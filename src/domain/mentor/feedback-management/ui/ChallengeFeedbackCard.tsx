@@ -5,8 +5,19 @@ import { useMemo } from 'react';
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import { STATUS_BADGE, STATUS_TEXT } from '@/domain/mentor/constants/statusColors';
+import { currentNow } from '@/domain/mentor/schedule/constants/mockNow';
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 import LiveFeedbackRoundList, { LiveRoundRow } from './LiveFeedbackRoundList';
+
+/** 오늘 날짜가 [start, end] 구간에 포함되는지 (일 단위 비교) */
+function isTodayInRange(start: string, end: string): boolean {
+  if (start === 'unknown' || end === 'unknown') return false;
+  const now = currentNow();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const s = new Date(start).setHours(0, 0, 0, 0);
+  const e = new Date(end).setHours(0, 0, 0, 0);
+  return today >= s && today <= e;
+}
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];
@@ -338,10 +349,21 @@ const ChallengeFeedbackCard = ({
               표시할 피드백이 없습니다.
             </div>
           ) : (
-            dateGroups.map((group) => (
+            dateGroups.map((group) => {
+              const isToday = isTodayInRange(group.start, group.end);
+              return (
               <section key={group.key}>
-                <h3 className="mb-2 text-sm font-semibold text-gray-700 md:mb-3 md:text-base">
+                <h3
+                  className={
+                    isToday
+                      ? 'mb-2 border-l-2 border-primary pl-2 text-sm font-semibold text-primary md:mb-3 md:text-base'
+                      : 'mb-2 text-sm font-semibold text-gray-700 md:mb-3 md:text-base'
+                  }
+                >
                   {formatDateRangeHeading(group.start, group.end)}
+                  {isToday && (
+                    <span className="ml-1.5 text-xs font-bold">· 오늘</span>
+                  )}
                 </h3>
                 <div className="space-y-2">
                   {group.written.map((mission) => (
@@ -362,7 +384,8 @@ const ChallengeFeedbackCard = ({
                   ))}
                 </div>
               </section>
-            ))
+              );
+            })
           )}
         </div>
       )}
