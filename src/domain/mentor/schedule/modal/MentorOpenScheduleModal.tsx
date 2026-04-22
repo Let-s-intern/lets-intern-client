@@ -207,15 +207,17 @@ const MentorOpenScheduleModal = ({
 
           <div className="overflow-hidden rounded-md border border-neutral-85">
             <div className="grid select-none grid-cols-[72px_repeat(7,minmax(88px,1fr))]">
-              <div className="border-b border-r border-neutral-85 bg-neutral-98 px-2 py-2 text-center text-xsmall14 font-medium text-neutral-40">
+              <div className="bg-neutral-98 border-b border-r border-neutral-85 px-2 py-2 text-center text-xsmall14 font-medium text-neutral-40">
                 시간
               </div>
               {days.map((day, index) => (
                 <div
                   key={index}
-                  className="border-b border-r border-neutral-85 bg-neutral-98 px-2 py-2 text-center last:border-r-0"
+                  className="bg-neutral-98 border-b border-r border-neutral-85 px-2 py-2 text-center last:border-r-0"
                 >
-                  <p className="text-xxsmall12 text-neutral-40">{WEEK_DAYS[index]}</p>
+                  <p className="text-xxsmall12 text-neutral-40">
+                    {WEEK_DAYS[index]}
+                  </p>
                   <p className="text-small18 font-semibold text-neutral-10">
                     {format(day, 'd')}
                   </p>
@@ -224,9 +226,7 @@ const MentorOpenScheduleModal = ({
 
               {TIME_SLOTS.map((time) => (
                 <div key={`row-${time}`} className="contents">
-                  <div
-                    className="border-b border-r border-neutral-85 bg-white px-2 py-2 text-center text-xsmall14 text-neutral-40"
-                  >
+                  <div className="border-b border-r border-neutral-85 bg-white px-2 py-2 text-center text-xsmall14 text-neutral-40">
                     {toTimeLabel(time)}
                   </div>
                   {WEEK_DAYS.map((_, dayIndex) => {
@@ -241,7 +241,9 @@ const MentorOpenScheduleModal = ({
                           event.preventDefault();
                           handleCellMouseDown(dayIndex, time);
                         }}
-                        onMouseEnter={() => handleCellMouseEnter(dayIndex, time)}
+                        onMouseEnter={() =>
+                          handleCellMouseEnter(dayIndex, time)
+                        }
                         className={`border-b border-r border-neutral-90 px-2 py-2 text-center text-xsmall14 transition-colors last:border-r-0 ${
                           isSelected
                             ? 'bg-primary-10 font-semibold text-primary'

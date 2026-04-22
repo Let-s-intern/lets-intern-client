@@ -1,6 +1,11 @@
 'use client';
 
-import { differenceInCalendarDays, format, getMonth, isSameDay } from 'date-fns';
+import {
+  differenceInCalendarDays,
+  format,
+  getMonth,
+  isSameDay,
+} from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
@@ -9,17 +14,20 @@ import { LiveFeedbackTimeBlock } from '../calendar-bar/ui/LiveFeedbackCard';
 import LiveFeedbackOpenBar from '../calendar-bar/ui/LiveFeedbackOpenBar';
 import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
 import type { PeriodBarData } from '../types';
+import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
 import ColumnDividers from './ui/ColumnDividers';
 import DayHeaderCell from './ui/DayHeaderCell';
 import TodayButton from './ui/TodayButton';
-import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
 
 // ─── 시간 그리드 상수 ────────────────────────────────────────────────────────
 const TIME_LABEL_W = 48; // 시간 레이블 열 너비 (px)
-const HOUR_H = 160;      // 한 시간당 높이 (px)
+const HOUR_H = 160; // 한 시간당 높이 (px)
 
 /** liveBars에서 표시할 시간 범위를 동적으로 계산한다. */
-function calcTimeRange(liveBars: PeriodBarData[]): { tStart: number; tEnd: number } {
+function calcTimeRange(liveBars: PeriodBarData[]): {
+  tStart: number;
+  tEnd: number;
+} {
   if (liveBars.length === 0) return { tStart: 8, tEnd: 18 };
 
   let minMin = Infinity;
@@ -101,10 +109,7 @@ const WeeklyCalendar = ({
   }, [targetScrollDate, scrollToDate]);
 
   // 라이브 피드백 시간 범위 (liveBars 기준 동적 계산)
-  const { tStart, tEnd } = useMemo(
-    () => calcTimeRange(liveBars),
-    [liveBars],
-  );
+  const { tStart, tEnd } = useMemo(() => calcTimeRange(liveBars), [liveBars]);
   const nHours = tEnd - tStart;
 
   // 서면 피드백 바 레이아웃 (grid 열 위치)
@@ -113,7 +118,8 @@ const WeeklyCalendar = ({
       writtenBars
         .map((bar) => {
           const startCol =
-            differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
+            differenceInCalendarDays(new Date(bar.startDate), timelineStart) +
+            1;
           const endCol =
             differenceInCalendarDays(
               new Date(bar.feedbackDeadline),
@@ -147,8 +153,7 @@ const WeeklyCalendar = ({
   const isEmpty = barLayouts.length === 0 && liveBars.length === 0;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-neutral-80">
-
+    <div className="rounded-2xl relative overflow-hidden border border-neutral-80">
       {/* ── 상단 태그: 일정 타입 범례 ─────────────────────────────────────── */}
       <div className="flex items-center gap-4 border-b border-neutral-80 bg-white px-4 py-2.5">
         <div className="flex items-center gap-1.5">
@@ -175,7 +180,6 @@ const WeeklyCalendar = ({
             minWidth: `${totalDays * 140}px`,
           }}
         >
-
           {/* ── 날짜 헤더 행 ─────────────────────────────────────────────── */}
           <div className="flex border-b border-neutral-80">
             {/* 시간 레이블 열과 정렬을 맞추는 sticky 스페이서 */}
@@ -193,7 +197,9 @@ const WeeklyCalendar = ({
                   ref={isSameDay(day, today) ? todayColRef : undefined}
                   day={day}
                   today={today}
-                  isMonthStart={i > 0 && getMonth(day) !== getMonth(days[i - 1])}
+                  isMonthStart={
+                    i > 0 && getMonth(day) !== getMonth(days[i - 1])
+                  }
                 />
               ))}
             </div>
@@ -221,8 +227,8 @@ const WeeklyCalendar = ({
                   >
                     {bar.barType === 'live-feedback-period' ? (
                       <LiveFeedbackPeriodBar bar={bar} />
-                    ) : (bar.barType === 'live-feedback-mentor-open' ||
-                        bar.barType === 'live-feedback-mentee-open') ? (
+                    ) : bar.barType === 'live-feedback-mentor-open' ||
+                      bar.barType === 'live-feedback-mentee-open' ? (
                       <LiveFeedbackOpenBar
                         bar={bar}
                         onMentorOpenClick={
@@ -312,11 +318,11 @@ const WeeklyCalendar = ({
 
                         {/* 라이브 피드백 세션 블록 */}
                         {dayLiveBars.map((bar) => {
-                          const [sh, sm] = bar.liveFeedback!.startTime
-                            .split(':')
+                          const [sh, sm] = bar
+                            .liveFeedback!.startTime.split(':')
                             .map(Number);
-                          const [eh, em] = bar.liveFeedback!.endTime
-                            .split(':')
+                          const [eh, em] = bar
+                            .liveFeedback!.endTime.split(':')
                             .map(Number);
                           const topPx =
                             (((sh - tStart) * 60 + sm) / 60) * HOUR_H;
@@ -340,7 +346,6 @@ const WeeklyCalendar = ({
               </div>
             </>
           )}
-
         </div>
       </div>
 
@@ -355,7 +360,10 @@ const WeeklyCalendar = ({
         </div>
       )}
 
-      <TodayButton isTodayVisible={isTodayVisible} onGoToToday={scrollToToday} />
+      <TodayButton
+        isTodayVisible={isTodayVisible}
+        onGoToToday={scrollToToday}
+      />
     </div>
   );
 };

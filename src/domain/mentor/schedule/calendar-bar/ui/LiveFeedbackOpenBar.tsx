@@ -25,7 +25,9 @@ const LiveFeedbackOpenBar = ({
     <div
       onClick={isMentorOpenClickable ? onMentorOpenClick : undefined}
       className={`relative z-10 flex w-full flex-col overflow-hidden text-left ${
-        isMentorOpenClickable ? 'cursor-pointer transition-opacity hover:opacity-85' : ''
+        isMentorOpenClickable
+          ? 'cursor-pointer transition-opacity hover:opacity-85'
+          : ''
       }`}
       role={isMentorOpenClickable ? 'button' : undefined}
       tabIndex={isMentorOpenClickable ? 0 : undefined}

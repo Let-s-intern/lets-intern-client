@@ -4,22 +4,22 @@ import { useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
-import WelcomeMessage from './ui/WelcomeMessage';
-import WeeklySummary from './ui/WeeklySummary';
-import ChallengeFilter from './ui/ChallengeFilter';
-import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
-import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
+import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
+import ChallengeFilter from './ui/ChallengeFilter';
+import WeeklySummary from './ui/WeeklySummary';
+import WelcomeMessage from './ui/WelcomeMessage';
+import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
-import { useWeeklySummary } from './hooks/useWeeklySummary';
-import { useScheduleData } from './hooks/useScheduleData';
-import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
-import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
 import {
   MENTOR_OPEN_SCHEDULE_MOCK,
   type MentorOpenSlot,
 } from './challenge-content/mentorOpenScheduleMock';
+import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
+import { useScheduleData } from './hooks/useScheduleData';
+import { useWeeklySummary } from './hooks/useWeeklySummary';
+import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
 
 const SchedulePage = () => {
   const {
@@ -47,9 +47,7 @@ const SchedulePage = () => {
     () =>
       selectedChallengeId === null
         ? liveFeedbackBars
-        : liveFeedbackBars.filter(
-            (b) => b.challengeId === selectedChallengeId,
-          ),
+        : liveFeedbackBars.filter((b) => b.challengeId === selectedChallengeId),
     [liveFeedbackBars, selectedChallengeId],
   );
 
