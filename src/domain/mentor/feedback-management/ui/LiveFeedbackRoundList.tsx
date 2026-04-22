@@ -2,13 +2,6 @@
 
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 
-function formatDateRange(startDate: string, endDate: string): string {
-  const s = new Date(startDate);
-  const e = new Date(endDate);
-  const fmt = (d: Date) => `${d.getMonth() + 1}/${d.getDate()}`;
-  return startDate === endDate ? fmt(s) : `${fmt(s)} ~ ${fmt(e)}`;
-}
-
 interface LiveRoundRowProps {
   round: LiveFeedbackRound;
   /** 챌린지 내 통합 시퀀스 번호 (서면+라이브 날짜순). 없으면 round.th 사용 */
@@ -59,7 +52,7 @@ export const LiveRoundRow = ({
             <span className="font-semibold text-gray-700">
               {round.totalMentees}
             </span>
-            명 · {formatDateRange(round.startDate, round.endDate)}
+            명
           </p>
           <p>
             피드백 완료{' '}

@@ -21,36 +21,27 @@ const formatDate = (dateStr: string | null) => {
   });
 };
 
-const formatDateGroupLabel = (dateKey: string) => {
-  if (dateKey === 'unknown') return '날짜 미정';
-  const d = new Date(dateKey);
-  return d.toLocaleDateString('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-    weekday: 'short',
-  });
+const formatKoDay = (iso: string): string => {
+  const d = new Date(iso);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 };
 
-function formatMDRange(start: string, end: string): string {
-  const s = new Date(start);
-  const e = new Date(end);
-  const fmt = (d: Date) => `${d.getMonth() + 1}/${d.getDate()}`;
-  return start === end ? fmt(s) : `${fmt(s)} ~ ${fmt(e)}`;
-}
+const formatDateRangeHeading = (start: string, end: string): string => {
+  if (start === 'unknown' || end === 'unknown') return '날짜 미정';
+  if (start === end) return formatKoDay(start);
+  return `${formatKoDay(start)} ~ ${formatKoDay(end)}`;
+};
 
 interface MissionRowProps {
   mission: Mission;
   /** 챌린지 내 통합 시퀀스 번호 (서면+라이브 날짜순). 없으면 mission.th 사용 */
   displayTh?: number;
-  /** 서면 피드백 기간 {start, end} (라이브처럼 기간 표시용) */
-  feedbackRange?: { start: string; end: string };
   onClickFeedback: (missionId: number, missionTh: number) => void;
 }
 
 export const MissionRow = ({
   mission,
   displayTh,
-  feedbackRange,
   onClickFeedback,
 }: MissionRowProps) => {
   const thLabel = displayTh ?? mission.th;
@@ -123,14 +114,6 @@ export const MissionRow = ({
               {mission.submittedCount}
             </span>{' '}
             / {totalCount}
-            {feedbackRange && (
-              <>
-                {' · '}
-                <span className="font-medium text-gray-700">
-                  {formatMDRange(feedbackRange.start, feedbackRange.end)}
-                </span>
-              </>
-            )}
           </p>
           <p>
             피드백 완료{' '}
@@ -179,22 +162,20 @@ const ChallengeFeedbackCard = ({
     onMissionClick(challenge, missionId, missionTh);
   };
 
-  // override가 주어지면 API 요청 생략
-  const shouldFetchDates = mode === 'combined' && !missionDateOverrides;
+  // API 미션 리스트를 항상 fetch해서 실제 챌린지도 기간 계산 가능하게 함
+  // (캐시되므로 중복 비용 없음, 재호출해도 React Query가 재사용)
   const { data: missionListData } = useMentorMissionFeedbackListQuery(
     challenge.challengeId,
-    { enabled: shouldFetchDates },
+    { enabled: true },
   );
 
-  /** missionId → 서면 피드백 기간 {start, end}. override 우선, 없으면 API missionEndDate+2/+4로 계산 */
+  /**
+   * missionId → 서면 피드백 기간 {start, end}.
+   * 1) API 응답 — mission.endDate + 2 ~ endDate + 4 (WRITTEN_FEEDBACK_CONFIG 기준)
+   * 2) override — mock 챌린지 등 API에 없는 항목 덮어쓰기
+   */
   const missionRangeMap = useMemo(() => {
     const map = new Map<number, { start: string; end: string }>();
-    if (missionDateOverrides) {
-      for (const [id, range] of Object.entries(missionDateOverrides)) {
-        map.set(Number(id), range);
-      }
-      return map;
-    }
     const addDays = (iso: string, days: number) => {
       const d = new Date(iso);
       d.setDate(d.getDate() + days);
@@ -207,6 +188,11 @@ const ChallengeFeedbackCard = ({
         end: addDays(m.endDate, 4),
       });
     }
+    if (missionDateOverrides) {
+      for (const [id, range] of Object.entries(missionDateOverrides)) {
+        map.set(Number(id), range);
+      }
+    }
     return map;
   }, [missionListData, missionDateOverrides]);
 
@@ -217,32 +203,49 @@ const ChallengeFeedbackCard = ({
     return map;
   }, [missionRangeMap]);
 
+  /**
+   * 실제 프로그램 일정에 맞춰 "MM/DD ~ MM/DD" 범위를 그룹 키로 사용.
+   * 서면: feedback 기간(start~end), 라이브: period(startDate~endDate).
+   */
   const dateGroups = useMemo(() => {
     if (mode !== 'combined') return [];
 
-    const groups = new Map<
-      string,
-      { written: Mission[]; live: LiveFeedbackRound[] }
-    >();
+    type Group = {
+      key: string;
+      start: string;
+      end: string;
+      written: Mission[];
+      live: LiveFeedbackRound[];
+    };
+    const groups = new Map<string, Group>();
+    const ensure = (start: string, end: string): Group => {
+      const key = `${start}_${end}`;
+      if (!groups.has(key)) {
+        groups.set(key, { key, start, end, written: [], live: [] });
+      }
+      return groups.get(key)!;
+    };
 
     for (const mission of challenge.feedbackMissions) {
-      const key = missionDateMap.get(mission.missionId) ?? 'unknown';
-      if (!groups.has(key)) groups.set(key, { written: [], live: [] });
-      groups.get(key)!.written.push(mission);
+      const range = missionRangeMap.get(mission.missionId);
+      const group = range
+        ? ensure(range.start, range.end)
+        : ensure('unknown', 'unknown');
+      group.written.push(mission);
     }
 
     for (const round of liveRounds) {
-      const key = round.startDate.slice(0, 10);
-      if (!groups.has(key)) groups.set(key, { written: [], live: [] });
-      groups.get(key)!.live.push(round);
+      ensure(round.startDate.slice(0, 10), round.endDate.slice(0, 10)).live.push(
+        round,
+      );
     }
 
-    return Array.from(groups.entries()).sort(([a], [b]) => {
-      if (a === 'unknown') return 1;
-      if (b === 'unknown') return -1;
-      return a.localeCompare(b);
+    return Array.from(groups.values()).sort((a, b) => {
+      if (a.start === 'unknown') return 1;
+      if (b.start === 'unknown') return -1;
+      return a.start.localeCompare(b.start);
     });
-  }, [mode, challenge.feedbackMissions, liveRounds, missionDateMap]);
+  }, [mode, challenge.feedbackMissions, liveRounds, missionRangeMap]);
 
   /**
    * 챌린지 내 서면+라이브 rounds를 날짜순으로 정렬해 통합 시퀀스 번호 부여.
@@ -312,7 +315,6 @@ const ChallengeFeedbackCard = ({
                   key={mission.missionId}
                   mission={mission}
                   displayTh={writtenDisplayTh.get(mission.missionId)}
-                  feedbackRange={missionRangeMap.get(mission.missionId)}
                   onClickFeedback={handleClickFeedback}
                 />
               ))}
@@ -338,13 +340,13 @@ const ChallengeFeedbackCard = ({
               표시할 피드백이 없습니다.
             </div>
           ) : (
-            dateGroups.map(([dateKey, items]) => (
-              <section key={dateKey}>
+            dateGroups.map((group) => (
+              <section key={group.key}>
                 <h3 className="mb-2 text-sm font-semibold text-gray-700 md:mb-3 md:text-base">
-                  {formatDateGroupLabel(dateKey)}
+                  {formatDateRangeHeading(group.start, group.end)}
                 </h3>
                 <div className="space-y-2">
-                  {items.written.map((mission) => (
+                  {group.written.map((mission) => (
                     <MissionRow
                       key={`w-${mission.missionId}`}
                       mission={mission}
@@ -352,7 +354,7 @@ const ChallengeFeedbackCard = ({
                       onClickFeedback={handleClickFeedback}
                     />
                   ))}
-                  {items.live.map((round) => (
+                  {group.live.map((round) => (
                     <LiveRoundRow
                       key={`l-${round.challengeId}-${round.th}`}
                       round={round}
