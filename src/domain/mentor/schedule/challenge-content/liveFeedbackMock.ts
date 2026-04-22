@@ -20,17 +20,17 @@ import type { PeriodBarData } from '../types';
  *     4/29: 오전 2명 (10:00/10:30 back-to-back, 챌린지1 오후와 분리)
  */
 export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
-  // ── 멘토 일정 오픈 (4/24, 1일) ──────────────────────────────────────────
+  // ── 멘토 일정 오픈 (4/22, 1일) ──────────────────────────────────────────
   {
     barType: 'live-feedback-mentor-open',
     challengeId: 1,
     missionId: -10,
     challengeTitle: '기필코 경험정리 챌린지 21기',
     th: 1,
-    startDate: '2026-04-24',
-    endDate: '2026-04-24',
-    feedbackStartDate: '2026-04-24',
-    feedbackDeadline: '2026-04-24',
+    startDate: '2026-04-22',
+    endDate: '2026-04-22',
+    feedbackStartDate: '2026-04-22',
+    feedbackDeadline: '2026-04-22',
     submittedCount: 0,
     notSubmittedCount: 0,
     waitingCount: 0,
@@ -39,17 +39,17 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     colorIndex: 0,
   },
 
-  // ── 멘티 신청 기간 (4/25~4/26, 2일) ───────────────────────────────────────
+  // ── 멘티 신청 기간 (4/23~4/24, 2일) ───────────────────────────────────────
   {
     barType: 'live-feedback-mentee-open',
     challengeId: 1,
     missionId: -11,
     challengeTitle: '기필코 경험정리 챌린지 21기',
     th: 1,
-    startDate: '2026-04-25',
-    endDate: '2026-04-26',
-    feedbackStartDate: '2026-04-25',
-    feedbackDeadline: '2026-04-26',
+    startDate: '2026-04-23',
+    endDate: '2026-04-24',
+    feedbackStartDate: '2026-04-23',
+    feedbackDeadline: '2026-04-24',
     submittedCount: 7,
     notSubmittedCount: 8,
     waitingCount: 0,
@@ -441,17 +441,17 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   // [챌린지2] 커리어 설계 챌린지 5기 — 오버랩 예시용 (colorIndex: 1, 하늘색)
   // ═══════════════════════════════════════════════════════════════════════════
 
-  // ── 멘토 일정 오픈 (4/22, 1일) ──────────────────────────────────────────
+  // ── 멘토 일정 오픈 (4/21, 1일) ──────────────────────────────────────────
   {
     barType: 'live-feedback-mentor-open',
     challengeId: 2,
     missionId: -20,
     challengeTitle: '커리어 설계 챌린지 5기',
     th: 1,
-    startDate: '2026-04-22',
-    endDate: '2026-04-22',
-    feedbackStartDate: '2026-04-22',
-    feedbackDeadline: '2026-04-22',
+    startDate: '2026-04-21',
+    endDate: '2026-04-21',
+    feedbackStartDate: '2026-04-21',
+    feedbackDeadline: '2026-04-21',
     submittedCount: 0,
     notSubmittedCount: 0,
     waitingCount: 0,
@@ -460,17 +460,17 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     colorIndex: 1,
   },
 
-  // ── 멘티 신청 기간 (4/23~4/24, 2일) ──────────────────────────────────────
+  // ── 멘티 신청 기간 (4/22~4/23, 2일) ──────────────────────────────────────
   {
     barType: 'live-feedback-mentee-open',
     challengeId: 2,
     missionId: -21,
     challengeTitle: '커리어 설계 챌린지 5기',
     th: 1,
-    startDate: '2026-04-23',
-    endDate: '2026-04-24',
-    feedbackStartDate: '2026-04-23',
-    feedbackDeadline: '2026-04-24',
+    startDate: '2026-04-22',
+    endDate: '2026-04-23',
+    feedbackStartDate: '2026-04-22',
+    feedbackDeadline: '2026-04-23',
     submittedCount: 6,
     notSubmittedCount: 2,
     waitingCount: 0,

@@ -121,7 +121,19 @@ const WeeklyCalendar = ({
   );
   const slotCount = (endMinutes - startMinutes) / SLOT_MINUTES;
 
-  // 서면 피드백 바 레이아웃 (grid 열 위치)
+  // 같은 챌린지의 바들은 같은 row에 배치 — 챌린지 등장 순서대로 row 번호 할당
+  const challengeRowMap = useMemo(() => {
+    const map = new Map<number, number>();
+    let row = 1;
+    for (const bar of writtenBars) {
+      if (!map.has(bar.challengeId)) {
+        map.set(bar.challengeId, row++);
+      }
+    }
+    return map;
+  }, [writtenBars]);
+
+  // 서면 피드백 바 레이아웃 (grid 열 위치 + 챌린지별 row)
   const barLayouts = useMemo(
     () =>
       writtenBars
@@ -134,10 +146,11 @@ const WeeklyCalendar = ({
               new Date(bar.feedbackDeadline),
               timelineStart,
             ) + 2;
-          return { bar, startCol, endCol, colSpan: endCol - startCol };
+          const gridRow = challengeRowMap.get(bar.challengeId) ?? 1;
+          return { bar, startCol, endCol, colSpan: endCol - startCol, gridRow };
         })
         .filter((l) => l.endCol >= 1 && l.startCol <= totalDays),
-    [writtenBars, timelineStart, totalDays],
+    [writtenBars, timelineStart, totalDays, challengeRowMap],
   );
 
   // 날짜별 라이브 피드백 그룹 (YYYY-MM-DD → bar[])
@@ -154,8 +167,8 @@ const WeeklyCalendar = ({
   const bodyMinHeight = useMemo(() => {
     const ROW_H = 70;
     const MIN_ROWS = 3;
-    return Math.max(writtenBars.length, MIN_ROWS) * ROW_H + 24;
-  }, [writtenBars.length]);
+    return Math.max(challengeRowMap.size, MIN_ROWS) * ROW_H + 24;
+  }, [challengeRowMap.size]);
 
   const innerWidthPercent = (totalDays / 7) * 100;
   const gridCols = `repeat(${totalDays}, 1fr)`;
@@ -228,11 +241,15 @@ const WeeklyCalendar = ({
                 className="relative gap-y-1 py-3"
                 style={{ display: 'grid', gridTemplateColumns: gridCols }}
               >
-                {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
+                {barLayouts.map(
+                  ({ bar, startCol, endCol, colSpan, gridRow }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                     className="px-px"
-                    style={{ gridColumn: `${startCol} / ${endCol}` }}
+                    style={{
+                      gridColumn: `${startCol} / ${endCol}`,
+                      gridRow,
+                    }}
                   >
                     {bar.barType === 'live-feedback-period' ? (
                       <LiveFeedbackPeriodBar bar={bar} />

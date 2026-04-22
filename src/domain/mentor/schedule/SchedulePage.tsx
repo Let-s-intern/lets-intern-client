@@ -19,11 +19,21 @@ import {
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
 import { useWeeklySummary } from './hooks/useWeeklySummary';
+import { useWrittenFeedbackMockData } from './hooks/useWrittenFeedbackMockData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
 import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
+  const { bars: writtenMockBars } = useWrittenFeedbackMockData();
+  const liveFeedbackBars = useLiveFeedbackData();
+
+  // 서면 + 라이브 mock 모두 extraBars로 주입 → 색상 재매핑과 태그 네비게이션에 투과
+  const extraBars = useMemo(
+    () => [...writtenMockBars, ...liveFeedbackBars],
+    [writtenMockBars, liveFeedbackBars],
+  );
+
   const {
     challenges,
     selectedChallengeId,
@@ -34,32 +44,16 @@ const SchedulePage = () => {
     challengeFilterItems,
     findNearestDate,
     findNextDate,
-  } = useScheduleData();
+  } = useScheduleData({ extraBars });
 
-  const liveFeedbackBars = useLiveFeedbackData();
-
-  // 라이브 피드백을 서면 피드백 바와 합산 — WeeklySummary는 live 바를 스킵함
-  const allBarsWithLive = useMemo(
-    () => [...allBarsUnfiltered, ...liveFeedbackBars],
-    [allBarsUnfiltered, liveFeedbackBars],
-  );
-
-  // 필터 적용된 라이브 피드백 바
-  const filteredLiveBars = useMemo(
-    () =>
-      selectedChallengeId === null
-        ? liveFeedbackBars
-        : liveFeedbackBars.filter((b) => b.challengeId === selectedChallengeId),
-    [liveFeedbackBars, selectedChallengeId],
-  );
-
-  const filteredBarsWithLive = useMemo(
-    () => [...filteredBars, ...filteredLiveBars],
-    [filteredBars, filteredLiveBars],
+  // 라이브 세션 바만 따로 추출 — LiveFeedbackReservationModal 네비게이션용
+  const filteredLiveSessionBars = useMemo(
+    () => filteredBars.filter((b) => b.barType === 'live-feedback'),
+    [filteredBars],
   );
 
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBarsWithLive);
+    useWeeklySummary(allBarsUnfiltered);
 
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
@@ -141,8 +135,8 @@ const SchedulePage = () => {
             />
 
             <WeeklyCalendar
-              bars={filteredBarsWithLive}
-              allBars={allBarsWithLive}
+              bars={filteredBars}
+              allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
               onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
               onLiveFeedbackTimeBlockClick={(bar) =>
@@ -200,7 +194,7 @@ const SchedulePage = () => {
         isOpen={!!selectedLiveFeedbackBar}
         onClose={() => setSelectedLiveFeedbackBar(null)}
         bar={selectedLiveFeedbackBar}
-        liveFeedbackBars={filteredLiveBars}
+        liveFeedbackBars={filteredLiveSessionBars}
         onSelectBar={setSelectedLiveFeedbackBar}
       />
     </div>

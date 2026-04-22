@@ -18,7 +18,7 @@ const TodayButton = ({ isTodayVisible, onGoToToday }: TodayButtonProps) => {
     <button
       type="button"
       onClick={onGoToToday}
-      className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary-hover"
+      className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary-hover"
       aria-label="오늘로 이동"
     >
       <svg
