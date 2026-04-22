@@ -2,7 +2,7 @@ import { SelectButton } from '@/common/button/SelectButton';
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
 import { useEffect, useMemo, useState } from 'react';
 import { CheckboxItem } from './WishJobCheckBox';
-import { WishJobModal } from './WishJobModal';
+import { WishJobModal } from '@/common/modal/WishJobModal';
 
 interface JobField {
   id: number;

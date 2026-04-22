@@ -1,6 +1,6 @@
 import { CareerFormType, UserCareerType } from '@/api/career/careerSchema';
-import CareerCard from '@/domain/mypage/career/CareerCard';
-import CareerForm from '@/domain/mypage/career/CareerForm';
+import CareerCard from '@/common/career/CareerCard';
+import CareerForm from '@/common/career/CareerForm';
 
 interface CareerItemProps {
   career: CareerFormType;

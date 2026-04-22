@@ -1,7 +1,7 @@
 import { useGetUserCareerQuery } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
-import CareerItem from '@/domain/mypage/career/CareerItem';
-import { DEFAULT_PAGE_INFO } from '@/domain/mypage/career/constants';
+import CareerItem from '@/common/career/CareerItem';
+import { DEFAULT_PAGE_INFO } from '@/common/career/constants';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { convertCareerApiToUiFormat } from '@/utils/career';
 import { useState } from 'react';

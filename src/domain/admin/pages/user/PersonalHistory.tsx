@@ -1,7 +1,7 @@
 import { usePostAdminCareerMutation } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
-import CareerForm from '@/domain/mypage/career/CareerForm';
-import { DEFAULT_CAREER } from '@/domain/mypage/career/constants';
+import CareerForm from '@/common/career/CareerForm';
+import { DEFAULT_CAREER } from '@/common/career/constants';
 import { UserAdminDetail } from '@/schema';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { Plus } from 'lucide-react';

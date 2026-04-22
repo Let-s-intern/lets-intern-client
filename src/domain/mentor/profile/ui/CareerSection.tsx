@@ -8,11 +8,11 @@ import {
   usePatchUserCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
-import CareerHeader from '@/domain/mypage/career/CareerHeader';
-import CareerItem from '@/domain/mypage/career/CareerItem';
-import CareerList from '@/domain/mypage/career/CareerList';
-import { DEFAULT_CAREER, PAGE_SIZE } from '@/domain/mypage/career/constants';
-import NoCareerView from '@/domain/mypage/career/NoCareerView';
+import CareerHeader from '@/common/career/CareerHeader';
+import CareerItem from '@/common/career/CareerItem';
+import CareerList from '@/common/career/CareerList';
+import { DEFAULT_CAREER, PAGE_SIZE } from '@/common/career/constants';
+import NoCareerView from '@/common/career/NoCareerView';
 
 export default function CareerSection() {
   const [createMode, setCreateMode] = useState(false);

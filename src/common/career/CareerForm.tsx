@@ -9,8 +9,8 @@ import {
 import WarningModal from '@/common/alert/WarningModal';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
-import { EmployeeTypeModal } from '@/domain/mypage/career/EmployeeTypeModal';
-import { PeriodSelectModal } from '@/domain/mypage/mypage/experience/components/PeriodSelectModal';
+import { EmployeeTypeModal } from '@/common/career/EmployeeTypeModal';
+import { PeriodSelectModal } from '@/common/career/PeriodSelectModal';
 import { convertCareerUiToApiFormat } from '@/utils/career';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
