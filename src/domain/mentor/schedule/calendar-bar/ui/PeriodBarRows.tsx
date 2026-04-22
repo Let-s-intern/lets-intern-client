@@ -179,18 +179,14 @@ const PeriodBarRows = ({
           {challengeTitle}
         </span>
 
-        <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
-          {menteeStatus === null ? (
-            <span className="text-neutral-50">대기 중</span>
-          ) : (
-            <>
-              <span className="text-neutral-40">{menteeStatus.label}</span>
-              <span className="text-neutral-10">
-                {formatCount(menteeStatus)}
-              </span>
-            </>
-          )}
-        </div>
+        {menteeStatus !== null && (
+          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
+            <span className="text-neutral-40">{menteeStatus.label}</span>
+            <span className="text-neutral-10">
+              {formatCount(menteeStatus)}
+            </span>
+          </div>
+        )}
       </div>
     </>
   );
