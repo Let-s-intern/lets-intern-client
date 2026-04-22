@@ -38,6 +38,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.10.0(react-hook-form@7.68.0(react@18.3.1))
+      '@letscareer/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@letscareer/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@lexical/clipboard':
         specifier: ^0.16.1
         version: 0.16.1
@@ -316,6 +322,43 @@ importers:
   packages/config/tailwind: {}
 
   packages/config/typescript: {}
+
+  packages/types:
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/utils:
+    dependencies:
+      '@lexical/selection':
+        specifier: '>=0.16'
+        version: 0.16.1
+      clsx:
+        specifier: '>=2'
+        version: 2.1.1
+      colorthief:
+        specifier: '>=2'
+        version: 2.6.0
+      lexical:
+        specifier: '>=0.16'
+        version: 0.16.1
+      nanoid:
+        specifier: '>=5'
+        version: 5.1.6
+      tailwind-merge:
+        specifier: '>=2'
+        version: 2.6.0
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
