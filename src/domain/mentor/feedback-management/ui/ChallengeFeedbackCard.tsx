@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
+import { deriveMissionStatus } from '@/domain/mentor/utils/deriveMissionStatus';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];
@@ -37,10 +38,12 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
       }
     }
 
-    const hasSubmission = mission.submittedCount > 0;
-    const isAllComplete = hasSubmission && completed >= mission.submittedCount;
-    const status: 'completed' | 'inProgress' | 'waiting' | 'none' = !hasSubmission ? 'none' : isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
-    return { completedCount: completed, missionStatus: status };
+    const missionStatus = deriveMissionStatus(
+      mission.submittedCount,
+      completed,
+      feedbackStarted,
+    );
+    return { completedCount: completed, missionStatus };
   }, [mission.feedbackStatusCounts, mission.submittedCount]);
 
   const statusConfig = {

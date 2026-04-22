@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
-import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import { deriveMissionStatus } from '@/domain/mentor/utils/deriveMissionStatus';
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ko-KR', {
@@ -53,14 +53,12 @@ const MissionRow = ({
       if (status !== 'WAITING') feedbackStarted++;
     }
 
-    const hasSubmission = submitted > 0;
-    const isAllComplete = hasSubmission && completed >= submitted;
-    const s: 'completed' | 'inProgress' | 'waiting' | 'none' = !hasSubmission ? 'none' : isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
+    const missionStatus = deriveMissionStatus(submitted, completed, feedbackStarted);
 
     return {
       submittedCount: submitted,
       completedCount: completed,
-      missionStatus: s,
+      missionStatus,
     };
   }, [attendanceList]);
 
