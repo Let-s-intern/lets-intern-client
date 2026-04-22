@@ -3,25 +3,20 @@
 import type { PeriodBarData } from '../../types';
 import { getColor } from '../../constants/colors';
 
-/**
- * "09:00" → "오전 9시", "09:30" → "9시 30분"
- * 시작 시각에만 오전/오후 접두어를 붙이고, 종료 시각은 생략한다.
- */
+/** "09:00" → "오전 9시", "09:30" → "9시 30분". 시작 시각에만 오전/오후 표기. */
 function formatTimeRange(start: string, end: string): string {
   const [sh, sm] = start.split(':').map(Number);
   const [eh, em] = end.split(':').map(Number);
-
   const period = sh < 12 ? '오전' : '오후';
   const startHour = sh === 0 ? 12 : sh > 12 ? sh - 12 : sh;
   const endHour = eh === 0 ? 12 : eh > 12 ? eh - 12 : eh;
   const startMin = sm !== 0 ? ` ${sm}분` : '';
   const endMin = em !== 0 ? ` ${em}분` : '';
-
   return `${period} ${startHour}시${startMin} ~ ${endHour}시${endMin}`;
 }
 
 /**
- * 라이브 피드백 단일 날짜 카드 (1:1 세션).
+ * 캘린더 상단 태그 영역에 쓰이는 라이브 피드백 카드 (단일 날짜용).
  *
  * TODO: 클릭 시 라이브 피드백 상세 모달 연결 (API 연동 후 구현)
  */
@@ -65,6 +60,48 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
           <span className="text-neutral-40">멘티</span>
           <span className="text-neutral-10">{lf.menteeName}님</span>
         </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * 시간별 일정(하단 time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
+ * 부모의 top/height(세션 시간 길이)에 맞춰 h-full/w-full로 채워진다.
+ */
+export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
+  const lf = bar.liveFeedback!;
+  const color = getColor(bar.colorIndex ?? 0);
+  const isCompleted = lf.status === 'completed';
+
+  return (
+    <div
+      className={`flex h-full w-full flex-col justify-between overflow-hidden border-l-[3px] px-2 py-1 ${color.border} ${isCompleted ? 'bg-neutral-95' : color.body}`}
+    >
+      {/* 상단: LIVE + 멘티명 + [완료 배지 오른쪽] */}
+      <div className="flex min-w-0 items-center gap-1">
+        <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-red-500" />
+        <span className="shrink-0 text-xxsmall12 font-bold leading-none text-red-500">
+          LIVE
+        </span>
+        <span className={`min-w-0 flex-1 truncate text-xxsmall12 font-medium leading-none ${isCompleted ? 'text-neutral-40' : 'text-neutral-10'}`}>
+          {lf.menteeName}님
+        </span>
+        {isCompleted && (
+          <span className="shrink-0 rounded-[3px] bg-green-500 px-1 py-0.5 text-[10px] font-bold leading-none text-white">
+            완료
+          </span>
+        )}
+      </div>
+
+      {/* 하단: 챌린지명 + 시간 */}
+      <div className="flex min-w-0 flex-col">
+        <span className="truncate text-xxsmall12 leading-tight text-neutral-40">
+          {bar.challengeTitle}
+        </span>
+        <span className="truncate text-xxsmall12 leading-tight text-neutral-30">
+          {formatTimeRange(lf.startTime, lf.endTime)}
+        </span>
       </div>
     </div>
   );

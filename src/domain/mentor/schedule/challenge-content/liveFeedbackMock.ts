@@ -4,56 +4,94 @@ import type { PeriodBarData } from '../types';
  * 라이브 피드백 목데이터 (1:1 세션).
  * API 연동 시 useLiveFeedbackData 훅의 반환값만 교체하면 됩니다.
  *
- * - barType: 'live-feedback'
- * - startDate / endDate / feedbackDeadline: 세션 당일로 동일 (단일 날짜)
- * - missionId: 음수 — 서면 피드백 missionId와 충돌 방지
+ * - barType: 'live-feedback-period' — 상단 3일 기간 바
+ * - barType: 'live-feedback'        — 하단 시간 그리드 개별 세션
+ * - missionId 음수: 서면 피드백 ID와 충돌 방지
  * - challengeId: API 연동 시 실제 챌린지 ID로 교체 필요
+ *
+ * 일정 구성
+ *   4/28(1일차): 오전 3명 (08:00~11:30)
+ *   4/29(2일차): 오후 4명 (16:00~17:00)
+ *   4/30(3일차): 오전 3명 + 오후 5명
  */
 export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
+  // ── 멘토 일정 오픈 (4/24, 1일) ──────────────────────────────────────────
   {
-    barType: 'live-feedback',
+    barType: 'live-feedback-mentor-open',
     challengeId: 1,
-    missionId: -101,
+    missionId: -10,
+    challengeTitle: '기필코 경험정리 챌린지 21기',
+    th: 1,
+    startDate: '2026-04-24',
+    endDate: '2026-04-24',
+    feedbackStartDate: '2026-04-24',
+    feedbackDeadline: '2026-04-24',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 0,
+  },
+
+  // ── 멘티 신청 기간 (4/25, 1일) ───────────────────────────────────────────
+  {
+    barType: 'live-feedback-mentee-open',
+    challengeId: 1,
+    missionId: -11,
+    challengeTitle: '기필코 경험정리 챌린지 21기',
+    th: 1,
+    startDate: '2026-04-25',
+    endDate: '2026-04-25',
+    feedbackStartDate: '2026-04-25',
+    feedbackDeadline: '2026-04-25',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 0,
+  },
+
+  // ── 상단 기간 바 (4/28~4/30, 3일) ──────────────────────────────────────
+  {
+    barType: 'live-feedback-period',
+    challengeId: 1,
+    missionId: -1,
     challengeTitle: '기필코 경험정리 챌린지 21기',
     th: 1,
     startDate: '2026-04-28',
-    endDate: '2026-04-28',
+    endDate: '2026-04-30',
     feedbackStartDate: '2026-04-28',
-    feedbackDeadline: '2026-04-28',
-    submittedCount: 0,
-    notSubmittedCount: 0,
-    waitingCount: 0,
+    feedbackDeadline: '2026-04-30',
+    submittedCount: 15, // 전체 멘티 수 (3 + 4 + 8)
+    notSubmittedCount: 5,
+    waitingCount: 5,
     inProgressCount: 0,
-    completedCount: 0,
+    completedCount: 10,
     colorIndex: 0,
-    liveFeedback: {
-      id: 101,
-      menteeName: '이지수',
-      startTime: '09:00',
-      endTime: '09:30',
-    },
   },
-  {
-    barType: 'live-feedback',
-    challengeId: 1,
-    missionId: -102,
-    challengeTitle: '기필코 경험정리 챌린지 21기',
-    th: 2,
-    startDate: '2026-05-07',
-    endDate: '2026-05-07',
-    feedbackStartDate: '2026-05-07',
-    feedbackDeadline: '2026-05-07',
-    submittedCount: 0,
-    notSubmittedCount: 0,
-    waitingCount: 0,
-    inProgressCount: 0,
-    completedCount: 0,
-    colorIndex: 0,
-    liveFeedback: {
-      id: 102,
-      menteeName: '이지수',
-      startTime: '09:00',
-      endTime: '09:30',
-    },
-  },
+
+  // ── 4/28 (1일차): 오전 3명 — 09:00 / 10:00 / 11:00 ──────────────────
+  { barType: 'live-feedback', challengeId: 1, missionId: -101, challengeTitle: '기필코 경험정리 챌린지 21기', th: 1, startDate: '2026-04-28', endDate: '2026-04-28', feedbackStartDate: '2026-04-28', feedbackDeadline: '2026-04-28', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 101, menteeName: '이지수', startTime: '09:00', endTime: '09:30', status: 'completed' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -102, challengeTitle: '기필코 경험정리 챌린지 21기', th: 2, startDate: '2026-04-28', endDate: '2026-04-28', feedbackStartDate: '2026-04-28', feedbackDeadline: '2026-04-28', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 102, menteeName: '김민준', startTime: '10:00', endTime: '10:30', status: 'completed' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -103, challengeTitle: '기필코 경험정리 챌린지 21기', th: 3, startDate: '2026-04-28', endDate: '2026-04-28', feedbackStartDate: '2026-04-28', feedbackDeadline: '2026-04-28', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 103, menteeName: '박서연', startTime: '11:00', endTime: '11:30' } },
+
+  // ── 4/29 (2일차): 오후 4명 — 16:00 / 17:00 / 18:00 / 19:00 ──────────
+  { barType: 'live-feedback', challengeId: 1, missionId: -201, challengeTitle: '기필코 경험정리 챌린지 21기', th: 4, startDate: '2026-04-29', endDate: '2026-04-29', feedbackStartDate: '2026-04-29', feedbackDeadline: '2026-04-29', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 201, menteeName: '정하늘', startTime: '16:00', endTime: '16:30', status: 'completed' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -202, challengeTitle: '기필코 경험정리 챌린지 21기', th: 5, startDate: '2026-04-29', endDate: '2026-04-29', feedbackStartDate: '2026-04-29', feedbackDeadline: '2026-04-29', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 202, menteeName: '최지훈', startTime: '17:00', endTime: '17:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -203, challengeTitle: '기필코 경험정리 챌린지 21기', th: 6, startDate: '2026-04-29', endDate: '2026-04-29', feedbackStartDate: '2026-04-29', feedbackDeadline: '2026-04-29', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 203, menteeName: '강민서', startTime: '18:00', endTime: '18:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -204, challengeTitle: '기필코 경험정리 챌린지 21기', th: 7, startDate: '2026-04-29', endDate: '2026-04-29', feedbackStartDate: '2026-04-29', feedbackDeadline: '2026-04-29', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 204, menteeName: '윤서준', startTime: '19:00', endTime: '19:30' } },
+
+  // ── 4/30 (3일차): 오전 3명 — 09:00 / 10:00 / 11:00 ──────────────────
+  { barType: 'live-feedback', challengeId: 1, missionId: -301, challengeTitle: '기필코 경험정리 챌린지 21기', th: 8, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 301, menteeName: '임채원', startTime: '09:00', endTime: '09:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -302, challengeTitle: '기필코 경험정리 챌린지 21기', th: 9, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 302, menteeName: '송지아', startTime: '10:00', endTime: '10:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -303, challengeTitle: '기필코 경험정리 챌린지 21기', th: 10, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 303, menteeName: '한도윤', startTime: '11:00', endTime: '11:30' } },
+
+  // ── 4/30 (3일차): 오후 5명 — 14:00 / 15:00 / 16:00 / 17:00 / 18:00 ──
+  { barType: 'live-feedback', challengeId: 1, missionId: -401, challengeTitle: '기필코 경험정리 챌린지 21기', th: 11, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 401, menteeName: '오지민', startTime: '14:00', endTime: '14:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -402, challengeTitle: '기필코 경험정리 챌린지 21기', th: 12, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 402, menteeName: '노은서', startTime: '15:00', endTime: '15:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -403, challengeTitle: '기필코 경험정리 챌린지 21기', th: 13, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 403, menteeName: '백준혁', startTime: '16:00', endTime: '16:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -404, challengeTitle: '기필코 경험정리 챌린지 21기', th: 14, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 404, menteeName: '류다연', startTime: '17:00', endTime: '17:30' } },
+  { barType: 'live-feedback', challengeId: 1, missionId: -405, challengeTitle: '기필코 경험정리 챌린지 21기', th: 15, startDate: '2026-04-30', endDate: '2026-04-30', feedbackStartDate: '2026-04-30', feedbackDeadline: '2026-04-30', submittedCount: 0, notSubmittedCount: 0, waitingCount: 0, inProgressCount: 0, completedCount: 0, colorIndex: 0, liveFeedback: { id: 405, menteeName: '권태양', startTime: '18:00', endTime: '18:30' } },
 ];
