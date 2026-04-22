@@ -20,6 +20,55 @@
 - `npm run typecheck` — TypeScript 타입 체크
 - `npm run lint` — ESLint
 
+## 모노레포 구조 (2026-04-22 전환 완료)
+
+### 앱 구조
+
+| 앱 | 경로 | 기술 | 도메인 |
+|---|---|---|---|
+| user | `apps/user/` | Next.js 15 App Router | 사용자 페이지 |
+| admin | `apps/admin/` | Vite + React Router | 어드민 |
+| mentor | `apps/mentor/` | Vite + React Router | 멘토 마이페이지 |
+
+### 공유 패키지
+
+| 패키지 | 경로 | 내용 |
+|---|---|---|
+| @letscareer/ui | `packages/ui/` | framework-agnostic UI 컴포넌트 |
+| @letscareer/store | `packages/store/` | zustand stores |
+| @letscareer/api | `packages/api/` | axios 인스턴스 |
+| @letscareer/hooks | `packages/hooks/` | 공유 훅 |
+| @letscareer/utils | `packages/utils/` | 순수 유틸리티 함수 |
+| @letscareer/types | `packages/types/` | 공유 타입 |
+| @letscareer/tsconfig | `packages/config/typescript/` | TypeScript config |
+| @letscareer/eslint-config | `packages/config/eslint/` | ESLint config |
+| @letscareer/prettier-config | `packages/config/prettier/` | Prettier config |
+| @letscareer/tailwind-config | `packages/config/tailwind/` | Tailwind preset |
+
+### 명령어 업데이트
+
+```bash
+# 루트에서 전체 실행 (turbo)
+pnpm build       # 전체 앱 빌드
+pnpm dev         # 전체 앱 개발 서버
+pnpm typecheck   # 전체 타입 체크
+pnpm lint        # 전체 린트
+
+# 특정 앱만
+pnpm --filter @letscareer/user dev
+pnpm --filter @letscareer/admin dev
+pnpm --filter @letscareer/mentor dev
+
+# 특정 앱 빌드
+pnpm --filter @letscareer/user build
+```
+
+### 의존성 규칙
+
+- `apps/*` → `packages/*` (단방향)
+- `packages/*` 내부에서도 순환 의존 금지
+- `packages/ui` 내부에서 `next/*` import 금지
+
 ---
 
 ## 핵심 원칙: 좋은 코드 = 수정하기 쉬운 코드
