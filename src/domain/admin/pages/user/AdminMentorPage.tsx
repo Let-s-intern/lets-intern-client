@@ -8,17 +8,24 @@ import {
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button, Tab, Tabs } from '@mui/material';
+import { Button, Pagination, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
+const PAGE_SIZE = 50;
+
 function MentorManagementTable() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const page = Math.max(0, Number(searchParams.get('page') ?? '1') - 1);
+
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const { data, isLoading } = useUserAdminQuery({
-    pageable: { page: 0, size: 500 },
+    pageable: { page, size: PAGE_SIZE },
   });
+
   const mentors = useMemo(
     () =>
       (data?.userAdminList ?? [])
@@ -31,6 +38,8 @@ function MentorManagementTable() {
         })),
     [data],
   );
+
+  const totalPages = data?.pageInfo?.totalPages ?? 1;
 
   const patchUser = usePatchUserAdminMutation({});
 
@@ -54,68 +63,87 @@ function MentorManagementTable() {
     }
   };
 
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(value));
+    router.push(`?${params.toString()}`);
+  };
+
   return (
-    <div className="rounded-lg border border-neutral-80">
-      {isLoading ? (
-        <div className="py-16 text-center text-xsmall14 text-neutral-40">
-          불러오는 중...
-        </div>
-      ) : mentors.length === 0 ? (
-        <div className="py-16 text-center text-xsmall14 text-neutral-40">
-          등록된 멘토가 없습니다.
-        </div>
-      ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b-2 border-neutral-60 bg-neutral-95">
-              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                이름
-              </th>
-              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                이메일
-              </th>
-              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                전화번호
-              </th>
-              <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
-                멘토 삭제
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {mentors.map((mentor) => (
-              <tr
-                key={mentor.id}
-                className="cursor-pointer border-b border-neutral-80 transition-colors hover:bg-neutral-95 last:border-b-0"
-              >
-                <td className="px-6 py-4 text-xsmall14">
-                  <Link
-                    href={`/admin/mentors/${mentor.id}`}
-                    className="text-neutral-0 underline hover:text-primary-30"
-                  >
-                    {mentor.name}
-                  </Link>
-                </td>
-                <td className="px-6 py-4 text-xsmall14">
-                  {mentor.email ?? '-'}
-                </td>
-                <td className="px-6 py-4 text-xsmall14">
-                  {mentor.phoneNum ?? '-'}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  <Button
-                    variant="text"
-                    color="error"
-                    size="small"
-                    onClick={(e) => handleDelete(e, mentor.id, mentor.name)}
-                  >
-                    삭제
-                  </Button>
-                </td>
+    <div>
+      <div className="rounded-lg border border-neutral-80">
+        {isLoading ? (
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+            불러오는 중...
+          </div>
+        ) : mentors.length === 0 ? (
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+            등록된 멘토가 없습니다.
+          </div>
+        ) : (
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  이름
+                </th>
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  이메일
+                </th>
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  전화번호
+                </th>
+                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                  멘토 삭제
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {mentors.map((mentor) => (
+                <tr
+                  key={mentor.id}
+                  className="cursor-pointer border-b border-neutral-80 transition-colors hover:bg-neutral-95 last:border-b-0"
+                >
+                  <td className="px-6 py-4 text-xsmall14">
+                    <Link
+                      href={`/admin/mentors/${mentor.id}`}
+                      className="text-neutral-0 underline hover:text-primary-30"
+                    >
+                      {mentor.name}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 text-xsmall14">
+                    {mentor.email ?? '-'}
+                  </td>
+                  <td className="px-6 py-4 text-xsmall14">
+                    {mentor.phoneNum ?? '-'}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Button
+                      variant="text"
+                      color="error"
+                      size="small"
+                      onClick={(e) => handleDelete(e, mentor.id, mentor.name)}
+                    >
+                      삭제
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {totalPages > 1 && (
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            count={totalPages}
+            page={page + 1}
+            onChange={handlePageChange}
+            color="primary"
+            shape="rounded"
+          />
+        </div>
       )}
     </div>
   );
