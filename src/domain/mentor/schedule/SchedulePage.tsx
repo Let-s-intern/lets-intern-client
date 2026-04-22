@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
@@ -14,6 +14,7 @@ import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 
 import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useScheduleData } from './hooks/useScheduleData';
+import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 
 const SchedulePage = () => {
   const {
@@ -28,8 +29,32 @@ const SchedulePage = () => {
     findNextDate,
   } = useScheduleData();
 
+  const liveFeedbackBars = useLiveFeedbackData();
+
+  // 라이브 피드백을 서면 피드백 바와 합산 — WeeklySummary는 live 바를 스킵함
+  const allBarsWithLive = useMemo(
+    () => [...allBarsUnfiltered, ...liveFeedbackBars],
+    [allBarsUnfiltered, liveFeedbackBars],
+  );
+
+  // 필터 적용된 라이브 피드백 바
+  const filteredLiveBars = useMemo(
+    () =>
+      selectedChallengeId === null
+        ? liveFeedbackBars
+        : liveFeedbackBars.filter(
+            (b) => b.challengeId === selectedChallengeId,
+          ),
+    [liveFeedbackBars, selectedChallengeId],
+  );
+
+  const filteredBarsWithLive = useMemo(
+    () => [...filteredBars, ...filteredLiveBars],
+    [filteredBars, filteredLiveBars],
+  );
+
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBarsUnfiltered);
+    useWeeklySummary(allBarsWithLive);
 
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
@@ -104,8 +129,8 @@ const SchedulePage = () => {
             />
 
             <WeeklyCalendar
-              bars={filteredBars}
-              allBars={allBarsUnfiltered}
+              bars={filteredBarsWithLive}
+              allBars={allBarsWithLive}
               onBarClick={handleBarClick}
               targetScrollDate={targetScrollDate}
             />

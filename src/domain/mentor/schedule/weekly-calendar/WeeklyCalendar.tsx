@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
 import type { PeriodBarData } from '../types';
 import { CompactFeedbackCard } from '../calendar-bar/ui/FeedbackCard';
+import LiveFeedbackCard from '../calendar-bar/ui/LiveFeedbackCard';
 import TodayButton from './ui/TodayButton';
 import DayHeaderCell from './ui/DayHeaderCell';
 import ColumnDividers from './ui/ColumnDividers';
@@ -136,7 +137,9 @@ const WeeklyCalendar = ({
                     className="px-px"
                     style={{ gridColumn: `${startCol} / ${endCol}` }}
                   >
-                    {colSpan <= 1 ? (
+                    {bar.barType === 'live-feedback' ? (
+                      <LiveFeedbackCard bar={bar} />
+                    ) : colSpan <= 1 ? (
                       <CompactFeedbackCard
                         bar={bar}
                         onBarClick={onBarClick}

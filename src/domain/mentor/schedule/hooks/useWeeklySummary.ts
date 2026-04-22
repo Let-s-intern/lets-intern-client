@@ -25,6 +25,8 @@ export function useWeeklySummary(bars: PeriodBarData[]): WeeklySummaryCounts {
     let completed = 0;
 
     for (const bar of bars) {
+      if (bar.barType === 'live-feedback') continue;
+
       const barTotal = bar.submittedCount + bar.notSubmittedCount;
       total += barTotal;
 
