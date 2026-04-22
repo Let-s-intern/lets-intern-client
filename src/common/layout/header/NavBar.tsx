@@ -149,9 +149,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                 <GlobalNavItem
                   className="text-xsmall14"
                   isNew
-                  href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/program?type=VOD"
                 >
                   취준위키 VOD
                 </GlobalNavItem>
@@ -191,9 +189,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
               <GlobalNavItem
                 className="text-xsmall16"
                 isNew
-                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/program?type=VOD"
               >
                 취준위키 VOD
               </GlobalNavItem>
@@ -247,12 +243,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/library/list" isNew>
           무료 자료집
         </SideNavItem>
-        <SideNavItem
-          href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
-          target="_blank"
-          isNew
-          rel="noopener noreferrer"
-        >
+        <SideNavItem href="/program?type=VOD" isNew>
           취준위키 VOD
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />

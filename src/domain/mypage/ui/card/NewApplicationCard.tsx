@@ -3,7 +3,7 @@
 import { MypageApplication } from '@/api/application';
 import AlertModal from '@/common/alert/AlertModal';
 import HybridLink from '@/common/HybridLink';
-import { downloadGuidebookAndTrack } from '@/domain/career-board/utils/guidebookDownload';
+import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
 import {
   MypageApplicationCardConfig,
   toMypageApplicationCardConfig,
@@ -41,10 +41,11 @@ export const MypageApplicationCard = ({
   const downloadAction = useDownloadAction({
     isDownloaded: config.isDownloaded ?? false,
     executeDownload: () =>
-      downloadGuidebookAndTrack({
+      downloadContentAndTrack({
         applicationId: config.id,
         contentFileUrl: config.contentFileUrl,
         contentUrl: config.contentUrl,
+        type: config.downloadType,
       }),
   });
 
@@ -235,6 +236,10 @@ const getDetailHref = (config: MypageApplicationCardConfig): string => {
 
   if (programTypeKey === 'GUIDEBOOK') {
     return `/program/guidebook/${programId}`;
+  }
+
+  if (programTypeKey === 'VOD') {
+    return `/program/vod/${programId}`;
   }
 
   return '#';

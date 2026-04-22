@@ -1,33 +1,34 @@
 'use client';
 
-import {
-  FeedbackStatus,
-  FeedbackStatusEnum,
-  FeedbackStatusMapping,
-} from '@/api/challenge/challengeSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
   getMentorAttendanceQueryKey,
 } from '@/api/challenge/challenge';
+import {
+  FeedbackStatus,
+  FeedbackStatusEnum,
+  FeedbackStatusMapping,
+} from '@/api/challenge/challengeSchema';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
-import { MenuItem, SelectChangeEvent } from '@mui/material';
+import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuItem,
+  SelectChangeEvent,
+} from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AttendanceRow } from '../types';
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from '@mui/material';
 
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
 
@@ -72,27 +73,32 @@ const FeedbackStatusRenderCell = (
     await queryClient.invalidateQueries({ queryKey: feedbackQueryKey });
   };
 
-  const applyChange = useCallback(async (newValue: FeedbackStatus) => {
-    const prevValue = localValue;
-    const attendanceId = params.row.id as number;
+  const applyChange = useCallback(
+    async (newValue: FeedbackStatus) => {
+      const prevValue = localValue;
+      const attendanceId = params.row.id as number;
 
-    setLocalValue(newValue);
+      setLocalValue(newValue);
 
-    try {
-      if (isAdmin === true) {
-        await patchAdmin({ attendanceId, feedbackStatus: newValue });
-      } else {
-        await patchMentor({ attendanceId, feedbackStatus: newValue });
+      try {
+        if (isAdmin === true) {
+          await patchAdmin({ attendanceId, feedbackStatus: newValue });
+        } else {
+          await patchMentor({ attendanceId, feedbackStatus: newValue });
+        }
+        await invalidateFeedbackQueries();
+        snackbar(
+          `진행상태가 '${FeedbackStatusMapping[newValue]}'(으)로 변경되었습니다.`,
+        );
+      } catch (error) {
+        setLocalValue(prevValue);
+        console.error('feedbackStatus 변경 실패:', error);
+        snackbar('진행상태 변경에 실패했습니다.');
       }
-      await invalidateFeedbackQueries();
-      snackbar(`진행상태가 '${FeedbackStatusMapping[newValue]}'(으)로 변경되었습니다.`);
-    } catch (error) {
-      setLocalValue(prevValue);
-      console.error('feedbackStatus 변경 실패:', error);
-      snackbar('진행상태 변경에 실패했습니다.');
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localValue, params.row.id, isAdmin]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [localValue, params.row.id, isAdmin],
+  );
 
   const handleChange = (e: SelectChangeEvent<FeedbackStatus>) => {
     const newValue = e.target.value as FeedbackStatus;
@@ -156,19 +162,20 @@ const FeedbackStatusRenderCell = (
         onChange={handleChange}
         sx={{ '& .MuiSelect-select': { fontSize: '12px' } }}
       >
-        {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
-          (item) => {
-            const color = FEEDBACK_STATUS_COLORS[item];
-            return (
-              <MenuItem key={item} value={item} sx={{ fontSize: '12px' }}>
-                <span
-                  className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${color.bg}`}
-                />
-                {FeedbackStatusMapping[item]}
-              </MenuItem>
-            );
-          },
-        )}
+        {(isAdmin
+          ? FeedbackStatusEnum
+          : FeedbackStatusEnumForMentor
+        ).options.map((item) => {
+          const color = FEEDBACK_STATUS_COLORS[item];
+          return (
+            <MenuItem key={item} value={item} sx={{ fontSize: '12px' }}>
+              <span
+                className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${color.bg}`}
+              />
+              {FeedbackStatusMapping[item]}
+            </MenuItem>
+          );
+        })}
       </SelectFormControl>
 
       <Dialog open={confirmOpen} onClose={handleCancel}>

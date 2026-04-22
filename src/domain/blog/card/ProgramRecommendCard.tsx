@@ -3,7 +3,7 @@ import {
   fetchChallenge,
   fetchLive,
   fetchPublicGuidebookData,
-  fetchVod,
+  fetchPublicVodData,
   getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
@@ -47,10 +47,10 @@ async function ProgramRecommendCard({ program }: Props) {
             ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
           case VOD:
-            const vod = await fetchVod(id);
-            title = vod.vodInfo.title ?? undefined;
-            thumbnail = vod.vodInfo.thumbnail ?? '';
-            ctaLink = vod.vodInfo.link ?? '';
+            const vod = await fetchPublicVodData(id);
+            title = vod.title ?? undefined;
+            thumbnail = vod.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
           case GUIDEBOOK:
             const guidebook = await fetchPublicGuidebookData(id);

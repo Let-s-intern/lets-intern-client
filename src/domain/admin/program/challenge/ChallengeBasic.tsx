@@ -25,7 +25,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React from 'react';
-import SelectFormControl from './SelectFormControl';
+import SelectFormControl from '../ui/form/SelectFormControl';
 
 interface ChallengeBasicProps<
   T extends CreateChallengeReq | UpdateChallengeReq,

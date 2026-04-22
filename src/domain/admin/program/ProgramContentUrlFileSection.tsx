@@ -2,28 +2,30 @@ import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
 import Input from '@/common/input/v1/Input';
 import FileUpload from '@/domain/admin/program/ui/form/FileUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import type { CreateGuidebookReq } from '@/schema';
 import { generateRandomString } from '@/utils/random';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import type React from 'react';
 import { useCallback, useState } from 'react';
 
-interface GuidebookResourceSectionProps {
-  input: CreateGuidebookReq;
-  setInput: React.Dispatch<React.SetStateAction<CreateGuidebookReq>>;
+import type { ContentProgramFormInput } from './programContentTypes';
+
+interface ProgramContentUrlFileSectionProps {
+  input: ContentProgramFormInput;
+  setInput: React.Dispatch<React.SetStateAction<ContentProgramFormInput>>;
+  uploadType: string;
   source: 'url' | 'file';
   onChangeSource: (source: 'url' | 'file') => void;
 }
 
 const FILE_SIZE = 50 * 1024 * 1024;
 
-const buildGuidebookObjectKey = (fileName: string) => {
+const buildObjectKey = (uploadType: string, fileName: string) => {
   const randomPrefix = generateRandomString();
   const timestamp = Date.now().toString(36);
-  return `guidebook/${timestamp}_${randomPrefix}_${fileName}`;
+  return `${uploadType.toLowerCase()}/${timestamp}_${randomPrefix}_${fileName}`;
 };
 
-const getGuidebookDisplayFileName = ({
+const getDisplayFileName = ({
   uploadedFileName,
   contentFileUrl,
 }: {
@@ -34,7 +36,6 @@ const getGuidebookDisplayFileName = ({
   if (!contentFileUrl) return '';
 
   const lastSegment = contentFileUrl.split('/').pop() ?? '';
-
   const decoded = (() => {
     try {
       return decodeURIComponent(lastSegment);
@@ -44,23 +45,16 @@ const getGuidebookDisplayFileName = ({
   })();
 
   const parts = decoded.split('_');
-
-  if (parts.length >= 3) {
-    return parts.slice(2).join('_');
-  }
-
-  return decoded;
+  return parts.length >= 3 ? parts.slice(2).join('_') : decoded;
 };
 
-const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
-  input,
-  setInput,
-  source,
-  onChangeSource,
-}) => {
+const ProgramContentUrlFileSection: React.FC<
+  ProgramContentUrlFileSectionProps
+> = ({ input, setInput, uploadType, source, onChangeSource }) => {
   const { snackbar } = useAdminSnackbar();
-  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+
   const onChangeText = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -81,19 +75,14 @@ const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
     [onChangeSource, setInput],
   );
 
-  const isUrl = source === 'url';
-
-  const handleGuidebookUpload = useCallback(
+  const handleUpload = useCallback(
     async (file: File | null) => {
       const targetFile = file ?? pendingFile;
       if (!targetFile) return;
 
       try {
-        const fileNameWithApiUrl = buildGuidebookObjectKey(targetFile.name);
-        const presignedUrl = await getPresignedUrl(
-          'GUIDEBOOK',
-          fileNameWithApiUrl,
-        );
+        const objectKey = buildObjectKey(uploadType, targetFile.name);
+        const presignedUrl = await getPresignedUrl(uploadType, objectKey);
         await uploadToS3(presignedUrl, targetFile);
         const fileUrl = presignedUrl.split('?')[0];
 
@@ -107,10 +96,11 @@ const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
         );
       }
     },
-    [pendingFile, setInput, snackbar],
+    [pendingFile, setInput, snackbar, uploadType],
   );
 
-  const helperFileName = getGuidebookDisplayFileName({
+  const isUrl = source === 'url';
+  const helperFileName = getDisplayFileName({
     uploadedFileName,
     contentFileUrl: input.contentFileUrl,
   });
@@ -134,7 +124,6 @@ const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
           onChange={onChangeText}
         />
       </div>
-
       <div className="flex flex-col gap-0.5">
         <FormControlLabel
           control={
@@ -152,11 +141,11 @@ const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
             setPendingFile(file);
             setUploadedFileName(file?.name ?? '');
           }}
-          onUploadClick={handleGuidebookUpload}
+          onUploadClick={handleUpload}
         />
       </div>
     </section>
   );
 };
 
-export default GuidebookResourceSection;
+export default ProgramContentUrlFileSection;

@@ -36,6 +36,11 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
     href: '/program?type=GUIDEBOOK',
     buttonText: '가이드북 둘러보기',
   },
+  VOD: {
+    description: '보유 중인 VOD 클래스가 없어요.',
+    href: '/program?type=VOD',
+    buttonText: 'VOD 클래스 둘러보기',
+  },
 };
 
 const CareerGrowthSection = () => {
@@ -64,10 +69,17 @@ const CareerGrowthSection = () => {
     if (category === 'GUIDEBOOK') {
       return items.filter((program) => program.programTypeKey === 'GUIDEBOOK');
     }
+    if (category === 'VOD') {
+      return items.filter((program) => program.programTypeKey === 'VOD');
+    }
     if (category === 'LIBRARY') {
       return [];
     }
-    return items.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
+    return items.filter(
+      (program) =>
+        program.programTypeKey !== 'GUIDEBOOK' &&
+        program.programTypeKey !== 'VOD',
+    );
   }, [category, items]);
 
   const cardConfigs = useMemo(() => {

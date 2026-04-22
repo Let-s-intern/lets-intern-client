@@ -3,6 +3,7 @@ import {
   GuidebookApplication,
   LiveApplication,
   ProgramTypeUpperCase,
+  VodApplication,
 } from '@/schema';
 import TableRow from './TableRow';
 
@@ -11,6 +12,7 @@ interface UserTableBodyProps {
     | ChallengeApplication
     | LiveApplication
     | GuidebookApplication
+    | VodApplication
   )[];
   programType: ProgramTypeUpperCase;
 }

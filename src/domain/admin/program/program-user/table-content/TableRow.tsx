@@ -5,6 +5,7 @@ import {
   LiveApplication,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  VodApplication,
 } from '@/schema';
 import { gradeToText } from '@/utils/convert';
 import { useMemo } from 'react';
@@ -12,11 +13,31 @@ import TD from '../../../ui/table/regacy/TD';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
 
+const DownloadTDs = ({
+  isDownloaded,
+  downloadedAt,
+}: Pick<
+  GuidebookApplication | VodApplication,
+  'isDownloaded' | 'downloadedAt'
+>) => (
+  <>
+    <TD>
+      {isDownloaded ? (
+        <span className="font-bold">Y</span>
+      ) : (
+        <span className="text-gray-300">N</span>
+      )}
+    </TD>
+    <TD>{downloadedAt ? downloadedAt.format('YYYY-MM-DD HH:mm') : '-'}</TD>
+  </>
+);
+
 interface Props {
   applicationItem:
     | ChallengeApplication
     | LiveApplication
-    | GuidebookApplication;
+    | GuidebookApplication
+    | VodApplication;
   programType: ProgramTypeUpperCase;
 }
 
@@ -24,6 +45,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
   const challengeApp = applicationItem as ChallengeApplication;
   const liveAppItem = applicationItem as LiveApplication;
   const guidebookAppItem = applicationItem as GuidebookApplication;
+  const vodAppItem = applicationItem as VodApplication;
   const applicationInfo =
     programType === 'CHALLENGE' ? challengeApp.application : liveAppItem;
 
@@ -33,6 +55,8 @@ const TableRow = ({ applicationItem, programType }: Props) => {
         return challengeApp.application.createDate;
       case 'GUIDEBOOK':
         return guidebookAppItem.createDate;
+      case 'VOD':
+        return vodAppItem.createDate;
       default:
         return liveAppItem.created_date;
     }
@@ -40,8 +64,12 @@ const TableRow = ({ applicationItem, programType }: Props) => {
   }, [applicationItem, programType]);
 
   const amount = useMemo(() => {
-    /** 라이브/가이드북 결제금액 */
-    if (programType === 'LIVE' || programType === 'GUIDEBOOK') {
+    /** 라이브/가이드북/VOD 결제금액 */
+    if (
+      programType === 'LIVE' ||
+      programType === 'GUIDEBOOK' ||
+      programType === 'VOD'
+    ) {
       const { couponDiscount, isCanceled, finalPrice } = liveAppItem;
 
       if (couponDiscount === -1) return 0;
@@ -93,7 +121,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
       </TD>
       <TD>{applicationInfo.email}</TD>
       <TD>{applicationInfo.phoneNum}</TD>
-      {(programType === 'LIVE' || programType === 'VOD') && (
+      {programType === 'LIVE' && (
         <>
           <TD>{applicationInfo.university}</TD>
           <TD>
@@ -122,20 +150,16 @@ const TableRow = ({ applicationItem, programType }: Props) => {
         )}
       </TD>
       {programType === 'GUIDEBOOK' && (
-        <>
-          <TD>
-            {guidebookAppItem.isDownloaded ? (
-              <span className="font-bold">Y</span>
-            ) : (
-              <span className="text-gray-300">N</span>
-            )}
-          </TD>
-          <TD>
-            {guidebookAppItem.downloadedAt
-              ? guidebookAppItem.downloadedAt.format('YYYY-MM-DD HH:mm')
-              : '-'}
-          </TD>
-        </>
+        <DownloadTDs
+          isDownloaded={guidebookAppItem.isDownloaded}
+          downloadedAt={guidebookAppItem.downloadedAt}
+        />
+      )}
+      {programType === 'VOD' && (
+        <DownloadTDs
+          isDownloaded={vodAppItem.isDownloaded}
+          downloadedAt={vodAppItem.downloadedAt}
+        />
       )}
       <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
     </tr>

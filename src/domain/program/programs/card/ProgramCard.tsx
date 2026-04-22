@@ -1,13 +1,12 @@
 import dayjs from '@/lib/dayjs';
 import { ProgramInfo } from '@/schema';
-import axios from '@/utils/axios';
 import {
   PROGRAM_BADGE_STATUS,
   PROGRAM_STATUS_KEY,
   PROGRAM_TYPE,
 } from '@/utils/programConst';
 import { useRouter } from 'next/navigation';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import DeadlineBadge from './DeadlineBadge';
 import NewBadge from './NewBadge';
 import ProgramStatusTag from './ProgramStatusTag';
@@ -26,38 +25,11 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     programInfo.programType === PROGRAM_TYPE.VOD ||
     programInfo.programType === PROGRAM_TYPE.GUIDEBOOK;
 
-  const [link, setLink] = useState(
-    `/program/${programInfo.programType.toLowerCase()}/${programInfo.id}`,
-  );
-
-  useEffect(() => {
-    const getVodLink = async () => {
-      if (programInfo.programType !== PROGRAM_TYPE.VOD) return;
-      try {
-        const res = await axios.get(`/vod/${programInfo.id}`);
-        if (res.status === 200) {
-          setLink(res.data.data.vodInfo.link);
-          return res.data.data;
-        }
-        throw new Error(`${res.status} ${res.statusText}`);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    };
-
-    (async () => await getVodLink())();
-  }, [programInfo.programType, programInfo.id]);
+  const link = `/program/${programInfo.programType.toLowerCase()}/${programInfo.id}`;
 
   return (
     <div
-      onClick={() => {
-        if (programInfo.programType === PROGRAM_TYPE.VOD) {
-          window.open(link);
-        } else {
-          router.push(link);
-        }
-      }}
+      onClick={() => router.push(link)}
       className="program_card row-span-3 grid w-full cursor-pointer grid-rows-subgrid gap-3 overflow-hidden"
       data-program-text={programInfo.title}
     >

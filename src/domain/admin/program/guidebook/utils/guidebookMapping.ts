@@ -5,8 +5,10 @@ import type {
   UpdateGuidebookReq,
 } from '@/schema';
 
+import type { ContentProgramFormInput } from '../../programContentTypes';
+
 // 가이드북 폼 초기값
-export const initialGuidebookInput: CreateGuidebookReq = {
+export const initialGuidebookInput: ContentProgramFormInput = {
   title: '',
   shortDesc: '',
   thumbnail: '',
@@ -18,16 +20,9 @@ export const initialGuidebookInput: CreateGuidebookReq = {
   job: '',
   contentUrl: undefined,
   contentFileUrl: undefined,
-  priceInfo: {
-    priceInfo: {
-      price: 0,
-      discount: 0,
-      accountNumber: '',
-      deadline: undefined,
-      accountType: 'KB',
-    },
-    guideBookPriceType: 'CHARGE',
-  },
+  price: 0,
+  discount: 0,
+  priceType: 'CHARGE',
   programTypeInfo: [],
   adminProgramTypeInfo: [],
 };
@@ -35,7 +30,7 @@ export const initialGuidebookInput: CreateGuidebookReq = {
 // 가이드북 데이터로 폼 입력값 변환
 export const guidebookToFormInput = (
   guidebook: GuidebookIdSchema,
-): CreateGuidebookReq => ({
+): ContentProgramFormInput => ({
   title: guidebook.title ?? '',
   shortDesc: guidebook.shortDesc ?? '',
   thumbnail: guidebook.thumbnail ?? '',
@@ -47,22 +42,16 @@ export const guidebookToFormInput = (
   job: guidebook.job ?? '',
   contentUrl: guidebook.contentUrl ?? undefined,
   contentFileUrl: guidebook.contentFileUrl ?? undefined,
-  priceInfo: {
-    priceInfo: {
-      price: guidebook.price ?? 0,
-      discount: guidebook.discount ?? 0,
-      accountNumber: '',
-      deadline: undefined,
-      accountType: 'KB',
-    },
-    guideBookPriceType: guidebook.guideBookPriceType ?? 'CHARGE',
-  },
+  price: guidebook.price ?? 0,
+  discount: guidebook.discount ?? 0,
+  priceType: guidebook.guideBookPriceType ?? 'CHARGE',
   programTypeInfo:
     guidebook.programTypeInfo?.map((value) => ({
       classificationInfo: {
         programClassification: value.programClassification ?? 'PASS',
       },
     })) ?? [],
+  // GET 응답은 adminClassificationInfo이지만 폼 상태는 adminProgramTypeInfo로 통일
   adminProgramTypeInfo:
     guidebook.adminClassificationInfo?.map((value) => ({
       classificationInfo: {
@@ -73,41 +62,60 @@ export const guidebookToFormInput = (
 
 // 생성 요청 바디 빌더
 export const buildCreateGuidebookReq = (
-  input: CreateGuidebookReq,
-): CreateGuidebookReq => input;
+  input: ContentProgramFormInput,
+): CreateGuidebookReq => ({
+  title: input.title,
+  shortDesc: input.shortDesc,
+  thumbnail: input.thumbnail,
+  desktopThumbnail: input.desktopThumbnail,
+  contentComposition: input.contentComposition,
+  accessMethod: input.accessMethod,
+  recommendedFor: input.recommendedFor,
+  description: input.description,
+  job: input.job,
+  contentUrl: input.contentUrl,
+  contentFileUrl: input.contentFileUrl,
+  priceInfo: {
+    priceInfo: {
+      price: input.price,
+      discount: input.discount,
+      accountNumber: '',
+      deadline: undefined,
+      accountType: 'KB',
+    },
+    guideBookPriceType: input.priceType as GuidebookPriceType,
+  },
+  programTypeInfo: input.programTypeInfo,
+  adminProgramTypeInfo: input.adminProgramTypeInfo,
+});
 
 // 수정 요청 바디 빌더
 export const buildUpdateGuidebookReq = (
   guidebookId: number,
-  input: CreateGuidebookReq,
-): UpdateGuidebookReq & { guidebookId: number } => {
-  const req: UpdateGuidebookReq & { guidebookId: number } = {
-    guidebookId,
-    title: input.title,
-    shortDesc: input.shortDesc,
-    thumbnail: input.thumbnail,
-    desktopThumbnail: input.desktopThumbnail,
-    contentComposition: input.contentComposition,
-    accessMethod: input.accessMethod,
-    recommendedFor: input.recommendedFor,
-    description: input.description,
-    job: input.job,
-    contentUrl: input.contentUrl,
-    contentFileUrl: input.contentFileUrl,
+  input: ContentProgramFormInput,
+): UpdateGuidebookReq & { guidebookId: number } => ({
+  guidebookId,
+  title: input.title,
+  shortDesc: input.shortDesc,
+  thumbnail: input.thumbnail,
+  desktopThumbnail: input.desktopThumbnail,
+  contentComposition: input.contentComposition,
+  accessMethod: input.accessMethod,
+  recommendedFor: input.recommendedFor,
+  description: input.description,
+  job: input.job,
+  contentUrl: input.contentUrl,
+  contentFileUrl: input.contentFileUrl,
+  priceInfo: {
     priceInfo: {
-      priceInfo: {
-        price: input.priceInfo.priceInfo.price,
-        discount: input.priceInfo.priceInfo.discount,
-        accountNumber: input.priceInfo.priceInfo.accountNumber,
-        deadline: input.priceInfo.priceInfo.deadline,
-        accountType: input.priceInfo.priceInfo.accountType,
-      },
-      guideBookPriceType: input.priceInfo
-        .guideBookPriceType as GuidebookPriceType,
+      price: input.price,
+      discount: input.discount,
+      accountNumber: '',
+      deadline: undefined,
+      accountType: 'KB',
     },
-    programTypeInfo: input.programTypeInfo,
-    adminProgramTypeInfo: input.adminProgramTypeInfo,
-  };
-
-  return req;
-};
+    guideBookPriceType: input.priceType as GuidebookPriceType,
+  },
+  programTypeInfo: input.programTypeInfo,
+  adminProgramTypeInfo: input.adminProgramTypeInfo,
+});

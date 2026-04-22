@@ -12,6 +12,7 @@ import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
+import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
 import { useState } from 'react';
 
 const Application = () => {
@@ -20,7 +21,9 @@ const Application = () => {
 
   const programApplications =
     applications?.filter(
-      (application) => application.programType !== 'GUIDEBOOK',
+      (application) =>
+        application.programType !== 'GUIDEBOOK' &&
+        application.programType !== 'VOD',
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
@@ -37,6 +40,10 @@ const Application = () => {
       (application) => application.programType === 'GUIDEBOOK',
     ) ?? [];
 
+  const vodClassApplicationList =
+    applications?.filter((application) => application.programType === 'VOD') ??
+    [];
+
   if (isLoading) return <></>;
 
   const isProgramEmpty =
@@ -46,12 +53,11 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
-      <div>
+      <div className="-mx-5 -mt-[18px] md:mx-0 md:mt-0">
         <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}
           selected={category}
           onChange={setCategory}
-          className="-mx-5 -mt-[18px] md:-mx-0 md:-mt-0"
         />
       </div>
       <div className="flex w-full flex-col gap-16">
@@ -81,6 +87,9 @@ const Application = () => {
 
         {category === 'GUIDEBOOK' && (
           <GuidebookSection applicationList={guidebookApplicationList} />
+        )}
+        {category === 'VOD' && (
+          <VodClassSection applicationList={vodClassApplicationList} />
         )}
       </div>
     </main>

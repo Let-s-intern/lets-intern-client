@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import type { CreateGuidebookReq, GuidebookIdSchema } from '@/schema';
+import type { GuidebookIdSchema } from '@/schema';
+import type { ContentProgramFormInput } from '../../programContentTypes';
 
 import {
   guidebookToFormInput,
@@ -19,15 +20,9 @@ export const useGuidebookForm = ({
   initialGuidebook,
 }: UseGuidebookFormOptions) => {
   const [isReady, setIsReady] = useState(mode === 'create');
-  const [input, setInput] = useState<CreateGuidebookReq>(() => {
-    if (mode === 'create') {
-      return initialGuidebookInput;
-    }
-
-    if (initialGuidebook) {
-      return guidebookToFormInput(initialGuidebook);
-    }
-
+  const [input, setInput] = useState<ContentProgramFormInput>(() => {
+    if (mode === 'create') return initialGuidebookInput;
+    if (initialGuidebook) return guidebookToFormInput(initialGuidebook);
     return initialGuidebookInput;
   });
 
@@ -37,14 +32,11 @@ export const useGuidebookForm = ({
         ? 'file'
         : 'url';
     }
-
     return 'url';
   });
 
   useEffect(() => {
-    if (mode !== 'edit' || !initialGuidebook) {
-      return;
-    }
+    if (mode !== 'edit' || !initialGuidebook) return;
 
     setInput(guidebookToFormInput(initialGuidebook));
     setResourceSource(
@@ -55,11 +47,5 @@ export const useGuidebookForm = ({
     setIsReady(true);
   }, [mode, initialGuidebook]);
 
-  return {
-    input,
-    setInput,
-    resourceSource,
-    setResourceSource,
-    isReady,
-  };
+  return { input, setInput, resourceSource, setResourceSource, isReady };
 };

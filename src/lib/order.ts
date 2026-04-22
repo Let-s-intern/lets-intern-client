@@ -28,6 +28,7 @@ export const getPayInfo = (
   challengePriceType: string | undefined;
   livePriceType: string | undefined;
   guideBookPriceType: string | undefined;
+  vodPriceType: string | undefined;
   challengePricePlanType?: ChallengePricePlan;
 } => {
   const item = application.priceList?.find(
@@ -46,6 +47,7 @@ export const getPayInfo = (
       challengePriceType: item.challengePriceType,
       livePriceType: undefined,
       guideBookPriceType: undefined,
+      vodPriceType: undefined,
       challengePricePlanType: item.challengePricePlanType, // 챌린지만 가격 플랜 있음
     };
   }
@@ -70,7 +72,29 @@ export const getPayInfo = (
       accountType: livePrice.accountType,
       challengePriceType: undefined,
       guideBookPriceType: undefined,
+      vodPriceType: undefined,
       livePriceType: livePrice.livePriceType,
+    };
+  }
+
+  // VOD
+  if (application.price && 'vodPriceType' in application.price) {
+    const vodPrice = application.price as {
+      priceId?: number | null;
+      price?: number | null;
+      discount?: number | null;
+      vodPriceType?: string;
+    };
+    return {
+      priceId: vodPrice.priceId ?? -1,
+      price: vodPrice.price ?? 0,
+      discount: vodPrice.discount ?? 0,
+      accountNumber: '',
+      deadline: '',
+      challengePriceType: undefined,
+      livePriceType: undefined,
+      guideBookPriceType: undefined,
+      vodPriceType: vodPrice.vodPriceType,
     };
   }
 
@@ -91,6 +115,7 @@ export const getPayInfo = (
       challengePriceType: undefined,
       livePriceType: undefined,
       guideBookPriceType: guidebookPrice.guideBookPriceType,
+      vodPriceType: undefined,
     };
   }
   return null;

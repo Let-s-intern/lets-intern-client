@@ -1,4 +1,3 @@
-import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
 import Heading2 from '@/common/header/Heading2';
@@ -6,7 +5,7 @@ import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { Dayjs } from 'dayjs';
 import { josa } from 'es-hangul';
@@ -247,14 +246,7 @@ const Portfolio다른프로그램추천 = ({
     const list = [];
 
     for (const item of programRecommend?.list ?? []) {
-      let to = '';
-      if (item.programInfo.programType === ProgramTypeEnum.enum.VOD) {
-        getVod(item.programInfo.id).then((data) => {
-          to = data.vodInfo.link ?? '';
-        });
-      } else {
-        to = `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`;
-      }
+      const to = `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`;
 
       list.push({
         id: item.programInfo.id,
@@ -262,17 +254,8 @@ const Portfolio다른프로그램추천 = ({
         title: item.recommendTitle ?? '',
         cta: item.recommendCTA ?? '',
         to,
-        onClickButton: async () => {
-          if (item.programInfo.programType === ProgramTypeEnum.enum.VOD) {
-            // VOD 링크로 이동
-            const data = await getVod(item.programInfo.id);
-            window.open(data.vodInfo.link ?? '');
-            return;
-          }
-
-          router.push(
-            `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
-          );
+        onClickButton: () => {
+          router.push(to);
         },
       });
     }
