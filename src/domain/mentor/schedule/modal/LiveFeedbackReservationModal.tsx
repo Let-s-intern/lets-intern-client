@@ -59,12 +59,19 @@ const LiveFeedbackReservationModal = ({
     const feedbackStatus: FeedbackStatus =
       itemDetail.mentoringStatusTone === 'critical' ? 'WAITING' : 'COMPLETED';
 
+    const submissionLabel: '제출' | '미제출' =
+      itemDetail.submissionStatusLabel === '미제출' ? '미제출' : '제출';
+
     return {
       id: item.liveFeedback?.id ?? item.missionId,
       name: itemDetail.menteeName,
       feedbackStatus,
-      status:
-        itemDetail.submissionStatusLabel === '미제출' ? 'ABSENT' : 'PRESENT',
+      status: submissionLabel === '미제출' ? 'ABSENT' : 'PRESENT',
+      date: item.startDate,
+      startTime: item.liveFeedback?.startTime,
+      endTime: item.liveFeedback?.endTime,
+      submissionLabel,
+      liveStatus: item.liveFeedback?.status,
     };
   });
 
