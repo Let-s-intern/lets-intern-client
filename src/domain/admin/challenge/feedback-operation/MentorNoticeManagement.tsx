@@ -22,8 +22,8 @@ import {
   DATA_GRID_LOCALE_TEXT,
   type NoticeForm,
   type ModalState,
-  type ContentType,
 } from './mentor-notice/types';
+import { guideToForm } from './mentor-notice/utils/formAdapter';
 
 export default function MentorNoticeManagement() {
   const queryClient = useQueryClient();
@@ -67,32 +67,7 @@ export default function MentorNoticeManagement() {
   };
 
   const openEditModal = (guide: ChallengeMentorGuideItem) => {
-    const hasContents = !!guide.contents;
-    let contentType: ContentType = 'URL';
-    if (hasContents) {
-      try {
-        const parsed = JSON.parse(guide.contents!);
-        contentType = parsed?.root ? 'EDITOR' : 'MARKDOWN';
-      } catch {
-        contentType = 'MARKDOWN';
-      }
-    }
-    setModalInitialForm({
-      title: guide.title ?? '',
-      link: guide.link ?? '',
-      contents: guide.contents ?? '',
-      contentType,
-      challengeScopeType: (guide.challengeScopeType ?? 'ALL') as NoticeForm['challengeScopeType'],
-      mentorScopeType: (guide.mentorScopeType ?? 'ALL_MENTOR') as NoticeForm['mentorScopeType'],
-      challengeId: guide.challengeId ? String(guide.challengeId) : '',
-      challengeMentorId: guide.challengeMentorId
-        ? String(guide.challengeMentorId)
-        : '',
-      dateType: (guide.dateType ?? 'INFINITE') as NoticeForm['dateType'],
-      startDate: guide.startDate ?? '',
-      endDate: guide.endDate ?? '',
-      isFixed: guide.isFixed ?? false,
-    });
+    setModalInitialForm(guideToForm(guide));
     if (guide.challengeId) {
       setFormChallengeId(String(guide.challengeId));
     }
