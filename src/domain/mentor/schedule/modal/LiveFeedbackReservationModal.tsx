@@ -32,7 +32,15 @@ const LiveFeedbackReservationModal = ({
 }: LiveFeedbackReservationModalProps) => {
   if (!bar) return null;
 
-  const reservationBars = liveFeedbackBars.filter((item) => item.liveFeedback);
+  // 날짜 → 시간 순 정렬 (MenteeList의 날짜 구분선·시간대 표시와 일치)
+  const reservationBars = liveFeedbackBars
+    .filter((item) => item.liveFeedback)
+    .slice()
+    .sort((a, b) => {
+      const aKey = `${a.startDate}T${a.liveFeedback!.startTime}`;
+      const bKey = `${b.startDate}T${b.liveFeedback!.startTime}`;
+      return aKey.localeCompare(bKey);
+    });
   const selectedBar = bar.liveFeedback ? bar : (reservationBars[0] ?? null);
   if (!selectedBar) return null;
 
@@ -111,6 +119,7 @@ const LiveFeedbackReservationModal = ({
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
         completedCount={completedCount}
+        colorIndex={selectedBar.colorIndex}
         onClose={onClose}
       />
 

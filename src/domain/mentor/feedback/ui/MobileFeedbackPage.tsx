@@ -22,6 +22,8 @@ interface MobileFeedbackPageProps {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  /** 챌린지 컬러 팔레트 인덱스 — 상단 바 배경에 반영 */
+  colorIndex?: number;
 }
 
 const MobileFeedbackPage = ({
@@ -31,6 +33,7 @@ const MobileFeedbackPage = ({
   missionId,
   challengeTitle,
   missionTh,
+  colorIndex,
 }: MobileFeedbackPageProps) => {
   const {
     selectedIndex,
@@ -117,6 +120,7 @@ const MobileFeedbackPage = ({
         <FeedbackHeader
           challengeTitle={challengeTitle}
           missionTh={missionTh}
+          colorIndex={colorIndex}
           totalCount={attendanceList.length}
           waitingCount={waitingCount}
           inProgressCount={inProgressCount}
@@ -198,6 +202,7 @@ const MobileFeedbackPage = ({
       <FeedbackHeader
         challengeTitle={challengeTitle}
         missionTh={missionTh}
+        colorIndex={colorIndex}
         totalCount={attendanceList.length}
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}

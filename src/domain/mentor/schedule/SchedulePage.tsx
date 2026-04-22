@@ -86,6 +86,7 @@ const SchedulePage = () => {
     missionId: number;
     challengeTitle?: string;
     missionTh?: number;
+    colorIndex?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
   const [isMentorOpenModalOpen, setIsMentorOpenModalOpen] = useState(false);
@@ -116,6 +117,7 @@ const SchedulePage = () => {
       missionId,
       challengeTitle: bar?.challengeTitle,
       missionTh: bar?.th,
+      colorIndex: bar?.colorIndex,
     });
   };
 
@@ -178,6 +180,7 @@ const SchedulePage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          colorIndex={feedbackModal.colorIndex}
         />
       ) : (
         <FeedbackModal
@@ -189,6 +192,7 @@ const SchedulePage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          colorIndex={feedbackModal.colorIndex}
         />
       )}
 

@@ -89,6 +89,23 @@ const FeedbackManagementPage = () => {
   const { challenges: liveChallenges, allSessionBars } = useLiveFeedbackList();
   const merged = useMergedChallenges(challengeList, liveChallenges);
 
+  // challengeId → colorIndex 맵 (전체 merged 챌린지의 등장 순서대로 + live mock의 colorIndex 우선)
+  const challengeColorMap = useMemo(() => {
+    const map = new Map<number, number>();
+    // live mock에 정의된 colorIndex 우선 사용 (mock 챌린지 고유 색)
+    for (const c of liveChallenges) {
+      map.set(c.challengeId, c.colorIndex);
+    }
+    // 아직 색이 없는 챌린지(=서면만 있는 챌린지)에 순차 할당
+    let nextIndex = liveChallenges.length;
+    for (const m of merged) {
+      if (!map.has(m.challengeId)) {
+        map.set(m.challengeId, nextIndex++);
+      }
+    }
+    return map;
+  }, [liveChallenges, merged]);
+
   const [activeTab, setActiveTab] = useState<FeedbackTabKey>('all');
   const [selectedRound, setSelectedRound] = useState<LiveFeedbackRound | null>(
     null,
@@ -142,7 +159,7 @@ const FeedbackManagementPage = () => {
                   mode="combined"
                   liveRounds={m.liveRounds}
                   missionDateOverrides={WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES}
-                  onMissionClick={handleMissionClick}
+                  onMissionClick={(c, mid, mth) => handleMissionClick(c, mid, mth, challengeColorMap.get(c.challengeId))}
                   onLiveRoundClick={handleLiveRoundClick}
                 />
               ) : (
@@ -167,7 +184,7 @@ const FeedbackManagementPage = () => {
                   )?.rounds ?? []
                 }
                 missionDateOverrides={WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES}
-                onMissionClick={handleMissionClick}
+                onMissionClick={(c, mid, mth) => handleMissionClick(c, mid, mth, challengeColorMap.get(c.challengeId))}
               />
             ))}
 
@@ -182,7 +199,7 @@ const FeedbackManagementPage = () => {
                     mode="live-only"
                     liveRounds={m.liveRounds}
                     missionDateOverrides={WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES}
-                    onMissionClick={handleMissionClick}
+                    onMissionClick={(c, mid, mth) => handleMissionClick(c, mid, mth, challengeColorMap.get(c.challengeId))}
                     onLiveRoundClick={handleLiveRoundClick}
                   />
                 ) : (
@@ -206,6 +223,7 @@ const FeedbackManagementPage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          colorIndex={feedbackModal.colorIndex}
         />
       ) : (
         <FeedbackModal
@@ -215,6 +233,7 @@ const FeedbackManagementPage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          colorIndex={feedbackModal.colorIndex}
         />
       )}
 
