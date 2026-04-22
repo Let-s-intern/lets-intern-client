@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.*
 .pnpm-store
@@ -16,8 +17,13 @@
 
 # next.js
 /.next/
+**/.next/
 /out/
 /dist
+
+# turbo
+.turbo
+**/.turbo
 
 # production
 /build
