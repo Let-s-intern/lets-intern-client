@@ -1,4 +1,5 @@
 import mentorConfig from '@/domain/mentor/constants/config';
+import { statusBadgeOrMuted } from '@/domain/mentor/constants/statusColors';
 import { getColor } from '@/domain/mentor/schedule/constants/colors';
 
 interface FeedbackHeaderProps {
@@ -45,21 +46,21 @@ const FeedbackHeader = ({
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              waitingCount > 0 ? 'bg-red-50 text-red-500' : 'text-gray-400'
+              statusBadgeOrMuted(waitingCount, 'waiting')
             }`}
           >
             시작 전 {waitingCount}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              inProgressCount > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+              statusBadgeOrMuted(inProgressCount, 'inProgress')
             }`}
           >
             진행 중 {inProgressCount}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              completedCount > 0 ? 'bg-green-50 text-green-700' : 'text-gray-400'
+              statusBadgeOrMuted(completedCount, 'completed')
             }`}
           >
             완료 {completedCount}
@@ -110,21 +111,21 @@ const FeedbackHeader = ({
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            waitingCount > 0 ? 'bg-red-50 text-red-500' : 'text-gray-400'
+            statusBadgeOrMuted(waitingCount, 'waiting')
           }`}
         >
           시작 전 {waitingCount}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            inProgressCount > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+            statusBadgeOrMuted(inProgressCount, 'inProgress')
           }`}
         >
           진행 중 {inProgressCount}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            completedCount > 0 ? 'bg-green-50 text-green-700' : 'text-gray-400'
+            statusBadgeOrMuted(completedCount, 'completed')
           }`}
         >
           완료 {completedCount}

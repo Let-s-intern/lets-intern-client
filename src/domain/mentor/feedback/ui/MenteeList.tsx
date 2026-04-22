@@ -2,6 +2,7 @@
 
 import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import { STATUS_BADGE } from '@/domain/mentor/constants/statusColors';
 import { currentNow } from '@/domain/mentor/schedule/constants/mockNow';
 import type { LiveFeedbackInfo } from '@/domain/mentor/schedule/types';
 
@@ -38,21 +39,12 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   switch (feedbackStatus) {
     case 'COMPLETED':
     case 'CONFIRMED':
-      return {
-        label: '완료',
-        className: 'border border-green-200 bg-green-50 text-green-700',
-      };
+      return { label: '완료', className: STATUS_BADGE.completed };
     case 'IN_PROGRESS':
-      return {
-        label: '진행 중',
-        className: 'border border-blue-200 bg-blue-50 text-blue-600',
-      };
+      return { label: '진행 중', className: STATUS_BADGE.inProgress };
     case 'WAITING':
     default:
-      return {
-        label: '시작 전',
-        className: 'border border-red-200 bg-red-50 text-red-500',
-      };
+      return { label: '시작 전', className: STATUS_BADGE.waiting };
   }
 }
 
@@ -63,48 +55,27 @@ function getLiveStatusBadge(status: LiveStatus | undefined): {
 } {
   switch (status) {
     case 'completed':
-      return {
-        label: '피드백 완료',
-        className: 'border border-green-200 bg-green-50 text-green-700',
-      };
+      return { label: '피드백 완료', className: STATUS_BADGE.completed };
     case 'in-progress':
-      return {
-        label: '진행중',
-        className: 'border border-blue-200 bg-blue-50 text-blue-600',
-      };
+      return { label: '진행중', className: STATUS_BADGE.inProgress };
     case 'mentor-late':
-      return {
-        label: '멘토 지각',
-        className: 'border border-amber-200 bg-amber-50 text-amber-700',
-      };
+      return { label: '멘토 지각', className: STATUS_BADGE.late };
     case 'mentee-late':
-      return {
-        label: '멘티 지각',
-        className: 'border border-amber-200 bg-amber-50 text-amber-700',
-      };
+      return { label: '멘티 지각', className: STATUS_BADGE.late };
     case 'mentor-absent':
-      return {
-        label: '멘토 미참여',
-        className: 'border border-neutral-300 bg-neutral-100 text-neutral-600',
-      };
+      return { label: '멘토 미참여', className: STATUS_BADGE.absent };
     case 'mentee-absent':
-      return {
-        label: '멘티 미참여',
-        className: 'border border-neutral-300 bg-neutral-100 text-neutral-600',
-      };
+      return { label: '멘티 미참여', className: STATUS_BADGE.absent };
     case 'waiting':
     default:
-      return {
-        label: '시작 전',
-        className: 'border border-red-200 bg-red-50 text-red-500',
-      };
+      return { label: '시작 전', className: STATUS_BADGE.waiting };
   }
 }
 
 function getSubmissionBadge(label: '제출' | '미제출'): string {
   return label === '제출'
-    ? 'border border-sky-200 bg-sky-50 text-sky-700'
-    : 'border border-orange-200 bg-orange-50 text-orange-600';
+    ? STATUS_BADGE.submitted
+    : STATUS_BADGE.notSubmitted;
 }
 
 function formatDateSeparator(iso: string): string {

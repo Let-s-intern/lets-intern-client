@@ -1,5 +1,6 @@
 'use client';
 
+import { STATUS_BADGE, STATUS_TEXT } from '@/domain/mentor/constants/statusColors';
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 
 interface LiveRoundRowProps {
@@ -19,10 +20,10 @@ export const LiveRoundRow = ({
     round.totalMentees === 0
       ? null
       : round.completedCount >= round.totalMentees
-        ? { label: '완료', className: 'bg-green-100 text-green-700' }
+        ? { label: '완료', className: STATUS_BADGE.completed }
         : round.inProgressCount > 0
-          ? { label: '진행중', className: 'bg-yellow-100 text-yellow-700' }
-          : { label: '진행전', className: 'bg-gray-100 text-gray-500' };
+          ? { label: '진행중', className: STATUS_BADGE.inProgress }
+          : { label: '진행전', className: STATUS_BADGE.none };
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
@@ -56,7 +57,7 @@ export const LiveRoundRow = ({
           </p>
           <p>
             피드백 완료{' '}
-            <span className="font-semibold text-green-600">
+            <span className={`font-semibold ${STATUS_TEXT.completed}`}>
               {round.completedCount}
             </span>{' '}
             / {round.totalMentees}

@@ -64,6 +64,7 @@ interface WeeklyCalendarProps {
   onMentorOpenPeriodClick?: () => void;
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
+  onMentorOpenPeriodBarClick?: (bar: PeriodBarData) => void;
   targetScrollDate?: Date | null;
 }
 
@@ -73,6 +74,7 @@ const WeeklyCalendar = ({
   allBars,
   onBarClick,
   onMentorOpenPeriodClick,
+  onMentorOpenPeriodBarClick,
   onLiveFeedbackTimeBlockClick,
   onLiveFeedbackPeriodClick,
   targetScrollDate,
@@ -245,9 +247,12 @@ const WeeklyCalendar = ({
                       <LiveFeedbackOpenBar
                         bar={bar}
                         onMentorOpenClick={
-                          bar.barType === 'live-feedback-mentor-open'
-                            ? onMentorOpenPeriodClick
-                            : undefined
+                          bar.barType === 'live-feedback-mentor-open' &&
+                          onMentorOpenPeriodBarClick
+                            ? () => onMentorOpenPeriodBarClick(bar)
+                            : bar.barType === 'live-feedback-mentor-open'
+                              ? onMentorOpenPeriodClick
+                              : undefined
                         }
                       />
                     ) : colSpan <= 1 ? (

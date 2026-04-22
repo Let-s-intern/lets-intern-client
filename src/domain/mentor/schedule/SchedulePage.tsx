@@ -13,7 +13,8 @@ import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
 import {
-  MENTOR_OPEN_SCHEDULE_MOCK,
+  MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE,
+  MENTOR_OPEN_SCHEDULES_BY_CHALLENGE,
   type MentorOpenSlot,
 } from './challenge-content/mentorOpenScheduleMock';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
@@ -90,9 +91,77 @@ const SchedulePage = () => {
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
   const [isMentorOpenModalOpen, setIsMentorOpenModalOpen] = useState(false);
-  const [mentorOpenSlots, setMentorOpenSlots] = useState<MentorOpenSlot[]>(
-    MENTOR_OPEN_SCHEDULE_MOCK,
-  );
+  const [mentorOpenChallengeBar, setMentorOpenChallengeBar] =
+    useState<PeriodBarData | null>(null);
+  const [mentorOpenSlotsByChallenge, setMentorOpenSlotsByChallenge] = useState<
+    Record<number, MentorOpenSlot[]>
+  >(MENTOR_OPEN_SCHEDULES_BY_CHALLENGE);
+
+  // 모달이 열릴 때 대상 챌린지의 슬롯 & 다른 챌린지들의 블록 슬롯 파생
+  const mentorOpenContext = useMemo(() => {
+    if (!mentorOpenChallengeBar) return null;
+    const activeChallengeId = mentorOpenChallengeBar.challengeId;
+    const initialSlots = mentorOpenSlotsByChallenge[activeChallengeId] ?? [];
+    const appliedBookings =
+      MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE[activeChallengeId] ?? [];
+    // 신청 예정 멘티 수 = 해당 챌린지 live-feedback-period 바의 submittedCount
+    const periodBar = allBarsUnfiltered.find(
+      (b) =>
+        b.barType === 'live-feedback-period' &&
+        b.challengeId === activeChallengeId,
+    );
+    const requiredSlotCount = periodBar?.submittedCount;
+    // 다른 챌린지 목록 (라이브 피드백이 있는 챌린지만)
+    const otherChallenges = allBarsUnfiltered
+      .filter(
+        (b) =>
+          b.barType === 'live-feedback-mentor-open' &&
+          b.challengeId !== activeChallengeId,
+      )
+      .map((b) => ({
+        challengeId: b.challengeId,
+        title: b.challengeTitle,
+        colorIndex: b.colorIndex ?? 0,
+      }));
+    const blockedSlots: Array<{
+      date: string;
+      time: string;
+      colorIndex: number;
+      challengeTitle?: string;
+      challengeId?: number;
+      menteeName?: string;
+    }> = [];
+    for (const [idText, slots] of Object.entries(mentorOpenSlotsByChallenge)) {
+      const id = Number(idText);
+      if (id === activeChallengeId) continue;
+      const otherBar = allBarsUnfiltered.find((b) => b.challengeId === id);
+      const applied = MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE[id] ?? [];
+      for (const slot of slots) {
+        const appliedMatch = applied.find(
+          (a) => a.date === slot.date && a.time === slot.time,
+        );
+        blockedSlots.push({
+          date: slot.date,
+          time: slot.time,
+          colorIndex: otherBar?.colorIndex ?? 0,
+          challengeTitle: otherBar?.challengeTitle,
+          challengeId: id,
+          menteeName: appliedMatch?.menteeName,
+        });
+      }
+    }
+    return {
+      challengeId: activeChallengeId,
+      challengeTitle: mentorOpenChallengeBar.challengeTitle,
+      colorIndex: mentorOpenChallengeBar.colorIndex,
+      initialSlots,
+      blockedSlots,
+      appliedBookings,
+      requiredSlotCount,
+      otherChallenges,
+      focusDate: periodBar?.startDate,
+    };
+  }, [mentorOpenChallengeBar, mentorOpenSlotsByChallenge, allBarsUnfiltered]);
   const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
     useState<PeriodBarData | null>(null);
 
@@ -152,6 +221,10 @@ const SchedulePage = () => {
               allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
               onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
+              onMentorOpenPeriodBarClick={(bar) => {
+                setMentorOpenChallengeBar(bar);
+                setIsMentorOpenModalOpen(true);
+              }}
               onLiveFeedbackTimeBlockClick={(bar) =>
                 setSelectedLiveFeedbackBar(bar)
               }
@@ -209,11 +282,42 @@ const SchedulePage = () => {
 
       <MentorOpenScheduleModal
         isOpen={isMentorOpenModalOpen}
-        onClose={() => setIsMentorOpenModalOpen(false)}
-        initialSlots={mentorOpenSlots}
+        onClose={() => {
+          setIsMentorOpenModalOpen(false);
+          setMentorOpenChallengeBar(null);
+        }}
+        initialSlots={mentorOpenContext?.initialSlots ?? []}
+        blockedSlots={mentorOpenContext?.blockedSlots ?? []}
+        appliedBookings={mentorOpenContext?.appliedBookings ?? []}
+        challengeTitle={mentorOpenContext?.challengeTitle}
+        colorIndex={mentorOpenContext?.colorIndex}
+        requiredSlotCount={mentorOpenContext?.requiredSlotCount}
+        otherChallenges={mentorOpenContext?.otherChallenges ?? []}
+        focusDate={mentorOpenContext?.focusDate}
+        onSwitchChallenge={(challengeId) => {
+          const next = allBarsUnfiltered.find(
+            (b) =>
+              b.barType === 'live-feedback-mentor-open' &&
+              b.challengeId === challengeId,
+          );
+          if (next) setMentorOpenChallengeBar(next);
+        }}
         onSave={(slots) => {
-          // TODO: API 연동 시 이 지점에서 서버 저장으로 교체
-          setMentorOpenSlots(slots);
+          const challengeId = mentorOpenContext?.challengeId;
+          if (challengeId !== undefined) {
+            setMentorOpenSlotsByChallenge((prev) => ({
+              ...prev,
+              [challengeId]: slots,
+            }));
+          }
+        }}
+        onSwapFromOtherChallenge={(fromChallengeId, slot) => {
+          setMentorOpenSlotsByChallenge((prev) => {
+            const fromSlots = (prev[fromChallengeId] ?? []).filter(
+              (s) => !(s.date === slot.date && s.time === slot.time),
+            );
+            return { ...prev, [fromChallengeId]: fromSlots };
+          });
         }}
       />
       <LiveFeedbackReservationModal

@@ -89,13 +89,13 @@ const STATUS_BADGE: Record<
   },
   'mentor-late': {
     label: '멘토 지각',
-    badge: 'bg-amber-500 text-white',
-    dim: false,
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
   },
   'mentee-late': {
     label: '멘티 지각',
-    badge: 'bg-amber-500 text-white',
-    dim: false,
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
   },
 };
 

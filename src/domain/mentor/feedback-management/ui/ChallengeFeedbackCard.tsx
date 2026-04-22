@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
+import { STATUS_BADGE, STATUS_TEXT } from '@/domain/mentor/constants/statusColors';
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 import LiveFeedbackRoundList, { LiveRoundRow } from './LiveFeedbackRoundList';
 
@@ -76,12 +77,9 @@ export const MissionRow = ({
   }, [mission.feedbackStatusCounts, mission.submittedCount]);
 
   const statusConfig = {
-    completed: { label: '완료', className: 'bg-green-100 text-green-700' },
-    inProgress: {
-      label: '진행중',
-      className: 'bg-yellow-100 text-yellow-700',
-    },
-    waiting: { label: '진행전', className: 'bg-gray-100 text-gray-500' },
+    completed: { label: '완료', className: STATUS_BADGE.completed },
+    inProgress: { label: '진행중', className: STATUS_BADGE.inProgress },
+    waiting: { label: '진행전', className: STATUS_BADGE.none },
     none: null,
   } as const;
 
@@ -117,7 +115,7 @@ export const MissionRow = ({
           </p>
           <p>
             피드백 완료{' '}
-            <span className="font-semibold text-green-600">
+            <span className={`font-semibold ${STATUS_TEXT.completed}`}>
               {completedCount}
             </span>{' '}
             / {mission.submittedCount}

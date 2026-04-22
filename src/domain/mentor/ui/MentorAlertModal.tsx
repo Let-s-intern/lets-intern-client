@@ -113,7 +113,7 @@ const MentorAlertModal = ({
 
           {/* Description */}
           {description && (
-            <p className="mt-2 text-center text-sm text-neutral-500">
+            <p className="mt-2 whitespace-pre-line text-center text-sm text-neutral-500">
               {description}
             </p>
           )}
