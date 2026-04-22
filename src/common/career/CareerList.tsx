@@ -23,15 +23,13 @@ const CareerList = ({
 }: CareerListProps) => {
   const [page, setPage] = useState(0);
 
-  const { data } = useGetUserCareerQuery({
-    page,
-    size: PAGE_SIZE,
-  });
+  const { data } = useGetUserCareerQuery(
+    { page, size: PAGE_SIZE },
+    { sort: 'desc', sortType: 'START_DATE' },
+  );
 
   const { pageInfo } = data ?? {};
-  const userCareers = [...(data?.userCareers ?? [])].sort((a, b) =>
-    (b.startDate ?? '').localeCompare(a.startDate ?? ''),
-  );
+  const userCareers = data?.userCareers ?? [];
 
   const {
     pageNum: currentPage,
