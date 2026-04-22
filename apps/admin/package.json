@@ -1,0 +1,32 @@
+{
+  "name": "@letscareer/admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "react-router-dom": "^6",
+    "@letscareer/ui": "workspace:*",
+    "@letscareer/store": "workspace:*",
+    "@letscareer/api": "workspace:*",
+    "@letscareer/utils": "workspace:*",
+    "@letscareer/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@letscareer/eslint-config": "workspace:*",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4",
+    "vite": "^5",
+    "typescript": "^5"
+  }
+}

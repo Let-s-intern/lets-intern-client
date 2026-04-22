@@ -20,6 +20,7 @@
 **/.next/
 /out/
 /dist
+**/dist/
 
 # turbo
 .turbo
@@ -40,6 +41,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 /.omc
 # vercel
 .vercel
