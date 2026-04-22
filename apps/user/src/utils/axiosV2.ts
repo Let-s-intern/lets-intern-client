@@ -1,12 +1,10 @@
-import { createAuthorizedAxios } from './createAuthorizedAxios';
+import { createV2Axios } from '@letscareer/api';
+import { getAuthHeader, logoutAndRefreshPage } from './auth';
 
-const axiosV2 = createAuthorizedAxios({
-  baseURL: buildV2BaseUrl(),
+const axiosV2 = createV2Axios({
+  basePath: process.env.NEXT_PUBLIC_API_BASE_PATH!,
+  getAuthHeader,
+  onUnauthorized: logoutAndRefreshPage,
 });
-
-function buildV2BaseUrl(): string {
-  const base = process.env.NEXT_PUBLIC_API_BASE_PATH!;
-  return base.endsWith('/') ? `${base}api/v2` : `${base}/api/v2`;
-}
 
 export default axiosV2;

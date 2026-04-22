@@ -7,6 +7,7 @@
     "./*": "./src/*.ts"
   },
   "peerDependencies": {
+    "dayjs": ">=1",
     "zustand": ">=4"
   },
   "devDependencies": {
