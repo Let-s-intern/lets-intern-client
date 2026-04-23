@@ -1,4 +1,6 @@
-import tailwindScrollbarHide from 'tailwind-scrollbar-hide';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const tailwindScrollbarHide = require('tailwind-scrollbar-hide');
 
 /** @type {import('tailwindcss').Config} */
 const preset = {
