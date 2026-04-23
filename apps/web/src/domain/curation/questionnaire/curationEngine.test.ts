@@ -8,7 +8,7 @@ import {
   COVER_S2,
   PORTFOLIO_S1,
   PORTFOLIO_S2,
-} from './optionIds';
+} from './data/optionIds';
 
 describe('computeCurationResult', () => {
   it('recommends 경험정리 우선 when starter has experience', () => {
