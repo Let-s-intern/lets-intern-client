@@ -10,4 +10,5 @@ export default defineConfig({
     },
   },
   envPrefix: 'VITE_',
+  server: { port: 3002 },
 });
