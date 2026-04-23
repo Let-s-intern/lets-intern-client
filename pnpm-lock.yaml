@@ -122,7 +122,7 @@ importers:
         specifier: ^5
         version: 5.4.21(@types/node@20.19.25)(sass@1.94.2)(terser@5.44.1)
 
-  apps/user:
+  apps/web:
     dependencies:
       '@emotion/react':
         specifier: ^11.11.4

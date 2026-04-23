@@ -26,7 +26,7 @@
 
 | 앱 | 경로 | 기술 | 도메인 |
 |---|---|---|---|
-| user | `apps/user/` | Next.js 15 App Router | 사용자 페이지 |
+| web | `apps/web/` | Next.js 15 App Router | 사용자 페이지 |
 | admin | `apps/admin/` | Vite + React Router | 어드민 |
 | mentor | `apps/mentor/` | Vite + React Router | 멘토 마이페이지 |
 
@@ -55,12 +55,12 @@ pnpm typecheck   # 전체 타입 체크
 pnpm lint        # 전체 린트
 
 # 특정 앱만
-pnpm --filter @letscareer/user dev
+pnpm --filter @letscareer/web dev
 pnpm --filter @letscareer/admin dev
 pnpm --filter @letscareer/mentor dev
 
 # 특정 앱 빌드
-pnpm --filter @letscareer/user build
+pnpm --filter @letscareer/web build
 ```
 
 ### 의존성 규칙
