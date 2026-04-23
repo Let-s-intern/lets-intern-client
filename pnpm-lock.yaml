@@ -458,6 +458,10 @@ importers:
   packages/config/typescript: {}
 
   packages/hooks:
+    dependencies:
+      dayjs:
+        specifier: '>=1'
+        version: 1.11.19
     devDependencies:
       '@letscareer/tsconfig':
         specifier: workspace:*

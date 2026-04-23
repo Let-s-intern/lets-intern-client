@@ -7,7 +7,11 @@
     "./*": "./src/*.ts"
   },
   "peerDependencies": {
+    "dayjs": ">=1",
     "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "dayjs": { "optional": true }
   },
   "devDependencies": {
     "@letscareer/tsconfig": "workspace:*",
