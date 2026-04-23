@@ -1,6 +1,16 @@
+import plugin from 'tailwindcss/plugin';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const tailwindScrollbarHide = require('tailwind-scrollbar-hide');
+
+const scrollbarHide = plugin(({ addUtilities }) => {
+  addUtilities({
+    '.scrollbar-hide': {
+      '-ms-overflow-style': 'none',
+      'scrollbar-width': 'none',
+      '&::-webkit-scrollbar': { display: 'none' },
+    },
+  });
+});
 
 /** @type {import('tailwindcss').Config} */
 const preset = {
@@ -227,7 +237,7 @@ const preset = {
     },
   },
 
-  plugins: [tailwindScrollbarHide, require('@tailwindcss/typography')],
+  plugins: [scrollbarHide, require('@tailwindcss/typography')],
 };
 
 export default preset;

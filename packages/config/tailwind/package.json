@@ -6,8 +6,7 @@
     "./preset": "./preset.js"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.19",
-    "tailwind-scrollbar-hide": "^1.1.7"
+    "@tailwindcss/typography": "^0.5.19"
   },
   "peerDependencies": {
     "tailwindcss": ">=3"
