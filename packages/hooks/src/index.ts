@@ -12,6 +12,7 @@ export { default as useInstagramAlert } from './useInstagramAlert';
 export { default as useLoading } from './useLoading';
 export { default as useSectionObserver } from './useSectionObserver';
 export { default as useValidateUrl } from './useValidateUrl';
+export { default as useInvalidateQueries } from './useInvalidateQueries';
 export { useCareerModals } from './useCareerModals';
 export { useChangeDetection } from './useChangeDetectionHook';
 export { useControlScroll } from './useControlScroll';

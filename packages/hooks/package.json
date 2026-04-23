@@ -7,10 +7,12 @@
     "./*": "./src/*.ts"
   },
   "peerDependencies": {
+    "@tanstack/react-query": ">=5",
     "dayjs": ">=1",
     "react": ">=18"
   },
   "peerDependenciesMeta": {
+    "@tanstack/react-query": { "optional": true },
     "dayjs": { "optional": true }
   },
   "devDependencies": {
