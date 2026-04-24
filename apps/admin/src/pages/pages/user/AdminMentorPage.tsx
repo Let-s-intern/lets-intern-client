@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   usePatchUserAdminMutation,
   useUserAdminQuery,
@@ -6,21 +6,18 @@ import {
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button, Pagination, Tab, Tabs } from '@mui/material';
+import { Button, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 1000;
 
 function MentorManagementTable() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const page = Math.max(0, Number(searchParams.get('page') ?? '1') - 1);
-
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const { data, isLoading } = useUserAdminQuery({
-    pageable: { page, size: PAGE_SIZE },
+    isMentor: true,
+    pageable: { page: 1, size: PAGE_SIZE },
   });
 
   const mentors = useMemo(
@@ -35,8 +32,6 @@ function MentorManagementTable() {
         })),
     [data],
   );
-
-  const totalPages = data?.pageInfo?.totalPages ?? 1;
 
   const patchUser = usePatchUserAdminMutation({});
 
@@ -58,12 +53,6 @@ function MentorManagementTable() {
     } catch (err) {
       snackbar(`문제가 발생했습니다: ${err}`);
     }
-  };
-
-  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(value));
-    navigate(`?${params.toString()}`);
   };
 
   return (
@@ -131,17 +120,6 @@ function MentorManagementTable() {
           </table>
         )}
       </div>
-      {totalPages > 1 && (
-        <div className="mt-4 flex justify-center">
-          <Pagination
-            count={totalPages}
-            page={page + 1}
-            onChange={handlePageChange}
-            color="primary"
-            shape="rounded"
-          />
-        </div>
-      )}
     </div>
   );
 }
