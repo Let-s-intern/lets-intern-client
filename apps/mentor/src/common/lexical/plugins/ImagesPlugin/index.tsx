@@ -242,11 +242,11 @@ export function InsertImageDialog({
                   ? {
                       altText:
                         'Daylight fir trees forest glacier green high ice landscape',
-                      src: landscapeImage.src,
+                      src: landscapeImage as unknown as string,
                     }
                   : {
                       altText: 'Yellow flower in tilt shift lens',
-                      src: yellowFlowerImage.src,
+                      src: yellowFlowerImage as unknown as string,
                     },
               )
             }
