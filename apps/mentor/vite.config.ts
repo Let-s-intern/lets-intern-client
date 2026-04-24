@@ -2,6 +2,8 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
+const DEV_API_TARGET = 'https://letsintern.kr';
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -10,5 +12,14 @@ export default defineConfig({
     },
   },
   envPrefix: 'VITE_',
-  server: { port: 3002 },
+  server: {
+    port: 3002,
+    proxy: {
+      '/api': {
+        target: DEV_API_TARGET,
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
 });
