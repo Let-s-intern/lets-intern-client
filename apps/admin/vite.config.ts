@@ -15,11 +15,18 @@ export default defineConfig({
   envPrefix: 'VITE_',
   server: {
     port: 3001,
+    strictPort: true,
     proxy: {
       '/api': {
         target: DEV_API_TARGET,
         changeOrigin: true,
         secure: true,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Origin', DEV_API_TARGET);
+            proxyReq.setHeader('Referer', `${DEV_API_TARGET}/`);
+          });
+        },
       },
     },
   },
