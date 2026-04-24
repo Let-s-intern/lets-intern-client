@@ -1,5 +1,11 @@
 import { useCallback } from 'react';
 
+declare global {
+  interface Window {
+    dataLayer?: Array<Record<string, unknown>>;
+  }
+}
+
 interface GoogleAnalyticsEvent {
   event: string;
   [key: string]: unknown;
