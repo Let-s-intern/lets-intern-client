@@ -1,4 +1,4 @@
-name: Build admin
+name: 어드민 빌드 검사
 
 # apps/admin 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
 # .claude/**, .cursor/**, *.md 같은 메타 파일 수정은 트리거되지 않는다.
@@ -25,7 +25,7 @@ on:
 
 jobs:
   build:
-    name: Build admin
+    name: 어드민 빌드
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

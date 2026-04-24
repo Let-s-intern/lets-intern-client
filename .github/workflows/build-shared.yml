@@ -1,4 +1,4 @@
-name: Build shared
+name: 공용 패키지 검사
 
 # 공용 패키지(packages/**)나 모노레포 루트 설정 변경 시 타입체크로 검증.
 # .claude/**, .cursor/**, *.md 등은 paths에 없어 자동으로 스킵된다.
@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    name: Typecheck packages
+    name: 공용 패키지 타입 검사
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
