@@ -8,6 +8,7 @@ import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import { useMediaQuery } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -251,7 +252,11 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/blog/list">블로그</SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
-          <SideNavItem href="/admin">관리자 페이지</SideNavItem>
+          <SideNavItem
+            href={buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/')}
+          >
+            관리자 페이지
+          </SideNavItem>
         )}
         <SideNavItem className="notice_gnb" href="/about">
           렛츠커리어 스토리

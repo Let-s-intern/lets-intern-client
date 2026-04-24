@@ -101,9 +101,36 @@ const useAuthStore = create(
             refreshTokenExpiresAt: state.refreshTokenExpiresAt,
           });
         }
+
+        consumeSsoHashIfPresent(state);
       },
     },
   ),
 );
+
+// 서브도메인/포트 간 개별 로그인을 피하기 위한 URL hash 기반 토큰 전달.
+// `#__sso=<accessToken>|<refreshToken>` 이 있으면 자동 로그인 후 hash 제거.
+function consumeSsoHashIfPresent(state: AuthStore) {
+  if (typeof window === 'undefined') return;
+  const match = window.location.hash.match(/(?:^#|&)__sso=([^&]+)/);
+  if (!match) return;
+
+  try {
+    const [accessToken, refreshToken] = decodeURIComponent(match[1]).split('|');
+    if (!accessToken || !refreshToken) return;
+    state.login(accessToken, refreshToken);
+  } catch {
+    return;
+  }
+
+  const cleaned = window.location.hash
+    .replace(/(^#|&)__sso=[^&]+/, '')
+    .replace(/^#&/, '#');
+  const newUrl =
+    window.location.pathname +
+    window.location.search +
+    (cleaned === '#' || cleaned === '' ? '' : cleaned);
+  window.history.replaceState(null, '', newUrl);
+}
 
 export default useAuthStore;

@@ -1,3 +1,4 @@
+import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import GlobalNavItem from './GlobalNavItem';
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
+  const adminHref = buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/');
   return (
     <div className="hidden items-center gap-1 md:flex">
       <GlobalNavItem
@@ -30,7 +32,7 @@ function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
       {isLoggedIn && isAdmin && (
         <GlobalNavItem
           className="ml-4 inline-block text-xsmall16 font-normal text-neutral-30"
-          href="/admin"
+          href={adminHref}
         >
           관리자 페이지
         </GlobalNavItem>
