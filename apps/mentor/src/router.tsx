@@ -9,6 +9,7 @@ import ChallengeDetailPage from '@/pages/challenge/ChallengeDetailPage';
 import FeedbackManagementPage from '@/pages/feedback-management/FeedbackManagementPage';
 import NoticeListPage from '@/pages/notice/NoticeListPage';
 import NoticeDetailPage from '@/pages/notice/NoticeDetailPage';
+import NotFound from '@/pages/NotFound';
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: '/feedback-management', element: <FeedbackManagementPage /> },
       { path: '/notice', element: <NoticeListPage /> },
       { path: '/notice/:noticeId', element: <NoticeDetailPage /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { AdminShell } from './layout/AdminShell';
+import NotFound from './pages/NotFound';
 
 // 무거운 페이지는 lazy로 분리하여 초기 번들 최소화
 const AdminHome = lazy(() => import('./pages/pages/AdminHome'));
@@ -366,6 +367,7 @@ export const router = createBrowserRouter([
         path: '/banner/program-banners/:bannerId/edit',
         element: withSuspense(<ProgramBannerEdit />),
       },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);
