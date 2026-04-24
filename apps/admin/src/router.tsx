@@ -56,6 +56,10 @@ const AttendanceUserExperiencesPage = lazy(
       './pages/pages/challenge/operation/AttendanceUserExperiencesPage'
     ),
 );
+const ChallengeOperationLayout = lazy(
+  () =>
+    import('./pages/pages/challenge/operation/ChallengeOperationLayout'),
+);
 const ChallengeFeedbackPage = lazy(
   () => import('./pages/pages/challenge/feedback/ChallengeFeedbackPage'),
 );
@@ -97,7 +101,9 @@ const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
 const BlogPostListPage = lazy(() => import('./pages/blog/BlogPostListPage'));
 const BlogCreatePage = lazy(() => import('./pages/blog/BlogCreatePage'));
 const BlogEditPage = lazy(() => import('./pages/blog/BlogEditPage'));
-const BlogRatingTable = lazy(() => import('./pages/blog/BlogRatingTable'));
+const BlogRatingListPage = lazy(
+  () => import('./pages/blog/BlogRatingListPage'),
+);
 const BlogBannerListPage = lazy(
   () => import('./pages/blog/BlogBannerListPage'),
 );
@@ -262,36 +268,54 @@ export const router = createBrowserRouter([
         element: withSuspense(<ChallengeOperationOnboarding />),
       },
       {
-        path: '/challenge/operation/:programId/home',
-        element: withSuspense(<ChallengeOperationHome />),
-      },
-      {
-        path: '/challenge/operation/:programId/attendances',
-        element: withSuspense(<ChallengeOperationAttendances />),
-      },
-      {
-        path: '/challenge/operation/:programId/participants',
-        element: withSuspense(<ChallengeOperationParticipants />),
-      },
-      {
-        path: '/challenge/operation/:programId/payback',
-        element: withSuspense(<ChallengeOperationPayback />),
-      },
-      {
-        path: '/challenge/operation/:programId/register-mission',
-        element: withSuspense(<ChallengeOperationRegisterMission />),
-      },
-      {
         path: '/challenge/feedback-operation',
-        element: withSuspense(<ChallengeOperationFeedbackPage />),
+        element: withSuspense(<FeedbackOperationPage />),
       },
       {
-        path: '/challenge/operation/:programId/feedback/mission/:missionId/participants',
-        element: withSuspense(<FeedbackParticipantPage />),
-      },
-      {
-        path: '/challenge/operation/:programId/mission/:missionId/participant/:userId/feedback',
-        element: withSuspense(<ChallengeFeedbackPage />),
+        path: '/challenge/operation/:programId',
+        element: withSuspense(<ChallengeOperationLayout />),
+        children: [
+          {
+            path: 'home',
+            element: withSuspense(<ChallengeOperationHome />),
+          },
+          {
+            path: 'attendances',
+            element: withSuspense(<ChallengeOperationAttendances />),
+          },
+          {
+            path: 'attendances/:missionId/:userId',
+            element: withSuspense(<AttendanceUserExperiencesPage />),
+          },
+          {
+            path: 'participants',
+            element: withSuspense(<ChallengeOperationParticipants />),
+          },
+          {
+            path: 'payback',
+            element: withSuspense(<ChallengeOperationPayback />),
+          },
+          {
+            path: 'register-mission',
+            element: withSuspense(<ChallengeOperationRegisterMission />),
+          },
+          {
+            path: 'missions',
+            element: withSuspense(<ChallengeMissionManagement />),
+          },
+          {
+            path: 'feedback',
+            element: withSuspense(<ChallengeOperationFeedbackPage />),
+          },
+          {
+            path: 'feedback/mission/:missionId/participants',
+            element: withSuspense(<FeedbackParticipantPage />),
+          },
+          {
+            path: 'mission/:missionId/participant/:userId/feedback',
+            element: withSuspense(<ChallengeFeedbackPage />),
+          },
+        ],
       },
       {
         path: '/challenge/mentor-assignment/:programId',
@@ -361,7 +385,7 @@ export const router = createBrowserRouter([
       { path: '/blog/list', element: withSuspense(<BlogPostListPage />) },
       { path: '/blog/create', element: withSuspense(<BlogCreatePage />) },
       { path: '/blog/edit/:id', element: withSuspense(<BlogEditPage />) },
-      { path: '/blog/reviews', element: withSuspense(<BlogRatingTable />) },
+      { path: '/blog/reviews', element: withSuspense(<BlogRatingListPage />) },
       { path: '/blog/banner', element: withSuspense(<BlogBannerListPage />) },
       {
         path: '/blog/banner/create',
