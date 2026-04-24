@@ -46,6 +46,16 @@ const ChallengeOperationFeedbackPage = lazy(
       './pages/pages/challenge/feedback-operation/ChallengeOperationFeedbackPage'
     ),
 );
+const FeedbackOperationPage = lazy(
+  () =>
+    import('./pages/challenge/feedback-operation/FeedbackOperationPage'),
+);
+const AttendanceUserExperiencesPage = lazy(
+  () =>
+    import(
+      './pages/pages/challenge/operation/AttendanceUserExperiencesPage'
+    ),
+);
 const ChallengeFeedbackPage = lazy(
   () => import('./pages/pages/challenge/feedback/ChallengeFeedbackPage'),
 );

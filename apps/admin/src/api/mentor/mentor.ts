@@ -16,7 +16,7 @@ export const useAdminChallengeMentorListQuery = (
   return useQuery({
     queryKey: ['useAdminChallengeMentorsQuery', challengeId],
     queryFn: async () => {
-      const res = await axiosV2.get(`/challenge/${challengeId}/mentor`);
+      const res = await axiosV2.get(`/admin/challenge/${challengeId}/mentor`);
       return adminChallengeMentorListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
@@ -29,7 +29,7 @@ export const useAdminUserMentorListQuery = (pageable?: IPageable) => {
   return useQuery({
     queryKey: ['useAdminUserMentorListQuery', pageable],
     queryFn: async () => {
-      const res = await axiosV2.get('/user/mentor', {
+      const res = await axiosV2.get('/admin/user/mentor', {
         params: {
           ...pageable,
         },
@@ -45,7 +45,7 @@ export const usePostAdminChallengeMentor = () => {
   return useMutation({
     mutationFn: async (data: PostAdminChallengeMentorReq) => {
       const { challengeId, ...body } = data;
-      await axiosV2.post(`/challenge/${challengeId}/mentor`, body);
+      await axiosV2.post(`/admin/challenge/${challengeId}/mentor`, body);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
@@ -59,7 +59,7 @@ export const usePostAdminChallengeMentor = () => {
 export const useDeleteChallengeMentor = () => {
   return useMutation({
     mutationFn: async (challengeMentorId: string | number) => {
-      return axios.delete(`/challenge-mentor/${challengeMentorId}`);
+      return axios.delete(`/admin/challenge-mentor/${challengeMentorId}`);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
@@ -79,7 +79,7 @@ export const usePostAdminChallengeMentorMatch = () => {
     }) => {
       const { challengeId, challengeMentorId, challengeApplicationIdList } = data;
       await axiosV2.post(
-        `/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
+        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
         { challengeApplicationIdList },
       );
     },

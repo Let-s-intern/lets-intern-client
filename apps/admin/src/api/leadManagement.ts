@@ -46,7 +46,7 @@ export const useMagnetApplicationByMagnetIdQuery = (
     enabled: options?.enabled ?? true,
     queryFn: async (): Promise<MagnetApplicationByMagnet[]> => {
       const res = await axios.get(
-        `/magnet/${magnetId}/applications`,
+        `/admin/magnet/${magnetId}/applications`,
       );
       return z
         .array(magnetApplicationByMagnetSchema)

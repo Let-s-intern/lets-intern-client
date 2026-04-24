@@ -36,7 +36,7 @@ export const usePatchAdminAttendance = () => {
   return useMutation({
     mutationFn: async (req: PatchAdminAttendanceReq) => {
       const { attendanceId, ...body } = req;
-      return axiosV2.patch(`/attendance/${attendanceId}`, body);
+      return axiosV2.patch(`/admin/attendance/${attendanceId}`, body);
     },
     onError: (error) => console.error('usePatchAdminAttendance >>', error),
   });

@@ -15,7 +15,7 @@ export const useGetChallengeOptions = () => {
   return useQuery({
     queryKey: [challengeOptionsQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/challenge-option');
+      const res = await axios.get('/admin/challenge-option');
       return challengeOptionsSchema.parse(res.data.data);
     },
     retry: 1,
@@ -28,7 +28,7 @@ export const usePostChallengeOption = () => {
 
   return useMutation({
     mutationFn: async (req: PostChallengeOptionReq) => {
-      const res = await axios.post('/challenge-option', req);
+      const res = await axios.post('/admin/challenge-option', req);
       return res.data.data;
     },
     onSuccess: () =>
@@ -45,7 +45,7 @@ export const useDeleteChallengeOption = () => {
 
   return useMutation({
     mutationFn: async (optionId: number | string) => {
-      const res = await axios.delete(`/challenge-option/${optionId}`);
+      const res = await axios.delete(`/admin/challenge-option/${optionId}`);
       return res.data.data;
     },
     onSuccess: () =>
@@ -64,7 +64,7 @@ export const usePatchChallengeOption = () => {
     mutationFn: async (req: PatchChallengeOptionReq) => {
       const { challengeOptionId, ...body } = req;
       const res = await axios.patch(
-        `/challenge-option/${challengeOptionId}`,
+        `/admin/challenge-option/${challengeOptionId}`,
         body,
       );
       return res.data.data;

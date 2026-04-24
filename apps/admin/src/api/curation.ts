@@ -111,7 +111,7 @@ export const useGetAdminCurationList = (
   return useQuery({
     queryKey: ['admin-curation', 'list', locationType],
     queryFn: async () => {
-      const res = await axios.get(`/curation`, {
+      const res = await axios.get(`/admin/curation`, {
         params: {
           locationType,
         },
@@ -125,7 +125,7 @@ export const useGetAdminCurationDetail = (id: number | undefined) => {
   return useQuery({
     queryKey: ['admin-curation', 'detail', id],
     queryFn: async () => {
-      const res = await axios.get(`/curation/${id}`);
+      const res = await axios.get(`/admin/curation/${id}`);
       return curationDetailSchema.parse(res.data.data);
     },
     enabled: !!id,
@@ -148,7 +148,7 @@ export const usePostAdminCuration = ({
       locationType: CurationLocationType;
       body: CurationBodyType;
     }) => {
-      const res = await axios.post(`/curation/${locationType}`, body);
+      const res = await axios.post(`/admin/curation/${locationType}`, body);
       return res.data;
     },
     // curation, admin-curation를 포함하는 쿼리키 무효화
@@ -185,7 +185,7 @@ export const usePatchAdminCuration = ({
       id: number;
       body: CurationEditBodyType;
     }) => {
-      const res = await axios.patch(`/curation/${id}`, body);
+      const res = await axios.patch(`/admin/curation/${id}`, body);
       return res.data;
     },
     onSuccess: () => {
@@ -215,7 +215,7 @@ export const useDeleteAdminCuration = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const res = await axios.delete(`/curation/${id}`);
+      const res = await axios.delete(`/admin/curation/${id}`);
       return res.data;
     },
     onSuccess: () => {
