@@ -17,8 +17,8 @@ import { useMediaQuery } from '@mui/material';
 import { Bell, LockKeyhole, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
 
 export type LibraryTab = 'contents' | 'my';
@@ -72,7 +72,17 @@ function Content({ tab }: { tab: LibraryTab }) {
   }, [searchParams]);
 
   const isMyTab = tab === 'my';
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!isMyTab || !isInitialized || isLoggedIn) return;
+    const qs = searchParams.toString();
+    const here = qs ? `${pathname}?${qs}` : pathname;
+    const params = new URLSearchParams({ redirect: here });
+    router.push(`/login?${params.toString()}`);
+  }, [isMyTab, isInitialized, isLoggedIn, pathname, router, searchParams]);
 
   const contentsQuery = useGetUserMagnetListQuery({
     typeList,
