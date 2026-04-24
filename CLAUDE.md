@@ -20,15 +20,17 @@
 - `npm run typecheck` — TypeScript 타입 체크
 - `npm run lint` — ESLint
 
-## 모노레포 구조 (2026-04-22 전환 완료)
+## 모노레포 구조 (2026-04-22 전환 완료, 2026-04-24 도메인 분리)
 
 ### 앱 구조
 
-| 앱 | 경로 | 기술 | 도메인 |
-|---|---|---|---|
-| web | `apps/web/` | Next.js 15 App Router | 사용자 페이지 |
-| admin | `apps/admin/` | Vite + React Router | 어드민 |
-| mentor | `apps/mentor/` | Vite + React Router | 멘토 마이페이지 |
+| 앱 | 경로 | 기술 | 프로덕션 도메인 | Preview 도메인 | 포트 |
+|---|---|---|---|---|---|
+| web | `apps/web/` | Next.js 15 App Router | `letscareer.co.kr` | `test.letscareer.co.kr` | 3000 |
+| admin | `apps/admin/` | Vite + React Router | `admin.letscareer.co.kr` | `test-admin.letscareer.co.kr` | 3001 |
+| mentor | `apps/mentor/` | Vite + React Router | `mentor.letscareer.co.kr` | `test-mentor.letscareer.co.kr` | 3002 |
+
+`letscareer.co.kr/admin/*`·`/mentor/*` 구 URL은 `apps/web/middleware.ts`가 308 redirect로 새 서브도메인으로 우회 (env: `NEXT_PUBLIC_ADMIN_URL`, `NEXT_PUBLIC_MENTOR_URL`).
 
 ### 공유 패키지
 
@@ -54,10 +56,10 @@ pnpm dev         # 전체 앱 개발 서버
 pnpm typecheck   # 전체 타입 체크
 pnpm lint        # 전체 린트
 
-# 특정 앱만
-pnpm --filter @letscareer/web dev
-pnpm --filter @letscareer/admin dev
-pnpm --filter @letscareer/mentor dev
+# 특정 앱만 (포트 주의)
+pnpm --filter @letscareer/web dev       # :3000
+pnpm --filter @letscareer/admin dev     # :3001
+pnpm --filter @letscareer/mentor dev    # :3002
 
 # 특정 앱 빌드
 pnpm --filter @letscareer/web build
