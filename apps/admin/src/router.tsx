@@ -98,8 +98,56 @@ const BlogBannerEditPage = lazy(
   () => import('./pages/blog/BlogBannerEditPage'),
 );
 
-const MagnetTable = lazy(() => import('./pages/magnet/MagnetTable'));
-const MagnetPostPage = lazy(() => import('./pages/magnet/MagnetPostPage'));
+const MagnetListPage = lazy(() => import('./pages/magnet/MagnetListPage'));
+const MagnetPostRoute = lazy(
+  () => import('./pages/pages/magnet/MagnetPostRoute'),
+);
+const MagnetFormRoute = lazy(
+  () => import('./pages/pages/magnet/MagnetFormRoute'),
+);
+const MagnetCommonFormPage = lazy(
+  () => import('./pages/magnet/CommonFormPage'),
+);
+
+// 후기 관리
+const AdminChallengeReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminChallengeReviewListPage'),
+);
+const AdminLiveReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminLiveReviewListPage'),
+);
+const AdminMissionReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminMissionReviewListPage'),
+);
+const AdminReportReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminReportReviewListPage'),
+);
+const AdminBlogReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminBlogReviewListPage'),
+);
+
+// 커리어 DB (유저 목록)
+const AdminUsersPage = lazy(
+  () => import('./domain/admin/pages/user/AdminUsersPage'),
+);
+
+// 통합 배너
+const CommonBanners = lazy(
+  () => import('./pages/pages/banner/common-banner/CommonBanners'),
+);
+const CommonBannerCreate = lazy(
+  () => import('./pages/pages/banner/common-banner/CommonBannerCreate'),
+);
+const CommonBannerEdit = lazy(
+  () => import('./pages/pages/banner/common-banner/CommonBannerEdit'),
+);
+
+// 리드 관리
+const LeadEventPage = lazy(() => import('./pages/lead/LeadEventPage'));
+const LeadHistoryPage = lazy(() => import('./pages/lead/LeadHistoryPage'));
+const LeadUserDetailPage = lazy(
+  () => import('./pages/lead/LeadUserDetailPage'),
+);
 
 const MainBanners = lazy(
   () => import('./pages/pages/home/main-banner/MainBanners'),
@@ -255,7 +303,30 @@ export const router = createBrowserRouter([
         element: withSuspense(<ReportApplicationsPage />),
       },
 
+      // 후기 관리
+      {
+        path: '/review/challenge',
+        element: withSuspense(<AdminChallengeReviewListPage />),
+      },
+      {
+        path: '/review/live',
+        element: withSuspense(<AdminLiveReviewListPage />),
+      },
+      {
+        path: '/review/mission',
+        element: withSuspense(<AdminMissionReviewListPage />),
+      },
+      {
+        path: '/review/report',
+        element: withSuspense(<AdminReportReviewListPage />),
+      },
+      {
+        path: '/review/blog',
+        element: withSuspense(<AdminBlogReviewListPage />),
+      },
+
       // 유저/멘토
+      { path: '/users', element: withSuspense(<AdminUsersPage />) },
       { path: '/users/:userId', element: withSuspense(<UserDetail />) },
       { path: '/users/:userId/edit', element: withSuspense(<UserEdit />) },
       { path: '/mentors', element: withSuspense(<AdminMentorPage />) },
@@ -292,10 +363,18 @@ export const router = createBrowserRouter([
       },
 
       // 마그넷
-      { path: '/magnet/list', element: withSuspense(<MagnetTable />) },
+      { path: '/magnet/list', element: withSuspense(<MagnetListPage />) },
       {
         path: '/magnet/:id/post',
-        element: withSuspense(<MagnetPostPage magnetId="" />),
+        element: withSuspense(<MagnetPostRoute />),
+      },
+      {
+        path: '/magnet/:id/form',
+        element: withSuspense(<MagnetFormRoute />),
+      },
+      {
+        path: '/magnet/form/common',
+        element: withSuspense(<MagnetCommonFormPage />),
       },
 
       // 홈 배너/큐레이션
@@ -334,6 +413,18 @@ export const router = createBrowserRouter([
       },
 
       // 배너
+      {
+        path: '/banner/common-banners',
+        element: withSuspense(<CommonBanners />),
+      },
+      {
+        path: '/banner/common-banners/new',
+        element: withSuspense(<CommonBannerCreate />),
+      },
+      {
+        path: '/banner/common-banners/:id/edit',
+        element: withSuspense(<CommonBannerEdit />),
+      },
       { path: '/banner/pop-up', element: withSuspense(<PopUpBanners />) },
       {
         path: '/banner/pop-up/new',
@@ -367,6 +458,17 @@ export const router = createBrowserRouter([
         path: '/banner/program-banners/:bannerId/edit',
         element: withSuspense(<ProgramBannerEdit />),
       },
+      // 리드 관리
+      { path: '/leads/events', element: withSuspense(<LeadEventPage />) },
+      {
+        path: '/leads/managements',
+        element: withSuspense(<LeadHistoryPage />),
+      },
+      {
+        path: '/leads/managements/:id',
+        element: withSuspense(<LeadUserDetailPage />),
+      },
+
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -11,6 +11,8 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
+  // apps/web/public의 공용 에셋(/icons, /logo, /images 등)을 그대로 재사용
+  publicDir: resolve(__dirname, '../web/public'),
   envPrefix: 'VITE_',
   server: {
     port: 3002,
