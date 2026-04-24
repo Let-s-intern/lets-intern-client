@@ -47,11 +47,6 @@
 │       │   └── mentor/                   # (design-system.md 포함)
 │       └── tech-stack/
 │
-├── roles/                                # 작업 역할 정의
-│   ├── coordinator.md
-│   ├── developer.md
-│   └── tester.md
-│
 ├── hooks/                                # Claude Code 훅 스크립트
 │   ├── check-tasks.sh
 │   ├── inject-task-context.sh
