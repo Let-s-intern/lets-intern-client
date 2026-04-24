@@ -30,6 +30,14 @@
 │   ├── task-runner/                      # 태스크 실행 오케스트레이션
 │   └── vercel-react-best-practices/      # Vercel/React 최적화 규칙
 │
+├── teams/                                # 팀 구성 레시피 (Orchestrate teams)
+│   ├── README.md                         # Agent Teams vs 서브에이전트 비교·사이징
+│   ├── code-migration.md                 # 대규모 코드 이식 팀
+│   ├── feature-push.md                   # 단일 기능 push 팀
+│   ├── parallel-review.md                # 병렬 코드 리뷰 팀
+│   ├── debug-hypothesis.md               # 경쟁 가설 디버깅 팀
+│   └── docs-refresh.md                   # 문서 최신화 팀
+│
 ├── docs/
 │   ├── claude_code_docs/                 # Claude Code 공식 문서 캐시
 │   ├── common-components/                # 공용 컴포넌트 레퍼런스
@@ -76,6 +84,7 @@
 | 태스크 실행 | `skills/task-runner/SKILL.md` → `agents/push-lead.md` |
 | Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
 | SEO 작업 | `skills/seo/SKILL.md` |
+| 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
 
 ## 외부 참조
 
