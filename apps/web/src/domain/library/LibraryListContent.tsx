@@ -16,13 +16,16 @@ import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import { Bell, LockKeyhole, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
 
+export type LibraryTab = 'contents' | 'my';
+
 const TABS = [
-  { label: '자료집 콘텐츠', value: 'contents' },
-  { label: 'MY 자료집', value: 'my' },
+  { label: '자료집 콘텐츠', href: '/library/list' },
+  { label: 'MY 자료집', href: '/library/list/my' },
 ];
 
 const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
@@ -46,10 +49,9 @@ function toUrlSlug(title: string) {
   return encodeURIComponent(title.replace(/\s+/g, '-'));
 }
 
-function Content() {
+function Content({ tab }: { tab: LibraryTab }) {
   const searchParams = useSearchParams();
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
-  const [activeTab, setActiveTab] = useState('contents');
   const [page, setPage] = useState(1);
 
   const pageSize = isMobile ? MOBILE_PAGE_SIZE : PC_PAGE_SIZE;
@@ -69,8 +71,18 @@ function Content() {
       ) as MagnetType[];
   }, [searchParams]);
 
-  const isMyTab = activeTab === 'my';
-  const { isLoggedIn } = useAuthStore();
+  const isMyTab = tab === 'my';
+  const { isLoggedIn, isInitialized } = useAuthStore();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!isMyTab || !isInitialized || isLoggedIn) return;
+    const qs = searchParams.toString();
+    const here = qs ? `${pathname}?${qs}` : pathname;
+    const params = new URLSearchParams({ redirect: here });
+    router.push(`/login?${params.toString()}`);
+  }, [isMyTab, isInitialized, isLoggedIn, pathname, router, searchParams]);
 
   const contentsQuery = useGetUserMagnetListQuery({
     typeList,
@@ -86,20 +98,14 @@ function Content() {
 
   const { data, isLoading } = isMyTab ? myQuery : contentsQuery;
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    setPage(1);
-  };
+  const qs = searchParams.toString();
+  const browseContentsHref = qs ? `/library/list?${qs}` : '/library/list';
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
       {/* 탭 + 필터 */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
-        <LibraryTabNav
-          tabs={TABS}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-        />
+        <LibraryTabNav tabs={TABS} />
         <FilterDropdown
           label="콘텐츠 카테고리"
           list={CATEGORY_FILTER_LIST}
@@ -136,14 +142,13 @@ function Content() {
               필요한 자료를 받아보세요.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => handleTabChange('contents')}
+          <Link
+            href={browseContentsHref}
             className="mt-6 flex items-center gap-1.5 rounded-xxs border border-primary px-4 py-2.5 text-xsmall14 font-medium text-primary transition-colors hover:bg-primary/5"
           >
             <Search size={16} />
             무료 자료집 둘러보기
-          </button>
+          </Link>
         </div>
       ) : (
         <div className="flex min-h-[200px] items-center justify-center text-neutral-40">
@@ -253,10 +258,10 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
   );
 }
 
-export default function LibraryListContent() {
+export default function LibraryListContent({ tab }: { tab: LibraryTab }) {
   return (
     <Suspense>
-      <Content />
+      <Content tab={tab} />
     </Suspense>
   );
 }
