@@ -16,11 +16,22 @@ export function useScheduleData() {
 
   const { data: challengeListData } = useMentorChallengeListQuery();
   const allChallenges = challengeListData?.myChallengeMentorVoList ?? [];
-  // Only show in-progress challenges in the schedule
-  const challenges = useMemo(
-    () => allChallenges.filter((c) => c.programStatusType === 'PROCEEDING'),
-    [allChallenges],
-  );
+  // 진행중(PROCEEDING) + 최근 종료(POST, 14일 이내)를 포함한다.
+  // 미션 종료 후 최대 4일까지 피드백 기간이 이어지고,
+  // 챌린지가 POST 상태여도 피드백은 여전히 표시되어야 한다.
+  const challenges = useMemo(() => {
+    const RECENT_POST_WINDOW_DAYS = 14;
+    const now = Date.now();
+    const cutoffMs = RECENT_POST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+    return allChallenges.filter((c) => {
+      if (c.programStatusType === 'PROCEEDING') return true;
+      if (c.programStatusType === 'POST' && c.endDate) {
+        const end = new Date(c.endDate).getTime();
+        if (!Number.isNaN(end) && now - end <= cutoffMs) return true;
+      }
+      return false;
+    });
+  }, [allChallenges]);
 
   // Bars collected from child data fetchers (keyed by "challengeId-missionId")
   const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(

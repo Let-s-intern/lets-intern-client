@@ -9,10 +9,23 @@
   },
   "scripts": {
     "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@letscareer/web",
+    "dev:admin": "turbo run dev --filter=@letscareer/admin",
+    "dev:mentor": "turbo run dev --filter=@letscareer/mentor",
     "build": "turbo run build",
+    "build:web": "turbo run build --filter=@letscareer/web",
+    "build:admin": "turbo run build --filter=@letscareer/admin",
+    "build:mentor": "turbo run build --filter=@letscareer/mentor",
     "lint": "turbo run lint",
+    "lint:web": "turbo run lint --filter=@letscareer/web",
+    "lint:admin": "turbo run lint --filter=@letscareer/admin",
+    "lint:mentor": "turbo run lint --filter=@letscareer/mentor",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "typecheck:web": "turbo run typecheck --filter=@letscareer/web",
+    "typecheck:admin": "turbo run typecheck --filter=@letscareer/admin",
+    "typecheck:mentor": "turbo run typecheck --filter=@letscareer/mentor",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
     "@letscareer/prettier-config": "workspace:*",
