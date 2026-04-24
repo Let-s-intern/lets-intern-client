@@ -1,41 +1,41 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 interface Tab {
   label: string;
-  value: string;
+  href: string;
 }
 
 interface LibraryTabNavProps {
   tabs: Tab[];
-  activeTab: string;
-  onTabChange: (value: string) => void;
 }
 
-export default function LibraryTabNav({
-  tabs,
-  activeTab,
-  onTabChange,
-}: LibraryTabNavProps) {
+export default function LibraryTabNav({ tabs }: LibraryTabNavProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const qs = searchParams.toString();
+
   return (
     <div className="flex gap-5">
       {tabs.map((tab) => {
-        const isActive = tab.value === activeTab;
+        const isActive = tab.href === pathname;
+        const fullHref = qs ? `${tab.href}?${qs}` : tab.href;
         return (
-          <button
-            key={tab.value}
-            type="button"
+          <Link
+            key={tab.href}
+            href={fullHref}
             className={twMerge(
               'border-b-[1.6px] pb-3 font-semibold md:text-small20',
               isActive
                 ? 'border-neutral-10 text-neutral-10'
                 : 'border-transparent text-neutral-45',
             )}
-            onClick={() => onTabChange(tab.value)}
           >
             {tab.label}
-          </button>
+          </Link>
         );
       })}
     </div>

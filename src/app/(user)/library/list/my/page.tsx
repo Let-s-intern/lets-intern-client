@@ -1,20 +1,20 @@
 import LibraryListContent from '@/domain/library/LibraryListContent';
 import type { Metadata } from 'next';
 
-const title = '무료 자료집 목록 | 무료 자료집 - 렛츠커리어';
+const title = 'MY 자료집 | 무료 자료집 - 렛츠커리어';
 const description =
-  '취업 준비에 필요한 무료 자료집, VOD, 템플릿을 한눈에 확인하세요.';
+  '신청한 무료 자료집, VOD, 템플릿을 한곳에서 확인하세요.';
 
 export const metadata: Metadata = {
   title,
   description,
   alternates: {
-    canonical: '/library/list',
+    canonical: '/library/list/my',
   },
   openGraph: {
     type: 'website',
     title,
-    url: '/library/list',
+    url: '/library/list/my',
     description,
     siteName: '렛츠커리어',
     locale: 'ko_KR',
@@ -26,6 +26,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LibraryListPage() {
-  return <LibraryListContent tab="contents" />;
+export default function LibraryMyListPage() {
+  return <LibraryListContent tab="my" />;
 }
