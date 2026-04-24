@@ -30,7 +30,13 @@ const AttendanceUserExperiencesPage = () => {
   if (isLoading) return <FaSpinner />;
 
   if (error) {
-    return <div>에러가 발생했습니다: {String(error)}</div>;
+    const message = error instanceof Error ? error.message : '알 수 없는 오류';
+    console.error('[AttendanceUserExperiences]', error);
+    return (
+      <div className="p-4 text-center text-red-500">
+        에러가 발생했습니다: {message}
+      </div>
+    );
   }
 
   const userExperiences = data?.userExperiences ?? [];

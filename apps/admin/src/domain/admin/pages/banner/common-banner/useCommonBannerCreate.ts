@@ -4,10 +4,12 @@ import {
   CommonBannerFormValue,
   usePostCommonBannerForAdmin,
 } from '@/api/banner';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useNavigate } from 'react-router-dom';
 
 const useCommonBannerCreate = () => {
   const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
 
   const [value, setValue] = useState<CommonBannerFormValue>({
     title: '',
@@ -34,8 +36,9 @@ const useCommonBannerCreate = () => {
       navigate('/banner/common-banners');
     },
     errorCallback: (error) => {
-      console.error(error);
-      alert('통합 배너 등록에 실패했습니다.');
+      console.error('[useCommonBannerCreate]', error);
+      const message = error instanceof Error ? error.message : '알 수 없는 오류';
+      snackbar(`통합 배너 등록에 실패했습니다: ${message}`);
     },
   });
 

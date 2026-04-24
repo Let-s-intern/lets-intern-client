@@ -102,7 +102,13 @@ const CommonBanners = () => {
     }
 
     if (error) {
-      return <EmptyContainer />;
+      const message = error instanceof Error ? error.message : '알 수 없는 오류';
+      console.error('[CommonBanners]', error);
+      return (
+        <div className="py-16 text-center text-sm text-red-500">
+          배너 목록을 불러오지 못했습니다: {message}
+        </div>
+      );
     }
 
     if (activeTab === 'active') {

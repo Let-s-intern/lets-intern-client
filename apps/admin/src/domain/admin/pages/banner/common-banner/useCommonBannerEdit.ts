@@ -7,6 +7,7 @@ import {
   useEditCommonBannerForAdmin,
   useGetCommonBannerDetailForAdmin,
 } from '@/api/banner';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -96,6 +97,7 @@ const mapDetailToFormValue = (
 
 const useCommonBannerEdit = () => {
   const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
   const params = useParams();
   const commonBannerId = Number(params.id);
 
@@ -116,8 +118,9 @@ const useCommonBannerEdit = () => {
       navigate('/banner/common-banners');
     },
     errorCallback: (error) => {
-      console.error(error);
-      alert('통합 배너 수정에 실패했습니다.');
+      console.error('[useCommonBannerEdit]', error);
+      const message = error instanceof Error ? error.message : '알 수 없는 오류';
+      snackbar(`통합 배너 수정에 실패했습니다: ${message}`);
     },
   });
 

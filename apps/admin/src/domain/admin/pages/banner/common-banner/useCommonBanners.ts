@@ -8,10 +8,12 @@ import {
   useGetCommonBannerForAdmin,
   useUpdateExpiredCommonBanners,
 } from '@/api/banner';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 
 export type TabType = 'active' | 'all';
 
 const useCommonBanners = () => {
+  const { snackbar } = useAdminSnackbar();
   const [activeTab, setActiveTab] = useState<TabType>('active');
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
   const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
@@ -42,10 +44,11 @@ const useCommonBanners = () => {
   const { mutate: updateExpiredBanners, isPending: isUpdatingExpired } =
     useUpdateExpiredCommonBanners({
       successCallback: () => {
-        alert('만료된 배너가 업데이트되었습니다.');
+        snackbar('만료된 배너가 업데이트되었습니다.');
       },
       errorCallback: (error) => {
-        alert('업데이트에 실패했습니다: ' + error.message);
+        console.error('[useCommonBanners] update expired failed', error);
+        snackbar(`업데이트에 실패했습니다: ${error.message}`);
       },
     });
 
