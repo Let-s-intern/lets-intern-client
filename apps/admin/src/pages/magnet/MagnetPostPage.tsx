@@ -1,5 +1,3 @@
-'use client';
-
 import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
 import { useMagnetPostForm } from '@/domain/admin/magnet/hooks/useMagnetPostForm';
 import MagnetProgramRecommendSection from '@/domain/admin/magnet/section/MagnetProgramRecommendSection';
@@ -21,12 +19,9 @@ import {
   TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import dynamic from 'next/dynamic';
+import { lazy, Suspense } from 'react';
 
-const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
-  ssr: false,
-});
+const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 const MAX_META_DESCRIPTION_LENGTH = 100;
 
@@ -287,19 +282,23 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
               {/* 4.9 콘텐츠 편집1 (신청 전 공개) */}
               <div>
                 <Heading2 className="mb-2">콘텐츠 편집1(신청 전 공개)</Heading2>
-                <EditorApp
-                  initialEditorStateJsonString={initialEditorStateBefore}
-                  onChange={onChangeEditorBefore}
-                />
+                <Suspense fallback={null}>
+                  <EditorApp
+                    initialEditorStateJsonString={initialEditorStateBefore}
+                    onChange={onChangeEditorBefore}
+                  />
+                </Suspense>
               </div>
 
               {/* 4.10 콘텐츠 편집2 (신청 후 공개) */}
               <div>
                 <Heading2 className="mb-2">콘텐츠 편집2(신청 후 공개)</Heading2>
-                <EditorApp
-                  initialEditorStateJsonString={initialEditorStateAfter}
-                  onChange={onChangeEditorAfter}
-                />
+                <Suspense fallback={null}>
+                  <EditorApp
+                    initialEditorStateJsonString={initialEditorStateAfter}
+                    onChange={onChangeEditorAfter}
+                  />
+                </Suspense>
               </div>
             </>
           )}

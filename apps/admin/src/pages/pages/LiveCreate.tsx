@@ -1,5 +1,3 @@
-'use client';
-
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
@@ -21,25 +19,19 @@ import dayjs from '@/lib/dayjs';
 import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import dynamic from 'next/dynamic';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
 
-const LiveInformation = dynamic(
+const LiveInformation = lazy(
   () => import('@/domain/admin/program/live/LiveInformation'),
-  { ssr: false },
 );
 
-const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
-  ssr: false,
-});
+const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 const LiveCreate: React.FC = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
   const [loading, setLoading] = useState(false);
@@ -113,8 +105,8 @@ const LiveCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('라이브가 생성되었습니다.');
-    router.push('/admin/programs');
-  }, [input, content, postLive, snackbar, router]);
+    navigate('/admin/programs');
+  }, [input, content, postLive, snackbar, navigate]);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
@@ -271,11 +263,13 @@ const LiveCreate: React.FC = () => {
       </section>
 
       {/* 프로그램 소개 */}
-      <LiveInformation
-        recommendFields={content.recommend ?? []}
-        reasonFields={content.reason ?? [{ title: '', content: '' }]}
-        setContent={setContent}
-      />
+      <Suspense fallback={null}>
+        <LiveInformation
+          recommendFields={content.recommend ?? []}
+          reasonFields={content.reason ?? [{ title: '', content: '' }]}
+          setContent={setContent}
+        />
+      </Suspense>
 
       {/* 프로그램 추천 */}
       <section className="mb-6">
@@ -294,14 +288,16 @@ const LiveCreate: React.FC = () => {
       />
 
       <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
-      <EditorApp
-        onChangeSerializedEditorState={(json) =>
-          setContent((prev) => ({
-            ...prev,
-            additionalCurriculum: json,
-          }))
-        }
-      />
+      <Suspense fallback={null}>
+        <EditorApp
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              additionalCurriculum: json,
+            }))
+          }
+        />
+      </Suspense>
       <ProgramBestReview
         reviewFields={content.liveReview ?? []}
         setReviewFields={(reviewFields) =>

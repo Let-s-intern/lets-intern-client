@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-'use client';
-
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
@@ -31,19 +29,15 @@ import {
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { Button, FormControlLabel, Switch, TextField } from '@mui/material';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import dynamic from 'next/dynamic';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
-const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
-  ssr: false,
-});
+
+const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
 
@@ -85,7 +79,7 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
  * 챌린지 생성 페이지
  */
 const ChallengeCreate: React.FC = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지  */
@@ -216,13 +210,13 @@ const ChallengeCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
-    router.push('/admin/programs');
+    navigate('/admin/programs');
   }, [
     input,
     content,
     postChallenge,
     snackbar,
-    router,
+    navigate,
     basicInfo,
     basicOptIds,
     isLightEnabled,
@@ -410,15 +404,17 @@ const ChallengeCreate: React.FC = () => {
         <>
           <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
           <section className="mt-6">
-            <EditorApp
-              onChangeSerializedEditorState={(json) =>
-                setContent((prev) => ({
-                  ...prev,
-                  isFreeTemplate: true,
-                  freeContent: json,
-                }))
-              }
-            />
+            <Suspense fallback={null}>
+              <EditorApp
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    isFreeTemplate: true,
+                    freeContent: json,
+                  }))
+                }
+              />
+            </Suspense>
           </section>
         </>
       ) : (
@@ -427,14 +423,16 @@ const ChallengeCreate: React.FC = () => {
 
           <section className="mt-6">
             <Heading3>인트로</Heading3>
-            <EditorApp
-              onChangeSerializedEditorState={(json) =>
-                setContent((prev) => ({
-                  ...prev,
-                  intro: json,
-                }))
-              }
-            />
+            <Suspense fallback={null}>
+              <EditorApp
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    intro: json,
+                  }))
+                }
+              />
+            </Suspense>
 
             <ChallengePoint
               challengePoint={content.challengePoint}
@@ -450,14 +448,16 @@ const ChallengeCreate: React.FC = () => {
             )}
 
             <Heading3>상세 설명</Heading3>
-            <EditorApp
-              onChangeSerializedEditorState={(json) =>
-                setContent((prev) => ({
-                  ...prev,
-                  mainDescription: json,
-                }))
-              }
-            />
+            <Suspense fallback={null}>
+              <EditorApp
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    mainDescription: json,
+                  }))
+                }
+              />
+            </Suspense>
           </section>
 
           {/* 프로그램 추천 */}

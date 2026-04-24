@@ -1,5 +1,3 @@
-'use client';
-
 import {
   ChallengeList,
   getClickCopy,
@@ -14,10 +12,12 @@ import useMentorAccessControl from '@/hooks/useMentorAccessControl';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Button, Checkbox } from '@mui/material';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import Link from 'next/link';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import {
+  Link,
+  useLocation,
+  useParams,
+  useNavigate,
+} from 'react-router-dom';
 import { useState } from 'react';
 
 const getNavLinks = (programId?: string | number) => {
@@ -56,7 +56,7 @@ const getNavLinks = (programId?: string | number) => {
 };
 
 const Actions = ({ openModal }: { openModal: () => void }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const { data } = useGetChallengeList({
     pageable: {
@@ -80,7 +80,7 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
         className="ml-3 border p-3"
         onChange={(e) => {
           if (e.target.value) {
-            router.push(`/admin/challenge/operation/${e.target.value}/home`);
+            navigate(`/admin/challenge/operation/${e.target.value}/home`);
           }
         }}
       >
@@ -99,7 +99,7 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
 
 const Navigation = () => {
   const params = useParams<{ programId: string }>();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const navLinks = getNavLinks(params.programId);
 
   const { data: isAdmin } = useIsAdminQuery();
@@ -113,7 +113,7 @@ const Navigation = () => {
         return (
           <Link
             key={navLink.to}
-            href={navLink.to}
+            to={navLink.to}
             className={twMerge('block px-4 py-2', isActive && 'text-blue-600')}
           >
             {navLink.text}

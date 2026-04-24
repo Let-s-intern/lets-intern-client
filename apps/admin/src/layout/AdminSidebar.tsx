@@ -1,7 +1,4 @@
-'use client';
-
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 
@@ -165,7 +162,7 @@ export const AdminSidebar = () => {
               {navSection.itemList.map((navItem, index) => (
                 <li key={index}>
                   <Link
-                    href={navItem.url}
+                    to={navItem.url}
                     className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
                   >
                     {navItem.name}

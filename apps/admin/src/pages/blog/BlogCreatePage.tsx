@@ -1,5 +1,3 @@
-'use client';
-
 import { useBlogCreateForm } from '@/domain/admin/blog/hooks/useBlogCreateForm';
 import BlogActionButtons from '@/domain/admin/blog/section/BlogActionButtons';
 import BlogBasicInfoSection from '@/domain/admin/blog/section/BlogBasicInfoSection';
@@ -7,17 +5,13 @@ import BlogProgramRecommendSection from '@/domain/admin/blog/section/BlogProgram
 import BlogPublishDateSection from '@/domain/admin/blog/section/BlogPublishDateSection';
 import BlogRecommendSection from '@/domain/admin/blog/section/BlogRecommendSection';
 import BlogTagSection from '@/domain/admin/blog/section/BlogTagSection';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import dynamic from 'next/dynamic';
-// TODO: next/ → react-router-dom 또는 공유 어댑터로 교체 필요 (Vite 이전)
-import { useRouter } from 'next/navigation';
+import { lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
-  ssr: false,
-});
+const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 const BlogCreatePage = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const {
     editingValue,
     dateTime,
@@ -70,10 +64,12 @@ const BlogCreatePage = () => {
 
           <h2 className="mt-10">콘텐츠 편집</h2>
 
-          <EditorApp onChange={onChangeEditor} />
+          <Suspense fallback={null}>
+            <EditorApp onChange={onChangeEditor} />
+          </Suspense>
 
           <BlogActionButtons
-            onCancel={() => router.push('/admin/blog/list')}
+            onCancel={() => navigate('/admin/blog/list')}
             onSaveTemp={() => postBlog(false)}
             onPublish={() => postBlog(true)}
             helperText="*발행: 블로그가 바로 게시됩니다."
