@@ -1,0 +1,40 @@
+name: Build shared
+
+# 공용 패키지(packages/**)나 모노레포 루트 설정 변경 시 타입체크로 검증.
+# .claude/**, .cursor/**, *.md 등은 paths에 없어 자동으로 스킵된다.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.github/workflows/build-shared.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+
+jobs:
+  build:
+    name: Typecheck packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec turbo run typecheck --filter='./packages/*'
