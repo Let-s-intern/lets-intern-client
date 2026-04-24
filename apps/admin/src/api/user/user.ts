@@ -380,8 +380,11 @@ export const useIsMentorQuery = ({
 };
 
 /** 유저 관리자 여부 /api/v1/user/isAdmin */
-export const useIsAdminQuery = () => {
+export const useIsAdminQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
   return useQuery({
+    ...options,
     queryKey: ['useIsAdminQuery'],
     queryFn: async () => {
       const res = await axios.get('/user/isAdmin');
