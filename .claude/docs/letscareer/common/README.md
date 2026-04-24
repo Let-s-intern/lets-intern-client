@@ -2,6 +2,8 @@
 
 렛츠커리어 프로젝트의 공통 컴포넌트, 훅, 서비스에 대한 통합 가이드입니다.
 
+최종 업데이트: 2026-04-24
+
 ## 문서 구조
 
 이 디렉토리는 프로젝트 전반에서 재사용되는 공통 모듈들을 문서화합니다:
@@ -16,11 +18,12 @@
 
 ---
 
-## 📦 공통 컴포넌트 (Components)
+## 공통 컴포넌트 (Components)
 
 **문서**: [components.md](./components.md)
 
-**위치**: `src/common/`
+**위치**: `apps/web/src/common/` (web 앱 전용 공통 UI)
+**공유 패키지**: `packages/ui/` (`@letscareer/ui` — 프레임워크 독립 컴포넌트)
 
 재사용 가능한 UI 컴포넌트 모음입니다.
 
@@ -68,13 +71,14 @@ const MyComponent = () => {
 
 ---
 
-## 🪝 공통 훅 (Hooks)
+## 공통 훅 (Hooks)
 
 **문서**: [hooks.md](./hooks.md)
 
-**위치**: `src/hooks/`
+**위치**: `packages/hooks/src/` (`@letscareer/hooks`)
+**레거시**: `apps/web/src/hooks/` (일부 web 전용 훅 잔존)
 
-프로젝트 전역에서 사용되는 커스텀 훅 모음입니다.
+프로젝트 전역에서 사용되는 커스텀 훅 모음입니다. 모노레포 전환 이후 공유 훅은 `packages/hooks`로 이전되었습니다.
 
 ### 주요 카테고리
 
@@ -115,15 +119,16 @@ const Header = () => {
 
 ---
 
-## 🔧 공통 서비스 (Services)
+## 공통 서비스 (Services)
 
 **문서**: [services.md](./services.md)
 
-**위치**: `src/api/`, `src/utils/`
+**위치**: `apps/web/src/api/`, `apps/web/src/utils/`
+**공유 패키지**: `packages/api/` (`@letscareer/api` — Axios 인스턴스), `packages/utils/` (`@letscareer/utils`)
 
 API 호출 함수와 유틸리티 서비스 모음입니다.
 
-### API 서비스 (src/api/)
+### API 서비스 (apps/web/src/api/)
 
 React Query 기반 API 호출:
 
@@ -134,7 +139,7 @@ React Query 기반 API 호출:
 - **Review**: 리뷰 관련 API
 - 기타: Application, Banner, Blog, Career, Coupon 등
 
-### 유틸리티 서비스 (src/utils/)
+### 유틸리티 서비스 (apps/web/src/utils/)
 
 순수 함수형 유틸리티:
 
@@ -185,13 +190,16 @@ const UserProfile = () => {
 
 ### 1. Import 경로
 
-Path alias를 사용하여 절대 경로로 import:
+Path alias를 사용하여 절대 경로로 import합니다. 공유 패키지는 `@letscareer/*` 네임스페이스로 import합니다.
 
 ```tsx
-// ✅ Good
+// apps/web 내부 (web 전용 모듈)
 import Button from '@/common/button/Button';
-import useMounted from '@/hooks/useMounted';
 import { useUserQuery } from '@/api/user/user';
+
+// 공유 패키지 (모든 앱에서 사용 가능)
+import { useInvalidateQueries } from '@letscareer/hooks';
+import { axiosInstance } from '@letscareer/api';
 
 // ❌ Bad
 import Button from '../../../common/button/Button';
@@ -261,31 +269,31 @@ useEffect(() => {
 
 ### 컴포넌트
 
-1. `src/common/{카테고리}/` 디렉토리에 생성
-2. Props 인터페이스 정의
-3. `className` props 지원
-4. [components.md](./components.md)에 문서 추가
+- web 전용: `apps/web/src/common/{카테고리}/` 디렉토리에 생성
+- 앱 간 공유: `packages/ui/src/` 에 생성 (`next/*` import 금지)
+- Props 인터페이스 정의, `className` props 지원
+- [components.md](./components.md)에 문서 추가
 
 ### 훅
 
-1. `src/hooks/` 디렉토리에 생성
-2. `use`로 시작하는 이름
-3. 타입 정의 및 JSDoc 주석
-4. [hooks.md](./hooks.md)에 문서 추가
+- web 전용: `apps/web/src/hooks/` 디렉토리에 생성
+- 앱 간 공유: `packages/hooks/src/` 에 생성 후 `index.ts`에 re-export
+- `use`로 시작하는 이름, 타입 정의 및 JSDoc 주석
+- [hooks.md](./hooks.md)에 문서 추가
 
 ### API 서비스
 
-1. `src/api/{도메인}/` 디렉토리에 생성
-2. Zod 스키마 정의
-3. React Query 훅 작성
-4. [services.md](./services.md)에 문서 추가
+- web 전용: `apps/web/src/api/{도메인}/` 디렉토리에 생성
+- 공유 Axios 인스턴스: `packages/api/` (`@letscareer/api`) 활용
+- Zod 스키마 정의, React Query 훅 작성
+- [services.md](./services.md)에 문서 추가
 
 ### 유틸리티
 
-1. `src/utils/` 디렉토리에 생성
-2. 순수 함수로 작성
-3. 타입 정의
-4. [services.md](./services.md)에 문서 추가
+- web 전용: `apps/web/src/utils/` 디렉토리에 생성
+- 앱 간 공유: `packages/utils/src/` 에 생성
+- 순수 함수로 작성, 타입 정의
+- [services.md](./services.md)에 문서 추가
 
 ---
 
@@ -303,14 +311,16 @@ useEffect(() => {
 
 | 항목 | 위치 | 문서 |
 |-----|------|------|
-| 버튼 | `src/common/button/` | [components.md](./components.md#button-컴포넌트) |
-| 입력 | `src/common/input/` | [components.md](./components.md#input-컴포넌트) |
-| 모달 | `src/common/modal/` | [components.md](./components.md#modal-컴포넌트) |
-| 스크롤 훅 | `src/hooks/useScrollDirection.ts` | [hooks.md](./hooks.md#usescrolldirection) |
-| 마운트 훅 | `src/hooks/useMounted.ts` | [hooks.md](./hooks.md#usemounted) |
-| 유저 API | `src/api/user/user.ts` | [services.md](./services.md#user-api) |
-| 스타일 유틸 | `src/utils/cn.ts` | [services.md](./services.md#cn) |
-| 디바운스 | `src/utils/debounce.ts` | [services.md](./services.md#debounce) |
+| 버튼 | `apps/web/src/common/button/` | [components.md](./components.md#button-컴포넌트) |
+| 입력 | `apps/web/src/common/input/` | [components.md](./components.md#input-컴포넌트) |
+| 모달 | `apps/web/src/common/modal/` | [components.md](./components.md#modal-컴포넌트) |
+| 스크롤 훅 | `packages/hooks/src/useScrollDirection.ts` | [hooks.md](./hooks.md#usescrolldirection) |
+| 마운트 훅 | `packages/hooks/src/useMounted.ts` | [hooks.md](./hooks.md#usemounted) |
+| 유저 API | `apps/web/src/api/user/user.ts` | [services.md](./services.md#user-api) |
+| 스타일 유틸 | `apps/web/src/utils/cn.ts` | [services.md](./services.md#cn) |
+| 디바운스 | `apps/web/src/utils/debounce.ts` | [services.md](./services.md#debounce) |
+| 쿼리 무효화 훅 | `packages/hooks/src/useInvalidateQueries.ts` | [hooks.md](./hooks.md#useinvalidatequeries) |
+| Axios 인스턴스 | `packages/api/src/` | [services.md](./services.md) |
 
 ---
 
@@ -326,4 +336,4 @@ useEffect(() => {
 
 ---
 
-**마지막 업데이트**: 2026-03-03
+**마지막 업데이트**: 2026-04-24

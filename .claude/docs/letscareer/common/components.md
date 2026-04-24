@@ -4,8 +4,10 @@
 
 ## 위치
 
+web 앱 전용 공통 컴포넌트 위치입니다. 앱 간 공유가 필요한 컴포넌트는 `packages/ui/` (`@letscareer/ui`)에 위치합니다.
+
 ```
-src/common/
+apps/web/src/common/
 ├── button/        # 버튼 컴포넌트들
 ├── input/         # 인풋 컴포넌트들
 ├── modal/         # 모달 컴포넌트들
@@ -34,7 +36,7 @@ src/common/
 
 ### 기본 버튼 (Button)
 
-**위치**: `src/common/button/Button.tsx`
+**위치**: `apps/web/src/common/button/Button.tsx`
 
 기본적인 버튼 컴포넌트입니다.
 
@@ -94,27 +96,27 @@ import Button from '@/common/button/Button';
 ### 기타 버튼들
 
 #### SolidButton
-- **위치**: `src/common/button/SolidButton.tsx`
+- **위치**: `apps/web/src/common/button/SolidButton.tsx`
 - Solid 스타일 버튼
 
 #### OutlinedButton
-- **위치**: `src/common/button/OutlinedButton.tsx`
+- **위치**: `apps/web/src/common/button/OutlinedButton.tsx`
 - 테두리 스타일 버튼
 
 #### SelectButton
-- **위치**: `src/common/button/SelectButton.tsx`
+- **위치**: `apps/web/src/common/button/SelectButton.tsx`
 - 선택형 버튼
 
 #### ModalButton
-- **위치**: `src/common/button/ModalButton.tsx`
+- **위치**: `apps/web/src/common/button/ModalButton.tsx`
 - 모달용 버튼
 
 #### BaseButton
-- **위치**: `src/common/button/BaseButton.tsx`
+- **위치**: `apps/web/src/common/button/BaseButton.tsx`
 - 기본 버튼 (다른 버튼들의 베이스)
 
 #### ApplyCTA
-- **위치**: `src/common/button/ApplyCTA.tsx`
+- **위치**: `apps/web/src/common/button/ApplyCTA.tsx`
 - 지원하기 CTA 버튼
 
 ---
@@ -123,7 +125,7 @@ import Button from '@/common/button/Button';
 
 ### Input (v2)
 
-**위치**: `src/common/input/v2/Input.tsx`
+**위치**: `apps/web/src/common/input/v2/Input.tsx`
 
 기본 인풋 컴포넌트 (최신 버전)
 
@@ -176,15 +178,15 @@ import Input from '@/common/input/v2/Input';
 ### 기타 Input
 
 #### TextArea
-- **위치**: `src/common/input/TextArea.tsx`
+- **위치**: `apps/web/src/common/input/TextArea.tsx`
 - 여러 줄 텍스트 입력
 
 #### LineInput
-- **위치**: `src/common/input/LineInput.tsx`
+- **위치**: `apps/web/src/common/input/LineInput.tsx`
 - 라인 스타일 인풋
 
 #### Input (v1)
-- **위치**: `src/common/input/v1/Input.tsx`
+- **위치**: `apps/web/src/common/input/v1/Input.tsx`
 - 이전 버전 (v2 사용 권장)
 
 ---
@@ -193,7 +195,7 @@ import Input from '@/common/input/v2/Input';
 
 ### BaseModal
 
-**위치**: `src/common/modal/BaseModal.tsx`
+**위치**: `apps/web/src/common/modal/BaseModal.tsx`
 
 기본 모달 컴포넌트입니다.
 
@@ -239,15 +241,15 @@ const [isOpen, setIsOpen] = useState(false);
 ### 기타 Modal
 
 #### ReportSubmitModal
-- **위치**: `src/common/modal/ReportSubmitModal.tsx`
+- **위치**: `apps/web/src/common/modal/ReportSubmitModal.tsx`
 - 리포트 제출 모달
 
 #### AlertModal
-- **위치**: `src/common/alert/AlertModal.tsx`
+- **위치**: `apps/web/src/common/alert/AlertModal.tsx`
 - 알림 모달
 
 #### WarningModal
-- **위치**: `src/common/alert/WarningModal.tsx`
+- **위치**: `apps/web/src/common/alert/WarningModal.tsx`
 - 경고 모달
 
 ---
@@ -256,19 +258,19 @@ const [isOpen, setIsOpen] = useState(false);
 
 ### Layout
 
-**위치**: `src/common/layout/Layout.tsx`
+**위치**: `apps/web/src/common/layout/Layout.tsx`
 
 페이지 레이아웃 컴포넌트
 
 ### ConditionalLayout
 
-**위치**: `src/common/layout/ConditionalLayout.tsx`
+**위치**: `apps/web/src/common/layout/ConditionalLayout.tsx`
 
 조건부 레이아웃 컴포넌트
 
 ### BottomNavBar
 
-**위치**: `src/common/layout/BottomNavBar.tsx`
+**위치**: `apps/web/src/common/layout/BottomNavBar.tsx`
 
 하단 네비게이션 바
 
@@ -278,37 +280,37 @@ const [isOpen, setIsOpen] = useState(false);
 
 ### BackHeader
 
-**위치**: `src/common/header/BackHeader.tsx`
+**위치**: `apps/web/src/common/header/BackHeader.tsx`
 
 뒤로가기 버튼이 있는 헤더
 
 ### SectionHeader
 
-**위치**: `src/common/header/SectionHeader.tsx`
+**위치**: `apps/web/src/common/header/SectionHeader.tsx`
 
 섹션 헤더
 
 ### SectionMainHeader
 
-**위치**: `src/common/header/SectionMainHeader.tsx`
+**위치**: `apps/web/src/common/header/SectionMainHeader.tsx`
 
 메인 섹션 헤더
 
 ### SectionSubHeader
 
-**위치**: `src/common/header/SectionSubHeader.tsx`
+**위치**: `apps/web/src/common/header/SectionSubHeader.tsx`
 
 서브 섹션 헤더
 
 ### Heading2
 
-**위치**: `src/common/header/Heading2.tsx`
+**위치**: `apps/web/src/common/header/Heading2.tsx`
 
 H2 헤딩 컴포넌트
 
 ### MoreHeader
 
-**위치**: `src/common/header/MoreHeader.tsx`
+**위치**: `apps/web/src/common/header/MoreHeader.tsx`
 
 더보기 헤더
 
@@ -318,19 +320,19 @@ H2 헤딩 컴포넌트
 
 ### FaqDropdown
 
-**위치**: `src/common/dropdown/FaqDropdown.tsx`
+**위치**: `apps/web/src/common/dropdown/FaqDropdown.tsx`
 
 FAQ 드롭다운
 
 ### FilterDropdown
 
-**위치**: `src/common/dropdown/FilterDropdown.tsx`
+**위치**: `apps/web/src/common/dropdown/FilterDropdown.tsx`
 
 필터 드롭다운
 
 ### OptionDropdown
 
-**위치**: `src/common/dropdown/OptionDropdown.tsx`
+**위치**: `apps/web/src/common/dropdown/OptionDropdown.tsx`
 
 옵션 드롭다운
 
@@ -340,19 +342,19 @@ FAQ 드롭다운
 
 ### ErrorContainer
 
-**위치**: `src/common/container/ErrorContainer.tsx`
+**위치**: `apps/web/src/common/container/ErrorContainer.tsx`
 
 에러 상태 컨테이너
 
 ### EmptyContainer
 
-**위치**: `src/common/container/EmptyContainer.tsx`
+**위치**: `apps/web/src/common/container/EmptyContainer.tsx`
 
 빈 상태 컨테이너
 
 ### LoadingContainer
 
-**위치**: `src/common/loading/LoadingContainer.tsx`
+**위치**: `apps/web/src/common/loading/LoadingContainer.tsx`
 
 로딩 상태 컨테이너
 
@@ -362,19 +364,19 @@ FAQ 드롭다운
 
 ### Badge
 
-**위치**: `src/common/badge/Badge.tsx`
+**위치**: `apps/web/src/common/badge/Badge.tsx`
 
 뱃지 컴포넌트
 
 ### CheckBox
 
-**위치**: `src/common/box/CheckBox.tsx`
+**위치**: `apps/web/src/common/box/CheckBox.tsx`
 
 체크박스
 
 ### CircularBox
 
-**위치**: `src/common/box/CircularBox.tsx`
+**위치**: `apps/web/src/common/box/CircularBox.tsx`
 
 원형 박스
 
@@ -384,13 +386,13 @@ FAQ 드롭다운
 
 ### DataTable
 
-**위치**: `src/common/table/DataTable.tsx`
+**위치**: `apps/web/src/common/table/DataTable.tsx`
 
 데이터 테이블
 
 ### ExpandableCell
 
-**위치**: `src/common/table/ExpandableCell.tsx`
+**위치**: `apps/web/src/common/table/ExpandableCell.tsx`
 
 확장 가능한 셀
 
@@ -400,7 +402,7 @@ FAQ 드롭다운
 
 ### If
 
-**위치**: `src/common/If.tsx`
+**위치**: `apps/web/src/common/If.tsx`
 
 조건부 렌더링 컴포넌트
 
@@ -412,55 +414,55 @@ FAQ 드롭다운
 
 ### HybridLink
 
-**위치**: `src/common/HybridLink.tsx`
+**위치**: `apps/web/src/common/HybridLink.tsx`
 
 Next.js + React 혼용 링크
 
 ### Break
 
-**위치**: `src/common/Break.tsx`
+**위치**: `apps/web/src/common/Break.tsx`
 
 줄바꿈 컴포넌트
 
 ### HorizontalRule
 
-**위치**: `src/common/HorizontalRule.tsx`
+**위치**: `apps/web/src/common/HorizontalRule.tsx`
 
 수평선 컴포넌트
 
 ### Duration
 
-**위치**: `src/common/Duration.tsx`
+**위치**: `apps/web/src/common/Duration.tsx`
 
 기간 표시 컴포넌트
 
 ### ControlLabel
 
-**위치**: `src/common/ControlLabel.tsx`
+**위치**: `apps/web/src/common/ControlLabel.tsx`
 
 컨트롤 레이블
 
 ### RequiredStar
 
-**위치**: `src/common/RequiredStar.tsx`
+**위치**: `apps/web/src/common/RequiredStar.tsx`
 
 필수 표시 별표
 
 ### ModalPortal
 
-**위치**: `src/common/ModalPortal.tsx`
+**위치**: `apps/web/src/common/ModalPortal.tsx`
 
 모달 포털 (Portal API)
 
 ### ModalOverlay
 
-**위치**: `src/common/ModalOverlay.tsx`
+**위치**: `apps/web/src/common/ModalOverlay.tsx`
 
 모달 오버레이 (배경)
 
 ### ScrollToTop
 
-**위치**: `src/common/scroll-to-top/ScrollToTop.tsx`
+**위치**: `apps/web/src/common/scroll-to-top/ScrollToTop.tsx`
 
 스크롤 최상단 이동 버튼
 
@@ -470,13 +472,13 @@ Next.js + React 혼용 링크
 
 ### BaseBottomSheet
 
-**위치**: `src/common/sheet/BaseBottomSheet.tsx`
+**위치**: `apps/web/src/common/sheet/BaseBottomSheet.tsx`
 
 기본 바텀 시트
 
 ### BottomSheet
 
-**위치**: `src/common/sheet/BottomSheeet.tsx`
+**위치**: `apps/web/src/common/sheet/BottomSheeet.tsx`
 
 바텀 시트 (타이포 주의)
 
@@ -486,13 +488,13 @@ Next.js + React 혼용 링크
 
 ### PriceView
 
-**위치**: `src/common/price/PriceView.tsx`
+**위치**: `apps/web/src/common/price/PriceView.tsx`
 
 가격 표시
 
 ### PriceSummary
 
-**위치**: `src/common/price/PriceSummary.tsx`
+**위치**: `apps/web/src/common/price/PriceSummary.tsx`
 
 가격 요약
 
@@ -502,7 +504,7 @@ Next.js + React 혼용 링크
 
 ### MobileCarousel
 
-**위치**: `src/common/carousel/MobileCarousel.tsx`
+**위치**: `apps/web/src/common/carousel/MobileCarousel.tsx`
 
 모바일 캐러셀
 
@@ -600,9 +602,9 @@ const MyForm = ({ onSubmit }: MyFormProps) => {
 ## 새 공통 컴포넌트 추가 시
 
 1. **적절한 카테고리 디렉토리**에 생성
-   - 버튼 → `src/common/button/`
-   - 인풋 → `src/common/input/`
-   - 모달 → `src/common/modal/`
+   - 버튼 → `apps/web/src/common/button/`
+   - 인풋 → `apps/web/src/common/input/`
+   - 모달 → `apps/web/src/common/modal/`
 
 2. **Props 인터페이스 정의**
    ```tsx

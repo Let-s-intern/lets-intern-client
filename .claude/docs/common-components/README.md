@@ -1,8 +1,15 @@
-# 공통 컴포넌트 (src/common)
+# 공통 컴포넌트
+
+최종 업데이트: 2026-04-24
 
 ## 개요
 
-`src/common/` 디렉토리에는 프로젝트 전반에서 재사용되는 공통 UI 컴포넌트가 위치한다.
+공통 UI 컴포넌트는 두 곳에 위치합니다.
+
+- `apps/web/src/common/` — web 앱 전용 공통 컴포넌트. Next.js Link/Image 등 사용 가능
+- `packages/ui/` (`@letscareer/ui`) — 앱 간 공유 컴포넌트. `next/*` import 금지, 프레임워크 독립
+
+이 문서는 `apps/web/src/common/` 기준으로 작성되었습니다.
 스타일링은 Tailwind CSS + `twMerge`가 주력이며, 일부 MUI 컴포넌트도 사용한다.
 
 ---
@@ -10,7 +17,7 @@
 ## 폴더 구조
 
 ```
-src/common/
+apps/web/src/common/
 ├── alert/           # 알림/경고 모달
 ├── badge/           # 배지
 ├── box/             # 체크박스, 원형 박스

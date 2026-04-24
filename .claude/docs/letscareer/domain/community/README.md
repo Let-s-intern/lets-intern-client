@@ -10,10 +10,10 @@
 ## 폴더 구조
 
 ```
-src/app/(user)/community/
+apps/web/src/app/(user)/community/
   └── page.tsx                         # 라우팅 + SEO 메타데이터만
 
-src/domain/community/
+apps/web/src/domain/community/
   ├── CommunityScreen.tsx              # 메인 스크린 (섹션 조합)
   ├── animations.ts                    # 공통 FADE_IN 애니메이션 유틸리티
   ├── sections/
@@ -102,8 +102,8 @@ B2B 랜딩 페이지와 동일한 디자인 시스템 적용:
 
 | 파일 | 변경 내용 |
 |---|---|
-| `src/common/layout/header/GlobalNavTopBar.tsx` | 커뮤니티 외부 링크(oopy.io) → `/community` |
-| `src/common/layout/header/NavBar.tsx` | 사이드 메뉴 커뮤니티 링크 → `/community` |
+| `apps/web/src/common/layout/header/GlobalNavTopBar.tsx` | 커뮤니티 외부 링크(oopy.io) → `/community` |
+| `apps/web/src/common/layout/header/NavBar.tsx` | 사이드 메뉴 커뮤니티 링크 → `/community` |
 
 ## TODO
 

@@ -25,8 +25,8 @@
 ### 라우트 엔트리
 
 ```
-src/app/(user)/program/challenge/[id]/page.tsx          # 리다이렉트
-src/app/(user)/program/challenge/[id]/[title]/page.tsx  # 메인 (뷰 분기)
+apps/web/src/app/(user)/program/challenge/[id]/page.tsx          # 리다이렉트
+apps/web/src/app/(user)/program/challenge/[id]/[title]/page.tsx  # 메인 (뷰 분기)
 ```
 
 ---
@@ -34,7 +34,7 @@ src/app/(user)/program/challenge/[id]/[title]/page.tsx  # 메인 (뷰 분기)
 ## 파일 구조
 
 ```
-src/domain/program/challenge/
+apps/web/src/domain/program/challenge/
 ├── ChallengeView.tsx                  # 기본 뷰 (가장 범용)
 ├── ChallengePortfolioView.tsx         # 포트폴리오 전용 뷰
 ├── ChallengeMarketingView.tsx         # 마케팅 전용 뷰
@@ -86,7 +86,7 @@ type ChallengePricePlan = 'LIGHT' | 'BASIC' | 'STANDARD' | 'PREMIUM';
 ### 가격 데이터 (API)
 
 ```typescript
-// src/schema.ts
+// apps/web/src/schema.ts
 interface ChallengePriceInfo {
   title?: string;                    // "베이직", "스탠다드" 등
   description?: string;              // 옵션 설명 텍스트
@@ -124,7 +124,7 @@ interface ChallengePriceInfo {
 ### PricePlanBottomSheet 구조
 
 ```
-src/domain/program/PricePlanBottomSheet.tsx
+apps/web/src/domain/program/PricePlanBottomSheet.tsx
 ```
 
 - Props: `challenge: ChallengeIdPrimitive`, `challengeId: string`, `isOpen`, `onClose`
@@ -137,7 +137,7 @@ src/domain/program/PricePlanBottomSheet.tsx
 ## ChallengeType ↔ 챌린지 매핑
 
 ```typescript
-// src/schema.ts
+// apps/web/src/schema.ts
 type ChallengeType =
   | 'CAREER_START'                  // 이력서 1주 완성
   | 'DOCUMENT_PREPARATION'
@@ -172,8 +172,8 @@ type ChallengeType =
 
 | 용도 | 위치 |
 |---|---|
-| 챌린지 데이터 fetch | `src/api/challenge/challenge.ts` |
-| 스키마 타입 | `src/schema.ts` (`ChallengeIdPrimitive`, `ChallengePriceInfo`) |
-| 가격 계산 유틸 | `src/utils/getChallengeOptionPriceInfo.ts` |
-| 결제 상태 관리 | `src/store/useProgramStore.ts` |
-| 공통 컴포넌트 | `src/common/` (ControlLabel, BottomSheet, PriceSummary 등) |
+| 챌린지 데이터 fetch | `apps/web/src/api/challenge/challenge.ts` |
+| 스키마 타입 | `apps/web/src/schema.ts` (`ChallengeIdPrimitive`, `ChallengePriceInfo`) |
+| 가격 계산 유틸 | `apps/web/src/utils/getChallengeOptionPriceInfo.ts` |
+| 결제 상태 관리 | `apps/web/src/store/useProgramStore.ts` |
+| 공통 컴포넌트 | `apps/web/src/common/` (ControlLabel, BottomSheet, PriceSummary 등) |
