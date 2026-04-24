@@ -1,8 +1,5 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import mentorConfig from '../constants/config';
@@ -22,7 +19,7 @@ const INITIAL_FORM_DATA: BasicInfoFormData = {
 };
 
 export default function ProfilePage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { data: user } = useUserQuery();
   const { alertProps, showAlert } = useMentorAlert();
 
@@ -136,11 +133,11 @@ export default function ProfilePage() {
     const { pendingHref, pendingAction } = navGuard;
     setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });
     if (pendingAction === 'back') {
-      router.back();
+      navigate(-1);
     } else if (pendingHref) {
-      router.push(pendingHref);
+      navigate(pendingHref);
     }
-  }, [navGuard, router]);
+  }, [navGuard, navigate]);
 
   const handleNavCancel = useCallback(() => {
     setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });

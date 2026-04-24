@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
-import { deriveMissionStatus } from '@/domain/mentor/utils/deriveMissionStatus';
+import { deriveMissionStatus } from '@/pages/utils/deriveMissionStatus';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];

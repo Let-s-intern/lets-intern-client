@@ -2,8 +2,8 @@
 
 import { useMediaQuery } from '@mui/material';
 
-import FeedbackModal from '@/domain/mentor/feedback/FeedbackModal';
-import MobileFeedbackPage from '@/domain/mentor/feedback/ui/MobileFeedbackPage';
+import FeedbackModal from '@/pages/feedback/FeedbackModal';
+import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
 import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
 import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 

@@ -1,17 +1,13 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import NotificationBell from '@/domain/mentor/notification/ui/NotificationBell';
+import { Link, useLocation } from 'react-router-dom';
+import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
 const navItems = [
-  { name: '프로그램 일정', url: '/mentor' },
-  { name: '피드백 현황', url: '/mentor/feedback-management' },
-  { name: '참여중인 챌린지', url: '/mentor/challenges' },
-  { name: '프로필', url: '/mentor/profile' },
-  { name: '공지사항', url: '/mentor/notice' },
+  { name: '프로그램 일정', url: '/' },
+  { name: '피드백 현황', url: '/feedback-management' },
+  { name: '참여중인 챌린지', url: '/challenges' },
+  { name: '프로필', url: '/profile' },
+  { name: '공지사항', url: '/notice' },
 ];
 
 interface MentorSidebarProps {
@@ -20,7 +16,7 @@ interface MentorSidebarProps {
 }
 
 export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const [isPwa, setIsPwa] = useState(false);
 
   useEffect(() => {
@@ -45,7 +41,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
         <nav className="flex h-screen w-[296px] flex-col justify-between border-r border-neutral-80 bg-white p-4">
           <div className="flex flex-col">
             <div className="flex h-[70px] items-center justify-between px-3 py-2.5">
-              <Link href="/mentor" onClick={onClose}>
+              <Link to="/" onClick={onClose}>
                 <img
                   src="/logo/horizontal-logo.svg"
                   alt="Logo"
@@ -80,14 +76,14 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
             <ul className="flex flex-col">
               {navItems.map((item) => {
                 const isActive =
-                  item.url === '/mentor'
-                    ? pathname === '/mentor'
+                  item.url === '/'
+                    ? pathname === '/'
                     : pathname.startsWith(item.url);
 
                 return (
                   <li key={item.url}>
                     <Link
-                      href={item.url}
+                      to={item.url}
                       onClick={onClose}
                       className={`block rounded px-3 py-2.5 text-xsmall16 tracking-[-0.6px] ${
                         isActive
@@ -103,8 +99,8 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
             </ul>
           </div>
           {!isPwa && (
-            <Link
-              href="/"
+            <a
+              href="https://letscareer.co.kr"
               className="flex items-center gap-1 rounded px-3 py-2.5"
             >
               <svg
@@ -143,7 +139,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
               <span className="text-xsmall16 font-medium tracking-[-0.6px] text-neutral-40">
                 홈페이지로 이동
               </span>
-            </Link>
+            </a>
           )}
         </nav>
       </aside>

@@ -1,7 +1,4 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import config from '../../constants/config';
 
 interface MentorChallengeCardProps {
@@ -60,7 +57,7 @@ const MentorChallengeCard = ({
 
   return (
     <Link
-      href={`/mentor/challenges/${challengeId}`}
+      to={`/challenges/${challengeId}`}
       className="flex flex-col overflow-hidden rounded-xl border border-gray-200 transition-shadow hover:shadow-md"
     >
       <img

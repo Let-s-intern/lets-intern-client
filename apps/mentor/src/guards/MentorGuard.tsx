@@ -1,8 +1,5 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -19,7 +16,7 @@ import axios from '@/utils/axios';
 export const MentorGuard: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { isLoggedIn, isInitialized } = useAuthStore();
 
   const { data: isMentor, isLoading } = useIsMentorQuery({
@@ -39,7 +36,7 @@ export const MentorGuard: React.FC<{
 
   // 2. 로그인했지만 멘토 아님
   if (!isMentor) {
-    return <NotMentorPrompt onGoBack={() => router.back()} />;
+    return <NotMentorPrompt onGoBack={() => navigate(-1)} />;
   }
 
   // 3. 멘토
@@ -48,7 +45,7 @@ export const MentorGuard: React.FC<{
 
 /** 미로그인 시 로그인 폼 직접 표시 */
 const LoginPrompt = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { login } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -157,7 +154,7 @@ const LoginPrompt = () => {
 
         <button
           type="button"
-          onClick={() => router.push('/')}
+          onClick={() => navigate('/')}
           className="mt-3 w-full rounded-xl border border-neutral-200 py-3 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50"
         >
           홈으로 돌아가기
@@ -169,7 +166,7 @@ const LoginPrompt = () => {
 
 /** 로그인했지만 멘토 권한 없을 때 */
 const NotMentorPrompt = ({ onGoBack }: { onGoBack: () => void }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -221,7 +218,7 @@ const NotMentorPrompt = ({ onGoBack }: { onGoBack: () => void }) => {
           </button>
           <button
             type="button"
-            onClick={() => router.push('/')}
+            onClick={() => navigate('/')}
             className="rounded-xl border border-neutral-200 py-3 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50"
           >
             홈으로 돌아가기
@@ -235,10 +232,11 @@ const NotMentorPrompt = ({ onGoBack }: { onGoBack: () => void }) => {
 /** 멘토 로그인 전용 소셜 로그인 버튼 */
 const MentorSocialLogin = () => {
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
-    const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
+    const basePath = import.meta.env.VITE_API_BASE_PATH;
     if (!basePath) return '#';
 
-    const redirect = typeof window !== 'undefined' ? window.location.pathname : '/mentor';
+    const redirect =
+      typeof window !== 'undefined' ? window.location.pathname : '/';
     const redirectPath = `${typeof window !== 'undefined' ? window.location.origin : ''}/login?redirect=${encodeURIComponent(redirect)}`;
 
     return `${basePath}/oauth2/authorize/${

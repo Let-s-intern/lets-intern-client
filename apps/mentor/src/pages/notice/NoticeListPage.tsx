@@ -1,7 +1,4 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
@@ -64,7 +61,7 @@ function GuideRow({
   if (hasContents) {
     return (
       <Link
-        href={`/mentor/notice/${guide.challengeMentorGuideId}`}
+        to={`/notice/${guide.challengeMentorGuideId}`}
         className={rowClass}
       >
         {badges}

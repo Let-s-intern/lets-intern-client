@@ -10,7 +10,7 @@ import {
   getMentorAttendanceQueryKey,
 } from './useMentorAttendanceQuery';
 import { emptyEditorState } from '@/common/lexical/EditorApp';
-import mentorConfig from '@/domain/mentor/constants/config';
+import mentorConfig from '@/pages/constants/config';
 
 interface UseFeedbackModalParams {
   isOpen: boolean;

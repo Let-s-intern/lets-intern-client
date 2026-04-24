@@ -1,6 +1,5 @@
-// TODO: next/* imports → react-router-dom 교체 필요
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import { useMentorChallengeListQuery } from '@/api/user/user';

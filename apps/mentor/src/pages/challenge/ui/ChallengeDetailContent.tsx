@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 
-import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
-import { deriveMissionStatus } from '@/domain/mentor/utils/deriveMissionStatus';
+import { useMentorAttendanceQuery } from '@/pages/feedback/hooks/useMentorAttendanceQuery';
+import { deriveMissionStatus } from '@/pages/utils/deriveMissionStatus';
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ko-KR', {

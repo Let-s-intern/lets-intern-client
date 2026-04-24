@@ -1,7 +1,4 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
@@ -82,7 +79,7 @@ export default function NotificationDropdown({
               return (
                 <Link
                   key={guide.challengeMentorGuideId}
-                  href={`/mentor/notice/${guide.challengeMentorGuideId}`}
+                  to={`/notice/${guide.challengeMentorGuideId}`}
                   onClick={() => handleClick(guide)}
                 >
                   {content}

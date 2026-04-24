@@ -1,13 +1,11 @@
-// TODO: next/* imports → react-router-dom 교체 필요
-'use client';
-
-import Link from 'next/link';
+import { Link, useParams } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 
-export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
+export default function NoticeDetailPage() {
+  const { noticeId } = useParams<{ noticeId: string }>();
   const { data, isLoading } = useMentorGuideListQuery();
   const guides = data?.challengeMentorGuideList ?? [];
   const guide = guides.find(
@@ -46,7 +44,7 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
 
       <div className="flex flex-col gap-4">
         <Link
-          href="/mentor/notice"
+          to="/notice"
           className="flex items-center gap-1 text-xsmall14 text-neutral-40 hover:text-neutral-10"
         >
           <svg

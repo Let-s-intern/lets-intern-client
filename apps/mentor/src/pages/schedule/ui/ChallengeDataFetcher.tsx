@@ -6,7 +6,7 @@ import type { ChallengeMentorVo } from '@/api/user/user';
 import {
   useMentorMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
-import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
+import { useMentorAttendanceQuery } from '@/pages/feedback/hooks/useMentorAttendanceQuery';
 import type { PeriodBarData } from '../types';
 import {
   computeDatesFromConfig,
