@@ -1,33 +1,30 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-// TODO: mentor 라우트 이전 후 추가 예정
+import MentorShell from '@/layout/MentorShell';
+import OAuthCallbackPage from '@/pages/login/OAuthCallbackPage';
+import SchedulePage from '@/pages/schedule/SchedulePage';
+import ProfilePage from '@/pages/profile/ProfilePage';
+import ChallengeListPage from '@/pages/challenge/ChallengeListPage';
+import ChallengeDetailPage from '@/pages/challenge/ChallengeDetailPage';
+import FeedbackManagementPage from '@/pages/feedback-management/FeedbackManagementPage';
+import NoticeListPage from '@/pages/notice/NoticeListPage';
+import NoticeDetailPage from '@/pages/notice/NoticeDetailPage';
+
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: <div>렛츠커리어 멘토 (개발 중)</div>,
+    path: '/login',
+    element: <OAuthCallbackPage />,
   },
   {
-    path: '/profile',
-    element: <div>프로필</div>,
-  },
-  {
-    path: '/challenges',
-    element: <div>챌린지 목록</div>,
-  },
-  {
-    path: '/challenges/:challengeId',
-    element: <div>챌린지 상세</div>,
-  },
-  {
-    path: '/feedback-management',
-    element: <div>피드백 관리</div>,
-  },
-  {
-    path: '/notice',
-    element: <div>공지사항</div>,
-  },
-  {
-    path: '/notice/:noticeId',
-    element: <div>공지사항 상세</div>,
+    element: <MentorShell />,
+    children: [
+      { path: '/', element: <SchedulePage /> },
+      { path: '/profile', element: <ProfilePage /> },
+      { path: '/challenges', element: <ChallengeListPage /> },
+      { path: '/challenges/:challengeId', element: <ChallengeDetailPage /> },
+      { path: '/feedback-management', element: <FeedbackManagementPage /> },
+      { path: '/notice', element: <NoticeListPage /> },
+      { path: '/notice/:noticeId', element: <NoticeDetailPage /> },
+    ],
   },
 ]);
