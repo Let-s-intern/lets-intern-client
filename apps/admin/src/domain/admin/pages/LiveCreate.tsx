@@ -109,7 +109,7 @@ const LiveCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('라이브가 생성되었습니다.');
-    navigate('/admin/programs');
+    navigate('/programs');
   }, [input, content, postLive, snackbar, navigate]);
 
   const [importJsonString, setImportJsonString] = useState('');

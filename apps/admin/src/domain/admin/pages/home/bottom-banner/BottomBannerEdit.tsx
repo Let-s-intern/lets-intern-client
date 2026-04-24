@@ -35,7 +35,7 @@ const BottomBannerEdit = () => {
   const { mutate: editBottomBanner } = useEditBannerForAdmin({
     successCallback: () => {
       alert('홈 하단 배너가 수정되었습니다.');
-      navigate('/admin/home/bottom-banners');
+      navigate('/home/bottom-banners');
     },
     errorCallback: (error) => {
       alert(error);

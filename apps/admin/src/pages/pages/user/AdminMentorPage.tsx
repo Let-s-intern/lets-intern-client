@@ -103,7 +103,7 @@ function MentorManagementTable() {
                 >
                   <td className="px-6 py-4 text-xsmall14">
                     <Link
-                      to={`/admin/mentors/${mentor.id}`}
+                      to={`/mentors/${mentor.id}`}
                       className="text-neutral-0 underline hover:text-primary-30"
                     >
                       {mentor.name}
@@ -152,7 +152,7 @@ export default function AdminMentorPage() {
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (newValue === 1) {
-      navigate('/admin/mentors/register');
+      navigate('/mentors/register');
     } else {
       setTab(newValue);
     }

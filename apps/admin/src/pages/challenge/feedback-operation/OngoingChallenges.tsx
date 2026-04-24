@@ -129,7 +129,7 @@ function ChallengeRow({ programInfo }: { programInfo: OngoingProgramInfo }) {
       </td>
       <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
         <Link
-          to={`/admin/challenge/operation/${challengeId}/feedback`}
+          to={`/challenge/operation/${challengeId}/feedback`}
           className="text-blue-600 hover:underline"
         >
           바로가기

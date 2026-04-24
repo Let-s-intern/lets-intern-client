@@ -33,7 +33,7 @@ const PopUpBannerEdit = () => {
   const { mutate: editPopUpBanner } = useEditBannerForAdmin({
     successCallback: () => {
       alert('팝업이 수정되었습니다.');
-      navigate('/admin/banner/pop-up');
+      navigate('/banner/pop-up');
     },
     errorCallback: (error) => {
       alert(error);

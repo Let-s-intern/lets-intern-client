@@ -69,7 +69,7 @@ const Coupons = () => {
         <header className="flex items-center justify-between px-3">
           <h1 className="text-2xl font-semibold">쿠폰 관리</h1>
           <Link
-            to="/admin/coupons/new"
+            to="/coupons/new"
             className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           >
             등록
@@ -171,7 +171,7 @@ const Coupons = () => {
                     )}
                   >
                     <div className="flex items-center gap-4">
-                      <Link to={`/admin/coupons/${coupon.id}/edit`}>
+                      <Link to={`/coupons/${coupon.id}/edit`}>
                         <i>
                           <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                         </i>

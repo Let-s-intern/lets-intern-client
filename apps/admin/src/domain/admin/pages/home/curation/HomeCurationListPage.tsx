@@ -93,7 +93,7 @@ const HomeCurationListPage = () => {
               key={'edit' + id}
               icon={<Pencil size={16} />}
               label="수정"
-              onClick={() => navigate(`/admin/home/curation/${id}/edit`)}
+              onClick={() => navigate(`/home/curation/${id}/edit`)}
             />,
             <GridActionsCellItem
               key={'delete' + id}
@@ -118,7 +118,7 @@ const HomeCurationListPage = () => {
               variant="contained"
               color="primary"
               startIcon={<Plus size={12} />}
-              onClick={() => navigate(`/admin/home/curation/create`)}
+              onClick={() => navigate(`/home/curation/create`)}
             >
               큐레이션 등록
             </Button>

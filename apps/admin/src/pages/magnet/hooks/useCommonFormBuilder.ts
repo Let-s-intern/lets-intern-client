@@ -164,7 +164,7 @@ export const useCommonFormBuilder = () => {
   };
 
   const navigateToList = () => {
-    navigate('/admin/magnet/list');
+    navigate('/magnet/list');
   };
 
   return {

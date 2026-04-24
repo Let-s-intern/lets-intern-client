@@ -33,7 +33,7 @@ export const useAdminChallengeMentorGuideAllQuery = () => {
   return useQuery({
     queryKey: [AdminChallengeMentorGuideQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/admin/challenge-mentor-guide');
+      const res = await axios.get('/challenge-mentor-guide');
       return challengeMentorGuideListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
@@ -48,7 +48,7 @@ export const useAdminChallengeMentorGuideListQuery = (
     queryKey: [AdminChallengeMentorGuideQueryKey, challengeMentorId],
     queryFn: async () => {
       const res = await axios.get(
-        `/admin/challenge-mentor-guide/${challengeMentorId}`,
+        `/challenge-mentor-guide/${challengeMentorId}`,
       );
       return challengeMentorGuideListSchema.parse(res.data.data);
     },
@@ -64,7 +64,7 @@ export const usePostAdminChallengeMentorGuide = () => {
     mutationFn: async (
       body: CreateChallengeMentorGuideReq & { challengeMentorId?: number },
     ) => {
-      const res = await axios.post('/admin/challenge-mentor-guide', body);
+      const res = await axios.post('/challenge-mentor-guide', body);
       return res.data;
     },
     onSuccess: () => {
@@ -88,7 +88,7 @@ export const usePatchAdminChallengeMentorGuide = () => {
       ...body
     }: UpdateChallengeMentorGuideReq & { challengeMentorGuideId: number }) => {
       const res = await axios.patch(
-        `/admin/challenge-mentor-guide/${challengeMentorGuideId}`,
+        `/challenge-mentor-guide/${challengeMentorGuideId}`,
         body,
       );
       return res.data;
@@ -111,7 +111,7 @@ export const useDeleteAdminChallengeMentorGuide = () => {
   return useMutation({
     mutationFn: async (challengeMentorGuideId: number) => {
       return axios.delete(
-        `/admin/challenge-mentor-guide/${challengeMentorGuideId}`,
+        `/challenge-mentor-guide/${challengeMentorGuideId}`,
       );
     },
     onSuccess: () => {

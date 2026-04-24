@@ -78,7 +78,7 @@ const BottomBanners = () => {
 
           return [
             <Link
-              to={`/admin/home/bottom-banners/${id}/edit`}
+              to={`/home/bottom-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
@@ -102,7 +102,7 @@ const BottomBanners = () => {
         title="홈 하단 배너 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/home/bottom-banners/new',
+          href: '/home/bottom-banners/new',
         }}
       >
         {isLoading ? (

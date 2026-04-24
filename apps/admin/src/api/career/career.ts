@@ -100,7 +100,7 @@ export const useGetAdminUserCareerQuery = (
         size: String(pageable.size),
       });
       const res = await axios.get(
-        `/admin/user-career/user/${userId}?${params.toString()}`,
+        `/user-career/user/${userId}?${params.toString()}`,
       );
       const data = res.data.data;
 
@@ -154,7 +154,7 @@ export const usePostAdminCareerMutation = (userId: number) => {
 
   return useMutation({
     mutationFn: async (careerData: FormData) => {
-      await axios.post(`/admin/user-career/user/${userId}`, careerData, {
+      await axios.post(`/user-career/user/${userId}`, careerData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -177,7 +177,7 @@ export const useDeleteAdminCareerMutation = (userId: number) => {
 
   return useMutation({
     mutationFn: async (careerId: number) => {
-      await axios.delete(`/admin/user-career/user/${userId}/${careerId}`);
+      await axios.delete(`/user-career/user/${userId}/${careerId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
@@ -194,7 +194,7 @@ export const usePostAdminExperienceMutation = (userId: number) => {
   return useMutation({
     mutationFn: async (data: UserExperience) => {
       const res = await axios.post(
-        `/admin/user-experience/user/${userId}`,
+        `/user-experience/user/${userId}`,
         data,
       );
       return res.data.data;

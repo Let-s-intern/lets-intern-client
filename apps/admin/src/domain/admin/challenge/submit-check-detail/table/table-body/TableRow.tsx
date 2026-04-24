@@ -138,7 +138,7 @@ const TableRow = ({
             currentChallenge?.id &&
             missionDetail?.id &&
             attendanceItem.attendance.userId
-              ? `/admin/challenge/operation/${currentChallenge.id}/attendances/${missionDetail.id}/${attendanceItem.attendance.userId}`
+              ? `/challenge/operation/${currentChallenge.id}/attendances/${missionDetail.id}/${attendanceItem.attendance.userId}`
               : null;
           const linkHref =
             attendanceItem.attendance.link || experienceSummaryLink;

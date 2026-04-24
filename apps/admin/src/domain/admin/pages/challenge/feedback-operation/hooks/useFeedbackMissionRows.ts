@@ -25,7 +25,7 @@ const useFeedbackMissionRows = (): Row[] => {
     () =>
       (data?.missionList ?? []).map((item) => ({
         ...item,
-        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
+        url: `/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     [data, programId],
   );

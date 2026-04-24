@@ -19,32 +19,32 @@ const getNavLinks = (programId?: string | number) => {
   return [
     {
       id: 'home',
-      to: `/admin/challenge/operation/${programId}/home`,
+      to: `/challenge/operation/${programId}/home`,
       text: '홈',
     },
     {
       id: 'register-mission',
-      to: `/admin/challenge/operation/${programId}/register-mission`,
+      to: `/challenge/operation/${programId}/register-mission`,
       text: '미션등록',
     },
     {
       id: 'attendances',
-      to: `/admin/challenge/operation/${programId}/attendances`,
+      to: `/challenge/operation/${programId}/attendances`,
       text: '제출확인',
     },
     {
       id: 'participants',
-      to: `/admin/challenge/operation/${programId}/participants`,
+      to: `/challenge/operation/${programId}/participants`,
       text: '참여자',
     },
     {
       id: 'payback',
-      to: `/admin/challenge/operation/${programId}/payback`,
+      to: `/challenge/operation/${programId}/payback`,
       text: '페이백',
     },
     {
       id: 'feedback',
-      to: `/admin/challenge/operation/${programId}/feedback`,
+      to: `/challenge/operation/${programId}/feedback`,
       text: '피드백',
     },
   ];
@@ -75,7 +75,7 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
         className="ml-3 border p-3"
         onChange={(e) => {
           if (e.target.value) {
-            navigate(`/admin/challenge/operation/${e.target.value}/home`);
+            navigate(`/challenge/operation/${e.target.value}/home`);
           }
         }}
       >

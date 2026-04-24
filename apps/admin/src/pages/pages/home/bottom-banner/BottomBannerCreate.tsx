@@ -21,7 +21,7 @@ const BottomBannerCreate = () => {
   const { mutate: addBottomBanner } = usePostBannerForAdmin({
     successCallback: () => {
       alert('홈 하단 배너가 등록되었습니다.');
-      navigate('/admin/home/bottom-banners');
+      navigate('/home/bottom-banners');
     },
     errorCallback: (error) => {
       alert(error);

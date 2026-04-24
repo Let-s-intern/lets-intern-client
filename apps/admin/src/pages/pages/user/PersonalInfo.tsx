@@ -8,7 +8,7 @@ const PersonalInfo = ({ data }: { data: UserAdminDetail }) => {
         <h1 className="text-lg font-semibold">개인 정보</h1>
         <button
           onClick={() =>
-            (window.location.href = `/admin/users/${data?.userInfo.id}/edit`)
+            (window.location.href = `/users/${data?.userInfo.id}/edit`)
           }
           className="rounded-lg bg-neutral-50 px-4 py-1 text-white hover:opacity-80"
         >

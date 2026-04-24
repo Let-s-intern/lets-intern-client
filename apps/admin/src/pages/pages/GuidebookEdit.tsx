@@ -61,7 +61,7 @@ const GuidebookEdit: React.FC = () => {
       await client.invalidateQueries();
 
       snackbar('저장되었습니다.');
-      navigate('/admin/programs');
+      navigate('/programs');
     } finally {
       setLoading(false);
     }

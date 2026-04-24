@@ -249,7 +249,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/blog/list">블로그</SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
-          <SideNavItem href="/admin">관리자 페이지</SideNavItem>
+          <SideNavItem href="/">관리자 페이지</SideNavItem>
         )}
         <SideNavItem className="notice_gnb" href="/about">
           렛츠커리어 스토리

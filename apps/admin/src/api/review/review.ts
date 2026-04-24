@@ -293,7 +293,7 @@ export const useGetAdminBlogReviewList = () => {
   return useQuery({
     queryKey: [adminBlogReviewListQueryKey],
     queryFn: async () => {
-      const res = await axiosV2.get('/admin/review/blog');
+      const res = await axiosV2.get('/review/blog');
       return adminBlogReviewListSchema.parse(res.data.data).reviewList;
     },
     refetchOnWindowFocus: false,
@@ -314,7 +314,7 @@ export const usePostAdminBlogReview = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (newReview: AdminBlogReviewPostReq) => {
-      const res = await axiosV2.post('/admin/review/blog', newReview);
+      const res = await axiosV2.post('/review/blog', newReview);
       return res;
     },
     onSuccess: async () =>
@@ -343,7 +343,7 @@ export const usePatchAdminBlogReview = () => {
   return useMutation({
     mutationFn: async (updatedReview: AdminBlogReviewPatchReq) => {
       const res = await axiosV2.patch(
-        `/admin/review/blog/${updatedReview.blogReviewId}`,
+        `/review/blog/${updatedReview.blogReviewId}`,
         updatedReview,
       );
       return res;
@@ -361,7 +361,7 @@ export const useDeleteAdminBlogReview = () => {
 
   return useMutation({
     mutationFn: async (blogReviewId: number | string) => {
-      const res = await axiosV2.delete(`/admin/review/blog/${blogReviewId}`);
+      const res = await axiosV2.delete(`/review/blog/${blogReviewId}`);
       return res;
     },
     onSuccess: async () =>
@@ -425,7 +425,7 @@ export const useGetAdminProgramReview = ({ type }: { type: ReviewType }) => {
   return useQuery({
     queryKey: getAdminProgramReviewQueryKey(type),
     queryFn: async () => {
-      const res = await axiosV2.get(`/admin/review/${type}`);
+      const res = await axiosV2.get(`/review/${type}`);
       return adminProgramReviewListSchema.parse(res.data.data);
     },
   });
@@ -455,7 +455,7 @@ export const useUpdateAdminProgramReview = ({
       reviewId: number;
       isVisible: boolean;
     }) => {
-      await axiosV2.patch(`/admin/review/${type}/${reviewId}`, {
+      await axiosV2.patch(`/review/${type}/${reviewId}`, {
         isVisible,
       });
 
@@ -497,7 +497,7 @@ export const useUpdateAdminProgramReviewItem = ({
       reviewItemId: number;
       isVisible: boolean;
     }) => {
-      await axiosV2.patch(`/admin/review/item/${reviewItemId}`, {
+      await axiosV2.patch(`/review/item/${reviewItemId}`, {
         isVisible,
       });
 

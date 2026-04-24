@@ -86,7 +86,7 @@ export const useLeadHistoryListQuery = (
       let totalPages = 1;
 
       while (page <= totalPages) {
-        const res = await axios.get('/admin/lead-history', {
+        const res = await axios.get('/lead-history', {
           params: {
             page,
             size: pageSize,
@@ -136,7 +136,7 @@ export const useCreateLeadHistoryMutation = () => {
 
   return useMutation({
     mutationFn: async (body: CreateLeadHistoryRequest) => {
-      return axios.post('/admin/lead-history', body);
+      return axios.post('/lead-history', body);
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [leadHistoryListQueryKey] });
@@ -161,7 +161,7 @@ export const useLeadEventListQuery = (
     enabled: options?.enabled ?? true,
     queryFn: async () => {
       const { pageable, ...rest } = params;
-      const res = await axios.get('/admin/lead-event', {
+      const res = await axios.get('/lead-event', {
         params: {
           page: pageable.page,
           size: pageable.size,
@@ -186,7 +186,7 @@ export const useDeleteLeadEventMutation = () => {
 
   return useMutation({
     mutationFn: async (leadEventId: number) => {
-      return axios.delete(`/admin/lead-event/${leadEventId}`);
+      return axios.delete(`/lead-event/${leadEventId}`);
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [leadEventListQueryKey] });
@@ -200,7 +200,7 @@ export const useCreateLeadEventMutation = () => {
 
   return useMutation({
     mutationFn: async (body: CreateLeadEventRequest) => {
-      return axios.post('/admin/lead-event', body);
+      return axios.post('/lead-event', body);
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [leadEventListQueryKey] });

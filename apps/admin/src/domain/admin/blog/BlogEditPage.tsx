@@ -74,7 +74,7 @@ const BlogEditPage = ({ blogId, initialBlogData }: BlogEditPageProps) => {
           />
 
           <BlogActionButtons
-            onCancel={() => navigate('/admin/blog/list')}
+            onCancel={() => navigate('/blog/list')}
             onSaveTemp={() => patchBlog(false)}
             onPublish={() => patchBlog(true)}
           />

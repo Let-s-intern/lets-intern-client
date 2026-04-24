@@ -142,7 +142,7 @@ const AdminReportCreatePage = () => {
 
     setSnackbar('서류 진단이 생성되었습니다.');
 
-    navigate('/admin/report/list');
+    navigate('/report/list');
   };
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -592,7 +592,7 @@ const AdminReportCreatePage = () => {
               variant="outlined"
               type="button"
               onClick={() => {
-                navigate('/admin/report/list');
+                navigate('/report/list');
               }}
             >
               취소 (리스트로 돌아가기)

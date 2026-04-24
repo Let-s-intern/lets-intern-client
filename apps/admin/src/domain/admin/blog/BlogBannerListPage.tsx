@@ -81,7 +81,7 @@ export default function BlogBannerListPage() {
             key={'edit' + id}
             icon={<Pencil size={20} />}
             label="Edit"
-            onClick={() => navigate(`/admin/blog/banner/edit/${id}`)}
+            onClick={() => navigate(`/blog/banner/edit/${id}`)}
           />,
           <GridActionsCellItem
             key={'delete' + id}
@@ -101,7 +101,7 @@ export default function BlogBannerListPage() {
         <Button
           className="h-fit"
           variant="outlined"
-          onClick={() => navigate('/admin/blog/banner/create')}
+          onClick={() => navigate('/blog/banner/create')}
         >
           등록
         </Button>

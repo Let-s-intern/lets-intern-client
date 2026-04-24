@@ -68,9 +68,9 @@ describe('feedbackStatus PATCH 요청 body 검증', () => {
 
     // mutationFn: const { attendanceId, ...body } = req
     const { attendanceId, ...body } = req;
-    mockPatch(`/admin/attendance/${attendanceId}`, body);
+    mockPatch(`/attendance/${attendanceId}`, body);
 
-    expect(mockPatch).toHaveBeenCalledWith('/admin/attendance/42', {
+    expect(mockPatch).toHaveBeenCalledWith('/attendance/42', {
       feedbackStatus: 'IN_PROGRESS',
     });
     // body에 feedback 필드가 없음 — 이것이 정상인지 서버에서 확인 필요

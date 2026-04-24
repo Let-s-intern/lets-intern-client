@@ -78,7 +78,7 @@ const TopBarBanners = () => {
 
           return [
             <Link
-              to={`/admin/banner/top-bar-banners/${id}/edit`}
+              to={`/banner/top-bar-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
@@ -102,7 +102,7 @@ const TopBarBanners = () => {
         title="상단 띠 배너 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/banner/top-bar-banners/new',
+          href: '/banner/top-bar-banners/new',
         }}
       >
         {isLoading ? (

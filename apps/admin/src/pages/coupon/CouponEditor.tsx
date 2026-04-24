@@ -94,7 +94,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['coupon'] });
-      navigate('/admin/coupons');
+      navigate('/coupons');
     },
     onError: (error) => handleSubmitError(error),
   });
@@ -107,7 +107,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupon'] });
-      navigate('/admin/coupons');
+      navigate('/coupons');
     },
     onError: (error) => handleSubmitError(error),
   });

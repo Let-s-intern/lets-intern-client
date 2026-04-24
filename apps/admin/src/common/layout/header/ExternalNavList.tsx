@@ -30,7 +30,7 @@ function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
       {isLoggedIn && isAdmin && (
         <GlobalNavItem
           className="ml-4 inline-block text-xsmall16 font-normal text-neutral-30"
-          href="/admin"
+          href="/"
         >
           관리자 페이지
         </GlobalNavItem>

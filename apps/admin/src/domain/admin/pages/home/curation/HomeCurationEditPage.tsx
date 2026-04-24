@@ -37,7 +37,7 @@ const HomeCurationEditPage = () => {
     usePatchAdminCuration({
       successCallback: () => {
         snackbar('홈 큐레이션을 수정했습니다.');
-        navigate('/admin/home/curation');
+        navigate('/home/curation');
       },
     });
 
@@ -121,7 +121,7 @@ const HomeCurationEditPage = () => {
               <Button
                 variant="contained"
                 color="error"
-                onClick={() => navigate('/admin/home/curation')}
+                onClick={() => navigate('/home/curation')}
               >
                 취소
               </Button>

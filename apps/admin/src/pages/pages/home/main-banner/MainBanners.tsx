@@ -78,7 +78,7 @@ const MainBanners = () => {
 
           return [
             <Link
-              to={`/admin/home/main-banners/${id}/edit`}
+              to={`/home/main-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
@@ -102,7 +102,7 @@ const MainBanners = () => {
         title="홈 상단 배너 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/home/main-banners/new',
+          href: '/home/main-banners/new',
         }}
       >
         {isLoading ? (

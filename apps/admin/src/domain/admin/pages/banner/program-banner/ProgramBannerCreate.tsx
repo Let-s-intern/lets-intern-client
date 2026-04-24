@@ -24,7 +24,7 @@ const ProgramBannerCreate = () => {
   const { mutate: tryCreateProgramBanner } = useCreateProgramBannerMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/program-banners');
+      navigate('/banner/program-banners');
     },
     onError: (error) => {
       console.error(error);

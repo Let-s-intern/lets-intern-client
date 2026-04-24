@@ -196,7 +196,7 @@ export default function AdminMentorRegisterPage() {
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (newValue === 0) {
-      navigate('/admin/mentors');
+      navigate('/mentors');
     }
   };
 

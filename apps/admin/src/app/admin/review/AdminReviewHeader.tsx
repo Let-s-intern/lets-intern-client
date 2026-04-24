@@ -7,11 +7,11 @@ type Tab = {
 };
 
 const TABS: readonly Tab[] = [
-  { href: '/admin/review/mission', label: '미션' },
-  { href: '/admin/review/challenge', label: '챌린지' },
-  { href: '/admin/review/live', label: '라이브' },
-  { href: '/admin/review/report', label: '리포트' },
-  { href: '/admin/review/blog', label: '블로그' },
+  { href: '/review/mission', label: '미션' },
+  { href: '/review/challenge', label: '챌린지' },
+  { href: '/review/live', label: '라이브' },
+  { href: '/review/report', label: '리포트' },
+  { href: '/review/blog', label: '블로그' },
 ] as const;
 
 function isActive(currentPath: string | null, href: string) {

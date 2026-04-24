@@ -10,11 +10,11 @@ const navData = [
     itemList: [
       {
         name: '프로그램 개설',
-        url: '/admin/programs',
+        url: '/programs',
       },
       {
         name: '후기 관리',
-        url: '/admin/review/challenge',
+        url: '/review/challenge',
       },
     ],
   },
@@ -23,19 +23,19 @@ const navData = [
     itemList: [
       {
         name: '콘텐츠 관리',
-        url: '/admin/challenge/contents',
+        url: '/challenge/contents',
       },
       {
         name: '미션 관리',
-        url: '/admin/challenge/missions',
+        url: '/challenge/missions',
       },
       {
         name: '챌린지 운영',
-        url: '/admin/challenge/operation',
+        url: '/challenge/operation',
       },
       {
         name: '피드백 운영',
-        url: '/admin/challenge/feedback-operation',
+        url: '/challenge/feedback-operation',
       },
     ],
   },
@@ -44,19 +44,19 @@ const navData = [
     itemList: [
       {
         name: '커리어 DB',
-        url: '/admin/users',
+        url: '/users',
       },
       {
         name: '쿠폰 관리',
-        url: '/admin/coupons',
+        url: '/coupons',
       },
       {
         name: '멘토 관리',
-        url: '/admin/mentors',
+        url: '/mentors',
       },
       {
         name: '리드 관리',
-        url: '/admin/leads/managements',
+        url: '/leads/managements',
       },
     ],
   },
@@ -65,7 +65,7 @@ const navData = [
     itemList: [
       {
         name: '홈 큐레이션 관리',
-        url: '/admin/home/curation',
+        url: '/home/curation',
       },
     ],
   },
@@ -74,15 +74,15 @@ const navData = [
     itemList: [
       {
         name: '상단 띠 배너 관리',
-        url: '/admin/banner/top-bar-banners',
+        url: '/banner/top-bar-banners',
       },
       {
         name: '통합 배너 관리',
-        url: '/admin/banner/common-banners',
+        url: '/banner/common-banners',
       },
       {
         name: '팝업 관리',
-        url: '/admin/banner/pop-up',
+        url: '/banner/pop-up',
       },
     ],
   },
@@ -91,15 +91,15 @@ const navData = [
     itemList: [
       {
         name: '블로그 글 관리/등록',
-        url: '/admin/blog/list',
+        url: '/blog/list',
       },
       {
         name: '블로그 후기',
-        url: '/admin/blog/reviews',
+        url: '/blog/reviews',
       },
       {
         name: '블로그 광고 배너',
-        url: '/admin/blog/banner',
+        url: '/blog/banner',
       },
     ],
   },
@@ -108,7 +108,7 @@ const navData = [
     itemList: [
       {
         name: '마그넷 관리/등록',
-        url: '/admin/magnet/list',
+        url: '/magnet/list',
       },
     ],
   },
@@ -117,7 +117,7 @@ const navData = [
     itemList: [
       {
         name: '리드 이벤트',
-        url: '/admin/leads/events',
+        url: '/leads/events',
       },
     ],
   },
@@ -126,7 +126,7 @@ const navData = [
     itemList: [
       {
         name: '서류 진단 프로그램 관리',
-        url: '/admin/report/list',
+        url: '/report/list',
       },
     ],
   },

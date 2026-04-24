@@ -83,7 +83,7 @@ export const useMagnetPostForm = (magnetId: string) => {
   const { mutate: createMagnet } = useCreateMagnetMutation({
     successCallback: () => {
       setSnackbar('마그넷이 등록되었습니다.');
-      navigate('/admin/magnet/list');
+      navigate('/magnet/list');
     },
   });
 
@@ -212,7 +212,7 @@ export const useMagnetPostForm = (magnetId: string) => {
   };
 
   const navigateToList = () => {
-    navigate('/admin/magnet/list');
+    navigate('/magnet/list');
   };
 
   return {

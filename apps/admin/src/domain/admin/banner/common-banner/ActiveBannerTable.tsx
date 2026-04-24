@@ -105,7 +105,7 @@ const ActiveBannerTable = ({
               <td className="px-4 py-4">
                 <div className="flex items-center justify-center gap-3">
                   <Link
-                    to={`/admin/banner/common-banners/${banner.commonBannerId}/edit`}
+                    to={`/banner/common-banners/${banner.commonBannerId}/edit`}
                   >
                     <Pencil
                       size={16}

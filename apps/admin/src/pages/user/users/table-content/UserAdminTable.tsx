@@ -385,7 +385,7 @@ const UserAdminTable = ({
           startIcon={<Pencil />}
           onClick={(e) => {
             e.stopPropagation();
-            handleClick(`/admin/users/${params.row.id}`);
+            handleClick(`/users/${params.row.id}`);
           }}
         >
           상세

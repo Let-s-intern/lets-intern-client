@@ -37,7 +37,7 @@ const VodCreate: React.FC = () => {
       const req = buildCreateVodReq(input);
       await postVod(req);
       snackbar('VOD가 생성되었습니다.');
-      navigate('/admin/programs');
+      navigate('/programs');
     } finally {
       setLoading(false);
     }

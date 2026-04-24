@@ -5,7 +5,7 @@ const AdminHome = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate('/admin/programs');
+    navigate('/programs');
   }, [navigate]);
 
   return <></>;

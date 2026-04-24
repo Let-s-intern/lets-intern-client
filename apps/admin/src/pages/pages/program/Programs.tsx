@@ -190,16 +190,16 @@ const Programs = () => {
               onClick={() => {
                 switch (params.row.programInfo.programType) {
                   case 'CHALLENGE':
-                    navigate(`/admin/challenge/${id}/edit`);
+                    navigate(`/challenge/${id}/edit`);
                     break;
                   case 'LIVE':
-                    navigate(`/admin/live/${id}/edit`);
+                    navigate(`/live/${id}/edit`);
                     break;
                   case 'VOD':
-                    navigate(`/admin/vod/${id}/edit`);
+                    navigate(`/vod/${id}/edit`);
                     break;
                   case 'GUIDEBOOK':
-                    navigate(`/admin/guidebook/${id}/edit`);
+                    navigate(`/guidebook/${id}/edit`);
                     break;
                   case 'REPORT':
                     throw new Error("Don't use this page");
@@ -216,7 +216,7 @@ const Programs = () => {
               startIcon={<FaList />}
               onClick={() => {
                 navigate(
-                  `/admin/programs/${id}/users?programType=${params.row.programInfo.programType}`,
+                  `/programs/${id}/users?programType=${params.row.programInfo.programType}`,
                 );
               }}
             >
@@ -347,7 +347,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/challenge/create`)}
+            onClick={() => navigate(`/challenge/create`)}
           >
             챌린지 등록
           </Button>
@@ -355,7 +355,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/live/create`)}
+            onClick={() => navigate(`/live/create`)}
           >
             LIVE 클래스 등록
           </Button>
@@ -363,7 +363,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/vod/create`)}
+            onClick={() => navigate(`/vod/create`)}
           >
             VOD 클래스 등록
           </Button>
@@ -371,7 +371,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/guidebook/create`)}
+            onClick={() => navigate(`/guidebook/create`)}
           >
             가이드북 등록
           </Button>

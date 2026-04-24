@@ -245,7 +245,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      navigate('/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
@@ -271,7 +271,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      navigate('/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
@@ -297,7 +297,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      navigate('/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');

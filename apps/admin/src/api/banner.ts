@@ -134,7 +134,7 @@ export const useGetCommonBannerForAdmin = ({
   return useQuery({
     queryKey: getCommonBannerForAdminQueryKey(),
     queryFn: async () => {
-      const res = await axios('/admin/common-banner', {});
+      const res = await axios('/common-banner', {});
       return commonBannerAdminArrayListSchema.parse(res.data.data);
     },
     enabled,
@@ -148,7 +148,7 @@ export const useGetActiveBannersForAdmin = ({
   return useQuery({
     queryKey: getActiveBannersForAdminQueryKey(),
     queryFn: async () => {
-      const res = await axios('/admin/common-banner/visible', {});
+      const res = await axios('/common-banner/visible', {});
       return commonBannerAdminListSchema.parse(res.data.data);
     },
     enabled,
@@ -478,7 +478,7 @@ export const usePostCommonBannerForAdmin = ({
           });
       }
 
-      const res = await axios.post('/admin/common-banner', {
+      const res = await axios.post('/common-banner', {
         commonBannerInfo: {
           title: form.title,
           landingUrl: form.landingUrl,
@@ -521,7 +521,7 @@ export const useGetCommonBannerDetailForAdmin = ({
   return useQuery({
     queryKey: getCommonBannerDetailForAdminQueryKey(commonBannerId),
     queryFn: async () => {
-      const res = await axios(`/admin/common-banner/${commonBannerId}`);
+      const res = await axios(`/common-banner/${commonBannerId}`);
       return res.data.data as CommonBannerDetailResponse;
     },
     refetchOnWindowFocus: false,
@@ -633,7 +633,7 @@ export const useEditCommonBannerForAdmin = ({
           });
       }
 
-      const res = await axios.patch(`/admin/common-banner/${commonBannerId}`, {
+      const res = await axios.patch(`/common-banner/${commonBannerId}`, {
         commonBannerInfo: {
           title: form.title,
           landingUrl: form.landingUrl,
@@ -680,7 +680,7 @@ export const useToggleCommonBannerVisibility = ({
       commonBannerId: number;
       isVisible: boolean;
     }) => {
-      const res = await axios.patch(`/admin/common-banner/${commonBannerId}`, {
+      const res = await axios.patch(`/common-banner/${commonBannerId}`, {
         commonBannerInfo: { isVisible },
       });
       return res.data;
@@ -711,7 +711,7 @@ export const useUpdateExpiredCommonBanners = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const res = await axios.patch('/admin/common-banner/expired');
+      const res = await axios.patch('/common-banner/expired');
       return res.data;
     },
     onSuccess: () => {
@@ -740,7 +740,7 @@ export const useDeleteCommonBannerForAdmin = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (commonBannerId: number) => {
-      const res = await axios.delete(`/admin/common-banner/${commonBannerId}`);
+      const res = await axios.delete(`/common-banner/${commonBannerId}`);
       return res.data;
     },
     onSuccess: () => {

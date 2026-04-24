@@ -18,7 +18,7 @@ const ChallengeOnboarding = () => {
 
   useEffect(() => {
     if (data) {
-      navigate(`/admin/challenge/operation/${data.programList[0]?.id}/home`);
+      navigate(`/challenge/operation/${data.programList[0]?.id}/home`);
     }
   }, [data, navigate]);
 

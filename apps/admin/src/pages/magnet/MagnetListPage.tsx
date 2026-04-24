@@ -94,7 +94,7 @@ const MagnetListPage = () => {
             type="button"
             bgColor="gray"
             width="8rem"
-            to="/admin/magnet/form/common"
+            to="/magnet/form/common"
           >
             공통 신청폼 등록
           </ActionButton>
@@ -102,7 +102,7 @@ const MagnetListPage = () => {
             type="button"
             bgColor="blue"
             width="6rem"
-            to="/admin/magnet/new/post"
+            to="/magnet/new/post"
           >
             마그넷 등록
           </ActionButton>

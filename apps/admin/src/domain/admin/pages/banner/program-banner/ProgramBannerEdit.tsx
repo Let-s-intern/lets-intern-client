@@ -43,7 +43,7 @@ const ProgramBannerEdit = () => {
 
   const { mutate: tryEditProgramBanner } = useEditProgramBannerMutation({
     onSuccess: async () => {
-      navigate('/admin/banner/program-banners', { replace: true });
+      navigate('/banner/program-banners', { replace: true });
     },
     onError: (error) => {
       console.error(error);

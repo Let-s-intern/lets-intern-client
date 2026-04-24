@@ -210,7 +210,7 @@ export default function AdminMentorDetailPage() {
   return (
     <section className="p-5">
       <div className="mb-4 flex items-center gap-4">
-        <Button variant="outlined" size="small" onClick={() => navigate('/admin/mentors')}>
+        <Button variant="outlined" size="small" onClick={() => navigate('/mentors')}>
           목록으로
         </Button>
         <Heading>멘토 상세 정보</Heading>

@@ -34,7 +34,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
       ? [
           {
             children: '관리자페이지',
-            href: '/admin',
+            href: '/',
           },
         ]
       : []),

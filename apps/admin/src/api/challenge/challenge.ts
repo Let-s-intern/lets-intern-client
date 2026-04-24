@@ -450,7 +450,7 @@ export const useGetChallengeAttendances = ({
 
 export const getClickCopy = async (fromId: number, toId: number) => {
   const res = await axiosV2.get(
-    `/admin/challenge/copy-dashboard/${fromId}/${toId}`,
+    `/challenge/copy-dashboard/${fromId}/${toId}`,
   );
   return res.data.data;
 };
@@ -509,7 +509,7 @@ export const useMissionAttendanceUserExperiencesQuery = ({
     queryKey: [MissionAttendanceUserExperiencesQueryKey, missionId, userId],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/admin/attendance/user-experiences/${missionId}`,
+        `/attendance/user-experiences/${missionId}`,
         {
           params: { userId },
         },
@@ -529,7 +529,7 @@ export const useChallengeMissionFeedbackListQuery = (
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/admin/challenge/${challengeId}/mission/feedback`,
+        `/challenge/${challengeId}/mission/feedback`,
       );
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
@@ -570,7 +570,7 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
     ],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
@@ -608,7 +608,7 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
   return useQuery({
     queryKey: ['useChallengeMissionListQuery', challengeId],
     queryFn: async () => {
-      const res = await axiosV2.get(`/admin/challenge/${challengeId}/mission`);
+      const res = await axiosV2.get(`/challenge/${challengeId}/mission`);
       return missionAdmin.parse(res.data.data);
     },
     enabled: !!challengeId,

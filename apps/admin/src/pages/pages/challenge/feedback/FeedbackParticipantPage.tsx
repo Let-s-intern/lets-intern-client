@@ -68,7 +68,7 @@ export default function FeedbackParticipantPage() {
           <Link
             to={
               params.value ||
-              `/admin/challenge/operation/${programId}/attendances/${missionId}/${params.row.userId}`
+              `/challenge/operation/${programId}/attendances/${missionId}/${params.row.userId}`
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -110,14 +110,14 @@ export default function FeedbackParticipantPage() {
       <div className="flex items-center gap-2">
         {isAdmin && (
           <Link
-            to={`/admin/challenge/operation/${programId}/feedback`}
+            to={`/challenge/operation/${programId}/feedback`}
             className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
           >
             멘토/멘티 배정
           </Link>
         )}
         <Link
-          to={`/admin/challenge/operation/${programId}/feedback`}
+          to={`/challenge/operation/${programId}/feedback`}
           className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
         >
           피드백 관리

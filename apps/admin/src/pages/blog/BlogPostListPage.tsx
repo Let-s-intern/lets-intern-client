@@ -7,7 +7,7 @@ export default function BlogPostListPage() {
       <header className="flex items-center justify-between px-3">
         <h1 className="text-2xl font-semibold">블로그</h1>
         <Link
-          to="/admin/blog/create"
+          to="/blog/create"
           className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
         >
           등록

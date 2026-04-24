@@ -29,7 +29,7 @@ export const useMentorListQuery = () => {
   return useQuery({
     queryKey: [UseMentorListQueryKey],
     queryFn: async () => {
-      const res = await axiosV2.get('/admin/user/mentor');
+      const res = await axiosV2.get('/user/mentor');
       return mentorListSchema.parse(res.data.data);
     },
   });
@@ -106,7 +106,7 @@ export const useUserAdminQuery = ({
           ...pageable,
         }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
       );
-      const res = await axiosV2.get('/admin/user', { params });
+      const res = await axiosV2.get('/user', { params });
       return userAdminType.parse(res.data.data);
     },
     placeholderData: keepPreviousData,
@@ -326,7 +326,7 @@ export const usePatchUserPoolUpMutation = (
       userId: number;
       isPoolUp: boolean;
     }) => {
-      return await axiosV2.patch(`/admin/user/${userId}/pool-up`, { isPoolUp });
+      return await axiosV2.patch(`/user/${userId}/pool-up`, { isPoolUp });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });

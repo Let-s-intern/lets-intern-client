@@ -31,7 +31,7 @@ const useCommonBannerCreate = () => {
 
   const { mutate: tryCreateCommonBanner } = usePostCommonBannerForAdmin({
     successCallback: () => {
-      navigate('/admin/banner/common-banners');
+      navigate('/banner/common-banners');
     },
     errorCallback: (error) => {
       console.error(error);

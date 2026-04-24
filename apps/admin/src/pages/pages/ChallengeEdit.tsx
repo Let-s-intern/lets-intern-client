@@ -332,7 +332,7 @@ const ChallengeEdit: React.FC = () => {
     // 구 버전 프로그램인지 판단
     if (challenge && isDeprecatedProgram(challenge)) {
       navigate(
-        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
+        `/programs/${challengeIdString}/edit?programType=CHALLENGE`,
         { replace: true },
       );
     }

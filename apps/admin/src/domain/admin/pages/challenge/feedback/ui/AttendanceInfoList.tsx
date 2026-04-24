@@ -12,7 +12,7 @@ const AttendanceInfoList = memo(function AttendanceInfoList() {
       key={attendance?.link}
       to={
         attendance?.link ||
-        `/admin/challenge/operation/${attendance?.id}/attendances/${mission?.id}/${attendance?.userId}`
+        `/challenge/operation/${attendance?.id}/attendances/${mission?.id}/${attendance?.userId}`
       }
       className="text-primary underline"
       target="_blank"

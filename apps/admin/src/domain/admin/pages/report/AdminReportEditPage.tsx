@@ -94,7 +94,7 @@ const AdminReportEditPage = () => {
     if (isLoadError) {
       const s = new URLSearchParams();
       s.set('message', '해당 서류 진단이 존재하지 않습니다.');
-      navigate(`/admin/report/list?${s.toString()}`);
+      navigate(`/report/list?${s.toString()}`);
     }
   }, [isLoadError, navigate]);
 
@@ -704,7 +704,7 @@ const AdminReportEditPage = () => {
                 variant="outlined"
                 type="button"
                 onClick={() => {
-                  navigate('/admin/report/list');
+                  navigate('/report/list');
                 }}
               >
                 취소 (리스트로 돌아가기)

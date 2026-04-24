@@ -138,7 +138,7 @@ export const useMagnetFormBuilder = ({
   };
 
   const navigateToList = () => {
-    navigate('/admin/magnet/list');
+    navigate('/magnet/list');
   };
 
   return {

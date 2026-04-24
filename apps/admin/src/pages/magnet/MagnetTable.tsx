@@ -129,7 +129,7 @@ const MagnetTable = ({
         width: 120,
         sortable: false,
         renderCell: ({ row }) => (
-          <Link to={`/admin/leads/managements/${row.magnetId}`}>
+          <Link to={`/leads/managements/${row.magnetId}`}>
             <Button variant="outlined" color="primary" size="small">
               신청자 정보
             </Button>
@@ -148,14 +148,14 @@ const MagnetTable = ({
           return (
             <div className="inline-flex items-center gap-2">
               {postEditable && (
-                <Link to={`/admin/magnet/${row.magnetId}/post`}>
+                <Link to={`/magnet/${row.magnetId}/post`}>
                   <Button variant="outlined" color="primary" size="small">
                     글 관리
                   </Button>
                 </Link>
               )}
               {manageable && (
-                <Link to={`/admin/magnet/${row.magnetId}/form`}>
+                <Link to={`/magnet/${row.magnetId}/form`}>
                   <Button variant="outlined" color="info" size="small">
                     신청 폼 관리
                   </Button>

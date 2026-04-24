@@ -77,7 +77,7 @@ const PopUpBanners = () => {
           const id = params.id;
 
           return [
-            <Link to={`/admin/banner/pop-up/${id}/edit`} key={'edit' + id}>
+            <Link to={`/banner/pop-up/${id}/edit`} key={'edit' + id}>
               <Pencil />
             </Link>,
             <Trash
@@ -99,7 +99,7 @@ const PopUpBanners = () => {
         title="팝업 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/banner/pop-up/new',
+          href: '/banner/pop-up/new',
         }}
       >
         {isLoading ? (

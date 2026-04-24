@@ -36,7 +36,7 @@ const GuidebookCreate: React.FC = () => {
       const req = buildCreateGuidebookReq(input);
       await postGuidebook(req);
       snackbar('가이드북이 생성되었습니다.');
-      navigate('/admin/programs');
+      navigate('/programs');
     } finally {
       setLoading(false);
     }

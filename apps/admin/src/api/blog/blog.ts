@@ -342,7 +342,7 @@ export const useGetAdminBlogBannerList = () => {
   return useQuery({
     queryKey: [useGetAdminBlogBannerListKey],
     queryFn: async () => {
-      const res = await axios.get('/admin/blog-banner');
+      const res = await axios.get('/blog-banner');
       return adminBlogBannerListSchema.parse(res.data.data);
     },
   });
@@ -357,7 +357,7 @@ export const usePatchAdminBlogBanner = () => {
       delete body.blogBannerId;
 
       const res = await axios.patch(
-        `/admin/blog-banner/${reqBody.blogBannerId}`,
+        `/blog-banner/${reqBody.blogBannerId}`,
         body,
       );
       console.log('req body:', reqBody);
@@ -384,7 +384,7 @@ export const usePostAdminBlogBanner = () => {
 
   return useMutation({
     mutationFn: async (reqBody: PostAdminBlogBannerReqBody) => {
-      const res = await axios.post('/admin/blog-banner', reqBody);
+      const res = await axios.post('/blog-banner', reqBody);
       console.log('req body:', reqBody);
       return res;
     },
@@ -405,7 +405,7 @@ export const useGetAdminBlogBanner = (id: number) => {
   return useQuery({
     queryKey: [useGetAdminBlogBannerKey, id],
     queryFn: async () => {
-      const res = await axios.get(`/admin/blog-banner/${id}`);
+      const res = await axios.get(`/blog-banner/${id}`);
       return adminBlogBannerSchema.parse(res.data.data);
     },
   });

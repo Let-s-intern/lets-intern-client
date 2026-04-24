@@ -69,7 +69,7 @@ const BlogCreatePage = () => {
           </Suspense>
 
           <BlogActionButtons
-            onCancel={() => navigate('/admin/blog/list')}
+            onCancel={() => navigate('/blog/list')}
             onSaveTemp={() => postBlog(false)}
             onPublish={() => postBlog(true)}
             helperText="*발행: 블로그가 바로 게시됩니다."

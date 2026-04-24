@@ -35,7 +35,7 @@ const HomeCurationCreatePage = () => {
     usePostAdminCuration({
       successCallback: () => {
         snackbar('홈 큐레이션을 생성했습니다.');
-        navigate('/admin/home/curation');
+        navigate('/home/curation');
       },
     });
 
@@ -97,7 +97,7 @@ const HomeCurationCreatePage = () => {
           <Button
             variant="contained"
             color="error"
-            onClick={() => navigate('/admin/home/curation')}
+            onClick={() => navigate('/home/curation')}
           >
             취소
           </Button>

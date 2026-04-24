@@ -43,7 +43,7 @@ export const useGetMagnetListQuery = (params: MagnetListQueryParams = {}) => {
   return useQuery({
     queryKey: [magnetListQueryKey, params.typeList, params.keyword],
     queryFn: async (): Promise<MagnetListResponse> => {
-      const res = await axios.get('/admin/magnet', {
+      const res = await axios.get('/magnet', {
         params: {
           typeList: params.typeList,
           keyword: params.keyword || undefined,
@@ -64,7 +64,7 @@ export const useDeleteMagnetMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (magnetId: number) => {
-      const res = await axios.delete(`/admin/magnet/${magnetId}`);
+      const res = await axios.delete(`/magnet/${magnetId}`);
       return res.data;
     },
     onSuccess: async () => {
@@ -94,7 +94,7 @@ export const usePatchMagnetVisibilityMutation = ({
       magnetId: number;
       isVisible: boolean;
     }) => {
-      const res = await axios.patch(`/admin/magnet/${magnetId}`, {
+      const res = await axios.patch(`/magnet/${magnetId}`, {
         isVisible,
       });
       return res.data;
@@ -113,7 +113,7 @@ export const usePatchMagnetVisibilityMutation = ({
 export const magnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [magnetDetailQueryKey, magnetId],
   queryFn: async (): Promise<MagnetDetailResponse> => {
-    const res = await axios.get(`/admin/magnet/${magnetId}`);
+    const res = await axios.get(`/magnet/${magnetId}`);
     return magnetDetailResponseSchema.parse(res.data.data);
   },
 });
@@ -157,7 +157,7 @@ export const usePatchMagnetMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ magnetId, ...body }: PatchMagnetReqBody) => {
-      const res = await axios.patch(`/admin/magnet/${magnetId}`, body);
+      const res = await axios.patch(`/magnet/${magnetId}`, body);
       return res.data;
     },
     onSuccess: async () => {
@@ -447,7 +447,7 @@ export const useCreateMagnetMutation = ({
       const oneMonthLater = new Date(
         Date.now() + 30 * 24 * 60 * 60 * 1000,
       ).toISOString();
-      const res = await axios.post('/admin/magnet', {
+      const res = await axios.post('/magnet', {
         type: body.type,
         programType: body.programType ?? null,
         challengeType: body.challengeType ?? null,
@@ -482,7 +482,7 @@ export const useGetBaseQuestionsQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: [baseQuestionQueryKey],
     queryFn: async (): Promise<BaseQuestionListResponse> => {
-      const res = await axios.get('/admin/magnet-question/base', {
+      const res = await axios.get('/magnet-question/base', {
         params: { isVisible: true },
       });
       return baseQuestionListResponseSchema.parse(res.data.data);
@@ -501,7 +501,7 @@ export const useCreateBaseQuestionMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: MagnetQuestionReqBody) => {
-      const res = await axios.post('/admin/magnet-question/base', {
+      const res = await axios.post('/magnet-question/base', {
         ...body,
         isVisible: true,
       });
@@ -534,7 +534,7 @@ export const usePatchMagnetQuestionMutation = ({
       ...body
     }: PatchMagnetQuestionReqBody & { magnetQuestionId: number }) => {
       const res = await axios.patch(
-        `/admin/magnet-question/${magnetQuestionId}`,
+        `/magnet-question/${magnetQuestionId}`,
         body,
       );
       return res.data;

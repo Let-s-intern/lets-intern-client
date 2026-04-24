@@ -210,7 +210,7 @@ const ChallengeCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
-    navigate('/admin/programs');
+    navigate('/programs');
   }, [
     input,
     content,

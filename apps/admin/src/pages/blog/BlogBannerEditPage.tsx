@@ -117,7 +117,7 @@ const BlogBannerEditPage = () => {
           </Button>
           <Button
             variant="outlined"
-            onClick={() => navigate('/admin/blog/banner')}
+            onClick={() => navigate('/blog/banner')}
           >
             취소
           </Button>

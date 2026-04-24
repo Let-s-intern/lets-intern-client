@@ -100,7 +100,7 @@ const PopUpBanners = () => {
         title="프로그램 배너 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/banner/program-banners/new',
+          href: '/banner/program-banners/new',
         }}
         columnMetaData={columnMetaData}
         minWidth="60rem"
@@ -146,7 +146,7 @@ const PopUpBanners = () => {
               <TableCell cellWidth={columnMetaData.management.cellWidth}>
                 <TableManageContent>
                   <Link
-                    to={`/admin/banner/program-banners/${banner.id}/edit`}
+                    to={`/banner/program-banners/${banner.id}/edit`}
                   >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />

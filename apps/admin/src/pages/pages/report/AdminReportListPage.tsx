@@ -109,7 +109,7 @@ function Toolbar() {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-2">-</div>
           <div className="flex items-center gap-2">
-            <Link to="/admin/report/create">
+            <Link to="/report/create">
               <Button variant="contained" color="primary">
                 등록
               </Button>
@@ -144,10 +144,10 @@ const AdminReportListPage = () => {
   const columns = useMemo(() => {
     return createColumns({
       handleEdit(id) {
-        navigate(`/admin/report/edit/${id}`);
+        navigate(`/report/edit/${id}`);
       },
       moveApplicationPage(reportId) {
-        navigate(`/admin/report/applications?reportId=${reportId}`);
+        navigate(`/report/applications?reportId=${reportId}`);
       },
     });
   }, [navigate]);
