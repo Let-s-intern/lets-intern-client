@@ -1,0 +1,16 @@
+<svg width="92" height="92" viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 1422241690">
+<g id="Group 1422241689">
+<ellipse id="Ellipse 2545" cx="45.622" cy="45.8725" rx="35.4853" ry="35.4848" fill="#4D55F5" fill-opacity="0.44"/>
+<ellipse id="Ellipse 2546" cx="45.622" cy="45.8736" rx="25.3466" ry="25.3463" fill="#4D55F5" fill-opacity="0.44"/>
+<ellipse id="Ellipse 2544" cx="45.6239" cy="45.8733" rx="45.6239" ry="45.6233" fill="#4D55F5" fill-opacity="0.44"/>
+</g>
+<path id="Rectangle 3232" d="M53.4646 50.0364C50.4951 53.0059 45.6807 53.0059 42.7112 50.0364C39.7417 47.0669 39.7417 42.2525 42.7112 39.283L81.17 0.824239L91.9234 11.5776L53.4646 50.0364Z" fill="url(#paint0_linear_7500_8485)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_7500_8485" x1="86.3697" y1="7.77512" x2="58.6478" y2="36.0026" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4D55F5" stop-opacity="0.4"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>

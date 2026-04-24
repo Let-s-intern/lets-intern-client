@@ -4,10 +4,16 @@
 
 ## 디렉토리 구조
 
+모노레포 전환(2026-04-22) 이후 공유 모듈은 `packages/`로 이전되었습니다.
+
 ```
-src/
-├── api/           # API 호출 함수 (React Query 훅)
-└── utils/         # 유틸리티 함수
+apps/web/src/
+├── api/           # web 전용 API 호출 함수 (React Query 훅)
+└── utils/         # web 전용 유틸리티 함수
+
+packages/
+├── api/           # @letscareer/api — 공유 Axios 인스턴스
+└── utils/         # @letscareer/utils — 공유 순수 유틸리티 함수
 ```
 
 ---
@@ -17,7 +23,7 @@ src/
 ## 위치
 
 ```
-src/api/
+apps/web/src/api/
 ├── user/              # 유저 관련 API
 │   ├── user.ts
 │   └── userSchema.ts
@@ -79,7 +85,7 @@ const MyComponent = () => {
 
 ## User API
 
-**위치**: `src/api/user/user.ts`
+**위치**: `apps/web/src/api/user/user.ts`
 
 ### useUserQuery
 
@@ -214,7 +220,7 @@ const { data: users } = useUserAdminQuery({
 
 ## Challenge API
 
-**위치**: `src/api/challenge/challenge.ts`
+**위치**: `apps/web/src/api/challenge/challenge.ts`
 
 챌린지 관련 API 호출 함수들
 
@@ -222,7 +228,7 @@ const { data: users } = useUserAdminQuery({
 
 ## Program API
 
-**위치**: `src/api/program.ts`
+**위치**: `apps/web/src/api/program.ts`
 
 프로그램 관련 API 호출 함수들
 
@@ -230,7 +236,7 @@ const { data: users } = useUserAdminQuery({
 
 ## Payment API
 
-**위치**: `src/api/payment/payment.ts`
+**위치**: `apps/web/src/api/payment/payment.ts`
 
 결제 관련 API 호출 함수들
 
@@ -238,7 +244,7 @@ const { data: users } = useUserAdminQuery({
 
 ## Review API
 
-**위치**: `src/api/review/review.ts`
+**위치**: `apps/web/src/api/review/review.ts`
 
 리뷰 관련 API 호출 함수들
 
@@ -246,20 +252,20 @@ const { data: users } = useUserAdminQuery({
 
 ## 기타 API
 
-- **Application**: `src/api/application.ts` - 지원 관련
-- **Banner**: `src/api/banner.ts` - 배너 관련
-- **Blog**: `src/api/blog/blog.ts` - 블로그 관련
-- **Career**: `src/api/career/career.ts` - 커리어 관련
-- **Coupon**: `src/api/coupon.ts` - 쿠폰 관련
-- **Curation**: `src/api/curation.ts` - 큐레이션 관련
-- **Experience**: `src/api/experience/experience.ts` - 경험 관련
-- **FAQ**: `src/api/faq.ts` - FAQ 관련
-- **File**: `src/api/file.ts` - 파일 업로드 관련
-- **Lead**: `src/api/lead.ts` - 리드 관련
-- **Mentor**: `src/api/mentor/mentor.ts` - 멘토 관련
-- **Mission**: `src/api/mission/mission.ts` - 미션 관련
-- **Report**: `src/api/report.ts` - 리포트 관련
-- **PresignedUrl**: `src/api/presignedUrl.ts` - S3 업로드 URL
+- **Application**: `apps/web/src/api/application.ts` - 지원 관련
+- **Banner**: `apps/web/src/api/banner.ts` - 배너 관련
+- **Blog**: `apps/web/src/api/blog/blog.ts` - 블로그 관련
+- **Career**: `apps/web/src/api/career/career.ts` - 커리어 관련
+- **Coupon**: `apps/web/src/api/coupon.ts` - 쿠폰 관련
+- **Curation**: `apps/web/src/api/curation.ts` - 큐레이션 관련
+- **Experience**: `apps/web/src/api/experience/experience.ts` - 경험 관련
+- **FAQ**: `apps/web/src/api/faq.ts` - FAQ 관련
+- **File**: `apps/web/src/api/file.ts` - 파일 업로드 관련
+- **Lead**: `apps/web/src/api/lead.ts` - 리드 관련
+- **Mentor**: `apps/web/src/api/mentor/mentor.ts` - 멘토 관련
+- **Mission**: `apps/web/src/api/mission/mission.ts` - 미션 관련
+- **Report**: `apps/web/src/api/report.ts` - 리포트 관련
+- **PresignedUrl**: `apps/web/src/api/presignedUrl.ts` - S3 업로드 URL
 
 ---
 
@@ -268,7 +274,7 @@ const { data: users } = useUserAdminQuery({
 ## 위치
 
 ```
-src/utils/
+apps/web/src/utils/
 ```
 
 ---
@@ -277,7 +283,7 @@ src/utils/
 
 ### axios
 
-**위치**: `src/utils/axios.ts`
+**위치**: `apps/web/src/utils/axios.ts`
 
 기본 axios 인스턴스 (v1 API용)
 
@@ -296,7 +302,7 @@ const response = await axios.get('/user');
 
 ### axiosV2
 
-**위치**: `src/utils/axiosV2.ts`
+**위치**: `apps/web/src/utils/axiosV2.ts`
 
 v2 API용 axios 인스턴스
 
@@ -310,7 +316,7 @@ const response = await axiosV2.get('/admin/user');
 
 ### createAuthorizedAxios
 
-**위치**: `src/utils/createAuthorizedAxios.ts`
+**위치**: `apps/web/src/utils/createAuthorizedAxios.ts`
 
 인증이 필요한 axios 인스턴스 생성 팩토리
 
@@ -328,7 +334,7 @@ const customAxios = createAuthorizedAxios({
 
 ### cn
 
-**위치**: `src/utils/cn.ts`
+**위치**: `apps/web/src/utils/cn.ts`
 
 Tailwind CSS 클래스 병합 유틸리티
 
@@ -360,7 +366,7 @@ export function cn(...inputs: ClassValue[]) {
 
 ### debounce
 
-**위치**: `src/utils/debounce.ts`
+**위치**: `apps/web/src/utils/debounce.ts`
 
 디바운스 함수
 
@@ -380,7 +386,7 @@ handleSearch('react query'); // 이전 호출 취소
 
 ### throttle
 
-**위치**: `src/utils/throttle.ts`
+**위치**: `apps/web/src/utils/throttle.ts`
 
 쓰로틀 함수
 
@@ -400,7 +406,7 @@ window.addEventListener('scroll', handleScroll);
 
 ### token
 
-**위치**: `src/utils/token.ts`
+**위치**: `apps/web/src/utils/token.ts`
 
 토큰 저장/조회/삭제
 
@@ -421,7 +427,7 @@ removeToken();
 
 ### auth
 
-**위치**: `src/utils/auth.ts`
+**위치**: `apps/web/src/utils/auth.ts`
 
 인증 관련 유틸리티
 
@@ -431,7 +437,7 @@ removeToken();
 
 ### convert
 
-**위치**: `src/utils/convert.ts`
+**위치**: `apps/web/src/utils/convert.ts`
 
 데이터 타입 변환 유틸리티
 
@@ -439,7 +445,7 @@ removeToken();
 
 ### converTypeToText
 
-**위치**: `src/utils/converTypeToText.ts`
+**위치**: `apps/web/src/utils/converTypeToText.ts`
 
 타입을 텍스트로 변환
 
@@ -454,7 +460,7 @@ const text = convertTypeToText('CHALLENGE');
 
 ### convertTypeToBank
 
-**위치**: `src/utils/convertTypeToBank.ts`
+**위치**: `apps/web/src/utils/convertTypeToBank.ts`
 
 은행 코드를 은행명으로 변환
 
@@ -471,7 +477,7 @@ const bankName = convertTypeToBank('088');
 
 ### formatDateString
 
-**위치**: `src/utils/formatDateString.ts`
+**위치**: `apps/web/src/utils/formatDateString.ts`
 
 날짜 문자열 포맷팅
 
@@ -486,7 +492,7 @@ const formatted = formatDateString('2024-03-03', 'YYYY.MM.DD');
 
 ### getChallengeSchedule
 
-**위치**: `src/utils/getChallengeSchedule.ts`
+**위치**: `apps/web/src/utils/getChallengeSchedule.ts`
 
 챌린지 스케줄 계산
 
@@ -496,7 +502,7 @@ const formatted = formatDateString('2024-03-03', 'YYYY.MM.DD');
 
 ### programPrice
 
-**위치**: `src/utils/programPrice.ts`
+**위치**: `apps/web/src/utils/programPrice.ts`
 
 프로그램 가격 계산
 
@@ -514,7 +520,7 @@ const price = calculatePrice({
 
 ### getChallengeOptionPriceInfo
 
-**위치**: `src/utils/getChallengeOptionPriceInfo.ts`
+**위치**: `apps/web/src/utils/getChallengeOptionPriceInfo.ts`
 
 챌린지 옵션 가격 정보
 
@@ -522,7 +528,7 @@ const price = calculatePrice({
 
 ### getRewardAmount
 
-**위치**: `src/utils/getRewardAmount.ts`
+**위치**: `apps/web/src/utils/getRewardAmount.ts`
 
 리워드 금액 계산
 
@@ -532,7 +538,7 @@ const price = calculatePrice({
 
 ### valid
 
-**위치**: `src/utils/valid.ts`
+**위치**: `apps/web/src/utils/valid.ts`
 
 유효성 검사 함수들
 
@@ -552,7 +558,7 @@ if (isValidPhoneNumber('010-1234-5678')) {
 
 ### invariant
 
-**위치**: `src/utils/invariant.ts`
+**위치**: `apps/web/src/utils/invariant.ts`
 
 불변 조건 검사
 
@@ -569,7 +575,7 @@ invariant(user !== null, 'User must be logged in');
 
 ### getFileNameFromUrl
 
-**위치**: `src/utils/getFileNameFromUrl.ts`
+**위치**: `apps/web/src/utils/getFileNameFromUrl.ts`
 
 URL에서 파일명 추출
 
@@ -588,7 +594,7 @@ const fileName = getFileNameFromUrl(
 
 ### network
 
-**위치**: `src/utils/network.ts`
+**위치**: `apps/web/src/utils/network.ts`
 
 네트워크 상태 확인
 
@@ -596,7 +602,7 @@ const fileName = getFileNameFromUrl(
 
 ### client
 
-**위치**: `src/utils/client.ts`
+**위치**: `apps/web/src/utils/client.ts`
 
 클라이언트 환경 확인
 
@@ -615,7 +621,7 @@ if (isClient()) {
 
 ### random
 
-**위치**: `src/utils/random.ts`
+**위치**: `apps/web/src/utils/random.ts`
 
 랜덤 값 생성
 
@@ -630,7 +636,7 @@ const id = generateRandomId();
 
 ### url
 
-**위치**: `src/utils/url.ts`
+**위치**: `apps/web/src/utils/url.ts`
 
 URL 조작 유틸리티
 
@@ -648,7 +654,7 @@ const params = parseQueryString('?category=challenge&page=1');
 
 ### constants
 
-**위치**: `src/utils/constants.ts`
+**위치**: `apps/web/src/utils/constants.ts`
 
 전역 상수 정의
 
@@ -660,7 +666,7 @@ import { API_BASE_URL, MAX_FILE_SIZE } from '@/utils/constants';
 
 ### programConst
 
-**위치**: `src/utils/programConst.ts`
+**위치**: `apps/web/src/utils/programConst.ts`
 
 프로그램 관련 상수
 
@@ -668,7 +674,7 @@ import { API_BASE_URL, MAX_FILE_SIZE } from '@/utils/constants';
 
 ### tableCellWidthList
 
-**위치**: `src/utils/tableCellWidthList.ts`
+**위치**: `apps/web/src/utils/tableCellWidthList.ts`
 
 테이블 셀 너비 정의
 
@@ -678,7 +684,7 @@ import { API_BASE_URL, MAX_FILE_SIZE } from '@/utils/constants';
 
 ### sentry
 
-**위치**: `src/utils/sentry.ts`
+**위치**: `apps/web/src/utils/sentry.ts`
 
 Sentry 에러 리포팅
 
@@ -696,7 +702,7 @@ try {
 
 ### webhook
 
-**위치**: `src/utils/webhook.ts`
+**위치**: `apps/web/src/utils/webhook.ts`
 
 웹훅 관련 유틸리티
 
@@ -706,7 +712,7 @@ try {
 
 ### experience
 
-**위치**: `src/utils/experience.ts`
+**위치**: `apps/web/src/utils/experience.ts`
 
 경험 관련 유틸리티
 
@@ -714,7 +720,7 @@ try {
 
 ### career
 
-**위치**: `src/utils/career.ts`
+**위치**: `apps/web/src/utils/career.ts`
 
 커리어 관련 유틸리티
 
@@ -722,7 +728,7 @@ try {
 
 ### challengeFilter
 
-**위치**: `src/utils/challengeFilter.ts`
+**위치**: `apps/web/src/utils/challengeFilter.ts`
 
 챌린지 필터링
 
@@ -732,7 +738,7 @@ try {
 
 ### dominantColor
 
-**위치**: `src/utils/dominantColor.ts`
+**위치**: `apps/web/src/utils/dominantColor.ts`
 
 이미지의 주요 색상 추출
 
@@ -740,7 +746,7 @@ try {
 
 ### swipe
 
-**위치**: `src/utils/swipe.ts`
+**위치**: `apps/web/src/utils/swipe.ts`
 
 스와이프 제스처 감지
 
@@ -748,7 +754,7 @@ try {
 
 ### useLayoutEffect
 
-**위치**: `src/utils/useLayoutEffect.ts`
+**위치**: `apps/web/src/utils/useLayoutEffect.ts`
 
 SSR 안전한 useLayoutEffect
 
@@ -764,7 +770,7 @@ useIsomorphicLayoutEffect(() => {
 
 ### getSelectedNode
 
-**위치**: `src/utils/getSelectedNode.ts`
+**위치**: `apps/web/src/utils/getSelectedNode.ts`
 
 Lexical Editor 관련 (선택된 노드 가져오기)
 
@@ -772,7 +778,7 @@ Lexical Editor 관련 (선택된 노드 가져오기)
 
 ### setFloatingElemPosition
 
-**위치**: `src/utils/setFloatingElemPosition.ts`
+**위치**: `apps/web/src/utils/setFloatingElemPosition.ts`
 
 Floating 요소 위치 설정
 
@@ -780,7 +786,7 @@ Floating 요소 위치 설정
 
 ### setFloatingElemPositionForLinkEditor
 
-**위치**: `src/utils/setFloatingElemPositionForLinkEditor.ts`
+**위치**: `apps/web/src/utils/setFloatingElemPositionForLinkEditor.ts`
 
 링크 에디터용 Floating 위치 설정
 
@@ -857,7 +863,7 @@ try {
 
 1. **해당 도메인 디렉토리**에 생성
    ```
-   src/api/myDomain/myDomain.ts
+   apps/web/src/api/myDomain/myDomain.ts
    ```
 
 2. **Zod 스키마 정의**
@@ -884,7 +890,7 @@ try {
 
 ### 유틸리티 함수
 
-1. **`src/utils/` 디렉토리**에 생성
+1. ** 디렉토리**에 생성
 
 2. **순수 함수로 작성**
 

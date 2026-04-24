@@ -52,7 +52,7 @@
 
 - 키워드 매칭은 `toLowerCase()` 비교로 대소문자 무관
 - `decodeURIComponent` 실패 시 원문 referrer로 폴백
-- 설정 파일: `src/domain/challenge-feedback/data/urls.ts` → `REFERRER_KEYWORD_MAP`
+- 설정 파일: `apps/web/src/domain/challenge-feedback/data/urls.ts` → `REFERRER_KEYWORD_MAP`
 
 #### 메뉴 클릭 시
 
@@ -66,14 +66,14 @@
 https://www.letscareer.co.kr/challenge/{type}/latest
 ```
 
-설정 파일: `src/domain/challenge-feedback/data/urls.ts` → `APPLY_URLS`
+설정 파일: `apps/web/src/domain/challenge-feedback/data/urls.ts` → `APPLY_URLS`
 
 ---
 
 ## 파일 구조
 
 ```
-src/
+apps/web/src/
 ├── app/(user)/challenge/feedback-mentoring/
 │   └── page.tsx                              # 라우트 엔트리
 │

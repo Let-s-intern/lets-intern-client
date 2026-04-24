@@ -13,16 +13,20 @@
 
 ## 1. 라우트 구조
 
-### 사용자 페이지
+### 사용자 페이지 (apps/web)
 ```
-/curation                               -> src/app/(user)/curation/page.tsx
+/curation                               -> apps/web/src/app/(user)/curation/page.tsx
 ```
 
-### 관리자 페이지
+### 관리자 페이지 (apps/admin, 2026-04-24 분리)
+
+관리자 페이지는 `apps/admin` 독립 앱으로 이전되었습니다.
+`letscareer.co.kr/admin/*` 접근 시 `admin.letscareer.co.kr/*`로 308 리다이렉트됩니다.
+
 ```
-/admin/home/curation                    -> src/app/admin/home/curation/page.tsx
-/admin/home/curation/create             -> src/app/admin/home/curation/create/page.tsx
-/admin/home/curation/[id]/edit          -> src/app/admin/home/curation/[id]/edit/page.tsx
+admin.letscareer.co.kr/home/curation           -> apps/admin 기준 /home/curation
+admin.letscareer.co.kr/home/curation/create    -> apps/admin 기준 /home/curation/create
+admin.letscareer.co.kr/home/curation/{id}/edit -> apps/admin 기준 /home/curation/{id}/edit
 ```
 
 ---
@@ -30,7 +34,7 @@
 ## 2. 도메인 파일 구조
 
 ```
-src/domain/curation/
+apps/web/src/domain/curation/
 ├── index.ts                              # 진입점 (CurationScreen export)
 ├── types.ts                              # 모든 타입 정의
 │
@@ -76,9 +80,9 @@ src/domain/curation/
     └── comparisons.ts                    # 챌린지 비교 데이터
 ```
 
-### 관리자 도메인
+### 관리자 도메인 (apps/admin, 2026-04-24 이전)
 ```
-src/domain/admin/
+apps/admin/src/domain/admin/
 ├── pages/home/curation/
 │   ├── HomeCurationListPage.tsx          # 목록 페이지 (DataGrid)
 │   ├── HomeCurationCreatePage.tsx        # 생성 페이지
@@ -239,7 +243,7 @@ interface FrequentComparisonItem {
 
 ## 6. API
 
-### 파일 위치: `src/api/curation.ts`
+### 파일 위치: `apps/web/src/api/curation.ts`
 
 #### 관리자 API
 | 훅 | 메서드 | 용도 |

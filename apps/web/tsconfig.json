@@ -1,0 +1,18 @@
+{
+  "extends": "@letscareer/tsconfig/nextjs",
+  "compilerOptions": {
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@/*": ["./src/*"],
+      "@renderer/*": ["./renderer/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "./dist/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

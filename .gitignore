@@ -2,8 +2,10 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.*
+.pnpm-store
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -15,8 +17,14 @@
 
 # next.js
 /.next/
+**/.next/
 /out/
 /dist
+**/dist/
+
+# turbo
+.turbo
+**/.turbo
 
 # production
 /build
@@ -33,6 +41,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 /.omc
 # vercel
 .vercel

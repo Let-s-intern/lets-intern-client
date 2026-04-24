@@ -2,6 +2,21 @@
 
 > 멘토 마이페이지 전체 UI에 적용되는 디자인 시스템 기준 문서
 
+최종 업데이트: 2026-04-24
+
+## 앱 위치 (2026-04-24 분리 완료)
+
+멘토 마이페이지는 독립 앱으로 분리되었습니다.
+
+- **앱 경로**: `apps/mentor/` (`@letscareer/mentor`)
+- **번들러**: Vite + React Router v6 (`next/*` import 없음)
+- **배포**: `mentor.letscareer.co.kr` (prod) / `test-mentor.letscareer.co.kr` (preview)
+- **개발 포트**: 3002
+- **라우팅**: react-router-dom v6. 기존 `/mentor/*` prefix 제거 (예: `/mentor/profile` → `/profile`)
+- **web → mentor 이동**: `apps/web/src/middleware.ts`가 `/mentor/*` 요청을 mentor 서브도메인으로 308 리다이렉트
+
+---
+
 ---
 
 ## 1. Color System

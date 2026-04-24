@@ -1,0 +1,63 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".env",
+    ".env.*"
+  ],
+  "globalEnv": ["NODE_ENV", "VERCEL", "CI"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!**/*.test.ts",
+        "!**/*.test.tsx",
+        "!**/__tests__/**",
+        "!dist/**",
+        "!.next/**",
+        "!.turbo/**"
+      ],
+      "env": [
+        "NEXT_PUBLIC_*",
+        "VITE_*",
+        "SENTRY_*",
+        "BUILDER_*"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": []
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!dist/**",
+        "!.next/**",
+        "!.turbo/**"
+      ],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!dist/**",
+        "!.next/**",
+        "!.turbo/**"
+      ],
+      "outputs": ["tsconfig.tsbuildinfo"]
+    },
+    "test": {
+      "cache": false,
+      "dependsOn": []
+    }
+  }
+}

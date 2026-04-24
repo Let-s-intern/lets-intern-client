@@ -2,10 +2,24 @@
 
 렛츠커리어 프로젝트에서 전역적으로 사용되는 커스텀 훅들의 사용 가이드입니다.
 
+최종 업데이트: 2026-04-24
+
 ## 위치
 
+모노레포 전환(2026-04-22) 이후 공유 훅은 `packages/hooks`로 이전되었습니다.
+
 ```
-src/hooks/
+packages/hooks/src/     # @letscareer/hooks — 앱 간 공유 훅
+apps/web/src/hooks/     # web 앱 전용 훅 (일부 잔존)
+```
+
+import 경로:
+```ts
+// 공유 훅 (모든 앱)
+import { useMounted } from '@letscareer/hooks';
+
+// web 전용 훅
+import useMounted from '@/hooks/useMounted';
 ```
 
 ---
@@ -14,7 +28,7 @@ src/hooks/
 
 ### useMounted
 
-**위치**: `src/hooks/useMounted.ts`
+**위치**: `packages/hooks/src/useMounted.ts`
 
 컴포넌트가 마운트되었는지 확인하는 훅
 
@@ -50,7 +64,7 @@ const MyComponent = () => {
 
 ### useRunOnce
 
-**위치**: `src/hooks/useRunOnce.ts`
+**위치**: `packages/hooks/src/useRunOnce.ts`
 
 특정 함수를 컴포넌트 생명주기 동안 한 번만 실행
 
@@ -75,7 +89,7 @@ const MyComponent = () => {
 
 ### useScrollDirection
 
-**위치**: `src/hooks/useScrollDirection.ts`
+**위치**: `packages/hooks/src/useScrollDirection.ts`
 
 스크롤 방향을 감지하는 훅
 
@@ -122,7 +136,7 @@ const Header = () => {
 
 ### useScrollFade
 
-**위치**: `src/hooks/useScrollFade.ts`
+**위치**: `packages/hooks/src/useScrollFade.ts`
 
 스크롤 시 페이드 효과
 
@@ -146,7 +160,7 @@ const Hero = () => {
 
 ### useScrollShadow
 
-**위치**: `src/hooks/useScrollShadow.ts`
+**위치**: `packages/hooks/src/useScrollShadow.ts`
 
 스크롤 시 그림자 효과
 
@@ -154,7 +168,7 @@ const Hero = () => {
 
 ### useProgramScrollDirectionStyle
 
-**위치**: `src/hooks/useProgramScrollDirectionStyle.ts`
+**위치**: `packages/hooks/src/useProgramScrollDirectionStyle.ts`
 
 프로그램 페이지용 스크롤 방향 스타일
 
@@ -164,7 +178,7 @@ const Hero = () => {
 
 ### useValidateUrl
 
-**위치**: `src/hooks/useValidateUrl.ts`
+**위치**: `packages/hooks/src/useValidateUrl.ts`
 
 URL 유효성 검사
 
@@ -172,7 +186,7 @@ URL 유효성 검사
 
 ### useActiveLink
 
-**위치**: `src/hooks/useActiveLink.ts`
+**위치**: `packages/hooks/src/useActiveLink.ts`
 
 현재 활성화된 링크 확인
 
@@ -199,7 +213,7 @@ const NavItem = ({ href, children }) => {
 
 ### useActiveReportNav
 
-**위치**: `src/hooks/useActiveReportNav.ts`
+**위치**: `packages/hooks/src/useActiveReportNav.ts`
 
 리포트 네비게이션에서 활성 항목 확인
 
@@ -207,7 +221,7 @@ const NavItem = ({ href, children }) => {
 
 ### useProgramCategoryNav
 
-**위치**: `src/hooks/useProgramCategoryNav.ts`
+**위치**: `packages/hooks/src/useProgramCategoryNav.ts`
 
 프로그램 카테고리 네비게이션
 
@@ -215,7 +229,7 @@ const NavItem = ({ href, children }) => {
 
 ### useLatestChallengeRedirect
 
-**위치**: `src/hooks/useLatestChallengeRedirect.ts`
+**위치**: `packages/hooks/src/useLatestChallengeRedirect.ts`
 
 최신 챌린지로 리다이렉트
 
@@ -225,7 +239,7 @@ const NavItem = ({ href, children }) => {
 
 ### useBeforeUnloadWarning
 
-**위치**: `src/hooks/useBeforeUnloadWarning.ts`
+**위치**: `packages/hooks/src/useBeforeUnloadWarning.ts`
 
 페이지 나가기 전 경고
 
@@ -247,7 +261,7 @@ const MyForm = () => {
 
 ### useUnsavedChangesWarning
 
-**위치**: `src/hooks/useUnsavedChangesWarning.ts`
+**위치**: `packages/hooks/src/useUnsavedChangesWarning.ts`
 
 저장되지 않은 변경사항 경고
 
@@ -255,7 +269,7 @@ const MyForm = () => {
 
 ### useChangeDetectionHook
 
-**위치**: `src/hooks/useChangeDetectionHook.ts`
+**위치**: `packages/hooks/src/useChangeDetectionHook.ts`
 
 변경사항 감지
 
@@ -265,7 +279,7 @@ const MyForm = () => {
 
 ### usePageableWithSearchParams
 
-**위치**: `src/hooks/usePageableWithSearchParams.ts`
+**위치**: `packages/hooks/src/usePageableWithSearchParams.ts`
 
 URL 쿼리 파라미터와 동기화된 페이지네이션
 
@@ -293,7 +307,7 @@ const ProgramList = () => {
 
 ### usePaginationModelWithSearchParams
 
-**위치**: `src/hooks/usePaginationModelWithSearchParams.ts`
+**위치**: `packages/hooks/src/usePaginationModelWithSearchParams.ts`
 
 MUI DataGrid 등의 페이지네이션 모델과 URL 동기화
 
@@ -303,7 +317,7 @@ MUI DataGrid 등의 페이지네이션 모델과 URL 동기화
 
 ### useInvalidateQueries
 
-**위치**: `src/hooks/useInvalidateQueries.ts`
+**위치**: `packages/hooks/src/useInvalidateQueries.ts`
 
 여러 쿼리 한 번에 무효화
 
@@ -330,7 +344,7 @@ const MyComponent = () => {
 
 ### useCounter
 
-**위치**: `src/hooks/useCounter.ts`
+**위치**: `packages/hooks/src/useCounter.ts`
 
 숫자 카운터 애니메이션
 
@@ -353,7 +367,7 @@ const Stats = () => {
 
 ### useDecimalCounter
 
-**위치**: `src/hooks/useDecimalCounter.ts`
+**위치**: `packages/hooks/src/useDecimalCounter.ts`
 
 소수점 카운터 애니메이션
 
@@ -363,7 +377,7 @@ const Stats = () => {
 
 ### useCareerModals
 
-**위치**: `src/hooks/useCareerModals.ts`
+**위치**: `packages/hooks/src/useCareerModals.ts`
 
 커리어 관련 모달 상태 관리
 
@@ -371,7 +385,7 @@ const Stats = () => {
 
 ### useExperienceSelectModal
 
-**위치**: `src/hooks/useExperienceSelectModal.ts`
+**위치**: `packages/hooks/src/useExperienceSelectModal.ts`
 
 경험 선택 모달 상태 관리
 
@@ -381,7 +395,7 @@ const Stats = () => {
 
 ### useReadItems
 
-**위치**: `src/hooks/useReadItems.ts`
+**위치**: `packages/hooks/src/useReadItems.ts`
 
 읽은 항목 관리 (로컬스토리지 활용)
 
@@ -412,7 +426,7 @@ const ArticleList = () => {
 
 ### useExperienceLevel
 
-**위치**: `src/hooks/useExperienceLevel.ts`
+**위치**: `packages/hooks/src/useExperienceLevel.ts`
 
 경험 레벨 관리
 
@@ -420,7 +434,7 @@ const ArticleList = () => {
 
 ### useChallengeProgram
 
-**위치**: `src/hooks/useChallengeProgram.ts`
+**위치**: `packages/hooks/src/useChallengeProgram.ts`
 
 챌린지 프로그램 관련 로직
 
@@ -428,7 +442,7 @@ const ArticleList = () => {
 
 ### useFirstB2CChallenge
 
-**위치**: `src/hooks/useFirstB2CChallenge.ts`
+**위치**: `packages/hooks/src/useFirstB2CChallenge.ts`
 
 첫 B2C 챌린지 관련 로직
 
@@ -436,7 +450,7 @@ const ArticleList = () => {
 
 ### useFilteredSchedules
 
-**위치**: `src/hooks/useFilteredSchedules.ts`
+**위치**: `packages/hooks/src/useFilteredSchedules.ts`
 
 필터링된 스케줄 목록
 
@@ -444,7 +458,7 @@ const ArticleList = () => {
 
 ### useMinDate
 
-**위치**: `src/hooks/useMinDate.ts`
+**위치**: `packages/hooks/src/useMinDate.ts`
 
 최소 날짜 계산
 
@@ -454,7 +468,7 @@ const ArticleList = () => {
 
 ### useMissionSelection
 
-**위치**: `src/hooks/useMissionSelection.ts`
+**위치**: `packages/hooks/src/useMissionSelection.ts`
 
 미션 선택 로직
 
@@ -462,7 +476,7 @@ const ArticleList = () => {
 
 ### useMissionOperation
 
-**위치**: `src/hooks/useMissionOperation.ts`
+**위치**: `packages/hooks/src/useMissionOperation.ts`
 
 미션 조작 로직
 
@@ -470,7 +484,7 @@ const ArticleList = () => {
 
 ### useMissionCalculation
 
-**위치**: `src/hooks/useMissionCalculation.ts`
+**위치**: `packages/hooks/src/useMissionCalculation.ts`
 
 미션 계산 로직
 
@@ -478,7 +492,7 @@ const ArticleList = () => {
 
 ### useUpdateMissionOption
 
-**위치**: `src/hooks/useUpdateMissionOption.ts`
+**위치**: `packages/hooks/src/useUpdateMissionOption.ts`
 
 미션 옵션 업데이트
 
@@ -488,7 +502,7 @@ const ArticleList = () => {
 
 ### useGetActiveReviews
 
-**위치**: `src/hooks/useGetActiveReviews.ts`
+**위치**: `packages/hooks/src/useGetActiveReviews.ts`
 
 활성 리뷰 목록 가져오기
 
@@ -496,7 +510,7 @@ const ArticleList = () => {
 
 ### useGetActiveMissionReviews
 
-**위치**: `src/hooks/useGetActiveMissionReviews.ts`
+**위치**: `packages/hooks/src/useGetActiveMissionReviews.ts`
 
 활성 미션 리뷰 목록 가져오기
 
@@ -506,7 +520,7 @@ const ArticleList = () => {
 
 ### useMentorAccessControl
 
-**위치**: `src/hooks/useMentorAccessControl.ts`
+**위치**: `packages/hooks/src/useMentorAccessControl.ts`
 
 멘토 접근 제어
 
@@ -529,7 +543,7 @@ const MentorDashboard = () => {
 
 ### usePatchVisibleProgram
 
-**위치**: `src/hooks/usePatchVisibleProgram.ts`
+**위치**: `packages/hooks/src/usePatchVisibleProgram.ts`
 
 프로그램 공개 여부 업데이트
 
@@ -537,7 +551,7 @@ const MentorDashboard = () => {
 
 ### useDeleteProgram
 
-**위치**: `src/hooks/useDeleteProgram.ts`
+**위치**: `packages/hooks/src/useDeleteProgram.ts`
 
 프로그램 삭제
 
@@ -545,7 +559,7 @@ const MentorDashboard = () => {
 
 ### useDuplicateProgram
 
-**위치**: `src/hooks/useDuplicateProgram.ts`
+**위치**: `packages/hooks/src/useDuplicateProgram.ts`
 
 프로그램 복제
 
@@ -555,7 +569,7 @@ const MentorDashboard = () => {
 
 ### useReportProgramInfo
 
-**위치**: `src/hooks/useReportProgramInfo.ts`
+**위치**: `packages/hooks/src/useReportProgramInfo.ts`
 
 리포트 프로그램 정보
 
@@ -563,7 +577,7 @@ const MentorDashboard = () => {
 
 ### useReportPayment
 
-**위치**: `src/hooks/useReportPayment.ts`
+**위치**: `packages/hooks/src/useReportPayment.ts`
 
 리포트 결제 정보
 
@@ -573,7 +587,7 @@ const MentorDashboard = () => {
 
 ### useGoogleAnalytics
 
-**위치**: `src/hooks/useGoogleAnalytics.ts`
+**위치**: `packages/hooks/src/useGoogleAnalytics.ts`
 
 Google Analytics 이벤트 추적
 
@@ -674,9 +688,9 @@ const useToggle = (initialValue: boolean) => {
 
 ## 새 훅 추가 시
 
-1. **`src/hooks/` 디렉토리**에 생성
+1. **`packages/hooks/src/` 디렉토리**에 생성
    ```
-   src/hooks/useMyCustomHook.ts
+   packages/hooks/src/useMyCustomHook.ts
    ```
 
 2. **명확한 네이밍**

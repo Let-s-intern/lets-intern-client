@@ -1,0 +1,11 @@
+{
+  "name": "@letscareer/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./base.mjs"
+  },
+  "peerDependencies": {
+    "eslint": ">=8"
+  }
+}

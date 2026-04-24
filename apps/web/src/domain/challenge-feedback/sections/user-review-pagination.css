@@ -1,0 +1,12 @@
+.user-review-pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.user-review-pagination .swiper-pagination-bullet-active {
+  background: #b49aff;
+}
