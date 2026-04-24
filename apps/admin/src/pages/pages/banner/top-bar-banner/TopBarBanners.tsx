@@ -13,7 +13,7 @@ import TableLayout from '@/domain/admin/ui/table/TableLayout';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import GridActionLink from '@/domain/admin/ui/table/GridActionLink';
 
 const TopBarBanners = () => {
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -77,12 +77,12 @@ const TopBarBanners = () => {
           const id = params.id;
 
           return [
-            <Link
+            <GridActionLink
               to={`/banner/top-bar-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
-            </Link>,
+            </GridActionLink>,
             <Trash
               key={'delete' + id}
               className="ml-4 cursor-pointer"

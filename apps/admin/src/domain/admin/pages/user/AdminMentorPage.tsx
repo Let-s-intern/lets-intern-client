@@ -15,11 +15,12 @@ const PAGE_SIZE = 50;
 function MentorManagementTable() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const page = Math.max(0, Number(searchParams.get('page') ?? '1') - 1);
+  const page = Math.max(1, Number(searchParams.get('page') ?? '1'));
 
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const { data, isLoading } = useUserAdminQuery({
+    isMentor: true,
     pageable: { page, size: PAGE_SIZE },
   });
 
@@ -135,7 +136,7 @@ function MentorManagementTable() {
         <div className="mt-4 flex justify-center">
           <Pagination
             count={totalPages}
-            page={page + 1}
+            page={page}
             onChange={handlePageChange}
             color="primary"
             shape="rounded"

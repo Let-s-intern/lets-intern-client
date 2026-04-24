@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import GridActionLink from '@/domain/admin/ui/table/GridActionLink';
 
 import { CommonBannerAdminAllItemType } from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
@@ -77,12 +77,12 @@ const CommonBanners = () => {
           const id = params.row.commonBannerId;
 
           return [
-            <Link
+            <GridActionLink
               to={`/banner/common-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
-            </Link>,
+            </GridActionLink>,
             <Trash
               key={'delete' + id}
               className="ml-4 cursor-pointer"
