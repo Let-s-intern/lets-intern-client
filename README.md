@@ -50,9 +50,9 @@ pnpm dev:mentor     # http://localhost:3002  (Vite)
 ```
 lets-intern-client/
 ├── apps/
-│   ├── web/      # 사용자 페이지 (Next.js)         → letscareer.co.kr
-│   ├── admin/    # 어드민 콘솔 (Vite + React)      → admin.letscareer.co.kr
-│   └── mentor/   # 멘토 마이페이지 (Vite + React)  → mentor.letscareer.co.kr
+│   ├── web/      # 사용자 페이지 (Next.js)         → <운영 도메인>
+│   ├── admin/    # 어드민 콘솔 (Vite + React)      → <어드민 운영 도메인>
+│   └── mentor/   # 멘토 마이페이지 (Vite + React)  → <멘토 운영 도메인>
 └── packages/
     ├── api/                  # axios 클라이언트 (공용)
     ├── hooks/                # 공유 React Hooks
@@ -121,7 +121,7 @@ pnpm dev   # 3개 앱 동시 기동 (:3000, :3001, :3002)
 
 ### 개발 시 API 프록시
 
-admin/mentor의 Vite dev 서버는 `/api` 요청을 `https://letsintern.kr`로 프록시합니다 (`vite.config.ts`). 별도 API 서버 기동 없이 실서버 데이터로 개발 가능.
+admin/mentor의 Vite dev 서버는 `/api` 요청을 백엔드 호스트로 프록시합니다 (`vite.config.ts`). 별도 API 서버 기동 없이 실서버 데이터로 개발 가능.
 
 ## 🏗 빌드 (build)
 
@@ -266,9 +266,9 @@ Vite + React Router로 만든 SPA는 `/users` 같은 직접 진입 URL에서 404
 
 | 프로젝트 | Production | Preview (Git Branch: `develop`) |
 |---|---|---|
-| `letscareer-web` | `letscareer.co.kr` | `test.letscareer.co.kr` |
-| `letscareer-admin` | `admin.letscareer.co.kr` | `test-admin.letscareer.co.kr` |
-| `letscareer-mentor` | `mentor.letscareer.co.kr` | `test-mentor.letscareer.co.kr` |
+| `letscareer-web` | `<운영 도메인>` | `<테스트 도메인>` |
+| `letscareer-admin` | `<어드민 운영 도메인>` | `<어드민 테스트 도메인>` |
+| `letscareer-mentor` | `<멘토 운영 도메인>` | `<멘토 테스트 도메인>` |
 
 DNS는 DNS 관리자(가비아/카페24 등)에서 6개 서브도메인에 `CNAME → cname.vercel-dns.com` 추가.
 
@@ -276,11 +276,11 @@ DNS는 DNS 관리자(가비아/카페24 등)에서 6개 서브도메인에 `CNAM
 
 ```bash
 # DNS 전파
-dig admin.letscareer.co.kr +short
+dig <어드민 운영 도메인> +short
 # → cname.vercel-dns.com.
 
 # 직접 진입 테스트
-curl -I https://admin.letscareer.co.kr/programs
+curl -I https://<어드민 운영 도메인>/programs
 # → 200 (SPA rewrite 동작)
 ```
 
