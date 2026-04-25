@@ -100,6 +100,21 @@ test -z "$(
 
 `test -z "$(... | ...)"` 형태에선 substitution 안 명령 실패가 외부 평가에 영향을 주지 않는다는 점에 주의. bash의 흔한 함정.
 
+## Vercel 빌드 로그 — 판정 근거 출력
+
+스크립트는 stdout으로 평가 과정을 모두 출력해 Vercel 빌드 로그에 그대로 남는다. "왜 빌드?" 질문에 로그만 보면 답이 나오도록 설계.
+
+```
+[skip-build] 변경 파일 (3개):
+  .claude/docs/letscareer/pnpm전환 메모 폴더/04-vercel-deployment.md
+  .claude/docs/letscareer/pnpm전환 메모 폴더/07-build-filter.md
+  scripts/vercel-skip-build.sh
+[skip-build] 🔴 BUILD — 다음 파일이 필터를 통과해 빌드 트리거:
+  scripts/vercel-skip-build.sh
+```
+
+스킵 케이스도 동일하게 변경 파일 목록 + `🟢 SKIP` 결정을 출력. 빌드 로그에서 `[skip-build]` 로 grep하면 판정 근거만 추출 가능.
+
 ## 로컬 검증
 
 스크립트를 실제로 실행해서 결과 확인:
