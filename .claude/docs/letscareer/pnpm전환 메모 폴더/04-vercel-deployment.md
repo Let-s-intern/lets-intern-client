@@ -117,22 +117,20 @@ Vercel이 다음 중 하나라도 해당하면 빌드를 트리거한다:
 
 워크스페이스 *외부* 변경(`turbo.json`, root `package.json` overrides 등)은 *모든 앱* 빌드 트리거 — 의도된 동작.
 
-### 커스텀 bash 폴백 (자동을 끄는 경우만)
+### 커스텀 IBS와 결합 (권장)
 
-자동 기능이 적합하지 않은 케이스(GitHub 외 호스트 사용, 특수 경로 추가 검사 필요 등)에서만 **Settings → Git → Ignored Build Step**에 다음 스크립트를 넣는다. exit 0이면 스킵, exit 1이면 빌드 진행. ⚠️ 이 방식은 *빌드 슬롯을 점유*하므로 자동 기능보다 비효율적.
+자동 기능은 워크스페이스 *외부* 변경(루트 `*.md`, `.claude/**`, `.github/**` 등)을 의존 그래프 외부로 간주해 모든 앱을 트리거할 수 있다. 이를 컷하기 위해 [scripts/vercel-skip-build.sh](../../../../scripts/vercel-skip-build.sh)를 **Settings → Git → Ignored Build Step**에 등록해 결합 사용한다.
 
 ```bash
-# letscareer-web
-git diff HEAD^ HEAD --quiet -- apps/web packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
-
-# letscareer-admin
-git diff HEAD^ HEAD --quiet -- apps/admin packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
-
-# letscareer-mentor
-git diff HEAD^ HEAD --quiet -- apps/mentor packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
+bash scripts/vercel-skip-build.sh
 ```
 
-> 자동 기능과 커스텀을 *동시에* 켜면 둘 중 하나라도 "스킵"이라고 하면 스킵된다. 디버깅이 어려워지므로 **하나만 사용**.
+3개 프로젝트 모두 동일 명령. 두 필터는 **AND** 관계 — 둘 중 하나라도 "스킵"이면 빌드 안 함. 역할 분담:
+
+- *Custom IBS* → 루트 `*.md` 및 dev 도구 폴더 (`.claude`, `.cursor`, `.gemini`, `.github`, `.vscode`) 컷
+- *Skip Unaffected* → 워크스페이스 내부 의존성 정밀 컷
+
+상세 설계·함정(한글 경로·첫 커밋 엣지 케이스)·검증 방법은 [07-build-filter.md](./07-build-filter.md) 참조.
 
 ## 3️⃣ SPA Rewrite (admin/mentor만)
 
