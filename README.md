@@ -82,7 +82,7 @@ pnpm clean         # 빌드 산출물·node_modules·.turbo 삭제
     ├── 01-monorepo-structure.md         # 워크스페이스·^build 의존 그래프
     ├── 02-pnpm-setup.md                 # Corepack·frozen-lockfile·일상 명령
     ├── 03-domain-routing.md             # 미들웨어 308·SSO hash·env fallback
-    ├── 04-vercel-deployment.md          # 3개 Vercel 프로젝트·Ignored Build Step
+    ├── 04-vercel-deployment.md          # 3개 Vercel 프로젝트·Skip Unaffected Projects
     ├── 05-build-test-ci.md              # Turbo·GitHub Actions·캐시 무효화
     └── 06-deployment-guide.md           # 배포·롤백·트러블슈팅
 ```

@@ -153,7 +153,7 @@ pnpm exec turbo run build --filter=@letscareer/web --filter=@letscareer/admin
 | `.github/workflows/build-X.yml` | 자기 자신만 | 자기 자신만 | 자기 자신만 | 자기 자신만 |
 | `.claude/**`, `*.md`, `.cursor/**` | ❌ | ❌ | ❌ | ❌ |
 
-이 트리거 매트릭스는 [04-vercel-deployment.md](./04-vercel-deployment.md)의 Ignored Build Step과 *같은 사고방식*이다. 둘 다 "앱별 격리 + 공용 변경 시 전체"를 다른 도구로 구현한 것.
+이 트리거 매트릭스는 [04-vercel-deployment.md](./04-vercel-deployment.md)의 Skip Unaffected Projects와 *같은 사고방식*이다. 둘 다 "앱별 격리 + 공용 변경 시 전체"를 다른 도구로 구현한 것.
 
 ### 공통 워크플로우 골격
 
