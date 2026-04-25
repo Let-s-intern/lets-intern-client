@@ -29,10 +29,12 @@
 ### 2️⃣ Ignored Build Step → "Run my own command"
 
 ```bash
-bash scripts/vercel-skip-build.sh
+bash "$(git rev-parse --show-toplevel)/scripts/vercel-skip-build.sh"
 ```
 
-세 프로젝트 모두 같은 명령. 앱별 분기 불필요 — 워크스페이스 내부 컷은 auto가 처리한다. 스크립트는 git 루트로 `cd`하므로 Vercel의 cwd와 무관하게 동작.
+세 프로젝트 모두 같은 명령. 앱별 분기 불필요 — 워크스페이스 내부 컷은 auto가 처리한다.
+
+> ⚠️ **`bash scripts/vercel-skip-build.sh` 상대 경로는 사용 금지** — Vercel IBS의 cwd는 프로젝트 Root Directory(`apps/<name>/`)이지 repo 루트가 아니라서 `bash: scripts/vercel-skip-build.sh: No such file or directory` (exit 127)로 실패한다. `$(git rev-parse --show-toplevel)`로 repo 루트 절대 경로를 동적 탐지하면 cwd와 무관하게 동작한다.
 
 ## 스크립트 — `scripts/vercel-skip-build.sh`
 
