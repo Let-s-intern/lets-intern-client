@@ -189,7 +189,7 @@ apps/<app>/src/
 - 도메인 내부 파일은 그 도메인의 폴더 밖을 import하지 않는다 (예외: `common`, `packages`).
 - 같은 패턴이 워크스페이스 패키지에서도 적용 (예: `packages/ui` 안에서도 카테고리별 분리).
 
-상세 규칙: [`.claude/skills/folder-structure/SKILL.md`](../../skills/folder-structure/SKILL.md), 도메인별 README는 [`.claude/docs/letscareer/domain/`](./domain/).
+상세 규칙: [`.claude/skills/folder-structure/SKILL.md`](../../skills/folder-structure/SKILL.md), 도메인별 README는 [`apps/`](./apps/) 하위 각 앱 폴더 참조.
 
 ## 외부 통합 매트릭스
 
@@ -258,9 +258,8 @@ apps/<app>/src/
 | Vercel 배포 설정 | [`pnpm전환 메모 폴더/04-vercel-deployment.md`](./pnpm전환%20메모%20폴더/04-vercel-deployment.md) |
 | 빌드·CI | [`pnpm전환 메모 폴더/05-build-test-ci.md`](./pnpm전환%20메모%20폴더/05-build-test-ci.md) |
 | 단계별 배포 절차 | [`pnpm전환 메모 폴더/06-deployment-guide.md`](./pnpm전환%20메모%20폴더/06-deployment-guide.md) |
-| 도메인별 아키텍처 | [`domain/`](./domain/) |
-| 공용 컴포넌트·훅 | [`common/`](./common/) |
+| 앱별 도메인 (web/admin/mentor) | [`apps/`](./apps/) |
+| 공유 패키지 (`@letscareer/*`) | [`packages/`](./packages/) |
 | API 명세 | [`API_docs/`](./API_docs/) |
-| 큐레이션 도메인 | [`curation-domain/`](./curation-domain/) |
 | 폴더 구조 규칙 | [`.claude/skills/folder-structure/SKILL.md`](../../skills/folder-structure/SKILL.md) |
 | 코드 품질 규칙 | [`.claude/skills/code-quality/SKILL.md`](../../skills/code-quality/SKILL.md) |

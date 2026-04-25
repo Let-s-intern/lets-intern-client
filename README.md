@@ -54,25 +54,28 @@ pnpm clean         # 빌드 산출물·node_modules·.turbo 삭제
 ├── API_docs/
 │   └── swagger_url.md                   # Swagger API 문서 URL
 │
-├── common/                              # 공용 모듈 가이드
-│   ├── README.md                        # 통합 가이드 (사용 원칙·import 경로)
-│   ├── components.md                    # 공용 컴포넌트 (Button·Modal·Layout 등)
-│   ├── hooks.md                         # 커스텀 훅 (useMounted·useScrollDirection 등)
-│   └── services.md                      # API 서비스·React Query 훅
-│
-├── domain/                              # 도메인별 아키텍처
-│   ├── challenge-detail/README.md       # 챌린지 상세
-│   ├── challenge-feedback/README.md     # 챌린지 피드백
-│   ├── community/README.md              # 커뮤니티
-│   ├── curation/                        # 큐레이션
-│   │   ├── README.md
-│   │   └── flow-map.md                  # 큐레이션 플로우 맵
+├── apps/                                # 앱별 도메인·로컬 모듈 가이드
+│   ├── README.md                        # 3개 앱 비교 표
+│   ├── web/                             # apps/web (Next.js 사용자 사이트)
+│   │   ├── README.md                    # 18개 도메인 개요
+│   │   ├── components.md                # web/src/common 컴포넌트
+│   │   ├── hooks.md                     # web/src/hooks 훅
+│   │   ├── services.md                  # web/src/api·utils 서비스
+│   │   └── domain/                      # 18개 도메인 폴더 (각 README.md)
+│   ├── admin/
+│   │   └── README.md                    # apps/admin 18개 도메인 개요
 │   └── mentor/
-│       └── design-system.md             # 멘토 디자인 시스템
+│       └── README.md                    # apps/mentor (단일 program 도메인)
 │
-├── curation-domain/                     # 큐레이션 도메인 (확장)
-│   ├── README.md
-│   └── flow-map.md
+├── packages/                            # 공유 패키지 가이드 (@letscareer/*)
+│   ├── README.md                        # 7개 패키지 개요·import 패턴
+│   ├── api.md                           # @letscareer/api
+│   ├── hooks.md                         # @letscareer/hooks
+│   ├── store.md                         # @letscareer/store
+│   ├── ui.md                            # @letscareer/ui
+│   ├── utils.md                         # @letscareer/utils
+│   ├── types.md                         # @letscareer/types
+│   └── config.md                        # eslint/prettier/tailwind/tsconfig
 │
 └── pnpm전환 메모 폴더/                    # pnpm 전환·운영 메모
     ├── README.md                        # 인덱스 + 빠른 의사결정 표

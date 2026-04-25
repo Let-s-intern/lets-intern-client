@@ -43,17 +43,16 @@
 │   ├── common-components/                # 공용 컴포넌트 레퍼런스
 │   ├── tech-stack/                       # 기술 스택 개요
 │   └── letscareer/
-│       ├── README.md                     # 프로젝트 전체 개요 (모노레포·3앱·도메인 분리)
+│       ├── README.md                     # 프로젝트 문서 인덱스
+│       ├── architecture.md               # 시스템 아키텍처 개요
 │       ├── API_docs/                     # Swagger URL 등
-│       ├── common/                       # 공통 hooks/components/services 상세
-│       ├── curation-domain/              # 큐레이션 도메인 상세
-│       ├── domain/                       # 도메인별 문서
-│       │   ├── challenge-detail/
-│       │   ├── challenge-feedback/
-│       │   ├── community/
-│       │   ├── curation/
-│       │   └── mentor/                   # (design-system.md 포함)
-│       └── tech-stack/
+│       ├── tech-stack/                   # 라이브러리 버전·설정
+│       ├── apps/                         # 앱별 도메인·로컬 모듈
+│       │   ├── web/                      # 18개 도메인 + components/hooks/services + domain/
+│       │   ├── admin/                    # 18개 도메인
+│       │   └── mentor/                   # 단일 program 도메인
+│       ├── packages/                     # 공유 패키지 (@letscareer/*) 가이드
+│       └── pnpm전환 메모 폴더/             # pnpm 전환·운영 메모 (01~06 + README)
 │
 ├── hooks/                                # Claude Code 훅 스크립트
 │   ├── check-tasks.sh
@@ -71,14 +70,15 @@
 
 | 상황 | 먼저 볼 곳 |
 |---|---|
-| 새 기능 구현 | `skills/folder-structure/SKILL.md`, `skills/vercel-react-best-practices/AGENTS.md`, `docs/letscareer/domain/` |
+| 새 기능 구현 | `skills/folder-structure/SKILL.md`, `skills/vercel-react-best-practices/AGENTS.md`, `docs/letscareer/apps/<app>/` |
 | 리팩터링 | `skills/folder-structure/SKILL.md`, `skills/code-quality/SKILL.md`, `agents/refactorer.md` |
 | 코드 리뷰 | `skills/code-review/SKILL.md` |
-| 공유 훅/컴포넌트 찾기 | `docs/letscareer/common/` |
-| 도메인 로직 이해 | `docs/letscareer/domain/{도메인}/README.md` |
+| 공유 훅/컴포넌트 찾기 | `docs/letscareer/packages/` |
+| 도메인 로직 이해 | `docs/letscareer/apps/<app>/domain/<도메인>.md` |
 | API/Swagger | `docs/letscareer/API_docs/swagger_url.md` |
 | 기술 스택 확인 | `docs/letscareer/tech-stack/README.md` |
-| 모노레포·배포 구조 | `docs/letscareer/README.md`, `tasks/memos/deployment-guide.md` |
+| 시스템 아키텍처 개요 | `docs/letscareer/architecture.md` |
+| 모노레포·배포 구조 | `docs/letscareer/pnpm전환 메모 폴더/` |
 | BE 협업 메시지 | `tasks/memos/be-request-*.md` |
 | PRD → 태스크 생성 | `skills/task-maker/SKILL.md` |
 | 태스크 실행 | `skills/task-runner/SKILL.md` → `agents/push-lead.md` |
