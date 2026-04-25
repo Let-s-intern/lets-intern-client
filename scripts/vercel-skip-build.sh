@@ -14,7 +14,11 @@
 #
 # Vercel UI 적용 (web/admin/mentor 3개 프로젝트 각각):
 #   Settings → Git → Ignored Build Step → "Run my own command"
-#     bash scripts/vercel-skip-build.sh
+#     bash "$(git rev-parse --show-toplevel)/scripts/vercel-skip-build.sh"
+#
+# 주의: `bash scripts/vercel-skip-build.sh` (상대 경로) 는 IBS의 cwd가
+# 프로젝트 Root Directory(`apps/<name>/`)이라 파일을 못 찾는다 (exit 127).
+# `$(git rev-parse --show-toplevel)` 로 repo 루트 절대 경로를 동적 탐지.
 #
 # 상세 설계·함정·검증 방법:
 #   .claude/docs/letscareer/pnpm전환 메모 폴더/07-build-filter.md

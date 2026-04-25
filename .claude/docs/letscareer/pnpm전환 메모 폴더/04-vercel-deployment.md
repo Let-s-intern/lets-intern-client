@@ -122,10 +122,10 @@ Vercel이 다음 중 하나라도 해당하면 빌드를 트리거한다:
 자동 기능은 워크스페이스 *외부* 변경(루트 `*.md`, `.claude/**`, `.github/**` 등)을 의존 그래프 외부로 간주해 모든 앱을 트리거할 수 있다. 이를 컷하기 위해 [scripts/vercel-skip-build.sh](../../../../scripts/vercel-skip-build.sh)를 **Settings → Git → Ignored Build Step**에 등록해 결합 사용한다.
 
 ```bash
-bash scripts/vercel-skip-build.sh
+bash "$(git rev-parse --show-toplevel)/scripts/vercel-skip-build.sh"
 ```
 
-3개 프로젝트 모두 동일 명령. 두 필터는 **AND** 관계 — 둘 중 하나라도 "스킵"이면 빌드 안 함. 역할 분담:
+3개 프로젝트 모두 동일 명령. IBS의 cwd가 `apps/<name>/`이므로 상대 경로 `bash scripts/...`는 exit 127로 실패한다 — 반드시 `$(git rev-parse --show-toplevel)` 로 절대 경로 변환. 두 필터는 **AND** 관계 — 둘 중 하나라도 "스킵"이면 빌드 안 함. 역할 분담:
 
 - *Custom IBS* → 루트 `*.md` 및 dev 도구 폴더 (`.claude`, `.cursor`, `.gemini`, `.github`, `.vscode`) 컷
 - *Skip Unaffected* → 워크스페이스 내부 의존성 정밀 컷
