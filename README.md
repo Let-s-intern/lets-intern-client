@@ -1,357 +1,88 @@
 # Lets Career Client
 
-렛츠커리어 프론트엔드 모노레포. pnpm workspace + Turborepo 기반의 3개 앱.
+렛츠커리어 프론트엔드 모노레포. pnpm workspace + Turborepo 기반 3개 앱 (Next.js + Vite × 2).
 
-## 📦 프로젝트 구성
+## 사전 요구사항
 
-```
-lets-intern-client/
-├── apps/
-│   ├── web/      # 사용자 페이지 (Next.js)         → letscareer.co.kr
-│   ├── admin/    # 어드민 콘솔 (Vite + React)      → admin.letscareer.co.kr
-│   └── mentor/   # 멘토 마이페이지 (Vite + React)  → mentor.letscareer.co.kr
-└── packages/
-    ├── api/                  # axios 클라이언트 (공용)
-    ├── hooks/                # 공유 React Hooks
-    ├── store/                # zustand stores
-    ├── types/                # 공유 TypeScript 타입
-    ├── ui/                   # 공유 컴포넌트
-    ├── utils/                # 유틸리티 함수
-    └── config/               # eslint / prettier / tailwind / tsconfig
-```
+- Node.js >= 18.17 (권장: 20.x)
+- pnpm >= 10 — `package.json`의 `packageManager: "pnpm@10.33.0"` 강제. Corepack 권장.
 
-## 🔧 사전 요구사항
-
-| 도구 | 버전 |
-|---|---|
-| Node.js | `>=18.17` (권장: 20.x) |
-| pnpm    | `>=10`   |
+## 빠른 시작
 
 ```bash
-# Node 버전 관리 (nvm 사용 시)
-nvm use 20
+# 1. pnpm 활성화 (Corepack)
+corepack enable
+corepack prepare pnpm@10.33.0 --activate
 
-# pnpm 설치
-npm install -g pnpm@10
-```
+# 2. 의존성 설치
+pnpm install --frozen-lockfile
 
-## 🚀 빠른 시작
-
-```bash
-# 1. 저장소 클론
-git clone <repo-url>
-cd lets-intern-client
-
-# 2. 의존성 설치 (모든 workspace 한 번에)
-pnpm install
-
-# 3. 환경변수 파일 준비 (각 앱 디렉토리)
+# 3. 환경변수 (각 앱의 .env.example 참고해 값 채우기)
 cp apps/web/.env.example apps/web/.env.local
-cp apps/admin/.env.example apps/admin/.env.development
-cp apps/mentor/.env.example apps/mentor/.env.development
+cp apps/admin/.env.example apps/admin/.env
+cp apps/mentor/.env.example apps/mentor/.env
 
-# 4. 원하는 앱 실행
-pnpm dev:web     # → http://localhost:3000
-pnpm dev:admin   # → http://localhost:3001
-pnpm dev:mentor  # → http://localhost:3002
+# 4. 개발 서버
+pnpm dev:web      # http://localhost:3000  (Next.js)
+pnpm dev:admin    # http://localhost:3001  (Vite)
+pnpm dev:mentor   # http://localhost:3002  (Vite)
+pnpm dev          # 3개 동시
 ```
 
-## 💻 개발 (dev)
-
-### 앱별 개별 실행 (권장)
-
-한 앱만 작업할 때는 **필터 스크립트**를 쓰세요. 다른 앱은 실행되지 않습니다.
+## 빌드·검증
 
 ```bash
-pnpm dev:web       # web 앱만 실행 :3000
-pnpm dev:admin     # admin 앱만 실행 :3001
-pnpm dev:mentor    # mentor 앱만 실행 :3002
-```
-
-### 모든 앱 동시 실행
-
-```bash
-pnpm dev   # 3개 앱 동시 기동 (:3000, :3001, :3002)
-```
-
-> ⚠️ 포트 충돌 주의. 이미 해당 포트를 쓰는 프로세스가 있으면 `strictPort: true` 설정으로 실패합니다.
-
-### 개발 시 API 프록시
-
-admin/mentor의 Vite dev 서버는 `/api` 요청을 `https://letsintern.kr`로 프록시합니다 (`vite.config.ts`). 별도 API 서버 기동 없이 실서버 데이터로 개발 가능.
-
-## 🏗 빌드 (build)
-
-```bash
-pnpm build:web     # web만 빌드 → apps/web/.next
-pnpm build:admin   # admin만 빌드 → apps/admin/dist
-pnpm build:mentor  # mentor만 빌드 → apps/mentor/dist
-
-pnpm build         # 3개 앱 모두 빌드
-```
-
-### Turborepo 캐시
-
-- **첫 빌드** 후 Turbo가 `.turbo/` 캐시를 저장합니다.
-- **같은 입력**이면 다음 빌드는 즉시 완료(`>>> FULL TURBO`).
-- **한 앱만 수정하면 다른 앱 캐시는 유지**됩니다 (→ "한 앱 수정 = 해당 앱만 재빌드").
-
-빌드 시간 예시:
-- 첫 빌드: `admin` ~28s, `mentor` ~18s, `web` ~60s
-- 캐시 히트: <1s
-
-캐시 무효화가 일어나는 조건:
-- 해당 앱 소스코드 변경
-- 해당 앱이 import하는 공용 패키지 변경 (`packages/*`)
-- `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.env*` 변경
-- 관련 환경변수(`NEXT_PUBLIC_*`, `VITE_*`, `SENTRY_*`, `BUILDER_*`) 변경
-
-## 🧪 검증 (lint / typecheck / test)
-
-```bash
-# 전체
-pnpm lint
-pnpm typecheck
+pnpm build         # 또는 build:web / build:admin / build:mentor
+pnpm lint          # 또는 lint:web / lint:admin / lint:mentor
+pnpm typecheck     # 또는 typecheck:web / typecheck:admin / typecheck:mentor
 pnpm test
-
-# 앱별
-pnpm lint:web
-pnpm typecheck:admin
-pnpm lint:mentor
+pnpm clean         # 빌드 산출물·node_modules·.turbo 삭제
 ```
 
-## 🧹 정리
+## 문서
 
-```bash
-pnpm clean   # 빌드 산출물 + node_modules + .turbo 삭제 (초기화)
+운영·아키텍처·도메인 문서는 [`.claude/docs/letscareer/`](./.claude/docs/letscareer/) 에 정리되어 있다. `.claude/` 전반 구조는 [`.claude/README.md`](./.claude/README.md) 참고.
+
 ```
-
-## 🌐 Vercel 배포 설정
-
-> **핵심 원칙**: 각 앱을 **독립된 Vercel 프로젝트**로 분리해야 앱별 격리 배포가 됩니다.
-> 지금은 1개 프로젝트가 모노레포 전체를 빌드하는 설정일 수 있으니 반드시 분리 확인.
-
-### 1️⃣ Vercel 프로젝트 3개 생성
-
-Vercel 대시보드 → **Add New → Project** → 같은 Git 저장소 선택 → 다음 설정 적용.
-
-#### `letscareer-web` (기존 프로젝트)
-
-| 항목 | 값 |
-|---|---|
-| Framework Preset | `Next.js` |
-| **Root Directory** | `apps/web` |
-| Install Command | `cd ../.. && pnpm install --frozen-lockfile` |
-| Build Command | `cd ../.. && pnpm build:web` |
-| Output Directory | `.next` (자동) |
-| Node Version | `20.x` |
-
-#### `letscareer-admin` (신규)
-
-| 항목 | 값 |
-|---|---|
-| Framework Preset | `Vite` |
-| **Root Directory** | `apps/admin` |
-| Install Command | `cd ../.. && pnpm install --frozen-lockfile` |
-| Build Command | `cd ../.. && pnpm build:admin` |
-| Output Directory | `dist` |
-| Node Version | `20.x` |
-
-#### `letscareer-mentor` (신규)
-
-| 항목 | 값 |
-|---|---|
-| Framework Preset | `Vite` |
-| **Root Directory** | `apps/mentor` |
-| Install Command | `cd ../.. && pnpm install --frozen-lockfile` |
-| Build Command | `cd ../.. && pnpm build:mentor` |
-| Output Directory | `dist` |
-| Node Version | `20.x` |
-
-> 💡 `cd ../..`로 모노레포 루트에서 pnpm을 실행해야 workspace 의존성(`@letscareer/*`)이 해석됩니다.
-
-### 2️⃣ Ignored Build Step (선택 사항, 권장)
-
-**앱 A 소스만 바꿨을 때 앱 B/C 배포를 스킵**하려면 각 프로젝트의 **Settings → Git → Ignored Build Step**에 아래 스크립트를 추가.
-
-#### `letscareer-admin` (`Settings → Git → Ignored Build Step`)
-```bash
-git diff HEAD^ HEAD --quiet -- apps/admin packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
+.claude/docs/letscareer/
+├── README.md                            # 프로젝트 전체 개요·문서 인덱스
+├── architecture.md                      # 시스템 아키텍처 개요 (한 페이지 지도)
+│
+├── tech-stack/
+│   └── README.md                        # 라이브러리 버전·설정 인벤토리
+│
+├── API_docs/
+│   └── swagger_url.md                   # Swagger API 문서 URL
+│
+├── apps/                                # 앱별 도메인·로컬 모듈 가이드
+│   ├── README.md                        # 3개 앱 비교 표
+│   ├── web/                             # apps/web (Next.js 사용자 사이트)
+│   │   ├── README.md                    # 18개 도메인 개요
+│   │   ├── components.md                # web/src/common 컴포넌트
+│   │   ├── hooks.md                     # web/src/hooks 훅
+│   │   ├── services.md                  # web/src/api·utils 서비스
+│   │   └── domain/                      # 18개 도메인 폴더 (각 README.md)
+│   ├── admin/
+│   │   └── README.md                    # apps/admin 18개 도메인 개요
+│   └── mentor/
+│       └── README.md                    # apps/mentor (단일 program 도메인)
+│
+├── packages/                            # 공유 패키지 가이드 (@letscareer/*)
+│   ├── README.md                        # 7개 패키지 개요·import 패턴
+│   ├── api.md                           # @letscareer/api
+│   ├── hooks.md                         # @letscareer/hooks
+│   ├── store.md                         # @letscareer/store
+│   ├── ui.md                            # @letscareer/ui
+│   ├── utils.md                         # @letscareer/utils
+│   ├── types.md                         # @letscareer/types
+│   └── config.md                        # eslint/prettier/tailwind/tsconfig
+│
+└── pnpm전환 메모 폴더/                    # pnpm 전환·운영 메모
+    ├── README.md                        # 인덱스 + 빠른 의사결정 표
+    ├── 01-monorepo-structure.md         # 워크스페이스·^build 의존 그래프
+    ├── 02-pnpm-setup.md                 # Corepack·frozen-lockfile·일상 명령
+    ├── 03-domain-routing.md             # 미들웨어 308·SSO hash·env fallback
+    ├── 04-vercel-deployment.md          # 3개 Vercel 프로젝트·Ignored Build Step
+    ├── 05-build-test-ci.md              # Turbo·GitHub Actions·캐시 무효화
+    └── 06-deployment-guide.md           # 배포·롤백·트러블슈팅
 ```
-- 이 명령이 exit code 0(변경 없음)이면 Vercel이 배포를 스킵합니다.
-- exit code 1이면 배포 진행.
-
-#### `letscareer-mentor`
-```bash
-git diff HEAD^ HEAD --quiet -- apps/mentor packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
-```
-
-#### `letscareer-web`
-```bash
-git diff HEAD^ HEAD --quiet -- apps/web packages pnpm-lock.yaml pnpm-workspace.yaml turbo.json
-```
-
-> ⚠️ `packages/`에 공용 코드 변경이 있으면 3개 앱 모두 배포됩니다 — 의도된 동작입니다.
-
-### 3️⃣ SPA rewrite (admin / mentor만)
-
-Vite + React Router로 만든 SPA는 `/users` 같은 직접 진입 URL에서 404가 납니다. 각 앱 루트에 **`vercel.json`** 추가:
-
-**`apps/admin/vercel.json`**
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-**`apps/mentor/vercel.json`**
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-`web` (Next.js)은 자체 라우팅이라 필요 없음.
-
-### 4️⃣ 환경변수 (Project Settings → Environment Variables)
-
-각 프로젝트별로 아래 값을 Production / Preview 두 환경에 입력.
-
-#### `letscareer-web`
-
-| Key | Production | Preview |
-|---|---|---|
-| `NEXT_PUBLIC_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `NEXT_PUBLIC_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `NEXT_PUBLIC_ADMIN_URL` | `https://admin.letscareer.co.kr` | `https://test-admin.letscareer.co.kr` |
-| `NEXT_PUBLIC_MENTOR_URL` | `https://mentor.letscareer.co.kr` | `https://test-mentor.letscareer.co.kr` |
-| `NEXT_PUBLIC_TOSS_CLIENT_KEY` | (운영 키) | (테스트 키) |
-| `NEXT_PUBLIC_SENTRY_DSN` | (공유 DSN) | (공유 DSN) |
-| `NEXT_PUBLIC_PROFILE` | `production` | `development` |
-
-#### `letscareer-admin`
-
-| Key | Production | Preview |
-|---|---|---|
-| `VITE_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `VITE_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `VITE_PROFILE` | `production` | `development` |
-| `VITE_BASE_URL` | `https://admin.letscareer.co.kr` | `https://test-admin.letscareer.co.kr` |
-
-#### `letscareer-mentor`
-
-| Key | Production | Preview |
-|---|---|---|
-| `VITE_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `VITE_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `VITE_PROFILE` | `production` | `development` |
-| `VITE_BASE_URL` | `https://mentor.letscareer.co.kr` | `https://test-mentor.letscareer.co.kr` |
-
-### 5️⃣ 도메인 연결 (Project Settings → Domains)
-
-각 프로젝트마다 도메인 등록.
-
-| 프로젝트 | Production | Preview (Git Branch: `develop`) |
-|---|---|---|
-| `letscareer-web` | `letscareer.co.kr` | `test.letscareer.co.kr` |
-| `letscareer-admin` | `admin.letscareer.co.kr` | `test-admin.letscareer.co.kr` |
-| `letscareer-mentor` | `mentor.letscareer.co.kr` | `test-mentor.letscareer.co.kr` |
-
-DNS는 DNS 관리자(가비아/카페24 등)에서 6개 서브도메인에 `CNAME → cname.vercel-dns.com` 추가.
-
-### 6️⃣ 배포 확인
-
-```bash
-# DNS 전파
-dig admin.letscareer.co.kr +short
-# → cname.vercel-dns.com.
-
-# 직접 진입 테스트
-curl -I https://admin.letscareer.co.kr/programs
-# → 200 (SPA rewrite 동작)
-```
-
-**배포 직후 smoke 체크**:
-- [ ] `https://letscareer.co.kr/` 정상 렌더
-- [ ] `https://admin.letscareer.co.kr/` 로그인 화면
-- [ ] `https://mentor.letscareer.co.kr/` 로그인 화면
-- [ ] `https://letscareer.co.kr/admin/programs` → 308 → `admin.letscareer.co.kr/programs`
-- [ ] OAuth(카카오/네이버) 로그인 정상
-
-더 자세한 배포 절차는 [`.claude/tasks/memos/deployment-guide.md`](.claude/tasks/memos/deployment-guide.md) 참고.
-
-## 📚 추가 문서
-
-| 문서 | 내용 |
-|---|---|
-| [`CLAUDE.md`](./CLAUDE.md) | `.claude/` 디렉토리 길잡이 |
-| [`.claude/tasks/memos/deployment-guide.md`](./.claude/tasks/memos/deployment-guide.md) | 배포 상세 절차 |
-| [`.claude/tasks/memos/env파일.md`](./.claude/tasks/memos/env파일.md) | 환경변수 참고 |
-| [`.claude/docs/letscareer/`](./.claude/docs/letscareer/) | 도메인별 아키텍처 문서 |
-| `apps/<app>/package.json` | 앱별 의존성 |
-
-## 🆘 자주 마주치는 문제
-
-### `pnpm install` 후 workspace 패키지(`@letscareer/*`)가 안 풀릴 때
-```bash
-pnpm clean && pnpm install
-```
-
-### Turbo 캐시가 꼬였을 때
-```bash
-pnpm exec turbo run build --filter=@letscareer/admin --force
-# 또는 전체 캐시 리셋
-rm -rf .turbo apps/*/.turbo packages/*/.turbo
-```
-
-### Vercel 배포 시 `@letscareer/*` 못 찾을 때
-- Root Directory가 앱 디렉토리(`apps/<name>`)로 지정되어 있는지 확인
-- Install/Build Command에 `cd ../..`가 포함되어 모노레포 루트에서 pnpm이 실행되는지 확인
-- Vercel의 "Include files outside of the Root Directory" 옵션 ON (pnpm workspace 감지용)
-
-### admin/mentor에서 SPA 새로고침 시 404
-`vercel.json`의 rewrites 규칙이 누락됐거나 배포되지 않은 상태. 위 **"3️⃣ SPA rewrite"** 설정 확인.
-
-### dev 서버 포트 충돌
-```bash
-# 점유 중인 프로세스 찾기
-lsof -i :3001
-# 또는 해당 앱의 vite.config.ts에서 port 변경
-```
-
-## 📋 스크립트 참고
-
-### 루트 스크립트
-
-| 명령 | 설명 |
-|---|---|
-| `pnpm dev` | 3개 앱 동시 실행 |
-| `pnpm dev:web` / `dev:admin` / `dev:mentor` | 해당 앱만 실행 |
-| `pnpm build` | 3개 앱 모두 빌드 |
-| `pnpm build:web` / `build:admin` / `build:mentor` | 해당 앱만 빌드 |
-| `pnpm lint` / `typecheck` / `test` | 전체 검증 |
-| `pnpm lint:<app>` / `typecheck:<app>` | 해당 앱만 검증 |
-| `pnpm clean` | 빌드 산출물·node_modules·.turbo 삭제 |
-
-### Turbo 고급 사용
-
-```bash
-# 특정 앱의 의존 그래프 확인
-pnpm exec turbo run build --filter=@letscareer/admin --dry-run
-
-# 캐시 무시하고 강제 빌드
-pnpm exec turbo run build --filter=@letscareer/admin --force
-
-# 여러 앱 동시 필터
-pnpm exec turbo run build --filter=@letscareer/web --filter=@letscareer/admin
-```
-
-## 🧭 아키텍처 요약
-
-- **공용 패키지**(`packages/*`): 3개 앱이 `workspace:*` 프로토콜로 참조
-- **빌드 순서**: `packages/*` → `apps/*` (`dependsOn: ["^build"]`)
-- **타입**: 공용 타입은 `@letscareer/types`, 앱별 타입은 각 앱의 `src/types/`
-- **API**: 공용 axios 인스턴스는 `@letscareer/api`, 앱별 엔드포인트는 각 앱의 `src/api/`
-- **도메인 레이어(DDD)**: `apps/<app>/src/domain/<domain>/` (컴포넌트·훅·API 응집)
-
-자세한 도메인 구조는 `.claude/docs/letscareer/domain/`의 각 도메인 README 참고.
