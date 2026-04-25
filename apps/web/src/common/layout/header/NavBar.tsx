@@ -253,7 +253,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem
-            href={buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/')}
+            href={buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/admin')}
           >
             관리자 페이지
           </SideNavItem>

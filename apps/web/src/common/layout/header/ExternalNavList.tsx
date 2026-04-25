@@ -7,7 +7,7 @@ interface Props {
 }
 
 function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
-  const adminHref = buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/');
+  const adminHref = buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/admin');
   return (
     <div className="hidden items-center gap-1 md:flex">
       <GlobalNavItem
