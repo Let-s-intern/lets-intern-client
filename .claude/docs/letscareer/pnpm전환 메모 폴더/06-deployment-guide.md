@@ -30,7 +30,7 @@ GitHub Actions에서 영향 받는 워크플로우만 트리거됨 ([05-build-te
 
 `main` 브랜치 머지 시:
 - 변경 영향 받는 Vercel 프로젝트만 자동 빌드·배포
-- Ignored Build Step 덕에 무관한 프로젝트는 빌드 스킵
+- Skip Unaffected Projects 덕에 무관한 프로젝트는 빌드 스킵
 - 통상 2–5분 안에 운영 도메인에 반영
 
 ### 4. Smoke 체크
@@ -67,7 +67,7 @@ curl -I https://<운영 도메인>/admin/programs
 7. Output Directory: `.next` (web) 또는 `dist` (admin/mentor)
 8. Framework Preset: `Next.js` (web) 또는 `Vite` (admin/mentor)
 9. Environment Variables 입력 (Production / Preview)
-10. Settings → Git → Ignored Build Step 추가
+10. Settings → Build and Deployment → Root Directory → **Skip deployment** 토글 ON 확인
 11. Settings → Domains → 운영/테스트 도메인 등록
 12. DNS 콘솔에서 CNAME 추가 (`cname.vercel-dns.com`)
 

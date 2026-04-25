@@ -214,7 +214,7 @@ apps/<app>/src/
 ```
 
 - 3개 Vercel 프로젝트가 같은 저장소를 보지만 Root Directory만 다름
-- Ignored Build Step + GitHub Actions paths 필터로 *변경된 앱만 빌드/배포*
+- Vercel Skip Unaffected Projects + GitHub Actions paths 필터로 *변경된 앱만 빌드/배포*
 - 공용 패키지(`packages/*`)나 락파일이 바뀌면 3개 모두 트리거 (의도)
 
 상세: [pnpm전환 메모 폴더/04-vercel-deployment.md](./pnpm전환%20메모%20폴더/04-vercel-deployment.md), [05-build-test-ci.md](./pnpm전환%20메모%20폴더/05-build-test-ci.md).
