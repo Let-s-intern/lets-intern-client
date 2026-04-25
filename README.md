@@ -258,7 +258,7 @@ Vite + React Router로 만든 SPA는 `/users` 같은 직접 진입 URL에서 404
 
 ### 4️⃣ 환경변수 (Project Settings → Environment Variables)
 
-각 Vercel 프로젝트별로 Production / Preview 환경의 env 값을 입력합니다. 실제 키 목록과 값은 보안상 README에 두지 않으니 팀 내부 저장소(1Password / Slack DM / 인수인계 문서)에서 받아 사용하세요.
+각 Vercel 프로젝트별로 Production / Preview 환경의 env 값을 입력합니다. 키의 *형태와 의미*는 각 앱의 [`.env.example`](apps/) 파일 참고.
 
 ### 5️⃣ 도메인 연결 (Project Settings → Domains)
 
@@ -285,22 +285,23 @@ curl -I https://<어드민 운영 도메인>/programs
 ```
 
 **배포 직후 smoke 체크**:
-- [ ] `https://letscareer.co.kr/` 정상 렌더
-- [ ] `https://admin.letscareer.co.kr/` 로그인 화면
-- [ ] `https://mentor.letscareer.co.kr/` 로그인 화면
-- [ ] `https://letscareer.co.kr/admin/programs` → 308 → `admin.letscareer.co.kr/programs`
+- [ ] `https://<운영 도메인>/` 정상 렌더
+- [ ] `https://<어드민 운영 도메인>/` 로그인 화면
+- [ ] `https://<멘토 운영 도메인>/` 로그인 화면
+- [ ] `https://<운영 도메인>/admin/programs` → 308 → `<어드민 운영 도메인>/programs`
 - [ ] OAuth(카카오/네이버) 로그인 정상
 
-더 자세한 배포 절차는 [`.claude/tasks/memos/deployment-guide.md`](.claude/tasks/memos/deployment-guide.md) 참고.
+더 자세한 배포 절차와 운영 메모는 [`.claude/docs/letscareer/pnpm전환 메모 폴더/`](.claude/docs/letscareer/pnpm전환%20메모%20폴더/) 참고. 모노레포 구조·pnpm 셋업·도메인 라우팅·Vercel 설정·CI 빌드·단계별 배포가 주제별로 분리되어 있습니다.
 
 ## 📚 추가 문서
 
 | 문서 | 내용 |
 |---|---|
 | [`CLAUDE.md`](./CLAUDE.md) | `.claude/` 디렉토리 길잡이 |
-| [`.claude/tasks/memos/deployment-guide.md`](./.claude/tasks/memos/deployment-guide.md) | 배포 상세 절차 |
-| [`.claude/tasks/memos/env파일.md`](./.claude/tasks/memos/env파일.md) | 환경변수 참고 |
+| [`.claude/docs/letscareer/architecture.md`](./.claude/docs/letscareer/architecture.md) | 시스템 아키텍처 개요 |
+| [`.claude/docs/letscareer/pnpm전환 메모 폴더/`](./.claude/docs/letscareer/pnpm전환%20메모%20폴더/) | pnpm·도메인·Vercel·CI·배포 운영 메모 |
 | [`.claude/docs/letscareer/`](./.claude/docs/letscareer/) | 도메인별 아키텍처 문서 |
+| `apps/<app>/.env.example` | 환경변수 키 형태와 의미 |
 | `apps/<app>/package.json` | 앱별 의존성 |
 
 ## 🆘 자주 마주치는 문제
