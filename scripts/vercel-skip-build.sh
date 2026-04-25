@@ -32,7 +32,10 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
 # 이게 없으면 아래 git diff 가 stderr 에러로 실패하는데, $(...)
 # 내부 실패는 외부 test -z 평가에 전파되지 않아 빈 문자열로 보고
 # 잘못 SKIP으로 떨어진다. 신규 프로젝트 첫 푸시 보호용.
-git rev-parse HEAD^ >/dev/null 2>&1 || exit 1
+if ! git rev-parse HEAD^ >/dev/null 2>&1; then
+  echo "[skip-build] BUILD - no parent commit (first-commit guard)"
+  exit 1
+fi
 
 # [본 로직]
 # `core.quotepath=off` 필수 — 이 옵션이 없으면 git은 비-ASCII 경로를
@@ -40,11 +43,23 @@ git rev-parse HEAD^ >/dev/null 2>&1 || exit 1
 # 그러면 라인이 `"` 로 시작하므로 아래 `^\.(claude|...)/` 앵커가
 # 매칭에 실패해 dev 폴더 변경이 잘못 BUILD로 떨어진다.
 # 본 레포는 한글 폴더(`pnpm전환 메모 폴더/`)를 실제로 쓰므로 필수.
-#
-# grep -v -E 로 "스킵 가능한" 라인을 모두 제거하고, 남은 게 있으면
-# 빌드해야 할 변경이라는 뜻 → test -z "..." 가 exit 1 → 빌드.
-# 남은 게 없으면 → test -z "" 가 exit 0 → 스킵.
-test -z "$(
-  git -c core.quotepath=off diff --name-only HEAD^ HEAD \
-    | grep -v -E '\.md$|^\.(claude|cursor|gemini|github|vscode)/'
-)"
+CHANGED=$(git -c core.quotepath=off diff --name-only HEAD^ HEAD)
+
+# grep -v -E 로 "스킵 가능한" 라인을 모두 제거. 남은 게 있으면
+# 빌드해야 할 변경이라는 뜻. `grep .` 로 빈 줄 제거.
+TRIGGERS=$(printf '%s\n' "$CHANGED" \
+  | grep -v -E '\.md$|^\.(claude|cursor|gemini|github|vscode)/' \
+  | grep . || true)
+
+# [로깅] Vercel 빌드 로그에 노출 — 다음 디버그 시 "왜 빌드?" 답이 됨.
+echo "[skip-build] Changed files ($(printf '%s\n' "$CHANGED" | grep -c .) total):"
+printf '%s\n' "$CHANGED" | sed 's/^/  /'
+
+if [ -z "$TRIGGERS" ]; then
+  echo "[skip-build] SKIP - all changes limited to *.md or dev folders"
+  exit 0
+fi
+
+echo "[skip-build] BUILD - these files passed the filter and triggered the build:"
+printf '%s\n' "$TRIGGERS" | sed 's/^/  /'
+exit 1
