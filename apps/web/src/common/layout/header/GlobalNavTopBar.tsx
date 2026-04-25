@@ -1,4 +1,9 @@
-import { useGetUserAdmin, useUserQuery } from '@/api/user/user';
+import {
+  useGetUserAdmin,
+  useIsMentorQuery,
+  useUserQuery,
+} from '@/api/user/user';
+import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { logoutAndRefreshPage } from '@/utils/auth';
@@ -24,17 +29,35 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
     enabled: isLoggedIn,
     retry: 1,
   });
+  const { data: isMentor } = useIsMentorQuery({
+    enabled: isLoggedIn,
+    retry: 1,
+  });
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
+
+  // 멘토 마이페이지: env 가 있을 때만 노출. 분리 도메인 운영 전엔 메뉴 자체를 숨김.
+  const mentorUrl = process.env.NEXT_PUBLIC_MENTOR_URL;
   const userSubNavList: SubNavItemProps[] = [
     {
       children: '마이페이지',
       href: '/mypage/career/board',
     },
+    ...(isMentor && mentorUrl
+      ? [
+          {
+            children: '멘토 마이페이지',
+            href: buildCrossAppUrl(mentorUrl, '/mentor'),
+          },
+        ]
+      : []),
     ...(isAdmin
       ? [
           {
             children: '관리자페이지',
-            href: '/admin',
+            href: buildCrossAppUrl(
+              process.env.NEXT_PUBLIC_ADMIN_URL,
+              '/admin',
+            ),
           },
         ]
       : []),

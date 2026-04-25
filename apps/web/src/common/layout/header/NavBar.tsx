@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetUserAdmin } from '@/api/user/user';
+import { useGetUserAdmin, useIsMentorQuery } from '@/api/user/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
@@ -61,6 +61,14 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
     enabled: isLoggedIn,
     retry: 1,
   });
+
+  const { data: isMentor } = useIsMentorQuery({
+    enabled: isLoggedIn,
+    retry: 1,
+  });
+
+  // 멘토 마이페이지 메뉴: env(분리 도메인) 가 설정된 경우에만 노출.
+  const mentorUrl = process.env.NEXT_PUBLIC_MENTOR_URL;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -251,6 +259,11 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/review">수강생 솔직 후기</SideNavItem>
         <SideNavItem href="/blog/list">블로그</SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        {isLoggedIn && isMentor && mentorUrl && (
+          <SideNavItem href={buildCrossAppUrl(mentorUrl, '/mentor')}>
+            멘토 마이페이지
+          </SideNavItem>
+        )}
         {isLoggedIn && isAdmin && (
           <SideNavItem
             href={buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/admin')}
