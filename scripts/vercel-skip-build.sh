@@ -33,7 +33,7 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
 # 내부 실패는 외부 test -z 평가에 전파되지 않아 빈 문자열로 보고
 # 잘못 SKIP으로 떨어진다. 신규 프로젝트 첫 푸시 보호용.
 if ! git rev-parse HEAD^ >/dev/null 2>&1; then
-  echo "[skip-build] 🔴 BUILD — 부모 커밋 없음 (첫 커밋 가드)"
+  echo "[skip-build] BUILD - no parent commit (first-commit guard)"
   exit 1
 fi
 
@@ -52,14 +52,14 @@ TRIGGERS=$(printf '%s\n' "$CHANGED" \
   | grep . || true)
 
 # [로깅] Vercel 빌드 로그에 노출 — 다음 디버그 시 "왜 빌드?" 답이 됨.
-echo "[skip-build] 변경 파일 ($(printf '%s\n' "$CHANGED" | grep -c .)개):"
+echo "[skip-build] Changed files ($(printf '%s\n' "$CHANGED" | grep -c .) total):"
 printf '%s\n' "$CHANGED" | sed 's/^/  /'
 
 if [ -z "$TRIGGERS" ]; then
-  echo "[skip-build] 🟢 SKIP — 모든 변경이 .md 또는 dev 폴더에 한정됨"
+  echo "[skip-build] SKIP - all changes limited to *.md or dev folders"
   exit 0
 fi
 
-echo "[skip-build] 🔴 BUILD — 다음 파일이 필터를 통과해 빌드 트리거:"
+echo "[skip-build] BUILD - these files passed the filter and triggered the build:"
 printf '%s\n' "$TRIGGERS" | sed 's/^/  /'
 exit 1
