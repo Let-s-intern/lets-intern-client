@@ -110,6 +110,50 @@ pnpm approve-builds
 | `pnpm exec <bin>` | 워크스페이스에 설치된 바이너리 실행 (npx 대체) |
 | `pnpm clean` | `.turbo`, `node_modules`, 빌드 산출물 삭제 |
 
+## 로컬 dev 환경 변수 설정
+
+3개 앱 각각 `.env.example`을 복사해 실제 값으로 채워야 한다.
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+cp apps/admin/.env.example apps/admin/.env
+cp apps/mentor/.env.example apps/mentor/.env
+```
+
+### admin/mentor의 `VITE_SERVER_API`는 *상대 경로*로
+
+admin(`localhost:3001`)·mentor(`localhost:3002`) dev 포트는 BE의 CORS 허용 목록에 등록돼 있지 않을 가능성이 높다. 절대 URL로 BE를 직접 호출하면 OPTIONS preflight가 403으로 막혀 로그인·SSO 모두 깨진다.
+
+[`apps/admin/vite.config.ts`](../../../../apps/admin/vite.config.ts)와 [`apps/mentor/vite.config.ts`](../../../../apps/mentor/vite.config.ts)에 이미 `/api` proxy가 설정돼 있어, `VITE_SERVER_API`만 상대 경로로 두면 자동으로 same-origin 우회.
+
+```env
+# apps/admin/.env  (apps/mentor/.env 도 동일 패턴)
+VITE_SERVER_API=/api/v1                            # ✓ Vite proxy 경유 (same-origin)
+# VITE_SERVER_API=https://api.<운영 도메인>/api/v1  # ✗ dev에선 CORS 403
+```
+
+흐름:
+1. axios가 `/api/v1/user/signin` 요청 → 브라우저는 same-origin이라 CORS preflight 없이 전송
+2. Vite dev server가 가로채서 `<API 호스트>/api/v1/user/signin`으로 forward
+3. `changeOrigin: true` 덕에 BE가 보는 Origin은 API 호스트 → 정상 응답
+
+prod 빌드는 영향 없음 — prod env는 절대 URL을 쓰고 prod admin/mentor 도메인은 BE CORS 허용에 등록돼 있다고 가정.
+
+### web은 proxy 불필요
+
+web(Next.js, `localhost:3000`)은 BE CORS 허용 목록에 이미 들어 있는 경우가 많아 절대 URL 직접 호출이 동작한다. `NEXT_PUBLIC_SERVER_API`는 `.env.local`에 절대 URL 그대로.
+
+### `.env` 변경 후 dev 서버 *반드시* 재시작
+
+Vite는 `import.meta.env.*`를 빌드 시점에 *정적 인라인*한다. `.env` 수정 후 dev 서버 재시작 안 하면 오래된 값이 axios 안에 그대로 박혀 있어 *CORS 403이 안 풀리거나 SSO 토큰이 끊겨 보이는 증상*이 캐시 문제처럼 나타난다.
+
+```bash
+# Ctrl+C 후
+pnpm dev:admin   # 또는 dev:mentor
+```
+
+Next.js의 web도 동일 — `.env.local` 변경 시 `pnpm dev:web` 재시작.
+
 ## 새 패키지 추가 워크플로우
 
 ```bash
@@ -134,3 +178,5 @@ pnpm --filter=@letscareer/utils add date-fns
 | 글로벌 pnpm과 Corepack 충돌 | 두 가지가 같이 설치됨 | `npm uninstall -g pnpm` 후 Corepack만 사용 |
 | `sharp` 미설치 | `approve-builds` 누락 | `pnpm approve-builds`로 sharp 승인 후 재설치 |
 | dev 서버 포트 충돌 | 3000/3001/3002 사용 중 | `lsof -i :3001`로 점유 프로세스 확인·종료 |
+| admin/mentor 로그인 시 CORS 403 (preflight) | `VITE_SERVER_API`가 절대 URL이라 BE가 `localhost:3001` Origin을 거부 | `.env`를 `VITE_SERVER_API=/api/v1` 상대 경로로 변경 후 dev 서버 재시작 |
+| `.env` 바꿨는데 그대로 동작 (CORS·SSO 캐시처럼 보이는 현상) | Vite/Next 가 빌드 시점에 env를 정적 인라인 | dev 서버 Ctrl+C 후 재시작 |
