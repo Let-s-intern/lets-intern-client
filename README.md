@@ -2,6 +2,49 @@
 
 렛츠커리어 프론트엔드 모노레포. pnpm workspace + Turborepo 기반의 3개 앱.
 
+## ⚡ 한눈에 보기
+
+### pnpm 실행 (Corepack 권장)
+
+이 저장소는 pnpm 10을 강제합니다 (`package.json`의 `packageManager: "pnpm@10.33.0"`). Node 16.10+에 내장된 **Corepack**으로 활성화하는 게 가장 확실합니다 — 선언된 버전을 자동으로 다운로드/고정하므로 락파일 충돌을 막아줍니다.
+
+```bash
+# 한 번만: Corepack 활성화 + 선언된 pnpm 버전 준비
+corepack enable
+corepack prepare pnpm@10.33.0 --activate
+
+# 의존성 설치 (락파일 검증 모드)
+pnpm install --frozen-lockfile
+
+# 개발 서버 (앱별)
+pnpm dev:web        # http://localhost:3000  (Next.js)
+pnpm dev:admin      # http://localhost:3001  (Vite)
+pnpm dev:mentor     # http://localhost:3002  (Vite)
+```
+
+> Corepack 없이 `npm install -g pnpm@10`도 가능하지만, 글로벌 pnpm 버전이 `packageManager` 필드와 어긋나면 의존성 해석이 흔들립니다. Corepack은 이걸 자동으로 막아줍니다.
+
+### Vercel 배포 토폴로지
+
+**3개 앱 = Vercel 프로젝트 3개**입니다. 한 프로젝트로 합쳐 배포하지 않습니다.
+
+```
+모노레포 (이 저장소)
+   │
+   ├─ apps/web      ─→  Vercel 프로젝트 #1 (letscareer-web)     →  <운영 도메인>
+   ├─ apps/admin    ─→  Vercel 프로젝트 #2 (letscareer-admin)   →  <어드민 운영 도메인>
+   └─ apps/mentor   ─→  Vercel 프로젝트 #3 (letscareer-mentor)  →  <멘토 운영 도메인>
+```
+
+핵심 효과:
+- **빌드 격리**: 각 Vercel 프로젝트는 자기 앱만 빌드합니다 (Next.js / Vite 서로 다른 프레임워크라 합칠 수도 없음).
+- **배포 격리**: `apps/admin`만 수정하면 admin 프로젝트만 재배포됩니다 — 단, 이를 위해선 각 프로젝트의 **Ignored Build Step** 설정이 필요합니다 (아래 [Vercel 배포 설정](#-vercel-배포-설정) 2️⃣ 참고).
+- **공용 변경 시 전체 재배포**: `packages/*`나 `pnpm-lock.yaml`이 바뀌면 3개 프로젝트가 모두 재빌드됩니다 (의도된 동작).
+
+> ⚠️ 한 도메인 안에서 `/admin` 같은 path 기반 통합 라우팅(Vercel Multi-Zones)은 **현재 적용되어 있지 않습니다.** 사용자는 어드민/멘토 서브도메인으로 직접 이동합니다.
+
+---
+
 ## 📦 프로젝트 구성
 
 ```
@@ -215,37 +258,7 @@ Vite + React Router로 만든 SPA는 `/users` 같은 직접 진입 URL에서 404
 
 ### 4️⃣ 환경변수 (Project Settings → Environment Variables)
 
-각 프로젝트별로 아래 값을 Production / Preview 두 환경에 입력.
-
-#### `letscareer-web`
-
-| Key | Production | Preview |
-|---|---|---|
-| `NEXT_PUBLIC_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `NEXT_PUBLIC_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `NEXT_PUBLIC_ADMIN_URL` | `https://admin.letscareer.co.kr` | `https://test-admin.letscareer.co.kr` |
-| `NEXT_PUBLIC_MENTOR_URL` | `https://mentor.letscareer.co.kr` | `https://test-mentor.letscareer.co.kr` |
-| `NEXT_PUBLIC_TOSS_CLIENT_KEY` | (운영 키) | (테스트 키) |
-| `NEXT_PUBLIC_SENTRY_DSN` | (공유 DSN) | (공유 DSN) |
-| `NEXT_PUBLIC_PROFILE` | `production` | `development` |
-
-#### `letscareer-admin`
-
-| Key | Production | Preview |
-|---|---|---|
-| `VITE_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `VITE_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `VITE_PROFILE` | `production` | `development` |
-| `VITE_BASE_URL` | `https://admin.letscareer.co.kr` | `https://test-admin.letscareer.co.kr` |
-
-#### `letscareer-mentor`
-
-| Key | Production | Preview |
-|---|---|---|
-| `VITE_API_BASE_PATH` | `https://api.letscareer.co.kr` | `https://letsintern.kr` |
-| `VITE_SERVER_API` | `https://api.letscareer.co.kr/api/v1` | `https://letsintern.kr/api/v1` |
-| `VITE_PROFILE` | `production` | `development` |
-| `VITE_BASE_URL` | `https://mentor.letscareer.co.kr` | `https://test-mentor.letscareer.co.kr` |
+각 Vercel 프로젝트별로 Production / Preview 환경의 env 값을 입력합니다. 실제 키 목록과 값은 보안상 README에 두지 않으니 팀 내부 저장소(1Password / Slack DM / 인수인계 문서)에서 받아 사용하세요.
 
 ### 5️⃣ 도메인 연결 (Project Settings → Domains)
 
