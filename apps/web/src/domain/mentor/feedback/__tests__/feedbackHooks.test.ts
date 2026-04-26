@@ -7,8 +7,6 @@
  * making it better suited for integration tests.
  */
 
-import { describe, expect, it } from 'vitest';
-
 // ── useFeedbackStatus ────────────────────────────────────────────────
 
 // Pure logic extracted for direct testing (mirrors useFeedbackStatus logic)

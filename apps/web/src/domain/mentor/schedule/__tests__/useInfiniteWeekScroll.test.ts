@@ -3,7 +3,6 @@
  * Tests the week navigation calculations without DOM/React rendering.
  */
 
-import { describe, expect, it } from 'vitest';
 import { addDays, startOfWeek } from 'date-fns';
 
 // ── Pure logic extracted from useInfiniteWeekScroll ──────────────────

@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 describe('MentorAssignmentRow 멘티 정보 매핑', () => {
   it('applications 데이터에서 멘티 정보를 추출하여 row에 매핑한다', () => {
     const applicationsList = [

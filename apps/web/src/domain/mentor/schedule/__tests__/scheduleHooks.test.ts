@@ -4,7 +4,6 @@
  * - useWeeklySummary (pure logic)
  */
 
-import { describe, expect, it } from 'vitest';
 import { addDays, startOfWeek } from 'date-fns';
 
 // ── useWeekNavigation (pure logic) ──────────────────────────────────

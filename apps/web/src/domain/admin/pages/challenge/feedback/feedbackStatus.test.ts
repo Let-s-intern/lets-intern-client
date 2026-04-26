@@ -9,7 +9,8 @@
  *   2. v1 mentor PATCH (/api/v1/attendance/{id}/mentor) 는 feedback (필수) 누락 시 실패
  */
 
-import { describe, expect, it, vi } from 'vitest';
+// jest globals — describe/expect/it 글로벌 사용
+const vi = jest;
 
 // ── 1) 타입 호환성 테스트 ─────────────────────────────────────────
 

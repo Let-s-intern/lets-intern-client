@@ -1,5 +1,3 @@
-import { describe, expect, it, beforeEach, vi } from 'vitest';
-
 const STORAGE_KEY = 'mentor_read_notice_ids';
 
 // localStorage mock
@@ -7,12 +5,19 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    clear: () => { store = {}; },
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    clear: () => {
+      store = {};
+    },
   };
 })();
 
-vi.stubGlobal('localStorage', localStorageMock);
+Object.defineProperty(globalThis, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
 
 describe('useNotificationState localStorage', () => {
   beforeEach(() => {
