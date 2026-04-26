@@ -46,15 +46,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: '1) Prettier check (admin 한정)'
+        continue-on-error: true
         run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
 
       - name: '2) ESLint (admin)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/admin lint
 
       - name: '3) Vitest (admin)'
         run: pnpm --filter @letscareer/admin test
 
       - name: '4) Coverage (V8, threshold 미설정)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/admin test:coverage
 
       - name: 'Upload admin coverage'

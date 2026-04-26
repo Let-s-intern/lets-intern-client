@@ -10,7 +10,6 @@ export const baseConfig = [
       'no-useless-rename': 'warn',
       'react/jsx-key': ['warn', { checkFragmentShorthand: true }],
       'react/prop-types': 'off',
-      '@next/next/no-img-element': 'off',
       '@typescript-eslint/ban-ts-comment': 'warn',
     },
   },

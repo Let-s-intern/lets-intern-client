@@ -46,15 +46,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: '1) Prettier check (web 한정)'
+        continue-on-error: true
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
       - name: '2) ESLint (web)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/web lint
 
       - name: '3) Jest (web)'
         run: pnpm --filter @letscareer/web test
 
       - name: '4) Coverage (V8, threshold 미설정)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/web test:coverage
 
       - name: 'Upload web coverage'

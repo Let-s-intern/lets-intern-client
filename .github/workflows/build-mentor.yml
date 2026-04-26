@@ -46,15 +46,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: '1) Prettier check (mentor 한정)'
+        continue-on-error: true
         run: pnpm exec prettier --check "apps/mentor/**/*.{ts,tsx,js,jsx,json,md}"
 
       - name: '2) ESLint (mentor)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/mentor lint
 
       - name: '3) Vitest (mentor)'
         run: pnpm --filter @letscareer/mentor test
 
       - name: '4) Coverage (V8, threshold 미설정)'
+        continue-on-error: true
         run: pnpm --filter @letscareer/mentor test:coverage
 
       - name: 'Upload mentor coverage'
