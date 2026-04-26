@@ -48,12 +48,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'cdn.builder.io',
-        port: '',
-        pathname: '/api/v1/image/assets/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'letscareer-test-bucket.s3.ap-northeast-2.amazonaws.com',
         port: '',
         pathname: '/**',
