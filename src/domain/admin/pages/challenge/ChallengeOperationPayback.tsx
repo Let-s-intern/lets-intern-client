@@ -147,16 +147,28 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
   ];
 }
 
+const EXCLUDED_THS = new Set([0, 99, 100, 999]);
+
+function isPaybackEligible(row: Row, regularThs: number[]): boolean {
+  const allSubmitted = regularThs.every((th) =>
+    row.scores.filter((s) => s.th === th).some((s) => s.score > 0),
+  );
+  const totalScore = row.scores.reduce((acc, s) => acc + s.score, 0);
+  return allSubmitted && totalScore >= 80;
+}
+
 declare module '@mui/x-data-grid' {
   interface ToolbarPropsOverrides {
     onMakeRefundedClick?: (selected: Map<number, Row>) => void;
     handleOpenPaybackModal: () => void;
+    regularThs: number[];
   }
 }
 
 function Toolbar({
   onMakeRefundedClick,
   handleOpenPaybackModal,
+  regularThs,
 }: ToolbarPropsOverrides) {
   const api = useGridApiContext();
   const hasSelected = api.current?.getSelectedRows().size !== 0;
@@ -173,17 +185,25 @@ function Toolbar({
             api.current?.exportDataAsCsv({
               fileName: `페이백_${dayjs().format('YYYY-MM-DD')}`,
               getRowsToExport(params) {
-                return (
-                  params.apiRef.current
-                    ?.getAllRowIds()
-                    .map((id) => ({
-                      id,
-                      total: params.apiRef.current?.getCellValue(id, 'total'),
-                    }))
-                    .filter((row) => row.total >= 80)
-                    .sort((a, b) => b.total - a.total)
-                    .map((row) => row.id) || []
-                );
+                const allIds = params.apiRef.current?.getAllRowIds() ?? [];
+                return allIds
+                  .filter((id) => {
+                    const row = params.apiRef.current?.getRow(id) as Row;
+                    return row && isPaybackEligible(row, regularThs);
+                  })
+                  .sort((a, b) => {
+                    const totalA =
+                      (params.apiRef.current?.getCellValue(
+                        a,
+                        'total',
+                      ) as number) || 0;
+                    const totalB =
+                      (params.apiRef.current?.getCellValue(
+                        b,
+                        'total',
+                      ) as number) || 0;
+                    return totalB - totalA;
+                  });
               },
             });
           }}
@@ -526,9 +546,11 @@ const ChallengeOperationPayback = () => {
         rows={
           // paybackConfirm 상태일 때는 row.scores의 합이 80점 이상인 사용자만 표시
           paybackConfirm
-            ? rows.filter(
-                (row) =>
-                  row.scores.reduce((acc, score) => acc + score.score, 0) >= 80,
+            ? rows.filter((row) =>
+                isPaybackEligible(
+                  row,
+                  ths.filter((th) => !EXCLUDED_THS.has(th)),
+                ),
               )
             : rows
         }
@@ -572,6 +594,7 @@ const ChallengeOperationPayback = () => {
             handleOpenPaybackModal() {
               setPaybackConfirm(true);
             },
+            regularThs: ths.filter((th) => !EXCLUDED_THS.has(th)),
           },
         }}
         checkboxSelection
