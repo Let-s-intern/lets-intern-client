@@ -79,9 +79,11 @@ jobs:
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
 
       - name: 'Install Playwright browsers'
+        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
         run: pnpm --filter @letscareer/web e2e:install
 
       - name: '6) E2E (Playwright, web 전용)'
+        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
         run: pnpm --filter @letscareer/web e2e
 
       - name: 'Upload Playwright report'
