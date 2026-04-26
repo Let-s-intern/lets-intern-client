@@ -18,7 +18,7 @@ import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
-  getBaseUrlFromServer,
+  getCanonicalSiteUrl,
   getLibraryPathname,
   getLibraryTitle,
 } from '@/utils/url';
@@ -100,7 +100,7 @@ export async function generateMetadata({
       title: magnetInfo.title,
       description: metaDescription ?? undefined,
       url:
-        getBaseUrlFromServer() +
+        getCanonicalSiteUrl() +
         getLibraryPathname({
           id: magnetInfo.magnetId,
           title: magnetInfo.title,
@@ -111,7 +111,7 @@ export async function generateMetadata({
     },
     alternates: {
       canonical:
-        getBaseUrlFromServer() +
+        getCanonicalSiteUrl() +
         getLibraryPathname({
           id: magnetInfo.magnetId,
           title: magnetInfo.title,

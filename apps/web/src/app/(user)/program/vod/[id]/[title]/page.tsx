@@ -3,7 +3,7 @@ import VodView from '@/domain/program/vod/VodView';
 import VodCTAButtons from '@/domain/program/vod/ui/VodCTAButtons';
 import { mapPublicVod } from '@/domain/program/vod/utils/publicVodMapping';
 import {
-  getBaseUrlFromServer,
+  getCanonicalSiteUrl,
   getVodTitle,
   getProgramPathname,
 } from '@/utils/url';
@@ -19,7 +19,7 @@ export async function generateMetadata({
   const apiData = await fetchPublicVodData(id);
   const vod = mapPublicVod(apiData);
   const url =
-    getBaseUrlFromServer() +
+    getCanonicalSiteUrl() +
     getProgramPathname({
       id,
       programType: 'vod',

@@ -3,7 +3,7 @@ import GuidebookView from '@/domain/program/guidebook/GuidebookView';
 import GuidebookCTAButtons from '@/domain/program/guidebook/ui/GuidebookCTAButtons';
 import { mapPublicGuidebook } from '@/domain/program/guidebook/utils/publicGuidebookMapping';
 import {
-  getBaseUrlFromServer,
+  getCanonicalSiteUrl,
   getGuidebookTitle,
   getProgramPathname,
 } from '@/utils/url';
@@ -20,7 +20,7 @@ export async function generateMetadata({
   const apiData = await fetchPublicGuidebookData(id);
   const program = mapPublicGuidebook(apiData);
   const url =
-    getBaseUrlFromServer() +
+    getCanonicalSiteUrl() +
     getProgramPathname({
       id,
       programType: 'guidebook',

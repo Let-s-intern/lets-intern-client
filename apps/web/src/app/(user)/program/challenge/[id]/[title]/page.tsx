@@ -7,7 +7,7 @@ import ChallengeView from '@/domain/program/challenge/ChallengeView';
 import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
-  getBaseUrlFromServer,
+  getCanonicalSiteUrl,
   getChallengeTitle,
   getProgramPathname,
 } from '@/utils/url';
@@ -23,7 +23,7 @@ export async function generateMetadata({
   const { id } = await params;
   const program = await fetchChallengeData(id);
   const url =
-    getBaseUrlFromServer() +
+    getCanonicalSiteUrl() +
     getProgramPathname({
       id,
       programType: 'challenge',

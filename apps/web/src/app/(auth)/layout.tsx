@@ -3,8 +3,14 @@ import Footer from '@/common/layout/footer/Footer';
 import LogoLink from '@/common/layout/header/LogoLink';
 import NavBar from '@/common/layout/header/NavBar';
 import Providers from '@/context/Providers';
+import {
+  getCanonicalSiteUrl,
+  getRobotsMetadata,
+} from '@/utils/url';
 import { Metadata } from 'next';
 import React from 'react';
+
+const SITE_URL = getCanonicalSiteUrl();
 
 export const metadata: Metadata = {
   title: '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
@@ -18,21 +24,16 @@ export const metadata: Metadata = {
     siteName: '렛츠커리어',
     images:
       'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/banner/popup/%E1%84%85%E1%85%A6%E1%86%BA%E1%84%8E%E1%85%B3%E1%84%8F%E1%85%A5%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A5%20%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9%20og_image%201200_630.png',
-    url: 'https://www.letscareer.co.kr',
+    url: SITE_URL,
     description:
       '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
     locale: 'ko_KR',
   },
   alternates: {
-    canonical: 'https://www.letscareer.co.kr',
+    canonical: '/',
   },
+  robots: getRobotsMetadata(),
 };
-
-if (process.env.NO_INDEX === 'true') {
-  metadata.robots = 'noindex';
-} else {
-  metadata.robots = 'index, follow';
-}
 
 /**
  * Auth 페이지 전용 레이아웃

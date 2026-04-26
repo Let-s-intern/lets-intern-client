@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { resumeReportDescription } from '@/data/description';
 import ReportResumePage from '@/domain/report/ReportResumePage';
-import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import { getCanonicalSiteUrl, getReportLandingTitle } from '@/utils/url';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성
@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     type: 'RESUME',
   });
 
-  const url = getBaseUrlFromServer() + `/report/landing/resume`;
+  const url = getCanonicalSiteUrl() + `/report/landing/resume`;
   const title = getReportLandingTitle(report?.title ?? '이력서 피드백 REPORT');
 
   return {
