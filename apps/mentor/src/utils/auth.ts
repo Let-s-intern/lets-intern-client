@@ -4,8 +4,9 @@ import { inferExpFromJwtMs } from './token';
 export { inferExpFromJwtMs } from './token';
 
 const THIRTY_SECONDS_MS = 30_000;
+// env push2 이후 VITE_SERVER_API_V2 가 절대 URL 이라 직접 결합.
 const REFRESH_PATH =
-  (import.meta.env.VITE_API_BASE_PATH ?? '') + '/api/v2/user/token';
+  (import.meta.env.VITE_SERVER_API_V2 ?? '') + '/user/token';
 
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;

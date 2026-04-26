@@ -1,8 +1,8 @@
 import { createV2Axios } from '@letscareer/api';
 import { getAuthHeader, logoutAndRefreshPage } from './auth';
 
+// env push2 이후 NEXT_PUBLIC_SERVER_API_V2 가 절대 URL 이라 baseURL 합성 불필요.
 const axiosV2 = createV2Axios({
-  basePath: process.env.NEXT_PUBLIC_API_BASE_PATH!,
   getAuthHeader,
   onUnauthorized: logoutAndRefreshPage,
 });

@@ -19,9 +19,11 @@ async function client<T>(
     headers,
   };
 
-  // URL에 쿼리 파라미터 추가
+  // URL에 쿼리 파라미터 추가.
+  // env push2 이후 NEXT_PUBLIC_API_BASE_PATH 는 호스트 루트 (`/api` 미포함).
+  // 기존 호출처가 `/v1/...`, `/v2/...` 형태로 endpoint 를 전달한다고 가정.
   const queryString = params ? `?${new URLSearchParams(params)}` : '';
-  const url = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api${endpoint}${queryString}`;
+  const url = `${process.env.NEXT_PUBLIC_API_BASE_PATH}${endpoint}${queryString}`;
 
   try {
     const res = await fetch(url, config);

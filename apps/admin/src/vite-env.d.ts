@@ -2,6 +2,9 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_BASE_PATH?: string;
+  readonly VITE_SERVER_API?: string;
+  readonly VITE_SERVER_API_V2?: string;
+  readonly VITE_SERVER_API_V3?: string;
   readonly VITE_PROFILE?: string;
   readonly VITE_SENTRY_DSN?: string;
   readonly VITE_ADMIN_URL?: string;
