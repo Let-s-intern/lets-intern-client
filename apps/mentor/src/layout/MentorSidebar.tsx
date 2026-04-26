@@ -100,7 +100,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
           </div>
           {!isPwa && (
             <a
-              href="https://letscareer.co.kr"
+              href={import.meta.env.VITE_WEB_URL ?? '#'}
               className="flex items-center gap-1 rounded px-3 py-2.5"
             >
               <svg

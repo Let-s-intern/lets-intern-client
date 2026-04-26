@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_SERVER_API_V3?: string;
   readonly VITE_PROFILE?: 'development' | 'production' | string;
   readonly VITE_BASE_URL?: string;
+  readonly VITE_WEB_URL?: string;
 }
 
 interface ImportMeta {

@@ -4,6 +4,10 @@ import { IoIosArrowDown } from 'react-icons/io';
 
 import { useIsAdminQuery } from '@/api/user/user';
 
+// 메인 web 으로 이동하는 외부 링크의 호스트.
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
+const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
+
 const navData = [
   {
     title: '프로그램 관리',
@@ -135,8 +139,9 @@ const navData = [
     itemList: [
       {
         name: '홈페이지로 이동',
-        url: '/',
+        url: WEB_URL,
         isExit: true,
+        external: true,
       },
     ],
   },
@@ -159,21 +164,36 @@ export const AdminSidebar = () => {
               </i>
             </div>
             <ul>
-              {navSection.itemList.map((navItem, index) => (
-                <li key={index}>
-                  <Link
-                    to={navItem.url}
-                    className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
-                  >
+              {navSection.itemList.map((navItem, index) => {
+                const isExternal =
+                  'external' in navItem && navItem.external === true;
+                const className =
+                  'flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]';
+                const content = (
+                  <>
                     {navItem.name}
                     {'isExit' in navItem && (
                       <i>
                         <ImExit className="translate-y-[1px]" />
                       </i>
                     )}
-                  </Link>
-                </li>
-              ))}
+                  </>
+                );
+
+                return (
+                  <li key={index}>
+                    {isExternal ? (
+                      <a href={navItem.url} className={className}>
+                        {content}
+                      </a>
+                    ) : (
+                      <Link to={navItem.url} className={className}>
+                        {content}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
