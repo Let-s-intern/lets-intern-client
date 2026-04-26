@@ -22,8 +22,15 @@ export function createV2Axios(options?: {
   getAuthHeader?: AuthHeaderResolver;
   onUnauthorized?: UnauthorizedHandler;
 }) {
+  const baseURL = options?.baseURL ?? SERVER_API_V2;
+  if (!baseURL) {
+    throw new Error(
+      '[@letscareer/api] createV2Axios: baseURL is empty. ' +
+        'Provide options.baseURL or set NEXT_PUBLIC_SERVER_API_V2 / VITE_SERVER_API_V2.',
+    );
+  }
   return createAuthorizedAxios({
-    baseURL: options?.baseURL ?? SERVER_API_V2,
+    baseURL,
     getAuthHeader: options?.getAuthHeader,
     onUnauthorized: options?.onUnauthorized,
   });

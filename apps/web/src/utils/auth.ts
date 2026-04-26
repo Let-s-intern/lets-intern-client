@@ -5,8 +5,15 @@ export { inferExpFromJwtMs } from './token';
 
 const THIRTY_SECONDS_MS = 30_000;
 // env push2 이후 NEXT_PUBLIC_SERVER_API_V2 가 절대 URL 이라 직접 결합.
-const REFRESH_PATH =
-  (process.env.NEXT_PUBLIC_SERVER_API_V2 ?? '') + '/user/token';
+// 모듈 로드 시점 fail-fast: env 부재 시 self-origin 으로 흘러 운영 사고 발생.
+const SERVER_API_V2_FOR_REFRESH = process.env.NEXT_PUBLIC_SERVER_API_V2;
+if (!SERVER_API_V2_FOR_REFRESH) {
+  throw new Error(
+    '[apps/web/utils/auth] NEXT_PUBLIC_SERVER_API_V2 is not defined. ' +
+      'Token refresh requires absolute V2 base URL.',
+  );
+}
+const REFRESH_PATH = SERVER_API_V2_FOR_REFRESH + '/user/token';
 
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;

@@ -10,8 +10,15 @@ export function createV3Axios(options?: {
   getAuthHeader?: AuthHeaderResolver;
   onUnauthorized?: UnauthorizedHandler;
 }) {
+  const baseURL = options?.baseURL ?? SERVER_API_V3;
+  if (!baseURL) {
+    throw new Error(
+      '[@letscareer/api] createV3Axios: baseURL is empty. ' +
+        'Provide options.baseURL or set NEXT_PUBLIC_SERVER_API_V3 / VITE_SERVER_API_V3.',
+    );
+  }
   return createAuthorizedAxios({
-    baseURL: options?.baseURL ?? SERVER_API_V3,
+    baseURL,
     getAuthHeader: options?.getAuthHeader,
     onUnauthorized: options?.onUnauthorized,
   });

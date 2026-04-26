@@ -5,8 +5,11 @@ require('dotenv').config({ path: '.env.local' });
 require('dotenv').config({ path: '.env' });
 
 // 테스트에서 필수 env 가 비었을 때 기본값 주입.
+// packages/api/src/env.ts 가 모든 키에 fail-fast 검증을 하므로 V1/V2/V3/BASE_PATH 모두 필요.
 process.env.NEXT_PUBLIC_API_BASE_PATH ??= 'https://api.example.com';
 process.env.NEXT_PUBLIC_SERVER_API ??= 'https://api.example.com/v1';
+process.env.NEXT_PUBLIC_SERVER_API_V2 ??= 'https://api.example.com/v2';
+process.env.NEXT_PUBLIC_SERVER_API_V3 ??= 'https://api.example.com/v3';
 
 const nextJest = require('next/jest.js');
 
