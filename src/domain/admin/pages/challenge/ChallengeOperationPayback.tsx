@@ -87,8 +87,9 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
           field: `th${th}`,
           headerName: `${th}회차`,
           valueGetter(_, row) {
-            const score = row.scores.find((s) => s.th === th);
-            return score?.score ?? '0';
+            return row.scores
+              .filter((s) => s.th === th)
+              .reduce((acc, s) => acc + s.score, 0);
           },
           sortable: false,
           filterable: false,
