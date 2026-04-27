@@ -333,27 +333,23 @@ const ChallengeOperationPayback = () => {
     message: '',
   });
 
-  const handleConfirmPayback = () => {
-    if (!paybackRes) return;
-
+  const validatePaybackSelection = (): boolean => {
     // 선택된 사용자가 없을 경우 경고 메시지 표시
     if (selectedIds.length === 0) {
       alert('페이백할 사용자를 선택해주세요.');
-      return;
+      return false;
     }
 
+    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
+    const hasIsRefundedUser = rows.some(
+      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
+    );
     // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
     const hasLowScoreUser = rows.some(
       (row) =>
         selectedIds.includes(row.id) &&
         row.scores.reduce((acc, score) => acc + score.score, 0) < 80,
     );
-
-    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
-    const hasIsRefundedUser = rows.some(
-      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
-    );
-
     // 선택된 사용자들 중 결제 금액이 페이백 금액보다 적은 사용자가 있는지 검사
     const hasLowPaybackUser = rows.some(
       (row) =>
@@ -364,120 +360,55 @@ const ChallengeOperationPayback = () => {
     if (hasIsRefundedUser) {
       // 이미 환급 완료된 사용자가 있을 경우 경고 메시지 표시
       alert('이미 환급 완료된 사용자가 포함되어 있습니다.');
-      return;
+      return false;
     }
-
     if (hasLowScoreUser) {
       // 총점이 80점 미만인 사용자가 있을 경우 경고 메시지 표시
       alert('페이백은 총점 80점 이상의 유저를 대상으로만 가능합니다.');
-      return;
+      return false;
     }
-
     if (hasLowPaybackUser) {
       // 결제 금액이 페이백 금액보다 적은 사용자가 있을 경우 경고 메시지 표시
       alert('결제 금액이 페이백 금액보다 적은 사용자가 포함되어 있습니다.');
-      return;
+      return false;
     }
 
     // 페이백 정보 유효성 검사
     if (!paybackInfo.price) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액을 입력해주세요.',
-      });
-      return;
+      setSnackbar({ open: true, message: '페이백 금액을 입력해주세요.' });
+      return false;
     }
     if (paybackInfo.price < 0) {
       setSnackbar({
         open: true,
         message: '페이백 금액은 0보다 작을 수 없습니다.',
       });
-      return;
+      return false;
     }
     if (paybackInfo.reason.length > 100) {
       setSnackbar({
         open: true,
         message: '취소사유는 100자 이하로 입력해주세요.',
       });
-      return;
+      return false;
     }
 
+    return true;
+  };
+
+  const handleConfirmPayback = () => {
+    if (!paybackRes) return;
+    if (!validatePaybackSelection()) return;
     setIsPaybackModalOpen(true);
   };
 
   const handlePayback = () => {
     if (!paybackRes) return;
-
-    // 선택된 사용자가 없을 경우 경고 메시지 표시
-    if (selectedIds.length === 0) {
-      alert('페이백할 사용자를 선택해주세요.');
-      return;
-    }
-
-    // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
-    const hasLowScoreUser = rows.some(
-      (row) =>
-        selectedIds.includes(row.id) &&
-        row.scores.reduce((acc, score) => acc + score.score, 0) < 80,
-    );
-
-    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
-    const hasIsRefundedUser = rows.some(
-      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
-    );
-
-    // 선택된 사용자들 중 결제 금액이 페이백 금액보다 적은 사용자가 있는지 검사
-    const hasLowPaybackUser = rows.some(
-      (row) =>
-        selectedIds.includes(row.id) &&
-        (row.finalPrice || 0) < (paybackInfo.price || 0),
-    );
-
-    if (hasIsRefundedUser) {
-      // 이미 환급 완료된 사용자가 있을 경우 경고 메시지 표시
-      alert('이미 환급 완료된 사용자가 포함되어 있습니다.');
-      return;
-    }
-
-    if (hasLowScoreUser) {
-      // 총점이 80점 미만인 사용자가 있을 경우 경고 메시지 표시
-      alert('페이백은 총점 80점 이상의 유저를 대상으로만 가능합니다.');
-      return;
-    }
-
-    if (hasLowPaybackUser) {
-      // 결제 금액이 페이백 금액보다 적은 사용자가 있을 경우 경고 메시지 표시
-      alert('결제 금액이 페이백 금액보다 적은 사용자가 포함되어 있습니다.');
-      return;
-    }
-
-    // 페이백 정보 유효성 검사
-    if (!paybackInfo.price) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액을 입력해주세요.',
-      });
-      return;
-    }
-    if (paybackInfo.price < 0) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액은 0보다 작을 수 없습니다.',
-      });
-      return;
-    }
-    if (paybackInfo.reason.length > 100) {
-      setSnackbar({
-        open: true,
-        message: '취소사유는 100자 이하로 입력해주세요.',
-      });
-      return;
-    }
-
+    if (!validatePaybackSelection()) return;
     // 페이백 실행
     setIsPaybackLoading(true);
     tryTotalPayback({
-      price: paybackInfo.price,
+      price: paybackInfo.price!,
       reason: paybackInfo.reason === '' ? undefined : paybackInfo.reason,
       applicationIdList: selectedIds,
     });
