@@ -340,9 +340,19 @@ const ChallengeOperationPayback = () => {
       return false;
     }
 
+    const regularThs = ths.filter((th) => !EXCLUDED_THS.has(th));
+
     // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
     const hasIsRefundedUser = rows.some(
       (row) => selectedIds.includes(row.id) && row.isRefunded === true,
+    );
+    // 선택된 사용자들 중 정규 미션 미제출이 있는 사용자가 있는지 검사
+    const hasUnsubmittedUser = rows.some(
+      (row) =>
+        selectedIds.includes(row.id) &&
+        !regularThs.every((th) =>
+          row.scores.filter((s) => s.th === th).some((s) => s.score > 0),
+        ),
     );
     // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
     const hasLowScoreUser = rows.some(
@@ -360,6 +370,11 @@ const ChallengeOperationPayback = () => {
     if (hasIsRefundedUser) {
       // 이미 환급 완료된 사용자가 있을 경우 경고 메시지 표시
       alert('이미 환급 완료된 사용자가 포함되어 있습니다.');
+      return false;
+    }
+    if (hasUnsubmittedUser) {
+      // 미제출 미션이 있는 사용자가 있을 경우 경고 메시지 표시
+      alert('미제출 미션이 있는 사용자가 포함되어 있습니다.');
       return false;
     }
     if (hasLowScoreUser) {
