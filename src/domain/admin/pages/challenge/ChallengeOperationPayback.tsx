@@ -152,7 +152,7 @@ const EXCLUDED_THS = new Set([0, 99, 100, 999]);
 
 function isPaybackEligible(row: Row, regularThs: number[]): boolean {
   const allSubmitted = regularThs.every((th) =>
-    row.scores.filter((s) => s.th === th).some((s) => s.score > 0),
+    row.scores.some((s) => s.th === th && s.score > 0),
   );
   const totalScore = row.scores.reduce((acc, s) => acc + s.score, 0);
   return allSubmitted && totalScore >= 80;
@@ -309,6 +309,11 @@ const ChallengeOperationPayback = () => {
     return Array.from(ths).sort();
   }, [paybackRes?.missionApplications]);
 
+  const regularThs = useMemo(
+    () => ths.filter((th) => !EXCLUDED_THS.has(th)),
+    [ths],
+  );
+
   const columns = useMemo(() => {
     return createColumns(ths);
   }, [ths]);
@@ -339,8 +344,6 @@ const ChallengeOperationPayback = () => {
       alert('페이백할 사용자를 선택해주세요.');
       return false;
     }
-
-    const regularThs = ths.filter((th) => !EXCLUDED_THS.has(th));
 
     // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
     const hasIsRefundedUser = rows.some(
@@ -493,12 +496,7 @@ const ChallengeOperationPayback = () => {
         rows={
           // paybackConfirm 상태일 때는 row.scores의 합이 80점 이상인 사용자만 표시
           paybackConfirm
-            ? rows.filter((row) =>
-                isPaybackEligible(
-                  row,
-                  ths.filter((th) => !EXCLUDED_THS.has(th)),
-                ),
-              )
+            ? rows.filter((row) => isPaybackEligible(row, regularThs))
             : rows
         }
         columns={columns}
@@ -541,7 +539,7 @@ const ChallengeOperationPayback = () => {
             handleOpenPaybackModal() {
               setPaybackConfirm(true);
             },
-            regularThs: ths.filter((th) => !EXCLUDED_THS.has(th)),
+            regularThs,
           },
         }}
         checkboxSelection
