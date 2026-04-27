@@ -4,16 +4,19 @@ import { inferExpFromJwtMs } from './token';
 export { inferExpFromJwtMs } from './token';
 
 const THIRTY_SECONDS_MS = 30_000;
-// env push2 이후 VITE_SERVER_API_V2 가 절대 URL 이라 직접 결합.
-// 모듈 로드 시점 fail-fast: env 부재 시 self-origin 으로 흘러 운영 사고 발생.
-const SERVER_API_V2_FOR_REFRESH = import.meta.env.VITE_SERVER_API_V2;
-if (!SERVER_API_V2_FOR_REFRESH) {
-  throw new Error(
-    '[apps/admin/utils/auth] VITE_SERVER_API_V2 is not defined. ' +
-      'Token refresh requires absolute V2 base URL.',
-  );
+
+// env push2 이후 VITE_SERVER_API_V2 는 절대 URL. 호출 시점에 fail-fast 하여
+// self-origin 호출은 막되, 모듈 평가 단계에서 admin SPA 전체를 죽이지는 않는다.
+function getRefreshPath(): string {
+  const base = import.meta.env.VITE_SERVER_API_V2;
+  if (!base) {
+    throw new Error(
+      '[apps/admin/utils/auth] VITE_SERVER_API_V2 is not defined. ' +
+        'Token refresh requires absolute V2 base URL.',
+    );
+  }
+  return base + '/user/token';
 }
-const REFRESH_PATH = SERVER_API_V2_FOR_REFRESH + '/user/token';
 
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;
@@ -30,7 +33,7 @@ async function ensureHydratedStore(): Promise<void> {
 
 // 실제 refresh 요청 수행
 async function requestRefresh(refreshToken: string): Promise<TokenSet | null> {
-  const response = await fetch(REFRESH_PATH, {
+  const response = await fetch(getRefreshPath(), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

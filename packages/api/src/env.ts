@@ -24,22 +24,26 @@ function readViteEnv(): Record<string, string | undefined> {
 }
 const VITE_ENV = readViteEnv();
 
-function required(value: string | undefined, label: string): string {
-  if (!value) {
-    throw new Error(
+// module-top throw는 admin/mentor SPA를 통째로 죽여 SSO 등 무관한 흐름까지 막힘.
+// fail-fast 의도(self-origin 호출 방지)는 axios.ts/axiosV2.ts/axiosV3.ts의
+// `if (!baseURL) throw` 가드가 호출 시점에 보장하므로, 여기서는 빈 문자열로 노출하고
+// 콘솔 경고만 남긴다.
+function readEnv(value: string | undefined, label: string): string {
+  if (!value && typeof window !== 'undefined') {
+    console.error(
       `[@letscareer/api] env ${label} is not defined. ` +
         `Set it in apps/{web,admin,mentor} env files. ` +
         `이 값이 비면 요청이 self-origin 으로 흘러 운영 사고로 이어집니다.`,
     );
   }
-  return value;
+  return value ?? '';
 }
 
 /**
  * v1 API base URL (예: https://letsintern.kr/api/v1).
  * env 키: NEXT_PUBLIC_SERVER_API (Next.js) → VITE_SERVER_API (Vite).
  */
-export const SERVER_API: string = required(
+export const SERVER_API: string = readEnv(
   process.env.NEXT_PUBLIC_SERVER_API ?? VITE_ENV.VITE_SERVER_API,
   '"NEXT_PUBLIC_SERVER_API" (or "VITE_SERVER_API")',
 );
@@ -48,7 +52,7 @@ export const SERVER_API: string = required(
  * v2 API base URL.
  * env 키: NEXT_PUBLIC_SERVER_API_V2 → VITE_SERVER_API_V2.
  */
-export const SERVER_API_V2: string = required(
+export const SERVER_API_V2: string = readEnv(
   process.env.NEXT_PUBLIC_SERVER_API_V2 ?? VITE_ENV.VITE_SERVER_API_V2,
   '"NEXT_PUBLIC_SERVER_API_V2" (or "VITE_SERVER_API_V2")',
 );
@@ -57,7 +61,7 @@ export const SERVER_API_V2: string = required(
  * v3 API base URL. 현재 BE 미배포.
  * env 키: NEXT_PUBLIC_SERVER_API_V3 → VITE_SERVER_API_V3.
  */
-export const SERVER_API_V3: string = required(
+export const SERVER_API_V3: string = readEnv(
   process.env.NEXT_PUBLIC_SERVER_API_V3 ?? VITE_ENV.VITE_SERVER_API_V3,
   '"NEXT_PUBLIC_SERVER_API_V3" (or "VITE_SERVER_API_V3")',
 );
@@ -66,7 +70,7 @@ export const SERVER_API_V3: string = required(
  * 백엔드 호스트 루트 (API 경로 prefix 없음).
  * OAuth 콜백·외부 임베드 등 호스트 루트가 필요한 곳에서만 사용.
  */
-export const API_BASE_PATH: string = required(
+export const API_BASE_PATH: string = readEnv(
   process.env.NEXT_PUBLIC_API_BASE_PATH ?? VITE_ENV.VITE_API_BASE_PATH,
   '"NEXT_PUBLIC_API_BASE_PATH" (or "VITE_API_BASE_PATH")',
 );
