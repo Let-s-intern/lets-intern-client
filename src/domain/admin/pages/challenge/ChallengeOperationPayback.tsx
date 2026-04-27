@@ -309,6 +309,9 @@ const ChallengeOperationPayback = () => {
     return Array.from(ths).sort();
   }, [paybackRes?.missionApplications]);
 
+  // 미제출 조건은 challengeId 234부터 적용
+  const shouldFilterUnsubmitted = Number(challengeId) >= 234;
+
   const regularThs = useMemo(
     () => ths.filter((th) => !EXCLUDED_THS.has(th)),
     [ths],
@@ -350,13 +353,15 @@ const ChallengeOperationPayback = () => {
       (row) => selectedIds.includes(row.id) && row.isRefunded === true,
     );
     // 선택된 사용자들 중 정규 미션 미제출이 있는 사용자가 있는지 검사
-    const hasUnsubmittedUser = rows.some(
-      (row) =>
-        selectedIds.includes(row.id) &&
-        !regularThs.every((th) =>
-          row.scores.filter((s) => s.th === th).some((s) => s.score > 0),
-        ),
-    );
+    const hasUnsubmittedUser =
+      shouldFilterUnsubmitted &&
+      rows.some(
+        (row) =>
+          selectedIds.includes(row.id) &&
+          !regularThs.every((th) =>
+            row.scores.some((s) => s.th === th && s.score > 0),
+          ),
+      );
     // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
     const hasLowScoreUser = rows.some(
       (row) =>
@@ -496,7 +501,12 @@ const ChallengeOperationPayback = () => {
         rows={
           // paybackConfirm 상태일 때는 row.scores의 합이 80점 이상인 사용자만 표시
           paybackConfirm
-            ? rows.filter((row) => isPaybackEligible(row, regularThs))
+            ? rows.filter((row) =>
+                isPaybackEligible(
+                  row,
+                  shouldFilterUnsubmitted ? regularThs : [],
+                ),
+              )
             : rows
         }
         columns={columns}
@@ -539,7 +549,7 @@ const ChallengeOperationPayback = () => {
             handleOpenPaybackModal() {
               setPaybackConfirm(true);
             },
-            regularThs,
+            regularThs: shouldFilterUnsubmitted ? regularThs : [],
           },
         }}
         checkboxSelection
