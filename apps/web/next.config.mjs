@@ -24,6 +24,11 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    // 빌드 시 typecheck 스킵 — 별도 CI job (`pnpm turbo run typecheck`) 에서 검증.
+    // next build 내장 tsc 가 5-10분 소요되어 빌드 시간 단축 목적.
+    ignoreBuildErrors: true,
+  },
   turbopack: {
     rules: {
       '*.svg': {
@@ -69,7 +74,11 @@ const nextConfig = {
 
 const branch =
   process.env.VERCEL_GIT_COMMIT_REF || process.env.GITHUB_REF_NAME || '';
-const shouldEnableSentry = branch === 'main' || branch.startsWith('test');
+// Sentry 인스트루먼트 (3-pass webpack) 는 빌드를 +2~4분 늘린다.
+// 운영 main 빌드에서만 켜고, 작업/PR 미리보기에서는 끈다.
+// 강제로 켜야 할 경우 SENTRY_FORCE_ENABLE=true 환경변수 설정.
+const shouldEnableSentry =
+  branch === 'main' || process.env.SENTRY_FORCE_ENABLE === 'true';
 
 export default shouldEnableSentry
   ? withSentryConfig(nextConfig, {
