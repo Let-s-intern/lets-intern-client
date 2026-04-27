@@ -3,7 +3,7 @@ import LiveView from '@/domain/program/live-view/LiveView';
 import LiveCTAButtons from '@/domain/program/live-view/ui/LiveCTAButtons';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
-  getBaseUrlFromServer,
+  getCanonicalSiteUrl,
   getLiveTitle,
   getProgramPathname,
 } from '@/utils/url';
@@ -19,7 +19,7 @@ export async function generateMetadata({
   const { id } = await params;
   const program = await fetchLiveData(id);
   const url =
-    getBaseUrlFromServer() +
+    getCanonicalSiteUrl() +
     getProgramPathname({ id, programType: 'live', title: program.title });
   const title = getLiveTitle(program);
 

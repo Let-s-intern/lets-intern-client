@@ -4,8 +4,6 @@
  * Tests the modal state management logic without react-query dependencies.
  */
 
-import { describe, expect, it } from 'vitest';
-
 // ── Modal state management logic ────────────────────────────────────
 
 interface FeedbackModalState {

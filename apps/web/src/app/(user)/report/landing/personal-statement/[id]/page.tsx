@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { personalStatementReportDescription } from '@/data/description';
 import ReportPersonalStatementPage from '@/domain/report/ReportPersonalStatementPage';
-import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import { getCanonicalSiteUrl, getReportLandingTitle } from '@/utils/url';
 import { Metadata } from 'next';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ export async function generateMetadata({
   });
 
   const url =
-    getBaseUrlFromServer() + `/report/landing/personal-statement/${id}`;
+    getCanonicalSiteUrl() + `/report/landing/personal-statement/${id}`;
   const title = getReportLandingTitle(
     report?.title ?? '자기소개서 피드백 REPORT',
   );

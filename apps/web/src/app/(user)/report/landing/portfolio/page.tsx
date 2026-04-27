@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { portfolioReportDescription } from '@/data/description';
 import ReportPortfolioPage from '@/domain/report/ReportPortfolioPage';
-import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import { getCanonicalSiteUrl, getReportLandingTitle } from '@/utils/url';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성
@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     type: 'PORTFOLIO',
   });
 
-  const url = getBaseUrlFromServer() + `/report/landing/portfolio`;
+  const url = getCanonicalSiteUrl() + `/report/landing/portfolio`;
   const title = getReportLandingTitle(
     report?.title ?? '포트폴리오 피드백 REPORT',
   );

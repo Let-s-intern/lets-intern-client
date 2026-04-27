@@ -5,7 +5,6 @@
  *       서버 응답 파싱이 올바르게 동작하는지 검증
  */
 
-import { describe, expect, it } from 'vitest';
 import {
   mentorFeedbackManagementSchema,
   mentorMenteeAttendanceListSchema,

@@ -6,8 +6,6 @@
  * - Tag toggle behavior works correctly
  */
 
-import { describe, expect, it } from 'vitest';
-
 interface BarLike {
   challengeId: number;
   missionId: number;

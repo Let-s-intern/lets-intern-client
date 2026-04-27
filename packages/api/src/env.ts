@@ -17,12 +17,55 @@ function readImportMetaEnv(key: string): string | undefined {
   }
 }
 
-export const SERVER_API: string =
-  readProcessEnv('NEXT_PUBLIC_SERVER_API') ??
-  readImportMetaEnv('VITE_SERVER_API') ??
-  '';
+/**
+ * 모듈 로드 시점에 필수 env 부재를 감지해 fail-fast 한다.
+ * silent 한 빈 baseURL 합성을 막아 self-origin 요청 사고를 차단.
+ */
+function readRequiredEnv(processKey: string, viteKey: string): string {
+  const value =
+    readProcessEnv(processKey) ?? readImportMetaEnv(viteKey) ?? '';
+  if (!value) {
+    throw new Error(
+      `[@letscareer/api] env "${processKey}" (or "${viteKey}") is not defined. ` +
+        `Set it in apps/{web,admin,mentor} env files. ` +
+        `이 값이 비면 요청이 self-origin 으로 흘러 운영 사고로 이어집니다.`,
+    );
+  }
+  return value;
+}
 
-export const API_BASE_PATH: string =
-  readProcessEnv('NEXT_PUBLIC_API_BASE_PATH') ??
-  readImportMetaEnv('VITE_API_BASE_PATH') ??
-  '';
+/**
+ * v1 API base URL (예: https://letsintern.kr/v1).
+ * env 키: NEXT_PUBLIC_SERVER_API (Next.js) → VITE_SERVER_API (Vite).
+ */
+export const SERVER_API: string = readRequiredEnv(
+  'NEXT_PUBLIC_SERVER_API',
+  'VITE_SERVER_API',
+);
+
+/**
+ * v2 API base URL (예: https://letsintern.kr/v2).
+ * env 키: NEXT_PUBLIC_SERVER_API_V2 → VITE_SERVER_API_V2.
+ */
+export const SERVER_API_V2: string = readRequiredEnv(
+  'NEXT_PUBLIC_SERVER_API_V2',
+  'VITE_SERVER_API_V2',
+);
+
+/**
+ * v3 API base URL (예: https://letsintern.kr/v3).
+ * env 키: NEXT_PUBLIC_SERVER_API_V3 → VITE_SERVER_API_V3.
+ */
+export const SERVER_API_V3: string = readRequiredEnv(
+  'NEXT_PUBLIC_SERVER_API_V3',
+  'VITE_SERVER_API_V3',
+);
+
+/**
+ * 백엔드 호스트 루트 (API 경로 prefix 없음).
+ * OAuth 콜백·외부 임베드 등 호스트 루트가 필요한 곳에서만 사용.
+ */
+export const API_BASE_PATH: string = readRequiredEnv(
+  'NEXT_PUBLIC_API_BASE_PATH',
+  'VITE_API_BASE_PATH',
+);

@@ -1,10 +1,20 @@
 import { withSentryConfig } from '@sentry/nextjs';
+
+// 빌드 시 필수 env 부재를 fail-fast 로 막아 silent self-origin 요청 사고를 방지.
 if (!process.env.NEXT_PUBLIC_API_BASE_PATH) {
   throw new Error('NEXT_PUBLIC_API_BASE_PATH is not defined');
 }
 
 if (!process.env.NEXT_PUBLIC_SERVER_API) {
   throw new Error('NEXT_PUBLIC_SERVER_API is not defined');
+}
+
+if (!process.env.NEXT_PUBLIC_SERVER_API_V2) {
+  throw new Error('NEXT_PUBLIC_SERVER_API_V2 is not defined');
+}
+
+if (!process.env.NEXT_PUBLIC_SERVER_API_V3) {
+  throw new Error('NEXT_PUBLIC_SERVER_API_V3 is not defined');
 }
 
 /** @type {import('next').NextConfig} */

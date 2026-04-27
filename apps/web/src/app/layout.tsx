@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable @next/next/next-script-for-ga */
 
-import { getBaseUrlFromServer } from '@/utils/url';
+import { getCanonicalSiteUrl } from '@/utils/url';
 import { Metadata, Viewport } from 'next';
 import '../fonts/font.css';
 import '../index.css';
@@ -12,7 +12,7 @@ import '../styles/modal.scss';
 import '../styles/mypage.scss';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getBaseUrlFromServer()),
+  metadataBase: new URL(getCanonicalSiteUrl()),
   other: {
     'naver-site-verification': '15caf82243b739e694f52cc6a5527956db0cd4a0',
   },
@@ -31,19 +31,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const siteJsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '렛츠커리어',
+    url: `${getCanonicalSiteUrl()}/`,
+  });
   return (
     <html lang="ko">
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: '렛츠커리어',
-              url: 'https://www.letscareer.co.kr/',
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: siteJsonLd }}
         />
         <script
           dangerouslySetInnerHTML={{

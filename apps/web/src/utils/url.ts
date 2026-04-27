@@ -103,6 +103,42 @@ export function getBaseUrlFromServer(): string {
   return process.env.BASE_URL || 'http://localhost:3000';
 }
 
+/**
+ * 정규 사이트 URL (canonical / og:url / JSON-LD url 용도).
+ * 우선순위: NEXT_PUBLIC_SITE_URL → BASE_URL → 'http://localhost:3000'.
+ * trailing slash 는 항상 제거된 형태로 반환한다.
+ */
+export function getCanonicalSiteUrl(): string {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.BASE_URL ||
+    'http://localhost:3000';
+  return raw.replace(/\/+$/, '');
+}
+
+/**
+ * pathname 을 받아 정규 사이트 URL 과 결합한다.
+ * pathname 이 비어 있으면 사이트 URL 을 그대로 반환.
+ */
+export function getCanonicalUrl(pathname: string = ''): string {
+  if (!pathname) return getCanonicalSiteUrl();
+  const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  return `${getCanonicalSiteUrl()}${normalized}`;
+}
+
+/**
+ * robots 메타 결정.
+ * 운영(production) 외 환경 또는 NO_INDEX === 'true' 면 noindex 강제.
+ */
+export function getRobotsMetadata(): 'index, follow' | 'noindex, nofollow' {
+  const profile = process.env.NEXT_PUBLIC_PROFILE;
+  const noIndex = process.env.NO_INDEX;
+  if (noIndex === 'true' || profile !== 'production') {
+    return 'noindex, nofollow';
+  }
+  return 'index, follow';
+}
+
 export function getLibraryPathname({
   id,
   title,

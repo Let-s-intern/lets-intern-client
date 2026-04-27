@@ -19,9 +19,10 @@ async function client<T>(
     headers,
   };
 
-  // URL에 쿼리 파라미터 추가
+  // URL에 쿼리 파라미터 추가.
+  // env push2 이후 VITE_API_BASE_PATH 는 호스트 루트 (`/api` 미포함).
   const queryString = params ? `?${new URLSearchParams(params)}` : '';
-  const url = `${import.meta.env.VITE_API_BASE_PATH}/api${endpoint}${queryString}`;
+  const url = `${import.meta.env.VITE_API_BASE_PATH}${endpoint}${queryString}`;
 
   try {
     const res = await fetch(url, config);

@@ -1,7 +1,7 @@
-name: 웹 빌드 검사
+name: 웹 검사
 
 # apps/web 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
-# .claude/**, .cursor/**, *.md 같은 메타 파일 수정은 트리거되지 않는다.
+# 5단계 검사 + Playwright E2E (web 전용) 직렬 실행.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -12,6 +12,7 @@ on:
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
       - 'package.json'
+      - '.prettierrc.mjs'
       - '.github/workflows/build-web.yml'
   push:
     branches: [main]
@@ -23,10 +24,15 @@ on:
       - 'turbo.json'
       - 'package.json'
 
+concurrency:
+  group: build-web-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    name: 웹 빌드
+  checks:
+    name: web 5단계 검사 + e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -39,7 +45,52 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm build:web
+      - name: '1) Prettier check (web 한정)'
+        continue-on-error: true
+        run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
+
+      - name: '2) ESLint (web)'
+        continue-on-error: true
+        run: pnpm --filter @letscareer/web lint
+
+      - name: '3) Jest (web)'
+        run: pnpm --filter @letscareer/web test
+
+      - name: '4) Coverage (V8, threshold 미설정)'
+        continue-on-error: true
+        run: pnpm --filter @letscareer/web test:coverage
+
+      - name: 'Upload web coverage'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-coverage-${{ github.sha }}
+          path: apps/web/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: '5) Build (web)'
+        run: pnpm --filter @letscareer/web build
         env:
-          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com' }}
-          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || '/api' }}
+          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
+          NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
+          NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
+          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
+
+      - name: 'Install Playwright browsers'
+        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
+        run: pnpm --filter @letscareer/web e2e:install
+
+      - name: '6) E2E (Playwright, web 전용)'
+        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
+        run: pnpm --filter @letscareer/web e2e
+
+      - name: 'Upload Playwright report'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.sha }}
+          path: apps/web/playwright-report
+          if-no-files-found: ignore
+          retention-days: 7

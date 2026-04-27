@@ -4,8 +4,16 @@ import { inferExpFromJwtMs } from './token';
 export { inferExpFromJwtMs } from './token';
 
 const THIRTY_SECONDS_MS = 30_000;
-const REFRESH_PATH =
-  (import.meta.env.VITE_API_BASE_PATH ?? '') + '/api/v2/user/token';
+// env push2 이후 VITE_SERVER_API_V2 가 절대 URL 이라 직접 결합.
+// 모듈 로드 시점 fail-fast: env 부재 시 self-origin 으로 흘러 운영 사고 발생.
+const SERVER_API_V2_FOR_REFRESH = import.meta.env.VITE_SERVER_API_V2;
+if (!SERVER_API_V2_FOR_REFRESH) {
+  throw new Error(
+    '[apps/admin/utils/auth] VITE_SERVER_API_V2 is not defined. ' +
+      'Token refresh requires absolute V2 base URL.',
+  );
+}
+const REFRESH_PATH = SERVER_API_V2_FOR_REFRESH + '/user/token';
 
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;

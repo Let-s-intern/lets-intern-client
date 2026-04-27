@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { personalStatementReportDescription } from '@/data/description';
 import ReportPersonalStatementPage from '@/domain/report/ReportPersonalStatementPage';
-import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import { getCanonicalSiteUrl, getReportLandingTitle } from '@/utils/url';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성
@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     type: 'PERSONAL_STATEMENT',
   });
 
-  const url = getBaseUrlFromServer() + `/report/landing/personal-statement`;
+  const url = getCanonicalSiteUrl() + `/report/landing/personal-statement`;
   const title = getReportLandingTitle(
     report?.title ?? '자기소개서 피드백 REPORT',
   );
