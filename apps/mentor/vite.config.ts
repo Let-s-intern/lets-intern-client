@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => {
     publicDir: resolve(__dirname, '../web/public'),
     envPrefix: 'VITE_',
     server: {
+      host: true,
       port: 3002,
       strictPort: true,
       proxy: {

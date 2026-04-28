@@ -24,6 +24,20 @@ function readViteEnv(): Record<string, string | undefined> {
 }
 const VITE_ENV = readViteEnv();
 
+// admin/mentor 의 tsconfig 는 `"types": ["vite/client", ...]` 화이트리스트로
+// @types/node 를 의도적으로 제외하므로, 이 파일이 그 컨텍스트에서 컴파일될 때
+// 직접 `process` 참조는 ts(2591)을 일으킨다.
+// 모듈 로컬 ambient 선언으로 타입만 보강하면 런타임에는 영향이 없고,
+// `process.env.<리터럴>` 텍스트 패턴이 그대로 남아 Next/Turbopack 정적 치환도 유지된다.
+// 타입은 항상 존재로 두고(runtime undefined 는 아래 typeof 가드가 처리),
+// const 변수 거친 narrowing 누락으로 ts(2533) 가 재발하지 않도록 한다.
+declare const process: { env: Record<string, string | undefined> };
+
+// Vite 브라우저 번들에는 `process` 전역이 실제로 없어 직접 접근 시 ReferenceError.
+// `typeof <bare id>` 는 미선언 식별자에도 안전하므로 Vite에서 false 로 단락된다.
+const HAS_PROCESS_ENV =
+  typeof process !== 'undefined' && typeof process.env !== 'undefined';
+
 // module-top throw는 admin/mentor SPA를 통째로 죽여 SSO 등 무관한 흐름까지 막힘.
 // fail-fast 의도(self-origin 호출 방지)는 axios.ts/axiosV2.ts/axiosV3.ts의
 // `if (!baseURL) throw` 가드가 호출 시점에 보장하므로, 여기서는 빈 문자열로 노출하고
@@ -44,7 +58,8 @@ function readEnv(value: string | undefined, label: string): string {
  * env 키: NEXT_PUBLIC_SERVER_API (Next.js) → VITE_SERVER_API (Vite).
  */
 export const SERVER_API: string = readEnv(
-  process.env.NEXT_PUBLIC_SERVER_API ?? VITE_ENV.VITE_SERVER_API,
+  (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API : undefined) ??
+    VITE_ENV.VITE_SERVER_API,
   '"NEXT_PUBLIC_SERVER_API" (or "VITE_SERVER_API")',
 );
 
@@ -53,7 +68,8 @@ export const SERVER_API: string = readEnv(
  * env 키: NEXT_PUBLIC_SERVER_API_V2 → VITE_SERVER_API_V2.
  */
 export const SERVER_API_V2: string = readEnv(
-  process.env.NEXT_PUBLIC_SERVER_API_V2 ?? VITE_ENV.VITE_SERVER_API_V2,
+  (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API_V2 : undefined) ??
+    VITE_ENV.VITE_SERVER_API_V2,
   '"NEXT_PUBLIC_SERVER_API_V2" (or "VITE_SERVER_API_V2")',
 );
 
@@ -62,7 +78,8 @@ export const SERVER_API_V2: string = readEnv(
  * env 키: NEXT_PUBLIC_SERVER_API_V3 → VITE_SERVER_API_V3.
  */
 export const SERVER_API_V3: string = readEnv(
-  process.env.NEXT_PUBLIC_SERVER_API_V3 ?? VITE_ENV.VITE_SERVER_API_V3,
+  (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API_V3 : undefined) ??
+    VITE_ENV.VITE_SERVER_API_V3,
   '"NEXT_PUBLIC_SERVER_API_V3" (or "VITE_SERVER_API_V3")',
 );
 
@@ -71,6 +88,7 @@ export const SERVER_API_V3: string = readEnv(
  * OAuth 콜백·외부 임베드 등 호스트 루트가 필요한 곳에서만 사용.
  */
 export const API_BASE_PATH: string = readEnv(
-  process.env.NEXT_PUBLIC_API_BASE_PATH ?? VITE_ENV.VITE_API_BASE_PATH,
+  (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_API_BASE_PATH : undefined) ??
+    VITE_ENV.VITE_API_BASE_PATH,
   '"NEXT_PUBLIC_API_BASE_PATH" (or "VITE_API_BASE_PATH")',
 );

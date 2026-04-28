@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => {
     },
     envPrefix: 'VITE_',
     server: {
+      host: true,
       port: 3001,
       strictPort: true,
       proxy: {
