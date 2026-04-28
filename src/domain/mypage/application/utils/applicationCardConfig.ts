@@ -155,7 +155,7 @@ const toGuidebookCardConfig = (
     : '';
 
   const thumbnail = programThumbnail ?? '';
-  const isUrl = !!contentUrl;
+  const isUrl = !!contentUrl && !contentFileUrl;
 
   const urlConfirm = {
     title: '가이드북을 열람하시겠습니까?',

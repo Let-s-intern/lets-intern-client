@@ -106,7 +106,7 @@ export const toGuidebookCardConfig = (
   item: CareerGrowthItem,
 ): CareerGrowthCardConfig => {
   const purchaseDateText = item.createDate || item.startDate;
-  const isUrl = !!item.contentUrl;
+  const isUrl = !!item.contentUrl && !item.contentFileUrl;
 
   const urlConfirm = {
     title: '가이드북을 열람하시겠습니까?',
