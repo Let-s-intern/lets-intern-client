@@ -17,7 +17,9 @@
     "e2e:install": "playwright install --with-deps chromium",
     "e2e:purchase": "playwright test --grep purchase",
     "e2e:headed": "playwright test --headed",
-    "e2e:debug": "playwright test --debug"
+    "e2e:debug": "playwright test --debug",
+    "e2e:nocapture": "E2E_CAPTURE=off playwright test",
+    "e2e:fastdebug": "E2E_CAPTURE=failure-only playwright test"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

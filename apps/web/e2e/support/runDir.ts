@@ -20,6 +20,21 @@ function formatTimestamp(d: Date) {
   );
 }
 
+/** snap() 호출 시 캡처 여부. 'off'/'failure-only' 면 false. 그 외엔 true. */
+function isCaptureEnabledForSnap(): boolean {
+  const v = (process.env.E2E_CAPTURE ?? '').toLowerCase().trim();
+  if (v === 'off' || v === '0' || v === 'false' || v === 'no') return false;
+  if (v === 'failure-only') return false; // 실패 시점 캡처는 finalize 가 별도 처리
+  return true;
+}
+
+/** afterEach 의 99-실패시점.png 캡처 여부. 'off' 만 false. */
+function isCaptureEnabledForFailure(): boolean {
+  const v = (process.env.E2E_CAPTURE ?? '').toLowerCase().trim();
+  if (v === 'off' || v === '0' || v === 'false' || v === 'no') return false;
+  return true;
+}
+
 /**
  * 한 test 의 산출물 디렉토리를 관리.
  *   - timestamp 기반 _pending/<TS>/ 에 저장
@@ -37,8 +52,21 @@ export class RunDir {
     fs.mkdirSync(this.pendingDir, { recursive: true });
   }
 
-  /** 단계별 스크린샷 저장. fullPage + 스크롤 최상단 보정. */
+  /**
+   * 단계별 스크린샷 저장. fullPage + 스크롤 최상단 보정.
+   *
+   * 환경변수 E2E_CAPTURE 로 동작 제어:
+   *   - off / 0 / false / no  -> 모든 캡처 skip (성공/실패 무관)
+   *   - failure-only          -> snap 호출은 skip, afterEach 의 99-실패시점만 저장
+   *   - on / 1 / 미설정       -> 모두 캡처 (default)
+   */
   async snap(page: Page, seq: number, name: string): Promise<void> {
+    if (!isCaptureEnabledForSnap()) {
+      log(
+        `  [SNAP-skip] ${name} (E2E_CAPTURE=${process.env.E2E_CAPTURE ?? '(unset)'})`,
+      );
+      return;
+    }
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(150);
     const safeName = name.replace(/[^\w가-힣\-]/g, '_');
@@ -65,12 +93,14 @@ export class RunDir {
     notes: JournalNote[] = [],
   ): Promise<void> {
     if (testInfo.status === 'failed' || testInfo.status === 'timedOut') {
-      try {
-        const failureFile = path.join(this.pendingDir, '99-실패시점.png');
-        await page.screenshot({ path: failureFile, fullPage: true });
-        log(`[SNAP] 실패 시점 캡처: ${failureFile}`);
-      } catch {
-        /* page 가 닫혔으면 무시 */
+      if (isCaptureEnabledForFailure()) {
+        try {
+          const failureFile = path.join(this.pendingDir, '99-실패시점.png');
+          await page.screenshot({ path: failureFile, fullPage: true });
+          log(`[SNAP] 실패 시점 캡처: ${failureFile}`);
+        } catch {
+          /* page 가 닫혔으면 무시 */
+        }
       }
       const message = testInfo.error?.message ?? '(no error message)';
       const stack = testInfo.error?.stack ?? '';
