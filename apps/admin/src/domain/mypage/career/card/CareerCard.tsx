@@ -1,0 +1,95 @@
+import clsx from 'clsx';
+import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+interface CareerCardProps {
+  title: string;
+  labelOnClick?: () => void;
+  className?: string;
+  body: React.ReactNode;
+  fullWidth?: boolean;
+}
+
+const CareerCard = ({
+  title,
+  labelOnClick,
+  className,
+  body,
+  fullWidth = false,
+}: CareerCardProps) => {
+  return (
+    <div className={clsx({ 'w-full': fullWidth })}>
+      <div
+        className={clsx(
+          'rounded-xs border-neutral-85 flex flex-1 flex-col gap-3 border p-4',
+          className,
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-[#4A495C]">{title}</h3>
+          {labelOnClick && (
+            <ChevronRight
+              className="cursor-pointer stroke-[1.5] text-neutral-50"
+              size={24}
+              onClick={labelOnClick}
+            />
+          )}
+        </div>
+        {body}
+      </div>
+    </div>
+  );
+};
+
+interface EmptyProps {
+  height?: number;
+  description: string;
+  buttonText: string;
+  buttonHref?: string;
+  onClick?: () => void;
+  className?: string;
+}
+
+const Empty = ({
+  height,
+  description,
+  buttonText,
+  buttonHref,
+  onClick,
+}: EmptyProps) => {
+  const navigate = useNavigate();
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (buttonHref) {
+      navigate(buttonHref);
+      return;
+    }
+    onClick?.();
+  };
+
+  return (
+    <div
+      className={clsx(
+        'flex flex-col items-center justify-center gap-3',
+        height && `h-[${height}px]`,
+      )}
+    >
+      <p className="text-sm text-[#666666]">{description}</p>
+      <button
+        type="button"
+        onClick={handleButtonClick}
+        className="rounded-xs border-primary text-primary hover:bg-primary/5 h-[32px] w-fit border px-3 py-1.5 text-sm font-medium transition-colors"
+      >
+        {buttonText}
+      </button>
+    </div>
+  );
+};
+
+CareerCard.Empty = Empty;
+
+export type CareerCardComponent = typeof CareerCard & {
+  Empty: typeof Empty;
+};
+
+export default CareerCard as CareerCardComponent;

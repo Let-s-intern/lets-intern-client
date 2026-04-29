@@ -1,6 +1,6 @@
-# 렛츠커리어 `.claude` 디렉토리 가이드
+# `.claude/` 디렉토리 가이드
 
-렛츠커리어 프로젝트에서 Claude Code를 효율적으로 사용하기 위한 설정과 자동화 도구들입니다.
+Claude Code를 효율적으로 쓰기 위한 프로젝트 단위 설정·자동화·문서 컨테이너. 구조 자체는 *어떤 프로젝트에도 그대로 가져다 쓸 수 있도록* 재사용 가능한 형태로 정리되어 있다. 프로젝트 특화 내용은 모두 `docs/<프로젝트명>/` 아래로 격리한다.
 
 ---
 
@@ -8,277 +8,207 @@
 
 ```
 .claude/
-├── agents/               # 서브 에이전트 (단일 세션 내 작업)
-├── roles/                # 에이전트 팀 역할 정의 (멀티 세션)
-├── skills/               # 재사용 가능한 스킬
-├── docs/                 # 프로젝트 문서
-├── hooks/                # 자동화 훅 스크립트
-├── tasks/                # 작업 기록
-├── settings.json         # Claude Code 설정
-└── launch.json           # VS Code 디버깅 설정
+├── agents/                # 서브 에이전트 (단일 세션 내 Task로 호출)
+├── teams/                 # 에이전트 팀 레시피 (멀티 세션 협업)
+├── commands/              # `/<커맨드>` 형태의 슬래시 커맨드
+├── skills/                # 재사용 스킬 (자동·수동 활성화)
+├── docs/
+│   ├── claude_code_docs/  # Claude Code 공식 문서 캐시 (오프라인 참조)
+│   └── <프로젝트명>/       # 프로젝트별 문서 (도메인·아키텍처·운영 메모)
+├── hooks/                 # 자동화 훅 스크립트
+├── tasks/                 # 작업 기록 (gitignored)
+├── behavioral.md          # 모든 세션 공통 행동 규칙
+├── settings.json          # Claude Code 설정 + hook 정의
+└── launch.json            # VS Code 디버깅 설정
 ```
+
+> **재사용성의 핵심**: 이 디렉토리 자체는 *프로젝트 특화 내용을 두지 않는다*. 도메인·기술 스택·API 명세 같은 프로젝트별 문서는 `docs/<프로젝트명>/` 아래로 격리해, `.claude/` 골격을 다른 저장소로 옮길 때 그대로 따라오게 만든다.
 
 ---
 
-## 🤖 에이전트
+## 🤖 에이전트 (`agents/`)
 
-### 1. 서브 에이전트 (`agents/`)
+단일 세션 안에서 Task 도구로 위임되는 전문 에이전트. 격리된 컨텍스트·도구셋으로 한정된 작업을 수행한다.
 
-단일 세션 내에서 Task 도구로 호출되는 전문 에이전트입니다.
+| 에이전트 | 역할 |
+|---|---|
+| **doc-finder** | 프로젝트 문서를 빠르게 검색·요약 |
+| **doc-updater** | 코드 변경에 따른 문서 동기화 |
+| **doc-worker** | 아키텍처·디자인·API 문서 작성 (팀 리드 하위) |
+| **test-runner** | 테스트 실행과 실패 분석 |
+| **task-executor** | 단일 자율 실행 (구현·테스트·커밋·에러 픽스) |
+| **push-lead** | Push 단위 팀을 만들어 워커 병렬 오케스트레이션 |
+| **feature-worker** | 신규 기능·컴포넌트 구현 (팀 리드 하위) |
+| **refactor-worker** | 파일 분리·훅 추출·import 정리 (팀 리드 하위) |
+| **design-worker** | 컬러·라운드·간격 통일·UI 개선 (팀 리드 하위) |
+| **refactorer** | DDD + 프랙탈 기반 자율 리팩터 |
 
-| 에이전트 | 역할 | 사용 시점 |
-|---------|------|----------|
-| **doc-finder** | 문서 검색 및 요약 | 개발 중 컴포넌트/훅/API 사용법 확인 필요 시 |
-| **doc-updater** | 문서 업데이트 | 코드 변경 시 자동 문서화 |
-| **test-runner** | 테스트 실행 | 구현 완료 후 자동 테스트 |
-| **task-executor** | 작업 실행 | 복잡한 구현 작업 위임 (서브에이전트 스폰 가능) |
-| **refactorer** | 리팩터링 실행 | DDD + 프랙탈 아키텍처 기반 구조 개선, 코드 리뷰 후 자율 리팩터링 |
-| **push-lead** | 팀 리드 | Push 단위 팀 생성 + 서브에이전트 병렬 오케스트레이션 |
-| **refactor-worker** | 리팩터링 워커 | 파일 분리, 훅 추출, import 정리 (팀 리드 하위) |
-| **design-worker** | 디자인 워커 | 컬러/라운드/간격 통일, UI 개선 (팀 리드 하위) |
-| **feature-worker** | 기능 구현 워커 | 신규 컴포넌트/훅/페이지 구현 (팀 리드 하위) |
-| **doc-worker** | 문서화 워커 | 아키텍처/디자인/API 문서 작성 (팀 리드 하위) |
+---
 
-### 2. 에이전트 팀 (`roles/`)
+## 👥 팀 (`teams/`)
 
-여러 Claude Code 세션이 협력하는 팀 구조입니다.
+여러 세션이 협력해 한 작업을 수행하는 *팀 레시피*. `commands/`의 슬래시 커맨드 또는 자연어로 진입한다.
 
-| 역할 | 책임 | 모델 |
-|-----|------|------|
-| **coordinator** | 작업 조율 및 분배 | Sonnet (inherit) |
-| **developer** | 코드 구현 | Sonnet (inherit) |
-| **tester** | 테스트 및 검증 | Haiku (빠른 실행) |
+| 팀 | 적합한 작업 |
+|---|---|
+| **feature-push** | 단일 기능 push (구현 + 테스트, <10 파일) |
+| **code-migration** | 대규모 코드 이식 (50+ 파일, 라이브러리 교체 등) |
+| **parallel-review** | 보안·성능·테스트 커버리지 동시 분석 |
+| **debug-hypothesis** | 원인 불명 버그 — 워커끼리 가설 디베이트 |
+| **docs-refresh** | 코드 변경에 맞춰 문서 일괄 최신화 |
 
-#### 에이전트 팀 활성화 방법
+팀 vs 서브에이전트 vs 단일 세션 의사결정 트리: [`teams/README.md`](./teams/README.md).
 
-`settings.json`에서 다음 설정 확인:
-- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (활성화)
-- `teammateMode: "tmux"` (tmux 기반 협업)
+---
+
+## ⌨️ 슬래시 커맨드 (`commands/`)
+
+```
+/team-feature-push       <작업 설명>
+/team-code-migration     <이식 범위>
+/team-parallel-review    <PR 또는 브랜치>
+/team-debug-hypothesis   <버그 증상>
+/team-docs-refresh       <갱신 대상>
+```
+
+각 커맨드는 동일한 이름의 팀 레시피를 호출한다. 슬래시 커맨드 외에도 (1) 자연어로 직접 부탁, (2) `agents/push-lead`에 task 파일로 위임 — 세 가지 진입점이 동등하게 사용 가능.
 
 ---
 
 ## 🎯 스킬 (`skills/`)
 
-프로젝트별 규칙과 베스트 프랙티스를 자동 적용합니다.
+코드 작성·리뷰·리팩터 시 자동/수동 적용되는 규칙 묶음. 일부는 일반적이고 일부는 도메인/스택 특화 — 모두 같은 SKILL.md 형식으로 작성.
 
-| 스킬 | 내용 | 적용 대상 |
-|-----|------|----------|
-| **code-quality** | 코드 품질 기준 (가독성, 예측성, 응집도, 결합도) | developer |
-| **code-review** | 코드 리뷰 (PR/diff/경로 기반, PR 없이도 동작) | developer, refactorer |
-| **folder-structure** | DDD + 프랙탈 아키텍처 폴더 구조 규칙 | developer, refactorer |
-| **seo** | SEO 최적화 가이드 (메타데이터, sitemap 등) | developer |
-| **vercel-react-best-practices** | Vercel React 최적화 규칙 (memo, 병렬 fetching 등) | developer, refactorer |
-| **task-runner** | 작업 실행 워크플로우 | coordinator |
-| **task-maker** | 작업 생성 및 관리 | coordinator |
+| 스킬 | 내용 | 활성화 |
+|---|---|---|
+| **code-quality** | 가독성·예측성·응집도·결합도 4축 품질 기준 | 자동 |
+| **code-review** | PR/diff/경로 기반 리뷰 (PR 없이도 동작) | 수동 (`/review`) |
+| **folder-structure** | DDD + 프랙탈 폴더 구조 규칙 | 자동 |
+| **seo** | 메타데이터·OG·sitemap·redirect·canonical | 자동 (관련 작업) |
+| **vercel-react-best-practices** | React/Next.js 성능 패턴 (memo, 병렬 fetch 등) | 자동 |
+| **task-runner** | 작업 실행 워크플로우 | 수동 |
+| **task-maker** | PRD → 태스크 분해 | 수동 |
+| **task-cleaner** | 완료 태스크 정리 | 수동 |
+| **skill-creator** | 새 스킬 작성 도우미 | 수동 |
 
-**자동 적용**: `developer` 역할은 vercel-react-best-practices, code-quality, folder-structure 자동 활성화
-**수동 활성화**: `/skill seo`
+다른 프로젝트로 골격을 옮길 때, 스택과 무관한 스킬(`code-quality`, `folder-structure`, `code-review`, `task-*`, `skill-creator`)은 그대로 가져가고 스택 의존(`vercel-react-best-practices`, `seo`)은 선택적으로 가져간다.
 
 ---
 
 ## 📚 문서 (`docs/`)
 
-### 1. 프로젝트 문서 (`letscareer/`)
+### Claude Code 공식 문서 캐시 (`claude_code_docs/`)
+
+Claude Code 공식 가이드(hooks·skills·subagents·orchestration)의 오프라인 사본. 인터넷 없이도 참조 가능.
+
+### 프로젝트별 문서 (`<프로젝트명>/`)
+
+프로젝트마다 한 디렉토리씩 만들어 *모든 프로젝트 특화 내용을 한 곳에 격리*한다. `.claude/` 골격을 새 저장소로 가져갈 때 이 디렉토리만 비워서 시작하면 된다.
+
+권장 하위 구조 (필수는 아님):
 
 ```
-docs/letscareer/
-├── common/                    # 공통 모듈 문서
-│   ├── README.md              # 통합 가이드
-│   ├── components.md          # 75+ 공통 컴포넌트
-│   ├── hooks.md               # 40+ 커스텀 훅
-│   └── services.md            # API 서비스 & 유틸리티
-├── curation-domain/           # 큐레이션 도메인 아키텍처
-│   └── README.md
-├── API_docs/                  # API 문서
-│   └── swagger_url.md
-└── tech-stack/                # 기술 스택
-    └── README.md
+docs/<프로젝트명>/
+├── README.md            # 프로젝트 전체 개요
+├── architecture.md      # 시스템 아키텍처 개요
+├── tech-stack/          # 라이브러리 버전·설정 인벤토리
+├── domain/              # 도메인별 README (DDD)
+├── common/              # 공용 모듈(컴포넌트·훅·서비스) 가이드
+├── API_docs/            # API 명세·Swagger 링크
+└── <기타 운영 메모>/     # 배포·전환·트러블슈팅 등
 ```
 
-#### 공통 모듈 문서 (`common/`)
-
-| 문서 | 내용 |
-|-----|------|
-| **components.md** | Button, Input, Modal, Layout, Dropdown, Container 등 75+ 재사용 컴포넌트 |
-| **hooks.md** | useMounted, useScrollDirection, usePageableWithSearchParams 등 40+ 커스텀 훅 |
-| **services.md** | useUserQuery, usePatchUser 등 React Query 기반 API 서비스 및 유틸리티 함수 |
-| **README.md** | 공통 모듈 통합 가이드 (사용 원칙, Import 경로, 타입 안전성) |
-
-#### 도메인 문서
-
-| 문서 | 내용 |
-|-----|------|
-| **curation-domain/README.md** | 큐레이션 플로우 상태 관리, 추천 엔진, FAQ 시스템, 컴포넌트 구조 |
-
-#### API 문서 (`API_docs/`)
-
-| 문서 | 내용 |
-|-----|------|
-| **swagger_url.md** | Swagger API 문서 URL (https://letsintern.kr/v3/api-docs) |
-
-#### 기술 스택 (`tech-stack/`)
-
-| 문서 | 내용 |
-|-----|------|
-| **README.md** | Next.js 15, React 18, TypeScript, Tailwind CSS, React Query, Zustand 등 전체 기술 스택 및 설정 |
-
-**tech-stack/README.md 주요 내용**:
-- 런타임 & 언어 (Node.js 20, TypeScript 5, React 18)
-- 프레임워크 (Next.js 15 App Router, Sentry)
-- 스타일링 (Tailwind CSS, PostCSS, SASS, Emotion, styled-components)
-- 상태 관리 (TanStack React Query v5, Zustand, React Hook Form, Zod)
-- UI 라이브러리 (MUI, Swiper, lucide-react)
-- 리치 텍스트 에디터 (Lexical, react-quill, KaTeX)
-- 애니메이션 (Framer Motion)
-- 유틸리티 (date-fns, dayjs, es-toolkit, lodash-es, nanoid, es-hangul)
-- 결제 (Toss Payments SDK)
-- 실시간 협업 (Yjs, y-websocket)
-- Firebase, Excalidraw
-- 개발 도구 (Vite, Vitest, SVGR, Builder.io)
-- ESLint 설정 (Flat Config, 주요 규칙)
-- Prettier 설정 (prettier-plugin-tailwindcss)
-- TypeScript 설정 (Path Aliases: @/, @components/*)
-- Next.js 설정 (Turbopack, Webpack, Sentry)
-- Tailwind CSS 커스텀 디자인 토큰 (색상, 반응형 breakpoints, 폰트 사이즈)
-
-### 2. Claude Code 문서 (`claude_code_docs/`)
-
-Claude Code 사용법 공식 가이드
-
-| 문서 | 내용 |
-|-----|------|
-| **Create custom subagents.md** | 서브 에이전트 생성 및 설정 방법 |
-| **Extend Claude with skills.md** | 프로젝트별 스킬 작성 가이드 |
-| **Automate workflows with hooks.md** | 훅 스크립트 작성 및 자동화 |
-| **Orchestrate teams of Claude Code sessions.md** | 에이전트 팀 설정 및 협업 방법 |
+이 저장소의 실제 예시: [`docs/letscareer/`](./docs/letscareer/).
 
 ---
 
 ## ⚙️ 훅 (`hooks/`)
 
-코드 작성 시 자동 실행되는 스크립트입니다.
+`settings.json`에 등록된 자동화 스크립트. 도구 호출 전후로 동작한다.
 
 | 훅 | 트리거 | 동작 |
-|----|--------|------|
-| **post-edit-lint.sh** | Edit/Write 도구 사용 후 | ESLint + Prettier 자동 실행 |
-| **check-tasks.sh** | 작업 시작 전 | 미완료 작업 체크 |
-| **inject-task-context.sh** | 작업 컨텍스트 주입 | 태스크 정보 자동 삽입 |
+|---|---|---|
+| **post-edit-lint.sh** | Edit/Write 도구 후 | ESLint + Prettier 자동 실행 |
+| **check-tasks.sh** | 세션 시작 | 미완료 태스크 점검 |
+| **inject-task-context.sh** | 세션 시작 | 태스크 컨텍스트를 첫 프롬프트에 주입 |
+
+새 훅 추가 → 스크립트 작성 → `settings.json`의 `hooks` 키에 매핑.
 
 ---
 
-## 📋 작업 관리 (`tasks/`)
+## 📋 작업 기록 (`tasks/`)
 
-```
-tasks/
-└── done/                  # 완료된 작업 아카이브
-    ├── 260301/            # 날짜별 폴더
-    ├── 260302/
-    └── ...
-```
+PRD·진행 중 task·완료 아카이브를 보관. **`.gitignore`에 포함되어 공유되지 않는다.** 팀 공유가 필요한 운영 메모는 반드시 `docs/<프로젝트명>/` 아래에 작성한다.
 
-**작업 기록 예시**:
-- PRD (제품 요구사항 문서)
-- TODO 목록
-- 변경사항 로그
-- 디자인 에셋 (Figma 캡처 등)
+---
+
+## 📜 행동 규칙 (`behavioral.md`)
+
+루트 `CLAUDE.md`에서 자동 로드되는 *모든 세션 공통 가이드*. 4가지 축으로 구성:
+
+1. **Think Before Coding** — 가정 명시, 불확실하면 질문
+2. **Simplicity First** — 요청 범위 외 기능·추상화·예외처리 추가 X
+3. **Surgical Changes** — 손대야 할 곳만, 인접 코드 자동 개선 X
+4. **Goal-Driven Execution** — 검증 가능한 성공 기준 정의 후 루프
+
+프로젝트별 추가 규칙은 루트 `CLAUDE.md`에서 이 파일을 `@.claude/behavioral.md`로 import해 확장한다.
+
+---
+
+## 🔧 설정 (`settings.json`)
+
+| 키 | 의미 |
+|---|---|
+| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | 에이전트 팀 활성화 토글 |
+| `hooks` | 도구 호출 전후 실행할 스크립트 매핑 |
+| `permissions` | Bash/MCP 도구 자동 허용 목록 |
+| `plugins` | 활성화된 Claude Code 플러그인 |
+
+`launch.json`은 VS Code의 Claude Code 디버깅 설정 (필요 시 사용).
 
 ---
 
 ## 🚀 빠른 시작
 
-### 1. 일반 작업 (단일 세션)
-
-**워크플로우**:
+### 단일 작업
 ```
-"새로운 useDebounce 훅을 만들어줘"
-→ developer 스킬 자동 적용
-→ 코드 작성
-→ ESLint + Prettier 자동 실행 (post-edit-lint 훅)
-→ doc-updater로 문서화
-→ 커밋
+"<훅/컴포넌트/페이지> 만들어줘"
+   ↓ 자동 적용: code-quality / folder-structure / 스택별 베스트 프랙티스 스킬
+   ↓ Edit/Write 후 post-edit-lint 훅이 자동 lint·format
+   ↓ 변경 영향 큰 경우 doc-updater에게 문서 동기화 위임
 ```
 
-### 2. 복잡한 작업 (에이전트 팀)
-
-**워크플로우**:
+### 팀 작업
 ```
-[coordinator에게] "검색 기능을 추가해줘. 자동완성과 최근 검색어 포함"
-
-→ coordinator: 작업 분석 및 분배
-→ developer: SearchInput 컴포넌트 구현 + useSearchSuggestions 훅 작성
-→ tester: ESLint, Prettier, 타입 체크, 유닛 테스트
-→ coordinator: 결과 취합 및 사용자 보고
+/team-feature-push <기능 설명>
+   ↓ push-lead가 작업 분해
+   ↓ feature-worker(구현) + test-runner(검증) 병렬 스폰
+   ↓ 결과 취합 후 보고
 ```
 
-### 3. 서브 에이전트 활용
-
-**워크플로우**:
+### 서브 에이전트 위임
 ```
-"Button 컴포넌트 사용법 알려줘"
-→ doc-finder 에이전트 호출
-→ components.md 검색 → Props, 사용 예시 요약 제공
-
-"Button 컴포넌트 Props 변경했어. 문서 업데이트 필요해"
-→ doc-updater 에이전트 자동 호출
-→ 코드 분석 → components.md 업데이트
-
-"로그인 기능 구현 완료"
-→ test-runner 에이전트 호출
-→ ESLint → Prettier → 타입 체크 → 유닛 테스트
+"<X> 사용법 알려줘"      → doc-finder
+"테스트 돌려줘"          → test-runner
+"이 영역 리팩터해줘"      → refactorer (자율 실행)
+"버그 원인 추적해줘"      → /team-debug-hypothesis 또는 push-lead
 ```
 
 ---
 
-## 💡 사용 팁
+## 🧭 다른 프로젝트로 옮기는 절차
 
-### 에이전트 팀 활용
-
-- **병렬 작업**: developer와 tester를 동시에 실행해 효율 극대화
-- **작업 위임**: coordinator는 "developer에게 X 구현 요청" 같은 명령 사용
-- **공유 태스크**: 팀 전체가 TodoList 공유하여 진행 상황 추적
-
-### 문서 활용
-
-- **공통 컴포넌트**: `docs/letscareer/common/components.md` 참조
-- **도메인 아키텍처**: `docs/letscareer/curation-domain/README.md` 참조
-- **기술 스택**: `docs/tech-stack/README.md` 참조
-
-### 스킬 활용
-
-- 스킬은 자동 적용되므로 별도 명령 불필요
-- 필요 시 `/skill [스킬명]`으로 수동 활성화
-
-### 훅 활용
-
-- 코드 포맷팅은 자동 실행 (post-edit-lint)
-- 추가 훅은 `hooks/` 디렉토리에 스크립트 추가 후 `settings.json`에 등록
+1. `.claude/` 디렉토리 통째로 복사 (`docs/<프로젝트명>/` 제외)
+2. 루트 `CLAUDE.md`에 `@.claude/behavioral.md` import 추가
+3. `settings.json`의 hook 경로·permissions·plugins를 새 저장소 환경에 맞춰 조정
+4. 스택과 무관한 스킬(`code-quality`, `folder-structure`, `code-review` 등)은 그대로
+5. 스택 의존 스킬(`vercel-react-best-practices`, `seo`)은 새 프로젝트 스택에 맞춰 추가/제거
+6. `docs/<새-프로젝트명>/` 디렉토리 생성 후 README·architecture·tech-stack부터 채움
 
 ---
 
-## 🔧 설정 파일
-
-### `settings.json`
-
-| 설정 | 값 | 설명 |
-|-----|-----|------|
-| CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS | "1" | 에이전트 팀 활성화 |
-| teammateMode | "tmux" | tmux 기반 협업 |
-| defaultRoleName | "coordinator" | 기본 역할 |
-
-### `.claude/roles/*.md`
-
-각 에이전트 역할 정의 파일 (YAML frontmatter + 상세 가이드)
-
----
-
-## 📖 참고 자료
+## 📖 참고
 
 - [Claude Code 공식 문서](https://docs.claude.com/claude-code)
-- [에이전트 팀 가이드](.claude/docs/claude_code_docs/Orchestrate teams of Claude Code sessions.md)
-- [서브 에이전트 생성 가이드](.claude/docs/claude_code_docs/Create custom subagents.md)
-- [스킬 작성 가이드](.claude/docs/claude_code_docs/Extend Claude with skills.md)
-- [훅 자동화 가이드](.claude/docs/claude_code_docs/Automate workflows with hooks.md)
-
----
-
-**마지막 업데이트**: 2026-03-03
+- [`docs/claude_code_docs/`](./docs/claude_code_docs/) — 오프라인 캐시 (subagents·skills·hooks·orchestration)
+- [`teams/README.md`](./teams/README.md) — 팀 vs 서브에이전트 vs 단일 세션 의사결정 트리

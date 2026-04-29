@@ -1,0 +1,18 @@
+{
+  "name": "@letscareer/api",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "peerDependencies": {
+    "axios": ">=1"
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@types/node": "^20.0.0",
+    "axios": "^1.15.0",
+    "typescript": "^5.9.3"
+  }
+}

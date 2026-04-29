@@ -1,0 +1,9 @@
+{
+  "name": "@letscareer/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./tsconfig.base.json",
+    "./nextjs": "./tsconfig.nextjs.json"
+  }
+}

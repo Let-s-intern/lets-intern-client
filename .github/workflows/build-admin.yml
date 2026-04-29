@@ -1,0 +1,58 @@
+name: 어드민 검사
+
+# apps/admin 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행 (PR 한정).
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/admin/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.prettierrc.mjs'
+      - '.github/workflows/build-admin.yml'
+
+concurrency:
+  group: build-admin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: admin 검사
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prettier check
+        run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
+
+      - name: ESLint
+        run: pnpm --filter @letscareer/admin lint
+
+      # TODO: typecheck 가 admin 셋업 시점부터 ~149 에러 누적된 상태.
+      # 외부 라이브러리 타입 (Excalidraw), 누락 모듈 (@/ChannelService, @/appSettings 등),
+      # 페이지 타입 불일치 (id?: number → required) 등 다수.
+      # 별도 push 으로 typecheck 정리 후 continue-on-error 제거.
+      - name: Typecheck
+        continue-on-error: true
+        run: pnpm --filter @letscareer/admin typecheck
+
+      - name: Build (vite)
+        run: pnpm --filter @letscareer/admin build
+        env:
+          VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
+          VITE_SERVER_API_V2: ${{ secrets.VITE_SERVER_API_V2 || 'https://api.example.com/v2' }}
+          VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
+          VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}

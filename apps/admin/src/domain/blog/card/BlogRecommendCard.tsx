@@ -1,0 +1,52 @@
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import dayjs from '@/lib/dayjs';
+import { blogCategory } from '@/utils/convert';
+import Image from '@/common/ui/Image';
+import { Link } from 'react-router-dom';
+
+interface Props {
+  blog: {
+    id: number;
+    category?: string | null;
+    title?: string | null;
+    thumbnail?: string | null;
+    displayDate?: string | null;
+  };
+}
+
+async function BlogRecommendCard({ blog }: Props) {
+  return (
+    <Link
+      key={blog.id}
+      to={`/blog/${blog.id}`}
+      className="blog_recommend flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-2.5"
+      data-url={`/blog/${blog.id}`}
+      data-text={blog.title}
+    >
+      <div className="flex flex-col gap-1 md:gap-2">
+        <h4 className="text-xxsmall12 text-primary md:text-xsmall14 mb-1 font-semibold">
+          {blogCategory[blog.category ?? ''] ?? '전체'}
+        </h4>
+        <h3 className="text-neutral-0 line-clamp-3 font-semibold md:line-clamp-2 md:min-h-12">
+          {blog.title}
+        </h3>
+        <span className="text-xxsmall12 text-neutral-40 hidden py-2 md:block">
+          {dayjs(blog.displayDate).format(YYYY_MM_DD)} 작성
+        </span>
+      </div>
+      {/* 4:3 비율 */}
+      <div className="rounded-xxs bg-neutral-95 relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden md:aspect-[4/3] md:h-auto md:w-full">
+        <Image
+          className="h-full w-full object-cover"
+          src={blog.thumbnail ?? ''}
+          alt={blog.title + ' 썸네일'}
+          fill
+          unoptimized
+          sizes="(max-width: 768px) 4.5rem, 17rem"
+        />
+      </div>
+    </Link>
+  );
+}
+
+export default BlogRecommendCard;

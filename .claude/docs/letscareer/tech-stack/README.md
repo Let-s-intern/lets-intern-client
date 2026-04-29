@@ -1,5 +1,7 @@
 # 기술 스택 및 설정
 
+최종 업데이트: 2026-04-24
+
 ## 런타임 & 언어
 
 | 기술 | 버전 | 비고 |
@@ -115,7 +117,7 @@
 
 | 기술 | 버전 | 비고 |
 |------|------|------|
-| **Vite** | ^5.4.20 | 테스트용 번들러 |
+| **Vite** | ^5.4.20 | admin/mentor 앱 번들러 + Vitest 기반 |
 | **Vitest** | ^1.6.1 | 테스트 프레임워크 |
 | **@vitejs/plugin-react** | ^4.3.1 | |
 | **@svgr/webpack** | ^8.1.0 | SVG -> React 컴포넌트 변환 |
@@ -130,8 +132,10 @@
 ## ESLint 설정
 
 - **버전**: ESLint ^9 (Flat Config)
-- **설정 파일**: `eslint.config.mjs`
-- **extends**: `next/core-web-vitals`, `next/typescript`
+- **공유 설정**: `@letscareer/eslint-config` (`packages/config/eslint/`)
+- **설정 파일**: 각 앱별 `eslint.config.mjs`
+- **apps/web extends**: `next/core-web-vitals`, `next/typescript`
+- **apps/admin, apps/mentor extends**: React 기본 규칙 (Next.js 규칙 제외)
 
 ### 주요 규칙
 
@@ -175,7 +179,12 @@
 
 ---
 
-## TypeScript 설정 (tsconfig.json)
+## TypeScript 설정
+
+- **공유 설정**: `@letscareer/tsconfig` (`packages/config/typescript/`)
+- 각 앱에서 공유 설정을 extends하여 사용
+
+### apps/web tsconfig.json
 
 | 옵션 | 값 |
 |------|------|
@@ -189,16 +198,24 @@
 | `isolatedModules` | true |
 | `esModuleInterop` | true |
 
-### Path Aliases
+### Path Aliases (apps/web)
 | alias | 경로 |
 |-------|------|
-| `@components/*` | `./src/components/*` |
 | `@/*` | `./src/*` |
-| `@renderer/*` | `./renderer/*` |
+
+### 패키지 참조
+| 패키지 | import 경로 |
+|--------|------------|
+| `@letscareer/ui` | `packages/ui/src/` |
+| `@letscareer/hooks` | `packages/hooks/src/` |
+| `@letscareer/api` | `packages/api/src/` |
+| `@letscareer/store` | `packages/store/src/` |
+| `@letscareer/utils` | `packages/utils/src/` |
+| `@letscareer/types` | `packages/types/src/` |
 
 ---
 
-## Next.js 설정 (next.config.mjs)
+## Next.js 설정 (apps/web/next.config.mjs)
 
 - **Turbopack**: SVG 로더 설정 포함
 - **Webpack**: @svgr/webpack으로 SVG를 React 컴포넌트로 변환
@@ -238,13 +255,33 @@
 
 ---
 
+## 패키지 매니저 & 빌드 시스템 (2026-04-22 모노레포 전환)
+
+| 기술 | 버전 | 비고 |
+|------|------|------|
+| **pnpm** | ^9 | npm 대체. workspace 기반 모노레포 의존성 관리 |
+| **Turborepo** | ^2 | 모노레포 빌드 오케스트레이션. 캐싱 및 병렬 실행 |
+
 ## 스크립트
+
+모노레포 전환 후 pnpm + Turborepo 기반으로 변경되었습니다.
+
+### 루트 명령어 (Turborepo)
 
 | 명령어 | 설명 |
 |--------|------|
-| `npm run dev` | 개발 서버 실행 (next dev) |
-| `npm run build` | 프로덕션 빌드 (next build) |
-| `npm run start` | 프로덕션 서버 실행 (next start) |
-| `npm run typecheck` | 타입 체크 (tsc --noEmit) |
-| `npm run test` | 테스트 실행 (vitest) |
-| `npm run lint` | ESLint 실행 (eslint .) |
+| `pnpm dev` | 전체 앱 개발 서버 실행 (Turbo 병렬) |
+| `pnpm build` | 전체 앱 프로덕션 빌드 |
+| `pnpm typecheck` | 전체 타입 체크 |
+| `pnpm lint` | 전체 린트 |
+
+### 특정 앱 명령어
+
+| 명령어 | 설명 |
+|--------|------|
+| `pnpm --filter @letscareer/web dev` | web 앱 개발 서버 (포트 3000) |
+| `pnpm --filter @letscareer/admin dev` | admin 앱 개발 서버 (포트 3001) |
+| `pnpm --filter @letscareer/mentor dev` | mentor 앱 개발 서버 (포트 3002) |
+| `pnpm --filter @letscareer/web build` | web 앱 빌드 |
+| `pnpm --filter @letscareer/admin build` | admin 앱 빌드 |
+| `pnpm --filter @letscareer/mentor build` | mentor 앱 빌드 |

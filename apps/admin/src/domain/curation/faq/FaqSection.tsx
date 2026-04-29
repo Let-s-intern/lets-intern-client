@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { SECTION_IDS } from '../shared/sectionIds';
+import type { FAQCategory } from '../types';
+import { FAQS } from './faqs';
+
+const FAQ_CATEGORIES: FAQCategory[] = [
+  '프로그램 적합성',
+  '커리큘럼/자료',
+  '참여 방법',
+  '피드백/멘토링',
+];
+
+// 마크다운 볼드(**텍스트**)를 연한 파란색 볼드로 렌더링하는 함수
+const parseMarkdown = (text: string) => {
+  // 줄바꿈으로 분리
+  const lines = text.split('\n');
+
+  return lines.map((line, lineIndex) => {
+    // 각 줄에서 **텍스트** 파싱
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+
+    const parsedLine = parts.map((part, partIndex) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const content = part.slice(2, -2);
+        return (
+          <span
+            key={`${lineIndex}-${partIndex}`}
+            className="font-bold text-blue-500"
+          >
+            {content}
+          </span>
+        );
+      }
+      return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
+    });
+
+    return (
+      <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+        {parsedLine}
+      </div>
+    );
+  });
+};
+
+const FaqSection = () => {
+  const [selectedCategory, setSelectedCategory] = useState<FAQCategory | 'all'>(
+    'all',
+  );
+
+  const filteredFaqs =
+    selectedCategory === 'all'
+      ? FAQS
+      : FAQS.filter((faq) => faq.category === selectedCategory);
+
+  return (
+    <section
+      className="flex w-full flex-col items-center gap-6"
+      id={SECTION_IDS.FAQ}
+    >
+      <div className="flex w-full flex-col items-center py-8 md:py-14">
+        <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
+          FAQ
+        </p>
+        <h3 className="text-neutral-0 mb-4 text-center text-2xl font-semibold leading-tight md:text-3xl md:leading-10">
+          자주 묻는 질문
+        </h3>
+        <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
+          챌린지 수강 전 궁금한 점을 모았어요
+        </p>
+      </div>
+
+      {/* 카테고리 필터 버튼 */}
+      <div className="flex flex-wrap justify-center gap-2 md:px-0">
+        <button
+          onClick={() => setSelectedCategory('all')}
+          className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
+            selectedCategory === 'all'
+              ? 'bg-indigo-500 text-gray-50'
+              : 'bg-zinc-100 font-medium text-neutral-600 hover:bg-zinc-200'
+          }`}
+          type="button"
+        >
+          전체
+        </button>
+        {FAQ_CATEGORIES.map((category) => (
+          <button
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
+              selectedCategory === category
+                ? 'bg-indigo-500 text-gray-50'
+                : 'bg-zinc-100 font-medium text-neutral-600 hover:bg-zinc-200'
+            }`}
+            type="button"
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* FAQ 리스트 — md:min-h로 카테고리 전환 시 높이 점핑 방지 */}
+      <div className="flex w-full max-w-[50rem] flex-col gap-3 md:min-h-[600px] md:px-0">
+        {filteredFaqs.length > 0 ? (
+          filteredFaqs.map((item) => (
+            <details
+              key={`${selectedCategory}-${item.question}`}
+              className="border-neutral-90 group overflow-hidden rounded-lg border bg-white"
+              open={undefined}
+              suppressHydrationWarning
+            >
+              <summary className="text-neutral-0 flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-base font-semibold leading-6 md:text-lg">
+                <span>{item.question}</span>
+                <span className="text-neutral-40 shrink-0 transition-transform">
+                  <span className="group-open:hidden">＋</span>
+                  <span className="hidden group-open:inline">−</span>
+                </span>
+              </summary>
+              <div className="border-neutral-90 text-neutral-35 border-t px-5 py-5 text-sm font-normal leading-6 md:text-base">
+                <div>{parseMarkdown(item.answer)}</div>
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.question}
+                    className="border-neutral-90 mt-3 w-full rounded-lg border"
+                  />
+                )}
+              </div>
+            </details>
+          ))
+        ) : (
+          <div className="border-neutral-90 text-neutral-40 rounded-lg border bg-white px-5 py-8 text-center text-sm md:text-base">
+            해당 카테고리에 질문이 없습니다.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export default FaqSection;

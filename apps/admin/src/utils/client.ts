@@ -1,0 +1,41 @@
+interface RequestConfig extends RequestInit {
+  params?: Record<string, string>;
+}
+interface HttpError extends Error {
+  status?: number;
+}
+
+async function client<T>(
+  endpoint: string,
+  { params, ...customConfig }: RequestConfig,
+): Promise<T> {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...customConfig.headers,
+  };
+
+  const config: RequestInit = {
+    ...customConfig,
+    headers,
+  };
+
+  // URL에 쿼리 파라미터 추가.
+  // env push2 이후 VITE_API_BASE_PATH 는 호스트 루트 (`/api` 미포함).
+  const queryString = params ? `?${new URLSearchParams(params)}` : '';
+  const url = `${import.meta.env.VITE_API_BASE_PATH}${endpoint}${queryString}`;
+
+  const res = await fetch(url, config);
+  const data = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(
+      data.message || '요청에 실패했습니다.',
+    ) as HttpError;
+    error.status = res.status;
+    throw error;
+  }
+
+  return data.data;
+}
+
+export { client };

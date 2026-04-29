@@ -1,0 +1,122 @@
+import { ProgramRecommendItem } from '@/api/blog/blogSchema';
+import {
+  fetchChallenge,
+  fetchLive,
+  fetchPublicGuidebookData,
+  fetchPublicVodData,
+  getChallengeByKeyword,
+} from '@/api/program';
+import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
+import { ProgramTypeEnum } from '@/schema';
+import Image from 'next/image';
+import Link from 'next/link';
+
+const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
+interface Props {
+  program: ProgramRecommendItem;
+}
+
+async function ProgramRecommendCard({ program }: Props) {
+  const { title, thumbnail, ctaLink } = await getProgramInfo();
+
+  const isProgramAvailable = title && ctaLink !== '';
+
+  async function getProgramInfo() {
+    let title: string | undefined;
+    let thumbnail = '';
+    let ctaLink = program.ctaLink ?? '';
+
+    // 관리자가 추천 프로그램을 등록한 경우
+    if (program.id) {
+      // 프로그램이 삭제된 경우 예외처리
+      try {
+        const [type, id] = program.id.split('-');
+
+        switch (type) {
+          case CHALLENGE:
+            const challenge = await fetchChallenge(id);
+
+            title = challenge.title;
+            thumbnail = challenge.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case LIVE:
+            const live = await fetchLive(id);
+            title = live.title;
+            thumbnail = live.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case VOD:
+            const vod = await fetchPublicVodData(id);
+            title = vod.title ?? undefined;
+            thumbnail = vod.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case GUIDEBOOK:
+            const guidebook = await fetchPublicGuidebookData(id);
+            title = guidebook.title ?? undefined;
+            thumbnail = guidebook.thumbnail ?? '';
+            ctaLink = `/program/guidebook/${id}`;
+            break;
+          default:
+            // type === REPORT
+            const report = await fetchReportId(id);
+            title = report.title ?? undefined;
+            thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
+            ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
+        }
+      } catch (err) {
+        console.error(`프로그램 조회 실패 (id: ${program.id}):`, err);
+      }
+    } else if (program.ctaLink?.startsWith('latest')) {
+      // latest:{keyword} 사용한 경우
+      const keyword = program.ctaLink.split('latest:')[1].trim();
+      const challenge = await getChallengeByKeyword(keyword);
+
+      if (challenge) {
+        title = challenge.programInfo.title ?? undefined;
+        thumbnail = challenge.programInfo.thumbnail ?? '';
+        ctaLink = `/program/${CHALLENGE.toLowerCase()}/${challenge.programInfo.id}`;
+      }
+    }
+
+    return { title, thumbnail, ctaLink };
+  }
+
+  if (!isProgramAvailable) return null;
+
+  return (
+    <Link
+      href={ctaLink}
+      className="programs-center blog_programrec flex justify-between gap-4"
+      data-url={ctaLink}
+      data-text={title}
+      data-program-name={program.ctaTitle}
+      data-program-id={program.id}
+    >
+      <div>
+        <h4 className="text-xxsmall12 text-neutral-20 mb-0.5 font-medium">
+          {program.ctaTitle}
+        </h4>
+        <h3 className="text-neutral-0 md:text-xsmall14 line-clamp-2 font-semibold">
+          {title}
+        </h3>
+      </div>
+
+      {thumbnail && (
+        <div className="bg-neutral-95 relative h-[3.375rem] w-[4.5rem] shrink-0">
+          <Image
+            unoptimized
+            fill
+            sizes="4.5rem"
+            className="rounded-xxs h-full w-full object-cover"
+            src={thumbnail}
+            alt={title + ' 썸네일'}
+          />
+        </div>
+      )}
+    </Link>
+  );
+}
+
+export default ProgramRecommendCard;

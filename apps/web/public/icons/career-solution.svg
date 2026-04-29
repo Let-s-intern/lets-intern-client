@@ -1,0 +1,14 @@
+<svg width="98" height="98" viewBox="0 0 98 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 1422241691">
+<rect id="Rectangle 3233" y="20.9004" width="79.7873" height="79.7873" rx="10" transform="rotate(-15 0 20.9004)" fill="#4D55F5" fill-opacity="0.44"/>
+<rect id="Rectangle 3234" x="11.2715" y="27.4092" width="61.3748" height="61.3748" rx="7" transform="rotate(-15 11.2715 27.4092)" fill="#4D55F5" fill-opacity="0.44"/>
+<rect id="Rectangle 3235" x="22.5527" y="33.9209" width="42.9624" height="42.9624" rx="8" transform="rotate(-15 22.5527 33.9209)" fill="#4D55F5" fill-opacity="0.44"/>
+<path id="Rectangle 3236" d="M38.5332 10.5762L67.4082 2.83913C72.7429 1.40971 78.2263 4.57554 79.6557 9.9102L87.3927 38.7852L56.5858 47.0399C52.3181 48.1834 47.9314 45.6508 46.7879 41.3831L38.5332 10.5762Z" fill="url(#paint0_linear_7500_8497)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_7500_8497" x1="45.9137" y1="49.9771" x2="72.132" y2="5.54466" gradientUnits="userSpaceOnUse">
+<stop offset="0.436468" stop-color="white"/>
+<stop offset="1" stop-color="#4D55F5" stop-opacity="0.4"/>
+</linearGradient>
+</defs>
+</svg>

@@ -1,0 +1,24 @@
+{
+  "name": "@letscareer/hooks",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5",
+    "dayjs": ">=1",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": { "optional": true },
+    "dayjs": { "optional": true }
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@types/react": "^18.3.3",
+    "react": "^18.3.1",
+    "typescript": "^5.9.3"
+  }
+}

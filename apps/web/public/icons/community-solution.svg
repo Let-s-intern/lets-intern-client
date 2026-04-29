@@ -1,0 +1,14 @@
+<svg width="105" height="101" viewBox="0 0 105 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 1422241692">
+<path id="Polygon 12" d="M45.1149 15.3125L90.2298 51.6699L70.1512 100.621H20.0785L0 51.6699L45.1149 15.3125Z" fill="#4D55F5" fill-opacity="0.44"/>
+<path id="Polygon 13" d="M45.1135 26.7969L78.7446 54.0649L63.777 90.778H26.4501L11.4824 54.0649L45.1135 26.7969Z" fill="#4D55F5" fill-opacity="0.44"/>
+<path id="Polygon 14" d="M45.1161 39.9209L65.6229 56.0021L56.4963 77.6533H33.736L24.6094 56.0021L45.1161 39.9209Z" fill="#4D55F5" fill-opacity="0.44"/>
+<path id="Polygon 15" d="M45.1152 0.25L104.425 48.9143L45.1152 61.0804V0.25Z" fill="url(#paint0_linear_7500_8508)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_7500_8508" x1="52.719" y1="51.1955" x2="74.7701" y2="26.1029" gradientUnits="userSpaceOnUse">
+<stop offset="0.171883" stop-color="white"/>
+<stop offset="1" stop-color="#4D55F5" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>
