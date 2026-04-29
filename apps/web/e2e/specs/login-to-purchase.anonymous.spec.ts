@@ -64,6 +64,8 @@ test.describe('login -> purchase (free option)', () => {
   );
 
   const runDir = new RunDir();
+  // afterEach 에서 접근하기 위해 변수 hoisting.
+  let flow: Pipeline | undefined;
 
   test('홈 -> 로그인 -> 전체 프로그램 -> 첫 가용 챌린지 -> 0원 결제', async ({
     page,
@@ -72,7 +74,7 @@ test.describe('login -> purchase (free option)', () => {
     log('[START] 시나리오 시작');
     log(`  실행 ID: ${runDir.timestamp}`);
 
-    const flow = new Pipeline(page, runDir);
+    flow = new Pipeline(page, runDir);
 
     // 1+2) 홈 -> 로그인 (LoginFlow 로 묶음)
     const home = await flow.run(
@@ -109,6 +111,7 @@ test.describe('login -> purchase (free option)', () => {
         const limit = Math.min(MAX_ATTEMPTS, total);
 
         if (limit === 0) {
+          flow!.note('/program 에 프로그램 카드 0개 — admin/필터 확인 필요');
           await runDir.snap(page, 31, '카드0개_진단용');
           test.skip(
             true,
@@ -129,8 +132,9 @@ test.describe('login -> purchase (free option)', () => {
           await runDir.snap(page, 40 + i * 4, `시도${i + 1}_상세_진입`);
 
           if (detail === null) {
-            // 챌린지가 아닌 프로그램 (live/guidebook/vod) — 다음 카드 시도
-            log(`    챌린지 아닌 type -> 다음`);
+            flow!.note(
+              `시도${i + 1}: 챌린지 아닌 프로그램 (live/guidebook/vod) — 다음 카드`,
+            );
             if (i < limit - 1) {
               list = await list.goto(WAITS.programList);
               await runDir.snap(page, 42 + i * 4, `시도${i + 1}_복귀_목록`);
@@ -140,10 +144,12 @@ test.describe('login -> purchase (free option)', () => {
 
           const status = await detail.checkStatus();
           await runDir.snap(page, 41 + i * 4, `시도${i + 1}_상태_${status}`);
-          log(`    status=${status} (url=${page.url()})`);
+          flow!.note(
+            `시도${i + 1}: 챌린지 진입 — status=${status} (${page.url()})`,
+          );
 
           if (status === 'available') {
-            log(`  [OK] 가용 챌린지 발견 — ${i + 1}번째 진행`);
+            flow!.note(`가용 챌린지 발견 (시도 ${i + 1}번째) — 결제 진행`);
             return detail;
           }
 
@@ -154,7 +160,7 @@ test.describe('login -> purchase (free option)', () => {
           }
         }
 
-        log(`  [WARN] 첫 ${limit}개 카드 모두 신청 불가 — test.skip`);
+        flow!.note(`첫 ${limit}개 카드 모두 신청 불가 — 시나리오 skip`);
         test.skip(
           true,
           `첫 ${limit}개 카드 모두 신청 불가 (챌린지 아님 / closed / enrolled / unknown). ` +
@@ -172,8 +178,11 @@ test.describe('login -> purchase (free option)', () => {
         const applyResult = await availableDetail.clickApply(WAITS.afterApply);
         await runDir.snap(page, 50, '5a_지금바로신청_클릭후');
 
-        // 클릭 후 "이미 신청 완료" 감지 시 즉시 skip (지금까지의 카드는 이미 신청됨).
+        // 클릭 후 "이미 신청 완료" 감지 시 즉시 skip.
         if (applyResult.alreadyEnrolled) {
+          flow!.note(
+            '"이미 신청이 완료되었습니다" 모달 감지 — 결제 플로우 진입 차단',
+          );
           await runDir.snap(page, 95, '이미신청완료_감지');
           test.skip(
             true,
@@ -216,6 +225,12 @@ test.describe('login -> purchase (free option)', () => {
   });
 
   test.afterEach(async ({ page }, testInfo) => {
-    await runDir.finalize(page, testInfo, '(전체 프로그램 첫 가용 카드)');
+    await runDir.finalize(
+      page,
+      testInfo,
+      '(전체 프로그램 첫 가용 카드)',
+      flow?.journal ?? [],
+      flow?.notes ?? [],
+    );
   });
 });

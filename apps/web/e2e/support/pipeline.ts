@@ -2,17 +2,35 @@ import { test, type Page } from '@playwright/test';
 import { log } from './log';
 import { RunDir } from './runDir';
 
+/** 시나리오 단계 단위 기록 — 통계/리포트 생성 입력. */
+export interface JournalEntry {
+  label: string;
+  status: 'passed' | 'failed';
+  durationMs: number;
+  startedAt: string;
+  finalUrl: string;
+  errorMessage?: string;
+}
+
+/** ad-hoc 메모/이벤트 (예: "404 감지", "이미 신청 완료" 등). */
+export interface JournalNote {
+  at: string;
+  message: string;
+}
+
 /**
- * 파이프라인 디자인 패턴 — 시나리오의 각 단계를 일관된 형태로 실행.
+ * 파이프라인 — 시나리오의 각 단계를 일관된 형태로 실행 + 기록.
  *
- * 각 step:
- *   1) test.step() 으로 묶음 (Playwright trace/리포트에 단계 기록)
- *   2) "[START] 라벨" / "[OK] 라벨" 자동 로그
- *   3) snapName 주면 단계 끝에 스크린샷 자동 캡처 (seq 자동 증가)
- *   4) 액션 결과를 그대로 반환 — 다음 POM 으로 chain 가능
+ * 책임:
+ *   1) test.step() 으로 묶음
+ *   2) 자동 로그 + 스크린샷
+ *   3) 단계 결과를 journal 에 기록 — afterEach 에서 요약 리포트 생성
+ *   4) note() 로 ad-hoc 이벤트 기록 (404 감지 / 이미신청 등)
  */
 export class Pipeline {
   private seq = 0;
+  readonly journal: JournalEntry[] = [];
+  readonly notes: JournalNote[] = [];
 
   constructor(
     public readonly page: Page,
@@ -24,15 +42,46 @@ export class Pipeline {
     fn: () => Promise<T>,
     snapName?: string,
   ): Promise<T> {
+    const start = Date.now();
+    const startedAt = new Date().toISOString().slice(11, 19);
     return test.step(label, async () => {
       log(`[START] ${label}`);
-      const result = await fn();
-      if (snapName) {
-        this.seq += 1;
-        await this.runDir.snap(this.page, this.seq, snapName);
+      try {
+        const result = await fn();
+        if (snapName) {
+          this.seq += 1;
+          await this.runDir.snap(this.page, this.seq, snapName);
+        }
+        const durationMs = Date.now() - start;
+        this.journal.push({
+          label,
+          status: 'passed',
+          durationMs,
+          startedAt,
+          finalUrl: this.page.url(),
+        });
+        log(`[OK] ${label} (${durationMs}ms)`);
+        return result;
+      } catch (err) {
+        const durationMs = Date.now() - start;
+        const e = err as Error;
+        this.journal.push({
+          label,
+          status: 'failed',
+          durationMs,
+          startedAt,
+          finalUrl: this.page.url(),
+          errorMessage: e?.message?.split('\n')[0]?.slice(0, 240),
+        });
+        throw err;
       }
-      log(`[OK] ${label}`);
-      return result;
     });
+  }
+
+  /** ad-hoc 이벤트 기록 — 단계 안에서 일어난 특수 상황(감지/우회 등). */
+  note(message: string): void {
+    const at = new Date().toISOString().slice(11, 19);
+    this.notes.push({ at, message });
+    log(`[NOTE] ${message}`);
   }
 }

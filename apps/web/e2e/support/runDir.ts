@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { Page, TestInfo } from '@playwright/test';
 import { log } from './log';
+import type { JournalEntry, JournalNote } from './pipeline';
 
 const RESULTS_ROOT = path.resolve(
   __dirname,
@@ -55,11 +56,13 @@ export class RunDir {
     fs.writeFileSync(path.join(this.pendingDir, 'error.txt'), content, 'utf8');
   }
 
-  /** afterEach 에서 호출 — testInfo 로 status 결정 + meta/error 작성 + 폴더 이동. */
+  /** afterEach 에서 호출 — testInfo 로 status 결정 + meta/error 작성 + 폴더 이동 + 리포트 출력. */
   async finalize(
     page: Page,
     testInfo: TestInfo,
     challengeTitle: string,
+    journal: JournalEntry[] = [],
+    notes: JournalNote[] = [],
   ): Promise<void> {
     if (testInfo.status === 'failed' || testInfo.status === 'timedOut') {
       try {
@@ -109,24 +112,99 @@ export class RunDir {
       log(`[WARN] 결과 폴더 이동 실패: ${(err as Error).message}`);
     }
 
-    // 실행 통계 출력 (콘솔 + meta).
+    // 실행 통계 출력 (콘솔 + report.txt).
     const screenshots = savedTarget
       ? fs.readdirSync(savedTarget).filter((f) => f.endsWith('.png')).length
       : 0;
     const seconds = (testInfo.duration / 1000).toFixed(1);
-    log('-----------------------------------------');
-    log('실행 통계');
-    log(`  Run ID    : ${this.timestamp}`);
-    log(`  Status    : ${testInfo.status}`);
-    log(`  Duration  : ${testInfo.duration} ms (${seconds}s)`);
-    log(`  Final URL : ${page.url()}`);
-    log(`  Base URL  : ${process.env.PLAYWRIGHT_BASE_URL ?? '(default)'}`);
-    log(`  Challenge : ${challengeTitle}`);
-    log(`  Screenshots: ${screenshots}장`);
-    if (savedTarget) log(`  Output    : ${savedTarget}`);
-    if (testInfo.error?.message) {
-      log(`  Error     : ${testInfo.error.message.split('\n')[0]}`);
+    const passedSteps = journal.filter((j) => j.status === 'passed').length;
+    const failedSteps = journal.filter((j) => j.status === 'failed').length;
+
+    const lines: string[] = [];
+    lines.push('=========================================');
+    lines.push('E2E 실행 결과 리포트');
+    lines.push('=========================================');
+    lines.push('');
+    lines.push('[기본 정보]');
+    lines.push(`  Run ID      : ${this.timestamp}`);
+    lines.push(`  Status      : ${testInfo.status}`);
+    lines.push(`  Duration    : ${testInfo.duration} ms (${seconds}s)`);
+    lines.push(`  Final URL   : ${page.url()}`);
+    lines.push(
+      `  Base URL    : ${process.env.PLAYWRIGHT_BASE_URL ?? '(default)'}`,
+    );
+    lines.push(`  Challenge   : ${challengeTitle}`);
+    lines.push(`  Screenshots : ${screenshots}장`);
+    if (savedTarget) lines.push(`  Output      : ${savedTarget}`);
+    lines.push('');
+
+    lines.push('[검사한 플로우]');
+    if (journal.length === 0) {
+      lines.push('  (단계 기록 없음 — Pipeline 사용 spec 인지 확인)');
+    } else {
+      lines.push(
+        `  총 ${journal.length}단계 (passed=${passedSteps}, failed=${failedSteps})`,
+      );
+      journal.forEach((j, idx) => {
+        const tag = j.status === 'passed' ? '[OK]    ' : '[FAIL]  ';
+        const dur = `${j.durationMs}ms`.padStart(7);
+        lines.push(
+          `  ${String(idx + 1).padStart(2)}. ${tag}${j.label} (${dur}) @${j.startedAt}`,
+        );
+        lines.push(`      url=${j.finalUrl}`);
+        if (j.errorMessage) {
+          lines.push(`      err=${j.errorMessage}`);
+        }
+      });
     }
-    log('-----------------------------------------');
+    lines.push('');
+
+    if (notes.length > 0) {
+      lines.push('[페이지 상태 / 발견 이벤트]');
+      notes.forEach((n) => {
+        lines.push(`  [${n.at}] ${n.message}`);
+      });
+      lines.push('');
+    }
+
+    if (
+      testInfo.status === 'failed' ||
+      testInfo.status === 'timedOut' ||
+      testInfo.status === 'skipped'
+    ) {
+      lines.push('[종결 사유]');
+      if (testInfo.error?.message) {
+        const msg = testInfo.error.message
+          .split('\n')
+          .slice(0, 4)
+          .join('\n        ');
+        lines.push(`  ${testInfo.status}: ${msg}`);
+      } else if (testInfo.status === 'skipped') {
+        lines.push(
+          `  skipped: 명시적 test.skip() 호출 (사유는 위 단계 err 메시지 또는 콘솔 로그 참고)`,
+        );
+      } else {
+        lines.push(`  ${testInfo.status}: (메시지 없음)`);
+      }
+      lines.push('');
+    }
+
+    lines.push('=========================================');
+
+    // 콘솔에 출력
+    lines.forEach((l) => log(l));
+
+    // report.txt 로도 저장 (savedTarget 안에).
+    if (savedTarget) {
+      try {
+        fs.writeFileSync(
+          path.join(savedTarget, 'report.txt'),
+          lines.join('\n') + '\n',
+          'utf8',
+        );
+      } catch (err) {
+        log(`[WARN] report.txt 저장 실패: ${(err as Error).message}`);
+      }
+    }
   }
 }
