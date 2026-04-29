@@ -119,8 +119,9 @@ test.describe('login → purchase (free option)', () => {
             i,
             WAITS.challengeDetail,
           );
-          await runDir.snap(page, 90 + i, `시도${i + 1}_상세`);
+          await runDir.snap(page, 40 + i * 4, `시도${i + 1}_상세_진입`);
           const status = await detail.checkStatus();
+          await runDir.snap(page, 41 + i * 4, `시도${i + 1}_상태_${status}`);
           log(`    status=${status} (url=${page.url()})`);
 
           if (status === 'available') {
@@ -131,6 +132,7 @@ test.describe('login → purchase (free option)', () => {
           if (i < limit - 1) {
             log('  → 다음 카드 시도 위해 /program 복귀');
             list = await list.goto(WAITS.programList);
+            await runDir.snap(page, 42 + i * 4, `시도${i + 1}_복귀_목록`);
           }
         }
 
@@ -146,16 +148,22 @@ test.describe('login → purchase (free option)', () => {
       },
     );
 
-    // 5) 신청 → 0원 결제
+    // 5) 신청 → 0원 결제 — 단계마다 캡처
     const result = await flow.run(
       '5. 지금 바로 신청 → (모달) 신청하기 → 0원 결제하기',
       async () => {
         await availableDetail.clickApply(WAITS.afterApply);
+        await runDir.snap(page, 50, '5a_지금바로신청_클릭후');
+
         const payment = new PaymentInputPage(page);
         await payment.clickEnrollIfPresent(WAITS.afterModalEnroll);
-        return payment.clickPayZero(WAITS.afterPayZero);
+        await runDir.snap(page, 51, '5b_모달_신청하기_클릭후');
+
+        const orderResult = await payment.clickPayZero(WAITS.afterPayZero);
+        await runDir.snap(page, 52, '5c_0원결제_클릭후');
+        return orderResult;
       },
-      '0원결제_완료',
+      '0원결제_완료_정리',
     );
 
     // 6) 결과 검증
