@@ -372,7 +372,7 @@ function CommentsComposer({
   submitAddComment: (
     commentOrThread: Comment,
     isInlineComment: boolean,
-    // eslint-disable-next-line no-shadow
+     
     thread?: Thread,
   ) => void;
   thread?: Thread;
@@ -427,7 +427,7 @@ function ShowDeleteCommentOrThreadDialog({
 
   deleteCommentOrThread: (
     comment: Comment | Thread,
-    // eslint-disable-next-line no-shadow
+     
     thread?: Thread,
   ) => void;
   onClose: () => void;
@@ -466,7 +466,7 @@ function CommentsPanelListComment({
   comment: Comment;
   deleteComment: (
     commentOrThread: Comment | Thread,
-    // eslint-disable-next-line no-shadow
+     
     thread?: Thread,
   ) => void;
   rtf: Intl.RelativeTimeFormat;
