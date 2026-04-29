@@ -95,13 +95,35 @@ export class ChallengePage {
   }
 
   /**
-   * "신청하기" / "결제하기" 버튼 클릭.
-   * 라벨 텍스트가 환경에 따라 다를 수 있어 정규식으로 다중 매칭.
+   * 이미 신청/구매 완료 상태인지 감지.
+   * 챌린지 상세에 "시작하기" / "내 라이브러리" / "이미 신청" 같은 텍스트가
+   * 보이면 봇 계정이 이전 실행에서 가입을 완료한 상태로 간주.
+   *
+   * 이 상태에서는 결제 플로우를 재현할 수 없으므로 spec 에서 skip 또는 fail
+   * 처리하고, BE 측에서 봇의 신청 이력을 리셋한 뒤 재실행해야 한다.
+   */
+  async isAlreadyEnrolled(): Promise<boolean> {
+    const enrolledIndicator = this.page
+      .getByRole('button', { name: /시작하기|내\s*라이브러리|이미\s*신청/i })
+      .or(this.page.getByText(/이미\s*신청|수강\s*중/i))
+      .first();
+    return (await enrolledIndicator.count()) > 0;
+  }
+
+  /**
+   * "신청하기" / "결제하기" / "구매하기" 버튼 클릭.
+   * "시작" 은 이미 신청한 사용자에게 보이는 라이브러리 진입 버튼이라 제외.
    */
   async clickApply() {
     const button = this.page
-      .getByRole('button', { name: /신청|결제|구매|시작/i })
+      .getByRole('button', {
+        name: /신청하기|결제하기|구매하기|결제|구매|신청/i,
+      })
       .first();
+    await expect(
+      button,
+      '신청/결제 버튼이 보여야 한다. 이미 신청한 상태라면 BE 에서 봇 계정의 신청 이력을 리셋한 뒤 재시도하세요.',
+    ).toBeVisible({ timeout: 10_000 });
     await expect(button, '신청/결제 버튼이 활성 상태여야 한다').toBeEnabled();
     await button.click();
   }

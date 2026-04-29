@@ -61,13 +61,20 @@ test.describe('login → purchase (free option)', () => {
     await detail.goto(target1);
     await detail.expectTitleContains(target.expectedTitleSubstring);
 
-    // 2) 안전 가드 — 가격이 무료/0원 인지 확인 (실 결제 사고 방지)
+    // 2) 이미 신청 완료 상태면 결제 플로우 재현 불가 → skip
+    test.skip(
+      await detail.isAlreadyEnrolled(),
+      '봇 계정이 이미 해당 챌린지에 신청한 상태입니다. ' +
+        'BE 에서 봇의 신청 이력을 리셋한 뒤 재실행하세요.',
+    );
+
+    // 3) 안전 가드 — 가격이 무료/0원 인지 확인 (실 결제 사고 방지)
     await detail.expectPriceIsFree();
 
-    // 3) (선택) 옵션 선택
+    // 4) (선택) 옵션 선택
     await detail.selectOptionIfNeeded(target.optionId);
 
-    // 4) 신청/결제 버튼 클릭 → /payment-input 로 이동
+    // 5) 신청/결제 버튼 클릭 → /payment-input 로 이동
     await detail.clickApply();
 
     const payment = new PaymentInputPage(page);
