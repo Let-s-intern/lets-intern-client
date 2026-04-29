@@ -1,100 +1,156 @@
 import { test, expect } from '@playwright/test';
-import { ChallengePage } from './helpers/challengePage';
-import { PaymentInputPage } from './helpers/paymentInputPage';
 
 /**
- * 시나리오: 로그인 → 챌린지 구매 (무료 옵션 종단 검증)
+ * 시나리오: 로그인 → 챌린지 구매 (사용자 실제 UX 플로우 기준)
  *
- * 대상: staging 의 테스트 전용 챌린지 "E2E_TEST-login_to_purchase"
- *   - E2E_TEST_CHALLENGE_ID 또는 E2E_TEST_CHALLENGE_PATH 로 식별
- *   - 무료 옵션이 있어 실 결제 사고 위험 없음
- *
- * 안전 가드:
- *   - 진입 후 가격 표시가 "무료" 또는 "0원" 이어야만 결제 진행
- *   - 매칭 안 되면 fail (admin 에서 가격이 바뀐 사고 방지)
+ * 흐름:
+ *   1) 렛츠커리어 홈 진입
+ *   2) 상단 "프로그램" 카테고리 드롭다운 → "전체 프로그램" 클릭
+ *   3) 프로그램 목록에서 "E2E_TEST-login_to_purchase" 챌린지 클릭
+ *   4) 챌린지 상세에서 "바로 신청" 클릭
+ *   5) "신청하기" 클릭 (모달/결제 입력)
+ *   6) "0원 결제하기" 클릭 — 무료 옵션이라 PG 안 거치고 즉시 성공 처리됨
+ *   7) 결제 결과 페이지 도달 확인
  *
  * 의존:
- *   - globalSetup 이 storageState 를 만들었어야 함 (E2E_TEST_USER_EMAIL/PW 필요)
- *   - 인증 정보가 없으면 자동 skip
+ *   - globalSetup 이 storageState 를 만들었어야 함 (E2E_TEST_USER_EMAIL/PW)
+ *   - 봇 계정이 해당 챌린지에 아직 신청하지 않은 상태여야 함
+ *     (이미 신청 상태면 "바로 신청" 대신 "시작하기" 가 보여서 자동 skip)
+ *   - 챌린지 가격이 무료(0원) 여야 함 — 마지막 단계의 "0원 결제하기" 버튼 라벨로 검증
  */
 
-const credentials = {
-  email: process.env.E2E_TEST_USER_EMAIL ?? '',
-  password: process.env.E2E_TEST_USER_PW ?? '',
-};
+const TEST_CHALLENGE_TITLE = 'E2E_TEST-login_to_purchase';
 
-const target = {
-  challengeId: process.env.E2E_TEST_CHALLENGE_ID ?? '',
-  challengePath: process.env.E2E_TEST_CHALLENGE_PATH ?? '',
-  optionId: process.env.E2E_TEST_CHALLENGE_OPTION_ID ?? '',
-  expectedTitleSubstring: 'E2E_TEST-login_to_purchase',
-};
-
-const purchaser = {
-  name: process.env.E2E_TEST_PURCHASER_NAME || 'E2E봇',
-  phone: process.env.E2E_TEST_PURCHASER_PHONE || '01000000000',
-  email:
-    process.env.E2E_TEST_PURCHASER_EMAIL ||
-    process.env.E2E_TEST_USER_EMAIL ||
-    '',
-};
-
-const hasCredentials = Boolean(credentials.email && credentials.password);
-const hasChallengeTarget = Boolean(target.challengeId || target.challengePath);
+const hasCredentials = Boolean(
+  process.env.E2E_TEST_USER_EMAIL && process.env.E2E_TEST_USER_PW,
+);
 
 test.describe('login → purchase (free option)', () => {
   test.skip(
     !hasCredentials,
     'E2E_TEST_USER_EMAIL/PW 가 비어 있어 로그인 시나리오를 skip 합니다.',
   );
-  test.skip(
-    !hasChallengeTarget,
-    'E2E_TEST_CHALLENGE_ID 또는 E2E_TEST_CHALLENGE_PATH 가 비어 있어 챌린지 구매 시나리오를 skip 합니다.',
-  );
 
-  test('인증된 사용자가 무료 옵션 챌린지를 결제 완료까지 진행한다', async ({
+  test('홈 → 전체 프로그램 → 테스트 챌린지 → 바로 신청 → 0원 결제', async ({
     page,
   }) => {
-    // 1) 챌린지 상세 진입
-    const detail = new ChallengePage(page);
-    const target1 = target.challengePath || target.challengeId;
-    await detail.goto(target1);
-    await detail.expectTitleContains(target.expectedTitleSubstring);
+    // ────────────────────────────────────────────────────────────
+    // 1) 렛츠커리어 홈
+    // ────────────────────────────────────────────────────────────
+    await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
-    // 2) 이미 신청 완료 상태면 결제 플로우 재현 불가 → skip
+    // ────────────────────────────────────────────────────────────
+    // 2) 상단 "프로그램" 드롭다운 → "전체 프로그램"
+    //    데스크톱에선 hover 로 열리는 게 일반적. click 도 fallback.
+    // ────────────────────────────────────────────────────────────
+    const programsTrigger = page
+      .getByRole('button', { name: /^프로그램$/ })
+      .or(page.getByRole('link', { name: /^프로그램$/ }))
+      .first();
+    await expect(
+      programsTrigger,
+      '상단 네비게이션의 "프로그램" 카테고리가 보여야 한다',
+    ).toBeVisible({ timeout: 10_000 });
+    await programsTrigger.hover();
+
+    const allProgramsLink = page
+      .getByRole('link', { name: /전체\s*프로그램/i })
+      .first();
+    // hover 로 안 열리면 click 해서 열기 시도
+    if (!(await allProgramsLink.isVisible().catch(() => false))) {
+      await programsTrigger.click({ trial: false }).catch(() => undefined);
+    }
+    await expect(
+      allProgramsLink,
+      '드롭다운에 "전체 프로그램" 링크가 보여야 한다',
+    ).toBeVisible({ timeout: 5_000 });
+    await allProgramsLink.click();
+
+    // ────────────────────────────────────────────────────────────
+    // 3) 프로그램 목록에서 테스트 챌린지 클릭
+    // ────────────────────────────────────────────────────────────
+    await page.waitForLoadState('domcontentloaded');
+    const challengeLink = page
+      .getByRole('link', { name: new RegExp(TEST_CHALLENGE_TITLE, 'i') })
+      .first();
+    await expect(
+      challengeLink,
+      `전체 프로그램 목록에 "${TEST_CHALLENGE_TITLE}" 챌린지가 보여야 한다`,
+    ).toBeVisible({ timeout: 15_000 });
+    await challengeLink.click();
+
+    // 챌린지 상세 redirect 대기 ([id] → [id]/[slug])
+    await page.waitForURL(/\/program\/challenge\/[^/]+\/[^/]+/, {
+      timeout: 15_000,
+    });
+    await expect(page).toHaveTitle(new RegExp(TEST_CHALLENGE_TITLE, 'i'), {
+      timeout: 10_000,
+    });
+
+    // ────────────────────────────────────────────────────────────
+    // 4) "바로 신청" 클릭
+    //    이미 신청한 봇이면 "시작하기" 가 보이므로 그땐 skip.
+    // ────────────────────────────────────────────────────────────
+    const alreadyEnrolled = await page
+      .getByRole('button', {
+        name: /시작하기|내\s*라이브러리|이미\s*신청|수강\s*중/i,
+      })
+      .first()
+      .isVisible()
+      .catch(() => false);
+
     test.skip(
-      await detail.isAlreadyEnrolled(),
+      alreadyEnrolled,
       '봇 계정이 이미 해당 챌린지에 신청한 상태입니다. ' +
         'BE 에서 봇의 신청 이력을 리셋한 뒤 재실행하세요.',
     );
 
-    // 3) 안전 가드 — 가격이 무료/0원 인지 확인 (실 결제 사고 방지)
-    await detail.expectPriceIsFree();
+    const applyNowButton = page
+      .getByRole('button', { name: /바로\s*신청/i })
+      .first();
+    await expect(applyNowButton, '"바로 신청" 버튼이 보여야 한다').toBeVisible({
+      timeout: 10_000,
+    });
+    await applyNowButton.click();
 
-    // 4) (선택) 옵션 선택
-    await detail.selectOptionIfNeeded(target.optionId);
+    // ────────────────────────────────────────────────────────────
+    // 5) "신청하기" 클릭 (모달 또는 결제 입력 화면)
+    // ────────────────────────────────────────────────────────────
+    const enrollButton = page
+      .getByRole('button', { name: /^신청하기$/ })
+      .first();
+    await expect(enrollButton, '"신청하기" 버튼이 보여야 한다').toBeVisible({
+      timeout: 10_000,
+    });
+    await enrollButton.click();
 
-    // 5) 신청/결제 버튼 클릭 → /payment-input 로 이동
-    await detail.clickApply();
-
-    const payment = new PaymentInputPage(page);
-    await payment.waitForLoaded();
-
-    // 5) 주문자 정보 + 약관 동의
-    await payment.fillPurchaser(purchaser);
-    await payment.acceptRequiredAgreements();
-    await payment.expectPayButtonEnabled();
-
-    // 6) 결제 버튼 클릭
-    //    - BE 가 0원 결제를 PG 우회 처리하면 즉시 /order/result 로 이동
-    //    - PG 를 거치는 분기라면 외부 페이지 잠깐 끼어듦 (timeout 넉넉히)
-    await payment.clickPay();
-
-    // 7) 결제 결과 페이지 도달 + 성공 표시 확인
-    await page.waitForURL(/\/order\/result/, { timeout: 60_000 });
+    // ────────────────────────────────────────────────────────────
+    // 6) "0원 결제하기" 클릭
+    //    버튼 라벨에 "0원" 이 들어 있는지가 가격 안전 가드 역할.
+    //    유료 챌린지였다면 라벨이 "N,000원 결제하기" 같이 다를 것.
+    // ────────────────────────────────────────────────────────────
+    const payZeroButton = page
+      .getByRole('button', { name: /0\s*원\s*결제/i })
+      .first();
     await expect(
-      page.getByText(/결제\s*완료|주문\s*완료|신청\s*완료|성공/i).first(),
-      '결제 결과 페이지에 성공 안내가 표시되어야 한다',
+      payZeroButton,
+      '"0원 결제하기" 버튼이 보여야 한다 (안전 가드: 무료 옵션 확인)',
+    ).toBeVisible({ timeout: 10_000 });
+    await payZeroButton.click();
+
+    // ────────────────────────────────────────────────────────────
+    // 7) 결제 결과 페이지 도달 확인
+    //    BE 가 0원 결제를 PG 우회 처리해서 /order/result 로 즉시 이동하거나,
+    //    /library 같은 후속 라우트로 갈 수도 있음. 두 가지 모두 수용.
+    // ────────────────────────────────────────────────────────────
+    await page.waitForURL(/\/order\/result|\/library/, { timeout: 30_000 });
+    await expect(
+      page
+        .getByText(/결제\s*완료|주문\s*완료|신청\s*완료|성공/i)
+        .or(page.getByText(/내\s*라이브러리|학습\s*시작/i))
+        .first(),
+      '결제 결과 또는 라이브러리 페이지에 성공 안내가 표시되어야 한다',
     ).toBeVisible({ timeout: 15_000 });
   });
 });
