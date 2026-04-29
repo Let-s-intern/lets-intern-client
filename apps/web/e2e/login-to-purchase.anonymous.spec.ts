@@ -26,6 +26,29 @@ import type { ProgramListPage } from './pages/ProgramListPage';
 
 const MAX_ATTEMPTS = 3;
 
+/**
+ * 단계별 settle 대기시간(ms).
+ * 각 페이지/액션의 BE fetch + React state 반영 특성에 맞춰 다르게 조정.
+ * 너무 짧으면 default state 오감지 (예: 챌린지 상세의 "출시알림신청" 잠시 노출),
+ * 너무 길면 spec 전체 시간 증가. 환경 변동성 큰 단계는 더 넉넉히.
+ */
+const WAITS = {
+  /** 홈 진입 후 — 정적 페이지라 짧게. */
+  home: 800,
+  /** 로그인 완료 후 — 인증 쿠키 반영 + 리다이렉트 안정화. */
+  afterLogin: 1500,
+  /** /program 진입 후 — 카드 lazy load 어느 정도 확보. */
+  programList: 1500,
+  /** 챌린지 상세 진입 후 — BE challenge data fetch + 상태 분기 반영 충분히 대기. */
+  challengeDetail: 3000,
+  /** 신청 CTA 클릭 후 — 모달/결제 입력 화면 전환. */
+  afterApply: 1500,
+  /** (모달) "신청하기" 클릭 후. */
+  afterModalEnroll: 1000,
+  /** "0원 결제하기" 클릭 후 → 결과 페이지 도달. */
+  afterPayZero: 1500,
+};
+
 const credentials = {
   email: process.env.E2E_TEST_USER_EMAIL ?? '',
   password: process.env.E2E_TEST_USER_PW ?? '',
@@ -53,16 +76,20 @@ test.describe('login → purchase (free option)', () => {
     // 1) 홈 진입
     let home = await flow.run(
       '1. 홈 진입',
-      () => new HomePage(page).goto(),
+      () => new HomePage(page).goto(WAITS.home),
       '홈',
     );
 
-    // 2) 로그인
+    // 2) 로그인 — 404 감지 시 자동 복구 (LoginPage 내부 로직)
     home = await flow.run(
-      '2. 로그인 (홈 → /login → 인증 → 복귀)',
+      '2. 로그인 (홈 → /login → 인증 → 복귀, 404 시 자동 복구)',
       async () => {
         const loginPage = await home.clickLogin();
-        return loginPage.loginWith(credentials.email, credentials.password);
+        return loginPage.loginWith(
+          credentials.email,
+          credentials.password,
+          WAITS.afterLogin,
+        );
       },
       '로그인_완료',
     );
@@ -73,13 +100,13 @@ test.describe('login → purchase (free option)', () => {
       async () => {
         await home.openProgramsDropdown();
         await runDir.snap(page, 99, '드롭다운_visual_only');
-        return home.gotoAllPrograms();
+        return home.gotoAllPrograms(WAITS.programList);
       },
       '전체프로그램_목록',
     );
 
     // 4) 첫 N 개 카드를 차례로 시도해 가용한 챌린지 발견
-    let availableDetail = await flow.run(
+    const availableDetail = await flow.run(
       `4. 첫 ${MAX_ATTEMPTS}개 챌린지 카드 순회 (가용한 첫 카드 선택)`,
       async () => {
         const total = await list.getChallengeCount();
@@ -88,7 +115,10 @@ test.describe('login → purchase (free option)', () => {
 
         for (let i = 0; i < limit; i += 1) {
           log(`  ── 시도 ${i + 1}/${limit} ──`);
-          const detail = await list.openChallengeByIndex(i);
+          const detail = await list.openChallengeByIndex(
+            i,
+            WAITS.challengeDetail,
+          );
           await runDir.snap(page, 90 + i, `시도${i + 1}_상세`);
           const status = await detail.checkStatus();
           log(`    status=${status} (url=${page.url()})`);
@@ -100,7 +130,7 @@ test.describe('login → purchase (free option)', () => {
 
           if (i < limit - 1) {
             log('  → 다음 카드 시도 위해 /program 복귀');
-            list = await list.goto();
+            list = await list.goto(WAITS.programList);
           }
         }
 
@@ -120,10 +150,10 @@ test.describe('login → purchase (free option)', () => {
     const result = await flow.run(
       '5. 지금 바로 신청 → (모달) 신청하기 → 0원 결제하기',
       async () => {
-        await availableDetail.clickApply();
+        await availableDetail.clickApply(WAITS.afterApply);
         const payment = new PaymentInputPage(page);
-        await payment.clickEnrollIfPresent();
-        return payment.clickPayZero();
+        await payment.clickEnrollIfPresent(WAITS.afterModalEnroll);
+        return payment.clickPayZero(WAITS.afterPayZero);
       },
       '0원결제_완료',
     );

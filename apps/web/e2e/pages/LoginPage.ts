@@ -15,8 +15,14 @@ export class LoginPage extends BasePage {
    * 이메일/비밀번호 입력 후 로그인.
    * 로컬 환경에서 redirect 가 깨져 404 페이지가 노출되는 케이스가 있어
    * 404 감지 시 "홈페이지로 돌아가기" 클릭 또는 page.goto('/') 로 복구.
+   *
+   * extraMs: 로그인 완료 후 settle 대기시간 (spec 에서 조정 가능).
    */
-  async loginWith(email: string, password: string): Promise<HomePage> {
+  async loginWith(
+    email: string,
+    password: string,
+    extraMs?: number,
+  ): Promise<HomePage> {
     const emailInput = this.page
       .getByLabel(/이메일|email/i)
       .or(this.page.getByPlaceholder(/이메일|email|@/i))
@@ -45,11 +51,18 @@ export class LoginPage extends BasePage {
       (url) => !/\/login(\?|$|\/)/.test(url.pathname),
       { timeout: 30_000 },
     );
-    await this.settle();
+    await this.settle(extraMs);
 
     // 404 감지 → 홈 복귀 fallback (로컬 환경 redirect 이슈 대비).
     if (await this.is404()) {
-      log('  ⚠ 로그인 후 404 페이지 감지 — 홈으로 복귀 시도');
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      log('⚠️  404 PAGE DETECTED AFTER LOGIN');
+      log(`   URL: ${this.page.url()}`);
+      log(
+        '   원인: 로그인 redirect 가 잘못된 경로로 보냄 (로컬 dev 환경에서 자주)',
+      );
+      log('   복구: "홈페이지로 돌아가기" 또는 page.goto("/")');
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       await this.recoverFrom404();
     }
 

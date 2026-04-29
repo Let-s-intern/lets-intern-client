@@ -4,10 +4,10 @@ import { ProgramListPage } from './ProgramListPage';
 
 /** 렛츠커리어 홈 (/) Page Object. */
 export class HomePage extends BasePage {
-  /** 홈으로 이동하고 settle 대기. */
-  async goto(): Promise<this> {
+  /** 홈으로 이동하고 settle 대기. extraMs 로 spec 에서 대기시간 조정. */
+  async goto(extraMs?: number): Promise<this> {
     await this.page.goto('/');
-    await this.settle();
+    await this.settle(extraMs);
     return this;
   }
 
@@ -42,9 +42,9 @@ export class HomePage extends BasePage {
    * /program 으로 직접 이동.
    * "전체 프로그램" 클릭은 모바일/데스크톱 메뉴 충돌이 잦아 URL navigation 으로 안전 우회.
    */
-  async gotoAllPrograms(): Promise<ProgramListPage> {
+  async gotoAllPrograms(extraMs?: number): Promise<ProgramListPage> {
     await this.page.goto('/program');
-    await this.settle();
+    await this.settle(extraMs);
     return new ProgramListPage(this.page);
   }
 }

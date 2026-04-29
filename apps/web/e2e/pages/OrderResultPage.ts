@@ -7,11 +7,11 @@ import { BasePage } from './BasePage';
  *   - 성공 안내 텍스트 검증
  */
 export class OrderResultPage extends BasePage {
-  async waitForLoaded(): Promise<this> {
+  async waitForLoaded(extraMs?: number): Promise<this> {
     await this.page.waitForURL(/\/order\/result|\/library/, {
       timeout: 30_000,
     });
-    await this.settle();
+    await this.settle(extraMs);
     return this;
   }
 

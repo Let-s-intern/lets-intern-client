@@ -5,9 +5,9 @@ import { ChallengeDetailPage } from './ChallengeDetailPage';
 /** /program 전체 프로그램 목록 Page Object. */
 export class ProgramListPage extends BasePage {
   /** /program 으로 이동 후 settle. 이미 그 페이지에 있으면 새로고침 효과. */
-  async goto(): Promise<this> {
+  async goto(extraMs?: number): Promise<this> {
     await this.page.goto('/program');
-    await this.settle();
+    await this.settle(extraMs);
     return this;
   }
 
@@ -24,7 +24,10 @@ export class ProgramListPage extends BasePage {
   }
 
   /** N 번째 챌린지 카드 클릭 → 상세 페이지로 이동. */
-  async openChallengeByIndex(index: number): Promise<ChallengeDetailPage> {
+  async openChallengeByIndex(
+    index: number,
+    extraMs?: number,
+  ): Promise<ChallengeDetailPage> {
     const links = this.challengeLinks();
     const total = await links.count();
     if (index >= total) {
@@ -41,7 +44,7 @@ export class ProgramListPage extends BasePage {
     await card.click();
 
     const detail = new ChallengeDetailPage(this.page);
-    await detail.waitForLoaded();
+    await detail.waitForLoaded(undefined, extraMs);
     return detail;
   }
 

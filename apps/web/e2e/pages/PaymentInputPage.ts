@@ -12,13 +12,13 @@ import { OrderResultPage } from './OrderResultPage';
  */
 export class PaymentInputPage extends BasePage {
   /** 모달의 "신청하기" 가 보이면 한 번 더 클릭. 없으면 noop. */
-  async clickEnrollIfPresent(): Promise<this> {
+  async clickEnrollIfPresent(extraMs?: number): Promise<this> {
     const modalEnroll = this.page
       .getByRole('button', { name: /^신청하기$/ })
       .first();
     if (await modalEnroll.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await modalEnroll.click();
-      await this.settle();
+      await this.settle(extraMs);
     }
     return this;
   }
@@ -27,7 +27,7 @@ export class PaymentInputPage extends BasePage {
    * "0원 결제하기" 버튼 클릭 → 결과 페이지로 이동.
    * 라벨이 가격 안전 가드 역할 (유료라면 "N,000원 결제하기" 로 매칭 실패).
    */
-  async clickPayZero(): Promise<OrderResultPage> {
+  async clickPayZero(extraMs?: number): Promise<OrderResultPage> {
     const payZero = this.page
       .getByRole('button', { name: /0\s*원\s*결제/i })
       .first();
@@ -38,7 +38,7 @@ export class PaymentInputPage extends BasePage {
     await payZero.click();
 
     const next = new OrderResultPage(this.page);
-    await next.waitForLoaded();
+    await next.waitForLoaded(extraMs);
     return next;
   }
 }

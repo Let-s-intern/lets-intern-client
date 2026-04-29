@@ -20,11 +20,14 @@ export class ChallengeDetailPage extends BasePage {
   /**
    * 상세 페이지 로드 대기.
    *   - URL: /program/challenge/[id]/[slug]
-   *   - 제목 검증: 제공되면 검사, 없으면 skip (어떤 챌린지인지 모를 때)
-   *   - settle(3000): BE fetch + React state 반영 충분히 대기 — default state
-   *     (출시알림신청) 오감지 방지
+   *   - 제목 검증: 제공되면 검사, 없으면 skip
+   *   - extraMs: spec 에서 대기시간 조정 (default 3000 — BE fetch + state 반영
+   *     충분 대기로 default state(출시알림신청) 오감지 방지)
    */
-  async waitForLoaded(expectedTitleSubstring?: string): Promise<this> {
+  async waitForLoaded(
+    expectedTitleSubstring?: string,
+    extraMs = 3000,
+  ): Promise<this> {
     await this.page.waitForURL(/\/program\/challenge\/[^/]+\/[^/]+/, {
       timeout: 15_000,
     });
@@ -34,7 +37,7 @@ export class ChallengeDetailPage extends BasePage {
         { timeout: 10_000 },
       );
     }
-    await this.settle(3000);
+    await this.settle(extraMs);
     return this;
   }
 
@@ -74,7 +77,7 @@ export class ChallengeDetailPage extends BasePage {
   }
 
   /** 신청 CTA 버튼 클릭. checkStatus() === 'available' 일 때만 호출. */
-  async clickApply(): Promise<void> {
+  async clickApply(extraMs?: number): Promise<void> {
     const button = this.page
       .getByRole('button', { name: APPLY_REGEX })
       .or(this.page.getByRole('link', { name: APPLY_REGEX }))
@@ -84,6 +87,6 @@ export class ChallengeDetailPage extends BasePage {
     });
     await button.scrollIntoViewIfNeeded();
     await button.click();
-    await this.settle();
+    await this.settle(extraMs);
   }
 }
