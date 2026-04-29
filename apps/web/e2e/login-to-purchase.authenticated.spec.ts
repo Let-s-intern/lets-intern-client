@@ -14,16 +14,32 @@ import * as path from 'node:path';
  *   6) "0원 결제하기" 클릭 — 무료 옵션이라 PG 안 거치고 즉시 성공 처리됨
  *   7) 결제 결과 페이지 도달 확인
  *
- * 산출물:
- *   apps/web/e2e-screenshots/<NN>-<step>.png — 단계별 풀페이지 스크린샷
+ * 산출물 디렉토리 구조:
+ *   apps/web/e2e-screenshots/
+ *     success/<YYYYMMDD-HHMMSS>/   — 성공 실행 (스텝 PNG + meta.txt)
+ *     failure/<YYYYMMDD-HHMMSS>/   — 실패 실행 (PNG + 99-실패시점.png + error.txt)
+ *     skipped/<YYYYMMDD-HHMMSS>/   — skip 된 실행 (PNG + meta.txt)
+ *     _pending/<YYYYMMDD-HHMMSS>/  — 실행 중 (afterEach 에서 위 셋 중 하나로 이동)
  */
 
 const TEST_CHALLENGE_TITLE = 'E2E_TEST-login_to_purchase';
-const SCREENSHOT_DIR = path.resolve(__dirname, '..', 'e2e-screenshots');
+const RESULTS_ROOT = path.resolve(__dirname, '..', 'e2e-screenshots');
+
+/** 실행 시작 시점 타임스탬프 (모듈 로드 시 1회 고정). */
+const RUN_TIMESTAMP = formatTimestamp(new Date());
+const PENDING_DIR = path.join(RESULTS_ROOT, '_pending', RUN_TIMESTAMP);
 
 const hasCredentials = Boolean(
   process.env.E2E_TEST_USER_EMAIL && process.env.E2E_TEST_USER_PW,
 );
+
+function formatTimestamp(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return (
+    `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}` +
+    `-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
+  );
+}
 
 /** 터미널에 보기 좋게 진행 로그 출력. */
 function log(message: string) {
@@ -32,21 +48,39 @@ function log(message: string) {
   console.log(`[E2E ${ts}] ${message}`);
 }
 
-/** 스크린샷 디렉토리 정리 (이전 실행 산출물 제거). */
-function resetScreenshotDir() {
-  if (fs.existsSync(SCREENSHOT_DIR)) {
-    fs.rmSync(SCREENSHOT_DIR, { recursive: true, force: true });
+/** 이번 실행을 위한 _pending 디렉토리 준비. 이전 _pending 실패 잔재도 정리. */
+function preparePendingDir() {
+  // 모듈 단위로 _pending/<TIMESTAMP> 가 존재할 가능성 (재실행). 정리.
+  if (fs.existsSync(PENDING_DIR)) {
+    fs.rmSync(PENDING_DIR, { recursive: true, force: true });
   }
-  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+  fs.mkdirSync(PENDING_DIR, { recursive: true });
 }
 
 /** 단계별 스크린샷 저장. fullPage=true 로 전체 화면 캡처. */
 async function snap(page: Page, seq: number, name: string) {
   const safeName = name.replace(/[^\w가-힣\-]/g, '_');
   const filename = `${String(seq).padStart(2, '0')}-${safeName}.png`;
-  const filepath = path.join(SCREENSHOT_DIR, filename);
+  const filepath = path.join(PENDING_DIR, filename);
   await page.screenshot({ path: filepath, fullPage: true });
   log(`  📸 ${filename}`);
+}
+
+/** 메타 파일 작성. */
+function writeMeta(content: string) {
+  fs.writeFileSync(path.join(PENDING_DIR, 'meta.txt'), content, 'utf8');
+}
+
+/** _pending 디렉토리를 status 폴더로 이동 (success/failure/skipped). */
+function finalizeRunDir(status: 'success' | 'failure' | 'skipped') {
+  const targetParent = path.join(RESULTS_ROOT, status);
+  fs.mkdirSync(targetParent, { recursive: true });
+  const target = path.join(targetParent, RUN_TIMESTAMP);
+  if (fs.existsSync(target)) {
+    fs.rmSync(target, { recursive: true, force: true });
+  }
+  fs.renameSync(PENDING_DIR, target);
+  return target;
 }
 
 test.describe('login → purchase (free option)', () => {
@@ -58,9 +92,10 @@ test.describe('login → purchase (free option)', () => {
   test('홈 → 전체 프로그램 → 테스트 챌린지 → 바로 신청 → 0원 결제', async ({
     page,
   }) => {
-    resetScreenshotDir();
+    preparePendingDir();
     log('▶ 시나리오 시작');
-    log(`  스크린샷 저장 위치: ${SCREENSHOT_DIR}`);
+    log(`  실행 ID: ${RUN_TIMESTAMP}`);
+    log(`  진행 중 산출물: ${PENDING_DIR}`);
 
     // ────────────────────────────────────────────────────────────
     // 1) 렛츠커리어 홈
@@ -229,19 +264,60 @@ test.describe('login → purchase (free option)', () => {
     });
 
     log('✓ 시나리오 종료 — 결제 플로우 정상');
-    log(`  📁 스크린샷 모음: ${SCREENSHOT_DIR}`);
   });
 
-  // 실패해도 마지막 화면을 캡처해 어디서 막혔는지 즉시 확인 가능.
+  /**
+   * 실행 종료 처리:
+   *   - 실패 시 마지막 화면 캡처 + error.txt 작성
+   *   - meta.txt 작성 후 _pending 을 success/failure/skipped 로 이동
+   */
   test.afterEach(async ({ page }, testInfo) => {
-    if (testInfo.status !== testInfo.expectedStatus) {
+    // 1) 실패 시 마지막 화면 + 에러 메모
+    if (testInfo.status === 'failed' || testInfo.status === 'timedOut') {
       try {
-        const failureFile = path.join(SCREENSHOT_DIR, '99-실패시점.png');
+        const failureFile = path.join(PENDING_DIR, '99-실패시점.png');
         await page.screenshot({ path: failureFile, fullPage: true });
         log(`📸 실패 시점 캡처: ${failureFile}`);
       } catch {
         /* page 가 닫혔으면 무시 */
       }
+      const errorMessage = testInfo.error?.message ?? '(no error message)';
+      const errorStack = testInfo.error?.stack ?? '';
+      fs.writeFileSync(
+        path.join(PENDING_DIR, 'error.txt'),
+        `${errorMessage}\n\n${errorStack}\n`,
+        'utf8',
+      );
+    }
+
+    // 2) meta.txt
+    const finalUrl = page.url();
+    const durationMs = testInfo.duration;
+    writeMeta(
+      [
+        `Test:       ${testInfo.title}`,
+        `Status:     ${testInfo.status}`,
+        `Expected:   ${testInfo.expectedStatus}`,
+        `Run ID:     ${RUN_TIMESTAMP}`,
+        `Duration:   ${durationMs} ms`,
+        `Final URL:  ${finalUrl}`,
+        `Base URL:   ${process.env.PLAYWRIGHT_BASE_URL ?? '(default)'}`,
+        `Challenge:  ${TEST_CHALLENGE_TITLE}`,
+      ].join('\n') + '\n',
+    );
+
+    // 3) status 별 폴더로 이동
+    const status: 'success' | 'failure' | 'skipped' =
+      testInfo.status === 'passed'
+        ? 'success'
+        : testInfo.status === 'skipped'
+          ? 'skipped'
+          : 'failure';
+    try {
+      const finalDir = finalizeRunDir(status);
+      log(`📁 결과 저장: ${finalDir}`);
+    } catch (err) {
+      log(`⚠ 결과 폴더 이동 실패: ${(err as Error).message}`);
     }
   });
 });
