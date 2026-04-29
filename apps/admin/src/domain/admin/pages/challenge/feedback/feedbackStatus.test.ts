@@ -10,6 +10,7 @@
  */
 
 import { describe, expect, it, vi } from 'vitest';
+import { z } from 'zod';
 
 // ── 1) 타입 호환성 테스트 ─────────────────────────────────────────
 
@@ -35,7 +36,6 @@ describe('PatchAttendanceMentorReq 타입 호환성', () => {
   it('mentorSchema 타입은 feedback이 필수이다', () => {
     // mentorSchema.ts의 patchAttendanceMentorReqSchema는 feedback이 required
     // 이 테스트는 백엔드가 feedback 없이 요청을 거부할 수 있음을 문서화
-    const { z } = require('zod');
     const schema = z.object({
       feedback: z.string(),
       feedbackStatus: z.string(),

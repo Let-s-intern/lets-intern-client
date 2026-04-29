@@ -33,37 +33,42 @@ async function ProgramRecommendCard({ program }: Props) {
         const [type, id] = program.id.split('-');
 
         switch (type) {
-          case CHALLENGE:
+          case CHALLENGE: {
             const challenge = await fetchChallenge(id);
 
             title = challenge.title;
             thumbnail = challenge.thumbnail ?? '';
             ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
-          case LIVE:
+          }
+          case LIVE: {
             const live = await fetchLive(id);
             title = live.title;
             thumbnail = live.thumbnail ?? '';
             ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
-          case VOD:
+          }
+          case VOD: {
             const vod = await fetchPublicVodData(id);
             title = vod.title ?? undefined;
             thumbnail = vod.thumbnail ?? '';
             ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
-          case GUIDEBOOK:
+          }
+          case GUIDEBOOK: {
             const guidebook = await fetchPublicGuidebookData(id);
             title = guidebook.title ?? undefined;
             thumbnail = guidebook.thumbnail ?? '';
             ctaLink = `/program/guidebook/${id}`;
             break;
-          default:
+          }
+          default: {
             // type === REPORT
             const report = await fetchReportId(id);
             title = report.title ?? undefined;
             thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
             ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
+          }
         }
       } catch (err) {
         console.error(`프로그램 조회 실패 (id: ${program.id}):`, err);

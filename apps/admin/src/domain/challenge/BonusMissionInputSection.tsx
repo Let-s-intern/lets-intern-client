@@ -55,7 +55,7 @@ const BonusMissionInputSection = ({
       setIsLinkChecked(false);
     }
     const expression =
-      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
     const regex = new RegExp(expression);
     if (regex.test(e.target.value)) {
       setIsValidLinkValue(true);
@@ -215,11 +215,11 @@ const BonusMissionInputSection = ({
         개인정보 활용 동의
       </label>
       <p className="text-xsmall14 mt-1">
-        [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로 개인정보를
-        수집, 이용 및 제공하는데 동의합니다. <br />
-        □ 개인정보의 수집 및 이용에 관한 사항 <br />
-        ✓ 수집하는 개인정보 항목 : 성명, 전화번호, 계좌번호 <br />
-        ✓ 개인정보의 이용 목적 : 렛츠커리어 프로그램 후기 리워드 지급
+        [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로 개인정보를
+        수집, 이용 및 제공하는데 동의합니다. <br />
+        □ 개인정보의 수집 및 이용에 관한 사항 <br />
+        ✓ 수집하는 개인정보 항목 : 성명, 전화번호, 계좌번호 <br />
+        ✓ 개인정보의 이용 목적 : 렛츠커리어 프로그램 후기 리워드 지급
       </p>
       <button
         type="button"

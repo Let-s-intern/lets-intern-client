@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 
 import axios from '@/utils/axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

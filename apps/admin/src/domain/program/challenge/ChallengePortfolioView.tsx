@@ -315,7 +315,7 @@ const ChallengePortfolioView: React.FC<{
                     title: '[뷰티 브랜드 기업] 채용담당자 인터뷰',
                     content: (
                       <>
-                        마케팅, BM 직무의 경우 필수는 아니나{' '}
+                        마케팅, BM 직무의 경우 필수는 아니나{' '}
                         <span style={{ color: challengeColors._4A76FF }}>
                           포트폴리오가 있다면 더욱 좋아요!
                         </span>

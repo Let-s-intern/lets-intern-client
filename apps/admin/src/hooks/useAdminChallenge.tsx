@@ -13,7 +13,7 @@ export default function useAdminChallenge(
   const challengePrice = useMemo(() => {
     if (!challengeInput?.priceInfo) return 0;
 
-    const { charge, refund, priceInfo } = challengeInput?.priceInfo[0];
+    const { charge, refund, priceInfo } = challengeInput.priceInfo[0];
     return (
       (charge ?? priceInfo.price ?? 0) +
       (refund ?? 0) -

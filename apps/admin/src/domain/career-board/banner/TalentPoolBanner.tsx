@@ -24,7 +24,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
     (error) => {
       // 실패 시 이전 상태로 롤백
       setIsEnabled((prev) => !prev);
-      // eslint-disable-next-line no-console
+       
       console.error('인재풀 등록 상태 변경 실패:', error);
     },
   );

@@ -189,7 +189,7 @@ const LeadEventPage = () => {
       snackbar('이벤트가 등록되었습니다.');
       setIsCreateOpen(false);
     } catch (error) {
-      // eslint-disable-next-line no-console
+       
       console.error(error);
       snackbar('등록에 실패했습니다. 다시 시도해주세요.');
     }
@@ -204,7 +204,7 @@ const LeadEventPage = () => {
         await deleteLeadEvent.mutateAsync(leadEventId);
         snackbar('이벤트가 삭제되었습니다.');
       } catch (error) {
-        // eslint-disable-next-line no-console
+         
         console.error(error);
         snackbar('삭제에 실패했습니다. 다시 시도해주세요.');
       }

@@ -44,7 +44,7 @@ import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
-InsertImageUriDialogBody;
+
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
   CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
