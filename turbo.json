@@ -58,6 +58,10 @@
     "test": {
       "cache": false,
       "dependsOn": []
+    },
+    "e2e": {
+      "cache": false,
+      "dependsOn": []
     }
   }
 }
