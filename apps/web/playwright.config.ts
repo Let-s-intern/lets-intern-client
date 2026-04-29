@@ -29,6 +29,11 @@ export default defineConfig({
     trace: 'retain-on-failure',
     video: 'off',
     screenshot: 'off',
+    // 데스크톱 viewport 강제 — 기본값 1280x720 은 일부 사이트에서
+    // 모바일 breakpoint 로 판정되어 햄버거 메뉴로 전환됨.
+    // 렛츠커리어 헤더의 "프로그램" 드롭다운은 데스크톱 nav 에만 있으므로
+    // 1920x1080 으로 확실한 데스크톱 레이아웃을 보장.
+    viewport: { width: 1920, height: 1080 },
     // 모든 액션에 마진 — Next dev 컴파일이 느려도 안정적.
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
