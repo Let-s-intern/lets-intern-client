@@ -164,7 +164,6 @@ export const challengeMissionFeedbackSchema = z.object({
       link: z.string(),
       feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
       feedback: z.string().nullish(),
-      mentorName: z.string().nullish(),
     })
     .nullable(),
 });

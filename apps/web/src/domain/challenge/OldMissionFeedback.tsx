@@ -58,12 +58,7 @@ export default function OldMissionFeedback() {
       <div className="p-4">
         {/* 미션 정보 섹션 */}
         <div className="mb-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">멘토명:</span>
-          </div>
-          <div className="text-sm text-gray-900">
-            {feedbackData?.attendanceInfo?.mentorName || '-'}
-          </div>
+          {/* 멘토명 표시 제거: 멘토 매칭이 attendance → challenge_application 으로 이동되어 attendance.mentorName 이 더 이상 사용되지 않습니다. */}
 
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
