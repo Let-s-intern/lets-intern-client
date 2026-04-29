@@ -205,25 +205,29 @@ test.describe('login → purchase (free option)', () => {
     // 4) "바로 신청"
     // ────────────────────────────────────────────────────────────
     await test.step('4. 첫 신청 CTA 클릭 (floating 하단 "신청하기" / "바로 신청")', async () => {
-      // 4-a) 프로그램 종료 상태 감지 — "출시알람신청" 버튼이 보이면 프로그램 종료.
-      log('  → 프로그램 종료 상태 감지 (출시알람신청)');
+      // 4-a) 프로그램 종료/시작 전 상태 감지.
+      //   소스 (NotiButton): 텍스트 정확히 "출시알림신청" — 알람(X) / 알림(O).
+      //   onClick 유무에 따라 <button> 또는 <a> 로 렌더되므로 둘 다 검사.
+      log('  → 프로그램 종료/시작 전 상태 감지 (출시알림신청)');
+      const closedRegex = /출시\s*알[림람]\s*신청|모집\s*마감/i;
       const isClosed = await page
-        .getByRole('button', { name: /출시\s*알람\s*신청|종료/i })
-        .or(page.getByText(/출시\s*알람\s*신청/i))
+        .getByRole('button', { name: closedRegex })
+        .or(page.getByRole('link', { name: closedRegex }))
+        .or(page.getByText(closedRegex))
         .first()
         .isVisible()
         .catch(() => false);
 
       if (isClosed) {
         log(
-          '  ⚠ 프로그램이 종료되었습니다 (출시알람신청 노출 감지) — test.skip 후 통과.',
+          '  ⚠ 프로그램이 종료되었습니다 (출시알림신청 노출 감지) — test.skip 후 통과.',
         );
         await snap(page, 5, '프로그램_종료');
       }
       test.skip(
         isClosed,
-        '프로그램이 종료된 상태입니다 (출시알람신청 노출). ' +
-          '챌린지 운영 일정이 끝나 더 이상 신청 불가. 새 회차 오픈 후 재실행하세요.',
+        '프로그램이 종료된(또는 시작 전) 상태입니다 (출시알림신청 노출). ' +
+          '챌린지 운영 일정이 끝났거나 시작 전이라 신청 불가. 새 회차 오픈 후 재실행하세요.',
       );
 
       // 4-b) 이미 신청 상태 감지
@@ -248,18 +252,17 @@ test.describe('login → purchase (free option)', () => {
           'BE 에서 봇의 신청 이력을 리셋한 뒤 재실행하세요.',
       );
 
-      // 챌린지에 따라 라벨이 다름:
-      //   - "바로 신청" (일부 챌린지)
-      //   - "신청하기"  (E2E_TEST 챌린지의 floating 하단 CTA)
-      //   - "구매하기"  (드물게)
+      // 챌린지에 따라 라벨이 다름 (예: "지금 바로 신청", "바로 신청", "신청하기", "구매하기").
+      // anchors(^...$) 없이 substring 매칭 — "지금 바로 신청" 도 "바로 신청" 으로 매칭됨.
+      // <a> 링크로 렌더되는 케이스도 fallback.
+      const applyRegex = /바로\s*신청|신청하기|구매하기|지금\s*신청/i;
       const applyButton = page
-        .getByRole('button', {
-          name: /^바로\s*신청$|^신청하기$|^구매하기$/,
-        })
+        .getByRole('button', { name: applyRegex })
+        .or(page.getByRole('link', { name: applyRegex }))
         .first();
       await expect(
         applyButton,
-        '챌린지 상세에 신청 CTA 버튼이 보여야 한다 (바로 신청 / 신청하기 / 구매하기)',
+        '챌린지 상세에 신청 CTA 버튼이 보여야 한다 (지금 바로 신청 / 바로 신청 / 신청하기 / 구매하기)',
       ).toBeVisible({ timeout: 10_000 });
       log('  ✓ 신청 CTA 버튼 노출');
       await applyButton.scrollIntoViewIfNeeded();
