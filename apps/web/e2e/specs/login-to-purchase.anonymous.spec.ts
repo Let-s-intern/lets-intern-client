@@ -169,8 +169,19 @@ test.describe('login → purchase (free option)', () => {
     const result = await flow.run(
       '5. 지금 바로 신청 → (모달) 신청하기 → 0원 결제하기',
       async () => {
-        await availableDetail.clickApply(WAITS.afterApply);
+        const applyResult = await availableDetail.clickApply(WAITS.afterApply);
         await runDir.snap(page, 50, '5a_지금바로신청_클릭후');
+
+        // 클릭 후 "이미 신청 완료" 감지 시 즉시 skip (지금까지의 카드는 이미 신청됨).
+        if (applyResult.alreadyEnrolled) {
+          await runDir.snap(page, 95, '이미신청완료_감지');
+          test.skip(
+            true,
+            '봇 계정이 해당 챌린지에 이미 신청된 상태입니다 (검사 통과 후 클릭 시점에 발견). ' +
+              'BE 에서 봇의 신청 이력을 리셋한 뒤 재실행하세요.',
+          );
+          throw new Error('unreachable');
+        }
 
         const payment = new PaymentInputPage(page);
         await payment.clickEnrollIfPresent(WAITS.afterModalEnroll);

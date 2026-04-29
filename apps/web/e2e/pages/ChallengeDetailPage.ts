@@ -103,13 +103,38 @@ export class ChallengeDetailPage extends BasePage {
    *   6) unknown
    */
   async checkStatus(): Promise<ChallengeStatus> {
+    // 0) "이미 신청 완료" 모달 우선 감지 — 페이지 어디든 노출되면 즉시 enrolled.
+    const alreadyEnrolledOverlay = await this.page
+      .getByText(/이미\s*신청\s*완료|이미\s*가입|이미\s*등록/i)
+      .first()
+      .isVisible({ timeout: 500 })
+      .catch(() => false);
+    if (alreadyEnrolledOverlay) {
+      log('    [checkStatus] "이미 신청 완료" 오버레이 감지 → enrolled');
+      return 'enrolled';
+    }
+
     // 1) className-scope: 메인 CTA "apply_button"
-    //    waitForLoaded 가 이미 안정화시켰으므로 짧은 timeout 으로 즉시 판단.
+    //    isApplied 상태일 때 같은 클래스를 가진 채로 텍스트가 "신청 완료" 로 바뀌고
+    //    disabled 됨 (OverviewContent.tsx 참조). text + disabled 조합으로 판정.
     const applyBtnByClass = this.page.locator('button.apply_button').first();
     if (
       await applyBtnByClass.isVisible({ timeout: 1_000 }).catch(() => false)
     ) {
-      log('    [checkStatus] .apply_button visible → available');
+      const rawText =
+        (await applyBtnByClass.textContent().catch(() => '')) ?? '';
+      const text = rawText.trim();
+      const disabled = await applyBtnByClass.isDisabled().catch(() => false);
+      log(
+        `    [checkStatus] .apply_button text="${text}" disabled=${disabled}`,
+      );
+
+      // "신청 완료" / "이미 신청" / disabled — 이미 신청한 상태.
+      if (disabled || /신청\s*완료|이미\s*신청/i.test(text)) {
+        log('    [checkStatus] disabled 또는 "신청 완료" 텍스트 → enrolled');
+        return 'enrolled';
+      }
+      log('    [checkStatus] .apply_button enabled → available');
       return 'available';
     }
     // 2) className-scope: 메인 CTA "early_button" (NotiButton 의 closed 상태)
@@ -158,8 +183,26 @@ export class ChallengeDetailPage extends BasePage {
     return 'unknown';
   }
 
-  /** 신청 CTA 버튼 클릭. checkStatus() === 'available' 일 때만 호출. */
-  async clickApply(extraMs?: number): Promise<void> {
+  /**
+   * 신청 CTA 버튼 클릭. checkStatus() === 'available' 일 때만 호출.
+   * 클릭 직후 "이미 신청 완료" 모달이 떠도 감지해 호출자에게 알림.
+   */
+  async clickApply(extraMs?: number): Promise<{ alreadyEnrolled: boolean }> {
+    // 안전 가드: 클릭 전에 disabled 한 번 더 검사 — flash 직후 잘못 진입 방지.
+    const applyBtn = this.page.locator('button.apply_button').first();
+    if (await applyBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+      const text = (
+        (await applyBtn.textContent().catch(() => '')) ?? ''
+      ).trim();
+      const disabled = await applyBtn.isDisabled().catch(() => false);
+      if (disabled || /신청\s*완료|이미\s*신청/i.test(text)) {
+        log(
+          `    [clickApply] 이미 신청 상태 (text="${text}", disabled=${disabled}) — 클릭 skip`,
+        );
+        return { alreadyEnrolled: true };
+      }
+    }
+
     const button = this.page
       .getByRole('button', { name: APPLY_REGEX })
       .or(this.page.getByRole('link', { name: APPLY_REGEX }))
@@ -170,5 +213,17 @@ export class ChallengeDetailPage extends BasePage {
     await button.scrollIntoViewIfNeeded();
     await button.click();
     await this.settle(extraMs);
+
+    // 클릭 후 "이미 신청 완료" 모달 감지.
+    const alreadyEnrolledModal = await this.page
+      .getByText(/이미\s*신청\s*완료|이미\s*가입|이미\s*등록/i)
+      .first()
+      .isVisible({ timeout: 2_000 })
+      .catch(() => false);
+    if (alreadyEnrolledModal) {
+      log('    [clickApply] 클릭 후 "이미 신청 완료" 모달 노출 — enrolled');
+      return { alreadyEnrolled: true };
+    }
+    return { alreadyEnrolled: false };
   }
 }
