@@ -22,7 +22,7 @@ export default function FeatureCard({
   return (
     <motion.section
       className={twMerge(
-        'overflow-hidden rounded-ms bg-white shadow-sm',
+        'rounded-ms overflow-hidden bg-white shadow-sm',
         className,
       )}
       initial={{ opacity: 0, y: 12 }}
@@ -43,8 +43,8 @@ export default function FeatureCard({
         </div>
       </div>
       <div className="bg-white p-6 md:p-8">
-        <h3 className="text-small18 font-semibold text-neutral-0">{title}</h3>
-        <p className="mt-2 break-keep text-xsmall14 font-medium text-neutral-40">
+        <h3 className="text-small18 text-neutral-0 font-semibold">{title}</h3>
+        <p className="text-xsmall14 text-neutral-40 mt-2 break-keep font-medium">
           {desc}
         </p>
       </div>

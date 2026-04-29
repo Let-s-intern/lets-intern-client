@@ -109,27 +109,26 @@ function ChallengeRow({ programInfo }: { programInfo: OngoingProgramInfo }) {
     mentorData?.mentorList.map((m) => m.name).join(', ') || '-';
 
   return (
-    <tr className="border-b border-neutral-80 last:border-b-0">
-      <td className="max-w-[300px] px-4 py-3 text-xsmall14">
+    <tr className="border-neutral-80 border-b last:border-b-0">
+      <td className="text-xsmall14 max-w-[300px] px-4 py-3">
         {programInfo.title ?? '-'}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
         {feedbackTh}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
-        {formatDate(programInfo.startDate)} ~{' '}
-        {formatDate(programInfo.endDate)}
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
+        {formatDate(programInfo.startDate)} ~ {formatDate(programInfo.endDate)}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
         {feedbackPeriod}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
         {feedbackStatus}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
         {mentorNames}
       </td>
-      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+      <td className="text-xsmall14 whitespace-nowrap px-4 py-3 text-center">
         <Link
           href={`/admin/challenge/operation/${challengeId}/feedback`}
           className="text-blue-600 hover:underline"
@@ -147,43 +146,43 @@ export default function OngoingChallenges() {
   const challenges = data?.programList ?? [];
 
   return (
-    <div className="rounded-lg border border-neutral-80 p-6">
+    <div className="border-neutral-80 rounded-lg border p-6">
       <div className="mb-6">
         <Heading>진행 중</Heading>
       </div>
 
       {isLoading ? (
-        <div className="py-16 text-center text-xsmall14 text-neutral-40">
+        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
           불러오는 중...
         </div>
       ) : challenges.length === 0 ? (
-        <div className="py-16 text-center text-xsmall14 text-neutral-40">
+        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
           진행 중인 챌린지가 없습니다.
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
-                <th className="min-w-[200px] px-4 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+              <tr className="border-neutral-60 bg-neutral-95 border-b-2">
+                <th className="text-xsmall14 text-neutral-0 min-w-[200px] px-4 py-3 text-left font-semibold">
                   챌린지
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   피드백 미션 회차
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   챌린지 기간
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   피드백 기간
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   상태
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   담당자
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 whitespace-nowrap px-4 py-3 text-center font-semibold">
                   바로가기
                 </th>
               </tr>

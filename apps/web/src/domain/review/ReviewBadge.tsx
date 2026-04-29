@@ -33,7 +33,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs bg-primary-10 px-2 py-1 text-xsmall14 font-bold text-primary',
+            'rounded-xxs bg-primary-10 text-xsmall14 text-primary inline-flex items-center gap-1 whitespace-pre px-2 py-1 font-bold',
             className,
           )}
         >
@@ -58,7 +58,7 @@ const ReviewBadge = ({
         // TODO: 색상 토크나이징
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs bg-[#FFF2E4] px-2 py-1 text-xsmall14 font-bold text-[#FF9C34]',
+            'rounded-xxs text-xsmall14 inline-flex items-center gap-1 whitespace-pre bg-[#FFF2E4] px-2 py-1 font-bold text-[#FF9C34]',
             className,
           )}
         >
@@ -84,7 +84,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs bg-[#F9EEFF] px-2 py-1 text-xsmall14 font-bold text-tertiary',
+            'rounded-xxs text-xsmall14 text-tertiary inline-flex items-center gap-1 whitespace-pre bg-[#F9EEFF] px-2 py-1 font-bold',
             className,
           )}
         >
@@ -111,7 +111,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs px-2 py-1 text-xsmall14 font-bold',
+            'rounded-xxs text-xsmall14 inline-flex items-center gap-1 whitespace-pre px-2 py-1 font-bold',
             className,
           )}
         >
@@ -136,7 +136,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs bg-secondary-10 px-2 py-1 text-xsmall14 font-bold text-secondary',
+            'rounded-xxs bg-secondary-10 text-xsmall14 text-secondary inline-flex items-center gap-1 whitespace-pre px-2 py-1 font-bold',
             className,
           )}
         >
@@ -163,7 +163,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'inline-flex items-center gap-1 whitespace-pre rounded-xxs bg-primary-10 px-2 py-1 text-xsmall14 font-bold text-primary',
+            'rounded-xxs bg-primary-10 text-xsmall14 text-primary inline-flex items-center gap-1 whitespace-pre px-2 py-1 font-bold',
             className,
           )}
         >

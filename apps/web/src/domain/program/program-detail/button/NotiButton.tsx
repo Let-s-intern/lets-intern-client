@@ -14,12 +14,12 @@ const NotiButton = ({ text, className, onClick }: NotiButtonProps) => {
         type="button"
         onClick={onClick}
         className={twMerge(
-          'flex w-full items-center justify-center gap-1 rounded-sm bg-point px-6 py-3',
+          'bg-point flex w-full items-center justify-center gap-1 rounded-sm px-6 py-3',
           className,
         )}
       >
         <img className="h-6 w-6" src="/icons/Bell.svg" alt="종 아이콘" />
-        <span className="text-xsmall14 font-medium text-neutral-0">{text}</span>
+        <span className="text-xsmall14 text-neutral-0 font-medium">{text}</span>
       </button>
     );
   }
@@ -30,12 +30,12 @@ const NotiButton = ({ text, className, onClick }: NotiButtonProps) => {
       target="_blank"
       rel="noreferrer"
       className={twMerge(
-        'flex w-full items-center justify-center gap-1 rounded-sm bg-point px-6 py-3',
+        'bg-point flex w-full items-center justify-center gap-1 rounded-sm px-6 py-3',
         className,
       )}
     >
       <img className="h-6 w-6" src="/icons/Bell.svg" alt="종 아이콘" />
-      <span className="text-xsmall14 font-medium text-neutral-0">{text}</span>
+      <span className="text-xsmall14 text-neutral-0 font-medium">{text}</span>
     </a>
   );
 };

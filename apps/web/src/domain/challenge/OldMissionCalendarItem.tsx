@@ -27,7 +27,7 @@ const OldMissionCalendarItem = ({
       <div className="mt-2 px-1.5">
         <span
           className={clsx('block w-full text-center text-xs', {
-            'font-semibold text-primary': mission.th === todayTh,
+            'text-primary font-semibold': mission.th === todayTh,
           })}
         >
           {mission.startDate?.format('MM/DD(ddd)')}

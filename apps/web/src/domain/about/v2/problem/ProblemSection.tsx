@@ -3,7 +3,7 @@ import ProblemInterview from './ProblemInterview';
 
 const ProblemSection = () => {
   return (
-    <section className="md:md-[8.75rem] flex flex-col items-center gap-[3.75rem] overflow-hidden bg-[#101348] px-5 py-[6.25rem] text-static-100 md:gap-[6.25rem] md:px-10">
+    <section className="md:md-[8.75rem] text-static-100 flex flex-col items-center gap-[3.75rem] overflow-hidden bg-[#101348] px-5 py-[6.25rem] md:gap-[6.25rem] md:px-10">
       <h2 className="text-1.5-bold xl:text-1.75-bold text-center">
         대한민국의 많은 청년들은
         <br />

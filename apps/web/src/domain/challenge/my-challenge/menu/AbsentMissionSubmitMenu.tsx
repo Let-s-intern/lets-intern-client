@@ -184,7 +184,7 @@ const AbsentMissionSubmitMenu = ({
               />
               <button
                 type="button"
-                className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
+                className="bg-primary rounded px-5 font-medium text-white disabled:bg-[#c7c7c7]"
                 onClick={() => {
                   if (value) {
                     Object.assign(document.createElement('a'), {
@@ -203,7 +203,7 @@ const AbsentMissionSubmitMenu = ({
             {value &&
               !isAttended &&
               (isLinkChecked ? (
-                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                <div className="text-primary ml-12 mt-1 text-xs font-medium">
                   링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
                   눌러주세요.
                 </div>
@@ -215,12 +215,12 @@ const AbsentMissionSubmitMenu = ({
                   )}
                 </div>
               ) : (
-                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                <div className="text-primary ml-12 mt-1 text-xs font-medium">
                   URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
                 </div>
               ))}
             <div className="mt-6 flex w-full flex-col gap-y-5">
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
                 미션 소감
               </h3>
               <div
@@ -231,7 +231,7 @@ const AbsentMissionSubmitMenu = ({
               >
                 <textarea
                   className={clsx(
-                    'h-20 flex-1 resize-none bg-neutral-95 text-xsmall14 outline-none disabled:bg-white',
+                    'bg-neutral-95 text-xsmall14 h-20 flex-1 resize-none outline-none disabled:bg-white',
                     {
                       'text-neutral-400': isAttended,
                     },
@@ -242,7 +242,7 @@ const AbsentMissionSubmitMenu = ({
                   disabled={isAttended}
                   maxLength={500}
                 />
-                <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
+                <span className="text-xxsmall12 text-neutral-0/35 w-full text-right">
                   {review.length}/500
                 </span>
               </div>

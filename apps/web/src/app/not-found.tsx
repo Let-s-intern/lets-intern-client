@@ -5,7 +5,7 @@ const NotFound = () => {
     <section className="bg-white">
       <div className="mx-auto max-w-screen-xl px-4 py-16 lg:px-6 lg:py-32">
         <div className="mx-auto max-w-screen-sm text-center">
-          <span className="mb-4 text-7xl font-extrabold tracking-tight text-primary-dark lg:text-9xl">
+          <span className="text-primary-dark mb-4 text-7xl font-extrabold tracking-tight lg:text-9xl">
             404
           </span>
           <p className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
@@ -16,7 +16,7 @@ const NotFound = () => {
           </p>
           <Link
             href="/"
-            className="my-4 inline-flex rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2"
+            className="bg-primary hover:bg-primary-light focus:ring-primary-light my-4 inline-flex rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
             홈페이지로 돌아가기
           </Link>

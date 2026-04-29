@@ -17,9 +17,9 @@ import type {
 } from 'lexical';
 
 import katex from 'katex';
-import {$applyNodeReplacement, DecoratorNode, DOMExportOutput} from 'lexical';
+import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
 import * as React from 'react';
-import {Suspense} from 'react';
+import { Suspense } from 'react';
 
 const EquationComponent = React.lazy(() => import('./EquationComponent'));
 
@@ -40,7 +40,7 @@ function $convertEquationElement(
   equation = atob(equation || '');
   if (equation) {
     const node = $createEquationNode(equation, inline);
-    return {node};
+    return { node };
   }
 
   return null;
@@ -102,7 +102,7 @@ export class EquationNode extends DecoratorNode<JSX.Element> {
       throwOnError: false,
       trust: false,
     });
-    return {element};
+    return { element };
   }
 
   static importDOM(): DOMConversionMap | null {

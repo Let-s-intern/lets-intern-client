@@ -1,7 +1,7 @@
 const DescriptionBox = ({ type }: { type: 'SUCCESS' | 'FAIL' | 'DELETE' }) => {
   return (
     <div className="flex w-full flex-col items-center justify-center rounded-md bg-neutral-100 py-6">
-      <div className="text-small20 font-semibold text-primary">
+      <div className="text-small20 text-primary font-semibold">
         {type === 'SUCCESS'
           ? '결제가 완료되었어요  🎉'
           : type === 'FAIL'

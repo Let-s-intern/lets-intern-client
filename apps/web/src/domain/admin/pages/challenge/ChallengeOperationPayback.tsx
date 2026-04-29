@@ -466,7 +466,7 @@ const ChallengeOperationPayback = () => {
     <main className="pt-3">
       {paybackConfirm && (
         <div className="flex py-5">
-          <div className="flex min-w-[500px] flex-col gap-y-4 rounded-sm bg-neutral-80 p-4">
+          <div className="bg-neutral-80 flex min-w-[500px] flex-col gap-y-4 rounded-sm p-4">
             <div className="flex w-full items-center gap-x-4">
               <h3 className="w-28 shrink-0 text-lg font-semibold">
                 페이백 금액
@@ -616,7 +616,7 @@ const ChallengeOperationPayback = () => {
           setIsPaybackModalOpen(false);
         }}
       >
-        <div className="absolute left-1/2 top-1/2 flex w-2/5 -translate-x-1/2 -translate-y-1/2 transform flex-col gap-y-4 rounded-xxs bg-neutral-100 p-6 shadow-md">
+        <div className="rounded-xxs absolute left-1/2 top-1/2 flex w-2/5 -translate-x-1/2 -translate-y-1/2 transform flex-col gap-y-4 bg-neutral-100 p-6 shadow-md">
           <>
             <h3 className="text-lg font-bold">페이백 정보 확인</h3>
             <div className="flex w-full gap-x-4">
@@ -661,7 +661,7 @@ const ChallengeOperationPayback = () => {
           {isPaybackLoading && (
             <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-neutral-100 bg-opacity-90">
               <div className="flex items-center gap-x-2">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary"></div>
+                <div className="border-primary h-6 w-6 animate-spin rounded-full border-2"></div>
                 <p>페이백 중...</p>
               </div>
             </div>

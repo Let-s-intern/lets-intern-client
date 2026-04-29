@@ -43,7 +43,7 @@ const Privacy = () => {
         <MarketingAgree />
       </div>
       <button
-        className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
+        className="text-neutral-0/40 mt-[24px] flex w-full items-center justify-center"
         onClick={() => setIsDeleteModalOpen(true)}
       >
         회원 탈퇴
@@ -58,7 +58,7 @@ const Privacy = () => {
           title="회원 탈퇴"
         >
           정말로 탈퇴하시겠습니까?
-          <div className="mt-4 text-sm text-system-error">
+          <div className="text-system-error mt-4 text-sm">
             탈퇴 시 복구가 불가능하며, 모든 정보가 삭제됩니다.
           </div>
         </AlertModal>

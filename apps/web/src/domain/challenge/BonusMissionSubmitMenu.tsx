@@ -172,7 +172,7 @@ const BonusMissionSubmitMenu = ({
               />
               <button
                 type="button"
-                className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
+                className="bg-primary rounded px-5 font-medium text-white disabled:bg-[#c7c7c7]"
                 onClick={() => {
                   if (link) {
                     Object.assign(document.createElement('a'), {
@@ -191,7 +191,7 @@ const BonusMissionSubmitMenu = ({
             {link &&
               !isAttended &&
               (isLinkChecked ? (
-                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                <div className="text-primary ml-12 mt-1 text-xs font-medium">
                   링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
                   눌러주세요.
                 </div>
@@ -203,14 +203,14 @@ const BonusMissionSubmitMenu = ({
                   )}
                 </div>
               ) : (
-                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                <div className="text-primary ml-12 mt-1 text-xs font-medium">
                   URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
                 </div>
               ))}
 
             {/* 리워드 받을 계좌번호 */}
             <div className="mt-6 flex w-full flex-col gap-y-3">
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
                 리워드 받을 계좌번호
               </h3>
               <p className="text-xsmall14">
@@ -229,7 +229,7 @@ const BonusMissionSubmitMenu = ({
                   type="number"
                   inputMode="numeric"
                   className={clsx(
-                    'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
+                    'text-xsmall14 disabled:bg-neutral-95 flex-1 cursor-text rounded-sm p-3 outline-none',
                     {
                       'text-neutral-400': isAttended,
                     },
@@ -248,11 +248,11 @@ const BonusMissionSubmitMenu = ({
             {/* 개인정보 활용 동의 */}
             <label
               htmlFor="privacyConsent"
-              className="mt-8 block text-xsmall14 font-semibold text-neutral-0"
+              className="text-xsmall14 text-neutral-0 mt-8 block font-semibold"
             >
               개인정보 활용 동의
             </label>
-            <p className="mt-1 text-xsmall14">
+            <p className="text-xsmall14 mt-1">
               [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로
               개인정보를 수집, 이용 및 제공하는데 동의합니다. <br />
               □ 개인정보의 수집 및 이용에 관한 사항 <br />

@@ -188,13 +188,13 @@ const CurationSelectModal = ({
                 <img
                   src={item.thumbnail}
                   alt={item.title}
-                  className="aspect-[3/2] w-full rounded-xxs object-cover"
+                  className="rounded-xxs aspect-[3/2] w-full object-cover"
                 />
                 <span className="mt-2 line-clamp-2 w-full text-center">
                   {item.title}
                 </span>
-                <span className="mt-0.5 text-xxsmall12 text-neutral-30">{`노출일자 : ${item.visibleDate ?? '-'}`}</span>
-                <span className="mt-0.5 text-xxsmall12 text-neutral-30">{`노출여부 : ${item.isVisible ? '노출' : '비노출'}`}</span>
+                <span className="text-xxsmall12 text-neutral-30 mt-0.5">{`노출일자 : ${item.visibleDate ?? '-'}`}</span>
+                <span className="text-xxsmall12 text-neutral-30 mt-0.5">{`노출여부 : ${item.isVisible ? '노출' : '비노출'}`}</span>
               </div>
             ))}
           </div>

@@ -38,11 +38,11 @@ function SideNavContainer({ children, isOpen, onClose }: Props) {
         </i>
       </div>
       <hr />
-      <div className="flex h-full flex-col gap-4 overflow-y-auto pb-36 scrollbar-hide">
+      <div className="scrollbar-hide flex h-full flex-col gap-4 overflow-y-auto pb-36">
         <KakaoChannel />
         <div className="mx-5 flex justify-between">
           {isLoggedIn ? (
-            <span className="flex w-full items-center justify-between gap-4 text-xsmall16 font-medium text-neutral-0 sm:p-0">
+            <span className="text-xsmall16 text-neutral-0 flex w-full items-center justify-between gap-4 font-medium sm:p-0">
               <span>
                 환영합니다, <span className="text-primary">{user?.name}</span>님
               </span>

@@ -25,7 +25,7 @@ function ReviewNavBar() {
         )}
       >
         <nav className="md:hidden">
-          <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
+          <ul className="border-neutral-80 flex items-stretch gap-6 border-b px-5 md:hidden">
             <MobileNavItem
               href="/review/program"
               subHref={['/review/mission', '/review/program']}
@@ -98,12 +98,12 @@ function MobileNavItem({
       className={clsx(
         'flex items-center justify-center whitespace-nowrap pb-3.5 pt-3.5 text-center leading-4',
         {
-          'border-b-2 border-primary': active,
+          'border-primary border-b-2': active,
         },
       )}
     >
       <Link
-        className={`text-xsmall14 ${active ? 'font-semibold text-primary' : 'text-neutral-35'}`}
+        className={`text-xsmall14 ${active ? 'text-primary font-semibold' : 'text-neutral-35'}`}
         href={href}
       >
         {children}
@@ -131,7 +131,7 @@ function MobileNavSubItem({
       )}
     >
       <Link
-        className={`text-xsmall14 ${active ? 'font-semibold text-primary' : 'text-neutral-35'}`}
+        className={`text-xsmall14 ${active ? 'text-primary font-semibold' : 'text-neutral-35'}`}
         href={href}
       >
         {children}
@@ -154,7 +154,7 @@ function DesktopNavItem({
   return (
     <li className="px-3 py-2">
       <Link
-        className={`text-xsmall16 ${active ? 'font-semibold text-primary' : 'text-neutral-35'}`}
+        className={`text-xsmall16 ${active ? 'text-primary font-semibold' : 'text-neutral-35'}`}
         href={href}
       >
         {children}
@@ -175,7 +175,7 @@ function DesktopNavSubItem({
   return (
     <li className={`rounded-xxs px-4 py-2 ${active ? 'bg-primary-5' : ''}`}>
       <Link
-        className={`text-xsmall14 ${active ? 'font-medium text-primary' : 'text-neutral-35'}`}
+        className={`text-xsmall14 ${active ? 'text-primary font-medium' : 'text-neutral-35'}`}
         href={href}
       >
         {children}

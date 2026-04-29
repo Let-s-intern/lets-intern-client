@@ -26,10 +26,10 @@ const TenScore = ({ tenScore, setTenScore }: TenScoreProps) => {
           <div
             key={th}
             className={clsx(
-              'flex h-8 w-8 cursor-pointer items-center justify-center font-medium text-neutral-0 md:h-12 md:w-12 md:text-small18',
+              'text-neutral-0 md:text-small18 flex h-8 w-8 cursor-pointer items-center justify-center font-medium md:h-12 md:w-12',
               {
                 'bg-primary text-white': th === tenScore,
-                'border border-r-0 border-primary-xlight bg-white last:border-r':
+                'border-primary-xlight border border-r-0 bg-white last:border-r':
                   th !== tenScore,
               },
             )}

@@ -109,7 +109,7 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
         일반
       </ActionButton>
       {isMenuOpen && (
-        <ul className="absolute -top-2 left-1/2 w-48 -translate-x-1/2 -translate-y-full overflow-hidden rounded-xxs border border-neutral-300 bg-white shadow-lg">
+        <ul className="rounded-xxs absolute -top-2 left-1/2 w-48 -translate-x-1/2 -translate-y-full overflow-hidden border border-neutral-300 bg-white shadow-lg">
           <li
             className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
             onClick={handleDownloadCSV}

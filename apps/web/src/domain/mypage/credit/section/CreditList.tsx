@@ -50,7 +50,7 @@ const CreditList = () => {
               </p>
               <Link
                 href="/program"
-                className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
+                className="other_program border-primary-xlight text-neutral-35 rounded-sm border-2 bg-white px-5 py-2 font-medium"
               >
                 다른 프로그램 둘러보기
               </Link>

@@ -55,7 +55,7 @@ export const ExperienceSelectModal = ({
         />
         {/* 테이블 */}
         <div className="flex-1 overflow-hidden px-6 pb-4">
-          <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
+          <div className="rounded-xxs border-neutral-80 h-full overflow-auto border">
             {data.isLoading ? (
               <div className="flex h-full items-center justify-center">
                 <LoadingContainer text="경험정리를 불러오는 중입니다.." />
@@ -104,10 +104,10 @@ export const ExperienceSelectModal = ({
             <button
               onClick={onCompleteClick}
               disabled={selection.selectedCount < 3}
-              className={`rounded-xs px-3 py-2.5 text-xsmall14 ${
+              className={`rounded-xs text-xsmall14 px-3 py-2.5 ${
                 selection.selectedCount >= 3
                   ? 'bg-primary text-white'
-                  : 'cursor-not-allowed bg-neutral-70 text-white'
+                  : 'bg-neutral-70 cursor-not-allowed text-white'
               }`}
             >
               {selection.selectedCount}개 선택 완료

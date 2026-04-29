@@ -93,15 +93,22 @@ const ChallengePeriodBar = ({
               </g>
               <defs>
                 <clipPath id="clip">
-                  <rect x="3" y="2" width="18" height="16" rx="0" fill="white" />
+                  <rect
+                    x="3"
+                    y="2"
+                    width="18"
+                    height="16"
+                    rx="0"
+                    fill="white"
+                  />
                 </clipPath>
               </defs>
             </svg>
-            <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
+            <span className="text-xxsmall12 text-neutral-10 whitespace-nowrap font-medium tracking-[-0.3px]">
               [ {bar.th}회차 ]
             </span>
           </div>
-          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
+          <div className="text-xxsmall12 flex shrink-0 items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
             <span className="text-[#f64e39]">시작 전</span>
             <span className="text-[#f64e39]">{bar.waitingCount}</span>
             <span className="text-neutral-10">·</span>
@@ -132,13 +139,15 @@ const ChallengePeriodBar = ({
                 className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
               >
                 <span
-                  className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+                  className={`text-xxsmall12 min-w-0 truncate rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white ${color.badge}`}
                 >
                   {bar.challengeTitle}
                 </span>
-                <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
+                <div className="text-xxsmall12 flex shrink-0 items-center gap-1 whitespace-nowrap px-1 font-medium tracking-[-0.3px]">
                   <span className="text-neutral-40">미제출</span>
-                  <span className="text-neutral-40">{bar.notSubmittedCount}</span>
+                  <span className="text-neutral-40">
+                    {bar.notSubmittedCount}
+                  </span>
                   <span className="text-neutral-10">·</span>
                   <span className="text-neutral-10">제출</span>
                   <span className="text-neutral-10">{bar.submittedCount}</span>
@@ -152,7 +161,7 @@ const ChallengePeriodBar = ({
               className={`flex min-w-0 items-center justify-center px-1 py-2 ${segmentBg(segment, segmentColSpans, color)}`}
             >
               <span
-                className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}
+                className={`text-xxsmall12 truncate whitespace-nowrap font-medium tracking-[-0.3px] ${color.text}`}
               >
                 {segment.label}
               </span>

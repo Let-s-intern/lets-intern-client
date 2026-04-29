@@ -6,17 +6,17 @@ type Props = {
 
 export default function JobCategoryCard({ job }: Props) {
   return (
-    <div className="flex flex-col gap-2.5 rounded-xs border border-neutral-80 bg-white p-3.5 md:gap-3 md:p-4">
+    <div className="rounded-xs border-neutral-80 flex flex-col gap-2.5 border bg-white p-3.5 md:gap-3 md:p-4">
       {/* Header with dot + name */}
       <div className="flex items-center gap-2">
-        <div className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-primary-90" />
-        <span className="text-xsmall14 font-bold text-static-0 md:text-xsmall16">
+        <div className="bg-primary-90 h-2.5 w-2.5 flex-shrink-0 rounded-full" />
+        <span className="text-xsmall14 text-static-0 md:text-xsmall16 font-bold">
           {job.name}
         </span>
       </div>
 
       {/* Description */}
-      <p className="flex-1 whitespace-pre-line text-xxsmall12 leading-snug text-neutral-40 md:text-xsmall14">
+      <p className="text-xxsmall12 text-neutral-40 md:text-xsmall14 flex-1 whitespace-pre-line leading-snug">
         {job.description}
       </p>
 
@@ -25,7 +25,7 @@ export default function JobCategoryCard({ job }: Props) {
         href={job.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="self-start text-xxsmall12 font-medium text-primary-90 transition-colors hover:text-primary-80 md:text-xsmall14"
+        className="text-xxsmall12 text-primary-90 hover:text-primary-80 md:text-xsmall14 self-start font-medium transition-colors"
       >
         참여하기 →
       </a>

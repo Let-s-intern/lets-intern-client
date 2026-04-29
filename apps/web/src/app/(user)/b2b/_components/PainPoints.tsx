@@ -50,7 +50,7 @@ export default function PainPoints() {
             transition={{ duration: 0.5, delay: i * 0.06 }}
           >
             <span
-              className={`mt-1 flex h-5 w-5 items-center justify-center rounded-full text-xsmall14 font-semibold text-neutral-0 md:h-[34px] md:w-[34px] md:text-small20 ${
+              className={`text-xsmall14 text-neutral-0 md:text-small20 mt-1 flex h-5 w-5 items-center justify-center rounded-full font-semibold md:h-[34px] md:w-[34px] ${
                 i === 0
                   ? 'bg-primary-20'
                   : i === 1
@@ -61,10 +61,10 @@ export default function PainPoints() {
               {i + 1}
             </span>
             <div>
-              <p className="text-small18 font-semibold text-neutral-0 md:text-[26px]">
+              <p className="text-small18 text-neutral-0 font-semibold md:text-[26px]">
                 {it.title}
               </p>
-              <p className="mt-1 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:mt-3 md:text-small20 md:leading-[1.6]">
+              <p className="text-xsmall14 text-neutral-40 md:text-small20 mt-1 break-keep leading-[22px] md:mt-3 md:leading-[1.6]">
                 {it.desc}
               </p>
             </div>

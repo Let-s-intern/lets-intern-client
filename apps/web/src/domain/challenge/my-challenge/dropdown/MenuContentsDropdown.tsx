@@ -16,18 +16,18 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
   return (
     <div className="relative">
       <button
-        className="rounded w-full border border-[#BCBCBC] px-4 py-2 font-medium"
+        className="w-full rounded border border-[#BCBCBC] px-4 py-2 font-medium"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         {isOtMission ? 'OT 자료' : '학습 콘텐츠 확인하기'}
       </button>
       {isMenuShown && (
-        <ul className="rounded absolute -bottom-1 w-full translate-y-full border border-[#BCBCBC] bg-white">
+        <ul className="absolute -bottom-1 w-full translate-y-full rounded border border-[#BCBCBC] bg-white">
           {essentialContentsLink && (
             <li>
               <HybridLink
                 href={essentialContentsLink}
-                className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
+                className="text-primary flex items-center justify-between px-5 py-3 text-center duration-200 hover:bg-gray-100"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -43,7 +43,7 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
               <li key={item.id}>
                 <HybridLink
                   href={item.link}
-                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                  className="text-primary flex w-full items-center justify-between px-4 py-3 hover:bg-gray-200"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

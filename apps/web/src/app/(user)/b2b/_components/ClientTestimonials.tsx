@@ -71,7 +71,7 @@ export default function ClientTestimonials() {
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}
         transition={{ duration: 0.6 }}
       >
-        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
+        <div className="scrollbar-hide relative overflow-x-auto overflow-y-visible pb-3">
           <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))] md:auto-cols-[360px]">
             {quotes.map((q, i) => (
               <motion.blockquote
@@ -94,12 +94,12 @@ export default function ClientTestimonials() {
                 <div className="px-5 pb-5 pt-0">
                   <span
                     aria-hidden
-                    className="absolute left-4 top-2 text-[44px] leading-none text-primary-20"
+                    className="text-primary-20 absolute left-4 top-2 text-[44px] leading-none"
                   ></span>
-                  <h3 className="mb-2 break-keep text-xsmall16 font-semibold text-neutral-800 md:text-small18">
+                  <h3 className="text-xsmall16 md:text-small18 mb-2 break-keep font-semibold text-neutral-800">
                     {q.title}
                   </h3>
-                  <p className="mb-4 break-keep text-xsmall14 text-neutral-600 md:text-xsmall16">
+                  <p className="text-xsmall14 md:text-xsmall16 mb-4 break-keep text-neutral-600">
                     {q.content}
                   </p>
                   <div className="flex items-center gap-3">

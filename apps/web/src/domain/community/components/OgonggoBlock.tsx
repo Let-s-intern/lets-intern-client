@@ -6,17 +6,17 @@ export default function OgonggoBlock() {
   return (
     <div className="rounded-sm bg-[#F7F9FF] p-5 md:p-6">
       {/* Header */}
-      <div className="mb-4 flex flex-col gap-3 border-b border-neutral-80 pb-4 md:mb-5 md:flex-row md:items-start md:justify-between md:pb-5">
+      <div className="border-neutral-80 mb-4 flex flex-col gap-3 border-b pb-4 md:mb-5 md:flex-row md:items-start md:justify-between md:pb-5">
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <h3 className="text-xsmall16 font-bold text-static-0 md:text-small18">
+            <h3 className="text-xsmall16 text-static-0 md:text-small18 font-bold">
               오공고 톡방
             </h3>
-            <span className="rounded-xxs bg-primary-5 px-2 py-0.5 text-xxsmall12 font-medium text-primary-90">
+            <span className="rounded-xxs bg-primary-5 text-xxsmall12 text-primary-90 px-2 py-0.5 font-medium">
               채용공고 큐레이션
             </span>
           </div>
-          <p className="break-keep text-xsmall14 leading-relaxed text-neutral-40">
+          <p className="text-xsmall14 text-neutral-40 break-keep leading-relaxed">
             문과 취준생을 위해 렛츠커리어가 운영하는 채용공고 큐레이션
             채널이에요.
             <br className="hidden md:inline" />
@@ -27,22 +27,22 @@ export default function OgonggoBlock() {
           href={OGONGGO_SITE_LINK}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-fit flex-shrink-0 whitespace-nowrap rounded-xs bg-primary-90 px-4 py-2 text-xxsmall12 font-medium text-white shadow-sm transition-colors hover:bg-primary-80 md:text-xsmall14"
+          className="rounded-xs bg-primary-90 text-xxsmall12 hover:bg-primary-80 md:text-xsmall14 w-fit flex-shrink-0 whitespace-nowrap px-4 py-2 font-medium text-white shadow-sm transition-colors"
         >
           오공고 사이트 →
         </a>
       </div>
 
       {/* Free resources banner */}
-      <div className="mb-4 flex items-start gap-2.5 rounded-xs border border-primary-20 bg-white px-4 py-3 md:mb-5">
+      <div className="rounded-xs border-primary-20 mb-4 flex items-start gap-2.5 border bg-white px-4 py-3 md:mb-5">
         <span
-          className="flex-shrink-0 text-xsmall16"
+          className="text-xsmall16 flex-shrink-0"
           role="img"
           aria-label="gift"
         >
           🎁
         </span>
-        <p className="text-xsmall14 leading-relaxed text-neutral-40">
+        <p className="text-xsmall14 text-neutral-40 leading-relaxed">
           <strong className="text-static-0">
             무료 취업 자료도 받아가세요.
           </strong>{' '}
@@ -59,8 +59,8 @@ export default function OgonggoBlock() {
       </div>
 
       {/* Chat preview screenshots */}
-      <div className="border-t border-neutral-80 pt-5 md:pt-6">
-        <p className="mb-3 text-xsmall14 font-bold text-static-0 md:mb-4 md:text-xsmall16">
+      <div className="border-neutral-80 border-t pt-5 md:pt-6">
+        <p className="text-xsmall14 text-static-0 md:text-xsmall16 mb-3 font-bold md:mb-4">
           톡방에서 매일 이런 정보가 공유돼요
         </p>
         <ChatPreview />

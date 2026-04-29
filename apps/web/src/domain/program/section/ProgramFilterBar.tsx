@@ -132,12 +132,12 @@ const ProgramFilterBar = ({
               src="/icons/redo.svg"
               alt="필터 초기화 아이콘"
             />
-            <span className="text-0.75-medium w-9 text-neutral-40">초기화</span>
+            <span className="text-0.75-medium text-neutral-40 w-9">초기화</span>
           </div>
         )}
       </div>
       {hasActiveFilters && (
-        <div className="mx-auto flex h-fit w-full items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
+        <div className="md:bg-neutral-90 mx-auto flex h-fit w-full items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:px-5 md:py-2">
           {/* 초기화 버튼 */}
           <div
             onClick={onResetAll}

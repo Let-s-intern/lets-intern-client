@@ -18,7 +18,7 @@ const MoreButton = ({
   return (
     <button
       type="button"
-      className="dashboard_moreprogramrec hidden text-xsmall14 font-medium text-neutral-45 md:inline"
+      className="dashboard_moreprogramrec text-xsmall14 text-neutral-45 hidden font-medium md:inline"
       onClick={onClick}
     >
       더보기
@@ -39,7 +39,7 @@ const MobileMoreButton = ({
     <div className="px-5">
       <BaseButton
         variant="outlined"
-        className="w-full rounded-xxs border bg-transparent md:hidden"
+        className="rounded-xxs w-full border bg-transparent md:hidden"
         onClick={onClick}
       >
         프로그램 더보기
@@ -99,7 +99,7 @@ function RecommendedProgramSection() {
     <>
       <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
         <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
-          <h2 className="text-xsmall16 font-semibold md:text-small18">
+          <h2 className="text-xsmall16 md:text-small18 font-semibold">
             챌린지 참여자들이 선택한 <br className="md:hidden" />
             다른 프로그램도 확인해보세요{' '}
             <span role="img" aria-label="돋보기">

@@ -16,7 +16,7 @@ const DailyMissionReviewSection = ({
   return (
     <>
       <div className="mt-6 flex w-full flex-col gap-y-5">
-        <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        <h3 className="text-xsmall16 text-neutral-0 font-semibold">
           미션 소감
         </h3>
         <div
@@ -27,7 +27,7 @@ const DailyMissionReviewSection = ({
         >
           <textarea
             className={clsx(
-              'h-20 flex-1 resize-none text-xsmall14 outline-none disabled:bg-neutral-95',
+              'text-xsmall14 disabled:bg-neutral-95 h-20 flex-1 resize-none outline-none',
               {
                 'text-neutral-400': !isEditing,
               },
@@ -38,7 +38,7 @@ const DailyMissionReviewSection = ({
             disabled={!isEditing}
             maxLength={500}
           />
-          <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
+          <span className="text-xxsmall12 text-neutral-0/35 w-full text-right">
             {review.length}/500
           </span>
         </div>

@@ -17,7 +17,7 @@ const Heading3 = ({
   return (
     <h3
       className={twMerge(
-        'text-xsmall16 font-semibold text-neutral-0',
+        'text-xsmall16 text-neutral-0 font-semibold',
         className,
       )}
     >
@@ -65,10 +65,10 @@ const MissionGuideTalentPoolSection = ({
         />
 
         {/* 미션 가이드 섹션 */}
-        <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
+        <section className="rounded-xs border-neutral-80 flex flex-col gap-5 border px-4 py-4">
           {/* 인트로 섹션 */}
           <section>
-            <p className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+            <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 whitespace-pre-wrap font-medium">
               안녕하세요, 렛츠커리어입니다.
               <br />
               챌린지를 끝까지 함께해 주신 여러분께 특별한 기회를 드려요! 🎉
@@ -83,14 +83,14 @@ const MissionGuideTalentPoolSection = ({
           </section>
 
           {/* 분리선 섹션 */}
-          <div className="h-px bg-neutral-80" />
+          <div className="bg-neutral-80 h-px" />
 
           {/* 참여 방법 섹션 */}
           <section className="flex flex-col gap-3">
             <Heading3>🤔 인재풀이 뭔가요?</Heading3>
-            <div className="flex flex-col gap-2 rounded-xxs bg-neutral-95 p-3">
+            <div className="rounded-xxs bg-neutral-95 flex flex-col gap-2 p-3">
               <div className="flex items-start gap-2">
-                <ol className="list-inside list-decimal whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+                <ol className="text-xsmall14 text-neutral-0 md:text-xsmall16 list-inside list-decimal whitespace-pre-wrap font-medium">
                   <li>
                     렛츠커리어에서 IT 스타트업 채용연계를 위해 관리하는
                     인재풀입니다.
@@ -111,9 +111,9 @@ const MissionGuideTalentPoolSection = ({
           {/* 후기 작성 가이드라인 섹션 */}
           <section className="flex flex-col gap-4">
             <Heading3>✨ 참여 혜택</Heading3>
-            <div className="flex flex-col gap-2 rounded-xxs bg-primary-5 p-3">
+            <div className="rounded-xxs bg-primary-5 flex flex-col gap-2 p-3">
               <div className="flex items-start gap-3">
-                <ol className="flex list-inside flex-col gap-2.5 text-xsmall14 font-medium leading-5 text-neutral-0 md:text-xsmall16">
+                <ol className="text-xsmall14 text-neutral-0 md:text-xsmall16 flex list-inside flex-col gap-2.5 font-medium leading-5">
                   <li>
                     1️⃣ 검증된 스타트업 네트워크
                     <div className="ml-5">

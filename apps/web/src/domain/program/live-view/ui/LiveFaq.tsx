@@ -21,7 +21,7 @@ function LiveFaq({ faqData }: LiveFaqProps) {
       id={LIVE_FAQ_ID}
       className="live-faq flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:px-10 md:py-40 lg:px-0"
     >
-      <SuperTitle className="mb-6 text-primary md:mb-12">FAQ</SuperTitle>
+      <SuperTitle className="text-primary mb-6 md:mb-12">FAQ</SuperTitle>
       <SuperTitle className="text-primary">{superTitle}</SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 

@@ -236,22 +236,22 @@ const MobileApplySection = ({
   return (
     <div
       className={twMerge(
-        'fixed bottom-0 left-0 right-0 z-30 flex max-h-[80%] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
+        'bg-static-100 shadow-05 scrollbar-hide fixed bottom-0 left-0 right-0 z-30 flex max-h-[80%] w-screen flex-col items-center overflow-hidden rounded-t-lg',
       )}
     >
-      <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+      <div className="bg-static-100 sticky top-0 flex w-full justify-center py-3">
         <div
           onClick={() =>
             drawerDispatch({
               type: 'close',
             })
           }
-          className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+          className="bg-neutral-80 h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full"
         />
       </div>
       <section
         className={twMerge(
-          'h-full w-full overflow-y-auto px-5 pb-3 scrollbar-hide',
+          'scrollbar-hide h-full w-full overflow-y-auto px-5 pb-3',
         )}
         ref={scrollRef}
       >

@@ -12,7 +12,7 @@ export const Badge = forwardRef<HTMLSpanElement, IBadgeProps>(
       <span
         ref={ref}
         className={twMerge(
-          'inline-flex h-5 items-center justify-center rounded-xs border border-transparent px-2.5 text-xs font-semibold',
+          'rounded-xs inline-flex h-5 items-center justify-center border border-transparent px-2.5 text-xs font-semibold',
           status === 'success' &&
             'border-secondary bg-secondary-10 text-secondary',
           status === 'warning' &&

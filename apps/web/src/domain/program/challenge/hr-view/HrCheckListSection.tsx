@@ -49,7 +49,7 @@ function Badge({
 }) {
   return (
     <span
-      className="absolute -top-5 left-4 z-10 -rotate-12 rounded-sm bg-[#FF7F27] px-4 py-1 text-xsmall14 font-semibold text-white md:left-6 md:px-4 md:text-small20"
+      className="text-xsmall14 md:text-small20 absolute -top-5 left-4 z-10 -rotate-12 rounded-sm bg-[#FF7F27] px-4 py-1 font-semibold text-white md:left-6 md:px-4"
       style={style}
     >
       {children}
@@ -102,7 +102,7 @@ const HrCheckListSection: React.FC = () => {
               className="flex w-full flex-col gap-6 md:items-center md:gap-10"
             >
               <Box
-                className={`text-small16 relative flex w-full max-w-[860px] flex-col py-6 font-semibold md:p-10 md:text-medium24 ${
+                className={`text-small16 md:text-medium24 relative flex w-full max-w-[860px] flex-col py-6 font-semibold md:p-10 ${
                   index === 0 ? 'justify-center gap-1 md:flex-row' : ' '
                 }`}
                 style={styles.boxStyle}
@@ -125,7 +125,7 @@ const HrCheckListSection: React.FC = () => {
                     {group.map((ele) => (
                       <span
                         key={ele}
-                        className="shrink-0 text-xsmall14 text-neutral-35 xs:text-xsmall14 md:text-small20"
+                        className="text-xsmall14 text-neutral-35 xs:text-xsmall14 md:text-small20 shrink-0"
                       >
                         {ele}
                       </span>

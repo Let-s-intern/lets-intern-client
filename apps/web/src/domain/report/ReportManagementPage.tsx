@@ -147,10 +147,10 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
       <Component
         ref={ref}
         className={twMerge(
-          'flex h-10 w-full items-center justify-center rounded-sm bg-primary-light text-xsmall14 font-semibold text-white shadow-sm outline-none outline-2 outline-offset-2 transition-all hover:bg-primary focus:outline focus:outline-primary',
+          'bg-primary-light text-xsmall14 hover:bg-primary focus:outline-primary flex h-10 w-full items-center justify-center rounded-sm font-semibold text-white shadow-sm outline-none outline-2 outline-offset-2 transition-all focus:outline',
 
           disabled &&
-            'cursor-not-allowed bg-neutral-95 text-neutral-60 hover:bg-neutral-95 focus:outline-none',
+            'bg-neutral-95 text-neutral-60 hover:bg-neutral-95 cursor-not-allowed focus:outline-none',
           className,
         )}
         disabled={disabled}
@@ -185,8 +185,8 @@ const FilterNavLink = ({
     <button
       onClick={handleClick}
       className={twMerge(
-        'inline-flex h-9 items-center justify-center px-2 text-xsmall14 text-neutral-0/45 transition hover:text-neutral-0/85 active:text-neutral-0/85',
-        isActive && 'font-medium text-neutral-0',
+        'text-xsmall14 text-neutral-0/45 hover:text-neutral-0/85 active:text-neutral-0/85 inline-flex h-9 items-center justify-center px-2 transition',
+        isActive && 'text-neutral-0 font-medium',
       )}
     >
       {filter.label}
@@ -314,7 +314,7 @@ const ReportManagementPage = () => {
   return (
     <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
       <header>
-        <h1 className="py-6 text-small20 font-semibold">MY 진단서 보기</h1>
+        <h1 className="text-small20 py-6 font-semibold">MY 진단서 보기</h1>
         <div className="mb-3 flex items-center gap-2">
           <h2 className="text-xsmall16 font-bold">서류 피드백 리포트</h2>
           <Tooltip className="text-xxsmall12 font-normal">
@@ -348,7 +348,7 @@ const ReportManagementPage = () => {
         {filteredApplications?.map((item) => {
           return (
             <div
-              className="flex flex-col rounded-md border border-neutral-80 p-4"
+              className="border-neutral-80 flex flex-col rounded-md border p-4"
               key={item.applicationId}
               data-application-id={item.applicationId}
               data-report-id={item.reportId}
@@ -372,18 +372,18 @@ const ReportManagementPage = () => {
                 <table>
                   <tbody>
                     <tr>
-                      <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                      <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
                         진단유형
                       </td>
-                      <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                      <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
                         {convertReportTypeToDisplayName(item.reportType)}
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                      <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
                         신청일자
                       </td>
-                      <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                      <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
                         {item.applicationTime.format('YYYY.MM.DD HH:mm')}
                       </td>
                     </tr>
@@ -395,7 +395,7 @@ const ReportManagementPage = () => {
                       {item.applyUrl ? (
                         <button
                           onClick={() => handleDownloadOrOpen(item.applyUrl)}
-                          className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
+                          className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
                         >
                           <DocIcon />
                           <span>제출서류</span>
@@ -405,7 +405,7 @@ const ReportManagementPage = () => {
                       {item.recruitmentUrl ? (
                         <button
                           onClick={() => handleDownloadOrOpen(item.applyUrl)}
-                          className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
+                          className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
                         >
                           <CompanyBagIcon />
                           <span>채용공고</span>
@@ -450,10 +450,10 @@ const ReportManagementPage = () => {
 
               {item.feedbackStatus && !item.feedbackIsCanceled ? (
                 <>
-                  <hr className="my-4 border-dashed border-neutral-80" />
+                  <hr className="border-neutral-80 my-4 border-dashed" />
                   <div>
                     <header>
-                      <h3 className="mb-3 text-xsmall14 font-medium text-primary-dark">
+                      <h3 className="text-xsmall14 text-primary-dark mb-3 font-medium">
                         1:1 온라인 상담 현황
                       </h3>
                       <div className="flex items-center gap-2">
@@ -486,10 +486,10 @@ const ReportManagementPage = () => {
                           {item.feedbackStatus === 'PENDING' ||
                           item.feedbackStatus === 'APPLIED' ? (
                             <tr>
-                              <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                              <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
                                 희망일자
                               </td>
-                              <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              <td className="text-xxsmall12 py-0.5 pl-4 font-medium leading-5 text-neutral-50">
                                 {item.desiredDate1 ? (
                                   <p>
                                     (1순위){' '}
@@ -522,12 +522,12 @@ const ReportManagementPage = () => {
                           {item.feedbackStatus === 'CONFIRMED' ||
                           item.feedbackStatus === 'COMPLETED' ? (
                             <tr>
-                              <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                              <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
                                 {item.feedbackStatus === 'CONFIRMED'
                                   ? '확정일자'
                                   : '완료일자'}
                               </td>
-                              <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-primary">
+                              <td className="text-xxsmall12 text-primary py-0.5 pl-4 font-medium leading-5">
                                 {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
                               </td>
                             </tr>
@@ -578,7 +578,7 @@ const ReportManagementPage = () => {
       <div className="my-3">
         <button
           onClick={onClickAddReport}
-          className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
+          className="add_button_click border-primary text-primary-dark hover:border-primary-light flex h-12 w-full items-center justify-center rounded-md border-2 bg-neutral-100 font-medium transition hover:bg-white"
         >
           추가 신청하기
         </button>

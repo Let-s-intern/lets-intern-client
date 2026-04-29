@@ -76,7 +76,12 @@ function computeWeeklySummary(bars: BarLike[], weekStartDate: Date) {
     }
   }
 
-  return { totalCount: total, todayDueCount: todayDue, incompleteCount: incomplete, completedCount: completed };
+  return {
+    totalCount: total,
+    todayDueCount: todayDue,
+    incompleteCount: incomplete,
+    completedCount: completed,
+  };
 }
 
 describe('useWeeklySummary (pure logic)', () => {

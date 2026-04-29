@@ -28,10 +28,10 @@ export default function LibraryTabNav({ tabs }: LibraryTabNavProps) {
             key={tab.href}
             href={fullHref}
             className={twMerge(
-              'border-b-[1.6px] pb-3 font-semibold md:text-small20',
+              'md:text-small20 border-b-[1.6px] pb-3 font-semibold',
               isActive
                 ? 'border-neutral-10 text-neutral-10'
-                : 'border-transparent text-neutral-45',
+                : 'text-neutral-45 border-transparent',
             )}
           >
             {tab.label}

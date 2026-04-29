@@ -27,7 +27,9 @@ const Banner = () => {
     };
   }, []);
 
-  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({ type: 'PROGRAM' });
+  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({
+    type: 'PROGRAM',
+  });
 
   useEffect(() => {
     if (!isPlay) return;
@@ -53,7 +55,7 @@ const Banner = () => {
   if (isLoading || !bannerList || bannerList.length === 0) return null;
 
   return (
-    <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
+    <div className="bg-static-0 text-static-100 relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm md:h-44 lg:h-56 xl:h-72">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
@@ -64,7 +66,9 @@ const Banner = () => {
             key={index}
             className="program_banner w-full shrink-0"
             target={
-              banner.landingUrl?.includes(window.location.origin) ? '_self' : '_blank'
+              banner.landingUrl?.includes(window.location.origin)
+                ? '_self'
+                : '_blank'
             }
           >
             <img
@@ -85,9 +89,7 @@ const Banner = () => {
         />
         <span className="text-0.75-medium md:text-0.875-medium">
           {bannerIndex + 1 < 10 ? `0${bannerIndex + 1}` : bannerIndex + 1} /{' '}
-          {bannerList.length < 10
-            ? `0${bannerList.length}`
-            : bannerList.length}
+          {bannerList.length < 10 ? `0${bannerList.length}` : bannerList.length}
         </span>
       </div>
     </div>

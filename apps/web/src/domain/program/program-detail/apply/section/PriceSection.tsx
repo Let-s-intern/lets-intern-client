@@ -48,16 +48,16 @@ const PriceSection = ({
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
     <div className="flex flex-col">
-      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+      <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
         <span>결제상품</span>
         <span>{payInfo.price.toLocaleString()}원</span>
       </div>
-      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+      <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
         <span>{Math.round(discountInfo.discountPer)}% 할인</span>
         <span>-{payInfo.discount.toLocaleString()}원</span>
       </div>
       {showCouponDiscount && (
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        <div className="text-primary flex h-10 items-center justify-between px-3">
           <span>쿠폰할인</span>
           <span className="font-bold">
             -{discountInfo.couponDiscount.toLocaleString()}원

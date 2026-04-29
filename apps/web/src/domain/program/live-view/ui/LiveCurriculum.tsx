@@ -12,10 +12,10 @@ interface LiveCurriculumProps {
 function LiveCurriculum({ curriculum, curriculumTitle }: LiveCurriculumProps) {
   return (
     <section className="py-20 md:pb-[130px]">
-      <SuperTitle className="mb-6 font-bold text-primary md:mb-10">
+      <SuperTitle className="text-primary mb-6 font-bold md:mb-10">
         커리큘럼
       </SuperTitle>
-      <SuperTitle className="mb-1 text-primary">{superTitle}</SuperTitle>
+      <SuperTitle className="text-primary mb-1">{superTitle}</SuperTitle>
       <Heading2 className="mb-8 md:mb-20">{curriculumTitle}</Heading2>
 
       <div className="flex flex-col gap-5 md:items-center">
@@ -24,20 +24,20 @@ function LiveCurriculum({ curriculum, curriculumTitle }: LiveCurriculumProps) {
             key={item.id}
             className="w-full max-w-[900px] overflow-hidden rounded-md md:flex"
           >
-            <div className="flex items-center gap-3 bg-primary px-6 py-4 md:h-36 md:w-2/5 md:items-start md:p-6">
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-30 text-xxsmall12 font-semibold text-primary md:mt-1">
+            <div className="bg-primary flex items-center gap-3 px-6 py-4 md:h-36 md:w-2/5 md:items-start md:p-6">
+              <div className="bg-primary-30 text-xxsmall12 text-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-semibold md:mt-1">
                 {index + 1}
               </div>
               <div className="flex w-full justify-between md:h-full md:flex-col">
-                <span className="text-small18 font-semibold text-white md:text-small20">
+                <span className="text-small18 md:text-small20 font-semibold text-white">
                   {item.title}
                 </span>
-                <span className="text-xsmall16 font-medium text-white md:text-small20">
+                <span className="text-xsmall16 md:text-small20 font-medium text-white">
                   {item.time}
                 </span>
               </div>
             </div>
-            <div className="whitespace-pre-line bg-neutral-95 px-8 py-4 text-xsmall14 text-neutral-0 md:w-full md:py-6 md:text-small20">
+            <div className="bg-neutral-95 text-xsmall14 text-neutral-0 md:text-small20 whitespace-pre-line px-8 py-4 md:w-full md:py-6">
               {item.content}
             </div>
           </div>

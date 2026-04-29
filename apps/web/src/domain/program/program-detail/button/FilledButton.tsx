@@ -18,7 +18,7 @@ const FilledButton = ({
       onClick={onClick}
       disabled={disabled}
       className={twMerge(
-        'w-full rounded-md px-6 py-3 text-small18 font-medium text-neutral-100',
+        'text-small18 w-full rounded-md px-6 py-3 font-medium text-neutral-100',
         disabled ? 'bg-neutral-0/50' : 'bg-primary',
         className,
       )}

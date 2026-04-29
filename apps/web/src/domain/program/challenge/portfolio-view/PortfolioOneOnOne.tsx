@@ -45,14 +45,14 @@ const Card = ({ order, title, description, imageUrl, styles }: CardProps) => {
       <div className="flex w-full flex-col gap-y-3">
         {order && (
           <p
-            className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
+            className="text-xsmall14 lg:text-small18 flex w-fit rounded-md px-[14px] py-1.5 font-semibold text-white"
             style={{
               backgroundColor: styles.primaryColor,
             }}
           >{`Point ${order}`}</p>
         )}
         <div className="flex w-full flex-col gap-y-4">
-          <h4 className="whitespace-pre-line text-small18 font-bold lg:text-medium22">
+          <h4 className="text-small18 lg:text-medium22 whitespace-pre-line font-bold">
             {title}
           </h4>
           <div className="flex w-full flex-col md:gap-y-1">{description}</div>
@@ -245,7 +245,7 @@ const PortfolioOneOnOne = ({
             혼자 만들면서 겪었던 어려움과 고민
           </SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
-            <div className="break-keep text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+            <div className="md:text-xlarge28 break-keep text-[22px] font-bold text-black md:text-center">
               1:1 실시간 첨삭으로 <Break />
               나에게 <span className="text-[#4A76FF]">딱 맞춘 피드백</span>{' '}
               받고, 포폴 완성도 높이자!

@@ -16,7 +16,7 @@ const ChallengeScheduleSection = ({
 }: Props) => {
   return (
     <section className="flex w-full flex-col items-center bg-[#F0F4FF] px-5 pb-20 pt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]">
-      <h2 className="mb-10 text-center text-[22px] font-bold md:text-xlarge28">
+      <h2 className="md:text-xlarge28 mb-10 text-center text-[22px] font-bold">
         한눈에 보는 {challenge.title ?? ''} 일정
       </h2>
 
@@ -29,13 +29,13 @@ const ChallengeScheduleSection = ({
               alt="마케팅 챌린지 달력"
               fill
               unoptimized
-              className="absolute rounded-xxs object-cover shadow-lg md:rounded-sm"
+              className="rounded-xxs absolute object-cover shadow-lg md:rounded-sm"
             />
           </div>
         )}
         {/* 오른쪽 박스 */}
         <div className="relative grid h-full w-full grid-rows-2 gap-2 text-[#0C1737] shadow-lg">
-          <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:p-5 md:pl-4">
+          <ul className="text-xsmall14 flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 leading-[22px] md:p-5 md:pl-4">
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#3B82F6] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
@@ -74,11 +74,11 @@ const ChallengeScheduleSection = ({
               </span>
             </li>
           </ul>
-          <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:py-5 md:pl-4 md:pr-0">
+          <ul className="text-xsmall14 flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 leading-[22px] md:py-5 md:pl-4 md:pr-0">
             <li className="flex flex-col gap-1">
               <div className="text-[16px]">
                 <span className="font-bold">+ </span>
-                <span className="rounded box-border inline-block rounded-[3px] bg-[#4A76FF] px-3 py-1.5 text-[14px] font-semibold text-white md:text-[16px]">
+                <span className="box-border inline-block rounded rounded-[3px] bg-[#4A76FF] px-3 py-1.5 text-[14px] font-semibold text-white md:text-[16px]">
                   렛츠커리어 24hr 커뮤니티
                 </span>
               </div>

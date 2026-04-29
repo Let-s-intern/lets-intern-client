@@ -30,11 +30,11 @@ const QuestionStep = ({
       <div className="hidden md:block">
         <div className="flex w-full flex-col gap-y-6">
           <div className="flex flex-col gap-y-2 text-center">
-            <h3 className="text-lg font-bold text-neutral-0">
+            <h3 className="text-neutral-0 text-lg font-bold">
               {question.title}
             </h3>
             {question.helper && (
-              <p className="text-small16 font-medium text-neutral-40">
+              <p className="text-small16 text-neutral-40 font-medium">
                 {question.helper}
               </p>
             )}

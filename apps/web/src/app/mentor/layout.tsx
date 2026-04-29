@@ -52,7 +52,7 @@ export default function MentorLayout({
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="p-1 text-neutral-10"
+                className="text-neutral-10 p-1"
                 aria-label="메뉴 열기"
               >
                 <svg

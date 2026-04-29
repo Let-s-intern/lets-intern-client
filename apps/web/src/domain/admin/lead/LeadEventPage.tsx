@@ -264,7 +264,7 @@ const LeadEventPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 이벤트 관리</Heading>
       <form
-        className="rounded mb-4 flex flex-col gap-4 bg-neutral-90 p-4"
+        className="bg-neutral-90 mb-4 flex flex-col gap-4 rounded p-4"
         onSubmit={handleFilterSubmit}
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -24,7 +24,7 @@ const ProgramCard = ({
         <h2 className="font-bold text-neutral-100">{title}</h2>
         <img src="/icons/Caret_Circle_Right_Outline.svg" alt="이동 아이콘" />
       </div>
-      <p className="flex flex-col whitespace-pre-line text-xsmall14 font-medium text-static-100/90">
+      <p className="text-xsmall14 text-static-100/90 flex flex-col whitespace-pre-line font-medium">
         {description}
       </p>
       {children}

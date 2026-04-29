@@ -41,7 +41,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <nav className="flex h-screen w-[296px] flex-col justify-between border-r border-neutral-80 bg-white p-4">
+        <nav className="border-neutral-80 flex h-screen w-[296px] flex-col justify-between border-r bg-white p-4">
           <div className="flex flex-col">
             <div className="flex h-[70px] items-center justify-between px-3 py-2.5">
               <Link href="/mentor" onClick={onClose}>
@@ -57,15 +57,10 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-1 text-neutral-40 lg:hidden"
+                  className="text-neutral-40 p-1 lg:hidden"
                   aria-label="메뉴 닫기"
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                  >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path
                       d="M5 5L15 15M15 5L5 15"
                       stroke="currentColor"
@@ -88,10 +83,10 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                     <Link
                       href={item.url}
                       onClick={onClose}
-                      className={`block rounded px-3 py-2.5 text-xsmall16 tracking-[-0.6px] ${
+                      className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
                         isActive
-                          ? 'bg-primary-5 font-semibold text-primary'
-                          : 'font-medium text-neutral-40'
+                          ? 'bg-primary-5 text-primary font-semibold'
+                          : 'text-neutral-40 font-medium'
                       }`}
                     >
                       {item.name}
@@ -139,7 +134,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <span className="text-xsmall16 font-medium tracking-[-0.6px] text-neutral-40">
+              <span className="text-xsmall16 text-neutral-40 font-medium tracking-[-0.6px]">
                 홈페이지로 이동
               </span>
             </Link>

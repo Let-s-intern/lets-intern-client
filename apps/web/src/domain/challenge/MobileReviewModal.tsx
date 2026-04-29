@@ -245,7 +245,7 @@ function MobileReviewModal({ isOpen, onClose }: Props) {
 
         <div className="flex flex-col gap-4">
           <BaseButton
-            className="w-full text-small18 font-medium"
+            className="text-small18 w-full font-medium"
             onClick={handleSubmit}
             disabled={isDisabled}
           >
@@ -253,7 +253,7 @@ function MobileReviewModal({ isOpen, onClose }: Props) {
           </BaseButton>
           <button
             type="button"
-            className="cursor-pointer text-small18 font-medium text-neutral-50 hover:underline"
+            className="text-small18 cursor-pointer font-medium text-neutral-50 hover:underline"
             onClick={() => {
               if (onClose) {
                 onClose();

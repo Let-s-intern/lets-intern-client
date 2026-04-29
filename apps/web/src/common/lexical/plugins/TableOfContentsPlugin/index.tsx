@@ -5,15 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {TableOfContentsEntry} from '@lexical/react/LexicalTableOfContentsPlugin';
-import type {HeadingTagType} from '@lexical/rich-text';
-import type {NodeKey} from 'lexical';
+import type { TableOfContentsEntry } from '@lexical/react/LexicalTableOfContentsPlugin';
+import type { HeadingTagType } from '@lexical/rich-text';
+import type { NodeKey } from 'lexical';
 
 import './index.css';
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {TableOfContentsPlugin as LexicalTableOfContentsPlugin} from '@lexical/react/LexicalTableOfContentsPlugin';
-import {useEffect, useRef, useState} from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
+import { useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 
 const MARGIN_ABOVE_EDITOR = 624;
@@ -147,7 +147,8 @@ function TableOfContentsList({
                   className="first-heading"
                   onClick={() => scrollToNode(key, index)}
                   role="button"
-                  tabIndex={0}>
+                  tabIndex={0}
+                >
                   {('' + text).length > 20
                     ? text.substring(0, 20) + '...'
                     : text}
@@ -161,17 +162,19 @@ function TableOfContentsList({
                 className={`normal-heading-wrapper ${
                   selectedKey === key ? 'selected-heading-wrapper' : ''
                 }`}
-                key={key}>
+                key={key}
+              >
                 <div
                   onClick={() => scrollToNode(key, index)}
                   role="button"
                   className={indent(tag)}
-                  tabIndex={0}>
+                  tabIndex={0}
+                >
                   <li
                     className={`normal-heading ${
                       selectedKey === key ? 'selected-heading' : ''
-                    }
-                    `}>
+                    } `}
+                  >
                     {('' + text).length > 27
                       ? text.substring(0, 27) + '...'
                       : text}

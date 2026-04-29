@@ -48,7 +48,7 @@ const cards = [
 
 const Badge = ({ text }: { text: string }) => {
   return (
-    <div className="bg-[#4A76FF] px-2 py-1 text-small18 font-bold text-white md:px-3 md:text-xlarge30">
+    <div className="text-small18 md:text-xlarge30 bg-[#4A76FF] px-2 py-1 font-bold text-white md:px-3">
       {text}
     </div>
   );
@@ -70,11 +70,11 @@ const Card = ({
   alt: string;
 }) => {
   return (
-    <div className="relative flex w-full min-w-60 flex-1 flex-col items-center justify-center gap-3 rounded-xs bg-white p-4 md:rounded-sm md:px-6 md:py-11">
-      <div className="absolute -top-2.5 left-5 -rotate-12 rounded-xxs bg-[#2CB2FF] px-3 py-1.5 text-xsmall16 font-semibold text-white md:-top-7 md:px-4 md:py-2 md:text-small18">
+    <div className="rounded-xs relative flex w-full min-w-60 flex-1 flex-col items-center justify-center gap-3 bg-white p-4 md:rounded-sm md:px-6 md:py-11">
+      <div className="rounded-xxs text-xsmall16 md:text-small18 absolute -top-2.5 left-5 -rotate-12 bg-[#2CB2FF] px-3 py-1.5 font-semibold text-white md:-top-7 md:px-4 md:py-2">
         Point {index}
       </div>
-      <div className="flex h-fit w-full items-center justify-center rounded-[4.5px] border border-neutral-80 bg-neutral-90 p-3">
+      <div className="border-neutral-80 bg-neutral-90 flex h-fit w-full items-center justify-center rounded-[4.5px] border p-3">
         <picture className="flex justify-center">
           <source
             srcSet={`/images/${mobileImg}`}
@@ -87,8 +87,8 @@ const Card = ({
           />
         </picture>
       </div>
-      <div className="mt-0.5 flex flex-col items-center justify-center gap-1.5 text-neutral-0 md:mt-6 md:gap-2">
-        <div className="text-small18 font-bold md:text-medium24">{title}</div>
+      <div className="text-neutral-0 mt-0.5 flex flex-col items-center justify-center gap-1.5 md:mt-6 md:gap-2">
+        <div className="text-small18 md:text-medium24 font-bold">{title}</div>
         <div className="text-xsmall14 md:text-xsmall16">{description}</div>
       </div>
     </div>

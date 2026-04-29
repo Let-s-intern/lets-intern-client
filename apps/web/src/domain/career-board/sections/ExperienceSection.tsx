@@ -91,8 +91,8 @@ const ExperienceBody = ({
           지금까지 정리한 경험
         </span>
         <div className="flex items-baseline gap-1">
-          <p className="text-2xl text-neutral-0">{experienceCount}</p>
-          <p className="text-xl text-neutral-0">개</p>
+          <p className="text-neutral-0 text-2xl">{experienceCount}</p>
+          <p className="text-neutral-0 text-xl">개</p>
         </div>
       </div>
       <div className="border-b border-[#EFEFEF]" />
@@ -106,7 +106,7 @@ const ExperienceBody = ({
           {coreCompetencies.map((competency, index) => (
             <span
               key={index}
-              className="rounded-xxs bg-primary-10 px-2 py-1 text-xxsmall12 font-normal text-neutral-35"
+              className="rounded-xxs bg-primary-10 text-xxsmall12 text-neutral-35 px-2 py-1 font-normal"
             >
               {competency}
             </span>

@@ -235,7 +235,8 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '직무 역량/지원동기 핵심 정리',
           suggestedPlanId: pickPlan(
             'coverLetter',
-            step2 === COVER_S2.DEEP_FEEDBACK || step2 === COVER_S2.PORTFOLIO_BOTH
+            step2 === COVER_S2.DEEP_FEEDBACK ||
+              step2 === COVER_S2.PORTFOLIO_BOTH
               ? 'intensive'
               : step2 === COVER_S2.LIVE_1 || step2 === COVER_S2.PORTFOLIO_MENTOR
                 ? 'feedback'
@@ -280,9 +281,12 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '직무 맞춤 포트폴리오/서류 완성',
           suggestedPlanId: pickPlan(
             baseProgram,
-            step2 === PORTFOLIO_S2.HAS_DRAFT || step2 === PORTFOLIO_S2.MKT_GUIDE || step2 === PORTFOLIO_S2.HR_GUIDE
+            step2 === PORTFOLIO_S2.HAS_DRAFT ||
+              step2 === PORTFOLIO_S2.MKT_GUIDE ||
+              step2 === PORTFOLIO_S2.HR_GUIDE
               ? 'basic'
-              : step2 === PORTFOLIO_S2.MKT_PREMIUM || step2 === PORTFOLIO_S2.HR_PREMIUM
+              : step2 === PORTFOLIO_S2.MKT_PREMIUM ||
+                  step2 === PORTFOLIO_S2.HR_PREMIUM
                 ? 'intensive'
                 : 'feedback',
           ),
@@ -493,7 +497,10 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
 
       // 거의 완성한 경우
       if (step1 === DONT_KNOW_S1.ALMOST_READY) {
-        if (step2 === DONT_KNOW_S2.FINAL_CHECK || step2 === DONT_KNOW_S2.FINAL_MENTOR) {
+        if (
+          step2 === DONT_KNOW_S2.FINAL_CHECK ||
+          step2 === DONT_KNOW_S2.FINAL_MENTOR
+        ) {
           return buildResult({
             personaId,
             headline: '마지막 점검은 피드백 리포트로',

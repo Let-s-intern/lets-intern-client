@@ -32,7 +32,7 @@ const Box = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col items-stretch rounded-sm bg-neutral-95 px-4 py-7 md:flex-1',
+        'bg-neutral-95 flex flex-col items-stretch rounded-sm px-4 py-7 md:flex-1',
         className,
       )}
     >
@@ -50,7 +50,7 @@ const Label = ({
 }) => {
   return (
     <span
-      className="text-xsmall16 font-semibold md:text-xsmall16"
+      className="text-xsmall16 md:text-xsmall16 font-semibold"
       style={{ color: themeColor }}
     >
       {children}
@@ -70,7 +70,7 @@ const InfoRow = ({
   return (
     <div className="flex flex-col gap-2">
       <Label themeColor={themeColor}>{label}</Label>
-      <p className="whitespace-pre-line text-xsmall16 font-medium text-neutral-0 md:text-xsmall16">
+      <p className="text-xsmall16 text-neutral-0 md:text-xsmall16 whitespace-pre-line font-medium">
         {value}
       </p>
     </div>
@@ -93,15 +93,15 @@ const PriceView = ({
   return (
     <div className="mt-5 flex shrink-0 flex-col text-left md:mt-0 md:items-end md:text-right">
       {hasDiscount && percent && (
-        <span className="inline-flex gap-1 text-xsmall14">
-          <span className="font-semibold text-system-error/90">{percent}%</span>
-          <span className="font-medium text-neutral-40 line-through">
+        <span className="text-xsmall14 inline-flex gap-1">
+          <span className="text-system-error/90 font-semibold">{percent}%</span>
+          <span className="text-neutral-40 font-medium line-through">
             {originalPrice.toLocaleString()}원
           </span>
         </span>
       )}
 
-      <span className="text-medium20 font-bold text-neutral-0">
+      <span className="text-medium20 text-neutral-0 font-bold">
         {sellingPrice.toLocaleString()}원
       </span>
     </div>
@@ -126,10 +126,10 @@ const PlanBenefits = ({
     !isBasic && line.startsWith('✓') ? line.slice(1).trimStart() : line;
 
   return (
-    <ul className="mt-3 space-y-1.5 text-left text-xsmall16 text-[#606060]">
+    <ul className="text-xsmall16 mt-3 space-y-1.5 text-left text-[#606060]">
       {lines.map((line) => (
         <li key={line} className="flex items-start gap-1.5">
-          <span className={twMerge('text-[#606060] md:text-xsmall16')}>
+          <span className={twMerge('md:text-xsmall16 text-[#606060]')}>
             {isBasic ? '' : '+'}
           </span>
           <span className="whitespace-pre-line">{displayLine(line)}</span>
@@ -137,7 +137,7 @@ const PlanBenefits = ({
       ))}
       {!isBasic && showBasicIncluded !== false && (
         <li className="flex items-start gap-1.5">
-          <span className="text-[#606060] md:text-xsmall16">✓</span>
+          <span className="md:text-xsmall16 text-[#606060]">✓</span>
           <span className="whitespace-pre-line">
             베이직에서 제공되는 모든 사항 포함
           </span>
@@ -151,7 +151,7 @@ const PlanRow = ({ plan }: { plan: PriceInfo }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-3.5">
       <div className="flex-1">
-        <div className="text-xsmall16 font-semibold text-neutral-0">
+        <div className="text-xsmall16 text-neutral-0 font-semibold">
           {plan.title}
         </div>
         <PlanBenefits
@@ -339,7 +339,7 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
                 <Fragment key={plan.planType}>
                   <PlanRow plan={plan} />
                   {!isLast && (
-                    <hr className="h-[1px] w-full border-none bg-neutral-80" />
+                    <hr className="bg-neutral-80 h-[1px] w-full border-none" />
                   )}
                 </Fragment>
               );

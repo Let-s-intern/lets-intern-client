@@ -10,7 +10,7 @@ function Badge({ children, className }: BadgeProps) {
   return (
     <div
       className={twMerge(
-        'gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] md:text-xlarge28',
+        'gap-1.6 rounded-xxs text-small18 md:text-xlarge28 flex w-fit items-center gap-1 bg-[#FFF7EF] px-2.5 py-1 font-bold text-[#FB8100]',
         className,
       )}
     >

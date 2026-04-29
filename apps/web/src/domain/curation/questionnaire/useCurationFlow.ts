@@ -98,7 +98,9 @@ export const useCurationFlow = ({
         const target = document.getElementById('curation-result');
         if (target) {
           const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-          const offset = STICKY_NAV_HEIGHT + (isMobile ? SCROLL_PADDING_MOBILE : SCROLL_PADDING_DESKTOP);
+          const offset =
+            STICKY_NAV_HEIGHT +
+            (isMobile ? SCROLL_PADDING_MOBILE : SCROLL_PADDING_DESKTOP);
           const elementPosition = target.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - offset;
 

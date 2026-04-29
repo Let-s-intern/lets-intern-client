@@ -18,7 +18,7 @@ const OldMissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
           ) : (
             <>
               오늘은&nbsp;
-              <strong className="font-semibold text-primary">
+              <strong className="text-primary font-semibold">
                 {todayTh}회차
               </strong>{' '}
               미션 날이에요

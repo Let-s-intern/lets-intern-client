@@ -107,13 +107,13 @@ const CareerForm = ({
             e.preventDefault();
           }
         }}
-        className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5 text-sm md:text-base"
+        className="rounded-xs border-neutral-80 flex w-full flex-col gap-3 border p-5 text-sm md:text-base"
       >
         {/* 기업 이름 */}
         <fieldset className="flex flex-col gap-1.5">
           <label
             htmlFor="career-company"
-            className="font-medium text-neutral-20"
+            className="text-neutral-20 font-medium"
           >
             기업 이름
           </label>
@@ -122,14 +122,14 @@ const CareerForm = ({
             {...register('company')}
             type="text"
             placeholder="예) 렛츠커리어"
-            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+            className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
           />
           <ErrorMsg msg={errors.company?.message} />
         </fieldset>
 
         {/* 직무 */}
         <fieldset className="flex flex-col gap-1.5">
-          <label htmlFor="career-job" className="font-medium text-neutral-20">
+          <label htmlFor="career-job" className="text-neutral-20 font-medium">
             직무
           </label>
           <input
@@ -137,7 +137,7 @@ const CareerForm = ({
             type="text"
             {...register('job')}
             placeholder="예) 서비스 기획자"
-            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+            className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
           />
           <ErrorMsg msg={errors.job?.message} />
         </fieldset>
@@ -146,7 +146,7 @@ const CareerForm = ({
         <fieldset className="flex flex-col gap-1.5">
           <span
             id="career-employment-type"
-            className="font-medium text-neutral-20"
+            className="text-neutral-20 font-medium"
           >
             고용 형태
           </span>
@@ -154,7 +154,7 @@ const CareerForm = ({
             aria-labelledby="career-employment-type"
             type="button"
             onClick={() => setEmployeeTypeModalOpen(true)}
-            className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
+            className="rounded-xxs border-neutral-80 flex w-full items-center justify-between border px-3 py-2 text-neutral-50"
           >
             {form.employmentType ? (
               <span className="text-neutral-0">{form.employmentType}</span>
@@ -172,7 +172,7 @@ const CareerForm = ({
               type="text"
               {...register('employmentTypeOther')}
               placeholder="직접 입력해 주세요."
-              className="mt-0.5 w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+              className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary mt-0.5 w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
             />
           )}
 
@@ -181,10 +181,7 @@ const CareerForm = ({
 
         {/* 업무분야 */}
         <fieldset className="flex flex-col gap-1.5">
-          <label
-            htmlFor="career-field"
-            className="font-medium text-neutral-20"
-          >
+          <label htmlFor="career-field" className="text-neutral-20 font-medium">
             업무분야
           </label>
           <input
@@ -192,7 +189,7 @@ const CareerForm = ({
             {...register('field')}
             type="text"
             placeholder="예) 개발, PM, 디자인"
-            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+            className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
           />
         </fieldset>
 
@@ -200,7 +197,7 @@ const CareerForm = ({
         <fieldset className="flex flex-col gap-1.5">
           <label
             htmlFor="career-position"
-            className="font-medium text-neutral-20"
+            className="text-neutral-20 font-medium"
           >
             직책
           </label>
@@ -209,7 +206,7 @@ const CareerForm = ({
             {...register('position')}
             type="text"
             placeholder="예) 팀장"
-            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+            className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
           />
         </fieldset>
 
@@ -217,7 +214,7 @@ const CareerForm = ({
         <fieldset className="flex flex-col gap-1.5">
           <label
             htmlFor="career-department"
-            className="font-medium text-neutral-20"
+            className="text-neutral-20 font-medium"
           >
             부서명
           </label>
@@ -226,17 +223,17 @@ const CareerForm = ({
             {...register('department')}
             type="text"
             placeholder="예) 개발팀"
-            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+            className="rounded-xxs border-neutral-80 text-neutral-0 focus:border-primary w-full border px-3 py-2 placeholder:text-neutral-50 focus:outline-none"
           />
         </fieldset>
 
         {/* 근무 기간 */}
         <fieldset className="flex flex-col gap-1.5">
           <div className="flex flex-col items-baseline gap-1 md:flex-row md:gap-2">
-            <span id="career-period" className="font-medium text-neutral-20">
+            <span id="career-period" className="text-neutral-20 font-medium">
               근무 기간
             </span>
-            <p className="text-sm text-neutral-45">
+            <p className="text-neutral-45 text-sm">
               현재 근무 중인 경우에는 종료일을 비워주세요.
             </p>
           </div>
@@ -246,7 +243,7 @@ const CareerForm = ({
               id="career-period"
               type="button"
               onClick={() => setPeriodMode('start')}
-              className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
+              className="rounded-xxs border-neutral-80 flex w-full items-center justify-between border px-3 py-2 text-neutral-50"
             >
               {form.startDate ? (
                 <span className="text-neutral-0">{form.startDate}</span>
@@ -266,7 +263,7 @@ const CareerForm = ({
                   setPeriodMode('end');
                 }
               }}
-              className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
+              className="rounded-xxs border-neutral-80 flex w-full items-center justify-between border px-3 py-2 text-neutral-50"
             >
               {form.endDate ? (
                 <span className="text-neutral-0">{form.endDate}</span>
@@ -351,5 +348,5 @@ export default CareerForm;
 
 const ErrorMsg = ({ msg }: { msg?: string }) => {
   if (!msg) return;
-  return <span className="mt-1 text-xxsmall12 text-red-500">{msg}</span>;
+  return <span className="text-xxsmall12 mt-1 text-red-500">{msg}</span>;
 };

@@ -200,7 +200,7 @@ const Programs = () => {
 
   return (
     <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
-      <h1 className="mb-8 text-medium24 font-bold md:mb-16 md:text-xlarge28">
+      <h1 className="text-medium24 md:text-xlarge28 mb-8 font-bold md:mb-16">
         프로그램
       </h1>
 
@@ -224,7 +224,7 @@ const Programs = () => {
             {/* 모바일: 필터 아이콘 */}
             <button
               onClick={() => setIsOpen(true)}
-              className="relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b border-neutral-85 p-1 pb-2 pr-5 lg:hidden"
+              className="border-neutral-85 relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b p-1 pb-2 pr-5 lg:hidden"
             >
               <img
                 className="w-5 md:w-6"

@@ -7,9 +7,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <NavBar />
-      <div className="min-h-[31rem] w-full">
-        {children}
-      </div>
+      <div className="min-h-[31rem] w-full">{children}</div>
       <Footer />
       <ChannelTalkBtn />
       <BottomNavBarWithPathname />

@@ -279,10 +279,10 @@ const ChallengeUserInfo = () => {
   return (
     <main className="mx-auto flex max-w-md flex-col gap-9 px-5 pb-16 pt-12 md:px-0 md:pb-24 md:pt-10">
       <div className="flex flex-col gap-3">
-        <h1 className="text-medium22 font-semibold md:text-medium24">
+        <h1 className="text-medium22 md:text-medium24 font-semibold">
           챌린지 대시보드 추가정보 입력
         </h1>
-        <p className="break-keep text-xsmall14 text-neutral-20 md:text-xsmall16">
+        <p className="text-xsmall14 text-neutral-20 md:text-xsmall16 break-keep">
           안녕하세요! {username}님
           <br /> {programTitle}에 입장하신 걸 환영합니다! <br />
           챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
@@ -302,10 +302,10 @@ const ChallengeUserInfo = () => {
           <section>
             <div className="flex flex-col gap-6" id="sourceSurvey">
               <div className="flex flex-col gap-1">
-                <h2 className="text-xsmall16 font-semibold md:text-small18">
+                <h2 className="text-xsmall16 md:text-small18 font-semibold">
                   렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
                 </h2>
-                <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
+                <p className="text-xsmall14 text-neutral-40 md:text-xsmall16 break-keep">
                   아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
                 </p>
               </div>
@@ -315,7 +315,7 @@ const ChallengeUserInfo = () => {
                   id="challengeAwarenessLabel"
                 >
                   {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
-                  아셨나요?<span className="pl-1 text-requirement">*</span>
+                  아셨나요?<span className="text-requirement pl-1">*</span>
                 </span>
                 <div className="flex flex-col gap-2">
                   {awarenessOptions.map((option) => (
@@ -350,9 +350,9 @@ const ChallengeUserInfo = () => {
                 >
                   {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
                   얼마나 고민하셨나요?
-                  <span className="pl-1 text-requirement">*</span>
+                  <span className="text-requirement pl-1">*</span>
                 </span>
-                <p className="mb-2 break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
+                <p className="text-xsmall14 text-neutral-40 md:text-xsmall16 mb-2 break-keep">
                   처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
                   선택해주세요.
                 </p>
@@ -377,7 +377,7 @@ const ChallengeUserInfo = () => {
                 >
                   그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
                   직전에는 어디를 통해 결제 페이지에 들어오셨나요?
-                  <span className="pl-1 text-requirement">*</span>
+                  <span className="text-requirement pl-1">*</span>
                 </span>
                 <div className="flex flex-col gap-2">
                   {entryPointOptions.map((option) => (
@@ -410,7 +410,7 @@ const ChallengeUserInfo = () => {
         ) : null}
 
         <button
-          className="rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
+          className="rounded-xs bg-primary text-xsmall14 disabled:bg-neutral-70 md:text-xsmall16 px-4 py-3 font-medium text-white"
           onClick={handleSubmit}
           disabled={isSubmitDisabled}
         >

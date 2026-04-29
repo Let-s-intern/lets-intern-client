@@ -243,7 +243,7 @@ export default function ChallengePrice<
 
       {/* 라이트 플랜 필드 (체크 시에만, 금액 유형 위) */}
       {isLightEnabled && (
-        <div className="rounded flex flex-col gap-3 border border-neutral-80 bg-neutral-95 p-3">
+        <div className="border-neutral-80 bg-neutral-95 flex flex-col gap-3 rounded border p-3">
           <Input
             label="라이트 금액"
             name="price"

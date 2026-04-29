@@ -32,7 +32,7 @@ const NotiToast = ({ isVisible, onClose }: NotiToastProps) => {
     <div className="fixed left-0 right-0 top-0 z-50 flex justify-center p-10">
       <div
         className={clsx(
-          'flex items-center gap-1.5 rounded-xxs bg-neutral-0 bg-opacity-85 px-3 py-2.5 shadow-lg transition-all duration-300',
+          'rounded-xxs bg-neutral-0 flex items-center gap-1.5 bg-opacity-85 px-3 py-2.5 shadow-lg transition-all duration-300',
           isAnimating
             ? 'translate-y-0 opacity-100'
             : '-translate-y-full opacity-0',

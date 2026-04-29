@@ -126,12 +126,12 @@ function BlogFilter({
       <div className="relative flex shrink-0 flex-col">
         <div
           className={clsx(
-            `flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xsmall14 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`,
+            `rounded-xxs text-xsmall14 md:text-xsmall16 flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 border bg-[#FBFBFC] px-3 py-2 ${isOpen ? 'border-primary' : 'border-neutral-90'}`,
           )}
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          <span className="font-medium text-neutral-20">{label}</span>
-          <span className="font-semibold text-primary">{caption}</span>
+          <span className="text-neutral-20 font-medium">{label}</span>
+          <span className="text-primary font-semibold">{caption}</span>
           <ChevronDown size={20} />
         </div>
 
@@ -139,7 +139,7 @@ function BlogFilter({
         {!isDesktop && (
           <BaseBottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
             <div className="px-1">
-              <span className="mb-4 block text-small18 font-semibold text-neutral-0">
+              <span className="text-small18 text-neutral-0 mb-4 block font-semibold">
                 {label}
               </span>
               <ul className="max-h-[60vh] overflow-y-auto">
@@ -177,7 +177,7 @@ function BlogFilter({
         {isOpen && isDesktop && (
           <ul
             className={twMerge(
-              'absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
+              'rounded-xxs absolute top-12 z-10 w-full bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
               dropdownClassName,
             )}
           >
@@ -232,7 +232,7 @@ const FilterListItem = ({
       key={item.value}
       className={twMerge(
         'flex cursor-pointer items-center justify-between py-3',
-        isLastItem ? '' : 'border-b border-neutral-90',
+        isLastItem ? '' : 'border-neutral-90 border-b',
         className,
       )}
       value={item.value}
@@ -251,7 +251,7 @@ const FilterCaption = memo(function FilterCaption({
   children: ReactNode;
 }) {
   return (
-    <div className="text-xsmall14 font-medium text-neutral-10">
+    <div className="text-xsmall14 text-neutral-10 font-medium">
       <div className="flex items-center gap-2">
         {checked ? (
           <CheckboxActive className="h-6 w-6" />

@@ -38,16 +38,16 @@ export default function NotificationDropdown({
   };
 
   return (
-    <div className="absolute left-0 top-full z-50 mt-2 w-[320px] rounded-xl border border-neutral-80 bg-white shadow-lg">
-      <div className="border-b border-neutral-90 px-4 py-3">
-        <span className="text-xsmall14 font-semibold text-neutral-10">
+    <div className="border-neutral-80 absolute left-0 top-full z-50 mt-2 w-[320px] rounded-xl border bg-white shadow-lg">
+      <div className="border-neutral-90 border-b px-4 py-3">
+        <span className="text-xsmall14 text-neutral-10 font-semibold">
           알림
         </span>
       </div>
 
       <div className="max-h-[400px] overflow-y-auto">
         {recentGuides.length === 0 ? (
-          <div className="px-4 py-8 text-center text-xsmall14 text-neutral-40">
+          <div className="text-xsmall14 text-neutral-40 px-4 py-8 text-center">
             알림이 없습니다
           </div>
         ) : (
@@ -57,7 +57,7 @@ export default function NotificationDropdown({
 
             const content = (
               <div
-                className={`flex flex-col gap-1 border-b border-neutral-90 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 ${
+                className={`border-neutral-90 hover:bg-neutral-95 flex flex-col gap-1 border-b px-4 py-3 transition-colors last:border-b-0 ${
                   read ? 'opacity-60' : ''
                 }`}
               >
@@ -65,7 +65,7 @@ export default function NotificationDropdown({
                   {!read && (
                     <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
                   )}
-                  <span className="truncate text-xsmall14 font-medium text-neutral-10">
+                  <span className="text-xsmall14 text-neutral-10 truncate font-medium">
                     {guide.title}
                   </span>
                 </div>

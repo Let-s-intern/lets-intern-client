@@ -35,7 +35,7 @@ const LiveInformation = ({
         className,
       )}
     >
-      <p className="text-xsmall14 font-semibold text-primary md:text-small20">
+      <p className="text-xsmall14 text-primary md:text-small20 font-semibold">
         클래스 소개
       </p>
       <div className="flex w-full flex-col gap-y-[70px] md:gap-y-[140px]">
@@ -45,10 +45,10 @@ const LiveInformation = ({
             <div className="flex w-full flex-col items-center">
               <div className="flex w-full flex-col items-center justify-center gap-y-8 rounded-md bg-[#F4F5FF] px-4 pb-[46px] pt-[50px] md:px-12">
                 <div className="flex w-full flex-col gap-y-1 md:items-center">
-                  <p className="text-xsmall14 font-semibold text-primary md:text-small18">
+                  <p className="text-xsmall14 text-primary md:text-small18 font-semibold">
                     혼자서는 너무 막막한 취업 준비
                   </p>
-                  <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
+                  <p className="text-small20 md:text-xlarge28 whitespace-pre-line font-bold md:text-center">
                     {title1}
                   </p>
                 </div>
@@ -58,10 +58,10 @@ const LiveInformation = ({
                       key={index}
                       className="flex w-full items-center gap-x-[14px] rounded-md bg-white px-2.5 py-[14px] md:justify-center md:px-[50px] md:py-[30px]"
                     >
-                      <div className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-primary text-white md:h-[30px] md:w-[30px]">
+                      <div className="bg-primary flex h-[24px] w-[24px] items-center justify-center rounded-full text-white md:h-[30px] md:w-[30px]">
                         <ChevronDownIcon />
                       </div>
-                      <p className="text-xsmall14 font-semibold md:text-medium24">
+                      <p className="text-xsmall14 md:text-medium24 font-semibold">
                         {field}
                       </p>
                     </div>
@@ -76,10 +76,10 @@ const LiveInformation = ({
           reasonFields[0].title !== '' && (
             <div className="flex w-full flex-col gap-y-8">
               <div className="flex w-full flex-col gap-y-1 md:items-center">
-                <p className="text-xsmall14 font-semibold text-primary md:text-small18">
+                <p className="text-xsmall14 text-primary md:text-small18 font-semibold">
                   더욱 특별한 LIVE 클래스
                 </p>
-                <p className="text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">
+                <p className="text-small20 text-neutral-0 md:text-xlarge28 font-bold md:text-center">
                   이번 클래스 <br className="hidden md:block" />꼭 들어야하는
                   이유
                 </p>
@@ -90,10 +90,10 @@ const LiveInformation = ({
                     className="flex w-full flex-col items-center justify-center gap-y-2 rounded-md bg-neutral-100 px-[30px] pb-5 pt-[14px]"
                     key={`reason${index}`}
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xsmall14 font-semibold text-white md:h-[30px] md:w-[30px] md:text-small20">
+                    <span className="bg-primary text-xsmall14 md:text-small20 flex h-6 w-6 items-center justify-center rounded-full font-semibold text-white md:h-[30px] md:w-[30px]">
                       {index + 1}
                     </span>
-                    <div className="flex w-full flex-col items-center gap-y-1 text-xsmall14 md:text-medium24">
+                    <div className="text-xsmall14 md:text-medium24 flex w-full flex-col items-center gap-y-1">
                       <p className="font-semibold">{reason.title}</p>
                       <p className="font-medium">{reason.content}</p>
                     </div>

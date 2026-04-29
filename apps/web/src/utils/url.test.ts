@@ -1,8 +1,4 @@
-import {
-  getCanonicalSiteUrl,
-  getCanonicalUrl,
-  getRobotsMetadata,
-} from './url';
+import { getCanonicalSiteUrl, getCanonicalUrl, getRobotsMetadata } from './url';
 
 describe('getCanonicalSiteUrl', () => {
   const ORIGINAL_ENV = process.env;

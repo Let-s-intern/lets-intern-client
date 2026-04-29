@@ -16,7 +16,7 @@ function LoginLink({ redirect, className, onClick }: Props) {
   return (
     <HybridLink
       className={twMerge(
-        'px-3 py-1.5 text-xsmall14 font-medium transition hover:opacity-80',
+        'text-xsmall14 px-3 py-1.5 font-medium transition hover:opacity-80',
         className,
       )}
       href={`/login?${searchParams.toString()}`}

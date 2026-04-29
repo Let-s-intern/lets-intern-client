@@ -63,7 +63,7 @@ const FaqSection = () => {
         <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
           FAQ
         </p>
-        <h3 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+        <h3 className="text-neutral-0 mb-4 text-center text-2xl font-semibold leading-tight md:text-3xl md:leading-10">
           자주 묻는 질문
         </h3>
         <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
@@ -106,31 +106,31 @@ const FaqSection = () => {
           filteredFaqs.map((item) => (
             <details
               key={`${selectedCategory}-${item.question}`}
-              className="group overflow-hidden rounded-lg border border-neutral-90 bg-white"
+              className="border-neutral-90 group overflow-hidden rounded-lg border bg-white"
               open={undefined}
               suppressHydrationWarning
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-base font-semibold leading-6 text-neutral-0 md:text-lg">
+              <summary className="text-neutral-0 flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-base font-semibold leading-6 md:text-lg">
                 <span>{item.question}</span>
-                <span className="shrink-0 text-neutral-40 transition-transform">
+                <span className="text-neutral-40 shrink-0 transition-transform">
                   <span className="group-open:hidden">＋</span>
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <div className="border-t border-neutral-90 px-5 py-5 text-sm font-normal leading-6 text-neutral-35 md:text-base">
+              <div className="border-neutral-90 text-neutral-35 border-t px-5 py-5 text-sm font-normal leading-6 md:text-base">
                 <div>{parseMarkdown(item.answer)}</div>
                 {item.image && (
                   <img
                     src={item.image}
                     alt={item.question}
-                    className="mt-3 w-full rounded-lg border border-neutral-90"
+                    className="border-neutral-90 mt-3 w-full rounded-lg border"
                   />
                 )}
               </div>
             </details>
           ))
         ) : (
-          <div className="rounded-lg border border-neutral-90 bg-white px-5 py-8 text-center text-sm text-neutral-40 md:text-base">
+          <div className="border-neutral-90 text-neutral-40 rounded-lg border bg-white px-5 py-8 text-center text-sm md:text-base">
             해당 카테고리에 질문이 없습니다.
           </div>
         )}

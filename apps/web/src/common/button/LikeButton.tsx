@@ -61,7 +61,7 @@ export default function LikeButton({
         color="#4D55F5"
         fill={alreadyLike ? '#4D55F5' : 'none'}
       />
-      <span className="text-xsmall14 font-medium text-primary">
+      <span className="text-xsmall14 text-primary font-medium">
         좋아요 {likeCount + countOne}
       </span>
     </button>

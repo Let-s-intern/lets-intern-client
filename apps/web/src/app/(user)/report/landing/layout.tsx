@@ -59,8 +59,8 @@ const ReportNavigationTabs = ({
               href={tab.href}
               className={
                 pathname === tab.href
-                  ? 'flex border-b-2 border-neutral-0 py-3 font-semibold text-neutral-0 md:py-4'
-                  : 'flex py-3 text-neutral-45 hover:text-gray-700 md:py-4'
+                  ? 'border-neutral-0 text-neutral-0 flex border-b-2 py-3 font-semibold md:py-4'
+                  : 'text-neutral-45 flex py-3 hover:text-gray-700 md:py-4'
               }
             >
               {tab.label}

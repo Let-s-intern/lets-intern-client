@@ -42,9 +42,9 @@ export default function ContentCard({
     >
       <div
         className={twMerge(
-          'relative overflow-hidden rounded-sm bg-neutral-90',
+          'bg-neutral-90 relative overflow-hidden rounded-sm',
           variant === 'library'
-            ? 'order-2 h-[3.375rem] w-[4.5rem] shrink-0 rounded-xxs md:order-none md:aspect-[4/3] md:h-auto md:w-full md:rounded-sm'
+            ? 'rounded-xxs order-2 h-[3.375rem] w-[4.5rem] shrink-0 md:order-none md:aspect-[4/3] md:h-auto md:w-full md:rounded-sm'
             : 'aspect-[4/3] w-full',
         )}
       >
@@ -59,7 +59,7 @@ export default function ContentCard({
       >
         <span
           className={twMerge(
-            'text-xsmall16 font-semibold text-primary md:text-xsmall14',
+            'text-xsmall16 text-primary md:text-xsmall14 font-semibold',
             (variant === 'library' || variant === 'library-card') && 'truncate',
           )}
         >
@@ -69,12 +69,12 @@ export default function ContentCard({
         <div className="flex flex-col gap-2">
           <h3
             className={twMerge(
-              'font-semibold text-neutral-0',
+              'text-neutral-0 font-semibold',
               variant === 'blog'
-                ? 'line-clamp-3 text-small18 md:text-xsmall16'
+                ? 'text-small18 md:text-xsmall16 line-clamp-3'
                 : variant === 'library'
-                  ? 'line-clamp-3 text-xsmall16 md:line-clamp-2'
-                  : 'line-clamp-2 text-small18 md:text-xsmall16',
+                  ? 'text-xsmall16 line-clamp-3 md:line-clamp-2'
+                  : 'text-small18 md:text-xsmall16 line-clamp-2',
             )}
           >
             <Link href={href} target={target}>

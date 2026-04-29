@@ -46,7 +46,7 @@ const OldScoreSection = ({
         </div>
         <div className="flex items-center justify-start">
           <div className="flex items-end">
-            <span className="text-3xl font-bold text-primary">
+            <span className="text-primary text-3xl font-bold">
               {currentScore}
             </span>
             <span className="mb-[1px] ml-1 font-semibold text-[#D3D3D3]">
@@ -57,7 +57,7 @@ const OldScoreSection = ({
       </div>
       {currentScore < 80 || !isProgramDone ? (
         <button
-          className={`flex cursor-not-allowed items-center justify-center rounded-sm border-2 border-neutral-80 bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-neutral-35 outline-none`}
+          className={`border-neutral-80 text-xsmall14 text-neutral-35 flex cursor-not-allowed items-center justify-center rounded-sm border-2 bg-neutral-100 px-4 py-1.5 font-medium outline-none`}
           onMouseEnter={() => {
             setIsHoverButton(true);
           }}
@@ -70,13 +70,13 @@ const OldScoreSection = ({
       ) : (
         <button
           onClick={() => reactToPrintFn()}
-          className={`flex items-center justify-center rounded-sm border-2 border-primary bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-primary-dark outline-none`}
+          className={`border-primary text-xsmall14 text-primary-dark flex items-center justify-center rounded-sm border-2 bg-neutral-100 px-4 py-1.5 font-medium outline-none`}
         >
           수료증 발급
         </button>
       )}
       {isHoverButton && (
-        <div className="absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-xsmall14 text-[#333]">
+        <div className="text-xsmall14 absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-[#333]">
           <div className="absolute bottom-0 left-0 z-0 h-[calc(100%-14px)] w-full shadow-[0_0_24px_rgba(204,204,206,0.27)]" />
           <img
             className="absolute bottom-0 left-0 z-0 h-full w-full object-fill"

@@ -19,7 +19,7 @@ const TabSection = ({
   const [tabIndex, setTabIndex] = useState<number>(0);
 
   return (
-    <section className="flex-1 bg-static-100">
+    <section className="bg-static-100 flex-1">
       <TabBar tabIndex={tabIndex} setTabIndex={setTabIndex} />
       {!isNewProgram && (
         <div>

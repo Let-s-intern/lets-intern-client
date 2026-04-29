@@ -31,7 +31,7 @@ const BottomSheet = ({
       )}
       <div
         className={twMerge(
-          'fixed bottom-0 left-0 right-0 z-40 flex rounded-t-lg bg-static-100 px-5 shadow-button',
+          'bg-static-100 shadow-button fixed bottom-0 left-0 right-0 z-40 flex rounded-t-lg px-5',
           variant === 'sheet'
             ? 'min-h-[35vh] items-start gap-3 pb-2.5 pt-5'
             : 'items-center pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3',

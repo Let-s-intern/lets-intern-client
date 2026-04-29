@@ -39,8 +39,8 @@ export default function SectionHeader({
       {kicker != null && (
         <motion.p
           className={twMerge(
-            'text-xsmall16 font-medium text-primary-90',
-            kickerBg && 'inline-block rounded-xs bg-primary-5 px-2 py-1',
+            'text-xsmall16 text-primary-90 font-medium',
+            kickerBg && 'rounded-xs bg-primary-5 inline-block px-2 py-1',
             isCenter && 'mx-auto',
           )}
           initial={{ opacity: 0, y: 12 }}
@@ -69,7 +69,7 @@ export default function SectionHeader({
       {desc != null && (
         <motion.p
           className={twMerge(
-            'mt-4 break-keep text-xsmall14 leading-[22px]',
+            'text-xsmall14 mt-4 break-keep leading-[22px]',
             isDark ? 'text-white/70' : 'text-neutral-40',
             'md:text-small20',
           )}

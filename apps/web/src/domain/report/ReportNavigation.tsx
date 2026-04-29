@@ -108,7 +108,7 @@ const ReportNavigation = ({
     <nav
       className={twMerge(
         'report_navigation sticky z-20 flex w-full transform justify-center gap-x-1 px-6 transition-all duration-300 md:gap-x-[100px]',
-        isDark ? 'bg-black/90' : 'border-b-2 border-neutral-80 bg-white',
+        isDark ? 'bg-black/90' : 'border-neutral-80 border-b-2 bg-white',
         scrollStyleClassName,
         className,
       )}
@@ -117,7 +117,7 @@ const ReportNavigation = ({
         {navItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`break-keep border-b-[2.4px] px-1.5 py-4 text-[8px] font-semibold xs:text-xxsmall12 md:min-w-[100px] md:text-xsmall16`}
+            className={`xs:text-xxsmall12 md:text-xsmall16 break-keep border-b-[2.4px] px-1.5 py-4 text-[8px] font-semibold md:min-w-[100px]`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection

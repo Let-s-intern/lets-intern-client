@@ -34,7 +34,7 @@ export default function StickyCTA() {
         }}
       >
         <div className="mx-4 flex items-center gap-3 rounded-sm bg-black/60 px-4 py-3 shadow-lg backdrop-blur-lg md:px-6">
-          <span className="hidden text-small20 font-semibold text-white md:mr-20 md:block">
+          <span className="text-small20 hidden font-semibold text-white md:mr-20 md:block">
             취업 교육은 렛츠커리어
           </span>
           <div className="flex flex-1 items-center gap-3 md:flex-auto">
@@ -44,8 +44,8 @@ export default function StickyCTA() {
               rel="noopener noreferrer"
               className={twMerge(
                 'b2b_introduce_download',
-                'rounded-xs bg-white px-5 py-3 text-xsmall14 font-medium text-primary shadow-sm transition hover:text-primary-90',
-                'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
+                'rounded-xs text-xsmall14 text-primary hover:text-primary-90 bg-white px-5 py-3 font-medium shadow-sm transition',
+                'md:text-xsmall16 inline-flex flex-1 items-center justify-center md:flex-auto',
               )}
             >
               교육 소개서 받기
@@ -56,8 +56,8 @@ export default function StickyCTA() {
               target="_blank"
               className={twMerge(
                 'b2b_education_inquire',
-                'rounded-xs bg-primary px-5 py-3 text-xsmall14 font-medium text-white shadow-sm hover:bg-primary',
-                'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
+                'rounded-xs bg-primary text-xsmall14 hover:bg-primary px-5 py-3 font-medium text-white shadow-sm',
+                'md:text-xsmall16 inline-flex flex-1 items-center justify-center md:flex-auto',
               )}
             >
               맞춤 교육 문의

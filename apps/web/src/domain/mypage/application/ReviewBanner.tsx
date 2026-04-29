@@ -1,6 +1,6 @@
 const ReviewBanner = ({ cnt }: { cnt: number }) => {
   return (
-    <div className="flex w-full items-center justify-center gap-x-2 bg-primary-light p-5 font-medium text-static-100">
+    <div className="bg-primary-light text-static-100 flex w-full items-center justify-center gap-x-2 p-5 font-medium">
       <div className="grow">
         작성하지 않은 <span className="font-bold">{cnt}건</span>의 후기가
         있어요!

@@ -132,7 +132,7 @@ export default function CaseStudies() {
       {/* Mobile (two independent horizontal rows) */}
       <div className="md:hidden">
         {/* Row 1 */}
-        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
+        <div className="scrollbar-hide relative overflow-x-auto overflow-y-visible pb-3">
           <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {row1.map((c, i) => (
               <CaseCard
@@ -147,7 +147,7 @@ export default function CaseStudies() {
           </div>
         </div>
         {/* Row 2 */}
-        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
+        <div className="scrollbar-hide relative overflow-x-auto overflow-y-visible pb-3">
           <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {row2.map((c, i) => (
               <CaseCard

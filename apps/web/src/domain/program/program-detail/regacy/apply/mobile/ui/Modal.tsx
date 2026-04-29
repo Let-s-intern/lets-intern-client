@@ -48,14 +48,14 @@ const Modal = ({
   return (
     <div
       className={`flex w-full cursor-auto flex-col items-center${
-        position === 'bottom' ? ' fixed bottom-0' : ''
+        position === 'bottom' ? 'fixed bottom-0' : ''
       }`}
     >
       <div
         className={`relative w-full bg-white shadow${
           position === 'bottom'
-            ? ' fixed bottom-0 max-w-2xl rounded-tl-lg rounded-tr-lg'
-            : ' rounded mx-5 max-w-md sm:mx-0'
+            ? 'fixed bottom-0 max-w-2xl rounded-tl-lg rounded-tr-lg'
+            : 'mx-5 max-w-md rounded sm:mx-0'
         }`}
         onClick={(e) => {
           e.stopPropagation();

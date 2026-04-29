@@ -77,7 +77,7 @@ export const FilterDropdown = ({
         ref={buttonRef}
         onClick={toggleDropdown}
         className={twMerge(
-          `flex ${width} items-center gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
+          `flex ${width} rounded-xs border-neutral-80 items-center gap-1.5 border bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
           isHideLabel ? 'justify-end' : 'justify-between',
           className,
         )}
@@ -113,7 +113,7 @@ export const FilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
+            className={`divide-neutral-95 rounded-xs shadow-07 scrollbar-hide absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y overflow-auto bg-white px-1 py-1.5 md:block`}
           >
             {options.map((option) => {
               const isSelected = option.value === selectedValue;
@@ -123,7 +123,7 @@ export const FilterDropdown = ({
                   key={option.value}
                   type="button"
                   onClick={() => handleSelect(option.value)}
-                  className="flex w-full items-center justify-between px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
+                  className="text-neutral-20 flex w-full items-center justify-between px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                 >
                   {option.label}
                   {isSelected && (
@@ -137,17 +137,17 @@ export const FilterDropdown = ({
           <BottomSheet className="md:hidden" onClose={() => setIsOpen(false)}>
             <div className="flex max-h-[62vh] w-full flex-col">
               <header className="flex items-center justify-between pb-4">
-                <span className="text-lg font-semibold text-neutral-0">
+                <span className="text-neutral-0 text-lg font-semibold">
                   {labelPrefix}
                 </span>
 
                 <X
                   onClick={toggleDropdown}
-                  className="cursor-pointer self-end text-neutral-0"
+                  className="text-neutral-0 cursor-pointer self-end"
                 />
               </header>
 
-              <div className="flex flex-col gap-1.5 overflow-y-auto scrollbar-hide">
+              <div className="scrollbar-hide flex flex-col gap-1.5 overflow-y-auto">
                 {options.map((option) => {
                   const isSelected = option.value === selectedValue;
 
@@ -156,7 +156,7 @@ export const FilterDropdown = ({
                       key={option.value}
                       type="button"
                       onClick={() => handleSelect(option.value)}
-                      className="flex w-full items-center justify-between py-2 text-left font-normal text-neutral-20"
+                      className="text-neutral-20 flex w-full items-center justify-between py-2 text-left font-normal"
                     >
                       {option.label}
                       {isSelected && (

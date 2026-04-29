@@ -31,8 +31,14 @@ export function usePageableWithSearchParams(
   const searchParams = useSearchParams();
 
   const [pageable, setPageable] = useState<Pageable>(() => {
-    const page = parseInt(searchParams.get('page') || defaultPage.toString(), 10);
-    const size = parseInt(searchParams.get('size') || defaultSize.toString(), 10);
+    const page = parseInt(
+      searchParams.get('page') || defaultPage.toString(),
+      10,
+    );
+    const size = parseInt(
+      searchParams.get('size') || defaultSize.toString(),
+      10,
+    );
     return { page, size };
   });
 
@@ -54,8 +60,14 @@ export function usePageableWithSearchParams(
 
   // searchParams 변경 시 pageable 동기화 (뒤로가기/앞으로가기 대응)
   useEffect(() => {
-    const page = parseInt(searchParams.get('page') || defaultPage.toString(), 10);
-    const size = parseInt(searchParams.get('size') || defaultSize.toString(), 10);
+    const page = parseInt(
+      searchParams.get('page') || defaultPage.toString(),
+      10,
+    );
+    const size = parseInt(
+      searchParams.get('size') || defaultSize.toString(),
+      10,
+    );
     setPageable({ page, size });
   }, [searchParams, defaultPage, defaultSize]);
 
@@ -65,4 +77,3 @@ export function usePageableWithSearchParams(
     handlePageChange,
   };
 }
-

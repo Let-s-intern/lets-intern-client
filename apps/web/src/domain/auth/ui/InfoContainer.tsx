@@ -165,10 +165,10 @@ const InfoContainer = ({
     <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
       <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
         <div className="mb-9">
-          <span className="mb-6 block text-xsmall16 font-normal text-neutral-30">
+          <span className="text-xsmall16 text-neutral-30 mb-6 block font-normal">
             정보입력
           </span>
-          <h1 className="text-medium22 font-semibold text-neutral-0">
+          <h1 className="text-medium22 text-neutral-0 font-semibold">
             <span className="block md:inline">
               커리어 정보를 <br className="block md:hidden" />
               입력해 주세요. (선택)
@@ -185,7 +185,7 @@ const InfoContainer = ({
 
           {/* 에러 메시지 */}
           {error ? (
-            <p className="mt-4 text-center text-xsmall14 text-system-error">
+            <p className="text-xsmall14 text-system-error mt-4 text-center">
               {errorMessage}
             </p>
           ) : null}
@@ -204,7 +204,7 @@ const InfoContainer = ({
         <div className="flex justify-center pb-3 pt-5">
           <button
             type="button"
-            className="text-xsmall16 font-normal text-neutral-40"
+            className="text-xsmall16 text-neutral-40 font-normal"
             onClick={handleSkip}
           >
             다음에 하기

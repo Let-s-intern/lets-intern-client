@@ -124,7 +124,7 @@ const ChallengeInfoBottom = ({
         style={{ color: styles.primaryColor }}
       >
         {isMobile ? (
-          <div className="flex w-full flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
+          <div className="bg-neutral-95 flex w-full flex-1 items-center justify-center rounded-md px-6 py-5">
             <div className="flex w-full flex-col gap-y-5">
               <BasicInfoRow
                 icon={<Announcement />}
@@ -185,19 +185,19 @@ const ChallengeInfoBottom = ({
             />
           </div>
         )}
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
+        <div className="bg-neutral-95 flex w-full flex-1 flex-col items-center justify-center gap-y-5 rounded-md px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
               <p className="text-small18 font-bold text-black">
                 {challenge.title}
               </p>
-              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
+              <div className="text-xsmall14 flex w-full flex-col gap-y-0.5">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex w-full gap-x-0.5">
                     <ChevronDown
                       width={24}
                       height={24}
-                      className="shrink-0 text-neutral-0"
+                      className="text-neutral-0 shrink-0"
                     />
                     <p className="grow whitespace-pre text-wrap break-keep text-black">
                       {reason}
@@ -207,15 +207,15 @@ const ChallengeInfoBottom = ({
               </div>
             </div>
             {priceInfo && (
-              <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+              <div className="border-neutral-80 text-neutral-0 flex w-full flex-col gap-y-2.5 border-b pb-[14px] pt-2.5">
+                <div className="text-xsmall16 flex w-full items-center justify-between gap-x-4">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
 
                 {/* 할인 금액이 0이면 숨김 */}
                 {priceInfo.discount !== 0 && (
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <div className="text-xsmall16 flex w-full items-center justify-between gap-x-4">
                     <span
                       className="font-bold"
                       style={{ color: styles.primaryColor }}
@@ -232,7 +232,7 @@ const ChallengeInfoBottom = ({
 
                 {/* 환급이 없으면 숨기기 */}
                 {priceInfo.refund !== 0 && (
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <div className="text-xsmall16 flex w-full items-center justify-between gap-x-4">
                     <span
                       style={
                         priceInfo.discount === 0
@@ -251,16 +251,16 @@ const ChallengeInfoBottom = ({
           </div>
           {priceInfo && (
             <div className="flex w-full flex-col gap-y-4">
-              <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
+              <div className="text-small20 text-neutral-0 flex w-full items-center justify-between font-medium">
                 <p>할인 적용가</p>
-                <p className="text-small20 font-medium text-neutral-0">
+                <p className="text-small20 text-neutral-0 font-medium">
                   {totalPrice.toLocaleString()}원~
                 </p>
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end gap-y-2">
                   <div style={{ color: styles.primaryColor }}>
-                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-medium22 mr-1 font-semibold">월</span>
                     <span className="text-xxlarge32 font-bold">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`

@@ -31,7 +31,7 @@ const GradeDropdown = ({ value, setValue, type }: GradeDropdownProps) => {
 
   return (
     <div
-      className={`relative ${type === 'SIGNUP' ? 'z-10 rounded-xxs border border-[#C4C4C4] bg-white' : ''}`}
+      className={`relative ${type === 'SIGNUP' ? 'rounded-xxs z-10 border border-[#C4C4C4] bg-white' : ''}`}
       ref={dropdownRef}
     >
       <div
@@ -56,7 +56,7 @@ const GradeDropdown = ({ value, setValue, type }: GradeDropdownProps) => {
           {Object.keys(gradeToText).map((grade: string) => (
             <li
               key={grade}
-              className="cursor-pointer rounded-md px-6 py-1.5 text-neutral-0 text-opacity-[88%] duration-200 hover:bg-primary-20"
+              className="text-neutral-0 hover:bg-primary-20 cursor-pointer rounded-md px-6 py-1.5 text-opacity-[88%] duration-200"
               onClick={() => handleMenuItemClick(grade)}
             >
               {gradeToText[grade]}

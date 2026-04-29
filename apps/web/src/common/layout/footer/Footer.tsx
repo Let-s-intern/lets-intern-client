@@ -30,7 +30,7 @@ const Footer = (props: FooterProps) => {
   return (
     <footer
       className={twMerge(
-        'border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52',
+        'border-t-1 border-neutral-80 bg-neutral-85 w-full px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52',
         props.className,
       )}
     >
@@ -80,7 +80,7 @@ const Footer = (props: FooterProps) => {
             </div>
           </div>
 
-          <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
+          <div className="text-0.75-medium text-neutral-45 flex flex-col gap-5">
             {/* 로고 */}
             <MainLink href="/" className="w-[7.5rem]">
               <img

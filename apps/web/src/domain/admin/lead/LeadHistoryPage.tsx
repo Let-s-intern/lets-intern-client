@@ -75,7 +75,7 @@ const LeadHistoryPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 관리</Heading>
 
-      <div className="rounded mb-4 border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 rounded border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <Typography className="text-xs text-gray-600">
             AND/OR 트리를 구성해 특정 마그넷·프로그램 참여 이력 여부로 전화번호

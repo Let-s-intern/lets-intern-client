@@ -22,7 +22,7 @@ const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
           'border-[#E7F2FF] bg-[#E7F2FF] text-[#006CEC]':
             status === '상시 판매',
         },
-        'flex items-center justify-center rounded-[3px] border px-2 py-1 text-center text-xxsmall12 font-normal',
+        'text-xxsmall12 flex items-center justify-center rounded-[3px] border px-2 py-1 text-center font-normal',
       )}
     >
       <span>{status}</span>

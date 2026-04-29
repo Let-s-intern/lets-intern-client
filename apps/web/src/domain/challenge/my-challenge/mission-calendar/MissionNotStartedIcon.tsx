@@ -17,7 +17,7 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
           className="object-cover"
         />
       </i>
-      <span className="mb-[6px] mt-1 block text-[13px] font-semibold leading-4 text-neutral-30">
+      <span className="text-neutral-30 mb-[6px] mt-1 block text-[13px] font-semibold leading-4">
         {schedule.missionInfo.th === BONUS_MISSION_TH
           ? '보너스'
           : schedule.missionInfo.th === TALENT_POOL_MISSION_TH

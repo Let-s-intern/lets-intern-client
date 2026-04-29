@@ -69,7 +69,7 @@ export default function Hero() {
           <br className="hidden md:block" /> 렛츠커리어가 설계합니다
         </motion.h1>
         <motion.p
-          className="mx-auto mt-6 w-[256px] break-keep text-xsmall14 leading-[22px] text-neutral-40 md:w-auto md:px-0 md:text-small20"
+          className="text-xsmall14 text-neutral-40 md:text-small20 mx-auto mt-6 w-[256px] break-keep leading-[22px] md:w-auto md:px-0"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -84,7 +84,7 @@ export default function Hero() {
             href="https://drive.google.com/drive/folders/16neodrrBoI3RcS_FLvVVS9TisZTwWlbn?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            className="b2b_introduce_download inline-flex items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary-90 md:px-5 md:text-xsmall16"
+            className="b2b_introduce_download rounded-xs bg-primary-90 text-xsmall16 hover:bg-primary-90 md:text-xsmall16 inline-flex items-center justify-center px-5 py-3 font-medium text-white shadow-sm md:px-5"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -95,7 +95,7 @@ export default function Hero() {
           <motion.a
             href={contactLink}
             target="_blank"
-            className="b2b_education_inquire inline-flex items-center justify-center rounded-xs bg-neutral-900 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
+            className="b2b_education_inquire rounded-xs text-xsmall16 md:text-xsmall16 inline-flex items-center justify-center bg-neutral-900 px-5 py-3 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -167,12 +167,12 @@ function HeroBadge({
   return (
     <div
       className={twMerge(
-        'flex items-center gap-2 rounded-xxs bg-white/90 p-1.5 shadow-06 backdrop-blur-md md:p-3',
+        'rounded-xxs shadow-06 flex items-center gap-2 bg-white/90 p-1.5 backdrop-blur-md md:p-3',
         className,
       )}
       style={animStyle}
     >
-      <span className="inline-flex items-center justify-center overflow-hidden rounded-xxs">
+      <span className="rounded-xxs inline-flex items-center justify-center overflow-hidden">
         <Icon
           viewBox="0 0 32 32 "
           className="h-4 w-4 md:h-8 md:w-8"

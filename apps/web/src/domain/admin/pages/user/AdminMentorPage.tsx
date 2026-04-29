@@ -71,29 +71,29 @@ function MentorManagementTable() {
 
   return (
     <div>
-      <div className="rounded-lg border border-neutral-80">
+      <div className="border-neutral-80 rounded-lg border">
         {isLoading ? (
-          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+          <div className="text-xsmall14 text-neutral-40 py-16 text-center">
             불러오는 중...
           </div>
         ) : mentors.length === 0 ? (
-          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+          <div className="text-xsmall14 text-neutral-40 py-16 text-center">
             등록된 멘토가 없습니다.
           </div>
         ) : (
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+              <tr className="border-neutral-60 bg-neutral-95 border-b-2">
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   이름
                 </th>
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   이메일
                 </th>
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   전화번호
                 </th>
-                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
                   멘토 삭제
                 </th>
               </tr>
@@ -102,20 +102,20 @@ function MentorManagementTable() {
               {mentors.map((mentor) => (
                 <tr
                   key={mentor.id}
-                  className="cursor-pointer border-b border-neutral-80 transition-colors hover:bg-neutral-95 last:border-b-0"
+                  className="border-neutral-80 hover:bg-neutral-95 cursor-pointer border-b transition-colors last:border-b-0"
                 >
-                  <td className="px-6 py-4 text-xsmall14">
+                  <td className="text-xsmall14 px-6 py-4">
                     <Link
                       href={`/admin/mentors/${mentor.id}`}
-                      className="text-neutral-0 underline hover:text-primary-30"
+                      className="text-neutral-0 hover:text-primary-30 underline"
                     >
                       {mentor.name}
                     </Link>
                   </td>
-                  <td className="px-6 py-4 text-xsmall14">
+                  <td className="text-xsmall14 px-6 py-4">
                     {mentor.email ?? '-'}
                   </td>
-                  <td className="px-6 py-4 text-xsmall14">
+                  <td className="text-xsmall14 px-6 py-4">
                     {mentor.phoneNum ?? '-'}
                   </td>
                   <td className="px-6 py-4 text-center">

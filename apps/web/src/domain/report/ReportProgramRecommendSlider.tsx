@@ -230,7 +230,7 @@ const ReportProgramRecommendSlider = ({
   return (
     <section
       data-section="recommend"
-      className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0"
+      className="bg-neutral-95 w-full px-5 py-16 md:py-24 lg:px-0"
     >
       <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}

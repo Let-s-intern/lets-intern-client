@@ -24,7 +24,7 @@ export function SelectButton({
       <label className="mb-1.5 flex items-center gap-1.5">
         <span className={className}>{label}</span>
         <Asterisk
-          className={`pb-1 text-primary ${!isRequired && 'hidden'}`}
+          className={`text-primary pb-1 ${!isRequired && 'hidden'}`}
           size={16}
         />
       </label>
@@ -33,9 +33,9 @@ export function SelectButton({
         type="button"
         onClick={onClick}
         disabled={disabled}
-        className={`${className} flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${
+        className={`${className} rounded-xxs border-neutral-80 flex w-full items-center justify-between truncate border px-3 py-2.5 text-left ${
           disabled
-            ? 'cursor-not-allowed border-neutral-80 bg-neutral-100 text-neutral-50'
+            ? 'border-neutral-80 cursor-not-allowed bg-neutral-100 text-neutral-50'
             : ''
         }`}
       >

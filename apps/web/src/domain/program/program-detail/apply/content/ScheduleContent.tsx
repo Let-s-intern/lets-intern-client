@@ -43,7 +43,7 @@ const ScheduleContent = ({
       <DateToggle programDate={programDate} programType={programType} />
       <div>
         <button
-          className={`text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100 disabled:bg-neutral-70`}
+          className={`text-1.125-medium bg-primary disabled:bg-neutral-70 flex w-full justify-center rounded-md px-6 py-3 font-medium text-neutral-100`}
           onClick={handleNextButtonClick}
           disabled={isApplied}
         >

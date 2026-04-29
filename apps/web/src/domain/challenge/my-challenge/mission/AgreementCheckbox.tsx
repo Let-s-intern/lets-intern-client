@@ -58,7 +58,7 @@ const AgreementCheckbox = ({
       {/* 텍스트 */}
       <span
         className={clsx(
-          'cursor-pointer select-none text-xsmall14 text-neutral-0',
+          'text-xsmall14 text-neutral-0 cursor-pointer select-none',
           disabled && 'cursor-not-allowed opacity-50',
         )}
       >
