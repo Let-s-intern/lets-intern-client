@@ -17,17 +17,24 @@ const CLOSED_REGEX = /출시\s*알[림람]\s*신청|모집\s*마감/i;
 const ENROLLED_REGEX = /시작하기|내\s*라이브러리|이미\s*신청|수강\s*중/i;
 
 export class ChallengeDetailPage extends BasePage {
-  /** 상세 페이지 로드 + redirect 완료 + BE fetch 안정화 대기. */
-  async waitForLoaded(expectedTitleSubstring: string): Promise<this> {
+  /**
+   * 상세 페이지 로드 대기.
+   *   - URL: /program/challenge/[id]/[slug]
+   *   - 제목 검증: 제공되면 검사, 없으면 skip (어떤 챌린지인지 모를 때)
+   *   - settle(3000): BE fetch + React state 반영 충분히 대기 — default state
+   *     (출시알림신청) 오감지 방지
+   */
+  async waitForLoaded(expectedTitleSubstring?: string): Promise<this> {
     await this.page.waitForURL(/\/program\/challenge\/[^/]+\/[^/]+/, {
       timeout: 15_000,
     });
-    await expect(this.page).toHaveTitle(
-      new RegExp(expectedTitleSubstring, 'i'),
-      { timeout: 10_000 },
-    );
-    // BE fetch + React state 반영을 충분히 기다려 default state 오감지 회피.
-    await this.settle(1500);
+    if (expectedTitleSubstring) {
+      await expect(this.page).toHaveTitle(
+        new RegExp(expectedTitleSubstring, 'i'),
+        { timeout: 10_000 },
+      );
+    }
+    await this.settle(3000);
     return this;
   }
 
