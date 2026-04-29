@@ -32,16 +32,18 @@ const useMentorAssignmentData = (programId: string) => {
     () => participantsData?.missionApplications ?? [],
     [participantsData],
   );
-  const mentors = useMemo(
-    () => mentorData?.mentorList ?? [],
-    [mentorData],
-  );
+  const mentors = useMemo(() => mentorData?.mentorList ?? [], [mentorData]);
 
   // applications에서 멘티 상세 정보 맵 생성
   const applicationDetailsMap = useMemo(() => {
     const map: Record<
       number,
-      { major: string; wishJob: string; wishCompany: string; pricePlanType: string }
+      {
+        major: string;
+        wishJob: string;
+        wishCompany: string;
+        pricePlanType: string;
+      }
     > = {};
     applicationsData?.applicationList.forEach((a) => {
       map[a.application.id] = {
@@ -148,7 +150,9 @@ const useMentorAssignmentData = (programId: string) => {
     () =>
       participants
         .filter(
-          (p) => applicationDetailsMap[p.applicationId]?.pricePlanType !== BASIC_PRICE_PLAN,
+          (p) =>
+            applicationDetailsMap[p.applicationId]?.pricePlanType !==
+            BASIC_PRICE_PLAN,
         )
         .map((p) => {
           const details = applicationDetailsMap[p.applicationId];
@@ -172,7 +176,8 @@ const useMentorAssignmentData = (programId: string) => {
     mentors,
     effectiveMentors,
     matchCounts,
-    isLoading: isParticipantsLoading || isMentorLoading || isApplicationsLoading,
+    isLoading:
+      isParticipantsLoading || isMentorLoading || isApplicationsLoading,
     isPending,
     handleSingleMatch,
     handleBulkMatch,

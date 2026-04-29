@@ -10,7 +10,7 @@ const Button = (props: ButtonProps) => {
   return (
     <button
       className={clsx(
-        'flex items-center justify-center gap-1 rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-semibold text-primary-dark',
+        'border-primary text-primary-dark flex items-center justify-center gap-1 rounded-sm border-2 bg-neutral-100 px-5 py-2 font-semibold',
         className,
       )}
       {...newProps}

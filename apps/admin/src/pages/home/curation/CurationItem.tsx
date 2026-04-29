@@ -107,7 +107,7 @@ const CurationItem = ({
         ) : (
           // ETC의 경우 썸네일, 제목, url 입력
           <div className="flex flex-1 items-center gap-x-5">
-            <Box className="flex h-full w-52 items-center justify-center overflow-hidden rounded-xs bg-neutral-90">
+            <Box className="rounded-xs bg-neutral-90 flex h-full w-52 items-center justify-center overflow-hidden">
               <ImageUpload
                 label="썸네일"
                 image={item.thumbnail}

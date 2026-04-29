@@ -36,7 +36,7 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
         </span>
         <span>만드는 밀도 있는 {weekText}간의 여정</span>
       </MainTitle>
-      <div className="text-small14 mb-[60px] mt-3 text-center text-neutral-0 md:mt-5 md:text-small18">
+      <div className="text-small14 text-neutral-0 md:text-small18 mb-[60px] mt-3 text-center md:mt-5">
         막연한 HR 관심에서 끝나지 않도록, 직무 탐색부터 경험 정리, 결과물
         완성까지 함께합니다.
       </div>

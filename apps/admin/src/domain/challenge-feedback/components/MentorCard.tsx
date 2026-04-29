@@ -21,7 +21,7 @@ const MentorCard = memo(function MentorCard({ mentor }: MentorCardProps) {
       </div>
       {/* 정보 — company/role이 있을 때만 표시 */}
       {(mentor.company || mentor.role) && (
-        <div className="p-4 space-y-0.5">
+        <div className="space-y-0.5 p-4">
           {mentor.company && (
             <p className="text-sm font-bold text-gray-900">{mentor.company}</p>
           )}

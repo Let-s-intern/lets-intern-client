@@ -27,7 +27,7 @@ const FeedbackLayout = ({
 
   return (
     <div
-      className={`flex flex-1 flex-col md:flex-row transition-all duration-300 ease-in-out ${
+      className={`flex flex-1 flex-col transition-all duration-300 ease-in-out md:flex-row ${
         isExpanded
           ? 'gap-1 px-2 pb-2 pt-1 md:gap-2 md:px-3 md:pb-3'
           : 'gap-4 px-4 pb-4 pt-2 md:gap-6 md:px-6 md:pb-6'
@@ -39,7 +39,7 @@ const FeedbackLayout = ({
         className={`flex shrink-0 flex-col transition-all duration-300 ease-in-out ${
           isExpanded
             ? 'max-h-0 overflow-hidden opacity-0 md:max-h-none md:w-0 md:opacity-0'
-            : 'max-h-40 md:max-h-none md:w-56 opacity-100'
+            : 'max-h-40 opacity-100 md:max-h-none md:w-56'
         }`}
       >
         {sidebar}
@@ -63,7 +63,7 @@ const FeedbackLayout = ({
         {/* Mentee info */}
         <div
           className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded ? 'max-h-14 mb-0' : 'max-h-[500px] mb-2'
+            isExpanded ? 'mb-0 max-h-14' : 'mb-2 max-h-[500px]'
           }`}
         >
           {menteeInfo(isExpanded)}

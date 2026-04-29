@@ -3,8 +3,10 @@ import { Link, LinkProps } from 'react-router-dom';
 
 type OmittedProps = 'touchRippleRef' | 'focusRipple' | 'centerRipple';
 
-interface GridActionLinkProps
-  extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface GridActionLinkProps extends Omit<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  'href'
+> {
   to: LinkProps['to'];
   children?: ReactNode;
   // MUI ButtonBase-related props we want to silently drop

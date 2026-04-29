@@ -752,7 +752,12 @@ export const useChallengeApplicationsQuery = ({
   enabled?: boolean;
 }) => {
   return useQuery({
-    queryKey: [ChallengeApplicationsQueryKey, challengeId, isMentee, isCanceled],
+    queryKey: [
+      ChallengeApplicationsQueryKey,
+      challengeId,
+      isMentee,
+      isCanceled,
+    ],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/applications`, {
         params: {

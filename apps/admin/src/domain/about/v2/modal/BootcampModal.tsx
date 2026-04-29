@@ -62,10 +62,7 @@ const BootcampModal = ({
         </div>
         {applyAvailable && (
           <div className="modal-footer">
-            <Link
-              to="/program?category=BOOTCAMP"
-              className="apply-link-button"
-            >
+            <Link to="/program?category=BOOTCAMP" className="apply-link-button">
               신청하기
             </Link>
           </div>

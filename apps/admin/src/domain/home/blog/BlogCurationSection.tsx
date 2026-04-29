@@ -25,7 +25,7 @@ const BlogCurationSection = () => {
     return null;
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24 md:gap-y-21">
+      <section className="md:gap-y-21 mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24">
         {blogCurationList.map((curation, index) => (
           <ProgramContainer
             gaItem="curation_card"

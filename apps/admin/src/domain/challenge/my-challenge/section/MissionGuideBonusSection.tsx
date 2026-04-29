@@ -19,7 +19,7 @@ const Heading3 = ({
   return (
     <h3
       className={twMerge(
-        'text-xsmall16 font-semibold text-neutral-0',
+        'text-xsmall16 text-neutral-0 font-semibold',
         className,
       )}
     >
@@ -91,13 +91,13 @@ const MissionGuideBonusSection = ({
         />
 
         {/* 미션 가이드 섹션 */}
-        <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
+        <section className="rounded-xs border-neutral-80 flex flex-col gap-5 border px-4 py-4">
           {/* 인트로 섹션 */}
           <section>
             <Heading3>
               안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!
             </Heading3>
-            <p className="whitespace-pre-wrap text-xsmall14 text-neutral-0 md:text-xsmall16">
+            <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 whitespace-pre-wrap">
               렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며,{' '}
               <br />
               {getRewardAmount(currentChallenge)}을 100% 지급해드리는 후기
@@ -108,9 +108,9 @@ const MissionGuideBonusSection = ({
           {/* 참여 방법 섹션 */}
           <section className="flex flex-col gap-3">
             <Heading3>1️⃣ 블로그 후기 이벤트 참여방법</Heading3>
-            <div className="flex flex-col gap-2 rounded-xxs bg-neutral-95 p-3">
+            <div className="rounded-xxs bg-neutral-95 flex flex-col gap-2 p-3">
               <div className="flex items-start gap-2">
-                <ol className="list-inside list-decimal whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+                <ol className="text-xsmall14 text-neutral-0 md:text-xsmall16 list-inside list-decimal whitespace-pre-wrap font-medium">
                   <li>
                     이번 챌린지를 통해 배운 점, 성장한 점 등을 바탕으로 네이버
                     블로그, 티스토리, 미디엄 등 택하여 후기를 작성해주세요.
@@ -136,7 +136,7 @@ const MissionGuideBonusSection = ({
           </section>
 
           {/* 분리선 섹션 */}
-          <div className="h-px bg-neutral-80" />
+          <div className="bg-neutral-80 h-px" />
 
           {/* 후기 작성 가이드라인 섹션 */}
           <section className="flex flex-col gap-4">
@@ -144,10 +144,10 @@ const MissionGuideBonusSection = ({
               2️⃣ 여러분의 소중한 후기가 리워드 대상에서 제외되지 않도록!
               <br /> 제출 전 아래의 점검 리스트 꼭 확인해주세요!
             </Heading3>
-            <div className="flex flex-col gap-2 rounded-xxs bg-primary-5 p-3">
+            <div className="rounded-xxs bg-primary-5 flex flex-col gap-2 p-3">
               ✅ 필수 항목 점검 ✅
               <div className="flex items-start gap-2">
-                <ol className="list-inside list-decimal text-xsmall14 font-medium leading-8 text-neutral-0 md:text-xsmall16">
+                <ol className="text-xsmall14 text-neutral-0 md:text-xsmall16 list-inside list-decimal font-medium leading-8">
                   <li className="mb-4">
                     <b>제목</b> <br />- &quot;렛츠 커리어&quot;,
                     &quot;취준&quot;, &quot;프로그램명&quot; 모두 포함
@@ -165,7 +165,7 @@ const MissionGuideBonusSection = ({
                       href={getChallengeLink()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="break-all text-primary hover:underline"
+                      className="text-primary break-all hover:underline"
                     >
                       렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요{' '}
                     </a>
@@ -202,7 +202,7 @@ const MissionGuideBonusSection = ({
                     href="https://www.letscareer.co.kr/review/blog"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="break-all text-xsmall14 text-primary hover:underline md:text-xsmall16"
+                    className="text-xsmall14 text-primary md:text-xsmall16 break-all hover:underline"
                   >
                     https://www.letscareer.co.kr/review/blog
                   </a>
@@ -228,7 +228,7 @@ const MissionGuideBonusSection = ({
           {/* 문의 */}
           <section className="flex flex-col gap-3 font-medium">
             <Heading3>4️⃣ 문의</Heading3>
-            <div className="flex flex-col text-xsmall14 md:text-xsmall16">
+            <div className="text-xsmall14 md:text-xsmall16 flex flex-col">
               문의는 챌린지 오픈 채팅방으로 부탁드립니다!
             </div>
           </section>

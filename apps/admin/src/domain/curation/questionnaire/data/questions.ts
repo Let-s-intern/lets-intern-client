@@ -296,8 +296,7 @@ export const QUESTION_MAP: Record<PersonaId, CurationQuestion[]> = {
         },
         {
           value: PORTFOLIO_S2.HR_PREMIUM,
-          title:
-            '현직자 멘토의 강의와 무제한 QNA와 함께 HR 포폴을 완성할게요',
+          title: '현직자 멘토의 강의와 무제한 QNA와 함께 HR 포폴을 완성할게요',
           group: PORTFOLIO_S1.HR_TRACK,
         },
       ],

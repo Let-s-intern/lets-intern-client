@@ -114,7 +114,7 @@ function BlogList({
             text={`준비 중인 콘텐츠입니다.\n조금만 기다려주세요!`}
           />
           <BaseButton
-            className="rounded-xs border px-5 py-2 text-xsmall14"
+            className="rounded-xs text-xsmall14 border px-5 py-2"
             variant="outlined"
             onClick={() => navigate('/blog/list', { replace: true })}
           >
@@ -126,7 +126,7 @@ function BlogList({
           <div className="mb-6 flex items-center justify-between">
             <Heading2>이런 콘텐츠는 어떠세요?</Heading2>
             <Link
-              className="text-xsmall14 font-medium text-neutral-45"
+              className="text-xsmall14 text-neutral-45 font-medium"
               to="/blog/list"
             >
               더보기
@@ -257,7 +257,7 @@ function BlogList({
                   isUpcoming ? (
                     <BaseButton
                       variant="point"
-                      className="relative z-10 flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
+                      className="rounded-xs text-xxsmall12 relative z-10 flex items-center gap-1 p-2.5 font-medium"
                     >
                       <BellIcon width={16} height={16} />
                       <span>알림신청</span>

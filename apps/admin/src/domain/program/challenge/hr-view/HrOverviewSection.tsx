@@ -91,7 +91,7 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
     <div className="flex min-w-[424px] flex-col gap-3 md:gap-4">
       <div className="flex items-center justify-start gap-3">
         <span
-          className="rounded-full px-4 py-2 text-xsmall16 font-semibold text-[#212121] md:text-medium22"
+          className="text-xsmall16 md:text-medium22 rounded-full px-4 py-2 font-semibold text-[#212121]"
           style={{ backgroundColor: '#FFBD96' }}
         >
           {step}
@@ -106,7 +106,7 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
         unoptimized
         className="h-auto w-full rounded-md"
       />
-      <div className="break-keep px-2 pt-4 text-xsmall16 text-neutral-100 md:px-4">
+      <div className="text-xsmall16 break-keep px-2 pt-4 text-neutral-100 md:px-4">
         {description}
       </div>
     </div>
@@ -123,7 +123,7 @@ const HrOverviewSection: React.FC<HrOverviewSectionProps> = ({ content }) => {
   return (
     <section className="flex w-full flex-col items-center bg-[#290F00] px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
-        <p className="mx-auto flex w-fit items-center gap-3 rounded-md bg-[#FF5E00] px-3.5 py-2.5 font-bold text-white md:text-medium24">
+        <p className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md bg-[#FF5E00] px-3.5 py-2.5 font-bold text-white">
           <Image
             unoptimized
             src="/images/hr-calendar.svg"

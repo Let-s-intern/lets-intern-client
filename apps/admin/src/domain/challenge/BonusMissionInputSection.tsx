@@ -106,11 +106,11 @@ const BonusMissionInputSection = ({
       {/* 블로그 링크 */}
       <label
         htmlFor="link"
-        className="text-xsmall14 font-semibold text-neutral-0"
+        className="text-xsmall14 text-neutral-0 font-semibold"
       >
         블로그 링크
       </label>
-      <p className="mt-1 text-xsmall14">
+      <p className="text-xsmall14 mt-1">
         {isEditing
           ? '미션 링크가 잘 열리는지 확인해 주세요.'
           : '미션 제출이 완료되었습니다.'}
@@ -119,7 +119,7 @@ const BonusMissionInputSection = ({
         <input
           type="text"
           className={clsx(
-            'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
+            'text-xsmall14 disabled:bg-neutral-95 flex-1 cursor-text rounded-sm p-3 outline-none',
             {
               'text-neutral-400': !isEditing,
               'border-red-500': !isValidLinkValue && url && isEditing,
@@ -136,7 +136,7 @@ const BonusMissionInputSection = ({
         />
         <button
           type="button"
-          className="rounded-sm bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
+          className="bg-primary text-static-100 disabled:bg-neutral-70 rounded-sm px-5 font-medium"
           onClick={() => {
             if (url) {
               Object.assign(document.createElement('a'), {
@@ -155,7 +155,7 @@ const BonusMissionInputSection = ({
       {url &&
         isEditing &&
         (isLinkChecked ? (
-          <div className="text-0.75-medium mt-1 text-primary">
+          <div className="text-0.75-medium text-primary mt-1">
             링크 확인을 완료하셨습니다.
           </div>
         ) : !isValidLinkValue ? (
@@ -164,7 +164,7 @@ const BonusMissionInputSection = ({
             {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
           </div>
         ) : (
-          <div className="text-0.75-medium mt-1 text-primary">
+          <div className="text-0.75-medium text-primary mt-1">
             URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
           </div>
         ))}
@@ -172,11 +172,11 @@ const BonusMissionInputSection = ({
       {/* 리워드 받을 계좌번호 */}
       <label
         htmlFor="accountNum"
-        className="mt-8 block text-xsmall14 font-semibold text-neutral-0"
+        className="text-xsmall14 text-neutral-0 mt-8 block font-semibold"
       >
         리워드 받을 계좌번호
       </label>
-      <p className="mt-1 text-xsmall14">
+      <p className="text-xsmall14 mt-1">
         리워드 받을 은행과 계좌번호를 입력해주세요. 본인 명의가 아닌 계좌로는
         리워드가 입금되지 않습니다.
       </p>
@@ -192,7 +192,7 @@ const BonusMissionInputSection = ({
           type="number"
           inputMode="numeric"
           className={clsx(
-            'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
+            'text-xsmall14 disabled:bg-neutral-95 flex-1 cursor-text rounded-sm p-3 outline-none',
             {
               'text-neutral-400': !isEditing,
             },
@@ -210,11 +210,11 @@ const BonusMissionInputSection = ({
       {/* 개인정보 활용 동의 */}
       <label
         htmlFor="privacyConsent"
-        className="mt-8 block text-xsmall14 font-semibold text-neutral-0"
+        className="text-xsmall14 text-neutral-0 mt-8 block font-semibold"
       >
         개인정보 활용 동의
       </label>
-      <p className="mt-1 text-xsmall14">
+      <p className="text-xsmall14 mt-1">
         [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로 개인정보를
         수집, 이용 및 제공하는데 동의합니다. <br />
         □ 개인정보의 수집 및 이용에 관한 사항 <br />
@@ -242,7 +242,7 @@ const BonusMissionInputSection = ({
         {submitted && (
           <button
             type="button"
-            className="h-12 flex-1 rounded-md border border-gray-50 bg-white px-6 py-3 text-center text-small18 font-medium disabled:bg-gray-50 disabled:text-gray-600"
+            className="text-small18 h-12 flex-1 rounded-md border border-gray-50 bg-white px-6 py-3 text-center font-medium disabled:bg-gray-50 disabled:text-gray-600"
             onClick={() => {
               if (isEditing) {
                 cancelEdit();
@@ -257,7 +257,7 @@ const BonusMissionInputSection = ({
         )}
         <button
           type="button"
-          className="h-12 flex-1 rounded-md bg-primary px-6 py-3 text-center text-small18 font-medium text-white disabled:bg-neutral-70 disabled:text-white"
+          className="bg-primary text-small18 disabled:bg-neutral-70 h-12 flex-1 rounded-md px-6 py-3 text-center font-medium text-white disabled:text-white"
           disabled={!isSubmittable}
           onClick={handleSubmit}
         >

@@ -8,7 +8,7 @@ interface ReviewItemProps {
 
 const ReviewItem = ({ review }: ReviewItemProps) => {
   return (
-    <li className="flex flex-col gap-2 rounded-md bg-neutral-0 bg-opacity-5 px-8 py-6">
+    <li className="bg-neutral-0 flex flex-col gap-2 rounded-md bg-opacity-5 px-8 py-6">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="text-0.875-medium">{review.title}</span>

@@ -21,10 +21,10 @@ export default function FeedbackOperationPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={twMerge(
-              'rounded-md border px-4 py-2 text-xsmall14',
+              'text-xsmall14 rounded-md border px-4 py-2',
               activeTab === tab.id
                 ? 'border-neutral-0 bg-neutral-0 text-white'
-                : 'border-neutral-80 bg-white text-neutral-40',
+                : 'border-neutral-80 text-neutral-40 bg-white',
             )}
           >
             {tab.label}

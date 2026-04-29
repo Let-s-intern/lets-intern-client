@@ -1,8 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import React, { forwardRef } from 'react';
 
-interface ReportContentContainerProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface ReportContentContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 

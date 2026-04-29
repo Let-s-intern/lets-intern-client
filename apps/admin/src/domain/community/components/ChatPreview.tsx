@@ -41,7 +41,7 @@ export default function ChatPreview() {
             key={item.label}
             type="button"
             onClick={() => setModalIndex(i)}
-            className="group relative aspect-square cursor-pointer overflow-hidden rounded-xs bg-white shadow-sm ring-1 ring-neutral-80 transition-all duration-200 hover:shadow-md hover:ring-2 hover:ring-primary-40"
+            className="rounded-xs ring-neutral-80 hover:ring-primary-40 group relative aspect-square cursor-pointer overflow-hidden bg-white shadow-sm ring-1 transition-all duration-200 hover:shadow-md hover:ring-2"
           >
             <Image
               src={item.src}
@@ -52,7 +52,7 @@ export default function ChatPreview() {
             />
             {/* Bottom gradient + label */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-3 pb-2.5 pt-8">
-              <span className="text-xxsmall12 font-bold text-white md:text-xsmall14">
+              <span className="text-xxsmall12 md:text-xsmall14 font-bold text-white">
                 {item.label}
               </span>
             </div>

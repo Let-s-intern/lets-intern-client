@@ -114,7 +114,7 @@ const LoginPrompt = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일을 입력하세요"
-              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:ring-1"
               autoComplete="email"
             />
           </div>
@@ -132,7 +132,7 @@ const LoginPrompt = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력하세요"
-              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:ring-1"
               autoComplete="current-password"
             />
           </div>
@@ -146,7 +146,7 @@ const LoginPrompt = () => {
           <button
             type="submit"
             disabled={buttonDisabled || fetchLogin.isPending}
-            className="mt-1 rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-primary hover:bg-primary-hover mt-1 rounded-xl py-3 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             {fetchLogin.isPending ? '로그인 중...' : '로그인'}
           </button>
@@ -203,7 +203,7 @@ const NotAdminPrompt = () => {
           <button
             type="button"
             onClick={logout}
-            className="rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+            className="bg-primary hover:bg-primary-hover rounded-xl py-3 text-sm font-medium text-white transition-colors"
           >
             로그아웃
           </button>

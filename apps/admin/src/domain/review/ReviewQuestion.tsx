@@ -16,7 +16,7 @@ function ReviewQuestion({ children, required = false, className }: Props) {
   return (
     <p
       className={twMerge(
-        'text-xsmall16 font-bold text-neutral-0',
+        'text-xsmall16 text-neutral-0 font-bold',
         required ? REQUIRED_STYLE : '',
         className,
       )}

@@ -11,7 +11,7 @@ const info = {
 
 function BusinessInfo() {
   return (
-    <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">
+    <div className="text-0.75-medium text-neutral-45 flex flex-col gap-2">
       <span>{info.TITLE}</span>
       <span>
         {info.OWNER} | {info.REGISTRATION_NUMBER}

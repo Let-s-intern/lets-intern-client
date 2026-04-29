@@ -24,7 +24,8 @@ const useAttendanceHandler = () => {
   const invalidateFeedback = useInvalidateQueries(queryKey);
 
   return {
-    patchAttendance: isAdmin === true ? patchAdminAttendance : patchAttendanceMentor,
+    patchAttendance:
+      isAdmin === true ? patchAdminAttendance : patchAttendanceMentor,
     invalidateAttendance: invalidateFeedback,
   };
 };

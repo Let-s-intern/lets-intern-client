@@ -89,7 +89,7 @@ const DoneMissionDetailMenu = ({
         {showMissionReview && (
           <div className="mt-10 flex w-full flex-col gap-y-2.5">
             <h4 className="text-xsmall16 font-bold">미션 소감</h4>
-            <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
+            <p className="bg-neutral-95 text-xsmall14 h-20 overflow-auto rounded-md p-3">
               {schedule.attendanceInfo.review ?? '-'}
             </p>
           </div>
@@ -97,7 +97,7 @@ const DoneMissionDetailMenu = ({
         {isOtMission && (
           <div className="mt-4 flex w-full flex-col gap-y-2.5">
             <h4 className="text-xsmall16 font-bold">챌린지 참여 목표</h4>
-            <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
+            <p className="bg-neutral-95 text-xsmall14 h-20 overflow-auto rounded-md p-3">
               {goalData?.goal}
             </p>
           </div>

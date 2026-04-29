@@ -24,7 +24,7 @@ const DescriptionBox = ({
   return (
     <p
       className={twMerge(
-        'rounded-xxs bg-neutral-95 p-3 text-xsmall14 text-neutral-10',
+        'rounded-xxs bg-neutral-95 text-xsmall14 text-neutral-10 p-3',
         className,
       )}
     >
@@ -193,7 +193,7 @@ const MissionSubmitBonusSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+        <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
           미션 제출하기
         </h2>
 
@@ -210,7 +210,7 @@ const MissionSubmitBonusSection = ({
 
         {/* 리워드 받을 계좌번호 */}
         <div className="mt-7 flex flex-col">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
+          <span className="text-xsmall16 text-neutral-0 font-semibold">
             리워드 받을 계좌번호
           </span>
           <DescriptionBox className="mt-1">
@@ -226,9 +226,9 @@ const MissionSubmitBonusSection = ({
             <input
               type="number"
               className={clsx(
-                'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-                'px-3 py-2 text-base text-neutral-0 placeholder:text-neutral-50',
-                'h-[44px] outline-none focus:border-primary',
+                'rounded-xxs border-neutral-80 w-full resize-none border bg-white',
+                'text-neutral-0 px-3 py-2 text-base placeholder:text-neutral-50',
+                'focus:border-primary h-[44px] outline-none',
                 'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
               )}
               placeholder={'계좌번호를 입력해주세요.'}
@@ -241,7 +241,7 @@ const MissionSubmitBonusSection = ({
 
         {/* 개인정보 활용 동의 */}
         <div className="mt-7 flex flex-col gap-1">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
+          <span className="text-xsmall16 text-neutral-0 font-semibold">
             개인정보 활용 동의
           </span>
           <DescriptionBox>
@@ -265,7 +265,7 @@ const MissionSubmitBonusSection = ({
 
         {/* 마케팅 활용 동의 */}
         <div className="mt-7 flex flex-col gap-1">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
+          <span className="text-xsmall16 text-neutral-0 font-semibold">
             마케팅 활용 동의
           </span>
           <DescriptionBox>

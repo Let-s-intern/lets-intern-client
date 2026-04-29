@@ -13,13 +13,19 @@ export interface BasicInfoFormData {
 interface BasicInfoProps {
   formData: BasicInfoFormData;
   onChange: (data: BasicInfoFormData) => void;
-  showAlert: (opts: { title: string; variant?: 'info' | 'success' | 'error' | 'confirm' }) => void;
+  showAlert: (opts: {
+    title: string;
+    variant?: 'info' | 'success' | 'error' | 'confirm';
+  }) => void;
 }
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-const FIELDS: { key: keyof Omit<BasicInfoFormData, 'profileImgUrl'>; label: string }[] = [
+const FIELDS: {
+  key: keyof Omit<BasicInfoFormData, 'profileImgUrl'>;
+  label: string;
+}[] = [
   { key: 'name', label: '이름' },
   { key: 'nickname', label: '활동명' },
   { key: 'phoneNum', label: '전화번호' },
@@ -27,7 +33,11 @@ const FIELDS: { key: keyof Omit<BasicInfoFormData, 'profileImgUrl'>; label: stri
   { key: 'email', label: 'e-mail' },
 ];
 
-export default function BasicInfo({ formData, onChange, showAlert }: BasicInfoProps) {
+export default function BasicInfo({
+  formData,
+  onChange,
+  showAlert,
+}: BasicInfoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -128,7 +138,7 @@ export default function BasicInfo({ formData, onChange, showAlert }: BasicInfoPr
                 type="text"
                 value={formData[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
-                className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
+                className="focus:border-primary min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
               />
             </div>
           ))}

@@ -13,13 +13,13 @@ const PersonalInfoConsent = ({
 }: PersonalInfoConsentProps) => {
   return (
     <div>
-      <h2 className="mb-1 text-xsmall16 font-semibold text-neutral-0">
+      <h2 className="text-xsmall16 text-neutral-0 mb-1 font-semibold">
         개인정보 수집 활용 동의서
       </h2>
 
       {/* 설명 박스 */}
       <div className="rounded-xxs bg-neutral-95 p-3">
-        <ol className="list-inside list-decimal text-xsmall14 font-normal leading-[1.375rem] text-neutral-10">
+        <ol className="text-xsmall14 text-neutral-10 list-inside list-decimal font-normal leading-[1.375rem]">
           {/* 1. 개인정보의 수집 및 이용에 대한 동의 */}
           <li>
             개인정보의 수집 및 이용에 대한 동의

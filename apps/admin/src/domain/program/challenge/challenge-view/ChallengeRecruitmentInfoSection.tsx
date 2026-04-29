@@ -22,7 +22,7 @@ const Box = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col items-stretch gap-5 rounded-sm bg-neutral-95 px-4 py-5 md:flex-1',
+        'bg-neutral-95 flex flex-col items-stretch gap-5 rounded-sm px-4 py-5 md:flex-1',
         className,
       )}
     >
@@ -40,7 +40,7 @@ const Label = ({
 }) => {
   return (
     <span
-      className="text-xsmall14 font-semibold md:text-xsmall16"
+      className="text-xsmall14 md:text-xsmall16 font-semibold"
       style={{ color: themeColor }}
     >
       {children}
@@ -60,7 +60,7 @@ const InfoWrapper = ({
   return (
     <div className="flex flex-col gap-2">
       <Label themeColor={themeColor}>{label}</Label>
-      <p className="whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+      <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 whitespace-pre-line font-medium">
         {children}
       </p>
     </div>
@@ -81,15 +81,15 @@ const PriceView = ({
   return (
     <div className="flex shrink-0 flex-col items-end">
       {hasDiscount && (
-        <span className="inline-flex gap-1 text-xsmall14">
-          <span className="font-semibold text-system-error/90">{percent}%</span>
-          <span className="font-medium text-neutral-40 line-through">
+        <span className="text-xsmall14 inline-flex gap-1">
+          <span className="text-system-error/90 font-semibold">{percent}%</span>
+          <span className="text-neutral-40 font-medium line-through">
             {originalPrice.toLocaleString()}원
           </span>
         </span>
       )}
 
-      <span className="text-small20 font-bold text-neutral-0">
+      <span className="text-small20 text-neutral-0 font-bold">
         {sellingPrice.toLocaleString()}원
       </span>
     </div>
@@ -99,7 +99,7 @@ const PriceView = ({
 const PriceListItem = ({ priceInfo }: { priceInfo: PriceInfo }) => {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+      <span className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-medium">
         {priceInfo.title}
       </span>
       <PriceView
@@ -215,7 +215,7 @@ export default function ChallengeRecruitmentInfoSection({
                 <Fragment key={item.title}>
                   <PriceListItem priceInfo={item} />
                   {index < priceList.length - 1 && (
-                    <hr className="my-2 border-t border-neutral-80" />
+                    <hr className="border-neutral-80 my-2 border-t" />
                   )}
                 </Fragment>
               );

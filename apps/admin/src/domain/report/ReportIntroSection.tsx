@@ -221,7 +221,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   return (
     <section
       id={REPORT_INTRO_ID}
-      className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
+      className="text-neutral-0 flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center"
     >
       {/* section0 */}
       <div
@@ -229,18 +229,18 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         className="flex w-full max-w-[1000px] flex-col gap-y-[30px] px-5 py-[60px] md:gap-y-[50px] md:pb-[120px] md:pt-[100px] lg:px-0"
       >
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
-          <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+          <h5 className="text-xsmall14 text-neutral-45 md:text-small18 w-full text-center font-semibold">
             서비스 소개
           </h5>
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <span
-              className="text-xsmall16 font-bold md:text-small20"
+              className="text-xsmall16 md:text-small20 font-bold"
               style={subHeaderStyle}
             >
               서류 합격에 한걸음 더 가까이
             </span>
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
-              <p className="text-medium22 font-bold md:text-xlarge30">
+              <p className="text-medium22 md:text-xlarge30 font-bold">
                 {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실 거예요.`}
               </p>
             </div>
@@ -254,24 +254,24 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               style={boxStyle}
             >
               <span
-                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold md:h-[30px] md:w-[30px] md:text-small20"
+                className="text-xxsmall12 md:text-small20 flex h-4 w-4 shrink-0 items-center justify-center rounded-full font-semibold md:h-[30px] md:w-[30px]"
                 style={stepStyle}
               >{`${index + 1}`}</span>
-              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-small20">
+              <div className="text-xsmall14 md:text-small20 flex flex-1 flex-col items-start gap-y-1 text-start font-medium">
                 {step}
               </div>
             </div>
           ))}
         </div>
         <div className="mx-auto flex w-full flex-col gap-y-3 md:w-[643px] md:gap-y-4">
-          <h6 className="mx-auto text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+          <h6 className="text-xsmall14 text-neutral-45 md:text-small18 mx-auto font-semibold">
             진행 방식
           </h6>
           <div className="flex w-full items-center gap-x-2 md:gap-x-6">
             {reportIntro.section0.images.map((image, index) => (
               <div
                 key={`step-img-${index}`}
-                className="flex flex-1 flex-col items-center gap-y-1 text-xxsmall12 font-medium text-neutral-20 md:gap-y-2 md:text-small18"
+                className="text-xxsmall12 text-neutral-20 md:text-small18 flex flex-1 flex-col items-center gap-y-1 font-medium md:gap-y-2"
               >
                 <img
                   src={image.image}
@@ -285,18 +285,18 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         </div>
       </div>
       {/* section1 */}
-      <div data-section="intro-2" className="w-full bg-neutral-90">
+      <div data-section="intro-2" className="bg-neutral-90 w-full">
         <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-[30px] px-5 pb-[70px] pt-[50px] md:gap-y-[50px] md:pb-[120px] md:pt-[100px] lg:px-0">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
             <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
               <span
-                className="text-xsmall16 font-bold md:text-small20"
+                className="text-xsmall16 md:text-small20 font-bold"
                 style={subHeaderStyle}
               >
                 쌓여가는 불합격 메일들...
               </span>
               <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
-                <p className="text-medium22 font-bold md:text-xlarge30">
+                <p className="text-medium22 md:text-xlarge30 font-bold">
                   {convertString(reportIntro.section1.title)}
                 </p>
               </div>
@@ -305,7 +305,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="mx-auto flex w-full flex-col gap-y-5 md:w-3/5 md:gap-y-9">
             {reportIntro.section1.questions.map((question, index) => (
               <div
-                className="relative flex w-full items-center justify-center rounded-md border px-4 py-3 text-xsmall16 font-bold md:px-[60px] md:py-[30px] md:text-medium24"
+                className="text-xsmall16 md:text-medium24 relative flex w-full items-center justify-center rounded-md border px-4 py-3 font-bold md:px-[60px] md:py-[30px]"
                 key={`${type}-question-${index}`}
                 style={boxStyle}
               >
@@ -329,11 +329,11 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-5 px-5 py-[70px] md:gap-y-20 md:pb-[140px] md:pt-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
-              className="text-xsmall16 font-bold md:text-small20"
+              className="text-xsmall16 md:text-small20 font-bold"
               style={darkSubHeaderStyle}
             >{`이제는 합격하는 ${convertReportTypeToDisplayName(type)}로!`}</h5>
             <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
-              <p className="text-medium22 font-bold text-white md:text-xlarge30">
+              <p className="text-medium22 md:text-xlarge30 font-bold text-white">
                 {convertString(reportIntro.section3.title)}
               </p>
               <p className="text-xsmall14 text-neutral-70 md:text-small20">
@@ -350,10 +350,10 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 className="relative flex min-h-full w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]"
                 ref={beforeRef}
               >
-                <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold text-neutral-30 md:text-small18">
+                <div className="bg-neutral-40 text-xsmall16 text-neutral-30 md:text-small18 absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full px-5 py-3 font-semibold">
                   BEFORE
                 </div>
-                <div className="grid h-full w-full grid-rows-4 rounded-sm bg-neutral-40 px-6 py-5 text-small18 font-semibold text-neutral-20 md:px-12 md:text-medium22">
+                <div className="bg-neutral-40 text-small18 text-neutral-20 md:text-medium22 grid h-full w-full grid-rows-4 rounded-sm px-6 py-5 font-semibold md:px-12">
                   {reportIntro.section3.before.map((item, index) => (
                     <div
                       className="h-full w-full"
@@ -372,13 +372,13 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 ref={afterRef}
               >
                 <div
-                  className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold text-neutral-0 md:text-small18"
+                  className="text-xsmall16 text-neutral-0 md:text-small18 absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 font-semibold"
                   style={{ borderColor: afterStyle.borderColor }}
                 >
                   AFTER
                 </div>
                 <div
-                  className="grid h-full w-full grid-rows-4 rounded-sm px-6 py-5 text-small18 font-semibold md:px-12 md:text-medium22"
+                  className="text-small18 md:text-medium22 grid h-full w-full grid-rows-4 rounded-sm px-6 py-5 font-semibold md:px-12"
                   style={{ backgroundColor: afterStyle.backgroundColor }}
                 >
                   {reportIntro.section3.after.map((item, index) => (

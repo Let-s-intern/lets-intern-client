@@ -60,7 +60,5 @@ const MOCK_MAGNETS: MagnetListItem[] = [
 ];
 
 export function fetchManageableMagnets(): MagnetListItem[] {
-  return MOCK_MAGNETS.filter((m) =>
-    MANAGEABLE_MAGNET_TYPES.includes(m.type),
-  );
+  return MOCK_MAGNETS.filter((m) => MANAGEABLE_MAGNET_TYPES.includes(m.type));
 }

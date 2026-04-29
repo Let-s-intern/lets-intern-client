@@ -13,7 +13,7 @@ const DeadlineBadge = ({ deadline }: DeadlineBadgeProps) => {
   if (daysLeft < 0 || daysLeft > DEADLINE_THRESHOLD_DAYS) return null;
 
   return (
-    <span className="absolute left-2 top-2 rounded-xs bg-neutral-0/80 px-2.5 py-1 text-xxsmall10 font-semibold text-static-100 md:text-xxsmall12">
+    <span className="rounded-xs bg-neutral-0/80 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 px-2.5 py-1 font-semibold">
       마감임박
     </span>
   );

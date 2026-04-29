@@ -47,9 +47,7 @@ const QuestionCard = ({
   return (
     <div className="rounded-lg border border-neutral-200 bg-white p-6">
       <div className="mb-5 flex items-center justify-between">
-        <span className="text-lg font-semibold">
-          질문 {questionNumber}
-        </span>
+        <span className="text-lg font-semibold">질문 {questionNumber}</span>
         <IconButton size="small" onClick={onRemove}>
           <Trash size={18} />
         </IconButton>
@@ -58,9 +56,7 @@ const QuestionCard = ({
       <div className="flex flex-col gap-5">
         {/* 질문 유형 */}
         <div>
-          <label className="mb-1 block text-sm font-medium">
-            질문 유형
-          </label>
+          <label className="mb-1 block text-sm font-medium">질문 유형</label>
           <RadioGroup
             row
             value={question.questionType}
@@ -81,9 +77,7 @@ const QuestionCard = ({
 
         {/* 응답 설정 */}
         <div>
-          <label className="mb-1 block text-sm font-medium">
-            응답 설정
-          </label>
+          <label className="mb-1 block text-sm font-medium">응답 설정</label>
           <RadioGroup
             row
             value={question.isRequired}
@@ -134,9 +128,7 @@ const QuestionCard = ({
               <RadioGroup
                 row
                 value={question.selectionMethod}
-                onChange={(e) =>
-                  handleSelectionMethodChange(e.target.value)
-                }
+                onChange={(e) => handleSelectionMethodChange(e.target.value)}
               >
                 <FormControlLabel
                   value="SINGLE"

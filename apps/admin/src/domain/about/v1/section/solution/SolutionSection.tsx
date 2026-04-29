@@ -27,7 +27,7 @@ const content = [
 const SolutionSection = () => {
   return (
     <section className="bg-neutral-100 px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:flex md:flex-col md:items-center xl:py-[8.75rem]">
-      <h1 className="text-1-bold xl:text-1.25-bold mb-2 text-neutral-40">
+      <h1 className="text-1-bold xl:text-1.25-bold text-neutral-40 mb-2">
         커리어 성장
       </h1>
       <div className="text-1.25-bold xl:text-1.75-bold sm:text-1.5-bold mb-[3.75rem] sm:mb-20 md:text-center">

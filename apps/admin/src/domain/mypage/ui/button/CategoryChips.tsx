@@ -21,7 +21,7 @@ const CategoryChips = <Value extends string>({
   return (
     <div
       className={clsx(
-        'flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide',
+        'scrollbar-hide flex gap-3 overflow-x-auto whitespace-nowrap',
         className,
       )}
     >
@@ -34,7 +34,7 @@ const CategoryChips = <Value extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={clsx(
-              'rounded-full px-3 py-1.5 text-xsmall14 leading-5',
+              'text-xsmall14 rounded-full px-3 py-1.5 leading-5',
               'shrink-0 whitespace-nowrap border transition-colors',
               isActive
                 ? 'bg-neutral-10 text-neutral-100'

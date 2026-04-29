@@ -36,7 +36,7 @@ const SummaryItem = ({
   icon: string;
 }) => {
   return (
-    <div className="flex flex-row items-center gap-5 rounded-xs bg-white p-5 md:flex-col md:items-start md:gap-4 md:p-6">
+    <div className="rounded-xs flex flex-row items-center gap-5 bg-white p-5 md:flex-col md:items-start md:gap-4 md:p-6">
       <div className="mb-2 shrink-0 md:mb-0 md:h-12 md:w-12">
         <img
           src={icon}
@@ -45,10 +45,10 @@ const SummaryItem = ({
         />
       </div>
       <div className="flex flex-col gap-1 text-left">
-        <div className="whitespace-pre-line text-xsmall16 font-bold text-neutral-10 md:text-small20">
+        <div className="text-xsmall16 text-neutral-10 md:text-small20 whitespace-pre-line font-bold">
           {title}
         </div>
-        <div className="whitespace-pre-line text-xsmall14 text-neutral-30 md:text-small18">
+        <div className="text-xsmall14 text-neutral-30 md:text-small18 whitespace-pre-line">
           {description}
         </div>
       </div>
@@ -70,12 +70,12 @@ const MarketingSummarySection: React.FC<MarketingSummarySectionProps> = ({
 
   return (
     <section className="flex flex-col items-center bg-[#F1F4FF] px-5 pb-12 pt-[60px] text-center md:px-0 md:pb-[120px] md:pt-[100px]">
-      <div className="mb-2 text-xsmall16 font-bold text-[#4A76FF] md:mb-3 md:text-small20">
+      <div className="text-xsmall16 md:text-small20 mb-2 font-bold text-[#4A76FF] md:mb-3">
         렛츠커리어의 심기일전!
       </div>
       <MainTitle className="mb-6">
         렛츠커리어는 취업의 <br className="md:hidden" />
-        <span className="text-bold mx-1 bg-[#4A76FF] px-2 py-1 text-medium22 text-white md:text-xlarge30">
+        <span className="text-bold text-medium22 md:text-xlarge30 mx-1 bg-[#4A76FF] px-2 py-1 text-white">
           합격의 순간
         </span>
         까지 함께합니다.

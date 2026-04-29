@@ -102,7 +102,8 @@ const CommonBanners = () => {
     }
 
     if (error) {
-      const message = error instanceof Error ? error.message : '알 수 없는 오류';
+      const message =
+        error instanceof Error ? error.message : '알 수 없는 오류';
       console.error('[CommonBanners]', error);
       return (
         <div className="py-16 text-center text-sm text-red-500">
@@ -113,7 +114,7 @@ const CommonBanners = () => {
 
     if (activeTab === 'active') {
       return (
-        <div className="overflow-x-auto rounded-xxs border border-gray-200">
+        <div className="rounded-xxs overflow-x-auto border border-gray-200">
           <ActiveBannerTable
             groupedData={groupedActiveBanners}
             onDeleteClick={handleDeleteButtonClicked}
@@ -170,7 +171,7 @@ const CommonBanners = () => {
               </button>
             </div>
             <button
-              className="flex items-center gap-1 rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold disabled:opacity-50"
+              className="rounded-xxs border-primary text-xsmall14 text-primary hover:bg-primary-20 flex items-center gap-1 border bg-white px-4 py-0.5 duration-200 hover:font-semibold disabled:opacity-50"
               disabled={isUpdatingExpired}
               onClick={() => updateExpiredBanners()}
             >

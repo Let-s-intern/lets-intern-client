@@ -24,7 +24,7 @@ const TableLayout = ({
         {headerButton && (
           <Link
             to={headerButton.href}
-            className="h-full rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold"
+            className="rounded-xxs border-primary text-xsmall14 text-primary hover:bg-primary-20 h-full border bg-white px-4 py-0.5 duration-200 hover:font-semibold"
           >
             {headerButton.label}
           </Link>

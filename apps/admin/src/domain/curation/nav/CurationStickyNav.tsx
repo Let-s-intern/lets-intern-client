@@ -69,7 +69,7 @@ const CurationStickyNav = ({
   }, []);
 
   return (
-    <nav className="sticky top-0 z-40 flex w-full justify-center border-b-2 border-neutral-80 bg-white shadow-sm">
+    <nav className="border-neutral-80 sticky top-0 z-40 flex w-full justify-center border-b-2 bg-white shadow-sm">
       <div className="flex w-full max-w-[1000px] items-center justify-between px-6">
         {navItems.map((navItem) => {
           const isActive = activeSection === navItem.sectionId;
@@ -77,7 +77,7 @@ const CurationStickyNav = ({
           return (
             <button
               key={navItem.title}
-              className="border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold transition-colors xs:text-xsmall16 md:min-w-[100px]"
+              className="xs:text-xsmall16 border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold transition-colors md:min-w-[100px]"
               style={{
                 borderBottomColor: isActive ? '#4D55F5' : 'transparent',
                 color: isActive ? '#4D55F5' : '#989ba2',

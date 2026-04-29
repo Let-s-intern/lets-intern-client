@@ -110,7 +110,7 @@ function Content() {
 
       {/* 카드 그리드 */}
       {isLoading ? (
-        <div className="flex min-h-[200px] items-center justify-center text-neutral-40">
+        <div className="text-neutral-40 flex min-h-[200px] items-center justify-center">
           <LoadingContainer />
         </div>
       ) : data && data.magnetList.length > 0 ? (
@@ -123,10 +123,10 @@ function Content() {
             className="h-40 w-40"
           />
           <div className="flex flex-col items-center gap-2">
-            <p className="text-small16 font-semibold text-neutral-30 md:text-small20">
+            <p className="text-small16 text-neutral-30 md:text-small20 font-semibold">
               아직 신청한 자료집이 없어요
             </p>
-            <p className="text-center text-xsmall16 text-neutral-40">
+            <p className="text-xsmall16 text-neutral-40 text-center">
               이력서, 자소서, 직무 정보 등
               <br className="md:hidden" />
               다양한 무료 자료집을 확인하고
@@ -137,14 +137,14 @@ function Content() {
           <button
             type="button"
             onClick={() => handleTabChange('contents')}
-            className="mt-6 flex items-center gap-1.5 rounded-xxs border border-primary px-4 py-2.5 text-xsmall14 font-medium text-primary transition-colors hover:bg-primary/5"
+            className="rounded-xxs border-primary text-xsmall14 text-primary hover:bg-primary/5 mt-6 flex items-center gap-1.5 border px-4 py-2.5 font-medium transition-colors"
           >
             <Search size={16} />
             무료 자료집 둘러보기
           </button>
         </div>
       ) : (
-        <div className="flex min-h-[200px] items-center justify-center text-neutral-40">
+        <div className="text-neutral-40 flex min-h-[200px] items-center justify-center">
           등록된 콘텐츠가 없습니다.
         </div>
       )}
@@ -198,7 +198,7 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
                     <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
                     <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1 self-center rounded-full bg-white/60 px-2 py-1">
                       <LockKeyhole size={12} color="#4C4F56" />
-                      <span className="text-xxsmall12 font-medium text-neutral-30">
+                      <span className="text-xxsmall12 text-neutral-30 font-medium">
                         공개예정
                       </span>
                     </div>
@@ -216,7 +216,7 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
             actionButton={
               isUpcoming ? (
                 magnet.appliedLaunchAlert ? (
-                  <div className="relative z-10 flex items-center gap-1 rounded-xs bg-neutral-70 p-2.5 text-xxsmall12 text-white">
+                  <div className="rounded-xs bg-neutral-70 text-xxsmall12 relative z-10 flex items-center gap-1 p-2.5 text-white">
                     <Bell size={15} />
                     알림 설정 완료
                   </div>
@@ -236,7 +236,7 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
                         `/library/${magnet.magnetId}/apply?type=launch-alert`,
                       );
                     }}
-                    className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 text-neutral-0"
+                    className="rounded-xs bg-point text-xxsmall12 text-neutral-0 relative z-10 flex items-center gap-1 p-2.5"
                   >
                     <Bell size={15} />
                     알림 설정

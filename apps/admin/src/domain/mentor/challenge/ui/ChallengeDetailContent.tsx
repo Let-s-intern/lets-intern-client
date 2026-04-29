@@ -51,7 +51,11 @@ const MissionRow = ({
       if (status !== 'WAITING') feedbackStarted++;
     }
 
-    const missionStatus = deriveMissionStatus(submitted, completed, feedbackStarted);
+    const missionStatus = deriveMissionStatus(
+      submitted,
+      completed,
+      feedbackStarted,
+    );
 
     return {
       submittedCount: submitted,
@@ -71,7 +75,7 @@ const MissionRow = ({
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="shrink-0 rounded-lg bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
+          <span className="bg-primary-10 text-primary-dark shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium">
             {mission.th}회차
           </span>
           <div className="flex flex-col gap-0.5">
@@ -121,7 +125,7 @@ const MissionRow = ({
         <button
           type="button"
           onClick={() => onClickFeedback(mission.id, mission.th)}
-          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
+          className="bg-primary hover:bg-primary-hover min-h-[44px] w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors md:min-h-0 md:w-auto"
         >
           피드백 작성
         </button>

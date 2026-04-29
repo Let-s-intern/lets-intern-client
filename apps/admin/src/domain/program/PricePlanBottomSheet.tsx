@@ -228,7 +228,7 @@ function PricePlanBottomSheet({
           <FeedbackMentoringLink
             challengeType={challenge.challengeType}
             themeColor={getChallengeThemeColor(challenge.challengeType)}
-            className="px-2.5 py-1 text-xxsmall12"
+            className="text-xxsmall12 px-2.5 py-1"
           />
         </div>
         <OptionDropdown
@@ -318,11 +318,11 @@ function PricePlanBottomSheet({
         </OptionDropdown>
 
         {/* 총 결제 금액 */}
-        <span className="mt-6 block text-xsmall14 font-semibold">
+        <span className="text-xsmall14 mt-6 block font-semibold">
           총 결제 금액
         </span>
         <hr className="my-3" />
-        <span className="block text-right text-small18 font-bold text-neutral-10">
+        <span className="text-small18 text-neutral-10 block text-right font-bold">
           {(
             finalPriceInfo.regularPrice - finalPriceInfo.discountPrice
           ).toLocaleString()}

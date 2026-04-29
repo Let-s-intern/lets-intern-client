@@ -12,7 +12,7 @@ export default function Tag({ id, title, onClick, onDelete }: TagProps) {
   return (
     <div
       key={id}
-      className="text-0.75 flex cursor-pointer items-center gap-1 rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
+      className="text-0.75 text-primary-dark flex cursor-pointer items-center gap-1 rounded-full bg-[#F3F5FA] px-2.5 py-1"
       onClick={onClick}
     >
       <span>#{title}</span>

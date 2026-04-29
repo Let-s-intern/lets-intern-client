@@ -4,7 +4,12 @@ import {
 } from '@/api/challenge/challenge';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
 import { twMerge } from '@/lib/twMerge';
-import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { type ReactNode } from 'react';
 
 export const enum TabMenu {
@@ -23,7 +28,7 @@ const TabButton = ({
 }) => {
   const getTabStyle = () => {
     return twMerge(
-      'rounded-full px-3 py-1.5 text-xsmall14 font-medium md:px-4 md:text-xsmall16',
+      'text-xsmall14 md:text-xsmall16 rounded-full px-3 py-1.5 font-medium md:px-4',
       isActive ? 'bg-neutral-10 text-white' : 'bg-neutral-90 text-neutral-40',
     );
   };
@@ -49,14 +54,14 @@ const NoticeItem = ({
   onClick?: () => void;
 }) => {
   return (
-    <li className="border-b border-neutral-80 py-4">
+    <li className="border-neutral-80 border-b py-4">
       <Link to={link} target="_blank" onClick={onClick}>
-        <h3 className="flex-1 text-xsmall16 font-medium leading-[26px] text-neutral-10 md:text-small18">
+        <h3 className="text-xsmall16 text-neutral-10 md:text-small18 flex-1 font-medium leading-[26px]">
           {children}{' '}
           {isNew && (
             <span
               aria-label="새 글"
-              className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-system-error align-middle text-[0.5rem] font-bold leading-none text-white"
+              className="bg-system-error inline-flex h-3 w-3 items-center justify-center rounded-full align-middle text-[0.5rem] font-bold leading-none text-white"
             >
               N
             </span>
@@ -82,7 +87,7 @@ const NoticeList = () => {
 
   if (isEmpty) {
     return (
-      <p className="mt-6 text-xsmall14 text-neutral-40">
+      <p className="text-xsmall14 text-neutral-40 mt-6">
         등록된 공지사항이 없습니다.
       </p>
     );
@@ -112,7 +117,7 @@ const GuideList = () => {
 
   if (isEmpty) {
     return (
-      <p className="mt-6 text-xsmall14 text-neutral-40">
+      <p className="text-xsmall14 text-neutral-40 mt-6">
         등록된 가이드가 없습니다.
       </p>
     );
@@ -149,7 +154,7 @@ const ChallengeGuidePage = () => {
       <section className="mb-2 md:mb-6">
         <h2
           id="guide-heading"
-          className="mt-8 text-medium22 font-semibold text-neutral-0 md:mt-0"
+          className="text-medium22 text-neutral-0 mt-8 font-semibold md:mt-0"
         >
           공지사항 / 챌린지 가이드
         </h2>

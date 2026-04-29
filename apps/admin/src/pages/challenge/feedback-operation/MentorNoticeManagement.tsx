@@ -26,8 +26,7 @@ import { guideToForm } from './mentor-notice/utils/formAdapter';
 export default function MentorNoticeManagement() {
   const queryClient = useQueryClient();
 
-  const { data: guideData, isLoading } =
-    useAdminChallengeMentorGuideAllQuery();
+  const { data: guideData, isLoading } = useAdminChallengeMentorGuideAllQuery();
 
   const { data: challengeData } = useGetChallengeList({
     pageable: { size: 1000, page: 1 },
@@ -165,7 +164,7 @@ export default function MentorNoticeManagement() {
 
   return (
     <>
-      <div className="rounded-lg border border-neutral-80 p-6">
+      <div className="border-neutral-80 rounded-lg border p-6">
         <div className="mb-6 flex items-center justify-between">
           <Heading>멘토 공지 관리</Heading>
           <Button variant="contained" onClick={openCreateModal}>
@@ -174,14 +173,14 @@ export default function MentorNoticeManagement() {
         </div>
 
         <div className="mb-6 flex items-center gap-3">
-          <label className="text-xsmall16 font-medium text-neutral-0">
+          <label className="text-xsmall16 text-neutral-0 font-medium">
             검색
           </label>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-[400px] rounded border border-neutral-80 px-3 py-2 text-xsmall14"
+            className="border-neutral-80 text-xsmall14 w-[400px] rounded border px-3 py-2"
             placeholder="제목, 링크, 내용으로 검색"
           />
         </div>

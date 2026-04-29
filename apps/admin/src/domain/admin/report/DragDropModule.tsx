@@ -78,7 +78,7 @@ const DragDropModule = ({ onFileAdd }: DragDropModuleProps) => {
         <button type="button">
           <img src="/icons/file-upload.svg" alt="upload" />
         </button>
-        <div className="text-center text-xsmall14 text-neutral-30">
+        <div className="text-xsmall14 text-neutral-30 text-center">
           <p>파일을 드래그하거나 클릭하여 업로드하세요.</p>
           <p>PDF, DOC, DOCX 형식만 첨부 가능합니다.</p>
         </div>

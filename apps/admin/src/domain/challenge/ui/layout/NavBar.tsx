@@ -17,16 +17,16 @@ const NavBar = () => {
     <>
       {/* 모바일: 상단 수평 탭, 데스크톱: 사이드 네비게이션 */}
       <nav className="w-full md:w-[220px]">
-        <ul className="flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 scrollbar-hide md:sticky md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
+        <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
               to={`/challenge/${applicationId}/${params.programId}`}
               className={clsx(
-                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
+                'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {
-                  'font-semibold text-primary md:bg-primary-5':
+                  'text-primary md:bg-primary-5 font-semibold':
                     activeStatus === 'DASHBOARD',
-                  'font-medium text-neutral-30': activeStatus !== 'DASHBOARD',
+                  'text-neutral-30 font-medium': activeStatus !== 'DASHBOARD',
                 },
               )}
             >
@@ -37,11 +37,11 @@ const NavBar = () => {
             <Link
               to={`/challenge/${applicationId}/${params.programId}/me`}
               className={clsx(
-                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
+                'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {
-                  'font-semibold text-primary md:bg-primary-5':
+                  'text-primary md:bg-primary-5 font-semibold':
                     activeStatus === 'MY_MISSION',
-                  'font-medium text-neutral-30': activeStatus !== 'MY_MISSION',
+                  'text-neutral-30 font-medium': activeStatus !== 'MY_MISSION',
                 },
               )}
             >
@@ -52,11 +52,11 @@ const NavBar = () => {
             <Link
               to={`/challenge/${applicationId}/${params.programId}/guides`}
               className={clsx(
-                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
+                'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {
-                  'font-semibold text-primary md:bg-primary-5':
+                  'text-primary md:bg-primary-5 font-semibold':
                     activeStatus === 'GUIDE',
-                  'font-medium text-neutral-30': activeStatus !== 'GUIDE',
+                  'text-neutral-30 font-medium': activeStatus !== 'GUIDE',
                 },
               )}
             >

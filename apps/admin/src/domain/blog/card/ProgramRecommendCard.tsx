@@ -95,21 +95,21 @@ async function ProgramRecommendCard({ program }: Props) {
       data-program-id={program.id}
     >
       <div>
-        <h4 className="mb-0.5 text-xxsmall12 font-medium text-neutral-20">
+        <h4 className="text-xxsmall12 text-neutral-20 mb-0.5 font-medium">
           {program.ctaTitle}
         </h4>
-        <h3 className="line-clamp-2 font-semibold text-neutral-0 md:text-xsmall14">
+        <h3 className="text-neutral-0 md:text-xsmall14 line-clamp-2 font-semibold">
           {title}
         </h3>
       </div>
 
       {thumbnail && (
-        <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
+        <div className="bg-neutral-95 relative h-[3.375rem] w-[4.5rem] shrink-0">
           <Image
             unoptimized
             fill
             sizes="4.5rem"
-            className="h-full w-full rounded-xxs object-cover"
+            className="rounded-xxs h-full w-full object-cover"
             src={thumbnail}
             alt={title + ' 썸네일'}
           />

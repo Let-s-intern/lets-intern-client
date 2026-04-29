@@ -10,9 +10,7 @@ import type {
 } from '../types';
 
 export const createConditionNode = (
-  overrides: Partial<
-    Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>
-  > = {},
+  overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
 ): LeadHistoryFilterConditionNode => ({
   id: nanoid(),
   type: 'condition',
@@ -91,9 +89,7 @@ export const deserializeFilterTree = (
   return fromStoredGroupNode(parsed);
 };
 
-export const getFilterTreeSignature = (
-  root: LeadHistoryFilterGroupNode,
-) => {
+export const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
   return serializeFilterTree(root) ?? '';
 };
 
@@ -152,9 +148,7 @@ export const evaluateFilterNode = (
   if (!node.children.length) return true;
 
   if (node.combinator === 'AND') {
-    return node.children.every((child) =>
-      evaluateFilterNode(summary, child),
-    );
+    return node.children.every((child) => evaluateFilterNode(summary, child));
   }
   return node.children.some((child) => evaluateFilterNode(summary, child));
 };

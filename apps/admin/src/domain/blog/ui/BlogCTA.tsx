@@ -93,7 +93,7 @@ const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
         <div className="flex w-full flex-col items-center md:px-[100px]">
           <button
-            className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
+            className="blog_cta bg-primary text-small18 w-full rounded-md px-6 py-3 font-medium text-neutral-100"
             onClick={handleCtaButtonClick}
           >
             {ctaText}

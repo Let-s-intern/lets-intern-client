@@ -31,8 +31,10 @@ const DEFAULT_LABEL_SX = {
   },
 };
 
-interface ExtendedControlLabelProps
-  extends Omit<FormControlLabelProps, 'control'> {
+interface ExtendedControlLabelProps extends Omit<
+  FormControlLabelProps,
+  'control'
+> {
   subText?: string;
   right?: React.ReactNode;
   wrapperClassName?: string;
@@ -70,7 +72,7 @@ export const OptionFormRadioControlLabel: React.FC<ExtendedControlLabelProps> =
             {...restProps}
           />
           {subText && (
-            <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
+            <span className="text-xsmall14 -ml-2 inline-block font-medium text-neutral-50">
               {subText}
             </span>
           )}
@@ -105,7 +107,7 @@ export const OptionFormCheckboxControlLabel: React.FC<
           {...restProps}
         />
         {subText && (
-          <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
+          <span className="text-xsmall14 -ml-2 inline-block font-medium text-neutral-50">
             {subText}
           </span>
         )}

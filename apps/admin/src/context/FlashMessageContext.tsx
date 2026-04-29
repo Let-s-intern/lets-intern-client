@@ -39,7 +39,7 @@ export const FlashMessageContext = ({
   const [props, setProps] = useState(INITIAL_STATE);
   const showFlashMessage = useCallback<ShowFlashMessage>(
     (message, duration) =>
-      setProps(message ? {duration, message} : INITIAL_STATE),
+      setProps(message ? { duration, message } : INITIAL_STATE),
     [],
   );
   useEffect(() => {

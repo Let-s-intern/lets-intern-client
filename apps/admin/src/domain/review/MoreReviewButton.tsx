@@ -30,12 +30,12 @@ const MoreReviewButton = ({
           className="relative mt-12 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-sm px-5 py-4 text-white md:mx-0 md:mt-20 md:w-fit"
           style={{ backgroundColor: mainColor }}
         >
-          <span className="text-xsmall16 font-semibold md:text-medium22">
+          <span className="text-xsmall16 md:text-medium22 font-semibold">
             더 다양한 후기 보러가기
           </span>
           <ArrowCircle className="h-6 w-6" />
           <div
-            className="absolute bottom-[calc(100%-7px)] rounded-xs px-2.5 py-1.5 text-xxsmall12 font-medium md:text-xsmall14"
+            className="rounded-xs text-xxsmall12 md:text-xsmall14 absolute bottom-[calc(100%-7px)] px-2.5 py-1.5 font-medium"
             style={{ backgroundColor: subColor, color: subTextColor }}
           >
             자세한 수강생들의 후기가 궁금하다면?

@@ -130,7 +130,7 @@ function PortfolioIntroCheckList({
             className="flex w-full flex-col gap-6 md:items-center md:gap-10"
           >
             <Box
-              className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold md:flex-row md:justify-center md:gap-1 md:p-10 md:text-medium24"
+              className="text-small18 md:text-medium24 relative flex w-full max-w-[860px] flex-col py-6 font-bold md:flex-row md:justify-center md:gap-1 md:p-10"
               style={styles.boxStyle}
             >
               <Badge style={styles.badgeStyle}>추천 {index + 1}</Badge>
@@ -155,7 +155,7 @@ function PortfolioIntroCheckList({
                     <span
                       key={ele}
                       className={twMerge(
-                        'shrink-0 text-xsmall14 font-semibold xs:text-xsmall16 md:text-small20',
+                        'text-xsmall14 xs:text-xsmall16 md:text-small20 shrink-0 font-semibold',
                       )}
                     >
                       {ele}
@@ -193,7 +193,7 @@ function Badge({
 }) {
   return (
     <span
-      className="absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-3 py-2 text-xsmall16 font-bold text-white md:px-4 md:text-small20 md:font-semibold"
+      className="text-xsmall16 md:text-small20 absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-3 py-2 font-bold text-white md:px-4 md:font-semibold"
       style={style}
     >
       {children}

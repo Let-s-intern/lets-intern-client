@@ -155,7 +155,7 @@ const ReportPlanSection = ({
   return (
     <section
       id={REPORT_PLAN_ID}
-      className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-24"
+      className="bg-neutral-90 w-full px-5 py-16 md:pb-36 md:pt-24"
     >
       <div>
         <SectionHeader className="mb-6 md:mb-14">
@@ -263,10 +263,10 @@ const ReportPlanSection = ({
                       <Badge className="mb-1">선택 옵션 1</Badge>
                     )}
                     <CardMainHeader>현직자 서면 피드백</CardMainHeader>
-                    <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
+                    <p className="text-xsmall14 text-neutral-0 md:text-small18 mb-2 mt-1">
                       현직자가 제공하는 심층 서류 피드백 및 작성 노하우
                     </p>
-                    <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
+                    <p className="text-xxsmall12 text-neutral-35 md:text-xsmall14 mb-1.5 font-light">
                       *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
                     </p>
                     <div
@@ -281,7 +281,7 @@ const ReportPlanSection = ({
                       {(optionTitles ?? []).map((title, index) => (
                         <div
                           key={index}
-                          className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
+                          className="rounded-xs text-xxsmall12 md:text-xsmall14 bg-[#EEFAFF] py-2 text-center font-medium"
                         >
                           {title}
                         </div>
@@ -289,7 +289,7 @@ const ReportPlanSection = ({
                     </div>
                   </div>
                   <div>
-                    <span className="mb-1.5 block text-xxsmall12 text-neutral-45 md:text-xsmall16">
+                    <span className="text-xxsmall12 text-neutral-45 md:text-xsmall16 mb-1.5 block">
                       현직자 택 1인 옵션 추가 금액
                     </span>
                     {/* 첫 번째 옵션 가격 표시 */}
@@ -387,7 +387,7 @@ const PriceCard = memo(function PriceCard({
           <div
             style={BANNER_STYLE}
             className={twMerge(
-              'rounded-xs bg-primary px-3 py-1 text-center text-xxsmall12 font-medium md:rounded-ms md:text-xsmall14 md:font-semibold',
+              'rounded-xs bg-primary text-xxsmall12 md:rounded-ms md:text-xsmall14 px-3 py-1 text-center font-medium md:font-semibold',
               bannerClassName,
             )}
           >
@@ -424,12 +424,12 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <div className={wrapperClassName}>
-      <div className="rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20">
+      <div className="text-xsmall16 md:text-small20 rounded-md bg-black px-5 py-3 font-semibold text-white md:py-4">
         {title}
       </div>
       <div
         className={twMerge(
-          'mt-2 rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:px-4 md:py-5',
+          'rounded-xs bg-neutral-95 mt-2 p-3 pr-4 md:mt-4 md:px-4 md:py-5',
           childrenClassName,
         )}
       >
@@ -458,7 +458,7 @@ const NumberedListItem = memo(function NumberedListItem({
         <div
           style={numberStyle}
           className={twMerge(
-            'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 pt-0.5 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
+            'bg-neutral-60 text-xxsmall12 md:text-small18 flex h-4 w-4 shrink-0 items-center justify-center rounded-full pt-0.5 font-medium text-white md:h-6 md:w-6',
             numberClassName,
           )}
         >
@@ -468,7 +468,7 @@ const NumberedListItem = memo(function NumberedListItem({
 
       <div
         className={twMerge(
-          'flex items-center whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-small18',
+          'text-xsmall14 text-neutral-0 md:text-small18 flex items-center whitespace-pre-line font-medium',
           childrenClassName,
         )}
       >
@@ -484,7 +484,7 @@ const CardMainHeader = memo(function CardMainHeader({
   children?: ReactNode;
 }) {
   return (
-    <span className="mb-2 mt-0.5 block text-xsmall16 font-medium md:mb-3 md:mt-2 md:text-small20">
+    <span className="text-xsmall16 md:text-small20 mb-2 mt-0.5 block font-medium md:mb-3 md:mt-2">
       {children}
     </span>
   );
@@ -500,7 +500,7 @@ const Badge = memo(function Badge({
   return (
     <div
       className={twMerge(
-        'w-fit rounded-xxs bg-neutral-35 px-2 py-1 text-xxsmall12 font-medium text-white md:font-normal',
+        'rounded-xxs bg-neutral-35 text-xxsmall12 w-fit px-2 py-1 font-medium text-white md:font-normal',
         className,
       )}
     >

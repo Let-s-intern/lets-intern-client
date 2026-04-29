@@ -219,10 +219,10 @@ export const CallOut = memo(function Callout({
 }) {
   return (
     <div className={twMerge('rounded-md bg-neutral-100 px-6 py-6', className)}>
-      <span className="-ml-1 text-xsmall16 font-semibold text-primary">
+      <span className="text-xsmall16 text-primary -ml-1 font-semibold">
         {header}
       </span>
-      <p className="mt-1 text-xsmall14 text-neutral-20">{body}</p>
+      <p className="text-xsmall14 text-neutral-20 mt-1">{body}</p>
     </div>
   );
 });
@@ -285,7 +285,7 @@ const ProgramInfoSection = ({
       />
       <div className="mt-10">
         <CallOut
-          className="mb-6 bg-primary-5"
+          className="bg-primary-5 mb-6"
           header="📄 진단을 위한 서류를 제출해주세요"
           body="서류 제출 순으로 진단이 시작됩니다. 빠른 진단을 원하신다면 제출을 서둘러주세요."
         />
@@ -369,7 +369,7 @@ export const DocumentSection = ({
               />
             )}
             {value === 'url' && !isValidUrl && (
-              <span className="h-3 text-xsmall14 text-system-error">
+              <span className="text-xsmall14 text-system-error h-3">
                 올바른 주소를 입력해주세요
               </span>
             )}
@@ -401,7 +401,7 @@ export const PremiumSection = ({
         </div>
       }
       <div className="w-full">
-        <span className="mb-3 inline-block text-xsmall14 lg:mb-4">
+        <span className="text-xsmall14 mb-3 inline-block lg:mb-4">
           희망하는 기업의 채용공고를 첨부해주세요.
         </span>
         <FormControl fullWidth>
@@ -421,7 +421,7 @@ export const PremiumSection = ({
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
-              <span className="mb-2 mt-2 block text-xxsmall12 text-neutral-45 md:mt-0">
+              <span className="text-xxsmall12 text-neutral-45 mb-2 mt-2 block md:mt-0">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
               {value === 'file' && (
@@ -441,7 +441,7 @@ export const PremiumSection = ({
                 />
               )}
               {value === 'url' && !isValidUrl && (
-                <span className="h-3 text-xsmall14 text-system-error">
+                <span className="text-xsmall14 text-system-error h-3">
                   올바른 주소를 입력해주세요
                 </span>
               )}
@@ -594,7 +594,7 @@ export const AdditionalInfoSection = () => {
         <Label htmlFor="message">서류 작성 고민</Label>
         <textarea
           id="message"
-          className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
+          className="bg-neutral-95 text-xsmall14 w-full resize-none rounded-md p-3"
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
@@ -626,7 +626,7 @@ export const FileUploadButton = React.memo(function FileUploadButton({
   return (
     <>
       <button
-        className="rounded-md border border-neutral-60 bg-neutral-100 px-3 py-1.5 text-xsmall14 text-neutral-40"
+        className="border-neutral-60 text-xsmall14 text-neutral-40 rounded-md border bg-neutral-100 px-3 py-1.5"
         onClick={() => {
           ref.current?.click();
         }}

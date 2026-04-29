@@ -76,9 +76,10 @@ export const useBlogCreateForm = () => {
   };
 
   const postBlog = async (isPublish: boolean) => {
-    const displayDate = isPublish && !dateTime
-      ? dayjs().format('YYYY-MM-DDTHH:mm')
-      : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? '');
+    const displayDate =
+      isPublish && !dateTime
+        ? dayjs().format('YYYY-MM-DDTHH:mm')
+        : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? '');
 
     await createBlogMutation.mutateAsync({
       ...editingValue,

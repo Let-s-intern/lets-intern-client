@@ -32,7 +32,7 @@ const Tab = ({
       type="button"
       className={twMerge(
         'w-fit translate-y-0.5 gap-2.5 text-nowrap border-b-2 px-2.5 py-4 md:w-[88px]',
-        active ? 'border-b-2' : 'border-transparent text-neutral-45',
+        active ? 'border-b-2' : 'text-neutral-45 border-transparent',
       )}
       style={
         active
@@ -92,7 +92,7 @@ export default function ChallengeTabNavigation({
   return (
     <nav
       className={twMerge(
-        'sticky z-20 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all md:gap-20 md:px-0 md:text-xsmall16',
+        'border-neutral-80 text-xsmall14 md:text-xsmall16 sticky z-20 flex w-full items-center justify-center border-b-2 bg-white px-4 font-semibold transition-all md:gap-20 md:px-0',
         scrollStyleClassName,
       )}
     >

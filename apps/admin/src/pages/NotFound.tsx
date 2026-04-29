@@ -16,7 +16,7 @@ export default function NotFound() {
         <div className="mt-6 flex justify-center">
           <Link
             to="/"
-            className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+            className="bg-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-sm font-medium text-white transition-colors"
           >
             홈으로
           </Link>

@@ -20,10 +20,7 @@ interface QuestionItemListProps {
   onUpdateItems: (items: FormQuestionItem[]) => void;
 }
 
-const QuestionItemList = ({
-  items,
-  onUpdateItems,
-}: QuestionItemListProps) => {
+const QuestionItemList = ({ items, onUpdateItems }: QuestionItemListProps) => {
   const hasOtherItem = items.some((item) => item.isOther);
 
   const handleAddItem = () => {
@@ -41,9 +38,7 @@ const QuestionItemList = ({
 
   const handleUpdateItemValue = (itemId: string, value: string) => {
     onUpdateItems(
-      items.map((item) =>
-        item.itemId === itemId ? { ...item, value } : item,
-      ),
+      items.map((item) => (item.itemId === itemId ? { ...item, value } : item)),
     );
   };
 
@@ -52,18 +47,13 @@ const QuestionItemList = ({
       <label className="mb-2 block text-sm font-medium">항목</label>
       <div className="flex flex-col gap-2">
         {items.map((item, index) => (
-          <div
-            key={item.itemId}
-            className="flex items-center gap-2"
-          >
+          <div key={item.itemId} className="flex items-center gap-2">
             <span className="w-6 shrink-0 text-sm text-neutral-500">
               {index + 1}.
             </span>
             {item.isOther ? (
               <div className="flex min-h-[40px] flex-1 items-center gap-2 rounded border border-neutral-300 px-3">
-                <span className="text-sm text-neutral-500">
-                  기타(직접입력)
-                </span>
+                <span className="text-sm text-neutral-500">기타(직접입력)</span>
                 <Chip
                   label="직접입력"
                   size="small"

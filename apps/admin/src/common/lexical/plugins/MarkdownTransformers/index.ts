@@ -46,8 +46,16 @@ import {
   $isEquationNode,
   EquationNode,
 } from '../../nodes/EquationNode';
-import {$createImageNode, $isImageNode, ImageNode} from '../../nodes/ImageNode';
-import {$createTweetNode, $isTweetNode, TweetNode} from '../../nodes/TweetNode';
+import {
+  $createImageNode,
+  $isImageNode,
+  ImageNode,
+} from '../../nodes/ImageNode';
+import {
+  $createTweetNode,
+  $isTweetNode,
+  TweetNode,
+} from '../../nodes/TweetNode';
 import emojiList from '@/utils/emoji-list';
 
 export const HR: ElementTransformer = {

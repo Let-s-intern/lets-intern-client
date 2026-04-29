@@ -77,10 +77,7 @@ const TopBarBanners = () => {
           const id = params.id;
 
           return [
-            <Link
-              to={`/banner/top-bar-banners/${id}/edit`}
-              key={'edit' + id}
-            >
+            <Link to={`/banner/top-bar-banners/${id}/edit`} key={'edit' + id}>
               <Pencil />
             </Link>,
             <Trash

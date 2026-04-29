@@ -88,7 +88,7 @@ function LiveIntro() {
   return (
     <section className="flex w-full flex-col gap-y-20 pb-[70px] md:items-center md:gap-y-52 md:pb-40">
       <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
-        <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
+        <SuperTitle className="text-primary mb-1">{superTitle[0]}</SuperTitle>
         <Heading2>{title[0]}</Heading2>
         <div className="mt-10 flex flex-col items-center md:mt-20">
           <SpeechBubble className="-translate-x-8 -rotate-6 md:-translate-x-16">
@@ -102,7 +102,7 @@ function LiveIntro() {
             {bubbles[1]}
           </SpeechBubble>
           <SpeechBubble
-            className="z-10 -translate-x-12 translate-y-2 -rotate-6 text-primary md:-translate-x-24 md:translate-y-6"
+            className="text-primary z-10 -translate-x-12 translate-y-2 -rotate-6 md:-translate-x-24 md:translate-y-6"
             tailPosition="left"
             bgColor="#E9EAFF"
           >
@@ -118,7 +118,7 @@ function LiveIntro() {
       </div>
 
       <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-        <SuperTitle className="mb-1 text-primary">{superTitle[1]}</SuperTitle>
+        <SuperTitle className="text-primary mb-1">{superTitle[1]}</SuperTitle>
         <Heading2>{title[1]}</Heading2>
         <div className="mt-8 flex flex-col gap-3 md:mt-20 md:flex-row">
           {points.map((point, index) => (
@@ -128,10 +128,10 @@ function LiveIntro() {
       </div>
 
       <div className="w-ful flex max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-        <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
+        <SuperTitle className="text-primary mb-1">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
         <div className="mt-8 w-full overflow-x-hidden md:mt-20">
-          <div className="flex w-fit animate-live-infinite-scroll-mobile gap-1.5 md:animate-live-infinite-scroll-desktop">
+          <div className="animate-live-infinite-scroll-mobile md:animate-live-infinite-scroll-desktop flex w-fit gap-1.5">
             <ImageGroup />
             <ImageGroup />
           </div>
@@ -145,7 +145,7 @@ function ImageGroup() {
   return company.map((item) => (
     <img
       key={item.imgSrc.src}
-      className="aspect-square h-auto w-56 rounded-sm bg-neutral-45 md:w-[360px]"
+      className="bg-neutral-45 aspect-square h-auto w-56 rounded-sm md:w-[360px]"
       src={item.imgSrc.src}
       alt={item.alt}
     />
@@ -156,15 +156,15 @@ function PointBox({ point, index }: { point: Point; index: number }) {
   return (
     <div
       key={index}
-      className="relative flex flex-col overflow-hidden rounded-md border border-primary-20 bg-neutral-95 px-4 pb-9 pt-6 md:h-72 md:w-full"
+      className="border-primary-20 bg-neutral-95 relative flex flex-col overflow-hidden rounded-md border px-4 pb-9 pt-6 md:h-72 md:w-full"
     >
-      <div className="mb-2.5 w-fit rounded-full bg-primary-90 px-2 py-1 text-xxsmall12 font-semibold text-white lg:text-xsmall14">
+      <div className="bg-primary-90 text-xxsmall12 lg:text-xsmall14 mb-2.5 w-fit rounded-full px-2 py-1 font-semibold text-white">
         Point {index + 1}
       </div>
-      <span className="mb-4 block whitespace-pre text-small18 font-semibold lg:text-medium24">
+      <span className="text-small18 lg:text-medium24 mb-4 block whitespace-pre font-semibold">
         {point.title}
       </span>
-      <span className="whitespace-pre break-keep text-xsmall14 font-medium text-neutral-30 lg:text-xsmall16">
+      <span className="text-xsmall14 text-neutral-30 lg:text-xsmall16 whitespace-pre break-keep font-medium">
         {point.content}
       </span>
       <img

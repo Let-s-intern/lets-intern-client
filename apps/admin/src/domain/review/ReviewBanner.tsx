@@ -37,7 +37,7 @@ function ReviewBanner() {
     all: (
       <>
         렛츠커리어 100% 솔직 후기 {/* {reviewsCount !== 0 && ( */}
-        <span className="items-center rounded-[4px] bg-[#4C64A5] px-[6px] py-[4px] text-xsmall14 font-semibold md:text-small18">
+        <span className="text-xsmall14 md:text-small18 items-center rounded-[4px] bg-[#4C64A5] px-[6px] py-[4px] font-semibold">
           총 {reviewsCount.toLocaleString()}개
         </span>
         {/* )} */}
@@ -57,12 +57,12 @@ function ReviewBanner() {
         {/* 본문 */}
         <div className="z-10 mt-10 flex w-full max-w-[1100px] flex-col gap-1 px-5 md:mt-0 md:gap-2 md:px-0">
           {/* pathname에 따라 제목 불러오기 */}
-          <h1 className="flex items-center gap-2 text-small20 font-semibold text-white md:text-medium24">
+          <h1 className="text-small20 md:text-medium24 flex items-center gap-2 font-semibold text-white">
             {pathname === '/review'
               ? heading.all
               : heading[pathname.split('/')[2] as HeadingKey]}
           </h1>
-          <p className="text-justify text-xsmall14 text-neutral-90 md:text-left md:text-xsmall16">
+          <p className="text-xsmall14 text-neutral-90 md:text-xsmall16 text-justify md:text-left">
             {pathname === '/review/blog'
               ? description.blog
               : description.program}

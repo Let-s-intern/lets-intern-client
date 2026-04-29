@@ -47,7 +47,7 @@ const PortfolioFeedbackInfo = () => {
   return (
     <div className="flex w-full flex-col items-center">
       {/* 피드백 리뷰 */}
-      <div className="flex w-full flex-col items-center bg-neutral-90">
+      <div className="bg-neutral-90 flex w-full flex-col items-center">
         <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
           <div className="mb-16 md:mb-20">
             {/* <SuperTitle className="mb-3 md:text-center">
@@ -56,7 +56,7 @@ const PortfolioFeedbackInfo = () => {
             <div
               className={twMerge(
                 'mb-4 flex w-fit gap-x-2 rounded-sm md:mx-auto',
-                'bg-white px-2 py-1 text-xsmall14',
+                'text-xsmall14 bg-white px-2 py-1',
                 'font-bold sm:items-center md:gap-x-3',
                 'md:rounded-md md:px-4 md:py-2.5 md:text-[18px]',
                 'text-[#436653]',
@@ -75,10 +75,10 @@ const PortfolioFeedbackInfo = () => {
             </Description>
           </div>
           <div className="relative w-full overflow-hidden">
-            <div className="absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-neutral-90 to-transparent"></div>
-            <div className="absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-neutral-90 to-transparent"></div>
+            <div className="from-neutral-90 absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r to-transparent"></div>
+            <div className="from-neutral-90 absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l to-transparent"></div>
             <div
-              className="flex w-max animate-infinite-scroll gap-5"
+              className="animate-infinite-scroll flex w-max gap-5"
               style={{
                 animationDuration: `${10000 * feedbackReviews.length}ms`,
               }}
@@ -88,11 +88,11 @@ const PortfolioFeedbackInfo = () => {
                   key={`${review.id}-${index}`}
                   className="flex w-[300px] flex-col rounded-md bg-white p-4 md:w-[380px] md:p-6"
                 >
-                  <p className="mb-auto break-keep text-xsmall16 font-medium md:text-medium22">
+                  <p className="text-xsmall16 md:text-medium22 mb-auto break-keep font-medium">
                     {review.content}
                   </p>
-                  <p className="mt-2 text-left md:mt-4 md:text-small20">
-                    <span className="rounded-full bg-[#B1C4FF] px-3 py-1 text-xxsmall12 md:text-xsmall16">
+                  <p className="md:text-small20 mt-2 text-left md:mt-4">
+                    <span className="text-xxsmall12 md:text-xsmall16 rounded-full bg-[#B1C4FF] px-3 py-1">
                       {review.from}
                     </span>
                   </p>
@@ -114,7 +114,7 @@ const PortfolioFeedbackInfo = () => {
               에서는
               <br className="sm:hidden" /> 이런 걸 가져갈 수 있어요
             </div> */}
-            <Heading2 className="break-keep text-neutral-30">
+            <Heading2 className="text-neutral-30 break-keep">
               <Balancer>
                 포트폴리오 챌린지에서는 렛츠커리어
                 <Break />
@@ -141,7 +141,7 @@ const PortfolioFeedbackInfo = () => {
               className="mx-auto aspect-[500/185] w-[500px] min-w-0"
             />
             <div className="flex flex-col items-start gap-4">
-              <span className="rounded-full bg-[#7897F9] px-4 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall16">
+              <span className="text-xxsmall12 md:text-xsmall16 rounded-full bg-[#7897F9] px-4 py-1 font-semibold text-white">
                 라이브 멘토링 진행
               </span>
               <p className="text-xsmall14 text-neutral-30 md:text-small18">
@@ -156,13 +156,13 @@ const PortfolioFeedbackInfo = () => {
         </section>
       </div>
       {/* 피드백 옵션 일정 안내 */}
-      <div className="flex w-full flex-col items-center bg-neutral-90">
+      <div className="bg-neutral-90 flex w-full flex-col items-center">
         <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
           <div className="mb-16 md:mb-20">
             <SuperTitle className="mb-3 text-[#4A76FF] md:text-center">
               옵션 일정
             </SuperTitle>
-            <div className="mb-1.5 text-xsmall16 font-bold text-[#1A2A5D] md:text-center md:text-medium24">
+            <div className="text-xsmall16 md:text-medium24 mb-1.5 font-bold text-[#1A2A5D] md:text-center">
               자신있게 추천합니다!
             </div>
             <Heading2>높은 퀄리티의 포트폴리오를 위한 피드백 옵션</Heading2>
@@ -173,29 +173,29 @@ const PortfolioFeedbackInfo = () => {
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-10">
             {/* 프리미엄 옵션 */}
             <div className="mx-auto max-w-[500px] rounded-lg bg-white p-4 md:p-8">
-              <div className="mx-auto overflow-hidden rounded-xxl">
-                <h3 className="text-16 break-keep bg-[#B1C4FF] px-3 py-5 text-center font-medium md:text-medium22">
+              <div className="rounded-xxl mx-auto overflow-hidden">
+                <h3 className="text-16 md:text-medium22 break-keep bg-[#B1C4FF] px-3 py-5 text-center font-medium">
                   <span className="font-semibold">피드백 두 번</span>으로{' '}
                   <span className="font-semibold">완성본</span> 만들어가고
                   싶다면,
                 </h3>
                 <div className="bg-neutral-95 px-5 py-6">
                   <div className="mb-6 flex w-full flex-col gap-2">
-                    <h4 className="mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 text-xsmall14 font-semibold md:text-small18">
+                    <h4 className="text-xsmall14 md:text-small18 mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 font-semibold">
                       1. <strong>4회차 미션</strong> 후 실시간 피드백
                     </h4>
                     <CheckItem text="스스로 미션을 잘 수행하고 있는지 궁금하신가요?" />
                     <CheckItem text="피드백 받고 싶은 포트폴리오 항목을 첨부하고 궁금한 점을 해결해보세요!" />
                   </div>
                   <div className="flex w-full flex-col gap-2">
-                    <h4 className="mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 text-xsmall14 font-semibold md:text-small18">
+                    <h4 className="text-xsmall14 md:text-small18 mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 font-semibold">
                       2. <strong>마지막 미션</strong> 후 실시간 피드백
                     </h4>
                     <CheckItem text="수정한 항목이 괜찮은지 궁금하신가요?" />
                     <CheckItem text="1차 피드백을 기반으로 수정한 포트폴리오를 첨부 또는, 다른 항목을 선택하여 피드백을 받아보세요!" />
                     <div className="flex items-start gap-1.5">
                       <Plus className="mt-0.5 h-4 w-4 text-[#47C8FE] md:mt-1" />
-                      <span className="break-keep text-xsmall14 font-semibold md:text-xsmall16">
+                      <span className="text-xsmall14 md:text-xsmall16 break-keep font-semibold">
                         피드백 바탕으로 추천드리는 합격자 서류 자료 공유
                       </span>
                     </div>
@@ -203,20 +203,20 @@ const PortfolioFeedbackInfo = () => {
                 </div>
               </div>
               <hr className="my-6" />
-              <div className="rounded-lg bg-[#B1C4FF] py-3 text-center text-xsmall16 font-semibold md:py-5 md:text-medium22">
+              <div className="text-xsmall16 md:text-medium22 rounded-lg bg-[#B1C4FF] py-3 text-center font-semibold md:py-5">
                 프리미엄 옵션
               </div>
             </div>
 
             {/* 스탠다드 옵션 */}
             <div className="mx-auto flex w-full max-w-[500px] flex-col rounded-lg bg-white p-4 md:p-8">
-              <div className="mx-auto flex w-full flex-1 flex-col overflow-hidden rounded-xxl">
-                <h3 className="text-16 break-keep bg-[#E3EAFF] px-3 py-5 text-center font-medium md:text-medium22">
+              <div className="rounded-xxl mx-auto flex w-full flex-1 flex-col overflow-hidden">
+                <h3 className="text-16 md:text-medium22 break-keep bg-[#E3EAFF] px-3 py-5 text-center font-medium">
                   최종 점검 피드백 한 번이 필요하다면,
                 </h3>
-                <div className="flex-1 bg-neutral-95 px-5 py-6">
+                <div className="bg-neutral-95 flex-1 px-5 py-6">
                   <div className="flex w-full flex-col gap-2">
-                    <h4 className="mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 text-xsmall14 font-semibold md:text-small18">
+                    <h4 className="text-xsmall14 md:text-small18 mb-1 rounded-sm bg-[#FBFBA3] px-3 py-2 font-semibold">
                       1. <strong>마지막 미션</strong> 후 실시간 피드백
                     </h4>
                     <CheckItem text="서류 완성 후 스스로 잘 작성하셨는지 고민이신가요?" />
@@ -225,7 +225,7 @@ const PortfolioFeedbackInfo = () => {
                 </div>
               </div>
               <hr className="my-6" />
-              <div className="rounded-lg bg-[#E3EAFF] py-3 text-center text-xsmall16 font-semibold md:py-5 md:text-medium22">
+              <div className="text-xsmall16 md:text-medium22 rounded-lg bg-[#E3EAFF] py-3 text-center font-semibold md:py-5">
                 스탠다드 옵션
               </div>
             </div>
@@ -240,7 +240,7 @@ const CheckItem = ({ text }: { text: string }) => {
   return (
     <div className="flex items-start gap-1.5">
       <Check className="mt-0.5 h-4 w-4 flex-none md:mt-1" />
-      <span className="break-keep text-xsmall14 md:text-xsmall16">{text}</span>
+      <span className="text-xsmall14 md:text-xsmall16 break-keep">{text}</span>
     </div>
   );
 };

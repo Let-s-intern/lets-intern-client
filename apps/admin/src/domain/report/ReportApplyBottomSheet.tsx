@@ -238,7 +238,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   const generateControlLabelClassName = (isLastChild: boolean) =>
     clsx('py-3 pl-2 pr-3', {
       // 마지막 아이템은 border 제외
-      'border-b border-neutral-80': !isLastChild,
+      'border-neutral-80 border-b': !isLastChild,
     });
 
   // 현직자 피드백 옵션
@@ -381,7 +381,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               <span className="text-xsmall16 font-bold text-neutral-100">
                 {report.title} 피드백 REPORT
               </span>
-              <span className="text-xsmall14 font-medium text-neutral-80">
+              <span className="text-xsmall14 text-neutral-80 font-medium">
                 서류 합격에 한걸음 더 가까워지고 싶다면?
               </span>
             </div>
@@ -399,7 +399,7 @@ const ReportApplyBottomSheet = React.forwardRef<
         <div
           ref={ref}
           className={twMerge(
-            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem] md:max-h-[85vh]',
+            'border-neutral-0/5 fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t bg-white shadow-lg transition md:h-[50rem] md:max-h-[85vh]',
             !show && 'hidden',
           )}
         >
@@ -473,7 +473,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           }
                         />
                         {/* Counter */}
-                        <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
+                        <div className="rounded-xs mt-3 flex items-center border border-[#D6D6D6]">
                           <button
                             className={twMerge(
                               'flex h-7 w-7 items-center justify-center',
@@ -502,7 +502,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           >
                             -
                           </button>
-                          <div className="flex h-7 w-7 items-center justify-center text-xsmall14 text-[#121212]">
+                          <div className="text-xsmall14 flex h-7 w-7 items-center justify-center text-[#121212]">
                             {selectedQuestionOptions.length}
                           </div>
                           <button
@@ -604,7 +604,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                   {/* 선택한 상품 */}
                   {(selectedReportPlan || optionIds.length > 0) && (
                     <>
-                      <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
+                      <div className="rounded-xs border-neutral-80 mt-3 overflow-hidden border">
                         {/*  선택한 서류 진단 플랜 */}
                         {selectedReportPlan && (
                           <SelectedItemBox
@@ -626,7 +626,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         {/* 선택한 자소서 문항 추가 */}
                         {selectedQuestionOptions.length > 0 && (
                           <SelectedItemBox
-                            className="border-t border-neutral-80"
+                            className="border-neutral-80 border-t"
                             title={`자기소개서 문항 추가 ${selectedQuestionOptions.length}개`}
                             // 자소서 문항 추가 모두 삭제
                             onClickDelete={() => {
@@ -655,7 +655,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                             return (
                               <SelectedItemBox
                                 key={info.reportOptionId}
-                                className="border-t border-neutral-80"
+                                className="border-neutral-80 border-t"
                                 title={info.optionTitle ?? ''}
                                 onClickDelete={() =>
                                   setReportApplication({
@@ -675,11 +675,11 @@ const ReportApplyBottomSheet = React.forwardRef<
                             );
                         })}
                       </div>
-                      <hr className="mt-3 border-neutral-0/5" />
+                      <hr className="border-neutral-0/5 mt-3" />
                     </>
                   )}
                   {/* 가격 */}
-                  <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
+                  <span className="text-small18 text-neutral-10 mt-3 block text-right font-bold">
                     {(
                       reportFinalPrice +
                       feedbackFinalPrice -
@@ -725,7 +725,7 @@ const Heading2 = ({
   className?: string;
 }) => (
   <h2
-    className={twMerge('text-xsmall14 font-semibold text-static-0', className)}
+    className={twMerge('text-xsmall14 text-static-0 font-semibold', className)}
   >
     {children}
   </h2>
@@ -745,7 +745,7 @@ const SelectedItemBox = ({
   return (
     <div className={twMerge('bg-neutral-100 p-3', className)}>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xsmall14 font-medium text-neutral-10">
+        <span className="text-xsmall14 text-neutral-10 font-medium">
           {title}
         </span>
         <IoCloseCircle

@@ -14,7 +14,7 @@ const CertificatePaper = forwardRef<HTMLDivElement, CertificatePaperProps>(
     return (
       <div
         ref={ref}
-        className="flex flex-col items-center bg-certificate-bg bg-contain bg-no-repeat bg-origin-padding tracking-[-0.64px]"
+        className="bg-certificate-bg flex flex-col items-center bg-contain bg-no-repeat bg-origin-padding tracking-[-0.64px]"
         style={{
           fontFamily: 'Bookk Myungjo Variable',
           width: '210mm',

@@ -18,7 +18,7 @@ const FAQToggle = ({ faq }: FAQToggleProps) => {
   return (
     <li>
       <div
-        className="flex cursor-pointer items-center gap-4 border-b border-neutral-80 px-2 py-4"
+        className="border-neutral-80 flex cursor-pointer items-center gap-4 border-b px-2 py-4"
         onClick={handleToggleClick}
       >
         <span

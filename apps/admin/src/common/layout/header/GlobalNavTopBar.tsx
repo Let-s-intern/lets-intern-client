@@ -84,7 +84,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
           href="/community"
         >
           커뮤니티
-          <span className="flex h-auto items-center text-xxsmall12 font-normal">
+          <span className="text-xxsmall12 flex h-auto items-center font-normal">
             +현직자 멘토 참여중
           </span>
         </GlobalNavItem>
@@ -101,7 +101,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
             align="right"
           >
             <div className="flex items-center gap-2">
-              <span className="pl-2 text-xsmall16 font-medium text-neutral-0">
+              <span className="text-xsmall16 text-neutral-0 pl-2 font-medium">
                 {user?.name} 님
               </span>
               <img
