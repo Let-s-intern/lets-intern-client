@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   pr-checks:
-    name: web PR 검사 (smoke)
+    name: web PR 검사
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -46,17 +46,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (web 한정) — 차단'
+      - name: Prettier check
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (web) — 비차단'
-        continue-on-error: true
+      - name: ESLint
         run: pnpm --filter @letscareer/web lint
 
-      - name: '3) Typecheck (web) — 차단'
+      - name: Typecheck
         run: pnpm --filter @letscareer/web typecheck
 
-      - name: '4) Build smoke (web, turbopack) — 차단'
+      - name: Build (turbopack)
         run: pnpm --filter @letscareer/web build
         env:
           NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
@@ -82,17 +81,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (web 한정) — 차단'
+      - name: Prettier check
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (web) — 비차단'
-        continue-on-error: true
+      - name: ESLint
         run: pnpm --filter @letscareer/web lint
 
-      - name: '3) Typecheck (web) — 차단'
+      - name: Typecheck
         run: pnpm --filter @letscareer/web typecheck
 
-      - name: '4) Build production (web, turbopack) — 차단'
+      - name: Build (turbopack)
         run: pnpm --filter @letscareer/web build
         env:
           NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
@@ -101,7 +99,7 @@ jobs:
           NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
 
-      - name: 'Upload web build artifact'
+      - name: Upload web build artifact
         if: always()
         continue-on-error: true
         uses: actions/upload-artifact@v4

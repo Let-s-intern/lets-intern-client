@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   pr-checks:
-    name: admin PR 검사 (smoke)
+    name: admin PR 검사
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -46,17 +46,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (admin 한정) — 차단'
+      - name: Prettier check
         run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (admin) — 비차단'
-        continue-on-error: true
+      - name: ESLint
         run: pnpm --filter @letscareer/admin lint
 
-      - name: '3) Typecheck (admin) — 차단'
+      - name: Typecheck
         run: pnpm --filter @letscareer/admin typecheck
 
-      - name: '4) Build smoke (admin, vite) — 차단'
+      - name: Build (vite)
         run: pnpm --filter @letscareer/admin build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
@@ -81,17 +80,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (admin 한정) — 차단'
+      - name: Prettier check
         run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (admin) — 비차단'
-        continue-on-error: true
+      - name: ESLint
         run: pnpm --filter @letscareer/admin lint
 
-      - name: '3) Typecheck (admin) — 차단'
+      - name: Typecheck
         run: pnpm --filter @letscareer/admin typecheck
 
-      - name: '4) Build production (admin, vite) — 차단'
+      - name: Build (vite)
         run: pnpm --filter @letscareer/admin build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
@@ -99,7 +97,7 @@ jobs:
           VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
           VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}
 
-      - name: 'Upload admin build artifact'
+      - name: Upload admin build artifact
         if: always()
         continue-on-error: true
         uses: actions/upload-artifact@v4
