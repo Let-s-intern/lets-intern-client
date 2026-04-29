@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { ChallengeDetailPage } from './ChallengeDetailPage';
+import { log } from '../helpers/log';
 
 /** /program 전체 프로그램 목록 Page Object. */
 export class ProgramListPage extends BasePage {
@@ -11,16 +12,54 @@ export class ProgramListPage extends BasePage {
     return this;
   }
 
-  /** 챌린지 카드 링크 locator (href 가 /program/challenge/ 로 시작). */
+  /**
+   * 챌린지 카드 링크 locator.
+   *   ProgramCard.tsx 의 href = `/program/${type}/${id}` (type='challenge').
+   *   - /program/challenge/{id} 패턴 매칭
+   *   - 같은 카드에 thumbnail + title 두 개 link 가 있을 수 있어 dedupe 위해
+   *     href 에 숫자 id 가 끝에 오는 것만 카운트
+   */
   private challengeLinks() {
-    return this.page.locator('a[href*="/program/challenge/"]');
+    return this.page.locator('a[href^="/program/challenge/"]');
   }
 
-  /** 현재 페이지의 챌린지 카드 개수. */
+  /**
+   * 현재 페이지의 챌린지 카드 개수.
+   *   - 첫 카드가 visible 될 때까지 최대 15s 대기 (BE fetch + hydration)
+   *   - 그 후 lazy-load 트리거를 위한 1회 스크롤 다운
+   *   - 카드 0건이면 진단 로그 + 페이지 텍스트 일부 출력
+   */
   async getChallengeCount(): Promise<number> {
-    // lazy load 가능성 — 한 번 끝까지 스크롤해 노출시킨 뒤 카운트.
+    const links = this.challengeLinks();
+    log('  → 첫 챌린지 카드 가시화 대기 (최대 15초)');
+    const firstAppeared = await links
+      .first()
+      .waitFor({ state: 'visible', timeout: 15_000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!firstAppeared) {
+      // 진단: 페이지에 어떤 link 가 있는지, 텍스트 일부
+      const allProgramLinks = await this.page
+        .locator('a[href^="/program/"]')
+        .count();
+      const bodyTextSample = (
+        await this.page
+          .locator('body')
+          .innerText()
+          .catch(() => '')
+      ).slice(0, 200);
+      log(
+        `  ⚠ 챌린지 카드를 찾지 못했습니다.\n` +
+          `    /program/* 으로 시작하는 모든 링크 개수: ${allProgramLinks}\n` +
+          `    페이지 본문 샘플(200자): ${JSON.stringify(bodyTextSample)}`,
+      );
+    }
+
     await this.scrollToBottomOnce();
-    return this.challengeLinks().count();
+    const count = await links.count();
+    log(`  → 챌린지 카드 카운트: ${count}개`);
+    return count;
   }
 
   /** N 번째 챌린지 카드 클릭 → 상세 페이지로 이동. */

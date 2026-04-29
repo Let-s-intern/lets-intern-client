@@ -110,8 +110,21 @@ test.describe('login → purchase (free option)', () => {
       `4. 첫 ${MAX_ATTEMPTS}개 챌린지 카드 순회 (가용한 첫 카드 선택)`,
       async () => {
         const total = await list.getChallengeCount();
+        await runDir.snap(page, 30, '카운트직후_목록');
         log(`  총 챌린지 카드 수: ${total}개`);
         const limit = Math.min(MAX_ATTEMPTS, total);
+
+        if (limit === 0) {
+          await runDir.snap(page, 31, '카드0개_진단용');
+          test.skip(
+            true,
+            '/program 에 챌린지 카드가 0개. ' +
+              'admin 에서 챌린지 노출 상태를 확인하거나 ' +
+              '필터(상단 탭/사이드바) 가 적용 중인지 확인하세요. ' +
+              '30-카운트직후_목록.png / 31-카드0개_진단용.png 참고.',
+          );
+          throw new Error('unreachable');
+        }
 
         for (let i = 0; i < limit; i += 1) {
           log(`  ── 시도 ${i + 1}/${limit} ──`);
