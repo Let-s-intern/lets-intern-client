@@ -40,6 +40,12 @@ jobs:
 
       - name: ESLint
         run: pnpm --filter @letscareer/web lint
+        env:
+          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
+          NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
+          NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
+          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
 
       - name: Typecheck
         run: pnpm --filter @letscareer/web typecheck
@@ -51,4 +57,4 @@ jobs:
           NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
           NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
           NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
