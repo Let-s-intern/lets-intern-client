@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { ChallengeDetailPage } from './ChallengeDetailPage';
-import { log } from '../helpers/log';
+import { log } from '../support/log';
 
 /** /program 전체 프로그램 목록 Page Object. */
 export class ProgramListPage extends BasePage {

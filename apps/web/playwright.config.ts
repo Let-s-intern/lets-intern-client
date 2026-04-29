@@ -13,15 +13,18 @@ const baseURL =
   'http://localhost:3000';
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './e2e/specs',
   fullyParallel: true,
+  // 단계가 많은 결제 시나리오 등은 30s 로 부족 → 120s 기본.
+  // (단계별 wait + lazy load + 4-state 검사 누적 시간 흡수)
+  timeout: 120_000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
   // globalSetup 은 한 번 실행되어 storageState.json 을 생성한다.
   // 환경변수가 비어 있으면 setup 은 noop 으로 통과한다.
-  globalSetup: require.resolve('./e2e/global-setup.ts'),
+  globalSetup: require.resolve('./e2e/support/global-setup.ts'),
   use: {
     baseURL,
     // 디버깅 산출물 — 단계별 스크린샷이 spec 안에서 page.screenshot() 으로

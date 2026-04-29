@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { settle } from '../helpers/settle';
+import { settle } from '../support/settle';
 
 /** 모든 Page Object 의 공통 베이스. page reference 와 settle 헬퍼만 노출. */
 export abstract class BasePage {

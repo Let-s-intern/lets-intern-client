@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { HomePage } from './HomePage';
-import { log } from '../helpers/log';
+import { log } from '../support/log';
 
 /** /login 페이지 Page Object. 이메일/비밀번호 입력 후 제출. */
 export class LoginPage extends BasePage {

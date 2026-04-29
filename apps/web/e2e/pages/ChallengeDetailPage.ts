@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
-import { log } from '../helpers/log';
+import { log } from '../support/log';
 
 /**
  * 챌린지 상세 페이지 (/program/challenge/[id]/[slug]) Page Object.

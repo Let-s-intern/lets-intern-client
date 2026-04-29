@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
-import { Pipeline } from './helpers/pipeline';
-import { RunDir } from './helpers/runDir';
-import { log } from './helpers/log';
-import { HomePage } from './pages/HomePage';
-import { PaymentInputPage } from './pages/PaymentInputPage';
-import type { ProgramListPage } from './pages/ProgramListPage';
+import { Pipeline } from '../support/pipeline';
+import { RunDir } from '../support/runDir';
+import { log } from '../support/log';
+import { PaymentInputPage } from '../pages/PaymentInputPage';
+import type { ProgramListPage } from '../pages/ProgramListPage';
+import { loginFlow } from '../flows/LoginFlow';
 
 /**
  * 시나리오: 로그인 → 전체 프로그램 → 첫 가용 챌린지 → 0원 결제
@@ -73,24 +73,16 @@ test.describe('login → purchase (free option)', () => {
 
     const flow = new Pipeline(page, runDir);
 
-    // 1) 홈 진입
-    let home = await flow.run(
-      '1. 홈 진입',
-      () => new HomePage(page).goto(WAITS.home),
-      '홈',
-    );
-
-    // 2) 로그인 — 404 감지 시 자동 복구 (LoginPage 내부 로직)
-    home = await flow.run(
-      '2. 로그인 (홈 → /login → 인증 → 복귀, 404 시 자동 복구)',
-      async () => {
-        const loginPage = await home.clickLogin();
-        return loginPage.loginWith(
-          credentials.email,
-          credentials.password,
-          WAITS.afterLogin,
-        );
-      },
+    // 1+2) 홈 → 로그인 (LoginFlow 로 묶음)
+    const home = await flow.run(
+      '1+2. 홈 진입 → /login → 인증 → 복귀',
+      () =>
+        loginFlow(page, {
+          email: credentials.email,
+          password: credentials.password,
+          homeWait: WAITS.home,
+          afterLoginWait: WAITS.afterLogin,
+        }),
       '로그인_완료',
     );
 
@@ -99,7 +91,7 @@ test.describe('login → purchase (free option)', () => {
       '3. 프로그램 드롭다운 → /program',
       async () => {
         await home.openProgramsDropdown();
-        await runDir.snap(page, 99, '드롭다운_visual_only');
+        await runDir.snap(page, 20, '드롭다운_visual');
         return home.gotoAllPrograms(WAITS.programList);
       },
       '전체프로그램_목록',

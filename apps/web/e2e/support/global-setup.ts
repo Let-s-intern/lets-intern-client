@@ -15,7 +15,8 @@ import * as path from 'node:path';
  * **사용자가 채워야 하는 TODO** 로 남겨둔다.
  */
 
-const AUTH_DIR = path.resolve(__dirname, '.auth');
+// 산출물은 e2e/ 루트의 .auth/ 에 저장 (specs/ 와 분리, .gitignore 에 등록).
+const AUTH_DIR = path.resolve(__dirname, '..', '.auth');
 const STORAGE_STATE_PATH = path.join(AUTH_DIR, 'storageState.json');
 
 function ensureAuthDir() {
