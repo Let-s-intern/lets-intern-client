@@ -1,185 +1,96 @@
 @.claude/behavioral.md
 
-# Repository Guidelines
-
-> 이 문서는 Claude Code 가 자동 로드합니다. 모든 AI 에이전트(Codex, Copilot, GPT 등) 도 이 규칙을 따라야 합니다.
-> 프로젝트 트리 / 작업 → 파일 매핑 같은 **네비게이션은 `AGENTS.md` 참조**.
-
-## Project Structure & Module Organization
-
-- Root: Next.js 15 app with TypeScript, Tailwind, Vitest.
-- `src/app`: App Router pages/layouts (routing only).
-- `src/domain`: Domain-based feature modules (primary code location).
-- `src/common`: Shared UI components used across 3+ domains.
-- `src/api`: API clients organized by domain.
-- `src/hooks`: Shared hooks used across 3+ domains.
-- `src/store`: Zustand stores.
-- `src/utils`, `src/types`: Shared utilities and types.
-- `src/lib`: Library configurations (dayjs, etc.).
-- `src/context`: React Context providers.
-- `src/schema.ts`: Central Zod schemas.
-- `public/`: Static assets (icons, logos, images).
-
----
-
-## Domain-Based Folder Structure (CRITICAL — Must Follow)
-
-### Core Principle
-
-**코드는 도메인(기능) 기반으로 구성한다. 파일 타입별(components/, hooks/ 등) flat 구조를 사용하지 않는다.**
-
-### File Placement Decision Flow
-
-When creating a new file, follow this decision order:
-
-#### Step 1: Is it used by only one domain?
-→ Place inside `src/domain/{domain}/`
-
-#### Step 2: Shared by 2-3 adjacent domains?
-→ Place in the **parent or primary domain** folder
-- Example: shared by `program` and `challenge` → put in `domain/program/`
-- Example: shared by `mypage` and `review` → put in `domain/mypage/`
-
-#### Step 3: Used by 3+ unrelated domains?
-→ Place in `src/common/` (UI), `src/hooks/` (hooks), or `src/utils/` (utilities)
-
-### Domain Folder Internal Structure
+# .claude/ 길잡이
 
 ```
-domain/{feature}/
-├── {ComponentName}.tsx         # Root-level components
-├── section/                    # Page section components
-├── ui/                         # Domain-specific UI components
-├── hooks/                      # Domain-specific hooks
-├── utils/                      # Domain-specific utilities
-├── modal/                      # Domain-specific modals
-└── {sub-feature}/              # Sub-feature folders
+.claude/
+├── README.md                             # 디렉토리 개요
+├── behavioral.md                         # 필수 행동 규칙 (자동 로드)
+│
+├── agents/                               # 서브에이전트 정의
+│   ├── push-lead.md                      # Push 단위 팀 리드
+│   ├── task-executor.md                  # 단일 자율 실행 에이전트
+│   ├── feature-worker.md                 # 기능 구현 워커
+│   ├── refactor-worker.md                # 리팩터 워커
+│   ├── refactorer.md                     # DDD 기반 리팩터
+│   ├── design-worker.md                  # 디자인/스타일
+│   ├── doc-worker.md                     # 문서 작성
+│   ├── doc-finder.md                     # 문서 검색
+│   ├── doc-updater.md                    # 문서 업데이트
+│   └── test-runner.md                    # 테스트 실행·검증
+│
+├── skills/                               # 슬래시 커맨드 스킬
+│   ├── code-quality/                     # 코드 품질 규칙 (Toss FE)
+│   ├── code-review/                      # 코드 리뷰 체크리스트
+│   ├── folder-structure/                 # DDD + 프랙탈 폴더 구조
+│   ├── seo/                              # SEO 규칙
+│   ├── skill-creator/                    # 스킬 생성 도우미
+│   ├── task-cleaner/                     # 태스크 정리
+│   ├── task-maker/                       # PRD → 태스크 생성
+│   ├── task-runner/                      # 태스크 실행 오케스트레이션
+│   └── vercel-react-best-practices/      # Vercel/React 최적화 규칙
+│
+├── teams/                                # 팀 구성 레시피 (Orchestrate teams)
+│   ├── README.md                         # Agent Teams vs 서브에이전트 비교·사이징
+│   ├── code-migration.md                 # 대규모 코드 이식 팀
+│   ├── feature-push.md                   # 단일 기능 push 팀
+│   ├── parallel-review.md                # 병렬 코드 리뷰 팀
+│   ├── debug-hypothesis.md               # 경쟁 가설 디버깅 팀
+│   └── docs-refresh.md                   # 문서 최신화 팀
+│
+├── docs/
+│   ├── claude_code_docs/                 # Claude Code 공식 문서 캐시
+│   ├── common-components/                # 공용 컴포넌트 레퍼런스
+│   ├── tech-stack/                       # 기술 스택 개요
+│   └── letscareer/
+│       ├── README.md                     # 프로젝트 문서 인덱스
+│       ├── architecture.md               # 시스템 아키텍처 개요
+│       ├── API_docs/                     # Swagger URL 등
+│       ├── tech-stack/                   # 라이브러리 버전·설정
+│       ├── apps/                         # 앱별 도메인·로컬 모듈
+│       │   ├── web/                      # 18개 도메인 + components/hooks/services + domain/
+│       │   ├── admin/                    # 18개 도메인
+│       │   └── mentor/                   # 단일 program 도메인
+│       ├── packages/                     # 공유 패키지 (@letscareer/*) 가이드
+│       └── pnpm전환 메모 폴더/             # pnpm 전환·운영 메모 (01~06 + README)
+│
+├── hooks/                                # Claude Code 훅 스크립트
+│   ├── check-tasks.sh
+│   ├── inject-task-context.sh
+│   └── post-edit-lint.sh
+│
+└── tasks/
+    ├── prd-*.md                          # PRD 문서
+    ├── todo/                             # 진행 중 태스크 파일
+    ├── done/                             # 완료된 태스크 + result-*.md
+    └── memos/                            # 배포·BE 요청 등 참고 메모
 ```
 
-### Current Domains
+## 작업 → 참조 파일 매핑
 
-```
-src/domain/
-├── about/              # About pages
-├── admin/              # Admin panel features
-├── auth/               # Authentication UI
-├── blog/               # Blog features
-├── career-board/       # Career board
-├── challenge/          # Challenge (micro-learning)
-├── faq/                # FAQ
-├── home/               # Homepage sections
-├── mypage/             # User profile & dashboard
-├── program/            # Program listing & details
-├── program-recommend/  # Program recommendation
-├── report/             # Report features
-└── review/             # Review system
-```
-
-### Prohibited Patterns
-
-1. **No cross-domain imports**: `domain/A/` must NOT import from `domain/B/`
-2. **No type-based flat structure**: Don't dump all components in `src/components/`
-3. **No circular dependencies**: Domain A → B → A is forbidden
-4. **Minimize file movement**: Respect existing structure; apply rules to new files only
-
-### Delete-Friendly Code
-
-A domain folder should be deletable without affecting other domains:
-- Domain-specific code lives inside its domain folder
-- Prefer duplication over premature shared abstraction
-- Verify necessity before creating shared code
-
-### Dependency Direction
-
-```
-common / hooks / utils (shared layer)
-        ↑
-domain/{each domain} (business logic)
-        ↑
-app/ (routing, page assembly)
-```
-
-Upper layers reference lower layers. Never reverse.
-
----
-
-## Build, Test, and Development Commands
-
-- `npm run dev`: Start local dev server (Turbopack).
-- `npm run build`: Production build via Next.js.
-- `npm start`: Serve the production build.
-- `npm run test`: Run Vitest tests.
-- `npm run typecheck`: TypeScript check without emit.
-- `npm run lint`: ESLint with Next.js/TypeScript config.
-
-## Coding Style & Naming Conventions
-
-- Formatting: Prettier (2 spaces, semicolons, single quotes, width 80).
-- Linting: ESLint flat config (`eslint.config.mjs`).
-- Tailwind: Class order enforced by `prettier-plugin-tailwindcss`.
-- Naming: PascalCase for components (`ProgramDetailNavigation.tsx`), camelCase for functions/variables, kebab-case for route folders.
-- Constants: UPPER_SNAKE_CASE (`ANIMATION_DELAY_MS`).
-
-## Code Quality Principles (Toss Frontend Fundamentals)
-
-1. **Readability**: Minimize contexts per code block, top-to-bottom flow, name magic numbers.
-2. **Predictability**: Consistent return types, no hidden side effects, descriptive names.
-3. **Cohesion**: Code that changes together lives together (colocation).
-4. **Coupling**: Minimize impact scope. Allow duplication over premature abstraction.
-
-## Key Patterns
-
-- Functional/declarative programming only — no classes.
-- Minimize `'use client'`, `useEffect`, `setState` — prefer RSC.
-- Error handling: early return, guard clauses.
-- Schema validation: Zod.
-- API hooks: Return TanStack Query's `UseQueryResult` consistently.
-- Forms: React Hook Form + Zod resolver.
-- Use composition over props drilling.
-- Separate complex conditional rendering into distinct components.
-
-## Performance (Vercel React Best Practices)
-
-- **CRITICAL**: Use `Promise.all()` for independent async operations.
-- **CRITICAL**: Avoid barrel file imports — import directly from source.
-- **CRITICAL**: Use dynamic imports for heavy components.
-- **HIGH**: Defer third-party library loading.
-- **HIGH**: Minimize serialization at RSC boundaries.
-
-## Testing Guidelines
-
-- Framework: Vitest (`vitest.config.ts`).
-- Location: Co-locate tests with code using `*.test.ts(x)`.
-- Style: Prefer pure-function tests and API client smoke tests.
-
-## Commit & Pull Request Guidelines
-
-- Commits: `<type>: <subject>` — types: feat, fix, docs, style, refactor, test, chore.
-- **Commit messages in Korean.**
-- PRs: Link related issues, include summary and screenshots for UI changes.
-- Ensure lint, typecheck, and tests pass before PR.
-
-## Security & Configuration
-
-- Env: Use `.env.local` (never commit).
-- Required: `NEXT_PUBLIC_SERVER_API`, optional Firebase keys.
-- Do not include secrets in client code or VCS history.
-
----
-
-## Detailed Rule References (Must Also Follow)
-
-When writing or reviewing code, also follow the detailed rules in these files:
-
-| File | Content |
+| 상황 | 먼저 볼 곳 |
 |---|---|
-| `AGENTS.md` | 프로젝트 트리 + 작업별 파일 매핑 (네비게이션 인덱스) |
-| `.claude/behavioral.md` | 필수 행동 규칙 (자동 로드) |
-| `.cursor/rules/toss-frontend.mdc` | Toss Frontend Fundamentals detailed code examples (magic numbers, guard patterns, conditional rendering, form cohesion, props drilling, abstraction) |
-| `.cursor/rules/full-stack-rule.mdc` | Full-stack development practices (RSC, error handling, optimization, testing) |
-| `.cursor/rules/domain-folder-structure.mdc` | Domain-based folder structure detailed rules |
-| `.cursor/rules/commit-convention.mdc` | Commit message convention details |
-| `.github/skills/vercel-react-best-practices/AGENTS.md` | Vercel React performance optimization 40+ detailed rules |
-| `.github/skills/vercel-react-best-practices/SKILL.md` | Vercel rules quick reference index |
+| 새 기능 구현 | `skills/folder-structure/SKILL.md`, `skills/vercel-react-best-practices/AGENTS.md`, `docs/letscareer/apps/<app>/` |
+| 리팩터링 | `skills/folder-structure/SKILL.md`, `skills/code-quality/SKILL.md`, `agents/refactorer.md` |
+| 코드 리뷰 | `skills/code-review/SKILL.md` |
+| 공유 훅/컴포넌트 찾기 | `docs/letscareer/packages/` |
+| 도메인 로직 이해 | `docs/letscareer/apps/<app>/domain/<도메인>.md` |
+| API/Swagger | `docs/letscareer/API_docs/swagger_url.md` |
+| 기술 스택 확인 | `docs/letscareer/tech-stack/README.md` |
+| 시스템 아키텍처 개요 | `docs/letscareer/architecture.md` |
+| 모노레포·배포 구조 | `docs/letscareer/pnpm전환 메모 폴더/` |
+| BE 협업 메시지 | `tasks/memos/be-request-*.md` |
+| PRD → 태스크 생성 | `skills/task-maker/SKILL.md` |
+| 태스크 실행 | `skills/task-runner/SKILL.md` → `agents/push-lead.md` |
+| Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
+| SEO 작업 | `skills/seo/SKILL.md` |
+| 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
 
-**If summaries in this document conflict with the detailed files above, follow the detailed files.**
+## 외부 참조
+
+| 파일 | 내용 |
+|---|---|
+| `.cursor/rules/toss-frontend.mdc` | Toss Frontend Fundamentals 코드 예시 |
+| `.cursor/rules/full-stack-rule.mdc` | 풀스택 개발 프랙티스 |
+| `.cursor/rules/domain-folder-structure.mdc` | 도메인 폴더 구조 상세 |
+| `.cursor/rules/commit-convention.mdc` | 커밋 메시지 컨벤션 |
