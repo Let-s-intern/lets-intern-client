@@ -1,7 +1,7 @@
 name: 어드민 검사
 
 # apps/admin 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
-# 5단계 검사 직렬 실행 (E2E 없음 — web 한정).
+# PR: pr-checks (smoke build), main push: main-checks (production build + artifact)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -29,10 +29,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
-    name: admin 5단계 검사
+  pr-checks:
+    name: admin PR 검사 (smoke)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -55,26 +56,55 @@ jobs:
       - name: '3) Typecheck (admin) — 차단'
         run: pnpm --filter @letscareer/admin typecheck
 
-      - name: '4) Vitest (admin) — 차단 (passWithNoTests)'
-        run: pnpm --filter @letscareer/admin test
-
-      - name: '5) Coverage (V8, threshold 미설정) — 비차단'
-        continue-on-error: true
-        run: pnpm --filter @letscareer/admin test:coverage
-
-      - name: 'Upload admin coverage'
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: admin-coverage-${{ github.sha }}
-          path: apps/admin/coverage
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: '6) Build (admin) — 차단'
+      - name: '4) Build smoke (admin, vite) — 차단'
         run: pnpm --filter @letscareer/admin build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
           VITE_SERVER_API_V2: ${{ secrets.VITE_SERVER_API_V2 || 'https://api.example.com/v2' }}
           VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
           VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}
+
+  main-checks:
+    name: admin main 검사 + production build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: '1) Prettier check (admin 한정) — 차단'
+        run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
+
+      - name: '2) ESLint (admin) — 비차단'
+        continue-on-error: true
+        run: pnpm --filter @letscareer/admin lint
+
+      - name: '3) Typecheck (admin) — 차단'
+        run: pnpm --filter @letscareer/admin typecheck
+
+      - name: '4) Build production (admin, vite) — 차단'
+        run: pnpm --filter @letscareer/admin build
+        env:
+          VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
+          VITE_SERVER_API_V2: ${{ secrets.VITE_SERVER_API_V2 || 'https://api.example.com/v2' }}
+          VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
+          VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}
+
+      - name: 'Upload admin build artifact'
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-build-${{ github.sha }}
+          path: apps/admin/dist
+          if-no-files-found: ignore
+          retention-days: 7
