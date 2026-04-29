@@ -183,14 +183,25 @@ test.describe('login → purchase (free option)', () => {
       '0원결제_완료_정리',
     );
 
-    // 6) 결과 검증
+    // 6) 결제 직후 결과 페이지 soft 검증 (성공 안내 메시지 있으면 OK, 없어도 진행)
     await flow.run(
-      '6. 결제 결과 검증',
-      () => result.expectSuccess(),
-      '결제완료',
+      '6. 결제 결과 페이지 soft 검증',
+      () => result.softCheckSuccess(),
+      '결제결과_soft체크',
     );
 
-    log('✓ 시나리오 종료 — 결제 플로우 정상');
+    // 7) 마이페이지 이동 + 신청 프로그램 노출 검증 (최종 검증)
+    await flow.run(
+      '7. 마이페이지 이동 → 신청 결과 검증',
+      async () => {
+        const mypage = await result.goToMypage();
+        await mypage.expectHasProgram();
+        return mypage;
+      },
+      '마이페이지_신청확인',
+    );
+
+    log('✓ 시나리오 종료 — 결제 플로우 + 마이페이지 검증 정상');
   });
 
   test.afterEach(async ({ page }, testInfo) => {
