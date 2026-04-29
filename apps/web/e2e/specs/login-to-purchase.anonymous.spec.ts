@@ -27,26 +27,27 @@ import { loginFlow } from '../flows/LoginFlow';
 const MAX_ATTEMPTS = 3;
 
 /**
- * 단계별 settle 대기시간(ms).
- * 각 페이지/액션의 BE fetch + React state 반영 특성에 맞춰 다르게 조정.
- * 너무 짧으면 default state 오감지 (예: 챌린지 상세의 "출시알림신청" 잠시 노출),
- * 너무 길면 spec 전체 시간 증가. 환경 변동성 큰 단계는 더 넉넉히.
+ * 단계별 추가 정적 대기(ms) — 보조 buffer.
+ *
+ * 각 POM 메서드는 동적 anchor 대기(특정 element visible 될 때까지)를 기본 사용.
+ * 즉 화면 준비되면 즉시 진행하고, 여기 값들은 anchor 가 떠도 더 기다릴 보조 시간.
+ * 보통 0 또는 매우 짧게 — anchor 가 충분하므로.
  */
 const WAITS = {
-  /** 홈 진입 후 — 정적 페이지라 짧게. */
-  home: 800,
-  /** 로그인 완료 후 — 인증 쿠키 반영 + 리다이렉트 안정화. */
-  afterLogin: 1500,
-  /** /program 진입 후 — 카드 lazy load 어느 정도 확보. */
-  programList: 1500,
-  /** 챌린지 상세 진입 후 — BE challenge data fetch + 상태 분기 반영 충분히 대기. */
-  challengeDetail: 3000,
-  /** 신청 CTA 클릭 후 — 모달/결제 입력 화면 전환. */
-  afterApply: 1500,
-  /** (모달) "신청하기" 클릭 후. */
-  afterModalEnroll: 1000,
-  /** "0원 결제하기" 클릭 후 → 결과 페이지 도달. */
-  afterPayZero: 1500,
+  /** 홈 진입 후 — anchor (헤더/로고) 시각화 후 추가 대기. */
+  home: 0,
+  /** 로그인 완료 후 — 인증 쿠키 반영. */
+  afterLogin: 500,
+  /** /program 진입 후 — 카드 첫 visible 후 추가 대기. */
+  programList: 0,
+  /** 챌린지 상세 진입 후 — anchor (apply_button/early_button) 후 추가 대기. */
+  challengeDetail: 0,
+  /** 신청 CTA 클릭 후 — 모달/결제 화면 전환 buffer. */
+  afterApply: 500,
+  /** (모달) "신청하기" 클릭 후 — 모달 → 결제 화면 전환. */
+  afterModalEnroll: 300,
+  /** "0원 결제하기" 클릭 후 → 결과 페이지. */
+  afterPayZero: 500,
 };
 
 const credentials = {

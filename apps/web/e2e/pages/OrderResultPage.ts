@@ -1,17 +1,28 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { waitForAnchor } from '../support/settle';
 
 /**
  * 결제 결과 Page Object.
  *   - /order/result 또는 /library 도착을 모두 수용
  *   - 성공 안내 텍스트 검증
+ *   - 동적 대기: 성공 메시지가 보일 때까지 (정적 wait 미사용)
  */
 export class OrderResultPage extends BasePage {
-  async waitForLoaded(extraMs?: number): Promise<this> {
+  async waitForLoaded(extraMs = 0): Promise<this> {
     await this.page.waitForURL(/\/order\/result|\/library/, {
       timeout: 30_000,
     });
-    await this.settle(extraMs);
+    // 성공 안내 텍스트가 노출될 때까지 동적 대기.
+    await waitForAnchor(
+      this.page,
+      [
+        'text=/결제\\s*완료|주문\\s*완료|신청\\s*완료|성공/',
+        'text=/내\\s*라이브러리|학습\\s*시작/',
+      ],
+      15_000,
+    );
+    if (extraMs > 0) await this.settle(extraMs);
     return this;
   }
 
