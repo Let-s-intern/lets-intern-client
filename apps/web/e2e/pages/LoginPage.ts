@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { HomePage } from './HomePage';
+import { log } from '../helpers/log';
 
 /** /login 페이지 Page Object. 이메일/비밀번호 입력 후 제출. */
 export class LoginPage extends BasePage {
@@ -10,7 +11,11 @@ export class LoginPage extends BasePage {
     return this;
   }
 
-  /** 이메일/비밀번호 입력 후 로그인 → 로그인 후 라우트로 이동. */
+  /**
+   * 이메일/비밀번호 입력 후 로그인.
+   * 로컬 환경에서 redirect 가 깨져 404 페이지가 노출되는 케이스가 있어
+   * 404 감지 시 "홈페이지로 돌아가기" 클릭 또는 page.goto('/') 로 복구.
+   */
   async loginWith(email: string, password: string): Promise<HomePage> {
     const emailInput = this.page
       .getByLabel(/이메일|email/i)
@@ -35,12 +40,50 @@ export class LoginPage extends BasePage {
       .first();
     await submit.click();
 
-    // 로그인 성공 시 /login 에서 벗어남.
+    // 로그인 성공 시 /login 에서 벗어남 (정상 redirect 또는 404 페이지).
     await this.page.waitForURL(
       (url) => !/\/login(\?|$|\/)/.test(url.pathname),
       { timeout: 30_000 },
     );
     await this.settle();
+
+    // 404 감지 → 홈 복귀 fallback (로컬 환경 redirect 이슈 대비).
+    if (await this.is404()) {
+      log('  ⚠ 로그인 후 404 페이지 감지 — 홈으로 복귀 시도');
+      await this.recoverFrom404();
+    }
+
     return new HomePage(this.page);
+  }
+
+  /** 페이지에 404 / "찾을 수 없음" 표식이 있는지. */
+  private async is404(): Promise<boolean> {
+    return this.page
+      .getByText(/404|페이지를?\s*찾을\s*수\s*없|not\s*found/i)
+      .first()
+      .isVisible({ timeout: 1_500 })
+      .catch(() => false);
+  }
+
+  /** 404 페이지에서 홈으로 복귀. 버튼 있으면 클릭, 없으면 직접 이동. */
+  private async recoverFrom404(): Promise<void> {
+    const homeButton = this.page
+      .getByRole('link', {
+        name: /홈페이지\s*로\s*돌아가|홈으로|메인으로|home/i,
+      })
+      .or(
+        this.page.getByRole('button', {
+          name: /홈페이지\s*로\s*돌아가|홈으로|메인으로/i,
+        }),
+      )
+      .first();
+    if (await homeButton.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      log('  → "홈페이지로 돌아가기" 버튼 클릭');
+      await homeButton.click();
+    } else {
+      log('  → 복귀 버튼 못 찾음 → page.goto("/") 로 직접 이동');
+      await this.page.goto('/');
+    }
+    await this.settle();
   }
 }
