@@ -5,7 +5,7 @@ import { RunDir } from './runDir';
 /** 시나리오 단계 단위 기록 — 통계/리포트 생성 입력. */
 export interface JournalEntry {
   label: string;
-  status: 'passed' | 'failed';
+  status: 'passed' | 'failed' | 'skipped';
   durationMs: number;
   startedAt: string;
   finalUrl: string;
@@ -65,13 +65,16 @@ export class Pipeline {
       } catch (err) {
         const durationMs = Date.now() - start;
         const e = err as Error;
+        // test.skip() 은 "Test is skipped: ..." throw — fail 이 아니라 skipped 로 분류.
+        const message = e?.message ?? '';
+        const isSkip = /Test is skipped/i.test(message);
         this.journal.push({
           label,
-          status: 'failed',
+          status: isSkip ? 'skipped' : 'failed',
           durationMs,
           startedAt,
           finalUrl: this.page.url(),
-          errorMessage: e?.message?.split('\n')[0]?.slice(0, 240),
+          errorMessage: message.split('\n')[0]?.slice(0, 240),
         });
         throw err;
       }

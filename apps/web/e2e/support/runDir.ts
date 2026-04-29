@@ -149,6 +149,7 @@ export class RunDir {
     const seconds = (testInfo.duration / 1000).toFixed(1);
     const passedSteps = journal.filter((j) => j.status === 'passed').length;
     const failedSteps = journal.filter((j) => j.status === 'failed').length;
+    const skippedSteps = journal.filter((j) => j.status === 'skipped').length;
 
     const lines: string[] = [];
     lines.push('=========================================');
@@ -173,10 +174,15 @@ export class RunDir {
       lines.push('  (단계 기록 없음 — Pipeline 사용 spec 인지 확인)');
     } else {
       lines.push(
-        `  총 ${journal.length}단계 (passed=${passedSteps}, failed=${failedSteps})`,
+        `  총 ${journal.length}단계 (passed=${passedSteps}, skipped=${skippedSteps}, failed=${failedSteps})`,
       );
       journal.forEach((j, idx) => {
-        const tag = j.status === 'passed' ? '[OK]    ' : '[FAIL]  ';
+        const tag =
+          j.status === 'passed'
+            ? '[OK]    '
+            : j.status === 'skipped'
+              ? '[SKIP]  '
+              : '[FAIL]  ';
         const dur = `${j.durationMs}ms`.padStart(7);
         lines.push(
           `  ${String(idx + 1).padStart(2)}. ${tag}${j.label} (${dur}) @${j.startedAt}`,
