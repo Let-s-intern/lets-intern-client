@@ -40,9 +40,7 @@ apps/web/e2e/
 ├── flows/                      — 재사용 가능한 시나리오 조각 (POM 조합)
 │   └── LoginFlow.ts            · 홈 -> /login -> 인증 -> 복귀 (한 번에 처리)
 ├── specs/                      — 실제 테스트 (testDir)
-│   ├── auth-mypage.authenticated.spec.ts
-│   ├── login-to-purchase.anonymous.spec.ts
-│   └── payment-flow.anonymous.spec.ts
+│   └── login-to-purchase.anonymous.spec.ts
 ├── .auth/                      — gitignored (storageState.json)
 └── README.md
 ```
