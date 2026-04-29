@@ -62,6 +62,21 @@ function preparePendingDir() {
   fs.mkdirSync(PENDING_DIR, { recursive: true });
 }
 
+/**
+ * 페이지 이동/클릭 후 settle 대기.
+ * domcontentloaded → networkidle → 추가 buffer 순으로 대기해
+ * BE fetch + React state 반영을 안정적으로 기다린다.
+ */
+async function settle(page: Page, extraMs = 800) {
+  await page
+    .waitForLoadState('domcontentloaded', { timeout: 10_000 })
+    .catch(() => undefined);
+  await page
+    .waitForLoadState('networkidle', { timeout: 8_000 })
+    .catch(() => undefined);
+  await page.waitForTimeout(extraMs);
+}
+
 /** 단계별 스크린샷 저장. fullPage=true 로 전체 화면 캡처. */
 async function snap(page: Page, seq: number, name: string) {
   // 스크롤 위치를 최상단으로 강제 — 헤더가 항상 PNG 상단에 보이도록.
@@ -113,7 +128,7 @@ test.describe('login → purchase (free option)', () => {
     await test.step('1. 홈 진입', async () => {
       log('  → 홈 진입 시도');
       await page.goto('/');
-      await page.waitForLoadState('domcontentloaded');
+      await settle(page);
       log(`  ✓ 홈 진입 성공 (url=${page.url()})`);
       await snap(page, 1, '홈');
     });
@@ -140,7 +155,7 @@ test.describe('login → purchase (free option)', () => {
 
       log('  → /program 으로 직접 이동 (모바일/데스크톱 충돌 회피)');
       await page.goto('/program');
-      await page.waitForLoadState('domcontentloaded');
+      await settle(page);
       log(`  ✓ 전체 프로그램 페이지 이동 완료 (url=${page.url()})`);
       await snap(page, 3, '전체프로그램_목록');
     });
@@ -149,11 +164,8 @@ test.describe('login → purchase (free option)', () => {
     // 3) 프로그램 목록에서 테스트 챌린지 클릭
     // ────────────────────────────────────────────────────────────
     await test.step(`3. 목록에서 "${TEST_CHALLENGE_TITLE}" 클릭`, async () => {
-      log('  → 목록 페이지 로딩 대기');
-      await page.waitForLoadState('domcontentloaded');
-      await page
-        .waitForLoadState('networkidle', { timeout: 10_000 })
-        .catch(() => undefined);
+      log('  → 목록 페이지 settle 대기');
+      await settle(page);
 
       log(`  → 목록에서 "${TEST_CHALLENGE_TITLE}" 검색`);
       // 카드가 <a> / <div onClick> / <button> 등 무엇이든 매칭되도록 다중 selector.
@@ -197,6 +209,9 @@ test.describe('login → purchase (free option)', () => {
       await expect(page).toHaveTitle(new RegExp(TEST_CHALLENGE_TITLE, 'i'), {
         timeout: 10_000,
       });
+      // 상세 페이지의 BE 응답 (challenge data) 도착 + React state 안정화 대기.
+      // 너무 일찍 검사하면 default state(출시알림신청) 가 잠깐 보였다 사라짐.
+      await settle(page, 1500);
       log(`  ✓ 챌린지 상세 진입 완료 (url=${page.url()})`);
       await snap(page, 4, '챌린지_상세');
     });
@@ -267,6 +282,7 @@ test.describe('login → purchase (free option)', () => {
       log('  ✓ 신청 CTA 버튼 노출');
       await applyButton.scrollIntoViewIfNeeded();
       await applyButton.click();
+      await settle(page);
       log('  ✓ 신청 CTA 클릭 완료');
       await snap(page, 5, '신청CTA_클릭후');
     });
@@ -285,6 +301,7 @@ test.describe('login → purchase (free option)', () => {
       if (isVisible) {
         log('  → 모달의 "신청하기" 발견 → 클릭');
         await modalEnrollButton.click();
+        await settle(page);
         log('  ✓ 모달 "신청하기" 클릭 완료');
         await snap(page, 6, '모달_신청하기_클릭후');
       } else {
@@ -315,6 +332,7 @@ test.describe('login → purchase (free option)', () => {
     await test.step('7. 결제 결과 페이지 도달 검증', async () => {
       log('  → /order/result 또는 /library 도달 대기');
       await page.waitForURL(/\/order\/result|\/library/, { timeout: 30_000 });
+      await settle(page);
       log(`  ✓ 결과 페이지 도달 (url=${page.url()})`);
       await expect(
         page
