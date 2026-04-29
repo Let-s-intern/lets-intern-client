@@ -149,16 +149,47 @@ test.describe('login → purchase (free option)', () => {
     // 3) 프로그램 목록에서 테스트 챌린지 클릭
     // ────────────────────────────────────────────────────────────
     await test.step(`3. 목록에서 "${TEST_CHALLENGE_TITLE}" 클릭`, async () => {
+      log('  → 목록 페이지 로딩 대기');
+      await page.waitForLoadState('domcontentloaded');
+      await page
+        .waitForLoadState('networkidle', { timeout: 10_000 })
+        .catch(() => undefined);
+
       log(`  → 목록에서 "${TEST_CHALLENGE_TITLE}" 검색`);
-      const challengeLink = page
+      // 카드가 <a> / <div onClick> / <button> 등 무엇이든 매칭되도록 다중 selector.
+      const challengeCard = page
         .getByRole('link', { name: new RegExp(TEST_CHALLENGE_TITLE, 'i') })
+        .or(page.locator(`a:has-text("${TEST_CHALLENGE_TITLE}")`))
+        .or(page.getByText(new RegExp(TEST_CHALLENGE_TITLE, 'i')))
         .first();
+
+      // 첫 화면에 없으면 페이지 끝까지 스크롤해 lazy load 트리거.
+      if (!(await challengeCard.isVisible().catch(() => false))) {
+        log('  → 첫 화면에 없음 → 스크롤 다운으로 lazy load 시도');
+        for (let i = 0; i < 10; i += 1) {
+          await page.evaluate(() =>
+            window.scrollTo(0, document.body.scrollHeight),
+          );
+          await page.waitForTimeout(500);
+          if (await challengeCard.isVisible().catch(() => false)) {
+            log(`  ✓ 스크롤 ${i + 1}회 후 발견`);
+            break;
+          }
+        }
+      }
+
       await expect(
-        challengeLink,
-        `전체 프로그램 목록에 "${TEST_CHALLENGE_TITLE}" 챌린지가 보여야 한다`,
+        challengeCard,
+        `전체 프로그램 목록에 "${TEST_CHALLENGE_TITLE}" 챌린지가 보여야 한다.\n` +
+          '확인할 것:\n' +
+          ' 1. admin 에서 해당 챌린지가 노출 상태(visible/published)인지\n' +
+          ' 2. 카드에 정확히 그 텍스트가 표시되는지 (제목 변환 여부)\n' +
+          ' 3. 03-전체프로그램_목록.png 스크린샷에 카드가 있는지 시각 확인',
       ).toBeVisible({ timeout: 15_000 });
+
       log('  ✓ 챌린지 카드 발견');
-      await challengeLink.click();
+      await challengeCard.scrollIntoViewIfNeeded();
+      await challengeCard.click();
       log('  → 상세 redirect 대기 ([id] → [id]/[slug])');
       await page.waitForURL(/\/program\/challenge\/[^/]+\/[^/]+/, {
         timeout: 15_000,
