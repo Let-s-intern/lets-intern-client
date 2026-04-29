@@ -97,21 +97,22 @@ test.describe('login → purchase (free option)', () => {
       '전체프로그램_목록',
     );
 
-    // 4) 첫 N 개 카드를 차례로 시도해 가용한 챌린지 발견
+    // 4) 첫 N 개 카드를 차례로 시도해 가용한 챌린지 발견.
+    //    카드는 type 정보가 DOM 에 없어 클릭 후 URL 로 챌린지 여부 판정.
     const availableDetail = await flow.run(
-      `4. 첫 ${MAX_ATTEMPTS}개 챌린지 카드 순회 (가용한 첫 카드 선택)`,
+      `4. 첫 ${MAX_ATTEMPTS}개 카드 순회 → 챌린지 판정 + 가용성 검사`,
       async () => {
-        const total = await list.getChallengeCount();
+        const total = await list.getProgramCount();
         await runDir.snap(page, 30, '카운트직후_목록');
-        log(`  총 챌린지 카드 수: ${total}개`);
+        log(`  총 프로그램 카드 수: ${total}개`);
         const limit = Math.min(MAX_ATTEMPTS, total);
 
         if (limit === 0) {
           await runDir.snap(page, 31, '카드0개_진단용');
           test.skip(
             true,
-            '/program 에 챌린지 카드가 0개. ' +
-              'admin 에서 챌린지 노출 상태를 확인하거나 ' +
+            '/program 에 프로그램 카드가 0개. ' +
+              'admin 에서 프로그램 노출 상태를 확인하거나 ' +
               '필터(상단 탭/사이드바) 가 적용 중인지 확인하세요. ' +
               '30-카운트직후_목록.png / 31-카드0개_진단용.png 참고.',
           );
@@ -120,11 +121,22 @@ test.describe('login → purchase (free option)', () => {
 
         for (let i = 0; i < limit; i += 1) {
           log(`  ── 시도 ${i + 1}/${limit} ──`);
-          const detail = await list.openChallengeByIndex(
+          const detail = await list.openProgramByIndex(
             i,
             WAITS.challengeDetail,
           );
           await runDir.snap(page, 40 + i * 4, `시도${i + 1}_상세_진입`);
+
+          if (detail === null) {
+            // 챌린지가 아닌 프로그램 (live/guidebook/vod) — 다음 카드 시도
+            log(`    챌린지 아닌 type → 다음`);
+            if (i < limit - 1) {
+              list = await list.goto(WAITS.programList);
+              await runDir.snap(page, 42 + i * 4, `시도${i + 1}_복귀_목록`);
+            }
+            continue;
+          }
+
           const status = await detail.checkStatus();
           await runDir.snap(page, 41 + i * 4, `시도${i + 1}_상태_${status}`);
           log(`    status=${status} (url=${page.url()})`);
@@ -144,11 +156,10 @@ test.describe('login → purchase (free option)', () => {
         log(`  ⚠ 첫 ${limit}개 카드 모두 신청 불가 — test.skip`);
         test.skip(
           true,
-          `첫 ${limit}개 챌린지 모두 신청 불가 (closed/enrolled/unknown). ` +
+          `첫 ${limit}개 카드 모두 신청 불가 (챌린지 아님 / closed / enrolled / unknown). ` +
             'admin 에서 결제 가능한 챌린지를 상단에 노출하거나 ' +
             '봇 신청 이력을 리셋한 뒤 재실행하세요.',
         );
-        // unreachable — test.skip 이 throw
         throw new Error('unreachable');
       },
     );
