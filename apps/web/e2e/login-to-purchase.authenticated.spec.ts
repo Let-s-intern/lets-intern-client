@@ -205,6 +205,28 @@ test.describe('login → purchase (free option)', () => {
     // 4) "바로 신청"
     // ────────────────────────────────────────────────────────────
     await test.step('4. 첫 신청 CTA 클릭 (floating 하단 "신청하기" / "바로 신청")', async () => {
+      // 4-a) 프로그램 종료 상태 감지 — "출시알람신청" 버튼이 보이면 프로그램 종료.
+      log('  → 프로그램 종료 상태 감지 (출시알람신청)');
+      const isClosed = await page
+        .getByRole('button', { name: /출시\s*알람\s*신청|종료/i })
+        .or(page.getByText(/출시\s*알람\s*신청/i))
+        .first()
+        .isVisible()
+        .catch(() => false);
+
+      if (isClosed) {
+        log(
+          '  ⚠ 프로그램이 종료되었습니다 (출시알람신청 노출 감지) — test.skip 후 통과.',
+        );
+        await snap(page, 5, '프로그램_종료');
+      }
+      test.skip(
+        isClosed,
+        '프로그램이 종료된 상태입니다 (출시알람신청 노출). ' +
+          '챌린지 운영 일정이 끝나 더 이상 신청 불가. 새 회차 오픈 후 재실행하세요.',
+      );
+
+      // 4-b) 이미 신청 상태 감지
       log('  → 이미 신청 상태 감지');
       const alreadyEnrolled = await page
         .getByRole('button', {
