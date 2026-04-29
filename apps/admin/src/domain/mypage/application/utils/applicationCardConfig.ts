@@ -155,6 +155,23 @@ const toGuidebookCardConfig = (
     : '';
 
   const thumbnail = programThumbnail ?? '';
+  const isUrl = !!contentUrl && !contentFileUrl;
+
+  const urlConfirm = {
+    title: '가이드북을 열람하시겠습니까?',
+    description:
+      '디지털 콘텐츠 특성상 열람 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
+    confirmText: 'URL 접속하기',
+    cancelText: '닫기',
+  };
+
+  const pdfConfirm = {
+    title: '가이드북을 다운로드하시겠습니까?',
+    description:
+      '디지털 콘텐츠 특성상 다운로드 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
+    confirmText: '다운로드',
+    cancelText: '닫기',
+  };
 
   return {
     id: id ?? 0,
@@ -171,15 +188,9 @@ const toGuidebookCardConfig = (
     contentFileUrl: contentFileUrl ?? undefined,
     isDownloaded: isDownloaded ?? false,
     actionButton: {
-      label: 'PDF 다운로드',
+      label: isUrl ? 'URL 접속' : 'PDF 다운로드',
       isDownload: true,
-      confirm: {
-        title: '가이드북을 다운로드하시겠습니까?',
-        description:
-          '디지털 콘텐츠 특성상 다운로드 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
-        confirmText: '다운로드',
-        cancelText: '닫기',
-      },
+      confirm: isUrl ? urlConfirm : pdfConfirm,
     },
     isCompleted: false,
   };

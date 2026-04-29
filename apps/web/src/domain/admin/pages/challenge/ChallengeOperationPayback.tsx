@@ -87,8 +87,9 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
           field: `th${th}`,
           headerName: `${th}회차`,
           valueGetter(_, row) {
-            const score = row.scores.find((s) => s.th === th);
-            return score?.score ?? '0';
+            return row.scores
+              .filter((s) => s.th === th)
+              .reduce((acc, s) => acc + s.score, 0);
           },
           sortable: false,
           filterable: false,
@@ -147,16 +148,28 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
   ];
 }
 
+const EXCLUDED_THS = new Set([0, 99, 100, 999]);
+
+function isPaybackEligible(row: Row, regularThs: number[]): boolean {
+  const allSubmitted = regularThs.every((th) =>
+    row.scores.some((s) => s.th === th && s.score > 0),
+  );
+  const totalScore = row.scores.reduce((acc, s) => acc + s.score, 0);
+  return allSubmitted && totalScore >= 80;
+}
+
 declare module '@mui/x-data-grid' {
   interface ToolbarPropsOverrides {
     onMakeRefundedClick?: (selected: Map<number, Row>) => void;
     handleOpenPaybackModal: () => void;
+    regularThs: number[];
   }
 }
 
 function Toolbar({
   onMakeRefundedClick,
   handleOpenPaybackModal,
+  regularThs,
 }: ToolbarPropsOverrides) {
   const api = useGridApiContext();
   const hasSelected = api.current?.getSelectedRows().size !== 0;
@@ -173,17 +186,25 @@ function Toolbar({
             api.current?.exportDataAsCsv({
               fileName: `페이백_${dayjs().format('YYYY-MM-DD')}`,
               getRowsToExport(params) {
-                return (
-                  params.apiRef.current
-                    ?.getAllRowIds()
-                    .map((id) => ({
-                      id,
-                      total: params.apiRef.current?.getCellValue(id, 'total'),
-                    }))
-                    .filter((row) => row.total >= 80)
-                    .sort((a, b) => b.total - a.total)
-                    .map((row) => row.id) || []
-                );
+                const allIds = params.apiRef.current?.getAllRowIds() ?? [];
+                return allIds
+                  .filter((id) => {
+                    const row = params.apiRef.current?.getRow(id) as Row;
+                    return row && isPaybackEligible(row, regularThs);
+                  })
+                  .sort((a, b) => {
+                    const totalA =
+                      (params.apiRef.current?.getCellValue(
+                        a,
+                        'total',
+                      ) as number) || 0;
+                    const totalB =
+                      (params.apiRef.current?.getCellValue(
+                        b,
+                        'total',
+                      ) as number) || 0;
+                    return totalB - totalA;
+                  });
               },
             });
           }}
@@ -288,6 +309,14 @@ const ChallengeOperationPayback = () => {
     return Array.from(ths).sort();
   }, [paybackRes?.missionApplications]);
 
+  // 미제출 조건은 challengeId 234부터 적용
+  const shouldFilterUnsubmitted = Number(challengeId) >= 234;
+
+  const regularThs = useMemo(
+    () => ths.filter((th) => !EXCLUDED_THS.has(th)),
+    [ths],
+  );
+
   const columns = useMemo(() => {
     return createColumns(ths);
   }, [ths]);
@@ -312,27 +341,33 @@ const ChallengeOperationPayback = () => {
     message: '',
   });
 
-  const handleConfirmPayback = () => {
-    if (!paybackRes) return;
-
+  const validatePaybackSelection = (): boolean => {
     // 선택된 사용자가 없을 경우 경고 메시지 표시
     if (selectedIds.length === 0) {
       alert('페이백할 사용자를 선택해주세요.');
-      return;
+      return false;
     }
 
+    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
+    const hasIsRefundedUser = rows.some(
+      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
+    );
+    // 선택된 사용자들 중 정규 미션 미제출이 있는 사용자가 있는지 검사
+    const hasUnsubmittedUser =
+      shouldFilterUnsubmitted &&
+      rows.some(
+        (row) =>
+          selectedIds.includes(row.id) &&
+          !regularThs.every((th) =>
+            row.scores.some((s) => s.th === th && s.score > 0),
+          ),
+      );
     // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
     const hasLowScoreUser = rows.some(
       (row) =>
         selectedIds.includes(row.id) &&
         row.scores.reduce((acc, score) => acc + score.score, 0) < 80,
     );
-
-    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
-    const hasIsRefundedUser = rows.some(
-      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
-    );
-
     // 선택된 사용자들 중 결제 금액이 페이백 금액보다 적은 사용자가 있는지 검사
     const hasLowPaybackUser = rows.some(
       (row) =>
@@ -343,120 +378,60 @@ const ChallengeOperationPayback = () => {
     if (hasIsRefundedUser) {
       // 이미 환급 완료된 사용자가 있을 경우 경고 메시지 표시
       alert('이미 환급 완료된 사용자가 포함되어 있습니다.');
-      return;
+      return false;
     }
-
+    if (hasUnsubmittedUser) {
+      // 미제출 미션이 있는 사용자가 있을 경우 경고 메시지 표시
+      alert('미제출 미션이 있는 사용자가 포함되어 있습니다.');
+      return false;
+    }
     if (hasLowScoreUser) {
       // 총점이 80점 미만인 사용자가 있을 경우 경고 메시지 표시
       alert('페이백은 총점 80점 이상의 유저를 대상으로만 가능합니다.');
-      return;
+      return false;
     }
-
     if (hasLowPaybackUser) {
       // 결제 금액이 페이백 금액보다 적은 사용자가 있을 경우 경고 메시지 표시
       alert('결제 금액이 페이백 금액보다 적은 사용자가 포함되어 있습니다.');
-      return;
+      return false;
     }
 
     // 페이백 정보 유효성 검사
     if (!paybackInfo.price) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액을 입력해주세요.',
-      });
-      return;
+      setSnackbar({ open: true, message: '페이백 금액을 입력해주세요.' });
+      return false;
     }
     if (paybackInfo.price < 0) {
       setSnackbar({
         open: true,
         message: '페이백 금액은 0보다 작을 수 없습니다.',
       });
-      return;
+      return false;
     }
     if (paybackInfo.reason.length > 100) {
       setSnackbar({
         open: true,
         message: '취소사유는 100자 이하로 입력해주세요.',
       });
-      return;
+      return false;
     }
 
+    return true;
+  };
+
+  const handleConfirmPayback = () => {
+    if (!paybackRes) return;
+    if (!validatePaybackSelection()) return;
     setIsPaybackModalOpen(true);
   };
 
   const handlePayback = () => {
     if (!paybackRes) return;
-
-    // 선택된 사용자가 없을 경우 경고 메시지 표시
-    if (selectedIds.length === 0) {
-      alert('페이백할 사용자를 선택해주세요.');
-      return;
-    }
-
-    // 선택된 사용자들 중 총점이 80점 미만인 사용자가 있는지 검사
-    const hasLowScoreUser = rows.some(
-      (row) =>
-        selectedIds.includes(row.id) &&
-        row.scores.reduce((acc, score) => acc + score.score, 0) < 80,
-    );
-
-    // 선택된 사용자들 중 이미 환급 완료된 사용자가 있는지 검사
-    const hasIsRefundedUser = rows.some(
-      (row) => selectedIds.includes(row.id) && row.isRefunded === true,
-    );
-
-    // 선택된 사용자들 중 결제 금액이 페이백 금액보다 적은 사용자가 있는지 검사
-    const hasLowPaybackUser = rows.some(
-      (row) =>
-        selectedIds.includes(row.id) &&
-        (row.finalPrice || 0) < (paybackInfo.price || 0),
-    );
-
-    if (hasIsRefundedUser) {
-      // 이미 환급 완료된 사용자가 있을 경우 경고 메시지 표시
-      alert('이미 환급 완료된 사용자가 포함되어 있습니다.');
-      return;
-    }
-
-    if (hasLowScoreUser) {
-      // 총점이 80점 미만인 사용자가 있을 경우 경고 메시지 표시
-      alert('페이백은 총점 80점 이상의 유저를 대상으로만 가능합니다.');
-      return;
-    }
-
-    if (hasLowPaybackUser) {
-      // 결제 금액이 페이백 금액보다 적은 사용자가 있을 경우 경고 메시지 표시
-      alert('결제 금액이 페이백 금액보다 적은 사용자가 포함되어 있습니다.');
-      return;
-    }
-
-    // 페이백 정보 유효성 검사
-    if (!paybackInfo.price) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액을 입력해주세요.',
-      });
-      return;
-    }
-    if (paybackInfo.price < 0) {
-      setSnackbar({
-        open: true,
-        message: '페이백 금액은 0보다 작을 수 없습니다.',
-      });
-      return;
-    }
-    if (paybackInfo.reason.length > 100) {
-      setSnackbar({
-        open: true,
-        message: '취소사유는 100자 이하로 입력해주세요.',
-      });
-      return;
-    }
-
+    if (!validatePaybackSelection()) return;
     // 페이백 실행
     setIsPaybackLoading(true);
     tryTotalPayback({
-      price: paybackInfo.price,
+      price: paybackInfo.price!,
       reason: paybackInfo.reason === '' ? undefined : paybackInfo.reason,
       applicationIdList: selectedIds,
     });
@@ -526,9 +501,11 @@ const ChallengeOperationPayback = () => {
         rows={
           // paybackConfirm 상태일 때는 row.scores의 합이 80점 이상인 사용자만 표시
           paybackConfirm
-            ? rows.filter(
-                (row) =>
-                  row.scores.reduce((acc, score) => acc + score.score, 0) >= 80,
+            ? rows.filter((row) =>
+                isPaybackEligible(
+                  row,
+                  shouldFilterUnsubmitted ? regularThs : [],
+                ),
               )
             : rows
         }
@@ -572,6 +549,7 @@ const ChallengeOperationPayback = () => {
             handleOpenPaybackModal() {
               setPaybackConfirm(true);
             },
+            regularThs: shouldFilterUnsubmitted ? regularThs : [],
           },
         }}
         checkboxSelection

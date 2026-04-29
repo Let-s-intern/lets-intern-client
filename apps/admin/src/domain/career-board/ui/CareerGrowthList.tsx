@@ -141,6 +141,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
 
       {hasConfirm && downloadAction.showConfirm && actionButton && (
         <AlertModal
+          className="m-5 md:m-0"
           title={actionButton.confirm?.title ?? '확인'}
           confirmText={actionButton.confirm?.confirmText ?? '확인'}
           cancelText={actionButton.confirm?.cancelText ?? '취소'}
