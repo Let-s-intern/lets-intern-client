@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 /** 공지 전달 범위 */
-export const ChallengeScopeTypeEnum = z.enum(['ALL', 'IN_PROGRESS', 'SPECIFIC']);
+export const ChallengeScopeTypeEnum = z.enum([
+  'ALL',
+  'IN_PROGRESS',
+  'SPECIFIC',
+]);
 export type ChallengeScopeType = z.infer<typeof ChallengeScopeTypeEnum>;
 
 /** 공지 전달 대상 */

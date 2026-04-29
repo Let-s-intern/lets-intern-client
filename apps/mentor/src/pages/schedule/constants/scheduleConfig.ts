@@ -67,9 +67,10 @@ export function computeSegmentColSpans(
   const missionDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
   return config.segments.map((seg) => {
-    const cols = seg.startOffset === -Infinity
-      ? missionDays
-      : seg.endOffset - seg.startOffset;
+    const cols =
+      seg.startOffset === -Infinity
+        ? missionDays
+        : seg.endOffset - seg.startOffset;
     return { segment: seg, cols };
   });
 }

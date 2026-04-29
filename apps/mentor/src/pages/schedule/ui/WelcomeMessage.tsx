@@ -14,9 +14,7 @@ const WelcomeMessage = () => {
         <span className="font-semibold text-neutral-900">
           {name} {config.welcomeMessage.nameSuffix}
         </span>
-        <span className="text-neutral-900">
-          {config.welcomeMessage.body}
-        </span>
+        <span className="text-neutral-900">{config.welcomeMessage.body}</span>
       </span>
     </div>
   );

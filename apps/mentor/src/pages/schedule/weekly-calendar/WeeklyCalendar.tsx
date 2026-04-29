@@ -91,7 +91,7 @@ const WeeklyCalendar = ({
     <div className="relative">
       <div
         ref={containerRef}
-        className="overflow-x-auto overflow-y-hidden rounded-2xl border border-neutral-80"
+        className="border-neutral-80 overflow-x-auto overflow-y-hidden rounded-2xl border"
       >
         <div
           style={{
@@ -101,7 +101,7 @@ const WeeklyCalendar = ({
         >
           {/* Day header */}
           <div
-            className="border-b border-neutral-80"
+            className="border-neutral-80 border-b"
             style={{ display: 'grid', gridTemplateColumns: gridCols }}
           >
             {days.map((day, i) => (
@@ -110,18 +110,13 @@ const WeeklyCalendar = ({
                 ref={isSameDay(day, today) ? todayColRef : undefined}
                 day={day}
                 today={today}
-                isMonthStart={
-                  i > 0 && getMonth(day) !== getMonth(days[i - 1])
-                }
+                isMonthStart={i > 0 && getMonth(day) !== getMonth(days[i - 1])}
               />
             ))}
           </div>
 
           {/* Body */}
-          <div
-            className="relative"
-            style={{ minHeight: `${bodyMinHeight}px` }}
-          >
+          <div className="relative" style={{ minHeight: `${bodyMinHeight}px` }}>
             <ColumnDividers days={days} gridCols={gridCols} />
 
             {/* Bars */}
@@ -129,27 +124,19 @@ const WeeklyCalendar = ({
               className="relative gap-y-1 py-3"
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
-              {barLayouts.map(
-                ({ bar, startCol, endCol, colSpan }, idx) => (
-                  <div
-                    key={`${bar.challengeId}-${bar.missionId}-${idx}`}
-                    className="px-px"
-                    style={{ gridColumn: `${startCol} / ${endCol}` }}
-                  >
-                    {colSpan <= 1 ? (
-                      <CompactFeedbackCard
-                        bar={bar}
-                        onBarClick={onBarClick}
-                      />
-                    ) : (
-                      <ChallengePeriodBar
-                        bar={bar}
-                        onBarClick={onBarClick}
-                      />
-                    )}
-                  </div>
-                ),
-              )}
+              {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
+                <div
+                  key={`${bar.challengeId}-${bar.missionId}-${idx}`}
+                  className="px-px"
+                  style={{ gridColumn: `${startCol} / ${endCol}` }}
+                >
+                  {colSpan <= 1 ? (
+                    <CompactFeedbackCard bar={bar} onBarClick={onBarClick} />
+                  ) : (
+                    <ChallengePeriodBar bar={bar} onBarClick={onBarClick} />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -158,8 +145,8 @@ const WeeklyCalendar = ({
       {/* Empty state overlay */}
       {barLayouts.length === 0 && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
-          <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
-            <p className="text-center text-xsmall16 font-medium text-neutral-30">
+          <div className="border-neutral-80 pointer-events-auto rounded-xl border bg-white px-8 py-6 shadow-lg">
+            <p className="text-xsmall16 text-neutral-30 text-center font-medium">
               진행 예정인 피드백 일정이 없습니다.
             </p>
           </div>
