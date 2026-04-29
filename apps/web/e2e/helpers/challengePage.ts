@@ -29,14 +29,27 @@ export class ChallengePage {
   /**
    * 챌린지 제목에 특정 텍스트가 포함되는지 확인.
    * 테스트 챌린지가 다른 챌린지와 섞이지 않도록 정체성 검증용.
+   *
+   * 검증 1: document title (Next metadata) — 가장 안정적.
+   *         page.tsx 의 generateMetadata 가 challenge.title 을 그대로 사용.
+   * 검증 2: URL slug — `/program/challenge/{id}/{slug}` 의 slug 부분.
+   *         redirect 가 반영되었는지 동시에 확인.
    */
   async expectTitleContains(text: string) {
-    // TODO: 챌린지 상세 헤더의 정확한 selector 로 교체.
-    //   예) page.getByRole('heading', { level: 1 })
-    //   현재는 가장 큰 heading 전체에서 substring 매칭으로 시작.
-    await expect(this.page.locator('h1, h2').first()).toContainText(text, {
-      ignoreCase: true,
+    // [id] → [id]/[title] 로 redirect 가 일어나므로 잠시 대기.
+    await this.page.waitForURL(/\/program\/challenge\/[^/]+\/[^/]+/, {
+      timeout: 15_000,
     });
+    // 1) document title
+    await expect(this.page).toHaveTitle(new RegExp(text, 'i'), {
+      timeout: 10_000,
+    });
+    // 2) URL slug — title 을 lowercase + 공백/슬래시 -> '-' 로 변환한 형태가 들어가야 함.
+    const expectedSlug = text.replace(/[ /]/g, '-').toLowerCase();
+    expect(
+      this.page.url().toLowerCase(),
+      `URL 에 챌린지 slug "${expectedSlug}" 가 포함되어야 한다 (현재: ${this.page.url()})`,
+    ).toContain(expectedSlug);
   }
 
   /**
