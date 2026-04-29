@@ -45,18 +45,20 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (admin 한정)'
-        continue-on-error: true
+      - name: '1) Prettier check (admin 한정) — 차단'
         run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (admin)'
+      - name: '2) ESLint (admin) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/admin lint
 
-      - name: '3) Vitest (admin)'
+      - name: '3) Typecheck (admin) — 차단'
+        run: pnpm --filter @letscareer/admin typecheck
+
+      - name: '4) Vitest (admin) — 차단 (passWithNoTests)'
         run: pnpm --filter @letscareer/admin test
 
-      - name: '4) Coverage (V8, threshold 미설정)'
+      - name: '5) Coverage (V8, threshold 미설정) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/admin test:coverage
 
@@ -69,7 +71,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: '5) Build (admin)'
+      - name: '6) Build (admin) — 차단'
         run: pnpm --filter @letscareer/admin build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}

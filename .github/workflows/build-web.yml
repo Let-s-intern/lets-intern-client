@@ -45,18 +45,20 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (web 한정)'
-        continue-on-error: true
+      - name: '1) Prettier check (web 한정) — 차단'
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (web)'
+      - name: '2) ESLint (web) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/web lint
 
-      - name: '3) Jest (web)'
+      - name: '3) Typecheck (web) — 차단'
+        run: pnpm --filter @letscareer/web typecheck
+
+      - name: '4) Jest (web) — 차단 (passWithNoTests)'
         run: pnpm --filter @letscareer/web test
 
-      - name: '4) Coverage (V8, threshold 미설정)'
+      - name: '5) Coverage (V8, threshold 미설정) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/web test:coverage
 
@@ -69,7 +71,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: '5) Build (web)'
+      - name: '6) Build (web) — 차단'
         run: pnpm --filter @letscareer/web build
         env:
           NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
@@ -78,11 +80,11 @@ jobs:
           NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
 
-      - name: 'Install Playwright browsers'
+      - name: 'Install Playwright browsers (조건부)'
         if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
         run: pnpm --filter @letscareer/web e2e:install
 
-      - name: '6) E2E (Playwright, web 전용)'
+      - name: '7) E2E (Playwright, web 전용) — 조건부 차단'
         if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
         run: pnpm --filter @letscareer/web e2e
 

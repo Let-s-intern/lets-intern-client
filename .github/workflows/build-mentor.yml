@@ -45,18 +45,20 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (mentor 한정)'
-        continue-on-error: true
+      - name: '1) Prettier check (mentor 한정) — 차단'
         run: pnpm exec prettier --check "apps/mentor/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (mentor)'
+      - name: '2) ESLint (mentor) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/mentor lint
 
-      - name: '3) Vitest (mentor)'
+      - name: '3) Typecheck (mentor) — 차단'
+        run: pnpm --filter @letscareer/mentor typecheck
+
+      - name: '4) Vitest (mentor) — 차단 (passWithNoTests)'
         run: pnpm --filter @letscareer/mentor test
 
-      - name: '4) Coverage (V8, threshold 미설정)'
+      - name: '5) Coverage (V8, threshold 미설정) — 비차단'
         continue-on-error: true
         run: pnpm --filter @letscareer/mentor test:coverage
 
@@ -69,7 +71,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: '5) Build (mentor)'
+      - name: '6) Build (mentor) — 차단'
         run: pnpm --filter @letscareer/mentor build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
