@@ -43,10 +43,12 @@ export default defineConfig({
       testMatch: /.*\.authenticated\.spec\.ts/,
     },
   ],
-  webServer: {
-    command: 'pnpm dev',
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  // webServer 자동 spawn 은 의도적으로 사용하지 않는다.
+  // 운영 흐름:
+  //   - 로컬: 사용자가 `pnpm --filter web dev` 를 별도 터미널에서 띄워두고 실행
+  //   - staging 검증: PLAYWRIGHT_BASE_URL 을 staging 으로 가리켜서 dev 서버 불요
+  //   - CI: 워크플로 step 으로 dev 또는 빌드된 web 을 먼저 띄운 뒤 e2e 실행
+  // 자동 spawn 시 reuseExistingServer 판단이 실패해 EADDRINUSE 가 자주 발생했음.
+  // baseURL 이 응답 안 하면 첫 page.goto 에서 ERR_CONNECTION_REFUSED 로 즉시 fail 하므로
+  // 진단 비용도 낮다.
 });
