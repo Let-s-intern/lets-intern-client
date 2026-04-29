@@ -24,11 +24,12 @@ export default defineConfig({
   globalSetup: require.resolve('./e2e/global-setup.ts'),
   use: {
     baseURL,
-    // 디버깅 산출물 — 원격 SSH 환경에서도 실패 분석 가능.
-    trace: 'retain-on-failure', // 실패 시 trace.zip 보존
-    video: 'retain-on-failure', // 실패 시 mp4 보존
-    screenshot: 'only-on-failure', // 실패 시 PNG 캡처
-    // 모든 액션에 5초 마진 — Next dev 컴파일이 느려도 안정적.
+    // 디버깅 산출물 — 단계별 스크린샷이 spec 안에서 page.screenshot() 으로
+    // 명시적으로 찍히므로, 자동 비디오/스크린샷은 끔. trace 는 실패 시만 보존.
+    trace: 'retain-on-failure',
+    video: 'off',
+    screenshot: 'off',
+    // 모든 액션에 마진 — Next dev 컴파일이 느려도 안정적.
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
   },

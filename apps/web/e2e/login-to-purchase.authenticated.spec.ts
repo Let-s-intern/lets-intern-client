@@ -1,4 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 /**
  * 시나리오: 로그인 → 챌린지 구매 (사용자 실제 UX 플로우 기준)
@@ -12,13 +14,12 @@ import { test, expect } from '@playwright/test';
  *   6) "0원 결제하기" 클릭 — 무료 옵션이라 PG 안 거치고 즉시 성공 처리됨
  *   7) 결제 결과 페이지 도달 확인
  *
- * 의존:
- *   - globalSetup 이 storageState 를 만들었어야 함 (E2E_TEST_USER_EMAIL/PW)
- *   - 봇 계정이 해당 챌린지에 아직 신청하지 않은 상태여야 함
- *   - 챌린지 가격이 무료(0원) 여야 함
+ * 산출물:
+ *   apps/web/e2e-screenshots/<NN>-<step>.png — 단계별 풀페이지 스크린샷
  */
 
 const TEST_CHALLENGE_TITLE = 'E2E_TEST-login_to_purchase';
+const SCREENSHOT_DIR = path.resolve(__dirname, '..', 'e2e-screenshots');
 
 const hasCredentials = Boolean(
   process.env.E2E_TEST_USER_EMAIL && process.env.E2E_TEST_USER_PW,
@@ -31,6 +32,23 @@ function log(message: string) {
   console.log(`[E2E ${ts}] ${message}`);
 }
 
+/** 스크린샷 디렉토리 정리 (이전 실행 산출물 제거). */
+function resetScreenshotDir() {
+  if (fs.existsSync(SCREENSHOT_DIR)) {
+    fs.rmSync(SCREENSHOT_DIR, { recursive: true, force: true });
+  }
+  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+}
+
+/** 단계별 스크린샷 저장. fullPage=true 로 전체 화면 캡처. */
+async function snap(page: Page, seq: number, name: string) {
+  const safeName = name.replace(/[^\w가-힣\-]/g, '_');
+  const filename = `${String(seq).padStart(2, '0')}-${safeName}.png`;
+  const filepath = path.join(SCREENSHOT_DIR, filename);
+  await page.screenshot({ path: filepath, fullPage: true });
+  log(`  📸 ${filename}`);
+}
+
 test.describe('login → purchase (free option)', () => {
   test.skip(
     !hasCredentials,
@@ -40,7 +58,9 @@ test.describe('login → purchase (free option)', () => {
   test('홈 → 전체 프로그램 → 테스트 챌린지 → 바로 신청 → 0원 결제', async ({
     page,
   }) => {
+    resetScreenshotDir();
     log('▶ 시나리오 시작');
+    log(`  스크린샷 저장 위치: ${SCREENSHOT_DIR}`);
 
     // ────────────────────────────────────────────────────────────
     // 1) 렛츠커리어 홈
@@ -50,6 +70,7 @@ test.describe('login → purchase (free option)', () => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
       log(`  ✓ 홈 진입 성공 (url=${page.url()})`);
+      await snap(page, 1, '홈');
     });
 
     // ────────────────────────────────────────────────────────────
@@ -67,11 +88,11 @@ test.describe('login → purchase (free option)', () => {
       ).toBeVisible({ timeout: 10_000 });
       await programsTrigger.hover();
       log('  ✓ "프로그램" hover 완료');
+      await snap(page, 2, '드롭다운_열림');
 
       const allProgramsLink = page
         .getByRole('link', { name: /전체\s*프로그램/i })
         .first();
-      // hover 로 드롭다운이 열렸는지 확인. 안 열렸으면 click 으로 fallback.
       if (!(await allProgramsLink.isVisible().catch(() => false))) {
         log('  → hover 로 안 열려 click 으로 fallback');
         await programsTrigger.click({ trial: false }).catch(() => undefined);
@@ -80,26 +101,23 @@ test.describe('login → purchase (free option)', () => {
         allProgramsLink,
         '드롭다운에 "전체 프로그램" 링크가 보여야 한다',
       ).toBeVisible({ timeout: 5_000 });
-      // 드롭다운 링크 위로 마우스 이동 → hover state 유지하며 자연스럽게 클릭.
-      // 이 단계가 없으면 Playwright 의 다른 처리 중 마우스가 트리거에서 떠나
-      // 드롭다운이 닫혀 viewport 밖으로 사라짐 (transform translateY 패턴).
       await allProgramsLink.hover();
       log('  → "전체 프로그램" 클릭');
       try {
         await allProgramsLink.click({ timeout: 5_000 });
       } catch {
-        // 그래도 viewport 밖이면 force 로 강제 클릭 (네비게이션 자체는 동작).
         log('  ↻ viewport 밖이라 force click 으로 재시도');
         await allProgramsLink.click({ force: true });
       }
+      await page.waitForLoadState('domcontentloaded');
       log(`  ✓ 전체 프로그램 페이지 이동 완료 (url=${page.url()})`);
+      await snap(page, 3, '전체프로그램_목록');
     });
 
     // ────────────────────────────────────────────────────────────
     // 3) 프로그램 목록에서 테스트 챌린지 클릭
     // ────────────────────────────────────────────────────────────
     await test.step(`3. 목록에서 "${TEST_CHALLENGE_TITLE}" 클릭`, async () => {
-      await page.waitForLoadState('domcontentloaded');
       log(`  → 목록에서 "${TEST_CHALLENGE_TITLE}" 검색`);
       const challengeLink = page
         .getByRole('link', { name: new RegExp(TEST_CHALLENGE_TITLE, 'i') })
@@ -118,6 +136,7 @@ test.describe('login → purchase (free option)', () => {
         timeout: 10_000,
       });
       log(`  ✓ 챌린지 상세 진입 완료 (url=${page.url()})`);
+      await snap(page, 4, '챌린지_상세');
     });
 
     // ────────────────────────────────────────────────────────────
@@ -137,6 +156,7 @@ test.describe('login → purchase (free option)', () => {
         log(
           '  ⚠ 이미 신청한 상태 감지 — test.skip. BE 에서 봇 신청 이력 리셋 필요.',
         );
+        await snap(page, 5, '이미신청_상태');
       }
       test.skip(
         alreadyEnrolled,
@@ -154,6 +174,7 @@ test.describe('login → purchase (free option)', () => {
       log('  ✓ "바로 신청" 버튼 노출');
       await applyNowButton.click();
       log('  ✓ "바로 신청" 클릭 완료');
+      await snap(page, 5, '바로신청_클릭후');
     });
 
     // ────────────────────────────────────────────────────────────
@@ -169,6 +190,7 @@ test.describe('login → purchase (free option)', () => {
       log('  ✓ "신청하기" 버튼 노출');
       await enrollButton.click();
       log('  ✓ "신청하기" 클릭 완료');
+      await snap(page, 6, '신청하기_클릭후');
     });
 
     // ────────────────────────────────────────────────────────────
@@ -183,6 +205,7 @@ test.describe('login → purchase (free option)', () => {
         '"0원 결제하기" 버튼이 보여야 한다 (안전 가드: 무료 옵션 확인)',
       ).toBeVisible({ timeout: 10_000 });
       log('  ✓ "0원 결제하기" 버튼 노출 — 무료 옵션 확인');
+      await snap(page, 7, '0원결제_버튼노출');
       await payZeroButton.click();
       log('  ✓ "0원 결제하기" 클릭 완료');
     });
@@ -202,8 +225,23 @@ test.describe('login → purchase (free option)', () => {
         '결제 결과 또는 라이브러리 페이지에 성공 안내가 표시되어야 한다',
       ).toBeVisible({ timeout: 15_000 });
       log('  ✓ 성공 안내 노출 확인');
+      await snap(page, 8, '결제완료');
     });
 
     log('✓ 시나리오 종료 — 결제 플로우 정상');
+    log(`  📁 스크린샷 모음: ${SCREENSHOT_DIR}`);
+  });
+
+  // 실패해도 마지막 화면을 캡처해 어디서 막혔는지 즉시 확인 가능.
+  test.afterEach(async ({ page }, testInfo) => {
+    if (testInfo.status !== testInfo.expectedStatus) {
+      try {
+        const failureFile = path.join(SCREENSHOT_DIR, '99-실패시점.png');
+        await page.screenshot({ path: failureFile, fullPage: true });
+        log(`📸 실패 시점 캡처: ${failureFile}`);
+      } catch {
+        /* page 가 닫혔으면 무시 */
+      }
+    }
   });
 });
