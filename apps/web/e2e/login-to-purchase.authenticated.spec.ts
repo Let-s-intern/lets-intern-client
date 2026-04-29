@@ -71,6 +71,7 @@ test.describe('login → purchase (free option)', () => {
       const allProgramsLink = page
         .getByRole('link', { name: /전체\s*프로그램/i })
         .first();
+      // hover 로 드롭다운이 열렸는지 확인. 안 열렸으면 click 으로 fallback.
       if (!(await allProgramsLink.isVisible().catch(() => false))) {
         log('  → hover 로 안 열려 click 으로 fallback');
         await programsTrigger.click({ trial: false }).catch(() => undefined);
@@ -79,8 +80,18 @@ test.describe('login → purchase (free option)', () => {
         allProgramsLink,
         '드롭다운에 "전체 프로그램" 링크가 보여야 한다',
       ).toBeVisible({ timeout: 5_000 });
+      // 드롭다운 링크 위로 마우스 이동 → hover state 유지하며 자연스럽게 클릭.
+      // 이 단계가 없으면 Playwright 의 다른 처리 중 마우스가 트리거에서 떠나
+      // 드롭다운이 닫혀 viewport 밖으로 사라짐 (transform translateY 패턴).
+      await allProgramsLink.hover();
       log('  → "전체 프로그램" 클릭');
-      await allProgramsLink.click();
+      try {
+        await allProgramsLink.click({ timeout: 5_000 });
+      } catch {
+        // 그래도 viewport 밖이면 force 로 강제 클릭 (네비게이션 자체는 동작).
+        log('  ↻ viewport 밖이라 force click 으로 재시도');
+        await allProgramsLink.click({ force: true });
+      }
       log(`  ✓ 전체 프로그램 페이지 이동 완료 (url=${page.url()})`);
     });
 
