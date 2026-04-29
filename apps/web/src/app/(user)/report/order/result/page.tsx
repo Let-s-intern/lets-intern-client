@@ -50,7 +50,7 @@ const ReportPaymentResultContent = () => {
     const result = paymentResultSearchParamsSchema.safeParse(obj);
 
     if (!result.success) {
-      // eslint-disable-next-line no-console
+       
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
@@ -106,7 +106,7 @@ const ReportPaymentResultContent = () => {
         });
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
+         
         console.error(e);
         alert(
           '결제 중 문제가 발생했습니다.\n문제가 계속되면 아래 채팅으로 문의해주세요.',

@@ -29,7 +29,7 @@ const AdminProviders: React.FC<{
 
         queryCache: new QueryCache({
           onError: (error) => {
-            // eslint-disable-next-line no-console
+             
             console.error(error);
             if (error instanceof ZodError) {
               // eslint-disable-next-line no-console

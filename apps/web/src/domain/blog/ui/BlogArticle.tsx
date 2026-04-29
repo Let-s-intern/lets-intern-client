@@ -47,7 +47,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
       thumbnailDiv.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
     } catch (error) {
       // 에러 발생 시 기본 배경색 유지
-      // eslint-disable-next-line no-console
+       
       console.error('Failed to get dominant color:', error);
     }
   };

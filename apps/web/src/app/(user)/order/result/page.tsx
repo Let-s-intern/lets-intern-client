@@ -35,7 +35,7 @@ const PaymentResultContent = () => {
     const result = paymentResultSearchParamsSchema.safeParse(obj);
 
     if (!result.success) {
-      // eslint-disable-next-line no-console
+       
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
@@ -107,7 +107,7 @@ const PaymentResultContent = () => {
         });
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
+         
         console.error(e);
         setResult('error');
       })

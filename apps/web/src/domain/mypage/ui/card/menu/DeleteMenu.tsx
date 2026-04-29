@@ -36,7 +36,7 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
       setIsAlertModalOpen(false);
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
+       
       console.error(error);
     },
   });

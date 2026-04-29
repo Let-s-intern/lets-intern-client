@@ -19,7 +19,7 @@ const PaymentFailContent = () => {
     const obj = searchParamsToObject(searchParams);
     const result = paymentFailSearchParamsSchema.safeParse(obj);
     if (!result.success) {
-      // eslint-disable-next-line no-console
+       
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
