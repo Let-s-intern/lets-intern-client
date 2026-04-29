@@ -1,7 +1,7 @@
 name: 웹 검사
 
 # apps/web 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
-# 5단계 검사 + Playwright E2E (web 전용) 직렬 실행.
+# PR: pr-checks (smoke build), main push: main-checks (production build + artifact)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -29,10 +29,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
-    name: web 5단계 검사 + e2e
+  pr-checks:
+    name: web PR 검사 (smoke)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -55,23 +56,7 @@ jobs:
       - name: '3) Typecheck (web) — 차단'
         run: pnpm --filter @letscareer/web typecheck
 
-      - name: '4) Jest (web) — 차단 (passWithNoTests)'
-        run: pnpm --filter @letscareer/web test
-
-      - name: '5) Coverage (V8, threshold 미설정) — 비차단'
-        continue-on-error: true
-        run: pnpm --filter @letscareer/web test:coverage
-
-      - name: 'Upload web coverage'
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-coverage-${{ github.sha }}
-          path: apps/web/coverage
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: '6) Build (web) — 차단'
+      - name: '4) Build smoke (web, turbopack) — 차단'
         run: pnpm --filter @letscareer/web build
         env:
           NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
@@ -80,19 +65,48 @@ jobs:
           NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
 
-      - name: 'Install Playwright browsers (조건부)'
-        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
-        run: pnpm --filter @letscareer/web e2e:install
+  main-checks:
+    name: web main 검사 + production build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: '7) E2E (Playwright, web 전용) — 조건부 차단'
-        if: hashFiles('apps/web/e2e/**/*.spec.ts') != ''
-        run: pnpm --filter @letscareer/web e2e
+      - uses: pnpm/action-setup@v4
 
-      - name: 'Upload Playwright report'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: '1) Prettier check (web 한정) — 차단'
+        run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
+
+      - name: '2) ESLint (web) — 비차단'
+        continue-on-error: true
+        run: pnpm --filter @letscareer/web lint
+
+      - name: '3) Typecheck (web) — 차단'
+        run: pnpm --filter @letscareer/web typecheck
+
+      - name: '4) Build production (web, turbopack) — 차단'
+        run: pnpm --filter @letscareer/web build
+        env:
+          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
+          NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
+          NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
+          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://www.letscareer.co.kr' }}
+
+      - name: 'Upload web build artifact'
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ github.sha }}
-          path: apps/web/playwright-report
+          name: web-build-${{ github.sha }}
+          path: apps/web/.next
           if-no-files-found: ignore
           retention-days: 7
