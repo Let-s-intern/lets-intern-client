@@ -1,7 +1,5 @@
 'use client';
 
- 
-
 import { CreateContentsReq, UpdateContentsReq } from '@/schema';
 import axios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';

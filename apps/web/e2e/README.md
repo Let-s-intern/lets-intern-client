@@ -48,6 +48,7 @@ apps/web/e2e/
 ## 디자인 패턴
 
 ### POM (Page Object Model)
+
 각 페이지를 클래스로 캡슐화. 메서드는 다음 페이지의 POM 을 반환 -> method chain.
 
 ```typescript
@@ -59,43 +60,54 @@ const detail = await list.openChallengeByIndex(0); // -> ChallengeDetailPage
 ```
 
 ### Pipeline
+
 단계 오케스트레이터 — `test.step` + 자동 로그 + 스크린샷 한 번에.
 
 ```typescript
 const flow = new Pipeline(page, runDir);
-const home = await flow.run('1. 홈 진입', () => new HomePage(page).goto(), '홈');
+const home = await flow.run(
+  '1. 홈 진입',
+  () => new HomePage(page).goto(),
+  '홈',
+);
 //                          ↑ 라벨        ↑ 액션              ↑ 스크린샷 이름
 ```
 
 ### Flows
+
 여러 POM 호출을 묶은 재사용 함수. 같은 시퀀스가 여러 spec 에서 반복될 때 추출.
 
 ```typescript
-const home = await loginFlow(page, { email, password, homeWait, afterLoginWait });
+const home = await loginFlow(page, {
+  email,
+  password,
+  homeWait,
+  afterLoginWait,
+});
 ```
 
 ## 산출물
 
 `apps/web/test-results/e2e-screenshots/<status>/<YYYYMMDD-HHMMSS>/`
 
-| status | 의미 |
-|---|---|
-| `success/` | 통과한 실행 (PNG + meta.txt) |
-| `failure/` | 실패한 실행 (PNG + 99-실패시점.png + error.txt) |
-| `skipped/` | skip 된 실행 |
-| `_pending/` | 실행 중 (afterEach 에서 위 셋으로 이동) |
+| status      | 의미                                            |
+| ----------- | ----------------------------------------------- |
+| `success/`  | 통과한 실행 (PNG + meta.txt)                    |
+| `failure/`  | 실패한 실행 (PNG + 99-실패시점.png + error.txt) |
+| `skipped/`  | skip 된 실행                                    |
+| `_pending/` | 실행 중 (afterEach 에서 위 셋으로 이동)         |
 
 ## 환경 변수
 
 `apps/web/.env.test.local.example` 을 `apps/web/.env.test.local` 로 복사 후 값 채우기.
 
-| 변수 | 의미 | 미설정 시 |
-|------|------|-----------|
-| `PLAYWRIGHT_BASE_URL` | 테스트 대상 baseURL | localhost:3000 fallback |
-| `E2E_TEST_USER_EMAIL` | 로그인 계정 이메일 | authenticated/login 시나리오 skip |
-| `E2E_TEST_USER_PW` | 로그인 계정 비밀번호 | authenticated/login 시나리오 skip |
-| `E2E_SSO_TEST_HASH` | SSO 1회용 해시 | SSO 시나리오 skip |
-| `E2E_SAMPLE_CHALLENGE_PATH` | 결제 스모크용 챌린지 path | `/program` fallback |
+| 변수                        | 의미                      | 미설정 시                         |
+| --------------------------- | ------------------------- | --------------------------------- |
+| `PLAYWRIGHT_BASE_URL`       | 테스트 대상 baseURL       | localhost:3000 fallback           |
+| `E2E_TEST_USER_EMAIL`       | 로그인 계정 이메일        | authenticated/login 시나리오 skip |
+| `E2E_TEST_USER_PW`          | 로그인 계정 비밀번호      | authenticated/login 시나리오 skip |
+| `E2E_SSO_TEST_HASH`         | SSO 1회용 해시            | SSO 시나리오 skip                 |
+| `E2E_SAMPLE_CHALLENGE_PATH` | 결제 스모크용 챌린지 path | `/program` fallback               |
 
 ## Project 매핑
 

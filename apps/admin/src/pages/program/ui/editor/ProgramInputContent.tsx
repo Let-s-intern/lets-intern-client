@@ -69,7 +69,6 @@ const ProgramInputContent = ({
           });
         });
       } catch (error) {
-         
         console.error(error);
       }
     });

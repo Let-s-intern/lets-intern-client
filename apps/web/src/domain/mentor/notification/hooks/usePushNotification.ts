@@ -28,7 +28,6 @@ export function usePushNotification() {
           await Notification.requestPermission();
         }
       } catch (err) {
-         
         console.warn('Push notification setup failed:', err);
       }
     };

@@ -24,7 +24,6 @@ const Providers: React.FC<{
 
         queryCache: new QueryCache({
           onError: (error) => {
-             
             console.error(error);
             if (error instanceof ZodError) {
               // eslint-disable-next-line no-console

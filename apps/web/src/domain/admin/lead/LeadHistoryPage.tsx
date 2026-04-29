@@ -65,7 +65,6 @@ const LeadHistoryPage = () => {
       snackbar('리드가 등록되었습니다.');
       setIsCreateOpen(false);
     } catch (error) {
-       
       console.error(error);
       snackbar('등록에 실패했습니다. 다시 시도해주세요.');
     }

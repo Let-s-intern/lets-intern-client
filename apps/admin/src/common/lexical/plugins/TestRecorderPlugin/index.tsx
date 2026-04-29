@@ -36,7 +36,7 @@ const download = (filename: string, text: string | null) => {
   const a = document.createElement('a');
   a.setAttribute(
     'href',
-     
+
     'data:text/plain;charset=utf-8,' + encodeURIComponent(text || ''),
   );
   a.setAttribute('download', filename);

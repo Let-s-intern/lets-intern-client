@@ -372,7 +372,7 @@ function CommentsComposer({
   submitAddComment: (
     commentOrThread: Comment,
     isInlineComment: boolean,
-     
+
     thread?: Thread,
   ) => void;
   thread?: Thread;
@@ -427,7 +427,7 @@ function ShowDeleteCommentOrThreadDialog({
 
   deleteCommentOrThread: (
     comment: Comment | Thread,
-     
+
     thread?: Thread,
   ) => void;
   onClose: () => void;
@@ -466,7 +466,7 @@ function CommentsPanelListComment({
   comment: Comment;
   deleteComment: (
     commentOrThread: Comment | Thread,
-     
+
     thread?: Thread,
   ) => void;
   rtf: Intl.RelativeTimeFormat;

@@ -19,7 +19,6 @@ const PaymentFailContent = () => {
     const obj = searchParamsToObject(searchParams);
     const result = paymentFailSearchParamsSchema.safeParse(obj);
     if (!result.success) {
-       
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;

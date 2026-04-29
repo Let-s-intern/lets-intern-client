@@ -93,7 +93,6 @@ const FeedbackStatusRenderCell = (
         console.error('feedbackStatus 변경 실패:', error);
         snackbar('진행상태 변경에 실패했습니다.');
       }
-       
     },
     [localValue, params.row.id, isAdmin],
   );
