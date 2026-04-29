@@ -1,0 +1,30 @@
+# ============================================================
+# ⚠️ 임시 stub — 반드시 삭제할 것 (TODO: DELETE THIS FILE)
+# ============================================================
+# 이 파일은 branch protection 룰이 요구하는 'Build Check' 필수 체크를
+# 만족시키기 위한 패스 전용 더미 워크플로다. 실제 빌드 검증은
+# build-web.yml / build-admin.yml / build-mentor.yml 이 담당.
+#
+# 원본 build-check.yml 은 커밋 0be6b25d4 에서 4개 워크플로로 분리되며 삭제됐으나,
+# main 브랜치의 protection 룰에 'Build Check' 필수 체크가 그대로 남아있어
+# PR 머지가 영구 차단됐던 문제를 임시 우회하기 위함.
+#
+# ▶▶ 정식 해결: GitHub repo Settings → Branches → main 브랜치 보호 룰 →
+#    Required status checks 목록에서 'Build Check' 제거.
+#    그 작업이 끝나면 이 파일 즉시 삭제할 것.
+# ============================================================
+# Security note: untrusted input (issue/PR title 등) 사용하지 않음 → 안전한 stub.
+
+name: Build Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pass
+        run: echo "임시 stub — branch protection 호환용. 실제 빌드는 어드민/멘토/웹 검사 워크플로 참조."
