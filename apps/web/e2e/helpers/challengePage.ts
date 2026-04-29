@@ -9,9 +9,16 @@ import { type Page, type Locator, expect } from '@playwright/test';
 export class ChallengePage {
   constructor(private readonly page: Page) {}
 
-  async goto(pathOrId: string) {
-    const isPath = pathOrId.startsWith('/');
-    const url = isPath ? pathOrId : `/program/challenge/${pathOrId}`;
+  async goto(target: string) {
+    // target 은 다음 셋 중 하나일 수 있다:
+    //   1) 풀 URL: "http://..." | "https://..."  → 그대로 사용
+    //   2) path: "/program/challenge/123"        → 그대로 사용 (baseURL 결합)
+    //   3) ID: "123"                              → "/program/challenge/123" 으로 조립
+    const url = /^https?:\/\//i.test(target)
+      ? target
+      : target.startsWith('/')
+        ? target
+        : `/program/challenge/${target}`;
     const response = await this.page.goto(url);
     expect(
       response?.status() ?? 0,
