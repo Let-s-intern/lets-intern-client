@@ -5,9 +5,8 @@ interface FilterItemProps {
 }
 
 const FilterItem = ({ caption, programType, handleClick }: FilterItemProps) => {
-
   return (
-    <div className="flex min-w-fit items-center gap-1 rounded-md bg-primary px-4 py-2.5 md:px-6 md:py-4">
+    <div className="bg-primary flex min-w-fit items-center gap-1 rounded-md px-4 py-2.5 md:px-6 md:py-4">
       <span className="text-0.875-medium md:text-1-medium text-static-100">
         {caption}
       </span>

@@ -3,10 +3,7 @@ import Footer from '@/common/layout/footer/Footer';
 import LogoLink from '@/common/layout/header/LogoLink';
 import NavBar from '@/common/layout/header/NavBar';
 import Providers from '@/context/Providers';
-import {
-  getCanonicalSiteUrl,
-  getRobotsMetadata,
-} from '@/utils/url';
+import { getCanonicalSiteUrl, getRobotsMetadata } from '@/utils/url';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -45,7 +42,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     <Providers>
       <div>
         <NavBar className="hidden md:block" />
-        <nav className="box-content flex items-center border-b-[1.5px] border-neutral-90 px-5 py-2.5 md:hidden">
+        <nav className="border-neutral-90 box-content flex items-center border-b-[1.5px] px-5 py-2.5 md:hidden">
           <LogoLink className="my-[2px] w-fit" />
         </nav>
         <div className="min-h-screen w-full md:min-h-[31rem]">{children}</div>

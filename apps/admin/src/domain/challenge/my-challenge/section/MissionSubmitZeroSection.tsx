@@ -104,24 +104,24 @@ const MissionSubmitZeroSection = ({
 
   return (
     <section className={clsx('', className)}>
-      <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+      <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
         미션 제출하기
       </h2>
       <div className="mb-1.5">
         <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
+          <span className="text-xsmall16 text-neutral-0 font-semibold">
             챌린지 참여 목표
           </span>
         </div>
-        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
+        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 rounded px-3 py-3">
           미션 제출 후, 작성한 챌린지 목표를 카카오톡 오픈채팅방에 공유해주세요.
         </div>
       </div>
       <textarea
         className={clsx(
-          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-          'p-3 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-base',
-          'min-h-[120px] outline-none focus:border-primary',
+          'rounded-xxs border-neutral-80 w-full resize-none border bg-white',
+          'text-xsmall14 text-neutral-0 p-3 placeholder:text-neutral-50 md:text-base',
+          'focus:border-primary min-h-[120px] outline-none',
           'disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
         placeholder={

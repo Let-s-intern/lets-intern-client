@@ -112,7 +112,7 @@ const StrategyCard = ({
   return (
     <div className="flex w-full flex-col items-center gap-4 rounded-sm bg-[#F1F4FF] p-4 md:items-start md:gap-6 md:p-6">
       {subTitle && (
-        <div className="text-small14 w-full rounded-xxs bg-static-100 p-2 py-2 text-center font-medium text-[#4A76FF] md:text-small18">
+        <div className="text-small14 rounded-xxs bg-static-100 md:text-small18 w-full p-2 py-2 text-center font-medium text-[#4A76FF]">
           {subTitle}
         </div>
       )}
@@ -128,13 +128,13 @@ const StrategyCard = ({
           />
         </div>
         <div className="flex w-full flex-col items-start justify-center md:w-auto">
-          <div className="mb-3 rounded-xxs bg-[#4A76FF] px-3 py-1 text-xsmall14 font-semibold text-static-100 md:mb-1 md:mb-2 md:text-xsmall16">
+          <div className="rounded-xxs text-xsmall14 text-static-100 md:text-xsmall16 mb-3 bg-[#4A76FF] px-3 py-1 font-semibold md:mb-1 md:mb-2">
             {step}
           </div>
-          <h3 className="mb-2 whitespace-pre-line text-left text-small18 font-bold md:mb-3 md:text-medium22">
+          <h3 className="text-small18 md:text-medium22 mb-2 whitespace-pre-line text-left font-bold md:mb-3">
             {title}
           </h3>
-          <ul className="text-left text-xsmall14 text-[#333] md:text-small18">
+          <ul className="text-xsmall14 md:text-small18 text-left text-[#333]">
             {bullets.map((b, i) => (
               <li key={i} className="mb-1 flex items-center gap-1 md:mb-2">
                 <Image
@@ -164,12 +164,12 @@ const MarketingApplicationStrategySection: React.FC<
   return (
     <section
       id="differentiators"
-      className="flex scroll-mt-[44px] flex-col items-center bg-static-100 px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
+      className="bg-static-100 flex scroll-mt-[44px] flex-col items-center px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
     >
-      <SectionHeader className="mb-6 font-semibold text-neutral-45 md:mb-12">
+      <SectionHeader className="text-neutral-45 mb-6 font-semibold md:mb-12">
         차별점
       </SectionHeader>
-      <span className="mb-3 flex items-center justify-center text-center font-bold text-[#4A76FF] md:text-small20">
+      <span className="md:text-small20 mb-3 flex items-center justify-center text-center font-bold text-[#4A76FF]">
         A기업에 제출 후 시간이 없어서 <br className="md:hidden" />
         그대로 B기업에 서류를 제출해오셨나요?
       </span>

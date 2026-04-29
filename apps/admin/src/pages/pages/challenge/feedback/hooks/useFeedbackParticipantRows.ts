@@ -30,8 +30,7 @@ const useFeedbackParticipantRows = (): AttendanceRow[] => {
           missionTitle: selectedMission.title ?? '',
           missionRound: selectedMission.th ?? '',
           feedbackStatus:
-            (rest.feedbackStatus as string) ??
-            FeedbackStatusEnum.enum.WAITING,
+            (rest.feedbackStatus as string) ?? FeedbackStatusEnum.enum.WAITING,
           feedbackPageLink: `/challenge/operation/${programId}/mission/${missionId}/participant/${rest.id}/feedback`,
         }),
       ),

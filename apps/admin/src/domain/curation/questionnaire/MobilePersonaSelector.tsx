@@ -22,7 +22,7 @@ const MobilePersonaSelector = ({
             onClick={() => onSelect(persona.id)}
             className={`relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-md border-2 bg-gradient-to-br px-4 py-3 text-center transition-all duration-300 ${
               isActive
-                ? 'border-primary from-primary-5 to-white shadow-lg shadow-primary/10'
+                ? 'border-primary from-primary-5 shadow-primary/10 to-white shadow-lg'
                 : 'border-neutral-85 from-white to-gray-50 shadow-sm active:scale-[0.98]'
             }`}
             whileTap={{ scale: 0.98 }}
@@ -30,7 +30,7 @@ const MobilePersonaSelector = ({
           >
             {isActive && (
               <motion.div
-                className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white shadow-md"
+                className="bg-primary absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full text-white shadow-md"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
@@ -59,8 +59,8 @@ const MobilePersonaSelector = ({
               onClick={() => onSelect(dontKnow.id)}
               className={`text-medium16 underline underline-offset-4 transition-colors ${
                 isActive
-                  ? 'font-bold text-primary'
-                  : 'font-normal text-neutral-35 active:text-neutral-0'
+                  ? 'text-primary font-bold'
+                  : 'text-neutral-35 active:text-neutral-0 font-normal'
               }`}
             >
               {dontKnow.title}

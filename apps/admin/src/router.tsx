@@ -42,23 +42,17 @@ const ChallengeOperationRegisterMission = lazy(
 );
 const ChallengeOperationFeedbackPage = lazy(
   () =>
-    import(
-      './pages/pages/challenge/feedback-operation/ChallengeOperationFeedbackPage'
-    ),
+    import('./pages/pages/challenge/feedback-operation/ChallengeOperationFeedbackPage'),
 );
 const FeedbackOperationPage = lazy(
-  () =>
-    import('./pages/challenge/feedback-operation/FeedbackOperationPage'),
+  () => import('./pages/challenge/feedback-operation/FeedbackOperationPage'),
 );
 const AttendanceUserExperiencesPage = lazy(
   () =>
-    import(
-      './pages/pages/challenge/operation/AttendanceUserExperiencesPage'
-    ),
+    import('./pages/pages/challenge/operation/AttendanceUserExperiencesPage'),
 );
 const ChallengeOperationLayout = lazy(
-  () =>
-    import('./pages/pages/challenge/operation/ChallengeOperationLayout'),
+  () => import('./pages/pages/challenge/operation/ChallengeOperationLayout'),
 );
 const ChallengeFeedbackPage = lazy(
   () => import('./pages/pages/challenge/feedback/ChallengeFeedbackPage'),
@@ -67,7 +61,8 @@ const FeedbackParticipantPage = lazy(
   () => import('./pages/pages/challenge/feedback/FeedbackParticipantPage'),
 );
 const MentorMenteeAssignment = lazy(
-  () => import('./pages/pages/challenge/mentor-assignment/MentorMenteeAssignment'),
+  () =>
+    import('./pages/pages/challenge/mentor-assignment/MentorMenteeAssignment'),
 );
 
 const AdminReportListPage = lazy(

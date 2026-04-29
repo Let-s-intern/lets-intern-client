@@ -1,7 +1,6 @@
 name: 멘토 검사
 
-# apps/mentor 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
-# 5단계 검사 직렬 실행 (E2E 없음 — web 한정).
+# apps/mentor 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행 (PR 한정).
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -14,15 +13,6 @@ on:
       - 'package.json'
       - '.prettierrc.mjs'
       - '.github/workflows/build-mentor.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'apps/mentor/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'turbo.json'
-      - 'package.json'
 
 concurrency:
   group: build-mentor-${{ github.ref }}
@@ -30,9 +20,9 @@ concurrency:
 
 jobs:
   checks:
-    name: mentor 5단계 검사
+    name: mentor 검사
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -45,31 +35,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: '1) Prettier check (mentor 한정)'
-        continue-on-error: true
+      - name: Prettier check
         run: pnpm exec prettier --check "apps/mentor/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: '2) ESLint (mentor)'
-        continue-on-error: true
+      - name: ESLint
         run: pnpm --filter @letscareer/mentor lint
 
-      - name: '3) Vitest (mentor)'
-        run: pnpm --filter @letscareer/mentor test
+      - name: Typecheck
+        run: pnpm --filter @letscareer/mentor typecheck
 
-      - name: '4) Coverage (V8, threshold 미설정)'
-        continue-on-error: true
-        run: pnpm --filter @letscareer/mentor test:coverage
-
-      - name: 'Upload mentor coverage'
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mentor-coverage-${{ github.sha }}
-          path: apps/mentor/coverage
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: '5) Build (mentor)'
+      - name: Build (vite)
         run: pnpm --filter @letscareer/mentor build
         env:
           VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}

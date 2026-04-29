@@ -30,7 +30,7 @@ const MenuLink = memo(
           src={`/mobile-nav/${active ? menu.activeImg : menu.img}`}
           alt={menu.name}
         />
-        <span className="block h-4 text-[0.688rem] font-medium text-neutral-40">
+        <span className="text-neutral-40 block h-4 text-[0.688rem] font-medium">
           {menu.name}
         </span>
       </HybridLink>
@@ -106,7 +106,7 @@ function BottomNavBar({ pathname = '' }: Props) {
   if (hidden) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center border-t border-neutral-80 bg-white md:hidden">
+    <nav className="border-neutral-80 fixed bottom-0 left-0 right-0 z-30 flex items-center border-t bg-white md:hidden">
       {menuInfo.map((item) => (
         <MenuLink
           menu={item}

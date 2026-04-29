@@ -57,8 +57,8 @@ const Popup = () => {
   }
 
   return showPopup && data ? (
-    <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 p-5">
-      <div className="relative h-fit max-w-[450px] overflow-hidden rounded-md bg-static-100 shadow-05">
+    <div className="bg-neutral-0/60 fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center p-5">
+      <div className="bg-static-100 shadow-05 relative h-fit max-w-[450px] overflow-hidden rounded-md">
         <img
           className="popup_banner h-auto w-full cursor-pointer"
           src={data?.imgUrl || undefined}
@@ -68,13 +68,13 @@ const Popup = () => {
 
         <div className="flex">
           <button
-            className="w-1/2 py-5 text-center text-xxsmall12 font-semibold"
+            className="text-xxsmall12 w-1/2 py-5 text-center font-semibold"
             onClick={() => close(true)}
           >
             하루 동안 보지 않기
           </button>
           <button
-            className="w-1/2 py-5 text-center text-xxsmall12 font-semibold"
+            className="text-xxsmall12 w-1/2 py-5 text-center font-semibold"
             onClick={() => close()}
           >
             닫기

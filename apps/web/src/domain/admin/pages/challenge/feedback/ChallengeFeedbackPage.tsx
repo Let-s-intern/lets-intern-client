@@ -60,7 +60,11 @@ export default function ChallengeFeedbackPage() {
     await invalidateFeedbackQueries();
     // 목록 쿼리도 invalidate하여 뒤로 갔을 때 상태 반영
     await queryClient.invalidateQueries({
-      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId],
+      queryKey: [
+        ChallengeMissionFeedbackAttendanceQueryKey,
+        programId,
+        missionId,
+      ],
     });
     await queryClient.invalidateQueries({
       queryKey: [MentorMenteeAttendanceQueryKey, programId, missionId],
@@ -72,7 +76,9 @@ export default function ChallengeFeedbackPage() {
         stored.feedbackStatus = 'IN_PROGRESS';
         localStorage.setItem('attendance', JSON.stringify(stored));
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     snackbar('저장되었습니다.');
   };
 
@@ -97,25 +103,25 @@ export default function ChallengeFeedbackPage() {
         {isAdmin && (
           <Link
             href={`/admin/challenge/operation/${programId}/feedback`}
-            className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+            className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
           >
             멘토/멘티 배정
           </Link>
         )}
         <Link
           href={`/admin/challenge/operation/${programId}/feedback`}
-          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
         >
           피드백 관리
         </Link>
         <button
           type="button"
-          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
           onClick={handleBackToListWithConfirm}
         >
           {mission?.title ?? '미션'} {mission?.th ?? ''}회차 제출현황
         </button>
-        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
+        <span className="border-neutral-0 bg-neutral-0 text-xsmall14 rounded-md border px-4 py-2 font-medium text-white">
           {attendance?.name} 피드백
         </span>
       </div>
@@ -140,11 +146,11 @@ export default function ChallengeFeedbackPage() {
           저장
         </Button>
       </div>
-      <p className="mt-2 text-right text-xsmall14">
+      <p className="text-xsmall14 mt-2 text-right">
         저장 버튼 클릭 후, 피드백 리스트 페이지에서
         <br />
         [진행 상태]를{' '}
-        <b className="font-semibold text-system-error">진행완료</b>로 변경해야
+        <b className="text-system-error font-semibold">진행완료</b>로 변경해야
         최종 제출됩니다.
       </p>
     </div>

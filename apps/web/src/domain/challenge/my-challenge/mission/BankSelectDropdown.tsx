@@ -74,7 +74,7 @@ const BankSelectDropdown = ({
       <div
         className={clsx(
           'z-10 flex h-[44px] w-full cursor-pointer items-center justify-between md:h-[44px] md:w-[184px]',
-          'rounded-xxs border bg-white px-3 py-2.5 transition-colors hover:border-neutral-60',
+          'rounded-xxs hover:border-neutral-60 border bg-white px-3 py-2.5 transition-colors',
           'focus-within:border-primary focus-within:outline-none',
           isOpen ? 'border-primary' : 'border-neutral-80',
           disabled && 'cursor-not-allowed bg-neutral-100 text-neutral-50',
@@ -115,8 +115,8 @@ const BankSelectDropdown = ({
 
       {/* 드롭다운 목록 */}
       {isOpen && !disabled && (
-        <div className="absolute top-full z-10 mt-2 w-full rounded-xxs border border-neutral-80 bg-white shadow-lg md:w-[184px]">
-          <div className="max-h-[204px] overflow-y-auto scrollbar-hide">
+        <div className="rounded-xxs border-neutral-80 absolute top-full z-10 mt-2 w-full border bg-white shadow-lg md:w-[184px]">
+          <div className="scrollbar-hide max-h-[204px] overflow-y-auto">
             {bankNames.map((bank, index) => (
               <div key={bank}>
                 <div
@@ -150,7 +150,7 @@ const BankSelectDropdown = ({
                   )}
                 </div>
                 {index < bankNames.length - 1 && (
-                  <div className="h-px bg-neutral-90" />
+                  <div className="bg-neutral-90 h-px" />
                 )}
               </div>
             ))}

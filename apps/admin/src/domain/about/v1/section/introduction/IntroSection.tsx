@@ -69,7 +69,7 @@ const IntroSection = () => {
                 title={title}
                 lineWidthClassName={lineWidthClassName}
               />
-              <p className="text-0.875 xl:text-1 mt-3 flex flex-col text-neutral-30 md:items-center">
+              <p className="text-0.875 xl:text-1 text-neutral-30 mt-3 flex flex-col md:items-center">
                 {description.map((item) => (
                   <span key={item}>{item}</span>
                 ))}

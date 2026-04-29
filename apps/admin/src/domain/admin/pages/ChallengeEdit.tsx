@@ -331,10 +331,9 @@ const ChallengeEdit: React.FC = () => {
   useEffect(() => {
     // 구 버전 프로그램인지 판단
     if (challenge && isDeprecatedProgram(challenge)) {
-      navigate(
-        `/programs/${challengeIdString}/edit?programType=CHALLENGE`,
-        { replace: true },
-      );
+      navigate(`/programs/${challengeIdString}/edit?programType=CHALLENGE`, {
+        replace: true,
+      });
     }
   }, [challenge, challengeIdString, navigate]);
 

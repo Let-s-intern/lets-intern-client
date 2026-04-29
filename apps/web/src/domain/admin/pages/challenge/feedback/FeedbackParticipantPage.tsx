@@ -114,18 +114,18 @@ export default function FeedbackParticipantPage() {
         {isAdmin && (
           <Link
             href={`/admin/challenge/operation/${programId}/feedback`}
-            className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+            className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
           >
             멘토/멘티 배정
           </Link>
         )}
         <Link
           href={`/admin/challenge/operation/${programId}/feedback`}
-          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
         >
           피드백 관리
         </Link>
-        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
+        <span className="border-neutral-0 bg-neutral-0 text-xsmall14 rounded-md border px-4 py-2 font-medium text-white">
           {selectedMission.title ?? '미션'} {selectedMission.th ?? ''}회차
           제출현황
         </span>

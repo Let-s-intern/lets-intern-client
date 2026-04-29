@@ -41,12 +41,11 @@ export function useFeedbackModal({
   const isDirty = editorContent !== serverContent;
 
   // Fetch attendance list — /mentee endpoint filters by ChallengeApplication.challengeMentor
-  const { data: attendanceData } =
-    useMentorAttendanceQuery({
-      challengeId,
-      missionId,
-      enabled: isOpen && !!challengeId && !!missionId,
-    });
+  const { data: attendanceData } = useMentorAttendanceQuery({
+    challengeId,
+    missionId,
+    enabled: isOpen && !!challengeId && !!missionId,
+  });
 
   const attendanceList = attendanceData?.attendanceList ?? [];
 
@@ -147,7 +146,8 @@ export function useFeedbackModal({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
-  const isAbsent = currentMentee?.status === 'ABSENT' || currentMentee?.id == null;
+  const isAbsent =
+    currentMentee?.status === 'ABSENT' || currentMentee?.id == null;
 
   return {
     selectedIndex,

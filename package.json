@@ -37,6 +37,8 @@
     "test:web": "turbo run test --filter=@letscareer/web",
     "test:admin": "turbo run test --filter=@letscareer/admin",
     "test:mentor": "turbo run test --filter=@letscareer/mentor",
+    "e2e": "turbo run e2e --filter=@letscareer/web",
+    "e2e:web": "turbo run e2e --filter=@letscareer/web",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {

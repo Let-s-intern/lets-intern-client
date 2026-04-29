@@ -130,7 +130,7 @@ describe('fallback 데이터 feedbackStatus 매핑', () => {
     };
 
     const mapped = {
-      feedbackStatus: (attendance.feedbackStatus ?? 'WAITING'),
+      feedbackStatus: attendance.feedbackStatus ?? 'WAITING',
     };
 
     expect(mapped.feedbackStatus).toBe('IN_PROGRESS');
@@ -144,7 +144,7 @@ describe('fallback 데이터 feedbackStatus 매핑', () => {
     };
 
     const mapped = {
-      feedbackStatus: (attendance.feedbackStatus ?? 'WAITING'),
+      feedbackStatus: attendance.feedbackStatus ?? 'WAITING',
     };
 
     expect(mapped.feedbackStatus).toBe('WAITING');
@@ -187,18 +187,26 @@ describe('query invalidation 후 feedbackStatus 동기화', () => {
     });
 
     // fallback 데이터 (feedbackStatus 없음)
-    const fallbackItem = { id: 1, feedbackStatus: undefined as string | undefined };
+    const fallbackItem = {
+      id: 1,
+      feedbackStatus: undefined as string | undefined,
+    };
     const cachedStatus = feedbackStatusMap.get(fallbackItem.id);
-    const resolvedStatus = cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
+    const resolvedStatus =
+      cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
 
     expect(resolvedStatus).toBe('COMPLETED');
   });
 
   it('캐시에도 없고 fallback에도 없으면 WAITING 기본값', () => {
     const feedbackStatusMap = new Map<number, string | null>();
-    const fallbackItem = { id: 999, feedbackStatus: undefined as string | undefined };
+    const fallbackItem = {
+      id: 999,
+      feedbackStatus: undefined as string | undefined,
+    };
     const cachedStatus = feedbackStatusMap.get(fallbackItem.id);
-    const resolvedStatus = cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
+    const resolvedStatus =
+      cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
 
     expect(resolvedStatus).toBe('WAITING');
   });
@@ -210,14 +218,31 @@ describe('멘토 색상 뱃지 (MentorRenderCell)', () => {
   it('getMentorColor는 인덱스에 따라 순환 색상을 반환한다', () => {
     const MENTOR_COLORS = [
       { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
-      { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
-      { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
+      {
+        bg: 'bg-orange-50',
+        text: 'text-orange-700',
+        border: 'border-orange-200',
+      },
+      {
+        bg: 'bg-yellow-50',
+        text: 'text-yellow-700',
+        border: 'border-yellow-200',
+      },
       { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
       { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-      { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
-      { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
+      {
+        bg: 'bg-indigo-50',
+        text: 'text-indigo-700',
+        border: 'border-indigo-200',
+      },
+      {
+        bg: 'bg-violet-50',
+        text: 'text-violet-700',
+        border: 'border-violet-200',
+      },
     ];
-    const getMentorColor = (i: number) => MENTOR_COLORS[i % MENTOR_COLORS.length];
+    const getMentorColor = (i: number) =>
+      MENTOR_COLORS[i % MENTOR_COLORS.length];
 
     expect(getMentorColor(0).bg).toBe('bg-red-50');
     expect(getMentorColor(6).bg).toBe('bg-violet-50');
@@ -245,12 +270,13 @@ describe('멘토 색상 뱃지 (MentorRenderCell)', () => {
 
 describe('진행상태 색상 매핑 (FeedbackStatusRenderCell)', () => {
   it('각 FeedbackStatus에 대한 색상이 정의되어 있다', () => {
-    const FEEDBACK_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-      WAITING: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
-      IN_PROGRESS: { bg: 'bg-blue-50', text: 'text-blue-700' },
-      COMPLETED: { bg: 'bg-green-50', text: 'text-green-700' },
-      CONFIRMED: { bg: 'bg-violet-50', text: 'text-violet-700' },
-    };
+    const FEEDBACK_STATUS_COLORS: Record<string, { bg: string; text: string }> =
+      {
+        WAITING: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
+        IN_PROGRESS: { bg: 'bg-blue-50', text: 'text-blue-700' },
+        COMPLETED: { bg: 'bg-green-50', text: 'text-green-700' },
+        CONFIRMED: { bg: 'bg-violet-50', text: 'text-violet-700' },
+      };
 
     const statuses = ['WAITING', 'IN_PROGRESS', 'COMPLETED', 'CONFIRMED'];
     statuses.forEach((status) => {
@@ -263,9 +289,9 @@ describe('진행상태 색상 매핑 (FeedbackStatusRenderCell)', () => {
   it('각 상태별 색상이 서로 다르다', () => {
     const colors = [
       'bg-neutral-90', // WAITING
-      'bg-blue-50',    // IN_PROGRESS
-      'bg-green-50',   // COMPLETED
-      'bg-violet-50',  // CONFIRMED
+      'bg-blue-50', // IN_PROGRESS
+      'bg-green-50', // COMPLETED
+      'bg-violet-50', // CONFIRMED
     ];
     const unique = new Set(colors);
     expect(unique.size).toBe(4);
@@ -369,7 +395,10 @@ describe('피드백 관리 제출/완료/전체 카운트', () => {
   });
 
   it('표시 형식: 멘티제출/진행전/확인완료/전체', () => {
-    const submitted = 3, waiting = 2, confirmed = 1, total = 5;
+    const submitted = 3,
+      waiting = 2,
+      confirmed = 1,
+      total = 5;
     const display = `${submitted} / ${waiting} / ${confirmed} / ${total}`;
     expect(display).toBe('3 / 2 / 1 / 5');
   });
@@ -400,12 +429,14 @@ describe('디버깅 가이드', () => {
       },
       {
         가설: 'v1 mentor PATCH에서 feedback 필수 누락',
-        확인방법: 'PATCH /api/v1/attendance/{id}/mentor 응답에 validation error 확인',
+        확인방법:
+          'PATCH /api/v1/attendance/{id}/mentor 응답에 validation error 확인',
         대안: 'feedback: "" (빈 문자열) 추가 전송',
       },
       {
         가설: 'PATCH는 성공하나 GET에서 값이 안 옴',
-        확인방법: '새로고침 후 GET /feedback/attendances 응답의 feedbackStatus 확인',
+        확인방법:
+          '새로고침 후 GET /feedback/attendances 응답의 feedbackStatus 확인',
         대안: 'fallback에서 일반 attendance의 feedbackStatus 매핑 (이미 적용됨)',
       },
     ];

@@ -29,7 +29,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   return (
     <div className={styles.login}>
       <div className={styles.content}>
-        <h2 className="text-xsmall14 font-normal text-neutral-45">
+        <h2 className="text-xsmall14 text-neutral-45 font-normal">
           또는 SNS 간편 {type === 'LOGIN' ? '로그인' : '회원 가입'}
         </h2>
         <div className={styles.buttons}>

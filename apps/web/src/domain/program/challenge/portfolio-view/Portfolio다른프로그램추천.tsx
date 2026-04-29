@@ -424,7 +424,7 @@ const Portfolio다른프로그램추천 = ({
           <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
             <div className="flex w-full flex-col md:items-center">
               <p
-                className="text-xsmall16 font-bold md:text-small20"
+                className="text-xsmall16 md:text-small20 font-bold"
                 style={{ color: styles.primaryColor }}
               >
                 진행 방식
@@ -433,13 +433,13 @@ const Portfolio다른프로그램추천 = ({
                 {josa(challengeTitle, '은/는')}
                 <br className="md:hidden" /> {weekText}간 아래와 같이 진행돼요
               </Heading2>
-              <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
+              <span className="text-xsmall14 mb-10 text-neutral-50 md:mb-20">
                 {description}
               </span>
             </div>
             <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
               <div
-                className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
+                className="text-xsmall14 flex w-full items-center rounded-t-md px-4 py-2.5 font-semibold text-white md:justify-center md:px-2.5"
                 style={{ backgroundColor: styles.primaryColor }}
               >
                 {weekText} 과정
@@ -493,7 +493,7 @@ const Portfolio다른프로그램추천 = ({
           </div>
 
           <div className="mb-8 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
-            <p className="mx-auto flex w-fit items-center gap-3 rounded-md bg-[#111C3F] px-3.5 py-2.5 font-bold text-white md:text-medium24">
+            <p className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md bg-[#111C3F] px-3.5 py-2.5 font-bold text-white">
               <Image
                 unoptimized
                 src="/images/calendar-icon-30-30.svg"
@@ -562,12 +562,12 @@ const Portfolio다른프로그램추천 = ({
                 >
                   <div className="flex items-center justify-start gap-3">
                     <span
-                      className="rounded-full px-3 py-1.5 text-xxsmall12 font-semibold text-white md:text-xsmall16"
+                      className="text-xxsmall12 md:text-xsmall16 rounded-full px-3 py-1.5 font-semibold text-white"
                       style={{ backgroundColor: styles.primaryColor }}
                     >
                       {item.step}
                     </span>
-                    <h3 className="text-xsmall14 font-bold text-white md:text-medium22">
+                    <h3 className="text-xsmall14 md:text-medium22 font-bold text-white">
                       {item.title}
                     </h3>
                   </div>
@@ -579,7 +579,7 @@ const Portfolio다른프로그램추천 = ({
                     unoptimized
                     className="h-auto w-full rounded-md"
                   />
-                  <p className="break-keep px-2 text-xxsmall12 text-neutral-75 md:px-4 md:text-xsmall16">
+                  <p className="text-xxsmall12 text-neutral-75 md:text-xsmall16 break-keep px-2 md:px-4">
                     {item.description}
                   </p>
                 </div>
@@ -645,17 +645,17 @@ function ProgressItem({
   return (
     <div key={item.index} className="flex gap-2">
       <div
-        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xsmall14 font-semibold text-white"
+        className="text-xsmall14 mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-semibold text-white"
         style={{ backgroundColor: bgColor }}
       >
         {item.index}
       </div>
       <div className="flex flex-col gap-0.5">
-        <span className="whitespace-pre-line text-xsmall16 font-bold text-neutral-0">
+        <span className="text-xsmall16 text-neutral-0 whitespace-pre-line font-bold">
           {item.title}
         </span>
         {item.subTitle && (
-          <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
+          <span className="text-xsmall14 text-neutral-45 whitespace-pre-line">
             {item.subTitle}
           </span>
         )}
@@ -691,7 +691,7 @@ function BoxItem({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 text-xsmall16 text-neutral-0">
+    <div className="text-xsmall16 text-neutral-0 flex flex-col gap-2">
       <span className="whitespace-pre-line font-bold">{title}</span>
       <span className="whitespace-pre-line break-keep">{children}</span>
     </div>

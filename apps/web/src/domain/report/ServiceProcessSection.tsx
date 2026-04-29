@@ -96,7 +96,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
                 <Badge style={badgeStyle}>작성 꿀팁</Badge>
-                <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
+                <p className="text-xxsmall12 md:text-xsmall16 font-semibold md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
                   적어주시면, 전문가가 보다 정확한 피드백을
@@ -112,11 +112,11 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 <br /> 이후 원하는 시점에 제출할 수 있습니다.
               </NumberedContent>
               <div className="md:flew-row flex flex-col gap-1 md:flex-row md:gap-3">
-                <ContentBox className="rounded-xxs bg-[#DDF5FF] py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16">
+                <ContentBox className="rounded-xxs text-xxsmall12 md:rounded-xs md:text-xsmall16 bg-[#DDF5FF] py-1 text-center font-semibold md:py-2.5">
                   결제 시, 바로 제출
                 </ContentBox>
                 <ContentBox
-                  className="rounded-xxs py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16"
+                  className="rounded-xxs text-xxsmall12 md:rounded-xs md:text-xsmall16 py-1 text-center font-semibold md:py-2.5"
                   style={contentBoxStyle}
                 >
                   결제 후, 원하는 시점에 제출
@@ -145,7 +145,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               <NumberedContent number="2-2">
                 진단 완료까지 48시간 소요됩니다.
               </NumberedContent>
-              <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium md:p-3 md:px-5 md:py-3 md:text-xsmall14">
+              <ContentBox className="text-xxsmall12 md:text-xsmall14 mt-3 bg-[#DDF5FF] font-medium md:p-3 md:px-5 md:py-3">
                 <p className="mb-3 md:mb-1">
                   *다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수
                   있습니다.
@@ -210,7 +210,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
           >
             <span
               className={clsx(
-                'text-xsmall14 font-medium opacity-75 md:text-xsmall16',
+                'text-xsmall14 md:text-xsmall16 font-medium opacity-75',
                 { 'text-white': reportType === 'PERSONAL_STATEMENT' },
               )}
             >
@@ -227,7 +227,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
                 <Badge style={badgeStyle}>진행 꿀팁</Badge>
-                <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
+                <p className="text-xxsmall12 md:text-xsmall16 font-semibold md:font-medium">
                   리포트 확인 후, 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!
                 </p>
@@ -269,7 +269,7 @@ const ProcessCard = memo(function ProcessCard({
     <div
       style={style}
       className={twMerge(
-        'w-full rounded-md bg-primary-80 px-5 py-6 text-neutral-0 md:px-12 md:py-10',
+        'bg-primary-80 text-neutral-0 w-full rounded-md px-5 py-6 md:px-12 md:py-10',
         className,
       )}
     >
@@ -296,7 +296,7 @@ const NumberedTitle = memo(function NumberedTitle({
       <div
         style={numberStyle}
         className={twMerge(
-          'flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-40 text-xsmall14 font-semibold md:h-7 md:w-7 md:text-small20',
+          'bg-primary-40 text-xsmall14 md:text-small20 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-semibold md:h-7 md:w-7',
           numberClassName,
         )}
       >
@@ -304,7 +304,7 @@ const NumberedTitle = memo(function NumberedTitle({
       </div>
       <span
         className={twMerge(
-          'flex items-center gap-2 text-small18 font-bold md:text-medium22',
+          'text-small18 md:text-medium22 flex items-center gap-2 font-bold',
           className,
         )}
       >
@@ -322,7 +322,7 @@ const NumberedContent = memo(function NumberedContent({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-2 text-xsmall14 font-semibold md:text-small20">
+    <div className="text-xsmall14 md:text-small20 flex items-start gap-2 font-semibold">
       <span className="shrink-0">{number ?? 1}</span>
       <span>{children}</span>
     </div>
@@ -363,7 +363,7 @@ const Badge = memo(function Badge({
   return (
     <div
       className={twMerge(
-        'w-fit shrink-0 rounded-xxs px-2 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall14',
+        'rounded-xxs text-xxsmall12 md:text-xsmall14 w-fit shrink-0 px-2 py-1 font-semibold text-white',
         className,
       )}
       style={style}

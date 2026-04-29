@@ -29,18 +29,18 @@ const WarningModal = ({
       className="max-w-[20rem] md:max-w-[28rem]"
       isLoading={isLoading}
     >
-      <div className="border-b border-neutral-80 px-6 py-5">
-        <span className="mb-3 block text-xsmall16 font-semibold">{title}</span>
+      <div className="border-neutral-80 border-b px-6 py-5">
+        <span className="text-xsmall16 mb-3 block font-semibold">{title}</span>
         <p className="text-xsmall14">{content}</p>
       </div>
-      <div className="flex items-center text-xsmall14">
+      <div className="text-xsmall14 flex items-center">
         <ModalButton
-          className="border-r border-neutral-80 font-medium"
+          className="border-neutral-80 border-r font-medium"
           onClick={onCancel}
         >
           {cancelText}
         </ModalButton>
-        <ModalButton className="font-semibold text-primary" onClick={onConfirm}>
+        <ModalButton className="text-primary font-semibold" onClick={onConfirm}>
           {confirmText}
         </ModalButton>
       </div>

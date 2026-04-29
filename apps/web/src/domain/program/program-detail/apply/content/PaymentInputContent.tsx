@@ -59,7 +59,7 @@ const PaymentInputContent = ({
   return (
     <div className="flex h-full flex-col gap-5">
       <div className="flex h-full flex-col gap-3">
-        <p className="text-xsmall16 font-semibold text-neutral-0">
+        <p className="text-xsmall16 text-neutral-0 font-semibold">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -78,14 +78,14 @@ const PaymentInputContent = ({
       </div>
       <div className="flex items-center gap-2">
         <button
-          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
+          className="border-primary text-primary-dark disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full flex-1 justify-center rounded-md border-2 bg-neutral-100 px-6 py-3 text-lg font-medium disabled:text-white"
           onClick={handleBackButtonClick}
           disabled={contentIndex === 0}
         >
           이전 단계로
         </button>
         <button
-          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:border-neutral-70 disabled:bg-neutral-70"
+          className="next_button border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
           onClick={handleNextButtonClick}
           disabled={buttonDisabled}
         >

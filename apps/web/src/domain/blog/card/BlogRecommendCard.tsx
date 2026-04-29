@@ -24,18 +24,18 @@ async function BlogRecommendCard({ blog }: Props) {
       data-text={blog.title}
     >
       <div className="flex flex-col gap-1 md:gap-2">
-        <h4 className="mb-1 text-xxsmall12 font-semibold text-primary md:text-xsmall14">
+        <h4 className="text-xxsmall12 text-primary md:text-xsmall14 mb-1 font-semibold">
           {blogCategory[blog.category ?? ''] ?? '전체'}
         </h4>
-        <h3 className="line-clamp-3 font-semibold text-neutral-0 md:line-clamp-2 md:min-h-12">
+        <h3 className="text-neutral-0 line-clamp-3 font-semibold md:line-clamp-2 md:min-h-12">
           {blog.title}
         </h3>
-        <span className="hidden py-2 text-xxsmall12 text-neutral-40 md:block">
+        <span className="text-xxsmall12 text-neutral-40 hidden py-2 md:block">
           {dayjs(blog.displayDate).format(YYYY_MM_DD)} 작성
         </span>
       </div>
       {/* 4:3 비율 */}
-      <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xxs bg-neutral-95 md:aspect-[4/3] md:h-auto md:w-full">
+      <div className="rounded-xxs bg-neutral-95 relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden md:aspect-[4/3] md:h-auto md:w-full">
         <Image
           className="h-full w-full object-cover"
           src={blog.thumbnail ?? ''}

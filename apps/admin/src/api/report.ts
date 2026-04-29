@@ -481,9 +481,7 @@ export const fetchReport = async ({
   type: ReportType;
   id?: number;
 }): Promise<ReportDetail | null> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/report/active`,
-  );
+  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/report/active`);
 
   if (!res.ok) {
     throw new Error('Failed to fetch report data');

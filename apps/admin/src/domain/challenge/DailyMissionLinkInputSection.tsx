@@ -23,11 +23,11 @@ const DailyMissionLinkInputSection = ({
     <>
       <label
         htmlFor="link"
-        className="text-xsmall14 font-semibold text-neutral-0"
+        className="text-xsmall14 text-neutral-0 font-semibold"
       >
         링크
       </label>
-      <p className="mt-1 text-xsmall14">
+      <p className="text-xsmall14 mt-1">
         {isEditing
           ? '미션 링크가 잘 열리는지 확인해 주세요. 제출 후 미션과 소감을 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
@@ -36,7 +36,7 @@ const DailyMissionLinkInputSection = ({
         <input
           type="text"
           className={clsx(
-            'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
+            'text-xsmall14 disabled:bg-neutral-95 flex-1 cursor-text rounded-sm p-3 outline-none',
             {
               'text-neutral-400': !isEditing,
               'border-red-500': !isValidLinkValue && value && isEditing,
@@ -53,7 +53,7 @@ const DailyMissionLinkInputSection = ({
         />
         <button
           type="button"
-          className="rounded-sm bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
+          className="bg-primary text-static-100 disabled:bg-neutral-70 rounded-sm px-5 font-medium"
           onClick={() => {
             if (value) {
               Object.assign(document.createElement('a'), {
@@ -72,7 +72,7 @@ const DailyMissionLinkInputSection = ({
       {value &&
         isEditing &&
         (isLinkChecked ? (
-          <div className="text-0.75-medium mt-1 text-primary">
+          <div className="text-0.75-medium text-primary mt-1">
             링크 확인을 완료하셨습니다. 링크가 올바르다면 미션 소감 작성 후 제출
             버튼을 눌러주세요.
           </div>
@@ -82,7 +82,7 @@ const DailyMissionLinkInputSection = ({
             {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
           </div>
         ) : (
-          <div className="text-0.75-medium mt-1 text-primary">
+          <div className="text-0.75-medium text-primary mt-1">
             URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
           </div>
         ))}

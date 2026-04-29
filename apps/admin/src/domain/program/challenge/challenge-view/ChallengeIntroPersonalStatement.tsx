@@ -104,7 +104,7 @@ function ChallengeIntroPersonalStatement() {
         <div className="flex flex-col gap-3 md:items-center md:text-center">
           <div>
             <Badge>평균 서류 합격률 28%</Badge>
-            <span className="mt-1 block text-[10px] text-neutral-30 md:text-xxsmall12">
+            <span className="text-neutral-30 md:text-xxsmall12 mt-1 block text-[10px]">
               *출처 : 한국경제인협회 설문조사
             </span>
           </div>
@@ -131,7 +131,7 @@ function ChallengeIntroPersonalStatement() {
 
 function Badge({ children }: { children?: ReactNode }) {
   return (
-    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] md:py-2 md:text-xlarge28">
+    <div className="gap-1.6 rounded-xxs text-small18 md:text-xlarge28 flex w-fit items-center gap-1 bg-[#FFF7EF] px-2.5 py-1 font-bold text-[#FB8100] md:py-2">
       {children}
     </div>
   );
@@ -150,10 +150,10 @@ function BoxItem({
     <div
       className={`flex flex-1 flex-col ${padding ? 'gap-y-2 md:gap-y-5' : ''} text-center`}
     >
-      <span className="block text-small20 font-bold text-[#008CC3]">
+      <span className="text-small20 block font-bold text-[#008CC3]">
         {title}
       </span>
-      <p className="block whitespace-pre text-xxsmall12 font-medium text-neutral-40 md:whitespace-normal md:text-small18">
+      <p className="text-xxsmall12 text-neutral-40 md:text-small18 block whitespace-pre font-medium md:whitespace-normal">
         {children}
       </p>
     </div>
@@ -178,7 +178,7 @@ function CircularBox({
   return (
     <div
       className={twMerge(
-        'flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] text-small20 font-bold text-static-100',
+        'text-small20 text-static-100 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] font-bold',
         className,
       )}
     >

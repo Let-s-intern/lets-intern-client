@@ -23,9 +23,9 @@ function SideNavItem({
   const [isOpen, setIsOpen] = useState(false);
 
   const linkClassName = twMerge(
-    'text-small16 flex max-h-[40px] w-full cursor-pointer gap-0.5 rounded-xs py-2 font-semibold text-neutral-30',
+    'text-small16 rounded-xs text-neutral-30 flex max-h-[40px] w-full cursor-pointer gap-0.5 py-2 font-semibold',
     isNew &&
-      "items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
+      "after:bg-system-error items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
     subNavList && 'justify-between',
     className,
   );
@@ -50,7 +50,7 @@ function SideNavItem({
           <Down
             width={24}
             className={twMerge(
-              'flex text-neutral-20 transition-transform',
+              'text-neutral-20 flex transition-transform',
               isOpen ? 'rotate-180' : 'rotate-0',
             )}
           />
@@ -66,7 +66,7 @@ function SideNavItem({
           {subNavList.map((item) => (
             <SubNavItem
               key={item.href}
-              className="flex h-[36px] px-0 py-2 text-xsmall14 font-semibold text-neutral-20 hover:bg-white"
+              className="text-xsmall14 text-neutral-20 flex h-[36px] px-0 py-2 font-semibold hover:bg-white"
               {...item}
             >
               {item.children}

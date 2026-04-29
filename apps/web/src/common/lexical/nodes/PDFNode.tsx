@@ -41,7 +41,8 @@ function PDFBlockComponent({
     <BlockWithAlignableContents
       className={className}
       format={format}
-      nodeKey={nodeKey}>
+      nodeKey={nodeKey}
+    >
       <React.Suspense fallback={<div>PDF 로딩 중...</div>}>
         <PDFComponent url={url} fileName={fileName} />
       </React.Suspense>
@@ -57,11 +58,10 @@ export type SerializedPDFNode = Spread<
   SerializedDecoratorBlockNode
 >;
 
-function $convertPDFElement(
-  domNode: HTMLElement,
-): null | DOMConversionOutput {
+function $convertPDFElement(domNode: HTMLElement): null | DOMConversionOutput {
   const url = domNode.getAttribute('data-lexical-pdf-url');
-  const fileName = domNode.getAttribute('data-lexical-pdf-name') || 'document.pdf';
+  const fileName =
+    domNode.getAttribute('data-lexical-pdf-name') || 'document.pdf';
   if (url) {
     const node = $createPDFNode(url, fileName);
     return { node };
@@ -82,10 +82,7 @@ export class PDFNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedPDFNode): PDFNode {
-    const node = $createPDFNode(
-      serializedNode.url,
-      serializedNode.fileName,
-    );
+    const node = $createPDFNode(serializedNode.url, serializedNode.fileName);
     node.setFormat(serializedNode.format);
     return node;
   }
@@ -175,7 +172,10 @@ export class PDFNode extends DecoratorBlockNode {
   }
 }
 
-export function $createPDFNode(url: string, fileName: string = 'document.pdf'): PDFNode {
+export function $createPDFNode(
+  url: string,
+  fileName: string = 'document.pdf',
+): PDFNode {
   return new PDFNode(url, fileName);
 }
 

@@ -43,14 +43,14 @@ const DifferentCard = ({
       <div className="flex w-full flex-col gap-y-3">
         {order && (
           <p
-            className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
+            className="text-xsmall14 lg:text-small18 flex w-fit rounded-md px-[14px] py-1.5 font-semibold text-white"
             style={{
               backgroundColor: styles.primaryColor,
             }}
           >{`Point ${order}`}</p>
         )}
         <div className="flex w-full flex-col gap-y-4">
-          <h4 className="whitespace-pre-line text-small18 font-bold lg:text-medium22">
+          <h4 className="text-small18 lg:text-medium22 whitespace-pre-line font-bold">
             {title}
           </h4>
           <div className="flex w-full flex-col gap-y-1">
@@ -62,7 +62,7 @@ const DifferentCard = ({
                   width={24}
                   height={24}
                 />
-                <p className="whitespace-pre text-wrap break-keep pt-px text-xsmall14 font-medium text-neutral-30 md:pt-0 lg:text-small18">
+                <p className="text-xsmall14 text-neutral-30 lg:text-small18 whitespace-pre text-wrap break-keep pt-px font-medium md:pt-0">
                   {option}
                 </p>
               </div>

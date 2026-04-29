@@ -19,10 +19,7 @@ export default function NotificationBell() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useMentorGuideListQuery();
-  const guides = useMemo(
-    () => data?.challengeMentorGuideList ?? [],
-    [data],
-  );
+  const guides = useMemo(() => data?.challengeMentorGuideList ?? [], [data]);
   const { readIds, markAsRead, isRead } = useNotificationState();
 
   // 최신순 정렬

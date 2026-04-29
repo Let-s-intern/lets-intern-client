@@ -19,8 +19,10 @@ export function guideToForm(guide: ChallengeMentorGuideItem): NoticeForm {
     link: guide.link ?? '',
     contents: guide.contents ?? '',
     contentType,
-    challengeScopeType: (guide.challengeScopeType ?? 'ALL') as NoticeForm['challengeScopeType'],
-    mentorScopeType: (guide.mentorScopeType ?? 'ALL_MENTOR') as NoticeForm['mentorScopeType'],
+    challengeScopeType: (guide.challengeScopeType ??
+      'ALL') as NoticeForm['challengeScopeType'],
+    mentorScopeType: (guide.mentorScopeType ??
+      'ALL_MENTOR') as NoticeForm['mentorScopeType'],
     challengeId: guide.challengeId ? String(guide.challengeId) : '',
     challengeMentorId: guide.challengeMentorId
       ? String(guide.challengeMentorId)

@@ -53,7 +53,7 @@ const BlogShareSection = ({
       <div className="blog_share flex items-center gap-x-5">
         <button
           type="button"
-          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+          className="bg-primary-10 flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full"
           onClick={() =>
             handleCopyClipBoard(`${window.location.origin}${location.pathname}`)
           }
@@ -66,7 +66,7 @@ const BlogShareSection = ({
         </button>
         <button
           type="button"
-          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+          className="bg-primary-10 flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full"
           onClick={handleShareKakaoClick}
         >
           <img

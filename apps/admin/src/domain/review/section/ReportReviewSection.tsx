@@ -16,7 +16,7 @@ const ReportReviewSection = ({
     <div className="flex flex-col gap-2">
       <p className="px-2.5">
         {josa(programTitle ?? '', '이/가')} 서류 보완에 어떻게 도움이 되셨나요?
-        <span className="ml-1 text-requirement">*</span>
+        <span className="text-requirement ml-1">*</span>
       </p>
       <TextArea
         rows={3}

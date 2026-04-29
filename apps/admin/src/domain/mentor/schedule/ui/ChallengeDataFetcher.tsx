@@ -1,14 +1,10 @@
 import { useEffect } from 'react';
 
 import type { ChallengeMentorVo } from '@/api/user/user';
-import {
-  useMentorMissionFeedbackListQuery,
-} from '@/api/challenge/challenge';
+import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import type { PeriodBarData } from '../types';
-import {
-  computeDatesFromConfig,
-} from '../constants/scheduleConfig';
+import { computeDatesFromConfig } from '../constants/scheduleConfig';
 import { WRITTEN_FEEDBACK_CONFIG } from '../challenge-content/writtenFeedback';
 
 // ---------------------------------------------------------------------------
@@ -60,9 +56,8 @@ const MissionAttendanceFetcher = ({
       colorIndex,
       submittedCount: submitted.length,
       notSubmittedCount: notSubmitted.length,
-      waitingCount: submitted.filter(
-        (a) => a.feedbackStatus === 'WAITING',
-      ).length,
+      waitingCount: submitted.filter((a) => a.feedbackStatus === 'WAITING')
+        .length,
       inProgressCount: submitted.filter(
         (a) => a.feedbackStatus === 'IN_PROGRESS',
       ).length,

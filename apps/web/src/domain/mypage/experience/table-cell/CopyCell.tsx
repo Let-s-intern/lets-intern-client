@@ -38,7 +38,7 @@ const CopyCell = ({
     >
       <Copy
         size={20}
-        className="cursor-pointer p-0.5 text-neutral-30"
+        className="text-neutral-30 cursor-pointer p-0.5"
         onClick={(e) => {
           e.stopPropagation();
           setIsCopyModalOpen(true);
@@ -49,8 +49,8 @@ const CopyCell = ({
         onClose={() => setIsCopyModalOpen(false)}
         className="h-fit w-[312px]"
       >
-        <div className="mx-6 my-5 text-neutral-20">
-          <div className="mb-2 text-xsmall16 font-semibold">
+        <div className="text-neutral-20 mx-6 my-5">
+          <div className="text-xsmall16 mb-2 font-semibold">
             해당 경험을 복제하시겠어요?
           </div>
           <div className="text-xsmall14">
@@ -58,16 +58,16 @@ const CopyCell = ({
           </div>
         </div>
 
-        <div className="flex h-[3.375rem] w-full divide-x divide-neutral-80 border-t border-neutral-80">
+        <div className="divide-neutral-80 border-neutral-80 flex h-[3.375rem] w-full divide-x border-t">
           <button
             onClick={() => setIsCopyModalOpen(false)}
-            className="flex-1 text-sm font-medium text-neutral-35"
+            className="text-neutral-35 flex-1 text-sm font-medium"
           >
             취소
           </button>
           <button
             onClick={() => handleCopy()}
-            className="flex-1 text-sm font-semibold text-primary"
+            className="text-primary flex-1 text-sm font-semibold"
           >
             복제하기
           </button>

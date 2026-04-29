@@ -38,15 +38,15 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
       {comment && (
         <>
-          <div className="mb-8 h-px bg-neutral-80" />
+          <div className="bg-neutral-80 mb-8 h-px" />
           <div className="mb-6">
-            <div className="mb-2 rounded-xs bg-primary-5 p-3">
-              <span className="text-xsmall16 font-semibold text-primary">
+            <div className="rounded-xs bg-primary-5 mb-2 p-3">
+              <span className="text-xsmall16 text-primary font-semibold">
                 코멘트
               </span>
             </div>
-            <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-              <p className="min-h-[120px] break-all text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+            <div className="rounded-xxs border-neutral-80 border bg-white p-3">
+              <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 min-h-[120px] break-all leading-relaxed">
                 {comment}
               </p>
             </div>
@@ -57,13 +57,13 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
       {mentorFeedback && mentorFeedback.root ? (
         <div>
-          <div className="mb-2 rounded-xs bg-primary-5 p-3">
-            <span className="text-xsmall16 font-semibold text-primary">
+          <div className="rounded-xs bg-primary-5 mb-2 p-3">
+            <span className="text-xsmall16 text-primary font-semibold">
               멘토 피드백
             </span>
           </div>
-          <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-            <div className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+          <div className="rounded-xxs border-neutral-80 border bg-white p-3">
+            <div className="text-xsmall14 text-neutral-0 md:text-xsmall16 min-h-[120px] leading-relaxed">
               <LexicalContent node={mentorFeedback.root} />
             </div>
           </div>

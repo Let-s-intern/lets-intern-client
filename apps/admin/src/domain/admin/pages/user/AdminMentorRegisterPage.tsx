@@ -143,7 +143,7 @@ const MentorFilter = () => {
 
   return (
     <form
-      className="mb-4 flex items-center justify-between bg-neutral-90 p-4"
+      className="bg-neutral-90 mb-4 flex items-center justify-between p-4"
       onSubmit={handleSubmit}
     >
       <div className="flex items-center gap-2">
@@ -185,7 +185,10 @@ export default function AdminMentorRegisterPage() {
   const navigate = useNavigate();
 
   const { paginationModel, handlePaginationModelChange } =
-    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: DEFAULT_PAGE_SIZE });
+    usePaginationModelWithSearchParams({
+      defaultPage: 0,
+      defaultPageSize: DEFAULT_PAGE_SIZE,
+    });
 
   const columns = useMentorColumns();
   const { rows, isLoading, pageInfo } = useMentorRows({

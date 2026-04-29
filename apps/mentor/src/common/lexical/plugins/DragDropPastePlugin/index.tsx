@@ -36,10 +36,7 @@ export default function DragDropPaste() {
       (files) => {
         (async () => {
           const allTypes = [...ACCEPTABLE_IMAGE_TYPES, ...ACCEPTABLE_PDF_TYPES];
-          const filesResult = await mediaFileReader(
-            files,
-            allTypes,
-          );
+          const filesResult = await mediaFileReader(files, allTypes);
           for (const { file } of filesResult) {
             if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {
               uploadFile({ file, type: 'BLOG' }).then((src) => {

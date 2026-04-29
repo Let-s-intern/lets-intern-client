@@ -7,9 +7,9 @@
  */
 import './index.css';
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {useLexicalNodeSelection} from '@lexical/react/useLexicalNodeSelection';
-import {mergeRegister} from '@lexical/utils';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
 import {
   $getNodeByKey,
   $getSelection,
@@ -27,11 +27,11 @@ import {
   SerializedLexicalNode,
 } from 'lexical';
 import * as React from 'react';
-import {useCallback, useEffect} from 'react';
+import { useCallback, useEffect } from 'react';
 
 export type SerializedPageBreakNode = SerializedLexicalNode;
 
-function PageBreakComponent({nodeKey}: {nodeKey: NodeKey}) {
+function PageBreakComponent({ nodeKey }: { nodeKey: NodeKey }) {
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
@@ -154,7 +154,7 @@ export class PageBreakNode extends DecoratorNode<JSX.Element> {
 }
 
 function $convertPageBreakElement(): DOMConversionOutput {
-  return {node: $createPageBreakNode()};
+  return { node: $createPageBreakNode() };
 }
 
 export function $createPageBreakNode(): PageBreakNode {

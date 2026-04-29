@@ -128,7 +128,7 @@ const CouponSubmit = ({
           value={couponCode}
           onChange={handleChange}
           placeholder="쿠폰 코드를 입력하세요."
-          className="min-w-0 flex-1 rounded-xs border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
+          className="rounded-xs outline-primary min-w-0 flex-1 border border-[#C4C4C4] px-3 py-2 text-sm"
           disabled={isSuccess}
           onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
         />

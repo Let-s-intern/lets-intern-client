@@ -8,7 +8,7 @@
 
 import './Collapsible.css';
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $findMatchingParent,
   $insertNodeToNearestRoot,
@@ -30,7 +30,7 @@ import {
   LexicalNode,
   NodeKey,
 } from 'lexical';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import {
   $createCollapsibleContainerNode,

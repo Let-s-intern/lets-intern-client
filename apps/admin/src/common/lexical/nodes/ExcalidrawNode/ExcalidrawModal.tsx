@@ -8,7 +8,7 @@
 
 import './ExcalidrawModal.css';
 
-import {Excalidraw} from '@excalidraw/excalidraw';
+import { Excalidraw } from '@excalidraw/excalidraw';
 import {
   AppState,
   BinaryFiles,
@@ -16,8 +16,14 @@ import {
   ExcalidrawInitialDataState,
 } from '@excalidraw/excalidraw/types/types';
 import * as React from 'react';
-import {ReactPortal, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
+import {
+  ReactPortal,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 
 import Button from '../../ui/Button';
 import Modal from '../../ui/Modal';
@@ -187,20 +193,23 @@ export default function ExcalidrawModal({
         onClose={() => {
           setDiscardModalOpen(false);
         }}
-        closeOnClickOutside={false}>
+        closeOnClickOutside={false}
+      >
         Are you sure you want to discard the changes?
         <div className="ExcalidrawModal__discardModal">
           <Button
             onClick={() => {
               setDiscardModalOpen(false);
               onClose();
-            }}>
+            }}
+          >
             Discard
           </Button>{' '}
           <Button
             onClick={() => {
               setDiscardModalOpen(false);
-            }}>
+            }}
+          >
             Cancel
           </Button>
         </div>
@@ -226,14 +235,15 @@ export default function ExcalidrawModal({
       <div
         className="ExcalidrawModal__modal"
         ref={excaliDrawModelRef}
-        tabIndex={-1}>
+        tabIndex={-1}
+      >
         <div className="ExcalidrawModal__row">
           {discardModalOpen && <ShowDiscardDialog />}
           <Excalidraw
             onChange={onChange}
             excalidrawAPI={excalidrawAPIRefCallback}
             initialData={{
-              appState: initialAppState || {isLoading: false},
+              appState: initialAppState || { isLoading: false },
               elements: initialElements,
               files: initialFiles,
             }}

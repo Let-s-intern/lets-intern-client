@@ -87,10 +87,10 @@ export const MultiFilterDropdown = ({
         type="button"
         ref={buttonRef}
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`}
+        className={`flex ${width} rounded-xs border-neutral-80 items-center justify-between gap-1.5 border bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`}
       >
         <span className="whitespace-nowrap">{labelPrefix} </span>
-        <span className="whitespace-nowrap text-primary-dark">
+        <span className="text-primary-dark whitespace-nowrap">
           {getFilterLabel()}
         </span>
 
@@ -111,7 +111,7 @@ export const MultiFilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
+            className={`divide-neutral-95 rounded-xs shadow-07 scrollbar-hide absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y overflow-auto bg-white px-1 py-1.5 md:block`}
           >
             {options.map((option) => {
               const isAllOptionsSelected =
@@ -129,7 +129,7 @@ export const MultiFilterDropdown = ({
                   key={option.value}
                   type="button"
                   onClick={() => handleSelect(option.value)}
-                  className="flex w-full items-center gap-1 px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
+                  className="text-neutral-20 flex w-full items-center gap-1 px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                 >
                   <CheckBox checked={isSelected} width="w-6" />
 
@@ -142,17 +142,17 @@ export const MultiFilterDropdown = ({
           <BottomSheet className="md:hidden" onClose={() => setIsOpen(false)}>
             <div className="flex max-h-[62vh] w-full flex-col">
               <header className="flex items-center justify-between pb-4">
-                <span className="text-lg font-semibold text-neutral-0">
+                <span className="text-neutral-0 text-lg font-semibold">
                   {labelPrefix}
                 </span>
 
                 <X
                   onClick={toggleDropdown}
-                  className="cursor-pointer self-end text-neutral-0"
+                  className="text-neutral-0 cursor-pointer self-end"
                 />
               </header>
 
-              <div className="flex flex-col gap-1.5 overflow-y-auto pb-20 scrollbar-hide">
+              <div className="scrollbar-hide flex flex-col gap-1.5 overflow-y-auto pb-20">
                 {options.map((option) => {
                   const isAllOptionsSelected =
                     nonAllOptions.length > 0 &&
@@ -170,7 +170,7 @@ export const MultiFilterDropdown = ({
                       key={option.value}
                       type="button"
                       onClick={() => handleSelect(option.value)}
-                      className="flex w-full items-center gap-1 py-2 text-left font-normal text-neutral-20"
+                      className="text-neutral-20 flex w-full items-center gap-1 py-2 text-left font-normal"
                     >
                       <CheckBox checked={isSelected} width="w-6" />
 
@@ -180,11 +180,11 @@ export const MultiFilterDropdown = ({
                 })}
               </div>
 
-              <footer className="fixed bottom-0 left-0 flex w-full gap-2 border-t border-neutral-85 bg-white px-5 py-4">
+              <footer className="border-neutral-85 fixed bottom-0 left-0 flex w-full gap-2 border-t bg-white px-5 py-4">
                 <Button
                   color="white"
                   onClick={onReset}
-                  className="w-1/4 rounded-xs"
+                  className="rounded-xs w-1/4"
                 >
                   초기화
                 </Button>
@@ -192,7 +192,7 @@ export const MultiFilterDropdown = ({
                   onClick={() => {
                     setIsOpen(false);
                   }}
-                  className="w-3/4 rounded-xs"
+                  className="rounded-xs w-3/4"
                 >
                   선택 완료
                 </Button>

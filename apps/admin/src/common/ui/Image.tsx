@@ -1,10 +1,9 @@
 import { ImgHTMLAttributes } from 'react';
 
-interface ImageProps
-  extends Omit<
-    ImgHTMLAttributes<HTMLImageElement>,
-    'width' | 'height' | 'src' | 'alt' | 'loading' | 'placeholder'
-  > {
+interface ImageProps extends Omit<
+  ImgHTMLAttributes<HTMLImageElement>,
+  'width' | 'height' | 'src' | 'alt' | 'loading' | 'placeholder'
+> {
   src: string;
   alt: string;
   width?: number | string;

@@ -115,7 +115,7 @@ const OldChallengeDashboard = () => {
           <OldGuideSection guides={guides} />
         </div>
         <div className="flex gap-4">
-          <section className="flex-1 rounded-xl border border-neutral-80 px-10 py-8">
+          <section className="border-neutral-80 flex-1 rounded-xl border px-10 py-8">
             <div className="flex items-center gap-2">
               <h2 className="text-1-bold text-neutral-30">
                 일정 및 미션 제출 현황

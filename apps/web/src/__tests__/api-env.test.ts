@@ -65,17 +65,13 @@ describe('packages/api env exports', () => {
   it('NEXT_PUBLIC_SERVER_API_V2 가 비면 createV2Axios 호출 시 throw', () => {
     delete process.env.NEXT_PUBLIC_SERVER_API_V2;
     const { createV2Axios } = loadApi();
-    expect(() => createV2Axios()).toThrow(
-      /NEXT_PUBLIC_SERVER_API_V2|baseURL/,
-    );
+    expect(() => createV2Axios()).toThrow(/NEXT_PUBLIC_SERVER_API_V2|baseURL/);
   });
 
   it('NEXT_PUBLIC_SERVER_API_V3 가 비면 createV3Axios 호출 시 throw', () => {
     delete process.env.NEXT_PUBLIC_SERVER_API_V3;
     const { createV3Axios } = loadApi();
-    expect(() => createV3Axios()).toThrow(
-      /NEXT_PUBLIC_SERVER_API_V3|baseURL/,
-    );
+    expect(() => createV3Axios()).toThrow(/NEXT_PUBLIC_SERVER_API_V3|baseURL/);
   });
 });
 

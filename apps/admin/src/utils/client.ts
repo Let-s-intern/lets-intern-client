@@ -24,22 +24,18 @@ async function client<T>(
   const queryString = params ? `?${new URLSearchParams(params)}` : '';
   const url = `${import.meta.env.VITE_API_BASE_PATH}${endpoint}${queryString}`;
 
-  try {
-    const res = await fetch(url, config);
-    const data = await res.json();
+  const res = await fetch(url, config);
+  const data = await res.json();
 
-    if (!res.ok) {
-      const error = new Error(
-        data.message || '요청에 실패했습니다.',
-      ) as HttpError;
-      error.status = res.status;
-      throw error;
-    }
-
-    return data.data;
-  } catch (error) {
+  if (!res.ok) {
+    const error = new Error(
+      data.message || '요청에 실패했습니다.',
+    ) as HttpError;
+    error.status = res.status;
     throw error;
   }
+
+  return data.data;
 }
 
 export { client };

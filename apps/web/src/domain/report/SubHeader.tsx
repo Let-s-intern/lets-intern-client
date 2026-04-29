@@ -13,7 +13,7 @@ function SubHeader({
   return (
     <span
       className={twMerge(
-        'block whitespace-pre-line text-center text-xsmall16 font-bold md:text-small20',
+        'text-xsmall16 md:text-small20 block whitespace-pre-line text-center font-bold',
         className,
       )}
       style={style}

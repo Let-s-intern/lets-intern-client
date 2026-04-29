@@ -48,9 +48,7 @@ export const useCommonFormBuilder = () => {
       .filter((q) => q.isVisible === true)
       .map(detailQuestionToFormQuestion);
     setQuestions(mapped);
-    originalQuestionIdsRef.current = new Set(
-      mapped.map((q) => q.questionId),
-    );
+    originalQuestionIdsRef.current = new Set(mapped.map((q) => q.questionId));
     originalQuestionsRef.current = new Map(
       mapped.map((q) => [q.questionId, q]),
     );
@@ -62,26 +60,17 @@ export const useCommonFormBuilder = () => {
   };
 
   const removeQuestion = (questionId: string) => {
-    setQuestions((prev) =>
-      prev.filter((q) => q.questionId !== questionId),
-    );
+    setQuestions((prev) => prev.filter((q) => q.questionId !== questionId));
   };
 
-  const updateQuestion = (
-    questionId: string,
-    patch: Partial<FormQuestion>,
-  ) => {
+  const updateQuestion = (questionId: string, patch: Partial<FormQuestion>) => {
     setQuestions((prev) =>
-      prev.map((q) =>
-        q.questionId === questionId ? { ...q, ...patch } : q,
-      ),
+      prev.map((q) => (q.questionId === questionId ? { ...q, ...patch } : q)),
     );
   };
 
   const saveForm = async () => {
-    const emptyQuestion = questions.find(
-      (q) => q.question.trim() === '',
-    );
+    const emptyQuestion = questions.find((q) => q.question.trim() === '');
     if (emptyQuestion) {
       setSnackbar('질문 텍스트를 입력해주세요.');
       return;

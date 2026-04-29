@@ -262,12 +262,12 @@ const SignUp = () => {
           <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
             <div className="mb-9">
               {/* 헤더 */}
-              <span className="text-xsmall16 leading-[1.625rem] text-neutral-30">
+              <span className="text-xsmall16 text-neutral-30 leading-[1.625rem]">
                 회원가입
               </span>
               {/* 타이틀 */}
               {!isSocial && (
-                <h1 className="mt-6 text-medium24 font-semibold text-neutral-0">
+                <h1 className="text-medium24 text-neutral-0 mt-6 font-semibold">
                   기본 정보를 입력해 주세요.
                 </h1>
               )}
@@ -281,7 +281,7 @@ const SignUp = () => {
                     <label className="text-xsmall14 text-neutral-0">
                       렛츠커리어 정보 수신용 이메일
                     </label>
-                    <p className="mb-1 text-xsmall14 text-neutral-40">
+                    <p className="text-xsmall14 text-neutral-40 mb-1">
                       * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주
                       사용하는 이메일 주소를 입력해주세요!
                     </p>
@@ -394,7 +394,7 @@ const SignUp = () => {
                   onClick={handleToggleAll}
                 >
                   <CheckBox checked={isAllAgreed} width="w-6" showCheckIcon />
-                  <span className="text-xsmall14 font-semibold text-neutral-0">
+                  <span className="text-xsmall14 text-neutral-0 font-semibold">
                     전체 동의
                   </span>
                 </button>
@@ -500,7 +500,7 @@ const SignUp = () => {
                       width="w-6"
                       showCheckIcon
                     />
-                    <span className="block break-words break-keep text-left text-xsmall14 text-neutral-0">
+                    <span className="text-xsmall14 text-neutral-0 block break-words break-keep text-left">
                       [선택] 렛츠커리어 프로그램 개설 소식을 가장 먼저
                       받아볼래요!
                     </span>
@@ -513,7 +513,7 @@ const SignUp = () => {
 
               {/* 에러 메시지 */}
               {error ? (
-                <p className="mt-4 text-center text-xsmall14 text-system-error">
+                <p className="text-xsmall14 text-system-error mt-4 text-center">
                   {errorMessage}
                 </p>
               ) : null}

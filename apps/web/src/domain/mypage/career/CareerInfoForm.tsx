@@ -19,7 +19,7 @@ const ConditionList = ({
         key={option.value}
         type="button"
         onClick={() => onToggle(option.value)}
-        className="flex w-full items-center gap-1 text-xsmall14"
+        className="text-xsmall14 flex w-full items-center gap-1"
       >
         <CheckBox
           checked={selected.includes(option.value)}
@@ -178,7 +178,7 @@ const CareerInfoForm = ({
     <>
       {/* 기본 정보 섹션 */}
       {showSectionTitle && (
-        <h1 className="mb-6 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+        <h1 className="text-xsmall16 text-neutral-0 md:text-small18 mb-6 font-semibold">
           {sectionTitle}
         </h1>
       )}
@@ -187,7 +187,7 @@ const CareerInfoForm = ({
         {/* 학교 */}
         <div className="flex flex-col gap-[6px]">
           <label className="text-xsmall14 md:text-xsmall16">
-            학교{showRequired && <span className="pl-1 text-primary">*</span>}
+            학교{showRequired && <span className="text-primary pl-1">*</span>}
           </label>
           <LineInput
             className="text-xsmall14 md:text-xsmall16"
@@ -210,7 +210,7 @@ const CareerInfoForm = ({
         {/* 전공 */}
         <div className="flex flex-col gap-[6px]">
           <label className="text-xsmall14 md:text-xsmall16">
-            전공{showRequired && <span className="pl-1 text-primary">*</span>}
+            전공{showRequired && <span className="text-primary pl-1">*</span>}
           </label>
           <LineInput
             className="text-xsmall14 md:text-xsmall16"
@@ -262,7 +262,7 @@ const CareerInfoForm = ({
         <div className="flex flex-col gap-[6px]">
           <label className="text-xsmall14 md:text-xsmall16">
             희망 기업
-            {showRequired && <span className="pl-1 text-primary">*</span>}
+            {showRequired && <span className="text-primary pl-1">*</span>}
           </label>
           <LineInput
             className="text-xsmall14 md:text-xsmall16"
@@ -281,7 +281,7 @@ const CareerInfoForm = ({
       <div className="flex flex-col gap-3">
         <span className="text-xsmall14 md:text-xsmall16">
           희망 구직 조건
-          {showRequired && <span className="pl-1 text-primary">*</span>}
+          {showRequired && <span className="text-primary pl-1">*</span>}
         </span>
         <ConditionList
           selected={(value.wishEmploymentType ?? '')

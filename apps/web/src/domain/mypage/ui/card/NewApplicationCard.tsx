@@ -66,7 +66,7 @@ export const MypageApplicationCard = ({
   };
 
   return (
-    <div className="flex flex-col justify-between gap-5 rounded-xs p-0 md:flex-row md:items-start md:justify-start md:gap-4 md:border md:border-neutral-85 md:p-4">
+    <div className="rounded-xs md:border-neutral-85 flex flex-col justify-between gap-5 p-0 md:flex-row md:items-start md:justify-start md:gap-4 md:border md:p-4">
       <div className="flex w-full flex-col gap-4 md:flex-row md:gap-4">
         <CardThumbnail
           href={detailHref}
@@ -81,10 +81,10 @@ export const MypageApplicationCard = ({
               {config.statusLabel && (
                 <span
                   className={twMerge(
-                    'rounded-xxs px-2 py-1 text-xxsmall12 font-normal',
+                    'rounded-xxs text-xxsmall12 px-2 py-1 font-normal',
                     (() => {
                       if (config.statusLabel === '참여예정') {
-                        return 'border border-neutral-80 text-primary';
+                        return 'border-neutral-80 text-primary border';
                       }
                       if (config.statusLabel === '참여종료') {
                         return 'bg-neutral-95 text-neutral-40';
@@ -98,15 +98,15 @@ export const MypageApplicationCard = ({
               )}
 
               {config.categoryLabel && (
-                <span className="text-xxsmall12 font-normal text-neutral-40">
+                <span className="text-xxsmall12 text-neutral-40 font-normal">
                   {config.categoryLabel}
                 </span>
               )}
 
               {config.dateText && (
                 <>
-                  <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-                  <p className="hidden text-xxsmall12 font-normal text-neutral-40 md:line-clamp-1 md:inline">
+                  <div className="bg-neutral-80 hidden h-4 w-px md:block" />
+                  <p className="text-xxsmall12 text-neutral-40 hidden font-normal md:line-clamp-1 md:inline">
                     {config.dateLabel} {config.dateText}
                   </p>
                 </>
@@ -114,7 +114,7 @@ export const MypageApplicationCard = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
                 <HybridLink
                   href={detailHref}
                   className="line-clamp-2 hover:underline"
@@ -125,18 +125,18 @@ export const MypageApplicationCard = ({
               {config.description &&
                 (config.isHtmlDescription ? (
                   <div
-                    className="line-clamp-2 text-xsmall14 text-neutral-20"
+                    className="text-xsmall14 text-neutral-20 line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: config.description }}
                   />
                 ) : (
-                  <p className="line-clamp-2 text-xsmall14 text-neutral-20">
+                  <p className="text-xsmall14 text-neutral-20 line-clamp-2">
                     {config.description}
                   </p>
                 ))}
             </div>
 
             {config.dateText && (
-              <p className="line-clamp-1 text-xxsmall12 font-normal text-neutral-40 md:hidden">
+              <p className="text-xxsmall12 text-neutral-40 line-clamp-1 font-normal md:hidden">
                 {config.dateLabel} {config.dateText}
               </p>
             )}
@@ -144,7 +144,7 @@ export const MypageApplicationCard = ({
 
           {config.purchasePlanText && (
             <div className="mt-2 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:justify-between">
-              <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+              <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
                 구매플랜
                 <p className="text-xxsmall12 text-primary-dark">
                   {config.purchasePlanText}
@@ -209,14 +209,14 @@ const CardThumbnail = ({
         <img
           src={thumbnail}
           alt={title || '프로그램 썸네일'}
-          className="h-[180px] w-full rounded-xs object-cover md:h-[119px] md:w-[158px]"
+          className="rounded-xs h-[180px] w-full object-cover md:h-[119px] md:w-[158px]"
         />
         {isCompleted && (
-          <div className="absolute inset-0 rounded-xs bg-black/40" />
+          <div className="rounded-xs absolute inset-0 bg-black/40" />
         )}
       </div>
     ) : (
-      <div className="h-[180px] w-full rounded-xs bg-neutral-80 md:h-[119px] md:w-[158px]" />
+      <div className="rounded-xs bg-neutral-80 h-[180px] w-full md:h-[119px] md:w-[158px]" />
     )}
   </HybridLink>
 );

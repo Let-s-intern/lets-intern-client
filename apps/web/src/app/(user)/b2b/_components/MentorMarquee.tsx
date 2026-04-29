@@ -299,11 +299,11 @@ function Row({
         {items.map((m, idx) => (
           <div
             key={`${m.name}-${idx}`}
-            className="flex w-[200px] flex-none flex-col overflow-hidden rounded-sm border border-neutral-85 bg-white shadow-sm md:w-[280px]"
+            className="border-neutral-85 flex w-[200px] flex-none flex-col overflow-hidden rounded-sm border bg-white shadow-sm md:w-[280px]"
           >
-            <div className="relative h-[90px] bg-neutral-95 md:h-[160px]">
+            <div className="bg-neutral-95 relative h-[90px] md:h-[160px]">
               {m.companyLogo && (
-                <div className="rounded absolute left-2.5 top-2.5 h-9 w-9 overflow-hidden rounded-xs border bg-white md:h-[66px] md:w-[66px]">
+                <div className="rounded-xs absolute left-2.5 top-2.5 h-9 w-9 overflow-hidden rounded border bg-white md:h-[66px] md:w-[66px]">
                   <Image
                     src={m.companyLogo}
                     alt={`${m.company ?? ''} 로고`}
@@ -322,7 +322,7 @@ function Row({
               )}
             </div>
             <div className="p-4 text-center">
-              <div className="mb-1 text-xsmall14 font-semibold text-neutral-0 md:mb-0 md:text-small20">
+              <div className="text-xsmall14 text-neutral-0 md:text-small20 mb-1 font-semibold md:mb-0">
                 {m.name}
               </div>
               <div className="text-xxsmall12 text-neutral-40 md:text-xsmall16">

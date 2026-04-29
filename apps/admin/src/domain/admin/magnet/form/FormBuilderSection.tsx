@@ -5,10 +5,7 @@ import { Plus } from 'lucide-react';
 
 interface FormBuilderSectionProps {
   questions: FormQuestion[];
-  onUpdateQuestion: (
-    questionId: string,
-    patch: Partial<FormQuestion>,
-  ) => void;
+  onUpdateQuestion: (questionId: string, patch: Partial<FormQuestion>) => void;
   onRemoveQuestion: (questionId: string) => void;
   onAddQuestion: () => void;
 }
@@ -27,9 +24,7 @@ const FormBuilderSection = ({
             key={question.questionId}
             questionNumber={index + 1}
             question={question}
-            onUpdate={(patch) =>
-              onUpdateQuestion(question.questionId, patch)
-            }
+            onUpdate={(patch) => onUpdateQuestion(question.questionId, patch)}
             onRemove={() => onRemoveQuestion(question.questionId)}
           />
         ))}

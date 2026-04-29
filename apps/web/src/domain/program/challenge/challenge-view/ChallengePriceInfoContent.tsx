@@ -30,9 +30,9 @@ const PlanButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex h-7 flex-1 items-center justify-center truncate text-nowrap rounded-xxs px-2.5 py-1 text-xsmall14 md:h-8 md:text-xsmall16',
+        'rounded-xxs text-xsmall14 md:text-xsmall16 flex h-7 flex-1 items-center justify-center truncate text-nowrap px-2.5 py-1 md:h-8',
         active
-          ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
+          ? 'text-neutral-0 bg-white font-medium shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
           : 'bg-transparent font-normal text-neutral-50',
       )}
       onClick={onClick}
@@ -64,7 +64,7 @@ const FinalPriceInfo = ({
 
   if (isLoading) {
     return (
-      <span className="inline-block px-2.5 text-right text-neutral-40">
+      <span className="text-neutral-40 inline-block px-2.5 text-right">
         로딩 중..
       </span>
     );
@@ -73,14 +73,14 @@ const FinalPriceInfo = ({
   return (
     <div className="flex flex-col items-stretch gap-0.5 px-2.5">
       {showMonthlyPrice && (
-        <div className="flex items-center justify-between font-medium text-neutral-20">
+        <div className="text-neutral-20 flex items-center justify-between font-medium">
           <span>최종 결제 금액</span>
           <div>{finalPrice.toLocaleString()}원</div>
         </div>
       )}
       {/* 할부가 안되면 할부 금액에 최종 결제 금액이 대신 표시됩니다 */}
       <div className="flex items-center justify-between">
-        <span className="font-medium text-neutral-20">
+        <span className="text-neutral-20 font-medium">
           {showMonthlyPrice ? '' : '최종 결제 금액'}
         </span>
         <div className="flex flex-col items-end gap-0.5">
@@ -248,14 +248,14 @@ function ChallengePriceInfoContent({
       <div className="flex flex-col gap-1.5">
         <div className="text-xsmall16 text-neutral-20">
           {/* 정가 */}
-          <div className="flex h-[26px] w-full items-center justify-between px-3 text-neutral-40">
+          <div className="text-neutral-40 flex h-[26px] w-full items-center justify-between px-3">
             <span>정가</span>
             <span>{regularPrice.toLocaleString()}원</span>
           </div>
           {/* 할인 금액 */}
           {discountAmount !== 0 && (
             <div className="flex w-full items-center justify-between px-3 font-medium">
-              <span className="font-semibold text-system-error">
+              <span className="text-system-error font-semibold">
                 {discountPercentage}% 할인
               </span>
               <span>-{discountAmount.toLocaleString()}원</span>

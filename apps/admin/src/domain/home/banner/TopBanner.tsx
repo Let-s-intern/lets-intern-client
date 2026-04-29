@@ -55,7 +55,7 @@ const TopBanner = () => {
     <>
       <section
         className={twMerge(
-          'band_banner fixed z-20 w-screen cursor-pointer bg-neutral-0 py-3 duration-300 md:px-5',
+          'band_banner bg-neutral-0 fixed z-20 w-screen cursor-pointer py-3 duration-300 md:px-5',
           FULL_NAVBAR_HEIGHT_OFFSET,
           scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
         )}
@@ -64,7 +64,7 @@ const TopBanner = () => {
       >
         <div className="flex items-center justify-between px-2">
           <div aria-hidden="true" className="h-6 w-6" />
-          <div className="flex flex-col items-center justify-center gap-1 text-center text-[13px] font-medium leading-[140%] md:flex-row md:text-small18">
+          <div className="md:text-small18 flex flex-col items-center justify-center gap-1 text-center text-[13px] font-medium leading-[140%] md:flex-row">
             <span>{data?.title}</span>
             <span>{data?.contents}</span>
           </div>

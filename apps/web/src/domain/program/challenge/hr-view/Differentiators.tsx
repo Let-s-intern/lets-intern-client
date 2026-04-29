@@ -106,7 +106,7 @@ export const Checklist = ({ items, isActive }: ChecklistProps) => {
 
   return (
     <div
-      className={`flex flex-col gap-3 rounded-xs p-5 md:gap-5 md:rounded-md ${bgColor} md:px-[34px] md:py-[35px]`}
+      className={`rounded-xs flex flex-col gap-3 p-5 md:gap-5 md:rounded-md ${bgColor} md:px-[34px] md:py-[35px]`}
     >
       {items.map((item, index) => (
         <div key={index} className="flex items-center gap-3">
@@ -143,22 +143,22 @@ export const Differentiator = ({
   return (
     <div className="flex flex-col gap-5 md:gap-8">
       <div className="flex flex-col gap-2">
-        <span className="text-medium32 font-semibold text-neutral-0 md:text-medium24">
+        <span className="text-medium32 text-neutral-0 md:text-medium24 font-semibold">
           {number}
         </span>
-        <h3 className="text-small16 font-bold text-neutral-0 md:text-medium24 md:font-semibold">
+        <h3 className="text-small16 text-neutral-0 md:text-medium24 font-bold md:font-semibold">
           {title}
         </h3>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
         <div className="flex flex-col gap-2">
-          <span className="pl-[6px] text-xsmall14 font-semibold text-neutral-50 md:text-small20">
+          <span className="text-xsmall14 md:text-small20 pl-[6px] font-semibold text-neutral-50">
             Before
           </span>
           <Checklist items={before} isActive={false} />
         </div>
         <div className="flex flex-col gap-2">
-          <span className="pl-[6px]text-xsmall14 font-semibold text-[#FF5E00] md:text-small20">
+          <span className="pl-[6px]text-xsmall14 md:text-small20 font-semibold text-[#FF5E00]">
             After
           </span>
           <Checklist items={after} isActive={true} />
@@ -212,8 +212,8 @@ export const FeedbackBenefit = ({
   description,
 }: FeedbackBenefitProps) => {
   return (
-    <div className="flex flex-1 flex-col gap-4 rounded-md bg-neutral-95 px-5 py-10 md:min-h-[186px] md:min-w-[532px] md:gap-6 md:px-[30px] md:py-10">
-      <h4 className="text-small18 font-bold text-neutral-0 md:text-medium22">
+    <div className="bg-neutral-95 flex flex-1 flex-col gap-4 rounded-md px-5 py-10 md:min-h-[186px] md:min-w-[532px] md:gap-6 md:px-[30px] md:py-10">
+      <h4 className="text-small18 text-neutral-0 md:text-medium22 font-bold">
         {title}
       </h4>
       <div className="flex items-start">

@@ -5,10 +5,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import NotiToast from './NotiToast';
-import {
-  DesktopApplyCTA,
-  MobileApplyCTA,
-} from '@/common/button/ApplyCTA';
+import { DesktopApplyCTA, MobileApplyCTA } from '@/common/button/ApplyCTA';
 import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
 
@@ -103,10 +100,7 @@ const ChallengeCTAButtons = ({
           challenge.challengeType ? [challenge.challengeType] : undefined
         }
       />
-      <NotiToast
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-      />
+      <NotiToast isVisible={showToast} onClose={() => setShowToast(false)} />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
         isOpen={isOpen}

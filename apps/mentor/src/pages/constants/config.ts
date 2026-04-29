@@ -6,16 +6,14 @@ export const mentorConfig = {
     body: ', 렛츠커리어와 함께 취준생들의 고민에 귀 기울여 주셔서 언제나 감사합니다. 앞으로도 잘 부탁드립니다!',
   },
   feedback: {
-    submitConfirm:
-      '최종 제출하시겠습니까? 제출 후에는 수정할 수 없습니다.',
+    submitConfirm: '최종 제출하시겠습니까? 제출 후에는 수정할 수 없습니다.',
     saveSuccess: '임시 저장되었습니다.',
     saveFail: '저장에 실패했습니다.',
     submitSuccess: '최종 제출되었습니다.',
     submitFail: '제출에 실패했습니다.',
     unsavedWarning:
       '저장하지 않은 변경사항이 있습니다. 다른 멘티로 이동하시겠습니까?',
-    closeWarning:
-      '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
+    closeWarning: '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
   },
   profile: {
     saveSuccess: '프로필이 저장되었습니다.',

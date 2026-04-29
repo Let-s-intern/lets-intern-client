@@ -50,13 +50,13 @@ const OldMissionTodayIcon = ({
             />
           </div>
         ) : (
-          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
+          <div className="bg-primary mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full">
             <i className="text-2xl text-white">
               <FaCheck />
             </i>
           </div>
         )}
-        <span className="text-sm font-semibold text-primary">
+        <span className="text-primary text-sm font-semibold">
           {mission.th}회차
         </span>
       </Link>

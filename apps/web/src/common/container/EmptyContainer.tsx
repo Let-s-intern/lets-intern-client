@@ -15,7 +15,7 @@ const EmptyContainer = ({ text, className }: EmptyContainerProps) => {
       )}
     >
       <Logo width={34} height={34} />
-      <p className="whitespace-pre-line text-center text-xsmall16 font-medium text-neutral-20">
+      <p className="text-xsmall16 text-neutral-20 whitespace-pre-line text-center font-medium">
         {text || '등록된 데이터가 없습니다.'}
       </p>
     </div>

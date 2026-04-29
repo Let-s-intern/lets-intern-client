@@ -43,7 +43,7 @@ export default function OldMissionFeedback() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleGoBack}
-            className="rounded flex h-8 w-8 items-center justify-center text-gray-600 hover:bg-gray-50"
+            className="flex h-8 w-8 items-center justify-center rounded text-gray-600 hover:bg-gray-50"
           >
             ←
           </button>
@@ -89,7 +89,7 @@ export default function OldMissionFeedback() {
         {/* 피드백 내용 섹션 */}
         <div className="mt-6">
           <div
-            className="rounded min-h-[500px] w-full border border-gray-300 bg-gray-100 p-6"
+            className="min-h-[500px] w-full rounded border border-gray-300 bg-gray-100 p-6"
             style={{ minHeight: '60vh' }}
           >
             <div className="flex h-full items-center justify-center">

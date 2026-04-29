@@ -60,12 +60,12 @@ const MissionStatusMessage = ({
   return (
     <div
       className={clsx(
-        'flex items-center gap-2 rounded-xxs bg-primary-5 px-3 py-3',
+        'rounded-xxs bg-primary-5 flex items-center gap-2 px-3 py-3',
         className,
       )}
     >
       <img src="/icons/check-star.svg" alt="status icon" className="h-6 w-6" />
-      <span className="flex-1 text-xsmall16 font-semibold text-primary">
+      <span className="text-xsmall16 text-primary flex-1 font-semibold">
         {messageParts.map((part, index) => (
           <span key={index} className={part.className}>
             {part.text}

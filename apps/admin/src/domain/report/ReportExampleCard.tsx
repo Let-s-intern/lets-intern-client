@@ -8,15 +8,15 @@ interface ReportExampleCardProps {
 const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
   return (
     <div className="w-full flex-1 flex-col whitespace-pre">
-      <div className="flex flex-col justify-between gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
-        <h5 className="whitespace-pre-line break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
+      <div className="bg-neutral-10 flex flex-col justify-between gap-y-3 overflow-hidden rounded-t-[10px] px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
+        <h5 className="text-xsmall16 md:text-small20 whitespace-pre-line break-keep text-center font-bold text-white">
           {example.title}
         </h5>
         <div className="w-full px-2.5 md:px-8">
           <img
             src={example.src}
             alt={example.title}
-            className="h-auto w-full rounded-t-xxs object-cover object-top shadow-none"
+            className="rounded-t-xxs h-auto w-full object-cover object-top shadow-none"
           />
         </div>
       </div>
@@ -27,7 +27,7 @@ const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
             key={`${example.title}-${index}`}
           >
             <CheckIcon width={24} height={24} />
-            <p className="flex-1 text-wrap text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
+            <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 flex-1 text-wrap font-semibold">
               {desc}
             </p>
           </div>

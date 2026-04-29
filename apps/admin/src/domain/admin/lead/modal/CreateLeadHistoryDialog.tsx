@@ -19,25 +19,23 @@ interface CreateLeadHistoryDialogProps {
   magnetOptions: SelectOption[];
 }
 
-const INITIAL_FORM: Record<
-  keyof CreateLeadHistoryRequest | 'userId',
-  string
-> = {
-  magnetId: '',
-  userId: '',
-  name: '',
-  phoneNum: '',
-  email: '',
-  inflow: '',
-  university: '',
-  major: '',
-  wishField: '',
-  wishCompany: '',
-  wishIndustry: '',
-  wishJob: '',
-  jobStatus: '',
-  instagramId: '',
-};
+const INITIAL_FORM: Record<keyof CreateLeadHistoryRequest | 'userId', string> =
+  {
+    magnetId: '',
+    userId: '',
+    name: '',
+    phoneNum: '',
+    email: '',
+    inflow: '',
+    university: '',
+    major: '',
+    wishField: '',
+    wishCompany: '',
+    wishIndustry: '',
+    wishJob: '',
+    jobStatus: '',
+    instagramId: '',
+  };
 
 const CreateLeadHistoryDialog = ({
   open,

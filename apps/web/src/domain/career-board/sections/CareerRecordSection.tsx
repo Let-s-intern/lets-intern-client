@@ -45,7 +45,11 @@ const CareerRecordSection = () => {
             jobTitle={latestCareer.job || ''}
             companyName={latestCareer.company || ''}
             employmentType={latestCareer.employmentType || ''}
-            startDate={latestCareer.startDate ? toCareerDateDot(latestCareer.startDate) : ''}
+            startDate={
+              latestCareer.startDate
+                ? toCareerDateDot(latestCareer.startDate)
+                : ''
+            }
             endDate={
               latestCareer.endDate ? toCareerDateDot(latestCareer.endDate) : ''
             }
@@ -93,17 +97,17 @@ const CareerRecordBody = ({
           {category}
         </span>
         <div className="flex flex-col gap-1">
-          <span className="text-xsmall14 font-normal text-neutral-0">
+          <span className="text-xsmall14 text-neutral-0 font-normal">
             {jobTitle}
           </span>
-          <span className="truncate text-xsmall16 font-medium text-neutral-0">
+          <span className="text-xsmall16 text-neutral-0 truncate font-medium">
             {companyName}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-xsmall14 font-normal text-neutral-0">
+            <span className="text-xsmall14 text-neutral-0 font-normal">
               {employmentType}
             </span>
-            <span className="text-xsmall14 font-normal text-neutral-40">
+            <span className="text-xsmall14 text-neutral-40 font-normal">
               {workPeriod}
             </span>
           </div>

@@ -19,7 +19,9 @@ interface UseCalendarLayoutReturn {
  *
  * The height accommodates at least MIN_ROWS bars to prevent layout shifts.
  */
-export function useCalendarLayout(visibleBarCount: number): UseCalendarLayoutReturn {
+export function useCalendarLayout(
+  visibleBarCount: number,
+): UseCalendarLayoutReturn {
   const bodyMinHeight = useMemo(() => {
     const rows = Math.max(visibleBarCount, MIN_ROWS);
     return rows * ROW_HEIGHT + PADDING_Y;

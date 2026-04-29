@@ -11,7 +11,7 @@ export default function Introduction({ value, onChange }: IntroductionProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="한줄 소개를 입력해주세요"
-        className="h-32 w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-primary"
+        className="focus:border-primary h-32 w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors"
       />
     </section>
   );

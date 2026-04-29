@@ -19,8 +19,8 @@ export function isB2BChallengeFromList(
   const adminList = challenge.adminClassificationInfo;
   return Boolean(
     adminList &&
-      adminList.length > 0 &&
-      adminList.some((info) => info.programAdminClassification === 'B2B'),
+    adminList.length > 0 &&
+    adminList.some((info) => info.programAdminClassification === 'B2B'),
   );
 }
 
@@ -36,7 +36,5 @@ export async function filterB2CChallenges<
     return [];
   }
 
-  return challenges.filter(
-    (challenge) => !isB2BChallengeFromList(challenge),
-  );
+  return challenges.filter((challenge) => !isB2BChallengeFromList(challenge));
 }

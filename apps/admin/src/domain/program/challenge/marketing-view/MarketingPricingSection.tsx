@@ -25,7 +25,7 @@ const PriceBox = ({
       <div
         className={
           label
-            ? 'w-fit rounded-xs bg-[#4A76FF] px-2.5 py-1.5 text-xsmall14 font-medium text-white'
+            ? 'rounded-xs text-xsmall14 w-fit bg-[#4A76FF] px-2.5 py-1.5 font-medium text-white'
             : 'h-[32px]'
         }
       >
@@ -34,7 +34,7 @@ const PriceBox = ({
       <div className="flex h-full flex-col gap-6">
         <span className="text-small20 font-bold">{title}</span>
         <div className="flex h-full flex-col gap-6 md:justify-between">
-          <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
+          <p className="text-small18 text-neutral-0 whitespace-pre-line font-medium md:mb-7 md:min-h-[78px]">
             {children}
           </p>
           <PriceSummary
@@ -119,7 +119,7 @@ const MarketingPricingSection = ({ priceInfoList, challengeType }: Props) => {
   return (
     <section
       id="pricing"
-      className="flex scroll-mt-[56px] flex-col items-center bg-neutral-90 px-5 py-[70px] md:scroll-mt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]"
+      className="bg-neutral-90 flex scroll-mt-[56px] flex-col items-center px-5 py-[70px] md:scroll-mt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]"
     >
       <SectionHeader className="mb-6 md:mb-[60px]">가격 플랜</SectionHeader>
       <div className="mb-[30px] flex flex-col items-center gap-2 md:mb-[50px] md:gap-3">
@@ -154,7 +154,7 @@ const MarketingPricingSection = ({ priceInfoList, challengeType }: Props) => {
       <FeedbackMentoringLink
         challengeType={challengeType}
         themeColor="#4A76FF"
-        className="mt-8 text-xsmall16"
+        className="text-xsmall16 mt-8"
       />
     </section>
   );

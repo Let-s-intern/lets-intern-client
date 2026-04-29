@@ -66,9 +66,7 @@ const BlogBasicInfoSection = ({
               </MenuItem>
             ))}
           </Select>
-          <FormHelperText>
-            카테고리는 하나만 설정할 수 있습니다.
-          </FormHelperText>
+          <FormHelperText>카테고리는 하나만 설정할 수 있습니다.</FormHelperText>
         </FormControl>
       </div>
 

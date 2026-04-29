@@ -126,12 +126,12 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     description:
       '마케팅 취업의 모든 것을 한 번에! 현직자 특강 8회 + 이력서·자소서·포트폴리오를 4주 동안 완성하는 마케터 올인원 챌린지',
     shortDescription: '현직자와 경험정리·자소서·포트폴리오 완성',
-    shortTarget: '마케팅 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
+    shortTarget:
+      '마케팅 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
     target:
       '• 마케팅 직무(그로스·퍼포먼스·콘텐츠·CRM)로 취업을 준비하는 취준생\n• 이력서·자소서·포트폴리오를 한 번에 완성하고 싶은 분\n• Figma·Meta·GA 등 마케팅 필수 실무 역량까지 함께 쌓고 싶은 분',
     duration: '4주',
-    pricing:
-      '1) 베이직 = 99,000\n2) 스탠다드 = 149,000\n3) 프리미엄 = 179,000',
+    pricing: '1) 베이직 = 99,000\n2) 스탠다드 = 149,000\n3) 프리미엄 = 179,000',
     feedback:
       '1) 스탠다드: 총 1회(*서면 멘토링)\n2) 프리미엄: 총 2회(*서면 멘토링)\n+전체: 마케터라면 꼭 들어야하는 특강 8회 제공\n마케팅 현직자 멘토 특강 4회\n마케팅 실무 필수 역량 특강 4회',
     deliverable:
@@ -145,7 +145,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     description:
       'HR 취업을 위한 모든 서류를 한 번에! 현직자 멘토 특강 4회 + 이력서·자소서·포트폴리오를 4주 동안 완성하는 HR 올인원 챌린지',
     shortDescription: 'HR 현직자와 경험정리·자소서·포트폴리오 완성',
-    shortTarget: 'HR 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
+    shortTarget:
+      'HR 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
     target:
       '• HR 직무(채용·조직문화·People·Analytics)로 취업을 준비하는 취준생\n• 이력서·자소서·포트폴리오를 한 번에 완성하고 싶은 분\n• HR 현직자 멘토 특강과 과제 전형 피드백까지 받고 싶은 분',
     duration: '4주',

@@ -234,14 +234,14 @@ const ChallengeDifferent = ({
           <SuperTitle style={{ color: styles.primaryColor }}>차별점</SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
             <p
-              className="text-xsmall16 font-bold md:text-small18"
+              className="text-xsmall16 md:text-small18 font-bold"
               style={{ color: styles.primaryColor }}
             >
               {isResumeTemplate
                 ? `${challengeTitle}에서 얻어갈 수 있는 것들`
                 : '비교 불가!'}
             </p>
-            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+            <div className="md:text-xlarge28 whitespace-pre text-[22px] font-bold text-black md:text-center">
               {isResumeTemplate ? (
                 <>
                   <span>렛츠커리어 챌린지만의 차별점</span>
@@ -278,7 +278,7 @@ const ChallengeDifferent = ({
           ))}
           {deposit >= 10000 && (
             <div
-              className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
+              className="text-small18 md:text-medium22 relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] font-bold md:px-10 md:py-[50px]"
               style={{
                 backgroundColor: styles.primaryLightColor,
                 color: styles.primaryLightColor,
@@ -302,7 +302,7 @@ const ChallengeDifferent = ({
 
       {/* 혜택 */}
       <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
-        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
+        <p className="text-small20 md:text-xlarge28 whitespace-pre-line font-bold md:text-center">
           여기서 끝이 아니죠
           <br />
           {challengeTitle}

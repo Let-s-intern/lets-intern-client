@@ -60,7 +60,7 @@ function ReviewLinkCard({
             sizes="(min-width:768px) 13rem , 50vw"
           />
         ) : (
-          <div className="h-full w-full rounded-sm bg-primary-light/10"></div>
+          <div className="bg-primary-light/10 h-full w-full rounded-sm"></div>
         )}
       </div>
       <div>
@@ -68,13 +68,13 @@ function ReviewLinkCard({
           {badgeType ? <ReviewBadge type={badgeType} /> : null}
 
           {programTitle ? (
-            <span className="block max-w-full truncate text-xsmall14 font-semibold text-primary">
+            <span className="text-xsmall14 text-primary block max-w-full truncate font-semibold">
               {programTitle}
             </span>
           ) : null}
         </div>
 
-        <h3 className="mb-2 line-clamp-2 h-12 overflow-hidden text-ellipsis text-xsmall16 font-bold text-neutral-0">
+        <h3 className="text-xsmall16 text-neutral-0 mb-2 line-clamp-2 h-12 overflow-hidden text-ellipsis font-bold">
           <Link
             to={url ?? ''}
             {...(!isInternal
@@ -83,13 +83,13 @@ function ReviewLinkCard({
                   rel: 'noreferrer noopener',
                 }
               : {})}
-            className="transition hover:text-neutral-30"
+            className="hover:text-neutral-30 transition"
           >
             {title}
             <span className="absolute inset-0 rounded-md transition"></span>
           </Link>
         </h3>
-        <p className="mb-4 line-clamp-2 overflow-hidden text-ellipsis text-xsmall14 text-neutral-20">
+        <p className="text-xsmall14 text-neutral-20 mb-4 line-clamp-2 overflow-hidden text-ellipsis">
           {description}
         </p>
         {externalLink || favicon ? (
@@ -98,7 +98,7 @@ function ReviewLinkCard({
               <img className="h-5 w-5" src={favicon} alt={title + ' 파비콘'} />
             )}
             {externalLink ? (
-              <span className="block truncate text-xsmall14 text-neutral-35">
+              <span className="text-xsmall14 text-neutral-35 block truncate">
                 {externalLink}
               </span>
             ) : null}

@@ -30,7 +30,7 @@ const ScrollTooltipQuestion = () => {
         <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
-        <div className="absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full rounded-xs bg-white shadow-[2px_0px_10px_rgba(0,0,0,0.07)]">
+        <div className="rounded-xs absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full bg-white shadow-[2px_0px_10px_rgba(0,0,0,0.07)]">
           <div
             className="absolute left-1/2 top-0 h-3 w-6 -translate-x-1/2 -translate-y-full bg-gray-300 blur-md"
             style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}

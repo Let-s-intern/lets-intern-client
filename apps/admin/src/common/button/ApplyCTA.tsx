@@ -12,7 +12,7 @@ function DisabledButton() {
   return (
     <button
       disabled
-      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall16 font-medium text-neutral-40"
+      className="bg-neutral-80 text-xsmall16 text-neutral-40 w-full rounded-sm px-6 py-3 font-medium"
     >
       이미 신청이 완료되었습니다
     </button>
@@ -86,7 +86,7 @@ export function MobileApplyCTA({
       ) : hasDeadline ? (
         <>
           <div>
-            <span className="mb-1 block text-xsmall14 font-medium">
+            <span className="text-xsmall14 mb-1 block font-medium">
               {program.deadline!.format('M월 D일 (dd)')} 마감까지 🚀
             </span>
             <div className="flex items-center gap-2">
@@ -127,17 +127,17 @@ export const MobileCTA = memo(function MobileCTA({
   return (
     <div
       className={twMerge(
-        'safe-area-bottom fixed left-0 right-0 z-40 w-full overflow-hidden bg-neutral-0/65 text-xxsmall12',
+        'safe-area-bottom bg-neutral-0/65 text-xxsmall12 fixed left-0 right-0 z-40 w-full overflow-hidden',
         className,
       )}
     >
       {banner}
       {!banner && (
-        <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
+        <div className="bg-neutral-0/95 text-static-100 w-full py-1.5 text-center font-bold">
           {title}
         </div>
       )}
-      <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
+      <div className="text-neutral-80 flex w-full items-center justify-between px-5 pb-5 pt-3 backdrop-blur">
         {children}
       </div>
     </div>
@@ -166,7 +166,7 @@ export function DesktopApplyCTA({
             : program?.title}
         </span>
         {!isOutOfDate && hasDeadline && program.deadline && (
-          <span className="text-xsmall14 font-medium text-neutral-80">
+          <span className="text-xsmall14 text-neutral-80 font-medium">
             {program.deadline.format('M월 D일 (dd)')} 마감까지 🚀
           </span>
         )}
@@ -213,7 +213,7 @@ export function DesktopCTA({
   return (
     <div
       className={twMerge(
-        'fixed bottom-4 left-0 right-0 z-40 mx-auto w-full max-w-[1000px] overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur',
+        'bg-neutral-0/65 fixed bottom-4 left-0 right-0 z-40 mx-auto w-full max-w-[1000px] overflow-hidden rounded-sm px-5 py-4 backdrop-blur',
         className,
       )}
     >

@@ -34,8 +34,8 @@ const MonthDivider = ({ days }: MonthDividerProps) => {
       className="pointer-events-none absolute bottom-0 top-0 z-10 flex flex-col items-center"
       style={{ left: `${leftPercent}%` }}
     >
-      <div className="h-full w-px bg-primary-20" />
-      <span className="absolute -top-5 rounded-full bg-primary-10 px-2 py-0.5 text-[10px] font-semibold text-primary-dark">
+      <div className="bg-primary-20 h-full w-px" />
+      <span className="bg-primary-10 text-primary-dark absolute -top-5 rounded-full px-2 py-0.5 text-[10px] font-semibold">
         {monthLabel}
       </span>
     </div>

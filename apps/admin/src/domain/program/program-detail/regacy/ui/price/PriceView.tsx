@@ -22,7 +22,7 @@ const PriceView = ({
       <h3 className="font-semibold">결제 금액</h3>
       <div className="mt-3 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="w-[5.5rem] rounded-full bg-primary py-1 text-center text-xs font-medium text-white">
+          <div className="bg-primary w-[5.5rem] rounded-full py-1 text-center text-xs font-medium text-white">
             참여비용
           </div>
           <span className="font-semibold">{price.toLocaleString()}원</span>
@@ -41,7 +41,7 @@ const PriceView = ({
           <div className="w-[5.5rem] rounded-full bg-amber-500 py-1 text-center text-xs font-medium text-white">
             쿠폰 할인
           </div>
-          <span className="font-semibold text-primary">
+          <span className="text-primary font-semibold">
             -{couponDiscount.toLocaleString()}원
           </span>
         </div>

@@ -143,7 +143,10 @@ export const useGetAdminUserCareerQuery = (
         }
       }
 
-      return { userCareers: [], pageInfo: { pageNum: 0, pageSize: 0, totalElements: 0, totalPages: 0 } };
+      return {
+        userCareers: [],
+        pageInfo: { pageNum: 0, pageSize: 0, totalElements: 0, totalPages: 0 },
+      };
     },
     enabled: !!userId,
   });

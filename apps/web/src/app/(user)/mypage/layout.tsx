@@ -64,7 +64,8 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
 
   const careerSubTabsProps = {
     options: careerSubTabs.map((tab) => ({ value: tab.id, label: tab.label })),
-    selected: careerSubTabs.find((tab) => tab.active)?.id ?? careerSubTabs[0].id,
+    selected:
+      careerSubTabs.find((tab) => tab.active)?.id ?? careerSubTabs[0].id,
     onChange: (id: string) => {
       const tab = careerSubTabs.find((t) => t.id === id);
       if (tab) router.push(tab.path);
@@ -137,16 +138,16 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       <MyPageBanner className="overflow-hidden md:hidden" />
 
       {/* 메인 탭 네비게이션 (모바일) */}
-      <nav className="flex w-full gap-6 overflow-x-auto border-b border-neutral-85 px-5 pt-3 scrollbar-hide md:hidden">
+      <nav className="border-neutral-85 scrollbar-hide flex w-full gap-6 overflow-x-auto border-b px-5 pt-3 md:hidden">
         {sidebarItems.map((tab) => (
           <button
             key={tab.id}
             onClick={() => router.push(tab.path)}
             className={clsx(
-              'flex-shrink-0 whitespace-nowrap pb-3 text-xsmall16',
+              'text-xsmall16 flex-shrink-0 whitespace-nowrap pb-3',
               tab.active
-                ? 'font-semibold text-primary'
-                : 'font-medium text-neutral-45',
+                ? 'text-primary font-semibold'
+                : 'text-neutral-45 font-medium',
             )}
           >
             {tab.label}
@@ -174,7 +175,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
           )}
         >
           <div className="flex flex-col gap-7">
-            <h1 className="hidden text-medium24 font-semibold text-neutral-0 md:block">
+            <h1 className="text-medium24 text-neutral-0 hidden font-semibold md:block">
               마이페이지
             </h1>
 
@@ -188,9 +189,9 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
                   key={item.id}
                   onClick={() => router.push(item.path)}
                   className={clsx(
-                    'flex items-center rounded-xs px-3 py-2.5 text-left text-xsmall16 font-medium',
+                    'rounded-xs text-xsmall16 flex items-center px-3 py-2.5 text-left font-medium',
                     item.active
-                      ? 'bg-primary-5 font-semibold text-primary'
+                      ? 'bg-primary-5 text-primary font-semibold'
                       : 'text-neutral-40',
                   )}
                 >
@@ -200,7 +201,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
             </nav>
 
             {/* 배너 (데스크탑) */}
-            <MyPageBanner className="hidden overflow-hidden rounded-xs md:block" />
+            <MyPageBanner className="rounded-xs hidden overflow-hidden md:block" />
           </div>
         </aside>
 

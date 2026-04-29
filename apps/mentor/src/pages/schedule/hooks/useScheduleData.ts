@@ -34,9 +34,7 @@ export function useScheduleData() {
   }, [allChallenges]);
 
   // Bars collected from child data fetchers (keyed by "challengeId-missionId")
-  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
-    new Map(),
-  );
+  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(new Map());
 
   const handleData = useCallback((key: string, bar: PeriodBarData) => {
     setBarsMap((prev) => {

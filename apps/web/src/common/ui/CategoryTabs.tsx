@@ -53,7 +53,7 @@ const CategoryTabs = <Value extends string>({
     <nav
       ref={navRef}
       className={clsx(
-        'relative flex w-full flex-nowrap overflow-x-auto border-b border-neutral-85 pl-5 scrollbar-hide md:pl-0',
+        'border-neutral-85 scrollbar-hide relative flex w-full flex-nowrap overflow-x-auto border-b pl-5 md:pl-0',
         size === 'large'
           ? 'text-xsmall16 md:text-small20'
           : 'text-xsmall14 md:text-xsmall16',
@@ -80,8 +80,8 @@ const CategoryTabs = <Value extends string>({
                 ? 'mr-4 text-nowrap pb-2 transition-colors md:mr-6 md:pb-3'
                 : 'mr-6 text-nowrap pb-3 transition-colors',
               isActive
-                ? 'font-semibold text-neutral-10'
-                : 'font-medium text-neutral-45 hover:text-neutral-10',
+                ? 'text-neutral-10 font-semibold'
+                : 'text-neutral-45 hover:text-neutral-10 font-medium',
             )}
           >
             {option.label as ReactNode}
@@ -90,7 +90,7 @@ const CategoryTabs = <Value extends string>({
       })}
       <span
         aria-hidden
-        className="absolute bottom-0 h-0.5 bg-neutral-0"
+        className="bg-neutral-0 absolute bottom-0 h-0.5"
         style={{
           left: indicator.left,
           width: indicator.width,

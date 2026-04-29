@@ -33,15 +33,15 @@ const MoreHeader = ({
     >
       <div
         className={clsx(
-          'flex flex-1 select-none gap-x-2 text-neutral-0',
+          'text-neutral-0 flex flex-1 select-none gap-x-2',
           isVertical ? 'flex-col items-start gap-y-1' : 'items-center',
         )}
       >
         <h2
           className={clsx(
-            'line-clamp-2 overflow-hidden break-all text-neutral-0',
+            'text-neutral-0 line-clamp-2 overflow-hidden break-all',
             isBig
-              ? 'text-small20 font-bold md:text-medium24'
+              ? 'text-small20 md:text-medium24 font-bold'
               : 'text-small20 font-semibold',
           )}
         >
@@ -63,7 +63,7 @@ const MoreHeader = ({
           href={href}
           target={href.startsWith('http') ? '_blank' : undefined}
           className={clsx(
-            'more_btn shrink-0 font-medium text-neutral-45',
+            'more_btn text-neutral-45 shrink-0 font-medium',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
             hideMoreWhenMobile ? 'hidden md:block' : '',

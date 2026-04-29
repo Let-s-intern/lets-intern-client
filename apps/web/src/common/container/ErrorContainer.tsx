@@ -18,7 +18,7 @@ const ErrorContainer = ({
       )}
     >
       <AlertCircle size={34} />
-      <p className="whitespace-pre-line text-center text-xsmall16 font-medium text-neutral-20">
+      <p className="text-xsmall16 text-neutral-20 whitespace-pre-line text-center font-medium">
         {text}
       </p>
     </div>

@@ -68,9 +68,12 @@ export const patchAttendanceMentorReqSchema = z
     feedback: z.string().optional(),
     feedbackStatus: z.string().optional(),
   })
-  .refine((data) => data.feedback !== undefined || data.feedbackStatus !== undefined, {
-    message: 'feedback 또는 feedbackStatus 중 하나는 필수입니다',
-  });
+  .refine(
+    (data) => data.feedback !== undefined || data.feedbackStatus !== undefined,
+    {
+      message: 'feedback 또는 feedbackStatus 중 하나는 필수입니다',
+    },
+  );
 
 export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema

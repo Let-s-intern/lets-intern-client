@@ -86,13 +86,13 @@ const DailyMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex h-[338px] min-h-[180px] flex-col rounded-xs border md:h-[360px] md:w-[488px]',
+        'rounded-xs flex h-[338px] min-h-[180px] flex-col border md:h-[360px] md:w-[488px]',
         isSubmitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
       <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:gap-2 md:py-4">
         <h2 className="flex flex-row font-semibold text-[#4A495C]">
-          <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
+          <span className="text-neutral-10 after:border-neutral-60 relative inline-block font-semibold after:mx-[6px] after:h-[18px] after:border-r after:content-['']">
             {missionTh}
           </span>
           <span>{missionName}</span>
@@ -102,7 +102,7 @@ const DailyMissionSection = ({
         </span>
       </div>
       <div className="flex-1 overflow-hidden p-4">
-        <p className="mb-4 line-clamp-[8] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:h-48 md:text-xsmall16">
+        <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 mb-4 line-clamp-[8] whitespace-pre-line md:mb-0 md:h-48">
           {missionDescription}
         </p>
       </div>
@@ -114,10 +114,10 @@ const DailyMissionSection = ({
         }
         onClick={handleMissionClick}
         className={clsx(
-          'm-4 rounded-xs py-3 text-center',
+          'rounded-xs m-4 py-3 text-center',
           isSubmitEdit
             ? 'bg-primary text-white'
-            : 'cursor-not-allowed bg-neutral-70 text-white',
+            : 'bg-neutral-70 cursor-not-allowed text-white',
         )}
       >
         {isSubmitted ? '제출 수정하기' : '미션 수행하기'}

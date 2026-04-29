@@ -35,12 +35,12 @@ const Dropdown = ({
   );
 
   return (
-    <div className="flex w-full flex-col overflow-hidden rounded-xs bg-white md:hidden">
+    <div className="rounded-xs flex w-full flex-col overflow-hidden bg-white md:hidden">
       <button
         className="flex w-full items-center justify-between p-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-2.5 text-small18 font-semibold text-[#FF5E00]">
+        <div className="text-small18 flex items-center gap-2.5 font-semibold text-[#FF5E00]">
           <span>WEEK {index + 1}</span>
           <span>{date}</span>
         </div>
@@ -53,7 +53,7 @@ const Dropdown = ({
       {isOpen && (
         <div
           className={twMerge(
-            'h-full min-w-0 overflow-x-hidden border-neutral-80',
+            'border-neutral-80 h-full min-w-0 overflow-x-hidden',
             isOpen && 'border-t p-4 pt-5',
           )}
         >
@@ -81,14 +81,14 @@ const SidebarButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex flex-col items-start gap-1 rounded-xs px-[30px] py-5',
+        'rounded-xs flex flex-col items-start gap-1 px-[30px] py-5',
         active
           ? 'bg-[#FFF7F2] text-[#FF5E00]'
-          : 'bg-transparent text-neutral-35',
+          : 'text-neutral-35 bg-transparent',
       )}
       onClick={onClick}
     >
-      <div className="flex items-center gap-2.5 text-small18 font-semibold md:text-small20">
+      <div className="text-small18 md:text-small20 flex items-center gap-2.5 font-semibold">
         <span>WEEK {index + 1}</span>
         <span>{date}</span>
       </div>
@@ -130,7 +130,7 @@ function DesktopHrCurriculums({
   return (
     <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
       {/* Sidebar */}
-      <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px]">
+      <div className="border-neutral-80 flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
             key={`sidebar-button-${index}`}

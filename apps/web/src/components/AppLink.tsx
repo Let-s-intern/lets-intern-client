@@ -7,12 +7,7 @@ type AppLinkProps = Omit<React.ComponentProps<typeof Link>, 'as'>;
 export function AppLink(props: AppLinkProps) {
   const { href, children, className, ...rest } = props;
   return (
-    <Link
-      href={href}
-      className={className}
-      as={NextLink as any}
-      {...rest}
-    >
+    <Link href={href} className={className} as={NextLink as any} {...rest}>
       {children}
     </Link>
   );

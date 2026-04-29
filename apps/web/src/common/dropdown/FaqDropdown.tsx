@@ -10,10 +10,10 @@ function FaqDropdown({ faq }: { faq: Faq }) {
   return (
     <div
       key={faq.id}
-      className="overflow-hidden rounded-xxs border border-neutral-80"
+      className="rounded-xxs border-neutral-80 overflow-hidden border"
     >
       <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
+        <span className="text-xsmall14 text-neutral-0 md:text-medium22 font-semibold">
           {faq.question}
         </span>
         <IoIosArrowDown
@@ -24,7 +24,7 @@ function FaqDropdown({ faq }: { faq: Faq }) {
         />
       </div>
       {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
+        <div className="border-neutral-80 text-xxsmall12 text-neutral-35 md:text-small18 border-t px-5 py-3">
           {faq.answer}
         </div>
       )}

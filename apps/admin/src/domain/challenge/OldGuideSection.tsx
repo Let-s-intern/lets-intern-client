@@ -13,7 +13,7 @@ const OldGuideSection = ({ guides }: Props) => {
           <li className="flex-1" key={guide.id}>
             <Link
               to={guide.link ?? ''}
-              className="flex h-full items-center justify-center rounded-xl border border-[#E4E4E7] font-medium duration-150 hover:bg-neutral-90"
+              className="hover:bg-neutral-90 flex h-full items-center justify-center rounded-xl border border-[#E4E4E7] font-medium duration-150"
               target="_blank"
               rel="noopenner noreferrer"
             >

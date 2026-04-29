@@ -26,7 +26,7 @@ function BlogReviewListSection({ page, setPage }: Props) {
 
   if (isLoading) return <LoadingContainer className="h-[50vh]" />;
   if (data?.reviewList.length === 0)
-    return <p className="text-center text-xsmall14">작성된 후기가 없습니다</p>;
+    return <p className="text-xsmall14 text-center">작성된 후기가 없습니다</p>;
 
   return (
     <section>

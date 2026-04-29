@@ -60,7 +60,7 @@ function DurationBox({
   return (
     <div
       className={twMerge(
-        'rounded-xxs bg-primary-10 p-1 text-xxsmall12 font-bold text-primary',
+        'rounded-xxs bg-primary-10 text-xxsmall12 text-primary p-1 font-bold',
         className,
       )}
     >

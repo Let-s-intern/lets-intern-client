@@ -133,18 +133,18 @@ const DocumentItem = ({ type, fileName, fileUrl }: DocumentItemProps) => {
 
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <span className="w-[52px] whitespace-nowrap text-xxsmall12 font-normal text-neutral-40">
+      <span className="text-xxsmall12 text-neutral-40 w-[52px] whitespace-nowrap font-normal">
         {type}
       </span>
       {fileUrl ? (
         <span
-          className="min-w-0 cursor-pointer truncate whitespace-nowrap text-xsmall14 font-normal text-neutral-0 underline"
+          className="text-xsmall14 text-neutral-0 min-w-0 cursor-pointer truncate whitespace-nowrap font-normal underline"
           onClick={handleFileClick}
         >
           {fileName}
         </span>
       ) : (
-        <span className="text-xsmall14 font-normal text-neutral-40">-</span>
+        <span className="text-xsmall14 text-neutral-40 font-normal">-</span>
       )}
     </div>
   );

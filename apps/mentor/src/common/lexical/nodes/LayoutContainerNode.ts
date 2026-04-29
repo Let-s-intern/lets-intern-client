@@ -17,8 +17,8 @@ import type {
   Spread,
 } from 'lexical';
 
-import {addClassNamesToElement} from '@lexical/utils';
-import {ElementNode} from 'lexical';
+import { addClassNamesToElement } from '@lexical/utils';
+import { ElementNode } from 'lexical';
 
 export type SerializedLayoutContainerNode = Spread<
   {
@@ -36,7 +36,7 @@ function $convertLayoutContainerElement(
   );
   if (templateColumns) {
     const node = $createLayoutContainerNode(templateColumns);
-    return {node};
+    return { node };
   }
   return null;
 }
@@ -70,7 +70,7 @@ export class LayoutContainerNode extends ElementNode {
     const element = document.createElement('div');
     element.style.gridTemplateColumns = this.__templateColumns;
     element.setAttribute('data-lexical-layout-container', 'true');
-    return {element};
+    return { element };
   }
 
   updateDOM(prevNode: LayoutContainerNode, dom: HTMLElement): boolean {

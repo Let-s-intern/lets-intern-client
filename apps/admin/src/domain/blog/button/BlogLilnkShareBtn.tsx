@@ -23,7 +23,7 @@ function BlogLinkShareBtn({
     <button
       type="button"
       className={twMerge(
-        'blog_share flex items-center gap-1.5 rounded-full border border-neutral-80 px-3 py-2',
+        'blog_share border-neutral-80 flex items-center gap-1.5 rounded-full border px-3 py-2',
         className,
       )}
       onClick={async () => {
@@ -43,7 +43,7 @@ function BlogLinkShareBtn({
         color={iconColor ?? '#5C5F66'}
       />
       {!hideCaption && (
-        <span className="text-xsmall14 font-medium text-neutral-35">
+        <span className="text-xsmall14 text-neutral-35 font-medium">
           공유하기
         </span>
       )}

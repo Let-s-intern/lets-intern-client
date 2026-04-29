@@ -130,7 +130,7 @@ const CurationScreen = () => {
             <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
               3초 큐레이션
             </p>
-            <h2 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+            <h2 className="text-neutral-0 mb-4 text-center text-2xl font-semibold leading-tight md:text-3xl md:leading-10">
               나에게 맞는 프로그램 찾기
             </h2>
             <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
@@ -179,7 +179,7 @@ const CurationScreen = () => {
       </section>
 
       {/* Section Divider */}
-      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
+      <div className="border-neutral-90 mx-6 border-t md:mx-10 lg:mx-[7.5rem]" />
 
       {/* Challenge Comparison Section */}
       <section className="w-full bg-[#f9f9f8]">
@@ -189,7 +189,7 @@ const CurationScreen = () => {
       </section>
 
       {/* Section Divider */}
-      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
+      <div className="border-neutral-90 mx-6 border-t md:mx-10 lg:mx-[7.5rem]" />
 
       {/* FAQ Section */}
       <section className="w-full bg-white">

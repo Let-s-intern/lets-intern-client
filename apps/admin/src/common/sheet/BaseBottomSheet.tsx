@@ -42,7 +42,7 @@ const BaseBottomSheet = ({
           {/* 닫기 버튼 */}
           <div className="sticky top-0 z-10 w-full bg-white pb-5 pt-3">
             <div
-              className="mx-auto h-1.5 w-[4.375rem] rounded-xxs bg-neutral-80"
+              className="rounded-xxs bg-neutral-80 mx-auto h-1.5 w-[4.375rem]"
               onClick={onClose}
             />
           </div>

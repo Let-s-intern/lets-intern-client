@@ -316,9 +316,7 @@ export const useGetLiveQuery = ({
 export const fetchLiveData = async (
   liveId: string,
 ): Promise<LiveIdPrimitive> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/live/${liveId}`,
-  );
+  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/live/${liveId}`);
 
   if (!res.ok) {
     throw new Error('Failed to fetch live data');
@@ -519,9 +517,7 @@ export const getVod = async (vodId: number) => {
 export const fetchPublicVodData = async (
   vodId: string,
 ): Promise<PublicVodSchema> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/vods/${vodId}`,
-  );
+  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/vods/${vodId}`);
 
   if (!res.ok) {
     throw new Error('VOD 상세 조회에 실패했습니다.');

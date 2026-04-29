@@ -180,9 +180,7 @@ const useLeadHistoryFilter = ({
   const handleUpdateCondition = useCallback(
     (
       conditionId: string,
-      updates: Partial<
-        Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>
-      >,
+      updates: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>>,
     ) => {
       updateTree(
         (prev) =>
@@ -242,14 +240,12 @@ const useLeadHistoryFilter = ({
     (field: LeadHistoryFilterField, value: string) => {
       if (field === 'magnet') return magnetLabelMap.get(value) ?? value;
       if (field === 'program') return value;
-      if (field === 'magnetType')
-        return magnetTypeLabelMap.get(value) ?? value;
+      if (field === 'magnetType') return magnetTypeLabelMap.get(value) ?? value;
       if (field === 'marketingAgree')
         return marketingAgreeLabelMap.get(value) ?? value;
       if (field === 'membership') {
         return (
-          membershipOptions.find((item) => item.value === value)?.label ??
-          value
+          membershipOptions.find((item) => item.value === value)?.label ?? value
         );
       }
       return value;

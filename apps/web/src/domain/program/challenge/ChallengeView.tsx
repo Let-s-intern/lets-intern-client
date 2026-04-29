@@ -384,7 +384,7 @@ const ChallengeView: React.FC<{
             >
               {(receivedContent.challengeReview ?? []).length > 0 &&
                 receivedContent.blogReview && (
-                  <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
+                  <div className="bg-neutral-95 flex w-full flex-col items-center py-[70px] md:py-[110px]">
                     <ProgramBestReviewSection
                       type="challenge"
                       reviews={receivedContent.challengeReview}

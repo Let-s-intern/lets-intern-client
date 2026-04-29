@@ -6,15 +6,9 @@ import { useEffect, useRef, useState } from 'react';
 import Input from '@/common/input/v1/Input';
 import axios from '@/utils/axios';
 import { typeToText } from '@/utils/converTypeToText';
-import {
-  isValidEmail,
-  isValidPhoneNumber,
-} from '@/utils/valid';
+import { isValidEmail, isValidPhoneNumber } from '@/utils/valid';
 
-import {
-  bankTypeToText,
-  wishJobToText,
-} from '@/utils/convert';
+import { bankTypeToText, wishJobToText } from '@/utils/convert';
 import InputPriceContent from '../../../ui/price/InputPriceContent';
 import classes from './InputContent.module.scss';
 

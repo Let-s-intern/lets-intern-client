@@ -6,11 +6,11 @@
  *
  */
 
-import type {LexicalEditor} from 'lexical';
+import type { LexicalEditor } from 'lexical';
 
-import {calculateZoomLevel} from '@lexical/utils';
+import { calculateZoomLevel } from '@lexical/utils';
 import * as React from 'react';
-import {useRef} from 'react';
+import { useRef } from 'react';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -36,8 +36,8 @@ export default function ImageResizer({
   onLinkClick,
 }: {
   editor: LexicalEditor;
-  buttonRef: {current: null | HTMLButtonElement};
-  imageRef: {current: null | HTMLElement};
+  buttonRef: { current: null | HTMLButtonElement };
+  imageRef: { current: null | HTMLElement };
   maxWidth?: number;
   onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
   onResizeStart: () => void;
@@ -77,8 +77,8 @@ export default function ImageResizer({
   const maxWidthContainer = maxWidth
     ? maxWidth
     : editorRootElement !== null
-    ? editorRootElement.getBoundingClientRect().width - 20
-    : 100;
+      ? editorRootElement.getBoundingClientRect().width - 20
+      : 100;
   const maxHeightContainer =
     editorRootElement !== null
       ? editorRootElement.getBoundingClientRect().height - 20
@@ -150,7 +150,7 @@ export default function ImageResizer({
 
     if (image !== null && controlWrapper !== null) {
       event.preventDefault();
-      const {width, height} = image.getBoundingClientRect();
+      const { width, height } = image.getBoundingClientRect();
       const zoom = calculateZoomLevel(image);
       const positioning = positioningRef.current;
       positioning.startWidth = width;
@@ -262,14 +262,13 @@ export default function ImageResizer({
             ref={buttonRef}
             onClick={() => {
               setShowCaption(!showCaption);
-            }}>
+            }}
+          >
             Add Caption
           </button>
         )}
         {onLinkClick && (
-          <button
-            className="image-link-button"
-            onClick={onLinkClick}>
+          <button className="image-link-button" onClick={onLinkClick}>
             링크
           </button>
         )}

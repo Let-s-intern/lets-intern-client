@@ -9,11 +9,9 @@ interface MentorListProps {
 export default function MentorList({ mentors, matchCounts }: MentorListProps) {
   return (
     <div className="mb-6">
-      <h3 className="mb-3 text-medium18 font-semibold">등록된 멘토</h3>
+      <h3 className="text-medium18 mb-3 font-semibold">등록된 멘토</h3>
       {mentors.length === 0 ? (
-        <p className="text-xsmall14 text-neutral-40">
-          등록된 멘토가 없습니다.
-        </p>
+        <p className="text-xsmall14 text-neutral-40">등록된 멘토가 없습니다.</p>
       ) : (
         <div className="flex flex-wrap gap-3">
           {mentors.map((m, i) => {
@@ -30,14 +28,14 @@ export default function MentorList({ mentors, matchCounts }: MentorListProps) {
                     [{m.userId}] {m.name}
                   </p>
                   <span
-                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.text} opacity-80`}
+                    className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.text} opacity-80`}
                   >
                     {count}명 배정
                   </span>
                 </div>
                 {career?.company && career?.job && (
                   <p
-                    className={`mt-0.5 text-xxsmall12 ${color.text} opacity-70`}
+                    className={`text-xxsmall12 mt-0.5 ${color.text} opacity-70`}
                   >
                     {career.company} / {career.job}
                   </p>

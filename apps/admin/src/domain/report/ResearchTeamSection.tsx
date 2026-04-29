@@ -33,7 +33,7 @@ const ResearchTeamSection = ({ reportType }: ResearchTeamSectionProps) => {
         {SUPER_TITLE}
       </SubHeader>
       <MainHeader>{HEADING}</MainHeader>
-      <p className="mb-8 mt-5 text-center text-xsmall14 md:mb-16 md:mt-8 md:text-small20">
+      <p className="text-xsmall14 md:text-small20 mb-8 mt-5 text-center md:mb-16 md:mt-8">
         렛츠커리어 취업 연구팀은
         <br className="md:hidden" /> 대기업 및 IT 업계 다양한 직무 현직자들로
         구성되어,

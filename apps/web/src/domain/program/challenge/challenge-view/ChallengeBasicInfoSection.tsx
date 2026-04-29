@@ -29,7 +29,7 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
 
         {/* 챌린지 정보 */}
         <div className="w-full md:max-w-[424px]">
-          <h1 className="mb-2 py-1 text-medium22 font-bold text-neutral-0 md:text-medium24">
+          <h1 className="text-medium22 text-neutral-0 md:text-medium24 mb-2 py-1 font-bold">
             {challenge.title}
           </h1>
 

@@ -25,8 +25,8 @@ const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
       <Heading2>모집개요</Heading2>
       <div className="flex w-full flex-col gap-3 md:flex-row">
-        <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-          <div className="flex w-full flex-col gap-y-5 text-primary-90">
+        <div className="bg-neutral-95 flex flex-1 items-center justify-center rounded-md px-6 py-5">
+          <div className="text-primary-90 flex w-full flex-col gap-y-5">
             <BasicInfoRow
               icon={<ClockIcon />}
               title="진행 기간"
@@ -55,19 +55,19 @@ const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
             />
           </div>
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center gap-y-3 rounded-md bg-neutral-95 px-6 py-5">
+        <div className="bg-neutral-95 flex flex-1 flex-col items-center justify-center gap-y-3 rounded-md px-6 py-5">
           <div className="flex w-full flex-col gap-y-2.5">
             <div className="flex w-full items-center gap-x-2">
               <WalletIcon className="text-primary-90" />
               <span className="text-xsmall16 font-semibold">가격</span>
             </div>
-            <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 py-2.5 text-neutral-0">
+            <div className="border-neutral-80 text-neutral-0 flex w-full flex-col gap-y-2.5 border-b py-2.5">
               <div className="flex w-full items-center justify-between gap-x-4">
                 <span className="text-xsmall16">정가</span>
                 <span>{live.priceInfo.price?.toLocaleString()}원</span>
               </div>
               <div className="flex w-full items-center justify-between gap-x-4">
-                <span className="text-xsmall16 font-bold text-primary">
+                <span className="text-xsmall16 text-primary font-bold">
                   {getDiscountPercent(
                     live.priceInfo.price ?? 0,
                     live.priceInfo.discount ?? 0,
@@ -78,7 +78,7 @@ const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
               </div>
             </div>
           </div>
-          <div className="w-full text-end text-xxlarge32 font-bold text-neutral-0">
+          <div className="text-xxlarge32 text-neutral-0 w-full text-end font-bold">
             {(
               (live.priceInfo.price ?? 0) - (live.priceInfo.discount ?? 0)
             ).toLocaleString()}

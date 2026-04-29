@@ -56,7 +56,7 @@ const RightTooltip = ({ children }: { children: React.ReactNode }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="relative flex items-center gap-1 whitespace-nowrap rounded-xs bg-neutral-10 py-2 pl-2.5 pr-0.5 text-xs text-white">
+    <div className="rounded-xs bg-neutral-10 relative flex items-center gap-1 whitespace-nowrap py-2 pl-2.5 pr-0.5 text-xs text-white">
       {children}
       <X size={16} onClick={handleClose} className="m-2 cursor-pointer" />
 
@@ -97,7 +97,7 @@ const LeftTooltip = ({ children }: { children: React.ReactNode }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="relative flex items-center gap-1 rounded-xs bg-neutral-10 py-2 pl-2.5 pr-0.5 text-xs text-white">
+    <div className="rounded-xs bg-neutral-10 relative flex items-center gap-1 py-2 pl-2.5 pr-0.5 text-xs text-white">
       {children}
       <X size={16} onClick={handleClose} className="m-2 cursor-pointer" />
 

@@ -31,19 +31,19 @@ export default function KeywordsPlugin(): JSX.Element | null {
   }, []);
 
   const getKeywordMatch = useCallback((text: string) => {
-      const matchArr = KEYWORDS_REGEX.exec(text);
+    const matchArr = KEYWORDS_REGEX.exec(text);
 
-      if (matchArr === null) {
-        return null;
-      }
+    if (matchArr === null) {
+      return null;
+    }
 
-      const hashtagLength = matchArr[2].length;
-      const startOffset = matchArr.index + matchArr[1].length;
-      const endOffset = startOffset + hashtagLength;
-      return {
-        end: endOffset,
-        start: startOffset,
-      };
+    const hashtagLength = matchArr[2].length;
+    const startOffset = matchArr.index + matchArr[1].length;
+    const endOffset = startOffset + hashtagLength;
+    return {
+      end: endOffset,
+      start: startOffset,
+    };
   }, []);
 
   useLexicalTextEntity<KeywordNode>(

@@ -133,7 +133,7 @@ const MentorAlertModal = ({
               ref={confirmRef}
               type="button"
               onClick={isConfirmMode ? onConfirm : onClose}
-              className="flex-1 rounded-xl bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+              className="bg-primary hover:bg-primary-hover flex-1 rounded-xl py-2.5 text-sm font-medium text-white transition-colors"
             >
               {confirmText}
             </button>

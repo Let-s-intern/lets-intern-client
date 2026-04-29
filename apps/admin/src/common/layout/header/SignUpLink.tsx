@@ -10,7 +10,7 @@ function SignUpLink({ className, onClick }: Props) {
   return (
     <HybridLink
       className={twMerge(
-        'px-3 py-1.5 text-xsmall14 font-medium text-primary transition hover:opacity-80',
+        'text-xsmall14 text-primary px-3 py-1.5 font-medium transition hover:opacity-80',
         className,
       )}
       href="/signup"

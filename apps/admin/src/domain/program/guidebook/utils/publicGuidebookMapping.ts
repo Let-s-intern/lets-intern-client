@@ -39,4 +39,3 @@ export const mapPublicGuidebook = (
     discount: discountPrice,
   };
 };
-

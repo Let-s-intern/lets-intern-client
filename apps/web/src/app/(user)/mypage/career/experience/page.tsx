@@ -109,11 +109,11 @@ const Experience = () => {
     <>
       {isDrawerOpen && (
         <div
-          className="fixed bottom-0 left-0 right-0 top-0 z-[100] animate-fade-in bg-black/50"
+          className="animate-fade-in fixed bottom-0 left-0 right-0 top-0 z-[100] bg-black/50"
           onClick={handleDrawerClose}
         >
           <div
-            className="absolute bottom-0 right-0 top-0 max-w-[600px] animate-slide-in-right bg-white"
+            className="animate-slide-in-right absolute bottom-0 right-0 top-0 max-w-[600px] bg-white"
             onClick={(e) => e.stopPropagation()}
           >
             <ExperienceForm
@@ -152,7 +152,7 @@ const Experience = () => {
           </div>
         </section>
 
-        <section className="-mx-5 flex justify-between border-b border-t border-neutral-85 bg-neutral-95 px-5 py-3 md:hidden">
+        <section className="border-neutral-85 bg-neutral-95 -mx-5 flex justify-between border-b border-t px-5 py-3 md:hidden">
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}

@@ -33,9 +33,7 @@ const MagnetFilter = ({
             size="small"
             label="마그넷 ID"
             value={values.magnetId}
-            onChange={(e) =>
-              onChange({ ...values, magnetId: e.target.value })
-            }
+            onChange={(e) => onChange({ ...values, magnetId: e.target.value })}
             onKeyDown={handleKeyDown}
             fullWidth
           />
@@ -44,9 +42,7 @@ const MagnetFilter = ({
             <Select
               value={values.type}
               label="타입"
-              onChange={(e) =>
-                onChange({ ...values, type: e.target.value })
-              }
+              onChange={(e) => onChange({ ...values, type: e.target.value })}
             >
               <MenuItem value="">전체</MenuItem>
               {Object.entries(MAGNET_TYPE).map(([key, label]) => (

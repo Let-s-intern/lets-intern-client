@@ -18,18 +18,18 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
   return (
     <div className="relative z-10 flex-1">
       <div
-        className="cursor-pointer rounded-sm bg-primary-20 p-3 text-center text-xsmall16 font-medium text-primary"
+        className="bg-primary-20 text-xsmall16 text-primary cursor-pointer rounded-sm p-3 text-center font-medium"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         {isOtMission ? 'OT 자료' : '학습 콘텐츠'}
       </div>
       {isMenuShown && (essentialContentsLink || additionalContentsLink) && (
-        <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">
+        <ul className="absolute bottom-[-0.25rem] w-full translate-y-[100%] rounded border border-[#DCDCDC] bg-white text-sm">
           {essentialContentsLink && (
             <li>
               <HybridLink
                 href={essentialContentsLink}
-                className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                className="text-primary flex w-full items-center justify-between px-4 py-3 hover:bg-gray-200"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -45,7 +45,7 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
               <li key={item.id}>
                 <HybridLink
                   href={item.link}
-                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                  className="text-primary flex w-full items-center justify-between px-4 py-3 hover:bg-gray-200"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

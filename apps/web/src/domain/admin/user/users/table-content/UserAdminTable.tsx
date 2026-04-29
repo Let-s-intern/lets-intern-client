@@ -80,7 +80,7 @@ const ProgramCell = ({ applicationInfos }: { applicationInfos: any[] }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className="max-h-32 min-w-[200px] overflow-y-auto bg-neutral-80 p-3 shadow-lg">
+            <div className="bg-neutral-80 max-h-32 min-w-[200px] overflow-y-auto p-3 shadow-lg">
               {applicationInfos.length < 1 ? (
                 <div className="whitespace-nowrap">신청 내역이 없습니다.</div>
               ) : (

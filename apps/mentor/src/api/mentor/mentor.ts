@@ -77,7 +77,8 @@ export const usePostAdminChallengeMentorMatch = () => {
       challengeMentorId: number;
       challengeApplicationIdList: number[];
     }) => {
-      const { challengeId, challengeMentorId, challengeApplicationIdList } = data;
+      const { challengeId, challengeMentorId, challengeApplicationIdList } =
+        data;
       await axiosV2.post(
         `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
         { challengeApplicationIdList },

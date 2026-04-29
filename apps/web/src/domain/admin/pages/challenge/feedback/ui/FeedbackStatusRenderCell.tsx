@@ -95,7 +95,7 @@ const FeedbackStatusRenderCell = (
         console.error('feedbackStatus 변경 실패:', error);
         snackbar('진행상태 변경에 실패했습니다.');
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     },
     [localValue, params.row.id, isAdmin],
   );
@@ -128,7 +128,7 @@ const FeedbackStatusRenderCell = (
   // 제출확인 전이면 드롭다운 비활성화
   if (params.row.status === 'ABSENT') {
     return (
-      <span className="inline-flex items-center rounded-full bg-neutral-95 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40">
+      <span className="bg-neutral-95 text-xxsmall12 text-neutral-40 inline-flex items-center rounded-full px-2 py-0.5 font-medium">
         확인전
       </span>
     );
@@ -138,7 +138,7 @@ const FeedbackStatusRenderCell = (
     const color = FEEDBACK_STATUS_COLORS[localValue];
     return (
       <span
-        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+        className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.bg} ${color.text}`}
       >
         {FeedbackStatusMapping[localValue]}
       </span>
@@ -153,7 +153,7 @@ const FeedbackStatusRenderCell = (
           const color = FEEDBACK_STATUS_COLORS[selected];
           return (
             <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+              className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.bg} ${color.text}`}
             >
               {FeedbackStatusMapping[selected]}
             </span>

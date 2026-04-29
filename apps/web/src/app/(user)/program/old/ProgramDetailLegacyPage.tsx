@@ -161,17 +161,17 @@ const ProgramDetailLegacyPage = ({
               ) : (
                 <div
                   className={twMerge(
-                    'fixed bottom-0 left-0 right-0 z-30 flex w-screen flex-col gap-y-2.5 rounded-t-lg bg-static-100 px-5 pb-2.5 pt-3 shadow-05',
+                    'bg-static-100 shadow-05 fixed bottom-0 left-0 right-0 z-30 flex w-screen flex-col gap-y-2.5 rounded-t-lg px-5 pb-2.5 pt-3',
                   )}
                 >
-                  <div className="flex w-full justify-center bg-static-100">
+                  <div className="bg-static-100 flex w-full justify-center">
                     <div
                       onClick={() =>
                         dispatchIsDrawerOpen({
                           type: 'close',
                         })
                       }
-                      className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+                      className="bg-neutral-80 h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full"
                     />
                   </div>
 

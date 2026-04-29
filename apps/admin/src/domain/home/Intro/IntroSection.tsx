@@ -26,12 +26,12 @@ const {
 
 const HOME_INTRO = {
   description: (
-    <span className="text-xsmall16 font-semibold text-primary md:text-medium22">
+    <span className="text-xsmall16 text-primary md:text-medium22 font-semibold">
       서류 작성부터 피드백, 면접까지
     </span>
   ),
   title: (
-    <h1 className="text-medium24 font-bold text-neutral-0 md:text-xxlarge32 md:font-semibold">
+    <h1 className="text-medium24 text-neutral-0 md:text-xxlarge32 font-bold md:font-semibold">
       지금 나에게 필요한
       <br className="md:hidden" /> 프로그램을 찾아보세요
     </h1>
@@ -184,7 +184,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex flex-col items-center gap-3 text-nowrap text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
+      className="icon_menu text-xxsmall12 text-neutral-20 md:text-xsmall14 flex flex-col items-center gap-3 text-nowrap text-center font-medium md:min-w-[92px]"
       to={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={(e) => {
@@ -199,7 +199,7 @@ const IntroItem = ({
     >
       <div
         className={twMerge(
-          'relative flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16',
+          'rounded-xxs relative flex aspect-square items-center justify-center bg-[#F7F7F7] md:w-16',
           iconClassName,
         )}
       >
@@ -207,7 +207,7 @@ const IntroItem = ({
         {subTitle && (
           <span
             className={twMerge(
-              'absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-1.5 py-1 text-xxsmall10 font-medium leading-none text-white md:text-[13px]',
+              'bg-primary text-xxsmall10 absolute -right-[14px] top-0 -translate-y-1/2 rounded-full px-1.5 py-1 font-medium leading-none text-white md:text-[13px]',
               badgeClassName,
             )}
           >

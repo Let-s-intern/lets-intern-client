@@ -21,7 +21,7 @@ const FeedbackEditorApp = ({
     try {
       const parsed = JSON.parse(initialEditorStateJsonString);
       return (
-        <div className="my-4 bg-neutral-90 p-5">
+        <div className="bg-neutral-90 my-4 p-5">
           <LexicalContent node={parsed.root} />
         </div>
       );

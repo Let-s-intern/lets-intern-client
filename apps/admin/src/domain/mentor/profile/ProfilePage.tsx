@@ -23,7 +23,8 @@ export default function ProfilePage() {
   const { data: user } = useUserQuery();
   const { alertProps, showAlert } = useMentorAlert();
 
-  const [formData, setFormData] = useState<BasicInfoFormData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] =
+    useState<BasicInfoFormData>(INITIAL_FORM_DATA);
   const [introduction, setIntroduction] = useState('');
 
   const [savedFormData, setSavedFormData] =
@@ -166,7 +167,11 @@ export default function ProfilePage() {
       <hr className="mb-6 border-gray-200" />
 
       <div className="flex flex-col gap-6 pb-20">
-        <BasicInfo formData={formData} onChange={setFormData} showAlert={showAlert} />
+        <BasicInfo
+          formData={formData}
+          onChange={setFormData}
+          showAlert={showAlert}
+        />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
       </div>
@@ -184,7 +189,7 @@ export default function ProfilePage() {
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:px-10"
+            className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-10"
           >
             {isPending ? '저장 중...' : '저장'}
           </button>

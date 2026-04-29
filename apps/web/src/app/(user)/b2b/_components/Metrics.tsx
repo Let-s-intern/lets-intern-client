@@ -18,7 +18,7 @@ export default function Metrics() {
 
   return (
     <div className="space-y-10">
-      <div className="rounded-xs bg-white px-2 py-4 shadow-sm md:rounded-ms md:px-4 md:py-7">
+      <div className="rounded-xs md:rounded-ms bg-white px-2 py-4 shadow-sm md:px-4 md:py-7">
         <div className="grid grid-cols-3 gap-x-0 gap-y-4 md:grid-cols-6 md:gap-4">
           {stats.map((s, i) => {
             const m = s.value.match(/^([0-9.,+]+)(.*)$/);
@@ -33,15 +33,15 @@ export default function Metrics() {
                 viewport={{ once: true, margin: '0px 0px -10% 0px' }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
               >
-                <div className="text-xxsmall12 font-medium leading-relaxed text-neutral-20 md:text-xsmall16 md:leading-normal">
+                <div className="text-xxsmall12 text-neutral-20 md:text-xsmall16 font-medium leading-relaxed md:leading-normal">
                   {s.label}
                 </div>
                 <div className="mt-1.5 leading-[1.3] md:leading-tight">
-                  <span className="text-[20px] font-bold tracking-[-0.02em] text-static-0 md:text-[36px] md:tracking-[-3px]">
+                  <span className="text-static-0 text-[20px] font-bold tracking-[-0.02em] md:text-[36px] md:tracking-[-3px]">
                     {number}
                   </span>
                   {unit && (
-                    <span className="ml-1 align-baseline text-xsmall16 font-semibold md:text-[24px]">
+                    <span className="text-xsmall16 ml-1 align-baseline font-semibold md:text-[24px]">
                       {unit}
                     </span>
                   )}

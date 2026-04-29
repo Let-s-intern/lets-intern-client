@@ -31,12 +31,12 @@ const Dropdown = ({
   );
 
   return (
-    <div className="flex w-full flex-col overflow-hidden rounded-xs bg-white md:hidden">
+    <div className="rounded-xs flex w-full flex-col overflow-hidden bg-white md:hidden">
       <button
         className="flex w-full items-center justify-between p-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-2.5 text-small18 font-semibold text-[#4A76FF]">
+        <div className="text-small18 flex items-center gap-2.5 font-semibold text-[#4A76FF]">
           <span>WEEK {index + 1}</span>
           {date ? <span>{date}</span> : <span>{title}</span>}
         </div>
@@ -49,7 +49,7 @@ const Dropdown = ({
       {isOpen && (
         <div
           className={twMerge(
-            'h-full border-neutral-80',
+            'border-neutral-80 h-full',
             isOpen && 'border-t p-4 pt-5',
           )}
         >
@@ -77,14 +77,14 @@ const SidebarButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex flex-col items-start gap-1 rounded-xs px-[30px] py-5',
+        'rounded-xs flex flex-col items-start gap-1 px-[30px] py-5',
         active
           ? 'bg-[#F0F4FF] text-[#4A76FF]'
-          : 'bg-transparent text-neutral-35',
+          : 'text-neutral-35 bg-transparent',
       )}
       onClick={onClick}
     >
-      <div className="flex items-center gap-2.5 text-small20 font-semibold">
+      <div className="text-small20 flex items-center gap-2.5 font-semibold">
         <span>WEEK {index + 1}</span>
         <span>{date}</span>
       </div>
@@ -126,7 +126,7 @@ function DesktopCurriculums({
   return (
     <div className="hidden w-full max-w-[920px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
       {/* Sidebar */}
-      <div className="flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r border-neutral-80 px-8 py-[30px]">
+      <div className="border-neutral-80 flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
             key={`sidebar-button-${index}`}

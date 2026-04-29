@@ -74,7 +74,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   />
                   <div className="absolute inset-x-0 top-0 h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 p-3">
                     <span
-                      className="block w-fit text-xsmall14 font-semibold text-white"
+                      className="text-xsmall14 block w-fit font-semibold text-white"
                       style={TEXT_SHADOW_STYLE}
                     >
                       {item.recommendTitle}
@@ -83,7 +83,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
                 </div>
 
                 <HybridLink href={url} className="flex justify-between">
-                  <span className="font-medium text-neutral-0">
+                  <span className="text-neutral-0 font-medium">
                     {item.recommendCTA || '자세히 보기'}
                   </span>
                   <ChevronRight className="mt-0.5" size={20} color="#CFCFCF" />

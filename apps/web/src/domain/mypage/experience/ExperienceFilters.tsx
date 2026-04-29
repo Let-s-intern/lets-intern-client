@@ -54,7 +54,7 @@ const ExperienceFilters = ({
   }, [filterOptions, filters, onFiltersChange]);
 
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide md:overflow-visible">
+    <div className="scrollbar-hide flex gap-2 overflow-x-auto md:overflow-visible">
       <MultiFilterDropdown
         labelPrefix="경험 분류"
         options={filterOptions.availableCategories}

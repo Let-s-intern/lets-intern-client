@@ -1,10 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '@/common/input/v1/Input';
-import {
-  bankTypeToText,
-  wishJobToText,
-} from '@/utils/convert';
+import { bankTypeToText, wishJobToText } from '@/utils/convert';
 import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface MemberInfoInputContentProps {

@@ -185,7 +185,9 @@ const FeedbackModal = ({
             isAbsent={isAbsent}
             onSaveSuccess={handleMutationSuccess}
             onSubmitSuccess={handleMutationSuccess}
-            onAlert={(opts) => showAlert({ title: opts.title, variant: opts.variant })}
+            onAlert={(opts) =>
+              showAlert({ title: opts.title, variant: opts.variant })
+            }
             onConfirm={(opts) =>
               showConfirm({
                 title: opts.title,

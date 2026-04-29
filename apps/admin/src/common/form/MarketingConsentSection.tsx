@@ -14,10 +14,10 @@ const MarketingConsentSection = ({
 }: MarketingConsentSectionProps) => {
   return (
     <div className="flex flex-col gap-1">
-      <h2 className="text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+      <h2 className="text-xsmall16 text-neutral-0 md:text-small18 font-semibold">
         마케팅 활용 동의
       </h2>
-      <div className="rounded-xxs bg-neutral-95 p-3 text-xsmall14 leading-relaxed text-neutral-10">
+      <div className="rounded-xxs bg-neutral-95 text-xsmall14 text-neutral-10 p-3 leading-relaxed">
         {children || <DefaultMarketingDescription />}
       </div>
       <button

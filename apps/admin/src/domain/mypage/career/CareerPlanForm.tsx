@@ -26,7 +26,7 @@ interface FormChecklistProps {
 }
 
 const FormField = ({ label, value }: FormFieldProps) => (
-  <div className="flex flex-col gap-2 border-b border-neutral-85 pb-4">
+  <div className="border-neutral-85 flex flex-col gap-2 border-b pb-4">
     <label className="text-xsmall14 text-neutral-35">{label}</label>
     <div>{value || '-'}</div>
   </div>
@@ -66,7 +66,7 @@ const CareerPlanForm = ({ user, handleEdit }: CareerPlanFormProps) => {
         <h1 className="text-small18 font-medium">기본 정보</h1>
         <button
           onClick={handleEdit}
-          className="flex items-center gap-1 text-neutral-35"
+          className="text-neutral-35 flex items-center gap-1"
         >
           <Pencil size={16} />
           <span className="text-xsmall14">수정</span>

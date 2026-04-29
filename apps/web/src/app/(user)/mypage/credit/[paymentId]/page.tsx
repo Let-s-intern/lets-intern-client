@@ -56,7 +56,7 @@ const CreditDetail = () => {
             router.push(`/mypage/credit`);
           }}
         />
-        <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
+        <h1 className="text-neutral-0 text-lg font-medium">결제상세</h1>
       </div>
 
       <section className="flex w-full flex-col gap-y-10 py-8">
@@ -78,8 +78,8 @@ const CreditDetail = () => {
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               {/* 환불 내역 */}
               {isRefunded && (
-                <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
-                  <div className="text-sm font-semibold text-primary-dark">
+                <section className="rounded-xxs bg-neutral-90 flex w-full gap-2 px-4 py-3">
+                  <div className="text-primary-dark text-sm font-semibold">
                     페이백 완료
                   </div>
                   <div className="flex grow items-center justify-end">
@@ -98,8 +98,8 @@ const CreditDetail = () => {
 
               {/* 결제 취소 */}
               {!isRefunded && isCanceled && (
-                <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
-                  <div className="text-sm font-semibold text-system-error">
+                <section className="rounded-xxs bg-neutral-90 flex w-full gap-2 px-4 py-3">
+                  <div className="text-system-error text-sm font-semibold">
                     결제 취소
                   </div>
                   <div className="flex grow items-center justify-end">
@@ -124,7 +124,7 @@ const CreditDetail = () => {
 
             {/* 참여자 정보 */}
             <section className="flex w-full flex-col items-start justify-center gap-y-6">
-              <div className="font-semibold text-neutral-0">참여자 정보</div>
+              <div className="text-neutral-0 font-semibold">참여자 정보</div>
               {!userData ? (
                 userDataIsLoading ? (
                   <p className="text-neutral-0">
@@ -182,11 +182,11 @@ const CreditDetail = () => {
 
             {/* 환불/결제 정보 */}
             <section className="flex w-full flex-col items-start justify-center gap-y-6">
-              <div className="font-semibold text-neutral-0">
+              <div className="text-neutral-0 font-semibold">
                 {isCanceled ? '환불 정보' : '결제 정보'}
               </div>
               <div className="flex w-full flex-col items-start justify-start gap-y-3">
-                <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
+                <div className="border-neutral-0 text-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5 font-bold">
                   <div>{isCanceled ? '총 환불금액' : '총 결제금액'}</div>
                   <div className="flex grow items-center justify-end">
                     {paymentDetail.tossInfo &&
@@ -241,7 +241,7 @@ const CreditDetail = () => {
 
                   {/* [환불된 내역] 환불 규정 표시 */}
                   {isCanceled && (
-                    <div className="py-2 text-xs font-medium text-primary-dark">
+                    <div className="text-primary-dark py-2 text-xs font-medium">
                       *환불 규정은{' '}
                       <a
                         className="underline underline-offset-2"
@@ -256,7 +256,7 @@ const CreditDetail = () => {
                   )}
                 </div>
 
-                <hr className="w-full border-neutral-85" />
+                <hr className="border-neutral-85 w-full" />
 
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
@@ -290,9 +290,9 @@ const CreditDetail = () => {
                       />
                       <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                         <div className="text-neutral-40">영수증</div>
-                        <div className="flex grow items-center justify-end text-neutral-0">
+                        <div className="text-neutral-0 flex grow items-center justify-end">
                           <button
-                            className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
+                            className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
                               if (paymentDetail.tossInfo?.receipt) {
                                 window.open(
@@ -312,7 +312,7 @@ const CreditDetail = () => {
               </div>
               {isCancelable ? (
                 <button
-                  className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
+                  className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"
                   onClick={() => {
                     router.push(`/mypage/credit/${paymentId}/delete`);
                   }}

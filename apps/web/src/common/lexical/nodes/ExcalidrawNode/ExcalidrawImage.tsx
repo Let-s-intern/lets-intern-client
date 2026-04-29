@@ -6,14 +6,14 @@
  *
  */
 
-import {exportToSvg} from '@excalidraw/excalidraw';
+import { exportToSvg } from '@excalidraw/excalidraw';
 import {
   ExcalidrawElement,
   NonDeleted,
 } from '@excalidraw/excalidraw/types/element/types';
-import {AppState, BinaryFiles} from '@excalidraw/excalidraw/types/types';
+import { AppState, BinaryFiles } from '@excalidraw/excalidraw/types/types';
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 type ImageType = 'svg' | 'canvas';
 
@@ -41,7 +41,7 @@ type Props = {
   /**
    * The ref object to be used to render the image
    */
-  imageContainerRef: {current: null | HTMLDivElement};
+  imageContainerRef: { current: null | HTMLDivElement };
   /**
    * The type of image to be rendered
    */
@@ -110,7 +110,7 @@ export default function ExcalidrawImage({
     <div
       ref={imageContainerRef}
       className={rootClassName ?? ''}
-      dangerouslySetInnerHTML={{__html: Svg?.outerHTML ?? ''}}
+      dangerouslySetInnerHTML={{ __html: Svg?.outerHTML ?? '' }}
     />
   );
 }

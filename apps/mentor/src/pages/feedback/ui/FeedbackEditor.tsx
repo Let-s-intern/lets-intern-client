@@ -1,8 +1,6 @@
 'use client';
 
-import EditorApp, {
-  emptyEditorState,
-} from '@/common/lexical/EditorApp';
+import EditorApp, { emptyEditorState } from '@/common/lexical/EditorApp';
 import LexicalContent from '@/common/lexical/LexicalContent';
 
 interface FeedbackEditorProps {

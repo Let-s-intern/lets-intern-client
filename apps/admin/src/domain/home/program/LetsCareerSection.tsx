@@ -129,7 +129,7 @@ const LetsCareerSection = () => {
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1120px] flex-col md:mt-21">
+      <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
         {isLoading ? (
           <LoadingContainer />
         ) : (

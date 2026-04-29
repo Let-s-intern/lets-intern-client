@@ -145,9 +145,7 @@ const PopUpBanners = () => {
               </TableCell>
               <TableCell cellWidth={columnMetaData.management.cellWidth}>
                 <TableManageContent>
-                  <Link
-                    to={`/banner/program-banners/${banner.id}/edit`}
-                  >
+                  <Link to={`/banner/program-banners/${banner.id}/edit`}>
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                     </i>

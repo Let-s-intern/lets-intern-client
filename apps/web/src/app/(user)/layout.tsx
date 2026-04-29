@@ -1,9 +1,6 @@
 import ConditionalLayout from '@/common/layout/ConditionalLayout';
 import Providers from '@/context/Providers';
-import {
-  getCanonicalSiteUrl,
-  getRobotsMetadata,
-} from '@/utils/url';
+import { getCanonicalSiteUrl, getRobotsMetadata } from '@/utils/url';
 import { Metadata } from 'next';
 import React from 'react';
 

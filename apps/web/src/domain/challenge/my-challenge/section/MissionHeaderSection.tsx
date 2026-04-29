@@ -80,11 +80,11 @@ const MissionHeaderSection = ({
       {/* 헤더 섹션 */}
       <div className="flex flex-col gap-2 md:flex-row">
         <div className="flex flex-row items-center gap-2">
-          <h2 className="text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+          <h2 className="text-xsmall16 text-neutral-0 md:text-small18 font-semibold">
             {getMissionTitle()}
           </h2>
-          <div className="h-[18px] w-px bg-neutral-60" />
-          <h2 className="text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+          <div className="bg-neutral-60 h-[18px] w-px" />
+          <h2 className="text-xsmall16 text-neutral-0 md:text-small18 font-semibold">
             {missionType}
           </h2>
         </div>
@@ -92,7 +92,7 @@ const MissionHeaderSection = ({
           (selectedMissionTh !== 0 && isBeforeMissionStart && (
             <p
               className={clsx(
-                'flex flex-row items-end text-xsmall14 font-medium md:text-xsmall16',
+                'text-xsmall14 md:text-xsmall16 flex flex-row items-end font-medium',
                 {
                   'text-neutral-60': isDeadlinePassed(),
                   'text-primary-90': !isDeadlinePassed(),

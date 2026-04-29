@@ -63,7 +63,7 @@ function ReviewModal({
       {/* 바탕 */}
       <div
         className={twMerge(
-          'mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24',
+          'bg-neutral-0/50 mx-auto md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24',
           className,
         )}
         onClick={() => {
@@ -77,7 +77,7 @@ function ReviewModal({
         }}
       >
         <div
-          className="relative bg-white md:overflow-hidden md:rounded-ms"
+          className="md:rounded-ms relative bg-white md:overflow-hidden"
           onClick={(e) => e.stopPropagation()} // 바탕 클릭 시 모달 닫힘 방지
         >
           <div
@@ -118,7 +118,7 @@ function ReviewModal({
             </div>
             <div className="w-full flex-1 md:overflow-y-auto">
               {isLastMission && programTitle && (
-                <p className="mb-8 text-xsmall16 font-medium text-neutral-20">
+                <p className="text-xsmall16 text-neutral-20 mb-8 font-medium">
                   참여한 {josa(programTitle, '을/를')} 회고하고,
                   <br />나 자신이 얼마나 성장했는지 확인해보세요!
                 </p>
@@ -146,7 +146,7 @@ function ReviewModal({
             )}
           >
             <BaseButton
-              className="w-full text-small18 font-medium"
+              className="text-small18 w-full font-medium"
               onClick={onSubmit}
               disabled={disabled}
             >
@@ -154,7 +154,7 @@ function ReviewModal({
             </BaseButton>
             {isLastMission && (
               <span
-                className="cursor-pointer text-small18 font-medium text-neutral-50 hover:underline"
+                className="text-small18 cursor-pointer font-medium text-neutral-50 hover:underline"
                 onClick={() => {
                   if (onClose) {
                     onClose();

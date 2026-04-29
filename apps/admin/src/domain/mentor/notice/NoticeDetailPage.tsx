@@ -14,10 +14,8 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-10">
-        <h1 className="text-medium22 font-semibold text-neutral-0">
-          공지사항
-        </h1>
-        <div className="py-20 text-center text-xsmall16 text-neutral-40">
+        <h1 className="text-medium22 text-neutral-0 font-semibold">공지사항</h1>
+        <div className="text-xsmall16 text-neutral-40 py-20 text-center">
           불러오는 중...
         </div>
       </div>
@@ -27,10 +25,8 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
   if (!guide) {
     return (
       <div className="flex flex-col gap-10">
-        <h1 className="text-medium22 font-semibold text-neutral-0">
-          공지사항
-        </h1>
-        <div className="py-20 text-center text-xsmall16 text-neutral-40">
+        <h1 className="text-medium22 text-neutral-0 font-semibold">공지사항</h1>
+        <div className="text-xsmall16 text-neutral-40 py-20 text-center">
           공지를 찾을 수 없습니다.
         </div>
       </div>
@@ -39,12 +35,12 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
 
   return (
     <div className="flex flex-col gap-10">
-      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
+      <h1 className="text-medium22 text-neutral-0 font-semibold">공지사항</h1>
 
       <div className="flex flex-col gap-4">
         <Link
           to="/mentor/notice"
-          className="flex items-center gap-1 text-xsmall14 text-neutral-40 hover:text-neutral-10"
+          className="text-xsmall14 text-neutral-40 hover:text-neutral-10 flex items-center gap-1"
         >
           <svg
             width="16"
@@ -64,35 +60,38 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
           뒤로 가기
         </Link>
 
-        <div className="flex flex-col gap-6 rounded-[16px] border border-neutral-80 p-6 md:gap-8 md:p-10">
-          <h2 className="text-medium24 font-bold text-neutral-0">
+        <div className="border-neutral-80 flex flex-col gap-6 rounded-[16px] border p-6 md:gap-8 md:p-10">
+          <h2 className="text-medium24 text-neutral-0 font-bold">
             {guide.title}
           </h2>
 
-          {guide.contents && (() => {
-            try {
-              const parsed = JSON.parse(guide.contents);
-              return (
-                <div className="flex w-full flex-col gap-1 break-words text-xsmall16">
-                  <LexicalContent node={parsed.root} />
-                </div>
-              );
-            } catch {
-              // JSON이 아니면 마크다운으로 렌더링
-              return (
-                <div className="prose prose-neutral max-w-none leading-relaxed">
-                  <Markdown remarkPlugins={[remarkGfm]}>{guide.contents}</Markdown>
-                </div>
-              );
-            }
-          })()}
+          {guide.contents &&
+            (() => {
+              try {
+                const parsed = JSON.parse(guide.contents);
+                return (
+                  <div className="text-xsmall16 flex w-full flex-col gap-1 break-words">
+                    <LexicalContent node={parsed.root} />
+                  </div>
+                );
+              } catch {
+                // JSON이 아니면 마크다운으로 렌더링
+                return (
+                  <div className="prose prose-neutral max-w-none leading-relaxed">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {guide.contents}
+                    </Markdown>
+                  </div>
+                );
+              }
+            })()}
 
           {guide.link && (
             <a
               href={guide.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xsmall16 text-primary hover:underline"
+              className="text-xsmall16 text-primary inline-flex items-center gap-1 hover:underline"
             >
               링크 바로가기
               <svg

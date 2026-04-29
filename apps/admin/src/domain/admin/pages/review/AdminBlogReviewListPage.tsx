@@ -359,7 +359,7 @@ export default function AdminBlogReviewListPage() {
         <div>
           <h2 className="font-semibold">동작 설명</h2>
           <p className="text-xsmall14">
-            <span className="block text-requirement">
+            <span className="text-requirement block">
               *<b>등록/편집</b>: 한 번에 하나만 가능
             </span>
             <span className="block">
@@ -375,7 +375,7 @@ export default function AdminBlogReviewListPage() {
         </div>
         <div>
           <h2 className="font-semibold">등록할 수 있는 URL 목록</h2>
-          <ul className="list-disc pl-6 text-xsmall14">
+          <ul className="text-xsmall14 list-disc pl-6">
             <li>
               네이버 블로그 (<b className="text-requirement">모바일</b>)
             </li>

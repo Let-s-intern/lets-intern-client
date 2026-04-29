@@ -23,7 +23,7 @@ const ChoicePayPlanContent = ({
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="font-medium text-neutral-0">
+      <p className="text-neutral-0 font-medium">
         프로그램 유형을 선택해주세요!
       </p>
       <ul>
@@ -49,7 +49,7 @@ const ChoicePayPlanContent = ({
               )}
             >
               {plan === 'BASIC' && (
-                <div className="h-[0.75rem] w-[0.75rem] rounded-full bg-primary" />
+                <div className="bg-primary h-[0.75rem] w-[0.75rem] rounded-full" />
               )}
             </div>
           </div>
@@ -77,7 +77,7 @@ const ChoicePayPlanContent = ({
               )}
             >
               {plan === 'PREMIUM' && (
-                <div className="h-[0.75rem] w-[0.75rem] rounded-full bg-primary" />
+                <div className="bg-primary h-[0.75rem] w-[0.75rem] rounded-full" />
               )}
             </div>
           </div>
@@ -85,7 +85,7 @@ const ChoicePayPlanContent = ({
         </li>
       </ul>
       <button
-        className="flex w-full justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark disabled:border-neutral-60 disabled:text-neutral-40"
+        className="border-primary text-primary-dark disabled:border-neutral-60 disabled:text-neutral-40 flex w-full justify-center rounded-md border-2 bg-neutral-100 px-6 py-3 text-lg font-medium"
         onClick={handleNextButtonClick}
         disabled={plan === null}
       >

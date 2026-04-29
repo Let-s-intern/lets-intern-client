@@ -1,10 +1,30 @@
 'use client';
 
 const TAG_COLORS = [
-  { text: 'text-[#fdad00]', bg: 'bg-[#fdad00]', border: 'border-[#fdad00]', lightBg: 'bg-[#fff3d9]' },
-  { text: 'text-[#14bcff]', bg: 'bg-[#14bcff]', border: 'border-[#14bcff]', lightBg: 'bg-[#eefaff]' },
-  { text: 'text-green-500', bg: 'bg-green-500', border: 'border-green-500', lightBg: 'bg-green-50' },
-  { text: 'text-purple-500', bg: 'bg-purple-500', border: 'border-purple-500', lightBg: 'bg-purple-50' },
+  {
+    text: 'text-[#fdad00]',
+    bg: 'bg-[#fdad00]',
+    border: 'border-[#fdad00]',
+    lightBg: 'bg-[#fff3d9]',
+  },
+  {
+    text: 'text-[#14bcff]',
+    bg: 'bg-[#14bcff]',
+    border: 'border-[#14bcff]',
+    lightBg: 'bg-[#eefaff]',
+  },
+  {
+    text: 'text-green-500',
+    bg: 'bg-green-500',
+    border: 'border-green-500',
+    lightBg: 'bg-green-50',
+  },
+  {
+    text: 'text-purple-500',
+    bg: 'bg-purple-500',
+    border: 'border-purple-500',
+    lightBg: 'bg-purple-50',
+  },
 ];
 
 interface ChallengeTagProps {
@@ -34,9 +54,7 @@ const ChallengeTag = ({
       type="button"
       onClick={() => onToggle(challengeId)}
       className={`rounded-full px-3 py-1.5 text-xs font-medium leading-5 transition-colors ${
-        isSelected
-          ? `${color.bg} text-white`
-          : `${color.lightBg} ${color.text}`
+        isSelected ? `${color.bg} text-white` : `${color.lightBg} ${color.text}`
       }`}
     >
       {title}

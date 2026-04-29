@@ -77,7 +77,7 @@ const ReviewSection = () => {
         className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-28 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
-          <div className="text-small20 font-bold text-neutral-0 md:mt-2 md:text-xlarge28">
+          <div className="text-small20 text-neutral-0 md:text-xlarge28 font-bold md:mt-2">
             <span className="text-primary">
               렛츠커리어 챌린지는 지금도 진행 중!
             </span>
@@ -95,13 +95,13 @@ const ReviewSection = () => {
             <span> 공유되고 있어요.</span>
           </div>
           <Button
-            className="review_cta mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-4 md:py-3 md:text-small18"
+            className="review_cta rounded-xs text-xsmall14 md:text-small18 mt-4 w-fit px-3 py-2.5 font-semibold md:mt-8 md:rounded-sm md:px-4 md:py-3"
             to="/review"
           >
             수강생들의 생생 후기 더 보기
           </Button>
         </div>
-        <div className="h-72 w-full items-center rounded-sm bg-primary-5 md:h-[520px] md:w-1/2">
+        <div className="bg-primary-5 h-72 w-full items-center rounded-sm md:h-[520px] md:w-1/2">
           <Swiper
             className="slide-per-auto-vertical slide-rolling h-full"
             modules={[Autoplay]}
@@ -142,11 +142,11 @@ export default ReviewSection;
 export const ReviewItem = ({ review }: { review: GetReview }) => {
   return (
     <div className="mx-auto flex w-[260px] select-none flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
-      <div className="flex flex-col gap-y-1.5 text-xsmall14">
-        <span className="font-medium text-primary">
+      <div className="text-xsmall14 flex flex-col gap-y-1.5">
+        <span className="text-primary font-medium">
           {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성
         </span>
-        <h3 className="line-clamp-2 font-bold text-neutral-0">
+        <h3 className="text-neutral-0 line-clamp-2 font-bold">
           {review.reviewInfo.programTitle}
         </h3>
       </div>
@@ -159,8 +159,8 @@ export const ReviewItem = ({ review }: { review: GetReview }) => {
           />
         ))}
       </div>
-      <div className="mt-3 flex w-full items-center gap-2 text-xxsmall12">
-        <span className="whitespace-pre font-medium text-neutral-20">
+      <div className="text-xxsmall12 mt-3 flex w-full items-center gap-2">
+        <span className="text-neutral-20 whitespace-pre font-medium">
           {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
         </span>
         <span className="text-neutral-70">|</span>
@@ -180,11 +180,11 @@ const ReviewItemBlock = (props: {
   questionType?: QuestionType | null;
 }) => {
   return (
-    <div className="flex flex-col gap-y-0.5 text-xsmall14">
-      <h3 className="font-semibold text-neutral-10">
+    <div className="text-xsmall14 flex flex-col gap-y-0.5">
+      <h3 className="text-neutral-10 font-semibold">
         {props.questionType ? questionTypeToText[props.questionType] : '-'}
       </h3>
-      <p className="line-clamp-2 text-neutral-20">{props.answer}</p>
+      <p className="text-neutral-20 line-clamp-2">{props.answer}</p>
     </div>
   );
 };

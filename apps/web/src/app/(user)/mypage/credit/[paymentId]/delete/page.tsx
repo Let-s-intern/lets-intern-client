@@ -70,9 +70,9 @@ const CreditDelete = () => {
               accessMethod={paymentDetail.accessMethod}
             />
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              <div className="font-semibold text-neutral-0">환불 정보</div>
+              <div className="text-neutral-0 font-semibold">환불 정보</div>
               <div className="flex w-full flex-col items-start justify-start gap-y-3">
-                <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
+                <div className="border-neutral-0 text-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5 font-bold">
                   <div>예정 환불금액</div>
                   <div className="flex grow items-center justify-end">
                     {expectedTotalRefund.toLocaleString()}원
@@ -87,7 +87,7 @@ const CreditDelete = () => {
                     title="환불 차감 금액"
                     content={`-${(expectedPartialRefundDeductionAmount ?? 0).toLocaleString()}원`}
                   />
-                  <div className="py-2 text-xs font-medium text-primary-dark">
+                  <div className="text-primary-dark py-2 text-xs font-medium">
                     *환불 규정은{' '}
                     <a
                       className="underline underline-offset-2"
@@ -101,7 +101,7 @@ const CreditDelete = () => {
                   </div>
                 </div>
 
-                <hr className="w-full border-neutral-85" />
+                <hr className="border-neutral-85 w-full" />
 
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
@@ -130,9 +130,9 @@ const CreditDelete = () => {
                       />
                       <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                         <div className="text-neutral-40">영수증</div>
-                        <div className="flex grow items-center justify-end text-neutral-0">
+                        <div className="text-neutral-0 flex grow items-center justify-end">
                           <button
-                            className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
+                            className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
                               if (paymentDetail.tossInfo?.receipt) {
                                 window.open(
@@ -170,13 +170,13 @@ const CreditDelete = () => {
               </div>
               <div className="flex w-full items-center gap-x-3">
                 <button
-                  className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
+                  className="border-primary text-primary-dark h-[46px] grow rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
                   onClick={() => router.back()}
                 >
                   이전
                 </button>
                 <button
-                  className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
+                  className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'bg-primary-20 cursor-not-allowed'} px-5 py-2 font-medium text-neutral-100`}
                   onClick={() => {
                     if (isChecked) {
                       tryCancelPayment({

@@ -4,10 +4,7 @@ import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
-import {
-  DesktopApplyCTA,
-  MobileApplyCTA,
-} from '@/common/button/ApplyCTA';
+import { DesktopApplyCTA, MobileApplyCTA } from '@/common/button/ApplyCTA';
 
 interface GuidebookCTAButtonsProps {
   guidebookId: string;

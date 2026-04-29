@@ -67,12 +67,18 @@ const MenteeInfo = ({
           </span>
           {mentee.wishJob && (
             <span className="text-xs text-neutral-500">
-              희망 직군: <span className="font-medium text-neutral-700">{mentee.wishJob}</span>
+              희망 직군:{' '}
+              <span className="font-medium text-neutral-700">
+                {mentee.wishJob}
+              </span>
             </span>
           )}
           {mentee.wishCompany && (
             <span className="text-xs text-neutral-500">
-              희망 기업: <span className="font-medium text-neutral-700">{mentee.wishCompany}</span>
+              희망 기업:{' '}
+              <span className="font-medium text-neutral-700">
+                {mentee.wishCompany}
+              </span>
             </span>
           )}
           <span className={`text-xs font-medium ${feedbackStatusStyle}`}>
@@ -119,7 +125,10 @@ const MenteeInfo = ({
 
           {/* Submission status + link */}
           <div className="flex flex-col gap-1.5">
-            <InfoRow label="제출 상태" value={isSubmitted ? '제출됨' : '미제출'} />
+            <InfoRow
+              label="제출 상태"
+              value={isSubmitted ? '제출됨' : '미제출'}
+            />
             {hasSubmissionLink ? (
               <a
                 href={mentee.link!}
@@ -145,8 +154,12 @@ const MenteeInfo = ({
         {/* Right column */}
         <div className="flex flex-1 flex-col justify-between">
           <div className="flex flex-col gap-3">
-            {mentee.wishJob ? <InfoRow label="희망 직군" value={mentee.wishJob} /> : null}
-            {mentee.wishCompany ? <InfoRow label="희망 기업" value={mentee.wishCompany} /> : null}
+            {mentee.wishJob ? (
+              <InfoRow label="희망 직군" value={mentee.wishJob} />
+            ) : null}
+            {mentee.wishCompany ? (
+              <InfoRow label="희망 기업" value={mentee.wishCompany} />
+            ) : null}
           </div>
           <div className="flex items-start gap-2">
             <span className="text-xs text-neutral-500">피드백 상태</span>

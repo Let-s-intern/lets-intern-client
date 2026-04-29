@@ -114,7 +114,7 @@ const PlanFieldItem = ({ label, value }: PlanFieldItemProps) => {
         <span className="font-regular text-xxsmall12 text-[#4138A3]">
           {label}
         </span>
-        <span className="truncate text-sm text-neutral-0">{value}</span>
+        <span className="text-neutral-0 truncate text-sm">{value}</span>
       </div>
       <div className="border-b border-[#EFEFEF]" />
     </>

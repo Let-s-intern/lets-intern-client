@@ -127,7 +127,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
             >
               {/* 프로그램 리뷰 */}
               {hasLiveReview && (
-                <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]">
+                <div className="bg-neutral-95 flex w-full flex-col items-center py-[70px] md:pb-[130px] md:pt-[110px]">
                   <ProgramBestReviewSection
                     reviews={receivedContent.liveReview}
                     type="live"

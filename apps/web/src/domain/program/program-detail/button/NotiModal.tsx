@@ -104,7 +104,7 @@ const NotiModal = ({
         </div>
 
         {/* 회원 정보 */}
-        <div className="flex flex-col rounded-sm bg-primary-5 p-3">
+        <div className="bg-primary-5 flex flex-col rounded-sm p-3">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <span className="text-xsmall14 text-neutral-35">이름</span>
@@ -128,9 +128,9 @@ const NotiModal = ({
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
             disabled={isAlreadyApplied}
-            className={`rounded-xxs border border-neutral-80 px-3 py-[9px] text-xsmall16 outline-none ${
+            className={`rounded-xxs border-neutral-80 text-xsmall16 border px-3 py-[9px] outline-none ${
               isAlreadyApplied
-                ? 'cursor-not-allowed bg-neutral-90 text-neutral-40'
+                ? 'bg-neutral-90 text-neutral-40 cursor-not-allowed'
                 : 'focus:border-primary'
             }`}
           />
@@ -145,9 +145,9 @@ const NotiModal = ({
         <button
           onClick={handleSubmit}
           disabled={isDisabled}
-          className={`w-full rounded-xs py-3 text-xsmall16 ${
+          className={`rounded-xs text-xsmall16 w-full py-3 ${
             isAlreadyApplied
-              ? 'cursor-not-allowed bg-neutral-80 text-neutral-40'
+              ? 'bg-neutral-80 text-neutral-40 cursor-not-allowed'
               : 'bg-primary text-white'
           }`}
         >

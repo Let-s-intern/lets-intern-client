@@ -6,8 +6,8 @@ const ReviewHeader = ({ program }: ReviewHeaderProps) => {
   return (
     <>
       <header className="py-3">
-        <span className="font-medium text-primary">{program.type}</span>
-        <h1 className="mt-3 text-xl font-bold text-neutral-grey">
+        <span className="text-primary font-medium">{program.type}</span>
+        <h1 className="text-neutral-grey mt-3 text-xl font-bold">
           {program.title}
         </h1>
       </header>

@@ -23,11 +23,11 @@ const YesNoScore = ({
     <div className="flex items-center gap-2">
       <button
         className={clsx(
-          'w-full rounded-md border-2 px-5 py-2 font-medium hover:border-primary hover:bg-primary hover:text-neutral-100',
+          'hover:border-primary hover:bg-primary w-full rounded-md border-2 px-5 py-2 font-medium hover:text-neutral-100',
           {
             'border-primary bg-primary text-neutral-100':
               hasRecommendationExperience === true,
-            'border-primary-xlight bg-white text-primary-dark':
+            'border-primary-xlight text-primary-dark bg-white':
               hasRecommendationExperience === false ||
               hasRecommendationExperience === null,
           },
@@ -38,11 +38,11 @@ const YesNoScore = ({
       </button>
       <button
         className={clsx(
-          'w-full rounded-md border-2 px-5 py-2 font-medium hover:border-primary hover:bg-primary hover:text-neutral-100',
+          'hover:border-primary hover:bg-primary w-full rounded-md border-2 px-5 py-2 font-medium hover:text-neutral-100',
           {
             'border-primary bg-primary text-neutral-100':
               hasRecommendationExperience === false,
-            'border-primary-xlight bg-white text-primary-dark':
+            'border-primary-xlight text-primary-dark bg-white':
               hasRecommendationExperience === true ||
               hasRecommendationExperience === null,
           },

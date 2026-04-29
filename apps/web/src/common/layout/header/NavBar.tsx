@@ -94,7 +94,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         className={twMerge(
           'fixed top-0 z-30 w-screen bg-white transition-transform duration-300',
           !(isMobile && location.pathname.startsWith('/challenge')) &&
-            'border-b border-neutral-80',
+            'border-neutral-80 border-b',
           scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
         )}
       >
@@ -107,7 +107,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         {/* 2단 */}
         <nav
           className={twMerge(
-            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16',
+            'mw-1180 text-xsmall14 md:text-xsmall16 items-center justify-between pb-[14px] pt-1.5 md:flex md:pb-[18px] md:pt-1',
             getBottomNavBarClassNameByPath(pathname),
           )}
         >
@@ -237,14 +237,14 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
         <SideNavItem href="/community">
           커뮤니티
-          <span className="flex items-center text-xxsmall12 font-normal">
+          <span className="text-xxsmall12 flex items-center font-normal">
             +현직자 멘토 참여중
           </span>
         </SideNavItem>
         <SideNavItem className="b2b_landing_click" href="/b2b">
           기업/학교 취업 교육 문의
         </SideNavItem>
-        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
         <SideNavItem href="/review" subNavList={reportNavList}>
           서류 피드백 REPORT
@@ -255,10 +255,10 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/program?type=VOD" isNew>
           취준위키 VOD
         </SideNavItem>
-        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/review">수강생 솔직 후기</SideNavItem>
         <SideNavItem href="/blog/list">블로그</SideNavItem>
-        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         {isLoggedIn && isMentor && mentorUrl && (
           <SideNavItem href={buildCrossAppUrl(mentorUrl, '/mentor')}>
             멘토 마이페이지

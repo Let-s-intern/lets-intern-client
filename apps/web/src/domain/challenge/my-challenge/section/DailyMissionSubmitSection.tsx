@@ -157,7 +157,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   return (
     <>
       <form onSubmit={handleMissionLinkSubmit}>
-        <h3 className="mb-6 text-xsmall16 font-semibold">미션 제출하기</h3>
+        <h3 className="text-xsmall16 mb-6 font-semibold">미션 제출하기</h3>
         {/* 기본 미션 */}
         {!isOtMission && !isBonusMission && (
           <>

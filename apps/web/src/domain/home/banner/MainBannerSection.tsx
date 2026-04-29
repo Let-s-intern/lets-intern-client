@@ -11,7 +11,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 const MainBannerSection = () => {
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
-  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({ type: 'HOME_TOP' });
+  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({
+    type: 'HOME_TOP',
+  });
 
   const handleClickBanner = (e: MouseEvent<HTMLAnchorElement>) => {
     const target = e.target as HTMLElement;
@@ -26,11 +28,11 @@ const MainBannerSection = () => {
   return (
     <>
       {isLoading ? (
-        <div className="mt-12 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
+        <div className="md:mt-22.5 mt-12 w-full max-w-[1120px] px-5 xl:px-0">
           <LoadingContainer />
         </div>
       ) : !bannerList || bannerList.length === 0 ? null : (
-        <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
+        <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
           <Swiper
             autoplay={bannerList.length > 1 ? { delay: 2500 } : false}
             modules={[Pagination, Autoplay, Navigation]}
@@ -56,7 +58,9 @@ const MainBannerSection = () => {
                   data-url={banner.landingUrl}
                   target={
                     banner.landingUrl?.includes('letscareer.co.kr') ||
-                    banner.landingUrl?.includes('lets-intern-client-test.vercel.app')
+                    banner.landingUrl?.includes(
+                      'lets-intern-client-test.vercel.app',
+                    )
                       ? '_self'
                       : '_blank'
                   }

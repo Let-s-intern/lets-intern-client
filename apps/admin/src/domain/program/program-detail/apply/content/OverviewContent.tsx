@@ -57,7 +57,7 @@ const OverviewContent = ({
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : (
           <button
-            className="apply_button flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
+            className="apply_button bg-primary disabled:bg-neutral-70 flex w-full justify-center rounded-md px-6 py-3 text-lg font-medium text-neutral-100"
             onClick={handleNextButtonClick}
             disabled={isApplied}
           >

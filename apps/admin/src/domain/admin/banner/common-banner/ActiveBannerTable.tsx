@@ -1,7 +1,4 @@
-import {
-  CommonBannerAdminListItemType,
-  CommonBannerType,
-} from '@/api/banner';
+import { CommonBannerAdminListItemType, CommonBannerType } from '@/api/banner';
 import dayjs from '@/lib/dayjs';
 import { Pencil, Trash } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -66,10 +63,7 @@ const ActiveBannerTable = ({
                 <td className="bg-gray-50 px-4 py-4 align-middle font-bold text-gray-800">
                   {label}
                 </td>
-                <td
-                  colSpan={5}
-                  className="px-4 py-4 text-center text-gray-400"
-                >
+                <td colSpan={5} className="px-4 py-4 text-center text-gray-400">
                   -
                 </td>
               </tr>
@@ -90,9 +84,7 @@ const ActiveBannerTable = ({
                   {label}
                 </td>
               )}
-              <td className="px-4 py-4 text-gray-700">
-                {banner.title || '-'}
-              </td>
+              <td className="px-4 py-4 text-gray-700">{banner.title || '-'}</td>
               <td className="max-w-[300px] truncate px-4 py-4 text-gray-500">
                 {banner.landingUrl || '-'}
               </td>
@@ -115,9 +107,7 @@ const ActiveBannerTable = ({
                   <Trash
                     size={16}
                     className="cursor-pointer text-gray-400 hover:text-red-500"
-                    onClick={() =>
-                      onDeleteClick(Number(banner.commonBannerId))
-                    }
+                    onClick={() => onDeleteClick(Number(banner.commonBannerId))}
                   />
                 </div>
               </td>

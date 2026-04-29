@@ -13,7 +13,7 @@ const IntroBubble = ({
   return (
     <div
       className={twMerge(
-        'w-full rounded-sm bg-[#E9EEFF] px-2 py-2.5 text-center text-xsmall14 font-medium md:w-[492px] md:py-[18px] md:text-small20',
+        'text-xsmall14 md:text-small20 w-full rounded-sm bg-[#E9EEFF] px-2 py-2.5 text-center font-medium md:w-[492px] md:py-[18px]',
         className,
       )}
     >
@@ -35,7 +35,7 @@ function MarketingIntroSection() {
           <div className="mx-auto mb-3 flex w-fit flex-col gap-1 leading-8 md:mb-2 md:flex-row md:items-center md:leading-none">
             <div className="flex w-full flex-col items-center justify-center md:flex-row">
               <div className="flex items-center gap-1 md:gap-1.5">
-                <div className="-rotate-6 bg-[#4A76FF] p-1.5 text-small20 leading-none text-neutral-100 md:px-2.5 md:py-0.5 md:text-xlarge30">
+                <div className="text-small20 md:text-xlarge30 -rotate-6 bg-[#4A76FF] p-1.5 leading-none text-neutral-100 md:px-2.5 md:py-0.5">
                   마케터
                 </div>
                 <span>를 준비하는</span>
@@ -81,7 +81,7 @@ function MarketingIntroSection() {
         </div>
         <div className="h-[70px] w-[72px] bg-[url('/images/user-with-laptop.svg')] bg-cover bg-center bg-no-repeat md:h-[136px] md:w-[146px]" />
         <div className="md:mt-17 mt-[58px] flex w-full items-center justify-center">
-          <span className="text-center text-medium22 font-semibold tracking-[-0.096px] md:text-xlarge30">
+          <span className="text-medium22 md:text-xlarge30 text-center font-semibold tracking-[-0.096px]">
             &quot;마케팅 취준생 김렛커의 고민들, <br className="md:hidden" />
             <span className="relative inline-block">
               <span className="relative z-10">해결되었을까?&quot;</span>

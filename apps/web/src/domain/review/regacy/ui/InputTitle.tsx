@@ -4,7 +4,7 @@ interface InputTitleProps {
 
 const InputTitle = ({ children }: InputTitleProps) => {
   return (
-    <h2 className="text-center text-lg font-bold text-neutral-grey">
+    <h2 className="text-neutral-grey text-center text-lg font-bold">
       {children}
     </h2>
   );

@@ -9,7 +9,11 @@ interface FeedbackActionsProps {
   onSaveSuccess: () => void;
   onSubmitSuccess: () => void;
   onAlert: (opts: { title: string; variant: 'success' | 'error' }) => void;
-  onConfirm: (opts: { title: string; description?: string; onConfirm: () => void }) => void;
+  onConfirm: (opts: {
+    title: string;
+    description?: string;
+    onConfirm: () => void;
+  }) => void;
 }
 
 const FeedbackActions = ({
@@ -80,7 +84,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSave}
           disabled={isDisabled}
-          className="whitespace-nowrap rounded-lg border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
+          className="border-primary text-primary hover:bg-primary-5 whitespace-nowrap rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
         >
           저장
         </button>
@@ -88,7 +92,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSubmit}
           disabled={isDisabled}
-          className="whitespace-nowrap rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
+          className="bg-primary hover:bg-primary-hover whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
         >
           피드백 제출
         </button>

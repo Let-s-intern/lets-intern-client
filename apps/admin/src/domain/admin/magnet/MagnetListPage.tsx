@@ -116,7 +116,6 @@ const MagnetListPage = () => {
           />
         </main>
       </div>
-
     </>
   );
 };

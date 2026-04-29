@@ -23,7 +23,7 @@ function PriceSummary({
           <span className="text-small20 font-bold text-[#FC5555]">
             {discountRate}%
           </span>
-          <s className="text-small20 font-medium text-neutral-45">
+          <s className="text-small20 text-neutral-45 font-medium">
             {originalPrice.toLocaleString()}원
           </s>
         </div>

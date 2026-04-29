@@ -109,7 +109,7 @@ const ProgramChallengePortfolioDetailNavigation = ({
   return (
     <nav
       className={twMerge(
-        'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
+        'border-neutral-80 sticky z-20 flex w-full justify-center gap-x-1 border-b-2 bg-white px-6 transition-all md:gap-x-[100px]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
         scrollStyleClassName,
@@ -120,7 +120,7 @@ const ProgramChallengePortfolioDetailNavigation = ({
         {challengeNavigateItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold xs:text-xsmall16 md:min-w-[100px]`}
+            className={`xs:text-xsmall16 border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold md:min-w-[100px]`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection ? primaryColor : 'transparent',

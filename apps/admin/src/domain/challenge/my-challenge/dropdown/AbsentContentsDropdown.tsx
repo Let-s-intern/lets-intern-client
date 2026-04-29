@@ -16,18 +16,18 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
   return (
     <div className="relative flex-1">
       <div
-        className="rounded cursor-pointer border border-[#DCDCDC] bg-primary px-4 py-2 text-center font-semibold text-white shadow"
+        className="bg-primary cursor-pointer rounded border border-[#DCDCDC] px-4 py-2 text-center font-semibold text-white shadow"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         학습 콘텐츠
       </div>
       {isMenuShown && (essentialContentsLink || additionalContentsLink) && (
-        <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">
+        <ul className="absolute bottom-[-0.25rem] w-full translate-y-[100%] rounded border border-[#DCDCDC] bg-white text-sm">
           {essentialContentsLink && (
             <li>
               <HybridLink
                 href={essentialContentsLink}
-                className="flex flex-1 items-center justify-between px-4 py-3 text-primary duration-200 hover:bg-gray-200"
+                className="text-primary flex flex-1 items-center justify-between px-4 py-3 duration-200 hover:bg-gray-200"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -43,7 +43,7 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
               <li key={item.id}>
                 <HybridLink
                   href={item.link}
-                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                  className="text-primary flex w-full items-center justify-between px-4 py-3 hover:bg-gray-200"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

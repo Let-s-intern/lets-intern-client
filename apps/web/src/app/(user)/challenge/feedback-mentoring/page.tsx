@@ -2,8 +2,7 @@ import ChallengeFeedbackScreen from '@/domain/challenge-feedback/ChallengeFeedba
 import { getCanonicalSiteUrl } from '@/utils/url';
 import { Metadata } from 'next';
 
-const PAGE_TITLE =
-  '렛츠커리어 | 현직자 피드백 멘토링 상세 안내';
+const PAGE_TITLE = '렛츠커리어 | 현직자 피드백 멘토링 상세 안내';
 const PAGE_DESCRIPTION =
   '대기업 · IT 대기업 · 시리즈 B 이상 스타트업 현직자들이 여러분의 서류를 직접 진단합니다. 렛츠커리어 챌린지 피드백 멘토링을 확인하세요.';
 

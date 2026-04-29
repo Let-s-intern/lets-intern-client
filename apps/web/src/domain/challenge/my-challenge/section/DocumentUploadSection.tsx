@@ -83,11 +83,11 @@ const DocumentFileItem = ({
   return (
     <div className="mb-5">
       <div className="mb-3">
-        <span className="text-xsmall16 font-medium text-neutral-20">
+        <span className="text-xsmall16 text-neutral-20 font-medium">
           {label}
         </span>
         {isRequired && (
-          <span className="ml-1 text-xsmall16 font-normal text-primary-90">
+          <span className="text-xsmall16 text-primary-90 ml-1 font-normal">
             (필수제출)
           </span>
         )}
@@ -98,7 +98,7 @@ const DocumentFileItem = ({
           <button
             type="button"
             onClick={() => handleFilePreview(displayFile)}
-            className="truncate text-xsmall14 font-normal text-neutral-0 underline"
+            className="text-xsmall14 text-neutral-0 truncate font-normal underline"
           >
             {typeof displayFile === 'string'
               ? getFileNameFromUrl(type, displayFile)
@@ -121,7 +121,7 @@ const DocumentFileItem = ({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isSubmitted}
-            className="flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition hover:bg-primary-15 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+            className="rounded-xs bg-primary-10 text-xsmall14 text-primary hover:bg-primary-15 disabled:bg-neutral-85 flex items-center gap-2 px-4 py-2 font-medium transition disabled:cursor-not-allowed disabled:text-neutral-50"
           >
             <Upload size={16} />
             파일 업로드
@@ -255,10 +255,10 @@ const DocumentUploadSection = ({
 
   return (
     <div className={clsx('', className)}>
-      <h2 className="mb-1 text-small18 font-semibold text-neutral-0">
+      <h2 className="text-small18 text-neutral-0 mb-1 font-semibold">
         서류 제출
       </h2>
-      <p className="mb-6 text-xsmall14 text-neutral-30">
+      <p className="text-xsmall14 text-neutral-30 mb-6">
         PDF 형식만 지원하며, 파일 용량은 50MB 이하로 업로드해 주세요.
       </p>
 
