@@ -204,7 +204,7 @@ test.describe('login → purchase (free option)', () => {
     // ────────────────────────────────────────────────────────────
     // 4) "바로 신청"
     // ────────────────────────────────────────────────────────────
-    await test.step('4. "바로 신청" 클릭', async () => {
+    await test.step('4. 첫 신청 CTA 클릭 (floating 하단 "신청하기" / "바로 신청")', async () => {
       log('  → 이미 신청 상태 감지');
       const alreadyEnrolled = await page
         .getByRole('button', {
@@ -226,33 +226,45 @@ test.describe('login → purchase (free option)', () => {
           'BE 에서 봇의 신청 이력을 리셋한 뒤 재실행하세요.',
       );
 
-      const applyNowButton = page
-        .getByRole('button', { name: /바로\s*신청/i })
+      // 챌린지에 따라 라벨이 다름:
+      //   - "바로 신청" (일부 챌린지)
+      //   - "신청하기"  (E2E_TEST 챌린지의 floating 하단 CTA)
+      //   - "구매하기"  (드물게)
+      const applyButton = page
+        .getByRole('button', {
+          name: /^바로\s*신청$|^신청하기$|^구매하기$/,
+        })
         .first();
       await expect(
-        applyNowButton,
-        '"바로 신청" 버튼이 보여야 한다',
+        applyButton,
+        '챌린지 상세에 신청 CTA 버튼이 보여야 한다 (바로 신청 / 신청하기 / 구매하기)',
       ).toBeVisible({ timeout: 10_000 });
-      log('  ✓ "바로 신청" 버튼 노출');
-      await applyNowButton.click();
-      log('  ✓ "바로 신청" 클릭 완료');
-      await snap(page, 5, '바로신청_클릭후');
+      log('  ✓ 신청 CTA 버튼 노출');
+      await applyButton.scrollIntoViewIfNeeded();
+      await applyButton.click();
+      log('  ✓ 신청 CTA 클릭 완료');
+      await snap(page, 5, '신청CTA_클릭후');
     });
 
     // ────────────────────────────────────────────────────────────
-    // 5) "신청하기"
+    // 5) 모달의 "신청하기" 한 번 더 (있으면) — 적응형
+    //    챌린지에 따라 모달 단계가 있을 수도, 없을 수도 있음.
     // ────────────────────────────────────────────────────────────
-    await test.step('5. "신청하기" 클릭', async () => {
-      const enrollButton = page
+    await test.step('5. (모달이면) "신청하기" 추가 클릭', async () => {
+      const modalEnrollButton = page
         .getByRole('button', { name: /^신청하기$/ })
         .first();
-      await expect(enrollButton, '"신청하기" 버튼이 보여야 한다').toBeVisible({
-        timeout: 10_000,
-      });
-      log('  ✓ "신청하기" 버튼 노출');
-      await enrollButton.click();
-      log('  ✓ "신청하기" 클릭 완료');
-      await snap(page, 6, '신청하기_클릭후');
+      const isVisible = await modalEnrollButton
+        .isVisible({ timeout: 3_000 })
+        .catch(() => false);
+      if (isVisible) {
+        log('  → 모달의 "신청하기" 발견 → 클릭');
+        await modalEnrollButton.click();
+        log('  ✓ 모달 "신청하기" 클릭 완료');
+        await snap(page, 6, '모달_신청하기_클릭후');
+      } else {
+        log('  → 모달의 "신청하기" 없음 → step 6 (0원 결제) 으로 직행');
+      }
     });
 
     // ────────────────────────────────────────────────────────────
