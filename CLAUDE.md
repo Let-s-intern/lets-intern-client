@@ -86,7 +86,3 @@
 | Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
 | SEO 작업 | `skills/seo/SKILL.md` |
 | 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
-
-## 외부 참조
-
-상세 규칙(Toss Frontend, 풀스택, 도메인 구조, 커밋 컨벤션, Vercel React 등) 은 `AGENTS.md` 의 **Detailed Rule References** 표 참조.
