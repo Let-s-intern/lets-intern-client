@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 /**
  * 페이지 이동/클릭 후 settle 대기 (정적).
  *
- * 단계: domcontentloaded → networkidle → optional extraMs buffer.
+ * 단계: domcontentloaded -> networkidle -> optional extraMs buffer.
  * extraMs 기본 0 — 명시적으로 필요한 곳만 지정.
  *
  * 가능하면 settle 보다 waitForAnchor 를 우선 사용 (동적 대기).
@@ -28,7 +28,7 @@ export async function settle(page: Page, extraMs = 0): Promise<void> {
  *   - 안 뜨면 최대 timeoutMs 까지 polling
  *
  * 예) waitForAnchor(page, ['.apply_button', '.early_button'])
- *   → 신청 가능 또는 종료 상태 둘 중 어느 게 떠도 OK
+ *   -> 신청 가능 또는 종료 상태 둘 중 어느 게 떠도 OK
  *
  * 반환값: 떴으면 true, 타임아웃 시 false (호출자가 fallback 처리).
  */

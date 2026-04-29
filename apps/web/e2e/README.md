@@ -16,7 +16,7 @@ pnpm --filter @letscareer/web e2e
 pnpm --filter @letscareer/web e2e:ui
 
 # 4) 특정 시나리오만
-pnpm --filter @letscareer/web e2e --grep "login → purchase"
+pnpm --filter @letscareer/web e2e --grep "login -> purchase"
 ```
 
 ## 디렉토리 구조
@@ -25,7 +25,7 @@ pnpm --filter @letscareer/web e2e --grep "login → purchase"
 apps/web/e2e/
 ├── support/                    — 인프라 (helpers + setup)
 │   ├── log.ts                  · [E2E HH:MM:SS] prefix 콘솔 로그
-│   ├── settle.ts               · domcontentloaded → networkidle → buffer 대기
+│   ├── settle.ts               · domcontentloaded -> networkidle -> buffer 대기
 │   ├── runDir.ts               · 실행 디렉토리 (success/failure/skipped × timestamp)
 │   ├── pipeline.ts             · Pipeline.run(label, fn, snap?) 단계 오케스트레이터
 │   └── global-setup.ts         · storageState 생성기 (환경변수 기반)
@@ -38,7 +38,7 @@ apps/web/e2e/
 │   ├── PaymentInputPage.ts     · 결제 입력 — clickEnrollIfPresent, clickPayZero
 │   └── OrderResultPage.ts      · /order/result — expectSuccess
 ├── flows/                      — 재사용 가능한 시나리오 조각 (POM 조합)
-│   └── LoginFlow.ts            · 홈 → /login → 인증 → 복귀 (한 번에 처리)
+│   └── LoginFlow.ts            · 홈 -> /login -> 인증 -> 복귀 (한 번에 처리)
 ├── specs/                      — 실제 테스트 (testDir)
 │   ├── auth-mypage.authenticated.spec.ts
 │   ├── login-to-purchase.anonymous.spec.ts
@@ -50,14 +50,14 @@ apps/web/e2e/
 ## 디자인 패턴
 
 ### POM (Page Object Model)
-각 페이지를 클래스로 캡슐화. 메서드는 다음 페이지의 POM 을 반환 → method chain.
+각 페이지를 클래스로 캡슐화. 메서드는 다음 페이지의 POM 을 반환 -> method chain.
 
 ```typescript
 const home = await new HomePage(page).goto();
-const login = await home.clickLogin();          // → LoginPage
-const homeAuth = await login.loginWith(...);    // → HomePage
-const list = await homeAuth.gotoAllPrograms();  // → ProgramListPage
-const detail = await list.openChallengeByIndex(0); // → ChallengeDetailPage
+const login = await home.clickLogin();          // -> LoginPage
+const homeAuth = await login.loginWith(...);    // -> HomePage
+const list = await homeAuth.gotoAllPrograms();  // -> ProgramListPage
+const detail = await list.openChallengeByIndex(0); // -> ChallengeDetailPage
 ```
 
 ### Pipeline

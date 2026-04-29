@@ -34,7 +34,7 @@ export class ProgramListPage extends BasePage {
    */
   async getProgramCount(): Promise<number> {
     const cards = this.programCards();
-    log('  → 첫 프로그램 카드 가시화 대기 (최대 15초)');
+    log('  -> 첫 프로그램 카드 가시화 대기 (최대 15초)');
     const firstAppeared = await cards
       .first()
       .waitFor({ state: 'visible', timeout: 15_000 })
@@ -52,7 +52,7 @@ export class ProgramListPage extends BasePage {
           .catch(() => '')
       ).slice(0, 200);
       log(
-        `  ⚠ 프로그램 카드를 찾지 못했습니다.\n` +
+        `  [WARN] 프로그램 카드를 찾지 못했습니다.\n` +
           `    .program_card 매칭 수: ${allDivs}\n` +
           `    페이지 본문 샘플(200자): ${JSON.stringify(bodyTextSample)}`,
       );
@@ -60,12 +60,12 @@ export class ProgramListPage extends BasePage {
 
     await this.scrollToBottomOnce();
     const count = await cards.count();
-    log(`  → 프로그램 카드 카운트: ${count}개`);
+    log(`  -> 프로그램 카드 카운트: ${count}개`);
     return count;
   }
 
   /**
-   * N 번째 프로그램 카드 클릭 → 라우트 이동.
+   * N 번째 프로그램 카드 클릭 -> 라우트 이동.
    * 챌린지 카드면 ChallengeDetailPage 반환, 아니면 null (spec 에서 다음으로 시도).
    */
   async openProgramByIndex(
@@ -84,7 +84,7 @@ export class ProgramListPage extends BasePage {
     const cardTitle = await card
       .getAttribute('data-program-text')
       .catch(() => null);
-    log(`  → ${index + 1}번째 카드 클릭: "${cardTitle ?? '(제목 미상)'}"`);
+    log(`  -> ${index + 1}번째 카드 클릭: "${cardTitle ?? '(제목 미상)'}"`);
 
     await expect(
       card,
@@ -102,7 +102,7 @@ export class ProgramListPage extends BasePage {
 
     const url = this.page.url();
     if (!/\/program\/challenge\//.test(url)) {
-      log(`  ⚠ 챌린지 아닌 프로그램 진입 (url=${url}) → 다음 카드 시도`);
+      log(`  [WARN] 챌린지 아닌 프로그램 진입 (url=${url}) -> 다음 카드 시도`);
       return null;
     }
 

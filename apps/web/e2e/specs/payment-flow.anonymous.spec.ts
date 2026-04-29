@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * 시나리오 1 (비로그인): 챌린지 상세 → 결제 페이지 도달.
+ * 시나리오 1 (비로그인): 챌린지 상세 -> 결제 페이지 도달.
  *
  * 목표: 결제 *직전* 까지 접근 가능한지 (404/500/Hydration error 회귀 확인).
  * 실제 결제는 수행하지 않는다.
@@ -24,13 +24,13 @@ test.describe('payment flow (anonymous)', () => {
     await expect(page).toHaveURL(new RegExp(`${SAMPLE_CHALLENGE_PATH}`));
   });
 
-  test('챌린지 상세 → 결제 페이지 진입 (스모크)', async ({ page }) => {
+  test('챌린지 상세 -> 결제 페이지 진입 (스모크)', async ({ page }) => {
     // TODO: 실제 챌린지 카드 selector 와 신청 버튼 selector 를 staging 환경에 맞춰 채울 것.
     //       현재는 페이지 진입 가능 여부만 보장하는 스모크 단계.
     await page.goto(SAMPLE_CHALLENGE_PATH);
 
     // 결제 페이지 라우팅 패턴이 존재하는지만 확인 (실제 결제 X).
-    // 실제 selector 가 채워지면 challenge → /program/[id] → 결제 페이지로 이어지도록 보강.
+    // 실제 selector 가 채워지면 challenge -> /program/[id] -> 결제 페이지로 이어지도록 보강.
     expect(page.url()).toContain(SAMPLE_CHALLENGE_PATH);
   });
 });

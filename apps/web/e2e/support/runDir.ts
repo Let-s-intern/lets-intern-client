@@ -44,7 +44,7 @@ export class RunDir {
     const filename = `${String(seq).padStart(2, '0')}-${safeName}.png`;
     const filepath = path.join(this.pendingDir, filename);
     await page.screenshot({ path: filepath, fullPage: true });
-    log(`  📸 ${filename}`);
+    log(`  [SNAP] ${filename}`);
   }
 
   writeMeta(content: string) {
@@ -65,7 +65,7 @@ export class RunDir {
       try {
         const failureFile = path.join(this.pendingDir, '99-실패시점.png');
         await page.screenshot({ path: failureFile, fullPage: true });
-        log(`📸 실패 시점 캡처: ${failureFile}`);
+        log(`[SNAP] 실패 시점 캡처: ${failureFile}`);
       } catch {
         /* page 가 닫혔으면 무시 */
       }
@@ -94,6 +94,7 @@ export class RunDir {
           ? 'skipped'
           : 'failure';
 
+    let savedTarget: string | null = null;
     try {
       const targetParent = path.join(RESULTS_ROOT, status);
       fs.mkdirSync(targetParent, { recursive: true });
@@ -102,9 +103,30 @@ export class RunDir {
         fs.rmSync(target, { recursive: true, force: true });
       }
       fs.renameSync(this.pendingDir, target);
-      log(`📁 결과 저장: ${target}`);
+      savedTarget = target;
+      log(`[OUT] 결과 저장: ${target}`);
     } catch (err) {
-      log(`⚠ 결과 폴더 이동 실패: ${(err as Error).message}`);
+      log(`[WARN] 결과 폴더 이동 실패: ${(err as Error).message}`);
     }
+
+    // 실행 통계 출력 (콘솔 + meta).
+    const screenshots = savedTarget
+      ? fs.readdirSync(savedTarget).filter((f) => f.endsWith('.png')).length
+      : 0;
+    const seconds = (testInfo.duration / 1000).toFixed(1);
+    log('-----------------------------------------');
+    log('실행 통계');
+    log(`  Run ID    : ${this.timestamp}`);
+    log(`  Status    : ${testInfo.status}`);
+    log(`  Duration  : ${testInfo.duration} ms (${seconds}s)`);
+    log(`  Final URL : ${page.url()}`);
+    log(`  Base URL  : ${process.env.PLAYWRIGHT_BASE_URL ?? '(default)'}`);
+    log(`  Challenge : ${challengeTitle}`);
+    log(`  Screenshots: ${screenshots}장`);
+    if (savedTarget) log(`  Output    : ${savedTarget}`);
+    if (testInfo.error?.message) {
+      log(`  Error     : ${testInfo.error.message.split('\n')[0]}`);
+    }
+    log('-----------------------------------------');
   }
 }

@@ -59,7 +59,7 @@ export class OrderResultPage extends BasePage {
     return this;
   }
 
-  /** 마이페이지로 이동 → 신청 결과 검증을 그쪽으로 위임. */
+  /** 마이페이지로 이동 -> 신청 결과 검증을 그쪽으로 위임. */
   async goToMypage(extraMs?: number): Promise<MypagePage> {
     const mypage = new MypagePage(this.page);
     await mypage.goto(extraMs);

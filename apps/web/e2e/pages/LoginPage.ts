@@ -53,16 +53,16 @@ export class LoginPage extends BasePage {
     );
     await this.settle(extraMs);
 
-    // 404 감지 → 홈 복귀 fallback (로컬 환경 redirect 이슈 대비).
+    // 404 감지 -> 홈 복귀 fallback (로컬 환경 redirect 이슈 대비).
     if (await this.is404()) {
-      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      log('⚠️  404 PAGE DETECTED AFTER LOGIN');
+      log('-----------------------------------------');
+      log('[WARN]  404 PAGE DETECTED AFTER LOGIN');
       log(`   URL: ${this.page.url()}`);
       log(
         '   원인: 로그인 redirect 가 잘못된 경로로 보냄 (로컬 dev 환경에서 자주)',
       );
       log('   복구: "홈페이지로 돌아가기" 또는 page.goto("/")');
-      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      log('-----------------------------------------');
       await this.recoverFrom404();
     }
 
@@ -91,10 +91,10 @@ export class LoginPage extends BasePage {
       )
       .first();
     if (await homeButton.isVisible({ timeout: 2_000 }).catch(() => false)) {
-      log('  → "홈페이지로 돌아가기" 버튼 클릭');
+      log('  -> "홈페이지로 돌아가기" 버튼 클릭');
       await homeButton.click();
     } else {
-      log('  → 복귀 버튼 못 찾음 → page.goto("/") 로 직접 이동');
+      log('  -> 복귀 버튼 못 찾음 -> page.goto("/") 로 직접 이동');
       await this.page.goto('/');
     }
     await this.settle();

@@ -11,7 +11,7 @@ export class HomePage extends BasePage {
     return this;
   }
 
-  /** 상단 "로그인" 링크 클릭 → /login 페이지로 이동. */
+  /** 상단 "로그인" 링크 클릭 -> /login 페이지로 이동. */
   async clickLogin(): Promise<LoginPage> {
     const loginLink = this.page
       .getByRole('link', { name: /^로그인$/ })

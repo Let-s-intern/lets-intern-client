@@ -7,7 +7,7 @@ import { RunDir } from './runDir';
  *
  * 각 step:
  *   1) test.step() 으로 묶음 (Playwright trace/리포트에 단계 기록)
- *   2) "▶ 라벨" / "✓ 라벨" 자동 로그
+ *   2) "[START] 라벨" / "[OK] 라벨" 자동 로그
  *   3) snapName 주면 단계 끝에 스크린샷 자동 캡처 (seq 자동 증가)
  *   4) 액션 결과를 그대로 반환 — 다음 POM 으로 chain 가능
  */
@@ -25,13 +25,13 @@ export class Pipeline {
     snapName?: string,
   ): Promise<T> {
     return test.step(label, async () => {
-      log(`▶ ${label}`);
+      log(`[START] ${label}`);
       const result = await fn();
       if (snapName) {
         this.seq += 1;
         await this.runDir.snap(this.page, this.seq, snapName);
       }
-      log(`✓ ${label}`);
+      log(`[OK] ${label}`);
       return result;
     });
   }

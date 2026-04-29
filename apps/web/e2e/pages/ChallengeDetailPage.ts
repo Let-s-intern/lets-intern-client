@@ -7,9 +7,9 @@ import { waitForAnchor } from '../support/settle';
  * 챌린지 상세 페이지 (/program/challenge/[id]/[slug]) Page Object.
  *
  * 진입 후 가능한 상태:
- *   - 'available'  : 메인 CTA 의 "신청하기"/"지금 바로 신청" 노출 → 신청 가능
- *   - 'closed'     : 메인 CTA 의 "출시알림신청" 노출 → 종료/시작 전
- *   - 'enrolled'   : "시작하기"/"내 라이브러리" 노출 → 이미 신청 완료
+ *   - 'available'  : 메인 CTA 의 "신청하기"/"지금 바로 신청" 노출 -> 신청 가능
+ *   - 'closed'     : 메인 CTA 의 "출시알림신청" 노출 -> 종료/시작 전
+ *   - 'enrolled'   : "시작하기"/"내 라이브러리" 노출 -> 이미 신청 완료
  *   - 'unknown'    : 위 셋 모두 감지 안 됨 (DOM 변경 등)
  *
  * 스코프 전략:
@@ -37,7 +37,7 @@ export class ChallengeDetailPage extends BasePage {
    *   1) URL: /program/challenge/[id]/[slug] redirect 완료 대기
    *   2) 제목 검증 (제공된 경우)
    *   3) **apply_button 을 우선 8초간 polling** — 전이 후 stable 상태 캐치
-   *   4) 8초 안에 apply 가 안 뜨면 진짜 종료 상태로 간주 → early_button /
+   *   4) 8초 안에 apply 가 안 뜨면 진짜 종료 상태로 간주 -> early_button /
    *      "시작하기" / "내 라이브러리" / "이미 신청" 중 하나 visible 까지 대기
    *
    * extraMs 는 anchor 가 떴어도 추가로 더 기다릴 양 (기본 0).
@@ -58,7 +58,7 @@ export class ChallengeDetailPage extends BasePage {
 
     // 1차: apply_button(신청 가능) 을 우선 polling.
     //      flash 동안 .early_button 이 잠시 떠도, .apply_button 이 곧
-    //      나타나면 그 시점에 즉시 진행 → 신청 가능 상태로 정착.
+    //      나타나면 그 시점에 즉시 진행 -> 신청 가능 상태로 정착.
     const applyAppeared = await this.page
       .locator('button.apply_button')
       .first()
@@ -67,12 +67,12 @@ export class ChallengeDetailPage extends BasePage {
       .catch(() => false);
 
     if (applyAppeared) {
-      log('    [waitForLoaded] .apply_button 도착 → 신청 가능 상태로 정착');
+      log('    [waitForLoaded] .apply_button 도착 -> 신청 가능 상태로 정착');
     } else {
-      // 2차: 8초 안에 apply 가 안 떴음 → 진짜 종료/이미신청 상태.
+      // 2차: 8초 안에 apply 가 안 떴음 -> 진짜 종료/이미신청 상태.
       //      여러 final state anchor 중 하나가 visible 될 때까지.
       log(
-        '    [waitForLoaded] .apply_button 미도착 → final state(early/시작하기/...) 대기',
+        '    [waitForLoaded] .apply_button 미도착 -> final state(early/시작하기/...) 대기',
       );
       await waitForAnchor(
         this.page,
@@ -94,23 +94,25 @@ export class ChallengeDetailPage extends BasePage {
    * 신청 가능성 검사. className-scope 우선, label regex fallback.
    *
    * 우선순위:
-   *   1) .apply_button 노출(메인 CTA) → available
-   *   2) .early_button 노출(메인 CTA) → closed
-   *   3) (className 못 찾으면) APPLY_REGEX 라벨 매칭 → available
-   *   4) ENROLLED_REGEX 라벨 매칭 → enrolled
-   *   5) (마지막) CLOSED_REGEX 라벨 매칭 → closed
+   *   1) .apply_button 노출(메인 CTA) -> available
+   *   2) .early_button 노출(메인 CTA) -> closed
+   *   3) (className 못 찾으면) APPLY_REGEX 라벨 매칭 -> available
+   *   4) ENROLLED_REGEX 라벨 매칭 -> enrolled
+   *   5) (마지막) CLOSED_REGEX 라벨 매칭 -> closed
    *      (마지막인 이유: 추천 섹션 등 다른 위치의 동일 텍스트 충돌 방지)
    *   6) unknown
    */
   async checkStatus(): Promise<ChallengeStatus> {
     // 0) "이미 신청 완료" 모달 우선 감지 — 페이지 어디든 노출되면 즉시 enrolled.
     const alreadyEnrolledOverlay = await this.page
-      .getByText(/이미\s*신청\s*완료|이미\s*가입|이미\s*등록/i)
+      .getByText(
+        /이미\s*신청(이)?\s*완료(되었습니다)?|이미\s*가입|이미\s*등록/i,
+      )
       .first()
       .isVisible({ timeout: 500 })
       .catch(() => false);
     if (alreadyEnrolledOverlay) {
-      log('    [checkStatus] "이미 신청 완료" 오버레이 감지 → enrolled');
+      log('    [checkStatus] "이미 신청 완료" 오버레이 감지 -> enrolled');
       return 'enrolled';
     }
 
@@ -131,10 +133,10 @@ export class ChallengeDetailPage extends BasePage {
 
       // "신청 완료" / "이미 신청" / disabled — 이미 신청한 상태.
       if (disabled || /신청\s*완료|이미\s*신청/i.test(text)) {
-        log('    [checkStatus] disabled 또는 "신청 완료" 텍스트 → enrolled');
+        log('    [checkStatus] disabled 또는 "신청 완료" 텍스트 -> enrolled');
         return 'enrolled';
       }
-      log('    [checkStatus] .apply_button enabled → available');
+      log('    [checkStatus] .apply_button enabled -> available');
       return 'available';
     }
     // 2) className-scope: 메인 CTA "early_button" (NotiButton 의 closed 상태)
@@ -142,7 +144,7 @@ export class ChallengeDetailPage extends BasePage {
     if (
       await closedBtnByClass.isVisible({ timeout: 1_000 }).catch(() => false)
     ) {
-      log('    [checkStatus] .early_button visible → closed');
+      log('    [checkStatus] .early_button visible -> closed');
       return 'closed';
     }
 
@@ -154,7 +156,7 @@ export class ChallengeDetailPage extends BasePage {
       .isVisible()
       .catch(() => false);
     if (hasApplyByLabel) {
-      log('    [checkStatus] APPLY_REGEX label match → available');
+      log('    [checkStatus] APPLY_REGEX label match -> available');
       return 'available';
     }
 
@@ -164,7 +166,7 @@ export class ChallengeDetailPage extends BasePage {
       .isVisible()
       .catch(() => false);
     if (isEnrolled) {
-      log('    [checkStatus] ENROLLED_REGEX label match → enrolled');
+      log('    [checkStatus] ENROLLED_REGEX label match -> enrolled');
       return 'enrolled';
     }
 
@@ -175,11 +177,11 @@ export class ChallengeDetailPage extends BasePage {
       .isVisible()
       .catch(() => false);
     if (isClosedByLabel) {
-      log('    [checkStatus] CLOSED_REGEX label match → closed');
+      log('    [checkStatus] CLOSED_REGEX label match -> closed');
       return 'closed';
     }
 
-    log('    [checkStatus] no match → unknown');
+    log('    [checkStatus] no match -> unknown');
     return 'unknown';
   }
 
@@ -216,7 +218,9 @@ export class ChallengeDetailPage extends BasePage {
 
     // 클릭 후 "이미 신청 완료" 모달 감지.
     const alreadyEnrolledModal = await this.page
-      .getByText(/이미\s*신청\s*완료|이미\s*가입|이미\s*등록/i)
+      .getByText(
+        /이미\s*신청(이)?\s*완료(되었습니다)?|이미\s*가입|이미\s*등록/i,
+      )
       .first()
       .isVisible({ timeout: 2_000 })
       .catch(() => false);

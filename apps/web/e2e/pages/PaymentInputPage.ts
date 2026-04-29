@@ -24,7 +24,7 @@ export class PaymentInputPage extends BasePage {
   }
 
   /**
-   * "0원 결제하기" 버튼 클릭 → 결과 페이지로 이동.
+   * "0원 결제하기" 버튼 클릭 -> 결과 페이지로 이동.
    * 라벨이 가격 안전 가드 역할 (유료라면 "N,000원 결제하기" 로 매칭 실패).
    */
   async clickPayZero(extraMs?: number): Promise<OrderResultPage> {
