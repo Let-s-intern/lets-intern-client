@@ -21,7 +21,7 @@ const CareerCard = ({
     <div className={clsx({ 'w-full': fullWidth })}>
       <div
         className={clsx(
-          'flex flex-1 flex-col gap-3 rounded-xs border border-neutral-85 p-4',
+          'rounded-xs border-neutral-85 flex flex-1 flex-col gap-3 border p-4',
           className,
         )}
       >
@@ -78,7 +78,7 @@ const Empty = ({
       <button
         type="button"
         onClick={handleButtonClick}
-        className="h-[32px] w-fit rounded-xs border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+        className="rounded-xs border-primary text-primary hover:bg-primary/5 h-[32px] w-fit border px-3 py-1.5 text-sm font-medium transition-colors"
       >
         {buttonText}
       </button>

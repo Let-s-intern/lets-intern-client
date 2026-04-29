@@ -111,8 +111,8 @@ const getBoxStyle = (box: (typeof TIMELINE_BOXES)[number]) => ({
 const MarketingTimelineDesktop = () => {
   return (
     <div className="hidden w-full overflow-x-auto md:block">
-      <div className="flex w-full min-w-[1140px] flex-col items-center gap-[70px] pb-10 pl-5 text-neutral-35">
-        <div className="flex w-full gap-[30px] pl-[120px] pr-5 text-xsmall16 font-semibold tracking-[-0.1px]">
+      <div className="text-neutral-35 flex w-full min-w-[1140px] flex-col items-center gap-[70px] pb-10 pl-5">
+        <div className="text-xsmall16 flex w-full gap-[30px] pl-[120px] pr-5 font-semibold tracking-[-0.1px]">
           {COLUMNS.map((col) => (
             <span key={col} className="w-20 text-center">
               {col}
@@ -123,7 +123,7 @@ const MarketingTimelineDesktop = () => {
         <div className="relative flex w-full flex-col gap-[60px]">
           {PLAN_LABELS.map((label, index) => (
             <div key={label} className="flex w-full items-center gap-[43px]">
-              <span className="w-[87px] text-start text-xsmall16 font-semibold tracking-[-0.1px]">
+              <span className="text-xsmall16 w-[87px] text-start font-semibold tracking-[-0.1px]">
                 {label}
               </span>
               <div
@@ -141,7 +141,7 @@ const MarketingTimelineDesktop = () => {
           {TIMELINE_BOXES.map((box, i) => (
             <div
               key={i}
-              className="absolute flex w-[104px] flex-col items-center justify-center rounded-sm px-1.5 text-center text-xsmall14 font-semibold leading-snug tracking-[-0.2px] text-[#27272D]"
+              className="text-xsmall14 absolute flex w-[104px] flex-col items-center justify-center rounded-sm px-1.5 text-center font-semibold leading-snug tracking-[-0.2px] text-[#27272D]"
               style={getBoxStyle(box)}
             >
               {box.lines.map((line, j) => (
@@ -158,7 +158,7 @@ const MarketingTimelineDesktop = () => {
 const MarketingTimelineMobile = () => {
   return (
     <div
-      className="grid w-full text-neutral-35 md:hidden"
+      className="text-neutral-35 grid w-full md:hidden"
       style={{
         gridTemplateColumns: '48px 1fr 1fr 1fr',
         gridTemplateRows: `auto repeat(${COLUMNS.length}, minmax(56px, auto))`,
@@ -168,7 +168,7 @@ const MarketingTimelineMobile = () => {
       {PLAN_LABELS.map((label, i) => (
         <span
           key={label}
-          className="pb-3 text-center text-xxsmall12 font-semibold tracking-[-0.3px]"
+          className="text-xxsmall12 pb-3 text-center font-semibold tracking-[-0.3px]"
           style={{ gridColumn: i + 2, gridRow: 1 }}
         >
           {label}
@@ -178,7 +178,7 @@ const MarketingTimelineMobile = () => {
       {COLUMNS.map((col, rowIdx) => (
         <span
           key={`label-${rowIdx}`}
-          className="flex max-w-7 items-start justify-center break-keep text-center text-xxsmall12 font-semibold tracking-[-0.3px]"
+          className="text-xxsmall12 flex max-w-7 items-start justify-center break-keep text-center font-semibold tracking-[-0.3px]"
           style={{ gridColumn: 1, gridRow: rowIdx + 2 }}
         >
           {col}
@@ -203,7 +203,7 @@ const MarketingTimelineMobile = () => {
       {MOBILE_TIMELINE_BOXES.map((box, i) => (
         <div
           key={i}
-          className="z-10 -mt-4 flex flex-col items-center justify-center self-start rounded-sm px-1 py-2 text-center text-xxsmall12 font-semibold tracking-[-0.3px] text-[#27272D]"
+          className="text-xxsmall12 z-10 -mt-4 flex flex-col items-center justify-center self-start rounded-sm px-1 py-2 text-center font-semibold tracking-[-0.3px] text-[#27272D]"
           style={{
             gridColumn: `${box.colStart + 2} / ${box.colEnd + 3}`,
             gridRow: box.rowIndex + 2,

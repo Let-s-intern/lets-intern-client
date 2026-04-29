@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { getChallengeAttendancesQueryKey } from '@/api/challenge/challenge';
 import { getAdminProgramReviewQueryKey } from '@/api/review/review';

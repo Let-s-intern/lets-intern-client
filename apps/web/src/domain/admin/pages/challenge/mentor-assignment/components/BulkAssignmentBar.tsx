@@ -31,8 +31,7 @@ export default function BulkAssignmentBar({
 }: BulkAssignmentBarProps) {
   const isUnassignedActive = unassignedCount > 0;
   const isSelectActive = selectedCount > 0;
-  const isAssignActive =
-    bulkMentorId !== '' && selectedCount > 0 && !isPending;
+  const isAssignActive = bulkMentorId !== '' && selectedCount > 0 && !isPending;
 
   return (
     <div className="mb-4 flex flex-col gap-2">
@@ -51,7 +50,7 @@ export default function BulkAssignmentBar({
             disabled={!isSelectActive}
             className={`outline-none ${
               isSelectActive
-                ? 'rounded border border-neutral-0 bg-white px-4 py-1.5 text-xsmall14 font-medium text-neutral-0'
+                ? 'border-neutral-0 text-xsmall14 text-neutral-0 rounded border bg-white px-4 py-1.5 font-medium'
                 : DISABLED
             }`}
             value={bulkMentorId}

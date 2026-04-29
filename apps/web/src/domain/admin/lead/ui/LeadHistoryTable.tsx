@@ -121,8 +121,8 @@ const LeadHistoryTable = ({
       </div>
       {!isLoading && remainingCount > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
-          상위 {VISIBLE_ROW_LIMIT}건만 표시됩니다. 외 {remainingCount}건은
-          CSV 다운로드로 확인하세요.
+          상위 {VISIBLE_ROW_LIMIT}건만 표시됩니다. 외 {remainingCount}건은 CSV
+          다운로드로 확인하세요.
         </div>
       )}
       {!isLoading && remainingCount === 0 && allRows.length > 0 && (

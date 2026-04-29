@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation } from '@tanstack/react-query';

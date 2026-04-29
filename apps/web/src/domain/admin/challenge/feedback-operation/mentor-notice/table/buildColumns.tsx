@@ -52,7 +52,9 @@ export function buildColumns({
         if (scope === 'ALL') return '전체 챌린지';
         if (scope === 'IN_PROGRESS') return '진행중 챌린지';
         if (row.challengeId) {
-          return challengeMap.get(row.challengeId) ?? `챌린지 #${row.challengeId}`;
+          return (
+            challengeMap.get(row.challengeId) ?? `챌린지 #${row.challengeId}`
+          );
         }
         return '특정 챌린지';
       },
@@ -65,7 +67,10 @@ export function buildColumns({
         const scope = row.mentorScopeType ?? 'ALL_MENTOR';
         if (scope === 'ALL_MENTOR') return '모든 멘토';
         if (row.challengeMentorId) {
-          return mentorMap.get(row.challengeMentorId) ?? `멘토 #${row.challengeMentorId}`;
+          return (
+            mentorMap.get(row.challengeMentorId) ??
+            `멘토 #${row.challengeMentorId}`
+          );
         }
         return '특정 멘토';
       },
@@ -96,8 +101,12 @@ export function buildColumns({
       valueGetter: (_, row) => {
         if (row.dateType === 'CHALLENGE') return '챌린지 기간';
         if (row.dateType === 'CUSTOM') {
-          const s = row.startDate ? new Date(row.startDate).toLocaleDateString() : '?';
-          const e = row.endDate ? new Date(row.endDate).toLocaleDateString() : '?';
+          const s = row.startDate
+            ? new Date(row.startDate).toLocaleDateString()
+            : '?';
+          const e = row.endDate
+            ? new Date(row.endDate).toLocaleDateString()
+            : '?';
           return `${s} ~ ${e}`;
         }
         return '무기한';

@@ -7,7 +7,7 @@ export type UserCareerType = z.infer<typeof userCareerSchema>;
 export type CareerFormType = z.infer<typeof careerFormSchema>;
 
 // "2025-08", "2025.08", or "2025-08-01"
-export const yearMonthSchema = z.string().regex(/^\d{4}[-\.]\d{2}(-\d{2})?$/);
+export const yearMonthSchema = z.string().regex(/^\d{4}[-.]\d{2}(-\d{2})?$/);
 
 export const employeeTypeSchema = z.enum([
   '정규직',

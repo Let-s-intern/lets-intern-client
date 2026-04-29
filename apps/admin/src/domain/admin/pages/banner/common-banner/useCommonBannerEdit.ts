@@ -119,7 +119,8 @@ const useCommonBannerEdit = () => {
     },
     errorCallback: (error) => {
       console.error('[useCommonBannerEdit]', error);
-      const message = error instanceof Error ? error.message : '알 수 없는 오류';
+      const message =
+        error instanceof Error ? error.message : '알 수 없는 오류';
       snackbar(`통합 배너 수정에 실패했습니다: ${message}`);
     },
   });

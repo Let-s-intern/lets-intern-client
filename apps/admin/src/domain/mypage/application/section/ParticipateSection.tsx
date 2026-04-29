@@ -13,14 +13,16 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
   const isDesktop = useMediaQuery('(min-width:768px)');
 
   const visibleCount = isDesktop ? 3 : 4;
-  const list = showMore ? applicationList : applicationList.slice(0, visibleCount);
+  const list = showMore
+    ? applicationList
+    : applicationList.slice(0, visibleCount);
 
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 중</h1>
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-xsmall14 font-normal text-neutral-20">
+          <p className="text-xsmall14 text-neutral-20 font-normal">
             참여 중인 프로그램이 아직 없어요.
           </p>
         </div>
@@ -36,7 +38,7 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
           </div>
           {applicationList.length > visibleCount && !showMore && (
             <MoreButton
-              className="border-neutral-80 !bg-transparent px-3 py-2 text-primary transition-colors hover:!bg-primary/5 md:flex md:p-3"
+              className="border-neutral-80 text-primary hover:!bg-primary/5 !bg-transparent px-3 py-2 transition-colors md:flex md:p-3"
               onClick={() => {
                 setShowMore(true);
               }}

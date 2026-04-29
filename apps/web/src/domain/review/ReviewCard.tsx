@@ -136,7 +136,7 @@ const ReviewCard = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 sm:flex-row sm:gap-[50px]',
+        'border-neutral-80 flex flex-col gap-4 rounded-sm border p-4 sm:flex-row sm:gap-[50px]',
         href && 'cursor-pointer',
         className,
       )}
@@ -163,7 +163,7 @@ const ReviewCard = ({
         </div>
         <h3
           className={twMerge(
-            'truncate text-xsmall16 font-bold text-neutral-0',
+            'text-xsmall16 text-neutral-0 truncate font-bold',
             gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
           )}
         >
@@ -171,14 +171,14 @@ const ReviewCard = ({
         </h3>
         {review.reviewInfo.type === 'MISSION_REVIEW' ? (
           <>
-            <div className="mb-3 flex items-center gap-2 text-xxsmall12 font-medium">
-              <span className="whitespace-pre text-neutral-20">
+            <div className="text-xxsmall12 mb-3 flex items-center gap-2 font-medium">
+              <span className="text-neutral-20 whitespace-pre">
                 {review.reviewInfo.missionTh}회차
               </span>
               <span className="text-neutral-70">|</span>
               <p
                 className={twMerge(
-                  'font-medium text-neutral-20',
+                  'text-neutral-20 font-medium',
                   missionTitleClamp === 1
                     ? 'line-clamp-1'
                     : missionTitleClamp === 2
@@ -220,11 +220,11 @@ const ReviewCard = ({
 
         <div
           className={twMerge(
-            'mt-auto flex items-center gap-2 text-xsmall14 md:flex-col md:items-start',
+            'text-xsmall14 mt-auto flex items-center gap-2 md:flex-col md:items-start',
             gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
           )}
         >
-          <span className="whitespace-pre font-medium text-neutral-20">
+          <span className="text-neutral-20 whitespace-pre font-medium">
             {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
           </span>
           <span className="text-neutral-70 md:hidden">|</span>
@@ -285,7 +285,7 @@ const ReviewItemBlock = (props: {
     <div>
       <div className="flex w-fit items-center gap-1">
         {/* {props.icon && props.icon} */}
-        <span className="text-xsmall14 font-semibold text-neutral-10">
+        <span className="text-xsmall14 text-neutral-10 font-semibold">
           {questionText}
         </span>
       </div>
@@ -293,12 +293,12 @@ const ReviewItemBlock = (props: {
         <ExpandableParagraph
           content={props.answer ?? ''}
           lineClamp={props.lineClamp}
-          className={twMerge('text-xsmall14 font-normal text-neutral-20')}
+          className={twMerge('text-xsmall14 text-neutral-20 font-normal')}
         />
       ) : (
         <p
           className={twMerge(
-            'text-xsmall14 font-normal tracking-[-0.028px] text-neutral-20',
+            'text-xsmall14 text-neutral-20 font-normal tracking-[-0.028px]',
             props.lineClamp === 1
               ? 'line-clamp-1'
               : props.lineClamp === 2

@@ -86,7 +86,9 @@ describe('challengeMentorGuideListSchema', () => {
 
     const result = challengeMentorGuideListSchema.parse(data);
     expect(result.challengeMentorGuideList).toHaveLength(1);
-    expect(result.challengeMentorGuideList[0].challengeScopeType).toBe('SPECIFIC');
+    expect(result.challengeMentorGuideList[0].challengeScopeType).toBe(
+      'SPECIFIC',
+    );
   });
 });
 
@@ -99,7 +101,9 @@ describe('Enum schemas', () => {
 
   it('MentorScopeType은 ALL_MENTOR, SPECIFIC_MENTOR만 허용', () => {
     expect(MentorScopeTypeEnum.parse('ALL_MENTOR')).toBe('ALL_MENTOR');
-    expect(MentorScopeTypeEnum.parse('SPECIFIC_MENTOR')).toBe('SPECIFIC_MENTOR');
+    expect(MentorScopeTypeEnum.parse('SPECIFIC_MENTOR')).toBe(
+      'SPECIFIC_MENTOR',
+    );
     expect(() => MentorScopeTypeEnum.parse('INVALID')).toThrow();
   });
 });

@@ -15,10 +15,10 @@ const EmptyCardList = ({ onReset }: EmptyCardListProps) => {
           }}
         />
         <div className="flex flex-col gap-3">
-          <h3 className="text-xsmall16 font-bold text-neutral-20 md:text-small20">
+          <h3 className="text-xsmall16 text-neutral-20 md:text-small20 font-bold">
             선택한 조건에 맞는 프로그램이 없어요
           </h3>
-          <p className="text-center text-xsmall14 text-neutral-45 md:text-xsmall16">
+          <p className="text-xsmall14 text-neutral-45 md:text-xsmall16 text-center">
             필터를 조정하거나 초기화해 <br className="md:hidden" /> 다른
             프로그램을 확인해보세요.
           </p>
@@ -26,7 +26,7 @@ const EmptyCardList = ({ onReset }: EmptyCardListProps) => {
       </div>
       <button
         onClick={onReset}
-        className="group flex items-center gap-1 rounded-xxs border border-primary px-3 py-2 text-xsmall14 text-primary"
+        className="rounded-xxs border-primary text-xsmall14 text-primary group flex items-center gap-1 border px-3 py-2"
       >
         <img
           src="/icons/filter-reset.svg"

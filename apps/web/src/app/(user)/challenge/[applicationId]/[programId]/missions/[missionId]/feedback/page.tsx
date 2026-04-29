@@ -4,8 +4,8 @@ import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LexicalContent from '@/common/lexical/LexicalContent';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function MissionFeedback() {
@@ -43,7 +43,7 @@ export default function MissionFeedback() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleGoBack}
-            className="rounded flex h-8 w-8 items-center justify-center text-gray-600 hover:bg-gray-50"
+            className="flex h-8 w-8 items-center justify-center rounded text-gray-600 hover:bg-gray-50"
           >
             ←
           </button>
@@ -58,12 +58,7 @@ export default function MissionFeedback() {
       <div className="p-4">
         {/* 미션 정보 섹션 */}
         <div className="mb-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">멘토명:</span>
-          </div>
-          <div className="text-sm text-gray-900">
-            {feedbackData?.attendanceInfo?.mentorName || '-'}
-          </div>
+          {/* 멘토명 표시 제거: 멘토 매칭이 attendance → challenge_application 으로 이동되어 attendance.mentorName 이 더 이상 사용되지 않습니다. */}
 
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
@@ -89,7 +84,7 @@ export default function MissionFeedback() {
         {/* 피드백 내용 섹션 */}
         <div className="mt-6">
           <div
-            className="rounded min-h-[500px] w-full border border-gray-300 bg-gray-100 p-6"
+            className="min-h-[500px] w-full rounded border border-gray-300 bg-gray-100 p-6"
             style={{ minHeight: '60vh' }}
           >
             <div className="flex h-full items-center justify-center">

@@ -12,7 +12,7 @@ export default function BlogHeading2({ children, className, id }: Props) {
     <h2
       id={id}
       className={twMerge(
-        'text-small20 font-semibold text-neutral-0',
+        'text-small20 text-neutral-0 font-semibold',
         className,
       )}
     >

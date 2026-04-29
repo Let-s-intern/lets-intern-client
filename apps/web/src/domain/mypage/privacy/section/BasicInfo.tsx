@@ -126,7 +126,7 @@ const BasicInfo = () => {
         )}
       </div>
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 border-b border-b-neutral-70 pb-4">
+        <div className="border-b-neutral-70 flex flex-col gap-3 border-b pb-4">
           <div className="flex flex-col gap-1">
             <label htmlFor="name" className="text-1-medium">
               이름
@@ -186,7 +186,7 @@ const BasicInfo = () => {
               렛츠커리어 정보 수신용 이메일
             </label>
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm text-neutral-0 text-opacity-[52%]">
+              <p className="text-neutral-0 text-sm text-opacity-[52%]">
                 * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는
                 이메일 주소를 입력해주세요!
               </p>
@@ -203,7 +203,7 @@ const BasicInfo = () => {
                   alt="check"
                   className="h-6 w-6"
                 />
-                <span className="text-xs font-medium text-neutral-0 text-opacity-[74%]">
+                <span className="text-neutral-0 text-xs font-medium text-opacity-[74%]">
                   가입한 이메일과 동일
                 </span>
               </div>

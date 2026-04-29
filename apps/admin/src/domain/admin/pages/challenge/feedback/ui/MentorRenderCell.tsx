@@ -12,7 +12,7 @@ const MentorRenderCell = (
   }
 
   return (
-    <span className="inline-flex items-center rounded-full bg-neutral-90 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40">
+    <span className="bg-neutral-90 text-xxsmall12 text-neutral-40 inline-flex items-center rounded-full px-2 py-0.5 font-medium">
       {name}
     </span>
   );

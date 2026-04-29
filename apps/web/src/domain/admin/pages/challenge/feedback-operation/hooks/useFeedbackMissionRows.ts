@@ -12,11 +12,11 @@ const useFeedbackMissionRows = (): Row[] => {
   const { data: isAdmin } = useIsAdminQuery();
   const { data: dataForAdmin } = useChallengeMissionFeedbackListQuery(
     Number(programId),
-    { enabled: !!programId && (isAdmin === true) },
+    { enabled: !!programId && isAdmin === true },
   );
   const { data: dataForMentor } = useMentorMissionFeedbackListQuery(
     Number(programId),
-    { enabled: !!programId && (isAdmin === false) },
+    { enabled: !!programId && isAdmin === false },
   );
 
   const data = isAdmin ? dataForAdmin : dataForMentor;

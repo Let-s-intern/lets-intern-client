@@ -50,6 +50,7 @@ export type UserAdminQueryParams = {
   company?: string | null;
   job?: string | null;
   memo?: string | null;
+  isMentor?: boolean | null;
   pageable?: {
     page: number;
     size: number;
@@ -69,6 +70,7 @@ export const useUserAdminQuery = ({
   company,
   job,
   memo,
+  isMentor,
   pageable,
 }: UserAdminQueryParams = {}) => {
   return useQuery({
@@ -86,6 +88,7 @@ export const useUserAdminQuery = ({
       company,
       job,
       memo,
+      isMentor,
       pageable,
     ],
     queryFn: async () => {
@@ -103,6 +106,7 @@ export const useUserAdminQuery = ({
           job,
           title,
           memo,
+          isMentor,
           ...pageable,
         }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
       );

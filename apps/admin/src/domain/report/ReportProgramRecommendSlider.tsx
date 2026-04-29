@@ -59,8 +59,7 @@ const ReportProgramRecommendSlider = ({
             reportProgramRecommend.challengeCareerStart?.cta ??
             '경험정리 하러 가기',
           to: `/program/challenge/${careerStart.id}`,
-          onClickButton: () =>
-            navigate(`/program/challenge/${careerStart.id}`),
+          onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
         });
       }
 
@@ -98,8 +97,7 @@ const ReportProgramRecommendSlider = ({
             reportProgramRecommend.challengePortfolio?.cta ??
             '포폴 완성하러 가기',
           to: `/program/challenge/${portfolio.id}`,
-          onClickButton: () =>
-            navigate(`/program/challenge/${portfolio.id}`),
+          onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
         });
       }
     }
@@ -230,7 +228,7 @@ const ReportProgramRecommendSlider = ({
   return (
     <section
       data-section="recommend"
-      className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0"
+      className="bg-neutral-95 w-full px-5 py-16 md:py-24 lg:px-0"
     >
       <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}

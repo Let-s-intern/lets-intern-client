@@ -117,7 +117,7 @@ const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
         ) && (
           <>
             <div className="mt-6 flex w-full flex-col gap-y-5">
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
                 챌린지 참여 목표
               </h3>
               <div
@@ -128,7 +128,7 @@ const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
               >
                 <textarea
                   className={clsx(
-                    'h-20 flex-1 resize-none bg-neutral-95 text-xsmall14 outline-none disabled:bg-white',
+                    'bg-neutral-95 text-xsmall14 h-20 flex-1 resize-none outline-none disabled:bg-white',
                     {
                       'text-neutral-400': isAttended,
                     },
@@ -139,7 +139,7 @@ const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
                   disabled={isAttended}
                   maxLength={500}
                 />
-                <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
+                <span className="text-xxsmall12 text-neutral-0/35 w-full text-right">
                   {goal.length}/500
                 </span>
               </div>

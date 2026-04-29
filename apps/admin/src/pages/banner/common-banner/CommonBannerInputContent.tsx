@@ -40,7 +40,7 @@ const ImageUploadBox = ({
         {label}
       </span>
       <div
-        className="relative flex h-[160px] w-[280px] cursor-pointer items-center justify-center rounded-xxs border border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
+        className="rounded-xxs relative flex h-[160px] w-[280px] cursor-pointer items-center justify-center border border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
         onClick={() => inputRef.current?.click()}
       >
         {preview ? (
@@ -48,7 +48,7 @@ const ImageUploadBox = ({
             <img
               src={preview}
               alt={label}
-              className="h-full w-full rounded-xxs object-cover"
+              className="rounded-xxs h-full w-full object-cover"
             />
             <button
               type="button"
@@ -121,7 +121,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
         <input
           type="text"
           placeholder="관리자 확인용 배너 제목을 입력해주세요."
-          className="w-full rounded-xxs border border-gray-300 px-4 py-2.5 outline-none focus:border-primary"
+          className="rounded-xxs focus:border-primary w-full border border-gray-300 px-4 py-2.5 outline-none"
           value={value.title}
           onChange={(e) => set({ title: e.target.value })}
         />
@@ -132,7 +132,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
         <input
           type="text"
           placeholder="배너 클릭시 이동할 랜딩 URL을 입력해주세요."
-          className="w-full rounded-xxs border border-gray-300 px-4 py-2.5 outline-none focus:border-primary"
+          className="rounded-xxs focus:border-primary w-full border border-gray-300 px-4 py-2.5 outline-none"
           value={value.landingUrl}
           onChange={(e) => set({ landingUrl: e.target.value })}
         />
@@ -168,7 +168,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
           <div className="relative flex items-center">
             <input
               type="datetime-local"
-              className="w-52 rounded-xxs border border-gray-300 px-3 py-2 outline-none focus:border-primary"
+              className="rounded-xxs focus:border-primary w-52 border border-gray-300 px-3 py-2 outline-none"
               value={value.startDate}
               onChange={(e) => set({ startDate: e.target.value })}
             />
@@ -177,7 +177,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
           <div className="relative flex items-center">
             <input
               type="datetime-local"
-              className="w-52 rounded-xxs border border-gray-300 px-3 py-2 outline-none focus:border-primary"
+              className="rounded-xxs focus:border-primary w-52 border border-gray-300 px-3 py-2 outline-none"
               value={value.endDate}
               onChange={(e) => set({ endDate: e.target.value })}
             />
@@ -197,7 +197,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 type="checkbox"
                 checked={value.types[type]}
                 onChange={(e) => setType(type, e.target.checked)}
-                className="h-4 w-4 accent-primary"
+                className="accent-primary h-4 w-4"
               />
               {BANNER_TYPE_LABELS[type]}
             </label>

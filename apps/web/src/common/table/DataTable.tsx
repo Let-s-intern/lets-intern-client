@@ -110,13 +110,13 @@ const DataTable = ({
         {/* 헤더 테이블 */}
         <div
           ref={headerScrollRef}
-          className="overflow-x-auto border-b border-neutral-80 bg-neutral-95 pr-5 scrollbar-hide"
+          className="border-neutral-80 bg-neutral-95 scrollbar-hide overflow-x-auto border-b pr-5"
         >
           <table className="w-full min-w-max table-fixed border-collapse">
             <thead>
               <tr>
                 {selectedRowIds && (
-                  <th className="sticky left-0 z-10 w-10 p-2 first:rounded-tl-xs">
+                  <th className="first:rounded-tl-xs sticky left-0 z-10 w-10 p-2">
                     <CheckBox
                       checked={allCurrentPageSelected}
                       onClick={toggleAllSelection}
@@ -127,7 +127,7 @@ const DataTable = ({
                   <th
                     key={header.key}
                     className={twMerge(
-                      'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
+                      'text-neutral-10 px-2 py-2.5 text-left text-sm font-medium',
                       header.align?.horizontal === 'center'
                         ? 'text-center'
                         : header.align?.horizontal === 'right'
@@ -165,14 +165,14 @@ const DataTable = ({
                   <tr
                     key={row.id}
                     className={twMerge(
-                      'group border-b border-neutral-80 hover:bg-neutral-95',
+                      'border-neutral-80 hover:bg-neutral-95 group border-b',
                       onRowClick && 'cursor-pointer',
                     )}
                     onClick={() => onRowClick?.(row)}
                   >
                     {selectedRowIds && (
                       <td
-                        className="sticky left-0 z-10 w-10 content-start bg-white p-2 group-hover:bg-neutral-95"
+                        className="group-hover:bg-neutral-95 sticky left-0 z-10 w-10 content-start bg-white p-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <CheckBox
@@ -231,9 +231,9 @@ const DataTable = ({
       <table className="w-full min-w-max table-fixed border-collapse">
         {/* 테이블 헤더 */}
         <thead>
-          <tr className="border-b border-neutral-80 bg-neutral-95">
+          <tr className="border-neutral-80 bg-neutral-95 border-b">
             {selectedRowIds && (
-              <th className="sticky left-0 z-10 w-10 bg-neutral-95 p-2">
+              <th className="bg-neutral-95 sticky left-0 z-10 w-10 p-2">
                 <CheckBox
                   checked={allCurrentPageSelected}
                   onClick={toggleAllSelection}
@@ -244,7 +244,7 @@ const DataTable = ({
               <th
                 key={header.key}
                 className={twMerge(
-                  'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
+                  'text-neutral-10 px-2 py-2.5 text-left text-sm font-medium',
                   header.align?.horizontal === 'center'
                     ? 'text-center'
                     : header.align?.horizontal === 'right'
@@ -271,14 +271,14 @@ const DataTable = ({
               <tr
                 key={row.id}
                 className={twMerge(
-                  'group border-b border-neutral-80 hover:bg-neutral-95',
+                  'border-neutral-80 hover:bg-neutral-95 group border-b',
                   onRowClick && 'cursor-pointer',
                 )}
                 onClick={() => onRowClick?.(row)}
               >
                 {selectedRowIds && (
                   <td
-                    className="sticky left-0 z-10 w-10 content-start bg-white p-2 group-hover:bg-neutral-95"
+                    className="group-hover:bg-neutral-95 sticky left-0 z-10 w-10 content-start bg-white p-2"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <CheckBox

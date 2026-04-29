@@ -39,7 +39,7 @@ export function WishJobModal({
           {children}
         </div>
         {footer && (
-          <div className="flex gap-2 border-t border-neutral-85 px-5 py-4">
+          <div className="border-neutral-85 flex gap-2 border-t px-5 py-4">
             {footer}
           </div>
         )}

@@ -200,7 +200,7 @@ const MissionSubmitTalentPoolSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="mb-6 text-small18 font-semibold text-neutral-0">
+        <h2 className="text-small18 text-neutral-0 mb-6 font-semibold">
           인재풀 등록하기
         </h2>
         {/* 희망 조건 입력 영역 */}

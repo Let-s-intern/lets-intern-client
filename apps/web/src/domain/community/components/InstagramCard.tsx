@@ -59,13 +59,13 @@ export default function InstagramCard({ channel }: Props) {
   }, [updateFade, scheduleUpdate]);
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-sm border border-neutral-80 bg-white shadow-sm">
+    <article className="border-neutral-80 flex flex-col overflow-hidden rounded-sm border bg-white shadow-sm">
       {/* Thumbnail area */}
-      <div className="relative border-b border-neutral-80">
+      <div className="border-neutral-80 relative border-b">
         {/* Desktop: 3x2 grid */}
-        <div className="hidden md:grid md:grid-cols-3 md:gap-px md:bg-neutral-80">
+        <div className="md:bg-neutral-80 hidden md:grid md:grid-cols-3 md:gap-px">
           {thumbnails.map((thumb, i) => (
-            <div key={i} className="aspect-square bg-neutral-90">
+            <div key={i} className="bg-neutral-90 aspect-square">
               <Image
                 src={thumb.src}
                 alt={thumb.alt}
@@ -81,12 +81,12 @@ export default function InstagramCard({ channel }: Props) {
         <div className="relative md:hidden">
           <div
             ref={scrollRef}
-            className="flex gap-1.5 overflow-x-auto px-3 py-3 scrollbar-hide"
+            className="scrollbar-hide flex gap-1.5 overflow-x-auto px-3 py-3"
           >
             {thumbnails.map((thumb, i) => (
               <div
                 key={i}
-                className="aspect-square min-w-[68px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90"
+                className="rounded-xxs bg-neutral-90 aspect-square min-w-[68px] flex-shrink-0 overflow-hidden"
               >
                 <Image
                   src={thumb.src}
@@ -119,12 +119,12 @@ export default function InstagramCard({ channel }: Props) {
               />
             </div>
           ) : (
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
+            <div className="bg-primary-5 text-primary-90 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold md:h-10 md:w-10">
               IG
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xsmall14 font-bold text-static-0 md:text-xsmall16">
+            <p className="text-xsmall14 text-static-0 md:text-xsmall16 truncate font-bold">
               {channel.handle}
             </p>
             <p className="text-xxsmall12 text-neutral-40">{channel.label}</p>
@@ -133,14 +133,14 @@ export default function InstagramCard({ channel }: Props) {
             href={channel.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-shrink-0 rounded-xs bg-primary-90 px-4 py-1.5 text-xxsmall12 font-bold text-white transition-colors hover:bg-primary-80 md:text-xsmall14"
+            className="rounded-xs bg-primary-90 text-xxsmall12 hover:bg-primary-80 md:text-xsmall14 flex-shrink-0 px-4 py-1.5 font-bold text-white transition-colors"
           >
             팔로우
           </a>
         </div>
 
         {/* Description */}
-        <p className="break-keep border-t border-neutral-80 pt-3 text-xsmall14 leading-[1.7] text-neutral-40">
+        <p className="border-neutral-80 text-xsmall14 text-neutral-40 break-keep border-t pt-3 leading-[1.7]">
           {channel.description}
         </p>
       </div>

@@ -36,7 +36,6 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
       setIsAlertModalOpen(false);
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
       console.error(error);
     },
   });
@@ -78,13 +77,13 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
     >
       <div
         onClick={handleDeleteMenuClick}
-        className="cursor-pointer text-[1.125rem] text-neutral-45"
+        className="text-neutral-45 cursor-pointer text-[1.125rem]"
       >
         <MdMoreVert />
       </div>
       {isDeleteMenuOpen && (
         <div
-          className="absolute -bottom-2 right-0 flex w-[6.5rem] translate-y-full cursor-pointer items-center gap-1 rounded-xs bg-white px-4 py-3 text-sm text-neutral-0 text-opacity-[60%] shadow-04"
+          className="rounded-xs text-neutral-0 shadow-04 absolute -bottom-2 right-0 flex w-[6.5rem] translate-y-full cursor-pointer items-center gap-1 bg-white px-4 py-3 text-sm text-opacity-[60%]"
           onClick={handleDeleteButtonClick}
         >
           <span>신청 취소</span>
@@ -105,7 +104,7 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
           신청 시에 작성했던 정보가 모두 삭제됩니다.
           <br />
           그래도 취소하시겠습니까?
-          <div className="mt-4 text-sm text-system-error">
+          <div className="text-system-error mt-4 text-sm">
             *결제금액 입금을 완료하신 경우,
             <br />
             자주 묻는 질문 내 환불 신청서를 제출해주세요!

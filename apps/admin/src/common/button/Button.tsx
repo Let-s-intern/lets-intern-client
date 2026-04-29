@@ -24,9 +24,9 @@ const Button = ({
       type={type}
       className={`rounded-xxs px-4 py-3 font-medium ${
         color === 'white'
-          ? 'border border-gray-300 bg-static-100 text-static-0'
+          ? 'bg-static-100 text-static-0 border border-gray-300'
           : 'text-static-100'
-      } ${disabled ? 'cursor-auto bg-primary-light' : 'bg-primary'}${
+      } ${disabled ? 'bg-primary-light cursor-auto' : 'bg-primary'}${
         className ? ` ${className}` : ''
       }`}
       onClick={() => {

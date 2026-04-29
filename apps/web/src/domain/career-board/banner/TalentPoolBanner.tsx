@@ -26,7 +26,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
     (error) => {
       // 실패 시 이전 상태로 롤백
       setIsEnabled((prev) => !prev);
-      // eslint-disable-next-line no-console
+
       console.error('인재풀 등록 상태 변경 실패:', error);
     },
   );
@@ -68,7 +68,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
     : '당신의 커리어에 꼭 맞는 기업을 추천해드려요.';
 
   return (
-    <div className="w-full rounded-xs border border-primary-20 bg-gradient-to-b from-[#FBFCFF] via-[#FAFAFF] to-[#F7F8FF] px-4 py-3 md:px-4 md:py-3">
+    <div className="rounded-xs border-primary-20 w-full border bg-gradient-to-b from-[#FBFCFF] via-[#FAFAFF] to-[#F7F8FF] px-4 py-3 md:px-4 md:py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-1 flex-col gap-1">
           <p className="text-xsmall14 font-medium text-[#333333]">{message}</p>

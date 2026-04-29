@@ -30,14 +30,19 @@ export function usePaginationModelWithSearchParams(
   const { defaultPage = 0, defaultPageSize = 20 } = options;
   const searchParams = useSearchParams();
 
-  const [paginationModel, setPaginationModel] = useState<PaginationModel>(() => {
-    const page = parseInt(searchParams.get('page') || defaultPage.toString(), 10);
-    const pageSize = parseInt(
-      searchParams.get('pageSize') || defaultPageSize.toString(),
-      10,
-    );
-    return { page, pageSize };
-  });
+  const [paginationModel, setPaginationModel] = useState<PaginationModel>(
+    () => {
+      const page = parseInt(
+        searchParams.get('page') || defaultPage.toString(),
+        10,
+      );
+      const pageSize = parseInt(
+        searchParams.get('pageSize') || defaultPageSize.toString(),
+        10,
+      );
+      return { page, pageSize };
+    },
+  );
 
   // Pagination 변경 핸들러
   const handlePaginationModelChange = (newModel: PaginationModel) => {
@@ -54,7 +59,10 @@ export function usePaginationModelWithSearchParams(
 
   // searchParams 변경 시 paginationModel 동기화 (뒤로가기/앞으로가기 대응)
   useEffect(() => {
-    const page = parseInt(searchParams.get('page') || defaultPage.toString(), 10);
+    const page = parseInt(
+      searchParams.get('page') || defaultPage.toString(),
+      10,
+    );
     const pageSize = parseInt(
       searchParams.get('pageSize') || defaultPageSize.toString(),
       10,
@@ -68,4 +76,3 @@ export function usePaginationModelWithSearchParams(
     handlePaginationModelChange,
   };
 }
-

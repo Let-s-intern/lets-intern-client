@@ -114,8 +114,8 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
         style={{ color: color ?? 'white' }}
       >
         {basicInfo && (
-          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-row md:gap-x-3 md:border-none md:bg-transparent md:p-0">
-            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+          <div className="bg-neutral-0/75 flex w-full flex-col gap-y-5 rounded-md border border-white/10 px-4 py-5 md:flex-row md:gap-x-3 md:border-none md:bg-transparent md:p-0">
+            <div className="md:bg-neutral-0/75 flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:px-4 md:py-5">
               {basicInfo.slice(0, 2).map((info, index) => (
                 <ReportBasicRow
                   key={index}
@@ -124,7 +124,7 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
                 />
               ))}
             </div>
-            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+            <div className="md:bg-neutral-0/75 flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:px-4 md:py-5">
               {basicInfo.slice(2).map((info, index) => (
                 <ReportBasicRow
                   key={index}
@@ -151,10 +151,10 @@ const ReportBasicRow = ({
 }) => {
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <span className="text-xsmall14 font-semibold md:text-xsmall16">
+      <span className="text-xsmall14 md:text-xsmall16 font-semibold">
         {title}
       </span>
-      <div className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-white md:text-xsmall16">
+      <div className="text-xsmall14 md:text-xsmall16 whitespace-pre-wrap break-words font-medium text-white">
         {content}
       </div>
     </div>

@@ -97,7 +97,7 @@ function ChallengeCurriculum({
         커리큘럼
       </SuperTitle>
       <div
-        className="mb-4 flex w-fit gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold sm:items-center md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
+        className="text-xsmall14 mb-4 flex w-fit gap-x-2 rounded-sm bg-white px-2 py-1 font-bold sm:items-center md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
         style={styles.titleStyle}
       >
         <img
@@ -139,10 +139,10 @@ function CurriculumItem({
   return (
     <div
       key={item.id}
-      className="h-fit rounded-md bg-white p-5 pt-4 md:shadow-06"
+      className="md:shadow-06 h-fit rounded-md bg-white p-5 pt-4"
     >
       <div
-        className="mb-2 flex items-center gap-2.5 text-xsmall16 font-semibold md:text-small20"
+        className="text-xsmall16 md:text-small20 mb-2 flex items-center gap-2.5 font-semibold"
         style={dateStyle}
       >
         <span>{item.session}</span>
@@ -152,7 +152,7 @@ function CurriculumItem({
         </span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-small18 font-bold text-neutral-0 md:text-medium22">
+        <span className="text-small18 text-neutral-0 md:text-medium22 font-bold">
           {item.title}
         </span>
         <IoIosArrowDown
@@ -163,7 +163,7 @@ function CurriculumItem({
         />
       </div>
       {isOpen && (
-        <div className="mt-3.5 whitespace-pre-line rounded-md bg-neutral-100 px-4 py-3 text-xsmall14 font-semibold text-neutral-0 md:px-4 md:py-8 md:text-small20">
+        <div className="text-xsmall14 text-neutral-0 md:text-small20 mt-3.5 whitespace-pre-line rounded-md bg-neutral-100 px-4 py-3 font-semibold md:px-4 md:py-8">
           {item.content}
         </div>
       )}

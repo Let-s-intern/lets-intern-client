@@ -105,10 +105,7 @@ const ChallengeCTAButtons = ({
           challenge.challengeType ? [challenge.challengeType] : undefined
         }
       />
-      <NotiToast
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-      />
+      <NotiToast isVisible={showToast} onClose={() => setShowToast(false)} />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
         isOpen={isOpen}

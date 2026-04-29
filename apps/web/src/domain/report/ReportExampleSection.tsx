@@ -97,17 +97,17 @@ const ReportExampleSection = ({
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-3 px-5 pb-[70px] pt-[50px] md:gap-y-5 md:pb-[120px] md:pt-[100px] lg:px-0">
         <div className="flex w-full flex-col gap-y-[30px] md:gap-y-[50px]">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
-            <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+            <h5 className="text-xsmall14 text-neutral-45 md:text-small18 w-full text-center font-semibold">
               리포트 예시
             </h5>
             <div className="flex w-full flex-col items-center gap-y-2">
               <span
-                className="break-keep text-center text-xsmall16 font-bold md:text-small20"
+                className="text-xsmall16 md:text-small20 break-keep text-center font-bold"
                 style={subHeaderStyle}
               >
                 진단 후 전송해 드리는 피드백 리포트
               </span>
-              <p className="underline-thickness-2 break-keep text-center text-medium22 font-bold text-neutral-0 md:text-xlarge30">
+              <p className="underline-thickness-2 text-medium22 text-neutral-0 md:text-xlarge30 break-keep text-center font-bold">
                 {`${convertReportTypeToShortName(type)}의 `}
                 <span
                   className="underline underline-offset-4"
@@ -129,7 +129,7 @@ const ReportExampleSection = ({
             </div>
           </div>
           <div
-            className="mx-auto flex w-full flex-col items-center gap-y-1 rounded-xs px-4 py-2 text-center text-xxsmall12 font-semibold md:w-[540px] md:py-3 md:text-xsmall14"
+            className="rounded-xs text-xxsmall12 md:text-xsmall14 mx-auto flex w-full flex-col items-center gap-y-1 px-4 py-2 text-center font-semibold md:w-[540px] md:py-3"
             style={infoBoxStyle}
           >
             {`${convertReportTypeToShortName(type)} 진단 후, 평가 내용을 전달받는 리포트 예시입니다.`}
@@ -185,7 +185,7 @@ const ReportExampleSection = ({
           >
             <div className="flex w-full flex-col gap-y-2 overflow-y-auto p-4 pb-9 sm:gap-y-3 sm:p-14 sm:pb-16">
               <div className="flex w-full items-center justify-between">
-                <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white sm:h-6 sm:w-6 sm:text-xsmall16">
+                <div className="rounded-xxs bg-primary-light text-xsmall14 sm:text-xsmall16 flex h-5 w-5 items-center justify-center font-semibold text-white sm:h-6 sm:w-6">
                   {clickedExample + 1}
                 </div>
                 <CloseIcon
@@ -193,17 +193,17 @@ const ReportExampleSection = ({
                   onClick={() => setClickedExample(null)}
                 />
               </div>
-              <div className="w-full text-wrap break-keep text-center text-xxsmall12 font-semibold sm:text-small20">
+              <div className="text-xxsmall12 sm:text-small20 w-full text-wrap break-keep text-center font-semibold">
                 {example[clickedExample].title.slice(3)}
               </div>
               <div className="relative mt-2.5 w-full md:mt-2">
                 <img
                   src={example[clickedExample].modalSrc}
                   alt={example[clickedExample].title}
-                  className="h-auto min-h-52 w-full rounded-xxs bg-neutral-95 sm:min-h-[500px]"
+                  className="rounded-xxs bg-neutral-95 h-auto min-h-52 w-full sm:min-h-[500px]"
                 />
                 <PrevButton
-                  className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
+                  className="text-neutral-20 absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
                   onClick={() =>
                     setClickedExample(
                       clickedExample > 0 ? clickedExample - 1 : 0,
@@ -211,7 +211,7 @@ const ReportExampleSection = ({
                   }
                 />
                 <NextButton
-                  className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
+                  className="text-neutral-20 absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
                   onClick={() =>
                     setClickedExample(
                       clickedExample < example.length - 1

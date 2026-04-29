@@ -44,7 +44,7 @@ const ContentCard = ({
   >
     <img src={imageSrc} alt={imageAlt} className="mb-9 w-full rounded-md" />
     <div>
-      <h3 className="mb-3 text-small20 font-bold text-neutral-0 md:text-medium24">
+      <h3 className="text-small20 text-neutral-0 md:text-medium24 mb-3 font-bold">
         {title}
       </h3>
       <div className="flex flex-col gap-2">
@@ -88,9 +88,9 @@ export const Contents = () => {
         />
       </div>
 
-      <div className="relative flex items-center rounded-xl bg-neutral-20 p-5 md:px-10 md:py-[30px]">
+      <div className="bg-neutral-20 relative flex items-center rounded-xl p-5 md:px-10 md:py-[30px]">
         <div className="flex-1">
-          <h3 className="mb-2 text-small20 font-bold text-neutral-80 md:text-medium24">
+          <h3 className="text-small20 text-neutral-80 md:text-medium24 mb-2 font-bold">
             HR 직무 맞춤형 서류 작성
           </h3>
           <p className="text-xsmall14 text-neutral-85 md:text-small20">
@@ -139,16 +139,16 @@ const InstructorCard = ({ lecture }: { lecture: LectureData }) => (
 
     <div className="relative z-10 mt-auto flex flex-col gap-2 rounded-b-md bg-gradient-to-b from-[rgba(254,238,229,0.0)] to-[#FEEEE5] px-4 pb-4 tracking-tight blur-[0px] backdrop-blur-[1.5px]">
       <div
-        className="flex w-fit items-center justify-center rounded-xxs px-[6px] py-[3px]"
+        className="rounded-xxs flex w-fit items-center justify-center px-[6px] py-[3px]"
         style={{ backgroundColor: HrPrimaryColor }}
       >
-        <span className="text-xsmall12 font-medium text-neutral-100 md:text-xsmall14">
+        <span className="text-xsmall12 md:text-xsmall14 font-medium text-neutral-100">
           {lecture.schedule}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-1">
-        <h4 className="text-xsmall18 font-bold text-neutral-0 md:text-small20">
+        <h4 className="text-xsmall18 text-neutral-0 md:text-small20 font-bold">
           {lecture.mentorName}
         </h4>
         <p className="text-xxsmall14 text-neutral-30 md:text-small18">
@@ -219,7 +219,7 @@ const PortfolioBox = ({
       </div>
 
       <p
-        className="text-small16 mt-4 text-center font-medium md:text-small20"
+        className="text-small16 md:text-small20 mt-4 text-center font-medium"
         style={{ color: descriptionColor, fontWeight: descriptionFontWeight }}
       >
         {description}

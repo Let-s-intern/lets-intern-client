@@ -30,7 +30,7 @@ const MissionSubmitButton = ({
       <div className={clsx('mt-10 flex gap-3', className)}>
         {/* 취소하기 버튼 */}
         <button
-          className="flex-1 cursor-pointer rounded-xs border border-neutral-70 bg-white p-4 text-xsmall16 font-medium text-neutral-40 transition-colors hover:bg-neutral-95"
+          className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 hover:bg-neutral-95 flex-1 cursor-pointer border bg-white p-4 font-medium transition-colors"
           onClick={onCancelEdit}
         >
           취소하기
@@ -38,11 +38,11 @@ const MissionSubmitButton = ({
         {/* 저장하기 버튼 */}
         <button
           className={clsx(
-            'flex-1 cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors disabled:cursor-not-allowed',
+            'rounded-xs text-xsmall16 flex-1 cursor-pointer p-4 font-medium transition-colors disabled:cursor-not-allowed',
             hasContent && !disabled
               ? 'bg-primary text-white hover:opacity-90'
-              : 'cursor-not-allowed bg-neutral-70 text-neutral-100',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+              : 'bg-neutral-70 cursor-not-allowed text-neutral-100',
+            'focus:ring-primary focus:outline-none focus:ring-2 focus:ring-offset-2',
           )}
           onClick={onSaveEdit}
           disabled={!hasContent || disabled}
@@ -67,7 +67,7 @@ const MissionSubmitButton = ({
     <div className={clsx('mt-10', className)}>
       <button
         className={clsx(
-          'w-full cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors disabled:cursor-not-allowed',
+          'rounded-xs text-xsmall16 w-full cursor-pointer p-4 font-medium transition-colors disabled:cursor-not-allowed',
           buttonColor,
           'hover:opacity-90',
         )}

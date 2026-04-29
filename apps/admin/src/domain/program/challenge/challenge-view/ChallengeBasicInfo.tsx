@@ -146,7 +146,7 @@ const ChallengeBasicInfo = ({
 
         {/* 챌린지 정보 */}
         <div className="w-full md:max-w-[424px]">
-          <h1 className="mb-2 py-1 text-medium22 font-bold text-neutral-0 md:text-medium24">
+          <h1 className="text-medium22 text-neutral-0 md:text-medium24 mb-2 py-1 font-bold">
             {challenge.title}
           </h1>
 
@@ -161,14 +161,14 @@ const ChallengeBasicInfo = ({
         style={styles.basicInfoStyle}
       >
         {!activeOnly && (
-          <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
+          <div className="rounded-ms bg-neutral-95 flex w-full flex-col gap-y-2 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
             <div className="flex w-full items-center gap-x-2">
               <Pin className="shrink-0" width={20} height={20} />
-              <p className="shrink-0 text-xsmall16 font-semibold text-neutral-0">
+              <p className="text-xsmall16 text-neutral-0 shrink-0 font-semibold">
                 시작 일자
               </p>
               <span
-                className="speech-bubble relative ml-3 animate-bounce-x break-keep rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
+                className="speech-bubble animate-bounce-x rounded-xxs text-xxsmall12 relative ml-3 break-keep px-2 py-1 font-normal text-white"
                 style={{
                   backgroundColor: styles.basicInfoStyle.color,
                   ['--after-border-color' as keyof CSSProperties]:
@@ -201,13 +201,13 @@ const ChallengeBasicInfo = ({
           </div>
         )}
 
-        <div className="hidden w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex md:flex-1 md:p-5 md:pt-4">
+        <div className="rounded-ms bg-neutral-95 hidden w-full flex-col gap-y-3 px-4 pb-5 pt-3 md:flex md:flex-1 md:p-5 md:pt-4">
           {activeOnly ? (
             <>
               <div className="flex w-full flex-col gap-y-2">
                 <div className="flex w-full items-center gap-x-2">
                   <Pin className="shrink-0" width={20} height={20} />
-                  <p className="text-xsmall16 font-semibold text-neutral-0">
+                  <p className="text-xsmall16 text-neutral-0 font-semibold">
                     시작 일자
                   </p>
                 </div>
@@ -229,7 +229,7 @@ const ChallengeBasicInfo = ({
             />
           )}
         </div>
-        <div className="flex w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
+        <div className="rounded-ms bg-neutral-95 flex w-full flex-col gap-y-3 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
           <div className="w-full md:hidden">
             <BasicInfoRow
               icon={<Announcement />}

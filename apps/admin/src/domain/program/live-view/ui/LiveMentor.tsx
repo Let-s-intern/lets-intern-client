@@ -39,7 +39,7 @@ function LiveMentor({
         <br className="hidden md:block" />
         <span className="text-primary">{curriculumTitle}</span>
       </Heading2>
-      <SuperTitle className="mb-5 text-primary md:mb-10">멘토 소개</SuperTitle>
+      <SuperTitle className="text-primary mb-5 md:mb-10">멘토 소개</SuperTitle>
 
       <div className="flex w-full max-w-[800px] flex-col gap-6 md:flex-row">
         {mentor.mentorImg && (
@@ -50,7 +50,7 @@ function LiveMentor({
           />
         )}
         {/* 멘토정보 */}
-        <div className="flex w-full flex-col justify-between gap-6 text-neutral-0">
+        <div className="text-neutral-0 flex w-full flex-col justify-between gap-6">
           <div>
             {mentor.mentorName && (
               <span className="text-small20 font-bold">
@@ -58,13 +58,13 @@ function LiveMentor({
               </span>
             )}
             {mentor.mentorCompany && mentor.mentorJob && (
-              <div className="mb-4 mt-1 text-xsmall16 font-semibold md:text-small18">
+              <div className="text-xsmall16 md:text-small18 mb-4 mt-1 font-semibold">
                 <span>{mentor.mentorCompany}</span> |{' '}
                 <span>{mentor.mentorJob}</span>
               </div>
             )}
             {mentor.mentorCareer && (
-              <p className="whitespace-pre-line text-xxsmall12 font-semibold text-neutral-35 md:text-small18">
+              <p className="text-xxsmall12 text-neutral-35 md:text-small18 whitespace-pre-line font-semibold">
                 {mentor.mentorCareer}
               </p>
             )}
@@ -73,11 +73,11 @@ function LiveMentor({
             <div className="flex flex-col gap-2 rounded-md bg-[#F4F5FF] p-4 pb-5">
               <div className="flex items-center gap-1">
                 <img src="/icons/speech-bubble-icon.svg" alt="말풍선 아이콘" />
-                <span className="text-xxsmall12 font-semibold text-black md:text-xsmall16">
+                <span className="text-xxsmall12 md:text-xsmall16 font-semibold text-black">
                   멘토님의 한마디
                 </span>
               </div>
-              <p className="whitespace-pre-line text-xxsmall12 text-black md:text-xsmall16">
+              <p className="text-xxsmall12 md:text-xsmall16 whitespace-pre-line text-black">
                 {mentor.mentorIntroduction ?? ''}
               </p>
             </div>

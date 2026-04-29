@@ -15,13 +15,13 @@ const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
         router.push(`/blog/${blogInfo.blogThumbnailInfo.id}`);
       }}
     >
-      <span className="w-full text-xsmall16 font-bold text-primary">
+      <span className="text-xsmall16 text-primary w-full font-bold">
         {blogCategory[blogInfo.blogThumbnailInfo.category || '']}
       </span>
       <div className="flex w-full flex-col gap-y-4">
         <div className="flex w-full gap-x-5">
           <div className="flex flex-1 flex-col gap-y-2">
-            <h2 className="line-clamp-3 font-bold text-neutral-0">
+            <h2 className="text-neutral-0 line-clamp-3 font-bold">
               {blogInfo.blogThumbnailInfo.title}
             </h2>
             <p className="text-xsmall14 text-neutral-45">

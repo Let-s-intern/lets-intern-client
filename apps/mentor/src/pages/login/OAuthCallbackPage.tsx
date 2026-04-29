@@ -60,7 +60,7 @@ export default function OAuthCallbackPage() {
           <button
             type="button"
             onClick={() => navigate('/', { replace: true })}
-            className="mt-6 w-full rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+            className="bg-primary hover:bg-primary-hover mt-6 w-full rounded-xl py-3 text-sm font-medium text-white transition-colors"
           >
             홈으로 돌아가기
           </button>
@@ -71,7 +71,7 @@ export default function OAuthCallbackPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="text-sm text-neutral-40">로그인 처리 중...</div>
+      <div className="text-neutral-40 text-sm">로그인 처리 중...</div>
     </div>
   );
 }

@@ -21,11 +21,11 @@ const DayHeaderCell = forwardRef<HTMLDivElement, DayHeaderCellProps>(
       <div
         ref={ref}
         className={`flex flex-col items-center justify-center gap-1 py-2 ${
-          isMonthStart ? 'border-l-2 border-primary-20' : ''
+          isMonthStart ? 'border-primary-20 border-l-2' : ''
         }`}
       >
         {isMonthStart && (
-          <span className="rounded-full bg-primary-10 px-1.5 py-0.5 text-[10px] font-semibold text-primary-dark">
+          <span className="bg-primary-10 text-primary-dark rounded-full px-1.5 py-0.5 text-[10px] font-semibold">
             {format(day, 'M월', { locale: ko })}
           </span>
         )}
@@ -41,11 +41,11 @@ const DayHeaderCell = forwardRef<HTMLDivElement, DayHeaderCellProps>(
           {DAY_LABELS_SHORT[day.getDay()]}
         </span>
         {isToday ? (
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xsmall14 font-semibold text-white">
+          <span className="bg-primary text-xsmall14 flex h-7 w-7 items-center justify-center rounded-full font-semibold text-white">
             {format(day, 'd', { locale: ko })}
           </span>
         ) : (
-          <span className="text-xsmall16 font-semibold text-neutral-10">
+          <span className="text-xsmall16 text-neutral-10 font-semibold">
             {format(day, 'd', { locale: ko })}
           </span>
         )}

@@ -18,9 +18,9 @@ const ActionButton = ({
     onClick={onClick}
     disabled={disabled}
     className={twMerge(
-      'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
+      'rounded-xxs text-xsmall14 border px-3 py-1.5 font-normal transition-colors',
       disabled
-        ? 'cursor-not-allowed border-neutral-80 text-neutral-50'
+        ? 'border-neutral-80 cursor-not-allowed text-neutral-50'
         : 'border-primary text-primary hover:bg-primary/5',
       variant === 'mobile' ? 'w-full md:hidden' : 'hidden shrink-0 md:block',
     )}

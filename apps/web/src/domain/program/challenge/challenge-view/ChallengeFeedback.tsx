@@ -87,7 +87,7 @@ export default function ChallengeFeedbackUI({
             이젠 진짜 만들기 시작해야하는데...
           </span>
         </div>
-        <h1 className="mb-8 text-medium24 font-bold text-white md:text-xxlarge36">
+        <h1 className="text-medium24 md:text-xxlarge36 mb-8 font-bold text-white">
           {currentContent.title}
           <br />
           혼자 만들 때 어떠셨나요?
@@ -121,7 +121,7 @@ export default function ChallengeFeedbackUI({
             혼자 만들면서 겪었던 어려움과 고민
           </span>
         </div>
-        <h1 className="mb-8 whitespace-pre-line text-medium24 font-bold md:text-xxlarge36">
+        <h1 className="text-medium24 md:text-xxlarge36 mb-8 whitespace-pre-line font-bold">
           {currentContent.solutionTitle}
         </h1>
 
@@ -150,7 +150,7 @@ export default function ChallengeFeedbackUI({
                   </div>
                 </div>
 
-                <div className="whitespace-pre-line text-neutral-10 md:text-xl">
+                <div className="text-neutral-10 whitespace-pre-line md:text-xl">
                   {benefit.benefitDescription}
                 </div>
               </div>

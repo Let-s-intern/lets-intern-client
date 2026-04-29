@@ -1,11 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import {
-  Button,
-  Chip,
-  MenuItem,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Button, Chip, MenuItem, TextField, Typography } from '@mui/material';
 import { Plus } from 'lucide-react';
 import type {
   LeadHistoryFilterCombinator,
@@ -47,7 +41,7 @@ const FilterConditionEditor = ({
   const valueOptions = callbacks.getOptionsForField(node.field);
 
   return (
-    <div className="rounded flex w-full flex-wrap items-end gap-2 border border-gray-200 bg-white px-2 py-2">
+    <div className="flex w-full flex-wrap items-end gap-2 rounded border border-gray-200 bg-white px-2 py-2">
       <TextField
         select
         size="small"
@@ -127,10 +121,7 @@ const FilterConditionEditor = ({
                     <Chip
                       key={String(item)}
                       size="small"
-                      label={callbacks.getValueLabel(
-                        node.field,
-                        String(item),
-                      )}
+                      label={callbacks.getValueLabel(node.field, String(item))}
                     />
                   ))}
                 </div>
@@ -176,7 +167,7 @@ const FilterGroupEditor = ({
   return (
     <div
       className={twMerge(
-        'rounded flex flex-col gap-2 border border-gray-200 bg-gray-50 p-3',
+        'flex flex-col gap-2 rounded border border-gray-200 bg-gray-50 p-3',
         !isRoot && 'ml-4',
       )}
     >

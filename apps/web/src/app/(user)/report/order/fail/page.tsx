@@ -32,7 +32,6 @@ const ReportPaymentFailContent = () => {
     const obj = searchParamsToObject(searchParams);
     const result = paymentFailSearchParamsSchema.safeParse(obj);
     if (!result.success) {
-      // eslint-disable-next-line no-console
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
@@ -59,14 +58,14 @@ const ReportPaymentFailContent = () => {
       <Heading1>결제 확인하기</Heading1>
       <div className="flex min-h-52 w-full flex-col items-center justify-center">
         <div className="flex w-full flex-col items-center justify-center rounded-md bg-neutral-100 py-6">
-          <div className="text-small20 font-semibold text-primary">
+          <div className="text-small20 text-primary font-semibold">
             결제가 실패했습니다❗️
           </div>
           <div className="text-xsmall16 text-neutral-20">{params?.message}</div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
           <div className="flex w-full flex-col items-start justify-center gap-6">
-            <div className="text-xsmall16 font-semibold text-neutral-0">
+            <div className="text-xsmall16 text-neutral-0 font-semibold">
               결제 프로그램
             </div>
             <Card
@@ -81,7 +80,7 @@ const ReportPaymentFailContent = () => {
           </div>
           <div className="flex w-full flex-col justify-center gap-6">
             <Heading2>결제 상세</Heading2>
-            <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
+            <div className="bg-neutral-90 flex w-full items-center justify-between gap-x-4 px-3 py-5">
               <div className="font-bold">예상 결제금액</div>
               <div className="font-bold">
                 {payment.amount?.toLocaleString()}원
@@ -141,7 +140,7 @@ const ReportPaymentFailContent = () => {
             </div>
             <Link
               href={paymentLink}
-              className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+              className="border-primary bg-primary flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
             >
               다시 결제하기
             </Link>

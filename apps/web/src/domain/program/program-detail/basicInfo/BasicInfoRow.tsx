@@ -9,11 +9,11 @@ const BasicInfoRow = ({ icon, title, content }: BasicInfoRowProps) => {
     <div className="flex w-full flex-col gap-y-2">
       <div className="flex shrink-0 items-center gap-2">
         {icon}
-        <span className="text-xsmall16 font-semibold text-neutral-0">
+        <span className="text-xsmall16 text-neutral-0 font-semibold">
           {title}
         </span>
       </div>
-      <div className="whitespace-pre-wrap text-pretty break-all text-xsmall14 font-normal text-neutral-0 xs:text-xsmall16">
+      <div className="text-xsmall14 text-neutral-0 xs:text-xsmall16 whitespace-pre-wrap text-pretty break-all font-normal">
         {content}
       </div>
     </div>

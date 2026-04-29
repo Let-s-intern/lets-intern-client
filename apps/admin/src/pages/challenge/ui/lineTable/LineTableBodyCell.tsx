@@ -11,7 +11,7 @@ const LineTableBodyCell = ({ className, children }: LineTableBodyCellProps) => {
   return (
     <div
       className={clsx(
-        'flex items-center justify-center p-1 text-sm text-zinc-500 break-all',
+        'flex items-center justify-center break-all p-1 text-sm text-zinc-500',
         className,
       )}
     >

@@ -42,11 +42,7 @@ const CommonFormPage = () => {
         />
 
         <div className="mt-8 flex items-center justify-end gap-4">
-          <Button
-            variant="outlined"
-            type="button"
-            onClick={navigateToList}
-          >
+          <Button variant="outlined" type="button" onClick={navigateToList}>
             취소
           </Button>
           <Button

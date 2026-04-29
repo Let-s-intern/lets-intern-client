@@ -6,7 +6,7 @@
  *
  */
 
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import useReport from '@/common/lexical/hooks/useReport';
 

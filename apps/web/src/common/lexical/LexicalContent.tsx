@@ -76,7 +76,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'quote': {
       const _node = node as SerializedQuoteNode;
       return (
-        <blockquote className="mb-4 border-l-2 border-neutral-80 pl-4 text-neutral-40">
+        <blockquote className="border-neutral-80 text-neutral-40 mb-4 border-l-2 pl-4">
           {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -313,7 +313,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'tablecell': {
       const _node = node as SerializedTableCellNode;
       return (
-        <td className="border border-neutral-80 p-2">
+        <td className="border-neutral-80 border p-2">
           {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -420,7 +420,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
               />
             </picture>
             {captionNode ? (
-              <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
+              <div className="image-caption-container text-xsmall14 mb-4 mt-3 w-full text-center text-neutral-50">
                 <div
                   role="textbox"
                   className="w-full whitespace-pre-wrap break-keep"
@@ -471,9 +471,9 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedPDFNode;
       return (
         <div className="pdf my-4">
-          <div className="overflow-hidden rounded-lg border border-neutral-80">
-            <div className="flex items-center justify-between bg-neutral-95 px-4 py-2">
-              <span className="text-xsmall14 font-semibold text-neutral-20">
+          <div className="border-neutral-80 overflow-hidden rounded-lg border">
+            <div className="bg-neutral-95 flex items-center justify-between px-4 py-2">
+              <span className="text-xsmall14 text-neutral-20 font-semibold">
                 {_node.fileName}
               </span>
               <a

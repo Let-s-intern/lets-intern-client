@@ -42,11 +42,11 @@ const UserInputSection = ({
   return (
     <div className="flex flex-col gap-2.5">
       <div className="flex flex-col gap-1">
-        <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+        <label className="text-xsmall14 ml-3 font-semibold">이름</label>
         <Input value={userInfo.name} disabled readOnly className="text-sm" />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="ml-3 text-xsmall14 font-semibold">휴대폰 번호</label>
+        <label className="text-xsmall14 ml-3 font-semibold">휴대폰 번호</label>
         <Input
           value={userInfo.phoneNumber}
           disabled
@@ -55,7 +55,7 @@ const UserInputSection = ({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="ml-3 text-xsmall14 font-semibold">
+        <label className="text-xsmall14 ml-3 font-semibold">
           가입한 이메일
         </label>
         <Input value={userInfo.email} disabled readOnly className="text-sm" />
@@ -66,7 +66,7 @@ const UserInputSection = ({
             렛츠커리어 정보 수신용 이메일
           </label>
           <div className="flex flex-col gap-1.5">
-            <p className="break-keep text-xxsmall12 font-light text-neutral-0 text-opacity-[52%]">
+            <p className="text-xxsmall12 text-neutral-0 break-keep font-light text-opacity-[52%]">
               * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는
               이메일 주소를 입력해주세요!
             </p>
@@ -89,7 +89,7 @@ const UserInputSection = ({
               >
                 <FaCheck className="h-2.5 w-2.5 text-white" />
               </div>
-              <span className="h-4 text-xxsmall12 font-medium text-neutral-0 text-opacity-[74%]">
+              <span className="text-xxsmall12 text-neutral-0 h-4 font-medium text-opacity-[74%]">
                 가입한 이메일과 동일
               </span>
             </label>

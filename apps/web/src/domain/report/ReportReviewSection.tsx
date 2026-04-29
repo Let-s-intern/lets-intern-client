@@ -40,15 +40,15 @@ const ReportReviewSection = ({
     >
       <div className="mx-auto flex w-full max-w-[800px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:pb-[150px] md:pt-[120px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
-          <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+          <h5 className="text-xsmall14 text-neutral-45 md:text-small18 w-full text-center font-semibold">
             후기
           </h5>
           <div className="flex w-full flex-col gap-y-2 whitespace-pre-wrap break-keep">
             <span
-              className="w-full text-center text-xsmall16 font-bold md:text-small20"
+              className="text-xsmall16 md:text-small20 w-full text-center font-bold"
               style={subHeaderStyle}
             >{`${convertReportTypeToDisplayName(type)} 피드백 REPORT, 실제로 효과 있을까?`}</span>
-            <p className="w-full text-center text-medium22 font-bold text-white md:text-xlarge30">
+            <p className="text-medium22 md:text-xlarge30 w-full text-center font-bold text-white">
               실제 사용자와의 인터뷰를 통해 <br />
               확인한 리얼 피드백
             </p>

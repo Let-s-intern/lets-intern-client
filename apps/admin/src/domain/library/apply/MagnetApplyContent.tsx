@@ -242,7 +242,7 @@ const MagnetApplyContent = ({
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-small18 font-medium text-neutral-0"
+        className="text-small18 text-neutral-0 flex items-center gap-2 font-medium"
       >
         <ArrowLeft className="h-5 w-5" />
         {pageTitle}
@@ -260,7 +260,7 @@ const MagnetApplyContent = ({
           onSelectionsChange={handleSelectionsChange}
           showRequired={true}
           beforeConditions={
-            <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+            <h2 className="text-xsmall16 text-neutral-0 md:text-small18 mb-6 mt-4 font-semibold">
               추가 정보
             </h2>
           }
@@ -300,7 +300,7 @@ const MagnetApplyContent = ({
 
       {/* 신청하기 버튼 */}
       <button
-        className="mt-6 rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
+        className="rounded-xs bg-primary text-xsmall14 disabled:bg-neutral-70 md:text-xsmall16 mt-6 px-4 py-3 font-medium text-white"
         onClick={handleSubmit}
         disabled={isSubmitDisabled}
       >

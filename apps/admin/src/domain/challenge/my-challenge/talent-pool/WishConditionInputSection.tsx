@@ -231,7 +231,7 @@ export default function WishConditionInputSection({
               <button
                 key={item.id}
                 onClick={() => handleFieldSelect(item.id)}
-                className={`flex w-full items-center justify-between rounded-xxs px-3 py-1.5 leading-[26px] ${
+                className={`rounded-xxs flex w-full items-center justify-between px-3 py-1.5 leading-[26px] ${
                   isSelected
                     ? 'text-primary'
                     : 'text-neutral-20 hover:bg-neutral-95'
@@ -263,16 +263,16 @@ export default function WishConditionInputSection({
             <>
               <button
                 onClick={backToField}
-                className="flex-1 rounded-xxs border border-primary py-3 text-primary"
+                className="rounded-xxs border-primary text-primary flex-1 border py-3"
               >
                 이전으로
               </button>
               <button
                 onClick={closeModal}
-                className={`flex-1 rounded-xxs py-3 text-white ${
+                className={`rounded-xxs flex-1 py-3 text-white ${
                   selectedPositions.length > 0
                     ? 'bg-primary'
-                    : 'cursor-not-allowed bg-neutral-70'
+                    : 'bg-neutral-70 cursor-not-allowed'
                 }`}
               >
                 선택 완료
@@ -323,10 +323,10 @@ export default function WishConditionInputSection({
           footer={
             <button
               onClick={closeModal}
-              className={`flex-1 rounded-xs py-3 text-white ${
+              className={`rounded-xs flex-1 py-3 text-white ${
                 selectedIndustries.length > 0
                   ? 'bg-primary'
-                  : 'cursor-not-allowed bg-neutral-70'
+                  : 'bg-neutral-70 cursor-not-allowed'
               }`}
             >
               선택 완료

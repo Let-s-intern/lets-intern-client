@@ -70,19 +70,12 @@ const CloneFormDropdown = ({
       >
         신청폼 복제
       </Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         {magnets.length === 0 ? (
           <MenuItem disabled>복제할 수 있는 폼이 없습니다</MenuItem>
         ) : (
           magnets.map((m) => (
-            <MenuItem
-              key={m.magnetId}
-              onClick={() => handleClone(m.magnetId)}
-            >
+            <MenuItem key={m.magnetId} onClick={() => handleClone(m.magnetId)}>
               [{m.magnetId}] {m.title}
             </MenuItem>
           ))

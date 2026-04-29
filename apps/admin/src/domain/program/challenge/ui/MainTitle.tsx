@@ -10,7 +10,7 @@ function MainTitle({ children, className }: Props) {
   return (
     <h2
       className={twMerge(
-        'text-center text-medium22 font-bold text-neutral-0 md:text-xlarge30',
+        'text-medium22 text-neutral-0 md:text-xlarge30 text-center font-bold',
         className,
       )}
     >

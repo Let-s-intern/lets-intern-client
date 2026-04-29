@@ -34,6 +34,9 @@ export function buildCrossAppUrl(
     target.hash = `__sso=${encodeURIComponent(`${accessToken}|${refreshToken}`)}`;
     return target.toString();
   } catch {
-    return baseUrl.replace(/\/$/, '') + (subPath.startsWith('/') ? subPath : `/${subPath}`);
+    return (
+      baseUrl.replace(/\/$/, '') +
+      (subPath.startsWith('/') ? subPath : `/${subPath}`)
+    );
   }
 }

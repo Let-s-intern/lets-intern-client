@@ -9,7 +9,7 @@ function CustomerSupport() {
   return (
     <div className="text-0.875 w-full">
       <span className="text-neutral-0">고객센터</span>
-      <p className="mt-2 flex flex-col text-neutral-0/65">
+      <p className="text-neutral-0/65 mt-2 flex flex-col">
         {content.map((item) => (
           <span key={item}>{item}</span>
         ))}

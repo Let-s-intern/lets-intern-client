@@ -32,7 +32,7 @@ function GlobalNavItem({
     'text-small18 font-semibold transition hover:opacity-80',
     active ? 'text-primary' : 'text-neutral-0',
     isNew &&
-      "flex items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
+      "after:bg-system-error flex items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
     className,
   );
 
@@ -61,7 +61,7 @@ function GlobalNavItem({
           {isMounted && showDropdownIcon && (
             <Down
               width={24}
-              className="text-neutral-20 transition-transform group-hover:text-neutral-0"
+              className="text-neutral-20 group-hover:text-neutral-0 transition-transform"
             />
           )}
         </span>
@@ -75,14 +75,14 @@ function GlobalNavItem({
           <div className="mx-auto h-auto w-[20px] text-white">
             {/* <Polygon /> */}
           </div>
-          <div className="my-3 flex w-full flex-col rounded-xs bg-white py-1">
+          <div className="rounded-xs my-3 flex w-full flex-col bg-white py-1">
             {subNavList.map((item, index) => (
               <Fragment key={`${item.href}-${index}`}>
                 <SubNavItem key={index} {...item} align={align}>
                   {item.children}
                 </SubNavItem>
                 {index < subNavList.length - 1 && (
-                  <hr className="border-t border-neutral-90" />
+                  <hr className="border-neutral-90 border-t" />
                 )}
               </Fragment>
             ))}

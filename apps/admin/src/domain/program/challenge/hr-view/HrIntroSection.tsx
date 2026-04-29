@@ -44,7 +44,7 @@ function HrIntroSection() {
             <div className="flex w-full flex-col items-center justify-center">
               <div className="flex items-center gap-1 md:gap-1.5">
                 <span>어디까지가</span>
-                <div className="-rotate-[2deg] rounded-xxs bg-[#ff5e00] px-2 py-1 text-small20 leading-none text-neutral-100 md:px-2 md:py-0.5 md:text-xlarge30">
+                <div className="rounded-xxs text-small20 md:text-xlarge30 -rotate-[2deg] bg-[#ff5e00] px-2 py-1 leading-none text-neutral-100 md:px-2 md:py-0.5">
                   제대로 된 준비
                 </div>
                 <span>일까요?</span>

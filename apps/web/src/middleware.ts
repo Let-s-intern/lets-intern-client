@@ -14,7 +14,7 @@ function buildRedirect(
 ) {
   const stripped = pathname.replace(new RegExp(`^${prefix}`), '') || '/';
   const target = new URL(base);
-  target.pathname = (target.pathname.replace(/\/$/, '') + stripped) || '/';
+  target.pathname = target.pathname.replace(/\/$/, '') + stripped || '/';
   target.search = search;
   return target.toString();
 }

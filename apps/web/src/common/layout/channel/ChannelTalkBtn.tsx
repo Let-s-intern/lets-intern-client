@@ -44,14 +44,16 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   }, [pathname]);
 
   const isB2BPage = pathname.startsWith('/b2b');
-  const isFeedbackMentoringPage = pathname.startsWith('/challenge/feedback-mentoring');
+  const isFeedbackMentoringPage = pathname.startsWith(
+    '/challenge/feedback-mentoring',
+  );
   const hiddenByPathname = isB2BPage || isFeedbackMentoringPage;
 
   return (
     <button
       id="custom-channel-button"
       className={twMerge(
-        'fixed right-4 z-30 flex w-32 items-center rounded-full bg-neutral-100 shadow-05 md:right-6 md:w-36',
+        'shadow-05 fixed right-4 z-30 flex w-32 items-center rounded-full bg-neutral-100 md:right-6 md:w-36',
         programDetailPathRegex.test(pathname) ||
           (pathname.startsWith('/report') && isUpTo1280) ||
           pathname.startsWith('/report/landing') ||
@@ -63,10 +65,10 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
       )}
       onClick={() => channelService.showMessenger()}
     >
-      <div className="flex flex-1 items-center justify-center pl-2 text-xsmall14 font-semibold md:text-xsmall16">
+      <div className="text-xsmall14 md:text-xsmall16 flex flex-1 items-center justify-center pl-2 font-semibold">
         문의하기
       </div>
-      <div className="flex h-12 w-12 translate-x-px items-center justify-center rounded-full bg-primary sm:h-14 sm:w-14">
+      <div className="bg-primary flex h-12 w-12 translate-x-px items-center justify-center rounded-full sm:h-14 sm:w-14">
         <img
           className="h-7 w-7 sm:h-8 sm:w-8"
           src="/icons/channel.svg"
@@ -75,7 +77,7 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
       </div>
       {/* 안 읽은 알람 표시 */}
       {alert > 0 && (
-        <div className="text-0.75 absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-system-error text-static-100 sm:h-6 sm:w-6">
+        <div className="text-0.75 bg-system-error text-static-100 absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full sm:h-6 sm:w-6">
           {alert}
         </div>
       )}

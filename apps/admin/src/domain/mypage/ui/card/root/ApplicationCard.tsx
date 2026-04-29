@@ -56,7 +56,7 @@ const ApplicationCard = ({
 
   return (
     <div
-      className="flex min-h-max w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
+      className="rounded-xs md:border-neutral-85 flex min-h-max w-full flex-col items-start gap-4 overflow-hidden md:h-full md:flex-row md:border md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
@@ -68,7 +68,7 @@ const ApplicationCard = ({
           <img
             src={thumbnail}
             alt="프로그램 썸네일"
-            className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
+            className="bg-primary-light md:rounded-xs h-[7.5rem] w-full object-cover md:h-[9rem] md:w-[11rem]"
           />
         </HybridLink>
         <div className="flex flex-col justify-between gap-2 py-2">
@@ -78,16 +78,16 @@ const ApplicationCard = ({
                 {application.programTitle}
               </HybridLink>
             </h2>
-            <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">
+            <p className="text-neutral-30 line-clamp-2 h-10 text-sm md:line-clamp-none md:h-auto">
               {application.programShortDesc}
             </p>
           </div>
           <div>
             <div className="flex items-center gap-1.5 md:justify-start">
-              <span className="text-xs text-neutral-0">
+              <span className="text-neutral-0 text-xs">
                 {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
               </span>
-              <span className="text-xs font-medium text-primary-dark">
+              <span className="text-primary-dark text-xs font-medium">
                 {application.programType === 'REPORT'
                   ? application.createDate?.format('YY.MM.DD')
                   : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
@@ -95,8 +95,8 @@ const ApplicationCard = ({
             </div>
             {application.programType === 'CHALLENGE' && (
               <div className="flex items-center gap-1.5 md:justify-start">
-                <span className="text-xs text-neutral-0">신청플랜</span>
-                <span className="text-xs font-medium text-primary-dark">
+                <span className="text-neutral-0 text-xs">신청플랜</span>
+                <span className="text-primary-dark text-xs font-medium">
                   {getChallengePlanLabel(application.pricePlanType)}
                 </span>
               </div>

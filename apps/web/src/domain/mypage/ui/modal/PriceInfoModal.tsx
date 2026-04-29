@@ -20,8 +20,8 @@ const PriceInfoModal = ({
   });
 
   return (
-    <div className="z-100 fixed inset-0 z-10 flex items-center justify-center bg-neutral-0/50 px-8">
-      <div className="relative flex w-[30rem] flex-col items-center justify-center gap-y-5 rounded-lg bg-static-100 p-6">
+    <div className="z-100 bg-neutral-0/50 fixed inset-0 z-10 flex items-center justify-center px-8">
+      <div className="bg-static-100 relative flex w-[30rem] flex-col items-center justify-center gap-y-5 rounded-lg p-6">
         <img
           onClick={onClose}
           src="/icons/Close_SM.svg"
@@ -36,7 +36,7 @@ const PriceInfoModal = ({
               <div className="w-full text-center text-lg font-bold">
                 결제정보
               </div>
-              <div className="flex w-full flex-col items-start justify-center border-b-2 border-neutral-30 border-b-neutral-85 pb-3">
+              <div className="border-neutral-30 border-b-neutral-85 flex w-full flex-col items-start justify-center border-b-2 pb-3">
                 <div className="mb-3 font-semibold">결제 방법</div>
                 <div className="item-center flex w-full justify-between gap-x-2 p-2">
                   <div className="text-neutral-30">입금 계좌</div>
@@ -56,14 +56,14 @@ const PriceInfoModal = ({
                   </div>
                 </div>
               </div>
-              <div className="flex w-full flex-col items-start justify-center border-b-2 border-neutral-30 border-b-neutral-85 pb-3">
+              <div className="border-neutral-30 border-b-neutral-85 flex w-full flex-col items-start justify-center border-b-2 pb-3">
                 <div className="item-center flex w-full justify-between gap-x-2 p-2">
                   <div className="text-neutral-30">참여 비용</div>
                   <div className="item-center flex grow justify-end font-semibold">
                     {data.priceInfo.price.toLocaleString()} 원
                   </div>
                 </div>
-                <div className="item-center flex w-full justify-between gap-x-2 p-2 font-semibold text-primary">
+                <div className="item-center text-primary flex w-full justify-between gap-x-2 p-2 font-semibold">
                   <div className="">쿠폰 할인</div>
                   <div className="item-center flex grow justify-end font-semibold">
                     -
@@ -77,7 +77,7 @@ const PriceInfoModal = ({
                     원
                   </div>
                 </div>
-                <div className="item-center flex w-full justify-between gap-x-2 p-2 font-semibold text-system-error">
+                <div className="item-center text-system-error flex w-full justify-between gap-x-2 p-2 font-semibold">
                   <div className="">
                     할인{' '}
                     {Math.floor(

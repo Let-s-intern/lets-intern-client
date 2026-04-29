@@ -31,8 +31,8 @@ const TestimonialCard = ({
   meta: string;
 }) => {
   return (
-    <div className="min-h-[282px] w-[300px] rounded-xs bg-static-100 p-5 shadow-sm md:w-[371px] md:rounded-sm">
-      <div className="mb-3 flex w-fit items-center rounded-xs bg-[#FEEEE5] px-2 py-1.5">
+    <div className="rounded-xs bg-static-100 min-h-[282px] w-[300px] p-5 shadow-sm md:w-[371px] md:rounded-sm">
+      <div className="rounded-xs mb-3 flex w-fit items-center bg-[#FEEEE5] px-2 py-1.5">
         {[...Array(5)].map((_, idx) => (
           <Image
             key={idx}
@@ -43,15 +43,15 @@ const TestimonialCard = ({
           />
         ))}
       </div>
-      <div className="min-h-[210px] text-neutral-0">
-        <p className="mb-2 line-clamp-1 break-keep text-xsmall16 font-bold md:text-small20">
+      <div className="text-neutral-0 min-h-[210px]">
+        <p className="text-xsmall16 md:text-small20 mb-2 line-clamp-1 break-keep font-bold">
           {title}
         </p>
-        <p className="md:line-clamp-7 line-clamp-6 whitespace-pre-line text-xsmall14 font-medium leading-relaxed md:text-xsmall16">
+        <p className="md:line-clamp-7 text-xsmall14 md:text-xsmall16 line-clamp-6 whitespace-pre-line font-medium leading-relaxed">
           {content}
         </p>
       </div>
-      <div className="mt-4 text-xsmall14 font-normal text-neutral-50">
+      <div className="text-xsmall14 mt-4 font-normal text-neutral-50">
         {meta}
       </div>
     </div>

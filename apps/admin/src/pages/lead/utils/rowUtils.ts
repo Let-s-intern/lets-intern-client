@@ -29,4 +29,3 @@ export const compareLeadHistoryRowsByName = (
 
   return (a.createDate ?? '').localeCompare(b.createDate ?? '');
 };
-

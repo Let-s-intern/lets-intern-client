@@ -17,8 +17,8 @@ export const calculateProgramPrice = ({
     feeType === 'REFUND'
       ? feeCharge + feeRefund
       : feeType === 'CHARGE'
-      ? feeCharge
-      : 0;
+        ? feeCharge
+        : 0;
   const discountAmount = programDiscount;
   const totalPrice =
     price - discountAmount - couponDiscount < 0

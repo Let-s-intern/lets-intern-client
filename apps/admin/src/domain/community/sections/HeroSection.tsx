@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="w-full bg-[#F7F9FF]">
       <div className="mw-1180 px-4 pb-16 pt-20 text-center md:pb-24 md:pt-32">
         <motion.p
-          className="text-xsmall16 font-medium text-primary-90"
+          className="text-xsmall16 text-primary-90 font-medium"
           {...FADE_IN()}
         >
           렛츠커리어 커뮤니티
@@ -24,7 +24,7 @@ export default function Hero() {
         </motion.h1>
 
         <motion.p
-          className="mx-auto mt-6 w-[256px] break-keep text-xsmall14 leading-[22px] text-neutral-40 md:w-auto md:px-0 md:text-small20"
+          className="text-xsmall14 text-neutral-40 md:text-small20 mx-auto mt-6 w-[256px] break-keep leading-[22px] md:w-auto md:px-0"
           {...FADE_IN(0.05)}
         >
           취준 고민과 질문을 자유롭게 공유하고, 렛츠커리어가
@@ -39,7 +39,7 @@ export default function Hero() {
           {heroChips.map((chip, i) => (
             <span
               key={i}
-              className="inline-block rounded-full bg-white px-5 py-2.5 text-xxsmall12 font-medium text-neutral-20 shadow-sm md:text-xsmall14"
+              className="text-xxsmall12 text-neutral-20 md:text-xsmall14 inline-block rounded-full bg-white px-5 py-2.5 font-medium shadow-sm"
             >
               {chip}
             </span>

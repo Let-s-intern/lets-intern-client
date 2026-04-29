@@ -6,8 +6,8 @@
  *
  */
 
-import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   LexicalContextMenuPlugin,
   MenuOption,
@@ -21,7 +21,7 @@ import {
   type LexicalNode,
   PASTE_COMMAND,
 } from 'lexical';
-import {useCallback, useMemo} from 'react';
+import { useCallback, useMemo } from 'react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -52,7 +52,8 @@ function ContextMenuItem({
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
-      onClick={onClick}>
+      onClick={onClick}
+    >
       <span className="text">{option.title}</span>
     </li>
   );
@@ -237,7 +238,7 @@ export default function ContextMenuPlugin(): JSX.Element {
           selectOptionAndCleanUp,
           setHighlightedIndex,
         },
-        {setMenuRef},
+        { setMenuRef },
       ) =>
         anchorElementRef.current
           ? ReactDOM.createPortal(
@@ -248,7 +249,8 @@ export default function ContextMenuPlugin(): JSX.Element {
                   userSelect: 'none',
                   width: 200,
                 }}
-                ref={setMenuRef}>
+                ref={setMenuRef}
+              >
                 <ContextMenu
                   options={options}
                   selectedItemIndex={selectedIndex}

@@ -103,7 +103,7 @@ const ChallengeActionDropdown = ({
         챌린지
       </ActionButton>
       {isMenuOpen && (
-        <ul className="rounded absolute -top-2 left-1/2 w-56 -translate-x-1/2 -translate-y-full overflow-hidden border border-neutral-300 bg-white shadow-lg">
+        <ul className="absolute -top-2 left-1/2 w-56 -translate-x-1/2 -translate-y-full overflow-hidden rounded border border-neutral-300 bg-white shadow-lg">
           <li
             className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
             onClick={downloadConfirmedEmailList}

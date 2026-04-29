@@ -65,7 +65,8 @@ const MenteeList = ({
               {attendanceList.map((mentee, idx) => {
                 const isSelected = idx === selectedIndex;
                 const feedbackBadge = getFeedbackBadge(mentee.feedbackStatus);
-                const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
+                const isAbsent =
+                  mentee.status === 'ABSENT' || mentee.id == null;
 
                 return (
                   <button
@@ -75,7 +76,7 @@ const MenteeList = ({
                     className={twMerge(
                       'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
                       isSelected
-                        ? 'rounded-md border-b-0 bg-primary-5'
+                        ? 'bg-primary-5 rounded-md border-b-0'
                         : 'hover:bg-neutral-50',
                     )}
                   >

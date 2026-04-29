@@ -34,12 +34,12 @@ const MarketingAgree = () => {
   };
 
   return (
-    <div className="flex items-center justify-between rounded-md bg-primary-10 px-5 py-4">
+    <div className="bg-primary-10 flex items-center justify-between rounded-md px-5 py-4">
       <div>
-        <h1 className="text-lg font-semibold text-neutral-0 text-opacity-[88%]">
+        <h1 className="text-neutral-0 text-lg font-semibold text-opacity-[88%]">
           마케팅 수신 동의
         </h1>
-        <p className="text-sm text-neutral-0 text-opacity-[52%]">
+        <p className="text-neutral-0 text-sm text-opacity-[52%]">
           할인, 이벤트, 프로그램 개설 및 추천 등<br />
           유용한 정보를 알려주는 소식을 받을 수 있어요.
         </p>
@@ -56,7 +56,7 @@ const MarketingAgree = () => {
           onClick={handleIsAgreeCheck}
         >
           <div
-            className={clsx('h-[1.25rem] w-[1.25rem] rounded-full bg-primary', {
+            className={clsx('bg-primary h-[1.25rem] w-[1.25rem] rounded-full', {
               'translate-x-0': !isAgree,
               'translate-x-[1.25rem]': isAgree,
             })}

@@ -32,9 +32,7 @@ const MagnetRecommendSection = ({
 
   const allMagnets = useMemo(
     () =>
-      (data?.magnetList ?? []).filter(
-        (m) => m.magnetId !== currentMagnetId,
-      ),
+      (data?.magnetList ?? []).filter((m) => m.magnetId !== currentMagnetId),
     [data, currentMagnetId],
   );
 

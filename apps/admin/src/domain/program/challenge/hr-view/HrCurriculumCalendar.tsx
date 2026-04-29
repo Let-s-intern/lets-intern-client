@@ -48,7 +48,7 @@ interface CalendarListProps {
 
 const CalendarList = ({ children }: CalendarListProps) => {
   return (
-    <ul className="flex w-full min-w-0 flex-col gap-3 rounded-xs bg-white p-4 text-xsmall14 md:min-w-[288px] md:flex-shrink-0 md:p-3">
+    <ul className="rounded-xs text-xsmall14 flex w-full min-w-0 flex-col gap-3 bg-white p-4 md:min-w-[288px] md:flex-shrink-0 md:p-3">
       {children}
     </ul>
   );
@@ -101,7 +101,7 @@ const HrCurriculumCalendar = ({
 
   return (
     <section className="flex w-full flex-col items-center bg-[#FFF7F2] pt-[60px] md:overflow-x-hidden md:px-0 md:pb-[104px] md:pt-[100px]">
-      <h2 className="mb-5 text-center text-[14px] font-bold md:mb-[60px] md:text-medium24 md:font-semibold">
+      <h2 className="md:text-medium24 mb-5 text-center text-[14px] font-bold md:mb-[60px] md:font-semibold">
         한눈에 보는 {'['} {challenge.title ?? ''} {']'} 일정
       </h2>
 
@@ -114,22 +114,22 @@ const HrCurriculumCalendar = ({
               alt="커리큘럼 상세 일정"
               fill
               unoptimized
-              className="absolute rounded-xxs object-cover md:rounded-xs"
+              className="rounded-xxs md:rounded-xs absolute object-cover"
             />
           </div>
         )}
         {/* 오른쪽 박스 */}
-        <div className="relative flex w-full min-w-0 flex-col gap-3 text-neutral-0 md:h-full md:justify-between">
+        <div className="text-neutral-0 relative flex w-full min-w-0 flex-col gap-3 md:h-full md:justify-between">
           <CalendarList>
             {calendarItems.map((item) => (
               <CalendarItem key={item.number} {...item} />
             ))}
           </CalendarList>
           <CalendarList>
-            <li className="flex flex-col text-xxsmall12 md:text-xsmall14">
+            <li className="text-xxsmall12 md:text-xsmall14 flex flex-col">
               <div className="text-xxsmall12 md:text-xsmall14">
                 <span className="font-bold">+ </span>
-                <span className="rounded box-border inline-block rounded-[2px] bg-[#FF7B2E] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]">
+                <span className="box-border inline-block rounded rounded-[2px] bg-[#FF7B2E] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]">
                   렛츠커리어 24hr 커뮤니티
                 </span>
               </div>
@@ -139,7 +139,7 @@ const HrCurriculumCalendar = ({
                 <span className="text-[14px] font-semibold leading-[20px] md:text-[16px] md:leading-[22px]">
                   + HR 직무 및 산업 스터디
                 </span>
-                <div className="text-xxsmall12 leading-[20px] md:text-xsmall14 md:leading-[22px]">
+                <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
                   꾸준한 HR에 대한 관심을 보여줄 수 있는 <br />
                   HR 직무/산업 스터디 템플릿을 제공해요.
                 </div>
@@ -148,7 +148,7 @@ const HrCurriculumCalendar = ({
                 <span className="text-[14px] font-semibold leading-[20px] md:text-[16px] md:leading-[22px]">
                   + 1:1 피드백을 신청하신 경우
                 </span>
-                <div className="text-xxsmall12 leading-[20px] md:text-xsmall14 md:leading-[22px]">
+                <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
                   내가 희망하는 세부 직무에 맞는 현직자와 <br />
                   매칭되어, 커리어 패스 상담 및 서류 작성과 <br />
                   면접 준비에 대한 조언을 얻을 수 있어요.

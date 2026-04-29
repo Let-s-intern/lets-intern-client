@@ -107,7 +107,9 @@ const LiveEdit: React.FC = () => {
   useEffect(() => {
     // 구 버전인지 판단
     if (live && isDeprecatedProgram(live)) {
-      navigate(`/programs/${liveIdString}/edit?programType=LIVE`, { replace: true });
+      navigate(`/programs/${liveIdString}/edit?programType=LIVE`, {
+        replace: true,
+      });
     }
   }, [live, liveIdString, navigate]);
 

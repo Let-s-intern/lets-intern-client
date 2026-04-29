@@ -30,7 +30,7 @@ export const CompetencyBadges = ({
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="ml-1 text-neutral-40 hover:text-neutral-0"
+            className="text-neutral-40 hover:text-neutral-0 ml-1"
             aria-label={`${competency.trim()} 삭제`}
           >
             <XIcon size={14} />

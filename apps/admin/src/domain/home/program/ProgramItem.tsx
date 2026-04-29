@@ -29,36 +29,36 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
         data-text={props.gaTitle}
       >
         {props.isDeadline && (
-          <span className="absolute left-2 top-2 rounded-xxs bg-neutral-10 p-1 text-[0.6875rem] text-xxsmall12 font-medium text-neutral-100 md:left-2.5 md:top-2.5 md:px-1.5 md:py-[5px]">
+          <span className="rounded-xxs bg-neutral-10 text-xxsmall12 absolute left-2 top-2 p-1 text-[0.6875rem] font-medium text-neutral-100 md:left-2.5 md:top-2.5 md:px-1.5 md:py-[5px]">
             마감임박🔥
           </span>
         )}
         <img
           src={props.thumbnail || undefined}
           alt="thumbnail"
-          className="aspect-[1.3/1] w-full rounded-sm border-[0.7px] border-neutral-75 object-cover"
+          className="border-neutral-75 aspect-[1.3/1] w-full rounded-sm border-[0.7px] object-cover"
         />
         {props.category && (
-          <span className="-mb-1 mt-3 text-xsmall14 font-semibold text-primary">
+          <span className="text-xsmall14 text-primary -mb-1 mt-3 font-semibold">
             {props.category}
           </span>
         )}
-        <h3 className="mt-2 line-clamp-2 text-xsmall16 font-semibold text-neutral-0 md:mt-3 md:text-small18">
+        <h3 className="text-xsmall16 text-neutral-0 md:text-small18 mt-2 line-clamp-2 font-semibold md:mt-3">
           {props.title}
         </h3>
         {props.duration && (
-          <div className="mt-2 flex items-center gap-x-1.5 text-xxsmall10 font-medium md:mt-4 md:text-xsmall14">
+          <div className="text-xxsmall10 md:text-xsmall14 mt-2 flex items-center gap-x-1.5 font-medium md:mt-4">
             <span className="text-neutral-0">진행기간</span>
             <span className="text-primary-dark">{props.duration}</span>
           </div>
         )}
         {props.badge && props.badge.text && (
-          <div className="mt-3 flex w-fit rounded-xxs bg-[#F2ECFC] px-2 py-1 text-center text-xxsmall12 font-semibold text-[#8444FF] md:mt-4">
+          <div className="rounded-xxs text-xxsmall12 mt-3 flex w-fit bg-[#F2ECFC] px-2 py-1 text-center font-semibold text-[#8444FF] md:mt-4">
             {props.badge.text}
           </div>
         )}
         {props.createdDate && (
-          <span className="mt-3 text-xxsmall12 text-neutral-40 md:mt-2">
+          <span className="text-xxsmall12 text-neutral-40 mt-3 md:mt-2">
             {props.createdDate}
           </span>
         )}

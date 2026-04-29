@@ -13,7 +13,7 @@ export const ExperienceSelectModalHeader = ({
           <h2 className="text-xl font-semibold text-gray-900">
             경험 정리 목록
           </h2>
-          <span className="font-regular inline-flex items-center rounded-xxs bg-gray-100 px-2 py-1 text-xxsmall12 text-gray-600">
+          <span className="font-regular rounded-xxs text-xxsmall12 inline-flex items-center bg-gray-100 px-2 py-1 text-gray-600">
             최소 3개 이상 선택
           </span>
         </div>
@@ -38,7 +38,7 @@ export const ExperienceSelectModalHeader = ({
       </div>
 
       {/* 안내사항 */}
-      <div className="mt-1.5 space-y-1 text-xsmall14 text-neutral-10">
+      <div className="text-xsmall14 text-neutral-10 mt-1.5 space-y-1">
         <p>• 모든 항목을 작성 완료한 경험만 제출할 수 있습니다.</p>
         <p>
           • 수정은,{' '}

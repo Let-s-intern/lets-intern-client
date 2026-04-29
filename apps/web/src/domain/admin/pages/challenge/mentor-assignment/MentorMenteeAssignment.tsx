@@ -29,7 +29,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       const color = PLAN_COLORS[plan] ?? PLAN_COLORS.BASIC;
       return (
         <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+          className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.bg} ${color.text}`}
         >
           {plan}
         </span>
@@ -47,7 +47,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       if (wishCompany === '-' && wishJob === '-')
         return <span className="text-neutral-40">-</span>;
       return (
-        <div className="flex flex-col py-1 text-xxsmall12">
+        <div className="text-xxsmall12 flex flex-col py-1">
           <span className="text-neutral-30">{wishCompany}</span>
           <span className="text-neutral-40">{wishJob}</span>
         </div>
@@ -120,7 +120,7 @@ export default function MentorMenteeAssignment() {
 
   if (isLoading) {
     return (
-      <div className="py-16 text-center text-xsmall14 text-neutral-40">
+      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
         불러오는 중...
       </div>
     );

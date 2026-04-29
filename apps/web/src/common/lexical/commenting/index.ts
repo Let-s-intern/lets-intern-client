@@ -6,11 +6,11 @@
  *
  */
 
-import type {LexicalEditor} from 'lexical';
+import type { LexicalEditor } from 'lexical';
 
-import {Provider, TOGGLE_CONNECT_COMMAND} from '@lexical/yjs';
-import {COMMAND_PRIORITY_LOW} from 'lexical';
-import {useEffect, useState} from 'react';
+import { Provider, TOGGLE_CONNECT_COMMAND } from '@lexical/yjs';
+import { COMMAND_PRIORITY_LOW } from 'lexical';
+import { useEffect, useState } from 'react';
 import {
   Array as YArray,
   Map as YMap,
@@ -170,7 +170,7 @@ export class CommentStore {
   deleteCommentOrThread(
     commentOrThread: Comment | Thread,
     thread?: Thread,
-  ): {markedComment: Comment; index: number} | null {
+  ): { markedComment: Comment; index: number } | null {
     const nextComments = Array.from(this._comments);
     // The YJS types explicitly use `any` as well.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

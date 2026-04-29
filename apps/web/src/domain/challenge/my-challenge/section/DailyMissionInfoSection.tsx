@@ -21,8 +21,8 @@ const MissionInfo = ({
         {missionDetail.description}
       </p>
       <div className="mt-8">
-        <h4 className="text-small18 font-semibold text-primary">미션 가이드</h4>
-        <p className="mt-5 whitespace-pre-line text-xsmall16 font-medium text-black">
+        <h4 className="text-small18 text-primary font-semibold">미션 가이드</h4>
+        <p className="text-xsmall16 mt-5 whitespace-pre-line font-medium text-black">
           {missionDetail.guide}
         </p>
       </div>
@@ -31,7 +31,7 @@ const MissionInfo = ({
         {!isOtMission && (
           <HybridLink
             href={missionDetail.templateLink || '#'}
-            className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
+            className="border-primary-20 text-xsmall16 flex-1 rounded-sm border bg-white p-3 text-center font-medium"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -50,7 +50,7 @@ const MissionInfo = ({
 const BonusMissionInfo = () => {
   return (
     <>
-      <p className="mt-5 whitespace-pre-line text-neutral-0">
+      <p className="text-neutral-0 mt-5 whitespace-pre-line">
         안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!
         <br />
         렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며,
@@ -60,8 +60,8 @@ const BonusMissionInfo = () => {
       </p>
       <hr className="mt-8" />
       <div className="mt-8">
-        <h4 className="text-small18 font-semibold text-primary">참여 방법</h4>
-        <ol className="mt-5 list-decimal pl-5 text-xsmall16 font-medium text-neutral-0">
+        <h4 className="text-small18 text-primary font-semibold">참여 방법</h4>
+        <ol className="text-xsmall16 text-neutral-0 mt-5 list-decimal pl-5 font-medium">
           <li>
             이번 챌린지를 통해 배운 점, 성장한 점 등을 바탕으로 네이버 블로그,
             티스토리, 브런치 등 원하는 플랫폼을 택하여 후기를 작성해주세요.
@@ -75,16 +75,16 @@ const BonusMissionInfo = () => {
       </div>
       <hr className="mt-8" />
       <div className="mt-8">
-        <h4 className="text-small18 font-semibold text-primary">
+        <h4 className="text-small18 text-primary font-semibold">
           후기 작성 가이드라인
         </h4>
-        <ul className="mt-5 list-disc pl-5 text-xsmall16 font-medium text-neutral-0">
+        <ul className="text-xsmall16 text-neutral-0 mt-5 list-disc pl-5 font-medium">
           <li>활동 이미지 3장 이상 필수 첨부</li>
           <li>&apos;렛츠커리어, 취준, 프로그램명&apos; 필수 키워드 포함</li>
           <li>공개 설정은 전체공개로 해 주세요</li>
           <li>블로그 플랫폼: 네이버블로그 / 티스토리 / 브런치 중 택 1</li>
         </ul>
-        <ul className="mt-5 flex flex-col gap-3 text-xsmall16 font-medium text-neutral-0">
+        <ul className="text-xsmall16 text-neutral-0 mt-5 flex flex-col gap-3 font-medium">
           <li>
             <span className="text-xsmall16 font-semibold">제목</span>
             <p className="text-xsmall16 font-medium">
@@ -107,13 +107,13 @@ const BonusMissionInfo = () => {
         </ul>
       </div>
       <hr className="mt-8" />
-      <div className="mt-8 text-xsmall16 font-medium text-neutral-0">
+      <div className="text-xsmall16 text-neutral-0 mt-8 font-medium">
         <p className="mb-8">
           📚 후기 예시가 궁금하다면? <br />
           👉 후기 모음 보기: https://www.letscareer.co.kr/review/blog
         </p>
         문의는 편한 방식으로 부탁드립니다! <br />
-        <ul className="mb-8 list-disc pl-5 text-neutral-0">
+        <ul className="text-neutral-0 mb-8 list-disc pl-5">
           <li>official@letscareer.co.kr로 이메일 문의 가능</li>
           <li>우측 하단 채팅 문의 가능</li>
         </ul>
@@ -139,7 +139,7 @@ const DailyMissionInfoSection = ({ missionDetail }: Props) => {
       <div className="flex items-end gap-2">
         <h3 className="text-small20 font-bold">{missionTitle}</h3>
         {missionDetail.endDate && (
-          <span className="text-xsmall16 font-medium text-primary">
+          <span className="text-xsmall16 text-primary font-medium">
             마감 {missionDetail.endDate.format('MM/DD(ddd) HH:mm')}까지
           </span>
         )}

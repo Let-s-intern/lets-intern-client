@@ -522,13 +522,13 @@ const ReportApplicationsPage = () => {
           <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
             <div className="flex min-h-64 min-w-96 flex-col justify-center rounded-sm bg-white px-8 py-6">
               <h1 className="text-lg font-bold">결제정보</h1>
-              <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
+              <div className="text-xsmall14 mt-5 flex w-full flex-col gap-y-3">
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">주문번호</h2>
+                  <h2 className="text-neutral-40 w-24">주문번호</h2>
                   <p>{applicationModal.application.orderId || '-'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">결제상품</h2>
+                  <h2 className="text-neutral-40 w-24">결제상품</h2>
                   <p>
                     {convertReportPriceType(
                       (applicationModal.application
@@ -537,7 +537,7 @@ const ReportApplicationsPage = () => {
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">옵션</h2>
+                  <h2 className="text-neutral-40 w-24">옵션</h2>
                   <div>
                     {optionsDataIsLoading
                       ? '로딩 중...'
@@ -557,7 +557,7 @@ const ReportApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">1:1 온라인 상담</h2>
+                  <h2 className="text-neutral-40 w-24">1:1 온라인 상담</h2>
                   <p>
                     {applicationModal.application.reportFeedbackStatus
                       ? 'O'
@@ -566,18 +566,18 @@ const ReportApplicationsPage = () => {
                 </div>
                 <hr />
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">쿠폰</h2>
+                  <h2 className="text-neutral-40 w-24">쿠폰</h2>
                   <p>{applicationModal.application.couponTitle ?? '없음'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">결제금액</h2>
+                  <h2 className="text-neutral-40 w-24">결제금액</h2>
                   <p>
                     {applicationModal.application.finalPrice?.toLocaleString() ||
                       '-'}
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-24 text-neutral-40">환불여부</h2>
+                  <h2 className="text-neutral-40 w-24">환불여부</h2>
                   <p>{applicationModal.application.isRefunded ? 'O' : 'X'}</p>
                 </div>
               </div>
@@ -597,7 +597,7 @@ const ReportApplicationsPage = () => {
             <div className="flex min-h-64 w-1/3 flex-col justify-center gap-y-5 rounded-sm bg-white px-8 py-6">
               <h1 className="text-lg font-bold">진단서 업로드</h1>
               {uploadedFile ? (
-                <div className="flex w-full gap-x-4 rounded-sm bg-neutral-95 px-3 py-4">
+                <div className="bg-neutral-95 flex w-full gap-x-4 rounded-sm px-3 py-4">
                   <p className="grow truncate">
                     {applicationModal.application.name + '_진단서.pdf'}
                   </p>
@@ -621,13 +621,13 @@ const ReportApplicationsPage = () => {
                     setApplicationModal(null);
                     setUploadedFile(null);
                   }}
-                  className="rounded-sm bg-neutral-80 px-4 py-2 text-xxsmall12 font-bold text-neutral-40"
+                  className="bg-neutral-80 text-xxsmall12 text-neutral-40 rounded-sm px-4 py-2 font-bold"
                 >
                   닫기
                 </button>
                 <button
                   onClick={handleDocumentPatch}
-                  className="rounded-sm bg-primary px-4 py-2 text-xxsmall12 font-bold text-white"
+                  className="bg-primary text-xxsmall12 rounded-sm px-4 py-2 font-bold text-white"
                 >
                   저장
                 </button>
@@ -640,21 +640,21 @@ const ReportApplicationsPage = () => {
           <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
             <div className="flex min-h-64 min-w-96 flex-col justify-center gap-y-5 rounded-sm bg-white px-8 py-6">
               <h1 className="text-lg font-bold">일정 선택</h1>
-              <div className="mt-5 flex w-full flex-col gap-y-5 text-xsmall14">
+              <div className="text-xsmall14 mt-5 flex w-full flex-col gap-y-5">
                 <h2 className="w-20 font-semibold">제출 일정</h2>
                 <div className="flex grow flex-col gap-y-4">
                   {applicationModal.application.desiredDate1 && (
                     <div className="flex items-center justify-center gap-x-10">
-                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                      <h3 className="text-xsmall16 text-neutral-40 w-20 font-medium">
                         희망 1순위
                       </h3>
                       <div className="flex items-center justify-center gap-x-2.5">
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {dateConverter(
                             applicationModal.application.desiredDate1,
                           )}
                         </p>
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {timeConverter(
                             applicationModal.application.desiredDate1,
                           )}
@@ -678,16 +678,16 @@ const ReportApplicationsPage = () => {
                   )}
                   {applicationModal.application.desiredDate2 && (
                     <div className="flex items-center justify-center gap-x-10">
-                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                      <h3 className="text-xsmall16 text-neutral-40 w-20 font-medium">
                         희망 2순위
                       </h3>
                       <div className="flex items-center justify-center gap-x-2.5">
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {dateConverter(
                             applicationModal.application.desiredDate2,
                           )}
                         </p>
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {timeConverter(
                             applicationModal.application.desiredDate2,
                           )}
@@ -711,16 +711,16 @@ const ReportApplicationsPage = () => {
                   )}
                   {applicationModal.application.desiredDate3 && (
                     <div className="flex items-center justify-center gap-x-10">
-                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                      <h3 className="text-xsmall16 text-neutral-40 w-20 font-medium">
                         희망 3순위
                       </h3>
                       <div className="flex items-center justify-center gap-x-2.5">
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {dateConverter(
                             applicationModal.application.desiredDate3,
                           )}
                         </p>
-                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                        <p className="rounded-xs border-primary-10 w-[180px] border px-4 py-3 text-center">
                           {timeConverter(
                             applicationModal.application.desiredDate3,
                           )}
@@ -747,7 +747,7 @@ const ReportApplicationsPage = () => {
                     applicationModal.application.desiredDate3) && <hr />}
 
                   <div className="flex items-center justify-center gap-x-10">
-                    <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                    <h3 className="text-xsmall16 text-neutral-40 w-20 font-medium">
                       운영진 변경
                     </h3>
                     <div className="flex items-center justify-center gap-x-2.5">
@@ -865,13 +865,13 @@ const ReportApplicationsPage = () => {
                     setAdminChangeTime(dayjs());
                     setSelectedDate(null);
                   }}
-                  className="rounded-sm bg-neutral-80 px-4 py-2 text-xxsmall12 font-bold text-neutral-40"
+                  className="bg-neutral-80 text-xxsmall12 text-neutral-40 rounded-sm px-4 py-2 font-bold"
                 >
                   닫기
                 </button>
                 <button
                   onClick={handleSubmitSchedule}
-                  className="rounded-sm bg-primary px-4 py-2 text-xxsmall12 font-bold text-white"
+                  className="bg-primary text-xxsmall12 rounded-sm px-4 py-2 font-bold text-white"
                 >
                   저장
                 </button>

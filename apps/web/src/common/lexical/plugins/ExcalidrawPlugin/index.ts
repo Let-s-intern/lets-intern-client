@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$wrapNodeInElement} from '@lexical/utils';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $wrapNodeInElement } from '@lexical/utils';
 import {
   $createParagraphNode,
   $insertNodes,
@@ -15,7 +15,7 @@ import {
   createCommand,
   LexicalCommand,
 } from 'lexical';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import {
   $createExcalidrawNode,

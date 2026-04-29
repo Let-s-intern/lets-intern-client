@@ -212,7 +212,7 @@ const NoticeSection = ({ className }: { className?: string }) => {
             <input
               type="text"
               id="notice"
-              className="rounded mb-4 w-full border px-3 py-1"
+              className="mb-4 w-full rounded border px-3 py-1"
               placeholder="제목"
               value={editingNotice.title}
               onChange={(e) =>
@@ -227,7 +227,7 @@ const NoticeSection = ({ className }: { className?: string }) => {
             <input
               type="text"
               id="notice-link"
-              className="rounded mb-4 w-full border px-3 py-1"
+              className="mb-4 w-full rounded border px-3 py-1"
               placeholder="링크"
               value={editingNotice.link}
               onChange={(e) =>

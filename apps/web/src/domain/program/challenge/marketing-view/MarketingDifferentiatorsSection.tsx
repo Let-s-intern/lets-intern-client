@@ -11,7 +11,7 @@ const Badge = ({ index }: { index: number }) => {
   return (
     <div className="flex h-8 w-20 items-center justify-center rounded-full bg-gradient-to-r from-[#7FDDFF] to-[#7395FF] md:h-[38px] md:w-[92px]">
       <div className="flex h-[28px] w-[76px] items-center justify-center rounded-full bg-[#060C1D] leading-none md:h-[34px] md:w-[88px]">
-        <span className="gradient-text bg-gradient-to-b from-[#7FDDFF] to-[#8FAAFF] text-xsmall14 font-bold md:text-small18 md:font-semibold">
+        <span className="gradient-text text-xsmall14 md:text-small18 bg-gradient-to-b from-[#7FDDFF] to-[#8FAAFF] font-bold md:font-semibold">
           차별점 {index}
         </span>
       </div>
@@ -34,7 +34,7 @@ const Differentiator = ({
     <div className="flex flex-col items-center">
       <Badge index={index} />
       <MainTitle className="mb-1 mt-5 text-white md:mb-1.5">{title}</MainTitle>
-      <p className="whitespace-pre-line text-center text-xsmall14 font-normal text-white/85 md:text-small20">
+      <p className="text-xsmall14 md:text-small20 whitespace-pre-line text-center font-normal text-white/85">
         {description}
       </p>
       {visualExplanation}
@@ -46,7 +46,6 @@ const MarketingDifferentiatorsSection: React.FC<{
   lectures?: ChallengeContent['lectures'];
   weekText: string;
 }> = ({ lectures, weekText }) => {
-
   const differentiators = [
     {
       title: '마케팅 실무 역량 Class',

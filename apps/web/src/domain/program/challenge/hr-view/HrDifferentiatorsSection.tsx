@@ -16,7 +16,7 @@ const HrDifferentiatorsSection: React.FC = () => {
       <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">
         차별점
       </SectionHeader>
-      <div className="text-small14 mb-3 text-center text-neutral-35 md:text-small18">
+      <div className="text-small14 text-neutral-35 md:text-small18 mb-3 text-center">
         HR/인사 직무 챌린지, 왜 다를까요?
       </div>
       <MainTitle className="mb-12 flex flex-col items-center">

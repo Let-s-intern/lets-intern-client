@@ -37,7 +37,11 @@ const CTA_BY_KEYWORD: Record<string, string> = {
 };
 
 /** 미설정시 기본값으로 노출할 프로그램 (이력서/자소서/포트폴리오 3종) */
-const DEFAULT_PROGRAM_KEYWORDS = ['이력서', '자기소개서', '포트폴리오'] as const;
+const DEFAULT_PROGRAM_KEYWORDS = [
+  '이력서',
+  '자기소개서',
+  '포트폴리오',
+] as const;
 
 function inferCtaSubtitle(
   classification: string | null | undefined,
@@ -116,7 +120,10 @@ const MagnetProgramRecommendSection = ({
         match.classificationList?.[0]?.programClassification ?? null;
       return {
         title: match.programInfo.title ?? '',
-        ctaTitle: inferCtaSubtitle(classification, match.programInfo.title ?? ''),
+        ctaTitle: inferCtaSubtitle(
+          classification,
+          match.programInfo.title ?? '',
+        ),
         ctaLink: `latest:${keyword}`,
       };
     }).filter(Boolean);
@@ -140,10 +147,7 @@ const MagnetProgramRecommendSection = ({
 
     if (e.target.name === 'id' && !notSelectProgram) {
       const info = programInfoByValue.get(e.target.value as string);
-      item.ctaTitle = inferCtaSubtitle(
-        info?.classification,
-        info?.title ?? '',
-      );
+      item.ctaTitle = inferCtaSubtitle(info?.classification, info?.title ?? '');
     }
 
     onChangeProgramRecommend([
@@ -198,9 +202,7 @@ const MagnetProgramRecommendSection = ({
                 </Select>
               </FormControl>
               {defaultLabel && (
-                <p className="text-xs text-blue-500">
-                  기본값: {defaultLabel}
-                </p>
+                <p className="text-xs text-blue-500">기본값: {defaultLabel}</p>
               )}
               <TextField
                 size="small"

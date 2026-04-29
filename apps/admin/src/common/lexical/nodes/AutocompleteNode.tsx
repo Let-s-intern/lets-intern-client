@@ -15,11 +15,11 @@ import type {
   Spread,
 } from 'lexical';
 
-import {DecoratorNode} from 'lexical';
+import { DecoratorNode } from 'lexical';
 import * as React from 'react';
 
-import {useSharedAutocompleteContext} from '../context/SharedAutocompleteContext';
-import {uuid as UUID} from '../plugins/AutocompletePlugin';
+import { useSharedAutocompleteContext } from '../context/SharedAutocompleteContext';
+import { uuid as UUID } from '../plugins/AutocompletePlugin';
 
 declare global {
   interface Navigator {

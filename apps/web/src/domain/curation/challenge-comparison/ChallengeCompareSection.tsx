@@ -113,7 +113,10 @@ const ChallengeCompareSection = () => {
     requestAnimationFrame(() => {
       const section = document.getElementById(SECTION_IDS.CHALLENGE_COMPARISON);
       if (!section) return;
-      const top = section.getBoundingClientRect().top + window.scrollY - STICKY_NAV_HEIGHT;
+      const top =
+        section.getBoundingClientRect().top +
+        window.scrollY -
+        STICKY_NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, [clearCart]);
@@ -136,7 +139,7 @@ const ChallengeCompareSection = () => {
         <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
           챌린지 비교
         </p>
-        <h3 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+        <h3 className="text-neutral-0 mb-4 text-center text-2xl font-semibold leading-tight md:text-3xl md:leading-10">
           고민되는 챌린지, 비교해보세요
         </h3>
         <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">

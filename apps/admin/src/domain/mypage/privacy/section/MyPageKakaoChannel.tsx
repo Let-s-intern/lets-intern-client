@@ -23,10 +23,10 @@ const MyPageKakaoChannel = () => {
       onClick={onClickAddChannel}
     >
       <div>
-        <h1 className="text-lg font-semibold text-neutral-0 text-opacity-[88%]">
+        <h1 className="text-neutral-0 text-lg font-semibold text-opacity-[88%]">
           렛츠커리어 채널 친구 추가
         </h1>
-        <p className="text-sm text-neutral-0 text-opacity-[52%]">
+        <p className="text-neutral-0 text-sm text-opacity-[52%]">
           렛츠커리어 카카오톡 채널을 추가하고,
           <br />
           프로그램 모집 및 혜택 알림을 가장 먼저 받을 수 있어요.

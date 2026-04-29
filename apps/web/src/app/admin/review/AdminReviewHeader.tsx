@@ -27,18 +27,22 @@ export default function AdminReviewHeader() {
 
   return (
     <header className="mx-2 my-1">
-      <h1 className="mb-2 font-bold text-medium22">후기 관리</h1>
+      <h1 className="text-medium22 mb-2 font-bold">후기 관리</h1>
       <nav aria-label="Review navigation">
         <ul className="flex py-5">
           {TABS.map((tab) => {
             const active = isActive(pathname, tab.href);
             const className = clsx(
               'px-4 py-2 text-gray-500',
-              active && 'font-bold text-primary',
+              active && 'text-primary font-bold',
             );
             return (
               <li key={tab.href}>
-                <Link href={tab.href} className={className} aria-current={active ? 'page' : undefined}>
+                <Link
+                  href={tab.href}
+                  className={className}
+                  aria-current={active ? 'page' : undefined}
+                >
                   {tab.label}
                 </Link>
               </li>

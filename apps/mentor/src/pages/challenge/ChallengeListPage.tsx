@@ -1,7 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useMentorChallengeListQuery, type ChallengeMentorVo } from '@/api/user/user';
+import {
+  useMentorChallengeListQuery,
+  type ChallengeMentorVo,
+} from '@/api/user/user';
 import MentorChallengeCard from './ui/MentorChallengeCard';
 
 function ChallengeGrid({ challenges }: { challenges: ChallengeMentorVo[] }) {
@@ -24,9 +27,7 @@ function ChallengeGrid({ challenges }: { challenges: ChallengeMentorVo[] }) {
 }
 
 function EmptyMessage({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="py-12 text-center text-gray-400">{children}</div>
-  );
+  return <div className="py-12 text-center text-gray-400">{children}</div>;
 }
 
 const ChallengeListPage = () => {
@@ -79,9 +80,7 @@ const ChallengeListPage = () => {
       {/* 끝난 챌린지 */}
       {endedChallenges.length > 0 && (
         <section>
-          <h2 className="mb-6 text-xl font-bold text-gray-900">
-            끝난 챌린지
-          </h2>
+          <h2 className="mb-6 text-xl font-bold text-gray-900">끝난 챌린지</h2>
           <ChallengeGrid challenges={endedChallenges} />
         </section>
       )}

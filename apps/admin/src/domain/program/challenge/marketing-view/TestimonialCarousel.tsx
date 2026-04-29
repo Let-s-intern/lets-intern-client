@@ -40,8 +40,8 @@ const TestimonialCard = ({
   }, content);
 
   return (
-    <div className="min-h-[282px] w-[300px] rounded-md bg-static-100 p-5 shadow-sm md:w-[371px]">
-      <div className="mb-3 flex w-fit items-center rounded-xs bg-[#F0F4FF] px-2 py-1.5">
+    <div className="bg-static-100 min-h-[282px] w-[300px] rounded-md p-5 shadow-sm md:w-[371px]">
+      <div className="rounded-xs mb-3 flex w-fit items-center bg-[#F0F4FF] px-2 py-1.5">
         {[...Array(5)].map((_, idx) => (
           <Image
             key={idx}
@@ -52,15 +52,15 @@ const TestimonialCard = ({
           />
         ))}
       </div>
-      <div className="min-h-[210px] text-neutral-0">
-        <p className="mb-2 line-clamp-2 break-keep text-xsmall16 font-bold md:text-small20">
+      <div className="text-neutral-0 min-h-[210px]">
+        <p className="text-xsmall16 md:text-small20 mb-2 line-clamp-2 break-keep font-bold">
           {title}
         </p>
-        <p className="whitespace-pre-line text-xsmall14 font-medium leading-relaxed md:text-xsmall16">
+        <p className="text-xsmall14 md:text-xsmall16 whitespace-pre-line font-medium leading-relaxed">
           {content}
         </p>
       </div>
-      <div className="mt-4 font-normal text-neutral-50 md:text-xsmall14">
+      <div className="md:text-xsmall14 mt-4 font-normal text-neutral-50">
         {meta}
       </div>
     </div>

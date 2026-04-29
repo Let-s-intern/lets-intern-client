@@ -50,7 +50,6 @@ const ReportPaymentResultContent = () => {
     const result = paymentResultSearchParamsSchema.safeParse(obj);
 
     if (!result.success) {
-      // eslint-disable-next-line no-console
       console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
@@ -106,7 +105,6 @@ const ReportPaymentResultContent = () => {
         });
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error(e);
         alert(
           '결제 중 문제가 발생했습니다.\n문제가 계속되면 아래 채팅으로 문의해주세요.',
@@ -175,7 +173,7 @@ const ReportPaymentResultContent = () => {
                 {/* 결제 상세 */}
                 <div className="flex w-full flex-col justify-center gap-6">
                   <Heading2>결제 상세</Heading2>
-                  <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
+                  <div className="bg-neutral-90 flex w-full items-center justify-between gap-x-4 px-3 py-5">
                     <div className="font-bold">총 결제금액</div>
                     {Number(searchParams.get('amount')).toLocaleString() + '원'}
                   </div>
@@ -274,12 +272,12 @@ const ReportPaymentResultContent = () => {
 
                         <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                           <div className="text-neutral-40">영수증</div>
-                          <div className="flex grow items-center justify-end text-neutral-0">
+                          <div className="text-neutral-0 flex grow items-center justify-end">
                             <Link
                               href={result!.tossInfo?.receipt?.url ?? '#'}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
+                              className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-3 py-2 text-sm font-medium"
                             >
                               영수증 보기
                             </Link>
@@ -292,7 +290,7 @@ const ReportPaymentResultContent = () => {
                   {isSuccess && (
                     <Link
                       href="/report/management"
-                      className="myreport_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+                      className="myreport_button_click border-primary bg-primary flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       {reportApplication.applyUrl
                         ? '서류 진단서 확인하기'
@@ -302,7 +300,7 @@ const ReportPaymentResultContent = () => {
                   {!isSuccess && (
                     <Link
                       href={`/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`}
-                      className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+                      className="border-primary bg-primary flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       다시 결제하기
                     </Link>

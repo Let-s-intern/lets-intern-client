@@ -182,7 +182,7 @@ const BlogDetailPage = async ({
             <BlogLikeBtn likeCount={blogInfo.likeCount ?? 0} />
             {/* 공유하기 */}
             <div className="flex items-center">
-              <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
+              <span className="text-xsmall14 text-neutral-35 mr-1.5 hidden font-medium md:block">
                 나만 보기 아깝다면 공유하기
               </span>
               <BlogLinkShareBtn
@@ -198,7 +198,7 @@ const BlogDetailPage = async ({
                 thumbnail={blogInfo.thumbnail ?? ''}
                 pathname={getBlogPathname(blogInfo)}
               />
-              <span className="text-xsmall14 font-medium text-neutral-35 md:hidden">
+              <span className="text-xsmall14 text-neutral-35 font-medium md:hidden">
                 공유하기
               </span>
             </div>
@@ -207,10 +207,10 @@ const BlogDetailPage = async ({
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
           <Link
             href="/blog/list"
-            className="blog_home flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
+            className="blog_home md:rounded-xs md:bg-neutral-95 flex w-full items-center justify-center gap-2 py-5"
           >
-            <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16 md:font-medium">
-              <span className="font-semibold text-primary">블로그 홈</span>{' '}
+            <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-semibold md:font-medium">
+              <span className="text-primary font-semibold">블로그 홈</span>{' '}
               바로가기
             </p>
             <CircleChevronRight
@@ -223,7 +223,7 @@ const BlogDetailPage = async ({
 
         {/* 프로그램 추천 */}
         {(programRecommendList ?? []).length > 0 && (
-          <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
+          <aside className="md:border-neutral-80 w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:px-6 md:py-5">
             <Heading2 className="text-neutral-0 md:text-xsmall16">
               렛츠커리어 프로그램 참여하고
               <br />
@@ -291,7 +291,7 @@ function MoreLink({
     <Link
       href={href}
       className={twMerge(
-        'block w-full rounded-xs border border-neutral-80 px-5 py-3 text-center font-medium text-neutral-20',
+        'rounded-xs border-neutral-80 text-neutral-20 block w-full border px-5 py-3 text-center font-medium',
         className,
       )}
     >

@@ -85,17 +85,17 @@ const CouponSection = ({
           onChange={handleCodeChange}
         />
         <button
-          className={`flex shrink-0 items-center justify-center rounded-sm ${isCoupon ? 'border-2 border-primary bg-neutral-100 text-primary' : 'bg-primary text-neutral-100'} px-4 py-1.5 text-sm font-medium`}
+          className={`flex shrink-0 items-center justify-center rounded-sm ${isCoupon ? 'border-primary text-primary border-2 bg-neutral-100' : 'bg-primary text-neutral-100'} px-4 py-1.5 text-sm font-medium`}
           onClick={clickApply}
         >
           {isCoupon ? '쿠폰 취소' : '쿠폰 적용'}
         </button>
       </div>
       {validationMsg && (
-        <div className="text-0.875 h-3 text-system-error">{validationMsg}</div>
+        <div className="text-0.875 text-system-error h-3">{validationMsg}</div>
       )}
       {successMsg && (
-        <div className="text-0.875 h-3 text-system-positive-blue">
+        <div className="text-0.875 text-system-positive-blue h-3">
           {successMsg}
         </div>
       )}

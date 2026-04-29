@@ -20,7 +20,7 @@ const FeedbackHeader = ({
   onClose,
 }: FeedbackHeaderProps) => {
   return (
-    <div className="flex flex-col gap-2 bg-primary-5 px-4 pb-3 pt-4 md:px-6 md:pt-6">
+    <div className="bg-primary-5 flex flex-col gap-2 px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 text-xs font-medium text-neutral-700">
@@ -48,7 +48,9 @@ const FeedbackHeader = ({
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              completedCount > 0 ? 'bg-green-50 text-green-700' : 'text-gray-400'
+              completedCount > 0
+                ? 'bg-green-50 text-green-700'
+                : 'text-gray-400'
             }`}
           >
             완료 {completedCount}

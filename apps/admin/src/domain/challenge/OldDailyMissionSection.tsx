@@ -24,7 +24,7 @@ const OldDailyMissionSection = ({
       </p>
       <Link
         to={`/old/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
-        className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"
+        className="rounded-xxs bg-primary mt-4 w-full px-4 py-3 text-center font-semibold text-white"
       >
         {dailyMission?.th}회차 미션 수행하기
       </Link>

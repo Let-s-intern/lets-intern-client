@@ -38,7 +38,7 @@ export const TooltipButton = ({ example }: { example: string }) => {
     >
       <button
         type="button"
-        className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+        className="rounded-xxs border-neutral-80 text-xsmall14 text-primary-80 border px-[6px] py-1 font-medium"
         onMouseEnter={() => setIsHovered(true)}
         onClick={() => setIsHovered((prev) => !prev)}
       >
@@ -56,10 +56,10 @@ export const TooltipButton = ({ example }: { example: string }) => {
             preserveAspectRatio="none"
           />
           <div
-            className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[320px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow md:w-[384px]"
+            className="rounded-xxs text-neutral-0 absolute right-0 top-[calc(100%+12px)] z-[101] w-[320px] bg-white p-3 drop-shadow md:w-[384px]"
             onMouseEnter={() => setIsHovered(true)}
           >
-            <p className="whitespace-pre-line text-xsmall14 font-normal">
+            <p className="text-xsmall14 whitespace-pre-line font-normal">
               {example}
             </p>
           </div>

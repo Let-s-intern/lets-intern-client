@@ -37,7 +37,7 @@ export default function LibraryArticle({ magnetInfo }: Props) {
   return (
     <article>
       {/* 썸네일 */}
-      <div className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
+      <div className="bg-neutral-95 relative mb-8 h-[16rem] overflow-hidden rounded-md md:h-[25.5rem]">
         {magnetInfo.desktopThumbnail && (
           <Image
             className="object-contain"
@@ -54,7 +54,7 @@ export default function LibraryArticle({ magnetInfo }: Props) {
             <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
             <div className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-white/60 px-2.5 py-1.5">
               <LockKeyhole size={14} color="#4C4F56" />
-              <span className="text-xsmall14 font-medium text-neutral-30">
+              <span className="text-xsmall14 text-neutral-30 font-medium">
                 공개예정
               </span>
             </div>
@@ -65,10 +65,10 @@ export default function LibraryArticle({ magnetInfo }: Props) {
       {/* 헤더 */}
       <div className="mb-7 flex flex-col gap-y-4">
         <div>
-          <h2 className="mb-1.5 text-small20 font-semibold text-primary">
+          <h2 className="text-small20 text-primary mb-1.5 font-semibold">
             {MAGNET_TYPE_LABEL[magnetInfo.type] ?? magnetInfo.type}
           </h2>
-          <h1 className="line-clamp-3 text-xlarge28 font-bold text-neutral-0 md:line-clamp-2">
+          <h1 className="text-xlarge28 text-neutral-0 line-clamp-3 font-bold md:line-clamp-2">
             {magnetInfo.title}
           </h1>
         </div>
@@ -83,7 +83,7 @@ export default function LibraryArticle({ magnetInfo }: Props) {
                   alt="렛츠커리어 프로필 사진"
                 />
               </div>
-              <span className="text-xsmall14 font-semibold text-neutral-0">
+              <span className="text-xsmall14 text-neutral-0 font-semibold">
                 렛츠커리어
               </span>
             </div>

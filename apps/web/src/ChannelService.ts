@@ -97,7 +97,8 @@ class ChannelService {
         s.async = true;
         s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
         const firstScript = document.getElementsByTagName('script')[0];
-        const parent = firstScript?.parentNode ?? document.head ?? document.body;
+        const parent =
+          firstScript?.parentNode ?? document.head ?? document.body;
         if (parent) {
           parent.insertBefore(s, firstScript ?? null);
         }

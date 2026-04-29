@@ -26,14 +26,14 @@ const LogoPlayItem = ({
     )}
     style={{ backgroundColor: theme }}
   >
-    <div className="flex flex-col text-neutral-0">
-      <span className="text-xsmall14 font-semibold md:text-medium22">
+    <div className="text-neutral-0 flex flex-col">
+      <span className="text-xsmall14 md:text-medium22 font-semibold">
         {company}
       </span>
-      <span className="mt-3 text-xsmall16 font-medium md:mt-6 md:text-small20">
+      <span className="text-xsmall16 md:text-small20 mt-3 font-medium md:mt-6">
         {job}
       </span>
-      <span className="mt-1 text-xsmall14 font-medium md:text-xsmall16">
+      <span className="text-xsmall14 md:text-xsmall16 mt-1 font-medium">
         <span>{name}</span>
         <span className="ml-3">{pass} 합격</span>
       </span>

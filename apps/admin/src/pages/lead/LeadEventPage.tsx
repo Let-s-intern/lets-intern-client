@@ -189,7 +189,6 @@ const LeadEventPage = () => {
       snackbar('이벤트가 등록되었습니다.');
       setIsCreateOpen(false);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
       snackbar('등록에 실패했습니다. 다시 시도해주세요.');
     }
@@ -204,7 +203,6 @@ const LeadEventPage = () => {
         await deleteLeadEvent.mutateAsync(leadEventId);
         snackbar('이벤트가 삭제되었습니다.');
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
         snackbar('삭제에 실패했습니다. 다시 시도해주세요.');
       }
@@ -262,7 +260,7 @@ const LeadEventPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 이벤트 관리</Heading>
       <form
-        className="rounded mb-4 flex flex-col gap-4 bg-neutral-90 p-4"
+        className="bg-neutral-90 mb-4 flex flex-col gap-4 rounded p-4"
         onSubmit={handleFilterSubmit}
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

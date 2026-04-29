@@ -22,8 +22,8 @@ const ListItem = ({
     <li
       className={twMerge(
         gtmId,
-        'flex cursor-pointer select-none items-center justify-center border-b-2 border-neutral-0 border-opacity-[16%] px-3 py-4 text-xsmall16 font-medium text-neutral-0/[74%] transition',
-        tabIndex === index && 'border-primary font-semibold text-primary',
+        'border-neutral-0 text-xsmall16 text-neutral-0/[74%] flex cursor-pointer select-none items-center justify-center border-b-2 border-opacity-[16%] px-3 py-4 font-medium transition',
+        tabIndex === index && 'border-primary text-primary font-semibold',
       )}
       onClick={onClick}
     >

@@ -38,7 +38,7 @@ const ScoreSection = ({
   });
 
   return (
-    <section className="relative flex w-[calc((100%-12px)/2)] flex-col gap-y-4 rounded-xs border border-[#E4E4E7] p-4">
+    <section className="rounded-xs relative flex w-[calc((100%-12px)/2)] flex-col gap-y-4 border border-[#E4E4E7] p-4">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-[#4A495C]">미션 점수 현황</h2>
@@ -46,7 +46,7 @@ const ScoreSection = ({
         </div>
         <div className="flex items-center justify-start">
           <div className="flex items-end">
-            <span className="text-2xl font-bold text-primary">
+            <span className="text-primary text-2xl font-bold">
               {currentScore}점
             </span>
             <span className="mb-[1px] ml-1 font-semibold text-[#D3D3D3]">
@@ -57,7 +57,7 @@ const ScoreSection = ({
       </div>
       {currentScore < 80 || !isProgramDone ? (
         <button
-          className={`flex cursor-not-allowed items-center justify-center rounded-xs border border-neutral-80 px-4 py-2.5 text-xsmall14 font-medium text-neutral-50 outline-none`}
+          className={`rounded-xs border-neutral-80 text-xsmall14 flex cursor-not-allowed items-center justify-center border px-4 py-2.5 font-medium text-neutral-50 outline-none`}
           onMouseEnter={() => {
             setIsHoverButton(true);
           }}
@@ -70,13 +70,13 @@ const ScoreSection = ({
       ) : (
         <button
           onClick={() => reactToPrintFn()}
-          className={`flex items-center justify-center rounded-xs border border-neutral-80 px-4 py-2.5 text-xsmall14 font-medium text-neutral-0 outline-none`}
+          className={`rounded-xs border-neutral-80 text-xsmall14 text-neutral-0 flex items-center justify-center border px-4 py-2.5 font-medium outline-none`}
         >
           수료증 발급
         </button>
       )}
       {isHoverButton && (
-        <div className="absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-xsmall14 text-[#333]">
+        <div className="text-xsmall14 absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-[#333]">
           <div className="absolute bottom-0 left-0 z-0 h-[calc(100%-14px)] w-full shadow-[0_0_24px_rgba(204,204,206,0.27)]" />
           <img
             className="absolute bottom-0 left-0 z-0 h-full w-full object-fill"

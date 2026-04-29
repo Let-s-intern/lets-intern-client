@@ -70,39 +70,39 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
           <img
             src={config.thumbnail}
             alt={config.title}
-            className="h-[85px] w-[113px] shrink-0 rounded-xs object-cover md:h-[119px] md:w-[158px]"
+            className="rounded-xs h-[85px] w-[113px] shrink-0 object-cover md:h-[119px] md:w-[158px]"
           />
         ) : (
-          <div className="h-[85px] w-[113px] shrink-0 rounded-xs bg-neutral-80 md:h-[119px] md:w-[158px]" />
+          <div className="rounded-xs bg-neutral-80 h-[85px] w-[113px] shrink-0 md:h-[119px] md:w-[158px]" />
         )}
         <div className="flex flex-1 flex-col gap-1 md:flex-row md:items-start md:gap-12">
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex w-full flex-wrap items-center gap-2">
               <span
                 className={twMerge(
-                  'rounded-xxs px-2 py-1 text-xxsmall12 font-normal',
+                  'rounded-xxs text-xxsmall12 px-2 py-1 font-normal',
                   isUpcoming
-                    ? 'border border-neutral-80 text-primary'
+                    ? 'border-neutral-80 text-primary border'
                     : 'bg-primary-10 text-primary',
                 )}
               >
                 {config.statusLabel}
               </span>
-              <span className="text-xxsmall12 font-normal text-neutral-40">
+              <span className="text-xxsmall12 text-neutral-40 font-normal">
                 {config.categoryLabel}
               </span>
-              <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-              <span className="text-xxsmall12 font-normal text-neutral-40">
+              <div className="bg-neutral-80 hidden h-4 w-px md:block" />
+              <span className="text-xxsmall12 text-neutral-40 font-normal">
                 {config.dateLabel} {config.dateText}
               </span>
             </div>
             <div className="flex flex-1 flex-col gap-1">
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
                 {config.title}
               </h3>
               {config.isHtmlDescription ? (
                 <div
-                  className="line-clamp-2 text-xsmall14 text-neutral-20"
+                  className="text-xsmall14 text-neutral-20 line-clamp-2"
                   dangerouslySetInnerHTML={{ __html: config.description }}
                 />
               ) : (
@@ -113,7 +113,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
             </div>
             {config.purchasePlanText && (
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+                <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
                   구매플랜
                   <p className="text-xxsmall12 text-primary">
                     {config.purchasePlanText}
@@ -174,9 +174,9 @@ const ActionButton = ({
     onClick={onClick}
     disabled={disabled}
     className={twMerge(
-      'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
+      'rounded-xxs text-xsmall14 border px-3 py-1.5 font-normal transition-colors',
       disabled
-        ? 'cursor-not-allowed border-neutral-60 bg-neutral-90 text-neutral-40'
+        ? 'border-neutral-60 bg-neutral-90 text-neutral-40 cursor-not-allowed'
         : 'border-primary text-primary hover:bg-primary/5',
       variant === 'mobile' ? 'w-full md:hidden' : 'hidden shrink-0 md:block',
     )}

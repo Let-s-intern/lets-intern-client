@@ -18,14 +18,20 @@ import type {
   Spread,
 } from 'lexical';
 
-import {BlockWithAlignableContents} from '@lexical/react/LexicalBlockWithAlignableContents';
+import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
 } from '@lexical/react/LexicalDecoratorBlockNode';
 import * as React from 'react';
 
-export type FigmaUrlType = 'design' | 'file' | 'proto' | 'board' | 'slides' | 'deck';
+export type FigmaUrlType =
+  | 'design'
+  | 'file'
+  | 'proto'
+  | 'board'
+  | 'slides'
+  | 'deck';
 
 function getFigmaEmbedUrl(documentID: string, urlType: FigmaUrlType): string {
   const embedType = urlType === 'file' ? 'design' : urlType;
@@ -54,7 +60,8 @@ function FigmaComponent({
     <BlockWithAlignableContents
       className={className}
       format={format}
-      nodeKey={nodeKey}>
+      nodeKey={nodeKey}
+    >
       <iframe
         width="560"
         height="315"
@@ -77,10 +84,11 @@ function $convertFigmaElement(
   domNode: HTMLElement,
 ): null | DOMConversionOutput {
   const documentID = domNode.getAttribute('data-lexical-figma');
-  const urlType = (domNode.getAttribute('data-lexical-figma-type') || 'design') as FigmaUrlType;
+  const urlType = (domNode.getAttribute('data-lexical-figma-type') ||
+    'design') as FigmaUrlType;
   if (documentID) {
     const node = $createFigmaNode(documentID, urlType);
-    return {node};
+    return { node };
   }
   return null;
 }
@@ -135,7 +143,7 @@ export class FigmaNode extends DecoratorBlockNode {
     element.setAttribute('height', '315');
     element.setAttribute('src', getFigmaEmbedUrl(this.__id, this.__urlType));
     element.setAttribute('allowfullscreen', 'true');
-    return {element};
+    return { element };
   }
 
   static importDOM(): DOMConversionMap | null {

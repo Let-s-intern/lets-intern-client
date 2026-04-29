@@ -13,7 +13,7 @@ export function CheckboxItem({
 }: CheckboxItemProps) {
   return (
     <label
-      className={`flex cursor-pointer items-center rounded-xxs px-3 py-1.5 leading-[26px] text-neutral-20 ${
+      className={`rounded-xxs text-neutral-20 flex cursor-pointer items-center px-3 py-1.5 leading-[26px] ${
         isDisabled ? 'cursor-not-allowed text-gray-300' : 'hover:bg-neutral-95'
       }`}
     >
@@ -24,7 +24,7 @@ export function CheckboxItem({
         disabled={isDisabled}
         className="peer sr-only"
       />
-      <div className="mr-3 flex h-4 w-4 items-center justify-center rounded-[2px] border border-neutral-70 peer-checked:border-none peer-checked:bg-primary-90 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+      <div className="border-neutral-70 peer-checked:bg-primary-90 mr-3 flex h-4 w-4 items-center justify-center rounded-[2px] border peer-checked:border-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
         {isSelected && (
           <svg
             className="h-3 w-3 text-white"

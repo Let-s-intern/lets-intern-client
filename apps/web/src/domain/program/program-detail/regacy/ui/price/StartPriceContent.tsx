@@ -21,8 +21,8 @@ const StartPriceContent = ({
     programFee.feeType === 'REFUND'
       ? programFee.feeCharge + programFee.feeRefund
       : programFee.feeType === 'CHARGE'
-      ? programFee.feeCharge
-      : 0;
+        ? programFee.feeCharge
+        : 0;
   const discountAmount = programFee.discountValue;
 
   return (

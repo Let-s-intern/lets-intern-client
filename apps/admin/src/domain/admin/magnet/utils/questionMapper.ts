@@ -54,9 +54,7 @@ export function detailQuestionToApiBody(
 }
 
 /** 프론트엔드 FormQuestion → PATCH 요청용 MagnetQuestionReqBody (ADDITIONAL) */
-export function formQuestionToApiBody(
-  q: FormQuestion,
-): MagnetQuestionReqBody {
+export function formQuestionToApiBody(q: FormQuestion): MagnetQuestionReqBody {
   return {
     type: 'ADDITIONAL',
     question: q.question,
@@ -66,8 +64,7 @@ export function formQuestionToApiBody(
       | 'CHOICE'
       | 'TEXT',
     choiceType: q.selectionMethod as 'SINGLE' | 'MULTIPLE',
-    options:
-      q.questionType === 'OBJECTIVE' ? serializeOptions(q.items) : null,
+    options: q.questionType === 'OBJECTIVE' ? serializeOptions(q.items) : null,
   };
 }
 
@@ -83,7 +80,6 @@ export function formQuestionToBaseApiBody(
       | 'CHOICE'
       | 'TEXT',
     choiceType: q.selectionMethod as 'SINGLE' | 'MULTIPLE',
-    options:
-      q.questionType === 'OBJECTIVE' ? serializeOptions(q.items) : null,
+    options: q.questionType === 'OBJECTIVE' ? serializeOptions(q.items) : null,
   };
 }

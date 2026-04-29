@@ -12,7 +12,7 @@ const ReviewCard = memo(function ReviewCard({
 }: ReviewCardProps) {
   return (
     <div
-      className={`rounded-2xl flex h-full flex-col border border-white/10 bg-white/5 p-6 md:p-8 ${className}`}
+      className={`flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 ${className}`}
     >
       {/* Avatar + Title */}
       <div className="mb-4 flex items-start gap-3">

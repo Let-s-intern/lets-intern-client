@@ -165,7 +165,7 @@ export const AdminSidebar = () => {
                 <li key={index}>
                   <Link
                     href={navItem.url}
-                    className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
+                    className="text-xsmall14 flex items-center gap-1 py-2 pl-6 hover:bg-[#2A2A2A]"
                   >
                     {navItem.name}
                     {'isExit' in navItem && (

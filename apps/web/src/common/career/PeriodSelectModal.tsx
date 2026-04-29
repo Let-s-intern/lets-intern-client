@@ -21,7 +21,7 @@ const PeriodSelectItem = ({
     <button
       {...props}
       type="button"
-      className={`mr-2 rounded-xxs px-3 py-1.5 text-left text-xsmall16 font-medium transition-colors ${
+      className={`rounded-xxs text-xsmall16 mr-2 px-3 py-1.5 text-left font-medium transition-colors ${
         isSelected
           ? 'bg-primary-5 text-primary'
           : 'text-neutral-20 hover:bg-neutral-95'
@@ -116,10 +116,10 @@ export const PeriodSelectModal = ({
             type="button"
             disabled={isDisabled}
             onClick={handleSelect}
-            className={`w-full rounded-xs py-3 text-xsmall16 font-medium ${
+            className={`rounded-xs text-xsmall16 w-full py-3 font-medium ${
               isDisabled
                 ? 'bg-neutral-70 text-white'
-                : 'bg-primary text-white hover:bg-primary-hover'
+                : 'bg-primary hover:bg-primary-hover text-white'
             }`}
           >
             선택 완료
@@ -130,7 +130,7 @@ export const PeriodSelectModal = ({
             <button
               type="button"
               onClick={onPrev}
-              className="flex-1 rounded-xs border border-primary py-3 font-medium text-primary"
+              className="rounded-xs border-primary text-primary flex-1 border py-3 font-medium"
             >
               이전으로
             </button>
@@ -139,7 +139,7 @@ export const PeriodSelectModal = ({
               type="button"
               disabled={isDisabled}
               onClick={handleSelect}
-              className={`flex-1 rounded-xs py-3 font-medium text-white ${
+              className={`rounded-xs flex-1 py-3 font-medium text-white ${
                 isDisabled
                   ? 'bg-neutral-70'
                   : 'bg-primary hover:bg-primary-hover'

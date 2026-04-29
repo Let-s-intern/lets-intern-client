@@ -174,7 +174,7 @@ function StudentCard({
       className="overflow-hidden rounded-lg bg-white p-5 pt-2.5"
     >
       {/* Logo */}
-      <div className="mb-2 flex items-center justify-start border-b border-neutral-95">
+      <div className="border-neutral-95 mb-2 flex items-center justify-start border-b">
         <Image
           src={review.logo}
           alt={review.studentInfo.company}
@@ -184,23 +184,23 @@ function StudentCard({
         />
       </div>
       {/* Student Info */}
-      <p className="mb-2 break-keep rounded-xxs bg-primary-5 px-1.5 py-1 text-xsmall14 font-semibold text-primary-dark">
+      <p className="rounded-xxs bg-primary-5 text-xsmall14 text-primary-dark mb-2 break-keep px-1.5 py-1 font-semibold">
         {review.studentInfo.name} / {review.studentInfo.company}{' '}
         {review.studentInfo.result} / {review.studentInfo.course}
       </p>
 
       {/* Main Review */}
-      <h3 className="text-small16 mb-1.5 break-keep font-semibold text-neutral-0 md:text-small18">
+      <h3 className="text-small16 text-neutral-0 md:text-small18 mb-1.5 break-keep font-semibold">
         {review.mainReview}
       </h3>
 
       {/* Detailed Review */}
-      <p className="mb-2 break-keep text-xsmall14 leading-relaxed text-neutral-20 md:text-xsmall16">
+      <p className="text-xsmall14 text-neutral-20 md:text-xsmall16 mb-2 break-keep leading-relaxed">
         {review.detailedReview}
       </p>
 
       {/* Program */}
-      <p className="text-xsmall14 font-semibold text-neutral-0">
+      <p className="text-xsmall14 text-neutral-0 font-semibold">
         {review.program}
       </p>
     </motion.article>
@@ -270,7 +270,7 @@ export default function StudentTestimonials() {
       >
         <div
           ref={scrollRef}
-          className="relative overflow-y-visible overflow-x-scroll pb-3 scrollbar-hide"
+          className="scrollbar-hide relative overflow-y-visible overflow-x-scroll pb-3"
         >
           <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))] md:auto-cols-[360px]">
             {STUDENT_REVIEWS.map((review, index) => (

@@ -62,7 +62,7 @@ const ExpandableCell = ({
       <div
         ref={contentRef}
         className={twMerge(
-          'w-full whitespace-normal break-words p-2 text-[0.8125rem] font-normal text-neutral-30',
+          'text-neutral-30 w-full whitespace-normal break-words p-2 text-[0.8125rem] font-normal',
           align === 'center'
             ? 'text-center'
             : align === 'right'
@@ -84,7 +84,7 @@ const ExpandableCell = ({
             e.stopPropagation();
             onToggleExpand();
           }}
-          className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-xxs border border-neutral-80 bg-neutral-100 shadow-03"
+          className="rounded-xxs border-neutral-80 shadow-03 absolute right-2 top-2 flex h-5 w-5 items-center justify-center border bg-neutral-100"
           aria-label={isRowExpanded ? '축소' : '확장'}
         >
           {isRowExpanded ? (

@@ -36,11 +36,11 @@ const PricePlanCard = memo(function PricePlanCard({
   paragraphStyle,
 }: CardProps) {
   return (
-    <div className="w-72 rounded-sm bg-white px-5 py-7 text-left text-neutral-0 md:flex-1">
-      <h4 className="mb-6 text-xsmall16 font-bold md:text-small20">{title}</h4>
+    <div className="text-neutral-0 w-72 rounded-sm bg-white px-5 py-7 text-left md:flex-1">
+      <h4 className="text-xsmall16 md:text-small20 mb-6 font-bold">{title}</h4>
       <p
         style={paragraphStyle}
-        className="mb-[52px] min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18"
+        className="rounded-xxs text-xsmall14 md:text-small18 mb-[52px] min-h-28 whitespace-pre-line bg-[#F1F4FF] px-3 py-5 font-medium"
       >
         {description}
       </p>
@@ -117,7 +117,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   return (
-    <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
+    <section className="bg-neutral-90 w-full px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
       <SectionHeader className="mb-6 md:mb-14">가격 플랜</SectionHeader>
       <SectionSubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         취준 비용 부담은 낮추고, 퀄리티는 높이고
@@ -169,7 +169,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
       <FeedbackMentoringLink
         challengeType={challengeType}
         themeColor={styles.primaryColor}
-        className="mx-auto mt-8 px-10 py-3 text-xsmall16"
+        className="text-xsmall16 mx-auto mt-8 px-10 py-3"
       />
     </section>
   );

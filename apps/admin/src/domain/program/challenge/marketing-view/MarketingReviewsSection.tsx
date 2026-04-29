@@ -33,7 +33,7 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
       id="reviews"
       className="flex scroll-mt-[56px] flex-col items-center bg-[#F0F4FF] py-[70px] md:scroll-mt-[60px] md:py-[120px]"
     >
-      <div className="mb-3 text-small20 font-bold text-[#4A76FF]">
+      <div className="text-small20 mb-3 font-bold text-[#4A76FF]">
         찐 후기 모음.zip
       </div>
       <MainTitle className="mb-[50px] text-center">
@@ -45,12 +45,12 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
       </div>
 
       <div className="relative mt-20 flex flex-col items-center">
-        <div className="absolute -top-6 z-10 rounded-xs bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
+        <div className="rounded-xs absolute -top-6 z-10 bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
           자세한 수강생들의 후기가 궁금하다면?
         </div>
         <button
           type="button"
-          className="z-1 relative flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-auto md:text-medium22"
+          className="z-1 text-xsmall16 md:text-medium22 relative flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center font-semibold text-white md:w-auto"
         >
           더 다양한 후기 보러가기
           <div className="relative h-5 w-5 md:h-6 md:w-6">

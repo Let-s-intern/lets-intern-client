@@ -7,11 +7,14 @@ interface Props {
 }
 
 function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
-  const adminHref = buildCrossAppUrl(process.env.NEXT_PUBLIC_ADMIN_URL, '/admin');
+  const adminHref = buildCrossAppUrl(
+    process.env.NEXT_PUBLIC_ADMIN_URL,
+    '/admin',
+  );
   return (
     <div className="hidden items-center gap-1 md:flex">
       <GlobalNavItem
-        className="notice_gnb text-xsmall16 font-normal text-neutral-30"
+        className="notice_gnb text-xsmall16 text-neutral-30 font-normal"
         href="https://letscareer.oopy.io"
         target="_blank"
         rel="noopener noreferrer"
@@ -22,7 +25,7 @@ function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
         ·
       </span>
       <GlobalNavItem
-        className="q&a_gnb text-xsmall16 font-normal text-neutral-30"
+        className="q&a_gnb text-xsmall16 text-neutral-30 font-normal"
         href="https://letscareer.oopy.io"
         target="_blank"
         rel="noopener noreferrer"
@@ -31,7 +34,7 @@ function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
       </GlobalNavItem>
       {isLoggedIn && isAdmin && (
         <GlobalNavItem
-          className="ml-4 inline-block text-xsmall16 font-normal text-neutral-30"
+          className="text-xsmall16 text-neutral-30 ml-4 inline-block font-normal"
           href={adminHref}
         >
           관리자 페이지

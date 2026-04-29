@@ -42,7 +42,7 @@ const ChallengeBrand = ({ challengeType }: Props) => {
 
   return (
     <section className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20 md:pb-32 md:pt-10">
-      <div className="flex w-full flex-col whitespace-pre text-small20 font-bold md:items-center md:text-xlarge28">
+      <div className="text-small20 md:text-xlarge28 flex w-full flex-col whitespace-pre font-bold md:items-center">
         <p>취업 준비의 든든한 지원군,</p>
         <p>
           <span style={{ color: primaryColor }}>렛츠커리어</span>와 함께하세요
@@ -53,10 +53,10 @@ const ChallengeBrand = ({ challengeType }: Props) => {
           className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: primaryColor }}
         >
-          <p className="text-xsmall14 font-semibold md:text-small18">
+          <p className="text-xsmall14 md:text-small18 font-semibold">
             누적 참여자 수
           </p>
-          <p className="text-small20 font-bold md:text-xlarge28">
+          <p className="text-small20 md:text-xlarge28 font-bold">
             {brandInfo.totalParticipants}명
           </p>
         </div>
@@ -64,10 +64,10 @@ const ChallengeBrand = ({ challengeType }: Props) => {
           className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: primaryColor }}
         >
-          <p className="text-xsmall14 font-semibold md:text-small18">
+          <p className="text-xsmall14 md:text-small18 font-semibold">
             챌린지 평균 수료율
           </p>
-          <p className="text-small20 font-bold md:text-xlarge28">
+          <p className="text-small20 md:text-xlarge28 font-bold">
             {brandInfo.passers}%
           </p>
         </div>
@@ -75,10 +75,10 @@ const ChallengeBrand = ({ challengeType }: Props) => {
           className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: primaryColor }}
         >
-          <p className="text-xsmall14 font-semibold md:text-small18">
+          <p className="text-xsmall14 md:text-small18 font-semibold">
             참여자 만족도
           </p>
-          <p className="text-small20 font-bold md:text-xlarge28">
+          <p className="text-small20 md:text-xlarge28 font-bold">
             {brandInfo.satisfaction}점
           </p>
         </div>

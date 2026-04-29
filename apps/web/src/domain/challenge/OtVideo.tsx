@@ -27,8 +27,8 @@ function OtVideo({ vodLink }: Props) {
 
   return (
     <section className="mt-8 flex flex-col gap-3">
-      <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
-      <div className="relative flex aspect-video items-center justify-center rounded-sm bg-neutral-95">
+      <h3 className="text-neutral-0 text-lg font-semibold">OT 영상</h3>
+      <div className="bg-neutral-95 relative flex aspect-video items-center justify-center rounded-sm">
         <iframe
           src={youtubeEmbedUrl}
           className="h-full w-full rounded-sm"

@@ -21,10 +21,27 @@ export const CheckIcon = ({ className }: { className?: string }) => (
 );
 
 /** 사람 아이콘 SVG */
-export const PersonIcon = ({ size = 14, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" className={className}>
+export const PersonIcon = ({
+  size = 14,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 14 14"
+    fill="none"
+    className={className}
+  >
     <circle cx="7" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path
+      d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
 

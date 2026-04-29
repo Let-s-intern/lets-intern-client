@@ -59,7 +59,7 @@ const ProgramCard = ({
       </Link>
       <div>
         <div className="flex justify-between">
-          <h2 className="mb-3 break-keep text-xsmall16 font-semibold">
+          <h2 className="text-xsmall16 mb-3 break-keep font-semibold">
             <Link to={programLink} className="hover:underline">
               {title}
             </Link>
@@ -68,8 +68,8 @@ const ProgramCard = ({
 
         {startDate ? (
           <div className="mb-1 flex items-center gap-1.5">
-            <span className="shrink-0 text-xs text-neutral-0">진행 기간</span>
-            <span className="text-xs font-medium text-primary-dark">
+            <span className="text-neutral-0 shrink-0 text-xs">진행 기간</span>
+            <span className="text-primary-dark text-xs font-medium">
               {type === 'challenge'
                 ? `${startDate.format('YY.MM.DD')} ~ ${
                     endDate ? endDate.format('YY.MM.DD') : ''
@@ -81,8 +81,8 @@ const ProgramCard = ({
 
         {accessMethod ? (
           <div className="mb-1 flex items-center gap-1.5">
-            <span className="shrink-0 text-xs text-neutral-0">열람 방식</span>
-            <span className="text-xs font-medium text-primary-dark">
+            <span className="text-neutral-0 shrink-0 text-xs">열람 방식</span>
+            <span className="text-primary-dark text-xs font-medium">
               {accessMethod}
             </span>
           </div>
@@ -90,8 +90,8 @@ const ProgramCard = ({
 
         {showType && progressType !== 'none' ? (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-0">진행 방식</span>
-            <span className="text-xs font-medium text-primary-dark">
+            <span className="text-neutral-0 text-xs">진행 방식</span>
+            <span className="text-primary-dark text-xs font-medium">
               {progressType === 'ALL'
                 ? '온라인/오프라인'
                 : progressType === 'ONLINE'

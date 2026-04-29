@@ -47,7 +47,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
       thumbnailDiv.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
     } catch (error) {
       // 에러 발생 시 기본 배경색 유지
-      // eslint-disable-next-line no-console
+
       console.error('Failed to get dominant color:', error);
     }
   };
@@ -57,7 +57,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
       {/* 썸네일 */}
       <div
         ref={thumbnailDivRef}
-        className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]"
+        className="bg-neutral-95 relative mb-8 h-[16rem] overflow-hidden rounded-md md:h-[25.5rem]"
       >
         <Image
           className="object-contain"
@@ -76,11 +76,11 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         {/* 제목 */}
         <div>
           {blogInfo.category && (
-            <Heading2 className="mb-1.5 text-primary" id="blog-category">
+            <Heading2 className="text-primary mb-1.5" id="blog-category">
               {blogCategory[blogInfo.category]}
             </Heading2>
           )}
-          <h1 className="line-clamp-3 text-xlarge28 font-bold text-neutral-0 md:line-clamp-2">
+          <h1 className="text-xlarge28 text-neutral-0 line-clamp-3 font-bold md:line-clamp-2">
             {blogInfo.title}{' '}
             {!blogInfo.isDisplayed && (
               <span className="text-xsmall14 text-system-error">(비공개)</span>
@@ -99,7 +99,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
                   alt="렛츠커리어 프로필 사진"
                 />
               </div>
-              <span className="text-xsmall14 font-semibold text-neutral-0">
+              <span className="text-xsmall14 text-neutral-0 font-semibold">
                 렛츠커리어
               </span>
             </div>
@@ -120,7 +120,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         <p className="py-16 text-center">아직 공개되지 않은 블로그입니다 🫥</p>
       ) : (
         lexical && (
-          <div className="w-full break-all text-xsmall16">
+          <div className="text-xsmall16 w-full break-all">
             <LexicalContent node={JSON.parse(lexical as string).root} />
           </div>
         )

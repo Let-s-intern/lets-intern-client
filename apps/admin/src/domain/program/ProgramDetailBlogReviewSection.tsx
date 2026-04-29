@@ -16,14 +16,14 @@ const ProgramDetailBlogReviewSection = ({
     <section className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10 lg:px-0">
       <div className="mb-6 w-full md:mb-16">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
-          <Heading2 className="text-small20 md:text-center md:text-xlarge28">
+          <Heading2 className="text-small20 md:text-xlarge28 md:text-center">
             {programType === 'live' ? '클래스 ' : ''}참여자들의
             <br /> 생생한 후기를 더 만나보세요
           </Heading2>
           <Link
             to="/blog/list"
             target="_blank"
-            className="mt-1 flex items-center whitespace-nowrap text-xsmall14 font-medium text-neutral-35 md:absolute md:right-0 md:top-0"
+            className="text-xsmall14 text-neutral-35 mt-1 flex items-center whitespace-nowrap font-medium md:absolute md:right-0 md:top-0"
           >
             더보기
             <MdChevronRight className="h-5 w-5" />

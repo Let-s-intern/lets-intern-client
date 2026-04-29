@@ -32,7 +32,7 @@ const BankDropdown = ({ value, setValue }: BankDropdownProps) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="flex w-full cursor-pointer items-center justify-between rounded-md bg-neutral-0 bg-opacity-[4%] px-4 py-3"
+        className="bg-neutral-0 flex w-full cursor-pointer items-center justify-between rounded-md bg-opacity-[4%] px-4 py-3"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {value.accountType ? (
@@ -50,7 +50,7 @@ const BankDropdown = ({ value, setValue }: BankDropdownProps) => {
         <ul className="absolute -bottom-1 w-full translate-y-full rounded-md bg-[#FAFAFA]">
           {Object.keys(bankTypeToText).map((bankType: string) => (
             <li
-              className="cursor-pointer rounded-md px-6 py-1.5 text-neutral-0 text-opacity-[88%] duration-200 hover:bg-primary-20"
+              className="text-neutral-0 hover:bg-primary-20 cursor-pointer rounded-md px-6 py-1.5 text-opacity-[88%] duration-200"
               onClick={() => handleMenuItemClick(bankType)}
             >
               {bankTypeToText[bankType]}

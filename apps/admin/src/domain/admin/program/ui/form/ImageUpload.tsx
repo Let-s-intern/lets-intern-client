@@ -53,7 +53,7 @@ const ImageUpload = ({
 
   return simpleMode ? (
     <div
-      className="flex h-full w-full cursor-pointer items-center justify-center bg-neutral-90"
+      className="bg-neutral-90 flex h-full w-full cursor-pointer items-center justify-center"
       onClick={handleImageUpload}
     >
       {image ? (
@@ -77,7 +77,7 @@ const ImageUpload = ({
       />
     </div>
   ) : (
-    <div className="flex h-fit flex-col gap-4 rounded-xxs bg-neutral-90 px-6 py-4">
+    <div className="rounded-xxs bg-neutral-90 flex h-fit flex-col gap-4 px-6 py-4">
       <div>
         <label htmlFor={id} className="text-1-medium block">
           {label}{' '}
@@ -107,8 +107,8 @@ const ImageUpload = ({
             />
           </div>
         ) : (
-          <div className="flex aspect-video w-full cursor-pointer items-center justify-center bg-neutral-75">
-            <span className="text-[2rem] text-neutral-40">
+          <div className="bg-neutral-75 flex aspect-video w-full cursor-pointer items-center justify-center">
+            <span className="text-neutral-40 text-[2rem]">
               <FiUpload />
             </span>
           </div>

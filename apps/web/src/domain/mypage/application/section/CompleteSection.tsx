@@ -22,7 +22,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
       <h1 className="text-lg font-semibold">참여 완료</h1>
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
-          <p className="text-xsmall14 font-normal text-neutral-20">
+          <p className="text-xsmall14 text-neutral-20 font-normal">
             참여 완료한 프로그램이 아직 없어요.
           </p>
         </div>

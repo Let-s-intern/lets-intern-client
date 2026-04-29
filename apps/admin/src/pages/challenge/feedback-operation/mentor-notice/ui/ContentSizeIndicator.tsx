@@ -20,7 +20,7 @@ export function ContentSizeIndicator({ content }: ContentSizeIndicatorProps) {
 
   return (
     <div className="mt-2 flex flex-col gap-1">
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-90">
+      <div className="bg-neutral-90 h-1.5 w-full overflow-hidden rounded-full">
         <div
           className={`h-full rounded-full transition-all ${barColor}`}
           style={{ width: `${percent}%` }}

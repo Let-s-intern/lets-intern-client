@@ -16,7 +16,7 @@ const HrReviewSection: React.FC<Props> = ({ content }) => {
   return (
     <section
       id="reviews"
-      className="flex scroll-mt-[56px] flex-col items-center bg-neutral-80 py-[60px] md:scroll-mt-[60px] md:py-[93px]"
+      className="bg-neutral-80 flex scroll-mt-[56px] flex-col items-center py-[60px] md:scroll-mt-[60px] md:py-[93px]"
     >
       <SectionHeader className="hidden w-full pl-5 text-left md:mb-[42px] md:block md:pl-0 md:text-center">
         후기
@@ -42,7 +42,7 @@ const HrReviewSection: React.FC<Props> = ({ content }) => {
         </div>
         <button
           type="button"
-          className="z-1 relative flex w-[272px] items-center justify-center gap-2 rounded-sm bg-[#F55A00] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-[320px] md:text-medium22"
+          className="z-1 text-xsmall16 md:text-medium22 relative flex w-[272px] items-center justify-center gap-2 rounded-sm bg-[#F55A00] px-5 py-4 text-center font-semibold text-white md:w-[320px]"
         >
           더 다양한 후기 보러가기
           <div className="relative h-5 w-5 md:h-6 md:w-6">

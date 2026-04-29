@@ -200,7 +200,7 @@ const UserEdit = () => {
             />
             <div className="flex w-full flex-col gap-y-2">
               <div className="font-semibold">참여 프로그램 내역</div>
-              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+              <div className="bg-neutral-90 w-full rounded-sm px-4 py-3">
                 {data.applicationInfo.length < 1 ? (
                   <div>신청 내역이 없습니다.</div>
                 ) : (

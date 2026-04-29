@@ -164,7 +164,7 @@ const Page = () => {
         </Suspense>
       </div>
 
-      <div className="my-20 flex gap-2 text-xsmall14 text-neutral-20">
+      <div className="text-xsmall14 text-neutral-20 my-20 flex gap-2">
         <div>
           {/* <p className="font-thin">
           폰트 테스트입니다. 14px 가나다라마바사 abcdefg ABCDEFG -_=

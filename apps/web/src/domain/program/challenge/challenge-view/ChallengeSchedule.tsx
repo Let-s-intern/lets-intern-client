@@ -16,7 +16,7 @@ const IconTitle = ({
   children?: ReactNode;
 }) => {
   return (
-    <div className="flex items-center gap-2 font-semibold text-neutral-0">
+    <div className="text-neutral-0 flex items-center gap-2 font-semibold">
       {icon}
       {children}
     </div>
@@ -33,7 +33,7 @@ const ScheduleBox = ({
   return (
     <div
       className={twMerge(
-        'flex flex-1 flex-col gap-3 rounded-xs bg-neutral-95 p-4 pb-5',
+        'rounded-xs bg-neutral-95 flex flex-1 flex-col gap-3 p-4 pb-5',
         className,
       )}
     >
@@ -86,7 +86,7 @@ function ChallengeSchedule({ challenge, themeColor = DEFAULT_COLOR }: Props) {
 
   return (
     <>
-      <ScheduleBox className="rounded-b-none pb-0 md:rounded-xs md:pb-5">
+      <ScheduleBox className="md:rounded-xs rounded-b-none pb-0 md:pb-5">
         <ScheduleWrapper className="hidden md:block">
           <IconTitle icon={<Pin color={themeColor} width={20} height={20} />}>
             시작 일자
@@ -105,7 +105,7 @@ function ChallengeSchedule({ challenge, themeColor = DEFAULT_COLOR }: Props) {
           </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>
-      <ScheduleBox className="rounded-t-none md:rounded-xs">
+      <ScheduleBox className="md:rounded-xs rounded-t-none">
         <ScheduleWrapper>
           <IconTitle
             icon={<ClockIcon color={themeColor} width={20} height={20} />}

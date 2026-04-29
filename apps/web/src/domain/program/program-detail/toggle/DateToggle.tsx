@@ -16,7 +16,7 @@ const Row = ({
 }) => (
   <div className="flex items-center justify-between px-1.5 py-2">
     <span className="text-neutral-0 text-opacity-[74%]">{title}</span>
-    <span className="text-right font-medium text-neutral-0 text-opacity-[94%]">
+    <span className="text-neutral-0 text-right font-medium text-opacity-[94%]">
       {value}
     </span>
   </div>
@@ -25,7 +25,7 @@ const Row = ({
 const DateToggle = ({ programDate, programType }: DateToggleProps) => {
   return (
     <div className="rounded-sm bg-neutral-100">
-      <div className="flex items-center justify-center gap-0.5 rounded-sm bg-neutral-0 bg-opacity-5 px-1.5 py-4 text-xsmall14 font-semibold text-neutral-0 text-opacity-[74%]">
+      <div className="bg-neutral-0 text-xsmall14 text-neutral-0 flex items-center justify-center gap-0.5 rounded-sm bg-opacity-5 px-1.5 py-4 font-semibold text-opacity-[74%]">
         프로그램 일정
       </div>
       <div className="px-2">

@@ -279,7 +279,7 @@ const PaymentInputContent = () => {
           }
         />
         {program && 'deadline' in program && program.deadline ? (
-          <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
+          <div className="bg-primary-10 text-xsmall14 -mx-5 mb-10 mt-8 flex items-center justify-center gap-2 px-2.5 py-5 lg:mx-0 lg:rounded-sm">
             <span>마감까지</span>
             <Duration
               deadline={program.deadline}
@@ -290,7 +290,7 @@ const PaymentInputContent = () => {
         ) : (
           <div className="mt-10"></div>
         )}
-        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
+        <p className="text-xsmall16 text-neutral-0 my-3 font-semibold">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -311,11 +311,11 @@ const PaymentInputContent = () => {
         </div>
       </div>
 
-      <hr className="my-10 block h-2 border-none bg-neutral-95" />
+      <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
       {!programApplicationData.isFree && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
-          <div className="font-semibold text-neutral-0">결제 정보</div>
+          <div className="text-neutral-0 font-semibold">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             {showCouponSection && (
               <CouponSection
@@ -329,7 +329,7 @@ const PaymentInputContent = () => {
 
             {programApplicationData.programType === 'challenge' &&
               !isLoading && (
-                <div className="flex items-start gap-2.5 px-3 text-primary">
+                <div className="text-primary flex items-start gap-2.5 px-3">
                   <CreditCardIcon className="h-auto w-5" />
                   <p className="text-xsmall14 font-medium">
                     {banks.join(', ')}카드로 결제하면{' '}
@@ -352,7 +352,7 @@ const PaymentInputContent = () => {
               showCouponDiscount={showCouponSection}
             />
             <hr className="bg-neutral-85" />
-            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+            <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">
               <span>결제금액</span>
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
@@ -361,7 +361,7 @@ const PaymentInputContent = () => {
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
             programApplicationData.deposit > 0 && (
-              <div className="relative overflow-hidden rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
+              <div className="text-xsmall14 relative overflow-hidden rounded-sm bg-[#E8F9F2] px-4 py-6 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
                   <br className="md:hidden" />{' '}
@@ -381,9 +381,9 @@ const PaymentInputContent = () => {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 md:hidden">
+      <div className="shadow-05 fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 md:hidden">
         <button
-          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          className="next_button border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 hover:disabled:opacity-100"
           onClick={onPaymentClick}
           disabled={
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
@@ -395,7 +395,7 @@ const PaymentInputContent = () => {
 
       <div className="mx-5 hidden md:block">
         <button
-          className="next_button block w-full justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          className="next_button border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 block w-full justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 hover:disabled:opacity-100"
           onClick={onPaymentClick}
           disabled={
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)

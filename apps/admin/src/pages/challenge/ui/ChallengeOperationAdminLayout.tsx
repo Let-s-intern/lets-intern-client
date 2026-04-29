@@ -12,12 +12,7 @@ import useMentorAccessControl from '@/hooks/useMentorAccessControl';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Button, Checkbox } from '@mui/material';
-import {
-  Link,
-  useLocation,
-  useParams,
-  useNavigate,
-} from 'react-router-dom';
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const getNavLinks = (programId?: string | number) => {
@@ -148,7 +143,7 @@ const ChallengeDashBoardModal = ({
   return (
     <BaseModal className="max-w-[800px]" isOpen={isOpen} onClose={onClose}>
       <section className="p-5">
-        <p className="mb-5 text-small18 font-bold">
+        <p className="text-small18 mb-5 font-bold">
           대시보드를 복제할 챌린지를 선택해주세요
         </p>
         <ul className="flex h-[600px] flex-col gap-1 overflow-y-auto">

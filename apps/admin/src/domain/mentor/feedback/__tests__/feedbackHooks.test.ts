@@ -30,7 +30,11 @@ function aggregateFeedbackStatus(
     }
   }
 
-  return { waitingCount: waiting, inProgressCount: inProgress, completedCount: completed };
+  return {
+    waitingCount: waiting,
+    inProgressCount: inProgress,
+    completedCount: completed,
+  };
 }
 
 describe('useFeedbackStatus (pure logic)', () => {
@@ -59,11 +63,7 @@ describe('useFeedbackStatus (pure logic)', () => {
   });
 
   it('treats null/undefined feedbackStatus as waiting', () => {
-    const list = [
-      { feedbackStatus: null },
-      { feedbackStatus: undefined },
-      {},
-    ];
+    const list = [{ feedbackStatus: null }, { feedbackStatus: undefined }, {}];
 
     const result = aggregateFeedbackStatus(list);
 
@@ -89,8 +89,7 @@ describe('useFeedbackStatus (pure logic)', () => {
 // ── useMenteeNavigation (pure logic) ──────────────────────────────────
 
 describe('useMenteeNavigation (pure logic)', () => {
-  const makeList = (ids: (number | null)[]) =>
-    ids.map((id) => ({ id }));
+  const makeList = (ids: (number | null)[]) => ids.map((id) => ({ id }));
 
   it('finds current index correctly', () => {
     const list = makeList([10, 20, 30]);

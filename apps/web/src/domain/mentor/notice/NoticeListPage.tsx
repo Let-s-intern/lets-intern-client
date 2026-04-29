@@ -20,7 +20,7 @@ function getRelativeDate(dateStr: string): string {
 function NoticeLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-6 md:gap-10">
-      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
+      <h1 className="text-medium22 text-neutral-0 font-semibold">공지사항</h1>
       {children}
     </div>
   );
@@ -39,12 +39,12 @@ function GuideRow({
   const badges = (
     <div className="flex items-center gap-2">
       {guide.createDate && (
-        <span className="w-fit shrink-0 rounded border border-neutral-80 px-2.5 py-0.5 text-xxsmall12 text-neutral-40 md:px-3 md:py-1">
+        <span className="border-neutral-80 text-xxsmall12 text-neutral-40 w-fit shrink-0 rounded border px-2.5 py-0.5 md:px-3 md:py-1">
           {getRelativeDate(guide.createDate)}
         </span>
       )}
       {challengeName && (
-        <span className="shrink-0 rounded bg-primary-5 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+        <span className="bg-primary-5 text-primary shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium">
           {challengeName}
         </span>
       )}
@@ -52,7 +52,7 @@ function GuideRow({
   );
 
   const title = (
-    <span className="break-words text-xsmall14 text-neutral-10 md:text-xsmall16">
+    <span className="text-xsmall14 text-neutral-10 md:text-xsmall16 break-words">
       {guide.title}
     </span>
   );
@@ -124,7 +124,7 @@ export default function NoticeListPage() {
   if (isLoading) {
     return (
       <NoticeLayout>
-        <div className="py-20 text-center text-xsmall14 text-neutral-40">
+        <div className="text-xsmall14 text-neutral-40 py-20 text-center">
           불러오는 중...
         </div>
       </NoticeLayout>
@@ -134,7 +134,7 @@ export default function NoticeListPage() {
   if (visibleGuides.length === 0) {
     return (
       <NoticeLayout>
-        <div className="py-20 text-center text-xsmall14 text-neutral-40">
+        <div className="text-xsmall14 text-neutral-40 py-20 text-center">
           등록된 공지가 없습니다.
         </div>
       </NoticeLayout>
@@ -145,10 +145,10 @@ export default function NoticeListPage() {
     <NoticeLayout>
       {fixedGuides.length > 0 && (
         <section className="flex flex-col gap-4">
-          <h2 className="text-small18 font-semibold text-neutral-0">
+          <h2 className="text-small18 text-neutral-0 font-semibold">
             중요 공지
           </h2>
-          <div className="flex flex-col rounded-[16px] border border-neutral-80">
+          <div className="border-neutral-80 flex flex-col rounded-[16px] border">
             {fixedGuides.map((guide) => (
               <GuideRow
                 key={guide.challengeMentorGuideId}
@@ -165,11 +165,11 @@ export default function NoticeListPage() {
       )}
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-small18 font-semibold text-neutral-0">
+        <h2 className="text-small18 text-neutral-0 font-semibold">
           프로그램 공지
         </h2>
         {normalGuides.length > 0 ? (
-          <div className="flex flex-col rounded-[16px] border border-neutral-80">
+          <div className="border-neutral-80 flex flex-col rounded-[16px] border">
             {normalGuides.map((guide) => (
               <GuideRow
                 key={guide.challengeMentorGuideId}
@@ -183,7 +183,7 @@ export default function NoticeListPage() {
             ))}
           </div>
         ) : (
-          <div className="py-10 text-center text-xsmall14 text-neutral-40">
+          <div className="text-xsmall14 text-neutral-40 py-10 text-center">
             등록된 프로그램 공지가 없습니다.
           </div>
         )}

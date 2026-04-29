@@ -42,7 +42,7 @@ const BaseModal = ({
         <ModalOverlay onClose={onClose} />
         <div
           className={twMerge(
-            'relative w-full overflow-hidden rounded-ms bg-white',
+            'rounded-ms relative w-full overflow-hidden bg-white',
             className,
           )}
         >

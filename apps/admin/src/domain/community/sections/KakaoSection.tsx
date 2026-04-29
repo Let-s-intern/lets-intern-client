@@ -11,7 +11,7 @@ export default function KakaoSection() {
       <div className="mw-1180 py-16 md:py-32">
         {/* Section header - B2B SectionHeader style */}
         <motion.div className="mb-10 text-center md:mb-16" {...FADE_IN()}>
-          <p className="flex items-center justify-center gap-1.5 text-xsmall16 font-medium text-primary-90">
+          <p className="text-xsmall16 text-primary-90 flex items-center justify-center gap-1.5 font-medium">
             <Image
               src="/icons/kakao-circle.svg"
               alt=""
@@ -20,10 +20,10 @@ export default function KakaoSection() {
             />
             카카오톡 오픈채팅방
           </p>
-          <h2 className="mt-4 break-keep text-[26px] font-bold leading-[1.35] text-static-0 md:mt-6 md:text-[40px]">
+          <h2 className="text-static-0 mt-4 break-keep text-[26px] font-bold leading-[1.35] md:mt-6 md:text-[40px]">
             취준 고민, 혼자 안고 있지 마세요
           </h2>
-          <p className="mt-4 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:text-small20">
+          <p className="text-xsmall14 text-neutral-40 md:text-small20 mt-4 break-keep leading-[22px]">
             렛츠커리어 커뮤니티에서 질문하고 정보 나누며 함께 취뽀해요.
           </p>
         </motion.div>

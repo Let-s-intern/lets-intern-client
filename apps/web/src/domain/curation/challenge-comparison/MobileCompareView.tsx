@@ -10,7 +10,10 @@ interface MobileCompareViewProps {
   onClose: () => void;
 }
 
-const COMPARE_ROWS: { label: string; key: keyof (typeof CHALLENGE_COMPARISON)[0] }[] = [
+const COMPARE_ROWS: {
+  label: string;
+  key: keyof (typeof CHALLENGE_COMPARISON)[0];
+}[] = [
   { label: '설명', key: 'description' },
   { label: '추천 대상', key: 'target' },
   { label: '기간', key: 'duration' },

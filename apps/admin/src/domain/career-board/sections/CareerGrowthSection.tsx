@@ -117,7 +117,7 @@ const CareerGrowthSection = () => {
         title="커리어 성장"
         labelOnClick={() => navigate('/mypage/application')}
         body={
-          <div className="py-8 text-center text-neutral-40">
+          <div className="text-neutral-40 py-8 text-center">
             데이터를 불러오는 중 오류가 발생했습니다.
           </div>
         }

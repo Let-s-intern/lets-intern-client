@@ -1,7 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 
-interface OutlinedButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface OutlinedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';

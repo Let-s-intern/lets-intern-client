@@ -36,12 +36,12 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       {/* 썸네일 + 모집 종료 dim */}
       <div className="relative">
         <img
-          className="aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs"
+          className="bg-neutral-80 md:rounded-xs aspect-[540/421] h-auto w-full rounded-sm object-cover"
           src={programInfo.thumbnail || undefined}
           alt="프로그램 썸네일 배경"
         />
         {isPost && (
-          <div className="absolute inset-0 rounded-sm bg-neutral-0/40 md:rounded-xs" />
+          <div className="bg-neutral-0/40 md:rounded-xs absolute inset-0 rounded-sm" />
         )}
         {!isPost && !isAlwaysAvailable && (
           <DeadlineBadge deadline={programInfo.deadline ?? undefined} />
@@ -54,7 +54,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         {!isAlwaysAvailable && (
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-              <span className="text-xxsmall12 font-normal text-neutral-0">
+              <span className="text-xxsmall12 text-neutral-0 font-normal">
                 모집기간
               </span>
               <span className="text-0.75-medium text-primary-dark">
@@ -63,7 +63,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
               </span>
             </div>
             <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-              <span className="text-xxsmall12 font-normal text-neutral-0">
+              <span className="text-xxsmall12 text-neutral-0 font-normal">
                 진행기간
               </span>
               <span className="text-0.75-medium text-primary-dark">

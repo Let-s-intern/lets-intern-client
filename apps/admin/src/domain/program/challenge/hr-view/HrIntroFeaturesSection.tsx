@@ -93,18 +93,18 @@ const Card = ({
       </div>
 
       <div className="relative z-10 flex h-full flex-col items-center">
-        <div className="flex w-fit items-center justify-center rounded-md bg-[#FF5E00] px-[14px] py-[6px] text-xsmall16 font-semibold text-white md:text-small18">
+        <div className="text-xsmall16 md:text-small18 flex w-fit items-center justify-center rounded-md bg-[#FF5E00] px-[14px] py-[6px] font-semibold text-white">
           Point {index}
         </div>
 
-        <div className="mt-[18px] text-center text-small18 font-bold text-neutral-0 md:text-medium24">
+        <div className="text-small18 text-neutral-0 md:text-medium24 mt-[18px] text-center font-bold">
           {title}
         </div>
 
         <div className="min-h-[97px] flex-1" />
 
         <div
-          className="text-center text-xsmall16 text-neutral-0 md:text-small18"
+          className="text-xsmall16 text-neutral-0 md:text-small18 text-center"
           style={{ letterSpacing: '-0.022px' }}
         >
           {description}
@@ -149,7 +149,7 @@ const HrIntroFeaturesSection: React.FC<HrIntroFeaturesSectionProps> = ({
             <span>자기소개서·포트폴리오까지 완성해요!</span>
           </div>
         </MainTitle>
-        <div className="text-small14 mt-3 text-neutral-0 md:mt-5 md:text-center md:text-small18">
+        <div className="text-small14 text-neutral-0 md:text-small18 mt-3 md:mt-5 md:text-center">
           막연한 HR 관심에서 끝나지 않도록, <br className="md:hidden" /> 직무
           탐색부터 경험 정리, 결과물 완성까지 함께합니다.
         </div>

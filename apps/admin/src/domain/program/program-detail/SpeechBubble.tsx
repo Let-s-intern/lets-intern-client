@@ -18,7 +18,7 @@ function SpeechBubble({
   return (
     <div
       className={twMerge(
-        'min-w-50 md:min-w-120 relative w-fit rounded-full bg-neutral-90 px-8 py-4 text-xxsmall12 font-semibold text-neutral-0 md:px-20 md:py-9 md:text-medium24',
+        'min-w-50 md:min-w-120 bg-neutral-90 text-xxsmall12 text-neutral-0 md:text-medium24 relative w-fit rounded-full px-8 py-4 font-semibold md:px-20 md:py-9',
         className,
       )}
       style={{ backgroundColor: bgColor }}

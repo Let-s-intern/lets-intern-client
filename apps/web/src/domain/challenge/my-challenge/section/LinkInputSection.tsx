@@ -143,11 +143,11 @@ const LinkInputSection = ({
     <section className={clsx(className)}>
       <div className="mb-1.5 transition-all delay-100 duration-500 ease-out">
         <div className="mb-1 flex items-center gap-2 md:mb-1.5">
-          <span className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
+          <span className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-semibold">
             링크
           </span>
         </div>
-        <div className="rounded mb-3 whitespace-pre-line bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10 md:mb-0">
+        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 mb-3 whitespace-pre-line rounded px-3 py-3 md:mb-0">
           {text ||
             '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
         </div>
@@ -156,9 +156,9 @@ const LinkInputSection = ({
         <input
           type="text"
           className={clsx(
-            'min-w-0 flex-1 items-center rounded-xxs border bg-white',
-            'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
-            'h-[44px] outline-none focus:border-primary',
+            'rounded-xxs min-w-0 flex-1 items-center border bg-white',
+            'text-xsmall14 text-neutral-0 md:text-xsmall16 px-3 py-2 placeholder:text-neutral-50',
+            'focus:border-primary h-[44px] outline-none',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
             linkError ? 'border-red-500' : 'border-neutral-80',
           )}
@@ -169,13 +169,13 @@ const LinkInputSection = ({
         />
         <button
           className={clsx(
-            'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
+            'rounded-xxs text-xsmall16 h-[44px] px-4 font-medium transition-colors',
             'flex-shrink-0 whitespace-nowrap',
-            'disabled:cursor-not-allowed disabled:bg-neutral-70 disabled:text-neutral-100',
+            'disabled:bg-neutral-70 disabled:cursor-not-allowed disabled:text-neutral-100',
             isVerified && linkValue === verifiedLink && !disabled
-              ? 'border border-primary bg-white text-primary hover:bg-neutral-90'
+              ? 'border-primary text-primary hover:bg-neutral-90 border bg-white'
               : linkValue && !linkError
-                ? 'bg-primary text-white hover:bg-primary-90'
+                ? 'bg-primary hover:bg-primary-90 text-white'
                 : 'bg-neutral-80 text-neutral-50',
           )}
           onClick={handleLinkCheck}
@@ -186,12 +186,12 @@ const LinkInputSection = ({
       </div>
       <div className="transition-all delay-300 duration-300 ease-out">
         {linkError && (
-          <p className="animate-fade-in mt-1 text-xsmall14 text-red-500">
+          <p className="animate-fade-in text-xsmall14 mt-1 text-red-500">
             {linkError}
           </p>
         )}
         {linkSuccess && (
-          <p className="animate-fade-in mt-1 text-xsmall14 text-primary">
+          <p className="animate-fade-in text-xsmall14 text-primary mt-1">
             {linkSuccess}
           </p>
         )}

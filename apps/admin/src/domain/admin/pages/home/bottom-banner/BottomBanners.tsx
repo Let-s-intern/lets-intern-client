@@ -77,10 +77,7 @@ const BottomBanners = () => {
           const id = params.id;
 
           return [
-            <Link
-              to={`/home/bottom-banners/${id}/edit`}
-              key={'edit' + id}
-            >
+            <Link to={`/home/bottom-banners/${id}/edit`} key={'edit' + id}>
               <Pencil />
             </Link>,
             <Trash

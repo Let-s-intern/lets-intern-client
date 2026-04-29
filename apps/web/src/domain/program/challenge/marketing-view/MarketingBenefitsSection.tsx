@@ -31,13 +31,13 @@ function MarketingBenefitsSection() {
           🎁 마케팅 챌린지 참여자를 <br className="md:hidden" />
           위한 특별 혜택
         </MainTitle>
-        <p className="mt-1.5 text-xsmall14 text-white/85 md:text-small20">
+        <p className="text-xsmall14 md:text-small20 mt-1.5 text-white/85">
           혼자 하는 취준, 여기서 끝내세요. <br />
           렛츠커리어는 마케팅 챌린지 수료자만을 위해 <br />
           채용 연계 인재풀 등록 기회를 제공합니다.
         </p>
       </div>
-      <div className="flex w-full flex-col items-center gap-3 rounded-xs bg-white p-3 pb-5 md:w-[800px] md:gap-4 md:rounded-sm md:px-6 md:pb-7 md:pt-5">
+      <div className="rounded-xs flex w-full flex-col items-center gap-3 bg-white p-3 pb-5 md:w-[800px] md:gap-4 md:rounded-sm md:px-6 md:pb-7 md:pt-5">
         <div className="flex w-full flex-col items-center">
           <Image
             src="/icons/check-star.svg"
@@ -47,7 +47,7 @@ function MarketingBenefitsSection() {
             unoptimized
             className="h-7 w-7 object-contain md:h-[34px] md:w-[34px]"
           />
-          <h3 className="mb-2 mt-1 text-center text-small18 font-bold text-[#4A76FF] md:mb-3 md:mt-2 md:text-medium24">
+          <h3 className="text-small18 md:text-medium24 mb-2 mt-1 text-center font-bold text-[#4A76FF] md:mb-3 md:mt-2">
             슈퍼인턴과 함께 30개사 이상의 <br className="md:hidden" />
             마케터 직무 채용 연계
           </h3>
@@ -61,7 +61,7 @@ function MarketingBenefitsSection() {
               className="h-6 w-auto md:h-10"
             />
             <span
-              className="text-xsmall14 font-medium text-neutral-40 md:text-medium24"
+              className="text-xsmall14 text-neutral-40 md:text-medium24 font-medium"
               aria-hidden="true"
             >
               X
@@ -76,8 +76,8 @@ function MarketingBenefitsSection() {
             />
           </div>
         </div>
-        <hr className="w-full max-w-[720px] border-t border-neutral-80" />
-        <p className="text-nowrap text-center text-xsmall16 text-neutral-0 md:text-medium22">
+        <hr className="border-neutral-80 w-full max-w-[720px] border-t" />
+        <p className="text-xsmall16 text-neutral-0 md:text-medium22 text-nowrap text-center">
           마케팅 챌린지 참여자분들만을 위해 준비했어요.
           <br />
           렛츠커리어 X 슈퍼인턴 인재풀 등록해서

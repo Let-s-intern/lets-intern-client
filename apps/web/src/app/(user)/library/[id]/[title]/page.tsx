@@ -90,8 +90,7 @@ export async function generateMetadata({
   const { magnetInfo } = data;
   const parsed = parseMagnetDescription(magnetInfo.description);
   const metaDescription =
-    parsed.metaDescription ||
-    `${magnetInfo.title} | 렛츠커리어 무료 자료집`;
+    parsed.metaDescription || `${magnetInfo.title} | 렛츠커리어 무료 자료집`;
 
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),
@@ -263,7 +262,7 @@ export default async function LibraryDetailPage({
             <LibraryLikeBtn likeCount={magnetInfo.likes ?? 0} />
             {/* 공유하기 */}
             <div className="flex items-center">
-              <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
+              <span className="text-xsmall14 text-neutral-35 mr-1.5 hidden font-medium md:block">
                 나만 보기 아깝다면 공유하기
               </span>
               <BlogLinkShareBtn
@@ -284,7 +283,7 @@ export default async function LibraryDetailPage({
                   title: magnetInfo.title,
                 })}
               />
-              <span className="text-xsmall14 font-medium text-neutral-35 md:hidden">
+              <span className="text-xsmall14 text-neutral-35 font-medium md:hidden">
                 공유하기
               </span>
             </div>
@@ -293,10 +292,10 @@ export default async function LibraryDetailPage({
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
           <Link
             href="/library/list"
-            className="flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
+            className="md:rounded-xs md:bg-neutral-95 flex w-full items-center justify-center gap-2 py-5"
           >
-            <p className="text-xsmall16 font-semibold text-neutral-0 md:font-medium">
-              <span className="font-semibold text-primary">자료집 홈</span>{' '}
+            <p className="text-xsmall16 text-neutral-0 font-semibold md:font-medium">
+              <span className="text-primary font-semibold">자료집 홈</span>{' '}
               바로가기
             </p>
             <CircleChevronRight
@@ -309,7 +308,7 @@ export default async function LibraryDetailPage({
 
         {/* 프로그램 추천 */}
         {programRecommendList.length > 0 && (
-          <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
+          <aside className="md:border-neutral-80 w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:px-6 md:py-5">
             <Heading2 className="text-neutral-0 md:text-xsmall16">
               렛츠커리어 프로그램 참여하고
               <br />
@@ -377,7 +376,7 @@ function MoreLink({
     <Link
       href={href}
       className={twMerge(
-        'block w-full rounded-xs border border-neutral-80 px-5 py-3 text-center font-medium text-neutral-20',
+        'rounded-xs border-neutral-80 text-neutral-20 block w-full border px-5 py-3 text-center font-medium',
         className,
       )}
     >

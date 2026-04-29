@@ -15,7 +15,7 @@ function SectionMainHeader({
   return (
     <h2
       className={twMerge(
-        'whitespace-pre-line text-center text-small20 font-bold text-neutral-0 md:text-xlarge30',
+        'text-small20 text-neutral-0 md:text-xlarge30 whitespace-pre-line text-center font-bold',
         className,
       )}
     >

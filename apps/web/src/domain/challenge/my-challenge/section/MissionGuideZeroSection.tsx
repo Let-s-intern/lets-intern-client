@@ -61,31 +61,31 @@ const MissionGuideZeroSection = ({
         missionStartDate={missionData.missionInfo.startDate}
       />
       {/* 미션 가이드 섹션 */}
-      <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
+      <section className="rounded-xs border-neutral-80 flex flex-col gap-5 border px-4 py-4">
         {/* 환영 섹션 */}
         <section className="flex flex-col gap-4">
-          <p className="whitespace-pre-wrap text-xsmall14 text-neutral-0 md:text-xsmall16">
+          <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 whitespace-pre-wrap">
             {missionData?.missionInfo?.description ||
               `환영합니다! \n챌린지가 시작하기 전에, \n전체적인 챌린지 흐름과 일정, 미션 제출 방법 등을 미리 알아보는 시간이에요. \n\n이번 0회차에서는 아래 3가지를 먼저 확인해주세요!`}
           </p>
         </section>
         {/* 분리선 섹션 */}
-        <div className="h-px bg-neutral-80" />
+        <div className="bg-neutral-80 h-px" />
         {/* 미션 가이드 섹션 */}
         <section className="flex flex-col gap-3">
-          <h3 className="text-xsmall16 font-semibold text-neutral-10">
+          <h3 className="text-xsmall16 text-neutral-10 font-semibold">
             미션 가이드
           </h3>
-          <p className="whitespace-pre-wrap text-xsmall14 text-neutral-10 md:text-xsmall16">
+          <p className="text-xsmall14 text-neutral-10 md:text-xsmall16 whitespace-pre-wrap">
             {missionData?.missionInfo?.guide ||
               `이번 가이드는 앞으로의 챌린지를 어렵게 않게 이야기하기 위한 작은 준비 운동 같은 거예요. \n콘텐츠를 따라 직무 인터뷰를 정독하며 여러분이 이해한 방식대로 정리합시다 😀`}
           </p>
         </section>
 
         {/* 미션 자료 모음 섹션 */}
-        <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
+        <section className="rounded-xxs bg-neutral-95 flex flex-col gap-4 p-3 pb-5">
           <div className="flex flex-col">
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
+            <h3 className="text-xsmall16 text-neutral-0 font-semibold">
               미션 자료 모음
             </h3>
             <p className="text-xsmall14 text-neutral-10">
@@ -136,9 +136,9 @@ const MissionGuideZeroSection = ({
         {/* OT 영상 섹션 */}
         {missionData?.missionInfo?.vodLink && (
           <section className="flex flex-col gap-3">
-            <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
+            <h3 className="text-neutral-0 text-lg font-semibold">OT 영상</h3>
             {convertToEmbedUrl(missionData.missionInfo.vodLink) ? (
-              <div className="relative flex aspect-video items-center justify-center rounded-sm bg-neutral-95">
+              <div className="bg-neutral-95 relative flex aspect-video items-center justify-center rounded-sm">
                 <iframe
                   src={convertToEmbedUrl(missionData.missionInfo.vodLink)!}
                   className="h-full w-full rounded-sm"
@@ -150,9 +150,9 @@ const MissionGuideZeroSection = ({
                 />
               </div>
             ) : (
-              <div className="relative flex aspect-video cursor-pointer items-center justify-center rounded-sm bg-neutral-95 transition-colors hover:bg-neutral-90">
+              <div className="bg-neutral-95 hover:bg-neutral-90 relative flex aspect-video cursor-pointer items-center justify-center rounded-sm transition-colors">
                 <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-white shadow-lg">
-                  <div className="ml-1 h-0 w-0 border-b-[8px] border-l-[12px] border-t-[8px] border-b-transparent border-l-neutral-0 border-t-transparent" />
+                  <div className="border-l-neutral-0 ml-1 h-0 w-0 border-b-[8px] border-l-[12px] border-t-[8px] border-b-transparent border-t-transparent" />
                 </div>
               </div>
             )}

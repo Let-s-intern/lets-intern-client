@@ -66,7 +66,7 @@ const ProgramBestReviewSection = ({
       <div className="mx-auto mb-[70px] flex w-full max-w-[1000px] flex-col gap-y-8">
         <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10 lg:px-0">
           <p
-            className="text-xsmall14 font-semibold text-primary md:text-small20"
+            className="text-xsmall14 text-primary md:text-small20 font-semibold"
             style={
               type === 'challenge' ? { color: styles.primaryColor } : undefined
             }
@@ -77,14 +77,14 @@ const ProgramBestReviewSection = ({
             className={`flex flex-col ${type === 'challenge' ? 'gap-y-1' : 'gap-y-2.5'} md:items-center md:gap-y-3`}
           >
             <p
-              className={`text-xsmall14 font-semibold md:text-small18 ${type === 'challenge' ? '' : 'w-fit rounded-[10px] bg-[#FFEACC] px-2 py-1'}`}
+              className={`text-xsmall14 md:text-small18 font-semibold ${type === 'challenge' ? '' : 'w-fit rounded-[10px] bg-[#FFEACC] px-2 py-1'}`}
               style={{
                 color: type === 'challenge' ? styles.primaryColor : '#E98900',
               }}
             >
               참여 만족도 4.9점
             </p>
-            <p className="whitespace-pre text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
+            <p className="text-small20 text-neutral-0 md:text-xlarge28 whitespace-pre font-bold md:text-center">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
           </div>
         </div>
       </div>

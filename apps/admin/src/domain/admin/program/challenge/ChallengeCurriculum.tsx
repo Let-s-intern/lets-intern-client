@@ -276,7 +276,7 @@ function ChallengeCurriculumEditor({
             const weekTitleItem = getWeekTitleItem(week);
             return (
               <div key={week} className="flex items-center gap-1.5">
-                <span className="text-small16 inline-flex h-[60px] items-center justify-center rounded-sm border border-neutral-200 bg-neutral-80 px-7">
+                <span className="text-small16 bg-neutral-80 inline-flex h-[60px] items-center justify-center rounded-sm border border-neutral-200 px-7">
                   {week}
                 </span>
 
@@ -312,7 +312,7 @@ function ChallengeCurriculumEditor({
           })}
         </div>
       )}
-      <hr className="my-6 w-full border-neutral-75" />
+      <hr className="border-neutral-75 my-6 w-full" />
 
       <div className="mb-3">
         {curriculum.map((item) => (
@@ -369,7 +369,7 @@ function ChallengeCurriculumEditor({
               onChange={(e) => onChange(e, item)}
             />
             <div className="relative h-[60px] w-[60px] flex-shrink-0">
-              <label className="absolute -top-2 z-10 text-xs text-neutral-40">
+              <label className="text-neutral-40 absolute -top-2 z-10 text-xs">
                 내용 이미지
               </label>
               <div className="h-full w-full overflow-hidden rounded-sm border border-neutral-200 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
@@ -423,7 +423,7 @@ function ChallengeCurriculumEditor({
             </IconButton>
           </div>
         ))}
-        <hr className="my-6 w-full border-neutral-75" />
+        <hr className="border-neutral-75 my-6 w-full" />
       </div>
       <div className="w-[300px] flex-shrink-0">
         <ImageUpload

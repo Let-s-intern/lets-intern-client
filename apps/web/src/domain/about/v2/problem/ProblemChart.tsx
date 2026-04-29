@@ -24,7 +24,7 @@ const ProblemChart = () => {
       <span className="text-0.75-medium xl:text-1-medium text-primary-dark">
         2022.02 잡코리아
       </span>
-      <p className="text-1-medium xl:text-1.25 mt-3 text-center text-static-100/65">
+      <p className="text-1-medium xl:text-1.25 text-static-100/65 mt-3 text-center">
         어디서 어떤 정보를 얻어야 할지 몰라
         <br />
         어려움을 겪는 취업 준비생

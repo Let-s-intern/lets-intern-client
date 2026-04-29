@@ -150,7 +150,7 @@ const ExperienceDataTable = ({
     <section className="group relative">
       <button
         onClick={() => setIsExpandModalOpen(true)}
-        className="absolute right-1.5 top-1.5 z-50 flex items-center gap-1 rounded-xxs border border-neutral-80 bg-white px-1.5 py-1 text-sm text-primary-90 opacity-0 shadow-03 transition-opacity group-hover:opacity-100"
+        className="rounded-xxs border-neutral-80 text-primary-90 shadow-03 absolute right-1.5 top-1.5 z-50 flex items-center gap-1 border bg-white px-1.5 py-1 text-sm opacity-0 transition-opacity group-hover:opacity-100"
       >
         <Maximize2Icon size={20} />
         <span>전체 화면</span>
@@ -161,7 +161,7 @@ const ExperienceDataTable = ({
         data={userExperiences}
         onRowClick={onRowClick}
         getRowHeight={getExperienceRowHeight}
-        className="rounded-xs border border-neutral-80"
+        className="rounded-xs border-neutral-80 border"
       />
 
       {totalPages > 1 && (
@@ -189,7 +189,7 @@ const ExperienceDataTable = ({
           onRowClick={onRowClick}
           getRowHeight={getExperienceRowHeight}
           maxHeight="calc(92vh - 12rem)"
-          className="rounded-xs border border-neutral-80"
+          className="rounded-xs border-neutral-80 border"
         />
       </ExperienceExpandModal>
     </section>
@@ -215,7 +215,7 @@ const ExperienceDataTableEmpty = ({
   if (isAllFilters)
     return (
       <div className="flex h-[25rem] flex-col items-center justify-center gap-3">
-        <p className="text-sm text-neutral-20">
+        <p className="text-neutral-20 text-sm">
           지금까지 쌓아온 경험을 작성해 주세요.
         </p>
         <OutlinedButton size="xs" onClick={onCreateClick}>
@@ -227,7 +227,7 @@ const ExperienceDataTableEmpty = ({
   // 일부 필터가 적용된 상태인 경우
   return (
     <div className="flex h-[25rem] flex-col items-center justify-center gap-3">
-      <p className="text-sm text-neutral-20">
+      <p className="text-neutral-20 text-sm">
         해당 조건에 맞는 경험이 없습니다.
       </p>
       <OutlinedButton size="xs" onClick={onResetFilters}>

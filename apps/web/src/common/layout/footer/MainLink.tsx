@@ -7,7 +7,7 @@ function MainLink({
   children,
   ...restProps
 }: React.ComponentProps<'a'>) {
-  const linkClassName = twMerge('w-fit text-xsmall14 font-medium', className);
+  const linkClassName = twMerge('text-xsmall14 w-fit font-medium', className);
 
   return (
     <HybridLink className={linkClassName} href={href} {...restProps}>

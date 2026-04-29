@@ -141,7 +141,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                     autoComplete="off"
                   />
                 </div>
-                <span className="text-right text-xsmall14 text-neutral-40">
+                <span className="text-xsmall14 text-neutral-40 text-right">
                   {editingComment.length <= 1200 ? editingComment.length : 1200}
                   / 1200자
                 </span>

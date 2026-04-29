@@ -28,7 +28,7 @@ const ReviewSection = () => {
             )}
           >
             <img
-              className="h-[11.25rem] w-auto rounded-xs object-contain sm:h-[250px]"
+              className="rounded-xs h-[11.25rem] w-auto object-contain sm:h-[250px]"
               src={blogThumbnailInfo.thumbnail ?? undefined}
               alt="참여 후기 썸네일"
             />

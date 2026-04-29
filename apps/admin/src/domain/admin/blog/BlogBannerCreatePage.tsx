@@ -101,10 +101,7 @@ const BlogBannerCreatePage = () => {
           >
             저장
           </Button>
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/blog/banner')}
-          >
+          <Button variant="outlined" onClick={() => navigate('/blog/banner')}>
             취소
           </Button>
         </div>

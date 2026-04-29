@@ -31,7 +31,7 @@ const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
           id="helper"
           role="tooltip"
           className={twMerge(
-            'absolute z-10 w-52 rounded-xs bg-neutral-95 px-4 py-3 text-xxsmall12 text-neutral-40 drop-shadow-[0_0_4px_rgba(0,0,0,0.32)]',
+            'rounded-xs bg-neutral-95 text-xxsmall12 text-neutral-40 absolute z-10 w-52 px-4 py-3 drop-shadow-[0_0_4px_rgba(0,0,0,0.32)]',
             isMobile ? '-left-10 top-8' : '-top-1 left-8',
             className,
           )}
@@ -39,7 +39,7 @@ const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
           {children}
           <div
             className={twMerge(
-              'absolute h-3 w-3 rotate-45 bg-neutral-95',
+              'bg-neutral-95 absolute h-3 w-3 rotate-45',
               isMobile ? '-top-1 left-11' : '-left-1 top-2',
             )}
           />

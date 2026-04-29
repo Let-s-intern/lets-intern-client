@@ -31,7 +31,7 @@ export default function Process() {
               교육을 위한 단계
             </motion.h3>
             <motion.p
-              className="mb-8 break-keep text-center text-xsmall14 font-normal text-white/50 md:text-left md:text-small20"
+              className="text-xsmall14 md:text-small20 mb-8 break-keep text-center font-normal text-white/50 md:text-left"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -43,7 +43,7 @@ export default function Process() {
             <motion.a
               href={contactLink}
               target="_blank"
-              className="b2b_education_inquire inline-flex w-full items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm transition hover:bg-primary-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:w-auto md:px-5 md:text-xsmall16"
+              className="b2b_education_inquire rounded-xs bg-primary-90 text-xsmall16 hover:bg-primary-80 md:text-xsmall16 inline-flex w-full items-center justify-center px-5 py-3 font-medium text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:w-auto md:px-5"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -64,9 +64,9 @@ export default function Process() {
                 viewport={{ once: true, margin: '0px 0px -10% 0px' }}
                 transition={{ duration: 0.5, delay: index * 0.06 }}
               >
-                <div className="rounded-2xl flex items-center rounded-sm bg-white/15 px-6 py-4 backdrop-blur-sm transition-all hover:bg-white/15">
+                <div className="flex items-center rounded-2xl rounded-sm bg-white/15 px-6 py-4 backdrop-blur-sm transition-all hover:bg-white/15">
                   <div className="flex items-center gap-4">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-static-100/25 text-xsmall14 text-white">
+                    <div className="bg-static-100/25 text-xsmall14 flex h-5 w-5 items-center justify-center rounded-full text-white">
                       {index + 1}
                     </div>
                     <h3 className="text-small18 font-semibold text-white">

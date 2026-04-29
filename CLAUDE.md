@@ -1,4 +1,5 @@
 @.claude/behavioral.md
+@AGENTS.md
 
 # .claude/ 길잡이
 
@@ -85,12 +86,3 @@
 | Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
 | SEO 작업 | `skills/seo/SKILL.md` |
 | 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
-
-## 외부 참조
-
-| 파일 | 내용 |
-|---|---|
-| `.cursor/rules/toss-frontend.mdc` | Toss Frontend Fundamentals 코드 예시 |
-| `.cursor/rules/full-stack-rule.mdc` | 풀스택 개발 프랙티스 |
-| `.cursor/rules/domain-folder-structure.mdc` | 도메인 폴더 구조 상세 |
-| `.cursor/rules/commit-convention.mdc` | 커밋 메시지 컨벤션 |

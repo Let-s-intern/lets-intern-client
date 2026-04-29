@@ -28,7 +28,7 @@ type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
 
 const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
   <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
-    <div className="flex flex-col text-center text-sm text-neutral-20">
+    <div className="text-neutral-20 flex flex-col text-center text-sm">
       <p>아직 커리어 방향을 설정하지 않았어요.</p>
       <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
     </div>
