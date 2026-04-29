@@ -1,4 +1,5 @@
 @.claude/behavioral.md
+@AGENTS.md
 
 # .claude/ 길잡이
 
@@ -88,9 +89,4 @@
 
 ## 외부 참조
 
-| 파일 | 내용 |
-|---|---|
-| `.cursor/rules/toss-frontend.mdc` | Toss Frontend Fundamentals 코드 예시 |
-| `.cursor/rules/full-stack-rule.mdc` | 풀스택 개발 프랙티스 |
-| `.cursor/rules/domain-folder-structure.mdc` | 도메인 폴더 구조 상세 |
-| `.cursor/rules/commit-convention.mdc` | 커밋 메시지 컨벤션 |
+상세 규칙(Toss Frontend, 풀스택, 도메인 구조, 커밋 컨벤션, Vercel React 등) 은 `AGENTS.md` 의 **Detailed Rule References** 표 참조.
