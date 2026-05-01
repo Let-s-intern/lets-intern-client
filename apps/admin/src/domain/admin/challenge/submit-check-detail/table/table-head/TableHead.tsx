@@ -36,7 +36,7 @@ const TableHead = ({
   return (
     <div
       className={clsx(
-        'flex justify-between text-sm font-medium text-[#868686]',
+        'flex text-sm font-medium text-[#868686]',
         className,
       )}
     >
