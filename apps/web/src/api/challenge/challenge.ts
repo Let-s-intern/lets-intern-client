@@ -455,15 +455,31 @@ export const getClickCopy = async (fromId: number, toId: number) => {
   return res.data.data;
 };
 
-/** [멘토용] 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
+/** [멘토용] 챌린지 피드백 미션 전체 목록.
+ * challengeId 가 LEGACY_CHALLENGE_THRESHOLD(230) 미만이면 legacy 데이터(prev 엔드포인트):
+ *   /api/v1/challenge/{challengeId}/mission/feedback/prev
+ * 그 외에는 신규 엔드포인트:
+ *   /api/v1/challenge/{challengeId}/mission/feedback
+ *
+ * 230 이전 챌린지는 "유저-attendance 단위" 멘토 배정(legacy), 230 이상은
+ * "유저-챌린지 단위" 배정으로 BE 데이터 모델이 바뀌어 분기 필요.
+ */
 export const useMentorMissionFeedbackListQuery = (
   challengeId?: number,
   { enabled }: { enabled?: boolean } = {},
 ) => {
+  const isLegacy = isLegacyChallenge(challengeId ?? Number.MAX_SAFE_INTEGER);
+  const suffix = isLegacy ? '/prev' : '';
   return useQuery({
-    queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+    queryKey: [
+      'useChallengeMissionFeedbackQuery',
+      challengeId,
+      isLegacy ? 'prev' : 'current',
+    ],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${challengeId}/mission/feedback`);
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/feedback${suffix}`,
+      );
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
     enabled,
@@ -520,16 +536,26 @@ export const useMissionAttendanceUserExperiencesQuery = ({
   });
 };
 
-/** [어드민용] 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
+/** [어드민용] 챌린지 피드백 미션 전체 목록.
+ * challengeId 230 미만 → /api/v2/admin/challenge/{challengeId}/mission/feedback/prev
+ * 그 외        → /api/v2/admin/challenge/{challengeId}/mission/feedback
+ * 분기 사유는 useMentorMissionFeedbackListQuery 주석 참조.
+ */
 export const useChallengeMissionFeedbackListQuery = (
   challengeId?: number,
   { enabled }: { enabled?: boolean } = {},
 ) => {
+  const isLegacy = isLegacyChallenge(challengeId ?? Number.MAX_SAFE_INTEGER);
+  const suffix = isLegacy ? '/prev' : '';
   return useQuery({
-    queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+    queryKey: [
+      'useChallengeMissionFeedbackQuery',
+      challengeId,
+      isLegacy ? 'prev' : 'current',
+    ],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/admin/challenge/${challengeId}/mission/feedback`,
+        `/admin/challenge/${challengeId}/mission/feedback${suffix}`,
       );
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
@@ -549,7 +575,11 @@ export const useChallengeApplicationQuery = (programId?: string | number) => {
   });
 };
 
-/** [어드민용] 챌린지 피드백 미션별 제출자 조회 /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+/** [어드민용] 챌린지 피드백 미션별 제출자 조회.
+ * challengeId 230 미만 → /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances/prev
+ * 그 외        → /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances
+ * 분기 사유는 useMentorMissionFeedbackListQuery 주석 참조.
+ */
 export const ChallengeMissionFeedbackAttendanceQueryKey =
   'useChallengeMissionFeedbackAttendanceQuery';
 
@@ -562,15 +592,18 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
   missionId?: number | string;
   enabled?: boolean;
 }) => {
+  const isLegacy = isLegacyChallenge(challengeId ?? Number.MAX_SAFE_INTEGER);
+  const suffix = isLegacy ? '/prev' : '';
   return useQuery({
     queryKey: [
       ChallengeMissionFeedbackAttendanceQueryKey,
       challengeId,
       missionId,
+      isLegacy ? 'prev' : 'current',
     ],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances${suffix}`,
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
@@ -578,7 +611,11 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
   });
 };
 
-/** [멘토용] 챌린지 피드백 미션별 제출자 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+/** [멘토용] 챌린지 피드백 미션별 제출자 조회.
+ * challengeId 230 미만 → /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/prev
+ * 그 외        → /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances
+ * 분기 사유는 useMentorMissionFeedbackListQuery 주석 참조.
+ */
 export const MentorMissionFeedbackAttendanceQueryKey =
   'useMentorMissionFeedbackAttendanceQuery';
 
@@ -591,11 +628,18 @@ export const useMentorMissionFeedbackAttendanceQuery = ({
   missionId?: number | string;
   enabled?: boolean;
 }) => {
+  const isLegacy = isLegacyChallenge(challengeId ?? Number.MAX_SAFE_INTEGER);
+  const suffix = isLegacy ? '/prev' : '';
   return useQuery({
-    queryKey: [MentorMissionFeedbackAttendanceQueryKey, challengeId, missionId],
+    queryKey: [
+      MentorMissionFeedbackAttendanceQueryKey,
+      challengeId,
+      missionId,
+      isLegacy ? 'prev' : 'current',
+    ],
     queryFn: async () => {
       const res = await axios.get(
-        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances${suffix}`,
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
