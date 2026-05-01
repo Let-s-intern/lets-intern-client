@@ -14,7 +14,7 @@ export function captureBlogError(
   },
 ) {
   const { section, extra, tags } = options;
-  const status = (err as { status?: number })?.status;
+  const status = extractHttpStatus(err);
   const isServerFault = typeof status === 'number' && status >= 500;
 
   Sentry.captureException(err, {
@@ -26,4 +26,18 @@ export function captureBlogError(
     },
     extra,
   });
+}
+
+/**
+ * 다양한 에러 객체 shape에서 HTTP status를 정규화 추출.
+ * - 커스텀 client(`utils/client.ts`): `err.status`
+ * - axios: `err.response.status`
+ * - native fetch + plain Error throw: status 미보존 (undefined 반환)
+ */
+function extractHttpStatus(err: unknown): number | undefined {
+  if (typeof err !== 'object' || err === null) return undefined;
+  const e = err as { status?: unknown; response?: { status?: unknown } };
+  if (typeof e.status === 'number') return e.status;
+  if (typeof e.response?.status === 'number') return e.response.status;
+  return undefined;
 }
