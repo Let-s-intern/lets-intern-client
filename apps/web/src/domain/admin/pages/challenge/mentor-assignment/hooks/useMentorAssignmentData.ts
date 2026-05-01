@@ -13,7 +13,8 @@ import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
 import type { MentorAssignmentRow } from '../types';
 
-const BASIC_PRICE_PLAN = 'BASIC';
+// 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션)
+const EXCLUDED_PRICE_PLANS = ['BASIC', 'LIGHT'];
 
 const useMentorAssignmentData = (programId: string) => {
   const { snackbar } = useAdminSnackbar();
@@ -153,8 +154,9 @@ const useMentorAssignmentData = (programId: string) => {
       participants
         .filter(
           (p) =>
-            applicationDetailsMap[p.applicationId]?.pricePlanType !==
-            BASIC_PRICE_PLAN,
+            !EXCLUDED_PRICE_PLANS.includes(
+              applicationDetailsMap[p.applicationId]?.pricePlanType ?? '',
+            ),
         )
         .map((p) => {
           const details = applicationDetailsMap[p.applicationId];
