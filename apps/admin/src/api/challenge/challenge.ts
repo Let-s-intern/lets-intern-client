@@ -702,7 +702,14 @@ export const useChallengeMissionFeedbackQuery = ({
   });
 };
 
-/** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId} */
+/** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회.
+ * 230 미만(legacy): /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId}/prev
+ * 그 외          : /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId}
+ *
+ * BE 가 명시적으로 알려준 /prev 엔드포인트는 LIST 4종뿐이지만, legacy 챌린지의
+ * 단일 attendance 상세도 동일 패턴(LIST URL + /{aid}/prev)일 가능성이 높아 분기.
+ * (legacy mentor flow 에서 모달이 빈 화면으로 뜨는 증상 차단용)
+ */
 export const FeedbackAttendanceQueryKey = 'useFeedbackAttendanceQuery';
 
 export const useFeedbackAttendanceQuery = ({
@@ -714,16 +721,19 @@ export const useFeedbackAttendanceQuery = ({
   missionId?: string | number;
   attendanceId?: string | number;
 }) => {
+  const isLegacy = isLegacyChallenge(challengeId ?? Number.MAX_SAFE_INTEGER);
+  const suffix = isLegacy ? '/prev' : '';
   return useQuery({
     queryKey: [
       FeedbackAttendanceQueryKey,
       challengeId,
       missionId,
       attendanceId,
+      isLegacy ? 'prev' : 'current',
     ],
     queryFn: async () => {
       const res = await axios.get(
-        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances/${attendanceId}`,
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances/${attendanceId}${suffix}`,
       );
       return feedbackAttendanceSchema.parse(res.data.data);
     },
