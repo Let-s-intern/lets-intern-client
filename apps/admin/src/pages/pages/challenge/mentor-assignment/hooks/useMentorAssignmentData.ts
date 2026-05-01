@@ -1,6 +1,5 @@
 import {
   ChallengeApplicationsQueryKey,
-  isLegacyChallenge,
   useChallengeApplicationsQuery,
 } from '@/api/challenge/challenge';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
@@ -12,13 +11,10 @@ import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
 import type { MentorAssignmentRow } from '../types';
 
-// 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션).
-// 단, 챌린지 230 미만(legacy)은 결제 플랜 체계 자체가 달라 적용 시 전원이 필터링되므로
-// 분기에서 우회한다 (isLegacyChallenge 참조).
+// 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션)
 const EXCLUDED_PRICE_PLANS = ['BASIC', 'LIGHT'];
 
 const useMentorAssignmentData = (programId: string) => {
-  const isLegacy = isLegacyChallenge(programId || Number.MAX_SAFE_INTEGER);
   const { snackbar } = useAdminSnackbar();
   const queryClient = useQueryClient();
 
@@ -156,7 +152,6 @@ const useMentorAssignmentData = (programId: string) => {
       participants
         .filter(
           (p) =>
-            isLegacy ||
             !EXCLUDED_PRICE_PLANS.includes(
               applicationDetailsMap[p.applicationId]?.pricePlanType ?? '',
             ),
@@ -175,7 +170,7 @@ const useMentorAssignmentData = (programId: string) => {
             matchedMentorId: effectiveMentors[p.applicationId] ?? null,
           };
         }),
-    [participants, effectiveMentors, applicationDetailsMap, isLegacy],
+    [participants, effectiveMentors, applicationDetailsMap],
   );
 
   return {
