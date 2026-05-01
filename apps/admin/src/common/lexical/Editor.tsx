@@ -67,6 +67,7 @@ import YouTubePlugin from './plugins/YouTubePlugin';
 import ContentEditable from './ui/ContentEditable';
 
 const skipCollaborationInit =
+  // TODO(ts-suppress): 검토 필요 — @ts-expect-error
   // @ts-expect-error
   window.parent != null && window.parent.frames.right === window;
 

@@ -8,6 +8,7 @@
 
 import { SerializedDocument } from '@lexical/file';
 
+// TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function* generateReader<T = any>(
   reader: ReadableStreamDefaultReader<T>,

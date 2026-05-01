@@ -64,7 +64,9 @@ const CautionContent = ({
       });
     } catch (error) {
       setError(error);
+      // TODO(ts-suppress): 검토 필요 — as any 캐스팅
       if ((error as any).response.status === 400) {
+        // TODO(ts-suppress): 검토 필요 — as any 캐스팅
         setMessage((error as any).response.data.reason);
       } else {
         setMessage('신청 작업 도중 오류가 발생했습니다.');

@@ -18,6 +18,7 @@ export function dynamic<T extends ComponentType<unknown>>(
     const mod = await loader();
     return 'default' in mod ? { default: mod.default } : { default: mod as T };
   });
+  // TODO(ts-suppress): 검토 필요 — as unknown as 이중 캐스팅
   return LazyComp as unknown as T;
 }
 
