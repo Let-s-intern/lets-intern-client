@@ -53,11 +53,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ challenge }) => {
           </div>
         </div>
       </div>
-      <LinkButton
-        to={`/admin/challenge/operation/${challenge.challengeId}/feedback`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <LinkButton to={`/mentor/challenges/${challenge.challengeId}`}>
         피드백 페이지 이동
       </LinkButton>
     </div>
