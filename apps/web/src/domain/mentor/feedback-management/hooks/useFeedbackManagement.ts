@@ -17,6 +17,7 @@ interface FeedbackModalState {
 // 챌린지가 끝나도 이 유예 기간 안에는 멘토가 피드백을 마저 쓸 수 있어야 하므로
 // 카드 노출 컷오프는 challenge.endDate 가 아니라 endDate + N일 로 잡는다.
 const FEEDBACK_GRACE_DAYS = 3;
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
  * Manages feedback management page data and modal state.
@@ -31,7 +32,7 @@ export function useFeedbackManagement() {
       if (!c.endDate) return true;
       const deadline = new Date(c.endDate).getTime();
       if (Number.isNaN(deadline)) return true;
-      return deadline + FEEDBACK_GRACE_DAYS * 24 * 60 * 60 * 1000 >= now;
+      return deadline + FEEDBACK_GRACE_DAYS * MILLISECONDS_PER_DAY >= now;
     });
   }, [data]);
 
