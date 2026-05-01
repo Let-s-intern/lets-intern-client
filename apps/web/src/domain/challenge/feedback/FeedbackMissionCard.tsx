@@ -16,11 +16,13 @@ export interface FeedbackMissionCardConfig {
 interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
   children?: React.ReactNode;
+  onMobileClick?: () => void;
 }
 
 const FeedbackMissionCard = ({
   config,
   children,
+  onMobileClick,
 }: FeedbackMissionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -116,10 +118,10 @@ const FeedbackMissionCard = ({
         {/* 모바일 토글 버튼 */}
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={onMobileClick}
           className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
         >
-          <span>{isOpen ? `${buttonLabel} 닫기` : `${buttonLabel} 하기`}</span>
+          <span>{`${buttonLabel} 하기`}</span>
         </button>
       </div>
 
