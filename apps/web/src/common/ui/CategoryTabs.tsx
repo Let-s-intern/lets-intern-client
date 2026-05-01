@@ -13,6 +13,7 @@ interface CategoryTabsProps<Value extends string> {
   selected: Value;
   onChange: (value: Value) => void;
   size?: 'large' | 'small';
+  full?: boolean;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ const CategoryTabs = <Value extends string>({
   selected,
   onChange,
   size = 'small',
+  full = false,
   className,
 }: CategoryTabsProps<Value>) => {
   const navRef = useRef<HTMLElement>(null);
@@ -53,7 +55,8 @@ const CategoryTabs = <Value extends string>({
     <nav
       ref={navRef}
       className={clsx(
-        'border-neutral-85 scrollbar-hide relative flex w-full flex-nowrap overflow-x-auto border-b pl-5 md:pl-0',
+        'border-neutral-85 scrollbar-hide relative flex w-full flex-nowrap overflow-x-auto border-b',
+        !full && 'pl-5 md:pl-0',
         size === 'large'
           ? 'text-xsmall16 md:text-small20'
           : 'text-xsmall14 md:text-xsmall16',
@@ -76,9 +79,12 @@ const CategoryTabs = <Value extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={clsx(
-              size === 'large'
-                ? 'mr-4 text-nowrap pb-2 transition-colors md:mr-6 md:pb-3'
-                : 'mr-6 text-nowrap pb-3 transition-colors',
+              'text-nowrap transition-colors',
+              full
+                ? 'flex-1 pb-2 text-center md:pb-3'
+                : size === 'large'
+                  ? 'mr-4 pb-2 md:mr-6 md:pb-3'
+                  : 'mr-6 pb-3',
               isActive
                 ? 'text-neutral-10 font-semibold'
                 : 'text-neutral-45 hover:text-neutral-10 font-medium',
