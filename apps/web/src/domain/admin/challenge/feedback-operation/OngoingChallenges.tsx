@@ -85,12 +85,13 @@ function ChallengeRow({ programInfo }: { programInfo: OngoingProgramInfo }) {
 
     const activeMission =
       missions.find((m) => {
+        if (!m.startDate || !m.endDate) return false;
         const start = new Date(m.startDate);
         const end = new Date(m.endDate);
         return now >= start && now <= end;
       }) ?? missions[missions.length - 1];
 
-    if (!activeMission) {
+    if (!activeMission || !activeMission.startDate || !activeMission.endDate) {
       return { feedbackTh: '-', feedbackPeriod: '-', feedbackStatus: '-' };
     }
 

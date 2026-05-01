@@ -4,8 +4,8 @@ export interface Row {
   id: number | string;
   title?: string | null;
   th: number;
-  startDate: string;
-  endDate: string;
+  startDate?: string | null;
+  endDate?: string | null;
   challengeOptionCode?: string | null;
   challengeOptionTitle?: string | null;
   submittedCount: number;

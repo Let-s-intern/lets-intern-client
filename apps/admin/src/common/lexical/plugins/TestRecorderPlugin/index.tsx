@@ -142,6 +142,7 @@ const keyPresses = new Set([
 ]);
 
 type Step = {
+  // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   count: number;

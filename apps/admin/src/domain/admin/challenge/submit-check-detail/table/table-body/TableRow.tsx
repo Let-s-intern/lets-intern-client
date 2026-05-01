@@ -64,7 +64,7 @@ const TableRow = ({
 
   return (
     <div
-      className={clsx('flex justify-between', {
+      className={clsx('flex', {
         'bg-[#F1F1F1]': bgColor === 'DARK',
         'bg-[#F7F7F7]': bgColor === 'LIGHT',
       })}
@@ -174,7 +174,7 @@ const TableRow = ({
       />
       <div
         className={clsx(
-          'overflow-hidden text-ellipsis py-3 text-center text-sm',
+          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[10],
         )}
       >

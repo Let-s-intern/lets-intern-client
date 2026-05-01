@@ -105,6 +105,7 @@ const InputContent = ({
           if (scrollRef.current) {
             scrollRef.current.classList.remove('scrolling');
           }
+          // TODO(ts-suppress): 검토 필요 — as unknown as 이중 캐스팅
         }, 500) as unknown as number;
       }
     };

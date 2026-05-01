@@ -10,11 +10,13 @@ export const MAX_COMPETENCIES = 5;
 export const CATEGORY_MAP: Record<
   DisplayExperienceCategory,
   ExperienceCategory
+  // TODO(ts-suppress): 검토 필요 — as any 캐스팅
 > = Object.fromEntries(CATEGORY_PAIRS) as any;
 
 export const CATEGORY_REVERSE_MAP: Record<
   ExperienceCategory,
   DisplayExperienceCategory
+  // TODO(ts-suppress): 검토 필요 — as any 캐스팅
 > = Object.fromEntries(CATEGORY_PAIRS.map(([d, a]) => [a, d])) as any;
 
 type ExperienceFormText = Record<

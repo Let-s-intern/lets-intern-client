@@ -127,6 +127,7 @@ export default function ContextMenuPlugin(): JSX.Element {
             const item = items[0];
 
             const permission = await navigator.permissions.query({
+              // TODO(ts-suppress): 검토 필요 — @ts-expect-error
               // @ts-expect-error These types are incorrect.
               name: 'clipboard-read',
             });
@@ -152,6 +153,7 @@ export default function ContextMenuPlugin(): JSX.Element {
         onSelect: (_node) => {
           navigator.clipboard.read().then(async function (...args) {
             const permission = await navigator.permissions.query({
+              // TODO(ts-suppress): 검토 필요 — @ts-expect-error
               // @ts-expect-error These types are incorrect.
               name: 'clipboard-read',
             });

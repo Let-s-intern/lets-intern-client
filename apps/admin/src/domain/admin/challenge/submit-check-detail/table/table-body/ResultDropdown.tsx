@@ -49,7 +49,7 @@ const ResultDropdown = ({
   return (
     <div
       className={clsx(
-        'relative flex items-center justify-center text-ellipsis border-r border-[#D9D9D9] text-center text-sm',
+        'relative flex items-center justify-center text-ellipsis border-r border-[#D9D9D9] px-2 py-3 text-center text-sm',
         cellWidthList[cellWidthListIndex],
       )}
       onClick={(e) => e.preventDefault()}

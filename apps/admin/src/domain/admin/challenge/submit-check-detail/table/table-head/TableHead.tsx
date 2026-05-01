@@ -34,12 +34,7 @@ const TableHead = ({
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   return (
-    <div
-      className={clsx(
-        'flex justify-between text-sm font-medium text-[#868686]',
-        className,
-      )}
-    >
+    <div className={clsx('flex text-sm font-medium text-[#868686]', className)}>
       <AllChoiceCheckbox
         cellWidthListIndex={0}
         attendanceList={attendances}
