@@ -42,9 +42,13 @@ import {
 } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
+
+// 메인 web 으로 이동하는 외부 링크의 호스트.
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
+const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
 type Row = ProgramAdminListItem & {
   id: number | string;
@@ -122,13 +126,14 @@ const Programs = () => {
         sortable: false,
         filterable: false,
         renderCell: ({ row }) => (
-          <Link
+          <a
             className="text-blue-500 underline transition hover:text-blue-300"
-            to={`/program/${row.programInfo.programType.toLowerCase()}/${row.programInfo.id}`}
+            href={`${WEB_URL}/program/${row.programInfo.programType.toLowerCase()}/${row.programInfo.id}`}
             target="_blank"
+            rel="noopener noreferrer"
           >
             보기
-          </Link>
+          </a>
         ),
       },
       {
