@@ -21,7 +21,7 @@ function FeedbackMissionList() {
         width: 200,
         sortable: false,
         renderCell: (params: GridRenderCellParams<Row, string>) =>
-          dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
+          params.value ? dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm) : '-',
       },
       {
         field: 'endDate',
@@ -29,7 +29,7 @@ function FeedbackMissionList() {
         sortable: false,
         width: 200,
         renderCell: (params: GridRenderCellParams<Row, string>) =>
-          dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
+          params.value ? dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm) : '-',
       },
       {
         field: 'challengeOptionTitle',
