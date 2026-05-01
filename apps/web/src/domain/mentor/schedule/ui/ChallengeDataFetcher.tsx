@@ -95,7 +95,12 @@ const ChallengeDataFetcher = ({
     { enabled: true },
   );
 
-  const missions = missionData?.missionList ?? [];
+  // 일정 차트는 startDate/endDate 가 모두 있어야 의미 있는 막대를 만들 수 있다.
+  // legacy /prev 응답에서 null 로 내려오는 미션은 차트에서 제외한다.
+  const missions = (missionData?.missionList ?? []).filter(
+    (m): m is typeof m & { startDate: string; endDate: string } =>
+      !!m.startDate && !!m.endDate,
+  );
 
   return (
     <>

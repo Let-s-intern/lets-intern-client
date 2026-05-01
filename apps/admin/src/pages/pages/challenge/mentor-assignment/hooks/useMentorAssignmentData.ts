@@ -1,6 +1,8 @@
 import {
   ChallengeApplicationsQueryKey,
+  isLegacyChallenge,
   useChallengeApplicationsQuery,
+  useChallengeMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -9,12 +11,17 @@ import { useCallback, useMemo, useState } from 'react';
 import { PaybackParticipantsQueryKey } from './usePaybackParticipants';
 import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
+import { useLegacyMentorAssignmentMap } from './useLegacyMentorAssignmentMap';
 import type { MentorAssignmentRow } from '../types';
 
-// 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션)
+// 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션).
+// 단, 230 미만(legacy) 챌린지는 결제 플랜 체계 자체가 달라 BASIC 사용자도
+// 실제로는 멘토를 받았다(BE 확인: ch200 = BASIC + 멘토). 이 경우 필터를 그대로
+// 적용하면 모든 행이 사라지므로 isLegacyChallenge 분기로 우회한다.
 const EXCLUDED_PRICE_PLANS = ['BASIC', 'LIGHT'];
 
 const useMentorAssignmentData = (programId: string) => {
+  const isLegacy = isLegacyChallenge(programId || Number.MAX_SAFE_INTEGER);
   const { snackbar } = useAdminSnackbar();
   const queryClient = useQueryClient();
 
@@ -27,6 +34,16 @@ const useMentorAssignmentData = (programId: string) => {
       challengeId: programId,
       enabled: !!programId,
     });
+  const { data: legacyMissionsData } = useChallengeMissionFeedbackListQuery(
+    Number(programId),
+    { enabled: isLegacy && !!programId },
+  );
+  const legacyMentorMap = useLegacyMentorAssignmentMap({
+    challengeId: programId,
+    enabled: isLegacy,
+    missionsData: legacyMissionsData,
+    applicationsData,
+  });
   const { handleMatch, isPending } = useMentorMatchHandler(programId);
 
   const participants = useMemo(
@@ -72,9 +89,12 @@ const useMentorAssignmentData = (programId: string) => {
     Record<number, number>
   >({});
 
+  // legacy 멘토 정보(attendance 역산) → application 매핑은 serverMentorMap 보다
+  // 우선하지 않는다. legacy 챌린지는 serverMentorMap 이 비어 있으므로 충돌이 없고,
+  // 만에 하나 BE 가 향후 application.challengeMentorId 를 backfill 하면 그 값을 신뢰.
   const effectiveMentors = useMemo(
-    () => ({ ...serverMentorMap, ...optimisticMentors }),
-    [serverMentorMap, optimisticMentors],
+    () => ({ ...legacyMentorMap, ...serverMentorMap, ...optimisticMentors }),
+    [legacyMentorMap, serverMentorMap, optimisticMentors],
   );
 
   // 멘토별 매칭 인원 수 계산
@@ -152,6 +172,7 @@ const useMentorAssignmentData = (programId: string) => {
       participants
         .filter(
           (p) =>
+            isLegacy ||
             !EXCLUDED_PRICE_PLANS.includes(
               applicationDetailsMap[p.applicationId]?.pricePlanType ?? '',
             ),
@@ -170,7 +191,7 @@ const useMentorAssignmentData = (programId: string) => {
             matchedMentorId: effectiveMentors[p.applicationId] ?? null,
           };
         }),
-    [participants, effectiveMentors, applicationDetailsMap],
+    [participants, effectiveMentors, applicationDetailsMap, isLegacy],
   );
 
   return {
