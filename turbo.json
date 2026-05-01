@@ -33,6 +33,36 @@
       "persistent": true,
       "dependsOn": []
     },
+    "dev:prod": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": []
+    },
+    "build:prod": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!**/*.test.ts",
+        "!**/*.test.tsx",
+        "!**/__tests__/**",
+        "!dist/**",
+        "!.next/**",
+        "!.turbo/**"
+      ],
+      "env": [
+        "NEXT_PUBLIC_*",
+        "VITE_*",
+        "SENTRY_*",
+        "BUILDER_*"
+      ]
+    },
+    "start:prod": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": []
+    },
     "lint": {
       "dependsOn": ["^lint"],
       "inputs": [
