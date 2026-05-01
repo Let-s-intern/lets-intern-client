@@ -25,7 +25,7 @@ const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <main className="md:mb-22 px-5 md:px-0 md:pl-12">
+    <main className="px-5 md:px-0 md:pl-12">
       <div className={isDetailPage ? 'hidden' : '-mx-5 md:hidden'}>
         <CategoryTabs
           className="pt-[14px]"
