@@ -1,3 +1,6 @@
+'use client';
+
+import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import LinkButton from '@/domain/mypage/ui/button/LinkButton';
 
 interface Challenge {
@@ -14,6 +17,16 @@ interface FeedbackCardProps {
 }
 
 const FeedbackCard: React.FC<FeedbackCardProps> = ({ challenge }) => {
+  // 운영 배포에서 /mentor 는 별도 서브도메인(NEXT_PUBLIC_MENTOR_URL)으로 리다이렉트되며
+  // 서브도메인은 localStorage 가 분리돼 그대로 이동하면 미로그인 상태가 된다.
+  // buildCrossAppUrl 이 토큰을 #__sso= 해시로 붙여 자동 로그인하도록 한다.
+  // env 미설정(=같은 web 내 라우트) 환경에서는 단순 경로로 fallback.
+  const href = buildCrossAppUrl(
+    process.env.NEXT_PUBLIC_MENTOR_URL,
+    '/mentor',
+    `/challenges/${challenge.challengeId}`,
+  );
+
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full w-[169px] flex-col items-start gap-4 overflow-hidden md:w-full md:flex-row md:border md:p-2.5">
       <div className="flex w-full flex-1 flex-col gap-2 md:flex-row md:gap-4">
@@ -53,9 +66,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ challenge }) => {
           </div>
         </div>
       </div>
-      <LinkButton to={`/mentor/challenges/${challenge.challengeId}`}>
-        피드백 페이지 이동
-      </LinkButton>
+      <LinkButton to={href}>피드백 페이지 이동</LinkButton>
     </div>
   );
 };
