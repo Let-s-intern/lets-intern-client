@@ -36,8 +36,8 @@ const FeedbackMissionCard = ({
   } = config;
 
   return (
-    <div className="rounded-xs md:border-neutral-85 flex flex-col md:border">
-      <div className="flex flex-col justify-between gap-5 p-0 md:flex-row md:items-start md:justify-start md:gap-12 md:p-4">
+    <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
+      <div className="flex flex-1 flex-col gap-4 p-0 md:flex-row md:items-start md:justify-start md:gap-12 md:p-4">
         <div className="flex w-full flex-col gap-4 md:flex-row md:gap-4">
           {/* 썸네일 */}
           <div className="h-[180px] w-full shrink-0 md:h-[119px] md:w-[158px]">
@@ -53,7 +53,7 @@ const FeedbackMissionCard = ({
           </div>
 
           {/* 텍스트 영역 */}
-          <div className="flex flex-1 flex-col justify-between">
+          <div className="flex flex-1 flex-col">
             <div className="flex flex-col gap-2">
               {/* 뱃지 영역 */}
               <div className="flex w-full flex-wrap items-center gap-2">
@@ -98,7 +98,7 @@ const FeedbackMissionCard = ({
           </div>
         </div>
 
-        {/* 토글 버튼 */}
+        {/* 토글 버튼 - 데스크톱 전용 */}
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -114,16 +114,16 @@ const FeedbackMissionCard = ({
           />
           <span>{isOpen ? `${buttonLabel} 닫기` : `${buttonLabel} 하기`}</span>
         </button>
-
-        {/* 모바일 토글 버튼 */}
-        <button
-          type="button"
-          onClick={onMobileClick}
-          className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
-        >
-          <span>{`${buttonLabel} 하기`}</span>
-        </button>
       </div>
+
+      {/* 모바일 버튼 - 카드 하단 고정 */}
+      <button
+        type="button"
+        onClick={onMobileClick}
+        className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 mt-5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
+      >
+        <span>{`${buttonLabel} 하기`}</span>
+      </button>
 
       {/* 아코디언 - 데스크톱 전용, 카드 내부 */}
       <div
