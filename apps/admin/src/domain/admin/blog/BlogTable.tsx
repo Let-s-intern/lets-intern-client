@@ -184,7 +184,9 @@ export default function BlogTable() {
       <div className="flex">
         <MuiPagination
           page={pageable.page}
-          pageInfo={(data?.pageInfo as IPageInfo | undefined) ?? initialPageInfo}
+          pageInfo={
+            (data?.pageInfo as IPageInfo | undefined) ?? initialPageInfo
+          }
           onChange={handlePageChange}
         />
       </div>
