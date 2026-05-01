@@ -21,10 +21,18 @@ const useFeedbackMissionRows = (): Row[] => {
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
 
-  return useMemo(
+  return useMemo<Row[]>(
     () =>
       (data?.missionList ?? []).map((item) => ({
-        ...item,
+        id: item.id,
+        title: item.title,
+        th: item.th,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        challengeOptionCode: item.challengeOptionCode,
+        challengeOptionTitle: item.challengeOptionTitle,
+        submittedCount: item.submittedCount,
+        totalCount: item.totalCount,
         url: `/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     [data, programId],

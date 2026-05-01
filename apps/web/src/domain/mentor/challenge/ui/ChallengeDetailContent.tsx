@@ -5,7 +5,8 @@ import { useMemo } from 'react';
 import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import { deriveMissionStatus } from '@/domain/mentor/utils/deriveMissionStatus';
 
-const formatDate = (dateStr: string) => {
+const formatDate = (dateStr?: string | null) => {
+  if (!dateStr) return '-';
   return new Date(dateStr).toLocaleDateString('ko-KR', {
     month: 'short',
     day: 'numeric',
@@ -16,8 +17,8 @@ interface MissionRowMission {
   id: number;
   title?: string | null | undefined;
   th: number;
-  startDate: string;
-  endDate: string;
+  startDate?: string | null;
+  endDate?: string | null;
   challengeOptionTitle?: string | null;
 }
 

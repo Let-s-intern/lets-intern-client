@@ -100,20 +100,22 @@ const BlogDetailPage = async ({
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
     : blogInfo?.content;
-  const blogRecommendList = await getBlogRecommendList().catch((err) => {
-    captureBlogError(err, {
-      section: 'blogRecommendList',
-      extra: { blogId: id },
-    });
-    return [];
-  });
-  const programRecommendList = await getProgramRecommendList().catch((err) => {
-    captureBlogError(err, {
-      section: 'programRecommendList',
-      extra: { blogId: id },
-    });
-    return [];
-  });
+  const [blogRecommendList, programRecommendList] = await Promise.all([
+    getBlogRecommendList().catch((err) => {
+      captureBlogError(err, {
+        section: 'blogRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+    getProgramRecommendList().catch((err) => {
+      captureBlogError(err, {
+        section: 'programRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+  ]);
 
   async function getProgramRecommendList() {
     const result = contentJson.programRecommend

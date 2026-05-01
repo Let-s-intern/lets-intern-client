@@ -169,11 +169,13 @@ function BlogList({
                   'data-text': blogBanners[0].title ?? '',
                 }}
                 thumbnail={
-                  <img
-                    className="h-full w-full object-cover"
-                    src={blogBanners[0].file ?? undefined}
-                    alt={blogBanners[0].title ?? undefined}
-                  />
+                  blogBanners[0].file ? (
+                    <img
+                      className="h-full w-full object-cover"
+                      src={blogBanners[0].file}
+                      alt={blogBanners[0].title ?? undefined}
+                    />
+                  ) : null
                 }
               />
             );
@@ -195,11 +197,13 @@ function BlogList({
                   'data-text': title,
                 }}
                 thumbnail={
-                  <img
-                    className="h-full w-full object-cover"
-                    src={blogBanners[1].file ?? undefined}
-                    alt={title ?? undefined}
-                  />
+                  blogBanners[1].file ? (
+                    <img
+                      className="h-full w-full object-cover"
+                      src={blogBanners[1].file}
+                      alt={title ?? undefined}
+                    />
+                  ) : null
                 }
               />
             );
@@ -235,11 +239,13 @@ function BlogList({
                 title={blogThumbnailInfo.title ?? ''}
                 thumbnail={
                   <>
-                    <img
-                      className="h-full w-full object-cover"
-                      src={blogThumbnailInfo.thumbnail ?? undefined}
-                      alt={blogThumbnailInfo.title ?? undefined}
-                    />
+                    {blogThumbnailInfo.thumbnail && (
+                      <img
+                        className="h-full w-full object-cover"
+                        src={blogThumbnailInfo.thumbnail}
+                        alt={blogThumbnailInfo.title ?? undefined}
+                      />
+                    )}
                     {/* 공개 예정인 썸네일에만 적용 */}
                     {isUpcoming && (
                       <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
@@ -324,11 +330,13 @@ function BlogRecommendList() {
           }
           title={blogThumbnailInfo.title ?? ''}
           thumbnail={
-            <img
-              className="h-full w-full object-cover"
-              src={blogThumbnailInfo.thumbnail ?? undefined}
-              alt={blogThumbnailInfo.title ?? undefined}
-            />
+            blogThumbnailInfo.thumbnail ? (
+              <img
+                className="h-full w-full object-cover"
+                src={blogThumbnailInfo.thumbnail}
+                alt={blogThumbnailInfo.title ?? undefined}
+              />
+            ) : null
           }
           date={
             blogThumbnailInfo.displayDate

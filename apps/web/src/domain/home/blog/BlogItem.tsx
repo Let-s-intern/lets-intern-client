@@ -20,11 +20,13 @@ const BlogItem = (props: BlogItemProps) => {
         data-url={props.url}
         data-text={props.title}
       >
-        <img
-          src={props.thumbnail}
-          alt="thumbnail"
-          className="border-neutral-75 aspect-[1.3/1] w-full rounded-sm border-[0.7px] object-cover"
-        />
+        {props.thumbnail && (
+          <img
+            src={props.thumbnail}
+            alt="thumbnail"
+            className="border-neutral-75 aspect-[1.3/1] w-full rounded-sm border-[0.7px] object-cover"
+          />
+        )}
         <span className="text-xsmall14 text-primary mt-3 font-semibold">
           {props.category}
         </span>

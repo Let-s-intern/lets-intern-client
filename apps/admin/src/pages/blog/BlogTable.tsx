@@ -13,6 +13,11 @@ import {
 import { BlogThumbnail, PatchBlogReqBody } from '@/api/blog/blogSchema';
 import { blogCategory } from '@/utils/convert';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import type { IPageInfo } from '@/types/interface';
+
+// 메인 web 으로 이동하는 외부 링크의 호스트.
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
+const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
 const blogColumnWidth = {
   id: 'w-20',
@@ -23,7 +28,7 @@ const blogColumnWidth = {
   management: 'w-52',
   status: 'w-40',
 };
-const initialPageInfo = {
+const initialPageInfo: IPageInfo = {
   pageNum: 0,
   pageSize: 0,
   totalElements: 0,
@@ -117,12 +122,14 @@ export default function BlogTable() {
               className="flex rounded-md border border-neutral-200"
             >
               <TableBodyCell widthClassName={blogColumnWidth.id}>
-                <Link
-                  to={`/blog/${blogInfo.blogThumbnailInfo.id}`}
+                <a
+                  href={`${WEB_URL}/blog/${blogInfo.blogThumbnailInfo.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="underline"
                 >
                   {blogInfo.blogThumbnailInfo.id}
-                </Link>
+                </a>
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.displayDate}>
                 {blogInfo.blogThumbnailInfo.displayDate
@@ -177,7 +184,9 @@ export default function BlogTable() {
       <div className="flex">
         <MuiPagination
           page={pageable.page}
-          pageInfo={data?.pageInfo || initialPageInfo}
+          pageInfo={
+            (data?.pageInfo as IPageInfo | undefined) ?? initialPageInfo
+          }
           onChange={handlePageChange}
         />
       </div>

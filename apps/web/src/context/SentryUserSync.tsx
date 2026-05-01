@@ -24,6 +24,10 @@ const SentryUserSync = () => {
     if (isLoggedIn) {
       if (user?.userId != null) {
         Sentry.setUser({ id: String(user.userId) });
+      } else {
+        // user 정보 도착 전엔 명시적으로 클리어 — 이전 anon ID가
+        // 잔존해 로그인 직후 에러가 anon으로 잘못 분류되는 것을 방지.
+        Sentry.setUser(null);
       }
       return;
     }
