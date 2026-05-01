@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
+    "dev:prod": "node --env-file=.env.prod node_modules/next/dist/bin/next dev --turbopack --port 3000",
     "build": "next build --turbopack",
+    "build:prod": "node --env-file=.env.prod node_modules/next/dist/bin/next build --turbopack",
     "start": "next start",
+    "start:prod": "node --env-file=.env.prod node_modules/next/dist/bin/next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",

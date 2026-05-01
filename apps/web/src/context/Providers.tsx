@@ -1,5 +1,6 @@
 'use client';
 
+import SentryUserSync from '@/context/SentryUserSync';
 import {
   QueryCache,
   QueryClient,
@@ -37,7 +38,10 @@ const Providers: React.FC<{
   );
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <SentryUserSync />
+      {children}
+    </QueryClientProvider>
   );
 };
 

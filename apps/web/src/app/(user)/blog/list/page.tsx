@@ -1,6 +1,10 @@
 import BlogListContent from '@/domain/blog/BlogListContent';
+import * as Sentry from '@sentry/nextjs';
 
 export default function Page() {
+  Sentry.setTag('domain', 'blog');
+  Sentry.setTag('blog.route', '/blog/list');
+
   return (
     <div className="flex flex-col items-center">
       {/* 블로그 배너 */}

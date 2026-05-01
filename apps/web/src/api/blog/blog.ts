@@ -321,8 +321,14 @@ export const fetchRecommendBlogData = async ({
   pageable,
   types: type,
 }: BlogQueryParams): Promise<BlogList> => {
+  const query = new URLSearchParams({
+    page: String(pageable.page),
+    size: String(pageable.size),
+  });
+  if (type) query.set('type', String(type));
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/blog?type=${type}&page=${pageable.page}&size=${pageable.size}`,
+    `${process.env.NEXT_PUBLIC_SERVER_API}/blog?${query.toString()}`,
   );
 
   if (!res.ok) {
