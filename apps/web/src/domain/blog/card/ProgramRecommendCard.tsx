@@ -7,6 +7,7 @@ import {
   getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
+import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
 import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -66,17 +67,29 @@ async function ProgramRecommendCard({ program }: Props) {
             ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
         }
       } catch (err) {
-        console.error(`프로그램 조회 실패 (id: ${program.id}):`, err);
+        captureBlogError(err, {
+          section: 'programRecommendCard',
+          tags: { lookup: 'byId' },
+          extra: { programId: program.id },
+        });
       }
     } else if (program.ctaLink?.startsWith('latest')) {
       // latest:{keyword} 사용한 경우
-      const keyword = program.ctaLink.split('latest:')[1].trim();
-      const challenge = await getChallengeByKeyword(keyword);
+      try {
+        const keyword = program.ctaLink.split('latest:')[1].trim();
+        const challenge = await getChallengeByKeyword(keyword);
 
-      if (challenge) {
-        title = challenge.programInfo.title ?? undefined;
-        thumbnail = challenge.programInfo.thumbnail ?? '';
-        ctaLink = `/program/${CHALLENGE.toLowerCase()}/${challenge.programInfo.id}`;
+        if (challenge) {
+          title = challenge.programInfo.title ?? undefined;
+          thumbnail = challenge.programInfo.thumbnail ?? '';
+          ctaLink = `/program/${CHALLENGE.toLowerCase()}/${challenge.programInfo.id}`;
+        }
+      } catch (err) {
+        captureBlogError(err, {
+          section: 'programRecommendCard',
+          tags: { lookup: 'byKeyword' },
+          extra: { ctaLink: program.ctaLink },
+        });
       }
     }
 
