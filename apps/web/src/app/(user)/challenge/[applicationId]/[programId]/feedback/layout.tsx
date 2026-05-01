@@ -17,15 +17,16 @@ const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const base = `/challenge/${params.applicationId}/${params.programId}/feedback`;
-  const selected: TabValue = pathname.endsWith('/live') ? 'live' : 'written';
+  const selected: TabValue = pathname.includes('/live') ? 'live' : 'written';
+  const isDetailPage = pathname.startsWith(`${base}/live/`);
 
   const handleChange = (value: TabValue) => {
     router.push(`${base}/${value}`);
   };
 
   return (
-    <main className="px-5 md:px-0 md:pl-12">
-      <div className="-mx-5 md:hidden">
+    <main className="md:mb-22 px-5 md:px-0 md:pl-12">
+      <div className={isDetailPage ? 'hidden' : '-mx-5 md:hidden'}>
         <CategoryTabs
           className="pt-[14px]"
           options={TABS}
@@ -43,7 +44,7 @@ const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
           full
         />
       </div>
-      <div className="pt-8 md:pt-6">{children}</div>
+      <div className="pt-0 md:pt-6">{children}</div>
     </main>
   );
 };

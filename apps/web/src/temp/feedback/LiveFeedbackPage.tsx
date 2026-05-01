@@ -6,6 +6,7 @@ import LiveReservationContent from '@/domain/challenge/feedback/LiveReservationC
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 const LiveFeedbackPage = () => {
   const router = useRouter();
@@ -13,6 +14,27 @@ const LiveFeedbackPage = () => {
   const searchParams = useSearchParams();
   const selectedMission = searchParams.get('mission');
   const isMissionSelected = selectedMission !== null;
+
+  const handleMobileClick = useCallback(
+    (index: number) => {
+      router.replace(`${pathname}?mission=${index}`, { scroll: false });
+    },
+    [pathname, router],
+  );
+
+  const cardList = useMemo(
+    () =>
+      DUMMY_FEEDBACK_MISSIONS.map((config, index) => (
+        <FeedbackMissionCard
+          key={index}
+          config={config}
+          onMobileClick={() => handleMobileClick(index)}
+        >
+          <LiveReservationContent />
+        </FeedbackMissionCard>
+      )),
+    [handleMobileClick],
+  );
 
   return (
     <>
@@ -23,19 +45,7 @@ const LiveFeedbackPage = () => {
           isMissionSelected && 'hidden md:flex',
         )}
       >
-        {DUMMY_FEEDBACK_MISSIONS.map((config, index) => (
-          <FeedbackMissionCard
-            key={index}
-            config={config}
-            onMobileClick={() =>
-              router.replace(`${pathname}?mission=${index}`, {
-                scroll: false,
-              })
-            }
-          >
-            <LiveReservationContent />
-          </FeedbackMissionCard>
-        ))}
+        {cardList}
       </div>
 
       {/* 모바일 전체화면 예약 뷰 - fixed로 탭/헤더 위에 덮어씌움 */}

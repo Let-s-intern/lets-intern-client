@@ -18,6 +18,8 @@ const NavBar = () => {
 
   if (pathname.endsWith('user/info')) return null;
 
+  const isDetailPage = /\/feedback\/live\/[^/]+$/.test(pathname);
+
   const navItems: NavItem[] = [
     { id: 'dashboard', label: '대시보드', href: base },
     { id: 'my-mission', label: '나의 미션', href: `${base}/me` },
@@ -53,7 +55,9 @@ const NavBar = () => {
     );
 
   return (
-    <nav className="w-full md:w-[220px]">
+    <nav
+      className={clsx('w-full md:w-[220px]', isDetailPage && 'hidden md:block')}
+    >
       <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
         {navItems.map((item) => {
           const parentActive = isParentActive(item);
