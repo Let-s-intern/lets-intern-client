@@ -45,10 +45,8 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
       const [r, g, b] = getDominantColor(img);
       const isDefault = r === 249 && g === 249 && b === 248;
       thumbnailDiv.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
-    } catch (error) {
-      // 에러 발생 시 기본 배경색 유지
-
-      console.error('Failed to get dominant color:', error);
+    } catch {
+      // cross-origin 이미지일 수 있음. 실패 시 기본 배경색 유지.
     }
   };
 
@@ -59,16 +57,18 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         ref={thumbnailDivRef}
         className="bg-neutral-95 relative mb-8 h-[16rem] overflow-hidden rounded-md md:h-[25.5rem]"
       >
-        <Image
-          className="object-contain"
-          priority
-          unoptimized
-          fill
-          src={blogInfo.thumbnail ?? ''}
-          alt="블로그 썸네일"
-          sizes="(max-width: 768px) 100vw, 26rem"
-          onLoad={handleImageLoad}
-        />
+        {blogInfo.thumbnail && (
+          <Image
+            className="object-contain"
+            priority
+            unoptimized
+            fill
+            src={blogInfo.thumbnail}
+            alt="블로그 썸네일"
+            sizes="(max-width: 768px) 100vw, 26rem"
+            onLoad={handleImageLoad}
+          />
+        )}
       </div>
 
       {/* 블로그 헤더 */}

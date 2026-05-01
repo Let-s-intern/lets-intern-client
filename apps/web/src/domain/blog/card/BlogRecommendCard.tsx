@@ -36,14 +36,16 @@ async function BlogRecommendCard({ blog }: Props) {
       </div>
       {/* 4:3 비율 */}
       <div className="rounded-xxs bg-neutral-95 relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden md:aspect-[4/3] md:h-auto md:w-full">
-        <Image
-          className="h-full w-full object-cover"
-          src={blog.thumbnail ?? ''}
-          alt={blog.title + ' 썸네일'}
-          fill
-          unoptimized
-          sizes="(max-width: 768px) 4.5rem, 17rem"
-        />
+        {blog.thumbnail && (
+          <Image
+            className="h-full w-full object-cover"
+            src={blog.thumbnail}
+            alt={blog.title + ' 썸네일'}
+            fill
+            unoptimized
+            sizes="(max-width: 768px) 4.5rem, 17rem"
+          />
+        )}
       </div>
     </Link>
   );
