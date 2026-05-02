@@ -2,7 +2,12 @@ import { useChallengeQuery } from '@/api/challenge/challenge';
 import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { useMemo } from 'react';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
@@ -50,6 +55,7 @@ const MobileMoreButton = ({
 
 function RecommendedProgramSection() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const params = useParams<{ programId: string }>();
   const trackEvent = useGoogleAnalytics();
@@ -85,10 +91,9 @@ function RecommendedProgramSection() {
   };
 
   const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'missions'];
-  // 컴포넌트를 렌더링하지 않음
-  const shouldHideSection = EXCLUDED_PATHS.some((path) =>
-    pathname.includes(path),
-  );
+  const shouldHideSection =
+    EXCLUDED_PATHS.some((path) => pathname.includes(path)) ||
+    (pathname.includes('live') && searchParams.has('mission'));
   if (shouldHideSection) {
     return null;
   }
