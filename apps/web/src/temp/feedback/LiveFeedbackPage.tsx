@@ -2,7 +2,7 @@
 
 import BackHeader from '@/common/header/BackHeader';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
-import LiveReservationContent from '@/domain/challenge/feedback/LiveReservationContent';
+import LiveFeedbackDetail from '@/domain/challenge/feedback/LiveFeedbackDetail';
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -30,7 +30,7 @@ const LiveFeedbackPage = () => {
           config={config}
           onMobileClick={() => handleMobileClick(index)}
         >
-          <LiveReservationContent />
+          <LiveFeedbackDetail />
         </FeedbackMissionCard>
       )),
     [handleMobileClick],
@@ -52,7 +52,7 @@ const LiveFeedbackPage = () => {
       {isMissionSelected && (
         <div className="z-1 fixed inset-x-0 bottom-0 top-[44px] overflow-y-auto bg-white px-5 md:hidden">
           <BackHeader to={pathname}>라이브 예약 신청하기</BackHeader>
-          <LiveReservationContent />
+          <LiveFeedbackDetail />
         </div>
       )}
     </>

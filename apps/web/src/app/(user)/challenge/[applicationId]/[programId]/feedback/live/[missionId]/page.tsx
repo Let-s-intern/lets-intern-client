@@ -1,7 +1,7 @@
 'use client';
 
 import BackHeader from '@/common/header/BackHeader';
-import LiveReservationContent from '@/domain/challenge/feedback/LiveReservationContent';
+import LiveFeedbackDetail from '@/domain/challenge/feedback/LiveFeedbackDetail';
 import { useParams } from 'next/navigation';
 
 const LiveMissionDetailPage = () => {
@@ -15,7 +15,7 @@ const LiveMissionDetailPage = () => {
   return (
     <>
       <BackHeader to={backPath}>라이브 예약 신청하기</BackHeader>
-      <LiveReservationContent />
+      <LiveFeedbackDetail />
     </>
   );
 };

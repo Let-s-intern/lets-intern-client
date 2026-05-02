@@ -102,7 +102,7 @@ const FeedbackMissionCard = ({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 hidden shrink-0 items-center gap-1 border px-3 py-1.5 font-normal transition-colors md:flex"
+          className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary-5 hidden shrink-0 items-center gap-1 border px-3 py-1.5 font-normal transition-colors md:flex"
         >
           <img
             src="/icons/Chevron_Down.svg"
@@ -133,7 +133,7 @@ const FeedbackMissionCard = ({
         )}
       >
         <div className="overflow-hidden">
-          <div className="bg-primary-5">{children}</div>
+          <div>{children}</div>
         </div>
       </div>
     </div>

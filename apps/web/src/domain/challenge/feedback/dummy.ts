@@ -1,5 +1,45 @@
 import { FeedbackMissionCardConfig } from './FeedbackMissionCard';
 
+export interface Mentor {
+  id: string;
+  company: string;
+  name: string;
+  thumbnailUrl?: string;
+  description: string;
+}
+
+export const DUMMY_MENTORS: Mentor[] = [
+  {
+    id: '1',
+    company: '렛츠인턴',
+    name: '이프쌤',
+    thumbnailUrl: '',
+    description:
+      '멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
+  },
+  {
+    id: '2',
+    company: '렛츠렛츠커리어',
+    name: '줄리아',
+    thumbnailUrl: '',
+    description: '멘토 소개를 간단히 적어주세요.',
+  },
+  {
+    id: '3',
+    company: '렛츠커리어',
+    name: '도안',
+    thumbnailUrl: '',
+    description: '멘토 소개를 간단히 적어주세요.',
+  },
+  {
+    id: '4',
+    company: '렛츠커리어',
+    name: '레오',
+    thumbnailUrl: '',
+    description: '멘토 소개를 간단히 적어주세요.',
+  },
+];
+
 export const DUMMY_FEEDBACK_MISSIONS: FeedbackMissionCardConfig[] = [
   {
     thumbnail: '',
