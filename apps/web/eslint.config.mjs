@@ -5,19 +5,6 @@ export default [
   {
     rules: {
       '@next/next/no-img-element': 'off',
-      // 의도적으로 미사용임을 표현하는 `_` prefix 관행을 허용 — 의도 표현용 false-positive 감축
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-        },
-      ],
-      // console.error / console.warn 은 에러 로깅·경고 라우팅의 표준 패턴이므로 허용.
-      // 디버그용 console.log/info/debug 만 경고로 남겨 의도적 로깅과 분리.
-      'no-console': ['warn', { allow: ['error', 'warn'] }],
     },
   },
   {
