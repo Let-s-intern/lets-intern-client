@@ -1,8 +1,12 @@
 /**
- * Integration test for useScheduleData × filterMentorSchedule (PRD-0503 #2).
+ * Integration test for useScheduleData × filterMentorSchedule × 피드백 태그 필터.
  *
- * useScheduleData 가 반환하는 `filteredBars` 가 멘토 화이트리스트만 노출하는지,
+ * (PRD-0503 #2) useScheduleData 가 반환하는 `filteredBars` 가 멘토 화이트리스트만 노출하는지,
  * `allBarsUnfiltered` 는 모달 의존성을 위해 그대로 유지되는지 검증한다.
+ *
+ * (PRD-0503 #4) 챌린지 단위 필터를 피드백 종류(태그) 단위 필터로 교체.
+ *  - selectedFeedbackTags 가 빈 집합이면 "전체" 모드 (화이트리스트만 적용)
+ *  - 태그가 선택되면 화이트리스트 ∩ 태그 매칭만 통과
  */
 
 import { describe, expect, it } from 'vitest';
@@ -50,8 +54,8 @@ const wrapper = ({ children }: { children: ReactNode }) => {
 
 // ── 테스트 ────────────────────────────────────────────────────────────
 
-describe('useScheduleData × 멘토 화이트리스트 필터', () => {
-  it('filteredBars 는 표시 허용 4종 (written-feedback, live-feedback-period, live-feedback-mentor-open, live-feedback) 만 포함한다', () => {
+describe('useScheduleData × 멘토 화이트리스트 + 피드백 태그 필터', () => {
+  it('filteredBars 는 표시 허용 4종 (written-feedback, live-feedback-period, live-feedback-mentor-open, live-feedback) 만 포함한다 (전체 모드)', () => {
     const extraBars: PeriodBarData[] = [
       makeBar('written-mission-submit', 1, 10),
       makeBar('written-review', 1, 11),
@@ -95,7 +99,6 @@ describe('useScheduleData × 멘토 화이트리스트 필터', () => {
     });
 
     expect(result.current.allBarsUnfiltered).toHaveLength(5);
-    // 블랙리스트 항목도 unfiltered 에는 살아있다
     expect(
       result.current.allBarsUnfiltered.some(
         (b) => b.barType === 'written-mission-submit',
@@ -123,29 +126,44 @@ describe('useScheduleData × 멘토 화이트리스트 필터', () => {
     expect(result.current.allBarsUnfiltered).toHaveLength(3);
   });
 
-  it('selectedChallengeId 적용 시 화이트리스트 ∩ 챌린지 필터 둘 다 만족하는 바만 남는다', () => {
+  it('피드백 태그 적용 시 화이트리스트 ∩ 태그 매칭 바만 남는다', () => {
     const extraBars: PeriodBarData[] = [
-      makeBar('written-feedback', 1, 12), // 표시 + 챌린지 1
-      makeBar('written-feedback', 2, 22), // 표시 + 챌린지 2
-      makeBar('written-mission-submit', 1, 10), // 비표시 + 챌린지 1
-      makeBar('live-feedback-period', 2, 24), // 표시 + 챌린지 2
+      makeBar('written-feedback', 1, 12), // 화이트리스트 + written
+      makeBar('written-feedback', 2, 22), // 화이트리스트 + written
+      makeBar('written-mission-submit', 1, 10), // 비화이트리스트
+      makeBar('live-feedback-period', 2, 24), // 화이트리스트 + live
     ];
 
     const { result } = renderHook(() => useScheduleData({ extraBars }), {
       wrapper,
     });
 
-    // 초기: selectedChallengeId === null → 화이트리스트 3종
+    // 초기: 빈 태그 집합 → 화이트리스트 3종 (written-feedback x2 + live-feedback-period)
     expect(result.current.filteredBars).toHaveLength(3);
 
-    // 챌린지 2 선택
+    // written 태그 선택 → 서면 피드백 2개만
     act(() => {
-      result.current.setSelectedChallengeId(2);
+      result.current.toggleFeedbackTag('written');
     });
 
     expect(result.current.filteredBars).toHaveLength(2);
     expect(
-      result.current.filteredBars.every((b) => b.challengeId === 2),
+      result.current.filteredBars.every((b) => b.barType === 'written-feedback'),
     ).toBe(true);
+
+    // live 태그 추가 선택 → 서면 + 라이브 기간 = 3개
+    act(() => {
+      result.current.toggleFeedbackTag('live');
+    });
+
+    expect(result.current.filteredBars).toHaveLength(3);
+
+    // 전체 초기화
+    act(() => {
+      result.current.clearFeedbackTags();
+    });
+
+    expect(result.current.selectedFeedbackTags.size).toBe(0);
+    expect(result.current.filteredBars).toHaveLength(3);
   });
 });

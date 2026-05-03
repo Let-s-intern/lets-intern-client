@@ -67,7 +67,6 @@ interface WeeklyCalendarProps {
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
   onMentorOpenPeriodBarClick?: (bar: PeriodBarData) => void;
-  targetScrollDate?: Date | null;
 }
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
@@ -79,7 +78,6 @@ const WeeklyCalendar = ({
   onMentorOpenPeriodBarClick,
   onLiveFeedbackTimeBlockClick,
   onLiveFeedbackPeriodClick,
-  targetScrollDate,
 }: WeeklyCalendarProps) => {
   // 상단 period bar(서면 + 라이브 기간) vs 하단 시간 블록(라이브 개별 세션) 분리
   const writtenBars = useMemo(
@@ -96,7 +94,6 @@ const WeeklyCalendar = ({
     timelineStart,
     totalDays,
     days,
-    scrollToDate,
     scrollToToday,
   } = useTimelineScroll({ allBars });
 
@@ -115,10 +112,6 @@ const WeeklyCalendar = ({
     observer.observe(el);
     return () => observer.disconnect();
   }, [containerRef, days]);
-
-  useEffect(() => {
-    if (targetScrollDate) scrollToDate(targetScrollDate);
-  }, [targetScrollDate, scrollToDate]);
 
   // 라이브 피드백 시간 범위 (liveBars 기준 동적 계산)
   const { startMinutes, endMinutes } = useMemo(

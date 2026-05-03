@@ -7,7 +7,7 @@ import { useMediaQuery } from '@mui/material';
 import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
-import ChallengeFilter from './ui/ChallengeFilter';
+import FeedbackTagFilter from './ui/FeedbackTagFilter';
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
@@ -27,7 +27,7 @@ const SchedulePage = () => {
   const { bars: writtenMockBars } = useWrittenFeedbackMockData();
   const liveFeedbackBars = useLiveFeedbackData();
 
-  // 서면 + 라이브 mock 모두 extraBars로 주입 → 색상 재매핑과 태그 네비게이션에 투과
+  // 서면 + 라이브 mock 모두 extraBars로 주입
   const extraBars = useMemo(
     () => [...writtenMockBars, ...liveFeedbackBars],
     [writtenMockBars, liveFeedbackBars],
@@ -35,14 +35,12 @@ const SchedulePage = () => {
 
   const {
     challenges,
-    selectedChallengeId,
-    setSelectedChallengeId,
+    selectedFeedbackTags,
+    toggleFeedbackTag,
+    clearFeedbackTags,
     allBarsUnfiltered,
     filteredBars,
     handleData,
-    challengeFilterItems,
-    findNearestDate,
-    findNextDate,
   } = useScheduleData({ extraBars });
 
   // 라이브 세션 바만 따로 추출 — LiveFeedbackReservationModal 네비게이션용
@@ -50,29 +48,6 @@ const SchedulePage = () => {
     () => filteredBars.filter((b) => b.barType === 'live-feedback'),
     [filteredBars],
   );
-
-  const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
-
-  const handleChallengeSelect = (challengeId: number | null) => {
-    if (challengeId === null) {
-      setSelectedChallengeId(null);
-      setTargetScrollDate(null);
-      return;
-    }
-    if (challengeId === selectedChallengeId && targetScrollDate) {
-      // 같은 태그 재클릭 → 다음 피드백 일정으로 이동
-      const next = findNextDate(challengeId, targetScrollDate);
-      if (next) {
-        setTargetScrollDate(next);
-      }
-      return;
-    }
-    setSelectedChallengeId(challengeId);
-    const nearest = findNearestDate(challengeId);
-    if (nearest) {
-      setTargetScrollDate(nearest);
-    }
-  };
 
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -198,10 +173,10 @@ const SchedulePage = () => {
       <div className="flex flex-col gap-14">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            <ChallengeFilter
-              challenges={challengeFilterItems}
-              selectedChallengeId={selectedChallengeId}
-              onSelect={handleChallengeSelect}
+            <FeedbackTagFilter
+              selectedTags={selectedFeedbackTags}
+              onToggle={toggleFeedbackTag}
+              onClearAll={clearFeedbackTags}
             />
 
             <WeeklyCalendar
@@ -227,7 +202,6 @@ const SchedulePage = () => {
                 );
                 if (firstSession) setSelectedLiveFeedbackBar(firstSession);
               }}
-              targetScrollDate={targetScrollDate}
             />
           </div>
         </div>

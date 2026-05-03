@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
+import {
+  filterBarsByFeedbackTags,
+  type FeedbackTagType,
+} from '../constants/feedbackTag';
 import type { PeriodBarData } from '../types';
 import { filterMentorSchedule } from '../utils/filterMentorSchedule';
 
@@ -10,15 +14,18 @@ interface UseScheduleDataOptions {
 }
 
 /**
- * Manages challenge data, bar aggregation, and challenge filtering for the schedule page.
+ * Manages challenge data, bar aggregation, and feedback-tag filtering for the schedule page.
  *
  * Key design: WeeklySummary uses `allBarsUnfiltered` (no filter applied),
- * while WeeklyCalendar uses `filteredBars` (respects selectedChallengeId).
+ * while WeeklyCalendar uses `filteredBars` (respects selectedFeedbackTags).
+ *
+ * PRD-0503 #4: 챌린지 단위 필터 → 피드백 종류 단위 필터로 전환.
+ *   selectedFeedbackTags 가 비어 있으면 "전체" 모드.
  */
 export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {}) {
-  const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(
-    null,
-  );
+  const [selectedFeedbackTags, setSelectedFeedbackTags] = useState<
+    ReadonlySet<FeedbackTagType>
+  >(() => new Set());
 
   const { data: challengeListData } = useMentorChallengeListQuery();
   const allChallenges = challengeListData?.myChallengeMentorVoList ?? [];
@@ -41,54 +48,12 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
     });
   }, []);
 
-  // API 챌린지와 extraBars 챌린지를 합쳐 colorIndex를 순차 할당 (mock은 API 다음 인덱스부터)
-  const challengeFilterItems = useMemo(() => {
-    const apiItems = challenges.map((c, index) => ({
-      challengeId: c.challengeId,
-      title: c.title,
-      colorIndex: index,
-    }));
-    const apiIds = new Set(apiItems.map((c) => c.challengeId));
-    const extras: { challengeId: number; title: string; colorIndex: number }[] =
-      [];
-    const seen = new Set<number>();
-    for (const bar of extraBars) {
-      if (apiIds.has(bar.challengeId) || seen.has(bar.challengeId)) continue;
-      seen.add(bar.challengeId);
-      extras.push({
-        challengeId: bar.challengeId,
-        title: bar.challengeTitle,
-        colorIndex: apiItems.length + extras.length,
-      });
-    }
-    return [...apiItems, ...extras];
-  }, [challenges, extraBars]);
-
-  /** challengeId → colorIndex (API/mock 구분 없이 고유 색상 보장) */
-  const challengeColorMap = useMemo(() => {
-    const map = new Map<number, number>();
-    for (const item of challengeFilterItems) {
-      map.set(item.challengeId, item.colorIndex);
-    }
-    return map;
-  }, [challengeFilterItems]);
-
-  // mock 바의 colorIndex를 재할당해 API 색상과 충돌 방지
-  const remappedExtraBars = useMemo(
-    () =>
-      extraBars.map((bar) => ({
-        ...bar,
-        colorIndex: challengeColorMap.get(bar.challengeId) ?? bar.colorIndex,
-      })),
-    [extraBars, challengeColorMap],
-  );
-
   // All bars without any filter — used by WeeklySummary & height calculation
   const allBarsUnfiltered = useMemo(() => {
-    const result: PeriodBarData[] = [...remappedExtraBars];
+    const result: PeriodBarData[] = [...extraBars];
     barsMap.forEach((bar) => result.push(bar));
     return result;
-  }, [barsMap, remappedExtraBars]);
+  }, [barsMap, extraBars]);
 
   // Mentor whitelist filter — 캘린더에는 멘토가 직접 행동/인지해야 하는 3종 바만 노출
   // (PRD-0503 #2). allBarsUnfiltered는 모달 데이터 흐름용으로 그대로 유지.
@@ -97,86 +62,34 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
     [allBarsUnfiltered],
   );
 
-  // Filtered bars — used by WeeklyCalendar (화이트리스트 ∩ 챌린지 선택)
-  const filteredBars = useMemo(() => {
-    if (selectedChallengeId === null) return mentorVisibleBars;
-    return mentorVisibleBars.filter(
-      (bar) => bar.challengeId === selectedChallengeId,
-    );
-  }, [mentorVisibleBars, selectedChallengeId]);
-
-  /**
-   * 필터 태그 클릭 네비게이션 — 멘토가 직접 액션하는 바로만 이동.
-   *  포함: 서면 피드백 제출기간 / 라이브 일정 오픈 / 라이브 피드백 기간
-   *  제외: 유저 제출·검수·멘티 신청 (멘토 대기) / 개별 라이브 세션
-   */
-  const MENTOR_ACTION_BAR_TYPES = [
-    'written-feedback',
-    'live-feedback-mentor-open',
-    'live-feedback-period',
-  ] as const;
-  const getFeedbackDates = useCallback(
-    (challengeId: number): Date[] => {
-      return allBarsUnfiltered
-        .filter(
-          (bar) =>
-            bar.challengeId === challengeId &&
-            MENTOR_ACTION_BAR_TYPES.includes(
-              bar.barType as (typeof MENTOR_ACTION_BAR_TYPES)[number],
-            ),
-        )
-        .map((bar) => new Date(bar.feedbackStartDate))
-        .sort((a, b) => a.getTime() - b.getTime());
-    },
-    [allBarsUnfiltered],
+  // Filtered bars — used by WeeklyCalendar (화이트리스트 ∩ 피드백 태그 선택)
+  const filteredBars = useMemo(
+    () => filterBarsByFeedbackTags(mentorVisibleBars, selectedFeedbackTags),
+    [mentorVisibleBars, selectedFeedbackTags],
   );
 
-  /**
-   * 오늘에서 가장 가까운 피드백 기간의 feedbackStartDate를 반환.
-   */
-  const findNearestDate = useCallback(
-    (challengeId: number): Date | null => {
-      const dates = getFeedbackDates(challengeId);
-      if (dates.length === 0) return null;
+  /** 단일 태그 토글 — 이미 선택돼 있으면 해제, 아니면 추가 (다중 선택 지원) */
+  const toggleFeedbackTag = useCallback((tag: FeedbackTagType) => {
+    setSelectedFeedbackTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  }, []);
 
-      const now = Date.now();
-      let nearest = dates[0];
-      for (const d of dates) {
-        if (Math.abs(d.getTime() - now) < Math.abs(nearest.getTime() - now)) {
-          nearest = d;
-        }
-      }
-      return nearest;
-    },
-    [getFeedbackDates],
-  );
-
-  /**
-   * 현재 날짜의 다음 피드백 일정을 반환. 마지막이면 처음으로 순환.
-   */
-  const findNextDate = useCallback(
-    (challengeId: number, currentDate: Date): Date | null => {
-      const dates = getFeedbackDates(challengeId);
-      if (dates.length === 0) return null;
-
-      const currentTime = currentDate.getTime();
-      const nextIdx = dates.findIndex((d) => d.getTime() > currentTime);
-      // 다음이 있으면 다음, 없으면 처음으로 순환
-      return dates[nextIdx >= 0 ? nextIdx : 0];
-    },
-    [getFeedbackDates],
-  );
+  /** "전체" 클릭 — 모든 선택 해제 */
+  const clearFeedbackTags = useCallback(() => {
+    setSelectedFeedbackTags(new Set());
+  }, []);
 
   return {
     challenges,
-    selectedChallengeId,
-    setSelectedChallengeId,
+    selectedFeedbackTags,
+    toggleFeedbackTag,
+    clearFeedbackTags,
     allBarsUnfiltered,
     filteredBars,
     handleData,
-    challengeFilterItems,
-    challengeColorMap,
-    findNearestDate,
-    findNextDate,
   };
 }
