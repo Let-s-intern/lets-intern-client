@@ -48,11 +48,7 @@ export function BlogGridSection(props: BlogGridSectionProps) {
   );
 }
 
-function BlogGridContent({
-  types,
-  page,
-  onChangePage,
-}: BlogGridSectionProps) {
+function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
   const router = useRouter();
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
