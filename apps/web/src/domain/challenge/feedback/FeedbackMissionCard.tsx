@@ -70,7 +70,7 @@ const FeedbackMissionCard = ({
               {/* 뱃지 영역 */}
               <div className="flex w-full flex-wrap items-center gap-2">
                 {statusLabel && (
-                  <span className="rounded-xxs text-xxsmall12 border-1 border-netural-80 text-primary border px-2 py-1 font-normal">
+                  <span className="rounded-xxs text-xxsmall12 border-1 border-neutral-80 text-primary border px-2 py-1 font-normal">
                     {statusLabel}
                   </span>
                 )}
