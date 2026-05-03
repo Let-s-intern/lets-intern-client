@@ -97,27 +97,35 @@ const STATUS_BADGE: Record<
   },
 };
 
+/**
+ * 시간별 일정(time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
+ *
+ * 디자인 참조: `.claude/tasks/라이브피드백.png` (PRD-0503 #3)
+ * - 카드: 흰 배경 + 옅은 회색 테두리 + 둥근 모서리
+ * - 상단: 시작시간(HH:MM) + 상태 배지 (진행중 등)
+ * - 본문: ▶ LIVE 피드백 (LIVE 빨강 강조)
+ * - 멘티명, 챌린지명
+ */
 export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
-  const color = getColor(bar.colorIndex ?? 0);
   const badge =
     lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
   const isDim = badge?.dim ?? false;
 
   return (
     <div
-      className={`flex h-full w-full flex-col justify-between overflow-hidden border-t-[3px] px-2 py-1 ${color.border} ${isDim ? 'bg-neutral-95' : color.body}`}
+      className={`flex h-full w-full flex-col gap-1 overflow-hidden rounded-lg border border-neutral-80 px-2 py-1.5 ${
+        isDim ? 'bg-neutral-95' : 'bg-white'
+      }`}
     >
-      {/* 상단: LIVE + 멘티명 + [상태 배지 오른쪽] */}
-      <div className="flex min-w-0 items-center gap-1">
-        <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-red-500" />
-        <span className="text-xxsmall12 shrink-0 font-bold leading-none text-red-500">
-          LIVE
-        </span>
+      {/* Row 1: 시작 시간 + 상태 배지 (진행중 등) */}
+      <div className="flex min-w-0 items-center gap-1.5">
         <span
-          className={`text-xxsmall12 min-w-0 flex-1 truncate font-medium leading-none ${isDim ? 'text-neutral-40' : 'text-neutral-10'}`}
+          className={`text-xxsmall12 shrink-0 font-bold leading-none ${
+            isDim ? 'text-neutral-40' : 'text-neutral-10'
+          }`}
         >
-          {lf.menteeName}님
+          {lf.startTime}
         </span>
         {badge && (
           <span
@@ -128,15 +136,43 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         )}
       </div>
 
-      {/* 하단: 챌린지명 + 시간 */}
-      <div className="flex min-w-0 flex-col">
-        <span className="text-xxsmall12 text-neutral-40 truncate leading-tight">
-          {bar.challengeTitle}
+      {/* Row 2: ▶ LIVE 피드백 */}
+      <div className="flex min-w-0 items-center gap-1">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          className="shrink-0 text-red-500"
+          aria-hidden
+        >
+          <path d="M3 2.5L9.5 6L3 9.5V2.5Z" fill="currentColor" />
+        </svg>
+        <span className="text-xxsmall12 shrink-0 font-bold leading-none text-red-500">
+          LIVE
         </span>
-        <span className="text-xxsmall12 text-neutral-30 truncate leading-tight">
-          {formatTimeRange(lf.startTime, lf.endTime)}
+        <span
+          className={`text-xxsmall12 shrink-0 font-semibold leading-none ${
+            isDim ? 'text-neutral-40' : 'text-neutral-10'
+          }`}
+        >
+          피드백
         </span>
       </div>
+
+      {/* Row 3: 멘티명 */}
+      <span
+        className={`text-xxsmall12 min-w-0 truncate font-medium leading-tight ${
+          isDim ? 'text-neutral-40' : 'text-neutral-10'
+        }`}
+      >
+        {lf.menteeName} 멘티
+      </span>
+
+      {/* Row 4: 챌린지명 */}
+      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+        {bar.challengeTitle}
+      </span>
     </div>
   );
 };
