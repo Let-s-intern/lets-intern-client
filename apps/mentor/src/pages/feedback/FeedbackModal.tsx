@@ -1,8 +1,8 @@
 'use client';
 
 import BaseModal from '@/common/modal/BaseModal';
-import MentorAlertModal from '../ui/MentorAlertModal';
-import { useMentorAlert } from '../hooks/useMentorAlert';
+import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { useMentorAlert } from '@/hooks/useMentorAlert';
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';

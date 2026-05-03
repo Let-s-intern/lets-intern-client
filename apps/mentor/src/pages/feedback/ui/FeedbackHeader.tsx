@@ -1,4 +1,4 @@
-import mentorConfig from '@/pages/constants/config';
+import mentorConfig from '@/constants/config';
 
 interface FeedbackHeaderProps {
   challengeTitle?: string;
