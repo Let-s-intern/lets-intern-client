@@ -7,7 +7,7 @@ import { blogCategory } from '@/utils/convert';
 import getDominantColor from '@/utils/dominantColor';
 import Image from 'next/image';
 import { useRef } from 'react';
-import BlogLinkShareBtn from '../button/BlogLilnkShareBtn';
+import BlogLinkShareBtn from './BlogLilnkShareBtn';
 import Heading2 from './BlogHeading2';
 import LexicalContent from '@/common/lexical/LexicalContent';
 

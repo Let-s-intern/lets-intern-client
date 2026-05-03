@@ -59,6 +59,24 @@ export const blogTypeSchema = z.enum([
   BlogType.JOB_POSTING,
 ]);
 
+export const blogListQueryOptions = ({
+  pageable,
+  types,
+  tagId,
+}: Omit<BlogQueryParams, 'enabled'>) => ({
+  queryKey: [blogListQueryKey, pageable, types] as const,
+  queryFn: async () => {
+    const res = await axios.get(`/blog`, {
+      params: {
+        ...pageable,
+        tagId,
+        types: types?.map((type) => type).join(','),
+      },
+    });
+    return blogListSchema.parse(res.data.data);
+  },
+});
+
 export const useBlogListQuery = ({
   pageable,
   types,
@@ -66,17 +84,7 @@ export const useBlogListQuery = ({
   enabled,
 }: BlogQueryParams) => {
   return useQuery({
-    queryKey: [blogListQueryKey, pageable, types],
-    queryFn: async () => {
-      const res = await axios.get(`/blog`, {
-        params: {
-          ...pageable,
-          tagId,
-          types: types?.map((type) => type).join(','),
-        },
-      });
-      return blogListSchema.parse(res.data.data);
-    },
+    ...blogListQueryOptions({ pageable, types, tagId }),
     enabled,
   });
 };
@@ -417,14 +425,16 @@ export const useGetAdminBlogBanner = (id: number) => {
   });
 };
 
+export const blogBannerListQueryOptions = (pageable: IPageable) => ({
+  queryKey: ['useGetBlogBannerList', pageable] as const,
+  queryFn: async () => {
+    const res = await axios.get('/blog-banner', { params: pageable });
+    return blogBannerListSchema.parse(res.data.data);
+  },
+});
+
 export const useGetBlogBannerList = (pageable: IPageable) => {
-  return useQuery({
-    queryKey: ['useGetBlogBannerList', pageable],
-    queryFn: async () => {
-      const res = await axios.get('/blog-banner', { params: pageable });
-      return blogBannerListSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(blogBannerListQueryOptions(pageable));
 };
 
 // 블로그 좋아요
