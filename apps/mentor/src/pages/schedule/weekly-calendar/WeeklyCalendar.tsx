@@ -120,37 +120,48 @@ const WeeklyCalendar = ({
   );
   const slotCount = (endMinutes - startMinutes) / SLOT_MINUTES;
 
-  // 같은 챌린지의 바들은 같은 row에 배치 — 챌린지 등장 순서대로 row 번호 할당
-  const challengeRowMap = useMemo(() => {
-    const map = new Map<number, number>();
-    let row = 1;
-    for (const bar of writtenBars) {
-      if (!map.has(bar.challengeId)) {
-        map.set(bar.challengeId, row++);
-      }
-    }
-    return map;
-  }, [writtenBars]);
+  // 서면 피드백 바 레이아웃: startCol/endCol 클램핑 + 겹치는 바는 다른 row로 분리
+  const barLayouts = useMemo(() => {
+    type Layout = { bar: PeriodBarData; startCol: number; endCol: number; colSpan: number; gridRow: number };
+    const layouts: Layout[] = [];
+    // row별 점유 범위 추적 — greedy interval scheduling
+    const rowRanges: Array<Array<{ start: number; end: number }>> = [];
 
-  // 서면 피드백 바 레이아웃 (grid 열 위치 + 챌린지별 row)
-  const barLayouts = useMemo(
-    () =>
-      writtenBars
-        .map((bar) => {
-          const startCol =
-            differenceInCalendarDays(new Date(bar.startDate), timelineStart) +
-            1;
-          const endCol =
-            differenceInCalendarDays(
-              new Date(bar.feedbackDeadline),
-              timelineStart,
-            ) + 2;
-          const gridRow = challengeRowMap.get(bar.challengeId) ?? 1;
-          return { bar, startCol, endCol, colSpan: endCol - startCol, gridRow };
-        })
-        .filter((l) => l.endCol >= 1 && l.startCol <= totalDays),
-    [writtenBars, timelineStart, totalDays, challengeRowMap],
-  );
+    for (const bar of writtenBars) {
+      const rawStart =
+        differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
+      const rawEnd =
+        differenceInCalendarDays(
+          new Date(bar.feedbackDeadline),
+          timelineStart,
+        ) + 2;
+
+      // 표시 범위 밖이면 건너뜀
+      if (rawEnd < 1 || rawStart > totalDays) continue;
+
+      // 클램핑: 타임라인 영역 안으로 제한
+      const startCol = Math.max(1, rawStart);
+      const endCol = Math.min(totalDays + 1, rawEnd);
+
+      // 겹치지 않는 가장 낮은 row 탐색
+      let gridRow = 1;
+      while (true) {
+        const occupied = rowRanges[gridRow - 1] ?? [];
+        const hasConflict = occupied.some(
+          (r) => startCol < r.end && endCol > r.start,
+        );
+        if (!hasConflict) break;
+        gridRow++;
+      }
+
+      if (!rowRanges[gridRow - 1]) rowRanges[gridRow - 1] = [];
+      rowRanges[gridRow - 1].push({ start: startCol, end: endCol });
+
+      layouts.push({ bar, startCol, endCol, colSpan: endCol - startCol, gridRow });
+    }
+
+    return layouts;
+  }, [writtenBars, timelineStart, totalDays]);
 
   // 날짜별 라이브 피드백 그룹 (YYYY-MM-DD → bar[])
   const liveBarsPerDay = useMemo(() => {
@@ -166,8 +177,9 @@ const WeeklyCalendar = ({
   const bodyMinHeight = useMemo(() => {
     const ROW_H = 70;
     const MIN_ROWS = 3;
-    return Math.max(challengeRowMap.size, MIN_ROWS) * ROW_H + 24;
-  }, [challengeRowMap.size]);
+    const maxRow = barLayouts.reduce((max, l) => Math.max(max, l.gridRow), 0);
+    return Math.max(maxRow, MIN_ROWS) * ROW_H + 24;
+  }, [barLayouts]);
 
   const innerWidthPercent = (totalDays / 7) * 100;
   const gridCols = `repeat(${totalDays}, 1fr)`;
@@ -283,9 +295,9 @@ const WeeklyCalendar = ({
                 className="flex border-t border-neutral-80"
                 style={{ height: `${slotCount * SLOT_H}px` }}
               >
-                {/* 시간 레이블 열 — sticky left */}
+                {/* 시간 레이블 열 — sticky left, z-20으로 라이브 블록(z-10)보다 위에 표시 */}
                 <div
-                  className="sticky left-0 z-10 shrink-0 border-r border-neutral-80 bg-white"
+                  className="sticky left-0 z-20 shrink-0 border-r border-neutral-80 bg-white"
                   style={{ width: TIME_LABEL_W }}
                 >
                   {Array.from(
