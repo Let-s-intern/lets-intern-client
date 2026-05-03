@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import useCounter from '../../../hooks/useCounter';
-import useDecimalCounter from '../../../hooks/useDecimalCounter';
+import useCounter from '@/hooks/useCounter';
+import useDecimalCounter from '@/hooks/useDecimalCounter';
 import AboutTitleDark from './ui/AboutTitleDark';
 
 const title = {
