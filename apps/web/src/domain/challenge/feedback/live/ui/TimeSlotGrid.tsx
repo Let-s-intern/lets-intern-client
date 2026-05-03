@@ -6,6 +6,7 @@ import DayHeaderCell from './DayHeaderCell';
 import TimeSlotCell from './TimeSlotCell';
 
 const DAY_NAMES = ['월', '화', '수', '목', '금', '토', '일'] as const;
+const TODAY = toDateString(new Date());
 
 interface Props {
   schedule: DaySchedule[];
@@ -14,8 +15,6 @@ interface Props {
 }
 
 const TimeSlotGrid = ({ schedule, selectedSlot, onSlotSelect }: Props) => {
-  const todayStr = toDateString(new Date());
-
   return (
     <div className="overflow-hidden">
       {/* 요일 헤더 */}
@@ -31,7 +30,7 @@ const TimeSlotGrid = ({ schedule, selectedSlot, onSlotSelect }: Props) => {
               dayName={DAY_NAMES[i]}
               dateStr={day.date}
               isSelected={selectedSlot?.date === day.date}
-              isToday={day.date === todayStr}
+              isToday={day.date === TODAY}
             />
           ))}
         </div>
