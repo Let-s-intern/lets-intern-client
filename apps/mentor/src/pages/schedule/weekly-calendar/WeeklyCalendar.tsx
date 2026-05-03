@@ -8,13 +8,10 @@ import {
 } from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
-import { CompactFeedbackCard } from '../calendar-bar/ui/FeedbackCard';
 import { LiveFeedbackTimeBlock } from '../calendar-bar/ui/LiveFeedbackCard';
 import LiveFeedbackOpenBar from '../calendar-bar/ui/LiveFeedbackOpenBar';
-import WrittenFeedbackBar from '../calendar-bar/ui/WrittenFeedbackBar';
-import WrittenPhaseBar from '../calendar-bar/ui/WrittenPhaseBar';
 import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
+import WrittenFeedbackBar from '../calendar-bar/ui/WrittenFeedbackBar';
 import type { PeriodBarData } from '../types';
 import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
 import ColumnDividers from './ui/ColumnDividers';
@@ -135,45 +132,76 @@ const WeeklyCalendar = ({
   );
   const slotCount = (endMinutes - startMinutes) / SLOT_MINUTES;
 
-  // 서면 피드백 바 레이아웃: startCol/endCol 클램핑 + 겹치는 바는 다른 row로 분리
+  // 서면 피드백 바 레이아웃 — 챌린지별 그룹 + 그룹 내 row 충돌 시 인접 row.
+  //   1) 한 챌린지의 모든 바는 연속된 row 블록을 차지 → 시각적으로 묶여 보임
+  //   2) 같은 챌린지 안에서 바가 겹치면 다음 row로 (위아래 인접)
+  //   3) 다음 챌린지는 이전 챌린지가 사용한 마지막 row 다음부터 시작
   const barLayouts = useMemo(() => {
-    type Layout = { bar: PeriodBarData; startCol: number; endCol: number; colSpan: number; gridRow: number };
-    const layouts: Layout[] = [];
-    // row별 점유 범위 추적 — greedy interval scheduling
-    const rowRanges: Array<Array<{ start: number; end: number }>> = [];
+    type Layout = {
+      bar: PeriodBarData;
+      startCol: number;
+      endCol: number;
+      gridRow: number;
+    };
 
+    // (1) 챌린지 등장 순서를 보존 (Map은 insertion order 유지)
+    const challengeOrder: number[] = [];
+    const seen = new Set<number>();
     for (const bar of writtenBars) {
-      const rawStart =
-        differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
-      const rawEnd =
-        differenceInCalendarDays(
-          new Date(bar.feedbackDeadline),
-          timelineStart,
-        ) + 2;
+      if (!seen.has(bar.challengeId)) {
+        seen.add(bar.challengeId);
+        challengeOrder.push(bar.challengeId);
+      }
+    }
 
-      // 표시 범위 밖이면 건너뜀
-      if (rawEnd < 1 || rawStart > totalDays) continue;
+    const layouts: Layout[] = [];
+    let nextStartRow = 1; // 다음 챌린지가 시작할 절대 row
 
-      // 클램핑: 타임라인 영역 안으로 제한
-      const startCol = Math.max(1, rawStart);
-      const endCol = Math.min(totalDays + 1, rawEnd);
-      if (endCol <= startCol) continue;
+    for (const challengeId of challengeOrder) {
+      const groupBars = writtenBars.filter((b) => b.challengeId === challengeId);
+      // 그룹 내부 점유 — index 0부터 차곡차곡, 그룹별로 독립
+      const groupRowRanges: Array<Array<{ start: number; end: number }>> = [];
 
-      // 겹치지 않는 가장 낮은 row 탐색
-      let gridRow = 1;
-      while (true) {
-        const occupied = rowRanges[gridRow - 1] ?? [];
-        const hasConflict = occupied.some(
-          (r) => startCol < r.end && endCol > r.start,
-        );
-        if (!hasConflict) break;
-        gridRow++;
+      for (const bar of groupBars) {
+        const rawStart =
+          differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
+        const rawEnd =
+          differenceInCalendarDays(
+            new Date(bar.feedbackDeadline),
+            timelineStart,
+          ) + 2;
+
+        if (rawEnd < 1 || rawStart > totalDays) continue;
+
+        const startCol = Math.max(1, rawStart);
+        const endCol = Math.min(totalDays + 1, rawEnd);
+        if (endCol <= startCol) continue;
+
+        // 그룹 안에서 충돌 없는 가장 낮은 local row 탐색
+        let localRow = 0;
+        while (true) {
+          const occupied = groupRowRanges[localRow] ?? [];
+          const hasConflict = occupied.some(
+            (r) => startCol < r.end && endCol > r.start,
+          );
+          if (!hasConflict) break;
+          localRow++;
+        }
+
+        if (!groupRowRanges[localRow]) groupRowRanges[localRow] = [];
+        groupRowRanges[localRow].push({ start: startCol, end: endCol });
+
+        layouts.push({
+          bar,
+          startCol,
+          endCol,
+          gridRow: nextStartRow + localRow,
+        });
       }
 
-      if (!rowRanges[gridRow - 1]) rowRanges[gridRow - 1] = [];
-      rowRanges[gridRow - 1].push({ start: startCol, end: endCol });
-
-      layouts.push({ bar, startCol, endCol, colSpan: endCol - startCol, gridRow });
+      // 다음 챌린지는 현재 그룹이 실제로 사용한 row 수만큼 뒤로 밀린다.
+      // (모든 바가 가시 범위 밖이면 0 → 그 챌린지는 시각적으로 자리 없음)
+      nextStartRow += groupRowRanges.length;
     }
 
     return layouts;
@@ -192,7 +220,7 @@ const WeeklyCalendar = ({
 
   const bodyMinHeight = useMemo(() => {
     const ROW_H = 70;
-    const MIN_ROWS = 3;
+    const MIN_ROWS = 2; // 챌린지 1~2개 기준 최소 빈 공간만 확보
     const maxRow = barLayouts.reduce((max, l) => Math.max(max, l.gridRow), 0);
     return Math.max(maxRow, MIN_ROWS) * ROW_H + 24;
   }, [barLayouts]);
@@ -252,8 +280,7 @@ const WeeklyCalendar = ({
                 className="relative w-full gap-y-1 py-3"
                 style={{ display: 'grid', gridTemplateColumns: gridCols }}
               >
-                {barLayouts.map(
-                  ({ bar, startCol, endCol, colSpan, gridRow }, idx) => (
+                {barLayouts.map(({ bar, startCol, endCol, gridRow }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                     style={{
@@ -266,30 +293,18 @@ const WeeklyCalendar = ({
                         bar={bar}
                         onClick={onLiveFeedbackPeriodClick}
                       />
-                    ) : bar.barType === 'live-feedback-mentor-open' ||
-                      bar.barType === 'live-feedback-mentee-open' ? (
+                    ) : bar.barType === 'live-feedback-mentor-open' ? (
                       <LiveFeedbackOpenBar
                         bar={bar}
                         onMentorOpenClick={
-                          bar.barType === 'live-feedback-mentor-open' &&
                           onMentorOpenPeriodBarClick
                             ? () => onMentorOpenPeriodBarClick(bar)
-                            : bar.barType === 'live-feedback-mentor-open'
-                              ? onMentorOpenPeriodClick
-                              : undefined
+                            : onMentorOpenPeriodClick
                         }
                       />
                     ) : bar.barType === 'written-feedback' ? (
-                      // PRD-0503 #3: 새 디자인 — 카드형 한 줄 (말풍선 + 라벨 + 챌린지명 + chevron)
                       <WrittenFeedbackBar bar={bar} onBarClick={onBarClick} />
-                    ) : bar.barType === 'written-mission-submit' ||
-                      bar.barType === 'written-review' ? (
-                      <WrittenPhaseBar bar={bar} />
-                    ) : colSpan <= 1 ? (
-                      <CompactFeedbackCard bar={bar} onBarClick={onBarClick} />
-                    ) : (
-                      <ChallengePeriodBar bar={bar} onBarClick={onBarClick} />
-                    )}
+                    ) : null}
                   </div>
                 ))}
               </div>
