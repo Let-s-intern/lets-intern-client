@@ -4,7 +4,7 @@ import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
 const navItems = [
   { name: '프로그램 일정', url: '/' },
-  { name: '피드백 현황', url: '/feedback-management' },
+  { name: '피드백', url: '/feedback-management' },
   { name: '참여중인 챌린지', url: '/challenges' },
   { name: '프로필', url: '/profile' },
   { name: '공지사항', url: '/notice' },
