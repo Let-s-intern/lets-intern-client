@@ -1,3 +1,25 @@
+import type { LiveFeedbackStatus } from './types';
+
+export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
+  prev: '예약 전',
+  reserved: '예약 완료',
+  done: '참여 완료',
+};
+
+export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
+  LiveFeedbackStatus,
+  'neutral' | 'active' | 'done'
+> = {
+  prev: 'neutral',
+  reserved: 'active',
+  done: 'done',
+};
+
+export function formatDay(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-');
+  return `${year.slice(2)}.${month}.${day}`;
+}
+
 export function addDays(date: Date, days: number): Date {
   const d = new Date(date);
   d.setDate(d.getDate() + days);

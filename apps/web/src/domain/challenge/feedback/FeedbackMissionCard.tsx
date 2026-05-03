@@ -2,45 +2,52 @@
 
 import clsx from 'clsx';
 import { useState } from 'react';
+import { formatDay } from './live/utils';
+
+export interface StatusBadge {
+  label: string;
+  variant: 'neutral' | 'active' | 'done';
+}
 
 export interface FeedbackMissionCardConfig {
   thumbnail: string;
   title: string;
   description?: string;
-  statusLabel?: string;
+  badge: StatusBadge;
   categoryLabel?: string;
   startDay?: string; // 'YYYY-MM-DD'
   endDay?: string; // 'YYYY-MM-DD'
-  buttonLabel: string;
-}
-
-function formatDay(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-');
-  return `${year.slice(2)}.${month}.${day}`;
 }
 
 interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
-  children?: React.ReactNode;
+  buttonLabel: string;
+  openLabel?: string; // 있으면 토글(아코디언), 없으면 단순 클릭
+  onButtonClick?: () => void; // 비토글일 때 클릭 핸들러
   onMobileClick?: () => void;
+  children?: React.ReactNode;
 }
 
 const FeedbackMissionCard = ({
   config,
-  children,
+  buttonLabel,
+  openLabel,
+  onButtonClick,
   onMobileClick,
+  children,
 }: FeedbackMissionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     thumbnail,
     title,
     description,
-    statusLabel,
+    badge,
     categoryLabel,
     startDay,
     endDay,
-    buttonLabel,
   } = config;
+
+  const isToggle = openLabel !== undefined;
 
   const dateText =
     startDay && endDay
@@ -69,11 +76,19 @@ const FeedbackMissionCard = ({
             <div className="flex flex-col gap-2">
               {/* 뱃지 영역 */}
               <div className="flex w-full flex-wrap items-center gap-2">
-                {statusLabel && (
-                  <span className="rounded-xxs text-xxsmall12 border-1 border-neutral-80 text-primary border px-2 py-1 font-normal">
-                    {statusLabel}
-                  </span>
-                )}
+                <span
+                  className={clsx(
+                    'rounded-xxs text-xxsmall12 border px-2 py-1 font-normal',
+                    badge.variant === 'neutral' &&
+                      'border-neutral-80 text-primary',
+                    badge.variant === 'active' &&
+                      'border-primary-10 bg-primary-10 text-primary',
+                    badge.variant === 'done' &&
+                      'border-neutral-95 bg-neutral-95 text-neutral-40',
+                  )}
+                >
+                  {badge.label}
+                </span>
                 {categoryLabel && (
                   <span className="text-xxsmall12 text-neutral-40 font-normal">
                     {categoryLabel}
@@ -110,44 +125,50 @@ const FeedbackMissionCard = ({
           </div>
         </div>
 
-        {/* 토글 버튼 - 데스크톱 전용 */}
+        {/* 데스크톱 버튼 */}
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={isToggle ? () => setIsOpen((prev) => !prev) : onButtonClick}
           className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary-5 hidden shrink-0 items-center gap-1 border px-3 py-1.5 font-normal transition-colors md:flex"
         >
-          <img
-            src="/icons/Chevron_Down.svg"
-            alt=""
-            className={clsx(
-              'h-4 w-4 transition-transform',
-              isOpen && 'rotate-180',
-            )}
-          />
-          <span>{isOpen ? `${buttonLabel} 닫기` : `${buttonLabel} 하기`}</span>
+          {isToggle && (
+            <img
+              src="/icons/Chevron_Down.svg"
+              alt=""
+              className={clsx(
+                'h-4 w-4 transition-transform',
+                isOpen && 'rotate-180',
+              )}
+            />
+          )}
+          <span>
+            {isToggle ? (isOpen ? openLabel : buttonLabel) : buttonLabel}
+          </span>
         </button>
       </div>
 
-      {/* 모바일 버튼 - 카드 하단 고정 */}
+      {/* 모바일 버튼 */}
       <button
         type="button"
         onClick={onMobileClick}
         className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 mt-5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
       >
-        <span>{`${buttonLabel} 하기`}</span>
+        <span>{buttonLabel}</span>
       </button>
 
-      {/* 아코디언 - 데스크톱 전용, 카드 내부 */}
-      <div
-        className={clsx(
-          'hidden transition-[grid-template-rows] duration-300 ease-in-out md:grid',
-          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        )}
-      >
-        <div className="overflow-hidden">
-          <div>{children}</div>
+      {/* 아코디언 - 토글일 때만 */}
+      {isToggle && (
+        <div
+          className={clsx(
+            'hidden transition-[grid-template-rows] duration-300 ease-in-out md:grid',
+            isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
+        >
+          <div className="overflow-hidden">
+            <div>{children}</div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
