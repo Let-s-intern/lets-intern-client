@@ -24,7 +24,7 @@ import TodayButton from './ui/TodayButton';
 // ─── 시간 그리드 상수 ────────────────────────────────────────────────────────
 const TIME_LABEL_W = 48; // 시간 레이블 열 너비 (px)
 const SLOT_MINUTES = 30;
-const SLOT_H = 80; // 30분당 높이 (px)
+const SLOT_H = 120; // 30분당 높이 (px)
 
 /** liveBars에서 표시할 시간 범위를 동적으로 계산한다. */
 function calcTimeRange(liveBars: PeriodBarData[]): {
@@ -142,6 +142,7 @@ const WeeklyCalendar = ({
       // 클램핑: 타임라인 영역 안으로 제한
       const startCol = Math.max(1, rawStart);
       const endCol = Math.min(totalDays + 1, rawEnd);
+      if (endCol <= startCol) continue;
 
       // 겹치지 않는 가장 낮은 row 탐색
       let gridRow = 1;

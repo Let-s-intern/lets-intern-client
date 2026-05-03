@@ -21,13 +21,8 @@ const FeedbackLiveAvailabilityPage = () => {
     Record<number, MentorOpenSlot[]>
   >(MENTOR_OPEN_SCHEDULES_BY_CHALLENGE);
 
-  const challengeIds = useMemo(
-    () => Object.keys(slotsByChallenge).map(Number),
-    [slotsByChallenge],
-  );
-
-  const [activeChallengeId, setActiveChallengeId] = useState<number>(
-    () => challengeIds[0] ?? 1,
+  const [activeChallengeId] = useState<number>(
+    () => Object.keys(MENTOR_OPEN_SCHEDULES_BY_CHALLENGE).map(Number)[0] ?? 1,
   );
 
   const initialSlots = slotsByChallenge[activeChallengeId] ?? [];
@@ -98,29 +93,6 @@ const FeedbackLiveAvailabilityPage = () => {
           라이브 피드백을 진행할 수 있는 시간대를 챌린지별로 설정하세요.
         </p>
       </div>
-
-      {challengeIds.length > 1 && (
-        <div className="flex items-center gap-3">
-          <label
-            htmlFor="active-challenge"
-            className="text-xsmall14 text-neutral-30 font-medium"
-          >
-            챌린지 선택
-          </label>
-          <select
-            id="active-challenge"
-            value={activeChallengeId}
-            onChange={(e) => setActiveChallengeId(Number(e.target.value))}
-            className="border-neutral-80 text-xsmall14 text-neutral-10 h-9 rounded-md border bg-white px-3"
-          >
-            {challengeIds.map((id) => (
-              <option key={id} value={id}>
-                챌린지 {id}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
 
       <div className="border-neutral-85 overflow-hidden rounded-md border bg-white">
         <LiveAvailabilityContent
