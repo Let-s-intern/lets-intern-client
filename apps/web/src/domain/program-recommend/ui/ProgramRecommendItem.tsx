@@ -39,11 +39,7 @@ const ProgramRecommendItem = ({
           maxLength={18}
           size="small"
           onChange={(e) =>
-            onChangeItem(
-              e,
-              item.programInfo.id,
-              item.programInfo.programType,
-            )
+            onChangeItem(e, item.programInfo.id, item.programInfo.programType)
           }
         />
         <Input
@@ -55,11 +51,7 @@ const ProgramRecommendItem = ({
           maxLength={16}
           size="small"
           onChange={(e) =>
-            onChangeItem(
-              e,
-              item.programInfo.id,
-              item.programInfo.programType,
-            )
+            onChangeItem(e, item.programInfo.id, item.programInfo.programType)
           }
         />
       </div>

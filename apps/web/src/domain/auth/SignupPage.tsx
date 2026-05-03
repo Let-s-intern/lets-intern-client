@@ -94,9 +94,7 @@ const SignUp = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xsmall14 text-neutral-0">
-                      이름
-                    </label>
+                    <label className="text-xsmall14 text-neutral-0">이름</label>
                     <LineInput
                       placeholder="이름을 입력해 주세요."
                       value={value.name}

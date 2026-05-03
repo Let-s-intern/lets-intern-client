@@ -84,8 +84,8 @@ const AgreementSection = ({
         >
           <CheckBox checked={value.agreeToPrivacy} width="w-6" showCheckIcon />
           <span className="text-xsmall14 text-neutral-0">
-            [필수]{' '}
-            <span className="text-primary">개인정보 수집 및 이용</span> 동의
+            [필수] <span className="text-primary">개인정보 수집 및 이용</span>{' '}
+            동의
           </span>
         </button>
         <PrivacyLink onClick={onShowPrivacyModal}>보기</PrivacyLink>

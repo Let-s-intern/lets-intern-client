@@ -59,10 +59,7 @@ const ProgramRecommendEditor = ({
     <>
       <Heading2 className="mb-2">프로그램 추천</Heading2>
       <div className="mb-4">
-        <Button
-          variant="outlined"
-          onClick={() => setSelectModalOpen(true)}
-        >
+        <Button variant="outlined" onClick={() => setSelectModalOpen(true)}>
           프로그램 선택
         </Button>
       </div>

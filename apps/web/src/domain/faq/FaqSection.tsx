@@ -48,7 +48,8 @@ function FaqSection<
               faq={faq}
               programType={programType}
               checked={
-                (faqInfo ?? []).findIndex((info) => info.faqId === faq.id) !== -1
+                (faqInfo ?? []).findIndex((info) => info.faqId === faq.id) !==
+                -1
               }
               onCheck={checkFaq}
               onChange={onChange}

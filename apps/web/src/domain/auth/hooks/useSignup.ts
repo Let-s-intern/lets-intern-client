@@ -53,8 +53,9 @@ const formatPhoneNumber = (raw: string): string => {
       p3 ? `${p1}-${p2}-${p3}` : `${p1}-${p2}`,
     );
   }
-  return digits.replace(/(\d{3})(\d{4})(\d+)/, (_, p1, p2, p3) =>
-    `${p1}-${p2}-${p3}`,
+  return digits.replace(
+    /(\d{3})(\d{4})(\d+)/,
+    (_, p1, p2, p3) => `${p1}-${p2}-${p3}`,
   );
 };
 
@@ -139,8 +140,8 @@ const useSignup = () => {
       setError(error);
       setErrorMessage(
         axiosError.response?.status === 409
-          ? (axiosError.response.data?.message || '이미 가입된 사용자입니다.')
-          : (axiosError.response?.data?.message || '회원가입에 실패했습니다.'),
+          ? axiosError.response.data?.message || '이미 가입된 사용자입니다.'
+          : axiosError.response?.data?.message || '회원가입에 실패했습니다.',
       );
     },
   });

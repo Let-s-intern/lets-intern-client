@@ -128,10 +128,7 @@ const ProgramSelectModal = ({
               </thead>
               <tbody>
                 {programList?.map((item) => (
-                  <tr
-                    key={item.programInfo.id}
-                    className="divide-x divide-y"
-                  >
+                  <tr key={item.programInfo.id} className="divide-x divide-y">
                     <td className="text-center">
                       <input
                         className="h-4 w-4"
