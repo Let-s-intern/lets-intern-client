@@ -57,7 +57,6 @@ const SchedulePage = () => {
     missionId: number;
     challengeTitle?: string;
     missionTh?: number;
-    colorIndex?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
   const [isMentorOpenModalOpen, setIsMentorOpenModalOpen] = useState(false);
@@ -91,12 +90,10 @@ const SchedulePage = () => {
       .map((b) => ({
         challengeId: b.challengeId,
         title: b.challengeTitle,
-        colorIndex: b.colorIndex ?? 0,
       }));
     const blockedSlots: Array<{
       date: string;
       time: string;
-      colorIndex: number;
       challengeTitle?: string;
       challengeId?: number;
       menteeName?: string;
@@ -113,7 +110,6 @@ const SchedulePage = () => {
         blockedSlots.push({
           date: slot.date,
           time: slot.time,
-          colorIndex: otherBar?.colorIndex ?? 0,
           challengeTitle: otherBar?.challengeTitle,
           challengeId: id,
           menteeName: appliedMatch?.menteeName,
@@ -123,7 +119,6 @@ const SchedulePage = () => {
     return {
       challengeId: activeChallengeId,
       challengeTitle: mentorOpenChallengeBar.challengeTitle,
-      colorIndex: mentorOpenChallengeBar.colorIndex,
       initialSlots,
       blockedSlots,
       appliedBookings,
@@ -156,7 +151,6 @@ const SchedulePage = () => {
       missionId,
       challengeTitle: bar?.challengeTitle,
       missionTh: bar?.th,
-      colorIndex: bar?.colorIndex,
     });
   };
 
@@ -207,11 +201,10 @@ const SchedulePage = () => {
         </div>
       </div>
 
-      {challenges.map((c, i) => (
+      {challenges.map((c) => (
         <ChallengeDataFetcher
           key={c.challengeId}
           challenge={c}
-          colorIndex={i}
           onData={handleData}
         />
       ))}
@@ -226,7 +219,6 @@ const SchedulePage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
-          colorIndex={feedbackModal.colorIndex}
         />
       ) : (
         <FeedbackModal
@@ -238,7 +230,6 @@ const SchedulePage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
-          colorIndex={feedbackModal.colorIndex}
         />
       )}
 
@@ -252,7 +243,6 @@ const SchedulePage = () => {
         blockedSlots={mentorOpenContext?.blockedSlots ?? []}
         appliedBookings={mentorOpenContext?.appliedBookings ?? []}
         challengeTitle={mentorOpenContext?.challengeTitle}
-        colorIndex={mentorOpenContext?.colorIndex}
         requiredSlotCount={mentorOpenContext?.requiredSlotCount}
         otherChallenges={mentorOpenContext?.otherChallenges ?? []}
         focusDate={mentorOpenContext?.focusDate}

@@ -24,7 +24,6 @@ const LiveFeedbackPeriodBar = ({
 
   return (
     <PeriodBarRows
-      colorIndex={bar.colorIndex}
       typeBadge={
         <>
           <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500" />

@@ -18,7 +18,6 @@ import { WRITTEN_FEEDBACK_CONFIG } from '../challenge-content/writtenFeedback';
 const MissionAttendanceFetcher = ({
   challenge,
   mission,
-  colorIndex,
   onData,
 }: {
   challenge: ChallengeMentorVo;
@@ -29,7 +28,6 @@ const MissionAttendanceFetcher = ({
     startDate: string;
     endDate: string;
   };
-  colorIndex: number;
   onData: (key: string, bar: PeriodBarData) => void;
 }) => {
   const { data: attendanceData } = useMentorAttendanceQuery({
@@ -71,7 +69,6 @@ const MissionAttendanceFetcher = ({
       challengeId: challenge.challengeId,
       challengeTitle: challenge.title,
       th: mission.th,
-      colorIndex,
       ...counts,
     };
 
@@ -106,20 +103,18 @@ const MissionAttendanceFetcher = ({
     onData(`${challenge.challengeId}-${mission.id}-submit`, submitBar);
     onData(`${challenge.challengeId}-${mission.id}-review`, reviewBar);
     onData(`${challenge.challengeId}-${mission.id}-feedback`, feedbackBar);
-  }, [attendanceData, challenge, mission, colorIndex, onData]);
+  }, [attendanceData, challenge, mission, onData]);
 
   return null;
 };
 
 interface ChallengeDataFetcherProps {
   challenge: ChallengeMentorVo;
-  colorIndex: number;
   onData: (key: string, bar: PeriodBarData) => void;
 }
 
 const ChallengeDataFetcher = ({
   challenge,
-  colorIndex,
   onData,
 }: ChallengeDataFetcherProps) => {
   const { data: missionData } = useMentorMissionFeedbackListQuery(
@@ -136,7 +131,6 @@ const ChallengeDataFetcher = ({
           key={m.id}
           challenge={challenge}
           mission={m}
-          colorIndex={colorIndex}
           onData={onData}
         />
       ))}

@@ -10,11 +10,11 @@ import type { PeriodBarData } from '../types';
  * - challengeId: API 연동 시 실제 챌린지 ID로 교체 필요
  *
  * 일정 구성 — 다양한 스케줄 패턴(느슨/빡빡/핸드오프) 예시 포함
- *   [챌린지1] 기필코 경험정리 챌린지 21기 (colorIndex 0, 주황)
+ *   [챌린지1] 기필코 경험정리 챌린지 21기 (서면 + 라이브)
  *     4/28: 오전 3명 (1시간 간격, 느슨)
  *     4/29: 오후 4명 (16:00~17:30 3연속 back-to-back + 18:00 gap)
  *     4/30: 오전 3명 + 오후 5명 (1시간 간격)
- *   [챌린지2] 커리어 설계 챌린지 5기 (colorIndex 1, 하늘)
+ *   [챌린지2] 커리어 설계 챌린지 5기
  *     4/27: 오후 2명 (14:00, 15:00)
  *     4/28: 11:30 서지안(챌린지1 11:00~11:30 직후 즉시 이어서) + 15:00 조예린
  *     4/29: 오전 2명 (10:00/10:30 back-to-back, 챌린지1 오후와 분리)
@@ -36,7 +36,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
   },
 
   // ── 멘티 신청 기간 (4/23~4/24, 2일) ───────────────────────────────────────
@@ -55,7 +54,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 7,
-    colorIndex: 0,
   },
 
   // ── 상단 기간 바 (4/28~4/30, 3일) ──────────────────────────────────────
@@ -74,7 +72,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 5,
     inProgressCount: 0,
     completedCount: 10,
-    colorIndex: 0,
   },
 
   // ── 4/28 (1일차): 오전 3명 — 09:00 / 10:00 / 11:00 ──────────────────
@@ -93,7 +90,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 101,
       menteeName: '이지수',
@@ -117,7 +113,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 102,
       menteeName: '김민준',
@@ -141,7 +136,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 103,
       menteeName: '박서연',
@@ -167,7 +161,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 201,
       menteeName: '정하늘',
@@ -191,7 +184,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 202,
       menteeName: '최지훈',
@@ -215,7 +207,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 203,
       menteeName: '강민서',
@@ -239,7 +230,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 204,
       menteeName: '윤서준',
@@ -265,7 +255,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 301,
       menteeName: '임채원',
@@ -288,7 +277,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 302,
       menteeName: '송지아',
@@ -311,7 +299,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 303,
       menteeName: '한도윤',
@@ -336,7 +323,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 401,
       menteeName: '오지민',
@@ -359,7 +345,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 402,
       menteeName: '노은서',
@@ -382,7 +367,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 403,
       menteeName: '백준혁',
@@ -405,7 +389,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 404,
       menteeName: '류다연',
@@ -428,7 +411,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     liveFeedback: {
       id: 405,
       menteeName: '권태양',
@@ -438,7 +420,7 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // [챌린지2] 커리어 설계 챌린지 5기 — 오버랩 예시용 (colorIndex: 1, 하늘색)
+  // [챌린지2] 커리어 설계 챌린지 5기 — 오버랩 예시용
   // ═══════════════════════════════════════════════════════════════════════════
 
   // ── 멘토 일정 오픈 (4/21, 1일) ──────────────────────────────────────────
@@ -457,7 +439,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 1, // 멘토 오픈 완료
-    colorIndex: 1,
   },
 
   // ── 멘티 신청 기간 (4/22~4/23, 2일) ──────────────────────────────────────
@@ -476,7 +457,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 6,
-    colorIndex: 1,
   },
 
   // ── 상단 기간 바 (4/27~4/29, 3일) — 챌린지1 기간(4/28~4/30)과 4/28·4/29 겹침 ──
@@ -495,7 +475,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 6,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
   },
 
   // ── 4/27: 오후 2명 — 14:00 / 15:00 ─────────────────────────────────────
@@ -514,7 +493,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 501,
       menteeName: '문수아',
@@ -537,7 +515,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 502,
       menteeName: '장우현',
@@ -562,7 +539,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 601,
       menteeName: '서지안',
@@ -585,7 +561,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 602,
       menteeName: '조예린',
@@ -610,7 +585,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 701,
       menteeName: '유채린',
@@ -633,7 +607,6 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
     liveFeedback: {
       id: 702,
       menteeName: '황도경',

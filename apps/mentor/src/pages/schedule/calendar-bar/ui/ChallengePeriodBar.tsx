@@ -30,7 +30,6 @@ const ChallengePeriodBar = ({
   return (
     <div style={style}>
       <PeriodBarRows
-        colorIndex={bar.colorIndex}
         typeBadge={
           <>
             <svg

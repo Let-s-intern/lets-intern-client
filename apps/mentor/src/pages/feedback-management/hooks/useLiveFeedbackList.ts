@@ -7,7 +7,6 @@ import type { PeriodBarData } from '@/pages/schedule/types';
 export interface LiveFeedbackRound {
   challengeId: number;
   challengeTitle: string;
-  colorIndex: number;
   th: number;
   startDate: string;
   endDate: string;
@@ -26,7 +25,6 @@ export interface LiveFeedbackRound {
 export interface LiveFeedbackChallenge {
   challengeId: number;
   title: string;
-  colorIndex: number;
   rounds: LiveFeedbackRound[];
 }
 
@@ -59,7 +57,6 @@ export function useLiveFeedbackList(): {
       periodBars: PeriodBarData[];
       sessionBars: PeriodBarData[];
       title: string;
-      colorIndex: number;
     };
     const byChallenge = new Map<number, Group>();
 
@@ -75,7 +72,6 @@ export function useLiveFeedbackList(): {
           periodBars: [],
           sessionBars: [],
           title: bar.challengeTitle,
-          colorIndex: bar.colorIndex ?? 0,
         });
       }
       const g = byChallenge.get(bar.challengeId)!;
@@ -99,7 +95,6 @@ export function useLiveFeedbackList(): {
           return {
             challengeId,
             challengeTitle: period.challengeTitle,
-            colorIndex: group.colorIndex,
             th: period.th,
             startDate: period.startDate,
             endDate: period.endDate,
@@ -116,7 +111,6 @@ export function useLiveFeedbackList(): {
       challenges.push({
         challengeId,
         title: group.title,
-        colorIndex: group.colorIndex,
         rounds,
       });
     });

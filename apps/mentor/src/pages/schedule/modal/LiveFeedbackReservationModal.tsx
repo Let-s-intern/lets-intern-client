@@ -120,7 +120,6 @@ const LiveFeedbackReservationModal = ({
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
         completedCount={completedCount}
-        colorIndex={selectedBar.colorIndex}
         onClose={onClose}
       />
 

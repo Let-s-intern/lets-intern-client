@@ -1,6 +1,5 @@
 import { mentorConfig } from '@/constants/config';
 import { statusBadgeOrMuted } from '@/constants/statusColors';
-import { getColor } from '@/pages/schedule/constants/colors';
 
 interface FeedbackHeaderProps {
   challengeTitle?: string;
@@ -9,11 +8,14 @@ interface FeedbackHeaderProps {
   waitingCount: number;
   inProgressCount: number;
   completedCount: number;
-  /** 챌린지 컬러 팔레트 인덱스 — 지정 시 상단 바 배경/보더에 반영 */
-  colorIndex?: number;
   onClose: () => void;
 }
 
+/**
+ * 피드백 모달/페이지 상단 바.
+ *
+ * PRD-0503 #4: 챌린지별 색상 구분 제거 — 단일 primary-5 배경으로 통일.
+ */
 const FeedbackHeader = ({
   challengeTitle,
   missionTh,
@@ -21,18 +23,10 @@ const FeedbackHeader = ({
   waitingCount,
   inProgressCount,
   completedCount,
-  colorIndex,
   onClose,
 }: FeedbackHeaderProps) => {
-  const challengeColor =
-    colorIndex !== undefined ? getColor(colorIndex) : null;
-  const bgClass = challengeColor?.body ?? 'bg-primary-5';
-  const borderClass = challengeColor ? `border-b-2 ${challengeColor.border}` : '';
-
   return (
-    <div
-      className={`flex flex-col gap-2 px-4 pb-3 pt-4 md:px-6 md:pt-6 ${bgClass} ${borderClass}`}
-    >
+    <div className="flex flex-col gap-2 bg-primary-5 px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 text-xs font-medium text-neutral-700">

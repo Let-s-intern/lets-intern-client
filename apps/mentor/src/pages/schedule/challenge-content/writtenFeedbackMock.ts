@@ -10,7 +10,6 @@ import type { PeriodBarData } from '../types';
 function buildRoundBars(input: {
   challengeId: number;
   challengeTitle: string;
-  colorIndex: number;
   th: number;
   missionIdBase: number;
   missionStart: string;
@@ -27,7 +26,6 @@ function buildRoundBars(input: {
   const common = {
     challengeId: input.challengeId,
     challengeTitle: input.challengeTitle,
-    colorIndex: input.colorIndex,
     th: input.th,
     submittedCount: input.submittedCount,
     notSubmittedCount: input.notSubmittedCount,
@@ -71,7 +69,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   ...buildRoundBars({
     challengeId: 1,
     challengeTitle: '기필코 경험정리 챌린지 21기',
-    colorIndex: 0,
     th: 1,
     missionIdBase: 1001,
     missionStart: '2026-03-28',
@@ -88,7 +85,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   ...buildRoundBars({
     challengeId: 1,
     challengeTitle: '기필코 경험정리 챌린지 21기',
-    colorIndex: 0,
     th: 2,
     missionIdBase: 1011,
     missionStart: '2026-04-08',
@@ -105,7 +101,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   ...buildRoundBars({
     challengeId: 1,
     challengeTitle: '기필코 경험정리 챌린지 21기',
-    colorIndex: 0,
     th: 3,
     missionIdBase: 1021,
     missionStart: '2026-05-04',
@@ -124,7 +119,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   ...buildRoundBars({
     challengeId: 2,
     challengeTitle: '커리어 설계 챌린지 5기',
-    colorIndex: 1,
     th: 1,
     missionIdBase: 2001,
     missionStart: '2026-04-07',
@@ -141,7 +135,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   ...buildRoundBars({
     challengeId: 2,
     challengeTitle: '커리어 설계 챌린지 5기',
-    colorIndex: 1,
     th: 2,
     missionIdBase: 2011,
     missionStart: '2026-05-03',
@@ -158,6 +151,6 @@ export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
 ];
 
 export const MOCK_CHALLENGE_FILTER_ITEMS = [
-  { challengeId: 1, title: '기필코 경험정리 챌린지 21기', colorIndex: 0 },
-  { challengeId: 2, title: '커리어 설계 챌린지 5기', colorIndex: 1 },
+  { challengeId: 1, title: '기필코 경험정리 챌린지 21기' },
+  { challengeId: 2, title: '커리어 설계 챌린지 5기' },
 ];

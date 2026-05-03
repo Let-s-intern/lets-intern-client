@@ -44,7 +44,6 @@ export interface PeriodBarData {
   waitingCount: number;
   inProgressCount: number;
   completedCount: number;
-  colorIndex?: number;
   /** barType === 'live-feedback' 일 때만 사용 */
   liveFeedback?: LiveFeedbackInfo;
 }

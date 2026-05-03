@@ -42,11 +42,10 @@ const FeedbackSummary = () => {
       />
 
       {/* 자식 fetcher: 챌린지별 미션 출석 데이터를 모아 handleData 로 전달 */}
-      {challenges.map((c, i) => (
+      {challenges.map((c) => (
         <ChallengeDataFetcher
           key={c.challengeId}
           challenge={c}
-          colorIndex={i}
           onData={handleData}
         />
       ))}

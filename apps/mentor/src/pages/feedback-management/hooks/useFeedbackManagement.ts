@@ -11,11 +11,12 @@ interface FeedbackModalState {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
-  colorIndex?: number;
 }
 
 /**
  * Manages feedback management page data and modal state.
+ *
+ * PRD-0503 #4: 챌린지 색상 매핑 제거 — colorIndex 의존성 제거.
  */
 export function useFeedbackManagement() {
   const { data, isLoading } = useMentorFeedbackManagementQuery();
@@ -31,7 +32,6 @@ export function useFeedbackManagement() {
     challenge: Challenge,
     missionId: number,
     missionTh: number,
-    colorIndex?: number,
   ) => {
     setFeedbackModal({
       isOpen: true,
@@ -39,7 +39,6 @@ export function useFeedbackManagement() {
       missionId,
       challengeTitle: challenge.title ?? undefined,
       missionTh,
-      colorIndex,
     });
   };
 

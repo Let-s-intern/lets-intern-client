@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { getColor } from '../../constants/colors';
-
 export interface ProgressCount {
   label: string;
   current: number;
@@ -9,8 +7,7 @@ export interface ProgressCount {
 }
 
 interface PeriodBarRowsProps {
-  colorIndex?: number;
-  /** Row 1 왼쪽 — 타입 배지 ReactNode (색은 내부에서 자동 입힘) */
+  /** Row 1 왼쪽 — 타입 배지 ReactNode */
   typeBadge: ReactNode;
   /** Row 1 카운트 — 멘토 진행. null이면 비액션(compact) 모드로 전환 */
   mentorProgress: ProgressCount | null;
@@ -33,13 +30,13 @@ function isCompleted(p: ProgressCount | null): boolean {
 }
 
 /**
- * Period bar 구조.
+ * Period bar 구조 (PRD-0503 #4 색 구분 제거 후).
  *
- * - 멘토 액션 (mentorProgress !== null) → Full: Row 1 (멘토 진행) + Row 2 (멘티 현황 + 챌린지 배지)
- * - 비액션 (mentorProgress === null)   → Compact: 한 줄, 챌린지 색. 태그 없음.
+ * 챌린지별 색상 매핑을 폐기하고 모든 바를 중성 톤으로 통일한다.
+ *  - Compact 비액션 바: 옅은 회색 본문 + 회색 텍스트
+ *  - Full 액션 바    : 흰 카드 + 회색 보더, 미완료 시 빨간 강조
  */
 const PeriodBarRows = ({
-  colorIndex,
   typeBadge,
   mentorProgress,
   menteeStatus,
@@ -47,8 +44,6 @@ const PeriodBarRows = ({
   onClick,
   phaseCompleted,
 }: PeriodBarRowsProps) => {
-  const color = getColor(colorIndex ?? 0);
-  // 완료 판정: phaseCompleted 명시 > 카운트 기반 자동 판정
   const mentorDone = phaseCompleted ?? isCompleted(mentorProgress);
   const isMentorAction = mentorProgress !== null;
 
@@ -56,7 +51,7 @@ const PeriodBarRows = ({
     'relative z-10 flex w-full flex-col overflow-hidden text-left';
   const interactive = onClick ? ' transition-opacity hover:opacity-80' : '';
 
-  // ── Compact: 비액션 바 (단일 행, 챌린지 색) ──────────────────────────
+  // ── Compact: 비액션 바 (단일 행, 중성 톤) ─────────────────────────────
   if (!isMentorAction) {
     const menteeCountDone = menteeStatus
       ? menteeStatus.current >= menteeStatus.target && menteeStatus.target > 0
@@ -64,16 +59,14 @@ const PeriodBarRows = ({
     const compactDone = phaseCompleted ?? menteeCountDone;
 
     const compact = (
-      <div
-        className={`flex h-7 min-w-0 items-center gap-2 overflow-hidden ${color.text}`}
-      >
+      <div className="flex h-7 min-w-0 items-center gap-2 overflow-hidden text-neutral-30">
         {compactDone && (
           <svg
             width="14"
             height="14"
             viewBox="0 0 12 12"
             fill="none"
-            className={`shrink-0 ${color.text}`}
+            className="shrink-0"
           >
             <path
               d="M2.5 6L5 8.5L9.5 3.5"
@@ -98,10 +91,8 @@ const PeriodBarRows = ({
           )}
         </div>
 
-        <div
-          className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
-        >
-          <div className={`h-0.5 w-full ${color.line}`} />
+        <div className="flex h-3 min-w-0 flex-1 items-center border-r-2 border-neutral-80">
+          <div className="h-0.5 w-full bg-neutral-80" />
         </div>
       </div>
     );
@@ -121,9 +112,9 @@ const PeriodBarRows = ({
   }
 
   // ── Full: 멘토 액션 바 (Row 1 + Row 2) ───────────────────────────────
-  const typeBadgeColor = mentorDone ? color.text : 'text-red-500';
-  const progressColor = mentorDone ? color.text : 'text-neutral-10';
-  const progressLabelColor = mentorDone ? color.text : 'text-neutral-30';
+  const typeBadgeColor = mentorDone ? 'text-neutral-30' : 'text-red-500';
+  const progressColor = mentorDone ? 'text-neutral-30' : 'text-neutral-10';
+  const progressLabelColor = mentorDone ? 'text-neutral-30' : 'text-neutral-30';
 
   const full = (
     <>
@@ -135,7 +126,7 @@ const PeriodBarRows = ({
             height="14"
             viewBox="0 0 12 12"
             fill="none"
-            className={`shrink-0 ${color.text}`}
+            className="shrink-0 text-neutral-30"
           >
             <path
               d="M2.5 6L5 8.5L9.5 3.5"
@@ -158,20 +149,14 @@ const PeriodBarRows = ({
           </span>
         </div>
 
-        <div
-          className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
-        >
-          <div className={`h-0.5 w-full ${color.line}`} />
+        <div className="flex h-3 min-w-0 flex-1 items-center border-r-2 border-neutral-80">
+          <div className="h-0.5 w-full bg-neutral-80" />
         </div>
       </div>
 
       {/* Row 2: 멘티 현황 */}
-      <div
-        className={`flex items-center justify-between gap-2 p-2 ${color.body}`}
-      >
-        <span
-          className={`text-xxsmall12 min-w-0 truncate rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white ${color.badge}`}
-        >
+      <div className="flex items-center justify-between gap-2 bg-neutral-95 p-2">
+        <span className="text-xxsmall12 min-w-0 truncate rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {challengeTitle}
         </span>
 

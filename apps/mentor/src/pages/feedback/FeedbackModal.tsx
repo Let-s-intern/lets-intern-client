@@ -23,8 +23,6 @@ interface FeedbackModalProps {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
-  /** 챌린지 컬러 팔레트 인덱스 — 상단 바 배경에 반영 */
-  colorIndex?: number;
 }
 
 const FeedbackModal = ({
@@ -34,7 +32,6 @@ const FeedbackModal = ({
   missionId,
   challengeTitle,
   missionTh,
-  colorIndex,
 }: FeedbackModalProps) => {
   const {
     selectedIndex,
@@ -78,7 +75,6 @@ const FeedbackModal = ({
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
         completedCount={completedCount}
-        colorIndex={colorIndex}
         onClose={handleClose}
       />
 

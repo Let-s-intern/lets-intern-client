@@ -47,7 +47,6 @@ const WrittenPhaseBar = ({ bar, onClick }: WrittenPhaseBarProps) => {
 
   return (
     <PeriodBarRows
-      colorIndex={bar.colorIndex}
       typeBadge={typeBadge}
       mentorProgress={null}
       menteeStatus={menteeStatus}

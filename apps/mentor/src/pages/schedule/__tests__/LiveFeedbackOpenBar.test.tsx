@@ -23,7 +23,6 @@ function makeBar(overrides: Partial<PeriodBarData> = {}): PeriodBarData {
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
     ...overrides,
   };
 }

@@ -14,7 +14,6 @@ import type {
   AppliedBooking,
   MentorOpenSlot,
 } from '../challenge-content/mentorOpenScheduleMock';
-import { getColor } from '../constants/colors';
 import { currentNow } from '../constants/mockNow';
 
 export interface BlockedSlot {
@@ -22,7 +21,6 @@ export interface BlockedSlot {
   date: string;
   /** "HH:mm" */
   time: string;
-  colorIndex: number;
   challengeTitle?: string;
   /** 점유 챌린지 id — 스왑 시 해당 챌린지 슬롯에서 제거 */
   challengeId?: number;
@@ -75,8 +73,6 @@ interface MentorOpenScheduleModalProps {
   onSave: (slots: MentorOpenSlot[]) => void;
   /** 현재 편집 중인 챌린지 제목 — 상단 바에 표시 */
   challengeTitle?: string;
-  /** 챌린지 컬러 인덱스 — 상단 바 + 선택 셀 색상 */
-  colorIndex?: number;
   /** 다른 챌린지가 이미 점유한 슬롯 — 기본은 스왑 가능, menteeName이 있으면 잠김 */
   blockedSlots?: BlockedSlot[];
   /** 현재 챌린지에서 멘티가 이미 신청 완료한 슬롯 — 선택 해제 불가, 이름 표시 */
@@ -92,7 +88,6 @@ interface MentorOpenScheduleModalProps {
   otherChallenges?: Array<{
     challengeId: number;
     title: string;
-    colorIndex: number;
   }>;
   /** 챌린지 전환 핸들러 */
   onSwitchChallenge?: (challengeId: number) => void;
@@ -106,7 +101,6 @@ const MentorOpenScheduleModal = ({
   initialSlots,
   onSave,
   challengeTitle,
-  colorIndex,
   blockedSlots = [],
   appliedBookings = [],
   onSwapFromOtherChallenge,
@@ -115,7 +109,6 @@ const MentorOpenScheduleModal = ({
   onSwitchChallenge,
   focusDate,
 }: MentorOpenScheduleModalProps) => {
-  const challengeColor = colorIndex !== undefined ? getColor(colorIndex) : null;
   const { alertProps, showConfirm } = useMentorAlert();
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
 
@@ -290,14 +283,10 @@ const MentorOpenScheduleModal = ({
       className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
     >
       <div className="flex h-full flex-col">
-        {/* 챌린지 컬러 상단 바 */}
-        {challengeColor && challengeTitle && (
-          <div
-            className={`relative flex items-center justify-between gap-2 border-b-2 px-6 py-3 ${challengeColor.body} ${challengeColor.border}`}
-          >
-            <span
-              className={`text-xxsmall12 rounded-[3px] px-2 py-1 font-medium text-white ${challengeColor.badge}`}
-            >
+        {/* 챌린지 상단 바 (PRD-0503 #4: 색 구분 제거 — 중성 톤) */}
+        {challengeTitle && (
+          <div className="relative flex items-center justify-between gap-2 border-b border-neutral-80 bg-neutral-95 px-6 py-3">
+            <span className="text-xxsmall12 rounded-[3px] bg-neutral-30 px-2 py-1 font-medium text-white">
               {challengeTitle}
             </span>
 
@@ -328,26 +317,21 @@ const MentorOpenScheduleModal = ({
                 {isSwitcherOpen && (
                   <div className="border-neutral-80 absolute right-0 top-full z-30 mt-1 min-w-[220px] rounded-md border bg-white shadow-lg">
                     <ul className="py-1">
-                      {otherChallenges.map((c) => {
-                        const itemColor = getColor(c.colorIndex);
-                        return (
-                          <li key={c.challengeId}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                onSwitchChallenge(c.challengeId);
-                                setIsSwitcherOpen(false);
-                              }}
-                              className="text-xxsmall12 text-neutral-20 hover:bg-neutral-95 flex w-full items-center gap-2 px-3 py-2 text-left font-medium"
-                            >
-                              <span
-                                className={`h-2 w-2 shrink-0 rounded-full ${itemColor.badge}`}
-                              />
-                              <span className="truncate">{c.title}</span>
-                            </button>
-                          </li>
-                        );
-                      })}
+                      {otherChallenges.map((c) => (
+                        <li key={c.challengeId}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              onSwitchChallenge(c.challengeId);
+                              setIsSwitcherOpen(false);
+                            }}
+                            className="text-xxsmall12 text-neutral-20 hover:bg-neutral-95 flex w-full items-center gap-2 px-3 py-2 text-left font-medium"
+                          >
+                            <span className="h-2 w-2 shrink-0 rounded-full bg-neutral-40" />
+                            <span className="truncate">{c.title}</span>
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
@@ -456,9 +440,6 @@ const MentorOpenScheduleModal = ({
 
                     // 현재 챌린지에서 이미 신청 완료 → 잠김 + 멘티 이름 (클릭 시 안내)
                     if (currentMenteeName) {
-                      const lockedClass = challengeColor
-                        ? `${challengeColor.body} ${challengeColor.text}`
-                        : 'bg-primary-10 text-primary';
                       return (
                         <button
                           key={`${time}-${dayIndex}`}
@@ -472,7 +453,7 @@ const MentorOpenScheduleModal = ({
                             })
                           }
                           title={`${currentMenteeName}님 신청 완료 — 클릭해 안내 확인`}
-                          className={`border-neutral-90 text-xsmall14 border-b border-r px-2 py-1.5 text-center font-medium opacity-80 transition-opacity last:border-r-0 hover:opacity-70 ${lockedClass}`}
+                          className="border-neutral-90 text-xsmall14 bg-primary-10 text-primary border-b border-r px-2 py-1.5 text-center font-medium opacity-80 transition-opacity last:border-r-0 hover:opacity-70"
                         >
                           <span className="flex flex-col leading-tight">
                             <span className="text-xxsmall12 font-normal opacity-70">
@@ -487,7 +468,6 @@ const MentorOpenScheduleModal = ({
                     }
 
                     if (blocker) {
-                      const blockerColor = getColor(blocker.colorIndex);
                       const isLocked = !!blocker.menteeName;
                       const handleBlockerClick = () => {
                         if (isLocked) {
@@ -535,7 +515,7 @@ const MentorOpenScheduleModal = ({
                                 ? `${blocker.challengeTitle} 일정 · 클릭 시 현재 챌린지로 이동`
                                 : '다른 챌린지 일정'
                           }
-                          className={`border-neutral-90 text-xsmall14 border-b border-r px-2 py-1.5 text-center font-medium transition-opacity last:border-r-0 hover:opacity-70 ${blockerColor.body} ${blockerColor.text} ${
+                          className={`border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 border-b border-r px-2 py-1.5 text-center font-medium transition-opacity last:border-r-0 hover:opacity-70 ${
                             isLocked ? 'opacity-80' : ''
                           }`}
                         >
@@ -555,9 +535,8 @@ const MentorOpenScheduleModal = ({
                       );
                     }
 
-                    const selectedClass = challengeColor
-                      ? `${challengeColor.body} ${challengeColor.text} font-semibold`
-                      : 'bg-primary-10 font-semibold text-primary';
+                    const selectedClass =
+                      'bg-primary-10 font-semibold text-primary';
 
                     return (
                       <button

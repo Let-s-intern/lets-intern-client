@@ -1,4 +1,3 @@
-import { getColor } from '../../constants/colors';
 import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
 /** "09:00" → "09:00", "18:30" → "18:30" */
@@ -9,11 +8,10 @@ function formatTimeRange(start: string, end: string): string {
 /**
  * 캘린더 상단 태그 영역에 쓰이는 라이브 피드백 카드 (단일 날짜용).
  *
- * TODO: 클릭 시 라이브 피드백 상세 모달 연결 (API 연동 후 구현)
+ * PRD-0503 #4: 챌린지별 색상 구분 제거 — 중성 톤 보더/배경으로 통일.
  */
 const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
-  const color = getColor(bar.colorIndex ?? 0);
 
   return (
     <div className="flex w-full flex-col overflow-hidden text-left">
@@ -35,16 +33,14 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
 
       {/* Row 3: 구분선 */}
       <div className="flex h-3 items-center">
-        <div className={`h-full w-0.5 ${color.line}`} />
-        <div className={`h-0.5 flex-1 ${color.line}`} />
-        <div className={`h-full w-0.5 ${color.line}`} />
+        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="h-0.5 flex-1 bg-neutral-80" />
+        <div className="h-full w-0.5 bg-neutral-80" />
       </div>
 
       {/* Row 4: 챌린지 배지 + 멘티 이름 */}
-      <div className={`flex flex-col gap-1 p-2 ${color.body}`}>
-        <span
-          className={`text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white ${color.badge}`}
-        >
+      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
+        <span className="text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
         <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
