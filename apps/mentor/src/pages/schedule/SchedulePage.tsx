@@ -8,7 +8,6 @@ import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
 import ChallengeFilter from './ui/ChallengeFilter';
-import WeeklySummary from './ui/WeeklySummary';
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
@@ -19,7 +18,6 @@ import {
 } from './challenge-content/mentorOpenScheduleMock';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
-import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useWrittenFeedbackMockData } from './hooks/useWrittenFeedbackMockData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
@@ -52,9 +50,6 @@ const SchedulePage = () => {
     () => filteredBars.filter((b) => b.barType === 'live-feedback'),
     [filteredBars],
   );
-
-  const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBarsUnfiltered);
 
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
@@ -202,13 +197,6 @@ const SchedulePage = () => {
 
       <div className="flex flex-col gap-14">
         <div className="flex flex-col gap-6">
-          <WeeklySummary
-            totalCount={totalCount}
-            todayDueCount={todayDueCount}
-            incompleteCount={incompleteCount}
-            completedCount={completedCount}
-          />
-
           <div className="flex flex-col gap-4">
             <ChallengeFilter
               challenges={challengeFilterItems}

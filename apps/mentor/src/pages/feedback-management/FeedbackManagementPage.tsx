@@ -10,6 +10,7 @@ import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackRes
 import type { PeriodBarData } from '@/pages/schedule/types';
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
+import FeedbackSummary from './ui/FeedbackSummary';
 import FeedbackTabs, { type FeedbackTabKey } from './ui/FeedbackTabs';
 import LiveFeedbackRoundList from './ui/LiveFeedbackRoundList';
 import { useFeedbackManagement } from './hooks/useFeedbackManagement';
@@ -135,6 +136,8 @@ const FeedbackManagementPage = () => {
       <h1 className="text-lg font-semibold leading-7 text-neutral-900 md:text-xl md:leading-8">
         피드백
       </h1>
+
+      <FeedbackSummary />
 
       <FeedbackTabs activeTab={activeTab} onChange={setActiveTab} />
 
