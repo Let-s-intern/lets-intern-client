@@ -1,18 +1,53 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
-const navItems = [
-  { name: '프로그램 일정', url: '/' },
-  { name: '피드백', url: '/feedback-management' },
-  { name: '참여중인 챌린지', url: '/challenges' },
-  { name: '프로필', url: '/profile' },
-  { name: '공지사항', url: '/notice' },
+interface NavLeaf {
+  type: 'leaf';
+  name: string;
+  url: string;
+}
+
+interface NavGroup {
+  type: 'group';
+  name: string;
+  /** 그룹 활성 판정용 prefix */
+  matchPrefix: string;
+  children: NavLeaf[];
+}
+
+type NavItem = NavLeaf | NavGroup;
+
+const navItems: NavItem[] = [
+  { type: 'leaf', name: '프로그램 일정', url: '/' },
+  {
+    type: 'group',
+    name: '피드백',
+    matchPrefix: '/feedback',
+    children: [
+      { type: 'leaf', name: '피드백 관리', url: '/feedback-management' },
+      { type: 'leaf', name: '가능한 시간 설정', url: '/feedback/live-availability' },
+      { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
+      { type: 'leaf', name: '멘티관리', url: '/feedback/live-mentee' },
+    ],
+  },
+  { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
+  { type: 'leaf', name: '프로필', url: '/profile' },
+  { type: 'leaf', name: '공지사항', url: '/notice' },
 ];
 
 interface MentorSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+function isLeafActive(pathname: string, url: string): boolean {
+  if (url === '/') return pathname === '/';
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
+function isGroupActive(pathname: string, group: NavGroup): boolean {
+  return group.children.some((child) => isLeafActive(pathname, child.url));
 }
 
 export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
@@ -22,6 +57,38 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
   useEffect(() => {
     setIsPwa(window.matchMedia('(display-mode: standalone)').matches);
   }, []);
+
+  // 활성 경로가 포함된 그룹은 자동 펼침
+  const initialOpenGroups = useMemo(() => {
+    const map: Record<string, boolean> = {};
+    for (const item of navItems) {
+      if (item.type === 'group') {
+        map[item.name] = isGroupActive(pathname, item);
+      }
+    }
+    return map;
+  }, [pathname]);
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
+    initialOpenGroups,
+  );
+
+  // 라우트 변경으로 새로 활성화된 그룹은 자동 펼침 (사용자 수동 펼침은 유지)
+  useEffect(() => {
+    setOpenGroups((prev) => {
+      const next = { ...prev };
+      for (const item of navItems) {
+        if (item.type === 'group' && isGroupActive(pathname, item)) {
+          next[item.name] = true;
+        }
+      }
+      return next;
+    });
+  }, [pathname]);
+
+  const toggleGroup = (name: string) => {
+    setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
 
   return (
     <>
@@ -70,24 +137,85 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
             </div>
             <ul className="flex flex-col">
               {navItems.map((item) => {
-                const isActive =
-                  item.url === '/'
-                    ? pathname === '/'
-                    : pathname.startsWith(item.url);
+                if (item.type === 'leaf') {
+                  const isActive = isLeafActive(pathname, item.url);
+                  return (
+                    <li key={item.url}>
+                      <Link
+                        to={item.url}
+                        onClick={onClose}
+                        className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
+                          isActive
+                            ? 'bg-primary-5 text-primary font-semibold'
+                            : 'text-neutral-40 font-medium'
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  );
+                }
 
+                const groupOpen = !!openGroups[item.name];
+                const groupActive = isGroupActive(pathname, item);
                 return (
-                  <li key={item.url}>
-                    <Link
-                      to={item.url}
-                      onClick={onClose}
-                      className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
-                        isActive
-                          ? 'bg-primary-5 text-primary font-semibold'
+                  <li key={item.name}>
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(item.name)}
+                      aria-expanded={groupOpen}
+                      aria-controls={`nav-group-${item.name}`}
+                      className={`text-xsmall16 flex w-full items-center justify-between rounded px-3 py-2.5 text-left tracking-[-0.6px] ${
+                        groupActive
+                          ? 'text-primary font-semibold'
                           : 'text-neutral-40 font-medium'
                       }`}
                     >
-                      {item.name}
-                    </Link>
+                      <span>{item.name}</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                        className={`transition-transform ${
+                          groupOpen ? 'rotate-180' : ''
+                        }`}
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M3 4.5L6 7.5L9 4.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    {groupOpen && (
+                      <ul
+                        id={`nav-group-${item.name}`}
+                        className="mt-0.5 flex flex-col"
+                      >
+                        {item.children.map((child) => {
+                          const childActive = isLeafActive(pathname, child.url);
+                          return (
+                            <li key={child.url}>
+                              <Link
+                                to={child.url}
+                                onClick={onClose}
+                                className={`text-xsmall14 block rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
+                                  childActive
+                                    ? 'bg-primary-5 text-primary font-semibold'
+                                    : 'text-neutral-40 font-medium'
+                                }`}
+                              >
+                                {child.name}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </li>
                 );
               })}

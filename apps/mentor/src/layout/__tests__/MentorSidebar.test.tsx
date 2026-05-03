@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -38,5 +39,43 @@ describe('MentorSidebar', () => {
 
     expect(screen.getByText('피드백')).toBeInTheDocument();
     expect(screen.queryByText('피드백 현황')).not.toBeInTheDocument();
+  });
+
+  it('피드백 그룹은 자식 라우트에 진입하면 자동으로 펼쳐지고 3개 하위 메뉴가 노출된다', () => {
+    render(
+      <MemoryRouter initialEntries={['/feedback/live-availability']}>
+        <MentorSidebar isOpen onClose={() => {}} />
+      </MemoryRouter>,
+    );
+
+    // 펼쳐진 상태이므로 하위 메뉴가 모두 보여야 함
+    expect(screen.getByText('가능한 시간 설정')).toBeInTheDocument();
+    expect(screen.getByText('예약 현황')).toBeInTheDocument();
+    expect(screen.getByText('멘티관리')).toBeInTheDocument();
+    expect(screen.getByText('피드백 관리')).toBeInTheDocument();
+
+    const groupButton = screen.getByRole('button', { name: /피드백/ });
+    expect(groupButton).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('피드백 그룹 토글 버튼을 클릭하면 펼침/접힘이 전환된다', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <MentorSidebar isOpen onClose={() => {}} />
+      </MemoryRouter>,
+    );
+
+    const groupButton = screen.getByRole('button', { name: /피드백/ });
+    expect(groupButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('가능한 시간 설정')).not.toBeInTheDocument();
+
+    await user.click(groupButton);
+    expect(groupButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('가능한 시간 설정')).toBeInTheDocument();
+
+    await user.click(groupButton);
+    expect(groupButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('가능한 시간 설정')).not.toBeInTheDocument();
   });
 });
