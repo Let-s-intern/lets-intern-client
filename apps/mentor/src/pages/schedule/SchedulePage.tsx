@@ -80,17 +80,6 @@ const SchedulePage = () => {
         b.challengeId === activeChallengeId,
     );
     const requiredSlotCount = periodBar?.submittedCount;
-    // 다른 챌린지 목록 (라이브 피드백이 있는 챌린지만)
-    const otherChallenges = allBarsUnfiltered
-      .filter(
-        (b) =>
-          b.barType === 'live-feedback-mentor-open' &&
-          b.challengeId !== activeChallengeId,
-      )
-      .map((b) => ({
-        challengeId: b.challengeId,
-        title: b.challengeTitle,
-      }));
     const blockedSlots: Array<{
       date: string;
       time: string;
@@ -123,7 +112,6 @@ const SchedulePage = () => {
       blockedSlots,
       appliedBookings,
       requiredSlotCount,
-      otherChallenges,
       focusDate: periodBar?.startDate,
     };
   }, [mentorOpenChallengeBar, mentorOpenSlotsByChallenge, allBarsUnfiltered]);
@@ -244,16 +232,7 @@ const SchedulePage = () => {
         appliedBookings={mentorOpenContext?.appliedBookings ?? []}
         challengeTitle={mentorOpenContext?.challengeTitle}
         requiredSlotCount={mentorOpenContext?.requiredSlotCount}
-        otherChallenges={mentorOpenContext?.otherChallenges ?? []}
         focusDate={mentorOpenContext?.focusDate}
-        onSwitchChallenge={(challengeId) => {
-          const next = allBarsUnfiltered.find(
-            (b) =>
-              b.barType === 'live-feedback-mentor-open' &&
-              b.challengeId === challengeId,
-          );
-          if (next) setMentorOpenChallengeBar(next);
-        }}
         onSave={(slots) => {
           const challengeId = mentorOpenContext?.challengeId;
           if (challengeId !== undefined) {

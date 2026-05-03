@@ -29,7 +29,7 @@ export interface BlockedSlot {
 
 const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
 const START_HOUR = 9;
-const END_HOUR = 17;
+const END_HOUR = 22;
 const SLOT_MINUTE_STEP = 30;
 
 function createTimeSlots(): string[] {
@@ -83,13 +83,6 @@ export interface LiveAvailabilityContentProps {
   ) => void;
   /** 해당 챌린지에 신청 예정인 멘티 수 — 최소 이만큼 오픈해야 저장 가능 */
   requiredSlotCount?: number;
-  /** 상단 우측 "다른 챌린지로 이동" 드롭다운에 노출할 챌린지 목록 */
-  otherChallenges?: Array<{
-    challengeId: number;
-    title: string;
-  }>;
-  /** 챌린지 전환 핸들러 */
-  onSwitchChallenge?: (challengeId: number) => void;
   /** 기본으로 표시할 주의 날짜 (예: 라이브 피드백 period startDate) — 없으면 "다음 주" */
   focusDate?: string;
   /** 페이지 모드 등에서 헤더 타이틀/설명을 노출할지 여부 (기본 true) */
@@ -111,13 +104,10 @@ const LiveAvailabilityContent = ({
   appliedBookings = [],
   onSwapFromOtherChallenge,
   requiredSlotCount,
-  otherChallenges = [],
-  onSwitchChallenge,
   focusDate,
   showHeader = true,
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
-  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
 
   /** 이미 신청 완료된 슬롯 클릭 시 — 챌린지·일시·멘티 정보를 명시 + 운영진 문의 옵션 */
   const handleAppliedSlotClick = (info: {
@@ -304,53 +294,6 @@ const LiveAvailabilityContent = ({
             {challengeTitle}
           </span>
 
-          {otherChallenges.length > 0 && onSwitchChallenge && (
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsSwitcherOpen((v) => !v)}
-                className="border-neutral-80 text-xxsmall12 text-neutral-30 hover:bg-neutral-95 inline-flex items-center gap-1 rounded-md border bg-white px-3 py-1.5 font-medium transition-colors"
-              >
-                다른 챌린지로 이동
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  className={`transition-transform ${isSwitcherOpen ? 'rotate-180' : ''}`}
-                >
-                  <path
-                    d="M2 3.5L5 6.5L8 3.5"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              {isSwitcherOpen && (
-                <div className="border-neutral-80 absolute right-0 top-full z-30 mt-1 min-w-[220px] rounded-md border bg-white shadow-lg">
-                  <ul className="py-1">
-                    {otherChallenges.map((c) => (
-                      <li key={c.challengeId}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onSwitchChallenge(c.challengeId);
-                            setIsSwitcherOpen(false);
-                          }}
-                          className="text-xxsmall12 text-neutral-20 hover:bg-neutral-95 flex w-full items-center gap-2 px-3 py-2 text-left font-medium"
-                        >
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-neutral-40" />
-                          <span className="truncate">{c.title}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 
@@ -423,15 +366,15 @@ const LiveAvailabilityContent = ({
           </p>
         </div>
 
-        <div className="border-neutral-85 overflow-hidden rounded-md border">
+        <div className="border-neutral-85 max-h-[520px] overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[72px_repeat(7,minmax(88px,1fr))]">
-            <div className="bg-neutral-98 border-neutral-85 text-xsmall14 text-neutral-40 border-b border-r px-2 py-2 text-center font-medium">
+            <div className="bg-neutral-98 border-neutral-85 text-xsmall14 text-neutral-40 sticky top-0 z-10 border-b border-r px-2 py-2 text-center font-medium">
               시간
             </div>
             {days.map((day, index) => (
               <div
                 key={index}
-                className="bg-neutral-98 border-neutral-85 border-b border-r px-2 py-2 text-center last:border-r-0"
+                className="bg-neutral-98 border-neutral-85 sticky top-0 z-10 border-b border-r px-2 py-2 text-center last:border-r-0"
               >
                 <p className="text-xxsmall12 text-neutral-40">
                   {WEEK_DAYS[index]}

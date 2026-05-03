@@ -63,10 +63,6 @@ const FeedbackLiveAvailabilityPage = () => {
     return list;
   }, [slotsByChallenge, activeChallengeId]);
 
-  const otherChallenges = challengeIds
-    .filter((id) => id !== activeChallengeId)
-    .map((id) => ({ challengeId: id, title: `챌린지 ${id}` }));
-
   const handleSave = (slots: MentorOpenSlot[]) => {
     setSlotsByChallenge((prev) => ({ ...prev, [activeChallengeId]: slots }));
     // TODO: 토스트 컴포넌트 연결 (현재는 임시 알림)
@@ -134,8 +130,6 @@ const FeedbackLiveAvailabilityPage = () => {
           challengeTitle={`챌린지 ${activeChallengeId}`}
           blockedSlots={blockedSlots}
           appliedBookings={appliedBookings}
-          otherChallenges={otherChallenges}
-          onSwitchChallenge={setActiveChallengeId}
           onSwapFromOtherChallenge={handleSwap}
           resetKey={activeChallengeId}
         />
