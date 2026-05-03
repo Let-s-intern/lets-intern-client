@@ -12,6 +12,7 @@ import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
 import { CompactFeedbackCard } from '../calendar-bar/ui/FeedbackCard';
 import { LiveFeedbackTimeBlock } from '../calendar-bar/ui/LiveFeedbackCard';
 import LiveFeedbackOpenBar from '../calendar-bar/ui/LiveFeedbackOpenBar';
+import WrittenFeedbackBar from '../calendar-bar/ui/WrittenFeedbackBar';
 import WrittenPhaseBar from '../calendar-bar/ui/WrittenPhaseBar';
 import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
 import type { PeriodBarData } from '../types';
@@ -256,6 +257,9 @@ const WeeklyCalendar = ({
                               : undefined
                         }
                       />
+                    ) : bar.barType === 'written-feedback' ? (
+                      // PRD-0503 #3: 새 디자인 — 카드형 한 줄 (말풍선 + 라벨 + 챌린지명 + chevron)
+                      <WrittenFeedbackBar bar={bar} onBarClick={onBarClick} />
                     ) : bar.barType === 'written-mission-submit' ||
                       bar.barType === 'written-review' ? (
                       <WrittenPhaseBar bar={bar} />
