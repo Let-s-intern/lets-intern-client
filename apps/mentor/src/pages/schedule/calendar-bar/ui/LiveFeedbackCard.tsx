@@ -1,3 +1,4 @@
+import LiveFeedbackIcon from '@/common/icon/feedback/LiveFeedbackIcon';
 import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
 /** "09:00" → "09:00", "18:30" → "18:30" */
@@ -110,12 +111,13 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
 
   return (
     <div
-      className={`flex h-full w-full flex-col gap-1 overflow-hidden rounded-lg border border-neutral-80 px-2 py-1.5 ${
+      className={`flex h-full w-full flex-col gap-1 overflow-hidden rounded-sm border border-neutral-80 px-2 py-1.5 ${
         isDim ? 'bg-neutral-95' : 'bg-white'
       }`}
     >
-      {/* Row 1: 시작 시간 + 상태 배지 (진행중 등) */}
+      {/* Row 1: 아이콘 + 시작 시간 + 상태 배지 (진행중 등) */}
       <div className="flex min-w-0 items-center gap-1.5">
+        <LiveFeedbackIcon size={14} className="shrink-0" />
         <span
           className={`text-xxsmall12 shrink-0 font-bold leading-none ${
             isDim ? 'text-neutral-40' : 'text-neutral-10'
@@ -169,6 +171,26 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
       <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
         {bar.challengeTitle}
       </span>
+
+      {/* chevron */}
+      <div className="mt-auto flex justify-end">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          className="shrink-0 text-neutral-40"
+          aria-hidden
+        >
+          <path
+            d="M9 6l6 6-6 6"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   );
 };

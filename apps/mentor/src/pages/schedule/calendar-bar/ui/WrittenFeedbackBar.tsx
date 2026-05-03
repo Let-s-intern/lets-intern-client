@@ -1,5 +1,6 @@
 'use client';
 
+import WrittenFeedbackIcon from '@/common/icon/feedback/WrittenFeedbackIcon';
 import { currentNow } from '../../constants/mockNow';
 import type { PeriodBarData } from '../../types';
 
@@ -30,35 +31,13 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
-      className="flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg border border-neutral-80 bg-white px-3 text-left transition-colors hover:bg-neutral-95"
+      className="flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border border-neutral-80 bg-white px-3 text-left transition-colors hover:bg-neutral-95"
       aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차${
         isCompleted ? ' (완료)' : ''
       } (총 ${totalMentees}명)`}
     >
       {/* 좌측: 말풍선 아이콘 */}
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="shrink-0 text-emerald-500"
-        aria-hidden
-      >
-        <path
-          d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9.5L5.5 19.5a.6.6 0 0 1-1-.42V5Z"
-          fill="currentColor"
-          fillOpacity="0.18"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8 8.5h8M8 11.5h5"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-      </svg>
+      <WrittenFeedbackIcon size={18} className="shrink-0" />
 
       {/* 라벨 */}
       <span className="text-xsmall14 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px] text-neutral-10">

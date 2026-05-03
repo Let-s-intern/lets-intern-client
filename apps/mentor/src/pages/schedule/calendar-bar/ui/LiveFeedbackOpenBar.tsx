@@ -1,5 +1,6 @@
 'use client';
 
+import LiveFeedbackOpenIcon from '@/common/icon/feedback/LiveFeedbackOpenIcon';
 import type { PeriodBarData } from '../../types';
 import { currentNow } from '../../constants/mockNow';
 
@@ -40,7 +41,7 @@ const LiveFeedbackOpenBar = ({
     <Tag
       type={interactive ? 'button' : undefined}
       onClick={interactive ? onMentorOpenClick : undefined}
-      className={`flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg border border-neutral-80 bg-white px-3 text-left ${
+      className={`flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border border-neutral-80 bg-white px-3 text-left ${
         interactive ? 'transition-colors hover:bg-neutral-95' : ''
       }`}
       aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}${
@@ -48,32 +49,7 @@ const LiveFeedbackOpenBar = ({
       }`}
     >
       {/* 좌측: 캘린더 아이콘 */}
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="shrink-0 text-blue-500"
-        aria-hidden
-      >
-        <rect
-          x="3.5"
-          y="5"
-          width="17"
-          height="15"
-          rx="2"
-          fill="currentColor"
-          fillOpacity="0.18"
-          stroke="currentColor"
-          strokeWidth="1.4"
-        />
-        <path
-          d="M8 3v4M16 3v4M3.5 10h17"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-      </svg>
+      <LiveFeedbackOpenIcon size={18} className="shrink-0" />
 
       {/* 라벨: LIVE(빨강) + " 피드백 일정 오픈" */}
       <span className="text-xsmall14 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px] text-neutral-10">

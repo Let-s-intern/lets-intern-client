@@ -1,5 +1,8 @@
 'use client';
 
+import LiveFeedbackIcon from '@/common/icon/feedback/LiveFeedbackIcon';
+import LiveFeedbackOpenIcon from '@/common/icon/feedback/LiveFeedbackOpenIcon';
+import WrittenFeedbackIcon from '@/common/icon/feedback/WrittenFeedbackIcon';
 import { twMerge } from '@/lib/twMerge';
 
 import {
@@ -38,7 +41,7 @@ const FeedbackTagFilter = ({
         type="button"
         onClick={onClearAll}
         className={twMerge(
-          'rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
+          'rounded-md border border-neutral-80 bg-white px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
           isAllSelected
             ? 'border-primary bg-primary text-white'
             : 'text-neutral-500 hover:bg-neutral-50',
@@ -77,7 +80,7 @@ const FeedbackTagButton = ({
       type="button"
       onClick={onToggle}
       className={twMerge(
-        'flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
+        'flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
         colorClass,
       )}
       aria-pressed={isSelected}
@@ -88,78 +91,15 @@ const FeedbackTagButton = ({
   );
 };
 
-/** 피드백 종류별 아이콘 — currentColor 로 active/inactive 시 자동 반영 */
+/** 피드백 종류별 아이콘 */
 const FeedbackTagIcon = ({ type }: { type: FeedbackTagType }) => {
   if (type === 'written') {
-    return (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="shrink-0"
-        aria-hidden
-      >
-        <path
-          d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9.5L5.5 19.5a.6.6 0 0 1-1-.42V5Z"
-          fill="currentColor"
-          fillOpacity="0.18"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8 8.5h8M8 11.5h5"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
+    return <WrittenFeedbackIcon size={14} className="shrink-0" />;
   }
   if (type === 'live') {
-    return (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 12 12"
-        fill="none"
-        className="shrink-0"
-        aria-hidden
-      >
-        <path d="M3 2.5L9.5 6L3 9.5V2.5Z" fill="currentColor" />
-      </svg>
-    );
+    return <LiveFeedbackIcon size={14} className="shrink-0" />;
   }
-  // live-open
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      className="shrink-0"
-      aria-hidden
-    >
-      <rect
-        x="3.5"
-        y="5"
-        width="17"
-        height="15"
-        rx="2"
-        fill="currentColor"
-        fillOpacity="0.18"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-      <path
-        d="M8 3v4M16 3v4M3.5 10h17"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+  return <LiveFeedbackOpenIcon size={14} className="shrink-0" />;
 };
 
 export default FeedbackTagFilter;

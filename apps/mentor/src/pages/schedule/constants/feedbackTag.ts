@@ -36,20 +36,20 @@ export const FEEDBACK_TAGS: readonly FeedbackTagDescriptor[] = [
   {
     type: 'written',
     label: '서면 피드백',
-    inactiveClass: 'bg-neutral-95 text-neutral-30',
-    activeClass: 'bg-neutral-30 text-white',
+    inactiveClass: 'bg-white border border-neutral-80 text-neutral-30',
+    activeClass: 'bg-neutral-30 text-white border border-neutral-30',
   },
   {
     type: 'live',
     label: 'LIVE 피드백',
-    inactiveClass: 'bg-red-50 text-red-500',
-    activeClass: 'bg-red-500 text-white',
+    inactiveClass: 'bg-white border border-neutral-80 text-red-500',
+    activeClass: 'bg-red-500 text-white border border-red-500',
   },
   {
     type: 'live-open',
     label: 'LIVE 피드백 일정 오픈',
-    inactiveClass: 'bg-blue-50 text-blue-500',
-    activeClass: 'bg-blue-500 text-white',
+    inactiveClass: 'bg-white border border-neutral-80 text-blue-500',
+    activeClass: 'bg-blue-500 text-white border border-blue-500',
   },
 ] as const;
 

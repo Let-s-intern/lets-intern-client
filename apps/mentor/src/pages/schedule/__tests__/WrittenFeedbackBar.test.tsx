@@ -82,4 +82,10 @@ describe('WrittenFeedbackBar (PRD-0503 #3 디자인)', () => {
 
     expect(onBarClick).toHaveBeenCalledWith(7, 99);
   });
+
+  it('버튼에 rounded-sm 클래스가 적용된다', () => {
+    render(<WrittenFeedbackBar bar={makeBar()} onBarClick={() => {}} />);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('rounded-sm');
+  });
 });

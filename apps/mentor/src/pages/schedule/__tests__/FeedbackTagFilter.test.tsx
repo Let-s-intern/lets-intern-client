@@ -90,4 +90,31 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
     fireEvent.click(screen.getByRole('button', { name: '전체' }));
     expect(onClearAll).toHaveBeenCalledTimes(1);
   });
+
+  it('태그 버튼에 rounded-md 클래스가 적용된다 (rounded-full 없음)', () => {
+    const { container } = render(
+      <FeedbackTagFilter
+        selectedTags={new Set<FeedbackTagType>()}
+        onToggle={noop}
+        onClearAll={noop}
+      />,
+    );
+    const buttons = container.querySelectorAll('button');
+    buttons.forEach((btn) => {
+      expect(btn.className).not.toContain('rounded-full');
+    });
+  });
+
+  it('비활성 태그 버튼에 bg-white 클래스가 적용된다', () => {
+    render(
+      <FeedbackTagFilter
+        selectedTags={new Set<FeedbackTagType>()}
+        onToggle={noop}
+        onClearAll={noop}
+      />,
+    );
+    const writtenBtn = screen
+      .getByRole('button', { name: /서면 피드백/ });
+    expect(writtenBtn.className).toContain('bg-white');
+  });
 });
