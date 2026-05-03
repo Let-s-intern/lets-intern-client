@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { PeriodBarData } from '../types';
+import { filterMentorSchedule } from '../utils/filterMentorSchedule';
 
 interface UseScheduleDataOptions {
   /** 캘린더/네비게이션에 추가로 포함할 mock 바 (예: 서면 피드백 mock) */
@@ -89,13 +90,20 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
     return result;
   }, [barsMap, remappedExtraBars]);
 
-  // Filtered bars — used by WeeklyCalendar
+  // Mentor whitelist filter — 캘린더에는 멘토가 직접 행동/인지해야 하는 3종 바만 노출
+  // (PRD-0503 #2). allBarsUnfiltered는 모달 데이터 흐름용으로 그대로 유지.
+  const mentorVisibleBars = useMemo(
+    () => filterMentorSchedule(allBarsUnfiltered),
+    [allBarsUnfiltered],
+  );
+
+  // Filtered bars — used by WeeklyCalendar (화이트리스트 ∩ 챌린지 선택)
   const filteredBars = useMemo(() => {
-    if (selectedChallengeId === null) return allBarsUnfiltered;
-    return allBarsUnfiltered.filter(
+    if (selectedChallengeId === null) return mentorVisibleBars;
+    return mentorVisibleBars.filter(
       (bar) => bar.challengeId === selectedChallengeId,
     );
-  }, [allBarsUnfiltered, selectedChallengeId]);
+  }, [mentorVisibleBars, selectedChallengeId]);
 
   /**
    * 필터 태그 클릭 네비게이션 — 멘토가 직접 액션하는 바로만 이동.
