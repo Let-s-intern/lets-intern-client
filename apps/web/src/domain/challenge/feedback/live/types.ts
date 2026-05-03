@@ -1,15 +1,25 @@
+// 시간 슬롯 예약 상태
 export type SlotStatus = 'expired' | 'unavailable' | 'booked' | 'available';
 
+// 미션 기간
+export interface MissionPeriod {
+  startDay: string; // 'YYYY-MM-DD'
+  endDay: string; // 'YYYY-MM-DD'
+}
+
+// 사용자가 선택한 예약 슬롯 (날짜 + 시작 시간)
 export interface SelectedSlot {
   date: string; // 'YYYY-MM-DD'
   time: string; // '09:00'
 }
 
+// 특정 날짜의 전체 시간 슬롯 상태 목록
 export interface DaySchedule {
   date: string; // 'YYYY-MM-DD'
   slots: Record<string, SlotStatus>;
 }
 
+// 예약 가능한 시간대 (30분 단위)
 export const TIME_SLOTS = [
   '09:00',
   '09:30',

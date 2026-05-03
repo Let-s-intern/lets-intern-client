@@ -1,5 +1,6 @@
 'use client';
 
+import type { MissionPeriod } from './types';
 import { useTimeSlotState } from './hooks/useTimeSlotState';
 import ReservationBar from './ui/ReservationBar';
 import TimeSlotGrid from './ui/TimeSlotGrid';
@@ -7,20 +8,23 @@ import WeekNav from './ui/WeekNav';
 
 interface Props {
   selectedMentorId: string | null;
+  period: MissionPeriod;
 }
 
-const TimeSlotSection = ({ selectedMentorId }: Props) => {
+const TimeSlotSection = ({ selectedMentorId, period }: Props) => {
   const {
     weekStart,
     selectedSlot,
     mentor,
     schedule,
+    canGoPrev,
+    canGoNext,
     handlePrev,
     handleNext,
     handleSlotSelect,
     handleCancel,
     handleConfirm,
-  } = useTimeSlotState(selectedMentorId);
+  } = useTimeSlotState(selectedMentorId, period);
 
   return (
     <section>
@@ -31,6 +35,8 @@ const TimeSlotSection = ({ selectedMentorId }: Props) => {
         {selectedMentorId && (
           <WeekNav
             weekStart={weekStart}
+            canGoPrev={canGoPrev}
+            canGoNext={canGoNext}
             onPrev={handlePrev}
             onNext={handleNext}
           />

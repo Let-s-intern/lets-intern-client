@@ -30,15 +30,24 @@ const LiveFeedbackPage = () => {
           config={config}
           onMobileClick={() => handleMobileClick(index)}
         >
-          <LiveFeedbackDetail />
+          <LiveFeedbackDetail
+            period={{
+              startDay: config.startDay ?? '',
+              endDay: config.endDay ?? '',
+            }}
+          />
         </FeedbackMissionCard>
       )),
     [handleMobileClick],
   );
 
+  const mobileMission =
+    selectedMission !== null
+      ? DUMMY_FEEDBACK_MISSIONS[Number(selectedMission)]
+      : null;
+
   return (
     <>
-      {/* 카드 목록 - 모바일에서 예약 뷰가 열리면 숨김 */}
       <div
         className={clsx(
           'grid grid-cols-2 gap-x-5 gap-y-10 pt-8 md:flex md:flex-col md:gap-y-5',
@@ -48,11 +57,15 @@ const LiveFeedbackPage = () => {
         {cardList}
       </div>
 
-      {/* 모바일 전체화면 예약 뷰 - fixed로 탭/헤더 위에 덮어씌움 */}
-      {isMissionSelected && (
+      {mobileMission && (
         <div className="z-1 fixed inset-x-0 bottom-0 top-[44px] overflow-y-auto bg-white px-5 md:hidden">
           <BackHeader to={pathname}>라이브 예약 신청하기</BackHeader>
-          <LiveFeedbackDetail />
+          <LiveFeedbackDetail
+            period={{
+              startDay: mobileMission.startDay ?? '',
+              endDay: mobileMission.endDay ?? '',
+            }}
+          />
         </div>
       )}
     </>

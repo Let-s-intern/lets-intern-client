@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import type { MissionPeriod } from './live/types';
 import MentorSection from './live/MentorSection';
 import TimeSlotSection from './live/TimeSlotSection';
 
-const LiveFeedbackDetail = () => {
+interface Props {
+  period: MissionPeriod;
+}
+
+const LiveFeedbackDetail = ({ period }: Props) => {
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
 
   return (
@@ -13,7 +18,7 @@ const LiveFeedbackDetail = () => {
         selectedMentorId={selectedMentorId}
         onSelect={setSelectedMentorId}
       />
-      <TimeSlotSection selectedMentorId={selectedMentorId} />
+      <TimeSlotSection selectedMentorId={selectedMentorId} period={period} />
     </div>
   );
 };

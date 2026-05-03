@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DUMMY_MENTORS, getMentorSchedule } from '../../dummy';
-import type { SelectedSlot } from '../types';
-import { addDays, getWeekStart } from '../utils';
+import type { MissionPeriod, SelectedSlot } from '../types';
+import { addDays, getWeekStart, toDateString } from '../utils';
 
-export function useTimeSlotState(selectedMentorId: string | null) {
-  const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()));
+export function useTimeSlotState(
+  selectedMentorId: string | null,
+  period: MissionPeriod,
+) {
+  const [weekStart, setWeekStart] = useState(() => {
+    const today = new Date();
+    const start = new Date(period.startDay);
+    const end = new Date(period.endDay);
+    const base = today < start ? start : today > end ? end : today;
+    return getWeekStart(base);
+  });
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
   useEffect(() => {
@@ -22,12 +31,21 @@ export function useTimeSlotState(selectedMentorId: string | null) {
     [selectedMentorId, weekStart],
   );
 
+  const canGoPrev =
+    toDateString(weekStart) >
+    toDateString(getWeekStart(new Date(period.startDay)));
+  const canGoNext =
+    toDateString(weekStart) <
+    toDateString(getWeekStart(new Date(period.endDay)));
+
   const handlePrev = () => {
+    if (!canGoPrev) return;
     setWeekStart((prev) => addDays(prev, -7));
     setSelectedSlot(null);
   };
 
   const handleNext = () => {
+    if (!canGoNext) return;
     setWeekStart((prev) => addDays(prev, 7));
     setSelectedSlot(null);
   };
@@ -49,6 +67,8 @@ export function useTimeSlotState(selectedMentorId: string | null) {
     selectedSlot,
     mentor,
     schedule,
+    canGoPrev,
+    canGoNext,
     handlePrev,
     handleNext,
     handleSlotSelect,

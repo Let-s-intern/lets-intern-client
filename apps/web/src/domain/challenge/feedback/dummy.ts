@@ -83,7 +83,8 @@ export const DUMMY_FEEDBACK_MISSIONS: FeedbackMissionCardConfig[] = [
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     statusLabel: '예약 전',
     categoryLabel: '프로그램 종류',
-    dateText: '진행기간 26.00.00 ~ 26.00.00',
+    startDay: '2026-05-04',
+    endDay: '2026-05-31',
     buttonLabel: '예약 신청',
   },
   {
@@ -92,7 +93,8 @@ export const DUMMY_FEEDBACK_MISSIONS: FeedbackMissionCardConfig[] = [
     description: '미션설명 미션설명 미션설명 미션설명',
     statusLabel: '예약 전',
     categoryLabel: '프로그램 종류',
-    dateText: '진행기간 26.00.00 ~ 26.00.00',
+    startDay: '2026-06-01',
+    endDay: '2026-06-28',
     buttonLabel: '예약 신청',
   },
 ];

@@ -9,8 +9,14 @@ export interface FeedbackMissionCardConfig {
   description?: string;
   statusLabel?: string;
   categoryLabel?: string;
-  dateText?: string;
+  startDay?: string; // 'YYYY-MM-DD'
+  endDay?: string; // 'YYYY-MM-DD'
   buttonLabel: string;
+}
+
+function formatDay(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-');
+  return `${year.slice(2)}.${month}.${day}`;
 }
 
 interface FeedbackMissionCardProps {
@@ -31,9 +37,15 @@ const FeedbackMissionCard = ({
     description,
     statusLabel,
     categoryLabel,
-    dateText,
+    startDay,
+    endDay,
     buttonLabel,
   } = config;
+
+  const dateText =
+    startDay && endDay
+      ? `진행기간 ${formatDay(startDay)} ~ ${formatDay(endDay)}`
+      : undefined;
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">

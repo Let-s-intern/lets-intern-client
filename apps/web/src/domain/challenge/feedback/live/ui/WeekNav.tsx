@@ -2,16 +2,25 @@ import { formatWeekRange } from '../utils';
 
 interface Props {
   weekStart: Date;
+  canGoPrev: boolean;
+  canGoNext: boolean;
   onPrev: () => void;
   onNext: () => void;
 }
 
-const WeekNav = ({ weekStart, onPrev, onNext }: Props) => (
+const WeekNav = ({
+  weekStart,
+  canGoPrev,
+  canGoNext,
+  onPrev,
+  onNext,
+}: Props) => (
   <div className="flex items-center gap-2">
     <button
       type="button"
       onClick={onPrev}
-      className="hover:bg-primary-5 rounded-full p-1"
+      disabled={!canGoPrev}
+      className="hover:bg-primary-5 rounded-full p-1 disabled:opacity-30"
     >
       <img src="/icons/Chevron_Left_MD.svg" alt="<" className="h-4 w-4" />
     </button>
@@ -21,7 +30,8 @@ const WeekNav = ({ weekStart, onPrev, onNext }: Props) => (
     <button
       type="button"
       onClick={onNext}
-      className="hover:bg-primary-5 rounded-full p-1"
+      disabled={!canGoNext}
+      className="hover:bg-primary-5 rounded-full p-1 disabled:opacity-30"
     >
       <img src="/icons/Chevron_Right_MD.svg" alt=">" className="h-4 w-4" />
     </button>
