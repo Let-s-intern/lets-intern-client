@@ -15,7 +15,7 @@ import BaseButton from '@/common/button/BaseButton';
 import { OptionFormRadioControlLabel } from '@/common/ControlLabel';
 import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
-import RequiredStar from '@/common/RequiredStar';
+import RequiredStar from './ui/RequiredStar';
 import BottomSheet from '@/common/sheet/BottomSheeet';
 import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import DateTimePicker from '@/domain/report/DateTimePicker';
