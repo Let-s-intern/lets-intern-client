@@ -1,4 +1,4 @@
-import type { LiveFeedbackStatus } from './types';
+import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
   prev: '예약 전',
@@ -14,6 +14,21 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   reserved: 'active',
   done: 'done',
 };
+
+export function toCardConfig(mission: LiveFeedbackMission) {
+  return {
+    thumbnail: mission.thumbnail,
+    title: mission.title,
+    description: mission.description,
+    badge: {
+      label: LIVE_FEEDBACK_STATUS_LABEL[mission.status],
+      variant: LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
+    },
+    categoryLabel: mission.categoryLabel,
+    startDay: mission.startDay,
+    endDay: mission.endDay,
+  };
+}
 
 export function formatDay(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');

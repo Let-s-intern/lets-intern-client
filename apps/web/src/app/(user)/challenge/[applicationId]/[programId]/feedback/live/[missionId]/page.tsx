@@ -1,8 +1,8 @@
 'use client';
 
 import BackHeader from '@/common/header/BackHeader';
-import LiveFeedbackDetail from '@/domain/challenge/feedback/LiveFeedbackDetail';
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
+import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
 import { useParams } from 'next/navigation';
 
 const LiveMissionDetailPage = () => {
@@ -18,9 +18,10 @@ const LiveMissionDetailPage = () => {
       <BackHeader to={backPath}>라이브 예약 신청하기</BackHeader>
       <LiveFeedbackDetail
         period={{
-          startDay: DUMMY_FEEDBACK_MISSIONS[0].startDay ?? '',
-          endDay: DUMMY_FEEDBACK_MISSIONS[0].endDay ?? '',
+          startDay: DUMMY_FEEDBACK_MISSIONS[0].startDay,
+          endDay: DUMMY_FEEDBACK_MISSIONS[0].endDay,
         }}
+        reservationInfo={DUMMY_FEEDBACK_MISSIONS[0].reservationInfo}
       />
     </>
   );

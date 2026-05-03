@@ -1,17 +1,18 @@
 'use client';
 
-import type { MissionPeriod } from './types';
 import { useTimeSlotState } from './hooks/useTimeSlotState';
+import type { Mentor, MissionPeriod, SelectedSlot } from './types';
 import ReservationBar from './ui/ReservationBar';
 import TimeSlotGrid from './ui/TimeSlotGrid';
 import WeekNav from './ui/WeekNav';
 
 interface Props {
-  selectedMentorId: string | null;
+  selectedMentorId: number | null;
   period: MissionPeriod;
+  onConfirm: (mentor: Mentor, slot: SelectedSlot) => void;
 }
 
-const TimeSlotSection = ({ selectedMentorId, period }: Props) => {
+const TimeSlotSection = ({ selectedMentorId, period, onConfirm }: Props) => {
   const {
     weekStart,
     selectedSlot,
@@ -24,7 +25,7 @@ const TimeSlotSection = ({ selectedMentorId, period }: Props) => {
     handleSlotSelect,
     handleCancel,
     handleConfirm,
-  } = useTimeSlotState(selectedMentorId, period);
+  } = useTimeSlotState(selectedMentorId, period, onConfirm);
 
   return (
     <section>

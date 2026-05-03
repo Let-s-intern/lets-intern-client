@@ -1,12 +1,23 @@
 'use client';
 
 import BackHeader from '@/common/header/BackHeader';
-import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
-import LiveFeedbackDetail from '@/domain/challenge/feedback/LiveFeedbackDetail';
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
+import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
+import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
+import type { LiveFeedbackStatus } from '@/domain/challenge/feedback/live/types';
+import { toCardConfig } from '@/domain/challenge/feedback/live/utils';
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
+
+const BUTTON_LABELS: Record<
+  LiveFeedbackStatus,
+  { buttonLabel: string; openLabel: string }
+> = {
+  prev: { buttonLabel: '예약 신청 보기', openLabel: '예약 신청 닫기' },
+  reserved: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+  done: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+};
 
 const LiveFeedbackPage = () => {
   const router = useRouter();
@@ -24,20 +35,28 @@ const LiveFeedbackPage = () => {
 
   const cardList = useMemo(
     () =>
-      DUMMY_FEEDBACK_MISSIONS.map((config, index) => (
-        <FeedbackMissionCard
-          key={index}
-          config={config}
-          onMobileClick={() => handleMobileClick(index)}
-        >
-          <LiveFeedbackDetail
-            period={{
-              startDay: config.startDay ?? '',
-              endDay: config.endDay ?? '',
-            }}
-          />
-        </FeedbackMissionCard>
-      )),
+      DUMMY_FEEDBACK_MISSIONS.map((mission, index) => {
+        const { buttonLabel, openLabel } = BUTTON_LABELS[mission.status];
+        const config = toCardConfig(mission);
+
+        return (
+          <FeedbackMissionCard
+            key={mission.id}
+            config={config}
+            buttonLabel={buttonLabel}
+            openLabel={openLabel}
+            onMobileClick={() => handleMobileClick(index)}
+          >
+            <LiveFeedbackDetail
+              period={{
+                startDay: mission.startDay,
+                endDay: mission.endDay,
+              }}
+              reservationInfo={mission.reservationInfo}
+            />
+          </FeedbackMissionCard>
+        );
+      }),
     [handleMobileClick],
   );
 
@@ -62,9 +81,10 @@ const LiveFeedbackPage = () => {
           <BackHeader to={pathname}>라이브 예약 신청하기</BackHeader>
           <LiveFeedbackDetail
             period={{
-              startDay: mobileMission.startDay ?? '',
-              endDay: mobileMission.endDay ?? '',
+              startDay: mobileMission.startDay,
+              endDay: mobileMission.endDay,
             }}
+            reservationInfo={mobileMission.reservationInfo}
           />
         </div>
       )}

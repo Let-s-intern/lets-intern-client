@@ -15,8 +15,8 @@ export interface FeedbackMissionCardConfig {
   description?: string;
   badge: StatusBadge;
   categoryLabel?: string;
-  startDay?: string; // 'YYYY-MM-DD'
-  endDay?: string; // 'YYYY-MM-DD'
+  startDay: string; // 'YYYY-MM-DD'
+  endDay: string; // 'YYYY-MM-DD'
 }
 
 interface FeedbackMissionCardProps {
@@ -49,10 +49,7 @@ const FeedbackMissionCard = ({
 
   const isToggle = openLabel !== undefined;
 
-  const dateText =
-    startDay && endDay
-      ? `진행기간 ${formatDay(startDay)} ~ ${formatDay(endDay)}`
-      : undefined;
+  const dateText = `진행기간 ${formatDay(startDay)} ~ ${formatDay(endDay)}`;
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
@@ -94,14 +91,12 @@ const FeedbackMissionCard = ({
                     {categoryLabel}
                   </span>
                 )}
-                {dateText && (
-                  <>
-                    <div className="bg-neutral-80 hidden h-4 w-px md:block" />
-                    <p className="text-xxsmall12 text-neutral-40 hidden font-normal md:inline">
-                      {dateText}
-                    </p>
-                  </>
-                )}
+                <>
+                  <div className="bg-neutral-80 hidden h-4 w-px md:block" />
+                  <p className="text-xxsmall12 text-neutral-40 hidden font-normal md:inline">
+                    {dateText}
+                  </p>
+                </>
               </div>
 
               {/* 제목 + 설명 */}
@@ -116,11 +111,9 @@ const FeedbackMissionCard = ({
                 )}
               </div>
 
-              {dateText && (
-                <p className="text-xxsmall12 text-neutral-40 line-clamp-1 font-normal md:hidden">
-                  {dateText}
-                </p>
-              )}
+              <p className="text-xxsmall12 text-neutral-40 line-clamp-1 font-normal md:hidden">
+                {dateText}
+              </p>
             </div>
           </div>
         </div>

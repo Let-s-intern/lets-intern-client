@@ -19,6 +19,41 @@ export interface DaySchedule {
   slots: Record<string, SlotStatus>;
 }
 
+// 라이브 피드백 미션 상태 코드
+export type LiveFeedbackStatus = 'prev' | 'reserved' | 'done';
+
+export interface Mentor {
+  id: number;
+  company: string;
+  name: string;
+  thumbnailUrl?: string;
+  description: string;
+  stars?: number;
+}
+
+// 확정된 예약 정보
+export interface Reservation {
+  reservationId: string;
+  mentor: Mentor;
+  scheduledDate: string; // 'YYYY-MM-DD'
+  scheduledTime: string; // '09:00'
+  zepRoomNumber: number | null;
+  zepRoomUrl: string | null;
+}
+
+// 라이브 피드백 미션 데이터
+export interface LiveFeedbackMission {
+  id: number;
+  thumbnail: string;
+  title: string;
+  description?: string;
+  status: LiveFeedbackStatus;
+  categoryLabel?: string;
+  startDay: string; // 'YYYY-MM-DD'
+  endDay: string; // 'YYYY-MM-DD'
+  reservationInfo: Reservation | null;
+}
+
 // 예약 가능한 시간대 (30분 단위)
 export const TIME_SLOTS = [
   '09:00',

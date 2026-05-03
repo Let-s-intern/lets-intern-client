@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DUMMY_MENTORS, getMentorSchedule } from '../../dummy';
-import type { MissionPeriod, SelectedSlot } from '../types';
+import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
 import { addDays, getWeekStart, toDateString } from '../utils';
 
 export function useTimeSlotState(
-  selectedMentorId: string | null,
+  selectedMentorId: number | null,
   period: MissionPeriod,
+  onConfirm: (mentor: Mentor, slot: SelectedSlot) => void,
 ) {
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date();
@@ -59,7 +60,8 @@ export function useTimeSlotState(
   const handleCancel = () => setSelectedSlot(null);
 
   const handleConfirm = () => {
-    if (!selectedSlot) return;
+    if (!selectedSlot || !mentor) return;
+    onConfirm(mentor, selectedSlot);
   };
 
   return {
