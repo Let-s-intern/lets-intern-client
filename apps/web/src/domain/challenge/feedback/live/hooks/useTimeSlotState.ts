@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DUMMY_MENTORS, getMentorSchedule } from '../../dummy';
 import type { SelectedSlot } from '../types';
 import { addDays, getWeekStart } from '../utils';
@@ -22,27 +22,27 @@ export function useTimeSlotState(selectedMentorId: string | null) {
     [selectedMentorId, weekStart],
   );
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     setWeekStart((prev) => addDays(prev, -7));
     setSelectedSlot(null);
-  }, []);
+  };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     setWeekStart((prev) => addDays(prev, 7));
     setSelectedSlot(null);
-  }, []);
+  };
 
-  const handleSlotSelect = useCallback((slot: SelectedSlot) => {
+  const handleSlotSelect = (slot: SelectedSlot) => {
     setSelectedSlot((prev) =>
       prev?.date === slot.date && prev?.time === slot.time ? null : slot,
     );
-  }, []);
+  };
 
-  const handleCancel = useCallback(() => setSelectedSlot(null), []);
+  const handleCancel = () => setSelectedSlot(null);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = () => {
     if (!selectedSlot) return;
-  }, [selectedSlot]);
+  };
 
   return {
     weekStart,

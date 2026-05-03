@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { memo } from 'react';
 import type { SelectedSlot, SlotStatus } from '../types';
 
 interface Props {
@@ -21,28 +20,24 @@ const STATUS_CONFIG: Record<SlotStatus, { label: string; className: string }> =
     },
   };
 
-const TimeSlotCell = memo(
-  ({ status, isSelected, date, time, onSelect }: Props) => {
-    const { label, className } = STATUS_CONFIG[status];
+const TimeSlotCell = ({ status, isSelected, date, time, onSelect }: Props) => {
+  const { label, className } = STATUS_CONFIG[status];
 
-    return (
-      <div
-        onClick={
-          status === 'available' ? () => onSelect({ date, time }) : undefined
-        }
-        className={clsx(
-          'text-xsmall14 flex items-center justify-center border text-center',
-          isSelected
-            ? 'border-primary rounded-xs text-primary border-2'
-            : ['border-transparent', className],
-        )}
-      >
-        {label}
-      </div>
-    );
-  },
-);
-
-TimeSlotCell.displayName = 'TimeSlotCell';
+  return (
+    <div
+      onClick={
+        status === 'available' ? () => onSelect({ date, time }) : undefined
+      }
+      className={clsx(
+        'text-xsmall14 flex items-center justify-center border text-center',
+        isSelected
+          ? 'border-primary rounded-xs text-primary border-2'
+          : ['border-transparent', className],
+      )}
+    >
+      {label}
+    </div>
+  );
+};
 
 export default TimeSlotCell;
