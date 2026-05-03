@@ -32,11 +32,13 @@ const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
                 : null}
             </p>
           </div>
-          <img
-            className="h-[60px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
-            src={blogInfo.blogThumbnailInfo.thumbnail || ''}
-            alt="thumbnail"
-          />
+          {blogInfo.blogThumbnailInfo.thumbnail && (
+            <img
+              className="h-[60px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
+              src={blogInfo.blogThumbnailInfo.thumbnail}
+              alt="thumbnail"
+            />
+          )}
         </div>
         {blogInfo.tagDetailInfos.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">

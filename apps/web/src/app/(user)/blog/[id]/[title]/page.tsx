@@ -18,6 +18,8 @@ import {
   getBlogSlug,
   getBlogTitle,
 } from '@/utils/url';
+import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
+import * as Sentry from '@sentry/nextjs';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -32,7 +34,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
+  Sentry.setTag('domain', 'blog');
+  Sentry.setTag('blog.route', '/blog/[id]/[title]');
+  Sentry.setTag('blog.phase', 'metadata');
+
   const { id } = await params;
+  Sentry.setTag('blog.id', id);
   const blog = await fetchBlogData(id);
 
   return {
@@ -59,7 +66,12 @@ const BlogDetailPage = async ({
 }: {
   params: Promise<{ id: string; title: string }>;
 }) => {
+  Sentry.setTag('domain', 'blog');
+  Sentry.setTag('blog.route', '/blog/[id]/[title]');
+  Sentry.setTag('blog.phase', 'render');
+
   const { id, title: _title } = await params;
+  Sentry.setTag('blog.id', id);
 
   const blog = await fetchBlogData(id);
 
@@ -88,8 +100,22 @@ const BlogDetailPage = async ({
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
     : blogInfo?.content;
-  const blogRecommendList = await getBlogRecommendList();
-  const programRecommendList = await getProgramRecommendList();
+  const [blogRecommendList, programRecommendList] = await Promise.all([
+    getBlogRecommendList().catch((err) => {
+      captureBlogError(err, {
+        section: 'blogRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+    getProgramRecommendList().catch((err) => {
+      captureBlogError(err, {
+        section: 'programRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+  ]);
 
   async function getProgramRecommendList() {
     const result = contentJson.programRecommend

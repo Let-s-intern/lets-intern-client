@@ -20,20 +20,32 @@ export const challengeValidUserSchema = z.object({
   isAccessible: z.boolean().nullable(),
 });
 
+// /prev (legacy challenge) 응답은 일부 필드가 null 이거나 datetime 포맷이
+// 비표준일 수 있어 schema 를 관대하게 둔다. zod 의 .default() 는 undefined 에만
+// 동작하므로 null 까지 흡수하려면 nullish + ?? 0 으로 변환해야 한다.
 export const challengeMissionFeedbackListSchema = z.object({
-  missionList: z.array(
-    z.object({
-      id: z.number(),
-      title: z.string().nullish(),
-      th: z.number(),
-      startDate: z.string().datetime({ local: true }),
-      endDate: z.string().datetime({ local: true }),
-      challengeOptionCode: z.string().nullish(),
-      challengeOptionTitle: z.string().nullish(),
-      submittedCount: z.number().default(0),
-      totalCount: z.number().default(0),
-    }),
-  ),
+  missionList: z
+    .array(
+      z.object({
+        id: z.number(),
+        title: z.string().nullish(),
+        th: z.number(),
+        startDate: z.string().nullish(),
+        endDate: z.string().nullish(),
+        challengeOptionCode: z.string().nullish(),
+        challengeOptionTitle: z.string().nullish(),
+        submittedCount: z
+          .number()
+          .nullish()
+          .transform((v) => v ?? 0),
+        totalCount: z
+          .number()
+          .nullish()
+          .transform((v) => v ?? 0),
+      }),
+    )
+    .nullish()
+    .transform((v) => v ?? []),
 });
 
 export type ChallengeMissionFeedbackList = z.infer<

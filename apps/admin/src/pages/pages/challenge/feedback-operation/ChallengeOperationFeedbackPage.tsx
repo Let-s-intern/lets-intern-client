@@ -1,5 +1,6 @@
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
+  isLegacyChallenge,
   MentorMissionFeedbackAttendanceQueryKey,
   MentorMenteeAttendanceQueryKey,
 } from '@/api/challenge/challenge';
@@ -16,6 +17,10 @@ function ChallengeOperationFeedbackPage() {
   const queryClient = useQueryClient();
   const { programId } = useParams<{ programId: string }>();
   const { data: isAdmin } = useIsAdminQuery();
+  // 230 미만 챌린지는 멘토 배정 모델이 attendance 단위라 이 화면의 멘토/멘티 배정
+  // 흐름과 호환되지 않는다. 탭 자체를 숨겨 잘못 진입하지 않게 한다.
+  const isLegacy = isLegacyChallenge(programId ?? Number.MAX_SAFE_INTEGER);
+  const showMentorMenteeTab = isAdmin === true && !isLegacy;
 
   const handleTabChange = useCallback(
     (tab: SubTab) => {
@@ -46,7 +51,7 @@ function ChallengeOperationFeedbackPage() {
     <div className="flex flex-col gap-4">
       {/* 하위 탭 버튼 */}
       <div className="flex items-center gap-2">
-        {isAdmin && (
+        {showMentorMenteeTab && (
           <button
             type="button"
             className={`text-xsmall14 rounded-md border px-4 py-2 font-medium transition-colors ${
@@ -73,7 +78,7 @@ function ChallengeOperationFeedbackPage() {
       </div>
 
       {/* 하위 탭 컨텐츠 */}
-      {activeTab === 'mentorMentee' && isAdmin ? (
+      {activeTab === 'mentorMentee' && showMentorMenteeTab ? (
         <MentorMenteeAssignment />
       ) : (
         <FeedbackMissionList />

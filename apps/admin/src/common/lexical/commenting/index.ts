@@ -129,6 +129,7 @@ export class CommentStore {
   ): void {
     const nextComments = Array.from(this._comments);
     // The YJS types explicitly use `any` as well.
+    // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sharedCommentsArray: YArray<any> | null = this._getCollabComments();
 
@@ -173,6 +174,7 @@ export class CommentStore {
   ): { markedComment: Comment; index: number } | null {
     const nextComments = Array.from(this._comments);
     // The YJS types explicitly use `any` as well.
+    // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sharedCommentsArray: YArray<any> | null = this._getCollabComments();
     let commentIndex: number | null = null;
@@ -230,6 +232,7 @@ export class CommentStore {
   _withRemoteTransaction(fn: () => void): void {
     const provider = this._collabProvider;
     if (provider !== null) {
+      // TODO(ts-suppress): 검토 필요 — @ts-expect-error
       // @ts-expect-error doc does exist
       const doc = provider.doc;
       doc.transact(fn, this);
@@ -246,18 +249,22 @@ export class CommentStore {
     }
   }
 
+  // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _getCollabComments(): null | YArray<any> {
     const provider = this._collabProvider;
     if (provider !== null) {
+      // TODO(ts-suppress): 검토 필요 — @ts-expect-error
       // @ts-expect-error doc does exist
       const doc = provider.doc;
+      // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return doc.get('comments', YArray) as YArray<any>;
     }
     return null;
   }
 
+  // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _createCollabSharedMap(commentOrThread: Comment | Thread): YMap<any> {
     const sharedMap = new YMap();
@@ -322,6 +329,7 @@ export class CommentStore {
 
     const onSharedCommentChanges = (
       // The YJS types explicitly use `any` as well.
+      // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       events: Array<YEvent<any>>,
       transaction: Transaction,
@@ -353,6 +361,7 @@ export class CommentStore {
                 insert
                   .slice()
                   .reverse()
+                  // TODO(ts-suppress): 검토 필요 — no-explicit-any 우회
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   .forEach((map: YMap<any>) => {
                     const id = map.get('id');
