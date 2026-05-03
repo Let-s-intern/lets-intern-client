@@ -63,6 +63,8 @@ interface WeeklyCalendarProps {
   bars: PeriodBarData[];
   allBars: PeriodBarData[];
   onBarClick: (challengeId: number, missionId: number) => void;
+  /** 부모가 지정한 스크롤 타겟 날짜 — 변경될 때마다 그 날짜를 화면 중앙으로 부드럽게 이동 */
+  targetScrollDate?: Date | null;
   onMentorOpenPeriodClick?: () => void;
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
@@ -74,6 +76,7 @@ const WeeklyCalendar = ({
   bars,
   allBars,
   onBarClick,
+  targetScrollDate,
   onMentorOpenPeriodClick,
   onMentorOpenPeriodBarClick,
   onLiveFeedbackTimeBlockClick,
@@ -94,8 +97,20 @@ const WeeklyCalendar = ({
     timelineStart,
     totalDays,
     days,
+    scrollToDate,
     scrollToToday,
   } = useTimelineScroll({ allBars });
+
+  // 부모가 지정한 타겟 날짜로 부드럽게 스크롤. ms 단위로 메모해 같은 날짜 재전송 시 noop.
+  const targetMs = targetScrollDate?.getTime() ?? null;
+  useEffect(() => {
+    if (targetMs == null) return;
+    // 한 번의 rAF로 layout 안정화 후 스크롤
+    const raf = requestAnimationFrame(() => {
+      scrollToDate(new Date(targetMs), 'smooth');
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [targetMs, scrollToDate]);
 
   const today = useMemo(() => new Date(), []);
   const todayColRef = useRef<HTMLDivElement>(null);
@@ -183,7 +198,9 @@ const WeeklyCalendar = ({
   }, [barLayouts]);
 
   const innerWidthPercent = (totalDays / 7) * 100;
-  const gridCols = `repeat(${totalDays}, 1fr)`;
+  // minmax(0, 1fr) — 자식 콘텐츠가 1fr 컬럼을 강제 확장하지 못하게 막아
+  // 헤더/디바이더/바 그리드의 컬럼 폭이 항상 동일하게 유지된다.
+  const gridCols = `repeat(${totalDays}, minmax(0, 1fr))`;
   const isEmpty = barLayouts.length === 0 && liveBars.length === 0;
 
   return (
@@ -232,14 +249,13 @@ const WeeklyCalendar = ({
             <div className="relative flex-1">
               <ColumnDividers days={days} gridCols={gridCols} />
               <div
-                className="relative gap-y-1 py-3"
+                className="relative w-full gap-y-1 py-3"
                 style={{ display: 'grid', gridTemplateColumns: gridCols }}
               >
                 {barLayouts.map(
                   ({ bar, startCol, endCol, colSpan, gridRow }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
-                    className="px-px"
                     style={{
                       gridColumn: `${startCol} / ${endCol}`,
                       gridRow,

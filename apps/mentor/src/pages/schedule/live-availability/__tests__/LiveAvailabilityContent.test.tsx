@@ -29,15 +29,17 @@ describe('LiveAvailabilityContent', () => {
     expect(timeCells.length).toBe(27);
   });
 
-  it('스크롤 컨테이너에 max-h 클래스가 있다', () => {
+  it('시간표 영역이 부모 높이를 가득 채우는 flex-1 + overflow-y-auto 스크롤 컨테이너로 감싸진다', () => {
     const { container } = render(<LiveAvailabilityContent {...baseProps} />);
-    const scrollEl = container.querySelector('[class*="max-h-"]');
+    const scrollEl = container.querySelector(
+      '.flex-1.overflow-y-auto.rounded-md.border',
+    );
     expect(scrollEl).not.toBeNull();
-    expect(scrollEl?.className).toMatch(/overflow-y-auto/);
+    expect(scrollEl?.className).toMatch(/min-h-0/);
   });
 
   it('"다른 챌린지로 이동" 버튼이 없다', () => {
-    render(<LiveAvailabilityContent {...baseProps} challengeTitle="테스트 챌린지" />);
+    render(<LiveAvailabilityContent {...baseProps} challengeTitles={["테스트 챌린지"]} />);
     expect(screen.queryByText('다른 챌린지로 이동')).not.toBeInTheDocument();
   });
 

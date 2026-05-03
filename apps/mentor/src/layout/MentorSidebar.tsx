@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
     matchPrefix: '/feedback',
     children: [
       { type: 'leaf', name: '피드백 관리', url: '/feedback-management' },
-      { type: 'leaf', name: '가능한 시간 설정', url: '/feedback/live-availability' },
+      { type: 'leaf', name: '라이브 피드백 일정 열기', url: '/feedback/live-availability' },
       { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
       { type: 'leaf', name: '멘티관리', url: '/feedback/live-mentee' },
     ],

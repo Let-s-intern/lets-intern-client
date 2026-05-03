@@ -70,17 +70,18 @@ describe('MentorOpenScheduleModal (콘텐츠 추출 후 회귀)', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('challengeTitle 이 상단 바에 노출된다', () => {
+  it('challengeTitles 가 상단 바에 모두 노출된다', () => {
     render(
       <MentorOpenScheduleModal
         isOpen
         onClose={() => {}}
         initialSlots={[]}
         onSave={() => {}}
-        challengeTitle="테스트 챌린지"
+        challengeTitles={['테스트 챌린지 A', '테스트 챌린지 B']}
         focusDate={focusDate}
       />,
     );
-    expect(screen.getByText('테스트 챌린지')).toBeInTheDocument();
+    expect(screen.getByText('테스트 챌린지 A')).toBeInTheDocument();
+    expect(screen.getByText('테스트 챌린지 B')).toBeInTheDocument();
   });
 });

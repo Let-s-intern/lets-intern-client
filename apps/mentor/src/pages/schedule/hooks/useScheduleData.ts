@@ -6,7 +6,10 @@ import {
   type FeedbackTagType,
 } from '../constants/feedbackTag';
 import type { PeriodBarData } from '../types';
-import { filterMentorSchedule } from '../utils/filterMentorSchedule';
+import {
+  filterMentorSchedule,
+  isMentorActionPeriodBar,
+} from '../utils/filterMentorSchedule';
 
 interface UseScheduleDataOptions {
   /** 캘린더/네비게이션에 추가로 포함할 mock 바 (예: 서면 피드백 mock) */
@@ -83,6 +86,68 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
     setSelectedFeedbackTags(new Set());
   }, []);
 
+  /**
+   * 태그 네비게이션의 "다음 일정" 계산 기준 — 멘토가 행동/인지해야 할 "기간" 단위 바만.
+   *
+   * 개별 라이브 세션(`live-feedback`)은 `live-feedback-period` 한 라운드 안의 세부
+   * 표현이므로 네비게이션 단위로는 세지 않는다 — 그래야 "라이브 피드백" 태그에서
+   * 일정 N개당 N번만 순환한다.
+   */
+  const sortedActionBarsByStart = useMemo(
+    () =>
+      [...mentorVisibleBars]
+        .filter(isMentorActionPeriodBar)
+        .sort(
+          (a, b) =>
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+        ),
+    [mentorVisibleBars],
+  );
+
+  /**
+   * 특정 태그(혹은 전체)의 바 중 오늘에서 가장 가까운(미래 우선) startDate 반환.
+   * - 미래/현재 진행 중 일정이 있으면 그중 가장 빠른 startDate
+   * - 모두 과거면 가장 최근 startDate
+   */
+  const findNearestDateForTag = useCallback(
+    (tag: FeedbackTagType | null): Date | null => {
+      const pool = tag
+        ? sortedActionBarsByStart.filter(
+            (bar) => barTypeToFeedbackTagSafe(bar.barType) === tag,
+          )
+        : sortedActionBarsByStart;
+      if (pool.length === 0) return null;
+
+      const nowMs = Date.now();
+      const upcoming = pool.find(
+        (bar) => new Date(bar.endDate).getTime() >= nowMs,
+      );
+      const target = upcoming ?? pool[pool.length - 1];
+      return new Date(target.startDate);
+    },
+    [sortedActionBarsByStart],
+  );
+
+  /** 같은 태그 재클릭 시 — currentDate 다음 바의 startDate. 마지막이면 처음으로 순환. */
+  const findNextDateForTag = useCallback(
+    (tag: FeedbackTagType | null, currentDate: Date): Date | null => {
+      const pool = tag
+        ? sortedActionBarsByStart.filter(
+            (bar) => barTypeToFeedbackTagSafe(bar.barType) === tag,
+          )
+        : sortedActionBarsByStart;
+      if (pool.length === 0) return null;
+
+      const baseMs = currentDate.getTime();
+      const next = pool.find(
+        (bar) => new Date(bar.startDate).getTime() > baseMs,
+      );
+      const target = next ?? pool[0];
+      return new Date(target.startDate);
+    },
+    [sortedActionBarsByStart],
+  );
+
   return {
     challenges,
     selectedFeedbackTags,
@@ -91,5 +156,27 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
     allBarsUnfiltered,
     filteredBars,
     handleData,
+    findNearestDateForTag,
+    findNextDateForTag,
   };
+}
+
+/** barType → FeedbackTagType 매핑. import 사이클 회피용 inline 함수. */
+function barTypeToFeedbackTagSafe(
+  barType: PeriodBarData['barType'],
+): FeedbackTagType | null {
+  switch (barType) {
+    case 'written-mission-submit':
+    case 'written-review':
+    case 'written-feedback':
+      return 'written';
+    case 'live-feedback':
+    case 'live-feedback-period':
+      return 'live';
+    case 'live-feedback-mentor-open':
+    case 'live-feedback-mentee-open':
+      return 'live-open';
+    default:
+      return null;
+  }
 }

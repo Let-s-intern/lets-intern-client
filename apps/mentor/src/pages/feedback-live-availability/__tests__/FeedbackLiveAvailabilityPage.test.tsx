@@ -7,7 +7,7 @@ describe('FeedbackLiveAvailabilityPage', () => {
   it('페이지 헤더와 안내 문구를 노출한다', () => {
     render(<FeedbackLiveAvailabilityPage />);
     expect(
-      screen.getByRole('heading', { name: '가능한 시간 설정' }),
+      screen.getByRole('heading', { name: '라이브 피드백 일정 열기' }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(

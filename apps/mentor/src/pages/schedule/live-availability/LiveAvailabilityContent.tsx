@@ -70,8 +70,11 @@ export interface LiveAvailabilityContentProps {
   onClose?: () => void;
   /** 외부에서 컨텐츠를 다시 마운트할 때 초기화 트리거용 (모달의 isOpen 변화 등) */
   resetKey?: unknown;
-  /** 현재 편집 중인 챌린지 제목 — 상단 바에 표시 */
-  challengeTitle?: string;
+  /**
+   * 상단 바에 노출할 챌린지 이름 목록 — 라이브 피드백이 진행되는 모든 챌린지를 함께 표기.
+   * 챌린지 단위 분리 편집을 폐기하고 통합 일정 편집으로 전환되며 추가됨.
+   */
+  challengeTitles?: string[];
   /** 다른 챌린지가 이미 점유한 슬롯 — 기본은 스왑 가능, menteeName이 있으면 잠김 */
   blockedSlots?: BlockedSlot[];
   /** 현재 챌린지에서 멘티가 이미 신청 완료한 슬롯 — 선택 해제 불가, 이름 표시 */
@@ -99,7 +102,7 @@ const LiveAvailabilityContent = ({
   mode = 'modal',
   onClose,
   resetKey,
-  challengeTitle,
+  challengeTitles,
   blockedSlots = [],
   appliedBookings = [],
   onSwapFromOtherChallenge,
@@ -287,20 +290,24 @@ const LiveAvailabilityContent = ({
 
   return (
     <div className="flex h-full flex-col">
-      {/* 챌린지 상단 바 (PRD-0503 #4: 색 구분 제거 — 중성 톤) */}
-      {challengeTitle && (
-        <div className="relative flex items-center justify-between gap-2 border-b border-neutral-80 bg-neutral-95 px-6 py-3">
-          <span className="text-xxsmall12 rounded-[3px] bg-neutral-30 px-2 py-1 font-medium text-white">
-            {challengeTitle}
-          </span>
-
+      {/* 라이브 피드백이 진행되는 모든 챌린지를 한 줄에 태그로 노출 */}
+      {challengeTitles && challengeTitles.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 border-b border-neutral-80 bg-neutral-95 px-6 py-3">
+          {challengeTitles.map((title) => (
+            <span
+              key={title}
+              className="text-xxsmall12 rounded-[3px] bg-neutral-30 px-2 py-1 font-medium text-white"
+            >
+              {title}
+            </span>
+          ))}
         </div>
       )}
 
       {showHeader && (
         <div className="border-neutral-85 border-b px-6 py-5">
           <h2 className="text-medium20 text-neutral-10 font-semibold">
-            멘토 일정 오픈하기
+            라이브 피드백 일정 열기
           </h2>
           <p className="text-xsmall14 text-neutral-40 mt-1">
             클릭 또는 드래그로 가능 시간을 설정해 주세요.
@@ -316,7 +323,7 @@ const LiveAvailabilityContent = ({
         </div>
       )}
 
-      <div className="flex-1 overflow-auto px-6 py-5">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 py-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-small18 text-neutral-10 font-semibold">
@@ -366,15 +373,15 @@ const LiveAvailabilityContent = ({
           </p>
         </div>
 
-        <div className="border-neutral-85 max-h-[520px] overflow-y-auto rounded-md border">
+        <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[72px_repeat(7,minmax(88px,1fr))]">
-            <div className="bg-neutral-98 border-neutral-85 text-xsmall14 text-neutral-40 sticky top-0 z-10 border-b border-r px-2 py-2 text-center font-medium">
+            <div className="bg-neutral-95 border-neutral-85 text-xsmall14 text-neutral-40 sticky top-0 z-10 border-b border-r px-2 py-2 text-center font-medium">
               시간
             </div>
             {days.map((day, index) => (
               <div
                 key={index}
-                className="bg-neutral-98 border-neutral-85 sticky top-0 z-10 border-b border-r px-2 py-2 text-center last:border-r-0"
+                className="bg-neutral-95 border-neutral-85 sticky top-0 z-10 border-b border-r px-2 py-2 text-center last:border-r-0"
               >
                 <p className="text-xxsmall12 text-neutral-40">
                   {WEEK_DAYS[index]}
@@ -406,7 +413,8 @@ const LiveAvailabilityContent = ({
                         onClick={() =>
                           handleAppliedSlotClick({
                             menteeName: currentMenteeName,
-                            challengeTitle: challengeTitle ?? '현재 챌린지',
+                            challengeTitle:
+                              challengeTitles?.join(' · ') ?? '현재 챌린지',
                             date: cellDate,
                             time,
                           })
@@ -509,7 +517,7 @@ const LiveAvailabilityContent = ({
                       className={`border-neutral-90 text-xsmall14 border-b border-r px-2 py-2 text-center transition-colors last:border-r-0 ${
                         isSelected
                           ? selectedClass
-                          : 'bg-neutral-98 text-neutral-40'
+                          : 'bg-neutral-95 text-neutral-40'
                       }`}
                     >
                       {isSelected ? '가능' : '불가능'}

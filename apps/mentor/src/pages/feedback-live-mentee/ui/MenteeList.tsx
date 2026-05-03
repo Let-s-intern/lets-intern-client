@@ -81,7 +81,7 @@ function MenteeRow({ mentee, isActive, onSelect }: MenteeRowProps) {
         type="button"
         onClick={() => onSelect(mentee.id)}
         className={`flex w-full items-start gap-3 border-b border-neutral-95 px-4 py-3 text-left transition-colors ${
-          isActive ? 'bg-primary-5' : 'hover:bg-neutral-98'
+          isActive ? 'bg-primary-5' : 'hover:bg-neutral-95'
         }`}
         aria-pressed={isActive}
         aria-label={`${mentee.name} 멘티 대화 선택`}

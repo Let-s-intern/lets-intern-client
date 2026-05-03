@@ -16,6 +16,7 @@ import {
   MENTOR_OPEN_SCHEDULES_BY_CHALLENGE,
   type MentorOpenSlot,
 } from './challenge-content/mentorOpenScheduleMock';
+import type { FeedbackTagType } from './constants/feedbackTag';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
 import { useWrittenFeedbackMockData } from './hooks/useWrittenFeedbackMockData';
@@ -41,6 +42,8 @@ const SchedulePage = () => {
     allBarsUnfiltered,
     filteredBars,
     handleData,
+    findNearestDateForTag,
+    findNextDateForTag,
   } = useScheduleData({ extraBars });
 
   // 라이브 세션 바만 따로 추출 — LiveFeedbackReservationModal 네비게이션용
@@ -48,6 +51,36 @@ const SchedulePage = () => {
     () => filteredBars.filter((b) => b.barType === 'live-feedback'),
     [filteredBars],
   );
+
+  // 캘린더 가로 스크롤 타겟 — 태그 클릭/재클릭으로 갱신.
+  const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
+
+  /**
+   * 태그 클릭 동작 — 단일 선택 토글 + 해당 일정 위치로 스크롤.
+   *  1) 비선택 태그 클릭: 그 태그만 선택 + 가장 가까운 일정으로 이동
+   *  2) 선택된 태그 재클릭: 같은 태그의 다음 일정으로 순환
+   */
+  const handleTagClick = (tag: FeedbackTagType) => {
+    if (selectedFeedbackTags.has(tag)) {
+      const current = targetScrollDate ?? findNearestDateForTag(tag);
+      const next = current
+        ? findNextDateForTag(tag, current)
+        : findNearestDateForTag(tag);
+      if (next) setTargetScrollDate(next);
+      return;
+    }
+    clearFeedbackTags();
+    toggleFeedbackTag(tag);
+    const nearest = findNearestDateForTag(tag);
+    if (nearest) setTargetScrollDate(nearest);
+  };
+
+  /** "전체" 클릭 — 필터 해제 + 전체에서 가장 가까운 일정으로 이동 */
+  const handleClearAll = () => {
+    clearFeedbackTags();
+    const nearest = findNearestDateForTag(null);
+    setTargetScrollDate(nearest);
+  };
 
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -107,7 +140,6 @@ const SchedulePage = () => {
     }
     return {
       challengeId: activeChallengeId,
-      challengeTitle: mentorOpenChallengeBar.challengeTitle,
       initialSlots,
       blockedSlots,
       appliedBookings,
@@ -115,6 +147,17 @@ const SchedulePage = () => {
       focusDate: periodBar?.startDate,
     };
   }, [mentorOpenChallengeBar, mentorOpenSlotsByChallenge, allBarsUnfiltered]);
+
+  // 라이브 피드백이 진행되는 모든 챌린지 이름 (중복 제거, 등록 순) — 상단 태그 표시용
+  const liveChallengeTitles = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const bar of allBarsUnfiltered) {
+      if (bar.barType === 'live-feedback-period') {
+        map.set(bar.challengeId, bar.challengeTitle);
+      }
+    }
+    return Array.from(map.values());
+  }, [allBarsUnfiltered]);
   const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
     useState<PeriodBarData | null>(null);
 
@@ -157,14 +200,15 @@ const SchedulePage = () => {
           <div className="flex flex-col gap-4">
             <FeedbackTagFilter
               selectedTags={selectedFeedbackTags}
-              onToggle={toggleFeedbackTag}
-              onClearAll={clearFeedbackTags}
+              onToggle={handleTagClick}
+              onClearAll={handleClearAll}
             />
 
             <WeeklyCalendar
               bars={filteredBars}
               allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
+              targetScrollDate={targetScrollDate}
               onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
               onMentorOpenPeriodBarClick={(bar) => {
                 setMentorOpenChallengeBar(bar);
@@ -230,7 +274,7 @@ const SchedulePage = () => {
         initialSlots={mentorOpenContext?.initialSlots ?? []}
         blockedSlots={mentorOpenContext?.blockedSlots ?? []}
         appliedBookings={mentorOpenContext?.appliedBookings ?? []}
-        challengeTitle={mentorOpenContext?.challengeTitle}
+        challengeTitles={liveChallengeTitles}
         requiredSlotCount={mentorOpenContext?.requiredSlotCount}
         focusDate={mentorOpenContext?.focusDate}
         onSave={(slots) => {

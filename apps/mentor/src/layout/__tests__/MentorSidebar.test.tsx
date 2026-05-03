@@ -49,7 +49,7 @@ describe('MentorSidebar', () => {
     );
 
     // 펼쳐진 상태이므로 하위 메뉴가 모두 보여야 함
-    expect(screen.getByText('가능한 시간 설정')).toBeInTheDocument();
+    expect(screen.getByText('라이브 피드백 일정 열기')).toBeInTheDocument();
     expect(screen.getByText('예약 현황')).toBeInTheDocument();
     expect(screen.getByText('멘티관리')).toBeInTheDocument();
     expect(screen.getByText('피드백 관리')).toBeInTheDocument();
@@ -68,14 +68,14 @@ describe('MentorSidebar', () => {
 
     const groupButton = screen.getByRole('button', { name: /피드백/ });
     expect(groupButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('가능한 시간 설정')).not.toBeInTheDocument();
+    expect(screen.queryByText('라이브 피드백 일정 열기')).not.toBeInTheDocument();
 
     await user.click(groupButton);
     expect(groupButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('가능한 시간 설정')).toBeInTheDocument();
+    expect(screen.getByText('라이브 피드백 일정 열기')).toBeInTheDocument();
 
     await user.click(groupButton);
     expect(groupButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('가능한 시간 설정')).not.toBeInTheDocument();
+    expect(screen.queryByText('라이브 피드백 일정 열기')).not.toBeInTheDocument();
   });
 });
