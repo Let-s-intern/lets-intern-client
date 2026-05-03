@@ -3,38 +3,34 @@ import { useCallback, useMemo, useState } from 'react';
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { PeriodBarData } from '../types';
 
+interface UseScheduleDataOptions {
+  /** 캘린더/네비게이션에 추가로 포함할 mock 바 (예: 서면 피드백 mock) */
+  extraBars?: PeriodBarData[];
+}
+
 /**
  * Manages challenge data, bar aggregation, and challenge filtering for the schedule page.
  *
  * Key design: WeeklySummary uses `allBarsUnfiltered` (no filter applied),
  * while WeeklyCalendar uses `filteredBars` (respects selectedChallengeId).
  */
-export function useScheduleData() {
+export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {}) {
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(
     null,
   );
 
   const { data: challengeListData } = useMentorChallengeListQuery();
   const allChallenges = challengeListData?.myChallengeMentorVoList ?? [];
-  // 진행중(PROCEEDING) + 최근 종료(POST, 14일 이내)를 포함한다.
-  // 미션 종료 후 최대 4일까지 피드백 기간이 이어지고,
-  // 챌린지가 POST 상태여도 피드백은 여전히 표시되어야 한다.
-  const challenges = useMemo(() => {
-    const RECENT_POST_WINDOW_DAYS = 14;
-    const now = Date.now();
-    const cutoffMs = RECENT_POST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
-    return allChallenges.filter((c) => {
-      if (c.programStatusType === 'PROCEEDING') return true;
-      if (c.programStatusType === 'POST' && c.endDate) {
-        const end = new Date(c.endDate).getTime();
-        if (!Number.isNaN(end) && now - end <= cutoffMs) return true;
-      }
-      return false;
-    });
-  }, [allChallenges]);
+  // Only show in-progress challenges in the schedule
+  const challenges = useMemo(
+    () => allChallenges.filter((c) => c.programStatusType === 'PROCEEDING'),
+    [allChallenges],
+  );
 
   // Bars collected from child data fetchers (keyed by "challengeId-missionId")
-  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(new Map());
+  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
+    new Map(),
+  );
 
   const handleData = useCallback((key: string, bar: PeriodBarData) => {
     setBarsMap((prev) => {
@@ -44,12 +40,54 @@ export function useScheduleData() {
     });
   }, []);
 
+  // API 챌린지와 extraBars 챌린지를 합쳐 colorIndex를 순차 할당 (mock은 API 다음 인덱스부터)
+  const challengeFilterItems = useMemo(() => {
+    const apiItems = challenges.map((c, index) => ({
+      challengeId: c.challengeId,
+      title: c.title,
+      colorIndex: index,
+    }));
+    const apiIds = new Set(apiItems.map((c) => c.challengeId));
+    const extras: { challengeId: number; title: string; colorIndex: number }[] =
+      [];
+    const seen = new Set<number>();
+    for (const bar of extraBars) {
+      if (apiIds.has(bar.challengeId) || seen.has(bar.challengeId)) continue;
+      seen.add(bar.challengeId);
+      extras.push({
+        challengeId: bar.challengeId,
+        title: bar.challengeTitle,
+        colorIndex: apiItems.length + extras.length,
+      });
+    }
+    return [...apiItems, ...extras];
+  }, [challenges, extraBars]);
+
+  /** challengeId → colorIndex (API/mock 구분 없이 고유 색상 보장) */
+  const challengeColorMap = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const item of challengeFilterItems) {
+      map.set(item.challengeId, item.colorIndex);
+    }
+    return map;
+  }, [challengeFilterItems]);
+
+  // mock 바의 colorIndex를 재할당해 API 색상과 충돌 방지
+  const remappedExtraBars = useMemo(
+    () =>
+      extraBars.map((bar) => ({
+        ...bar,
+        colorIndex: challengeColorMap.get(bar.challengeId) ?? bar.colorIndex,
+      })),
+    [extraBars, challengeColorMap],
+  );
+
   // All bars without any filter — used by WeeklySummary & height calculation
   const allBarsUnfiltered = useMemo(() => {
-    const result: PeriodBarData[] = [];
+    const result: PeriodBarData[] = [...remappedExtraBars];
     barsMap.forEach((bar) => result.push(bar));
     return result;
-  }, [barsMap]);
+  }, [barsMap, remappedExtraBars]);
 
   // Filtered bars — used by WeeklyCalendar
   const filteredBars = useMemo(() => {
@@ -59,23 +97,26 @@ export function useScheduleData() {
     );
   }, [allBarsUnfiltered, selectedChallengeId]);
 
-  const challengeFilterItems = useMemo(
-    () =>
-      challenges.map((c, index) => ({
-        challengeId: c.challengeId,
-        title: c.title,
-        colorIndex: index,
-      })),
-    [challenges],
-  );
-
   /**
-   * 해당 챌린지의 피드백 일정 목록을 feedbackStartDate 순으로 반환.
+   * 필터 태그 클릭 네비게이션 — 멘토가 직접 액션하는 바로만 이동.
+   *  포함: 서면 피드백 제출기간 / 라이브 일정 오픈 / 라이브 피드백 기간
+   *  제외: 유저 제출·검수·멘티 신청 (멘토 대기) / 개별 라이브 세션
    */
+  const MENTOR_ACTION_BAR_TYPES = [
+    'written-feedback',
+    'live-feedback-mentor-open',
+    'live-feedback-period',
+  ] as const;
   const getFeedbackDates = useCallback(
     (challengeId: number): Date[] => {
       return allBarsUnfiltered
-        .filter((bar) => bar.challengeId === challengeId)
+        .filter(
+          (bar) =>
+            bar.challengeId === challengeId &&
+            MENTOR_ACTION_BAR_TYPES.includes(
+              bar.barType as (typeof MENTOR_ACTION_BAR_TYPES)[number],
+            ),
+        )
         .map((bar) => new Date(bar.feedbackStartDate))
         .sort((a, b) => a.getTime() - b.getTime());
     },
@@ -126,6 +167,7 @@ export function useScheduleData() {
     filteredBars,
     handleData,
     challengeFilterItems,
+    challengeColorMap,
     findNearestDate,
     findNextDate,
   };

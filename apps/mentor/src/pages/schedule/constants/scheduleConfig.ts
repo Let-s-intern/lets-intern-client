@@ -1,10 +1,10 @@
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 
 // ---------------------------------------------------------------------------
 // 일정 구간(Segment) 정의
 // ---------------------------------------------------------------------------
 
-/** 캘린더 바의 개별 구간 */
+/** 캘린더 바의 개별 구간 — 배경 단색화로 cardStyle 제거 */
 export interface BarSegment {
   /** 구간 식별자 */
   id: string;
@@ -16,8 +16,6 @@ export interface BarSegment {
   endOffset: number;
   /** 상단 라인 스타일: 'solid' | 'faded' | 'muted' */
   lineStyle: 'solid' | 'faded' | 'muted';
-  /** 카드 배경 스타일: 'primary' = 진한색, 'light' = 연한색 */
-  cardStyle: 'primary' | 'light';
   /** 카드 오른쪽 구분선 표시 여부 */
   showBorder: boolean;
   /** 이 구간이 멘토의 주요 액션 구간인지 (회차/카운트/라인 표시 위치) */
@@ -44,15 +42,18 @@ export interface ScheduleTypeConfig {
 // 헬퍼: 설정에서 날짜 계산
 // ---------------------------------------------------------------------------
 
-/** 설정 기반으로 feedbackStartDate, feedbackDeadline 계산 */
+/** 설정 기반으로 feedbackStartDate, feedbackDeadline 계산 (yyyy-MM-dd 형식 반환) */
 export function computeDatesFromConfig(
   config: ScheduleTypeConfig,
   missionEndDate: string,
 ) {
   const end = new Date(missionEndDate);
   return {
-    feedbackStartDate: addDays(end, config.scrollTargetOffset).toISOString(),
-    feedbackDeadline: addDays(end, config.barEndOffset).toISOString(),
+    feedbackStartDate: format(
+      addDays(end, config.scrollTargetOffset),
+      'yyyy-MM-dd',
+    ),
+    feedbackDeadline: format(addDays(end, config.barEndOffset), 'yyyy-MM-dd'),
   };
 }
 
@@ -67,10 +68,9 @@ export function computeSegmentColSpans(
   const missionDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
   return config.segments.map((seg) => {
-    const cols =
-      seg.startOffset === -Infinity
-        ? missionDays
-        : seg.endOffset - seg.startOffset;
+    const cols = seg.startOffset === -Infinity
+      ? missionDays
+      : seg.endOffset - seg.startOffset;
     return { segment: seg, cols };
   });
 }

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { useState, type ReactNode } from 'react';
 
@@ -22,6 +22,8 @@ interface MobileFeedbackPageProps {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  /** 챌린지 컬러 팔레트 인덱스 — 상단 바 배경에 반영 */
+  colorIndex?: number;
 }
 
 const MobileFeedbackPage = ({
@@ -31,6 +33,7 @@ const MobileFeedbackPage = ({
   missionId,
   challengeTitle,
   missionTh,
+  colorIndex,
 }: MobileFeedbackPageProps) => {
   const {
     selectedIndex,
@@ -83,9 +86,7 @@ const MobileFeedbackPage = ({
       isAbsent={isAbsent}
       onSaveSuccess={handleMutationSuccess}
       onSubmitSuccess={handleMutationSuccess}
-      onAlert={(opts) =>
-        showAlert({ title: opts.title, variant: opts.variant })
-      }
+      onAlert={(opts) => showAlert({ title: opts.title, variant: opts.variant })}
       onConfirm={(opts) =>
         showConfirm({
           title: opts.title,
@@ -119,6 +120,7 @@ const MobileFeedbackPage = ({
         <FeedbackHeader
           challengeTitle={challengeTitle}
           missionTh={missionTh}
+          colorIndex={colorIndex}
           totalCount={attendanceList.length}
           waitingCount={waitingCount}
           inProgressCount={inProgressCount}
@@ -134,7 +136,9 @@ const MobileFeedbackPage = ({
           />
         </div>
 
-        <div className="px-4 py-3">{editorBlock}</div>
+        <div className="px-4 py-3">
+          {editorBlock}
+        </div>
 
         <div
           className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3"
@@ -169,13 +173,7 @@ const MobileFeedbackPage = ({
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-3.5 text-base font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M14 8L9 13L14 18"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M14 8L9 13L14 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               이전 멘티
             </button>
@@ -187,13 +185,7 @@ const MobileFeedbackPage = ({
             >
               다음 멘티
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M10 8L15 13L10 18"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M10 8L15 13L10 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
@@ -206,13 +198,11 @@ const MobileFeedbackPage = ({
 
   // 기본 모드
   return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col bg-white"
-      style={{ height: '100dvh' }}
-    >
+    <div className="fixed inset-0 z-50 flex flex-col bg-white" style={{ height: '100dvh' }}>
       <FeedbackHeader
         challengeTitle={challengeTitle}
         missionTh={missionTh}
+        colorIndex={colorIndex}
         totalCount={attendanceList.length}
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
@@ -243,11 +233,16 @@ const MobileFeedbackPage = ({
       </div>
 
       <div className="shrink-0 border-b border-gray-100 px-4 py-3">
-        <MenteeInfo mentee={currentMentee} challengeTitle={challengeTitle} />
+        <MenteeInfo
+          mentee={currentMentee}
+          challengeTitle={challengeTitle}
+        />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-3">
-        <div className="flex min-h-[240px] flex-1 flex-col">{editorBlock}</div>
+        <div className="flex min-h-[240px] flex-1 flex-col">
+          {editorBlock}
+        </div>
       </div>
 
       <div

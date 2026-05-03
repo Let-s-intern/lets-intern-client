@@ -11,6 +11,7 @@ interface FeedbackModalState {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  colorIndex?: number;
 }
 
 /**
@@ -30,6 +31,7 @@ export function useFeedbackManagement() {
     challenge: Challenge,
     missionId: number,
     missionTh: number,
+    colorIndex?: number,
   ) => {
     setFeedbackModal({
       isOpen: true,
@@ -37,6 +39,7 @@ export function useFeedbackManagement() {
       missionId,
       challengeTitle: challenge.title ?? undefined,
       missionTh,
+      colorIndex,
     });
   };
 

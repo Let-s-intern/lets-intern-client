@@ -1,0 +1,144 @@
+import { getColor } from '../../constants/colors';
+import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
+
+/** "09:00" → "09:00", "18:30" → "18:30" */
+function formatTimeRange(start: string, end: string): string {
+  return `${start} ~ ${end}`;
+}
+
+/**
+ * 캘린더 상단 태그 영역에 쓰이는 라이브 피드백 카드 (단일 날짜용).
+ *
+ * TODO: 클릭 시 라이브 피드백 상세 모달 연결 (API 연동 후 구현)
+ */
+const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
+  const lf = bar.liveFeedback!;
+  const color = getColor(bar.colorIndex ?? 0);
+
+  return (
+    <div className="flex w-full flex-col overflow-hidden text-left">
+      {/* Row 1: LIVE 인디케이터 + N회차 */}
+      <div className="flex h-6 items-center gap-1.5 overflow-hidden">
+        <span className="flex shrink-0 items-center gap-1">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+          <span className="text-xxsmall12 font-bold text-red-500">LIVE</span>
+        </span>
+        <span className="text-xxsmall12 text-neutral-10 whitespace-nowrap font-medium tracking-[-0.3px]">
+          [ {bar.th}회차 ]
+        </span>
+      </div>
+
+      {/* Row 2: 오전 9시 ~ 9시 30분 */}
+      <div className="text-xxsmall12 text-neutral-40 flex items-center whitespace-nowrap font-medium tracking-[-0.3px]">
+        {formatTimeRange(lf.startTime, lf.endTime)}
+      </div>
+
+      {/* Row 3: 구분선 */}
+      <div className="flex h-3 items-center">
+        <div className={`h-full w-0.5 ${color.line}`} />
+        <div className={`h-0.5 flex-1 ${color.line}`} />
+        <div className={`h-full w-0.5 ${color.line}`} />
+      </div>
+
+      {/* Row 4: 챌린지 배지 + 멘티 이름 */}
+      <div className={`flex flex-col gap-1 p-2 ${color.body}`}>
+        <span
+          className={`text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+        >
+          {bar.challengeTitle}
+        </span>
+        <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
+          <span className="text-neutral-40">멘티</span>
+          <span className="text-neutral-10">{lf.menteeName}님</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * 시간별 일정(하단 time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
+ * 부모의 top/height(세션 시간 길이)에 맞춰 h-full/w-full로 채워진다.
+ */
+type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
+
+/**
+ * 상태별 태그 스타일 — 종료 상태(완료/미참여)는 dim 처리, 진행 상태(진행중/지각)는 강조.
+ */
+const STATUS_BADGE: Record<
+  Exclude<BadgeStatus, 'waiting'>,
+  { label: string; badge: string; dim: boolean }
+> = {
+  'in-progress': {
+    label: '진행중',
+    badge: 'bg-red-500 text-white',
+    dim: false,
+  },
+  completed: { label: '완료', badge: 'bg-green-500 text-white', dim: true },
+  'mentor-absent': {
+    label: '멘토 미참여',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+  'mentee-absent': {
+    label: '멘티 미참여',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+  'mentor-late': {
+    label: '멘토 지각',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+  'mentee-late': {
+    label: '멘티 지각',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+};
+
+export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
+  const lf = bar.liveFeedback!;
+  const color = getColor(bar.colorIndex ?? 0);
+  const badge =
+    lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
+  const isDim = badge?.dim ?? false;
+
+  return (
+    <div
+      className={`flex h-full w-full flex-col justify-between overflow-hidden border-t-[3px] px-2 py-1 ${color.border} ${isDim ? 'bg-neutral-95' : color.body}`}
+    >
+      {/* 상단: LIVE + 멘티명 + [상태 배지 오른쪽] */}
+      <div className="flex min-w-0 items-center gap-1">
+        <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-red-500" />
+        <span className="text-xxsmall12 shrink-0 font-bold leading-none text-red-500">
+          LIVE
+        </span>
+        <span
+          className={`text-xxsmall12 min-w-0 flex-1 truncate font-medium leading-none ${isDim ? 'text-neutral-40' : 'text-neutral-10'}`}
+        >
+          {lf.menteeName}님
+        </span>
+        {badge && (
+          <span
+            className={`shrink-0 whitespace-nowrap rounded-[3px] px-1 py-0.5 text-[10px] font-bold leading-none ${badge.badge}`}
+          >
+            {badge.label}
+          </span>
+        )}
+      </div>
+
+      {/* 하단: 챌린지명 + 시간 */}
+      <div className="flex min-w-0 flex-col">
+        <span className="text-xxsmall12 text-neutral-40 truncate leading-tight">
+          {bar.challengeTitle}
+        </span>
+        <span className="text-xxsmall12 text-neutral-30 truncate leading-tight">
+          {formatTimeRange(lf.startTime, lf.endTime)}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export default LiveFeedbackCard;
