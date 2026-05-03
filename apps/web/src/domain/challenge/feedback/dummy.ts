@@ -1,4 +1,38 @@
 import { FeedbackMissionCardConfig } from './FeedbackMissionCard';
+import type { DaySchedule, SlotStatus } from './live/types';
+import { TIME_SLOTS } from './live/types';
+import { toDateString } from './live/utils';
+
+function getSlotStatus(date: Date, time: string, mentorId: string): SlotStatus {
+  const [hour, minute] = time.split(':').map(Number);
+  const slotTime = new Date(date);
+  slotTime.setHours(hour, minute, 0, 0);
+  if (slotTime <= new Date()) return 'expired';
+
+  const hash = [...`${toDateString(date)}${time}${mentorId}`].reduce(
+    (acc, c) => acc + c.charCodeAt(0),
+    0,
+  );
+  const n = hash % 10;
+  if (n < 3) return 'unavailable';
+  if (n < 6) return 'booked';
+  return 'available';
+}
+
+export function getMentorSchedule(
+  mentorId: string,
+  weekStart: Date,
+): DaySchedule[] {
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + i);
+    const slots: Record<string, SlotStatus> = {};
+    TIME_SLOTS.forEach((time) => {
+      slots[time] = getSlotStatus(date, time, mentorId);
+    });
+    return { date: toDateString(date), slots };
+  });
+}
 
 export interface Mentor {
   id: string;
