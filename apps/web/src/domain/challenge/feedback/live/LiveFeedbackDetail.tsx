@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 
-import MentorSection from './MentorSection';
+import ReservationFormSection from './ReservationFormSection';
 import ReservationInfoSection from './ReservationInfoSection';
-import TimeSlotSection from './TimeSlotSection';
 import type { Mentor, MissionPeriod, Reservation, SelectedSlot } from './types';
 
 interface Props {
@@ -33,30 +32,23 @@ const LiveFeedbackDetail = ({
     });
   };
 
+  if (!assignedMentor) return null;
+
   if (reservation) {
     return (
-      <div className="flex flex-col gap-4 md:p-4">
-        {assignedMentor && (
-          <ReservationInfoSection
-            mentor={assignedMentor}
-            reservation={reservation}
-          />
-        )}
-      </div>
+      <ReservationInfoSection
+        mentor={assignedMentor}
+        reservation={reservation}
+      />
     );
   }
 
-  if (!assignedMentor) return null;
-
   return (
-    <div className="flex flex-col gap-4 md:p-4">
-      <MentorSection mentor={assignedMentor} />
-      <TimeSlotSection
-        mentor={assignedMentor}
-        period={period}
-        onConfirm={handleConfirm}
-      />
-    </div>
+    <ReservationFormSection
+      mentor={assignedMentor}
+      period={period}
+      onConfirm={handleConfirm}
+    />
   );
 };
 

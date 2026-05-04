@@ -30,17 +30,15 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
   const formattedTime = formatReservationTime(scheduledDate, scheduledTime);
 
   return (
-    <section className="flex w-full gap-5">
-      {/* 멘토 정보 */}
-      <div className="flex w-full flex-col">
+    <div className="flex w-full gap-5 p-0 md:p-4">
+      <section className="flex w-full flex-col">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold">
           담당 멘토
         </h2>
         <MentorCard mentor={mentor} showStars={true} />
-      </div>
+      </section>
 
-      {/* 예약 정보 */}
-      <div className="flex w-full flex-col gap-4">
+      <section className="flex w-full flex-col gap-4">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold">
           라이브 피드백
         </h2>
@@ -101,8 +99,8 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
             )}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 
