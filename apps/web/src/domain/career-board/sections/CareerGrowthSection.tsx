@@ -1,11 +1,15 @@
-import { useMypageApplicationsQuery } from '@/api/application';
-import { useGetMypageMagnetListQuery } from '@/api/magnet/magnet';
+'use client';
+
+import { mypageApplicationsQueryOptions } from '@/api/application';
+import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import {
   APPLICATION_CATEGORY_OPTIONS,
   ApplicationCategory,
 } from '@/domain/mypage/application/constants';
 import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
@@ -16,6 +20,9 @@ import {
   toCareerGrowthCardConfigs,
   toLibraryCardConfigs,
 } from '../utils/careerGrowthCard';
+
+const TITLE = '커리어 성장';
+const HREF = '/mypage/application';
 
 const EMPTY_CONFIG_BY_CATEGORY: Record<
   ApplicationCategory,
@@ -45,20 +52,42 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
 
 const CareerGrowthSection = () => {
   const router = useRouter();
-  const {
-    data: applications,
-    isLoading,
-    isError,
-  } = useMypageApplicationsQuery();
+
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={
+            <LoadingContainer text="진행중인 프로그램을 불러오는 중입니다." />
+          }
+        />
+      }
+      rejectedFallback={({ resetErrorBoundary }) => (
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<SectionErrorFallback onRetry={resetErrorBoundary} />}
+        />
+      )}
+    >
+      <CareerGrowthContent />
+    </AsyncBoundary>
+  );
+};
+
+export default CareerGrowthSection;
+
+const CareerGrowthContent = () => {
+  const router = useRouter();
+  const { data: applications } = useSuspenseQuery(
+    mypageApplicationsQueryOptions,
+  );
   const { setHasCareerData } = useCareerDataStatus();
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
   const isLibraryTab = category === 'LIBRARY';
-
-  const { data: magnetData, isLoading: isMagnetLoading } =
-    useGetMypageMagnetListQuery({
-      enabled: isLibraryTab,
-    });
 
   const items = useMemo(
     () => toCareerGrowthItems(applications ?? []),
@@ -82,16 +111,12 @@ const CareerGrowthSection = () => {
     );
   }, [category, items]);
 
-  const cardConfigs = useMemo(() => {
-    if (isLibraryTab) {
-      return toLibraryCardConfigs(magnetData?.magnetList ?? []);
-    }
-    return toCareerGrowthCardConfigs(visibleItems, category);
-  }, [isLibraryTab, magnetData, visibleItems, category]);
+  const programCardConfigs = useMemo(
+    () => toCareerGrowthCardConfigs(visibleItems, category),
+    [visibleItems, category],
+  );
 
-  // 데이터 존재 여부 확인 (전체 프로그램 기준)
   const hasData = items.length > 0;
-  const hasVisibleData = cardConfigs.length > 0;
 
   useEffect(() => {
     if (hasData) {
@@ -99,35 +124,10 @@ const CareerGrowthSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading || (isLibraryTab && isMagnetLoading)) {
-    return (
-      <CareerCard
-        title="커리어 성장"
-        labelOnClick={() => router.push('/mypage/application')}
-        body={
-          <LoadingContainer text="진행중인 프로그램을 불러오는 중입니다." />
-        }
-      />
-    );
-  }
-
-  if (isError) {
-    return (
-      <CareerCard
-        title="커리어 성장"
-        labelOnClick={() => router.push('/mypage/application')}
-        body={
-          <div className="text-neutral-40 py-8 text-center">
-            데이터를 불러오는 중 오류가 발생했습니다.
-          </div>
-        }
-      />
-    );
-  }
   return (
     <CareerCard
-      title="커리어 성장"
-      labelOnClick={() => router.push('/mypage/application')}
+      title={TITLE}
+      labelOnClick={() => router.push(HREF)}
       body={
         <div className="flex flex-col gap-6 pt-1">
           <CategoryChips
@@ -135,8 +135,19 @@ const CareerGrowthSection = () => {
             selected={category}
             onChange={setCategory}
           />
-          {hasVisibleData ? (
-            <CareerGrowthList items={cardConfigs} />
+          {isLibraryTab ? (
+            <AsyncBoundary
+              pendingFallback={
+                <LoadingContainer text="자료집을 불러오는 중입니다." />
+              }
+              rejectedFallback={({ resetErrorBoundary }) => (
+                <SectionErrorFallback onRetry={resetErrorBoundary} />
+              )}
+            >
+              <LibraryGrowthList />
+            </AsyncBoundary>
+          ) : programCardConfigs.length > 0 ? (
+            <CareerGrowthList items={programCardConfigs} />
           ) : (
             <div className="pb-6">
               <CareerCard.Empty
@@ -155,4 +166,40 @@ const CareerGrowthSection = () => {
   );
 };
 
-export default CareerGrowthSection;
+const LibraryGrowthList = () => {
+  const router = useRouter();
+  const { data: magnetData } = useSuspenseQuery(mypageMagnetListQueryOptions());
+
+  const cardConfigs = useMemo(
+    () => toLibraryCardConfigs(magnetData?.magnetList ?? []),
+    [magnetData],
+  );
+
+  if (cardConfigs.length === 0) {
+    return (
+      <div className="pb-6">
+        <CareerCard.Empty
+          description={EMPTY_CONFIG_BY_CATEGORY.LIBRARY.description}
+          buttonText={EMPTY_CONFIG_BY_CATEGORY.LIBRARY.buttonText}
+          buttonHref={EMPTY_CONFIG_BY_CATEGORY.LIBRARY.href}
+          onClick={() => router.push(EMPTY_CONFIG_BY_CATEGORY.LIBRARY.href)}
+        />
+      </div>
+    );
+  }
+
+  return <CareerGrowthList items={cardConfigs} />;
+};
+
+const SectionErrorFallback = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="flex flex-col items-center justify-center gap-3 py-8">
+    <p className="text-xsmall14 text-neutral-40">불러오지 못했어요.</p>
+    <button
+      type="button"
+      onClick={onRetry}
+      className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-20 border px-4 py-2 font-medium"
+    >
+      다시 시도
+    </button>
+  </div>
+);

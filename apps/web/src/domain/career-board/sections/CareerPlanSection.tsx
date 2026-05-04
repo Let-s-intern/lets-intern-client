@@ -1,22 +1,54 @@
-import { useUserQuery } from '@/api/user/user';
+'use client';
+
+import { userQueryOptions } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
+const TITLE = '커리어 계획';
+const HREF = '/mypage/career/plan';
+
 const CareerPlanSection = () => {
   const router = useRouter();
-  const { data: userData, isLoading } = useUserQuery();
+
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<LoadingContainer text="커리어 계획 조회 중" />}
+        />
+      }
+      rejectedFallback={({ resetErrorBoundary }) => (
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<SectionErrorFallback onRetry={resetErrorBoundary} />}
+        />
+      )}
+    >
+      <CareerPlanContent />
+    </AsyncBoundary>
+  );
+};
+
+export default CareerPlanSection;
+
+const CareerPlanContent = () => {
+  const router = useRouter();
+  const { data: userData } = useSuspenseQuery(userQueryOptions);
   const { setHasCareerData } = useCareerDataStatus();
 
-  // 서버에서 받아온 데이터
   const wishField = userData?.wishField ?? null;
   const wishJob = userData?.wishJob ?? null;
   const wishIndustry = userData?.wishIndustry ?? null;
   const wishCompany = userData?.wishCompany ?? null;
 
-  // 데이터 존재 여부 확인 (null, 빈 문자열 체크)
   const hasData =
     (wishField && wishField.trim()) ||
     (wishJob && wishJob.trim()) ||
@@ -29,20 +61,10 @@ const CareerPlanSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="커리어 계획"
-        labelOnClick={() => router.push('/mypage/career/plan')}
-        body={<LoadingContainer text="커리어 계획 조회 중" />}
-      />
-    );
-  }
-
   return (
     <CareerCard
-      title="커리어 계획"
-      labelOnClick={() => router.push('/mypage/career/plan')}
+      title={TITLE}
+      labelOnClick={() => router.push(HREF)}
       body={
         hasData ? (
           <CareerPlanBody
@@ -55,8 +77,8 @@ const CareerPlanSection = () => {
           <CareerCard.Empty
             description="아직 커리어 방향을 설정하지 않았어요."
             buttonText="커리어 계획하기"
-            buttonHref="/mypage/career/plan"
-            onClick={() => router.push('/mypage/career/plan')}
+            buttonHref={HREF}
+            onClick={() => router.push(HREF)}
           />
         )
       }
@@ -64,7 +86,18 @@ const CareerPlanSection = () => {
   );
 };
 
-export default CareerPlanSection;
+const SectionErrorFallback = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="flex flex-col items-center justify-center gap-3 py-8">
+    <p className="text-xsmall14 text-neutral-40">불러오지 못했어요.</p>
+    <button
+      type="button"
+      onClick={onRetry}
+      className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-20 border px-4 py-2 font-medium"
+    >
+      다시 시도
+    </button>
+  </div>
+);
 
 interface CareerPlanBodyProps {
   wishField: string | null;
@@ -79,7 +112,6 @@ const CareerPlanBody = ({
   wishIndustry,
   wishCompany,
 }: CareerPlanBodyProps) => {
-  // 희망 직군/직무 조합
   const jobRoleText = (() => {
     const parts: string[] = [];
     if (wishField && wishField.trim()) parts.push(wishField.trim());

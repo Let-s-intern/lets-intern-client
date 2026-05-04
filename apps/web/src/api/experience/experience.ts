@@ -22,6 +22,21 @@ export const useGetUserExperienceFiltersQuery = () => {
   });
 };
 
+export const allUserExperienceQueryOptions = (
+  filter: ExperienceFiltersReq,
+  sortable: Sortable,
+  pageable: Pageable,
+) => ({
+  queryKey: [UserExperienceQueryKey, filter, sortable, pageable] as const,
+  queryFn: async () => {
+    const res = await axios.post(
+      `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
+      { ...filter, sortType: sortable },
+    );
+    return userExperienceListSchema.parse(res.data.data);
+  },
+});
+
 export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
   sortable: Sortable,
@@ -29,14 +44,7 @@ export const useGetAllUserExperienceQuery = (
   options?: { enabled?: boolean },
 ) => {
   return useQuery({
-    queryKey: [UserExperienceQueryKey, filter, sortable, pageable],
-    queryFn: async () => {
-      const res = await axios.post(
-        `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
-        { ...filter, sortType: sortable },
-      );
-      return userExperienceListSchema.parse(res.data.data);
-    },
+    ...allUserExperienceQueryOptions(filter, sortable, pageable),
     enabled: options?.enabled,
   });
 };

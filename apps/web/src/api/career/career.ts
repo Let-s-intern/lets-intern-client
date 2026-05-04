@@ -11,31 +11,36 @@ import { z } from 'zod';
 
 export const UserCareerQueryKey = 'userCareerQueryKey';
 
+export const userCareerQueryOptions = (
+  pageable: Pageable,
+  sortable?: Sortable,
+) => ({
+  queryKey: [
+    UserCareerQueryKey,
+    ...Object.values(pageable),
+    ...(sortable ? Object.values(sortable) : []),
+  ] as const,
+  queryFn: async () => {
+    const params = new URLSearchParams({
+      page: String(pageable.page),
+      size: String(pageable.size),
+    });
+
+    if (sortable) {
+      params.append('sort', String(sortable.sort));
+      params.append('sortType', String(sortable.sortType));
+    }
+
+    const res = await axios.get(`/user-career/my?${params.toString()}`);
+    return userCareerListSchema.parse(res.data.data);
+  },
+});
+
 export const useGetUserCareerQuery = (
   pageable: Pageable,
   sortable?: Sortable,
 ) => {
-  return useQuery({
-    queryKey: [
-      UserCareerQueryKey,
-      ...Object.values(pageable),
-      ...(sortable ? Object.values(sortable) : []),
-    ],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        page: String(pageable.page),
-        size: String(pageable.size),
-      });
-
-      if (sortable) {
-        params.append('sort', String(sortable.sort));
-        params.append('sortType', String(sortable.sortType));
-      }
-
-      const res = await axios.get(`/user-career/my?${params.toString()}`);
-      return userCareerListSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(userCareerQueryOptions(pageable, sortable));
 };
 
 export const usePostUserCareerMutation = () => {

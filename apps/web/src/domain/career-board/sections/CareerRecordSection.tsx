@@ -1,17 +1,52 @@
-import { useGetUserCareerQuery } from '@/api/career/career';
+'use client';
+
+import { userCareerQueryOptions } from '@/api/career/career';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { toCareerDateDot } from '@/utils/career';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
+const TITLE = '커리어 기록';
+const HREF = '/mypage/career/record';
+
 const CareerRecordSection = () => {
   const router = useRouter();
 
-  const { data, isLoading } = useGetUserCareerQuery(
-    { page: 0, size: 1 },
-    { sort: 'desc', sortType: 'START_DATE' },
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<LoadingContainer text="커리어 기록 조회 중" />}
+        />
+      }
+      rejectedFallback={({ resetErrorBoundary }) => (
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<SectionErrorFallback onRetry={resetErrorBoundary} />}
+        />
+      )}
+    >
+      <CareerRecordContent />
+    </AsyncBoundary>
+  );
+};
+
+export default CareerRecordSection;
+
+const CareerRecordContent = () => {
+  const router = useRouter();
+  const { data } = useSuspenseQuery(
+    userCareerQueryOptions(
+      { page: 0, size: 1 },
+      { sort: 'desc', sortType: 'START_DATE' },
+    ),
   );
   const { setHasCareerData } = useCareerDataStatus();
 
@@ -24,20 +59,10 @@ const CareerRecordSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="커리어 기록"
-        labelOnClick={() => router.push('/mypage/career/record')}
-        body={<LoadingContainer text="커리어 기록 조회 중" />}
-      />
-    );
-  }
-
   return (
     <CareerCard
-      title="커리어 기록"
-      labelOnClick={() => router.push('/mypage/career/record')}
+      title={TITLE}
+      labelOnClick={() => router.push(HREF)}
       body={
         hasData && latestCareer ? (
           <CareerRecordBody
@@ -59,8 +84,8 @@ const CareerRecordSection = () => {
             height={109}
             description="아직 등록된 커리어가 없어요"
             buttonText="커리어 기록하기"
-            buttonHref="/mypage/career/record"
-            onClick={() => router.push('/mypage/career/record')}
+            buttonHref={HREF}
+            onClick={() => router.push(HREF)}
           />
         )
       }
@@ -68,7 +93,18 @@ const CareerRecordSection = () => {
   );
 };
 
-export default CareerRecordSection;
+const SectionErrorFallback = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="flex flex-col items-center justify-center gap-3 py-8">
+    <p className="text-xsmall14 text-neutral-40">불러오지 못했어요.</p>
+    <button
+      type="button"
+      onClick={onRetry}
+      className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-20 border px-4 py-2 font-medium"
+    >
+      다시 시도
+    </button>
+  </div>
+);
 
 interface CareerRecordBodyProps {
   category: string;
@@ -91,7 +127,6 @@ const CareerRecordBody = ({
 
   return (
     <div className="flex h-[109px] flex-col gap-4">
-      {/* 경력 카테고리 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">
           {category}
