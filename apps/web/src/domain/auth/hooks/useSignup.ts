@@ -68,7 +68,6 @@ const useSignup = () => {
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState<SignupValue>(INITIAL_VALUE);
   const [accessTokenForSocialSignup, setAccessTokenForSocialSignup] =
     useState('');
@@ -101,25 +100,21 @@ const useSignup = () => {
     if (isLoggedIn) router.push('/');
   }, [router, isLoggedIn]);
 
-  // 버튼 활성화 상태
-  useEffect(() => {
-    const requiredFields = isSocial
-      ? [value.email, value.inflow]
-      : [
-          value.email,
-          value.name,
-          value.phoneNum,
-          value.password,
-          value.passwordConfirm,
-          value.inflow,
-        ];
-
-    const hasEmptyField = requiredFields.some((field) => field === '');
-    const hasUncheckedAgreement =
-      !value.acceptedAge || !value.agreeToTerms || !value.agreeToPrivacy;
-
-    setButtonDisabled(hasEmptyField || hasUncheckedAgreement);
-  }, [value, isSocial]);
+  // 버튼 활성화 상태 (파생)
+  const requiredFields = isSocial
+    ? [value.email, value.inflow]
+    : [
+        value.email,
+        value.name,
+        value.phoneNum,
+        value.password,
+        value.passwordConfirm,
+        value.inflow,
+      ];
+  const hasEmptyField = requiredFields.some((field) => field === '');
+  const hasUncheckedAgreement =
+    !value.acceptedAge || !value.agreeToTerms || !value.agreeToPrivacy;
+  const buttonDisabled = hasEmptyField || hasUncheckedAgreement;
 
   // 이메일 회원가입
   const postEmailUser = useMutation({
