@@ -3,7 +3,14 @@
 import BackHeader from '@/common/header/BackHeader';
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
 import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
+import type { LiveFeedbackStatus } from '@/domain/challenge/feedback/live/types';
 import { useParams } from 'next/navigation';
+
+const HEADER_TITLE: Record<LiveFeedbackStatus, string> = {
+  prev: '라이브 피드백 예약하기',
+  reserved: '라이브 피드백 신청 정보',
+  done: '라이브 피드백 회고하기',
+};
 
 const LiveMissionDetailPage = () => {
   const { applicationId, programId, missionId } = useParams<{
@@ -19,7 +26,7 @@ const LiveMissionDetailPage = () => {
 
   return (
     <>
-      <BackHeader to={backPath}>라이브 예약 신청하기</BackHeader>
+      <BackHeader to={backPath}>{HEADER_TITLE[mission.status]}</BackHeader>
       <LiveFeedbackDetail
         assignedMentor={mission.assignedMentor}
         period={{

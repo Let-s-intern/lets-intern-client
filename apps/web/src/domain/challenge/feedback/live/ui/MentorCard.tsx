@@ -1,5 +1,5 @@
 'use client';
-import clsx from 'clsx';
+import { twMerge } from '@/lib/twMerge';
 import type { Mentor } from '../types';
 
 interface MentorCardProps {
@@ -17,7 +17,7 @@ const MentorCard = ({
 }: MentorCardProps) => {
   const stars = mentor.stars ?? 0;
 
-  const cardClassName = clsx(
+  const cardClassName = twMerge(
     'rounded-xs flex w-full items-center gap-4 p-4 text-left transition-colors',
     onClick && 'cursor-pointer',
     className,

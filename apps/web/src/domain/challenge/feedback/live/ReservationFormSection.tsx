@@ -28,7 +28,7 @@ const ReservationFormSection = ({ mentor, period, onConfirm }: Props) => {
   } = useTimeSlotState(mentor, period, onConfirm);
 
   return (
-    <div className="flex flex-col gap-6 p-0 md:p-4">
+    <div className="mb-10 flex flex-col gap-6 p-0 md:mb-0 md:p-4">
       <section>
         <h2 className="text-xsmall16 text-neutral-0 mb-4 font-semibold">
           담당 멘토
