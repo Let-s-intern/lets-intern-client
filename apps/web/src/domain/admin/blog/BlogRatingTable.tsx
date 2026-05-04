@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import dayjs from '@/lib/dayjs';
 import { useBlogRatingListQuery } from '../../../api/blog/blog';
 import { blogCategory } from '../../../utils/convert';
-import MuiPagination from '../../program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 
 const ratingColumnWidth = {
   createdDate: 'w-32',

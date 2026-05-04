@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import ModalButton from '../button/ModalButton';
-import BaseModal from './BaseModal';
+import ModalButton from '@/common/button/ModalButton';
+import BaseModal from '@/common/modal/BaseModal';
 
 interface ReportSubmitModalProps {
   isOpen: boolean;
