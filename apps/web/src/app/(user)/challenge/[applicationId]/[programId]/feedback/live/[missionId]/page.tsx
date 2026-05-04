@@ -17,6 +17,7 @@ const LiveMissionDetailPage = () => {
     <>
       <BackHeader to={backPath}>라이브 예약 신청하기</BackHeader>
       <LiveFeedbackDetail
+        assignedMentor={DUMMY_FEEDBACK_MISSIONS[0].assignedMentor}
         period={{
           startDay: DUMMY_FEEDBACK_MISSIONS[0].startDay,
           endDay: DUMMY_FEEDBACK_MISSIONS[0].endDay,

@@ -34,7 +34,6 @@ export interface Mentor {
 // 확정된 예약 정보
 export interface Reservation {
   reservationId: string;
-  mentor: Mentor;
   scheduledDate: string; // 'YYYY-MM-DD'
   scheduledTime: string; // '09:00'
   zepRoomNumber: number | null;
@@ -51,6 +50,7 @@ export interface LiveFeedbackMission {
   categoryLabel?: string;
   startDay: string; // 'YYYY-MM-DD'
   endDay: string; // 'YYYY-MM-DD'
+  assignedMentor: Mentor | null;
   reservationInfo: Reservation | null;
 }
 

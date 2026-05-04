@@ -8,24 +8,24 @@ import TimeSlotSection from './TimeSlotSection';
 import type { Mentor, MissionPeriod, Reservation, SelectedSlot } from './types';
 
 interface Props {
+  assignedMentor: Mentor | null;
   period: MissionPeriod;
   reservationInfo: Reservation | null;
 }
 
 const LiveFeedbackDetail = ({
+  assignedMentor,
   period,
   reservationInfo: initialReservation,
 }: Props) => {
-  const [selectedMentorId, setSelectedMentorId] = useState<number | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(
     initialReservation,
   );
 
-  const handleConfirm = (mentor: Mentor, selectedSlot: SelectedSlot) => {
-    // POST 성공 후 GET 응답 시뮬레이션 (추후 변경 예정)
+  const handleConfirm = (selectedSlot: SelectedSlot) => {
+    if (!assignedMentor) return;
     setReservation({
-      reservationId: `reservation-${mentor.id}-${selectedSlot.date}-${selectedSlot.time}`,
-      mentor,
+      reservationId: `reservation-${assignedMentor.id}-${selectedSlot.date}-${selectedSlot.time}`,
       scheduledDate: selectedSlot.date,
       scheduledTime: selectedSlot.time,
       zepRoomNumber: 8,
@@ -36,19 +36,23 @@ const LiveFeedbackDetail = ({
   if (reservation) {
     return (
       <div className="flex flex-col gap-4 md:p-4">
-        <ReservationInfoSection reservation={reservation} />
+        {assignedMentor && (
+          <ReservationInfoSection
+            mentor={assignedMentor}
+            reservation={reservation}
+          />
+        )}
       </div>
     );
   }
 
+  if (!assignedMentor) return null;
+
   return (
     <div className="flex flex-col gap-4 md:p-4">
-      <MentorSection
-        selectedMentorId={selectedMentorId}
-        onSelect={setSelectedMentorId}
-      />
+      <MentorSection mentor={assignedMentor} />
       <TimeSlotSection
-        selectedMentorId={selectedMentorId}
+        mentor={assignedMentor}
         period={period}
         onConfirm={handleConfirm}
       />

@@ -46,7 +46,7 @@ export const DUMMY_MENTORS: Mentor[] = [
     thumbnailUrl: '',
     stars: 5,
     description:
-      '멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
+      '멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
   },
   {
     id: 2,
@@ -63,7 +63,8 @@ export const DUMMY_MENTORS: Mentor[] = [
     name: '도안',
     thumbnailUrl: '',
     stars: 3,
-    description: '멘토 소개를 간단히 적어주세요.',
+    description:
+      '멘토 소개를 간단히 적어주세요.멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
   },
   {
     id: 4,
@@ -85,6 +86,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     categoryLabel: '프로그램 종류',
     startDay: '2026-06-01',
     endDay: '2026-06-28',
+    assignedMentor: DUMMY_MENTORS[0],
     reservationInfo: null,
   },
   {
@@ -98,9 +100,9 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     categoryLabel: '프로그램 종류',
     startDay: '2026-05-04',
     endDay: '2026-05-31',
+    assignedMentor: DUMMY_MENTORS[1],
     reservationInfo: {
       reservationId: 'reservation-dummy-001',
-      mentor: DUMMY_MENTORS[1],
       scheduledDate: '2026-05-10',
       scheduledTime: '13:30',
       zepRoomNumber: 8,
@@ -118,9 +120,9 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     categoryLabel: '프로그램 종류',
     startDay: '2026-05-04',
     endDay: '2026-05-31',
+    assignedMentor: DUMMY_MENTORS[1],
     reservationInfo: {
       reservationId: 'reservation-dummy-001',
-      mentor: DUMMY_MENTORS[3],
       scheduledDate: '2026-05-03',
       scheduledTime: '23:00',
       zepRoomNumber: 8,
@@ -138,9 +140,9 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     categoryLabel: '대기업 자기소개서 완성 챌린지 7기',
     startDay: '2026-04-01',
     endDay: '2026-04-30',
+    assignedMentor: DUMMY_MENTORS[2],
     reservationInfo: {
       reservationId: 'reservation-dummy-002',
-      mentor: DUMMY_MENTORS[3],
       scheduledDate: '2026-04-10',
       scheduledTime: '14:00',
       zepRoomNumber: 3,

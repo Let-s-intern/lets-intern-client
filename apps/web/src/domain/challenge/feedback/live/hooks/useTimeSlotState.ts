@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
-import { DUMMY_MENTORS, getMentorSchedule } from '../../dummy';
+import { useMemo, useState } from 'react';
+import { getMentorSchedule } from '../../dummy';
 import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
 import { addDays, getWeekStart, toDateString } from '../utils';
 
 export function useTimeSlotState(
-  selectedMentorId: number | null,
+  mentor: Mentor,
   period: MissionPeriod,
-  onConfirm: (mentor: Mentor, slot: SelectedSlot) => void,
+  onConfirm: (slot: SelectedSlot) => void,
 ) {
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date();
@@ -17,19 +17,9 @@ export function useTimeSlotState(
   });
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
-  useEffect(() => {
-    setSelectedSlot(null);
-  }, [selectedMentorId]);
-
-  const mentor = useMemo(
-    () => DUMMY_MENTORS.find((m) => m.id === selectedMentorId),
-    [selectedMentorId],
-  );
-
   const schedule = useMemo(
-    () =>
-      selectedMentorId ? getMentorSchedule(selectedMentorId, weekStart) : [],
-    [selectedMentorId, weekStart],
+    () => getMentorSchedule(mentor.id, weekStart),
+    [mentor.id, weekStart],
   );
 
   const canGoPrev =
@@ -60,14 +50,13 @@ export function useTimeSlotState(
   const handleCancel = () => setSelectedSlot(null);
 
   const handleConfirm = () => {
-    if (!selectedSlot || !mentor) return;
-    onConfirm(mentor, selectedSlot);
+    if (!selectedSlot) return;
+    onConfirm(selectedSlot);
   };
 
   return {
     weekStart,
     selectedSlot,
-    mentor,
     schedule,
     canGoPrev,
     canGoNext,

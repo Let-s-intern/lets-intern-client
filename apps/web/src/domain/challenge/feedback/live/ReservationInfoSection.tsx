@@ -1,8 +1,9 @@
-import type { Reservation } from './types';
+import type { Mentor, Reservation } from './types';
 import MentorCard from './ui/MentorCard';
 import { formatReservationTime } from './utils';
 
 interface Props {
+  mentor: Mentor;
   reservation: Reservation;
 }
 
@@ -21,8 +22,8 @@ function getCtaState(scheduledDate: string, scheduledTime: string): CtaState {
   return 'pending';
 }
 
-const ReservationInfoSection = ({ reservation }: Props) => {
-  const { mentor, scheduledDate, scheduledTime, zepRoomNumber, zepRoomUrl } =
+const ReservationInfoSection = ({ mentor, reservation }: Props) => {
+  const { scheduledDate, scheduledTime, zepRoomNumber, zepRoomUrl } =
     reservation;
 
   const ctaState = getCtaState(scheduledDate, scheduledTime);

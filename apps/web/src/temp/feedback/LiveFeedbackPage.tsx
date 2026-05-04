@@ -48,6 +48,7 @@ const LiveFeedbackPage = () => {
             onMobileClick={() => handleMobileClick(index)}
           >
             <LiveFeedbackDetail
+              assignedMentor={mission.assignedMentor}
               period={{
                 startDay: mission.startDay,
                 endDay: mission.endDay,
@@ -80,6 +81,7 @@ const LiveFeedbackPage = () => {
         <div className="z-1 fixed inset-x-0 bottom-0 top-[44px] overflow-y-auto bg-white px-5 md:hidden">
           <BackHeader to={pathname}>라이브 예약 신청하기</BackHeader>
           <LiveFeedbackDetail
+            assignedMentor={mobileMission.assignedMentor}
             period={{
               startDay: mobileMission.startDay,
               endDay: mobileMission.endDay,
