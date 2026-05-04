@@ -70,7 +70,7 @@ export const blogListQueryOptions = ({
       params: {
         ...pageable,
         tagId,
-        types: types?.map((type) => type).join(','),
+        types: types?.join(','),
       },
     });
     return blogListSchema.parse(res.data.data);

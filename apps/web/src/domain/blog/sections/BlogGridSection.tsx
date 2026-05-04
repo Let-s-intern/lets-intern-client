@@ -16,13 +16,14 @@ import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { blogCategory } from '@/utils/convert';
 import { useMediaQuery } from '@mui/material';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 import BaseButton from '../../../common/button/BaseButton';
 import EmptyContainer from '../../../common/container/EmptyContainer';
 import LoadingContainer from '../../../common/loading/LoadingContainer';
-import MuiPagination from '../../program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import { BlogRecommendSection } from './BlogRecommendSection';
 
 const willBePublished = (date: string) => dayjs(date).isAfter(dayjs());
@@ -126,10 +127,12 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
                 }}
                 thumbnail={
                   blogBanners[0].file ? (
-                    <img
-                      className="h-full w-full object-cover"
+                    <Image
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover"
                       src={blogBanners[0].file}
-                      alt={blogBanners[0].title ?? undefined}
+                      alt={blogBanners[0].title ?? ''}
                     />
                   ) : null
                 }
@@ -154,10 +157,12 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
                 }}
                 thumbnail={
                   blogBanners[1].file ? (
-                    <img
-                      className="h-full w-full object-cover"
+                    <Image
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover"
                       src={blogBanners[1].file}
-                      alt={title ?? undefined}
+                      alt={title}
                     />
                   ) : null
                 }
@@ -196,10 +201,12 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
                 thumbnail={
                   <>
                     {blogThumbnailInfo.thumbnail && (
-                      <img
-                        className="h-full w-full object-cover"
+                      <Image
+                        fill
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                        className="object-cover"
                         src={blogThumbnailInfo.thumbnail}
-                        alt={blogThumbnailInfo.title ?? undefined}
+                        alt={blogThumbnailInfo.title ?? ''}
                       />
                     )}
                     {isUpcoming && (

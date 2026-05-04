@@ -45,7 +45,7 @@ describe('AsyncBoundary', () => {
     spy.mockRestore();
   });
 
-  it('커스텀 rejectedFallback을 렌더���한다', () => {
+  it('커스텀 rejectedFallback을 렌더링한다', () => {
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     render(
@@ -78,7 +78,7 @@ describe('AsyncBoundary', () => {
     let shouldThrow = true;
 
     function MaybeThrow() {
-      if (shouldThrow) throw new Error('일시적 에��');
+      if (shouldThrow) throw new Error('일시적 에러');
       return <div>복구 성공</div>;
     }
 
