@@ -1,3 +1,5 @@
+'use client';
+
 import { Suspense, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 
@@ -9,12 +11,10 @@ interface AsyncBoundaryProps {
 
 function DefaultErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <div className="flex flex-col items-center gap-2 py-4">
-      <p className="text-neutral-40 text-sm">
-        {error?.message ?? '오류가 발생했습니다.'}
-      </p>
+    <div className="flex flex-col items-center justify-center gap-4 py-10">
+      <p className="text-xsmall14 text-neutral-40">문제가 발생했습니다.</p>
       <button
-        className="text-sm text-blue-500 underline"
+        className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-20 border px-4 py-2 font-medium"
         onClick={resetErrorBoundary}
       >
         다시 시도
