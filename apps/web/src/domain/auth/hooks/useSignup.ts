@@ -111,7 +111,7 @@ const useSignup = () => {
         value.passwordConfirm,
         value.inflow,
       ];
-  const hasEmptyField = requiredFields.some((field) => field === '');
+  const hasEmptyField = requiredFields.some((field) => field.trim() === '');
   const hasUncheckedAgreement =
     !value.acceptedAge || !value.agreeToTerms || !value.agreeToPrivacy;
   const buttonDisabled = hasEmptyField || hasUncheckedAgreement;
