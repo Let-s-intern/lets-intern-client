@@ -9,7 +9,7 @@ import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
