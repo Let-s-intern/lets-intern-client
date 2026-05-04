@@ -6,23 +6,27 @@ import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDet
 import { useParams } from 'next/navigation';
 
 const LiveMissionDetailPage = () => {
-  const { applicationId, programId } = useParams<{
+  const { applicationId, programId, missionId } = useParams<{
     applicationId: string;
     programId: string;
+    missionId: string;
   }>();
 
   const backPath = `/challenge/${applicationId}/${programId}/feedback/live`;
+  const mission = DUMMY_FEEDBACK_MISSIONS[Number(missionId)];
+
+  if (!mission) return null;
 
   return (
     <>
       <BackHeader to={backPath}>라이브 예약 신청하기</BackHeader>
       <LiveFeedbackDetail
-        assignedMentor={DUMMY_FEEDBACK_MISSIONS[0].assignedMentor}
+        assignedMentor={mission.assignedMentor}
         period={{
-          startDay: DUMMY_FEEDBACK_MISSIONS[0].startDay,
-          endDay: DUMMY_FEEDBACK_MISSIONS[0].endDay,
+          startDay: mission.startDay,
+          endDay: mission.endDay,
         }}
-        reservationInfo={DUMMY_FEEDBACK_MISSIONS[0].reservationInfo}
+        reservationInfo={mission.reservationInfo}
       />
     </>
   );

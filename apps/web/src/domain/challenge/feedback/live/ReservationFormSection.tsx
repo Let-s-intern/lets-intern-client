@@ -28,18 +28,21 @@ const ReservationFormSection = ({ mentor, period, onConfirm }: Props) => {
   } = useTimeSlotState(mentor, period, onConfirm);
 
   return (
-    <div className="flex flex-col gap-4 p-0 md:p-4">
+    <div className="flex flex-col gap-6 p-0 md:p-4">
       <section>
         <h2 className="text-xsmall16 text-neutral-0 mb-4 font-semibold">
           담당 멘토
         </h2>
-        <MentorCard mentor={mentor} />
+        <MentorCard
+          mentor={mentor}
+          className="border-neutral-80 min-w-[316px] border"
+        />
       </section>
 
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xsmall16 text-neutral-0 font-semibold">
-            예약 가능한 시간
+            예약 가능한 시간 선택
           </h2>
           <WeekNav
             weekStart={weekStart}

@@ -1,13 +1,11 @@
 'use client';
 
-import BackHeader from '@/common/header/BackHeader';
 import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
 import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
 import type { LiveFeedbackStatus } from '@/domain/challenge/feedback/live/types';
 import { toCardConfig } from '@/domain/challenge/feedback/live/utils';
-import clsx from 'clsx';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
 const BUTTON_LABELS: Record<
@@ -22,13 +20,10 @@ const BUTTON_LABELS: Record<
 const LiveFeedbackPage = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const selectedMission = searchParams.get('mission');
-  const isMissionSelected = selectedMission !== null;
 
   const handleMobileClick = useCallback(
     (index: number) => {
-      router.replace(`${pathname}?mission=${index}`, { scroll: false });
+      router.push(`${pathname}/${index}`);
     },
     [pathname, router],
   );
@@ -61,36 +56,10 @@ const LiveFeedbackPage = () => {
     [handleMobileClick],
   );
 
-  const mobileMission =
-    selectedMission !== null
-      ? DUMMY_FEEDBACK_MISSIONS[Number(selectedMission)]
-      : null;
-
   return (
-    <>
-      <div
-        className={clsx(
-          'grid grid-cols-2 gap-x-5 gap-y-10 pt-8 md:flex md:flex-col md:gap-y-5',
-          isMissionSelected && 'hidden md:flex',
-        )}
-      >
-        {cardList}
-      </div>
-
-      {mobileMission && (
-        <div className="z-1 fixed inset-x-0 bottom-0 top-[44px] overflow-y-auto bg-white px-5 md:hidden">
-          <BackHeader to={pathname}>라이브 예약 신청하기</BackHeader>
-          <LiveFeedbackDetail
-            assignedMentor={mobileMission.assignedMentor}
-            period={{
-              startDay: mobileMission.startDay,
-              endDay: mobileMission.endDay,
-            }}
-            reservationInfo={mobileMission.reservationInfo}
-          />
-        </div>
-      )}
-    </>
+    <div className="grid grid-cols-2 gap-x-5 gap-y-10 pt-8 md:flex md:flex-col md:gap-y-5">
+      {cardList}
+    </div>
   );
 };
 

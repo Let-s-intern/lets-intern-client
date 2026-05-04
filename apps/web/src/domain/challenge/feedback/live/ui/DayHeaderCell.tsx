@@ -15,13 +15,13 @@ const DayHeaderCell = ({ dayName, dateStr, isSelected, isToday }: Props) => {
   return (
     <div
       className={clsx(
-        'flex flex-col items-center gap-4 rounded-sm border border-2 py-5',
+        'flex flex-col items-center gap-2 rounded-sm border-2 py-2 md:gap-4 md:py-5',
         isSelected ? 'border-primary' : 'border-transparent',
       )}
     >
       <span
         className={clsx(
-          'text-xssmall16',
+          'md:text-xsmall16 text-xxsmall12',
           isSunday ? 'text-red-500' : 'text-neutral-10',
         )}
       >
@@ -35,7 +35,7 @@ const DayHeaderCell = ({ dayName, dateStr, isSelected, isToday }: Props) => {
         ) : (
           <span
             className={clsx(
-              'text-medium24 flex h-12 w-12 items-center justify-center font-bold',
+              'text-xsmall16 md:text-medium24 flex h-[30px] w-[22px] items-center justify-center font-bold md:h-12 md:w-12',
               isSunday ? 'text-red-500' : 'text-neutral-10',
             )}
           >

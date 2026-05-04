@@ -19,10 +19,14 @@ const TimeSlotGrid = ({ schedule, selectedSlot, onSlotSelect }: Props) => {
     <div className="overflow-hidden">
       {/* 요일 헤더 */}
       <div className="overflow-y-auto [scrollbar-gutter:stable]">
-        <div className="border-neutral-80 mb-0.5 grid grid-cols-[repeat(8,1fr)] border-b">
-          <div className="border-neutral-80 text-xxsmall16 text-neutral-10 flex flex-col items-center justify-center border-r py-3 text-center leading-tight">
-            <span>멘토링</span>
-            <span>시작 시간</span>
+        <div className="border-neutral-80 grid grid-cols-[46px_repeat(7,1fr)] border-b md:grid-cols-[repeat(8,1fr)]">
+          <div className="border-neutral-80 text-xxsmall12 md:text-xsmall16 text-neutral-10 flex flex-col items-center justify-center border-r py-3 text-center leading-tight">
+            <span className="hidden md:block">멘토링</span>
+            <span>
+              시작
+              <br className="block md:hidden" />
+              시간
+            </span>
           </div>
           {schedule.map((day, i) => (
             <DayHeaderCell
@@ -42,16 +46,11 @@ const TimeSlotGrid = ({ schedule, selectedSlot, onSlotSelect }: Props) => {
           <div
             key={time}
             className={clsx(
-              'border-neutral-80 grid grid-cols-[repeat(8,1fr)] border-b',
-              i % 2 === 0 ? 'bg-white' : 'bg-[#fafafa]',
+              'grid grid-cols-[46px_repeat(7,1fr)] border-b md:grid-cols-[repeat(8,1fr)]',
+              i % 2 === 0 ? 'border-neutral-80' : 'border-neutral-70',
             )}
           >
-            <div
-              className={clsx(
-                'border-neutral-80 text-xsmall16 text-neutral-20 flex h-10 items-center justify-center border-r font-medium',
-                i % 2 === 0 ? 'bg-white' : 'bg-[#F5F6FF]',
-              )}
-            >
+            <div className="border-neutral-80 text-xxsmall12 md:text-xsmall16 text-neutral-20 flex h-10 items-center justify-center border-r font-medium tracking-[-0.3px]">
               {time}
             </div>
             {schedule.map((day) => (
