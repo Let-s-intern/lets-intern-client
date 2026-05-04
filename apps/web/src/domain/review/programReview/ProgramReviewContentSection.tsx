@@ -9,7 +9,7 @@ import {
 } from '@/api/review/review';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import ReviewCard from '@/domain/review/ReviewCard';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import { useSearchParams } from 'next/navigation';
