@@ -2206,6 +2206,9 @@ export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
 // 참고: 본 Push 시점에 BE Swagger 응답 형태를 일부만 추정 가능하다.
 //       알려지지 않은 필드는 `.passthrough()` 또는 `z.unknown().optional()` 로
 //       보수적으로 정의하고, BE 응답 확인 후 정확히 좁힌다.
+//
+//       본 블록은 apps/web/src/schema.ts 와 동일하게 유지한다.
+//       Q5(공유 패키지 추출) 결정 후 packages/api 로 통합 예정.
 // ---------------------------------------------------------------------------
 
 /** GET /api/v1/live/{liveId}/title — 라이브 타이틀 단건 조회 (웹 SEO/메타용)
