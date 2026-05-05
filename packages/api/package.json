@@ -7,7 +7,9 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "gen:api": "orval --config ./orval.config.ts"
+    "fetch:spec": "node ./scripts/fetch-spec.mjs",
+    "generate": "orval --config ./orval.config.ts",
+    "gen:api": "pnpm fetch:spec && pnpm generate"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5",
