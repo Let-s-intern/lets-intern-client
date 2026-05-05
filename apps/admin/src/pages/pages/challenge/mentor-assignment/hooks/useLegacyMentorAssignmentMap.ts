@@ -90,11 +90,14 @@ export function useLegacyMentorAssignmentMap({
       }
     });
     return result;
-    // attendanceQueries 는 매 렌더마다 새 배열 reference 라 length 와 data 의 합으로 의존성 표현
+    // useQueries 는 매 렌더 새 배열을 반환해 직접 dep 으로 쓰면 useMemo 가 무력화된다.
+    // q.data 객체를 join 하면 String() 결과가 모두 '[object Object]' 라 데이터 변화 감지 불가.
+    // q.dataUpdatedAt (number, react-query 가 갱신 시점에 set) 를 join 해 안정적 primitive
+    // 키를 만든다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     enabled,
     applicationsData,
-    attendanceQueries.map((q) => q.data).join(','),
+    attendanceQueries.map((q) => q.dataUpdatedAt).join('-'),
   ]);
 }

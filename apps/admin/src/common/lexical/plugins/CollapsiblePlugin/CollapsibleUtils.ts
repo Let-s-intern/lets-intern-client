@@ -7,6 +7,7 @@
  */
 
 export function setDomHiddenUntilFound(dom: HTMLElement): void {
+  // TODO(ts-suppress): 검토 필요 — @ts-expect-error
   // @ts-expect-error Property 'hidden' does not exist on type 'HTMLElement'
   dom.hidden = 'until-found';
 }

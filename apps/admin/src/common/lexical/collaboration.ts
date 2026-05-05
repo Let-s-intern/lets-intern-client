@@ -31,6 +31,7 @@ export function createWebsocketProvider(
     doc.load();
   }
 
+  // TODO(ts-suppress): 검토 필요 — @ts-expect-error
   // @ts-expect-error
   return new WebsocketProvider(
     WEBSOCKET_ENDPOINT,

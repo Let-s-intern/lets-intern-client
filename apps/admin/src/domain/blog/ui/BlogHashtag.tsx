@@ -10,6 +10,7 @@ const BlogHashtag = ({ text, tagId }: { text: string; tagId: number }) => {
 
     // 현재 경로가 /blog/hashtag라면
     if (pathname === '/blog/hashtag') {
+      // TODO(ts-suppress): 검토 필요 — as any 캐스팅
       const params = new URLSearchParams(searchParams as any);
       params.set('tagId', tagId.toString());
       navigate(`/blog/hashtag?${params.toString()}`);

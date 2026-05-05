@@ -31,6 +31,17 @@ import {
 import React, { useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 
+const TYPE_LABEL: Record<string, string> = {
+  WRITTEN_FEEDBACK: '서면',
+  LIVE_FEEDBACK: '라이브',
+};
+
+const TYPE_BADGE_CLASS: Record<string, string> = {
+  WRITTEN_FEEDBACK:
+    'ml-1 rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700',
+  LIVE_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700',
+};
+
 /** 피드백 미션 여부 renderCell  */
 const ChallengeOptionRenderCell = (
   params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
@@ -54,7 +65,16 @@ const ChallengeOptionRenderCell = (
   return (
     <SelectFormControl<number>
       value={params.value ?? NO_OPTION_ID}
-      renderValue={() => <>{option?.code ?? '없음'}</>}
+      renderValue={() => (
+        <>
+          {option?.code ?? '없음'}
+          {option?.type && (
+            <span className={TYPE_BADGE_CLASS[option.type]}>
+              {TYPE_LABEL[option.type]}
+            </span>
+          )}
+        </>
+      )}
       disabled={params.row.id === -1}
       onChange={handleChange}
     >
@@ -65,6 +85,11 @@ const ChallengeOptionRenderCell = (
           value={item.challengeOptionId}
         >
           {item.code}
+          {item.type && (
+            <span className={TYPE_BADGE_CLASS[item.type]}>
+              {TYPE_LABEL[item.type]}
+            </span>
+          )}
         </MenuItem>
       ))}
     </SelectFormControl>
@@ -513,7 +538,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
     {
       field: 'challengeOptionId',
       headerName: '피드백 미션 여부',
-      width: 160,
+      width: 220,
       renderCell: ChallengeOptionRenderCell,
     },
     {

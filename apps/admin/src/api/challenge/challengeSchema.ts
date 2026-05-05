@@ -6,6 +6,7 @@ import {
   ProgramStatusEnum,
 } from '@/schema';
 import { z } from 'zod';
+import { ChallengeOptionTypeEnum } from './challengeOptionSchema';
 
 export const challengeGoalSchema = z.object({
   goal: z.string().nullable(),
@@ -34,6 +35,7 @@ export const challengeMissionFeedbackListSchema = z.object({
         endDate: z.string().nullish(),
         challengeOptionCode: z.string().nullish(),
         challengeOptionTitle: z.string().nullish(),
+        challengeOptionType: ChallengeOptionTypeEnum.nullish(),
         submittedCount: z
           .number()
           .nullish()

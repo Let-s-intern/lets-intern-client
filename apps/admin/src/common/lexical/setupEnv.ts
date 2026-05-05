@@ -27,6 +27,7 @@ export default (() => {
   }
 
   if (INITIAL_SETTINGS.disableBeforeInput) {
+    // TODO(ts-suppress): 검토 필요 — @ts-expect-error
     // @ts-expect-error
     delete window.InputEvent.prototype.getTargetRanges;
   }

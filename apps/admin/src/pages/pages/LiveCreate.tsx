@@ -166,6 +166,7 @@ const LiveCreate: React.FC = () => {
                 (info) => info.classificationInfo,
               ),
             }}
+            // TODO(ts-suppress): 검토 필요 — as any 캐스팅
             setInput={setInput as any}
           />
         </section>
@@ -185,6 +186,7 @@ const LiveCreate: React.FC = () => {
               priceId: 0,
               livePriceType: input.priceInfo.livePriceType,
             }}
+            // TODO(ts-suppress): 검토 필요 — as any 캐스팅
             setInput={setInput as any}
           />
           <ProgramSchedule
@@ -210,6 +212,7 @@ const LiveCreate: React.FC = () => {
                 },
               }));
             }}
+            // TODO(ts-suppress): 검토 필요 — as any 캐스팅
             setInput={setInput as any}
           />
           <FormControlLabel
@@ -258,6 +261,7 @@ const LiveCreate: React.FC = () => {
               onChange={onChangeImage}
             />
           </div>
+          // TODO(ts-suppress): 검토 필요 — as any 캐스팅
           <LiveMentor defaultValue={input} setInput={setInput as any} />
         </div>
       </section>
