@@ -38,7 +38,7 @@ const TYPE_LABEL: Record<string, string> = {
 
 const TYPE_BADGE_CLASS: Record<string, string> = {
   WRITTEN_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700',
-  LIVE_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-green-100 text-green-700',
+  LIVE_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700',
 };
 
 /** 피드백 미션 여부 renderCell  */
@@ -539,7 +539,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
     {
       field: 'challengeOptionId',
       headerName: '피드백 미션 여부',
-      width: 160,
+      width: 220,
       renderCell: ChallengeOptionRenderCell,
     },
     {

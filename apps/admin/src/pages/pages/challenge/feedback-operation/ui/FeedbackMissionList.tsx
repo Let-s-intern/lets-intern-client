@@ -17,10 +17,21 @@ function FeedbackMissionList() {
         headerName: '피드백 타입',
         width: 90,
         sortable: false,
-        valueFormatter: (_: unknown, row: Row) => {
-          if (row.challengeOptionType === 'WRITTEN_FEEDBACK') return '서면';
-          if (row.challengeOptionType === 'LIVE_FEEDBACK') return '라이브';
-          return '-';
+        renderCell: (params: GridRenderCellParams<Row>) => {
+          const type = params.row.challengeOptionType;
+          if (type === 'WRITTEN_FEEDBACK')
+            return (
+              <span className="rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700">
+                서면
+              </span>
+            );
+          if (type === 'LIVE_FEEDBACK')
+            return (
+              <span className="rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700">
+                라이브
+              </span>
+            );
+          return <span className="text-gray-400">-</span>;
         },
       },
       { field: 'th', headerName: '미션 회차', type: 'number', width: 90 },
