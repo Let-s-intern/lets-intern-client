@@ -23,8 +23,7 @@ interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
   buttonLabel: string;
   openLabel?: string; // 있으면 토글(아코디언), 없으면 단순 클릭
-  onButtonClick?: () => void; // 비토글일 때 클릭 핸들러
-  onMobileClick?: () => void;
+  onClick?: () => void; // 비토글일 때 데스크탑/모바일 공통 클릭 핸들러
   children?: React.ReactNode;
 }
 
@@ -32,8 +31,7 @@ const FeedbackMissionCard = ({
   config,
   buttonLabel,
   openLabel,
-  onButtonClick,
-  onMobileClick,
+  onClick,
   children,
 }: FeedbackMissionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -121,7 +119,7 @@ const FeedbackMissionCard = ({
         {/* 데스크톱 버튼 */}
         <button
           type="button"
-          onClick={isToggle ? () => setIsOpen((prev) => !prev) : onButtonClick}
+          onClick={isToggle ? () => setIsOpen((prev) => !prev) : onClick}
           className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary-5 hidden shrink-0 items-center gap-1 border px-3 py-1.5 font-normal transition-colors md:flex"
         >
           {isToggle && (
@@ -143,7 +141,7 @@ const FeedbackMissionCard = ({
       {/* 모바일 버튼 */}
       <button
         type="button"
-        onClick={onMobileClick}
+        onClick={onClick}
         className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 mt-5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
       >
         <span>{buttonLabel}</span>

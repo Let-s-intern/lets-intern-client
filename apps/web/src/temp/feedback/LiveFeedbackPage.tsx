@@ -40,7 +40,7 @@ const LiveFeedbackPage = () => {
             config={config}
             buttonLabel={buttonLabel}
             openLabel={openLabel}
-            onMobileClick={() => handleMobileClick(index)}
+            onClick={() => handleMobileClick(index)}
           >
             <LiveFeedbackDetail
               assignedMentor={mission.assignedMentor}

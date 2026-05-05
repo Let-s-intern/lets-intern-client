@@ -4,6 +4,7 @@ import type {
   Mentor,
   SlotStatus,
 } from './live/types';
+import type { WrittenFeedbackMission } from './written/types';
 import { TIME_SLOTS } from './live/types';
 import { toDateString } from './live/utils';
 
@@ -73,6 +74,43 @@ export const DUMMY_MENTORS: Mentor[] = [
     thumbnailUrl: '',
     stars: 2,
     description: '멘토 소개를 간단히 적어주세요.',
+  },
+];
+
+export const DUMMY_WRITTEN_FEEDBACK_MISSIONS: WrittenFeedbackMission[] = [
+  {
+    id: 1,
+    thumbnail: '',
+    title: '프로그램 n주차 미션, 서면 피드백',
+    description: '미션설명 미션설명 미션설명 미션설명',
+    status: 'pending',
+    categoryLabel: '프로그램 종류',
+    startDay: '2026-06-01',
+    endDay: '2026-06-28',
+  },
+  {
+    id: 2,
+    thumbnail: '',
+    title:
+      '프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백',
+    description:
+      '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명',
+    status: 'submitted',
+    categoryLabel: '프로그램 종류',
+    startDay: '2026-05-04',
+    endDay: '2026-05-31',
+  },
+  {
+    id: 3,
+    thumbnail: '',
+    title:
+      '프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백',
+    description:
+      '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명',
+    status: 'done',
+    categoryLabel: '대기업 자기소개서 완성 챌린지 7기',
+    startDay: '2026-04-01',
+    endDay: '2026-04-30',
   },
 ];
 
