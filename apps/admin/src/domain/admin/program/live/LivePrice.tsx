@@ -7,6 +7,12 @@ import { newProgramFeeTypeToText } from '@/utils/convert';
 interface LivePriceProps<T extends CreateLiveReq | UpdateLiveReq> {
   defaultValue?: LiveIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  /**
+   * PRD-서면라이브 분리 §5.2 — variant 분기 prop. 현재 PRD §10 Q2 미해결로
+   * SEOMYEON 분기 동작 없음. prop 채널만 열어두어 후속 작업에서 추가.
+   * TODO(prd-q2): 서면 가격/일정 정책 결정 후 분기 구현.
+   */
+  type?: 'LIVE' | 'SEOMYEON';
 }
 
 export const initialLivePrice = {
@@ -23,7 +29,10 @@ export const initialLivePrice = {
 export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
   defaultValue,
   setInput,
+  type: _type = 'LIVE',
 }: LivePriceProps<T>) {
+  // _type 은 후속 작업에서 분기 진입점으로 활용 (현재 미사용).
+  void _type;
   const defaultPriceReq: CreateLiveReq['priceInfo'] = {
     livePriceType:
       defaultValue?.livePriceType ?? initialLivePrice.livePriceType,

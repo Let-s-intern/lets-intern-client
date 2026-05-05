@@ -14,12 +14,21 @@ interface LiveMentorProps<T extends CreateLiveReq | UpdateLiveReq> {
     | 'mentorIntroduction'
   >;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  /**
+   * PRD-서면라이브 분리 §5.2 — variant 분기 prop. 현재 PRD §10 Q4 미해결로
+   * SEOMYEON 분기 동작 없음. prop 채널만 열어두어 후속 작업에서 추가.
+   * TODO(prd-q4): 서면 멘토 정의 결정 후 분기 구현.
+   */
+  type?: 'LIVE' | 'SEOMYEON';
 }
 
 function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
   defaultValue,
   setInput,
+  type: _type = 'LIVE',
 }: LiveMentorProps<T>) {
+  // _type 은 후속 작업에서 분기 진입점으로 활용 (현재 미사용).
+  void _type;
   const [mentorCareer, setMentorCareer] = useState(defaultValue.mentorCareer);
   const [mentorIntroduction, setMentorIntroduction] = useState(
     defaultValue.mentorIntroduction,
