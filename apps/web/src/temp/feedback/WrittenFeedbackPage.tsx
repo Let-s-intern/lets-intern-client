@@ -2,6 +2,7 @@
 
 import { DUMMY_WRITTEN_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
+import type { WrittenFeedbackStatus } from '@/domain/challenge/feedback/written/types';
 import {
   WRITTEN_FEEDBACK_BUTTON_LABEL,
   toWrittenCardConfig,
@@ -13,9 +14,13 @@ const WrittenFeedbackPage = () => {
   const router = useRouter();
   const params = useParams<{ applicationId: string; programId: string }>();
 
-  const handleClick = useCallback(() => {
-    router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
-  }, [params.applicationId, params.programId, router]);
+  const handleClick = useCallback(
+    (status: WrittenFeedbackStatus) => {
+      const base = `/challenge/${params.applicationId}/${params.programId}/me`;
+      router.push(status === 'done' ? `${base}#mentor-feedback` : base);
+    },
+    [params.applicationId, params.programId, router],
+  );
 
   const cardList = useMemo(
     () =>
@@ -24,7 +29,7 @@ const WrittenFeedbackPage = () => {
           key={mission.id}
           config={toWrittenCardConfig(mission)}
           buttonLabel={WRITTEN_FEEDBACK_BUTTON_LABEL[mission.status]}
-          onClick={handleClick}
+          onClick={() => handleClick(mission.status)}
         />
       )),
     [handleClick],
