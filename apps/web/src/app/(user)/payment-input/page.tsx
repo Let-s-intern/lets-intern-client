@@ -1,6 +1,9 @@
 'use client';
 
-import { useProgramQuery } from '@/api/program';
+import {
+  useGetLiveApplicationFormQuery,
+  useProgramQuery,
+} from '@/api/program';
 import { usePatchUser } from '@/api/user/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
@@ -60,11 +63,28 @@ const PaymentInputContent = () => {
     type: programApplicationData.programType ?? 'live',
   });
 
+  // 라이브 신청 폼은 신규 단건 API(/live/{id}/application) 응답을 우선 데이터 소스로 사용한다.
+  // BE 가 정의한 신청 폼 스키마(applied/priceList/마감 등) 를 그대로 받아 store/UI 와 매핑하기 위함.
+  // 라이브 외 프로그램 타입에서는 호출하지 않는다.
+  const liveApplicationFormQuery = useGetLiveApplicationFormQuery({
+    liveId: programApplicationData.programId ?? 0,
+    enabled:
+      programApplicationData.programType === 'live' &&
+      !!programApplicationData.programId,
+  });
+  const liveApplicationForm = liveApplicationFormQuery.data;
+
+  // 라이브: /application 응답 → store(programApplicationData) 순으로 폴백.
+  // /application 미수신 시 기존 동작(store 값) 그대로.
   const userInfo = {
-    name: programApplicationData.name ?? '',
-    email: programApplicationData.email ?? '',
-    phoneNumber: programApplicationData.phone ?? '',
-    contactEmail: programApplicationData.contactEmail ?? '',
+    name: programApplicationData.name ?? liveApplicationForm?.name ?? '',
+    email: programApplicationData.email ?? liveApplicationForm?.email ?? '',
+    phoneNumber:
+      programApplicationData.phone ?? liveApplicationForm?.phoneNumber ?? '',
+    contactEmail:
+      programApplicationData.contactEmail ??
+      liveApplicationForm?.contactEmail ??
+      '',
     question: programApplicationData.question ?? '',
     initialized: true,
   };
