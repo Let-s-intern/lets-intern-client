@@ -10,6 +10,8 @@ const ChallengeCreate = lazy(() => import('./pages/pages/ChallengeCreate'));
 const ChallengeEdit = lazy(() => import('./pages/pages/ChallengeEdit'));
 const LiveCreate = lazy(() => import('./pages/pages/LiveCreate'));
 const LiveEdit = lazy(() => import('./pages/pages/LiveEdit'));
+const SeomyeonCreate = lazy(() => import('./pages/pages/SeomyeonCreate'));
+const SeomyeonEdit = lazy(() => import('./pages/pages/SeomyeonEdit'));
 const VodCreate = lazy(() => import('./pages/pages/VodCreate'));
 const VodEdit = lazy(() => import('./pages/pages/VodEdit'));
 const GuidebookCreate = lazy(() => import('./pages/pages/GuidebookCreate'));
@@ -237,6 +239,11 @@ export const router = createBrowserRouter([
       },
       { path: '/live/create', element: withSuspense(<LiveCreate />) },
       { path: '/live/:liveId/edit', element: withSuspense(<LiveEdit />) },
+      { path: '/seomyeon/create', element: withSuspense(<SeomyeonCreate />) },
+      {
+        path: '/seomyeon/:liveId/edit',
+        element: withSuspense(<SeomyeonEdit />),
+      },
       { path: '/vod/create', element: withSuspense(<VodCreate />) },
       { path: '/vod/:vodId/edit', element: withSuspense(<VodEdit />) },
       { path: '/guidebook/create', element: withSuspense(<GuidebookCreate />) },
