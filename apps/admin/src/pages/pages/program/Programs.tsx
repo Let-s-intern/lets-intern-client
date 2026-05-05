@@ -368,6 +368,14 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/seomyeon/create`)}
+          >
+            서면 등록
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
             onClick={() => navigate(`/vod/create`)}
           >
             VOD 클래스 등록
