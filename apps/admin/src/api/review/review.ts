@@ -154,6 +154,12 @@ export type PostReviewParams = {
  * @description : USER 프로그램 리뷰 등록
  * @param param: errorCallback, successCallback
  * @returns : 프로그램 리뷰 등록
+ *
+ * @deprecated v2 통합 리뷰 작성 API(`POST /api/v2/review`)로 이전 예정.
+ * 신규 코드는 `usePostReviewV2Mutation`(apps/admin/src/api/program.ts) 사용을 권장한다.
+ * v2 페이로드(`programType`/`programId`/`nps`/`npsAns`/`npsCheckAns`/`score`/`content`)
+ * 와 v1 페이로드(`reviewItemList[]`) 차이가 커 UI 재설계가 선행되어야 하므로
+ * 현재 호출처는 그대로 유지한다. 자세한 내용은 PRD §5.6 참고.
  */
 export const usePostReviewMutation = ({
   challengeId,
@@ -211,6 +217,12 @@ const getProgramReviewQueryKey = (param?: programReviewParam) => [
  * @description : USER 프로그램 리뷰 리스트 조회
  * @param param : types, challengeTypes, page, size
  * @returns : 프로그램 리뷰 리스트
+ *
+ * @deprecated v2 통합 리뷰 조회 API(`GET /api/v2/review`)로 이전 예정.
+ * 신규 코드는 `useGetReviewListV2Query`(apps/admin/src/api/program.ts) 사용을 권장한다.
+ * v2 응답(`reviewList[].programType` 등) 과 v1 응답(`reviewInfo`/`reviewItemList`)의
+ * 필드명·중첩 구조 차이가 커 어댑터 또는 호출처 단계 매핑이 필요하다.
+ * 자세한 내용은 PRD §5.6 참고.
  */
 export const useGetProgramReview = ({
   types,

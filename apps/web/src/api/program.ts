@@ -55,6 +55,7 @@ import {
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
+import axiosV2 from '../utils/axiosV2';
 
 export const useProgramQuery = ({
   programId,
@@ -623,7 +624,9 @@ export const useGetLiveMentorContentQuery = ({
 
 export const useGetReviewListV2QueryKey = 'useGetReviewListV2QueryKey';
 
-/** GET /api/v2/review — 후기 전체 조회 (challenge, mission, live, report) */
+/** GET /api/v2/review — 후기 전체 조회 (challenge, mission, live, report)
+ *  ※ axiosV2 의 baseURL = `${NEXT_PUBLIC_SERVER_API_V2}` 이므로 path 는 `/review` 만 사용한다.
+ */
 export const useGetReviewListV2Query = ({
   params,
   enabled,
@@ -635,13 +638,15 @@ export const useGetReviewListV2Query = ({
     enabled,
     queryKey: [useGetReviewListV2QueryKey, params],
     queryFn: async () => {
-      const res = await axios.get(`/v2/review`, { params });
+      const res = await axiosV2.get(`/review`, { params });
       return ReviewV2ListSchema.parse(res.data.data);
     },
   });
 };
 
-/** POST /api/v2/review — 후기 생성 (challenge, live, report) */
+/** POST /api/v2/review — 후기 생성 (challenge, live, report)
+ *  ※ axiosV2 의 baseURL = `${NEXT_PUBLIC_SERVER_API_V2}` 이므로 path 는 `/review` 만 사용한다.
+ */
 export const usePostReviewV2Mutation = ({
   errorCallback,
   successCallback,
@@ -651,7 +656,7 @@ export const usePostReviewV2Mutation = ({
 } = {}) => {
   return useMutation({
     mutationFn: async (data: CreateReviewV2Req) => {
-      const res = await axios.post(`/v2/review`, data);
+      const res = await axiosV2.post(`/review`, data);
       return res.data as unknown;
     },
     onSuccess: successCallback,

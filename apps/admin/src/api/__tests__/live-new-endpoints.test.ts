@@ -15,6 +15,17 @@ vi.mock('../../utils/axios', () => {
   };
 });
 
+// axiosV2 인스턴스 모킹: v2 review 훅이 axiosV2 를 사용한다.
+vi.mock('../../utils/axiosV2', () => {
+  const get = vi.fn();
+  const post = vi.fn();
+  const patch = vi.fn();
+  const del = vi.fn();
+  return {
+    default: { get, post, patch, delete: del },
+  };
+});
+
 // auth helper 도 import 시 호출되므로 무해화한다.
 vi.mock('../../utils/auth', () => ({
   getAuthHeader: () => ({}),
@@ -22,6 +33,7 @@ vi.mock('../../utils/auth', () => ({
 }));
 
 import axios from '../../utils/axios';
+import axiosV2 from '../../utils/axiosV2';
 import {
   useGetLiveApplicantsQuery,
   useGetLiveApplicationFormQuery,
@@ -39,6 +51,8 @@ import {
 
 const get = axios.get as unknown as ReturnType<typeof vi.fn>;
 const post = axios.post as unknown as ReturnType<typeof vi.fn>;
+const v2Get = axiosV2.get as unknown as ReturnType<typeof vi.fn>;
+const v2Post = axiosV2.post as unknown as ReturnType<typeof vi.fn>;
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -56,6 +70,8 @@ function createWrapper() {
 beforeEach(() => {
   get.mockReset();
   post.mockReset();
+  v2Get.mockReset();
+  v2Post.mockReset();
 });
 
 /**
@@ -202,8 +218,8 @@ describe('useGetLiveMentorContentQuery', () => {
 });
 
 describe('useGetReviewListV2Query', () => {
-  it('GET /v2/review 를 params 와 함께 호출한다', async () => {
-    get.mockResolvedValue({ data: { data: { reviewList: [] } } });
+  it('axiosV2 GET /review 를 params 와 함께 호출한다', async () => {
+    v2Get.mockResolvedValue({ data: { data: { reviewList: [] } } });
     const { result } = renderHook(
       () =>
         useGetReviewListV2Query({
@@ -213,15 +229,15 @@ describe('useGetReviewListV2Query', () => {
       { wrapper: createWrapper() },
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(get).toHaveBeenCalledWith('/v2/review', {
+    expect(v2Get).toHaveBeenCalledWith('/review', {
       params: { type: 'CHALLENGE', size: 10 },
     });
   });
 });
 
 describe('usePostReviewV2Mutation', () => {
-  it('POST /v2/review 를 호출한다', async () => {
-    post.mockResolvedValue({ data: { id: 1 } });
+  it('axiosV2 POST /review 를 호출한다', async () => {
+    v2Post.mockResolvedValue({ data: { id: 1 } });
     const { result } = renderHook(() => usePostReviewV2Mutation(), {
       wrapper: createWrapper(),
     });
@@ -235,7 +251,7 @@ describe('usePostReviewV2Mutation', () => {
       content: '좋음',
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(post).toHaveBeenCalledWith('/v2/review', {
+    expect(v2Post).toHaveBeenCalledWith('/review', {
       programType: 'LIVE',
       programId: 1,
       nps: 9,
