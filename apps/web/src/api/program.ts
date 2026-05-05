@@ -6,6 +6,7 @@ import {
   CreateChallengeReq,
   CreateGuidebookReq,
   CreateLiveReq,
+  CreateReviewV2Req,
   CreateVodReq,
   faqSchema,
   getChallengeIdPrimitiveSchema,
@@ -16,8 +17,20 @@ import {
   getPublicGuidebookSchema,
   getPublicVodSchema,
   getVodIdSchema,
+  LiveApplicantListSchema,
+  LiveApplicationFormSchema,
+  LiveContent,
+  LiveContentSchema,
+  LiveHistory,
+  LiveHistorySchema,
   LiveIdPrimitive,
   LiveIdSchema,
+  LiveMentorContentSchema,
+  LiveMentorPasswordSchema,
+  LiveReviewListSchema,
+  LiveThumbnail,
+  LiveThumbnailSchema,
+  LiveTitle,
   liveTitleSchema,
   Program,
   programAdminSchema,
@@ -34,6 +47,7 @@ import {
   ProgramTypeUpperCase,
   PublicGuidebookSchema,
   PublicVodSchema,
+  ReviewV2ListSchema,
   UpdateChallengeReq,
   UpdateGuidebookReq,
   UpdateLiveReq,
@@ -394,6 +408,334 @@ export const useGetLiveFaq = (liveId: number | string) => {
       return faqSchema.parse(res.data.data);
     },
   });
+};
+
+// ---------------------------------------------------------------------------
+// 라이브 신규 엔드포인트 훅 (PRD-서면라이브 분리, Push 1)
+// 본 Push 는 훅 정의만 추가하며 UI 는 변경하지 않는다.
+//
+// apps/admin/src/api/program.ts 와 동일 시그니처를 유지한다.
+// 웹은 RSC 우선이므로 단건 fetch 헬퍼(fetchLiveContent / fetchLiveTitle /
+// fetchLiveThumbnail / fetchLiveHistory)도 함께 export 한다.
+// ---------------------------------------------------------------------------
+
+export const useGetLiveContentQueryKey = 'useGetLiveContentQueryKey';
+
+/** GET /api/v1/live/{liveId}/content — 라이브 상세 본문 */
+export const useGetLiveContentQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveContentQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/content`);
+      return LiveContentSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveTitleQueryKey = 'useGetLiveTitleQueryKey';
+
+/** GET /api/v1/live/{liveId}/title — 라이브 타이틀 (SEO/메타) */
+export const useGetLiveTitleQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveTitleQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/title`);
+      return liveTitleSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveThumbnailQueryKey = 'useGetLiveThumbnailQueryKey';
+
+/** GET /api/v1/live/{liveId}/thumbnail — 라이브 썸네일 */
+export const useGetLiveThumbnailQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveThumbnailQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/thumbnail`);
+      return LiveThumbnailSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveApplicationFormQueryKey =
+  'useGetLiveApplicationFormQueryKey';
+
+/** GET /api/v1/live/{liveId}/application — 라이브 신청폼 조회 */
+export const useGetLiveApplicationFormQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveApplicationFormQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/application`);
+      return LiveApplicationFormSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveHistoryQueryKey = 'useGetLiveHistoryQueryKey';
+
+/** GET /api/v1/live/{liveId}/history — 신청 여부 조회 */
+export const useGetLiveHistoryQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveHistoryQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/history`);
+      return LiveHistorySchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveApplicantsQueryKey = 'useGetLiveApplicantsQueryKey';
+
+/** GET /api/v1/live/{liveId}/applications — [어드민] 신청자 목록 */
+export const useGetLiveApplicantsQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveApplicantsQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/applications`);
+      return LiveApplicantListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveReviewsAdminQueryKey =
+  'useGetLiveReviewsAdminQueryKey';
+
+/** GET /api/v1/live/{liveId}/reviews — [어드민] 신청자 리뷰 */
+export const useGetLiveReviewsAdminQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveReviewsAdminQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/reviews`);
+      return LiveReviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveReviewsQueryKey = 'useGetLiveReviewsQueryKey';
+
+/** GET /api/v1/live/reviews — 라이브 리뷰 (전체) */
+export const useGetLiveReviewsQuery = ({
+  enabled,
+}: { enabled?: boolean } = {}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveReviewsQueryKey],
+    queryFn: async () => {
+      const res = await axios.get(`/live/reviews`);
+      return LiveReviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveMentorPasswordQueryKey =
+  'useGetLiveMentorPasswordQueryKey';
+
+/** GET /api/v1/live/{liveId}/mentor — [어드민] 멘토 비밀번호 */
+export const useGetLiveMentorPasswordQuery = ({
+  liveId,
+  enabled,
+}: {
+  liveId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveMentorPasswordQueryKey, liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/mentor`);
+      return LiveMentorPasswordSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetLiveMentorContentQueryKey =
+  'useGetLiveMentorContentQueryKey';
+
+/** GET /api/v1/live/{liveId}/mentor/{password} — [어드민] 멘토 전달 내용 */
+export const useGetLiveMentorContentQuery = ({
+  liveId,
+  password,
+  enabled,
+}: {
+  liveId: number;
+  password: string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetLiveMentorContentQueryKey, liveId, password],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/mentor/${password}`);
+      return LiveMentorContentSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetReviewListV2QueryKey = 'useGetReviewListV2QueryKey';
+
+/** GET /api/v2/review — 후기 전체 조회 (challenge, mission, live, report) */
+export const useGetReviewListV2Query = ({
+  params,
+  enabled,
+}: {
+  params?: Record<string, string | number | boolean | undefined>;
+  enabled?: boolean;
+} = {}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetReviewListV2QueryKey, params],
+    queryFn: async () => {
+      const res = await axios.get(`/v2/review`, { params });
+      return ReviewV2ListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** POST /api/v2/review — 후기 생성 (challenge, live, report) */
+export const usePostReviewV2Mutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateReviewV2Req) => {
+      const res = await axios.post(`/v2/review`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+// ---------------------------------------------------------------------------
+// RSC 용 단건 fetch 헬퍼 (Next.js Server Components 에서 직접 호출)
+// 기존 fetchLiveData 와 동일한 패턴: process.env.NEXT_PUBLIC_SERVER_API + fetch
+// ---------------------------------------------------------------------------
+
+/** GET /api/v1/live/{liveId}/content — RSC 용 */
+export const fetchLiveContent = async (
+  liveId: string | number,
+  init?: RequestInit,
+): Promise<LiveContent> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}/content`,
+    init,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch live content');
+  }
+
+  const data = await res.json();
+  return LiveContentSchema.parse(data.data);
+};
+
+/** GET /api/v1/live/{liveId}/title — RSC 용 (SEO/메타) */
+export const fetchLiveTitle = async (
+  liveId: string | number,
+  init?: RequestInit,
+): Promise<LiveTitle> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}/title`,
+    init,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch live title');
+  }
+
+  const data = await res.json();
+  return liveTitleSchema.parse(data.data);
+};
+
+/** GET /api/v1/live/{liveId}/thumbnail — RSC 용 */
+export const fetchLiveThumbnail = async (
+  liveId: string | number,
+  init?: RequestInit,
+): Promise<LiveThumbnail> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}/thumbnail`,
+    init,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch live thumbnail');
+  }
+
+  const data = await res.json();
+  return LiveThumbnailSchema.parse(data.data);
+};
+
+/** GET /api/v1/live/{liveId}/history — RSC 용 (auth 헤더 필요)
+ *  사용자별 신청 여부 조회이므로 호출 측에서 Authorization 헤더를 init.headers 로 전달한다.
+ */
+export const fetchLiveHistory = async (
+  liveId: string | number,
+  init?: RequestInit,
+): Promise<LiveHistory> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}/history`,
+    init,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch live history');
+  }
+
+  const data = await res.json();
+  return LiveHistorySchema.parse(data.data);
 };
 
 export const useGetGuidebookQueryKey = 'useGetGuidebookQueryKey';
