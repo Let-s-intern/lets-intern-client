@@ -30,9 +30,25 @@ const LiveInformation = lazy(
 
 const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
-const LiveCreate: React.FC = () => {
+// PRD-서면라이브 분리 §5.1 — 동일 폼을 라이브/서면으로 분기 진입.
+// type 은 페이지 타이틀과 (Push 3 이후) 폼 필드 분기용. 본 Push에서는 페이지 타이틀에만 적용.
+// TODO(push3): type prop 을 LiveBasic/LivePrice/LiveMentor 등 폼 컴포넌트로 전파.
+export type LiveCreateProgramType = 'LIVE' | 'SEOMYEON';
+
+interface LiveCreateProps {
+  type?: LiveCreateProgramType;
+  titleOverride?: string;
+}
+
+const LiveCreate: React.FC<LiveCreateProps> = ({
+  type = 'LIVE',
+  titleOverride,
+}) => {
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
+  const pageTitle = titleOverride ?? (type === 'SEOMYEON' ? '서면 생성' : '라이브 생성');
+  const successMessage =
+    type === 'SEOMYEON' ? '서면이 생성되었습니다.' : '라이브가 생성되었습니다.';
 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
@@ -104,9 +120,9 @@ const LiveCreate: React.FC = () => {
     console.log('res:', res);
 
     setLoading(false);
-    snackbar('라이브가 생성되었습니다.');
+    snackbar(successMessage);
     navigate('/programs');
-  }, [input, content, postLive, snackbar, navigate]);
+  }, [input, content, postLive, snackbar, navigate, successMessage]);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
@@ -118,7 +134,7 @@ const LiveCreate: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>라이브 생성</Heading>
+        <Heading>{pageTitle}</Heading>
         <div className="flex items-center gap-3">
           <TextField
             size="small"

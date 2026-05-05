@@ -32,11 +32,25 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
 
-const LiveEdit: React.FC = () => {
+// PRD-서면라이브 분리 §5.1 — 동일 폼을 라이브/서면으로 분기 진입.
+// type 은 페이지 타이틀과 (Push 3 이후) 폼 필드 분기용. 본 Push에서는 페이지 타이틀에만 적용.
+// TODO(push3): type prop 을 LiveBasic/LivePrice/LiveMentor 등 폼 컴포넌트로 전파.
+export type LiveEditProgramType = 'LIVE' | 'SEOMYEON';
+
+interface LiveEditProps {
+  type?: LiveEditProgramType;
+  titleOverride?: string;
+}
+
+const LiveEdit: React.FC<LiveEditProps> = ({
+  type = 'LIVE',
+  titleOverride,
+}) => {
   const { liveId: liveIdString } = useParams<{ liveId: string }>();
   const router = useRouter();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
+  const pageTitle = titleOverride ?? (type === 'SEOMYEON' ? '서면 수정' : '라이브 수정');
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
@@ -128,7 +142,7 @@ const LiveEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>라이브 수정</Heading>
+        <Heading>{pageTitle}</Heading>
         <div className="flex items-center gap-3">
           <Button
             variant="outlined"
