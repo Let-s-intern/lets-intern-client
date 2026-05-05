@@ -16,32 +16,36 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const apiData = await fetchPublicVodData(id);
-  const vod = mapPublicVod(apiData);
-  const url =
-    getCanonicalSiteUrl() +
-    getProgramPathname({
-      id,
-      programType: 'vod',
-      title: vod.title,
-    });
-  const title = getVodTitle(vod);
+  try {
+    const apiData = await fetchPublicVodData(id);
+    const vod = mapPublicVod(apiData);
+    const url =
+      getCanonicalSiteUrl() +
+      getProgramPathname({
+        id,
+        programType: 'vod',
+        title: vod.title,
+      });
+    const title = getVodTitle(vod);
 
-  return {
-    title,
-    openGraph: {
+    return {
       title,
-      url,
-      images: [
-        {
-          url: vod.thumbnail ?? '',
-        },
-      ],
-    },
-    alternates: {
-      canonical: url,
-    },
-  };
+      openGraph: {
+        title,
+        url,
+        images: [
+          {
+            url: vod.thumbnail ?? '',
+          },
+        ],
+      },
+      alternates: {
+        canonical: url,
+      },
+    };
+  } catch {
+    return {};
+  }
 }
 
 const Page = async ({
@@ -51,8 +55,13 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const apiData = await fetchPublicVodData(id);
-  const vod = mapPublicVod(apiData);
+  let vod;
+  try {
+    const apiData = await fetchPublicVodData(id);
+    vod = mapPublicVod(apiData);
+  } catch {
+    redirect('/');
+  }
 
   const correctPathname = getProgramPathname({
     id,

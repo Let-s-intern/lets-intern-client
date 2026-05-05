@@ -6,14 +6,18 @@ import { redirect } from 'next/navigation';
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const apiData = await fetchPublicVodData(id);
-  const vod = mapPublicVod(apiData);
-
-  const pathname = getProgramPathname({
-    id,
-    programType: 'vod',
-    title: vod.title,
-  });
+  let pathname: string;
+  try {
+    const apiData = await fetchPublicVodData(id);
+    const vod = mapPublicVod(apiData);
+    pathname = getProgramPathname({
+      id,
+      programType: 'vod',
+      title: vod.title,
+    });
+  } catch {
+    redirect('/');
+  }
 
   redirect(pathname);
 };
