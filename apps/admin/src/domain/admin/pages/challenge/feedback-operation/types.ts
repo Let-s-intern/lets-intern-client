@@ -8,6 +8,7 @@ export interface Row {
   endDate?: string | null;
   challengeOptionCode?: string | null;
   challengeOptionTitle?: string | null;
+  challengeOptionType?: 'WRITTEN_FEEDBACK' | 'LIVE_FEEDBACK' | null;
   submittedCount: number;
   totalCount: number;
   url: string;
