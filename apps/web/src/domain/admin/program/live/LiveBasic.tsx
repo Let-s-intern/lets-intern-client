@@ -38,12 +38,19 @@ interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
     | 'place'
   >;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  /**
+   * PRD-서면라이브 분리 §5.2 — 'SEOMYEON'일 때 progressType/place 필드를 숨긴다.
+   * default 'LIVE' 로 기존 라이브 폼 동작 무회귀.
+   */
+  type?: 'LIVE' | 'SEOMYEON';
 }
 
 export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
   defaultValue,
   setInput,
+  type = 'LIVE',
 }: LiveBasicProps<T>) {
+  const isSeomyeon = type === 'SEOMYEON';
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent,
   ) => {
@@ -149,32 +156,37 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         ))}
       </SelectFormControl>
 
-      <FormControl size="small">
-        <InputLabel id="progressType">온/오프라인 여부</InputLabel>
-        <Select
-          labelId="progressType"
-          id="progressType"
-          label="온/오프라인 여부"
-          name="progressType"
-          defaultValue={defaultValue?.progressType ?? undefined}
-          onChange={onChange}
-        >
-          {Object.keys(liveProgressTypeToText).map((key) => (
-            <MenuItem key={key} value={key}>
-              {liveProgressTypeToText[key as LiveProgressType]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Input
-        label="장소 (오프라인일 경우)"
-        type="text"
-        name="place"
-        size="small"
-        defaultValue={defaultValue?.place ?? ''}
-        placeholder="장소를 입력해주세요"
-        onChange={onChange}
-      />
+      {/* PRD §5.2 — 서면(SEOMYEON)에서는 진행방식/장소 필드 숨김 */}
+      {!isSeomyeon && (
+        <>
+          <FormControl size="small">
+            <InputLabel id="progressType">온/오프라인 여부</InputLabel>
+            <Select
+              labelId="progressType"
+              id="progressType"
+              label="온/오프라인 여부"
+              name="progressType"
+              defaultValue={defaultValue?.progressType ?? undefined}
+              onChange={onChange}
+            >
+              {Object.keys(liveProgressTypeToText).map((key) => (
+                <MenuItem key={key} value={key}>
+                  {liveProgressTypeToText[key as LiveProgressType]}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Input
+            label="장소 (오프라인일 경우)"
+            type="text"
+            name="place"
+            size="small"
+            defaultValue={defaultValue?.place ?? ''}
+            placeholder="장소를 입력해주세요"
+            onChange={onChange}
+          />
+        </>
+      )}
       <FormControl size="small">
         <InputLabel id="job">직무</InputLabel>
         <Select
