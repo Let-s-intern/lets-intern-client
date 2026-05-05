@@ -4,7 +4,7 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./generated": "./src/generated/index.ts",
+    "./generated/schemas": "./src/generated/letsCareerAPI.schemas.ts",
     "./generated/*": "./src/generated/*/*.ts",
     "./*": "./src/*.ts"
   },
