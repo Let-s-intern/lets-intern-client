@@ -21,13 +21,13 @@ function FeedbackMissionList() {
           const type = params.row.challengeOptionType;
           if (type === 'WRITTEN_FEEDBACK')
             return (
-              <span className="rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700">
+              <span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs text-blue-700">
                 서면
               </span>
             );
           if (type === 'LIVE_FEEDBACK')
             return (
-              <span className="rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700">
+              <span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-700">
                 라이브
               </span>
             );

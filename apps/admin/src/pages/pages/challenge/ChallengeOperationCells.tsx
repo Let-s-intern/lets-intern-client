@@ -37,7 +37,8 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 const TYPE_BADGE_CLASS: Record<string, string> = {
-  WRITTEN_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700',
+  WRITTEN_FEEDBACK:
+    'ml-1 rounded px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700',
   LIVE_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700',
 };
 
