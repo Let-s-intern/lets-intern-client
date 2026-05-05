@@ -6,6 +6,9 @@
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
+  "scripts": {
+    "gen:api": "orval --config ./orval.config.ts"
+  },
   "peerDependencies": {
     "axios": ">=1"
   },
@@ -13,6 +16,7 @@
     "@letscareer/tsconfig": "workspace:*",
     "@types/node": "^20.0.0",
     "axios": "^1.15.0",
+    "orval": "^7.14.0",
     "typescript": "^5.9.3"
   }
 }
