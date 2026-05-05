@@ -34,6 +34,9 @@ export const challengeMissionFeedbackListSchema = z.object({
         endDate: z.string().nullish(),
         challengeOptionCode: z.string().nullish(),
         challengeOptionTitle: z.string().nullish(),
+        challengeOptionType: z
+          .enum(['WRITTEN_FEEDBACK', 'LIVE_FEEDBACK'])
+          .nullish(),
         submittedCount: z
           .number()
           .nullish()
