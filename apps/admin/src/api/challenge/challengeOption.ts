@@ -9,7 +9,9 @@ import {
 const challengeOptionsQueryKey = 'challengeOptionsQueryKey';
 
 // GET 챌린지 옵션 전체 목록 조회 /api/v1/admin/challenge-option
-export const useGetChallengeOptions = ({ enabled = true }: { enabled?: boolean } = {}) => {
+export const useGetChallengeOptions = ({
+  enabled = true,
+}: { enabled?: boolean } = {}) => {
   return useQuery({
     queryKey: [challengeOptionsQueryKey],
     queryFn: async () => {

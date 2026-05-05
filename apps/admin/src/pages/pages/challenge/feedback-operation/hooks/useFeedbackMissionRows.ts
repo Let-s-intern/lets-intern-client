@@ -26,7 +26,9 @@ const useFeedbackMissionRows = (): Row[] => {
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
 
-  const { data: optionsData } = useGetChallengeOptions({ enabled: isAdmin === true });
+  const { data: optionsData } = useGetChallengeOptions({
+    enabled: isAdmin === true,
+  });
 
   // legacy 챌린지는 BE 가 submittedCount/totalCount 를 채워주지 않으므로
   // attendances/prev 를 미션별로 조회해 직접 계산한 값으로 덮어쓴다.
