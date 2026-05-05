@@ -30,9 +30,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
 
-// PRD-서면라이브 분리 §5.1 — 동일 폼을 라이브/서면으로 분기 진입.
-// type 은 페이지 타이틀과 (Push 3 이후) 폼 필드 분기용. 본 Push에서는 페이지 타이틀에만 적용.
-// TODO(push3): type prop 을 LiveBasic/LivePrice/LiveMentor 등 폼 컴포넌트로 전파.
+// PRD-서면라이브 분리 §5.1/§5.2 — 동일 폼을 라이브/서면으로 분기 진입.
+// type 은 페이지 타이틀 및 LiveBasic/LivePrice/LiveMentor variant 분기에 사용.
 export type LiveEditProgramType = 'LIVE' | 'SEOMYEON';
 
 interface LiveEditProps {
@@ -160,12 +159,16 @@ const LiveEdit: React.FC<LiveEditProps> = ({
         {/* 기본 정보 */}
         <section>
           <Heading2 className="mb-3">기본 정보</Heading2>
-          <LiveBasic defaultValue={live} setInput={setInput} />
+          <LiveBasic defaultValue={live} setInput={setInput} type={type} />
         </section>
         {/* 가격 정보 & 일정 */}
         <section className="flex flex-col gap-3">
           <Heading2>가격 정보 & 일정</Heading2>
-          <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
+          <LivePrice
+            defaultValue={live.priceInfo}
+            setInput={setInput}
+            type={type}
+          />
           <ProgramSchedule
             defaultValue={live}
             setInput={setInput}
@@ -247,7 +250,11 @@ const LiveEdit: React.FC<LiveEditProps> = ({
               onChange={onChangeImage}
             />
           </div>
-          <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
+          <LiveMentor
+            defaultValue={mentorDefaultValue}
+            setInput={setInput}
+            type={type}
+          />
         </div>
       </section>
 

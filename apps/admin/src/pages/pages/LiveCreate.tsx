@@ -30,9 +30,8 @@ const LiveInformation = lazy(
 
 const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
-// PRD-서면라이브 분리 §5.1 — 동일 폼을 라이브/서면으로 분기 진입.
-// type 은 페이지 타이틀과 (Push 3 이후) 폼 필드 분기용. 본 Push에서는 페이지 타이틀에만 적용.
-// TODO(push3): type prop 을 LiveBasic/LivePrice/LiveMentor 등 폼 컴포넌트로 전파.
+// PRD-서면라이브 분리 §5.1/§5.2 — 동일 폼을 라이브/서면으로 분기 진입.
+// type 은 페이지 타이틀 및 LiveBasic/LivePrice/LiveMentor variant 분기에 사용.
 export type LiveCreateProgramType = 'LIVE' | 'SEOMYEON';
 
 interface LiveCreateProps {
@@ -184,6 +183,7 @@ const LiveCreate: React.FC<LiveCreateProps> = ({
             }}
             // TODO(ts-suppress): 검토 필요 — as any 캐스팅
             setInput={setInput as any}
+            type={type}
           />
         </section>
         {/* 가격 정보 & 일정 */}
@@ -204,6 +204,7 @@ const LiveCreate: React.FC<LiveCreateProps> = ({
             }}
             // TODO(ts-suppress): 검토 필요 — as any 캐스팅
             setInput={setInput as any}
+            type={type}
           />
           <ProgramSchedule
             defaultValue={{
@@ -278,7 +279,11 @@ const LiveCreate: React.FC<LiveCreateProps> = ({
             />
           </div>
           // TODO(ts-suppress): 검토 필요 — as any 캐스팅
-          <LiveMentor defaultValue={input} setInput={setInput as any} />
+          <LiveMentor
+            defaultValue={input}
+            setInput={setInput as any}
+            type={type}
+          />
         </div>
       </section>
 
