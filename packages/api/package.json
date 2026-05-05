@@ -10,10 +10,12 @@
     "gen:api": "orval --config ./orval.config.ts"
   },
   "peerDependencies": {
+    "@tanstack/react-query": ">=5",
     "axios": ">=1"
   },
   "devDependencies": {
     "@letscareer/tsconfig": "workspace:*",
+    "@tanstack/react-query": "^5.49.2",
     "@types/node": "^20.0.0",
     "axios": "^1.15.0",
     "orval": "^7.14.0",
