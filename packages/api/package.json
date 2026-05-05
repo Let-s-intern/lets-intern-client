@@ -5,7 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./generated": "./src/generated/index.ts",
-    "./generated/*": "./src/generated/*.ts",
+    "./generated/*": "./src/generated/*/*.ts",
     "./*": "./src/*.ts"
   },
   "scripts": {
