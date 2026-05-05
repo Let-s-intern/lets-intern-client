@@ -71,7 +71,14 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const [live] = await Promise.all([fetchLiveData(id)]);
+  // CRITICAL(Vercel async-parallel): 라이브 메타/스케줄 응답과 본문 응답을 병렬 fetch.
+  // 메타에 들어가는 필드(title/thumbnail) 는 generateMetadata 가 이미 단건 API 로 처리한다.
+  // 본 RSC 단계에서는 LiveView/LiveCTAButtons 가 사용하는 전체 응답(live)과
+  // 본문(content) 응답을 동시에 시작해 TTFB 를 줄인다.
+  const [live, content] = await Promise.all([
+    fetchLiveData(id),
+    fetchLiveContent(id),
+  ]);
 
   const isDeprecated = isDeprecatedProgram(live);
 
@@ -97,10 +104,16 @@ const Page = async ({
     redirect(correctPathname);
   }
 
+  // /content 응답이 본문 desc 를 가지고 있으면 우선 사용 (단건 API 로 본문 전환 일환).
+  // 기존 LiveView 는 props 의 `live.desc` 를 JSON.parse 하여 본문을 렌더하므로,
+  // 본문 데이터만 새 응답으로 덮어써 LiveView 자체 변경을 최소화한다.
+  const liveWithFreshContent =
+    typeof content.desc === 'string' ? { ...live, desc: content.desc } : live;
+
   return (
     <>
-      <LiveView live={live} />
-      <LiveCTAButtons live={live} liveId={id} />
+      <LiveView live={liveWithFreshContent} />
+      <LiveCTAButtons live={liveWithFreshContent} liveId={id} />
     </>
   );
 };
