@@ -13,6 +13,7 @@ import LiveInformation from '@/domain/admin/program/live/LiveInformation';
 import LiveMentor from '@/domain/admin/program/live/LiveMentor';
 import LivePrice from '@/domain/admin/program/live/LivePrice';
 import LiveBasic from '@/domain/admin/program/live/LiveBasic';
+import { applySeomyeonDefaults } from '@/domain/admin/program/live/seomyeon/applySeomyeonDefaults';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
@@ -102,8 +103,11 @@ const LiveEdit: React.FC<LiveEditProps> = ({
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
+    // PRD §5.3 — 서면 모드에서는 programTypeInfo 에 DOCUMENT_PREPARATION 자동 포함
+    const normalizedInput =
+      type === 'SEOMYEON' ? applySeomyeonDefaults(input) : input;
     const req: Parameters<typeof patchLive>[0] = {
-      ...input,
+      ...normalizedInput,
       liveId: Number(liveIdString),
       desc: JSON.stringify(content),
     };
@@ -117,7 +121,7 @@ const LiveEdit: React.FC<LiveEditProps> = ({
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [input, liveIdString, content, patchLive, client, snackbar]);
+  }, [type, input, liveIdString, content, patchLive, client, snackbar]);
 
   useEffect(() => {
     // 구 버전인지 판단

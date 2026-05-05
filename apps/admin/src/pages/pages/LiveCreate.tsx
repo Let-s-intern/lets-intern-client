@@ -5,6 +5,7 @@ import LiveCurriculum from '@/domain/admin/program/live/LiveCurriculum';
 import LiveMentor from '@/domain/admin/program/live/LiveMentor';
 import LivePrice from '@/domain/admin/program/live/LivePrice';
 import LiveBasic from '@/domain/admin/program/live/LiveBasic';
+import { applySeomyeonDefaults } from '@/domain/admin/program/live/seomyeon/applySeomyeonDefaults';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
@@ -109,8 +110,11 @@ const LiveCreate: React.FC<LiveCreateProps> = ({
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
+    // PRD §5.3 — 서면 모드에서는 programTypeInfo 에 DOCUMENT_PREPARATION 자동 포함
+    const normalizedInput =
+      type === 'SEOMYEON' ? applySeomyeonDefaults(input) : input;
     const req: CreateLiveReq = {
-      ...input,
+      ...normalizedInput,
       desc: JSON.stringify(content),
     };
     console.log('req:', req);
@@ -121,7 +125,7 @@ const LiveCreate: React.FC<LiveCreateProps> = ({
     setLoading(false);
     snackbar(successMessage);
     navigate('/programs');
-  }, [input, content, postLive, snackbar, navigate, successMessage]);
+  }, [type, input, content, postLive, snackbar, navigate, successMessage]);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
