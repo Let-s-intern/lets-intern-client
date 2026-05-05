@@ -2199,3 +2199,193 @@ export const programBannerAdminDetailSchema = z.object({
 });
 
 export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
+
+// ---------------------------------------------------------------------------
+// 라이브 신규 엔드포인트 스키마 (PRD-서면라이브 분리, Push 1)
+//
+// 참고: 본 Push 시점에 BE Swagger 응답 형태를 일부만 추정 가능하다.
+//       알려지지 않은 필드는 `.passthrough()` 또는 `z.unknown().optional()` 로
+//       보수적으로 정의하고, BE 응답 확인 후 정확히 좁힌다.
+// ---------------------------------------------------------------------------
+
+/** GET /api/v1/live/{liveId}/title — 라이브 타이틀 단건 조회 (웹 SEO/메타용)
+ *  ※ liveTitleSchema 가 위쪽(1054)에 이미 정의되어 있어 재사용한다.
+ */
+export const LiveTitleSchema = liveTitleSchema;
+export type LiveTitle = z.infer<typeof LiveTitleSchema>;
+
+/** GET /api/v1/live/{liveId}/thumbnail — 라이브 썸네일 단건 조회
+ *  TODO(BE): 응답 정확한 키 확인 후 좁힐 것.
+ */
+export const LiveThumbnailSchema = z.object({
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+});
+export type LiveThumbnail = z.infer<typeof LiveThumbnailSchema>;
+
+/** GET /api/v1/live/{liveId}/content — 라이브 상세 본문 조회 (웹 상세 페이지)
+ *  TODO(BE): 응답 키 확정 후 nullable/optional 좁힐 것. 마크다운/HTML 여부도 확인.
+ */
+export const LiveContentSchema = z
+  .object({
+    desc: z.string().nullable().optional(),
+    shortDesc: z.string().nullable().optional(),
+    criticalNotice: z.string().nullable().optional(),
+  })
+  .passthrough();
+export type LiveContent = z.infer<typeof LiveContentSchema>;
+
+/** GET /api/v1/live/{liveId}/application — 라이브 신청폼 조회 (웹 신청 페이지)
+ *  TODO(BE): 응답 키 확정 필요. 현재 challenge/{id}/application 패턴을 참고해 보수적으로 정의.
+ */
+export const LiveApplicationFormSchema = z
+  .object({
+    applied: z.boolean().nullable().optional(),
+    name: z.string().nullable().optional(),
+    email: z.string().nullable().optional(),
+    contactEmail: z.string().nullable().optional(),
+    phoneNumber: z.string().nullable().optional(),
+    startDate: z.string().nullable().optional(),
+    endDate: z.string().nullable().optional(),
+    deadline: z.string().nullable().optional(),
+    priceList: z
+      .array(
+        z
+          .object({
+            priceId: z.number().nullable().optional(),
+            price: z.number().nullable().optional(),
+            discount: z.number().nullable().optional(),
+            accountNumber: z.string().nullable().optional(),
+            deadline: z.string().nullable().optional(),
+            accountType: accountType.nullable().optional(),
+            livePriceType: livePriceTypeSchema.nullable().optional(),
+          })
+          .passthrough(),
+      )
+      .nullable()
+      .optional(),
+  })
+  .passthrough();
+export type LiveApplicationForm = z.infer<typeof LiveApplicationFormSchema>;
+
+/** GET /api/v1/live/{liveId}/history — 신청 여부 조회 (웹 상세에서 신청 버튼 분기용)
+ *  TODO(BE): 응답 정확한 키(applied, applicationId 등) 확인 후 좁힐 것.
+ */
+export const LiveHistorySchema = z
+  .object({
+    applied: z.boolean().nullable().optional(),
+    applicationId: z.number().nullable().optional(),
+  })
+  .passthrough();
+export type LiveHistory = z.infer<typeof LiveHistorySchema>;
+
+/** GET /api/v1/live/{liveId}/mentor — [어드민] 멘토 비밀번호 조회
+ *  ※ 위쪽(1923)에 이미 `adminMentorInfoSchema = { mentorPassword }` 가 정의되어 있어 재사용한다.
+ */
+export const LiveMentorPasswordSchema = adminMentorInfoSchema;
+export type LiveMentorPassword = z.infer<typeof LiveMentorPasswordSchema>;
+
+/** GET /api/v1/live/{liveId}/mentor/{password} — [어드민] 멘토 전달 내용 미리보기
+ *  ※ 위쪽(1881)의 `mentorNotificationSchema` 가 동일 응답을 다룬다.
+ */
+export const LiveMentorContentSchema = mentorNotificationSchema;
+export type LiveMentorContent = z.infer<typeof LiveMentorContentSchema>;
+
+/** GET /api/v1/live/{liveId}/applications — [어드민] 라이브 신청자 목록
+ *  TODO(BE): 응답 형태 확정 후 필드 좁힐 것. 현재 application 도메인 패턴 참고로 보수적 정의.
+ */
+export const LiveApplicantItemSchema = z
+  .object({
+    applicationId: z.number().nullable().optional(),
+    userId: z.number().nullable().optional(),
+    name: z.string().nullable().optional(),
+    email: z.string().nullable().optional(),
+    contactEmail: z.string().nullable().optional(),
+    phoneNumber: z.string().nullable().optional(),
+    isConfirmed: z.boolean().nullable().optional(),
+    paybackStatus: z.string().nullable().optional(),
+    createDate: z.string().nullable().optional(),
+  })
+  .passthrough();
+export const LiveApplicantListSchema = z
+  .object({
+    applicationList: z.array(LiveApplicantItemSchema).nullable().optional(),
+    pageInfo: pageInfo.nullable().optional(),
+  })
+  .passthrough();
+export type LiveApplicant = z.infer<typeof LiveApplicantItemSchema>;
+export type LiveApplicantList = z.infer<typeof LiveApplicantListSchema>;
+
+/** GET /api/v1/live/{liveId}/reviews ([어드민] 라이브 리뷰)
+ *  GET /api/v1/live/reviews         (전체 라이브 리뷰)
+ *  TODO(BE): 응답 키(`reviewList` vs `reviews`)와 페이지네이션 유무 확인 필요.
+ *  ※ 기존 reviewSchema 를 우선 재사용한다. 새 필드가 있다면 좁힐 것.
+ */
+export const LiveReviewListSchema = z
+  .object({
+    reviewList: z.array(reviewSchema).nullable().optional(),
+    pageInfo: pageInfo.nullable().optional(),
+  })
+  .passthrough();
+export type LiveReviewList = z.infer<typeof LiveReviewListSchema>;
+
+/** GET /api/v2/review — 후기 전체 조회 (challenge, mission, live, report)
+ *  POST /api/v2/review — 후기 생성 (challenge, live, report)
+ *  TODO(BE): v2 응답 스키마(`programType`, `programId`, `nps*`, `score`, …) 확정 후 좁힐 것.
+ */
+export const ReviewV2ProgramTypeEnum = z.enum([
+  'CHALLENGE',
+  'MISSION',
+  'LIVE',
+  'REPORT',
+]);
+export type ReviewV2ProgramType = z.infer<typeof ReviewV2ProgramTypeEnum>;
+
+export const ReviewV2ItemSchema = z
+  .object({
+    id: z.number().nullable().optional(),
+    programType: ReviewV2ProgramTypeEnum.nullable().optional(),
+    programId: z.number().nullable().optional(),
+    programTitle: z.string().nullable().optional(),
+    name: z.string().nullable().optional(),
+    nps: z.number().nullable().optional(),
+    npsAns: z.string().nullable().optional(),
+    npsCheckAns: z.boolean().nullable().optional(),
+    score: z.number().nullable().optional(),
+    content: z.string().nullable().optional(),
+    isVisible: z.boolean().nullable().optional(),
+    createdDate: z.string().nullable().optional(),
+  })
+  .passthrough();
+export type ReviewV2Item = z.infer<typeof ReviewV2ItemSchema>;
+
+export const ReviewV2ListSchema = z
+  .object({
+    reviewList: z.array(ReviewV2ItemSchema).nullable().optional(),
+    pageInfo: pageInfo.nullable().optional(),
+  })
+  .passthrough();
+export type ReviewV2List = z.infer<typeof ReviewV2ListSchema>;
+
+/** POST /api/v2/review 요청 바디
+ *  TODO(BE): 필드 확정 필요. mission 은 작성 비대상(서버 405) 가능성.
+ */
+export type CreateReviewV2Req = {
+  programType: Exclude<ReviewV2ProgramType, 'MISSION'>;
+  programId: number;
+  nps: number;
+  npsAns: string;
+  npsCheckAns: boolean;
+  score: number;
+  content: string;
+};
+
+export const CreateReviewV2ReqSchema = z.object({
+  programType: z.enum(['CHALLENGE', 'LIVE', 'REPORT']),
+  programId: z.number(),
+  nps: z.number(),
+  npsAns: z.string(),
+  npsCheckAns: z.boolean(),
+  score: z.number(),
+  content: z.string(),
+});
