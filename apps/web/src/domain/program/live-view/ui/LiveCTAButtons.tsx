@@ -1,6 +1,7 @@
 'use client';
 
 import { useProgramApplicationQuery } from '@/api/application';
+import { useGetLiveHistoryQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
@@ -12,6 +13,7 @@ import {
   DesktopApplyCTA,
   MobileApplyCTA,
 } from '../../../../common/button/ApplyCTA';
+import { getIsAlreadyApplied } from './getIsAlreadyApplied';
 
 const LiveCTAButtons = ({
   live,
@@ -28,6 +30,13 @@ const LiveCTAButtons = ({
     Number(liveId),
   );
 
+  // 신청 여부는 신규 단건 API(/live/{id}/history) 로 정확히 판정한다.
+  // 비로그인 시에는 호출하지 않도록 enabled 게이트를 둔다.
+  const { data: history } = useGetLiveHistoryQuery({
+    liveId: Number(liveId),
+    enabled: isLoggedIn,
+  });
+
   const { setProgramApplicationForm } = useProgramStore();
 
   // 로그인 상태 변경 시 application 데이터 refetch
@@ -37,8 +46,11 @@ const LiveCTAButtons = ({
     }
   }, [isLoggedIn, refetch]);
 
-  /** 이미 신청했는지 체크하는 정보 */
-  const isAlreadyApplied = application?.applied ?? false;
+  /** 이미 신청했는지 체크하는 정보
+   *  - history 응답이 신청 여부의 단일 진실 소스(SoT). 비로그인 시 false.
+   *  - 호환 폴백: history 미수신 시 기존 application.applied 사용.
+   */
+  const isAlreadyApplied = getIsAlreadyApplied(history, application);
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
