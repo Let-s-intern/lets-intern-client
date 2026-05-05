@@ -55,13 +55,9 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  let vod;
-  try {
-    const apiData = await fetchPublicVodData(id);
-    vod = mapPublicVod(apiData);
-  } catch {
-    redirect('/');
-  }
+  const vod = await fetchPublicVodData(id)
+    .then(mapPublicVod)
+    .catch(() => redirect('/'));
 
   const correctPathname = getProgramPathname({
     id,
