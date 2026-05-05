@@ -26,12 +26,28 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useParams, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ApplicantsTab from '@/domain/admin/program/live/tabs/ApplicantsTab';
+import ReviewsTab from '@/domain/admin/program/live/tabs/ReviewsTab';
+import MentorDispatchSection from '@/domain/admin/program/live/tabs/MentorDispatchSection';
 import ProgramSchedule from './program/ProgramSchedule';
+
+// PRD-서면라이브 분리 §5.4 — 어드민 라이브 상세 탭 식별자.
+const TAB_IDS = ['basic', 'applicants', 'reviews', 'mentor'] as const;
+type LiveEditTabId = (typeof TAB_IDS)[number];
+
+function isLiveEditTabId(value: string | null): value is LiveEditTabId {
+  return value !== null && (TAB_IDS as readonly string[]).includes(value);
+}
 
 // PRD-서면라이브 분리 §5.1/§5.2 — 동일 폼을 라이브/서면으로 분기 진입.
 // type 은 페이지 타이틀 및 LiveBasic/LivePrice/LiveMentor variant 분기에 사용.
@@ -48,9 +64,25 @@ const LiveEdit: React.FC<LiveEditProps> = ({
 }) => {
   const { liveId: liveIdString } = useParams<{ liveId: string }>();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const pageTitle = titleOverride ?? (type === 'SEOMYEON' ? '서면 수정' : '라이브 수정');
+
+  // PRD-서면라이브 분리 §5.4 — URL 쿼리(`?tab=`) 로 탭 상태 보존.
+  const tabParam = searchParams?.get('tab') ?? null;
+  const activeTab: LiveEditTabId = isLiveEditTabId(tabParam) ? tabParam : 'basic';
+  const handleTabChange = (_: unknown, next: LiveEditTabId) => {
+    const params = new URLSearchParams(searchParams?.toString() ?? '');
+    if (next === 'basic') {
+      params.delete('tab');
+    } else {
+      params.set('tab', next);
+    }
+    const query = params.toString();
+    router.replace(`${pathname ?? ''}${query ? `?${query}` : ''}`);
+  };
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
@@ -159,6 +191,36 @@ const LiveEdit: React.FC<LiveEditProps> = ({
         </div>
       </Header>
 
+      <Tabs
+        value={activeTab}
+        onChange={(_, next) => handleTabChange(_, next as LiveEditTabId)}
+        className="mt-3"
+      >
+        <Tab value="basic" label="기본정보" />
+        <Tab value="applicants" label="신청자" />
+        <Tab value="reviews" label="리뷰" />
+        <Tab value="mentor" label="멘토발송" />
+      </Tabs>
+
+      {activeTab === 'applicants' ? (
+        <div className="mt-4">
+          <ApplicantsTab liveId={Number(liveIdString)} />
+        </div>
+      ) : null}
+
+      {activeTab === 'reviews' ? (
+        <div className="mt-4">
+          <ReviewsTab liveId={Number(liveIdString)} />
+        </div>
+      ) : null}
+
+      {activeTab === 'mentor' ? (
+        <div className="mt-4">
+          <MentorDispatchSection liveId={Number(liveIdString)} />
+        </div>
+      ) : null}
+
+      <div hidden={activeTab !== 'basic'}>
       <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
         {/* 기본 정보 */}
         <section>
@@ -333,6 +395,7 @@ const LiveEdit: React.FC<LiveEditProps> = ({
           저장
         </Button>
       </footer>
+      </div>
     </div>
   );
 };
