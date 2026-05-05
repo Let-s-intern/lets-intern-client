@@ -1,3 +1,5 @@
+import type { ChallengeOptionType } from '@/api/challenge/challengeOptionSchema';
+
 export type SubTab = 'mentorMentee' | 'feedbackManage';
 
 export interface Row {
@@ -8,7 +10,7 @@ export interface Row {
   endDate?: string | null;
   challengeOptionCode?: string | null;
   challengeOptionTitle?: string | null;
-  challengeOptionType?: 'WRITTEN_FEEDBACK' | 'LIVE_FEEDBACK' | null;
+  challengeOptionType?: ChallengeOptionType | null;
   submittedCount: number;
   totalCount: number;
   url: string;

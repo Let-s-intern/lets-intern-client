@@ -53,8 +53,6 @@ const ChallengeOptionRenderCell = (
     (item) => item.challengeOptionId === params.value,
   );
 
-  const typeLabel = option?.type ? TYPE_LABEL[option.type] : null;
-
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const challengeOptionId = Number(e.target.value);
     await updateMissionOption({
