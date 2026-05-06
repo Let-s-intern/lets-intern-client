@@ -198,3 +198,93 @@ Error
 - [ ] `noise=translator` 이슈가 메인 이슈 보드에서 비노출
 - [ ] Replay 업로드 건수 감소 확인 (크래시 건수만)
 - [ ] Slack 알람에 `replayId` 태그 포함 여부 확인
+
+---
+
+## 9. Sentry Logs 사용 가이드 (M5d)
+
+### 9.1 wrapper 카탈로그 (`apps/web/src/utils/log.ts`)
+
+| Wrapper | Level | Sentry message | 호출 시점 |
+|---|---|---|---|
+| `apiSlow(method, url, durationMs)` | warn | `api.slow` | fetchJson 성공이지만 duration ≥ 1000ms |
+| `apiClientError(method, url, status, errorCode)` | warn | `api.client_error` | fetchJson 4xx 응답 (FE/입력 오류) |
+| `apiServerError(method, url, status, errorCode)` | error | `api.server_error` | fetchJson 5xx 응답 (BE 장애) |
+| `signinSuccess(method, userIdHash)` | info | `auth.signin.success` | 로그인 성공 (`onSuccess`) |
+| `signinReject(method, reason, status)` | warn | `auth.signin.reject` | 로그인 실패 (`onError`, 4xx 거절 포함) |
+| `socialCallbackError(provider, errorCode)` | error | `auth.social.callback_error` | 소셜 로그인 콜백 에러 분기 |
+| `staleChunkReload(chunkUrl)` | info | `app.stale_chunk_reload` | `StaleChunkHandler` 자동 reload 직전 |
+| `rscRenderFailed(digest, route)` | error | `app.rsc_render_failed` | `global-error.tsx` (RSC 렌더 실패) |
+| `replayFlushed(replayId, errorCode)` | info | `replay.flushed` | crash 분류 시 Replay buffer flush 시점 |
+
+`fetchJson`은 `apps/web/src/instrumentation(.ts/-client.ts)`에서 `setFetchJsonLogger({ apiSlow, apiClientError, apiServerError })`로 주입되어 자동으로 호출된다. `packages/api`는 `@sentry/nextjs`에 직접 의존하지 않는다.
+
+### 9.2 level별 샘플링 정책 (`beforeSendLog`)
+
+`apps/web/src/utils/sentryLogSampler.ts::shouldSendLog`가 3개 sentry config (`server`, `edge`, `instrumentation-client`)에서 `beforeSendLog`로 호출된다.
+
+| Level | 통과율 | 비고 |
+|---|---|---|
+| `trace` | 1% | 샘플링 차단 |
+| `debug` | 1% | 샘플링 차단 |
+| `info` | 5% | 정상 흐름 카운터, 비용 절감 |
+| `warn` | 100% | 신호 보존 |
+| `error` | 100% | 신호 보존 |
+| `fatal` | 100% | 신호 보존 |
+
+알 수 없는 level은 보수적으로 통과시킨다 (SDK 변화에 강건).
+
+### 9.3 Logs UI 검색 쿼리 예시
+
+#### 도메인별 5xx 추적
+
+```
+log.message:api.server_error log.attributes.url:/api/vods/*
+log.message:api.server_error log.attributes.errorCode:BLOG_FETCH_FAILED
+```
+
+#### 1초 이상 느린 API (성공이지만 SLO 위반)
+
+```
+log.message:api.slow log.attributes.durationMs:>1000
+```
+
+#### 로그인 거절 누적
+
+```
+log.message:auth.signin.reject log.attributes.method:password
+```
+
+#### 소셜 로그인 콜백 에러
+
+```
+log.message:auth.social.callback_error
+log.message:auth.social.callback_error log.attributes.provider:kakao
+```
+
+#### Stale chunk 자동 reload 추이
+
+```
+log.message:app.stale_chunk_reload
+```
+
+#### RSC 렌더 실패
+
+```
+log.message:app.rsc_render_failed
+log.message:app.rsc_render_failed log.attributes.route:/program/*
+```
+
+#### Replay flush 카운트 (crash KPI)
+
+```
+log.message:replay.flushed
+log.message:replay.flushed log.attributes.errorCode:*_PARSE
+```
+
+### 9.4 ESLint no-console: 'error'
+
+`apps/web/eslint.config.mjs`에 `no-console: 'error'` 적용. `console.*` 사용은 lint 에러로 차단된다. 다음 두 가지 대응:
+
+1. **마이그레이션**: 9개 wrapper 중 의미가 맞는 것으로 교체 (`@/utils/log` import)
+2. **인라인 비활성화**: 디버깅 또는 wrapper 매핑이 부적절한 경우 `// eslint-disable-next-line no-console` 주석을 호출 라인 직전에 명시
