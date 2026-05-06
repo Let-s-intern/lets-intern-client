@@ -1,35 +1,69 @@
-import { useGetAllUserExperienceQuery } from '@/api/experience/experience';
+'use client';
+
+import { allUserExperienceQueryOptions } from '@/api/experience/experience';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getTopCoreCompetencies } from '@/domain/career-board/utils/experienceSummary';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
+import { SectionErrorFallback } from '../ui/SectionErrorFallback';
+
+const TITLE = '경험 정리';
+const HREF = '/mypage/career/experience';
 
 const ExperienceSection = () => {
   const router = useRouter();
 
-  // API 호출
-  const { data, isLoading } = useGetAllUserExperienceQuery(
-    {
-      experienceCategories: [],
-      activityTypes: [],
-      years: [],
-      coreCompetencies: [],
-    },
-    'LATEST',
-    { page: 1, size: 1000 },
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<LoadingContainer text="경험 정리 조회 중" />}
+        />
+      }
+      rejectedFallback={({ resetErrorBoundary }) => (
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<SectionErrorFallback onRetry={resetErrorBoundary} />}
+        />
+      )}
+    >
+      <ExperienceContent />
+    </AsyncBoundary>
+  );
+};
+
+export default ExperienceSection;
+
+const ExperienceContent = () => {
+  const router = useRouter();
+
+  const { data } = useSuspenseQuery(
+    allUserExperienceQueryOptions(
+      {
+        experienceCategories: [],
+        activityTypes: [],
+        years: [],
+        coreCompetencies: [],
+      },
+      'LATEST',
+      { page: 1, size: 1000 },
+    ),
   );
   const { setHasCareerData } = useCareerDataStatus();
 
-  // 사용자가 직접 입력한 경험만 필터링
   const userExperiences =
     data?.userExperiences.filter((exp) => exp.isAddedByAdmin === false) ?? [];
 
   const experienceCount = userExperiences.length;
   const coreCompetencies = getTopCoreCompetencies(data?.userExperiences ?? []);
 
-  // 데이터 존재 여부 확인
   const hasData = experienceCount > 0;
 
   useEffect(() => {
@@ -38,20 +72,10 @@ const ExperienceSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="경험 정리"
-        labelOnClick={() => router.push('/mypage/career/experience')}
-        body={<LoadingContainer text="경험 정리 조회 중" />}
-      />
-    );
-  }
-
   return (
     <CareerCard
-      title="경험 정리"
-      labelOnClick={() => router.push('/mypage/career/experience')}
+      title={TITLE}
+      labelOnClick={() => router.push(HREF)}
       body={
         hasData ? (
           <ExperienceBody
@@ -63,16 +87,14 @@ const ExperienceSection = () => {
             height={179}
             description="아직 정리된 경험이 없어요"
             buttonText="경험 정리하기"
-            buttonHref="/mypage/career/experience"
-            onClick={() => router.push('/mypage/career/experience')}
+            buttonHref={HREF}
+            onClick={() => router.push(HREF)}
           />
         )
       }
     />
   );
 };
-
-export default ExperienceSection;
 
 interface ExperienceBodyProps {
   experienceCount: number;
@@ -85,7 +107,6 @@ const ExperienceBody = ({
 }: ExperienceBodyProps) => {
   return (
     <div className="flex h-[179px] flex-col gap-4">
-      {/* 지금까지 정리한 경험 */}
       <div className="flex flex-col gap-1">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">
           지금까지 정리한 경험
@@ -97,7 +118,6 @@ const ExperienceBody = ({
       </div>
       <div className="border-b border-[#EFEFEF]" />
 
-      {/* 내 주요 핵심 역량 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">
           내 주요 핵심 역량

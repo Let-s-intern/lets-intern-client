@@ -337,18 +337,20 @@ export type MypageApplication = z.infer<
 
 export const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
 
+export const mypageApplicationsQueryOptions = {
+  queryKey: [useMypageApplicationsQueryKey] as const,
+  queryFn: async () => {
+    const res = await axiosV2.get('/user/applications');
+    return mypageApplicationsSchema
+      .parse(res.data.data)
+      .applicationList.filter(
+        (application) => application.programType !== 'REPORT',
+      );
+  },
+};
+
 export const useMypageApplicationsQuery = () => {
-  return useQuery({
-    queryKey: [useMypageApplicationsQueryKey],
-    queryFn: async () => {
-      const res = await axiosV2.get('/user/applications');
-      return mypageApplicationsSchema
-        .parse(res.data.data)
-        .applicationList.filter(
-          (application) => application.programType !== 'REPORT',
-        );
-    },
-  });
+  return useQuery(mypageApplicationsQueryOptions);
 };
 
 const participationInfoSchema = z.object({

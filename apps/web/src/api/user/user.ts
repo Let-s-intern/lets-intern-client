@@ -245,17 +245,21 @@ export type User = z.infer<typeof userSchema>;
 /** GET /api/v1/user */
 export const useUserQueryKey = 'useUserQueryKey';
 
+export const userQueryOptions = {
+  queryKey: [useUserQueryKey] as const,
+  queryFn: async () => {
+    const res = await axios.get(`/user`);
+    return userSchema.parse(res.data.data);
+  },
+  refetchOnWindowFocus: false,
+};
+
 export const useUserQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
   return useQuery({
+    ...userQueryOptions,
     ...options,
-    queryKey: [useUserQueryKey],
-    queryFn: async () => {
-      const res = await axios.get(`/user`);
-      return userSchema.parse(res.data.data);
-    },
-    refetchOnWindowFocus: false,
   });
 };
 
@@ -399,14 +403,17 @@ export const useIsAdminQuery = ({
 
 /** GET [유저] 서류(자소서, 포트폴리오 등) 조회 /api/v1/user-document */
 export const UseGetUserDocumentListQueryKey = 'useGetUserDocumentListQueryKey';
+
+export const userDocumentListQueryOptions = {
+  queryKey: [UseGetUserDocumentListQueryKey] as const,
+  queryFn: async () => {
+    const res = await axios.get('/user-document');
+    return userDocumentListSchema.parse(res.data.data);
+  },
+};
+
 export const useGetUserDocumentListQuery = () => {
-  return useQuery({
-    queryKey: [UseGetUserDocumentListQueryKey],
-    queryFn: async () => {
-      const res = await axios.get('/user-document');
-      return userDocumentListSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(userDocumentListQueryOptions);
 };
 
 /** DELETE [유저] 서류(자소서, 포트폴리오 등) 삭제 /api/v1/user-document/{userDocumentId}*/

@@ -392,6 +392,16 @@ export const usePostMagnetApplicationMutation = () => {
 };
 
 // 마이페이지 MY 마그넷 신청현황 조회
+export const mypageMagnetListQueryOptions = (typeList?: MagnetType[]) => ({
+  queryKey: [mypageMagnetListQueryKey, typeList] as const,
+  queryFn: async (): Promise<MypageMagnetListResponse> => {
+    const res = await axios.get('/magnet/mypage', {
+      params: { typeList },
+    });
+    return mypageMagnetListResponseSchema.parse(res.data.data);
+  },
+});
+
 export const useGetMypageMagnetListQuery = ({
   typeList,
   enabled,
@@ -400,13 +410,7 @@ export const useGetMypageMagnetListQuery = ({
   enabled?: boolean;
 }) => {
   return useQuery({
-    queryKey: [mypageMagnetListQueryKey, typeList],
-    queryFn: async (): Promise<MypageMagnetListResponse> => {
-      const res = await axios.get('/magnet/mypage', {
-        params: { typeList },
-      });
-      return mypageMagnetListResponseSchema.parse(res.data.data);
-    },
+    ...mypageMagnetListQueryOptions(typeList),
     enabled,
   });
 };
