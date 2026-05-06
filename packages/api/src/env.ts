@@ -8,21 +8,29 @@
  */
 
 /**
- * Vite 환경에서만 import.meta.env 가 존재한다. Next(번들러)는 ESM이지만
- * 라이브러리 코드 컨텍스트에 따라 import.meta 자체를 모르므로 Function 우회.
- * 반환되는 객체는 Vite가 빌드 시 정적 치환한 결과 (런타임 객체 아님 — 호출 1회만 의미).
+ * Vite 환경에서만 import.meta.env 에 환경 변수가 채워진다.
+ *
+ * 이전 구현은 `Function('return import.meta')()` 우회를 썼지만, Function 으로 만든
+ * 함수는 **글로벌 스코프**에서 평가되어 모듈 스코프의 `import.meta` 가 안 보인다.
+ * 결과적으로 항상 `{}` 를 반환해 Vite 환경에서도 env 가 비는 버그가 있었다.
+ *
+ * 수정: 모듈 스코프에서 직접 `import.meta.env` 를 참조한다.
+ * - Vite: dev/build 모두 객체로 제공
+ * - Next(Turbopack/SWC): import.meta 는 ESM 컨텍스트에서 정의되지만 .env 는 undefined → ?? 가드
+ * - jest(next/jest SWC): import.meta syntax 자체는 valid, .env 는 undefined → fallback
+ *
+ * tsconfig 의 `module: esnext` 덕분에 import.meta 사용은 컴파일 가능.
  */
-function readViteEnv(): Record<string, string | undefined> {
+const VITE_ENV: Record<string, string | undefined> = (() => {
   try {
-    const meta = Function(
-      'return typeof import.meta !== "undefined" ? import.meta : undefined',
-    )();
-    return meta?.env ?? {};
+    const meta = import.meta as unknown as {
+      env?: Record<string, string | undefined>;
+    };
+    return meta.env ?? {};
   } catch {
     return {};
   }
-}
-const VITE_ENV = readViteEnv();
+})();
 
 // admin/mentor 의 tsconfig 는 `"types": ["vite/client", ...]` 화이트리스트로
 // @types/node 를 의도적으로 제외하므로, 이 파일이 그 컨텍스트에서 컴파일될 때
