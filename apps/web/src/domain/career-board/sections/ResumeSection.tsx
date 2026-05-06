@@ -1,20 +1,26 @@
-import { useGetUserDocumentListQuery } from '@/api/user/user';
+'use client';
+
+import { userDocumentListQueryOptions } from '@/api/user/user';
 import { UserDocument } from '@/api/user/userSchema';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
+import { SectionErrorFallback } from '../ui/SectionErrorFallback';
 
-// 문서 타입을 한국어로 매핑
+const TITLE = '서류 정리';
+const HREF = '/mypage/career/resume';
+
 const DOCUMENT_TYPE_MAP: Record<UserDocument['userDocumentType'], string> = {
   RESUME: '이력서',
   PERSONAL_STATEMENT: '자기소개서',
   PORTFOLIO: '포트폴리오',
 };
 
-// 표시할 문서 타입 순서
 const DOCUMENT_TYPE_ORDER: UserDocument['userDocumentType'][] = [
   'RESUME',
   'PERSONAL_STATEMENT',
@@ -29,15 +35,42 @@ interface Document {
 
 const ResumeSection = () => {
   const router = useRouter();
-  const { data: userDocumentData, isLoading } = useGetUserDocumentListQuery();
+
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<LoadingContainer text="서류 정리 조회 중" />}
+        />
+      }
+      rejectedFallback={({ resetErrorBoundary }) => (
+        <CareerCard
+          title={TITLE}
+          labelOnClick={() => router.push(HREF)}
+          body={<SectionErrorFallback onRetry={resetErrorBoundary} />}
+        />
+      )}
+    >
+      <ResumeContent />
+    </AsyncBoundary>
+  );
+};
+
+export default ResumeSection;
+
+const ResumeContent = () => {
+  const router = useRouter();
+  const { data: userDocumentData } = useSuspenseQuery(
+    userDocumentListQueryOptions,
+  );
   const { setHasCareerData } = useCareerDataStatus();
 
-  // API 응답을 UI 형식으로 변환
   const documents: Document[] = DOCUMENT_TYPE_ORDER.map((docType) => {
     const document = userDocumentData?.userDocumentList.find(
       (doc) => doc.userDocumentType === docType,
     );
-    // fileUrl에서 추출
     const fileName = document?.fileUrl
       ? getFileNameFromUrl(document.userDocumentType, document.fileUrl)
       : null;
@@ -49,7 +82,6 @@ const ResumeSection = () => {
     };
   });
 
-  // 데이터 존재 여부 확인 (fileUrl이 있는지 확인)
   const hasData = documents.some((doc) => doc.fileUrl !== null);
 
   useEffect(() => {
@@ -58,20 +90,10 @@ const ResumeSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="서류 정리"
-        labelOnClick={() => router.push('/mypage/career/resume')}
-        body={<LoadingContainer text="서류 정리 조회 중" />}
-      />
-    );
-  }
-
   return (
     <CareerCard
-      title="서류 정리"
-      labelOnClick={() => router.push('/mypage/career/resume')}
+      title={TITLE}
+      labelOnClick={() => router.push(HREF)}
       body={
         hasData ? (
           <ResumeBody documents={documents} />
@@ -80,17 +102,14 @@ const ResumeSection = () => {
             height={109}
             description="아직 등록된 서류가 없어요"
             buttonText="서류 정리하기"
-            buttonHref="/mypage/career/resume"
-            onClick={() => router.push('/mypage/career/resume')}
+            buttonHref={HREF}
+            onClick={() => router.push(HREF)}
           />
         )
       }
     />
   );
 };
-
-export default ResumeSection;
-
 interface ResumeBodyProps {
   documents: Document[];
 }
@@ -98,7 +117,6 @@ interface ResumeBodyProps {
 const ResumeBody = ({ documents }: ResumeBodyProps) => {
   return (
     <div className="flex h-[109px] flex-col gap-4">
-      {/* 내 서류 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">
           내 서류
