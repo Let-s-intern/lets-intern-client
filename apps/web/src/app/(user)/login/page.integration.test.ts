@@ -7,10 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const SOURCE = readFileSync(
-  resolve(__dirname, 'page.tsx'),
-  'utf8',
-);
+const SOURCE = readFileSync(resolve(__dirname, 'page.tsx'), 'utf8');
 
 describe('login/page.tsx — Sentry Logs wrapper 사용', () => {
   it('signinSuccess 호출이 onSuccess 분기에 존재한다', () => {
@@ -26,6 +23,8 @@ describe('login/page.tsx — Sentry Logs wrapper 사용', () => {
   });
 
   it('@/utils/log 모듈을 import한다', () => {
-    expect(SOURCE).toMatch(/import\s+\*\s+as\s+log\s+from\s+['"]@\/utils\/log['"]/);
+    expect(SOURCE).toMatch(
+      /import\s+\*\s+as\s+log\s+from\s+['"]@\/utils\/log['"]/,
+    );
   });
 });

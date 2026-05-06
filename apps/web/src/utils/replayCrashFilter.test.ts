@@ -56,7 +56,9 @@ describe('isCrashEvent', () => {
 
   it('errorCode ending with _PARSE → true', () => {
     expect(
-      isCrashEvent(makeEvent({ tags: { errorCode: 'VOD_FETCH_FAILED_PARSE' } })),
+      isCrashEvent(
+        makeEvent({ tags: { errorCode: 'VOD_FETCH_FAILED_PARSE' } }),
+      ),
     ).toBe(true);
   });
 
@@ -73,8 +75,14 @@ describe('isCrashEvent', () => {
       isCrashEvent(
         makeEvent({
           level: 'error',
-          tags: { domain: 'vod', httpStatus: '404', errorCode: 'VOD_FETCH_FAILED' },
-          exception: { values: [{ mechanism: { handled: true, type: 'generic' } }] },
+          tags: {
+            domain: 'vod',
+            httpStatus: '404',
+            errorCode: 'VOD_FETCH_FAILED',
+          },
+          exception: {
+            values: [{ mechanism: { handled: true, type: 'generic' } }],
+          },
         }),
       ),
     ).toBe(false);
@@ -85,16 +93,18 @@ describe('isCrashEvent', () => {
       isCrashEvent(
         makeEvent({
           level: 'warning',
-          tags: { domain: 'vod', httpStatus: '500', errorCode: 'VOD_FETCH_FAILED' },
+          tags: {
+            domain: 'vod',
+            httpStatus: '500',
+            errorCode: 'VOD_FETCH_FAILED',
+          },
         }),
       ),
     ).toBe(false);
   });
 
   it('errorCode 없이 일반 에러 → false', () => {
-    expect(
-      isCrashEvent(makeEvent({ level: 'error' })),
-    ).toBe(false);
+    expect(isCrashEvent(makeEvent({ level: 'error' }))).toBe(false);
   });
 
   it('errorCode가 _PARSE로 끝나지 않으면 false', () => {

@@ -8,8 +8,7 @@ export function emitBlogRecommendFallbackSpan(opts: {
   section: 'blogRecommendList' | 'programRecommendList';
   err: unknown;
 }): void {
-  const fallbackReason =
-    opts.err instanceof Error ? opts.err.name : 'unknown';
+  const fallbackReason = opts.err instanceof Error ? opts.err.name : 'unknown';
   Sentry.startSpan(
     {
       name: 'blog.recommend.fallback',

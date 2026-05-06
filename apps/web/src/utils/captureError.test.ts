@@ -150,10 +150,12 @@ describe('captureDomainError', () => {
       section: 'fetchPublicVodData',
     });
 
-    const fp1 = (mockCaptureException.mock.calls[0][1] as { fingerprint: string[] })
-      .fingerprint;
-    const fp2 = (mockCaptureException.mock.calls[1][1] as { fingerprint: string[] })
-      .fingerprint;
+    const fp1 = (
+      mockCaptureException.mock.calls[0][1] as { fingerprint: string[] }
+    ).fingerprint;
+    const fp2 = (
+      mockCaptureException.mock.calls[1][1] as { fingerprint: string[] }
+    ).fingerprint;
     expect(fp1).toEqual(fp2);
   });
 
@@ -181,7 +183,9 @@ describe('captureDomainError', () => {
   });
 
   it('활성 replay가 있으면 replayId tag 부착', () => {
-    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<typeof Sentry.getReplay>;
+    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<
+      typeof Sentry.getReplay
+    >;
     mockGetReplay.mockReturnValue({
       getReplayId: () => 'replay-abc123',
     } as unknown as ReturnType<typeof Sentry.getReplay>);
@@ -199,7 +203,9 @@ describe('captureDomainError', () => {
   });
 
   it('replay가 없으면 replayId tag 미부착', () => {
-    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<typeof Sentry.getReplay>;
+    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<
+      typeof Sentry.getReplay
+    >;
     mockGetReplay.mockReturnValue(undefined);
 
     const err = new Error('에러');

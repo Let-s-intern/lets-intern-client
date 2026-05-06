@@ -51,6 +51,9 @@ describe('GlobalError', () => {
     });
 
     expect(mockRscRenderFailed).toHaveBeenCalledTimes(1);
-    expect(mockRscRenderFailed).toHaveBeenCalledWith('d456', expect.any(String));
+    expect(mockRscRenderFailed).toHaveBeenCalledWith(
+      'd456',
+      expect.any(String),
+    );
   });
 });

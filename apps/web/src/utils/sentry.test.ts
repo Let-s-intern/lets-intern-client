@@ -99,7 +99,9 @@ describe('classifyNoise', () => {
   });
 
   it('일반 TypeError(비번역기) → null', () => {
-    const err = new TypeError('Cannot read properties of undefined (reading x)');
+    const err = new TypeError(
+      'Cannot read properties of undefined (reading x)',
+    );
     expect(classifyNoise(err)).toBeNull();
   });
 });

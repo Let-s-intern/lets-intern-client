@@ -20,7 +20,9 @@ describe('fetchBlogData', () => {
   });
 
   it('5xx → ApiError(code=BLOG_FETCH_FAILED) throw', async () => {
-    mockFetch.mockResolvedValue(makeResponse(500, { message: '서버 오류' }, false));
+    mockFetch.mockResolvedValue(
+      makeResponse(500, { message: '서버 오류' }, false),
+    );
     let caught: unknown;
     try {
       await fetchBlogData('1');

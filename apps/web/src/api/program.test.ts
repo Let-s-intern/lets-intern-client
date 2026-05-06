@@ -1,4 +1,8 @@
-import { fetchPublicVodData, fetchPublicGuidebookData, fetchLive } from './program';
+import {
+  fetchPublicVodData,
+  fetchPublicGuidebookData,
+  fetchLive,
+} from './program';
 import { ApiError } from '@letscareer/api';
 
 const mockFetch = jest.fn();
@@ -37,7 +41,9 @@ describe('fetchPublicVodData', () => {
   });
 
   it('5xx → ApiError(status=500, code=VOD_FETCH_FAILED) throw', async () => {
-    mockFetch.mockResolvedValue(makeResponse(500, { message: '서버 오류' }, false));
+    mockFetch.mockResolvedValue(
+      makeResponse(500, { message: '서버 오류' }, false),
+    );
     let caught: unknown;
     try {
       await fetchPublicVodData('1');

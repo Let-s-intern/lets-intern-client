@@ -98,7 +98,7 @@ const LoginContent = () => {
       const reason =
         status === 400 || status === 404
           ? 'invalid_credentials'
-          : axiosError.code ?? 'unknown';
+          : (axiosError.code ?? 'unknown');
       log.signinReject('password', reason, status);
       const emailHash = await hashEmailPrefix(email);
       captureAuthError(error, {

@@ -30,7 +30,8 @@ export function isCrashEvent(event: SentryEvent): boolean {
 
   // 5) Schema parse 실패 (_PARSE suffix)
   const errorCode = event.tags?.errorCode;
-  if (typeof errorCode === 'string' && errorCode.endsWith('_PARSE')) return true;
+  if (typeof errorCode === 'string' && errorCode.endsWith('_PARSE'))
+    return true;
 
   return false;
 }

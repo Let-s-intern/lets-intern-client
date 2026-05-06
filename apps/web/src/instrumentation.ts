@@ -1,8 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
-import {
-  setFetchJsonStartSpan,
-  setFetchJsonLogger,
-} from '@letscareer/api';
+import { setFetchJsonStartSpan, setFetchJsonLogger } from '@letscareer/api';
 import { apiSlow, apiClientError, apiServerError } from '@/utils/log';
 
 export async function register() {

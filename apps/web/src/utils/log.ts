@@ -13,11 +13,7 @@ import * as Sentry from '@sentry/nextjs';
  * §8.1 — API 호출이 1초 이상 걸린 성공 케이스.
  * Logs level: warn.
  */
-export function apiSlow(
-  method: string,
-  url: string,
-  durationMs: number,
-): void {
+export function apiSlow(method: string, url: string, durationMs: number): void {
   Sentry.logger.warn('api.slow', {
     method,
     url,
@@ -92,10 +88,7 @@ export function signinReject(
  * §8.1 — 소셜 로그인 콜백 에러.
  * Logs level: error.
  */
-export function socialCallbackError(
-  provider: string,
-  errorCode: string,
-): void {
+export function socialCallbackError(provider: string, errorCode: string): void {
   Sentry.logger.error('auth.social.callback_error', {
     provider,
     errorCode,
