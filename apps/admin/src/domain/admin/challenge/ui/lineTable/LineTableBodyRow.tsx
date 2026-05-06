@@ -184,6 +184,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     name={attr}
                     value={value}
                     onChange={handleChange}
+                    className="w-full rounded-md border border-neutral-400 bg-white p-2 focus:border-neutral-600 focus:outline-none"
                   />
                 ) : (
                   dayjs(value).format('YYYY-MM-DD HH:mm:ss')
@@ -199,6 +200,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     name={attr}
                     value={value}
                     onChange={handleChange}
+                    className="w-full rounded-md border border-neutral-400 bg-white p-2 focus:border-neutral-600 focus:outline-none"
                   />
                 ) : (
                   dayjs(value).format('YYYY-MM-DD HH:mm:ss')
