@@ -26,7 +26,7 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
-      const res = await axiosV2.patch(`/attendance/${attendance.id}`, {
+      const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {
         status,
       });
       const data = res.data;
