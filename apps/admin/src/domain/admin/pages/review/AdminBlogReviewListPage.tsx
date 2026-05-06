@@ -6,6 +6,7 @@ import {
   usePostAdminBlogReview,
 } from '@/api/review/review';
 import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
+import ConfirmTextModal from '@/common/alert/ConfirmTextModal';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import dayjs from '@/lib/dayjs';
@@ -233,6 +234,28 @@ export default function AdminBlogReviewListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
+  // 위험한 작업(url 변경·삭제) 전 사용자에게 정확한 문구를 타이핑하게 하는 가드 모달.
+  // resolve 콜백을 들고 있다가 사용자 응답 시 호출하여 await 흐름을 이어간다.
+  const [confirmState, setConfirmState] = useState<{
+    title: string;
+    description?: string;
+    expectedText: string;
+    confirmLabel: string;
+    resolve: (ok: boolean) => void;
+  } | null>(null);
+
+  const askConfirm = (
+    opts: Omit<NonNullable<typeof confirmState>, 'resolve'>,
+  ) =>
+    new Promise<boolean>((resolve) => {
+      setConfirmState({ ...opts, resolve });
+    });
+
+  const closeConfirm = (ok: boolean) => {
+    confirmState?.resolve(ok);
+    setConfirmState(null);
+  };
+
   const handleSaveClick = (id: GridRowId) => () => {
     setRowModesModel({
       ...rowModesModel,
@@ -283,8 +306,14 @@ export default function AdminBlogReviewListPage() {
   };
 
   const handleDeleteClick = (id: GridRowId) => async () => {
-    const isDelete = confirm('삭제하시겠습니까?');
-    if (isDelete) await deleteReview.mutateAsync(id);
+    const ok = await askConfirm({
+      title: '후기 삭제',
+      description:
+        '삭제된 후기는 복구할 수 없습니다.\n진행하시려면 아래에 삭제하겠습니다 를 입력해 주세요.',
+      expectedText: '삭제하겠습니다',
+      confirmLabel: '삭제',
+    });
+    if (ok) await deleteReview.mutateAsync(id);
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -313,6 +342,23 @@ export default function AdminBlogReviewListPage() {
     } = newRow;
     const updatedRow = { ...newRow, isNew: false };
     const target = rows.find((row) => row.id === newRow.id);
+    const preservedRow = target ?? newRow;
+    const isUrlChanged = !target?.isNew && target?.url !== url;
+
+    // url이 실제로 바뀌었을 때만 가드 모달. 신규 등록은 처음부터 입력하는 흐름이라 제외.
+    if (isUrlChanged) {
+      const ok = await askConfirm({
+        title: 'URL 변경 확인',
+        description:
+          'URL을 변경하면 사용자 페이지의 링크가 즉시 바뀝니다.\n진행하시려면 아래에 변경하겠습니다 를 입력해 주세요.',
+        expectedText: '변경하겠습니다',
+        confirmLabel: '변경',
+      });
+      if (!ok) {
+        // throw 하면 DataGrid가 onProcessRowUpdateError 경유로 행을 원본 값으로 되돌린다.
+        throw new Error('cancelled');
+      }
+    }
 
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
@@ -328,7 +374,8 @@ export default function AdminBlogReviewListPage() {
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
     } else {
-      // [API] 리뷰 수정
+      // url을 보내면 BE가 OpenGraph 재조회 + S3 썸네일 재업로드를 트리거한다.
+      // 이미지 fetch 실패 시 500(FILE_UPLOAD_ERROR)이 떨어지므로, 실제 변경되지 않았으면 url 필드를 생략한다.
       await patchReview.mutateAsync({
         blogReviewId,
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
@@ -336,9 +383,15 @@ export default function AdminBlogReviewListPage() {
         name,
         title,
         description,
-        url,
+        ...(isUrlChanged ? { url } : {}),
         isVisible: isVisible ?? false,
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
+        phoneNum: preservedRow.phoneNum,
+        accountType: preservedRow.accountType,
+        accountNum: preservedRow.accountNum,
+        thumbnail: preservedRow.thumbnail,
+        isConfirmed: preservedRow.isConfirmed,
+        isRemittanceConfirmed: preservedRow.isRemittanceConfirmed,
       });
     }
 
@@ -411,6 +464,16 @@ export default function AdminBlogReviewListPage() {
         onPaginationModelChange={handlePaginationModelChange}
         slots={{ toolbar: CustomToolbar }}
       />
+      {confirmState && (
+        <ConfirmTextModal
+          title={confirmState.title}
+          description={confirmState.description}
+          expectedText={confirmState.expectedText}
+          confirmLabel={confirmState.confirmLabel}
+          onConfirm={() => closeConfirm(true)}
+          onCancel={() => closeConfirm(false)}
+        />
+      )}
     </div>
   );
 }

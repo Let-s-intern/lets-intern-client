@@ -338,6 +338,10 @@ interface AdminBlogReviewPatchReq {
   isRemittanceConfirmed?: boolean;
   isVisible?: boolean;
   description?: string | null;
+  phoneNum?: string | null;
+  accountType?: string | null;
+  accountNum?: string | null;
+  thumbnail?: string | null;
 }
 
 export const usePatchAdminBlogReview = () => {

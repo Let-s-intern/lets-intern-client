@@ -1,18 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
+  useDeleteAdminCareerMutation,
+  useGetAdminUserCareerQuery,
+  usePostAdminCareerMutation,
+} from '@/api/career/career';
+import { uploadFile } from '@/api/file';
+import {
   usePatchUserAdminMutation,
+  UseUserAdminQueryKey,
   useUserDetailAdminQuery,
   UseUserDetailAdminQueryKey,
 } from '@/api/user/user';
-import {
-  useGetAdminUserCareerQuery,
-  usePostAdminCareerMutation,
-  useDeleteAdminCareerMutation,
-} from '@/api/career/career';
-import { uploadFile } from '@/api/file';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
@@ -81,6 +82,9 @@ export default function AdminMentorDetailPage() {
       snackbar('프로필이 저장되었습니다.');
       queryClient.invalidateQueries({
         queryKey: [UseUserDetailAdminQueryKey, mentorId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [UseUserAdminQueryKey],
       });
     },
     errorCallback: () => snackbar('저장에 실패했습니다.'),
@@ -184,6 +188,8 @@ export default function AdminMentorDetailPage() {
       setForm((prev) => ({ ...prev, profileImgUrl: fileUrl }));
     } catch {
       snackbar('이미지 업로드에 실패했습니다.');
+    } finally {
+      e.target.value = '';
     }
   };
 
