@@ -310,7 +310,6 @@ export default function AdminBlogReviewListPage() {
     } = newRow;
     const updatedRow = { ...newRow, isNew: false };
     const target = rows.find((row) => row.id === newRow.id);
-    const preservedRow = target ?? newRow;
 
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
@@ -335,12 +334,6 @@ export default function AdminBlogReviewListPage() {
         url,
         isVisible: isVisible ?? false,
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
-        phoneNum: preservedRow.phoneNum,
-        accountType: preservedRow.accountType,
-        accountNum: preservedRow.accountNum,
-        thumbnail: preservedRow.thumbnail,
-        isConfirmed: preservedRow.isConfirmed,
-        isRemittanceConfirmed: preservedRow.isRemittanceConfirmed,
       });
     }
 
