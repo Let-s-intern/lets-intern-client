@@ -1,4 +1,5 @@
 import type * as Sentry from '@sentry/nextjs';
+import type { ApiError } from '@letscareer/api';
 
 /**
  * Sentry 이벤트 태그를 webhook에서 사용할 수 있는 형식으로 정규화합니다.
@@ -18,6 +19,21 @@ export function normalizeSentryTags(
       value?.toString() ?? null,
     ]),
   ) as Record<string, string | number | boolean | null | undefined>;
+}
+
+/**
+ * 다양한 에러 객체 shape에서 HTTP status를 정규화 추출.
+ * - ApiError (packages/api): `err.status`
+ * - 커스텀 client(utils/client.ts): `err.status`
+ * - axios: `err.response.status`
+ * - native fetch + plain Error throw: status 미보존 (undefined 반환)
+ */
+export function extractHttpStatus(err: unknown): number | undefined {
+  if (typeof err !== 'object' || err === null) return undefined;
+  const e = err as Partial<ApiError> & { response?: { status?: unknown } };
+  if (typeof e.status === 'number') return e.status;
+  if (typeof e.response?.status === 'number') return e.response.status;
+  return undefined;
 }
 
 /**
