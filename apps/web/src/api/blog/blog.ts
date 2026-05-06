@@ -372,6 +372,7 @@ export const usePatchAdminBlogBanner = () => {
         `/admin/blog-banner/${reqBody.blogBannerId}`,
         body,
       );
+      // eslint-disable-next-line no-console
       console.log('req body:', reqBody);
       return res;
     },
@@ -397,6 +398,7 @@ export const usePostAdminBlogBanner = () => {
   return useMutation({
     mutationFn: async (reqBody: PostAdminBlogBannerReqBody) => {
       const res = await axios.post('/admin/blog-banner', reqBody);
+      // eslint-disable-next-line no-console
       console.log('req body:', reqBody);
       return res;
     },

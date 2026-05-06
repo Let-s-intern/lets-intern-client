@@ -124,7 +124,9 @@ const ReportApplicationsPage = () => {
 
   const { data: reportDetail } = useGetReportDetailAdminQuery(Number(reportId));
 
+  // eslint-disable-next-line no-console
   console.log('서류 진단 상세:', reportDetail);
+  // eslint-disable-next-line no-console
   console.log('ADMIN 서류 신청:', data);
 
   const { mutate: patchDocument } = usePatchApplicationDocument({

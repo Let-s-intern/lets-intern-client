@@ -133,6 +133,7 @@ const AdminReportCreatePage = () => {
       delete body.visibleDate;
     }
 
+    // eslint-disable-next-line no-console
     console.log('서류진단 생성 요청 body:', body);
     await createReportMutation.mutateAsync({
       ...body,

@@ -94,12 +94,14 @@ const LiveEdit: React.FC = () => {
       liveId: Number(liveIdString),
       desc: JSON.stringify(content),
     };
+    // eslint-disable-next-line no-console
     console.log('req:', req);
 
     const res = await patchLive(req);
     client.invalidateQueries({
       queryKey: [useGetLiveQueryKey, Number(liveIdString)],
     });
+    // eslint-disable-next-line no-console
     console.log('res:', res);
 
     setLoading(false);

@@ -1005,6 +1005,7 @@ export const useCreateReportApplication = () => {
   return useMutation({
     mutationFn: async (data: CreateReportApplication) => {
       // Mock API call
+      // eslint-disable-next-line no-console
       console.log('Creating report application:', data);
       return {
         success: true,
@@ -1020,6 +1021,7 @@ export const useDeleteReport = () => {
   return useMutation({
     mutationFn: async (reportId: number) => {
       // Mock API call
+      // eslint-disable-next-line no-console
       console.log('Deleting report:', reportId);
       return { success: true, message: 'Report deleted successfully' };
     },

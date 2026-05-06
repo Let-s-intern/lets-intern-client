@@ -188,6 +188,7 @@ const ChallengeUserInfo = () => {
         wishEmploymentType: value.wishEmploymentType,
       });
 
+      // eslint-disable-next-line no-console
       console.log('tryPatchUser success', tryPatchUserRes.data);
 
       const tryPostGoalRes = await tryPostGoal({
@@ -195,6 +196,7 @@ const ChallengeUserInfo = () => {
         goal: DASHBOARD_FIRST_VISIT_GOAL,
       });
 
+      // eslint-disable-next-line no-console
       console.log('tryPostGoal success', tryPostGoalRes.data);
 
       const awarenessPath =
@@ -216,6 +218,7 @@ const ChallengeUserInfo = () => {
         },
       });
 
+      // eslint-disable-next-line no-console
       console.log(
         'patchApplicationSurvey success',
         patchApplicationSurveyRes.data,

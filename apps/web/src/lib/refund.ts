@@ -112,7 +112,9 @@ export const getReportRefundPercent = ({
   reportApplicationStatus: ReportApplicationStatus;
 }) => {
   if (!paymentInfo || !applicationInfo) {
+    // eslint-disable-next-line no-console
     console.log('paymentInfo', paymentInfo);
+    // eslint-disable-next-line no-console
     console.log('applicationInfo', applicationInfo);
     return 0;
   }
@@ -233,6 +235,7 @@ export const getTotalRefund = ({
       reportApplicationStatus,
     });
 
+  // eslint-disable-next-line no-console
   console.log(
     getReportDiscountedPrice(paymentInfo),
     getReportRefundPercent({
@@ -252,8 +255,11 @@ export const getTotalRefund = ({
       reportFeedbackDesiredDate,
     });
 
+  // eslint-disable-next-line no-console
   console.log(refundReportPrice, refundFeedbackPrice);
+  // eslint-disable-next-line no-console
   console.log(nearestTen(refundReportPrice), refundFeedbackPrice);
+  // eslint-disable-next-line no-console
   console.log(couponPrice);
 
   const refundPrice =
