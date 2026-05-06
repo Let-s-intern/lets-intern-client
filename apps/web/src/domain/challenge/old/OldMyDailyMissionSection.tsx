@@ -4,8 +4,8 @@ import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import DailyMissionInfoSection from './my-challenge/section/DailyMissionInfoSection';
-import DailyMissionSubmitSection from './my-challenge/section/DailyMissionSubmitSection';
+import DailyMissionInfoSection from '../my-challenge/section/DailyMissionInfoSection';
+import DailyMissionSubmitSection from '../my-challenge/section/DailyMissionSubmitSection';
 
 interface Props {
   myDailyMission: MyDailyMission;
