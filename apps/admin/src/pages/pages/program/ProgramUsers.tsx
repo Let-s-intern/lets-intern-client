@@ -5,6 +5,10 @@ import TableHead, {
 } from '@/domain/admin/program/program-user/table-content/TableHead';
 import Table from '@/domain/admin/ui/table/regacy/Table';
 import {
+  dedupeChallengeApplications,
+  dedupeFlatApplications,
+} from '@/domain/admin/program/program-user/utils/dedupeApplications';
+import {
   adminMentorInfoSchema,
   ChallengeApplication,
   challengeApplicationsSchema,
@@ -42,9 +46,9 @@ const ProgramUsers = () => {
     queryKey: ['challenge', programId, 'applications'],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/applications`);
-      const list = challengeApplicationsSchema.parse(
-        res.data.data,
-      ).applicationList;
+      const list = dedupeChallengeApplications(
+        challengeApplicationsSchema.parse(res.data.data).applicationList,
+      );
       list.sort((a, b) => {
         return a.application.isCanceled === b.application.isCanceled
           ? 0
@@ -61,7 +65,9 @@ const ProgramUsers = () => {
     queryKey: ['live', programId, 'applications'],
     queryFn: async () => {
       const res = await axios.get(`/live/${programId}/applications`);
-      const list = liveApplicationsSchema.parse(res.data.data).applicationList;
+      const list = dedupeFlatApplications(
+        liveApplicationsSchema.parse(res.data.data).applicationList,
+      );
       list.sort((a, b) => {
         return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
       });
@@ -74,9 +80,9 @@ const ProgramUsers = () => {
     queryKey: ['guidebook', programId, 'applications'],
     queryFn: async () => {
       const res = await axios.get(`/guidebook/${programId}/applications`);
-      const list = guidebookApplicationsSchema.parse(
-        res.data.data,
-      ).applicationList;
+      const list = dedupeFlatApplications(
+        guidebookApplicationsSchema.parse(res.data.data).applicationList,
+      );
       list.sort((a, b) => {
         return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
       });
@@ -89,7 +95,9 @@ const ProgramUsers = () => {
     queryKey: ['vod', programId, 'applications'],
     queryFn: async () => {
       const res = await axios.get(`/vod/${programId}/applications`);
-      const list = vodApplicationsSchema.parse(res.data.data).applicationList;
+      const list = dedupeFlatApplications(
+        vodApplicationsSchema.parse(res.data.data).applicationList,
+      );
       list.sort((a, b) => {
         return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
       });
