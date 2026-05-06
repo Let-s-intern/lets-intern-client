@@ -13,3 +13,4 @@ export {
 export { createDefaultAxios } from './axios';
 export { createV2Axios, buildV2BaseUrl } from './axiosV2';
 export { createV3Axios } from './axiosV3';
+export { configureGeneratedAxios } from './mutator';

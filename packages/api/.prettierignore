@@ -1,0 +1,6 @@
+# orval 자동 생성 산출물 — 수정 금지, 포맷 검사 제외
+src/generated/**
+
+# 빌드 산출물
+dist/**
+node_modules/**
