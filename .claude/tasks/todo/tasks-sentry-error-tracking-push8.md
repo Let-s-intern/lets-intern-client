@@ -27,9 +27,9 @@
     - [x] 8.1 `apps/web/src/utils/log.ts` 추가: 9개 wrapper (`apiSlow`, `apiClientError`, `apiServerError`, `signinSuccess`, `signinReject`, `socialCallbackError`, `staleChunkReload`, `rscRenderFailed`, `replayFlushed`). 모두 `Sentry.logger.{trace,info,warn,error,fatal}` 호출.
         - [x] 8.1.T1 `log.test.ts`: 각 wrapper가 정확한 level + attributes 로 emit (Sentry.logger mock)
         - [x] 8.1.T2 테스트 실행 그린
-    - [ ] 8.2 3개 sentry config (`server`, `edge`, `instrumentation-client`)에 `beforeSendLog` 샘플링 추가: trace/debug 1%, info 5%, warn 이상 100%. `Math.random()` 기반.
-        - [ ] 8.2.T1 단위 테스트: 시드된 random mock으로 level별 통과율 검증 (10000회 표본)
-        - [ ] 8.2.T2 테스트 실행 그린
+    - [x] 8.2 3개 sentry config (`server`, `edge`, `instrumentation-client`)에 `beforeSendLog` 샘플링 추가: trace/debug 1%, info 5%, warn 이상 100%. `Math.random()` 기반.
+        - [x] 8.2.T1 단위 테스트: 시드된 random mock으로 level별 통과율 검증 (10000회 표본)
+        - [x] 8.2.T2 테스트 실행 그린
     - [ ] 8.3 `eslint.config.mjs`에 `no-console: 'error'` 추가. 기존 위반은 (a) `log.*`로 마이그레이션 가능하면 마이그레이션, (b) 그 외 `// eslint-disable-next-line no-console` 명시. 결과적으로 lint clean.
         - [ ] 8.3.T1 `pnpm lint` clean 통과
         - [ ] 8.3.T2 마이그레이션 결과 grep으로 `log.` import 사용처 카운트 확인

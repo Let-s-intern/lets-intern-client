@@ -5,6 +5,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { normalizeSentryTags, classifyNoise } from './src/utils/sentry';
+import { shouldSendLog } from './src/utils/sentryLogSampler';
 import { sendErrorToWebhook } from './src/utils/webhook';
 
 Sentry.init({
@@ -15,6 +16,9 @@ Sentry.init({
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
+  // §8.2 — Logs ingestion 비용 보호: trace/debug 1%, info 5%, warn 이상 100%
+  beforeSendLog: (log) => (shouldSendLog(log.level) ? log : null),
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii

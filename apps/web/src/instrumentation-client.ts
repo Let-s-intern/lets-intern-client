@@ -4,6 +4,7 @@
 
 import { normalizeSentryTags, classifyNoise } from '@/utils/sentry';
 import { isCrashEvent } from '@/utils/replayCrashFilter';
+import { shouldSendLog } from '@/utils/sentryLogSampler';
 import { setFetchJsonStartSpan } from '@letscareer/api';
 import * as Sentry from '@sentry/nextjs';
 
@@ -33,6 +34,9 @@ Sentry.init({
   tracesSampleRate: 1,
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
+  // §8.2 — Logs ingestion 비용 보호: trace/debug 1%, info 5%, warn 이상 100%
+  beforeSendLog: (log) => (shouldSendLog(log.level) ? log : null),
 
   // Replay: 전체 세션 녹화 OFF, 크래시 시에만 buffer flush (비용 절감)
   replaysSessionSampleRate: 0,
