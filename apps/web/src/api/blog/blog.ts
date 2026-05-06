@@ -1,3 +1,4 @@
+import { fetchJson } from '@letscareer/api';
 import { IPageable } from '@/types/interface';
 import axios from '@/utils/axios';
 import {
@@ -314,14 +315,14 @@ export const usePostBlogRatingMutation = ({
 export const fetchBlogData = async (
   id: string | number,
 ): Promise<BlogSchema> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch blog data');
-  }
-
-  const data = await res.json();
-  return blogSchema.parse(data.data);
+  return fetchJson<BlogSchema>(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`,
+    {
+      code: 'BLOG_FETCH_FAILED',
+      displayMessage: '블로그 조회에 실패했습니다.',
+      parse: (data) => blogSchema.parse(data),
+    },
+  );
 };
 
 // Fetching 추천 블로그 데이터
@@ -335,17 +336,14 @@ export const fetchRecommendBlogData = async ({
   });
   if (type) query.set('type', String(type));
 
-  const res = await fetch(
+  return fetchJson<BlogList>(
     `${process.env.NEXT_PUBLIC_SERVER_API}/blog?${query.toString()}`,
+    {
+      code: 'BLOG_RECOMMEND_FETCH_FAILED',
+      displayMessage: '추천 블로그 조회에 실패했습니다.',
+      parse: (data) => blogListSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch recommend blog data');
-  }
-
-  const data = await res.json();
-
-  return blogListSchema.parse(data.data);
 };
 
 /* 블로그 광고 배너 */

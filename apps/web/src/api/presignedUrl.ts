@@ -1,3 +1,4 @@
+import { ApiError } from '@letscareer/api';
 import axios from '@/utils/axios';
 
 const getPresignedUrl = async (
@@ -15,9 +16,14 @@ const uploadToS3 = async (presignedUrl: string, file: File): Promise<void> => {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `S3 업로드 실패: ${response.status} ${response.statusText}`,
-    );
+    throw new ApiError({
+      code: 'PRESIGNED_URL_FAILED',
+      message: '업로드 URL 발급에 실패했습니다.',
+      status: response.status,
+      endpoint: presignedUrl,
+      method: 'PUT',
+      context: { statusText: response.statusText },
+    });
   }
 };
 
