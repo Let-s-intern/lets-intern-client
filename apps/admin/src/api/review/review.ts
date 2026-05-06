@@ -305,6 +305,7 @@ interface AdminBlogReviewPostReq {
   programType: ProgramTypeUpperCase;
   programTitle?: string | null;
   name?: string | null;
+  title?: string | null;
   url?: string | null;
   postDate?: string | null;
   description?: string | null;
@@ -330,6 +331,7 @@ interface AdminBlogReviewPatchReq {
   programType?: ProgramTypeUpperCase;
   programTitle?: string | null;
   name?: string | null;
+  title?: string | null;
   url?: string | null;
   postDate?: string | null;
   isConfirmed?: boolean;
