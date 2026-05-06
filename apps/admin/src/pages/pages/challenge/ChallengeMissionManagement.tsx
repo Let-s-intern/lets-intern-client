@@ -64,7 +64,8 @@ const ChallengeMissionManagement = () => {
       ) ?? [];
 
     if (insertingMissionTemplate) {
-      list?.push(insertingMissionTemplate);
+      // 등록 버튼 클릭 시 입력 행을 맨 위에 추가
+      list.unshift(insertingMissionTemplate);
     }
 
     return list;

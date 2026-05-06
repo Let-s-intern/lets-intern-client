@@ -1,4 +1,5 @@
 import type * as Sentry from '@sentry/nextjs';
+import type { ApiError } from '@letscareer/api';
 
 /**
  * Sentry 이벤트 태그를 webhook에서 사용할 수 있는 형식으로 정규화합니다.
@@ -21,8 +22,72 @@ export function normalizeSentryTags(
 }
 
 /**
+ * 다양한 에러 객체 shape에서 HTTP status를 정규화 추출.
+ * - ApiError (packages/api): `err.status`
+ * - 커스텀 client(utils/client.ts): `err.status`
+ * - axios: `err.response.status`
+ * - native fetch + plain Error throw: status 미보존 (undefined 반환)
+ */
+export function extractHttpStatus(err: unknown): number | undefined {
+  if (typeof err !== 'object' || err === null) return undefined;
+  const e = err as Partial<ApiError> & { response?: { status?: unknown } };
+  if (typeof e.status === 'number') return e.status;
+  if (typeof e.response?.status === 'number') return e.response.status;
+  return undefined;
+}
+
+/**
+ * 에러를 노이즈 카테고리로 분류합니다.
+ * - 'translator': Google 번역기/브라우저 번역 확장이 유발하는 DOM 충돌 에러
+ * - 'wallet': MetaMask/Web3 지갑 확장 에러
+ * - 'stale-deploy': 배포 직후 stale chunk 로딩 실패 에러
+ * - null: 노이즈가 아닌 실제 에러
+ */
+export function classifyNoise(
+  error: Error,
+): 'translator' | 'wallet' | 'stale-deploy' | null {
+  const message = error.message.toLowerCase();
+  const name = error.name.toLowerCase();
+
+  // 번역기 DOM 충돌 (Google Translate 등이 DOM 노드를 제거해서 발생)
+  if (
+    name === 'typeerror' &&
+    (message.includes('parentnode') ||
+      message.includes('removechild') ||
+      message.includes('insertbefore') ||
+      message.includes('nextsibling') ||
+      message.includes('previoussibling'))
+  ) {
+    return 'translator';
+  }
+
+  // MetaMask/Web3 지갑 확장 에러
+  if (
+    message.includes('metamask') ||
+    message.includes('web3') ||
+    message.includes('ethereum') ||
+    message.includes('wallet')
+  ) {
+    return 'wallet';
+  }
+
+  // Stale chunk (배포 직후 오래된 JS 청크를 로드하지 못하는 에러)
+  if (
+    name === 'chunkloaderror' ||
+    message.includes('failed to load chunk') ||
+    message.includes('loading chunk') ||
+    message.includes('chunkloaderror')
+  ) {
+    return 'stale-deploy';
+  }
+
+  return null;
+}
+
+/**
  * Webhook으로 전송하기 전에 에러를 필터링합니다.
  * 불필요한 노이즈 에러(React Fast Refresh, Manifest, 네트워크 에러 등)를 제외합니다.
+ * 번역기/MetaMask/stale chunk는 drop 하지 않고 noise 태그로 격리합니다 (classifyNoise 활용).
  * @param error - 에러 객체
  * @param url - 에러가 발생한 URL (선택사항)
  * @returns true면 필터링 (전송하지 않음), false면 전송

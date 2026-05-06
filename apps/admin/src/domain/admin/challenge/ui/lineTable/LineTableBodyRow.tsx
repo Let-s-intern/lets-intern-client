@@ -122,7 +122,8 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   return (
     <div
       className={twMerge(
-        'flex gap-px rounded-md border border-neutral-200 p-1',
+        'flex gap-px rounded-md border p-1',
+        isEditMode ? 'border-neutral-500' : 'border-neutral-200',
         onClick && 'cursor-pointer hover:bg-slate-50',
       )}
       onClick={() => onClick?.(values)}
@@ -184,6 +185,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     name={attr}
                     value={value}
                     onChange={handleChange}
+                    className="w-full rounded-md border border-neutral-400 bg-white p-2 focus:border-neutral-600 focus:outline-none"
                   />
                 ) : (
                   dayjs(value).format('YYYY-MM-DD HH:mm:ss')
@@ -199,6 +201,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     name={attr}
                     value={value}
                     onChange={handleChange}
+                    className="w-full rounded-md border border-neutral-400 bg-white p-2 focus:border-neutral-600 focus:outline-none"
                   />
                 ) : (
                   dayjs(value).format('YYYY-MM-DD HH:mm:ss')
@@ -216,6 +219,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <div className="flex min-w-[100px] gap-2">
               <button
                 type="button"
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-blue-700"
                 onClick={() => {
                   onSave?.(values);
                   setIsEditMode(false);
@@ -225,6 +229,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               </button>
               <button
                 type="button"
+                className="rounded-md bg-neutral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-600"
                 onClick={() => {
                   setValues(initialValues);
                   if (initialValues.rowStatus === TABLE_STATUS.SAVE) {

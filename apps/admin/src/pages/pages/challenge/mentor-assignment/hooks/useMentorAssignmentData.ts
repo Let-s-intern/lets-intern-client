@@ -12,7 +12,7 @@ import { PaybackParticipantsQueryKey } from './usePaybackParticipants';
 import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
 import { useLegacyMentorAssignmentMap } from './useLegacyMentorAssignmentMap';
-import type { MentorAssignmentRow } from '../types';
+import type { MentorAssignmentRow, MentorItem } from '../types';
 
 // 멘토 배정 대상이 아닌 결제 플랜 (멘토링 미포함 옵션).
 // 단, 230 미만(legacy) 챌린지는 결제 플랜 체계 자체가 달라 BASIC 사용자도
@@ -50,7 +50,26 @@ const useMentorAssignmentData = (programId: string) => {
     () => participantsData?.missionApplications ?? [],
     [participantsData],
   );
-  const mentors = useMemo(() => mentorData?.mentorList ?? [], [mentorData]);
+  // API는 모든 필드를 optional 로 노출하지만 MentorItem 은 핵심 식별 필드를 require.
+  // 누락된 행은 BE 데이터 결손이므로 화면에서 제외하고, 나머지는 MentorItem 모양으로 정규화.
+  const mentors = useMemo<MentorItem[]>(
+    () =>
+      (mentorData?.mentorList ?? [])
+        .filter(
+          (m) =>
+            m.challengeMentorId != null && m.userId != null && m.name != null,
+        )
+        .map((m) => ({
+          challengeMentorId: m.challengeMentorId as number,
+          userId: m.userId as number,
+          name: m.name as string,
+          userCareerList: (m.userCareerList ?? []).map((c) => ({
+            company: c.company ?? null,
+            job: c.job ?? null,
+          })),
+        })),
+    [mentorData],
+  );
 
   // applications에서 멘티 상세 정보 맵 생성
   const applicationDetailsMap = useMemo(() => {

@@ -104,9 +104,11 @@ const LiveCreate: React.FC = () => {
       ...input,
       desc: JSON.stringify(content),
     };
+    // eslint-disable-next-line no-console
     console.log('req:', req);
 
     const res = await postLive(req);
+    // eslint-disable-next-line no-console
     console.log('res:', res);
 
     setLoading(false);

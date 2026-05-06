@@ -40,6 +40,7 @@ const UserEdit = () => {
       router.back();
     },
     errorCallback: (error: Error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
       alert('수정에 실패했습니다.');
     },

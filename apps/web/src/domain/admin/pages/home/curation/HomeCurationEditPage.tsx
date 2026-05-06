@@ -56,6 +56,7 @@ const HomeCurationEditPage = () => {
             (!item.title || !item.url || !item.thumbnail)),
       )
     ) {
+      // eslint-disable-next-line no-console
       console.log(form);
       snackbar('필수 항목을 입력해주세요.');
       return;

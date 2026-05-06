@@ -5,6 +5,9 @@ export default [
   {
     rules: {
       '@next/next/no-img-element': 'off',
+      // §8.3 — apps/web에서는 console.* 사용 금지. Sentry Logs wrapper(@/utils/log)를 사용한다.
+      // 기존 위반은 (a) log.*로 마이그레이션 가능하면 마이그레이션, (b) 그 외 inline disable.
+      'no-console': 'error',
     },
   },
   {

@@ -308,6 +308,7 @@ export async function sendErrorToWebhook(
   const slackMessage = createSlackMessage(messageTemplate);
 
   try {
+    // eslint-disable-next-line no-console
     console.log('[Webhook] Slack으로 에러 전송 시도:', {
       url: webhookUrl.substring(0, 50) + '...',
       errorName: error.name,
@@ -334,6 +335,7 @@ export async function sendErrorToWebhook(
         JSON.stringify(slackMessage, null, 2),
       );
     } else {
+      // eslint-disable-next-line no-console
       console.log('[Webhook] Slack으로 에러 전송 성공');
     }
   } catch (webhookError) {

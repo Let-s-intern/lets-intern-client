@@ -179,6 +179,7 @@ const MagnetTable = ({
 
   return (
     <DataGrid
+      autoHeight
       rows={data.magnetList}
       columns={columns}
       getRowId={(row) => row.magnetId}

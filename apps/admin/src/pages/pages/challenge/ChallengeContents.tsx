@@ -41,7 +41,8 @@ const ChallengeContents = () => {
       ) ?? [];
 
     if (insertingContents) {
-      list?.push(insertingContents);
+      // 등록 버튼 클릭 시 입력 행을 맨 위에 추가
+      list.unshift(insertingContents);
     }
 
     return list;

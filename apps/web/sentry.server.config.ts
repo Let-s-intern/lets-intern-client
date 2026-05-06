@@ -3,7 +3,8 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
-import { normalizeSentryTags } from './src/utils/sentry';
+import { normalizeSentryTags, classifyNoise } from './src/utils/sentry';
+import { shouldSendLog } from './src/utils/sentryLogSampler';
 import { sendErrorToWebhook } from './src/utils/webhook';
 
 Sentry.init({
@@ -15,12 +16,23 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
+  // §8.2 — Logs ingestion 비용 보호: trace/debug 1%, info 5%, warn 이상 100%
+  beforeSendLog: (log) => (shouldSendLog(log.level) ? log : null),
+
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: false,
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
+    // noise 분류 태그 부착 (drop 하지 않음 — 격리만)
+    if (hint.originalException instanceof Error) {
+      const noise = classifyNoise(hint.originalException);
+      if (noise) {
+        event.tags = { ...event.tags, noise };
+      }
+    }
+
     // 개발 환경에서는 webhook 전송하지 않음
     if (process.env.NODE_ENV === 'development') {
       return event;

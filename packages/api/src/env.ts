@@ -8,21 +8,35 @@
  */
 
 /**
- * Vite 환경에서만 import.meta.env 가 존재한다. Next(번들러)는 ESM이지만
- * 라이브러리 코드 컨텍스트에 따라 import.meta 자체를 모르므로 Function 우회.
- * 반환되는 객체는 Vite가 빌드 시 정적 치환한 결과 (런타임 객체 아님 — 호출 1회만 의미).
+ * Vite 환경에서만 import.meta.env 에 환경 변수가 채워진다.
+ *
+ * 핵심: Vite 의 `import.meta.env` 정적 치환은 **AST 상 정확한 member access 패턴**
+ * (`import.meta.env.<KEY>`) 만 인식한다. cast(`as unknown as ...`) 가 끼거나 변수
+ * 거친 동적 접근(`VITE_ENV.VITE_X`) 은 transform 누락으로 dev/build 모두에서 undefined
+ * 가 되어 워닝 폭주. 그래서 각 키를 **직접 리터럴 텍스트** 로 참조한다.
+ *
+ * - Vite: dev/build 모두 정적 치환·객체 inject
+ * - Next(Turbopack/SWC): import.meta 는 ESM 컨텍스트에서 정의되지만 .env 는 undefined → ?? fallback
+ * - jest(next/jest SWC): import.meta syntax 자체는 valid, .env 는 undefined → fallback
+ *
+ * packages/api 는 vite/client 타입을 직접 import 하지 않으므로 ImportMeta 를 ambient
+ * 보강 (다른 코드 영향 없음, 같은 인터페이스 머지).
  */
-function readViteEnv(): Record<string, string | undefined> {
-  try {
-    const meta = Function(
-      'return typeof import.meta !== "undefined" ? import.meta : undefined',
-    )();
-    return meta?.env ?? {};
-  } catch {
-    return {};
+declare global {
+  interface ImportMeta {
+    readonly env?: Record<string, string | undefined>;
   }
 }
-const VITE_ENV = readViteEnv();
+
+function readViteVar(
+  read: () => string | undefined,
+): string | undefined {
+  try {
+    return read();
+  } catch {
+    return undefined;
+  }
+}
 
 // admin/mentor 의 tsconfig 는 `"types": ["vite/client", ...]` 화이트리스트로
 // @types/node 를 의도적으로 제외하므로, 이 파일이 그 컨텍스트에서 컴파일될 때
@@ -59,7 +73,7 @@ function readEnv(value: string | undefined, label: string): string {
  */
 export const SERVER_API: string = readEnv(
   (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API : undefined) ??
-    VITE_ENV.VITE_SERVER_API,
+    readViteVar(() => import.meta.env?.VITE_SERVER_API),
   '"NEXT_PUBLIC_SERVER_API" (or "VITE_SERVER_API")',
 );
 
@@ -69,7 +83,7 @@ export const SERVER_API: string = readEnv(
  */
 export const SERVER_API_V2: string = readEnv(
   (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API_V2 : undefined) ??
-    VITE_ENV.VITE_SERVER_API_V2,
+    readViteVar(() => import.meta.env?.VITE_SERVER_API_V2),
   '"NEXT_PUBLIC_SERVER_API_V2" (or "VITE_SERVER_API_V2")',
 );
 
@@ -79,7 +93,7 @@ export const SERVER_API_V2: string = readEnv(
  */
 export const SERVER_API_V3: string = readEnv(
   (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_SERVER_API_V3 : undefined) ??
-    VITE_ENV.VITE_SERVER_API_V3,
+    readViteVar(() => import.meta.env?.VITE_SERVER_API_V3),
   '"NEXT_PUBLIC_SERVER_API_V3" (or "VITE_SERVER_API_V3")',
 );
 
@@ -89,6 +103,6 @@ export const SERVER_API_V3: string = readEnv(
  */
 export const API_BASE_PATH: string = readEnv(
   (HAS_PROCESS_ENV ? process.env.NEXT_PUBLIC_API_BASE_PATH : undefined) ??
-    VITE_ENV.VITE_API_BASE_PATH,
+    readViteVar(() => import.meta.env?.VITE_API_BASE_PATH),
   '"NEXT_PUBLIC_API_BASE_PATH" (or "VITE_API_BASE_PATH")',
 );

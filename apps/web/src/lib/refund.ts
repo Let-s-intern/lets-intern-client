@@ -111,9 +111,10 @@ export const getReportRefundPercent = ({
   now: Dayjs;
   reportApplicationStatus: ReportApplicationStatus;
 }) => {
+  // 둘 중 하나만 falsy일 때 console.log를 통해 다른 하나(실제 결제 데이터)가
+  // 브라우저 콘솔에 노출되는 보안 이슈가 있어 제거. 환불율 산정 불가 케이스이므로
+  // 추적이 필요하면 Sentry breadcrumb 등으로 별도 처리할 것.
   if (!paymentInfo || !applicationInfo) {
-    console.log('paymentInfo', paymentInfo);
-    console.log('applicationInfo', applicationInfo);
     return 0;
   }
 
@@ -233,16 +234,6 @@ export const getTotalRefund = ({
       reportApplicationStatus,
     });
 
-  console.log(
-    getReportDiscountedPrice(paymentInfo),
-    getReportRefundPercent({
-      now,
-      applicationInfo,
-      paymentInfo,
-      reportApplicationStatus,
-    }),
-  );
-
   const refundFeedbackPrice =
     getFeedbackDiscountedPrice(paymentInfo) *
     getFeedbackRefundPercent({
@@ -251,10 +242,6 @@ export const getTotalRefund = ({
       reportFeedbackStatus,
       reportFeedbackDesiredDate,
     });
-
-  console.log(refundReportPrice, refundFeedbackPrice);
-  console.log(nearestTen(refundReportPrice), refundFeedbackPrice);
-  console.log(couponPrice);
 
   const refundPrice =
     Math.max(0, nearestTen(refundReportPrice) - couponPrice) +

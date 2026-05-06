@@ -107,6 +107,7 @@ export default function BlogBannerListPage() {
         </Button>
       </div>
       <DataGrid
+        autoHeight
         columnGroupingModel={[
           {
             groupId: 'period',

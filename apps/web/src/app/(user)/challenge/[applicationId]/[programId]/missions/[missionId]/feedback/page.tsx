@@ -6,7 +6,9 @@ import {
 } from '@/api/challenge/challenge';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import * as Sentry from '@sentry/nextjs';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function MissionFeedback() {
   const router = useRouter();
@@ -16,6 +18,16 @@ export default function MissionFeedback() {
     missionId: string;
   }>();
   const { applicationId, programId, missionId } = params;
+
+  useEffect(() => {
+    Sentry.startSpan(
+      {
+        name: 'challenge.mission.feedback',
+        attributes: { applicationId, missionId },
+      },
+      () => undefined,
+    );
+  }, [applicationId, missionId]);
   const { currentChallenge } = useCurrentChallenge();
   const challengeId = currentChallenge?.id;
 

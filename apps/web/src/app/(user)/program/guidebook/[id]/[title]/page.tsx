@@ -2,11 +2,13 @@ import { fetchPublicGuidebookData } from '@/api/program';
 import GuidebookView from '@/domain/program/guidebook/GuidebookView';
 import GuidebookCTAButtons from '@/domain/program/guidebook/ui/GuidebookCTAButtons';
 import { mapPublicGuidebook } from '@/domain/program/guidebook/utils/publicGuidebookMapping';
+import { captureGuidebookError } from '@/utils/captureError';
 import {
   getCanonicalSiteUrl,
   getGuidebookTitle,
   getProgramPathname,
 } from '@/utils/url';
+import * as Sentry from '@sentry/nextjs';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -17,34 +19,42 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const apiData = await fetchPublicGuidebookData(id);
-  const program = mapPublicGuidebook(apiData);
-  const url =
-    getCanonicalSiteUrl() +
-    getProgramPathname({
-      id,
-      programType: 'guidebook',
-      title: program.title,
-    });
-  const title = getGuidebookTitle(program);
+  try {
+    const apiData = await fetchPublicGuidebookData(id);
+    const program = mapPublicGuidebook(apiData);
+    const url =
+      getCanonicalSiteUrl() +
+      getProgramPathname({
+        id,
+        programType: 'guidebook',
+        title: program.title,
+      });
+    const title = getGuidebookTitle(program);
 
-  return {
-    title,
-    description: program.shortDesc,
-    openGraph: {
+    return {
       title,
-      description: program.shortDesc || undefined,
-      url,
-      images: [
-        {
-          url: program.thumbnail ?? '',
-        },
-      ],
-    },
-    alternates: {
-      canonical: url,
-    },
-  };
+      description: program.shortDesc,
+      openGraph: {
+        title,
+        description: program.shortDesc || undefined,
+        url,
+        images: [
+          {
+            url: program.thumbnail ?? '',
+          },
+        ],
+      },
+      alternates: {
+        canonical: url,
+      },
+    };
+  } catch (err) {
+    captureGuidebookError(err, {
+      section: 'guidebookMetadata',
+      extra: { guidebookId: id },
+    });
+    return {};
+  }
 }
 
 const Page = async ({
@@ -54,8 +64,19 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const apiData = await fetchPublicGuidebookData(id);
-  const guidebook = mapPublicGuidebook(apiData);
+  const guidebook = await Sentry.startSpan(
+    { name: 'guidebook.detail.render', attributes: { guidebookId: id } },
+    async () => {
+      const apiData = await fetchPublicGuidebookData(id).catch((err) => {
+        captureGuidebookError(err, {
+          section: 'guidebookDetailPage',
+          extra: { guidebookId: id },
+        });
+        redirect('/');
+      });
+      return mapPublicGuidebook(apiData);
+    },
+  );
 
   // 올바른 경로 생성
   const correctPathname = getProgramPathname({

@@ -53,6 +53,7 @@ const PaymentResultContent = () => {
     }
     hasRequested.current = true;
 
+    // eslint-disable-next-line no-console
     console.log('programApplicationData', programApplicationData);
 
     if (searchParams.get('postApplicationDone') === 'true') {

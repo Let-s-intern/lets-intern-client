@@ -231,6 +231,7 @@ const PaymentInputContent = () => {
 
   useEffect(() => {
     if (checkInvalidate() || !isLoggedIn) {
+      // eslint-disable-next-line no-console
       console.log(
         'checkInvalidate()',
         checkInvalidate(),

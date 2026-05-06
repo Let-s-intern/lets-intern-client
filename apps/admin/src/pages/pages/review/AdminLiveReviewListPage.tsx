@@ -196,6 +196,7 @@ const AdminLiveReviewListPage = () => {
         <LoadingContainer />
       ) : (
         <DataGrid
+          autoHeight
           sx={{
             // '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
             //   outline: 'none', // outline 제거

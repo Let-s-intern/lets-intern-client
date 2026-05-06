@@ -2,6 +2,10 @@
   "name": "@letscareer/api",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
@@ -13,6 +17,7 @@
     "@letscareer/tsconfig": "workspace:*",
     "@types/node": "^20.0.0",
     "axios": "^1.15.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
   }
 }

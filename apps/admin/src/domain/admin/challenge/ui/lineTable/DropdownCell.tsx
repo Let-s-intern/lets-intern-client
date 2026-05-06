@@ -12,7 +12,11 @@ const DropdownCell = ({
   onChange,
 }: DropdownCellProps) => {
   return (
-    <select className="w-full" name={name} onChange={onChange}>
+    <select
+      className="w-full rounded-md border border-neutral-400 bg-white p-2 focus:border-neutral-600 focus:outline-none"
+      name={name}
+      onChange={onChange}
+    >
       {optionList.map(({ id, title }) => (
         <option
           key={id}

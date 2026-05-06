@@ -1,3 +1,4 @@
+import { ApiError } from '@letscareer/api';
 import axios from '@/utils/axios';
 
 const getPresignedUrl = async (
@@ -8,6 +9,17 @@ const getPresignedUrl = async (
   return res.data.data;
 };
 
+// presigned URL의 쿼리 스트링은 AWS Signature/Expires/AccessKeyId 등 자격증명을 포함.
+// Sentry tag/extra로 흘러가면 시크릿 leak이 되므로 origin+path 만 남기고 쿼리 제거.
+const stripPresignedQuery = (presignedUrl: string): string => {
+  try {
+    const u = new URL(presignedUrl);
+    return `${u.origin}${u.pathname}`;
+  } catch {
+    return presignedUrl.split('?')[0];
+  }
+};
+
 const uploadToS3 = async (presignedUrl: string, file: File): Promise<void> => {
   const response = await fetch(presignedUrl, {
     method: 'PUT',
@@ -15,9 +27,14 @@ const uploadToS3 = async (presignedUrl: string, file: File): Promise<void> => {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `S3 업로드 실패: ${response.status} ${response.statusText}`,
-    );
+    throw new ApiError({
+      code: 'S3_UPLOAD_FAILED',
+      message: '파일 업로드에 실패했습니다.',
+      status: response.status,
+      endpoint: stripPresignedQuery(presignedUrl),
+      method: 'PUT',
+      context: { statusText: response.statusText },
+    });
   }
 };
 

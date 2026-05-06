@@ -113,6 +113,7 @@ const MainBanners = () => {
           <EmptyContainer />
         ) : (
           <DataGrid
+            autoHeight
             rows={mainBannerList?.bannerList || []}
             columns={columns}
             hideFooter

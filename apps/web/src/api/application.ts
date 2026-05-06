@@ -1,3 +1,4 @@
+import { fetchJson } from '@letscareer/api';
 import dayjs from '@/lib/dayjs';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -50,16 +51,14 @@ export type ProgramApplicationFormInfo = z.infer<
 export const fetchProgramApplication = async (
   programId: string,
 ): Promise<ProgramApplicationFormInfo> => {
-  const res = await fetch(
+  return fetchJson<ProgramApplicationFormInfo>(
     `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${programId}/application`,
+    {
+      code: 'APPLICATION_FETCH_FAILED',
+      displayMessage: '신청 정보 조회에 실패했습니다.',
+      parse: (data) => programApplicationSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch application data');
-  }
-
-  const data = await res.json();
-  return programApplicationSchema.parse(data.data);
 };
 
 export const useProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
