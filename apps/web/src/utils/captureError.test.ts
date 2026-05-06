@@ -1,9 +1,36 @@
-import { AppError, ApiError } from '@letscareer/api';
+import { AppError, ApiError, SchemaParseError } from '@letscareer/api';
 import { captureDomainError, captureVodError } from './captureError';
+
+type CapturedSpan = {
+  name: string;
+  op?: string;
+  attributes: Record<string, unknown>;
+};
+
+const capturedSpans: CapturedSpan[] = [];
 
 jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
   getReplay: jest.fn(() => undefined),
+  startSpan: jest.fn(
+    (
+      options: {
+        name: string;
+        op?: string;
+        attributes?: Record<string, unknown>;
+      },
+      cb: (span: unknown) => unknown,
+    ) => {
+      capturedSpans.push({
+        name: options.name,
+        op: options.op,
+        attributes: { ...(options.attributes ?? {}) },
+      });
+      return cb({
+        setAttribute: () => {},
+      });
+    },
+  ),
 }));
 
 import * as Sentry from '@sentry/nextjs';
@@ -15,6 +42,7 @@ const mockCaptureException = Sentry.captureException as jest.MockedFunction<
 describe('captureDomainError', () => {
   beforeEach(() => {
     mockCaptureException.mockClear();
+    capturedSpans.length = 0;
   });
 
   it('5xx ApiError → level: warning', () => {
@@ -175,5 +203,79 @@ describe('captureDomainError', () => {
       tags: Record<string, unknown>;
     };
     expect(callArgs.tags.replayId).toBeUndefined();
+  });
+});
+
+describe('captureDomainError → replay.crash op span (§7.3)', () => {
+  beforeEach(() => {
+    mockCaptureException.mockClear();
+    capturedSpans.length = 0;
+  });
+
+  it('SchemaParseError(_PARSE) → replay.crash emit + domain/errorCode attr', () => {
+    const err = new SchemaParseError({
+      code: 'VOD_FETCH_FAILED_PARSE',
+      message: 'VOD 조회에 실패했습니다.',
+      status: 200,
+    });
+
+    captureDomainError(err, { domain: 'vod', section: 'fetchPublicVodData' });
+
+    expect(capturedSpans).toHaveLength(1);
+    const span = capturedSpans[0];
+    expect(span.name).toBe('replay.crash');
+    expect(span.op).toBe('app.crash');
+    expect(span.attributes.domain).toBe('vod');
+    expect(span.attributes.errorCode).toBe('VOD_FETCH_FAILED_PARSE');
+  });
+
+  it('ChunkLoadError → replay.crash emit', () => {
+    const err = new Error('Loading chunk 123 failed');
+    err.name = 'ChunkLoadError';
+
+    captureDomainError(err, { domain: 'common', section: 'navigation' });
+
+    expect(capturedSpans).toHaveLength(1);
+    const span = capturedSpans[0];
+    expect(span.name).toBe('replay.crash');
+    expect(span.attributes.domain).toBe('common');
+    // ChunkLoadError는 AppError 아님 → errorCode 미부착
+    expect(span.attributes.errorCode).toBeUndefined();
+  });
+
+  it('일반 4xx ApiError → replay.crash emit 안 함', () => {
+    const err = new ApiError({
+      code: 'VOD_FETCH_FAILED',
+      message: 'VOD 조회에 실패했습니다.',
+      status: 404,
+      endpoint: '/vods/1',
+      method: 'GET',
+    });
+
+    captureDomainError(err, { domain: 'vod', section: 'fetchPublicVodData' });
+
+    expect(capturedSpans).toHaveLength(0);
+  });
+
+  it('일반 5xx ApiError → replay.crash emit 안 함', () => {
+    const err = new ApiError({
+      code: 'VOD_FETCH_FAILED',
+      message: 'VOD 조회에 실패했습니다.',
+      status: 500,
+      endpoint: '/vods/1',
+      method: 'GET',
+    });
+
+    captureDomainError(err, { domain: 'vod', section: 'fetchPublicVodData' });
+
+    expect(capturedSpans).toHaveLength(0);
+  });
+
+  it('plain Error → replay.crash emit 안 함', () => {
+    captureDomainError(new Error('알 수 없는 에러'), {
+      domain: 'common',
+      section: 'unknown',
+    });
+    expect(capturedSpans).toHaveLength(0);
   });
 });
