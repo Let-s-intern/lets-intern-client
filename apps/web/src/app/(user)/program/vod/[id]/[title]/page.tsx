@@ -2,6 +2,7 @@ import { fetchPublicVodData } from '@/api/program';
 import VodView from '@/domain/program/vod/VodView';
 import VodCTAButtons from '@/domain/program/vod/ui/VodCTAButtons';
 import { mapPublicVod } from '@/domain/program/vod/utils/publicVodMapping';
+import { captureVodError } from '@/utils/captureError';
 import {
   getCanonicalSiteUrl,
   getVodTitle,
@@ -43,7 +44,8 @@ export async function generateMetadata({
         canonical: url,
       },
     };
-  } catch {
+  } catch (err) {
+    captureVodError(err, { section: 'vodMetadata', extra: { vodId: id } });
     return {};
   }
 }
@@ -57,7 +59,10 @@ const Page = async ({
 
   const vod = await fetchPublicVodData(id)
     .then(mapPublicVod)
-    .catch(() => redirect('/'));
+    .catch((err) => {
+      captureVodError(err, { section: 'vodDetailPage', extra: { vodId: id } });
+      redirect('/');
+    });
 
   const correctPathname = getProgramPathname({
     id,
