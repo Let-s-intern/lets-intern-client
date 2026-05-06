@@ -3,7 +3,7 @@ import { captureDomainError, captureVodError } from './captureError';
 
 jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
-  getReplay: jest.fn(() => null),
+  getReplay: jest.fn(() => undefined),
 }));
 
 import * as Sentry from '@sentry/nextjs';
@@ -144,5 +144,36 @@ describe('captureDomainError', () => {
       tags: Record<string, string>;
     };
     expect(callArgs.tags.domain).toBe('vod');
+  });
+
+  it('활성 replay가 있으면 replayId tag 부착', () => {
+    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<typeof Sentry.getReplay>;
+    mockGetReplay.mockReturnValue({
+      getReplayId: () => 'replay-abc123',
+    } as unknown as ReturnType<typeof Sentry.getReplay>);
+
+    const err = new Error('에러');
+    captureDomainError(err, { domain: 'vod', section: 'test' });
+
+    const callArgs = mockCaptureException.mock.calls[0][1] as {
+      tags: Record<string, string>;
+    };
+    expect(callArgs.tags.replayId).toBe('replay-abc123');
+
+    // 원상 복구
+    mockGetReplay.mockReturnValue(undefined);
+  });
+
+  it('replay가 없으면 replayId tag 미부착', () => {
+    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<typeof Sentry.getReplay>;
+    mockGetReplay.mockReturnValue(undefined);
+
+    const err = new Error('에러');
+    captureDomainError(err, { domain: 'vod', section: 'test' });
+
+    const callArgs = mockCaptureException.mock.calls[0][1] as {
+      tags: Record<string, unknown>;
+    };
+    expect(callArgs.tags.replayId).toBeUndefined();
   });
 });

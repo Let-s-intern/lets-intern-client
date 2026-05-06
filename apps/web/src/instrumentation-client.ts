@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import { normalizeSentryTags, classifyNoise } from '@/utils/sentry';
+import { isCrashEvent } from '@/utils/replayCrashFilter';
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
@@ -10,7 +11,13 @@ Sentry.init({
 
   // Add optional integrations for additional features
   integrations: [
-    Sentry.replayIntegration(),
+    Sentry.replayIntegration({
+      // PII 보호 정책 유지
+      maskAllText: false,
+      blockAllMedia: false,
+      // 크래시(fatal/unhandled/server-component/ChunkLoadError/_PARSE)에만 buffer flush
+      beforeErrorSampling: isCrashEvent,
+    }),
     // 전역 에러 핸들러 활성화 (throw error 자동 캡처)
     Sentry.globalHandlersIntegration({
       onerror: true,
@@ -23,12 +30,10 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+  // Replay: 전체 세션 녹화 OFF, 크래시 시에만 buffer flush (비용 절감)
+  replaysSessionSampleRate: 0,
 
-  // Define how likely Replay events are sampled when an error occurs.
+  // 크래시로 판정된 에러의 100% 업로드 (beforeErrorSampling으로 필터링)
   replaysOnErrorSampleRate: 1.0,
 
   // Enable sending user PII (Personally Identifiable Information)
