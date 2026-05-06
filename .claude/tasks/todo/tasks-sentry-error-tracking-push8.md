@@ -36,13 +36,13 @@
     - [x] 8.4 `fetchJson` 호출 시 5xx → `log.apiServerError`, 4xx → `log.apiClientError`, 1초 이상 성공 → `log.apiSlow` 호출
         - [x] 8.4.T1 fetchJson 단위 테스트 확장: 각 분기에 log wrapper 호출 단언
         - [x] 8.4.T2 테스트 실행 그린
-    - [ ] 8.5 호출처 마이그레이션
-        - [ ] 8.5.1 `app/(user)/login/page.tsx`: 성공 → `log.signinSuccess(method, userIdHash)`, 실패 → `log.signinReject(method, reason, status)`, 소셜 콜백 에러 → `log.socialCallbackError`
-        - [ ] 8.5.2 `app/global-error.tsx`: useEffect 안에서 `log.rscRenderFailed(digest, route)` 호출
-        - [ ] 8.5.3 `components/StaleChunkHandler.tsx`: reload 직전 `log.staleChunkReload(chunkUrl)` 호출
-        - [ ] 8.5.4 `utils/captureError.ts::captureDomainError`: crash로 분류된 경우 `log.replayFlushed(replayId, errorCode)` 호출
-        - [ ] 8.5.T1 4개 호출처 통합 테스트
-        - [ ] 8.5.T2 테스트 실행 그린
+    - [x] 8.5 호출처 마이그레이션
+        - [x] 8.5.1 `app/(user)/login/page.tsx`: 성공 → `log.signinSuccess(method, userIdHash)`, 실패 → `log.signinReject(method, reason, status)`, 소셜 콜백 에러 → `log.socialCallbackError`
+        - [x] 8.5.2 `app/global-error.tsx`: useEffect 안에서 `log.rscRenderFailed(digest, route)` 호출
+        - [x] 8.5.3 `components/StaleChunkHandler.tsx`: reload 직전 `log.staleChunkReload(chunkUrl)` 호출
+        - [x] 8.5.4 `utils/captureError.ts::captureDomainError`: crash로 분류된 경우 `log.replayFlushed(replayId, errorCode)` 호출
+        - [x] 8.5.T1 4개 호출처 통합 테스트
+        - [x] 8.5.T2 테스트 실행 그린
     - [ ] 8.6 운영 문서 (`docs/letscareer/apps/web/sentry.md`)에 “Sentry Logs 사용 가이드” 섹션 추가: 9개 wrapper 카탈로그 + level별 샘플링 정책 + Logs UI 검색 쿼리 (PRD §9.3 그대로)
         - [ ] 8.6.T1 mdlint 통과
         - [ ] 8.6.T2 wrapper 9개 모두 문서에 언급되는지 grep 검증

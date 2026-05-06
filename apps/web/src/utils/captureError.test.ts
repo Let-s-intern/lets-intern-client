@@ -1,5 +1,4 @@
 import { AppError, ApiError, SchemaParseError } from '@letscareer/api';
-import { captureDomainError, captureVodError } from './captureError';
 
 type CapturedSpan = {
   name: string;
@@ -32,6 +31,13 @@ jest.mock('@sentry/nextjs', () => ({
     },
   ),
 }));
+
+const mockReplayFlushed = jest.fn();
+jest.mock('./log', () => ({
+  replayFlushed: (...args: unknown[]) => mockReplayFlushed(...args),
+}));
+
+import { captureDomainError, captureVodError } from './captureError';
 
 import * as Sentry from '@sentry/nextjs';
 
@@ -209,6 +215,7 @@ describe('captureDomainError', () => {
 describe('captureDomainError → replay.crash op span (§7.3)', () => {
   beforeEach(() => {
     mockCaptureException.mockClear();
+    mockReplayFlushed.mockClear();
     capturedSpans.length = 0;
   });
 
@@ -227,6 +234,42 @@ describe('captureDomainError → replay.crash op span (§7.3)', () => {
     expect(span.op).toBe('app.crash');
     expect(span.attributes.domain).toBe('vod');
     expect(span.attributes.errorCode).toBe('VOD_FETCH_FAILED_PARSE');
+  });
+
+  it('§8.5.4 — crash 분류 시 replayFlushed(replayId, errorCode) 호출', () => {
+    const mockGetReplay = Sentry.getReplay as jest.MockedFunction<
+      typeof Sentry.getReplay
+    >;
+    mockGetReplay.mockReturnValue({
+      getReplayId: () => 'replay-xyz',
+    } as unknown as ReturnType<typeof Sentry.getReplay>);
+
+    const err = new SchemaParseError({
+      code: 'BLOG_FETCH_FAILED_PARSE',
+      message: 'x',
+      status: 200,
+    });
+    captureDomainError(err, { domain: 'blog', section: 'fetchBlog' });
+
+    expect(mockReplayFlushed).toHaveBeenCalledTimes(1);
+    expect(mockReplayFlushed).toHaveBeenCalledWith(
+      'replay-xyz',
+      'BLOG_FETCH_FAILED_PARSE',
+    );
+
+    mockGetReplay.mockReturnValue(undefined);
+  });
+
+  it('§8.5.4 — crash 아님 → replayFlushed 미호출', () => {
+    const err = new ApiError({
+      code: 'VOD_FETCH_FAILED',
+      message: 'x',
+      status: 500,
+      endpoint: '/x',
+      method: 'GET',
+    });
+    captureDomainError(err, { domain: 'vod', section: 'fetchVod' });
+    expect(mockReplayFlushed).not.toHaveBeenCalled();
   });
 
   it('ChunkLoadError → replay.crash emit', () => {

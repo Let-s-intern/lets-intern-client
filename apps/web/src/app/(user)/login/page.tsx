@@ -10,6 +10,7 @@ import {
 } from '@/domain/auth/utils/authSpan';
 import useAuthStore from '@/store/useAuthStore';
 import { captureAuthError } from '@/utils/captureError';
+import * as log from '@/utils/log';
 import axios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -82,18 +83,23 @@ const LoginContent = () => {
         });
         return res.data;
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      const userIdHash = await hashEmailPrefix(email);
+      log.signinSuccess('password', userIdHash);
       login(data.data.accessToken, data.data.refreshToken);
       router.push(redirect);
     },
     onError: async (error) => {
       const axiosError = error as AxiosError;
-      if (
-        axiosError.response?.status === 400 ||
-        axiosError.response?.status === 404
-      ) {
+      const status = axiosError.response?.status;
+      if (status === 400 || status === 404) {
         setErrorMessage('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
+      const reason =
+        status === 400 || status === 404
+          ? 'invalid_credentials'
+          : axiosError.code ?? 'unknown';
+      log.signinReject('password', reason, status);
       const emailHash = await hashEmailPrefix(email);
       captureAuthError(error, {
         section: 'signin',
@@ -135,6 +141,7 @@ const LoginContent = () => {
       const provider = searchParams.get('provider') ?? 'unknown';
       const reason = searchParams.get('error') ?? 'unknown';
       emitSocialSigninSpan({ result: 'fail', provider, reason });
+      log.socialCallbackError(provider, reason);
       captureAuthError(new Error(`소셜 로그인 콜백 에러: ${reason}`), {
         section: 'social-callback',
         tags: { provider },

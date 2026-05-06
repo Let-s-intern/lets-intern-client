@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { AppError, ApiError } from '@letscareer/api';
 import { extractHttpStatus } from './sentry';
+import { replayFlushed } from './log';
 
 export type Domain =
   | 'auth'
@@ -88,6 +89,8 @@ export function captureDomainError(
       },
       () => {},
     );
+    // §8.5.4 — crash 분류 시 Replay buffer flush 시점을 구조화 로그로 기록
+    replayFlushed(replayId, code);
   }
 }
 
