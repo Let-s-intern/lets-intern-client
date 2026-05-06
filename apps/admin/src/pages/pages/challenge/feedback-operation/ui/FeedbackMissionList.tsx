@@ -106,6 +106,7 @@ function FeedbackMissionList() {
 
   return (
     <DataGrid
+      autoHeight
       rows={rows}
       columns={columns}
       disableRowSelectionOnClick

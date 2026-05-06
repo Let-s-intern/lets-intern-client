@@ -218,6 +218,7 @@ export default function AdminMentorRegisterPage() {
         사용하세요.
       </span>
       <DataGrid
+        autoHeight
         rows={rows}
         columns={columns}
         disableRowSelectionOnClick

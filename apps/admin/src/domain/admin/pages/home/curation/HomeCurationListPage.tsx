@@ -134,6 +134,7 @@ const HomeCurationListPage = () => {
           ) : (
             <>
               <DataGrid
+                autoHeight
                 rows={
                   data?.curationList.map((item) => ({
                     ...item,

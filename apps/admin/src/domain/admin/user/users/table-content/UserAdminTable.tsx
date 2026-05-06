@@ -416,6 +416,7 @@ const UserAdminTable = ({
   return (
     <div style={{ width: '100%' }}>
       <DataGrid
+        autoHeight
         rows={rows}
         columns={columns}
         loading={isLoading}
