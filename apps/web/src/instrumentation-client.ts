@@ -4,7 +4,11 @@
 
 import { normalizeSentryTags, classifyNoise } from '@/utils/sentry';
 import { isCrashEvent } from '@/utils/replayCrashFilter';
+import { setFetchJsonStartSpan } from '@letscareer/api';
 import * as Sentry from '@sentry/nextjs';
+
+// §7.1 — fetchJson을 'api.fetch' op span으로 자동 wrapping (브라우저 측).
+setFetchJsonStartSpan(Sentry.startSpan);
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,

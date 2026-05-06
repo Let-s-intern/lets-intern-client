@@ -5,7 +5,7 @@ export {
   type UnauthorizedHandler,
 } from './createAuthorizedAxios';
 export { AppError, ApiError, AuthError, SchemaParseError } from './errors';
-export { fetchJson } from './fetchJson';
+export { fetchJson, setFetchJsonStartSpan } from './fetchJson';
 export {
   SERVER_API,
   SERVER_API_V2,
