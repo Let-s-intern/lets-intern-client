@@ -219,6 +219,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <div className="flex min-w-[100px] gap-2">
               <button
                 type="button"
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-blue-700"
                 onClick={() => {
                   onSave?.(values);
                   setIsEditMode(false);
@@ -228,6 +229,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               </button>
               <button
                 type="button"
+                className="rounded-md bg-neutral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-600"
                 onClick={() => {
                   setValues(initialValues);
                   if (initialValues.rowStatus === TABLE_STATUS.SAVE) {
