@@ -4,6 +4,10 @@ import Button from '@/common/button/Button';
 import Input from '@/common/input/v1/Input';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import SocialLogin from '@/domain/auth/ui/SocialLogin';
+import {
+  emitSocialSigninSpan,
+  runPasswordSigninSpan,
+} from '@/domain/auth/utils/authSpan';
 import useAuthStore from '@/store/useAuthStore';
 import { captureAuthError } from '@/utils/captureError';
 import axios from '@/utils/axios';
@@ -70,13 +74,14 @@ const LoginContent = () => {
   const redirect: string = searchParams.get('redirect') || '/';
 
   const fetchLogin = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post('/user/signin', {
-        email,
-        password,
-      });
-      return res.data;
-    },
+    mutationFn: async () =>
+      runPasswordSigninSpan(async () => {
+        const res = await axios.post('/user/signin', {
+          email,
+          password,
+        });
+        return res.data;
+      }),
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
       router.push(redirect);
@@ -129,6 +134,7 @@ const LoginContent = () => {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       const provider = searchParams.get('provider') ?? 'unknown';
       const reason = searchParams.get('error') ?? 'unknown';
+      emitSocialSigninSpan({ result: 'fail', provider, reason });
       captureAuthError(new Error(`소셜 로그인 콜백 에러: ${reason}`), {
         section: 'social-callback',
         tags: { provider },
@@ -142,6 +148,7 @@ const LoginContent = () => {
       const parsedToken = searchParams.get('result')
         ? JSON.parse(searchParams.get('result') || '{}')
         : null;
+      emitSocialSigninSpan({ result: 'success' });
       // Next.js에서는 searchParams를 직접 변경할 수 없으므로 router.replace 사용
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('result');
