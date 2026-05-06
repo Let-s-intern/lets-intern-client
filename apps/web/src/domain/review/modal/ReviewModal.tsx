@@ -5,8 +5,8 @@ import clsx from 'clsx';
 import { josa } from 'es-hangul';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import BaseButton from '../../common/button/BaseButton';
-import BackHeader from '../../common/header/BackHeader';
+import BaseButton from '@/common/button/BaseButton';
+import BackHeader from '@/common/header/BackHeader';
 import ReviewExitModal from './ReviewExitModal';
 
 interface Props {
