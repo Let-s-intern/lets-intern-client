@@ -73,7 +73,10 @@ const BlogDetailPage = async ({
   const { id, title: _title } = await params;
   Sentry.setTag('blog.id', id);
 
-  const blog = await fetchBlogData(id);
+  const blog = await Sentry.startSpan(
+    { name: 'blog.detail.render', attributes: { blogId: id } },
+    () => fetchBlogData(id),
+  );
 
   // 올바른 경로 생성
   const correctPathname = getBlogPathname({

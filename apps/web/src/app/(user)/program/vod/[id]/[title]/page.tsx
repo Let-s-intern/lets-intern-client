@@ -8,6 +8,7 @@ import {
   getVodTitle,
   getProgramPathname,
 } from '@/utils/url';
+import * as Sentry from '@sentry/nextjs';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -57,12 +58,19 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const vod = await fetchPublicVodData(id)
-    .then(mapPublicVod)
-    .catch((err) => {
-      captureVodError(err, { section: 'vodDetailPage', extra: { vodId: id } });
-      redirect('/');
-    });
+  const vod = await Sentry.startSpan(
+    { name: 'vod.detail.render', attributes: { vodId: id } },
+    () =>
+      fetchPublicVodData(id)
+        .then(mapPublicVod)
+        .catch((err) => {
+          captureVodError(err, {
+            section: 'vodDetailPage',
+            extra: { vodId: id },
+          });
+          redirect('/');
+        }),
+  );
 
   const correctPathname = getProgramPathname({
     id,

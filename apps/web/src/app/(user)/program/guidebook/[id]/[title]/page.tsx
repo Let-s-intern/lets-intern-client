@@ -8,6 +8,7 @@ import {
   getGuidebookTitle,
   getProgramPathname,
 } from '@/utils/url';
+import * as Sentry from '@sentry/nextjs';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -63,14 +64,19 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const apiData = await fetchPublicGuidebookData(id).catch((err) => {
-    captureGuidebookError(err, {
-      section: 'guidebookDetailPage',
-      extra: { guidebookId: id },
-    });
-    redirect('/');
-  });
-  const guidebook = mapPublicGuidebook(apiData);
+  const guidebook = await Sentry.startSpan(
+    { name: 'guidebook.detail.render', attributes: { guidebookId: id } },
+    async () => {
+      const apiData = await fetchPublicGuidebookData(id).catch((err) => {
+        captureGuidebookError(err, {
+          section: 'guidebookDetailPage',
+          extra: { guidebookId: id },
+        });
+        redirect('/');
+      });
+      return mapPublicGuidebook(apiData);
+    },
+  );
 
   // 올바른 경로 생성
   const correctPathname = getProgramPathname({
