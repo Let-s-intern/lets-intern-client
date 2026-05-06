@@ -31,6 +31,11 @@ import {
 import React, { useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 
+const TYPE_LABEL: Record<string, string> = {
+  WRITTEN_FEEDBACK: '서면',
+  LIVE_FEEDBACK: '라이브',
+};
+
 /** 피드백 미션 여부 renderCell  */
 const ChallengeOptionRenderCell = (
   params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
@@ -41,6 +46,8 @@ const ChallengeOptionRenderCell = (
   const option = data?.challengeOptionList.find(
     (item) => item.challengeOptionId === params.value,
   );
+
+  const typeLabel = option?.type ? TYPE_LABEL[option.type] : null;
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const challengeOptionId = Number(e.target.value);
@@ -54,7 +61,14 @@ const ChallengeOptionRenderCell = (
   return (
     <SelectFormControl<number>
       value={params.value ?? NO_OPTION_ID}
-      renderValue={() => <>{option?.code ?? '없음'}</>}
+      renderValue={() => (
+        <>
+          {option?.code ?? '없음'}
+          {typeLabel && (
+            <span className="text-primary ml-1 text-xs">({typeLabel})</span>
+          )}
+        </>
+      )}
       disabled={params.row.id === -1}
       onChange={handleChange}
     >
@@ -65,6 +79,11 @@ const ChallengeOptionRenderCell = (
           value={item.challengeOptionId}
         >
           {item.code}
+          {item.type && (
+            <span className="text-primary ml-1 text-xs">
+              ({TYPE_LABEL[item.type]})
+            </span>
+          )}
         </MenuItem>
       ))}
     </SelectFormControl>

@@ -3,9 +3,18 @@ import {
   usePatchChallengeOption,
   usePostChallengeOption,
 } from '@/api/challenge/challengeOption';
-import { ChallengeOption } from '@/api/challenge/challengeOptionSchema';
+import {
+  ChallengeOption,
+  ChallengeOptionType,
+} from '@/api/challenge/challengeOptionSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button, TextField, TextFieldProps } from '@mui/material';
+import {
+  Button,
+  MenuItem,
+  Select,
+  TextField,
+  TextFieldProps,
+} from '@mui/material';
 import { ChangeEvent, memo, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
@@ -53,6 +62,18 @@ function ChallengeOptionSection({ options }: Props) {
     );
   };
 
+  const handleTypeChange = (value: string, index: number) => {
+    setEditingOptions((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        return {
+          ...item,
+          type: value === '' ? null : (value as ChallengeOptionType),
+        };
+      }),
+    );
+  };
+
   const handleCreate = async () => {
     await postChallengeOpt({
       title: '',
@@ -60,6 +81,7 @@ function ChallengeOptionSection({ options }: Props) {
       price: 0,
       discountPrice: 0,
       isFeedback: true,
+      type: null,
     });
   };
 
@@ -122,6 +144,17 @@ function ChallengeOptionSection({ options }: Props) {
                 placeholder="옵션 코드를 입력하세요"
                 InputLabelProps={inputLabelProps}
               />
+              <Select
+                size="small"
+                value={item.type ?? ''}
+                onChange={(e) => handleTypeChange(e.target.value, index)}
+                displayEmpty
+                sx={{ minWidth: 140, fontSize: '14px' }}
+              >
+                <MenuItem value="">없음</MenuItem>
+                <MenuItem value="WRITTEN_FEEDBACK">서면 피드백</MenuItem>
+                <MenuItem value="LIVE_FEEDBACK">라이브 피드백</MenuItem>
+              </Select>
               {/* 옵션 삭제 with trash icon */}
               <Button
                 variant="text"
