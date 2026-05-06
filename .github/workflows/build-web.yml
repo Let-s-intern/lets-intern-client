@@ -25,6 +25,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 변경 파일 diff 계산을 위해 풀 히스토리 필요
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
 
@@ -47,8 +50,44 @@ jobs:
           NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
 
-      - name: Typecheck
-        run: pnpm --filter @letscareer/web typecheck
+      # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
+      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      - name: Typecheck (변경 파일 한정)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -e
+
+          # git pathspec은 ** 글로브를 지원하지 않으므로 prefix만 주고 확장자는 grep으로 필터.
+          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMR -- 'apps/web/src/' \
+            | grep -E '\.(ts|tsx)$' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "apps/web 내 TS/TSX 변경 없음 — typecheck 스킵"
+            exit 0
+          fi
+
+          echo "변경된 .ts/.tsx 파일:"
+          echo "$CHANGED"
+          echo ""
+
+          set +e
+          pnpm --filter @letscareer/web typecheck > /tmp/typecheck.log 2>&1
+          set -e
+
+          # tsc 출력의 파일경로는 'src/...' 형태 (apps/web 작업디렉토리 기준)이므로
+          # CHANGED 의 'apps/web/' 접두사 제거 후 패턴 매칭.
+          PATTERNS=$(echo "$CHANGED" | sed 's|^apps/web/||' | paste -sd '|')
+          RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
+
+          if [ -n "$RELEVANT" ]; then
+            echo "변경 파일에서 typecheck 에러 발견:"
+            echo ""
+            echo "$RELEVANT"
+            exit 1
+          fi
+
+          echo "변경 파일 typecheck 통과"
 
       - name: Build (turbopack)
         run: pnpm --filter @letscareer/web build
