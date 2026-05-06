@@ -33,9 +33,9 @@
     - [ ] 8.3 `eslint.config.mjs`에 `no-console: 'error'` 추가. 기존 위반은 (a) `log.*`로 마이그레이션 가능하면 마이그레이션, (b) 그 외 `// eslint-disable-next-line no-console` 명시. 결과적으로 lint clean.
         - [ ] 8.3.T1 `pnpm lint` clean 통과
         - [ ] 8.3.T2 마이그레이션 결과 grep으로 `log.` import 사용처 카운트 확인
-    - [ ] 8.4 `fetchJson` 호출 시 5xx → `log.apiServerError`, 4xx → `log.apiClientError`, 1초 이상 성공 → `log.apiSlow` 호출
-        - [ ] 8.4.T1 fetchJson 단위 테스트 확장: 각 분기에 log wrapper 호출 단언
-        - [ ] 8.4.T2 테스트 실행 그린
+    - [x] 8.4 `fetchJson` 호출 시 5xx → `log.apiServerError`, 4xx → `log.apiClientError`, 1초 이상 성공 → `log.apiSlow` 호출
+        - [x] 8.4.T1 fetchJson 단위 테스트 확장: 각 분기에 log wrapper 호출 단언
+        - [x] 8.4.T2 테스트 실행 그린
     - [ ] 8.5 호출처 마이그레이션
         - [ ] 8.5.1 `app/(user)/login/page.tsx`: 성공 → `log.signinSuccess(method, userIdHash)`, 실패 → `log.signinReject(method, reason, status)`, 소셜 콜백 에러 → `log.socialCallbackError`
         - [ ] 8.5.2 `app/global-error.tsx`: useEffect 안에서 `log.rscRenderFailed(digest, route)` 호출

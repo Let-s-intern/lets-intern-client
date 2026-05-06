@@ -1,4 +1,8 @@
-import { fetchJson, setFetchJsonStartSpan } from './fetchJson';
+import {
+  fetchJson,
+  setFetchJsonStartSpan,
+  setFetchJsonLogger,
+} from './fetchJson';
 import { ApiError, SchemaParseError } from './errors';
 
 const mockFetch = vi.fn();
@@ -283,5 +287,133 @@ describe('fetchJson + setFetchJsonStartSpan', () => {
     });
     expect(result).toEqual({ id: 1 });
     expect(captured).toHaveLength(0);
+  });
+});
+
+/**
+ * §8.4 — fetchJson에 logger 주입 시 5xx → apiServerError, 4xx → apiClientError,
+ * 1초 이상 성공 → apiSlow를 호출한다.
+ */
+describe('fetchJson + setFetchJsonLogger', () => {
+  const apiSlow = vi.fn();
+  const apiClientError = vi.fn();
+  const apiServerError = vi.fn();
+
+  beforeEach(() => {
+    mockFetch.mockReset();
+    apiSlow.mockReset();
+    apiClientError.mockReset();
+    apiServerError.mockReset();
+    setFetchJsonStartSpan(undefined);
+    setFetchJsonLogger({ apiSlow, apiClientError, apiServerError });
+  });
+
+  it('5xx 응답: apiServerError(method, url, status, code) 호출', async () => {
+    mockFetch.mockResolvedValue(makeResponse(503, {}, false));
+    await expect(
+      fetchJson('/api/x', {
+        method: 'GET',
+        code: 'VOD_FETCH_FAILED',
+        displayMessage: 'x',
+      }),
+    ).rejects.toBeInstanceOf(ApiError);
+
+    expect(apiServerError).toHaveBeenCalledTimes(1);
+    expect(apiServerError).toHaveBeenCalledWith(
+      'GET',
+      '/api/x',
+      503,
+      'VOD_FETCH_FAILED',
+    );
+    expect(apiClientError).not.toHaveBeenCalled();
+    expect(apiSlow).not.toHaveBeenCalled();
+  });
+
+  it('4xx 응답: apiClientError(method, url, status, code) 호출', async () => {
+    mockFetch.mockResolvedValue(makeResponse(404, {}, false));
+    await expect(
+      fetchJson('/api/y', {
+        method: 'POST',
+        code: 'BLOG_FETCH_FAILED',
+        displayMessage: 'y',
+      }),
+    ).rejects.toBeInstanceOf(ApiError);
+
+    expect(apiClientError).toHaveBeenCalledTimes(1);
+    expect(apiClientError).toHaveBeenCalledWith(
+      'POST',
+      '/api/y',
+      404,
+      'BLOG_FETCH_FAILED',
+    );
+    expect(apiServerError).not.toHaveBeenCalled();
+    expect(apiSlow).not.toHaveBeenCalled();
+  });
+
+  it('200 + 1초 미만: 어떤 wrapper도 호출 안 함', async () => {
+    mockFetch.mockResolvedValue(makeResponse(200, { data: { id: 1 } }));
+    await fetchJson('/api/z', {
+      code: 'TEST',
+      displayMessage: 'z',
+    });
+
+    expect(apiSlow).not.toHaveBeenCalled();
+    expect(apiClientError).not.toHaveBeenCalled();
+    expect(apiServerError).not.toHaveBeenCalled();
+  });
+
+  it('200 + 1초 이상: apiSlow(method, url, durationMs) 호출', async () => {
+    // Date.now mock: 첫 호출 0, 다음 호출 1500 (1.5초 경과)
+    const now = vi
+      .spyOn(Date, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(1500);
+    try {
+      mockFetch.mockResolvedValue(makeResponse(200, { data: { id: 1 } }));
+      await fetchJson('/api/slow', {
+        method: 'GET',
+        code: 'TEST',
+        displayMessage: 'x',
+      });
+
+      expect(apiSlow).toHaveBeenCalledTimes(1);
+      expect(apiSlow).toHaveBeenCalledWith('GET', '/api/slow', 1500);
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('200 + parse 성공 + 1초 이상: apiSlow 호출', async () => {
+    const now = vi
+      .spyOn(Date, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(2000);
+    try {
+      mockFetch.mockResolvedValue(makeResponse(200, { data: { id: 1 } }));
+      await fetchJson('/api/parse-slow', {
+        method: 'GET',
+        code: 'TEST',
+        displayMessage: 'x',
+        parse: (raw) => raw as { id: number },
+      });
+
+      expect(apiSlow).toHaveBeenCalledTimes(1);
+      expect(apiSlow).toHaveBeenCalledWith('GET', '/api/parse-slow', 2000);
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('logger 미주입 상태에서도 정상 동작 (no-op)', async () => {
+    setFetchJsonLogger(undefined);
+    mockFetch.mockResolvedValue(makeResponse(500, {}, false));
+    await expect(
+      fetchJson('/api/x', {
+        code: 'TEST',
+        displayMessage: 'x',
+      }),
+    ).rejects.toBeInstanceOf(ApiError);
+
+    expect(apiServerError).not.toHaveBeenCalled();
   });
 });

@@ -49,6 +49,43 @@ export function setFetchJsonStartSpan(fn: StartSpan | undefined): void {
   injectedStartSpan = fn;
 }
 
+/**
+ * §8.4 — fetchJson 호출 결과를 Sentry Logs로 emit하기 위한 logger 인터페이스.
+ *
+ * `packages/api`는 `@sentry/nextjs`에 직접 의존하지 않으므로, 호스트 앱에서
+ * `setFetchJsonLogger({ apiSlow, apiClientError, apiServerError })` 형태로
+ * 한 번 등록한다. 미등록 상태에서도 fetchJson은 정상 동작 (no-op).
+ */
+export interface FetchJsonLogger {
+  apiSlow: (method: string, url: string, durationMs: number) => void;
+  apiClientError: (
+    method: string,
+    url: string,
+    status: number,
+    errorCode: string,
+  ) => void;
+  apiServerError: (
+    method: string,
+    url: string,
+    status: number,
+    errorCode: string,
+  ) => void;
+}
+
+let injectedLogger: FetchJsonLogger | undefined;
+
+/**
+ * §8.4 — fetchJson 결과 로깅용 logger를 등록한다.
+ * 호스트 앱(apps/web)이 instrumentation 시점에 1회 호출하면, 이후의 모든
+ * fetchJson 호출이 5xx → apiServerError, 4xx → apiClientError, 1초 이상
+ * 성공 → apiSlow를 자동 호출한다.
+ */
+export function setFetchJsonLogger(logger: FetchJsonLogger | undefined): void {
+  injectedLogger = logger;
+}
+
+const SLOW_THRESHOLD_MS = 1000;
+
 type SetAttr = (key: string, value: SpanAttributeValue) => void;
 
 async function runWithSpan<T>(
@@ -132,9 +169,16 @@ export async function fetchJson<T>(
       }
 
       if (!res.ok) {
+        const durationMs = Date.now() - startedAt;
         setAttr('result', 'http_error');
         setAttr('error.code', init.code);
-        setAttr('duration_ms', Date.now() - startedAt);
+        setAttr('duration_ms', durationMs);
+        // §8.4 — 5xx → apiServerError, 4xx → apiClientError
+        if (res.status >= 500) {
+          injectedLogger?.apiServerError(method, url, res.status, init.code);
+        } else if (res.status >= 400) {
+          injectedLogger?.apiClientError(method, url, res.status, init.code);
+        }
         throw new ApiError({
           code: init.code,
           message: init.displayMessage,
@@ -149,15 +193,25 @@ export async function fetchJson<T>(
       const data = (body as { data?: unknown } | null)?.data ?? body;
 
       if (!init.parse) {
+        const durationMs = Date.now() - startedAt;
         setAttr('result', 'success');
-        setAttr('duration_ms', Date.now() - startedAt);
+        setAttr('duration_ms', durationMs);
+        // §8.4 — 1초 이상 성공 응답 → apiSlow
+        if (durationMs >= SLOW_THRESHOLD_MS) {
+          injectedLogger?.apiSlow(method, url, durationMs);
+        }
         return data as T;
       }
 
       try {
         const parsed = init.parse(data);
+        const durationMs = Date.now() - startedAt;
         setAttr('result', 'success');
-        setAttr('duration_ms', Date.now() - startedAt);
+        setAttr('duration_ms', durationMs);
+        // §8.4 — 1초 이상 성공 응답 → apiSlow
+        if (durationMs >= SLOW_THRESHOLD_MS) {
+          injectedLogger?.apiSlow(method, url, durationMs);
+        }
         return parsed;
       } catch (cause) {
         setAttr('result', 'parse_error');
