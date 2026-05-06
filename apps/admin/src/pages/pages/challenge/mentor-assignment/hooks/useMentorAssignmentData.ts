@@ -57,9 +57,7 @@ const useMentorAssignmentData = (programId: string) => {
       (mentorData?.mentorList ?? [])
         .filter(
           (m) =>
-            m.challengeMentorId != null &&
-            m.userId != null &&
-            m.name != null,
+            m.challengeMentorId != null && m.userId != null && m.name != null,
         )
         .map((m) => ({
           challengeMentorId: m.challengeMentorId as number,
