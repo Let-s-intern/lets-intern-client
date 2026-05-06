@@ -258,8 +258,8 @@ export const useUserQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
   return useQuery({
-    ...options,
     ...userQueryOptions,
+    ...options,
   });
 };
 
