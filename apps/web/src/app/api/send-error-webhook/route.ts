@@ -1,8 +1,5 @@
 import { sendErrorToWebhook } from '@/utils/webhook';
-import {
-  buildSignature,
-  recordAndCheckFirst,
-} from '@/utils/errorDedupe';
+import { buildSignature, recordAndCheckFirst } from '@/utils/errorDedupe';
 import { headers } from 'next/headers';
 import { NextRequest } from 'next/server';
 
@@ -41,10 +38,7 @@ export async function POST(request: NextRequest) {
 
     // crash 가 아닌 경우만 dedupe — 첫 발생 send, 반복은 카운트만.
     if (!isCrash) {
-      const signature = buildSignature(
-        error.name || 'Error',
-        error.message,
-      );
+      const signature = buildSignature(error.name || 'Error', error.message);
       const isFirst = recordAndCheckFirst(signature, {
         name: error.name || 'Error',
         message: error.message,

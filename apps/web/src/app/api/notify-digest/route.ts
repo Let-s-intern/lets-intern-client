@@ -26,7 +26,11 @@ export async function GET(request: NextRequest) {
 
   const entries = flushAll();
   if (entries.length === 0) {
-    return Response.json({ success: true, count: 0, message: '집계 항목 없음' });
+    return Response.json({
+      success: true,
+      count: 0,
+      message: '집계 항목 없음',
+    });
   }
 
   const webhookUrl =
