@@ -36,7 +36,9 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   EVENT: '이벤트',
 };
 
-const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];
+// EVENT 는 단발성 이벤트 마그넷으로 신청 페이지에서만 활용. 마이자료집(/library/list/my)
+// 및 자료집 콘텐츠 리스트(/library/list) 양쪽 모두에서 노출 차단 (PRD FR-3 정책 연장).
+const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT', 'EVENT'];
 
 const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL)
   .filter(([value]) => !HIDDEN_TYPES_IN_LIST.includes(value as MagnetType))
