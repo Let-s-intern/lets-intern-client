@@ -119,7 +119,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 1,
     thumbnail: '',
-    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
     description: '미션설명 미션설명 미션설명 미션설명',
     status: 'prev',
     challengeType: 'HR',
@@ -134,7 +134,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 2,
     thumbnail: '',
-    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'reserved',
@@ -156,7 +156,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 3,
     thumbnail: '',
-    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'reserved',
@@ -178,7 +178,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 4,
     thumbnail: '',
-    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'done',

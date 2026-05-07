@@ -44,7 +44,7 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
 
       <section className="flex w-full flex-col">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold">
-          라이브 피드백
+          LIVE 피드백
         </h2>
         <div className="flex flex-col gap-10 px-0 py-4 md:gap-4 md:px-4">
           <div className="flex w-full flex-col gap-3">
@@ -84,7 +84,7 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
                 type="button"
                 className="bg-primary text-xsmall14 flex-1 whitespace-nowrap rounded-sm py-3 font-semibold text-white"
               >
-                라이브 피드백 회고하기
+                LIVE 피드백 회고하기
               </button>
             ) : (
               <a
@@ -98,7 +98,7 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
               >
-                라이브 피드백 입장하기
+                LIVE 피드백 입장하기
               </a>
             )}
           </div>

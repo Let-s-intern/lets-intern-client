@@ -8,7 +8,7 @@ type TabValue = 'written' | 'live';
 
 const TABS: { value: TabValue; label: string }[] = [
   { value: 'written', label: '서면 피드백' },
-  { value: 'live', label: '라이브 피드백' },
+  { value: 'live', label: 'LIVE 피드백' },
 ];
 
 const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {

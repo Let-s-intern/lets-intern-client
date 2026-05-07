@@ -29,7 +29,7 @@ const ReservationBar = ({
 
   const timeText = selectedSlot
     ? formatReservationTime(selectedSlot.date, selectedSlot.time)
-    : '멘토링 시간을 선택해주세요';
+    : '피드백 시간을 선택해주세요';
 
   return (
     <>
@@ -37,7 +37,7 @@ const ReservationBar = ({
       <div className="flex flex-col gap-6 md:hidden">
         <div className="bg-primary-5 flex flex-col gap-0.5 rounded-sm px-5 py-4">
           <span className="text-xsmall16 text-primary-90 font-bold">
-            선택된 멘토링 시간
+            선택된 피드백 시간
           </span>
           <span className="text-xsmall14 text-primary-90">{timeText}</span>
         </div>
@@ -93,7 +93,7 @@ const ReservationBar = ({
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-xsmall16 text-primary-90 font-bold">
-              선택된 멘토링 시간
+              선택된 피드백 시간
             </span>
             <span className="text-xsmall14 text-primary-90">{timeText}</span>
           </div>
@@ -119,7 +119,7 @@ const ReservationBar = ({
 
       {isConfirmModalOpen && selectedSlot && (
         <AlertModal
-          title="라이브 멘토링을 예약하시겠습니까?"
+          title="LIVE 피드백을 예약하시겠습니까?"
           confirmText="예약 확정"
           cancelText="닫기"
           highlight="confirm"
@@ -131,11 +131,11 @@ const ReservationBar = ({
         >
           <>
             <span>
-              선택하신 멘토링 일정은
-              <b>{`${formatReservationTime(selectedSlot.date, selectedSlot.time)}`}</b>
+              선택하신 피드백 일정은
+              <b>{` ${formatReservationTime(selectedSlot.date, selectedSlot.time)}`}</b>
               입니다.
             </span>
-            <span>예약 확정 이후에는 멘토링 일정 변경이 불가합니다.</span>
+            <span>예약 확정 이후에는 피드백 일정 변경이 불가합니다.</span>
           </>
         </AlertModal>
       )}

@@ -34,7 +34,7 @@ const NavBar = () => {
         },
         {
           id: 'feedback-live',
-          label: '라이브 피드백',
+          label: 'LIVE 피드백',
           href: `${base}/feedback/live`,
         },
       ],
