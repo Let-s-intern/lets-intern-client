@@ -19,9 +19,7 @@ describe('sentry.server.config 정책 회귀 방지', () => {
   const source = fs.readFileSync(filePath, 'utf-8');
 
   it('isCrashEvent import 가 존재한다 (handled BE 에러 Slack 차단의 핵심 게이트)', () => {
-    expect(source).toMatch(
-      /from\s+['"]\.\/src\/utils\/replayCrashFilter['"]/,
-    );
+    expect(source).toMatch(/from\s+['"]\.\/src\/utils\/replayCrashFilter['"]/);
     expect(source).toContain('isCrashEvent');
   });
 
@@ -40,9 +38,8 @@ describe('sentry.server.config 정책 회귀 방지', () => {
   it('NODE_ENV 단독 체크로만 webhook 차단하던 과거 정책으로 회귀하지 않는다', () => {
     // 과거 코드: `if (process.env.NODE_ENV === 'development') return event;`
     // 이 패턴만 존재하고 isCrashEvent 게이트가 없으면 BE 5xx 가 모두 Slack 으로 감.
-    const hasOnlyNodeEnvCheck = /process\.env\.NODE_ENV\s*===\s*['"]development['"]/.test(
-      source,
-    );
+    const hasOnlyNodeEnvCheck =
+      /process\.env\.NODE_ENV\s*===\s*['"]development['"]/.test(source);
     if (hasOnlyNodeEnvCheck) {
       // NODE_ENV 체크가 남아있어도 무방하지만, 반드시 isCrashEvent 게이트가 함께 있어야 한다.
       expect(source).toContain('isCrashEvent');
