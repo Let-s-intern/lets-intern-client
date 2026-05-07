@@ -64,11 +64,6 @@ export function toCardConfig(mission: LiveFeedbackMission) {
   };
 }
 
-export function formatDay(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-');
-  return `${year.slice(2)}.${month}.${day}`;
-}
-
 export function addDays(date: Date, days: number): Date {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
@@ -95,6 +90,20 @@ export function toDateString(date: Date): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+export function isEntranceActive(
+  scheduledDate: string,
+  scheduledTime: string,
+): boolean {
+  const [hour, minute] = scheduledTime.split(':').map(Number);
+  const start = new Date(scheduledDate);
+  start.setHours(hour, minute, 0, 0);
+
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  const now = new Date();
+
+  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
 }
 
 export function formatReservationTime(dateStr: string, time: string): string {

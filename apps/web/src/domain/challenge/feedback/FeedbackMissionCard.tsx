@@ -2,7 +2,10 @@
 
 import clsx from 'clsx';
 import { useState } from 'react';
-import { formatDay } from './live/utils';
+function formatDay(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-');
+  return `${year.slice(2)}.${month}.${day}`;
+}
 
 export interface StatusBadge {
   label: string;

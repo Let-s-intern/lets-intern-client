@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import ReservationFormSection from './ReservationFormSection';
-import ReservationInfoSection from './ReservationInfoSection';
+import ReservationFormSection from './section/ReservationFormSection';
+import ReservationInfoSection from './section/ReservationInfoSection';
 import type {
   LiveFeedbackStatus,
   Mentor,

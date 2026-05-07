@@ -1,11 +1,11 @@
 'use client';
 
-import { useTimeSlotState } from './hooks/useTimeSlotState';
-import type { Mentor, MissionPeriod, SelectedSlot } from './types';
-import MentorCard from './ui/MentorCard';
-import ReservationBar from './ui/ReservationBar';
-import TimeSlotGrid from './ui/TimeSlotGrid';
-import WeekNav from './ui/WeekNav';
+import { useTimeSlotState } from '../hooks/useTimeSlotState';
+import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
+import MentorCard from '../ui/MentorCard';
+import ReservationBar from '../ui/ReservationBar';
+import TimeSlotGrid from '../ui/TimeSlotGrid';
+import WeekNav from '../ui/WeekNav';
 
 interface Props {
   mentor: Mentor;

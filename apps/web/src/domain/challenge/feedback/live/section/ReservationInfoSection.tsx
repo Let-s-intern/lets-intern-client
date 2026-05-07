@@ -1,21 +1,8 @@
+import { isEntranceActive } from '../utils';
+import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
+import MentorCard from '../ui/MentorCard';
+import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
-import type { LiveFeedbackStatus, Mentor, Reservation } from './types';
-import MentorCard from './ui/MentorCard';
-import { formatReservationTime } from './utils';
-
-function isEntranceActive(
-  scheduledDate: string,
-  scheduledTime: string,
-): boolean {
-  const [hour, minute] = scheduledTime.split(':').map(Number);
-  const start = new Date(scheduledDate);
-  start.setHours(hour, minute, 0, 0);
-
-  const end = new Date(start.getTime() + 30 * 60 * 1000);
-  const now = new Date();
-
-  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
-}
 
 interface Props {
   mentor: Mentor;
