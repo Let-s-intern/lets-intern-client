@@ -63,5 +63,11 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/notify-digest",
+      "schedule": "0 23 * * *"
+    }
   ]
 }
