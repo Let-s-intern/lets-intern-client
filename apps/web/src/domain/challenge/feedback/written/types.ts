@@ -6,7 +6,10 @@ export interface WrittenFeedbackMission {
   title: string;
   description?: string;
   status: WrittenFeedbackStatus;
-  categoryLabel?: string;
+  challengeType?: string;
+  missionNumber: number;
   startDay: string; // 'YYYY-MM-DD'
   endDay: string; // 'YYYY-MM-DD'
+  reservationStartDay?: string; // 'YYYY-MM-DD'
+  reservationEndDay?: string; // 'YYYY-MM-DD'
 }

@@ -47,9 +47,12 @@ export interface LiveFeedbackMission {
   title: string;
   description?: string;
   status: LiveFeedbackStatus;
-  categoryLabel?: string;
+  challengeType: string;
+  missionNumber: number;
   startDay: string; // 'YYYY-MM-DD'
   endDay: string; // 'YYYY-MM-DD'
+  reservationStartDay: string; // 'YYYY-MM-DD'
+  reservationEndDay: string; // 'YYYY-MM-DD'
   assignedMentor: Mentor | null;
   reservationInfo: Reservation | null;
 }

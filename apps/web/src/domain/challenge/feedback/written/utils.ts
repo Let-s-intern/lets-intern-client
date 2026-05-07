@@ -36,8 +36,11 @@ export function toWrittenCardConfig(mission: WrittenFeedbackMission) {
       label: WRITTEN_FEEDBACK_STATUS_LABEL[mission.status],
       variant: WRITTEN_FEEDBACK_STATUS_VARIANT[mission.status],
     },
-    categoryLabel: mission.categoryLabel,
+    challengeType: mission.challengeType ?? '',
+    missionNumber: mission.missionNumber,
     startDay: mission.startDay,
     endDay: mission.endDay,
+    reservationStartDay: mission.reservationStartDay,
+    reservationEndDay: mission.reservationEndDay,
   };
 }

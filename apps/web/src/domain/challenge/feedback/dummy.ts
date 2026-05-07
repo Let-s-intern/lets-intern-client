@@ -4,9 +4,9 @@ import type {
   Mentor,
   SlotStatus,
 } from './live/types';
-import type { WrittenFeedbackMission } from './written/types';
 import { TIME_SLOTS } from './live/types';
 import { toDateString } from './live/utils';
+import type { WrittenFeedbackMission } from './written/types';
 
 function getSlotStatus(date: Date, time: string, mentorId: number): SlotStatus {
   const [hour, minute] = time.split(':').map(Number);
@@ -84,31 +84,32 @@ export const DUMMY_WRITTEN_FEEDBACK_MISSIONS: WrittenFeedbackMission[] = [
     title: '프로그램 n주차 미션, 서면 피드백',
     description: '미션설명 미션설명 미션설명 미션설명',
     status: 'pending',
-    categoryLabel: '프로그램 종류',
+    challengeType: '경험정리',
+    missionNumber: 1,
     startDay: '2026-06-01',
     endDay: '2026-06-28',
   },
   {
     id: 2,
     thumbnail: '',
-    title:
-      '프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백',
+    title: '프로그램 n주차 미션',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명',
     status: 'submitted',
-    categoryLabel: '프로그램 종류',
+    challengeType: 'HR',
+    missionNumber: 2,
     startDay: '2026-05-04',
     endDay: '2026-05-31',
   },
   {
     id: 3,
     thumbnail: '',
-    title:
-      '프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백 프로그램 n주차 미션, 서면 피드백',
+    title: '프로그램 n주차 서면 피드백 프로그램 n주차 미션',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명',
     status: 'done',
-    categoryLabel: '대기업 자기소개서 완성 챌린지 7기',
+    challengeType: '대기업 자소서',
+    missionNumber: 3,
     startDay: '2026-04-01',
     endDay: '2026-04-30',
   },
@@ -121,23 +122,28 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
     description: '미션설명 미션설명 미션설명 미션설명',
     status: 'prev',
-    categoryLabel: '프로그램 종류',
+    challengeType: 'HR',
+    missionNumber: 1,
     startDay: '2026-06-01',
     endDay: '2026-06-28',
+    reservationStartDay: '2026-06-01',
+    reservationEndDay: '2026-06-28',
     assignedMentor: DUMMY_MENTORS[0],
     reservationInfo: null,
   },
   {
     id: 2,
     thumbnail: '',
-    title:
-      '프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'reserved',
-    categoryLabel: '프로그램 종류',
+    challengeType: '마케팅',
+    missionNumber: 2,
     startDay: '2026-05-04',
     endDay: '2026-05-31',
+    reservationStartDay: '2026-05-04',
+    reservationEndDay: '2026-05-31',
     assignedMentor: DUMMY_MENTORS[1],
     reservationInfo: {
       reservationId: 'reservation-dummy-001',
@@ -150,14 +156,16 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 3,
     thumbnail: '',
-    title:
-      '프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'reserved',
-    categoryLabel: '프로그램 종류',
+    challengeType: '경험정리',
+    missionNumber: 3,
     startDay: '2026-05-04',
     endDay: '2026-05-31',
+    reservationStartDay: '2026-05-04',
+    reservationEndDay: '2026-05-31',
     assignedMentor: DUMMY_MENTORS[1],
     reservationInfo: {
       reservationId: 'reservation-dummy-001',
@@ -170,14 +178,16 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
   {
     id: 4,
     thumbnail: '',
-    title:
-      '프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링 프로그램 n주차 미션, 라이브 1:1 멘토링',
+    title: '프로그램 n주차 미션, 라이브 1:1 멘토링',
     description:
       '미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 미션설명 ',
     status: 'done',
-    categoryLabel: '대기업 자기소개서 완성 챌린지 7기',
+    challengeType: '대기업 자소서',
+    missionNumber: 4,
     startDay: '2026-04-01',
     endDay: '2026-04-30',
+    reservationStartDay: '2026-04-01',
+    reservationEndDay: '2026-04-30',
     assignedMentor: DUMMY_MENTORS[2],
     reservationInfo: {
       reservationId: 'reservation-dummy-002',

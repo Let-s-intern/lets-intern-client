@@ -14,9 +14,12 @@ export interface FeedbackMissionCardConfig {
   title: string;
   description?: string;
   badge: StatusBadge;
-  categoryLabel?: string;
-  startDay: string; // 'YYYY-MM-DD'
-  endDay: string; // 'YYYY-MM-DD'
+  challengeType: string;
+  missionNumber: number;
+  startDay: string;
+  endDay: string;
+  reservationStartDay?: string;
+  reservationEndDay?: string;
 }
 
 interface FeedbackMissionCardProps {
@@ -40,14 +43,50 @@ const FeedbackMissionCard = ({
     title,
     description,
     badge,
-    categoryLabel,
+    challengeType,
+    missionNumber,
     startDay,
     endDay,
+    reservationStartDay,
+    reservationEndDay,
   } = config;
 
   const isToggle = openLabel !== undefined;
 
-  const dateText = `진행기간 ${formatDay(startDay)} ~ ${formatDay(endDay)}`;
+  const cardInfoTextCls =
+    'text-xxsmall12 text-neutral-40 font-normal tracking-[-0.3px]';
+
+  const DateField = ({
+    label,
+    start,
+    end,
+    highlighted,
+    className,
+  }: {
+    label: string;
+    start: string;
+    end: string;
+    highlighted?: boolean;
+    className?: string;
+  }) => (
+    <span
+      className={clsx(
+        'flex gap-1.5 tracking-[-0.36px]',
+        cardInfoTextCls,
+        className,
+      )}
+    >
+      <span className={highlighted ? 'text-neutral-0' : 'text-neutral-40'}>
+        {label}
+      </span>
+      <span className={highlighted ? 'text-primary-dark' : 'text-neutral-40'}>
+        {formatDay(start)} ~ {formatDay(end)}
+      </span>
+    </span>
+  );
+
+  const btnCls =
+    'rounded-xxs text-xsmall14 border-primary text-primary border px-3 py-1.5 font-normal transition-colors items-center gap-1 hover:bg-primary-5';
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
@@ -67,8 +106,8 @@ const FeedbackMissionCard = ({
           </div>
 
           {/* 텍스트 영역 */}
-          <div className="flex flex-1 flex-col">
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-1 flex-col justify-between">
+            <div className="flex flex-col gap-2 md:gap-1.5">
               {/* 뱃지 영역 */}
               <div className="flex w-full flex-wrap items-center gap-2">
                 <span
@@ -84,34 +123,59 @@ const FeedbackMissionCard = ({
                 >
                   {badge.label}
                 </span>
-                {categoryLabel && (
-                  <span className="text-xxsmall12 text-neutral-40 font-normal">
-                    {categoryLabel}
-                  </span>
-                )}
-                <>
-                  <div className="bg-neutral-80 hidden h-4 w-px md:block" />
-                  <p className="text-xxsmall12 text-neutral-40 hidden font-normal md:inline">
-                    {dateText}
-                  </p>
-                </>
+                <span
+                  className={clsx(cardInfoTextCls, 'basis-full md:basis-auto')}
+                >
+                  {challengeType} 챌린지 • {missionNumber}회차
+                </span>
+                <div className="bg-neutral-80 hidden h-4 w-px md:block" />
+                <DateField
+                  label="진행일정"
+                  start={startDay}
+                  end={endDay}
+                  className="hidden md:flex"
+                />
               </div>
 
               {/* 제목 + 설명 */}
-              <div className="flex flex-col gap-1">
-                <h3 className="text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+              <div className="mb-5 flex flex-col gap-1 md:mb-0">
+                <h3 className="text-xsmall16 text-neutral-0 line-clamp-2 font-semibold leading-tight">
                   {title}
                 </h3>
                 {description && (
-                  <p className="text-xsmall14 text-neutral-20 line-clamp-2">
+                  <p className="text-xsmall14 text-neutral-20 line-clamp-2 hidden leading-tight md:inline">
                     {description}
                   </p>
                 )}
               </div>
+            </div>
 
-              <p className="text-xxsmall12 text-neutral-40 line-clamp-1 font-normal md:hidden">
-                {dateText}
-              </p>
+            {reservationStartDay && reservationEndDay && (
+              <DateField
+                label="예약기간"
+                highlighted
+                start={reservationStartDay}
+                end={reservationEndDay}
+                className="hidden md:flex"
+              />
+            )}
+
+            {/* 모바일 날짜 */}
+            <div className="flex flex-col gap-1 md:hidden">
+              <DateField
+                label="진행일정"
+                highlighted
+                start={startDay}
+                end={endDay}
+              />
+              {reservationStartDay && reservationEndDay && (
+                <DateField
+                  label="예약기간"
+                  highlighted
+                  start={reservationStartDay}
+                  end={reservationEndDay}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -120,21 +184,16 @@ const FeedbackMissionCard = ({
         <button
           type="button"
           onClick={isToggle ? () => setIsOpen((prev) => !prev) : onClick}
-          className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary-5 hidden shrink-0 items-center gap-1 border px-3 py-1.5 font-normal transition-colors md:flex"
+          className={clsx(btnCls, 'hidden shrink-0 md:flex')}
         >
           {isToggle && (
             <img
               src="/icons/Chevron_Down.svg"
-              alt=""
-              className={clsx(
-                'h-4 w-4 transition-transform',
-                isOpen && 'rotate-180',
-              )}
+              alt="▿"
+              className={clsx('transition-transform', isOpen && 'rotate-180')}
             />
           )}
-          <span>
-            {isToggle ? (isOpen ? openLabel : buttonLabel) : buttonLabel}
-          </span>
+          {buttonLabel}
         </button>
       </div>
 
@@ -142,9 +201,9 @@ const FeedbackMissionCard = ({
       <button
         type="button"
         onClick={onClick}
-        className="rounded-xxs text-xsmall14 border-primary text-primary hover:bg-primary/5 mt-5 flex w-full items-center justify-center gap-1 border px-3 py-1.5 font-normal transition-colors md:hidden"
+        className={clsx(btnCls, 'mt-5 flex w-full justify-center md:hidden')}
       >
-        <span>{buttonLabel}</span>
+        {buttonLabel}
       </button>
 
       {/* 아코디언 - 토글일 때만 */}
