@@ -54,18 +54,37 @@ Sentry.init({
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
-    // noise 분류 태그 부착 (drop 하지 않음 — 격리만)
+    // noise 분류 태그 부착 (Sentry 대시보드에는 격리되어 들어감, drop 안 함)
+    let noiseCategory: ReturnType<typeof classifyNoise> = null;
     if (hint.originalException instanceof Error) {
-      const noise = classifyNoise(hint.originalException);
-      if (noise) {
-        event.tags = { ...event.tags, noise };
+      noiseCategory = classifyNoise(hint.originalException);
+      if (noiseCategory) {
+        event.tags = { ...event.tags, noise: noiseCategory };
       }
     }
+
+    // 사용자 세션 crash (페이지 사용 불가 수준)인지 분류 → tag 부착
+    // 이 태그가 있으면 route.ts 의 dedupe 가 우회되어 항상 즉시 Slack 발송.
+    const isCrash = isCrashEvent(event);
+    if (isCrash) {
+      event.tags = { ...event.tags, crash: 'true' };
+    }
+
+    // Slack webhook 발송 차단 조건:
+    // 1) production 환경이 아니면 무조건 차단 (preview/dev 운영 채널 오염 방지)
+    // 2) production 이어도, crash 가 아니고 noise 분류된 경우 차단
+    //    (crash 면 noise 라벨과 무관하게 항상 발송 — 사용자 영향 우선)
+    const isProduction =
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' ||
+      process.env.NODE_ENV === 'production';
+    const shouldSkipWebhook =
+      !isProduction || (!isCrash && noiseCategory !== null);
 
     // 에러 객체가 있는 경우 webhook으로 전송 (클라이언트 사이드는 API 라우트를 통해)
     if (
       hint.originalException instanceof Error &&
-      typeof window !== 'undefined'
+      typeof window !== 'undefined' &&
+      !shouldSkipWebhook
     ) {
       const error = hint.originalException;
 
