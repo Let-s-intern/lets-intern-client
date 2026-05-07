@@ -1,6 +1,7 @@
 'use client';
 
 import { usePostMagnetApplicationMutation } from '@/api/magnet/magnet';
+import { MagnetType } from '@/api/magnet/magnetSchema';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import MarketingConsentSection from '../ui/MarketingConsentSection';
 import CareerInfoForm, {
@@ -12,6 +13,7 @@ import { getLibraryPathname } from '@/utils/url';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import EventExtraMagnetSection from './EventExtraMagnetSection';
 import LaunchAlertProgramSection from './LaunchAlertProgramSection';
 import MagnetApplyInfoCard from './MagnetApplyInfoCard';
 import MagnetSurveySection, {
@@ -21,6 +23,7 @@ import MagnetSurveySection, {
 
 interface MagnetApplyContentProps {
   magnetId: number;
+  magnetType: MagnetType;
   title: string;
   thumbnail: string | null;
   questions: MagnetQuestion[];
@@ -31,6 +34,7 @@ interface MagnetApplyContentProps {
 
 const MagnetApplyContent = ({
   magnetId,
+  magnetType,
   title,
   thumbnail,
   questions,
@@ -70,6 +74,11 @@ const MagnetApplyContent = ({
   const [wantNotification, setWantNotification] = useState<boolean | null>(
     null,
   );
+
+  // EVENT 신청 시 함께 받아볼 추가 자료집 선택 상태
+  const [selectedExtraMagnetIds, setSelectedExtraMagnetIds] = useState<
+    number[]
+  >([]);
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
@@ -288,6 +297,16 @@ const MagnetApplyContent = ({
             onSelectedMagnetIdsChange={setSelectedLaunchAlertIds}
             wantNotification={wantNotification}
             onWantNotificationChange={setWantNotification}
+          />
+        </section>
+      )}
+
+      {/* EVENT 신청 시 함께 받아볼 추가 자료집 선택 */}
+      {magnetType === 'EVENT' && (
+        <section>
+          <EventExtraMagnetSection
+            selectedMagnetIds={selectedExtraMagnetIds}
+            onSelectedMagnetIdsChange={setSelectedExtraMagnetIds}
           />
         </section>
       )}
