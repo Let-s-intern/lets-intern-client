@@ -232,6 +232,31 @@ const MagnetApplyContent = ({
         );
       }
 
+      // ⚠️ N+1 호출: batch 신청 API 부재로 magnetId 당 1회 POST 발생.
+      //    BE 에서 batch endpoint 도입 시 단일 호출로 변경 가능.
+      //    Swagger /api/v1/magnet-application 경로에 batch 미구현 확인 (2026-05-07).
+      //    상세 제안: .claude/tasks/memos/be-request-magnet-batch-application.md
+      if (magnetType === 'EVENT' && selectedExtraMagnetIds.length > 0) {
+        const results = await Promise.allSettled(
+          selectedExtraMagnetIds.map((id) =>
+            tryPostMagnetApplication({
+              magnetId: id,
+              body: { magnetAnswerList: [] },
+            }),
+          ),
+        );
+        const failedIds = results
+          .map((r, i) =>
+            r.status === 'rejected' ? selectedExtraMagnetIds[i] : null,
+          )
+          .filter((id): id is number => id !== null);
+        if (failedIds.length > 0) {
+          alert(
+            `일부 자료집 신청에 실패했습니다 (실패 magnetId: ${failedIds.join(', ')})`,
+          );
+        }
+      }
+
       alert('신청이 완료되었습니다.');
       router.push(getLibraryPathname({ id: magnetId, title }));
       router.refresh();
