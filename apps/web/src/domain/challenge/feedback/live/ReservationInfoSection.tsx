@@ -1,0 +1,103 @@
+import LiveFeedbackReview from './LiveFeedbackReview';
+import type { LiveFeedbackStatus, Mentor, Reservation } from './types';
+import MentorCard from './ui/MentorCard';
+import { formatReservationTime } from './utils';
+
+function isEntranceActive(
+  scheduledDate: string,
+  scheduledTime: string,
+): boolean {
+  const [hour, minute] = scheduledTime.split(':').map(Number);
+  const start = new Date(scheduledDate);
+  start.setHours(hour, minute, 0, 0);
+
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  const now = new Date();
+
+  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
+}
+
+interface Props {
+  mentor: Mentor;
+  reservation: Reservation;
+  status: LiveFeedbackStatus;
+}
+
+const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
+  const { scheduledDate, scheduledTime, zepRoomNumber, zepRoomUrl } =
+    reservation;
+
+  const entranceActive = isEntranceActive(scheduledDate, scheduledTime);
+  const formattedTime = formatReservationTime(scheduledDate, scheduledTime);
+
+  return (
+    <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
+      <section className="flex w-full flex-col">
+        <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+          담당 멘토
+        </h2>
+        <MentorCard
+          mentor={mentor}
+          showStars={true}
+          className="min-w-[314px] px-0 py-4 md:px-4"
+        />
+      </section>
+
+      <section className="flex w-full flex-col">
+        <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+          LIVE 피드백
+        </h2>
+        <div className="flex flex-col gap-10 px-0 py-4 md:gap-4 md:px-4">
+          <div className="flex w-full flex-col gap-3">
+            <div className="flex items-center">
+              <img src="/icons/clock.svg" alt=" - " />
+              <span className="text-xsmall14 text-neutral-40 pl-1 pr-3">
+                예약 시간
+              </span>
+              <span className="text-xsmall14 text-neutral-0 font-semibold">
+                {formattedTime}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <img src="/icons/door-closed.svg" alt=" - " />
+              <span className="text-xsmall14 text-neutral-40 pl-1 pr-3">
+                젭 회의실
+              </span>
+              <span className="text-xsmall14 text-neutral-0 font-semibold">
+                {zepRoomNumber !== null ? `${zepRoomNumber}번 방` : '미정'}
+              </span>
+            </div>
+          </div>
+
+          {status === 'done' ? (
+            <LiveFeedbackReview />
+          ) : (
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className="border-primary text-xsmall14 text-primary flex-1 whitespace-nowrap rounded-sm border bg-neutral-100 py-3 font-semibold"
+              >
+                멘토님께 질문하기
+              </button>
+              <a
+                href={zepRoomUrl ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-disabled={!entranceActive}
+                className={
+                  entranceActive
+                    ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
+                    : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
+                }
+              >
+                LIVE 피드백 입장하기
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default ReservationInfoSection;
