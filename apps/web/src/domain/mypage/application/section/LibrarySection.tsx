@@ -64,7 +64,12 @@ const LibrarySection = () => {
 
   if (isLoading) return <></>;
 
-  const magnetList = data?.magnetList ?? [];
+  // BE typeList 미적용/직렬화 호환 이슈에 대비한 클라이언트 측 방어 필터.
+  // EVENT/LAUNCH_ALERT 는 마이자료집에 절대 노출되지 않아야 한다.
+  const visibleTypes = LIBRARY_VISIBLE_MAGNET_TYPES as readonly string[];
+  const magnetList = (data?.magnetList ?? []).filter((m) =>
+    visibleTypes.includes(m.type),
+  );
   const hasMagnets = magnetList.length > 0;
   const list = showMore ? magnetList : magnetList.slice(0, 10);
 
