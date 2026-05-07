@@ -77,14 +77,14 @@ export default function StickyApplyBox({ magnetId, onApplyClick }: Props) {
           </div>
           <GradientButton
             onClick={() => onApplyClick(`/library/${magnetId}/apply`)}
-            className="text-xsmall16 shrink-0 px-6 py-3 font-semibold text-white"
+            className="text-xsmall16 min-w-80 max-w-[60rem] shrink-0 px-6 py-3 font-semibold text-white"
           >
             자료집 신청하기
           </GradientButton>
         </div>
 
         {/* 모바일: 항상 하단 고정 */}
-        <div className="safe-area-bottom fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden md:hidden">
+        <div className="safe-area-bottom fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden lg:hidden">
           <div className="bg-primary-dark text-xxsmall12 py-1.5 text-center font-semibold text-white">
             여기서부터가 핵심내용이에요!
           </div>
