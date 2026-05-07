@@ -33,14 +33,15 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   FREE_TEMPLATE: '무료 템플릿',
   MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '기타',
+  EVENT: '이벤트',
 };
 
-const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];
-
-const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL)
-  .filter(([value]) => !HIDDEN_TYPES_IN_LIST.includes(value as MagnetType))
-  .map(([value, caption]) => ({ caption, value }));
+// 탭별 숨김 정책. /library/list 는 EVENT/LAUNCH_ALERT 모두 노출,
+// /library/list/my (MY 자료집) 는 PRD FR-3 정책에 따라 둘 다 차단.
+const HIDDEN_TYPES_BY_TAB: Record<LibraryTab, MagnetType[]> = {
+  contents: [],
+  my: ['LAUNCH_ALERT', 'EVENT'],
+};
 
 const PC_PAGE_SIZE = 16;
 const MOBILE_PAGE_SIZE = 8;
@@ -55,21 +56,30 @@ function Content({ tab }: { tab: LibraryTab }) {
   const [page, setPage] = useState(1);
 
   const pageSize = isMobile ? MOBILE_PAGE_SIZE : PC_PAGE_SIZE;
+  const hiddenTypes = HIDDEN_TYPES_BY_TAB[tab];
+
+  const categoryFilterList = useMemo(
+    () =>
+      Object.entries(MAGNET_TYPE_LABEL)
+        .filter(([value]) => !hiddenTypes.includes(value as MagnetType))
+        .map(([value, caption]) => ({ caption, value })),
+    [hiddenTypes],
+  );
 
   const typeList = useMemo(() => {
     const category = searchParams.get('category');
     if (!category) {
       return Object.keys(MAGNET_TYPE_LABEL).filter(
-        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+        (type) => !hiddenTypes.includes(type as MagnetType),
       ) as MagnetType[];
     }
     return category
       .toUpperCase()
       .split(',')
       .filter(
-        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+        (type) => !hiddenTypes.includes(type as MagnetType),
       ) as MagnetType[];
-  }, [searchParams]);
+  }, [searchParams, hiddenTypes]);
 
   const isMyTab = tab === 'my';
   const { isLoggedIn, isInitialized } = useAuthStore();
@@ -108,7 +118,7 @@ function Content({ tab }: { tab: LibraryTab }) {
         <LibraryTabNav tabs={TABS} />
         <FilterDropdown
           label="콘텐츠 카테고리"
-          list={CATEGORY_FILTER_LIST}
+          list={categoryFilterList}
           paramKey="category"
           multiSelect
           onChange={() => setPage(1)}

@@ -13,6 +13,7 @@ import {
   libraryApplyEventExtraSubmitBatch,
   libraryApplyMounted,
 } from '@/utils/log';
+import { extractHttpStatus } from '@/utils/sentry';
 import { getLibraryPathname } from '@/utils/url';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -228,10 +229,22 @@ const MagnetApplyContent = ({
         return { magnetQuestionId: a.questionId, answer };
       });
 
-      await tryPostMagnetApplication({
-        magnetId,
-        body: { magnetAnswerList },
-      });
+      // 메인 신청을 격리된 try 로 감싼다. 이미 신청한 경우(409)에는
+      // 추가 마그넷/출시알림 신청 흐름은 그대로 진행되어야 하기 때문.
+      let mainAlreadyApplied = false;
+      try {
+        await tryPostMagnetApplication({
+          magnetId,
+          body: { magnetAnswerList },
+        });
+      } catch (mainError) {
+        const status = extractHttpStatus(mainError);
+        if (status === 409) {
+          mainAlreadyApplied = true;
+        } else {
+          throw mainError;
+        }
+      }
 
       // 출시 알림: 선택한 프로그램들에 대해 신청
       if (wantNotification && selectedLaunchAlertIds.length > 0) {
@@ -249,6 +262,7 @@ const MagnetApplyContent = ({
       //    BE 에서 batch endpoint 도입 시 단일 호출로 변경 가능.
       //    Swagger /api/v1/magnet-application 경로에 batch 미구현 확인 (2026-05-07).
       //    상세 제안: .claude/tasks/memos/be-request-magnet-batch-application.md
+      let extraFailedIds: number[] = [];
       if (magnetType === 'EVENT' && selectedExtraMagnetIds.length > 0) {
         const results = await Promise.allSettled(
           selectedExtraMagnetIds.map((id) =>
@@ -258,29 +272,36 @@ const MagnetApplyContent = ({
             }),
           ),
         );
-        const failedIds = results
+        extraFailedIds = results
           .map((r, i) =>
             r.status === 'rejected' ? selectedExtraMagnetIds[i] : null,
           )
           .filter((id): id is number => id !== null);
         libraryApplyEventExtraSubmitBatch({
           totalCount: selectedExtraMagnetIds.length,
-          successCount: selectedExtraMagnetIds.length - failedIds.length,
-          failedCount: failedIds.length,
-          failedIds,
+          successCount: selectedExtraMagnetIds.length - extraFailedIds.length,
+          failedCount: extraFailedIds.length,
+          failedIds: extraFailedIds,
         });
-        if (failedIds.length > 0) {
-          alert(
-            `일부 자료집 신청에 실패했습니다 (실패 magnetId: ${failedIds.join(', ')})`,
-          );
-        }
       }
 
-      alert('신청이 완료되었습니다.');
+      // 메시지 통합: 부분 실패/이미 신청 케이스가 있으면 단일 alert 로,
+      // 모두 성공한 경우에만 "신청이 완료되었습니다." 표시.
+      const messages: string[] = [];
+      if (mainAlreadyApplied) {
+        messages.push('이미 신청한 자료집이에요.');
+      }
+      if (extraFailedIds.length > 0) {
+        messages.push(
+          `일부 자료집 신청에 실패했습니다 (실패 magnetId: ${extraFailedIds.join(', ')})`,
+        );
+      }
+      alert(
+        messages.length > 0 ? messages.join('\n') : '신청이 완료되었습니다.',
+      );
       router.push(getLibraryPathname({ id: magnetId, title }));
       router.refresh();
     } catch (error) {
-      console.error(error);
       const message =
         (error as { response?: { data?: { message?: string } } })?.response
           ?.data?.message ?? '신청에 실패했습니다. 다시 시도해주세요.';

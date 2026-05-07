@@ -238,7 +238,7 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
     );
   });
 
-  it('추가 마그넷 일부 실패 시 alert 으로 실패 magnetId 안내', async () => {
+  it('추가 마그넷 일부 실패 시 alert 으로 실패 magnetId 안내 + 성공 alert 미표시 (Gemini 리뷰 #2 반영)', async () => {
     // 메인(1) 성공, 추가 101 성공, 102 실패, 103 실패
     tryPostMagnetApplicationMock.mockImplementation(
       ({ magnetId }: { magnetId: number }) => {
@@ -274,6 +274,65 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
       expect(String(failureCall?.[0])).toContain('102');
       expect(String(failureCall?.[0])).toContain('103');
       expect(String(failureCall?.[0])).not.toContain('101');
+    });
+
+    // 일부 실패 시 "신청이 완료되었습니다." 는 표시되지 않아야 한다.
+    const successCall = alertSpy.mock.calls.find((args) =>
+      String(args[0]).includes('신청이 완료되었습니다'),
+    );
+    expect(successCall).toBeUndefined();
+  });
+
+  it('메인 EVENT 가 이미 신청(409)이어도 추가 마그넷 신청은 진행된다', async () => {
+    // 메인(1) → 409, 추가 101/102 성공
+    tryPostMagnetApplicationMock.mockImplementation(
+      ({ magnetId }: { magnetId: number }) => {
+        if (magnetId === 1) {
+          return Promise.reject({
+            response: {
+              status: 409,
+              data: { message: '이미 존재하는 신청 내역입니다.' },
+            },
+            status: 409,
+          });
+        }
+        return Promise.resolve({});
+      },
+    );
+
+    const { container, getByTestId } = render(
+      <MagnetApplyContent
+        magnetId={1}
+        magnetType="EVENT"
+        title="EVENT 마그넷"
+        thumbnail={null}
+        questions={[]}
+        variant="apply"
+      />,
+    );
+
+    fireEvent.click(getByTestId('select-extra-101'));
+    fireEvent.click(getByTestId('select-extra-102'));
+
+    await clickSubmit(container, getByTestId);
+
+    // 메인 1회 시도 + 추가 101, 102 호출되었는지 확인
+    await waitFor(() => {
+      expect(tryPostMagnetApplicationMock).toHaveBeenCalledTimes(3);
+    });
+    const calls = tryPostMagnetApplicationMock.mock.calls.map(
+      (args) => args[0].magnetId,
+    );
+    expect(calls).toContain(1);
+    expect(calls).toContain(101);
+    expect(calls).toContain(102);
+
+    // alert 에 "이미 신청한 자료집이에요" 포함
+    await waitFor(() => {
+      const conflictCall = alertSpy.mock.calls.find((args) =>
+        String(args[0]).includes('이미 신청한 자료집'),
+      );
+      expect(conflictCall).toBeDefined();
     });
   });
 
