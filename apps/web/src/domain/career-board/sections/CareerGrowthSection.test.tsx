@@ -41,9 +41,7 @@ describe('CareerGrowthSection - LibraryGrowthList typeList', () => {
     );
 
     // import 확인
-    expect(source).toMatch(
-      /from\s+['"]@\/api\/magnet\/magnetSchema['"]/,
-    );
+    expect(source).toMatch(/from\s+['"]@\/api\/magnet\/magnetSchema['"]/);
     expect(source).toContain('LIBRARY_VISIBLE_MAGNET_TYPES');
     // mypageMagnetListQueryOptions 호출 시 typeList 인자 전달 확인
     expect(source).toMatch(

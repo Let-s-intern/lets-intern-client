@@ -75,8 +75,9 @@ jest.mock('@/domain/mypage/career/CareerInfoForm', () => ({
     const triggered = (globalThis as { __careerFormTriggered?: boolean })
       .__careerFormTriggered;
     if (!triggered) {
-      (globalThis as { __careerFormTriggered?: boolean }).__careerFormTriggered =
-        true;
+      (
+        globalThis as { __careerFormTriggered?: boolean }
+      ).__careerFormTriggered = true;
       Promise.resolve().then(() => {
         onChange({
           university: '서울대',
@@ -126,27 +127,21 @@ jest.mock('./EventExtraMagnetSection', () => ({
       <button
         type="button"
         data-testid="select-extra-101"
-        onClick={() =>
-          onSelectedMagnetIdsChange([...selectedMagnetIds, 101])
-        }
+        onClick={() => onSelectedMagnetIdsChange([...selectedMagnetIds, 101])}
       >
         add-101
       </button>
       <button
         type="button"
         data-testid="select-extra-102"
-        onClick={() =>
-          onSelectedMagnetIdsChange([...selectedMagnetIds, 102])
-        }
+        onClick={() => onSelectedMagnetIdsChange([...selectedMagnetIds, 102])}
       >
         add-102
       </button>
       <button
         type="button"
         data-testid="select-extra-103"
-        onClick={() =>
-          onSelectedMagnetIdsChange([...selectedMagnetIds, 103])
-        }
+        onClick={() => onSelectedMagnetIdsChange([...selectedMagnetIds, 103])}
       >
         add-103
       </button>
@@ -163,7 +158,10 @@ const MagnetApplyContent = require('./MagnetApplyContent').default;
  * 컴포넌트 내부 isSubmitDisabled 가 disabled 를 풀지 않는 환경에서도
  * 호출 자체를 검증하기 위해 disabled 우회 클릭을 사용한다.
  */
-const clickSubmit = async (container: HTMLElement, getByTestId: (id: string) => HTMLElement) => {
+const clickSubmit = async (
+  container: HTMLElement,
+  getByTestId: (id: string) => HTMLElement,
+) => {
   // 1) marketing consent 동의
   fireEvent.click(getByTestId('marketing-consent-stub'));
 

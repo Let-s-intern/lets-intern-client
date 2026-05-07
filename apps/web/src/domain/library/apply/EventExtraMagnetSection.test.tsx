@@ -19,8 +19,7 @@ jest.mock('@/common/box/CheckBox', () => ({
   ),
 }));
 
-const EventExtraMagnetSection =
-  require('./EventExtraMagnetSection').default;
+const EventExtraMagnetSection = require('./EventExtraMagnetSection').default;
 
 const buildMagnet = (
   magnetId: number,
@@ -131,10 +130,7 @@ describe('EventExtraMagnetSection', () => {
   it('체크박스 클릭 시 onSelectedMagnetIdsChange 가 호출된다', () => {
     useGetUserMagnetListQueryMock.mockReturnValue({
       data: {
-        magnetList: [
-          buildMagnet(1, '자료집 A'),
-          buildMagnet(2, '자료집 B'),
-        ],
+        magnetList: [buildMagnet(1, '자료집 A'), buildMagnet(2, '자료집 B')],
         pageInfo: {},
       },
       isLoading: false,
@@ -159,10 +155,7 @@ describe('EventExtraMagnetSection', () => {
   it('이미 선택된 magnetId 를 다시 클릭하면 선택 해제된다', () => {
     useGetUserMagnetListQueryMock.mockReturnValue({
       data: {
-        magnetList: [
-          buildMagnet(1, '자료집 A'),
-          buildMagnet(2, '자료집 B'),
-        ],
+        magnetList: [buildMagnet(1, '자료집 A'), buildMagnet(2, '자료집 B')],
         pageInfo: {},
       },
       isLoading: false,
