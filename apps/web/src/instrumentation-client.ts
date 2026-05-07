@@ -2,7 +2,7 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import { classifyNoise } from '@/utils/sentry';
+import { normalizeSentryTags, classifyNoise } from '@/utils/sentry';
 import { isCrashEvent } from '@/utils/replayCrashFilter';
 import { shouldSendLog } from '@/utils/sentryLogSampler';
 import { apiSlow, apiClientError, apiServerError } from '@/utils/log';
@@ -52,15 +52,57 @@ Sentry.init({
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: false,
 
-  // noise 분류된 에러는 Sentry 대시보드에서 필터링할 수 있도록 tag 만 부착.
-  // (drop 하지 않음 — 운영진이 Sentry UI 에서 noise 별도 보거나 알림 룰에서 제외 가능)
+  // 에러를 Sentry로는 모두 전송하되, Slack webhook 은 사용자 영향 큰 crash 만.
+  // 정책:
+  //  - production 외 (preview/dev)         → Slack 차단
+  //  - noise 분류 (번역기/지갑/stale-chunk) → Slack 차단 (Sentry 태그만 부착)
+  //  - non-crash (일반 catch 가능 에러)     → Slack 차단 (Sentry 대시보드만)
+  //  - production + crash + non-noise       → Slack 발송
+  // crash 기준은 isCrashEvent (replayCrashFilter.ts):
+  //   level=fatal / unhandled / server-component / ChunkLoadError / *_PARSE
   beforeSend(event, hint) {
+    // noise 분류 태그 부착 (Sentry 대시보드 필터링용 — drop X)
+    let isNoise = false;
     if (hint.originalException instanceof Error) {
       const noise = classifyNoise(hint.originalException);
       if (noise) {
         event.tags = { ...event.tags, noise };
+        isNoise = true;
       }
     }
+
+    const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+    const isCrash = isCrashEvent(event);
+    const shouldSendWebhook =
+      isProduction &&
+      isCrash &&
+      !isNoise &&
+      hint.originalException instanceof Error &&
+      typeof window !== 'undefined';
+
+    if (shouldSendWebhook) {
+      const error = hint.originalException as Error;
+      // 클라이언트 사이드에서는 API 라우트를 통해 전송 (CORS 방지)
+      fetch('/api/send-error-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: {
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+          },
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          tags: normalizeSentryTags(event.tags),
+          extra: event.extra,
+        }),
+      }).catch(() => {
+        // Webhook 전송 실패는 조용히 무시 (무한 루프 방지)
+      });
+    }
+
+    // Sentry 로는 모든 이벤트 그대로 전송 (대시보드 가시성 유지)
     return event;
   },
 });

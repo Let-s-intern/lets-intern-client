@@ -6,6 +6,10 @@ jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
 }));
 
+jest.mock('@/utils/webhook', () => ({
+  sendErrorToWebhook: jest.fn(() => Promise.resolve()),
+}));
+
 const mockRscRenderFailed = jest.fn();
 jest.mock('@/utils/log', () => ({
   rscRenderFailed: (...args: unknown[]) => mockRscRenderFailed(...args),
