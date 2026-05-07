@@ -15,7 +15,7 @@ const MentorCard = ({
   showStars = false,
   className,
 }: MentorCardProps) => {
-  const stars = mentor.stars ?? 0;
+  const stars = Math.round(mentor.stars ?? 0);
 
   const cardClassName = twMerge(
     'rounded-xs flex w-full items-center gap-4 p-4 text-left transition-colors',
@@ -44,7 +44,7 @@ const MentorCard = ({
       </div>
       <div className="flex w-full flex-col gap-1 py-2">
         <p className="text-xsmall14 text-neutral-0 font-bold">{mentor.name}</p>
-        {showStars && (
+        {showStars && stars > 0 && (
           <div className="flex items-center gap-[1.5px]">
             {Array.from({ length: 5 }, (_, index) => (
               <img
