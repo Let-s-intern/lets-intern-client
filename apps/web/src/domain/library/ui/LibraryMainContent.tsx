@@ -7,6 +7,7 @@ import {
 } from '@/api/magnet/magnet';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import useAuthStore from '@/store/useAuthStore';
+import StickyApplyBox from './StickyApplyBox';
 import { SerializedLexicalNode } from 'lexical';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -128,26 +129,7 @@ export default function LibraryMainContent({
           <LexicalContent node={previewRoot} />
         </PreviewWithFade>
       )}
-      <div className="bg-primary-10 mt-8 flex flex-col items-center rounded-md px-5 py-10">
-        <div className="border-primary-15 mb-5 flex h-10 w-10 items-center justify-center rounded-sm border bg-white">
-          <img src="/icons/magnet-folder.svg" className="size-6" alt="folder" />
-        </div>
-        <div className="text-small18 text-neutral-20 mb-6 text-center font-light">
-          렛츠커리어만의{' '}
-          <span className="text-primary font-semibold">취준 꿀팁</span>이{' '}
-          <br className="block md:hidden" />
-          담긴 콘텐츠,
-          <br />
-          다음 내용이 궁금하다면?
-        </div>
-        <button
-          type="button"
-          onClick={() => handleApplyClick(`/library/${magnetId}/apply`)}
-          className="rounded-xs bg-primary text-xsmall16 w-full max-w-lg px-6 py-4 text-center text-white"
-        >
-          자료집 신청하기
-        </button>
-      </div>
+      <StickyApplyBox magnetId={magnetId} onApplyClick={handleApplyClick} />
     </>
   );
 }
