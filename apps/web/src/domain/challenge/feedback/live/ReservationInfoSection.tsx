@@ -1,16 +1,12 @@
 import LiveFeedbackReview from './LiveFeedbackReview';
-import type { Mentor, Reservation } from './types';
+import type { LiveFeedbackStatus, Mentor, Reservation } from './types';
 import MentorCard from './ui/MentorCard';
 import { formatReservationTime } from './utils';
 
-interface Props {
-  mentor: Mentor;
-  reservation: Reservation;
-}
-
-type CtaState = 'pending' | 'active' | 'done';
-
-function getCtaState(scheduledDate: string, scheduledTime: string): CtaState {
+function isEntranceActive(
+  scheduledDate: string,
+  scheduledTime: string,
+): boolean {
   const [hour, minute] = scheduledTime.split(':').map(Number);
   const start = new Date(scheduledDate);
   start.setHours(hour, minute, 0, 0);
@@ -18,16 +14,20 @@ function getCtaState(scheduledDate: string, scheduledTime: string): CtaState {
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   const now = new Date();
 
-  if (now >= end) return 'done';
-  if ((start.getTime() - now.getTime()) / 60_000 <= 10) return 'active';
-  return 'pending';
+  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
 }
 
-const ReservationInfoSection = ({ mentor, reservation }: Props) => {
+interface Props {
+  mentor: Mentor;
+  reservation: Reservation;
+  status: LiveFeedbackStatus;
+}
+
+const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
   const { scheduledDate, scheduledTime, zepRoomNumber, zepRoomUrl } =
     reservation;
 
-  const ctaState = getCtaState(scheduledDate, scheduledTime);
+  const entranceActive = isEntranceActive(scheduledDate, scheduledTime);
   const formattedTime = formatReservationTime(scheduledDate, scheduledTime);
 
   return (
@@ -69,7 +69,7 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
             </div>
           </div>
 
-          {ctaState === 'done' ? (
+          {status === 'done' ? (
             <LiveFeedbackReview />
           ) : (
             <div className="flex gap-4">
@@ -83,9 +83,9 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
                 href={zepRoomUrl ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-disabled={ctaState === 'pending'}
+                aria-disabled={!entranceActive}
                 className={
-                  ctaState === 'active'
+                  entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }

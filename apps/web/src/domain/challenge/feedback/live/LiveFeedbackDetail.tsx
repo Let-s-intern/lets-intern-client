@@ -4,18 +4,27 @@ import { useState } from 'react';
 
 import ReservationFormSection from './ReservationFormSection';
 import ReservationInfoSection from './ReservationInfoSection';
-import type { Mentor, MissionPeriod, Reservation, SelectedSlot } from './types';
+import type {
+  LiveFeedbackStatus,
+  Mentor,
+  Reservation,
+  SelectedSlot,
+} from './types';
 
 interface Props {
   assignedMentor: Mentor | null;
-  period: MissionPeriod;
+  startDay: string;
+  endDay: string;
   reservationInfo: Reservation | null;
+  status: LiveFeedbackStatus;
 }
 
 const LiveFeedbackDetail = ({
   assignedMentor,
-  period,
+  startDay,
+  endDay,
   reservationInfo: initialReservation,
+  status,
 }: Props) => {
   const [reservation, setReservation] = useState<Reservation | null>(
     initialReservation,
@@ -39,6 +48,7 @@ const LiveFeedbackDetail = ({
       <ReservationInfoSection
         mentor={assignedMentor}
         reservation={reservation}
+        status={status}
       />
     );
   }
@@ -46,7 +56,7 @@ const LiveFeedbackDetail = ({
   return (
     <ReservationFormSection
       mentor={assignedMentor}
-      period={period}
+      period={{ startDay, endDay }}
       onConfirm={handleConfirm}
     />
   );
