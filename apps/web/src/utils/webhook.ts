@@ -272,6 +272,13 @@ export async function sendErrorToWebhook(
     extra?: Record<string, unknown>;
   },
 ): Promise<void> {
+  // production 외 환경(preview/dev)은 Slack 운영 채널 오염 방지로 차단.
+  // Vercel preview/dev 도 NODE_ENV='production' 으로 빌드되므로
+  // NEXT_PUBLIC_VERCEL_ENV 만 single source of truth 로 사용.
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+    return;
+  }
+
   // 불필요한 노이즈 에러 필터링 (Sentry는 모든 에러를 전송하지만, webhook은 필터링)
   if (shouldFilterError(error, additionalInfo?.url)) {
     // 필터링된 에러는 조용히 무시
