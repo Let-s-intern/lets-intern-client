@@ -1,5 +1,27 @@
 import type { WrittenFeedbackMission, WrittenFeedbackStatus } from './types';
 
+export const WRITTEN_FEEDBACK_SECTIONS: {
+  status: WrittenFeedbackStatus;
+  label: string;
+  emptyMessage: string;
+}[] = [
+  {
+    status: 'pending',
+    label: '제출 전',
+    emptyMessage: '제출 전인 미션이 없어요.',
+  },
+  {
+    status: 'submitted',
+    label: '제출 완료',
+    emptyMessage: '제출 완료된 미션이 없어요.',
+  },
+  {
+    status: 'done',
+    label: '피드백 완료',
+    emptyMessage: '피드백 완료된 미션이 없어요.',
+  },
+];
+
 export const WRITTEN_FEEDBACK_STATUS_LABEL: Record<
   WrittenFeedbackStatus,
   string

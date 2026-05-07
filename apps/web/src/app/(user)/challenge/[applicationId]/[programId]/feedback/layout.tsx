@@ -44,7 +44,7 @@ const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
           full
         />
       </div>
-      <div className="pt-0 md:pt-6">{children}</div>
+      <div className="pt-0 md:pt-10">{children}</div>
     </main>
   );
 };

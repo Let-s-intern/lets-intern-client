@@ -1,5 +1,36 @@
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
+export const LIVE_FEEDBACK_SECTIONS: {
+  status: LiveFeedbackStatus;
+  label: string;
+  emptyMessage: string;
+}[] = [
+  {
+    status: 'prev',
+    label: '예약 전',
+    emptyMessage: '예약 전인 미션이 없어요.',
+  },
+  {
+    status: 'reserved',
+    label: '예약 완료',
+    emptyMessage: '예약 완료된 미션이 없어요.',
+  },
+  {
+    status: 'done',
+    label: '피드백 완료',
+    emptyMessage: '피드백 완료된 미션이 없어요.',
+  },
+];
+
+export const LIVE_FEEDBACK_BUTTON_LABELS: Record<
+  LiveFeedbackStatus,
+  { buttonLabel: string; openLabel: string }
+> = {
+  prev: { buttonLabel: '예약 신청 보기', openLabel: '예약 신청 닫기' },
+  reserved: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+  done: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+};
+
 export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
   prev: '예약 전',
   reserved: '예약 완료',
