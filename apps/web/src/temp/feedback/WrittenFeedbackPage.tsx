@@ -17,7 +17,13 @@ const WrittenFeedbackPage = () => {
   const handleClick = useCallback(
     (status: WrittenFeedbackStatus) => {
       const base = `/challenge/${params.applicationId}/${params.programId}/me`;
-      router.push(status === 'done' ? `${base}#mentor-feedback` : base);
+      if (status === 'done') {
+        router.push(`${base}#mentor-feedback`);
+      } else if (status === 'submitted') {
+        router.push(`${base}#mission-submit`);
+      } else {
+        router.push(base);
+      }
     },
     [params.applicationId, params.programId, router],
   );
