@@ -52,50 +52,40 @@ Sentry.init({
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: false,
 
-  // 에러를 Sentry로 보내기 전에 webhook으로도 전송
+  // 에러를 Sentry로는 모두 전송하되, Slack webhook 은 사용자 영향 큰 crash 만.
+  // 정책:
+  //  - production 외 (preview/dev)         → Slack 차단
+  //  - noise 분류 (번역기/지갑/stale-chunk) → Slack 차단 (Sentry 태그만 부착)
+  //  - non-crash (일반 catch 가능 에러)     → Slack 차단 (Sentry 대시보드만)
+  //  - production + crash + non-noise       → Slack 발송
+  // crash 기준은 isCrashEvent (replayCrashFilter.ts):
+  //   level=fatal / unhandled / server-component / ChunkLoadError / *_PARSE
   beforeSend(event, hint) {
-    // noise 분류 태그 부착 (Sentry 대시보드에는 격리되어 들어감, drop 안 함)
-    let noiseCategory: ReturnType<typeof classifyNoise> = null;
+    // noise 분류 태그 부착 (Sentry 대시보드 필터링용 — drop X)
+    let isNoise = false;
     if (hint.originalException instanceof Error) {
-      noiseCategory = classifyNoise(hint.originalException);
-      if (noiseCategory) {
-        event.tags = { ...event.tags, noise: noiseCategory };
+      const noise = classifyNoise(hint.originalException);
+      if (noise) {
+        event.tags = { ...event.tags, noise };
+        isNoise = true;
       }
     }
 
-    // 사용자 세션 crash (페이지 사용 불가 수준)인지 분류 → tag 부착
-    // 이 태그가 있으면 route.ts 의 dedupe 가 우회되어 항상 즉시 Slack 발송.
-    const isCrash = isCrashEvent(event);
-    if (isCrash) {
-      event.tags = { ...event.tags, crash: 'true' };
-    }
-
-    // Slack webhook 발송 차단 조건:
-    // 1) production 환경이 아니면 무조건 차단 (preview/dev 운영 채널 오염 방지)
-    // 2) production 이어도, crash 가 아니고 noise 분류된 경우 차단
-    //    (crash 면 noise 라벨과 무관하게 항상 발송 — 사용자 영향 우선)
-    //
-    // Vercel preview/dev 빌드도 NODE_ENV='production' 으로 빌드되므로
-    // NODE_ENV 만으로는 운영 구분이 안 됨. NEXT_PUBLIC_VERCEL_ENV 만을
-    // single source of truth 로 사용 (값 없으면 non-production 으로 간주).
     const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-    const shouldSkipWebhook =
-      !isProduction || (!isCrash && noiseCategory !== null);
-
-    // 에러 객체가 있는 경우 webhook으로 전송 (클라이언트 사이드는 API 라우트를 통해)
-    if (
+    const isCrash = isCrashEvent(event);
+    const shouldSendWebhook =
+      isProduction &&
+      isCrash &&
+      !isNoise &&
       hint.originalException instanceof Error &&
-      typeof window !== 'undefined' &&
-      !shouldSkipWebhook
-    ) {
-      const error = hint.originalException;
+      typeof window !== 'undefined';
 
+    if (shouldSendWebhook) {
+      const error = hint.originalException as Error;
       // 클라이언트 사이드에서는 API 라우트를 통해 전송 (CORS 방지)
       fetch('/api/send-error-webhook', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           error: {
             message: error.message,
@@ -112,7 +102,7 @@ Sentry.init({
       });
     }
 
-    // Sentry로도 계속 전송
+    // Sentry 로는 모든 이벤트 그대로 전송 (대시보드 가시성 유지)
     return event;
   },
 });
