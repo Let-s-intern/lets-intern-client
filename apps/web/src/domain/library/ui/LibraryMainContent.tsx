@@ -128,7 +128,81 @@ export default function LibraryMainContent({
           <LexicalContent node={previewRoot} />
         </PreviewWithFade>
       )}
-      <div className="bg-primary-10 mt-8 flex flex-col items-center rounded-md px-5 py-10">
+      <StickyApplyBox magnetId={magnetId} onApplyClick={handleApplyClick} />
+    </>
+  );
+}
+
+function StickyApplyBox({
+  magnetId,
+  onApplyClick,
+}: {
+  magnetId: number;
+  onApplyClick: (path: string) => void;
+}) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [isFixed, setIsFixed] = useState(true);
+  const [boxHeight, setBoxHeight] = useState(0);
+  const [fixedLeft, setFixedLeft] = useState(0);
+  const [fixedWidth, setFixedWidth] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      if (sentinelRef.current) {
+        const rect = sentinelRef.current.getBoundingClientRect();
+        setFixedLeft(rect.left);
+        setFixedWidth(rect.width);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  useEffect(() => {
+    if (boxRef.current) {
+      setBoxHeight(boxRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsFixed(false);
+        } else {
+          setIsFixed(entry.boundingClientRect.top > 0);
+        }
+      },
+      { threshold: 0 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <>
+      <div ref={sentinelRef} className="mt-8" />
+      {isFixed && <div style={{ height: boxHeight }} />}
+      <div
+        ref={boxRef}
+        className="bg-primary-10 flex flex-col items-center rounded-md px-5 py-10"
+        style={
+          isFixed
+            ? {
+                position: 'fixed',
+                bottom: 16,
+                left: fixedLeft,
+                width: fixedWidth,
+                zIndex: 50,
+              }
+            : { marginTop: '2rem' }
+        }
+      >
         <div className="border-primary-15 mb-5 flex h-10 w-10 items-center justify-center rounded-sm border bg-white">
           <img src="/icons/magnet-folder.svg" className="size-6" alt="folder" />
         </div>
@@ -142,7 +216,7 @@ export default function LibraryMainContent({
         </div>
         <button
           type="button"
-          onClick={() => handleApplyClick(`/library/${magnetId}/apply`)}
+          onClick={() => onApplyClick(`/library/${magnetId}/apply`)}
           className="rounded-xs bg-primary text-xsmall16 w-full max-w-lg px-6 py-4 text-center text-white"
         >
           자료집 신청하기
