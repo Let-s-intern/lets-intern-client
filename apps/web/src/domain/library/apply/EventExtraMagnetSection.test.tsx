@@ -19,7 +19,6 @@ jest.mock('@/common/box/CheckBox', () => ({
   ),
 }));
 
-// eslint-disable-next-line import/first, @typescript-eslint/no-require-imports
 const EventExtraMagnetSection =
   require('./EventExtraMagnetSection').default;
 

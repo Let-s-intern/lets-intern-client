@@ -154,7 +154,6 @@ jest.mock('./EventExtraMagnetSection', () => ({
   ),
 }));
 
-// eslint-disable-next-line import/first, @typescript-eslint/no-require-imports
 const MagnetApplyContent = require('./MagnetApplyContent').default;
 
 /**
