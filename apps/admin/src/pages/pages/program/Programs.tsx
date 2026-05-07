@@ -392,6 +392,7 @@ const Programs = () => {
         ) : (
           <>
             <DataGrid
+              autoHeight
               rows={programList.map((p) => ({
                 id: p.programInfo.programType + p.programInfo.id,
                 ...p,

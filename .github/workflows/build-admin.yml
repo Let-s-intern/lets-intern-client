@@ -25,6 +25,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 변경 파일 diff 계산을 위해 풀 히스토리 필요
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
 
@@ -41,13 +44,45 @@ jobs:
       - name: ESLint
         run: pnpm --filter @letscareer/admin lint
 
-      # TODO: typecheck 가 admin 셋업 시점부터 ~149 에러 누적된 상태.
-      # 외부 라이브러리 타입 (Excalidraw), 누락 모듈 (@/ChannelService, @/appSettings 등),
-      # 페이지 타입 불일치 (id?: number → required) 등 다수.
-      # 별도 push 으로 typecheck 정리 후 continue-on-error 제거.
-      - name: Typecheck
-        continue-on-error: true
-        run: pnpm --filter @letscareer/admin typecheck
+      # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
+      # 베이스라인 138 에러는 무시되고, 변경 파일에서 발생한 에러만 fail.
+      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      - name: Typecheck (변경 파일 한정)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -e
+
+          # git pathspec은 ** 글로브를 지원하지 않으므로 prefix만 주고 확장자는 grep으로 필터.
+          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMR -- 'apps/admin/src/' \
+            | grep -E '\.(ts|tsx)$' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "apps/admin 내 TS/TSX 변경 없음 — typecheck 스킵"
+            exit 0
+          fi
+
+          echo "변경된 .ts/.tsx 파일:"
+          echo "$CHANGED"
+          echo ""
+
+          set +e
+          pnpm --filter @letscareer/admin typecheck > /tmp/typecheck.log 2>&1
+          set -e
+
+          # tsc 출력의 파일경로는 'src/...' 형태 (apps/admin 작업디렉토리 기준)이므로
+          # CHANGED 의 'apps/admin/' 접두사 제거 후 패턴 매칭.
+          PATTERNS=$(echo "$CHANGED" | sed 's|^apps/admin/||' | paste -sd '|')
+          RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
+
+          if [ -n "$RELEVANT" ]; then
+            echo "변경 파일에서 typecheck 에러 발견:"
+            echo ""
+            echo "$RELEVANT"
+            exit 1
+          fi
+
+          echo "변경 파일 typecheck 통과"
 
       - name: Build (vite)
         run: pnpm --filter @letscareer/admin build

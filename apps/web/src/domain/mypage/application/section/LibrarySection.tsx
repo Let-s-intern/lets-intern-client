@@ -1,7 +1,10 @@
 'use client';
 
 import { useGetMypageMagnetListQuery } from '@/api/magnet/magnet';
-import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
+import {
+  LIBRARY_VISIBLE_MAGNET_TYPES,
+  MypageMagnetListItem,
+} from '@/api/magnet/magnetSchema';
 import dayjs from '@/lib/dayjs';
 import { useState } from 'react';
 import MoreButton from '../../ui/button/MoreButton';
@@ -54,7 +57,9 @@ const toLibraryCardConfig = (
 };
 
 const LibrarySection = () => {
-  const { data, isLoading } = useGetMypageMagnetListQuery({});
+  const { data, isLoading } = useGetMypageMagnetListQuery({
+    typeList: [...LIBRARY_VISIBLE_MAGNET_TYPES],
+  });
   const [showMore, setShowMore] = useState(false);
 
   if (isLoading) return <></>;

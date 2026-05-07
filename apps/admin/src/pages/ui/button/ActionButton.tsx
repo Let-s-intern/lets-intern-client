@@ -70,9 +70,9 @@ const ActionButtonBlock = styled.button<ActionButtonBlockProps>`
   align-items: center;
   justify-content: center;
   border-radius: 0.25rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  width: ${(props) => props.$width};
+  padding: 0.5rem 1rem;
+  min-width: ${(props) => props.$width};
+  white-space: nowrap;
   color: white;
 
   ${(props) =>

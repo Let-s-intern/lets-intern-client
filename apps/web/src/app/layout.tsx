@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable @next/next/next-script-for-ga */
 
+import StaleChunkHandler from '@/components/StaleChunkHandler';
 import { getCanonicalSiteUrl } from '@/utils/url';
 import { Metadata, Viewport } from 'next';
 import '../fonts/font.css';
@@ -159,6 +160,7 @@ export default function RootLayout({
           ></iframe>
         </noscript>
         <div id="root">{children}</div>
+        <StaleChunkHandler />
       </body>
     </html>
   );

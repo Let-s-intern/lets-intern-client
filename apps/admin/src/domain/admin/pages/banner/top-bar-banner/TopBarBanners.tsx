@@ -108,6 +108,7 @@ const TopBarBanners = () => {
           <EmptyContainer />
         ) : (
           <DataGrid
+            autoHeight
             rows={topBannerList?.bannerList || []}
             columns={columns}
             hideFooter

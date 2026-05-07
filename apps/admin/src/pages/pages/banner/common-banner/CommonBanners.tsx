@@ -130,6 +130,7 @@ const CommonBanners = () => {
 
       return (
         <DataGrid
+          autoHeight
           rows={allBanners}
           getRowId={(row) => row.uniqueId}
           columns={allColumns}

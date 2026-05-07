@@ -33,6 +33,7 @@ const OldScoreSection = ({
 
     documentTitle: `${programName} 수료증`,
     onAfterPrint: () => {
+      // eslint-disable-next-line no-console
       console.log('수료증 출력 완료');
     },
   });

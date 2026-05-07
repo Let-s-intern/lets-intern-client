@@ -1,3 +1,4 @@
+import { fetchJson } from '@letscareer/api';
 import { userAttendanceExperienceSchema } from '@/api/experience/experienceSchema';
 import {
   activeChallengeResponse,
@@ -63,16 +64,14 @@ export const useChallengeQuery = ({
 export const fetchChallengeData = async (
   challengeId: string,
 ): Promise<ChallengeIdPrimitive> => {
-  const res = await fetch(
+  return fetchJson<ChallengeIdPrimitive>(
     `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${challengeId}`,
+    {
+      code: 'CHALLENGE_FETCH_FAILED',
+      displayMessage: '챌린지 조회에 실패했습니다.',
+      parse: (data) => getChallengeIdPrimitiveSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch challenge data');
-  }
-
-  const data = await res.json();
-  return getChallengeIdPrimitiveSchema.parse(data.data);
 };
 
 export const usePatchChallengePayback = ({

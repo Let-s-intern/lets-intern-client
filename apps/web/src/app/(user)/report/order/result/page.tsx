@@ -42,6 +42,7 @@ const ReportPaymentResultContent = () => {
   const { payment } = useReportPayment();
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
     console.log('[useEffect] reportApplication', reportApplication);
   }, [reportApplication]);
 
@@ -74,6 +75,7 @@ const ReportPaymentResultContent = () => {
     }
 
     hasRequested.current = true;
+    // eslint-disable-next-line no-console
     console.log('reportApplication', reportApplication);
 
     if (searchParams.get('postApplicationDone') === 'true') {

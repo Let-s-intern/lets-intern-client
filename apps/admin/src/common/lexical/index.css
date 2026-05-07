@@ -1419,17 +1419,20 @@ button.action-button:disabled {
 .toolbar {
   @apply border;
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 1px;
   background: #fff;
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   vertical-align: middle;
-  height: 36px;
+  min-height: 36px;
   position: sticky;
   top: 0;
   z-index: 2;
   overflow-x: auto;
+  overflow-y: visible;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;

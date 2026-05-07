@@ -95,7 +95,7 @@ const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
 
 const BlogPostListPage = lazy(() => import('./pages/blog/BlogPostListPage'));
 const BlogCreatePage = lazy(() => import('./pages/blog/BlogCreatePage'));
-const BlogEditPage = lazy(() => import('./pages/blog/BlogEditRoute'));
+const BlogEditPage = lazy(() => import('./domain/admin/blog/BlogEditRoute'));
 const BlogRatingListPage = lazy(
   () => import('./pages/blog/BlogRatingListPage'),
 );
@@ -370,10 +370,13 @@ export const router = createBrowserRouter([
 
       // 쿠폰
       { path: '/coupons', element: withSuspense(<Coupons />) },
-      { path: '/coupons/new', element: withSuspense(<CouponEditor />) },
+      {
+        path: '/coupons/new',
+        element: withSuspense(<CouponEditor editorMode="create" />),
+      },
       {
         path: '/coupons/:couponId/edit',
-        element: withSuspense(<CouponEditor />),
+        element: withSuspense(<CouponEditor editorMode="edit" />),
       },
 
       // 블로그

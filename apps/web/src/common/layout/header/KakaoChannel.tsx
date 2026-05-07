@@ -15,6 +15,7 @@ const KakaoChannel = () => {
     })
       .then((response: any) => {})
       .catch((error: any) => {
+        // eslint-disable-next-line no-console
         console.log(error);
       });
   };

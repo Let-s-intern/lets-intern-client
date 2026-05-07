@@ -19,7 +19,7 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
 
   return (
     <div>
-      {!isCurationPage && <NavBar isLoginPage={isLoginPage} />}
+      <NavBar isLoginPage={isLoginPage} disableFixed={isCurationPage} />
       <div className="min-h-[31rem] w-full">{children}</div>
       {!isLoginPage && !isDarkPage && !isCurationPage && <Footer />}
       {!isLoginPage && !isCurationPage && <ChannelTalkBtn />}

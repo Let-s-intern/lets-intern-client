@@ -390,6 +390,7 @@ export default function AdminBlogReviewListPage() {
         </Button>
       </div>
       <DataGrid
+        autoHeight
         editMode="row"
         rows={rows}
         columns={columns}
