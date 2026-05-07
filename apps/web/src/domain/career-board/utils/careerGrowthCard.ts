@@ -150,7 +150,7 @@ const MAGNET_TYPE_LABEL: Record<string, string> = {
   VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '기타',
+  EVENT: '이벤트',
 };
 
 /** 무료 자료집(마그넷) 카드 */
