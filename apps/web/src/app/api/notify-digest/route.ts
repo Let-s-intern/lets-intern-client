@@ -1,9 +1,5 @@
 import { NextRequest } from 'next/server';
-import {
-  clearAll,
-  peekAll,
-  type DedupeEntry,
-} from '@/utils/errorDedupe';
+import { clearAll, peekAll, type DedupeEntry } from '@/utils/errorDedupe';
 
 const DIGEST_TOP_N = 20;
 const DIGEST_MESSAGE_PREVIEW_MAX = 200;
@@ -55,7 +51,11 @@ export async function GET(request: NextRequest) {
 
   const entries = peekAll();
   if (entries.length === 0) {
-    return Response.json({ success: true, count: 0, message: '집계 항목 없음' });
+    return Response.json({
+      success: true,
+      count: 0,
+      message: '집계 항목 없음',
+    });
   }
 
   const webhookUrl =
