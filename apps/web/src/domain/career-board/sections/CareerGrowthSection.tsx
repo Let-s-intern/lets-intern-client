@@ -2,6 +2,7 @@
 
 import { mypageApplicationsQueryOptions } from '@/api/application';
 import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
+import { LIBRARY_VISIBLE_MAGNET_TYPES } from '@/api/magnet/magnetSchema';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import {
@@ -169,7 +170,9 @@ const CareerGrowthContent = () => {
 
 const LibraryGrowthList = () => {
   const router = useRouter();
-  const { data: magnetData } = useSuspenseQuery(mypageMagnetListQueryOptions());
+  const { data: magnetData } = useSuspenseQuery(
+    mypageMagnetListQueryOptions([...LIBRARY_VISIBLE_MAGNET_TYPES]),
+  );
 
   const cardConfigs = useMemo(
     () => toLibraryCardConfigs(magnetData?.magnetList ?? []),
