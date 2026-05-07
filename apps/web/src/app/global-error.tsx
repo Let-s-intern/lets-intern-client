@@ -3,7 +3,6 @@
 import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
-import { sendErrorToWebhook } from '@/utils/webhook';
 import { rscRenderFailed } from '@/utils/log';
 
 export default function GlobalError({
@@ -26,18 +25,6 @@ export default function GlobalError({
 
     // §8.5.2 — RSC 렌더 실패 구조화 로그
     rscRenderFailed(error.digest, route);
-
-    // Webhook으로도 에러 전송 (이중 안전장치)
-    sendErrorToWebhook(error, {
-      url: typeof window !== 'undefined' ? window.location.href : undefined,
-      userAgent:
-        typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-      extra: {
-        digest: error.digest,
-      },
-    }).catch(() => {
-      // Webhook 전송 실패는 조용히 무시 (무한 루프 방지)
-    });
   }, [error]);
 
   return (
