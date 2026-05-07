@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { getMentorSchedule } from '../../dummy';
 import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
 import { addDays, getWeekStart, toDateString } from '../utils';
@@ -41,11 +41,11 @@ export function useTimeSlotState(
     setSelectedSlot(null);
   };
 
-  const handleSlotSelect = useCallback((slot: SelectedSlot) => {
+  const handleSlotSelect = (slot: SelectedSlot) => {
     setSelectedSlot((prev) =>
       prev?.date === slot.date && prev?.time === slot.time ? null : slot,
     );
-  }, []);
+  };
 
   const handleCancel = () => setSelectedSlot(null);
 

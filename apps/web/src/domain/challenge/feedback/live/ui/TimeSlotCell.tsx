@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { memo } from 'react';
 import type { SelectedSlot, SlotStatus } from '../types';
 
 interface Props {
@@ -36,27 +35,25 @@ const STATUS_CONFIG: Record<
   },
 };
 
-const TimeSlotCell = memo(
-  ({ status, isSelected, date, time, onSelect }: Props) => {
-    const { label, mobileLabel, className } = STATUS_CONFIG[status];
+const TimeSlotCell = ({ status, isSelected, date, time, onSelect }: Props) => {
+  const { label, mobileLabel, className } = STATUS_CONFIG[status];
 
-    return (
-      <div
-        onClick={
-          status === 'available' ? () => onSelect({ date, time }) : undefined
-        }
-        className={clsx(
-          'text-xxsmall12 md:text-xsmall14 flex items-center justify-center text-center',
-          isSelected
-            ? 'border-primary rounded-xs text-primary border-2'
-            : ['border-neutral-80 border-r', className],
-        )}
-      >
-        <span className="md:hidden">{mobileLabel}</span>
-        <span className="hidden md:inline">{label}</span>
-      </div>
-    );
-  },
-);
+  return (
+    <div
+      onClick={
+        status === 'available' ? () => onSelect({ date, time }) : undefined
+      }
+      className={clsx(
+        'text-xxsmall12 md:text-xsmall14 flex items-center justify-center text-center',
+        isSelected
+          ? 'border-primary rounded-xs text-primary border-2'
+          : ['border-neutral-80 border-r', className],
+      )}
+    >
+      <span className="md:hidden">{mobileLabel}</span>
+      <span className="hidden md:inline">{label}</span>
+    </div>
+  );
+};
 
 export default TimeSlotCell;
