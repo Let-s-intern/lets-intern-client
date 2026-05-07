@@ -289,7 +289,10 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
       ({ magnetId }: { magnetId: number }) => {
         if (magnetId === 1) {
           return Promise.reject({
-            response: { status: 409, data: { message: '이미 존재하는 신청 내역입니다.' } },
+            response: {
+              status: 409,
+              data: { message: '이미 존재하는 신청 내역입니다.' },
+            },
             status: 409,
           });
         }
@@ -317,7 +320,9 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
     await waitFor(() => {
       expect(tryPostMagnetApplicationMock).toHaveBeenCalledTimes(3);
     });
-    const calls = tryPostMagnetApplicationMock.mock.calls.map((args) => args[0].magnetId);
+    const calls = tryPostMagnetApplicationMock.mock.calls.map(
+      (args) => args[0].magnetId,
+    );
     expect(calls).toContain(1);
     expect(calls).toContain(101);
     expect(calls).toContain(102);
