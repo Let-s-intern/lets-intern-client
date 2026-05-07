@@ -30,6 +30,41 @@ interface FeedbackMissionCardProps {
   children?: React.ReactNode;
 }
 
+const cardInfoTextCls =
+  'text-xxsmall12 text-neutral-40 font-normal tracking-[-0.3px]';
+
+const btnCls =
+  'rounded-xxs text-xsmall14 border-primary text-primary border px-3 py-1.5 font-normal transition-colors items-center gap-1 hover:bg-primary-5';
+
+const DateField = ({
+  label,
+  start,
+  end,
+  highlighted,
+  className,
+}: {
+  label: string;
+  start: string;
+  end: string;
+  highlighted?: boolean;
+  className?: string;
+}) => (
+  <span
+    className={clsx(
+      'flex gap-1.5 tracking-[-0.36px]',
+      cardInfoTextCls,
+      className,
+    )}
+  >
+    <span className={highlighted ? 'text-neutral-0' : 'text-neutral-40'}>
+      {label}
+    </span>
+    <span className={highlighted ? 'text-primary-dark' : 'text-neutral-40'}>
+      {formatDay(start)} ~ {formatDay(end)}
+    </span>
+  </span>
+);
+
 const FeedbackMissionCard = ({
   config,
   buttonLabel,
@@ -52,41 +87,6 @@ const FeedbackMissionCard = ({
   } = config;
 
   const isToggle = openLabel !== undefined;
-
-  const cardInfoTextCls =
-    'text-xxsmall12 text-neutral-40 font-normal tracking-[-0.3px]';
-
-  const DateField = ({
-    label,
-    start,
-    end,
-    highlighted,
-    className,
-  }: {
-    label: string;
-    start: string;
-    end: string;
-    highlighted?: boolean;
-    className?: string;
-  }) => (
-    <span
-      className={clsx(
-        'flex gap-1.5 tracking-[-0.36px]',
-        cardInfoTextCls,
-        className,
-      )}
-    >
-      <span className={highlighted ? 'text-neutral-0' : 'text-neutral-40'}>
-        {label}
-      </span>
-      <span className={highlighted ? 'text-primary-dark' : 'text-neutral-40'}>
-        {formatDay(start)} ~ {formatDay(end)}
-      </span>
-    </span>
-  );
-
-  const btnCls =
-    'rounded-xxs text-xsmall14 border-primary text-primary border px-3 py-1.5 font-normal transition-colors items-center gap-1 hover:bg-primary-5';
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
