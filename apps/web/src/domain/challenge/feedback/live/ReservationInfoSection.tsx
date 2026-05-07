@@ -1,3 +1,4 @@
+import LiveFeedbackReview from './LiveFeedbackReview';
 import type { Mentor, Reservation } from './types';
 import MentorCard from './ui/MentorCard';
 import { formatReservationTime } from './utils';
@@ -68,25 +69,16 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
             </div>
           </div>
 
-          {/* CTA 버튼 */}
-          <div className="flex gap-4">
-            {ctaState !== 'done' && (
+          {ctaState === 'done' ? (
+            <LiveFeedbackReview />
+          ) : (
+            <div className="flex gap-4">
               <button
                 type="button"
                 className="border-primary text-xsmall14 text-primary flex-1 whitespace-nowrap rounded-sm border bg-neutral-100 py-3 font-semibold"
               >
                 멘토님께 질문하기
               </button>
-            )}
-
-            {ctaState === 'done' ? (
-              <button
-                type="button"
-                className="bg-primary text-xsmall14 flex-1 whitespace-nowrap rounded-sm py-3 font-semibold text-white"
-              >
-                LIVE 피드백 회고하기
-              </button>
-            ) : (
               <a
                 href={zepRoomUrl ?? undefined}
                 target="_blank"
@@ -100,8 +92,8 @@ const ReservationInfoSection = ({ mentor, reservation }: Props) => {
               >
                 LIVE 피드백 입장하기
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
