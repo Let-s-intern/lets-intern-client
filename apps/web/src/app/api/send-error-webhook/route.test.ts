@@ -74,7 +74,7 @@ describe('POST /api/send-error-webhook', () => {
       expect(mockedSend).not.toHaveBeenCalled();
     });
 
-    it("GTM b.parentNode 패턴 → ignored", async () => {
+    it('GTM b.parentNode 패턴 → ignored', async () => {
       const res = await POST(
         createPostRequest({
           error: {

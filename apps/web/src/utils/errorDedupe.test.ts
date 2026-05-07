@@ -28,9 +28,7 @@ describe('errorDedupe', () => {
     it('message 가 ERROR_SIGNATURE_MAX_LENGTH 보다 길면 잘림', () => {
       const longMsg = 'x'.repeat(ERROR_SIGNATURE_MAX_LENGTH + 50);
       const sig = buildSignature('Err', longMsg);
-      expect(sig).toBe(
-        `Err::${'x'.repeat(ERROR_SIGNATURE_MAX_LENGTH)}`,
-      );
+      expect(sig).toBe(`Err::${'x'.repeat(ERROR_SIGNATURE_MAX_LENGTH)}`);
       expect(sig.length).toBe(5 /* 'Err::' */ + ERROR_SIGNATURE_MAX_LENGTH);
     });
 
@@ -64,12 +62,12 @@ describe('errorDedupe', () => {
     });
 
     it('다른 signature → 각각 첫 발생으로 true', () => {
-      expect(
-        recordAndCheckFirst('sig-A', { name: 'A', message: '1' }),
-      ).toBe(true);
-      expect(
-        recordAndCheckFirst('sig-B', { name: 'B', message: '2' }),
-      ).toBe(true);
+      expect(recordAndCheckFirst('sig-A', { name: 'A', message: '1' })).toBe(
+        true,
+      );
+      expect(recordAndCheckFirst('sig-B', { name: 'B', message: '2' })).toBe(
+        true,
+      );
     });
 
     it('반복 호출 시 count 증가', () => {

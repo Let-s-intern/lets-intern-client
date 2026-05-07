@@ -317,8 +317,7 @@ describe('GET /api/notify-digest', () => {
 
       // Top 이슈 상세 — 첫 번째가 가장 높은 count
       const topSectionIdx = body.blocks.findIndex(
-        (b: { text?: { text?: string } }) =>
-          b.text?.text?.includes('상위'),
+        (b: { text?: { text?: string } }) => b.text?.text?.includes('상위'),
       );
       expect(topSectionIdx).toBeGreaterThanOrEqual(0);
       const firstIssueBlock = body.blocks[topSectionIdx + 1];

@@ -176,7 +176,9 @@ async function fetchSentryIssues({
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Sentry ${res.status} ${res.statusText}: ${body.slice(0, 200)}`);
+    throw new Error(
+      `Sentry ${res.status} ${res.statusText}: ${body.slice(0, 200)}`,
+    );
   }
   return (await res.json()) as SentryIssue[];
 }
@@ -208,7 +210,10 @@ const hhmmKst = (iso: string): string =>
  * 백분율 → block 문자 막대 (최대 width 25칸).
  */
 function bar(percent: number, width = 25): string {
-  const filled = Math.max(0, Math.min(width, Math.round((percent / 100) * width)));
+  const filled = Math.max(
+    0,
+    Math.min(width, Math.round((percent / 100) * width)),
+  );
   return '█'.repeat(filled) + '░'.repeat(width - filled);
 }
 
@@ -300,9 +305,7 @@ function formatDigestForSlack(issues: SentryIssue[]) {
   topIssues.forEach((i, idx) => {
     const titleSafe = escapeSlack((i.title || '(no title)').slice(0, 200));
     const culprit = i.culprit ? escapeSlack(i.culprit.slice(0, 100)) : '-';
-    const link = i.permalink
-      ? ` (<${i.permalink}|${i.shortId ?? i.id}>)`
-      : '';
+    const link = i.permalink ? ` (<${i.permalink}|${i.shortId ?? i.id}>)` : '';
     blocks.push({
       type: 'section',
       text: {
