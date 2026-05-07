@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 type ChannelTalkBtnProps = React.ComponentProps<'button'>;
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
+const libraryDetailPathRegex = /^\/library\/\d+/; // 라이브러리 상세페이지
 const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
@@ -55,6 +56,7 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
       className={twMerge(
         'shadow-05 fixed right-4 z-30 flex w-32 items-center rounded-full bg-neutral-100 md:right-6 md:w-36',
         programDetailPathRegex.test(pathname) ||
+          libraryDetailPathRegex.test(pathname) ||
           (pathname.startsWith('/report') && isUpTo1280) ||
           pathname.startsWith('/report/landing') ||
           (pathname.startsWith('/payment-input') && isUpTo991)
