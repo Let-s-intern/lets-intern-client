@@ -36,6 +36,24 @@ const EventExtraMagnetSection = ({
     const appliedIds = new Set(
       (appliedData?.magnetList ?? []).map((m) => m.magnetId),
     );
+
+    // 🔧 MOCK (비활성): BE 가 빈 답변(`magnetAnswerList: []`) 신청을 거부하는 경우의 임시 fallback.
+    //   - 활성화 조건: 스테이징/운영에서 거부 케이스가 실제로 확인된 경우에만.
+    //   - 동작: 거부된 magnetId 를 localStorage 에 누적 저장하여 다음 진입 시 후보군에서 제외.
+    //   - 정식 해결: BE 응답에 "필수 답변 보유" 플래그 노출, 또는 빈 답변 신청 허용 정책 합의.
+    //   - 검증 후 불필요시 본 블록 통째 제거. (TODO: 2.4 메모 참조 — be-request-magnet-batch-application.md)
+    //
+    // const rejectedIds = new Set<number>(
+    //   JSON.parse(
+    //     typeof window !== 'undefined'
+    //       ? (window.localStorage.getItem('rejected-extra-magnet-ids') ?? '[]')
+    //       : '[]',
+    //   ) as number[],
+    // );
+    // return candidateData.magnetList.filter(
+    //   (m) => !appliedIds.has(m.magnetId) && !rejectedIds.has(m.magnetId),
+    // );
+
     return candidateData.magnetList.filter((m) => !appliedIds.has(m.magnetId));
   }, [candidateData, appliedData]);
 
