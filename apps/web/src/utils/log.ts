@@ -132,3 +132,71 @@ export function replayFlushed(
     ...(errorCode !== undefined && { errorCode }),
   });
 }
+
+/**
+ * 자료집 신청 페이지 마운트.
+ * Logs level: info. EventExtraMagnetSection 가 노출되어야 할 type 인지 확인용.
+ */
+export function libraryApplyMounted(args: {
+  magnetId: number;
+  magnetType: string;
+  variant: string;
+  useLaunchAlert: boolean;
+}): void {
+  Sentry.logger.info('library.apply.mounted', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — 두 쿼리(/magnet, /magnet/my) 의 상태 스냅샷.
+ * 로딩 완료 시점에 한 번만 emit 한다. count 가 null 이면 응답 부재.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraQueries(args: {
+  candidateLoading: boolean;
+  appliedLoading: boolean;
+  candidateCount: number | null;
+  appliedCount: number | null;
+}): void {
+  Sentry.logger.info('library.apply.event_extra.queries', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — 후보-신청이력 차집합 계산 결과.
+ * availableCount === 0 이면 섹션이 노출되지 않는다.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraComputed(args: {
+  candidateCount: number;
+  appliedCount: number;
+  availableCount: number;
+}): void {
+  Sentry.logger.info('library.apply.event_extra.computed', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — `null` 반환 시 사유.
+ * `loading`: 둘 중 하나라도 로딩 중. `empty`: 차집합이 0개.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraSkipped(
+  reason: 'loading' | 'empty',
+): void {
+  Sentry.logger.info('library.apply.event_extra.skipped', { reason });
+}
+
+/**
+ * EVENT 추가 마그넷 N+1 일괄 신청 결과.
+ * 일부 실패 시 warn, 전부 성공 시 info.
+ */
+export function libraryApplyEventExtraSubmitBatch(args: {
+  totalCount: number;
+  successCount: number;
+  failedCount: number;
+  failedIds: number[];
+}): void {
+  if (args.failedCount > 0) {
+    Sentry.logger.warn('library.apply.event_extra.submit_batch', { ...args });
+  } else {
+    Sentry.logger.info('library.apply.event_extra.submit_batch', { ...args });
+  }
+}

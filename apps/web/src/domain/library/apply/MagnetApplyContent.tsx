@@ -9,6 +9,10 @@ import CareerInfoForm, {
   CareerInfoValues,
 } from '@/domain/mypage/career/CareerInfoForm';
 import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
+import {
+  libraryApplyEventExtraSubmitBatch,
+  libraryApplyMounted,
+} from '@/utils/log';
 import { getLibraryPathname } from '@/utils/url';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -86,6 +90,15 @@ const MagnetApplyContent = ({
     mutateAsync: tryPostMagnetApplication,
     isPending: postApplicationIsPending,
   } = usePostMagnetApplicationMutation();
+
+  useEffect(() => {
+    libraryApplyMounted({
+      magnetId,
+      magnetType,
+      variant,
+      useLaunchAlert,
+    });
+  }, [magnetId, magnetType, variant, useLaunchAlert]);
 
   useEffect(() => {
     if (userData) {
@@ -250,6 +263,12 @@ const MagnetApplyContent = ({
             r.status === 'rejected' ? selectedExtraMagnetIds[i] : null,
           )
           .filter((id): id is number => id !== null);
+        libraryApplyEventExtraSubmitBatch({
+          totalCount: selectedExtraMagnetIds.length,
+          successCount: selectedExtraMagnetIds.length - failedIds.length,
+          failedCount: failedIds.length,
+          failedIds,
+        });
         if (failedIds.length > 0) {
           alert(
             `일부 자료집 신청에 실패했습니다 (실패 magnetId: ${failedIds.join(', ')})`,

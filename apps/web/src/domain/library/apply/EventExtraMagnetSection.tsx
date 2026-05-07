@@ -6,7 +6,12 @@ import {
 } from '@/api/magnet/magnet';
 import { LIBRARY_VISIBLE_MAGNET_TYPES } from '@/api/magnet/magnetSchema';
 import CheckBox from '@/common/box/CheckBox';
-import { useMemo } from 'react';
+import {
+  libraryApplyEventExtraComputed,
+  libraryApplyEventExtraQueries,
+  libraryApplyEventExtraSkipped,
+} from '@/utils/log';
+import { useEffect, useMemo } from 'react';
 
 const EXTRA_MAGNET_PAGE_SIZE = 100;
 
@@ -30,6 +35,18 @@ const EventExtraMagnetSection = ({
       typeList: [...LIBRARY_VISIBLE_MAGNET_TYPES],
       pageable: { page: 1, size: EXTRA_MAGNET_PAGE_SIZE },
     });
+
+  const candidateCount = candidateData?.magnetList.length ?? null;
+  const appliedCount = appliedData?.magnetList.length ?? null;
+
+  useEffect(() => {
+    libraryApplyEventExtraQueries({
+      candidateLoading: isCandidateLoading,
+      appliedLoading: isAppliedLoading,
+      candidateCount,
+      appliedCount,
+    });
+  }, [isCandidateLoading, isAppliedLoading, candidateCount, appliedCount]);
 
   const availableMagnets = useMemo(() => {
     if (!candidateData) return [];
@@ -56,6 +73,28 @@ const EventExtraMagnetSection = ({
 
     return candidateData.magnetList.filter((m) => !appliedIds.has(m.magnetId));
   }, [candidateData, appliedData]);
+
+  const isReady = !isCandidateLoading && !isAppliedLoading;
+  const availableCount = availableMagnets.length;
+
+  useEffect(() => {
+    if (!isReady) return;
+    libraryApplyEventExtraComputed({
+      candidateCount: candidateData?.magnetList.length ?? 0,
+      appliedCount: appliedData?.magnetList.length ?? 0,
+      availableCount,
+    });
+  }, [isReady, candidateData, appliedData, availableCount]);
+
+  useEffect(() => {
+    if (!isReady) {
+      libraryApplyEventExtraSkipped('loading');
+      return;
+    }
+    if (availableCount === 0) {
+      libraryApplyEventExtraSkipped('empty');
+    }
+  }, [isReady, availableCount]);
 
   if (isCandidateLoading || isAppliedLoading) return null;
   if (availableMagnets.length === 0) return null;
