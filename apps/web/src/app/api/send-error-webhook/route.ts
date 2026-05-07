@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     // crash 태그는 instrumentation-client.ts beforeSend 가 isCrashEvent 결과로 부착.
-    const isCrash = tags?.crash === 'true' || tags?.crash === true;
+    // normalizeSentryTags 가 모든 태그 값을 문자열로 변환하므로 'true' 비교만으로 충분.
+    const isCrash = tags?.crash === 'true';
 
     // crash 가 아닌 경우만 dedupe — 첫 발생 send, 반복은 카운트만.
     if (!isCrash) {

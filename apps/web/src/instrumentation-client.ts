@@ -74,9 +74,11 @@ Sentry.init({
     // 1) production 환경이 아니면 무조건 차단 (preview/dev 운영 채널 오염 방지)
     // 2) production 이어도, crash 가 아니고 noise 분류된 경우 차단
     //    (crash 면 noise 라벨과 무관하게 항상 발송 — 사용자 영향 우선)
-    const isProduction =
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' ||
-      process.env.NODE_ENV === 'production';
+    //
+    // Vercel preview/dev 빌드도 NODE_ENV='production' 으로 빌드되므로
+    // NODE_ENV 만으로는 운영 구분이 안 됨. NEXT_PUBLIC_VERCEL_ENV 만을
+    // single source of truth 로 사용 (값 없으면 non-production 으로 간주).
+    const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
     const shouldSkipWebhook =
       !isProduction || (!isCrash && noiseCategory !== null);
 
