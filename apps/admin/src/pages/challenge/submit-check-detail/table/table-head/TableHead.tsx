@@ -36,7 +36,10 @@ const TableHead = ({
   return (
     <div
       className={clsx(
-        'flex justify-between text-sm font-medium text-[#868686]',
+        // 각 셀에 명시적 w-[N%] 가 부여되고 합이 100% 이므로
+        // justify-between 으로 잔여공간을 분배할 필요가 없다.
+        // (행과 동일한 컨테이너 스타일을 유지해야 컬럼이 정확히 정렬된다.)
+        'flex w-full text-sm font-medium text-[#868686]',
         className,
       )}
     >

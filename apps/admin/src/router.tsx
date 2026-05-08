@@ -370,10 +370,13 @@ export const router = createBrowserRouter([
 
       // 쿠폰
       { path: '/coupons', element: withSuspense(<Coupons />) },
-      { path: '/coupons/new', element: withSuspense(<CouponEditor />) },
+      {
+        path: '/coupons/new',
+        element: withSuspense(<CouponEditor editorMode="create" />),
+      },
       {
         path: '/coupons/:couponId/edit',
-        element: withSuspense(<CouponEditor />),
+        element: withSuspense(<CouponEditor editorMode="edit" />),
       },
 
       // 블로그

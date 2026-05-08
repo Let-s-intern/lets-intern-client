@@ -107,7 +107,12 @@ const PopUpBanners = () => {
         ) : error || !popupList || popupList.bannerList.length === 0 ? (
           <EmptyContainer />
         ) : (
-          <DataGrid rows={popupList.bannerList} columns={columns} hideFooter />
+          <DataGrid
+            autoHeight
+            rows={popupList.bannerList}
+            columns={columns}
+            hideFooter
+          />
         )}
       </TableLayout>
       <WarningModal

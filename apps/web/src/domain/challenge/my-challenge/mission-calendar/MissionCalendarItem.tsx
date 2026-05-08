@@ -48,6 +48,7 @@ const MissionCalendarItem = ({
 
   const isValid = () => {
     if (isAxiosError(error)) {
+      // eslint-disable-next-line no-console
       console.log('error:', error);
       const errorCode = error?.response?.data.status;
       if (errorCode === 400) {

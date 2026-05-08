@@ -17,12 +17,26 @@ interface UserTableBodyProps {
   programType: ProgramTypeUpperCase;
 }
 
+const getRowKey = (
+  item:
+    | ChallengeApplication
+    | LiveApplication
+    | GuidebookApplication
+    | VodApplication,
+  programType: ProgramTypeUpperCase,
+): number => {
+  if (programType === 'CHALLENGE') {
+    return (item as ChallengeApplication).application.id;
+  }
+  return (item as LiveApplication | GuidebookApplication | VodApplication).id;
+};
+
 const UserTableBody = ({ applications, programType }: UserTableBodyProps) => {
   return (
     <tbody>
-      {applications.map((item, index) => (
+      {applications.map((item) => (
         <TableRow
-          key={index}
+          key={getRowKey(item, programType)}
           applicationItem={item}
           programType={programType}
         />

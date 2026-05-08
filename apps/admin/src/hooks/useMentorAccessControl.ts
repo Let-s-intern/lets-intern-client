@@ -6,10 +6,13 @@ export default function useMentorAccessControl() {
   const { programId } = useParams<{ programId: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading: isChallengeLoading } = useMentorChallengeListQuery();
-  const { data: isAdmin } = useIsAdminQuery();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
+  // admin이면 mentor 검증이 불필요하므로 /challenge-mentor 호출 자체를 막아 403 회피.
+  const { data, isLoading: isChallengeLoading } = useMentorChallengeListQuery({
+    enabled: isAdmin === false,
+  });
 
-  const isLoading = isChallengeLoading || !programId;
+  const isLoading = isAdminLoading || isChallengeLoading || !programId;
   const mentorChallengeIds = data?.myChallengeMentorVoList.map(
     (item) => item.challengeId,
   );

@@ -141,6 +141,7 @@ export default function MentorMenteeAssignment() {
         />
 
         <DataGrid
+          autoHeight
           rows={rows}
           columns={columns}
           checkboxSelection

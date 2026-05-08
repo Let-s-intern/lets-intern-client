@@ -129,6 +129,7 @@ export default function FeedbackParticipantPage() {
       </div>
 
       <DataGrid
+        autoHeight
         rows={rows}
         columns={columns}
         disableRowSelectionOnClick
