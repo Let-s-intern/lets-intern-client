@@ -1,6 +1,6 @@
 import { UserMagnetInfo } from '@/api/magnet/magnetSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
+import BlogLinkShareBtn from '@/domain/blog/ui/BlogLilnkShareBtn';
 import dayjs from '@/lib/dayjs';
 import { LockKeyhole } from 'lucide-react';
 import Image from 'next/image';

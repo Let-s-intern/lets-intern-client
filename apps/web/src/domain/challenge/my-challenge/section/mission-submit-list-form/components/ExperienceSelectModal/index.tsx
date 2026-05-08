@@ -3,7 +3,7 @@
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import BaseModal from '@/common/modal/BaseModal';
 import DataTable from '@/common/table/DataTable';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
 import { ExperienceData, getExperienceHeaders } from '../../data';

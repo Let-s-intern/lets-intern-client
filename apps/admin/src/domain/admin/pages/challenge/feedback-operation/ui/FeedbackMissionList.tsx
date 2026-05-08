@@ -12,6 +12,17 @@ function FeedbackMissionList() {
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       { field: 'title', headerName: '미션 명', flex: 1, minWidth: 180 },
+      {
+        field: 'challengeOptionType',
+        headerName: '피드백 타입',
+        width: 90,
+        sortable: false,
+        valueFormatter: (_: unknown, row: Row) => {
+          if (row.challengeOptionType === 'WRITTEN_FEEDBACK') return '서면';
+          if (row.challengeOptionType === 'LIVE_FEEDBACK') return '라이브';
+          return '-';
+        },
+      },
       { field: 'th', headerName: '미션 회차', type: 'number', width: 90 },
       {
         field: 'startDate',

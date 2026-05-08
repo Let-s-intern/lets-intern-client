@@ -12,7 +12,7 @@ import {
 import BaseButton from '@/common/button/BaseButton';
 import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
-import ReportSubmitModal from '@/common/modal/ReportSubmitModal';
+import ReportSubmitModal from '@/domain/report/modal/ReportSubmitModal';
 import BottomSheet from '@/common/sheet/BottomSheeet';
 import {
   AdditionalInfoSection,

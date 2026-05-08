@@ -18,7 +18,7 @@ import {
   reportPriceTypeEnum,
 } from '@/api/report';
 import ModalOverlay from '@/common/ModalOverlay';
-import RequiredStar from '@/common/RequiredStar';
+import RequiredStar from './ui/RequiredStar';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { generateOrderId } from '@/lib/order';
@@ -33,9 +33,9 @@ import {
   OptionFormCheckboxControlLabel,
   OptionFormRadioControlLabel,
 } from '../../common/ControlLabel';
-import DrawerCloseBtn from '../../common/drawer/DrawerCloseBtn';
+import DrawerCloseBtn from './ui/DrawerCloseBtn';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
-import PaymentErrorNotification from '../../common/PaymentErrorNotification';
+import PaymentErrorNotification from '@/common/PaymentErrorNotification';
 import PriceView from '../../common/price/PriceView';
 import GradientButton from '../program/program-detail/button/GradientButton';
 

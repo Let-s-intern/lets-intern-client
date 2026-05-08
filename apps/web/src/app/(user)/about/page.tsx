@@ -1,16 +1,16 @@
 'use client';
 
-import AboutHeader from '@/domain/about/v1/header/AboutHeader';
-import ResultSection from '@/domain/about/v1/ResultSection';
-import CommunitySection from '@/domain/about/v1/section/CommunitySection';
-import ContactSection from '@/domain/about/v1/section/ContactSection';
-import EndSection from '@/domain/about/v1/section/EndSection';
-import IntroSection from '@/domain/about/v1/section/introduction/IntroSection';
-import PartnerSection from '@/domain/about/v1/section/PartnerSection';
-import ProblemSection from '@/domain/about/v1/section/problem/ProblemSection';
-import ProgramMenuSection from '@/domain/about/v1/section/program/ProgramMenuSection';
-import ReviewSection from '@/domain/about/v1/section/ReviewSection';
-import SolutionSection from '@/domain/about/v1/section/solution/SolutionSection';
+import AboutHeader from '@/domain/about/header/AboutHeader';
+import ResultSection from '@/domain/about/ResultSection';
+import CommunitySection from '@/domain/about/section/CommunitySection';
+import ContactSection from '@/domain/about/section/ContactSection';
+import EndSection from '@/domain/about/section/EndSection';
+import IntroSection from '@/domain/about/section/introduction/IntroSection';
+import PartnerSection from '@/domain/about/section/PartnerSection';
+import ProblemSection from '@/domain/about/section/problem/ProblemSection';
+import ProgramMenuSection from '@/domain/about/section/program/ProgramMenuSection';
+import ReviewSection from '@/domain/about/section/ReviewSection';
+import SolutionSection from '@/domain/about/section/solution/SolutionSection';
 
 const About = () => {
   return (

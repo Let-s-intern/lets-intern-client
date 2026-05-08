@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { FADE_IN } from '../animations';
-import InstagramCard from '../components/InstagramCard';
+import InstagramCard from '../ui/InstagramCard';
 import { instagramChannels } from '../data/instagram';
 
 export default function InstagramSection() {

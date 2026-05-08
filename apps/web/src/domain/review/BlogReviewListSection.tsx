@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetBlogReviewList } from '@/api/review/review';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import BlogReviewCard from '@/domain/review/BlogReviewCard';
 import { ProgramTypeUpperCase } from '@/schema';
 import { useSearchParams } from 'next/navigation';

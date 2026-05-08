@@ -1,5 +1,5 @@
 import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
-import { If } from '@/common/If';
+import { If } from '@/domain/challenge/ui/If';
 import { useMemo } from 'react';
 import { ExperienceData, isUserExperienceComplete } from '../data';
 import { EmptyState } from './EmptyState';

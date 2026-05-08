@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+export const ChallengeOptionTypeEnum = z.enum([
+  'WRITTEN_FEEDBACK',
+  'LIVE_FEEDBACK',
+]);
+export type ChallengeOptionType = z.infer<typeof ChallengeOptionTypeEnum>;
+
 // 챌린지 옵션
 export const challengeOptionSchema = z.object({
   challengeOptionId: z.number(),
@@ -8,6 +14,7 @@ export const challengeOptionSchema = z.object({
   price: z.number().optional().nullable(),
   discountPrice: z.number().optional().nullable(),
   isFeedback: z.boolean().default(false),
+  type: ChallengeOptionTypeEnum.nullish(),
 });
 
 export type ChallengeOption = z.infer<typeof challengeOptionSchema>;
@@ -25,6 +32,7 @@ export interface PostChallengeOptionReq {
   price: number;
   discountPrice: number;
   isFeedback: boolean;
+  type?: ChallengeOptionType | null;
 }
 
 // PATCH 챌린지 옵션 수정 Request
@@ -35,4 +43,5 @@ export interface PatchChallengeOptionReq {
   price?: number | null;
   discountPrice?: number | null;
   isFeedback?: boolean;
+  type?: ChallengeOptionType | null;
 }

@@ -11,7 +11,7 @@ import {
 
 import { useUserProgramQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import EmptyCardList from '@/domain/program/programs/card/EmptyCardList';
 import ProgramCard from '@/domain/program/programs/card/ProgramCard';
 import FreeMagnetSection from '@/domain/program/section/FreeMagnetSection';

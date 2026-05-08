@@ -10,7 +10,7 @@ import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompet
 import DeleteCell from '@/domain/mypage/experience/table-cell/DeleteCell';
 import PeriodCell from '@/domain/mypage/experience/table-cell/PeriodCell';
 import YearCell from '@/domain/mypage/experience/table-cell/YearCell';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import MuiPagination from '@/common/pagination/MuiPagination';
 import {
   convertFilterUiToApiFormat,
   getExperienceRowHeight,

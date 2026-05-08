@@ -2,7 +2,7 @@
 
 import { usePostMagnetApplicationMutation } from '@/api/magnet/magnet';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
-import MarketingConsentSection from '@/common/form/MarketingConsentSection';
+import MarketingConsentSection from '../ui/MarketingConsentSection';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,

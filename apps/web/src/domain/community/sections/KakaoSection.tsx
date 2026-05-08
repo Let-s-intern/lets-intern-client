@@ -3,8 +3,8 @@
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { FADE_IN } from '../animations';
-import OgonggoBlock from '../components/OgonggoBlock';
-import QnaChatCard from '../components/QnaChatCard';
+import OgonggoBlock from '../ui/OgonggoBlock';
+import QnaChatCard from '../ui/QnaChatCard';
 import { kakaoRooms } from '../data/kakao';
 
 export default function KakaoSection() {
