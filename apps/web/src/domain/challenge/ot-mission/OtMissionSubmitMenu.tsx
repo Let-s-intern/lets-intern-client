@@ -8,7 +8,7 @@ import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ParsedCommentBox from './my-challenge/ParsedCommentBox';
+import ParsedCommentBox from '../my-challenge/ParsedCommentBox';
 
 interface Props {
   currentSchedule: Schedule;

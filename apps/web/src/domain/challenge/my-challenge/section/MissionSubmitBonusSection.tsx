@@ -7,7 +7,7 @@ import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
+import LinkChangeConfirmationModal from '../../modal/LinkChangeConfirmationModal';
 import AgreementCheckbox from '../mission/AgreementCheckbox';
 import BankSelectDropdown from '../mission/BankSelectDropdown';
 import MissionSubmitButton from '../mission/MissionSubmitButton';

@@ -3,8 +3,8 @@ import { usePostBlogBonus } from '@/api/review/review';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import BankSelectDropdown from './my-challenge/mission/BankSelectDropdown';
-import ParsedCommentBox from './my-challenge/ParsedCommentBox';
+import BankSelectDropdown from '../my-challenge/mission/BankSelectDropdown';
+import ParsedCommentBox from '../my-challenge/ParsedCommentBox';
 
 interface Props {
   currentSchedule: Schedule;
