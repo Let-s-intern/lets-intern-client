@@ -7,7 +7,7 @@ const ProgramRecommendCTA = () => {
         나에게 맞는 프로그램을 찾기 어려우신가요?
       </span>
       <Link
-        href="/program-recommend"
+        href="/curation"
         className="text-0.75-medium rounded-xs bg-primary text-static-100 hover:bg-primary-dark md:text-xsmall14 shrink-0 px-4 py-2 transition-colors md:px-4 md:py-2"
       >
         나에게 맞는 프로그램 찾기

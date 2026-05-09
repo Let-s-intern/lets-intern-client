@@ -43,9 +43,16 @@ export const getBottomNavBarClassNameByPath = (pathname: string) => {
 
 interface NavBarProps extends React.ComponentProps<'header'> {
   isLoginPage?: boolean;
+  /**
+   * true일 경우 fixed 헤더와 관련 translate UI 적용을 비활성화하고
+   * 페이지 콘텐츠와 함께 흐르는(static) 헤더로 렌더링한다.
+   * 큐레이션 페이지처럼 자체 sticky nav가 viewport 상단을 차지해야 할 때 사용.
+   * 참고: useScrollDirection 훅 자체는 계속 호출되며, translate 클래스 적용만 차단된다.
+   */
+  disableFixed?: boolean;
 }
 
-const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
+const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -92,10 +99,16 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(
-          'fixed top-0 z-30 w-screen bg-white transition-transform duration-300',
-          !(isMobile && location.pathname.startsWith('/challenge')) &&
+          'w-screen bg-white',
+          disableFixed
+            ? 'relative'
+            : 'fixed top-0 z-30 transition-transform duration-300',
+          !(isMobile && pathname.startsWith('/challenge')) &&
             'border-neutral-80 border-b',
-          scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
+          !disableFixed &&
+            (scrollDirection === 'DOWN'
+              ? '-translate-y-full'
+              : 'translate-y-0'),
         )}
       >
         {/* 1단 */}
@@ -292,13 +305,15 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         </SideNavItem>
       </SideNavContainer>
 
-      {/* 네비게이션 바 공간 차지 */}
-      <Spacer
-        hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)}
-        backgroundColor={
-          pathname.startsWith('/report') ? 'bg-black' : 'bg-white'
-        }
-      />
+      {/* 네비게이션 바 공간 차지 (fixed일 때만 필요) */}
+      {!disableFixed && (
+        <Spacer
+          hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)}
+          backgroundColor={
+            pathname.startsWith('/report') ? 'bg-black' : 'bg-white'
+          }
+        />
+      )}
     </header>
   );
 };

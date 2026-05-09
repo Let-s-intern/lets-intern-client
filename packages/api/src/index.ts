@@ -4,6 +4,13 @@ export {
   type AuthHeaderResolver,
   type UnauthorizedHandler,
 } from './createAuthorizedAxios';
+export { AppError, ApiError, AuthError, SchemaParseError } from './errors';
+export {
+  fetchJson,
+  setFetchJsonStartSpan,
+  setFetchJsonLogger,
+  type FetchJsonLogger,
+} from './fetchJson';
 export {
   SERVER_API,
   SERVER_API_V2,

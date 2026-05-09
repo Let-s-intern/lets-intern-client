@@ -16,7 +16,7 @@ import ProgramDetailNavigation, {
   LIVE_PROGRAM_INTRO_ID,
   LIVE_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
-import MoreReviewButton from '../../review/MoreReviewButton';
+import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import LiveBasicInfo from './ui/LiveBasicInfo';
 import LiveCurriculum from './ui/LiveCurriculum';

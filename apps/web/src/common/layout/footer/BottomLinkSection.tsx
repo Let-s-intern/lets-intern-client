@@ -5,6 +5,7 @@ const onClickAddChannel = () => {
   window.Kakao.Channel.followChannel({
     channelPublicId: '_tCeHG',
   }).catch((error: any) => {
+    // eslint-disable-next-line no-console
     console.log(error);
   });
 };

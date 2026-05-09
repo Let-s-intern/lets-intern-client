@@ -38,7 +38,8 @@ const TextareaCell = ({
       rows={1}
       className={clsx(
         {
-          'rounded-md border border-neutral-200': !disabled,
+          'rounded-md border border-neutral-400 focus:border-neutral-600 focus:outline-none':
+            !disabled,
         },
         'bg-static-100 w-full resize-none overflow-hidden p-2',
       )}

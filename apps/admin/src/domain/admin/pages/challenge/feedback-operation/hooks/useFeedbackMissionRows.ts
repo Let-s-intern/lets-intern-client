@@ -31,6 +31,7 @@ const useFeedbackMissionRows = (): Row[] => {
         endDate: item.endDate,
         challengeOptionCode: item.challengeOptionCode,
         challengeOptionTitle: item.challengeOptionTitle,
+        challengeOptionType: item.challengeOptionType,
         submittedCount: item.submittedCount,
         totalCount: item.totalCount,
         url: `/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,

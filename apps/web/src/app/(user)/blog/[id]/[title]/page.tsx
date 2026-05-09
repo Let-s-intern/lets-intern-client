@@ -19,6 +19,7 @@ import {
   getBlogTitle,
 } from '@/utils/url';
 import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
+import { emitBlogRecommendFallbackSpan } from '@/domain/blog/utils/blogFallbackSpan';
 import * as Sentry from '@sentry/nextjs';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
@@ -73,7 +74,10 @@ const BlogDetailPage = async ({
   const { id, title: _title } = await params;
   Sentry.setTag('blog.id', id);
 
-  const blog = await fetchBlogData(id);
+  const blog = await Sentry.startSpan(
+    { name: 'blog.detail.render', attributes: { blogId: id } },
+    () => fetchBlogData(id),
+  );
 
   // 올바른 경로 생성
   const correctPathname = getBlogPathname({
@@ -102,6 +106,7 @@ const BlogDetailPage = async ({
     : blogInfo?.content;
   const [blogRecommendList, programRecommendList] = await Promise.all([
     getBlogRecommendList().catch((err) => {
+      emitBlogRecommendFallbackSpan({ section: 'blogRecommendList', err });
       captureBlogError(err, {
         section: 'blogRecommendList',
         extra: { blogId: id },
@@ -109,6 +114,7 @@ const BlogDetailPage = async ({
       return [];
     }),
     getProgramRecommendList().catch((err) => {
+      emitBlogRecommendFallbackSpan({ section: 'programRecommendList', err });
       captureBlogError(err, {
         section: 'programRecommendList',
         extra: { blogId: id },

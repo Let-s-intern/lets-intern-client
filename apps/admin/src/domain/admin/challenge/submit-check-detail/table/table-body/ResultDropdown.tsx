@@ -27,7 +27,7 @@ const ResultDropdown = ({
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (result: AttendanceItem['attendance']['result']) => {
-      const res = await axiosV2.patch(`/attendance/${attendance.id}`, {
+      const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {
         result,
       });
       const data = res.data;
