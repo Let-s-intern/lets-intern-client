@@ -8,11 +8,11 @@ import { Suspense } from 'react';
 import { useGetChallengeTitle } from '@/api/challenge/challenge';
 import { useGetProgramReviewDetail } from '@/api/review/review';
 import { useUserQuery } from '@/api/user/user';
-import GoalOrConcernsBox from '@/domain/review/form/GoalOrConcernsBox';
-import ReviewInstruction from '@/domain/review/form/ReviewInstruction';
+import GoalOrConcernsBox from '@/common/review-form/GoalOrConcernsBox';
+import ReviewInstruction from '@/common/review-form/ReviewInstruction';
 import ReviewModal from '@/domain/review/modal/ReviewModal';
-import ReviewQuestion from '@/domain/review/form/ReviewQuestion';
-import ReviewTextarea from '@/domain/review/form/ReviewTextarea';
+import ReviewQuestion from '@/common/review-form/ReviewQuestion';
+import ReviewTextarea from '@/common/review-form/ReviewTextarea';
 import TenScore from '@/domain/review/score/TenScore';
 
 const ChallengeReviewPageContent = () => {

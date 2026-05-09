@@ -6,10 +6,10 @@ import { Suspense } from 'react';
 
 import { useGetLiveTitle } from '@/api/program';
 import { useGetProgramReviewDetail } from '@/api/review/review';
-import ReviewInstruction from '@/domain/review/form/ReviewInstruction';
+import ReviewInstruction from '@/common/review-form/ReviewInstruction';
 import ReviewModal from '@/domain/review/modal/ReviewModal';
-import ReviewQuestion from '@/domain/review/form/ReviewQuestion';
-import ReviewTextarea from '@/domain/review/form/ReviewTextarea';
+import ReviewQuestion from '@/common/review-form/ReviewQuestion';
+import ReviewTextarea from '@/common/review-form/ReviewTextarea';
 import TenScore from '@/domain/review/score/TenScore';
 
 const LiveReviewPageContent = () => {

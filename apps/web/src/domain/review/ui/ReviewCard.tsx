@@ -10,7 +10,6 @@ import ReviewBadge from './ReviewBadge';
 import ReviewItemBlock from './ReviewItemBlock';
 import {
   getThumbnail,
-  questionIcon,
   questionPriority,
   reviewTypeToProgramType,
 } from './reviewCardHelpers';
@@ -108,7 +107,6 @@ const ReviewCard = ({
                 questionType={null}
                 answer={review.reviewInfo.attendanceReview}
                 lineClamp={expandable ? reviewItemLineClamp : 5}
-                icon={questionIcon(null)}
                 expandable={expandable}
               />
             </div>
@@ -125,7 +123,6 @@ const ReviewCard = ({
               key={index}
               {...reviewItem}
               lineClamp={reviewItemLineClamp}
-              icon={questionIcon(reviewItem.questionType ?? null)}
               expandable={expandable}
             />
           ))}

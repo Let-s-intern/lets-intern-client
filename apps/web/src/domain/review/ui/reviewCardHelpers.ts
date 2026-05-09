@@ -1,12 +1,5 @@
 import { ReportType } from '@/api/report';
 import { GetReview, QuestionType, ReviewType } from '@/api/review/review';
-import Bubble from '@/assets/graphic/bubble.svg?react';
-import Heart from '@/assets/graphic/heart.svg?react';
-import Lightbulb from '@/assets/graphic/lightbulb.svg?react';
-import Pen from '@/assets/graphic/pen.svg?react';
-import PinBlue from '@/assets/graphic/pin_blue.svg?react';
-import PinRed from '@/assets/graphic/pin_red.svg?react';
-import Trophy from '@/assets/graphic/trophy.svg?react';
 import { ProgramTypeUpperCase } from '@/schema';
 
 export function reviewTypeToProgramType(
@@ -36,25 +29,6 @@ export const getTitle = (review: GetReview) => {
       return review.reviewInfo.programTitle;
     case 'MISSION_REVIEW':
       return review.reviewInfo.missionTitle;
-  }
-};
-
-export const questionIcon = (questionType: QuestionType | null) => {
-  switch (questionType) {
-    case 'WORRY':
-      return <PinBlue width={18} height={18} />;
-    case 'WORRY_RESULT':
-      return <Lightbulb width={18} height={18} />;
-    case 'GOAL':
-      return <PinRed width={18} height={18} />;
-    case 'GOAL_RESULT':
-      return <Trophy width={18} height={18} />;
-    case 'GOOD_POINT':
-      return <Heart width={18} height={18} />;
-    case 'BAD_POINT':
-      return <Pen width={18} height={18} />;
-    default:
-      return <Bubble width={18} height={18} />;
   }
 };
 
