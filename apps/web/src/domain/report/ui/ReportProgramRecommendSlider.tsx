@@ -7,8 +7,8 @@ import { ReportProgramRecommend } from '@/types/interface';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import ProgramRecommendSlider from '../program-recommend/ProgramRecommendSlider';
-import MainHeader from './MainHeader';
-import SubHeader from './SubHeader';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
 const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';

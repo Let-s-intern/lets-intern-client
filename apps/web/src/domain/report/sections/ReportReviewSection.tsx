@@ -1,11 +1,11 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
-import { REPORT_REVIEW_ID } from '@/domain/report/ReportNavigation';
+import { REPORT_REVIEW_ID } from '@/domain/report/ui/ReportNavigation';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import MoreReviewButton from '../review/MoreReviewButton';
-import ReportInterviewCard from './ReportInterviewCard';
+import ReportInterviewCard from '@/domain/report/ui/card/ReportInterviewCard';
 
 interface ReportReviewSectionProps {
   type: ReportType;

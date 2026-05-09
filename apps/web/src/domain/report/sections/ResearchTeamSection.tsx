@@ -3,8 +3,8 @@ import { useMediaQuery } from '@mui/material';
 import { ReportType } from '@/api/report';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
-import MainHeader from './MainHeader';
-import SubHeader from './SubHeader';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SUPER_TITLE = '전문가와 함께 해결하세요.';
 const HEADING =

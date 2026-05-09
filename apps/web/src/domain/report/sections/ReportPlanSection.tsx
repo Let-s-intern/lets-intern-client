@@ -4,7 +4,7 @@ import {
   ReportPriceDetail,
   ReportType,
 } from '@/api/report';
-import { REPORT_PLAN_ID } from '@/domain/report/ReportNavigation';
+import { REPORT_PLAN_ID } from '@/domain/report/ui/ReportNavigation';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { twMerge } from '@/lib/twMerge';
@@ -14,9 +14,9 @@ import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';
 import PriceSummary from '../../common/price/PriceSummary';
-import MainHeader from './MainHeader';
-import SectionHeader from './SectionHeader';
-import SubHeader from './SubHeader';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SectionHeader from '@/domain/report/ui/header/SectionHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SECTION_HEADER = '가격 및 플랜';
 const SUB_HEADER = '합리적인 가격 구성';
