@@ -23,11 +23,13 @@ export function useBonusMissionSubmitMenu({
   );
   const [link, setLink] = useState(attendance?.link || '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);
-  const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
-  const [isStartedHttp, setIsStartedHttp] = useState(false);
   const [accountType, setAccountType] = useState(attendance?.accountType ?? '');
   const [accountNum, setAccountNum] = useState(attendance?.accountNum ?? '');
   const [privacyConsent, setPrivacyConsent] = useState(attendance.submitted);
+
+  const isStartedHttp =
+    link.startsWith('https://') || link.startsWith('http://');
+  const isValidLinkValue = URL_REGEX.test(link);
 
   const postBlogBonus = usePostBlogBonus();
   const patchAttendance = usePatchAttendance();
@@ -40,28 +42,12 @@ export function useBonusMissionSubmitMenu({
     accountNum &&
     accountType;
 
-  const handleMissionLinkChanged = (
-    e: React.ChangeEvent<HTMLInputElement> | { target: { value: string } },
-  ) => {
-    const inputValue = e.target.value;
-    setLink(inputValue);
-    if (inputValue.startsWith('https://') || inputValue.startsWith('http://')) {
-      setIsStartedHttp(true);
-    } else {
-      setIsStartedHttp(false);
-      setIsLinkChecked(false);
-    }
-
-    if (URL_REGEX.test(inputValue)) {
-      setIsValidLinkValue(true);
-    } else {
-      setIsValidLinkValue(false);
-      setIsLinkChecked(false);
-    }
+  const handleMissionLinkChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLink(e.target.value);
   };
 
   useEffect(() => {
-    handleMissionLinkChanged({ target: { value: link } });
+    setIsLinkChecked(false);
   }, [link]);
 
   const handleLinkCheck = () => {

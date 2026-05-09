@@ -52,12 +52,7 @@ export function useMissionSubmitBonus({
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const inputChar = (e.nativeEvent as InputEvent).data;
-    const isNotNumber = inputChar && !/^[0-9]$/.test(inputChar);
-    if (isNotNumber) return;
-
-    const value = e.target.value;
-    setAccountNumber(value.replace(/[^0-9]/g, ''));
+    setAccountNumber(e.target.value.replace(/[^0-9]/g, ''));
   };
 
   const handleLinkChange = (link: string) => {
@@ -93,6 +88,7 @@ export function useMissionSubmitBonus({
       setShowToast(true);
     } catch (error) {
       console.error('제출 실패:', error);
+      alert('미션 제출에 실패했습니다. 다시 시도해주세요.');
     }
   };
 

@@ -9,6 +9,9 @@ import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 
+const FIRST_THIRD_RATIO = 1 / 3;
+const SECOND_THIRD_RATIO = 2 / 3;
+
 export interface MissionSubmitRegularAttendanceInfo {
   link: string | null;
   status: AttendanceStatus | null;
@@ -106,9 +109,11 @@ export function useMissionSubmitRegular({
     if (!bonusMission) return;
     const totalMissionCount = schedules.length;
     const isFirstThirdMission =
-      Math.floor(totalMissionCount * (1 / 3)) === currentSubmissionMissionTh;
+      Math.floor(totalMissionCount * FIRST_THIRD_RATIO) ===
+      currentSubmissionMissionTh;
     const isSecondThirdMission =
-      Math.floor(totalMissionCount * (2 / 3)) === currentSubmissionMissionTh;
+      Math.floor(totalMissionCount * SECOND_THIRD_RATIO) ===
+      currentSubmissionMissionTh;
 
     if (isFirstThirdMission || isSecondThirdMission) {
       setIsBonusMissionModalOpen(true);
@@ -142,8 +147,9 @@ export function useMissionSubmitRegular({
       if (isLastRegularMissionSubmit && !attendanceInfo?.submitted) {
         setModalOpen(true);
       }
-    } catch {
-      // 에러 처리 로직 추가 가능
+    } catch (error) {
+      console.error('미션 제출 실패:', error);
+      alert('미션 제출에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
