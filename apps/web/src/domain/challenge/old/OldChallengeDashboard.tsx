@@ -1,12 +1,12 @@
 import { useUserQuery } from '@/api/user/user';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import EndDailyMissionSection from '@/domain/challenge/dashboard/section/EndDailyMissionSection';
-import OldDailyMissionSection from '@/domain/challenge/OldDailyMissionSection';
-import OldGuideSection from '@/domain/challenge/OldGuideSection';
-import OldMissionCalendar from '@/domain/challenge/OldMissionCalendar';
-import OldMissionTooltipQuestion from '@/domain/challenge/OldMissionTooltipQuestion';
-import OldNoticeSection from '@/domain/challenge/OldNoticeSection';
-import OldScoreSection from '@/domain/challenge/OldScoreSection';
+import OldDailyMissionSection from '@/domain/challenge/old/OldDailyMissionSection';
+import OldGuideSection from '@/domain/challenge/old/OldGuideSection';
+import OldMissionCalendar from '@/domain/challenge/old/OldMissionCalendar';
+import OldMissionTooltipQuestion from '@/domain/challenge/old/OldMissionTooltipQuestion';
+import OldNoticeSection from '@/domain/challenge/old/OldNoticeSection';
+import OldScoreSection from '@/domain/challenge/old/OldScoreSection';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';

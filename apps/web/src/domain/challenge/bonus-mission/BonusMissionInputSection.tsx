@@ -3,8 +3,8 @@ import { usePostBlogBonus } from '@/api/review/review';
 import { MyDailyMission } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
-import LinkChangeConfirmationModal from './LinkChangeConfirmationModal';
-import BankSelectDropdown from './my-challenge/mission/BankSelectDropdown';
+import LinkChangeConfirmationModal from '../modal/LinkChangeConfirmationModal';
+import BankSelectDropdown from '../my-challenge/mission/BankSelectDropdown';
 
 interface Props {
   myDailyMission: MyDailyMission;

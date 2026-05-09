@@ -9,12 +9,12 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import { josa } from 'es-hangul';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import BaseButton from '../../common/button/BaseButton';
+import BaseButton from '@/common/button/BaseButton';
 import GoalOrConcernsBox from '@/common/review-form/GoalOrConcernsBox';
 import ReviewInstruction from '@/common/review-form/ReviewInstruction';
 import ReviewQuestion from '@/common/review-form/ReviewQuestion';
 import ReviewTextarea from '@/common/review-form/ReviewTextarea';
-import TenScore from '../review/score/TenScore';
+import TenScore from '@/domain/review/score/TenScore';
 
 interface Props {
   isOpen: boolean;

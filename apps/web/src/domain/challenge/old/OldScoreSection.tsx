@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import ScoreTooltipQuestion from './ScoreTooltipQuestion';
-import CertificatePaper from './dashboard/CertificatePaper';
+import CertificatePaper from '../dashboard/CertificatePaper';
 
 interface Props {
   totalScore: number;

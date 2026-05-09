@@ -1,7 +1,7 @@
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import OtherMissionSection from '@/domain/challenge/my-challenge/section/OtherMissionSection';
-import OldMissionCalendarSection from '@/domain/challenge/OldMissionCalendarSection';
-import OldMyDailyMissionSection from '@/domain/challenge/OldMyDailyMissionSection';
+import OldMissionCalendarSection from '@/domain/challenge/old/OldMissionCalendarSection';
+import OldMyDailyMissionSection from '@/domain/challenge/old/OldMyDailyMissionSection';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
