@@ -10,10 +10,10 @@ import { josa } from 'es-hangul';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import BaseButton from '../../common/button/BaseButton';
-import GoalOrConcernsBox from '../review/GoalOrConcernsBox';
-import ReviewInstruction from '../review/ReviewInstruction';
-import ReviewQuestion from '../review/ReviewQuestion';
-import ReviewTextarea from '../review/ReviewTextarea';
+import GoalOrConcernsBox from '@/domain/review/form/GoalOrConcernsBox';
+import ReviewInstruction from '@/domain/review/form/ReviewInstruction';
+import ReviewQuestion from '@/domain/review/form/ReviewQuestion';
+import ReviewTextarea from '@/domain/review/form/ReviewTextarea';
 import TenScore from '../review/score/TenScore';
 
 interface Props {

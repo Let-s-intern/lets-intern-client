@@ -13,7 +13,7 @@ import { generateUUID } from '@/utils/random';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';
-import PriceSummary from '../../common/price/PriceSummary';
+import PriceSummary from '@/common/price/PriceSummary';
 import MainHeader from '@/domain/report/ui/header/MainHeader';
 import SectionHeader from '@/domain/report/ui/header/SectionHeader';
 import SubHeader from '@/domain/report/ui/header/SubHeader';

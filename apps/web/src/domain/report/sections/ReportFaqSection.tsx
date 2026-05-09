@@ -1,8 +1,8 @@
 import { ReportType, useGetReportFaqs } from '@/api/report';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
-import FaqDropdown from '../../common/dropdown/FaqDropdown';
-import FaqChat from '../faq/FaqChat';
+import FaqDropdown from '@/common/dropdown/FaqDropdown';
+import FaqChat from '@/domain/faq/FaqChat';
 import MainHeader from '@/domain/report/ui/header/MainHeader';
 import SubHeader from '@/domain/report/ui/header/SubHeader';
 

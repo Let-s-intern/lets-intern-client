@@ -3,7 +3,7 @@
 import { useGetBlogReviewList } from '@/api/review/review';
 import MoreHeader from '@/common/header/MoreHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import ReviewLinkCard from '../ReviewLinkCard';
+import ReviewLinkCard from '@/domain/review/ui/ReviewLinkCard';
 
 function MainBlogReviewSection() {
   const { data, isLoading } = useGetBlogReviewList({

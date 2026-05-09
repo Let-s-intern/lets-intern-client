@@ -4,7 +4,7 @@ import { personalStatementColors } from '@/domain/report/ReportPersonalStatement
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
-import MoreReviewButton from '../review/MoreReviewButton';
+import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ReportInterviewCard from '@/domain/report/ui/card/ReportInterviewCard';
 
 interface ReportReviewSectionProps {

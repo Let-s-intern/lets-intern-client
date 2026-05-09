@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs';
 import { ReportProgramRecommend } from '@/types/interface';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import ProgramRecommendSlider from '../program-recommend/ProgramRecommendSlider';
+import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import MainHeader from '@/domain/report/ui/header/MainHeader';
 import SubHeader from '@/domain/report/ui/header/SubHeader';
 
