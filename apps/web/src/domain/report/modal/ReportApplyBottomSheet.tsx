@@ -18,7 +18,7 @@ import {
   reportPriceTypeEnum,
 } from '@/api/report';
 import ModalOverlay from '@/common/ModalOverlay';
-import RequiredStar from './ui/RequiredStar';
+import RequiredStar from '@/domain/report/ui/RequiredStar';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { generateOrderId } from '@/lib/order';
@@ -27,17 +27,17 @@ import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import { DesktopCTA, MobileCTA } from '../../common/button/ApplyCTA';
-import { default as BaseButton } from '../../common/button/BaseButton';
+import { DesktopCTA, MobileCTA } from '@/common/button/ApplyCTA';
+import { default as BaseButton } from '@/common/button/BaseButton';
 import {
   OptionFormCheckboxControlLabel,
   OptionFormRadioControlLabel,
-} from '../../common/ControlLabel';
-import DrawerCloseBtn from './ui/DrawerCloseBtn';
-import OptionDropdown from '../../common/dropdown/OptionDropdown';
+} from '@/common/ControlLabel';
+import DrawerCloseBtn from '@/domain/report/ui/DrawerCloseBtn';
+import OptionDropdown from '@/common/dropdown/OptionDropdown';
 import PaymentErrorNotification from '@/common/PaymentErrorNotification';
-import PriceView from '../../common/price/PriceView';
-import GradientButton from '../program/program-detail/button/GradientButton';
+import PriceView from '@/common/price/PriceView';
+import GradientButton from '@/domain/program/program-detail/button/GradientButton';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;

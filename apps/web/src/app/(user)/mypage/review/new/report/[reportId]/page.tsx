@@ -10,11 +10,11 @@ import { Suspense, useState } from 'react';
 import { useGetReportMessage, useGetReportTitle } from '@/api/report';
 import { usePostReviewMutation } from '@/api/review/review';
 import { useUserQuery } from '@/api/user/user';
-import GoalOrConcernsBox from '@/domain/review/GoalOrConcernsBox';
-import ReviewInstruction from '@/domain/review/ReviewInstruction';
-import ReviewModal from '@/domain/review/ReviewModal';
-import ReviewQuestion from '@/domain/review/ReviewQuestion';
-import ReviewTextarea from '@/domain/review/ReviewTextarea';
+import GoalOrConcernsBox from '@/common/review-form/GoalOrConcernsBox';
+import ReviewInstruction from '@/common/review-form/ReviewInstruction';
+import ReviewModal from '@/domain/review/modal/ReviewModal';
+import ReviewQuestion from '@/common/review-form/ReviewQuestion';
+import ReviewTextarea from '@/common/review-form/ReviewTextarea';
 import TenScore from '@/domain/review/score/TenScore';
 
 const ReportReviewCreatePageContent = () => {

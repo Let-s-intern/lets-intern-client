@@ -1,14 +1,14 @@
 import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
-import { REPORT_GUIDE_ID } from '@/domain/report/ReportNavigation';
+import { REPORT_GUIDE_ID } from '@/domain/report/ui/ReportNavigation';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';
-import MainHeader from './MainHeader';
-import SectionHeader from './SectionHeader';
-import SubHeader from './SubHeader';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SectionHeader from '@/domain/report/ui/header/SectionHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SECTION_HEADER = '서비스 이용 방법';
 

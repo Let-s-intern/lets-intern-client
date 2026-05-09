@@ -1,12 +1,12 @@
 'use client';
 
 import { useGetBlogReviewList } from '@/api/review/review';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/common/pagination/MuiPagination';
-import BlogReviewCard from '@/domain/review/BlogReviewCard';
 import { ProgramTypeUpperCase } from '@/schema';
 import { useSearchParams } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
-import LoadingContainer from '../../common/loading/LoadingContainer';
+import BlogReviewCard from './BlogReviewCard';
 
 const PAGE_SIZE = 10;
 

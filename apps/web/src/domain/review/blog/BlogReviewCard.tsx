@@ -4,7 +4,7 @@ import { BlogReview } from '@/api/review/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,
-} from '@/domain/review/ReviewBadge';
+} from '@/domain/review/ui/ReviewBadge';
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import Image from 'next/image';

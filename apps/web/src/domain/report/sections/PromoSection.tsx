@@ -9,8 +9,8 @@ import { personalStatementColors } from '@/domain/report/ReportPersonalStatement
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';
-import MainHeader from './MainHeader';
-import SubHeader from './SubHeader';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SUB_HEADER = '진단 리포트는 받았는데\n어떻게 수정해야 할지 막막하다면?';
 const MAIN_HEADER =

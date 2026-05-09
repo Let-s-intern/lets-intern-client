@@ -1,10 +1,10 @@
 import { ReportType, useGetReportFaqs } from '@/api/report';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
-import FaqDropdown from '../../common/dropdown/FaqDropdown';
-import FaqChat from '../faq/FaqChat';
-import MainHeader from './MainHeader';
-import SubHeader from './SubHeader';
+import FaqDropdown from '@/common/dropdown/FaqDropdown';
+import FaqChat from '@/domain/faq/FaqChat';
+import MainHeader from '@/domain/report/ui/header/MainHeader';
+import SubHeader from '@/domain/report/ui/header/SubHeader';
 
 const SUB_HEADER = '자주 묻는 질문';
 const MAIN_HEADER = '궁금한 점이 있으신가요?';

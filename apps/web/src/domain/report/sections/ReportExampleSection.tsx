@@ -3,13 +3,13 @@ import CloseIcon from '@/assets/icons/close.svg?react';
 import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
-import { REPORT_EXAMPLE_ID } from '@/domain/report/ReportNavigation';
+import { REPORT_EXAMPLE_ID } from '@/domain/report/ui/ReportNavigation';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { ReportExample } from '@/types/interface';
 import { useRef, useState } from 'react';
-import ReportExampleCard from './ReportExampleCard';
+import ReportExampleCard from '@/domain/report/ui/card/ReportExampleCard';
 
 interface ReportExampleSectionProps {
   type: ReportType;

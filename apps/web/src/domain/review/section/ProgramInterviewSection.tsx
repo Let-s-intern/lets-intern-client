@@ -2,9 +2,9 @@
 
 import { BlogType, useBlogListQuery } from '@/api/blog/blog';
 import { getBlogPathname } from '@/utils/url';
-import MoreHeader from '../../common/header/MoreHeader';
-import LoadingContainer from '../../common/loading/LoadingContainer';
-import ReviewLinkCard from './ReviewLinkCard';
+import MoreHeader from '@/common/header/MoreHeader';
+import LoadingContainer from '@/common/loading/LoadingContainer';
+import ReviewLinkCard from '@/domain/review/ui/ReviewLinkCard';
 
 function ProgramInterviewSection() {
   const { data, isLoading } = useBlogListQuery({
