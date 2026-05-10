@@ -102,6 +102,7 @@ const AdminReportEditPage = () => {
 
   useEffect(() => {
     if (reportDetail) {
+      // eslint-disable-next-line no-console
       console.log('GET 서류진단 상세 조회:', reportDetail);
       setEditingValue({
         // 기본값
@@ -160,6 +161,7 @@ const AdminReportEditPage = () => {
       );
 
       const json = JSON.parse(reportDetail.contents);
+      // eslint-disable-next-line no-console
       console.log('GET 서류진단 contents:', json);
       setContent(json);
     }
@@ -215,7 +217,9 @@ const AdminReportEditPage = () => {
         break;
     }
 
+    // eslint-disable-next-line no-console
     console.log('서류진단 수정 요청 contents:', content);
+    // eslint-disable-next-line no-console
     console.log('서류진단 수정 요청 body:', body);
 
     await editReportMutation.mutateAsync({

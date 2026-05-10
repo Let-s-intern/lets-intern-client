@@ -7,12 +7,12 @@ import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
-import BonusMissionInputSection from '../../BonusMissionInputSection';
-import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
-import DailyMissionReviewSection from '../../DailyMissionReviewSection';
-import DailyMissionSubmitButton from '../../DailyMissionSubmitButton';
-import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
-import OtMissionInputSection from '../../OtMissionInputSection';
+import BonusMissionInputSection from '../../bonus-mission/BonusMissionInputSection';
+import DailyMissionLinkInputSection from '../../daily-mission/DailyMissionLinkInputSection';
+import DailyMissionReviewSection from '../../daily-mission/DailyMissionReviewSection';
+import DailyMissionSubmitButton from '../../daily-mission/DailyMissionSubmitButton';
+import LinkChangeConfirmationModal from '../../modal/LinkChangeConfirmationModal';
+import OtMissionInputSection from '../../ot-mission/OtMissionInputSection';
 import LastMissionSubmitModal from './LastMissionSubmitModal';
 
 interface Props {

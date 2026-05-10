@@ -1,7 +1,7 @@
 import { Break } from '@/common/Break';
 import Heading2 from '@/common/header/Heading2';
 import Description from '@/domain/program/program-detail/Description';
-import MoreReviewButton from '@/domain/review/MoreReviewButton';
+import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import Image from 'next/image';
 import { FaCheck } from 'react-icons/fa6';
 

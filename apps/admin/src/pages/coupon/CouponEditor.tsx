@@ -195,7 +195,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
               ))}
             </Select>
           </FormControl>
-          <div className="ml-4 flex items-center">
+          <div className="ml-4 flex flex-wrap items-center gap-y-1">
             <label htmlFor="program" className="w-[8rem] font-medium">
               프로그램
             </label>
@@ -207,6 +207,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                 />
               }
               label="전체"
+              slotProps={{ typography: { sx: { whiteSpace: 'nowrap' } } }}
             />
             {Object.keys(newProgramTypeToText).map((programType) => (
               <FormControlLabel
@@ -219,6 +220,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                   />
                 }
                 label={newProgramTypeToText[programType]}
+                slotProps={{ typography: { sx: { whiteSpace: 'nowrap' } } }}
               />
             ))}
           </div>

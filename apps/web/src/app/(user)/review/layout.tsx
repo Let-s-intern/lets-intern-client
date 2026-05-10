@@ -1,5 +1,5 @@
-import ReviewBanner from '@/domain/review/ReviewBanner';
-import ReviewNavBar from '@/domain/review/ReviewNavBar';
+import ReviewBanner from '@/domain/review/ui/ReviewBanner';
+import ReviewNavBar from '@/domain/review/ui/ReviewNavBar';
 
 export default function ReviewLayout({
   children,

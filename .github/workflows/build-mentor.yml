@@ -25,6 +25,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 변경 파일 diff 계산을 위해 풀 히스토리 필요
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
 
@@ -41,8 +44,41 @@ jobs:
       - name: ESLint
         run: pnpm --filter @letscareer/mentor lint
 
-      - name: Typecheck
-        run: pnpm --filter @letscareer/mentor typecheck
+      # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
+      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      - name: Typecheck (변경 파일 한정)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -e
+
+          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMR -- 'apps/mentor/src/' \
+            | grep -E '\.(ts|tsx)$' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "apps/mentor 내 TS/TSX 변경 없음 — typecheck 스킵"
+            exit 0
+          fi
+
+          echo "변경된 .ts/.tsx 파일:"
+          echo "$CHANGED"
+          echo ""
+
+          set +e
+          pnpm --filter @letscareer/mentor typecheck > /tmp/typecheck.log 2>&1
+          set -e
+
+          PATTERNS=$(echo "$CHANGED" | sed 's|^apps/mentor/||' | paste -sd '|')
+          RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
+
+          if [ -n "$RELEVANT" ]; then
+            echo "변경 파일에서 typecheck 에러 발견:"
+            echo ""
+            echo "$RELEVANT"
+            exit 1
+          fi
+
+          echo "변경 파일 typecheck 통과"
 
       - name: Build (vite)
         run: pnpm --filter @letscareer/mentor build

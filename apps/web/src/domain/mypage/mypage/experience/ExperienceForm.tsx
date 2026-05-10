@@ -269,6 +269,7 @@ export const ExperienceForm = ({
       setLastAutoSaveTime(new Date());
       // 현재 값을 새로운 기준점으로 설정 (이후 변경사항 추적을 위해)
       if (!isCopy) reset(snapshot, { keepDefaultValues: false });
+      // eslint-disable-next-line no-console
       console.log('자동 저장 완료');
     } catch (error) {
       console.error('자동 저장 실패:', error);

@@ -4,7 +4,13 @@ import Button from '@/common/button/Button';
 import Input from '@/common/input/v1/Input';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import SocialLogin from '@/domain/auth/ui/SocialLogin';
+import {
+  emitSocialSigninSpan,
+  runPasswordSigninSpan,
+} from '@/domain/auth/utils/authSpan';
 import useAuthStore from '@/store/useAuthStore';
+import { captureAuthError } from '@/utils/captureError';
+import * as log from '@/utils/log';
 import axios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -41,6 +47,22 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   );
 };
 
+/** 이메일을 sha256으로 해시하여 앞 8자만 반환 (PII 회피) */
+async function hashEmailPrefix(email: string): Promise<string> {
+  try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(email.toLowerCase().trim());
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+    return hashHex.slice(0, 8);
+  } catch {
+    return 'unknown';
+  }
+}
+
 const LoginContent = () => {
   const { isLoggedIn, login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -53,25 +75,36 @@ const LoginContent = () => {
   const redirect: string = searchParams.get('redirect') || '/';
 
   const fetchLogin = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post('/user/signin', {
-        email,
-        password,
-      });
-      return res.data;
-    },
-    onSuccess: (data) => {
+    mutationFn: async () =>
+      runPasswordSigninSpan(async () => {
+        const res = await axios.post('/user/signin', {
+          email,
+          password,
+        });
+        return res.data;
+      }),
+    onSuccess: async (data) => {
+      const userIdHash = await hashEmailPrefix(email);
+      log.signinSuccess('password', userIdHash);
       login(data.data.accessToken, data.data.refreshToken);
       router.push(redirect);
     },
-    onError: (error) => {
+    onError: async (error) => {
       const axiosError = error as AxiosError;
-      if (
-        axiosError.response?.status === 400 ||
-        axiosError.response?.status === 404
-      ) {
+      const status = axiosError.response?.status;
+      if (status === 400 || status === 404) {
         setErrorMessage('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
+      const reason =
+        status === 400 || status === 404
+          ? 'invalid_credentials'
+          : (axiosError.code ?? 'unknown');
+      log.signinReject('password', reason, status);
+      const emailHash = await hashEmailPrefix(email);
+      captureAuthError(error, {
+        section: 'signin',
+        extra: { emailHash },
+      });
     },
   });
 
@@ -105,6 +138,15 @@ const LoginContent = () => {
 
     if (searchParams.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
+      const provider = searchParams.get('provider') ?? 'unknown';
+      const reason = searchParams.get('error') ?? 'unknown';
+      emitSocialSigninSpan({ result: 'fail', provider, reason });
+      log.socialCallbackError(provider, reason);
+      captureAuthError(new Error(`소셜 로그인 콜백 에러: ${reason}`), {
+        section: 'social-callback',
+        tags: { provider },
+        extra: { reason },
+      });
       return;
     }
 
@@ -113,6 +155,7 @@ const LoginContent = () => {
       const parsedToken = searchParams.get('result')
         ? JSON.parse(searchParams.get('result') || '{}')
         : null;
+      emitSocialSigninSpan({ result: 'success' });
       // Next.js에서는 searchParams를 직접 변경할 수 없으므로 router.replace 사용
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('result');

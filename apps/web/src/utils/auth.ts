@@ -113,6 +113,7 @@ async function refreshTokenAtOnce(): Promise<boolean> {
 
   refreshPromise = (async () => {
     try {
+      // eslint-disable-next-line no-console
       console.log('[letscareer] refreshToken Started');
       const next = await requestRefresh(refreshToken);
       if (!next) {
@@ -130,6 +131,7 @@ async function refreshTokenAtOnce(): Promise<boolean> {
       }
       return false;
     } finally {
+      // eslint-disable-next-line no-console
       console.log('[letscareer] refreshToken Finished ⚡');
       refreshPromise = null;
     }

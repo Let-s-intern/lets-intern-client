@@ -7,7 +7,12 @@ import {
   getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
-import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
+import {
+  captureBlogError,
+  captureChallengeError,
+  captureGuidebookError,
+  captureVodError,
+} from '@/utils/captureError';
 import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -67,7 +72,17 @@ async function ProgramRecommendCard({ program }: Props) {
             ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
         }
       } catch (err) {
-        captureBlogError(err, {
+        const [type] = (program.id ?? '').split('-');
+        const captureByType =
+          type === VOD
+            ? captureVodError
+            : type === GUIDEBOOK
+              ? captureGuidebookError
+              : type === CHALLENGE
+                ? captureChallengeError
+                : captureBlogError;
+
+        captureByType(err, {
           section: 'programRecommendCard',
           tags: { lookup: 'byId' },
           extra: { programId: program.id },

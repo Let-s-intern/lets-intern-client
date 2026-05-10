@@ -1,6 +1,11 @@
 // apps/admin 전용 — 챌린지 제출확인 표의 column 정렬을 견고하게 만들기 위해
-// shrink-0 을 묶어 둔다. packages/utils 는 web 의 동일 화면이 함께 사용 중이라
-// 그쪽 영향을 피하려고 admin 로컬에서만 override 한다.
+// 모든 셀을 명시적 `w-[N%] shrink-0` 으로 고정한다. 헤더(TableHead)와 행(TableRow)
+// 양쪽 모두 동일 배열을 같은 인덱스로 사용하므로, width 합이 100% 가 되도록 두면
+// flex 잔여공간이 사라져 row 별 정렬이 어긋나지 않는다.
+//
+// (이전에는 index 9 가 `flex-1` 이었는데, 컨테이너의 `flex justify-between` 과
+//  결합하여 row 별로 sub-pixel 단위의 미세 잔여공간이 비결정적으로 분배되며
+//  컬럼 경계가 줄마다 어긋나 보이는 버그가 있었다.)
 //
 // 1400px 기준 폭(괄호 안 px)과 들어갈 콘텐츠:
 //  0  체크박스      4%  (56)  ─ 16px 아이콘
@@ -12,8 +17,9 @@
 //  6  미션(링크)    4%  (56)  ─ "확인" 작은 링크
 //  7  확인여부(드롭)  7%  (98)  ─ "확인 완료 ▼" 버튼
 //  8  코멘트       14%  (196) ─ 자유 텍스트
-//  9  미션 소감    flex-1 ~21% (294) ─ 가장 긴 자유 텍스트, 잉여 흡수
+//  9  미션 소감    21% (294) ─ 가장 긴 자유 텍스트
 // 10  노출 여부     5%  (70)  ─ MUI Switch 58px + 여유
+//                  합계 100%
 export const challengeSubmitDetailCellWidthList = [
   'w-[4%] shrink-0',
   'w-[11%] shrink-0',
@@ -24,6 +30,6 @@ export const challengeSubmitDetailCellWidthList = [
   'w-[4%] shrink-0',
   'w-[7%] shrink-0',
   'w-[14%] shrink-0',
-  'flex-1 shrink-0',
+  'w-[21%] shrink-0',
   'w-[5%] shrink-0',
 ];
