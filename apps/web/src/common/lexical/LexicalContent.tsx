@@ -16,16 +16,17 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
-import { SerializedCodeHighlightNode } from './nodes/CodeHighlightNode';
 import CheckBox from './CheckBox';
+import { SerializedCodeHighlightNode } from './nodes/CodeHighlightNode';
 import { SerializedCollapsibleContainerNode } from './nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from './nodes/CollapsibleContentNode';
 import { SerializedCollapsibleTitleNode } from './nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from './nodes/EmojiNode';
+import { SerializedFigmaNode } from './nodes/FigmaNode';
+import { SerializedImageCarouselNode } from './nodes/ImageCarouselNode';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
-import { SerializedFigmaNode } from './nodes/FigmaNode';
 import { SerializedPDFNode } from './nodes/PDFNode';
 import { SerializedYouTubeNode } from './nodes/YouTubeNode';
 
@@ -490,6 +491,55 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
               className="h-[600px] w-full"
               title={_node.fileName}
             />
+          </div>
+        </div>
+      );
+    }
+    case 'image-carousel': {
+      const _node = node as SerializedImageCarouselNode;
+      const containerWidth = _node.width === 0 ? '100%' : _node.width;
+      return (
+        <div className="my-4 overflow-x-auto" style={{ width: containerWidth }}>
+          <div
+            className="flex gap-3 pb-3"
+            style={{ scrollSnapType: 'x mandatory' }}
+          >
+            {_node.images.map((img, idx) => (
+              <div
+                key={idx}
+                className="flex-none overflow-hidden rounded-lg"
+                style={{ width: 360, height: 260, scrollSnapAlign: 'start' }}
+              >
+                <picture className="h-full w-full">
+                  {img.webpDesktop && (
+                    <source
+                      media="(min-width: 768px)"
+                      srcSet={img.webpDesktop}
+                      type="image/webp"
+                    />
+                  )}
+                  {img.jpegDesktop && (
+                    <source
+                      media="(min-width: 768px)"
+                      srcSet={img.jpegDesktop}
+                      type="image/jpeg"
+                    />
+                  )}
+                  {img.webpMobile && (
+                    <source srcSet={img.webpMobile} type="image/webp" />
+                  )}
+                  {img.jpegMobile && (
+                    <source srcSet={img.jpegMobile} type="image/jpeg" />
+                  )}
+                  <img
+                    src={img.src}
+                    alt={img.altText}
+                    className="h-full w-full object-cover"
+                    draggable={false}
+                  />
+                </picture>
+              </div>
+            ))}
           </div>
         </div>
       );
