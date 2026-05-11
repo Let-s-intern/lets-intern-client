@@ -56,45 +56,44 @@ function CarouselImageRow({
   );
 }
 
+async function uploadSingleImage(file: File): Promise<CarouselImage> {
+  const [mobileSet, desktopSet] = await Promise.all([
+    createImageSet(file),
+    createImageSet(file, true),
+  ]);
+  const [src, webpMobileUrl, jpegMobileUrl, webpDesktopUrl, jpegDesktopUrl] =
+    await Promise.all([
+      uploadFile({ file, type: 'BLOG' }),
+      uploadFile({ file: mobileSet.webpMobile!, type: 'BLOG' }),
+      uploadFile({ file: mobileSet.jpegMobile!, type: 'BLOG' }),
+      uploadFile({ file: desktopSet.webpDesktop!, type: 'BLOG' }),
+      uploadFile({ file: desktopSet.jpegDesktop!, type: 'BLOG' }),
+    ]);
+  return {
+    src,
+    altText: file.name,
+    webpMobile: webpMobileUrl,
+    jpegMobile: jpegMobileUrl,
+    webpDesktop: webpDesktopUrl,
+    jpegDesktop: jpegDesktopUrl,
+  };
+}
+
 // 새 슬라이드 업로드 폼
-function AddSlideForm({ onAdd }: { onAdd: (image: CarouselImage) => void }) {
+function AddSlideForm({ onAdd }: { onAdd: (images: CarouselImage[]) => void }) {
   const { snackbar: setSnackbar } = useAdminSnackbar();
   const [loading, setLoading] = useState(false);
 
-  const handleMobileUpload = async (files: FileList | null) => {
-    const file = files?.[0];
-    if (!file) return;
+  const handleUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
 
     setLoading(true);
     try {
-      const [mobileSet, desktopSet] = await Promise.all([
-        createImageSet(file),
-        createImageSet(file, true),
-      ]);
-
-      const [
-        src,
-        webpMobileUrl,
-        jpegMobileUrl,
-        webpDesktopUrl,
-        jpegDesktopUrl,
-      ] = await Promise.all([
-        uploadFile({ file, type: 'BLOG' }),
-        uploadFile({ file: mobileSet.webpMobile!, type: 'BLOG' }),
-        uploadFile({ file: mobileSet.jpegMobile!, type: 'BLOG' }),
-        uploadFile({ file: desktopSet.webpDesktop!, type: 'BLOG' }),
-        uploadFile({ file: desktopSet.jpegDesktop!, type: 'BLOG' }),
-      ]);
-
-      onAdd({
-        src,
-        altText: file.name,
-        webpMobile: webpMobileUrl,
-        jpegMobile: jpegMobileUrl,
-        webpDesktop: webpDesktopUrl,
-        jpegDesktop: jpegDesktopUrl,
-      });
-      setSnackbar('슬라이드가 추가되었습니다.');
+      const uploaded = await Promise.all(
+        Array.from(files).map(uploadSingleImage),
+      );
+      onAdd(uploaded);
+      setSnackbar(`${uploaded.length}장이 추가되었습니다.`);
     } catch {
       setSnackbar('업로드에 실패했습니다.');
     } finally {
@@ -106,8 +105,9 @@ function AddSlideForm({ onAdd }: { onAdd: (image: CarouselImage) => void }) {
     <div className="mt-2 rounded border border-dashed border-gray-300 p-3">
       <FileInput
         label={loading ? '업로드 중...' : '+ 슬라이드 이미지 추가'}
-        onChange={handleMobileUpload}
+        onChange={handleUpload}
         accept="image/*"
+        multiple
         data-test-id="carousel-image-upload"
       />
     </div>
@@ -123,8 +123,8 @@ export function InsertImageCarouselDialog({
 }) {
   const [images, setImages] = useState<CarouselImage[]>([]);
 
-  const addImage = (image: CarouselImage) =>
-    setImages((prev) => [...prev, image]);
+  const addImage = (newImages: CarouselImage[]) =>
+    setImages((prev) => [...prev, ...newImages]);
 
   const removeImage = (index: number) =>
     setImages((prev) => prev.filter((_, i) => i !== index));
