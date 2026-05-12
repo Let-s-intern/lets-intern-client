@@ -12,7 +12,7 @@ import MagnetApplicationDailyChart from './ui/MagnetApplicationDailyChart';
 import MarketingAgreeStat from './ui/MarketingAgreeStat';
 import QuestionAnswerStat from './ui/QuestionAnswerStat';
 import WishFieldPieChart from './ui/WishFieldPieChart';
-import WishJobPieChart from './ui/WishJobPieChart';
+import WishIndustryPieChart from './ui/WishIndustryPieChart';
 import { downloadCsv } from './utils/csv';
 
 // --- Helpers ---
@@ -152,7 +152,7 @@ const LeadUserDetailPage = () => {
 
   return (
     <div className="px-12 py-6">
-      <div className="mb-4 flex flex-col gap-4 lg:flex-row">
+      <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-stretch">
         <div className="lg:flex-1">
           <MagnetApplicationDailyChart applications={applications} />
         </div>
@@ -160,10 +160,10 @@ const LeadUserDetailPage = () => {
           <WishFieldPieChart applications={applications} />
         </div>
         <div className="lg:w-60">
-          <WishJobPieChart applications={applications} />
+          <WishIndustryPieChart applications={applications} />
         </div>
-        <div className="flex h-full flex-col divide-y divide-gray-200 rounded border border-gray-200 lg:w-48">
-          <div className="flex-1 p-3">
+        <div className="flex flex-col rounded border border-gray-200 lg:w-48">
+          <div className="flex-1 border-b border-gray-200 p-3">
             <QuestionAnswerStat applications={applications} />
           </div>
           <div className="flex-1 p-3">
