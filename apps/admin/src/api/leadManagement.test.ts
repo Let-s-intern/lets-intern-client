@@ -44,7 +44,7 @@ describe('magnetApplicationByMagnetSchema', () => {
     expect(result.createDate).toBe('2026-05-01T09:00:00');
   });
 
-  it('createDate가 누락되면 파싱이 실패한다', () => {
+  it('createDate가 누락되어도 undefined로 파싱된다 (BE main 미반영 환경 대응)', () => {
     const data = {
       magnetApplicationId: 3,
       name: '김철수',
@@ -58,6 +58,8 @@ describe('magnetApplicationByMagnetSchema', () => {
       questionAnswerList: [],
     };
 
-    expect(() => magnetApplicationByMagnetSchema.parse(data)).toThrow();
+    const result = magnetApplicationByMagnetSchema.parse(data);
+    expect(result.createDate).toBeUndefined();
+    expect(result.magnetApplicationId).toBe(3);
   });
 });

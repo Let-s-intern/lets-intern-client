@@ -21,7 +21,7 @@ export const magnetApplicationByMagnetSchema = z.object({
   wishCompany: z.string().nullable(),
   marketingAgree: z.boolean(),
   questionAnswerList: z.array(questionAnswerSchema),
-  createDate: z.string(),
+  createDate: z.string().optional(),
 });
 
 // --- Types ---
