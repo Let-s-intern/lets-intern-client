@@ -1,6 +1,7 @@
 import type { MagnetApplicationByMagnet } from '@/api/leadManagement';
 import { useMemo } from 'react';
 
+import { getPercentColor } from '../utils/percentColor';
 import { questionAnswerStat } from '../utils/questionAnswerStat';
 
 interface QuestionAnswerStatProps {
@@ -32,7 +33,12 @@ const QuestionAnswerStat = ({ applications }: QuestionAnswerStatProps) => {
   return (
     <div>
       <p className="mb-1 text-sm text-gray-700">질문 응답률</p>
-      <p className="text-2xl font-bold text-[#02b3a7]">{stat.percent}%</p>
+      <p
+        className="text-2xl font-bold"
+        style={{ color: getPercentColor(stat.percent) }}
+      >
+        {stat.percent}%
+      </p>
       <p className="text-xs text-gray-500">
         {stat.answered} / {stat.total}명
       </p>

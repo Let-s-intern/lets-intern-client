@@ -2,6 +2,7 @@ import type { MagnetApplicationByMagnet } from '@/api/leadManagement';
 import { useMemo } from 'react';
 
 import { marketingAgreeStat } from '../utils/marketingAgreeStat';
+import { getPercentColor } from '../utils/percentColor';
 
 interface MarketingAgreeStatProps {
   applications: MagnetApplicationByMagnet[];
@@ -32,7 +33,12 @@ const MarketingAgreeStat = ({ applications }: MarketingAgreeStatProps) => {
   return (
     <div>
       <p className="mb-1 text-sm text-gray-700">마케팅 동의율</p>
-      <p className="text-2xl font-bold text-[#3a82f7]">{stat.percent}%</p>
+      <p
+        className="text-2xl font-bold"
+        style={{ color: getPercentColor(stat.percent) }}
+      >
+        {stat.percent}%
+      </p>
       <p className="text-xs text-gray-500">
         {stat.agreed} / {stat.total}명
       </p>
