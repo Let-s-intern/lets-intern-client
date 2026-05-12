@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import MagnetApplicationDailyChart from './ui/MagnetApplicationDailyChart';
 import MarketingAgreeStat from './ui/MarketingAgreeStat';
+import QuestionAnswerStat from './ui/QuestionAnswerStat';
 import WishFieldPieChart from './ui/WishFieldPieChart';
 import WishJobPieChart from './ui/WishJobPieChart';
 import { downloadCsv } from './utils/csv';
@@ -156,10 +157,19 @@ const LeadUserDetailPage = () => {
         <div className="lg:flex-1">
           <MagnetApplicationDailyChart applications={applications} />
         </div>
-        <div className="flex flex-col gap-4 lg:w-96">
+        <div className="lg:w-60">
           <WishFieldPieChart applications={applications} />
+        </div>
+        <div className="lg:w-60">
           <WishJobPieChart applications={applications} />
-          <MarketingAgreeStat applications={applications} />
+        </div>
+        <div className="flex flex-col divide-y divide-gray-200 rounded border border-gray-200 lg:w-48">
+          <div className="p-3">
+            <QuestionAnswerStat applications={applications} />
+          </div>
+          <div className="p-3">
+            <MarketingAgreeStat applications={applications} />
+          </div>
         </div>
       </div>
       <div className="mb-4 flex items-center justify-between">
