@@ -14,7 +14,15 @@ interface MarketingAgreeStatProps {
  * - 통계는 응답 원본 기준으로 고정되며 DataGrid 필터에 반응하지 않는다.
  */
 const MarketingAgreeStat = ({ applications }: MarketingAgreeStatProps) => {
-  const stat = useMemo(() => marketingAgreeStat(applications), [applications]);
+  // strictNullChecks 미활성 환경에서 z.infer가 모든 필드를 optional로 추론하므로,
+  // marketingAgreeStat 시그니처에 맞게 boolean 필드만 추려 넘긴다.
+  const stat = useMemo(
+    () =>
+      marketingAgreeStat(
+        applications.map((a) => ({ marketingAgree: a.marketingAgree ?? false })),
+      ),
+    [applications],
+  );
 
   if (applications.length === 0) return null;
 
