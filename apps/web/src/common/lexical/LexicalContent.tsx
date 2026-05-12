@@ -501,16 +501,16 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       return (
         <div className="my-4 overflow-x-auto" style={{ width: containerWidth }}>
           <div
-            className="flex gap-3 pb-3"
+            className="flex gap-3 pb-1"
             style={{ scrollSnapType: 'x mandatory' }}
           >
             {_node.images.map((img, idx) => (
               <div
                 key={idx}
-                className="flex-none overflow-hidden rounded-lg"
-                style={{ width: 360, height: 260, scrollSnapAlign: 'start' }}
+                className="flex-none overflow-hidden"
+                style={{ height: 260, scrollSnapAlign: 'start' }}
               >
-                <picture className="h-full w-full">
+                <picture>
                   {img.webpDesktop && (
                     <source
                       media="(min-width: 768px)"
@@ -534,7 +534,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                   <img
                     src={img.src}
                     alt={img.altText}
-                    className="h-full w-full object-cover"
+                    style={{ height: 260, width: 'auto' }}
                     draggable={false}
                   />
                 </picture>

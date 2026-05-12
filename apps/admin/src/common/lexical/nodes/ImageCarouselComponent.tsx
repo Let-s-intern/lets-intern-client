@@ -48,10 +48,10 @@ export default function ImageCarouselComponent({
         {images.map((img, idx) => (
           <div
             key={idx}
-            className="flex-none overflow-hidden rounded-lg"
-            style={{ width: 360, height: 260, scrollSnapAlign: 'start' }}
+            className="flex-none overflow-hidden"
+            style={{ height: 260, scrollSnapAlign: 'start' }}
           >
-            <picture className="h-full w-full">
+            <picture>
               {img.webpDesktop && (
                 <source
                   media="(min-width: 768px)"
@@ -75,7 +75,8 @@ export default function ImageCarouselComponent({
               <img
                 src={img.src}
                 alt={img.altText}
-                className="h-full w-full object-cover"
+                className="h-full w-auto"
+                style={{ height: 260 }}
               />
             </picture>
           </div>
