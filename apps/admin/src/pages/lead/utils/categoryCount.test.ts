@@ -145,10 +145,7 @@ describe('categoryCount', () => {
     });
 
     it('토큰 trim 후 빈 문자열과 - 는 제외한다', () => {
-      const items: Sample[] = [
-        { field: 'A, , -, B' },
-        { field: ' A ' },
-      ];
+      const items: Sample[] = [{ field: 'A, , -, B' }, { field: ' A ' }];
       const result = categoryCount(items, (item) => item.field, {
         splitDelimiter: ',',
       });
