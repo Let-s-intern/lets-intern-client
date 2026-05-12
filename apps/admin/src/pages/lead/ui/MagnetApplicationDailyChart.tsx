@@ -3,6 +3,9 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { useMemo } from 'react';
 
 import { dailyApplicationCount } from '../utils/dailyApplicationCount';
+import { PIE_COLORS } from '../utils/pieColors';
+
+const LINE_COLOR = PIE_COLORS[0];
 
 interface MagnetApplicationDailyChartProps {
   applications: MagnetApplicationByMagnet[];
@@ -36,8 +39,23 @@ const MagnetApplicationDailyChart = ({
       <LineChart
         height={200}
         xAxis={[{ data: dates, scaleType: 'point' }]}
-        series={[{ data: counts, label: '신청자 수', showMark: true }]}
+        series={[
+          {
+            data: counts,
+            label: '신청자 수',
+            showMark: true,
+            color: LINE_COLOR,
+          },
+        ]}
+        slotProps={{ legend: { hidden: true } }}
       />
+      <div className="mt-1 flex items-center justify-center gap-1 text-[11px] text-gray-700">
+        <span
+          className="inline-block h-2 w-2 shrink-0 rounded-sm"
+          style={{ backgroundColor: LINE_COLOR }}
+        />
+        <span>신청자 수</span>
+      </div>
     </div>
   );
 };
