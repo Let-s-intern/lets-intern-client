@@ -1,43 +1,82 @@
 import { useMemo, useState } from 'react';
-import { getMentorSchedule } from '../../dummy';
+import { getMentorDaySlots, getMentorMonthAvailability } from '../../dummy';
 import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
-import { addDays, getWeekStart, toDateString } from '../utils';
+import { toDateString } from '../utils';
 
 export function useTimeSlotState(
   mentor: Mentor,
   period: MissionPeriod,
   onConfirm: (slot: SelectedSlot) => void,
 ) {
-  const [weekStart, setWeekStart] = useState(() => {
-    const today = new Date();
-    const start = new Date(period.startDay);
-    const end = new Date(period.endDay);
-    const base = today < start ? start : today > end ? end : today;
-    return getWeekStart(base);
-  });
+  const periodStart = new Date(period.startDay);
+  const periodEnd = new Date(period.endDay);
+  const today = new Date();
+  const base =
+    today < periodStart ? periodStart : today > periodEnd ? periodEnd : today;
+
+  const [currentYear, setCurrentYear] = useState(base.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(base.getMonth());
+  const [selectedDate, setSelectedDate] = useState<string>(toDateString(base));
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
-  const schedule = useMemo(
-    () => getMentorSchedule(mentor.id, weekStart),
-    [mentor.id, weekStart],
+  // 진행일정(startDay~endDay)이 포함된 달만 활성화
+  const canGoPrev = useMemo(
+    () =>
+      currentYear > periodStart.getFullYear() ||
+      (currentYear === periodStart.getFullYear() &&
+        currentMonth > periodStart.getMonth()),
+    [currentYear, currentMonth, periodStart],
   );
 
-  const canGoPrev =
-    toDateString(weekStart) >
-    toDateString(getWeekStart(new Date(period.startDay)));
-  const canGoNext =
-    toDateString(weekStart) <
-    toDateString(getWeekStart(new Date(period.endDay)));
+  const canGoNext = useMemo(
+    () =>
+      currentYear < periodEnd.getFullYear() ||
+      (currentYear === periodEnd.getFullYear() &&
+        currentMonth < periodEnd.getMonth()),
+    [currentYear, currentMonth, periodEnd],
+  );
 
-  const handlePrev = () => {
+  const monthAvailability = useMemo(
+    () =>
+      getMentorMonthAvailability(
+        mentor.id,
+        currentYear,
+        currentMonth,
+        period.startDay,
+        period.endDay,
+      ),
+    [mentor.id, currentYear, currentMonth, period.startDay, period.endDay],
+  );
+
+  const daySlots = useMemo(
+    () => getMentorDaySlots(mentor.id, selectedDate),
+    [mentor.id, selectedDate],
+  );
+
+  const handlePrevMonth = () => {
     if (!canGoPrev) return;
-    setWeekStart((prev) => addDays(prev, -7));
+    if (currentMonth === 0) {
+      setCurrentYear((y) => y - 1);
+      setCurrentMonth(11);
+    } else {
+      setCurrentMonth((m) => m - 1);
+    }
     setSelectedSlot(null);
   };
 
-  const handleNext = () => {
+  const handleNextMonth = () => {
     if (!canGoNext) return;
-    setWeekStart((prev) => addDays(prev, 7));
+    if (currentMonth === 11) {
+      setCurrentYear((y) => y + 1);
+      setCurrentMonth(0);
+    } else {
+      setCurrentMonth((m) => m + 1);
+    }
+    setSelectedSlot(null);
+  };
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
     setSelectedSlot(null);
   };
 
@@ -55,13 +94,17 @@ export function useTimeSlotState(
   };
 
   return {
-    weekStart,
+    currentYear,
+    currentMonth,
+    selectedDate,
     selectedSlot,
-    schedule,
+    monthAvailability,
+    daySlots,
     canGoPrev,
     canGoNext,
-    handlePrev,
-    handleNext,
+    handlePrevMonth,
+    handleNextMonth,
+    handleDateSelect,
     handleSlotSelect,
     handleCancel,
     handleConfirm,

@@ -3,9 +3,9 @@
 import { useTimeSlotState } from '../hooks/useTimeSlotState';
 import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
 import MentorCard from '../ui/MentorCard';
+import MonthCalendar from '../ui/MonthCalendar';
 import ReservationBar from '../ui/ReservationBar';
-import TimeSlotGrid from '../ui/TimeSlotGrid';
-import WeekNav from '../ui/WeekNav';
+import TimeSlotButtons from '../ui/TimeSlotButtons';
 
 interface Props {
   mentor: Mentor;
@@ -15,20 +15,24 @@ interface Props {
 
 const ReservationFormSection = ({ mentor, period, onConfirm }: Props) => {
   const {
-    weekStart,
+    currentYear,
+    currentMonth,
+    selectedDate,
     selectedSlot,
-    schedule,
+    monthAvailability,
+    daySlots,
     canGoPrev,
     canGoNext,
-    handlePrev,
-    handleNext,
+    handlePrevMonth,
+    handleNextMonth,
+    handleDateSelect,
     handleSlotSelect,
     handleCancel,
     handleConfirm,
   } = useTimeSlotState(mentor, period, onConfirm);
 
   return (
-    <div className="mb-10 flex flex-col gap-6 p-0 md:mb-0 md:p-4">
+    <div className="flex flex-col gap-6 p-0 md:p-4">
       <section>
         <h2 className="text-xsmall16 text-neutral-0 mb-4 font-semibold">
           담당 멘토
@@ -40,31 +44,36 @@ const ReservationFormSection = ({ mentor, period, onConfirm }: Props) => {
       </section>
 
       <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xsmall16 text-neutral-0 font-semibold">
-            예약 가능한 시간 선택
-          </h2>
-          <WeekNav
-            weekStart={weekStart}
+        <h2 className="text-xsmall16 text-neutral-0 mb-4 font-semibold">
+          예약 일시 선택
+        </h2>
+        <div className="flex flex-col gap-4 md:mb-6 md:flex-row md:items-start md:gap-8">
+          <MonthCalendar
+            year={currentYear}
+            month={currentMonth}
+            selectedDate={selectedDate}
+            monthAvailability={monthAvailability}
             canGoPrev={canGoPrev}
             canGoNext={canGoNext}
-            onPrev={handlePrev}
-            onNext={handleNext}
+            onPrev={handlePrevMonth}
+            onNext={handleNextMonth}
+            onDateSelect={handleDateSelect}
           />
+          <div className="flex flex-1">
+            <TimeSlotButtons
+              date={selectedDate}
+              slots={daySlots}
+              selectedSlot={selectedSlot}
+              onSlotSelect={handleSlotSelect}
+            />
+          </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <TimeSlotGrid
-            schedule={schedule}
-            selectedSlot={selectedSlot}
-            onSlotSelect={handleSlotSelect}
-          />
-          <ReservationBar
-            mentorName={mentor.name}
-            selectedSlot={selectedSlot}
-            onCancel={handleCancel}
-            onConfirm={handleConfirm}
-          />
-        </div>
+        <ReservationBar
+          mentorName={mentor.name}
+          selectedSlot={selectedSlot}
+          onCancel={handleCancel}
+          onConfirm={handleConfirm}
+        />
       </section>
     </div>
   );

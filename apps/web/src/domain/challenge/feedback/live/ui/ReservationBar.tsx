@@ -102,7 +102,7 @@ const ReservationBar = ({
           <button
             type="button"
             onClick={onCancel}
-            className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-[9px] font-semibold"
+            className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-3 font-semibold"
           >
             취소
           </button>
@@ -110,7 +110,7 @@ const ReservationBar = ({
             type="button"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={!selectedSlot}
-            className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-[9px] font-semibold text-neutral-100 disabled:opacity-50"
+            className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-3 font-semibold text-neutral-100 disabled:opacity-50"
           >
             예약 확정
           </button>
