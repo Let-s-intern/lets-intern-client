@@ -37,7 +37,7 @@ const MarketingAgreeStat = ({ applications }: MarketingAgreeStatProps) => {
         className="text-2xl font-bold"
         style={{ color: getPercentColor(stat.percent) }}
       >
-        {stat.percent}%
+        {stat.percent.toFixed(2)}%
       </p>
       <p className="text-xs text-gray-500">
         {stat.agreed} / {stat.total}명

@@ -44,7 +44,7 @@ describe('QuestionAnswerStat', () => {
     );
 
     expect(getByText('질문 응답률')).toBeInTheDocument();
-    expect(getByText('67%')).toBeInTheDocument();
+    expect(getByText('66.67%')).toBeInTheDocument();
     expect(getByText('2 / 3명')).toBeInTheDocument();
   });
 

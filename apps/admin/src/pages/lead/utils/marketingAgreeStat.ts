@@ -4,14 +4,14 @@
 export interface MarketingAgreeStat {
   total: number;
   agreed: number;
-  /** 0~100 정수(반올림). 총원 0이면 0. */
+  /** 0~100 실수. 총원 0이면 0. 표시단에서 `.toFixed(N)`로 자리수 결정. */
   percent: number;
 }
 
 /**
  * 신청자 배열의 마케팅 동의율을 계산한다.
  *
- * - `percent`는 `Math.round((agreed / total) * 100)`로 계산되며 소수점은 가지지 않는다.
+ * - `percent`는 `(agreed / total) * 100` 실수다. 표시단에서 자리수 결정.
  * - `total === 0`이면 `{ total: 0, agreed: 0, percent: 0 }`을 반환한다.
  */
 export const marketingAgreeStat = (
@@ -28,6 +28,6 @@ export const marketingAgreeStat = (
   return {
     total,
     agreed,
-    percent: Math.round((agreed / total) * 100),
+    percent: (agreed / total) * 100,
   };
 };

@@ -36,7 +36,7 @@ describe('MarketingAgreeStat', () => {
     );
 
     expect(getByText('마케팅 동의율')).toBeInTheDocument();
-    expect(getByText('75%')).toBeInTheDocument();
+    expect(getByText('75.00%')).toBeInTheDocument();
     expect(getByText('3 / 4명')).toBeInTheDocument();
   });
 

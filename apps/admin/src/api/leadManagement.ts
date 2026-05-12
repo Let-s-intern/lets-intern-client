@@ -6,8 +6,8 @@ import axios from '@/utils/axios';
 // --- Zod Schemas ---
 
 const questionAnswerSchema = z.object({
-  question: z.string(),
-  answer: z.string(),
+  question: z.string().nullable(),
+  answer: z.string().nullable(),
 });
 
 export const magnetApplicationByMagnetSchema = z.object({

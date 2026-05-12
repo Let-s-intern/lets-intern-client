@@ -16,24 +16,22 @@ describe('questionAnswerStat', () => {
       { questionAnswerList: [{ answer: '응답 1' }] },
       { questionAnswerList: [{ answer: '응답 2' }] },
     ];
-    expect(questionAnswerStat(items)).toEqual({
-      total: 2,
-      answered: 2,
-      percent: 100,
-    });
+    const result = questionAnswerStat(items);
+    expect(result.total).toBe(2);
+    expect(result.answered).toBe(2);
+    expect(result.percent).toBe(100);
   });
 
-  it('3명 중 2명 답변 시 percent를 반올림한다 (67%)', () => {
+  it('3명 중 2명 답변 시 percent는 약 66.667의 실수', () => {
     const items = [
       { questionAnswerList: [{ answer: '응답' }] },
       { questionAnswerList: [{ answer: '응답' }] },
       { questionAnswerList: [{ answer: '' }] },
     ];
-    expect(questionAnswerStat(items)).toEqual({
-      total: 3,
-      answered: 2,
-      percent: 67,
-    });
+    const result = questionAnswerStat(items);
+    expect(result.total).toBe(3);
+    expect(result.answered).toBe(2);
+    expect(result.percent).toBeCloseTo(66.6667, 3);
   });
 
   it('answer가 공백 문자열만 있으면 답변 안 한 것으로 카운트한다', () => {
@@ -42,11 +40,10 @@ describe('questionAnswerStat', () => {
       { questionAnswerList: [{ answer: '\t\n' }] },
       { questionAnswerList: [{ answer: '실제 응답' }] },
     ];
-    expect(questionAnswerStat(items)).toEqual({
-      total: 3,
-      answered: 1,
-      percent: 33,
-    });
+    const result = questionAnswerStat(items);
+    expect(result.total).toBe(3);
+    expect(result.answered).toBe(1);
+    expect(result.percent).toBeCloseTo(33.3333, 3);
   });
 
   it('questionAnswerList가 빈 배열이면 답변 안 한 것으로 카운트한다', () => {
@@ -54,11 +51,10 @@ describe('questionAnswerStat', () => {
       { questionAnswerList: [] },
       { questionAnswerList: [{ answer: '응답' }] },
     ];
-    expect(questionAnswerStat(items)).toEqual({
-      total: 2,
-      answered: 1,
-      percent: 50,
-    });
+    const result = questionAnswerStat(items);
+    expect(result.total).toBe(2);
+    expect(result.answered).toBe(1);
+    expect(result.percent).toBe(50);
   });
 
   it('answer가 null/undefined이면 답변 안 한 것으로 카운트한다', () => {
@@ -67,10 +63,9 @@ describe('questionAnswerStat', () => {
       { questionAnswerList: [{ answer: undefined }] },
       { questionAnswerList: [{ answer: '응답' }] },
     ];
-    expect(questionAnswerStat(items)).toEqual({
-      total: 3,
-      answered: 1,
-      percent: 33,
-    });
+    const result = questionAnswerStat(items);
+    expect(result.total).toBe(3);
+    expect(result.answered).toBe(1);
+    expect(result.percent).toBeCloseTo(33.3333, 3);
   });
 });

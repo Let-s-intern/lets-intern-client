@@ -5,7 +5,7 @@ export interface QuestionAnswerStatResult {
   total: number;
   /** `questionAnswerList`에 trim 후 비어있지 않은 answer가 하나 이상 있는 신청자 수. */
   answered: number;
-  /** 0~100 정수(반올림). 총원 0이면 0. */
+  /** 0~100 실수. 총원 0이면 0. 표시단에서 `.toFixed(N)`로 자리수 결정. */
   percent: number;
 }
 
@@ -14,7 +14,7 @@ export interface QuestionAnswerStatResult {
  *
  * - `answered`는 `questionAnswerList` 중 `answer`가 trim 후 비어있지 않은 항목이
  *   하나 이상 있는 신청자 수다.
- * - `percent`는 `Math.round((answered / total) * 100)`로 계산되며 소수점은 가지지 않는다.
+ * - `percent`는 `(answered / total) * 100` 실수다. 표시단에서 자리수 결정.
  * - `total === 0`이면 `{ total: 0, answered: 0, percent: 0 }`을 반환한다.
  */
 export const questionAnswerStat = (
@@ -34,6 +34,6 @@ export const questionAnswerStat = (
   return {
     total,
     answered,
-    percent: Math.round((answered / total) * 100),
+    percent: (answered / total) * 100,
   };
 };
