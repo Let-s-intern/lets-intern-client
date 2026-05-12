@@ -57,26 +57,34 @@ describe('dailyApplicationCount', () => {
     expect(result).toEqual([{ date: '2026-05-12', count: 2 }]);
   });
 
-  it('invalid date 문자열이 섞여 있어도 무한 루프 없이 valid 항목만 집계한다', { timeout: 5000 }, () => {
-    const result = dailyApplicationCount([
-      { createDate: 'not-a-date' },
-      { createDate: '2026-05-10T09:00:00' },
-      { createDate: 'also-invalid' },
-      { createDate: '2026-05-11T18:30:00' },
-    ]);
-    expect(result).toEqual([
-      { date: '2026-05-10', count: 1 },
-      { date: '2026-05-11', count: 1 },
-    ]);
-  });
+  it(
+    'invalid date 문자열이 섞여 있어도 무한 루프 없이 valid 항목만 집계한다',
+    { timeout: 5000 },
+    () => {
+      const result = dailyApplicationCount([
+        { createDate: 'not-a-date' },
+        { createDate: '2026-05-10T09:00:00' },
+        { createDate: 'also-invalid' },
+        { createDate: '2026-05-11T18:30:00' },
+      ]);
+      expect(result).toEqual([
+        { date: '2026-05-10', count: 1 },
+        { date: '2026-05-11', count: 1 },
+      ]);
+    },
+  );
 
-  it('모든 항목이 invalid date이면 빈 배열을 반환한다', { timeout: 5000 }, () => {
-    const result = dailyApplicationCount([
-      { createDate: 'not-a-date' },
-      { createDate: 'also-invalid' },
-    ]);
-    expect(result).toEqual([]);
-  });
+  it(
+    '모든 항목이 invalid date이면 빈 배열을 반환한다',
+    { timeout: 5000 },
+    () => {
+      const result = dailyApplicationCount([
+        { createDate: 'not-a-date' },
+        { createDate: 'also-invalid' },
+      ]);
+      expect(result).toEqual([]);
+    },
+  );
 
   describe('cumulative 옵션', () => {
     it('빈 입력은 cumulative: true에서도 빈 배열을 반환한다', () => {
