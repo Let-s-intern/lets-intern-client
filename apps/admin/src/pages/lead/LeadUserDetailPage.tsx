@@ -93,7 +93,8 @@ const LeadUserDetailPage = () => {
       {
         field: 'questionAnswerList',
         headerName: '질문 답변',
-        width: 240,
+        flex: 1,
+        minWidth: 240,
         valueGetter: (_, row) => formatQuestions(row.questionAnswerList),
       },
       {
