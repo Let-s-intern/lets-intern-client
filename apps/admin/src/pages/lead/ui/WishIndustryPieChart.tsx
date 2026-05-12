@@ -22,6 +22,7 @@ const WishIndustryPieChart = ({ applications }: WishIndustryPieChartProps) => {
     () =>
       categoryCount(applications, (a) => a.wishIndustry, {
         excludeEmpty: true,
+        splitDelimiter: /\s*,\s*/,
       }),
     [applications],
   );

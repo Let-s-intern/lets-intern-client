@@ -15,6 +15,12 @@ interface CategoryCountOptions {
   restLabel?: string;
   /** true이면 null/undefined/빈문자열/'-' 값을 카운트에서 완전히 제외한다. */
   excludeEmpty?: boolean;
+  /**
+   * 다중 값 필드를 분리하기 위한 구분자.
+   * 지정 시 `pick` 결과를 이 패턴으로 split → 각 토큰을 trim 후 별도 카테고리로 누적한다.
+   * 예: `splitDelimiter: ','` 로 `'마케팅, 영업'` → `['마케팅', '영업']` 각각 +1
+   */
+  splitDelimiter?: string | RegExp;
 }
 
 const DEFAULT_EMPTY_LABEL = '미입력';
@@ -41,13 +47,34 @@ export const categoryCount = <T>(
   const restLabel = options?.restLabel ?? DEFAULT_REST_LABEL;
   const excludeEmpty = options?.excludeEmpty ?? false;
 
+  const splitDelimiter = options?.splitDelimiter;
+
   const countByLabel = new Map<string, number>();
   for (const item of items) {
     const raw = pick(item);
-    const isEmpty = raw == null || raw === '' || raw === '-';
-    if (isEmpty && excludeEmpty) continue;
-    const label = isEmpty ? emptyLabel : raw;
-    countByLabel.set(label, (countByLabel.get(label) ?? 0) + 1);
+    const isRawEmpty = raw == null || raw === '' || raw === '-';
+    if (isRawEmpty) {
+      if (excludeEmpty) continue;
+      countByLabel.set(emptyLabel, (countByLabel.get(emptyLabel) ?? 0) + 1);
+      continue;
+    }
+
+    const tokens = splitDelimiter
+      ? raw
+          .split(splitDelimiter)
+          .map((t) => t.trim())
+          .filter((t) => t !== '' && t !== '-')
+      : [raw];
+
+    if (tokens.length === 0) {
+      if (excludeEmpty) continue;
+      countByLabel.set(emptyLabel, (countByLabel.get(emptyLabel) ?? 0) + 1);
+      continue;
+    }
+
+    for (const token of tokens) {
+      countByLabel.set(token, (countByLabel.get(token) ?? 0) + 1);
+    }
   }
 
   const sorted: CategoryBucket[] = Array.from(countByLabel.entries())

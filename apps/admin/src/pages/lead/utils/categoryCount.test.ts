@@ -126,4 +126,57 @@ describe('categoryCount', () => {
       { label: 'Others', count: 2 },
     ]);
   });
+
+  describe('splitDelimiter 옵션', () => {
+    it('쉼표 구분된 다중 값을 각 토큰별로 분리해 카운트한다', () => {
+      const items: Sample[] = [
+        { field: '마케팅, 영업' },
+        { field: '마케팅' },
+        { field: '영업, IT' },
+      ];
+      const result = categoryCount(items, (item) => item.field, {
+        splitDelimiter: ',',
+      });
+      expect(result).toEqual([
+        { label: '마케팅', count: 2 },
+        { label: '영업', count: 2 },
+        { label: 'IT', count: 1 },
+      ]);
+    });
+
+    it('토큰 trim 후 빈 문자열과 - 는 제외한다', () => {
+      const items: Sample[] = [
+        { field: 'A, , -, B' },
+        { field: ' A ' },
+      ];
+      const result = categoryCount(items, (item) => item.field, {
+        splitDelimiter: ',',
+      });
+      expect(result).toEqual([
+        { label: 'A', count: 2 },
+        { label: 'B', count: 1 },
+      ]);
+    });
+
+    it('split 후 모든 토큰이 빈 값이면 excludeEmpty true일 때 결과에서 제외된다', () => {
+      const items: Sample[] = [{ field: ', , -' }, { field: 'A' }];
+      const result = categoryCount(items, (item) => item.field, {
+        splitDelimiter: ',',
+        excludeEmpty: true,
+      });
+      expect(result).toEqual([{ label: 'A', count: 1 }]);
+    });
+
+    it('RegExp 구분자도 지원한다 (쉼표 + 양옆 공백)', () => {
+      const items: Sample[] = [{ field: '마케팅 , 영업, IT' }];
+      const result = categoryCount(items, (item) => item.field, {
+        splitDelimiter: /\s*,\s*/,
+      });
+      expect(result).toEqual([
+        { label: '마케팅', count: 1 },
+        { label: '영업', count: 1 },
+        { label: 'IT', count: 1 },
+      ]);
+    });
+  });
 });

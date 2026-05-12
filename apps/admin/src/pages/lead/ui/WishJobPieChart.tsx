@@ -22,6 +22,7 @@ const WishJobPieChart = ({ applications }: WishJobPieChartProps) => {
     () =>
       categoryCount(applications, (a) => a.wishJob, {
         excludeEmpty: true,
+        splitDelimiter: /\s*,\s*/,
       }),
     [applications],
   );
