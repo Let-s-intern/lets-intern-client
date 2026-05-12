@@ -1,7 +1,6 @@
-import { isEntranceActive } from '../utils';
 import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime } from '../utils';
+import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
 interface Props {
@@ -32,33 +31,58 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
 
       <section className="flex w-full flex-col">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold">
-          LIVE 피드백
+          LIVE 피드백 예약내역
         </h2>
         <div className="flex flex-col gap-10 px-0 py-4 md:gap-4 md:px-4">
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center">
               <img src="/icons/clock.svg" alt=" - " />
               <span className="text-xsmall14 text-neutral-40 pl-1 pr-3">
-                예약 시간
+                예약 일시
               </span>
-              <span className="text-xsmall14 text-neutral-0 font-semibold">
+              <span
+                className={`text-xsmall14 font-semibold ${status === 'canceled' ? 'text-neutral-60 line-through' : 'text-neutral-0'}`}
+              >
                 {formattedTime}
               </span>
+              {status === 'canceled' && (
+                <span className="text-xxsmall12 text-neutral-40 ml-2">
+                  취소됨
+                </span>
+              )}
             </div>
-            <div className="flex items-center">
-              <img src="/icons/door-closed.svg" alt=" - " />
-              <span className="text-xsmall14 text-neutral-40 pl-1 pr-3">
-                젭 회의실
-              </span>
-              <span className="text-xsmall14 text-neutral-0 font-semibold">
-                {zepRoomNumber !== null ? `${zepRoomNumber}번 방` : '미정'}
-              </span>
-            </div>
+            {status === 'canceled' && (
+              <div className="bg-primary-10 text-primary flex items-start gap-2 rounded-sm px-4 py-3">
+                <img
+                  src="/icons/info.svg"
+                  alt="안내"
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xsmall14 font-semibold">
+                    예약시간이 취소되었어요.
+                  </span>
+                  <span className="text-xxsmall12">
+                    멘토님과 조율된 내용인지 확인해 주세요.
+                  </span>
+                </div>
+              </div>
+            )}
+            {status !== 'canceled' && (
+              <div className="flex items-center">
+                <img src="/icons/door-closed.svg" alt=" - " />
+                <span className="text-xsmall14 text-neutral-40 pl-1 pr-3">
+                  젭 회의실
+                </span>
+                <span className="text-xsmall14 text-neutral-0 font-semibold">
+                  {zepRoomNumber !== null ? `${zepRoomNumber}번 방` : '미정'}
+                </span>
+              </div>
+            )}
           </div>
 
-          {status === 'done' ? (
-            <LiveFeedbackReview />
-          ) : (
+          {status === 'done' && <LiveFeedbackReview />}
+          {status !== 'done' && status !== 'canceled' && (
             <div className="flex gap-4">
               <button
                 type="button"

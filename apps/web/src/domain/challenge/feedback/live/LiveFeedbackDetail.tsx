@@ -45,11 +45,20 @@ const LiveFeedbackDetail = ({
 
   if (reservation) {
     return (
-      <ReservationInfoSection
-        mentor={assignedMentor}
-        reservation={reservation}
-        status={status}
-      />
+      <div className="flex flex-col">
+        <ReservationInfoSection
+          mentor={assignedMentor}
+          reservation={reservation}
+          status={status}
+        />
+        {status === 'canceled' && (
+          <ReservationFormSection
+            mentor={assignedMentor}
+            period={{ startDay, endDay }}
+            onConfirm={handleConfirm}
+          />
+        )}
+      </div>
     );
   }
 
