@@ -32,8 +32,7 @@ const LiveMissionDetailPage = () => {
       <BackHeader to={backPath}>{HEADER_TITLE[mission.status]}</BackHeader>
       <LiveFeedbackDetail
         assignedMentor={mission.assignedMentor}
-        startDay={mission.startDay}
-        endDay={mission.endDay}
+        period={{ startDay: mission.startDay, endDay: mission.endDay }}
         reservationInfo={mission.reservationInfo}
         status={mission.status}
       />

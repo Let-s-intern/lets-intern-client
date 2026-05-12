@@ -98,9 +98,9 @@ const LiveFeedbackReview = () => {
   if (isReviewing) {
     return (
       <div className="flex flex-col gap-4">
-        <h3 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
+        <h2 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
           LIVE 피드백 회고하기
-        </h3>
+        </h2>
         <div className="flex flex-col gap-2">
           <StarRating value={stars} onChange={setStars} />
           {!canSubmit && (

@@ -48,8 +48,7 @@ function LiveFeedbackSection({
               >
                 <LiveFeedbackDetail
                   assignedMentor={mission.assignedMentor}
-                  startDay={mission.startDay}
-                  endDay={mission.endDay}
+                  period={{ startDay: mission.startDay, endDay: mission.endDay }}
                   reservationInfo={mission.reservationInfo}
                   status={mission.status}
                 />
