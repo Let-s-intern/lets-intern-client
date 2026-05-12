@@ -21,7 +21,6 @@ const WishFieldPieChart = ({ applications }: WishFieldPieChartProps) => {
   const buckets = useMemo(
     () =>
       categoryCount(applications, (a) => a.wishField, {
-        topN: 6,
         excludeEmpty: true,
       }),
     [applications],

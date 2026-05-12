@@ -21,7 +21,6 @@ const WishJobPieChart = ({ applications }: WishJobPieChartProps) => {
   const buckets = useMemo(
     () =>
       categoryCount(applications, (a) => a.wishJob, {
-        topN: 6,
         excludeEmpty: true,
       }),
     [applications],
