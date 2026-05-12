@@ -9,6 +9,9 @@ import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import MagnetApplicationDailyChart from './ui/MagnetApplicationDailyChart';
+import MarketingAgreeStat from './ui/MarketingAgreeStat';
+import WishFieldPieChart from './ui/WishFieldPieChart';
+import WishJobPieChart from './ui/WishJobPieChart';
 import { downloadCsv } from './utils/csv';
 
 // --- Helpers ---
@@ -149,7 +152,16 @@ const LeadUserDetailPage = () => {
 
   return (
     <div className="px-12 py-6">
-      <MagnetApplicationDailyChart applications={applications} />
+      <div className="mb-4 flex flex-col gap-4 lg:flex-row">
+        <div className="lg:flex-1">
+          <MagnetApplicationDailyChart applications={applications} />
+        </div>
+        <div className="flex flex-col gap-4 lg:w-96">
+          <WishFieldPieChart applications={applications} />
+          <WishJobPieChart applications={applications} />
+          <MarketingAgreeStat applications={applications} />
+        </div>
+      </div>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">마그넷 신청자 목록</h2>
         <Button
