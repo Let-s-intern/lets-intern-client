@@ -84,6 +84,37 @@ describe('categoryCount', () => {
     expect(result).toHaveLength(2);
   });
 
+  it('excludeEmpty: true이면 미입력 값이 결과에서 완전히 제외된다', () => {
+    const items: Sample[] = [
+      { field: null },
+      { field: '' },
+      { field: '-' },
+      { field: '개발' },
+      { field: '개발' },
+      { field: '디자인' },
+    ];
+    const result = categoryCount(items, (item) => item.field, {
+      excludeEmpty: true,
+    });
+    expect(result).toEqual([
+      { label: '개발', count: 2 },
+      { label: '디자인', count: 1 },
+    ]);
+    expect(result.some((b) => b.label === '미입력')).toBe(false);
+  });
+
+  it('excludeEmpty: true이고 모든 값이 미입력이면 빈 배열을 반환한다', () => {
+    const items: Sample[] = [
+      { field: null },
+      { field: '' },
+      { field: '-' },
+    ];
+    const result = categoryCount(items, (item) => item.field, {
+      excludeEmpty: true,
+    });
+    expect(result).toEqual([]);
+  });
+
   it('emptyLabel, restLabel 옵션을 커스텀할 수 있다', () => {
     const items: Sample[] = [
       { field: null },

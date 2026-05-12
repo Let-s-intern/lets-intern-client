@@ -13,6 +13,8 @@ interface CategoryCountOptions {
   emptyLabel?: string;
   /** topN 초과 항목을 합산할 라벨. 기본값 `'기타'`. */
   restLabel?: string;
+  /** true이면 null/undefined/빈문자열/'-' 값을 카운트에서 완전히 제외한다. */
+  excludeEmpty?: boolean;
 }
 
 const DEFAULT_EMPTY_LABEL = '미입력';
@@ -22,6 +24,7 @@ const DEFAULT_REST_LABEL = '기타';
  * 아이템 배열을 카테고리별 카운트 버킷 배열로 변환한다.
  *
  * - null/undefined/빈문자열/`'-'`은 `emptyLabel`(기본 `'미입력'`) 버킷에 누적된다.
+ *   `excludeEmpty: true`이면 미입력 값을 버킷 생성 없이 완전히 제외한다.
  * - 결과는 카운트 내림차순으로 정렬된다.
  * - `topN`이 주어지면 상위 N개만 유지하고 나머지를 `restLabel` 버킷으로 합산한다.
  *   단, top N+1 이후에 데이터가 없으면 `restLabel` 버킷은 생성하지 않는다.
@@ -36,12 +39,14 @@ export const categoryCount = <T>(
 
   const emptyLabel = options?.emptyLabel ?? DEFAULT_EMPTY_LABEL;
   const restLabel = options?.restLabel ?? DEFAULT_REST_LABEL;
+  const excludeEmpty = options?.excludeEmpty ?? false;
 
   const countByLabel = new Map<string, number>();
   for (const item of items) {
     const raw = pick(item);
-    const label =
-      raw == null || raw === '' || raw === '-' ? emptyLabel : raw;
+    const isEmpty = raw == null || raw === '' || raw === '-';
+    if (isEmpty && excludeEmpty) continue;
+    const label = isEmpty ? emptyLabel : raw;
     countByLabel.set(label, (countByLabel.get(label) ?? 0) + 1);
   }
 
