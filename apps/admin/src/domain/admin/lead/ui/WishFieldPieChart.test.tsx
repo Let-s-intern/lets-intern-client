@@ -35,20 +35,25 @@ const buildApplication = (
 });
 
 describe('WishFieldPieChart', () => {
-  it('데이터가 있으면 차트와 캡션을 렌더한다', () => {
+  it('데이터가 있으면 차트, 캡션, 카드 하단 자체 범례를 렌더한다', () => {
     const applications: MagnetApplicationByMagnet[] = [
       buildApplication({ magnetApplicationId: 1, wishField: '개발' }),
       buildApplication({ magnetApplicationId: 2, wishField: '개발' }),
       buildApplication({ magnetApplicationId: 3, wishField: '디자인' }),
     ];
 
-    const { getByTestId, getByText } = render(
+    const { getByTestId, getByText, getByRole } = render(
       <WishFieldPieChart applications={applications} />,
     );
 
     expect(getByText('희망 직군 분포')).toBeInTheDocument();
-    expect(getByTestId('pie-chart')).toHaveTextContent('개발:2');
-    expect(getByTestId('pie-chart')).toHaveTextContent('디자인:1');
+    expect(getByTestId('pie-chart')).toBeInTheDocument();
+
+    const legend = getByRole('list');
+    expect(legend).toHaveTextContent('개발');
+    expect(legend).toHaveTextContent('(2)');
+    expect(legend).toHaveTextContent('디자인');
+    expect(legend).toHaveTextContent('(1)');
   });
 
   it('데이터가 비어 있으면 null을 반환한다', () => {
