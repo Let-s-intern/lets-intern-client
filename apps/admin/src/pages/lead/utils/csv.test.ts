@@ -84,8 +84,8 @@ describe('downloadCsv', () => {
     );
 
     expect(blobs).toHaveLength(1);
-    // BOM(﻿) 제거 후 라인 분리.
-    const csv = blobs[0].replace(/^﻿/, '');
+    // BOM(U+FEFF) 제거 후 라인 분리.
+    const csv = blobs[0].replace(/^\uFEFF/, '');
     const [headerLine, firstRow, secondRow] = csv.split('\n');
 
     // 헤더 첫 컬럼이 "신청일자".
