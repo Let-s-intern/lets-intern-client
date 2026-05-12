@@ -1,6 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
-import { usePatchUserAdminMutation } from '@/api/user/user';
+import {
+  UseAdminUserMentorListQueryKey,
+  useAdminUserMentorListQuery,
+} from '@/api/mentor/mentor';
+import {
+  usePatchUserAdminMutation,
+  UseUserAdminQueryKey,
+} from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, Tab, Tabs } from '@mui/material';
@@ -33,7 +39,9 @@ function MentorManagementTable() {
     try {
       await patchUser.mutateAsync({ id: mentorId, isMentor: false });
       queryClient.invalidateQueries({
-        queryKey: ['useAdminUserMentorListQuery'],
+        predicate: ({ queryKey }) =>
+          queryKey[0] === UseAdminUserMentorListQueryKey ||
+          queryKey[0] === UseUserAdminQueryKey,
       });
       snackbar('멘토가 삭제되었습니다.');
     } catch (err) {
