@@ -280,7 +280,9 @@ export async function sendErrorToWebhook(
   }
 
   // 불필요한 노이즈 에러 필터링 (Sentry는 모든 에러를 전송하지만, webhook은 필터링)
-  if (shouldFilterError(error, additionalInfo?.url)) {
+  if (
+    shouldFilterError(error, additionalInfo?.url, additionalInfo?.userAgent)
+  ) {
     // 필터링된 에러는 조용히 무시
     return;
   }
