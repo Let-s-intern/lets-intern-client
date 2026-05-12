@@ -20,7 +20,13 @@ export interface DaySchedule {
 }
 
 // 라이브 피드백 미션 상태 코드
-export type LiveFeedbackStatus = 'prev' | 'reserved' | 'done';
+export type LiveFeedbackStatus =
+  | 'prev'
+  | 'canceled'
+  | 'reserved'
+  | 'changed'
+  | 'done'
+  | 'expired';
 
 export interface Mentor {
   id: number;

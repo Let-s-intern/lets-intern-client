@@ -1,49 +1,61 @@
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 export const LIVE_FEEDBACK_SECTIONS: {
-  status: LiveFeedbackStatus;
+  statuses: LiveFeedbackStatus[];
   label: string;
   emptyMessage: string;
 }[] = [
   {
-    status: 'prev',
-    label: '예약 전',
-    emptyMessage: '예약 전인 미션이 없어요.',
+    statuses: ['prev', 'canceled'],
+    label: '예약 필요',
+    emptyMessage: '예약 필요한 미션이 없어요.',
   },
   {
-    status: 'reserved',
+    statuses: ['reserved', 'changed'],
     label: '예약 완료',
     emptyMessage: '예약 완료된 미션이 없어요.',
   },
   {
-    status: 'done',
+    statuses: ['done'],
     label: '피드백 완료',
     emptyMessage: '피드백 완료된 미션이 없어요.',
   },
+  {
+    statuses: ['expired'],
+    label: '기간 만료',
+    emptyMessage: '기간이 만료된 미션이 없어요.',
+  },
 ];
 
-export const LIVE_FEEDBACK_BUTTON_LABELS: Record<
-  LiveFeedbackStatus,
-  { buttonLabel: string; openLabel: string }
+export const LIVE_FEEDBACK_BUTTON_LABELS: Partial<
+  Record<LiveFeedbackStatus, { buttonLabel: string; openLabel: string }>
 > = {
   prev: { buttonLabel: '예약 신청 보기', openLabel: '예약 신청 닫기' },
+  canceled: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
   reserved: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+  changed: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
   done: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
 };
 
 export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
   prev: '예약 전',
+  canceled: '예약 취소',
   reserved: '예약 완료',
-  done: '참여 완료',
+  changed: '예약 변경',
+  done: '피드백 완료',
+  expired: '예약 종료',
 };
 
 export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   LiveFeedbackStatus,
-  'neutral' | 'active' | 'done'
+  'neutral' | 'active' | 'muted' | 'canceled'
 > = {
   prev: 'neutral',
-  reserved: 'active',
-  done: 'done',
+  canceled: 'canceled',
+  reserved: 'muted',
+  changed: 'active',
+  done: 'muted',
+  expired: 'muted',
 };
 
 export function toCardConfig(mission: LiveFeedbackMission) {
