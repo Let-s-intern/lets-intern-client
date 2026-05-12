@@ -5,7 +5,7 @@ import {
 import { formatDateTimeCellValue } from '@/domain/admin/ui/table/TableFilter';
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { downloadCsv } from './utils/csv';
@@ -24,6 +24,7 @@ const formatQuestions = (
 const LeadUserDetailPage = () => {
   const params = useParams<{ id: string }>();
   const magnetId = Number(params.id);
+  const apiRef = useGridApiRef();
 
   const { data: applications = [], isLoading } =
     useMagnetApplicationByMagnetIdQuery(magnetId, {
@@ -102,7 +103,13 @@ const LeadUserDetailPage = () => {
   );
 
   const handleDownloadCsv = () => {
-    if (!applications.length) {
+    // DataGrid의 정렬·필터가 적용된 순서대로 행을 수집한다.
+    const sortedRowIds = apiRef.current?.getSortedRowIds() ?? [];
+    const sortedRows = sortedRowIds
+      .map((id) => apiRef.current?.getRow<MagnetApplicationByMagnet>(id))
+      .filter((row): row is MagnetApplicationByMagnet => row != null);
+
+    if (!sortedRows.length) {
       window.alert('다운로드할 데이터가 없습니다.');
       return;
     }
@@ -121,7 +128,7 @@ const LeadUserDetailPage = () => {
         '질문 답변',
         '마케팅 동의 여부',
       ],
-      applications.map((row) => [
+      sortedRows.map((row) => [
         formatDateTimeCellValue(
           row.createDate ? dayjs(row.createDate).toDate() : null,
           'YYYY-MM-DD HH:mm',
@@ -153,6 +160,7 @@ const LeadUserDetailPage = () => {
       </div>
       <DataGrid
         autoHeight
+        apiRef={apiRef}
         rows={applications}
         columns={columns}
         getRowId={(row) => row.magnetApplicationId}

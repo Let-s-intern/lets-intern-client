@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,6 +12,12 @@ vi.mock('@/api/leadManagement', () => ({
     magnetId: number,
     options?: { enabled?: boolean },
   ) => useMagnetApplicationByMagnetIdQueryMock(magnetId, options),
+}));
+
+// downloadCsv 호출을 가로채 정렬·필터된 행이 전달되는지 검증한다.
+const downloadCsvMock = vi.fn();
+vi.mock('./utils/csv', () => ({
+  downloadCsv: (...args: unknown[]) => downloadCsvMock(...args),
 }));
 
 import LeadUserDetailPage from './LeadUserDetailPage';
@@ -60,6 +66,7 @@ const renderPage = () =>
 describe('LeadUserDetailPage', () => {
   beforeEach(() => {
     useMagnetApplicationByMagnetIdQueryMock.mockReset();
+    downloadCsvMock.mockReset();
   });
 
   it('컬럼 헤더가 모두 렌더링된다', () => {
@@ -110,5 +117,35 @@ describe('LeadUserDetailPage', () => {
 
     const csvButton = screen.getByRole('button', { name: 'CSV 내보내기' });
     expect(csvButton).toBeDisabled();
+  });
+
+  it('CSV 내보내기는 DataGrid 정렬 순서(내림차순)대로 행을 전달한다', () => {
+    useMagnetApplicationByMagnetIdQueryMock.mockReturnValue({
+      data: mockApplications,
+      isLoading: false,
+    });
+
+    renderPage();
+
+    const csvButton = screen.getByRole('button', { name: 'CSV 내보내기' });
+    fireEvent.click(csvButton);
+
+    expect(downloadCsvMock).toHaveBeenCalledTimes(1);
+
+    const [filename, headers, dataRows] = downloadCsvMock.mock.calls[0] as [
+      string,
+      string[],
+      string[][],
+    ];
+
+    expect(filename).toBe('magnet-123-applications');
+    expect(headers[0]).toBe('신청일자');
+    // 기본 정렬: createDate 내림차순. 더 최근(김철수, 2026-05-12)이 먼저.
+    expect(dataRows).toHaveLength(2);
+    expect(dataRows[0][1]).toBe('김철수');
+    expect(dataRows[1][1]).toBe('홍길동');
+    // 신청일자 첫 컬럼이 YYYY-MM-DD HH:mm 포맷인지 검증.
+    expect(dataRows[0][0]).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/);
+    expect(dataRows[1][0]).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/);
   });
 });
