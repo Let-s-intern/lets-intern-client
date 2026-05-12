@@ -43,11 +43,13 @@ export const dailyApplicationCount = <T extends { createDate?: string | null }>(
 ): DailyApplicationCountPoint[] => {
   if (applications.length === 0) return [];
 
-  // 일자별 카운트 집계 (createDate 누락 항목은 건너뛴다)
+  // 일자별 카운트 집계 (createDate 누락/유효하지 않은 항목은 건너뛴다)
   const countByDate = new Map<string, number>();
   for (const application of applications) {
     if (!application.createDate) continue;
-    const date = dayjs(application.createDate).format(DATE_FORMAT);
+    const d = dayjs(application.createDate);
+    if (!d.isValid()) continue;
+    const date = d.format(DATE_FORMAT);
     countByDate.set(date, (countByDate.get(date) ?? 0) + 1);
   }
 
