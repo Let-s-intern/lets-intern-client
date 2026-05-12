@@ -1,26 +1,94 @@
-import { useEffect, useRef } from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
+import {
+  $getNodeByKey,
+  $getSelection,
+  $isNodeSelection,
+  BaseSelection,
+  CLICK_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  KEY_BACKSPACE_COMMAND,
+  KEY_DELETE_COMMAND,
+} from 'lexical';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CarouselImage } from './ImageCarouselNode';
 
 export default function ImageCarouselComponent({
   images,
   width = 0,
   maxWidth = 950,
+  nodeKey,
 }: {
   images: CarouselImage[];
   width?: number;
   maxWidth?: number;
+  nodeKey: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [editor] = useLexicalComposerContext();
+  const [isSelected, setSelected, clearSelection] =
+    useLexicalNodeSelection(nodeKey);
+  const [selection, setSelection] = useState<BaseSelection | null>(null);
+
+  const $onDelete = useCallback(
+    (event: KeyboardEvent) => {
+      if (isSelected && $isNodeSelection($getSelection())) {
+        event.preventDefault();
+        $getNodeByKey(nodeKey)?.remove();
+        return true;
+      }
+      return false;
+    },
+    [isSelected, nodeKey],
+  );
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerUpdateListener(({ editorState }) => {
+        setSelection(editorState.read(() => $getSelection()));
+      }),
+      editor.registerCommand<MouseEvent>(
+        CLICK_COMMAND,
+        (event) => {
+          if (containerRef.current?.contains(event.target as Node)) {
+            clearSelection();
+            setSelected(true);
+            return true;
+          }
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        KEY_DELETE_COMMAND,
+        $onDelete,
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        KEY_BACKSPACE_COMMAND,
+        $onDelete,
+        COMMAND_PRIORITY_LOW,
+      ),
+    );
+  }, [editor, $onDelete, setSelected, clearSelection]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const onWheel = (e: WheelEvent) => {
-      const max = el.scrollWidth - el.clientWidth;
-      if (max <= 0) return;
+      if (el.scrollWidth <= el.clientWidth) return;
+
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      e.stopPropagation();
+
+      if (isHorizontal) {
+        return;
+      }
       e.preventDefault();
-      el.scrollLeft += e.deltaY + e.deltaX;
+      el.scrollLeft += e.deltaY;
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
@@ -29,12 +97,19 @@ export default function ImageCarouselComponent({
 
   if (!images.length) return null;
 
+  const isDraggable = isSelected && $isNodeSelection(selection);
+
   return (
     <div
+      ref={containerRef}
+      draggable={isDraggable}
       className="my-4"
       style={{
         width: width === 0 ? '100%' : width,
         maxWidth,
+        outline: isSelected ? '2px solid #0d6efd' : 'none',
+        outlineOffset: 2,
+        cursor: isDraggable ? 'grab' : undefined,
       }}
     >
       <div
@@ -75,8 +150,8 @@ export default function ImageCarouselComponent({
               <img
                 src={img.src}
                 alt={img.altText}
-                className="h-full w-auto"
-                style={{ height: 260 }}
+                style={{ height: 260, width: 'auto' }}
+                draggable={false}
               />
             </picture>
           </div>

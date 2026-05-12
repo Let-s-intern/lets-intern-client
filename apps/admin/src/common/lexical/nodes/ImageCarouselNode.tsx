@@ -128,10 +128,6 @@ export class ImageCarouselNode extends DecoratorNode<JSX.Element> {
     return false;
   }
 
-  getImages(): CarouselImage[] {
-    return this.__images;
-  }
-
   decorate(_editor: LexicalEditor, _config: EditorConfig): JSX.Element {
     return (
       <Suspense fallback={null}>
@@ -139,6 +135,7 @@ export class ImageCarouselNode extends DecoratorNode<JSX.Element> {
           images={this.__images}
           width={this.__width}
           maxWidth={this.__maxWidth}
+          nodeKey={this.getKey()}
         />
       </Suspense>
     );
