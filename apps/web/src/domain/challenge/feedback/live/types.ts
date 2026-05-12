@@ -13,12 +13,6 @@ export interface SelectedSlot {
   time: string; // '09:00'
 }
 
-// 특정 날짜의 전체 시간 슬롯 상태 목록
-export interface DaySchedule {
-  date: string; // 'YYYY-MM-DD'
-  slots: Record<string, SlotStatus>;
-}
-
 // 라이브 피드백 미션 상태 코드
 export type LiveFeedbackStatus =
   | 'prev'
@@ -40,10 +34,10 @@ export interface Mentor {
 // 확정된 예약 정보
 export interface Reservation {
   reservationId: string;
-  scheduledDate: string; // 'YYYY-MM-DD'
-  scheduledTime: string; // '09:00'
-  zepRoomNumber: number | null;
-  zepRoomUrl: string | null;
+  scheduledDate: string | null; // 'YYYY-MM-DD' — canceled 상태에서는 null
+  scheduledTime: string | null; // '09:00'      — canceled 상태에서는 null
+  previousScheduledDate?: string; // 변경/취소 전 날짜 (changed, canceled)
+  previousScheduledTime?: string; // 변경/취소 전 시간 (changed, canceled)
 }
 
 // 라이브 피드백 미션 데이터

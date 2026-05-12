@@ -76,27 +76,6 @@ export function toCardConfig(mission: LiveFeedbackMission) {
   };
 }
 
-export function addDays(date: Date, days: number): Date {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
-}
-
-export function getWeekStart(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  const day = d.getDay();
-  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
-  return d;
-}
-
-export function formatWeekRange(weekStart: Date): string {
-  const end = addDays(weekStart, 6);
-  const fmt = (d: Date) =>
-    `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-  return `${fmt(weekStart)} – ${fmt(end)}`;
-}
-
 export function toDateString(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -105,9 +84,10 @@ export function toDateString(date: Date): string {
 }
 
 export function isEntranceActive(
-  scheduledDate: string,
-  scheduledTime: string,
+  scheduledDate: string | null | undefined,
+  scheduledTime: string | null | undefined,
 ): boolean {
+  if (!scheduledDate || !scheduledTime) return false;
   const [hour, minute] = scheduledTime.split(':').map(Number);
   const start = new Date(scheduledDate);
   start.setHours(hour, minute, 0, 0);
@@ -118,7 +98,11 @@ export function isEntranceActive(
   return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
 }
 
-export function formatReservationTime(dateStr: string, time: string): string {
+export function formatReservationTime(
+  dateStr: string | null | undefined,
+  time: string | null | undefined,
+): string | null {
+  if (!dateStr || !time) return null;
   const date = new Date(dateStr);
   const month = date.getMonth() + 1;
   const day = date.getDate();

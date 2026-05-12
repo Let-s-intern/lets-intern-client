@@ -1,9 +1,4 @@
-import type {
-  DaySchedule,
-  LiveFeedbackMission,
-  Mentor,
-  SlotStatus,
-} from './live/types';
+import type { LiveFeedbackMission, Mentor, SlotStatus } from './live/types';
 import { TIME_SLOTS } from './live/types';
 import { toDateString } from './live/utils';
 import type { WrittenFeedbackMission } from './written/types';
@@ -56,21 +51,6 @@ export function getMentorMonthAvailability(
     result[dateStr] = slots.some((s) => s === 'available');
   }
   return result;
-}
-
-export function getMentorSchedule(
-  mentorId: number,
-  weekStart: Date,
-): DaySchedule[] {
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(weekStart);
-    date.setDate(weekStart.getDate() + i);
-    const slots: Record<string, SlotStatus> = {};
-    TIME_SLOTS.forEach((time) => {
-      slots[time] = getSlotStatus(date, time, mentorId);
-    });
-    return { date: toDateString(date), slots };
-  });
 }
 
 export const DUMMY_MENTORS: Mentor[] = [
@@ -183,8 +163,6 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-001',
       scheduledDate: '2026-05-10',
       scheduledTime: '13:30',
-      zepRoomNumber: 8,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
   },
   {
@@ -205,8 +183,6 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-001',
       scheduledDate: '2026-03-10',
       scheduledTime: '14:00',
-      zepRoomNumber: 8,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
   },
   {
@@ -227,8 +203,6 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-002',
       scheduledDate: '2026-04-10',
       scheduledTime: '14:00',
-      zepRoomNumber: 3,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
   },
   {
@@ -246,10 +220,10 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     assignedMentor: DUMMY_MENTORS[2],
     reservationInfo: {
       reservationId: 'reservation-dummy-003',
-      scheduledDate: '2026-05-08',
-      scheduledTime: '10:00',
-      zepRoomNumber: null,
-      zepRoomUrl: null,
+      scheduledDate: null,
+      scheduledTime: null,
+      previousScheduledDate: '2026-05-08',
+      previousScheduledTime: '10:00',
     },
   },
   {
@@ -267,10 +241,10 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     assignedMentor: DUMMY_MENTORS[3],
     reservationInfo: {
       reservationId: 'reservation-dummy-004',
-      scheduledDate: '2026-05-12',
+      scheduledDate: '2026-05-14',
       scheduledTime: '14:30',
-      zepRoomNumber: 5,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
+      previousScheduledDate: '2026-05-12',
+      previousScheduledTime: '11:00',
     },
   },
   {
