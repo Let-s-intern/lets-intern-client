@@ -24,6 +24,7 @@ import { SerializedCollapsibleTitleNode } from './nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from './nodes/EmojiNode';
 import { SerializedFigmaNode } from './nodes/FigmaNode';
 import { SerializedImageCarouselNode } from './nodes/ImageCarouselNode';
+import ImageCarouselViewer from './nodes/ImageCarouselViewer';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
@@ -499,49 +500,10 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedImageCarouselNode;
       const containerWidth = _node.width === 0 ? '100%' : _node.width;
       return (
-        <div className="my-4 overflow-x-auto" style={{ width: containerWidth }}>
-          <div
-            className="flex gap-3 pb-1"
-            style={{ scrollSnapType: 'x mandatory' }}
-          >
-            {_node.images.map((img, idx) => (
-              <div
-                key={idx}
-                className="flex-none overflow-hidden"
-                style={{ height: 260, scrollSnapAlign: 'start' }}
-              >
-                <picture>
-                  {img.webpDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.webpDesktop}
-                      type="image/webp"
-                    />
-                  )}
-                  {img.jpegDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.jpegDesktop}
-                      type="image/jpeg"
-                    />
-                  )}
-                  {img.webpMobile && (
-                    <source srcSet={img.webpMobile} type="image/webp" />
-                  )}
-                  {img.jpegMobile && (
-                    <source srcSet={img.jpegMobile} type="image/jpeg" />
-                  )}
-                  <img
-                    src={img.src}
-                    alt={img.altText}
-                    style={{ height: 260, width: 'auto' }}
-                    draggable={false}
-                  />
-                </picture>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ImageCarouselViewer
+          images={_node.images}
+          containerWidth={containerWidth}
+        />
       );
     }
     default:
