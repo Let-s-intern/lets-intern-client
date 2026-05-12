@@ -32,8 +32,14 @@ const buildApplication = (
 describe('MagnetApplicationDailyChart', () => {
   it('데이터가 있으면 차트와 캡션을 렌더한다', () => {
     const applications: MagnetApplicationByMagnet[] = [
-      buildApplication({ magnetApplicationId: 1, createDate: '2026-05-10T09:00:00' }),
-      buildApplication({ magnetApplicationId: 2, createDate: '2026-05-12T18:30:00' }),
+      buildApplication({
+        magnetApplicationId: 1,
+        createDate: '2026-05-10T09:00:00',
+      }),
+      buildApplication({
+        magnetApplicationId: 2,
+        createDate: '2026-05-12T18:30:00',
+      }),
     ];
 
     const { getByTestId, getByText } = render(

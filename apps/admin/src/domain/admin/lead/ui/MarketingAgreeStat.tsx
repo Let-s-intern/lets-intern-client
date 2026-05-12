@@ -20,7 +20,9 @@ const MarketingAgreeStat = ({ applications }: MarketingAgreeStatProps) => {
   const stat = useMemo(
     () =>
       marketingAgreeStat(
-        applications.map((a) => ({ marketingAgree: a.marketingAgree ?? false })),
+        applications.map((a) => ({
+          marketingAgree: a.marketingAgree ?? false,
+        })),
       ),
     [applications],
   );

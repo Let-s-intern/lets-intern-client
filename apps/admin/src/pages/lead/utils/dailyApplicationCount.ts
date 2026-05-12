@@ -37,9 +37,7 @@ export interface DailyApplicationCountOptions {
  * 타임존이 없는 ISO 문자열(예: `2026-05-12T13:24:00`)이 들어오면 dayjs가
  * 로컬 시간으로 해석하여 일자(YYYY-MM-DD)를 안정적으로 추출한다.
  */
-export const dailyApplicationCount = <
-  T extends { createDate?: string | null },
->(
+export const dailyApplicationCount = <T extends { createDate?: string | null }>(
   applications: T[],
   options?: DailyApplicationCountOptions,
 ): DailyApplicationCountPoint[] => {

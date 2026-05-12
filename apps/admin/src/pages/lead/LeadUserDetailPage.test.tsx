@@ -55,10 +55,7 @@ const renderPage = () =>
   render(
     <MemoryRouter initialEntries={['/leads/managements/123']}>
       <Routes>
-        <Route
-          path="/leads/managements/:id"
-          element={<LeadUserDetailPage />}
-        />
+        <Route path="/leads/managements/:id" element={<LeadUserDetailPage />} />
       </Routes>
     </MemoryRouter>,
   );

@@ -71,11 +71,7 @@ describe('categoryCount', () => {
   });
 
   it('topN=2, 카테고리 2개면 기타 버킷이 생성되지 않는다 (길이 2)', () => {
-    const items: Sample[] = [
-      { field: 'A' },
-      { field: 'A' },
-      { field: 'B' },
-    ];
+    const items: Sample[] = [{ field: 'A' }, { field: 'A' }, { field: 'B' }];
     const result = categoryCount(items, (item) => item.field, { topN: 2 });
     expect(result).toEqual([
       { label: 'A', count: 2 },
@@ -104,11 +100,7 @@ describe('categoryCount', () => {
   });
 
   it('excludeEmpty: true이고 모든 값이 미입력이면 빈 배열을 반환한다', () => {
-    const items: Sample[] = [
-      { field: null },
-      { field: '' },
-      { field: '-' },
-    ];
+    const items: Sample[] = [{ field: null }, { field: '' }, { field: '-' }];
     const result = categoryCount(items, (item) => item.field, {
       excludeEmpty: true,
     });

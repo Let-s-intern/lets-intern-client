@@ -57,10 +57,7 @@ const WishIndustryPieChart = ({ applications }: WishIndustryPieChartProps) => {
       />
       <ul className="mt-2 grid grid-cols-2 gap-x-2 gap-y-0.5 text-[11px] text-gray-700">
         {buckets.map((bucket, index) => (
-          <li
-            key={bucket.label}
-            className="flex items-center gap-1 truncate"
-          >
+          <li key={bucket.label} className="flex items-center gap-1 truncate">
             <span
               className="inline-block h-2 w-2 shrink-0 rounded-sm"
               style={{

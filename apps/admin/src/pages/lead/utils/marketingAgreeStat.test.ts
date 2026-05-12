@@ -24,10 +24,7 @@ describe('marketingAgreeStat', () => {
 
   it('전원 동의는 percent 100', () => {
     expect(
-      marketingAgreeStat([
-        { marketingAgree: true },
-        { marketingAgree: true },
-      ]),
+      marketingAgreeStat([{ marketingAgree: true }, { marketingAgree: true }]),
     ).toEqual({ total: 2, agreed: 2, percent: 100 });
   });
 

@@ -116,7 +116,11 @@ describe('downloadCsv', () => {
       return element;
     });
 
-    downloadCsv('magnet-123-applications', ['신청일자'], [['2026-05-12 18:30']]);
+    downloadCsv(
+      'magnet-123-applications',
+      ['신청일자'],
+      [['2026-05-12 18:30']],
+    );
 
     expect(capturedDownload).toMatch(
       /^magnet-123-applications_\d{8}_\d{6}\.csv$/,
