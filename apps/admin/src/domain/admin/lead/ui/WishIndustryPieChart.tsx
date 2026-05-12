@@ -3,24 +3,11 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { useMemo } from 'react';
 
 import { categoryCount } from '../utils/categoryCount';
+import { PIE_COLORS } from '../utils/pieColors';
 
 interface WishIndustryPieChartProps {
   applications: MagnetApplicationByMagnet[];
 }
-
-/**
- * 카드 하단 자체 범례에 사용할 색상 팔레트.
- * 차트 series.data 각 항목의 `color`와 범례 마크업 색상을 동일 인덱스로 매핑한다.
- */
-const PIE_COLORS = [
-  '#02b3a7',
-  '#3a82f7',
-  '#f5a623',
-  '#e94e77',
-  '#9b59b6',
-  '#1abc9c',
-  '#95a5a6',
-];
 
 /**
  * 마그넷 신청자의 희망 산업 분포 파이 차트.
