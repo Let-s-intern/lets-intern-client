@@ -90,13 +90,41 @@ export function classifyNoise(
  * 번역기/MetaMask/stale chunk는 drop 하지 않고 noise 태그로 격리합니다 (classifyNoise 활용).
  * @param error - 에러 객체
  * @param url - 에러가 발생한 URL (선택사항)
+ * @param userAgent - 요청의 User-Agent (선택사항). 봇/크롤러로 식별되면 필터링.
  * @returns true면 필터링 (전송하지 않음), false면 전송
  */
-export function shouldFilterError(error: Error, url?: string): boolean {
+export function shouldFilterError(
+  error: Error,
+  url?: string,
+  userAgent?: string,
+): boolean {
   const message = error.message.toLowerCase();
   const name = error.name.toLowerCase();
   const stack = error.stack?.toLowerCase() || '';
   const urlLower = url?.toLowerCase() || '';
+  const uaLower = userAgent?.toLowerCase() || '';
+
+  // 봇/크롤러 트래픽 (사용자 영향 0이므로 Slack 알림 가치 없음).
+  // Slack/Twitter/Facebook/Discord/LinkedIn은 링크 미리보기(unfurl) 봇,
+  // KakaoTalk/네이버는 한국 메신저·검색 크롤러, Googlebot/Bingbot은 검색 색인.
+  // Sentry 대시보드에는 이벤트가 그대로 남아 통계는 보존됨.
+  if (
+    uaLower.includes('slackbot') ||
+    uaLower.includes('twitterbot') ||
+    uaLower.includes('facebookexternalhit') ||
+    uaLower.includes('discordbot') ||
+    uaLower.includes('linkedinbot') ||
+    uaLower.includes('kakaotalk-scrap') ||
+    uaLower.includes('googlebot') ||
+    uaLower.includes('bingbot') ||
+    uaLower.includes('yeti') ||
+    uaLower.includes('daumoa') ||
+    uaLower.includes('crawler') ||
+    uaLower.includes('spider') ||
+    uaLower.includes('bot/')
+  ) {
+    return true;
+  }
 
   // React Fast Refresh 에러
   if (
