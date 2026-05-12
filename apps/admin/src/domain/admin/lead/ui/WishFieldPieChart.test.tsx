@@ -55,4 +55,17 @@ describe('WishFieldPieChart', () => {
     const { container } = render(<WishFieldPieChart applications={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('모든 wishField가 미입력이면 차트를 렌더하지 않는다', () => {
+    const applications: MagnetApplicationByMagnet[] = [
+      buildApplication({ magnetApplicationId: 1, wishField: null }),
+      buildApplication({ magnetApplicationId: 2, wishField: '' }),
+      buildApplication({ magnetApplicationId: 3, wishField: '-' }),
+    ];
+
+    const { container } = render(
+      <WishFieldPieChart applications={applications} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
 });

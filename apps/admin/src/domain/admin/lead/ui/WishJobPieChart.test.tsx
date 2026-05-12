@@ -53,4 +53,17 @@ describe('WishJobPieChart', () => {
     const { container } = render(<WishJobPieChart applications={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('모든 wishJob이 미입력이면 차트를 렌더하지 않는다', () => {
+    const applications: MagnetApplicationByMagnet[] = [
+      buildApplication({ magnetApplicationId: 1, wishJob: null }),
+      buildApplication({ magnetApplicationId: 2, wishJob: '' }),
+      buildApplication({ magnetApplicationId: 3, wishJob: '-' }),
+    ];
+
+    const { container } = render(
+      <WishJobPieChart applications={applications} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
 });
