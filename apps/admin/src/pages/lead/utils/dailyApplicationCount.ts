@@ -13,18 +13,35 @@ export interface DailyApplicationCountPoint {
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 /**
+ * `dailyApplicationCount` 동작 옵션.
+ */
+export interface DailyApplicationCountOptions {
+  /**
+   * true이면 일자별 카운트를 누적합(cumulative sum)으로 변환한다.
+   * 빈 일자에서는 직전 누적값을 유지하여 감소가 발생하지 않는다.
+   * 기본값(undefined/false)에서는 일자별 카운트를 그대로 반환한다.
+   */
+  cumulative?: boolean;
+}
+
+/**
  * 마그넷 신청자 배열을 일자별 신청자 수 시리즈로 변환한다.
  *
  * - 입력 배열이 비어 있으면 빈 배열을 반환한다.
  * - 가장 이른 신청일부터 가장 늦은 신청일까지 빈 일자도 `count: 0`으로 채운다.
  * - 동일 일자 중복 신청은 누적 합산한다.
  * - 시간 오름차순으로 정렬된다.
+ * - `options.cumulative === true`이면 일자별 카운트를 누적합으로 변환한다
+ *   (단조 증가, 빈 일자는 직전 값 유지).
  *
  * 타임존이 없는 ISO 문자열(예: `2026-05-12T13:24:00`)이 들어오면 dayjs가
  * 로컬 시간으로 해석하여 일자(YYYY-MM-DD)를 안정적으로 추출한다.
  */
-export const dailyApplicationCount = (
-  applications: Array<{ createDate?: string }>,
+export const dailyApplicationCount = <
+  T extends { createDate?: string | null },
+>(
+  applications: T[],
+  options?: DailyApplicationCountOptions,
 ): DailyApplicationCountPoint[] => {
   if (applications.length === 0) return [];
 
@@ -52,5 +69,12 @@ export const dailyApplicationCount = (
     cursor = cursor.add(1, 'day');
   }
 
-  return result;
+  if (!options?.cumulative) return result;
+
+  // 누적합으로 변환: 빈 일자는 직전 값 유지 (감소 없음).
+  let running = 0;
+  return result.map((point) => {
+    running += point.count;
+    return { date: point.date, count: running };
+  });
 };
