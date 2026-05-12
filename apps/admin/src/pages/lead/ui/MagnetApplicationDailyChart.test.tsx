@@ -42,7 +42,7 @@ describe('MagnetApplicationDailyChart', () => {
 
     expect(getByTestId('line-chart')).toBeInTheDocument();
     // 2026-05-10 ~ 2026-05-12 = 3일치, 총 2건
-    expect(getByText(/신청자 수 추이 \(총 2건, 3일\)/)).toBeInTheDocument();
+    expect(getByText(/일자별 신청자 수 \(총 2건, 3일\)/)).toBeInTheDocument();
   });
 
   it('데이터가 비어 있으면 null을 반환하여 영역을 렌더하지 않는다', () => {
