@@ -24,16 +24,19 @@ const DATE_FORMAT = 'YYYY-MM-DD';
  * 로컬 시간으로 해석하여 일자(YYYY-MM-DD)를 안정적으로 추출한다.
  */
 export const dailyApplicationCount = (
-  applications: Array<{ createDate: string }>,
+  applications: Array<{ createDate?: string }>,
 ): DailyApplicationCountPoint[] => {
   if (applications.length === 0) return [];
 
-  // 일자별 카운트 집계
+  // 일자별 카운트 집계 (createDate 누락 항목은 건너뛴다)
   const countByDate = new Map<string, number>();
   for (const application of applications) {
+    if (!application.createDate) continue;
     const date = dayjs(application.createDate).format(DATE_FORMAT);
     countByDate.set(date, (countByDate.get(date) ?? 0) + 1);
   }
+
+  if (countByDate.size === 0) return [];
 
   // min ~ max 일자 결정
   const dates = Array.from(countByDate.keys()).sort();
