@@ -8,6 +8,8 @@ import { downloadCsv } from './csv';
 describe('downloadCsv', () => {
   const blobs: string[] = [];
   const originalBlob = global.Blob;
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
   let createObjectURLSpy: ReturnType<typeof vi.fn>;
   let revokeObjectURLSpy: ReturnType<typeof vi.fn>;
 
@@ -37,6 +39,14 @@ describe('downloadCsv', () => {
 
   afterEach(() => {
     (global as { Blob: typeof Blob }).Blob = originalBlob;
+    // vi.spyOn이 아닌 직접 할당이므로 vi.restoreAllMocks로 복구되지 않는다.
+    // 다른 테스트에 영향을 주지 않도록 원본 함수로 복구한다.
+    (
+      URL as unknown as { createObjectURL: typeof URL.createObjectURL }
+    ).createObjectURL = originalCreateObjectURL;
+    (
+      URL as unknown as { revokeObjectURL: typeof URL.revokeObjectURL }
+    ).revokeObjectURL = originalRevokeObjectURL;
     vi.restoreAllMocks();
   });
 
