@@ -3,23 +3,28 @@ import { describe, expect, it } from 'vitest';
 import { getPercentColor } from './percentColor';
 
 describe('getPercentColor', () => {
-  it('80 이상이면 진한 초록을 반환한다', () => {
-    expect(getPercentColor(100)).toBe('#10b981');
-    expect(getPercentColor(80)).toBe('#10b981');
-  });
-
-  it('60 이상 80 미만이면 청록을 반환한다', () => {
-    expect(getPercentColor(79)).toBe('#02b3a7');
-    expect(getPercentColor(60)).toBe('#02b3a7');
-  });
-
-  it('40 이상 60 미만이면 주황을 반환한다', () => {
-    expect(getPercentColor(59)).toBe('#f59e0b');
-    expect(getPercentColor(40)).toBe('#f59e0b');
-  });
-
-  it('40 미만이면 빨강을 반환한다', () => {
-    expect(getPercentColor(39)).toBe('#ef4444');
-    expect(getPercentColor(0)).toBe('#ef4444');
+  it.each([
+    [100, '#059669'],
+    [90, '#059669'],
+    [89, '#10b981'],
+    [80, '#10b981'],
+    [79, '#22c55e'],
+    [70, '#22c55e'],
+    [69, '#84cc16'],
+    [60, '#84cc16'],
+    [59, '#eab308'],
+    [50, '#eab308'],
+    [49, '#f59e0b'],
+    [40, '#f59e0b'],
+    [39, '#f97316'],
+    [30, '#f97316'],
+    [29, '#ef4444'],
+    [20, '#ef4444'],
+    [19, '#dc2626'],
+    [10, '#dc2626'],
+    [9, '#991b1b'],
+    [0, '#991b1b'],
+  ])('percent %d → %s', (percent, expected) => {
+    expect(getPercentColor(percent)).toBe(expected);
   });
 });
