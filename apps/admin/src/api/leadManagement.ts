@@ -6,11 +6,11 @@ import axios from '@/utils/axios';
 // --- Zod Schemas ---
 
 const questionAnswerSchema = z.object({
-  question: z.string(),
-  answer: z.string(),
+  question: z.string().nullable(),
+  answer: z.string().nullable(),
 });
 
-const magnetApplicationByMagnetSchema = z.object({
+export const magnetApplicationByMagnetSchema = z.object({
   magnetApplicationId: z.number(),
   name: z.string().nullable(),
   phoneNum: z.string().nullable(),
@@ -21,6 +21,7 @@ const magnetApplicationByMagnetSchema = z.object({
   wishCompany: z.string().nullable(),
   marketingAgree: z.boolean(),
   questionAnswerList: z.array(questionAnswerSchema),
+  createDate: z.string().optional(),
 });
 
 // --- Types ---
