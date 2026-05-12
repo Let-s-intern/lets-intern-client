@@ -23,6 +23,8 @@ import { SerializedCollapsibleContentNode } from './nodes/CollapsibleContentNode
 import { SerializedCollapsibleTitleNode } from './nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from './nodes/EmojiNode';
 import { SerializedImageNode } from './nodes/ImageNode';
+import { SerializedImageCarouselNode } from './nodes/ImageCarouselNode';
+import ImageCarouselComponent from './nodes/ImageCarouselComponent';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
 import { SerializedFigmaNode } from './nodes/FigmaNode';
@@ -492,6 +494,16 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
             />
           </div>
         </div>
+      );
+    }
+    case 'image-carousel': {
+      const _node = node as SerializedImageCarouselNode;
+      return (
+        <ImageCarouselComponent
+          images={_node.images}
+          width={_node.width ?? 0}
+          maxWidth={_node.maxWidth ?? 950}
+        />
       );
     }
     default:

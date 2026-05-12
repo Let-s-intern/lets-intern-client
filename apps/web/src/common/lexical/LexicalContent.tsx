@@ -16,16 +16,18 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
-import { SerializedCodeHighlightNode } from './nodes/CodeHighlightNode';
 import CheckBox from './CheckBox';
+import { SerializedCodeHighlightNode } from './nodes/CodeHighlightNode';
 import { SerializedCollapsibleContainerNode } from './nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from './nodes/CollapsibleContentNode';
 import { SerializedCollapsibleTitleNode } from './nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from './nodes/EmojiNode';
+import { SerializedFigmaNode } from './nodes/FigmaNode';
+import { SerializedImageCarouselNode } from './nodes/ImageCarouselNode';
+import ImageCarouselViewer from './nodes/ImageCarouselViewer';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
-import { SerializedFigmaNode } from './nodes/FigmaNode';
 import { SerializedPDFNode } from './nodes/PDFNode';
 import { SerializedYouTubeNode } from './nodes/YouTubeNode';
 
@@ -492,6 +494,16 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
             />
           </div>
         </div>
+      );
+    }
+    case 'image-carousel': {
+      const _node = node as SerializedImageCarouselNode;
+      const containerWidth = _node.width === 0 ? '100%' : _node.width;
+      return (
+        <ImageCarouselViewer
+          images={_node.images}
+          containerWidth={containerWidth}
+        />
       );
     }
     default:

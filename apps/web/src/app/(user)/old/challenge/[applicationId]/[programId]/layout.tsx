@@ -1,7 +1,7 @@
 'use client';
 
 import { OldCurrentChallengeProvider } from '@/context/OldCurrentChallengeProvider';
-import OldChallengeLayout from '@/domain/challenge/ui/layout/OldChallengeLayout';
+import OldChallengeLayout from '@/domain/challenge/old/OldChallengeLayout';
 
 export default function OldChallengeLayoutWrapper({
   children,
