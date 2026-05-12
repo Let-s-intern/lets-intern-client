@@ -29,7 +29,7 @@ const MagnetApplicationDailyChart = ({
   const counts = series.map((point) => point.count);
 
   return (
-    <div className="mb-4 rounded border border-gray-200 p-3">
+    <div className="mb-0 flex h-full flex-col rounded border border-gray-200 p-3">
       <p className="mb-2 text-sm text-gray-700">
         {`신청자 수 추이 (총 ${applications.length}건, ${series.length}일)`}
       </p>
