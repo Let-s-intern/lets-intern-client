@@ -189,11 +189,14 @@ const LeadUserDetailPage = () => {
         columns={columns}
         getRowId={(row) => row.magnetApplicationId}
         loading={isLoading}
-        hideFooter
         getRowHeight={() => 'auto'}
+        pageSizeOptions={[25, 50, 100]}
         initialState={{
           sorting: {
             sortModel: [{ field: 'createDate', sort: 'desc' }],
+          },
+          pagination: {
+            paginationModel: { pageSize: 100, page: 0 },
           },
         }}
         sx={{
