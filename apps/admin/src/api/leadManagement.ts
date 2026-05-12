@@ -10,7 +10,7 @@ const questionAnswerSchema = z.object({
   answer: z.string(),
 });
 
-const magnetApplicationByMagnetSchema = z.object({
+export const magnetApplicationByMagnetSchema = z.object({
   magnetApplicationId: z.number(),
   name: z.string().nullable(),
   phoneNum: z.string().nullable(),
@@ -21,6 +21,7 @@ const magnetApplicationByMagnetSchema = z.object({
   wishCompany: z.string().nullable(),
   marketingAgree: z.boolean(),
   questionAnswerList: z.array(questionAnswerSchema),
+  createDate: z.string(),
 });
 
 // --- Types ---
