@@ -32,7 +32,7 @@ const QuestionAnswerStat = ({ applications }: QuestionAnswerStatProps) => {
   return (
     <div>
       <p className="mb-1 text-sm text-gray-700">질문 응답률</p>
-      <p className="text-2xl font-bold">{stat.percent}%</p>
+      <p className="text-2xl font-bold text-[#02b3a7]">{stat.percent}%</p>
       <p className="text-xs text-gray-500">
         {stat.answered} / {stat.total}명
       </p>
