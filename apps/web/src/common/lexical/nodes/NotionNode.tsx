@@ -1,8 +1,9 @@
 /**
  * NotionNode (web - 본문 렌더 측).
  *
- * apps/admin 의 NotionNode 와 동일 구조이며 읽기 전용 렌더에 사용된다.
- * 플러그인은 web 에 등록하지 않는다 — 본문에서 노드만 인식해 iframe 을 그린다.
+ * apps/admin 의 NotionNode 와 동일 직렬화 형식. 본문 렌더는 LexicalContent 가 별도로
+ * 자체 JSON 트래버서로 처리하므로 이 클래스는 LexicalComposer 사용 경로(있다면) 와
+ * importJSON 라운드트립용으로만 의미가 있다.
  *
  * 현재는 변경 격리를 위해 복제한다. 추후 공통 패키지로 승격 시 통합한다.
  */
@@ -30,7 +31,8 @@ import { isAllowedNotionUrl, toNotionEmbedUrl } from '../utils/notion';
 
 const NOTION_IFRAME_SANDBOX =
   'allow-scripts allow-same-origin allow-popups allow-forms';
-const NOTION_IFRAME_HEIGHT = 1200;
+const NOTION_DEFAULT_HEIGHT = 1200;
+const NOTION_MIN_HEIGHT = 200;
 
 type NotionComponentProps = Readonly<{
   className: Readonly<{
@@ -40,6 +42,7 @@ type NotionComponentProps = Readonly<{
   format: ElementFormatType | null;
   nodeKey: NodeKey;
   url: string;
+  height: number;
 }>;
 
 function NotionComponent({
@@ -47,8 +50,8 @@ function NotionComponent({
   format,
   nodeKey,
   url,
+  height,
 }: NotionComponentProps) {
-  // 노션 publish URL 은 `X-Frame-Options` 로 차단되므로 `/ebd/<id>` 임베드용 URL 로 변환해 iframe 에 사용.
   const embedSrc = toNotionEmbedUrl(url);
 
   return (
@@ -61,7 +64,7 @@ function NotionComponent({
         <iframe
           src={embedSrc}
           width="100%"
-          height={NOTION_IFRAME_HEIGHT}
+          height={height}
           frameBorder={0}
           scrolling="no"
           allowFullScreen
@@ -89,6 +92,7 @@ function NotionComponent({
 export type SerializedNotionNode = Spread<
   {
     url: string;
+    height: number;
   },
   SerializedDecoratorBlockNode
 >;
@@ -98,7 +102,12 @@ function $convertNotionElement(
 ): null | DOMConversionOutput {
   const url = domNode.getAttribute('data-lexical-notion-url');
   if (url && isAllowedNotionUrl(url)) {
-    const node = $createNotionNode(url);
+    const heightAttr = domNode.getAttribute('height');
+    const height =
+      heightAttr !== null && Number.isFinite(Number(heightAttr))
+        ? Math.max(NOTION_MIN_HEIGHT, Number(heightAttr))
+        : NOTION_DEFAULT_HEIGHT;
+    const node = $createNotionNode(url, height);
     return { node };
   }
   return null;
@@ -106,18 +115,25 @@ function $convertNotionElement(
 
 export class NotionNode extends DecoratorBlockNode {
   __url: string;
+  __height: number;
 
   static getType(): string {
     return 'notion';
   }
 
   static clone(node: NotionNode): NotionNode {
-    return new NotionNode(node.__url, node.__format, node.__key);
+    return new NotionNode(node.__url, node.__height, node.__format, node.__key);
   }
 
   static importJSON(serializedNode: SerializedNotionNode): NotionNode {
     const url = isAllowedNotionUrl(serializedNode.url) ? serializedNode.url : '';
-    const node = $createNotionNode(url);
+    const height =
+      typeof serializedNode.height === 'number' &&
+      Number.isFinite(serializedNode.height) &&
+      serializedNode.height >= NOTION_MIN_HEIGHT
+        ? serializedNode.height
+        : NOTION_DEFAULT_HEIGHT;
+    const node = $createNotionNode(url, height);
     node.setFormat(serializedNode.format);
     return node;
   }
@@ -128,12 +144,19 @@ export class NotionNode extends DecoratorBlockNode {
       type: 'notion',
       version: 1,
       url: this.__url,
+      height: this.__height,
     };
   }
 
-  constructor(url: string, format?: ElementFormatType, key?: NodeKey) {
+  constructor(
+    url: string,
+    height: number = NOTION_DEFAULT_HEIGHT,
+    format?: ElementFormatType,
+    key?: NodeKey,
+  ) {
     super(format, key);
     this.__url = url;
+    this.__height = height;
   }
 
   exportDOM(): DOMExportOutput {
@@ -145,7 +168,7 @@ export class NotionNode extends DecoratorBlockNode {
       element.setAttribute('src', embedSrc);
     }
     element.setAttribute('width', '100%');
-    element.setAttribute('height', String(NOTION_IFRAME_HEIGHT));
+    element.setAttribute('height', String(this.__height));
     element.setAttribute('frameborder', '0');
     element.setAttribute('scrolling', 'no');
     element.setAttribute('allowfullscreen', 'true');
@@ -177,6 +200,16 @@ export class NotionNode extends DecoratorBlockNode {
     return this.__url;
   }
 
+  getHeight(): number {
+    return this.__height;
+  }
+
+  setHeight(height: number): this {
+    const writable = this.getWritable();
+    writable.__height = Math.max(NOTION_MIN_HEIGHT, Math.floor(height));
+    return writable;
+  }
+
   getTextContent(
     _includeInert?: boolean | undefined,
     _includeDirectionless?: false | undefined,
@@ -196,13 +229,17 @@ export class NotionNode extends DecoratorBlockNode {
         format={this.__format}
         nodeKey={this.getKey()}
         url={this.__url}
+        height={this.__height}
       />
     );
   }
 }
 
-export function $createNotionNode(url: string): NotionNode {
-  return new NotionNode(url);
+export function $createNotionNode(
+  url: string,
+  height: number = NOTION_DEFAULT_HEIGHT,
+): NotionNode {
+  return new NotionNode(url, height);
 }
 
 export function $isNotionNode(

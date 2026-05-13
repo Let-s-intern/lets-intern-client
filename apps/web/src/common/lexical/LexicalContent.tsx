@@ -475,12 +475,18 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       if (embedSrc === null) {
         return null;
       }
+      const height =
+        typeof _node.height === 'number' &&
+        Number.isFinite(_node.height) &&
+        _node.height >= 200
+          ? _node.height
+          : 1200;
       return (
         <div className="notion my-4 w-full">
           <iframe
             src={embedSrc}
             width="100%"
-            height={1200}
+            height={height}
             frameBorder={0}
             scrolling="no"
             allowFullScreen
