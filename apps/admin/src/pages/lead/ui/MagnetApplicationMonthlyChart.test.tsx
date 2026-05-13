@@ -53,9 +53,7 @@ describe('MagnetApplicationMonthlyChart', () => {
 
     expect(getByTestId('line-chart')).toBeInTheDocument();
     // 2026-03 ~ 2026-05 = 3개월(중간 04월 0건 포함), 총 2건
-    expect(
-      getByText(/월별 신청자 수 \(총 2건, 3개월\)/),
-    ).toBeInTheDocument();
+    expect(getByText(/월별 신청자 수 \(총 2건, 3개월\)/)).toBeInTheDocument();
   });
 
   it('선 그래프의 동그라미 마커는 표시하지 않는다 (showMark=false)', () => {

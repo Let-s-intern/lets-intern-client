@@ -23,7 +23,9 @@ const MagnetApplicationDailyChart = ({
   applications,
 }: MagnetApplicationDailyChartProps) => {
   const recentApplications = useMemo(() => {
-    const threshold = dayjs().subtract(RECENT_WINDOW_DAYS - 1, 'day').startOf('day');
+    const threshold = dayjs()
+      .subtract(RECENT_WINDOW_DAYS - 1, 'day')
+      .startOf('day');
     return applications.filter((app) => {
       if (!app.createDate) return false;
       const d = dayjs(app.createDate);
