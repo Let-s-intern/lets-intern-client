@@ -195,3 +195,10 @@ export const launchAlertResponseSchema = z.object({
 });
 
 export type LaunchAlertResponse = z.infer<typeof launchAlertResponseSchema>;
+
+// 마이자료집/캐리어보드에서 노출할 마그넷 타입 (EVENT/LAUNCH_ALERT 제외)
+export const LIBRARY_VISIBLE_MAGNET_TYPES = [
+  'MATERIAL',
+  'VOD',
+  'FREE_TEMPLATE',
+] as const satisfies readonly MagnetType[];

@@ -755,7 +755,7 @@ export const useDeleteProgramBannerMutation = ({
 export const fetchChallenge = async (
   id: string | number,
 ): Promise<ChallengeIdSchema> => {
-  const data = await client<ChallengeIdSchema>(`/v1/challenge/${id}`, {
+  const data = await client<ChallengeIdSchema>(`/api/v1/challenge/${id}`, {
     method: 'GET',
   });
   return getChallengeIdSchema.parse(data);
@@ -763,7 +763,7 @@ export const fetchChallenge = async (
 
 export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
   return fetchJson<LiveIdSchema>(
-    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/v1/live/${id}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/v1/live/${id}`,
     {
       method: 'GET',
       code: 'LIVE_FETCH_FAILED',
@@ -782,7 +782,7 @@ export const fetchProgram = async (params: {
   page: number | string;
   size: number | string;
 }): Promise<Program> => {
-  const data = await client<Program>('/v1/program', {
+  const data = await client<Program>('/api/v1/program', {
     method: 'GET',
     params: {
       ...params,
@@ -823,7 +823,7 @@ export const getChallengeByKeyword = async (keyword: string) => {
 };
 
 export const fetchProgramRecommend = async () => {
-  const data = await client<ProgramRecommend>('/v1/program/recommend', {
+  const data = await client<ProgramRecommend>('/api/v1/program/recommend', {
     method: 'GET',
   });
   return programRecommendSchema.parse(data);

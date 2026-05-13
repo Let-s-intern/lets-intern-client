@@ -1,20 +1,20 @@
 'use client';
 
 import { ReportDetail, useGetReportPriceDetail } from '@/api/report';
-import PromoSection from '@/domain/report/PromoSection';
-import ReportApplyBottomSheet from '@/domain/report/ReportApplyBottomSheet';
-import ReportBasicInfo from '@/domain/report/ReportBasicInfo';
-import ReportExampleSection from '@/domain/report/ReportExampleSection';
-import ReportFaqSection from '@/domain/report/ReportFaqSection';
-import ReportIntroSection from '@/domain/report/ReportIntroSection';
-import ReportPlanSection from '@/domain/report/ReportPlanSection';
-import ReportProgramRecommendSlider from '@/domain/report/ReportProgramRecommendSlider';
-import ReportReviewSection from '@/domain/report/ReportReviewSection';
-import ServiceProcessSection from '@/domain/report/ServiceProcessSection';
+import PromoSection from '@/domain/report/sections/PromoSection';
+import ReportApplyBottomSheet from '@/domain/report/modal/ReportApplyBottomSheet';
+import ReportBasicInfo from '@/domain/report/ui/ReportBasicInfo';
+import ReportExampleSection from '@/domain/report/sections/ReportExampleSection';
+import ReportFaqSection from '@/domain/report/sections/ReportFaqSection';
+import ReportIntroSection from '@/domain/report/sections/ReportIntroSection';
+import ReportPlanSection from '@/domain/report/sections/ReportPlanSection';
+import ReportProgramRecommendSlider from '@/domain/report/ui/ReportProgramRecommendSlider';
+import ReportReviewSection from '@/domain/report/sections/ReportReviewSection';
+import ServiceProcessSection from '@/domain/report/sections/ServiceProcessSection';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { useEffect } from 'react';
-import ReportNavigation from './ReportNavigation';
+import ReportNavigation from '@/domain/report/ui/ReportNavigation';
 
 export const personalStatementColors = {
   C34AFF: '#C34AFF',

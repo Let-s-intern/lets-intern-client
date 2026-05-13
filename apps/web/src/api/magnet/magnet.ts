@@ -360,6 +360,9 @@ export interface MagnetApplicationReqBody {
     magnetQuestionId: number;
     answer: string;
   }[];
+  // 메인 신청과 함께 묶음으로 신청되는 추가 마그넷이면 true.
+  // 메인 마그넷일 경우 생략 (또는 false). BE 가 묶음 단위 후처리(예: 알림톡 dedupe)에 사용.
+  isExtra?: boolean;
 }
 
 export const usePostMagnetApplicationMutation = () => {

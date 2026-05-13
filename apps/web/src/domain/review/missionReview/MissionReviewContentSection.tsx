@@ -10,7 +10,7 @@ import {
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/common/pagination/MuiPagination';
-import ReviewCard from '@/domain/review/ReviewCard';
+import ReviewCard from '@/domain/review/ui/ReviewCard';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import { useSearchParams } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';

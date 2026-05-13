@@ -2,6 +2,7 @@
 
 import { mypageApplicationsQueryOptions } from '@/api/application';
 import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
+import { LIBRARY_VISIBLE_MAGNET_TYPES } from '@/api/magnet/magnetSchema';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import {
@@ -169,11 +170,22 @@ const CareerGrowthContent = () => {
 
 const LibraryGrowthList = () => {
   const router = useRouter();
-  const { data: magnetData } = useSuspenseQuery(mypageMagnetListQueryOptions());
+  const { data: magnetData } = useSuspenseQuery(
+    mypageMagnetListQueryOptions([...LIBRARY_VISIBLE_MAGNET_TYPES]),
+  );
+
+  // BE typeList 미적용/직렬화 호환 이슈에 대비한 클라이언트 측 방어 필터.
+  // EVENT/LAUNCH_ALERT 는 캐리어보드 자료집 위젯에 절대 노출되지 않아야 한다.
+  const visibleMagnetList = useMemo(() => {
+    const visibleTypes = LIBRARY_VISIBLE_MAGNET_TYPES as readonly string[];
+    return (magnetData?.magnetList ?? []).filter((m) =>
+      visibleTypes.includes(m.type),
+    );
+  }, [magnetData]);
 
   const cardConfigs = useMemo(
-    () => toLibraryCardConfigs(magnetData?.magnetList ?? []),
-    [magnetData],
+    () => toLibraryCardConfigs(visibleMagnetList),
+    [visibleMagnetList],
   );
 
   if (cardConfigs.length === 0) {

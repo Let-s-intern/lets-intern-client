@@ -51,6 +51,7 @@ export default function LibraryApplyPage() {
   return (
     <MagnetApplyContent
       magnetId={magnetInfo.magnetId}
+      magnetType={magnetInfo.type}
       title={magnetInfo.title}
       thumbnail={magnetInfo.desktopThumbnail}
       questions={questions}

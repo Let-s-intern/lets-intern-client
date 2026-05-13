@@ -1,5 +1,5 @@
-import MainBlogReviewSection from '@/domain/review/MainBlogReviewSection';
-import ProgramInterviewSection from '@/domain/review/ProgramInterviewSection';
+import MainBlogReviewSection from '@/domain/review/blog/MainBlogReviewSection';
+import ProgramInterviewSection from '@/domain/review/section/ProgramInterviewSection';
 import ProgramReviewSection from '@/domain/review/programReview/ProgramReviewSection';
 
 const Page = () => {
