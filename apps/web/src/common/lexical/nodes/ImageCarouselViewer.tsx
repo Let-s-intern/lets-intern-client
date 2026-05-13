@@ -6,7 +6,8 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
-import { Keyboard } from 'swiper/modules';
+import 'swiper/css/zoom';
+import { Keyboard, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { CarouselImage } from './ImageCarouselNode';
 
@@ -42,7 +43,7 @@ function Lightbox({
             <button
               key={i}
               onClick={() => swiperRef.current?.slideTo(i)}
-              aria-label={`${i + 1}번 사진`}
+              aria-label={`이미지 ${i + 1}`}
               className={`h-2.5 w-2.5 rounded-full transition-colors ${
                 i === index ? 'bg-primary' : 'bg-neutral-70'
               }`}
@@ -66,8 +67,9 @@ function Lightbox({
 
         <div className="z-10 w-[90vw] md:w-[60vw]">
           <Swiper
-            modules={[Keyboard]}
+            modules={[Keyboard, Zoom]}
             keyboard={{ enabled: true }}
+            zoom={{ maxRatio: 2 }}
             initialSlide={initialIndex}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
@@ -77,33 +79,35 @@ function Lightbox({
           >
             {images.map((img, i) => (
               <SwiperSlide key={i} className="flex items-center justify-center">
-                <picture className="block h-full w-full">
-                  {img.webpDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.webpDesktop}
-                      type="image/webp"
+                <div className="swiper-zoom-container">
+                  <picture className="block h-full w-full">
+                    {img.webpDesktop && (
+                      <source
+                        media="(min-width: 768px)"
+                        srcSet={img.webpDesktop}
+                        type="image/webp"
+                      />
+                    )}
+                    {img.jpegDesktop && (
+                      <source
+                        media="(min-width: 768px)"
+                        srcSet={img.jpegDesktop}
+                        type="image/jpeg"
+                      />
+                    )}
+                    {img.webpMobile && (
+                      <source srcSet={img.webpMobile} type="image/webp" />
+                    )}
+                    {img.jpegMobile && (
+                      <source srcSet={img.jpegMobile} type="image/jpeg" />
+                    )}
+                    <img
+                      src={img.src}
+                      alt={img.altText}
+                      className="h-full w-full object-contain"
                     />
-                  )}
-                  {img.jpegDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.jpegDesktop}
-                      type="image/jpeg"
-                    />
-                  )}
-                  {img.webpMobile && (
-                    <source srcSet={img.webpMobile} type="image/webp" />
-                  )}
-                  {img.jpegMobile && (
-                    <source srcSet={img.jpegMobile} type="image/jpeg" />
-                  )}
-                  <img
-                    src={img.src}
-                    alt={img.altText}
-                    className="h-full w-full object-contain"
-                  />
-                </picture>
+                  </picture>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
@@ -141,14 +145,14 @@ export default function ImageCarouselViewer({
     <>
       <div className="my-4 overflow-x-auto" style={{ width: containerWidth }}>
         <div
-          className="flex gap-3 pb-1"
+          className="flex gap-2 pb-1 md:gap-3"
           style={{ scrollSnapType: 'x mandatory' }}
         >
           {images.map((img, idx) => (
             <div
               key={idx}
               className="flex-none cursor-pointer overflow-hidden"
-              style={{ height: 260, scrollSnapAlign: 'start' }}
+              style={{ scrollSnapAlign: 'start' }}
               onClick={() => setLightboxIndex(idx)}
             >
               <picture>
@@ -175,7 +179,7 @@ export default function ImageCarouselViewer({
                 <img
                   src={img.src}
                   alt={img.altText}
-                  style={{ height: 260, width: 'auto' }}
+                  className="h-40 w-auto md:h-[260px]"
                   draggable={false}
                 />
               </picture>

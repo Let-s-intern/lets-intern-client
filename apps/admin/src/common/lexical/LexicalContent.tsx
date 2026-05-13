@@ -24,7 +24,6 @@ import { SerializedCollapsibleTitleNode } from './nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from './nodes/EmojiNode';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedImageCarouselNode } from './nodes/ImageCarouselNode';
-import ImageCarouselComponent from './nodes/ImageCarouselComponent';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
 import { SerializedFigmaNode } from './nodes/FigmaNode';
@@ -498,12 +497,57 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'image-carousel': {
       const _node = node as SerializedImageCarouselNode;
+      if (!_node.images.length) return null;
       return (
-        <ImageCarouselComponent
-          images={_node.images}
-          width={_node.width ?? 0}
-          maxWidth={_node.maxWidth ?? 950}
-        />
+        <div
+          className="my-4"
+          style={{
+            width: (_node.width ?? 0) === 0 ? '100%' : _node.width,
+            maxWidth: _node.maxWidth ?? 950,
+          }}
+        >
+          <div
+            className="flex gap-3 overflow-x-auto pb-3"
+            style={{ scrollSnapType: 'x mandatory' }}
+          >
+            {_node.images.map((img, idx) => (
+              <div
+                key={idx}
+                className="flex-none overflow-hidden"
+                style={{ height: 260, scrollSnapAlign: 'start' }}
+              >
+                <picture>
+                  {img.webpDesktop && (
+                    <source
+                      media="(min-width: 768px)"
+                      srcSet={img.webpDesktop}
+                      type="image/webp"
+                    />
+                  )}
+                  {img.jpegDesktop && (
+                    <source
+                      media="(min-width: 768px)"
+                      srcSet={img.jpegDesktop}
+                      type="image/jpeg"
+                    />
+                  )}
+                  {img.webpMobile && (
+                    <source srcSet={img.webpMobile} type="image/webp" />
+                  )}
+                  {img.jpegMobile && (
+                    <source srcSet={img.jpegMobile} type="image/jpeg" />
+                  )}
+                  <img
+                    src={img.src}
+                    alt={img.altText}
+                    style={{ height: 260, width: 'auto' }}
+                    draggable={false}
+                  />
+                </picture>
+              </div>
+            ))}
+          </div>
+        </div>
       );
     }
     default:
