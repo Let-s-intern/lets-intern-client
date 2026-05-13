@@ -6,7 +6,8 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
-import { Keyboard } from 'swiper/modules';
+import 'swiper/css/zoom';
+import { Keyboard, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { CarouselImage } from './ImageCarouselNode';
 
@@ -66,8 +67,9 @@ function Lightbox({
 
         <div className="z-10 w-[90vw] md:w-[60vw]">
           <Swiper
-            modules={[Keyboard]}
+            modules={[Keyboard, Zoom]}
             keyboard={{ enabled: true }}
+            zoom={{ maxRatio: 2 }}
             initialSlide={initialIndex}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
@@ -77,33 +79,35 @@ function Lightbox({
           >
             {images.map((img, i) => (
               <SwiperSlide key={i} className="flex items-center justify-center">
-                <picture className="block h-full w-full">
-                  {img.webpDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.webpDesktop}
-                      type="image/webp"
+                <div className="swiper-zoom-container">
+                  <picture className="block h-full w-full">
+                    {img.webpDesktop && (
+                      <source
+                        media="(min-width: 768px)"
+                        srcSet={img.webpDesktop}
+                        type="image/webp"
+                      />
+                    )}
+                    {img.jpegDesktop && (
+                      <source
+                        media="(min-width: 768px)"
+                        srcSet={img.jpegDesktop}
+                        type="image/jpeg"
+                      />
+                    )}
+                    {img.webpMobile && (
+                      <source srcSet={img.webpMobile} type="image/webp" />
+                    )}
+                    {img.jpegMobile && (
+                      <source srcSet={img.jpegMobile} type="image/jpeg" />
+                    )}
+                    <img
+                      src={img.src}
+                      alt={img.altText}
+                      className="h-full w-full object-contain"
                     />
-                  )}
-                  {img.jpegDesktop && (
-                    <source
-                      media="(min-width: 768px)"
-                      srcSet={img.jpegDesktop}
-                      type="image/jpeg"
-                    />
-                  )}
-                  {img.webpMobile && (
-                    <source srcSet={img.webpMobile} type="image/webp" />
-                  )}
-                  {img.jpegMobile && (
-                    <source srcSet={img.jpegMobile} type="image/jpeg" />
-                  )}
-                  <img
-                    src={img.src}
-                    alt={img.altText}
-                    className="h-full w-full object-contain"
-                  />
-                </picture>
+                  </picture>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
