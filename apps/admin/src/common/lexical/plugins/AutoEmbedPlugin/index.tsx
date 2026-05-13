@@ -154,8 +154,7 @@ export const NotionEmbedConfig: PlaygroundEmbedConfig = {
 
   exampleUrl: 'https://letsintern.notion.site/',
 
-  // 전용 아이콘이 아직 없어 자리만 잡아둔다 (후속 디자인 작업에서 교체).
-  icon: <i className="icon" />,
+  icon: <i className="icon notion" />,
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
     editor.dispatchCommand(INSERT_NOTION_COMMAND, result.url);

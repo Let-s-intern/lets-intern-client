@@ -441,6 +441,10 @@ i.youtube {
   background-image: url(images/icons/youtube.svg);
 }
 
+i.notion {
+  background-image: url(images/icons/notion.png);
+}
+
 .icon.left-align,
 i.left-align {
   background-image: url(images/icons/text-left.svg);
