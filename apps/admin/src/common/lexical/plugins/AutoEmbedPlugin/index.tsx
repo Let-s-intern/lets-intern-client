@@ -22,7 +22,9 @@ import * as ReactDOM from 'react-dom';
 import useModal from '@/common/lexical/hooks/useModal';
 import Button from '../../ui/Button';
 import { DialogActions } from '../../ui/Dialog';
+import { parseNotionUrl } from '../../utils/notion';
 import { INSERT_FIGMA_COMMAND } from '../FigmaPlugin';
+import { INSERT_NOTION_COMMAND } from '../NotionPlugin';
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin';
 import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin';
 
@@ -147,10 +149,36 @@ export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
   type: 'figma',
 };
 
+export const NotionEmbedConfig: PlaygroundEmbedConfig = {
+  contentName: 'Notion 페이지',
+
+  exampleUrl: 'https://letsintern.notion.site/',
+
+  // 전용 아이콘이 아직 없어 자리만 잡아둔다 (후속 디자인 작업에서 교체).
+  icon: <i className="icon" />,
+
+  insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
+    editor.dispatchCommand(INSERT_NOTION_COMMAND, result.url);
+  },
+
+  keywords: ['notion', '노션', 'embed'],
+
+  parseUrl: (text: string) => {
+    const url = parseNotionUrl(text);
+    if (url == null) {
+      return null;
+    }
+    return { id: url, url };
+  },
+
+  type: 'notion',
+};
+
 export const EmbedConfigs = [
   TwitterEmbedConfig,
   YoutubeEmbedConfig,
   FigmaEmbedConfig,
+  NotionEmbedConfig,
 ];
 
 function AutoEmbedMenuItem({
