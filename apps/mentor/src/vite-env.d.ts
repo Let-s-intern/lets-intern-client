@@ -8,6 +8,9 @@ interface ImportMetaEnv {
   readonly VITE_PROFILE?: 'development' | 'production' | string;
   readonly VITE_BASE_URL?: string;
   readonly VITE_WEB_URL?: string;
+  readonly VITE_ZEP_SPACE_URL?: string;
+  readonly VITE_ZEP_ENTRY_CODE?: string;
+  readonly VITE_ZEP_SPACE_NAME?: string;
 }
 
 interface ImportMeta {
