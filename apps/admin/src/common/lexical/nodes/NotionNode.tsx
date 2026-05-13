@@ -31,7 +31,7 @@ import { isAllowedNotionUrl, toNotionEmbedUrl } from '../utils/notion';
 
 const NOTION_IFRAME_SANDBOX =
   'allow-scripts allow-same-origin allow-popups allow-forms';
-const NOTION_IFRAME_HEIGHT = 600;
+const NOTION_IFRAME_HEIGHT = 1200;
 
 type NotionComponentProps = Readonly<{
   className: Readonly<{
