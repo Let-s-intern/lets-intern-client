@@ -85,6 +85,7 @@ import {
   InsertImagePayload,
 } from '../ImagesPlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
+import { InsertNotionDialog } from '../NotionPlugin';
 import { InsertPDFDialog } from '../PDFPlugin';
 import { InsertTableDialog } from '../TablePlugin';
 import FontSize from './fontSize';
@@ -1145,6 +1146,20 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon image" />
                   <span className="text">PDF</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
+                    showModal('Notion 임베드', (onClose) => (
+                      <InsertNotionDialog
+                        activeEditor={activeEditor}
+                        onClose={onClose}
+                      />
+                    ));
+                  }}
+                  className="item"
+                >
+                  <i className="icon" />
+                  <span className="text">Notion 임베드</span>
                 </DropDownItem>
                 {/* <DropDownItem
                   onClick={() => {
