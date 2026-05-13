@@ -21,8 +21,6 @@ export const INSERT_NOTION_COMMAND: LexicalCommand<string> = createCommand(
   'INSERT_NOTION_COMMAND',
 );
 
-export { default as InsertNotionDialog } from './InsertNotionDialog';
-
 export default function NotionPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
