@@ -28,7 +28,6 @@ import ImageCarouselViewer from './nodes/ImageCarouselViewer';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
-import { SerializedFigmaNode } from './nodes/FigmaNode';
 import { SerializedNotionNode } from './nodes/NotionNode';
 import { SerializedPDFNode } from './nodes/PDFNode';
 import { SerializedYouTubeNode } from './nodes/YouTubeNode';
