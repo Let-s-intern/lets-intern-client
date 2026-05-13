@@ -3,12 +3,23 @@
  *
  * apps/admin 측과 동일 로직. 현 시점에서는 변경 격리를 위해 복제하며,
  * 추후 공통 패키지로 승격 시 함께 옮긴다.
+ *
+ * 노션의 공개(publish) 페이지는 워크스페이스마다 서브도메인이 다르므로
+ * `*.notion.site` 패턴을 허용한다. `www.notion.so` 는 노션 측이 iframe 을 차단하므로 제거.
  */
 
-const ALLOWED_NOTION_HOSTS = new Set([
-  'letsintern.notion.site',
-  'www.notion.so',
-]);
+/**
+ * host 가 노션의 publish 도메인(`<workspace>.notion.site`) 인지 검사한다.
+ *
+ * - `endsWith('.notion.site')` 로 점이 앞에 붙은 경우만 매치 → `notion-site.com`,
+ *   `evilnotion.site` 같은 위조 도메인 방어.
+ * - `host.length > '.notion.site'.length` 로 정확히 `notion.site` (서브도메인 없음) 거부.
+ */
+function isNotionPublishHost(host: string): boolean {
+  return (
+    host.endsWith('.notion.site') && host.length > '.notion.site'.length
+  );
+}
 
 export function isAllowedNotionUrl(url: string): boolean {
   if (typeof url !== 'string' || url.length === 0) {
@@ -26,7 +37,7 @@ export function isAllowedNotionUrl(url: string): boolean {
     return false;
   }
 
-  return ALLOWED_NOTION_HOSTS.has(parsed.host);
+  return isNotionPublishHost(parsed.host);
 }
 
 export function parseNotionUrl(text: string): string | null {
