@@ -18,9 +18,7 @@
  * - `host.length > '.notion.site'.length` 로 정확히 `notion.site` (서브도메인 없음) 거부.
  */
 function isNotionPublishHost(host: string): boolean {
-  return (
-    host.endsWith('.notion.site') && host.length > '.notion.site'.length
-  );
+  return host.endsWith('.notion.site') && host.length > '.notion.site'.length;
 }
 
 /**

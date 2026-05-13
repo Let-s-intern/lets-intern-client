@@ -314,7 +314,9 @@ export class NotionNode extends DecoratorBlockNode {
     // JSON 복원 단계에서 화이트리스트 재검증.
     // 통과 실패한 URL 은 빈 문자열로 치환되어 decorate() 의 placeholder 분기로 렌더된다
     // (DecoratorBlockNode 시그니처상 null 반환은 불가).
-    const url = isAllowedNotionUrl(serializedNode.url) ? serializedNode.url : '';
+    const url = isAllowedNotionUrl(serializedNode.url)
+      ? serializedNode.url
+      : '';
     const height =
       typeof serializedNode.height === 'number' &&
       Number.isFinite(serializedNode.height) &&

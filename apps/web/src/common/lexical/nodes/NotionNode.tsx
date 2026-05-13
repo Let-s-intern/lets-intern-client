@@ -126,7 +126,9 @@ export class NotionNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedNotionNode): NotionNode {
-    const url = isAllowedNotionUrl(serializedNode.url) ? serializedNode.url : '';
+    const url = isAllowedNotionUrl(serializedNode.url)
+      ? serializedNode.url
+      : '';
     const height =
       typeof serializedNode.height === 'number' &&
       Number.isFinite(serializedNode.height) &&

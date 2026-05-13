@@ -10,9 +10,7 @@ describe('isAllowedNotionUrl', () => {
 
   test('허용: 외부 워크스페이스 publish URL (boggy-chestnut-60b.notion.site)', () => {
     expect(
-      isAllowedNotionUrl(
-        'https://boggy-chestnut-60b.notion.site/abc?query=1',
-      ),
+      isAllowedNotionUrl('https://boggy-chestnut-60b.notion.site/abc?query=1'),
     ).toBe(true);
   });
 
@@ -88,9 +86,9 @@ describe('parseNotionUrl', () => {
   });
 
   test('허용 URL (외부 워크스페이스) 반환', () => {
-    expect(
-      parseNotionUrl('https://boggy-chestnut-60b.notion.site/abc'),
-    ).toBe('https://boggy-chestnut-60b.notion.site/abc');
+    expect(parseNotionUrl('https://boggy-chestnut-60b.notion.site/abc')).toBe(
+      'https://boggy-chestnut-60b.notion.site/abc',
+    );
   });
 
   test('거부 URL (www.notion.so) 은 null', () => {
@@ -139,7 +137,9 @@ describe('toNotionEmbedUrl', () => {
       toNotionEmbedUrl(
         'https://letsintern.notion.site/Page-Name-3505e77cbee180b6a827f28ff0695959',
       ),
-    ).toBe('https://letsintern.notion.site/ebd/3505e77cbee180b6a827f28ff0695959');
+    ).toBe(
+      'https://letsintern.notion.site/ebd/3505e77cbee180b6a827f28ff0695959',
+    );
   });
 
   test('이미 /ebd/<id> 인 URL → 호스트만 정규화 후 그대로(쿼리 제거)', () => {
