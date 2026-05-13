@@ -42,7 +42,7 @@ function Lightbox({
             <button
               key={i}
               onClick={() => swiperRef.current?.slideTo(i)}
-              aria-label={`${i + 1}번 사진`}
+              aria-label={`이미지 ${i + 1}`}
               className={`h-2.5 w-2.5 rounded-full transition-colors ${
                 i === index ? 'bg-primary' : 'bg-neutral-70'
               }`}
@@ -141,14 +141,14 @@ export default function ImageCarouselViewer({
     <>
       <div className="my-4 overflow-x-auto" style={{ width: containerWidth }}>
         <div
-          className="flex gap-3 pb-1"
+          className="flex gap-2 pb-1 md:gap-3"
           style={{ scrollSnapType: 'x mandatory' }}
         >
           {images.map((img, idx) => (
             <div
               key={idx}
               className="flex-none cursor-pointer overflow-hidden"
-              style={{ height: 260, scrollSnapAlign: 'start' }}
+              style={{ scrollSnapAlign: 'start' }}
               onClick={() => setLightboxIndex(idx)}
             >
               <picture>
@@ -175,7 +175,7 @@ export default function ImageCarouselViewer({
                 <img
                   src={img.src}
                   alt={img.altText}
-                  style={{ height: 260, width: 'auto' }}
+                  className="h-40 w-auto md:h-[260px]"
                   draggable={false}
                 />
               </picture>
