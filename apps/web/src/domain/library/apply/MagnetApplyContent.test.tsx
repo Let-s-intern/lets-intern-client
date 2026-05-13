@@ -225,15 +225,15 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
       magnetId: 1,
       body: { magnetAnswerList: [] },
     });
-    // 추가 마그넷 신청 (빈 답변)
+    // 추가 마그넷 신청 (빈 답변, isExtra: true 로 묶음 표시)
     const extraCalls = tryPostMagnetApplicationMock.mock.calls
       .slice(1)
       .map((args) => args[0]);
     expect(extraCalls).toEqual(
       expect.arrayContaining([
-        { magnetId: 101, body: { magnetAnswerList: [] } },
-        { magnetId: 102, body: { magnetAnswerList: [] } },
-        { magnetId: 103, body: { magnetAnswerList: [] } },
+        { magnetId: 101, body: { magnetAnswerList: [], isExtra: true } },
+        { magnetId: 102, body: { magnetAnswerList: [], isExtra: true } },
+        { magnetId: 103, body: { magnetAnswerList: [], isExtra: true } },
       ]),
     );
   });

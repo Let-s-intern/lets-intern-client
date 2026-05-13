@@ -246,13 +246,13 @@ const MagnetApplyContent = ({
         }
       }
 
-      // 출시 알림: 선택한 프로그램들에 대해 신청
+      // 출시 알림: 선택한 프로그램들에 대해 신청 (메인과 함께 묶음 신청 → isExtra: true)
       if (wantNotification && selectedLaunchAlertIds.length > 0) {
         await Promise.allSettled(
           selectedLaunchAlertIds.map((id) =>
             tryPostMagnetApplication({
               magnetId: id,
-              body: { magnetAnswerList: [] },
+              body: { magnetAnswerList: [], isExtra: true },
             }),
           ),
         );
@@ -262,13 +262,14 @@ const MagnetApplyContent = ({
       //    BE 에서 batch endpoint 도입 시 단일 호출로 변경 가능.
       //    Swagger /api/v1/magnet-application 경로에 batch 미구현 확인 (2026-05-07).
       //    상세 제안: .claude/tasks/memos/be-request-magnet-batch-application.md
+      //    isExtra:true 로 BE 가 묶음 단위로 알림톡 dedupe 처리 가능.
       let extraFailedIds: number[] = [];
       if (magnetType === 'EVENT' && selectedExtraMagnetIds.length > 0) {
         const results = await Promise.allSettled(
           selectedExtraMagnetIds.map((id) =>
             tryPostMagnetApplication({
               magnetId: id,
-              body: { magnetAnswerList: [] },
+              body: { magnetAnswerList: [], isExtra: true },
             }),
           ),
         );
