@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import ZepEmbedModal from '@/common/modal/ZepEmbedModal';
+
 import { isEntranceActive } from '../utils';
 import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
 import MentorCard from '../ui/MentorCard';
@@ -11,8 +15,8 @@ interface Props {
 }
 
 const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
-  const { scheduledDate, scheduledTime, zepRoomNumber, zepRoomUrl } =
-    reservation;
+  const { scheduledDate, scheduledTime, zepRoomNumber } = reservation;
+  const [isZepOpen, setIsZepOpen] = useState(false);
 
   const entranceActive = isEntranceActive(scheduledDate, scheduledTime);
   const formattedTime = formatReservationTime(scheduledDate, scheduledTime);
@@ -66,11 +70,10 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
               >
                 멘토님께 질문하기
               </button>
-              <a
-                href={zepRoomUrl ?? undefined}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-disabled={!entranceActive}
+              <button
+                type="button"
+                disabled={!entranceActive}
+                onClick={entranceActive ? () => setIsZepOpen(true) : undefined}
                 className={
                   entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
@@ -78,11 +81,13 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
                 }
               >
                 LIVE 피드백 입장하기
-              </a>
+              </button>
             </div>
           )}
         </div>
       </section>
+
+      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
     </div>
   );
 };
