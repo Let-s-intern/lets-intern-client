@@ -9,8 +9,10 @@ import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import MagnetApplicationDailyChart from './ui/MagnetApplicationDailyChart';
+import MagnetApplicationMonthlyChart from './ui/MagnetApplicationMonthlyChart';
 import MarketingAgreeStat from './ui/MarketingAgreeStat';
 import QuestionAnswerStat from './ui/QuestionAnswerStat';
+import TodayApplicationCountStat from './ui/TodayApplicationCountStat';
 import WishFieldPieChart from './ui/WishFieldPieChart';
 import WishIndustryPieChart from './ui/WishIndustryPieChart';
 import { downloadCsv } from './utils/csv';
@@ -157,6 +159,9 @@ const LeadUserDetailPage = () => {
         <div className="lg:flex-1">
           <MagnetApplicationDailyChart applications={applications} />
         </div>
+        <div className="lg:flex-1">
+          <MagnetApplicationMonthlyChart applications={applications} />
+        </div>
         <div className="lg:w-60">
           <WishFieldPieChart applications={applications} />
         </div>
@@ -164,6 +169,9 @@ const LeadUserDetailPage = () => {
           <WishIndustryPieChart applications={applications} />
         </div>
         <div className="flex flex-col rounded border border-gray-200 lg:w-48">
+          <div className="flex-1 border-b border-gray-200 p-3">
+            <TodayApplicationCountStat applications={applications} />
+          </div>
           <div className="flex-1 border-b border-gray-200 p-3">
             <QuestionAnswerStat applications={applications} />
           </div>
