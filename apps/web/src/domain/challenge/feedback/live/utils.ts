@@ -92,10 +92,16 @@ export function toDateString(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+// 데모/전시용 — 2028-12-31 까지는 라이브 피드백 입장 버튼을 항상 활성 상태로 둔다.
+// BE 연동 시점에 원래 윈도우(예약 시각 10분 전 ~ 30분 후)로 복원할 것.
+const DEMO_ENTRANCE_OPEN_UNTIL = new Date('2028-12-31T23:59:59');
+
 export function isEntranceActive(
   scheduledDate: string,
   scheduledTime: string,
 ): boolean {
+  if (new Date() < DEMO_ENTRANCE_OPEN_UNTIL) return true;
+
   const [hour, minute] = scheduledTime.split(':').map(Number);
   const start = new Date(scheduledDate);
   start.setHours(hour, minute, 0, 0);
