@@ -28,6 +28,7 @@ import { EquationNode } from './EquationNode';
 import { FigmaNode } from './FigmaNode';
 import { ImageNode } from './ImageNode';
 import { PDFNode } from './PDFNode';
+import { ImageCarouselNode } from './ImageCarouselNode';
 import { InlineImageNode } from './InlineImageNode/InlineImageNode';
 import { KeywordNode } from './KeywordNode';
 import { LayoutContainerNode } from './LayoutContainerNode';
@@ -57,6 +58,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   PollNode,
   StickyNode,
   ImageNode,
+  ImageCarouselNode,
   InlineImageNode,
   MentionNode,
   EmojiNode,
