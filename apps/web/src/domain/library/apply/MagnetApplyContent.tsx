@@ -309,11 +309,20 @@ const MagnetApplyContent = ({
             }),
           ),
         );
-        const launchAlertFailedIds = results
-          .map((r, i) =>
-            r.status === 'rejected' ? selectedLaunchAlertIds[i] : null,
-          )
-          .filter((id): id is number => id !== null);
+        const launchAlertFailedIds: number[] = [];
+        results.forEach((r, i) => {
+          if (r.status === 'rejected') {
+            const failedId = selectedLaunchAlertIds[i];
+            launchAlertFailedIds.push(failedId);
+            // 항목별 Sentry 보고 — batch 요약 로그만으로는 reason/stack 분석 불가.
+            libraryApplyUnexpectedError(r.reason, {
+              stage: 'launch_alert',
+              magnetId: failedId,
+              magnetType,
+              status: extractHttpStatus(r.reason),
+            });
+          }
+        });
         libraryApplyLaunchAlertBatch({
           totalCount: selectedLaunchAlertIds.length,
           successCount:
@@ -338,11 +347,18 @@ const MagnetApplyContent = ({
             }),
           ),
         );
-        extraFailedIds = results
-          .map((r, i) =>
-            r.status === 'rejected' ? selectedExtraMagnetIds[i] : null,
-          )
-          .filter((id): id is number => id !== null);
+        results.forEach((r, i) => {
+          if (r.status === 'rejected') {
+            const failedId = selectedExtraMagnetIds[i];
+            extraFailedIds.push(failedId);
+            libraryApplyUnexpectedError(r.reason, {
+              stage: 'event_extra',
+              magnetId: failedId,
+              magnetType,
+              status: extractHttpStatus(r.reason),
+            });
+          }
+        });
         libraryApplyEventExtraSubmitBatch({
           totalCount: selectedExtraMagnetIds.length,
           successCount: selectedExtraMagnetIds.length - extraFailedIds.length,
@@ -352,11 +368,13 @@ const MagnetApplyContent = ({
       }
 
       // 5) 결과 모달 — 성공/이미신청/일부실패를 단일 모달로 통합.
+      // 내부 magnetId 는 사용자에게 의미 없으므로 노출하지 않고, 위 stage 별
+      // libraryApplyUnexpectedError 호출에서 Sentry extra 로 보존.
       if (mainAlreadyApplied && extraFailedIds.length > 0) {
         setResultModal({
           isOpen: true,
           title: '이미 신청한 자료집이에요',
-          message: `일부 추가 자료집 신청에도 실패했어요.\n실패 자료집 ID: ${extraFailedIds.join(', ')}`,
+          message: '함께 받아볼 자료집 일부 신청에 실패했어요.\n잠시 후 다시 시도해 주세요.',
           variant: 'conflict',
           shouldNavigate: true,
         });
@@ -372,7 +390,7 @@ const MagnetApplyContent = ({
         setResultModal({
           isOpen: true,
           title: '일부 자료집 신청에 실패했어요',
-          message: `실패 자료집 ID: ${extraFailedIds.join(', ')}\n잠시 후 다시 시도해 주세요.`,
+          message: '잠시 후 다시 시도해 주세요.',
           variant: 'error',
           shouldNavigate: true,
         });

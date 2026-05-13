@@ -11,7 +11,7 @@ import {
   libraryApplyEventExtraQueries,
   libraryApplyEventExtraSkipped,
 } from '@/utils/log';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 const EXTRA_MAGNET_PAGE_SIZE = 100;
 
@@ -39,7 +39,13 @@ const EventExtraMagnetSection = ({
   const candidateCount = candidateData?.magnetList.length ?? null;
   const appliedCount = appliedData?.magnetList.length ?? null;
 
+  // 로딩 완료 시점에 1회만 emit (docstring 계약). loading 변화마다 emit 되어
+  // Sentry Logs 가 노이즈로 가득 차는 것을 방지.
+  const queriesEmittedRef = useRef(false);
   useEffect(() => {
+    if (queriesEmittedRef.current) return;
+    if (isCandidateLoading || isAppliedLoading) return;
+    queriesEmittedRef.current = true;
     libraryApplyEventExtraQueries({
       candidateLoading: isCandidateLoading,
       appliedLoading: isAppliedLoading,
