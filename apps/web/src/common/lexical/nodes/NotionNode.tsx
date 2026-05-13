@@ -1,0 +1,206 @@
+/**
+ * NotionNode (web - 본문 렌더 측).
+ *
+ * apps/admin 의 NotionNode 와 동일 구조이며 읽기 전용 렌더에 사용된다.
+ * 플러그인은 web 에 등록하지 않는다 — 본문에서 노드만 인식해 iframe 을 그린다.
+ *
+ * 현재는 변경 격리를 위해 복제한다. 추후 공통 패키지로 승격 시 통합한다.
+ */
+
+import type {
+  DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
+  EditorConfig,
+  ElementFormatType,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  Spread,
+} from 'lexical';
+
+import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
+import {
+  DecoratorBlockNode,
+  SerializedDecoratorBlockNode,
+} from '@lexical/react/LexicalDecoratorBlockNode';
+import * as React from 'react';
+
+import { isAllowedNotionUrl } from '../utils/notion';
+
+const NOTION_IFRAME_SANDBOX =
+  'allow-scripts allow-same-origin allow-popups allow-forms';
+const NOTION_IFRAME_HEIGHT = 600;
+
+type NotionComponentProps = Readonly<{
+  className: Readonly<{
+    base: string;
+    focus: string;
+  }>;
+  format: ElementFormatType | null;
+  nodeKey: NodeKey;
+  url: string;
+}>;
+
+function NotionComponent({
+  className,
+  format,
+  nodeKey,
+  url,
+}: NotionComponentProps) {
+  const allowed = isAllowedNotionUrl(url);
+
+  return (
+    <BlockWithAlignableContents
+      className={className}
+      format={format}
+      nodeKey={nodeKey}
+    >
+      {allowed ? (
+        <iframe
+          src={url}
+          width="100%"
+          height={NOTION_IFRAME_HEIGHT}
+          frameBorder={0}
+          allowFullScreen
+          sandbox={NOTION_IFRAME_SANDBOX}
+          title="Notion 페이지"
+        />
+      ) : (
+        <div
+          style={{
+            padding: 16,
+            border: '1px dashed #d1d5db',
+            color: '#6b7280',
+            background: '#f9fafb',
+            borderRadius: 4,
+          }}
+        >
+          허용되지 않은 Notion URL 입니다. 이 임베드는 표시되지 않습니다.
+        </div>
+      )}
+    </BlockWithAlignableContents>
+  );
+}
+
+export type SerializedNotionNode = Spread<
+  {
+    url: string;
+  },
+  SerializedDecoratorBlockNode
+>;
+
+function $convertNotionElement(
+  domNode: HTMLElement,
+): null | DOMConversionOutput {
+  const url = domNode.getAttribute('data-lexical-notion-url');
+  if (url && isAllowedNotionUrl(url)) {
+    const node = $createNotionNode(url);
+    return { node };
+  }
+  return null;
+}
+
+export class NotionNode extends DecoratorBlockNode {
+  __url: string;
+
+  static getType(): string {
+    return 'notion';
+  }
+
+  static clone(node: NotionNode): NotionNode {
+    return new NotionNode(node.__url, node.__format, node.__key);
+  }
+
+  static importJSON(serializedNode: SerializedNotionNode): NotionNode {
+    const url = isAllowedNotionUrl(serializedNode.url) ? serializedNode.url : '';
+    const node = $createNotionNode(url);
+    node.setFormat(serializedNode.format);
+    return node;
+  }
+
+  exportJSON(): SerializedNotionNode {
+    return {
+      ...super.exportJSON(),
+      type: 'notion',
+      version: 1,
+      url: this.__url,
+    };
+  }
+
+  constructor(url: string, format?: ElementFormatType, key?: NodeKey) {
+    super(format, key);
+    this.__url = url;
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('iframe');
+    element.setAttribute('data-lexical-notion', 'true');
+    element.setAttribute('data-lexical-notion-url', this.__url);
+    if (isAllowedNotionUrl(this.__url)) {
+      element.setAttribute('src', this.__url);
+    }
+    element.setAttribute('width', '100%');
+    element.setAttribute('height', String(NOTION_IFRAME_HEIGHT));
+    element.setAttribute('frameborder', '0');
+    element.setAttribute('allowfullscreen', 'true');
+    element.setAttribute('sandbox', NOTION_IFRAME_SANDBOX);
+    element.setAttribute('title', 'Notion 페이지');
+    return { element };
+  }
+
+  static importDOM(): DOMConversionMap | null {
+    return {
+      iframe: (domNode: HTMLElement) => {
+        if (!domNode.hasAttribute('data-lexical-notion')) {
+          return null;
+        }
+        return {
+          conversion: $convertNotionElement,
+          priority: 1,
+        };
+      },
+    };
+  }
+
+  updateDOM(): false {
+    return false;
+  }
+
+  getUrl(): string {
+    return this.__url;
+  }
+
+  getTextContent(
+    _includeInert?: boolean | undefined,
+    _includeDirectionless?: false | undefined,
+  ): string {
+    return this.__url;
+  }
+
+  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
+    const embedBlockTheme = config.theme.embedBlock || {};
+    const className = {
+      base: embedBlockTheme.base || '',
+      focus: embedBlockTheme.focus || '',
+    };
+    return (
+      <NotionComponent
+        className={className}
+        format={this.__format}
+        nodeKey={this.getKey()}
+        url={this.__url}
+      />
+    );
+  }
+}
+
+export function $createNotionNode(url: string): NotionNode {
+  return new NotionNode(url);
+}
+
+export function $isNotionNode(
+  node: NotionNode | LexicalNode | null | undefined,
+): node is NotionNode {
+  return node instanceof NotionNode;
+}
