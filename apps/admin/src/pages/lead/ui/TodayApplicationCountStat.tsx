@@ -18,12 +18,10 @@ const TodayApplicationCountStat = ({
 }: TodayApplicationCountStatProps) => {
   const todayCount = useMemo(() => {
     const todayStr = dayjs().format('YYYY-MM-DD');
-    return applications.reduce((acc, app) => {
-      if (!app.createDate) return acc;
-      const d = dayjs(app.createDate);
-      if (!d.isValid()) return acc;
-      return d.format('YYYY-MM-DD') === todayStr ? acc + 1 : acc;
-    }, 0);
+    return applications.reduce(
+      (acc, app) => (app.createDate?.startsWith(todayStr) ? acc + 1 : acc),
+      0,
+    );
   }, [applications]);
 
   if (applications.length === 0) return null;

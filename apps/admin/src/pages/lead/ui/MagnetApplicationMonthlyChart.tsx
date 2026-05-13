@@ -29,11 +29,12 @@ const MagnetApplicationMonthlyChart = ({
 
   const months = series.map((point) => point.month);
   const counts = series.map((point) => point.count);
+  const totalCount = counts.reduce((sum, count) => sum + count, 0);
 
   return (
     <div className="flex h-full flex-col rounded border border-gray-200 p-3">
       <p className="mb-2 text-sm text-gray-700">
-        {`월별 신청자 수 (총 ${applications.length}건, ${series.length}개월)`}
+        {`월별 신청자 수 (총 ${totalCount}건, ${series.length}개월)`}
       </p>
       <LineChart
         height={200}
