@@ -66,9 +66,11 @@ function NotionComponent({
           width="100%"
           height={NOTION_IFRAME_HEIGHT}
           frameBorder={0}
+          scrolling="no"
           allowFullScreen
           sandbox={NOTION_IFRAME_SANDBOX}
           title="Notion 페이지"
+          style={{ display: 'block', overflow: 'hidden' }}
         />
       ) : (
         <div
@@ -152,9 +154,11 @@ export class NotionNode extends DecoratorBlockNode {
     element.setAttribute('width', '100%');
     element.setAttribute('height', String(NOTION_IFRAME_HEIGHT));
     element.setAttribute('frameborder', '0');
+    element.setAttribute('scrolling', 'no');
     element.setAttribute('allowfullscreen', 'true');
     element.setAttribute('sandbox', NOTION_IFRAME_SANDBOX);
     element.setAttribute('title', 'Notion 페이지');
+    element.setAttribute('style', 'display:block;overflow:hidden;');
     return { element };
   }
 
