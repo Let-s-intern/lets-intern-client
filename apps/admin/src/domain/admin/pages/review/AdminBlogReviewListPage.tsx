@@ -123,6 +123,16 @@ export default function AdminBlogReviewListPage() {
       sortable: false,
       width: 160,
       editable: true,
+      renderCell: (params: GridRenderCellParams<Row, string>) =>
+        params.value ? (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => window.open(params.value, '_blank', 'noreferrer')}
+          >
+            확인
+          </Button>
+        ) : null,
     },
     {
       field: 'isConfirmed',
