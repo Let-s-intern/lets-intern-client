@@ -60,6 +60,8 @@ function NotionComponent({
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [displayHeight, setDisplayHeight] = useState(height);
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
     setDisplayHeight(height);
@@ -67,7 +69,25 @@ function NotionComponent({
 
   const embedSrc = toNotionEmbedUrl(url);
 
+  const commitHeight = (next: number) => {
+    const clamped = Math.max(NOTION_MIN_HEIGHT, Math.floor(next));
+    setDisplayHeight(clamped);
+    if (iframeRef.current !== null) {
+      iframeRef.current.style.height = `${clamped}px`;
+    }
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isNotionNode(node)) {
+        node.setHeight(clamped);
+      }
+    });
+  };
+
   const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 더블클릭 신호(e.detail >= 2) 면 인라인 편집 모드에 양보하고 드래그 시작하지 않는다.
+    if (e.detail >= 2) {
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
 
@@ -99,17 +119,34 @@ function NotionComponent({
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
 
-      setDisplayHeight(lastHeight);
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isNotionNode(node)) {
-          node.setHeight(lastHeight);
-        }
-      });
+      commitHeight(lastHeight);
     };
 
     window.addEventListener('mousemove', handleMove);
     window.addEventListener('mouseup', handleUp);
+  };
+
+  const openInlineEditor = () => {
+    setInputValue(String(displayHeight));
+    setIsEditing(true);
+  };
+
+  const handleHandleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openInlineEditor();
+  };
+
+  const commitInlineInput = () => {
+    const num = Number(inputValue);
+    if (Number.isFinite(num) && num > 0) {
+      commitHeight(num);
+    }
+    setIsEditing(false);
+  };
+
+  const cancelInlineInput = () => {
+    setIsEditing(false);
   };
 
   return (
@@ -157,10 +194,11 @@ function NotionComponent({
           }}
         />
         {/* 리사이즈 핸들. embedSrc 가 유효할 때만 노출. */}
-        {embedSrc !== null && (
+        {embedSrc !== null && !isEditing && (
           <div
             onMouseDown={handleResizeStart}
-            title="드래그하여 노션 임베드 높이 조절"
+            onDoubleClick={handleHandleDoubleClick}
+            title="드래그하여 높이 조절 · 더블클릭하여 직접 입력"
             style={{
               position: 'absolute',
               left: 0,
@@ -181,6 +219,54 @@ function NotionComponent({
                 borderRadius: 2,
               }}
             />
+          </div>
+        )}
+        {/* 인라인 높이 입력 모드 (핸들 더블클릭 시) */}
+        {embedSrc !== null && isEditing && (
+          <div
+            onMouseDown={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              bottom: -16,
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '4px 8px',
+              background: 'white',
+              border: '1px solid #d1d5db',
+              borderRadius: 4,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              zIndex: 1,
+            }}
+          >
+            <input
+              type="number"
+              autoFocus
+              min={NOTION_MIN_HEIGHT}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onBlur={commitInlineInput}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitInlineInput();
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  cancelInlineInput();
+                }
+              }}
+              style={{
+                width: 80,
+                padding: '2px 4px',
+                fontSize: 12,
+                border: '1px solid #e5e7eb',
+                borderRadius: 2,
+                outline: 'none',
+              }}
+            />
+            <span style={{ fontSize: 12, color: '#6b7280' }}>px</span>
           </div>
         )}
       </div>
