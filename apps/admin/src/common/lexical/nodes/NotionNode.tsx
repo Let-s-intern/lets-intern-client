@@ -155,7 +155,13 @@ function NotionComponent({
       format={format}
       nodeKey={nodeKey}
     >
-      <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          position: 'relative',
+          // 어드민 에디터에서만 보이는 임베드 영역 가이드. web 본문 렌더(LexicalContent) 에는 영향 없음.
+          border: '1px solid #e5e7eb',
+        }}
+      >
         {embedSrc !== null ? (
           <iframe
             ref={iframeRef}
