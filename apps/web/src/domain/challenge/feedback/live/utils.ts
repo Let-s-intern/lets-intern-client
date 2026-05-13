@@ -58,7 +58,27 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   expired: 'muted',
 };
 
+export function formatReservationDateTime(
+  dateStr: string | null | undefined,
+  time: string | null | undefined,
+): string | null {
+  if (!dateStr || !time) return null;
+  const date = new Date(dateStr);
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+
+  const [hour, minute] = time.split(':').map(Number);
+  const totalEnd = hour * 60 + minute + 30;
+  const endTime = `${String(Math.floor(totalEnd / 60)).padStart(2, '0')}:${String(totalEnd % 60).padStart(2, '0')}`;
+
+  return `${yy}.${mm}.${dd} ${time}~${endTime}`;
+}
+
 export function toCardConfig(mission: LiveFeedbackMission) {
+  const showDateTime =
+    mission.status === 'reserved' || mission.status === 'changed';
+
   return {
     thumbnail: mission.thumbnail,
     title: mission.title,
@@ -73,6 +93,12 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     endDay: mission.endDay,
     reservationStartDay: mission.reservationStartDay,
     reservationEndDay: mission.reservationEndDay,
+    reservationDateTime: showDateTime
+      ? formatReservationDateTime(
+          mission.reservationInfo?.scheduledDate,
+          mission.reservationInfo?.scheduledTime,
+        )
+      : undefined,
   };
 }
 

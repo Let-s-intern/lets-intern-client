@@ -23,6 +23,7 @@ export interface FeedbackMissionCardConfig {
   endDay: string;
   reservationStartDay?: string;
   reservationEndDay?: string;
+  reservationDateTime?: string | null;
 }
 
 interface FeedbackMissionCardProps {
@@ -43,12 +44,14 @@ const DateField = ({
   label,
   start,
   end,
+  value,
   highlighted,
   className,
 }: {
   label: string;
-  start: string;
-  end: string;
+  start?: string;
+  end?: string;
+  value?: string | null;
   highlighted?: boolean;
   className?: string;
 }) => (
@@ -63,7 +66,8 @@ const DateField = ({
       {label}
     </span>
     <span className={highlighted ? 'text-primary-dark' : 'text-neutral-40'}>
-      {formatDay(start)} ~ {formatDay(end)}
+      {value ??
+        (start && end ? `${formatDay(start)} ~ ${formatDay(end)}` : null)}
     </span>
   </span>
 );
@@ -87,6 +91,7 @@ const FeedbackMissionCard = ({
     endDay,
     reservationStartDay,
     reservationEndDay,
+    reservationDateTime,
   } = config;
 
   const isToggle = openLabel !== undefined;
@@ -155,14 +160,24 @@ const FeedbackMissionCard = ({
               </div>
             </div>
 
-            {reservationStartDay && reservationEndDay && (
+            {reservationDateTime ? (
               <DateField
-                label="예약기간"
+                label="예약일시"
+                value={reservationDateTime}
                 highlighted
-                start={reservationStartDay}
-                end={reservationEndDay}
                 className="hidden md:flex"
               />
+            ) : (
+              reservationStartDay &&
+              reservationEndDay && (
+                <DateField
+                  label="예약기간"
+                  highlighted
+                  start={reservationStartDay}
+                  end={reservationEndDay}
+                  className="hidden md:flex"
+                />
+              )
             )}
 
             {/* 모바일 날짜 */}
@@ -173,13 +188,22 @@ const FeedbackMissionCard = ({
                 start={startDay}
                 end={endDay}
               />
-              {reservationStartDay && reservationEndDay && (
+              {reservationDateTime ? (
                 <DateField
-                  label="예약기간"
+                  label="예약일시"
+                  value={reservationDateTime}
                   highlighted
-                  start={reservationStartDay}
-                  end={reservationEndDay}
                 />
+              ) : (
+                reservationStartDay &&
+                reservationEndDay && (
+                  <DateField
+                    label="예약기간"
+                    highlighted
+                    start={reservationStartDay}
+                    end={reservationEndDay}
+                  />
+                )
               )}
             </div>
           </div>
