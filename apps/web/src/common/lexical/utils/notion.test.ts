@@ -1,4 +1,4 @@
-import { isAllowedNotionUrl, parseNotionUrl } from './notion';
+import { isAllowedNotionUrl, parseNotionUrl, toNotionEmbedUrl } from './notion';
 
 describe('isAllowedNotionUrl', () => {
   // 허용 케이스
@@ -108,5 +108,73 @@ describe('parseNotionUrl', () => {
 
   test('javascript: 스킴은 null', () => {
     expect(parseNotionUrl('javascript:alert(1)')).toBe(null);
+  });
+});
+
+describe('toNotionEmbedUrl', () => {
+  test('일반 publish URL → /ebd/<id> 변환', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2',
+      ),
+    ).toBe(
+      'https://boggy-chestnut-60b.notion.site/ebd/35f4740158fa80b4b79cd69e01eddca2',
+    );
+  });
+
+  test('쿼리스트링 포함 publish URL → /ebd/<id> 로 정규화', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2?source=copy_link',
+      ),
+    ).toBe(
+      'https://boggy-chestnut-60b.notion.site/ebd/35f4740158fa80b4b79cd69e01eddca2',
+    );
+  });
+
+  test('페이지 이름 prefix 된 publish URL → /ebd/<id>', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://letsintern.notion.site/Page-Name-3505e77cbee180b6a827f28ff0695959',
+      ),
+    ).toBe('https://letsintern.notion.site/ebd/3505e77cbee180b6a827f28ff0695959');
+  });
+
+  test('이미 /ebd/<id> URL → 그대로(쿼리 제거)', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://boggy-chestnut-60b.notion.site/ebd/35f4740158fa80b4b79cd69e01eddca2?source=copy_link',
+      ),
+    ).toBe(
+      'https://boggy-chestnut-60b.notion.site/ebd/35f4740158fa80b4b79cd69e01eddca2',
+    );
+  });
+
+  test('dashed UUID → hex32 로 통일', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://letsintern.notion.site/35f47401-58fa-80b4-b79c-d69e01eddca2',
+      ),
+    ).toBe(
+      'https://letsintern.notion.site/ebd/35f4740158fa80b4b79cd69e01eddca2',
+    );
+  });
+
+  test('page-id 없는 URL → null', () => {
+    expect(toNotionEmbedUrl('https://letsintern.notion.site/no-id-here')).toBe(
+      null,
+    );
+  });
+
+  test('화이트리스트 미통과 URL → null', () => {
+    expect(
+      toNotionEmbedUrl(
+        'https://www.notion.so/35f4740158fa80b4b79cd69e01eddca2',
+      ),
+    ).toBe(null);
+  });
+
+  test('빈 문자열 → null', () => {
+    expect(toNotionEmbedUrl('')).toBe(null);
   });
 });

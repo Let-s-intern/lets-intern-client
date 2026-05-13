@@ -26,7 +26,7 @@ import {
 } from '@lexical/react/LexicalDecoratorBlockNode';
 import * as React from 'react';
 
-import { isAllowedNotionUrl } from '../utils/notion';
+import { isAllowedNotionUrl, toNotionEmbedUrl } from '../utils/notion';
 
 const NOTION_IFRAME_SANDBOX =
   'allow-scripts allow-same-origin allow-popups allow-forms';
@@ -48,7 +48,8 @@ function NotionComponent({
   nodeKey,
   url,
 }: NotionComponentProps) {
-  const allowed = isAllowedNotionUrl(url);
+  // 노션 publish URL 은 `X-Frame-Options` 로 차단되므로 `/ebd/<id>` 임베드용 URL 로 변환해 iframe 에 사용.
+  const embedSrc = toNotionEmbedUrl(url);
 
   return (
     <BlockWithAlignableContents
@@ -56,9 +57,9 @@ function NotionComponent({
       format={format}
       nodeKey={nodeKey}
     >
-      {allowed ? (
+      {embedSrc !== null ? (
         <iframe
-          src={url}
+          src={embedSrc}
           width="100%"
           height={NOTION_IFRAME_HEIGHT}
           frameBorder={0}
@@ -137,8 +138,9 @@ export class NotionNode extends DecoratorBlockNode {
     const element = document.createElement('iframe');
     element.setAttribute('data-lexical-notion', 'true');
     element.setAttribute('data-lexical-notion-url', this.__url);
-    if (isAllowedNotionUrl(this.__url)) {
-      element.setAttribute('src', this.__url);
+    const embedSrc = toNotionEmbedUrl(this.__url);
+    if (embedSrc !== null) {
+      element.setAttribute('src', embedSrc);
     }
     element.setAttribute('width', '100%');
     element.setAttribute('height', String(NOTION_IFRAME_HEIGHT));

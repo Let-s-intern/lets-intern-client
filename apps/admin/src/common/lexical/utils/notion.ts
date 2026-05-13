@@ -63,3 +63,41 @@ export function parseNotionUrl(text: string): string | null {
   }
   return isAllowedNotionUrl(trimmed) ? trimmed : null;
 }
+
+const NOTION_PAGE_ID_RE =
+  /([0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+
+/**
+ * 노션 publish URL 을 iframe 임베드용 URL(`/ebd/<page-id>`) 로 변환한다.
+ *
+ * 노션은 일반 publish 페이지에는 `X-Frame-Options` 로 iframe 임베드를 차단하지만,
+ * `/ebd/<page-id>` 경로에 대해서는 임베드를 허용하는 별도 응답을 내려준다.
+ * 따라서 사용자가 복사한 publish URL 을 그대로 iframe `src` 에 박으면 화면이 비고,
+ * 이 함수로 변환된 URL 을 써야 정상 렌더된다.
+ *
+ * 변환 규칙:
+ *  - 화이트리스트 미통과 URL → null
+ *  - pathname 이 이미 `/ebd/...` 로 시작하면 그대로 반환(쿼리스트링은 제거).
+ *  - pathname 의 마지막 부분에서 32자 hex 또는 dashed UUID 형식의 page-id 를 추출,
+ *    `https://<host>/ebd/<id-hex32>` 로 정규화하여 반환.
+ *  - page-id 를 찾지 못하면 null.
+ */
+export function toNotionEmbedUrl(url: string): string | null {
+  if (!isAllowedNotionUrl(url)) {
+    return null;
+  }
+
+  const parsed = new URL(url);
+
+  if (parsed.pathname.startsWith('/ebd/')) {
+    return `${parsed.origin}${parsed.pathname}`;
+  }
+
+  const match = parsed.pathname.match(NOTION_PAGE_ID_RE);
+  if (match === null) {
+    return null;
+  }
+
+  const id = match[1].replace(/-/g, '').toLowerCase();
+  return `${parsed.origin}/ebd/${id}`;
+}

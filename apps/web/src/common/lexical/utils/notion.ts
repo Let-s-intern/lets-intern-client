@@ -50,3 +50,30 @@ export function parseNotionUrl(text: string): string | null {
   }
   return isAllowedNotionUrl(trimmed) ? trimmed : null;
 }
+
+const NOTION_PAGE_ID_RE =
+  /([0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+
+/**
+ * 노션 publish URL 을 iframe 임베드용 URL(`/ebd/<page-id>`) 로 변환한다.
+ * admin/web 동일 로직. apps/admin/src/common/lexical/utils/notion.ts 참조.
+ */
+export function toNotionEmbedUrl(url: string): string | null {
+  if (!isAllowedNotionUrl(url)) {
+    return null;
+  }
+
+  const parsed = new URL(url);
+
+  if (parsed.pathname.startsWith('/ebd/')) {
+    return `${parsed.origin}${parsed.pathname}`;
+  }
+
+  const match = parsed.pathname.match(NOTION_PAGE_ID_RE);
+  if (match === null) {
+    return null;
+  }
+
+  const id = match[1].replace(/-/g, '').toLowerCase();
+  return `${parsed.origin}/ebd/${id}`;
+}

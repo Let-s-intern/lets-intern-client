@@ -27,7 +27,7 @@ import {
 } from '@lexical/react/LexicalDecoratorBlockNode';
 import * as React from 'react';
 
-import { isAllowedNotionUrl } from '../utils/notion';
+import { isAllowedNotionUrl, toNotionEmbedUrl } from '../utils/notion';
 
 const NOTION_IFRAME_SANDBOX =
   'allow-scripts allow-same-origin allow-popups allow-forms';
@@ -49,7 +49,10 @@ function NotionComponent({
   nodeKey,
   url,
 }: NotionComponentProps) {
-  const allowed = isAllowedNotionUrl(url);
+  // 노션은 publish URL 자체에는 X-Frame-Options 차단을 걸어두지만,
+  // `/ebd/<page-id>` 경로는 임베드 허용한다. 저장은 원본 URL 을 유지하되
+  // 렌더 시점에만 임베드용 URL 로 변환해 iframe `src` 로 사용한다.
+  const embedSrc = toNotionEmbedUrl(url);
 
   return (
     <BlockWithAlignableContents
@@ -57,9 +60,9 @@ function NotionComponent({
       format={format}
       nodeKey={nodeKey}
     >
-      {allowed ? (
+      {embedSrc !== null ? (
         <iframe
-          src={url}
+          src={embedSrc}
           width="100%"
           height={NOTION_IFRAME_HEIGHT}
           frameBorder={0}
@@ -141,9 +144,10 @@ export class NotionNode extends DecoratorBlockNode {
     const element = document.createElement('iframe');
     element.setAttribute('data-lexical-notion', 'true');
     element.setAttribute('data-lexical-notion-url', this.__url);
-    // 화이트리스트 통과 URL 만 실제 src 를 부여한다.
-    if (isAllowedNotionUrl(this.__url)) {
-      element.setAttribute('src', this.__url);
+    // 화이트리스트 통과 URL 은 임베드용(`/ebd/<id>`) 으로 변환한 값을 src 로 부여한다.
+    const embedSrc = toNotionEmbedUrl(this.__url);
+    if (embedSrc !== null) {
+      element.setAttribute('src', embedSrc);
     }
     element.setAttribute('width', '100%');
     element.setAttribute('height', String(NOTION_IFRAME_HEIGHT));
