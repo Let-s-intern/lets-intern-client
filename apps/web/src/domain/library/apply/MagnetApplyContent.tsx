@@ -337,7 +337,7 @@ const MagnetApplyContent = ({
       //    BE 에서 batch endpoint 도입 시 단일 호출로 변경 가능.
       //    상세 제안: .claude/tasks/memos/be-request-magnet-batch-application.md
       //    isExtra:true 로 BE 가 묶음 단위로 알림톡 dedupe 처리 가능.
-      let extraFailedIds: number[] = [];
+      const extraFailedIds: number[] = [];
       if (magnetType === 'EVENT' && selectedExtraMagnetIds.length > 0) {
         const results = await Promise.allSettled(
           selectedExtraMagnetIds.map((id) =>
