@@ -149,6 +149,45 @@ jest.mock('./EventExtraMagnetSection', () => ({
   ),
 }));
 
+// 결과 모달은 본 테스트의 관심사가 BaseModal/Portal 렌더링이 아니라
+// "어떤 variant/title/message 로 호출되는지" 이므로 stub 으로 props 만 노출.
+jest.mock('./LibraryApplyResultModal', () => ({
+  __esModule: true,
+  default: ({
+    isOpen,
+    title,
+    message,
+    variant,
+  }: {
+    isOpen: boolean;
+    title: string;
+    message?: string;
+    variant: string;
+  }) =>
+    isOpen ? (
+      <div data-testid="apply-result-modal" data-variant={variant}>
+        <h2 data-testid="apply-result-title">{title}</h2>
+        {message ? <p data-testid="apply-result-message">{message}</p> : null}
+      </div>
+    ) : null,
+}));
+
+// log.ts 의 Sentry wrapper 들은 실제 SDK 를 호출하므로 jest 환경에서 stub.
+const libraryApplyUnexpectedErrorMock = jest.fn();
+const libraryApplyEventExtraSubmitBatchMock = jest.fn();
+const libraryApplyLaunchAlertBatchMock = jest.fn();
+const libraryApplyMainConflictMock = jest.fn();
+
+jest.mock('@/utils/log', () => ({
+  __esModule: true,
+  libraryApplyMounted: jest.fn(),
+  libraryApplyEventExtraSubmitBatch: libraryApplyEventExtraSubmitBatchMock,
+  libraryApplyLaunchAlertBatch: libraryApplyLaunchAlertBatchMock,
+  libraryApplySubmitAttempt: jest.fn(),
+  libraryApplyMainConflict: libraryApplyMainConflictMock,
+  libraryApplyUnexpectedError: libraryApplyUnexpectedErrorMock,
+}));
+
 const MagnetApplyContent = require('./MagnetApplyContent').default;
 
 /**
@@ -180,20 +219,17 @@ const clickSubmit = async (
 };
 
 describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청)', () => {
-  let alertSpy: jest.SpyInstance;
-
   beforeEach(() => {
     tryPostMagnetApplicationMock.mockReset();
     tryPatchUserMock.mockReset();
     tryPatchUserMock.mockResolvedValue(undefined);
-    alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    libraryApplyUnexpectedErrorMock.mockReset();
+    libraryApplyEventExtraSubmitBatchMock.mockReset();
+    libraryApplyLaunchAlertBatchMock.mockReset();
+    libraryApplyMainConflictMock.mockReset();
     // CareerInfoForm 의 마운트-1회 트리거 플래그 리셋.
     (globalThis as { __careerFormTriggered?: boolean }).__careerFormTriggered =
       false;
-  });
-
-  afterEach(() => {
-    alertSpy.mockRestore();
   });
 
   it('EVENT + 추가 마그넷 3개 선택 시 메인 1회 + 추가 3회 신청 호출', async () => {
@@ -225,20 +261,20 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
       magnetId: 1,
       body: { magnetAnswerList: [] },
     });
-    // 추가 마그넷 신청 (빈 답변)
+    // 추가 마그넷 신청 (빈 답변, isExtra: true 로 묶음 표시)
     const extraCalls = tryPostMagnetApplicationMock.mock.calls
       .slice(1)
       .map((args) => args[0]);
     expect(extraCalls).toEqual(
       expect.arrayContaining([
-        { magnetId: 101, body: { magnetAnswerList: [] } },
-        { magnetId: 102, body: { magnetAnswerList: [] } },
-        { magnetId: 103, body: { magnetAnswerList: [] } },
+        { magnetId: 101, body: { magnetAnswerList: [], isExtra: true } },
+        { magnetId: 102, body: { magnetAnswerList: [], isExtra: true } },
+        { magnetId: 103, body: { magnetAnswerList: [], isExtra: true } },
       ]),
     );
   });
 
-  it('추가 마그넷 일부 실패 시 alert 으로 실패 magnetId 안내 + 성공 alert 미표시 (Gemini 리뷰 #2 반영)', async () => {
+  it('추가 마그넷 일부 실패 시 error 모달 + 항목별 Sentry 보고 + 성공 모달 미표시', async () => {
     // 메인(1) 성공, 추가 101 성공, 102 실패, 103 실패
     tryPostMagnetApplicationMock.mockImplementation(
       ({ magnetId }: { magnetId: number }) => {
@@ -266,21 +302,28 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
 
     await clickSubmit(container, getByTestId);
 
+    // 모달이 'error' variant 로 뜨고, 사용자 메시지에는 내부 ID 미노출.
     await waitFor(() => {
-      const failureCall = alertSpy.mock.calls.find((args) =>
-        String(args[0]).includes('일부 자료집 신청에 실패'),
-      );
-      expect(failureCall).toBeDefined();
-      expect(String(failureCall?.[0])).toContain('102');
-      expect(String(failureCall?.[0])).toContain('103');
-      expect(String(failureCall?.[0])).not.toContain('101');
+      const modal = getByTestId('apply-result-modal');
+      expect(modal.getAttribute('data-variant')).toBe('error');
+      const title = getByTestId('apply-result-title').textContent ?? '';
+      expect(title).toContain('일부 자료집 신청에 실패');
+      expect(title).not.toContain('완료');
+      const message = getByTestId('apply-result-message').textContent ?? '';
+      // 내부 magnetId 는 사용자 메시지에 노출되지 않아야 함 (Copilot Comment 2).
+      expect(message).not.toMatch(/\b101\b|\b102\b|\b103\b/);
     });
 
-    // 일부 실패 시 "신청이 완료되었습니다." 는 표시되지 않아야 한다.
-    const successCall = alertSpy.mock.calls.find((args) =>
-      String(args[0]).includes('신청이 완료되었습니다'),
-    );
-    expect(successCall).toBeUndefined();
+    // 항목별 Sentry 보고 (Copilot Comment 1) — 실패 102, 103 각각 호출, 성공 101 은 미호출.
+    const failedCalls = libraryApplyUnexpectedErrorMock.mock.calls;
+    const failedIdsCaptured = failedCalls
+      .map((args) => args[1]?.magnetId)
+      .filter((id): id is number => typeof id === 'number');
+    expect(failedIdsCaptured).toEqual(expect.arrayContaining([102, 103]));
+    expect(failedIdsCaptured).not.toContain(101);
+    failedCalls.forEach((args) => {
+      expect(args[1]?.stage).toBe('event_extra');
+    });
   });
 
   it('메인 EVENT 가 이미 신청(409)이어도 추가 마그넷 신청은 진행된다', async () => {
@@ -327,12 +370,12 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
     expect(calls).toContain(101);
     expect(calls).toContain(102);
 
-    // alert 에 "이미 신청한 자료집이에요" 포함
+    // 모달이 'conflict' variant 로 뜨고, 타이틀에 "이미 신청한 자료집" 포함.
     await waitFor(() => {
-      const conflictCall = alertSpy.mock.calls.find((args) =>
-        String(args[0]).includes('이미 신청한 자료집'),
-      );
-      expect(conflictCall).toBeDefined();
+      const modal = getByTestId('apply-result-modal');
+      expect(modal.getAttribute('data-variant')).toBe('conflict');
+      const title = getByTestId('apply-result-title').textContent ?? '';
+      expect(title).toContain('이미 신청한 자료집');
     });
   });
 

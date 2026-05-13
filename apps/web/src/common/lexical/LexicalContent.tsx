@@ -28,8 +28,10 @@ import ImageCarouselViewer from './nodes/ImageCarouselViewer';
 import { SerializedImageNode } from './nodes/ImageNode';
 import { SerializedLayoutContainerNode } from './nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from './nodes/LayoutItemNode';
+import { SerializedNotionNode } from './nodes/NotionNode';
 import { SerializedPDFNode } from './nodes/PDFNode';
 import { SerializedYouTubeNode } from './nodes/YouTubeNode';
+import { toNotionEmbedUrl } from './utils/notion';
 
 const parseStyle = (styleString: string) =>
   styleString
@@ -466,6 +468,34 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
               allowFullScreen
             />
           </div>
+        </div>
+      );
+    }
+    case 'notion': {
+      const _node = node as SerializedNotionNode;
+      const embedSrc = toNotionEmbedUrl(_node.url);
+      if (embedSrc === null) {
+        return null;
+      }
+      const height =
+        typeof _node.height === 'number' &&
+        Number.isFinite(_node.height) &&
+        _node.height >= 200
+          ? _node.height
+          : 1200;
+      return (
+        <div className="notion my-4 w-full">
+          <iframe
+            src={embedSrc}
+            width="100%"
+            height={height}
+            frameBorder={0}
+            scrolling="no"
+            allowFullScreen
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+            title="Notion 페이지"
+            style={{ display: 'block', overflow: 'hidden' }}
+          />
         </div>
       );
     }
