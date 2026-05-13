@@ -6,6 +6,9 @@
  *
  */
 
+import useModal from '@/common/lexical/hooks/useModal';
+import { getSelectedNode } from '@/utils/getSelectedNode';
+import { sanitizeUrl } from '@/utils/url';
 import {
   $createCodeNode,
   $isCodeNode,
@@ -72,13 +75,11 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { Dispatch, useCallback, useEffect, useState } from 'react';
-import { sanitizeUrl } from '@/utils/url';
-import useModal from '@/common/lexical/hooks/useModal';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import DropdownColorPicker from '../../ui/DropdownColorPicker';
-import { getSelectedNode } from '@/utils/getSelectedNode';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
+import { InsertImageCarouselDialog } from '../ImageCarouselPlugin';
 import {
   INSERT_IMAGE_COMMAND,
   InsertImageDialog,
@@ -1131,6 +1132,20 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon image" />
                   <span className="text">이미지</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
+                    showModal('이미지 슬라이더 삽입', (onClose) => (
+                      <InsertImageCarouselDialog
+                        activeEditor={activeEditor}
+                        onClose={onClose}
+                      />
+                    ));
+                  }}
+                  className="item"
+                >
+                  <i className="icon image" />
+                  <span className="text">이미지 슬라이더</span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
