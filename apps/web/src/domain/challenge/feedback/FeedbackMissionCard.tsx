@@ -54,7 +54,7 @@ const DateField = ({
 }) => (
   <span
     className={clsx(
-      'flex gap-1.5 tracking-[-0.36px]',
+      'flex gap-1.5 tracking-[-0.4px] md:tracking-[-0.3px]',
       cardInfoTextCls,
       className,
     )}

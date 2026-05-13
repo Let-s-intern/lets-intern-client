@@ -137,7 +137,7 @@ const LiveFeedbackReview = () => {
     <button
       type="button"
       onClick={() => setIsReviewing(true)}
-      className="bg-primary text-xsmall14 flex-1 whitespace-nowrap rounded-sm py-3 font-semibold text-white"
+      className="bg-primary text-xsmall16 flex-1 whitespace-nowrap rounded-sm py-4 font-semibold text-white"
     >
       LIVE 피드백 회고하기
     </button>

@@ -34,7 +34,7 @@ const ReservationBar = ({
   return (
     <>
       {/* 모바일 레이아웃 */}
-      <div className="flex flex-col gap-6 md:hidden">
+      <div className="mt-3 flex flex-col gap-6 md:hidden">
         <div className="bg-primary-5 flex flex-col gap-0.5 rounded-sm px-5 py-4">
           <span className="text-xsmall16 text-primary-90 font-bold">
             선택된 피드백 시간
