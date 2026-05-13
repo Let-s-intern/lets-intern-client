@@ -1,5 +1,5 @@
 import { UserChallengeMissionDetail } from '@/schema';
-import OtVideo from '../../OtVideo';
+import OtVideo from '../../ot-mission/OtVideo';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;

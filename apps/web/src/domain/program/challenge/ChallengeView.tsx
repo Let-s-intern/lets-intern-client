@@ -29,7 +29,7 @@ import ProgramDetailNavigation, {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
-import MoreReviewButton from '../../review/MoreReviewButton';
+import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';

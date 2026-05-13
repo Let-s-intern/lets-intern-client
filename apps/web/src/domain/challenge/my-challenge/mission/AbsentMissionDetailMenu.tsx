@@ -1,8 +1,8 @@
 import { Schedule, UserChallengeMissionDetail } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import BonusMissionSubmitMenu from '../../BonusMissionSubmitMenu';
-import OtMissionSubmitMenu from '../../OtMissionSubmitMenu';
-import OtVideo from '../../OtVideo';
+import BonusMissionSubmitMenu from '../../bonus-mission/BonusMissionSubmitMenu';
+import OtMissionSubmitMenu from '../../ot-mission/OtMissionSubmitMenu';
+import OtVideo from '../../ot-mission/OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
 import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';

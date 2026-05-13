@@ -192,7 +192,9 @@ const toLibraryCardConfig = (
 export const toLibraryCardConfigs = (
   magnetList: MypageMagnetListItem[],
 ): CareerGrowthCardConfig[] => {
-  return magnetList.map(toLibraryCardConfig);
+  return magnetList
+    .filter((magnet) => magnet.type !== 'LAUNCH_ALERT')
+    .map(toLibraryCardConfig);
 };
 
 /** 탭별 카드 설정 매핑 */

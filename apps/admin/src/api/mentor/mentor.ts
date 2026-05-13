@@ -24,10 +24,12 @@ export const useAdminChallengeMentorListQuery = (
   });
 };
 
+export const UseAdminUserMentorListQueryKey = 'useAdminUserMentorListQuery';
+
 /** GET 멘토 전체 목록 /api/v2/admin/user/mentor */
 export const useAdminUserMentorListQuery = (pageable?: IPageable) => {
   return useQuery({
-    queryKey: ['useAdminUserMentorListQuery', pageable],
+    queryKey: [UseAdminUserMentorListQueryKey, pageable],
     queryFn: async () => {
       const res = await axiosV2.get('/admin/user/mentor', {
         params: {

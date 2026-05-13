@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
+import LibraryMyVisitNotice from './ui/LibraryMyVisitNotice';
 
 export type LibraryTab = 'contents' | 'my';
 
@@ -113,6 +114,7 @@ function Content({ tab }: { tab: LibraryTab }) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
+      {isMyTab && <LibraryMyVisitNotice />}
       {/* 탭 + 필터 */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <LibraryTabNav tabs={TABS} />

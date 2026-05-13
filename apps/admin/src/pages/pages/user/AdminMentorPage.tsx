@@ -1,37 +1,29 @@
 import { Link, useNavigate } from 'react-router-dom';
 import {
+  UseAdminUserMentorListQueryKey,
+  useAdminUserMentorListQuery,
+} from '@/api/mentor/mentor';
+import {
   usePatchUserAdminMutation,
-  useUserAdminQuery,
   UseUserAdminQueryKey,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 const PAGE_SIZE = 1000;
 
 function MentorManagementTable() {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
-  const { data, isLoading } = useUserAdminQuery({
-    isMentor: true,
-    pageable: { page: 1, size: PAGE_SIZE },
+  const { data, isLoading } = useAdminUserMentorListQuery({
+    page: 1,
+    size: PAGE_SIZE,
   });
 
-  const mentors = useMemo(
-    () =>
-      (data?.userAdminList ?? [])
-        .filter((u) => u.userInfo.isMentor === true)
-        .map((u) => ({
-          id: u.userInfo.id,
-          name: u.userInfo.name,
-          email: u.userInfo.email,
-          phoneNum: u.userInfo.phoneNum,
-        })),
-    [data],
-  );
+  const mentors = data?.mentorList ?? [];
 
   const patchUser = usePatchUserAdminMutation({});
 
@@ -47,7 +39,9 @@ function MentorManagementTable() {
     try {
       await patchUser.mutateAsync({ id: mentorId, isMentor: false });
       queryClient.invalidateQueries({
-        queryKey: [UseUserAdminQueryKey],
+        predicate: ({ queryKey }) =>
+          queryKey[0] === UseAdminUserMentorListQueryKey ||
+          queryKey[0] === UseUserAdminQueryKey,
       });
       snackbar('멘토가 삭제되었습니다.');
     } catch (err) {
@@ -74,10 +68,13 @@ function MentorManagementTable() {
                   이름
                 </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
-                  이메일
+                  닉네임
                 </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   전화번호
+                </th>
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                  이메일
                 </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
                   멘토 삭제
@@ -99,10 +96,13 @@ function MentorManagementTable() {
                     </Link>
                   </td>
                   <td className="text-xsmall14 px-6 py-4">
-                    {mentor.email ?? '-'}
+                    {mentor.nickname ?? '-'}
                   </td>
                   <td className="text-xsmall14 px-6 py-4">
                     {mentor.phoneNum ?? '-'}
+                  </td>
+                  <td className="text-xsmall14 px-6 py-4">
+                    {mentor.email ?? '-'}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <Button
