@@ -10,6 +10,8 @@
   color: #000;
   position: relative;
   line-height: 1.7;
+  /* sticky 컨테이닝 블록이 .editor-shell 로 잡히지 않도록 overflow: visible 명시 */
+  overflow: visible;
   @apply block my-5 font-normal;
 }
 
