@@ -149,6 +149,40 @@ jest.mock('./EventExtraMagnetSection', () => ({
   ),
 }));
 
+// 결과 모달은 본 테스트의 관심사가 BaseModal/Portal 렌더링이 아니라
+// "어떤 variant/title/message 로 호출되는지" 이므로 stub 으로 props 만 노출.
+jest.mock('./LibraryApplyResultModal', () => ({
+  __esModule: true,
+  default: ({
+    isOpen,
+    title,
+    message,
+    variant,
+  }: {
+    isOpen: boolean;
+    title: string;
+    message?: string;
+    variant: string;
+  }) =>
+    isOpen ? (
+      <div data-testid="apply-result-modal" data-variant={variant}>
+        <h2 data-testid="apply-result-title">{title}</h2>
+        {message ? <p data-testid="apply-result-message">{message}</p> : null}
+      </div>
+    ) : null,
+}));
+
+// log.ts 의 Sentry wrapper 들은 실제 SDK 를 호출하므로 jest 환경에서 stub.
+jest.mock('@/utils/log', () => ({
+  __esModule: true,
+  libraryApplyMounted: jest.fn(),
+  libraryApplyEventExtraSubmitBatch: jest.fn(),
+  libraryApplyLaunchAlertBatch: jest.fn(),
+  libraryApplySubmitAttempt: jest.fn(),
+  libraryApplyMainConflict: jest.fn(),
+  libraryApplyUnexpectedError: jest.fn(),
+}));
+
 const MagnetApplyContent = require('./MagnetApplyContent').default;
 
 /**
@@ -180,20 +214,13 @@ const clickSubmit = async (
 };
 
 describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청)', () => {
-  let alertSpy: jest.SpyInstance;
-
   beforeEach(() => {
     tryPostMagnetApplicationMock.mockReset();
     tryPatchUserMock.mockReset();
     tryPatchUserMock.mockResolvedValue(undefined);
-    alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
     // CareerInfoForm 의 마운트-1회 트리거 플래그 리셋.
     (globalThis as { __careerFormTriggered?: boolean }).__careerFormTriggered =
       false;
-  });
-
-  afterEach(() => {
-    alertSpy.mockRestore();
   });
 
   it('EVENT + 추가 마그넷 3개 선택 시 메인 1회 + 추가 3회 신청 호출', async () => {
@@ -238,7 +265,7 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
     );
   });
 
-  it('추가 마그넷 일부 실패 시 alert 으로 실패 magnetId 안내 + 성공 alert 미표시 (Gemini 리뷰 #2 반영)', async () => {
+  it('추가 마그넷 일부 실패 시 error 모달로 실패 magnetId 안내 + 성공 모달 미표시', async () => {
     // 메인(1) 성공, 추가 101 성공, 102 실패, 103 실패
     tryPostMagnetApplicationMock.mockImplementation(
       ({ magnetId }: { magnetId: number }) => {
@@ -266,21 +293,18 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
 
     await clickSubmit(container, getByTestId);
 
+    // 모달이 'error' variant 로 뜨고, 메시지에 102/103 포함, 101 미포함, "완료" 미포함.
     await waitFor(() => {
-      const failureCall = alertSpy.mock.calls.find((args) =>
-        String(args[0]).includes('일부 자료집 신청에 실패'),
-      );
-      expect(failureCall).toBeDefined();
-      expect(String(failureCall?.[0])).toContain('102');
-      expect(String(failureCall?.[0])).toContain('103');
-      expect(String(failureCall?.[0])).not.toContain('101');
+      const modal = getByTestId('apply-result-modal');
+      expect(modal.getAttribute('data-variant')).toBe('error');
+      const title = getByTestId('apply-result-title').textContent ?? '';
+      expect(title).toContain('일부 자료집 신청에 실패');
+      const message = getByTestId('apply-result-message').textContent ?? '';
+      expect(message).toContain('102');
+      expect(message).toContain('103');
+      expect(message).not.toContain('101');
+      expect(title).not.toContain('완료');
     });
-
-    // 일부 실패 시 "신청이 완료되었습니다." 는 표시되지 않아야 한다.
-    const successCall = alertSpy.mock.calls.find((args) =>
-      String(args[0]).includes('신청이 완료되었습니다'),
-    );
-    expect(successCall).toBeUndefined();
   });
 
   it('메인 EVENT 가 이미 신청(409)이어도 추가 마그넷 신청은 진행된다', async () => {
@@ -327,12 +351,12 @@ describe('MagnetApplyContent — handleSubmit (EVENT 추가 마그넷 N+1 신청
     expect(calls).toContain(101);
     expect(calls).toContain(102);
 
-    // alert 에 "이미 신청한 자료집이에요" 포함
+    // 모달이 'conflict' variant 로 뜨고, 타이틀에 "이미 신청한 자료집" 포함.
     await waitFor(() => {
-      const conflictCall = alertSpy.mock.calls.find((args) =>
-        String(args[0]).includes('이미 신청한 자료집'),
-      );
-      expect(conflictCall).toBeDefined();
+      const modal = getByTestId('apply-result-modal');
+      expect(modal.getAttribute('data-variant')).toBe('conflict');
+      const title = getByTestId('apply-result-title').textContent ?? '';
+      expect(title).toContain('이미 신청한 자료집');
     });
   });
 
