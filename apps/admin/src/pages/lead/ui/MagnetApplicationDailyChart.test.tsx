@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import type { MagnetApplicationByMagnet } from '@/api/leadManagement';
 
@@ -30,7 +30,16 @@ const buildApplication = (
 });
 
 describe('MagnetApplicationDailyChart', () => {
-  it('데이터가 있으면 차트와 캡션을 렌더한다', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-05-13T12:00:00'));
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  it('최근 한 달 내 데이터가 있으면 차트와 캡션을 렌더한다', () => {
     const applications: MagnetApplicationByMagnet[] = [
       buildApplication({
         magnetApplicationId: 1,
@@ -47,8 +56,25 @@ describe('MagnetApplicationDailyChart', () => {
     );
 
     expect(getByTestId('line-chart')).toBeInTheDocument();
-    // 2026-05-10 ~ 2026-05-12 = 3일치, 총 2건
-    expect(getByText(/일자별 신청자 수 \(총 2건, 3일\)/)).toBeInTheDocument();
+    // 2026-05-10 ~ 2026-05-12 = 3일치, 총 2건이 최근 30일 윈도우(2026-04-14~2026-05-13) 내
+    expect(
+      getByText(/일자별 신청자 수 \(최근 한 달 총 2건, 3일\)/),
+    ).toBeInTheDocument();
+  });
+
+  it('한 달 이전 데이터는 제외된다', () => {
+    const applications: MagnetApplicationByMagnet[] = [
+      buildApplication({
+        magnetApplicationId: 1,
+        // 2026-05-13 기준 30일보다 이전
+        createDate: '2026-01-01T09:00:00',
+      }),
+    ];
+
+    const { container } = render(
+      <MagnetApplicationDailyChart applications={applications} />,
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('데이터가 비어 있으면 null을 반환하여 영역을 렌더하지 않는다', () => {
