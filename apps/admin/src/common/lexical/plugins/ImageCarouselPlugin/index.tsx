@@ -126,7 +126,7 @@ function CarouselImageRow({
         className="h-14 w-20 rounded object-cover"
       />
       <span className="flex-1 truncate text-xs text-gray-500">
-        슬라이드 {index + 1}
+        {image.altText}
       </span>
       <button
         onClick={onRemove}
@@ -232,7 +232,7 @@ export function InsertImageCarouselDialog({
       <AddSlideForm onAdd={addImage} />
 
       <DialogActions>
-        <Button disabled={images.length === 0} onClick={handleInsert}>
+        <Button disabled={images.length < 3} onClick={handleInsert}>
           슬라이더 삽입
         </Button>
       </DialogActions>
