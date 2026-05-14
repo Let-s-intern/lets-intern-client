@@ -1,8 +1,9 @@
 import { SelectButton } from '@/common/button/SelectButton';
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
 import { useEffect, useMemo, useState } from 'react';
-import { CheckboxItem } from './WishJobCheckBox';
-import { WishJobModal } from '@/common/modal/WishJobModal';
+import WishFieldSelectModal from './modal/WishFieldSelectModal';
+import WishIndustrySelectModal from './modal/WishIndustrySelectModal';
+import WishPositionSelectModal from './modal/WishPositionSelectModal';
 
 interface JobField {
   id: number;
@@ -222,135 +223,34 @@ export default function WishConditionInputSection({
         />
       </div>
 
-      {/* 직군 모달 */}
       {modalStep === 'field' && (
-        <WishJobModal title="직군" onClose={closeModal}>
-          {jobCategories.map((item) => {
-            const isSelected = selectedField === item.name;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleFieldSelect(item.id)}
-                className={`rounded-xxs flex w-full items-center justify-between px-3 py-1.5 leading-[26px] ${
-                  isSelected
-                    ? 'text-primary'
-                    : 'text-neutral-20 hover:bg-neutral-95'
-                }`}
-              >
-                <span className="text-left">{item.name}</span>
-                {isSelected && (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M16.6667 5L7.50004 14.1667L3.33337 10"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </button>
-            );
-          })}
-        </WishJobModal>
+        <WishFieldSelectModal
+          jobCategories={jobCategories}
+          selectedField={selectedField}
+          onFieldSelect={handleFieldSelect}
+          onClose={closeModal}
+        />
       )}
-      {/* 직무 선택 모달 */}
+
       {modalStep === 'position' && selectedField !== null && (
-        <WishJobModal
-          title="직무 선택 (최대 3개)"
+        <WishPositionSelectModal
+          selectedField={selectedField}
+          selectedPositions={selectedPositions}
+          jobCategories={jobCategories}
+          jobPositions={jobPositions}
+          onPositionSelect={handlePositionSelect}
+          onBackToField={backToField}
           onClose={closeModal}
-          footer={
-            <>
-              <button
-                onClick={backToField}
-                className="rounded-xxs border-primary text-primary flex-1 border py-3"
-              >
-                이전으로
-              </button>
-              <button
-                onClick={closeModal}
-                className={`rounded-xxs flex-1 py-3 text-white ${
-                  selectedPositions.length > 0
-                    ? 'bg-primary'
-                    : 'bg-neutral-70 cursor-not-allowed'
-                }`}
-              >
-                선택 완료
-              </button>
-            </>
-          }
-        >
-          {(() => {
-            const fieldIndex = jobCategories.findIndex(
-              (cat) => cat.name === selectedField,
-            );
-            if (fieldIndex === -1) return null;
-
-            return (jobPositions[fieldIndex] || []).map((item) => {
-              const isSelected = selectedPositions.includes(item.name);
-
-              // "직무 전체"가 선택되어 있는지 확인
-              const hasAll = selectedPositions.some((name) =>
-                name.includes('직무 전체'),
-              );
-
-              // 현재 항목이 "직무 전체"인지 확인
-              const isAllPosition = item.name.includes('직무 전체');
-
-              const isDisabled =
-                (!isSelected && selectedPositions.length >= 3) ||
-                (!isSelected && !isAllPosition && hasAll);
-
-              return (
-                <CheckboxItem
-                  key={item.id}
-                  label={item.name}
-                  isSelected={isSelected}
-                  isDisabled={isDisabled}
-                  onChange={() => handlePositionSelect(item.id)}
-                />
-              );
-            });
-          })()}
-        </WishJobModal>
+        />
       )}
 
-      {/* 산업 선택 모달 */}
       {modalStep === 'industry' && (
-        <WishJobModal
-          title="산업 선택 (최대 3개)"
+        <WishIndustrySelectModal
+          industries={industries}
+          selectedIndustries={selectedIndustries}
+          onIndustrySelect={handleIndustrySelect}
           onClose={closeModal}
-          footer={
-            <button
-              onClick={closeModal}
-              className={`rounded-xs flex-1 py-3 text-white ${
-                selectedIndustries.length > 0
-                  ? 'bg-primary'
-                  : 'bg-neutral-70 cursor-not-allowed'
-              }`}
-            >
-              선택 완료
-            </button>
-          }
-        >
-          {industries.map((industry) => {
-            const isSelected = selectedIndustries.includes(industry.name);
-            const isDisabled =
-              (!isSelected && selectedIndustries.length >= 3) ||
-              (!isSelected &&
-                selectedIndustries.some((name) => name === '산업 무관'));
-
-            return (
-              <CheckboxItem
-                key={industry.id}
-                label={industry.name}
-                isSelected={isSelected}
-                isDisabled={isDisabled}
-                onChange={() => handleIndustrySelect(industry.id)}
-              />
-            );
-          })}
-        </WishJobModal>
+        />
       )}
     </div>
   );

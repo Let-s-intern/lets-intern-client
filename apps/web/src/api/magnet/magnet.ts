@@ -360,6 +360,9 @@ export interface MagnetApplicationReqBody {
     magnetQuestionId: number;
     answer: string;
   }[];
+  // 메인 신청과 함께 묶음으로 신청되는 추가 마그넷이면 true.
+  // 메인 마그넷일 경우 생략 (또는 false). BE 가 묶음 단위 후처리(예: 알림톡 dedupe)에 사용.
+  isExtra?: boolean;
 }
 
 export const usePostMagnetApplicationMutation = () => {
@@ -392,6 +395,16 @@ export const usePostMagnetApplicationMutation = () => {
 };
 
 // 마이페이지 MY 마그넷 신청현황 조회
+export const mypageMagnetListQueryOptions = (typeList?: MagnetType[]) => ({
+  queryKey: [mypageMagnetListQueryKey, typeList] as const,
+  queryFn: async (): Promise<MypageMagnetListResponse> => {
+    const res = await axios.get('/magnet/mypage', {
+      params: { typeList },
+    });
+    return mypageMagnetListResponseSchema.parse(res.data.data);
+  },
+});
+
 export const useGetMypageMagnetListQuery = ({
   typeList,
   enabled,
@@ -400,13 +413,7 @@ export const useGetMypageMagnetListQuery = ({
   enabled?: boolean;
 }) => {
   return useQuery({
-    queryKey: [mypageMagnetListQueryKey, typeList],
-    queryFn: async (): Promise<MypageMagnetListResponse> => {
-      const res = await axios.get('/magnet/mypage', {
-        params: { typeList },
-      });
-      return mypageMagnetListResponseSchema.parse(res.data.data);
-    },
+    ...mypageMagnetListQueryOptions(typeList),
     enabled,
   });
 };

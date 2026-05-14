@@ -1,7 +1,10 @@
 'use client';
 
 import { useGetMypageMagnetListQuery } from '@/api/magnet/magnet';
-import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
+import {
+  LIBRARY_VISIBLE_MAGNET_TYPES,
+  MypageMagnetListItem,
+} from '@/api/magnet/magnetSchema';
 import dayjs from '@/lib/dayjs';
 import { useState } from 'react';
 import MoreButton from '../../ui/button/MoreButton';
@@ -14,7 +17,7 @@ const MAGNET_TYPE_LABEL: Record<string, string> = {
   VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '기타',
+  EVENT: '이벤트',
 };
 
 const toLibraryCardConfig = (
@@ -54,12 +57,19 @@ const toLibraryCardConfig = (
 };
 
 const LibrarySection = () => {
-  const { data, isLoading } = useGetMypageMagnetListQuery({});
+  const { data, isLoading } = useGetMypageMagnetListQuery({
+    typeList: [...LIBRARY_VISIBLE_MAGNET_TYPES],
+  });
   const [showMore, setShowMore] = useState(false);
 
   if (isLoading) return <></>;
 
-  const magnetList = data?.magnetList ?? [];
+  // BE typeList 미적용/직렬화 호환 이슈에 대비한 클라이언트 측 방어 필터.
+  // EVENT/LAUNCH_ALERT 는 마이자료집에 절대 노출되지 않아야 한다.
+  const visibleTypes = LIBRARY_VISIBLE_MAGNET_TYPES as readonly string[];
+  const magnetList = (data?.magnetList ?? []).filter((m) =>
+    visibleTypes.includes(m.type),
+  );
   const hasMagnets = magnetList.length > 0;
   const list = showMore ? magnetList : magnetList.slice(0, 10);
 

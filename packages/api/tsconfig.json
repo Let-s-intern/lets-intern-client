@@ -1,7 +1,8 @@
 {
   "extends": "@letscareer/tsconfig/base",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["vitest/globals", "node"]
   },
   "include": ["src/**/*"]
 }

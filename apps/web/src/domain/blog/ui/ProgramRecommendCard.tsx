@@ -7,7 +7,12 @@ import {
   getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
-import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
+import {
+  captureBlogError,
+  captureChallengeError,
+  captureGuidebookError,
+  captureVodError,
+} from '@/utils/captureError';
 import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,45 +34,56 @@ async function ProgramRecommendCard({ program }: Props) {
 
     // 관리자가 추천 프로그램을 등록한 경우
     if (program.id) {
+      // ProgramRecommendItem.id 는 `${TYPE}-${id}` 형식. catch 블록에서도 재사용
+      // 하기 위해 try 바깥에서 한 번만 파싱한다 (ID 형식 의존을 한 곳에 집중).
+      const [programType, entityId] = program.id.split('-');
+
       // 프로그램이 삭제된 경우 예외처리
       try {
-        const [type, id] = program.id.split('-');
-
-        switch (type) {
+        switch (programType) {
           case CHALLENGE:
-            const challenge = await fetchChallenge(id);
+            const challenge = await fetchChallenge(entityId);
 
             title = challenge.title;
             thumbnail = challenge.thumbnail ?? '';
-            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            ctaLink = `/program/${programType.toLowerCase()}/${entityId}`;
             break;
           case LIVE:
-            const live = await fetchLive(id);
+            const live = await fetchLive(entityId);
             title = live.title;
             thumbnail = live.thumbnail ?? '';
-            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            ctaLink = `/program/${programType.toLowerCase()}/${entityId}`;
             break;
           case VOD:
-            const vod = await fetchPublicVodData(id);
+            const vod = await fetchPublicVodData(entityId);
             title = vod.title ?? undefined;
             thumbnail = vod.thumbnail ?? '';
-            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            ctaLink = `/program/${programType.toLowerCase()}/${entityId}`;
             break;
           case GUIDEBOOK:
-            const guidebook = await fetchPublicGuidebookData(id);
+            const guidebook = await fetchPublicGuidebookData(entityId);
             title = guidebook.title ?? undefined;
             thumbnail = guidebook.thumbnail ?? '';
-            ctaLink = `/program/guidebook/${id}`;
+            ctaLink = `/program/guidebook/${entityId}`;
             break;
           default:
-            // type === REPORT
-            const report = await fetchReportId(id);
+            // programType === REPORT
+            const report = await fetchReportId(entityId);
             title = report.title ?? undefined;
             thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
             ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
         }
       } catch (err) {
-        captureBlogError(err, {
+        const captureByType =
+          programType === VOD
+            ? captureVodError
+            : programType === GUIDEBOOK
+              ? captureGuidebookError
+              : programType === CHALLENGE
+                ? captureChallengeError
+                : captureBlogError;
+
+        captureByType(err, {
           section: 'programRecommendCard',
           tags: { lookup: 'byId' },
           extra: { programId: program.id },

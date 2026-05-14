@@ -64,7 +64,10 @@ const TableRow = ({
 
   return (
     <div
-      className={clsx('flex justify-between', {
+      // 각 셀에 명시적 w-[N%] 가 부여되고 합이 100% 이므로
+      // justify-between 으로 잔여공간을 분배하면 row 별 sub-pixel 분배 차이로
+      // 컬럼이 어긋난다. 헤더와 동일하게 단순 flex 만 사용한다.
+      className={clsx('flex w-full', {
         'bg-[#F1F1F1]': bgColor === 'DARK',
         'bg-[#F7F7F7]': bgColor === 'LIGHT',
       })}

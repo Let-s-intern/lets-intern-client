@@ -57,6 +57,7 @@ const ChallengeOperationRegisterMission = () => {
   return (
     <main>
       <DataGrid
+        autoHeight
         apiRef={apiRef}
         editMode="row"
         initialState={{

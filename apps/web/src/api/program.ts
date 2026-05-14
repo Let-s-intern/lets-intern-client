@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchJson } from '@letscareer/api';
 
 import { client } from '@/utils/client';
 import {
@@ -419,16 +420,14 @@ export const useGetGuidebookQuery = ({
 export const fetchPublicGuidebookData = async (
   guidebookId: string,
 ): Promise<PublicGuidebookSchema> => {
-  const res = await fetch(
+  return fetchJson<PublicGuidebookSchema>(
     `${process.env.NEXT_PUBLIC_SERVER_API}/guidebooks/${guidebookId}`,
+    {
+      code: 'GUIDEBOOK_FETCH_FAILED',
+      displayMessage: '가이드북 조회에 실패했습니다.',
+      parse: (data) => getPublicGuidebookSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('가이드북 상세 조회에 실패했습니다.');
-  }
-
-  const data = await res.json();
-  return getPublicGuidebookSchema.parse(data.data);
 };
 
 /** 1회용으로 사용하기 위한 함수 */
@@ -519,16 +518,14 @@ export const getVod = async (vodId: number) => {
 export const fetchPublicVodData = async (
   vodId: string,
 ): Promise<PublicVodSchema> => {
-  const res = await fetch(
+  return fetchJson<PublicVodSchema>(
     `${process.env.NEXT_PUBLIC_SERVER_API}/vods/${vodId}`,
+    {
+      code: 'VOD_FETCH_FAILED',
+      displayMessage: 'VOD 조회에 실패했습니다.',
+      parse: (data) => getPublicVodSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('VOD 상세 조회에 실패했습니다.');
-  }
-
-  const data = await res.json();
-  return getPublicVodSchema.parse(data.data);
 };
 
 export const usePostVodMutation = ({
@@ -758,17 +755,22 @@ export const useDeleteProgramBannerMutation = ({
 export const fetchChallenge = async (
   id: string | number,
 ): Promise<ChallengeIdSchema> => {
-  const data = await client<ChallengeIdSchema>(`/v1/challenge/${id}`, {
+  const data = await client<ChallengeIdSchema>(`/api/v1/challenge/${id}`, {
     method: 'GET',
   });
   return getChallengeIdSchema.parse(data);
 };
 
 export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
-  const data = await client<LiveIdSchema>(`/v1/live/${id}`, {
-    method: 'GET',
-  });
-  return getLiveIdSchema.parse(data);
+  return fetchJson<LiveIdSchema>(
+    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/v1/live/${id}`,
+    {
+      method: 'GET',
+      code: 'LIVE_FETCH_FAILED',
+      displayMessage: '라이브 프로그램 조회에 실패했습니다.',
+      parse: (data) => getLiveIdSchema.parse(data),
+    },
+  );
 };
 
 export const fetchProgram = async (params: {
@@ -780,7 +782,7 @@ export const fetchProgram = async (params: {
   page: number | string;
   size: number | string;
 }): Promise<Program> => {
-  const data = await client<Program>('/v1/program', {
+  const data = await client<Program>('/api/v1/program', {
     method: 'GET',
     params: {
       ...params,
@@ -821,7 +823,7 @@ export const getChallengeByKeyword = async (keyword: string) => {
 };
 
 export const fetchProgramRecommend = async () => {
-  const data = await client<ProgramRecommend>('/v1/program/recommend', {
+  const data = await client<ProgramRecommend>('/api/v1/program/recommend', {
     method: 'GET',
   });
   return programRecommendSchema.parse(data);

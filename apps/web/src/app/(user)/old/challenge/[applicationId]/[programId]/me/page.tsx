@@ -1,5 +1,5 @@
 'use client';
 
-import OldMyChallengeDashboard from '@/domain/challenge/OldMyChallengeDashboard';
+import OldMyChallengeDashboard from '@/domain/challenge/old/OldMyChallengeDashboard';
 
 export default OldMyChallengeDashboard;

@@ -1,3 +1,4 @@
+import { fetchJson, AppError } from '@letscareer/api';
 import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { number, z } from 'zod';
@@ -481,17 +482,14 @@ export const fetchReport = async ({
   type: ReportType;
   id?: number;
 }): Promise<ReportDetail | null> => {
-  const res = await fetch(
+  const activeReports = await fetchJson(
     `${process.env.NEXT_PUBLIC_SERVER_API}/report/active`,
+    {
+      code: 'REPORT_FETCH_FAILED',
+      displayMessage: '리포트 조회에 실패했습니다.',
+      parse: (data) => getActiveReportsSchema.parse(data),
+    },
   );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch report data');
-  }
-
-  const data = await res.json();
-
-  const activeReports = getActiveReportsSchema.parse(data.data);
 
   let list: ReportDetail[];
 
@@ -502,7 +500,11 @@ export const fetchReport = async ({
   } else if (type === 'RESUME') {
     list = activeReports.resumeInfoList;
   } else {
-    throw new Error('Invalid report type');
+    throw new AppError({
+      code: 'REPORT_INVALID_TYPE',
+      message: '알 수 없는 리포트 유형입니다.',
+      context: { type },
+    });
   }
   const visibleList = list.filter(
     (item) =>
@@ -1003,6 +1005,7 @@ export const useCreateReportApplication = () => {
   return useMutation({
     mutationFn: async (data: CreateReportApplication) => {
       // Mock API call
+      // eslint-disable-next-line no-console
       console.log('Creating report application:', data);
       return {
         success: true,
@@ -1018,6 +1021,7 @@ export const useDeleteReport = () => {
   return useMutation({
     mutationFn: async (reportId: number) => {
       // Mock API call
+      // eslint-disable-next-line no-console
       console.log('Deleting report:', reportId);
       return { success: true, message: 'Report deleted successfully' };
     },
@@ -1239,12 +1243,12 @@ export const useGetReportMessage = (applicationId: number) => {
 export const fetchReportId = async (
   id: string | number,
 ): Promise<ReportDetail> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/report/${id}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch report data');
-  }
-
-  const data = await res.json();
-  return getReportDetailSchema.parse(data.data);
+  return fetchJson<ReportDetail>(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/report/${id}`,
+    {
+      code: 'REPORT_FETCH_FAILED',
+      displayMessage: '리포트 조회에 실패했습니다.',
+      parse: (data) => getReportDetailSchema.parse(data),
+    },
+  );
 };

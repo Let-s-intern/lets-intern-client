@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
 import { sendErrorToWebhook } from '@/utils/webhook';
+import { rscRenderFailed } from '@/utils/log';
 
 export default function GlobalError({
   error,
@@ -11,8 +12,20 @@ export default function GlobalError({
   error: Error & { digest?: string };
 }) {
   useEffect(() => {
-    // Sentry로 에러 전송
-    Sentry.captureException(error);
+    const route =
+      typeof window !== 'undefined' ? window.location.pathname : undefined;
+
+    // Sentry로 에러 전송 (server-component 종류 태그 + route 정보 추가)
+    Sentry.captureException(error, {
+      tags: { kind: 'server-component' },
+      extra: {
+        digest: error.digest,
+        route,
+      },
+    });
+
+    // §8.5.2 — RSC 렌더 실패 구조화 로그
+    rscRenderFailed(error.digest, route);
 
     // Webhook으로도 에러 전송 (이중 안전장치)
     sendErrorToWebhook(error, {

@@ -1,4 +1,5 @@
 import Axios, { AxiosError, AxiosHeaders, AxiosInstance } from 'axios';
+import { ApiError } from './errors';
 
 export type AuthHeaderResolver = () => Promise<{ Authorization: string } | null>;
 export type UnauthorizedHandler = () => void;
@@ -71,6 +72,24 @@ export function createAuthorizedAxios({
       ) {
         onUnauthorized?.();
         return Promise.reject(error);
+      }
+
+      if (error.response) {
+        const { status, config: axiosConfig, data } = error.response;
+        const endpoint = axiosConfig?.url ?? '';
+        const method = (axiosConfig?.method ?? 'GET').toUpperCase();
+        const serverMessage = extractErrorMessage(data) ?? undefined;
+        const apiError = new ApiError({
+          code: 'API_ERROR',
+          message: serverMessage ?? '서버 오류가 발생했습니다.',
+          status,
+          endpoint,
+          method,
+          serverMessage,
+          context: {},
+          cause: error,
+        });
+        return Promise.reject(apiError);
       }
 
       return Promise.reject(error);

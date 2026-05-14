@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
+import LibraryMyVisitNotice from './ui/LibraryMyVisitNotice';
 
 export type LibraryTab = 'contents' | 'my';
 
@@ -33,14 +34,18 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   FREE_TEMPLATE: '무료 템플릿',
   MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '기타',
+  EVENT: '이벤트',
 };
 
-const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];
-
-const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL)
-  .filter(([value]) => !HIDDEN_TYPES_IN_LIST.includes(value as MagnetType))
-  .map(([value, caption]) => ({ caption, value }));
+// 탭별 숨김 정책.
+// - /library/list (자료집 콘텐츠 탭): LAUNCH_ALERT 는 어드민 isVisible 토글과 무관하게 항상 차단
+//   (임호정 PM 5/14 요청: "노출여부와 상관없이 리스트에서 가려주세요").
+//   EVENT 는 어드민 isVisible 토글로 제어 가능하도록 노출 허용.
+// - /library/list/my (MY 자료집 탭): PRD FR-3 정책에 따라 EVENT/LAUNCH_ALERT 모두 차단.
+const HIDDEN_TYPES_BY_TAB: Record<LibraryTab, MagnetType[]> = {
+  contents: ['LAUNCH_ALERT'],
+  my: ['LAUNCH_ALERT', 'EVENT'],
+};
 
 const PC_PAGE_SIZE = 16;
 const MOBILE_PAGE_SIZE = 8;
@@ -55,21 +60,30 @@ function Content({ tab }: { tab: LibraryTab }) {
   const [page, setPage] = useState(1);
 
   const pageSize = isMobile ? MOBILE_PAGE_SIZE : PC_PAGE_SIZE;
+  const hiddenTypes = HIDDEN_TYPES_BY_TAB[tab];
+
+  const categoryFilterList = useMemo(
+    () =>
+      Object.entries(MAGNET_TYPE_LABEL)
+        .filter(([value]) => !hiddenTypes.includes(value as MagnetType))
+        .map(([value, caption]) => ({ caption, value })),
+    [hiddenTypes],
+  );
 
   const typeList = useMemo(() => {
     const category = searchParams.get('category');
     if (!category) {
       return Object.keys(MAGNET_TYPE_LABEL).filter(
-        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+        (type) => !hiddenTypes.includes(type as MagnetType),
       ) as MagnetType[];
     }
     return category
       .toUpperCase()
       .split(',')
       .filter(
-        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+        (type) => !hiddenTypes.includes(type as MagnetType),
       ) as MagnetType[];
-  }, [searchParams]);
+  }, [searchParams, hiddenTypes]);
 
   const isMyTab = tab === 'my';
   const { isLoggedIn, isInitialized } = useAuthStore();
@@ -103,12 +117,13 @@ function Content({ tab }: { tab: LibraryTab }) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
+      {isMyTab && <LibraryMyVisitNotice />}
       {/* 탭 + 필터 */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <LibraryTabNav tabs={TABS} />
         <FilterDropdown
           label="콘텐츠 카테고리"
-          list={CATEGORY_FILTER_LIST}
+          list={categoryFilterList}
           paramKey="category"
           multiSelect
           onChange={() => setPage(1)}

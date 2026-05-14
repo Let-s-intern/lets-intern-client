@@ -25,7 +25,7 @@ import {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
-import Heading2 from '../../report/Heading2';
+import Heading2 from '@/domain/report/ui/heading/Heading2';
 import Description from '../program-detail/Description';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
