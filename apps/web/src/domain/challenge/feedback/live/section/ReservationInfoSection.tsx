@@ -110,7 +110,9 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
                   <span className="text-xsmall14 text-neutral-40 pr-2">
                     젭 회의실
                   </span>
-                  <span className="text-xsmall14 text-neutral-20">미정</span>
+                  <span className="text-xsmall14 text-neutral-20">
+                    {entranceActive ? '빈 회의실에 입장해주세요' : '미정'}
+                  </span>
                 </div>
               )}
             </div>
