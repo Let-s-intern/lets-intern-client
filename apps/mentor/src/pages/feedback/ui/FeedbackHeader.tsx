@@ -1,4 +1,5 @@
-import mentorConfig from '@/pages/constants/config';
+import { mentorConfig } from '@/constants/config';
+import { statusBadgeOrMuted } from '@/constants/statusColors';
 
 interface FeedbackHeaderProps {
   challengeTitle?: string;
@@ -10,6 +11,11 @@ interface FeedbackHeaderProps {
   onClose: () => void;
 }
 
+/**
+ * 피드백 모달/페이지 상단 바.
+ *
+ * PRD-0503 #4: 챌린지별 색상 구분 제거 — 단일 primary-5 배경으로 통일.
+ */
 const FeedbackHeader = ({
   challengeTitle,
   missionTh,
@@ -20,7 +26,7 @@ const FeedbackHeader = ({
   onClose,
 }: FeedbackHeaderProps) => {
   return (
-    <div className="bg-primary-5 flex flex-col gap-2 px-4 pb-3 pt-4 md:px-6 md:pt-6">
+    <div className="flex flex-col gap-2 bg-primary-5 px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 text-xs font-medium text-neutral-700">
@@ -34,23 +40,21 @@ const FeedbackHeader = ({
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              waitingCount > 0 ? 'bg-red-50 text-red-500' : 'text-gray-400'
+              statusBadgeOrMuted(waitingCount, 'waiting')
             }`}
           >
             시작 전 {waitingCount}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              inProgressCount > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+              statusBadgeOrMuted(inProgressCount, 'inProgress')
             }`}
           >
             진행 중 {inProgressCount}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              completedCount > 0
-                ? 'bg-green-50 text-green-700'
-                : 'text-gray-400'
+              statusBadgeOrMuted(completedCount, 'completed')
             }`}
           >
             완료 {completedCount}
@@ -101,21 +105,21 @@ const FeedbackHeader = ({
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            waitingCount > 0 ? 'bg-red-50 text-red-500' : 'text-gray-400'
+            statusBadgeOrMuted(waitingCount, 'waiting')
           }`}
         >
           시작 전 {waitingCount}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            inProgressCount > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+            statusBadgeOrMuted(inProgressCount, 'inProgress')
           }`}
         >
           진행 중 {inProgressCount}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-            completedCount > 0 ? 'bg-green-50 text-green-700' : 'text-gray-400'
+            statusBadgeOrMuted(completedCount, 'completed')
           }`}
         >
           완료 {completedCount}

@@ -1,7 +1,6 @@
 'use client';
 
 import type { PeriodBarData } from '../../types';
-import { getColor } from '../../constants/colors';
 
 /**
  * Single-day feedback card — vertical stack:
@@ -11,6 +10,8 @@ import { getColor } from '../../constants/colors';
  *   ├────────┤
  *   [챌린지명]
  *   미제출 0 · 제출 0
+ *
+ * PRD-0503 #4: 프로그램별 색상 매핑 제거 — 중성 톤(neutral-80) 보더 + 옅은 회색 배경.
  */
 const CompactFeedbackCard = ({
   bar,
@@ -19,8 +20,6 @@ const CompactFeedbackCard = ({
   bar: PeriodBarData;
   onBarClick: (challengeId: number, missionId: number) => void;
 }) => {
-  const color = getColor(bar.colorIndex ?? 0);
-
   return (
     <button
       type="button"
@@ -74,16 +73,14 @@ const CompactFeedbackCard = ({
 
       {/* Row 3: H-line ├────┤ */}
       <div className="flex h-3 items-center">
-        <div className={`h-full w-0.5 ${color.line}`} />
-        <div className={`h-0.5 flex-1 ${color.line}`} />
-        <div className={`h-full w-0.5 ${color.line}`} />
+        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="h-0.5 flex-1 bg-neutral-80" />
+        <div className="h-full w-0.5 bg-neutral-80" />
       </div>
 
       {/* Row 4-5: card body */}
-      <div className={`flex flex-col gap-1 p-2 ${color.body}`}>
-        <span
-          className={`text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white ${color.badge}`}
-        >
+      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
+        <span className="text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
         <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
