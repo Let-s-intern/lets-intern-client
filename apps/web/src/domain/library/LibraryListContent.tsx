@@ -37,10 +37,13 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   EVENT: '이벤트',
 };
 
-// 탭별 숨김 정책. /library/list 는 EVENT/LAUNCH_ALERT 모두 노출,
-// /library/list/my (MY 자료집) 는 PRD FR-3 정책에 따라 둘 다 차단.
+// 탭별 숨김 정책.
+// - /library/list (자료집 콘텐츠 탭): LAUNCH_ALERT 는 어드민 isVisible 토글과 무관하게 항상 차단
+//   (임호정 PM 5/14 요청: "노출여부와 상관없이 리스트에서 가려주세요").
+//   EVENT 는 어드민 isVisible 토글로 제어 가능하도록 노출 허용.
+// - /library/list/my (MY 자료집 탭): PRD FR-3 정책에 따라 EVENT/LAUNCH_ALERT 모두 차단.
 const HIDDEN_TYPES_BY_TAB: Record<LibraryTab, MagnetType[]> = {
-  contents: [],
+  contents: ['LAUNCH_ALERT'],
   my: ['LAUNCH_ALERT', 'EVENT'],
 };
 
