@@ -6,7 +6,6 @@ import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
 import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompetencyCell';
 import PeriodCell from '@/domain/mypage/experience/table-cell/PeriodCell';
 import YearCell from '@/domain/mypage/experience/table-cell/YearCell';
-import { getExperienceRowHeight } from '@/utils/experience';
 import { useParams } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa6';
 
@@ -51,7 +50,7 @@ const AttendanceUserExperiencesPage = () => {
       <DataTable
         headers={experienceTableHeaders}
         data={formattedData}
-        getRowHeight={getExperienceRowHeight}
+        getRowHeight={() => 'auto'}
         className="rounded-lg border"
       />
     </div>
