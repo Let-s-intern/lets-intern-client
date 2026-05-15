@@ -7,7 +7,7 @@ const CoreCompetencyCell = ({ value }: { value: string }) => {
       {valueArray.map((item) => (
         <span
           key={item}
-          className="rounded-xxs whitespace-nowrap bg-neutral-90 px-2 py-1 text-xs font-normal"
+          className="rounded-xxs bg-neutral-90 whitespace-nowrap px-2 py-1 text-xs font-normal"
         >
           {item}
         </span>
