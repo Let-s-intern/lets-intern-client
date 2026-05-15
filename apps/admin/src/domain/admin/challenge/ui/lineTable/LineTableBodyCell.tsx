@@ -11,7 +11,7 @@ const LineTableBodyCell = ({ className, children }: LineTableBodyCellProps) => {
   return (
     <div
       className={clsx(
-        'flex min-w-0 items-center justify-center overflow-hidden break-all p-1 text-sm text-zinc-500',
+        'flex min-w-0 items-center justify-center overflow-hidden break-words p-1 text-sm text-zinc-500',
         className,
       )}
     >

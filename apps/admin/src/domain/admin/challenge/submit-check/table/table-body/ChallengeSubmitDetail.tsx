@@ -52,7 +52,7 @@ const ChallengeSubmitDetail = ({
   };
 
   return (
-    <div className="w-full overflow-hidden rounded">
+    <div className="w-full rounded">
       <div className="flex justify-end bg-[#F1F1F1] px-6 py-3">
         <select
           name="missionStatusType"
