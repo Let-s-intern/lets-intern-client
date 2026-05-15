@@ -1,12 +1,11 @@
 import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge/challenge';
 import { UserAttendanceExperience } from '@/api/experience/experienceSchema';
-import DataTable, { TableHeader } from '@/common/table/DataTable';
+import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
 import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompetencyCell';
 import PeriodCell from '@/domain/mypage/experience/table-cell/PeriodCell';
 import YearCell from '@/domain/mypage/experience/table-cell/YearCell';
-import { getExperienceRowHeight } from '@/utils/experience';
 import { useParams } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa6';
 
@@ -44,14 +43,16 @@ const AttendanceUserExperiencesPage = () => {
     return <div>데이터가 없습니다.</div>;
   }
 
-  const formattedData = formatExperienceData(userExperiences);
+  const formattedData = formatExperienceData(userExperiences).filter(
+    (item) => typeof item.id === 'number',
+  ) as TableData[];
 
   return (
     <div className="p-4">
       <DataTable
         headers={experienceTableHeaders}
         data={formattedData}
-        getRowHeight={getExperienceRowHeight}
+        getRowHeight={() => 'auto'}
         className="rounded-lg border"
       />
     </div>

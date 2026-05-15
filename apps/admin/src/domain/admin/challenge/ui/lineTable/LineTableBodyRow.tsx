@@ -122,7 +122,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   return (
     <div
       className={twMerge(
-        'flex gap-px rounded-md border p-1',
+        'flex w-full gap-px rounded-md border p-1',
         isEditMode ? 'border-neutral-500' : 'border-neutral-200',
         onClick && 'cursor-pointer hover:bg-slate-50',
       )}
