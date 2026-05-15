@@ -1,6 +1,6 @@
 import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge/challenge';
 import { UserAttendanceExperience } from '@/api/experience/experienceSchema';
-import DataTable, { TableHeader } from '@/common/table/DataTable';
+import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
 import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompetencyCell';
@@ -43,7 +43,9 @@ const AttendanceUserExperiencesPage = () => {
     return <div>데이터가 없습니다.</div>;
   }
 
-  const formattedData = formatExperienceData(userExperiences);
+  const formattedData = formatExperienceData(userExperiences).filter(
+    (item) => typeof item.id === 'number',
+  ) as TableData[];
 
   return (
     <div className="p-4">
