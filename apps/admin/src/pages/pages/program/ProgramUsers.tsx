@@ -29,6 +29,12 @@ import { useMemo, useState } from 'react';
 
 const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 
+// 클립보드로 공유되는 절대 URL이므로 메인 web 도메인을 사용한다.
+// 미설정 시 admin 자기 자신의 origin 으로 fallback (개발 환경 안전장치).
+const WEB_URL =
+  import.meta.env.VITE_WEB_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : '');
+
 const ProgramUsers = () => {
   const [searchParams] = useSearchParams();
   const params = useParams<{ programId: string }>();
@@ -226,7 +232,7 @@ const ProgramUsers = () => {
               onClick={() => {
                 navigator.clipboard
                   .writeText(
-                    `${window.location.origin}/live/${programId}/mentor/notification/before?code=${mentorInfo?.mentorPassword}`,
+                    `${WEB_URL}/live/${programId}/mentor/notification/before?code=${mentorInfo?.mentorPassword}`,
                   )
                   .then(() => {
                     alert('링크가 클립보드에 복사되었습니다.');
@@ -243,7 +249,7 @@ const ProgramUsers = () => {
               onClick={() => {
                 navigator.clipboard
                   .writeText(
-                    `${window.location.origin}/live/${programId}/mentor/notification/after?code=${mentorInfo?.mentorPassword}`,
+                    `${WEB_URL}/live/${programId}/mentor/notification/after?code=${mentorInfo?.mentorPassword}`,
                   )
                   .then(() => alert('링크가 클립보드에 복사되었습니다.'))
                   .catch(() => alert('복사에 실패했습니다'));
