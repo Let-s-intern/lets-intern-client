@@ -17,7 +17,7 @@ const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로
 /** "YYYY-MM-DD" 포맷의 날짜를 "YYYY.MM.DD"로. */
 function formatDot(iso: string): string {
   if (!iso || iso === 'unknown') return '-';
-  return iso.slice(0, 10).replaceAll('-', '.');
+  return iso.slice(0, 10).replace(/-/g, '.');
 }
 
 function formatWrittenSchedule(start: string, end: string): string {
