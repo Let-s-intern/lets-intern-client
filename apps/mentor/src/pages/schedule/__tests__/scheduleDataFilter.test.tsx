@@ -47,9 +47,7 @@ const wrapper = ({ children }: { children: ReactNode }) => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
   });
-  return (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 };
 
 // ── 테스트 ────────────────────────────────────────────────────────────
@@ -148,7 +146,9 @@ describe('useScheduleData × 멘토 화이트리스트 + 피드백 태그 필터
 
     expect(result.current.filteredBars).toHaveLength(2);
     expect(
-      result.current.filteredBars.every((b) => b.barType === 'written-feedback'),
+      result.current.filteredBars.every(
+        (b) => b.barType === 'written-feedback',
+      ),
     ).toBe(true);
 
     // live 태그 추가 선택 → 서면 + 라이브 기간 = 3개

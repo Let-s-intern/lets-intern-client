@@ -41,8 +41,8 @@ const LiveFeedbackOpenBar = ({
     <Tag
       type={interactive ? 'button' : undefined}
       onClick={interactive ? onMentorOpenClick : undefined}
-      className={`flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border border-neutral-80 bg-white px-3 text-left ${
-        interactive ? 'transition-colors hover:bg-neutral-95' : ''
+      className={`border-neutral-80 flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border bg-white px-3 text-left ${
+        interactive ? 'hover:bg-neutral-95 transition-colors' : ''
       }`}
       aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}${
         isCompleted ? ' (완료)' : ''
@@ -52,13 +52,13 @@ const LiveFeedbackOpenBar = ({
       <LiveFeedbackOpenIcon size={18} className="shrink-0" />
 
       {/* 라벨: LIVE(빨강) + " 피드백 일정 오픈" */}
-      <span className="text-xsmall14 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px] text-neutral-10">
+      <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
         <span className="text-red-500">LIVE</span> 피드백 일정 오픈
       </span>
 
       {/* 완료 배지 */}
       {isCompleted && (
-        <span className="shrink-0 whitespace-nowrap rounded bg-neutral-95 px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px] text-neutral-40">
+        <span className="bg-neutral-95 text-neutral-40 shrink-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px]">
           완료
         </span>
       )}
@@ -66,7 +66,7 @@ const LiveFeedbackOpenBar = ({
       <span className="flex-1" />
 
       {/* 우측: 챌린지명 */}
-      <span className="text-xxsmall12 min-w-0 truncate font-medium tracking-[-0.3px] text-neutral-30">
+      <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
         {bar.challengeTitle}
       </span>
 
@@ -75,7 +75,7 @@ const LiveFeedbackOpenBar = ({
         height="14"
         viewBox="0 0 24 24"
         fill="none"
-        className="shrink-0 text-neutral-40"
+        className="text-neutral-40 shrink-0"
         aria-hidden
       >
         <path

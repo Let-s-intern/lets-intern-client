@@ -1,5 +1,3 @@
-
-
 import { useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
@@ -144,7 +142,9 @@ const FeedbackManagementPage = () => {
                   challenge={m.written}
                   mode="combined"
                   liveRounds={m.liveRounds}
-                  missionDateOverrides={WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES}
+                  missionDateOverrides={
+                    WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES
+                  }
                   onMissionClick={handleMissionClick}
                   onLiveRoundClick={handleLiveRoundClick}
                 />
@@ -184,7 +184,9 @@ const FeedbackManagementPage = () => {
                     challenge={m.written}
                     mode="live-only"
                     liveRounds={m.liveRounds}
-                    missionDateOverrides={WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES}
+                    missionDateOverrides={
+                      WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES
+                    }
                     onMissionClick={handleMissionClick}
                     onLiveRoundClick={handleLiveRoundClick}
                   />

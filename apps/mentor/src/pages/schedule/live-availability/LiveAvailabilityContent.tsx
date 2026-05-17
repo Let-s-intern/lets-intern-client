@@ -292,11 +292,11 @@ const LiveAvailabilityContent = ({
     <div className="flex h-full flex-col">
       {/* 라이브 피드백이 진행되는 모든 챌린지를 한 줄에 태그로 노출 */}
       {challengeTitles && challengeTitles.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-neutral-80 bg-neutral-95 px-6 py-3">
+        <div className="border-neutral-80 bg-neutral-95 flex flex-wrap items-center gap-2 border-b px-6 py-3">
           {challengeTitles.map((title) => (
             <span
               key={title}
-              className="text-xxsmall12 rounded-[3px] bg-neutral-30 px-2 py-1 font-medium text-white"
+              className="text-xxsmall12 bg-neutral-30 rounded-[3px] px-2 py-1 font-medium text-white"
             >
               {title}
             </span>
@@ -362,8 +362,8 @@ const LiveAvailabilityContent = ({
             <p>
               · 신청 예정인 멘티가{' '}
               <span className="font-semibold">{requiredSlotCount}명</span>
-              이므로 최소 {requiredSlotCount}개 이상의 시간대를 열어야 저장할
-              수 있습니다.
+              이므로 최소 {requiredSlotCount}개 이상의 시간대를 열어야 저장할 수
+              있습니다.
             </p>
           )}
           <p>· 멘티가 이미 신청 완료한 시간은 변경할 수 없습니다.</p>

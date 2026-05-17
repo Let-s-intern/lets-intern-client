@@ -39,7 +39,12 @@ describe('LiveAvailabilityContent', () => {
   });
 
   it('"다른 챌린지로 이동" 버튼이 없다', () => {
-    render(<LiveAvailabilityContent {...baseProps} challengeTitles={["테스트 챌린지"]} />);
+    render(
+      <LiveAvailabilityContent
+        {...baseProps}
+        challengeTitles={['테스트 챌린지']}
+      />,
+    );
     expect(screen.queryByText('다른 챌린지로 이동')).not.toBeInTheDocument();
   });
 

@@ -17,7 +17,9 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
     );
 
     expect(screen.getByRole('button', { name: '전체' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /서면 피드백/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /서면 피드백/ }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /^LIVE 피드백$/ }),
     ).toBeInTheDocument();
@@ -113,8 +115,7 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
         onClearAll={noop}
       />,
     );
-    const writtenBtn = screen
-      .getByRole('button', { name: /서면 피드백/ });
+    const writtenBtn = screen.getByRole('button', { name: /서면 피드백/ });
     expect(writtenBtn.className).toContain('bg-white');
   });
 });

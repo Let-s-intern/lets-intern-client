@@ -31,7 +31,7 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
-      className="flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border border-neutral-80 bg-white px-3 text-left transition-colors hover:bg-neutral-95"
+      className="border-neutral-80 hover:bg-neutral-95 flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border bg-white px-3 text-left transition-colors"
       aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차${
         isCompleted ? ' (완료)' : ''
       } (총 ${totalMentees}명)`}
@@ -40,13 +40,13 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
       <WrittenFeedbackIcon size={18} className="shrink-0" />
 
       {/* 라벨 */}
-      <span className="text-xsmall14 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px] text-neutral-10">
+      <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
         서면 피드백 기간
       </span>
 
       {/* 완료 배지 */}
       {isCompleted && (
-        <span className="shrink-0 whitespace-nowrap rounded bg-neutral-95 px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px] text-neutral-40">
+        <span className="bg-neutral-95 text-neutral-40 shrink-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px]">
           완료
         </span>
       )}
@@ -55,7 +55,7 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
       <span className="flex-1" />
 
       {/* 우측: 챌린지명 (포트폴리오 챌린지 n기) */}
-      <span className="text-xxsmall12 min-w-0 truncate font-medium tracking-[-0.3px] text-neutral-30">
+      <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
         {bar.challengeTitle}
       </span>
 
@@ -64,7 +64,7 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
         height="14"
         viewBox="0 0 24 24"
         fill="none"
-        className="shrink-0 text-neutral-40"
+        className="text-neutral-40 shrink-0"
         aria-hidden
       >
         <path

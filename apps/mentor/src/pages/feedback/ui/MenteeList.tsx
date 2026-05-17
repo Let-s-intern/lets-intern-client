@@ -1,5 +1,3 @@
-
-
 import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { STATUS_BADGE } from '@/constants/statusColors';
@@ -73,9 +71,7 @@ function getLiveStatusBadge(status: LiveStatus | undefined): {
 }
 
 function getSubmissionBadge(label: '제출' | '미제출'): string {
-  return label === '제출'
-    ? STATUS_BADGE.submitted
-    : STATUS_BADGE.notSubmitted;
+  return label === '제출' ? STATUS_BADGE.submitted : STATUS_BADGE.notSubmitted;
 }
 
 function formatDateSeparator(iso: string): string {
@@ -134,8 +130,7 @@ const MenteeList = ({
                   mentee.status === 'ABSENT' || mentee.id == null;
                 const prev = attendanceList[idx - 1];
                 const showDateHeader =
-                  !!mentee.date &&
-                  (!prev?.date || prev.date !== mentee.date);
+                  !!mentee.date && (!prev?.date || prev.date !== mentee.date);
                 const hasTime = !!(mentee.startTime && mentee.endTime);
                 const imminent = isSessionImminent(
                   mentee.date,
@@ -154,7 +149,7 @@ const MenteeList = ({
                         className={twMerge(
                           'px-4 py-1 text-[11px] font-semibold',
                           isToday(mentee.date!)
-                            ? 'border-l-2 border-primary bg-primary-5 text-primary'
+                            ? 'border-primary bg-primary-5 text-primary border-l-2'
                             : 'bg-neutral-100 text-neutral-600',
                         )}
                       >
@@ -172,7 +167,7 @@ const MenteeList = ({
                       className={twMerge(
                         'flex w-full items-center justify-between gap-2 border-b border-neutral-200 px-4 py-2 text-left transition-colors',
                         isSelected
-                          ? 'rounded-md border-b-0 bg-primary-5'
+                          ? 'bg-primary-5 rounded-md border-b-0'
                           : 'hover:bg-neutral-50',
                       )}
                     >
@@ -181,7 +176,7 @@ const MenteeList = ({
                           className={twMerge(
                             'line-clamp-1 text-sm',
                             imminent
-                              ? 'font-semibold text-primary'
+                              ? 'text-primary font-semibold'
                               : 'text-neutral-900',
                           )}
                         >
@@ -192,7 +187,7 @@ const MenteeList = ({
                             className={twMerge(
                               'text-[11px]',
                               imminent
-                                ? 'font-medium text-primary'
+                                ? 'text-primary font-medium'
                                 : 'text-neutral-500',
                             )}
                           >

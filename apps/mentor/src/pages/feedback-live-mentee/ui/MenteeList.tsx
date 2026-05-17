@@ -27,10 +27,10 @@ export default function MenteeList({
   }, [mentees, keyword]);
 
   return (
-    <div className="flex h-full flex-col border-r border-neutral-80">
+    <div className="border-neutral-80 flex h-full flex-col border-r">
       {/* 헤더 */}
-      <div className="border-b border-neutral-80 px-4 py-3">
-        <h2 className="text-small16 font-semibold text-neutral-10">
+      <div className="border-neutral-80 border-b px-4 py-3">
+        <h2 className="text-small16 text-neutral-10 font-semibold">
           멘티 목록
         </h2>
         <input
@@ -39,14 +39,14 @@ export default function MenteeList({
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="이름·이메일·챌린지 검색"
           aria-label="멘티 검색"
-          className="mt-2 h-8 w-full rounded-md border border-neutral-80 bg-white px-3 text-xs text-neutral-10 placeholder:text-neutral-50"
+          className="border-neutral-80 text-neutral-10 mt-2 h-8 w-full rounded-md border bg-white px-3 text-xs placeholder:text-neutral-50"
         />
       </div>
 
       {/* 멘티 행 목록 */}
       <ul className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
-          <li className="px-4 py-8 text-center text-xs text-neutral-40">
+          <li className="text-neutral-40 px-4 py-8 text-center text-xs">
             검색 결과 없음
           </li>
         ) : (
@@ -80,27 +80,27 @@ function MenteeRow({ mentee, isActive, onSelect }: MenteeRowProps) {
       <button
         type="button"
         onClick={() => onSelect(mentee.id)}
-        className={`flex w-full items-start gap-3 border-b border-neutral-95 px-4 py-3 text-left transition-colors ${
+        className={`border-neutral-95 flex w-full items-start gap-3 border-b px-4 py-3 text-left transition-colors ${
           isActive ? 'bg-primary-5' : 'hover:bg-neutral-95'
         }`}
         aria-pressed={isActive}
         aria-label={`${mentee.name} 멘티 대화 선택`}
       >
         {/* 아바타 */}
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-90 text-xs font-semibold text-neutral-30">
+        <div className="bg-neutral-90 text-neutral-30 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
           {mentee.avatarInitial}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-xsmall14 truncate font-semibold text-neutral-10">
+            <span className="text-xsmall14 text-neutral-10 truncate font-semibold">
               {mentee.name}
             </span>
-            <span className="text-xxsmall12 shrink-0 text-neutral-40">
+            <span className="text-xxsmall12 text-neutral-40 shrink-0">
               {formattedTime}
             </span>
           </div>
-          <p className="text-xxsmall12 mt-0.5 truncate text-neutral-40">
+          <p className="text-xxsmall12 text-neutral-40 mt-0.5 truncate">
             {mentee.lastMessage}
           </p>
           <p className="text-xxsmall12 mt-0.5 truncate text-neutral-50">
