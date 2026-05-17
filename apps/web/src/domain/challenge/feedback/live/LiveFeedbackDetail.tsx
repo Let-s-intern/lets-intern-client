@@ -2,27 +2,26 @@
 
 import { useState } from 'react';
 
-import ReservationFormSection from './section/ReservationFormSection';
 import ReservationInfoSection from './section/ReservationInfoSection';
+import ReservationScheduleSection from './section/ReservationScheduleSection';
 import type {
   LiveFeedbackStatus,
   Mentor,
+  MissionPeriod,
   Reservation,
   SelectedSlot,
 } from './types';
 
 interface Props {
   assignedMentor: Mentor | null;
-  startDay: string;
-  endDay: string;
+  period: MissionPeriod;
   reservationInfo: Reservation | null;
   status: LiveFeedbackStatus;
 }
 
 const LiveFeedbackDetail = ({
   assignedMentor,
-  startDay,
-  endDay,
+  period,
   reservationInfo: initialReservation,
   status,
 }: Props) => {
@@ -36,29 +35,28 @@ const LiveFeedbackDetail = ({
       reservationId: `reservation-${assignedMentor.id}-${selectedSlot.date}-${selectedSlot.time}`,
       scheduledDate: selectedSlot.date,
       scheduledTime: selectedSlot.time,
-      zepRoomNumber: 8,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     });
   };
 
   if (!assignedMentor) return null;
 
-  if (reservation) {
-    return (
+  const showScheduleSection = status === 'prev' || status === 'canceled';
+
+  return (
+    <div className="flex flex-col">
       <ReservationInfoSection
         mentor={assignedMentor}
         reservation={reservation}
         status={status}
       />
-    );
-  }
-
-  return (
-    <ReservationFormSection
-      mentor={assignedMentor}
-      period={{ startDay, endDay }}
-      onConfirm={handleConfirm}
-    />
+      {showScheduleSection && (
+        <ReservationScheduleSection
+          mentor={assignedMentor}
+          period={period}
+          onConfirm={handleConfirm}
+        />
+      )}
+    </div>
   );
 };
 

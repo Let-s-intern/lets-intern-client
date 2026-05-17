@@ -1,9 +1,4 @@
-import type {
-  DaySchedule,
-  LiveFeedbackMission,
-  Mentor,
-  SlotStatus,
-} from './live/types';
+import type { LiveFeedbackMission, Mentor, SlotStatus } from './live/types';
 import { TIME_SLOTS } from './live/types';
 import { toDateString } from './live/utils';
 import type { WrittenFeedbackMission } from './written/types';
@@ -24,19 +19,38 @@ function getSlotStatus(date: Date, time: string, mentorId: number): SlotStatus {
   return 'available';
 }
 
-export function getMentorSchedule(
+export function getMentorDaySlots(
   mentorId: number,
-  weekStart: Date,
-): DaySchedule[] {
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(weekStart);
-    date.setDate(weekStart.getDate() + i);
-    const slots: Record<string, SlotStatus> = {};
-    TIME_SLOTS.forEach((time) => {
-      slots[time] = getSlotStatus(date, time, mentorId);
-    });
-    return { date: toDateString(date), slots };
+  dateStr: string,
+): Record<string, SlotStatus> {
+  const date = new Date(dateStr);
+  const slots: Record<string, SlotStatus> = {};
+  TIME_SLOTS.forEach((time) => {
+    slots[time] = getSlotStatus(date, time, mentorId);
   });
+  return slots;
+}
+
+export function getMentorMonthAvailability(
+  mentorId: number,
+  year: number,
+  month: number,
+  startDay: string,
+  endDay: string,
+): Record<string, boolean> {
+  const start = new Date(startDay);
+  const end = new Date(endDay);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const result: Record<string, boolean> = {};
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    if (date < start || date > end) continue;
+    const dateStr = toDateString(date);
+    const slots = Object.values(getMentorDaySlots(mentorId, dateStr));
+    result[dateStr] = slots.some((s) => s === 'available');
+  }
+  return result;
 }
 
 export const DUMMY_MENTORS: Mentor[] = [
@@ -124,10 +138,10 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     status: 'prev',
     challengeType: 'HR',
     missionNumber: 1,
-    startDay: '2026-06-01',
-    endDay: '2026-06-28',
-    reservationStartDay: '2026-06-05',
-    reservationEndDay: '2026-06-15',
+    startDay: '2026-05-10',
+    endDay: '2026-06-01',
+    reservationStartDay: '2026-04-12',
+    reservationEndDay: '2026-05-30',
     assignedMentor: DUMMY_MENTORS[0],
     reservationInfo: null,
   },
@@ -149,8 +163,6 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-001',
       scheduledDate: '2028-12-31',
       scheduledTime: '13:30',
-      zepRoomNumber: 8,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
   },
   {
@@ -171,8 +183,6 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-001',
       scheduledDate: '2026-03-10',
       scheduledTime: '14:00',
-      zepRoomNumber: 8,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
   },
   {
@@ -193,8 +203,63 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
       reservationId: 'reservation-dummy-002',
       scheduledDate: '2026-04-10',
       scheduledTime: '14:00',
-      zepRoomNumber: 3,
-      zepRoomUrl: 'https://www.letscareer.co.kr/',
     },
+  },
+  {
+    id: 5,
+    thumbnail: '',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
+    description: '미션설명 미션설명 미션설명 미션설명',
+    status: 'canceled',
+    challengeType: '마케팅 서류 완성 25기',
+    missionNumber: 25,
+    startDay: '2026-05-01',
+    endDay: '2026-05-31',
+    reservationStartDay: '2026-05-05',
+    reservationEndDay: '2026-05-15',
+    assignedMentor: DUMMY_MENTORS[2],
+    reservationInfo: {
+      reservationId: 'reservation-dummy-003',
+      scheduledDate: null,
+      scheduledTime: null,
+      previousScheduledDate: '2026-05-08',
+      previousScheduledTime: '10:00',
+    },
+  },
+  {
+    id: 6,
+    thumbnail: '',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
+    description: '미션설명 미션설명 미션설명 미션설명',
+    status: 'changed',
+    challengeType: '경험정리',
+    missionNumber: 6,
+    startDay: '2026-05-01',
+    endDay: '2026-05-31',
+    reservationStartDay: '2026-05-05',
+    reservationEndDay: '2026-05-15',
+    assignedMentor: DUMMY_MENTORS[3],
+    reservationInfo: {
+      reservationId: 'reservation-dummy-004',
+      scheduledDate: '2026-05-14',
+      scheduledTime: '14:30',
+      previousScheduledDate: '2026-05-12',
+      previousScheduledTime: '11:00',
+    },
+  },
+  {
+    id: 7,
+    thumbnail: '',
+    title: '프로그램 n주차 미션, LIVE 1:1 멘토링',
+    description: '미션설명 미션설명 미션설명 미션설명',
+    status: 'expired',
+    challengeType: 'HR',
+    missionNumber: 7,
+    startDay: '2026-02-01',
+    endDay: '2026-02-28',
+    reservationStartDay: '2026-02-03',
+    reservationEndDay: '2026-02-10',
+    assignedMentor: DUMMY_MENTORS[3],
+    reservationInfo: null,
   },
 ];

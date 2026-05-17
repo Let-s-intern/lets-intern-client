@@ -9,7 +9,7 @@ function formatDay(dateStr: string): string {
 
 export interface StatusBadge {
   label: string;
-  variant: 'neutral' | 'active' | 'done';
+  variant: 'neutral' | 'active' | 'muted' | 'canceled';
 }
 
 export interface FeedbackMissionCardConfig {
@@ -23,11 +23,12 @@ export interface FeedbackMissionCardConfig {
   endDay: string;
   reservationStartDay?: string;
   reservationEndDay?: string;
+  reservationDateTime?: string | null;
 }
 
 interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
-  buttonLabel: string;
+  buttonLabel?: string;
   openLabel?: string; // 있으면 토글(아코디언), 없으면 단순 클릭
   onClick?: () => void; // 비토글일 때 데스크탑/모바일 공통 클릭 핸들러
   children?: React.ReactNode;
@@ -43,18 +44,20 @@ const DateField = ({
   label,
   start,
   end,
+  value,
   highlighted,
   className,
 }: {
   label: string;
-  start: string;
-  end: string;
+  start?: string;
+  end?: string;
+  value?: string | null;
   highlighted?: boolean;
   className?: string;
 }) => (
   <span
     className={clsx(
-      'flex gap-1.5 tracking-[-0.36px]',
+      'flex gap-1.5 tracking-[-0.4px] md:tracking-[-0.3px]',
       cardInfoTextCls,
       className,
     )}
@@ -63,7 +66,8 @@ const DateField = ({
       {label}
     </span>
     <span className={highlighted ? 'text-primary-dark' : 'text-neutral-40'}>
-      {formatDay(start)} ~ {formatDay(end)}
+      {value ??
+        (start && end ? `${formatDay(start)} ~ ${formatDay(end)}` : null)}
     </span>
   </span>
 );
@@ -87,6 +91,7 @@ const FeedbackMissionCard = ({
     endDay,
     reservationStartDay,
     reservationEndDay,
+    reservationDateTime,
   } = config;
 
   const isToggle = openLabel !== undefined;
@@ -120,8 +125,10 @@ const FeedbackMissionCard = ({
                       'border-neutral-80 text-primary',
                     badge.variant === 'active' &&
                       'border-primary-10 bg-primary-10 text-primary',
-                    badge.variant === 'done' &&
+                    badge.variant === 'muted' &&
                       'border-neutral-95 bg-neutral-95 text-neutral-40',
+                    badge.variant === 'canceled' &&
+                      'bg-system-error/10 text-system-error border-[#FEEDEB]',
                   )}
                 >
                   {badge.label}
@@ -153,14 +160,24 @@ const FeedbackMissionCard = ({
               </div>
             </div>
 
-            {reservationStartDay && reservationEndDay && (
+            {reservationDateTime ? (
               <DateField
-                label="예약기간"
+                label="예약일시"
+                value={reservationDateTime}
                 highlighted
-                start={reservationStartDay}
-                end={reservationEndDay}
                 className="hidden md:flex"
               />
+            ) : (
+              reservationStartDay &&
+              reservationEndDay && (
+                <DateField
+                  label="예약기간"
+                  highlighted
+                  start={reservationStartDay}
+                  end={reservationEndDay}
+                  className="hidden md:flex"
+                />
+              )
             )}
 
             {/* 모바일 날짜 */}
@@ -171,43 +188,56 @@ const FeedbackMissionCard = ({
                 start={startDay}
                 end={endDay}
               />
-              {reservationStartDay && reservationEndDay && (
+              {reservationDateTime ? (
                 <DateField
-                  label="예약기간"
+                  label="예약일시"
+                  value={reservationDateTime}
                   highlighted
-                  start={reservationStartDay}
-                  end={reservationEndDay}
                 />
+              ) : (
+                reservationStartDay &&
+                reservationEndDay && (
+                  <DateField
+                    label="예약기간"
+                    highlighted
+                    start={reservationStartDay}
+                    end={reservationEndDay}
+                  />
+                )
               )}
             </div>
           </div>
         </div>
 
         {/* 데스크톱 버튼 */}
-        <button
-          type="button"
-          onClick={isToggle ? () => setIsOpen((prev) => !prev) : onClick}
-          className={clsx(btnCls, 'hidden shrink-0 md:flex')}
-        >
-          {isToggle && (
-            <img
-              src="/icons/Chevron_Down.svg"
-              alt="▿"
-              className={clsx('transition-transform', isOpen && 'rotate-180')}
-            />
-          )}
-          {buttonLabel}
-        </button>
+        {buttonLabel && (
+          <button
+            type="button"
+            onClick={isToggle ? () => setIsOpen((prev) => !prev) : onClick}
+            className={clsx(btnCls, 'hidden shrink-0 md:flex')}
+          >
+            {isToggle && (
+              <img
+                src="/icons/Chevron_Down.svg"
+                alt="▿"
+                className={clsx('transition-transform', isOpen && 'rotate-180')}
+              />
+            )}
+            {buttonLabel}
+          </button>
+        )}
       </div>
 
       {/* 모바일 버튼 */}
-      <button
-        type="button"
-        onClick={onClick}
-        className={clsx(btnCls, 'mt-5 flex w-full justify-center md:hidden')}
-      >
-        {buttonLabel}
-      </button>
+      {buttonLabel && (
+        <button
+          type="button"
+          onClick={onClick}
+          className={clsx(btnCls, 'mt-5 flex w-full justify-center md:hidden')}
+        >
+          {buttonLabel}
+        </button>
+      )}
 
       {/* 아코디언 - 토글일 때만 */}
       {isToggle && (

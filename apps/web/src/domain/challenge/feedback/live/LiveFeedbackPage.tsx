@@ -37,20 +37,21 @@ function LiveFeedbackSection({
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
           {missions.map((mission) => {
-            const { buttonLabel, openLabel } =
-              LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
+            const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
             return (
               <FeedbackMissionCard
                 key={mission.id}
                 config={toCardConfig(mission)}
-                buttonLabel={buttonLabel}
-                openLabel={openLabel}
+                buttonLabel={labels?.buttonLabel}
+                openLabel={labels?.openLabel}
                 onClick={() => onMobileClick(mission)}
               >
                 <LiveFeedbackDetail
                   assignedMentor={mission.assignedMentor}
-                  startDay={mission.startDay}
-                  endDay={mission.endDay}
+                  period={{
+                    startDay: mission.startDay,
+                    endDay: mission.endDay,
+                  }}
                   reservationInfo={mission.reservationInfo}
                   status={mission.status}
                 />
@@ -79,11 +80,13 @@ const LiveFeedbackPage = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      {LIVE_FEEDBACK_SECTIONS.map(({ status, label, emptyMessage }) => (
+      {LIVE_FEEDBACK_SECTIONS.map(({ statuses, label, emptyMessage }) => (
         <LiveFeedbackSection
-          key={status}
+          key={statuses.join(',')}
           label={label}
-          missions={DUMMY_FEEDBACK_MISSIONS.filter((m) => m.status === status)}
+          missions={DUMMY_FEEDBACK_MISSIONS.filter((m) =>
+            statuses.includes(m.status),
+          )}
           emptyMessage={emptyMessage}
           onMobileClick={handleMobileClick}
         />

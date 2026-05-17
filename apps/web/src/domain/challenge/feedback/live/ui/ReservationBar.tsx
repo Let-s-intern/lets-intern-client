@@ -34,7 +34,7 @@ const ReservationBar = ({
   return (
     <>
       {/* 모바일 레이아웃 */}
-      <div className="flex flex-col gap-6 md:hidden">
+      <div className="mt-3 flex flex-col gap-6 md:hidden">
         <div className="bg-primary-5 flex flex-col gap-0.5 rounded-sm px-5 py-4">
           <span className="text-xsmall16 text-primary-90 font-bold">
             선택된 피드백 시간
@@ -102,7 +102,7 @@ const ReservationBar = ({
           <button
             type="button"
             onClick={onCancel}
-            className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-[9px] font-semibold"
+            className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-3 font-semibold"
           >
             취소
           </button>
@@ -110,7 +110,7 @@ const ReservationBar = ({
             type="button"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={!selectedSlot}
-            className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-[9px] font-semibold text-neutral-100 disabled:opacity-50"
+            className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-3 font-semibold text-neutral-100 disabled:opacity-50"
           >
             예약 확정
           </button>

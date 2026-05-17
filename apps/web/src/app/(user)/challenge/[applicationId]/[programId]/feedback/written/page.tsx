@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import WrittenFeedbackPage from '@/temp/feedback/WrittenFeedbackPage';
+import WrittenFeedbackPage from '@/domain/challenge/feedback/written/WrittenFeedbackPage';
 
 const WrittenFeedbackPageWithSuspense = () => (
   <Suspense fallback={null}>

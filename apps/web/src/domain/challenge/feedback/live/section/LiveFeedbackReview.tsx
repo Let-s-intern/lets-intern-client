@@ -98,9 +98,9 @@ const LiveFeedbackReview = () => {
   if (isReviewing) {
     return (
       <div className="flex flex-col gap-4">
-        <h3 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
+        <h2 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
           LIVE 피드백 회고하기
-        </h3>
+        </h2>
         <div className="flex flex-col gap-2">
           <StarRating value={stars} onChange={setStars} />
           {!canSubmit && (
@@ -137,7 +137,7 @@ const LiveFeedbackReview = () => {
     <button
       type="button"
       onClick={() => setIsReviewing(true)}
-      className="bg-primary text-xsmall14 flex-1 whitespace-nowrap rounded-sm py-3 font-semibold text-white"
+      className="bg-primary text-xsmall16 flex-1 whitespace-nowrap rounded-sm py-4 font-semibold text-white"
     >
       LIVE 피드백 회고하기
     </button>

@@ -33,11 +33,11 @@ export const WRITTEN_FEEDBACK_STATUS_LABEL: Record<
 
 export const WRITTEN_FEEDBACK_STATUS_VARIANT: Record<
   WrittenFeedbackStatus,
-  'neutral' | 'active' | 'done'
+  'neutral' | 'active' | 'muted'
 > = {
   pending: 'neutral',
   submitted: 'active',
-  done: 'done',
+  done: 'muted',
 };
 
 export const WRITTEN_FEEDBACK_BUTTON_LABEL: Record<
