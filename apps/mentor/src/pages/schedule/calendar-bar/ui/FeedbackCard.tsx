@@ -73,14 +73,14 @@ const CompactFeedbackCard = ({
 
       {/* Row 3: H-line ├────┤ */}
       <div className="flex h-3 items-center">
-        <div className="h-full w-0.5 bg-neutral-80" />
-        <div className="h-0.5 flex-1 bg-neutral-80" />
-        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="bg-neutral-80 h-full w-0.5" />
+        <div className="bg-neutral-80 h-0.5 flex-1" />
+        <div className="bg-neutral-80 h-full w-0.5" />
       </div>
 
       {/* Row 4-5: card body */}
-      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
-        <span className="text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
+      <div className="bg-neutral-95 flex flex-col gap-1 p-2">
+        <span className="text-xxsmall12 bg-neutral-30 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
         <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">

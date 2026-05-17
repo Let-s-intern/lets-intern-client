@@ -60,7 +60,8 @@ describe('상수 정의', () => {
 
 describe('isMentorActionPeriodBar', () => {
   it.each(MENTOR_ACTION_PERIOD_BAR_TYPES)(
-    '행동 기간 타입(%s)은 true', (type) => {
+    '행동 기간 타입(%s)은 true',
+    (type) => {
       expect(isMentorActionPeriodBar(makeBar(type))).toBe(true);
     },
   );
@@ -84,7 +85,8 @@ describe('isMentorActionPeriodBar', () => {
 
 describe('isMentorVisibleBar', () => {
   it.each(MENTOR_VISIBLE_BAR_TYPES)(
-    '캘린더 표시 허용 타입(%s)은 true', (type) => {
+    '캘린더 표시 허용 타입(%s)은 true',
+    (type) => {
       expect(isMentorVisibleBar(makeBar(type))).toBe(true);
     },
   );

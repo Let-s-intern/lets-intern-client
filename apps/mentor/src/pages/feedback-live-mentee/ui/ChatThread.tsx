@@ -18,7 +18,7 @@ export default function ChatThread({ messages, menteeName }: ChatThreadProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-1 items-center justify-center text-sm text-neutral-40">
+      <div className="text-neutral-40 flex flex-1 items-center justify-center text-sm">
         아직 메시지가 없습니다.
       </div>
     );
@@ -32,11 +32,11 @@ export default function ChatThread({ messages, menteeName }: ChatThreadProps) {
         <div key={date}>
           {/* 날짜 구분선 */}
           <div className="flex items-center gap-3 py-2">
-            <div className="flex-1 border-t border-neutral-90" />
+            <div className="border-neutral-90 flex-1 border-t" />
             <span className="text-xxsmall12 text-neutral-40">
               {formatDate(date)}
             </span>
-            <div className="flex-1 border-t border-neutral-90" />
+            <div className="border-neutral-90 flex-1 border-t" />
           </div>
 
           {dayMessages.map((msg) => (
@@ -67,7 +67,7 @@ function MessageBubble({
       className={`mb-2 flex items-end gap-2 ${isMentor ? 'flex-row-reverse' : 'flex-row'}`}
     >
       {!isMentor && (
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-90 text-[10px] font-semibold text-neutral-30">
+        <div className="bg-neutral-90 text-neutral-30 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold">
           {menteeName[0]}
         </div>
       )}
@@ -78,12 +78,12 @@ function MessageBubble({
           className={`rounded-2xl px-3 py-2 text-sm leading-relaxed ${
             isMentor
               ? 'bg-primary rounded-br-sm text-white'
-              : 'rounded-bl-sm bg-neutral-95 text-neutral-10'
+              : 'bg-neutral-95 text-neutral-10 rounded-bl-sm'
           }`}
         >
           {message.text}
         </div>
-        <span className="text-[10px] text-neutral-40">{time}</span>
+        <span className="text-neutral-40 text-[10px]">{time}</span>
       </div>
     </div>
   );

@@ -25,7 +25,9 @@ interface UseScheduleDataOptions {
  * PRD-0503 #4: 챌린지 단위 필터 → 피드백 종류 단위 필터로 전환.
  *   selectedFeedbackTags 가 비어 있으면 "전체" 모드.
  */
-export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {}) {
+export function useScheduleData({
+  extraBars = [],
+}: UseScheduleDataOptions = {}) {
   const [selectedFeedbackTags, setSelectedFeedbackTags] = useState<
     ReadonlySet<FeedbackTagType>
   >(() => new Set());
@@ -39,9 +41,7 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
   );
 
   // Bars collected from child data fetchers (keyed by "challengeId-missionId")
-  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
-    new Map(),
-  );
+  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(new Map());
 
   const handleData = useCallback((key: string, bar: PeriodBarData) => {
     setBarsMap((prev) => {

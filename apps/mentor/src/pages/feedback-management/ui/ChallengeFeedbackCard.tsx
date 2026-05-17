@@ -1,5 +1,3 @@
-
-
 import { useMemo } from 'react';
 
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
@@ -13,7 +11,11 @@ import LiveFeedbackRoundList, { LiveRoundRow } from './LiveFeedbackRoundList';
 function isTodayInRange(start: string, end: string): boolean {
   if (start === 'unknown' || end === 'unknown') return false;
   const now = currentNow();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  ).getTime();
   const s = new Date(start).setHours(0, 0, 0, 0);
   const e = new Date(end).setHours(0, 0, 0, 0);
   return today >= s && today <= e;
@@ -98,7 +100,7 @@ export const MissionRow = ({
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="shrink-0 rounded-lg bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
+          <span className="bg-primary-10 text-primary-dark shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium">
             {thLabel}회차 서면
           </span>
           <h3 className="text-sm font-medium text-gray-900 md:text-base">
@@ -136,7 +138,7 @@ export const MissionRow = ({
         <button
           type="button"
           onClick={() => onClickFeedback(mission.missionId, mission.th)}
-          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
+          className="bg-primary hover:bg-primary-hover min-h-[44px] w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors md:min-h-0 md:w-auto"
         >
           피드백 작성
         </button>
@@ -244,9 +246,10 @@ const ChallengeFeedbackCard = ({
     }
 
     for (const round of liveRounds) {
-      ensure(round.startDate.slice(0, 10), round.endDate.slice(0, 10)).live.push(
-        round,
-      );
+      ensure(
+        round.startDate.slice(0, 10),
+        round.endDate.slice(0, 10),
+      ).live.push(round);
     }
 
     return Array.from(groups.values()).sort((a, b) => {
@@ -352,38 +355,38 @@ const ChallengeFeedbackCard = ({
             dateGroups.map((group) => {
               const isToday = isTodayInRange(group.start, group.end);
               return (
-              <section key={group.key}>
-                <h3
-                  className={
-                    isToday
-                      ? 'mb-2 border-l-2 border-primary pl-2 text-sm font-semibold text-primary md:mb-3 md:text-base'
-                      : 'mb-2 text-sm font-semibold text-gray-700 md:mb-3 md:text-base'
-                  }
-                >
-                  {formatDateRangeHeading(group.start, group.end)}
-                  {isToday && (
-                    <span className="ml-1.5 text-xs font-bold">· 오늘</span>
-                  )}
-                </h3>
-                <div className="space-y-2">
-                  {group.written.map((mission) => (
-                    <MissionRow
-                      key={`w-${mission.missionId}`}
-                      mission={mission}
-                      displayTh={writtenDisplayTh.get(mission.missionId)}
-                      onClickFeedback={handleClickFeedback}
-                    />
-                  ))}
-                  {group.live.map((round) => (
-                    <LiveRoundRow
-                      key={`l-${round.challengeId}-${round.th}`}
-                      round={round}
-                      displayTh={liveDisplayTh.get(round.th)}
-                      onClick={onLiveRoundClick}
-                    />
-                  ))}
-                </div>
-              </section>
+                <section key={group.key}>
+                  <h3
+                    className={
+                      isToday
+                        ? 'border-primary text-primary mb-2 border-l-2 pl-2 text-sm font-semibold md:mb-3 md:text-base'
+                        : 'mb-2 text-sm font-semibold text-gray-700 md:mb-3 md:text-base'
+                    }
+                  >
+                    {formatDateRangeHeading(group.start, group.end)}
+                    {isToday && (
+                      <span className="ml-1.5 text-xs font-bold">· 오늘</span>
+                    )}
+                  </h3>
+                  <div className="space-y-2">
+                    {group.written.map((mission) => (
+                      <MissionRow
+                        key={`w-${mission.missionId}`}
+                        mission={mission}
+                        displayTh={writtenDisplayTh.get(mission.missionId)}
+                        onClickFeedback={handleClickFeedback}
+                      />
+                    ))}
+                    {group.live.map((round) => (
+                      <LiveRoundRow
+                        key={`l-${round.challengeId}-${round.th}`}
+                        round={round}
+                        displayTh={liveDisplayTh.get(round.th)}
+                        onClick={onLiveRoundClick}
+                      />
+                    ))}
+                  </div>
+                </section>
               );
             })
           )}

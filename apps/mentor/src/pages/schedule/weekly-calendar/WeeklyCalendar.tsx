@@ -1,5 +1,3 @@
-
-
 import {
   differenceInCalendarDays,
   format,
@@ -158,7 +156,9 @@ const WeeklyCalendar = ({
     let nextStartRow = 1; // 다음 챌린지가 시작할 절대 row
 
     for (const challengeId of challengeOrder) {
-      const groupBars = writtenBars.filter((b) => b.challengeId === challengeId);
+      const groupBars = writtenBars.filter(
+        (b) => b.challengeId === challengeId,
+      );
       // 그룹 내부 점유 — index 0부터 차곡차곡, 그룹별로 독립
       const groupRowRanges: Array<Array<{ start: number; end: number }>> = [];
 
@@ -232,7 +232,7 @@ const WeeklyCalendar = ({
   const isEmpty = barLayouts.length === 0 && liveBars.length === 0;
 
   return (
-    <div className="rounded-2xl relative overflow-hidden border border-neutral-80">
+    <div className="border-neutral-80 relative overflow-hidden rounded-2xl border">
       {/* ── 수평 스크롤 컨테이너 ───────────────────────────────────────────── */}
       <div ref={containerRef} className="overflow-x-auto">
         <div
@@ -242,10 +242,10 @@ const WeeklyCalendar = ({
           }}
         >
           {/* ── 날짜 헤더 행 ─────────────────────────────────────────────── */}
-          <div className="flex border-b border-neutral-80">
+          <div className="border-neutral-80 flex border-b">
             {/* 시간 레이블 열과 정렬을 맞추는 sticky 스페이서 */}
             <div
-              className="sticky left-0 z-20 shrink-0 border-r border-neutral-80 bg-white"
+              className="border-neutral-80 sticky left-0 z-20 shrink-0 border-r bg-white"
               style={{ width: TIME_LABEL_W }}
             />
             <div
@@ -270,7 +270,7 @@ const WeeklyCalendar = ({
           <div className="flex" style={{ minHeight: `${bodyMinHeight}px` }}>
             {/* sticky 스페이서 */}
             <div
-              className="sticky left-0 z-10 shrink-0 border-r border-neutral-80 bg-white"
+              className="border-neutral-80 sticky left-0 z-10 shrink-0 border-r bg-white"
               style={{ width: TIME_LABEL_W }}
             />
             {/* 바 렌더링 영역 */}
@@ -315,21 +315,21 @@ const WeeklyCalendar = ({
           {liveBars.length > 0 && (
             <>
               {/* 구분선 + 섹션 레이블 */}
-              <div className="flex items-center gap-2 border-t border-neutral-80 bg-neutral-95 px-3 py-1.5">
+              <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 border-t px-3 py-1.5">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-                <span className="text-xxsmall12 font-medium text-neutral-40">
+                <span className="text-xxsmall12 text-neutral-40 font-medium">
                   시간별 일정
                 </span>
               </div>
 
               {/* 시간 그리드 — tStart~tEnd 범위만 표시 */}
               <div
-                className="flex border-t border-neutral-80"
+                className="border-neutral-80 flex border-t"
                 style={{ height: `${slotCount * SLOT_H}px` }}
               >
                 {/* 시간 레이블 열 — sticky left, z-20으로 라이브 블록(z-10)보다 위에 표시 */}
                 <div
-                  className="sticky left-0 z-20 shrink-0 border-r border-neutral-80 bg-white"
+                  className="border-neutral-80 sticky left-0 z-20 shrink-0 border-r bg-white"
                   style={{ width: TIME_LABEL_W }}
                 >
                   {Array.from(
@@ -341,7 +341,7 @@ const WeeklyCalendar = ({
                       className="flex items-start justify-center pt-2"
                       style={{ height: SLOT_H }}
                     >
-                      <span className="text-[10px] leading-none text-neutral-40">
+                      <span className="text-neutral-40 text-[10px] leading-none">
                         {formatTimeLabel(minutes)}
                       </span>
                     </div>
@@ -365,9 +365,9 @@ const WeeklyCalendar = ({
                         key={i}
                         className={`relative ${isToday ? 'bg-[#fbf9fe]' : ''} ${
                           isMonthStart
-                            ? 'border-l-2 border-primary-20'
+                            ? 'border-primary-20 border-l-2'
                             : i > 0
-                              ? 'border-l border-neutral-90'
+                              ? 'border-neutral-90 border-l'
                               : ''
                         }`}
                       >
@@ -375,7 +375,7 @@ const WeeklyCalendar = ({
                         {Array.from({ length: slotCount }, (_, j) => (
                           <div
                             key={j}
-                            className="border-b border-neutral-95"
+                            className="border-neutral-95 border-b"
                             style={{ height: SLOT_H }}
                           />
                         ))}
@@ -426,8 +426,8 @@ const WeeklyCalendar = ({
       {/* ── Empty state ──────────────────────────────────────────────────── */}
       {isEmpty && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-white/60">
-          <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
-            <p className="text-center text-xsmall16 font-medium text-neutral-30">
+          <div className="border-neutral-80 pointer-events-auto rounded-xl border bg-white px-8 py-6 shadow-lg">
+            <p className="text-xsmall16 text-neutral-30 text-center font-medium">
               진행 예정인 피드백 일정이 없습니다.
             </p>
           </div>

@@ -7,8 +7,10 @@ import LiveAvailabilityContent, {
 
 export type { BlockedSlot };
 
-interface MentorOpenScheduleModalProps
-  extends Omit<LiveAvailabilityContentProps, 'mode' | 'resetKey' | 'onClose'> {
+interface MentorOpenScheduleModalProps extends Omit<
+  LiveAvailabilityContentProps,
+  'mode' | 'resetKey' | 'onClose'
+> {
   isOpen: boolean;
   onClose: () => void;
 }

@@ -13,7 +13,8 @@ import NoticeDetailPage from '@/pages/notice/NoticeDetailPage';
 import NotFound from '@/pages/NotFound';
 
 const FeedbackLiveAvailabilityPage = lazy(
-  () => import('@/pages/feedback-live-availability/FeedbackLiveAvailabilityPage'),
+  () =>
+    import('@/pages/feedback-live-availability/FeedbackLiveAvailabilityPage'),
 );
 const FeedbackLiveReservationPage = lazy(
   () => import('@/pages/feedback-live-reservation/FeedbackLiveReservationPage'),
