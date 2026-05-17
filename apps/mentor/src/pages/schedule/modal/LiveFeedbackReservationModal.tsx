@@ -68,8 +68,12 @@ const LiveFeedbackReservationModal = ({
   const selectedBar = bar?.liveFeedback ? bar : (reservationBars[0] ?? null);
   const feedbackId = selectedBar?.liveFeedback?.id ?? null;
 
-  // BE 단건 상세 — feedbackId 가 있으면 자동 fetch
-  const { data: feedbackDetail } = useFeedbackDetailQuery(feedbackId);
+  // BE 단건 상세 — 모달이 열려있을 때만 fetch.
+  // 모달은 항상 mount 되어 있기 때문에 isOpen 게이트가 없으면 페이지 로드 시점에
+  // mock 바의 가짜 ID(예: 101)로 prod API를 때려 404가 발생한다.
+  const { data: feedbackDetail } = useFeedbackDetailQuery(
+    isOpen ? feedbackId : null,
+  );
 
   // 카운트다운 — BE startDate/endDate 우선, 없으면 mock(bar.startDate + HH:mm) 사용
   const startIso =
