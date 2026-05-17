@@ -8,10 +8,18 @@ import {
 import {
   type CreateFeedbackSlotRequest,
   type FeedbackSlotStatus,
+  getFeedbackDetailResponseSchema,
   getMentorFeedbackSlotsResponseSchema,
 } from './feedbackSchema';
 
 const FEEDBACK_MENTOR_SLOT_PATH = '/feedback/mentor/slot';
+const FEEDBACK_DETAIL_PATH = '/feedback';
+
+/**
+ * 피드백 단건 상세 query key prefix.
+ * 단건 상세 캐시는 `feedbackId` 단위로 분리한다.
+ */
+export const FEEDBACK_DETAIL_QUERY_KEY = ['feedback', 'detail'] as const;
 
 /**
  * 멘토 슬롯 query key prefix.
@@ -101,5 +109,25 @@ export const useDeleteFeedbackMentorSlotsMutation = () => {
         queryKey: FEEDBACK_MENTOR_SLOT_QUERY_KEY,
       });
     },
+  });
+};
+
+/**
+ * GET /api/v1/feedback/{feedbackId} — 피드백 단건 상세 조회.
+ *
+ * Query key 컨벤션: `['feedback','detail', { feedbackId }]`
+ * - `feedbackId`가 falsy(undefined/null/0)면 query를 실행하지 않는다.
+ * - 응답 `feedbackInfo`만 추출해서 반환한다 (caller가 한 단계 덜 파야 한다).
+ */
+export const useFeedbackDetailQuery = (feedbackId: number | null | undefined) => {
+  return useQuery({
+    queryKey: [...FEEDBACK_DETAIL_QUERY_KEY, { feedbackId }],
+    queryFn: async () => {
+      const res = await axios.get(`${FEEDBACK_DETAIL_PATH}/${feedbackId}`);
+      const parsed = getFeedbackDetailResponseSchema.parse(res.data.data);
+      return parsed.feedbackInfo;
+    },
+    enabled: !!feedbackId,
+    refetchOnWindowFocus: false,
   });
 };

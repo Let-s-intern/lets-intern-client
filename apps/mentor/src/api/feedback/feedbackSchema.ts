@@ -42,3 +42,40 @@ export const createFeedbackSlotRequestSchema = z.object({
 export type CreateFeedbackSlotRequest = z.infer<
   typeof createFeedbackSlotRequestSchema
 >;
+
+/**
+ * BE FeedbackStatus enum 1:1 매핑.
+ * - RESERVED: 예약 완료, 시작 전 또는 진행 중
+ * - COMPLETED: 진행 완료 (멘토/멘티 정상 참가)
+ * - CANCELED: 취소 (멘토/멘티 불참 또는 명시적 취소)
+ */
+export const feedbackStatusSchema = z.enum([
+  'RESERVED',
+  'COMPLETED',
+  'CANCELED',
+]);
+export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
+
+/**
+ * BE FeedbackVo 1:1 매핑.
+ * `meetingUrl`은 BE 미배포 영역으로 현재는 항상 null로 내려올 수 있음.
+ */
+export const feedbackSchema = z.object({
+  feedbackId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  meetingUrl: z.string().nullable(),
+  status: feedbackStatusSchema,
+});
+export type Feedback = z.infer<typeof feedbackSchema>;
+
+/**
+ * BE GetFeedbackDetailResponseDto 응답 매핑.
+ * `GET /api/v1/feedback/{feedbackId}` 응답 구조.
+ */
+export const getFeedbackDetailResponseSchema = z.object({
+  feedbackInfo: feedbackSchema,
+});
+export type GetFeedbackDetailResponse = z.infer<
+  typeof getFeedbackDetailResponseSchema
+>;

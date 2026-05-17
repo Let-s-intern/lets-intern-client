@@ -8,6 +8,7 @@ import {
   FEEDBACK_MENTOR_SLOT_QUERY_KEY,
   useCreateFeedbackMentorSlotsMutation,
   useDeleteFeedbackMentorSlotsMutation,
+  useFeedbackDetailQuery,
   useFeedbackMentorSlotsQuery,
 } from '../feedback';
 
@@ -176,5 +177,77 @@ describe('useDeleteFeedbackMentorSlotsMutation', () => {
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: FEEDBACK_MENTOR_SLOT_QUERY_KEY,
     });
+  });
+});
+
+describe('useFeedbackDetailQuery', () => {
+  it('feedbackId 가 있으면 GET /feedback/{id} 를 호출하고 feedbackInfo 만 반환한다', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: {
+            feedbackId: 99,
+            startDate: '2026-05-20T11:00:00',
+            endDate: '2026-05-20T11:30:00',
+            meetingUrl: null,
+            status: 'RESERVED',
+          },
+        },
+      },
+    });
+
+    const client = newClient();
+    const { result } = renderHook(() => useFeedbackDetailQuery(99), {
+      wrapper: createWrapper(client),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosMock.get).toHaveBeenCalledWith('/feedback/99');
+    expect(result.current.data?.feedbackId).toBe(99);
+    expect(result.current.data?.meetingUrl).toBeNull();
+  });
+
+  it('feedbackId 가 null 이면 axios 를 호출하지 않는다', async () => {
+    const client = newClient();
+    renderHook(() => useFeedbackDetailQuery(null), {
+      wrapper: createWrapper(client),
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+    expect(axiosMock.get).not.toHaveBeenCalled();
+  });
+
+  it('feedbackId 가 undefined 면 axios 를 호출하지 않는다', async () => {
+    const client = newClient();
+    renderHook(() => useFeedbackDetailQuery(undefined), {
+      wrapper: createWrapper(client),
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+    expect(axiosMock.get).not.toHaveBeenCalled();
+  });
+
+  it('응답 스키마가 깨지면 isError 가 된다', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: {
+            feedbackId: 'not-a-number',
+            startDate: '2026-05-20T11:00:00',
+            endDate: '2026-05-20T11:30:00',
+            meetingUrl: null,
+            status: 'RESERVED',
+          },
+        },
+      },
+    });
+
+    const client = newClient();
+    const { result } = renderHook(() => useFeedbackDetailQuery(5), {
+      wrapper: createWrapper(client),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
   });
 });
