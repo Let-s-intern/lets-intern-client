@@ -8,6 +8,13 @@ interface FeedbackHeaderProps {
   waitingCount: number;
   inProgressCount: number;
   completedCount: number;
+  /**
+   * LIVE 피드백 모달에서만 사용하는 4번째 카운터 ("미완료").
+   * 서면 피드백 모달은 이 prop을 넘기지 않으므로 미렌더.
+   */
+  missedCount?: number;
+  /** 헤더 좌상단 회차 라벨을 "LIVE 피드백"으로 표시 (디자인 image copy 3.png). */
+  isLive?: boolean;
   onClose: () => void;
 }
 
@@ -23,14 +30,17 @@ const FeedbackHeader = ({
   waitingCount,
   inProgressCount,
   completedCount,
+  missedCount,
+  isLive = false,
   onClose,
 }: FeedbackHeaderProps) => {
+  const sessionSuffix = isLive ? 'LIVE 피드백' : '피드백';
   return (
     <div className="bg-primary-5 flex flex-col gap-2 px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 text-xs font-medium text-neutral-700">
-          {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 피드백
+          {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 {sessionSuffix}
         </span>
 
         {/* 데스크탑: 통계 뱃지 */}
@@ -44,7 +54,7 @@ const FeedbackHeader = ({
               'waiting',
             )}`}
           >
-            시작 전 {waitingCount}
+            {isLive ? '대기' : '시작 전'} {waitingCount}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
@@ -62,6 +72,16 @@ const FeedbackHeader = ({
           >
             완료 {completedCount}
           </span>
+          {missedCount !== undefined && (
+            <span
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+                missedCount,
+                'absent',
+              )}`}
+            >
+              미완료 {missedCount}
+            </span>
+          )}
         </div>
 
         {/* 모바일에서만 spacer */}
@@ -112,7 +132,7 @@ const FeedbackHeader = ({
             'waiting',
           )}`}
         >
-          시작 전 {waitingCount}
+          {isLive ? '대기' : '시작 전'} {waitingCount}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
@@ -130,6 +150,16 @@ const FeedbackHeader = ({
         >
           완료 {completedCount}
         </span>
+        {missedCount !== undefined && (
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+              missedCount,
+              'absent',
+            )}`}
+          >
+            미완료 {missedCount}
+          </span>
+        )}
       </div>
     </div>
   );
