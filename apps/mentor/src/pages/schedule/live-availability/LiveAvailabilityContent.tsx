@@ -79,6 +79,11 @@ export interface LiveAvailabilityContentProps {
   blockedSlots?: BlockedSlot[];
   /** 현재 챌린지에서 멘티가 이미 신청 완료한 슬롯 — 선택 해제 불가, 이름 표시 */
   appliedBookings?: AppliedBooking[];
+  /**
+   * BE 에서 받아온 RESERVED 상태 슬롯 — 회색 + "예약 완료" 라벨 + 클릭 비활성.
+   * 멘티 이름이 응답에 포함되지 않는 BE API 응답 (mentor2.3) 매핑용.
+   */
+  reservedSlots?: Array<{ date: string; time: string }>;
   /** 점유 챌린지 슬롯을 현재 챌린지로 이전할 때 호출 (from → to) */
   onSwapFromOtherChallenge?: (
     fromChallengeId: number,
@@ -105,6 +110,7 @@ const LiveAvailabilityContent = ({
   challengeTitles,
   blockedSlots = [],
   appliedBookings = [],
+  reservedSlots = [],
   onSwapFromOtherChallenge,
   requiredSlotCount,
   focusDate,
@@ -201,12 +207,22 @@ const LiveAvailabilityContent = ({
     return map;
   }, [appliedBookings]);
 
+  /** BE RESERVED 슬롯 key 집합 — 멘티 이름 없는 잠금 표시 */
+  const reservedSet = useMemo(() => {
+    const set = new Set<string>();
+    for (const slot of reservedSlots) {
+      set.add(toKey(slot.date, slot.time));
+    }
+    return set;
+  }, [reservedSlots]);
+
   const selectedCount = selectedKeys.size;
 
   const handleCellMouseDown = (date: string, time: string) => {
     const key = toKey(date, time);
     // 다른 챌린지 점유 또는 현재 챌린지에서 이미 신청 완료된 슬롯은 토글 불가
-    if (blockedMap.has(key) || appliedMap.has(key)) return;
+    if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
+      return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -230,7 +246,8 @@ const LiveAvailabilityContent = ({
     if (!isDragging || !dragMode) return;
 
     const key = toKey(date, time);
-    if (blockedMap.has(key) || appliedMap.has(key)) return;
+    if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
+      return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -403,6 +420,24 @@ const LiveAvailabilityContent = ({
                   const isSelected = selectedKeys.has(key);
                   const blocker = blockedMap.get(key);
                   const currentMenteeName = appliedMap.get(key);
+
+                  // BE RESERVED 슬롯 → 회색 + 잠금, 멘티 이름 미표시 (mentor2.3)
+                  if (reservedSet.has(key)) {
+                    return (
+                      <div
+                        key={`${time}-${dayIndex}`}
+                        title="예약이 완료된 시간입니다"
+                        aria-disabled="true"
+                        className="border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 flex items-center justify-center border-b border-r px-2 py-1.5 text-center font-medium last:border-r-0"
+                      >
+                        <span className="flex flex-col leading-tight">
+                          <span className="text-xxsmall12 font-normal opacity-70">
+                            예약 완료
+                          </span>
+                        </span>
+                      </div>
+                    );
+                  }
 
                   // 현재 챌린지에서 이미 신청 완료 → 잠김 + 멘티 이름 (클릭 시 안내)
                   if (currentMenteeName) {
