@@ -63,7 +63,11 @@ function toInitialSet(slots: MentorOpenSlot[]): Set<string> {
 
 export interface LiveAvailabilityContentProps {
   initialSlots: MentorOpenSlot[];
-  onSave: (slots: MentorOpenSlot[]) => void;
+  /**
+   * 저장 핸들러. Promise 를 반환하면 mode='modal' 일 때 완료 후 onClose 가 호출된다.
+   * Promise 가 reject 되면 onClose 가 호출되지 않으므로 모달 안에서 에러 토스트를 보여줄 수 있다.
+   */
+  onSave: (slots: MentorOpenSlot[]) => void | Promise<void>;
   /** 모드: 'modal' = 저장/취소 시 닫기 호출, 'page' = 닫기 호출 없음 */
   mode?: 'modal' | 'page';
   /** 'modal' 모드에서 닫기 콜백 (저장 후 + 취소 시 호출) */
@@ -277,7 +281,8 @@ const LiveAvailabilityContent = ({
     setWeekStart((prev) => addDays(prev, 7));
   };
 
-  const handleSave = () => {
+  const [isSavingLocal, setIsSavingLocal] = useState(false);
+  const handleSave = async () => {
     const nextSlots: MentorOpenSlot[] = [];
 
     for (const key of selectedKeys) {
@@ -290,9 +295,17 @@ const LiveAvailabilityContent = ({
       return a.time.localeCompare(b.time);
     });
 
-    onSave(nextSlots);
-    if (mode === 'modal') {
-      onClose?.();
+    setIsSavingLocal(true);
+    try {
+      // onSave 가 Promise 를 반환하면 await — 실패하면 throw 되어 onClose 가 호출되지 않는다.
+      await onSave(nextSlots);
+      if (mode === 'modal') {
+        onClose?.();
+      }
+    } catch {
+      // 호출자에서 에러 처리 — 모달은 열린 채로 두어 토스트 등을 노출할 수 있게 한다.
+    } finally {
+      setIsSavingLocal(false);
     }
   };
 
@@ -608,12 +621,13 @@ const LiveAvailabilityContent = ({
             type="button"
             onClick={handleSave}
             disabled={
-              requiredSlotCount !== undefined &&
-              selectedCount < requiredSlotCount
+              isSavingLocal ||
+              (requiredSlotCount !== undefined &&
+                selectedCount < requiredSlotCount)
             }
             className="bg-primary text-xsmall14 hover:bg-primary-hover disabled:bg-neutral-80 rounded-md px-4 py-2 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:text-neutral-50"
           >
-            저장하기
+            {isSavingLocal ? '저장 중...' : '저장하기'}
           </button>
         </div>
       </div>
