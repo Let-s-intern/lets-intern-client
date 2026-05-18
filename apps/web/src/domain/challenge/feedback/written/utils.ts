@@ -62,7 +62,5 @@ export function toWrittenCardConfig(mission: WrittenFeedbackMission) {
     missionNumber: mission.missionNumber,
     startDay: mission.startDay,
     endDay: mission.endDay,
-    reservationStartDay: mission.reservationStartDay,
-    reservationEndDay: mission.reservationEndDay,
   };
 }
