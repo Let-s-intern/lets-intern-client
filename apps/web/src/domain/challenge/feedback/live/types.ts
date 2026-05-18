@@ -23,12 +23,9 @@ export type LiveFeedbackStatus =
   | 'expired';
 
 export interface Mentor {
-  id: number;
-  company: string;
-  name: string;
-  thumbnailUrl?: string;
-  description: string;
-  stars?: number;
+  nickname: string;
+  introduction: string;
+  profileImgUrl: string;
 }
 
 // 확정된 예약 정보

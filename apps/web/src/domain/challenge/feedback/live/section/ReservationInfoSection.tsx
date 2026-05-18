@@ -41,7 +41,6 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
         </h2>
         <MentorCard
           mentor={mentor}
-          showStars
           className="min-w-[314px] px-0 py-4 md:px-4"
         />
       </section>

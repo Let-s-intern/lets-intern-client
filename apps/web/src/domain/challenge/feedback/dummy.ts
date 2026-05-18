@@ -55,39 +55,27 @@ export function getMentorMonthAvailability(
 
 export const DUMMY_MENTORS: Mentor[] = [
   {
-    id: 1,
-    company: '렛츠인턴',
-    name: '이프쌤',
-    thumbnailUrl: '',
-    stars: 5,
-    description:
+    nickname: '이프쌤',
+    profileImgUrl: '',
+    introduction:
       '멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
   },
   {
-    id: 2,
-    company: '렛츠렛츠커리어',
-    name: '줄리아',
-    thumbnailUrl: '',
-    stars: 4,
-    description:
+    nickname: '줄리아',
+    profileImgUrl: '',
+    introduction:
       '멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. ',
   },
   {
-    id: 3,
-    company: '렛츠커리어',
-    name: '도안',
-    thumbnailUrl: '',
-    stars: 3,
-    description:
+    nickname: '도안',
+    profileImgUrl: '',
+    introduction:
       '멘토 소개를 간단히 적어주세요.멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요. 멘토 소개를 간단히 적어주세요.',
   },
   {
-    id: 4,
-    company: '렛츠커리어',
-    name: '레오',
-    thumbnailUrl: '',
-    stars: 2,
-    description: '멘토 소개를 간단히 적어주세요.',
+    nickname: '레오',
+    profileImgUrl: '',
+    introduction: '멘토 소개를 간단히 적어주세요.',
   },
 ];
 
