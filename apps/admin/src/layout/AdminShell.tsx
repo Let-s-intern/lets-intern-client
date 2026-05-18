@@ -12,7 +12,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
     <AdminGuard>
       <div className="flex min-h-screen">
         <AdminSidebar />
-        <main className="flex-1">{children}</main>
+        <main className="min-w-0 flex-1 overflow-x-auto">{children}</main>
       </div>
     </AdminGuard>
   );
