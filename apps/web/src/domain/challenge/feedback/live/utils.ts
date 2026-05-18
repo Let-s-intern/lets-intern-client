@@ -32,7 +32,7 @@ export function toMission(
     endDay,
     reservationStartDay: startDay,
     reservationEndDay: endDay,
-    assignedMentor: null,
+    assignedMentor: item.mentorInfo ?? null,
     reservationInfo: null,
   };
 }

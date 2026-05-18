@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { getMentorDaySlots, getMentorMonthAvailability } from '../../dummy';
-import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
+import type { MissionPeriod, SelectedSlot } from '../types';
 import { toDateString } from '../utils';
 
 function getInitialDate(period: MissionPeriod): Date {
@@ -14,7 +14,6 @@ function getInitialDate(period: MissionPeriod): Date {
 }
 
 export function useTimeSlotState(
-  mentor: Mentor,
   period: MissionPeriod,
   onConfirm: (slot: SelectedSlot) => void,
 ) {
@@ -45,19 +44,13 @@ export function useTimeSlotState(
 
   const monthAvailability = useMemo(
     () =>
-      getMentorMonthAvailability(
-        mentor.id,
-        year,
-        month,
-        period.startDay,
-        period.endDay,
-      ),
-    [mentor.id, year, month, period.startDay, period.endDay],
+      getMentorMonthAvailability(0, year, month, period.startDay, period.endDay),
+    [year, month, period.startDay, period.endDay],
   );
 
   const daySlots = useMemo(
-    () => getMentorDaySlots(mentor.id, selectedDate),
-    [mentor.id, selectedDate],
+    () => getMentorDaySlots(0, selectedDate),
+    [selectedDate],
   );
 
   const navigateMonth = useCallback((dir: 1 | -1) => {

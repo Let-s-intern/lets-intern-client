@@ -1,19 +1,23 @@
 'use client';
 
 import { useTimeSlotState } from '../hooks/useTimeSlotState';
-import type { Mentor, MissionPeriod, SelectedSlot } from '../types';
+import type { MissionPeriod, SelectedSlot } from '../types';
 import MonthCalendar from '../ui/MonthCalendar';
 import ReservationBar from '../ui/ReservationBar';
 import TimeSlotButtons from '../ui/TimeSlotButtons';
 
 interface Props {
-  mentor: Mentor;
+  mentorName: string;
   period: MissionPeriod;
   onConfirm: (slot: SelectedSlot) => void;
 }
 
-const ReservationScheduleSection = ({ mentor, period, onConfirm }: Props) => {
-  const { calendar, slots, bar } = useTimeSlotState(mentor, period, onConfirm);
+const ReservationScheduleSection = ({
+  mentorName,
+  period,
+  onConfirm,
+}: Props) => {
+  const { calendar, slots, bar } = useTimeSlotState(period, onConfirm);
 
   return (
     <div className="p-0 pb-10 md:p-4">
@@ -26,7 +30,7 @@ const ReservationScheduleSection = ({ mentor, period, onConfirm }: Props) => {
           <TimeSlotButtons {...slots} />
         </div>
       </div>
-      <ReservationBar mentorName={mentor.name} {...bar} />
+      <ReservationBar mentorName={mentorName} {...bar} />
     </div>
   );
 };
