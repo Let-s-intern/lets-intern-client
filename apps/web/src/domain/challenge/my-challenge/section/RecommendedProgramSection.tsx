@@ -84,8 +84,7 @@ function RecommendedProgramSection() {
     router.push(clickUrl);
   };
 
-  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
-  // 컴포넌트를 렌더링하지 않음
+  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'live/'];
   const shouldHideSection = EXCLUDED_PATHS.some((path) =>
     pathname.includes(path),
   );

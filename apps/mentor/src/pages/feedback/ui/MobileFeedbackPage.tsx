@@ -1,9 +1,7 @@
-'use client';
-
 import { useState, type ReactNode } from 'react';
 
-import MentorAlertModal from '../../ui/MentorAlertModal';
-import { useMentorAlert } from '../../hooks/useMentorAlert';
+import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { useMentorAlert } from '@/hooks/useMentorAlert';
 
 import MenteeInfo from './MenteeInfo';
 import FeedbackEditor from './FeedbackEditor';
