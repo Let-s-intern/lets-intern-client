@@ -181,6 +181,8 @@ export const useMagnetPostForm = (magnetId: string) => {
         programType: createProgramType || undefined,
         challengeType: createChallengeType || undefined,
         title: createTitle.trim(),
+        startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? undefined,
+        endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? undefined,
       });
       return;
     }

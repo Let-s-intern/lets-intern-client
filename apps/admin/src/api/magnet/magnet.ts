@@ -161,7 +161,10 @@ export const usePatchMagnetMutation = ({
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] }),
+        queryClient.invalidateQueries({ queryKey: [magnetDetailQueryKey] }),
+      ]);
       successCallback?.();
     },
     onError: (error) => {
@@ -443,8 +446,9 @@ export const useCreateMagnetMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: CreateMagnetReqBody) => {
-      const now = new Date().toISOString();
-      const oneMonthLater = new Date(
+      // BE 가 startDate/endDate non-null 을 요구하므로, 호출자가 미지정 시에만 default 를 채운다.
+      const defaultStart = new Date().toISOString();
+      const defaultEnd = new Date(
         Date.now() + 30 * 24 * 60 * 60 * 1000,
       ).toISOString();
       const res = await axios.post('/admin/magnet', {
@@ -459,8 +463,8 @@ export const useCreateMagnetMutation = ({
         mobileThumbnail: '',
         useBaseQuestion: false,
         useLaunchAlert: false,
-        startDate: now,
-        endDate: oneMonthLater,
+        startDate: body.startDate ?? defaultStart,
+        endDate: body.endDate ?? defaultEnd,
         magnetQuestionList: [],
       });
       return res.data;
