@@ -242,7 +242,7 @@ export const DUMMY_FEEDBACK_MISSIONS: LiveFeedbackMission[] = [
     reservationInfo: {
       reservationId: 'reservation-dummy-004',
       scheduledDate: '2026-05-14',
-      scheduledTime: '14:30',
+      scheduledTime: '18:00',
       previousScheduledDate: '2026-05-12',
       previousScheduledTime: '11:00',
     },

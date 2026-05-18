@@ -105,15 +105,14 @@ const MonthCalendar = ({
             const isToday = dateStr === TODAY;
             const isAvailable = monthAvailability[dateStr] === true;
             const isSunday = (firstDayOfWeek + day - 1) % 7 === 6;
-            const isPast = dateStr < TODAY;
-            const isDisabled = !isAvailable && !isToday;
+            const isDisabled = !isAvailable;
 
             const dayState = isSelected
               ? 'selected'
-              : isToday
-                ? 'today'
-                : isDisabled || isPast
-                  ? 'disabled'
+              : isDisabled
+                ? 'disabled'
+                : isToday
+                  ? 'today'
                   : 'available';
 
             return (
