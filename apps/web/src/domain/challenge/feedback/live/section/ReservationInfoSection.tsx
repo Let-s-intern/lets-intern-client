@@ -1,8 +1,9 @@
+'use client';
+
 import { useState } from 'react';
 
 import ZepEmbedModal from '@/common/modal/ZepEmbedModal';
 
-import { isEntranceActive } from '../utils';
 import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
 import MentorCard from '../ui/MentorCard';
 import { formatReservationTime, isEntranceActive } from '../utils';
@@ -15,8 +16,8 @@ interface Props {
 }
 
 const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
-  const { scheduledDate, scheduledTime, zepRoomNumber } = reservation;
   const [isZepOpen, setIsZepOpen] = useState(false);
+
   const currentTime = formatReservationTime(
     reservation?.scheduledDate,
     reservation?.scheduledTime,
@@ -123,42 +124,38 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
                 </div>
               )}
             </div>
+
             {/* 하단 액션 */}
             {status === 'done' && <LiveFeedbackReview />}
             {(status === 'reserved' || status === 'changed') && (
-              <button
-                type="button"
-                className="border-primary text-xsmall14 text-primary flex-1 whitespace-nowrap rounded-sm border bg-neutral-100 py-3 font-semibold"
-              >
-                멘토님께 질문하기
-              </button>
-              <button
-                type="button"
-                disabled={!entranceActive}
-                onClick={entranceActive ? () => setIsZepOpen(true) : undefined}
-                className={
-                  entranceActive
-                    ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
-                    : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
-                }
-              >
-                LIVE 피드백 입장하기
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
-                disabled={!entranceActive}
-                className={`text-xsmall16 flex w-full items-center justify-center whitespace-nowrap rounded-sm py-4 font-semibold ${entranceActive ? 'bg-gradient-to-r from-[#4B53FF] to-[#763CFF] text-white' : 'bg-neutral-70 text-neutral-100'}`}
-              >
-                LIVE 피드백 입장하기
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  className="border-primary text-xsmall14 text-primary flex-1 whitespace-nowrap rounded-sm border bg-neutral-100 py-3 font-semibold"
+                >
+                  멘토님께 질문하기
+                </button>
+                <button
+                  type="button"
+                  disabled={!entranceActive}
+                  onClick={
+                    entranceActive ? () => setIsZepOpen(true) : undefined
+                  }
+                  className={
+                    entranceActive
+                      ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
+                      : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
+                  }
+                >
+                  LIVE 피드백 입장하기
+                </button>
+              </div>
             )}
           </div>
         </section>
       )}
+
+      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
     </div>
   );
 };
