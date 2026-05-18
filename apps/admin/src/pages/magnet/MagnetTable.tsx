@@ -5,17 +5,35 @@ import {
   MultiSelectFilterInput,
   MultiSelectFilterOption,
 } from '@/domain/admin/ui/table/TableFilter';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
+import { getLibraryPathname } from '@/utils/url';
 import { Button, Checkbox } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   isMagnetManageable,
   isMagnetVisibilityManageable,
   MAGNET_TYPE,
   MagnetListItem,
+  MagnetTypeKey,
 } from './types';
+
+// 클립보드로 공유되는 절대 URL이므로 메인 web 도메인을 사용한다.
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 origin 으로 fallback — 외부 메신저 공유 시에도
+// 동작하도록 항상 절대 경로(origin 포함) 가 되도록 보장한다.
+const WEB_URL =
+  import.meta.env.VITE_WEB_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : '');
+
+const buildApplyUrl = (magnetId: number, type: MagnetTypeKey) => {
+  const base = `${WEB_URL}/library/${magnetId}/apply`;
+  return type === 'LAUNCH_ALERT' ? `${base}?type=launch-alert` : base;
+};
+
+const buildDetailUrl = (magnetId: number, title: string) =>
+  `${WEB_URL}${getLibraryPathname({ id: magnetId, title })}`;
 
 interface MagnetTableProps {
   data: MagnetListResponse;
@@ -41,6 +59,38 @@ const MagnetTable = ({
   onToggleVisibility,
   onDelete,
 }: MagnetTableProps) => {
+  const { snackbar } = useAdminSnackbar();
+
+  const copyToClipboard = useCallback(
+    async (url: string, successMessage: string) => {
+      try {
+        await navigator.clipboard.writeText(url);
+        snackbar(successMessage);
+      } catch {
+        snackbar('복사에 실패했습니다. 다시 시도해 주세요.');
+      }
+    },
+    [snackbar],
+  );
+
+  const handleCopyApplyLink = useCallback(
+    (magnetId: number, type: MagnetTypeKey) =>
+      copyToClipboard(
+        buildApplyUrl(magnetId, type),
+        '신청 페이지 링크가 복사되었습니다.',
+      ),
+    [copyToClipboard],
+  );
+
+  const handleCopyDetailLink = useCallback(
+    (magnetId: number, title: string) =>
+      copyToClipboard(
+        buildDetailUrl(magnetId, title),
+        '상세 페이지 링크가 복사되었습니다.',
+      ),
+    [copyToClipboard],
+  );
+
   const columns = useMemo<GridColDef<Row>[]>(
     () => [
       {
@@ -173,8 +223,48 @@ const MagnetTable = ({
           );
         },
       },
+      {
+        field: 'detailLink',
+        headerName: '상세페이지 링크',
+        width: 140,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) =>
+          row.isVisible ? (
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={() => handleCopyDetailLink(row.magnetId, row.title)}
+            >
+              복사
+            </Button>
+          ) : (
+            '-'
+          ),
+      },
+      {
+        field: 'applyLink',
+        headerName: '신청페이지 링크',
+        width: 140,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) =>
+          row.isVisible ? (
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={() => handleCopyApplyLink(row.magnetId, row.type)}
+            >
+              복사
+            </Button>
+          ) : (
+            '-'
+          ),
+      },
     ],
-    [onToggleVisibility, onDelete],
+    [onToggleVisibility, onDelete, handleCopyApplyLink, handleCopyDetailLink],
   );
 
   return (

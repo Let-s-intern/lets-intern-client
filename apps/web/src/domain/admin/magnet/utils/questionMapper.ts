@@ -33,7 +33,8 @@ export function detailQuestionToFormQuestion(
     isRequired: q.isRequired ? 'REQUIRED' : 'OPTIONAL',
     question: q.question,
     description: q.description ?? '',
-    selectionMethod: q.choiceType,
+    // 주관식은 BE 가 null 을 내려주므로 무해한 디폴트로 채운다.
+    selectionMethod: q.choiceType ?? 'SINGLE',
     items: parseOptions(q.options),
   };
 }
@@ -48,7 +49,7 @@ export function detailQuestionToApiBody(
     description: q.description ?? '',
     isRequired: q.isRequired,
     answerType: q.answerType,
-    choiceType: q.choiceType,
+    choiceType: q.choiceType ?? 'SINGLE',
     options: q.options,
   };
 }

@@ -197,11 +197,14 @@ function App({
   } = useSettings();
 
   // 유효한 Lexical JSON만 editorState에 전달, 아니면 빈 에디터
+  // root.children 이 비어있으면 Lexical 이 "editor state is empty" 로 폭발하므로 함께 검증한다.
   const safeEditorState = (() => {
     if (!initialEditorStateJsonString) return emptyEditorState;
     try {
       const parsed = JSON.parse(initialEditorStateJsonString);
-      if (parsed?.root) return initialEditorStateJsonString;
+      if (parsed?.root?.children?.length > 0) {
+        return initialEditorStateJsonString;
+      }
     } catch {
       // JSON이 아닌 평문
     }

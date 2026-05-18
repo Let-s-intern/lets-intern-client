@@ -49,6 +49,10 @@ export interface CreateMagnetReqBody {
   programType?: string;
   challengeType?: string;
   title: string;
+  /** 미지정 시 API 에서 "오늘" 로 채움 */
+  startDate?: string;
+  /** 미지정 시 API 에서 "오늘 + 30일" 로 채움 */
+  endDate?: string;
 }
 
 /** 필터 상태 */
