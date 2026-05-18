@@ -226,16 +226,19 @@ const MagnetTable = ({
         width: 140,
         sortable: false,
         filterable: false,
-        renderCell: ({ row }) => (
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="small"
-            onClick={() => handleCopyDetailLink(row.magnetId, row.title)}
-          >
-            복사
-          </Button>
-        ),
+        renderCell: ({ row }) =>
+          row.isVisible ? (
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={() => handleCopyDetailLink(row.magnetId, row.title)}
+            >
+              복사
+            </Button>
+          ) : (
+            '-'
+          ),
       },
       {
         field: 'applyLink',
@@ -243,16 +246,19 @@ const MagnetTable = ({
         width: 140,
         sortable: false,
         filterable: false,
-        renderCell: ({ row }) => (
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="small"
-            onClick={() => handleCopyApplyLink(row.magnetId, row.type)}
-          >
-            복사
-          </Button>
-        ),
+        renderCell: ({ row }) =>
+          row.isVisible ? (
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={() => handleCopyApplyLink(row.magnetId, row.type)}
+            >
+              복사
+            </Button>
+          ) : (
+            '-'
+          ),
       },
     ],
     [onToggleVisibility, onDelete, handleCopyApplyLink, handleCopyDetailLink],
