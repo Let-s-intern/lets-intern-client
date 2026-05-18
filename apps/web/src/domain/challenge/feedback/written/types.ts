@@ -10,6 +10,4 @@ export interface WrittenFeedbackMission {
   missionNumber: number;
   startDay: string; // 'YYYY-MM-DD'
   endDay: string; // 'YYYY-MM-DD'
-  reservationStartDay?: string; // 'YYYY-MM-DD'
-  reservationEndDay?: string; // 'YYYY-MM-DD'
 }
