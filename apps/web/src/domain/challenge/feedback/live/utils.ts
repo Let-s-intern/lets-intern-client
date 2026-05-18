@@ -1,31 +1,41 @@
+import type { LiveFeedbackItem } from '@/api/feedback/feedbackSchema';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
-export const LIVE_FEEDBACK_SECTIONS: {
-  statuses: LiveFeedbackStatus[];
-  label: string;
-  emptyMessage: string;
-}[] = [
-  {
-    statuses: ['prev', 'canceled'],
-    label: '예약 필요',
-    emptyMessage: '예약 필요한 미션이 없어요.',
-  },
-  {
-    statuses: ['reserved', 'changed'],
-    label: '예약 완료',
-    emptyMessage: '예약 완료된 미션이 없어요.',
-  },
-  {
-    statuses: ['done'],
-    label: '피드백 완료',
-    emptyMessage: '피드백 완료된 미션이 없어요.',
-  },
-  {
-    statuses: ['expired'],
-    label: '기간 만료',
-    emptyMessage: '기간이 만료된 미션이 없어요.',
-  },
-];
+const FEEDBACK_STATUS_MAP: Record<string, LiveFeedbackStatus> = {
+  RESERVED: 'reserved',
+  CANCELED: 'canceled',
+  CHANGED: 'changed',
+  DONE: 'done',
+  EXPIRED: 'expired',
+};
+
+export function toMission(
+  item: LiveFeedbackItem,
+  index: number,
+  challengeType: string,
+): LiveFeedbackMission {
+  const startDay = item.missionStartDate.slice(0, 10);
+  const endDay = item.missionEndDate.slice(0, 10);
+  const status: LiveFeedbackStatus =
+    item.feedbackId == null
+      ? 'prev'
+      : (FEEDBACK_STATUS_MAP[item.feedbackStatus ?? ''] ?? 'prev');
+
+  return {
+    id: index,
+    thumbnail: item.thumbnail,
+    title: item.missionTitle,
+    status,
+    challengeType,
+    missionNumber: item.missionTh,
+    startDay,
+    endDay,
+    reservationStartDay: startDay,
+    reservationEndDay: endDay,
+    assignedMentor: null,
+    reservationInfo: null,
+  };
+}
 
 export const LIVE_FEEDBACK_BUTTON_LABELS: Partial<
   Record<LiveFeedbackStatus, { buttonLabel: string; openLabel: string }>
