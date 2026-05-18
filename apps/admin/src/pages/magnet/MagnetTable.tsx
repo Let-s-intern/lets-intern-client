@@ -21,8 +21,11 @@ import {
 } from './types';
 
 // 클립보드로 공유되는 절대 URL이므로 메인 web 도메인을 사용한다.
-// VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
-const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 origin 으로 fallback — 외부 메신저 공유 시에도
+// 동작하도록 항상 절대 경로(origin 포함) 가 되도록 보장한다.
+const WEB_URL =
+  import.meta.env.VITE_WEB_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : '');
 
 const buildApplyUrl = (magnetId: number, type: MagnetTypeKey) => {
   const base = `${WEB_URL}/library/${magnetId}/apply`;
