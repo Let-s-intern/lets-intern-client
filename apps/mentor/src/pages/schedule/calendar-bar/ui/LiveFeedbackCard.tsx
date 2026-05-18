@@ -34,14 +34,14 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
 
       {/* Row 3: 구분선 */}
       <div className="flex h-3 items-center">
-        <div className="h-full w-0.5 bg-neutral-80" />
-        <div className="h-0.5 flex-1 bg-neutral-80" />
-        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="bg-neutral-80 h-full w-0.5" />
+        <div className="bg-neutral-80 h-0.5 flex-1" />
+        <div className="bg-neutral-80 h-full w-0.5" />
       </div>
 
       {/* Row 4: 챌린지 배지 + 멘티 이름 */}
-      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
-        <span className="text-xxsmall12 shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
+      <div className="bg-neutral-95 flex flex-col gap-1 p-2">
+        <span className="text-xxsmall12 bg-neutral-30 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
         <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
@@ -111,7 +111,7 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
 
   return (
     <div
-      className={`flex h-full w-full flex-col gap-1 overflow-hidden rounded-sm border border-neutral-80 px-2 py-1.5 ${
+      className={`border-neutral-80 flex h-full w-full flex-col gap-1 overflow-hidden rounded-sm border px-2 py-1.5 ${
         isDim ? 'bg-neutral-95' : 'bg-white'
       }`}
     >
@@ -179,7 +179,7 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
           height="12"
           viewBox="0 0 24 24"
           fill="none"
-          className="shrink-0 text-neutral-40"
+          className="text-neutral-40 shrink-0"
           aria-hidden
         >
           <path

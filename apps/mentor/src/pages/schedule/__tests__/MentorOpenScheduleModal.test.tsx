@@ -32,7 +32,9 @@ describe('MentorOpenScheduleModal (콘텐츠 추출 후 회귀)', () => {
         focusDate={focusDate}
       />,
     );
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '저장하기' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '취소' })).toBeInTheDocument();
   });
 

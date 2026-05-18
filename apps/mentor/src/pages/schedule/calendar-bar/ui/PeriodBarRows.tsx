@@ -59,7 +59,7 @@ const PeriodBarRows = ({
     const compactDone = phaseCompleted ?? menteeCountDone;
 
     const compact = (
-      <div className="flex h-7 min-w-0 items-center gap-2 overflow-hidden text-neutral-30">
+      <div className="text-neutral-30 flex h-7 min-w-0 items-center gap-2 overflow-hidden">
         {compactDone && (
           <svg
             width="14"
@@ -91,8 +91,8 @@ const PeriodBarRows = ({
           )}
         </div>
 
-        <div className="flex h-3 min-w-0 flex-1 items-center border-r-2 border-neutral-80">
-          <div className="h-0.5 w-full bg-neutral-80" />
+        <div className="border-neutral-80 flex h-3 min-w-0 flex-1 items-center border-r-2">
+          <div className="bg-neutral-80 h-0.5 w-full" />
         </div>
       </div>
     );
@@ -126,7 +126,7 @@ const PeriodBarRows = ({
             height="14"
             viewBox="0 0 12 12"
             fill="none"
-            className="shrink-0 text-neutral-30"
+            className="text-neutral-30 shrink-0"
           >
             <path
               d="M2.5 6L5 8.5L9.5 3.5"
@@ -149,14 +149,14 @@ const PeriodBarRows = ({
           </span>
         </div>
 
-        <div className="flex h-3 min-w-0 flex-1 items-center border-r-2 border-neutral-80">
-          <div className="h-0.5 w-full bg-neutral-80" />
+        <div className="border-neutral-80 flex h-3 min-w-0 flex-1 items-center border-r-2">
+          <div className="bg-neutral-80 h-0.5 w-full" />
         </div>
       </div>
 
       {/* Row 2: 멘티 현황 */}
-      <div className="flex items-center justify-between gap-2 bg-neutral-95 p-2">
-        <span className="text-xxsmall12 min-w-0 truncate rounded-[3px] bg-neutral-30 px-2 py-1 font-medium tracking-[-0.3px] text-white">
+      <div className="bg-neutral-95 flex items-center justify-between gap-2 p-2">
+        <span className="text-xxsmall12 bg-neutral-30 min-w-0 truncate rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
           {challengeTitle}
         </span>
 

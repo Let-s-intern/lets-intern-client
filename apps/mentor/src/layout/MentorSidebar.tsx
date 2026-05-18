@@ -26,7 +26,11 @@ const navItems: NavItem[] = [
     matchPrefix: '/feedback',
     children: [
       { type: 'leaf', name: '피드백 관리', url: '/feedback-management' },
-      { type: 'leaf', name: '라이브 피드백 일정 열기', url: '/feedback/live-availability' },
+      {
+        type: 'leaf',
+        name: '라이브 피드백 일정 열기',
+        url: '/feedback/live-availability',
+      },
       { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
       { type: 'leaf', name: '멘티관리', url: '/feedback/live-mentee' },
     ],
@@ -69,9 +73,8 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
     return map;
   }, [pathname]);
 
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
-    initialOpenGroups,
-  );
+  const [openGroups, setOpenGroups] =
+    useState<Record<string, boolean>>(initialOpenGroups);
 
   // 라우트 변경으로 새로 활성화된 그룹은 자동 펼침 (사용자 수동 펼침은 유지)
   useEffect(() => {

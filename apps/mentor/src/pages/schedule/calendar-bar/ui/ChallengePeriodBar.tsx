@@ -1,5 +1,3 @@
-
-
 import { useId, type CSSProperties } from 'react';
 
 import { currentNow } from '../../constants/mockNow';
@@ -54,11 +52,18 @@ const ChallengePeriodBar = ({
               </g>
               <defs>
                 <clipPath id={clipId}>
-                  <rect x="3" y="2" width="18" height="16" rx="0" fill="white" />
+                  <rect
+                    x="3"
+                    y="2"
+                    width="18"
+                    height="16"
+                    rx="0"
+                    fill="white"
+                  />
                 </clipPath>
               </defs>
             </svg>
-            <span className="whitespace-nowrap text-xsmall14 font-semibold tracking-[-0.3px]">
+            <span className="text-xsmall14 whitespace-nowrap font-semibold tracking-[-0.3px]">
               [ {bar.th}회차 서면 ]
             </span>
           </>

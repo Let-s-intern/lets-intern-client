@@ -123,8 +123,8 @@ const FeedbackLiveReservationPage = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xsmall14 text-neutral-30">
-                    {formatDate(bar.startDate)} · {bar.liveFeedback?.startTime}
-                    ~{bar.liveFeedback?.endTime}
+                    {formatDate(bar.startDate)} · {bar.liveFeedback?.startTime}~
+                    {bar.liveFeedback?.endTime}
                   </span>
                   <span
                     className={`text-xxsmall12 rounded-full px-2 py-0.5 font-medium ${

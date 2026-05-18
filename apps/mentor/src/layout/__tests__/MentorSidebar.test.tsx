@@ -68,7 +68,9 @@ describe('MentorSidebar', () => {
 
     const groupButton = screen.getByRole('button', { name: /피드백/ });
     expect(groupButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('라이브 피드백 일정 열기')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('라이브 피드백 일정 열기'),
+    ).not.toBeInTheDocument();
 
     await user.click(groupButton);
     expect(groupButton).toHaveAttribute('aria-expanded', 'true');
@@ -76,6 +78,8 @@ describe('MentorSidebar', () => {
 
     await user.click(groupButton);
     expect(groupButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('라이브 피드백 일정 열기')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('라이브 피드백 일정 열기'),
+    ).not.toBeInTheDocument();
   });
 });

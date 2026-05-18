@@ -13,8 +13,7 @@ const FeedbackLiveMenteePage = () => {
   );
 
   const activeMentee = useMemo(
-    () =>
-      MENTEE_CHAT_MOCK.mentees.find((m) => m.id === activeMenteeId) ?? null,
+    () => MENTEE_CHAT_MOCK.mentees.find((m) => m.id === activeMenteeId) ?? null,
     [activeMenteeId],
   );
 
@@ -36,7 +35,7 @@ const FeedbackLiveMenteePage = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-xl border border-neutral-80 bg-white">
+    <div className="border-neutral-80 flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-xl border bg-white">
       <div className="flex flex-1 overflow-hidden">
         {/* 좌측: 멘티 리스트 */}
         <div className="w-72 shrink-0">
@@ -52,8 +51,8 @@ const FeedbackLiveMenteePage = () => {
           {activeMentee ? (
             <>
               {/* 대화 헤더 */}
-              <div className="border-b border-neutral-80 px-4 py-3">
-                <p className="text-xsmall14 font-semibold text-neutral-10">
+              <div className="border-neutral-80 border-b px-4 py-3">
+                <p className="text-xsmall14 text-neutral-10 font-semibold">
                   {activeMentee.name}
                 </p>
                 <p className="text-xxsmall12 text-neutral-40">
@@ -71,7 +70,7 @@ const FeedbackLiveMenteePage = () => {
               <ChatComposer onSend={handleSend} />
             </>
           ) : (
-            <div className="flex flex-1 flex-col items-center justify-center gap-2 text-neutral-40">
+            <div className="text-neutral-40 flex flex-1 flex-col items-center justify-center gap-2">
               <svg
                 width="40"
                 height="40"

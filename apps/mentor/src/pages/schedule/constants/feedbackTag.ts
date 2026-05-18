@@ -74,10 +74,9 @@ export function barTypeToFeedbackTag(
 }
 
 /** 선택된 태그 집합으로 바를 필터링한다. 빈 집합이면 전체 노출 (= "전체" 모드). */
-export function filterBarsByFeedbackTags<T extends { barType?: PeriodBarData['barType'] }>(
-  bars: T[],
-  selectedTags: ReadonlySet<FeedbackTagType>,
-): T[] {
+export function filterBarsByFeedbackTags<
+  T extends { barType?: PeriodBarData['barType'] },
+>(bars: T[], selectedTags: ReadonlySet<FeedbackTagType>): T[] {
   if (selectedTags.size === 0) return bars;
   return bars.filter((bar) => {
     const tag = barTypeToFeedbackTag(bar.barType);
