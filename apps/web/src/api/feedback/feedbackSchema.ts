@@ -10,6 +10,14 @@ export const feedbackStatusSchema = z.enum([
 
 export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
 
+export const challengeMentorInfoSchema = z.object({
+  nickname: z.string(),
+  introduction: z.string(),
+  profileImgUrl: z.string(),
+});
+
+export type ChallengeMentorInfo = z.infer<typeof challengeMentorInfoSchema>;
+
 export const liveFeedbackItemSchema = z.object({
   thumbnail: z.string(),
   desktopThumbnail: z.string(),
@@ -19,6 +27,7 @@ export const liveFeedbackItemSchema = z.object({
   missionEndDate: z.string(),
   feedbackId: z.number().nullable(),
   feedbackStatus: feedbackStatusSchema.nullable(),
+  mentorInfo: challengeMentorInfoSchema.nullish(),
 });
 
 export type LiveFeedbackItem = z.infer<typeof liveFeedbackItemSchema>;
