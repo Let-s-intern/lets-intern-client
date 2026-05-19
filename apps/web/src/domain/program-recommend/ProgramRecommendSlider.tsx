@@ -137,6 +137,7 @@ function ProgramRecommendSlider({
                 trailingSlide.buttonClassName,
               )}
               data-url={trailingSlide.to}
+              style={buttonStyle}
               onClick={(e) => {
                 pushDataLayer(
                   trailingSlide,

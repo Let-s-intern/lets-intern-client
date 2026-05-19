@@ -306,8 +306,6 @@ const ChallengePointView = ({
       to: '/curation',
       onClickButton: () => router.push('/curation'),
       eventName: 'curation_entry_click',
-      // challengeColors.F26646 (#F26646) — Tailwind JIT 정적 매칭을 위해 리터럴 사용
-      buttonClassName: 'bg-[#F26646]',
       ariaLabel: '맞춤 챌린지 탐색 큐레이션 페이지로 이동',
     };
   }, [curationCard?.visible, router]);
