@@ -1,15 +1,15 @@
 'use client'; // 클라이언트 timezone을 사용하기 위함
 
 import { BlogDetailInfo } from '@/api/blog/blogSchema';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import getDominantColor from '@/utils/dominantColor';
 import Image from 'next/image';
 import { useRef } from 'react';
-import BlogLinkShareBtn from './BlogLilnkShareBtn';
 import Heading2 from './BlogHeading2';
-import LexicalContent from '@/common/lexical/LexicalContent';
+import BlogLinkShareBtn from './BlogLilnkShareBtn';
 
 interface Props {
   blogInfo: BlogDetailInfo;
@@ -55,7 +55,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
       {/* 썸네일 */}
       <div
         ref={thumbnailDivRef}
-        className="bg-neutral-95 relative mb-8 h-[16rem] overflow-hidden rounded-md md:h-[25.5rem]"
+        className="bg-neutral-95 relative mb-8 aspect-[4/3] overflow-hidden rounded-md"
       >
         {blogInfo.thumbnail && (
           <Image
@@ -65,7 +65,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
             fill
             src={blogInfo.thumbnail}
             alt="블로그 썸네일"
-            sizes="(max-width: 768px) 100vw, 26rem"
+            sizes="(max-width: 768px) 100vw, 50vw"
             onLoad={handleImageLoad}
           />
         )}
