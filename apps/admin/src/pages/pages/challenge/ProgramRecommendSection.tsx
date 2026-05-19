@@ -7,7 +7,12 @@ import {
   OperationRecommendMoreButton,
   ProgramRecommend,
 } from '@/types/interface';
-import { Button } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -17,6 +22,8 @@ const defaultMoreButton: OperationRecommendMoreButton = {
 };
 
 const defaultPrograms: ProgramRecommend = { list: [] };
+
+const defaultCurationCard = { visible: true };
 
 function ProgramRecommendSection() {
   const params = useParams<{ programId: string }>();
@@ -39,12 +46,14 @@ function ProgramRecommendSection() {
 
   const [programRecommend, setProgramRecommend] = useState(defaultPrograms);
   const [moreButton, setMoreButton] = useState(defaultMoreButton);
+  const [curationCard, setCurationCard] = useState(defaultCurationCard);
 
   const handleSave = async () => {
     const newDescJson = {
       ...descJson,
       operationRecommendProgram: programRecommend,
       operationRecommendMoreButton: moreButton,
+      curationCard,
     };
     const request = {
       challengeId: programId,
@@ -65,6 +74,7 @@ function ProgramRecommendSection() {
 
     setProgramRecommend(descJson?.operationRecommendProgram ?? defaultPrograms);
     setMoreButton(descJson?.operationRecommendMoreButton ?? defaultMoreButton);
+    setCurationCard(descJson?.curationCard ?? defaultCurationCard);
   }, [isLoading, descJson]);
 
   if (isLoading) return null;
@@ -86,6 +96,24 @@ function ProgramRecommendSection() {
             setMoreButton((prev) => ({ ...prev, url }));
           }}
         />
+      </div>
+      <div className="mb-4">
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={curationCard.visible}
+              onChange={(e) =>
+                setCurationCard({ visible: e.target.checked })
+              }
+            />
+          }
+          label="큐레이션 카드 노출 (기본 켜짐)"
+        />
+        <Typography variant="caption" color="text.secondary" component="p">
+          추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
+          큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두 채우려면
+          이 옵션을 꺼주세요.
+        </Typography>
       </div>
       <Button variant="contained" onClick={handleSave}>
         저장
