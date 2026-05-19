@@ -1,4 +1,4 @@
-import useScrollFade from '@/hooks/useScrollFade';
+import useScrollFade from '../hooks/useScrollFade';
 
 const Caption = [
   '취업, 어디서부터 시작해야 할 지 모르겠어..',
@@ -6,7 +6,7 @@ const Caption = [
   '인턴 어떻게 시작하는 건데?',
 ];
 
-const TopSection = () => {
+export default function AboutHeaderSection() {
   const { boxRef, ref0, ref1, ref2 } = useScrollFade();
 
   return (
@@ -59,6 +59,4 @@ const TopSection = () => {
       </div>
     </header>
   );
-};
-
-export default TopSection;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import useCounter from '@/hooks/useCounter';
 import useDecimalCounter from '@/hooks/useDecimalCounter';
+import useCounter from '../hooks/useCounter';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {
@@ -15,16 +15,7 @@ const maxSuccessCount = 162;
 const maxSatisfaction = 4.8;
 const defaultIncrement = 1;
 
-const groupDigit = (num: number) => {
-  return num.toLocaleString();
-};
-
-const calculateIncrement = (target: number) => {
-  const min = Math.min(maxProgramCount, maxApplicationCount, maxSuccessCount);
-  return Math.floor(defaultIncrement * (target / min));
-};
-
-const ResultSection = () => {
+export default function ResultSection() {
   const programRef = useRef<HTMLDivElement>(null);
 
   const [isCount, setIsCount] = useState(false);
@@ -93,14 +84,6 @@ const ResultSection = () => {
       </div>
     </section>
   );
-};
-
-interface ResultTitleProps {
-  title: string;
-}
-
-interface ResultScoreProps {
-  children: React.ReactNode;
 }
 
 const ResultLine = () => {
@@ -109,16 +92,21 @@ const ResultLine = () => {
   );
 };
 
-const ResultTitle = ({ title }: ResultTitleProps) => {
-  return (
-    <h2 className="text-0.875-medium xl:text-1-medium text-neutral-100">
-      {title}
-    </h2>
-  );
-};
+const ResultTitle = ({ title }: { title: string }) => (
+  <h2 className="text-0.875-medium xl:text-1-medium text-neutral-100">
+    {title}
+  </h2>
+);
 
-const ResultScore = ({ children }: ResultScoreProps) => {
+const ResultScore = ({ children }: { children: React.ReactNode }) => {
   return <p className="text-1.75-bold mt-1 text-neutral-100">{children}</p>;
 };
 
-export default ResultSection;
+const groupDigit = (num: number) => {
+  return num.toLocaleString();
+};
+
+const calculateIncrement = (target: number) => {
+  const min = Math.min(maxProgramCount, maxApplicationCount, maxSuccessCount);
+  return Math.floor(defaultIncrement * (target / min));
+};

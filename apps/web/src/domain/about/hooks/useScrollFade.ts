@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 const maxScrollY = 2500; // Header 높이 - 500
 
-const useScrollFade = () => {
+export default function useScrollFade() {
   const boxRef = useRef<HTMLDivElement>(null);
   const ref0 = useRef<HTMLDivElement>(null);
   const ref1 = useRef<HTMLDivElement>(null);
@@ -60,6 +60,4 @@ const useScrollFade = () => {
   };
 
   return { boxRef, ref0, ref1, ref2 };
-};
-
-export default useScrollFade;
+}

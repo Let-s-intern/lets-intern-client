@@ -1,5 +1,3 @@
-import SolutionBox from './SolutionBox';
-
 const content = [
   {
     imgName: 'lets-solution.svg',
@@ -24,7 +22,7 @@ const content = [
   },
 ];
 
-const SolutionSection = () => {
+export default function SolutionSection() {
   return (
     <section className="bg-neutral-100 px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:flex md:flex-col md:items-center xl:py-[8.75rem]">
       <h1 className="text-1-bold xl:text-1.25-bold text-neutral-40 mb-2">
@@ -46,6 +44,36 @@ const SolutionSection = () => {
       </div>
     </section>
   );
-};
+}
 
-export default SolutionSection;
+interface SolutionBoxProps {
+  title: string;
+  imgWidthClassName: string;
+  imgName: string;
+  description: string;
+}
+
+const SolutionBox = ({
+  title,
+  imgWidthClassName,
+  imgName,
+  description,
+}: SolutionBoxProps) => {
+  return (
+    <div key={title} className="flex items-center gap-6 md:flex-col">
+      <img
+        alt={title}
+        className={`h-full ${imgWidthClassName}`}
+        src={`/icons/${imgName}`}
+      />
+      <div className="flex flex-col gap-2">
+        <h2 className="text-1-bold xl:text-1.25-bold text-primary md:text-center">
+          {title}
+        </h2>
+        <p className="text-0.875 xl:text-1.125 text-neutral-40 md:text-center">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+};
