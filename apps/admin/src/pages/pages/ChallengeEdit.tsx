@@ -38,7 +38,13 @@ import {
   UpdateChallengeReq,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button, FormControlLabel, Switch } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Switch,
+  Typography,
+} from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -592,6 +598,27 @@ const ChallengeEdit: React.FC = () => {
                 setContent((prev) => ({ ...prev, programRecommend }))
               }
             />
+            <div className="mt-2">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={content.curationCard?.visible ?? true}
+                    onChange={(e) =>
+                      setContent((prev) => ({
+                        ...prev,
+                        curationCard: { visible: e.target.checked },
+                      }))
+                    }
+                  />
+                }
+                label="큐레이션 카드 노출 (기본 켜짐)"
+              />
+              <Typography variant="caption" color="text.secondary" component="p">
+                추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
+                큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
+                채우려면 이 옵션을 꺼주세요.
+              </Typography>
+            </div>
           </section>
 
           <ChallengeCurriculumEditor
