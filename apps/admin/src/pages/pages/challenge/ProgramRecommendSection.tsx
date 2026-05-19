@@ -1,5 +1,6 @@
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import MoreButtonSection from '@/domain/admin/ui/section/MoreButtonSection';
+import CurationCardPreview from '@/domain/program-recommend/ui/CurationCardPreview';
 import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
@@ -85,6 +86,7 @@ function ProgramRecommendSection() {
         <ProgramRecommendEditor
           programRecommend={programRecommend}
           setProgramRecommend={setProgramRecommend}
+          maxCount={curationCard.visible ? 2 : undefined}
         />
         <MoreButtonSection
           checked={moreButton?.visible}
@@ -114,6 +116,9 @@ function ProgramRecommendSection() {
           큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두 채우려면
           이 옵션을 꺼주세요.
         </Typography>
+        <div className="mt-3">
+          <CurationCardPreview />
+        </div>
       </div>
       <Button variant="contained" onClick={handleSave}>
         저장

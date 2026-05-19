@@ -26,6 +26,7 @@ import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import FaqSection from '@/domain/faq/FaqSection';
+import CurationCardPreview from '@/domain/program-recommend/ui/CurationCardPreview';
 import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
@@ -597,6 +598,9 @@ const ChallengeEdit: React.FC = () => {
               setProgramRecommend={(programRecommend) =>
                 setContent((prev) => ({ ...prev, programRecommend }))
               }
+              maxCount={
+                (content.curationCard?.visible ?? true) ? 2 : undefined
+              }
             />
             <div className="mt-2">
               <FormControlLabel
@@ -618,6 +622,9 @@ const ChallengeEdit: React.FC = () => {
                 큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
                 채우려면 이 옵션을 꺼주세요.
               </Typography>
+              <div className="mt-3">
+                <CurationCardPreview />
+              </div>
             </div>
           </section>
 
