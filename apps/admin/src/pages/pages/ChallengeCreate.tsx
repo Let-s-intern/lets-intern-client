@@ -485,12 +485,25 @@ const ChallengeCreate: React.FC = () => {
                 control={
                   <Checkbox
                     checked={content.curationCard?.visible ?? true}
-                    onChange={(e) =>
-                      setContent((prev) => ({
-                        ...prev,
-                        curationCard: { visible: e.target.checked },
-                      }))
-                    }
+                    onChange={(e) => {
+                      const nextVisible = e.target.checked;
+                      setContent((prev) => {
+                        const next = {
+                          ...prev,
+                          curationCard: { visible: nextVisible },
+                        };
+                        // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
+                        // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
+                        const list = prev.programRecommend?.list ?? [];
+                        if (nextVisible && list.length > 2) {
+                          next.programRecommend = {
+                            ...prev.programRecommend,
+                            list: list.slice(0, 2),
+                          };
+                        }
+                        return next;
+                      });
+                    }}
                   />
                 }
                 label="큐레이션 카드 노출 (기본 켜짐)"
@@ -500,9 +513,11 @@ const ChallengeCreate: React.FC = () => {
                 큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
                 채우려면 이 옵션을 꺼주세요.
               </Typography>
-              <div className="mt-3">
-                <CurationCardPreview />
-              </div>
+              {(content.curationCard?.visible ?? true) && (
+                <div className="mt-3">
+                  <CurationCardPreview />
+                </div>
+              )}
             </div>
           </section>
 
