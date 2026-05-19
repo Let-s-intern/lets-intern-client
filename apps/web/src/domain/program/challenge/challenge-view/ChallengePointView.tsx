@@ -266,10 +266,17 @@ const ChallengePointView = ({
     }
   }, [challengeType, challengeId]);
 
+  // 큐레이션 카드 노출 시 추천은 최대 2개로 제한 (사용자 페이지 안전장치)
+  const effectiveList = useMemo(() => {
+    const list = programRecommend?.list ?? [];
+    const isVisible = curationCard?.visible ?? true;
+    return isVisible ? list.slice(0, 2) : list;
+  }, [curationCard?.visible, programRecommend?.list]);
+
   const slideList = useMemo(() => {
     const list = [];
 
-    for (const item of programRecommend?.list ?? []) {
+    for (const item of effectiveList) {
       const to = `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`;
 
       list.push({
@@ -285,7 +292,7 @@ const ChallengePointView = ({
     }
 
     return list;
-  }, [programRecommend?.list, router]);
+  }, [effectiveList, router]);
 
   // 큐레이션 진입 카드 — `memo` 비교 유지를 위해 useMemo로 안정화
   const curationTrailingSlide = useMemo(() => {
@@ -299,7 +306,8 @@ const ChallengePointView = ({
       to: '/curation',
       onClickButton: () => router.push('/curation'),
       eventName: 'curation_entry_click',
-      buttonClassName: 'bg-[#FF6F1F]',
+      // challengeColors.F26646 (#F26646) — Tailwind JIT 정적 매칭을 위해 리터럴 사용
+      buttonClassName: 'bg-[#F26646]',
       ariaLabel: '맞춤 챌린지 탐색 큐레이션 페이지로 이동',
     };
   }, [curationCard?.visible, router]);
