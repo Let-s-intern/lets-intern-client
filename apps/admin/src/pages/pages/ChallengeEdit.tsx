@@ -598,9 +598,7 @@ const ChallengeEdit: React.FC = () => {
               setProgramRecommend={(programRecommend) =>
                 setContent((prev) => ({ ...prev, programRecommend }))
               }
-              maxCount={
-                (content.curationCard?.visible ?? true) ? 2 : undefined
-              }
+              maxCount={(content.curationCard?.visible ?? true) ? 2 : undefined}
             />
             {(content.programRecommend?.list?.length ?? 0) > 0 && (
               <div className="mt-2">

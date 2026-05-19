@@ -8,12 +8,7 @@ import {
   OperationRecommendMoreButton,
   ProgramRecommend,
 } from '@/types/interface';
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Typography,
-} from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 

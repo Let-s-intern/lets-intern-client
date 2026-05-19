@@ -17,14 +17,16 @@ import Input from '@/common/input/v1/Input';
 const CurationCardPreview = () => {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xxsmall12 text-neutral-40">미리보기 (수정 불가)</span>
+      <span className="text-xxsmall12 text-neutral-40">
+        미리보기 (수정 불가)
+      </span>
       <div
         className="pointer-events-none flex items-center gap-2 opacity-90"
         aria-hidden="true"
       >
         {/* 좌측 썸네일 */}
         <div
-          className="rounded-xs h-32 w-40 flex-none border bg-neutral-60"
+          className="rounded-xs bg-neutral-60 h-32 w-40 flex-none border"
           style={{
             backgroundImage: "url('/images/curation-entry-card.png')",
             backgroundSize: 'cover',
