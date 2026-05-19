@@ -28,7 +28,14 @@ import {
   ProgramTypeEnum,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button, FormControlLabel, Switch, TextField } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -93,6 +100,7 @@ const ChallengeCreate: React.FC = () => {
     initialized: true,
     faqCategory: [],
     programRecommend: { list: [] },
+    curationCard: { visible: true },
   });
   const [isFreeTemplate, setIsFreeTemplate] = useState(false);
 
@@ -468,6 +476,27 @@ const ChallengeCreate: React.FC = () => {
                 setContent((prev) => ({ ...prev, programRecommend }))
               }
             />
+            <div className="mt-2">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={content.curationCard?.visible ?? true}
+                    onChange={(e) =>
+                      setContent((prev) => ({
+                        ...prev,
+                        curationCard: { visible: e.target.checked },
+                      }))
+                    }
+                  />
+                }
+                label="큐레이션 카드 노출 (기본 켜짐)"
+              />
+              <Typography variant="caption" color="text.secondary" component="p">
+                추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
+                큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
+                채우려면 이 옵션을 꺼주세요.
+              </Typography>
+            </div>
           </section>
 
           <ChallengeCurriculum
