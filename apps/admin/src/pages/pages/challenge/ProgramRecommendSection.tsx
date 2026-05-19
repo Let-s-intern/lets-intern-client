@@ -104,9 +104,18 @@ function ProgramRecommendSection() {
           control={
             <Checkbox
               checked={curationCard.visible}
-              onChange={(e) =>
-                setCurationCard({ visible: e.target.checked })
-              }
+              onChange={(e) => {
+                const nextVisible = e.target.checked;
+                setCurationCard({ visible: nextVisible });
+                // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
+                // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
+                if (nextVisible && programRecommend.list.length > 2) {
+                  setProgramRecommend({
+                    ...programRecommend,
+                    list: programRecommend.list.slice(0, 2),
+                  });
+                }
+              }}
             />
           }
           label="큐레이션 카드 노출 (기본 켜짐)"
@@ -116,9 +125,11 @@ function ProgramRecommendSection() {
           큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두 채우려면
           이 옵션을 꺼주세요.
         </Typography>
-        <div className="mt-3">
-          <CurationCardPreview />
-        </div>
+        {curationCard.visible && (
+          <div className="mt-3">
+            <CurationCardPreview />
+          </div>
+        )}
       </div>
       <Button variant="contained" onClick={handleSave}>
         저장
