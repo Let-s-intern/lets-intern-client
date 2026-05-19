@@ -1,6 +1,4 @@
 import AboutTitle from '../ui/AboutTitle';
-import IntroCard from './IntroCard';
-import IntroTitle from './IntroTtile';
 
 const title = {
   subTitle: '렛츠커리어와 함께',
@@ -57,7 +55,7 @@ const CARD_content = [
   },
 ];
 
-const IntroSection = () => {
+export default function IntroSection() {
   return (
     <section className="flex flex-col px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center xl:py-[7.5rem]">
       <AboutTitle {...title} />
@@ -91,6 +89,38 @@ const IntroSection = () => {
       </div>
     </section>
   );
-};
+}
 
-export default IntroSection;
+interface IntroTitleProps {
+  title: string;
+  lineWidthClassName: string;
+}
+
+const IntroTitle = ({ title, lineWidthClassName }: IntroTitleProps) => (
+  <div className="relative flex flex-col md:items-center">
+    <h2 className="text-1-bold xl:text-1.25-bold z-10">{title}</h2>
+    <div
+      className={`absolute top-3 h-3 xl:top-4 ${lineWidthClassName} bg-primary-xlight/60`}
+    />
+  </div>
+);
+
+interface IntroCardProps {
+  title: string;
+  subTitle: string;
+  description: string[];
+}
+
+const IntroCard = ({ title, subTitle, description }: IntroCardProps) => (
+  <div className="bg-primary flex flex-col rounded-md p-5 sm:py-8 md:justify-between md:text-center lg:min-w-max">
+    <div className="mb-3">
+      <h3 className="text-1-semibold text-static-100">{title}</h3>
+      <h4 className="text-0.875-bold text-[#8288F8]">{subTitle}</h4>
+    </div>
+    <p className="text-0.875 text-neutral-80 lg:flex lg:flex-col">
+      {description.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </p>
+  </div>
+);

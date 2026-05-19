@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../../apps/web/src/domain/about/hooks/useCounter.ts"]
 }
