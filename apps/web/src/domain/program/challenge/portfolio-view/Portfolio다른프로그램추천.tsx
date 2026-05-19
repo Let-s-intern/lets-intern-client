@@ -172,6 +172,7 @@ const Portfolio다른프로그램추천 = ({
   challengeType,
   challengeTitle,
   programRecommend,
+  curationCard,
   deposit,
   // challengeId,
   // isResumeTemplate,
@@ -182,6 +183,8 @@ const Portfolio다른프로그램추천 = ({
   challengeType: ChallengeType;
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
+  /** 챌린지 상세: 추천 슬라이더 큐레이션 카드 노출 토글 (undefined → true 규약) */
+  curationCard?: { visible: boolean };
   deposit: number;
   challengeId: number;
   isResumeTemplate: boolean;
@@ -262,6 +265,23 @@ const Portfolio다른프로그램추천 = ({
 
     return list;
   }, [programRecommend?.list, router]);
+
+  // 큐레이션 진입 카드 — `memo` 비교 유지를 위해 useMemo로 안정화
+  const curationTrailingSlide = useMemo(() => {
+    const isVisible = curationCard?.visible ?? true;
+    if (!isVisible) return undefined;
+    return {
+      id: 'curation' as const,
+      backgroundImage: '/images/curation-entry-card.png',
+      title: '',
+      cta: '나에게 맞는 프로그램을 찾자!',
+      to: '/curation',
+      onClickButton: () => router.push('/curation'),
+      eventName: 'curation_entry_click',
+      buttonClassName: 'bg-[#FF6F1F]',
+      ariaLabel: '맞춤 챌린지 탐색 큐레이션 페이지로 이동',
+    };
+  }, [curationCard?.visible, router]);
 
   // const styles = useMemo(() => {
   //   switch (challengeType) {
@@ -408,6 +428,7 @@ const Portfolio다른프로그램추천 = ({
               buttonStyle={{ backgroundColor: styles.buttonBgColor }}
               className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
               list={slideList}
+              trailingSlide={curationTrailingSlide}
             />
           </div>
         </div>
