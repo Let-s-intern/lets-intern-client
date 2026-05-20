@@ -18,12 +18,9 @@ const YearCell = ({ row }: YearCellProps) => {
     (_, i) => startYear + i,
   );
 
-  const visibleItems = yearBadges.slice(0, 2);
-  const hiddenCount = Math.max(0, yearBadges.length - 2);
-
   return (
     <div className="flex flex-wrap items-center gap-1">
-      {visibleItems.map((year: number) => (
+      {yearBadges.map((year: number) => (
         <span
           key={year}
           className="rounded-xxs bg-neutral-90 px-2 py-1 text-xs font-normal"
@@ -31,9 +28,6 @@ const YearCell = ({ row }: YearCellProps) => {
           {year}
         </span>
       ))}
-      {hiddenCount > 0 && (
-        <span className="text-neutral-30 text-xs">+{hiddenCount}</span>
-      )}
     </div>
   );
 };

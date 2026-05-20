@@ -34,7 +34,12 @@ const TableHead = ({
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   return (
-    <div className={clsx('flex text-sm font-medium text-[#868686]', className)}>
+    <div
+      className={clsx(
+        'flex w-full text-sm font-medium text-[#868686]',
+        className,
+      )}
+    >
       <AllChoiceCheckbox
         cellWidthListIndex={0}
         attendanceList={attendances}

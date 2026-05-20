@@ -66,7 +66,8 @@ const magnetQuestionSchema = z.object({
   description: z.string().nullable(),
   isRequired: z.boolean(),
   answerType: z.enum(['TEXT', 'CHOICE']),
-  choiceType: z.enum(['SINGLE', 'MULTIPLE']),
+  // 주관식(TEXT)일 때 BE 가 null 을 내려주므로 nullable 처리.
+  choiceType: z.enum(['SINGLE', 'MULTIPLE']).nullable(),
   options: z.string().nullable(),
   isVisible: z.boolean().optional(),
 });
@@ -153,7 +154,8 @@ const userMagnetQuestionItemSchema = z.object({
   description: z.string().nullable(),
   isRequired: z.boolean(),
   answerType: z.enum(['CHOICE', 'TEXT']),
-  choiceType: z.enum(['SINGLE', 'MULTIPLE']),
+  // 주관식(TEXT)일 때 BE 가 null 을 내려주므로 nullable 처리.
+  choiceType: z.enum(['SINGLE', 'MULTIPLE']).nullable(),
   options: z.string().nullable(),
 });
 

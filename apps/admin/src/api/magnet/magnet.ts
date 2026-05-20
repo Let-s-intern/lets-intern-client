@@ -30,6 +30,9 @@ const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 const userMagnetListQueryKey = 'UserMagnetListQueryKey';
 const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 const baseQuestionQueryKey = 'BaseQuestionQueryKey';
+
+/** 마그넷 생성 시 노출 종료일 기본값 — 시작일로부터 30일 후 */
+const DEFAULT_VISIBILITY_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
 const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
 const launchAlertQueryKey = 'LaunchAlertQueryKey';
@@ -161,7 +164,10 @@ export const usePatchMagnetMutation = ({
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] }),
+        queryClient.invalidateQueries({ queryKey: [magnetDetailQueryKey] }),
+      ]);
       successCallback?.();
     },
     onError: (error) => {
@@ -443,9 +449,10 @@ export const useCreateMagnetMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: CreateMagnetReqBody) => {
-      const now = new Date().toISOString();
-      const oneMonthLater = new Date(
-        Date.now() + 30 * 24 * 60 * 60 * 1000,
+      // BE 가 startDate/endDate non-null 을 요구하므로, 호출자가 미지정 시에만 default 를 채운다.
+      const defaultStart = new Date().toISOString();
+      const defaultEnd = new Date(
+        Date.now() + DEFAULT_VISIBILITY_DURATION_MS,
       ).toISOString();
       const res = await axios.post('/admin/magnet', {
         type: body.type,
@@ -459,8 +466,8 @@ export const useCreateMagnetMutation = ({
         mobileThumbnail: '',
         useBaseQuestion: false,
         useLaunchAlert: false,
-        startDate: now,
-        endDate: oneMonthLater,
+        startDate: body.startDate ?? defaultStart,
+        endDate: body.endDate ?? defaultEnd,
         magnetQuestionList: [],
       });
       return res.data;
