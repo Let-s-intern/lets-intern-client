@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 import {
   isMagnetManageable,
+  isMagnetPostEditable,
   isMagnetVisibilityManageable,
   MAGNET_TYPE,
   MagnetListItem,
@@ -194,7 +195,7 @@ const MagnetTable = ({
         filterable: false,
         renderCell: ({ row }) => {
           const manageable = isMagnetManageable(row.type);
-          const postEditable = manageable || row.type === 'LAUNCH_ALERT';
+          const postEditable = isMagnetPostEditable(row.type);
           return (
             <div className="inline-flex items-center gap-2">
               {postEditable && (

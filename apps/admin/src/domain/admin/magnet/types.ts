@@ -20,6 +20,18 @@ export const MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
 export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
   MANAGEABLE_MAGNET_TYPES.includes(type);
 
+/** 글 관리 페이지에 접근 가능한 타입 (manageable + 출시알림 + 이벤트) */
+export const POST_EDITABLE_MAGNET_TYPES: MagnetTypeKey[] = [
+  'MATERIAL',
+  'VOD',
+  'FREE_TEMPLATE',
+  'LAUNCH_ALERT',
+  'EVENT',
+];
+
+export const isMagnetPostEditable = (type: MagnetTypeKey): boolean =>
+  POST_EDITABLE_MAGNET_TYPES.includes(type);
+
 /** 노출시작일/종료일/노출여부를 관리할 수 있는 타입 (manageable + 출시알림) */
 const VISIBILITY_MANAGEABLE_TYPES: MagnetTypeKey[] = [
   ...MANAGEABLE_MAGNET_TYPES,
