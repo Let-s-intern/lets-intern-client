@@ -132,7 +132,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           : ('ul' as keyof JSX.IntrinsicElements);
       return (
         <ListTag
-          className={clsx({
+          className={clsx('pl-1', {
             'list-disc': _node.listType === 'bullet',
             'list-decimal': _node.listType === 'number',
             'list-none': _node.listType === 'check',
