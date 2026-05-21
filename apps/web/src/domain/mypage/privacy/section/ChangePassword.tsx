@@ -1,13 +1,20 @@
+/**
+ * 비밀번호 변경 섹션. 디자인 시스템 import:
+ *   - EditConfirmDialog: 변경 직전 confirm 다이얼로그
+ *   - useToast: 변경 결과/검증 에러 알림 (success 1 + error 4)
+ * 둘 다 @letscareer/ui에서만 import. raw alert/confirm 직접 사용 금지.
+ */
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { EditConfirmDialog } from '@letscareer/ui';
+import { EditConfirmDialog, useToast } from '@letscareer/ui';
 import { AxiosError } from 'axios';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
 
 const ChangePassword = () => {
+  const toast = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [passwordInfo, setPasswordInfo] = useState<{
     password: string;
@@ -28,7 +35,7 @@ const ChangePassword = () => {
       return res.data;
     },
     onSuccess: async () => {
-      alert('비밀번호가 변경되었습니다.');
+      toast.success('비밀번호가 변경되었습니다');
       setPasswordInfo({
         password: '',
         newPassword: '',
@@ -39,9 +46,9 @@ const ChangePassword = () => {
       const error = _error as AxiosError;
       const status = (error.response?.data as { status: number })?.status;
       if (status === 400) {
-        alert('기존 비밀번호가 올바르지 않습니다.');
+        toast.error('기존 비밀번호가 올바르지 않습니다');
       } else {
-        alert('비밀번호 변경에 실패했습니다.');
+        toast.error('비밀번호 변경에 실패했습니다');
       }
     },
   });
@@ -55,10 +62,10 @@ const ChangePassword = () => {
 
   const handleSubmit = () => {
     if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
+      toast.error('비밀번호가 일치하지 않습니다');
       return;
     } else if (passwordInfo.password === passwordInfo.newPassword) {
-      alert('기존 비밀번호와 새로운 비밀번호가 같습니다.');
+      toast.error('기존 비밀번호와 새로운 비밀번호가 같습니다');
       return;
     }
     setConfirmOpen(true);

@@ -30,6 +30,21 @@ jest.mock('@/api/user/user', () => {
   };
 });
 
+// useToast는 BasicInfo 외부에서 발화 사실만 검증하면 충분하므로 spy로 대체.
+const toastSuccessMock = jest.fn();
+const toastErrorMock = jest.fn();
+jest.mock('@letscareer/ui', () => {
+  const actual = jest.requireActual('@letscareer/ui');
+  return {
+    ...actual,
+    useToast: () => ({
+      success: toastSuccessMock,
+      error: toastErrorMock,
+      toast: jest.fn(),
+    }),
+  };
+});
+
 import BasicInfo from './BasicInfo';
 
 function renderBasicInfo() {
@@ -47,8 +62,8 @@ describe('BasicInfo confirm', () => {
   beforeEach(() => {
     patchMock.mockReset();
     patchMock.mockResolvedValue({ data: {} });
-    // alert는 jsdom 미구현이라 stub.
-    window.alert = jest.fn();
+    toastSuccessMock.mockReset();
+    toastErrorMock.mockReset();
   });
 
   it('수정하기 버튼 클릭 시 EditConfirmDialog가 노출된다', async () => {
@@ -104,5 +119,51 @@ describe('BasicInfo confirm', () => {
         }),
       );
     });
+  });
+});
+
+describe('BasicInfo toast', () => {
+  beforeEach(() => {
+    patchMock.mockReset();
+    toastSuccessMock.mockReset();
+    toastErrorMock.mockReset();
+  });
+
+  it('mutation 성공 시 toast.success가 호출된다', async () => {
+    const user = userEvent.setup();
+    patchMock.mockResolvedValue({ data: {} });
+    renderBasicInfo();
+
+    await user.click(
+      screen.getByRole('button', { name: '기본 정보 수정하기' }),
+    );
+    await screen.findByText('기본 정보를 수정하시겠어요?');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    await waitFor(() => {
+      expect(toastSuccessMock).toHaveBeenCalledWith('정보가 수정되었습니다');
+    });
+    expect(toastErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('mutation 실패 시 toast.error가 호출된다', async () => {
+    const user = userEvent.setup();
+    patchMock.mockRejectedValue(new Error('서버 오류'));
+    // console.error 호출을 가린다 (BasicInfo onError에서 호출)
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    renderBasicInfo();
+
+    await user.click(
+      screen.getByRole('button', { name: '기본 정보 수정하기' }),
+    );
+    await screen.findByText('기본 정보를 수정하시겠어요?');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith('정보 수정에 실패했습니다');
+    });
+    consoleErrorSpy.mockRestore();
   });
 });

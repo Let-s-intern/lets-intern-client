@@ -1,7 +1,13 @@
+/**
+ * 기본 정보 수정 섹션. 디자인 시스템 import:
+ *   - EditConfirmDialog: 수정 직전 confirm 다이얼로그
+ *   - useToast: 수정 결과 알림 (success 1 + error 1)
+ * 둘 다 @letscareer/ui에서만 import. raw alert/confirm 직접 사용 금지.
+ */
 import { useEffect, useState } from 'react';
 
 import { useUserQuery, useUserQueryKey } from '@/api/user/user';
-import { EditConfirmDialog } from '@letscareer/ui';
+import { EditConfirmDialog, useToast } from '@letscareer/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
@@ -17,6 +23,7 @@ interface BasicInfoValue {
 
 const BasicInfo = () => {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const [user, setUser] = useState<BasicInfoValue>({
     name: '',
@@ -45,11 +52,11 @@ const BasicInfo = () => {
       return res.data;
     },
     onSuccess: async () => {
-      alert('정보가 수정되었습니다.');
+      toast.success('정보가 수정되었습니다');
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
     },
     onError: (error) => {
-      alert('정보 수정에 실패했습니다.');
+      toast.error('정보 수정에 실패했습니다');
       console.error(error);
     },
   });
