@@ -13,6 +13,8 @@ import {
 } from './index';
 import { ConfirmDialog } from './ConfirmDialog';
 import { ConfirmProvider } from './ConfirmProvider';
+import { EditConfirmDialog } from './EditConfirmDialog';
+import { DangerConfirmDialog } from './DangerConfirmDialog';
 import { useConfirm } from './useConfirm';
 
 function BasicAlertDialog({
@@ -262,5 +264,193 @@ describe('ConfirmProvider + useConfirm', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => render(<Bad />)).toThrow(/ConfirmProvider/);
     spy.mockRestore();
+  });
+});
+
+describe('EditConfirmDialog', () => {
+  it('variant=default이 강제되어 destructive 마커가 적용되지 않는다', () => {
+    render(
+      <EditConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="기본 정보를 수정하시겠어요?"
+        onConfirm={() => {}}
+      />,
+    );
+    const action = screen.getByText('수정');
+    expect(action).toHaveAttribute('data-variant', 'default');
+    expect(action.className).not.toContain('bg-red-500');
+  });
+
+  it('confirmLabel 기본값은 "수정"이다', () => {
+    render(
+      <EditConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="제목"
+        onConfirm={() => {}}
+      />,
+    );
+    expect(screen.getByText('수정')).toBeInTheDocument();
+  });
+
+  it('confirmLabel을 명시하면 그대로 사용된다', () => {
+    render(
+      <EditConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="제목"
+        confirmLabel="변경"
+        onConfirm={() => {}}
+      />,
+    );
+    expect(screen.getByText('변경')).toBeInTheDocument();
+  });
+});
+
+describe('DangerConfirmDialog', () => {
+  it('variant=destructive가 강제 적용된다', () => {
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="정말 삭제하시겠어요?"
+        confirmLabel="삭제"
+        onConfirm={() => {}}
+      />,
+    );
+    const action = screen.getByRole('button', { name: '삭제' });
+    expect(action).toHaveAttribute('data-variant', 'destructive');
+    expect(action.className).toContain('bg-red-500');
+  });
+
+  it('requireTypedConfirmation 없을 때는 일반 destructive confirm처럼 동작한다', async () => {
+    const onConfirm = vi.fn();
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="정말 삭제하시겠어요?"
+        confirmLabel="삭제"
+        onConfirm={onConfirm}
+      />,
+    );
+    // input 미노출
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    // 클릭 시 onConfirm 호출
+    await userEvent.click(screen.getByRole('button', { name: '삭제' }));
+    expect(onConfirm).toHaveBeenCalled();
+  });
+
+  it('requireTypedConfirmation 있을 때 input 노출 + 일치 안 하면 confirm 비활성', () => {
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="회원 탈퇴 하시겠어요?"
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={() => {}}
+      />,
+    );
+    const input = screen.getByRole('textbox');
+    expect(input).toBeInTheDocument();
+    const action = screen.getByRole('button', { name: '탈퇴' });
+    expect(action).toBeDisabled();
+  });
+
+  it('정확히 일치하면 confirm 활성 → 클릭 시 onConfirm 호출', async () => {
+    const onConfirm = vi.fn();
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="회원 탈퇴 하시겠어요?"
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={onConfirm}
+      />,
+    );
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, '회원탈퇴');
+    const action = screen.getByRole('button', { name: '탈퇴' });
+    expect(action).not.toBeDisabled();
+    await userEvent.click(action);
+    expect(onConfirm).toHaveBeenCalled();
+  });
+
+  it('일치 후 다시 일치 안 하게 입력 변경하면 다시 비활성화', async () => {
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="회원 탈퇴 하시겠어요?"
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={() => {}}
+      />,
+    );
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, '회원탈퇴');
+    const action = screen.getByRole('button', { name: '탈퇴' });
+    expect(action).not.toBeDisabled();
+    await userEvent.type(input, 'x');
+    expect(action).toBeDisabled();
+  });
+
+  it('다이얼로그 재오픈 시 input이 초기화된다', async () => {
+    function Harness() {
+      const [open, setOpen] = React.useState(true);
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>
+            reopen
+          </button>
+          <DangerConfirmDialog
+            open={open}
+            onOpenChange={setOpen}
+            title="회원 탈퇴 하시겠어요?"
+            confirmLabel="탈퇴"
+            requireTypedConfirmation="회원탈퇴"
+            onConfirm={() => {}}
+          />
+        </>
+      );
+    }
+    render(<Harness />);
+
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    await userEvent.type(input, '회원탈퇴');
+    expect(input.value).toBe('회원탈퇴');
+
+    // 다이얼로그 닫기
+    await userEvent.click(screen.getByRole('button', { name: '취소' }));
+    await waitFor(() => {
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    // 재오픈
+    await userEvent.click(screen.getByRole('button', { name: 'reopen' }));
+    const newInput = (await screen.findByRole('textbox')) as HTMLInputElement;
+    expect(newInput.value).toBe('');
+  });
+
+  it('input 미입력 상태에서는 confirm 버튼 disabled (onConfirm 미호출)', async () => {
+    const onConfirm = vi.fn();
+    render(
+      <DangerConfirmDialog
+        open={true}
+        onOpenChange={() => {}}
+        title="회원 탈퇴 하시겠어요?"
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={onConfirm}
+      />,
+    );
+    const action = screen.getByRole('button', { name: '탈퇴' });
+    expect(action).toBeDisabled();
+    // disabled 상태에서 클릭해도 onConfirm 미호출
+    await userEvent.click(action);
+    expect(onConfirm).not.toHaveBeenCalled();
   });
 });
