@@ -31,7 +31,8 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": []
+      "dependsOn": [],
+      "env": ["NEXT_PUBLIC_*", "VITE_*"]
     },
     "dev:prod": {
       "cache": false,
