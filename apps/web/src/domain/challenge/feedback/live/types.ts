@@ -14,27 +14,17 @@ export interface SelectedSlot {
 }
 
 // 라이브 피드백 미션 상태 코드
-export type LiveFeedbackStatus =
-  | 'prev'
-  | 'canceled'
-  | 'reserved'
-  | 'changed'
-  | 'done'
-  | 'expired';
+export type LiveFeedbackStatus = 'prev' | 'reserved' | 'done' | 'expired';
 
-export interface Mentor {
-  nickname: string;
-  introduction: string;
-  profileImgUrl: string;
-}
+import type { ChallengeMentorInfo } from '@/api/feedback/feedbackSchema';
+export type Mentor = ChallengeMentorInfo;
 
-// 확정된 예약 정보
+// 확정된 예약 정보 (GET /feedback/{feedbackId} 응답 기준)
 export interface Reservation {
-  reservationId: string;
-  scheduledDate: string | null; // 'YYYY-MM-DD' — canceled 상태에서는 null
-  scheduledTime: string | null; // '09:00'      — canceled 상태에서는 null
-  previousScheduledDate?: string; // 변경/취소 전 날짜 (changed, canceled)
-  previousScheduledTime?: string; // 변경/취소 전 시간 (changed, canceled)
+  feedbackId: number;
+  startDate: string; // ISO datetime
+  endDate: string; // ISO datetime
+  meetingUrl: string | null;
 }
 
 // 라이브 피드백 미션 데이터
@@ -42,7 +32,6 @@ export interface LiveFeedbackMission {
   id: number;
   thumbnail: string;
   title: string;
-  description?: string;
   status: LiveFeedbackStatus;
   challengeType: string;
   missionNumber: number;

@@ -31,12 +31,8 @@ const LiveFeedbackPage = () => {
     [pathname, router],
   );
 
-  const needReservation = missions.filter(
-    (m) => m.status === 'prev' || m.status === 'canceled',
-  );
-  const reserved = missions.filter(
-    (m) => m.status === 'reserved' || m.status === 'changed',
-  );
+  const needReservation = missions.filter((m) => m.status === 'prev');
+  const reserved = missions.filter((m) => m.status === 'reserved');
   const done = missions.filter((m) => m.status === 'done');
   const expired = missions.filter((m) => m.status === 'expired');
 

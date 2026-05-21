@@ -8,9 +8,7 @@ import { useParams } from 'next/navigation';
 
 const HEADER_TITLE: Record<LiveFeedbackStatus, string> = {
   prev: 'LIVE 피드백 예약하기',
-  canceled: 'LIVE 피드백 신청 정보',
   reserved: 'LIVE 피드백 신청 정보',
-  changed: 'LIVE 피드백 신청 정보',
   done: 'LIVE 피드백 회고하기',
   expired: 'LIVE 피드백',
 };

@@ -36,14 +36,17 @@ const LiveFeedbackDetail = ({
   };
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
+    const start = new Date(`${selectedSlot.date}T${selectedSlot.time}:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
     setReservation({
-      reservationId: `reservation-${selectedSlot.date}-${selectedSlot.time}`,
-      scheduledDate: selectedSlot.date,
-      scheduledTime: selectedSlot.time,
+      feedbackId: 0, // POST 예약 API 연동 시 실제 ID로 교체
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+      meetingUrl: null,
     });
   };
 
-  const showScheduleSection = status === 'prev' || status === 'canceled';
+  const showScheduleSection = status === 'prev';
 
   return (
     <div className="flex flex-col">
