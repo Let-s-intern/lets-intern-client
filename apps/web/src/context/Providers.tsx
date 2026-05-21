@@ -1,7 +1,7 @@
 'use client';
 
 import SentryUserSync from '@/context/SentryUserSync';
-import { ConfirmProvider } from '@letscareer/ui';
+import { ConfirmProvider, Toaster } from '@letscareer/ui';
 import {
   QueryCache,
   QueryClient,
@@ -41,7 +41,9 @@ const Providers: React.FC<{
   return (
     <QueryClientProvider client={queryClient}>
       <SentryUserSync />
-      <ConfirmProvider>{children}</ConfirmProvider>
+      <ConfirmProvider>
+        <Toaster>{children}</Toaster>
+      </ConfirmProvider>
     </QueryClientProvider>
   );
 };
