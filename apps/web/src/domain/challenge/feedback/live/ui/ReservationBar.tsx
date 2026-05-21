@@ -28,7 +28,7 @@ const ReservationBar = ({
   const [isChecked, setIsChecked] = useState(false);
 
   const timeText = selectedSlot
-    ? formatReservationTime(selectedSlot.date, selectedSlot.time)
+    ? formatReservationTime(`${selectedSlot.date}T${selectedSlot.time}:00`)
     : '피드백 시간을 선택해주세요';
 
   return (
@@ -132,7 +132,7 @@ const ReservationBar = ({
           <>
             <span>
               선택하신 피드백 일정은
-              <b>{` ${formatReservationTime(selectedSlot.date, selectedSlot.time)}`}</b>
+              <b>{` ${formatReservationTime(`${selectedSlot.date}T${selectedSlot.time}:00`)}`}</b>
               입니다.
             </span>
             <span>예약 확정 이후에는 피드백 일정 변경이 불가합니다.</span>

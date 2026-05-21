@@ -29,29 +29,35 @@ const LiveFeedbackDetail = ({
     initialReservation,
   );
 
+  const mentor: Mentor = assignedMentor ?? {
+    nickname: '멘토',
+    introduction: '멘토 정보를 불러오는 중입니다.',
+    profileImgUrl: '',
+  };
+
   const handleConfirm = (selectedSlot: SelectedSlot) => {
-    if (!assignedMentor) return;
+    const start = new Date(`${selectedSlot.date}T${selectedSlot.time}:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
     setReservation({
-      reservationId: `reservation-${assignedMentor.id}-${selectedSlot.date}-${selectedSlot.time}`,
-      scheduledDate: selectedSlot.date,
-      scheduledTime: selectedSlot.time,
+      feedbackId: 0, // POST 예약 API 연동 시 실제 ID로 교체
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+      meetingUrl: null,
     });
   };
 
-  if (!assignedMentor) return null;
-
-  const showScheduleSection = status === 'prev' || status === 'canceled';
+  const showScheduleSection = status === 'prev';
 
   return (
     <div className="flex flex-col">
       <ReservationInfoSection
-        mentor={assignedMentor}
+        mentor={mentor}
         reservation={reservation}
         status={status}
       />
       {showScheduleSection && (
         <ReservationScheduleSection
-          mentor={assignedMentor}
+          mentorName={mentor.nickname}
           period={period}
           onConfirm={handleConfirm}
         />

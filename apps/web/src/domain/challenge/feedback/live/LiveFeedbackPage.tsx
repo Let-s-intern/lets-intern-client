@@ -1,96 +1,67 @@
 'use client';
 
-import { DUMMY_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
-import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
-import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
-import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
-import {
-  LIVE_FEEDBACK_BUTTON_LABELS,
-  LIVE_FEEDBACK_SECTIONS,
-  toCardConfig,
-} from '@/domain/challenge/feedback/live/utils';
-import { usePathname, useRouter } from 'next/navigation';
-import { useCallback } from 'react';
-
-interface SectionProps {
-  label: string;
-  missions: LiveFeedbackMission[];
-  emptyMessage: string;
-  onMobileClick: (mission: LiveFeedbackMission) => void;
-}
-
-function LiveFeedbackSection({
-  label,
-  missions,
-  emptyMessage,
-  onMobileClick,
-}: SectionProps) {
-  return (
-    <section className="flex flex-col gap-6">
-      <h1 className="text-lg font-semibold">{label}</h1>
-      {missions.length === 0 ? (
-        <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
-            {emptyMessage}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
-          {missions.map((mission) => {
-            const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
-            return (
-              <FeedbackMissionCard
-                key={mission.id}
-                config={toCardConfig(mission)}
-                buttonLabel={labels?.buttonLabel}
-                openLabel={labels?.openLabel}
-                onClick={() => onMobileClick(mission)}
-              >
-                <LiveFeedbackDetail
-                  assignedMentor={mission.assignedMentor}
-                  period={{
-                    startDay: mission.startDay,
-                    endDay: mission.endDay,
-                  }}
-                  reservationInfo={mission.reservationInfo}
-                  status={mission.status}
-                />
-              </FeedbackMissionCard>
-            );
-          })}
-        </div>
-      )}
-    </section>
-  );
-}
+import { useLiveFeedbackListQuery } from '@/api/feedback/feedback';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import LiveFeedbackSection from '@/domain/challenge/feedback/live/section/LiveFeedbackSection';
+import { toMission } from '@/domain/challenge/feedback/live/utils';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
+import type { LiveFeedbackMission } from './types';
 
 const LiveFeedbackPage = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { programId } = useParams<{ programId: string }>();
+  const { currentChallenge } = useCurrentChallenge();
+
+  const { data } = useLiveFeedbackListQuery(programId);
+
+  const missions = useMemo(
+    () =>
+      (data?.liveFeedbackList ?? []).map((item, index) =>
+        toMission(item, index, currentChallenge?.challengeType ?? ''),
+      ),
+    [data, currentChallenge?.challengeType],
+  );
 
   const handleMobileClick = useCallback(
     (mission: LiveFeedbackMission) => {
-      const index = DUMMY_FEEDBACK_MISSIONS.findIndex(
-        (m) => m.id === mission.id,
-      );
-      router.push(`${pathname}/${index}`);
+      router.push(`${pathname}/${mission.id}`);
     },
     [pathname, router],
   );
 
+  const needReservation = missions.filter((m) => m.status === 'prev');
+  const reserved = missions.filter((m) => m.status === 'reserved');
+  const done = missions.filter((m) => m.status === 'done');
+  const expired = missions.filter((m) => m.status === 'expired');
+
   return (
     <div className="flex flex-col gap-10">
-      {LIVE_FEEDBACK_SECTIONS.map(({ statuses, label, emptyMessage }) => (
-        <LiveFeedbackSection
-          key={statuses.join(',')}
-          label={label}
-          missions={DUMMY_FEEDBACK_MISSIONS.filter((m) =>
-            statuses.includes(m.status),
-          )}
-          emptyMessage={emptyMessage}
-          onMobileClick={handleMobileClick}
-        />
-      ))}
+      <LiveFeedbackSection
+        label="예약 필요"
+        missions={needReservation}
+        emptyMessage="예약 필요한 미션이 없어요."
+        onMobileClick={handleMobileClick}
+      />
+      <LiveFeedbackSection
+        label="예약 완료"
+        missions={reserved}
+        emptyMessage="예약 완료된 미션이 없어요."
+        onMobileClick={handleMobileClick}
+      />
+      <LiveFeedbackSection
+        label="피드백 완료"
+        missions={done}
+        emptyMessage="피드백 완료된 미션이 없어요."
+        onMobileClick={handleMobileClick}
+      />
+      <LiveFeedbackSection
+        label="기간 만료"
+        missions={expired}
+        emptyMessage="기간이 만료된 미션이 없어요."
+        onMobileClick={handleMobileClick}
+      />
     </div>
   );
 };
