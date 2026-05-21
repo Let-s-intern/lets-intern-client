@@ -19,10 +19,10 @@ export interface FeedbackMissionCardConfig {
   badge: StatusBadge;
   challengeType: string;
   missionNumber: number;
-  startDay: string;
-  endDay: string;
-  reservationStartDay?: string;
-  reservationEndDay?: string;
+  startDay?: string;
+  endDay?: string;
+  feedbackStartDay: string;
+  feedbackEndDay: string;
   reservationDateTime?: string | null;
 }
 
@@ -89,8 +89,8 @@ const FeedbackMissionCard = ({
     missionNumber,
     startDay,
     endDay,
-    reservationStartDay,
-    reservationEndDay,
+    feedbackStartDay,
+    feedbackEndDay,
     reservationDateTime,
   } = config;
 
@@ -140,9 +140,9 @@ const FeedbackMissionCard = ({
                 </span>
                 <div className="bg-neutral-80 hidden h-4 w-px md:block" />
                 <DateField
-                  label="진행일정"
-                  start={startDay}
-                  end={endDay}
+                  label="피드백 진행일정"
+                  start={feedbackStartDay}
+                  end={feedbackEndDay}
                   className="hidden md:flex"
                 />
               </div>
@@ -168,13 +168,13 @@ const FeedbackMissionCard = ({
                 className="hidden md:flex"
               />
             ) : (
-              reservationStartDay &&
-              reservationEndDay && (
+              startDay &&
+              endDay && (
                 <DateField
                   label="예약기간"
                   highlighted
-                  start={reservationStartDay}
-                  end={reservationEndDay}
+                  start={startDay}
+                  end={endDay}
                   className="hidden md:flex"
                 />
               )
@@ -185,8 +185,8 @@ const FeedbackMissionCard = ({
               <DateField
                 label="진행일정"
                 highlighted
-                start={startDay}
-                end={endDay}
+                start={feedbackStartDay}
+                end={feedbackEndDay}
               />
               {reservationDateTime ? (
                 <DateField
@@ -195,13 +195,13 @@ const FeedbackMissionCard = ({
                   highlighted
                 />
               ) : (
-                reservationStartDay &&
-                reservationEndDay && (
+                startDay &&
+                endDay && (
                   <DateField
                     label="예약기간"
                     highlighted
-                    start={reservationStartDay}
-                    end={reservationEndDay}
+                    start={startDay}
+                    end={endDay}
                   />
                 )
               )}

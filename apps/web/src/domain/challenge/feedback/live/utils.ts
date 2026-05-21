@@ -14,6 +14,13 @@ export function toMission(
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
   const endDay = item.missionEndDate.slice(0, 10);
+  const feedbackStartDay = endDay;
+  const feedbackEndDay = new Date(
+    new Date(item.missionEndDate).getTime() + 3 * 24 * 60 * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 10);
+
   const status: LiveFeedbackStatus =
     item.feedbackId == null
       ? 'prev'
@@ -28,8 +35,8 @@ export function toMission(
     missionNumber: item.missionTh,
     startDay,
     endDay,
-    reservationStartDay: startDay,
-    reservationEndDay: endDay,
+    feedbackStartDay,
+    feedbackEndDay,
     assignedMentor: item.mentorInfo ?? null,
     reservationInfo: null,
   };
@@ -87,10 +94,10 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionNumber,
+    feedbackStartDay: mission.feedbackStartDay,
+    feedbackEndDay: mission.feedbackEndDay,
     startDay: mission.startDay,
     endDay: mission.endDay,
-    reservationStartDay: mission.reservationStartDay,
-    reservationEndDay: mission.reservationEndDay,
     reservationDateTime:
       mission.status === 'reserved'
         ? formatReservationDateTime(mission.reservationInfo?.startDate)

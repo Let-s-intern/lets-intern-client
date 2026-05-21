@@ -35,10 +35,10 @@ export interface LiveFeedbackMission {
   status: LiveFeedbackStatus;
   challengeType: string;
   missionNumber: number;
-  startDay: string; // 'YYYY-MM-DD'
-  endDay: string; // 'YYYY-MM-DD'
-  reservationStartDay: string; // 'YYYY-MM-DD'
-  reservationEndDay: string; // 'YYYY-MM-DD'
+  startDay: string; // 'YYYY-MM-DD' — missionStartDate (예약 가능 기간 시작)
+  endDay: string; // 'YYYY-MM-DD' — missionEndDate (예약 가능 기간 종료)
+  feedbackStartDay: string; // 'YYYY-MM-DD' — missionEndDate (피드백 진행 기간 시작)
+  feedbackEndDay: string; // 'YYYY-MM-DD' — missionEndDate + 3일 (피드백 진행 기간 종료)
   assignedMentor: Mentor | null;
   reservationInfo: Reservation | null;
 }

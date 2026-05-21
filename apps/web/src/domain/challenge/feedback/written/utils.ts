@@ -60,7 +60,7 @@ export function toWrittenCardConfig(mission: WrittenFeedbackMission) {
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionNumber,
-    startDay: mission.startDay,
-    endDay: mission.endDay,
+    feedbackStartDay: mission.startDay,
+    feedbackEndDay: mission.endDay,
   };
 }
