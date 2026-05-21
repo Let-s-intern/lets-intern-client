@@ -5,6 +5,7 @@ const config = {
   presets: [preset],
   content: [
     './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
+    '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
   ],
 };
 
