@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { ConfirmProvider } from '@letscareer/ui';
 import ChangePassword from './ChangePassword';
 
 const patchMock = jest.fn();
@@ -22,9 +21,7 @@ function renderChangePassword() {
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <ConfirmProvider>
-        <ChangePassword />
-      </ConfirmProvider>
+      <ChangePassword />
     </QueryClientProvider>,
   );
 }

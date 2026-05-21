@@ -1,14 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { useConfirm } from '@letscareer/ui';
+import { EditConfirmDialog } from '@letscareer/ui';
 import { AxiosError } from 'axios';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
 
 const ChangePassword = () => {
-  const confirm = useConfirm();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [passwordInfo, setPasswordInfo] = useState<{
     password: string;
     newPassword: string;
@@ -53,7 +53,7 @@ const ChangePassword = () => {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
@@ -61,14 +61,10 @@ const ChangePassword = () => {
       alert('기존 비밀번호와 새로운 비밀번호가 같습니다.');
       return;
     }
-    const ok = await confirm({
-      title: '비밀번호를 변경하시겠어요?',
-      description: '변경 후 새 비밀번호로 다시 로그인해야 할 수 있습니다.',
-      confirmLabel: '변경',
-      cancelLabel: '취소',
-      variant: 'default',
-    });
-    if (!ok) return;
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
     changePassword.mutate();
   };
 
@@ -119,6 +115,14 @@ const ChangePassword = () => {
       <Button className="w-full" onClick={handleSubmit}>
         비밀번호 변경
       </Button>
+      <EditConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="비밀번호를 변경하시겠어요?"
+        description="변경 후 새 비밀번호로 다시 로그인해야 할 수 있습니다."
+        confirmLabel="변경"
+        onConfirm={handleConfirm}
+      />
     </section>
   );
 };
