@@ -12,7 +12,8 @@
     "./*": "./src/*/index.tsx",
     "./Link": "./src/Link/index.tsx",
     "./Image": "./src/Image/index.tsx",
-    "./AlertDialog": "./src/AlertDialog/index.tsx"
+    "./AlertDialog": "./src/AlertDialog/index.tsx",
+    "./Toast": "./src/Toast/index.tsx"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.4",
