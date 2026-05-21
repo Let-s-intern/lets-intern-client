@@ -121,6 +121,12 @@ function ProgramRecommendSection() {
             큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두 채우려면
             이 옵션을 꺼주세요.
           </Typography>
+          {curationCard.visible && programRecommend.list.length > 2 && (
+            <Typography variant="caption" color="warning.main" component="p">
+              ⚠ 현재 추천이 {programRecommend.list.length}개입니다. 사용자
+              페이지에는 처음 2개만 노출됩니다.
+            </Typography>
+          )}
           {curationCard.visible && (
             <div className="mt-3">
               <CurationCardPreview />

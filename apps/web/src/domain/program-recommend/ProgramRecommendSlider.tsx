@@ -111,7 +111,6 @@ function ProgramRecommendSlider({
           <div
             key={trailingSlide.id ?? 'trailing-slide'}
             className="flex w-[262px] flex-col items-center md:w-[312px]"
-            aria-label={trailingSlide.ariaLabel}
           >
             <div
               className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem]"
@@ -138,6 +137,7 @@ function ProgramRecommendSlider({
               )}
               data-url={trailingSlide.to}
               style={buttonStyle}
+              aria-label={trailingSlide.ariaLabel}
               onClick={(e) => {
                 pushDataLayer(
                   trailingSlide,
