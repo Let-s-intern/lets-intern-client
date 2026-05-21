@@ -13,6 +13,10 @@ interface ImportMetaEnv {
   readonly VITE_ZEP_SPACE_NAME?: string;
   readonly VITE_JITSI_BASE_URL?: string;
   readonly VITE_JITSI_FALLBACK_URL?: string;
+  readonly VITE_JITSI_ROOM_SALT?: string;
+  readonly VITE_JITSI_USE_DEV_MOCK?: string;
+  readonly VITE_JITSI_DEV_MOCK_FEEDBACK_ID?: string;
+  readonly VITE_API_MOCKING?: string;
 }
 
 interface ImportMeta {

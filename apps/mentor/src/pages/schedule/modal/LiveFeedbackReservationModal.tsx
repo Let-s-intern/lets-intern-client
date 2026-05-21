@@ -91,36 +91,32 @@ const LiveFeedbackReservationModal = ({
 
   const countdown = useFeedbackCountdown(startIso, endIso);
 
-  // Jitsi 메타데이터 — 멘티 측과 동일한 입력값으로 URL을 합성해 같은 방에 모인다.
-  // missionName은 멘토 schedule 컨텍스트에 미존재(BE 미배포): 임시 placeholder 사용
-  // → BE 메모: .claude/tasks/memos/be-request-jitsi-mentor-meta.md
+  // Jitsi 메타데이터 — `feedbackId`만 사용 (양측 BE 공통 필드).
+  // 양측이 동일한 salt(env)와 feedbackId를 가지면 동일 방 URL로 수렴.
+  // TODO(통합 QA 후 제거): dev mock 분기 — 양측 .env에 같은 mock id 박으면 테스트 가능
+  const devMockEnabled = import.meta.env.VITE_JITSI_USE_DEV_MOCK === 'true';
+  const devMockFeedbackId = Number(
+    import.meta.env.VITE_JITSI_DEV_MOCK_FEEDBACK_ID ?? 999999,
+  );
+  const effectiveFeedbackId = devMockEnabled ? devMockFeedbackId : feedbackId;
+
   const jitsiMeta: JitsiMeta | null = useMemo(() => {
-    if (!startIso) return null;
-    if (!selectedBar?.liveFeedback) return null;
-    if (feedbackId == null) return null;
-    return {
-      challengeName: selectedBar.challengeTitle,
-      // TODO(BE): feedbackDetail.missionTitle로 교체. 현재는 placeholder라 멘티 측과 URL 불일치 가능
-      missionName: `${selectedBar.th}회차 라이브 피드백`,
-      menteeName: selectedBar.liveFeedback.menteeName,
-      startDate: startIso,
-      feedbackId,
-    };
-  }, [
-    startIso,
-    selectedBar?.challengeTitle,
-    selectedBar?.th,
-    selectedBar?.liveFeedback,
-    feedbackId,
-  ]);
+    if (effectiveFeedbackId == null) return null;
+    return { feedbackId: effectiveFeedbackId };
+  }, [effectiveFeedbackId]);
 
   // 프론트 합성 URL — resolveLiveFeedbackAccess의 첫 인자 의미가 변경됨
   // ("BE가 내려준 URL" → "프론트가 만든 URL or null")
   const baseUrl = import.meta.env.VITE_JITSI_BASE_URL;
+  const salt = import.meta.env.VITE_JITSI_ROOM_SALT;
   const meetingUrl = useMemo(() => {
-    if (!jitsiMeta || !baseUrl) return null;
-    return buildJitsiRoomUrl({ baseUrl, ...jitsiMeta });
-  }, [baseUrl, jitsiMeta]);
+    if (!jitsiMeta || !baseUrl || !salt) return null;
+    return buildJitsiRoomUrl({
+      baseUrl,
+      feedbackId: jitsiMeta.feedbackId,
+      salt,
+    });
+  }, [baseUrl, salt, jitsiMeta]);
 
   if (!bar || !selectedBar) return null;
 
@@ -453,6 +449,7 @@ const LiveFeedbackReservationModal = ({
           isOpen={isJitsiOpen}
           onClose={() => setIsJitsiOpen(false)}
           meta={jitsiMeta}
+          spaceName={selectedBar?.challengeTitle}
         />
       )}
     </>
