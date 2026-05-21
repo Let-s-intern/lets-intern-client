@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_ZEP_SPACE_URL?: string;
   readonly VITE_ZEP_ENTRY_CODE?: string;
   readonly VITE_ZEP_SPACE_NAME?: string;
+  readonly VITE_JITSI_BASE_URL?: string;
+  readonly VITE_JITSI_FALLBACK_URL?: string;
 }
 
 interface ImportMeta {
