@@ -81,6 +81,19 @@ const useAuthStore = create(
     },
     {
       name: 'userLoginStatus',
+      version: 1,
+      // 옛 스키마(version 0: {isLoggedIn, accessToken?, refreshToken?}) 좀비 상태 정리.
+      // 신 스키마(version 1)는 그대로 통과. 그 외 비정상 케이스는 안전하게 nuke.
+      migrate: (persisted, version) => {
+        if (version === 1) {
+          return persisted as AuthStore;
+        }
+        // version === 0 또는 미상: 옛 스키마이므로 강제 로그아웃 상태로 초기화.
+        return {
+          ...emptyTokens,
+          isInitialized: false,
+        } as unknown as AuthStore;
+      },
       onRehydrateStorage: () => (state) => {
         state?.setInitialized(true);
 
@@ -88,18 +101,26 @@ const useAuthStore = create(
           return;
         }
 
-        if (
+        const hasValidTokens =
           state.accessToken &&
           state.refreshToken &&
           typeof state.accessTokenExpiresAt === 'number' &&
-          typeof state.refreshTokenExpiresAt === 'number'
-        ) {
+          typeof state.refreshTokenExpiresAt === 'number';
+
+        if (hasValidTokens) {
           state.setToken({
-            accessToken: state.accessToken,
-            refreshToken: state.refreshToken,
-            accessTokenExpiresAt: state.accessTokenExpiresAt,
-            refreshTokenExpiresAt: state.refreshTokenExpiresAt,
+            accessToken: state.accessToken as string,
+            refreshToken: state.refreshToken as string,
+            accessTokenExpiresAt: state.accessTokenExpiresAt as number,
+            refreshTokenExpiresAt: state.refreshTokenExpiresAt as number,
           });
+        } else if (
+          state.isLoggedIn ||
+          state.accessToken ||
+          state.refreshToken
+        ) {
+          // 좀비 상태(로그인 표시는 있는데 expiresAt 누락 등) 강제 초기화.
+          state.logout();
         }
 
         consumeSsoHashIfPresent(state);
