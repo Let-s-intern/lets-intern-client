@@ -99,28 +99,31 @@ const LoginContent = () => {
 
       if (status === 400 || status === 404) {
         // 자격증명 불일치 — 입력 자체 문제. 인라인 + toast 동시 노출.
+        // 서버는 이메일/비밀번호 중 무엇이 틀렸는지 구분해주지 않으므로 중립 문구 사용.
         const inlineText = '이메일 또는 비밀번호가 일치하지 않습니다.';
         setErrorMessage(inlineText);
-        toast.error('비밀번호가 틀렸습니다', {
+        toast.error('로그인 정보가 올바르지 않습니다', {
           description: '입력하신 이메일과 비밀번호를 다시 확인해주세요.',
         });
       } else if (status === 401) {
         toast.error('인증에 실패했습니다', {
-          description: '다시 시도해주세요. 문제가 계속되면 비밀번호 찾기를 이용해주세요.',
+          description:
+            '다시 시도해주세요. 문제가 계속되면 비밀번호 찾기를 이용해주세요.',
         });
       } else if (status === 429) {
         toast.error('잠시 후 다시 시도해주세요', {
-          description: '로그인 시도가 너무 많아요. 잠시 뒤에 다시 시도해주세요.',
+          description:
+            '로그인 시도가 너무 많아요. 잠시 뒤에 다시 시도해주세요.',
         });
       } else if (status && status >= 500) {
         toast.error('서버에 일시적인 문제가 발생했어요', {
-          description: '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
+          description:
+            '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
         });
       } else {
         toast.error('로그인에 실패했습니다', {
           description:
-            serverMessage ??
-            '네트워크 상태를 확인하고 다시 시도해주세요.',
+            serverMessage ?? '네트워크 상태를 확인하고 다시 시도해주세요.',
         });
       }
 

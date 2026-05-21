@@ -50,15 +50,21 @@ const ChangePassword = () => {
       const serverMessage = (error.response?.data as { message?: string })
         ?.message;
 
-      // 백엔드는 두 가지 400을 message로만 구분한다.
-      //   - MISMATCH_PASSWORD: "비밀번호가 일치하지 않습니다." (기존 비번 불일치)
+      // TODO(BE 협의): 현재 백엔드는 두 가지 400을 한국어 message 문구로만 구분한다.
       //   - INVALID_PASSWORD:  "비밀번호 형식이 잘못되었습니다." (새 비번 정규식 위반)
-      if (status === 400 && serverMessage?.includes('형식')) {
+      //   - MISMATCH_PASSWORD: "비밀번호가 일치하지 않습니다." (기존 비번 불일치)
+      // 문구가 변경되면 즉시 분기 로직이 깨지므로, 추후 BE에 error code 필드
+      // (예: { code: "INVALID_PASSWORD_FORMAT" | "PASSWORD_MISMATCH" })를
+      // 요청하여 코드 기반 분기로 전환해야 한다.
+      // 매칭 키워드는 한 곳에 모아 향후 교체 시 변경 지점을 최소화한다.
+      const INVALID_FORMAT_KEYWORD = '형식';
+      const MISMATCH_KEYWORD = '일치';
+      if (status === 400 && serverMessage?.includes(INVALID_FORMAT_KEYWORD)) {
         toast.error('새 비밀번호 형식이 올바르지 않아요', {
           description:
             '8자 이상이며 특수문자(!@#$ 등)를 최소 1개 포함해야 합니다.',
         });
-      } else if (status === 400 && serverMessage?.includes('일치')) {
+      } else if (status === 400 && serverMessage?.includes(MISMATCH_KEYWORD)) {
         toast.error('기존 비밀번호가 일치하지 않아요', {
           description: '입력하신 기존 비밀번호를 다시 확인해주세요.',
         });
@@ -73,11 +79,13 @@ const ChangePassword = () => {
         });
       } else if (status === 429) {
         toast.error('잠시 후 다시 시도해주세요', {
-          description: '비밀번호 변경 시도가 너무 잦아요. 잠시 뒤에 다시 시도해주세요.',
+          description:
+            '비밀번호 변경 시도가 너무 잦아요. 잠시 뒤에 다시 시도해주세요.',
         });
       } else if (status && status >= 500) {
         toast.error('서버에 일시적인 문제가 발생했어요', {
-          description: '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
+          description:
+            '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
         });
       } else {
         toast.error('비밀번호 변경에 실패했어요', {
@@ -102,7 +110,8 @@ const ChangePassword = () => {
       !passwordInfo.confirmPassword
     ) {
       toast.error('모든 항목을 입력해주세요', {
-        description: '기존 비밀번호, 새 비밀번호, 비밀번호 확인을 모두 채워주세요.',
+        description:
+          '기존 비밀번호, 새 비밀번호, 비밀번호 확인을 모두 채워주세요.',
       });
       return;
     }

@@ -175,7 +175,10 @@ describe('BasicInfo toast', () => {
   it('mutation 실패(400) 시 입력값 검증 toast가 호출된다', async () => {
     const user = userEvent.setup();
     patchMock.mockRejectedValue({
-      response: { status: 400, data: { message: '이메일 형식이 잘못되었습니다.' } },
+      response: {
+        status: 400,
+        data: { message: '이메일 형식이 잘못되었습니다.' },
+      },
       isAxiosError: true,
     });
     const consoleErrorSpy = jest

@@ -20,7 +20,8 @@
     "@radix-ui/react-toast": "^1.2.4"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=18",
+    "react-dom": ">=18"
   },
   "devDependencies": {
     "@letscareer/tsconfig": "workspace:*",

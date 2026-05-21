@@ -262,7 +262,7 @@ export const useUserQuery = ({
   return useQuery({
     ...userQueryOptions,
     ...options,
-    enabled: options.enabled ?? isLoggedIn,
+    enabled: (options.enabled ?? true) && isLoggedIn,
   });
 };
 
@@ -277,7 +277,7 @@ export const useGetUserAdmin = ({
       return isAdminSchema.parse(res.data.data);
     },
     ...options,
-    enabled: options.enabled ?? isLoggedIn,
+    enabled: (options.enabled ?? true) && isLoggedIn,
   });
 };
 

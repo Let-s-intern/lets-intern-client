@@ -49,6 +49,9 @@ export function DangerConfirmDialog({
   ...rest
 }: DangerConfirmDialogProps) {
   const [typed, setTyped] = React.useState('');
+  // 한 페이지에 여러 DangerConfirmDialog가 동시에 존재해도 label/input 매칭이
+  // 어긋나지 않도록 인스턴스마다 고유 id를 생성한다.
+  const inputId = React.useId();
 
   // 다이얼로그가 닫힐 때 input 값 초기화 (재오픈 시 빈 값으로 시작)
   React.useEffect(() => {
@@ -60,11 +63,11 @@ export function DangerConfirmDialog({
 
   const extra = requireTypedConfirmation ? (
     <div>
-      <label htmlFor="danger-confirm-typed-input" className={LABEL_CLASSES}>
+      <label htmlFor={inputId} className={LABEL_CLASSES}>
         확인을 위해 &lsquo;{requireTypedConfirmation}&rsquo;를 입력해주세요.
       </label>
       <input
-        id="danger-confirm-typed-input"
+        id={inputId}
         type="text"
         className={INPUT_CLASSES}
         value={typed}

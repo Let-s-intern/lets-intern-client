@@ -81,8 +81,7 @@ const BasicInfo = () => {
       } else {
         toast.error('기본 정보를 저장하지 못했어요', {
           description:
-            serverMessage ??
-            '네트워크 상태를 확인하고 다시 시도해주세요.',
+            serverMessage ?? '네트워크 상태를 확인하고 다시 시도해주세요.',
         });
       }
       console.error(error);

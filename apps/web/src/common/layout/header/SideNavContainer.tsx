@@ -15,7 +15,7 @@ interface Props {
 }
 
 function SideNavContainer({ children, isOpen, onClose }: Props) {
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });

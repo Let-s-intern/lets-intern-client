@@ -39,9 +39,7 @@ describe('SideNavContainer 로그아웃 confirm', () => {
 
     await user.click(screen.getByRole('button', { name: '로그아웃' }));
 
-    expect(
-      await screen.findByText('로그아웃 하시겠어요?'),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('로그아웃 하시겠어요?')).toBeInTheDocument();
     expect(
       screen.getByText('진행 중인 작업이 있다면 저장한 뒤에 진행해주세요.'),
     ).toBeInTheDocument();
@@ -56,7 +54,9 @@ describe('SideNavContainer 로그아웃 confirm', () => {
     await user.click(screen.getByRole('button', { name: '취소' }));
 
     await waitFor(() => {
-      expect(screen.queryByText('로그아웃 하시겠어요?')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('로그아웃 하시겠어요?'),
+      ).not.toBeInTheDocument();
     });
     expect(logoutAndRefreshPageMock).not.toHaveBeenCalled();
   });

@@ -77,9 +77,7 @@ describe('회원 탈퇴 confirm', () => {
 
     // destructive variant 적용 확인
     const dialog = screen.getByRole('alertdialog');
-    expect(
-      dialog.querySelector('[data-variant="destructive"]'),
-    ).not.toBeNull();
+    expect(dialog.querySelector('[data-variant="destructive"]')).not.toBeNull();
   });
 
   it('빈 input 상태에서는 confirm 버튼이 disabled이고 DELETE /user 가 호출되지 않는다', async () => {

@@ -55,6 +55,10 @@ const VIEWPORT_CLASSES =
 const BACKDROP_CLASSES =
   'pointer-events-none fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-200';
 
+// Toast.tsx의 `transition-all duration-200`과 동기. 이 시간 이후 entry를
+// 배열에서 제거해 data-[state=closed] 애니메이션이 끝까지 재생되도록 한다.
+const CLOSE_ANIMATION_DURATION_MS = 200;
+
 export function Toaster({ children }: { children: React.ReactNode }) {
   const [entries, setEntries] = React.useState<ToastEntry[]>([]);
   const nextIdRef = React.useRef(0);
@@ -66,10 +70,19 @@ export function Toaster({ children }: { children: React.ReactNode }) {
 
   const handleOpenChange = React.useCallback((id: number, open: boolean) => {
     if (open) return;
-    setEntries((current) => current.filter((entry) => entry.id !== id));
+    // 1단계: open=false로 표시 → data-state=closed로 전환되며 종료 애니메이션 실행
+    setEntries((current) =>
+      current.map((entry) =>
+        entry.id === id ? { ...entry, open: false } : entry,
+      ),
+    );
+    // 2단계: 애니메이션이 끝난 뒤 DOM에서 완전 제거 (메모리/포커스 트랩 누적 방지)
+    setTimeout(() => {
+      setEntries((current) => current.filter((entry) => entry.id !== id));
+    }, CLOSE_ANIMATION_DURATION_MS);
   }, []);
 
-  const hasActive = entries.length > 0;
+  const hasActive = entries.some((entry) => entry.open);
 
   return (
     <ToastEnqueueContext.Provider value={enqueue}>
