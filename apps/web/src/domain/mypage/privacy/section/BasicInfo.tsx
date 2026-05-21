@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useUserQuery, useUserQueryKey } from '@/api/user/user';
+import { EditConfirmDialog } from '@letscareer/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
@@ -25,6 +26,7 @@ const BasicInfo = () => {
     authProvider: '',
   });
   const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const { data: userData } = useUserQuery();
 
   useEffect(() => {
@@ -96,6 +98,10 @@ const BasicInfo = () => {
   };
 
   const handleSubmit = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
     const newUser = {
       ...user,
       contactEmail: isSameEmail ? user.email : user.contactEmail,
@@ -221,6 +227,13 @@ const BasicInfo = () => {
       <Button onClick={handleSubmit}>
         {!user.contactEmail ? '기본 정보 등록하기' : '기본 정보 수정하기'}
       </Button>
+      <EditConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="기본 정보를 수정하시겠어요?"
+        description="입력한 정보로 변경됩니다."
+        onConfirm={handleConfirm}
+      />
     </section>
   );
 };
