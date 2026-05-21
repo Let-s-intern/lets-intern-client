@@ -1,110 +1,104 @@
 import { useMemo, useState } from 'react';
 
-import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
 import {
-  MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE,
-  MENTOR_OPEN_SCHEDULES_BY_CHALLENGE,
-  type MentorOpenSlot,
-} from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
-import { LIVE_FEEDBACK_MOCK_DATA } from '@/pages/schedule/challenge-content/liveFeedbackMock';
+  useCreateFeedbackMentorSlotsMutation,
+  useDeleteFeedbackMentorSlotsMutation,
+  useFeedbackMentorSlotsQuery,
+} from '@/api/feedback/feedback';
+import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
+
+import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
 
 /**
  * 좌측 메뉴 "피드백 > 라이브 피드백 일정 열기" 페이지.
- * 콘텐츠는 캘린더에서 띄우는 라이브 피드백 일정 모달(MentorOpenScheduleModal)과
- * 동일한 LiveAvailabilityContent 컴포넌트를 page 모드로 재사용한다 (단일 소스).
+ * BE `/feedback/mentor/slot` CRUD 와 연결. 모든 챌린지를 합쳐 단일 그리드로 표시한다.
  *
- * BE 미연동 — 모든 챌린지의 mock 슬롯을 메모리에서 관리. 챌린지 전환은
- * 상단 챌린지 셀렉트로 수행하며, 저장 시 토스트 자리를 alert 로 임시 노출한다.
+ * - OPEN 슬롯: 그리드에 선택된 상태로 표시, 토글 해제 시 DELETE 대상
+ * - RESERVED 슬롯: 회색 잠금 표시, 토글 불가
+ * - 신규 선택 셀: 저장 시 POST 대상
+ *
+ * 챌린지 단위 분리 (mentor2.4 / 2.6) 는 BE 미배포 영역이라 이번 push 에서는 mock 유지가 아니라
+ * 분리 자체를 폐기하고 통합 일정으로 운영한다.
  */
 const FeedbackLiveAvailabilityPage = () => {
-  // mock: 챌린지 → 슬롯 맵
-  const [slotsByChallenge, setSlotsByChallenge] = useState<
-    Record<number, MentorOpenSlot[]>
-  >(MENTOR_OPEN_SCHEDULES_BY_CHALLENGE);
+  // 그리드 RESETKEY — 저장 실패 시 직전 BE 상태로 되돌리기 위해 사용
+  const [resetCounter, setResetCounter] = useState(0);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const [activeChallengeId] = useState<number>(
-    () => Object.keys(MENTOR_OPEN_SCHEDULES_BY_CHALLENGE).map(Number)[0] ?? 1,
+  const slotsQuery = useFeedbackMentorSlotsQuery({
+    statusList: ['OPEN', 'RESERVED'],
+  });
+  const createSlots = useCreateFeedbackMentorSlotsMutation();
+  const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+
+  const beSlots = slotsQuery.data?.feedbackSlotList ?? [];
+
+  // BE 응답을 그리드용 cell 로 변환
+  const beCells = useMemo(() => toBeSlotCells(beSlots), [beSlots]);
+
+  // 그리드 초기 선택 = OPEN 슬롯만. RESERVED 는 reservedSlots prop 으로 잠금 분기 처리.
+  const initialSlots: MentorOpenSlot[] = useMemo(
+    () =>
+      beCells
+        .filter((c) => c.status === 'OPEN')
+        .map((c) => ({ date: c.date, time: c.time })),
+    [beCells],
   );
 
-  const initialSlots = slotsByChallenge[activeChallengeId] ?? [];
-  const appliedBookings =
-    MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE[activeChallengeId] ?? [];
+  const reservedSlots = useMemo(
+    () =>
+      beCells
+        .filter((c) => c.status === 'RESERVED')
+        .map((c) => ({ date: c.date, time: c.time })),
+    [beCells],
+  );
 
-  // 라이브 피드백이 진행되는 모든 챌린지 이름 — 상단 태그 표시용
-  const liveChallengeTitles = useMemo(() => {
-    const map = new Map<number, string>();
-    for (const bar of LIVE_FEEDBACK_MOCK_DATA) {
-      if (bar.barType === 'live-feedback-period') {
-        map.set(bar.challengeId, bar.challengeTitle);
-      }
-    }
-    return Array.from(map.values());
-  }, []);
+  const isSaving = createSlots.isPending || deleteSlots.isPending;
 
-  // 챌린지 id → 표시용 타이틀 lookup
-  const challengeTitleById = useMemo(() => {
-    const map = new Map<number, string>();
-    for (const bar of LIVE_FEEDBACK_MOCK_DATA) {
-      if (bar.barType === 'live-feedback-period') {
-        map.set(bar.challengeId, bar.challengeTitle);
-      }
-    }
-    return map;
-  }, []);
-
-  // 다른 챌린지 점유 슬롯
-  // eslint 경고 회피: 위에서 만든 challengeTitleById를 useMemo dep에 넣기 위함
-  const blockedSlots = useMemo(() => {
-    const list: Array<{
-      date: string;
-      time: string;
-      challengeTitle?: string;
-      challengeId?: number;
-      menteeName?: string;
-    }> = [];
-    for (const [idText, slots] of Object.entries(slotsByChallenge)) {
-      const id = Number(idText);
-      if (id === activeChallengeId) continue;
-      const applied = MENTOR_OPEN_APPLIED_BOOKINGS_BY_CHALLENGE[id] ?? [];
-      for (const slot of slots) {
-        const appliedMatch = applied.find(
-          (a) => a.date === slot.date && a.time === slot.time,
-        );
-        list.push({
-          date: slot.date,
-          time: slot.time,
-          challengeTitle: challengeTitleById.get(id) ?? `챌린지 ${id}`,
-          challengeId: id,
-          menteeName: appliedMatch?.menteeName,
-        });
-      }
-    }
-    return list;
-  }, [slotsByChallenge, activeChallengeId, challengeTitleById]);
-
-  const handleSave = (slots: MentorOpenSlot[]) => {
-    setSlotsByChallenge((prev) => ({ ...prev, [activeChallengeId]: slots }));
-    // TODO: 토스트 컴포넌트 연결 (현재는 임시 알림)
-    if (typeof window !== 'undefined') {
-      window.alert(`가능한 시간 ${slots.length}개를 저장했습니다.`);
-    }
-  };
-
-  const handleSwap = (
-    fromChallengeId: number,
-    slot: { date: string; time: string },
-  ) => {
-    setSlotsByChallenge((prev) => {
-      const fromSlots = (prev[fromChallengeId] ?? []).filter(
-        (s) => !(s.date === slot.date && s.time === slot.time),
-      );
-      const toSlots = [...(prev[activeChallengeId] ?? []), slot];
-      return {
-        ...prev,
-        [fromChallengeId]: fromSlots,
-        [activeChallengeId]: toSlots,
-      };
+  const handleSave = async (slots: MentorOpenSlot[]) => {
+    setSaveError(null);
+    const { creates, deletes } = diffGridAgainstBeSlots({
+      selected: slots,
+      beSlots,
     });
+
+    // 변경이 없으면 호출 생략
+    if (creates.length === 0 && deletes.length === 0) {
+      return;
+    }
+
+    // 독립 비동기 작업을 Promise.all 로 병렬 처리 (Vercel async-parallel)
+    // 둘 중 하나가 실패해도 다른 하나의 결과는 유지 — allSettled 사용
+    const results = await Promise.allSettled([
+      creates.length > 0
+        ? createSlots.mutateAsync(creates)
+        : Promise.resolve(),
+      deletes.length > 0
+        ? deleteSlots.mutateAsync(deletes)
+        : Promise.resolve(),
+    ]);
+
+    const createResult = results[0];
+    const deleteResult = results[1];
+    const failures: string[] = [];
+    if (createResult.status === 'rejected' && creates.length > 0) {
+      failures.push(`슬롯 ${creates.length}개 생성 실패`);
+    }
+    if (deleteResult.status === 'rejected' && deletes.length > 0) {
+      failures.push(`슬롯 ${deletes.length}개 삭제 실패`);
+    }
+
+    if (failures.length > 0) {
+      setSaveError(failures.join(' · '));
+      // 실패 시 그리드를 최신 BE 상태로 리셋 (성공한 변경은 invalidate 로 이미 반영)
+      setResetCounter((n) => n + 1);
+      return;
+    }
+
+    // 모두 성공 시 — invalidate 가 트리거되어 최신 BE 데이터로 그리드 새로고침
+    // resetKey 변경으로 그리드 selectedKeys 도 초기 상태로 동기화
+    setResetCounter((n) => n + 1);
   };
 
   return (
@@ -114,22 +108,52 @@ const FeedbackLiveAvailabilityPage = () => {
           라이브 피드백 일정 열기
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          라이브 피드백을 진행할 수 있는 시간대를 챌린지별로 설정하세요.
+          라이브 피드백을 진행할 수 있는 시간대를 설정하세요.
         </p>
       </div>
 
       <div className="border-neutral-85 flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-md border bg-white">
-        <LiveAvailabilityContent
-          mode="page"
-          initialSlots={initialSlots}
-          onSave={handleSave}
-          challengeTitles={liveChallengeTitles}
-          blockedSlots={blockedSlots}
-          appliedBookings={appliedBookings}
-          onSwapFromOtherChallenge={handleSwap}
-          resetKey={activeChallengeId}
-          showHeader={false}
-        />
+        {slotsQuery.isPending ? (
+          <div className="flex flex-1 items-center justify-center py-20">
+            <p className="text-xsmall14 text-neutral-40">
+              슬롯 정보를 불러오는 중...
+            </p>
+          </div>
+        ) : slotsQuery.isError ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20">
+            <p className="text-xsmall14 text-neutral-40">
+              슬롯 정보를 불러오지 못했습니다.
+            </p>
+            <button
+              type="button"
+              onClick={() => slotsQuery.refetch()}
+              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
+            >
+              다시 시도
+            </button>
+          </div>
+        ) : (
+          <>
+            {saveError && (
+              <div className="border-red-100 bg-red-50 text-xsmall14 border-b px-6 py-3 text-red-600">
+                저장 중 문제가 발생했어요: {saveError}
+              </div>
+            )}
+            {isSaving && (
+              <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+                저장 중입니다...
+              </div>
+            )}
+            <LiveAvailabilityContent
+              mode="page"
+              initialSlots={initialSlots}
+              reservedSlots={reservedSlots}
+              onSave={handleSave}
+              resetKey={resetCounter}
+              showHeader={false}
+            />
+          </>
+        )}
       </div>
     </div>
   );

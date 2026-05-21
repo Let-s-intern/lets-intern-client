@@ -1,3 +1,10 @@
+/**
+ * @deprecated Use FeedbackTable instead.
+ *
+ * 2026-05-17 PRD §7.2 — 피드백 현황 페이지가 카드 → 통합 표 형태로 개편됨에 따라
+ * 본 컴포넌트(`LiveRoundRow`, `LiveFeedbackRoundList`)는 더 이상 사용되지 않는다.
+ * 후속 정리 task에서 `ChallengeFeedbackCard`와 함께 삭제 예정.
+ */
 import { STATUS_BADGE, STATUS_TEXT } from '@/constants/statusColors';
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 

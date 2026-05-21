@@ -1,3 +1,10 @@
+/**
+ * @deprecated Use FeedbackTable instead.
+ *
+ * 2026-05-17 PRD §7.2 — 피드백 현황 페이지가 카드 → 통합 표 형태로 개편됨에 따라
+ * 본 컴포넌트는 더 이상 사용되지 않는다. 후속 정리 task에서 LiveFeedbackRoundList와
+ * 함께 삭제 예정. 다른 페이지에서 import하지 말 것.
+ */
 import { useMemo } from 'react';
 
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';

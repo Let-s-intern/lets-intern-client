@@ -63,7 +63,11 @@ function toInitialSet(slots: MentorOpenSlot[]): Set<string> {
 
 export interface LiveAvailabilityContentProps {
   initialSlots: MentorOpenSlot[];
-  onSave: (slots: MentorOpenSlot[]) => void;
+  /**
+   * 저장 핸들러. Promise 를 반환하면 mode='modal' 일 때 완료 후 onClose 가 호출된다.
+   * Promise 가 reject 되면 onClose 가 호출되지 않으므로 모달 안에서 에러 토스트를 보여줄 수 있다.
+   */
+  onSave: (slots: MentorOpenSlot[]) => void | Promise<void>;
   /** 모드: 'modal' = 저장/취소 시 닫기 호출, 'page' = 닫기 호출 없음 */
   mode?: 'modal' | 'page';
   /** 'modal' 모드에서 닫기 콜백 (저장 후 + 취소 시 호출) */
@@ -79,6 +83,11 @@ export interface LiveAvailabilityContentProps {
   blockedSlots?: BlockedSlot[];
   /** 현재 챌린지에서 멘티가 이미 신청 완료한 슬롯 — 선택 해제 불가, 이름 표시 */
   appliedBookings?: AppliedBooking[];
+  /**
+   * BE 에서 받아온 RESERVED 상태 슬롯 — 회색 + "예약 완료" 라벨 + 클릭 비활성.
+   * 멘티 이름이 응답에 포함되지 않는 BE API 응답 (mentor2.3) 매핑용.
+   */
+  reservedSlots?: Array<{ date: string; time: string }>;
   /** 점유 챌린지 슬롯을 현재 챌린지로 이전할 때 호출 (from → to) */
   onSwapFromOtherChallenge?: (
     fromChallengeId: number,
@@ -105,6 +114,7 @@ const LiveAvailabilityContent = ({
   challengeTitles,
   blockedSlots = [],
   appliedBookings = [],
+  reservedSlots = [],
   onSwapFromOtherChallenge,
   requiredSlotCount,
   focusDate,
@@ -201,12 +211,22 @@ const LiveAvailabilityContent = ({
     return map;
   }, [appliedBookings]);
 
+  /** BE RESERVED 슬롯 key 집합 — 멘티 이름 없는 잠금 표시 */
+  const reservedSet = useMemo(() => {
+    const set = new Set<string>();
+    for (const slot of reservedSlots) {
+      set.add(toKey(slot.date, slot.time));
+    }
+    return set;
+  }, [reservedSlots]);
+
   const selectedCount = selectedKeys.size;
 
   const handleCellMouseDown = (date: string, time: string) => {
     const key = toKey(date, time);
     // 다른 챌린지 점유 또는 현재 챌린지에서 이미 신청 완료된 슬롯은 토글 불가
-    if (blockedMap.has(key) || appliedMap.has(key)) return;
+    if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
+      return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -230,7 +250,8 @@ const LiveAvailabilityContent = ({
     if (!isDragging || !dragMode) return;
 
     const key = toKey(date, time);
-    if (blockedMap.has(key) || appliedMap.has(key)) return;
+    if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
+      return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -260,7 +281,8 @@ const LiveAvailabilityContent = ({
     setWeekStart((prev) => addDays(prev, 7));
   };
 
-  const handleSave = () => {
+  const [isSavingLocal, setIsSavingLocal] = useState(false);
+  const handleSave = async () => {
     const nextSlots: MentorOpenSlot[] = [];
 
     for (const key of selectedKeys) {
@@ -273,9 +295,17 @@ const LiveAvailabilityContent = ({
       return a.time.localeCompare(b.time);
     });
 
-    onSave(nextSlots);
-    if (mode === 'modal') {
-      onClose?.();
+    setIsSavingLocal(true);
+    try {
+      // onSave 가 Promise 를 반환하면 await — 실패하면 throw 되어 onClose 가 호출되지 않는다.
+      await onSave(nextSlots);
+      if (mode === 'modal') {
+        onClose?.();
+      }
+    } catch {
+      // 호출자에서 에러 처리 — 모달은 열린 채로 두어 토스트 등을 노출할 수 있게 한다.
+    } finally {
+      setIsSavingLocal(false);
     }
   };
 
@@ -403,6 +433,24 @@ const LiveAvailabilityContent = ({
                   const isSelected = selectedKeys.has(key);
                   const blocker = blockedMap.get(key);
                   const currentMenteeName = appliedMap.get(key);
+
+                  // BE RESERVED 슬롯 → 회색 + 잠금, 멘티 이름 미표시 (mentor2.3)
+                  if (reservedSet.has(key)) {
+                    return (
+                      <div
+                        key={`${time}-${dayIndex}`}
+                        title="예약이 완료된 시간입니다"
+                        aria-disabled="true"
+                        className="border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 flex items-center justify-center border-b border-r px-2 py-1.5 text-center font-medium last:border-r-0"
+                      >
+                        <span className="flex flex-col leading-tight">
+                          <span className="text-xxsmall12 font-normal opacity-70">
+                            예약 완료
+                          </span>
+                        </span>
+                      </div>
+                    );
+                  }
 
                   // 현재 챌린지에서 이미 신청 완료 → 잠김 + 멘티 이름 (클릭 시 안내)
                   if (currentMenteeName) {
@@ -573,12 +621,13 @@ const LiveAvailabilityContent = ({
             type="button"
             onClick={handleSave}
             disabled={
-              requiredSlotCount !== undefined &&
-              selectedCount < requiredSlotCount
+              isSavingLocal ||
+              (requiredSlotCount !== undefined &&
+                selectedCount < requiredSlotCount)
             }
             className="bg-primary text-xsmall14 hover:bg-primary-hover disabled:bg-neutral-80 rounded-md px-4 py-2 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:text-neutral-50"
           >
-            저장하기
+            {isSavingLocal ? '저장 중...' : '저장하기'}
           </button>
         </div>
       </div>

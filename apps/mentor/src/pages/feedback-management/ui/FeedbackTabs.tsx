@@ -1,9 +1,9 @@
 export type FeedbackTabKey = 'all' | 'written' | 'live';
 
 const TABS: { key: FeedbackTabKey; label: string }[] = [
-  { key: 'all', label: '전체' },
-  { key: 'written', label: '서면 피드백' },
-  { key: 'live', label: '라이브 피드백' },
+  { key: 'all', label: '전체 현황' },
+  { key: 'written', label: '서면 피드백 현황' },
+  { key: 'live', label: 'LIVE 피드백 현황' },
 ];
 
 interface FeedbackTabsProps {
