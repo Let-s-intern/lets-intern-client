@@ -1,17 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// JWT 페이로드 인코딩 헬퍼 (테스트 시드용).
+// JWT 페이로드 인코딩 헬퍼 (테스트 시드용). 브라우저 호환 base64url 인코딩.
+function base64UrlEncode(input: string): string {
+  // jsdom + atob/btoa는 latin-1 한정. ASCII만 사용하므로 안전.
+  const base64 = btoa(input);
+  return base64.replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
 function makeJwt(payload: Record<string, unknown>): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
-    .toString('base64')
-    .replace(/=+$/, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-  const body = Buffer.from(JSON.stringify(payload))
-    .toString('base64')
-    .replace(/=+$/, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+  const header = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = base64UrlEncode(JSON.stringify(payload));
   return `${header}.${body}.sig`;
 }
 
