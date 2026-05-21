@@ -14,13 +14,36 @@ interface Props {
   mentor: Mentor;
   reservation: Reservation | null;
   status: LiveFeedbackStatus;
+  /** 헤더 라벨에 표시되는 챌린지명 (URL 합성에는 사용 X) */
   challengeName: string;
+  /** 헤더 라벨에 표시되는 미션명 (URL 합성에는 사용 X) */
   missionName: string;
+}
+
+// TODO(통합 QA 후 제거): 양측이 같은 방으로 수렴하는지 dev에서 확인용 mock.
+// `NEXT_PUBLIC_JITSI_USE_DEV_MOCK=true`일 때 reservation 없어도 mock feedbackId로 방 진입.
+const DEV_MOCK_ENABLED =
+  process.env.NEXT_PUBLIC_JITSI_USE_DEV_MOCK === 'true';
+const DEV_MOCK_FEEDBACK_ID = Number(
+  process.env.NEXT_PUBLIC_JITSI_DEV_MOCK_FEEDBACK_ID ?? 999999,
+);
+
+/** "예약 일시" UI까지 보여주기 위한 mock reservation. */
+function buildMockReservation(): Reservation {
+  const now = new Date();
+  const start = new Date(now.getTime() + 5 * 60 * 1000);
+  const end = new Date(now.getTime() + 35 * 60 * 1000);
+  return {
+    feedbackId: DEV_MOCK_FEEDBACK_ID,
+    startDate: start.toISOString(),
+    endDate: end.toISOString(),
+    meetingUrl: null,
+  };
 }
 
 const ReservationInfoSection = ({
   mentor,
-  reservation,
+  reservation: incomingReservation,
   status,
   challengeName,
   missionName,
@@ -28,11 +51,21 @@ const ReservationInfoSection = ({
   const [isLiveOpen, setIsLiveOpen] = useState(false);
   const { data: user } = useUserQuery();
 
+  // dev mock 토글일 때는 reservation이 없어도 mock으로 채워 "예약 일시" UI를 표시
+  const reservation =
+    incomingReservation ?? (DEV_MOCK_ENABLED ? buildMockReservation() : null);
+
   const reservationTime = formatReservationTime(reservation?.startDate);
   const entranceActive = isEntranceActive(reservation?.startDate);
 
-  // 모달은 reservation + 사용자 정보가 모두 확보되어야 열 수 있다
-  const canOpenLive = entranceActive && reservation != null && user?.name != null;
+  const effectiveFeedbackId = DEV_MOCK_ENABLED
+    ? DEV_MOCK_FEEDBACK_ID
+    : reservation?.feedbackId;
+
+  // 모달은 reservation + 사용자 정보 또는 dev mock 토글이 있어야 열 수 있다
+  const canOpenLive = DEV_MOCK_ENABLED
+    ? true
+    : entranceActive && reservation != null && user?.name != null;
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -96,17 +129,12 @@ const ReservationInfoSection = ({
         </section>
       )}
 
-      {reservation && user?.name && (
+      {effectiveFeedbackId != null && (
         <JitsiEmbedModal
           isOpen={isLiveOpen}
           onClose={() => setIsLiveOpen(false)}
-          meta={{
-            challengeName,
-            missionName,
-            menteeName: user.name,
-            startDate: reservation.startDate,
-            feedbackId: reservation.feedbackId,
-          }}
+          meta={{ feedbackId: effectiveFeedbackId }}
+          spaceName={`${challengeName} · ${missionName}`}
         />
       )}
     </div>
