@@ -2,9 +2,10 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import MyPageKakaoChannel from '@/domain/mypage/privacy/section/MyPageKakaoChannel';
-import { useConfirm } from '@letscareer/ui';
+import { DangerConfirmDialog } from '@letscareer/ui';
 import BasicInfo from '../../../../domain/mypage/privacy/section/BasicInfo';
 import ChangePassword from '../../../../domain/mypage/privacy/section/ChangePassword';
 import MarketingAgree from '../../../../domain/mypage/privacy/section/MarketingAgree';
@@ -13,7 +14,7 @@ import axios from '../../../../utils/axios';
 
 const Privacy = () => {
   const router = useRouter();
-  const confirm = useConfirm();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { logout } = useAuthStore();
   const { mutate: tryDeleteUser } = useMutation({
@@ -31,15 +32,11 @@ const Privacy = () => {
     },
   });
 
-  const handleDeleteClick = async () => {
-    const ok = await confirm({
-      title: '회원 탈퇴 하시겠어요?',
-      description: '탈퇴 시 계정 및 활동 내역이 복구되지 않습니다.',
-      confirmLabel: '탈퇴',
-      cancelLabel: '취소',
-      variant: 'destructive',
-    });
-    if (!ok) return;
+  const handleDeleteClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
     tryDeleteUser();
   };
 
@@ -58,6 +55,15 @@ const Privacy = () => {
       >
         회원 탈퇴
       </button>
+      <DangerConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="회원 탈퇴 하시겠어요?"
+        description="탈퇴 시 계정 및 활동 내역이 복구되지 않습니다."
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={handleConfirm}
+      />
     </main>
   );
 };
