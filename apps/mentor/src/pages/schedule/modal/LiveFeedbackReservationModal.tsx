@@ -13,7 +13,7 @@ import {
   getLiveFeedbackBadgeVisual,
   resolveLiveFeedbackStatus,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
-import { resolveZepAccess } from '@/pages/feedback/utils/zepAccess';
+import { resolveLiveFeedbackAccess } from '@/pages/feedback/utils/liveFeedbackAccess';
 
 import { currentNow } from '../constants/mockNow';
 import { getLiveFeedbackReservationMock } from '../challenge-content/liveFeedbackReservationMock';
@@ -153,7 +153,7 @@ const LiveFeedbackReservationModal = ({
   const meetingUrl = feedbackDetail?.meetingUrl ?? null;
   const zepAccess =
     startIso && endIso
-      ? resolveZepAccess(meetingUrl, startIso, endIso, now)
+      ? resolveLiveFeedbackAccess(meetingUrl, startIso, endIso, now)
       : { state: 'unassigned' as const, url: null };
 
   // ZEP 영역 표기
