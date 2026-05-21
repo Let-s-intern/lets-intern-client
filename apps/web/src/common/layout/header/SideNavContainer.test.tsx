@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import SideNavContainer from './SideNavContainer';
-import { ConfirmProvider } from '@letscareer/ui';
 
 // 로그인 상태 + 사용자 정보 stub.
 jest.mock('@/store/useAuthStore', () => ({
@@ -26,11 +25,7 @@ jest.mock('./KakaoChannel', () => ({
 }));
 
 function renderSideNav() {
-  return render(
-    <ConfirmProvider>
-      <SideNavContainer isOpen onClose={jest.fn()} />
-    </ConfirmProvider>,
-  );
+  return render(<SideNavContainer isOpen onClose={jest.fn()} />);
 }
 
 describe('SideNavContainer 로그아웃 confirm', () => {

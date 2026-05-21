@@ -2,8 +2,8 @@ import { useUserQuery } from '@/api/user/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { logoutAndRefreshPage } from '@/utils/auth';
-import { useConfirm } from '@letscareer/ui';
-import { ReactNode } from 'react';
+import { DangerConfirmDialog } from '@letscareer/ui';
+import { ReactNode, useState } from 'react';
 import KakaoChannel from './KakaoChannel';
 import LoginLink from './LoginLink';
 import SignUpLink from './SignUpLink';
@@ -16,19 +16,15 @@ interface Props {
 
 function SideNavContainer({ children, isOpen, onClose }: Props) {
   const { isLoggedIn, logout } = useAuthStore();
-  const confirm = useConfirm();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
 
-  const handleLogoutClick = async () => {
-    const ok = await confirm({
-      title: '로그아웃 하시겠어요?',
-      description: '진행 중인 작업이 있다면 저장한 뒤에 진행해주세요.',
-      confirmLabel: '로그아웃',
-      cancelLabel: '취소',
-      variant: 'destructive',
-    });
-    if (!ok) return;
+  const handleLogoutClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
     logoutAndRefreshPage();
   };
 
@@ -85,6 +81,14 @@ function SideNavContainer({ children, isOpen, onClose }: Props) {
           {children}
         </nav>
       </div>
+      <DangerConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="로그아웃 하시겠어요?"
+        description="진행 중인 작업이 있다면 저장한 뒤에 진행해주세요."
+        confirmLabel="로그아웃"
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }
