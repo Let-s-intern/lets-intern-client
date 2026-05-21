@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import axios from '@/utils/axios';
 
@@ -81,6 +81,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.clearAllMocks();
+  vi.unstubAllEnvs();
 });
 
 describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
@@ -107,9 +108,18 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(screen.getByText('피드백 상태')).toBeInTheDocument();
   });
 
-  it('meetingUrl 이 null 이면 ZEP 영역에 "미정"이 표시된다', () => {
+  it('Jitsi env 미설정 시 회의실 영역에 "미정"이 표시된다 (unassigned)', () => {
+    // env stub 없음 → buildJitsiRoomUrl이 호출되지 않아 meetingUrl=null → unassigned
+    vi.stubEnv('VITE_JITSI_BASE_URL', '');
     renderModal(makeBar());
     expect(screen.getByText('미정')).toBeInTheDocument();
+  });
+
+  it('Jitsi env 설정 + T-10 이전(09:45 / 시작 10:00) → "10분 전 자동 배정" (pending, T-10 회귀)', () => {
+    vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
+    renderModal(makeBar());
+    // mockNow=2026-05-04 09:45, start=10:00 → 15분 전 → pending
+    expect(screen.getByText('10분 전 자동 배정')).toBeInTheDocument();
   });
 
   it('푸터에 "멘티와 대화하기" 버튼이 disabled 로 노출된다', () => {
@@ -118,7 +128,15 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(btn).toBeDisabled();
   });
 
-  it('meetingUrl 이 null 이면 "라이브 입장하기" 버튼이 disabled', () => {
+  it('Jitsi env 미설정 시 "라이브 입장하기" 버튼이 disabled', () => {
+    vi.stubEnv('VITE_JITSI_BASE_URL', '');
+    renderModal(makeBar());
+    const btn = screen.getByRole('button', { name: '라이브 입장하기' });
+    expect(btn).toBeDisabled();
+  });
+
+  it('Jitsi env 설정 + T-10 이전 → "라이브 입장하기" 버튼이 여전히 disabled (T-10 룰 회귀)', () => {
+    vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
     renderModal(makeBar());
     const btn = screen.getByRole('button', { name: '라이브 입장하기' });
     expect(btn).toBeDisabled();

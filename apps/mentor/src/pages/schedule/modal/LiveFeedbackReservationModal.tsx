@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
+
 import { useFeedbackDetailQuery } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
@@ -18,7 +20,7 @@ import { resolveLiveFeedbackAccess } from '@/pages/feedback/utils/liveFeedbackAc
 import { currentNow } from '../constants/mockNow';
 import { getLiveFeedbackReservationMock } from '../challenge-content/liveFeedbackReservationMock';
 import type { PeriodBarData } from '../types';
-import ZepEmbedModal from './ZepEmbedModal';
+import JitsiEmbedModal, { type JitsiMeta } from './JitsiEmbedModal';
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -51,7 +53,7 @@ const LiveFeedbackReservationModal = ({
   onSelectBar,
   roundTh,
 }: LiveFeedbackReservationModalProps) => {
-  const [isZepOpen, setIsZepOpen] = useState(false);
+  const [isJitsiOpen, setIsJitsiOpen] = useState(false);
 
   // 날짜 → 시간 순 정렬 (MenteeList의 날짜 구분선·시간대 표시와 일치)
   const reservationBars = useMemo(() => {
@@ -88,6 +90,37 @@ const LiveFeedbackReservationModal = ({
       : null);
 
   const countdown = useFeedbackCountdown(startIso, endIso);
+
+  // Jitsi 메타데이터 — 멘티 측과 동일한 입력값으로 URL을 합성해 같은 방에 모인다.
+  // missionName은 멘토 schedule 컨텍스트에 미존재(BE 미배포): 임시 placeholder 사용
+  // → BE 메모: .claude/tasks/memos/be-request-jitsi-mentor-meta.md
+  const jitsiMeta: JitsiMeta | null = useMemo(() => {
+    if (!startIso) return null;
+    if (!selectedBar?.liveFeedback) return null;
+    if (feedbackId == null) return null;
+    return {
+      challengeName: selectedBar.challengeTitle,
+      // TODO(BE): feedbackDetail.missionTitle로 교체. 현재는 placeholder라 멘티 측과 URL 불일치 가능
+      missionName: `${selectedBar.th}회차 라이브 피드백`,
+      menteeName: selectedBar.liveFeedback.menteeName,
+      startDate: startIso,
+      feedbackId,
+    };
+  }, [
+    startIso,
+    selectedBar?.challengeTitle,
+    selectedBar?.th,
+    selectedBar?.liveFeedback,
+    feedbackId,
+  ]);
+
+  // 프론트 합성 URL — resolveLiveFeedbackAccess의 첫 인자 의미가 변경됨
+  // ("BE가 내려준 URL" → "프론트가 만든 URL or null")
+  const baseUrl = import.meta.env.VITE_JITSI_BASE_URL;
+  const meetingUrl = useMemo(() => {
+    if (!jitsiMeta || !baseUrl) return null;
+    return buildJitsiRoomUrl({ baseUrl, ...jitsiMeta });
+  }, [baseUrl, jitsiMeta]);
 
   if (!bar || !selectedBar) return null;
 
@@ -150,7 +183,6 @@ const LiveFeedbackReservationModal = ({
       : 'waiting';
   const liveBadge = getLiveFeedbackBadgeVisual(liveUiStatus);
 
-  const meetingUrl = feedbackDetail?.meetingUrl ?? null;
   const zepAccess =
     startIso && endIso
       ? resolveLiveFeedbackAccess(meetingUrl, startIso, endIso, now)
@@ -398,7 +430,7 @@ const LiveFeedbackReservationModal = ({
                 disabled={zepAccess.state !== 'active'}
                 onClick={
                   zepAccess.state === 'active'
-                    ? () => setIsZepOpen(true)
+                    ? () => setIsJitsiOpen(true)
                     : undefined
                 }
                 aria-label="라이브 입장하기"
@@ -416,7 +448,13 @@ const LiveFeedbackReservationModal = ({
         />
       </BaseModal>
 
-      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
+      {jitsiMeta && (
+        <JitsiEmbedModal
+          isOpen={isJitsiOpen}
+          onClose={() => setIsJitsiOpen(false)}
+          meta={jitsiMeta}
+        />
+      )}
     </>
   );
 };
