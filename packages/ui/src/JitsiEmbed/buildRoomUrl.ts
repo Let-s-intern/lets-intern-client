@@ -1,121 +1,62 @@
 /**
  * Jitsi 방 URL 생성 유틸.
  *
- * PRD §5 방 이름 생성 규칙에 따라 매칭별 고유한 회의실 URL을 만든다.
+ * 핵심 원칙:
+ * 1. 멘토/멘티/어드민이 **양측 BE 응답 공통 필드**(`feedbackId`)와 공유 `salt`만으로
+ *    동일한 방을 합성한다. 시간·이름 등 정규화 차이가 발생할 수 있는 입력은 사용 X.
+ * 2. **다른 조직과 방이 우연히 겹치지 않도록** 충분히 식별 가능한 prefix(`letscareer-livefeedback-`)
+ *    와 **긴 해시(12자리 base36, ≈ 4.7×10^18 조합)** 를 사용한다.
+ *    meet.jit.si는 전 세계 공용 서버라 짧은 방 이름은 외부 충돌 위험이 있다.
+ * 3. 외부 라이브러리 없이 djb2 + sdbm 두 해시를 결합해 32-bit 단일 해시 대비
+ *    충돌 가능성을 한 차원 더 낮춘다.
  *
  * 포맷:
- *   {챌린지명}-{미션명}-{멘티명}-{YYYYMMDD-HHmm}-{shortHash}
- *
- * - 공백/`?` `#` `/` `:` 등 URL slug 호환성을 해치는 문자를 제거한다.
- * - 80자 초과 시 챌린지명 → 미션명 순으로 잘라낸다.
- * - shortHash(4자리 base36)는 5개 입력(챌린지/미션/멘티/시작시간/feedbackId) 기반.
- *   외부 라이브러리 없이 djb2 변형으로 직접 계산한다.
- * - 최종적으로 `encodeURIComponent`로 인코딩해 baseUrl에 이어 붙인다.
+ *   {baseUrl}letscareer-livefeedback-{12자리 base36}
  */
 
 export interface BuildJitsiRoomUrlInput {
   /** Jitsi 서버 베이스 URL (예: "https://meet.jit.si/") */
   baseUrl: string;
-  /** 챌린지 이름 (예: "취준생을 위한 AI 활용 챌린지") */
-  challengeName: string;
-  /** 미션 이름 (예: "1주차 자소서 피드백") */
-  missionName: string;
-  /** 멘티 이름 (예: "홍길동") */
-  menteeName: string;
-  /** 피드백 입장 시간 (ISO 또는 Date 가능한 문자열) */
-  startDate: string;
-  /** 매칭 식별자 — 입력이 같아도 매칭이 다르면 다른 방으로 분리하는 안전벨트 */
+  /** 매칭 식별자 — 멘토/멘티/어드민 BE 응답에서 동일 보장 */
   feedbackId: number;
+  /**
+   * 환경변수로 주입되는 공유 salt. 충분히 random한 32자 이상 권장.
+   * - 양측 멘토/멘티/어드민이 동일 값을 가져야 같은 방으로 수렴
+   * - 외부자가 feedbackId만으로 URL을 추측하지 못하게 하는 안전선
+   */
+  salt: string;
 }
 
-/** PRD §5.3: 최대 길이 80자 (Jitsi 안정 영역) */
-const MAX_ROOM_NAME_LENGTH = 80;
-/** PRD §5.2: shortHash 자리수 (base36) */
-const SHORT_HASH_LENGTH = 4;
-/** djb2 해시 시작값 */
+/** 방 이름 prefix — 회사명 포함해 외부 조직과의 우연 충돌 회피 */
+const ROOM_PREFIX = 'letscareer-livefeedback-';
+/** base36 해시 자리수 (36^12 ≈ 4.7×10^18, 충돌·추측 모두 안전) */
+const HASH_LENGTH = 12;
+/** 결합 해시: 절반은 djb2, 절반은 sdbm */
+const HALF_LENGTH = HASH_LENGTH / 2;
+const HALF_MOD = 36 ** HALF_LENGTH;
 const DJB2_INIT = 5381;
-/** base36 modulus (4자리 = 36^4 = 1_679_616) */
-const SHORT_HASH_MOD = 36 ** SHORT_HASH_LENGTH;
-/** slug에서 제거할 특수문자 */
-const STRIP_CHARS_REGEXP = /[\s/?#:]+/g;
 
 /**
- * 외부 의존성 없는 결정론적 해시.
- * djb2 변형: `hash * 33 ^ char`. 32-bit 안전 범위 내에서 동작.
+ * djb2 + sdbm 두 해시를 결합해 base36 12자리 문자열 생성.
+ * 단일 32-bit 해시의 충돌 가능성을 한 차원 더 낮춘다.
  */
-function djb2Hash(input: string): number {
-  let hash = DJB2_INIT;
+function combinedHash(input: string): string {
+  let djb2 = DJB2_INIT;
+  let sdbm = 0;
   for (let i = 0; i < input.length; i += 1) {
-    // (hash * 33) ^ char — 32-bit 정수로 강제
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-    hash |= 0;
+    const c = input.charCodeAt(i);
+    djb2 = ((djb2 << 5) + djb2) ^ c;
+    djb2 |= 0;
+    sdbm = c + (sdbm << 6) + (sdbm << 16) - sdbm;
+    sdbm |= 0;
   }
-  // 부호 제거 후 4자리 base36 단축
-  return Math.abs(hash) % SHORT_HASH_MOD;
-}
-
-/** 4자리 base36 short hash 문자열 (앞 0 패딩) */
-function toShortHash(input: string): string {
-  return djb2Hash(input).toString(36).padStart(SHORT_HASH_LENGTH, '0');
-}
-
-/** URL slug 안전화 — 공백/특수문자 제거. 한국어는 보존. */
-function normalizeSegment(segment: string): string {
-  return segment.replace(STRIP_CHARS_REGEXP, '');
-}
-
-/** Date를 `YYYYMMDD-HHmm` 형식으로 포맷 (로컬 시간 기준) */
-function formatStartDate(startDate: string): string {
-  const date = new Date(startDate);
-  if (Number.isNaN(date.getTime())) {
-    return 'invaliddate';
-  }
-  const pad = (value: number, length = 2) =>
-    value.toString().padStart(length, '0');
-  const yyyy = date.getFullYear().toString();
-  const mm = pad(date.getMonth() + 1);
-  const dd = pad(date.getDate());
-  const hh = pad(date.getHours());
-  const min = pad(date.getMinutes());
-  return `${yyyy}${mm}${dd}-${hh}${min}`;
-}
-
-/**
- * 챌린지명/미션명을 우선순위에 따라 잘라 80자 안에 맞춘다.
- * fixed = 멘티명 + 날짜 + 해시 + 구분자 — 절대 자르지 않는다.
- * 챌린지명 → 미션명 순으로 잘라낸다.
- */
-function fitWithinLimit(
-  challenge: string,
-  mission: string,
-  fixedTail: string,
-): { challenge: string; mission: string } {
-  // 전체 = challenge + '-' + mission + '-' + fixedTail
-  const separatorBudget = 2; // challenge-mission 사이 '-' 1개 + mission-tail 사이 '-' 1개
-  const budgetForVariable =
-    MAX_ROOM_NAME_LENGTH - fixedTail.length - separatorBudget;
-
-  if (budgetForVariable <= 0) {
-    // 비정상 입력: 변수 영역을 완전히 잘라낸다
-    return { challenge: '', mission: '' };
-  }
-
-  if (challenge.length + mission.length <= budgetForVariable) {
-    return { challenge, mission };
-  }
-
-  // 1단계: 챌린지명을 줄여 본다 (미션명은 유지)
-  let nextChallenge = challenge;
-  let nextMission = mission;
-  if (nextMission.length <= budgetForVariable) {
-    nextChallenge = nextChallenge.slice(0, budgetForVariable - nextMission.length);
-    return { challenge: nextChallenge, mission: nextMission };
-  }
-
-  // 2단계: 미션명까지 줄여야 하는 경우 — 챌린지명을 0으로 만들고 미션명을 자른다
-  nextChallenge = '';
-  nextMission = nextMission.slice(0, budgetForVariable);
-  return { challenge: nextChallenge, mission: nextMission };
+  const part1 = (Math.abs(djb2) % HALF_MOD)
+    .toString(36)
+    .padStart(HALF_LENGTH, '0');
+  const part2 = (Math.abs(sdbm) % HALF_MOD)
+    .toString(36)
+    .padStart(HALF_LENGTH, '0');
+  return part1 + part2;
 }
 
 /**
@@ -123,29 +64,9 @@ function fitWithinLimit(
  * 디버그/테스트 용도로 내부 노출.
  */
 export function buildJitsiRoomName(input: BuildJitsiRoomUrlInput): string {
-  const challengeRaw = normalizeSegment(input.challengeName);
-  const missionRaw = normalizeSegment(input.missionName);
-  const menteeRaw = normalizeSegment(input.menteeName);
-  const dateToken = formatStartDate(input.startDate);
-
-  // shortHash는 정규화 전/후 어느 쪽으로 만들어도 입력이 같으면 결과가 같다.
-  // 정규화 후 문자열 + feedbackId로 계산하면 시각적 입력 변화(공백 추가 등)에도 안정적.
-  const hashInput = `${challengeRaw}|${missionRaw}|${menteeRaw}|${dateToken}|${input.feedbackId}`;
-  const shortHash = toShortHash(hashInput);
-
-  // fixed tail = "{mentee}-{date}-{shortHash}"
-  const fixedTail = `${menteeRaw}-${dateToken}-${shortHash}`;
-  const { challenge, mission } = fitWithinLimit(
-    challengeRaw,
-    missionRaw,
-    fixedTail,
-  );
-
-  // 빈 segment는 연속 '-' 회피
-  const segments = [challenge, mission, menteeRaw, dateToken, shortHash].filter(
-    (s) => s.length > 0,
-  );
-  return segments.join('-');
+  // 구분자(`:`)로 입력을 명확히 분리해 salt와 id가 우연히 합쳐지는 충돌 회피
+  const hashInput = `${input.salt}:${input.feedbackId}`;
+  return `${ROOM_PREFIX}${combinedHash(hashInput)}`;
 }
 
 /**
@@ -154,19 +75,15 @@ export function buildJitsiRoomName(input: BuildJitsiRoomUrlInput): string {
  * @example
  *   buildJitsiRoomUrl({
  *     baseUrl: 'https://meet.jit.si/',
- *     challengeName: '취준생을 위한 AI 활용 챌린지',
- *     missionName: '1주차 자소서 피드백',
- *     menteeName: '홍길동',
- *     startDate: '2026-05-21T19:00:00+09:00',
  *     feedbackId: 1234,
+ *     salt: process.env.NEXT_PUBLIC_JITSI_ROOM_SALT,
  *   });
- *   // → "https://meet.jit.si/%EC%B7%A8%EC%A4%80...-3f7a"
+ *   // → "https://meet.jit.si/letscareer-livefeedback-a3f7b29kd8e1"
  */
 export function buildJitsiRoomUrl(input: BuildJitsiRoomUrlInput): string {
   const roomName = buildJitsiRoomName(input);
-  // baseUrl이 슬래시로 끝나지 않을 가능성 대비
   const normalizedBase = input.baseUrl.endsWith('/')
     ? input.baseUrl
     : `${input.baseUrl}/`;
-  return `${normalizedBase}${encodeURIComponent(roomName)}`;
+  return `${normalizedBase}${roomName}`;
 }
