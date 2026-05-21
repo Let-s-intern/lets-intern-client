@@ -17,6 +17,8 @@ interface Props {
   period: MissionPeriod;
   reservationInfo: Reservation | null;
   status: LiveFeedbackStatus;
+  challengeName: string;
+  missionName: string;
 }
 
 const LiveFeedbackDetail = ({
@@ -24,6 +26,8 @@ const LiveFeedbackDetail = ({
   period,
   reservationInfo: initialReservation,
   status,
+  challengeName,
+  missionName,
 }: Props) => {
   const [reservation, setReservation] = useState<Reservation | null>(
     initialReservation,
@@ -54,6 +58,8 @@ const LiveFeedbackDetail = ({
         mentor={mentor}
         reservation={reservation}
         status={status}
+        challengeName={challengeName}
+        missionName={missionName}
       />
       {showScheduleSection && (
         <ReservationScheduleSection

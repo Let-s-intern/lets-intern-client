@@ -36,6 +36,10 @@ const LiveFeedbackPage = () => {
   const done = missions.filter((m) => m.status === 'done');
   const expired = missions.filter((m) => m.status === 'expired');
 
+  // Jitsi 방 이름 생성에 사용. title이 비어있을 가능성 대비 challengeType을 fallback으로 사용.
+  const challengeName =
+    currentChallenge?.title ?? currentChallenge?.challengeType ?? '';
+
   return (
     <div className="flex flex-col gap-10">
       <LiveFeedbackSection
@@ -43,24 +47,28 @@ const LiveFeedbackPage = () => {
         missions={needReservation}
         emptyMessage="예약 필요한 미션이 없어요."
         onMobileClick={handleMobileClick}
+        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="예약 완료"
         missions={reserved}
         emptyMessage="예약 완료된 미션이 없어요."
         onMobileClick={handleMobileClick}
+        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="피드백 완료"
         missions={done}
         emptyMessage="피드백 완료된 미션이 없어요."
         onMobileClick={handleMobileClick}
+        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="기간 만료"
         missions={expired}
         emptyMessage="기간이 만료된 미션이 없어요."
         onMobileClick={handleMobileClick}
+        challengeName={challengeName}
       />
     </div>
   );

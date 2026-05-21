@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import ZepEmbedModal from '@/common/modal/ZepEmbedModal';
+import { useUserQuery } from '@/api/user/user';
+import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
 import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
 import MentorCard from '../ui/MentorCard';
@@ -13,13 +14,25 @@ interface Props {
   mentor: Mentor;
   reservation: Reservation | null;
   status: LiveFeedbackStatus;
+  challengeName: string;
+  missionName: string;
 }
 
-const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
-  const [isZepOpen, setIsZepOpen] = useState(false);
+const ReservationInfoSection = ({
+  mentor,
+  reservation,
+  status,
+  challengeName,
+  missionName,
+}: Props) => {
+  const [isLiveOpen, setIsLiveOpen] = useState(false);
+  const { data: user } = useUserQuery();
 
   const reservationTime = formatReservationTime(reservation?.startDate);
   const entranceActive = isEntranceActive(reservation?.startDate);
+
+  // 모달은 reservation + 사용자 정보가 모두 확보되어야 열 수 있다
+  const canOpenLive = entranceActive && reservation != null && user?.name != null;
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -51,11 +64,11 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
                 </span>
               </div>
 
-              {/* 젭 회의실 */}
+              {/* 라이브 회의실 */}
               <div className="flex items-center gap-1">
                 <img src="/icons/door-closed.svg" alt="" />
                 <span className="text-xsmall14 text-neutral-40 pr-2">
-                  젭 회의실
+                  라이브 회의실
                 </span>
                 <span className="text-xsmall14 text-neutral-20">
                   {entranceActive ? '빈 회의실에 입장해주세요' : '미정'}
@@ -68,10 +81,10 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
             {status === 'reserved' && (
               <button
                 type="button"
-                disabled={!entranceActive}
-                onClick={entranceActive ? () => setIsZepOpen(true) : undefined}
+                disabled={!canOpenLive}
+                onClick={canOpenLive ? () => setIsLiveOpen(true) : undefined}
                 className={
-                  entranceActive
+                  canOpenLive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
@@ -83,7 +96,19 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
         </section>
       )}
 
-      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
+      {reservation && user?.name && (
+        <JitsiEmbedModal
+          isOpen={isLiveOpen}
+          onClose={() => setIsLiveOpen(false)}
+          meta={{
+            challengeName,
+            missionName,
+            menteeName: user.name,
+            startDate: reservation.startDate,
+            feedbackId: reservation.feedbackId,
+          }}
+        />
+      )}
     </div>
   );
 };

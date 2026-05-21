@@ -11,6 +11,7 @@ interface Props {
   missions: LiveFeedbackMission[];
   emptyMessage: string;
   onMobileClick: (mission: LiveFeedbackMission) => void;
+  challengeName: string;
 }
 
 export default function LiveFeedbackSection({
@@ -18,6 +19,7 @@ export default function LiveFeedbackSection({
   missions,
   emptyMessage,
   onMobileClick,
+  challengeName,
 }: Props) {
   return (
     <section className="flex flex-col gap-6">
@@ -48,6 +50,8 @@ export default function LiveFeedbackSection({
                   }}
                   reservationInfo={mission.reservationInfo}
                   status={mission.status}
+                  challengeName={challengeName}
+                  missionName={mission.title}
                 />
               </FeedbackMissionCard>
             );
