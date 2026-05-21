@@ -129,7 +129,7 @@ describe('BasicInfo toast', () => {
     toastErrorMock.mockReset();
   });
 
-  it('mutation 성공 시 toast.success가 호출된다', async () => {
+  it('mutation 성공 시 success toast가 호출된다', async () => {
     const user = userEvent.setup();
     patchMock.mockResolvedValue({ data: {} });
     renderBasicInfo();
@@ -141,15 +141,17 @@ describe('BasicInfo toast', () => {
     await user.click(screen.getByRole('button', { name: '수정' }));
 
     await waitFor(() => {
-      expect(toastSuccessMock).toHaveBeenCalledWith('정보가 수정되었습니다');
+      expect(toastSuccessMock).toHaveBeenCalledWith(
+        '기본 정보가 저장되었어요',
+        expect.objectContaining({ description: expect.any(String) }),
+      );
     });
     expect(toastErrorMock).not.toHaveBeenCalled();
   });
 
-  it('mutation 실패 시 toast.error가 호출된다', async () => {
+  it('mutation 실패(network/기타) 시 일반 error toast가 호출된다', async () => {
     const user = userEvent.setup();
     patchMock.mockRejectedValue(new Error('서버 오류'));
-    // console.error 호출을 가린다 (BasicInfo onError에서 호출)
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -162,7 +164,62 @@ describe('BasicInfo toast', () => {
     await user.click(screen.getByRole('button', { name: '수정' }));
 
     await waitFor(() => {
-      expect(toastErrorMock).toHaveBeenCalledWith('정보 수정에 실패했습니다');
+      expect(toastErrorMock).toHaveBeenCalledWith(
+        '기본 정보를 저장하지 못했어요',
+        expect.objectContaining({ description: expect.any(String) }),
+      );
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('mutation 실패(400) 시 입력값 검증 toast가 호출된다', async () => {
+    const user = userEvent.setup();
+    patchMock.mockRejectedValue({
+      response: { status: 400, data: { message: '이메일 형식이 잘못되었습니다.' } },
+      isAxiosError: true,
+    });
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    renderBasicInfo();
+
+    await user.click(
+      screen.getByRole('button', { name: '기본 정보 수정하기' }),
+    );
+    await screen.findByText('기본 정보를 수정하시겠어요?');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith(
+        '입력값을 확인해주세요',
+        expect.objectContaining({ description: expect.any(String) }),
+      );
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('mutation 실패(500) 시 서버 오류 toast가 호출된다', async () => {
+    const user = userEvent.setup();
+    patchMock.mockRejectedValue({
+      response: { status: 500, data: { message: 'internal' } },
+      isAxiosError: true,
+    });
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    renderBasicInfo();
+
+    await user.click(
+      screen.getByRole('button', { name: '기본 정보 수정하기' }),
+    );
+    await screen.findByText('기본 정보를 수정하시겠어요?');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith(
+        '서버에 일시적인 문제가 발생했어요',
+        expect.objectContaining({ description: expect.any(String) }),
+      );
     });
     consoleErrorSpy.mockRestore();
   });

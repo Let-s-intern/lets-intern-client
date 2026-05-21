@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useUserQuery, useUserQueryKey } from '@/api/user/user';
 import { EditConfirmDialog, useToast } from '@letscareer/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
@@ -52,11 +53,38 @@ const BasicInfo = () => {
       return res.data;
     },
     onSuccess: async () => {
-      toast.success('정보가 수정되었습니다');
+      toast.success('기본 정보가 저장되었어요', {
+        description: '입력한 정보로 프로필이 업데이트되었습니다.',
+      });
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
     },
     onError: (error) => {
-      toast.error('정보 수정에 실패했습니다');
+      const axiosError = error as AxiosError;
+      const status = axiosError.response?.status;
+      const serverMessage = (axiosError.response?.data as { message?: string })
+        ?.message;
+
+      if (status === 400) {
+        toast.error('입력값을 확인해주세요', {
+          description:
+            serverMessage ??
+            '이메일·연락처·학년 등의 입력 형식이 올바른지 확인해주세요.',
+        });
+      } else if (status === 401) {
+        toast.error('로그인이 만료되었어요', {
+          description: '다시 로그인한 뒤 정보 수정을 시도해주세요.',
+        });
+      } else if (status && status >= 500) {
+        toast.error('서버에 일시적인 문제가 발생했어요', {
+          description: '잠시 후 다시 시도해주세요.',
+        });
+      } else {
+        toast.error('기본 정보를 저장하지 못했어요', {
+          description:
+            serverMessage ??
+            '네트워크 상태를 확인하고 다시 시도해주세요.',
+        });
+      }
       console.error(error);
     },
   });

@@ -94,13 +94,36 @@ const LoginContent = () => {
     onError: async (error) => {
       const axiosError = error as AxiosError;
       const status = axiosError.response?.status;
+      const serverMessage = (axiosError.response?.data as { message?: string })
+        ?.message;
+
       if (status === 400 || status === 404) {
-        const message = '이메일 또는 비밀번호가 일치하지 않습니다';
-        setErrorMessage(`${message}.`);
-        toast.error(message);
+        // 자격증명 불일치 — 입력 자체 문제. 인라인 + toast 동시 노출.
+        const inlineText = '이메일 또는 비밀번호가 일치하지 않습니다.';
+        setErrorMessage(inlineText);
+        toast.error('비밀번호가 틀렸습니다', {
+          description: '입력하신 이메일과 비밀번호를 다시 확인해주세요.',
+        });
+      } else if (status === 401) {
+        toast.error('인증에 실패했습니다', {
+          description: '다시 시도해주세요. 문제가 계속되면 비밀번호 찾기를 이용해주세요.',
+        });
+      } else if (status === 429) {
+        toast.error('잠시 후 다시 시도해주세요', {
+          description: '로그인 시도가 너무 많아요. 잠시 뒤에 다시 시도해주세요.',
+        });
+      } else if (status && status >= 500) {
+        toast.error('서버에 일시적인 문제가 발생했어요', {
+          description: '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
+        });
       } else {
-        toast.error('로그인에 실패했습니다');
+        toast.error('로그인에 실패했습니다', {
+          description:
+            serverMessage ??
+            '네트워크 상태를 확인하고 다시 시도해주세요.',
+        });
       }
+
       const reason =
         status === 400 || status === 404
           ? 'invalid_credentials'
@@ -143,9 +166,11 @@ const LoginContent = () => {
     };
 
     if (searchParams.get('error')) {
-      const message = '이미 가입된 휴대폰 번호입니다';
-      setErrorMessage(`${message}.`);
-      toast.error(message);
+      setErrorMessage('이미 가입된 휴대폰 번호입니다.');
+      toast.error('이미 가입된 휴대폰 번호예요', {
+        description:
+          '같은 번호로 가입된 계정이 있어요. 기존 계정으로 로그인하거나 비밀번호 찾기를 이용해주세요.',
+      });
       const provider = searchParams.get('provider') ?? 'unknown';
       const reason = searchParams.get('error') ?? 'unknown';
       emitSocialSigninSpan({ result: 'fail', provider, reason });

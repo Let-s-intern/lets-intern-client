@@ -35,7 +35,9 @@ const ChangePassword = () => {
       return res.data;
     },
     onSuccess: async () => {
-      toast.success('비밀번호가 변경되었습니다');
+      toast.success('비밀번호가 변경되었습니다', {
+        description: '새 비밀번호로 다음 로그인부터 사용해주세요.',
+      });
       setPasswordInfo({
         password: '',
         newPassword: '',
@@ -44,11 +46,44 @@ const ChangePassword = () => {
     },
     onError: async (_error) => {
       const error = _error as AxiosError;
-      const status = (error.response?.data as { status: number })?.status;
-      if (status === 400) {
-        toast.error('기존 비밀번호가 올바르지 않습니다');
+      const status = error.response?.status;
+      const serverMessage = (error.response?.data as { message?: string })
+        ?.message;
+
+      // 백엔드는 두 가지 400을 message로만 구분한다.
+      //   - MISMATCH_PASSWORD: "비밀번호가 일치하지 않습니다." (기존 비번 불일치)
+      //   - INVALID_PASSWORD:  "비밀번호 형식이 잘못되었습니다." (새 비번 정규식 위반)
+      if (status === 400 && serverMessage?.includes('형식')) {
+        toast.error('새 비밀번호 형식이 올바르지 않아요', {
+          description:
+            '8자 이상이며 특수문자(!@#$ 등)를 최소 1개 포함해야 합니다.',
+        });
+      } else if (status === 400 && serverMessage?.includes('일치')) {
+        toast.error('기존 비밀번호가 일치하지 않아요', {
+          description: '입력하신 기존 비밀번호를 다시 확인해주세요.',
+        });
+      } else if (status === 400) {
+        // 알 수 없는 400 — 서버 메시지가 있으면 그것을 그대로 노출
+        toast.error('비밀번호를 변경할 수 없어요', {
+          description: serverMessage ?? '입력값을 다시 확인해주세요.',
+        });
+      } else if (status === 401) {
+        toast.error('로그인이 만료되었어요', {
+          description: '다시 로그인한 뒤 비밀번호 변경을 시도해주세요.',
+        });
+      } else if (status === 429) {
+        toast.error('잠시 후 다시 시도해주세요', {
+          description: '비밀번호 변경 시도가 너무 잦아요. 잠시 뒤에 다시 시도해주세요.',
+        });
+      } else if (status && status >= 500) {
+        toast.error('서버에 일시적인 문제가 발생했어요', {
+          description: '잠시 후 다시 시도해주세요. 계속되면 고객센터에 문의해주세요.',
+        });
       } else {
-        toast.error('비밀번호 변경에 실패했습니다');
+        toast.error('비밀번호 변경에 실패했어요', {
+          description:
+            serverMessage ?? '네트워크 상태를 확인하고 다시 시도해주세요.',
+        });
       }
     },
   });
@@ -61,11 +96,26 @@ const ChangePassword = () => {
   };
 
   const handleSubmit = () => {
-    if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
-      toast.error('비밀번호가 일치하지 않습니다');
+    if (
+      !passwordInfo.password ||
+      !passwordInfo.newPassword ||
+      !passwordInfo.confirmPassword
+    ) {
+      toast.error('모든 항목을 입력해주세요', {
+        description: '기존 비밀번호, 새 비밀번호, 비밀번호 확인을 모두 채워주세요.',
+      });
       return;
-    } else if (passwordInfo.password === passwordInfo.newPassword) {
-      toast.error('기존 비밀번호와 새로운 비밀번호가 같습니다');
+    }
+    if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
+      toast.error('새 비밀번호와 확인이 일치하지 않아요', {
+        description: '"새 비밀번호"와 "비밀번호 확인"을 동일하게 입력해주세요.',
+      });
+      return;
+    }
+    if (passwordInfo.password === passwordInfo.newPassword) {
+      toast.error('새 비밀번호가 기존과 동일해요', {
+        description: '보안을 위해 기존과 다른 비밀번호를 사용해주세요.',
+      });
       return;
     }
     setConfirmOpen(true);

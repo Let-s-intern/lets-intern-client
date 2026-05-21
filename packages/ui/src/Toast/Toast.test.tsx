@@ -43,26 +43,29 @@ describe('Toast (Layer 1)', () => {
     expect(screen.getByText('설명입니다')).toBeInTheDocument();
   });
 
-  it('variant="success" 일 때 data-variant=success 가 적용된다', () => {
-    render(
+  it('variant="success" 일 때 data-variant=success + 아이콘 wrapper에 green 톤 적용', () => {
+    const { container } = render(
       withProvider(
         <Toast open onOpenChange={() => {}} title="성공" variant="success" />,
       ),
     );
     const toast = screen.getByText('성공').closest('[data-variant]');
     expect(toast).toHaveAttribute('data-variant', 'success');
-    expect(toast?.className).toContain('bg-green-50');
+    // 아이콘 wrapper에 variant 컬러 톤 적용 확인
+    expect(container.innerHTML).toContain('bg-green-50');
+    expect(container.innerHTML).toContain('text-green-600');
   });
 
-  it('variant="error" 일 때 data-variant=error 가 적용된다', () => {
-    render(
+  it('variant="error" 일 때 data-variant=error + 아이콘 wrapper에 red 톤 적용', () => {
+    const { container } = render(
       withProvider(
         <Toast open onOpenChange={() => {}} title="실패" variant="error" />,
       ),
     );
     const toast = screen.getByText('실패').closest('[data-variant]');
     expect(toast).toHaveAttribute('data-variant', 'error');
-    expect(toast?.className).toContain('bg-red-50');
+    expect(container.innerHTML).toContain('bg-red-50');
+    expect(container.innerHTML).toContain('text-red-600');
   });
 
   it('variant 미지정 시 data-variant=default 가 적용된다', () => {

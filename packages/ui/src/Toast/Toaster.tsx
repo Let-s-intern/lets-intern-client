@@ -4,13 +4,18 @@
  * Toast Provider + Viewport 통합 (앱 루트 마운트용).
  *
  * 어떤 컴포넌트인가:
- *   Radix ToastProvider로 children을 감싸고 ToastViewport를 화면 우측 하단에
- *   portal 마운트한다. 내부적으로 toast queue를 useState로 관리하며, useToast
- *   훅이 소비할 수 있는 imperative `enqueue(...)` 함수를 Context로 제공한다.
+ *   Radix ToastProvider로 children을 감싸고 ToastViewport를 화면 중앙에 portal
+ *   마운트한다. 활성 toast가 있을 때 화면 전체에 backdrop(반투명 + blur)을
+ *   덮어 사용자가 결과 알림을 확실히 인지하도록 한다.
  *
- *   각 toast에는 고유 id를 부여해 중복 dismiss 안전성을 확보했고, Radix가
- *   onOpenChange(false)로 알려주면 자동으로 queue에서 제거한다(언마운트도 함께).
- *   swipeDirection='right'로 모바일에서 오른쪽 스와이프로 닫을 수 있다.
+ *   내부적으로 toast queue를 useState로 관리하며, useToast 훅이 소비할 수
+ *   있는 imperative `enqueue(...)` 함수를 Context로 제공한다. 각 toast에는
+ *   고유 id를 부여해 중복 dismiss 안전성을 확보했고, Radix가 onOpenChange(false)로
+ *   알려주면 자동으로 queue에서 제거한다.
+ *
+ *   swipeDirection='up'으로 위 방향 스와이프 시 닫힌다(중앙 모달 형태에 적합).
+ *   backdrop은 클릭 차단을 위한 시각 효과만 담당하며 pointer-events-none이라
+ *   사용자 인터랙션을 가로채지 않는다(toast의 close 버튼/swipe 동작은 정상).
  *
  * 어디에 마운트되어 있는가:
  *   • apps/web/src/context/Providers.tsx (앱 루트, useToast 사용 가능 영역)
@@ -42,8 +47,13 @@ type EnqueueFn = (options: ToastOptions) => void;
 
 export const ToastEnqueueContext = React.createContext<EnqueueFn | null>(null);
 
+// Viewport: 화면 중앙, toast 자체에 pointer-events-auto 부여(클릭/swipe 가능)
 const VIEWPORT_CLASSES =
-  'fixed bottom-4 right-4 z-50 m-0 flex w-auto max-w-[100vw] list-none flex-col gap-2 outline-none';
+  'pointer-events-none fixed inset-0 z-50 m-0 flex items-center justify-center p-6 outline-none';
+
+// Backdrop: 활성 toast 있을 때만 보이도록 opacity transition (toast의 scale 애니메이션과 동기)
+const BACKDROP_CLASSES =
+  'pointer-events-none fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-200';
 
 export function Toaster({ children }: { children: React.ReactNode }) {
   const [entries, setEntries] = React.useState<ToastEntry[]>([]);
@@ -54,21 +64,21 @@ export function Toaster({ children }: { children: React.ReactNode }) {
     setEntries((current) => [...current, { ...options, id, open: true }]);
   }, []);
 
-  const handleOpenChange = React.useCallback(
-    (id: number, open: boolean) => {
-      if (open) return;
-      // 닫힘 신호를 받으면 해당 entry를 open=false로 표시 → Radix 애니메이션 종료 후
-      // 다음 commit에서 제거. 간단히 즉시 제거해도 Radix가 close 애니메이션을 위해
-      // 자체 캐시를 보존하므로 시각적 문제 없음.
-      setEntries((current) => current.filter((entry) => entry.id !== id));
-    },
-    [],
-  );
+  const handleOpenChange = React.useCallback((id: number, open: boolean) => {
+    if (open) return;
+    setEntries((current) => current.filter((entry) => entry.id !== id));
+  }, []);
+
+  const hasActive = entries.length > 0;
 
   return (
     <ToastEnqueueContext.Provider value={enqueue}>
-      <ToastProvider swipeDirection="right">
+      <ToastProvider swipeDirection="up">
         {children}
+        <div
+          className={`${BACKDROP_CLASSES} ${hasActive ? 'opacity-100' : 'opacity-0'}`}
+          aria-hidden="true"
+        />
         {entries.map((entry) => (
           <Toast
             key={entry.id}

@@ -130,7 +130,7 @@ describe('ChangePassword toast', () => {
     toastErrorMock.mockReset();
   });
 
-  it('mutation 성공 시 toast.success가 호출된다', async () => {
+  it('mutation 성공 시 success toast가 호출된다', async () => {
     const user = userEvent.setup();
     patchMock.mockResolvedValue({ data: {} });
     renderChangePassword();
@@ -143,15 +143,19 @@ describe('ChangePassword toast', () => {
     await waitFor(() => {
       expect(toastSuccessMock).toHaveBeenCalledWith(
         '비밀번호가 변경되었습니다',
+        expect.objectContaining({ description: expect.any(String) }),
       );
     });
     expect(toastErrorMock).not.toHaveBeenCalled();
   });
 
-  it('mutation 실패(400) 시 "기존 비밀번호가 올바르지 않습니다" error toast가 호출된다', async () => {
+  it('400 + 메시지 "비밀번호가 일치하지 않습니다" 시 기존 비번 불일치 toast', async () => {
     const user = userEvent.setup();
     patchMock.mockRejectedValue({
-      response: { data: { status: 400 } },
+      response: {
+        status: 400,
+        data: { message: '비밀번호가 일치하지 않습니다.' },
+      },
       isAxiosError: true,
     });
     renderChangePassword();
@@ -163,15 +167,21 @@ describe('ChangePassword toast', () => {
 
     await waitFor(() => {
       expect(toastErrorMock).toHaveBeenCalledWith(
-        '기존 비밀번호가 올바르지 않습니다',
+        '기존 비밀번호가 일치하지 않아요',
+        expect.objectContaining({
+          description: expect.stringContaining('기존 비밀번호'),
+        }),
       );
     });
   });
 
-  it('mutation 실패(기타) 시 "비밀번호 변경에 실패했습니다" error toast가 호출된다', async () => {
+  it('400 + 메시지 "비밀번호 형식이 잘못되었습니다" 시 형식 위반 toast', async () => {
     const user = userEvent.setup();
     patchMock.mockRejectedValue({
-      response: { data: { status: 500 } },
+      response: {
+        status: 400,
+        data: { message: '비밀번호 형식이 잘못되었습니다.' },
+      },
       isAxiosError: true,
     });
     renderChangePassword();
@@ -183,12 +193,36 @@ describe('ChangePassword toast', () => {
 
     await waitFor(() => {
       expect(toastErrorMock).toHaveBeenCalledWith(
-        '비밀번호 변경에 실패했습니다',
+        '새 비밀번호 형식이 올바르지 않아요',
+        expect.objectContaining({
+          description: expect.stringContaining('특수문자'),
+        }),
       );
     });
   });
 
-  it('새 비밀번호와 확인이 불일치하면 검증 error toast가 호출된다 (confirm 미노출)', async () => {
+  it('500 status 시 서버 오류 toast', async () => {
+    const user = userEvent.setup();
+    patchMock.mockRejectedValue({
+      response: { status: 500, data: { message: '서버 오류' } },
+      isAxiosError: true,
+    });
+    renderChangePassword();
+
+    await fillValidForm(user);
+    await user.click(screen.getByRole('button', { name: '비밀번호 변경' }));
+    await screen.findByText('비밀번호를 변경하시겠어요?');
+    await user.click(screen.getByRole('button', { name: '변경' }));
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith(
+        '서버에 일시적인 문제가 발생했어요',
+        expect.objectContaining({ description: expect.any(String) }),
+      );
+    });
+  });
+
+  it('새 비밀번호와 확인이 불일치하면 검증 error toast 호출 + confirm 미노출', async () => {
     const user = userEvent.setup();
     renderChangePassword();
 
@@ -197,14 +231,17 @@ describe('ChangePassword toast', () => {
     await user.type(screen.getByLabelText('비밀번호 확인'), 'mismatch!');
     await user.click(screen.getByRole('button', { name: '비밀번호 변경' }));
 
-    expect(toastErrorMock).toHaveBeenCalledWith('비밀번호가 일치하지 않습니다');
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      '새 비밀번호와 확인이 일치하지 않아요',
+      expect.objectContaining({ description: expect.any(String) }),
+    );
     expect(
       screen.queryByText('비밀번호를 변경하시겠어요?'),
     ).not.toBeInTheDocument();
     expect(patchMock).not.toHaveBeenCalled();
   });
 
-  it('기존 비밀번호와 새 비밀번호가 같으면 검증 error toast가 호출된다 (confirm 미노출)', async () => {
+  it('기존 비밀번호와 새 비밀번호가 같으면 검증 error toast 호출 + confirm 미노출', async () => {
     const user = userEvent.setup();
     renderChangePassword();
 
@@ -214,7 +251,8 @@ describe('ChangePassword toast', () => {
     await user.click(screen.getByRole('button', { name: '비밀번호 변경' }));
 
     expect(toastErrorMock).toHaveBeenCalledWith(
-      '기존 비밀번호와 새로운 비밀번호가 같습니다',
+      '새 비밀번호가 기존과 동일해요',
+      expect.objectContaining({ description: expect.any(String) }),
     );
     expect(
       screen.queryByText('비밀번호를 변경하시겠어요?'),

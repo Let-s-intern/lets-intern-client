@@ -9,10 +9,16 @@
  *   'error')으로 톤을 분기한다. 닫기 버튼이 기본 포함되며, duration을 통해 자동
  *   dismiss 타이머도 Radix가 책임진다.
  *
- *   호출부에서 직접 써도 되지만 일관성을 위해 Layer 2 preset(SuccessToast /
- *   ErrorToast) 사용을 권장한다. 결과 알림의 톤이 컴파일 타임에 결정되도록 강제.
+ *   디자인 시스템 결정:
+ *     • 화면 중앙에 표시(Toaster가 viewport 위치 결정)
+ *     • 카드 형태(큰 패딩, 둥근 모서리, 그림자, 링)
+ *     • variant별 아이콘 + 컬러 톤
+ *     • fade + scale transition (열림/닫힘 자연스러운 등장·사라짐)
+ *     • Radix `data-state` 속성에 반응하는 Tailwind variant로 애니메이션 처리
  *
- *   imperative 호출(useToast)도 내부적으로 Toaster가 이 컴포넌트를 사용한다.
+ *   호출부에서 직접 써도 되지만 일관성을 위해 Layer 2 preset(SuccessToast /
+ *   ErrorToast) 사용을 권장한다. imperative 호출(useToast)도 내부적으로 Toaster가
+ *   이 컴포넌트를 사용한다.
  *
  * 어디에 쓰이는가:
  *   직접 호출처 0건 (apps/web — 2026-05-21).
@@ -44,25 +50,75 @@ export interface ToastProps {
 
 const DEFAULT_DURATION_MS = 4000;
 
-const ROOT_BASE =
-  'group pointer-events-auto relative flex w-[20rem] max-w-[calc(100vw-2rem)] items-start gap-3 rounded-lg border p-4 shadow-04 data-[state=open]:animate-fade-in data-[state=closed]:opacity-0 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=end]:transition-transform';
+// 중앙 표시 + scale/fade 애니메이션 + swipe(up)로 dismiss
+const ROOT_CLASSES =
+  'group pointer-events-auto relative flex w-[22rem] max-w-[calc(100vw-3rem)] flex-col items-center gap-4 rounded-2xl bg-white px-6 py-8 shadow-2xl ring-1 ring-black/5 transition-all duration-200 ease-out data-[state=open]:translate-y-0 data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=closed]:translate-y-2 data-[state=closed]:opacity-0 data-[state=closed]:scale-95 data-[swipe=move]:translate-y-[var(--radix-toast-swipe-move-y)] data-[swipe=cancel]:translate-y-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:translate-y-[var(--radix-toast-swipe-end-y)] data-[swipe=end]:transition-transform';
 
-const ROOT_DEFAULT = 'border-neutral-70 bg-white text-neutral-0';
-const ROOT_SUCCESS = 'border-green-200 bg-green-50 text-green-900';
-const ROOT_ERROR = 'border-red-200 bg-red-50 text-red-900';
+const ICON_WRAPPER_BASE =
+  'flex h-14 w-14 items-center justify-center rounded-full';
 
-const TITLE_CLASSES = 'text-xsmall14 font-semibold';
-const DESCRIPTION_CLASSES = 'mt-1 text-xsmall12 opacity-80';
+const ICON_WRAPPER: Record<ToastVariant, string> = {
+  default: `${ICON_WRAPPER_BASE} bg-neutral-95 text-neutral-30`,
+  success: `${ICON_WRAPPER_BASE} bg-green-50 text-green-600`,
+  error: `${ICON_WRAPPER_BASE} bg-red-50 text-red-600`,
+};
+
+// variant별 SVG 아이콘 (lucide 의존 없이 inline)
+const ICON_NODE: Record<ToastVariant, React.ReactNode> = {
+  default: (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  ),
+  success: (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  error: (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  ),
+};
+
+const TITLE_CLASSES = 'text-center text-base font-semibold text-neutral-0';
+const DESCRIPTION_CLASSES =
+  'mt-1 text-center text-sm leading-relaxed text-neutral-30';
 const CLOSE_CLASSES =
-  'absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded text-xsmall12 opacity-60 hover:opacity-100';
-const BODY_CLASSES = 'flex-1';
-const ACTION_WRAPPER_CLASSES = 'mt-2';
-
-function variantClasses(variant: ToastVariant): string {
-  if (variant === 'success') return ROOT_SUCCESS;
-  if (variant === 'error') return ROOT_ERROR;
-  return ROOT_DEFAULT;
-}
+  'absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-neutral-50 transition-colors hover:bg-neutral-95 hover:text-neutral-0';
+const BODY_CLASSES = 'flex w-full flex-col items-center';
+const ACTION_WRAPPER_CLASSES = 'mt-3';
 
 /**
  * 선언적 Toast (Layer 1).
@@ -87,8 +143,11 @@ export function Toast({
       onOpenChange={onOpenChange}
       duration={duration}
       data-variant={variant}
-      className={`${ROOT_BASE} ${variantClasses(variant)}`}
+      className={ROOT_CLASSES}
     >
+      <div className={ICON_WRAPPER[variant]} aria-hidden="true">
+        {ICON_NODE[variant]}
+      </div>
       <div className={BODY_CLASSES}>
         <ToastTitle className={TITLE_CLASSES}>{title}</ToastTitle>
         {description ? (
@@ -99,7 +158,19 @@ export function Toast({
         {action ? <div className={ACTION_WRAPPER_CLASSES}>{action}</div> : null}
       </div>
       <ToastClose className={CLOSE_CLASSES} aria-label="닫기">
-        ×
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
       </ToastClose>
     </ToastRoot>
   );
