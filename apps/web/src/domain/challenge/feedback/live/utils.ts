@@ -21,10 +21,12 @@ export function toMission(
     .toISOString()
     .slice(0, 10);
 
-  const status: LiveFeedbackStatus =
-    item.feedbackId == null
-      ? 'prev'
-      : (FEEDBACK_STATUS_MAP[item.feedbackStatus ?? ''] ?? 'prev');
+  let status: LiveFeedbackStatus = 'prev';
+  if (item.feedbackId == null) {
+    status = new Date(item.missionEndDate) < new Date() ? 'expired' : 'prev';
+  } else {
+    status = FEEDBACK_STATUS_MAP[item.feedbackStatus ?? ''] ?? 'prev';
+  }
 
   return {
     id: index,
