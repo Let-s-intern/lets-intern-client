@@ -1,5 +1,25 @@
 'use client';
 
+/**
+ * Layer 1 — 스타일 입힌 generic confirm 다이얼로그.
+ *
+ * 어떤 컴포넌트인가:
+ *   Layer 0(primitives.tsx)의 Radix raw 컴포넌트를 조합해 디자인 시스템 기본
+ *   스타일(Tailwind)을 입힌 선언적 confirm. variant prop('default' | 'destructive')으로
+ *   액션 버튼 톤을 분기한다. async onConfirm을 받으면 await 후 자동으로 닫는다.
+ *
+ *   extra(slot)와 confirmDisabled(외부 가드) prop을 제공해 Layer 2가 검증
+ *   로직을 직접 책임지면서 본체는 generic을 유지하도록 했다.
+ *
+ *   호출부에서 직접 써도 되지만 일관성을 위해 Layer 2 preset(EditConfirmDialog /
+ *   DangerConfirmDialog) 사용을 권장. 직접 사용은 양쪽 어디에도 안 맞는 특수
+ *   케이스에 한정.
+ *
+ * 어디에 쓰이는가:
+ *   직접 호출처 0건. Layer 2 preset과 ConfirmProvider가 내부에서 사용 중.
+ *   직접 호출 케이스가 생기면 여기에 기록해주세요.
+ */
+
 import * as React from 'react';
 
 import {

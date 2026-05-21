@@ -21,9 +21,26 @@ export type ConfirmFn = (options: ConfirmOptions) => Promise<boolean>;
 export const ConfirmContext = React.createContext<ConfirmFn | null>(null);
 
 /**
- * 단일 ConfirmDialog 인스턴스를 마운트하고 imperative `confirm(...)` API를 제공한다.
- * - 동시 호출 시 이전 promise는 resolve(false)로 정리하여 dangling을 방지한다.
- * - cancel/ESC/외부닫기는 모두 resolve(false), action 클릭은 resolve(true).
+ * imperative confirm API의 백킹 Provider.
+ *
+ * 어떤 컴포넌트인가:
+ *   단일 ConfirmDialog 인스턴스를 트리 어딘가에 마운트하고, `useConfirm()` 훅이
+ *   소비할 수 있는 imperative `confirm(...)` 함수를 Context로 제공한다.
+ *   동시 호출 시 이전 promise는 resolve(false)로 정리하여 dangling을 방지한다.
+ *   cancel/ESC/외부닫기는 모두 resolve(false), action 클릭은 resolve(true).
+ *
+ *   imperative 흐름이 자연스러운 케이스(핸들러 내부에서 await 후 다음 액션 실행)에
+ *   유용하지만, 선언적 preset 컴포넌트(EditConfirmDialog / DangerConfirmDialog) 사용을
+ *   기본으로 권장한다. UI 구성 의도가 컴포넌트 트리에 그대로 드러나서 디자인 PR
+ *   리뷰가 쉽다.
+ *
+ * 어디에 마운트되어 있는가:
+ *   • apps/web/src/context/Providers.tsx (앱 루트, useConfirm 사용 가능 영역)
+ *
+ * 어디서 useConfirm으로 호출되고 있는가:
+ *   직접 호출처 0건 (apps/web — 2026-05-21). 호출처 4곳 모두 선언적 preset
+ *   컴포넌트로 마이그레이션 완료. admin/mentor 앱 호출처 확인 후 미사용 확정 시
+ *   deprecation 검토.
  */
 export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   const [entry, setEntry] = React.useState<ConfirmEntry | null>(null);
