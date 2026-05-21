@@ -12,6 +12,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { captureAuthError } from '@/utils/captureError';
 import * as log from '@/utils/log';
 import axios from '@/utils/axios';
+import { useToast } from '@letscareer/ui';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -65,6 +66,7 @@ async function hashEmailPrefix(email: string): Promise<string> {
 
 const LoginContent = () => {
   const { isLoggedIn, login } = useAuthStore();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -93,7 +95,11 @@ const LoginContent = () => {
       const axiosError = error as AxiosError;
       const status = axiosError.response?.status;
       if (status === 400 || status === 404) {
-        setErrorMessage('이메일 또는 비밀번호가 일치하지 않습니다.');
+        const message = '이메일 또는 비밀번호가 일치하지 않습니다';
+        setErrorMessage(`${message}.`);
+        toast.error(message);
+      } else {
+        toast.error('로그인에 실패했습니다');
       }
       const reason =
         status === 400 || status === 404
@@ -137,7 +143,9 @@ const LoginContent = () => {
     };
 
     if (searchParams.get('error')) {
-      setErrorMessage('이미 가입된 휴대폰 번호입니다.');
+      const message = '이미 가입된 휴대폰 번호입니다';
+      setErrorMessage(`${message}.`);
+      toast.error(message);
       const provider = searchParams.get('provider') ?? 'unknown';
       const reason = searchParams.get('error') ?? 'unknown';
       emitSocialSigninSpan({ result: 'fail', provider, reason });
@@ -173,7 +181,7 @@ const LoginContent = () => {
       router.push(redirect);
       return;
     }
-  }, [searchParams, router, isLoggedIn, redirect, login]);
+  }, [searchParams, router, isLoggedIn, redirect, login, toast]);
 
   return (
     <>
