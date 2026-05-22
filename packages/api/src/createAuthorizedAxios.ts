@@ -34,6 +34,12 @@ function extractErrorMessage(data: unknown, depth = 0): string | null {
   return null;
 }
 
+function extractErrorCode(data: unknown): string | null {
+  if (data == null || typeof data !== 'object') return null;
+  const code = (data as Record<string, unknown>).code;
+  return typeof code === 'string' ? code : null;
+}
+
 export function createAuthorizedAxios({
   baseURL,
   getAuthHeader,
@@ -79,8 +85,9 @@ export function createAuthorizedAxios({
         const endpoint = axiosConfig?.url ?? '';
         const method = (axiosConfig?.method ?? 'GET').toUpperCase();
         const serverMessage = extractErrorMessage(data) ?? undefined;
+        const serverCode = extractErrorCode(data);
         const apiError = new ApiError({
-          code: 'API_ERROR',
+          code: serverCode ?? 'API_ERROR',
           message: serverMessage ?? '서버 오류가 발생했습니다.',
           status,
           endpoint,
