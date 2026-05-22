@@ -9,11 +9,12 @@ import {
   ReviewSectionConfig,
 } from '@/domain/program/challenge/template-view/types';
 
+const HR_THEME = { primary: '#FF5E00', lightAccent: '#FEEEE5' };
+
 export const hrIntroConfig: IntroSectionConfig = {
+  primaryColor: HR_THEME.primary,
+  lightAccentColor: HR_THEME.lightAccent,
   backgroundColor: '#FFFAF7',
-  primaryColor: '#ff5e00',
-  bubbleBackgroundColor: '#FEEFE6',
-  bubbleTextColor: '#3D3D3D',
   titleLine1: 'HR/인사 직무,',
   description: (
     <>
@@ -108,6 +109,7 @@ const HR_FEATURE_CARDS: FeatureCardConfig[] = [
 ];
 
 export const hrIntroFeaturesConfig: IntroFeaturesSectionConfig = {
+  primaryColor: HR_THEME.primary,
   getTitle: (weekText) => (
     <>
       <div>
@@ -126,11 +128,12 @@ export const hrIntroFeaturesConfig: IntroFeaturesSectionConfig = {
     </>
   ),
   cards: HR_FEATURE_CARDS,
-  primaryColor: '#FF5E00',
   cardGradient: 'linear-gradient(180deg, #FEF4EF 0%, #FEE6D8 100%)',
 };
 
 export const hrCheckListConfig: CheckListSectionConfig = {
+  primaryColor: HR_THEME.primary,
+  lightAccentColor: HR_THEME.lightAccent,
   items: [
     {
       title: ['HR 직무에 관심은 있지만,', '실제로 어떤 일을 하는지 몰라요'],
@@ -161,12 +164,10 @@ export const hrCheckListConfig: CheckListSectionConfig = {
       ],
     },
   ],
-  boxBackgroundColor: '#FEEEE5',
-  badgeBackgroundColor: '#FF5E00',
-  checkboxColor: '#FF5E00',
 };
 
 export const hrCurriculumPointsConfig: CurriculumPointsSectionConfig = {
+  primaryColor: HR_THEME.primary,
   getTitle: (weekText) => (
     <>
       <span>누적 5,000건 이상의 피드백,</span>
@@ -213,10 +214,11 @@ export const hrCurriculumPointsConfig: CurriculumPointsSectionConfig = {
       ),
     },
   ],
-  primaryColor: '#FF5E00',
 };
 
 export const hrDifferentiatorsConfig: DifferentiatorsSectionConfig = {
+  primaryColor: HR_THEME.primary,
+  lightAccentColor: HR_THEME.lightAccent,
   subtitle: 'HR/인사 직무 챌린지, 왜 다를까요?',
   title: (
     <>
@@ -271,21 +273,19 @@ export const hrDifferentiatorsConfig: DifferentiatorsSectionConfig = {
       ],
     },
   ],
-  primaryColor: '#FF5E00',
-  activeBoxBgColor: '#FEEEE5',
 };
 
 export const hrReviewConfig: ReviewSectionConfig = {
+  primaryColor: HR_THEME.primary,
+  lightAccentColor: HR_THEME.lightAccent,
   reviewLinkQuery: { program: 'challenge_review', challenge: 'hr' },
-  starBadgeBgColor: '#FEEEE5',
-  starColor: '#FF5E00',
   bubbleBgColor: '#FF9B61',
   buttonBgColor: '#F55A00',
 };
 
 export const hrOverviewConfig: OverviewSectionConfig = {
+  primaryColor: HR_THEME.primary,
   backgroundColor: '#290F00',
   stepBadgeBackgroundColor: '#FFBD96',
-  titleBadgeColor: '#FF5E00',
   getTitle: (weekText) => `${weekText} 여정 한 번에 보기`,
 };

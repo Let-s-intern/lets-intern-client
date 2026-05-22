@@ -12,15 +12,15 @@ const INACTIVE_COLOR = '#ACAFB6';
 const Checklist = ({
   items,
   isActive,
-  activeBoxBgColor,
   primaryColor,
+  lightAccentColor,
 }: {
   items: ChecklistItemConfig[];
   isActive: boolean;
-  activeBoxBgColor: string;
   primaryColor: string;
+  lightAccentColor: string;
 }) => {
-  const bgColor = isActive ? activeBoxBgColor : '#F3F3F3';
+  const bgColor = isActive ? lightAccentColor : '#F3F3F3';
   const checkboxColor = isActive ? primaryColor : INACTIVE_COLOR;
 
   return (
@@ -50,10 +50,10 @@ const Differentiator = ({
   before,
   after,
   primaryColor,
-  activeBoxBgColor,
+  lightAccentColor,
 }: DifferentiatorItemConfig & {
   primaryColor: string;
-  activeBoxBgColor: string;
+  lightAccentColor: string;
 }) => {
   return (
     <div className="flex flex-col gap-5 md:gap-8">
@@ -73,8 +73,8 @@ const Differentiator = ({
           <Checklist
             items={before}
             isActive={false}
-            activeBoxBgColor={activeBoxBgColor}
             primaryColor={primaryColor}
+            lightAccentColor={lightAccentColor}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -87,8 +87,8 @@ const Differentiator = ({
           <Checklist
             items={after}
             isActive={true}
-            activeBoxBgColor={activeBoxBgColor}
             primaryColor={primaryColor}
+            lightAccentColor={lightAccentColor}
           />
         </div>
       </div>
@@ -101,7 +101,7 @@ interface Props {
 }
 
 function DifferentiatorsSection({ config }: Props) {
-  const { subtitle, title, differentiators, primaryColor, activeBoxBgColor } =
+  const { primaryColor, lightAccentColor, subtitle, title, differentiators } =
     config;
 
   return (
@@ -125,7 +125,7 @@ function DifferentiatorsSection({ config }: Props) {
             <Differentiator
               {...item}
               primaryColor={primaryColor}
-              activeBoxBgColor={activeBoxBgColor}
+              lightAccentColor={lightAccentColor}
             />
           </article>
         ))}

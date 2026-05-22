@@ -121,12 +121,8 @@ interface Props {
 
 function OverviewSection({ config, content }: Props) {
   const weekText = content?.challengePoint?.weekText ?? '3주';
-  const {
-    backgroundColor,
-    stepBadgeBackgroundColor,
-    titleBadgeColor,
-    getTitle,
-  } = config;
+  const { primaryColor, backgroundColor, stepBadgeBackgroundColor, getTitle } =
+    config;
 
   return (
     <section
@@ -136,7 +132,7 @@ function OverviewSection({ config, content }: Props) {
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
         <p
           className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md px-3.5 py-2.5 font-bold text-white"
-          style={{ backgroundColor: titleBadgeColor }}
+          style={{ backgroundColor: primaryColor }}
         >
           <CalendarBadge className="h-[30px] w-[30px]" aria-hidden="true" />
           <span>{getTitle(weekText)}</span>

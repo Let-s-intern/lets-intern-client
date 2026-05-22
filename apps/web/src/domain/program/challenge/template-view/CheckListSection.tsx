@@ -52,8 +52,7 @@ interface Props {
 }
 
 function CheckListSection({ config }: Props) {
-  const { items, boxBackgroundColor, badgeBackgroundColor, checkboxColor } =
-    config;
+  const { primaryColor, lightAccentColor, items } = config;
 
   return (
     <section className="flex flex-col items-center bg-[#FFFAF7] pb-[70px] pt-[50px] text-center md:pb-[142px] md:pt-[88px]">
@@ -68,9 +67,9 @@ function CheckListSection({ config }: Props) {
                 className={`text-small16 md:text-medium24 relative flex w-full max-w-[860px] flex-col py-6 font-semibold md:p-10 ${
                   index === 0 ? 'justify-center gap-1 md:flex-row' : ' '
                 }`}
-                style={{ backgroundColor: boxBackgroundColor }}
+                style={{ backgroundColor: lightAccentColor }}
               >
-                <Badge style={{ backgroundColor: badgeBackgroundColor }}>
+                <Badge style={{ backgroundColor: primaryColor }}>
                   추천 {index + 1}
                 </Badge>
                 {item.title.map((ele) => (
@@ -86,7 +85,7 @@ function CheckListSection({ config }: Props) {
                     className={
                       group.length > 1 ? 'justify-start' : 'items-center'
                     }
-                    checkboxColor={checkboxColor}
+                    checkboxColor={primaryColor}
                   >
                     {group.map((ele) => (
                       <span

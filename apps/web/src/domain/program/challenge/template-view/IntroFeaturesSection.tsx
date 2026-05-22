@@ -1,6 +1,6 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import { ChallengeContent } from '@/types/interface';
-import { ReactNode } from 'react';
+
 import MainTitle from '../ui/MainTitle';
 import { FeatureCardConfig, IntroFeaturesSectionConfig } from './types';
 
@@ -70,7 +70,7 @@ interface Props {
 
 function IntroFeaturesSection({ config, content }: Props) {
   const weekText = content?.challengePoint?.weekText ?? '3주';
-  const { getTitle, description, cards, primaryColor, cardGradient } = config;
+  const { primaryColor, getTitle, description, cards, cardGradient } = config;
 
   return (
     <section

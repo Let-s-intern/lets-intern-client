@@ -15,9 +15,9 @@ interface Props {
 function ReviewSection({ config, content }: Props) {
   const reviews = content?.challengeReview ?? [];
   const {
+    primaryColor,
+    lightAccentColor,
     reviewLinkQuery,
-    starBadgeBgColor,
-    starColor,
     bubbleBgColor,
     buttonBgColor,
   } = config;
@@ -37,8 +37,8 @@ function ReviewSection({ config, content }: Props) {
       <div className="w-full">
         <TestimonialCarousel
           reviews={reviews}
-          starBadgeBgColor={starBadgeBgColor}
-          starColor={starColor}
+          starBadgeBgColor={lightAccentColor}
+          starColor={primaryColor}
         />
       </div>
 

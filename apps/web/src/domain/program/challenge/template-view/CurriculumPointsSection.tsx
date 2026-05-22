@@ -51,7 +51,7 @@ interface Props {
 function CurriculumPointsSection({ config, content }: Props) {
   const weekText = content?.challengePoint?.weekText ?? '3주';
   const lectureCount = content?.lectures?.length ?? DEFAULT_LECTURE_COUNT;
-  const { getTitle, getCurriculumCards, primaryColor } = config;
+  const { primaryColor, getTitle, getCurriculumCards } = config;
   const curriculumCards = getCurriculumCards?.(lectureCount);
 
   return (

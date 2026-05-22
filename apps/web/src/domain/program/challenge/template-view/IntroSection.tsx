@@ -8,12 +8,10 @@ const IntroBubble = ({
   children,
   align = 'left',
   backgroundColor,
-  textColor,
 }: {
   children: ReactNode;
   align?: 'left' | 'right' | 'center';
   backgroundColor: string;
-  textColor: string;
 }) => {
   const base =
     'relative w-full min-w-0 max-w-full rounded-xl p-5 text-center text-xsmall14 md:min-w-0 md:max-w-full md:px-[60px] md:py-[30px] md:text-left md:text-small20 md:w-fit';
@@ -23,7 +21,7 @@ const IntroBubble = ({
   return (
     <div
       className={`${base} ${align === 'right' ? 'md:ml-auto' : ''}`}
-      style={{ backgroundColor, color: textColor }}
+      style={{ backgroundColor, color: '#3D3D3D' }}
     >
       {children}
       <IntroBubbleTail
@@ -47,10 +45,9 @@ interface Props {
 
 function IntroSection({ config }: Props) {
   const {
-    backgroundColor,
     primaryColor,
-    bubbleBackgroundColor,
-    bubbleTextColor,
+    lightAccentColor,
+    backgroundColor,
     titleLine1,
     description,
     bubbles,
@@ -94,8 +91,7 @@ function IntroSection({ config }: Props) {
             >
               <IntroBubble
                 align={bubble.align}
-                backgroundColor={bubbleBackgroundColor}
-                textColor={bubbleTextColor}
+                backgroundColor={lightAccentColor}
               >
                 {bubble.text}
               </IntroBubble>

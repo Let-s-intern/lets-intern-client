@@ -8,10 +8,9 @@ export interface IntroBubbleConfig {
 }
 
 export interface IntroSectionConfig {
-  backgroundColor: string;
   primaryColor: string;
-  bubbleBackgroundColor: string;
-  bubbleTextColor: string;
+  lightAccentColor: string;
+  backgroundColor: string;
   titleLine1: string;
   description: ReactNode;
   bubbles: IntroBubbleConfig[];
@@ -29,10 +28,10 @@ export interface FeatureCardConfig {
 }
 
 export interface IntroFeaturesSectionConfig {
+  primaryColor: string;
   getTitle: (weekText: string) => ReactNode;
   description: ReactNode;
   cards: FeatureCardConfig[];
-  primaryColor: string;
   cardGradient: string;
 }
 
@@ -44,10 +43,9 @@ export interface CheckListItemConfig {
 }
 
 export interface CheckListSectionConfig {
+  primaryColor: string;
+  lightAccentColor: string;
   items: CheckListItemConfig[];
-  boxBackgroundColor: string;
-  badgeBackgroundColor: string;
-  checkboxColor: string;
 }
 
 // ---- CurriculumPointsSection ----
@@ -58,9 +56,9 @@ export interface CurriculumPointCardConfig {
 }
 
 export interface CurriculumPointsSectionConfig {
+  primaryColor: string;
   getTitle: (weekText: string) => ReactNode;
   getCurriculumCards?: (lectureCount: number) => CurriculumPointCardConfig[];
-  primaryColor: string;
 }
 
 // ---- DifferentiatorsSection ----
@@ -82,19 +80,19 @@ export interface FeedbackBenefitConfig {
 }
 
 export interface DifferentiatorsSectionConfig {
+  primaryColor: string;
+  lightAccentColor: string;
   subtitle: string;
   title: ReactNode;
   differentiators: DifferentiatorItemConfig[];
-  primaryColor: string;
-  activeBoxBgColor: string;
 }
 
 // ---- ReviewSection ----
 
 export interface ReviewSectionConfig {
+  primaryColor: string;
+  lightAccentColor: string;
   reviewLinkQuery: Record<string, string>;
-  starBadgeBgColor: string;
-  starColor: string;
   bubbleBgColor: string;
   buttonBgColor: string;
 }
@@ -102,8 +100,8 @@ export interface ReviewSectionConfig {
 // ---- OverviewSection ----
 
 export interface OverviewSectionConfig {
+  primaryColor: string;
   backgroundColor: string;
   stepBadgeBackgroundColor: string;
-  titleBadgeColor: string;
   getTitle: (weekText: string) => string;
 }
