@@ -1,7 +1,7 @@
 'use client';
 
+import StarIcon from '@/assets/icons/star.svg';
 import { useMediaQuery } from '@mui/material';
-import Image from 'next/image';
 import React from 'react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -19,27 +19,35 @@ interface ReviewItem {
 
 interface Props {
   reviews: ReviewItem[];
+  starBadgeBgColor: string;
+  starColor: string;
 }
 
 const TestimonialCard = ({
   title,
   content,
   meta,
+  starBadgeBgColor,
+  starColor,
 }: {
   title: string;
   content: string;
   meta: string;
+  starBadgeBgColor: string;
+  starColor: string;
 }) => {
   return (
     <div className="rounded-xs bg-static-100 min-h-[282px] w-[300px] p-5 shadow-sm md:w-[371px] md:rounded-sm">
-      <div className="rounded-xs mb-3 flex w-fit items-center bg-[#FEEEE5] px-2 py-1.5">
+      <div
+        className="rounded-xs mb-3 flex w-fit items-center px-2 py-1.5"
+        style={{ backgroundColor: starBadgeBgColor }}
+      >
         {[...Array(5)].map((_, idx) => (
-          <Image
+          <StarIcon
             key={idx}
-            src="/images/hr-star.svg"
-            alt="star"
-            width={16}
-            height={16}
+            className="h-4 w-4"
+            style={{ color: starColor }}
+            aria-hidden="true"
           />
         ))}
       </div>
@@ -58,7 +66,11 @@ const TestimonialCard = ({
   );
 };
 
-const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
+const TestimonialCarousel: React.FC<Props> = ({
+  reviews,
+  starBadgeBgColor,
+  starColor,
+}) => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   return (
@@ -85,6 +97,8 @@ const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
                 title={item.title}
                 content={item.content}
                 meta={meta}
+                starBadgeBgColor={starBadgeBgColor}
+                starColor={starColor}
               />
             </SwiperSlide>
           );

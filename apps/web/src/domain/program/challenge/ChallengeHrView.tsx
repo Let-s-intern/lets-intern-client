@@ -7,17 +7,27 @@ import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
-import HrCheckListSection from './hr-view/HrCheckListSection';
-import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
+import {
+  hrCheckListConfig,
+  hrCurriculumPointsConfig,
+  hrDifferentiatorsConfig,
+  hrIntroConfig,
+  hrIntroFeaturesConfig,
+  hrOverviewConfig,
+  hrReviewConfig,
+} from './hr-view/hrConfig';
 import HrCurriculumSection from './hr-view/HrCurriculumSection';
 import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
-import HrDifferentiatorsSection from './hr-view/HrDifferentiatorsSection';
 import HrFAQSection from './hr-view/HrFAQSection';
-import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
-import HrIntroSection from './hr-view/HrIntroSection';
-import HrOverviewSection from './hr-view/HrOverviewSection';
+import HrFeedbackSection from './hr-view/HrFeedbackSection';
 import HrRecruitmentInfoSection from './hr-view/HrRecruitmentInfoSection';
-import HrReviewSection from './hr-view/HrReviewSection';
+import CheckListSection from './template-view/CheckListSection';
+import CurriculumPointsSection from './template-view/CurriculumPointsSection';
+import DifferentiatorsSection from './template-view/DifferentiatorsSection';
+import IntroFeaturesSection from './template-view/IntroFeaturesSection';
+import IntroSection from './template-view/IntroSection';
+import OverviewSection from './template-view/OverviewSection';
+import ReviewSection from './template-view/ReviewSection';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
@@ -39,16 +49,23 @@ const ChallengeHrView = ({ challenge }: Props) => {
         <>
           <ChallengeTabNavigation themeColor={themeColor} />
           <ChallengeIntroEditorContent challenge={challenge} />
-          <HrIntroSection />
-          <HrIntroFeaturesSection content={content} />
-          <HrCheckListSection />
-          <HrCurriculumPointsSection content={content} />
+          <IntroSection config={hrIntroConfig} />
+          <IntroFeaturesSection
+            config={hrIntroFeaturesConfig}
+            content={content}
+          />
+          <CheckListSection config={hrCheckListConfig} />
+          <CurriculumPointsSection
+            config={hrCurriculumPointsConfig}
+            content={content}
+          />
           <HrCurriculumStepsSection content={content} />
           <HrCurriculumSection challenge={challenge} content={content} />
-          <HrOverviewSection content={content} />
-          <HrDifferentiatorsSection />
+          <OverviewSection config={hrOverviewConfig} content={content} />
+          <DifferentiatorsSection config={hrDifferentiatorsConfig} />
+          <HrFeedbackSection />
           <HrRecruitmentInfoSection challenge={challenge} />
-          <HrReviewSection content={content} />
+          <ReviewSection config={hrReviewConfig} content={content} />
           <HrFAQSection challenge={challenge} content={content} />
         </>
       )}

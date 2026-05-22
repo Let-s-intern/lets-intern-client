@@ -1,6 +1,8 @@
+import CalendarBadge from '@/assets/icons/calendar-badge.svg';
 import { ChallengeContent } from '@/types/interface';
 import Image from 'next/image';
 import { ReactNode } from 'react';
+import { OverviewSectionConfig } from './types';
 
 interface StepItem {
   step: string;
@@ -78,21 +80,20 @@ const OVERVIEW_STEPS: StepItem[] = [
   },
 ];
 
-interface StepCardProps {
-  step: string;
-  title: string;
-  description: ReactNode;
-  src: string;
-  index: number;
-}
-
-const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
+const StepCard = ({
+  step,
+  title,
+  description,
+  src,
+  index,
+  stepBadgeBackgroundColor,
+}: StepItem & { index: number; stepBadgeBackgroundColor: string }) => {
   return (
     <div className="flex min-w-[424px] flex-col gap-3 md:gap-4">
       <div className="flex items-center justify-start gap-3">
         <span
           className="text-xsmall16 md:text-medium22 rounded-full px-4 py-2 font-semibold text-[#212121]"
-          style={{ backgroundColor: '#FFBD96' }}
+          style={{ backgroundColor: stepBadgeBackgroundColor }}
         >
           {step}
         </span>
@@ -113,36 +114,48 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
   );
 };
 
-interface HrOverviewSectionProps {
+interface Props {
+  config: OverviewSectionConfig;
   content: ChallengeContent | null;
 }
 
-const HrOverviewSection: React.FC<HrOverviewSectionProps> = ({ content }) => {
+function OverviewSection({ config, content }: Props) {
   const weekText = content?.challengePoint?.weekText ?? '3주';
+  const {
+    backgroundColor,
+    stepBadgeBackgroundColor,
+    titleBadgeColor,
+    getTitle,
+  } = config;
 
   return (
-    <section className="flex w-full flex-col items-center bg-[#290F00] px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
+    <section
+      className="flex w-full flex-col items-center px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0"
+      style={{ backgroundColor }}
+    >
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
-        <p className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md bg-[#FF5E00] px-3.5 py-2.5 font-bold text-white">
-          <Image
-            unoptimized
-            src="/images/hr-calendar.svg"
-            alt="캘린더 아이콘"
-            width={30}
-            height={30}
-          />
-          <span>{weekText} 여정 한 번에 보기</span>
+        <p
+          className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md px-3.5 py-2.5 font-bold text-white"
+          style={{ backgroundColor: titleBadgeColor }}
+        >
+          <CalendarBadge className="h-[30px] w-[30px]" aria-hidden="true" />
+          <span>{getTitle(weekText)}</span>
         </p>
       </div>
       <div className="mb-16 w-screen md:mb-36">
         <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4">
           {OVERVIEW_STEPS.map((item, index) => (
-            <StepCard key={index} {...item} index={index} />
+            <StepCard
+              key={index}
+              {...item}
+              index={index}
+              stepBadgeBackgroundColor={stepBadgeBackgroundColor}
+            />
           ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
-export default HrOverviewSection;
+export default OverviewSection;
