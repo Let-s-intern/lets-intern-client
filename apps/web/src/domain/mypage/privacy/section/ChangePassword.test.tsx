@@ -1,6 +1,22 @@
+// 패키지 entry(@letscareer/api) 는 env.ts 의 import.meta 때문에 jest 환경에서
+// SyntaxError 가 발생한다. ApiError 클래스만 필요하므로 errors 서브경로를 직접
+// import 해서 패키지 entry 로드를 우회한다 (package.json exports "./*").
+import { ApiError } from '@letscareer/api/errors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+function makeApiError(status: number, message: string): ApiError {
+  return new ApiError({
+    code: 'API_ERROR',
+    message,
+    status,
+    endpoint: '/user/password',
+    method: 'PATCH',
+    serverMessage: message,
+    context: {},
+  });
+}
 
 const patchMock = jest.fn();
 jest.mock('../../../../utils/axios', () => ({
@@ -151,13 +167,9 @@ describe('ChangePassword toast', () => {
 
   it('400 + 메시지 "비밀번호가 일치하지 않습니다" 시 기존 비번 불일치 toast', async () => {
     const user = userEvent.setup();
-    patchMock.mockRejectedValue({
-      response: {
-        status: 400,
-        data: { message: '비밀번호가 일치하지 않습니다.' },
-      },
-      isAxiosError: true,
-    });
+    patchMock.mockRejectedValue(
+      makeApiError(400, '비밀번호가 일치하지 않습니다.'),
+    );
     renderChangePassword();
 
     await fillValidForm(user);
@@ -177,13 +189,9 @@ describe('ChangePassword toast', () => {
 
   it('400 + 메시지 "비밀번호 형식이 잘못되었습니다" 시 형식 위반 toast', async () => {
     const user = userEvent.setup();
-    patchMock.mockRejectedValue({
-      response: {
-        status: 400,
-        data: { message: '비밀번호 형식이 잘못되었습니다.' },
-      },
-      isAxiosError: true,
-    });
+    patchMock.mockRejectedValue(
+      makeApiError(400, '비밀번호 형식이 잘못되었습니다.'),
+    );
     renderChangePassword();
 
     await fillValidForm(user);
@@ -203,10 +211,7 @@ describe('ChangePassword toast', () => {
 
   it('500 status 시 서버 오류 toast', async () => {
     const user = userEvent.setup();
-    patchMock.mockRejectedValue({
-      response: { status: 500, data: { message: '서버 오류' } },
-      isAxiosError: true,
-    });
+    patchMock.mockRejectedValue(makeApiError(500, '서버 오류'));
     renderChangePassword();
 
     await fillValidForm(user);
