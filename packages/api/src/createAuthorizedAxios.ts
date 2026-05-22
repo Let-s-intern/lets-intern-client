@@ -34,10 +34,12 @@ function extractErrorMessage(data: unknown, depth = 0): string | null {
   return null;
 }
 
-function extractErrorCode(data: unknown): string | null {
-  if (data == null || typeof data !== 'object') return null;
-  const code = (data as Record<string, unknown>).code;
-  return typeof code === 'string' ? code : null;
+function extractErrorCode(data: unknown, depth = 0): string | null {
+  if (data == null || depth > 3 || typeof data !== 'object') return null;
+  const record = data as Record<string, unknown>;
+  if (typeof record.code === 'string') return record.code;
+  if ('data' in record) return extractErrorCode(record.data, depth + 1);
+  return null;
 }
 
 export function createAuthorizedAxios({
