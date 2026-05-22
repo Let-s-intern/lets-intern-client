@@ -1,7 +1,7 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import { isAxiosError } from 'axios';
+import { ApiError } from '@letscareer/api/errors';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -9,6 +9,16 @@ import Button from '../../../common/button/Button';
 import Input from '../../../common/input/v1/Input';
 import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
+
+const SOCIAL_PROVIDER_KEYWORDS = ['카카오', '네이버', '구글'] as const;
+
+function extractSocialProviderLabel(serverMessage?: string): string | null {
+  if (!serverMessage) return null;
+  return (
+    SOCIAL_PROVIDER_KEYWORDS.find((label) => serverMessage.includes(label)) ??
+    null
+  );
+}
 
 const FindPassword = () => {
   const router = useRouter();
@@ -63,20 +73,24 @@ const FindPassword = () => {
       router.push('/login');
     } catch (error) {
       setIsError(true);
-      if (isAxiosError(error) && error.response?.status === 404) {
-        setMessage('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
-        return;
-      }
-      if (isAxiosError(error) && error.response?.status === 400) {
-        const social = error.response.data.message.slice(0, 3);
-        setMessage(`${social}로 로그인해주세요.`);
-        alert(
-          `${social}로 회원가입된 사용자입니다.\n${social}로 로그인해주세요.`,
-        );
-        return;
+      if (error instanceof ApiError) {
+        if (error.status === 404) {
+          setMessage('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
+          return;
+        }
+        if (error.status === 400) {
+          const socialLabel = extractSocialProviderLabel(error.serverMessage);
+          if (socialLabel) {
+            setMessage(`${socialLabel}로 로그인해주세요.`);
+            alert(
+              `${socialLabel}로 회원가입된 사용자입니다.\n${socialLabel}로 로그인해주세요.`,
+            );
+            return;
+          }
+        }
       }
       setMessage(
-        '비밀번호 재설정 링크 전송에 실패했습니다.\n하단 채팅문의를 통해 문의해주세요.',
+        '임시 비밀번호 이메일 전송에 실패했습니다.\n하단 채팅문의를 통해 문의해주세요.',
       );
     }
   };

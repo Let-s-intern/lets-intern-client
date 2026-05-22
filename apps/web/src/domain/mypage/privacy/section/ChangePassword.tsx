@@ -7,8 +7,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { ApiError } from '@letscareer/api/errors';
 import { EditConfirmDialog, useToast } from '@letscareer/ui';
-import { AxiosError } from 'axios';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
@@ -45,10 +45,14 @@ const ChangePassword = () => {
       });
     },
     onError: async (_error) => {
-      const error = _error as AxiosError;
-      const status = error.response?.status;
-      const serverMessage = (error.response?.data as { message?: string })
-        ?.message;
+      if (!(_error instanceof ApiError)) {
+        toast.error('비밀번호 변경에 실패했어요', {
+          description: '네트워크 상태를 확인하고 다시 시도해주세요.',
+        });
+        return;
+      }
+      const status = _error.status;
+      const serverMessage = _error.serverMessage;
 
       // TODO(BE 협의): 현재 백엔드는 두 가지 400을 한국어 message 문구로만 구분한다.
       //   - INVALID_PASSWORD:  "비밀번호 형식이 잘못되었습니다." (새 비번 정규식 위반)
