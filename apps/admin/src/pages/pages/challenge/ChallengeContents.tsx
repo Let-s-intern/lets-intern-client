@@ -5,12 +5,14 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
+import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import { usePageableWithSearchParams } from '@/hooks/usePageableWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import { ContentsResItem } from '@/schema';
 import { TABLE_CONTENT, TABLE_STATUS } from '@/utils/convert';
 import { useMemo, useState } from 'react';
-import useContentsQuery from './contents/hooks/useContentsQuery';
 import useContentsMutations from './contents/hooks/useContentsMutations';
+import useContentsQuery from './contents/hooks/useContentsQuery';
 
 const cellWidthList = [
   'w-[200px]',
@@ -25,7 +27,11 @@ const colNames = ['생성일자', 'id', '콘텐츠구분', '콘텐츠명', '콘�
 type Row = ContentsResItem & ItemWithStatus;
 
 const ChallengeContents = () => {
-  const { data, refetch } = useContentsQuery();
+  const { pageable, handlePageChange } = usePageableWithSearchParams({
+    defaultPage: 1,
+    defaultSize: 20,
+  });
+  const { data, refetch } = useContentsQuery(pageable.page, pageable.size);
   const { createMutation, updateMutation, deleteMutation } =
     useContentsMutations();
 
@@ -123,6 +129,12 @@ const ChallengeContents = () => {
           ))}
         </LineTableBody>
       </div>
+      <MuiPagination
+        page={pageable.page}
+        pageInfo={data?.pageInfo ?? { totalPages: 0 }}
+        onChange={handlePageChange}
+        className="py-4"
+      />
     </div>
   );
 };
