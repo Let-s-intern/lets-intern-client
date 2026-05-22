@@ -33,6 +33,7 @@ import { KeywordNode } from './KeywordNode';
 import { LayoutContainerNode } from './LayoutContainerNode';
 import { LayoutItemNode } from './LayoutItemNode';
 import { MentionNode } from './MentionNode';
+import { NotionNode } from './NotionNode';
 import { PageBreakNode } from './PageBreakNode';
 import { PollNode } from './PollNode';
 import { StickyNode } from './StickyNode';
@@ -66,6 +67,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   HorizontalRuleNode,
   TweetNode,
   YouTubeNode,
+  NotionNode,
   FigmaNode,
   PDFNode,
   MarkNode,

@@ -21,7 +21,8 @@ function toMagnetQuestion(item: UserMagnetQuestionItem): MagnetQuestion {
     isRequired: item.isRequired ? 'REQUIRED' : 'OPTIONAL',
     question: item.question,
     description: item.description,
-    selectionMethod: item.choiceType,
+    // 주관식은 choiceType 이 null — 사용처(MagnetSurveySection)가 'SINGLE' 비교만 하므로 무해한 디폴트.
+    selectionMethod: item.choiceType ?? 'SINGLE',
     items: options.map((value, index) => ({
       itemId: index + 1,
       value,
@@ -51,6 +52,7 @@ export default function LibraryApplyPage() {
   return (
     <MagnetApplyContent
       magnetId={magnetInfo.magnetId}
+      magnetType={magnetInfo.type}
       title={magnetInfo.title}
       thumbnail={magnetInfo.desktopThumbnail}
       questions={questions}

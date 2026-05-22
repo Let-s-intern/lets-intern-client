@@ -9,14 +9,12 @@ packages/hooks/src/
 ├── useMounted.ts                  # 마운트 여부
 ├── useRunOnce.ts                  # 1회만 실행
 ├── useScrollDirection.ts          # 스크롤 방향 감지
-├── useScrollFade.ts               # 스크롤 페이드 효과
 ├── useScrollShadow.ts             # 스크롤 그림자
 ├── useActiveLink.ts               # 현재 활성 링크
 ├── useValidateUrl.ts              # URL 검증
 ├── useBeforeUnloadWarning.ts      # 페이지 이탈 경고
 ├── useChangeDetectionHook.ts      # 변경 감지
 ├── useControlScroll.tsx           # 스크롤 제어
-├── useCounter.ts                  # 카운터
 ├── useDecimalCounter.ts           # 소수점 카운터
 ├── useGoogleAnalytics.ts          # GA 이벤트
 ├── useInstagramAlert.tsx          # 인스타 외부 브라우저 안내
@@ -33,10 +31,8 @@ packages/hooks/src/
 ```ts
 export { default as useRunOnce } from './useRunOnce';
 export { default as useMounted } from './useMounted';
-export { default as useCounter } from './useCounter';
 export { default as useDecimalCounter } from './useDecimalCounter';
 export { default as useBeforeUnloadWarning } from './useBeforeUnloadWarning';
-export { default as useScrollFade } from './useScrollFade';
 export { default as useScrollShadow } from './useScrollShadow';
 export { default as useScrollDirection } from './useScrollDirection';
 export { default as useActiveLink } from './useActiveLink';
@@ -69,7 +65,7 @@ function Header() {
 
 ## 앱 로컬 훅과의 분리
 
-도메인 로직(`useChallengeProgram`, `useDeleteProgram` 등)은 *공유되지 않으므로* `apps/<app>/src/hooks/`에 둔다. apps/web 훅 카탈로그: [`../apps/web/hooks.md`](../apps/web/hooks.md).
+도메인 로직(`useChallengeProgram`, `useDeleteProgram` 등)은 _공유되지 않으므로_ `apps/<app>/src/hooks/`에 둔다. apps/web 훅 카탈로그: [`../apps/web/hooks.md`](../apps/web/hooks.md).
 
 ## 관련
 

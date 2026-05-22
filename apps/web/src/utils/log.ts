@@ -132,3 +132,147 @@ export function replayFlushed(
     ...(errorCode !== undefined && { errorCode }),
   });
 }
+
+/**
+ * 자료집 신청 페이지 마운트.
+ * Logs level: info. EventExtraMagnetSection 가 노출되어야 할 type 인지 확인용.
+ */
+export function libraryApplyMounted(args: {
+  magnetId: number;
+  magnetType: string;
+  variant: string;
+  useLaunchAlert: boolean;
+}): void {
+  Sentry.logger.info('library.apply.mounted', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — 두 쿼리(/magnet, /magnet/my) 의 상태 스냅샷.
+ * 로딩 완료 시점에 한 번만 emit 한다. count 가 null 이면 응답 부재.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraQueries(args: {
+  candidateLoading: boolean;
+  appliedLoading: boolean;
+  candidateCount: number | null;
+  appliedCount: number | null;
+}): void {
+  Sentry.logger.info('library.apply.event_extra.queries', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — 후보-신청이력 차집합 계산 결과.
+ * availableCount === 0 이면 섹션이 노출되지 않는다.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraComputed(args: {
+  candidateCount: number;
+  appliedCount: number;
+  availableCount: number;
+}): void {
+  Sentry.logger.info('library.apply.event_extra.computed', { ...args });
+}
+
+/**
+ * EVENT 추가 마그넷 섹션 — `null` 반환 시 사유.
+ * `loading`: 둘 중 하나라도 로딩 중. `empty`: 차집합이 0개.
+ * Logs level: info.
+ */
+export function libraryApplyEventExtraSkipped(
+  reason: 'loading' | 'empty',
+): void {
+  Sentry.logger.info('library.apply.event_extra.skipped', { reason });
+}
+
+/**
+ * EVENT 추가 마그넷 N+1 일괄 신청 결과.
+ * 일부 실패 시 warn, 전부 성공 시 info.
+ */
+export function libraryApplyEventExtraSubmitBatch(args: {
+  totalCount: number;
+  successCount: number;
+  failedCount: number;
+  failedIds: number[];
+}): void {
+  if (args.failedCount > 0) {
+    Sentry.logger.warn('library.apply.event_extra.submit_batch', { ...args });
+  } else {
+    Sentry.logger.info('library.apply.event_extra.submit_batch', { ...args });
+  }
+}
+
+/**
+ * 자료집 신청 — handleSubmit 진입 (사용자가 "신청하기" 버튼 클릭).
+ * Logs level: info.
+ */
+export function libraryApplySubmitAttempt(args: {
+  magnetId: number;
+  magnetType: string;
+  variant: string;
+  hasLaunchAlertExtras: boolean;
+  hasEventExtras: boolean;
+}): void {
+  Sentry.logger.info('library.apply.submit_attempt', { ...args });
+}
+
+/**
+ * 자료집 신청 — 메인 마그넷 신청 409 (이미 신청한 케이스).
+ * 사용자 입력 오류 성격이라 warn.
+ */
+export function libraryApplyMainConflict(args: {
+  magnetId: number;
+  magnetType: string;
+}): void {
+  Sentry.logger.warn('library.apply.main.conflict', { ...args });
+}
+
+/**
+ * 자료집 신청 — 출시알림 N건 일괄 신청 결과.
+ * 일부 실패 시 warn, 전부 성공 시 info.
+ */
+export function libraryApplyLaunchAlertBatch(args: {
+  totalCount: number;
+  successCount: number;
+  failedCount: number;
+  failedIds: number[];
+}): void {
+  if (args.failedCount > 0) {
+    Sentry.logger.warn('library.apply.launch_alert.submit_batch', { ...args });
+  } else {
+    Sentry.logger.info('library.apply.launch_alert.submit_batch', { ...args });
+  }
+}
+
+/**
+ * 자료집 신청 — 예상하지 못한 에러 (5xx, 네트워크, parse 실패 등).
+ * Logs level: error + Sentry.captureException 으로 이슈화.
+ */
+export function libraryApplyUnexpectedError(
+  error: unknown,
+  context: {
+    stage: 'patch_user' | 'main_submit' | 'launch_alert' | 'event_extra';
+    magnetId?: number;
+    magnetType?: string;
+    status?: number;
+  },
+): void {
+  Sentry.logger.error('library.apply.unexpected_error', {
+    stage: context.stage,
+    ...(context.magnetId !== undefined && { magnetId: context.magnetId }),
+    ...(context.magnetType !== undefined && { magnetType: context.magnetType }),
+    ...(context.status !== undefined && { status: context.status }),
+    message: error instanceof Error ? error.message : String(error),
+  });
+  Sentry.captureException(error, {
+    tags: {
+      'library.apply.stage': context.stage,
+      ...(context.magnetType && {
+        'library.apply.magnet_type': context.magnetType,
+      }),
+    },
+    extra: {
+      magnetId: context.magnetId,
+      status: context.status,
+    },
+  });
+}

@@ -43,6 +43,7 @@ import FigmaPlugin from './plugins/FigmaPlugin';
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
 import FloatingTextFormatToolbarPlugin from './plugins/FloatingTextFormatToolbarPlugin';
 import ImagesPlugin from './plugins/ImagesPlugin';
+import ImageCarouselPlugin from './plugins/ImageCarouselPlugin';
 import InlineImagePlugin from './plugins/InlineImagePlugin';
 import KeywordsPlugin from './plugins/KeywordsPlugin';
 import { LayoutPlugin } from './plugins/LayoutPlugin/LayoutPlugin';
@@ -51,6 +52,7 @@ import ListMaxIndentLevelPlugin from './plugins/ListMaxIndentLevelPlugin';
 import MarkdownShortcutPlugin from './plugins/MarkdownShortcutPlugin';
 import { MaxLengthPlugin } from './plugins/MaxLengthPlugin';
 import MentionsPlugin from './plugins/MentionsPlugin';
+import NotionPlugin from './plugins/NotionPlugin';
 import PageBreakPlugin from './plugins/PageBreakPlugin';
 import PDFPlugin from './plugins/PDFPlugin';
 import PollPlugin from './plugins/PollPlugin';
@@ -191,11 +193,13 @@ export default function Editor(): JSX.Element {
             <TableCellResizer />
             <TableHoverActionsPlugin />
             <ImagesPlugin />
+            <ImageCarouselPlugin />
             <InlineImagePlugin />
             <LinkPlugin />
             <PollPlugin />
             <TwitterPlugin />
             <YouTubePlugin />
+            <NotionPlugin />
             <FigmaPlugin />
             <PDFPlugin />
             <ClickableLinkPlugin disabled={isEditable} />

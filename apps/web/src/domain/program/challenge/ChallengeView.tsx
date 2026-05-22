@@ -276,6 +276,7 @@ const ChallengeView: React.FC<{
                 endDate={dayjs(challenge.endDate)}
                 challengeTitle={challenge.title ?? ''}
                 programRecommend={receivedContent.programRecommend}
+                curationCard={receivedContent.curationCard}
                 deposit={challenge.priceInfo[0].refund ?? 0}
                 challengeId={Number(id)}
                 isResumeTemplate={isResumeTemplate}
