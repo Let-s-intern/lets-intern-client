@@ -1,3 +1,4 @@
+import UserWithLaptop from '@/assets/illust/user-with-laptop.svg';
 import Description from '@/domain/program/program-detail/Description';
 import IntroBubbleTail from '@/assets/icons/intro-bubble-tail.svg';
 import { ReactNode } from 'react';
@@ -8,10 +9,12 @@ const IntroBubble = ({
   children,
   align = 'left',
   backgroundColor,
+  isTextWhite = false,
 }: {
   children: ReactNode;
   align?: 'left' | 'right' | 'center';
   backgroundColor: string;
+  isTextWhite?: boolean;
 }) => {
   const base =
     'relative w-full min-w-0 max-w-full rounded-xl p-5 text-center text-xsmall14 md:min-w-0 md:max-w-full md:px-[60px] md:py-[30px] md:text-left md:text-small20 md:w-fit';
@@ -21,7 +24,7 @@ const IntroBubble = ({
   return (
     <div
       className={`${base} ${align === 'right' ? 'md:ml-auto' : ''}`}
-      style={{ backgroundColor, color: '#3D3D3D' }}
+      style={{ backgroundColor, color: isTextWhite ? '#ffffff' : '#3D3D3D' }}
     >
       {children}
       <IntroBubbleTail
@@ -51,7 +54,7 @@ function IntroSection({ config }: Props) {
     titleLine1,
     description,
     bubbles,
-    userImageSrc,
+    isTextWhite = false,
   } = config;
 
   return (
@@ -92,15 +95,16 @@ function IntroSection({ config }: Props) {
               <IntroBubble
                 align={bubble.align}
                 backgroundColor={lightAccentColor}
+                isTextWhite={isTextWhite}
               >
                 {bubble.text}
               </IntroBubble>
             </div>
           ))}
         </div>
-        <div
-          className="h-[70px] w-[72px] bg-cover bg-center bg-no-repeat md:h-[136px] md:w-[146px]"
-          style={{ backgroundImage: `url('${userImageSrc}')` }}
+        <UserWithLaptop
+          className="h-[70px] w-[72px] md:h-[136px] md:w-[146px]"
+          style={{ color: primaryColor }}
         />
       </div>
     </section>

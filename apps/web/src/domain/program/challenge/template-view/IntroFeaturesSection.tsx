@@ -7,8 +7,7 @@ const Card = ({
   title,
   description,
   index,
-  desktopImg,
-  mobileImg,
+  bgImg,
   alt,
   primaryColor,
   cardGradient,
@@ -24,13 +23,9 @@ const Card = ({
     >
       <div className="absolute bottom-0 left-0 right-0 z-0">
         <picture className="mb-[34px] flex items-end justify-center">
-          <source
-            srcSet={`/images/${mobileImg}`}
-            media="(orientation: portrait)"
-          />
           <img
             className="object-cover object-center"
-            src={`/images/${desktopImg}`}
+            src={`/images/${bgImg}`}
             alt={alt}
             aria-hidden="true"
           />

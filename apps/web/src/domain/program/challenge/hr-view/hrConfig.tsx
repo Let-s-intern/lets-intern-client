@@ -55,7 +55,6 @@ export const hrIntroConfig: IntroSectionConfig = {
       align: 'left',
     },
   ],
-  userImageSrc: '/images/hr-user-with-laptop.svg',
 };
 
 const HR_FEATURE_CARDS: FeatureCardConfig[] = [
@@ -68,8 +67,7 @@ const HR_FEATURE_CARDS: FeatureCardConfig[] = [
         이해할 수 있어요.
       </>
     ),
-    mobileImg: 'hr-point1-desktop.png',
-    desktopImg: 'hr-point1-desktop.png',
+    bgImg: 'hr-point1-desktop.png',
     alt: 'point1 이미지',
   },
   {
@@ -86,8 +84,7 @@ const HR_FEATURE_CARDS: FeatureCardConfig[] = [
         재정리해요.
       </>
     ),
-    mobileImg: 'hr-point2-desktop.png',
-    desktopImg: 'hr-point2-desktop.png',
+    bgImg: 'hr-point2-desktop.png',
     alt: 'point2 이미지',
   },
   {
@@ -104,8 +101,7 @@ const HR_FEATURE_CARDS: FeatureCardConfig[] = [
         완성해요.
       </>
     ),
-    mobileImg: 'hr-point3-desktop.png',
-    desktopImg: 'hr-point3-desktop.png',
+    bgImg: 'hr-point3-desktop.png',
     alt: 'point3 이미지',
   },
 ];
