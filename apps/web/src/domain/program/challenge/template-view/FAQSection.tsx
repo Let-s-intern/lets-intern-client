@@ -11,18 +11,13 @@ interface Props {
   content: ChallengeContent | null;
 }
 
-const HrFAQSection = ({ challenge, content }: Props) => {
+const FAQSection = ({ challenge, content }: Props) => {
   const { id } = useParams<{ id: string }>();
   const { data: faqData } = useGetChallengeFaq(id ?? '');
 
-  // 빈 문자열이나 undefined를 필터링하여 빈 카테고리 버튼이 나타나지 않도록 함
-  const faqCategory =
-    content?.faqCategory?.filter(
-      (category): category is string =>
-        typeof category === 'string' && category.trim() !== '',
-    ) ?? [];
-
-  // faqData가 없어도 UI는 표시되도록 빈 객체 전달
+  const faqCategory = (content?.faqCategory ?? []).filter(
+    (c): c is string => typeof c === 'string' && c.trim() !== '',
+  );
   const safeFaqData = faqData ?? { faqList: [] };
 
   return (
@@ -37,4 +32,4 @@ const HrFAQSection = ({ challenge, content }: Props) => {
   );
 };
 
-export default HrFAQSection;
+export default FAQSection;

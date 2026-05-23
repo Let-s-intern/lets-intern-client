@@ -11,8 +11,9 @@ interface WeekGroup {
   items: ChallengeCurriculum[];
 }
 
-interface HrCurriculumContentProps {
+interface CurriculumContentProps {
   weekGroup: WeekGroup;
+  accentColor?: string;
 }
 
 function Description({ children }: { children: ReactNode }) {
@@ -28,29 +29,31 @@ function Description({ children }: { children: ReactNode }) {
 function Highlight({
   contentImg,
   contentHighlightColor,
+  accentColor,
   description,
   className,
 }: {
   contentImg?: string;
   contentHighlightColor?: 'none' | 'gray' | 'accent';
+  accentColor?: string;
   description: ReactNode;
   className?: string;
 }) {
   const hasHighlightColor =
     contentHighlightColor && contentHighlightColor !== 'none';
 
+  const isAccent = contentHighlightColor === 'accent';
   const bgColorClass =
     contentHighlightColor === 'gray'
       ? 'bg-neutral-90'
-      : contentHighlightColor === 'accent'
-        ? 'bg-orange-50'
+      : isAccent
+        ? ''
         : 'bg-transparent';
 
   const textStyle = hasHighlightColor
     ? 'text-xsmall16 font-semibold md:text-small18'
     : 'text-xxsmall12 text-neutral-0 md:text-xsmall16';
 
-  // 강조 색상이 있을 때만 padding 적용
   const paddingClass = hasHighlightColor ? 'px-3 py-2.5' : '';
 
   return (
@@ -61,6 +64,7 @@ function Highlight({
         paddingClass,
         className,
       )}
+      style={isAccent ? { backgroundColor: accentColor } : undefined}
     >
       <p
         className={twMerge(
@@ -81,7 +85,10 @@ function Highlight({
   );
 }
 
-const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
+const CurriculumContent = ({
+  weekGroup,
+  accentColor,
+}: CurriculumContentProps) => {
   const isLastItem = (index: number) => index === weekGroup.items.length - 1;
 
   return (
@@ -114,6 +121,7 @@ const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
               <Highlight
                 contentImg={item.contentImg}
                 contentHighlightColor={item.contentHighlightColor}
+                accentColor={accentColor}
                 description={item.content}
               />
             ) : (
@@ -129,4 +137,4 @@ const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
   );
 };
 
-export default HrCurriculumContent;
+export default CurriculumContent;

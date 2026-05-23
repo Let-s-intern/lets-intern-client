@@ -6,12 +6,7 @@ import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import HrCurriculumContent from './HrCurriculumContent';
-
-interface HrCurriculumsProps {
-  curriculum: ChallengeCurriculum[];
-  content: ChallengeContent;
-}
+import CurriculumContent from './CurriculumContent';
 
 interface WeekGroup {
   week: string;
@@ -26,15 +21,15 @@ const Dropdown = ({
   date,
   title,
   children,
+  primaryColor,
 }: {
   index: number;
   date: string;
   title: string;
   children: React.ReactNode;
+  primaryColor: string;
 }) => {
-  const [isOpen, setIsOpen] = useState(
-    index === 0 || index === 1 ? true : false,
-  );
+  const [isOpen, setIsOpen] = useState(index === 0 || index === 1);
 
   return (
     <div className="rounded-xs flex w-full flex-col overflow-hidden bg-white md:hidden">
@@ -42,7 +37,10 @@ const Dropdown = ({
         className="flex w-full items-center justify-between p-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="text-small18 flex items-center gap-2.5 font-semibold text-[#FF5E00]">
+        <div
+          className="text-small18 flex items-center gap-2.5 font-semibold"
+          style={{ color: primaryColor }}
+        >
           <span>WEEK {index + 1}</span>
           <span>{date}</span>
         </div>
@@ -72,22 +70,26 @@ const SidebarButton = ({
   title,
   active,
   onClick,
+  primaryColor,
+  lightAccentColor,
 }: {
   index: number;
   date: string;
   title: string;
   active: boolean;
   onClick?: () => void;
+  primaryColor: string;
+  lightAccentColor: string;
 }) => {
   return (
     <button
       type="button"
-      className={twMerge(
-        'rounded-xs flex flex-col items-start gap-1 px-[30px] py-5',
+      className="rounded-xs flex flex-col items-start gap-1 px-[30px] py-5"
+      style={
         active
-          ? 'bg-[#FFF7F2] text-[#FF5E00]'
-          : 'text-neutral-35 bg-transparent',
-      )}
+          ? { backgroundColor: lightAccentColor, color: primaryColor }
+          : { color: '#7A7D84' }
+      }
       onClick={onClick}
     >
       <div className="text-small18 md:text-small20 flex items-center gap-2.5 font-semibold">
@@ -107,58 +109,67 @@ const SidebarButton = ({
   );
 };
 
-interface DesktopHrCurriculumsProps {
-  groupedByWeek: WeekGroup[];
-  sidebarList: {
-    date: string;
-    title: string;
-  }[];
-}
-
-function DesktopHrCurriculums({
+function DesktopCurriculums({
   groupedByWeek,
   sidebarList,
-}: DesktopHrCurriculumsProps) {
+  primaryColor,
+  lightAccentColor,
+}: {
+  groupedByWeek: WeekGroup[];
+  sidebarList: { date: string; title: string }[];
+  primaryColor: string;
+  lightAccentColor: string;
+}) {
   const [active, setActive] = useState(0);
-
   const safeActiveIndex =
     active >= 0 && active < groupedByWeek.length ? active : 0;
   const activeGroup = groupedByWeek[safeActiveIndex];
 
-  if (!activeGroup) {
-    return null;
-  }
+  if (!activeGroup) return null;
 
   return (
     <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
-      {/* Sidebar */}
       <div className="border-neutral-80 flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
-            key={`sidebar-button-${index}`}
+            key={index}
             index={index}
             date={item.date}
             title={item.title}
             active={index === safeActiveIndex}
             onClick={() => setActive(index)}
+            primaryColor={primaryColor}
+            lightAccentColor={lightAccentColor}
           />
         ))}
       </div>
-      {/* Content */}
       <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
-        <HrCurriculumContent weekGroup={activeGroup} />
+        <CurriculumContent
+          weekGroup={activeGroup}
+          accentColor={lightAccentColor}
+        />
       </div>
     </div>
   );
 }
 
-function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
+interface Props {
+  curriculum: ChallengeCurriculum[];
+  content: ChallengeContent;
+  primaryColor: string;
+  lightAccentColor: string;
+}
+
+function Curriculums({
+  curriculum,
+  content,
+  primaryColor,
+  lightAccentColor,
+}: Props) {
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  // 주차별로 그룹화
   const groupedByWeek = useMemo<WeekGroup[]>(() => {
     if (!content.useWeekSettings || !content.weekTitles?.length) {
-      // 주차 설정이 없으면 그냥 리스트로 반환
       return [
         {
           week: '',
@@ -171,8 +182,6 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
     }
 
     const weekMap = new Map<string, WeekGroup>();
-
-    // 주차별로 초기화
     content.weekTitles.forEach((weekTitle) => {
       weekMap.set(weekTitle.week, {
         week: weekTitle.week,
@@ -182,17 +191,12 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
         items: [],
       });
     });
-
-    // 커리큘럼 아이템을 주차별로 분류
     curriculum.forEach((item) => {
       if (item.week && weekMap.has(item.week)) {
         weekMap.get(item.week)!.items.push(item);
       } else {
-        // 주차가 없는 아이템은 첫 번째 그룹에 추가
         const firstWeek = Array.from(weekMap.values())[0];
-        if (firstWeek) {
-          firstWeek.items.push(item);
-        }
+        if (firstWeek) firstWeek.items.push(item);
       }
     });
 
@@ -221,8 +225,12 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
               title={group.weekTitle}
               date={dateRange}
               index={index}
+              primaryColor={primaryColor}
             >
-              <HrCurriculumContent weekGroup={group} />
+              <CurriculumContent
+                weekGroup={group}
+                accentColor={lightAccentColor}
+              />
             </Dropdown>
           );
         })}
@@ -231,11 +239,13 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
   }
 
   return (
-    <DesktopHrCurriculums
+    <DesktopCurriculums
       groupedByWeek={groupedByWeek}
       sidebarList={sidebarList}
+      primaryColor={primaryColor}
+      lightAccentColor={lightAccentColor}
     />
   );
 }
 
-export default HrCurriculums;
+export default Curriculums;

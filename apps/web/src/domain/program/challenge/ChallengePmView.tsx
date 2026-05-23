@@ -7,17 +7,16 @@ import { useMemo } from 'react';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import {
-  hrCheckListConfig,
-  hrCurriculumPointsConfig,
-  hrCurriculumSectionConfig,
-  hrDifferentiatorsConfig,
-  hrIntroConfig,
-  hrIntroFeaturesConfig,
-  hrOverviewConfig,
-  hrReviewConfig,
-} from './hr-view/hrConfig';
-import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
-import HrFeedbackSection from './hr-view/HrFeedbackSection';
+  pmCheckListConfig,
+  pmCurriculumPointsConfig,
+  pmCurriculumSectionConfig,
+  pmDifferentiatorsConfig,
+  pmIntroConfig,
+  pmIntroFeaturesConfig,
+  pmOverviewConfig,
+  pmReviewConfig,
+} from './pm-view/pmConfig';
+import PmCurriculumStepsSection from './pm-view/PmCurriculumStepsSection';
 import CheckListSection from './template-view/CheckListSection';
 import CurriculumPointsSection from './template-view/CurriculumPointsSection';
 import CurriculumSection from './template-view/CurriculumSection';
@@ -33,7 +32,7 @@ interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
-const ChallengeHrView = ({ challenge }: Props) => {
+const ChallengePmView = ({ challenge }: Props) => {
   const content = useMemo<ChallengeContent | null>(
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
@@ -48,28 +47,27 @@ const ChallengeHrView = ({ challenge }: Props) => {
         <>
           <ChallengeTabNavigation challengeType={challenge.challengeType} />
           <ChallengeIntroEditorContent challenge={challenge} />
-          <IntroSection config={hrIntroConfig} />
+          <IntroSection config={pmIntroConfig} />
           <IntroFeaturesSection
-            config={hrIntroFeaturesConfig}
+            config={pmIntroFeaturesConfig}
             content={content}
           />
-          <CheckListSection config={hrCheckListConfig} />
+          <CheckListSection config={pmCheckListConfig} />
           <CurriculumPointsSection
-            config={hrCurriculumPointsConfig}
+            config={pmCurriculumPointsConfig}
             content={content}
           />
-          <HrCurriculumStepsSection content={content} />
+          <PmCurriculumStepsSection content={content} />
           <CurriculumSection
             challenge={challenge}
             content={content}
-            config={hrCurriculumSectionConfig}
+            config={pmCurriculumSectionConfig}
           />
-          <OverviewSection config={hrOverviewConfig} content={content} />
-          <DifferentiatorsSection config={hrDifferentiatorsConfig} />
-          <HrFeedbackSection />
+          <OverviewSection config={pmOverviewConfig} content={content} />
+          <DifferentiatorsSection config={pmDifferentiatorsConfig} />
           <RecruitmentInfoSection challenge={challenge} />
           <ReviewSection
-            config={hrReviewConfig}
+            config={pmReviewConfig}
             content={content}
             challengeType={challenge.challengeType}
           />
@@ -80,4 +78,4 @@ const ChallengeHrView = ({ challenge }: Props) => {
   );
 };
 
-export default ChallengeHrView;
+export default ChallengePmView;

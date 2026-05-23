@@ -11,6 +11,7 @@ const {
   PORTFOLIO,
   MARKETING,
   HR,
+  PM,
 } = challengeTypeSchema.enum;
 
 /**
@@ -77,6 +78,7 @@ export function useNavB2CChallenges() {
   const portfolio = useFirstB2CChallenge(PORTFOLIO);
   const marketing = useFirstB2CChallenge(MARKETING);
   const hr = useFirstB2CChallenge(HR);
+  const pm = useFirstB2CChallenge(PM);
 
   return {
     experienceSummary,
@@ -86,5 +88,6 @@ export function useNavB2CChallenges() {
     portfolio,
     marketing,
     hr,
+    pm,
   };
 }

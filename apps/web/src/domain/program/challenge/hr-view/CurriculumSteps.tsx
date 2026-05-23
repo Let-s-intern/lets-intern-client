@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import CheckIcon from '@/assets/icons/check.svg';
 import { getChallengeThemeColor } from '../utils/getChallengeThemeColor';
 
 // Constants
@@ -27,7 +28,11 @@ type PortfolioBoxProps = {
 // Shared Components
 const CheckItem = ({ children }: { children: ReactNode }) => (
   <div className="flex items-start gap-2">
-    <img src="/images/hr-check.svg" alt="" aria-hidden="true" />
+    <CheckIcon
+      style={{ color: HrPrimaryColor }}
+      className="h-6 w-6 shrink-0"
+      aria-hidden="true"
+    />
     <p className="text-xsmall14 md:text-medium22">{children}</p>
   </div>
 );
@@ -170,7 +175,7 @@ export const Seminar = ({ lectures }: SeminarProps) => {
     <div className="flex w-full flex-col items-center justify-center gap-6 md:gap-8">
       <div className="mx-auto w-full max-w-[900px]">
         <img
-          src="/images/hr-live-seminar.gif"
+          src="/images/live-seminar.gif"
           alt="HR LIVE 세미나"
           className="w-full rounded-xl"
         />
