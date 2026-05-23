@@ -3,6 +3,7 @@ import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDet
 import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
 import {
   LIVE_FEEDBACK_BUTTON_LABELS,
+  LIVE_MISSION_BUTTON_LABEL,
   toCardConfig,
 } from '@/domain/challenge/feedback/live/utils';
 
@@ -10,6 +11,7 @@ interface Props {
   label: string;
   missions: LiveFeedbackMission[];
   emptyMessage: string;
+  onMissionClick: (mission: LiveFeedbackMission) => void;
   onMobileClick: (mission: LiveFeedbackMission) => void;
 }
 
@@ -17,6 +19,7 @@ export default function LiveFeedbackSection({
   label,
   missions,
   emptyMessage,
+  onMissionClick,
   onMobileClick,
 }: Props) {
   return (
@@ -36,9 +39,11 @@ export default function LiveFeedbackSection({
               <FeedbackMissionCard
                 key={mission.id}
                 config={toCardConfig(mission)}
-                buttonLabel={labels?.buttonLabel}
+                buttonLabel={LIVE_MISSION_BUTTON_LABEL[mission.status]}
+                onClick={() => onMissionClick(mission)}
+                accordionLabel={labels?.buttonLabel}
                 openLabel={labels?.openLabel}
-                onClick={() => onMobileClick(mission)}
+                onAccordionMobileClick={() => onMobileClick(mission)}
               >
                 <LiveFeedbackDetail
                   assignedMentor={mission.assignedMentor}
