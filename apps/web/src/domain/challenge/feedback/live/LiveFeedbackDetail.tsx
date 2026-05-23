@@ -1,5 +1,6 @@
 'use client';
 
+import { useMentorDetailQuery } from '@/api/feedback/feedback';
 import { useState } from 'react';
 
 import ReservationInfoSection from './section/ReservationInfoSection';
@@ -13,6 +14,7 @@ import type {
 } from './types';
 
 interface Props {
+  challengeId: string | number;
   assignedMentor: Mentor | null;
   period: MissionPeriod;
   reservationInfo: Reservation | null;
@@ -20,6 +22,7 @@ interface Props {
 }
 
 const LiveFeedbackDetail = ({
+  challengeId,
   assignedMentor,
   period,
   reservationInfo: initialReservation,
@@ -29,11 +32,16 @@ const LiveFeedbackDetail = ({
     initialReservation,
   );
 
-  const mentor: Mentor = assignedMentor ?? {
-    nickname: '멘토',
-    introduction: '멘토 정보를 불러오는 중입니다.',
-    profileImgUrl: '',
-  };
+  const { data: mentorData } = useMentorDetailQuery(
+    assignedMentor ? undefined : challengeId,
+  );
+
+  const mentor: Mentor = assignedMentor ??
+    mentorData?.challengeMentorInfo ?? {
+      nickname: '멘토',
+      introduction: '멘토 정보를 불러오는 중입니다.',
+      profileImgUrl: '',
+    };
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
     const start = new Date(`${selectedSlot.date}T${selectedSlot.time}:00`);

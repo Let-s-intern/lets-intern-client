@@ -11,6 +11,7 @@ interface Props {
   label: string;
   missions: LiveFeedbackMission[];
   emptyMessage: string;
+  challengeId: string | number;
   onMissionClick: (mission: LiveFeedbackMission) => void;
   onMobileClick: (mission: LiveFeedbackMission) => void;
 }
@@ -19,6 +20,7 @@ export default function LiveFeedbackSection({
   label,
   missions,
   emptyMessage,
+  challengeId,
   onMissionClick,
   onMobileClick,
 }: Props) {
@@ -46,6 +48,7 @@ export default function LiveFeedbackSection({
                 onAccordionMobileClick={() => onMobileClick(mission)}
               >
                 <LiveFeedbackDetail
+                  challengeId={challengeId}
                   assignedMentor={mission.assignedMentor}
                   period={{
                     startDay: mission.startDay,

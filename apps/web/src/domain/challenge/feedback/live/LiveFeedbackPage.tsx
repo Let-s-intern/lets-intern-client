@@ -57,6 +57,7 @@ const LiveFeedbackPage = () => {
         label="예약 필요"
         missions={needReservation}
         emptyMessage="예약 필요한 미션이 없어요."
+        challengeId={programId}
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
@@ -64,6 +65,7 @@ const LiveFeedbackPage = () => {
         label="예약 완료"
         missions={reserved}
         emptyMessage="예약 완료된 미션이 없어요."
+        challengeId={programId}
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
@@ -71,6 +73,7 @@ const LiveFeedbackPage = () => {
         label="피드백 완료"
         missions={done}
         emptyMessage="피드백 완료된 미션이 없어요."
+        challengeId={programId}
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
@@ -78,6 +81,7 @@ const LiveFeedbackPage = () => {
         label="기간 만료"
         missions={expired}
         emptyMessage="기간이 만료된 미션이 없어요."
+        challengeId={programId}
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />

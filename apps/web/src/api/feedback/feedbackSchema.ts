@@ -30,6 +30,12 @@ export const liveFeedbackListSchema = z.object({
   liveFeedbackList: z.array(liveFeedbackItemSchema),
 });
 
+export const mentorDetailSchema = z.object({
+  challengeMentorInfo: challengeMentorInfoSchema,
+});
+
+export type MentorDetail = z.infer<typeof mentorDetailSchema>;
+
 export const feedbackDetailSchema = z.object({
   feedbackInfo: z.object({
     feedbackId: z.number(),
