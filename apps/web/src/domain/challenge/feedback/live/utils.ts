@@ -46,16 +46,24 @@ export function toMission(
 export const LIVE_FEEDBACK_BUTTON_LABELS: Partial<
   Record<LiveFeedbackStatus, { buttonLabel: string; openLabel: string }>
 > = {
-  prev: { buttonLabel: '예약 신청 보기', openLabel: '예약 신청 닫기' },
+  prev: { buttonLabel: '예약 신청 하기', openLabel: '예약 신청 닫기' },
   reserved: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
-  completed: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+  completed: { buttonLabel: '피드백 내역 보기', openLabel: '피드백 내역 닫기' },
+};
+
+export const LIVE_MISSION_BUTTON_LABEL: Partial<
+  Record<LiveFeedbackStatus, string>
+> = {
+  prev: '미션 제출하기',
+  reserved: '제출된 미션 보기',
+  completed: '제출된 미션 보기',
 };
 
 export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
-  prev: '예약 전',
-  reserved: '예약 완료',
-  completed: '피드백 완료',
-  expired: '예약 종료',
+  prev: '진행 전',
+  reserved: '진행 예정',
+  completed: '진행 완료',
+  expired: '기간 만료',
 };
 
 export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
@@ -85,13 +93,33 @@ export function formatReservationDateTime(
   return `${yy}.${mm}.${dd} ${time}~${endTime}`;
 }
 
+export function isInProgress(
+  startDate: string | null | undefined,
+  endDate: string | null | undefined,
+): boolean {
+  if (!startDate || !endDate) return false;
+  const now = new Date();
+  return now >= new Date(startDate) && now < new Date(endDate);
+}
+
 export function toCardConfig(mission: LiveFeedbackMission) {
+  const inProgress =
+    mission.status === 'reserved' &&
+    isInProgress(
+      mission.reservationInfo?.startDate,
+      mission.reservationInfo?.endDate,
+    );
+
   return {
     thumbnail: mission.thumbnail,
     title: mission.title,
     badge: {
-      label: LIVE_FEEDBACK_STATUS_LABEL[mission.status],
-      variant: LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
+      label: inProgress
+        ? '진행 중'
+        : LIVE_FEEDBACK_STATUS_LABEL[mission.status],
+      variant: inProgress
+        ? 'active'
+        : LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionNumber,
@@ -100,7 +128,7 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     startDay: mission.startDay,
     endDay: mission.endDay,
     reservationDateTime:
-      mission.status === 'reserved'
+      mission.status === 'reserved' || mission.status === 'completed'
         ? formatReservationDateTime(mission.reservationInfo?.startDate)
         : undefined,
   };
@@ -119,12 +147,15 @@ const DEMO_ENTRANCE_OPEN_UNTIL = new Date('2028-12-31T23:59:59');
 
 export function isEntranceActive(
   startDate: string | null | undefined,
+  endDate?: string | null,
 ): boolean {
   if (new Date() < DEMO_ENTRANCE_OPEN_UNTIL) return true;
 
   if (!startDate) return false;
   const start = new Date(startDate);
-  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  const end = endDate
+    ? new Date(endDate)
+    : new Date(start.getTime() + 30 * 60 * 1000);
   const now = new Date();
 
   return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
