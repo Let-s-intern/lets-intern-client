@@ -33,7 +33,7 @@ const LiveFeedbackPage = () => {
 
   const needReservation = missions.filter((m) => m.status === 'prev');
   const reserved = missions.filter((m) => m.status === 'reserved');
-  const done = missions.filter((m) => m.status === 'done');
+  const done = missions.filter((m) => m.status === 'completed');
   const expired = missions.filter((m) => m.status === 'expired');
 
   return (

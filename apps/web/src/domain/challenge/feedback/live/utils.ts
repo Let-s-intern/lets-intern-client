@@ -3,8 +3,7 @@ import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 const FEEDBACK_STATUS_MAP: Record<string, LiveFeedbackStatus> = {
   RESERVED: 'reserved',
-  DONE: 'done',
-  EXPIRED: 'expired',
+  COMPLETED: 'completed',
 };
 
 export function toMission(
@@ -49,13 +48,13 @@ export const LIVE_FEEDBACK_BUTTON_LABELS: Partial<
 > = {
   prev: { buttonLabel: '예약 신청 보기', openLabel: '예약 신청 닫기' },
   reserved: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
-  done: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
+  completed: { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' },
 };
 
 export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
   prev: '예약 전',
   reserved: '예약 완료',
-  done: '피드백 완료',
+  completed: '피드백 완료',
   expired: '예약 종료',
 };
 
@@ -65,7 +64,7 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
 > = {
   prev: 'neutral',
   reserved: 'muted',
-  done: 'active',
+  completed: 'active',
   expired: 'muted',
 };
 

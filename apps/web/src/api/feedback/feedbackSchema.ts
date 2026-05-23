@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-export const feedbackStatusSchema = z.enum([
-  'RESERVED',
-  'CANCELED',
-  'CHANGED',
-  'DONE',
-  'EXPIRED',
-]);
+export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
 
 export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
 

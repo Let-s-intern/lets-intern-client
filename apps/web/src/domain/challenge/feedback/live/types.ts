@@ -14,7 +14,7 @@ export interface SelectedSlot {
 }
 
 // 라이브 피드백 미션 상태 코드
-export type LiveFeedbackStatus = 'prev' | 'reserved' | 'done' | 'expired';
+export type LiveFeedbackStatus = 'prev' | 'reserved' | 'completed' | 'expired';
 
 import type { ChallengeMentorInfo } from '@/api/feedback/feedbackSchema';
 export type Mentor = ChallengeMentorInfo;

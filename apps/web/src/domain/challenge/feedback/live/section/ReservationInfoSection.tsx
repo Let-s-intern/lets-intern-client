@@ -64,7 +64,7 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
             </div>
 
             {/* 하단 액션 */}
-            {status === 'done' && <LiveFeedbackReview />}
+            {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
               <button
                 type="button"
