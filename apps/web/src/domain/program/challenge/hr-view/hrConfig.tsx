@@ -1,6 +1,8 @@
 import {
+  CalendarItemConfig,
   CheckListSectionConfig,
   CurriculumPointsSectionConfig,
+  CurriculumSectionConfig,
   DifferentiatorsSectionConfig,
   FeatureCardConfig,
   IntroFeaturesSectionConfig,
@@ -278,7 +280,6 @@ export const hrDifferentiatorsConfig: DifferentiatorsSectionConfig = {
 export const hrReviewConfig: ReviewSectionConfig = {
   primaryColor: HR_THEME.primary,
   lightAccentColor: HR_THEME.lightAccent,
-  reviewLinkQuery: { program: 'challenge_review', challenge: 'hr' },
   bubbleBgColor: '#FF9B61',
   buttonBgColor: '#F55A00',
 };
@@ -288,4 +289,59 @@ export const hrOverviewConfig: OverviewSectionConfig = {
   backgroundColor: '#290F00',
   stepBadgeBackgroundColor: '#FFBD96',
   getTitle: (weekText) => `${weekText} 여정 한 번에 보기`,
+};
+
+const HR_CALENDAR_ITEMS = (lectureCount: number): CalendarItemConfig[] => [
+  {
+    number: 1,
+    title: '합격 콘텐츠 & 미션 6회차',
+    description: (
+      <div className="leading-[20px] md:leading-[22px]">
+        챌린지 대시보드를 통해 HR 서류 작성 콘텐츠를 <br />
+        확인 후 회차별 미션을 제출합니다.
+      </div>
+    ),
+  },
+  {
+    number: 2,
+    title: `현직자 LIVE 세미나 ${lectureCount}회`,
+    description: (
+      <div className="leading-[20px] md:leading-[22px]">
+        채용, 리크루팅, HRD, People Analytics 등 <br />
+        다양한 분야의 <strong>HR 현직자의 이야기</strong>를 들어요.
+      </div>
+    ),
+  },
+  {
+    number: 3,
+    title: 'HR/인사 직무 과제 전형 피드백',
+    description: (
+      <div className="leading-[20px] md:leading-[22px]">
+        스페셜 미션으로, IT기업/스타트업/대기업의 <br />
+        과제 전형을 3일 만에 수행하고 현직자에게 <br />
+        직접 피드백을 받을 수 있어요.
+      </div>
+    ),
+  },
+];
+
+export const hrCurriculumSectionConfig: CurriculumSectionConfig = {
+  primaryColor: HR_THEME.primary,
+  lightAccentColor: HR_THEME.lightAccent,
+  getTitle: (lectureCount, weekText) => (
+    <>
+      <span>
+        6회의 미션 <br className="md:hidden" />+ 현직자 LIVE 세미나{' '}
+        {lectureCount}회와 함께
+      </span>
+      <span>만드는 밀도 있는 {weekText}간의 여정</span>
+    </>
+  ),
+  description: (
+    <>
+      막연한 HR 관심에서 끝나지 않도록, 직무 탐색부터 경험 정리, 결과물 완성까지
+      함께합니다.
+    </>
+  ),
+  getCalendarItems: HR_CALENDAR_ITEMS,
 };

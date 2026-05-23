@@ -1,6 +1,5 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import { ChallengeContent } from '@/types/interface';
-
 import MainTitle from '../ui/MainTitle';
 import { FeatureCardConfig, IntroFeaturesSectionConfig } from './types';
 

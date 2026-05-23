@@ -1,6 +1,5 @@
 import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
-import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
@@ -10,23 +9,24 @@ import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import {
   hrCheckListConfig,
   hrCurriculumPointsConfig,
+  hrCurriculumSectionConfig,
   hrDifferentiatorsConfig,
   hrIntroConfig,
   hrIntroFeaturesConfig,
   hrOverviewConfig,
   hrReviewConfig,
 } from './hr-view/hrConfig';
-import HrCurriculumSection from './hr-view/HrCurriculumSection';
 import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
-import HrFAQSection from './hr-view/HrFAQSection';
 import HrFeedbackSection from './hr-view/HrFeedbackSection';
-import HrRecruitmentInfoSection from './hr-view/HrRecruitmentInfoSection';
 import CheckListSection from './template-view/CheckListSection';
 import CurriculumPointsSection from './template-view/CurriculumPointsSection';
+import CurriculumSection from './template-view/CurriculumSection';
 import DifferentiatorsSection from './template-view/DifferentiatorsSection';
+import FAQSection from './template-view/FAQSection';
 import IntroFeaturesSection from './template-view/IntroFeaturesSection';
 import IntroSection from './template-view/IntroSection';
 import OverviewSection from './template-view/OverviewSection';
+import RecruitmentInfoSection from './template-view/RecruitmentInfoSection';
 import ReviewSection from './template-view/ReviewSection';
 
 interface Props {
@@ -34,7 +34,6 @@ interface Props {
 }
 
 const ChallengeHrView = ({ challenge }: Props) => {
-  const themeColor = getChallengeThemeColor(challenge.challengeType);
   const content = useMemo<ChallengeContent | null>(
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
@@ -47,7 +46,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
         <FreeTemplateLayout freeContent={content.freeContent} />
       ) : (
         <>
-          <ChallengeTabNavigation themeColor={themeColor} />
+          <ChallengeTabNavigation challengeType={challenge.challengeType} />
           <ChallengeIntroEditorContent challenge={challenge} />
           <IntroSection config={hrIntroConfig} />
           <IntroFeaturesSection
@@ -60,13 +59,21 @@ const ChallengeHrView = ({ challenge }: Props) => {
             content={content}
           />
           <HrCurriculumStepsSection content={content} />
-          <HrCurriculumSection challenge={challenge} content={content} />
+          <CurriculumSection
+            challenge={challenge}
+            content={content}
+            config={hrCurriculumSectionConfig}
+          />
           <OverviewSection config={hrOverviewConfig} content={content} />
           <DifferentiatorsSection config={hrDifferentiatorsConfig} />
           <HrFeedbackSection />
-          <HrRecruitmentInfoSection challenge={challenge} />
-          <ReviewSection config={hrReviewConfig} content={content} />
-          <HrFAQSection challenge={challenge} content={content} />
+          <RecruitmentInfoSection challenge={challenge} />
+          <ReviewSection
+            config={hrReviewConfig}
+            content={content}
+            challengeType={challenge.challengeType}
+          />
+          <FAQSection challenge={challenge} content={content} />
         </>
       )}
     </div>

@@ -1,6 +1,7 @@
 import ArrowCircleRight from '@/assets/icons/arrow-circle-right.svg';
 import ReviewBubbleTail from '@/assets/icons/review-bubble-tail.svg';
 import SectionHeader from '@/common/header/SectionHeader';
+import { ChallengeType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import Link from 'next/link';
 import MainTitle from '../ui/MainTitle';
@@ -10,17 +11,17 @@ import { ReviewSectionConfig } from './types';
 interface Props {
   config: ReviewSectionConfig;
   content: ChallengeContent | null;
+  challengeType: ChallengeType;
 }
 
-function ReviewSection({ config, content }: Props) {
+function ReviewSection({ config, content, challengeType }: Props) {
   const reviews = content?.challengeReview ?? [];
-  const {
-    primaryColor,
-    lightAccentColor,
-    reviewLinkQuery,
-    bubbleBgColor,
-    buttonBgColor,
-  } = config;
+  const { primaryColor, lightAccentColor, bubbleBgColor, buttonBgColor } =
+    config;
+  const reviewLinkQuery = {
+    program: 'challenge_review',
+    challenge: challengeType.toLowerCase(),
+  };
 
   return (
     <section
