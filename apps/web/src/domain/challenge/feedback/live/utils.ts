@@ -8,7 +8,7 @@ const FEEDBACK_STATUS_MAP: Record<string, LiveFeedbackStatus> = {
 
 export function toMission(
   item: LiveFeedbackItem,
-  index: number,
+  _index: number,
   challengeType: string,
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
@@ -28,7 +28,7 @@ export function toMission(
   }
 
   return {
-    id: index,
+    id: item.missionTh,
     thumbnail: item.thumbnail,
     title: item.missionTitle,
     status,
