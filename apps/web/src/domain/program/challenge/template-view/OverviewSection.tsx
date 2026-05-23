@@ -92,7 +92,7 @@ const StepCard = ({
     <div className="flex min-w-[424px] flex-col gap-3 md:gap-4">
       <div className="flex items-center justify-start gap-3">
         <span
-          className="text-xsmall16 md:text-medium22 rounded-full px-4 py-2 font-semibold text-[#212121]"
+          className="text-xsmall16 rounded-full px-4 py-2 font-semibold text-[#212121]"
           style={{ backgroundColor: stepBadgeBackgroundColor }}
         >
           {step}
@@ -121,8 +121,7 @@ interface Props {
 
 function OverviewSection({ config, content }: Props) {
   const weekText = content?.challengePoint?.weekText ?? '3주';
-  const { primaryColor, backgroundColor, stepBadgeBackgroundColor, getTitle } =
-    config;
+  const { primaryColor, backgroundColor, stepBadgeBackgroundColor } = config;
 
   return (
     <section
@@ -135,7 +134,7 @@ function OverviewSection({ config, content }: Props) {
           style={{ backgroundColor: primaryColor }}
         >
           <CalendarBadge className="h-[30px] w-[30px]" aria-hidden="true" />
-          <span>{getTitle(weekText)}</span>
+          <span>{weekText} 여정 한 번에 보기</span>
         </p>
       </div>
       <div className="mb-16 w-screen md:mb-36">
