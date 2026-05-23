@@ -44,12 +44,10 @@ const LiveFeedbackDetail = ({
     };
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
-    const start = new Date(`${selectedSlot.date}T${selectedSlot.time}:00`);
-    const end = new Date(start.getTime() + 30 * 60 * 1000);
     setReservation({
       feedbackId: 0, // POST 예약 API 연동 시 실제 ID로 교체
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
+      startDate: selectedSlot.startDate,
+      endDate: selectedSlot.endDate,
       meetingUrl: null,
     });
   };
@@ -65,6 +63,7 @@ const LiveFeedbackDetail = ({
       />
       {showScheduleSection && (
         <ReservationScheduleSection
+          challengeId={challengeId}
           mentorName={mentor.nickname}
           period={period}
           onConfirm={handleConfirm}

@@ -9,8 +9,11 @@ export interface MissionPeriod {
 
 // 사용자가 선택한 예약 슬롯 (날짜 + 시작 시간)
 export interface SelectedSlot {
+  feedbackSlotId: number;
   date: string; // 'YYYY-MM-DD'
-  time: string; // '09:00'
+  time: string; // 'HH:MM' (시작 시각)
+  startDate: string; // ISO datetime
+  endDate: string; // ISO datetime
 }
 
 // 라이브 피드백 미션 상태 코드
@@ -69,4 +72,10 @@ export const TIME_SLOTS = [
   '19:30',
   '20:00',
   '20:30',
+  '21:00',
+  '21:30',
+  '22:00',
+  '22:30',
+  '23:00',
+  '23:30',
 ] as const;

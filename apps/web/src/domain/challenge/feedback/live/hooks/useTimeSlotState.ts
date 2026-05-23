@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { getMentorDaySlots, getMentorMonthAvailability } from '../../dummy';
-import type { MissionPeriod, SelectedSlot } from '../types';
+import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
+import type { MissionPeriod, SelectedSlot, SlotStatus } from '../types';
 import { toDateString } from '../utils';
 
 function getInitialDate(period: MissionPeriod): Date {
@@ -13,8 +13,24 @@ function getInitialDate(period: MissionPeriod): Date {
   return today;
 }
 
+function toTimeString(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function toSlotStatus(
+  apiStatus: FeedbackSlot['status'],
+  startDate: string,
+): SlotStatus {
+  if (new Date(startDate) <= new Date()) return 'expired';
+  if (apiStatus === 'OPEN') return 'available';
+  if (apiStatus === 'BOOKED') return 'booked';
+  return 'unavailable';
+}
+
 export function useTimeSlotState(
   period: MissionPeriod,
+  feedbackSlots: FeedbackSlot[],
   onConfirm: (slot: SelectedSlot) => void,
 ) {
   const base = getInitialDate(period);
@@ -42,16 +58,32 @@ export function useTimeSlotState(
     );
   }, [year, month, period.endDay]);
 
-  const monthAvailability = useMemo(
-    () =>
-      getMentorMonthAvailability(0, year, month, period.startDay, period.endDay),
-    [year, month, period.startDay, period.endDay],
-  );
+  const monthAvailability = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    feedbackSlots.forEach((slot) => {
+      const date = slot.startDate.slice(0, 10);
+      if (result[date] === undefined) result[date] = false;
+      if (slot.status === 'OPEN' && new Date(slot.startDate) > new Date()) {
+        result[date] = true;
+      }
+    });
+    return result;
+  }, [feedbackSlots]);
 
-  const daySlots = useMemo(
-    () => getMentorDaySlots(0, selectedDate),
-    [selectedDate],
-  );
+  const daySlots = useMemo(() => {
+    const result: Record<string, { status: SlotStatus; label: string }> = {};
+    feedbackSlots
+      .filter((slot) => slot.startDate.slice(0, 10) === selectedDate)
+      .forEach((slot) => {
+        const startTime = toTimeString(slot.startDate);
+        const endTime = toTimeString(slot.endDate);
+        result[startTime] = {
+          status: toSlotStatus(slot.status, slot.startDate),
+          label: `${startTime} ~ ${endTime}`,
+        };
+      });
+    return result;
+  }, [feedbackSlots, selectedDate]);
 
   const navigateMonth = useCallback((dir: 1 | -1) => {
     setYearMonth(({ year: y, month: m }) => {
@@ -68,11 +100,28 @@ export function useTimeSlotState(
     setSelectedSlot(null);
   }, []);
 
-  const handleSlotSelect = useCallback((slot: SelectedSlot) => {
-    setSelectedSlot((prev) =>
-      prev?.date === slot.date && prev?.time === slot.time ? null : slot,
-    );
-  }, []);
+  const handleSlotSelect = useCallback(
+    (date: string, time: string) => {
+      if (selectedSlot?.date === date && selectedSlot?.time === time) {
+        setSelectedSlot(null);
+        return;
+      }
+      const apiSlot = feedbackSlots.find(
+        (s) =>
+          s.startDate.slice(0, 10) === date &&
+          toTimeString(s.startDate) === time,
+      );
+      if (!apiSlot) return;
+      setSelectedSlot({
+        feedbackSlotId: apiSlot.feedbackSlotId,
+        date,
+        time,
+        startDate: apiSlot.startDate,
+        endDate: apiSlot.endDate,
+      });
+    },
+    [feedbackSlots, selectedSlot],
+  );
 
   const handleConfirm = useCallback(() => {
     if (selectedSlot) onConfirm(selectedSlot);

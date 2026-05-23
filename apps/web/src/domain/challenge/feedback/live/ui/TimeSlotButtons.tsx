@@ -1,20 +1,15 @@
 import type { SelectedSlot, SlotStatus } from '../types';
-import { TIME_SLOTS } from '../types';
 
-function formatTimeRange(time: string): string {
-  const [hour, minute] = time.split(':').map(Number);
-  const endMinutes = hour * 60 + minute + 30;
-  const endHour = Math.floor(endMinutes / 60);
-  const endMinute = endMinutes % 60;
-  const fmt = (h: number, m: number) => `${h}:${String(m).padStart(2, '0')}`;
-  return `${fmt(hour, minute)} ~ ${fmt(endHour, endMinute)}`;
+interface SlotEntry {
+  status: SlotStatus;
+  label: string;
 }
 
 interface Props {
   date: string;
-  slots: Record<string, SlotStatus>;
+  slots: Record<string, SlotEntry>;
   selectedSlot: SelectedSlot | null;
-  onSlotSelect: (slot: SelectedSlot) => void;
+  onSlotSelect: (date: string, time: string) => void;
 }
 
 const STATE_CLASSES: Record<'selected' | 'unavailable' | 'available', string> =
@@ -33,8 +28,7 @@ const TimeSlotButtons = ({
 }: Props) => {
   return (
     <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 md:grid-cols-4">
-      {TIME_SLOTS.map((time) => {
-        const status = slots[time] ?? 'unavailable';
+      {Object.entries(slots).map(([time, { status, label }]) => {
         const isSelected =
           selectedSlot?.date === date && selectedSlot?.time === time;
         const isUnavailable =
@@ -53,10 +47,10 @@ const TimeSlotButtons = ({
             key={time}
             type="button"
             disabled={isUnavailable}
-            onClick={() => onSlotSelect({ date, time })}
+            onClick={() => onSlotSelect(date, time)}
             className={`text-xxsmall12 flex flex-1 items-center justify-center rounded-sm border py-2 transition-colors ${STATE_CLASSES[slotState]}`}
           >
-            {formatTimeRange(time)}
+            {label}
           </button>
         );
       })}
