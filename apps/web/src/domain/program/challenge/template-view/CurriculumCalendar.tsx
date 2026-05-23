@@ -33,7 +33,7 @@ const CalendarItem = ({ number, title, description }: CalendarItemConfig) => {
 
 const CalendarList = ({ children }: { children: ReactNode }) => {
   return (
-    <ul className="rounded-xs text-xsmall14 flex w-full min-w-0 flex-col gap-3 bg-white p-4 md:min-w-[288px] md:flex-shrink-0 md:p-3">
+    <ul className="rounded-xs text-xsmall14 flex w-full min-w-0 flex-col gap-3 bg-white p-4 md:min-w-[288px] md:flex-1 md:flex-shrink-0 md:p-3">
       {children}
     </ul>
   );
@@ -80,32 +80,27 @@ const CurriculumCalendar = ({
             <li className="text-xxsmall12 md:text-xsmall14 flex flex-col">
               <div className="text-xxsmall12 md:text-xsmall14">
                 <span className="font-bold">+ </span>
-                <span className="box-border inline-block rounded rounded-[2px] bg-[#FF7B2E] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]">
+                <span
+                  className="box-border inline-block rounded rounded-[2px] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]"
+                  style={{ backgroundColor: config.primaryColor }}
+                >
                   렛츠커리어 24hr 커뮤니티
                 </span>
               </div>
             </li>
             <div className="flex flex-col gap-1">
-              <li className="flex flex-col gap-1">
-                <span className="text-[14px] font-semibold leading-[20px] md:text-[16px] md:leading-[22px]">
-                  + {challenge.challengeType} 직무 및 산업 스터디
-                </span>
-                <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
-                  꾸준한 {challenge.challengeType}에 대한 관심을 보여줄 수 있는{' '}
-                  <br />
-                  {challenge.challengeType} 직무/산업 스터디 템플릿을 제공해요.
-                </div>
-              </li>
-              <li className="flex flex-col gap-1">
-                <span className="text-[14px] font-semibold leading-[20px] md:text-[16px] md:leading-[22px]">
-                  + 1:1 피드백을 신청하신 경우
-                </span>
-                <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
-                  내가 희망하는 세부 직무에 맞는 현직자와 <br />
-                  매칭되어, 커리어 패스 상담 및 서류 작성과 <br />
-                  면접 준비에 대한 조언을 얻을 수 있어요.
-                </div>
-              </li>
+              {config.bonusItems?.map((item, index) => (
+                <li key={index} className="flex flex-col gap-1">
+                  {item.title && (
+                    <span className="text-[14px] font-semibold leading-[20px] md:text-[16px] md:leading-[22px]">
+                      + {item.title}
+                    </span>
+                  )}
+                  <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
+                    {item.description}
+                  </div>
+                </li>
+              ))}
             </div>
           </CalendarList>
         </div>

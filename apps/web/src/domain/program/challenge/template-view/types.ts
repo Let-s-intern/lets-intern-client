@@ -14,7 +14,7 @@ export interface IntroSectionConfig {
   titleLine1: string;
   description: ReactNode;
   bubbles: IntroBubbleConfig[];
-  userImageSrc: string;
+  isTextWhite?: boolean;
 }
 
 // ---- IntroFeaturesSection ----
@@ -22,8 +22,7 @@ export interface IntroSectionConfig {
 export interface FeatureCardConfig {
   title: ReactNode;
   description: ReactNode;
-  mobileImg: string;
-  desktopImg: string;
+  bgImg: string;
   alt: string;
 }
 
@@ -45,6 +44,7 @@ export interface CheckListItemConfig {
 export interface CheckListSectionConfig {
   primaryColor: string;
   lightAccentColor: string;
+  backgroundColor: string;
   items: CheckListItemConfig[];
 }
 
@@ -102,7 +102,6 @@ export interface OverviewSectionConfig {
   primaryColor: string;
   backgroundColor: string;
   stepBadgeBackgroundColor: string;
-  getTitle: (weekText: string) => string;
 }
 
 // ---- CurriculumSection ----
@@ -113,10 +112,16 @@ export interface CalendarItemConfig {
   description: ReactNode;
 }
 
+export interface CalendarPlusItemConfig {
+  title?: string;
+  description: ReactNode;
+}
+
 export interface CurriculumSectionConfig {
   primaryColor: string;
   lightAccentColor: string;
   getTitle: (lectureCount: number, weekText: string) => ReactNode;
   description: ReactNode;
   getCalendarItems: (lectureCount: number) => CalendarItemConfig[];
+  bonusItems?: CalendarPlusItemConfig[];
 }

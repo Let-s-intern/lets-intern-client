@@ -144,7 +144,10 @@ function DesktopCurriculums({
         ))}
       </div>
       <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
-        <CurriculumContent weekGroup={activeGroup} />
+        <CurriculumContent
+          weekGroup={activeGroup}
+          accentColor={lightAccentColor}
+        />
       </div>
     </div>
   );
@@ -224,7 +227,10 @@ function Curriculums({
               index={index}
               primaryColor={primaryColor}
             >
-              <CurriculumContent weekGroup={group} />
+              <CurriculumContent
+                weekGroup={group}
+                accentColor={lightAccentColor}
+              />
             </Dropdown>
           );
         })}
