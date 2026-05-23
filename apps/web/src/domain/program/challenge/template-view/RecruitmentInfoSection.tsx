@@ -8,8 +8,6 @@ import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import MainTitle from '../ui/MainTitle';
 import { getChallengeThemeColor } from '../utils/getChallengeThemeColor';
 
-const DEFAULT_COLOR = getChallengeThemeColor('HR');
-
 interface PriceInfo {
   title: string;
   originalPrice: number;
@@ -43,10 +41,10 @@ const Box = ({
 
 const Label = ({
   children,
-  themeColor = DEFAULT_COLOR,
+  themeColor,
 }: {
   children?: ReactNode;
-  themeColor?: string;
+  themeColor: string;
 }) => {
   return (
     <span
@@ -61,11 +59,11 @@ const Label = ({
 const InfoRow = ({
   label,
   value,
-  themeColor = DEFAULT_COLOR,
+  themeColor,
 }: {
   label: string;
   value: ReactNode;
-  themeColor?: string;
+  themeColor: string;
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -168,7 +166,8 @@ const PlanRow = ({ plan }: { plan: PriceInfo }) => {
   );
 };
 
-const HrRecruitmentInfoSection = ({ challenge }: Props) => {
+const RecruitmentInfoSection = ({ challenge }: Props) => {
+  const themeColor = getChallengeThemeColor(challenge.challengeType);
   const { startDate, deadline, startDateWithTime, endDateWithTime } =
     getChallengeSchedule(challenge);
 
@@ -294,7 +293,7 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
             <InfoRow
               label="시작 일자"
               value={startDate}
-              themeColor={DEFAULT_COLOR}
+              themeColor={themeColor}
             />
             <InfoRow
               label="진행 기간"
@@ -305,7 +304,7 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
                   {endDateWithTime}
                 </>
               }
-              themeColor={DEFAULT_COLOR}
+              themeColor={themeColor}
             />
           </Box>
 
@@ -313,24 +312,24 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
             <InfoRow
               label="모집 마감"
               value={deadline}
-              themeColor={DEFAULT_COLOR}
+              themeColor={themeColor}
             />
             <InfoRow
               label="OT 일자"
               value="챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청 부탁드립니다."
-              themeColor={DEFAULT_COLOR}
+              themeColor={themeColor}
             />
             <InfoRow
               label="진행방식"
               value="100% 온라인"
-              themeColor={DEFAULT_COLOR}
+              themeColor={themeColor}
             />
           </Box>
         </div>
 
         {/* 우측: 가격 플랜 */}
         <Box className="flex-1">
-          <Label themeColor={DEFAULT_COLOR}>가격</Label>
+          <Label themeColor={themeColor}>가격</Label>
           <div className="mt-2 flex flex-col gap-3.5">
             {plans.map((plan, index) => {
               const isLast = index === plans.length - 1;
@@ -351,4 +350,4 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
   );
 };
 
-export default HrRecruitmentInfoSection;
+export default RecruitmentInfoSection;
