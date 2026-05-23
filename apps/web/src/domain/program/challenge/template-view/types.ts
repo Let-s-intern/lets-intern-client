@@ -92,7 +92,6 @@ export interface DifferentiatorsSectionConfig {
 export interface ReviewSectionConfig {
   primaryColor: string;
   lightAccentColor: string;
-  reviewLinkQuery: Record<string, string>;
   bubbleBgColor: string;
   buttonBgColor: string;
 }
@@ -104,4 +103,20 @@ export interface OverviewSectionConfig {
   backgroundColor: string;
   stepBadgeBackgroundColor: string;
   getTitle: (weekText: string) => string;
+}
+
+// ---- CurriculumSection ----
+
+export interface CalendarItemConfig {
+  number: number;
+  title: string;
+  description: ReactNode;
+}
+
+export interface CurriculumSectionConfig {
+  primaryColor: string;
+  lightAccentColor: string;
+  getTitle: (lectureCount: number, weekText: string) => ReactNode;
+  description: ReactNode;
+  getCalendarItems: (lectureCount: number) => CalendarItemConfig[];
 }

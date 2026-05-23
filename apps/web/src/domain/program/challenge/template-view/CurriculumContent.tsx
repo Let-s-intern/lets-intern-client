@@ -11,7 +11,7 @@ interface WeekGroup {
   items: ChallengeCurriculum[];
 }
 
-interface HrCurriculumContentProps {
+interface CurriculumContentProps {
   weekGroup: WeekGroup;
 }
 
@@ -81,7 +81,7 @@ function Highlight({
   );
 }
 
-const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
+const CurriculumContent = ({ weekGroup }: CurriculumContentProps) => {
   const isLastItem = (index: number) => index === weekGroup.items.length - 1;
 
   return (
@@ -129,4 +129,4 @@ const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
   );
 };
 
-export default HrCurriculumContent;
+export default CurriculumContent;
