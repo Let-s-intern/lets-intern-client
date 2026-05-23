@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import {
   feedbackDetailSchema,
+  feedbackSlotListSchema,
   liveFeedbackListSchema,
   mentorDetailSchema,
 } from './feedbackSchema';
@@ -25,6 +26,27 @@ export const useMentorDetailQuery = (challengeId?: number | string) => {
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/feedback/mentor`);
       return mentorDetailSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+/** GET /api/v1/challenge/{challengeId}/feedback/mentor/slot 멘토 피드백 슬롯 목록 조회 */
+export const useFeedbackSlotListQuery = (
+  challengeId?: number | string,
+  startDate?: string,
+  endDate?: string,
+) => {
+  return useQuery({
+    queryKey: ['feedbackSlotList', challengeId, startDate, endDate],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
+      const res = await axios.get(
+        `/challenge/${challengeId}/feedback/mentor/slot?${params}`,
+      );
+      return feedbackSlotListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
   });
