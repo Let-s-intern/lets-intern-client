@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import CheckIcon from '@/assets/icons/check.svg';
 
 const FEEDBACK_BENEFITS = [
   {
@@ -57,13 +57,10 @@ function HrFeedbackSection() {
               {benefit.title}
             </h4>
             <div className="flex items-start">
-              <Image
-                src="/images/hr-check.svg"
-                alt="체크"
-                width={24}
-                height={24}
-                className="h-6 w-6 flex-shrink-0"
-                unoptimized
+              <CheckIcon
+                style={{ color: '#FF5E00' }}
+                className="h-6 w-6 shrink-0"
+                aria-hidden="true"
               />
               <span className="text-xsmall14 text-neutral-30 md:text-small18">
                 {benefit.description}

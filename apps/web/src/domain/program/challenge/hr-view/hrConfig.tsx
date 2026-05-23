@@ -132,6 +132,7 @@ export const hrIntroFeaturesConfig: IntroFeaturesSectionConfig = {
 export const hrCheckListConfig: CheckListSectionConfig = {
   primaryColor: HR_THEME.primary,
   lightAccentColor: HR_THEME.lightAccent,
+  backgroundColor: '#FFFAF7',
   items: [
     {
       title: ['HR 직무에 관심은 있지만,', '실제로 어떤 일을 하는지 몰라요'],
@@ -284,7 +285,6 @@ export const hrOverviewConfig: OverviewSectionConfig = {
   primaryColor: HR_THEME.primary,
   backgroundColor: '#290F00',
   stepBadgeBackgroundColor: '#FFBD96',
-  getTitle: (weekText) => `${weekText} 여정 한 번에 보기`,
 };
 
 const HR_CALENDAR_ITEMS = (lectureCount: number): CalendarItemConfig[] => [
@@ -340,4 +340,25 @@ export const hrCurriculumSectionConfig: CurriculumSectionConfig = {
     </>
   ),
   getCalendarItems: HR_CALENDAR_ITEMS,
+  bonusItems: [
+    {
+      title: 'HR 직무 및 산업 스터디',
+      description: (
+        <>
+          꾸준한 HR에 대한 관심을 보여줄 수 있는 <br />
+          HR 직무/산업 스터디 템플릿을 제공해요.
+        </>
+      ),
+    },
+    {
+      title: '1:1 피드백을 신청하신 경우',
+      description: (
+        <>
+          내가 희망하는 세부 직무에 맞는 현직자와 <br />
+          매칭되어, 커리어 패스 상담 및 서류 작성과 <br />
+          면접 준비에 대한 조언을 얻을 수 있어요.
+        </>
+      ),
+    },
+  ],
 };
