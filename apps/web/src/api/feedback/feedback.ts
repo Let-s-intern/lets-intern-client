@@ -1,6 +1,6 @@
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { liveFeedbackListSchema } from './feedbackSchema';
+import { feedbackDetailSchema, liveFeedbackListSchema } from './feedbackSchema';
 
 /** GET /api/v1/challenge/{challengeId}/feedback/live 라이브 피드백 목록 조회 */
 export const useLiveFeedbackListQuery = (challengeId?: number | string) => {
@@ -11,5 +11,17 @@ export const useLiveFeedbackListQuery = (challengeId?: number | string) => {
       return liveFeedbackListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+/** GET /api/v1/feedback/{feedbackId} 피드백 상세 조회 */
+export const useFeedbackDetailQuery = (feedbackId?: number | null) => {
+  return useQuery({
+    queryKey: ['feedbackDetail', feedbackId],
+    queryFn: async () => {
+      const res = await axios.get(`/feedback/${feedbackId}`);
+      return feedbackDetailSchema.parse(res.data.data);
+    },
+    enabled: !!feedbackId,
   });
 };

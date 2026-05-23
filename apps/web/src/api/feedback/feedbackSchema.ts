@@ -29,3 +29,15 @@ export type LiveFeedbackItem = z.infer<typeof liveFeedbackItemSchema>;
 export const liveFeedbackListSchema = z.object({
   liveFeedbackList: z.array(liveFeedbackItemSchema),
 });
+
+export const feedbackDetailSchema = z.object({
+  feedbackInfo: z.object({
+    feedbackId: z.number(),
+    startDate: z.string(),
+    endDate: z.string(),
+    meetingUrl: z.string().nullable(),
+    status: feedbackStatusSchema,
+  }),
+});
+
+export type FeedbackDetail = z.infer<typeof feedbackDetailSchema>;
