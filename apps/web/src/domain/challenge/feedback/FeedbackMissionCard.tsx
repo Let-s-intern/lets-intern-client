@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { useState } from 'react';
+
 function formatDay(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
   return `${year.slice(2)}.${month}.${day}`;
@@ -28,12 +29,13 @@ export interface FeedbackMissionCardConfig {
 
 interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
-  buttonLabel?: string; // 우상단 미션 버튼 (항상 navigate)
+  buttonLabel?: string; // 우상단 미션 버튼
   onClick?: () => void; // 미션 버튼 클릭 핸들러
   accordionLabel?: string; // 보라색 바 닫힌 텍스트 / 모바일 두 번째 버튼 (있으면 렌더링)
   openLabel?: string; // 보라색 바 열린 텍스트
   onAccordionMobileClick?: () => void; // 모바일 두 번째 버튼 클릭 (상세 페이지 이동)
   children?: React.ReactNode;
+  notice?: React.ReactNode; // 카드 하단 안내 박스
 }
 
 const cardInfoTextCls =
@@ -82,6 +84,7 @@ const FeedbackMissionCard = ({
   openLabel,
   onAccordionMobileClick,
   children,
+  notice,
 }: FeedbackMissionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -99,6 +102,12 @@ const FeedbackMissionCard = ({
   } = config;
 
   const hasAccordion = !!accordionLabel && !!openLabel;
+
+  const reservationDateProps = reservationDateTime
+    ? { label: '예약일시', value: reservationDateTime, highlighted: true }
+    : startDay && endDay
+      ? { label: '예약기간', start: startDay, end: endDay, highlighted: true }
+      : null;
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
@@ -164,24 +173,8 @@ const FeedbackMissionCard = ({
               </div>
             </div>
 
-            {reservationDateTime ? (
-              <DateField
-                label="예약일시"
-                value={reservationDateTime}
-                highlighted
-                className="hidden md:flex"
-              />
-            ) : (
-              startDay &&
-              endDay && (
-                <DateField
-                  label="예약기간"
-                  highlighted
-                  start={startDay}
-                  end={endDay}
-                  className="hidden md:flex"
-                />
-              )
+            {reservationDateProps && (
+              <DateField {...reservationDateProps} className="hidden md:flex" />
             )}
 
             {/* 모바일 날짜 */}
@@ -192,23 +185,7 @@ const FeedbackMissionCard = ({
                 start={feedbackStartDay}
                 end={feedbackEndDay}
               />
-              {reservationDateTime ? (
-                <DateField
-                  label="예약일시"
-                  value={reservationDateTime}
-                  highlighted
-                />
-              ) : (
-                startDay &&
-                endDay && (
-                  <DateField
-                    label="예약기간"
-                    highlighted
-                    start={startDay}
-                    end={endDay}
-                  />
-                )
-              )}
+              {reservationDateProps && <DateField {...reservationDateProps} />}
             </div>
           </div>
         </div>
@@ -280,6 +257,8 @@ const FeedbackMissionCard = ({
           />
         </button>
       )}
+
+      {notice && <div className="px-4 pb-4 pt-2">{notice}</div>}
     </div>
   );
 };

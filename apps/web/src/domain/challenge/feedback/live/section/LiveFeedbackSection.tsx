@@ -16,6 +16,21 @@ interface Props {
   onMobileClick: (mission: LiveFeedbackMission) => void;
 }
 
+const ExpiredNotice = () => (
+  <div className="bg-primary-5 rounded-xs md:blick hidden gap-2 border px-4 py-2 md:flex">
+    <img src="/icons/info.svg" alt="" className="size-4" />
+    <div className="flex flex-col gap-0.5">
+      <p className="text-xxsmall12 text-system-positive-blue items-center">
+        미션 제출 기간이 만료되었습니다.
+      </p>
+      <p className="text-xxsmall12 text-neutral-20">
+        미션을 제출하지 않아 LIVE 피드백이 진행되지 않았습니다. 기간 내에 예약과
+        미션 제출이 모두 이루어져야 피드백을 받을 수 있습니다.
+      </p>
+    </div>
+  </div>
+);
+
 export default function LiveFeedbackSection({
   label,
   missions,
@@ -46,6 +61,9 @@ export default function LiveFeedbackSection({
                 accordionLabel={labels?.buttonLabel}
                 openLabel={labels?.openLabel}
                 onAccordionMobileClick={() => onMobileClick(mission)}
+                notice={
+                  mission.status === 'expired' ? <ExpiredNotice /> : undefined
+                }
               >
                 <LiveFeedbackDetail
                   challengeId={challengeId}
