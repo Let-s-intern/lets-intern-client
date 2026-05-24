@@ -1,8 +1,6 @@
-import { memo } from 'react';
-
 import channelService from '@/ChannelService';
 
-function FaqChat() {
+export default function FaqChat() {
   return (
     <div className="bg-neutral-95 mx-auto flex flex-col items-center gap-3 rounded-md px-8 py-4 md:w-full md:max-w-[800px] md:flex-row md:items-center md:justify-between">
       <span className="text-xsmall14 text-neutral-35 md:text-small20 font-semibold">
@@ -17,5 +15,3 @@ function FaqChat() {
     </div>
   );
 }
-
-export default memo(FaqChat);

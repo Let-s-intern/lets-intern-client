@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useState } from 'react';
 
 import { useIsAdminQuery, useIsMentorQuery } from '@/api/user/user';
 import useAuthStore from '@/store/useAuthStore';

@@ -10,8 +10,8 @@ import {
   useDeleteReportApplication,
   useGetReportPaymentDetailQuery,
 } from '@/api/report';
-import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import ReportCreditRow from '@/domain/mypage/credit/ui/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ui/ReportCreditSubRow';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import {
