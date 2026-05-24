@@ -4,57 +4,12 @@ import { useCallback } from 'react';
 import { ProgramAdminList, ProgramAdminListItem } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
-
-const isSameProgram = (
-  a: { id: number; programType: string },
-  b: { id: number; programType: string },
-) => a.id === b.id && a.programType === b.programType;
-
-const toRecommendItem = (item: ProgramAdminListItem) => ({
-  programInfo: { ...item.programInfo },
-  classificationList: item.classificationList.map((ele) => ({
-    programClassification: ele.programClassification,
-  })),
-  adminClassificationList: (item.adminClassificationList ?? []).map((ele) => ({
-    programAdminClassification: ele.programAdminClassification,
-  })),
-});
-
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '95%',
-  maxHeight: '100vh',
-  bgcolor: 'background.paper',
-  borderRadius: 2,
-  boxShadow: 24,
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const headerStyle = {
-  p: 2,
-  borderBottom: 1,
-  borderColor: 'divider',
-  display: 'flex',
-  justifyContent: 'space-between',
-};
-
-const contentStyle = {
-  flex: 1,
-  overflow: 'auto',
-};
-
-const footerStyle = {
-  p: 2,
-  borderTop: 1,
-  borderColor: 'divider',
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: 1,
-};
+import {
+  contentStyle,
+  footerStyle,
+  headerStyle,
+  modalStyle,
+} from './ProgramSelectModal.style';
 
 interface ProgramSelectModalProps {
   open: boolean;
@@ -64,13 +19,13 @@ interface ProgramSelectModalProps {
   programList?: ProgramAdminList;
 }
 
-const ProgramSelectModal = ({
+export default function ProgramSelectModal({
   open,
   onClose,
   programRecommend,
   setProgramRecommend,
   programList,
-}: ProgramSelectModalProps) => {
+}: ProgramSelectModalProps) {
   const isSelected = (item: ProgramAdminListItem) =>
     programRecommend.list.some((v) =>
       isSameProgram(v.programInfo, item.programInfo),
@@ -175,6 +130,27 @@ const ProgramSelectModal = ({
       </Box>
     </Modal>
   );
-};
+}
 
-export default ProgramSelectModal;
+function isSameProgram(
+  a: { id: number; programType: string },
+  b: { id: number; programType: string },
+) {
+  return a.id === b.id && a.programType === b.programType;
+}
+
+function toRecommendItem(
+  item: ProgramAdminListItem,
+): ProgramRecommend['list'][number] {
+  return {
+    programInfo: { ...item.programInfo },
+    classificationList: item.classificationList.map((ele) => ({
+      programClassification: ele.programClassification,
+    })),
+    adminClassificationList: (item.adminClassificationList ?? []).map(
+      (ele) => ({
+        programAdminClassification: ele.programAdminClassification,
+      }),
+    ),
+  };
+}
