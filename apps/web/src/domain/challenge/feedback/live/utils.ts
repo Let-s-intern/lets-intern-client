@@ -35,7 +35,7 @@ export function toMission(
     missionEndDate: endDay,
     feedbackEndDate: feedbackEndDay,
     mentorInfo: item.mentorInfo ?? null,
-    reservationInfo: null,
+    feedbackInfo: null,
   };
 }
 
@@ -102,8 +102,8 @@ export function toCardConfig(mission: LiveFeedbackMission) {
   const inProgress =
     mission.status === 'reserved' &&
     isInProgress(
-      mission.reservationInfo?.startDate,
-      mission.reservationInfo?.endDate,
+      mission.feedbackInfo?.startDate,
+      mission.feedbackInfo?.endDate,
     );
 
   return {
@@ -125,7 +125,7 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     endDay: mission.missionEndDate,
     reservationDateTime:
       mission.status === 'reserved' || mission.status === 'completed'
-        ? formatReservationDateTime(mission.reservationInfo?.startDate)
+        ? formatReservationDateTime(mission.feedbackInfo?.startDate)
         : undefined,
   };
 }

@@ -1,23 +1,18 @@
 'use client';
 
 import { useMentorDetailQuery } from '@/api/feedback/feedback';
+import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
 import { useState } from 'react';
 
 import ReservationInfoSection from './section/ReservationInfoSection';
 import ReservationScheduleSection from './section/ReservationScheduleSection';
-import type {
-  LiveFeedbackStatus,
-  Mentor,
-  MissionPeriod,
-  Reservation,
-  SelectedSlot,
-} from './types';
+import type { LiveFeedbackStatus, Mentor, MissionPeriod, SelectedSlot } from './types';
 
 interface Props {
   challengeId: string | number;
   assignedMentor: Mentor | null;
   period: MissionPeriod;
-  reservationInfo: Reservation | null;
+  feedbackInfo: FeedbackInfo | null;
   status: LiveFeedbackStatus;
 }
 
@@ -25,11 +20,11 @@ const LiveFeedbackDetail = ({
   challengeId,
   assignedMentor,
   period,
-  reservationInfo: initialReservation,
+  feedbackInfo: initialFeedbackInfo,
   status,
 }: Props) => {
-  const [reservation, setReservation] = useState<Reservation | null>(
-    initialReservation,
+  const [feedbackInfo, setFeedbackInfo] = useState<FeedbackInfo | null>(
+    initialFeedbackInfo,
   );
 
   const { data: mentorData } = useMentorDetailQuery(
@@ -44,11 +39,12 @@ const LiveFeedbackDetail = ({
     };
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
-    setReservation({
+    setFeedbackInfo({
       feedbackId: 0, // POST 예약 API 연동 시 실제 ID로 교체
       startDate: selectedSlot.startDate,
       endDate: selectedSlot.endDate,
       meetingUrl: null,
+      status: 'RESERVED',
     });
   };
 
@@ -58,7 +54,7 @@ const LiveFeedbackDetail = ({
     <div className="flex flex-col">
       <ReservationInfoSection
         mentor={mentor}
-        reservation={reservation}
+        feedbackInfo={feedbackInfo}
         status={status}
       />
       {showScheduleSection && (

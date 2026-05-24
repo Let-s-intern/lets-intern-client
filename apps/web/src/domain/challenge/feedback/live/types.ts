@@ -22,13 +22,8 @@ export type LiveFeedbackStatus = 'prev' | 'reserved' | 'completed' | 'expired';
 import type { ChallengeMentorInfo } from '@/api/feedback/feedbackSchema';
 export type Mentor = ChallengeMentorInfo;
 
-// 확정된 예약 정보 (GET /feedback/{feedbackId} 응답 기준)
-export interface Reservation {
-  feedbackId: number;
-  startDate: string; // ISO datetime
-  endDate: string; // ISO datetime
-  meetingUrl: string | null;
-}
+import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
+export type { FeedbackInfo };
 
 // 라이브 피드백 미션 데이터
 export interface LiveFeedbackMission {
@@ -41,5 +36,5 @@ export interface LiveFeedbackMission {
   missionEndDate: string; // 'YYYY-MM-DD'
   feedbackEndDate: string; // 'YYYY-MM-DD' — missionEndDate + 3일
   mentorInfo: Mentor | null;
-  reservationInfo: Reservation | null;
+  feedbackInfo: FeedbackInfo | null;
 }

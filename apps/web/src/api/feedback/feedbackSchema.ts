@@ -47,6 +47,7 @@ export const feedbackDetailSchema = z.object({
 });
 
 export type FeedbackDetail = z.infer<typeof feedbackDetailSchema>;
+export type FeedbackInfo = FeedbackDetail['feedbackInfo'];
 
 export const feedbackSlotStatusSchema = z.enum(['OPEN', 'CLOSED', 'BOOKED']);
 

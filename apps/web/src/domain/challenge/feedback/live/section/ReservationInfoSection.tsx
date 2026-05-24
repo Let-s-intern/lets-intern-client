@@ -4,22 +4,22 @@ import { useState } from 'react';
 
 import ZepEmbedModal from '@/common/modal/ZepEmbedModal';
 
-import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
+import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
 import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
 interface Props {
   mentor: Mentor;
-  reservation: Reservation | null;
+  feedbackInfo: FeedbackInfo | null;
   status: LiveFeedbackStatus;
 }
 
-const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
+const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
   const [isZepOpen, setIsZepOpen] = useState(false);
 
-  const reservationTime = formatReservationTime(reservation?.startDate);
-  const entranceActive = isEntranceActive(reservation?.startDate);
+  const reservationTime = formatReservationTime(feedbackInfo?.startDate);
+  const entranceActive = isEntranceActive(feedbackInfo?.startDate, feedbackInfo?.endDate);
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -33,7 +33,7 @@ const ReservationInfoSection = ({ mentor, reservation, status }: Props) => {
         />
       </section>
 
-      {reservation && (
+      {feedbackInfo && (
         <section className="flex w-full flex-col">
           <h2 className="text-xsmall16 text-neutral-0 font-semibold">
             LIVE 피드백 예약내역

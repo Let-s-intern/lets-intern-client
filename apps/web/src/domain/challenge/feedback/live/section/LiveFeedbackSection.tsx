@@ -54,7 +54,7 @@ export default function LiveFeedbackSection({
                     startDay: mission.missionStartDate,
                     endDay: mission.missionEndDate,
                   }}
-                  reservationInfo={mission.reservationInfo}
+                  feedbackInfo={mission.feedbackInfo}
                   status={mission.status}
                 />
               </FeedbackMissionCard>

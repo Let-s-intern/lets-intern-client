@@ -47,7 +47,7 @@ const LiveMissionDetailPage = () => {
           startDay: mission.missionStartDate,
           endDay: mission.missionEndDate,
         }}
-        reservationInfo={mission.reservationInfo}
+        feedbackInfo={mission.feedbackInfo}
         status={mission.status}
       />
     </>
