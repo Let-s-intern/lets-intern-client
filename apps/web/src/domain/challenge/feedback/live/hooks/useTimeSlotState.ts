@@ -4,6 +4,17 @@ import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
 import type { MissionPeriod, SelectedSlot, SlotStatus } from '../types';
 import { toDateString } from '../utils';
 
+function generateSlotTimes(startHour: number, endHour: number): string[] {
+  const times: string[] = [];
+  for (let h = startHour; h < endHour; h++) {
+    times.push(`${String(h).padStart(2, '0')}:00`);
+    times.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  return times;
+}
+
+const ALL_SLOT_TIMES = generateSlotTimes(9, 24);
+
 function getInitialDate(period: MissionPeriod): Date {
   const today = new Date();
   const start = new Date(period.startDay);
@@ -71,17 +82,26 @@ export function useTimeSlotState(
   }, [feedbackSlots]);
 
   const daySlots = useMemo(() => {
+    const slotsForDate = new Map(
+      feedbackSlots
+        .filter((slot) => slot.startDate.slice(0, 10) === selectedDate)
+        .map((slot) => [toTimeString(slot.startDate), slot]),
+    );
+
     const result: Record<string, { status: SlotStatus; label: string }> = {};
-    feedbackSlots
-      .filter((slot) => slot.startDate.slice(0, 10) === selectedDate)
-      .forEach((slot) => {
-        const startTime = toTimeString(slot.startDate);
-        const endTime = toTimeString(slot.endDate);
-        result[startTime] = {
-          status: toSlotStatus(slot.status, slot.startDate),
-          label: `${startTime} ~ ${endTime}`,
-        };
-      });
+    ALL_SLOT_TIMES.forEach((time) => {
+      const [h, m] = time.split(':').map(Number);
+      const endH = m === 30 ? h + 1 : h;
+      const endM = m === 30 ? '00' : '30';
+      const endTime = `${String(endH).padStart(2, '0')}:${endM}`;
+      const apiSlot = slotsForDate.get(time);
+      result[time] = {
+        status: apiSlot
+          ? toSlotStatus(apiSlot.status, apiSlot.startDate)
+          : 'unavailable',
+        label: `${time} ~ ${endTime}`,
+      };
+    });
     return result;
   }, [feedbackSlots, selectedDate]);
 
@@ -92,12 +112,10 @@ export function useTimeSlotState(
       if (next > 11) return { year: y + 1, month: 0 };
       return { year: y, month: next };
     });
-    setSelectedSlot(null);
   }, []);
 
   const handleDateSelect = useCallback((date: string) => {
     setSelectedDate(date);
-    setSelectedSlot(null);
   }, []);
 
   const handleSlotSelect = useCallback(

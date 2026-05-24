@@ -39,7 +39,7 @@ export default function LiveFeedbackSection({
             const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
             return (
               <FeedbackMissionCard
-                key={mission.id}
+                key={mission.missionTh}
                 config={toCardConfig(mission)}
                 buttonLabel={LIVE_MISSION_BUTTON_LABEL[mission.status]}
                 onClick={() => onMissionClick(mission)}
@@ -49,10 +49,10 @@ export default function LiveFeedbackSection({
               >
                 <LiveFeedbackDetail
                   challengeId={challengeId}
-                  assignedMentor={mission.assignedMentor}
+                  assignedMentor={mission.mentorInfo}
                   period={{
-                    startDay: mission.startDay,
-                    endDay: mission.endDay,
+                    startDay: mission.missionStartDate,
+                    endDay: mission.missionEndDate,
                   }}
                   reservationInfo={mission.reservationInfo}
                   status={mission.status}

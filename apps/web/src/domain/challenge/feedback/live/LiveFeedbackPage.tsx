@@ -21,15 +21,15 @@ const LiveFeedbackPage = () => {
 
   const missions = useMemo(
     () =>
-      (data?.liveFeedbackList ?? []).map((item, index) =>
-        toMission(item, index, currentChallenge?.challengeType ?? ''),
+      (data?.liveFeedbackList ?? []).map((item) =>
+        toMission(item, currentChallenge?.challengeType ?? ''),
       ),
     [data, currentChallenge?.challengeType],
   );
 
   const handleMobileClick = useCallback(
     (mission: LiveFeedbackMission) => {
-      router.push(`${pathname}/${mission.id}`);
+      router.push(`${pathname}/${mission.missionTh}`);
     },
     [pathname, router],
   );
@@ -52,7 +52,7 @@ const LiveFeedbackPage = () => {
   const expired = missions.filter((m) => m.status === 'expired');
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="mb-12 flex flex-col gap-10">
       <LiveFeedbackSection
         label="예약 필요"
         missions={needReservation}

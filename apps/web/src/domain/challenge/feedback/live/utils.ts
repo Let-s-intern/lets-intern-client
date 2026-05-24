@@ -8,12 +8,10 @@ const FEEDBACK_STATUS_MAP: Record<string, LiveFeedbackStatus> = {
 
 export function toMission(
   item: LiveFeedbackItem,
-  _index: number,
   challengeType: string,
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
   const endDay = item.missionEndDate.slice(0, 10);
-  const feedbackStartDay = endDay;
   const feedbackEndDay = new Date(
     new Date(item.missionEndDate).getTime() + 3 * 24 * 60 * 60 * 1000,
   )
@@ -28,17 +26,15 @@ export function toMission(
   }
 
   return {
-    id: item.missionTh,
+    missionTh: item.missionTh,
     thumbnail: item.thumbnail,
-    title: item.missionTitle,
+    missionTitle: item.missionTitle,
     status,
     challengeType,
-    missionNumber: item.missionTh,
-    startDay,
-    endDay,
-    feedbackStartDay,
-    feedbackEndDay,
-    assignedMentor: item.mentorInfo ?? null,
+    missionStartDate: startDay,
+    missionEndDate: endDay,
+    feedbackEndDate: feedbackEndDay,
+    mentorInfo: item.mentorInfo ?? null,
     reservationInfo: null,
   };
 }
@@ -112,7 +108,7 @@ export function toCardConfig(mission: LiveFeedbackMission) {
 
   return {
     thumbnail: mission.thumbnail,
-    title: mission.title,
+    title: mission.missionTitle,
     badge: {
       label: inProgress
         ? '진행 중'
@@ -122,11 +118,11 @@ export function toCardConfig(mission: LiveFeedbackMission) {
         : LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
     },
     challengeType: mission.challengeType ?? '',
-    missionNumber: mission.missionNumber,
-    feedbackStartDay: mission.feedbackStartDay,
-    feedbackEndDay: mission.feedbackEndDay,
-    startDay: mission.startDay,
-    endDay: mission.endDay,
+    missionNumber: mission.missionTh,
+    feedbackStartDay: mission.missionEndDate,
+    feedbackEndDay: mission.feedbackEndDate,
+    startDay: mission.missionStartDate,
+    endDay: mission.missionEndDate,
     reservationDateTime:
       mission.status === 'reserved' || mission.status === 'completed'
         ? formatReservationDateTime(mission.reservationInfo?.startDate)

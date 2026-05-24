@@ -32,7 +32,7 @@ const LiveMissionDetailPage = () => {
     const th = Number(missionId);
     const index = list.findIndex((item) => item.missionTh === th);
     if (index === -1) return null;
-    return toMission(list[index], index, currentChallenge?.challengeType ?? '');
+    return toMission(list[index], currentChallenge?.challengeType ?? '');
   }, [data, missionId, currentChallenge?.challengeType]);
 
   if (!mission) return <BackHeader to={backPath}>LIVE 피드백</BackHeader>;
@@ -42,8 +42,11 @@ const LiveMissionDetailPage = () => {
       <BackHeader to={backPath}>{HEADER_TITLE[mission.status]}</BackHeader>
       <LiveFeedbackDetail
         challengeId={programId}
-        assignedMentor={mission.assignedMentor}
-        period={{ startDay: mission.startDay, endDay: mission.endDay }}
+        assignedMentor={mission.mentorInfo}
+        period={{
+          startDay: mission.missionStartDate,
+          endDay: mission.missionEndDate,
+        }}
         reservationInfo={mission.reservationInfo}
         status={mission.status}
       />
