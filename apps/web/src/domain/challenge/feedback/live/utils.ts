@@ -1,11 +1,6 @@
 import type { LiveFeedbackItem } from '@/api/feedback/feedbackSchema';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
-const FEEDBACK_STATUS_MAP: Record<string, LiveFeedbackStatus> = {
-  RESERVED: 'reserved',
-  COMPLETED: 'completed',
-};
-
 export function toMission(
   item: LiveFeedbackItem,
   challengeType: string,
@@ -21,8 +16,10 @@ export function toMission(
   let status: LiveFeedbackStatus = 'prev';
   if (item.feedbackId == null) {
     status = new Date(item.missionEndDate) < new Date() ? 'expired' : 'prev';
-  } else {
-    status = FEEDBACK_STATUS_MAP[item.feedbackStatus ?? ''] ?? 'prev';
+  } else if (item.feedbackStatus === 'COMPLETED') {
+    status = 'completed';
+  } else if (item.feedbackStatus === 'RESERVED') {
+    status = 'reserved';
   }
 
   return {
