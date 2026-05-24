@@ -3,7 +3,7 @@
 import { CurationType, useGetUserCuration } from '@/api/curation';
 import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
-import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
+import { getReportThumbnail } from '@/domain/mypage/credit/ui/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import ProgramContainer from '../program/ProgramContainer';

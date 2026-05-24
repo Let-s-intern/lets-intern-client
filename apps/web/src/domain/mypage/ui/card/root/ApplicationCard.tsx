@@ -1,6 +1,6 @@
 import { MypageApplication } from '@/api/application';
 import HybridLink from '@/common/HybridLink';
-import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
+import { getReportThumbnail } from '@/domain/mypage/credit/ui/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import { ChallengePricePlan } from '@/schema';
 import { challengePricePlanToText } from '@/utils/convert';

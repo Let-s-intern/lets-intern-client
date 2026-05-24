@@ -1,9 +1,9 @@
-import {
-  fetchPublicVodData,
-  fetchPublicGuidebookData,
-  fetchLive,
-} from './program';
 import { ApiError } from '@letscareer/api';
+import {
+  fetchLive,
+  fetchPublicGuidebookData,
+  fetchPublicVodData,
+} from './program';
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
