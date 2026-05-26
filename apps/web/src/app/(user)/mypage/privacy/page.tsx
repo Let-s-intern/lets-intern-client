@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import MyPageKakaoChannel from '@/domain/mypage/privacy/section/MyPageKakaoChannel';
-import AlertModal from '../../../../common/alert/AlertModal';
+import { DangerConfirmDialog } from '@letscareer/ui';
 import BasicInfo from '../../../../domain/mypage/privacy/section/BasicInfo';
 import ChangePassword from '../../../../domain/mypage/privacy/section/ChangePassword';
 import MarketingAgree from '../../../../domain/mypage/privacy/section/MarketingAgree';
@@ -14,8 +14,7 @@ import axios from '../../../../utils/axios';
 
 const Privacy = () => {
   const router = useRouter();
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { logout } = useAuthStore();
   const { mutate: tryDeleteUser } = useMutation({
@@ -33,6 +32,14 @@ const Privacy = () => {
     },
   });
 
+  const handleDeleteClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
+    tryDeleteUser();
+  };
+
   return (
     <main className="flex w-full flex-col gap-16 md:w-4/5">
       <BasicInfo />
@@ -44,25 +51,19 @@ const Privacy = () => {
       </div>
       <button
         className="text-neutral-0/40 mt-[24px] flex w-full items-center justify-center"
-        onClick={() => setIsDeleteModalOpen(true)}
+        onClick={handleDeleteClick}
       >
         회원 탈퇴
       </button>
-      {isDeleteModalOpen && (
-        <AlertModal
-          onConfirm={() => {
-            tryDeleteUser();
-          }}
-          onCancel={() => setIsDeleteModalOpen(false)}
-          className="break-keep"
-          title="회원 탈퇴"
-        >
-          정말로 탈퇴하시겠습니까?
-          <div className="text-system-error mt-4 text-sm">
-            탈퇴 시 복구가 불가능하며, 모든 정보가 삭제됩니다.
-          </div>
-        </AlertModal>
-      )}
+      <DangerConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="회원 탈퇴 하시겠어요?"
+        description="탈퇴 시 계정 및 활동 내역이 복구되지 않습니다."
+        confirmLabel="탈퇴"
+        requireTypedConfirmation="회원탈퇴"
+        onConfirm={handleConfirm}
+      />
     </main>
   );
 };

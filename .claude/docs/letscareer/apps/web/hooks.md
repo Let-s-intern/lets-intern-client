@@ -14,6 +14,7 @@ apps/web/src/hooks/     # web 앱 전용 훅 (일부 잔존)
 ```
 
 import 경로:
+
 ```ts
 // 공유 훅 (모든 앱)
 import { useMounted } from '@letscareer/hooks';
@@ -35,7 +36,7 @@ import useMounted from '@/hooks/useMounted';
 #### 반환값
 
 ```typescript
-boolean  // 마운트 여부
+boolean; // 마운트 여부
 ```
 
 #### 사용 예시
@@ -102,7 +103,7 @@ pathname?: string  // 현재 경로 (옵션)
 #### 반환값
 
 ```typescript
-'UP' | 'DOWN'  // 스크롤 방향
+'UP' | 'DOWN'; // 스크롤 방향
 ```
 
 #### 사용 예시
@@ -131,30 +132,6 @@ const Header = () => {
 
 - 특정 페이지에서만 동작 (`/report/landing`, `/program/challenge` 등)
 - pathname 없이도 사용 가능 (모든 페이지에서 동작)
-
----
-
-### useScrollFade
-
-**위치**: `packages/hooks/src/useScrollFade.ts`
-
-스크롤 시 페이드 효과
-
-#### 사용 예시
-
-```tsx
-import useScrollFade from '@/hooks/useScrollFade';
-
-const Hero = () => {
-  const fadeRef = useScrollFade();
-
-  return (
-    <div ref={fadeRef} className="transition-opacity">
-      스크롤하면 페이드됩니다
-    </div>
-  );
-};
-```
 
 ---
 
@@ -199,10 +176,7 @@ const NavItem = ({ href, children }) => {
   const isActive = useActiveLink(href);
 
   return (
-    <a
-      href={href}
-      className={isActive ? 'text-primary' : 'text-gray-500'}
-    >
+    <a href={href} className={isActive ? 'text-primary' : 'text-gray-500'}>
       {children}
     </a>
   );
@@ -341,29 +315,6 @@ const MyComponent = () => {
 ---
 
 ## 카운터 & 애니메이션
-
-### useCounter
-
-**위치**: `packages/hooks/src/useCounter.ts`
-
-숫자 카운터 애니메이션
-
-#### 사용 예시
-
-```tsx
-import useCounter from '@/hooks/useCounter';
-
-const Stats = () => {
-  const count = useCounter({
-    end: 1000,
-    duration: 2000,
-  });
-
-  return <div>현재 사용자: {count}명</div>;
-};
-```
-
----
 
 ### useDecimalCounter
 
@@ -689,6 +640,7 @@ const useToggle = (initialValue: boolean) => {
 ## 새 훅 추가 시
 
 1. **`packages/hooks/src/` 디렉토리**에 생성
+
    ```
    packages/hooks/src/useMyCustomHook.ts
    ```
@@ -698,6 +650,7 @@ const useToggle = (initialValue: boolean) => {
    - 역할이 명확한 이름
 
 3. **타입 정의**
+
    ```tsx
    interface UseMyHookOptions {
      enabled?: boolean;
@@ -714,6 +667,7 @@ const useToggle = (initialValue: boolean) => {
    ```
 
 4. **JSDoc 주석**
+
    ```tsx
    /**
     * 사용자 정보를 가져오는 훅

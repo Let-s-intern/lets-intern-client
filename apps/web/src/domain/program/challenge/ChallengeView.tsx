@@ -19,9 +19,10 @@ import {
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
 
+import LexicalContent from '@/common/lexical/LexicalContent';
+import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import LexicalContent from '@/common/lexical/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
@@ -29,7 +30,6 @@ import ProgramDetailNavigation, {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
-import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
@@ -103,6 +103,9 @@ export const challengeColors = {
   A8E6FF: '#A8E6FF',
   FF5E00: '#FF5E00',
   FEEEE5: '#FEEEE5',
+  _1BC47D: '#1BC47D',
+  D1F3E5: '#D1F3E5',
+  E8F9F2: '#E8F9F2',
 };
 
 export type ChallengeColor = {

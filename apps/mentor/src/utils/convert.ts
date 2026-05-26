@@ -66,6 +66,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   MARKETING: '마케팅',
   EXPERIENCE_SUMMARY: '경험 정리',
   HR: 'HR',
+  PM: 'PM',
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
@@ -79,6 +80,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
   MARKETING: '마케팅',
   EXPERIENCE_SUMMARY: '경험 정리 챌린지',
   HR: 'HR',
+  PM: 'PM',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -92,6 +94,7 @@ export const challengeTypes: ChallengeType[] = [
   'MARKETING',
   'EXPERIENCE_SUMMARY',
   'HR',
+  'PM',
 ];
 
 export const programStatusToText: Record<string, string> = {

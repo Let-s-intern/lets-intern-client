@@ -20,15 +20,19 @@ export const usePaymentQuery = () => {
 
 export const UsePaymentDetailQueryKey = 'usePaymentDetailQueryKey';
 
+export const paymentDetailQueryOptions = (paymentId: string | number) => ({
+  queryKey: [UsePaymentDetailQueryKey, paymentId],
+  queryFn: async () => {
+    const res = await axios.get(`/payment/${paymentId}`);
+    return paymentDetailType.parse(res.data.data);
+  },
+});
+
 export const usePaymentDetailQuery = (
   paymentId: string | number | undefined | null,
 ) => {
   return useQuery({
-    queryKey: [UsePaymentDetailQueryKey, paymentId],
-    queryFn: async () => {
-      const res = await axios.get(`/payment/${paymentId}`);
-      return paymentDetailType.parse(res.data.data);
-    },
+    ...paymentDetailQueryOptions(paymentId ?? ''),
     enabled: !!paymentId,
   });
 };

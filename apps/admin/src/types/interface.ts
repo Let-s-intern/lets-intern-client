@@ -105,7 +105,7 @@ export type ChallengeContent = {
   operationRecommendProgram?: ProgramRecommend;
   /** 챌린지 운영: 더보기 버튼 정보 */
   operationRecommendMoreButton?: OperationRecommendMoreButton;
-  /** 챌린지 상세: 추천 슬라이더 큐레이션 카드 노출 토글 */
+  /** 챌린지 상세: 추천 슬라이더 큐레이션 카드 노출 토글 (undefined → true 규약) */
   curationCard?: { visible: boolean };
   /** 강의 정보 (HR 챌린지 등) */
   lectures?: {
