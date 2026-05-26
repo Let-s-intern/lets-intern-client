@@ -1,12 +1,6 @@
-'use client';
-
-import { useState } from 'react';
-
-import ZepEmbedModal from '@/common/modal/ZepEmbedModal';
-
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime, isEntranceActive } from '../utils';
+import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
 interface Props {
@@ -16,10 +10,8 @@ interface Props {
 }
 
 const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
-  const [isZepOpen, setIsZepOpen] = useState(false);
-
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
-  const entranceActive = isEntranceActive(feedbackInfo?.startDate, feedbackInfo?.endDate);
+  const meetingUrl = feedbackInfo?.meetingUrl;
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -51,39 +43,47 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
                 </span>
               </div>
 
-              {/* 젭 회의실 */}
+              {/* 회의 링크 */}
               <div className="flex items-center gap-1">
                 <img src="/icons/door-closed.svg" alt="" />
                 <span className="text-xsmall14 text-neutral-40 pr-2">
-                  젭 회의실
+                  회의 링크
                 </span>
-                <span className="text-xsmall14 text-neutral-20">
-                  {entranceActive ? '빈 회의실에 입장해주세요' : '미정'}
-                </span>
+                {meetingUrl ? (
+                  <a
+                    href={meetingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xsmall14 text-primary underline"
+                  >
+                    {meetingUrl}
+                  </a>
+                ) : (
+                  <span className="text-xsmall14 text-neutral-20">미정</span>
+                )}
               </div>
             </div>
 
             {/* 하단 액션 */}
             {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
-              <button
-                type="button"
-                disabled={!entranceActive}
-                onClick={entranceActive ? () => setIsZepOpen(true) : undefined}
+              <a
+                href={meetingUrl ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-disabled={!meetingUrl}
                 className={
-                  entranceActive
+                  meetingUrl
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
               >
                 LIVE 피드백 입장하기
-              </button>
+              </a>
             )}
           </div>
         </section>
       )}
-
-      <ZepEmbedModal isOpen={isZepOpen} onClose={() => setIsZepOpen(false)} />
     </div>
   );
 };

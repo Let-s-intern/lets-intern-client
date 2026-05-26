@@ -32,7 +32,7 @@ export function toMission(
     missionEndDate: endDay,
     feedbackEndDate: feedbackEndDay,
     mentorInfo: item.mentorInfo ?? null,
-    feedbackInfo: null,
+    feedbackId: item.feedbackId,
   };
 }
 
@@ -69,50 +69,13 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   expired: 'muted',
 };
 
-export function formatReservationDateTime(
-  isoDateTime: string | null | undefined,
-): string | null {
-  if (!isoDateTime) return null;
-  const date = new Date(isoDateTime);
-  const yy = String(date.getFullYear()).slice(2);
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-  const totalEnd = hour * 60 + minute + 30;
-  const endTime = `${String(Math.floor(totalEnd / 60)).padStart(2, '0')}:${String(totalEnd % 60).padStart(2, '0')}`;
-
-  return `${yy}.${mm}.${dd} ${time}~${endTime}`;
-}
-
-export function isInProgress(
-  startDate: string | null | undefined,
-  endDate: string | null | undefined,
-): boolean {
-  if (!startDate || !endDate) return false;
-  const now = new Date();
-  return now >= new Date(startDate) && now < new Date(endDate);
-}
-
 export function toCardConfig(mission: LiveFeedbackMission) {
-  const inProgress =
-    mission.status === 'reserved' &&
-    isInProgress(
-      mission.feedbackInfo?.startDate,
-      mission.feedbackInfo?.endDate,
-    );
-
   return {
     thumbnail: mission.thumbnail,
     title: mission.missionTitle,
     badge: {
-      label: inProgress
-        ? '진행 중'
-        : LIVE_FEEDBACK_STATUS_LABEL[mission.status],
-      variant: inProgress
-        ? 'active'
-        : LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
+      label: LIVE_FEEDBACK_STATUS_LABEL[mission.status],
+      variant: LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionTh,
@@ -120,10 +83,6 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     feedbackEndDay: mission.feedbackEndDate,
     startDay: mission.missionStartDate,
     endDay: mission.missionEndDate,
-    reservationDateTime:
-      mission.status === 'reserved' || mission.status === 'completed'
-        ? formatReservationDateTime(mission.feedbackInfo?.startDate)
-        : undefined,
   };
 }
 
@@ -132,26 +91,6 @@ export function toDateString(date: Date): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
-}
-
-// 데모/전시용 — 2028-12-31 까지는 라이브 피드백 입장 버튼을 항상 활성 상태로 둔다.
-// BE 연동 시점에 원래 윈도우(예약 시각 10분 전 ~ 30분 후)로 복원할 것.
-const DEMO_ENTRANCE_OPEN_UNTIL = new Date('2028-12-31T23:59:59');
-
-export function isEntranceActive(
-  startDate: string | null | undefined,
-  endDate?: string | null,
-): boolean {
-  if (new Date() < DEMO_ENTRANCE_OPEN_UNTIL) return true;
-
-  if (!startDate) return false;
-  const start = new Date(startDate);
-  const end = endDate
-    ? new Date(endDate)
-    : new Date(start.getTime() + 30 * 60 * 1000);
-  const now = new Date();
-
-  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
 }
 
 export function formatReservationTime(
