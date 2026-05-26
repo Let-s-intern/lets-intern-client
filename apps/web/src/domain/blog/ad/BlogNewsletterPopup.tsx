@@ -23,8 +23,16 @@ const ARTICLE_BODY_ID = 'blog-article-body';
  * 자기완결(props 없음). 헤드리스 `Popup`(Radix Dialog) 위에 크리에이티브를 얹는다.
  */
 export function BlogNewsletterPopup() {
-  const { baseImage, signpostImage, alt, link, triggerRatio } =
-    blogScrollPopupData;
+  const {
+    baseImage,
+    baseWidth,
+    baseHeight,
+    signpostImage,
+    alt,
+    link,
+    triggerRatio,
+    signpost,
+  } = blogScrollPopupData;
 
   const [open, setOpen] = useState(false);
   // 정책상 단 1회만 열리도록 — 한 번 트리거(노출/게이트 차단)되면 더는 검사하지 않는다.
@@ -68,16 +76,29 @@ export function BlogNewsletterPopup() {
           <Image
             src={baseImage}
             alt=""
-            width={400}
-            height={400}
+            width={baseWidth}
+            height={baseHeight}
             sizes="(max-width: 768px) 90vw, 400px"
             className="h-auto w-full"
             priority
           />
 
-          {/* 가운데 푯말 — group-hover 흔들림(motion-reduce 대응은 WobbleSignpost 내부) */}
-          <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 md:h-32 md:w-32">
-            <WobbleSignpost src={signpostImage} alt="" />
+          {/* 가운데 푯말 — 위치/크기/페이드는 scrollPopup.data.ts의 signpost로 조정.
+              group-hover 흔들림(motion-reduce 대응은 WobbleSignpost 내부) */}
+          <div
+            className="absolute aspect-square"
+            style={{
+              width: `${signpost.widthPct}%`,
+              left: `${signpost.leftPct}%`,
+              top: `${signpost.topPct}%`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <WobbleSignpost
+              src={signpostImage}
+              alt=""
+              maskFadeStart={signpost.fadeStartPct}
+            />
           </div>
 
           {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
