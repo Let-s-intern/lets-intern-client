@@ -72,3 +72,6 @@ next-env.d.ts
 .claude/tasks/
 .claude/settings.local.json
 .remember/
+
+# Playwright MCP 산출물 (스크린샷/스냅샷)
+.playwright-mcp/
