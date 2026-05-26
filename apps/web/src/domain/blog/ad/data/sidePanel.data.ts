@@ -21,12 +21,12 @@ export const blogSidePanelData = {
   // CTA(투명 링크) 위치/크기 — "지금 바로 무료 구독" pill 영역에 겹침. pc/모바일 따로.
   // bottomPct=하단에서 거리, left/rightPct=좌우 안쪽 여백, heightPct=링크 높이 (모두 %).
   cta: {
-    pc: { bottomPct: 8, leftPct: 8, rightPct: 45, heightPct: 18 }, // 데스크톱
+    pc: { bottomPct: 30, leftPct: 8, rightPct: 45, heightPct: 18 }, // 데스크톱
     mobile: { bottomPct: 8, leftPct: 8, rightPct: 45, heightPct: 18 }, // 모바일
   },
   // 첫 진입 시 자동 흔들림 — 횟수/속도 조정. (이후 호버 시에도 흔들림)
   introWobble: {
-    count: 3, // 흔들리는 횟수 — 많이 흔들리게 하려면 ↑ (예 5)
+    count: 1, // 흔들리는 횟수 — 많이 흔들리게 하려면 ↑ (예 5)
     durationMs: 500, // 1회 흔들림 속도(ms) — 작을수록 빠름(예 300), 클수록 느림(예 800)
   },
 } as const;
