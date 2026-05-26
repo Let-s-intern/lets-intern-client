@@ -25,6 +25,7 @@ export default function BlogNewsletterSidePanel() {
     link,
     signpost,
     introWobble,
+    cta,
   } = blogSidePanelData;
 
   // 푯말 원본 비율(찌그러짐 방지) — 래퍼가 aspectRatio로 비율을 유지한다.
@@ -82,40 +83,77 @@ export default function BlogNewsletterSidePanel() {
       </div>
 
       {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
-          정확한 px 좌표는 최종 에셋 수령 후 미세조정 */}
-      <PillLink link={link} ariaLabel={alt} />
+          위치/크기는 sidePanel.data.ts의 cta(pc/mobile)로 조정 */}
+      {link && (
+        <>
+          <PillLink
+            link={link}
+            ariaLabel={alt}
+            pos={cta.pc}
+            visibility="hidden md:block"
+          />
+          <PillLink
+            link={link}
+            ariaLabel={alt}
+            pos={cta.mobile}
+            visibility="block md:hidden"
+          />
+        </>
+      )}
     </div>
   );
 }
 
+/** CTA 투명 링크 위치/크기 (%) — sidePanel.data.ts의 cta.pc / cta.mobile */
+type CtaPos = {
+  bottomPct: number;
+  leftPct: number;
+  rightPct: number;
+  heightPct: number;
+};
+
 /**
- * CTA pill 영역에 겹치는 투명 링크. 링크가 비어 있으면 렌더하지 않는다.
+ * CTA pill 영역에 겹치는 투명 링크. inline style(%)로 위치하며 pc/모바일을 분리한다.
  * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동.
  */
 function PillLink({
   link,
   ariaLabel,
+  pos,
+  visibility,
 }: {
   link: string;
   ariaLabel: string;
+  pos: CtaPos;
+  visibility: string;
 }): ReactNode {
-  if (!link) return null;
+  const className = `absolute ${visibility}`;
+  const style = {
+    bottom: `${pos.bottomPct}%`,
+    left: `${pos.leftPct}%`,
+    right: `${pos.rightPct}%`,
+    height: `${pos.heightPct}%`,
+  };
 
-  // 베이스 이미지 하단의 "지금 바로 무료 구독" pill 위치 (대략값)
-  const className = 'absolute bottom-4 left-5 right-5 h-11';
-  const isExternal = link.startsWith('http');
-
-  if (isExternal) {
+  if (link.startsWith('http')) {
     return (
       <a
         href={link}
         aria-label={ariaLabel}
         target="_blank"
         rel="noopener"
+        style={style}
         className={className}
       />
     );
   }
 
-  return <Link href={link} aria-label={ariaLabel} className={className} />;
+  return (
+    <Link
+      href={link}
+      aria-label={ariaLabel}
+      style={style}
+      className={className}
+    />
+  );
 }
