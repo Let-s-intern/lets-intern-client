@@ -60,7 +60,9 @@ export default function WobbleSignpost({
       sizes="(max-width: 768px) 40vw, 200px"
       style={
         introActive
-          ? { animation: `wobble ${introDurationMs}ms ease-in-out ${introCount}` }
+          ? {
+              animation: `wobble ${introDurationMs}ms ease-in-out ${introCount}`,
+            }
           : undefined
       }
       className={twMerge(

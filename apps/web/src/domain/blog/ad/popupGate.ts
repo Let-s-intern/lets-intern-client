@@ -1,4 +1,7 @@
-import { BLOG_POPUP_HIDE_UNTIL, POPUP_HIDE_DURATION_MS } from './data/newsletter';
+import {
+  BLOG_POPUP_HIDE_UNTIL,
+  POPUP_HIDE_DURATION_MS,
+} from './data/newsletter';
 
 /**
  * 스크롤 팝업 노출 게이트.

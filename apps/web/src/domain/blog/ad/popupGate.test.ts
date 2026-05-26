@@ -1,4 +1,7 @@
-import { BLOG_POPUP_HIDE_UNTIL, POPUP_HIDE_DURATION_MS } from './data/newsletter';
+import {
+  BLOG_POPUP_HIDE_UNTIL,
+  POPUP_HIDE_DURATION_MS,
+} from './data/newsletter';
 import { canShowPopup, hidePopupForDay } from './popupGate';
 
 describe('popupGate', () => {
