@@ -27,6 +27,7 @@ export type { FeedbackInfo };
 
 // 라이브 피드백 미션 데이터
 export interface LiveFeedbackMission {
+  missionId: number;
   missionTh: number;
   thumbnail: string;
   missionTitle: string;

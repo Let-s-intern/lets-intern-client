@@ -67,7 +67,7 @@ export default function LiveFeedbackSection({
               >
                 <LiveFeedbackDetail
                   challengeId={challengeId}
-                  missionTh={mission.missionTh}
+                  missionId={mission.missionId}
                   feedbackId={mission.feedbackId}
                   assignedMentor={mission.mentorInfo}
                   period={{

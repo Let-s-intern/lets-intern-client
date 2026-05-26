@@ -16,7 +16,7 @@ import type {
 
 interface Props {
   challengeId: string | number;
-  missionTh: number;
+  missionId: number;
   feedbackId?: number | null;
   assignedMentor: Mentor | null;
   period: MissionPeriod;
@@ -25,7 +25,7 @@ interface Props {
 
 const LiveFeedbackDetail = ({
   challengeId,
-  missionTh,
+  missionId,
   feedbackId,
   assignedMentor,
   period,
@@ -49,7 +49,7 @@ const LiveFeedbackDetail = ({
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
     reserveFeedback(
-      { missionId: missionTh, feedbackSlotId: selectedSlot.feedbackSlotId },
+      { missionId, feedbackSlotId: selectedSlot.feedbackSlotId },
       {
         onError: (error) => {
           console.error('[예약 실패]', error);

@@ -16,6 +16,7 @@ export const liveFeedbackItemSchema = z.object({
   thumbnail: z.string(),
   desktopThumbnail: z.string(),
   missionTitle: z.string(),
+  missionId: z.number(),
   missionTh: z.number(),
   missionStartDate: z.string(),
   missionEndDate: z.string(),

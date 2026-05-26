@@ -23,6 +23,7 @@ export function toMission(
   }
 
   return {
+    missionId: item.missionId,
     missionTh: item.missionTh,
     thumbnail: item.thumbnail,
     missionTitle: item.missionTitle,
