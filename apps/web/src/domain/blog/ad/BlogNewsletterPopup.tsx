@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { blogScrollPopupData } from './data/scrollPopup.data';
-import { canShowPopup, hidePopupForDay, markPopupShown } from './popupGate';
+import { canShowPopup, hidePopupForDay } from './popupGate';
 import WobbleSignpost from './WobbleSignpost';
 
 // 진행률 측정 대상 본문 요소 id (page.tsx의 <article>에 부여)
@@ -16,8 +16,8 @@ const ARTICLE_BODY_ID = 'blog-article-body';
  * 블로그 글 본문을 60%(triggerRatio) 읽은 시점에 1회 노출되는 뉴스레터 스크롤 팝업.
  *
  * 노출 정책:
- * - 본문 읽기 진행률이 `triggerRatio` 이상 + 게이트(canShowPopup) 통과 시 단 1회 open.
- * - open 되는 순간 `BLOG_POPUP_SHOWN`(sessionStorage)을 기록해 세션 내 재노출을 막는다.
+ * - 본문 읽기 진행률이 `triggerRatio` 이상 + 게이트(canShowPopup) 통과 시 open.
+ * - **매 방문마다** 노출(이 페이지 보기 안에서는 `triggeredRef`로 1회만).
  * - "하루 동안 보지 않기"는 `BLOG_POPUP_HIDE_UNTIL`(localStorage)로 24시간 노출을 차단한다.
  *
  * 자기완결(props 없음). 헤드리스 `Popup`(Radix Dialog) 위에 크리에이티브를 얹는다.
@@ -53,7 +53,6 @@ export function BlogNewsletterPopup() {
 
     if (!canShowPopup()) return;
 
-    markPopupShown();
     setOpen(true);
   }, [progress, triggerRatio]);
 
