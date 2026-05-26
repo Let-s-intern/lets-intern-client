@@ -13,10 +13,12 @@
     "./Link": "./src/Link/index.tsx",
     "./Image": "./src/Image/index.tsx",
     "./AlertDialog": "./src/AlertDialog/index.tsx",
+    "./Popup": "./src/Popup/index.ts",
     "./Toast": "./src/Toast/index.tsx"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.4",
+    "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-toast": "^1.2.4"
   },
   "peerDependencies": {
