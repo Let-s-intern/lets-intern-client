@@ -22,9 +22,7 @@ export default function Page() {
               독자적인 커리어 교육 콘텐츠를 확인해보세요.
             </p>
           </div>
-          {NEWSLETTER_SUBSCRIBE_URL && (
-            <NewsletterSubscribeButton url={NEWSLETTER_SUBSCRIBE_URL} />
-          )}
+          <NewsletterSubscribeButton url={NEWSLETTER_SUBSCRIBE_URL} />
         </div>
       </header>
 
@@ -39,15 +37,23 @@ export default function Page() {
 /**
  * 배너 우측 "뉴스레터 구독하기" pill 버튼.
  * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동.
- * 구독 링크가 비어 있으면 호출 측에서 렌더하지 않는다.
+ * 구독 링크(`NEWSLETTER_SUBSCRIBE_URL`)가 아직 비어 있으면 클릭은 비활성이지만
+ * 버튼 자체는 노출한다(추후 링크 입력 시 자동 활성화).
  */
 function NewsletterSubscribeButton({ url }: { url: string }) {
   const label = '🔥 렛츠커리어 뉴스레터 구독하기';
   const className =
     'text-primary text-xsmall14 md:text-xsmall16 w-fit shrink-0 whitespace-nowrap rounded-full bg-white px-6 py-3 font-semibold shadow-sm transition-colors hover:bg-white/90';
-  const isExternal = url.startsWith('http');
 
-  if (isExternal) {
+  if (!url) {
+    return (
+      <span className={className} aria-disabled>
+        {label}
+      </span>
+    );
+  }
+
+  if (url.startsWith('http')) {
     return (
       <a href={url} target="_blank" rel="noopener" className={className}>
         {label}
