@@ -14,8 +14,20 @@ import WobbleSignpost from './WobbleSignpost';
  * 구독 링크(`NEWSLETTER_SUBSCRIBE_URL`)가 비어 있는 동안에는 투명 링크 없이 이미지만 노출한다.
  */
 export default function BlogNewsletterSidePanel() {
-  const { baseImage, baseWidth, baseHeight, signpostImage, alt, link, signpost } =
-    blogSidePanelData;
+  const {
+    baseImage,
+    baseWidth,
+    baseHeight,
+    signpostImage,
+    signpostWidth,
+    signpostHeight,
+    alt,
+    link,
+    signpost,
+  } = blogSidePanelData;
+
+  // 푯말 원본 비율(찌그러짐 방지) — 래퍼가 aspectRatio로 비율을 유지한다.
+  const aspectRatio = `${signpostWidth}/${signpostHeight}`;
 
   return (
     <div className="group relative w-full">
@@ -29,22 +41,31 @@ export default function BlogNewsletterSidePanel() {
         className="h-auto w-full"
       />
 
-      {/* 푯말(문구 밑·버튼 오른쪽) — 위치/크기/페이드는 sidePanel.data.ts의 signpost로 조정.
-          호버 흔들림 (origin-bottom, group-hover) */}
+      {/* 푯말(문구 밑·버튼 오른쪽) — 위치/크기는 sidePanel.data.ts의 signpost(pc/mobile)로 조정.
+          첫 진입 시 자동 흔들림(autoWobble) + 이후 호버 흔들림. 비율은 aspectRatio로 유지. */}
       <div
-        className="absolute aspect-square"
+        className="absolute hidden md:block" // 데스크톱 위치
         style={{
-          width: `${signpost.widthPct}%`,
-          left: `${signpost.leftPct}%`,
-          top: `${signpost.topPct}%`,
+          width: `${signpost.pc.widthPct}%`,
+          left: `${signpost.pc.leftPct}%`,
+          top: `${signpost.pc.topPct}%`,
           transform: 'translateX(-50%)',
+          aspectRatio,
         }}
       >
-        <WobbleSignpost
-          src={signpostImage}
-          alt=""
-          maskFadeStart={signpost.fadeStartPct}
-        />
+        <WobbleSignpost src={signpostImage} alt="" autoWobble />
+      </div>
+      <div
+        className="absolute block md:hidden" // 모바일 위치
+        style={{
+          width: `${signpost.mobile.widthPct}%`,
+          left: `${signpost.mobile.leftPct}%`,
+          top: `${signpost.mobile.topPct}%`,
+          transform: 'translateX(-50%)',
+          aspectRatio,
+        }}
+      >
+        <WobbleSignpost src={signpostImage} alt="" autoWobble />
       </div>
 
       {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).

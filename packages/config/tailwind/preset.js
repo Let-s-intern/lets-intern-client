@@ -227,6 +227,7 @@ const preset = {
         'slide-in-right': 'slide-in-right 0.2s ease-out',
         'infinite-scroll': 'infinite-scroll 40s linear infinite',
         wobble: 'wobble 0.4s ease-in-out',
+        'wobble-intro': 'wobble 0.5s ease-in-out 3',
       },
     },
     borderRadius: {
