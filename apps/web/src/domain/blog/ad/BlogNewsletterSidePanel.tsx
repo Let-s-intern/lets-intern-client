@@ -14,7 +14,8 @@ import WobbleSignpost from './WobbleSignpost';
  * 구독 링크(`NEWSLETTER_SUBSCRIBE_URL`)가 비어 있는 동안에는 투명 링크 없이 이미지만 노출한다.
  */
 export default function BlogNewsletterSidePanel() {
-  const { baseImage, signpostImage, alt, link } = blogSidePanelData;
+  const { baseImage, baseWidth, baseHeight, signpostImage, alt, link, signpost } =
+    blogSidePanelData;
 
   return (
     <div className="group relative w-full">
@@ -22,15 +23,28 @@ export default function BlogNewsletterSidePanel() {
       <Image
         src={baseImage}
         alt=""
-        width={328}
-        height={220}
+        width={baseWidth}
+        height={baseHeight}
         sizes="(max-width: 768px) 100vw, 328px"
         className="h-auto w-full"
       />
 
-      {/* 우측 푯말 — 호버 흔들림 (origin-bottom, group-hover) */}
-      <div className="absolute -right-1 -top-4 h-20 w-20 md:-right-2 md:h-24 md:w-24">
-        <WobbleSignpost src={signpostImage} alt="" />
+      {/* 푯말(문구 밑·버튼 오른쪽) — 위치/크기/페이드는 sidePanel.data.ts의 signpost로 조정.
+          호버 흔들림 (origin-bottom, group-hover) */}
+      <div
+        className="absolute aspect-square"
+        style={{
+          width: `${signpost.widthPct}%`,
+          left: `${signpost.leftPct}%`,
+          top: `${signpost.topPct}%`,
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <WobbleSignpost
+          src={signpostImage}
+          alt=""
+          maskFadeStart={signpost.fadeStartPct}
+        />
       </div>
 
       {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
