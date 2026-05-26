@@ -259,7 +259,7 @@ const BlogDetailPage = async ({
         </section>
 
         {/* 사이드바: 뉴스레터 사이드 패널(항상) + 추천 챌린지(있을 때만) */}
-        <aside className="w-full px-5 py-9 md:sticky md:top-[124px] md:max-w-[20.5rem] md:px-0 md:py-0">
+        <aside className="w-full px-5 py-9 md:max-w-[20.5rem] md:px-0 md:py-0 lg:sticky lg:top-[124px]">
           {/* 뉴스레터 사이드 패널 — 추천 챌린지 유무와 독립적으로 항상 노출 */}
           <BlogNewsletterSidePanel />
 
