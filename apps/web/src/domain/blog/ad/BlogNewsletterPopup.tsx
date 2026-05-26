@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { blogScrollPopupData } from './data/scrollPopup.data';
 import { canShowPopup, hidePopupForDay } from './popupGate';
-import WobbleSignpost from './WobbleSignpost';
 
 // 진행률 측정 대상 본문 요소 id (page.tsx의 <article>에 부여)
 const ARTICLE_BODY_ID = 'blog-article-body';
@@ -23,16 +22,8 @@ const ARTICLE_BODY_ID = 'blog-article-body';
  * 자기완결(props 없음). 헤드리스 `Popup`(Radix Dialog) 위에 크리에이티브를 얹는다.
  */
 export function BlogNewsletterPopup() {
-  const {
-    baseImage,
-    baseWidth,
-    baseHeight,
-    signpostImage,
-    alt,
-    link,
-    triggerRatio,
-    signpost,
-  } = blogScrollPopupData;
+  const { baseImage, baseWidth, baseHeight, alt, link, triggerRatio } =
+    blogScrollPopupData;
 
   const [open, setOpen] = useState(false);
   // 정책상 단 1회만 열리도록 — 한 번 트리거(노출/게이트 차단)되면 더는 검사하지 않는다.
@@ -70,8 +61,8 @@ export function BlogNewsletterPopup() {
       className="w-[90vw] max-w-[400px]"
     >
       <div className="overflow-hidden rounded-2xl bg-white">
-        {/* 크리에이티브: 베이스 이미지 + 가운데 푯말(호버 흔들림) + CTA 투명 링크 */}
-        <div className="group relative">
+        {/* 크리에이티브: 완성 카드 이미지(푯말·CTA baked-in, 애니메이션 없음) + CTA 투명 링크 */}
+        <div className="relative">
           <Image
             src={baseImage}
             alt=""
@@ -82,26 +73,8 @@ export function BlogNewsletterPopup() {
             priority
           />
 
-          {/* 가운데 푯말 — 위치/크기/페이드는 scrollPopup.data.ts의 signpost로 조정.
-              group-hover 흔들림(motion-reduce 대응은 WobbleSignpost 내부) */}
-          <div
-            className="absolute aspect-square"
-            style={{
-              width: `${signpost.widthPct}%`,
-              left: `${signpost.leftPct}%`,
-              top: `${signpost.topPct}%`,
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <WobbleSignpost
-              src={signpostImage}
-              alt=""
-              maskFadeStart={signpost.fadeStartPct}
-            />
-          </div>
-
           {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
-              정확한 px 좌표는 최종 에셋 수령 후 미세조정 */}
+              위치/크기는 scrollPopup.data.ts의 cta(pc/mobile)로 조정 */}
           <CtaLink link={link} ariaLabel={alt} />
         </div>
 
@@ -127,9 +100,17 @@ export function BlogNewsletterPopup() {
   );
 }
 
+/** CTA 위치/크기 (%) — scrollPopup.data.ts의 cta.pc / cta.mobile 형태 */
+type CtaPos = {
+  bottomPct: number;
+  leftPct: number;
+  rightPct: number;
+  heightPct: number;
+};
+
 /**
  * CTA pill 영역에 겹치는 투명 링크. 링크가 비어 있으면 렌더하지 않는다(클릭 무효).
- * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동.
+ * 위치/크기는 데이터(cta)의 pc/모바일 값으로 분리 조정하며, 반응형으로 둘 중 하나만 노출한다.
  */
 function CtaLink({
   link,
@@ -140,8 +121,50 @@ function CtaLink({
 }): ReactNode {
   if (!link) return null;
 
-  // 베이스 이미지 하단의 CTA pill 위치 (대략값 — 최종 에셋 수령 후 미세조정)
-  const className = 'absolute bottom-5 left-6 right-6 h-12';
+  const { pc, mobile } = blogScrollPopupData.cta;
+
+  return (
+    <>
+      {/* 데스크톱 위치 */}
+      <CtaAnchor
+        link={link}
+        ariaLabel={ariaLabel}
+        pos={pc}
+        visibility="hidden md:block"
+      />
+      {/* 모바일 위치 */}
+      <CtaAnchor
+        link={link}
+        ariaLabel={ariaLabel}
+        pos={mobile}
+        visibility="block md:hidden"
+      />
+    </>
+  );
+}
+
+/**
+ * 단일 투명 앵커. inline style(%)로 위치하며, 외부 링크(`http`)는 새 탭으로,
+ * 내부 경로는 `next/link`로 이동한다. `visibility`로 pc/모바일 노출을 제어한다.
+ */
+function CtaAnchor({
+  link,
+  ariaLabel,
+  pos,
+  visibility,
+}: {
+  link: string;
+  ariaLabel: string;
+  pos: CtaPos;
+  visibility: string;
+}): ReactNode {
+  const className = `absolute ${visibility}`;
+  const style = {
+    bottom: `${pos.bottomPct}%`,
+    left: `${pos.leftPct}%`,
+    right: `${pos.rightPct}%`,
+    height: `${pos.heightPct}%`,
+  };
 
   if (link.startsWith('http')) {
     return (
@@ -150,10 +173,18 @@ function CtaLink({
         aria-label={ariaLabel}
         target="_blank"
         rel="noopener noreferrer"
+        style={style}
         className={className}
       />
     );
   }
 
-  return <Link href={link} aria-label={ariaLabel} className={className} />;
+  return (
+    <Link
+      href={link}
+      aria-label={ariaLabel}
+      style={style}
+      className={className}
+    />
+  );
 }
