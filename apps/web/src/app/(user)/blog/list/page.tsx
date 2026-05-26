@@ -1,6 +1,7 @@
 import BlogListContent from '@/domain/blog/BlogListContent';
-import { NEWSLETTER_SUBSCRIBE_URL } from '@/domain/blog/ad/data/newsletter';
+import { blogListBannerButtonData } from '@/domain/blog/ad/data/listBanner.data';
 import * as Sentry from '@sentry/nextjs';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Page() {
@@ -22,7 +23,7 @@ export default function Page() {
               독자적인 커리어 교육 콘텐츠를 확인해보세요.
             </p>
           </div>
-          <NewsletterSubscribeButton url={NEWSLETTER_SUBSCRIBE_URL} />
+          <NewsletterSubscribeButton url={blogListBannerButtonData.link} />
         </div>
       </header>
 
@@ -35,35 +36,62 @@ export default function Page() {
 }
 
 /**
- * 배너 우측 "뉴스레터 구독하기" pill 버튼.
+ * 배너 우측 "뉴스레터 바로 신청하기" 이미지 버튼.
  * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동.
- * 구독 링크(`NEWSLETTER_SUBSCRIBE_URL`)가 아직 비어 있으면 클릭은 비활성이지만
+ * 구독 링크(`blogListBannerButtonData.link`)가 아직 비어 있으면 클릭은 비활성이지만
  * 버튼 자체는 노출한다(추후 링크 입력 시 자동 활성화).
+ * 크기/위치는 `listBanner.data.ts`의 size 값으로 조정한다.
  */
 function NewsletterSubscribeButton({ url }: { url: string }) {
-  const label = '🔥 렛츠커리어 뉴스레터 구독하기';
-  const className =
-    'text-primary text-xsmall14 md:text-xsmall16 w-fit shrink-0 whitespace-nowrap rounded-full bg-white px-6 py-3 font-semibold shadow-sm transition-colors hover:bg-white/90';
+  const { image, width, height, alt, size } = blogListBannerButtonData;
+
+  // 비율(width:height) 자동 유지 — pc/모바일 너비만 데이터로 조정
+  const buttonImage = (
+    <>
+      {/* 데스크톱 */}
+      <Image
+        src={image}
+        width={width}
+        height={height}
+        alt={alt}
+        className="hidden h-auto md:block"
+        style={{ width: size.pc.widthPx }}
+      />
+      {/* 모바일 */}
+      <Image
+        src={image}
+        width={width}
+        height={height}
+        alt={alt}
+        className="block h-auto md:hidden"
+        style={{ width: size.mobile.widthPx }}
+      />
+    </>
+  );
 
   if (!url) {
-    return (
-      <span className={className} aria-disabled>
-        {label}
-      </span>
-    );
+    return <span className="w-fit shrink-0">{buttonImage}</span>;
   }
 
   if (url.startsWith('http')) {
     return (
-      <a href={url} target="_blank" rel="noopener" className={className}>
-        {label}
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener"
+        className="w-fit shrink-0 transition-opacity hover:opacity-90"
+      >
+        {buttonImage}
       </a>
     );
   }
 
   return (
-    <Link href={url} className={className}>
-      {label}
+    <Link
+      href={url}
+      className="w-fit shrink-0 transition-opacity hover:opacity-90"
+    >
+      {buttonImage}
     </Link>
   );
 }
