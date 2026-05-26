@@ -45,7 +45,7 @@ export default function Page() {
 function NewsletterSubscribeButton({ url }: { url: string }) {
   const { image, width, height, alt, size } = blogListBannerButtonData;
 
-  // 비율(width:height) 자동 유지 — pc/모바일 너비만 데이터로 조정
+  // 비율(width:height) 자동 유지 — pc/모바일 너비·위치(offsetX/Y)를 데이터로 조정
   const buttonImage = (
     <>
       {/* 데스크톱 */}
@@ -55,7 +55,10 @@ function NewsletterSubscribeButton({ url }: { url: string }) {
         height={height}
         alt={alt}
         className="hidden h-auto md:block"
-        style={{ width: size.pc.widthPx }}
+        style={{
+          width: size.pc.widthPx,
+          transform: `translate(${size.pc.offsetX}px, ${size.pc.offsetY}px)`,
+        }}
       />
       {/* 모바일 */}
       <Image
@@ -64,7 +67,10 @@ function NewsletterSubscribeButton({ url }: { url: string }) {
         height={height}
         alt={alt}
         className="block h-auto md:hidden"
-        style={{ width: size.mobile.widthPx }}
+        style={{
+          width: size.mobile.widthPx,
+          transform: `translate(${size.mobile.offsetX}px, ${size.mobile.offsetY}px)`,
+        }}
       />
     </>
   );

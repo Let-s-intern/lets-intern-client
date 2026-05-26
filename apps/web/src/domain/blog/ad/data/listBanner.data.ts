@@ -9,8 +9,9 @@ export const blogListBannerButtonData = {
   link: NEWSLETTER_SUBSCRIBE_URL,
   alt: '렛츠커리어 뉴스레터 바로 신청하기',
   // 크기/위치 — pc·모바일 별도. 너비만 지정하면 비율(498:72)은 자동 유지.
+  // widthPx=버튼 너비, offsetX=좌우 이동(오른쪽 +, 왼쪽 - px), offsetY=상하 이동(아래 +, 위 - px)
   size: {
-    pc: { widthPx: 300 }, // 데스크톱 버튼 너비(px) — 키우려면 ↑, 줄이려면 ↓
-    mobile: { widthPx: 240 }, // 모바일 버튼 너비(px) — 키우려면 ↑, 줄이려면 ↓
+    pc: { widthPx: 250, offsetX: 0, offsetY: 0 }, // 데스크톱
+    mobile: { widthPx: 240, offsetX: 0, offsetY: 0 }, // 모바일
   },
 } as const;
