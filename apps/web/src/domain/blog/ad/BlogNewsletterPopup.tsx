@@ -4,6 +4,7 @@ import { useReadingProgress } from '@letscareer/hooks';
 import { Popup } from '@letscareer/ui';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { blogScrollPopupData } from './data/scrollPopup.data';
 import { canShowPopup, hidePopupForDay } from './popupGate';
@@ -22,12 +23,27 @@ const ARTICLE_BODY_ID = 'blog-article-body';
  * 자기완결(props 없음). 헤드리스 `Popup`(Radix Dialog) 위에 크리에이티브를 얹는다.
  */
 export function BlogNewsletterPopup() {
-  const { baseImage, baseWidth, baseHeight, alt, link, triggerRatio } =
-    blogScrollPopupData;
+  const {
+    baseImage,
+    baseWidth,
+    baseHeight,
+    alt,
+    link,
+    triggerRatio,
+    borderRadiusPx,
+  } = blogScrollPopupData;
 
   const [open, setOpen] = useState(false);
-  // 정책상 단 1회만 열리도록 — 한 번 트리거(노출/게이트 차단)되면 더는 검사하지 않는다.
+  // 한 글 보기 안에서는 1회만. (글 이동 시 pathname 변경으로 리셋 → 매 방문 재노출)
   const triggeredRef = useRef(false);
+
+  // 클라이언트 사이드 네비게이션(글→글 이동) 시 컴포넌트가 재사용되어 triggeredRef가
+  // 유지되는 문제 방지: 경로가 바뀌면 트리거/열림 상태를 리셋해 새 글에서 다시 노출되게 한다.
+  const pathname = usePathname();
+  useEffect(() => {
+    triggeredRef.current = false;
+    setOpen(false);
+  }, [pathname]);
 
   const getArticleBody = useCallback(
     () => document.getElementById(ARTICLE_BODY_ID),
@@ -60,7 +76,10 @@ export function BlogNewsletterPopup() {
       showCloseButton={false}
       className="w-[90vw] max-w-[400px]"
     >
-      <div className="overflow-hidden rounded-2xl bg-white">
+      <div
+        className="overflow-hidden bg-white"
+        style={{ borderRadius: `${borderRadiusPx}px` }}
+      >
         {/* 크리에이티브: 완성 카드 이미지(푯말·CTA baked-in, 애니메이션 없음) + CTA 투명 링크 */}
         <div className="relative">
           <Image
