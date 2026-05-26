@@ -18,4 +18,9 @@ export const blogSidePanelData = {
     pc: { widthPct: 46, topPct: 30, leftPct: 76 }, // 데스크톱: 크기/상하/좌우(%)
     mobile: { widthPct: 52, topPct: 30, leftPct: 74 }, // 모바일
   },
+  // 첫 진입 시 자동 흔들림 — 횟수/속도 조정. (이후 호버 시에도 흔들림)
+  introWobble: {
+    count: 3, // 흔들리는 횟수 — 많이 흔들리게 하려면 ↑ (예 5)
+    durationMs: 500, // 1회 흔들림 속도(ms) — 작을수록 빠름(예 300), 클수록 느림(예 800)
+  },
 } as const;

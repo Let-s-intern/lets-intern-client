@@ -10,42 +10,47 @@ interface WobbleSignpostProps {
   /** 위치/크기 제어용 클래스 (사용처에서 absolute 배치 등) */
   className?: string;
   /**
-   * true면 컴포넌트 mount 시(=페이지 첫 진입) 자동으로 잠깐 흔들린 뒤,
+   * true면 컴포넌트 mount 시(=페이지 첫 진입) 자동으로 흔들린 뒤,
    * 이후에는 호버 시에만 흔들린다. false면 호버 흔들림만 동작한다.
    */
   autoWobble?: boolean;
+  /** 자동 흔들림 횟수 (기본 3). 데이터(introWobble.count)로 조정. */
+  introCount?: number;
+  /** 자동 흔들림 1회 속도(ms, 기본 500). 작을수록 빠름. 데이터(introWobble.durationMs)로 조정. */
+  introDurationMs?: number;
 }
 
-// 인트로 자동 흔들림 지속 시간(ms)
-// preset.js의 wobble-intro(0.5s × 3회 = 1.5s)가 끝난 직후 클래스를 제거하도록 약간의 여유를 둔다.
-const INTRO_DURATION_MS = 1600;
-
 /**
- * 푯말 이미지 + 흔들림 애니메이션 (스크롤 팝업·사이드 패널 공유).
+ * 푯말 이미지 + 흔들림 애니메이션.
  *
- * - `autoWobble`이면 mount 직후 일정 시간(INTRO_DURATION_MS) 동안 자동으로 흔들리고(인트로),
- *   인트로가 끝나면 부모의 `group` 호버에서만 흔들린다(`group-hover:animate-wobble`).
- *   인트로 중에는 호버 클래스를 적용하지 않아 두 애니메이션이 충돌하지 않는다.
- * - 기둥(하단)을 축으로 흔들리도록 `origin-bottom`을 적용하며,
- *   `prefers-reduced-motion` 환경에서는 `motion-reduce:animate-none`으로 정지한다.
- *
- * 사용처는 이 컴포넌트를 `group relative` 컨테이너 안에 배치하고,
- * 컨테이너가 크기/비율(aspectRatio)을 담당한다 (`fill`).
+ * - `autoWobble`이면 mount 직후(클라이언트) `introCount`회 × `introDurationMs`ms 동안
+ *   자동으로 흔들리고, 끝나면 부모 `group` 호버에서만 흔들린다.
+ *   인트로는 `wobble` keyframe을 inline `animation`으로 돌려 횟수·속도를 데이터로 조정한다.
+ * - 인트로는 SSR 깜빡임/하이드레이션 불일치를 막기 위해 클라이언트 effect에서만 시작하고,
+ *   `prefers-reduced-motion` 환경에서는 아예 시작하지 않는다(호버도 `motion-reduce:animate-none`).
+ * - 기둥(하단)을 축으로 흔들리도록 `origin-bottom` 적용. 컨테이너가 크기/비율을 담당한다(`fill`).
  */
 export default function WobbleSignpost({
   src,
   alt,
   className,
   autoWobble = false,
+  introCount = 3,
+  introDurationMs = 500,
 }: WobbleSignpostProps) {
-  // mount 직후 인트로 흔들림 ON → INTRO_DURATION_MS 후 OFF(이후엔 호버 흔들림만)
-  const [intro, setIntro] = useState(autoWobble);
+  const [introActive, setIntroActive] = useState(false);
 
   useEffect(() => {
     if (!autoWobble) return;
-    const timer = setTimeout(() => setIntro(false), INTRO_DURATION_MS);
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+    setIntroActive(true);
+    const timer = setTimeout(
+      () => setIntroActive(false),
+      introCount * introDurationMs + 100,
+    );
     return () => clearTimeout(timer);
-  }, [autoWobble]);
+  }, [autoWobble, introCount, introDurationMs]);
 
   return (
     <Image
@@ -53,10 +58,15 @@ export default function WobbleSignpost({
       alt={alt}
       fill
       sizes="(max-width: 768px) 40vw, 200px"
+      style={
+        introActive
+          ? { animation: `wobble ${introDurationMs}ms ease-in-out ${introCount}` }
+          : undefined
+      }
       className={twMerge(
         'origin-bottom object-contain motion-reduce:animate-none',
-        // 인트로 중엔 자동 흔들림, 끝난 뒤엔 호버 흔들림 (충돌 방지 위해 분기)
-        intro ? 'animate-wobble-intro' : 'group-hover:animate-wobble',
+        // 인트로 중엔 inline 애니메이션, 끝난 뒤엔 호버 흔들림 (충돌 방지)
+        introActive ? '' : 'group-hover:animate-wobble',
         className,
       )}
     />

@@ -24,6 +24,7 @@ export default function BlogNewsletterSidePanel() {
     alt,
     link,
     signpost,
+    introWobble,
   } = blogSidePanelData;
 
   // 푯말 원본 비율(찌그러짐 방지) — 래퍼가 aspectRatio로 비율을 유지한다.
@@ -53,7 +54,13 @@ export default function BlogNewsletterSidePanel() {
           aspectRatio,
         }}
       >
-        <WobbleSignpost src={signpostImage} alt="" autoWobble />
+        <WobbleSignpost
+          src={signpostImage}
+          alt=""
+          autoWobble
+          introCount={introWobble.count}
+          introDurationMs={introWobble.durationMs}
+        />
       </div>
       <div
         className="absolute block md:hidden" // 모바일 위치
@@ -65,7 +72,13 @@ export default function BlogNewsletterSidePanel() {
           aspectRatio,
         }}
       >
-        <WobbleSignpost src={signpostImage} alt="" autoWobble />
+        <WobbleSignpost
+          src={signpostImage}
+          alt=""
+          autoWobble
+          introCount={introWobble.count}
+          introDurationMs={introWobble.durationMs}
+        />
       </div>
 
       {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
