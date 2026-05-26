@@ -1,6 +1,7 @@
 // 뉴스레터 광고 공통 상수
-// ⚠️ 값은 비워두고 사용자가 추후 입력 (구독 링크는 데이터로 분리 관리)
-export const NEWSLETTER_SUBSCRIBE_URL = ''; // TODO: 실제 구독 링크 입력
+// ⚠️ 구독 링크는 데이터로 분리 관리
+// TODO: 실제 구독 링크로 교체 (현재 임시 구글 링크)
+export const NEWSLETTER_SUBSCRIBE_URL = 'https://www.google.com';
 
 // 팝업 노출 정책 키/기간 ("하루 동안 보지 않기" — 24h 차단)
 export const BLOG_POPUP_HIDE_UNTIL = 'blogNewsletterPopupHideUntil'; // localStorage 키 (ms timestamp)
