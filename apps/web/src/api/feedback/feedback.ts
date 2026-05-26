@@ -1,5 +1,5 @@
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   feedbackDetailSchema,
   feedbackSlotListSchema,
@@ -61,5 +61,28 @@ export const useFeedbackDetailQuery = (feedbackId?: number | null) => {
       return feedbackDetailSchema.parse(res.data.data);
     },
     enabled: !!feedbackId,
+  });
+};
+
+/** POST /api/v1/challenge/{challengeId}/{missionId}/feedback/{feedbackSlotId} LIVE 피드백 예약 */
+export const usePostFeedbackReservation = (challengeId: string | number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      missionId,
+      feedbackSlotId,
+    }: {
+      missionId: number;
+      feedbackSlotId: number;
+    }) =>
+      axios.post(
+        `/challenge/${challengeId}/${missionId}/feedback/${feedbackSlotId}`,
+        { preQuestion: '' }, // BE에서 preQuestion 필드 제거 후 삭제
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['liveFeedbackList', challengeId],
+      });
+    },
   });
 };

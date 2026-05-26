@@ -1,15 +1,24 @@
 'use client';
 
-import { useMentorDetailQuery } from '@/api/feedback/feedback';
+import {
+  useMentorDetailQuery,
+  usePostFeedbackReservation,
+} from '@/api/feedback/feedback';
 import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
 import { useState } from 'react';
 
 import ReservationInfoSection from './section/ReservationInfoSection';
 import ReservationScheduleSection from './section/ReservationScheduleSection';
-import type { LiveFeedbackStatus, Mentor, MissionPeriod, SelectedSlot } from './types';
+import type {
+  LiveFeedbackStatus,
+  Mentor,
+  MissionPeriod,
+  SelectedSlot,
+} from './types';
 
 interface Props {
   challengeId: string | number;
+  missionTh: number;
   assignedMentor: Mentor | null;
   period: MissionPeriod;
   feedbackInfo: FeedbackInfo | null;
@@ -18,6 +27,7 @@ interface Props {
 
 const LiveFeedbackDetail = ({
   challengeId,
+  missionTh,
   assignedMentor,
   period,
   feedbackInfo: initialFeedbackInfo,
@@ -26,6 +36,8 @@ const LiveFeedbackDetail = ({
   const [feedbackInfo, setFeedbackInfo] = useState<FeedbackInfo | null>(
     initialFeedbackInfo,
   );
+
+  const { mutate: reserveFeedback } = usePostFeedbackReservation(challengeId);
 
   const { data: mentorData } = useMentorDetailQuery(
     assignedMentor ? undefined : challengeId,
@@ -39,16 +51,26 @@ const LiveFeedbackDetail = ({
     };
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
-    setFeedbackInfo({
-      feedbackId: 0, // POST 예약 API 연동 시 실제 ID로 교체
-      startDate: selectedSlot.startDate,
-      endDate: selectedSlot.endDate,
-      meetingUrl: null,
-      status: 'RESERVED',
-    });
+    // console.log('[예약 요청]', { challengeId, missionTh, feedbackSlotId: selectedSlot.feedbackSlotId, selectedSlot });
+    reserveFeedback(
+      { missionId: missionTh, feedbackSlotId: selectedSlot.feedbackSlotId },
+      {
+        onSuccess: (_data) => {
+          // console.log('[예약 성공]', data);
+          setFeedbackInfo({
+            feedbackId: 0,
+            startDate: selectedSlot.startDate,
+            endDate: selectedSlot.endDate,
+            meetingUrl: null,
+            status: 'RESERVED',
+          });
+        },
+        onError: (error) => {
+          console.error('[예약 실패]', error);
+        },
+      },
+    );
   };
-
-  const showScheduleSection = status === 'prev';
 
   return (
     <div className="flex flex-col">
@@ -57,7 +79,7 @@ const LiveFeedbackDetail = ({
         feedbackInfo={feedbackInfo}
         status={status}
       />
-      {showScheduleSection && (
+      {status === 'prev' && (
         <ReservationScheduleSection
           challengeId={challengeId}
           mentorName={mentor.nickname}

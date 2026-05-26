@@ -67,6 +67,7 @@ export default function LiveFeedbackSection({
               >
                 <LiveFeedbackDetail
                   challengeId={challengeId}
+                  missionTh={mission.missionTh}
                   assignedMentor={mission.mentorInfo}
                   period={{
                     startDay: mission.missionStartDate,

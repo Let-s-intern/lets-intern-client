@@ -42,6 +42,7 @@ const LiveMissionDetailPage = () => {
       <BackHeader to={backPath}>{HEADER_TITLE[mission.status]}</BackHeader>
       <LiveFeedbackDetail
         challengeId={programId}
+        missionTh={mission.missionTh}
         assignedMentor={mission.mentorInfo}
         period={{
           startDay: mission.missionStartDate,
