@@ -10,7 +10,6 @@ import BlogRecommendCard from '@/domain/blog/ui/BlogRecommendCard';
 import ProgramRecommendCard from '@/domain/blog/ui/ProgramRecommendCard';
 import BlogArticle from '@/domain/blog/ui/BlogArticle';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
-import BlogTopBanner from '@/domain/blog/ad/BlogTopBanner';
 import BlogNewsletterSidePanel from '@/domain/blog/ad/BlogNewsletterSidePanel';
 import { BlogNewsletterPopup } from '@/domain/blog/ad/BlogNewsletterPopup';
 import { twMerge } from '@/lib/twMerge';
@@ -210,8 +209,6 @@ const BlogDetailPage = async ({
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
-          {/* 상단 배너 (블로그 전체 글 공통) */}
-          <BlogTopBanner />
           {/* 본문 영역 (Push 3 팝업 60% 스크롤 계산 기준점) */}
           <div id="blog-article-body">
             <BlogArticle blogInfo={blogInfo} lexical={lexical} />
