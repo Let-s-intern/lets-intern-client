@@ -10,6 +10,8 @@ import BlogRecommendCard from '@/domain/blog/ui/BlogRecommendCard';
 import ProgramRecommendCard from '@/domain/blog/ui/ProgramRecommendCard';
 import BlogArticle from '@/domain/blog/ui/BlogArticle';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
+import BlogTopBanner from '@/domain/blog/ad/BlogTopBanner';
+import BlogNewsletterSidePanel from '@/domain/blog/ad/BlogNewsletterSidePanel';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -207,7 +209,12 @@ const BlogDetailPage = async ({
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
-          <BlogArticle blogInfo={blogInfo} lexical={lexical} />
+          {/* 상단 배너 (블로그 전체 글 공통) */}
+          <BlogTopBanner />
+          {/* 본문 영역 (Push 3 팝업 60% 스크롤 계산 기준점) */}
+          <div id="blog-article-body">
+            <BlogArticle blogInfo={blogInfo} lexical={lexical} />
+          </div>
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
@@ -253,26 +260,31 @@ const BlogDetailPage = async ({
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
         </section>
 
-        {/* 프로그램 추천 */}
-        {(programRecommendList ?? []).length > 0 && (
-          <aside className="md:border-neutral-80 w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:px-6 md:py-5">
-            <Heading2 className="text-neutral-0 md:text-xsmall16">
-              렛츠커리어 프로그램 참여하고
-              <br />
-              취뽀 성공해요!
-            </Heading2>
-            <section className="mb-6 mt-5 flex flex-col gap-6">
-              {programRecommendList?.map((item) => (
-                <ProgramRecommendCard key={item.id} program={item} />
-              ))}
-            </section>
-            <MoreLink
-              href={`/program/?status=${ProgramStatusEnum.enum.PROCEEDING}`}
-            >
-              모집 중인 프로그램 보기
-            </MoreLink>
-          </aside>
-        )}
+        {/* 사이드바: 뉴스레터 사이드 패널(항상) + 추천 챌린지(있을 때만) */}
+        <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:px-0 md:py-0">
+          {/* 뉴스레터 사이드 패널 — 추천 챌린지 유무와 독립적으로 항상 노출 */}
+          <BlogNewsletterSidePanel />
+
+          {(programRecommendList ?? []).length > 0 && (
+            <div className="md:border-neutral-80 mt-6 md:rounded-md md:border md:px-6 md:py-5">
+              <Heading2 className="text-neutral-0 md:text-xsmall16">
+                렛츠커리어 프로그램 참여하고
+                <br />
+                취뽀 성공해요!
+              </Heading2>
+              <section className="mb-6 mt-5 flex flex-col gap-6">
+                {programRecommendList?.map((item) => (
+                  <ProgramRecommendCard key={item.id} program={item} />
+                ))}
+              </section>
+              <MoreLink
+                href={`/program/?status=${ProgramStatusEnum.enum.PROCEEDING}`}
+              >
+                모집 중인 프로그램 보기
+              </MoreLink>
+            </div>
+          )}
+        </aside>
       </div>
 
       <HorizontalRule className="h-3 md:hidden" />
