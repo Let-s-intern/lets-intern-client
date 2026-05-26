@@ -32,7 +32,8 @@ export default function BlogNewsletterSidePanel() {
   const aspectRatio = `${signpostWidth}/${signpostHeight}`;
 
   return (
-    <div className="group relative w-full">
+    // 모바일에서는 사이드 패널을 숨김(데스크톱 전용 노출)
+    <div className="group relative hidden w-full md:block">
       {/* 베이스 이미지 (문구·CTA pill baked-in) */}
       <Image
         src={baseImage}
