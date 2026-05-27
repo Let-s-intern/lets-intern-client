@@ -265,7 +265,18 @@ describe('useMergedFeedbackRows', () => {
     expect(waiting?.mentorParticipation).toBeNull();
   });
 
-  it('정렬: startDate ASC → startTime ASC → menteeName ASC', () => {
+  it('정렬: startDate DESC(최신 먼저) → startTime ASC → menteeName ASC', () => {
+    const laterDateSession: PeriodBarData = {
+      ...liveSessionBar,
+      missionId: -301,
+      startDate: '2026-05-06',
+      liveFeedback: {
+        id: 301,
+        menteeName: '산',
+        startTime: '11:00',
+        endTime: '11:30',
+      },
+    };
     const earlySession: PeriodBarData = {
       ...liveSessionBar,
       missionId: -201,
@@ -302,11 +313,12 @@ describe('useMergedFeedbackRows', () => {
 
     const round: LiveFeedbackRound = {
       ...liveRound,
-      sessionBars: [lateSession, earlySession, sameTimeA],
+      sessionBars: [lateSession, earlySession, sameTimeA, laterDateSession],
     };
 
     const { result } = renderHook(() => useMergedFeedbackRows([], [round]));
     expect(result.current.map((r) => r.id)).toEqual([
+      'live-301', // 5/6 (최신 날짜 먼저)
       'live-203', // 5/5 09:00 'A'
       'live-201', // 5/5 09:00 '하늘'
       'live-202', // 5/5 10:00 '바다'

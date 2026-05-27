@@ -306,10 +306,14 @@ export function useMergedFeedbackRows(
     }
 
     // ── 정렬 ─────────────────────────────────────
+    // 날짜 내림차순(최신 먼저). 단 날짜 미상 행은 항상 마지막으로 민다.
+    // 같은 날 안에서는 시간 오름차순(이른 세션 먼저) → 멘티명 순서 유지.
     rows.sort((a, b) => {
-      const dateA = a.startDate || '9999-99-99';
-      const dateB = b.startDate || '9999-99-99';
-      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      const hasA = !!a.startDate;
+      const hasB = !!b.startDate;
+      if (hasA !== hasB) return hasA ? -1 : 1;
+      if (hasA && a.startDate !== b.startDate)
+        return b.startDate.localeCompare(a.startDate);
 
       const tA = a.startTime ?? NULL_TIME;
       const tB = b.startTime ?? NULL_TIME;
