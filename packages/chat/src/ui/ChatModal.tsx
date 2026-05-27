@@ -205,7 +205,7 @@ function ChatRoomPanel({
 }) {
   const room = chatRoomKey(feedbackId);
   const { messages } = useChatMessages({ room, pbUrl });
-  const { sendMessage, markRead, endChat } = useChatRoom({
+  const { sendMessage, markRead, endChat, counterpartEnded } = useChatRoom({
     feedbackId,
     role,
     meta,
@@ -235,15 +235,26 @@ function ChatRoomPanel({
 
   return (
     <>
-      <div className="border-neutral-90 flex justify-end border-b px-4 py-2">
+      <div className="border-neutral-90 flex items-center justify-between gap-2 border-b px-4 py-2">
+        {counterpartEnded ? (
+          <span className="text-system-error truncate text-xs font-semibold">
+            상대가 채팅을 종료했어요. 종료하면 대화가 삭제됩니다.
+          </span>
+        ) : (
+          <span aria-hidden />
+        )}
         <button
           type="button"
           onClick={() => setConfirmOpen(true)}
-          className="border-neutral-80 text-neutral-40 hover:border-system-error hover:text-system-error flex items-center gap-1 rounded-md border bg-white px-2.5 py-1 text-xs font-semibold transition-colors"
+          className={
+            counterpartEnded
+              ? 'bg-system-error flex shrink-0 items-center gap-1 rounded-md px-3 py-1.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90'
+              : 'border-neutral-80 text-neutral-40 hover:border-system-error hover:text-system-error flex shrink-0 items-center gap-1 rounded-md border bg-white px-2.5 py-1 text-xs font-semibold transition-colors'
+          }
         >
           <svg
-            width="13"
-            height="13"
+            width={counterpartEnded ? 15 : 13}
+            height={counterpartEnded ? 15 : 13}
             viewBox="0 0 24 24"
             fill="none"
             aria-hidden

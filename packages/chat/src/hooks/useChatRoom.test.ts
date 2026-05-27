@@ -14,6 +14,7 @@ vi.mock('../client', () => ({
             getFirstListItem: roomsGetFirst,
             create: roomsCreate,
             update: roomsUpdate,
+            subscribe: () => Promise.resolve(() => {}),
           }
         : { create: messagesCreate },
   }),
@@ -58,7 +59,8 @@ describe('useChatRoom', () => {
   });
 
   it('방이 없으면 meta와 함께 생성한다 (upsert)', async () => {
-    roomsGetFirst.mockRejectedValueOnce(new Error('404'));
+    // 방 없음 상황: counterpartEnded 효과·markRead 모두 조회 실패 → create 경로.
+    roomsGetFirst.mockRejectedValue(new Error('404'));
     const { result } = renderHook(() =>
       useChatRoom({
         feedbackId: 7,

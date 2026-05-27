@@ -13,7 +13,8 @@ vi.mock('../hooks/useChatRoom', () => ({
     room: 'feedback_1',
     sendMessage,
     markRead,
-    endChat: vi.fn().mockResolvedValue({ deleted: false }),
+    endChat: vi.fn().mockResolvedValue(undefined),
+    counterpartEnded: false,
   }),
 }));
 vi.mock('../hooks/useUnreadSummary', () => ({

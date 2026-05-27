@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getChatClient } from '../client';
 import { COLLECTIONS } from '../config';
@@ -25,8 +25,10 @@ interface UseChatRoomResult {
   room: string;
   sendMessage: (text: string) => Promise<void>;
   markRead: () => Promise<void>;
-  /** 내 역할의 종료(숨김) 플래그 set + 종료 안내 메시지. 메시지는 보존(삭제 X). */
+  /** 내 역할의 종료 플래그 set + 안내 메시지. 양쪽 모두 종료하면 방·메시지 삭제. */
   endChat: () => Promise<void>;
+  /** 상대(반대 역할)가 이미 채팅을 종료했는지 — 내 종료 버튼 강조용. */
+  counterpartEnded: boolean;
 }
 
 /**
@@ -122,5 +124,39 @@ export function useChatRoom({
     }
   }, [room, role, pbUrl, ensureRoom]);
 
-  return { room, sendMessage, markRead, endChat };
+  // 상대가 종료했는지 실시간 추적 (내 종료 버튼 강조용).
+  const [counterpartEnded, setCounterpartEnded] = useState(false);
+  useEffect(() => {
+    let active = true;
+    let unsubscribe = () => {};
+    const otherEndedField: 'mentorEnded' | 'menteeEnded' =
+      role === 'mentor' ? 'menteeEnded' : 'mentorEnded';
+    const pb = getChatClient(pbUrl);
+    const load = async () => {
+      try {
+        const rec = await pb.collection(COLLECTIONS.rooms).getFirstListItem<{
+          mentorEnded?: boolean;
+          menteeEnded?: boolean;
+        }>(`room="${room}"`);
+        if (active) setCounterpartEnded(Boolean(rec[otherEndedField]));
+      } catch {
+        if (active) setCounterpartEnded(false);
+      }
+    };
+    void load();
+    pb.collection(COLLECTIONS.rooms)
+      .subscribe('*', () => {
+        if (active) void load();
+      })
+      .then((fn) => {
+        if (active) unsubscribe = fn;
+        else fn();
+      });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [room, role, pbUrl]);
+
+  return { room, sendMessage, markRead, endChat, counterpartEnded };
 }
