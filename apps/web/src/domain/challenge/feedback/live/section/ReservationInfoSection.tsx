@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
+import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import MentorCard from '../ui/MentorCard';
 import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
@@ -33,6 +34,8 @@ const ReservationInfoSection = ({
 }: Props) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  // 모달을 열 때만 전체 멘토 로스터를 조회한다(좌측 목록용).
+  const chatRooms = useMenteeChatRooms(isChatOpen);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
   // TODO(임시): 정식 운영 시 T-10 게이팅 복원.
@@ -153,13 +156,17 @@ const ReservationInfoSection = ({
       {feedbackId != null && isChatOpen && (
         <ChatModal
           role="mentee"
-          rooms={[
-            {
-              feedbackId,
-              title: mentor.nickname,
-              meta: { mentorName: mentor.nickname },
-            },
-          ]}
+          rooms={
+            chatRooms.length > 0
+              ? chatRooms
+              : [
+                  {
+                    feedbackId,
+                    title: mentor.nickname,
+                    meta: { mentorName: mentor.nickname },
+                  },
+                ]
+          }
           activeFeedbackId={feedbackId}
           onClose={() => setIsChatOpen(false)}
         />

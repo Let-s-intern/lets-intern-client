@@ -3,7 +3,10 @@ import { lazy, Suspense, useMemo, useState } from 'react';
 import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
 import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 
-import { useFeedbackMentorDetailQuery } from '@/api/feedback/feedback';
+import {
+  useFeedbackMentorDetailQuery,
+  useFeedbackMentorListQuery,
+} from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { mentorConfig } from '@/constants/config';
@@ -132,23 +135,42 @@ const LiveFeedbackReservationModal = ({
   }, [baseUrl, salt, jitsiMeta]);
 
   // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
+  // 채팅 모달은 멘토관리처럼 전체 멘티 로스터를 좌측 목록으로 보여준다.
+  // (선택된 세션은 activeFeedbackId로 지정) — 방 단위는 feedbackId(세션).
+  const { data: allFeedbacks } = useFeedbackMentorListQuery();
   const chatRooms: ChatRoomListItem[] = useMemo(() => {
-    if (feedbackId == null) return [];
-    const menteeName =
-      feedbackDetail?.menteeName ??
-      selectedBar?.liveFeedback?.menteeName ??
-      '멘티';
-    const challengeTitle =
-      feedbackDetail?.programTitle ?? selectedBar?.challengeTitle ?? '';
-    return [
-      {
-        feedbackId,
-        title: menteeName,
-        subtitle: challengeTitle,
-        meta: { menteeName, challengeTitle },
-      },
-    ];
+    const seen = new Set<number>();
+    const list: ChatRoomListItem[] = [];
+    for (const fb of allFeedbacks ?? []) {
+      if (seen.has(fb.feedbackId)) continue;
+      seen.add(fb.feedbackId);
+      list.push({
+        feedbackId: fb.feedbackId,
+        title: fb.menteeName,
+        subtitle: fb.programTitle,
+        meta: { menteeName: fb.menteeName, challengeTitle: fb.programTitle },
+      });
+    }
+    // 로스터 미로딩 시 현재 선택 세션만으로 fallback (모달이 항상 열리도록).
+    if (list.length === 0 && feedbackId != null) {
+      const menteeName =
+        feedbackDetail?.menteeName ??
+        selectedBar?.liveFeedback?.menteeName ??
+        '멘티';
+      const challengeTitle =
+        feedbackDetail?.programTitle ?? selectedBar?.challengeTitle ?? '';
+      return [
+        {
+          feedbackId,
+          title: menteeName,
+          subtitle: challengeTitle,
+          meta: { menteeName, challengeTitle },
+        },
+      ];
+    }
+    return list;
   }, [
+    allFeedbacks,
     feedbackId,
     feedbackDetail?.menteeName,
     feedbackDetail?.programTitle,
