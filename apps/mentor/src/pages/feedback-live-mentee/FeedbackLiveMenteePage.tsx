@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react';
 import { useMenteeRoster } from './hooks/useMenteeRoster';
 import MenteeList from './ui/MenteeList';
 
-// 채팅 BE 미구현 — ChatThread/ChatComposer 는 추후 채팅 연결 시 사용한다.
-// 현재는 우측 패널에 "준비 중" 플레이스홀더만 노출한다.
+// 채팅 진입은 예약 모달의 "멘티와 대화하기"·전역 플로팅 버튼(@letscareer/chat)으로 일원화됐다.
+// 이 페이지는 멘티 로스터 조회 용도이며, 우측 패널은 "준비 중" 플레이스홀더만 노출한다.
 
 const FeedbackLiveMenteePage = () => {
   const { mentees, isLoading, isError } = useMenteeRoster();

@@ -15,24 +15,4 @@ export const MenteeSchema = z.object({
   challengeTitle: z.string(),
 });
 
-/**
- * 채팅 메시지 한 건. (채팅 BE 미구현 — 추후 연결용 스키마)
- */
-export const MessageSchema = z.object({
-  id: z.string(),
-  menteeId: z.string(),
-  sender: z.enum(['mentor', 'mentee']),
-  text: z.string(),
-  sentAt: z.string(),
-});
-
-/**
- * 한 멘티 스레드의 채팅 데이터. (채팅 BE 미구현 — 추후 연결용 스키마)
- */
-export const ChatDataSchema = z.object({
-  messages: z.array(MessageSchema),
-});
-
 export type Mentee = z.infer<typeof MenteeSchema>;
-export type Message = z.infer<typeof MessageSchema>;
-export type ChatData = z.infer<typeof ChatDataSchema>;
