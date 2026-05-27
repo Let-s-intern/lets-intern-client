@@ -1,3 +1,4 @@
+import { useFeedbackDetailQuery } from '@/api/feedback/feedback';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
 import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
 import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
@@ -10,16 +11,91 @@ interface Props {
   label: string;
   missions: LiveFeedbackMission[];
   emptyMessage: string;
+  challengeId: string | number;
+  onMissionClick: (mission: LiveFeedbackMission) => void;
   onMobileClick: (mission: LiveFeedbackMission) => void;
-  challengeName: string;
 }
+
+function getAccordionLabels(mission: LiveFeedbackMission) {
+  if (mission.status === 'prev' && mission.feedbackId) {
+    return { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' };
+  }
+  return LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
+}
+
+function getMissionButtonLabel(mission: LiveFeedbackMission) {
+  if (mission.status === 'expired') return undefined;
+  return mission.isMissionSubmitted ? '제출된 미션 보기' : '미션 제출하기';
+}
+
+const ExpiredNotice = () => (
+  <div className="bg-primary-5 rounded-xs hidden gap-2 border px-4 py-2 md:flex">
+    <img src="/icons/info.svg" alt="" className="size-4" />
+    <div className="flex flex-col gap-0.5">
+      <p className="text-xxsmall12 text-system-positive-blue items-center">
+        미션 제출 기간이 만료되었습니다.
+      </p>
+      <p className="text-xxsmall12 text-neutral-20">
+        미션을 제출하지 않아 LIVE 피드백이 진행되지 않았습니다. 기간 내에 예약과
+        미션 제출이 모두 이루어져야 피드백을 받을 수 있습니다.
+      </p>
+    </div>
+  </div>
+);
+
+interface MissionCardProps {
+  mission: LiveFeedbackMission;
+  challengeId: string | number;
+  onMissionClick: (mission: LiveFeedbackMission) => void;
+  onMobileClick: (mission: LiveFeedbackMission) => void;
+}
+
+const LiveFeedbackMissionCard = ({
+  mission,
+  challengeId,
+  onMissionClick,
+  onMobileClick,
+}: MissionCardProps) => {
+  const { data: feedbackDetailData } = useFeedbackDetailQuery(
+    mission.feedbackId,
+  );
+  const feedbackInfo = feedbackDetailData?.feedbackInfo ?? null;
+
+  const labels = getAccordionLabels(mission);
+  const missionButtonLabel = getMissionButtonLabel(mission);
+
+  return (
+    <FeedbackMissionCard
+      config={toCardConfig(mission, feedbackInfo)}
+      buttonLabel={missionButtonLabel}
+      onClick={() => onMissionClick(mission)}
+      accordionLabel={labels?.buttonLabel}
+      openLabel={labels?.openLabel}
+      onAccordionMobileClick={() => onMobileClick(mission)}
+      notice={mission.status === 'expired' ? <ExpiredNotice /> : undefined}
+    >
+      <LiveFeedbackDetail
+        challengeId={challengeId}
+        missionId={mission.missionId}
+        feedbackId={mission.feedbackId}
+        assignedMentor={mission.mentorInfo}
+        period={{
+          startDay: mission.missionStartDate,
+          endDay: mission.missionEndDate,
+        }}
+        status={mission.status}
+      />
+    </FeedbackMissionCard>
+  );
+};
 
 export default function LiveFeedbackSection({
   label,
   missions,
   emptyMessage,
+  challengeId,
+  onMissionClick,
   onMobileClick,
-  challengeName,
 }: Props) {
   return (
     <section className="flex flex-col gap-6">
@@ -32,30 +108,15 @@ export default function LiveFeedbackSection({
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
-          {missions.map((mission) => {
-            const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
-            return (
-              <FeedbackMissionCard
-                key={mission.id}
-                config={toCardConfig(mission)}
-                buttonLabel={labels?.buttonLabel}
-                openLabel={labels?.openLabel}
-                onClick={() => onMobileClick(mission)}
-              >
-                <LiveFeedbackDetail
-                  assignedMentor={mission.assignedMentor}
-                  period={{
-                    startDay: mission.startDay,
-                    endDay: mission.endDay,
-                  }}
-                  reservationInfo={mission.reservationInfo}
-                  status={mission.status}
-                  challengeName={challengeName}
-                  missionName={mission.title}
-                />
-              </FeedbackMissionCard>
-            );
-          })}
+          {missions.map((mission) => (
+            <LiveFeedbackMissionCard
+              key={mission.missionTh}
+              mission={mission}
+              challengeId={challengeId}
+              onMissionClick={onMissionClick}
+              onMobileClick={onMobileClick}
+            />
+          ))}
         </div>
       )}
     </section>

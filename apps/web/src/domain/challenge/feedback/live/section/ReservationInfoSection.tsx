@@ -1,71 +1,23 @@
-'use client';
-
-import { useState } from 'react';
-
-import { useUserQuery } from '@/api/user/user';
-import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
-
-import type { LiveFeedbackStatus, Mentor, Reservation } from '../types';
+import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
 import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
+const FALLBACK_URL = 'https://www.letscareer.co.kr/';
+
 interface Props {
   mentor: Mentor;
-  reservation: Reservation | null;
+  feedbackInfo: FeedbackInfo | null;
   status: LiveFeedbackStatus;
-  /** 헤더 라벨에 표시되는 챌린지명 (URL 합성에는 사용 X) */
-  challengeName: string;
-  /** 헤더 라벨에 표시되는 미션명 (URL 합성에는 사용 X) */
-  missionName: string;
 }
 
-// TODO(통합 QA 후 제거): 양측이 같은 방으로 수렴하는지 dev에서 확인용 mock.
-// `NEXT_PUBLIC_JITSI_USE_DEV_MOCK=true`일 때 reservation 없어도 mock feedbackId로 방 진입.
-const DEV_MOCK_ENABLED =
-  process.env.NEXT_PUBLIC_JITSI_USE_DEV_MOCK === 'true';
-const DEV_MOCK_FEEDBACK_ID = Number(
-  process.env.NEXT_PUBLIC_JITSI_DEV_MOCK_FEEDBACK_ID ?? 999999,
-);
-
-/** "예약 일시" UI까지 보여주기 위한 mock reservation. */
-function buildMockReservation(): Reservation {
-  const now = new Date();
-  const start = new Date(now.getTime() + 5 * 60 * 1000);
-  const end = new Date(now.getTime() + 35 * 60 * 1000);
-  return {
-    feedbackId: DEV_MOCK_FEEDBACK_ID,
-    startDate: start.toISOString(),
-    endDate: end.toISOString(),
-    meetingUrl: null,
-  };
-}
-
-const ReservationInfoSection = ({
-  mentor,
-  reservation: incomingReservation,
-  status,
-  challengeName,
-  missionName,
-}: Props) => {
-  const [isLiveOpen, setIsLiveOpen] = useState(false);
-  const { data: user } = useUserQuery();
-
-  // dev mock 토글일 때는 reservation이 없어도 mock으로 채워 "예약 일시" UI를 표시
-  const reservation =
-    incomingReservation ?? (DEV_MOCK_ENABLED ? buildMockReservation() : null);
-
-  const reservationTime = formatReservationTime(reservation?.startDate);
-  const entranceActive = isEntranceActive(reservation?.startDate);
-
-  const effectiveFeedbackId = DEV_MOCK_ENABLED
-    ? DEV_MOCK_FEEDBACK_ID
-    : reservation?.feedbackId;
-
-  // 모달은 reservation + 사용자 정보 또는 dev mock 토글이 있어야 열 수 있다
-  const canOpenLive = DEV_MOCK_ENABLED
-    ? true
-    : entranceActive && reservation != null && user?.name != null;
+const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
+  const reservationTime = formatReservationTime(feedbackInfo?.startDate);
+  const meetingUrl = feedbackInfo?.meetingUrl;
+  const entranceActive = isEntranceActive(
+    feedbackInfo?.startDate,
+    feedbackInfo?.endDate,
+  );
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -79,7 +31,7 @@ const ReservationInfoSection = ({
         />
       </section>
 
-      {reservation && (
+      {feedbackInfo && (
         <section className="flex w-full flex-col">
           <h2 className="text-xsmall16 text-neutral-0 font-semibold">
             LIVE 피드백 예약내역
@@ -97,45 +49,46 @@ const ReservationInfoSection = ({
                 </span>
               </div>
 
-              {/* 라이브 회의실 */}
+              {/* 회의 링크 */}
               <div className="flex items-center gap-1">
                 <img src="/icons/door-closed.svg" alt="" />
                 <span className="text-xsmall14 text-neutral-40 pr-2">
-                  라이브 회의실
+                  회의 링크
                 </span>
-                <span className="text-xsmall14 text-neutral-20">
-                  {entranceActive ? '빈 회의실에 입장해주세요' : '미정'}
-                </span>
+                {meetingUrl ? (
+                  <a
+                    href={meetingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xsmall14 text-primary underline"
+                  >
+                    {meetingUrl}
+                  </a>
+                ) : (
+                  <span className="text-xsmall14 text-neutral-20">미정</span>
+                )}
               </div>
             </div>
 
             {/* 하단 액션 */}
-            {status === 'done' && <LiveFeedbackReview />}
+            {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
-              <button
-                type="button"
-                disabled={!canOpenLive}
-                onClick={canOpenLive ? () => setIsLiveOpen(true) : undefined}
+              <a
+                href={entranceActive ? (meetingUrl ?? FALLBACK_URL) : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-disabled={!entranceActive}
                 className={
-                  canOpenLive
+                  entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
               >
                 LIVE 피드백 입장하기
-              </button>
+              </a>
             )}
           </div>
         </section>
-      )}
-
-      {effectiveFeedbackId != null && (
-        <JitsiEmbedModal
-          isOpen={isLiveOpen}
-          onClose={() => setIsLiveOpen(false)}
-          meta={{ feedbackId: effectiveFeedbackId }}
-          spaceName={`${challengeName} · ${missionName}`}
-        />
       )}
     </div>
   );

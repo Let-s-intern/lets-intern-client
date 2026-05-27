@@ -1,8 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { getMentorDaySlots, getMentorMonthAvailability } from '../../dummy';
-import type { MissionPeriod, SelectedSlot } from '../types';
+import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
+import type { MissionPeriod, SelectedSlot, SlotStatus } from '../types';
 import { toDateString } from '../utils';
+
+function generateSlotTimes(startHour: number, endHour: number): string[] {
+  const times: string[] = [];
+  for (let h = startHour; h < endHour; h++) {
+    times.push(`${String(h).padStart(2, '0')}:00`);
+    times.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  return times;
+}
+
+const ALL_SLOT_TIMES = generateSlotTimes(9, 24);
 
 function getInitialDate(period: MissionPeriod): Date {
   const today = new Date();
@@ -13,8 +24,24 @@ function getInitialDate(period: MissionPeriod): Date {
   return today;
 }
 
+function toTimeString(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function toSlotStatus(
+  apiStatus: FeedbackSlot['status'],
+  startDate: string,
+): SlotStatus {
+  if (new Date(startDate) <= new Date()) return 'expired';
+  if (apiStatus === 'OPEN') return 'available';
+  if (apiStatus === 'BOOKED') return 'booked';
+  return 'unavailable';
+}
+
 export function useTimeSlotState(
   period: MissionPeriod,
+  feedbackSlots: FeedbackSlot[],
   onConfirm: (slot: SelectedSlot) => void,
 ) {
   const base = getInitialDate(period);
@@ -42,16 +69,41 @@ export function useTimeSlotState(
     );
   }, [year, month, period.endDay]);
 
-  const monthAvailability = useMemo(
-    () =>
-      getMentorMonthAvailability(0, year, month, period.startDay, period.endDay),
-    [year, month, period.startDay, period.endDay],
-  );
+  const monthAvailability = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    feedbackSlots.forEach((slot) => {
+      const date = slot.startDate.slice(0, 10);
+      if (result[date] === undefined) result[date] = false;
+      if (slot.status === 'OPEN' && new Date(slot.startDate) > new Date()) {
+        result[date] = true;
+      }
+    });
+    return result;
+  }, [feedbackSlots]);
 
-  const daySlots = useMemo(
-    () => getMentorDaySlots(0, selectedDate),
-    [selectedDate],
-  );
+  const daySlots = useMemo(() => {
+    const slotsForDate = new Map(
+      feedbackSlots
+        .filter((slot) => slot.startDate.slice(0, 10) === selectedDate)
+        .map((slot) => [toTimeString(slot.startDate), slot]),
+    );
+
+    const result: Record<string, { status: SlotStatus; label: string }> = {};
+    ALL_SLOT_TIMES.forEach((time) => {
+      const [h, m] = time.split(':').map(Number);
+      const endH = m === 30 ? h + 1 : h;
+      const endM = m === 30 ? '00' : '30';
+      const endTime = `${String(endH).padStart(2, '0')}:${endM}`;
+      const apiSlot = slotsForDate.get(time);
+      result[time] = {
+        status: apiSlot
+          ? toSlotStatus(apiSlot.status, apiSlot.startDate)
+          : 'unavailable',
+        label: `${time} ~ ${endTime}`,
+      };
+    });
+    return result;
+  }, [feedbackSlots, selectedDate]);
 
   const navigateMonth = useCallback((dir: 1 | -1) => {
     setYearMonth(({ year: y, month: m }) => {
@@ -60,19 +112,34 @@ export function useTimeSlotState(
       if (next > 11) return { year: y + 1, month: 0 };
       return { year: y, month: next };
     });
-    setSelectedSlot(null);
   }, []);
 
   const handleDateSelect = useCallback((date: string) => {
     setSelectedDate(date);
-    setSelectedSlot(null);
   }, []);
 
-  const handleSlotSelect = useCallback((slot: SelectedSlot) => {
-    setSelectedSlot((prev) =>
-      prev?.date === slot.date && prev?.time === slot.time ? null : slot,
-    );
-  }, []);
+  const handleSlotSelect = useCallback(
+    (date: string, time: string) => {
+      if (selectedSlot?.date === date && selectedSlot?.time === time) {
+        setSelectedSlot(null);
+        return;
+      }
+      const apiSlot = feedbackSlots.find(
+        (s) =>
+          s.startDate.slice(0, 10) === date &&
+          toTimeString(s.startDate) === time,
+      );
+      if (!apiSlot) return;
+      setSelectedSlot({
+        feedbackSlotId: apiSlot.feedbackSlotId,
+        date,
+        time,
+        startDate: apiSlot.startDate,
+        endDate: apiSlot.endDate,
+      });
+    },
+    [feedbackSlots, selectedSlot],
+  );
 
   const handleConfirm = useCallback(() => {
     if (selectedSlot) onConfirm(selectedSlot);

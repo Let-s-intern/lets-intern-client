@@ -11,64 +11,79 @@ import type { LiveFeedbackMission } from './types';
 const LiveFeedbackPage = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { programId } = useParams<{ programId: string }>();
+  const { applicationId, programId } = useParams<{
+    applicationId: string;
+    programId: string;
+  }>();
   const { currentChallenge } = useCurrentChallenge();
 
   const { data } = useLiveFeedbackListQuery(programId);
 
   const missions = useMemo(
     () =>
-      (data?.liveFeedbackList ?? []).map((item, index) =>
-        toMission(item, index, currentChallenge?.challengeType ?? ''),
+      (data?.liveFeedbackList ?? []).map((item) =>
+        toMission(item, currentChallenge?.challengeType ?? ''),
       ),
     [data, currentChallenge?.challengeType],
   );
 
   const handleMobileClick = useCallback(
     (mission: LiveFeedbackMission) => {
-      router.push(`${pathname}/${mission.id}`);
+      router.push(`${pathname}/${mission.missionTh}`);
     },
     [pathname, router],
   );
 
+  const handleMissionClick = useCallback(
+    (mission: LiveFeedbackMission) => {
+      const base = `/challenge/${applicationId}/${programId}/me`;
+      if (mission.status === 'prev') {
+        router.push(base);
+      } else {
+        router.push(`${base}#mission-submit`);
+      }
+    },
+    [applicationId, programId, router],
+  );
+
   const needReservation = missions.filter((m) => m.status === 'prev');
   const reserved = missions.filter((m) => m.status === 'reserved');
-  const done = missions.filter((m) => m.status === 'done');
+  const done = missions.filter((m) => m.status === 'completed');
   const expired = missions.filter((m) => m.status === 'expired');
 
-  // Jitsi 방 이름 생성에 사용. title이 비어있을 가능성 대비 challengeType을 fallback으로 사용.
-  const challengeName =
-    currentChallenge?.title ?? currentChallenge?.challengeType ?? '';
-
   return (
-    <div className="flex flex-col gap-10">
+    <div className="mb-12 flex flex-col gap-10">
       <LiveFeedbackSection
         label="예약 필요"
         missions={needReservation}
         emptyMessage="예약 필요한 미션이 없어요."
+        challengeId={programId}
+        onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
-        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="예약 완료"
         missions={reserved}
         emptyMessage="예약 완료된 미션이 없어요."
+        challengeId={programId}
+        onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
-        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="피드백 완료"
         missions={done}
         emptyMessage="피드백 완료된 미션이 없어요."
+        challengeId={programId}
+        onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
-        challengeName={challengeName}
       />
       <LiveFeedbackSection
         label="기간 만료"
         missions={expired}
         emptyMessage="기간이 만료된 미션이 없어요."
+        challengeId={programId}
+        onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
-        challengeName={challengeName}
       />
     </div>
   );

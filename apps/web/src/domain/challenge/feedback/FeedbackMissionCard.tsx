@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { useState } from 'react';
+
 function formatDay(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
   return `${year.slice(2)}.${month}.${day}`;
@@ -28,10 +29,13 @@ export interface FeedbackMissionCardConfig {
 
 interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
-  buttonLabel?: string;
-  openLabel?: string; // 있으면 토글(아코디언), 없으면 단순 클릭
-  onClick?: () => void; // 비토글일 때 데스크탑/모바일 공통 클릭 핸들러
+  buttonLabel?: string; // 우상단 미션 버튼
+  onClick?: () => void; // 미션 버튼 클릭 핸들러
+  accordionLabel?: string; // 보라색 바 닫힌 텍스트 / 모바일 두 번째 버튼 (있으면 렌더링)
+  openLabel?: string; // 보라색 바 열린 텍스트
+  onAccordionMobileClick?: () => void; // 모바일 두 번째 버튼 클릭 (상세 페이지 이동)
   children?: React.ReactNode;
+  notice?: React.ReactNode; // 카드 하단 안내 박스
 }
 
 const cardInfoTextCls =
@@ -75,9 +79,12 @@ const DateField = ({
 const FeedbackMissionCard = ({
   config,
   buttonLabel,
-  openLabel,
   onClick,
+  accordionLabel,
+  openLabel,
+  onAccordionMobileClick,
   children,
+  notice,
 }: FeedbackMissionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -94,7 +101,13 @@ const FeedbackMissionCard = ({
     reservationDateTime,
   } = config;
 
-  const isToggle = openLabel !== undefined;
+  const hasAccordion = !!accordionLabel && !!openLabel;
+
+  const reservationDateProps = reservationDateTime
+    ? { label: '예약일시', value: reservationDateTime, highlighted: true }
+    : startDay && endDay
+      ? { label: '예약기간', start: startDay, end: endDay, highlighted: true }
+      : null;
 
   return (
     <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
@@ -160,24 +173,8 @@ const FeedbackMissionCard = ({
               </div>
             </div>
 
-            {reservationDateTime ? (
-              <DateField
-                label="예약일시"
-                value={reservationDateTime}
-                highlighted
-                className="hidden md:flex"
-              />
-            ) : (
-              startDay &&
-              endDay && (
-                <DateField
-                  label="예약기간"
-                  highlighted
-                  start={startDay}
-                  end={endDay}
-                  className="hidden md:flex"
-                />
-              )
+            {reservationDateProps && (
+              <DateField {...reservationDateProps} className="hidden md:flex" />
             )}
 
             {/* 모바일 날짜 */}
@@ -188,59 +185,49 @@ const FeedbackMissionCard = ({
                 start={feedbackStartDay}
                 end={feedbackEndDay}
               />
-              {reservationDateTime ? (
-                <DateField
-                  label="예약일시"
-                  value={reservationDateTime}
-                  highlighted
-                />
-              ) : (
-                startDay &&
-                endDay && (
-                  <DateField
-                    label="예약기간"
-                    highlighted
-                    start={startDay}
-                    end={endDay}
-                  />
-                )
-              )}
+              {reservationDateProps && <DateField {...reservationDateProps} />}
             </div>
           </div>
         </div>
 
-        {/* 데스크톱 버튼 */}
+        {/* 데스크톱 미션 버튼 - 항상 navigate */}
         {buttonLabel && (
           <button
             type="button"
-            onClick={isToggle ? () => setIsOpen((prev) => !prev) : onClick}
+            onClick={onClick}
             className={clsx(btnCls, 'hidden shrink-0 md:flex')}
           >
-            {isToggle && (
-              <img
-                src="/icons/Chevron_Down.svg"
-                alt="▿"
-                className={clsx('transition-transform', isOpen && 'rotate-180')}
-              />
-            )}
             {buttonLabel}
           </button>
         )}
       </div>
 
-      {/* 모바일 버튼 */}
-      {buttonLabel && (
-        <button
-          type="button"
-          onClick={onClick}
-          className={clsx(btnCls, 'mt-5 flex w-full justify-center md:hidden')}
-        >
-          {buttonLabel}
-        </button>
+      {/* 모바일 버튼 영역 */}
+      {(buttonLabel || accordionLabel) && (
+        <div className="mt-5 flex flex-col gap-2 md:hidden">
+          {buttonLabel && (
+            <button
+              type="button"
+              onClick={onClick}
+              className={clsx(btnCls, 'flex w-full justify-center')}
+            >
+              {buttonLabel}
+            </button>
+          )}
+          {accordionLabel && (
+            <button
+              type="button"
+              onClick={onAccordionMobileClick}
+              className={clsx(btnCls, 'flex w-full justify-center')}
+            >
+              {accordionLabel}
+            </button>
+          )}
+        </div>
       )}
 
-      {/* 아코디언 - 토글일 때만 */}
-      {isToggle && (
+      {/* 아코디언 콘텐츠 */}
+      {hasAccordion && (
         <div
           className={clsx(
             'hidden transition-[grid-template-rows] duration-300 ease-in-out md:grid',
@@ -252,6 +239,26 @@ const FeedbackMissionCard = ({
           </div>
         </div>
       )}
+
+      {/* 보라색 아코디언 토글 바 */}
+      {hasAccordion && (
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="bg-primary-5 hidden items-center justify-end gap-1 px-4 py-3 md:flex"
+        >
+          <span className="text-xsmall14 text-primary font-medium">
+            {isOpen ? openLabel : accordionLabel}
+          </span>
+          <img
+            src="/icons/Chevron_Down.svg"
+            alt=""
+            className={clsx('transition-transform', isOpen && 'rotate-180')}
+          />
+        </button>
+      )}
+
+      {notice && <div className="px-4 pb-4 pt-2">{notice}</div>}
     </div>
   );
 };
