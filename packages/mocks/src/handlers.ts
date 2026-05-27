@@ -34,6 +34,92 @@ const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
 
 export const handlers = [
   /**
+   * (멘토) GET /challenge/mentor/feedback-management
+   * 참여중인 챌린지별 서면 피드백 현황. BE mentorFeedbackManagementSchema 정확히 일치.
+   * (기존 feedback-management/mocks/writtenChallengeMock.ts 시나리오 이관)
+   *
+   * 라우트 순서: generic challenge/:id 패턴보다 먼저 등록해야
+   * `:id`가 "mentor"로 매칭되어 가로채는 것을 막는다.
+   */
+  http.get('*/challenge/mentor/feedback-management', () => {
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        challengeList: [
+          {
+            challengeId: 1,
+            title: '기필코 경험정리 챌린지 21기',
+            shortDesc: '3주간 경험정리 미션과 멘토 피드백으로 완성하는 자소서',
+            startDate: '2026-04-14',
+            endDate: '2026-05-04',
+            feedbackMissions: [
+              {
+                missionId: 1001,
+                missionTitle: '1회차 — 경험 리스트 작성',
+                th: 1,
+                submittedCount: 10,
+                notSubmittedCount: 2,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'COMPLETED', count: 8 },
+                  { feedbackStatus: 'IN_PROGRESS', count: 2 },
+                ],
+              },
+              {
+                missionId: 1002,
+                missionTitle: '2회차 — 경험 구조화',
+                th: 2,
+                submittedCount: 11,
+                notSubmittedCount: 1,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'WAITING', count: 7 },
+                  { feedbackStatus: 'IN_PROGRESS', count: 4 },
+                ],
+              },
+              {
+                missionId: 1003,
+                missionTitle: '3회차 — 자소서 초안 작성',
+                th: 3,
+                submittedCount: 0,
+                notSubmittedCount: 0,
+                feedbackStatusCounts: [],
+              },
+            ],
+          },
+          {
+            challengeId: 2,
+            title: '커리어 설계 챌린지 5기',
+            shortDesc: '자신의 커리어 로드맵을 그려보는 2주 챌린지',
+            startDate: '2026-04-15',
+            endDate: '2026-04-28',
+            feedbackMissions: [
+              {
+                missionId: 2001,
+                missionTitle: '1회차 — 직무 탐색',
+                th: 1,
+                submittedCount: 7,
+                notSubmittedCount: 1,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'COMPLETED', count: 2 },
+                  { feedbackStatus: 'IN_PROGRESS', count: 3 },
+                  { feedbackStatus: 'WAITING', count: 2 },
+                ],
+              },
+              {
+                missionId: 2002,
+                missionTitle: '2회차 — 커리어 로드맵 작성',
+                th: 2,
+                submittedCount: 0,
+                notSubmittedCount: 0,
+                feedbackStatusCounts: [],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  }),
+
+  /**
    * (멘티) GET /challenge/:id/feedback/live
    * 응답에 **예약 확정된 라이브 피드백 1건**을 박는다.
    * → 멘티 화면에서 "예약 완료" 카드로 보임.
