@@ -4,7 +4,6 @@ import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDet
 import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
 import {
   LIVE_FEEDBACK_BUTTON_LABELS,
-  LIVE_MISSION_BUTTON_LABEL,
   toCardConfig,
 } from '@/domain/challenge/feedback/live/utils';
 
@@ -15,6 +14,18 @@ interface Props {
   challengeId: string | number;
   onMissionClick: (mission: LiveFeedbackMission) => void;
   onMobileClick: (mission: LiveFeedbackMission) => void;
+}
+
+function getAccordionLabels(mission: LiveFeedbackMission) {
+  if (mission.status === 'prev' && mission.feedbackId) {
+    return { buttonLabel: '신청 내역 보기', openLabel: '신청 내역 닫기' };
+  }
+  return LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
+}
+
+function getMissionButtonLabel(mission: LiveFeedbackMission) {
+  if (mission.status === 'expired') return undefined;
+  return mission.isMissionSubmitted ? '제출된 미션 보기' : '미션 제출하기';
 }
 
 const ExpiredNotice = () => (
@@ -46,17 +57,17 @@ const LiveFeedbackMissionCard = ({
   onMobileClick,
 }: MissionCardProps) => {
   const { data: feedbackDetailData } = useFeedbackDetailQuery(
-    mission.status === 'reserved' || mission.status === 'completed'
-      ? mission.feedbackId
-      : null,
+    mission.feedbackId,
   );
   const feedbackInfo = feedbackDetailData?.feedbackInfo ?? null;
-  const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
+
+  const labels = getAccordionLabels(mission);
+  const missionButtonLabel = getMissionButtonLabel(mission);
 
   return (
     <FeedbackMissionCard
       config={toCardConfig(mission, feedbackInfo)}
-      buttonLabel={LIVE_MISSION_BUTTON_LABEL[mission.status]}
+      buttonLabel={missionButtonLabel}
       onClick={() => onMissionClick(mission)}
       accordionLabel={labels?.buttonLabel}
       openLabel={labels?.openLabel}

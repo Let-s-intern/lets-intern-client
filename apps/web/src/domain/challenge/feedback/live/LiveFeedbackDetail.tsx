@@ -65,7 +65,7 @@ const LiveFeedbackDetail = ({
         feedbackInfo={feedbackInfo}
         status={status}
       />
-      {status === 'prev' && (
+      {status === 'prev' && !feedbackId && (
         <ReservationScheduleSection
           challengeId={challengeId}
           mentorName={mentor.nickname}
