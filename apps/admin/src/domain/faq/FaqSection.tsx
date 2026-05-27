@@ -2,7 +2,7 @@ import { CategoryTabs } from '@letscareer/ui';
 import { Button } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useDeleteFaq, useGetFaq, usePatchFaq } from '@/api/faq';
+import { useDeleteFaq, useGetFaq } from '@/api/faq';
 import { CreateReportData, UpdateReportData } from '@/api/report';
 import {
   CreateChallengeReq,
@@ -13,6 +13,7 @@ import {
   UpdateLiveReq,
 } from '@/schema';
 import FaqAddModal from './FaqAddModal';
+import FaqEditModal from './FaqEditModal';
 
 interface FaqSectionProps<
   T extends
@@ -42,10 +43,10 @@ function FaqSection<
   const [isInitialized, setIsInitialized] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('진행 방식');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<Faq | null>(null);
 
   const { data } = useGetFaq(programType);
   const { mutateAsync: deleteFaq } = useDeleteFaq();
-  const { mutateAsync: patchFaq } = usePatchFaq();
 
   const customCategories = useMemo(
     () => [
@@ -75,17 +76,6 @@ function FaqSection<
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     if (e.target.checked) setFaqInfo([...(faqInfo ?? []), { faqId }]);
     else setFaqInfo(faqInfo?.filter((info) => info.faqId !== faqId));
-  };
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
-    const { name, value } = e.target;
-    const index = faqList.findIndex((faq) => faq.id === faqId);
-
-    setFaqList([
-      ...faqList.slice(0, index),
-      { ...faqList[index], [name]: value },
-      ...faqList.slice(index + 1),
-    ]);
   };
 
   useEffect(() => {
@@ -141,6 +131,12 @@ function FaqSection<
         customCategories={customCategories}
         onClose={() => setIsAddModalOpen(false)}
       />
+      <FaqEditModal
+        isOpen={editingFaq !== null}
+        faq={editingFaq}
+        customCategories={customCategories}
+        onClose={() => setEditingFaq(null)}
+      />
       <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-xl font-medium">FAQ</h3>
@@ -163,11 +159,12 @@ function FaqSection<
             </span>
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col divide-y divide-[#e2e8f0]">
             {filteredFaqList.map((faq) => (
-              <div key={faq.id} className="flex gap-2">
+              <div key={faq.id} className="flex items-start gap-3 py-4">
                 <input
                   type="checkbox"
+                  className="shrink-0"
                   checked={
                     (faqInfo ?? []).findIndex(
                       (info) => info.faqId === faq.id,
@@ -175,74 +172,43 @@ function FaqSection<
                   }
                   onChange={(e) => checkFaq(e, faq.id)}
                 />
-                <div className="flex w-full flex-col gap-2">
-                  <FaqInput
-                    name="question"
-                    placeholder="질문을 입력하세요."
-                    value={faq.question ?? ''}
-                    onChange={(e) => onChange(e, faq.id)}
-                  />
-                  <FaqInput
-                    name="answer"
-                    placeholder="답변을 입력하세요."
-                    value={faq.answer ?? ''}
-                    onChange={(e) => onChange(e, faq.id)}
-                  />
+                <div className="flex flex-1 flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-xxs flex-1 rounded border border-[#E7E7E7] px-3 py-1.5">
+                      <span className="text-xsmall16 text-[#ACAFB6]">
+                        {faq.question}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outlined"
+                      size="medium"
+                      onClick={() => setEditingFaq(faq)}
+                    >
+                      수정
+                    </Button>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-xxs flex-1 rounded border border-[#E7E7E7] px-3 py-1.5">
+                      <span className="text-xsmall16 text-[#ACAFB6]">
+                        {faq.answer}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outlined"
+                      size="medium"
+                      color="error"
+                      onClick={async () => await deleteFaq(faq.id)}
+                    >
+                      삭제
+                    </Button>
+                  </div>
                 </div>
-                {programType === 'CHALLENGE' && (
-                  <FaqInput
-                    name="category"
-                    placeholder="유형을 입력하세요."
-                    value={faq.category ?? ''}
-                    onChange={(e) => onChange(e, faq.id)}
-                  />
-                )}
-                <button
-                  type="button"
-                  className="w-[5rem] rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
-                  onClick={async () => await deleteFaq(faq.id)}
-                >
-                  삭제
-                </button>
               </div>
             ))}
           </div>
         )}
-        <div className="mt-4 flex justify-start">
-          <Button
-            variant="contained"
-            onClick={() => {
-              Promise.all(faqList.map((faq) => patchFaq(faq)))
-                .then(() => alert('FAQ가 저장되었습니다.'))
-                .catch((err) => alert(`FAQ 저장에 실패했습니다.\n${err}`));
-            }}
-          >
-            저장
-          </Button>
-        </div>
       </div>
     </>
-  );
-}
-
-function FaqInput({
-  name,
-  placeholder,
-  value,
-  onChange,
-}: React.DetailedHTMLProps<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
->) {
-  return (
-    <input
-      type="text"
-      className="rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-    />
   );
 }
 
