@@ -36,10 +36,14 @@ function FaqAddModal({
   const { mutateAsync: postFaq, isPending } = usePostFaq();
 
   const resolvedCategory = category === DIRECT_INPUT ? directInput : category;
+  const isDuplicateCategory =
+    category === DIRECT_INPUT &&
+    [...FIXED_CATEGORIES, ...customCategories].includes(directInput.trim());
   const isSaveEnabled =
     resolvedCategory.trim() !== '' &&
     question.trim() !== '' &&
-    answer.trim() !== '';
+    answer.trim() !== '' &&
+    !isDuplicateCategory;
 
   const handleClose = () => {
     setCategory('');
@@ -62,7 +66,7 @@ function FaqAddModal({
 
   const categoryOptions = [
     ...FIXED_CATEGORIES,
-    ...customCategories.filter((c) => !FIXED_CATEGORIES.includes(c)),
+    ...customCategories.filter((c) => c !== DIRECT_INPUT),
     DIRECT_INPUT,
   ];
 
@@ -98,14 +102,21 @@ function FaqAddModal({
         </FormControl>
 
         {category === DIRECT_INPUT && (
-          <TextField
-            fullWidth
-            size="small"
-            label="직접 입력"
-            placeholder="직접 입력해주세요."
-            value={directInput}
-            onChange={(e) => setDirectInput(e.target.value)}
-          />
+          <div className="flex flex-col gap-1">
+            <TextField
+              fullWidth
+              size="small"
+              label="직접 입력"
+              placeholder="직접 입력해주세요."
+              value={directInput}
+              onChange={(e) => setDirectInput(e.target.value)}
+            />
+            {isDuplicateCategory && (
+              <span className="text-xs text-red-500">
+                * 이미 존재하는 카테고리입니다.
+              </span>
+            )}
+          </div>
         )}
 
         <TextField
