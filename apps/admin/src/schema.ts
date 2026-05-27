@@ -2199,3 +2199,87 @@ export const programBannerAdminDetailSchema = z.object({
 });
 
 export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
+
+// 전체 공지 관리 notice type
+export const adminNoticeType = z.union([
+  z.literal('NOTICE'),
+  z.literal('GUIDE'),
+  z.literal('PROGRAM'),
+]);
+export type AdminNoticeType = z.infer<typeof adminNoticeType>;
+
+// GET /api/v1/admin/notice
+export const adminNoticeListSchema = z
+  .object({
+    noticeList: z.array(
+      z.object({
+        id: z.number(),
+        type: adminNoticeType.nullable(),
+        title: z.string().nullable(),
+        link: z.string().nullable(),
+        createDate: z.string().nullable(),
+      }),
+    ),
+    pageInfo,
+  })
+  .transform((data) => ({
+    noticeList: data.noticeList.map((item) => ({
+      ...item,
+      createDate: item.createDate ? dayjs(item.createDate) : null,
+    })),
+    pageInfo: data.pageInfo,
+  }));
+
+export type AdminNoticeResItem = z.infer<
+  typeof adminNoticeListSchema
+>['noticeList'][number];
+
+export const adminNoticeDetailSchema = z.object({
+  id: z.number(),
+  type: adminNoticeType.nullable(),
+  title: z.string().nullable(),
+  link: z.string().nullable(),
+  isMoreVisible: z.boolean().nullable(),
+  moreLink: z.string().nullable(),
+  programList: z
+    .array(
+      z.object({
+        id: z.number(),
+        programType: z.string(),
+        programId: z.number(),
+        title: z.string(),
+        cta: z.string(),
+        thumbnail: z.string().nullable(),
+      }),
+    )
+    .nullable(),
+});
+
+export type AdminNoticeDetail = z.infer<typeof adminNoticeDetailSchema>;
+
+export type AdminNoticeProgramItem = {
+  programType: string;
+  programId: number;
+  title: string;
+  cta: string;
+};
+
+// POST /api/v1/admin/notice
+export type CreateAdminNoticeReq = {
+  type: AdminNoticeType;
+  title: string;
+  link: string;
+  isMoreVisible?: boolean;
+  moreLink?: string;
+  programList?: AdminNoticeProgramItem[];
+};
+
+// PATCH /api/v1/admin/notice/{id}
+export type UpdateAdminNoticeReq = {
+  type: AdminNoticeType;
+  title: string;
+  link: string;
+  isMoreVisible?: boolean;
+  moreLink?: string;
+  programList?: AdminNoticeProgramItem[];
+};

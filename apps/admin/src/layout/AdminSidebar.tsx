@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Link } from 'react-router-dom';
 
 import { useIsAdminQuery } from '@/api/user/user';
 
@@ -32,6 +32,10 @@ const navData = [
       {
         name: '미션 관리',
         url: '/challenge/missions',
+      },
+      {
+        name: '전체 공지 관리',
+        url: '/challenge/notices',
       },
       {
         name: '챌린지 운영',
