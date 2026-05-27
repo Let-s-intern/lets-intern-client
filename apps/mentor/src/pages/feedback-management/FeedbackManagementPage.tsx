@@ -6,7 +6,6 @@ import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '@/pages/schedule/types';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import FeedbackSummary from './ui/FeedbackSummary';
 import FeedbackTabs from './ui/FeedbackTabs';
 import FeedbackTable from './ui/FeedbackTable';
@@ -17,32 +16,17 @@ import {
   type LiveFeedbackRound,
 } from './hooks/useLiveFeedbackList';
 import { useMergedFeedbackRows } from './hooks/useMergedFeedbackRows';
-import { WRITTEN_CHALLENGE_MOCK } from './mocks/writtenChallengeMock';
 import type { FeedbackRow } from './types';
-
-type Challenge = MentorFeedbackManagement['challengeList'][number];
-
-/** API 서면 + mock 서면 병합 (challengeId 중복 시 API 우선). */
-function useMergedWrittenChallenges(apiChallenges: Challenge[]) {
-  return useMemo(() => {
-    const apiIds = new Set(apiChallenges.map((c) => c.challengeId));
-    const extras = WRITTEN_CHALLENGE_MOCK.filter(
-      (c) => !apiIds.has(c.challengeId),
-    );
-    return [...apiChallenges, ...extras];
-  }, [apiChallenges]);
-}
 
 const FeedbackManagementPage = () => {
   const {
-    challengeList: apiChallengeList,
+    challengeList,
     isLoading,
     feedbackModal,
     openWrittenFeedbackModal,
     handleCloseModal,
   } = useFeedbackManagement();
 
-  const challengeList = useMergedWrittenChallenges(apiChallengeList);
   const { challenges: liveChallenges, allSessionBars } = useLiveFeedbackList();
 
   const allLiveRounds = useMemo<LiveFeedbackRound[]>(

@@ -5,7 +5,6 @@ import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { PeriodBarData } from '@/pages/schedule/types';
 
-import { WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES } from '../mocks/writtenChallengeMock';
 import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
 
@@ -161,12 +160,6 @@ function buildMissionRangeMap(
     if (!m.endDate) continue;
     map.set(m.id, { start: addDays(m.endDate, 2), end: addDays(m.endDate, 4) });
   }
-  // mock override (writtenChallengeMock에 없는 API 미션은 그대로 유지)
-  for (const [idStr, range] of Object.entries(
-    WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES,
-  )) {
-    map.set(Number(idStr), range);
-  }
   return map;
 }
 
@@ -189,9 +182,10 @@ export function useMergedFeedbackRows(
   writtenChallenges: Challenge[],
   liveRounds: LiveFeedbackRound[],
 ): FeedbackRow[] {
-  // 서면 피드백 기간 계산용 — 첫 번째 챌린지만 fetch (성능 보호용).
-  // 실제 API는 challengeId 단위라 모든 챌린지 fetch는 캐시되더라도 N개 호출이 발생.
-  // 단순화를 위해 mock RANGES override만 사용하고 API range는 빈 맵 처리.
+  // 서면 피드백 기간 맵.
+  // feedback-management 응답(mentorFeedbackManagementSchema)에는 미션별 피드백
+  // 기간 필드가 없어 기본은 빈 맵이며, 서면 행 일정은 '-'로 표기된다.
+  // 미션별 기간이 필요한 호출자는 useApiMissionRangeMap(challengeId)로 주입한다.
   const missionRangeMap = useMemo(() => buildMissionRangeMap([]), []);
 
   return useMemo(() => {
