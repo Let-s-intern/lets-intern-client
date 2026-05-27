@@ -129,6 +129,57 @@ const calendarSlotList = [
   },
 ];
 
+/**
+ * 서면 미션 제출자(출석) 시드 — challengeMissionFeedbackAttendanceListSchema 와
+ * mentorMenteeAttendanceListSchema 양쪽을 모두 통과하는 공통 형태.
+ *
+ * status(ABSENT 여부)와 feedbackStatus(WAITING/IN_PROGRESS/COMPLETED) 분포로
+ * ChallengeDataFetcher 가 written-feedback 바의 카운트를 파생한다.
+ * (과거 WRITTEN_FEEDBACK_MOCK_DATA 의 제출/진행/완료 분포를 대표값으로 이관)
+ */
+const MOCK_ATTENDANCE_LIST = [
+  {
+    id: 1,
+    userId: 101,
+    mentorName: '테스트 멘토',
+    name: '이지수',
+    status: 'PRESENT',
+    feedbackStatus: 'COMPLETED',
+  },
+  {
+    id: 2,
+    userId: 102,
+    mentorName: '테스트 멘토',
+    name: '김민준',
+    status: 'PRESENT',
+    feedbackStatus: 'COMPLETED',
+  },
+  {
+    id: 3,
+    userId: 103,
+    mentorName: '테스트 멘토',
+    name: '박서연',
+    status: 'PRESENT',
+    feedbackStatus: 'IN_PROGRESS',
+  },
+  {
+    id: 4,
+    userId: 104,
+    mentorName: '테스트 멘토',
+    name: '정하늘',
+    status: 'PRESENT',
+    feedbackStatus: 'WAITING',
+  },
+  {
+    id: 5,
+    userId: 105,
+    mentorName: '테스트 멘토',
+    name: '최지훈',
+    status: 'ABSENT',
+    feedbackStatus: 'WAITING',
+  },
+];
+
 export const handlers = [
   /**
    * (멘토) GET /challenge/mentor/feedback-management
@@ -210,6 +261,106 @@ export const handlers = [
                 feedbackStatusCounts: [],
               },
             ],
+          },
+        ],
+      },
+    });
+  }),
+
+  /**
+   * (멘토) GET /challenge-mentor — 멘토 본인이 담당하는 챌린지 목록.
+   * BE challengeMentorVoSchema 정확히 일치. PROCEEDING 2개를 박는다.
+   * (과거 WRITTEN_FEEDBACK_MOCK_DATA / MOCK_CHALLENGE_FILTER_ITEMS 시나리오 이관)
+   * → schedule 캘린더가 이 2개 챌린지를 ChallengeDataFetcher 로 fan-out.
+   */
+  http.get('*/challenge-mentor', () => {
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        myChallengeMentorVoList: [
+          {
+            challengeMentorId: 11,
+            challengeId: 1,
+            programStatusType: 'PROCEEDING',
+            title: '기필코 경험정리 챌린지 21기',
+            shortDesc: '3주간 경험정리 미션과 멘토 피드백으로 완성하는 자소서',
+            thumbnail: '',
+            startDate: '2026-04-14',
+            endDate: '2026-05-08',
+          },
+          {
+            challengeMentorId: 12,
+            challengeId: 2,
+            programStatusType: 'PROCEEDING',
+            title: '커리어 설계 챌린지 5기',
+            shortDesc: '자신의 커리어 로드맵을 그려보는 2주 챌린지',
+            thumbnail: '',
+            startDate: '2026-04-15',
+            endDate: '2026-05-08',
+          },
+        ],
+      },
+    });
+  }),
+
+  /**
+   * (멘토) GET /challenge/:challengeId/mission/:missionId/feedback/attendances/mentee
+   * 신규(≥230) 챌린지 멘티 제출 내역. BE mentorMenteeAttendanceListSchema 일치.
+   *
+   * ⚠️ 라우트 순서: 구체 경로(.../mentee)를 일반 경로(.../attendances)보다 먼저 등록.
+   * MSW는 등록 순서로 매칭하므로 mentee 가 attendances 에 가로채이지 않게 한다.
+   */
+  http.get(
+    '*/challenge/:challengeId/mission/:missionId/feedback/attendances/mentee',
+    () => {
+      return HttpResponse.json({
+        status: 200,
+        data: { attendanceList: MOCK_ATTENDANCE_LIST },
+      });
+    },
+  ),
+
+  /**
+   * (멘토) GET /challenge/:challengeId/mission/:missionId/feedback/attendances
+   * legacy(<230) 챌린지 제출자(출석). BE challengeMissionFeedbackAttendanceListSchema 일치.
+   * 시드 챌린지(1,2)는 legacy 라 ChallengeDataFetcher 가 이 경로를 사용.
+   */
+  http.get(
+    '*/challenge/:challengeId/mission/:missionId/feedback/attendances',
+    () => {
+      return HttpResponse.json({
+        status: 200,
+        data: { attendanceList: MOCK_ATTENDANCE_LIST },
+      });
+    },
+  ),
+
+  /**
+   * (멘토) GET /challenge/:challengeId/mission/feedback
+   * 챌린지 피드백 미션 목록. BE challengeMissionFeedbackListSchema 일치.
+   * startDate/endDate 는 datetime({ local: true }) 포맷(타임존 없음) 준수.
+   *
+   * 미션 endDate 4/25/4/27 → ChallengeDataFetcher 가 written-feedback 바를
+   * endDate+2~+4 (4/27~4/29, 4/29~5/1)로 파생 → 과거 mock 동등.
+   */
+  http.get('*/challenge/:challengeId/mission/feedback', ({ params }) => {
+    const challengeId = Number(params.challengeId);
+    const missionEnd =
+      challengeId === 2 ? '2026-04-27T23:59:59' : '2026-04-25T23:59:59';
+    const missionStart =
+      challengeId === 2 ? '2026-04-22T00:00:00' : '2026-04-20T00:00:00';
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        missionList: [
+          {
+            id: challengeId * 1000 + 1,
+            title: '1회차 서면 피드백',
+            th: 1,
+            startDate: missionStart,
+            endDate: missionEnd,
+            submittedCount: 0,
+            totalCount: 0,
           },
         ],
       },
