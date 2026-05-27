@@ -1,7 +1,7 @@
 'use client';
 
 import { useMypageApplicationsQuery } from '@/api/application';
-import CategoryTabs from '@/common/ui/CategoryTabs';
+import { CategoryTabs } from '@letscareer/ui';
 import {
   APPLICATION_CATEGORY_OPTIONS,
   ApplicationCategory,

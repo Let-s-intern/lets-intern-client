@@ -1,6 +1,6 @@
 'use client';
 
-import CategoryTabs from '@/common/ui/CategoryTabs';
+import { CategoryTabs } from '@letscareer/ui';
 
 const STATUS_TAB_OPTIONS = [
   { value: '', label: '전체' },
