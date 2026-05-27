@@ -22,3 +22,8 @@ export {
   isUnread,
   sumUnread,
 } from './hooks/useUnreadSummary';
+export { default as ChatThread } from './ui/ChatThread';
+export { default as ChatComposer } from './ui/ChatComposer';
+export { default as ChatModal, type ChatRoomListItem } from './ui/ChatModal';
+export { default as ChatFloatingButton } from './ui/ChatFloatingButton';
+export { MAX_BADGE, formatBadge } from './ui/badge';
