@@ -20,6 +20,9 @@ export default function ChatComposer({ onSend, disabled }: ChatComposerProps) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 한글 등 IME 합성 중 Enter는 무시한다.
+    // (합성 확정용 Enter가 전송까지 트리거해 마지막 단어가 중복 전송되는 버그 방지)
+    if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();

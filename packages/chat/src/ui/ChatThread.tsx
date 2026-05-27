@@ -42,7 +42,7 @@ export default function ChatThread({
   const grouped = groupByDate(messages);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
       {grouped.map(({ date, messages: dayMessages }) => (
         <div key={date}>
           {/* 날짜 구분선 */}

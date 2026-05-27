@@ -63,7 +63,7 @@ export default function ChatModal({
           />
         )}
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <header className="border-neutral-90 flex items-center justify-between border-b px-4 py-3">
             <h2 className="text-neutral-10 text-sm font-semibold">
               {selectedRoom?.title ?? '채팅'}
