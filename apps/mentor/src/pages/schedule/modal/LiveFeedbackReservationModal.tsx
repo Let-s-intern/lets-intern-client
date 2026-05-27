@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
 
-import { useFeedbackDetailQuery } from '@/api/feedback/feedback';
+import { useFeedbackMentorDetailQuery } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { mentorConfig } from '@/constants/config';
@@ -18,9 +18,17 @@ import {
 import { resolveLiveFeedbackAccess } from '@/pages/feedback/utils/liveFeedbackAccess';
 
 import { currentNow } from '../constants/mockNow';
-import { getLiveFeedbackReservationMock } from '../challenge-content/liveFeedbackReservationMock';
 import type { PeriodBarData } from '../types';
 import JitsiEmbedModal, { type JitsiMeta } from './JitsiEmbedModal';
+
+/** 피드백 가이드 버튼 — 정적 메타(BE 비제공). 모달 외부로 hoist. */
+const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
+  { label: '자소서첨삭 피드백 가이드' },
+  { label: '라이브 멘토링 피드백 가이드' },
+];
+
+/** 빈 값 대체용 placeholder */
+const EMPTY_PLACEHOLDER = '-';
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -70,10 +78,10 @@ const LiveFeedbackReservationModal = ({
   const selectedBar = bar?.liveFeedback ? bar : (reservationBars[0] ?? null);
   const feedbackId = selectedBar?.liveFeedback?.id ?? null;
 
-  // BE 단건 상세 — 모달이 열려있을 때만 fetch.
+  // BE 멘토 단건 상세 — 모달이 열려있을 때만 fetch.
   // 모달은 항상 mount 되어 있기 때문에 isOpen 게이트가 없으면 페이지 로드 시점에
   // mock 바의 가짜 ID(예: 101)로 prod API를 때려 404가 발생한다.
-  const { data: feedbackDetail } = useFeedbackDetailQuery(
+  const { data: feedbackDetail } = useFeedbackMentorDetailQuery(
     isOpen ? feedbackId : null,
   );
 
@@ -120,7 +128,6 @@ const LiveFeedbackReservationModal = ({
 
   if (!bar || !selectedBar) return null;
 
-  const detail = getLiveFeedbackReservationMock(selectedBar);
   const currentIndex = reservationBars.findIndex(
     (item) => item.missionId === selectedBar.missionId,
   );
@@ -138,25 +145,22 @@ const LiveFeedbackReservationModal = ({
     onSelectBar(reservationBars[currentIndex + 1]);
   };
 
+  // 사이드바 멘티 리스트 — schedule 바(liveFeedback)에서 직접 파생.
+  // 단건 상세 API는 선택된 1건만 내려주므로 리스트 명/상태는 바 데이터를 사용한다.
   const menteeListItems = reservationBars.map((item) => {
-    const itemDetail = getLiveFeedbackReservationMock(item);
-
+    const liveStatus = item.liveFeedback?.status;
     const feedbackStatus: FeedbackStatus =
-      itemDetail.mentoringStatusTone === 'critical' ? 'WAITING' : 'COMPLETED';
-
-    const submissionLabel: '제출' | '미제출' =
-      itemDetail.submissionStatusLabel === '미제출' ? '미제출' : '제출';
+      liveStatus === 'completed' ? 'COMPLETED' : 'WAITING';
 
     return {
       id: item.liveFeedback?.id ?? item.missionId,
-      name: itemDetail.menteeName,
+      name: item.liveFeedback?.menteeName ?? '익명',
       feedbackStatus,
-      status: submissionLabel === '미제출' ? 'ABSENT' : 'PRESENT',
+      status: null,
       date: item.startDate,
       startTime: item.liveFeedback?.startTime,
       endTime: item.liveFeedback?.endTime,
-      submissionLabel,
-      liveStatus: item.liveFeedback?.status,
+      liveStatus,
     };
   });
 
@@ -198,17 +202,38 @@ const LiveFeedbackReservationModal = ({
     }
   })();
 
+  // 제출 상태 라벨 — BE attendanceStatus(서면 제출) 기준. ABSENT → '미제출', 그 외 '제출'.
+  const submissionStatusLabel: '제출' | '미제출' =
+    feedbackDetail?.attendanceStatus === 'ABSENT' ? '미제출' : '제출';
+
+  // 멘티 라이브 출석(menteeStatus) — 읽기 표시만.
+  // 마킹 버튼(PRESENT/ABSENT 쓰기 UI)은 디자인 미확정으로 보류.
+  // 확정 시 useUpdateFeedbackByMentorMutation({ feedbackId, menteeStatus })로 PATCH 연결.
+  const menteeAttendanceLabel: string = (() => {
+    switch (feedbackDetail?.menteeStatus) {
+      case 'PRESENT':
+        return '출석';
+      case 'ABSENT':
+        return '불참';
+      case 'PENDING':
+        return '대기';
+      default:
+        return EMPTY_PLACEHOLDER;
+    }
+  })();
+
   const selectedMentee = {
-    id: selectedBar.liveFeedback?.id ?? selectedBar.missionId,
-    name: detail.menteeName,
-    challengeTitle: detail.challengeTitle,
-    submissionStatusLabel: detail.submissionStatusLabel,
-    reservationTimeLabel: detail.reservationTimeLabel,
-    mentorRole: detail.mentorRole,
-    mentorIndustry: detail.mentorIndustry,
-    mentorCompany: detail.mentorCompany,
-    phoneNumber: detail.phoneNumber,
-    questionAnswer: detail.questionAnswer,
+    id: feedbackDetail?.feedbackId ?? selectedBar.liveFeedback?.id ?? null,
+    name:
+      feedbackDetail?.menteeName ?? selectedBar.liveFeedback?.menteeName ?? '',
+    challengeTitle: feedbackDetail?.programTitle ?? selectedBar.challengeTitle,
+    submissionStatusLabel,
+    attendanceUrl: feedbackDetail?.attendanceUrl ?? '',
+    mentorRole: feedbackDetail?.menteeWishField ?? EMPTY_PLACEHOLDER,
+    mentorIndustry: feedbackDetail?.menteeWishIndustry ?? EMPTY_PLACEHOLDER,
+    mentorCompany: feedbackDetail?.menteeWishCompany ?? EMPTY_PLACEHOLDER,
+    questionAnswer: feedbackDetail?.preQuestion ?? EMPTY_PLACEHOLDER,
+    menteeAttendanceLabel,
   };
 
   const reservationDateLine = formatReservationDateLine(
@@ -225,7 +250,7 @@ const LiveFeedbackReservationModal = ({
         className="mx-2 h-[85vh] w-[1200px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
       >
         <FeedbackHeader
-          challengeTitle={detail.challengeTitle}
+          challengeTitle={selectedMentee.challengeTitle}
           missionTh={roundTh ?? selectedBar.th}
           totalCount={reservationBars.length}
           waitingCount={waitingCount}
@@ -284,12 +309,33 @@ const LiveFeedbackReservationModal = ({
                         {selectedMentee.submissionStatusLabel}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      제출물 보기
-                    </button>
+                    <div className="flex items-center gap-2 text-xs text-neutral-500">
+                      <span>라이브 출석</span>
+                      <span className="font-medium text-neutral-700">
+                        {selectedMentee.menteeAttendanceLabel}
+                      </span>
+                      {/* TODO(디자인 확정): 멘티 출석 마킹 버튼(PRESENT/ABSENT)을 여기에 노출.
+                          useUpdateFeedbackByMentorMutation 으로
+                          PATCH /feedback/mentor/{feedbackId} { menteeStatus } 호출. */}
+                    </div>
+                    {selectedMentee.attendanceUrl ? (
+                      <a
+                        href={selectedMentee.attendanceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                      >
+                        제출물 보기
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-flex w-fit items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
+                      >
+                        제출물 보기
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -385,7 +431,7 @@ const LiveFeedbackReservationModal = ({
           }
           leftActions={
             <div className="flex items-center gap-2.5">
-              {detail.guidebookButtons.map((button) => (
+              {GUIDEBOOK_BUTTONS.map((button) => (
                 <a
                   key={button.label}
                   href={mentorConfig.feedbackGuidelineUrl}
