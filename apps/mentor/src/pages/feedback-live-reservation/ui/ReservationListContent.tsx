@@ -7,10 +7,7 @@ import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackRes
 import type { PeriodBarData } from '@/pages/schedule/types';
 
 import { useReservationFilters } from '../hooks/useReservationFilters';
-import {
-  formatCreateDate,
-  formatDateTimeRange,
-} from '../utils/formatReservation';
+import { formatDateTimeRange } from '../utils/formatReservation';
 import CompletedReservationTable from './CompletedReservationTable';
 import ReservationFilterCard from './ReservationFilterCard';
 
@@ -124,9 +121,6 @@ const ReservationListContent = () => {
                     멘티
                   </th>
                   <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
-                    신청 시간
-                  </th>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
                     상세
                   </th>
                 </tr>
@@ -145,9 +139,6 @@ const ReservationListContent = () => {
                     </td>
                     <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
                       {row.menteeName}
-                    </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
-                      {formatCreateDate(row.createDate)}
                     </td>
                     <td className="text-xsmall14 px-4 py-3 align-middle">
                       <button

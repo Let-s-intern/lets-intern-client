@@ -267,7 +267,7 @@ describe('ReservationListContent', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('createDate가 있으면 예약 목록(RESERVED) 신청 시간 셀도 포맷되어 보인다', () => {
+  it('예약 목록(RESERVED) 테이블에는 "신청 시간" 컬럼이 없다 (예정 예약 불필요)', () => {
     mockBase([
       makeFeedback({
         feedbackId: 1,
@@ -282,10 +282,25 @@ describe('ReservationListContent', () => {
     const reservedTable = screen
       .getByRole('heading', { name: '예약 목록' })
       .parentElement!.querySelector('table')!;
+
+    // 헤더는 5컬럼(날짜/시간·프로그램·멘토·멘티·상세), "신청 시간" 없음.
+    const headers = within(reservedTable)
+      .getAllByRole('columnheader')
+      .map((th) => th.textContent);
+    expect(headers).toEqual([
+      '날짜 / 시간',
+      '프로그램',
+      '멘토',
+      '멘티',
+      '상세',
+    ]);
     expect(
-      within(reservedTable).getByText('2026-05-17 09:30'),
-    ).toBeInTheDocument();
-    expect(within(reservedTable).queryByText('—')).not.toBeInTheDocument();
+      within(reservedTable).queryByText('신청 시간'),
+    ).not.toBeInTheDocument();
+    // 신청 시간 값 셀도 렌더되지 않는다.
+    expect(
+      within(reservedTable).queryByText('2026-05-17 09:30'),
+    ).not.toBeInTheDocument();
   });
 
   it('멘티 헤더 클릭으로 완료 테이블 정렬이 토글된다', async () => {
