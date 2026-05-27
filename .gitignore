@@ -72,3 +72,8 @@ next-env.d.ts
 .claude/tasks/
 .claude/settings.local.json
 .remember/
+
+# Playwright MCP 스크래치 (스냅샷 .yml / 콘솔 로그 / 임시 캡처 html·png)
+.playwright-mcp/
+# Playwright 스크린샷이 레포 루트로 떨어지는 임시 캡처
+/*-table.png
