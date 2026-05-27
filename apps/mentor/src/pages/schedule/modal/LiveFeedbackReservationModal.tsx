@@ -436,18 +436,23 @@ const LiveFeedbackReservationModal = ({
                 멘티와 대화하기
               </button>
 
-              {/* 라이브 입장하기 — ZEP active 일 때만 활성 (T-10 룰) */}
+              {/* 라이브 입장하기
+                  TODO(임시): 정식 운영 시 T-10 게이팅 복원
+                    → disabled={zepAccess.state !== 'active'} / onClick은 active일 때만.
+                  임시 변경: 시간 게이팅(pending/ended) 우회 — 회의실 URL이 합성되면
+                    (env 설정 + 예약 일시 존재 → state !== 'unassigned') 시간 무관 항상 입장 허용.
+                  zepAccess 산출 로직 자체는 보존하고 버튼 조건만 우회한다. */}
               <button
                 type="button"
-                disabled={zepAccess.state !== 'active'}
+                disabled={zepAccess.state === 'unassigned'}
                 onClick={
-                  zepAccess.state === 'active'
+                  zepAccess.state !== 'unassigned'
                     ? () => setIsJitsiOpen(true)
                     : undefined
                 }
                 aria-label="라이브 입장하기"
                 className={
-                  zepAccess.state === 'active'
+                  zepAccess.state !== 'unassigned'
                     ? 'bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors'
                     : 'rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
                 }

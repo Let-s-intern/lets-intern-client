@@ -145,11 +145,16 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(btn).toBeDisabled();
   });
 
-  it('Jitsi env 설정 + T-10 이전 → "라이브 입장하기" 버튼이 여전히 disabled (T-10 룰 회귀)', () => {
+  // TODO(임시): 라이브 입장 시간 게이팅(T-10 룰)이 임시 해제됨 (PRD §13).
+  // 정식 운영 복원 시 "T-10 이전 → disabled" 단언으로 되돌린다.
+  // 임시 동작: env(baseUrl+salt)만 설정되면 회의실 URL이 합성되어
+  // 시간 무관(T-10 이전 포함) 항상 입장 가능.
+  it('Jitsi env 설정 시 T-10 이전이어도 "라이브 입장하기" 버튼이 활성 (시간 게이팅 임시 해제)', () => {
     vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
+    vi.stubEnv('VITE_JITSI_ROOM_SALT', 'test-salt');
     renderModal(makeBar());
     const btn = screen.getByRole('button', { name: '라이브 입장하기' });
-    expect(btn).toBeDisabled();
+    expect(btn).toBeEnabled();
   });
 
   it('예약 일시 라인이 "YYYY.MM.DD (요일) HH:mm~HH:mm" 형식으로 노출된다', () => {
