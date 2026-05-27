@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import axios from '@/utils/axios';
@@ -26,9 +27,11 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function renderModal(props: { isOpen: boolean; onClose?: () => void } = {
-  isOpen: true,
-}) {
+function renderModal(
+  props: { isOpen: boolean; onClose?: () => void } = {
+    isOpen: true,
+  },
+) {
   const client = new QueryClient({
     defaultOptions: {
       queries: { retry: false, gcTime: 0 },
@@ -87,6 +90,27 @@ describe('FeedbackAvailabilityModal', () => {
     await waitFor(() =>
       expect(
         screen.getByText('슬롯 정보를 불러오지 못했습니다.'),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it('"예약현황 보기" 클릭 시 예약 현황 모달이 열린다', async () => {
+    const user = userEvent.setup();
+    axiosMock.get.mockResolvedValue({
+      data: { data: { feedbackSlotList: [] } },
+    });
+    renderModal({ isOpen: true });
+
+    // 일정 오픈 모달 헤더의 "예약현황 보기" 버튼이 노출된다.
+    const openReservationButton = await screen.findByRole('button', {
+      name: '예약현황 보기',
+    });
+    await user.click(openReservationButton);
+
+    // 예약 현황 모달(헤더 "예약 현황")이 열린다 — 페이지 이동 아님.
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', { name: '예약 현황' }),
       ).toBeInTheDocument(),
     );
   });
