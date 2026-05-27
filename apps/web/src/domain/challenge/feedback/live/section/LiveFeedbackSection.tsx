@@ -1,3 +1,4 @@
+import { useFeedbackDetailQuery } from '@/api/feedback/feedback';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
 import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
 import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const ExpiredNotice = () => (
-  <div className="bg-primary-5 rounded-xs md:blick hidden gap-2 border px-4 py-2 md:flex">
+  <div className="bg-primary-5 rounded-xs hidden gap-2 border px-4 py-2 md:flex">
     <img src="/icons/info.svg" alt="" className="size-4" />
     <div className="flex flex-col gap-0.5">
       <p className="text-xxsmall12 text-system-positive-blue items-center">
@@ -30,6 +31,52 @@ const ExpiredNotice = () => (
     </div>
   </div>
 );
+
+interface MissionCardProps {
+  mission: LiveFeedbackMission;
+  challengeId: string | number;
+  onMissionClick: (mission: LiveFeedbackMission) => void;
+  onMobileClick: (mission: LiveFeedbackMission) => void;
+}
+
+const LiveFeedbackMissionCard = ({
+  mission,
+  challengeId,
+  onMissionClick,
+  onMobileClick,
+}: MissionCardProps) => {
+  const { data: feedbackDetailData } = useFeedbackDetailQuery(
+    mission.status === 'reserved' || mission.status === 'completed'
+      ? mission.feedbackId
+      : null,
+  );
+  const feedbackInfo = feedbackDetailData?.feedbackInfo ?? null;
+  const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
+
+  return (
+    <FeedbackMissionCard
+      config={toCardConfig(mission, feedbackInfo)}
+      buttonLabel={LIVE_MISSION_BUTTON_LABEL[mission.status]}
+      onClick={() => onMissionClick(mission)}
+      accordionLabel={labels?.buttonLabel}
+      openLabel={labels?.openLabel}
+      onAccordionMobileClick={() => onMobileClick(mission)}
+      notice={mission.status === 'expired' ? <ExpiredNotice /> : undefined}
+    >
+      <LiveFeedbackDetail
+        challengeId={challengeId}
+        missionId={mission.missionId}
+        feedbackId={mission.feedbackId}
+        assignedMentor={mission.mentorInfo}
+        period={{
+          startDay: mission.missionStartDate,
+          endDay: mission.missionEndDate,
+        }}
+        status={mission.status}
+      />
+    </FeedbackMissionCard>
+  );
+};
 
 export default function LiveFeedbackSection({
   label,
@@ -50,35 +97,15 @@ export default function LiveFeedbackSection({
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
-          {missions.map((mission) => {
-            const labels = LIVE_FEEDBACK_BUTTON_LABELS[mission.status];
-            return (
-              <FeedbackMissionCard
-                key={mission.missionTh}
-                config={toCardConfig(mission)}
-                buttonLabel={LIVE_MISSION_BUTTON_LABEL[mission.status]}
-                onClick={() => onMissionClick(mission)}
-                accordionLabel={labels?.buttonLabel}
-                openLabel={labels?.openLabel}
-                onAccordionMobileClick={() => onMobileClick(mission)}
-                notice={
-                  mission.status === 'expired' ? <ExpiredNotice /> : undefined
-                }
-              >
-                <LiveFeedbackDetail
-                  challengeId={challengeId}
-                  missionId={mission.missionId}
-                  feedbackId={mission.feedbackId}
-                  assignedMentor={mission.mentorInfo}
-                  period={{
-                    startDay: mission.missionStartDate,
-                    endDay: mission.missionEndDate,
-                  }}
-                  status={mission.status}
-                />
-              </FeedbackMissionCard>
-            );
-          })}
+          {missions.map((mission) => (
+            <LiveFeedbackMissionCard
+              key={mission.missionTh}
+              mission={mission}
+              challengeId={challengeId}
+              onMissionClick={onMissionClick}
+              onMobileClick={onMobileClick}
+            />
+          ))}
         </div>
       )}
     </section>

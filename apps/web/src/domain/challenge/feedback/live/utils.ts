@@ -1,4 +1,7 @@
-import type { LiveFeedbackItem } from '@/api/feedback/feedbackSchema';
+import type {
+  FeedbackInfo,
+  LiveFeedbackItem,
+} from '@/api/feedback/feedbackSchema';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 export function toMission(
@@ -70,13 +73,60 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   expired: 'muted',
 };
 
-export function toCardConfig(mission: LiveFeedbackMission) {
+export function isEntranceActive(
+  startDate: string | null | undefined,
+  endDate: string | null | undefined,
+): boolean {
+  if (!startDate || !endDate) return false;
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return now < end && (start.getTime() - now.getTime()) / 60_000 <= 10;
+}
+
+function isInProgress(
+  startDate: string | null | undefined,
+  endDate: string | null | undefined,
+): boolean {
+  if (!startDate || !endDate) return false;
+  const now = new Date();
+  return now >= new Date(startDate) && now < new Date(endDate);
+}
+
+function formatReservationDateTime(
+  isoDateTime: string | null | undefined,
+): string | null {
+  if (!isoDateTime) return null;
+  const date = new Date(isoDateTime);
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  const totalEnd = hour * 60 + minute + 30;
+  const endTime = `${String(Math.floor(totalEnd / 60)).padStart(2, '0')}:${String(totalEnd % 60).padStart(2, '0')}`;
+  return `${yy}.${mm}.${dd} ${time}~${endTime}`;
+}
+
+export function toCardConfig(
+  mission: LiveFeedbackMission,
+  feedbackInfo?: FeedbackInfo | null,
+) {
+  const inProgress =
+    mission.status === 'reserved' &&
+    isInProgress(feedbackInfo?.startDate, feedbackInfo?.endDate);
+
   return {
     thumbnail: mission.thumbnail,
     title: mission.missionTitle,
     badge: {
-      label: LIVE_FEEDBACK_STATUS_LABEL[mission.status],
-      variant: LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
+      label: inProgress
+        ? '진행 중'
+        : LIVE_FEEDBACK_STATUS_LABEL[mission.status],
+      variant: inProgress
+        ? ('active' as const)
+        : LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionTh,
@@ -84,6 +134,10 @@ export function toCardConfig(mission: LiveFeedbackMission) {
     feedbackEndDay: mission.feedbackEndDate,
     startDay: mission.missionStartDate,
     endDay: mission.missionEndDate,
+    reservationDateTime:
+      mission.status === 'reserved' || mission.status === 'completed'
+        ? formatReservationDateTime(feedbackInfo?.startDate)
+        : undefined,
   };
 }
 
