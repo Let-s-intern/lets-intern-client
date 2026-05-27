@@ -3,4 +3,15 @@
 //
 // 공개 API 배럴: 진입점만 노출한다. 세부 모듈은 서브경로 import 권장
 // (예: `@letscareer/chat/hooks/useUnreadSummary`).
-export {};
+export { DEFAULT_PB_URL, COLLECTIONS } from './config';
+export { getChatClient } from './client';
+export { chatRoomKey, feedbackIdFromRoomKey } from './roomKey';
+export {
+  ChatRoleSchema,
+  ChatMessageSchema,
+  ChatRoomSchema,
+  LAST_READ_FIELD,
+  type ChatRole,
+  type ChatMessage,
+  type ChatRoom,
+} from './schema';
