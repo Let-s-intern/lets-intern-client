@@ -1,7 +1,9 @@
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime } from '../utils';
+import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
+
+const FALLBACK_URL = 'https://www.letscareer.co.kr/';
 
 interface Props {
   mentor: Mentor;
@@ -12,6 +14,10 @@ interface Props {
 const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
+  const entranceActive = isEntranceActive(
+    feedbackInfo?.startDate,
+    feedbackInfo?.endDate,
+  );
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -68,12 +74,12 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
             {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
               <a
-                href={meetingUrl ?? undefined}
+                href={entranceActive ? (meetingUrl ?? FALLBACK_URL) : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-disabled={!meetingUrl}
+                aria-disabled={!entranceActive}
                 className={
-                  meetingUrl
+                  entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
