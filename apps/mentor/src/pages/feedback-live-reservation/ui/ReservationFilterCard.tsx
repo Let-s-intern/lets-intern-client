@@ -1,3 +1,5 @@
+import OutlinedButton from '@/common/button/OutlinedButton';
+
 import type {
   ReservationFilterState,
   UseReservationFiltersResult,
@@ -109,13 +111,14 @@ const ReservationFilterCard = ({
       </div>
 
       <div className="flex justify-end">
-        <button
+        <OutlinedButton
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={resetFilters}
-          className="text-xsmall14 text-neutral-40 border-neutral-80 hover:bg-neutral-95 h-10 rounded-md border px-4 font-medium"
         >
           필터 초기화
-        </button>
+        </OutlinedButton>
       </div>
     </section>
   );

@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useFeedbackMentorListQuery } from '@/api/feedback/feedback';
 import { useUserQuery } from '@/api/user/user';
+import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
+import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
+import type { PeriodBarData } from '@/pages/schedule/types';
 
 import { useReservationFilters } from './hooks/useReservationFilters';
 import CompletedReservationTable from './ui/CompletedReservationTable';
-import ReservationDetailModal from './ui/ReservationDetailModal';
 import ReservationFilterCard from './ui/ReservationFilterCard';
 import {
   formatCreateDate,
@@ -28,7 +30,32 @@ const FeedbackLiveReservationPage = () => {
   const { data: user } = useUserQuery();
   const mentorName = user?.name ?? '';
 
+  // 라이브 모달용 캘린더 바 — schedule 와 동일 query key 라 추가 fetch 없음.
+  const { bars } = useLiveFeedbackData();
+
   const [detailFeedbackId, setDetailFeedbackId] = useState<number | null>(null);
+
+  // "보기" 로 선택한 feedbackId 의 라이브 세션 바.
+  const selectedBar = useMemo<PeriodBarData | null>(() => {
+    if (detailFeedbackId === null) return null;
+    return (
+      bars.find(
+        (b) =>
+          b.barType === 'live-feedback' &&
+          b.liveFeedback?.id === detailFeedbackId,
+      ) ?? null
+    );
+  }, [bars, detailFeedbackId]);
+
+  // 사이드바 멘티 리스트 — 선택 세션의 challengeId 로 스코프(프로그램 일정과 동일 규칙).
+  const modalLiveFeedbackBars = useMemo<PeriodBarData[]>(() => {
+    if (!selectedBar) return [];
+    return bars.filter(
+      (b) =>
+        b.barType === 'live-feedback' &&
+        b.challengeId === selectedBar.challengeId,
+    );
+  }, [bars, selectedBar]);
 
   const {
     filters,
@@ -173,10 +200,15 @@ const FeedbackLiveReservationPage = () => {
         )}
       </section>
 
-      <ReservationDetailModal
-        feedbackId={detailFeedbackId}
-        mentorName={mentorName}
+      <LiveFeedbackReservationModal
+        isOpen={detailFeedbackId !== null}
         onClose={() => setDetailFeedbackId(null)}
+        bar={selectedBar}
+        liveFeedbackBars={modalLiveFeedbackBars}
+        onSelectBar={(nextBar) =>
+          setDetailFeedbackId(nextBar.liveFeedback?.id ?? null)
+        }
+        roundTh={selectedBar?.th}
       />
     </div>
   );

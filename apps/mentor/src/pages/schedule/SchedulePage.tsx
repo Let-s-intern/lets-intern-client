@@ -112,6 +112,15 @@ const SchedulePage = () => {
     return period?.th;
   }, [selectedLiveFeedbackBar, allBarsUnfiltered]);
 
+  // 모달 사이드바 멘티 리스트 — 선택된 세션의 challengeId 로 스코프.
+  // 서면 모달이 챌린지별인 것과 일치하도록 해당 챌린지 세션만 노출한다.
+  const modalLiveFeedbackBars = useMemo(() => {
+    if (!selectedLiveFeedbackBar) return filteredLiveSessionBars;
+    return filteredLiveSessionBars.filter(
+      (b) => b.challengeId === selectedLiveFeedbackBar.challengeId,
+    );
+  }, [filteredLiveSessionBars, selectedLiveFeedbackBar]);
+
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
       (b) => b.challengeId === challengeId && b.missionId === missionId,
@@ -217,7 +226,7 @@ const SchedulePage = () => {
         isOpen={!!selectedLiveFeedbackBar}
         onClose={() => setSelectedLiveFeedbackBar(null)}
         bar={selectedLiveFeedbackBar}
-        liveFeedbackBars={filteredLiveSessionBars}
+        liveFeedbackBars={modalLiveFeedbackBars}
         onSelectBar={setSelectedLiveFeedbackBar}
         roundTh={selectedRoundTh}
       />

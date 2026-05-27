@@ -10,11 +10,13 @@ import FeedbackLiveReservationPage from '../FeedbackLiveReservationPage';
 const useFeedbackMentorListQueryMock = vi.fn();
 const useUserQueryMock = vi.fn();
 const useFeedbackMentorDetailQueryMock = vi.fn();
+const useFeedbackMentorSlotsQueryMock = vi.fn();
 
 vi.mock('@/api/feedback/feedback', () => ({
   useFeedbackMentorListQuery: () => useFeedbackMentorListQueryMock(),
   useFeedbackMentorDetailQuery: (id: number | null) =>
     useFeedbackMentorDetailQueryMock(id),
+  useFeedbackMentorSlotsQuery: () => useFeedbackMentorSlotsQueryMock(),
 }));
 
 vi.mock('@/api/user/user', () => ({
@@ -61,6 +63,11 @@ function mockBase(list: FeedbackMentor[]) {
   useUserQueryMock.mockReturnValue({ data: { name: '테스트 멘토' } });
   useFeedbackMentorDetailQueryMock.mockReturnValue({
     data: undefined,
+    isLoading: false,
+    isError: false,
+  });
+  useFeedbackMentorSlotsQueryMock.mockReturnValue({
+    data: { feedbackSlotList: [] },
     isLoading: false,
     isError: false,
   });
@@ -299,7 +306,7 @@ describe('FeedbackLiveReservationPage', () => {
     expect(screen.getAllByText('테스트 멘토')).toHaveLength(2);
   });
 
-  it('"보기" 클릭 시 상세 모달을 연다', async () => {
+  it('"보기" 클릭 시 라이브 피드백 모달을 열고 해당 feedbackId 상세를 fetch한다', async () => {
     const user = userEvent.setup();
     mockBase([
       makeFeedback({
@@ -333,11 +340,11 @@ describe('FeedbackLiveReservationPage', () => {
 
     await user.click(screen.getByRole('button', { name: '보기' }));
 
-    expect(
-      screen.getByRole('heading', { name: '예약 상세' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('강하늘 멘티')).toBeInTheDocument();
+    // 경량 모달 대신 LiveFeedbackReservationModal 이 열린다.
+    expect(screen.getAllByText(/LIVE 피드백/).length).toBeGreaterThan(0);
     expect(screen.getByText('자소서 피드백 받고 싶어요.')).toBeInTheDocument();
+    // 열린 동안 클릭한 feedbackId(=1) 로 상세를 fetch한다.
+    expect(useFeedbackMentorDetailQueryMock).toHaveBeenCalledWith(1);
   });
 
   it('로딩 중이면 안내 문구를 노출한다', () => {
@@ -348,6 +355,11 @@ describe('FeedbackLiveReservationPage', () => {
     });
     useUserQueryMock.mockReturnValue({ data: undefined });
     useFeedbackMentorDetailQueryMock.mockReturnValue({ data: undefined });
+    useFeedbackMentorSlotsQueryMock.mockReturnValue({
+      data: { feedbackSlotList: [] },
+      isLoading: false,
+      isError: false,
+    });
     renderPage();
     expect(screen.getByText('불러오는 중...')).toBeInTheDocument();
   });
@@ -360,6 +372,11 @@ describe('FeedbackLiveReservationPage', () => {
     });
     useUserQueryMock.mockReturnValue({ data: undefined });
     useFeedbackMentorDetailQueryMock.mockReturnValue({ data: undefined });
+    useFeedbackMentorSlotsQueryMock.mockReturnValue({
+      data: { feedbackSlotList: [] },
+      isLoading: false,
+      isError: false,
+    });
     renderPage();
     expect(
       screen.getByText('예약 내역을 불러오지 못했습니다.'),
