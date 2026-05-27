@@ -71,7 +71,7 @@ const ChallengePmView = ({ challenge }: Props) => {
             content={content}
             challengeType={challenge.challengeType}
           />
-          <FAQSection challenge={challenge} content={content} />
+          <FAQSection challenge={challenge} />
         </>
       )}
     </div>

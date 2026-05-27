@@ -49,7 +49,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
           <HrDifferentiatorsSection />
           <HrRecruitmentInfoSection challenge={challenge} />
           <HrReviewSection content={content} />
-          <HrFAQSection challenge={challenge} content={content} />
+          <HrFAQSection challenge={challenge} />
         </>
       )}
     </div>

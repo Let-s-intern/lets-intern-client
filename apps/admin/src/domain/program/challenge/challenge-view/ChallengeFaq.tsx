@@ -5,7 +5,6 @@ import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
-import { ChallengeContent } from '@/types/interface';
 import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
 
@@ -17,21 +16,26 @@ const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY, HR } =
 
 interface ChallengeFaqProps {
   faqData?: faqSchemaType;
-  faqCategory: ChallengeContent['faqCategory'];
   challengeType: ChallengeType;
   headerColorOverride?: string;
 }
 
 function ChallengeFaq({
   faqData,
-  faqCategory,
   challengeType,
   headerColorOverride,
 }: ChallengeFaqProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const faqList = faqData?.faqList;
-  const categoryList = [...new Set(faqCategory)];
+  const categoryList = useMemo(
+    () => [
+      ...new Set(
+        (faqList ?? []).map((faq) => faq.category ?? '').filter(Boolean),
+      ),
+    ],
+    [faqList],
+  );
 
   const styles = useMemo(() => {
     switch (challengeType) {
