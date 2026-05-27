@@ -1,0 +1,38 @@
+{
+  "name": "@letscareer/chat",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config.ts",
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema.ts",
+    "./roomKey": "./src/roomKey.ts",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./ui/*": "./src/ui/*.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "pocketbase": "^0.27.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/react": "^18.3.3",
+    "jsdom": "^25.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
+  }
+}
