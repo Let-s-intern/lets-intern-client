@@ -189,7 +189,7 @@ function FaqSection<
                   </div>
                   <div className="flex items-start gap-2">
                     <div className="rounded-xxs flex-1 rounded border border-[#E7E7E7] px-3 py-1.5">
-                      <span className="text-xsmall16 text-[#ACAFB6]">
+                      <span className="text-xsmall16 whitespace-pre-wrap text-[#ACAFB6]">
                         {faq.answer}
                       </span>
                     </div>
