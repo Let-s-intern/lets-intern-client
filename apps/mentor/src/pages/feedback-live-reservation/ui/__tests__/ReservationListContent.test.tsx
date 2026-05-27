@@ -248,6 +248,46 @@ describe('ReservationListContent', () => {
     expect(screen.getByText('—')).toBeInTheDocument();
   });
 
+  it('createDate가 있으면 완료 테이블 신청 시간 셀을 "YYYY-MM-DD HH:mm"로 표기한다', () => {
+    mockBase([
+      makeFeedback({
+        feedbackId: 1,
+        status: 'COMPLETED',
+        menteeName: '강하늘',
+        createDate: '2025-10-10T13:20:00',
+      }),
+    ]);
+    renderContent();
+    // '—' 가 아니라 포맷된 신청 시간이 보여야 한다 (MSW/실데이터 createDate 회귀 가드).
+    expect(
+      within(getCompletedTable()).getByText('2025-10-10 13:20'),
+    ).toBeInTheDocument();
+    expect(
+      within(getCompletedTable()).queryByText('—'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('createDate가 있으면 예약 목록(RESERVED) 신청 시간 셀도 포맷되어 보인다', () => {
+    mockBase([
+      makeFeedback({
+        feedbackId: 1,
+        status: 'RESERVED',
+        menteeName: '이지수',
+        startDate: '2026-05-20T10:00:00',
+        endDate: '2026-05-20T10:30:00',
+        createDate: '2026-05-17T09:30:00',
+      }),
+    ]);
+    renderContent();
+    const reservedTable = screen
+      .getByRole('heading', { name: '예약 목록' })
+      .parentElement!.querySelector('table')!;
+    expect(
+      within(reservedTable).getByText('2026-05-17 09:30'),
+    ).toBeInTheDocument();
+    expect(within(reservedTable).queryByText('—')).not.toBeInTheDocument();
+  });
+
   it('멘티 헤더 클릭으로 완료 테이블 정렬이 토글된다', async () => {
     const user = userEvent.setup();
     mockBase([
