@@ -67,51 +67,59 @@ export function useChatRoom({
       const trimmed = text.trim();
       if (!trimmed) return;
       const pb = getChatClient(pbUrl);
-      await Promise.all([
-        pb
-          .collection(COLLECTIONS.messages)
-          .create({ room, sender: role, text: trimmed }),
-        ensureRoom(),
-      ]);
+      const record = (await ensureRoom()) as {
+        id: string;
+        mentorEnded?: boolean;
+        menteeEnded?: boolean;
+      };
+      const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
+      // 내가 종료(숨김)했던 방에 다시 보내면 내 화면에 다시 보이게(플래그 해제).
+      if (record[endedField]) {
+        await pb
+          .collection(COLLECTIONS.rooms)
+          .update(record.id, { [endedField]: false });
+      }
+      await pb
+        .collection(COLLECTIONS.messages)
+        .create({ room, sender: role, text: trimmed });
     },
     [room, role, pbUrl, ensureRoom],
   );
 
   const markRead = useCallback(async () => {
     const pb = getChatClient(pbUrl);
-    const record = (await ensureRoom()) as {
-      id: string;
-      mentorEnded?: boolean;
-      menteeEnded?: boolean;
-    };
-    const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
-    // 내가 종료(숨김)했던 방을 다시 열면 재입장 처리 + 안내 메시지.
-    if (record[endedField]) {
-      await pb.collection(COLLECTIONS.messages).create({
-        room,
-        sender: 'system',
-        text: `${role === 'mentor' ? '멘토' : '멘티'}가 입장했습니다.`,
-      });
-    }
-    await pb.collection(COLLECTIONS.rooms).update(record.id, {
-      [LAST_READ_FIELD[role]]: new Date().toISOString(),
-      [endedField]: false,
-    });
-  }, [room, role, pbUrl, ensureRoom]);
+    const record = await ensureRoom();
+    await pb
+      .collection(COLLECTIONS.rooms)
+      .update(record.id, { [LAST_READ_FIELD[role]]: new Date().toISOString() });
+  }, [role, pbUrl, ensureRoom]);
 
   const endChat = useCallback(async (): Promise<void> => {
     const pb = getChatClient(pbUrl);
     const record = await ensureRoom();
     const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
-    // 종료 안내 시스템 메시지 + 내 종료(숨김) 플래그 set. 메시지는 보존(삭제 X).
+    // 종료 안내 + 내 종료(숨김) 플래그 set.
     await pb.collection(COLLECTIONS.messages).create({
       room,
       sender: 'system',
       text: `${role === 'mentor' ? '멘토' : '멘티'}가 채팅을 종료했습니다.`,
     });
-    await pb
+    const updated = await pb
       .collection(COLLECTIONS.rooms)
-      .update(record.id, { [endedField]: true });
+      .update<{ mentorEnded?: boolean; menteeEnded?: boolean }>(record.id, {
+        [endedField]: true,
+      });
+
+    // 멘토·멘티 둘 다 종료하면 메시지 + 방 삭제.
+    if (updated.mentorEnded && updated.menteeEnded) {
+      const messages = await pb
+        .collection(COLLECTIONS.messages)
+        .getFullList({ filter: `room="${room}"` });
+      await Promise.all(
+        messages.map((m) => pb.collection(COLLECTIONS.messages).delete(m.id)),
+      );
+      await pb.collection(COLLECTIONS.rooms).delete(record.id);
+    }
   }, [room, role, pbUrl, ensureRoom]);
 
   return { room, sendMessage, markRead, endChat };
