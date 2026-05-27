@@ -106,6 +106,7 @@ export default function MenteeChatLauncher() {
         role="mentee"
         feedbackIds={feedbackIds}
         onOpen={() => setIsOpen(true)}
+        positionClassName="bottom-36 right-6"
       />
       {isOpen && (
         <ChatModal

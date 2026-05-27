@@ -46,6 +46,7 @@ export default function MentorChatLauncher() {
         role="mentor"
         feedbackIds={feedbackIds}
         onOpen={() => setIsOpen(true)}
+        positionClassName="bottom-20 right-4"
       />
 
       {isOpen && (
