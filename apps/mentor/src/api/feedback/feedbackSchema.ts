@@ -127,6 +127,14 @@ export const feedbackMentorSchema = z.object({
   status: feedbackStatusSchema,
   programTitle: z.string(),
   menteeName: z.string(),
+  /**
+   * 신청 시간(멘티가 예약을 신청한 일시).
+   *
+   * ⚠️ 현재 BE `FeedbackMentorVo`에는 이 필드가 없다(어드민 VO엔 존재).
+   * forward-compatible: optional/nullable이라 응답에 없어도 parse 통과한다.
+   * BE가 추가하면 그대로 채워진다. (be-request-feedback-mentor-createdate.md 참고)
+   */
+  createDate: z.string().nullable().optional(),
 });
 export type FeedbackMentor = z.infer<typeof feedbackMentorSchema>;
 

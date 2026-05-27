@@ -96,11 +96,26 @@ const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
   ],
 ];
 
+/** startDate(ISO local)에서 며칠 앞선 신청 일시(createDate)를 파생 */
+function deriveCreateDate(startDate: string, daysBefore: number): string {
+  const start = new Date(startDate);
+  const created = new Date(start.getTime() - daysBefore * 24 * 60 * 60 * 1000);
+  // 신청 시각은 예약 시작 시각과 무관하게 오전 무렵으로 고정해 자연스럽게 표기.
+  created.setHours(9, 30, 0, 0);
+  const y = created.getFullYear();
+  const mo = String(created.getMonth() + 1).padStart(2, '0');
+  const d = String(created.getDate()).padStart(2, '0');
+  const hh = String(created.getHours()).padStart(2, '0');
+  const mm = String(created.getMinutes()).padStart(2, '0');
+  return `${y}-${mo}-${d}T${hh}:${mm}:00`;
+}
+
 const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
   ([startDate, endDate, programTitle, menteeName], idx) => ({
     feedbackId: 70_000 + idx,
     startDate,
     endDate,
+    createDate: deriveCreateDate(startDate, 3 + (idx % 3)),
     meetingUrl: null,
     mentorStatus: 'PENDING',
     menteeStatus: 'PENDING',
@@ -109,6 +124,107 @@ const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
     menteeName,
   }),
 );
+
+/**
+ * 완료된 예약(COMPLETED) 분포 시드 — 예약 현황 "완료된 예약" 테이블용.
+ * 과거 날짜로 프로그램/멘티/신청시간을 다양화한다. RESERVED(예정)와 별도.
+ *
+ * [startDate, endDate, programTitle, menteeName, createDate(신청 일시)]
+ */
+const COMPLETED_FEEDBACK_SESSIONS: ReadonlyArray<
+  readonly [string, string, string, string, string]
+> = [
+  [
+    '2025-10-16T17:30:00',
+    '2025-10-16T18:00:00',
+    '한경닷컴 마케팅 과정 9기 1:1 멘토링',
+    '강하늘',
+    '2025-10-10T13:20:00',
+  ],
+  [
+    '2025-10-20T11:00:00',
+    '2025-10-20T11:30:00',
+    '포트폴리오 완성 챌린지 16기 1차 피드백',
+    '윤서아',
+    '2025-10-12T09:05:00',
+  ],
+  [
+    '2025-10-23T19:00:00',
+    '2025-10-23T19:30:00',
+    '자기소개서 완성 챌린지 16기 2차 피드백',
+    '오지호',
+    '2025-10-18T22:40:00',
+  ],
+  [
+    '2025-11-03T14:00:00',
+    '2025-11-03T14:30:00',
+    '한경닷컴 마케팅 과정 9기 1:1 멘토링',
+    '김도현',
+    '2025-10-28T10:15:00',
+  ],
+  [
+    '2025-11-07T10:30:00',
+    '2025-11-07T11:00:00',
+    '포트폴리오 완성 챌린지 16기 1차 피드백',
+    '서지안',
+    '2025-11-01T16:30:00',
+  ],
+  [
+    '2025-11-12T16:00:00',
+    '2025-11-12T16:30:00',
+    '자기소개서 완성 챌린지 16기 2차 피드백',
+    '한예준',
+    '2025-11-05T08:50:00',
+  ],
+  [
+    '2025-11-18T18:30:00',
+    '2025-11-18T19:00:00',
+    '한경닷컴 마케팅 과정 9기 1:1 멘토링',
+    '정유나',
+    '2025-11-13T20:10:00',
+  ],
+];
+
+const completedFeedbackList = COMPLETED_FEEDBACK_SESSIONS.map(
+  ([startDate, endDate, programTitle, menteeName, createDate], idx) => ({
+    feedbackId: 60_000 + idx,
+    startDate,
+    endDate,
+    createDate,
+    meetingUrl: null,
+    mentorStatus: 'PRESENT',
+    menteeStatus: 'PRESENT',
+    status: 'COMPLETED',
+    programTitle,
+    menteeName,
+  }),
+);
+
+/**
+ * 멘토 라이브 피드백 단일 시드.
+ *
+ * 목록(`GET /feedback/mentor`)과 단건 상세(`GET /feedback/mentor/:feedbackId`)가
+ * **이 배열을 공유**한다. 상세 핸들러는 feedbackId로 여기서 세션을 찾아
+ * 목록과 동일한 일시/프로그램/멘티/상태를 반환한다.
+ *
+ * 구성: 기본 세션(MOCK_FEEDBACK_ID, RESERVED) + 캘린더 RESERVED 분포 + COMPLETED 분포.
+ */
+const MENTOR_FEEDBACK_SEED = [
+  {
+    feedbackId: MOCK_FEEDBACK_ID,
+    startDate: reservationStart,
+    endDate: reservationEnd,
+    createDate: deriveCreateDate(reservationStart, 2),
+    meetingUrl: null,
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
+    status: 'RESERVED',
+    programTitle: '자소서 챌린지 7기',
+    menteeName: '이지수',
+  },
+  ...calendarFeedbackList,
+  ...completedFeedbackList,
+];
 
 /**
  * 멘토 오픈 슬롯 분포 시드 — `live-feedback-mentor-open` 글로벌 바 파생용.
@@ -429,21 +545,8 @@ export const handlers = [
     return HttpResponse.json({
       status: 200,
       data: {
-        feedbackList: [
-          {
-            feedbackId: MOCK_FEEDBACK_ID,
-            startDate: reservationStart,
-            endDate: reservationEnd,
-            meetingUrl: null,
-            mentorStatus: 'PENDING',
-            menteeStatus: 'PENDING',
-            status: 'RESERVED',
-            programTitle: '자소서 챌린지 7기',
-            menteeName: '이지수',
-          },
-          // 캘린더 세션 분포(2 챌린지, 5/4~5/8) — live-feedback / period 바 파생.
-          ...calendarFeedbackList,
-        ],
+        // 단일 시드 공유: 기본 RESERVED + 캘린더 RESERVED 분포 + COMPLETED 분포.
+        feedbackList: MENTOR_FEEDBACK_SEED,
       },
     });
   }),
@@ -457,26 +560,32 @@ export const handlers = [
    */
   http.get('*/feedback/mentor/:feedbackId', ({ params }) => {
     const feedbackId = Number(params.feedbackId);
+    // 목록과 동일 시드에서 세션을 찾아 일시/프로그램/멘티/상태를 도출한다.
+    // 못 찾으면 기본 세션(MOCK_FEEDBACK_ID)으로 폴백하되 요청 feedbackId는 echo.
+    const base =
+      MENTOR_FEEDBACK_SEED.find((s) => s.feedbackId === feedbackId) ??
+      MENTOR_FEEDBACK_SEED[0];
     return HttpResponse.json({
       status: 200,
       data: {
         feedbackInfo: {
           feedbackId,
-          startDate: reservationStart,
-          endDate: reservationEnd,
-          meetingUrl: null,
-          status: 'RESERVED',
-          programTitle: '자소서 챌린지 7기',
+          startDate: base.startDate,
+          endDate: base.endDate,
+          meetingUrl: base.meetingUrl,
+          status: base.status,
+          programTitle: base.programTitle,
+          menteeName: base.menteeName,
+          mentorStatus: base.mentorStatus,
+          menteeStatus: base.menteeStatus,
+          // 상세 전용 필드는 기본값 유지(세션별로 다를 필요 없음).
           attendanceUrl: 'https://example.com/submission/' + feedbackId,
           attendanceStatus: 'PRESENT',
-          menteeName: '이지수',
           menteeWishField: '기획 / PM / PO',
           menteeWishIndustry: 'IT · 플랫폼, 금융 · 핀테크',
           menteeWishCompany: 'Toss, Kakao',
           preQuestion:
             '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
-          mentorStatus: 'PENDING',
-          menteeStatus: 'PENDING',
         },
       },
     });
