@@ -16,12 +16,16 @@ export function toMission(
     .toISOString()
     .slice(0, 10);
 
+  const isMissionSubmitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
+    item.attendanceStatus ?? '',
+  );
+
   let status: LiveFeedbackStatus = 'prev';
   if (item.feedbackId == null) {
     status = new Date(item.missionEndDate) < new Date() ? 'expired' : 'prev';
   } else if (item.feedbackStatus === 'COMPLETED') {
     status = 'completed';
-  } else if (item.feedbackStatus === 'RESERVED') {
+  } else if (item.feedbackStatus === 'RESERVED' && isMissionSubmitted) {
     status = 'reserved';
   }
 
@@ -37,6 +41,7 @@ export function toMission(
     feedbackEndDate: feedbackEndDay,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
+    isMissionSubmitted,
   };
 }
 
@@ -135,7 +140,7 @@ export function toCardConfig(
     startDay: mission.missionStartDate,
     endDay: mission.missionEndDate,
     reservationDateTime:
-      mission.status === 'reserved' || mission.status === 'completed'
+      mission.feedbackId != null
         ? formatReservationDateTime(feedbackInfo?.startDate)
         : undefined,
   };

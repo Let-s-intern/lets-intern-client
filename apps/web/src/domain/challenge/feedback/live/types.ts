@@ -38,4 +38,5 @@ export interface LiveFeedbackMission {
   feedbackEndDate: string; // 'YYYY-MM-DD' — missionEndDate + 3일
   mentorInfo: Mentor | null;
   feedbackId: number | null;
+  isMissionSubmitted: boolean;
 }
