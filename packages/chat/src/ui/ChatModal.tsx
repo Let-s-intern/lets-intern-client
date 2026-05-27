@@ -209,14 +209,16 @@ function ChatRoomPanel({
     void markReadRef.current();
   }, [feedbackId, messages.length]);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [ending, setEnding] = useState(false);
+
   const handleEnd = async () => {
-    const ok = window.confirm(
-      '채팅을 종료하시겠어요?\n멘토·멘티가 모두 종료하면 대화 내용이 삭제됩니다.',
-    );
-    if (!ok) return;
+    setEnding(true);
     try {
       await endChat();
     } finally {
+      setEnding(false);
+      setConfirmOpen(false);
       onEnded(feedbackId);
     }
   };
@@ -226,9 +228,24 @@ function ChatRoomPanel({
       <div className="border-neutral-90 flex justify-end border-b px-4 py-2">
         <button
           type="button"
-          onClick={handleEnd}
-          className="text-neutral-40 hover:text-system-error text-xs font-medium"
+          onClick={() => setConfirmOpen(true)}
+          className="border-neutral-80 text-neutral-40 hover:border-system-error hover:text-system-error flex items-center gap-1 rounded-md border bg-white px-2.5 py-1 text-xs font-semibold transition-colors"
         >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           채팅 종료하기
         </button>
       </div>
@@ -238,6 +255,43 @@ function ChatRoomPanel({
         counterpartName={counterpartName}
       />
       <ChatComposer onSend={(text) => void sendMessage(text)} />
+
+      {confirmOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50 p-4"
+          style={{ zIndex: 10000 }}
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="채팅 종료 확인"
+        >
+          <div className="w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl">
+            <h3 className="text-neutral-10 text-base font-bold">
+              채팅을 종료할까요?
+            </h3>
+            <p className="text-neutral-40 mt-2 text-sm leading-relaxed">
+              멘토·멘티가 모두 종료하면 대화 내용이 삭제됩니다.
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmOpen(false)}
+                disabled={ending}
+                className="border-neutral-80 text-neutral-40 hover:bg-neutral-95 flex-1 rounded-lg border py-2.5 text-sm font-semibold transition-colors disabled:opacity-60"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={handleEnd}
+                disabled={ending}
+                className="bg-system-error flex-1 rounded-lg py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              >
+                {ending ? '종료 중…' : '종료하기'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

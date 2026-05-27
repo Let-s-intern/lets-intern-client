@@ -78,7 +78,7 @@ const CHAT_MESSAGES = {
       type: 'select',
       required: true,
       maxSelect: 1,
-      values: ['mentor', 'mentee'],
+      values: ['mentor', 'mentee', 'system'],
     },
     { name: 'text', type: 'text', required: true, max: 5000 },
     { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
@@ -106,9 +106,17 @@ async function authSuperuser(pb) {
 async function upsertCollection(pb, cfg) {
   const existing = await pb.collections.getOne(cfg.name).catch(() => null);
   if (existing) {
-    // 기존 필드(id 보존) + cfg에만 있는 신규 필드(name 기준)를 병합.
+    // 기존 필드(id 보존)는 유지하되 select values는 cfg 기준으로 갱신,
+    // cfg에만 있는 신규 필드(name 기준)는 추가.
+    const cfgByName = new Map(cfg.fields.map((f) => [f.name, f]));
+    const fields = existing.fields.map((ef) => {
+      const cf = cfgByName.get(ef.name);
+      if (cf && cf.type === 'select' && Array.isArray(cf.values)) {
+        return { ...ef, values: cf.values };
+      }
+      return ef;
+    });
     const existingNames = new Set(existing.fields.map((f) => f.name));
-    const fields = [...existing.fields];
     for (const f of cfg.fields) {
       if (!existingNames.has(f.name)) fields.push(f);
     }

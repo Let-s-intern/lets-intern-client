@@ -4,6 +4,10 @@ import { z } from 'zod';
 export const ChatRoleSchema = z.enum(['mentor', 'mentee']);
 export type ChatRole = z.infer<typeof ChatRoleSchema>;
 
+/** 메시지 sender = 역할 + 시스템(종료 안내 등 자동 메시지). */
+export const ChatMessageSenderSchema = z.enum(['mentor', 'mentee', 'system']);
+export type ChatMessageSender = z.infer<typeof ChatMessageSenderSchema>;
+
 /**
  * `chat_messages` 레코드 (PRD §6).
  * PB 응답은 메타 필드(collectionId 등)가 더 있으나 패키지에서 쓰는 필드만 파싱한다.
@@ -11,7 +15,7 @@ export type ChatRole = z.infer<typeof ChatRoleSchema>;
 export const ChatMessageSchema = z.object({
   id: z.string(),
   room: z.string(),
-  sender: ChatRoleSchema,
+  sender: ChatMessageSenderSchema,
   text: z.string(),
   created: z.string(),
 });

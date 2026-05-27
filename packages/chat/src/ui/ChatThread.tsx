@@ -78,6 +78,17 @@ function MessageBubble({
   myRole: ChatRole;
   counterpartName: string;
 }) {
+  // 시스템 메시지(채팅 종료 안내 등)는 가운데 정렬 안내로 표시.
+  if (message.sender === 'system') {
+    return (
+      <div className="my-2 flex justify-center">
+        <span className="bg-neutral-95 text-neutral-40 rounded-full px-3 py-1 text-[11px]">
+          {message.text}
+        </span>
+      </div>
+    );
+  }
+
   const isMine = message.sender === myRole;
   const time = new Date(message.created).toLocaleTimeString('ko-KR', {
     hour: '2-digit',

@@ -88,6 +88,12 @@ export function useChatRoom({
   const endChat = useCallback(async (): Promise<{ deleted: boolean }> => {
     const pb = getChatClient(pbUrl);
     const record = await ensureRoom();
+    // 종료 안내 시스템 메시지를 남긴다(상대가 종료 사실을 인지).
+    await pb.collection(COLLECTIONS.messages).create({
+      room,
+      sender: 'system',
+      text: `${role === 'mentor' ? '멘토' : '멘티'}가 채팅을 종료했습니다.`,
+    });
     const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
     const updated = await pb
       .collection(COLLECTIONS.rooms)

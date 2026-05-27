@@ -9,7 +9,12 @@ vi.mock('../hooks/useChatMessages', () => ({
   useChatMessages: () => ({ messages: [], isLoading: false }),
 }));
 vi.mock('../hooks/useChatRoom', () => ({
-  useChatRoom: () => ({ room: 'feedback_1', sendMessage, markRead }),
+  useChatRoom: () => ({
+    room: 'feedback_1',
+    sendMessage,
+    markRead,
+    endChat: vi.fn().mockResolvedValue({ deleted: false }),
+  }),
 }));
 vi.mock('../hooks/useUnreadSummary', () => ({
   useUnreadSummary: () => ({
