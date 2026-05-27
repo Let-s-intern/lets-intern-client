@@ -1,13 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import { useChatMessages } from '@letscareer/chat/hooks/useChatMessages';
-import { useChatRoom } from '@letscareer/chat/hooks/useChatRoom';
-import { chatRoomKey } from '@letscareer/chat/roomKey';
-import ChatComposer from '@letscareer/chat/ui/ChatComposer';
-import ChatThread from '@letscareer/chat/ui/ChatThread';
+import ChatRoomView from '@letscareer/chat/ui/ChatRoomView';
 
 import { useFeedbackMentorListQuery } from '@/api/feedback/feedback';
-import type { FeedbackMentor } from '@/api/feedback/feedbackSchema';
 
 import MenteeList from './ui/MenteeList';
 import type { Mentee } from './schema';
@@ -16,8 +11,8 @@ import type { Mentee } from './schema';
  * 멘티 관리 = 라이브 피드백 멘티별 채팅.
  *
  * 방 단위는 `feedbackId`(세션)다. `GET /feedback/mentor` 응답에서 feedbackId를
- * 그대로 사용해 멘티↔멘토 공유 방(`feedback_{id}`)에 접속한다. 좌측 목록 선택 →
- * 우측 패널에 `@letscareer/chat` 패키지 채팅을 임베드한다.
+ * 그대로 사용해 멘티↔멘토 공유 방(`feedback_{id}`)에 접속한다. 좌측 멘티 목록은
+ * 유지하고, 우측 패널에 `@letscareer/chat`의 `ChatRoomView`(종료 버튼 포함)를 임베드한다.
  */
 const FeedbackLiveMenteePage = () => {
   const { data: feedbacks, isLoading, isError } = useFeedbackMentorListQuery();
@@ -56,7 +51,7 @@ const FeedbackLiveMenteePage = () => {
   return (
     <div className="border-neutral-80 flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-xl border bg-white">
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* 좌측: 멘티(세션) 목록 */}
+        {/* 좌측: 멘티(세션) 목록 — 항상 유지 */}
         <div className="w-72 shrink-0">
           {isLoading ? (
             <div className="border-neutral-80 text-neutral-40 flex h-full items-center justify-center border-r text-xs">
@@ -75,7 +70,7 @@ const FeedbackLiveMenteePage = () => {
           )}
         </div>
 
-        {/* 우측: 채팅 */}
+        {/* 우측: 채팅 (종료 버튼 포함) */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {activeFeedback ? (
             <>
@@ -92,7 +87,16 @@ const FeedbackLiveMenteePage = () => {
                     .join(' · ')}
                 </p>
               </div>
-              <MentorChatPanel feedback={activeFeedback} />
+              <ChatRoomView
+                key={activeFeedback.feedbackId}
+                feedbackId={activeFeedback.feedbackId}
+                role="mentor"
+                counterpartName={activeFeedback.menteeName}
+                meta={{
+                  menteeName: activeFeedback.menteeName,
+                  challengeTitle: activeFeedback.programTitle,
+                }}
+              />
             </>
           ) : (
             <EmptyState />
@@ -118,38 +122,6 @@ function formatSession(iso?: string | null): string | undefined {
     hour: '2-digit',
     minute: '2-digit',
   });
-}
-
-/** 선택된 멘티(feedbackId) 세션의 임베드 채팅 패널. */
-function MentorChatPanel({ feedback }: { feedback: FeedbackMentor }) {
-  const room = chatRoomKey(feedback.feedbackId);
-  const { messages } = useChatMessages({ room });
-  const { sendMessage, markRead } = useChatRoom({
-    feedbackId: feedback.feedbackId,
-    role: 'mentor',
-    meta: {
-      menteeName: feedback.menteeName,
-      challengeTitle: feedback.programTitle,
-    },
-  });
-
-  // 진입·신규 메시지 수신 시 읽음 처리.
-  const markReadRef = useRef(markRead);
-  markReadRef.current = markRead;
-  useEffect(() => {
-    void markReadRef.current();
-  }, [feedback.feedbackId, messages.length]);
-
-  return (
-    <>
-      <ChatThread
-        messages={messages}
-        myRole="mentor"
-        counterpartName={feedback.menteeName}
-      />
-      <ChatComposer onSend={(text) => void sendMessage(text)} />
-    </>
-  );
 }
 
 function EmptyState() {

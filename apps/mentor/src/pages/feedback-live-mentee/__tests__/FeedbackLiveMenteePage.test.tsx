@@ -24,7 +24,12 @@ vi.mock('@letscareer/chat/hooks/useChatMessages', () => ({
   useChatMessages: () => ({ messages: [] }),
 }));
 vi.mock('@letscareer/chat/hooks/useChatRoom', () => ({
-  useChatRoom: () => ({ sendMessage: vi.fn(), markRead: vi.fn() }),
+  useChatRoom: () => ({
+    sendMessage: vi.fn(),
+    markRead: vi.fn(),
+    endChat: vi.fn(),
+    counterpartEnded: false,
+  }),
 }));
 
 import FeedbackLiveMenteePage from '../FeedbackLiveMenteePage';

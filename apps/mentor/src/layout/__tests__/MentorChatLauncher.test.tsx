@@ -9,6 +9,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { MemoryRouter } from 'react-router-dom';
+
 import axios from '@/utils/axios';
 
 vi.mock('@/utils/axios', () => ({
@@ -78,9 +80,11 @@ function renderLauncher() {
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
   });
   return render(
-    <QueryClientProvider client={client}>
-      <MentorChatLauncher />
-    </QueryClientProvider>,
+    <MemoryRouter>
+      <QueryClientProvider client={client}>
+        <MentorChatLauncher />
+      </QueryClientProvider>
+    </MemoryRouter>,
   );
 }
 

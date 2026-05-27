@@ -1,5 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 
+import { useLocation } from 'react-router-dom';
+
 import ChatFloatingButton from '@letscareer/chat/ui/ChatFloatingButton';
 import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 
@@ -7,6 +9,9 @@ import { useFeedbackMentorListQuery } from '@/api/feedback/feedback';
 
 /** 채팅 모달 — 열릴 때만 로드 (동적 import). */
 const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
+
+/** 멘티관리 페이지는 자체 채팅 목록이 있어 플로팅을 띄우지 않는다. */
+const HIDE_FLOATING_PATHS = ['/feedback/live-mentee'];
 
 /**
  * 멘토 전역 채팅 런처 (얇은 마운트 래퍼).
@@ -19,6 +24,7 @@ const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
  * 삭제 surface: `MentorShell`의 `<MentorChatLauncher />` 1줄 + 이 파일.
  */
 export default function MentorChatLauncher() {
+  const { pathname } = useLocation();
   const { data } = useFeedbackMentorListQuery();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -39,6 +45,9 @@ export default function MentorChatLauncher() {
   }, [data]);
 
   const feedbackIds = useMemo(() => rooms.map((r) => r.feedbackId), [rooms]);
+
+  // 멘티관리 페이지에서는 플로팅을 숨긴다(페이지 자체에 채팅 목록 존재).
+  if (HIDE_FLOATING_PATHS.some((p) => pathname.startsWith(p))) return null;
 
   return (
     <>
