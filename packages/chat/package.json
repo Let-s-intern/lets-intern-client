@@ -14,7 +14,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "setup:pb": "node scripts/setup-collections.mjs"
   },
   "peerDependencies": {
     "react": ">=18"
