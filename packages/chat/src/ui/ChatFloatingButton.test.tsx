@@ -14,16 +14,12 @@ describe('ChatFloatingButton', () => {
     mockTotal = 0;
   });
 
-  it('안읽음이 0이면 뱃지를 숨긴다', () => {
+  it('안읽음이 0이면 버튼을 렌더하지 않는다', () => {
     mockTotal = 0;
     render(
       <ChatFloatingButton role="mentee" feedbackIds={[1]} onOpen={vi.fn()} />,
     );
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'aria-label',
-      '채팅 열기',
-    );
-    expect(screen.queryByText(/\d/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('안읽음이 있으면 개수 뱃지를 표시한다', () => {
@@ -51,7 +47,7 @@ describe('ChatFloatingButton', () => {
   });
 
   it('클릭 시 onOpen을 호출한다', async () => {
-    mockTotal = 0;
+    mockTotal = 5;
     const onOpen = vi.fn();
     render(
       <ChatFloatingButton role="mentee" feedbackIds={[1]} onOpen={onOpen} />,

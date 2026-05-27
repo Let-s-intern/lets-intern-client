@@ -324,6 +324,9 @@ importers:
       '@letscareer/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@letscareer/chat':
+        specifier: workspace:*
+        version: link:../../packages/chat
       '@letscareer/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -547,6 +550,9 @@ importers:
       '@letscareer/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@letscareer/chat':
+        specifier: workspace:*
+        version: link:../../packages/chat
       '@letscareer/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -882,6 +888,9 @@ importers:
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.3.7
+        version: 18.3.7(@types/react@18.3.27)
       jsdom:
         specifier: ^25.0.0
         version: 25.0.1(bufferutil@4.0.9)

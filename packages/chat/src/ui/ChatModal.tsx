@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useChatMessages } from '../hooks/useChatMessages';
 import { useChatRoom, type ChatRoomMeta } from '../hooks/useChatRoom';
@@ -46,14 +47,22 @@ export default function ChatModal({
   const selectedRoom = rooms.find((r) => r.feedbackId === selectedId) ?? null;
   const showList = rooms.length > 1;
 
-  return (
+  const overlay = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 flex items-center justify-center bg-black/40 p-4"
+      style={{ zIndex: 9999 }}
       role="dialog"
       aria-modal="true"
       aria-label="채팅"
     >
-      <div className="flex h-[80dvh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl">
+      <div
+        className="flex w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-xl"
+        style={{
+          height: 'min(600px, 80dvh)',
+          borderRadius: '1rem',
+          overflow: 'hidden',
+        }}
+      >
         {showList && (
           <ChatRoomList
             rooms={rooms}
@@ -94,6 +103,11 @@ export default function ChatModal({
       </div>
     </div>
   );
+
+  // 다른 모달(예약 상세 등) 내부에서 열려도 최상위에 표시되도록 body로 포털.
+  return typeof document !== 'undefined'
+    ? createPortal(overlay, document.body)
+    : overlay;
 }
 
 function ChatRoomList({
