@@ -188,10 +188,12 @@ const WeeklyCalendar = ({
   }, [liveBars]);
 
   const bodyMinHeight = useMemo(() => {
-    const ROW_H = 70;
-    const MIN_ROWS = 2; // 챌린지 1~2개 기준 최소 빈 공간만 확보
+    // minHeight는 바닥값만 정하고 그리드는 내용에 맞게 늘어난다(잘림 없음).
+    // 바가 적을 때 하단 빈 공간을 줄이기 위해 행 높이/최소 행/여백을 축소.
+    const ROW_H = 56;
+    const MIN_ROWS = 1;
     const maxRow = barLayouts.reduce((max, l) => Math.max(max, l.gridRow), 0);
-    return Math.max(maxRow, MIN_ROWS) * ROW_H + 24;
+    return Math.max(maxRow, MIN_ROWS) * ROW_H + 8;
   }, [barLayouts]);
 
   const innerWidthPercent = (totalDays / 7) * 100;
