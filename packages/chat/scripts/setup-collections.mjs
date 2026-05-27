@@ -43,8 +43,8 @@ const CHAT_ROOMS = {
   listRule: OPEN,
   viewRule: OPEN,
   createRule: OPEN,
-  updateRule: OPEN, // lastReadAt·종료 플래그 갱신 허용
-  deleteRule: OPEN, // 양쪽 종료 시 방 삭제 허용 (임시)
+  updateRule: OPEN, // lastReadAt·종료(숨김) 플래그 갱신 허용
+  deleteRule: LOCK, // 종료는 삭제가 아닌 숨김 → 삭제 불필요(잠금)
   fields: [
     { name: 'room', type: 'text', required: true, max: 100 },
     { name: 'menteeName', type: 'text', max: 100 },
@@ -70,7 +70,7 @@ const CHAT_MESSAGES = {
   viewRule: OPEN,
   createRule: OPEN, // 전송
   updateRule: LOCK, // 메시지 수정 불가
-  deleteRule: OPEN, // 방 삭제 시 메시지 정리 허용 (임시)
+  deleteRule: LOCK, // 메시지 삭제 불가(종료는 숨김 처리)
   fields: [
     { name: 'room', type: 'text', required: true, max: 100 },
     {
