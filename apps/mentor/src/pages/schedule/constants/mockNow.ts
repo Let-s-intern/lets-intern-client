@@ -1,14 +1,12 @@
 /**
- * 라이브 피드백 모달 시연용 mock "현재 시각".
+ * "현재 시각" 추상화 헬퍼.
  *
- * 목적:
- *  - MenteeList의 "오늘 날짜" 구분 박스 강조 시연
- *  - SessionCountdown의 1시간 전 카운트다운 시연
- *
- * 5/4 09:45 = 이지수 10:00 세션 15분 전 → 카운트다운 노출 + 5/4 "오늘" 강조.
- * 프로덕션에서는 `null`로 설정해 실제 시각을 사용.
+ * 과거에는 라이브 피드백 모달 시연을 위해 고정 데모 시각(2026-05-04 09:45)을 사용했으나,
+ * 목데이터 제거 작업으로 실 API/MSW 기반 렌더로 전환되어 데모 시각 override를 끈다.
+ * `MOCK_NOW = null` → `currentNow()`가 항상 실제 시각을 반환한다.
+ * (시그니처/소비처는 무변경 — "오늘" 강조·카운트다운이 실제 날짜 기준으로 동작)
  */
-export const MOCK_NOW: Date | null = new Date('2026-05-04T09:45:00');
+export const MOCK_NOW: Date | null = null;
 
 /** mock이 설정되어 있으면 mock을, 아니면 실제 시각을 반환 */
 export function currentNow(): Date {
