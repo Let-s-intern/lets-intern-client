@@ -40,15 +40,13 @@ beforeAll(() => {
   );
 });
 
-function makeLiveBar(
-  overrides: {
-    missionId: number;
-    startTime: string;
-    endTime: string;
-    menteeName: string;
-    startDate?: string;
-  },
-): PeriodBarData {
+function makeLiveBar(overrides: {
+  missionId: number;
+  startTime: string;
+  endTime: string;
+  menteeName: string;
+  startDate?: string;
+}): PeriodBarData {
   return {
     barType: 'live-feedback',
     challengeId: 1,
@@ -169,11 +167,13 @@ describe('WeeklyCalendar — 라이브 시간순 스택', () => {
       />,
     );
 
-    await userEvent.setup().click(
-      within(screen.getByText('이지수 멘티').closest('button')!).getByText(
-        '이지수 멘티',
-      ),
-    );
+    await userEvent
+      .setup()
+      .click(
+        within(screen.getByText('이지수 멘티').closest('button')!).getByText(
+          '이지수 멘티',
+        ),
+      );
     expect(onClick).toHaveBeenCalledWith(bar);
   });
 });

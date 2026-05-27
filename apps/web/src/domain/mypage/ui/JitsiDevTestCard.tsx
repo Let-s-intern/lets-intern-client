@@ -11,8 +11,7 @@ import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
  * - 클릭 시 mock feedbackId로 즉시 Jitsi 모달 진입
  * - 멘토 ProfilePage의 동일 카드와 같은 방으로 수렴하는지 확인용
  */
-const DEV_MOCK_ENABLED =
-  process.env.NEXT_PUBLIC_JITSI_USE_DEV_MOCK === 'true';
+const DEV_MOCK_ENABLED = process.env.NEXT_PUBLIC_JITSI_USE_DEV_MOCK === 'true';
 const MOCK_FEEDBACK_ID = Number(
   process.env.NEXT_PUBLIC_JITSI_DEV_MOCK_FEEDBACK_ID ?? 999999,
 );
@@ -27,10 +26,12 @@ const JitsiDevTestCard = () => {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-between rounded-lg border border-dashed border-primary px-4 py-3 text-left text-sm font-medium text-primary hover:bg-primary-5"
+        className="border-primary text-primary hover:bg-primary-5 flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-3 text-left text-sm font-medium"
       >
         <span>🧪 Jitsi 회의실 테스트 진입 (dev mock)</span>
-        <span className="text-xs text-neutral-40">feedbackId={MOCK_FEEDBACK_ID}</span>
+        <span className="text-neutral-40 text-xs">
+          feedbackId={MOCK_FEEDBACK_ID}
+        </span>
       </button>
       <JitsiEmbedModal
         isOpen={open}

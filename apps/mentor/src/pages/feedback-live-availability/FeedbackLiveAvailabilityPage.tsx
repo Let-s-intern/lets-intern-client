@@ -75,12 +75,8 @@ const FeedbackLiveAvailabilityPage = () => {
     // 독립 비동기 작업을 Promise.all 로 병렬 처리 (Vercel async-parallel)
     // 둘 중 하나가 실패해도 다른 하나의 결과는 유지 — allSettled 사용
     const results = await Promise.allSettled([
-      creates.length > 0
-        ? createSlots.mutateAsync(creates)
-        : Promise.resolve(),
-      deletes.length > 0
-        ? deleteSlots.mutateAsync(deletes)
-        : Promise.resolve(),
+      creates.length > 0 ? createSlots.mutateAsync(creates) : Promise.resolve(),
+      deletes.length > 0 ? deleteSlots.mutateAsync(deletes) : Promise.resolve(),
     ]);
 
     const createResult = results[0];
@@ -150,7 +146,7 @@ const FeedbackLiveAvailabilityPage = () => {
         ) : (
           <>
             {saveError && (
-              <div className="border-red-100 bg-red-50 text-xsmall14 border-b px-6 py-3 text-red-600">
+              <div className="text-xsmall14 border-b border-red-100 bg-red-50 px-6 py-3 text-red-600">
                 저장 중 문제가 발생했어요: {saveError}
               </div>
             )}

@@ -73,11 +73,7 @@ export interface FeedbackRow {
  * 라이브 슬롯 4종 UI 상태 (피드백 현황 표 행에서 사용).
  * `resolveLiveFeedbackStatus`와 동일한 의미를 갖는다.
  */
-export type LiveRowUiStatus =
-  | 'waiting'
-  | 'inProgress'
-  | 'completed'
-  | 'missed';
+export type LiveRowUiStatus = 'waiting' | 'inProgress' | 'completed' | 'missed';
 
 /**
  * 서면 행 piece — 미션 단위 상태 매핑 결과.

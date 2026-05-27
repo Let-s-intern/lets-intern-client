@@ -45,11 +45,7 @@ const JitsiEmbedModal = ({
       className="mx-2 h-[92vh] w-[1280px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[90vh] md:rounded-3xl"
     >
       {roomUrl ? (
-        <JitsiEmbed
-          roomUrl={roomUrl}
-          spaceName={spaceName}
-          onClose={onClose}
-        />
+        <JitsiEmbed roomUrl={roomUrl} spaceName={spaceName} onClose={onClose} />
       ) : (
         <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-500">
           Jitsi 회의실 설정이 누락되었습니다.

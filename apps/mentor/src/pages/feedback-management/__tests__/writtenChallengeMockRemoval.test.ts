@@ -146,9 +146,9 @@ describe('writtenChallengeMock 제거 — 실 API 서면 행 렌더', () => {
       expect.arrayContaining(attendanceList.map((a) => a.name)),
     );
     // 집계 라벨이 남아있지 않아야 한다.
-    expect(
-      writtenRows.some((r) => /멘티 \d+명/.test(r.menteeNameLabel)),
-    ).toBe(false);
+    expect(writtenRows.some((r) => /멘티 \d+명/.test(r.menteeNameLabel))).toBe(
+      false,
+    );
   });
 });
 

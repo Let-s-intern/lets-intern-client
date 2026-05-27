@@ -63,9 +63,7 @@ describe('FeedbackLiveAvailabilityPage', () => {
       screen.getByRole('heading', { name: '라이브 피드백 일정 열기' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /라이브 피드백을 진행할 수 있는 시간대를 설정하세요./,
-      ),
+      screen.getByText(/라이브 피드백을 진행할 수 있는 시간대를 설정하세요./),
     ).toBeInTheDocument();
   });
 
@@ -141,8 +139,6 @@ describe('FeedbackLiveAvailabilityPage', () => {
     // RESERVED 셀은 reservedSet 분기로 "예약 완료" 라벨이 표시되어야 한다
     // (그리드가 해당 주 범위가 아니면 표시되지 않을 수 있으므로 navigation 없이 확인 가능한 카운트 0 이상)
     // 보수적으로: 페이지가 정상 렌더되었는지만 확인 (그리드 셀 존재만 검증)
-    expect(
-      screen.getByText(/주간 일정표/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/주간 일정표/)).toBeInTheDocument();
   });
 });
