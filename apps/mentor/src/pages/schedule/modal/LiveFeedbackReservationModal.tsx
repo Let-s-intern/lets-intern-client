@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 
 import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
+import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 
 import { useFeedbackMentorDetailQuery } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
@@ -29,6 +30,9 @@ const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
+
+/** 멘티 채팅 모달 — 열릴 때만 로드 (동적 import). */
+const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -62,6 +66,7 @@ const LiveFeedbackReservationModal = ({
   roundTh,
 }: LiveFeedbackReservationModalProps) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // 날짜 → 시간 순 정렬 (MenteeList의 날짜 구분선·시간대 표시와 일치)
   const reservationBars = useMemo(() => {
@@ -125,6 +130,31 @@ const LiveFeedbackReservationModal = ({
       salt,
     });
   }, [baseUrl, salt, jitsiMeta]);
+
+  // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
+  const chatRooms: ChatRoomListItem[] = useMemo(() => {
+    if (feedbackId == null) return [];
+    const menteeName =
+      feedbackDetail?.menteeName ??
+      selectedBar?.liveFeedback?.menteeName ??
+      '멘티';
+    const challengeTitle =
+      feedbackDetail?.programTitle ?? selectedBar?.challengeTitle ?? '';
+    return [
+      {
+        feedbackId,
+        title: menteeName,
+        subtitle: challengeTitle,
+        meta: { menteeName, challengeTitle },
+      },
+    ];
+  }, [
+    feedbackId,
+    feedbackDetail?.menteeName,
+    feedbackDetail?.programTitle,
+    selectedBar?.liveFeedback?.menteeName,
+    selectedBar?.challengeTitle,
+  ]);
 
   if (!bar || !selectedBar) return null;
 
@@ -425,13 +455,17 @@ const LiveFeedbackReservationModal = ({
           }
           actions={
             <div className="flex items-center gap-3">
-              {/* 멘티와 대화하기 — BE 채팅 미배포 (PRD §5.4 mentor3.15) */}
+              {/* 멘티와 대화하기 — @letscareer/chat 모달(role=mentor) 연결 */}
               <button
                 type="button"
-                disabled
-                aria-label="멘티와 대화하기 (서비스 준비 중)"
-                title="채팅 기능은 서비스 준비 중입니다"
-                className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-400"
+                onClick={() => setIsChatOpen(true)}
+                disabled={feedbackId == null}
+                aria-label="멘티와 대화하기"
+                className={
+                  feedbackId != null
+                    ? 'rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50'
+                    : 'rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-300'
+                }
               >
                 멘티와 대화하기
               </button>
@@ -472,6 +506,17 @@ const LiveFeedbackReservationModal = ({
           meta={jitsiMeta}
           spaceName={selectedBar?.challengeTitle}
         />
+      )}
+
+      {isChatOpen && chatRooms.length > 0 && (
+        <Suspense fallback={null}>
+          <ChatModal
+            role="mentor"
+            rooms={chatRooms}
+            activeFeedbackId={feedbackId}
+            onClose={() => setIsChatOpen(false)}
+          />
+        </Suspense>
       )}
     </>
   );

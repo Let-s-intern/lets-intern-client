@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import axios from '@/utils/axios';
@@ -14,6 +15,30 @@ vi.mock('@/utils/axios', () => ({
     patch: vi.fn(),
     delete: vi.fn(),
   },
+}));
+
+// 채팅 모달은 PocketBase realtime에 연결되므로 테스트에서는 패키지 컴포넌트를 모킹해
+// 멘토 측 래핑(역할·feedbackId 전달)만 검증한다. (패키지 자체는 별도 테스트됨)
+vi.mock('@letscareer/chat/ui/ChatModal', () => ({
+  default: ({
+    role,
+    activeFeedbackId,
+    onClose,
+  }: {
+    role: string;
+    activeFeedbackId?: number | null;
+    onClose: () => void;
+  }) => (
+    <div
+      data-testid="chat-modal"
+      data-role={role}
+      data-feedback-id={String(activeFeedbackId)}
+    >
+      <button type="button" onClick={onClose}>
+        채팅 모달 닫기
+      </button>
+    </div>
+  ),
 }));
 
 // mockNow는 라이브 모달이 시연용으로 잡혀 있어 setInterval이 멈춰 있음.
@@ -132,10 +157,21 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(screen.queryByText('종료됨')).not.toBeInTheDocument();
   });
 
-  it('푸터에 "멘티와 대화하기" 버튼이 disabled 로 노출된다', () => {
+  it('푸터의 "멘티와 대화하기" 버튼이 활성 상태로 노출된다', () => {
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: /멘티와 대화하기/ });
-    expect(btn).toBeDisabled();
+    const btn = screen.getByRole('button', { name: '멘티와 대화하기' });
+    expect(btn).toBeEnabled();
+  });
+
+  it('"멘티와 대화하기" 클릭 시 role=mentor·해당 feedbackId로 채팅 모달이 열린다', async () => {
+    const user = userEvent.setup();
+    renderModal(makeBar());
+
+    await user.click(screen.getByRole('button', { name: '멘티와 대화하기' }));
+
+    const modal = await screen.findByTestId('chat-modal');
+    expect(modal).toHaveAttribute('data-role', 'mentor');
+    expect(modal).toHaveAttribute('data-feedback-id', '101');
   });
 
   it('Jitsi env 미설정 시 "라이브 입장하기" 버튼이 disabled', () => {
