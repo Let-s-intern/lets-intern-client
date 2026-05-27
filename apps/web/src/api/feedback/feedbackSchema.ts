@@ -2,6 +2,13 @@ import { z } from 'zod';
 
 export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
 
+export const attendanceStatusSchema = z.enum([
+  'PRESENT',
+  'UPDATED',
+  'LATE',
+  'ABSENT',
+]);
+
 export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
 
 export const challengeMentorInfoSchema = z.object({
@@ -22,6 +29,7 @@ export const liveFeedbackItemSchema = z.object({
   missionEndDate: z.string(),
   feedbackId: z.number().nullable(),
   feedbackStatus: feedbackStatusSchema.nullable(),
+  attendanceStatus: attendanceStatusSchema.nullable(),
   mentorInfo: challengeMentorInfoSchema.nullish(),
 });
 
