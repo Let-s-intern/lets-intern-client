@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { LIVE_FEEDBACK_MOCK_DATA } from '@/pages/schedule/challenge-content/liveFeedbackMock';
-import type { PeriodBarData } from '@/pages/schedule/types';
+import { useFeedbackMentorListQuery } from '@/api/feedback/feedback';
+import type { FeedbackMentor } from '@/api/feedback/feedbackSchema';
 
 type StatusFilter = 'all' | 'waiting' | 'completed';
 
@@ -11,46 +11,46 @@ const STATUS_OPTIONS: Array<{ key: StatusFilter; label: string }> = [
   { key: 'completed', label: '완료' },
 ];
 
-function isCompleted(bar: PeriodBarData): boolean {
-  return bar.liveFeedback?.status === 'completed';
+function isCompleted(item: FeedbackMentor): boolean {
+  return item.status === 'COMPLETED';
 }
 
-function formatDate(date: string): string {
-  const [, month, day] = date.split('-');
-  return `${Number(month)}월 ${Number(day)}일`;
+/** ISO 문자열에서 "M월 D일" 추출 */
+function formatDate(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+/** ISO 문자열에서 "HH:mm" 추출 */
+function formatTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
 }
 
 /**
  * 좌측 메뉴 "라이브설정 > 예약 현황" 페이지.
  *
- * BE 미연동 — 기존 라이브 피드백 mock 에서 개별 세션(barType: 'live-feedback')
- * 만 추출해 리스트로 노출하는 1차 골격.
- *
- * TODO(BE):
- *  - 예약 리스트 API 확정 후 mock 자리 교체
- *  - 정렬/페이지네이션/검색 (디자이너 명세 확정 후)
- *  - 상세 모달 진입 (LiveFeedbackReservationModal 재사용 검토)
+ * `GET /feedback/mentor` 목록을 노출한다.
+ * 상태(`status`) 기준 필터/카운트: COMPLETED → '완료', 그 외(RESERVED/CANCELED) → '예정'.
  */
 const FeedbackLiveReservationPage = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
+  const { data, isLoading, isError } = useFeedbackMentorListQuery();
+
   const reservations = useMemo(() => {
-    return LIVE_FEEDBACK_MOCK_DATA.filter(
-      (bar) => bar.barType === 'live-feedback' && bar.liveFeedback,
-    ).sort((a, b) => {
-      if (a.startDate !== b.startDate) {
-        return a.startDate.localeCompare(b.startDate);
-      }
-      const aTime = a.liveFeedback?.startTime ?? '';
-      const bTime = b.liveFeedback?.startTime ?? '';
-      return aTime.localeCompare(bTime);
-    });
-  }, []);
+    if (!data) return [];
+    return data.slice().sort((a, b) => a.startDate.localeCompare(b.startDate));
+  }, [data]);
 
   const filteredReservations = useMemo(() => {
     if (statusFilter === 'all') return reservations;
     if (statusFilter === 'completed') return reservations.filter(isCompleted);
-    return reservations.filter((bar) => !isCompleted(bar));
+    return reservations.filter((item) => !isCompleted(item));
   }, [reservations, statusFilter]);
 
   const counts = useMemo(() => {
@@ -95,7 +95,22 @@ const FeedbackLiveReservationPage = () => {
         })}
       </div>
 
-      {filteredReservations.length === 0 ? (
+      {isLoading ? (
+        <div className="border-neutral-85 flex flex-col items-center justify-center gap-2 rounded-md border bg-white py-16">
+          <p className="text-small16 text-neutral-30 font-medium">
+            불러오는 중...
+          </p>
+        </div>
+      ) : isError ? (
+        <div className="border-neutral-85 flex flex-col items-center justify-center gap-2 rounded-md border bg-white py-16">
+          <p className="text-small16 text-neutral-30 font-medium">
+            예약 내역을 불러오지 못했습니다.
+          </p>
+          <p className="text-xsmall14 text-neutral-40">
+            잠시 후 다시 시도해 주세요.
+          </p>
+        </div>
+      ) : filteredReservations.length === 0 ? (
         <div className="border-neutral-85 flex flex-col items-center justify-center gap-2 rounded-md border bg-white py-16">
           <p className="text-small16 text-neutral-30 font-medium">
             아직 예약이 없습니다.
@@ -106,25 +121,25 @@ const FeedbackLiveReservationPage = () => {
         </div>
       ) : (
         <ul className="border-neutral-85 divide-neutral-90 divide-y overflow-hidden rounded-md border bg-white">
-          {filteredReservations.map((bar) => {
-            const completed = isCompleted(bar);
+          {filteredReservations.map((item) => {
+            const completed = isCompleted(item);
             return (
               <li
-                key={`${bar.challengeId}-${bar.startDate}-${bar.liveFeedback?.startTime}`}
+                key={item.feedbackId}
                 className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
               >
                 <div className="flex flex-col gap-0.5">
                   <p className="text-small16 text-neutral-10 font-semibold">
-                    {bar.liveFeedback?.menteeName ?? '익명'} 멘티
+                    {item.menteeName} 멘티
                   </p>
                   <p className="text-xsmall14 text-neutral-40">
-                    {bar.challengeTitle}
+                    {item.programTitle}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xsmall14 text-neutral-30">
-                    {formatDate(bar.startDate)} · {bar.liveFeedback?.startTime}~
-                    {bar.liveFeedback?.endTime}
+                    {formatDate(item.startDate)} · {formatTime(item.startDate)}~
+                    {formatTime(item.endDate)}
                   </span>
                   <span
                     className={`text-xxsmall12 rounded-full px-2 py-0.5 font-medium ${
@@ -141,11 +156,6 @@ const FeedbackLiveReservationPage = () => {
           })}
         </ul>
       )}
-
-      <div className="bg-neutral-95 text-xxsmall12 text-neutral-40 rounded-md px-3 py-2">
-        ⚠ 예약 리스트는 mock 데이터입니다. 실제 데이터 연동은 BE API 확정 후
-        진행됩니다.
-      </div>
     </div>
   );
 };
