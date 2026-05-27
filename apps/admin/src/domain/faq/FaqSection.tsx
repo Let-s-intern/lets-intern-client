@@ -1,7 +1,8 @@
 import { CategoryTabs } from '@letscareer/ui';
+import { Button } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
+import { useDeleteFaq, useGetFaq, usePatchFaq } from '@/api/faq';
 import { CreateReportData, UpdateReportData } from '@/api/report';
 import {
   CreateChallengeReq,
@@ -11,6 +12,7 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
 } from '@/schema';
+import FaqAddModal from './FaqAddModal';
 
 interface FaqSectionProps<
   T extends
@@ -39,25 +41,31 @@ function FaqSection<
   const [faqList, setFaqList] = useState<Faq[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('진행 방식');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { data } = useGetFaq(programType);
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
-  const { mutateAsync: postFaq } = usePostFaq();
 
-  const tabs = useMemo(() => {
-    const customCategories = [
+  const customCategories = useMemo(
+    () => [
       ...new Set(
         faqList
           .map((faq) => faq.category ?? '')
           .filter((cat) => cat && !FIXED_CATEGORIES.includes(cat)),
       ),
-    ];
-    return ['전체', ...FIXED_CATEGORIES, ...customCategories].map((cat) => ({
-      value: cat,
-      label: cat,
-    }));
-  }, [faqList]);
+    ],
+    [faqList],
+  );
+
+  const tabs = useMemo(
+    () =>
+      ['전체', ...FIXED_CATEGORIES, ...customCategories].map((cat) => ({
+        value: cat,
+        label: cat,
+      })),
+    [customCategories],
+  );
 
   const filteredFaqList =
     selectedCategory === '전체'
@@ -126,82 +134,94 @@ function FaqSection<
   }, [data]);
 
   return (
-    <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-xl font-medium">FAQ</h3>
-        <FaqButton onClick={async () => await postFaq(programType)}>
-          문항 추가
-        </FaqButton>
-      </div>
-
-      <CategoryTabs
-        className="mb-4"
-        options={tabs}
-        selected={selectedCategory}
-        onChange={setSelectedCategory}
+    <>
+      <FaqAddModal
+        isOpen={isAddModalOpen}
+        programType={programType}
+        customCategories={customCategories}
+        onClose={() => setIsAddModalOpen(false)}
       />
-
-      {filteredFaqList.length === 0 ? (
-        <p className="text-center text-sm text-gray-400">
-          해당 카테고리의 FAQ가 없습니다.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {filteredFaqList.map((faq) => (
-            <div key={faq.id} className="flex gap-2">
-              <input
-                type="checkbox"
-                checked={
-                  (faqInfo ?? []).findIndex((info) => info.faqId === faq.id) !==
-                  -1
-                }
-                onChange={(e) => checkFaq(e, faq.id)}
-              />
-              <div className="flex w-full flex-col gap-2">
-                <FaqInput
-                  name="question"
-                  placeholder="질문을 입력하세요."
-                  value={faq.question ?? ''}
-                  onChange={(e) => onChange(e, faq.id)}
-                />
-                <FaqInput
-                  name="answer"
-                  placeholder="답변을 입력하세요."
-                  value={faq.answer ?? ''}
-                  onChange={(e) => onChange(e, faq.id)}
-                />
-              </div>
-              {programType === 'CHALLENGE' && (
-                <FaqInput
-                  name="category"
-                  placeholder="유형을 입력하세요."
-                  value={faq.category ?? ''}
-                  onChange={(e) => onChange(e, faq.id)}
-                />
-              )}
-              <button
-                type="button"
-                className="w-[5rem] rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
-                onClick={async () => await deleteFaq(faq.id)}
-              >
-                삭제
-              </button>
-            </div>
-          ))}
+      <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-xl font-medium">FAQ</h3>
+          <Button variant="contained" onClick={() => setIsAddModalOpen(true)}>
+            문항 추가
+          </Button>
         </div>
-      )}
-      <div className="mt-4 flex justify-start">
-        <FaqButton
-          onClick={() => {
-            Promise.all(faqList.map((faq) => patchFaq(faq)))
-              .then(() => alert('FAQ가 저장되었습니다.'))
-              .catch((err) => alert(`FAQ 저장에 실패했습니다.\n${err}`));
-          }}
-        >
-          저장
-        </FaqButton>
+
+        <CategoryTabs
+          className="mb-4"
+          options={tabs}
+          selected={selectedCategory}
+          onChange={setSelectedCategory}
+        />
+
+        {filteredFaqList.length === 0 ? (
+          <div className="py-10 text-center">
+            <span className="text-sm text-gray-400">
+              해당 카테고리의 FAQ가 없습니다.
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {filteredFaqList.map((faq) => (
+              <div key={faq.id} className="flex gap-2">
+                <input
+                  type="checkbox"
+                  checked={
+                    (faqInfo ?? []).findIndex(
+                      (info) => info.faqId === faq.id,
+                    ) !== -1
+                  }
+                  onChange={(e) => checkFaq(e, faq.id)}
+                />
+                <div className="flex w-full flex-col gap-2">
+                  <FaqInput
+                    name="question"
+                    placeholder="질문을 입력하세요."
+                    value={faq.question ?? ''}
+                    onChange={(e) => onChange(e, faq.id)}
+                  />
+                  <FaqInput
+                    name="answer"
+                    placeholder="답변을 입력하세요."
+                    value={faq.answer ?? ''}
+                    onChange={(e) => onChange(e, faq.id)}
+                  />
+                </div>
+                {programType === 'CHALLENGE' && (
+                  <FaqInput
+                    name="category"
+                    placeholder="유형을 입력하세요."
+                    value={faq.category ?? ''}
+                    onChange={(e) => onChange(e, faq.id)}
+                  />
+                )}
+                <button
+                  type="button"
+                  className="w-[5rem] rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+                  onClick={async () => await deleteFaq(faq.id)}
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="mt-4 flex justify-start">
+          <Button
+            variant="contained"
+            onClick={() => {
+              Promise.all(faqList.map((faq) => patchFaq(faq)))
+                .then(() => alert('FAQ가 저장되었습니다.'))
+                .catch((err) => alert(`FAQ 저장에 실패했습니다.\n${err}`));
+            }}
+          >
+            저장
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -223,24 +243,6 @@ function FaqInput({
       value={value}
       onChange={onChange}
     />
-  );
-}
-
-function FaqButton({
-  onClick,
-  children,
-}: React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->) {
-  return (
-    <button
-      type="button"
-      className="rounded-xs bg-primary text-xsmall16 p-3 font-bold text-white"
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 }
 
