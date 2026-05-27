@@ -12,16 +12,17 @@ interface JitsiEmbedProps {
 }
 
 /**
- * Jitsi 클라이언트 설정 — 오디오 only + 화면공유 모드.
+ * Jitsi 클라이언트 설정 — 카메라(얼굴)·마이크·화면공유 모드.
  *
  * 정책:
- * - 카메라 차단: toolbarButtons에서 'camera' 제외 → UI에 버튼 없음
- * - 시작 시 비디오 OFF, 마이크 ON
+ * - 카메라 허용: toolbarButtons에 'camera' 포함 → 얼굴 공유 가능
+ * - 시작 시 비디오 ON, 마이크 ON
  * - 화면공유 1인 (Jitsi 기본 동작)
  * - 카메라 트랙 480p (사용자 우회 대비), 화면공유 5~15FPS
  */
 const ALLOWED_TOOLBAR_BUTTONS = [
   'microphone',
+  'camera',
   'desktop',
   'chat',
   'tileview',
@@ -32,9 +33,9 @@ const ALLOWED_TOOLBAR_BUTTONS = [
 ];
 
 const CONFIG_OVERWRITE = {
-  startWithVideoMuted: true,
+  startWithVideoMuted: false,
   startWithAudioMuted: false,
-  disableSelfView: true,
+  disableSelfView: false,
   toolbarButtons: ALLOWED_TOOLBAR_BUTTONS,
   resolution: 480,
   constraints: {
