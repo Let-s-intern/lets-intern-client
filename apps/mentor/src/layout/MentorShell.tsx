@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { MentorGuard } from '@/guards/MentorGuard';
+import MentorChatLauncher from './MentorChatLauncher';
 import { MentorSidebar } from './MentorSidebar';
 
 /**
@@ -40,6 +41,9 @@ export default function MentorShell() {
             <Outlet />
           </main>
         </div>
+
+        {/* 전역 멘토 채팅 런처 (플로팅 버튼 + 모달) — 1회 마운트 */}
+        <MentorChatLauncher />
       </div>
     </MentorGuard>
   );
