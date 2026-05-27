@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   useCreateFeedbackMentorSlotsMutation,
   useDeleteFeedbackMentorSlotsMutation,
   useFeedbackMentorSlotsQuery,
 } from '@/api/feedback/feedback';
+import OutlinedButton from '@/common/button/OutlinedButton';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
@@ -22,6 +24,8 @@ import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
  * 분리 자체를 폐기하고 통합 일정으로 운영한다.
  */
 const FeedbackLiveAvailabilityPage = () => {
+  const navigate = useNavigate();
+
   // 그리드 RESETKEY — 저장 실패 시 직전 BE 상태로 되돌리기 위해 사용
   const [resetCounter, setResetCounter] = useState(0);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -103,13 +107,24 @@ const FeedbackLiveAvailabilityPage = () => {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-6">
-      <div className="flex shrink-0 flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-          라이브 피드백 일정 열기
-        </h1>
-        <p className="text-xsmall14 text-neutral-40">
-          라이브 피드백을 진행할 수 있는 시간대를 설정하세요.
-        </p>
+      <div className="flex shrink-0 flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+            라이브 피드백 일정 열기
+          </h1>
+          <p className="text-xsmall14 text-neutral-40">
+            라이브 피드백을 진행할 수 있는 시간대를 설정하세요.
+          </p>
+        </div>
+        <OutlinedButton
+          type="button"
+          variant="secondary"
+          size="sm"
+          className="shrink-0"
+          onClick={() => navigate('/feedback/live-reservation')}
+        >
+          예약현황 보기
+        </OutlinedButton>
       </div>
 
       <div className="border-neutral-85 flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-md border bg-white">
