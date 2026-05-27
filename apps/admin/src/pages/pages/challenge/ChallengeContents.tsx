@@ -129,12 +129,14 @@ const ChallengeContents = () => {
           ))}
         </LineTableBody>
       </div>
-      <MuiPagination
-        page={pageable.page}
-        pageInfo={data?.pageInfo ?? { totalPages: 0 }}
-        onChange={handlePageChange}
-        className="py-4"
-      />
+      <div className="flex justify-center">
+        <MuiPagination
+          page={pageable.page}
+          pageInfo={data?.pageInfo ?? { totalPages: 0 }}
+          onChange={handlePageChange}
+          className="py-4"
+        />
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import Button from '@/domain/admin/challenge/ui/button/Button';
 import Heading from '@/domain/admin/challenge/ui/heading/Heading';
 import LineTableBody from '@/domain/admin/challenge/ui/lineTable/LineTableBody';
@@ -6,6 +5,7 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
+import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { usePageableWithSearchParams } from '@/hooks/usePageableWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import {
@@ -199,12 +199,14 @@ const ChallengeMissionManagement = () => {
           ))}
         </LineTableBody>
       </div>
-      <MuiPagination
-        page={pageable.page}
-        pageInfo={data?.pageInfo ?? { totalPages: 0 }}
-        onChange={handlePageChange}
-        className="py-4"
-      />
+      <div className="flex justify-center">
+        <MuiPagination
+          page={pageable.page}
+          pageInfo={data?.pageInfo ?? { totalPages: 0 }}
+          onChange={handlePageChange}
+          className="py-4"
+        />
+      </div>
     </div>
   );
 };
