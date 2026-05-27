@@ -33,6 +33,9 @@ export const ChatRoomSchema = z.object({
   mentorName: z.string().optional().default(''),
   menteeName: z.string().optional().default(''),
   challengeTitle: z.string().optional().default(''),
+  // 종료(숨김) 플래그 — 해당 역할이 종료하면 그 역할의 목록에서 숨긴다(삭제 X).
+  mentorEnded: z.boolean().optional().default(false),
+  menteeEnded: z.boolean().optional().default(false),
 });
 export type ChatRoom = z.infer<typeof ChatRoomSchema>;
 
@@ -40,4 +43,10 @@ export type ChatRoom = z.infer<typeof ChatRoomSchema>;
 export const LAST_READ_FIELD = {
   mentor: 'mentorLastReadAt',
   mentee: 'menteeLastReadAt',
+} as const;
+
+/** 역할별 종료(숨김) 플래그 필드명. */
+export const ENDED_FIELD = {
+  mentor: 'mentorEnded',
+  mentee: 'menteeEnded',
 } as const;

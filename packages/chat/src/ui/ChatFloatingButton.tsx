@@ -33,10 +33,14 @@ export default function ChatFloatingButton({
   positionClassName = 'bottom-6 right-6',
   label,
 }: ChatFloatingButtonProps) {
-  const { total } = useUnreadSummary({ feedbackIds, role, pbUrl });
+  const { total, visibleRooms } = useUnreadSummary({
+    feedbackIds,
+    role,
+    pbUrl,
+  });
 
-  // 방(대화 상대)이 있을 때만 노출한다. 안읽음 개수는 뱃지로 표시.
-  if (feedbackIds.length === 0) return null;
+  // 메시지가 있고 안 숨긴 방이 하나라도 있을 때만 노출(빈 방·종료한 방 제외).
+  if (visibleRooms.size === 0) return null;
 
   const badge = formatBadge(total);
   const text = label ?? (role === 'mentor' ? '멘티와 채팅' : '멘토와 채팅');

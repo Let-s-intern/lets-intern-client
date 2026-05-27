@@ -8,6 +8,7 @@ import { chatRoomKey } from '../roomKey';
 import {
   ChatMessageSchema,
   ChatRoomSchema,
+  ENDED_FIELD,
   LAST_READ_FIELD,
   type ChatMessage,
   type ChatRole,
@@ -52,6 +53,8 @@ interface UseUnreadSummaryOptions {
 interface UseUnreadSummaryResult {
   total: number;
   unreadByRoom: Record<string, number>;
+  /** 메시지가 있고(빈 방 제외) 내가 종료(숨김)하지 않은 방 키 집합. */
+  visibleRooms: Set<string>;
 }
 
 function parseList<T>(
@@ -77,7 +80,11 @@ export function useUnreadSummary({
   role,
   pbUrl,
 }: UseUnreadSummaryOptions): UseUnreadSummaryResult {
-  const [unreadByRoom, setUnreadByRoom] = useState<Record<string, number>>({});
+  const [state, setState] = useState<{
+    unreadByRoom: Record<string, number>;
+    visibleRooms: Set<string>;
+  }>({ unreadByRoom: {}, visibleRooms: new Set<string>() });
+
   const roomsKey = feedbackIds
     .slice()
     .sort((a, b) => a - b)
@@ -85,35 +92,43 @@ export function useUnreadSummary({
 
   const load = useCallback(async () => {
     if (feedbackIds.length === 0) {
-      setUnreadByRoom({});
+      setState({ unreadByRoom: {}, visibleRooms: new Set<string>() });
       return;
     }
     const pb = getChatClient(pbUrl);
     const rooms = feedbackIds.map(chatRoomKey);
     const roomFilter = rooms.map((r) => `room="${r}"`).join(' || ');
-    const otherRole: ChatRole = role === 'mentor' ? 'mentee' : 'mentor';
 
     const [roomRecords, messageRecords] = await Promise.all([
       pb.collection(COLLECTIONS.rooms).getFullList({ filter: roomFilter }),
-      pb.collection(COLLECTIONS.messages).getFullList({
-        filter: `(${roomFilter}) && sender="${otherRole}"`,
-      }),
+      pb.collection(COLLECTIONS.messages).getFullList({ filter: roomFilter }),
     ]);
 
     const lastReadByRoom: Record<string, string> = {};
+    const endedByRoom: Record<string, boolean> = {};
     for (const r of parseList(roomRecords, ChatRoomSchema)) {
       lastReadByRoom[r.room] = r[LAST_READ_FIELD[role]];
+      endedByRoom[r.room] = Boolean(r[ENDED_FIELD[role]]);
     }
 
     const messages = parseList(messageRecords, ChatMessageSchema);
-    const byRoom: Record<string, number> = {};
-    for (const room of rooms) byRoom[room] = 0;
+    const unreadByRoom: Record<string, number> = {};
+    const hasMessages: Record<string, boolean> = {};
+    for (const room of rooms) unreadByRoom[room] = 0;
     for (const m of messages) {
+      hasMessages[m.room] = true;
       if (isUnread(m, role, lastReadByRoom[m.room] ?? '')) {
-        byRoom[m.room] = (byRoom[m.room] ?? 0) + 1;
+        unreadByRoom[m.room] = (unreadByRoom[m.room] ?? 0) + 1;
       }
     }
-    setUnreadByRoom(byRoom);
+
+    // 메시지가 있고(빈 방 제외) 내가 종료(숨김)하지 않은 방만 노출.
+    const visibleRooms = new Set<string>();
+    for (const room of rooms) {
+      if (hasMessages[room] && !endedByRoom[room]) visibleRooms.add(room);
+    }
+
+    setState({ unreadByRoom, visibleRooms });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomsKey, role, pbUrl]);
 
@@ -146,6 +161,14 @@ export function useUnreadSummary({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
-  const total = Object.values(unreadByRoom).reduce((a, b) => a + b, 0);
-  return { total, unreadByRoom };
+  // 숨겨진/빈 방의 안읽음은 합계에서 제외한다.
+  const total = Array.from(state.visibleRooms).reduce(
+    (acc, room) => acc + (state.unreadByRoom[room] ?? 0),
+    0,
+  );
+  return {
+    total,
+    unreadByRoom: state.unreadByRoom,
+    visibleRooms: state.visibleRooms,
+  };
 }

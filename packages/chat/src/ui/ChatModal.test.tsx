@@ -20,6 +20,7 @@ vi.mock('../hooks/useUnreadSummary', () => ({
   useUnreadSummary: () => ({
     total: 3,
     unreadByRoom: { feedback_1: 3, feedback_2: 0 },
+    visibleRooms: new Set(['feedback_1', 'feedback_2']),
   }),
 }));
 

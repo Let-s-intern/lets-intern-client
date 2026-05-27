@@ -42,22 +42,32 @@ export default function ChatModal({
     activeFeedbackId ?? rooms[0]?.feedbackId ?? null,
   );
 
-  // 내가 종료한 방은 즉시 목록에서 숨긴다(양쪽 종료 시 PB에서 삭제됨).
+  // 내가 방금 종료한 방은 즉시 목록에서 제거(낙관적). PB 숨김 플래그는 비동기 반영.
   const [endedIds, setEndedIds] = useState<number[]>([]);
 
-  const visibleRooms = rooms.filter((r) => !endedIds.includes(r.feedbackId));
-  const feedbackIds = visibleRooms.map((r) => r.feedbackId);
-  const { unreadByRoom } = useUnreadSummary({ feedbackIds, role, pbUrl });
+  const { unreadByRoom, visibleRooms: visibleRoomKeys } = useUnreadSummary({
+    feedbackIds: rooms.map((r) => r.feedbackId),
+    role,
+    pbUrl,
+  });
+
+  // 메시지가 있고 내가 숨기지 않은 방만 노출. 단, 명시적으로 연 방
+  // (activeFeedbackId)은 시작/재입장을 위해 항상 포함한다.
+  const displayRooms = rooms.filter(
+    (r) =>
+      !endedIds.includes(r.feedbackId) &&
+      (visibleRoomKeys.has(chatRoomKey(r.feedbackId)) ||
+        r.feedbackId === activeFeedbackId),
+  );
   const selectedRoom =
-    visibleRooms.find((r) => r.feedbackId === selectedId) ?? null;
-  // 멘토관리처럼 항상 좌측 목록(멘토/멘티 로스터)을 노출한다.
-  const showList = visibleRooms.length >= 1;
+    displayRooms.find((r) => r.feedbackId === selectedId) ?? null;
+  const showList = displayRooms.length >= 1;
 
   const handleEnded = (feedbackId: number) => {
     const next = [...endedIds, feedbackId];
     setEndedIds(next);
     if (selectedId === feedbackId) {
-      const remaining = rooms.filter((r) => !next.includes(r.feedbackId));
+      const remaining = displayRooms.filter((r) => r.feedbackId !== feedbackId);
       setSelectedId(remaining[0]?.feedbackId ?? null);
     }
   };
@@ -80,7 +90,7 @@ export default function ChatModal({
       >
         {showList && (
           <ChatRoomList
-            rooms={visibleRooms}
+            rooms={displayRooms}
             selectedId={selectedId}
             unreadByRoom={unreadByRoom}
             onSelect={setSelectedId}

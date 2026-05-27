@@ -25,8 +25,8 @@ interface UseChatRoomResult {
   room: string;
   sendMessage: (text: string) => Promise<void>;
   markRead: () => Promise<void>;
-  /** 내 역할의 종료 플래그 set. 멘토·멘티 둘 다 종료하면 방+메시지 삭제. */
-  endChat: () => Promise<{ deleted: boolean }>;
+  /** 내 역할의 종료(숨김) 플래그 set + 종료 안내 메시지. 메시지는 보존(삭제 X). */
+  endChat: () => Promise<void>;
 }
 
 /**
@@ -79,40 +79,39 @@ export function useChatRoom({
 
   const markRead = useCallback(async () => {
     const pb = getChatClient(pbUrl);
-    const record = await ensureRoom();
-    await pb
-      .collection(COLLECTIONS.rooms)
-      .update(record.id, { [LAST_READ_FIELD[role]]: new Date().toISOString() });
-  }, [role, pbUrl, ensureRoom]);
+    const record = (await ensureRoom()) as {
+      id: string;
+      mentorEnded?: boolean;
+      menteeEnded?: boolean;
+    };
+    const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
+    // 내가 종료(숨김)했던 방을 다시 열면 재입장 처리 + 안내 메시지.
+    if (record[endedField]) {
+      await pb.collection(COLLECTIONS.messages).create({
+        room,
+        sender: 'system',
+        text: `${role === 'mentor' ? '멘토' : '멘티'}가 입장했습니다.`,
+      });
+    }
+    await pb.collection(COLLECTIONS.rooms).update(record.id, {
+      [LAST_READ_FIELD[role]]: new Date().toISOString(),
+      [endedField]: false,
+    });
+  }, [room, role, pbUrl, ensureRoom]);
 
-  const endChat = useCallback(async (): Promise<{ deleted: boolean }> => {
+  const endChat = useCallback(async (): Promise<void> => {
     const pb = getChatClient(pbUrl);
     const record = await ensureRoom();
-    // 종료 안내 시스템 메시지를 남긴다(상대가 종료 사실을 인지).
+    const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
+    // 종료 안내 시스템 메시지 + 내 종료(숨김) 플래그 set. 메시지는 보존(삭제 X).
     await pb.collection(COLLECTIONS.messages).create({
       room,
       sender: 'system',
       text: `${role === 'mentor' ? '멘토' : '멘티'}가 채팅을 종료했습니다.`,
     });
-    const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
-    const updated = await pb
+    await pb
       .collection(COLLECTIONS.rooms)
-      .update<{ mentorEnded?: boolean; menteeEnded?: boolean }>(record.id, {
-        [endedField]: true,
-      });
-
-    // 양쪽 모두 종료하면 메시지 전체 + 방 삭제.
-    const bothEnded = Boolean(updated.mentorEnded && updated.menteeEnded);
-    if (bothEnded) {
-      const messages = await pb
-        .collection(COLLECTIONS.messages)
-        .getFullList({ filter: `room="${room}"` });
-      await Promise.all(
-        messages.map((m) => pb.collection(COLLECTIONS.messages).delete(m.id)),
-      );
-      await pb.collection(COLLECTIONS.rooms).delete(record.id);
-    }
-    return { deleted: bothEnded };
+      .update(record.id, { [endedField]: true });
   }, [room, role, pbUrl, ensureRoom]);
 
   return { room, sendMessage, markRead, endChat };
