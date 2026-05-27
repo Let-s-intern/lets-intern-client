@@ -18,6 +18,7 @@ import {
 } from './hooks/useLiveFeedbackList';
 import {
   useMergedFeedbackRows,
+  useWrittenMissionRangeMap,
   type WrittenMenteeAttendance,
 } from './hooks/useMergedFeedbackRows';
 import type { FeedbackRow } from './types';
@@ -54,10 +55,19 @@ const FeedbackManagementPage = () => {
     [],
   );
 
+  // 서면 피드백 기간 — feedback-management 응답엔 미션 날짜가 없어, 챌린지별
+  // 미션 목록을 병렬 조회해 missionId→{start,end} 맵을 채운다(서면 행 일정 표시용).
+  const challengeIds = useMemo(
+    () => challengeList.map((c) => c.challengeId),
+    [challengeList],
+  );
+  const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
+
   const allRows = useMergedFeedbackRows(
     challengeList,
     allLiveRounds,
     writtenAttendance,
+    missionRangeMap,
   );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();

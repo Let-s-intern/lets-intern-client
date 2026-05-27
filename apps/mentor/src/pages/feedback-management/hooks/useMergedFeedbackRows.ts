@@ -1,6 +1,8 @@
+import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
+import axios from '@/utils/axios';
+import { challengeMissionFeedbackListSchema } from '@/api/challenge/challengeSchema';
 import type {
   FeedbackStatus,
   MentorFeedbackManagement,
@@ -75,7 +77,11 @@ function summarizeWrittenMentee(mentee: WrittenMenteeAttendance): {
     return { submissionLabel, statusLabel: '완료', statusTone: 'completed' };
   }
   if (mentee.feedbackStatus === 'IN_PROGRESS') {
-    return { submissionLabel, statusLabel: '진행 중', statusTone: 'inProgress' };
+    return {
+      submissionLabel,
+      statusLabel: '진행 중',
+      statusTone: 'inProgress',
+    };
   }
   return { submissionLabel, statusLabel: '진행 전', statusTone: 'waiting' };
 }
@@ -158,14 +164,15 @@ function resolveLiveParticipation(bar: PeriodBarData): {
   return { menteeParticipation: null, mentorParticipation: null };
 }
 
-interface MissionRangeMap {
-  /** missionId → 서면 피드백 기간 {start, end} */
-  get(id: number): { start: string; end: string } | undefined;
-}
+/** missionId → 서면 피드백 기간 {start, end} */
+export type MissionRangeMap = ReadonlyMap<
+  number,
+  { start: string; end: string }
+>;
 
-function buildMissionRangeMap(
+export function buildMissionRangeMap(
   apiMissions: Array<{ id: number; endDate?: string | null }>,
-): MissionRangeMap {
+): Map<number, { start: string; end: string }> {
   const map = new Map<number, { start: string; end: string }>();
   const addDays = (iso: string, days: number) => {
     const d = new Date(iso);
@@ -203,13 +210,13 @@ export function useMergedFeedbackRows(
    * 누락(미주입/로딩/빈) 미션은 행을 0개 생성한다 (graceful).
    */
   writtenAttendanceMap?: WrittenAttendanceMap,
+  /**
+   * missionId → 서면 피드백 기간 {start, end}.
+   * feedback-management 응답에는 미션 날짜가 없어, 미션 기간이 필요한 호출자는
+   * `useWrittenMissionRangeMap(challengeIds)`로 채워 주입한다. 미주입 시 일정은 '-'.
+   */
+  missionRangeMap?: MissionRangeMap,
 ): FeedbackRow[] {
-  // 서면 피드백 기간 맵.
-  // feedback-management 응답(mentorFeedbackManagementSchema)에는 미션별 피드백
-  // 기간 필드가 없어 기본은 빈 맵이며, 서면 행 일정은 '-'로 표기된다.
-  // 미션별 기간이 필요한 호출자는 useApiMissionRangeMap(challengeId)로 주입한다.
-  const missionRangeMap = useMemo(() => buildMissionRangeMap([]), []);
-
   return useMemo(() => {
     const now = currentNow();
     const rows: FeedbackRow[] = [];
@@ -217,14 +224,15 @@ export function useMergedFeedbackRows(
     // ── 서면 행 (멘티 1명당 1행) ─────────────────────────────────────
     for (const challenge of writtenChallenges) {
       for (const mission of challenge.feedbackMissions) {
-        const range = missionRangeMap.get(mission.missionId);
+        const range = missionRangeMap?.get(mission.missionId);
         const scheduleStart = range?.start ?? '';
         const scheduleEnd = range?.end ?? '';
         const scheduleLabel = formatWrittenSchedule(scheduleStart, scheduleEnd);
 
         const menteeList =
-          writtenAttendanceMap?.get(`${challenge.challengeId}-${mission.missionId}`) ??
-          [];
+          writtenAttendanceMap?.get(
+            `${challenge.challengeId}-${mission.missionId}`,
+          ) ?? [];
 
         // 출석이 비어있으면(미주입/로딩) 이 미션은 행 0개 — 깨지지 않게 skip.
         menteeList.forEach((mentee, menteeIdx) => {
@@ -315,13 +323,42 @@ export function useMergedFeedbackRows(
 }
 
 /**
- * 옵션 — 향후 API mission 응답을 가져와 missionRangeMap을 채울 때 사용.
- * 현재 selector는 mock override만 쓰지만, 다중 챌린지 API range를 합치고 싶을 때
- * 이 hook을 호출자가 함께 사용하면 missionRangeMap을 외부에서 주입할 수 있다.
+ * 여러 챌린지의 미션 날짜(`GET /challenge/:id/mission/feedback`)를 병렬 조회해
+ * 서면 피드백 기간 맵(missionId → {start, end})을 합쳐 반환한다.
+ *
+ * feedback-management 응답에는 미션 날짜가 없어 서면 행 일정이 '-'로 비어 있는데,
+ * 이 hook 결과를 `useMergedFeedbackRows`에 주입하면 `scheduleLabel`이 채워진다.
+ *
+ * useQueries 로 challengeId 별 fan-out(N+1 허용). 도착한 미션만 endDate+2~+4로 파생한다.
  */
-export function useApiMissionRangeMap(challengeId: number | undefined) {
-  const { data } = useMentorMissionFeedbackListQuery(challengeId ?? 0, {
-    enabled: !!challengeId,
+export function useWrittenMissionRangeMap(
+  challengeIds: number[],
+): MissionRangeMap {
+  const results = useQueries({
+    queries: challengeIds.map((challengeId) => ({
+      queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+      queryFn: async () => {
+        const res = await axios.get(
+          `/challenge/${challengeId}/mission/feedback`,
+        );
+        return challengeMissionFeedbackListSchema.parse(res.data.data);
+      },
+    })),
   });
-  return useMemo(() => buildMissionRangeMap(data?.missionList ?? []), [data]);
+
+  // 결과 배열의 미션 리스트를 평면화해 단일 키로 메모 (객체 참조 변동 최소화).
+  const missionListKey = results
+    .map((r) => (r.data ? r.data.missionList.map((m) => m.id).join(',') : ''))
+    .join('|');
+
+  return useMemo(() => {
+    const merged = new Map<number, { start: string; end: string }>();
+    for (const result of results) {
+      const partial = buildMissionRangeMap(result.data?.missionList ?? []);
+      partial.forEach((range, id) => merged.set(id, range));
+    }
+    return merged;
+    // missionListKey 가 같으면 같은 미션 집합 → 재계산 불필요.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [missionListKey]);
 }

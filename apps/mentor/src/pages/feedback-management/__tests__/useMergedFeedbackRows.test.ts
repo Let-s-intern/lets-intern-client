@@ -40,9 +40,7 @@ const writtenMock: Challenge[] = [
         th: 1,
         submittedCount: 5,
         notSubmittedCount: 2,
-        feedbackStatusCounts: [
-          { feedbackStatus: 'COMPLETED', count: 5 },
-        ],
+        feedbackStatusCounts: [{ feedbackStatus: 'COMPLETED', count: 5 }],
       },
       {
         missionId: 1003,
@@ -94,7 +92,12 @@ const liveSessionBar: PeriodBarData = {
   waitingCount: 0,
   inProgressCount: 0,
   completedCount: 0,
-  liveFeedback: { id: 101, menteeName: '이지수', startTime: '10:00', endTime: '10:30' },
+  liveFeedback: {
+    id: 101,
+    menteeName: '이지수',
+    startTime: '10:00',
+    endTime: '10:30',
+  },
 };
 
 const liveCompletedBar: PeriodBarData = {
@@ -202,10 +205,33 @@ describe('useMergedFeedbackRows', () => {
     expect(row?.thLabel).toBe('1회차');
   });
 
-  it('라이브 행은 멘티 제출(submissionLabel)이 null이다', () => {
+  it('missionRangeMap 미주입 시 서면 행 일정은 "-"다', () => {
     const { result } = renderHook(() =>
-      useMergedFeedbackRows([], [liveRound]),
+      useMergedFeedbackRows(writtenMock, [], writtenAttendanceMap),
     );
+    const row = result.current.find((r) => r.id === 'written-1-1001-11');
+    expect(row?.scheduleLabel).toBe('-');
+  });
+
+  it('missionRangeMap 주입 시 서면 행 일정이 채워진다', () => {
+    const missionRangeMap = new Map<number, { start: string; end: string }>([
+      [1001, { start: '2026-05-06', end: '2026-05-08' }],
+    ]);
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(
+        writtenMock,
+        [],
+        writtenAttendanceMap,
+        missionRangeMap,
+      ),
+    );
+    const row = result.current.find((r) => r.id === 'written-1-1001-11');
+    expect(row?.scheduleLabel).toBe('2026.05.06 ~ 2026.05.08');
+    expect(row?.startDate).toBe('2026-05-06');
+  });
+
+  it('라이브 행은 멘티 제출(submissionLabel)이 null이다', () => {
+    const { result } = renderHook(() => useMergedFeedbackRows([], [liveRound]));
 
     const liveRows = result.current.filter((r) => r.type === 'live');
     expect(liveRows.length).toBe(3);
@@ -216,9 +242,7 @@ describe('useMergedFeedbackRows', () => {
   });
 
   it('라이브 행 status 매핑 — completed/mentee-absent/시간 기준 분기', () => {
-    const { result } = renderHook(() =>
-      useMergedFeedbackRows([], [liveRound]),
-    );
+    const { result } = renderHook(() => useMergedFeedbackRows([], [liveRound]));
 
     const completed = result.current.find((r) => r.id === 'live-102');
     const absent = result.current.find((r) => r.id === 'live-103');
@@ -246,19 +270,34 @@ describe('useMergedFeedbackRows', () => {
       ...liveSessionBar,
       missionId: -201,
       startDate: '2026-05-05',
-      liveFeedback: { id: 201, menteeName: '하늘', startTime: '09:00', endTime: '09:30' },
+      liveFeedback: {
+        id: 201,
+        menteeName: '하늘',
+        startTime: '09:00',
+        endTime: '09:30',
+      },
     };
     const lateSession: PeriodBarData = {
       ...liveSessionBar,
       missionId: -202,
       startDate: '2026-05-05',
-      liveFeedback: { id: 202, menteeName: '바다', startTime: '10:00', endTime: '10:30' },
+      liveFeedback: {
+        id: 202,
+        menteeName: '바다',
+        startTime: '10:00',
+        endTime: '10:30',
+      },
     };
     const sameTimeA: PeriodBarData = {
       ...liveSessionBar,
       missionId: -203,
       startDate: '2026-05-05',
-      liveFeedback: { id: 203, menteeName: 'A', startTime: '09:00', endTime: '09:30' },
+      liveFeedback: {
+        id: 203,
+        menteeName: 'A',
+        startTime: '09:00',
+        endTime: '09:30',
+      },
     };
 
     const round: LiveFeedbackRound = {
