@@ -35,8 +35,8 @@ export default function ChatFloatingButton({
 }: ChatFloatingButtonProps) {
   const { total } = useUnreadSummary({ feedbackIds, role, pbUrl });
 
-  // 새(안 읽은) 메시지가 있을 때만 노출한다.
-  if (total <= 0) return null;
+  // 방(대화 상대)이 있을 때만 노출한다. 안읽음 개수는 뱃지로 표시.
+  if (feedbackIds.length === 0) return null;
 
   const badge = formatBadge(total);
   const text = label ?? (role === 'mentor' ? '멘티와 채팅' : '멘토와 채팅');
@@ -45,7 +45,9 @@ export default function ChatFloatingButton({
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`채팅 열기, 안 읽은 메시지 ${total}개`}
+      aria-label={
+        total > 0 ? `채팅 열기, 안 읽은 메시지 ${total}개` : '채팅 열기'
+      }
       className={`shadow-05 fixed ${positionClassName} z-40 flex items-center rounded-full bg-neutral-100`}
     >
       <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 flex flex-1 items-center justify-center whitespace-nowrap pl-4 pr-2 font-semibold">

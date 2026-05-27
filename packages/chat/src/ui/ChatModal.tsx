@@ -42,10 +42,25 @@ export default function ChatModal({
     activeFeedbackId ?? rooms[0]?.feedbackId ?? null,
   );
 
-  const feedbackIds = rooms.map((r) => r.feedbackId);
+  // 내가 종료한 방은 즉시 목록에서 숨긴다(양쪽 종료 시 PB에서 삭제됨).
+  const [endedIds, setEndedIds] = useState<number[]>([]);
+
+  const visibleRooms = rooms.filter((r) => !endedIds.includes(r.feedbackId));
+  const feedbackIds = visibleRooms.map((r) => r.feedbackId);
   const { unreadByRoom } = useUnreadSummary({ feedbackIds, role, pbUrl });
-  const selectedRoom = rooms.find((r) => r.feedbackId === selectedId) ?? null;
-  const showList = rooms.length > 1;
+  const selectedRoom =
+    visibleRooms.find((r) => r.feedbackId === selectedId) ?? null;
+  // 멘토관리처럼 항상 좌측 목록(멘토/멘티 로스터)을 노출한다.
+  const showList = visibleRooms.length >= 1;
+
+  const handleEnded = (feedbackId: number) => {
+    const next = [...endedIds, feedbackId];
+    setEndedIds(next);
+    if (selectedId === feedbackId) {
+      const remaining = rooms.filter((r) => !next.includes(r.feedbackId));
+      setSelectedId(remaining[0]?.feedbackId ?? null);
+    }
+  };
 
   const overlay = (
     <div
@@ -65,7 +80,7 @@ export default function ChatModal({
       >
         {showList && (
           <ChatRoomList
-            rooms={rooms}
+            rooms={visibleRooms}
             selectedId={selectedId}
             unreadByRoom={unreadByRoom}
             onSelect={setSelectedId}
@@ -95,6 +110,7 @@ export default function ChatModal({
               counterpartName={selectedRoom.title}
               meta={selectedRoom.meta}
               pbUrl={pbUrl}
+              onEnded={handleEnded}
             />
           ) : (
             <EmptyRooms />
@@ -168,16 +184,18 @@ function ChatRoomPanel({
   counterpartName,
   meta,
   pbUrl,
+  onEnded,
 }: {
   feedbackId: number;
   role: ChatRole;
   counterpartName: string;
   meta?: ChatRoomMeta;
   pbUrl?: string;
+  onEnded: (feedbackId: number) => void;
 }) {
   const room = chatRoomKey(feedbackId);
   const { messages } = useChatMessages({ room, pbUrl });
-  const { sendMessage, markRead } = useChatRoom({
+  const { sendMessage, markRead, endChat } = useChatRoom({
     feedbackId,
     role,
     meta,
@@ -191,8 +209,29 @@ function ChatRoomPanel({
     void markReadRef.current();
   }, [feedbackId, messages.length]);
 
+  const handleEnd = async () => {
+    const ok = window.confirm(
+      '채팅을 종료하시겠어요?\n멘토·멘티가 모두 종료하면 대화 내용이 삭제됩니다.',
+    );
+    if (!ok) return;
+    try {
+      await endChat();
+    } finally {
+      onEnded(feedbackId);
+    }
+  };
+
   return (
     <>
+      <div className="border-neutral-90 flex justify-end border-b px-4 py-2">
+        <button
+          type="button"
+          onClick={handleEnd}
+          className="text-neutral-40 hover:text-system-error text-xs font-medium"
+        >
+          채팅 종료하기
+        </button>
+      </div>
       <ChatThread
         messages={messages}
         myRole={role}

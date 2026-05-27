@@ -64,9 +64,9 @@ describe('ChatModal', () => {
     expect(screen.getByText('대화할 상대가 없습니다.')).toBeInTheDocument();
   });
 
-  it('단일 방이면 목록을 생략한다 (멘티 단일 진입)', () => {
+  it('단일 방이어도 목록(멘토관리 스타일)을 표시한다', () => {
     render(<ChatModal role="mentee" rooms={[ROOMS[0]]} onClose={vi.fn()} />);
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
   it('닫기 버튼 클릭 시 onClose 호출', async () => {

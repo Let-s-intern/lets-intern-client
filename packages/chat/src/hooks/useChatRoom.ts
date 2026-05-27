@@ -25,6 +25,8 @@ interface UseChatRoomResult {
   room: string;
   sendMessage: (text: string) => Promise<void>;
   markRead: () => Promise<void>;
+  /** 내 역할의 종료 플래그 set. 멘토·멘티 둘 다 종료하면 방+메시지 삭제. */
+  endChat: () => Promise<{ deleted: boolean }>;
 }
 
 /**
@@ -83,5 +85,29 @@ export function useChatRoom({
       .update(record.id, { [LAST_READ_FIELD[role]]: new Date().toISOString() });
   }, [role, pbUrl, ensureRoom]);
 
-  return { room, sendMessage, markRead };
+  const endChat = useCallback(async (): Promise<{ deleted: boolean }> => {
+    const pb = getChatClient(pbUrl);
+    const record = await ensureRoom();
+    const endedField = role === 'mentor' ? 'mentorEnded' : 'menteeEnded';
+    const updated = await pb
+      .collection(COLLECTIONS.rooms)
+      .update<{ mentorEnded?: boolean; menteeEnded?: boolean }>(record.id, {
+        [endedField]: true,
+      });
+
+    // 양쪽 모두 종료하면 메시지 전체 + 방 삭제.
+    const bothEnded = Boolean(updated.mentorEnded && updated.menteeEnded);
+    if (bothEnded) {
+      const messages = await pb
+        .collection(COLLECTIONS.messages)
+        .getFullList({ filter: `room="${room}"` });
+      await Promise.all(
+        messages.map((m) => pb.collection(COLLECTIONS.messages).delete(m.id)),
+      );
+      await pb.collection(COLLECTIONS.rooms).delete(record.id);
+    }
+    return { deleted: bothEnded };
+  }, [room, role, pbUrl, ensureRoom]);
+
+  return { room, sendMessage, markRead, endChat };
 }

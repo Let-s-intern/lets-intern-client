@@ -7,22 +7,37 @@ interface ChatComposerProps {
   disabled?: boolean;
 }
 
+/** 입력창 자동 높이 상한(px). */
+const MAX_HEIGHT_PX = 120;
+
 export default function ChatComposer({ onSend, disabled }: ChatComposerProps) {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  /** 내용에 맞춰 높이 자동 조정(줄바꿈이 보이도록), 상한까지만 확장. */
+  const resize = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT_PX)}px`;
+  };
 
   const handleSend = () => {
     const trimmed = text.trim();
     if (!trimmed || disabled) return;
     onSend(trimmed);
     setText('');
-    textareaRef.current?.focus();
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (el) el.style.height = 'auto';
+      el?.focus();
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // 한글 등 IME 합성 중 Enter는 무시한다.
-    // (합성 확정용 Enter가 전송까지 트리거해 마지막 단어가 중복 전송되는 버그 방지)
+    // 한글 등 IME 합성 중 Enter는 무시한다(마지막 단어 중복 전송 방지).
     if (e.nativeEvent.isComposing) return;
+    // Enter = 전송, Shift+Enter = 줄바꿈(기본 동작 유지).
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -34,12 +49,16 @@ export default function ChatComposer({ onSend, disabled }: ChatComposerProps) {
       <textarea
         ref={textareaRef}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          setText(e.target.value);
+          resize();
+        }}
         onKeyDown={handleKeyDown}
         placeholder="메시지를 입력하세요 (Enter 전송, Shift+Enter 줄바꿈)"
         disabled={disabled}
-        rows={2}
-        className="border-neutral-80 text-neutral-10 focus:ring-primary disabled:bg-neutral-95 flex-1 resize-none rounded-lg border bg-white px-3 py-2 text-sm placeholder:text-neutral-50 focus:outline-none focus:ring-1"
+        rows={1}
+        style={{ maxHeight: MAX_HEIGHT_PX }}
+        className="border-neutral-80 text-neutral-10 focus:ring-primary disabled:bg-neutral-95 min-h-[40px] flex-1 resize-none overflow-y-auto rounded-lg border bg-white px-3 py-2 text-sm placeholder:text-neutral-50 focus:outline-none focus:ring-1"
         aria-label="메시지 입력"
       />
       <button

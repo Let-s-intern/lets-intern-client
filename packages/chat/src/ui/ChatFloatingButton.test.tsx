@@ -14,12 +14,21 @@ describe('ChatFloatingButton', () => {
     mockTotal = 0;
   });
 
-  it('안읽음이 0이면 버튼을 렌더하지 않는다', () => {
+  it('방이 없으면 버튼을 렌더하지 않는다', () => {
+    mockTotal = 0;
+    render(
+      <ChatFloatingButton role="mentee" feedbackIds={[]} onOpen={vi.fn()} />,
+    );
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it('방이 있으면 안읽음 0이어도 버튼을 표시한다(뱃지 없음)', () => {
     mockTotal = 0;
     render(
       <ChatFloatingButton role="mentee" feedbackIds={[1]} onOpen={vi.fn()} />,
     );
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.queryByText(/\d/)).not.toBeInTheDocument();
   });
 
   it('안읽음이 있으면 개수 뱃지를 표시한다', () => {

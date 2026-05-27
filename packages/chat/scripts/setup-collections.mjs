@@ -43,8 +43,8 @@ const CHAT_ROOMS = {
   listRule: OPEN,
   viewRule: OPEN,
   createRule: OPEN,
-  updateRule: OPEN, // lastReadAt 갱신 허용
-  deleteRule: LOCK,
+  updateRule: OPEN, // lastReadAt·종료 플래그 갱신 허용
+  deleteRule: OPEN, // 양쪽 종료 시 방 삭제 허용 (임시)
   fields: [
     { name: 'room', type: 'text', required: true, max: 100 },
     { name: 'menteeName', type: 'text', max: 100 },
@@ -52,6 +52,9 @@ const CHAT_ROOMS = {
     { name: 'challengeTitle', type: 'text', max: 200 },
     { name: 'mentorLastReadAt', type: 'date' },
     { name: 'menteeLastReadAt', type: 'date' },
+    // 채팅 종료 플래그 — 멘토·멘티 둘 다 종료하면 방을 삭제한다.
+    { name: 'mentorEnded', type: 'bool' },
+    { name: 'menteeEnded', type: 'bool' },
     { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
     { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
   ],
@@ -67,7 +70,7 @@ const CHAT_MESSAGES = {
   viewRule: OPEN,
   createRule: OPEN, // 전송
   updateRule: LOCK, // 메시지 수정 불가
-  deleteRule: LOCK,
+  deleteRule: OPEN, // 방 삭제 시 메시지 정리 허용 (임시)
   fields: [
     { name: 'room', type: 'text', required: true, max: 100 },
     {
@@ -103,14 +106,21 @@ async function authSuperuser(pb) {
 async function upsertCollection(pb, cfg) {
   const existing = await pb.collections.getOne(cfg.name).catch(() => null);
   if (existing) {
+    // 기존 필드(id 보존) + cfg에만 있는 신규 필드(name 기준)를 병합.
+    const existingNames = new Set(existing.fields.map((f) => f.name));
+    const fields = [...existing.fields];
+    for (const f of cfg.fields) {
+      if (!existingNames.has(f.name)) fields.push(f);
+    }
     await pb.collections.update(existing.id, {
+      fields,
       listRule: cfg.listRule,
       viewRule: cfg.viewRule,
       createRule: cfg.createRule,
       updateRule: cfg.updateRule,
       deleteRule: cfg.deleteRule,
     });
-    console.log(`✓ 이미 존재 → 규칙만 갱신: ${cfg.name}`);
+    console.log(`✓ 갱신(필드 병합 + 규칙): ${cfg.name}`);
   } else {
     await pb.collections.create(cfg);
     console.log(`✓ 생성 완료: ${cfg.name}`);
