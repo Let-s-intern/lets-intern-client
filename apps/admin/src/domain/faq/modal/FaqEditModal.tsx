@@ -53,7 +53,11 @@ function FaqEditModal({
       question !== (faq.question ?? '') ||
       answer !== (faq.answer ?? ''));
 
-  const isSaveEnabled = hasChanges && resolvedCategory.trim() !== '';
+  const isSaveEnabled =
+    hasChanges &&
+    resolvedCategory.trim() !== '' &&
+    question.trim() !== '' &&
+    answer.trim() !== '';
 
   const handleSave = async () => {
     if (!faq || !isSaveEnabled) return;

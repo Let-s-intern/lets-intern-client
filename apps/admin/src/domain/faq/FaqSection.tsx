@@ -12,8 +12,8 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
 } from '@/schema';
-import FaqAddModal from './FaqAddModal';
-import FaqEditModal from './FaqEditModal';
+import FaqAddModal from './modal/FaqAddModal';
+import FaqEditModal from './modal/FaqEditModal';
 
 interface FaqSectionProps<
   T extends
