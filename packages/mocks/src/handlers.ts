@@ -32,6 +32,103 @@ const isoMissionEnd = new Date(
 const reservationStart = new Date(now.getTime() + 5 * 60 * 1000).toISOString();
 const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
 
+/**
+ * 캘린더 라이브 세션 분포 시드.
+ *
+ * 과거 `LIVE_FEEDBACK_MOCK_DATA` 시나리오(챌린지 2개, 라이브 5/4~5/8)를 MSW 응답으로
+ * 이관해 화면 동등성을 유지한다. `useLiveFeedbackData`가 programTitle 그룹별
+ * `live-feedback-period` 바와 개별 `live-feedback` 바를 파생한다.
+ *
+ * 절대일자(2026-05-xx)를 사용 — mockNow(데모 시각)와 함께 보던 고정 시연 일정 재현.
+ */
+const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
+  readonly [string, string, string, string]
+> = [
+  // [챌린지1] 기필코 경험정리 챌린지 21기 — 5/4~5/6
+  [
+    '2026-05-04T10:00:00',
+    '2026-05-04T10:30:00',
+    '기필코 경험정리 챌린지 21기',
+    '이지수',
+  ],
+  [
+    '2026-05-04T14:00:00',
+    '2026-05-04T14:30:00',
+    '기필코 경험정리 챌린지 21기',
+    '박서연',
+  ],
+  [
+    '2026-05-05T10:00:00',
+    '2026-05-05T10:30:00',
+    '기필코 경험정리 챌린지 21기',
+    '최지훈',
+  ],
+  [
+    '2026-05-05T15:00:00',
+    '2026-05-05T15:30:00',
+    '기필코 경험정리 챌린지 21기',
+    '임채원',
+  ],
+  [
+    '2026-05-06T09:00:00',
+    '2026-05-06T09:30:00',
+    '기필코 경험정리 챌린지 21기',
+    '한도윤',
+  ],
+  // [챌린지2] 커리어 설계 챌린지 5기 — 5/6~5/8
+  [
+    '2026-05-06T14:00:00',
+    '2026-05-06T14:30:00',
+    '커리어 설계 챌린지 5기',
+    '문수아',
+  ],
+  [
+    '2026-05-07T10:00:00',
+    '2026-05-07T10:30:00',
+    '커리어 설계 챌린지 5기',
+    '조예린',
+  ],
+  [
+    '2026-05-08T15:00:00',
+    '2026-05-08T15:30:00',
+    '커리어 설계 챌린지 5기',
+    '백지윤',
+  ],
+];
+
+const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
+  ([startDate, endDate, programTitle, menteeName], idx) => ({
+    feedbackId: 70_000 + idx,
+    startDate,
+    endDate,
+    meetingUrl: null,
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
+    status: 'RESERVED',
+    programTitle,
+    menteeName,
+  }),
+);
+
+/**
+ * 멘토 오픈 슬롯 분포 시드 — `live-feedback-mentor-open` 글로벌 바 파생용.
+ * 4/24~4/28 분포 → 캘린더 상단 오픈기간 바 1개로 묶인다.
+ */
+const calendarSlotList = [
+  {
+    feedbackSlotId: 80_001,
+    startDate: '2026-04-24T09:00:00',
+    endDate: '2026-04-25T18:00:00',
+    status: 'OPEN' as const,
+  },
+  {
+    feedbackSlotId: 80_002,
+    startDate: '2026-04-27T09:00:00',
+    endDate: '2026-04-28T18:00:00',
+    status: 'OPEN' as const,
+  },
+];
+
 export const handlers = [
   /**
    * (멘토) GET /challenge/mentor/feedback-management
@@ -147,8 +244,10 @@ export const handlers = [
 
   /**
    * (멘토) GET /feedback/mentor/slot
-   * BE feedbackSlotSchema 정확히 일치. **예약 확정된 슬롯 1건**을 박는다.
-   * → 멘토 schedule/feedback-management에서 RESERVED 슬롯으로 보임.
+   * BE feedbackSlotSchema 정확히 일치.
+   *  - 예약 확정 슬롯 1건(Jitsi QA용, 시작 임박) +
+   *  - 캘린더 오픈기간 파생용 OPEN 슬롯 분포(4/24~4/28).
+   * → 멘토 schedule 캘린더에서 `live-feedback-mentor-open` 바 1개로 묶임.
    */
   http.get('*/feedback/mentor/slot', () => {
     return HttpResponse.json({
@@ -161,6 +260,7 @@ export const handlers = [
             endDate: reservationEnd,
             status: 'RESERVED',
           },
+          ...calendarSlotList,
         ],
       },
     });
@@ -190,6 +290,8 @@ export const handlers = [
             programTitle: '자소서 챌린지 7기',
             menteeName: '이지수',
           },
+          // 캘린더 세션 분포(2 챌린지, 5/4~5/8) — live-feedback / period 바 파생.
+          ...calendarFeedbackList,
         ],
       },
     });
