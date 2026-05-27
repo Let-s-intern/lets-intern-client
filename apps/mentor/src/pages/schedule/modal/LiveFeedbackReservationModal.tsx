@@ -188,20 +188,6 @@ const LiveFeedbackReservationModal = ({
       ? resolveLiveFeedbackAccess(meetingUrl, startIso, endIso, now)
       : { state: 'unassigned' as const, url: null };
 
-  // ZEP 영역 표기
-  const zepLabel = (() => {
-    switch (zepAccess.state) {
-      case 'unassigned':
-        return '미정';
-      case 'pending':
-        return '10분 전 자동 배정';
-      case 'active':
-        return '입장 가능';
-      case 'ended':
-        return '종료됨';
-    }
-  })();
-
   // 제출 상태 라벨 — BE attendanceStatus(서면 제출) 기준. ABSENT → '미제출', 그 외 '제출'.
   const submissionStatusLabel: '제출' | '미제출' =
     feedbackDetail?.attendanceStatus === 'ABSENT' ? '미제출' : '제출';
@@ -375,7 +361,7 @@ const LiveFeedbackReservationModal = ({
                 </p>
               </section>
 
-              {/* 액션 패널 — 예약 일시 / ZEP 회의실 / 피드백 상태 */}
+              {/* 액션 패널 — 예약 일시 / 피드백 상태 */}
               <section
                 aria-label="라이브 피드백 액션 패널"
                 className="rounded-xl border border-gray-200 p-4"
@@ -396,22 +382,6 @@ const LiveFeedbackReservationModal = ({
                           : countdown.label}
                       </span>
                     )}
-                  </li>
-
-                  {/* ZEP 회의실 */}
-                  <li className="flex items-center gap-3">
-                    <span className="w-20 shrink-0 text-xs font-medium text-neutral-400">
-                      줌 회의실
-                    </span>
-                    <span
-                      className={
-                        zepAccess.state === 'active'
-                          ? 'text-neutral-800'
-                          : 'text-neutral-400'
-                      }
-                    >
-                      {zepLabel}
-                    </span>
                   </li>
 
                   {/* 피드백 상태 */}

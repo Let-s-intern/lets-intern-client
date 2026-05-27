@@ -116,25 +116,20 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(screen.getAllByText(/미완료/).length).toBeGreaterThan(0);
   });
 
-  it('액션 패널에 "예약 일시" / "줌 회의실" / "피드백 상태" 행이 노출된다', () => {
+  it('액션 패널에 "예약 일시" / "피드백 상태" 행이 노출된다', () => {
     renderModal(makeBar());
     expect(screen.getByText('예약 일시')).toBeInTheDocument();
-    expect(screen.getByText('줌 회의실')).toBeInTheDocument();
     expect(screen.getByText('피드백 상태')).toBeInTheDocument();
   });
 
-  it('Jitsi env 미설정 시 회의실 영역에 "미정"이 표시된다 (unassigned)', () => {
-    // env stub 없음 → buildJitsiRoomUrl이 호출되지 않아 meetingUrl=null → unassigned
-    vi.stubEnv('VITE_JITSI_BASE_URL', '');
-    renderModal(makeBar());
-    expect(screen.getByText('미정')).toBeInTheDocument();
-  });
-
-  it('Jitsi env 설정 + T-10 이전(09:45 / 시작 10:00) → "10분 전 자동 배정" (pending, T-10 회귀)', () => {
+  it('액션 패널에 "줌 회의실" 행이 더 이상 노출되지 않는다', () => {
     vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
     renderModal(makeBar());
-    // mockNow=2026-05-04 09:45, start=10:00 → 15분 전 → pending
-    expect(screen.getByText('10분 전 자동 배정')).toBeInTheDocument();
+    expect(screen.queryByText('줌 회의실')).not.toBeInTheDocument();
+    // 줌 회의실 행에서만 쓰이던 상태 라벨도 사라진다.
+    expect(screen.queryByText('미정')).not.toBeInTheDocument();
+    expect(screen.queryByText('10분 전 자동 배정')).not.toBeInTheDocument();
+    expect(screen.queryByText('종료됨')).not.toBeInTheDocument();
   });
 
   it('푸터에 "멘티와 대화하기" 버튼이 disabled 로 노출된다', () => {
