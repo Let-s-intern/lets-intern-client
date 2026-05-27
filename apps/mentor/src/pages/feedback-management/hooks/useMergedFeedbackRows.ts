@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
+import type {
+  FeedbackStatus,
+  MentorFeedbackManagement,
+} from '@/api/challenge/challengeSchema';
+import type { AttendanceStatus } from '@/schema';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { PeriodBarData } from '@/pages/schedule/types';
 
@@ -9,7 +13,21 @@ import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
-type Mission = Challenge['feedbackMissions'][number];
+
+/** 미션별 출석에서 추린 멘티 1명 단위 데이터 (서면 행 펼침용). */
+export interface WrittenMenteeAttendance {
+  /** 출석 id — 신규 출석 API(미제출자)는 null 가능. 행 key는 index로 보강한다. */
+  id: number | null;
+  name: string;
+  status: AttendanceStatus;
+  feedbackStatus: FeedbackStatus | null;
+}
+
+/** `${challengeId}-${missionId}` → 멘티별 출석 리스트 */
+export type WrittenAttendanceMap = ReadonlyMap<
+  string,
+  WrittenMenteeAttendance[]
+>;
 
 const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로 미는 sentinel
 
@@ -32,36 +50,34 @@ function formatLiveSchedule(
   return `${formatDot(date)} ${startTime} ~ ${endTime}`;
 }
 
-/** 서면 미션 행 — 제출/피드백 상태 요약 */
-function summarizeWrittenMission(mission: Mission): {
+/**
+ * 서면 멘티 1명 행 — 제출(status)/피드백(feedbackStatus) 기준 상태 라벨.
+ * - status === 'ABSENT' → 미제출 (피드백 미시작이므로 '진행 전')
+ * - feedbackStatus COMPLETED/CONFIRMED → 완료
+ * - feedbackStatus IN_PROGRESS → 진행 중
+ * - 그 외(WAITING/null) → 진행 전
+ */
+function summarizeWrittenMentee(mentee: WrittenMenteeAttendance): {
+  submissionLabel: '제출' | '미제출';
   statusLabel: string;
   statusTone: FeedbackRow['statusTone'];
 } {
-  let completed = 0;
-  let feedbackStarted = 0;
-  for (const item of mission.feedbackStatusCounts) {
-    if (
-      item.feedbackStatus === 'COMPLETED' ||
-      item.feedbackStatus === 'CONFIRMED'
-    ) {
-      completed += item.count;
-    }
-    if (item.feedbackStatus !== 'WAITING') {
-      feedbackStarted += item.count;
-    }
-  }
+  const submissionLabel: '제출' | '미제출' =
+    mentee.status === 'ABSENT' ? '미제출' : '제출';
 
-  const hasSubmission = mission.submittedCount > 0;
-  if (!hasSubmission) {
-    return { statusLabel: '진행 전', statusTone: 'waiting' };
+  if (submissionLabel === '미제출') {
+    return { submissionLabel, statusLabel: '진행 전', statusTone: 'waiting' };
   }
-  if (completed >= mission.submittedCount) {
-    return { statusLabel: '완료', statusTone: 'completed' };
+  if (
+    mentee.feedbackStatus === 'COMPLETED' ||
+    mentee.feedbackStatus === 'CONFIRMED'
+  ) {
+    return { submissionLabel, statusLabel: '완료', statusTone: 'completed' };
   }
-  if (feedbackStarted > 0) {
-    return { statusLabel: '진행 중', statusTone: 'inProgress' };
+  if (mentee.feedbackStatus === 'IN_PROGRESS') {
+    return { submissionLabel, statusLabel: '진행 중', statusTone: 'inProgress' };
   }
-  return { statusLabel: '진행 전', statusTone: 'waiting' };
+  return { submissionLabel, statusLabel: '진행 전', statusTone: 'waiting' };
 }
 
 /**
@@ -181,6 +197,12 @@ function buildMissionRangeMap(
 export function useMergedFeedbackRows(
   writtenChallenges: Challenge[],
   liveRounds: LiveFeedbackRound[],
+  /**
+   * `${challengeId}-${missionId}` → 멘티별 출석 리스트.
+   * 주입되면 서면 행을 라이브처럼 멘티 1명당 1행으로 펼친다.
+   * 누락(미주입/로딩/빈) 미션은 행을 0개 생성한다 (graceful).
+   */
+  writtenAttendanceMap?: WrittenAttendanceMap,
 ): FeedbackRow[] {
   // 서면 피드백 기간 맵.
   // feedback-management 응답(mentorFeedbackManagementSchema)에는 미션별 피드백
@@ -192,47 +214,49 @@ export function useMergedFeedbackRows(
     const now = currentNow();
     const rows: FeedbackRow[] = [];
 
-    // ── 서면 행 ─────────────────────────────────────
+    // ── 서면 행 (멘티 1명당 1행) ─────────────────────────────────────
     for (const challenge of writtenChallenges) {
       for (const mission of challenge.feedbackMissions) {
         const range = missionRangeMap.get(mission.missionId);
         const scheduleStart = range?.start ?? '';
         const scheduleEnd = range?.end ?? '';
-        const summary = summarizeWrittenMission(mission);
+        const scheduleLabel = formatWrittenSchedule(scheduleStart, scheduleEnd);
 
-        // 서면 제출 라벨 (대표 요약): 제출자 있으면 '제출', 없으면 '미제출'
-        const submissionLabel: '제출' | '미제출' =
-          mission.submittedCount > 0 ? '제출' : '미제출';
+        const menteeList =
+          writtenAttendanceMap?.get(`${challenge.challengeId}-${mission.missionId}`) ??
+          [];
 
-        // 멘티 성명 — 미션 단위 행은 멘티별로 펼치지 않음. 인원 수 표기.
-        const totalCount = mission.submittedCount + mission.notSubmittedCount;
-        const menteeNameLabel = totalCount > 0 ? `멘티 ${totalCount}명` : '-';
+        // 출석이 비어있으면(미주입/로딩) 이 미션은 행 0개 — 깨지지 않게 skip.
+        menteeList.forEach((mentee, menteeIdx) => {
+          const summary = summarizeWrittenMentee(mentee);
+          const menteeKey = mentee.id ?? `idx${menteeIdx}`;
 
-        rows.push({
-          id: `written-${challenge.challengeId}-${mission.missionId}`,
-          type: 'written',
-          startDate: scheduleStart || '',
-          startTime: null,
-          endTime: null,
-          statusLabel: summary.statusLabel,
-          statusTone: summary.statusTone,
-          reservationLabel: null,
-          submissionLabel,
-          menteeParticipation: null,
-          mentorParticipation: null,
-          challengeTitle: challenge.title ?? '챌린지',
-          thLabel: `${mission.th}회차`,
-          scheduleLabel: formatWrittenSchedule(scheduleStart, scheduleEnd),
-          menteeNameLabel,
-          // 서면 상세는 제출자가 있을 때만 의미가 있다.
-          canOpenDetail: mission.submittedCount > 0,
-          source: {
+          rows.push({
+            id: `written-${challenge.challengeId}-${mission.missionId}-${menteeKey}`,
             type: 'written',
-            challengeId: challenge.challengeId,
-            missionId: mission.missionId,
-            missionTh: mission.th,
+            startDate: scheduleStart || '',
+            startTime: null,
+            endTime: null,
+            statusLabel: summary.statusLabel,
+            statusTone: summary.statusTone,
+            reservationLabel: null,
+            submissionLabel: summary.submissionLabel,
+            menteeParticipation: null,
+            mentorParticipation: null,
             challengeTitle: challenge.title ?? '챌린지',
-          },
+            thLabel: `${mission.th}회차`,
+            scheduleLabel,
+            menteeNameLabel: mentee.name,
+            // 서면 상세 — 멘티 행이어도 미션 모달로 진입(제출자 있을 때).
+            canOpenDetail: mentee.status !== 'ABSENT',
+            source: {
+              type: 'written',
+              challengeId: challenge.challengeId,
+              missionId: mission.missionId,
+              missionTh: mission.th,
+              challengeTitle: challenge.title ?? '챌린지',
+            },
+          });
         });
       }
     }
@@ -287,7 +311,7 @@ export function useMergedFeedbackRows(
     });
 
     return rows;
-  }, [writtenChallenges, liveRounds, missionRangeMap]);
+  }, [writtenChallenges, liveRounds, missionRangeMap, writtenAttendanceMap]);
 }
 
 /**

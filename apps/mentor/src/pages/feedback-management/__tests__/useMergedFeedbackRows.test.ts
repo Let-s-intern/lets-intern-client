@@ -13,7 +13,10 @@ import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import type { PeriodBarData } from '@/pages/schedule/types';
 
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
-import { useMergedFeedbackRows } from '../hooks/useMergedFeedbackRows';
+import {
+  useMergedFeedbackRows,
+  type WrittenMenteeAttendance,
+} from '../hooks/useMergedFeedbackRows';
 
 // currentNow 고정 — 정렬·시간 분기 안정성 확보
 vi.mock('@/pages/schedule/constants/mockNow', () => ({
@@ -52,6 +55,29 @@ const writtenMock: Challenge[] = [
     ],
   },
 ];
+
+// 서면 멘티별 출석 맵 — `${challengeId}-${missionId}` 키.
+// mission 1001: 제출 2명(완료/진행중) + 미제출 1명. mission 1003: 빈 미션.
+const writtenAttendanceMap = new Map<string, WrittenMenteeAttendance[]>([
+  [
+    '1-1001',
+    [
+      {
+        id: 11,
+        name: '이지수',
+        status: 'PRESENT',
+        feedbackStatus: 'COMPLETED',
+      },
+      {
+        id: 12,
+        name: '김민준',
+        status: 'PRESENT',
+        feedbackStatus: 'IN_PROGRESS',
+      },
+      { id: 13, name: '최지훈', status: 'ABSENT', feedbackStatus: 'WAITING' },
+    ],
+  ],
+]);
 
 const liveSessionBar: PeriodBarData = {
   barType: 'live-feedback',
@@ -109,11 +135,22 @@ const liveRound: LiveFeedbackRound = {
 };
 
 describe('useMergedFeedbackRows', () => {
-  it('서면 행은 멘티예약/멘티참여/멘토참여가 null이다', () => {
+  it('출석 맵이 없으면 서면 행은 0개다 (graceful — 로딩/미주입)', () => {
     const { result } = renderHook(() => useMergedFeedbackRows(writtenMock, []));
+    expect(result.current.filter((r) => r.type === 'written').length).toBe(0);
+  });
+
+  it('서면 행은 출석 멘티 1명당 1행으로 펼쳐진다 (라이브처럼)', () => {
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(writtenMock, [], writtenAttendanceMap),
+    );
 
     const writtenRows = result.current.filter((r) => r.type === 'written');
-    expect(writtenRows.length).toBe(2);
+    // mission 1001 멘티 3명 → 3행. mission 1003 은 출석 없음 → 0행.
+    expect(writtenRows.length).toBe(3);
+    expect(writtenRows.map((r) => r.menteeNameLabel).sort()).toEqual(
+      ['김민준', '이지수', '최지훈'].sort(),
+    );
     for (const r of writtenRows) {
       expect(r.reservationLabel).toBeNull();
       expect(r.menteeParticipation).toBeNull();
@@ -123,19 +160,46 @@ describe('useMergedFeedbackRows', () => {
     }
   });
 
-  it('서면 행은 submittedCount > 0일 때 canOpenDetail=true', () => {
-    const { result } = renderHook(() => useMergedFeedbackRows(writtenMock, []));
+  it('서면 멘티 행 — status/feedbackStatus 기준 제출·상태 매핑', () => {
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(writtenMock, [], writtenAttendanceMap),
+    );
 
-    const row1001 = result.current.find((r) =>
-      r.id.includes('written-1-1001'),
+    const completed = result.current.find((r) => r.id === 'written-1-1001-11');
+    const inProgress = result.current.find((r) => r.id === 'written-1-1001-12');
+    const absent = result.current.find((r) => r.id === 'written-1-1001-13');
+
+    // 제출 + COMPLETED → 완료, 상세 열림
+    expect(completed?.submissionLabel).toBe('제출');
+    expect(completed?.statusLabel).toBe('완료');
+    expect(completed?.statusTone).toBe('completed');
+    expect(completed?.canOpenDetail).toBe(true);
+
+    // 제출 + IN_PROGRESS → 진행 중
+    expect(inProgress?.submissionLabel).toBe('제출');
+    expect(inProgress?.statusLabel).toBe('진행 중');
+    expect(inProgress?.statusTone).toBe('inProgress');
+
+    // ABSENT → 미제출, 진행 전, 상세 닫힘
+    expect(absent?.submissionLabel).toBe('미제출');
+    expect(absent?.statusLabel).toBe('진행 전');
+    expect(absent?.statusTone).toBe('waiting');
+    expect(absent?.canOpenDetail).toBe(false);
+  });
+
+  it('서면 멘티 행도 미션 모달 진입용 source(written)를 유지한다', () => {
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(writtenMock, [], writtenAttendanceMap),
     );
-    const row1003 = result.current.find((r) =>
-      r.id.includes('written-1-1003'),
-    );
-    expect(row1001?.canOpenDetail).toBe(true);
-    expect(row1001?.submissionLabel).toBe('제출');
-    expect(row1003?.canOpenDetail).toBe(false);
-    expect(row1003?.submissionLabel).toBe('미제출');
+    const row = result.current.find((r) => r.id === 'written-1-1001-11');
+    expect(row?.source).toEqual({
+      type: 'written',
+      challengeId: 1,
+      missionId: 1001,
+      missionTh: 1,
+      challengeTitle: '기필코 경험정리 챌린지 21기',
+    });
+    expect(row?.thLabel).toBe('1회차');
   });
 
   it('라이브 행은 멘티 제출(submissionLabel)이 null이다', () => {
@@ -212,11 +276,11 @@ describe('useMergedFeedbackRows', () => {
 
   it('서면 + 라이브 혼합 시 둘 다 정렬 결과에 포함된다', () => {
     const { result } = renderHook(() =>
-      useMergedFeedbackRows(writtenMock, [liveRound]),
+      useMergedFeedbackRows(writtenMock, [liveRound], writtenAttendanceMap),
     );
 
-    // 서면 2개 + 라이브 3개
-    expect(result.current.length).toBe(5);
+    // 서면 멘티 3행 + 라이브 3행
+    expect(result.current.length).toBe(6);
     const types = result.current.map((r) => r.type);
     expect(types).toContain('written');
     expect(types).toContain('live');

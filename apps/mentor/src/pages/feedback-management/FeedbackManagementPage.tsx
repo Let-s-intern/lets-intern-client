@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
@@ -9,13 +9,17 @@ import type { PeriodBarData } from '@/pages/schedule/types';
 import FeedbackSummary from './ui/FeedbackSummary';
 import FeedbackTabs from './ui/FeedbackTabs';
 import FeedbackTable from './ui/FeedbackTable';
+import WrittenMenteeAttendanceFetcher from './ui/WrittenMenteeAttendanceFetcher';
 import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 import { useFeedbackTabQuery } from './hooks/useFeedbackTabQuery';
 import {
   useLiveFeedbackList,
   type LiveFeedbackRound,
 } from './hooks/useLiveFeedbackList';
-import { useMergedFeedbackRows } from './hooks/useMergedFeedbackRows';
+import {
+  useMergedFeedbackRows,
+  type WrittenMenteeAttendance,
+} from './hooks/useMergedFeedbackRows';
 import type { FeedbackRow } from './types';
 
 const FeedbackManagementPage = () => {
@@ -34,7 +38,27 @@ const FeedbackManagementPage = () => {
     [liveChallenges],
   );
 
-  const allRows = useMergedFeedbackRows(challengeList, allLiveRounds);
+  // 서면 멘티별 출석 fan-out 결과를 모으는 맵 — 도착 즉시 행이 멘티별로 펼쳐진다.
+  const [writtenAttendance, setWrittenAttendance] = useState<
+    Map<string, WrittenMenteeAttendance[]>
+  >(new Map());
+
+  const handleWrittenAttendance = useCallback(
+    (key: string, list: WrittenMenteeAttendance[]) => {
+      setWrittenAttendance((prev) => {
+        const next = new Map(prev);
+        next.set(key, list);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const allRows = useMergedFeedbackRows(
+    challengeList,
+    allLiveRounds,
+    writtenAttendance,
+  );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();
 
@@ -89,6 +113,13 @@ const FeedbackManagementPage = () => {
       <FeedbackSummary />
 
       <FeedbackTabs activeTab={activeTab} onChange={setActiveTab} />
+
+      {/* 서면 멘티별 출석 fan-out — 화면 출력 없음. 미션마다 출석을 병렬 조회해
+          handleWrittenAttendance 로 보고하면 서면 행이 멘티별로 펼쳐진다. */}
+      <WrittenMenteeAttendanceFetcher
+        challenges={challengeList}
+        onData={handleWrittenAttendance}
+      />
 
       {isLoading ? (
         <div className="py-12 text-center text-gray-400">로딩 중...</div>
