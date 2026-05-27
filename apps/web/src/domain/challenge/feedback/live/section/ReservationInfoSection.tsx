@@ -50,7 +50,7 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
               </div>
 
               {/* 회의 링크 */}
-              <div className="flex items-center gap-1">
+              {/* <div className="flex items-center gap-1">
                 <img src="/icons/door-closed.svg" alt="" />
                 <span className="text-xsmall14 text-neutral-40 pr-2">
                   회의 링크
@@ -67,7 +67,7 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
                 ) : (
                   <span className="text-xsmall14 text-neutral-20">미정</span>
                 )}
-              </div>
+              </div> */}
             </div>
 
             {/* 하단 액션 */}

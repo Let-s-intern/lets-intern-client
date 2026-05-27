@@ -54,7 +54,7 @@ const LiveFeedbackPage = () => {
   return (
     <div className="mb-12 flex flex-col gap-10">
       <LiveFeedbackSection
-        label="예약 필요"
+        label="진행 전"
         missions={needReservation}
         emptyMessage="예약 필요한 미션이 없어요."
         challengeId={programId}
@@ -62,7 +62,7 @@ const LiveFeedbackPage = () => {
         onMobileClick={handleMobileClick}
       />
       <LiveFeedbackSection
-        label="예약 완료"
+        label="진행 예정"
         missions={reserved}
         emptyMessage="예약 완료된 미션이 없어요."
         challengeId={programId}
@@ -70,7 +70,7 @@ const LiveFeedbackPage = () => {
         onMobileClick={handleMobileClick}
       />
       <LiveFeedbackSection
-        label="피드백 완료"
+        label="진행 완료"
         missions={done}
         emptyMessage="피드백 완료된 미션이 없어요."
         challengeId={programId}
@@ -78,7 +78,7 @@ const LiveFeedbackPage = () => {
         onMobileClick={handleMobileClick}
       />
       <LiveFeedbackSection
-        label="기간 만료"
+        label="미진행"
         missions={expired}
         emptyMessage="기간이 만료된 미션이 없어요."
         challengeId={programId}
