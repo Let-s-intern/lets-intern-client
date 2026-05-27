@@ -5,8 +5,6 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
-import MuiPagination from '@/domain/program/pagination/MuiPagination';
-import { usePageableWithSearchParams } from '@/hooks/usePageableWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import {
   CreateMissionTemplateReq,
@@ -45,17 +43,10 @@ type Row = MissionTemplateResItem & ItemWithStatus;
 
 /** 미션 (템플릿) 관리 */
 const ChallengeMissionManagement = () => {
-  const { pageable, handlePageChange } = usePageableWithSearchParams({
-    defaultPage: 1,
-    defaultSize: 20,
-  });
-
   const { data, refetch } = useQuery({
-    queryKey: ['mission-template', 'admin', pageable.page, pageable.size],
+    queryKey: ['mission-template', 'admin'],
     queryFn: async () => {
-      const res = await axios.get(
-        `/mission-template/admin?page=${pageable.page}&size=${pageable.size}`,
-      );
+      const res = await axios.get('/mission-template/admin?size=1000');
       return missionTemplateAdmin.parse(res.data.data);
     },
   });
@@ -198,14 +189,6 @@ const ChallengeMissionManagement = () => {
             />
           ))}
         </LineTableBody>
-      </div>
-      <div className="flex justify-center">
-        <MuiPagination
-          page={pageable.page}
-          pageInfo={data?.pageInfo ?? { totalPages: 0 }}
-          onChange={handlePageChange}
-          className="py-4"
-        />
       </div>
     </div>
   );
