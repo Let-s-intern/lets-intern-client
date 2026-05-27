@@ -14,19 +14,15 @@ import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import type { FeedbackTagType } from './constants/feedbackTag';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
-import { useWrittenFeedbackMockData } from './hooks/useWrittenFeedbackMockData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
-  const { bars: writtenMockBars } = useWrittenFeedbackMockData();
+  // 라이브 바는 실 API 파생. 서면 바는 ChallengeDataFetcher(실 API) 단일 경로로
+  // 일원화되어 별도 extraBars 주입이 필요 없다 (중복 오버레이 제거).
   const { bars: liveFeedbackBars } = useLiveFeedbackData();
 
-  // 서면 + 라이브 바 모두 extraBars로 주입 (라이브는 실 API 파생)
-  const extraBars = useMemo(
-    () => [...writtenMockBars, ...liveFeedbackBars],
-    [writtenMockBars, liveFeedbackBars],
-  );
+  const extraBars = liveFeedbackBars;
 
   const {
     challenges,
