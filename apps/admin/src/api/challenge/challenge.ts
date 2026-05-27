@@ -857,6 +857,30 @@ export const useGetChallengeNotices = (
   });
 };
 
+export interface DuplicateChallengeReq {
+  title: string;
+  beginning: string;
+  deadline: string;
+  startDate: string;
+  endDate: string | null;
+  thumbnail: string | null;
+  desktopThumbnail: string | null;
+  copyContent: boolean;
+  copyDashboard: boolean;
+}
+
+/** POST 챌린지 복제 */
+export const duplicateChallenge = async (
+  sourceChallengeId: number,
+  req: DuplicateChallengeReq,
+): Promise<{ challengeId: number }> => {
+  const res = await axiosV2.post(
+    `/admin/challenge/${sourceChallengeId}/duplicate`,
+    req,
+  );
+  return res.data;
+};
+
 /** GET 챌린지 가이드 조회 */
 export const useGetChallengeGuides = (challengeId?: string) => {
   return useQuery({
