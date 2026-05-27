@@ -1214,7 +1214,6 @@ export const missionTemplateAdmin = z
         vodLink: z.string().nullish(),
       }),
     ),
-    pageInfo,
   })
   .transform((data) => {
     return {
@@ -1224,7 +1223,6 @@ export const missionTemplateAdmin = z
           createDate: dayjs(missionTemplate.createDate),
         }),
       ),
-      pageInfo: data.pageInfo,
     };
   });
 
