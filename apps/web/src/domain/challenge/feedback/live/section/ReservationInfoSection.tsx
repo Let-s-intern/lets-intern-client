@@ -2,12 +2,20 @@
 
 import { useState } from 'react';
 
+import dynamic from 'next/dynamic';
+
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
 import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
+
+// 채팅 모달은 PocketBase 클라이언트를 끌어오므로 동적 import 로 분리해
+// 모달을 실제로 열 때까지 초기 번들에서 제외한다.
+const ChatModal = dynamic(() => import('@letscareer/chat/ui/ChatModal'), {
+  ssr: false,
+});
 
 interface Props {
   mentor: Mentor;
@@ -24,6 +32,7 @@ const ReservationInfoSection = ({
   feedbackId,
 }: Props) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
   // TODO(임시): 정식 운영 시 T-10 게이팅 복원.
@@ -42,6 +51,32 @@ const ReservationInfoSection = ({
           mentor={mentor}
           className="min-w-[314px] px-0 py-4 md:px-4"
         />
+        {/* 회의 입장(Jitsi)과 별개로, 멘토와 텍스트로 소통하는 채팅 진입.
+            feedbackId 보유(reserved/completed) 상태에서만 노출. */}
+        {feedbackId != null && (
+          <button
+            type="button"
+            onClick={() => setIsChatOpen(true)}
+            className="text-xsmall14 border-primary text-primary flex items-center justify-center gap-1.5 rounded-sm border py-3 font-semibold md:mx-4"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            멘토에게 연락하기
+          </button>
+        )}
       </section>
 
       {feedbackInfo && (
@@ -112,6 +147,21 @@ const ReservationInfoSection = ({
           onClose={() => setIsJitsiOpen(false)}
           meta={{ feedbackId }}
           spaceName={mentor.nickname}
+        />
+      )}
+
+      {feedbackId != null && isChatOpen && (
+        <ChatModal
+          role="mentee"
+          rooms={[
+            {
+              feedbackId,
+              title: mentor.nickname,
+              meta: { mentorName: mentor.nickname },
+            },
+          ]}
+          activeFeedbackId={feedbackId}
+          onClose={() => setIsChatOpen(false)}
         />
       )}
     </div>
