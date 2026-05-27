@@ -1,3 +1,4 @@
+// ⚠️ 채팅 BE 미구현 — 현재 미사용. 채팅 기능 구현 시 추후 연결한다.
 import { useRef, useState } from 'react';
 
 interface ChatComposerProps {

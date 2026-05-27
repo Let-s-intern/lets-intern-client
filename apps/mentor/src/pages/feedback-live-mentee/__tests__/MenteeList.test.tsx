@@ -7,29 +7,21 @@ import MenteeList from '../ui/MenteeList';
 
 const mockMentees: Mentee[] = [
   {
-    id: '1',
+    id: '홍길동|챌린지 1기',
     name: '홍길동',
-    email: 'hong@test.com',
     avatarInitial: '홍',
     challengeTitle: '챌린지 1기',
-    unreadCount: 2,
-    lastMessage: '안녕하세요',
-    lastMessageAt: '2025-05-03T10:00:00',
   },
   {
-    id: '2',
+    id: '김철수|챌린지 2기',
     name: '김철수',
-    email: 'kim@test.com',
     avatarInitial: '김',
     challengeTitle: '챌린지 2기',
-    unreadCount: 0,
-    lastMessage: '감사합니다',
-    lastMessageAt: '2025-05-02T10:00:00',
   },
 ];
 
 describe('MenteeList', () => {
-  it('renders all mentees', () => {
+  it('renders all mentees with name and challenge', () => {
     render(
       <MenteeList
         mentees={mockMentees}
@@ -39,6 +31,8 @@ describe('MenteeList', () => {
     );
     expect(screen.getByText('홍길동')).toBeInTheDocument();
     expect(screen.getByText('김철수')).toBeInTheDocument();
+    expect(screen.getByText('챌린지 1기')).toBeInTheDocument();
+    expect(screen.getByText('챌린지 2기')).toBeInTheDocument();
   });
 
   it('filters by name', async () => {
@@ -55,7 +49,8 @@ describe('MenteeList', () => {
     expect(screen.queryByText('김철수')).not.toBeInTheDocument();
   });
 
-  it('shows unread count badge', () => {
+  it('filters by challenge title', async () => {
+    const user = userEvent.setup();
     render(
       <MenteeList
         mentees={mockMentees}
@@ -63,10 +58,32 @@ describe('MenteeList', () => {
         onSelect={vi.fn()}
       />,
     );
-    expect(screen.getByText('2')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('멘티 검색'), '2기');
+    expect(screen.getByText('김철수')).toBeInTheDocument();
+    expect(screen.queryByText('홍길동')).not.toBeInTheDocument();
   });
 
-  it('calls onSelect when mentee row clicked', async () => {
+  it('shows empty-search state when no match', async () => {
+    const user = userEvent.setup();
+    render(
+      <MenteeList
+        mentees={mockMentees}
+        activeMenteeId={null}
+        onSelect={vi.fn()}
+      />,
+    );
+    await user.type(screen.getByLabelText('멘티 검색'), '없는이름');
+    expect(screen.getByText('검색 결과 없음')).toBeInTheDocument();
+  });
+
+  it('shows empty state when no mentees', () => {
+    render(
+      <MenteeList mentees={[]} activeMenteeId={null} onSelect={vi.fn()} />,
+    );
+    expect(screen.getByText('멘티가 없습니다.')).toBeInTheDocument();
+  });
+
+  it('calls onSelect with stable id when mentee row clicked', async () => {
     const onSelect = vi.fn();
     const user = userEvent.setup();
     render(
@@ -76,7 +93,7 @@ describe('MenteeList', () => {
         onSelect={onSelect}
       />,
     );
-    await user.click(screen.getByLabelText('홍길동 멘티 대화 선택'));
-    expect(onSelect).toHaveBeenCalledWith('1');
+    await user.click(screen.getByLabelText('홍길동 멘티 선택'));
+    expect(onSelect).toHaveBeenCalledWith('홍길동|챌린지 1기');
   });
 });
