@@ -75,6 +75,8 @@ export function BlogNewsletterPopup() {
       title="뉴스레터 구독 안내"
       showCloseButton={false}
       className="w-[90vw] max-w-[400px]"
+      // 스크롤로 자동 노출되는 마케팅 팝업이라, 열릴 때 버튼에 자동 포커스(파란 ring)되는 걸 막는다.
+      onOpenAutoFocus={(e) => e.preventDefault()}
     >
       <div
         className="overflow-hidden bg-white"

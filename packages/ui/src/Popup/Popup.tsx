@@ -48,6 +48,11 @@ export interface PopupProps {
   overlayClassName?: string;
   /** 닫기 X 버튼 노출 여부 (기본 true) */
   showCloseButton?: boolean;
+  /**
+   * 열릴 때 첫 포커스 가능 요소로 자동 포커스되는 Radix 기본 동작 콜백.
+   * `e.preventDefault()`로 자동 포커스(및 그로 인한 focus ring)를 막을 수 있다.
+   */
+  onOpenAutoFocus?: (event: Event) => void;
   children: React.ReactNode;
 }
 
@@ -58,6 +63,7 @@ export function Popup({
   className,
   overlayClassName,
   showCloseButton = true,
+  onOpenAutoFocus,
   children,
 }: PopupProps) {
   return (
@@ -74,6 +80,7 @@ export function Popup({
           className={
             className ? `${CONTENT_CLASSES} ${className}` : CONTENT_CLASSES
           }
+          onOpenAutoFocus={onOpenAutoFocus}
         >
           <Dialog.Title className="sr-only">{title}</Dialog.Title>
           {children}
