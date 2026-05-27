@@ -15,3 +15,10 @@ export {
   type ChatMessage,
   type ChatRoom,
 } from './schema';
+export { useChatMessages } from './hooks/useChatMessages';
+export { useChatRoom, type ChatRoomMeta } from './hooks/useChatRoom';
+export {
+  useUnreadSummary,
+  isUnread,
+  sumUnread,
+} from './hooks/useUnreadSummary';
