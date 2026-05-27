@@ -1,23 +1,36 @@
+'use client';
+
+import { useState } from 'react';
+
+import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
+
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime, isEntranceActive } from '../utils';
+import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
-
-const FALLBACK_URL = 'https://www.letscareer.co.kr/';
 
 interface Props {
   mentor: Mentor;
   feedbackInfo: FeedbackInfo | null;
   status: LiveFeedbackStatus;
+  /** Jitsi 동일 방 합성용 — 미션 아이템의 feedbackId */
+  feedbackId?: number | null;
 }
 
-const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
+const ReservationInfoSection = ({
+  mentor,
+  feedbackInfo,
+  status,
+  feedbackId,
+}: Props) => {
+  const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
-  const entranceActive = isEntranceActive(
-    feedbackInfo?.startDate,
-    feedbackInfo?.endDate,
-  );
+  // TODO(임시): 정식 운영 시 T-10 게이팅 복원.
+  //   const entranceActive = isEntranceActive(feedbackInfo?.startDate, feedbackInfo?.endDate);
+  // 임시 변경: 라이브 입장 시간 게이팅을 우회해 항상 입장 허용 (PRD §13).
+  // isEntranceActive 함수는 ../utils 에 보존(복원 시 import 재추가).
+  const entranceActive: boolean = true;
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -73,11 +86,13 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
             {/* 하단 액션 */}
             {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
-              <a
-                href={entranceActive ? (meetingUrl ?? FALLBACK_URL) : undefined}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-disabled={!entranceActive}
+              // TODO(임시): 외부 회의 링크 대신 Jitsi 임베드 모달로 연결 (PRD §13).
+              //   buildJitsiRoomUrl(feedbackId, salt)로 멘토와 동일 방 입장.
+              //   상단 "회의 링크"(meetingUrl 외부 링크) row는 그대로 보존.
+              <button
+                type="button"
+                onClick={() => setIsJitsiOpen(true)}
+                disabled={!entranceActive}
                 className={
                   entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
@@ -85,10 +100,19 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
                 }
               >
                 LIVE 피드백 입장하기
-              </a>
+              </button>
             )}
           </div>
         </section>
+      )}
+
+      {feedbackId != null && (
+        <JitsiEmbedModal
+          isOpen={isJitsiOpen}
+          onClose={() => setIsJitsiOpen(false)}
+          meta={{ feedbackId }}
+          spaceName={mentor.nickname}
+        />
       )}
     </div>
   );
