@@ -135,3 +135,46 @@ describe('useLiveFeedbackList (옵션 A — programTitle 그룹핑)', () => {
     expect(round.endDate).toBe('2026-05-22');
   });
 });
+
+describe('useLiveFeedbackList — status/출석 → 세션 status 매핑 (2.2)', () => {
+  function firstBar(list: FeedbackMentor[]) {
+    setList(list);
+    const { result } = renderHook(() => useLiveFeedbackList());
+    return result.current.allSessionBars[0].liveFeedback;
+  }
+
+  it('COMPLETED → completed, 시간은 HH:mm 으로 파싱', () => {
+    const lf = firstBar([makeFeedback({ status: 'COMPLETED' })]);
+    expect(lf?.status).toBe('completed');
+    expect(lf?.startTime).toBe('10:00');
+    expect(lf?.endTime).toBe('10:30');
+  });
+
+  it('CANCELED + 멘티 ABSENT → mentee-absent', () => {
+    const lf = firstBar([
+      makeFeedback({ status: 'CANCELED', menteeStatus: 'ABSENT' }),
+    ]);
+    expect(lf?.status).toBe('mentee-absent');
+  });
+
+  it('CANCELED + 멘토 ABSENT → mentor-absent', () => {
+    const lf = firstBar([
+      makeFeedback({
+        status: 'CANCELED',
+        menteeStatus: 'PRESENT',
+        mentorStatus: 'ABSENT',
+      }),
+    ]);
+    expect(lf?.status).toBe('mentor-absent');
+  });
+
+  it('RESERVED → undefined (소비처 시간 기준 분기)', () => {
+    const lf = firstBar([makeFeedback({ status: 'RESERVED' })]);
+    expect(lf?.status).toBeUndefined();
+  });
+
+  it('liveFeedback.id 는 feedbackId 를 그대로 사용한다 (모달 단건 상세 fetch 키)', () => {
+    const lf = firstBar([makeFeedback({ feedbackId: 777 })]);
+    expect(lf?.id).toBe(777);
+  });
+});

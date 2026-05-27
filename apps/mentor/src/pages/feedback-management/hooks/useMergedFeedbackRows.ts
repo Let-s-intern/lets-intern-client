@@ -67,13 +67,16 @@ function summarizeWrittenMission(mission: Mission): {
 
 /**
  * 라이브 세션(`PeriodBarData`) → 4종 UI 상태 라벨 매핑.
- * `useLiveFeedbackList`의 `bar.liveFeedback?.status` (mock 키)를 사용한다.
+ * `useLiveFeedbackList`의 `bar.liveFeedback?.status` 키를 사용한다.
  *
- * BE 자동 상태 전이 미구현(PRD §5.4 mentor3.14) 보완:
- * - completed → 완료
- * - mentor-absent | mentee-absent → 미완료
- * - in-progress | mentor-late | mentee-late → 진행 중
- * - undefined | waiting → 시간 기준 분기 (시작 전: 진행 전, 시작 후: 진행 중, 종료 후: 미완료)
+ * Push 2 이후 라이브 세션 데이터 소스는 BE 멘토 목록(`useFeedbackMentorListQuery`)이며,
+ * `useLiveFeedbackList`가 BE `status`/`menteeStatus`/`mentorStatus` 조합을 다음으로만 매핑한다:
+ * - completed (status=COMPLETED) → 완료
+ * - mentor-absent | mentee-absent (status=CANCELED) → 미완료
+ * - undefined (status=RESERVED) → 시간 기준 분기 (시작 전: 진행 전, 진행 중, 종료 후: 미완료)
+ *
+ * ⚠️ in-progress / mentor-late / mentee-late 는 BE에 없는 세분 상태다.
+ * `LiveFeedbackInfo.status` 타입에는 남아 있어 아래 분기를 유지하지만, API 데이터로는 도달하지 않는다.
  */
 function resolveLiveRowStatus(
   bar: PeriodBarData,
@@ -112,8 +115,9 @@ function resolveLiveRowStatus(
 
 /**
  * 라이브 세션 → 멘티 예약/참여 라벨.
- * 본 단계에서는 mock 슬롯이 항상 예약된 상태이므로 모두 '예약 완료'.
- * 참여 라벨은 status에서 도출.
+ * BE 목록에 내려온 세션은 모두 예약 확정 건이므로 예약 라벨은 '예약 완료'로 고정한다.
+ * 참여 라벨은 `useLiveFeedbackList`가 BE status/출석을 매핑한 liveFeedback.status에서 도출.
+ * (mentee-absent → 멘티 불참, mentor-absent → 멘토 불참, completed → 양측 참여)
  */
 function resolveLiveParticipation(bar: PeriodBarData): {
   menteeParticipation: '참여' | '불참' | null;
@@ -174,8 +178,12 @@ function buildMissionRangeMap(
  * - 서면: 멘티예약/멘티참여/멘토참여 = null
  * - 라이브: 멘티제출 = null (제출 연동 미구현)
  *
- * 라이브 행 데이터 소스는 Push 1의 `useFeedbackMentorSlotsQuery`로 교체될 예정이지만,
- * 현 시점에는 mock 기반 `useLiveFeedbackList`의 결과(`LiveFeedbackRound.sessionBars`)를 그대로 사용한다.
+ * 라이브 행 데이터 소스는 Push 2부터 BE 멘토 목록(`useFeedbackMentorListQuery`) 기반
+ * `useLiveFeedbackList`의 결과(`LiveFeedbackRound.sessionBars`)를 사용한다.
+ *
+ * ⚠️ 회차(`thLabel`) 한계: BE `FeedbackMentorVo`에 missionTh(회차)가 없어 옵션 A로
+ *   챌린지당 단일 회차(`th=1`)만 부여한다. 따라서 라이브 행은 항상 "1회차"로 표기되며
+ *   정밀 회차 구분은 불가하다 (정밀화는 BE 회차 필드 선행 필요, PRD §6.1).
  */
 export function useMergedFeedbackRows(
   writtenChallenges: Challenge[],
@@ -184,10 +192,7 @@ export function useMergedFeedbackRows(
   // 서면 피드백 기간 계산용 — 첫 번째 챌린지만 fetch (성능 보호용).
   // 실제 API는 challengeId 단위라 모든 챌린지 fetch는 캐시되더라도 N개 호출이 발생.
   // 단순화를 위해 mock RANGES override만 사용하고 API range는 빈 맵 처리.
-  const missionRangeMap = useMemo(
-    () => buildMissionRangeMap([]),
-    [],
-  );
+  const missionRangeMap = useMemo(() => buildMissionRangeMap([]), []);
 
   return useMemo(() => {
     const now = currentNow();
@@ -206,10 +211,8 @@ export function useMergedFeedbackRows(
           mission.submittedCount > 0 ? '제출' : '미제출';
 
         // 멘티 성명 — 미션 단위 행은 멘티별로 펼치지 않음. 인원 수 표기.
-        const totalCount =
-          mission.submittedCount + mission.notSubmittedCount;
-        const menteeNameLabel =
-          totalCount > 0 ? `멘티 ${totalCount}명` : '-';
+        const totalCount = mission.submittedCount + mission.notSubmittedCount;
+        const menteeNameLabel = totalCount > 0 ? `멘티 ${totalCount}명` : '-';
 
         rows.push({
           id: `written-${challenge.challengeId}-${mission.missionId}`,
@@ -302,8 +305,5 @@ export function useApiMissionRangeMap(challengeId: number | undefined) {
   const { data } = useMentorMissionFeedbackListQuery(challengeId ?? 0, {
     enabled: !!challengeId,
   });
-  return useMemo(
-    () => buildMissionRangeMap(data?.missionList ?? []),
-    [data],
-  );
+  return useMemo(() => buildMissionRangeMap(data?.missionList ?? []), [data]);
 }

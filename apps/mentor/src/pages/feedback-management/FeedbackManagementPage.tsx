@@ -109,10 +109,7 @@ const FeedbackManagementPage = () => {
       {isLoading ? (
         <div className="py-12 text-center text-gray-400">로딩 중...</div>
       ) : (
-        <FeedbackTable
-          rows={filteredRows}
-          onClickDetail={handleClickDetail}
-        />
+        <FeedbackTable rows={filteredRows} onClickDetail={handleClickDetail} />
       )}
 
       {/* 서면 피드백 모달 — 모바일/데스크탑 분기 */}
@@ -136,7 +133,9 @@ const FeedbackManagementPage = () => {
         />
       )}
 
-      {/* 라이브 피드백 모달 — 선택한 회차의 세션들만 네비게이션 대상 */}
+      {/* 라이브 피드백 모달 — 선택한 회차의 세션들만 네비게이션 대상.
+          ⚠️ 회차 한계: BE에 missionTh가 없어 옵션 A로 selectedRound.th는 항상 1.
+          모달 헤더 "N차 피드백"은 1차로 고정된다 (정밀 회차는 BE 선행 필요, PRD §6.1). */}
       <LiveFeedbackReservationModal
         isOpen={!!modalBar}
         onClose={closeLiveModal}
