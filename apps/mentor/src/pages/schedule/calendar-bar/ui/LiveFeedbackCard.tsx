@@ -54,8 +54,8 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
 };
 
 /**
- * 시간별 일정(하단 time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
- * 부모의 top/height(세션 시간 길이)에 맞춰 h-full/w-full로 채워진다.
+ * 시간별 일정(하단) 안에서 시간순으로 쌓이는 라이브 피드백 블록.
+ * 콘텐츠 높이에 맞춰 자연스럽게 늘어난다 (절대배치 아님).
  */
 type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
 
@@ -95,7 +95,7 @@ const STATUS_BADGE: Record<
 };
 
 /**
- * 시간별 일정(time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
+ * 시간별 일정(하단) 안에서 시간순으로 쌓이는 라이브 피드백 블록.
  *
  * 디자인 참조: `.claude/tasks/라이브피드백.png` (PRD-0503 #3)
  * - 카드: 흰 배경 + 옅은 회색 테두리 + 둥근 모서리

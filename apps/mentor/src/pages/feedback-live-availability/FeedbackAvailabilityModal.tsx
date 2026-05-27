@@ -7,6 +7,7 @@ import {
   useFeedbackMentorSlotsQuery,
 } from '@/api/feedback/feedback';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
 import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
@@ -31,6 +32,7 @@ const FeedbackAvailabilityModal = ({
 }: FeedbackAvailabilityModalProps) => {
   const [resetCounter, setResetCounter] = useState(0);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [reservationOpen, setReservationOpen] = useState(false);
 
   const slotsQuery = useFeedbackMentorSlotsQuery({
     statusList: ['OPEN', 'RESERVED'],
@@ -73,12 +75,8 @@ const FeedbackAvailabilityModal = ({
     }
 
     const results = await Promise.allSettled([
-      creates.length > 0
-        ? createSlots.mutateAsync(creates)
-        : Promise.resolve(),
-      deletes.length > 0
-        ? deleteSlots.mutateAsync(deletes)
-        : Promise.resolve(),
+      creates.length > 0 ? createSlots.mutateAsync(creates) : Promise.resolve(),
+      deletes.length > 0 ? deleteSlots.mutateAsync(deletes) : Promise.resolve(),
     ]);
 
     const failures: string[] = [];
@@ -101,54 +99,62 @@ const FeedbackAvailabilityModal = ({
   };
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={onClose}
-      className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
-    >
-      {slotsQuery.isPending ? (
-        <div className="flex flex-1 items-center justify-center py-20">
-          <p className="text-xsmall14 text-neutral-40">
-            슬롯 정보를 불러오는 중...
-          </p>
-        </div>
-      ) : slotsQuery.isError ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20">
-          <p className="text-xsmall14 text-neutral-40">
-            슬롯 정보를 불러오지 못했습니다.
-          </p>
-          <button
-            type="button"
-            onClick={() => slotsQuery.refetch()}
-            className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
-          >
-            다시 시도
-          </button>
-        </div>
-      ) : (
-        <>
-          {saveError && (
-            <div className="border-red-100 bg-red-50 text-xsmall14 border-b px-6 py-3 text-red-600">
-              저장 중 문제가 발생했어요: {saveError}
-            </div>
-          )}
-          {isSaving && (
-            <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
-              저장 중입니다...
-            </div>
-          )}
-          <LiveAvailabilityContent
-            mode="modal"
-            initialSlots={initialSlots}
-            reservedSlots={reservedSlots}
-            onSave={handleSave}
-            onClose={onClose}
-            resetKey={`${isOpen}-${resetCounter}`}
-            focusDate={focusDate}
-          />
-        </>
-      )}
-    </BaseModal>
+    <>
+      <BaseModal
+        isOpen={isOpen}
+        onClose={onClose}
+        className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
+      >
+        {slotsQuery.isPending ? (
+          <div className="flex flex-1 items-center justify-center py-20">
+            <p className="text-xsmall14 text-neutral-40">
+              슬롯 정보를 불러오는 중...
+            </p>
+          </div>
+        ) : slotsQuery.isError ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20">
+            <p className="text-xsmall14 text-neutral-40">
+              슬롯 정보를 불러오지 못했습니다.
+            </p>
+            <button
+              type="button"
+              onClick={() => slotsQuery.refetch()}
+              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
+            >
+              다시 시도
+            </button>
+          </div>
+        ) : (
+          <>
+            {saveError && (
+              <div className="text-xsmall14 border-b border-red-100 bg-red-50 px-6 py-3 text-red-600">
+                저장 중 문제가 발생했어요: {saveError}
+              </div>
+            )}
+            {isSaving && (
+              <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+                저장 중입니다...
+              </div>
+            )}
+            <LiveAvailabilityContent
+              mode="modal"
+              initialSlots={initialSlots}
+              reservedSlots={reservedSlots}
+              onSave={handleSave}
+              onClose={onClose}
+              resetKey={`${isOpen}-${resetCounter}`}
+              focusDate={focusDate}
+              onOpenReservation={() => setReservationOpen(true)}
+            />
+          </>
+        )}
+      </BaseModal>
+
+      <ReservationListModal
+        isOpen={reservationOpen}
+        onClose={() => setReservationOpen(false)}
+      />
+    </>
   );
 };
 

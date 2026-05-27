@@ -1,33 +1,65 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import FeedbackLiveReservationPage from '../FeedbackLiveReservationPage';
 
+const useFeedbackMentorListQueryMock = vi.fn();
+const useUserQueryMock = vi.fn();
+const useFeedbackMentorDetailQueryMock = vi.fn();
+const useFeedbackMentorSlotsQueryMock = vi.fn();
+
+vi.mock('@/api/feedback/feedback', () => ({
+  useFeedbackMentorListQuery: () => useFeedbackMentorListQueryMock(),
+  useFeedbackMentorDetailQuery: (id: number | null) =>
+    useFeedbackMentorDetailQueryMock(id),
+  useFeedbackMentorSlotsQuery: () => useFeedbackMentorSlotsQueryMock(),
+}));
+
+vi.mock('@/api/user/user', () => ({
+  useUserQuery: () => useUserQueryMock(),
+}));
+
+function renderPage() {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={client}>
+      <FeedbackLiveReservationPage />
+    </QueryClientProvider>,
+  );
+}
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
+
 describe('FeedbackLiveReservationPage', () => {
-  it('헤더와 mock 안내가 노출된다', () => {
-    render(<FeedbackLiveReservationPage />);
+  it('페이지 헤더와 본문(ReservationListContent) 섹션을 노출한다', () => {
+    useFeedbackMentorListQueryMock.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+    });
+    useUserQueryMock.mockReturnValue({ data: { name: '테스트 멘토' } });
+    useFeedbackMentorDetailQueryMock.mockReturnValue({ data: undefined });
+    useFeedbackMentorSlotsQueryMock.mockReturnValue({
+      data: { feedbackSlotList: [] },
+      isLoading: false,
+      isError: false,
+    });
+
+    renderPage();
+
     expect(
       screen.getByRole('heading', { name: '예약 현황' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/예약 리스트는 mock 데이터입니다/),
+      screen.getByRole('heading', { name: '예약 목록' }),
     ).toBeInTheDocument();
-  });
-
-  it('상태 탭이 3개 노출되고 클릭 시 활성 상태가 변한다', async () => {
-    const user = userEvent.setup();
-    render(<FeedbackLiveReservationPage />);
-
-    const allTab = screen.getByRole('tab', { name: /전체/ });
-    const waitingTab = screen.getByRole('tab', { name: /예정/ });
-    const completedTab = screen.getByRole('tab', { name: /완료/ });
-
-    expect(allTab).toHaveAttribute('aria-selected', 'true');
-    expect(waitingTab).toHaveAttribute('aria-selected', 'false');
-
-    await user.click(completedTab);
-    expect(completedTab).toHaveAttribute('aria-selected', 'true');
-    expect(allTab).toHaveAttribute('aria-selected', 'false');
+    expect(
+      screen.getByRole('heading', { name: '완료된 예약' }),
+    ).toBeInTheDocument();
   });
 });

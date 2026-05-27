@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
@@ -6,43 +6,32 @@ import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '@/pages/schedule/types';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import FeedbackSummary from './ui/FeedbackSummary';
 import FeedbackTabs from './ui/FeedbackTabs';
 import FeedbackTable from './ui/FeedbackTable';
+import WrittenMenteeAttendanceFetcher from './ui/WrittenMenteeAttendanceFetcher';
 import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 import { useFeedbackTabQuery } from './hooks/useFeedbackTabQuery';
 import {
   useLiveFeedbackList,
   type LiveFeedbackRound,
 } from './hooks/useLiveFeedbackList';
-import { useMergedFeedbackRows } from './hooks/useMergedFeedbackRows';
-import { WRITTEN_CHALLENGE_MOCK } from './mocks/writtenChallengeMock';
+import {
+  useMergedFeedbackRows,
+  useWrittenMissionRangeMap,
+  type WrittenMenteeAttendance,
+} from './hooks/useMergedFeedbackRows';
 import type { FeedbackRow } from './types';
-
-type Challenge = MentorFeedbackManagement['challengeList'][number];
-
-/** API 서면 + mock 서면 병합 (challengeId 중복 시 API 우선). */
-function useMergedWrittenChallenges(apiChallenges: Challenge[]) {
-  return useMemo(() => {
-    const apiIds = new Set(apiChallenges.map((c) => c.challengeId));
-    const extras = WRITTEN_CHALLENGE_MOCK.filter(
-      (c) => !apiIds.has(c.challengeId),
-    );
-    return [...apiChallenges, ...extras];
-  }, [apiChallenges]);
-}
 
 const FeedbackManagementPage = () => {
   const {
-    challengeList: apiChallengeList,
+    challengeList,
     isLoading,
     feedbackModal,
     openWrittenFeedbackModal,
     handleCloseModal,
   } = useFeedbackManagement();
 
-  const challengeList = useMergedWrittenChallenges(apiChallengeList);
   const { challenges: liveChallenges, allSessionBars } = useLiveFeedbackList();
 
   const allLiveRounds = useMemo<LiveFeedbackRound[]>(
@@ -50,7 +39,36 @@ const FeedbackManagementPage = () => {
     [liveChallenges],
   );
 
-  const allRows = useMergedFeedbackRows(challengeList, allLiveRounds);
+  // 서면 멘티별 출석 fan-out 결과를 모으는 맵 — 도착 즉시 행이 멘티별로 펼쳐진다.
+  const [writtenAttendance, setWrittenAttendance] = useState<
+    Map<string, WrittenMenteeAttendance[]>
+  >(new Map());
+
+  const handleWrittenAttendance = useCallback(
+    (key: string, list: WrittenMenteeAttendance[]) => {
+      setWrittenAttendance((prev) => {
+        const next = new Map(prev);
+        next.set(key, list);
+        return next;
+      });
+    },
+    [],
+  );
+
+  // 서면 피드백 기간 — feedback-management 응답엔 미션 날짜가 없어, 챌린지별
+  // 미션 목록을 병렬 조회해 missionId→{start,end} 맵을 채운다(서면 행 일정 표시용).
+  const challengeIds = useMemo(
+    () => challengeList.map((c) => c.challengeId),
+    [challengeList],
+  );
+  const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
+
+  const allRows = useMergedFeedbackRows(
+    challengeList,
+    allLiveRounds,
+    writtenAttendance,
+    missionRangeMap,
+  );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();
 
@@ -106,13 +124,17 @@ const FeedbackManagementPage = () => {
 
       <FeedbackTabs activeTab={activeTab} onChange={setActiveTab} />
 
+      {/* 서면 멘티별 출석 fan-out — 화면 출력 없음. 미션마다 출석을 병렬 조회해
+          handleWrittenAttendance 로 보고하면 서면 행이 멘티별로 펼쳐진다. */}
+      <WrittenMenteeAttendanceFetcher
+        challenges={challengeList}
+        onData={handleWrittenAttendance}
+      />
+
       {isLoading ? (
         <div className="py-12 text-center text-gray-400">로딩 중...</div>
       ) : (
-        <FeedbackTable
-          rows={filteredRows}
-          onClickDetail={handleClickDetail}
-        />
+        <FeedbackTable rows={filteredRows} onClickDetail={handleClickDetail} />
       )}
 
       {/* 서면 피드백 모달 — 모바일/데스크탑 분기 */}
@@ -136,7 +158,9 @@ const FeedbackManagementPage = () => {
         />
       )}
 
-      {/* 라이브 피드백 모달 — 선택한 회차의 세션들만 네비게이션 대상 */}
+      {/* 라이브 피드백 모달 — 선택한 회차의 세션들만 네비게이션 대상.
+          ⚠️ 회차 한계: BE에 missionTh가 없어 옵션 A로 selectedRound.th는 항상 1.
+          모달 헤더 "N차 피드백"은 1차로 고정된다 (정밀 회차는 BE 선행 필요, PRD §6.1). */}
       <LiveFeedbackReservationModal
         isOpen={!!modalBar}
         onClose={closeLiveModal}

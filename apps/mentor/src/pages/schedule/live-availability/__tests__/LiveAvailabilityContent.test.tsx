@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import LiveAvailabilityContent from '../LiveAvailabilityContent';
@@ -52,5 +53,38 @@ describe('LiveAvailabilityContent', () => {
     const { container } = render(<LiveAvailabilityContent {...baseProps} />);
     const stickyHeaders = container.querySelectorAll('.sticky.top-0');
     expect(stickyHeaders.length).toBeGreaterThan(0);
+  });
+
+  it('onOpenReservation 이 없으면 "예약현황 보기" 버튼을 노출하지 않는다', () => {
+    render(<LiveAvailabilityContent {...baseProps} />);
+    expect(
+      screen.queryByRole('button', { name: '예약현황 보기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('onOpenReservation 이 있으면 "예약현황 보기" 버튼 클릭 시 콜백을 호출한다', async () => {
+    const user = userEvent.setup();
+    const onOpenReservation = vi.fn();
+    render(
+      <LiveAvailabilityContent
+        {...baseProps}
+        onOpenReservation={onOpenReservation}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: '예약현황 보기' }));
+    expect(onOpenReservation).toHaveBeenCalledTimes(1);
+  });
+
+  it('showHeader=false 면 onOpenReservation 이 있어도 버튼을 노출하지 않는다', () => {
+    render(
+      <LiveAvailabilityContent
+        {...baseProps}
+        showHeader={false}
+        onOpenReservation={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByRole('button', { name: '예약현황 보기' }),
+    ).not.toBeInTheDocument();
   });
 });

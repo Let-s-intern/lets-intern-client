@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import axios from '@/utils/axios';
@@ -13,6 +15,15 @@ vi.mock('@/utils/axios', () => ({
     delete: vi.fn(),
   },
 }));
+
+const navigateMock = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-router-dom')>(
+      'react-router-dom',
+    );
+  return { ...actual, useNavigate: () => navigateMock };
+});
 
 const axiosMock = vi.mocked(axios, true);
 
@@ -35,7 +46,9 @@ function renderPage() {
   });
   return render(
     <QueryClientProvider client={client}>
-      <FeedbackLiveAvailabilityPage />
+      <MemoryRouter>
+        <FeedbackLiveAvailabilityPage />
+      </MemoryRouter>
     </QueryClientProvider>,
   );
 }
@@ -50,10 +63,20 @@ describe('FeedbackLiveAvailabilityPage', () => {
       screen.getByRole('heading', { name: '라이브 피드백 일정 열기' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /라이브 피드백을 진행할 수 있는 시간대를 설정하세요./,
-      ),
+      screen.getByText(/라이브 피드백을 진행할 수 있는 시간대를 설정하세요./),
     ).toBeInTheDocument();
+  });
+
+  it('"예약현황 보기" 버튼 클릭 시 예약현황 페이지로 이동한다', async () => {
+    const user = userEvent.setup();
+    axiosMock.get.mockResolvedValue({
+      data: { data: { feedbackSlotList: [] } },
+    });
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: '예약현황 보기' }));
+
+    expect(navigateMock).toHaveBeenCalledWith('/feedback/live-reservation');
   });
 
   it('로딩 중에는 안내 메시지를 노출한다', () => {
@@ -116,8 +139,6 @@ describe('FeedbackLiveAvailabilityPage', () => {
     // RESERVED 셀은 reservedSet 분기로 "예약 완료" 라벨이 표시되어야 한다
     // (그리드가 해당 주 범위가 아니면 표시되지 않을 수 있으므로 navigation 없이 확인 가능한 카운트 0 이상)
     // 보수적으로: 페이지가 정상 렌더되었는지만 확인 (그리드 셀 존재만 검증)
-    expect(
-      screen.getByText(/주간 일정표/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/주간 일정표/)).toBeInTheDocument();
   });
 });

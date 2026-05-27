@@ -79,3 +79,118 @@ export const getFeedbackDetailResponseSchema = z.object({
 export type GetFeedbackDetailResponse = z.infer<
   typeof getFeedbackDetailResponseSchema
 >;
+
+/**
+ * BE AttendanceStatus enum 1:1 매핑 (서면 제출 상태).
+ * - PRESENT: 제출 완료
+ * - UPDATED: 제출 후 수정
+ * - LATE: 지각 제출
+ * - ABSENT: 미제출
+ */
+export const attendanceStatusSchema = z.enum([
+  'PRESENT',
+  'UPDATED',
+  'LATE',
+  'ABSENT',
+]);
+export type AttendanceStatus = z.infer<typeof attendanceStatusSchema>;
+
+/**
+ * BE FeedbackAttendanceStatus enum 1:1 매핑 (라이브 출석, 신규).
+ * 멘토/멘티 각각의 라이브 세션 참석 상태.
+ * - PENDING: 대기 (아직 마킹 안 됨)
+ * - PRESENT: 참석
+ * - ABSENT: 불참
+ */
+export const feedbackAttendanceStatusSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+export type FeedbackAttendanceStatus = z.infer<
+  typeof feedbackAttendanceStatusSchema
+>;
+
+/**
+ * BE FeedbackMentorVo 1:1 매핑 (멘토 목록 item).
+ * `GET /feedback/mentor` 의 `feedbackList` 원소.
+ * - `meetingUrl`은 BE 미배포 영역으로 null 가능.
+ * - enum 필드(mentorStatus/menteeStatus/status)는 BE가 항상 채운다.
+ */
+export const feedbackMentorSchema = z.object({
+  feedbackId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  meetingUrl: z.string().nullable(),
+  mentorStatus: feedbackAttendanceStatusSchema,
+  menteeStatus: feedbackAttendanceStatusSchema,
+  status: feedbackStatusSchema,
+  programTitle: z.string(),
+  menteeName: z.string(),
+  /**
+   * 신청 시간(멘티가 예약을 신청한 일시).
+   *
+   * ⚠️ 현재 BE `FeedbackMentorVo`에는 이 필드가 없다(어드민 VO엔 존재).
+   * forward-compatible: optional/nullable이라 응답에 없어도 parse 통과한다.
+   * BE가 추가하면 그대로 채워진다. (be-request-feedback-mentor-createdate.md 참고)
+   */
+  createDate: z.string().nullable().optional(),
+});
+export type FeedbackMentor = z.infer<typeof feedbackMentorSchema>;
+
+/**
+ * BE GetMentorFeedbacksResponseDto 응답 매핑.
+ * `GET /feedback/mentor` 응답 구조.
+ */
+export const getMentorFeedbacksResponseSchema = z.object({
+  feedbackList: z.array(feedbackMentorSchema),
+});
+export type GetMentorFeedbacksResponse = z.infer<
+  typeof getMentorFeedbacksResponseSchema
+>;
+
+/**
+ * BE FeedbackDetailMentorVo 1:1 매핑 (멘토 상세).
+ * `GET /feedback/mentor/{feedbackId}` 의 `feedbackInfo`.
+ * 멘토 목록 VO의 상위집합 + 멘티 희망정보·사전질문·출석 URL 포함.
+ */
+export const feedbackDetailMentorSchema = z.object({
+  feedbackId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  meetingUrl: z.string().nullable(),
+  status: feedbackStatusSchema,
+  programTitle: z.string(),
+  attendanceUrl: z.string(),
+  attendanceStatus: attendanceStatusSchema,
+  menteeName: z.string(),
+  menteeWishField: z.string().nullable(),
+  menteeWishIndustry: z.string().nullable(),
+  menteeWishCompany: z.string().nullable(),
+  preQuestion: z.string().nullable(),
+  mentorStatus: feedbackAttendanceStatusSchema,
+  menteeStatus: feedbackAttendanceStatusSchema,
+});
+export type FeedbackDetailMentor = z.infer<typeof feedbackDetailMentorSchema>;
+
+/**
+ * BE GetMentorFeedbackDetailResponseDto 응답 매핑.
+ * `GET /feedback/mentor/{feedbackId}` 응답 구조.
+ */
+export const getMentorFeedbackDetailResponseSchema = z.object({
+  feedbackInfo: feedbackDetailMentorSchema,
+});
+export type GetMentorFeedbackDetailResponse = z.infer<
+  typeof getMentorFeedbackDetailResponseSchema
+>;
+
+/**
+ * 멘토 PATCH 요청 본문.
+ * 멘토는 멘티 출석 상태(`menteeStatus`)만 수정할 수 있다.
+ */
+export const updateFeedbackByMentorRequestSchema = z.object({
+  menteeStatus: feedbackAttendanceStatusSchema,
+});
+export type UpdateFeedbackByMentorRequest = z.infer<
+  typeof updateFeedbackByMentorRequestSchema
+>;

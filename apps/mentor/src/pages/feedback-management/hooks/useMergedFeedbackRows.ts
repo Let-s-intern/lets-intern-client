@@ -1,16 +1,35 @@
+import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
+import axios from '@/utils/axios';
+import { challengeMissionFeedbackListSchema } from '@/api/challenge/challengeSchema';
+import type {
+  FeedbackStatus,
+  MentorFeedbackManagement,
+} from '@/api/challenge/challengeSchema';
+import type { AttendanceStatus } from '@/schema';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { PeriodBarData } from '@/pages/schedule/types';
 
-import { WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES } from '../mocks/writtenChallengeMock';
 import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
-type Mission = Challenge['feedbackMissions'][number];
+
+/** 미션별 출석에서 추린 멘티 1명 단위 데이터 (서면 행 펼침용). */
+export interface WrittenMenteeAttendance {
+  /** 출석 id — 신규 출석 API(미제출자)는 null 가능. 행 key는 index로 보강한다. */
+  id: number | null;
+  name: string;
+  status: AttendanceStatus;
+  feedbackStatus: FeedbackStatus | null;
+}
+
+/** `${challengeId}-${missionId}` → 멘티별 출석 리스트 */
+export type WrittenAttendanceMap = ReadonlyMap<
+  string,
+  WrittenMenteeAttendance[]
+>;
 
 const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로 미는 sentinel
 
@@ -33,47 +52,52 @@ function formatLiveSchedule(
   return `${formatDot(date)} ${startTime} ~ ${endTime}`;
 }
 
-/** 서면 미션 행 — 제출/피드백 상태 요약 */
-function summarizeWrittenMission(mission: Mission): {
+/**
+ * 서면 멘티 1명 행 — 제출(status)/피드백(feedbackStatus) 기준 상태 라벨.
+ * - status === 'ABSENT' → 미제출 (피드백 미시작이므로 '진행 전')
+ * - feedbackStatus COMPLETED/CONFIRMED → 완료
+ * - feedbackStatus IN_PROGRESS → 진행 중
+ * - 그 외(WAITING/null) → 진행 전
+ */
+function summarizeWrittenMentee(mentee: WrittenMenteeAttendance): {
+  submissionLabel: '제출' | '미제출';
   statusLabel: string;
   statusTone: FeedbackRow['statusTone'];
 } {
-  let completed = 0;
-  let feedbackStarted = 0;
-  for (const item of mission.feedbackStatusCounts) {
-    if (
-      item.feedbackStatus === 'COMPLETED' ||
-      item.feedbackStatus === 'CONFIRMED'
-    ) {
-      completed += item.count;
-    }
-    if (item.feedbackStatus !== 'WAITING') {
-      feedbackStarted += item.count;
-    }
-  }
+  const submissionLabel: '제출' | '미제출' =
+    mentee.status === 'ABSENT' ? '미제출' : '제출';
 
-  const hasSubmission = mission.submittedCount > 0;
-  if (!hasSubmission) {
-    return { statusLabel: '진행 전', statusTone: 'waiting' };
+  if (submissionLabel === '미제출') {
+    return { submissionLabel, statusLabel: '진행 전', statusTone: 'waiting' };
   }
-  if (completed >= mission.submittedCount) {
-    return { statusLabel: '완료', statusTone: 'completed' };
+  if (
+    mentee.feedbackStatus === 'COMPLETED' ||
+    mentee.feedbackStatus === 'CONFIRMED'
+  ) {
+    return { submissionLabel, statusLabel: '완료', statusTone: 'completed' };
   }
-  if (feedbackStarted > 0) {
-    return { statusLabel: '진행 중', statusTone: 'inProgress' };
+  if (mentee.feedbackStatus === 'IN_PROGRESS') {
+    return {
+      submissionLabel,
+      statusLabel: '진행 중',
+      statusTone: 'inProgress',
+    };
   }
-  return { statusLabel: '진행 전', statusTone: 'waiting' };
+  return { submissionLabel, statusLabel: '진행 전', statusTone: 'waiting' };
 }
 
 /**
  * 라이브 세션(`PeriodBarData`) → 4종 UI 상태 라벨 매핑.
- * `useLiveFeedbackList`의 `bar.liveFeedback?.status` (mock 키)를 사용한다.
+ * `useLiveFeedbackList`의 `bar.liveFeedback?.status` 키를 사용한다.
  *
- * BE 자동 상태 전이 미구현(PRD §5.4 mentor3.14) 보완:
- * - completed → 완료
- * - mentor-absent | mentee-absent → 미완료
- * - in-progress | mentor-late | mentee-late → 진행 중
- * - undefined | waiting → 시간 기준 분기 (시작 전: 진행 전, 시작 후: 진행 중, 종료 후: 미완료)
+ * Push 2 이후 라이브 세션 데이터 소스는 BE 멘토 목록(`useFeedbackMentorListQuery`)이며,
+ * `useLiveFeedbackList`가 BE `status`/`menteeStatus`/`mentorStatus` 조합을 다음으로만 매핑한다:
+ * - completed (status=COMPLETED) → 완료
+ * - mentor-absent | mentee-absent (status=CANCELED) → 미완료
+ * - undefined (status=RESERVED) → 시간 기준 분기 (시작 전: 진행 전, 진행 중, 종료 후: 미완료)
+ *
+ * ⚠️ in-progress / mentor-late / mentee-late 는 BE에 없는 세분 상태다.
+ * `LiveFeedbackInfo.status` 타입에는 남아 있어 아래 분기를 유지하지만, API 데이터로는 도달하지 않는다.
  */
 function resolveLiveRowStatus(
   bar: PeriodBarData,
@@ -112,8 +136,9 @@ function resolveLiveRowStatus(
 
 /**
  * 라이브 세션 → 멘티 예약/참여 라벨.
- * 본 단계에서는 mock 슬롯이 항상 예약된 상태이므로 모두 '예약 완료'.
- * 참여 라벨은 status에서 도출.
+ * BE 목록에 내려온 세션은 모두 예약 확정 건이므로 예약 라벨은 '예약 완료'로 고정한다.
+ * 참여 라벨은 `useLiveFeedbackList`가 BE status/출석을 매핑한 liveFeedback.status에서 도출.
+ * (mentee-absent → 멘티 불참, mentor-absent → 멘토 불참, completed → 양측 참여)
  */
 function resolveLiveParticipation(bar: PeriodBarData): {
   menteeParticipation: '참여' | '불참' | null;
@@ -139,14 +164,15 @@ function resolveLiveParticipation(bar: PeriodBarData): {
   return { menteeParticipation: null, mentorParticipation: null };
 }
 
-interface MissionRangeMap {
-  /** missionId → 서면 피드백 기간 {start, end} */
-  get(id: number): { start: string; end: string } | undefined;
-}
+/** missionId → 서면 피드백 기간 {start, end} */
+export type MissionRangeMap = ReadonlyMap<
+  number,
+  { start: string; end: string }
+>;
 
-function buildMissionRangeMap(
+export function buildMissionRangeMap(
   apiMissions: Array<{ id: number; endDate?: string | null }>,
-): MissionRangeMap {
+): Map<number, { start: string; end: string }> {
   const map = new Map<number, { start: string; end: string }>();
   const addDays = (iso: string, days: number) => {
     const d = new Date(iso);
@@ -156,12 +182,6 @@ function buildMissionRangeMap(
   for (const m of apiMissions) {
     if (!m.endDate) continue;
     map.set(m.id, { start: addDays(m.endDate, 2), end: addDays(m.endDate, 4) });
-  }
-  // mock override (writtenChallengeMock에 없는 API 미션은 그대로 유지)
-  for (const [idStr, range] of Object.entries(
-    WRITTEN_CHALLENGE_MISSION_FEEDBACK_RANGES,
-  )) {
-    map.set(Number(idStr), range);
   }
   return map;
 }
@@ -174,68 +194,77 @@ function buildMissionRangeMap(
  * - 서면: 멘티예약/멘티참여/멘토참여 = null
  * - 라이브: 멘티제출 = null (제출 연동 미구현)
  *
- * 라이브 행 데이터 소스는 Push 1의 `useFeedbackMentorSlotsQuery`로 교체될 예정이지만,
- * 현 시점에는 mock 기반 `useLiveFeedbackList`의 결과(`LiveFeedbackRound.sessionBars`)를 그대로 사용한다.
+ * 라이브 행 데이터 소스는 Push 2부터 BE 멘토 목록(`useFeedbackMentorListQuery`) 기반
+ * `useLiveFeedbackList`의 결과(`LiveFeedbackRound.sessionBars`)를 사용한다.
+ *
+ * ⚠️ 회차(`thLabel`) 한계: BE `FeedbackMentorVo`에 missionTh(회차)가 없어 옵션 A로
+ *   챌린지당 단일 회차(`th=1`)만 부여한다. 따라서 라이브 행은 항상 "1회차"로 표기되며
+ *   정밀 회차 구분은 불가하다 (정밀화는 BE 회차 필드 선행 필요, PRD §6.1).
  */
 export function useMergedFeedbackRows(
   writtenChallenges: Challenge[],
   liveRounds: LiveFeedbackRound[],
+  /**
+   * `${challengeId}-${missionId}` → 멘티별 출석 리스트.
+   * 주입되면 서면 행을 라이브처럼 멘티 1명당 1행으로 펼친다.
+   * 누락(미주입/로딩/빈) 미션은 행을 0개 생성한다 (graceful).
+   */
+  writtenAttendanceMap?: WrittenAttendanceMap,
+  /**
+   * missionId → 서면 피드백 기간 {start, end}.
+   * feedback-management 응답에는 미션 날짜가 없어, 미션 기간이 필요한 호출자는
+   * `useWrittenMissionRangeMap(challengeIds)`로 채워 주입한다. 미주입 시 일정은 '-'.
+   */
+  missionRangeMap?: MissionRangeMap,
 ): FeedbackRow[] {
-  // 서면 피드백 기간 계산용 — 첫 번째 챌린지만 fetch (성능 보호용).
-  // 실제 API는 challengeId 단위라 모든 챌린지 fetch는 캐시되더라도 N개 호출이 발생.
-  // 단순화를 위해 mock RANGES override만 사용하고 API range는 빈 맵 처리.
-  const missionRangeMap = useMemo(
-    () => buildMissionRangeMap([]),
-    [],
-  );
-
   return useMemo(() => {
     const now = currentNow();
     const rows: FeedbackRow[] = [];
 
-    // ── 서면 행 ─────────────────────────────────────
+    // ── 서면 행 (멘티 1명당 1행) ─────────────────────────────────────
     for (const challenge of writtenChallenges) {
       for (const mission of challenge.feedbackMissions) {
-        const range = missionRangeMap.get(mission.missionId);
+        const range = missionRangeMap?.get(mission.missionId);
         const scheduleStart = range?.start ?? '';
         const scheduleEnd = range?.end ?? '';
-        const summary = summarizeWrittenMission(mission);
+        const scheduleLabel = formatWrittenSchedule(scheduleStart, scheduleEnd);
 
-        // 서면 제출 라벨 (대표 요약): 제출자 있으면 '제출', 없으면 '미제출'
-        const submissionLabel: '제출' | '미제출' =
-          mission.submittedCount > 0 ? '제출' : '미제출';
+        const menteeList =
+          writtenAttendanceMap?.get(
+            `${challenge.challengeId}-${mission.missionId}`,
+          ) ?? [];
 
-        // 멘티 성명 — 미션 단위 행은 멘티별로 펼치지 않음. 인원 수 표기.
-        const totalCount =
-          mission.submittedCount + mission.notSubmittedCount;
-        const menteeNameLabel =
-          totalCount > 0 ? `멘티 ${totalCount}명` : '-';
+        // 출석이 비어있으면(미주입/로딩) 이 미션은 행 0개 — 깨지지 않게 skip.
+        menteeList.forEach((mentee, menteeIdx) => {
+          const summary = summarizeWrittenMentee(mentee);
+          const menteeKey = mentee.id ?? `idx${menteeIdx}`;
 
-        rows.push({
-          id: `written-${challenge.challengeId}-${mission.missionId}`,
-          type: 'written',
-          startDate: scheduleStart || '',
-          startTime: null,
-          endTime: null,
-          statusLabel: summary.statusLabel,
-          statusTone: summary.statusTone,
-          reservationLabel: null,
-          submissionLabel,
-          menteeParticipation: null,
-          mentorParticipation: null,
-          challengeTitle: challenge.title ?? '챌린지',
-          thLabel: `${mission.th}회차`,
-          scheduleLabel: formatWrittenSchedule(scheduleStart, scheduleEnd),
-          menteeNameLabel,
-          // 서면 상세는 제출자가 있을 때만 의미가 있다.
-          canOpenDetail: mission.submittedCount > 0,
-          source: {
+          rows.push({
+            id: `written-${challenge.challengeId}-${mission.missionId}-${menteeKey}`,
             type: 'written',
-            challengeId: challenge.challengeId,
-            missionId: mission.missionId,
-            missionTh: mission.th,
+            startDate: scheduleStart || '',
+            startTime: null,
+            endTime: null,
+            statusLabel: summary.statusLabel,
+            statusTone: summary.statusTone,
+            reservationLabel: null,
+            submissionLabel: summary.submissionLabel,
+            menteeParticipation: null,
+            mentorParticipation: null,
             challengeTitle: challenge.title ?? '챌린지',
-          },
+            thLabel: `${mission.th}회차`,
+            scheduleLabel,
+            menteeNameLabel: mentee.name,
+            // 서면 상세 — 멘티 행이어도 미션 모달로 진입(제출자 있을 때).
+            canOpenDetail: mentee.status !== 'ABSENT',
+            source: {
+              type: 'written',
+              challengeId: challenge.challengeId,
+              missionId: mission.missionId,
+              missionTh: mission.th,
+              challengeTitle: challenge.title ?? '챌린지',
+            },
+          });
         });
       }
     }
@@ -277,10 +306,14 @@ export function useMergedFeedbackRows(
     }
 
     // ── 정렬 ─────────────────────────────────────
+    // 날짜 내림차순(최신 먼저). 단 날짜 미상 행은 항상 마지막으로 민다.
+    // 같은 날 안에서는 시간 오름차순(이른 세션 먼저) → 멘티명 순서 유지.
     rows.sort((a, b) => {
-      const dateA = a.startDate || '9999-99-99';
-      const dateB = b.startDate || '9999-99-99';
-      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      const hasA = !!a.startDate;
+      const hasB = !!b.startDate;
+      if (hasA !== hasB) return hasA ? -1 : 1;
+      if (hasA && a.startDate !== b.startDate)
+        return b.startDate.localeCompare(a.startDate);
 
       const tA = a.startTime ?? NULL_TIME;
       const tB = b.startTime ?? NULL_TIME;
@@ -290,20 +323,46 @@ export function useMergedFeedbackRows(
     });
 
     return rows;
-  }, [writtenChallenges, liveRounds, missionRangeMap]);
+  }, [writtenChallenges, liveRounds, missionRangeMap, writtenAttendanceMap]);
 }
 
 /**
- * 옵션 — 향후 API mission 응답을 가져와 missionRangeMap을 채울 때 사용.
- * 현재 selector는 mock override만 쓰지만, 다중 챌린지 API range를 합치고 싶을 때
- * 이 hook을 호출자가 함께 사용하면 missionRangeMap을 외부에서 주입할 수 있다.
+ * 여러 챌린지의 미션 날짜(`GET /challenge/:id/mission/feedback`)를 병렬 조회해
+ * 서면 피드백 기간 맵(missionId → {start, end})을 합쳐 반환한다.
+ *
+ * feedback-management 응답에는 미션 날짜가 없어 서면 행 일정이 '-'로 비어 있는데,
+ * 이 hook 결과를 `useMergedFeedbackRows`에 주입하면 `scheduleLabel`이 채워진다.
+ *
+ * useQueries 로 challengeId 별 fan-out(N+1 허용). 도착한 미션만 endDate+2~+4로 파생한다.
  */
-export function useApiMissionRangeMap(challengeId: number | undefined) {
-  const { data } = useMentorMissionFeedbackListQuery(challengeId ?? 0, {
-    enabled: !!challengeId,
+export function useWrittenMissionRangeMap(
+  challengeIds: number[],
+): MissionRangeMap {
+  const results = useQueries({
+    queries: challengeIds.map((challengeId) => ({
+      queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+      queryFn: async () => {
+        const res = await axios.get(
+          `/challenge/${challengeId}/mission/feedback`,
+        );
+        return challengeMissionFeedbackListSchema.parse(res.data.data);
+      },
+    })),
   });
-  return useMemo(
-    () => buildMissionRangeMap(data?.missionList ?? []),
-    [data],
-  );
+
+  // 결과 배열의 미션 리스트를 평면화해 단일 키로 메모 (객체 참조 변동 최소화).
+  const missionListKey = results
+    .map((r) => (r.data ? r.data.missionList.map((m) => m.id).join(',') : ''))
+    .join('|');
+
+  return useMemo(() => {
+    const merged = new Map<number, { start: string; end: string }>();
+    for (const result of results) {
+      const partial = buildMissionRangeMap(result.data?.missionList ?? []);
+      partial.forEach((range, id) => merged.set(id, range));
+    }
+    return merged;
+    // missionListKey 가 같으면 같은 미션 집합 → 재계산 불필요.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [missionListKey]);
 }

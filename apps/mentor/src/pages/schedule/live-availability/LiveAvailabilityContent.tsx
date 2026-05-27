@@ -3,6 +3,7 @@ import { ko } from 'date-fns/locale';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import OutlinedButton from '@/common/button/OutlinedButton';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 
 import type {
@@ -99,6 +100,11 @@ export interface LiveAvailabilityContentProps {
   focusDate?: string;
   /** 페이지 모드 등에서 헤더 타이틀/설명을 노출할지 여부 (기본 true) */
   showHeader?: boolean;
+  /**
+   * 헤더 우측 "예약현황 보기" 버튼 클릭 콜백.
+   * showHeader 가 true 이고 이 콜백이 있을 때만 버튼이 노출된다.
+   */
+  onOpenReservation?: () => void;
 }
 
 /**
@@ -119,6 +125,7 @@ const LiveAvailabilityContent = ({
   requiredSlotCount,
   focusDate,
   showHeader = true,
+  onOpenReservation,
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
 
@@ -335,21 +342,33 @@ const LiveAvailabilityContent = ({
       )}
 
       {showHeader && (
-        <div className="border-neutral-85 border-b px-6 py-5">
-          <h2 className="text-medium20 text-neutral-10 font-semibold">
-            라이브 피드백 일정 열기
-          </h2>
-          <p className="text-xsmall14 text-neutral-40 mt-1">
-            클릭 또는 드래그로 가능 시간을 설정해 주세요.
-            {blockedSlots.length > 0 && (
-              <>
-                {' '}
-                <span className="text-neutral-30">
-                  다른 챌린지가 이미 점유한 시간대는 선택할 수 없습니다.
-                </span>
-              </>
-            )}
-          </p>
+        <div className="border-neutral-85 flex items-start justify-between gap-4 border-b px-6 py-5">
+          <div>
+            <h2 className="text-medium20 text-neutral-10 font-semibold">
+              라이브 피드백 일정 열기
+            </h2>
+            <p className="text-xsmall14 text-neutral-40 mt-1">
+              클릭 또는 드래그로 가능 시간을 설정해 주세요.
+              {blockedSlots.length > 0 && (
+                <>
+                  {' '}
+                  <span className="text-neutral-30">
+                    다른 챌린지가 이미 점유한 시간대는 선택할 수 없습니다.
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+          {onOpenReservation && (
+            <OutlinedButton
+              variant="secondary"
+              size="sm"
+              onClick={onOpenReservation}
+              className="shrink-0"
+            >
+              예약현황 보기
+            </OutlinedButton>
+          )}
         </div>
       )}
 

@@ -20,6 +20,8 @@ export const LiveRoundRow = ({
   displayTh,
   onClick,
 }: LiveRoundRowProps) => {
+  // ⚠️ 회차 한계: BE에 missionTh(회차)가 없어 round.th는 옵션 A로 항상 1.
+  // displayTh(서면+라이브 통합 시퀀스)가 있으면 그것을, 없으면 1회차로 표기된다.
   const thLabel = displayTh ?? round.th;
   const activeLabel =
     round.totalMentees === 0

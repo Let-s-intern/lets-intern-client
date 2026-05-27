@@ -14,19 +14,15 @@ import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import type { FeedbackTagType } from './constants/feedbackTag';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
-import { useWrittenFeedbackMockData } from './hooks/useWrittenFeedbackMockData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
-  const { bars: writtenMockBars } = useWrittenFeedbackMockData();
-  const liveFeedbackBars = useLiveFeedbackData();
+  // 라이브 바는 실 API 파생. 서면 바는 ChallengeDataFetcher(실 API) 단일 경로로
+  // 일원화되어 별도 extraBars 주입이 필요 없다 (중복 오버레이 제거).
+  const { bars: liveFeedbackBars } = useLiveFeedbackData();
 
-  // 서면 + 라이브 mock 모두 extraBars로 주입
-  const extraBars = useMemo(
-    () => [...writtenMockBars, ...liveFeedbackBars],
-    [writtenMockBars, liveFeedbackBars],
-  );
+  const extraBars = liveFeedbackBars;
 
   const {
     challenges,
@@ -115,6 +111,15 @@ const SchedulePage = () => {
     );
     return period?.th;
   }, [selectedLiveFeedbackBar, allBarsUnfiltered]);
+
+  // 모달 사이드바 멘티 리스트 — 선택된 세션의 challengeId 로 스코프.
+  // 서면 모달이 챌린지별인 것과 일치하도록 해당 챌린지 세션만 노출한다.
+  const modalLiveFeedbackBars = useMemo(() => {
+    if (!selectedLiveFeedbackBar) return filteredLiveSessionBars;
+    return filteredLiveSessionBars.filter(
+      (b) => b.challengeId === selectedLiveFeedbackBar.challengeId,
+    );
+  }, [filteredLiveSessionBars, selectedLiveFeedbackBar]);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
@@ -221,7 +226,7 @@ const SchedulePage = () => {
         isOpen={!!selectedLiveFeedbackBar}
         onClose={() => setSelectedLiveFeedbackBar(null)}
         bar={selectedLiveFeedbackBar}
-        liveFeedbackBars={filteredLiveSessionBars}
+        liveFeedbackBars={modalLiveFeedbackBars}
         onSelectBar={setSelectedLiveFeedbackBar}
         roundTh={selectedRoundTh}
       />

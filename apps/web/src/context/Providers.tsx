@@ -1,5 +1,6 @@
 'use client';
 
+import MswProvider from '@/context/MswProvider';
 import SentryUserSync from '@/context/SentryUserSync';
 import {
   QueryCache,
@@ -40,7 +41,7 @@ const Providers: React.FC<{
   return (
     <QueryClientProvider client={queryClient}>
       <SentryUserSync />
-      {children}
+      <MswProvider>{children}</MswProvider>
     </QueryClientProvider>
   );
 };

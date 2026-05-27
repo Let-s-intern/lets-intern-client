@@ -6,15 +6,30 @@
     ".": "./src/index.ts",
     "./*": "./src/*/index.tsx",
     "./Link": "./src/Link/index.tsx",
-    "./Image": "./src/Image/index.tsx"
+    "./Image": "./src/Image/index.tsx",
+    "./JitsiEmbed": "./src/JitsiEmbed/index.tsx",
+    "./JitsiEmbed/buildRoomUrl": "./src/JitsiEmbed/buildRoomUrl.ts"
+  },
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "react": ">=18"
   },
   "devDependencies": {
     "@letscareer/tsconfig": "workspace:*",
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.0",
     "@types/react": "^18.3.3",
+    "jsdom": "^25.0.0",
     "react": "^18.3.1",
-    "typescript": "^5.9.3"
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
+  },
+  "dependencies": {
+    "@jitsi/react-sdk": "^1.4.4"
   }
 }

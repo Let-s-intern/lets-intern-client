@@ -16,42 +16,10 @@ import ColumnDividers from './ui/ColumnDividers';
 import DayHeaderCell from './ui/DayHeaderCell';
 import TodayButton from './ui/TodayButton';
 
-// ─── 시간 그리드 상수 ────────────────────────────────────────────────────────
-const TIME_LABEL_W = 48; // 시간 레이블 열 너비 (px)
-const SLOT_MINUTES = 30;
-const SLOT_H = 120; // 30분당 높이 (px)
-
-/** liveBars에서 표시할 시간 범위를 동적으로 계산한다. */
-function calcTimeRange(liveBars: PeriodBarData[]): {
-  startMinutes: number;
-  endMinutes: number;
-} {
-  if (liveBars.length === 0)
-    return { startMinutes: 8 * 60, endMinutes: 18 * 60 };
-
-  let minMin = Infinity;
-  let maxMin = -Infinity;
-  for (const bar of liveBars) {
-    const [sh, sm] = bar.liveFeedback!.startTime.split(':').map(Number);
-    const [eh, em] = bar.liveFeedback!.endTime.split(':').map(Number);
-    const s = sh * 60 + sm;
-    const e = eh * 60 + em;
-    if (s < minMin) minMin = s;
-    if (e > maxMin) maxMin = e;
-  }
-  return {
-    startMinutes: Math.floor(minMin / SLOT_MINUTES) * SLOT_MINUTES,
-    endMinutes: Math.ceil(maxMin / SLOT_MINUTES) * SLOT_MINUTES,
-  };
-}
-
-function formatTimeLabel(totalMinutes: number): string {
-  const hour = Math.floor(totalMinutes / 60);
-  const minute = totalMinutes % 60;
-  const hourText = String(hour).padStart(2, '0');
-  const minuteText = String(minute).padStart(2, '0');
-  return `${hourText}:${minuteText}`;
-}
+// ─── 레이아웃 상수 ───────────────────────────────────────────────────────────
+// 날짜 헤더·상단 서면 섹션과 컬럼 정렬을 맞추기 위한 좌측 스페이서 폭 (px).
+// 하단 라이브 섹션은 시간 레이블을 표시하지 않고 동일 폭 빈 스페이서만 유지한다.
+const TIME_LABEL_W = 48;
 
 // ─── 타입 ────────────────────────────────────────────────────────────────────
 interface WeeklyCalendarProps {
@@ -122,13 +90,6 @@ const WeeklyCalendar = ({
     observer.observe(el);
     return () => observer.disconnect();
   }, [containerRef, days]);
-
-  // 라이브 피드백 시간 범위 (liveBars 기준 동적 계산)
-  const { startMinutes, endMinutes } = useMemo(
-    () => calcTimeRange(liveBars),
-    [liveBars],
-  );
-  const slotCount = (endMinutes - startMinutes) / SLOT_MINUTES;
 
   // 서면 피드백 바 레이아웃 — 챌린지별 그룹 + 그룹 내 row 충돌 시 인접 row.
   //   1) 한 챌린지의 모든 바는 연속된 row 블록을 차지 → 시각적으로 묶여 보임
@@ -207,7 +168,8 @@ const WeeklyCalendar = ({
     return layouts;
   }, [writtenBars, timelineStart, totalDays]);
 
-  // 날짜별 라이브 피드백 그룹 (YYYY-MM-DD → bar[])
+  // 날짜별 라이브 피드백 그룹 (YYYY-MM-DD → bar[]) — 각 날짜 안에서 시작시각 오름차순.
+  // 시간 그리드 절대배치 대신 위에서부터 시간순으로 차곡차곡 쌓기 위해 정렬해 둔다.
   const liveBarsPerDay = useMemo(() => {
     const map = new Map<string, PeriodBarData[]>();
     for (const bar of liveBars) {
@@ -215,14 +177,23 @@ const WeeklyCalendar = ({
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(bar);
     }
+    for (const dayBars of map.values()) {
+      dayBars.sort((a, b) =>
+        (a.liveFeedback?.startTime ?? '').localeCompare(
+          b.liveFeedback?.startTime ?? '',
+        ),
+      );
+    }
     return map;
   }, [liveBars]);
 
   const bodyMinHeight = useMemo(() => {
-    const ROW_H = 70;
-    const MIN_ROWS = 2; // 챌린지 1~2개 기준 최소 빈 공간만 확보
+    // minHeight는 바닥값만 정하고 그리드는 내용에 맞게 늘어난다(잘림 없음).
+    // 바가 적을 때 하단 빈 공간을 줄이기 위해 행 높이/최소 행/여백을 축소.
+    const ROW_H = 56;
+    const MIN_ROWS = 1;
     const maxRow = barLayouts.reduce((max, l) => Math.max(max, l.gridRow), 0);
-    return Math.max(maxRow, MIN_ROWS) * ROW_H + 24;
+    return Math.max(maxRow, MIN_ROWS) * ROW_H + 8;
   }, [barLayouts]);
 
   const innerWidthPercent = (totalDays / 7) * 100;
@@ -315,38 +286,20 @@ const WeeklyCalendar = ({
           {liveBars.length > 0 && (
             <>
               {/* 구분선 + 섹션 레이블 */}
-              <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 border-t px-3 py-1.5">
+              <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 border-t px-3 py-0.5">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
                 <span className="text-xxsmall12 text-neutral-40 font-medium">
                   시간별 일정
                 </span>
               </div>
 
-              {/* 시간 그리드 — tStart~tEnd 범위만 표시 */}
-              <div
-                className="border-neutral-80 flex border-t"
-                style={{ height: `${slotCount * SLOT_H}px` }}
-              >
-                {/* 시간 레이블 열 — sticky left, z-20으로 라이브 블록(z-10)보다 위에 표시 */}
+              {/* 시간순 스택 — 날짜별 열에 그날 세션을 시작시각 오름차순으로 쌓는다 */}
+              <div className="border-neutral-80 flex border-t">
+                {/* 좌측 스페이서 — 시간 레이블은 제거하고 컬럼 정렬용 빈 폭만 유지 */}
                 <div
                   className="border-neutral-80 sticky left-0 z-20 shrink-0 border-r bg-white"
                   style={{ width: TIME_LABEL_W }}
-                >
-                  {Array.from(
-                    { length: slotCount },
-                    (_, i) => startMinutes + i * SLOT_MINUTES,
-                  ).map((minutes) => (
-                    <div
-                      key={minutes}
-                      className="flex items-start justify-center pt-2"
-                      style={{ height: SLOT_H }}
-                    >
-                      <span className="text-neutral-40 text-[10px] leading-none">
-                        {formatTimeLabel(minutes)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                />
 
                 {/* 날짜별 열 */}
                 <div
@@ -363,7 +316,9 @@ const WeeklyCalendar = ({
                     return (
                       <div
                         key={i}
-                        className={`relative ${isToday ? 'bg-[#fbf9fe]' : ''} ${
+                        className={`flex flex-col gap-1 px-1 py-1 ${
+                          isToday ? 'bg-[#fbf9fe]' : ''
+                        } ${
                           isMonthStart
                             ? 'border-primary-20 border-l-2'
                             : i > 0
@@ -371,48 +326,21 @@ const WeeklyCalendar = ({
                               : ''
                         }`}
                       >
-                        {/* 시간 구분선 */}
-                        {Array.from({ length: slotCount }, (_, j) => (
-                          <div
-                            key={j}
-                            className="border-neutral-95 border-b"
-                            style={{ height: SLOT_H }}
-                          />
+                        {/* 라이브 피드백 세션 블록 — 시간순으로 위에서부터 공백 없이 적재 */}
+                        {dayLiveBars.map((bar) => (
+                          <button
+                            key={bar.missionId}
+                            type="button"
+                            onClick={() => onLiveFeedbackTimeBlockClick?.(bar)}
+                            className={`w-full text-left ${
+                              onLiveFeedbackTimeBlockClick
+                                ? 'cursor-pointer'
+                                : ''
+                            }`}
+                          >
+                            <LiveFeedbackTimeBlock bar={bar} />
+                          </button>
                         ))}
-
-                        {/* 라이브 피드백 세션 블록 */}
-                        {dayLiveBars.map((bar) => {
-                          const [sh, sm] = bar
-                            .liveFeedback!.startTime.split(':')
-                            .map(Number);
-                          const [eh, em] = bar
-                            .liveFeedback!.endTime.split(':')
-                            .map(Number);
-                          const topPx =
-                            ((sh * 60 + sm - startMinutes) / SLOT_MINUTES) *
-                            SLOT_H;
-                          const heightPx =
-                            ((eh * 60 + em - (sh * 60 + sm)) / SLOT_MINUTES) *
-                            SLOT_H;
-
-                          return (
-                            <button
-                              key={bar.missionId}
-                              type="button"
-                              onClick={() =>
-                                onLiveFeedbackTimeBlockClick?.(bar)
-                              }
-                              className={`absolute left-1 right-1 z-10 text-left ${
-                                onLiveFeedbackTimeBlockClick
-                                  ? 'cursor-pointer'
-                                  : ''
-                              }`}
-                              style={{ top: topPx, height: heightPx }}
-                            >
-                              <LiveFeedbackTimeBlock bar={bar} />
-                            </button>
-                          );
-                        })}
                       </div>
                     );
                   })}

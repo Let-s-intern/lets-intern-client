@@ -342,7 +342,9 @@ const ChallengeFeedbackCard = ({
         </>
       )}
 
-      {/* 라이브 only — 회차 row 나열 */}
+      {/* 라이브 only — 회차 row 나열.
+          ⚠️ 회차 한계: BE에 missionTh가 없어 라이브 round.th는 옵션 A로 항상 1.
+          통합(combined) 모드에서만 서면+라이브 날짜순 통합 시퀀스(displayTh)로 보정된다. */}
       {showLive && (
         <LiveFeedbackRoundList
           rounds={liveRounds}
