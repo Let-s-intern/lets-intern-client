@@ -20,9 +20,9 @@ import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
   const { bars: writtenMockBars } = useWrittenFeedbackMockData();
-  const liveFeedbackBars = useLiveFeedbackData();
+  const { bars: liveFeedbackBars } = useLiveFeedbackData();
 
-  // 서면 + 라이브 mock 모두 extraBars로 주입
+  // 서면 + 라이브 바 모두 extraBars로 주입 (라이브는 실 API 파생)
   const extraBars = useMemo(
     () => [...writtenMockBars, ...liveFeedbackBars],
     [writtenMockBars, liveFeedbackBars],
