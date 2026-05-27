@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { CategoryTabs } from '@letscareer/ui';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
 import { CreateReportData, UpdateReportData } from '@/api/report';
@@ -26,6 +27,8 @@ interface FaqSectionProps<
   isCreate?: boolean;
 }
 
+const FIXED_CATEGORIES = ['진행 방식', '신청/환불', '페이백', '기타'];
+
 function FaqSection<
   T extends
     | CreateChallengeReq
@@ -35,11 +38,31 @@ function FaqSection<
 >({ programType, faqInfo, setFaqInfo, isCreate }: FaqSectionProps<T>) {
   const [faqList, setFaqList] = useState<Faq[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('진행 방식');
 
   const { data } = useGetFaq(programType);
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
   const { mutateAsync: postFaq } = usePostFaq();
+
+  const tabs = useMemo(() => {
+    const customCategories = [
+      ...new Set(
+        faqList
+          .map((faq) => faq.category ?? '')
+          .filter((cat) => cat && !FIXED_CATEGORIES.includes(cat)),
+      ),
+    ];
+    return ['전체', ...FIXED_CATEGORIES, ...customCategories].map((cat) => ({
+      value: cat,
+      label: cat,
+    }));
+  }, [faqList]);
+
+  const filteredFaqList =
+    selectedCategory === '전체'
+      ? faqList
+      : faqList.filter((faq) => faq.category === selectedCategory);
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     if (e.target.checked) setFaqInfo([...(faqInfo ?? []), { faqId }]);
@@ -104,12 +127,27 @@ function FaqSection<
 
   return (
     <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
-      <h3 className="mb-4 text-xl font-medium">FAQ</h3>
-      {data?.faqList.length === 0 ? (
-        <p className="text-center">등록된 FAQ가 없습니다.</p>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-xl font-medium">FAQ</h3>
+        <FaqButton onClick={async () => await postFaq(programType)}>
+          문항 추가
+        </FaqButton>
+      </div>
+
+      <CategoryTabs
+        className="mb-4"
+        options={tabs}
+        selected={selectedCategory}
+        onChange={setSelectedCategory}
+      />
+
+      {filteredFaqList.length === 0 ? (
+        <p className="text-center text-sm text-gray-400">
+          해당 카테고리의 FAQ가 없습니다.
+        </p>
       ) : (
         <div className="flex flex-col gap-2">
-          {faqList.map((faq) => (
+          {filteredFaqList.map((faq) => (
             <div key={faq.id} className="flex gap-2">
               <input
                 type="checkbox"
@@ -152,7 +190,7 @@ function FaqSection<
           ))}
         </div>
       )}
-      <div className="mt-4 flex justify-between">
+      <div className="mt-4 flex justify-start">
         <FaqButton
           onClick={() => {
             Promise.all(faqList.map((faq) => patchFaq(faq)))
@@ -161,9 +199,6 @@ function FaqSection<
           }}
         >
           저장
-        </FaqButton>
-        <FaqButton onClick={async () => await postFaq(programType)}>
-          추가
         </FaqButton>
       </div>
     </div>
@@ -201,7 +236,7 @@ function FaqButton({
   return (
     <button
       type="button"
-      className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+      className="rounded-xs bg-primary text-xsmall16 p-3 font-bold text-white"
       onClick={onClick}
     >
       {children}
