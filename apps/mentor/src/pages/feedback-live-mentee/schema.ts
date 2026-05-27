@@ -13,6 +13,11 @@ export const MenteeSchema = z.object({
   name: z.string(),
   avatarInitial: z.string().max(2),
   challengeTitle: z.string(),
+  /**
+   * 세션 구분용 라벨(라이브 피드백 일시).
+   * BE에 미션/회차 필드가 없어, 같은 챌린지의 여러 세션은 일시로 구분한다.
+   */
+  sessionLabel: z.string().optional(),
 });
 
 export type Mentee = z.infer<typeof MenteeSchema>;
