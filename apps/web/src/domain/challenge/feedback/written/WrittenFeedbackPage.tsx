@@ -74,7 +74,7 @@ const WrittenFeedbackPage = () => {
           key={status}
           label={label}
           missions={DUMMY_WRITTEN_FEEDBACK_MISSIONS.filter(
-            (m) => m.status === status,
+            (m) => m.status === status && new Date(m.startDay) <= new Date(),
           )}
           emptyMessage={emptyMessage}
           onCardClick={handleClick}

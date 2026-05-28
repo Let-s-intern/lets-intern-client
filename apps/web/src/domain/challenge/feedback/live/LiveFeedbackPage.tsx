@@ -46,10 +46,13 @@ const LiveFeedbackPage = () => {
     [applicationId, programId, router],
   );
 
-  const needReservation = missions.filter((m) => m.status === 'prev');
-  const reserved = missions.filter((m) => m.status === 'reserved');
-  const done = missions.filter((m) => m.status === 'completed');
-  const expired = missions.filter((m) => m.status === 'expired');
+  const today = new Date();
+  const started = missions.filter((m) => new Date(m.missionStartDate) <= today);
+
+  const needReservation = started.filter((m) => m.status === 'prev');
+  const reserved = started.filter((m) => m.status === 'reserved');
+  const done = started.filter((m) => m.status === 'completed');
+  const expired = started.filter((m) => m.status === 'expired');
 
   return (
     <div className="mb-22 flex flex-col gap-10">
