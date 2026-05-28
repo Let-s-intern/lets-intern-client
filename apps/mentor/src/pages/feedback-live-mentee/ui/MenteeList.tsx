@@ -95,6 +95,11 @@ function MenteeRow({ mentee, isActive, onSelect }: MenteeRowProps) {
           <p className="text-xxsmall12 mt-0.5 truncate text-neutral-50">
             {mentee.challengeTitle}
           </p>
+          {mentee.sessionLabel && (
+            <p className="text-xxsmall12 text-neutral-40 mt-0.5 truncate">
+              {mentee.sessionLabel}
+            </p>
+          )}
         </div>
       </button>
     </li>

@@ -1,8 +1,12 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 
 import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
+import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 
-import { useFeedbackMentorDetailQuery } from '@/api/feedback/feedback';
+import {
+  useFeedbackMentorDetailQuery,
+  useFeedbackMentorListQuery,
+} from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { mentorConfig } from '@/constants/config';
@@ -29,6 +33,9 @@ const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
+
+/** 멘티 채팅 모달 — 열릴 때만 로드 (동적 import). */
+const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -62,6 +69,7 @@ const LiveFeedbackReservationModal = ({
   roundTh,
 }: LiveFeedbackReservationModalProps) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // 날짜 → 시간 순 정렬 (MenteeList의 날짜 구분선·시간대 표시와 일치)
   const reservationBars = useMemo(() => {
@@ -125,6 +133,50 @@ const LiveFeedbackReservationModal = ({
       salt,
     });
   }, [baseUrl, salt, jitsiMeta]);
+
+  // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
+  // 채팅 모달은 멘토관리처럼 전체 멘티 로스터를 좌측 목록으로 보여준다.
+  // (선택된 세션은 activeFeedbackId로 지정) — 방 단위는 feedbackId(세션).
+  const { data: allFeedbacks } = useFeedbackMentorListQuery();
+  const chatRooms: ChatRoomListItem[] = useMemo(() => {
+    const seen = new Set<number>();
+    const list: ChatRoomListItem[] = [];
+    for (const fb of allFeedbacks ?? []) {
+      if (seen.has(fb.feedbackId)) continue;
+      seen.add(fb.feedbackId);
+      list.push({
+        feedbackId: fb.feedbackId,
+        title: fb.menteeName,
+        subtitle: fb.programTitle,
+        meta: { menteeName: fb.menteeName, challengeTitle: fb.programTitle },
+      });
+    }
+    // 로스터 미로딩 시 현재 선택 세션만으로 fallback (모달이 항상 열리도록).
+    if (list.length === 0 && feedbackId != null) {
+      const menteeName =
+        feedbackDetail?.menteeName ??
+        selectedBar?.liveFeedback?.menteeName ??
+        '멘티';
+      const challengeTitle =
+        feedbackDetail?.programTitle ?? selectedBar?.challengeTitle ?? '';
+      return [
+        {
+          feedbackId,
+          title: menteeName,
+          subtitle: challengeTitle,
+          meta: { menteeName, challengeTitle },
+        },
+      ];
+    }
+    return list;
+  }, [
+    allFeedbacks,
+    feedbackId,
+    feedbackDetail?.menteeName,
+    feedbackDetail?.programTitle,
+    selectedBar?.liveFeedback?.menteeName,
+    selectedBar?.challengeTitle,
+  ]);
 
   if (!bar || !selectedBar) return null;
 
@@ -425,29 +477,38 @@ const LiveFeedbackReservationModal = ({
           }
           actions={
             <div className="flex items-center gap-3">
-              {/* 멘티와 대화하기 — BE 채팅 미배포 (PRD §5.4 mentor3.15) */}
+              {/* 멘티와 대화하기 — @letscareer/chat 모달(role=mentor) 연결 */}
               <button
                 type="button"
-                disabled
-                aria-label="멘티와 대화하기 (서비스 준비 중)"
-                title="채팅 기능은 서비스 준비 중입니다"
-                className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-400"
+                onClick={() => setIsChatOpen(true)}
+                disabled={feedbackId == null}
+                aria-label="멘티와 대화하기"
+                className={
+                  feedbackId != null
+                    ? 'rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50'
+                    : 'rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-300'
+                }
               >
                 멘티와 대화하기
               </button>
 
-              {/* 라이브 입장하기 — ZEP active 일 때만 활성 (T-10 룰) */}
+              {/* 라이브 입장하기
+                  TODO(임시): 정식 운영 시 T-10 게이팅 복원
+                    → disabled={zepAccess.state !== 'active'} / onClick은 active일 때만.
+                  임시 변경: 시간 게이팅(pending/ended) 우회 — 회의실 URL이 합성되면
+                    (env 설정 + 예약 일시 존재 → state !== 'unassigned') 시간 무관 항상 입장 허용.
+                  zepAccess 산출 로직 자체는 보존하고 버튼 조건만 우회한다. */}
               <button
                 type="button"
-                disabled={zepAccess.state !== 'active'}
+                disabled={zepAccess.state === 'unassigned'}
                 onClick={
-                  zepAccess.state === 'active'
+                  zepAccess.state !== 'unassigned'
                     ? () => setIsJitsiOpen(true)
                     : undefined
                 }
                 aria-label="라이브 입장하기"
                 className={
-                  zepAccess.state === 'active'
+                  zepAccess.state !== 'unassigned'
                     ? 'bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors'
                     : 'rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
                 }
@@ -467,6 +528,17 @@ const LiveFeedbackReservationModal = ({
           meta={jitsiMeta}
           spaceName={selectedBar?.challengeTitle}
         />
+      )}
+
+      {isChatOpen && chatRooms.length > 0 && (
+        <Suspense fallback={null}>
+          <ChatModal
+            role="mentor"
+            rooms={chatRooms}
+            activeFeedbackId={feedbackId}
+            onClose={() => setIsChatOpen(false)}
+          />
+        </Suspense>
       )}
     </>
   );

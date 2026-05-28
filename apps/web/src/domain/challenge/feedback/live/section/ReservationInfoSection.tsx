@@ -1,23 +1,48 @@
+'use client';
+
+import { useState } from 'react';
+
+import dynamic from 'next/dynamic';
+
+import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
+
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
+import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime, isEntranceActive } from '../utils';
+import { formatReservationTime } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
-const FALLBACK_URL = 'https://www.letscareer.co.kr/';
+// 채팅 모달은 PocketBase 클라이언트를 끌어오므로 동적 import 로 분리해
+// 모달을 실제로 열 때까지 초기 번들에서 제외한다.
+const ChatModal = dynamic(() => import('@letscareer/chat/ui/ChatModal'), {
+  ssr: false,
+});
 
 interface Props {
   mentor: Mentor;
   feedbackInfo: FeedbackInfo | null;
   status: LiveFeedbackStatus;
+  /** Jitsi 동일 방 합성용 — 미션 아이템의 feedbackId */
+  feedbackId?: number | null;
 }
 
-const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
+const ReservationInfoSection = ({
+  mentor,
+  feedbackInfo,
+  status,
+  feedbackId,
+}: Props) => {
+  const [isJitsiOpen, setIsJitsiOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  // 모달을 열 때만 전체 멘토 로스터를 조회한다(좌측 목록용).
+  const chatRooms = useMenteeChatRooms(isChatOpen);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
-  const entranceActive = isEntranceActive(
-    feedbackInfo?.startDate,
-    feedbackInfo?.endDate,
-  );
+  // TODO(임시): 정식 운영 시 T-10 게이팅 복원.
+  //   const entranceActive = isEntranceActive(feedbackInfo?.startDate, feedbackInfo?.endDate);
+  // 임시 변경: 라이브 입장 시간 게이팅을 우회해 항상 입장 허용 (PRD §13).
+  // isEntranceActive 함수는 ../utils 에 보존(복원 시 import 재추가).
+  const entranceActive: boolean = true;
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -29,6 +54,32 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
           mentor={mentor}
           className="min-w-[314px] px-0 py-4 md:px-4"
         />
+        {/* 회의 입장(Jitsi)과 별개로, 멘토와 텍스트로 소통하는 채팅 진입.
+            feedbackId 보유(reserved/completed) 상태에서만 노출. */}
+        {feedbackId != null && (
+          <button
+            type="button"
+            onClick={() => setIsChatOpen(true)}
+            className="text-xsmall14 border-primary text-primary flex items-center justify-center gap-1.5 rounded-sm border py-3 font-semibold md:mx-4"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            멘토에게 연락하기
+          </button>
+        )}
       </section>
 
       {feedbackInfo && (
@@ -73,11 +124,13 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
             {/* 하단 액션 */}
             {status === 'completed' && <LiveFeedbackReview />}
             {status === 'reserved' && (
-              <a
-                href={entranceActive ? (meetingUrl ?? FALLBACK_URL) : undefined}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-disabled={!entranceActive}
+              // TODO(임시): 외부 회의 링크 대신 Jitsi 임베드 모달로 연결 (PRD §13).
+              //   buildJitsiRoomUrl(feedbackId, salt)로 멘토와 동일 방 입장.
+              //   상단 "회의 링크"(meetingUrl 외부 링크) row는 그대로 보존.
+              <button
+                type="button"
+                onClick={() => setIsJitsiOpen(true)}
+                disabled={!entranceActive}
                 className={
                   entranceActive
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
@@ -85,10 +138,38 @@ const ReservationInfoSection = ({ mentor, feedbackInfo, status }: Props) => {
                 }
               >
                 LIVE 피드백 입장하기
-              </a>
+              </button>
             )}
           </div>
         </section>
+      )}
+
+      {feedbackId != null && (
+        <JitsiEmbedModal
+          isOpen={isJitsiOpen}
+          onClose={() => setIsJitsiOpen(false)}
+          meta={{ feedbackId }}
+          spaceName={mentor.nickname}
+        />
+      )}
+
+      {feedbackId != null && isChatOpen && (
+        <ChatModal
+          role="mentee"
+          rooms={
+            chatRooms.length > 0
+              ? chatRooms
+              : [
+                  {
+                    feedbackId,
+                    title: mentor.nickname,
+                    meta: { mentorName: mentor.nickname },
+                  },
+                ]
+          }
+          activeFeedbackId={feedbackId}
+          onClose={() => setIsChatOpen(false)}
+        />
       )}
     </div>
   );

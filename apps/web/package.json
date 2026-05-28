@@ -29,6 +29,7 @@
     "@excalidraw/excalidraw": "^0.17.6",
     "@hookform/resolvers": "^3.3.4",
     "@letscareer/api": "workspace:*",
+    "@letscareer/chat": "workspace:*",
     "@letscareer/hooks": "workspace:*",
     "@letscareer/mocks": "workspace:*",
     "@letscareer/store": "workspace:*",

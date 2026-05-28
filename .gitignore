@@ -72,3 +72,4 @@ next-env.d.ts
 .claude/tasks/
 .claude/settings.local.json
 .remember/
+.playwright-mcp

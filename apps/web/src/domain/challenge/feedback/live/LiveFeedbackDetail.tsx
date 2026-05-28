@@ -64,6 +64,7 @@ const LiveFeedbackDetail = ({
         mentor={mentor}
         feedbackInfo={feedbackInfo}
         status={status}
+        feedbackId={feedbackId}
       />
       {status === 'prev' && !feedbackId && (
         <ReservationScheduleSection
