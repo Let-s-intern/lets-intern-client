@@ -53,8 +53,8 @@
 │       ├── API_docs/                     # Swagger URL 등
 │       ├── tech-stack/                   # 라이브러리 버전·설정
 │       ├── apps/                         # 앱별 도메인·로컬 모듈
-│       │   ├── web/                      # 18개 도메인 + components/hooks/services/sentry + domain/
-│       │   ├── admin/                    # 18개 도메인
+│       │   ├── web/                      # 17개 도메인 + components/hooks/services/sentry + domain/
+│       │   ├── admin/                    # 17개 도메인
 │       │   └── mentor/                   # 단일 program 도메인
 │       ├── packages/                     # 공유 패키지 (@letscareer/*) 가이드
 │       └── pnpm전환 메모 폴더/             # pnpm 전환·운영 메모 (01~07 + README)
