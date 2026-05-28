@@ -2,6 +2,8 @@ import type {
   FeedbackInfo,
   LiveFeedbackItem,
 } from '@/api/feedback/feedbackSchema';
+import type { ChallengeType } from '@/schema';
+import { challengeTypeToText } from '@/utils/convert';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 function resolveStatus(
@@ -146,7 +148,10 @@ export function toCardConfig(
         ? ('active' as const)
         : LIVE_FEEDBACK_STATUS_VARIANT[mission.status],
     },
-    challengeType: mission.challengeType ?? '',
+    challengeType:
+      challengeTypeToText[mission.challengeType as ChallengeType] ??
+      mission.challengeType ??
+      '',
     missionNumber: mission.missionTh,
     feedbackStartDay: mission.missionEndDate,
     feedbackEndDay: mission.feedbackEndDate,
