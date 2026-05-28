@@ -10,7 +10,7 @@ function formatDay(dateStr: string): string {
 
 export interface StatusBadge {
   label: string;
-  variant: 'neutral' | 'active' | 'muted' | 'canceled';
+  variant: 'neutral' | 'active' | 'muted' | 'error';
 }
 
 export interface FeedbackMissionCardConfig {
@@ -140,7 +140,7 @@ const FeedbackMissionCard = ({
                       'border-primary-10 bg-primary-10 text-primary',
                     badge.variant === 'muted' &&
                       'border-neutral-95 bg-neutral-95 text-neutral-40',
-                    badge.variant === 'canceled' &&
+                    badge.variant === 'error' &&
                       'bg-system-error/10 text-system-error border-[#FEEDEB]',
                   )}
                 >

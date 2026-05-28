@@ -4,6 +4,23 @@ import type {
 } from '@/api/feedback/feedbackSchema';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
+function resolveStatus(
+  item: LiveFeedbackItem,
+  isMissionSubmitted: boolean,
+): LiveFeedbackStatus {
+  const isExpired = new Date(item.missionEndDate) < new Date();
+
+  if (!item.feedbackId || !isMissionSubmitted) {
+    return isExpired ? 'expired' : 'prev';
+  }
+  if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
+  if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
+  if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
+    return 'completed';
+  }
+  return 'reserved';
+}
+
 export function toMission(
   item: LiveFeedbackItem,
   challengeType: string,
@@ -19,15 +36,7 @@ export function toMission(
   const isMissionSubmitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
     item.attendanceStatus ?? '',
   );
-
-  let status: LiveFeedbackStatus = 'prev';
-  if (item.feedbackId == null) {
-    status = new Date(item.missionEndDate) < new Date() ? 'expired' : 'prev';
-  } else if (item.feedbackStatus === 'COMPLETED') {
-    status = 'completed';
-  } else if (item.feedbackStatus === 'RESERVED' && isMissionSubmitted) {
-    status = 'reserved';
-  }
+  const status = resolveStatus(item, isMissionSubmitted);
 
   return {
     missionId: item.missionId,
@@ -66,16 +75,20 @@ export const LIVE_FEEDBACK_STATUS_LABEL: Record<LiveFeedbackStatus, string> = {
   reserved: '진행 예정',
   completed: '진행 완료',
   expired: '기간 만료',
+  nonParticipation: '미참여',
+  checkNeeded: '확인필요',
 };
 
 export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
   LiveFeedbackStatus,
-  'neutral' | 'active' | 'muted'
+  'neutral' | 'active' | 'muted' | 'error'
 > = {
   prev: 'neutral',
   reserved: 'muted',
   completed: 'active',
   expired: 'muted',
+  nonParticipation: 'muted',
+  checkNeeded: 'error',
 };
 
 export function isEntranceActive(

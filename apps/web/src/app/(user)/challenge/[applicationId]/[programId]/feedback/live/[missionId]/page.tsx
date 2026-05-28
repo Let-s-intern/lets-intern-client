@@ -9,11 +9,10 @@ import { toMission } from '@/domain/challenge/feedback/live/utils';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
-const HEADER_TITLE: Record<LiveFeedbackStatus, string> = {
+const HEADER_TITLE: Partial<Record<LiveFeedbackStatus, string>> = {
   prev: 'LIVE 피드백 예약하기',
   reserved: 'LIVE 피드백 신청 정보',
   completed: 'LIVE 피드백 회고하기',
-  expired: 'LIVE 피드백',
 };
 
 const LiveMissionDetailPage = () => {
@@ -39,7 +38,9 @@ const LiveMissionDetailPage = () => {
 
   return (
     <>
-      <BackHeader to={backPath}>{HEADER_TITLE[mission.status]}</BackHeader>
+      <BackHeader to={backPath}>
+        {HEADER_TITLE[mission.status] ?? 'LIVE 피드백'}
+      </BackHeader>
       <LiveFeedbackDetail
         challengeId={programId}
         missionId={mission.missionId}
