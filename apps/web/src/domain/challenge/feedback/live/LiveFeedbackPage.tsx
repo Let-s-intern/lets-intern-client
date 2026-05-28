@@ -55,7 +55,7 @@ const LiveFeedbackPage = () => {
   const expired = started.filter((m) => m.status === 'expired');
 
   return (
-    <div className="mb-22 flex flex-col gap-10">
+    <div className="md:mb-22 mb-10 flex flex-col gap-10">
       <LiveFeedbackSection
         label="진행 전"
         missions={needReservation}
