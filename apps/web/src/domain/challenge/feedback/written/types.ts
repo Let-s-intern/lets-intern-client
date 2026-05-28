@@ -1,4 +1,8 @@
-export type WrittenFeedbackStatus = 'pending' | 'submitted' | 'done';
+export type WrittenFeedbackStatus =
+  | 'in_progress'
+  | 'waiting'
+  | 'confirmed'
+  | 'expired';
 
 export interface WrittenFeedbackMission {
   id: number;
