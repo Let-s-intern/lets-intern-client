@@ -9,7 +9,17 @@ export const attendanceStatusSchema = z.enum([
   'ABSENT',
 ]);
 
+// 멘토/멘티 피드백 참여 상태
+export const feedbackAttendanceStatusSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+
 export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
+export type FeedbackAttendanceStatus = z.infer<
+  typeof feedbackAttendanceStatusSchema
+>;
 
 export const challengeMentorInfoSchema = z.object({
   nickname: z.string(),
@@ -30,6 +40,8 @@ export const liveFeedbackItemSchema = z.object({
   feedbackId: z.number().nullable(),
   feedbackStatus: feedbackStatusSchema.nullable(),
   attendanceStatus: attendanceStatusSchema.nullable(),
+  mentorStatus: feedbackAttendanceStatusSchema.nullable(),
+  menteeStatus: feedbackAttendanceStatusSchema.nullable(),
   mentorInfo: challengeMentorInfoSchema.nullish(),
 });
 
@@ -52,6 +64,8 @@ export const feedbackDetailSchema = z.object({
     endDate: z.string(),
     meetingUrl: z.string().nullable(),
     status: feedbackStatusSchema,
+    mentorStatus: feedbackAttendanceStatusSchema.nullable(),
+    menteeStatus: feedbackAttendanceStatusSchema.nullable(),
   }),
 });
 
