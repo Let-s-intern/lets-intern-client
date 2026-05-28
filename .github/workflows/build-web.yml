@@ -80,11 +80,11 @@ jobs:
       - name: ESLint
         run: pnpm --filter @letscareer/web lint
         env:
-          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
-          NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
-          NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
-          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
+          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
+          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
+          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
+          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
+          NEXT_PUBLIC_SITE_URL: https://example.com
 
       # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
       # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
@@ -131,8 +131,8 @@ jobs:
       - name: Build (turbopack)
         run: pnpm --filter @letscareer/web build
         env:
-          NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com/v1' }}
-          NEXT_PUBLIC_SERVER_API_V2: ${{ secrets.NEXT_PUBLIC_SERVER_API_V2 || 'https://api.example.com/v2' }}
-          NEXT_PUBLIC_SERVER_API_V3: ${{ secrets.NEXT_PUBLIC_SERVER_API_V3 || 'https://api.example.com/v3' }}
-          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || 'https://api.example.com' }}
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
+          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
+          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
+          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
+          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
+          NEXT_PUBLIC_SITE_URL: https://example.com

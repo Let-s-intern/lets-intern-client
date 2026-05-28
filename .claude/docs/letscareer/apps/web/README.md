@@ -14,14 +14,13 @@
 
 ## 도메인 (`apps/web/src/domain/`)
 
-총 18개. 각 도메인 폴더 안에 `ui/`, `hooks/`, `api/`가 응집되어 있다 (DDD + 프랙탈).
+총 17개. 각 도메인 폴더 안에 `ui/`, `hooks/`, `api/`가 응집되어 있다 (DDD + 프랙탈).
 
 각 도메인은 `domain/<이름>/README.md`에 개요 문서가 있다. 깊이 있는 문서가 있는 도메인은 추가 파일을 함께 둔다.
 
 | 도메인 | 설명 | 추가 문서 |
 |---|---|---|
 | [about](./domain/about/README.md) | 회사·서비스 소개 | — |
-| [admin](./domain/admin/README.md) | 어드민 fallback 라우트 (web 단독 운영 모드용) | — |
 | [auth](./domain/auth/README.md) | 로그인·회원가입·소셜 로그인 | — |
 | [blog](./domain/blog/README.md) | 블로그 글 목록·상세 | — |
 | [career-board](./domain/career-board/README.md) | 커리어 보드 | — |
