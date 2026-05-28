@@ -52,7 +52,7 @@ const LiveFeedbackPage = () => {
   const expired = missions.filter((m) => m.status === 'expired');
 
   return (
-    <div className="mb-12 flex flex-col gap-10">
+    <div className="mb-22 flex flex-col gap-10">
       <LiveFeedbackSection
         label="진행 전"
         missions={needReservation}
@@ -77,14 +77,16 @@ const LiveFeedbackPage = () => {
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
-      <LiveFeedbackSection
-        label="미진행"
-        missions={expired}
-        emptyMessage="기간이 만료된 미션이 없어요."
-        challengeId={programId}
-        onMissionClick={handleMissionClick}
-        onMobileClick={handleMobileClick}
-      />
+      {expired.length > 0 && (
+        <LiveFeedbackSection
+          label="미진행"
+          missions={expired}
+          emptyMessage="기간이 만료된 미션이 없어요."
+          challengeId={programId}
+          onMissionClick={handleMissionClick}
+          onMobileClick={handleMobileClick}
+        />
+      )}
     </div>
   );
 };

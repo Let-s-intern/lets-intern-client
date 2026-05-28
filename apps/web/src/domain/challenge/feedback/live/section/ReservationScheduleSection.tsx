@@ -38,7 +38,7 @@ const ReservationScheduleSection = ({
       <h2 className="text-xsmall16 text-neutral-0 mb-4 font-semibold">
         예약 일시 선택
       </h2>
-      <div className="flex flex-col gap-4 md:mb-6 md:flex-row md:items-start md:gap-8">
+      <div className="flex flex-col gap-4 md:mb-4 md:flex-row md:items-start md:gap-8">
         <MonthCalendar {...calendar} />
         <div className="flex flex-1">
           <TimeSlotButtons {...slots} />

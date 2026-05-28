@@ -245,7 +245,10 @@ const FeedbackMissionCard = ({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="bg-primary-5 hidden items-center justify-end gap-1 px-4 py-3 md:flex"
+          className={clsx(
+            'hidden items-center justify-end gap-1 p-4 md:flex',
+            isOpen ? 'bg-white' : 'bg-primary-5',
+          )}
         >
           <span className="text-xsmall14 text-primary font-medium">
             {isOpen ? openLabel : accordionLabel}
