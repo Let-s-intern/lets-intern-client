@@ -1,15 +1,17 @@
 'use client';
 
-import { DUMMY_WRITTEN_FEEDBACK_MISSIONS } from '@/domain/challenge/feedback/dummy';
+import { useWrittenFeedbackListQuery } from '@/api/feedback/feedback';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import type { WrittenFeedbackMission } from '@/domain/challenge/feedback/written/types';
 import {
   WRITTEN_FEEDBACK_BUTTON_LABEL,
   WRITTEN_FEEDBACK_SECTIONS,
   toWrittenCardConfig,
+  toWrittenMission,
 } from '@/domain/challenge/feedback/written/utils';
 import { useParams, useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface SectionProps {
   label: string;
@@ -39,7 +41,9 @@ function FeedbackSection({
             <FeedbackMissionCard
               key={mission.id}
               config={toWrittenCardConfig(mission)}
-              buttonLabel={WRITTEN_FEEDBACK_BUTTON_LABEL[mission.status]}
+              buttonLabel={
+                WRITTEN_FEEDBACK_BUTTON_LABEL[mission.status] || undefined
+              }
               onClick={() => onCardClick(mission)}
             />
           ))}
@@ -52,13 +56,27 @@ function FeedbackSection({
 const WrittenFeedbackPage = () => {
   const router = useRouter();
   const params = useParams<{ applicationId: string; programId: string }>();
+  const { currentChallenge } = useCurrentChallenge();
+
+  const { data } = useWrittenFeedbackListQuery(params.programId);
+
+  const missions = useMemo(
+    () =>
+      (data?.writtenFeedbackList ?? []).map((item) =>
+        toWrittenMission(item, currentChallenge?.challengeType ?? ''),
+      ),
+    [data, currentChallenge?.challengeType],
+  );
+
+  const today = new Date();
+  const started = missions.filter((m) => new Date(m.startDay) <= today);
 
   const handleClick = useCallback(
     (mission: WrittenFeedbackMission) => {
       const base = `/challenge/${params.applicationId}/${params.programId}/me`;
-      if (mission.status === 'done') {
+      if (mission.status === 'confirmed') {
         router.push(`${base}#mentor-feedback`);
-      } else if (mission.status === 'submitted') {
+      } else if (mission.status === 'waiting') {
         router.push(`${base}#mission-submit`);
       } else {
         router.push(base);
@@ -73,9 +91,7 @@ const WrittenFeedbackPage = () => {
         <FeedbackSection
           key={status}
           label={label}
-          missions={DUMMY_WRITTEN_FEEDBACK_MISSIONS.filter(
-            (m) => m.status === status,
-          )}
+          missions={started.filter((m) => m.status === status)}
           emptyMessage={emptyMessage}
           onCardClick={handleClick}
         />

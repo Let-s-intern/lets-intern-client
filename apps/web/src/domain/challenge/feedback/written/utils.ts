@@ -1,4 +1,27 @@
+import type { WrittenFeedbackItem } from '@/api/feedback/feedbackSchema';
 import type { WrittenFeedbackMission, WrittenFeedbackStatus } from './types';
+
+function resolveStatus(item: WrittenFeedbackItem): WrittenFeedbackStatus {
+  if (item.feedbackStatus === 'WAITING') return 'waiting';
+  if (item.feedbackStatus === 'CONFIRMED') return 'confirmed';
+  return new Date(item.missionEndDate) < new Date() ? 'expired' : 'in_progress';
+}
+
+export function toWrittenMission(
+  item: WrittenFeedbackItem,
+  challengeType: string,
+): WrittenFeedbackMission {
+  return {
+    id: item.attendanceId,
+    thumbnail: item.thumbnail,
+    title: item.missionTitle,
+    status: resolveStatus(item),
+    challengeType,
+    missionNumber: item.missionTh,
+    startDay: item.missionStartDate.slice(0, 10),
+    endDay: item.missionEndDate.slice(0, 10),
+  };
+}
 
 export const WRITTEN_FEEDBACK_SECTIONS: {
   status: WrittenFeedbackStatus;
@@ -6,19 +29,24 @@ export const WRITTEN_FEEDBACK_SECTIONS: {
   emptyMessage: string;
 }[] = [
   {
-    status: 'pending',
-    label: '제출 전',
+    status: 'in_progress',
+    label: '진행 전',
     emptyMessage: '제출 전인 미션이 없어요.',
   },
   {
-    status: 'submitted',
-    label: '제출 완료',
+    status: 'waiting',
+    label: '진행 중',
     emptyMessage: '제출 완료된 미션이 없어요.',
   },
   {
-    status: 'done',
-    label: '피드백 완료',
+    status: 'confirmed',
+    label: '진행 완료',
     emptyMessage: '피드백 완료된 미션이 없어요.',
+  },
+  {
+    status: 'expired',
+    label: '기간 만료',
+    emptyMessage: '기간이 만료됐어요',
   },
 ];
 
@@ -26,27 +54,30 @@ export const WRITTEN_FEEDBACK_STATUS_LABEL: Record<
   WrittenFeedbackStatus,
   string
 > = {
-  pending: '제출 필요',
-  submitted: '피드백 대기',
-  done: '피드백 완료',
+  in_progress: '진행 전',
+  waiting: '진행 중',
+  confirmed: '진행 완료',
+  expired: '기간 만료',
 };
 
 export const WRITTEN_FEEDBACK_STATUS_VARIANT: Record<
   WrittenFeedbackStatus,
   'neutral' | 'active' | 'muted'
 > = {
-  pending: 'neutral',
-  submitted: 'active',
-  done: 'muted',
+  in_progress: 'neutral',
+  waiting: 'muted',
+  confirmed: 'active',
+  expired: 'muted',
 };
 
 export const WRITTEN_FEEDBACK_BUTTON_LABEL: Record<
   WrittenFeedbackStatus,
   string
 > = {
-  pending: '미션 제출하기',
-  submitted: '미션 제출물 보기',
-  done: '피드백 보기',
+  in_progress: '미션 제출하기',
+  waiting: '미션 제출물 보기',
+  confirmed: '피드백 보기',
+  expired: '',
 };
 
 export function toWrittenCardConfig(mission: WrittenFeedbackMission) {

@@ -46,13 +46,16 @@ const LiveFeedbackPage = () => {
     [applicationId, programId, router],
   );
 
-  const needReservation = missions.filter((m) => m.status === 'prev');
-  const reserved = missions.filter((m) => m.status === 'reserved');
-  const done = missions.filter((m) => m.status === 'completed');
-  const expired = missions.filter((m) => m.status === 'expired');
+  const today = new Date();
+  const started = missions.filter((m) => new Date(m.missionStartDate) <= today);
+
+  const needReservation = started.filter((m) => m.status === 'prev');
+  const reserved = started.filter((m) => m.status === 'reserved');
+  const done = started.filter((m) => m.status === 'completed');
+  const expired = started.filter((m) => m.status === 'expired');
 
   return (
-    <div className="mb-12 flex flex-col gap-10">
+    <div className="md:mb-22 mb-10 flex flex-col gap-10">
       <LiveFeedbackSection
         label="진행 전"
         missions={needReservation}
@@ -77,14 +80,16 @@ const LiveFeedbackPage = () => {
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
-      <LiveFeedbackSection
-        label="미진행"
-        missions={expired}
-        emptyMessage="기간이 만료된 미션이 없어요."
-        challengeId={programId}
-        onMissionClick={handleMissionClick}
-        onMobileClick={handleMobileClick}
-      />
+      {expired.length > 0 && (
+        <LiveFeedbackSection
+          label="미진행"
+          missions={expired}
+          emptyMessage="기간이 만료된 미션이 없어요."
+          challengeId={programId}
+          onMissionClick={handleMissionClick}
+          onMobileClick={handleMobileClick}
+        />
+      )}
     </div>
   );
 };

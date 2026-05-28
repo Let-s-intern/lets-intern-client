@@ -5,6 +5,7 @@ import {
   feedbackSlotListSchema,
   liveFeedbackListSchema,
   mentorDetailSchema,
+  writtenFeedbackListSchema,
 } from './feedbackSchema';
 
 /** GET /api/v1/challenge/{challengeId}/feedback/live 라이브 피드백 목록 조회 */
@@ -61,6 +62,18 @@ export const useFeedbackDetailQuery = (feedbackId?: number | null) => {
       return feedbackDetailSchema.parse(res.data.data);
     },
     enabled: !!feedbackId,
+  });
+};
+
+/** GET /api/v1/challenge/{challengeId}/feedback/written 서면 피드백 목록 조회 */
+export const useWrittenFeedbackListQuery = (challengeId?: number | string) => {
+  return useQuery({
+    queryKey: ['writtenFeedbackList', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/feedback/written`);
+      return writtenFeedbackListSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };
 
