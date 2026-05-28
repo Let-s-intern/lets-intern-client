@@ -23,10 +23,13 @@
 ├── skills/                               # 슬래시 커맨드 스킬
 │   ├── code-quality/                     # 코드 품질 규칙 (Toss FE)
 │   ├── code-review/                      # 코드 리뷰 체크리스트
+│   ├── dev-docs-updater/                 # .claude/docs 개발문서 갱신·3계층 동기화
 │   ├── folder-structure/                 # DDD + 프랙탈 폴더 구조
 │   ├── git-branch-report/                # 브랜치 작업 → 팀 공유 HTML/PDF 보고서
 │   ├── seo/                              # SEO 규칙
+│   ├── server-code-reference/            # 백엔드(Spring) 실제 소스 직접 확인
 │   ├── skill-creator/                    # 스킬 생성 도우미
+│   ├── swagger-api-finder/               # Swagger API 스펙 저비용 탐색
 │   ├── task-cleaner/                     # 태스크 정리
 │   ├── task-maker/                       # PRD → 태스크 생성
 │   ├── task-runner/                      # 태스크 실행 오케스트레이션
@@ -77,7 +80,8 @@
 | 코드 리뷰 | `skills/code-review/SKILL.md` |
 | 공유 훅/컴포넌트 찾기 | `docs/letscareer/packages/` |
 | 도메인 로직 이해 | `docs/letscareer/apps/<app>/domain/<도메인>.md` |
-| API/Swagger | `docs/letscareer/API_docs/swagger_url.md` |
+| API 엔드포인트·요청/응답 스펙 찾기 | `skills/swagger-api-finder/SKILL.md` (원문 URL: `docs/letscareer/API_docs/swagger_url.md`) |
+| BE 실제 동작·DB 저장 구조·쿼리 확인 | `skills/server-code-reference/SKILL.md` (소스: `../lets-career-server`) |
 | 기술 스택 확인 | `docs/letscareer/tech-stack/README.md` |
 | 시스템 아키텍처 개요 | `docs/letscareer/architecture.md` |
 | 모노레포·배포 구조 | `docs/letscareer/pnpm전환 메모 폴더/` |
@@ -87,4 +91,5 @@
 | Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
 | SEO 작업 | `skills/seo/SKILL.md` |
 | 브랜치 작업 팀 공유 보고서 | `skills/git-branch-report/SKILL.md` |
+| 개발문서(`.claude/docs`) 갱신·동기화 | `skills/dev-docs-updater/SKILL.md` |
 | 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
