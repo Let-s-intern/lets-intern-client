@@ -1,19 +1,18 @@
 # ============================================================
-# ⚠️ 임시 stub — 반드시 삭제할 것 (TODO: DELETE THIS FILE)
+# Build Check — 의존성 보안 감사(pnpm audit) 게이트
 # ============================================================
-# 이 파일은 branch protection 룰이 요구하는 'Build Check' 필수 체크를
-# 만족시키기 위한 패스 전용 더미 워크플로다. 실제 빌드 검증은
-# build-web.yml / build-admin.yml / build-mentor.yml 이 담당.
+# 이 워크플로는 main 브랜치 protection 룰이 요구하는 'Build Check' 필수
+# 체크를 만족시키는 동시에, 모든 PR에서 의존성 보안 취약점을 검사한다.
 #
-# 원본 build-check.yml 은 커밋 0be6b25d4 에서 4개 워크플로로 분리되며 삭제됐으나,
-# main 브랜치의 protection 룰에 'Build Check' 필수 체크가 그대로 남아있어
-# PR 머지가 영구 차단됐던 문제를 임시 우회하기 위함.
+# audit은 공유 pnpm-lock.yaml 전체를 검사하므로 path 필터 없이 모든 PR에서
+# 실행되어야 한다. (앱별 빌드는 build-web/admin/mentor.yml 이 path 필터로 담당)
 #
-# ▶▶ 정식 해결: GitHub repo Settings → Branches → main 브랜치 보호 룰 →
-#    Required status checks 목록에서 'Build Check' 제거.
-#    그 작업이 끝나면 이 파일 즉시 삭제할 것.
+# ▶ 현재 단계: report-only (머지 차단 안 함)
+#   critical 취약점(swiper 등)이 정리될 때까지 결과만 출력하고 통과시킨다.
+#   protobufjs/swiper 등 critical 정리 후 아래 audit 스텝의 `|| true` 를
+#   제거하면 차단 모드로 전환된다.
 # ============================================================
-# Security note: untrusted input (issue/PR title 등) 사용하지 않음 → 안전한 stub.
+# Security note: untrusted input(issue/PR title 등) 사용하지 않음 → 안전.
 
 name: Build Check
 
@@ -25,6 +24,21 @@ jobs:
   build:
     name: Build Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Pass
-        run: echo "임시 stub — branch protection 호환용. 실제 빌드는 어드민/멘토/웹 검사 워크플로 참조."
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # pnpm audit 은 pnpm-lock.yaml 만 읽으므로 `pnpm install` 불필요.
+      # TODO(보안 게이트 차단 모드 전환): critical 정리 후 `|| true` 제거.
+      - name: Security audit (report-only — 아직 머지 차단 안 함)
+        run: |
+          echo "::group::pnpm audit (critical, prod deps)"
+          pnpm audit --audit-level critical --prod --ignore-registry-errors || true
+          echo "::endgroup::"
+          echo "ℹ️ 현재 report-only 모드입니다. critical 취약점 정리 후 차단 모드로 전환 예정."
