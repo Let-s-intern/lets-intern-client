@@ -64,6 +64,9 @@
 │   ├── inject-task-context.sh
 │   └── post-edit-lint.sh
 │
+├── troubleshooting/                     # 원인 미상·미해결 이슈 추적 로그
+│   └── README.md                        # 인덱스 + 이슈 작성 템플릿
+│
 └── tasks/
     ├── prd-*.md                          # PRD 문서
     ├── todo/                             # 진행 중 태스크 파일
@@ -92,4 +95,5 @@
 | SEO 작업 | `skills/seo/SKILL.md` |
 | 브랜치 작업 팀 공유 보고서 | `skills/git-branch-report/SKILL.md` |
 | 개발문서(`.claude/docs`) 갱신·동기화 | `skills/dev-docs-updater/SKILL.md` |
+| 원인 미상·미해결 이슈 기록/조회 | `troubleshooting/README.md` |
 | 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
