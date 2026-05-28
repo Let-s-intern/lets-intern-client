@@ -1,8 +1,6 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import AlertModal from '@/common/alert/AlertModal';
-
 import type { SelectedSlot } from '../types';
 import { formatReservationTime } from '../utils';
 
@@ -24,7 +22,6 @@ const ReservationBar = ({
     applicationId: string;
     programId: string;
   }>();
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const timeText = selectedSlot
@@ -83,62 +80,61 @@ const ReservationBar = ({
       </div>
 
       {/* 데스크톱 레이아웃 */}
-      <div className="bg-primary-5 hidden items-center justify-between rounded-sm px-5 py-4 md:flex">
-        <div className="flex gap-12">
-          <div className="flex flex-col gap-1">
-            <span className="text-xsmall16 text-primary-90 font-bold">
-              멘토
-            </span>
-            <span className="text-xsmall14 text-primary-90">{mentorName}</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-xsmall16 text-primary-90 font-bold">
-              선택된 피드백 시간
-            </span>
-            <span className="text-xsmall14 text-primary-90">{timeText}</span>
-          </div>
+      <div className="hidden flex-col gap-10 md:flex">
+        <div
+          className="flex cursor-pointer items-center gap-1"
+          onClick={() => setIsChecked((prev) => !prev)}
+        >
+          <img
+            src={
+              isChecked
+                ? '/icons/checkbox-checked.svg'
+                : '/icons/checkbox-unchecked-box.svg'
+            }
+            alt=""
+            width={20}
+            height={20}
+          />
+          <span className="text-xsmall14 text-neutral-10">
+            예약 확정 후에는 예약 시간을 변경할 수 없습니다.
+          </span>
         </div>
-        <div className="flex shrink-0 gap-6">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-3 font-semibold"
-          >
-            취소
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsConfirmModalOpen(true)}
-            disabled={!selectedSlot}
-            className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-3 font-semibold text-neutral-100 disabled:opacity-50"
-          >
-            예약 확정
-          </button>
+        <div className="bg-primary-5 flex items-center justify-between rounded-sm px-5 py-4">
+          <div className="flex gap-12">
+            <div className="flex flex-col gap-1">
+              <span className="text-xsmall16 text-primary-90 font-bold">
+                멘토
+              </span>
+              <span className="text-xsmall14 text-primary-90">
+                {mentorName}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xsmall16 text-primary-90 font-bold">
+                선택된 피드백 시간
+              </span>
+              <span className="text-xsmall14 text-primary-90">{timeText}</span>
+            </div>
+          </div>
+          <div className="flex shrink-0 gap-6">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-3 font-semibold"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              disabled={!selectedSlot || !isChecked}
+              className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-3 font-semibold text-neutral-100 disabled:opacity-50"
+            >
+              예약 확정
+            </button>
+          </div>
         </div>
       </div>
-
-      {isConfirmModalOpen && selectedSlot && (
-        <AlertModal
-          title="LIVE 피드백을 예약하시겠습니까?"
-          confirmText="예약 확정"
-          cancelText="닫기"
-          highlight="confirm"
-          onConfirm={() => {
-            setIsConfirmModalOpen(false);
-            onConfirm();
-          }}
-          onCancel={() => setIsConfirmModalOpen(false)}
-        >
-          <>
-            <span>
-              선택하신 피드백 일정은
-              <b>{` ${formatReservationTime(`${selectedSlot.date}T${selectedSlot.time}:00`)}`}</b>
-              입니다.
-            </span>
-            <span>예약 확정 이후에는 피드백 일정 변경이 불가합니다.</span>
-          </>
-        </AlertModal>
-      )}
     </>
   );
 };
