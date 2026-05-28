@@ -89,6 +89,22 @@ function resolveUrls(args) {
   const failed = [];
   try {
     browser = await chromium.launch();
+  } catch (e) {
+    // playwright 패키지는 있으나 브라우저 바이너리가 없을 때 — 미설치와 동일하게 graceful 처리(exit 3).
+    if (/Executable doesn't exist|playwright install/i.test(e.message)) {
+      log(
+        'Playwright 브라우저(chromium)가 설치되어 있지 않아 화면 캡처를 건너뜁니다.',
+      );
+      log(
+        '  로컬 dev 서버 화면을 캡처하려면:  npx playwright install chromium',
+      );
+      log('  (캡처 없이도 텍스트 보고서는 정상 생성됩니다.)');
+      process.exit(3);
+    }
+    log(`브라우저 실행 실패: ${e.message}`);
+    process.exit(1);
+  }
+  try {
     const context = await browser.newContext({
       deviceScaleFactor: 2,
       viewport: { width: 1280, height: 800 },

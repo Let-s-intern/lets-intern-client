@@ -68,6 +68,21 @@ function loadChromium() {
   let browser;
   try {
     browser = await chromium.launch();
+  } catch (e) {
+    // playwright 패키지는 있으나 브라우저 바이너리가 없을 때 — 미설치와 동일하게 graceful 처리(exit 3).
+    if (/Executable doesn't exist|playwright install/i.test(e.message)) {
+      log(
+        'Playwright 브라우저(chromium)가 설치되어 있지 않아 PDF 변환을 건너뜁니다.',
+      );
+      log('  HTML 보고서는 정상 생성되었습니다: ' + htmlPath);
+      log('  PDF 가 필요하면:  npx playwright install chromium  후 재실행');
+      log('  또는 브라우저에서 HTML 을 열고 인쇄(Cmd/Ctrl+P) → "PDF로 저장".');
+      process.exit(3);
+    }
+    log(`브라우저 실행 실패: ${e.message}`);
+    process.exit(1);
+  }
+  try {
     const page = await browser.newPage();
     await page.goto(`file://${htmlPath}`, {
       waitUntil: 'networkidle',
