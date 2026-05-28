@@ -1,9 +1,14 @@
 import { useFeedbackDetailQuery } from '@/api/feedback/feedback';
 import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
+import type { MobilePrimaryAction } from '@/domain/challenge/feedback/FeedbackMissionCard';
 import LiveFeedbackDetail from '@/domain/challenge/feedback/live/LiveFeedbackDetail';
-import type { LiveFeedbackMission } from '@/domain/challenge/feedback/live/types';
+import type {
+  FeedbackInfo,
+  LiveFeedbackMission,
+} from '@/domain/challenge/feedback/live/types';
 import {
   LIVE_FEEDBACK_BUTTON_LABELS,
+  isEntranceActive,
   toCardConfig,
 } from '@/domain/challenge/feedback/live/utils';
 
@@ -24,8 +29,57 @@ function getAccordionLabels(mission: LiveFeedbackMission) {
 }
 
 function getMissionButtonLabel(mission: LiveFeedbackMission) {
-  if (mission.status === 'expired') return undefined;
+  if (
+    mission.status === 'expired' ||
+    mission.status === 'nonParticipation' ||
+    mission.status === 'checkNeeded'
+  )
+    return undefined;
   return mission.isMissionSubmitted ? '제출된 미션 보기' : '미션 제출하기';
+}
+
+function getMobilePrimaryAction(
+  mission: LiveFeedbackMission,
+  feedbackInfo: FeedbackInfo | null,
+  onNavigate: () => void,
+): MobilePrimaryAction | undefined {
+  const { status, feedbackId, isMissionSubmitted } = mission;
+
+  if (
+    status === 'expired' ||
+    status === 'nonParticipation' ||
+    status === 'checkNeeded'
+  )
+    return undefined;
+
+  if (status === 'prev') {
+    return {
+      label: feedbackId ? '신청 내역 보기' : '예약 신청 하기',
+      onClick: onNavigate,
+    };
+  }
+
+  if (status === 'reserved') {
+    if (!isMissionSubmitted) {
+      return { label: '신청 내역 보기', onClick: onNavigate };
+    }
+    const entranceActive = isEntranceActive(
+      feedbackInfo?.startDate,
+      feedbackInfo?.endDate,
+    );
+    return {
+      label: 'LIVE 피드백 입장하기',
+      href: feedbackInfo?.meetingUrl ?? undefined,
+      disabled: !entranceActive,
+      isEntrance: true,
+    };
+  }
+
+  if (status === 'completed') {
+    return { label: 'LIVE 피드백 회고하기', onClick: onNavigate };
+  }
+
+  return undefined;
 }
 
 const ExpiredNotice = () => (
@@ -63,6 +117,11 @@ const LiveFeedbackMissionCard = ({
 
   const labels = getAccordionLabels(mission);
   const missionButtonLabel = getMissionButtonLabel(mission);
+  const mobilePrimaryAction = getMobilePrimaryAction(
+    mission,
+    feedbackInfo,
+    () => onMobileClick(mission),
+  );
 
   return (
     <FeedbackMissionCard
@@ -71,7 +130,7 @@ const LiveFeedbackMissionCard = ({
       onClick={() => onMissionClick(mission)}
       accordionLabel={labels?.buttonLabel}
       openLabel={labels?.openLabel}
-      onAccordionMobileClick={() => onMobileClick(mission)}
+      mobilePrimaryAction={mobilePrimaryAction}
       notice={mission.status === 'expired' ? <ExpiredNotice /> : undefined}
     >
       <LiveFeedbackDetail

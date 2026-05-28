@@ -13,6 +13,14 @@ export interface StatusBadge {
   variant: 'neutral' | 'active' | 'muted' | 'error';
 }
 
+export interface MobilePrimaryAction {
+  label: string;
+  onClick?: () => void;
+  href?: string;
+  disabled?: boolean;
+  isEntrance?: boolean;
+}
+
 export interface FeedbackMissionCardConfig {
   thumbnail: string;
   title: string;
@@ -31,9 +39,9 @@ interface FeedbackMissionCardProps {
   config: FeedbackMissionCardConfig;
   buttonLabel?: string; // 우상단 미션 버튼
   onClick?: () => void; // 미션 버튼 클릭 핸들러
-  accordionLabel?: string; // 보라색 바 닫힌 텍스트 / 모바일 두 번째 버튼 (있으면 렌더링)
-  openLabel?: string; // 보라색 바 열린 텍스트
-  onAccordionMobileClick?: () => void; // 모바일 두 번째 버튼 클릭 (상세 페이지 이동)
+  accordionLabel?: string; // 보라색 바 닫힌 텍스트 (데스크톱 전용)
+  openLabel?: string; // 보라색 바 열린 텍스트 (데스크톱 전용)
+  mobilePrimaryAction?: MobilePrimaryAction; // 모바일 첫 번째 버튼
   children?: React.ReactNode;
   notice?: React.ReactNode; // 카드 하단 안내 박스
 }
@@ -43,6 +51,42 @@ const cardInfoTextCls =
 
 const btnCls =
   'rounded-xxs text-xsmall14 border-primary text-primary border px-3 py-1.5 font-normal transition-colors items-center gap-1 hover:bg-primary-5';
+
+const baseBtnCls =
+  'rounded-xxs text-xsmall14 flex w-full items-center justify-center px-3 py-1.5 font-normal';
+
+const MobilePrimaryButton = ({ action }: { action: MobilePrimaryAction }) => {
+  if (action.isEntrance) {
+    return (
+      <a
+        href={action.disabled ? undefined : action.href}
+        target={!action.disabled && action.href ? '_blank' : undefined}
+        rel={
+          !action.disabled && action.href ? 'noopener noreferrer' : undefined
+        }
+        aria-disabled={action.disabled}
+        className={clsx(
+          baseBtnCls,
+          action.disabled
+            ? 'bg-neutral-70 pointer-events-none text-neutral-100'
+            : 'bg-gradient-to-r from-[#4B53FF] to-[#763CFF] text-white',
+        )}
+      >
+        {action.label}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={action.onClick}
+      className={clsx(btnCls, 'flex w-full justify-center')}
+    >
+      {action.label}
+    </button>
+  );
+};
 
 const DateField = ({
   label,
@@ -82,7 +126,7 @@ const FeedbackMissionCard = ({
   onClick,
   accordionLabel,
   openLabel,
-  onAccordionMobileClick,
+  mobilePrimaryAction,
   children,
   notice,
 }: FeedbackMissionCardProps) => {
@@ -203,8 +247,11 @@ const FeedbackMissionCard = ({
       </div>
 
       {/* 모바일 버튼 영역 */}
-      {(buttonLabel || accordionLabel) && (
+      {(mobilePrimaryAction || buttonLabel) && (
         <div className="mt-5 flex flex-col gap-2 md:hidden">
+          {mobilePrimaryAction && (
+            <MobilePrimaryButton action={mobilePrimaryAction} />
+          )}
           {buttonLabel && (
             <button
               type="button"
@@ -212,15 +259,6 @@ const FeedbackMissionCard = ({
               className={clsx(btnCls, 'flex w-full justify-center')}
             >
               {buttonLabel}
-            </button>
-          )}
-          {accordionLabel && (
-            <button
-              type="button"
-              onClick={onAccordionMobileClick}
-              className={clsx(btnCls, 'flex w-full justify-center')}
-            >
-              {accordionLabel}
             </button>
           )}
         </div>
