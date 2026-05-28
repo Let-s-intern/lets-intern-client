@@ -113,7 +113,7 @@ jobs:
       - name: Build (vite)
         run: pnpm --filter @letscareer/mentor build
         env:
-          VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
-          VITE_SERVER_API_V2: ${{ secrets.VITE_SERVER_API_V2 || 'https://api.example.com/v2' }}
-          VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
-          VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}
+          VITE_SERVER_API: https://api.example.com/v1
+          VITE_SERVER_API_V2: https://api.example.com/v2
+          VITE_SERVER_API_V3: https://api.example.com/v3
+          VITE_API_BASE_PATH: https://api.example.com
