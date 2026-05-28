@@ -69,10 +69,16 @@ node "$SCRIPT_DIR/build_report.js" --git "$GIT_JSON" --content "$CONTENT" --out 
   log "[report] HTML 생성 실패."; [ -n "$CLEANUP" ] && rm -f "$CLEANUP"; exit 1;
 }
 
-# 5) PDF 변환 (Playwright 없으면 건너뜀 — exit 3)
+# 5) PDF 변환 (선택). Playwright(패키지 또는 브라우저)가 없으면 HTML 까지만 만들고 깔끔히 종료.
+#    exit 3 = Playwright 미가용으로 의도된 건너뜀(정상). 그 외 비0 = 실제 변환 오류.
 if [ "$DO_PDF" -eq 1 ]; then
-  node "$SCRIPT_DIR/render_to_pdf.js" --html "$OUT_DIR/report.html" || \
-    log "[report] PDF 변환을 건너뛰었습니다(코드 $?). HTML 은 정상입니다."
+  node "$SCRIPT_DIR/render_to_pdf.js" --html "$OUT_DIR/report.html"
+  rc=$?  # 명령 직후 즉시 캡처 ('!'/파이프 뒤 $? 함정 회피). set -e 미사용이라 안전.
+  if [ "$rc" -eq 3 ]; then
+    log "[report] Playwright 가 없어 PDF 는 생략하고 HTML 까지만 생성했습니다 (정상)."
+  elif [ "$rc" -ne 0 ]; then
+    log "[report] PDF 변환 중 오류(코드 $rc). HTML 은 정상 생성되었습니다."
+  fi
 fi
 
 [ -n "$CLEANUP" ] && rm -f "$CLEANUP"

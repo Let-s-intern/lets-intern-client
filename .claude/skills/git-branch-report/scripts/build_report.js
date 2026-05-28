@@ -340,6 +340,11 @@ function main() {
   const htmlPath = path.join(outDir, 'report.html');
   fs.writeFileSync(htmlPath, html, 'utf8');
 
+  // 새 HTML 을 만들었으니 같은 폴더(유형-브랜치-날짜로 결정적)의 이전 PDF 는 stale → 제거.
+  // render_to_pdf 가 가능하면 새로 만들고, 불가능하면(Playwright 없음) 오래된 PDF 가 남아
+  // 최신인 척 공유되는 일을 막는다.
+  fs.rmSync(path.join(outDir, 'report.pdf'), { force: true });
+
   // 후속 스크립트(render_to_pdf)가 받아쓰도록 경로를 JSON 한 줄로 출력
   process.stdout.write(
     `${JSON.stringify({ outDir, htmlPath, type, screens: view.screens.length })}\n`,
