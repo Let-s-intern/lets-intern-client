@@ -20,11 +20,28 @@
 
 set -euo pipefail
 
-BASE="main"
-
 REPO_PATH="${1:-.}"
 
 log() { printf '%s\n' "$*" >&2; }
+
+# base 브랜치 자동 감지 (PRD §14 미결 해소).
+#   우선순위: 환경변수 GBR_BASE > main > origin/HEAD 기본 브랜치 > master > develop
+#   (대부분 팀은 main 이지만, develop/master 베이스 레포도 자동 대응한다.)
+detect_base() {
+  if [ -n "${GBR_BASE:-}" ]; then
+    if git rev-parse --verify --quiet "$GBR_BASE" >/dev/null 2>&1; then printf '%s' "$GBR_BASE"; return; fi
+    log "[extract_git_log] GBR_BASE='$GBR_BASE' 브랜치를 찾을 수 없어 자동 감지로 넘어갑니다."
+  fi
+  if git rev-parse --verify --quiet main >/dev/null 2>&1; then printf 'main'; return; fi
+  local def
+  def="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@')"
+  if [ -n "$def" ] && git rev-parse --verify --quiet "$def" >/dev/null 2>&1; then printf '%s' "$def"; return; fi
+  local b
+  for b in master develop; do
+    if git rev-parse --verify --quiet "$b" >/dev/null 2>&1; then printf '%s' "$b"; return; fi
+  done
+  printf ''
+}
 
 # repo_path 로 이동 (없으면 안내 후 종료)
 if [ ! -d "$REPO_PATH" ]; then
@@ -49,17 +66,17 @@ if [ -z "$BRANCH" ]; then
   exit 0
 fi
 
-# base(main) 브랜치 존재 확인 — 미존재 시 base 확인 유도
-if ! git rev-parse --verify --quiet "$BASE" >/dev/null 2>&1; then
-  log "[extract_git_log] base 브랜치 '$BASE' 를 찾을 수 없습니다."
-  log "  → 이 스킬은 base 를 'main' 으로 가정합니다. 로컬에 main 이 없으면:"
-  log "      git fetch origin main:main"
-  log "    또는 다른 base(develop/master 등)를 사용 중이라면 팀 컨벤션을 확인하세요."
+# base 브랜치 자동 감지 — 못 찾으면 사용자에게 확인 유도
+BASE="$(detect_base)"
+if [ -z "$BASE" ]; then
+  log "[extract_git_log] base 브랜치를 자동 감지하지 못했습니다 (main/master/develop/origin-HEAD 없음)."
+  log "  → 로컬에 base 브랜치를 만들거나(예: git fetch origin main:main),"
+  log "    팀 base 가 다르면 GBR_BASE 로 지정하세요. 예: GBR_BASE=develop ./extract_git_log.sh"
   exit 0
 fi
 
-# 엣지: 현재 브랜치가 base(main) 자신 / master 인 경우
-if [ "$BRANCH" = "$BASE" ] || [ "$BRANCH" = "master" ]; then
+# 엣지: 현재 브랜치가 base 자신인 경우
+if [ "$BRANCH" = "$BASE" ]; then
   log "[extract_git_log] 현재 브랜치가 '$BRANCH' 입니다 (base 브랜치)."
   log "  → 보고서는 feature 브랜치에서 'main 대비 작업'을 추출합니다."
   log "    작업 브랜치로 체크아웃한 뒤 다시 실행하세요. 예: git checkout <feature-branch>"

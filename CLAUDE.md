@@ -24,6 +24,7 @@
 │   ├── code-quality/                     # 코드 품질 규칙 (Toss FE)
 │   ├── code-review/                      # 코드 리뷰 체크리스트
 │   ├── folder-structure/                 # DDD + 프랙탈 폴더 구조
+│   ├── git-branch-report/                # 브랜치 작업 → 팀 공유 HTML/PDF 보고서
 │   ├── seo/                              # SEO 규칙
 │   ├── skill-creator/                    # 스킬 생성 도우미
 │   ├── task-cleaner/                     # 태스크 정리
@@ -85,4 +86,5 @@
 | 태스크 실행 | `skills/task-runner/SKILL.md` → `agents/push-lead.md` |
 | Claude Code 기능 (hooks/skills/subagents 등) | `docs/claude_code_docs/` |
 | SEO 작업 | `skills/seo/SKILL.md` |
+| 브랜치 작업 팀 공유 보고서 | `skills/git-branch-report/SKILL.md` |
 | 병렬 작업 팀 구성 | `teams/README.md` → 상황별 레시피 선택 |
