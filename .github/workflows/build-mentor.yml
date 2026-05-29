@@ -1,6 +1,6 @@
 name: 멘토 검사
 
-# apps/mentor 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행 (PR 한정).
+# apps/mentor 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -13,10 +13,26 @@ on:
       - 'package.json'
       - '.prettierrc.mjs'
       - '.github/workflows/build-mentor.yml'
+  # main 머지 시에도 빌드해 "기본 브랜치 스코프" 캐시를 시딩한다.
+  # GitHub Actions 캐시 규칙: 기본 브랜치(main)에서 만든 캐시는 모든 PR 이
+  # 복원 가능하지만, PR 브랜치가 만든 캐시는 그 PR 에서만 복원된다.
+  # 따라서 main 빌드가 공용 캐시 공급자 역할을 해야 매 PR 이 warm start 된다.
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mentor/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.prettierrc.mjs'
+      - '.github/workflows/build-mentor.yml'
 
 concurrency:
   group: build-mentor-${{ github.ref }}
-  cancel-in-progress: true
+  # PR 은 새 푸시로 이전 실행 취소(빠른 피드백), main 은 캐시 시딩 빌드를 취소하지 않음.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   checks:
@@ -38,6 +54,17 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # turbo 로컬 캐시 — 입력이 동일하면 빌드 태스크 자체를 스킵(FULL TURBO).
+      # vite 는 별도 증분 캐시가 없고 산출물(dist)을 turbo outputs 가 캐시하므로
+      # .turbo 캐시 하나로 충분하다.
+      - name: Turbo 캐시
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-mentor-${{ github.sha }}
+          restore-keys: |
+            turbo-mentor-
+
       - name: Prettier check
         run: pnpm exec prettier --check "apps/mentor/**/*.{ts,tsx,js,jsx,json,md}"
 
@@ -46,7 +73,10 @@ jobs:
 
       # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
       # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      # 변경 파일 기준이라 PR 에서만 의미가 있다(main push 는 base SHA 없음).
+      # → push 에선 스킵하고 캐시 시딩 빌드만 수행. typecheck 로직은 변경하지 않음.
       - name: Typecheck (변경 파일 한정)
+        if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -83,7 +113,7 @@ jobs:
       - name: Build (vite)
         run: pnpm --filter @letscareer/mentor build
         env:
-          VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/v1' }}
-          VITE_SERVER_API_V2: ${{ secrets.VITE_SERVER_API_V2 || 'https://api.example.com/v2' }}
-          VITE_SERVER_API_V3: ${{ secrets.VITE_SERVER_API_V3 || 'https://api.example.com/v3' }}
-          VITE_API_BASE_PATH: ${{ secrets.VITE_API_BASE_PATH || 'https://api.example.com' }}
+          VITE_SERVER_API: https://api.example.com/v1
+          VITE_SERVER_API_V2: https://api.example.com/v2
+          VITE_SERVER_API_V3: https://api.example.com/v3
+          VITE_API_BASE_PATH: https://api.example.com

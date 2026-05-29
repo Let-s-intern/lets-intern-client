@@ -36,6 +36,7 @@ permissionMode: dontAsk
 
 4. **API 문서** (`.claude/docs/letscareer/API_docs/`)
    - swagger_url.md — Swagger 문서 URL
+   - 실제 엔드포인트·요청/응답 스펙은 `.claude/skills/swagger-api-finder/SKILL.md` 로 저비용 추출 (api-docs 통째 읽기 금지)
 
 5. **Claude Code 가이드** (`.claude/docs/claude_code_docs/`)
    - 서브 에이전트, 스킬, 훅, 에이전트 팀 가이드

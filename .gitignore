@@ -75,3 +75,4 @@ next-env.d.ts
 
 # Playwright MCP 산출물 (스크린샷/스냅샷)
 .playwright-mcp/
+.claude/skills/skill-creator/scripts/__pycache__/
