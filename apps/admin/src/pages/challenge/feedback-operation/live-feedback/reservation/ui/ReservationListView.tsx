@@ -1,3 +1,4 @@
+import { Fragment, useState } from 'react';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -5,6 +6,10 @@ import {
   formatReservationDateTime,
 } from '../../utils/format';
 import type { SortKey, SortState } from '../utils/sortReservations';
+import ReservationHistoryPanel from './ReservationHistoryPanel';
+
+/** 표 컬럼 수 (변경 내역 펼침 행의 colSpan 용) */
+const COLUMN_COUNT = 7;
 
 interface ReservationListViewProps {
   reservations: FeedbackAdminVo[];
@@ -58,6 +63,9 @@ export default function ReservationListView({
   isLoading,
   emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
+  // 행별 "예약 변경 내역" 펼침 — 한 번에 하나만 펼친다.
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
   if (isLoading) {
     return (
       <div className="text-xsmall14 text-neutral-40 py-16 text-center">
@@ -106,40 +114,69 @@ export default function ReservationListView({
               />
             </th>
             <th className={twMerge(thClassName, 'text-center')}>상세</th>
+            <th className={twMerge(thClassName, 'text-center')}>
+              예약 변경 내역
+            </th>
           </tr>
         </thead>
         <tbody>
-          {reservations.map((item) => (
-            <tr
-              key={item.feedbackId}
-              className="border-neutral-80 border-b last:border-b-0"
-            >
-              <td className={tdClassName}>
-                {formatReservationDateTime(item.startDate, item.endDate)}
-              </td>
-              <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
-                {item.programTitle || '-'}
-              </td>
-              <td className={twMerge(tdClassName, 'text-center')}>
-                {item.mentorName}
-              </td>
-              <td className={twMerge(tdClassName, 'text-center')}>
-                {item.menteeName}
-              </td>
-              <td className={twMerge(tdClassName, 'text-center')}>
-                {formatApplyDateTime(item.createDate)}
-              </td>
-              <td className={twMerge(tdClassName, 'text-center')}>
-                <button
-                  type="button"
-                  onClick={() => onView(item.feedbackId)}
-                  className="text-blue-600 hover:underline"
-                >
-                  보기
-                </button>
-              </td>
-            </tr>
-          ))}
+          {reservations.map((item) => {
+            const isExpanded = expandedId === item.feedbackId;
+            return (
+              <Fragment key={item.feedbackId}>
+                <tr className="border-neutral-80 border-b last:border-b-0">
+                  <td className={tdClassName}>
+                    {formatReservationDateTime(item.startDate, item.endDate)}
+                  </td>
+                  <td
+                    className={twMerge(tdClassName, 'max-w-[260px] truncate')}
+                  >
+                    {item.programTitle || '-'}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    {item.mentorName}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    {item.menteeName}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    {formatApplyDateTime(item.createDate)}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    <button
+                      type="button"
+                      onClick={() => onView(item.feedbackId)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      보기
+                    </button>
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedId(isExpanded ? null : item.feedbackId)
+                      }
+                      aria-expanded={isExpanded}
+                      className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
+                    >
+                      예약 변경 내역
+                      <span className="text-xxsmall12">
+                        {isExpanded ? '▲' : '▼'}
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+                {isExpanded && (
+                  <tr className="border-neutral-80 bg-neutral-95 border-b">
+                    <td colSpan={COLUMN_COUNT} className="px-4 py-2">
+                      <ReservationHistoryPanel feedbackId={item.feedbackId} />
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>

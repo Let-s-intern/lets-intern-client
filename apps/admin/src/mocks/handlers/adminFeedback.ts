@@ -1,6 +1,10 @@
 import { http, HttpResponse } from 'msw';
 
-import { seedFeedbacks, seedSlotsByMentorId } from '../seed/feedback';
+import {
+  seedFeedbacks,
+  seedHistoryByFeedbackId,
+  seedSlotsByMentorId,
+} from '../seed/feedback';
 
 /**
  * LIVE 피드백(예약) MSW 핸들러.
@@ -90,6 +94,13 @@ export const adminFeedbackHandlers = [
     }
 
     return HttpResponse.json({ data: { feedbackInfo: found.detail } });
+  }),
+
+  // 예약 변경 내역
+  http.get(`${BASE}/admin/feedback/:feedbackId/history`, ({ params }) => {
+    const feedbackId = Number(params.feedbackId);
+    const historyList = seedHistoryByFeedbackId[feedbackId] ?? [];
+    return HttpResponse.json({ data: { historyList } });
   }),
 
   // 멘토 슬롯 (범위·상태 필터)

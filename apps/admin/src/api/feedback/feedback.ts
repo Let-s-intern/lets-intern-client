@@ -5,9 +5,11 @@ import {
   type AdminFeedbackListParams,
   type FeedbackAdminVo,
   type FeedbackDetailAdminVo,
+  type FeedbackHistoryItem,
   type FeedbackSlotVo,
   type MentorFeedbackSlotParams,
   getAdminFeedbackDetailResponseSchema,
+  getAdminFeedbackHistoryResponseSchema,
   getAdminFeedbacksResponseSchema,
   getMentorFeedbackSlotsResponseSchema,
 } from './feedbackSchema';
@@ -21,6 +23,7 @@ import {
 
 const ADMIN_FEEDBACK_QUERY_KEY = 'adminFeedbackList';
 const ADMIN_FEEDBACK_DETAIL_QUERY_KEY = 'adminFeedbackDetail';
+const ADMIN_FEEDBACK_HISTORY_QUERY_KEY = 'adminFeedbackHistory';
 const MENTOR_FEEDBACK_SLOTS_QUERY_KEY = 'mentorFeedbackSlots';
 
 /** 빈 배열/undefined/빈 문자열 파라미터를 제거해 직렬화한다. */
@@ -100,6 +103,22 @@ export const useAdminFeedbackDetailQuery = (
         .feedbackInfo;
     },
     enabled: feedbackId != null,
+  });
+};
+
+/** GET /admin/feedback/{feedbackId}/history — 예약 변경 내역 (펼침 시 조회) */
+export const useAdminFeedbackHistoryQuery = (
+  feedbackId?: number,
+  enabled = true,
+): UseQueryResult<FeedbackHistoryItem[]> => {
+  return useQuery({
+    queryKey: [ADMIN_FEEDBACK_HISTORY_QUERY_KEY, feedbackId],
+    queryFn: async () => {
+      const res = await axios.get(`/admin/feedback/${feedbackId}/history`);
+      return getAdminFeedbackHistoryResponseSchema.parse(res.data.data)
+        .historyList;
+    },
+    enabled: feedbackId != null && enabled,
   });
 };
 

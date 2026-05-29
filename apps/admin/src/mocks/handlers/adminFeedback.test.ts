@@ -3,6 +3,7 @@ import { setupServer } from 'msw/node';
 
 import {
   getAdminFeedbackDetailResponseSchema,
+  getAdminFeedbackHistoryResponseSchema,
   getAdminFeedbacksResponseSchema,
   getMentorFeedbackSlotsResponseSchema,
 } from '@/api/feedback/feedbackSchema';
@@ -80,6 +81,21 @@ describe('GET /admin/feedback/{feedbackId}', () => {
   it('없는 id 는 404 를 반환한다', async () => {
     const res = await fetch(`${BASE}/admin/feedback/9999`);
     expect(res.status).toBe(404);
+  });
+});
+
+describe('GET /admin/feedback/{feedbackId}/history', () => {
+  it('예약 이동 내역(이전 예약일)을 스키마 형태로 반환한다', async () => {
+    const data = await fetchData('/admin/feedback/1/history');
+    const parsed = getAdminFeedbackHistoryResponseSchema.parse(data);
+    expect(parsed.historyList.length).toBeGreaterThan(0);
+    expect(parsed.historyList[0].beforeStartDate).toBeTruthy();
+  });
+
+  it('이동 내역 없는 예약은 빈 목록을 반환한다 (feedbackId=3)', async () => {
+    const data = await fetchData('/admin/feedback/3/history');
+    const parsed = getAdminFeedbackHistoryResponseSchema.parse(data);
+    expect(parsed.historyList).toHaveLength(0);
   });
 });
 

@@ -79,6 +79,28 @@ export type GetAdminFeedbackDetailResponse = z.infer<
   typeof getAdminFeedbackDetailResponseSchema
 >;
 
+/**
+ * 예약 변경(이동) 내역 항목 (GET /admin/feedback/{feedbackId}/history).
+ * 예약을 다른 날로 옮긴 기록 — 옮기기 전(이전) 예약 일시를 보여준다.
+ */
+export const feedbackHistoryItemSchema = z.object({
+  id: z.number(),
+  /** 변경(이동)한 시각 (ISO) */
+  changedAt: z.string(),
+  /** 이전(옮기기 전) 예약 일시 */
+  beforeStartDate: z.string(),
+  beforeEndDate: z.string(),
+});
+export type FeedbackHistoryItem = z.infer<typeof feedbackHistoryItemSchema>;
+
+/** 예약 변경 내역 응답 */
+export const getAdminFeedbackHistoryResponseSchema = z.object({
+  historyList: z.array(feedbackHistoryItemSchema),
+});
+export type GetAdminFeedbackHistoryResponse = z.infer<
+  typeof getAdminFeedbackHistoryResponseSchema
+>;
+
 /** 멘토 슬롯 (GET /admin/feedback/slot/{mentorId}) */
 export const feedbackSlotVoSchema = z.object({
   feedbackSlotId: z.number(),

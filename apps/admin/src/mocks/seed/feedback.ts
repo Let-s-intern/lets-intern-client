@@ -1,6 +1,7 @@
 import type {
   FeedbackAdminVo,
   FeedbackDetailAdminVo,
+  FeedbackHistoryItem,
   FeedbackSlotVo,
 } from '@/api/feedback/feedbackSchema';
 
@@ -182,6 +183,44 @@ export const seedFeedbacks: SeedFeedback[] = [
     },
   },
 ];
+
+/**
+ * 예약별 변경(이동) 내역 (feedbackId 기준).
+ * 멘토/멘티가 잡았던 예약을 다른 날(시간)로 옮긴 기록. 행 우측 "예약 변경 내역" 펼침에서 조회. 최신순.
+ */
+export const seedHistoryByFeedbackId: Record<number, FeedbackHistoryItem[]> = {
+  1: [
+    {
+      id: 11,
+      changedAt: '2026-05-28T09:15:00',
+      beforeStartDate: '2026-05-29T17:00:00',
+      beforeEndDate: '2026-05-29T17:30:00',
+    },
+    {
+      id: 10,
+      changedAt: '2026-05-25T14:02:00',
+      beforeStartDate: '2026-05-27T16:00:00',
+      beforeEndDate: '2026-05-27T16:30:00',
+    },
+  ],
+  2: [
+    {
+      id: 21,
+      changedAt: '2026-05-26T11:40:00',
+      beforeStartDate: '2026-05-30T18:00:00',
+      beforeEndDate: '2026-05-30T18:30:00',
+    },
+  ],
+  3: [],
+  4: [
+    {
+      id: 41,
+      changedAt: '2026-05-30T16:20:00',
+      beforeStartDate: '2026-06-02T19:00:00',
+      beforeEndDate: '2026-06-02T19:30:00',
+    },
+  ],
+};
 
 /**
  * 멘토별 주간 슬롯.

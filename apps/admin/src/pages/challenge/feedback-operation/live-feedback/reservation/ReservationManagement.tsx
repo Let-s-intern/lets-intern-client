@@ -15,19 +15,6 @@ const ReservationCalendarView = lazy(
 const ReservationDetailModal = lazy(
   () => import('./ui/ReservationDetailModal'),
 );
-
-/** 목록 카테고리 — 드롭다운으로 예약 목록(예정)/예약 변경 내역을 전환한다. */
-type ReservationCategory = 'reserved' | 'changed';
-
-const CATEGORY_OPTIONS: { value: ReservationCategory; label: string }[] = [
-  { value: 'reserved', label: '예약 목록' },
-  { value: 'changed', label: '예약 변경 내역' },
-];
-
-const CATEGORY_EMPTY: Record<ReservationCategory, string> = {
-  reserved: '예정된 예약이 없습니다.',
-  changed: '예약 변경 내역이 없습니다.',
-};
 import {
   INITIAL_FILTER,
   buildListParams,
@@ -75,8 +62,6 @@ export default function ReservationManagement() {
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
     null,
   );
-  // 드롭다운: 예약 목록(RESERVED) / 예약 변경 내역(COMPLETED·CANCELED) 전환.
-  const [category, setCategory] = useState<ReservationCategory>('reserved');
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -109,13 +94,8 @@ export default function ReservationManagement() {
 
   const visibleReservations = useMemo(() => {
     const byName = filterByMenteeName(reservations ?? [], filter.menteeName);
-    const byCategory = byName.filter((r) =>
-      category === 'reserved'
-        ? r.status === 'RESERVED'
-        : r.status !== 'RESERVED',
-    );
-    return sortReservations(byCategory, sort);
-  }, [reservations, filter.menteeName, category, sort]);
+    return sortReservations(byName, sort);
+  }, [reservations, filter.menteeName, sort]);
 
   const toggleSort = (key: SortKey) => {
     setSort((prev) =>
@@ -134,19 +114,7 @@ export default function ReservationManagement() {
         mentorOptions={mentorOptions}
       />
 
-      <div className="flex items-center justify-between">
-        <select
-          aria-label="예약 목록 구분"
-          value={category}
-          onChange={(e) => setCategory(e.target.value as ReservationCategory)}
-          className="border-neutral-80 text-xsmall14 text-neutral-0 rounded-md border bg-white px-3 py-2"
-        >
-          {CATEGORY_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+      <div className="flex justify-end">
         <ViewToggle value={view} onChange={setView} />
       </div>
 
@@ -157,7 +125,6 @@ export default function ReservationManagement() {
           onToggleSort={toggleSort}
           onView={setSelectedFeedbackId}
           isLoading={isLoading}
-          emptyMessage={CATEGORY_EMPTY[category]}
         />
       ) : (
         <Suspense fallback={null}>
