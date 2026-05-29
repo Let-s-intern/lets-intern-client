@@ -26,6 +26,7 @@
 │   ├── dev-docs-updater/                 # .claude/docs 개발문서 갱신·3계층 동기화
 │   ├── folder-structure/                 # DDD + 프랙탈 폴더 구조
 │   ├── git-branch-report/                # 브랜치 작업 → 팀 공유 HTML/PDF 보고서
+│   ├── quality-check/                     # 변경 파일 포맷·린트·타입체크 실행
 │   ├── seo/                              # SEO 규칙
 │   ├── server-code-reference/            # 백엔드(Spring) 실제 소스 직접 확인
 │   ├── skill-creator/                    # 스킬 생성 도우미
@@ -81,6 +82,7 @@
 | 새 기능 구현 | `skills/folder-structure/SKILL.md`, `skills/vercel-react-best-practices/AGENTS.md`, `docs/letscareer/apps/<app>/` |
 | 리팩터링 | `skills/folder-structure/SKILL.md`, `skills/code-quality/SKILL.md`, `agents/refactorer.md` |
 | 코드 리뷰 | `skills/code-review/SKILL.md` |
+| 커밋 전 포맷·린트·타입체크 | `skills/quality-check/SKILL.md` |
 | 공유 훅/컴포넌트 찾기 | `docs/letscareer/packages/` |
 | 도메인 로직 이해 | `docs/letscareer/apps/<app>/domain/<도메인>.md` |
 | API 엔드포인트·요청/응답 스펙 찾기 | `skills/swagger-api-finder/SKILL.md` (원문 URL: `docs/letscareer/API_docs/swagger_url.md`) |
