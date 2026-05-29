@@ -17,6 +17,7 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
     <div className="border-neutral-80 inline-flex rounded-md border p-0.5">
       {views.map((view) => (
         <button
+          type="button"
           key={view.id}
           onClick={() => onChange(view.id)}
           className={twMerge(

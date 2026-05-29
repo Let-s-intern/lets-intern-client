@@ -96,7 +96,8 @@ export function getSlotPosition(
   const slotIndex = Math.floor(startMinutes / SLOT_MINUTES);
 
   const durationMinutes = Math.max(end.diff(start, 'minute'), SLOT_MINUTES);
-  const slotSpan = Math.max(Math.round(durationMinutes / SLOT_MINUTES), 1);
+  // 30분에 딱 안 떨어지는 길이는 올림(그리드에서 잘리지 않도록)
+  const slotSpan = Math.max(Math.ceil(durationMinutes / SLOT_MINUTES), 1);
 
   return { dayIndex, slotIndex, slotSpan };
 }

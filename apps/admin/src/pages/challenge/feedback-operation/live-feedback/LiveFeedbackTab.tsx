@@ -26,6 +26,7 @@ export default function LiveFeedbackTab() {
       <nav className="border-neutral-80 flex gap-1 border-b">
         {subTabs.map((tab) => (
           <button
+            type="button"
             key={tab.id}
             onClick={() => setSubTab(tab.id)}
             className={twMerge(

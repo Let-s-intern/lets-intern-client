@@ -4,6 +4,7 @@ import type {
 } from '@/api/feedback/feedbackSchema';
 import { useAdminFeedbackDetailQuery } from '@/api/feedback/feedback';
 import { twMerge } from '@/lib/twMerge';
+import { sanitizeUrl } from '@/utils/url';
 import { formatReservationDateTime } from '../../utils/format';
 
 interface ReservationDetailModalProps {
@@ -106,7 +107,7 @@ function DetailBody({ detail }: { detail: FeedbackDetailAdminVo }) {
             </span>
             {detail.meetingUrl ? (
               <a
-                href={detail.meetingUrl}
+                href={sanitizeUrl(detail.meetingUrl)}
                 target="_blank"
                 rel="noreferrer"
                 className="break-all text-blue-600 hover:underline"
@@ -127,9 +128,11 @@ export default function ReservationDetailModal({
   feedbackId,
   onClose,
 }: ReservationDetailModalProps) {
-  const { data: detail, isLoading } = useAdminFeedbackDetailQuery(
-    feedbackId ?? undefined,
-  );
+  const {
+    data: detail,
+    isLoading,
+    isError,
+  } = useAdminFeedbackDetailQuery(feedbackId ?? undefined);
 
   if (feedbackId == null) return null;
 
@@ -166,7 +169,11 @@ export default function ReservationDetailModal({
         </div>
 
         <div className="overflow-y-auto px-6 py-5">
-          {isLoading || !detail ? (
+          {isError ? (
+            <div className="text-xsmall14 py-12 text-center text-red-500">
+              예약 정보를 불러오지 못했습니다. 다시 시도해 주세요.
+            </div>
+          ) : isLoading || !detail ? (
             <div className="text-xsmall14 text-neutral-40 py-12 text-center">
               불러오는 중...
             </div>

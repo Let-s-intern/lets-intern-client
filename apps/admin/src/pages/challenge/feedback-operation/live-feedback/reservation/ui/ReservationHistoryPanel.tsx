@@ -15,12 +15,24 @@ interface ReservationHistoryPanelProps {
 export default function ReservationHistoryPanel({
   feedbackId,
 }: ReservationHistoryPanelProps) {
-  const { data: history, isLoading } = useAdminFeedbackHistoryQuery(feedbackId);
+  const {
+    data: history,
+    isLoading,
+    isError,
+  } = useAdminFeedbackHistoryQuery(feedbackId);
 
   if (isLoading) {
     return (
       <div className="text-xxsmall12 text-neutral-40 py-4 text-center">
         변경 내역 불러오는 중...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-xxsmall12 py-4 text-center text-red-500">
+        변경 내역을 불러오지 못했습니다.
       </div>
     );
   }

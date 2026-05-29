@@ -45,8 +45,13 @@ function renderApp() {
 // worker.start() 완료 후 렌더해야 초기 요청이 핸들러에 의해 가로채진다.
 async function bootstrap() {
   if (import.meta.env.VITE_ENABLE_MSW === 'true') {
-    const { worker } = await import('./mocks/browser');
-    await worker.start({ onUnhandledRequest: 'bypass' });
+    // MSW 부팅 실패(SW 등록 실패 등)해도 앱은 렌더되도록 격리한다.
+    try {
+      const { worker } = await import('./mocks/browser');
+      await worker.start({ onUnhandledRequest: 'bypass' });
+    } catch (error) {
+      console.error('[MSW] worker 시작 실패 — 목 없이 계속 진행합니다.', error);
+    }
   }
   renderApp();
 }
