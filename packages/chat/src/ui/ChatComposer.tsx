@@ -1,0 +1,83 @@
+'use client';
+
+import { useRef, useState } from 'react';
+
+interface ChatComposerProps {
+  onSend: (text: string) => void;
+  disabled?: boolean;
+}
+
+/** 입력창 자동 높이 상한(px). */
+const MAX_HEIGHT_PX = 120;
+
+export default function ChatComposer({ onSend, disabled }: ChatComposerProps) {
+  const [text, setText] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  /** 내용에 맞춰 높이 자동 조정(줄바꿈이 보이도록), 상한까지만 확장. */
+  const resize = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT_PX)}px`;
+  };
+
+  const handleSend = () => {
+    const trimmed = text.trim();
+    if (!trimmed || disabled) return;
+    onSend(trimmed);
+    setText('');
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (el) el.style.height = 'auto';
+      el?.focus();
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 한글 등 IME 합성 중 Enter는 무시한다(마지막 단어 중복 전송 방지).
+    if (e.nativeEvent.isComposing) return;
+    // Enter = 전송, Shift+Enter = 줄바꿈(기본 동작 유지).
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div className="border-neutral-80 flex items-end gap-2 border-t px-4 py-3">
+      <textarea
+        ref={textareaRef}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          resize();
+        }}
+        onKeyDown={handleKeyDown}
+        placeholder="메시지를 입력하세요 (Enter 전송, Shift+Enter 줄바꿈)"
+        disabled={disabled}
+        rows={1}
+        style={{ maxHeight: MAX_HEIGHT_PX }}
+        className="border-neutral-80 text-neutral-10 focus:ring-primary disabled:bg-neutral-95 min-h-[40px] flex-1 resize-none overflow-y-auto rounded-lg border bg-white px-3 py-2 text-sm placeholder:text-neutral-50 focus:outline-none focus:ring-1"
+        aria-label="메시지 입력"
+      />
+      <button
+        type="button"
+        onClick={handleSend}
+        disabled={!text.trim() || disabled}
+        className="bg-primary hover:bg-primary-hover disabled:bg-neutral-80 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white transition-colors disabled:cursor-not-allowed"
+        aria-label="메시지 전송"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path
+            d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+  );
+}

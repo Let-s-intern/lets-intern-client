@@ -29,7 +29,9 @@
     "@excalidraw/excalidraw": "^0.17.6",
     "@hookform/resolvers": "^3.3.4",
     "@letscareer/api": "workspace:*",
+    "@letscareer/chat": "workspace:*",
     "@letscareer/hooks": "workspace:*",
+    "@letscareer/mocks": "workspace:*",
     "@letscareer/store": "workspace:*",
     "@letscareer/types": "workspace:*",
     "@letscareer/ui": "workspace:*",
@@ -108,12 +110,12 @@
     "@letscareer/tailwind-config": "workspace:*",
     "@letscareer/tsconfig": "workspace:*",
     "@playwright/test": "^1.48.0",
-    "@types/katex": "^0.16.7",
-    "@types/lodash-es": "^4.17.12",
     "@testing-library/jest-dom": "^6.4.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.0",
     "@types/jest": "^29.5.0",
+    "@types/katex": "^0.16.7",
+    "@types/lodash-es": "^4.17.12",
     "@vercel/node": "^3.2.7",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
@@ -127,5 +129,10 @@
     "typescript": "^5.9.3",
     "vite": "^5.4.20",
     "vite-plugin-svgr": "^4.2.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly VITE_MUI_X_LICENSE_KEY?: string;
   readonly VITE_GA_ID?: string;
   readonly VITE_DISCORD_WEBHOOK_URL?: string;
+  readonly VITE_ENABLE_MSW?: string;
   readonly [key: `VITE_${string}`]: string | undefined;
 }
 

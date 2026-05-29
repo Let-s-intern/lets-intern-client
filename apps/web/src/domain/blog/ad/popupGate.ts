@@ -13,8 +13,13 @@ import {
 export function canShowPopup(): boolean {
   if (typeof window === 'undefined') return false;
 
-  const hideUntil = window.localStorage.getItem(BLOG_POPUP_HIDE_UNTIL);
-  if (hideUntil && Number(hideUntil) > Date.now()) return false;
+  // Safari 시크릿 모드·스토리지 차단 환경에서는 localStorage 접근이 throw → 노출 허용으로 폴백.
+  try {
+    const hideUntil = window.localStorage.getItem(BLOG_POPUP_HIDE_UNTIL);
+    if (hideUntil && Number(hideUntil) > Date.now()) return false;
+  } catch {
+    return true;
+  }
 
   return true;
 }
@@ -22,8 +27,14 @@ export function canShowPopup(): boolean {
 /** "하루 동안 보지 않기" — 24시간 동안 노출을 차단한다. */
 export function hidePopupForDay(): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(
-    BLOG_POPUP_HIDE_UNTIL,
-    String(Date.now() + POPUP_HIDE_DURATION_MS),
-  );
+
+  // 스토리지 차단 환경에서 setItem이 throw해도 앱이 죽지 않도록 무시(차단 저장만 실패).
+  try {
+    window.localStorage.setItem(
+      BLOG_POPUP_HIDE_UNTIL,
+      String(Date.now() + POPUP_HIDE_DURATION_MS),
+    );
+  } catch {
+    // no-op: 차단 정보를 저장하지 못해도 팝업 동작 자체는 정상 유지.
+  }
 }

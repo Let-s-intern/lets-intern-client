@@ -6,7 +6,7 @@ const config = {
   content: [
     './index.html',
     './src/**/*.{html,js,jsx,ts,tsx}',
-    '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
+    '../../packages/*/src/**/*.{js,jsx,ts,tsx}',
   ],
 };
 

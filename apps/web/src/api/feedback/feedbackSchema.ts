@@ -1,0 +1,108 @@
+import { z } from 'zod';
+
+export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
+
+export const attendanceStatusSchema = z.enum([
+  'PRESENT',
+  'UPDATED',
+  'LATE',
+  'ABSENT',
+]);
+
+// 멘토/멘티 피드백 참여 상태
+export const feedbackAttendanceStatusSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+
+export type FeedbackStatus = z.infer<typeof feedbackStatusSchema>;
+export type FeedbackAttendanceStatus = z.infer<
+  typeof feedbackAttendanceStatusSchema
+>;
+
+export const challengeMentorInfoSchema = z.object({
+  nickname: z.string(),
+  introduction: z.string(),
+  profileImgUrl: z.string(),
+});
+
+export type ChallengeMentorInfo = z.infer<typeof challengeMentorInfoSchema>;
+
+export const liveFeedbackItemSchema = z.object({
+  thumbnail: z.string(),
+  desktopThumbnail: z.string(),
+  missionTitle: z.string(),
+  missionId: z.number(),
+  missionTh: z.number(),
+  missionStartDate: z.string(),
+  missionEndDate: z.string(),
+  feedbackId: z.number().nullable(),
+  feedbackStatus: feedbackStatusSchema.nullable(),
+  attendanceStatus: attendanceStatusSchema.nullable(),
+  mentorStatus: feedbackAttendanceStatusSchema.nullable(),
+  menteeStatus: feedbackAttendanceStatusSchema.nullable(),
+  mentorInfo: challengeMentorInfoSchema.nullish(),
+});
+
+export type LiveFeedbackItem = z.infer<typeof liveFeedbackItemSchema>;
+
+export const liveFeedbackListSchema = z.object({
+  liveFeedbackList: z.array(liveFeedbackItemSchema),
+});
+
+export const mentorDetailSchema = z.object({
+  challengeMentorInfo: challengeMentorInfoSchema,
+});
+
+export type MentorDetail = z.infer<typeof mentorDetailSchema>;
+
+export const feedbackDetailSchema = z.object({
+  feedbackInfo: z.object({
+    feedbackId: z.number(),
+    startDate: z.string(),
+    endDate: z.string(),
+    meetingUrl: z.string().nullable(),
+    status: feedbackStatusSchema,
+    mentorStatus: feedbackAttendanceStatusSchema.nullable(),
+    menteeStatus: feedbackAttendanceStatusSchema.nullable(),
+  }),
+});
+
+export type FeedbackDetail = z.infer<typeof feedbackDetailSchema>;
+export type FeedbackInfo = FeedbackDetail['feedbackInfo'];
+
+export const feedbackSlotStatusSchema = z.enum(['OPEN', 'CLOSED', 'BOOKED']);
+
+export const feedbackSlotSchema = z.object({
+  feedbackSlotId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: feedbackSlotStatusSchema,
+});
+
+export type FeedbackSlot = z.infer<typeof feedbackSlotSchema>;
+
+export const feedbackSlotListSchema = z.object({
+  feedbackSlotList: z.array(feedbackSlotSchema),
+});
+
+export const writtenFeedbackItemSchema = z.object({
+  thumbnail: z.string(),
+  desktopThumbnail: z.string(),
+  attendanceId: z.number(),
+  attendanceStatus: attendanceStatusSchema.nullable(),
+  attendanceResult: z.string().nullable(),
+  feedbackStatus: z.enum(['IN_PROGRESS', 'WAITING', 'CONFIRMED']).nullable(),
+  attendanceLink: z.string().nullable(),
+  missionTitle: z.string(),
+  missionTh: z.number(),
+  missionStartDate: z.string(),
+  missionEndDate: z.string(),
+});
+
+export type WrittenFeedbackItem = z.infer<typeof writtenFeedbackItemSchema>;
+
+export const writtenFeedbackListSchema = z.object({
+  writtenFeedbackList: z.array(writtenFeedbackItemSchema),
+});

@@ -44,10 +44,10 @@ export default function BlogNewsletterSidePanel() {
         className="h-auto w-full"
       />
 
-      {/* 푯말(문구 밑·버튼 오른쪽) — 위치/크기는 sidePanel.data.ts의 signpost(pc/mobile)로 조정.
+      {/* 푯말(문구 밑·버튼 오른쪽) — 위치/크기는 sidePanel.data.ts의 signpost.pc로 조정.
           첫 진입 시 자동 흔들림(autoWobble) + 이후 호버 흔들림. 비율은 aspectRatio로 유지. */}
       <div
-        className="absolute hidden md:block" // 데스크톱 위치
+        className="absolute"
         style={{
           width: `${signpost.pc.widthPct}%`,
           left: `${signpost.pc.leftPct}%`,
@@ -64,48 +64,15 @@ export default function BlogNewsletterSidePanel() {
           introDurationMs={introWobble.durationMs}
         />
       </div>
-      <div
-        className="absolute block md:hidden" // 모바일 위치
-        style={{
-          width: `${signpost.mobile.widthPct}%`,
-          left: `${signpost.mobile.leftPct}%`,
-          top: `${signpost.mobile.topPct}%`,
-          transform: 'translateX(-50%)',
-          aspectRatio,
-        }}
-      >
-        <WobbleSignpost
-          src={signpostImage}
-          alt=""
-          autoWobble
-          introCount={introWobble.count}
-          introDurationMs={introWobble.durationMs}
-        />
-      </div>
 
       {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
-          위치/크기는 sidePanel.data.ts의 cta(pc/mobile)로 조정 */}
-      {link && (
-        <>
-          <PillLink
-            link={link}
-            ariaLabel={alt}
-            pos={cta.pc}
-            visibility="hidden md:block"
-          />
-          <PillLink
-            link={link}
-            ariaLabel={alt}
-            pos={cta.mobile}
-            visibility="block md:hidden"
-          />
-        </>
-      )}
+          위치/크기는 sidePanel.data.ts의 cta.pc로 조정 */}
+      {link && <PillLink link={link} ariaLabel={alt} pos={cta.pc} />}
     </div>
   );
 }
 
-/** CTA 투명 링크 위치/크기 (%) — sidePanel.data.ts의 cta.pc / cta.mobile */
+/** CTA 투명 링크 위치/크기 (%) — sidePanel.data.ts의 cta.pc */
 type CtaPos = {
   bottomPct: number;
   leftPct: number;
@@ -114,21 +81,18 @@ type CtaPos = {
 };
 
 /**
- * CTA pill 영역에 겹치는 투명 링크. inline style(%)로 위치하며 pc/모바일을 분리한다.
+ * CTA pill 영역에 겹치는 투명 링크. inline style(%)로 위치한다.
  * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동.
  */
 function PillLink({
   link,
   ariaLabel,
   pos,
-  visibility,
 }: {
   link: string;
   ariaLabel: string;
   pos: CtaPos;
-  visibility: string;
 }): ReactNode {
-  const className = `absolute ${visibility}`;
   const style = {
     bottom: `${pos.bottomPct}%`,
     left: `${pos.leftPct}%`,
@@ -142,9 +106,9 @@ function PillLink({
         href={link}
         aria-label={ariaLabel}
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         style={style}
-        className={className}
+        className="absolute"
       />
     );
   }
@@ -154,7 +118,7 @@ function PillLink({
       href={link}
       aria-label={ariaLabel}
       style={style}
-      className={className}
+      className="absolute"
     />
   );
 }

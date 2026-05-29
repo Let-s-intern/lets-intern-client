@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
-import mentorConfig from '../constants/config';
-import MentorAlertModal from '../ui/MentorAlertModal';
-import { useMentorAlert } from '../hooks/useMentorAlert';
+import mentorConfig from '@/constants/config';
+import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { useMentorAlert } from '@/hooks/useMentorAlert';
 import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
 import CareerSection from './ui/CareerSection';
 import Introduction from './ui/Introduction';
+import JitsiDevTestCard from './ui/JitsiDevTestCard';
 
 const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
@@ -167,6 +168,7 @@ export default function ProfilePage() {
       <hr className="mb-6 border-gray-200" />
 
       <div className="flex flex-col gap-6 pb-20">
+        <JitsiDevTestCard />
         <BasicInfo
           formData={formData}
           onChange={setFormData}
