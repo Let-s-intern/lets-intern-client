@@ -2,6 +2,7 @@
 
 import MswProvider from '@/context/MswProvider';
 import SentryUserSync from '@/context/SentryUserSync';
+import { ConfirmProvider, Toaster } from '@letscareer/ui';
 import {
   QueryCache,
   QueryClient,
@@ -41,7 +42,11 @@ const Providers: React.FC<{
   return (
     <QueryClientProvider client={queryClient}>
       <SentryUserSync />
-      <MswProvider>{children}</MswProvider>
+      <MswProvider>
+        <ConfirmProvider>
+          <Toaster>{children}</Toaster>
+        </ConfirmProvider>
+      </MswProvider>
     </QueryClientProvider>
   );
 };

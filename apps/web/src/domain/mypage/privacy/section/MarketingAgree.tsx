@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import useAuthStore from '@/store/useAuthStore';
 import clsx from 'clsx';
 import axios from '../../../../utils/axios';
 
 const MarketingAgree = () => {
   const queryClient = useQueryClient();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
   const [isAgree, setIsAgree] = useState<boolean>(false);
   const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
@@ -17,6 +19,7 @@ const MarketingAgree = () => {
       setIsAgree(res.data.data.marketingAgree);
       return res.data;
     },
+    enabled: isLoggedIn,
   });
 
   const editMyInfo = useMutation({

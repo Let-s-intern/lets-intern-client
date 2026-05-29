@@ -29,6 +29,9 @@ skills:
 | 프랙탈 재귀 | `.claude/skills/folder-structure/references/fractal-recursion.md` | 분리 기준 설명 참조 |
 | 레이어 규칙 | `.claude/skills/folder-structure/references/layer-conventions.md` | 레이어 설명 참조 |
 | 프로젝트 문서 | `.claude/docs/letscareer/README.md` | 기존 문서 인덱스 |
+| 개발문서 갱신 규칙 | `.claude/skills/dev-docs-updater/SKILL.md` | `.claude/docs` 수정 시 인덱스·CLAUDE.md 3계층 동기화 |
+| API 스펙 | `.claude/skills/swagger-api-finder/SKILL.md` | API 분석·최적화 제안서 작성 시 실제 엔드포인트·스펙 확인 |
+| BE 실제 동작 | `.claude/skills/server-code-reference/SKILL.md` | 서버 로직·DB 저장 구조를 문서에 정확히 반영 |
 
 ## 실행 절차
 

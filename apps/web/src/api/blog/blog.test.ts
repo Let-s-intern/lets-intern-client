@@ -1,5 +1,5 @@
-import { fetchBlogData, fetchRecommendBlogData } from './blog';
 import { ApiError } from '@letscareer/api';
+import { fetchBlogData, fetchRecommendBlogData } from './blog';
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;

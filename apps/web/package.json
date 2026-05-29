@@ -97,7 +97,7 @@
     "remark-gfm": "^4.0.1",
     "require-in-the-middle": "^8.0.1",
     "styled-components": "^6.1.11",
-    "swiper": "^11.2.4",
+    "swiper": "^12.1.2",
     "tailwind-merge": "^2.3.0",
     "tailwind-scrollbar-hide": "^1.1.7",
     "y-websocket": "^2.0.4",

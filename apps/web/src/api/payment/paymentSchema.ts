@@ -189,23 +189,6 @@ export const paymentListType = z.object({
 
 export type PaymentType = z.infer<typeof paymentType>;
 
-export const convertPaymentStatus = (status: string) => {
-  switch (status) {
-    case 'REFUNDED':
-      return '페이백 완료';
-    case 'DONE':
-      return '결제완료';
-    case 'CANCELED':
-      return '결제취소';
-    case 'PARTIAL_CANCELED':
-      return '결제취소';
-    case 'ZERO':
-      return '결제취소';
-    default:
-      return '상태없음';
-  }
-};
-
 export const paymentDetailType = z.object({
   programInfo: z.object({
     id: z.number().nullable().optional(),

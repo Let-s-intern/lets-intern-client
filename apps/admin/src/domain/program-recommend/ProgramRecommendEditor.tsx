@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Typography } from '@mui/material';
+import { Box, Button, Modal, Tooltip, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useGetProgramAdminQuery } from '@/api/program';
@@ -51,11 +51,18 @@ const footerStyle = {
 interface ProgramRecommendEditorProps {
   programRecommend: ProgramRecommend;
   setProgramRecommend: (value: ProgramRecommend) => void;
+  /**
+   * 추천 프로그램 선택 가능한 최대 개수.
+   * 지정 시 미선택 항목은 한도 도달 후 disabled. 이미 선택된 항목은 항상 해제 가능.
+   * 미지정(undefined) 시 제한 없음(기존 동작).
+   */
+  maxCount?: number;
 }
 
 const ProgramRecommendEditor = ({
   programRecommend,
   setProgramRecommend,
+  maxCount,
 }: ProgramRecommendEditorProps) => {
   const [selectModalOpen, setSelectModalOpen] = useState(false);
 
@@ -172,7 +179,9 @@ const ProgramRecommendEditor = ({
               component="h2"
               fontWeight="bold"
             >
-              프로그램 선택 (노출 순서대로 체크하세요)
+              {maxCount !== undefined
+                ? `프로그램 선택 (최대 ${maxCount}개, 노출 순서대로 체크하세요)`
+                : '프로그램 선택 (노출 순서대로 체크하세요)'}
             </Typography>
             <Button onClick={onClose} variant="outlined">
               닫기
@@ -202,6 +211,57 @@ const ProgramRecommendEditor = ({
                           item.programInfo.programType,
                     );
                     const order = index === -1 ? '' : index + 1;
+                    const isSelected = index !== -1;
+                    const isOverLimit =
+                      !isSelected &&
+                      maxCount !== undefined &&
+                      programRecommend.list.length >= maxCount;
+
+                    const checkboxInput = (
+                      <input
+                        className="h-4 w-4"
+                        type="checkbox"
+                        disabled={isOverLimit}
+                        checked={isSelected}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setProgramRecommend({
+                              list: [
+                                ...programRecommend.list,
+                                {
+                                  programInfo: {
+                                    ...item.programInfo,
+                                  },
+                                  classificationList:
+                                    item.classificationList.map((ele) => ({
+                                      programClassification:
+                                        ele.programClassification,
+                                    })),
+                                  adminClassificationList:
+                                    item.adminClassificationList
+                                      ? item.adminClassificationList.map(
+                                          (ele) => ({
+                                            programAdminClassification:
+                                              ele.programAdminClassification,
+                                          }),
+                                        )
+                                      : [],
+                                },
+                              ],
+                            });
+                          } else {
+                            setProgramRecommend({
+                              list: programRecommend.list.filter(
+                                (v) =>
+                                  v.programInfo.programType !==
+                                    item.programInfo.programType ||
+                                  v.programInfo.id !== item.programInfo.id,
+                              ),
+                            });
+                          }
+                        }}
+                      />
+                    );
 
                     return (
                       <tr
@@ -210,53 +270,13 @@ const ProgramRecommendEditor = ({
                       >
                         {/* 체크박스 */}
                         <td className="text-center">
-                          <input
-                            className="h-4 w-4"
-                            type="checkbox"
-                            checked={programRecommend.list.some(
-                              (v) =>
-                                v.programInfo.id === item.programInfo.id &&
-                                v.programInfo.programType ===
-                                  item.programInfo.programType,
-                            )}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setProgramRecommend({
-                                  list: [
-                                    ...programRecommend.list,
-                                    {
-                                      programInfo: {
-                                        ...item.programInfo,
-                                      },
-                                      classificationList:
-                                        item.classificationList.map((ele) => ({
-                                          programClassification:
-                                            ele.programClassification,
-                                        })),
-                                      adminClassificationList:
-                                        item.adminClassificationList
-                                          ? item.adminClassificationList.map(
-                                              (ele) => ({
-                                                programAdminClassification:
-                                                  ele.programAdminClassification,
-                                              }),
-                                            )
-                                          : [],
-                                    },
-                                  ],
-                                });
-                              } else {
-                                setProgramRecommend({
-                                  list: programRecommend.list.filter(
-                                    (v) =>
-                                      v.programInfo.programType !==
-                                        item.programInfo.programType ||
-                                      v.programInfo.id !== item.programInfo.id,
-                                  ),
-                                });
-                              }
-                            }}
-                          />
+                          {isOverLimit ? (
+                            <Tooltip title="큐레이션 카드 노출 중에는 최대 2개까지 선택 가능합니다.">
+                              <span>{checkboxInput}</span>
+                            </Tooltip>
+                          ) : (
+                            checkboxInput
+                          )}
                         </td>
                         {/* 순서 */}
                         <td className="px-2 py-1">

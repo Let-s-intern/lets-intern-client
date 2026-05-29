@@ -99,4 +99,69 @@ describe('createAuthorizedAxios', () => {
     await expect(interceptor!.rejected!(axiosErr)).rejects.toBeInstanceOf(ApiError);
     expect(onUnauthorized).not.toHaveBeenCalled();
   });
+
+  it('응답에 code 가 있으면 ApiError.code 로 전달된다', async () => {
+    const instance = createAuthorizedAxios({ baseURL: 'https://api.test' });
+
+    const interceptor = (instance.interceptors.response as unknown as {
+      handlers: Array<{
+        fulfilled: ((v: unknown) => unknown) | null;
+        rejected: ((e: unknown) => unknown) | null;
+      }>;
+    }).handlers.find((h) => h.rejected !== null);
+
+    const axiosErr = makeAxiosError(400, {
+      code: 'INVALID_AUTH_PROVIDER_KAKAO',
+      message: '카카오 소셜 로그인으로 가입된 계정입니다.',
+    });
+    await expect(interceptor!.rejected!(axiosErr)).rejects.toSatisfy(
+      (err: unknown) => {
+        if (!(err instanceof ApiError)) return false;
+        expect(err.code).toBe('INVALID_AUTH_PROVIDER_KAKAO');
+        return true;
+      },
+    );
+  });
+
+  it('응답에 code 가 없으면 ApiError.code 는 fallback "API_ERROR" 로 설정된다', async () => {
+    const instance = createAuthorizedAxios({ baseURL: 'https://api.test' });
+
+    const interceptor = (instance.interceptors.response as unknown as {
+      handlers: Array<{
+        fulfilled: ((v: unknown) => unknown) | null;
+        rejected: ((e: unknown) => unknown) | null;
+      }>;
+    }).handlers.find((h) => h.rejected !== null);
+
+    const axiosErr = makeAxiosError(400, { message: '잘못된 요청입니다.' });
+    await expect(interceptor!.rejected!(axiosErr)).rejects.toSatisfy(
+      (err: unknown) => {
+        if (!(err instanceof ApiError)) return false;
+        expect(err.code).toBe('API_ERROR');
+        return true;
+      },
+    );
+  });
+
+  it('중첩된 data.code 도 재귀로 추출한다', async () => {
+    const instance = createAuthorizedAxios({ baseURL: 'https://api.test' });
+
+    const interceptor = (instance.interceptors.response as unknown as {
+      handlers: Array<{
+        fulfilled: ((v: unknown) => unknown) | null;
+        rejected: ((e: unknown) => unknown) | null;
+      }>;
+    }).handlers.find((h) => h.rejected !== null);
+
+    const axiosErr = makeAxiosError(400, {
+      data: { code: 'USER_NOT_FOUND', message: '존재하지 않는 사용자입니다.' },
+    });
+    await expect(interceptor!.rejected!(axiosErr)).rejects.toSatisfy(
+      (err: unknown) => {
+        if (!(err instanceof ApiError)) return false;
+        expect(err.code).toBe('USER_NOT_FOUND');
+        return true;
+      },
+    );
+  });
 });

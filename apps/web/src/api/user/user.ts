@@ -4,6 +4,7 @@ import {
   grade,
   userAdminDetailType,
 } from '@/schema';
+import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import {
@@ -257,15 +258,18 @@ export const userQueryOptions = {
 export const useUserQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   return useQuery({
     ...userQueryOptions,
     ...options,
+    enabled: (options.enabled ?? true) && isLoggedIn,
   });
 };
 
 export const useGetUserAdmin = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   return useQuery({
     queryKey: ['useGetUserAdmin'],
     queryFn: async () => {
@@ -273,6 +277,7 @@ export const useGetUserAdmin = ({
       return isAdminSchema.parse(res.data.data);
     },
     ...options,
+    enabled: (options.enabled ?? true) && isLoggedIn,
   });
 };
 
@@ -358,6 +363,7 @@ const UseMentorChallengeListQueryKey = 'useMentorChallengeListQueryKey';
 export const useMentorChallengeListQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   return useQuery({
     ...options,
     queryKey: [UseMentorChallengeListQueryKey],
@@ -366,6 +372,7 @@ export const useMentorChallengeListQuery = ({
       return mentorChallengeListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+    enabled: options.enabled ?? isLoggedIn,
   });
 };
 
@@ -376,6 +383,7 @@ const UseIsMentorQueryKey = 'useIsMentorQueryKey';
 export const useIsMentorQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   return useQuery({
     ...options,
     queryKey: [UseIsMentorQueryKey],
@@ -384,6 +392,7 @@ export const useIsMentorQuery = ({
       return isMentorSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+    enabled: options.enabled ?? isLoggedIn,
   });
 };
 
@@ -391,6 +400,7 @@ export const useIsMentorQuery = ({
 export const useIsAdminQuery = ({
   ...options
 }: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   return useQuery({
     ...options,
     queryKey: ['useIsAdminQuery'],
@@ -398,6 +408,7 @@ export const useIsAdminQuery = ({
       const res = await axios.get('/user/isAdmin');
       return isAdminSchema.parse(res.data.data);
     },
+    enabled: options.enabled ?? isLoggedIn,
   });
 };
 

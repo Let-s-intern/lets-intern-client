@@ -7,7 +7,7 @@ import { toCareerDateDot } from '@/utils/career';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import CareerCard from '../../mypage/career/card/CareerCard';
+import CareerCard from '../../mypage/career/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 import { SectionErrorFallback } from '../ui/SectionErrorFallback';
 

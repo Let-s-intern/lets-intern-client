@@ -152,6 +152,20 @@ async function bootstrap(): Promise<void> {
       await ensureHydratedStore();
       const initial = useAuthStore.getState();
 
+      // 좀비 상태 방어층 (마이그레이션 정상 동작 시 도달하지 않지만 race condition 대비):
+      // 로그인 표시는 있는데 토큰/만료시각 일부가 누락된 모순 상태는 조용히 로그아웃 처리.
+      // reload 없이 logout()만 호출해서 무한 루프(logoutAndRefreshPage → reload → 동일 상태) 차단.
+      const hasInconsistentLoggedInState =
+        initial.isLoggedIn &&
+        (!initial.accessToken ||
+          !initial.refreshToken ||
+          typeof initial.accessTokenExpiresAt !== 'number' ||
+          typeof initial.refreshTokenExpiresAt !== 'number');
+      if (hasInconsistentLoggedInState) {
+        useAuthStore.getState().logout();
+        return;
+      }
+
       if (
         !initial.isLoggedIn ||
         !initial.accessToken ||

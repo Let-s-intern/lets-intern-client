@@ -12,7 +12,7 @@ import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
-const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY, HR } =
+const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY, HR, PM } =
   challengeTypeSchema.enum;
 
 interface ChallengeFaqProps {
@@ -58,6 +58,12 @@ function ChallengeFaq({
           primaryColor: challengeColors.F26646,
           primaryLightColor: challengeColors.FFF6F4,
           borderColor: challengeColors.FFC8BC,
+        };
+      case PM:
+        return {
+          primaryColor: challengeColors._1BC47D,
+          primaryLightColor: challengeColors.E8F9F2,
+          borderColor: challengeColors._1BC47D,
         };
       case ETC:
         return {

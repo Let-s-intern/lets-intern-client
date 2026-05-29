@@ -1,7 +1,7 @@
 import { ProgramAdminClassification } from '@/schema';
 
 type AdminClassificationInfo = {
-  programAdminClassification: ProgramAdminClassification;
+  programAdminClassification?: ProgramAdminClassification;
 };
 
 type B2BCheckableChallenge = {
