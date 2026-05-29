@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
+import ReservationManagement from './reservation/ReservationManagement';
 
 type SubTab = 'reservation' | 'schedule';
 
@@ -42,10 +43,7 @@ export default function LiveFeedbackTab() {
       </nav>
 
       {subTab === 'reservation' ? (
-        // 예약 관리 컨테이너는 2.2 에서 연결한다.
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-          예약 관리는 준비 중입니다.
-        </div>
+        <ReservationManagement />
       ) : (
         // 멘토 스케줄 뷰는 Push 3 에서 구현한다.
         <div className="text-xsmall14 text-neutral-40 py-16 text-center">
