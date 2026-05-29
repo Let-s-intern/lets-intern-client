@@ -11,10 +11,4 @@ export const blogScrollPopupData = {
   link: NEWSLETTER_SUBSCRIBE_URL,
   triggerRatio: 0.6, // 본문(<article>) 60% 읽은 시점에 노출 (페이지 전체 X)
   borderRadiusPx: 16, // 팝업 모달 모서리 둥글기(px) — 각지게 0, 더 둥글게 ↑(예 24)
-  // CTA(투명 링크) 위치/크기 — 이미지 하단 "지금 바로 무료 구독하러 가기" pill 영역에 겹침.
-  // pc/모바일 따로 조정. bottomPct=하단에서 거리, left/rightPct=좌우 안쪽 여백, heightPct=링크 높이 (모두 %).
-  cta: {
-    pc: { bottomPct: 4, leftPct: 6, rightPct: 6, heightPct: 9 }, // 데스크톱
-    mobile: { bottomPct: 4, leftPct: 6, rightPct: 6, heightPct: 10 }, // 모바일
-  },
 } as const;

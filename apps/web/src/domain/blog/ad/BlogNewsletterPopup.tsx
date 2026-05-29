@@ -82,7 +82,7 @@ export function BlogNewsletterPopup() {
         className="overflow-hidden bg-white"
         style={{ borderRadius: `${borderRadiusPx}px` }}
       >
-        {/* 크리에이티브: 완성 카드 이미지(푯말·CTA baked-in, 애니메이션 없음) + CTA 투명 링크 */}
+        {/* 크리에이티브: 완성 카드 이미지(푯말·CTA baked-in, 애니메이션 없음) + 전체 투명 링크 */}
         <div className="relative">
           <Image
             src={baseImage}
@@ -94,9 +94,8 @@ export function BlogNewsletterPopup() {
             priority
           />
 
-          {/* CTA pill 영역만 투명 링크 (전체 클릭 아님).
-              위치/크기는 scrollPopup.data.ts의 cta(pc/mobile)로 조정 */}
-          <CtaLink link={link} ariaLabel={alt} />
+          {/* 이미지 전체가 클릭 영역 (CTA pill 한정 아님) */}
+          <PopupLink link={link} ariaLabel={alt} />
         </div>
 
         {/* footer 기능 버튼 (이미지 아님) */}
@@ -121,19 +120,11 @@ export function BlogNewsletterPopup() {
   );
 }
 
-/** CTA 위치/크기 (%) — scrollPopup.data.ts의 cta.pc / cta.mobile 형태 */
-type CtaPos = {
-  bottomPct: number;
-  leftPct: number;
-  rightPct: number;
-  heightPct: number;
-};
-
 /**
- * CTA pill 영역에 겹치는 투명 링크. 링크가 비어 있으면 렌더하지 않는다(클릭 무효).
- * 위치/크기는 데이터(cta)의 pc/모바일 값으로 분리 조정하며, 반응형으로 둘 중 하나만 노출한다.
+ * 이미지 전체를 덮는 투명 링크(inset-0). 링크가 비어 있으면 렌더하지 않는다(클릭 무효).
+ * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동한다.
  */
-function CtaLink({
+function PopupLink({
   link,
   ariaLabel,
 }: {
@@ -142,50 +133,7 @@ function CtaLink({
 }): ReactNode {
   if (!link) return null;
 
-  const { pc, mobile } = blogScrollPopupData.cta;
-
-  return (
-    <>
-      {/* 데스크톱 위치 */}
-      <CtaAnchor
-        link={link}
-        ariaLabel={ariaLabel}
-        pos={pc}
-        visibility="hidden md:block"
-      />
-      {/* 모바일 위치 */}
-      <CtaAnchor
-        link={link}
-        ariaLabel={ariaLabel}
-        pos={mobile}
-        visibility="block md:hidden"
-      />
-    </>
-  );
-}
-
-/**
- * 단일 투명 앵커. inline style(%)로 위치하며, 외부 링크(`http`)는 새 탭으로,
- * 내부 경로는 `next/link`로 이동한다. `visibility`로 pc/모바일 노출을 제어한다.
- */
-function CtaAnchor({
-  link,
-  ariaLabel,
-  pos,
-  visibility,
-}: {
-  link: string;
-  ariaLabel: string;
-  pos: CtaPos;
-  visibility: string;
-}): ReactNode {
-  const className = `absolute ${visibility}`;
-  const style = {
-    bottom: `${pos.bottomPct}%`,
-    left: `${pos.leftPct}%`,
-    right: `${pos.rightPct}%`,
-    height: `${pos.heightPct}%`,
-  };
+  const className = 'absolute inset-0';
 
   if (link.startsWith('http')) {
     return (
@@ -194,18 +142,10 @@ function CtaAnchor({
         aria-label={ariaLabel}
         target="_blank"
         rel="noopener noreferrer"
-        style={style}
         className={className}
       />
     );
   }
 
-  return (
-    <Link
-      href={link}
-      aria-label={ariaLabel}
-      style={style}
-      className={className}
-    />
-  );
+  return <Link href={link} aria-label={ariaLabel} className={className} />;
 }
