@@ -55,7 +55,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
       <div className="min-w-[720px]">
         {/* 요일 헤더 */}
         <div
-          className="grid border-neutral-80 border-b"
+          className="border-neutral-80 grid border-b"
           style={{
             gridTemplateColumns: `${TIME_COL_WIDTH}px repeat(7, 1fr)`,
           }}

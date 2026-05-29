@@ -37,7 +37,7 @@ export function buildSlotBlocks(
       const statusClass =
         slot.status === 'RESERVED'
           ? twMerge(color.bg, color.border, color.text)
-          : twMerge('bg-white border-dashed', color.border, color.text);
+          : twMerge('border-dashed bg-white', color.border, color.text);
       return {
         key: `${mentorId}-${slot.feedbackSlotId}`,
         dayIndex,

@@ -2,9 +2,7 @@ import { useMemo, useState } from 'react';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import { twMerge } from '@/lib/twMerge';
 import { getMentorColor } from '../../constants/colors';
-import WeeklyGrid, {
-  type GridBlock,
-} from '../../weekly-calendar/WeeklyGrid';
+import WeeklyGrid, { type GridBlock } from '../../weekly-calendar/WeeklyGrid';
 import WeekNavigator from '../../weekly-calendar/WeekNavigator';
 import {
   getMonday,
@@ -48,9 +46,7 @@ export function buildReservationBlocks(
 export default function ReservationCalendarView({
   reservations,
 }: ReservationCalendarViewProps) {
-  const [weekStart, setWeekStart] = useState(() =>
-    getMonday(new Date()),
-  );
+  const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
 
   const blocks = useMemo(
     () => buildReservationBlocks(reservations, weekStart),

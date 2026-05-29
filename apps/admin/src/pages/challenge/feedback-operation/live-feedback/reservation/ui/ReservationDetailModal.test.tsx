@@ -22,8 +22,7 @@ const detail: FeedbackDetailAdminVo = {
 const useAdminFeedbackDetailQuery = vi.fn();
 
 vi.mock('@/api/feedback/feedback', () => ({
-  useAdminFeedbackDetailQuery: (id?: number) =>
-    useAdminFeedbackDetailQuery(id),
+  useAdminFeedbackDetailQuery: (id?: number) => useAdminFeedbackDetailQuery(id),
 }));
 
 import ReservationDetailModal from './ReservationDetailModal';

@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
-import {
-  filterByMenteeName,
-  sortReservations,
-} from './sortReservations';
+import { filterByMenteeName, sortReservations } from './sortReservations';
 
 const make = (overrides: Partial<FeedbackAdminVo>): FeedbackAdminVo => ({
   feedbackId: 1,
