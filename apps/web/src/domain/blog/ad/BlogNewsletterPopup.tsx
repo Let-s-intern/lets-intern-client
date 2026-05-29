@@ -1,11 +1,11 @@
 'use client';
 
-import { useReadingProgress } from '@letscareer/hooks';
 import { Popup } from '@letscareer/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import useReadingProgress from '../hooks/useReadingProgress';
 import { blogScrollPopupData } from './data/scrollPopup.data';
 import { canShowPopup, hidePopupForDay } from './popupGate';
 

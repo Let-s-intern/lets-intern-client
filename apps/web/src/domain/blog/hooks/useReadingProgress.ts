@@ -5,9 +5,11 @@ import { useEffect, useState } from 'react';
 /**
  * 대상 요소(본문) 기준 읽기 진행률을 0~1로 반환한다.
  *
- * - 진행률 = (scrollY + innerHeight - el.offsetTop) / el.offsetHeight
+ * - 진행률 = (innerHeight - rect.top) / rect.height
  *   (요소 하단이 뷰포트 하단에 닿으면 1, 요소 상단이 뷰포트 하단에 닿으면 0 근처)
- * - offsetTop/offsetHeight는 캐싱하지 않고 매 scroll/resize 틱마다 live로 재측정한다.
+ * - `getBoundingClientRect()`는 항상 뷰포트 기준 좌표라 positioned 조상 유무와
+ *   무관하게 정확하다(offsetTop은 offsetParent 기준이라 어긋날 수 있음).
+ * - rect는 캐싱하지 않고 매 scroll/resize 틱마다 live로 재측정한다.
  *   → lazy 이미지/임베드 로딩으로 본문 높이가 나중에 늘어나도 자가 보정된다.
  * - scroll/resize는 passive 리스너 + requestAnimationFrame throttle로 처리한다.
  *
@@ -31,8 +33,9 @@ export default function useReadingProgress(
       }
 
       // 매 틱마다 live 재측정 (캐싱 금지)
+      const rect = el.getBoundingClientRect();
       const ratio =
-        (window.scrollY + window.innerHeight - el.offsetTop) / el.offsetHeight;
+        rect.height > 0 ? (window.innerHeight - rect.top) / rect.height : 0;
 
       setProgress(Math.min(1, Math.max(0, ratio)));
     };

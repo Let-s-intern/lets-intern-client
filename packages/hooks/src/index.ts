@@ -10,7 +10,6 @@ export { default as useInvalidateQueries } from './useInvalidateQueries';
 export { default as useLoading } from './useLoading';
 export { default as useMounted } from './useMounted';
 export { useReadGuides, useReadItems, useReadNotices } from './useReadItems';
-export { default as useReadingProgress } from './useReadingProgress';
 export { default as useRunOnce } from './useRunOnce';
 export { default as useScrollDirection } from './useScrollDirection';
 export { default as useScrollShadow } from './useScrollShadow';

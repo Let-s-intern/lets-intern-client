@@ -81,6 +81,8 @@ export function Popup({
             className ? `${CONTENT_CLASSES} ${className}` : CONTENT_CLASSES
           }
           onOpenAutoFocus={onOpenAutoFocus}
+          // 공통 셸이라 고정 Description이 없음 → Radix의 누락 경고를 명시적으로 끈다.
+          aria-describedby={undefined}
         >
           <Dialog.Title className="sr-only">{title}</Dialog.Title>
           {children}

@@ -84,7 +84,7 @@ function NewsletterSubscribeButton({ url }: { url: string }) {
       <a
         href={url}
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         className="w-fit shrink-0 transition-opacity hover:opacity-90"
       >
         {buttonImage}
