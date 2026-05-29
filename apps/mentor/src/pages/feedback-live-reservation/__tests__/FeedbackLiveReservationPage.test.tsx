@@ -59,7 +59,7 @@ describe('FeedbackLiveReservationPage', () => {
       screen.getByRole('heading', { name: '예약 목록' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '완료된 예약' }),
+      screen.getByRole('heading', { name: '예약 변경 내역' }),
     ).toBeInTheDocument();
   });
 });
