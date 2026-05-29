@@ -5,12 +5,19 @@ import { useUserAdminQuery } from '@/api/user/user';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
+import ReservationListView from './ui/ReservationListView';
 import ViewToggle, { type ReservationView } from './ui/ViewToggle';
 import {
   INITIAL_FILTER,
   buildListParams,
   type ReservationFilterState,
 } from './utils/buildListParams';
+import {
+  filterByMenteeName,
+  sortReservations,
+  type SortKey,
+  type SortState,
+} from './utils/sortReservations';
 
 const DROPDOWN_PAGE_SIZE = 1000;
 
@@ -40,6 +47,12 @@ const useChallengeDropdownQuery = () =>
 export default function ReservationManagement() {
   const [filter, setFilter] = useState<ReservationFilterState>(INITIAL_FILTER);
   const [view, setView] = useState<ReservationView>('list');
+  const [sort, setSort] = useState<SortState>({
+    key: 'dateTime',
+    direction: 'asc',
+  });
+  // Push 3 의 예약 상세 모달이 사용한다(현재는 setter 만 연결, 모달은 Push 3).
+  const [, setSelectedFeedbackId] = useState<number | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -49,8 +62,8 @@ export default function ReservationManagement() {
   });
 
   const listParams = useMemo(() => buildListParams(filter), [filter]);
-  // 목록 데이터는 2.3 의 리스트 뷰에서 사용한다(여기선 파라미터 매핑·재조회만 연결).
-  useAdminFeedbackListQuery(listParams);
+  const { data: reservations, isLoading } =
+    useAdminFeedbackListQuery(listParams);
 
   const challengeOptions = useMemo(
     () =>
@@ -70,6 +83,22 @@ export default function ReservationManagement() {
     [mentorData],
   );
 
+  const visibleReservations = useMemo(() => {
+    const filtered = filterByMenteeName(
+      reservations ?? [],
+      filter.menteeName,
+    );
+    return sortReservations(filtered, sort);
+  }, [reservations, filter.menteeName, sort]);
+
+  const toggleSort = (key: SortKey) => {
+    setSort((prev) =>
+      prev.key === key
+        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+        : { key, direction: 'asc' },
+    );
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <ReservationFilters
@@ -83,10 +112,20 @@ export default function ReservationManagement() {
         <ViewToggle value={view} onChange={setView} />
       </div>
 
-      {/* 리스트/캘린더 뷰는 2.3·Push 3 에서 연결한다. */}
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-        목록은 준비 중입니다.
-      </div>
+      {view === 'list' ? (
+        <ReservationListView
+          reservations={visibleReservations}
+          sort={sort}
+          onToggleSort={toggleSort}
+          onView={setSelectedFeedbackId}
+          isLoading={isLoading}
+        />
+      ) : (
+        // 캘린더 뷰는 Push 3 에서 구현한다(필터/뷰 상태 공유 지점).
+        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+          캘린더 뷰는 준비 중입니다.
+        </div>
+      )}
     </div>
   );
 }
