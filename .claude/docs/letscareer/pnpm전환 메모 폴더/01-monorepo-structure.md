@@ -149,11 +149,13 @@ packages/utils ┘    apps/mentor
 루트 `package.json`에 보안·호환성 패치를 위한 의존 강제:
 
 ```json
-"overrides": {
-  "tar-fs": "2.1.4",
-  "path-to-regexp": "6.3.0",
-  "undici": "5.29.0"
+"pnpm": {
+  "overrides": {
+    "protobufjs@<7.5.5": "^7.5.5",
+    "path-to-regexp@<6.3.0": "6.3.0",
+    "undici@6": "^6.24.0"
+  }
 }
 ```
 
-pnpm은 `overrides`를 그대로 인식해 모든 transitive 의존성도 위 버전으로 픽스한다.
+pnpm은 `pnpm.overrides`를 인식해 모든 transitive 의존성도 위 버전으로 픽스한다.
