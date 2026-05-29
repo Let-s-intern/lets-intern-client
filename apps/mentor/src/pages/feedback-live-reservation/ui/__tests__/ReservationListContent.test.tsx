@@ -73,22 +73,22 @@ function mockBase(list: FeedbackMentor[]) {
   });
 }
 
-/** "완료된 예약" 섹션의 table 엘리먼트. (select option 텍스트와 충돌 방지용 스코프) */
+/** "예약 변경 내역" 섹션의 table 엘리먼트. (select option 텍스트와 충돌 방지용 스코프) */
 function getCompletedTable(): HTMLTableElement {
   return screen
-    .getByRole('heading', { name: '완료된 예약' })
+    .getByRole('heading', { name: '예약 변경 내역' })
     .parentElement!.querySelector('table')!;
 }
 
 describe('ReservationListContent', () => {
-  it('단독 마운트 시 두 섹션(예약 목록/완료된 예약)을 노출한다', () => {
+  it('단독 마운트 시 두 섹션(예약 목록/예약 변경 내역)을 노출한다', () => {
     mockBase([]);
     renderContent();
     expect(
       screen.getByRole('heading', { name: '예약 목록' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '완료된 예약' }),
+      screen.getByRole('heading', { name: '예약 변경 내역' }),
     ).toBeInTheDocument();
   });
 
@@ -98,7 +98,7 @@ describe('ReservationListContent', () => {
     expect(screen.getByText('예정된 예약이 없습니다.')).toBeInTheDocument();
   });
 
-  it('RESERVED는 "예약 목록", COMPLETED는 "완료된 예약"으로 분리된다', () => {
+  it('RESERVED는 "예약 목록", COMPLETED는 "예약 변경 내역"으로 분리된다', () => {
     mockBase([
       makeFeedback({
         feedbackId: 1,

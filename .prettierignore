@@ -1,0 +1,3 @@
+# 생성/벤더 파일 — 포맷 검사 제외
+# MSW 워커 스크립트는 `msw init` 산출물(수기 포맷 대상 아님)
+**/public/mockServiceWorker.js

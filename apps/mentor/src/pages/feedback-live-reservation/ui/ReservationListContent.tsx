@@ -20,7 +20,7 @@ const emptyBoxClass =
  * (`ReservationListModal`) 양쪽에서 재사용하기 위해 추출됨.
  *
  * `GET /feedback/mentor` 단일 호출 결과를 클라이언트에서 필터/정렬해
- * 상단 필터 카드 / "예약 목록"(예정, RESERVED) / "완료된 예약"(COMPLETED) 테이블로 구성한다.
+ * 상단 필터 카드 / "예약 목록"(예정, RESERVED) / "예약 변경 내역"(COMPLETED) 테이블로 구성한다.
  * 자체적으로 query/필터/보기 모달을 포함하므로 어디서든 단독 마운트 가능하다.
  */
 const ReservationListContent = () => {
@@ -158,9 +158,9 @@ const ReservationListContent = () => {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className={sectionTitleClass}>완료된 예약</h2>
+        <h2 className={sectionTitleClass}>예약 변경 내역</h2>
         {completedList.length === 0 ? (
-          <div className={emptyBoxClass}>완료된 예약이 없습니다.</div>
+          <div className={emptyBoxClass}>예약 변경 내역이 없습니다.</div>
         ) : (
           <CompletedReservationTable
             rows={completedList}
