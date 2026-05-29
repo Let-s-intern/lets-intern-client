@@ -5,7 +5,11 @@ import { useUserAdminQuery } from '@/api/user/user';
 import { getMentorColor } from '../constants/colors';
 import WeeklyGrid from '../weekly-calendar/WeeklyGrid';
 import WeekNavigator from '../weekly-calendar/WeekNavigator';
-import { getMonday, getWeekRange, shiftWeek } from '../weekly-calendar/weekUtils';
+import {
+  getMonday,
+  getWeekRange,
+  shiftWeek,
+} from '../weekly-calendar/weekUtils';
 import { buildSlotBlocks, type MentorSlots } from './buildSlotBlocks';
 
 const MENTOR_PAGE_SIZE = 1000;
@@ -72,9 +76,11 @@ export default function MentorScheduleView() {
 
 /** 멘토별 색상 범례 + OPEN/RESERVED 표기 안내. */
 function MentorLegend({ mentorNames }: { mentorNames: string[] }) {
+  // 색상은 이름 기반이라 동명이인은 같은 색 → 고유 이름만 한 번씩 표기.
+  const uniqueNames = [...new Set(mentorNames)];
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-      {mentorNames.map((name) => {
+      {uniqueNames.map((name) => {
         const color = getMentorColor(name);
         return (
           <span
