@@ -51,7 +51,13 @@ type Row = AdminBlogReview & {
 };
 
 export default function AdminBlogReviewListPage() {
-  const { data } = useGetAdminBlogReviewList();
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
+
+  const { data } = useGetAdminBlogReviewList({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+  });
   const postReview = usePostAdminBlogReview();
   const patchReview = usePatchAdminBlogReview();
   const deleteReview = useDeleteAdminBlogReview();
@@ -123,16 +129,21 @@ export default function AdminBlogReviewListPage() {
       sortable: false,
       width: 160,
       editable: true,
-      renderCell: (params: GridRenderCellParams<Row, string>) =>
-        params.value ? (
+      renderCell: (params: GridRenderCellParams<Row, string>) => {
+        // editable + 외부 제출 리뷰 데이터라 신뢰 불가 → http(s) 스킴만 허용.
+        // (javascript:/data: URI 가 window.open 으로 실행되는 XSS 차단)
+        const url = params.value;
+        const isSafe = !!url && /^https?:\/\//i.test(url);
+        return isSafe ? (
           <Button
             variant="contained"
             size="small"
-            onClick={() => window.open(params.value, '_blank', 'noreferrer')}
+            onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
           >
             확인
           </Button>
-        ) : null,
+        ) : null;
+      },
     },
     {
       field: 'isConfirmed',
@@ -234,9 +245,6 @@ export default function AdminBlogReviewListPage() {
       },
     },
   ];
-
-  const { paginationModel, handlePaginationModelChange } =
-    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
   const [rows, setRows] = useState<Row[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
@@ -353,7 +361,7 @@ export default function AdminBlogReviewListPage() {
   // 행 초기화
   useEffect(() => {
     const initialRows =
-      data?.map((review) => ({
+      data?.reviewList.map((review) => ({
         ...review,
         id: review.blogReviewId,
         isNew: false,
@@ -411,6 +419,8 @@ export default function AdminBlogReviewListPage() {
         onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
         pagination
+        paginationMode="server"
+        rowCount={data?.pageInfo.totalElements ?? 0}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
