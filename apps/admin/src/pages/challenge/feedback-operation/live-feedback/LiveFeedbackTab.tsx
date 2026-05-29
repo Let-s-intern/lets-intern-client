@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
 import ReservationManagement from './reservation/ReservationManagement';
+
+// 멘토 스케줄은 멘토별 병렬 슬롯 조회 + 그리드라 무게가 있어 지연 로드한다.
+const MentorScheduleView = lazy(
+  () => import('./mentor-schedule/MentorScheduleView'),
+);
 
 type SubTab = 'reservation' | 'schedule';
 
@@ -45,10 +50,9 @@ export default function LiveFeedbackTab() {
       {subTab === 'reservation' ? (
         <ReservationManagement />
       ) : (
-        // 멘토 스케줄 뷰는 Push 3 에서 구현한다.
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-          멘토 스케줄은 준비 중입니다.
-        </div>
+        <Suspense fallback={null}>
+          <MentorScheduleView />
+        </Suspense>
       )}
     </div>
   );

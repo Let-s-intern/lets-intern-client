@@ -7,6 +7,11 @@ vi.mock('./reservation/ReservationManagement', () => ({
   default: () => <div>예약관리목</div>,
 }));
 
+// 멘토 스케줄도 네트워크 의존(lazy) 이라 목으로 대체한다.
+vi.mock('./mentor-schedule/MentorScheduleView', () => ({
+  default: () => <div>멘토스케줄목</div>,
+}));
+
 import LiveFeedbackTab from './LiveFeedbackTab';
 
 const renderTab = () =>
@@ -24,10 +29,10 @@ describe('LiveFeedbackTab', () => {
     expect(screen.getByText('예약관리목')).toBeInTheDocument();
   });
 
-  it('멘토 스케줄 서브탭으로 전환하면 준비 중 안내를 표시한다', () => {
+  it('멘토 스케줄 서브탭으로 전환하면 멘토 스케줄 뷰를 표시한다', async () => {
     renderTab();
     fireEvent.click(screen.getByText('멘토 스케줄'));
-    expect(screen.getByText('멘토 스케줄은 준비 중입니다.')).toBeInTheDocument();
+    expect(await screen.findByText('멘토스케줄목')).toBeInTheDocument();
     expect(screen.queryByText('예약관리목')).not.toBeInTheDocument();
   });
 });

@@ -103,22 +103,34 @@ export const useAdminFeedbackDetailQuery = (
   });
 };
 
-/** GET /admin/feedback/slot/{mentorId} — 멘토 주간 슬롯 */
-export const useMentorFeedbackSlotsQuery = (
-  mentorId?: number,
+/**
+ * 멘토 슬롯 조회 쿼리 옵션 팩토리.
+ * 단일 훅과 useQueries(멘토별 병렬 호출)에서 공유한다.
+ */
+export const mentorFeedbackSlotsQueryOptions = (
+  mentorId: number,
   range: MentorFeedbackSlotParams = {},
-): UseQueryResult<FeedbackSlotVo[]> => {
+) => {
   const queryParams = serializeMentorSlotParams(range);
-
-  return useQuery({
+  return {
     queryKey: [MENTOR_FEEDBACK_SLOTS_QUERY_KEY, mentorId, queryParams],
-    queryFn: async () => {
+    queryFn: async (): Promise<FeedbackSlotVo[]> => {
       const res = await axios.get(`/admin/feedback/slot/${mentorId}`, {
         params: queryParams,
       });
       return getMentorFeedbackSlotsResponseSchema.parse(res.data.data)
         .feedbackSlotList;
     },
+  };
+};
+
+/** GET /admin/feedback/slot/{mentorId} — 멘토 주간 슬롯 */
+export const useMentorFeedbackSlotsQuery = (
+  mentorId?: number,
+  range: MentorFeedbackSlotParams = {},
+): UseQueryResult<FeedbackSlotVo[]> => {
+  return useQuery({
+    ...mentorFeedbackSlotsQueryOptions(mentorId ?? 0, range),
     enabled: mentorId != null,
   });
 };
