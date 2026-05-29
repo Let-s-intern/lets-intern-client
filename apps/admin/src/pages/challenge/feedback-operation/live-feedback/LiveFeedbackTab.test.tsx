@@ -22,10 +22,9 @@ const renderTab = () =>
   );
 
 describe('LiveFeedbackTab', () => {
-  it('기본 서브탭은 예약 관리이며 헤더와 관리자 홈 링크를 표시한다', () => {
+  it('기본 서브탭은 예약 관리이며 헤더를 표시한다', () => {
     renderTab();
     expect(screen.getByText('전체 예약 목록')).toBeInTheDocument();
-    expect(screen.getByText('← 관리자 홈')).toBeInTheDocument();
     expect(screen.getByText('예약관리목')).toBeInTheDocument();
   });
 

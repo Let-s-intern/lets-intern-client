@@ -1,5 +1,4 @@
 import { lazy, Suspense, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
 import ReservationManagement from './reservation/ReservationManagement';
 
@@ -20,15 +19,9 @@ export default function LiveFeedbackTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-medium20 text-neutral-0 font-semibold">
-          전체 예약 목록
-        </h2>
-        {/* 관리자 홈 라우트 미확정(PRD §7-5) → 임시로 루트(/)로 둔다. */}
-        <Link to="/" className="text-xsmall14 text-neutral-40 hover:underline">
-          ← 관리자 홈
-        </Link>
-      </div>
+      <h2 className="text-medium20 text-neutral-0 font-semibold">
+        전체 예약 목록
+      </h2>
 
       <nav className="border-neutral-80 flex gap-1 border-b">
         {subTabs.map((tab) => (
