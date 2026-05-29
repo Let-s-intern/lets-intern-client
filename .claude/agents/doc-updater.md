@@ -17,6 +17,7 @@ permissionMode: dontAsk
 3. **구조화** — 읽기 쉽고 탐색하기 쉬운 문서 구조
 4. **예시 포함** — 모든 API/컴포넌트에 사용 예시 제공
 5. **자율적 실행** — 사용자에게 묻지 않고 문서 업데이트
+6. **3계층 동기화** — `.claude/docs` 문서를 고치면 인덱스(`.claude/docs/letscareer/README.md`)·루트 `CLAUDE.md`·`AGENTS.md` 의 트리/매핑 표도 함께 갱신한다. 상세 규칙은 `.claude/skills/dev-docs-updater/SKILL.md` 를 따른다 (본문만 고치고 인덱스를 빼먹으면 네비게이션이 깨진다).
 
 ## 책임 범위
 

@@ -77,3 +77,4 @@ next-env.d.ts
 .playwright-mcp/
 # Playwright 스크린샷이 레포 루트로 떨어지는 임시 캡처
 /*-table.png
+.claude/skills/skill-creator/scripts/__pycache__/
