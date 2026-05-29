@@ -12,6 +12,8 @@ interface ReservationListViewProps {
   onToggleSort: (key: SortKey) => void;
   onView: (feedbackId: number) => void;
   isLoading: boolean;
+  /** 빈 목록일 때 표시할 문구. 섹션(예약 목록/예약 변경 내역)별로 다르게 줄 수 있다. */
+  emptyMessage?: string;
 }
 
 const thClassName =
@@ -54,6 +56,7 @@ export default function ReservationListView({
   onToggleSort,
   onView,
   isLoading,
+  emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
   if (isLoading) {
     return (
@@ -66,7 +69,7 @@ export default function ReservationListView({
   if (reservations.length === 0) {
     return (
       <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-        예약 내역이 없습니다.
+        {emptyMessage}
       </div>
     );
   }

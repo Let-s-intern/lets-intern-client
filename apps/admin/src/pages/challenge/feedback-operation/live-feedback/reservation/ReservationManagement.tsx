@@ -8,8 +8,9 @@ import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
 import ViewToggle, { type ReservationView } from './ui/ViewToggle';
 
-// 캘린더 뷰·상세 모달은 초기 진입(리스트)에 불필요하므로 지연 로드한다.
+// 캘린더 뷰·예약 현황/상세 모달은 초기 진입(리스트)에 불필요하므로 지연 로드한다.
 const ReservationCalendarView = lazy(() => import('./ui/ReservationCalendarView'));
+const ReservationListModal = lazy(() => import('./ui/ReservationListModal'));
 const ReservationDetailModal = lazy(() => import('./ui/ReservationDetailModal'));
 import {
   INITIAL_FILTER,
@@ -58,6 +59,8 @@ export default function ReservationManagement() {
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
     null,
   );
+  // 행 "보기" → 예약 현황 목록 모달(예약 목록/예약 변경 내역). 그 안의 "보기" → 단건 상세.
+  const [listModalOpen, setListModalOpen] = useState(false);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -122,7 +125,7 @@ export default function ReservationManagement() {
           reservations={visibleReservations}
           sort={sort}
           onToggleSort={toggleSort}
-          onView={setSelectedFeedbackId}
+          onView={() => setListModalOpen(true)}
           isLoading={isLoading}
         />
       ) : (
@@ -130,6 +133,18 @@ export default function ReservationManagement() {
           <ReservationCalendarView reservations={visibleReservations} />
         </Suspense>
       )}
+
+      <Suspense fallback={null}>
+        <ReservationListModal
+          open={listModalOpen}
+          onClose={() => setListModalOpen(false)}
+          reservations={visibleReservations}
+          sort={sort}
+          onToggleSort={toggleSort}
+          onView={setSelectedFeedbackId}
+          isLoading={isLoading}
+        />
+      </Suspense>
 
       <Suspense fallback={null}>
         <ReservationDetailModal
