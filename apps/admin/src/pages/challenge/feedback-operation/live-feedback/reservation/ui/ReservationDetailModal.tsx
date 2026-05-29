@@ -18,70 +18,108 @@ const ATTENDANCE_LABEL: Record<FeedbackAttendanceStatus, string> = {
   ABSENT: '불참',
 };
 
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
+/** 멘토 모달의 정보 그리드 행(라벨 + 값)과 동일한 스타일. */
+function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="flex flex-col gap-1">
-      <dt className="text-xxsmall12 text-neutral-40">{label}</dt>
-      <dd className="text-xsmall14 text-neutral-0 break-words">
-        {value || '-'}
-      </dd>
+    <div className="flex gap-2">
+      <span className="text-neutral-40 w-20 shrink-0">{label}</span>
+      <span className="break-words">{value || '-'}</span>
     </div>
   );
 }
 
+/**
+ * 멘토 예약 상세 모달(LiveFeedbackReservationModal)의 멘티정보 카드 디자인을
+ * 어드민 단건 모달에 맞춰 재현한다. 어드민에 없는 필드(희망 직군/산업/기업·제출물)는
+ * 어드민이 가진 값(멘토·이메일·연락처·출석)으로 대체한다.
+ */
 function DetailBody({ detail }: { detail: FeedbackDetailAdminVo }) {
   return (
-    <dl className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-      <div className="md:col-span-2">
-        <Field label="프로그램" value={detail.programTitle} />
-      </div>
-      <div className="md:col-span-2">
-        <Field
-          label="일시"
-          value={formatReservationDateTime(detail.startDate, detail.endDate)}
-        />
-      </div>
+    <div className="flex flex-col gap-3">
+      {/* 멘티/예약 정보 카드 */}
+      <section className="border-neutral-80 rounded-xl border p-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-7">
+          <div className="flex flex-1 flex-col gap-6">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h3 className="text-medium20 text-neutral-0 font-semibold">
+                {detail.menteeName || '-'}
+              </h3>
+              <span className="text-xxsmall12 text-neutral-40 font-medium">
+                {detail.programTitle || '-'}
+              </span>
+            </div>
 
-      <Field label="멘토" value={detail.mentorName} />
-      <Field label="멘토 이메일" value={detail.mentorEmail} />
+            <div className="flex flex-col gap-1.5">
+              <div className="text-xxsmall12 text-neutral-40 flex items-center gap-2">
+                <span>멘토 출석</span>
+                <span className="text-neutral-20 font-medium">
+                  {ATTENDANCE_LABEL[detail.mentorStatus]}
+                </span>
+              </div>
+              <div className="text-xxsmall12 text-neutral-40 flex items-center gap-2">
+                <span>멘티 출석</span>
+                <span className="text-neutral-20 font-medium">
+                  {ATTENDANCE_LABEL[detail.menteeStatus]}
+                </span>
+              </div>
+            </div>
+          </div>
 
-      <Field label="멘티" value={detail.menteeName} />
-      <Field label="멘티 이메일" value={detail.menteeEmail} />
-      <Field label="멘티 연락처" value={detail.menteePhoneNum} />
+          <div className="flex flex-1 flex-col justify-between gap-3">
+            <div className="text-xsmall14 text-neutral-20 grid gap-2">
+              <InfoRow label="멘토" value={detail.mentorName} />
+              <InfoRow label="멘토 이메일" value={detail.mentorEmail} />
+              <InfoRow label="멘티 이메일" value={detail.menteeEmail} />
+              <InfoRow label="멘티 연락처" value={detail.menteePhoneNum} />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <Field
-        label="멘토 출석"
-        value={ATTENDANCE_LABEL[detail.mentorStatus]}
-      />
-      <Field
-        label="멘티 출석"
-        value={ATTENDANCE_LABEL[detail.menteeStatus]}
-      />
+      {/* 사전 Q&A */}
+      <section className="border-neutral-80 rounded-xl border p-4">
+        <p className="text-xxsmall12 text-neutral-40 font-medium">
+          사전 Q&amp;A
+        </p>
+        <p className="text-xsmall14 text-neutral-20 mt-3 whitespace-pre-wrap leading-6">
+          {detail.preQuestion || '-'}
+        </p>
+      </section>
 
-      <div className="md:col-span-2">
-        <Field
-          label="미팅 URL"
-          value={
-            detail.meetingUrl ? (
+      {/* 예약 정보 패널 */}
+      <section
+        aria-label="예약 정보"
+        className="border-neutral-80 rounded-xl border p-4"
+      >
+        <ul className="text-xsmall14 flex flex-col gap-3">
+          <li className="flex items-center gap-3">
+            <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0 font-medium">
+              예약 일시
+            </span>
+            <span className="text-neutral-0">
+              {formatReservationDateTime(detail.startDate, detail.endDate)}
+            </span>
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0 font-medium">
+              미팅 URL
+            </span>
+            {detail.meetingUrl ? (
               <a
                 href={detail.meetingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-600 hover:underline"
+                className="break-all text-blue-600 hover:underline"
               >
                 {detail.meetingUrl}
               </a>
             ) : (
-              '-'
-            )
-          }
-        />
-      </div>
-
-      <div className="md:col-span-2">
-        <Field label="사전 질문" value={detail.preQuestion} />
-      </div>
-    </dl>
+              <span className="text-neutral-0">-</span>
+            )}
+          </li>
+        </ul>
+      </section>
+    </div>
   );
 }
 
@@ -109,7 +147,7 @@ export default function ReservationDetailModal({
       />
       <div
         className={twMerge(
-          'relative z-10 flex max-h-[85dvh] w-full max-w-2xl flex-col',
+          'relative z-10 flex max-h-[85dvh] w-full max-w-3xl flex-col',
           'overflow-hidden rounded-lg bg-white shadow-lg',
         )}
       >
