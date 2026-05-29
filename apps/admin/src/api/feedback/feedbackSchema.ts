@@ -41,6 +41,12 @@ export const feedbackAdminVoSchema = z.object({
   mentorStatus: feedbackAttendanceStatusSchema,
   menteeStatus: feedbackAttendanceStatusSchema,
   status: feedbackStatusSchema,
+  /**
+   * 예약을 다른 날로 옮긴 횟수.
+   * BE 미제공(예약 변경 내역 자체가 LC-3065 미구현) → 목 전용. 실 API 에 없으면 undefined → 0 으로 본다.
+   * BE 도입 시 list VO 또는 별도 집계로 대체.
+   */
+  rescheduleCount: z.number().optional(),
 });
 export type FeedbackAdminVo = z.infer<typeof feedbackAdminVoSchema>;
 

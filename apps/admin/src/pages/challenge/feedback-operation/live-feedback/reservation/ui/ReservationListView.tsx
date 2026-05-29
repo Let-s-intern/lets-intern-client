@@ -121,7 +121,9 @@ export default function ReservationListView({
         </thead>
         <tbody>
           {reservations.map((item) => {
-            const isExpanded = expandedId === item.feedbackId;
+            const changeCount = item.rescheduleCount ?? 0;
+            const hasChanges = changeCount > 0;
+            const isExpanded = hasChanges && expandedId === item.feedbackId;
             return (
               <Fragment key={item.feedbackId}>
                 <tr className="border-neutral-80 border-b last:border-b-0">
@@ -152,19 +154,27 @@ export default function ReservationListView({
                     </button>
                   </td>
                   <td className={twMerge(tdClassName, 'text-center')}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setExpandedId(isExpanded ? null : item.feedbackId)
-                      }
-                      aria-expanded={isExpanded}
-                      className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
-                    >
-                      예약 변경 내역
-                      <span className="text-xxsmall12">
-                        {isExpanded ? '▲' : '▼'}
-                      </span>
-                    </button>
+                    {hasChanges ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedId(isExpanded ? null : item.feedbackId)
+                        }
+                        aria-expanded={isExpanded}
+                        className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
+                      >
+                        예약 변경 내역
+                        <span className="font-semibold text-blue-600">
+                          {changeCount}
+                        </span>
+                        회
+                        <span className="text-xxsmall12">
+                          {isExpanded ? '▲' : '▼'}
+                        </span>
+                      </button>
+                    ) : (
+                      <span className="text-neutral-40">-</span>
+                    )}
                   </td>
                 </tr>
                 {isExpanded && (

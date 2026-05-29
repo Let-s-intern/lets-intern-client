@@ -75,7 +75,14 @@ export const adminFeedbackHandlers = [
     });
 
     return HttpResponse.json({
-      data: { feedbackList: filtered.map((item) => item.vo) },
+      data: {
+        feedbackList: filtered.map((item) => ({
+          ...item.vo,
+          // 예약 이동 횟수 = 변경 내역 길이 (목 전용, BE 미제공)
+          rescheduleCount: (seedHistoryByFeedbackId[item.vo.feedbackId] ?? [])
+            .length,
+        })),
+      },
     });
   }),
 
