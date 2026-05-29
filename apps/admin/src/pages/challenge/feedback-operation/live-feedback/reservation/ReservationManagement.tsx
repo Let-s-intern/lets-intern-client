@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useUserAdminQuery } from '@/api/user/user';
@@ -7,6 +7,10 @@ import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
 import ViewToggle, { type ReservationView } from './ui/ViewToggle';
+
+// 캘린더 뷰·상세 모달은 초기 진입(리스트)에 불필요하므로 지연 로드한다.
+const ReservationCalendarView = lazy(() => import('./ui/ReservationCalendarView'));
+const ReservationDetailModal = lazy(() => import('./ui/ReservationDetailModal'));
 import {
   INITIAL_FILTER,
   buildListParams,
@@ -51,8 +55,9 @@ export default function ReservationManagement() {
     key: 'dateTime',
     direction: 'asc',
   });
-  // Push 3 의 예약 상세 모달이 사용한다(현재는 setter 만 연결, 모달은 Push 3).
-  const [, setSelectedFeedbackId] = useState<number | null>(null);
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
+    null,
+  );
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -121,11 +126,17 @@ export default function ReservationManagement() {
           isLoading={isLoading}
         />
       ) : (
-        // 캘린더 뷰는 Push 3 에서 구현한다(필터/뷰 상태 공유 지점).
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-          캘린더 뷰는 준비 중입니다.
-        </div>
+        <Suspense fallback={null}>
+          <ReservationCalendarView reservations={visibleReservations} />
+        </Suspense>
       )}
+
+      <Suspense fallback={null}>
+        <ReservationDetailModal
+          feedbackId={selectedFeedbackId}
+          onClose={() => setSelectedFeedbackId(null)}
+        />
+      </Suspense>
     </div>
   );
 }
