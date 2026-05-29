@@ -862,7 +862,6 @@ export interface DuplicateChallengeReq {
   beginning: string;
   deadline: string;
   startDate: string;
-  endDate: string | null;
   thumbnail: string | null;
   desktopThumbnail: string | null;
   copyContent: boolean;

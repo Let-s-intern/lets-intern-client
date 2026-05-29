@@ -76,7 +76,6 @@ const ChallengeDuplicateModal = ({
         startDate: copyContent
           ? ''
           : (startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
-        endDate: null,
         thumbnail: generateThumbnail
           ? null
           : (sourceChallenge.thumbnail ?? null),
