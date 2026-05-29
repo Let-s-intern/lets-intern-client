@@ -19,18 +19,21 @@
  * - Next(Turbopack/SWC): import.meta 는 ESM 컨텍스트에서 정의되지만 .env 는 undefined → ?? fallback
  * - jest(next/jest SWC): import.meta syntax 자체는 valid, .env 는 undefined → fallback
  *
- * packages/api 는 vite/client 타입을 직접 import 하지 않으므로 ImportMeta 를 ambient
- * 보강 (다른 코드 영향 없음, 같은 인터페이스 머지).
+ * packages/api 는 vite/client 타입을 직접 import 하지 않으므로 import.meta.env 의
+ * 임의 키 접근을 타입 보강한다.
+ *
+ * ⚠️ `ImportMeta.env` 자체를 보강하면 admin/mentor 의 vite/client(또는 vite-env.d.ts)
+ * 가 선언한 `readonly env: ImportMetaEnv` 와 modifier(optional)·타입(Record≠ImportMetaEnv)
+ * 이 충돌해 ts(2687)/ts(2717) 가 난다. 그래서 `ImportMeta.env` 는 건드리지 않고
+ * 기존 `ImportMetaEnv` 에 인덱스 시그니처만 머지한다(추가만 하므로 기존 키와 호환).
  */
 declare global {
-  interface ImportMeta {
-    readonly env?: Record<string, string | undefined>;
+  interface ImportMetaEnv {
+    readonly [key: string]: string | undefined;
   }
 }
 
-function readViteVar(
-  read: () => string | undefined,
-): string | undefined {
+function readViteVar(read: () => string | undefined): string | undefined {
   try {
     return read();
   } catch {

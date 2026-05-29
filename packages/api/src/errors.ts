@@ -16,7 +16,13 @@ export class AppError extends Error {
     context?: Record<string, unknown>;
     cause?: unknown;
   }) {
-    super(opts.message, { cause: opts.cause });
+    super(opts.message);
+    // Error(message, { cause }) 2-인자 오버로드는 lib ES2022+ 에만 있어 tsconfig
+    // (target ES2020) 에서 ts(2554). 런타임(Node20/모던 브라우저)은 cause 를 지원하므로
+    // super 후 직접 할당한다. (lib 타입에 cause 가 없어 캐스트로 우회)
+    if (opts.cause !== undefined) {
+      (this as { cause?: unknown }).cause = opts.cause;
+    }
     this.name = new.target.name; // class name 보존
     this.code = opts.code;
     this.status = opts.status;
