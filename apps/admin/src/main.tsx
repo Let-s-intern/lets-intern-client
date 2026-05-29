@@ -26,14 +26,29 @@ const queryClient = new QueryClient({
   },
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-        <AdminSnackbarProvider>
-          <RouterProvider router={router} />
-        </AdminSnackbarProvider>
-      </LocalizationProvider>
-    </QueryClientProvider>
-  </React.StrictMode>,
-);
+function renderApp() {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+          <AdminSnackbarProvider>
+            <RouterProvider router={router} />
+          </AdminSnackbarProvider>
+        </LocalizationProvider>
+      </QueryClientProvider>
+    </React.StrictMode>,
+  );
+}
+
+// MSW 게이트: VITE_ENABLE_MSW === 'true' 일 때만 worker 를 동적 import 후 시작.
+// 동적 import + env 게이트로 프로덕션 번들에는 포함되지 않는다.
+// worker.start() 완료 후 렌더해야 초기 요청이 핸들러에 의해 가로채진다.
+async function bootstrap() {
+  if (import.meta.env.VITE_ENABLE_MSW === 'true') {
+    const { worker } = await import('./mocks/browser');
+    await worker.start({ onUnhandledRequest: 'bypass' });
+  }
+  renderApp();
+}
+
+bootstrap();
