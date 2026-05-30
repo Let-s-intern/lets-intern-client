@@ -35,12 +35,12 @@ export const BADGE_COLORS: Partial<Record<ChallengeType, string>> = {
 
 const CANVAS_WIDTH = 860;
 const CANVAS_HEIGHT = 645;
-const BADGE_X = 40;
-const BADGE_Y = 244;
-const BADGE_RADIUS = 12;
-const BADGE_PADDING = { top: 2, right: 12, bottom: 4, left: 12 };
-const FONT_SIZE = 22;
-const LINE_HEIGHT = 30;
+const BADGE_X = 60;
+const BADGE_Y = 366;
+const BADGE_RADIUS = 18;
+const BADGE_PADDING = { top: 4, right: 18, bottom: 6, left: 18 };
+const FONT_SIZE = 33;
+const LINE_HEIGHT = 45;
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -82,11 +82,11 @@ export async function drawBadgeOnCanvas(
   ctx.fill();
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = 'middle';
   ctx.fillText(
     generation,
     BADGE_X + BADGE_PADDING.left,
-    BADGE_Y + BADGE_PADDING.top,
+    BADGE_Y + badgeHeight / 2,
   );
 
   return new Promise((resolve, reject) => {
