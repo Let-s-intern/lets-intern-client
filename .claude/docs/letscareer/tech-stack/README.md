@@ -15,7 +15,7 @@
 
 | 기술 | 버전 | 비고 |
 |------|------|------|
-| **Next.js** | ^15.5.7 | App Router, Turbopack 지원 |
+| **Next.js** | 15.5.16 | App Router, Turbopack 지원 |
 | **Sentry** | @sentry/nextjs ^10.32.1 | main/test 브랜치에서만 활성화 |
 
 ## 스타일링
@@ -51,7 +51,7 @@
 | **MUI Material** | ^6.4.0 | 관리자 페이지 주로 사용 |
 | **MUI X Data Grid** | ^7.24.0 | 관리자 테이블 |
 | **MUI X Date Pickers** | ^7.24.0 | 날짜 선택 |
-| **Swiper** | ^11.2.4 | 캐러셀/슬라이더 |
+| **Swiper** | ^12.1.2 | 캐러셀/슬라이더 |
 | **lucide-react** | ^0.473.0 | 아이콘 |
 | **react-icons** | 5.2.1 | 아이콘 (레거시) |
 

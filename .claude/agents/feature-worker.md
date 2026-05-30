@@ -37,6 +37,8 @@ hooks:
 | 레이어 규칙 | `.claude/skills/folder-structure/references/layer-conventions.md` | 레이어 네이밍 |
 | 코드 품질 | `.claude/skills/code-quality/SKILL.md` | 코드 품질 기준 |
 | Vercel 가이드 | `.claude/skills/vercel-react-best-practices/AGENTS.md` | Vercel 규칙 총괄 |
+| API 스펙 | `.claude/skills/swagger-api-finder/SKILL.md` | 호출할 엔드포인트·요청/응답 형태 확인 (추측 금지) |
+| BE 실제 동작 | `.claude/skills/server-code-reference/SKILL.md` | 응답 필드·DB 저장·에러 코드 검증 (`../lets-career-server`) |
 
 ### Vercel 규칙 빠른 참조
 
