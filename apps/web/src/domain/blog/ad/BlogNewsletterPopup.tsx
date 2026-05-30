@@ -50,28 +50,41 @@ export function BlogNewsletterPopup() {
   const pathname = usePathname();
   const blogId = parseBlogId(pathname);
 
-  // 실험 변형/임계값. 마운트 시점에 플래그를 평가해 모든 방문자의 노출을 기록한다(아래 useEffect).
+  // 실험 변형/임계값. 페이지 진입 시 플래그를 평가해 모든 방문자의 노출을 기록한다(아래 useEffect).
   // 플래그 미로딩/실패/SDK 미초기화 시 control(null)·데이터 파일 폴백 ratio(0.6)로 현행 동작 유지.
-  const variantRef = useRef<string | null>(null);
-  const triggerRatioRef = useRef<number>(fallbackTriggerRatio);
+  const [variant, setVariant] = useState<string | null>(null);
+  const [triggerRatio, setTriggerRatio] =
+    useState<number>(fallbackTriggerRatio);
 
-  // 노출(exposure) 기록은 "팝업이 뜨는 시점"이 아니라 "페이지 마운트 시점"에 1회 발생해야 한다.
+  // 노출(exposure) 기록은 "팝업이 뜨는 시점"이 아니라 "페이지 진입 시점"에 발생해야 한다.
   // 100% 변형은 끝까지 읽은 사람만 팝업이 뜨므로, 노출을 팝업 시점에 잡으면 분모(방문자 수)가
   // 편향돼 "방문자당 전환수" 비교가 무너진다. getFeatureFlag 호출이 $feature_flag_called를
   // 발화해 모든 방문자를 실험 분모로 등록한다.
+  //
+  // 피처 플래그는 비동기로 로드된다. 진입 즉시 평가하면 아직 미로딩이라 폴백만 잡히므로,
+  // onFeatureFlags로 로드 완료 시점을 구독해 변형/임계값을 갱신(리렌더)한다.
   useEffect(() => {
     if (!posthog.__loaded) {
-      // SDK 미초기화(env 미설정/프리뷰): 노출 기록 불가 → 폴백값으로 현행 동작만 유지.
-      variantRef.current = null;
-      triggerRatioRef.current = fallbackTriggerRatio;
+      // SDK 미초기화(env 미설정/프리뷰): 폴백값으로 현행 동작만 유지.
+      setVariant(null);
+      setTriggerRatio(fallbackTriggerRatio);
       return;
     }
 
-    const variant = posthog.getFeatureFlag(BLOG_POPUP_FLAG_KEY);
-    variantRef.current = typeof variant === 'string' ? variant : null;
-    triggerRatioRef.current = parseTriggerRatio(
-      posthog.getFeatureFlagPayload(BLOG_POPUP_FLAG_KEY),
-    );
+    const evaluate = () => {
+      const activeVariant = posthog.getFeatureFlag(BLOG_POPUP_FLAG_KEY);
+      setVariant(typeof activeVariant === 'string' ? activeVariant : null);
+      setTriggerRatio(
+        parseTriggerRatio(posthog.getFeatureFlagPayload(BLOG_POPUP_FLAG_KEY)),
+      );
+    };
+
+    // 이미 로드됐으면 즉시, 아직이면 onFeatureFlags 콜백에서 평가.
+    evaluate();
+    const unsubscribe = posthog.onFeatureFlags(evaluate);
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, [pathname, fallbackTriggerRatio]);
 
   // 클라이언트 사이드 네비게이션(글→글 이동) 시 컴포넌트가 재사용되어 triggeredRef가
@@ -90,7 +103,7 @@ export function BlogNewsletterPopup() {
   useEffect(() => {
     if (triggeredRef.current) return;
     // 임계값 출처만 플래그 페이로드(ratio)로 교체. 트리거/게이트/쿨다운 로직은 그대로.
-    if (progress < triggerRatioRef.current) return;
+    if (progress < triggerRatio) return;
 
     // 진행률 도달 후 1회만 게이트 검사 (통과/차단 무관하게 더는 재시도하지 않음)
     triggeredRef.current = true;
@@ -102,16 +115,20 @@ export function BlogNewsletterPopup() {
     // 팝업이 실제로 열린 직후 노출 이벤트(전환율 분자 후보). 노출(exposure) 기록과는 별개.
     captureExperimentEvent(
       BLOG_POPUP_EVENTS.shown,
-      { variant: variantRef.current, blogId },
-      { trigger_ratio: triggerRatioRef.current },
+      { variant: variant, blogId },
+      { trigger_ratio: triggerRatio },
     );
-  }, [progress, blogId]);
+  }, [progress, blogId, triggerRatio, variant]);
 
   const dismiss = (reason: DismissReason) => {
-    captureExperimentEvent(BLOG_POPUP_EVENTS.dismissed, {
-      variant: variantRef.current,
-      blogId,
-    }, { reason });
+    captureExperimentEvent(
+      BLOG_POPUP_EVENTS.dismissed,
+      {
+        variant: variant,
+        blogId,
+      },
+      { reason },
+    );
     setOpen(false);
   };
 
@@ -122,7 +139,7 @@ export function BlogNewsletterPopup() {
 
   const handleCtaClick = () => {
     captureExperimentEvent(BLOG_POPUP_EVENTS.ctaClicked, {
-      variant: variantRef.current,
+      variant: variant,
       blogId,
     });
   };
