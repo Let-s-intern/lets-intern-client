@@ -1,5 +1,5 @@
 import { duplicateChallenge } from '@/api/challenge/challenge';
-import { generateAndUploadThumbnail } from './utils/generateThumbnail';
+import { ChallengeType } from '@/schema';
 import {
   Button,
   Checkbox,
@@ -15,7 +15,14 @@ import {
 } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  extractGeneration,
+  fetchChallengeType,
+  generateAndUploadThumbnail,
+  THUMBNAIL_IMAGES,
+  THUMBNAIL_TYPE_LABELS,
+} from './utils/generateThumbnail';
 
 interface Props {
   isOpen: boolean;
@@ -32,6 +39,8 @@ const dateTimePickerSlotProps: DateTimePickerSlotProps<Dayjs, false> = {
   textField: { size: 'small', sx: { width: '100%' } },
 };
 
+const SUPPORTED_TYPE_LABELS = Object.values(THUMBNAIL_TYPE_LABELS).join(', ');
+
 const ChallengeDuplicateModal = ({
   isOpen,
   sourceChallenge,
@@ -46,6 +55,19 @@ const ChallengeDuplicateModal = ({
   const [generateThumbnail, setGenerateThumbnail] = useState(false);
   const [copyDashboard, setCopyDashboard] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [challengeType, setChallengeType] = useState<ChallengeType | null>(
+    null,
+  );
+
+  const isSupportedType =
+    challengeType !== null && challengeType in THUMBNAIL_IMAGES;
+  const isThumbnailEnabled =
+    !copyContent && extractGeneration(title) !== null && isSupportedType;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchChallengeType(sourceChallenge.id).then(setChallengeType);
+  }, [isOpen, sourceChallenge.id]);
 
   const isSubmitDisabled =
     !copyContent && (!title || !beginning || !deadline || !startDate);
@@ -58,7 +80,13 @@ const ChallengeDuplicateModal = ({
     setStartDate(null);
     setGenerateThumbnail(false);
     setCopyDashboard(false);
+    setChallengeType(null);
     onClose();
+  };
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
+    if (generateThumbnail) setGenerateThumbnail(false);
   };
 
   const handleSubmit = async () => {
@@ -69,9 +97,9 @@ const ChallengeDuplicateModal = ({
       const effectiveTitle = copyContent ? sourceChallenge.title : title;
 
       let thumbnailUrl: string | null = sourceChallenge.thumbnail ?? null;
-      if (generateThumbnail) {
+      if (generateThumbnail && challengeType) {
         thumbnailUrl = await generateAndUploadThumbnail(
-          sourceChallenge.id,
+          challengeType,
           effectiveTitle,
         );
       }
@@ -127,7 +155,7 @@ const ChallengeDuplicateModal = ({
               fullWidth
               disabled={copyContent}
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => handleTitleChange(e.target.value)}
             />
           </div>
 
@@ -174,17 +202,25 @@ const ChallengeDuplicateModal = ({
             </div>
           </LocalizationProvider>
 
-          <div className="flex flex-col">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={generateThumbnail}
-                  disabled={copyContent}
-                  onChange={(e) => setGenerateThumbnail(e.target.checked)}
-                />
-              }
-              label="썸네일 자동 생성"
-            />
+          <div className="flex flex-col gap-1">
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={generateThumbnail}
+                    disabled={!isThumbnailEnabled}
+                    onChange={(e) => setGenerateThumbnail(e.target.checked)}
+                  />
+                }
+                label="썸네일 자동 생성"
+              />
+              <p className="-mt-1 ml-8 text-xs text-gray-400">
+                * <strong>기수가 포함된 제목</strong> 입력 시 활성화됩니다. (ex.
+                포트폴리오 1주 완성 챌린지 32기)
+                <br />* <strong>{SUPPORTED_TYPE_LABELS}</strong> 챌린지만
+                가능합니다.
+              </p>
+            </div>
             <FormControlLabel
               control={
                 <Checkbox

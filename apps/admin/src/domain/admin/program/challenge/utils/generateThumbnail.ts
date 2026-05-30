@@ -1,6 +1,6 @@
 import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
-import axios from '@/utils/axios';
 import { ChallengeType } from '@/schema';
+import axios from '@/utils/axios';
 
 export const THUMBNAIL_IMAGES: Partial<Record<ChallengeType, string>> = {
   PERSONAL_STATEMENT: '/images/thumbnail-personal-statement.png',
@@ -9,6 +9,14 @@ export const THUMBNAIL_IMAGES: Partial<Record<ChallengeType, string>> = {
   EXPERIENCE_SUMMARY: '/images/thumbnail-experience-summary.png',
   DOCUMENT_PREPARATION: '/images/thumbnail-document-preparation.png',
   PORTFOLIO: '/images/thumbnail-portfolio.png',
+};
+
+export const THUMBNAIL_TYPE_LABELS: Partial<Record<ChallengeType, string>> = {
+  PERSONAL_STATEMENT: '자기소개서',
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업',
+  EXPERIENCE_SUMMARY: '경험정리',
+  DOCUMENT_PREPARATION: '서류준비',
+  PORTFOLIO: '포트폴리오',
 };
 
 export const extractGeneration = (title: string): string | null => {
@@ -97,14 +105,13 @@ export async function fetchChallengeType(
 }
 
 export async function generateAndUploadThumbnail(
-  challengeId: number,
+  challengeType: ChallengeType,
   title: string,
 ): Promise<string | null> {
-  const challengeType = await fetchChallengeType(challengeId);
   const blob = await drawBadgeOnCanvas(challengeType, title);
   if (!blob) return null;
 
-  const fileName = `challenge-thumbnail-${challengeId}-${Date.now()}.png`;
+  const fileName = `challenge-thumbnail-${Date.now()}.png`;
   const presignedUrl = await getPresignedUrl('challenge', fileName);
   const file = new File([blob], fileName, { type: 'image/png' });
   await uploadToS3(presignedUrl, file);
