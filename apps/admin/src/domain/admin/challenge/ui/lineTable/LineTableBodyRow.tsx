@@ -1,9 +1,9 @@
+import AlertModal from '@/common/alert/AlertModal';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { TABLE_CONTENT, TABLE_STATUS } from '@/utils/convert';
 import React, { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-import AlertModal from '@/common/alert/AlertModal';
 import DropdownCell from './DropdownCell';
 import LineTableBodyCell from './LineTableBodyCell';
 import TextareaCell from './TextareaCell';
@@ -123,7 +123,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
     <div
       className={twMerge(
         'flex w-full gap-px rounded-md border p-1',
-        isEditMode ? 'border-neutral-500' : 'border-neutral-200',
+        isEditMode ? 'border-neutral-200' : 'border-neutral-500',
         onClick && 'cursor-pointer hover:bg-slate-50',
       )}
       onClick={() => onClick?.(values)}
