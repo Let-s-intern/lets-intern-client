@@ -211,6 +211,11 @@ const preset = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        wobble: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-6deg)' },
+          '75%': { transform: 'rotate(6deg)' },
+        },
       },
       animation: {
         'live-infinite-scroll-desktop':
@@ -221,6 +226,7 @@ const preset = {
         'fade-in': 'fade-in 0.2s ease-out',
         'slide-in-right': 'slide-in-right 0.2s ease-out',
         'infinite-scroll': 'infinite-scroll 40s linear infinite',
+        wobble: 'wobble 0.4s ease-in-out',
       },
     },
     borderRadius: {
