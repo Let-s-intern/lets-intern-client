@@ -140,9 +140,7 @@ function ChallengeDashboardContent() {
       <div className="flex flex-col gap-4 md:gap-5">
         <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
-          <AsyncBoundary pendingFallback={<LoadingContainer />}>
-            <MissionDetailSection />
-          </AsyncBoundary>
+          <MissionDetailSection />
 
           {/* 공지사항, 미션점수 */}
           <div className="flex flex-col gap-2.5 md:w-[22rem]">
