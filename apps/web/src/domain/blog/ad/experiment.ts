@@ -4,8 +4,12 @@
 
 import posthog from 'posthog-js';
 
-/** PostHog Feature Flag 키 (콘솔 Experiment 키와 동일해야 함). */
-export const BLOG_POPUP_FLAG_KEY = 'blog-popup-scroll-trigger';
+/**
+ * PostHog Feature Flag 키 (콘솔 Experiment 키와 글자까지 100% 동일해야 함).
+ * ⚠️ 끝의 `-`는 오타가 아니라 PostHog에 생성된 실제 키(`blog-popup-scroll-trigger-`)와
+ * 맞추기 위한 것이다. 임의로 지우면 `getFeatureFlag`가 undefined를 반환해 실험이 죽는다.
+ */
+export const BLOG_POPUP_FLAG_KEY = 'blog-popup-scroll-trigger-';
 
 /**
  * 플래그/페이로드가 없거나 깨졌을 때의 트리거 임계값(본문 읽기 진행률).
