@@ -47,17 +47,22 @@ const ChallengeSubmitDetail = ({
 
   const handleConfirm = async () => {
     if (!pendingResult || isCheckedList.length === 0) return;
-    await bulkPatch.mutateAsync({
-      attendanceIdList: isCheckedList,
-      result: pendingResult,
-    });
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['admin'] }),
-      queryClient.invalidateQueries({ queryKey: ['challenge'] }),
-    ]);
-    setIsCheckedList([]);
-    setPendingResult(null);
-    refetch();
+    try {
+      await bulkPatch.mutateAsync({
+        attendanceIdList: isCheckedList,
+        result: pendingResult,
+      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin'] }),
+        queryClient.invalidateQueries({ queryKey: ['challenge'] }),
+      ]);
+      setIsCheckedList([]);
+      refetch();
+    } catch (error) {
+      console.error('일괄 변경 실패:', error);
+    } finally {
+      setPendingResult(null);
+    }
   };
 
   return (
@@ -65,8 +70,9 @@ const ChallengeSubmitDetail = ({
       <div className="flex justify-end bg-[#F1F1F1] px-6 py-3">
         <select
           value={dropdownValue}
-          className="rounded-sm border border-gray-400 bg-transparent px-2 py-1 text-sm"
+          className="rounded-sm border border-gray-400 bg-transparent px-2 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           onChange={handleSelectChange}
+          disabled={isCheckedList.length === 0}
         >
           <option value="">확인여부 일괄변경</option>
           {BULK_RESULT_OPTIONS.map((result) => (
