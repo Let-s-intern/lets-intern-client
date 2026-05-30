@@ -22,6 +22,9 @@ const ChallengeContents = lazy(
 const ChallengeMissionManagement = lazy(
   () => import('./pages/pages/challenge/ChallengeMissionManagement'),
 );
+const ChallengeNoticesPage = lazy(
+  () => import('./pages/pages/challenge/ChallengeNoticesPage'),
+);
 const ChallengeOperationOnboarding = lazy(
   () => import('./pages/pages/challenge/ChallengeOperationOnboarding'),
 );
@@ -257,6 +260,10 @@ export const router = createBrowserRouter([
       {
         path: '/challenge/missions',
         element: withSuspense(<ChallengeMissionManagement />),
+      },
+      {
+        path: '/challenge/notices',
+        element: withSuspense(<ChallengeNoticesPage />),
       },
       {
         path: '/challenge/operation',
