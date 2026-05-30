@@ -1,5 +1,7 @@
 'use client';
 
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import MissionCalendarSection from '@/domain/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@/domain/challenge/my-challenge/section/MissionGuideSection';
@@ -13,7 +15,7 @@ import { useMissionStore } from '@/store/useMissionStore';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-const MyChallengeDashboard = () => {
+function MyChallengeDashboardContent() {
   const { schedules } = useCurrentChallenge();
   const { selectedMissionId } = useMissionStore();
   const params = useParams<{ programId: string; applicationId: string }>();
@@ -66,6 +68,12 @@ const MyChallengeDashboard = () => {
       </Link>
     </main>
   );
-};
+}
 
-export default MyChallengeDashboard;
+export default function MyChallengeDashboard() {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <MyChallengeDashboardContent />
+    </AsyncBoundary>
+  );
+}
