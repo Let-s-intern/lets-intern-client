@@ -1,4 +1,4 @@
-import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
+import { uploadFile } from '@/api/file';
 import { ChallengeType } from '@/schema';
 import axios from '@/utils/axios';
 
@@ -111,10 +111,8 @@ export async function generateAndUploadThumbnail(
   const blob = await drawBadgeOnCanvas(challengeType, title);
   if (!blob) return null;
 
-  const fileName = `challenge-thumbnail-${Date.now()}.png`;
-  const presignedUrl = await getPresignedUrl('challenge', fileName);
-  const file = new File([blob], fileName, { type: 'image/png' });
-  await uploadToS3(presignedUrl, file);
-
-  return presignedUrl.split('?')[0];
+  const file = new File([blob], `challengethumbnail${Date.now()}.png`, {
+    type: 'image/png',
+  });
+  return uploadFile({ file, type: 'CHALLENGE' });
 }
