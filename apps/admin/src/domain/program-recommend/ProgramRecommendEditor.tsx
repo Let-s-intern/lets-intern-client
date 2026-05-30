@@ -14,13 +14,14 @@ const modalStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '95%',
-  maxHeight: '100vh', // 뷰포트 높이의 90%로 제한
+  width: '70%',
+  maxWidth: 900,
+  maxHeight: '80vh',
   bgcolor: 'background.paper',
   borderRadius: 2,
   boxShadow: 24,
   display: 'flex',
-  flexDirection: 'column', // 컨텐츠를 세로로 배치
+  flexDirection: 'column',
 };
 
 // 헤더 스타일
@@ -117,7 +118,10 @@ const ProgramRecommendEditor = ({
       <div className="w-full overflow-x-auto">
         <div className="flex min-w-full flex-col gap-2">
           {programRecommend.list.map((item) => (
-            <div key={item.programInfo.id} className="flex items-center gap-2">
+            <div
+              key={`${item.programInfo.programType}-${item.programInfo.id}`}
+              className="flex items-center gap-2"
+            >
               <div
                 className="rounded-xs bg-neutral-60 h-32 w-40 flex-none border"
                 style={{
@@ -183,9 +187,6 @@ const ProgramRecommendEditor = ({
                 ? `프로그램 선택 (최대 ${maxCount}개, 노출 순서대로 체크하세요)`
                 : '프로그램 선택 (노출 순서대로 체크하세요)'}
             </Typography>
-            <Button onClick={onClose} variant="outlined">
-              닫기
-            </Button>
           </Box>
 
           {/* 컨텐츠 영역 - 스크롤 가능 */}
@@ -194,7 +195,7 @@ const ProgramRecommendEditor = ({
               <table className="min-w-full table-auto">
                 <thead>
                   <tr>
-                    <th></th> {/* 체크박스 */}
+                    <th></th>
                     <th className="whitespace-nowrap">순서</th>
                     <th className="whitespace-nowrap">프로그램 분류</th>
                     <th className="whitespace-nowrap">제목</th>
@@ -265,7 +266,7 @@ const ProgramRecommendEditor = ({
 
                     return (
                       <tr
-                        key={item.programInfo.id}
+                        key={`${item.programInfo.programType}-${item.programInfo.id}`}
                         className="divide-x divide-y"
                       >
                         {/* 체크박스 */}
@@ -326,6 +327,9 @@ const ProgramRecommendEditor = ({
           <Box sx={footerStyle}>
             <Button onClick={onClose} variant="outlined">
               닫기
+            </Button>
+            <Button onClick={onClose} variant="contained">
+              저장
             </Button>
           </Box>
         </Box>
