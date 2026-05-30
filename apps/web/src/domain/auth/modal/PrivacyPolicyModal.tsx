@@ -12,10 +12,10 @@ const PrivacyPolicyModal = ({
   return (
     <div
       aria-hidden={!showModal}
-      className={`fixed left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-50 transition-opacity ${
+      className={`fixed left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-50 transition-all ${
         showModal
-          ? 'pointer-events-auto opacity-100'
-          : 'pointer-events-none opacity-0'
+          ? 'pointer-events-auto visible opacity-100'
+          : 'pointer-events-none invisible opacity-0'
       }`}
     >
       <div

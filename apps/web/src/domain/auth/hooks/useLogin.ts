@@ -186,7 +186,18 @@ const useLogin = () => {
 
     if (searchParams.get('result')) {
       setIsSocialCallbackPending(true);
-      const parsedToken = JSON.parse(searchParams.get('result') || '{}');
+      const rawResult = searchParams.get('result') || '{}';
+      let parsedToken: Token;
+      try {
+        parsedToken = JSON.parse(rawResult);
+      } catch (error) {
+        captureAuthError(error as Error, {
+          section: 'social-callback-parse',
+          extra: { rawResult },
+        });
+        setIsSocialCallbackPending(false);
+        return;
+      }
       emitSocialSigninSpan({ result: 'success' });
       // Next.js에서는 searchParams를 직접 변경할 수 없으므로 router.replace 사용
       const newSearchParams = new URLSearchParams(searchParams.toString());

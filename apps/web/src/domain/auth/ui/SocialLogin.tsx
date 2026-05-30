@@ -15,8 +15,7 @@ function SocialLoginContent({ type }: SocialLoginProps) {
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
     const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
     if (!basePath) {
-      alert('No base path.\n잠시 후 다시 로그인 해주세요.');
-      return;
+      return '#';
     }
     const redirectPath = `${getUniversalBaseUrl()}/${
       type === 'LOGIN' ? 'login' : 'signup'
@@ -24,6 +23,13 @@ function SocialLoginContent({ type }: SocialLoginProps) {
     return `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${encodeURIComponent(redirectPath)}`;
+  };
+
+  const handleSocialClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!process.env.NEXT_PUBLIC_API_BASE_PATH) {
+      e.preventDefault();
+      alert('No base path.\n잠시 후 다시 로그인 해주세요.');
+    }
   };
 
   return (
@@ -35,6 +41,7 @@ function SocialLoginContent({ type }: SocialLoginProps) {
         <a
           className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500] transition-opacity hover:opacity-80"
           href={getSocialLink('KAKAO')}
+          onClick={handleSocialClick}
           rel="noopener noreferrer"
         >
           <img
@@ -46,6 +53,7 @@ function SocialLoginContent({ type }: SocialLoginProps) {
         <a
           className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400] transition-opacity hover:opacity-80"
           href={getSocialLink('NAVER')}
+          onClick={handleSocialClick}
           rel="noopener noreferrer"
         >
           <img
