@@ -926,6 +926,7 @@ export const missionAdmin = z
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
+        waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
