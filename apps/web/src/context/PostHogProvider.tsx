@@ -31,6 +31,14 @@ const PostHogProvider: React.FC<{
     posthog.init(posthogKey, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
       defaults: POSTHOG_DEFAULTS,
+      // 세션 리플레이(세션 캡처). 실제 녹화 on/off는 PostHog 프로젝트 설정
+      // (Settings → Session Replay → "Record user sessions")에서 켜야 동작한다.
+      // 여기서는 개인정보 보호를 위한 마스킹만 지정한다.
+      session_recording: {
+        // 이력/지원 정보를 다루는 사이트라 모든 입력값을 마스킹한다.
+        // (특정 요소만 더 가리려면 해당 DOM에 `ph-no-capture` 클래스 부여)
+        maskAllInputs: true,
+      },
     });
     initializedRef.current = true;
   }
