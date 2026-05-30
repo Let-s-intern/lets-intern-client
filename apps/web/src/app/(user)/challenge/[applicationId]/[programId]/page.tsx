@@ -91,7 +91,7 @@ const ChallengeDashboard = () => {
       type: null as null,
       title: item.title,
       link: item.url,
-      createDate: dayjs(item.createdAt),
+      createDate: item.createdAt ? dayjs(item.createdAt) : null,
     }));
 
   const guides = (homeData?.noticeList ?? [])
