@@ -60,12 +60,20 @@ export const useUpdateAdminNoticeMutation = () => {
   });
 };
 
+export type NoticeChallengeItem = {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  isVisible: boolean;
+};
+
 export const useGetNoticeChallenges = (noticeId: number | null) => {
   return useQuery({
     queryKey: [QUERY_KEY, 'challenge', noticeId],
     queryFn: async () => {
       const res = await axios.get(`/admin/notice/${noticeId}/challenge`);
-      return res.data.data as { challengeIdList: number[] };
+      return res.data.data as { challengeList: NoticeChallengeItem[] };
     },
     enabled: noticeId !== null,
   });

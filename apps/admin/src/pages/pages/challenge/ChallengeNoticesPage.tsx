@@ -1,4 +1,3 @@
-import { useGetChallengeList } from '@/api/challenge/challenge';
 import {
   useCreateAdminNoticeMutation,
   useDeleteAdminNoticeMutation,
@@ -76,9 +75,6 @@ const ChallengeNoticesPage = () => {
   const deleteMutation = useDeleteAdminNoticeMutation();
 
   // 노출 영역 관리 hooks
-  const challengeListQuery = useGetChallengeList({
-    pageable: { page: 1, size: 10000 },
-  });
   const noticeChallengesQuery = useGetNoticeChallenges(exposureNoticeId);
   const updateChallengesMutation = useUpdateNoticeChallengeMutation();
 
@@ -193,7 +189,11 @@ const ChallengeNoticesPage = () => {
 
   useEffect(() => {
     if (!noticeChallengesQuery.data) return;
-    setSelectedChallengeIds(noticeChallengesQuery.data.challengeIdList ?? []);
+    setSelectedChallengeIds(
+      noticeChallengesQuery.data.challengeList
+        .filter((c) => c.isVisible)
+        .map((c) => c.id),
+    );
   }, [noticeChallengesQuery.data]);
 
   const closeExposureModal = () => {
@@ -210,7 +210,7 @@ const ChallengeNoticesPage = () => {
   };
 
   const allChallengeIds =
-    challengeListQuery.data?.programList?.map((item) => item.id) ?? [];
+    noticeChallengesQuery.data?.challengeList?.map((item) => item.id) ?? [];
   const isAllSelected =
     allChallengeIds.length > 0 &&
     allChallengeIds.every((id) => selectedChallengeIds.includes(id));
@@ -411,7 +411,7 @@ const ChallengeNoticesPage = () => {
               </div>
             </div>
             <div className="mx-3 flex-1 overflow-auto">
-              {challengeListQuery.isLoading ? (
+              {noticeChallengesQuery.isLoading ? (
                 <LoadingContainer />
               ) : (
                 <table className="min-w-full table-auto">
@@ -443,7 +443,7 @@ const ChallengeNoticesPage = () => {
                         전체선택
                       </td>
                     </tr>
-                    {challengeListQuery.data?.programList?.map((item) => (
+                    {noticeChallengesQuery.data?.challengeList?.map((item) => (
                       <tr
                         key={item.id}
                         className="border-b text-sm hover:bg-neutral-50"

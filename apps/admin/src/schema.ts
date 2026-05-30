@@ -2251,7 +2251,7 @@ export const adminNoticeDetailSchema = z.object({
     .array(
       z.object({
         programId: z.number(),
-        programType: ProgramTypeEnum,
+        programType: ProgramTypeEnum.optional(),
         title: z.string(),
         cta: z.string(),
         thumbnail: z.string().nullable(),
