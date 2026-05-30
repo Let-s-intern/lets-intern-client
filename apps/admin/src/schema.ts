@@ -2216,18 +2216,24 @@ export const adminNoticeListSchema = z
         id: z.number(),
         type: adminNoticeType.nullable(),
         title: z.string().nullable(),
-        link: z.string().nullable(),
-        createDate: z.string().nullable(),
+        url: z.string().nullable(),
+        createdAt: z.string().nullable(),
       }),
     ),
-    pageInfo,
+    pageInfo: z.object({
+      currentPage: z.number(),
+      totalPages: z.number(),
+      totalElements: z.number(),
+    }),
   })
   .transform((data) => ({
     noticeList: data.noticeList.map((item) => ({
       ...item,
-      createDate: item.createDate ? dayjs(item.createDate) : null,
+      createDate: item.createdAt ? dayjs(item.createdAt) : null,
     })),
-    pageInfo: data.pageInfo,
+    currentPage: data.pageInfo.currentPage,
+    totalPages: data.pageInfo.totalPages,
+    totalElements: data.pageInfo.totalElements,
   }));
 
 export type AdminNoticeResItem = z.infer<
@@ -2238,15 +2244,14 @@ export const adminNoticeDetailSchema = z.object({
   id: z.number(),
   type: adminNoticeType.nullable(),
   title: z.string().nullable(),
-  link: z.string().nullable(),
+  url: z.string().nullable(),
   isMoreVisible: z.boolean().nullable(),
-  moreLink: z.string().nullable(),
-  programList: z
+  moreUrl: z.string().nullable(),
+  programs: z
     .array(
       z.object({
-        id: z.number(),
-        programType: z.string(),
         programId: z.number(),
+        programType: ProgramTypeEnum,
         title: z.string(),
         cta: z.string(),
         thumbnail: z.string().nullable(),
@@ -2258,28 +2263,28 @@ export const adminNoticeDetailSchema = z.object({
 export type AdminNoticeDetail = z.infer<typeof adminNoticeDetailSchema>;
 
 export type AdminNoticeProgramItem = {
-  programType: string;
   programId: number;
   title: string;
   cta: string;
+  thumbnail: string;
 };
 
 // POST /api/v1/admin/notice
 export type CreateAdminNoticeReq = {
   type: AdminNoticeType;
   title: string;
-  link: string;
+  url: string;
   isMoreVisible?: boolean;
   moreLink?: string;
-  programList?: AdminNoticeProgramItem[];
+  programs?: AdminNoticeProgramItem[];
 };
 
 // PATCH /api/v1/admin/notice/{id}
 export type UpdateAdminNoticeReq = {
   type: AdminNoticeType;
   title: string;
-  link: string;
+  url: string;
   isMoreVisible?: boolean;
   moreLink?: string;
-  programList?: AdminNoticeProgramItem[];
+  programs?: AdminNoticeProgramItem[];
 };

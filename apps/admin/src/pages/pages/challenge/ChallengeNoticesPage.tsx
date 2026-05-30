@@ -11,15 +11,15 @@ import {
 import WarningModal from '@/common/alert/WarningModal';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import TableLayout from '@/domain/admin/ui/table/TableLayout';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
+import dayjs from '@/lib/dayjs';
 import {
   AdminNoticeResItem,
   AdminNoticeType,
   CreateAdminNoticeReq,
 } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
-import dayjs from '@/lib/dayjs';
 import { Pencil, Trash } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -41,7 +41,7 @@ const NOTICE_TYPE_LABEL: Record<AdminNoticeType, string> = {
 const EMPTY_FORM: CreateAdminNoticeReq = {
   type: 'NOTICE',
   title: '',
-  link: '',
+  url: '',
 };
 
 const defaultProgramRecommend: ProgramRecommend = { list: [] };
@@ -105,15 +105,16 @@ const ChallengeNoticesPage = () => {
     setForm({
       type: detail.type ?? 'NOTICE',
       title: detail.title ?? '',
-      link: detail.link ?? '',
+      url: detail.url ?? '',
     });
     if (detail.type === 'PROGRAM') {
       setProgramRecommend({
-        list: (detail.programList ?? []).map((p) => ({
+        list: (detail.programs ?? []).map((p) => ({
           programInfo: {
             id: p.programId,
             programType: p.programType,
             title: p.title,
+            cta: p.cta,
             thumbnail: p.thumbnail ?? '',
           } as ProgramRecommend['list'][number]['programInfo'],
           classificationList: [],
@@ -124,7 +125,7 @@ const ChallengeNoticesPage = () => {
       });
       setMoreButton({
         visible: detail.isMoreVisible ?? false,
-        url: detail.moreLink ?? '',
+        url: detail.moreUrl ?? '',
       });
     }
   }, [detailQuery.data, modalMode]);
@@ -152,11 +153,11 @@ const ChallengeNoticesPage = () => {
         ...form,
         isMoreVisible: moreButton.visible,
         moreLink: moreButton.url,
-        programList: programRecommend.list.map((item) => ({
-          programType: item.programInfo.programType,
+        programs: programRecommend.list.map((item) => ({
           programId: item.programInfo.id,
           title: item.recommendTitle ?? '',
           cta: item.recommendCTA ?? '',
+          thumbnail: item.programInfo.thumbnail ?? '',
         })),
       };
     }
@@ -295,9 +296,9 @@ const ChallengeNoticesPage = () => {
                     : '-'}
                 </td>
                 <td className="px-4 py-4">
-                  {row.link ? (
+                  {row.url ? (
                     <a
-                      href={row.link}
+                      href={row.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary underline"
@@ -534,11 +535,11 @@ const ChallengeNoticesPage = () => {
                       type="text"
                       className="w-full rounded border px-3 py-2 text-sm"
                       placeholder="https://..."
-                      value={form.link}
+                      value={form.url}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          link: e.target.value,
+                          url: e.target.value,
                         }))
                       }
                     />
