@@ -213,6 +213,8 @@ const AdminChallengeReviewListPage = () => {
 
   const { data, isLoading } = useGetAdminProgramReview({
     type: 'CHALLENGE_REVIEW',
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
   });
 
   const handleRowClick = (e: React.MouseEvent, row: Row) => {
@@ -267,6 +269,8 @@ const AdminChallengeReviewListPage = () => {
           disableColumnSelector
           disableDensitySelector
           pagination
+          paginationMode="server"
+          rowCount={data?.pageInfo.totalElements ?? 0}
           pageSizeOptions={[10, 20, 50, 100]}
           paginationModel={paginationModel}
           onPaginationModelChange={handlePaginationModelChange}
