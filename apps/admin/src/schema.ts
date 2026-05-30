@@ -2268,6 +2268,7 @@ export type AdminNoticeDetail = z.infer<typeof adminNoticeDetailSchema>;
 
 export type AdminNoticeProgramItem = {
   programId: number;
+  programType?: string;
   title: string;
   cta: string;
   thumbnail: string;

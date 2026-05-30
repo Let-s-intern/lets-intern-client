@@ -77,6 +77,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
         moreLink: moreButton.url,
         programs: programRecommend.list.map((item) => ({
           programId: item.programInfo.id,
+          programType: item.programInfo.programType,
           title: item.recommendTitle ?? '',
           cta: item.recommendCTA ?? '',
           thumbnail: item.programInfo.thumbnail ?? '',
