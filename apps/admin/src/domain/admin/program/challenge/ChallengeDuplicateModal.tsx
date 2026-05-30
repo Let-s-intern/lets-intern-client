@@ -1,4 +1,5 @@
 import { duplicateChallenge } from '@/api/challenge/challenge';
+import { generateAndUploadThumbnail } from './utils/generateThumbnail';
 import {
   Button,
   Checkbox,
@@ -65,8 +66,18 @@ const ChallengeDuplicateModal = ({
 
     setIsLoading(true);
     try {
+      const effectiveTitle = copyContent ? sourceChallenge.title : title;
+
+      let thumbnailUrl: string | null = sourceChallenge.thumbnail ?? null;
+      if (generateThumbnail) {
+        thumbnailUrl = await generateAndUploadThumbnail(
+          sourceChallenge.id,
+          effectiveTitle,
+        );
+      }
+
       await duplicateChallenge(sourceChallenge.id, {
-        title: copyContent ? sourceChallenge.title : title,
+        title: effectiveTitle,
         beginning: copyContent
           ? ''
           : (beginning?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
@@ -76,12 +87,8 @@ const ChallengeDuplicateModal = ({
         startDate: copyContent
           ? ''
           : (startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
-        thumbnail: generateThumbnail
-          ? null
-          : (sourceChallenge.thumbnail ?? null),
-        desktopThumbnail: generateThumbnail
-          ? null
-          : (sourceChallenge.thumbnail ?? null),
+        thumbnail: thumbnailUrl,
+        desktopThumbnail: thumbnailUrl,
         copyContent,
         copyDashboard,
       });
