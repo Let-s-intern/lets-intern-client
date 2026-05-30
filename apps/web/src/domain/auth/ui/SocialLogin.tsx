@@ -37,14 +37,22 @@ function SocialLoginContent({ type }: SocialLoginProps) {
           href={getSocialLink('KAKAO')}
           rel="noopener noreferrer"
         >
-          <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" className="w-5" />
+          <img
+            src="/icons/kakao-icon.svg"
+            alt="카카오톡 아이콘"
+            className="w-5"
+          />
         </a>
         <a
           className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400] transition-opacity hover:opacity-80"
           href={getSocialLink('NAVER')}
           rel="noopener noreferrer"
         >
-          <img src="/icons/naver-icon.svg" alt="네이버 아이콘" className="h-4 w-4" />
+          <img
+            src="/icons/naver-icon.svg"
+            alt="네이버 아이콘"
+            className="h-4 w-4"
+          />
         </a>
       </div>
     </div>

@@ -42,7 +42,8 @@ function resolveErrorMessage(
   }
   if (status === 401) {
     return {
-      message: '인증에 실패했어요. 다시 시도하거나 비밀번호 찾기를 이용해주세요.',
+      message:
+        '인증에 실패했어요. 다시 시도하거나 비밀번호 찾기를 이용해주세요.',
       isCredentialError: false,
     };
   }
@@ -59,7 +60,9 @@ function resolveErrorMessage(
     };
   }
   return {
-    message: serverMessage ?? '로그인에 실패했어요. 네트워크 상태를 확인하고 다시 시도해주세요.',
+    message:
+      serverMessage ??
+      '로그인에 실패했어요. 네트워크 상태를 확인하고 다시 시도해주세요.',
     isCredentialError: false,
   };
 }
@@ -199,7 +202,11 @@ const useLogin = () => {
     }
 
     // 소셜 콜백 처리(result/error)가 이미 redirect를 수행하므로 중복 push 방지.
-    if (isLoggedIn && !searchParams.get('result') && !searchParams.get('error')) {
+    if (
+      isLoggedIn &&
+      !searchParams.get('result') &&
+      !searchParams.get('error')
+    ) {
       router.push(redirect);
     }
   }, [searchParams, router, isLoggedIn, redirect, login]);
