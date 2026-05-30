@@ -4,9 +4,19 @@ import { Popup } from '@letscareer/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import posthog from 'posthog-js';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import useReadingProgress from '../hooks/useReadingProgress';
 import { blogScrollPopupData } from './data/scrollPopup.data';
+import {
+  BLOG_POPUP_EVENTS,
+  BLOG_POPUP_FLAG_KEY,
+  captureExperimentEvent,
+  DISMISS_REASON,
+  DismissReason,
+  parseBlogId,
+  parseTriggerRatio,
+} from './experiment';
 import { canShowPopup, hidePopupForDay } from './popupGate';
 
 // 진행률 측정 대상 본문 요소 id (page.tsx의 <article>에 부여)
@@ -29,7 +39,7 @@ export function BlogNewsletterPopup() {
     baseHeight,
     alt,
     link,
-    triggerRatio,
+    triggerRatio: fallbackTriggerRatio,
     borderRadiusPx,
   } = blogScrollPopupData;
 
@@ -37,9 +47,35 @@ export function BlogNewsletterPopup() {
   // 한 글 보기 안에서는 1회만. (글 이동 시 pathname 변경으로 리셋 → 매 방문 재노출)
   const triggeredRef = useRef(false);
 
+  const pathname = usePathname();
+  const blogId = parseBlogId(pathname);
+
+  // 실험 변형/임계값. 마운트 시점에 플래그를 평가해 모든 방문자의 노출을 기록한다(아래 useEffect).
+  // 플래그 미로딩/실패/SDK 미초기화 시 control(null)·데이터 파일 폴백 ratio(0.6)로 현행 동작 유지.
+  const variantRef = useRef<string | null>(null);
+  const triggerRatioRef = useRef<number>(fallbackTriggerRatio);
+
+  // 노출(exposure) 기록은 "팝업이 뜨는 시점"이 아니라 "페이지 마운트 시점"에 1회 발생해야 한다.
+  // 100% 변형은 끝까지 읽은 사람만 팝업이 뜨므로, 노출을 팝업 시점에 잡으면 분모(방문자 수)가
+  // 편향돼 "방문자당 전환수" 비교가 무너진다. getFeatureFlag 호출이 $feature_flag_called를
+  // 발화해 모든 방문자를 실험 분모로 등록한다.
+  useEffect(() => {
+    if (!posthog.__loaded) {
+      // SDK 미초기화(env 미설정/프리뷰): 노출 기록 불가 → 폴백값으로 현행 동작만 유지.
+      variantRef.current = null;
+      triggerRatioRef.current = fallbackTriggerRatio;
+      return;
+    }
+
+    const variant = posthog.getFeatureFlag(BLOG_POPUP_FLAG_KEY);
+    variantRef.current = typeof variant === 'string' ? variant : null;
+    triggerRatioRef.current = parseTriggerRatio(
+      posthog.getFeatureFlagPayload(BLOG_POPUP_FLAG_KEY),
+    );
+  }, [pathname, fallbackTriggerRatio]);
+
   // 클라이언트 사이드 네비게이션(글→글 이동) 시 컴포넌트가 재사용되어 triggeredRef가
   // 유지되는 문제 방지: 경로가 바뀌면 트리거/열림 상태를 리셋해 새 글에서 다시 노출되게 한다.
-  const pathname = usePathname();
   useEffect(() => {
     triggeredRef.current = false;
     setOpen(false);
@@ -53,7 +89,8 @@ export function BlogNewsletterPopup() {
 
   useEffect(() => {
     if (triggeredRef.current) return;
-    if (progress < triggerRatio) return;
+    // 임계값 출처만 플래그 페이로드(ratio)로 교체. 트리거/게이트/쿨다운 로직은 그대로.
+    if (progress < triggerRatioRef.current) return;
 
     // 진행률 도달 후 1회만 게이트 검사 (통과/차단 무관하게 더는 재시도하지 않음)
     triggeredRef.current = true;
@@ -61,11 +98,33 @@ export function BlogNewsletterPopup() {
     if (!canShowPopup()) return;
 
     setOpen(true);
-  }, [progress, triggerRatio]);
+
+    // 팝업이 실제로 열린 직후 노출 이벤트(전환율 분자 후보). 노출(exposure) 기록과는 별개.
+    captureExperimentEvent(
+      BLOG_POPUP_EVENTS.shown,
+      { variant: variantRef.current, blogId },
+      { trigger_ratio: triggerRatioRef.current },
+    );
+  }, [progress, blogId]);
+
+  const dismiss = (reason: DismissReason) => {
+    captureExperimentEvent(BLOG_POPUP_EVENTS.dismissed, {
+      variant: variantRef.current,
+      blogId,
+    }, { reason });
+    setOpen(false);
+  };
 
   const handleHideForDay = () => {
     hidePopupForDay();
-    setOpen(false);
+    dismiss(DISMISS_REASON.hideDay);
+  };
+
+  const handleCtaClick = () => {
+    captureExperimentEvent(BLOG_POPUP_EVENTS.ctaClicked, {
+      variant: variantRef.current,
+      blogId,
+    });
   };
 
   return (
@@ -95,7 +154,7 @@ export function BlogNewsletterPopup() {
           />
 
           {/* 이미지 전체가 클릭 영역 (CTA pill 한정 아님) */}
-          <PopupLink link={link} ariaLabel={alt} />
+          <PopupLink link={link} ariaLabel={alt} onClick={handleCtaClick} />
         </div>
 
         {/* footer 기능 버튼 (이미지 아님) */}
@@ -109,7 +168,7 @@ export function BlogNewsletterPopup() {
           </button>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => dismiss(DISMISS_REASON.close)}
             className="border-neutral-80 text-neutral-0 flex-1 border-l py-3.5 font-semibold"
           >
             닫기
@@ -123,13 +182,19 @@ export function BlogNewsletterPopup() {
 /**
  * 이미지 전체를 덮는 투명 링크(inset-0). 링크가 비어 있으면 렌더하지 않는다(클릭 무효).
  * 외부 링크(`http`)는 새 탭으로, 내부 경로는 `next/link`로 이동한다.
+ *
+ * `onClick`(전환 capture)은 네비게이션 전에 동기 실행된다.
+ * 외부 링크는 새 탭(`target="_blank"`)이라 현재 탭이 유지되어 capture 손실이 없고,
+ * 내부 링크도 onClick이 next/link 라우팅보다 먼저 호출돼 누락되지 않는다.
  */
 function PopupLink({
   link,
   ariaLabel,
+  onClick,
 }: {
   link: string;
   ariaLabel: string;
+  onClick: () => void;
 }): ReactNode {
   if (!link) return null;
 
@@ -143,9 +208,17 @@ function PopupLink({
         target="_blank"
         rel="noopener noreferrer"
         className={className}
+        onClick={onClick}
       />
     );
   }
 
-  return <Link href={link} aria-label={ariaLabel} className={className} />;
+  return (
+    <Link
+      href={link}
+      aria-label={ariaLabel}
+      className={className}
+      onClick={onClick}
+    />
+  );
 }
