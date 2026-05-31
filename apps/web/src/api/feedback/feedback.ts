@@ -77,6 +77,20 @@ export const useWrittenFeedbackListQuery = (challengeId?: number | string) => {
   });
 };
 
+/** PATCH /api/v1/feedback/{feedbackId} 라이브 피드백 후기 작성 */
+export const usePatchFeedbackReview = (feedbackId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ score, review }: { score: number; review: string }) =>
+      axios.patch(`/feedback/${feedbackId}`, { score, review }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['feedbackDetail', feedbackId],
+      });
+    },
+  });
+};
+
 /** POST /api/v1/challenge/{challengeId}/{missionId}/feedback/{feedbackSlotId} LIVE 피드백 예약 */
 export const usePostFeedbackReservation = (challengeId: string | number) => {
   const queryClient = useQueryClient();

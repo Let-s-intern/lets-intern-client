@@ -66,6 +66,8 @@ export const feedbackDetailSchema = z.object({
     status: feedbackStatusSchema,
     mentorStatus: feedbackAttendanceStatusSchema.nullable(),
     menteeStatus: feedbackAttendanceStatusSchema.nullable(),
+    score: z.number().nullable(),
+    review: z.string().nullable(),
   }),
 });
 
