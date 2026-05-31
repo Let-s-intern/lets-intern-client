@@ -53,7 +53,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
       >
         {programs.map((program) => (
           <SwiperSlide
-            key={program.programId}
+            key={`${program.programId}-${program.programType}`}
             className="dashboard_programrec !w-[214px] cursor-pointer"
             onClick={() => handleClickSlide(program)}
           >
