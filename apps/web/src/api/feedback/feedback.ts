@@ -104,7 +104,6 @@ export const usePostFeedbackReservation = (challengeId: string | number) => {
     }) =>
       axios.post(
         `/challenge/${challengeId}/${missionId}/feedback/${feedbackSlotId}`,
-        { preQuestion: '' }, // BE에서 preQuestion 필드 제거 후 삭제
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
