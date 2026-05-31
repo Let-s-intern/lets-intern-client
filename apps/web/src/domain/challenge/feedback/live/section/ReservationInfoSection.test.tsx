@@ -34,6 +34,10 @@ const feedbackInfo: FeedbackInfo = {
   endDate: '2026-05-04T10:30:00+09:00',
   meetingUrl: 'https://zoom.example.com/j/abc',
   status: 'RESERVED',
+  mentorStatus: null,
+  menteeStatus: null,
+  score: null,
+  review: null,
 };
 
 const ORIGINAL_BASE = process.env.NEXT_PUBLIC_JITSI_BASE_URL;
