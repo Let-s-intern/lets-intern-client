@@ -68,7 +68,7 @@ const ProgramRecommendEditor = ({
         <div className="flex min-w-full flex-col gap-2">
           {programRecommend.list.map((item) => (
             <ProgramRecommendItem
-              key={item.programInfo.id}
+              key={`${item.programInfo.id}-${item.programInfo.programType}`}
               item={item}
               onChangeItem={onChangeItem}
             />
