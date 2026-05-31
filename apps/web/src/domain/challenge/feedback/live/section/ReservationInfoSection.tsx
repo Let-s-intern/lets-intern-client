@@ -122,7 +122,9 @@ const ReservationInfoSection = ({
             </div>
 
             {/* 하단 액션 */}
-            {status === 'completed' && <LiveFeedbackReview />}
+            {status === 'completed' && feedbackId != null && (
+              <LiveFeedbackReview feedbackId={feedbackId} />
+            )}
             {status === 'reserved' && (
               // TODO(임시): 외부 회의 링크 대신 Jitsi 임베드 모달로 연결 (PRD §13).
               //   buildJitsiRoomUrl(feedbackId, salt)로 멘토와 동일 방 입장.
