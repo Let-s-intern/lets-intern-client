@@ -70,6 +70,7 @@ const MobileFeedbackPage = ({
       onChange={setEditorContent}
       isReadOnly={isReadOnly}
       isAbsent={isAbsent}
+      hasMentee={!!currentMentee}
     />
   );
 

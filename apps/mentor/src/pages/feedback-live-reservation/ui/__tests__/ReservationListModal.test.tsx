@@ -9,11 +9,19 @@ const useUserQueryMock = vi.fn();
 const useFeedbackMentorDetailQueryMock = vi.fn();
 const useFeedbackMentorSlotsQueryMock = vi.fn();
 
+const noopMutation = {
+  mutate: vi.fn(),
+  mutateAsync: vi.fn(),
+  isPending: false,
+};
+
 vi.mock('@/api/feedback/feedback', () => ({
   useFeedbackMentorListQuery: () => useFeedbackMentorListQueryMock(),
   useFeedbackMentorDetailQuery: (id: number | null) =>
     useFeedbackMentorDetailQueryMock(id),
   useFeedbackMentorSlotsQuery: () => useFeedbackMentorSlotsQueryMock(),
+  useUpdateFeedbackByMentorMutation: () => noopMutation,
+  useUpdateFeedbackMeetingUrlMutation: () => noopMutation,
 }));
 
 vi.mock('@/api/user/user', () => ({

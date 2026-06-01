@@ -23,9 +23,7 @@ describe('LiveAvailabilityContent', () => {
   it('슬롯 개수가 27개다 (09:00~22:00, 30분 간격)', () => {
     const { container } = render(<LiveAvailabilityContent {...baseProps} />);
     // 시간 레이블 셀 — grid 첫 번째 열의 시간 표시
-    const timeCells = container.querySelectorAll(
-      '.grid .border-b.border-r.bg-white.px-2.py-2.text-center',
-    );
+    const timeCells = container.querySelectorAll('[data-time-label]');
     // 27 슬롯: 09:00, 09:30, ..., 21:30, 22:00
     expect(timeCells.length).toBe(27);
   });
@@ -58,7 +56,7 @@ describe('LiveAvailabilityContent', () => {
   it('onOpenReservation 이 없으면 "예약현황 보기" 버튼을 노출하지 않는다', () => {
     render(<LiveAvailabilityContent {...baseProps} />);
     expect(
-      screen.queryByRole('button', { name: '예약현황 보기' }),
+      screen.queryByRole('button', { name: '예약 현황 보기' }),
     ).not.toBeInTheDocument();
   });
 
@@ -71,7 +69,7 @@ describe('LiveAvailabilityContent', () => {
         onOpenReservation={onOpenReservation}
       />,
     );
-    await user.click(screen.getByRole('button', { name: '예약현황 보기' }));
+    await user.click(screen.getByRole('button', { name: '예약 현황 보기' }));
     expect(onOpenReservation).toHaveBeenCalledTimes(1);
   });
 
@@ -84,7 +82,7 @@ describe('LiveAvailabilityContent', () => {
       />,
     );
     expect(
-      screen.queryByRole('button', { name: '예약현황 보기' }),
+      screen.queryByRole('button', { name: '예약 현황 보기' }),
     ).not.toBeInTheDocument();
   });
 });

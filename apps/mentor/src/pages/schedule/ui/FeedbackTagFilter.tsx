@@ -38,7 +38,7 @@ const FeedbackTagFilter = ({
         type="button"
         onClick={onClearAll}
         className={twMerge(
-          'border-neutral-80 rounded-md border bg-white px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
+          'border-neutral-80 rounded-md border bg-white px-3 py-2 text-xs font-medium leading-5 transition-colors',
           isAllSelected
             ? 'border-primary bg-primary text-white'
             : 'text-neutral-500 hover:bg-neutral-50',
@@ -77,7 +77,7 @@ const FeedbackTagButton = ({
       type="button"
       onClick={onToggle}
       className={twMerge(
-        'flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium leading-5 transition-colors',
+        'flex items-center gap-1 rounded-md px-3 py-2 text-xs font-medium leading-5 transition-colors',
         colorClass,
       )}
       aria-pressed={isSelected}
@@ -113,20 +113,14 @@ const FeedbackTagIcon = ({ type }: { type: FeedbackTagType }) => {
   if (type === 'live') {
     return (
       <svg
-        width="14"
-        height="14"
-        viewBox="0 0 20 20"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
         fill="none"
         className="shrink-0"
         aria-hidden
       >
-        <path
-          d="M12.4997 16.666H7.49967M3.33301 11.4995V6.83284C3.33301 5.89942 3.33301 5.43237 3.51466 5.07585C3.67445 4.76224 3.92924 4.50746 4.24284 4.34767C4.59936 4.16602 5.06642 4.16602 5.99984 4.16602H13.9998C14.9333 4.16602 15.3993 4.16602 15.7558 4.34767C16.0694 4.50746 16.3251 4.76224 16.4849 5.07585C16.6663 5.43202 16.6663 5.89851 16.6663 6.83011V11.5019C16.6663 12.4335 16.6663 12.8993 16.4849 13.2555C16.3251 13.5691 16.0694 13.8247 15.7558 13.9845C15.3997 14.166 14.9338 14.166 14.0022 14.166H5.9971C5.0655 14.166 4.59901 14.166 4.24284 13.9845C3.92924 13.8247 3.67445 13.5691 3.51466 13.2555C3.33301 12.899 3.33301 12.4329 3.33301 11.4995ZM12.083 9.16602L8.33301 6.66602V11.666L12.083 9.16602Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M3 2.5L9.5 6L3 9.5V2.5Z" fill="currentColor" />
       </svg>
     );
   }

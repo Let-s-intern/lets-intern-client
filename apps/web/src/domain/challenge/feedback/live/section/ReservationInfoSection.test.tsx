@@ -16,6 +16,19 @@ jest.mock('@letscareer/ui/JitsiEmbed', () => ({
   ),
 }));
 
+// 입장 핸들러가 쓰는 회의실 URL PATCH 훅 스텁 — axios(@letscareer/api)·QueryClient 체인 차단.
+jest.mock('@/api/feedback/feedback', () => ({
+  __esModule: true,
+  usePatchFeedbackMeetingUrl: () => ({
+    mutateAsync: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
+// 멘티 채팅 로스터 훅도 user api(axios) 체인을 끌어오므로 스텁으로 대체.
+jest.mock('../useMenteeChatRooms', () => ({
+  useMenteeChatRooms: () => [],
+}));
+
 const FEEDBACK_ID = 4242;
 const MEETING_URL = 'https://meet.jit.si/letscareer-x7k2p9';
 
@@ -25,10 +38,12 @@ const mentor: Mentor = {
   profileImgUrl: '',
 };
 
+// 입장 게이트(isEntranceActive)는 "시작 10분 전 ~ 종료 전"에만 활성이므로,
+// 입장 버튼을 누르는 테스트는 시작 +5분 / 종료 +35분(=현재 입장 가능)으로 둔다.
 const feedbackInfo: FeedbackInfo = {
   feedbackId: FEEDBACK_ID,
-  startDate: '2026-05-04T10:00:00+09:00',
-  endDate: '2026-05-04T10:30:00+09:00',
+  startDate: new Date(Date.now() + 5 * 60_000).toISOString(),
+  endDate: new Date(Date.now() + 35 * 60_000).toISOString(),
   meetingUrl: MEETING_URL,
   status: 'RESERVED',
   mentorStatus: null,
@@ -80,8 +95,19 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
     expect(embed).toHaveAttribute('data-room-url', MEETING_URL);
   });
 
-  it('meetingUrl 미생성(null) 시 입장 모달이 회의실 준비 중 안내를 표시한다', async () => {
+  it('meetingUrl 미생성(null) + 살아있는 회의실 도메인이 없으면 알림 후 입장하지 않는다', async () => {
+    // 입장 순서 무관(데드락 방지): meetingUrl 이 null 이어도 멘티가 직접 헬스체크 후
+    // 회의실을 생성(PATCH)하려 시도한다. 단, 살아있는 도메인이 하나도 없으면 알림 후 종료.
+    // (생성 성공 경로는 @letscareer/ui ensureLiveMeetingUrl 단위 테스트가 커버)
     const user = userEvent.setup();
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    // 환경에 따라 global.fetch 유무가 다르므로 헬스체크가 결정적으로 실패하도록 stub
+    // (실제 네트워크 호출/타임아웃 대기로 인한 flaky·지연 방지).
+    const originalFetch = global.fetch;
+    global.fetch = jest
+      .fn()
+      .mockRejectedValue(new Error('health-check down')) as typeof fetch;
+
     render(
       <ReservationInfoSection
         mentor={mentor}
@@ -95,9 +121,11 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
       screen.getByRole('button', { name: 'LIVE 피드백 입장하기' }),
     );
 
+    // 살아있는 도메인 없음 → 알림·모달 미오픈.
+    expect(alertSpy).toHaveBeenCalled();
     expect(screen.queryByTestId('jitsi-embed')).not.toBeInTheDocument();
-    expect(
-      screen.getByText(/회의실이 아직 준비되지 않았습니다/),
-    ).toBeInTheDocument();
+
+    global.fetch = originalFetch;
+    alertSpy.mockRestore();
   });
 });

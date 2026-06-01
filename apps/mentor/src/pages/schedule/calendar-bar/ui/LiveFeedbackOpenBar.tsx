@@ -1,6 +1,8 @@
 'use client';
 
 import LiveFeedbackOpenIcon from '@/common/icon/feedback/LiveFeedbackOpenIcon';
+import { twMerge } from '@/lib/twMerge';
+import { scheduleDesign } from '../../scheduleDesign';
 import type { PeriodBarData } from '../../types';
 import { currentNow } from '../../constants/mockNow';
 
@@ -9,83 +11,63 @@ interface LiveFeedbackOpenBarProps {
   onMentorOpenClick?: () => void;
 }
 
+/** 하루의 밀리초 — D-day 계산용 */
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** 오늘 기준 D-day (양수=남음, 0=오늘, 음수=경과). */
+function daysFromToday(iso: string): number {
+  const now = currentNow();
+  const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const t = new Date(iso);
+  const b = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
+}
+
 /**
- * 라이브 피드백 일정 오픈 바 (PRD-0503 #3 디자인 갱신).
+ * 라이브 피드백 일정 오픈 바 — 2줄 레이아웃 (디자인 시안 image #17).
+ * 1줄: [캘린더 아이콘] LIVE 피드백 일정 오픈 + 챌린지명(회색)
+ * 2줄: D-N · 예약 가능 멘티 N
  *
- * 디자인 참조: `.claude/tasks/라이브 피드백 일정 오픈.png`
- * - 흰 배경 + 옅은 회색 테두리 + 둥근 모서리
- * - 좌측: 캘린더 아이콘 (블루 톤)
- * - "LIVE 피드백 일정 오픈" — LIVE 빨강 강조
- * - 완료 상태일 때 옅은 회색 "완료" 배지
- * - 우측: 챌린지명 + chevron-right
- *
- * 멘토 화이트리스트(`live-feedback-mentor-open`) 한정. 멘티 신청은 이 바를 사용하지 않는다.
+ * ⚠️ "예약 가능 멘티" 전용 BE 필드가 없어 notSubmittedCount(미예약 멘티 수)로 임시 표기.
+ * 멘토 화이트리스트(`live-feedback-mentor-open`) 한정.
  */
 const LiveFeedbackOpenBar = ({
   bar,
   onMentorOpenClick,
 }: LiveFeedbackOpenBarProps) => {
   const isMentorPhase = bar.barType === 'live-feedback-mentor-open';
-  // 멘토 오픈기간 완료 = 멘토가 슬롯을 1개 이상 저장(`completedCount > 0`) 또는 기간 경과
-  const isPast = new Date(bar.endDate).getTime() < currentNow().getTime();
-  const isCompleted = isMentorPhase
-    ? bar.completedCount > 0 || isPast
-    : (bar.submittedCount > 0 &&
-        bar.submittedCount >= bar.submittedCount + bar.notSubmittedCount) ||
-      isPast;
-
-  const interactive = isMentorPhase && onMentorOpenClick;
+  const interactive = isMentorPhase && !!onMentorOpenClick;
   const Tag = interactive ? 'button' : 'div';
+
+  const dday = daysFromToday(bar.feedbackStartDate);
+  const ddayLabel = dday > 0 ? `D-${dday}` : dday === 0 ? 'D-DAY' : '진행 중';
 
   return (
     <Tag
       type={interactive ? 'button' : undefined}
       onClick={interactive ? onMentorOpenClick : undefined}
-      className={`border-neutral-80 flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border bg-white px-3 text-left ${
-        interactive ? 'hover:bg-neutral-95 transition-colors' : ''
-      }`}
-      aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}${
-        isCompleted ? ' (완료)' : ''
-      }`}
-    >
-      {/* 좌측: 캘린더 아이콘 */}
-      <LiveFeedbackOpenIcon size={18} className="shrink-0" />
-
-      {/* 라벨: LIVE(빨강) + " 피드백 일정 오픈" */}
-      <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
-        <span className="text-red-500">LIVE</span> 피드백 일정 오픈
-      </span>
-
-      {/* 완료 배지 */}
-      {isCompleted && (
-        <span className="bg-neutral-95 text-neutral-40 shrink-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px]">
-          완료
-        </span>
+      className={twMerge(
+        scheduleDesign.surface,
+        'flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left',
+        interactive ? 'hover:bg-neutral-95 transition-colors' : '',
       )}
+      aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}`}
+    >
+      {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}
+      <div className="flex items-center gap-2">
+        <LiveFeedbackOpenIcon size={18} className="shrink-0" />
+        <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
+          <span className="text-red-500">LIVE</span> 피드백 일정 오픈
+        </span>
+        <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
+          {bar.challengeTitle}
+        </span>
+      </div>
 
-      <span className="flex-1" />
-
-      {/* 우측: 챌린지명 */}
-      <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
-        {bar.challengeTitle}
-      </span>
-
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="text-neutral-40 shrink-0"
-        aria-hidden
-      >
-        <path
-          d="M9 6l6 6-6 6"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {/* 2줄: 보조 정보 (아이콘 너비만큼 들여쓰기) */}
+      <div className="text-xxsmall12 text-neutral-40 pl-[26px] tracking-[-0.3px]">
+        {ddayLabel} · 예약 가능 멘티 {bar.notSubmittedCount}
+      </div>
     </Tag>
   );
 };

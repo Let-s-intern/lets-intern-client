@@ -38,37 +38,16 @@ describe('LiveFeedbackOpenBar (PRD-0503 #3 디자인)', () => {
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });
 
-  it('슬롯이 저장되지 않은 진행 상태에서는 "완료" 배지를 노출하지 않는다', () => {
-    render(
+  it('2줄 보조정보(D-day · 예약 가능 멘티)를 노출한다', () => {
+    const { container } = render(
       <LiveFeedbackOpenBar
-        bar={makeBar({ completedCount: 0 })}
+        bar={makeBar({ notSubmittedCount: 7 })}
         onMentorOpenClick={() => {}}
       />,
     );
 
-    expect(screen.queryByText('완료')).not.toBeInTheDocument();
-  });
-
-  it('completedCount > 0 이면 "완료" 배지를 노출한다', () => {
-    render(
-      <LiveFeedbackOpenBar
-        bar={makeBar({ completedCount: 3 })}
-        onMentorOpenClick={() => {}}
-      />,
-    );
-
-    expect(screen.getByText('완료')).toBeInTheDocument();
-  });
-
-  it('기간 경과면 슬롯 미저장이어도 "완료"로 본다', () => {
-    render(
-      <LiveFeedbackOpenBar
-        bar={makeBar({ endDate: '2000-01-01', completedCount: 0 })}
-        onMentorOpenClick={() => {}}
-      />,
-    );
-
-    expect(screen.getByText('완료')).toBeInTheDocument();
+    expect(container.textContent).toContain('예약 가능 멘티 7');
+    expect(container.textContent).toMatch(/D-\d+|D-DAY|진행 중/);
   });
 
   it('멘토 케이스 + onMentorOpenClick 이 주어지면 클릭 가능하다', () => {
@@ -77,6 +56,13 @@ describe('LiveFeedbackOpenBar (PRD-0503 #3 디자인)', () => {
 
     fireEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalled();
+  });
+
+  it('버튼에 rounded(4px) 클래스가 적용된다', () => {
+    render(
+      <LiveFeedbackOpenBar bar={makeBar()} onMentorOpenClick={() => {}} />,
+    );
+    expect(screen.getByRole('button').className).toContain('rounded');
   });
 });
 
@@ -104,27 +90,65 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
 
     expect(screen.getByText('15:30')).toBeInTheDocument();
-    expect(screen.getByText('LIVE')).toBeInTheDocument();
-    expect(screen.getByText('피드백')).toBeInTheDocument();
+    expect(screen.getByText('LIVE 피드백')).toBeInTheDocument();
     expect(screen.getByText('김멋쟁 멘티')).toBeInTheDocument();
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });
 
-  it('진행중 상태 배지를 표시한다', () => {
+  it('진행 중 상태 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
-    expect(screen.getByText('진행중')).toBeInTheDocument();
+    expect(screen.getByText('진행 중')).toBeInTheDocument();
   });
 
-  it('완료 상태 배지를 표시한다', () => {
+  it('진행 완료 상태 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('completed')} />);
-    expect(screen.getByText('완료')).toBeInTheDocument();
+    expect(screen.getByText('진행 완료')).toBeInTheDocument();
   });
 
-  it('대기 상태에서는 상태 배지를 표시하지 않는다', () => {
+  it('대기(waiting) 상태에서는 "진행 전" 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('waiting')} />);
+    expect(screen.getByText('진행 전')).toBeInTheDocument();
+  });
 
-    expect(screen.queryByText('진행중')).not.toBeInTheDocument();
-    expect(screen.queryByText('완료')).not.toBeInTheDocument();
+  it('상태가 없으면(undefined) "진행 전" 배지를 표시한다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar(undefined)} />);
+    expect(screen.getByText('진행 전')).toBeInTheDocument();
+  });
+
+  it('취소(cancelled) 상태 배지를 표시한다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('cancelled')} />);
+    expect(screen.getByText('취소')).toBeInTheDocument();
+  });
+
+  it('취소 배지는 연빨강 톤 색상을 가진다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('cancelled')} />);
+    const badge = screen.getByText('취소');
+    expect(badge.className).toContain('bg-red-50');
+    expect(badge.className).toContain('text-red-500');
+  });
+
+  it('진행 중 배지는 보라(primary) 톤 색상을 가진다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
+    const badge = screen.getByText('진행 중');
+    expect(badge.className).toContain('bg-primary-5');
+    expect(badge.className).toContain('text-primary');
+  });
+
+  it('진행 완료 배지는 회색 아웃라인 톤 색상을 가진다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('completed')} />);
+    const badge = screen.getByText('진행 완료');
+    expect(badge.className).toContain('bg-white');
+    expect(badge.className).toContain('text-neutral-500');
+  });
+
+  it('우하단 ⋮(케밥) 메뉴를 표시한다', () => {
+    const { container } = render(
+      <LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />,
+    );
+    // 케밥 = 세로 점 3개(circle 3개)
+    expect(container.querySelectorAll('circle').length).toBeGreaterThanOrEqual(
+      3,
+    );
   });
 });
 
