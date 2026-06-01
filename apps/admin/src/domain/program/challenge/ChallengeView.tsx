@@ -407,7 +407,6 @@ const ChallengeView: React.FC<{
           <ChallengeFaq
             faqData={faqData}
             challengeType={challenge.challengeType}
-            faqCategory={receivedContent.faqCategory}
           />
           <ChallengeInfoBottom challenge={challengeTransformed} />
         </div>

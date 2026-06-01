@@ -5,33 +5,44 @@ import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
-import { ChallengeContent } from '@/types/interface';
 import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
+const CATEGORY_ORDER = ['진행 방식', '신청/환불', '페이백'];
+const LAST_CATEGORY = '기타';
+
 const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY, HR } =
   challengeTypeSchema.enum;
 
 interface ChallengeFaqProps {
   faqData?: faqSchemaType;
-  faqCategory: ChallengeContent['faqCategory'];
   challengeType: ChallengeType;
   headerColorOverride?: string;
 }
 
 function ChallengeFaq({
   faqData,
-  faqCategory,
   challengeType,
   headerColorOverride,
 }: ChallengeFaqProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const faqList = faqData?.faqList;
-  const categoryList = [...new Set(faqCategory)];
+  const categoryList = useMemo(() => {
+    const weight = (cat: string) => {
+      if (cat === LAST_CATEGORY) return Infinity;
+      const i = CATEGORY_ORDER.indexOf(cat);
+      return i === -1 ? CATEGORY_ORDER.length : i;
+    };
+    return [
+      ...new Set(
+        (faqList ?? []).map((faq) => faq.category ?? '').filter(Boolean),
+      ),
+    ].sort((a, b) => weight(a) - weight(b));
+  }, [faqList]);
 
   const styles = useMemo(() => {
     switch (challengeType) {
