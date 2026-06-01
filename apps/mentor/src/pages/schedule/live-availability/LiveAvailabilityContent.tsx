@@ -576,12 +576,14 @@ const LiveAvailabilityContent = ({
                       {period.challengeTitle}
                       {period.generation !== undefined &&
                         ` ${period.generation}기`}
-                      {period.th !== undefined && ` ${period.th}회차`} LIVE 피드백
-                      기간
+                      {period.th !== undefined && ` ${period.th}회차`} LIVE
+                      피드백 기간
                     </span>
                     <span className="text-xxsmall12 ml-auto shrink-0 font-semibold">
                       👥 {period.reservedCount ?? 0}
-                      {period.capacity !== undefined ? `/${period.capacity}` : ''}
+                      {period.capacity !== undefined
+                        ? `/${period.capacity}`
+                        : ''}
                     </span>
                   </div>
                 </div>
