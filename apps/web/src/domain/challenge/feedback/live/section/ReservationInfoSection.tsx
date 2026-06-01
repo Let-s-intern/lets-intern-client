@@ -9,7 +9,7 @@ import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import MentorCard from '../ui/MentorCard';
-import { formatReservationTime } from '../utils';
+import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
 // 채팅 모달은 PocketBase 클라이언트를 끌어오므로 동적 import 로 분리해
@@ -38,11 +38,10 @@ const ReservationInfoSection = ({
   const chatRooms = useMenteeChatRooms(isChatOpen);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
-  // TODO(임시): 정식 운영 시 T-10 게이팅 복원.
-  //   const entranceActive = isEntranceActive(feedbackInfo?.startDate, feedbackInfo?.endDate);
-  // 임시 변경: 라이브 입장 시간 게이팅을 우회해 항상 입장 허용 (PRD §13).
-  // isEntranceActive 함수는 ../utils 에 보존(복원 시 import 재추가).
-  const entranceActive: boolean = true;
+  const entranceActive = isEntranceActive(
+    feedbackInfo?.startDate,
+    feedbackInfo?.endDate,
+  );
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
