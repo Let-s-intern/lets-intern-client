@@ -170,12 +170,14 @@ function EditPanel({ detail }: { detail: FeedbackDetailAdminVo }) {
   }, [detail]);
 
   const handleSave = () => {
+    // 미선택(score 0)·빈 후기는 null 로 명시 전송해 기존 값을 초기화한다.
+    const trimmedReview = review.trim();
     updateFeedback({
       feedbackId: detail.feedbackId,
       mentorStatus,
       menteeStatus,
-      score: score > 0 ? score : undefined,
-      review: review.trim() ? review : undefined,
+      score: score > 0 ? score : null,
+      review: trimmedReview ? trimmedReview : null,
       reviewIsVisible,
     });
   };

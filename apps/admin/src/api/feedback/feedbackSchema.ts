@@ -94,13 +94,15 @@ export type GetAdminFeedbackDetailResponse = z.infer<
 /**
  * [어드민] 라이브 피드백 수정 요청 (PATCH /admin/feedback/{feedbackId}).
  * 모든 필드 optional — 보낸 필드만 갱신한다.
+ * score·review 는 `null` 을 명시 전송하면 기존 값을 초기화(미선택/빈 값)한다.
+ * (undefined 는 PATCH 특성상 기존 값 유지)
  */
 export interface UpdateAdminFeedbackReq {
   feedbackId: number;
   mentorStatus?: FeedbackAttendanceStatus;
   menteeStatus?: FeedbackAttendanceStatus;
-  score?: number;
-  review?: string;
+  score?: number | null;
+  review?: string | null;
   reviewIsVisible?: boolean;
 }
 

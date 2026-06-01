@@ -86,12 +86,21 @@ const MenteeAttendanceCheckModal = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdownOpen]);
 
-  // 저장 게이트: 종료 시각 이후에만 저장·선택 가능
+  // 모달이 열려 있는 동안 1초마다 현재 시각을 갱신해, 종료 시각이 지나면
+  // (모달을 닫지 않아도) 저장 버튼이 자동으로 활성화되도록 한다.
+  const [now, setNow] = useState(() => dayjs().valueOf());
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer = setInterval(() => setNow(dayjs().valueOf()), 1000);
+    return () => clearInterval(timer);
+  }, [isOpen]);
+
+  // 저장 게이트: 종료 시각 이후에만 "저장" 가능. (선택 자체는 항상 허용)
   const canSave = useMemo(() => {
     const end = dayjs(endDate);
     if (!end.isValid()) return false;
-    return dayjs().valueOf() >= end.valueOf();
-  }, [endDate]);
+    return now >= end.valueOf();
+  }, [endDate, now]);
 
   const selectedLabel = selected
     ? SELECTABLE_STATUSES.find((s) => s.value === selected)?.label
@@ -137,15 +146,13 @@ const MenteeAttendanceCheckModal = ({
             {menteeName} 멘티 참여 상태
           </span>
           <div className="relative" ref={dropdownRef}>
+            {/* 선택은 종료 전에도 미리 가능. 저장만 종료 시각 이후로 게이트한다. */}
             <button
               type="button"
-              disabled={!canSave}
               onClick={() => setIsDropdownOpen((prev) => !prev)}
               className={twMerge(
                 'flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm transition-colors',
-                canSave
-                  ? 'border-neutral-300 bg-white text-neutral-800 hover:border-neutral-400'
-                  : 'cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-300',
+                'border-neutral-300 bg-white text-neutral-800 hover:border-neutral-400',
               )}
             >
               <span className={selectedLabel ? '' : 'text-neutral-400'}>
@@ -171,7 +178,7 @@ const MenteeAttendanceCheckModal = ({
               </svg>
             </button>
 
-            {isDropdownOpen && canSave && (
+            {isDropdownOpen && (
               <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-lg">
                 {SELECTABLE_STATUSES.map((status) => (
                   <li key={status.value}>
