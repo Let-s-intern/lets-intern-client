@@ -91,6 +91,20 @@ export const usePatchFeedbackReview = (feedbackId: number) => {
   });
 };
 
+/** PATCH /api/v1/feedback/{feedbackId}/meeting-url 회의실 URL 업데이트 */
+export const usePatchFeedbackMeetingUrl = (feedbackId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ meetingUrl }: { meetingUrl: string }) =>
+      axios.patch(`/feedback/${feedbackId}/meeting-url`, { meetingUrl }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['feedbackDetail', feedbackId],
+      });
+    },
+  });
+};
+
 /** POST /api/v1/challenge/{challengeId}/{missionId}/feedback/{feedbackSlotId} LIVE 피드백 예약 */
 export const usePostFeedbackReservation = (challengeId: string | number) => {
   const queryClient = useQueryClient();
