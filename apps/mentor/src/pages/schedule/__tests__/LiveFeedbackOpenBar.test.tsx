@@ -88,50 +88,50 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
 
     expect(screen.getByText('15:30')).toBeInTheDocument();
-    expect(screen.getByText('LIVE')).toBeInTheDocument();
-    expect(screen.getByText('피드백')).toBeInTheDocument();
+    expect(screen.getByText('LIVE 피드백')).toBeInTheDocument();
     expect(screen.getByText('김멋쟁 멘티')).toBeInTheDocument();
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });
 
-  it('진행중 상태 배지를 표시한다', () => {
+  it('진행 중 상태 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
-    expect(screen.getByText('진행중')).toBeInTheDocument();
+    expect(screen.getByText('진행 중')).toBeInTheDocument();
   });
 
-  it('완료 상태 배지를 표시한다', () => {
+  it('진행 완료 상태 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('completed')} />);
-    expect(screen.getByText('완료')).toBeInTheDocument();
+    expect(screen.getByText('진행 완료')).toBeInTheDocument();
   });
 
   it('대기 상태에서는 상태 배지를 표시하지 않는다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('waiting')} />);
 
-    expect(screen.queryByText('진행중')).not.toBeInTheDocument();
-    expect(screen.queryByText('완료')).not.toBeInTheDocument();
+    expect(screen.queryByText('진행 중')).not.toBeInTheDocument();
+    expect(screen.queryByText('진행 완료')).not.toBeInTheDocument();
   });
 
-  it('진행중 배지는 연파랑(소프트) 톤 색상을 가진다', () => {
+  it('진행 중 배지는 보라(primary) 톤 색상을 가진다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
-    const badge = screen.getByText('진행중');
-    expect(badge.className).toContain('bg-blue-50');
-    expect(badge.className).toContain('text-blue-600');
+    const badge = screen.getByText('진행 중');
+    expect(badge.className).toContain('bg-primary-5');
+    expect(badge.className).toContain('text-primary');
   });
 
-  it('완료 배지는 회색(소프트) 톤 색상을 가진다', () => {
+  it('진행 완료 배지는 회색 아웃라인 톤 색상을 가진다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('completed')} />);
-    const badge = screen.getByText('완료');
-    expect(badge.className).toContain('bg-neutral-95');
-    expect(badge.className).toContain('text-neutral-40');
+    const badge = screen.getByText('진행 완료');
+    expect(badge.className).toContain('bg-white');
+    expect(badge.className).toContain('text-neutral-500');
   });
 
-  it('우하단 chevron(케밥 아님)을 유지한다', () => {
+  it('우하단 ⋮(케밥) 메뉴를 표시한다', () => {
     const { container } = render(
       <LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />,
     );
-    // chevron path(d="M9 6l6 6-6 6")가 존재한다
-    const chevron = container.querySelector('path[d="M9 6l6 6-6 6"]');
-    expect(chevron).not.toBeNull();
+    // 케밥 = 세로 점 3개(circle 3개)
+    expect(
+      container.querySelectorAll('circle').length,
+    ).toBeGreaterThanOrEqual(3);
   });
 });
 

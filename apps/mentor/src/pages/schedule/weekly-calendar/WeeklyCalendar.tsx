@@ -45,9 +45,14 @@ const WeeklyCalendar = ({
   onLiveFeedbackTimeBlockClick,
   onLiveFeedbackPeriodClick,
 }: WeeklyCalendarProps) => {
-  // 상단 period bar(서면 + 라이브 기간) vs 하단 시간 블록(라이브 개별 세션) 분리
+  // 상단 period bar(서면 기간 + 라이브 일정 오픈) vs 하단 시간 블록(라이브 개별 세션) 분리.
+  // 라이브 피드백 "기간" 바(live-feedback-period)는 상단에 노출하지 않는다 — 라이브는 하단 개별 일정만 표시.
   const writtenBars = useMemo(
-    () => bars.filter((b) => b.barType !== 'live-feedback'),
+    () =>
+      bars.filter(
+        (b) =>
+          b.barType !== 'live-feedback' && b.barType !== 'live-feedback-period',
+      ),
     [bars],
   );
   const liveBars = useMemo(

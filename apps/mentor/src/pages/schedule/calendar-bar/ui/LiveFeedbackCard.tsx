@@ -69,109 +69,90 @@ type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
  */
 const STATUS_BADGE: Record<
   Exclude<BadgeStatus, 'waiting'>,
-  { label: string; badge: string; dim: boolean }
+  { label: string; badge: string }
 > = {
-  'in-progress': {
-    label: '진행중',
-    badge: 'bg-blue-50 text-blue-600',
-    dim: false,
-  },
+  'in-progress': { label: '진행 중', badge: 'bg-primary-5 text-primary' },
   completed: {
-    label: '완료',
-    badge: 'bg-neutral-95 text-neutral-40',
-    dim: true,
+    label: '진행 완료',
+    badge: 'border border-neutral-300 bg-white text-neutral-500',
   },
   'mentor-absent': {
     label: '멘토 미참여',
-    badge: 'bg-neutral-95 text-neutral-40',
-    dim: true,
+    badge: 'border border-neutral-300 bg-white text-neutral-500',
   },
   'mentee-absent': {
     label: '멘티 미참여',
-    badge: 'bg-neutral-95 text-neutral-40',
-    dim: true,
+    badge: 'border border-neutral-300 bg-white text-neutral-500',
   },
   'mentor-late': {
     label: '멘토 지각',
-    badge: 'bg-neutral-95 text-neutral-40',
-    dim: true,
+    badge: 'border border-neutral-300 bg-white text-neutral-500',
   },
   'mentee-late': {
     label: '멘티 지각',
-    badge: 'bg-neutral-95 text-neutral-40',
-    dim: true,
+    badge: 'border border-neutral-300 bg-white text-neutral-500',
   },
 };
 
 /**
- * 시간별 일정(하단) 안에서 시간순으로 쌓이는 라이브 피드백 블록.
+ * 시간별 일정(하단) 안에서 시간순으로 쌓이는 라이브 피드백 개별 카드.
  *
- * 디자인 참조: `.claude/tasks/라이브피드백.png` (PRD-0503 #3)
- * - 카드: 흰 배경 + 옅은 회색 테두리 + 둥근 모서리
- * - 상단: 시작시간(HH:MM) + 상태 배지 (진행중 등)
- * - 본문: ▶ LIVE 피드백 (LIVE 빨강 강조)
- * - 멘티명, 챌린지명
+ * 디자인 시안 image #19:
+ * - 카드: 흰 배경 + 옅은 회색 테두리 + 둥근(4px) 모서리
+ * - 1줄: 시작시간(크게 굵게) + 상태 배지(진행 완료=회색 아웃라인 등)
+ * - 2줄: ▶(빨강 비디오 아이콘) LIVE 피드백(굵은 검정)
+ * - 멘티명, 챌린지명(회색)
+ * - 우하단: ⋮ (케밥)
  */
 export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
   const badge =
     lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
-  const isDim = badge?.dim ?? false;
 
   return (
-    <div
-      className={`border-neutral-80 flex h-full w-full flex-col gap-1 overflow-hidden rounded-sm border px-2 py-1.5 ${
-        isDim ? 'bg-neutral-95' : 'bg-white'
-      }`}
-    >
-      {/* Row 1: 시작 시간 + 상태 배지 (진행중 등) */}
-      <div className="flex min-w-0 items-center gap-1.5">
-        <span
-          className={`text-xxsmall12 shrink-0 font-bold leading-none ${
-            isDim ? 'text-neutral-40' : 'text-neutral-10'
-          }`}
-        >
+    <div className="border-neutral-80 flex h-full w-full flex-col gap-1.5 overflow-hidden rounded border bg-white px-2.5 py-2">
+      {/* Row 1: 시작 시간 + 상태 배지 */}
+      <div className="flex items-center justify-between gap-1">
+        <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
           {lf.startTime}
         </span>
         {badge && (
           <span
-            className={`shrink-0 whitespace-nowrap rounded-[3px] px-1 py-0.5 text-[10px] font-bold leading-none ${badge.badge}`}
+            className={`shrink-0 whitespace-nowrap rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium leading-none ${badge.badge}`}
           >
             {badge.label}
           </span>
         )}
       </div>
 
-      {/* Row 2: ▶ LIVE 피드백 */}
-      <div className="flex min-w-0 items-center gap-1">
+      {/* Row 2: ▶ LIVE 피드백 (빨강 비디오 아이콘 + 검정 라벨) */}
+      <div className="flex min-w-0 items-center gap-1.5">
         <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
+          width="18"
+          height="18"
+          viewBox="0 0 20 20"
           fill="none"
-          className="shrink-0 text-red-500"
+          className="shrink-0"
           aria-hidden
         >
-          <path d="M3 2.5L9.5 6L3 9.5V2.5Z" fill="currentColor" />
+          <rect
+            x="2"
+            y="4.5"
+            width="16"
+            height="11"
+            rx="3"
+            stroke="#f64e39"
+            strokeWidth="1.4"
+          />
+          <path d="M8.5 7.5L12.5 10L8.5 12.5V7.5Z" fill="#f64e39" />
         </svg>
-        <span className="text-xxsmall12 shrink-0 font-bold leading-none text-red-500">
-          LIVE
-        </span>
-        <span
-          className={`text-xxsmall12 shrink-0 font-semibold leading-none ${
-            isDim ? 'text-neutral-40' : 'text-neutral-10'
-          }`}
-        >
-          피드백
+        <span className="text-xxsmall12 text-neutral-10 shrink-0 font-bold leading-none">
+          LIVE 피드백
         </span>
       </div>
 
       {/* Row 3: 멘티명 */}
-      <span
-        className={`text-xxsmall12 min-w-0 truncate font-medium leading-tight ${
-          isDim ? 'text-neutral-40' : 'text-neutral-10'
-        }`}
-      >
+      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
         {lf.menteeName} 멘티
       </span>
 
@@ -180,23 +161,19 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         {bar.challengeTitle}
       </span>
 
-      {/* chevron */}
+      {/* ⋮ 케밥 (우하단) */}
       <div className="mt-auto flex justify-end">
         <svg
-          width="12"
-          height="12"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
-          fill="none"
+          fill="currentColor"
           className="text-neutral-40 shrink-0"
           aria-hidden
         >
-          <path
-            d="M9 6l6 6-6 6"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <circle cx="12" cy="5" r="1.7" />
+          <circle cx="12" cy="12" r="1.7" />
+          <circle cx="12" cy="19" r="1.7" />
         </svg>
       </div>
     </div>
