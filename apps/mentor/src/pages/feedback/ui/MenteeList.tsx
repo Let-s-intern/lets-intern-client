@@ -31,6 +31,18 @@ interface MenteeListProps {
   isLoading?: boolean;
 }
 
+/**
+ * 멘티 리스트 상태 뱃지 색 (디자인 시안 image #15 기준).
+ * - 진행 중 / 진행 전: 보라(primary), 임박한 진행 전은 빨강으로 강조
+ * - 진행 완료: 회색 아웃라인
+ * (헤더 칩 등 다른 화면의 STATUS_BADGE 와 분리 — 모달 멘티 리스트 전용)
+ */
+const LIST_BADGE_COLOR = {
+  active: 'bg-primary-5 text-primary',
+  urgent: 'bg-red-50 text-red-500',
+  done: 'border border-neutral-300 bg-white text-neutral-500',
+} as const;
+
 function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   label: string;
   className: string;
@@ -38,25 +50,31 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   switch (feedbackStatus) {
     case 'COMPLETED':
     case 'CONFIRMED':
-      return { label: '완료', className: STATUS_BADGE.completed };
+      return { label: '진행 완료', className: LIST_BADGE_COLOR.done };
     case 'IN_PROGRESS':
-      return { label: '진행 중', className: STATUS_BADGE.inProgress };
+      return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'WAITING':
     default:
-      return { label: '시작 전', className: STATUS_BADGE.waiting };
+      return { label: '진행 전', className: LIST_BADGE_COLOR.active };
   }
 }
 
-/** 라이브 피드백 상태 → 배지 스타일. undefined/waiting은 '시작 전'. */
-function getLiveStatusBadge(status: LiveStatus | undefined): {
+/**
+ * 라이브 피드백 상태 → 배지 스타일.
+ * waiting(진행 전)은 기본 보라, 임박(imminent) 시 빨강으로 강조 (시안 image #15).
+ */
+function getLiveStatusBadge(
+  status: LiveStatus | undefined,
+  imminent = false,
+): {
   label: string;
   className: string;
 } {
   switch (status) {
     case 'completed':
-      return { label: '피드백 완료', className: STATUS_BADGE.completed };
+      return { label: '진행 완료', className: LIST_BADGE_COLOR.done };
     case 'in-progress':
-      return { label: '진행중', className: STATUS_BADGE.inProgress };
+      return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'mentor-late':
       return { label: '멘토 지각', className: STATUS_BADGE.late };
     case 'mentee-late':
@@ -67,7 +85,10 @@ function getLiveStatusBadge(status: LiveStatus | undefined): {
       return { label: '멘티 미참여', className: STATUS_BADGE.absent };
     case 'waiting':
     default:
-      return { label: '시작 전', className: STATUS_BADGE.waiting };
+      return {
+        label: '진행 전',
+        className: imminent ? LIST_BADGE_COLOR.urgent : LIST_BADGE_COLOR.active,
+      };
   }
 }
 
@@ -210,7 +231,10 @@ const MenteeList = ({
                             </span>
                           )}
                           {(() => {
-                            const badge = getLiveStatusBadge(mentee.liveStatus);
+                            const badge = getLiveStatusBadge(
+                              mentee.liveStatus,
+                              imminent,
+                            );
                             return (
                               <span
                                 className={twMerge(
