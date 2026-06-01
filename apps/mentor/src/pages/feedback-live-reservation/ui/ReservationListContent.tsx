@@ -130,7 +130,10 @@ const ReservationListContent = () => {
               </thead>
               <tbody>
                 {reservedList.map((row) => {
-                  const isExpanded = expandedId === row.feedbackId;
+                  const changeCount = row.rescheduleCount ?? 0;
+                  const hasChanges = changeCount > 0;
+                  const isExpanded =
+                    hasChanges && expandedId === row.feedbackId;
                   return (
                     <Fragment key={row.feedbackId}>
                       <tr className="border-neutral-90 border-b last:border-b-0">
@@ -156,19 +159,30 @@ const ReservationListContent = () => {
                           </button>
                         </td>
                         <td className="text-xsmall14 px-4 py-3 text-center align-middle">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setExpandedId(isExpanded ? null : row.feedbackId)
-                            }
-                            aria-expanded={isExpanded}
-                            className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
-                          >
-                            예약 변경 내역
-                            <span className="text-xxsmall12">
-                              {isExpanded ? '▲' : '▼'}
+                          {hasChanges ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedId(
+                                  isExpanded ? null : row.feedbackId,
+                                )
+                              }
+                              aria-expanded={isExpanded}
+                              className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
+                            >
+                              예약 변경 내역
+                              <span className="text-primary font-semibold">
+                                {changeCount}건
+                              </span>
+                              <span className="text-xxsmall12">
+                                {isExpanded ? '▲' : '▼'}
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="text-neutral-40">
+                              예약 변경 내역이 없습니다
                             </span>
-                          </button>
+                          )}
                         </td>
                       </tr>
                       {isExpanded && (

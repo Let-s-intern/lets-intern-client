@@ -226,12 +226,31 @@ describe('ReservationListContent', () => {
     );
   });
 
-  it('행의 "예약 변경 내역" 버튼을 누르면 변경 내역 드롭다운이 펼쳐진다', async () => {
-    const user = userEvent.setup();
-    mockBase([makeFeedback({ feedbackId: 1, status: 'RESERVED' })]);
+  it('변경 내역이 없으면(0건) 드롭다운 버튼 대신 "예약 변경 내역이 없습니다" 텍스트를 노출한다', () => {
+    mockBase([
+      makeFeedback({ feedbackId: 1, status: 'RESERVED', rescheduleCount: 0 }),
+    ]);
     renderContent();
 
     const reservedTable = getReservedTable();
+    expect(
+      within(reservedTable).getByText('예약 변경 내역이 없습니다'),
+    ).toBeInTheDocument();
+    // 클릭 가능한 토글 버튼은 없다.
+    expect(
+      within(reservedTable).queryByRole('button', { name: /예약 변경 내역/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('변경 내역이 있으면 "예약 변경 내역 N건" 버튼 클릭 시 드롭다운이 펼쳐진다', async () => {
+    const user = userEvent.setup();
+    mockBase([
+      makeFeedback({ feedbackId: 1, status: 'RESERVED', rescheduleCount: 3 }),
+    ]);
+    renderContent();
+
+    const reservedTable = getReservedTable();
+    expect(within(reservedTable).getByText('3건')).toBeInTheDocument();
     // 펼치기 전: 변경 내역 패널 문구 없음.
     expect(
       within(reservedTable).queryByText('예약을 옮긴 내역이 없습니다.'),
