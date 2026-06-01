@@ -31,6 +31,8 @@ const FeedbackLayout = ({
 }: FeedbackLayoutProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldShowCompactNavigation = showExpandToggle && isExpanded;
+  // menteeInfo 가 null 이면(예: 라이브 모달은 정보 카드를 editor 로 이동) 빈 래퍼·여백을 렌더하지 않는다.
+  const menteeInfoContent = menteeInfo(isExpanded);
 
   return (
     <div
@@ -68,13 +70,15 @@ const FeedbackLayout = ({
         </div>
 
         {/* Mentee info */}
-        <div
-          className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded ? 'mb-0 max-h-14' : 'mb-2 max-h-[500px]'
-          }`}
-        >
-          {menteeInfo(isExpanded)}
-        </div>
+        {menteeInfoContent && (
+          <div
+            className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
+              isExpanded ? 'mb-0 max-h-14' : 'mb-2 max-h-[500px]'
+            }`}
+          >
+            {menteeInfoContent}
+          </div>
+        )}
 
         {/* Feedback editor */}
         <div className="flex min-h-0 flex-1 flex-col overflow-auto">
