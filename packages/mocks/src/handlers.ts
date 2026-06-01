@@ -15,6 +15,18 @@ import { http, HttpResponse } from 'msw';
 /** 양측이 같은 방으로 수렴하기 위한 단일 feedbackId */
 export const MOCK_FEEDBACK_ID = 999999;
 
+/** mock 회의실 방 이름 — PATCH 로 받은 base 와 합성(BE 의 base + meetingRoom 합성 모사). */
+const MOCK_MEETING_ROOM = 'letscareer-mock-room-9z9z9z';
+
+/**
+ * 입장 시 `PATCH /feedback/{id}/meeting-url` 로 등록된 회의실 URL 을 feedbackId 별로 보관.
+ *
+ * MSW 핸들러는 무상태라 기본적으로 PATCH 결과가 다음 GET 에 반영되지 않는다. 이 스토어로
+ * **먼저 입장한 쪽(멘토 or 멘티)이 등록하면 이후 양쪽 상세 조회가 같은 meetingUrl 을 받아**
+ * 동일 방으로 수렴(입장 순서 무관 = 데드락 방지)하는 흐름을 수동 QA 에서 재현한다.
+ */
+const meetingUrlStore = new Map<number, string>();
+
 const MOCK_MENTOR = {
   nickname: '테스트 멘토',
   introduction: '안녕하세요. Jitsi 통합 QA용 mock 멘토입니다.',
@@ -29,8 +41,12 @@ const isoMissionEnd = new Date(
   now.getTime() + 14 * 24 * 60 * 60 * 1000,
 ).toISOString();
 /** 시작 5분 후 → T-10 룰로 즉시 활성화 */
-const reservationStart = new Date(now.getTime() + 5 * 60 * 1000).toISOString();
-const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
+// QA 입장창을 넉넉히 연다: 1시간 전 시작 ~ 12시간 후 종료 → 항상 "진행 중"이라
+// 멘토(T-20 게이팅)·멘티 모두 입장 버튼이 활성. (종료 후 동작은 completedFeedbackList 로 확인)
+const reservationStart = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
+const reservationEnd = new Date(
+  now.getTime() + 12 * 60 * 60 * 1000,
+).toISOString();
 
 /**
  * 캘린더 라이브 세션 분포 시드.
@@ -521,11 +537,18 @@ export const handlers = [
             thumbnail: '',
             desktopThumbnail: '',
             missionTitle: '1주차 자소서 라이브 피드백',
+            missionId: 70_001,
             missionTh: 1,
             missionStartDate: isoMissionStart,
             missionEndDate: isoMissionEnd,
             feedbackId: MOCK_FEEDBACK_ID,
+            // 예약 확정 세션 — liveFeedbackItemSchema 의 nullable 필수 키를 모두 채운다.
+            feedbackStartDate: reservationStart,
+            feedbackEndDate: reservationEnd,
             feedbackStatus: 'RESERVED',
+            attendanceStatus: null,
+            mentorStatus: 'PENDING',
+            menteeStatus: 'PENDING',
             mentorInfo: MOCK_MENTOR,
           },
         ],
@@ -596,7 +619,7 @@ export const handlers = [
           feedbackId,
           startDate: base.startDate,
           endDate: base.endDate,
-          meetingUrl: base.meetingUrl,
+          meetingUrl: meetingUrlStore.get(feedbackId) ?? base.meetingUrl,
           status: base.status,
           programTitle: base.programTitle,
           menteeName: base.menteeName,
@@ -624,20 +647,48 @@ export const handlers = [
   }),
 
   /**
-   * (양쪽 공통) GET /feedback/:feedbackId
-   * 단건 상세. 시작 5분 후 / 종료 35분 후 → T-10 룰로 즉시 입장 활성화.
+   * (양쪽 공통) PATCH /feedback/:feedbackId/meeting-url
+   * 먼저 입장한 쪽(멘토 or 멘티)이 헬스체크 후 보낸 base URL 을 `base + meetingRoom` 으로
+   * 합성해 meetingUrlStore 에 보관한다(BE 합성 모사). 이후 양쪽 상세 GET 이 같은
+   * meetingUrl 을 받아 동일 방으로 수렴 → 입장 순서 무관(데드락 방지) 흐름을 QA 한다.
+   */
+  http.patch(
+    '*/feedback/:feedbackId/meeting-url',
+    async ({ params, request }) => {
+      const feedbackId = Number(params.feedbackId);
+      const body = (await request.json().catch(() => null)) as {
+        meetingUrl?: string;
+      } | null;
+      const base = body?.meetingUrl ?? '';
+      meetingUrlStore.set(feedbackId, `${base}${MOCK_MEETING_ROOM}`);
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (양쪽 공통, 멘티 상세) GET /feedback/:feedbackId
+   * BE feedbackDetailSchema 일치(mentorStatus/menteeStatus/score/review nullable 포함).
+   * 입장창을 넉넉히 열어(1시간 전 시작 ~ 12시간 후 종료) 즉시 입장 활성.
+   * meetingUrl 은 누군가 입장 등록(PATCH)한 시점부터 채워진다(meetingUrlStore).
    */
   http.get('*/feedback/:feedbackId', ({ params }) => {
     const feedbackId = Number(params.feedbackId);
+    const base =
+      MENTOR_FEEDBACK_SEED.find((s) => s.feedbackId === feedbackId) ??
+      MENTOR_FEEDBACK_SEED[0];
     return HttpResponse.json({
       status: 200,
       data: {
         feedbackInfo: {
           feedbackId,
-          startDate: reservationStart,
-          endDate: reservationEnd,
-          meetingUrl: null,
-          status: 'RESERVED',
+          startDate: base.startDate,
+          endDate: base.endDate,
+          meetingUrl: meetingUrlStore.get(feedbackId) ?? base.meetingUrl,
+          status: base.status,
+          mentorStatus: base.mentorStatus,
+          menteeStatus: base.menteeStatus,
+          score: null,
+          review: null,
         },
       },
     });
