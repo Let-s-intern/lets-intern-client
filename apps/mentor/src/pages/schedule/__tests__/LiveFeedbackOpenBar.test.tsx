@@ -59,7 +59,9 @@ describe('LiveFeedbackOpenBar (PRD-0503 #3 디자인)', () => {
   });
 
   it('버튼에 rounded(4px) 클래스가 적용된다', () => {
-    render(<LiveFeedbackOpenBar bar={makeBar()} onMentorOpenClick={() => {}} />);
+    render(
+      <LiveFeedbackOpenBar bar={makeBar()} onMentorOpenClick={() => {}} />,
+    );
     expect(screen.getByRole('button').className).toContain('rounded');
   });
 });
@@ -144,9 +146,9 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
       <LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />,
     );
     // 케밥 = 세로 점 3개(circle 3개)
-    expect(
-      container.querySelectorAll('circle').length,
-    ).toBeGreaterThanOrEqual(3);
+    expect(container.querySelectorAll('circle').length).toBeGreaterThanOrEqual(
+      3,
+    );
   });
 });
 

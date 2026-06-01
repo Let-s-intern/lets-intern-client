@@ -53,7 +53,9 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
       {/* 2줄: 보조 정보 (아이콘 너비만큼 들여쓰기) */}
       <div className="text-xxsmall12 text-neutral-40 pl-[26px] tracking-[-0.3px]">
         {isDeadlineToday && <span>오늘 마감 · </span>}
-        <span className="text-primary font-medium">남은 피드백 {remaining}건</span>
+        <span className="text-primary font-medium">
+          남은 피드백 {remaining}건
+        </span>
         {` · 완료 ${bar.completedCount} / 제출 ${bar.submittedCount}`}
       </div>
     </button>
