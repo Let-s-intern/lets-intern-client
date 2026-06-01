@@ -82,7 +82,7 @@ const FeedbackLayout = ({
         </div>
 
         {/* Bottom bar */}
-        <div className="flex shrink-0 items-center border-t border-gray-200 pt-3">
+        <div className="flex shrink-0 items-center pt-3">
           {/* 왼쪽: 커스텀 액션 또는 크게 보기 / 작게 보기 */}
           {leftActions ? (
             <div className="flex items-center">{leftActions}</div>

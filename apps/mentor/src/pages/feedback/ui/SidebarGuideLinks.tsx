@@ -17,7 +17,7 @@ const SidebarGuideLinks = ({ labels }: SidebarGuideLinksProps) => (
         href={mentorConfig.feedbackGuidelineUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800"
+        className="flex items-center justify-between gap-1 rounded-md border border-gray-300 px-3 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800"
       >
         <span>{label}</span>
         <svg

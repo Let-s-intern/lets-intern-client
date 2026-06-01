@@ -519,11 +519,11 @@ const LiveFeedbackReservationModal = ({
             </section>
           )}
           editor={
-            <div className="flex h-full flex-col gap-3">
-              {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단 고정: 라이브 입장하기 바로 위) */}
+            <div className="flex flex-col gap-3">
+              {/* 액션 패널 — 예약 일시 / 피드백 상태 */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="border-neutral-80 mt-auto shrink-0 rounded-lg border p-4"
+                className="border-neutral-80 rounded-lg border p-4"
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}
@@ -595,8 +595,8 @@ const LiveFeedbackReservationModal = ({
                 aria-label="멘티와 대화하기"
                 className={
                   feedbackId != null
-                    ? 'rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50'
-                    : 'rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-300'
+                    ? 'rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50'
+                    : 'rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-300'
                 }
               >
                 멘티와 대화하기
@@ -616,8 +616,8 @@ const LiveFeedbackReservationModal = ({
                 aria-label="라이브 입장하기"
                 className={
                   feedbackId != null && !isPreparingRoom
-                    ? 'bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors'
-                    : 'rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
+                    ? 'bg-primary hover:bg-primary-hover rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors'
+                    : 'rounded-md bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
                 }
               >
                 {isPreparingRoom ? '회의실 준비 중…' : '라이브 입장하기'}
