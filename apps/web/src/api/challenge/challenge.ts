@@ -18,6 +18,7 @@ import {
   ProgramClassification,
   ProgramStatus,
   challengeApplicationsSchema,
+  challengeHomeSchema,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
 } from '@/schema';
@@ -852,6 +853,18 @@ export const useGetChallengeNotices = (
         params,
       });
       return challengeNotices.parse(res.data.data);
+    },
+  });
+};
+
+/** GET 챌린지 홈 (공지·가이드·추천 프로그램) */
+export const useChallengeHome = (challengeId?: number) => {
+  return useQuery({
+    enabled: Boolean(challengeId),
+    queryKey: ['challenge', challengeId, 'home'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/home`);
+      return challengeHomeSchema.parse(res.data.data);
     },
   });
 };

@@ -1,11 +1,9 @@
-import {
-  useGetChallengeGuides,
-  useGetChallengeNotices,
-} from '@/api/challenge/challenge';
+import { useChallengeHome } from '@/api/challenge/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { type ReactNode } from 'react';
 
 export const enum TabMenu {
@@ -68,20 +66,17 @@ const NoticeItem = ({
   );
 };
 
-const NoticeList = () => {
-  const params = useParams<{ programId: string }>();
+type HomeNoticeItem = {
+  id: number;
+  title: string | null;
+  url: string | null;
+  createdAt: string | null;
+};
 
-  const { data: noticeData } = useGetChallengeNotices(params.programId, {
-    page: 1,
-    size: 99,
-  });
-
-  const noticeList = noticeData?.challengeNoticeList;
-  const isEmpty = noticeList?.length === 0;
-
+const NoticeList = ({ items }: { items: HomeNoticeItem[] }) => {
   const { isNewItem, markAsRead } = useReadNotices();
 
-  if (isEmpty) {
+  if (items.length === 0) {
     return (
       <p className="text-xsmall14 text-neutral-40 mt-6">
         등록된 공지사항이 없습니다.
@@ -89,11 +84,11 @@ const NoticeList = () => {
     );
   }
 
-  return noticeList?.map((notice) => (
+  return items.map((notice) => (
     <NoticeItem
       key={'notice-' + notice.id}
-      isNew={isNewItem(notice.createDate, notice.id)}
-      link={notice.link ?? '#'}
+      isNew={isNewItem(notice.createdAt, notice.id)}
+      link={notice.url ?? '#'}
       onClick={() => markAsRead(notice.id)}
     >
       {notice.title}
@@ -101,17 +96,10 @@ const NoticeList = () => {
   ));
 };
 
-const GuideList = () => {
-  const params = useParams<{ programId: string }>();
-
-  const { data: guideData } = useGetChallengeGuides(params.programId);
-
-  const guideList = guideData?.challengeGuideList;
-  const isEmpty = guideList?.length === 0;
-
+const GuideList = ({ items }: { items: HomeNoticeItem[] }) => {
   const { isNewItem, markAsRead } = useReadGuides();
 
-  if (isEmpty) {
+  if (items.length === 0) {
     return (
       <p className="text-xsmall14 text-neutral-40 mt-6">
         등록된 가이드가 없습니다.
@@ -119,11 +107,11 @@ const GuideList = () => {
     );
   }
 
-  return guideList?.map((guide) => (
+  return items.map((guide) => (
     <NoticeItem
       key={'guide-' + guide.id}
-      isNew={isNewItem(guide.createDate, guide.id)}
-      link={guide.link ?? '#'}
+      isNew={isNewItem(guide.createdAt, guide.id)}
+      link={guide.url ?? '#'}
       onClick={() => markAsRead(guide.id)}
     >
       {guide.title}
@@ -135,9 +123,19 @@ const ChallengeGuidePage = () => {
   const searchParams = useSearchParams();
   const activeTab = Number(searchParams.get('tab'));
   const router = useRouter();
+  const { currentChallenge } = useCurrentChallenge();
+
+  const { data: homeData } = useChallengeHome(currentChallenge?.id);
+
+  const notices = (homeData?.noticeList ?? []).filter(
+    (item) => item.type === 'NOTICE',
+  );
+  const guides = (homeData?.noticeList ?? []).filter(
+    (item) => item.type === 'GUIDE',
+  );
 
   const handleTabClick = (tab: TabMenu) => {
-    const newParams = new URLSearchParams(searchParams); // 기존 쿼리 유지
+    const newParams = new URLSearchParams(searchParams);
     newParams.set('tab', String(tab));
     router.push(`?${newParams.toString()}`);
   };
@@ -175,7 +173,11 @@ const ChallengeGuidePage = () => {
       <section aria-label="공지 목록" className="w-full">
         <div className="w-full max-w-[852px]">
           <ul role="list">
-            {activeTab === TabMenu.GUIDE ? <GuideList /> : <NoticeList />}
+            {activeTab === TabMenu.GUIDE ? (
+              <GuideList items={guides} />
+            ) : (
+              <NoticeList items={notices} />
+            )}
           </ul>
         </div>
       </section>
