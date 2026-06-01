@@ -546,7 +546,10 @@ export const handlers = [
             feedbackStartDate: reservationStart,
             feedbackEndDate: reservationEnd,
             feedbackStatus: 'RESERVED',
-            attendanceStatus: null,
+            // 'PRESENT' = 미션 제출 완료 → resolveStatus 가 'reserved' 로 도출되어
+            // 멘티 화면에 "LIVE 피드백 입장하기" 버튼이 노출된다(미제출=null 이면 'prev' 로
+            // 빠져 예약/제출 유도 화면만 보임).
+            attendanceStatus: 'PRESENT',
             mentorStatus: 'PENDING',
             menteeStatus: 'PENDING',
             mentorInfo: MOCK_MENTOR,
