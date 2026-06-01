@@ -78,6 +78,26 @@ describe('LiveFeedbackOpenBar (PRD-0503 #3 디자인)', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalled();
   });
+
+  it('미완료 상태에서 우측 빨간 점(액션 필요)을 노출한다', () => {
+    const { container } = render(
+      <LiveFeedbackOpenBar
+        bar={makeBar({ completedCount: 0 })}
+        onMentorOpenClick={() => {}}
+      />,
+    );
+    expect(container.querySelector('.bg-red-500')).not.toBeNull();
+  });
+
+  it('완료 상태에서는 빨간 점을 노출하지 않는다', () => {
+    const { container } = render(
+      <LiveFeedbackOpenBar
+        bar={makeBar({ completedCount: 3 })}
+        onMentorOpenClick={() => {}}
+      />,
+    );
+    expect(container.querySelector('.bg-red-500')).toBeNull();
+  });
 });
 
 describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {

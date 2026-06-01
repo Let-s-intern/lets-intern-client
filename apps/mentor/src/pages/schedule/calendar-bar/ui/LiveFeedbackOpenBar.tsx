@@ -70,6 +70,14 @@ const LiveFeedbackOpenBar = ({
         {bar.challengeTitle}
       </span>
 
+      {/* 미완료(액션 필요) 표시 — 우측 끝 빨간 점 */}
+      {!isCompleted && (
+        <span
+          className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-500"
+          aria-hidden
+        />
+      )}
+
       <svg
         width="14"
         height="14"
