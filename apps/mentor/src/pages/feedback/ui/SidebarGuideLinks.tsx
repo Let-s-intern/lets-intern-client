@@ -1,4 +1,5 @@
 import { mentorConfig } from '@/constants/config';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 interface SidebarGuideLinksProps {
   /** 가이드 링크 라벨 목록 (위→아래 순서로 세로 정렬) */
@@ -17,7 +18,7 @@ const SidebarGuideLinks = ({ labels }: SidebarGuideLinksProps) => (
         href={mentorConfig.feedbackGuidelineUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-1 rounded-md border border-gray-300 px-3 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800"
+        className={feedbackModalDesign.guideButton}
       >
         <span>{label}</span>
         <svg

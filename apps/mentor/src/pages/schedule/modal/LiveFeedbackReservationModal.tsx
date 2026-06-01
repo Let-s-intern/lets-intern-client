@@ -10,6 +10,8 @@ import {
 } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
+import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdown';
 import FeedbackHeader from '@/pages/feedback/ui/FeedbackHeader';
 import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
@@ -340,7 +342,7 @@ const LiveFeedbackReservationModal = ({
       <BaseModal
         isOpen={isOpen}
         onClose={onClose}
-        className="mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl"
+        className={feedbackModalDesign.modalContainer}
       >
         <FeedbackHeader
           challengeTitle={selectedMentee.challengeTitle}
@@ -391,7 +393,12 @@ const LiveFeedbackReservationModal = ({
           editor={
             <div className="flex h-full flex-col gap-3">
               {/* 멘티 정보 카드 — 사전 Q&A 가 남은 세로 공간을 채운다(flex-1) */}
-              <section className="border-neutral-80 flex min-h-0 flex-1 flex-col rounded-lg border p-4">
+              <section
+                className={twMerge(
+                  feedbackModalDesign.cardSurface,
+                  'flex min-h-0 flex-1 flex-col',
+                )}
+              >
                 <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
                   <div className="flex flex-1 flex-col gap-6">
                     <div className="flex flex-wrap items-baseline gap-2">
@@ -412,11 +419,12 @@ const LiveFeedbackReservationModal = ({
                         </span>
                         <div className="flex items-center gap-1.5 text-sm">
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${
+                            className={twMerge(
+                              feedbackModalDesign.dotBase,
                               selectedMentee.submissionStatusLabel === '제출됨'
-                                ? 'bg-green-500'
-                                : 'bg-neutral-300'
-                            }`}
+                                ? feedbackModalDesign.dotOk
+                                : feedbackModalDesign.dotNone,
+                            )}
                           />
                           <span className="font-medium text-neutral-700">
                             {selectedMentee.submissionStatusLabel}
@@ -427,7 +435,7 @@ const LiveFeedbackReservationModal = ({
                             href={selectedMentee.attendanceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                            className={feedbackModalDesign.outlineButton}
                           >
                             <LinkIcon />
                             제출물 보기
@@ -436,7 +444,9 @@ const LiveFeedbackReservationModal = ({
                           <button
                             type="button"
                             disabled
-                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
+                            className={
+                              feedbackModalDesign.outlineButtonDisabled
+                            }
                           >
                             <LinkIcon />
                             제출물 보기
@@ -455,14 +465,15 @@ const LiveFeedbackReservationModal = ({
                         </div>
                         <div className="flex items-center gap-1.5 text-sm">
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${
+                            className={twMerge(
+                              feedbackModalDesign.dotBase,
                               selectedMentee.menteeAttendanceLabel === '참여'
-                                ? 'bg-green-500'
+                                ? feedbackModalDesign.dotOk
                                 : selectedMentee.menteeAttendanceLabel ===
                                     '불참'
-                                  ? 'bg-red-500'
-                                  : 'bg-primary'
-                            }`}
+                                  ? feedbackModalDesign.dotAbsent
+                                  : feedbackModalDesign.dotPending,
+                            )}
                           />
                           <span className="font-medium text-neutral-700">
                             {selectedMentee.menteeAttendanceLabel}
@@ -474,7 +485,7 @@ const LiveFeedbackReservationModal = ({
                           <button
                             type="button"
                             onClick={() => setIsAttendanceOpen(true)}
-                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                            className={feedbackModalDesign.outlineButton}
                           >
                             <CheckCircleIcon />
                             참여 확인하기
@@ -485,7 +496,7 @@ const LiveFeedbackReservationModal = ({
                   </div>
 
                   {/* 세로 구분선 — 제출/참여 ↔ 희망 정보 */}
-                  <div className="hidden w-px shrink-0 self-stretch bg-gray-200 md:block" />
+                  <div className={feedbackModalDesign.dividerVertical} />
 
                   <div className="flex flex-1 flex-col gap-3">
                     <div className="text-xsmall14 grid gap-2 text-neutral-600">
@@ -512,11 +523,16 @@ const LiveFeedbackReservationModal = ({
                 </div>
 
                 {/* 가로 구분선 + 사전 Q&A — 남은 세로 공간을 채움(flex-1) */}
-                <div className="border-neutral-80 mt-4 flex min-h-0 flex-1 flex-col border-t pt-4">
+                <div
+                  className={twMerge(
+                    feedbackModalDesign.dividerTop,
+                    'mt-4 flex min-h-0 flex-1 flex-col pt-4',
+                  )}
+                >
                   <p className="text-xs font-medium text-neutral-400">
                     사전 Q&amp;A
                   </p>
-                  <p className="mt-3 min-h-0 flex-1 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
+                  <p className={twMerge('mt-3', feedbackModalDesign.qnaBody)}>
                     {selectedMentee.questionAnswer}
                   </p>
                 </div>
@@ -525,7 +541,7 @@ const LiveFeedbackReservationModal = ({
               {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단, 버튼 바로 위) */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="border-neutral-80 shrink-0 rounded-lg border p-4"
+                className={twMerge(feedbackModalDesign.cardSurface, 'shrink-0')}
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}
@@ -597,8 +613,8 @@ const LiveFeedbackReservationModal = ({
                 aria-label="멘티와 대화하기"
                 className={
                   feedbackId != null
-                    ? 'rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50'
-                    : 'rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-300'
+                    ? feedbackModalDesign.footerSecondary
+                    : feedbackModalDesign.footerSecondaryDisabled
                 }
               >
                 멘티와 대화하기
@@ -618,8 +634,8 @@ const LiveFeedbackReservationModal = ({
                 aria-label="라이브 입장하기"
                 className={
                   feedbackId != null && !isPreparingRoom
-                    ? 'bg-primary hover:bg-primary-hover rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors'
-                    : 'rounded-md bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
+                    ? feedbackModalDesign.footerPrimary
+                    : feedbackModalDesign.footerPrimaryDisabled
                 }
               >
                 {isPreparingRoom ? '회의실 준비 중…' : '라이브 입장하기'}

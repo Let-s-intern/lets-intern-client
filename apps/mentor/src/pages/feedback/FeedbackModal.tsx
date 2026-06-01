@@ -1,6 +1,7 @@
 import BaseModal from '@/common/modal/BaseModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 import FeedbackActions from './ui/FeedbackActions';
 import FeedbackEditor from './ui/FeedbackEditor';
@@ -65,7 +66,7 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className="mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl"
+      className={feedbackModalDesign.modalContainer}
     >
       <FeedbackHeader
         challengeTitle={challengeTitle}

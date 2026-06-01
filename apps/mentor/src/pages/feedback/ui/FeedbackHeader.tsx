@@ -1,4 +1,7 @@
+import { twMerge } from '@/lib/twMerge';
+
 import { statusBadgeOrMuted } from '@/constants/statusColors';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 interface FeedbackHeaderProps {
   challengeTitle?: string;
@@ -44,39 +47,41 @@ const FeedbackHeader = ({
 
         {/* 데스크탑: 통계 뱃지 (우측 정렬) */}
         <div className="hidden flex-1 items-center justify-end gap-1.5 md:flex">
-          <span className="rounded px-2 py-0.5 text-xs font-medium text-gray-500">
+          <span
+            className={twMerge(feedbackModalDesign.headerChip, 'text-gray-500')}
+          >
             총 {totalCount}명
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              waitingCount,
-              'waiting',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(waitingCount, 'waiting'),
+            )}
           >
             {isLive ? '대기' : '시작 전'} {waitingCount}
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              inProgressCount,
-              'inProgress',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(inProgressCount, 'inProgress'),
+            )}
           >
             진행 중 {inProgressCount}
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              completedCount,
-              'completed',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(completedCount, 'completed'),
+            )}
           >
             완료 {completedCount}
           </span>
           {missedCount !== undefined && (
             <span
-              className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-                missedCount,
-                'absent',
-              )}`}
+              className={twMerge(
+                feedbackModalDesign.headerChip,
+                statusBadgeOrMuted(missedCount, 'absent'),
+              )}
             >
               미완료 {missedCount}
             </span>
@@ -112,39 +117,41 @@ const FeedbackHeader = ({
 
       {/* 2줄 (모바일만: 통계 뱃지) */}
       <div className="flex items-center justify-center gap-1.5 md:hidden">
-        <span className="rounded px-2 py-0.5 text-xs font-medium text-gray-500">
+        <span
+          className={twMerge(feedbackModalDesign.headerChip, 'text-gray-500')}
+        >
           총 {totalCount}명
         </span>
         <span
-          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            waitingCount,
-            'waiting',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(waitingCount, 'waiting'),
+          )}
         >
           {isLive ? '대기' : '시작 전'} {waitingCount}
         </span>
         <span
-          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            inProgressCount,
-            'inProgress',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(inProgressCount, 'inProgress'),
+          )}
         >
           진행 중 {inProgressCount}
         </span>
         <span
-          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            completedCount,
-            'completed',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(completedCount, 'completed'),
+          )}
         >
           완료 {completedCount}
         </span>
         {missedCount !== undefined && (
           <span
-            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              missedCount,
-              'absent',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(missedCount, 'absent'),
+            )}
           >
             미완료 {missedCount}
           </span>

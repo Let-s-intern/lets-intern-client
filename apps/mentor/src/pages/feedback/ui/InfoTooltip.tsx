@@ -1,6 +1,9 @@
 import { useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+
 interface InfoTooltipProps {
   /** 툴팁 본문 텍스트 */
   text: string;
@@ -68,9 +71,10 @@ const InfoTooltip = ({ text, label }: InfoTooltipProps) => {
           id={tooltipId}
           role="tooltip"
           style={{ position: 'fixed', top: pos.top, left: pos.left }}
-          className={`z-[1000] w-56 -translate-x-1/2 rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs leading-5 text-neutral-700 shadow-lg transition-opacity ${
-            isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
-          }`}
+          className={twMerge(
+            feedbackModalDesign.tooltipBox,
+            isVisible ? 'opacity-100' : 'pointer-events-none opacity-0',
+          )}
         >
           {/* 말풍선 꼬리 — 위쪽(트리거 방향)을 가리키는 흰 네모 회전 */}
           <span

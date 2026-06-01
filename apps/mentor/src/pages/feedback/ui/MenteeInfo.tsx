@@ -1,9 +1,12 @@
 'use client';
 
+import { twMerge } from '@/lib/twMerge';
+
 import {
   FeedbackStatusMapping,
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 interface MenteeData {
   id: number | null;
@@ -86,7 +89,13 @@ const MenteeInfo = ({
             rel="noopener noreferrer"
             className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden
+            >
               <path
                 d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
                 stroke="currentColor"
@@ -103,7 +112,7 @@ const MenteeInfo = ({
   }
 
   return (
-    <section className="border-neutral-80 rounded-lg border p-4">
+    <section className={feedbackModalDesign.cardSurface}>
       <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
         {/* 좌: 이름 + 제출 상태 */}
         <div className="flex flex-1 flex-col gap-6">
@@ -120,9 +129,12 @@ const MenteeInfo = ({
             <span className="text-xs text-neutral-500">제출 상태</span>
             <div className="flex items-center gap-1.5 text-sm">
               <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  isSubmitted ? 'bg-green-500' : 'bg-neutral-300'
-                }`}
+                className={twMerge(
+                  feedbackModalDesign.dotBase,
+                  isSubmitted
+                    ? feedbackModalDesign.dotOk
+                    : feedbackModalDesign.dotNone,
+                )}
               />
               <span className="font-medium text-neutral-700">
                 {isSubmitted ? '제출됨' : '미제출'}
@@ -133,7 +145,7 @@ const MenteeInfo = ({
                 href={mentee.link!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                className={feedbackModalDesign.outlineButton}
               >
                 <svg
                   width="16"
@@ -157,20 +169,24 @@ const MenteeInfo = ({
         </div>
 
         {/* 세로 구분선 — 제출 상태 ↔ 멘티 정보 */}
-        <div className="bg-neutral-80 hidden w-px shrink-0 self-stretch md:block" />
+        <div className={feedbackModalDesign.dividerVertical} />
 
         {/* 우: 희망 정보 + 피드백 상태 */}
         <div className="flex flex-1 flex-col justify-between gap-3">
           <div className="text-xsmall14 flex flex-col gap-2 text-neutral-600">
             {mentee.wishJob ? (
               <div className="flex gap-2">
-                <span className="w-16 shrink-0 text-neutral-400">희망 직군</span>
+                <span className="w-16 shrink-0 text-neutral-400">
+                  희망 직군
+                </span>
                 <span>{mentee.wishJob}</span>
               </div>
             ) : null}
             {mentee.wishCompany ? (
               <div className="flex gap-2">
-                <span className="w-16 shrink-0 text-neutral-400">희망 기업</span>
+                <span className="w-16 shrink-0 text-neutral-400">
+                  희망 기업
+                </span>
                 <span>{mentee.wishCompany}</span>
               </div>
             ) : null}
