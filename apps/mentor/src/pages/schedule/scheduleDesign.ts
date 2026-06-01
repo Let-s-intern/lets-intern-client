@@ -10,4 +10,5 @@ export const scheduleDesign = {
   /** 개별 카드 상태 배지 색 */
   cardBadgeActive: 'bg-primary-5 text-primary',
   cardBadgeDone: 'border border-neutral-300 bg-white text-neutral-500',
+  cardBadgeCanceled: 'bg-red-50 text-red-500',
 } as const;

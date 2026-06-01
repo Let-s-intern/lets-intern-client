@@ -86,6 +86,9 @@ const FeedbackEditor = ({
           initialEditorStateJsonString || emptyEditorState
         }
         onChange={onChange}
+        // editor-shell 기본 block·my-5 를 덮어 래퍼 높이를 꽉 채우고
+        // 툴바(상단)·본문이 정상 배치되도록 flex 컬럼으로 전환.
+        shellClassName="my-0 flex min-h-0 flex-1 flex-col"
       />
     </div>
   );

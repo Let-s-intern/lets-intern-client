@@ -106,41 +106,44 @@ const ReservationListContent = () => {
         ) : (
           <div className="border-neutral-85 overflow-x-auto rounded-lg border bg-white">
             <table className="w-full min-w-[720px] border-collapse">
-              <thead className="bg-neutral-95 border-neutral-90 border-b">
-                <tr>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
+              <thead>
+                <tr className="border-neutral-60 border-b-2 bg-white">
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold">
                     날짜 / 시간
                   </th>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold">
                     프로그램
                   </th>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
                     멘토
                   </th>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
                     멘티
                   </th>
-                  <th className="text-xsmall14 text-neutral-30 px-4 py-3 text-left font-medium">
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
                     상세
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-neutral-90 divide-y">
+              <tbody>
                 {reservedList.map((row) => (
-                  <tr key={row.feedbackId}>
+                  <tr
+                    key={row.feedbackId}
+                    className="border-neutral-90 border-b last:border-b-0"
+                  >
                     <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
                       {formatDateTimeRange(row.startDate, row.endDate)}
                     </td>
                     <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
                       {row.programTitle}
                     </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
                       {mentorName}
                     </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
                       {row.menteeName}
                     </td>
-                    <td className="text-xsmall14 px-4 py-3 align-middle">
+                    <td className="text-xsmall14 px-4 py-3 text-center align-middle">
                       <button
                         type="button"
                         className="text-primary text-xsmall14 font-medium hover:underline"

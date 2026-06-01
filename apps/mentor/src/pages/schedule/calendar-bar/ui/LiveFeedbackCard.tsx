@@ -64,21 +64,21 @@ type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
  * 상태별 태그 스타일 — 종료 상태(완료/미참여)는 dim 처리, 진행 상태(진행중/지각)는 강조.
  *
  * 디자인(이미지 #1): 솔리드 배지를 연한 톤(소프트) 배지로 정렬.
+ *  - 진행 전   : 연보라 배경 / 보라 글씨 (대기·undefined 기본)
  *  - 진행 중   : 연파랑 배경 / 파랑 글씨
  *  - 진행 완료 : 회색 배경 / 회색 글씨
+ *  - 취소      : 연빨강 배경 / 빨강 글씨
  *  - 미참여·지각(종료 상태): 회색 배경 / 회색 글씨
  * ⚠️ 라벨 텍스트·상태 매핑은 기존 그대로 유지하고 색/배경만 정렬한다(확정은 추후 기획).
  */
-const STATUS_BADGE: Record<
-  Exclude<BadgeStatus, 'waiting'>,
-  { label: string; badge: string }
-> = {
+const STATUS_BADGE: Record<BadgeStatus, { label: string; badge: string }> = {
+  waiting: { label: '진행 전', badge: scheduleDesign.cardBadgeActive },
   'in-progress': { label: '진행 중', badge: scheduleDesign.cardBadgeActive },
   completed: {
     label: '진행 완료',
     badge: scheduleDesign.cardBadgeDone,
   },
-  // '취소'(cancelled)는 라이브 세션 상태에서 제외 — 예약 취소는 별도 도메인.
+  cancelled: { label: '취소', badge: scheduleDesign.cardBadgeCanceled },
   'mentor-absent': {
     label: '멘토 미참여',
     badge: scheduleDesign.cardBadgeDone,
@@ -109,8 +109,8 @@ const STATUS_BADGE: Record<
  */
 export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
-  const badge =
-    lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
+  // 항상 배지 노출 — 상태가 없으면(undefined) '진행 전'(waiting)으로 표시.
+  const badge = lf.status ? STATUS_BADGE[lf.status] : STATUS_BADGE.waiting;
 
   return (
     <div
@@ -124,17 +124,15 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
           {lf.startTime}
         </span>
-        {badge && (
-          <span
-            className={twMerge(
-              'shrink-0 whitespace-nowrap',
-              scheduleDesign.cardBadge,
-              badge.badge,
-            )}
-          >
-            {badge.label}
-          </span>
-        )}
+        <span
+          className={twMerge(
+            'shrink-0 whitespace-nowrap',
+            scheduleDesign.cardBadge,
+            badge.badge,
+          )}
+        >
+          {badge.label}
+        </span>
       </div>
 
       {/* Row 2: ▶ LIVE 피드백 (빨강 비디오 아이콘 + 검정 라벨) */}

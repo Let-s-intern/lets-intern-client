@@ -96,22 +96,6 @@ function getSubmissionBadge(label: '제출' | '미제출'): string {
   return label === '제출' ? STATUS_BADGE.submitted : STATUS_BADGE.notSubmitted;
 }
 
-function formatDateSeparator(iso: string): string {
-  const d = new Date(iso);
-  const weekday = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 (${weekday})`;
-}
-
-function isToday(iso: string): boolean {
-  const d = new Date(iso);
-  const now = currentNow();
-  return (
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-  );
-}
-
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 /** 세션 시작이 현재 시각으로부터 1시간 이내(미래)면 true */
@@ -150,9 +134,6 @@ const MenteeList = ({
                 const isSelected = idx === selectedIndex;
                 const isAbsent =
                   mentee.status === 'ABSENT' || mentee.id == null;
-                const prev = attendanceList[idx - 1];
-                const showDateHeader =
-                  !!mentee.date && (!prev?.date || prev.date !== mentee.date);
                 const hasTime = !!(mentee.startTime && mentee.endTime);
                 const imminent = isSessionImminent(
                   mentee.date,
@@ -166,23 +147,6 @@ const MenteeList = ({
 
                 return (
                   <div key={mentee.id ?? `no-attendance-${idx}`}>
-                    {showDateHeader && (
-                      <div
-                        className={twMerge(
-                          'px-4 py-1 text-[11px] font-semibold',
-                          isToday(mentee.date!)
-                            ? 'border-primary bg-primary-5 text-primary border-l-2'
-                            : 'bg-neutral-100 text-neutral-600',
-                        )}
-                      >
-                        {formatDateSeparator(mentee.date!)}
-                        {isToday(mentee.date!) && (
-                          <span className="ml-1.5 text-[10px] font-bold">
-                            · 오늘
-                          </span>
-                        )}
-                      </div>
-                    )}
                     <button
                       type="button"
                       onClick={() => onSelectByIndex(idx)}

@@ -28,6 +28,23 @@ export interface BlockedSlot {
   menteeName?: string;
 }
 
+/**
+ * 그리드 상단에 노출할 "라이브 피드백 기간" 바 정보.
+ * 데이터가 없으면 바를 렌더하지 않는다 (optional prop).
+ */
+export interface LiveFeedbackPeriodInfo {
+  /** 챌린지명 */
+  challengeTitle: string;
+  /** 기수 (n기) */
+  generation?: number;
+  /** 회차 (N회차) */
+  th?: number;
+  /** 예약 인원 */
+  reservedCount?: number;
+  /** 정원 */
+  capacity?: number;
+}
+
 const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
 const START_HOUR = 9;
 const END_HOUR = 22;
@@ -49,6 +66,34 @@ function createTimeSlots(): string[] {
 }
 
 const TIME_SLOTS = createTimeSlots();
+
+/** 예약 완료 셀/레전드에 쓰는 잠금 아이콘 */
+const LockIcon = () => (
+  <svg
+    width="10"
+    height="10"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden
+    className="shrink-0"
+  >
+    <rect
+      x="5"
+      y="11"
+      width="14"
+      height="9"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+    <path
+      d="M8 11V8a4 4 0 0 1 8 0v3"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
 function toKey(date: string, time: string): string {
   return `${date}|${time}`;
@@ -105,6 +150,11 @@ export interface LiveAvailabilityContentProps {
    * showHeader 가 true 이고 이 콜백이 있을 때만 버튼이 노출된다.
    */
   onOpenReservation?: () => void;
+  /**
+   * 그리드 상단에 표시할 그 주의 "라이브 피드백 기간" 바 정보.
+   * 미지정 시 바를 렌더하지 않는다.
+   */
+  livePeriod?: LiveFeedbackPeriodInfo;
 }
 
 /**
@@ -126,6 +176,7 @@ const LiveAvailabilityContent = ({
   focusDate,
   showHeader = true,
   onOpenReservation,
+  livePeriod,
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
 
@@ -167,8 +218,9 @@ const LiveAvailabilityContent = ({
     return addDays(startOfWeek(currentNow(), { weekStartsOn: 1 }), 7);
   }, [focusDate]);
   const [weekStart, setWeekStart] = useState<Date>(() => minWeekStart);
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() =>
-    toInitialSet(initialSlots),
+  const initialKeys = useMemo(() => toInitialSet(initialSlots), [initialSlots]);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
+    () => new Set(initialKeys),
   );
   const [isDragging, setIsDragging] = useState(false);
   const [dragMode, setDragMode] = useState<'select' | 'deselect' | null>(null);
@@ -228,6 +280,19 @@ const LiveAvailabilityContent = ({
   }, [reservedSlots]);
 
   const selectedCount = selectedKeys.size;
+
+  /** 초기 상태 대비 변경된(추가/삭제된) 셀 개수 — "변경사항 N개" 표기용 */
+  const changedKeys = useMemo(() => {
+    const set = new Set<string>();
+    for (const key of selectedKeys) {
+      if (!initialKeys.has(key)) set.add(key);
+    }
+    for (const key of initialKeys) {
+      if (!selectedKeys.has(key)) set.add(key);
+    }
+    return set;
+  }, [selectedKeys, initialKeys]);
+  const changedCount = changedKeys.size;
 
   const handleCellMouseDown = (date: string, time: string) => {
     const key = toKey(date, time);
@@ -342,90 +407,131 @@ const LiveAvailabilityContent = ({
       )}
 
       {showHeader && (
-        <div className="border-neutral-85 flex items-start justify-between gap-4 border-b px-6 py-5">
-          <div>
-            <h2 className="text-medium20 text-neutral-10 font-semibold">
-              라이브 피드백 일정 열기
-            </h2>
-            <p className="text-xsmall14 text-neutral-40 mt-1">
-              클릭 또는 드래그로 가능 시간을 설정해 주세요.
-              {blockedSlots.length > 0 && (
-                <>
-                  {' '}
-                  <span className="text-neutral-30">
-                    다른 챌린지가 이미 점유한 시간대는 선택할 수 없습니다.
-                  </span>
-                </>
-              )}
-            </p>
-          </div>
-          {onOpenReservation && (
+        <div className="border-neutral-85 flex items-center justify-between gap-4 border-b px-6 py-5">
+          <h2 className="text-medium20 text-neutral-10 font-semibold">
+            LIVE 피드백 일정 오픈하기
+          </h2>
+          {mode === 'modal' && onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="닫기"
+              className="text-neutral-40 hover:text-neutral-10 -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden
+              >
+                <path
+                  d="M6 6l12 12M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 py-5">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-small18 text-neutral-10 font-semibold">
+            예약 가능 시간 설정
+          </p>
+          {showHeader && onOpenReservation && (
             <OutlinedButton
               variant="secondary"
               size="sm"
               onClick={onOpenReservation}
               className="shrink-0"
             >
-              예약현황 보기
+              예약 현황 보기
             </OutlinedButton>
           )}
         </div>
-      )}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 py-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-small18 text-neutral-10 font-semibold">
-              주간 일정표
-            </p>
-            <p className="text-xsmall14 text-neutral-40">
-              {format(weekStart, 'yyyy년 M월', { locale: ko })}
-            </p>
-          </div>
+        {/* 참고사항 배너 — 한 줄 */}
+        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 truncate rounded-md px-3 py-2">
+          마우스로 드래그하여 여러 시간대를 선택한 후 "저장하기" 버튼을 클릭해야
+          최종반영 됩니다, 저장하기 전까지는 임시 상태입니다.
+        </div>
+        {requiredSlotCount !== undefined && (
+          <p className="text-xxsmall12 text-neutral-40 mb-3">
+            신청 예정인 멘티가{' '}
+            <span className="font-semibold">{requiredSlotCount}명</span>
+            이므로 최소 {requiredSlotCount}개 이상의 시간대를 열어야 저장할 수
+            있습니다.
+          </p>
+        )}
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrevWeek}
-              disabled={!canGoPrev}
-              className="border-neutral-80 text-xsmall14 text-neutral-40 hover:bg-neutral-95 disabled:border-neutral-85 disabled:bg-neutral-95 h-8 rounded-md border px-3 transition-colors disabled:cursor-not-allowed disabled:text-neutral-50"
-            >
-              이전 주
-            </button>
-            <button
-              type="button"
-              onClick={handleNextWeek}
-              className="border-neutral-80 text-xsmall14 text-neutral-40 h-8 rounded-md border px-3"
-            >
-              다음 주
-            </button>
-          </div>
+        {/* 주 네비게이션 — "‹ 03.02 ~ 03.08 ›" */}
+        <div className="mb-3 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={handlePrevWeek}
+            disabled={!canGoPrev}
+            aria-label="이전 주"
+            className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-70 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
+          >
+            ‹
+          </button>
+          <p className="text-xsmall14 text-neutral-10 font-semibold tabular-nums">
+            {format(weekStart, 'MM.dd')} ~ {format(addDays(weekStart, 6), 'MM.dd')}
+          </p>
+          <button
+            type="button"
+            onClick={handleNextWeek}
+            aria-label="다음 주"
+            className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+          >
+            ›
+          </button>
         </div>
 
-        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-4 flex flex-col gap-1 rounded-md px-3 py-2">
-          <p>
-            · 마우스로 드래그하여 여러 시간대를 선택한 후 "저장하기" 버튼을
-            클릭하세요. 저장하기 전까지는 임시 상태입니다.
-          </p>
-          {requiredSlotCount !== undefined && (
-            <p>
-              · 신청 예정인 멘티가{' '}
-              <span className="font-semibold">{requiredSlotCount}명</span>
-              이므로 최소 {requiredSlotCount}개 이상의 시간대를 열어야 저장할 수
-              있습니다.
-            </p>
-          )}
-          <p>· 멘티가 이미 신청 완료한 시간은 변경할 수 없습니다.</p>
-          <p>
-            · 다른 챌린지가 점유한 시간은 선택할 수 없으며, 클릭 시 현재
-            챌린지로 이전할 수 있습니다.
-          </p>
+        {/* 레전드 — 예약 가능 / 예약 완료(잠금) / 변경사항 */}
+        <div className="text-xxsmall12 text-neutral-40 mb-3 flex items-center gap-4">
+          <span className="flex items-center gap-1.5">
+            <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+            예약 가능
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="bg-neutral-90 text-neutral-40 flex h-3 w-3 items-center justify-center rounded-[3px]">
+              <LockIcon />
+            </span>
+            예약 완료
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
+            변경사항
+          </span>
         </div>
+
+        {/* 라이브 피드백 기간 바 */}
+        {livePeriod && (
+          <div className="border-primary-20 bg-primary-5 mb-3 flex items-center gap-2 rounded-md border px-3 py-2">
+            <span className="bg-primary h-2 w-2 shrink-0 rounded-full" />
+            <span className="text-xsmall14 text-primary-90 min-w-0 truncate font-medium">
+              {livePeriod.challengeTitle}
+              {livePeriod.generation !== undefined &&
+                ` ${livePeriod.generation}기`}
+              {livePeriod.th !== undefined && ` ${livePeriod.th}회차`} LIVE
+              피드백 기간
+            </span>
+            <span className="text-xxsmall12 text-primary-90 ml-auto flex shrink-0 items-center gap-1 font-semibold">
+              <span aria-hidden>👥</span>
+              {livePeriod.reservedCount ?? 0}/{livePeriod.capacity ?? 0}
+            </span>
+          </div>
+        )}
 
         <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
-          <div className="grid select-none grid-cols-[72px_repeat(7,minmax(88px,1fr))]">
-            <div className="bg-neutral-95 border-neutral-85 text-xsmall14 text-neutral-40 sticky top-0 z-10 border-b border-r px-2 py-2 text-center font-medium">
-              시간
+          <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
+            <div className="bg-neutral-95 border-neutral-85 text-xxsmall12 text-neutral-40 sticky top-0 z-10 flex items-center justify-center border-b border-r px-2 py-2 text-center font-medium leading-tight">
+              멘토링 시작 시간
             </div>
             {days.map((day, index) => (
               <div
@@ -443,7 +549,10 @@ const LiveAvailabilityContent = ({
 
             {TIME_SLOTS.map((time) => (
               <div key={`row-${time}`} className="contents">
-                <div className="border-neutral-85 text-xsmall14 text-neutral-40 border-b border-r bg-white px-2 py-2 text-center">
+                <div
+                  data-time-label
+                  className="border-neutral-85 text-xsmall14 text-neutral-40 border-b border-r bg-white px-2 py-2 text-center"
+                >
                   {time}
                 </div>
                 {WEEK_DAYS.map((_, dayIndex) => {
@@ -453,20 +562,17 @@ const LiveAvailabilityContent = ({
                   const blocker = blockedMap.get(key);
                   const currentMenteeName = appliedMap.get(key);
 
-                  // BE RESERVED 슬롯 → 회색 + 잠금, 멘티 이름 미표시 (mentor2.3)
+                  // BE RESERVED 슬롯 → 예약 완료, 잠금 아이콘, 드래그 불가
                   if (reservedSet.has(key)) {
                     return (
                       <div
                         key={`${time}-${dayIndex}`}
                         title="예약이 완료된 시간입니다"
                         aria-disabled="true"
-                        className="border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 flex items-center justify-center border-b border-r px-2 py-1.5 text-center font-medium last:border-r-0"
+                        className="border-neutral-90 text-xxsmall12 bg-neutral-90 text-neutral-30 flex items-center justify-center gap-1 border-b border-r px-2 py-2 text-center font-medium last:border-r-0"
                       >
-                        <span className="flex flex-col leading-tight">
-                          <span className="text-xxsmall12 font-normal opacity-70">
-                            예약 완료
-                          </span>
-                        </span>
+                        <LockIcon />
+                        <span>예약 완료</span>
                       </div>
                     );
                   }
@@ -569,8 +675,15 @@ const LiveAvailabilityContent = ({
                     );
                   }
 
-                  const selectedClass =
-                    'bg-primary-10 font-semibold text-primary';
+                  // 선택됨 + 초기 상태 대비 변경(추가)된 셀 → "변경사항"(연보라 테두리)
+                  // 선택됨 + 기존 저장 슬롯 → "예약 가능"
+                  // 미선택 → 빈 셀 (예약 불가능 상태 없음)
+                  const isChanged = isSelected && changedKeys.has(key);
+                  const cellClass = isChanged
+                    ? 'bg-primary-15 text-primary font-semibold'
+                    : isSelected
+                      ? 'bg-primary-10 text-primary font-semibold'
+                      : 'bg-white text-neutral-40 hover:bg-neutral-95';
 
                   return (
                     <button
@@ -581,13 +694,9 @@ const LiveAvailabilityContent = ({
                         handleCellMouseDown(cellDate, time);
                       }}
                       onMouseEnter={() => handleCellMouseEnter(cellDate, time)}
-                      className={`border-neutral-90 text-xsmall14 border-b border-r px-2 py-2 text-center transition-colors last:border-r-0 ${
-                        isSelected
-                          ? selectedClass
-                          : 'bg-neutral-95 text-neutral-40'
-                      }`}
+                      className={`border-neutral-90 text-xxsmall12 border-b border-r px-2 py-2 text-center transition-colors last:border-r-0 ${cellClass}`}
                     >
-                      {isSelected ? '가능' : '불가능'}
+                      {isSelected ? '예약 가능' : ''}
                     </button>
                   );
                 })}
@@ -634,7 +743,7 @@ const LiveAvailabilityContent = ({
             onClick={handleCancel}
             className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2 font-medium"
           >
-            {mode === 'modal' ? '취소' : '되돌리기'}
+            되돌리기
           </button>
           <button
             type="button"
@@ -646,7 +755,11 @@ const LiveAvailabilityContent = ({
             }
             className="bg-primary text-xsmall14 hover:bg-primary-hover disabled:bg-neutral-80 rounded-md px-4 py-2 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:text-neutral-50"
           >
-            {isSavingLocal ? '저장 중...' : '저장하기'}
+            {isSavingLocal
+              ? '저장 중...'
+              : changedCount > 0
+                ? `변경사항 ${changedCount}개 저장하기`
+                : '저장하기'}
           </button>
         </div>
       </div>
