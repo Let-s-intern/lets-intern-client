@@ -1,5 +1,6 @@
 'use client';
 
+import { useChallengeHome } from '@/api/challenge/challenge';
 import { useUserQuery } from '@/api/user/user';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
@@ -13,7 +14,7 @@ import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
-import { challengeHomeSchema, challengeScore } from '@/schema';
+import { challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
@@ -75,14 +76,7 @@ const ChallengeDashboard = () => {
 
   const params = useParams<{ programId: string }>();
 
-  const { data: homeData } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'home'],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge/${currentChallenge?.id}/home`);
-      return challengeHomeSchema.parse(res.data.data);
-    },
-  });
+  const { data: homeData } = useChallengeHome(currentChallenge?.id);
 
   const notices = (homeData?.noticeList ?? [])
     .filter((item) => item.type === 'NOTICE')
@@ -91,7 +85,7 @@ const ChallengeDashboard = () => {
       type: null as null,
       title: item.title,
       link: item.url,
-      createDate: item.createdAt ? dayjs(item.createdAt) : null,
+      createDate: dayjs(item.createdAt),
     }));
 
   const guides = (homeData?.noticeList ?? [])
@@ -100,7 +94,7 @@ const ChallengeDashboard = () => {
       id: item.id,
       title: item.title,
       link: item.url,
-      createDate: item.createdAt ? dayjs(item.createdAt) : null,
+      createDate: dayjs(item.createdAt),
     }));
 
   const { data: user } = useUserQuery();
