@@ -387,143 +387,145 @@ const LiveFeedbackReservationModal = ({
               hasNext={hasNextMentee}
             />
           }
-          menteeInfo={() => (
-            <section className="border-neutral-80 rounded-lg border p-4">
-              <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
-                <div className="flex flex-1 flex-col gap-6">
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <h3 className="text-lg font-semibold text-neutral-900 md:text-2xl">
-                      {selectedMentee.name}
-                    </h3>
-                    <span className="text-xs font-medium text-neutral-500">
-                      {selectedMentee.challengeTitle}
-                    </span>
-                  </div>
-
-                  {/* 2열 상태 영역 — 좌: 제출 상태 / 우: 피드백 참여 */}
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {/* 좌: 제출 상태 */}
-                    <div className="flex flex-col gap-2">
-                      <span className="text-xs text-neutral-500">
-                        제출 상태
-                      </span>
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            selectedMentee.submissionStatusLabel === '제출됨'
-                              ? 'bg-green-500'
-                              : 'bg-neutral-300'
-                          }`}
-                        />
-                        <span className="font-medium text-neutral-700">
-                          {selectedMentee.submissionStatusLabel}
-                        </span>
-                      </div>
-                      {selectedMentee.attendanceUrl ? (
-                        <a
-                          href={selectedMentee.attendanceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                        >
-                          <LinkIcon />
-                          제출물 보기
-                        </a>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
-                        >
-                          <LinkIcon />
-                          제출물 보기
-                        </button>
-                      )}
-                    </div>
-
-                    {/* 우: 피드백 참여 */}
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-1 text-xs text-neutral-500">
-                        <span>피드백 참여</span>
-                        <InfoTooltip
-                          label="피드백 참여 안내"
-                          text={PARTICIPATION_TOOLTIP_TEXT}
-                        />
-                      </div>
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            selectedMentee.menteeAttendanceLabel === '참여'
-                              ? 'bg-green-500'
-                              : selectedMentee.menteeAttendanceLabel === '불참'
-                                ? 'bg-red-500'
-                                : 'bg-primary'
-                          }`}
-                        />
-                        <span className="font-medium text-neutral-700">
-                          {selectedMentee.menteeAttendanceLabel}
-                        </span>
-                      </div>
-                      {/* 멘티 참여 상태 확인 모달 진입 — 프로그램 일정에서의 진입점.
-                          종료 후에만 저장 가능(모달 내부 게이트). */}
-                      {feedbackId != null && (
-                        <button
-                          type="button"
-                          onClick={() => setIsAttendanceOpen(true)}
-                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                        >
-                          <CheckCircleIcon />
-                          참여 확인하기
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* 세로 구분선 — 제출/참여 ↔ 희망 정보 */}
-                <div className="hidden w-px shrink-0 self-stretch bg-gray-200 md:block" />
-
-                <div className="flex flex-1 flex-col gap-3">
-                  <div className="text-xsmall14 grid gap-2 text-neutral-600">
-                    <div className="flex gap-2">
-                      <span className="w-16 shrink-0 text-neutral-400">
-                        희망 직군
-                      </span>
-                      <span>{selectedMentee.mentorRole}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="w-16 shrink-0 text-neutral-400">
-                        희망 산업
-                      </span>
-                      <span>{selectedMentee.mentorIndustry}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="w-16 shrink-0 text-neutral-400">
-                        희망 기업
-                      </span>
-                      <span>{selectedMentee.mentorCompany}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 가로 구분선 + 사전 Q&A — 별도 박스가 아닌 같은 카드 내 구분선 분리 */}
-              <div className="mt-4 border-t border-gray-200 pt-4">
-                <p className="text-xs font-medium text-neutral-400">
-                  사전 Q&amp;A
-                </p>
-                <p className="mt-3 h-24 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
-                  {selectedMentee.questionAnswer}
-                </p>
-              </div>
-            </section>
-          )}
+          menteeInfo={() => null}
           editor={
-            <div className="flex flex-col gap-3">
-              {/* 액션 패널 — 예약 일시 / 피드백 상태 */}
+            <div className="flex h-full flex-col gap-3">
+              {/* 멘티 정보 카드 — 사전 Q&A 가 남은 세로 공간을 채운다(flex-1) */}
+              <section className="border-neutral-80 flex min-h-0 flex-1 flex-col rounded-lg border p-4">
+                <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
+                  <div className="flex flex-1 flex-col gap-6">
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <h3 className="text-lg font-semibold text-neutral-900 md:text-2xl">
+                        {selectedMentee.name}
+                      </h3>
+                      <span className="text-xs font-medium text-neutral-500">
+                        {selectedMentee.challengeTitle}
+                      </span>
+                    </div>
+
+                    {/* 2열 상태 영역 — 좌: 제출 상태 / 우: 피드백 참여 */}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {/* 좌: 제출 상태 */}
+                      <div className="flex flex-col gap-2">
+                        <span className="text-xs text-neutral-500">
+                          제출 상태
+                        </span>
+                        <div className="flex items-center gap-1.5 text-sm">
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              selectedMentee.submissionStatusLabel === '제출됨'
+                                ? 'bg-green-500'
+                                : 'bg-neutral-300'
+                            }`}
+                          />
+                          <span className="font-medium text-neutral-700">
+                            {selectedMentee.submissionStatusLabel}
+                          </span>
+                        </div>
+                        {selectedMentee.attendanceUrl ? (
+                          <a
+                            href={selectedMentee.attendanceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                          >
+                            <LinkIcon />
+                            제출물 보기
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled
+                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
+                          >
+                            <LinkIcon />
+                            제출물 보기
+                          </button>
+                        )}
+                      </div>
+
+                      {/* 우: 피드백 참여 */}
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-1 text-xs text-neutral-500">
+                          <span>피드백 참여</span>
+                          <InfoTooltip
+                            label="피드백 참여 안내"
+                            text={PARTICIPATION_TOOLTIP_TEXT}
+                          />
+                        </div>
+                        <div className="flex items-center gap-1.5 text-sm">
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              selectedMentee.menteeAttendanceLabel === '참여'
+                                ? 'bg-green-500'
+                                : selectedMentee.menteeAttendanceLabel ===
+                                    '불참'
+                                  ? 'bg-red-500'
+                                  : 'bg-primary'
+                            }`}
+                          />
+                          <span className="font-medium text-neutral-700">
+                            {selectedMentee.menteeAttendanceLabel}
+                          </span>
+                        </div>
+                        {/* 멘티 참여 상태 확인 모달 진입 — 프로그램 일정에서의 진입점.
+                          종료 후에만 저장 가능(모달 내부 게이트). */}
+                        {feedbackId != null && (
+                          <button
+                            type="button"
+                            onClick={() => setIsAttendanceOpen(true)}
+                            className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                          >
+                            <CheckCircleIcon />
+                            참여 확인하기
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 세로 구분선 — 제출/참여 ↔ 희망 정보 */}
+                  <div className="hidden w-px shrink-0 self-stretch bg-gray-200 md:block" />
+
+                  <div className="flex flex-1 flex-col gap-3">
+                    <div className="text-xsmall14 grid gap-2 text-neutral-600">
+                      <div className="flex gap-2">
+                        <span className="w-16 shrink-0 text-neutral-400">
+                          희망 직군
+                        </span>
+                        <span>{selectedMentee.mentorRole}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="w-16 shrink-0 text-neutral-400">
+                          희망 산업
+                        </span>
+                        <span>{selectedMentee.mentorIndustry}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="w-16 shrink-0 text-neutral-400">
+                          희망 기업
+                        </span>
+                        <span>{selectedMentee.mentorCompany}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 가로 구분선 + 사전 Q&A — 남은 세로 공간을 채움(flex-1) */}
+                <div className="border-neutral-80 mt-4 flex min-h-0 flex-1 flex-col border-t pt-4">
+                  <p className="text-xs font-medium text-neutral-400">
+                    사전 Q&amp;A
+                  </p>
+                  <p className="mt-3 min-h-0 flex-1 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
+                    {selectedMentee.questionAnswer}
+                  </p>
+                </div>
+              </section>
+
+              {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단, 버튼 바로 위) */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="border-neutral-80 rounded-lg border p-4"
+                className="border-neutral-80 shrink-0 rounded-lg border p-4"
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}

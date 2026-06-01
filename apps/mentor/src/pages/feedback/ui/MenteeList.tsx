@@ -201,7 +201,7 @@ const MenteeList = ({
                           {mentee.submissionLabel && (
                             <span
                               className={twMerge(
-                                'rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                'rounded px-2 py-0.5 text-[10px] font-medium',
                                 getSubmissionBadge(mentee.submissionLabel),
                               )}
                             >
@@ -213,7 +213,7 @@ const MenteeList = ({
                             return (
                               <span
                                 className={twMerge(
-                                  'rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                  'rounded px-2 py-0.5 text-[10px] font-medium',
                                   badge.className,
                                 )}
                               >
@@ -223,7 +223,7 @@ const MenteeList = ({
                           })()}
                         </div>
                       ) : isAbsent ? (
-                        <span className="ml-2 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
+                        <span className="ml-2 shrink-0 rounded border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
                           미제출
                         </span>
                       ) : (
@@ -232,7 +232,7 @@ const MenteeList = ({
                           return (
                             <span
                               className={twMerge(
-                                'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+                                'ml-2 shrink-0 rounded px-2.5 py-0.5 text-[11px] font-medium',
                                 badge.className,
                               )}
                             >

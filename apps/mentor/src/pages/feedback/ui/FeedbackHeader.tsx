@@ -44,11 +44,11 @@ const FeedbackHeader = ({
 
         {/* 데스크탑: 통계 뱃지 (우측 정렬) */}
         <div className="hidden flex-1 items-center justify-end gap-1.5 md:flex">
-          <span className="rounded-md px-2 py-0.5 text-xs font-medium text-gray-500">
+          <span className="rounded px-2 py-0.5 text-xs font-medium text-gray-500">
             총 {totalCount}명
           </span>
           <span
-            className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
               waitingCount,
               'waiting',
             )}`}
@@ -56,7 +56,7 @@ const FeedbackHeader = ({
             {isLive ? '대기' : '시작 전'} {waitingCount}
           </span>
           <span
-            className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
               inProgressCount,
               'inProgress',
             )}`}
@@ -64,7 +64,7 @@ const FeedbackHeader = ({
             진행 중 {inProgressCount}
           </span>
           <span
-            className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
               completedCount,
               'completed',
             )}`}
@@ -73,7 +73,7 @@ const FeedbackHeader = ({
           </span>
           {missedCount !== undefined && (
             <span
-              className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+              className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
                 missedCount,
                 'absent',
               )}`}
@@ -112,11 +112,11 @@ const FeedbackHeader = ({
 
       {/* 2줄 (모바일만: 통계 뱃지) */}
       <div className="flex items-center justify-center gap-1.5 md:hidden">
-        <span className="rounded-md px-2 py-0.5 text-xs font-medium text-gray-500">
+        <span className="rounded px-2 py-0.5 text-xs font-medium text-gray-500">
           총 {totalCount}명
         </span>
         <span
-          className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
             waitingCount,
             'waiting',
           )}`}
@@ -124,7 +124,7 @@ const FeedbackHeader = ({
           {isLive ? '대기' : '시작 전'} {waitingCount}
         </span>
         <span
-          className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
             inProgressCount,
             'inProgress',
           )}`}
@@ -132,7 +132,7 @@ const FeedbackHeader = ({
           진행 중 {inProgressCount}
         </span>
         <span
-          className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+          className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
             completedCount,
             'completed',
           )}`}
@@ -141,7 +141,7 @@ const FeedbackHeader = ({
         </span>
         {missedCount !== undefined && (
           <span
-            className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
+            className={`rounded px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
               missedCount,
               'absent',
             )}`}
