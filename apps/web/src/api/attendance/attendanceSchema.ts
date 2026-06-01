@@ -7,6 +7,7 @@ export type PatchAttendanceReq = {
   attendanceId: number | string;
   link?: string;
   review?: string;
+  preQuestion?: string;
   accountType?: string;
   accountNum?: string;
   userExperienceIds?: number[];
@@ -28,6 +29,7 @@ export type PatchAdminAttendanceReq = {
   comments?: string;
   review?: string;
   reviewIsVisible?: boolean;
+  preQuestion?: string;
   mentorUserId?: number | null;
   challengeMentorId?: number | null;
   feedback?: string | null;

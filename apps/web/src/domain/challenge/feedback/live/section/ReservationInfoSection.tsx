@@ -122,11 +122,13 @@ const ReservationInfoSection = ({
             </div>
 
             {/* 하단 액션 */}
-            {status === 'completed' && <LiveFeedbackReview />}
+            {status === 'completed' && feedbackId != null && (
+              <LiveFeedbackReview feedbackId={feedbackId} />
+            )}
             {status === 'reserved' && (
-              // TODO(임시): 외부 회의 링크 대신 Jitsi 임베드 모달로 연결 (PRD §13).
-              //   buildJitsiRoomUrl(feedbackId, salt)로 멘토와 동일 방 입장.
-              //   상단 "회의 링크"(meetingUrl 외부 링크) row는 그대로 보존.
+              // Jitsi 임베드 모달로 연결. BE 가 합성한 meetingUrl(= base + 랜덤 meetingRoom)을
+              // 그대로 사용해 멘토와 동일 방으로 입장한다. 멘토 입장 전(meetingUrl=null)이면
+              // 모달이 "회의실 준비 중" 안내를 표시한다.
               <button
                 type="button"
                 onClick={() => setIsJitsiOpen(true)}
@@ -148,7 +150,7 @@ const ReservationInfoSection = ({
         <JitsiEmbedModal
           isOpen={isJitsiOpen}
           onClose={() => setIsJitsiOpen(false)}
-          meta={{ feedbackId }}
+          meetingUrl={meetingUrl ?? null}
           spaceName={mentor.nickname}
         />
       )}

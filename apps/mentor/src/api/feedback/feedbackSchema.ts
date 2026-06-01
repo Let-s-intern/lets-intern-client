@@ -170,6 +170,12 @@ export const feedbackDetailMentorSchema = z.object({
   preQuestion: z.string().nullable(),
   mentorStatus: feedbackAttendanceStatusSchema,
   menteeStatus: feedbackAttendanceStatusSchema,
+  /**
+   * 멘티가 작성한 후기 점수/내용 (Phase 1 추가).
+   * BE 가 아직 멘토 상세 VO 에 안 내려줄 수 있어 forward-compatible 하게 optional/nullable.
+   */
+  score: z.number().nullable().optional(),
+  review: z.string().nullable().optional(),
 });
 export type FeedbackDetailMentor = z.infer<typeof feedbackDetailMentorSchema>;
 

@@ -20,6 +20,9 @@ function resolveStatus(
   if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
     return 'completed';
   }
+  if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
+    return 'nonParticipation';
+  }
   return 'reserved';
 }
 

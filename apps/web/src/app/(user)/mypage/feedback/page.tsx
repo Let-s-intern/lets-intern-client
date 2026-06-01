@@ -1,7 +1,6 @@
 'use client';
 
 import { useMentorChallengeListQuery, useUserQuery } from '@/api/user/user';
-import JitsiDevTestCard from '@/domain/mypage/ui/JitsiDevTestCard';
 import MobileCarousel from '@/domain/mypage/ui/MobileCarousel';
 import FeedbackCard from '@/domain/mypage/ui/card/FeedbackCard';
 import useAuthStore from '@/store/useAuthStore';
@@ -24,7 +23,6 @@ const Feedback = () => {
 
   return (
     <section className="flex flex-col gap-6">
-      <JitsiDevTestCard />
       {user && (
         <>
           <h2 className="text-small18 font-bold">참여 중</h2>
