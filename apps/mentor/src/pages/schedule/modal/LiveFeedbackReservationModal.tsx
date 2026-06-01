@@ -1,11 +1,11 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 
-import { buildJitsiRoomUrl } from '@letscareer/ui/JitsiEmbed/buildRoomUrl';
 import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 
 import {
   useFeedbackMentorDetailQuery,
   useFeedbackMentorListQuery,
+  useUpdateFeedbackByMentorMutation,
 } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
@@ -14,6 +14,7 @@ import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdow
 import FeedbackHeader from '@/pages/feedback/ui/FeedbackHeader';
 import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
 import FeedbackMenteeNavigation from '@/pages/feedback/ui/FeedbackMenteeNavigation';
+import MenteeAttendanceCheckModal from '@/pages/feedback/ui/MenteeAttendanceCheckModal';
 import MenteeList from '@/pages/feedback/ui/MenteeList';
 import {
   getLiveFeedbackBadgeVisual,
@@ -23,7 +24,7 @@ import { resolveLiveFeedbackAccess } from '@/pages/feedback/utils/liveFeedbackAc
 
 import { currentNow } from '../constants/mockNow';
 import type { PeriodBarData } from '../types';
-import JitsiEmbedModal, { type JitsiMeta } from './JitsiEmbedModal';
+import JitsiEmbedModal from './JitsiEmbedModal';
 
 /** 피드백 가이드 버튼 — 정적 메타(BE 비제공). 모달 외부로 hoist. */
 const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
@@ -70,6 +71,10 @@ const LiveFeedbackReservationModal = ({
 }: LiveFeedbackReservationModalProps) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
+
+  const { mutate: updateMenteeStatus, isPending: isSavingAttendance } =
+    useUpdateFeedbackByMentorMutation();
 
   // 날짜 → 시간 순 정렬 (MenteeList의 날짜 구분선·시간대 표시와 일치)
   const reservationBars = useMemo(() => {
@@ -107,32 +112,11 @@ const LiveFeedbackReservationModal = ({
 
   const countdown = useFeedbackCountdown(startIso, endIso);
 
-  // Jitsi 메타데이터 — `feedbackId`만 사용 (양측 BE 공통 필드).
-  // 양측이 동일한 salt(env)와 feedbackId를 가지면 동일 방 URL로 수렴.
-  // TODO(통합 QA 후 제거): dev mock 분기 — 양측 .env에 같은 mock id 박으면 테스트 가능
-  const devMockEnabled = import.meta.env.VITE_JITSI_USE_DEV_MOCK === 'true';
-  const devMockFeedbackId = Number(
-    import.meta.env.VITE_JITSI_DEV_MOCK_FEEDBACK_ID ?? 999999,
-  );
-  const effectiveFeedbackId = devMockEnabled ? devMockFeedbackId : feedbackId;
-
-  const jitsiMeta: JitsiMeta | null = useMemo(() => {
-    if (effectiveFeedbackId == null) return null;
-    return { feedbackId: effectiveFeedbackId };
-  }, [effectiveFeedbackId]);
-
-  // 프론트 합성 URL — resolveLiveFeedbackAccess의 첫 인자 의미가 변경됨
-  // ("BE가 내려준 URL" → "프론트가 만든 URL or null")
-  const baseUrl = import.meta.env.VITE_JITSI_BASE_URL;
-  const salt = import.meta.env.VITE_JITSI_ROOM_SALT;
-  const meetingUrl = useMemo(() => {
-    if (!jitsiMeta || !baseUrl || !salt) return null;
-    return buildJitsiRoomUrl({
-      baseUrl,
-      feedbackId: jitsiMeta.feedbackId,
-      salt,
-    });
-  }, [baseUrl, salt, jitsiMeta]);
+  // 회의실 URL — BE 가 합성한 `meetingUrl`(= jitsi base + 랜덤 meetingRoom)을 그대로 사용.
+  // 멘토/멘티/어드민이 동일 feedbackId 의 동일 meetingUrl 을 받아 같은 방으로 수렴하며,
+  // 방 이름이 서버 생성 랜덤값이라 외부에서 추측·접속할 수 없다.
+  // 멘토가 입장(meeting-url PATCH) 하기 전이면 null → 입장 버튼 비활성.
+  const meetingUrl = feedbackDetail?.meetingUrl ?? null;
 
   // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
   // 채팅 모달은 멘토관리처럼 전체 멘티 로스터를 좌측 목록으로 보여준다.
@@ -352,9 +336,17 @@ const LiveFeedbackReservationModal = ({
                       <span className="font-medium text-neutral-700">
                         {selectedMentee.menteeAttendanceLabel}
                       </span>
-                      {/* TODO(디자인 확정): 멘티 출석 마킹 버튼(PRESENT/ABSENT)을 여기에 노출.
-                          useUpdateFeedbackByMentorMutation 으로
-                          PATCH /feedback/mentor/{feedbackId} { menteeStatus } 호출. */}
+                      {/* 멘티 참여 상태 확인 모달 진입 — 프로그램 일정에서의 진입점.
+                          종료 후에만 저장 가능(모달 내부 게이트). */}
+                      {feedbackId != null && (
+                        <button
+                          type="button"
+                          onClick={() => setIsAttendanceOpen(true)}
+                          className="text-primary hover:bg-primary-5 border-primary ml-1 rounded border px-2 py-0.5 text-xs font-medium transition-colors"
+                        >
+                          참여 상태 확인
+                        </button>
+                      )}
                     </div>
                     {selectedMentee.attendanceUrl ? (
                       <a
@@ -521,12 +513,33 @@ const LiveFeedbackReservationModal = ({
         />
       </BaseModal>
 
-      {jitsiMeta && (
+      {feedbackId != null && (
         <JitsiEmbedModal
           isOpen={isJitsiOpen}
-          onClose={() => setIsJitsiOpen(false)}
-          meta={jitsiMeta}
+          onClose={() => {
+            // 멘토가 Jitsi 회의실을 닫으면 멘티 참여 상태 확인 모달을 자동으로 띄운다.
+            setIsJitsiOpen(false);
+            setIsAttendanceOpen(true);
+          }}
+          meetingUrl={meetingUrl}
           spaceName={selectedBar?.challengeTitle}
+        />
+      )}
+
+      {feedbackId != null && endIso && (
+        <MenteeAttendanceCheckModal
+          isOpen={isAttendanceOpen}
+          onClose={() => setIsAttendanceOpen(false)}
+          menteeName={selectedMentee.name || '멘티'}
+          endDate={endIso}
+          currentStatus={feedbackDetail?.menteeStatus ?? null}
+          isSaving={isSavingAttendance}
+          onSave={(menteeStatus) =>
+            updateMenteeStatus(
+              { feedbackId, menteeStatus },
+              { onSuccess: () => setIsAttendanceOpen(false) },
+            )
+          }
         />
       )}
 
