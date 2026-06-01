@@ -4,13 +4,15 @@ import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge/challenge';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import * as Sentry from '@sentry/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function MissionFeedback() {
+function MissionFeedbackContent() {
   const router = useRouter();
   const params = useParams<{
     applicationId: string;
@@ -119,5 +121,13 @@ export default function MissionFeedback() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MissionFeedback() {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <MissionFeedbackContent />
+    </AsyncBoundary>
   );
 }
