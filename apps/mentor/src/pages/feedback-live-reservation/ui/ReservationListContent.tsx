@@ -13,7 +13,7 @@ import ReservationHistoryPanel from './ReservationHistoryPanel';
 
 const sectionTitleClass = 'text-small18 text-neutral-10 font-semibold';
 const emptyBoxClass =
-  'border-neutral-85 text-xsmall14 text-neutral-40 flex items-center justify-center rounded-lg border bg-white py-12';
+  'flex items-center justify-center rounded-xl border border-gray-200 bg-white py-12 text-sm text-gray-400';
 
 /**
  * 예약 현황 본문 — 페이지(`FeedbackLiveReservationPage`)와 모달
@@ -104,26 +104,18 @@ const ReservationListContent = () => {
         {reservedList.length === 0 ? (
           <div className={emptyBoxClass}>예정된 예약이 없습니다.</div>
         ) : (
-          <div className="border-neutral-85 overflow-x-auto rounded-lg border bg-white">
-            <table className="w-full min-w-[840px] border-collapse">
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+            <table className="w-full min-w-[840px] border-collapse text-left">
               <thead>
-                <tr className="border-neutral-60 border-b-2 bg-white">
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold">
+                <tr className="border-b border-gray-200 bg-white text-xs font-medium text-gray-500">
+                  <th className="px-3 py-3 text-left font-medium">
                     날짜 / 시간
                   </th>
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold">
-                    프로그램
-                  </th>
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
-                    멘토
-                  </th>
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
-                    멘티
-                  </th>
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
-                    상세
-                  </th>
-                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
+                  <th className="px-3 py-3 text-left font-medium">프로그램</th>
+                  <th className="px-3 py-3 text-center font-medium">멘토</th>
+                  <th className="px-3 py-3 text-center font-medium">멘티</th>
+                  <th className="px-3 py-3 text-center font-medium">상세</th>
+                  <th className="px-3 py-3 text-center font-medium">
                     예약 변경 내역
                   </th>
                 </tr>
@@ -136,29 +128,29 @@ const ReservationListContent = () => {
                     hasChanges && expandedId === row.feedbackId;
                   return (
                     <Fragment key={row.feedbackId}>
-                      <tr className="border-neutral-90 border-b last:border-b-0">
-                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                      <tr className="border-b border-gray-100 text-sm text-neutral-700 last:border-b-0 hover:bg-gray-50">
+                        <td className="px-3 py-3 align-middle">
                           {formatDateTimeRange(row.startDate, row.endDate)}
                         </td>
-                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                        <td className="px-3 py-3 align-middle text-neutral-800">
                           {row.programTitle}
                         </td>
-                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle">
                           {mentorName}
                         </td>
-                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle text-neutral-800">
                           {row.menteeName}
                         </td>
-                        <td className="text-xsmall14 px-4 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle">
                           <button
                             type="button"
-                            className="text-primary text-xsmall14 font-medium hover:underline"
+                            className="text-primary text-sm font-medium underline-offset-2 hover:underline"
                             onClick={() => setDetailFeedbackId(row.feedbackId)}
                           >
                             보기
                           </button>
                         </td>
-                        <td className="text-xsmall14 px-4 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle">
                           {hasChanges ? (
                             <button
                               type="button"
@@ -168,26 +160,24 @@ const ReservationListContent = () => {
                                 )
                               }
                               aria-expanded={isExpanded}
-                              className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
+                              className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-800"
                             >
                               예약 변경 내역
                               <span className="text-primary font-semibold">
                                 {changeCount}건
                               </span>
-                              <span className="text-xxsmall12">
+                              <span className="text-xs">
                                 {isExpanded ? '▲' : '▼'}
                               </span>
                             </button>
                           ) : (
-                            <span className="text-neutral-40">
-                              예약 변경 내역이 없습니다
-                            </span>
+                            <span className="text-xs text-gray-300">-</span>
                           )}
                         </td>
                       </tr>
                       {isExpanded && (
-                        <tr className="border-neutral-90 border-b bg-white">
-                          <td colSpan={6} className="px-4 py-2">
+                        <tr className="border-b border-gray-100 bg-white">
+                          <td colSpan={6} className="px-3 py-2">
                             <ReservationHistoryPanel />
                           </td>
                         </tr>

@@ -226,16 +226,14 @@ describe('ReservationListContent', () => {
     );
   });
 
-  it('변경 내역이 없으면(0건) 드롭다운 버튼 대신 "예약 변경 내역이 없습니다" 텍스트를 노출한다', () => {
+  it('변경 내역이 없으면(0건) 드롭다운 버튼 대신 "-" 를 노출한다', () => {
     mockBase([
       makeFeedback({ feedbackId: 1, status: 'RESERVED', rescheduleCount: 0 }),
     ]);
     renderContent();
 
     const reservedTable = getReservedTable();
-    expect(
-      within(reservedTable).getByText('예약 변경 내역이 없습니다'),
-    ).toBeInTheDocument();
+    expect(within(reservedTable).getByText('-')).toBeInTheDocument();
     // 클릭 가능한 토글 버튼은 없다.
     expect(
       within(reservedTable).queryByRole('button', { name: /예약 변경 내역/ }),
