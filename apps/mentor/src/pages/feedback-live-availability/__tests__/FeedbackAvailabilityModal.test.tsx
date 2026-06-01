@@ -101,9 +101,9 @@ describe('FeedbackAvailabilityModal', () => {
     });
     renderModal({ isOpen: true });
 
-    // 일정 오픈 모달 헤더의 "예약현황 보기" 버튼이 노출된다.
+    // 일정 오픈 모달 헤더의 "예약 현황 보기" 버튼이 노출된다.
     const openReservationButton = await screen.findByRole('button', {
-      name: '예약현황 보기',
+      name: '예약 현황 보기',
     });
     await user.click(openReservationButton);
 

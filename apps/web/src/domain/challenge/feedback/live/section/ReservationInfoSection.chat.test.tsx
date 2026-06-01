@@ -13,6 +13,19 @@ jest.mock('@letscareer/ui/JitsiEmbed', () => ({
   JitsiEmbed: () => <div data-testid="jitsi-embed" />,
 }));
 
+// 입장 핸들러가 쓰는 회의실 URL PATCH 훅 스텁 — axios(@letscareer/api)·QueryClient 체인 차단.
+jest.mock('@/api/feedback/feedback', () => ({
+  __esModule: true,
+  usePatchFeedbackMeetingUrl: () => ({
+    mutateAsync: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
+// 멘티 채팅 로스터 훅도 user api(axios) 체인을 끌어오므로 스텁으로 대체(fallback 방 사용).
+jest.mock('../useMenteeChatRooms', () => ({
+  useMenteeChatRooms: () => [],
+}));
+
 // 채팅 모달은 PocketBase 클라이언트를 끌어오므로 스텁으로 대체.
 // 여기서는 앱 측 배선(노출 조건·전달 props·open)만 검증한다.
 jest.mock('@letscareer/chat/ui/ChatModal', () => ({

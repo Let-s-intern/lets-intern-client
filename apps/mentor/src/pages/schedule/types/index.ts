@@ -11,6 +11,7 @@ export interface LiveFeedbackInfo {
     | 'waiting'
     | 'in-progress'
     | 'completed'
+    | 'cancelled'
     | 'mentor-absent'
     | 'mentee-absent'
     | 'mentor-late'

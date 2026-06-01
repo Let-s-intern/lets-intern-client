@@ -135,6 +135,14 @@ export const feedbackMentorSchema = z.object({
    * BE가 추가하면 그대로 채워진다. (be-request-feedback-mentor-createdate.md 참고)
    */
   createDate: z.string().nullable().optional(),
+  /**
+   * 예약 변경(이동) 횟수 — 예약 현황의 "예약 변경 내역" 셀 표기/드롭다운 노출 판단용.
+   *
+   * ⚠️ 현재 BE `FeedbackMentorVo`에는 이 필드가 없다(어드민 측에도 미구현, 목 전용).
+   * forward-compatible: optional 이라 응답에 없어도 parse 통과하며, 없으면 0(변경 없음)으로 취급한다.
+   * BE가 변경 내역 집계를 추가하면 그대로 채워진다. (be-request-admin-feedback-slot-change.md 참고)
+   */
+  rescheduleCount: z.number().optional(),
 });
 export type FeedbackMentor = z.infer<typeof feedbackMentorSchema>;
 

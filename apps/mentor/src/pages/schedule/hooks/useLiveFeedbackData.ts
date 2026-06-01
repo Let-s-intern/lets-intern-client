@@ -28,14 +28,17 @@ import { currentNow } from '../constants/mockNow';
  *  - `live-feedback-mentee-open`(멘티 신청기간)은 멘토 캘린더 비표시 →
  *    원본 API도 없어 생성하지 않는다.
  */
-export function useLiveFeedbackData(): {
+export function useLiveFeedbackData(
+  /** false면 내부 쿼리를 실행하지 않는다 (모달이 닫혀 있을 때 등) */
+  { enabled = true }: { enabled?: boolean } = {},
+): {
   bars: PeriodBarData[];
   isLoading: boolean;
 } {
   const { data: sessions, isLoading: isSessionsLoading } =
-    useFeedbackMentorListQuery();
+    useFeedbackMentorListQuery({ enabled });
   const { data: slotsData, isLoading: isSlotsLoading } =
-    useFeedbackMentorSlotsQuery();
+    useFeedbackMentorSlotsQuery({ enabled });
 
   const bars = useMemo(
     () =>
@@ -70,6 +73,7 @@ function buildSyntheticChallengeId(groupIndex: number): number {
  *  - COMPLETED → completed
  *  - CANCELED + menteeStatus ABSENT → mentee-absent
  *  - CANCELED + mentorStatus ABSENT → mentor-absent
+ *  - CANCELED (불참 표기 없는 단순 취소) → cancelled
  *  - RESERVED → 시작 시각 기준 waiting (시작 전) / 미래 세션은 waiting
  */
 function resolveSessionStatus(
@@ -80,7 +84,8 @@ function resolveSessionStatus(
   if (session.status === 'CANCELED') {
     if (session.menteeStatus === 'ABSENT') return 'mentee-absent';
     if (session.mentorStatus === 'ABSENT') return 'mentor-absent';
-    return 'completed';
+    // 불참 표기 없는 단순 취소 → cancelled('취소' 배지).
+    return 'cancelled';
   }
   // RESERVED — 진행 시각이면 in-progress, 그 외 대기
   const start = new Date(session.startDate).getTime();

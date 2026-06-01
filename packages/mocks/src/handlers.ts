@@ -15,6 +15,18 @@ import { http, HttpResponse } from 'msw';
 /** 양측이 같은 방으로 수렴하기 위한 단일 feedbackId */
 export const MOCK_FEEDBACK_ID = 999999;
 
+/** mock 회의실 방 이름 — PATCH 로 받은 base 와 합성(BE 의 base + meetingRoom 합성 모사). */
+const MOCK_MEETING_ROOM = 'letscareer-mock-room-9z9z9z';
+
+/**
+ * 입장 시 `PATCH /feedback/{id}/meeting-url` 로 등록된 회의실 URL 을 feedbackId 별로 보관.
+ *
+ * MSW 핸들러는 무상태라 기본적으로 PATCH 결과가 다음 GET 에 반영되지 않는다. 이 스토어로
+ * **먼저 입장한 쪽(멘토 or 멘티)이 등록하면 이후 양쪽 상세 조회가 같은 meetingUrl 을 받아**
+ * 동일 방으로 수렴(입장 순서 무관 = 데드락 방지)하는 흐름을 수동 QA 에서 재현한다.
+ */
+const meetingUrlStore = new Map<number, string>();
+
 const MOCK_MENTOR = {
   nickname: '테스트 멘토',
   introduction: '안녕하세요. Jitsi 통합 QA용 mock 멘토입니다.',
@@ -29,8 +41,12 @@ const isoMissionEnd = new Date(
   now.getTime() + 14 * 24 * 60 * 60 * 1000,
 ).toISOString();
 /** 시작 5분 후 → T-10 룰로 즉시 활성화 */
-const reservationStart = new Date(now.getTime() + 5 * 60 * 1000).toISOString();
-const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
+// QA 입장창을 넉넉히 연다: 1시간 전 시작 ~ 12시간 후 종료 → 항상 "진행 중"이라
+// 멘토(T-20 게이팅)·멘티 모두 입장 버튼이 활성. (종료 후 동작은 completedFeedbackList 로 확인)
+const reservationStart = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
+const reservationEnd = new Date(
+  now.getTime() + 12 * 60 * 60 * 1000,
+).toISOString();
 
 /**
  * 캘린더 라이브 세션 분포 시드.
@@ -41,8 +57,25 @@ const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
  *
  * 절대일자(2026-05-xx)를 사용 — mockNow(데모 시각)와 함께 보던 고정 시연 일정 재현.
  */
+/**
+ * 캘린더 개별 LIVE 카드의 상태 배지 시연을 위한 세션별 상태.
+ *
+ * `status`(BE FeedbackStatus) + 출석(mentorStatus/menteeStatus)으로
+ * `resolveSessionStatus` 매핑을 거쳐 카드 배지가 결정된다.
+ *  - COMPLETED                  → 진행 완료(회색 아웃라인)
+ *  - CANCELED + menteeStatus ABSENT → 멘티 미참여
+ *  - CANCELED (단순 취소)        → 취소(연빨강)
+ *  - RESERVED                   → 대기(배지 없음)
+ * 미지정 시 RESERVED(대기) 기본값.
+ */
+type CalendarSessionStatus = {
+  status: 'RESERVED' | 'COMPLETED' | 'CANCELED';
+  mentorStatus: 'PENDING' | 'PRESENT' | 'ABSENT';
+  menteeStatus: 'PENDING' | 'PRESENT' | 'ABSENT';
+};
+
 const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
-  readonly [string, string, string, string]
+  readonly [string, string, string, string, CalendarSessionStatus?]
 > = [
   // [챌린지1] 기필코 경험정리 챌린지 21기 — 5/4~5/6
   [
@@ -50,30 +83,35 @@ const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
     '2026-05-04T10:30:00',
     '기필코 경험정리 챌린지 21기',
     '이지수',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   [
     '2026-05-04T14:00:00',
     '2026-05-04T14:30:00',
     '기필코 경험정리 챌린지 21기',
     '박서연',
+    { status: 'CANCELED', mentorStatus: 'PENDING', menteeStatus: 'PENDING' },
   ],
   [
     '2026-05-05T10:00:00',
     '2026-05-05T10:30:00',
     '기필코 경험정리 챌린지 21기',
     '최지훈',
+    { status: 'CANCELED', mentorStatus: 'PRESENT', menteeStatus: 'ABSENT' },
   ],
   [
     '2026-05-05T15:00:00',
     '2026-05-05T15:30:00',
     '기필코 경험정리 챌린지 21기',
     '임채원',
+    // 미지정 → RESERVED(대기, 배지 없음)
   ],
   [
     '2026-05-06T09:00:00',
     '2026-05-06T09:30:00',
     '기필코 경험정리 챌린지 21기',
     '한도윤',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   // [챌린지2] 커리어 설계 챌린지 5기 — 5/6~5/8
   [
@@ -81,12 +119,14 @@ const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
     '2026-05-06T14:30:00',
     '커리어 설계 챌린지 5기',
     '문수아',
+    { status: 'CANCELED', mentorStatus: 'PENDING', menteeStatus: 'PENDING' },
   ],
   [
     '2026-05-07T10:00:00',
     '2026-05-07T10:30:00',
     '커리어 설계 챌린지 5기',
     '조예린',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   [
     '2026-05-08T15:00:00',
@@ -111,15 +151,15 @@ function deriveCreateDate(startDate: string, daysBefore: number): string {
 }
 
 const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
-  ([startDate, endDate, programTitle, menteeName], idx) => ({
+  ([startDate, endDate, programTitle, menteeName, sessionStatus], idx) => ({
     feedbackId: 70_000 + idx,
     startDate,
     endDate,
     createDate: deriveCreateDate(startDate, 3 + (idx % 3)),
     meetingUrl: null,
-    mentorStatus: 'PENDING',
-    menteeStatus: 'PENDING',
-    status: 'RESERVED',
+    mentorStatus: sessionStatus?.mentorStatus ?? 'PENDING',
+    menteeStatus: sessionStatus?.menteeStatus ?? 'PENDING',
+    status: sessionStatus?.status ?? 'RESERVED',
     programTitle,
     menteeName,
   }),
@@ -497,11 +537,21 @@ export const handlers = [
             thumbnail: '',
             desktopThumbnail: '',
             missionTitle: '1주차 자소서 라이브 피드백',
+            missionId: 70_001,
             missionTh: 1,
             missionStartDate: isoMissionStart,
             missionEndDate: isoMissionEnd,
             feedbackId: MOCK_FEEDBACK_ID,
+            // 예약 확정 세션 — liveFeedbackItemSchema 의 nullable 필수 키를 모두 채운다.
+            feedbackStartDate: reservationStart,
+            feedbackEndDate: reservationEnd,
             feedbackStatus: 'RESERVED',
+            // 'PRESENT' = 미션 제출 완료 → resolveStatus 가 'reserved' 로 도출되어
+            // 멘티 화면에 "LIVE 피드백 입장하기" 버튼이 노출된다(미제출=null 이면 'prev' 로
+            // 빠져 예약/제출 유도 화면만 보임).
+            attendanceStatus: 'PRESENT',
+            mentorStatus: 'PENDING',
+            menteeStatus: 'PENDING',
             mentorInfo: MOCK_MENTOR,
           },
         ],
@@ -572,7 +622,7 @@ export const handlers = [
           feedbackId,
           startDate: base.startDate,
           endDate: base.endDate,
-          meetingUrl: base.meetingUrl,
+          meetingUrl: meetingUrlStore.get(feedbackId) ?? base.meetingUrl,
           status: base.status,
           programTitle: base.programTitle,
           menteeName: base.menteeName,
@@ -600,20 +650,48 @@ export const handlers = [
   }),
 
   /**
-   * (양쪽 공통) GET /feedback/:feedbackId
-   * 단건 상세. 시작 5분 후 / 종료 35분 후 → T-10 룰로 즉시 입장 활성화.
+   * (양쪽 공통) PATCH /feedback/:feedbackId/meeting-url
+   * 먼저 입장한 쪽(멘토 or 멘티)이 헬스체크 후 보낸 base URL 을 `base + meetingRoom` 으로
+   * 합성해 meetingUrlStore 에 보관한다(BE 합성 모사). 이후 양쪽 상세 GET 이 같은
+   * meetingUrl 을 받아 동일 방으로 수렴 → 입장 순서 무관(데드락 방지) 흐름을 QA 한다.
+   */
+  http.patch(
+    '*/feedback/:feedbackId/meeting-url',
+    async ({ params, request }) => {
+      const feedbackId = Number(params.feedbackId);
+      const body = (await request.json().catch(() => null)) as {
+        meetingUrl?: string;
+      } | null;
+      const base = body?.meetingUrl ?? '';
+      meetingUrlStore.set(feedbackId, `${base}${MOCK_MEETING_ROOM}`);
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (양쪽 공통, 멘티 상세) GET /feedback/:feedbackId
+   * BE feedbackDetailSchema 일치(mentorStatus/menteeStatus/score/review nullable 포함).
+   * 입장창을 넉넉히 열어(1시간 전 시작 ~ 12시간 후 종료) 즉시 입장 활성.
+   * meetingUrl 은 누군가 입장 등록(PATCH)한 시점부터 채워진다(meetingUrlStore).
    */
   http.get('*/feedback/:feedbackId', ({ params }) => {
     const feedbackId = Number(params.feedbackId);
+    const base =
+      MENTOR_FEEDBACK_SEED.find((s) => s.feedbackId === feedbackId) ??
+      MENTOR_FEEDBACK_SEED[0];
     return HttpResponse.json({
       status: 200,
       data: {
         feedbackInfo: {
           feedbackId,
-          startDate: reservationStart,
-          endDate: reservationEnd,
-          meetingUrl: null,
-          status: 'RESERVED',
+          startDate: base.startDate,
+          endDate: base.endDate,
+          meetingUrl: meetingUrlStore.get(feedbackId) ?? base.meetingUrl,
+          status: base.status,
+          mentorStatus: base.mentorStatus,
+          menteeStatus: base.menteeStatus,
+          score: null,
+          review: null,
         },
       },
     });

@@ -1,6 +1,7 @@
 import BaseModal from '@/common/modal/BaseModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 import FeedbackActions from './ui/FeedbackActions';
 import FeedbackEditor from './ui/FeedbackEditor';
@@ -9,6 +10,7 @@ import FeedbackLayout from './ui/FeedbackLayout';
 import FeedbackMenteeNavigation from './ui/FeedbackMenteeNavigation';
 import MenteeInfo from './ui/MenteeInfo';
 import MenteeList from './ui/MenteeList';
+import SidebarGuideLinks from './ui/SidebarGuideLinks';
 
 import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
@@ -64,7 +66,7 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className="mx-2 h-[85vh] w-[1200px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
+      className={feedbackModalDesign.modalContainer}
     >
       <FeedbackHeader
         challengeTitle={challengeTitle}
@@ -78,11 +80,18 @@ const FeedbackModal = ({
 
       <FeedbackLayout
         sidebar={
-          <MenteeList
-            attendanceList={attendanceList}
-            selectedIndex={selectedIndex}
-            onSelectByIndex={handleSelectByIndex}
-          />
+          <div className="flex h-full flex-col gap-3">
+            <div className="min-h-0 flex-1">
+              <MenteeList
+                attendanceList={attendanceList}
+                selectedIndex={selectedIndex}
+                onSelectByIndex={handleSelectByIndex}
+              />
+            </div>
+            <SidebarGuideLinks
+              labels={['자소서챌린지 피드백 가이드', '서면 피드백 가이드']}
+            />
+          </div>
         }
         navigation={
           <FeedbackMenteeNavigation
@@ -115,6 +124,7 @@ const FeedbackModal = ({
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
             isAbsent={isAbsent}
+            hasMentee={!!currentMentee}
           />
         }
         actions={

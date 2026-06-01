@@ -19,7 +19,12 @@ const createJestConfig = nextJest({ dir: './' });
 const customConfig = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+  moduleNameMapper: {
+    // SVGR(`*.svg?react`) 컴포넌트 import 는 jest 에 로더가 없어 경량 목으로 대체.
+    // (반드시 '^@/' 보다 먼저 — '@/...svg?react' 가 양쪽에 매칭되므로 순서가 중요)
+    '\\.svg\\?react$': '<rootDir>/jest/svgrMock.tsx',
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
   coverageProvider: 'v8',
   coverageReporters: ['text', 'json-summary', 'html'],
   coverageDirectory: '<rootDir>/coverage',

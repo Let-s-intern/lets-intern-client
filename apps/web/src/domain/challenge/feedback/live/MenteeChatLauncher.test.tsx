@@ -77,8 +77,13 @@ function makeFeedbackItem(feedbackId: number | null, missionTh: number) {
     missionStartDate: '2026-05-01',
     missionEndDate: '2026-05-03',
     feedbackId,
+    // liveFeedbackItemSchema 의 nullable 필수 키 — 누락 시 parse 실패로 방이 0개가 된다.
+    feedbackStartDate: feedbackId == null ? null : '2026-05-04T10:00:00',
+    feedbackEndDate: feedbackId == null ? null : '2026-05-04T10:30:00',
     feedbackStatus: feedbackId == null ? null : 'RESERVED',
     attendanceStatus: null,
+    mentorStatus: null,
+    menteeStatus: null,
     mentorInfo: {
       nickname: '김멘토',
       introduction: '소개',

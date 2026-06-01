@@ -1,5 +1,7 @@
-import { mentorConfig } from '@/constants/config';
+import { twMerge } from '@/lib/twMerge';
+
 import { statusBadgeOrMuted } from '@/constants/statusColors';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 interface FeedbackHeaderProps {
   challengeTitle?: string;
@@ -34,50 +36,55 @@ const FeedbackHeader = ({
   isLive = false,
   onClose,
 }: FeedbackHeaderProps) => {
-  const sessionSuffix = isLive ? 'LIVE 피드백' : '피드백';
+  const sessionSuffix = isLive ? 'LIVE 피드백' : '서면 피드백';
+  // 서면(isLive=false)은 "진행 전 / 진행 중 / 승인 완료" 라벨, 라이브는 기존 유지.
+  const waitingLabel = isLive ? '대기' : '진행 전';
+  const completedLabel = isLive ? '완료' : '승인 완료';
   return (
-    <div className="bg-primary-5 flex flex-col gap-2 px-4 pb-3 pt-4 md:px-6 md:pt-6">
+    <div className="flex flex-col gap-2 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 text-xs font-medium text-neutral-700">
           {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 {sessionSuffix}
         </span>
 
-        {/* 데스크탑: 통계 뱃지 */}
-        <div className="hidden flex-1 items-center justify-center gap-1.5 md:flex">
-          <span className="rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
+        {/* 데스크탑: 통계 뱃지 (우측 정렬) */}
+        <div className="hidden flex-1 items-center justify-end gap-1.5 md:flex">
+          <span
+            className={twMerge(feedbackModalDesign.headerChip, 'text-gray-500')}
+          >
             총 {totalCount}명
           </span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              waitingCount,
-              'waiting',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(waitingCount, 'waiting'),
+            )}
           >
-            {isLive ? '대기' : '시작 전'} {waitingCount}
+            {waitingLabel} {waitingCount}
           </span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              inProgressCount,
-              'inProgress',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(inProgressCount, 'inProgress'),
+            )}
           >
             진행 중 {inProgressCount}
           </span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              completedCount,
-              'completed',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(completedCount, 'completed'),
+            )}
           >
-            완료 {completedCount}
+            {completedLabel} {completedCount}
           </span>
           {missedCount !== undefined && (
             <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-                missedCount,
-                'absent',
-              )}`}
+              className={twMerge(
+                feedbackModalDesign.headerChip,
+                statusBadgeOrMuted(missedCount, 'absent'),
+              )}
             >
               미완료 {missedCount}
             </span>
@@ -86,16 +93,6 @@ const FeedbackHeader = ({
 
         {/* 모바일에서만 spacer */}
         <div className="flex-1 md:hidden" />
-
-        {/* 데스크탑: 가이드 버튼 */}
-        <a
-          href={mentorConfig.feedbackGuidelineUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 md:block"
-        >
-          피드백 가이드 라인
-        </a>
 
         {/* 닫기 */}
         <button
@@ -123,39 +120,41 @@ const FeedbackHeader = ({
 
       {/* 2줄 (모바일만: 통계 뱃지) */}
       <div className="flex items-center justify-center gap-1.5 md:hidden">
-        <span className="rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
+        <span
+          className={twMerge(feedbackModalDesign.headerChip, 'text-gray-500')}
+        >
           총 {totalCount}명
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            waitingCount,
-            'waiting',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(waitingCount, 'waiting'),
+          )}
         >
-          {isLive ? '대기' : '시작 전'} {waitingCount}
+          {waitingLabel} {waitingCount}
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            inProgressCount,
-            'inProgress',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(inProgressCount, 'inProgress'),
+          )}
         >
           진행 중 {inProgressCount}
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-            completedCount,
-            'completed',
-          )}`}
+          className={twMerge(
+            feedbackModalDesign.headerChip,
+            statusBadgeOrMuted(completedCount, 'completed'),
+          )}
         >
-          완료 {completedCount}
+          {completedLabel} {completedCount}
         </span>
         {missedCount !== undefined && (
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeOrMuted(
-              missedCount,
-              'absent',
-            )}`}
+            className={twMerge(
+              feedbackModalDesign.headerChip,
+              statusBadgeOrMuted(missedCount, 'absent'),
+            )}
           >
             미완료 {missedCount}
           </span>

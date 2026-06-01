@@ -1,6 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { STATUS_BADGE } from '@/constants/statusColors';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { LiveFeedbackInfo } from '@/pages/schedule/types';
 
@@ -30,6 +31,18 @@ interface MenteeListProps {
   isLoading?: boolean;
 }
 
+/**
+ * 멘티 리스트 상태 뱃지 색 (디자인 시안 image #15 기준).
+ * - 진행 중 / 진행 전: 보라(primary), 임박한 진행 전은 빨강으로 강조
+ * - 진행 완료: 회색 아웃라인
+ * (헤더 칩 등 다른 화면의 STATUS_BADGE 와 분리 — 모달 멘티 리스트 전용)
+ */
+const LIST_BADGE_COLOR = {
+  active: 'bg-primary-5 text-primary',
+  urgent: 'bg-red-50 text-red-500',
+  done: 'border border-neutral-300 bg-white text-neutral-500',
+} as const;
+
 function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   label: string;
   className: string;
@@ -37,25 +50,31 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   switch (feedbackStatus) {
     case 'COMPLETED':
     case 'CONFIRMED':
-      return { label: '완료', className: STATUS_BADGE.completed };
+      return { label: '진행 완료', className: LIST_BADGE_COLOR.done };
     case 'IN_PROGRESS':
-      return { label: '진행 중', className: STATUS_BADGE.inProgress };
+      return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'WAITING':
     default:
-      return { label: '시작 전', className: STATUS_BADGE.waiting };
+      return { label: '진행 전', className: LIST_BADGE_COLOR.active };
   }
 }
 
-/** 라이브 피드백 상태 → 배지 스타일. undefined/waiting은 '시작 전'. */
-function getLiveStatusBadge(status: LiveStatus | undefined): {
+/**
+ * 라이브 피드백 상태 → 배지 스타일.
+ * waiting(진행 전)은 기본 보라, 임박(imminent) 시 빨강으로 강조 (시안 image #15).
+ */
+function getLiveStatusBadge(
+  status: LiveStatus | undefined,
+  imminent = false,
+): {
   label: string;
   className: string;
 } {
   switch (status) {
     case 'completed':
-      return { label: '피드백 완료', className: STATUS_BADGE.completed };
+      return { label: '진행 완료', className: LIST_BADGE_COLOR.done };
     case 'in-progress':
-      return { label: '진행중', className: STATUS_BADGE.inProgress };
+      return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'mentor-late':
       return { label: '멘토 지각', className: STATUS_BADGE.late };
     case 'mentee-late':
@@ -66,28 +85,15 @@ function getLiveStatusBadge(status: LiveStatus | undefined): {
       return { label: '멘티 미참여', className: STATUS_BADGE.absent };
     case 'waiting':
     default:
-      return { label: '시작 전', className: STATUS_BADGE.waiting };
+      return {
+        label: '진행 전',
+        className: imminent ? LIST_BADGE_COLOR.urgent : LIST_BADGE_COLOR.active,
+      };
   }
 }
 
 function getSubmissionBadge(label: '제출' | '미제출'): string {
   return label === '제출' ? STATUS_BADGE.submitted : STATUS_BADGE.notSubmitted;
-}
-
-function formatDateSeparator(iso: string): string {
-  const d = new Date(iso);
-  const weekday = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 (${weekday})`;
-}
-
-function isToday(iso: string): boolean {
-  const d = new Date(iso);
-  const now = currentNow();
-  return (
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-  );
 }
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -128,9 +134,6 @@ const MenteeList = ({
                 const isSelected = idx === selectedIndex;
                 const isAbsent =
                   mentee.status === 'ABSENT' || mentee.id == null;
-                const prev = attendanceList[idx - 1];
-                const showDateHeader =
-                  !!mentee.date && (!prev?.date || prev.date !== mentee.date);
                 const hasTime = !!(mentee.startTime && mentee.endTime);
                 const imminent = isSessionImminent(
                   mentee.date,
@@ -144,30 +147,13 @@ const MenteeList = ({
 
                 return (
                   <div key={mentee.id ?? `no-attendance-${idx}`}>
-                    {showDateHeader && (
-                      <div
-                        className={twMerge(
-                          'px-4 py-1 text-[11px] font-semibold',
-                          isToday(mentee.date!)
-                            ? 'border-primary bg-primary-5 text-primary border-l-2'
-                            : 'bg-neutral-100 text-neutral-600',
-                        )}
-                      >
-                        {formatDateSeparator(mentee.date!)}
-                        {isToday(mentee.date!) && (
-                          <span className="ml-1.5 text-[10px] font-bold">
-                            · 오늘
-                          </span>
-                        )}
-                      </div>
-                    )}
                     <button
                       type="button"
                       onClick={() => onSelectByIndex(idx)}
                       className={twMerge(
-                        'flex w-full items-center justify-between gap-2 border-b border-neutral-200 px-4 py-2 text-left transition-colors',
+                        'flex w-full items-center justify-between gap-2 px-4 py-2 text-left transition-colors',
                         isSelected
-                          ? 'bg-primary-5 rounded-md border-b-0'
+                          ? 'bg-primary-5 rounded-md'
                           : 'hover:bg-neutral-50',
                       )}
                     >
@@ -201,7 +187,7 @@ const MenteeList = ({
                           {mentee.submissionLabel && (
                             <span
                               className={twMerge(
-                                'rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                feedbackModalDesign.listBadgeSm,
                                 getSubmissionBadge(mentee.submissionLabel),
                               )}
                             >
@@ -209,11 +195,14 @@ const MenteeList = ({
                             </span>
                           )}
                           {(() => {
-                            const badge = getLiveStatusBadge(mentee.liveStatus);
+                            const badge = getLiveStatusBadge(
+                              mentee.liveStatus,
+                              imminent,
+                            );
                             return (
                               <span
                                 className={twMerge(
-                                  'rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                  feedbackModalDesign.listBadgeSm,
                                   badge.className,
                                 )}
                               >
@@ -223,7 +212,12 @@ const MenteeList = ({
                           })()}
                         </div>
                       ) : isAbsent ? (
-                        <span className="ml-2 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
+                        <span
+                          className={twMerge(
+                            feedbackModalDesign.listBadgeMd,
+                            'ml-2 shrink-0 border border-orange-200 bg-orange-50 text-orange-600',
+                          )}
+                        >
                           미제출
                         </span>
                       ) : (
@@ -232,7 +226,8 @@ const MenteeList = ({
                           return (
                             <span
                               className={twMerge(
-                                'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+                                feedbackModalDesign.listBadgeMd,
+                                'ml-2 shrink-0',
                                 badge.className,
                               )}
                             >

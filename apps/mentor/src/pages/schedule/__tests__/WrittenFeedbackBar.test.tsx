@@ -32,41 +32,17 @@ describe('WrittenFeedbackBar (PRD-0503 #3 디자인)', () => {
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });
 
-  it('진행 중(완료 아님)이면 "완료" 배지를 노출하지 않는다', () => {
-    render(
+  it('2줄 보조정보(남은 피드백 · 완료/제출)를 노출한다', () => {
+    const { container } = render(
       <WrittenFeedbackBar
-        bar={makeBar({ submittedCount: 5, completedCount: 2 })}
+        bar={makeBar({ submittedCount: 7, completedCount: 5 })}
         onBarClick={() => {}}
       />,
     );
 
-    expect(screen.queryByText('완료')).not.toBeInTheDocument();
-  });
-
-  it('모든 제출자에게 피드백을 작성하면 "완료" 배지를 노출한다', () => {
-    render(
-      <WrittenFeedbackBar
-        bar={makeBar({ submittedCount: 5, completedCount: 5 })}
-        onBarClick={() => {}}
-      />,
-    );
-
-    expect(screen.getByText('완료')).toBeInTheDocument();
-  });
-
-  it('제출자 0 + 기간 경과면 "완료" 배지를 노출한다', () => {
-    render(
-      <WrittenFeedbackBar
-        bar={makeBar({
-          endDate: '2000-01-01',
-          submittedCount: 0,
-          completedCount: 0,
-        })}
-        onBarClick={() => {}}
-      />,
-    );
-
-    expect(screen.getByText('완료')).toBeInTheDocument();
+    // 남은 피드백 = 제출(7) - 완료(5) = 2
+    expect(container.textContent).toContain('남은 피드백 2건');
+    expect(container.textContent).toContain('완료 5 / 제출 7');
   });
 
   it('클릭 시 onBarClick(challengeId, missionId)이 호출된다', () => {
@@ -83,9 +59,9 @@ describe('WrittenFeedbackBar (PRD-0503 #3 디자인)', () => {
     expect(onBarClick).toHaveBeenCalledWith(7, 99);
   });
 
-  it('버튼에 rounded-sm 클래스가 적용된다', () => {
+  it('버튼에 rounded(4px) 클래스가 적용된다', () => {
     render(<WrittenFeedbackBar bar={makeBar()} onBarClick={() => {}} />);
     const btn = screen.getByRole('button');
-    expect(btn.className).toContain('rounded-sm');
+    expect(btn.className).toContain('rounded');
   });
 });
