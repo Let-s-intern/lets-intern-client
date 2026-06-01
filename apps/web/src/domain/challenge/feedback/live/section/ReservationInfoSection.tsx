@@ -6,9 +6,10 @@ import dynamic from 'next/dynamic';
 
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
+import ChatIcon from '@/assets/icons/chat.svg?react';
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
-import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import MentorCard from '../ui/MentorCard';
+import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
 
@@ -53,32 +54,6 @@ const ReservationInfoSection = ({
           mentor={mentor}
           className="min-w-[314px] px-0 py-4 md:px-4"
         />
-        {/* 회의 입장(Jitsi)과 별개로, 멘토와 텍스트로 소통하는 채팅 진입.
-            feedbackId 보유(reserved/completed) 상태에서만 노출. */}
-        {feedbackId != null && (
-          <button
-            type="button"
-            onClick={() => setIsChatOpen(true)}
-            className="text-xsmall14 border-primary text-primary flex items-center justify-center gap-1.5 rounded-sm border py-3 font-semibold md:mx-4"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden
-            >
-              <path
-                d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            멘토에게 연락하기
-          </button>
-        )}
       </section>
 
       {feedbackInfo && (
@@ -86,7 +61,7 @@ const ReservationInfoSection = ({
           <h2 className="text-xsmall16 text-neutral-0 font-semibold">
             LIVE 피드백 예약내역
           </h2>
-          <div className="flex flex-col gap-10 px-0 py-4 md:gap-4 md:px-4">
+          <div className="flex h-full flex-col gap-4 px-0 py-4 md:px-4">
             <div className="flex flex-col gap-3">
               {/* 예약 일시 */}
               <div className="flex items-start gap-1">
@@ -121,26 +96,38 @@ const ReservationInfoSection = ({
             </div>
 
             {/* 하단 액션 */}
-            {status === 'completed' && feedbackId != null && (
-              <LiveFeedbackReview feedbackId={feedbackId} />
-            )}
-            {status === 'reserved' && (
-              // Jitsi 임베드 모달로 연결. BE 가 합성한 meetingUrl(= base + 랜덤 meetingRoom)을
-              // 그대로 사용해 멘토와 동일 방으로 입장한다. 멘토 입장 전(meetingUrl=null)이면
-              // 모달이 "회의실 준비 중" 안내를 표시한다.
-              <button
-                type="button"
-                onClick={() => setIsJitsiOpen(true)}
-                disabled={!entranceActive}
-                className={
-                  entranceActive
-                    ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
-                    : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
-                }
-              >
-                LIVE 피드백 입장하기
-              </button>
-            )}
+            <div className="flex flex-col gap-2">
+              {feedbackId != null && (
+                <button
+                  type="button"
+                  onClick={() => setIsChatOpen(true)}
+                  className="text-xsmall14 border-primary text-primary flex items-center justify-center gap-1.5 rounded-sm border py-3 font-semibold"
+                >
+                  <ChatIcon />
+                  멘토에게 연락하기
+                </button>
+              )}
+              {status === 'completed' && feedbackId != null && (
+                <LiveFeedbackReview feedbackId={feedbackId} />
+              )}
+              {status === 'reserved' && (
+                // Jitsi 임베드 모달로 연결. BE 가 합성한 meetingUrl(= base + 랜덤 meetingRoom)을
+                // 그대로 사용해 멘토와 동일 방으로 입장한다. 멘토 입장 전(meetingUrl=null)이면
+                // 모달이 "회의실 준비 중" 안내를 표시한다.
+                <button
+                  type="button"
+                  onClick={() => setIsJitsiOpen(true)}
+                  disabled={!entranceActive}
+                  className={
+                    entranceActive
+                      ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
+                      : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
+                  }
+                >
+                  LIVE 피드백 입장하기
+                </button>
+              )}
+            </div>
           </div>
         </section>
       )}
