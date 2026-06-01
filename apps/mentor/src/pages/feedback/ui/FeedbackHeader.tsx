@@ -1,4 +1,3 @@
-import { mentorConfig } from '@/constants/config';
 import { statusBadgeOrMuted } from '@/constants/statusColors';
 
 interface FeedbackHeaderProps {
@@ -43,8 +42,8 @@ const FeedbackHeader = ({
           {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 {sessionSuffix}
         </span>
 
-        {/* 데스크탑: 통계 뱃지 */}
-        <div className="hidden flex-1 items-center justify-center gap-1.5 md:flex">
+        {/* 데스크탑: 통계 뱃지 (우측 정렬) */}
+        <div className="hidden flex-1 items-center justify-end gap-1.5 md:flex">
           <span className="rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
             총 {totalCount}명
           </span>
@@ -86,16 +85,6 @@ const FeedbackHeader = ({
 
         {/* 모바일에서만 spacer */}
         <div className="flex-1 md:hidden" />
-
-        {/* 데스크탑: 가이드 버튼 */}
-        <a
-          href={mentorConfig.feedbackGuidelineUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 md:block"
-        >
-          피드백 가이드 라인
-        </a>
 
         {/* 닫기 */}
         <button

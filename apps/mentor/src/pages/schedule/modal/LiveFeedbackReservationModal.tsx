@@ -10,7 +10,6 @@ import {
 } from '@/api/feedback/feedback';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
-import { mentorConfig } from '@/constants/config';
 import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdown';
 import FeedbackHeader from '@/pages/feedback/ui/FeedbackHeader';
 import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
@@ -18,6 +17,7 @@ import FeedbackMenteeNavigation from '@/pages/feedback/ui/FeedbackMenteeNavigati
 import InfoTooltip from '@/pages/feedback/ui/InfoTooltip';
 import MenteeAttendanceCheckModal from '@/pages/feedback/ui/MenteeAttendanceCheckModal';
 import MenteeList from '@/pages/feedback/ui/MenteeList';
+import SidebarGuideLinks from '@/pages/feedback/ui/SidebarGuideLinks';
 import {
   getLiveFeedbackBadgeVisual,
   resolveLiveFeedbackStatus,
@@ -28,11 +28,12 @@ import { currentNow } from '../constants/mockNow';
 import type { PeriodBarData } from '../types';
 import JitsiEmbedModal from './JitsiEmbedModal';
 
-/** 피드백 가이드 버튼 — 정적 메타(BE 비제공). 모달 외부로 hoist. */
-const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
-  { label: '자소서첨삭 피드백 가이드' },
-  { label: '라이브 멘토링 피드백 가이드' },
-];
+/** 좌측 사이드바 하단 가이드 링크 (세로 정렬). */
+const GUIDE_LINK_LABELS = [
+  '자소서첨삭 피드백 가이드',
+  '라이브 멘토링 피드백 가이드',
+  '피드백 가이드 라인',
+] as const;
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
@@ -356,14 +357,19 @@ const LiveFeedbackReservationModal = ({
 
         <FeedbackLayout
           sidebar={
-            <MenteeList
-              attendanceList={menteeListItems}
-              selectedIndex={Math.max(currentIndex, 0)}
-              onSelectByIndex={(index) => {
-                const target = reservationBars[index];
-                if (target) onSelectBar(target);
-              }}
-            />
+            <div className="flex h-full flex-col gap-3">
+              <div className="min-h-0 flex-1">
+                <MenteeList
+                  attendanceList={menteeListItems}
+                  selectedIndex={Math.max(currentIndex, 0)}
+                  onSelectByIndex={(index) => {
+                    const target = reservationBars[index];
+                    if (target) onSelectBar(target);
+                  }}
+                />
+              </div>
+              <SidebarGuideLinks labels={GUIDE_LINK_LABELS} />
+            </div>
           }
           navigation={
             <FeedbackMenteeNavigation
@@ -504,19 +510,21 @@ const LiveFeedbackReservationModal = ({
 
               {/* 가로 구분선 + 사전 Q&A — 별도 박스가 아닌 같은 카드 내 구분선 분리 */}
               <div className="mt-4 border-t border-gray-200 pt-4">
-                <p className="text-xs font-medium text-neutral-400">사전 Q&amp;A</p>
-                <p className="mt-3 max-h-40 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
+                <p className="text-xs font-medium text-neutral-400">
+                  사전 Q&amp;A
+                </p>
+                <p className="mt-3 h-28 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
                   {selectedMentee.questionAnswer}
                 </p>
               </div>
             </section>
           )}
           editor={
-            <div className="flex flex-col gap-3">
-              {/* 액션 패널 — 예약 일시 / 피드백 상태 */}
+            <div className="flex h-full flex-col gap-3">
+              {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단 고정: 라이브 입장하기 바로 위) */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="rounded-xl border border-gray-200 p-4"
+                className="mt-auto rounded-xl border border-gray-200 p-4"
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}
@@ -576,30 +584,6 @@ const LiveFeedbackReservationModal = ({
                   </li>
                 </ul>
               </section>
-            </div>
-          }
-          leftActions={
-            <div className="flex items-center gap-2.5">
-              {GUIDEBOOK_BUTTONS.map((button) => (
-                <a
-                  key={button.label}
-                  href={mentorConfig.feedbackGuidelineUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 rounded-lg border border-gray-300 px-2.5 py-1.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800"
-                >
-                  <span>{button.label}</span>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </a>
-              ))}
             </div>
           }
           actions={

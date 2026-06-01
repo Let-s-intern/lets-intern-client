@@ -9,6 +9,7 @@ import FeedbackLayout from './ui/FeedbackLayout';
 import FeedbackMenteeNavigation from './ui/FeedbackMenteeNavigation';
 import MenteeInfo from './ui/MenteeInfo';
 import MenteeList from './ui/MenteeList';
+import SidebarGuideLinks from './ui/SidebarGuideLinks';
 
 import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
@@ -78,11 +79,16 @@ const FeedbackModal = ({
 
       <FeedbackLayout
         sidebar={
-          <MenteeList
-            attendanceList={attendanceList}
-            selectedIndex={selectedIndex}
-            onSelectByIndex={handleSelectByIndex}
-          />
+          <div className="flex h-full flex-col gap-3">
+            <div className="min-h-0 flex-1">
+              <MenteeList
+                attendanceList={attendanceList}
+                selectedIndex={selectedIndex}
+                onSelectByIndex={handleSelectByIndex}
+              />
+            </div>
+            <SidebarGuideLinks labels={['피드백 가이드 라인']} />
+          </div>
         }
         navigation={
           <FeedbackMenteeNavigation
