@@ -208,7 +208,7 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     renderModal(makeBar());
     // 2026-05-04 = 월요일
     expect(
-      screen.getByText(/2026\.05\.04 \(월\) 10:00~10:30/),
+      screen.getByText(/2026\.05\.04 \(월\) 10:00 – 10:30/),
     ).toBeInTheDocument();
   });
 });

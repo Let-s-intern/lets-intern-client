@@ -30,9 +30,8 @@ import JitsiEmbedModal from './JitsiEmbedModal';
 
 /** 좌측 사이드바 하단 가이드 링크 (세로 정렬). */
 const GUIDE_LINK_LABELS = [
-  '자소서첨삭 피드백 가이드',
-  '라이브 멘토링 피드백 가이드',
-  '피드백 가이드 라인',
+  '자소서챌린지 피드백 가이드',
+  '라이브 피드백 가이드',
 ] as const;
 
 /** 빈 값 대체용 placeholder */
@@ -65,7 +64,7 @@ function formatReservationDateLine(
   const [y, m, d] = dateStr.split('-');
   const date = new Date(`${dateStr}T00:00:00`);
   const dow = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-  return `${y}.${m}.${d} (${dow}) ${startTime}~${endTime}`;
+  return `${y}.${m}.${d} (${dow}) ${startTime} – ${endTime}`;
 }
 
 /** 외부 링크(체인) 아이콘 — 제출물 보기 버튼용. */
@@ -389,7 +388,7 @@ const LiveFeedbackReservationModal = ({
             />
           }
           menteeInfo={() => (
-            <section className="rounded-xl border border-gray-200 p-4">
+            <section className="border-neutral-80 rounded-lg border p-4">
               <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
                 <div className="flex flex-1 flex-col gap-6">
                   <div className="flex flex-wrap items-baseline gap-2">
@@ -524,7 +523,7 @@ const LiveFeedbackReservationModal = ({
               {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단 고정: 라이브 입장하기 바로 위) */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="mt-auto rounded-xl border border-gray-200 p-4"
+                className="border-neutral-80 mt-auto rounded-lg border p-4"
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}
