@@ -19,16 +19,17 @@ interface NavGroup {
 type NavItem = NavLeaf | NavGroup;
 
 const navItems: NavItem[] = [
-  { type: 'leaf', name: '프로그램 일정', url: '/' },
+  { type: 'leaf', name: '공지사항', url: '/notice' },
   {
     type: 'group',
     name: '피드백',
     matchPrefix: '/feedback',
     children: [
-      { type: 'leaf', name: '피드백 관리', url: '/feedback-management' },
+      { type: 'leaf', name: '피드백 캘린더', url: '/' },
+      { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
       {
         type: 'leaf',
-        name: '라이브 피드백 일정 열기',
+        name: 'LIVE 슬롯 오픈',
         url: '/feedback/live-availability',
       },
       { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
@@ -37,7 +38,6 @@ const navItems: NavItem[] = [
   },
   { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
   { type: 'leaf', name: '프로필', url: '/profile' },
-  { type: 'leaf', name: '공지사항', url: '/notice' },
 ];
 
 interface MentorSidebarProps {
