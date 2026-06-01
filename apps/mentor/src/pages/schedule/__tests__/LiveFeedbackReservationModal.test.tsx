@@ -232,12 +232,12 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
   });
 
-  it('attendanceStatus 가 PRESENT 면 제출 상태가 "제출"로 표기된다', async () => {
+  it('attendanceStatus 가 PRESENT 면 제출 상태가 "제출됨"로 표기된다', async () => {
     renderModal(makeBar());
     await waitFor(() => {
       expect(screen.getByText('제출 상태')).toBeInTheDocument();
     });
-    expect(screen.getByText('제출')).toBeInTheDocument();
+    expect(screen.getByText('제출됨')).toBeInTheDocument();
   });
 
   it('attendanceStatus 가 ABSENT 면 제출 상태가 "미제출"로 표기된다', async () => {
@@ -288,9 +288,9 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     renderModal(makeBar());
     await waitFor(() => {
       expect(screen.getByText('피드백 참여')).toBeInTheDocument();
-      // 값 노출 — 정확히 "출석" 텍스트 노드 (피드백 참여 라벨과 별개)
+      // 값 노출 — 정확히 "참여" 텍스트 노드 (피드백 참여 라벨과 별개)
       expect(
-        screen.getByText((content) => content === '출석'),
+        screen.getByText((content) => content === '참여'),
       ).toBeInTheDocument();
     });
     // 출석 마킹 버튼(쓰기 UI)은 디자인 미확정으로 노출 금지

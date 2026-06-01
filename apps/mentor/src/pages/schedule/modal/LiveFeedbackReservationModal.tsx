@@ -67,6 +67,33 @@ function formatReservationDateLine(
   return `${y}.${m}.${d} (${dow}) ${startTime}~${endTime}`;
 }
 
+/** 외부 링크(체인) 아이콘 — 제출물 보기 버튼용. */
+const LinkIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+    <path
+      d="M6.5 9.5L9.5 6.5M7 4.5l.8-.8a2.3 2.3 0 113.3 3.3l-.8.8M9 11.5l-.8.8a2.3 2.3 0 11-3.3-3.3l.8-.8"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** 체크 서클 아이콘 — 참여 확인하기 버튼 / 피드백 상태 라벨용. */
+const CheckCircleIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+    <circle cx="8" cy="8" r="6.3" stroke="currentColor" strokeWidth="1.2" />
+    <path
+      d="M5.4 8.2L7.1 9.9 10.6 6.1"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 const LiveFeedbackReservationModal = ({
   isOpen,
   onClose,
@@ -271,8 +298,8 @@ const LiveFeedbackReservationModal = ({
   const liveBadge = getLiveFeedbackBadgeVisual(liveUiStatus);
 
   // 제출 상태 라벨 — BE attendanceStatus(서면 제출) 기준. ABSENT → '미제출', 그 외 '제출'.
-  const submissionStatusLabel: '제출' | '미제출' =
-    feedbackDetail?.attendanceStatus === 'ABSENT' ? '미제출' : '제출';
+  const submissionStatusLabel: '제출됨' | '미제출' =
+    feedbackDetail?.attendanceStatus === 'ABSENT' ? '미제출' : '제출됨';
 
   // 멘티 라이브 출석(menteeStatus) — 읽기 표시만.
   // 마킹 버튼(PRESENT/ABSENT 쓰기 UI)은 디자인 미확정으로 보류.
@@ -280,13 +307,11 @@ const LiveFeedbackReservationModal = ({
   const menteeAttendanceLabel: string = (() => {
     switch (feedbackDetail?.menteeStatus) {
       case 'PRESENT':
-        return '출석';
+        return '참여';
       case 'ABSENT':
         return '불참';
-      case 'PENDING':
-        return '대기';
       default:
-        return EMPTY_PLACEHOLDER;
+        return '확인 전';
     }
   })();
 
@@ -315,7 +340,7 @@ const LiveFeedbackReservationModal = ({
       <BaseModal
         isOpen={isOpen}
         onClose={onClose}
-        className="mx-2 h-[85vh] w-[1200px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
+        className="mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
       >
         <FeedbackHeader
           challengeTitle={selectedMentee.challengeTitle}
@@ -359,7 +384,7 @@ const LiveFeedbackReservationModal = ({
           }
           menteeInfo={() => (
             <section className="rounded-xl border border-gray-200 p-4">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-7">
+              <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
                 <div className="flex flex-1 flex-col gap-6">
                   <div className="flex flex-wrap items-baseline gap-2">
                     <h3 className="text-lg font-semibold text-neutral-900 md:text-2xl">
@@ -374,8 +399,17 @@ const LiveFeedbackReservationModal = ({
                   <div className="grid gap-4 sm:grid-cols-2">
                     {/* 좌: 제출 상태 */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-xs text-neutral-500">
-                        <span>제출 상태</span>
+                      <span className="text-xs text-neutral-500">
+                        제출 상태
+                      </span>
+                      <div className="flex items-center gap-1.5 text-sm">
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            selectedMentee.submissionStatusLabel === '제출됨'
+                              ? 'bg-green-500'
+                              : 'bg-neutral-300'
+                          }`}
+                        />
                         <span className="font-medium text-neutral-700">
                           {selectedMentee.submissionStatusLabel}
                         </span>
@@ -385,16 +419,18 @@ const LiveFeedbackReservationModal = ({
                           href={selectedMentee.attendanceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
                         >
+                          <LinkIcon />
                           제출물 보기
                         </a>
                       ) : (
                         <button
                           type="button"
                           disabled
-                          className="inline-flex w-fit items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
+                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
                         >
+                          <LinkIcon />
                           제출물 보기
                         </button>
                       )}
@@ -402,11 +438,22 @@ const LiveFeedbackReservationModal = ({
 
                     {/* 우: 피드백 참여 */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+                      <div className="flex items-center gap-1 text-xs text-neutral-500">
                         <span>피드백 참여</span>
                         <InfoTooltip
                           label="피드백 참여 안내"
                           text={PARTICIPATION_TOOLTIP_TEXT}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5 text-sm">
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            selectedMentee.menteeAttendanceLabel === '참여'
+                              ? 'bg-green-500'
+                              : selectedMentee.menteeAttendanceLabel === '불참'
+                                ? 'bg-red-500'
+                                : 'bg-primary'
+                          }`}
                         />
                         <span className="font-medium text-neutral-700">
                           {selectedMentee.menteeAttendanceLabel}
@@ -418,8 +465,9 @@ const LiveFeedbackReservationModal = ({
                         <button
                           type="button"
                           onClick={() => setIsAttendanceOpen(true)}
-                          className="text-primary hover:bg-primary-5 border-primary inline-flex w-fit items-center gap-1 rounded border px-3 py-2 text-sm font-medium transition-colors"
+                          className="inline-flex w-fit items-center gap-1.5 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
                         >
+                          <CheckCircleIcon />
                           참여 확인하기
                         </button>
                       )}
@@ -427,7 +475,10 @@ const LiveFeedbackReservationModal = ({
                   </div>
                 </div>
 
-                <div className="flex flex-1 flex-col justify-between gap-3">
+                {/* 세로 구분선 — 제출/참여 ↔ 희망 정보 */}
+                <div className="hidden w-px shrink-0 self-stretch bg-gray-200 md:block" />
+
+                <div className="flex flex-1 flex-col gap-3">
                   <div className="text-xsmall14 grid gap-2 text-neutral-600">
                     <div className="flex gap-2">
                       <span className="w-16 shrink-0 text-neutral-400">
@@ -450,19 +501,18 @@ const LiveFeedbackReservationModal = ({
                   </div>
                 </div>
               </div>
+
+              {/* 가로 구분선 + 사전 Q&A — 별도 박스가 아닌 같은 카드 내 구분선 분리 */}
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <p className="text-xs font-medium text-neutral-400">사전 Q&amp;A</p>
+                <p className="mt-3 max-h-40 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
+                  {selectedMentee.questionAnswer}
+                </p>
+              </div>
             </section>
           )}
           editor={
             <div className="flex flex-col gap-3">
-              <section className="rounded-xl border border-gray-200 p-4">
-                <p className="text-xs font-medium text-neutral-400">
-                  사전 Q&amp;A
-                </p>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-700">
-                  {selectedMentee.questionAnswer}
-                </p>
-              </section>
-
               {/* 액션 패널 — 예약 일시 / 피드백 상태 */}
               <section
                 aria-label="라이브 피드백 액션 패널"
@@ -499,18 +549,23 @@ const LiveFeedbackReservationModal = ({
                     <span className="text-neutral-800">
                       {reservationDateLine}
                     </span>
-                    {countdown.label && countdown.status !== 'after' && (
-                      <span className="text-primary text-xs font-medium">
-                        {countdown.status === 'during'
-                          ? countdown.label
-                          : countdown.label}
+                    {countdown.status === 'after' ? (
+                      <span className="text-xs font-medium text-neutral-400">
+                        종료
                       </span>
+                    ) : (
+                      countdown.label && (
+                        <span className="text-primary text-xs font-medium">
+                          {countdown.label}
+                        </span>
+                      )
                     )}
                   </li>
 
                   {/* 피드백 상태 */}
                   <li className="flex items-center gap-3">
-                    <span className="w-20 shrink-0 text-xs font-medium text-neutral-400">
+                    <span className="flex w-20 shrink-0 items-center gap-1 text-xs font-medium text-neutral-400">
+                      <CheckCircleIcon />
                       피드백 상태
                     </span>
                     <span
