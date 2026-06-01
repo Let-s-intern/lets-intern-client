@@ -1,9 +1,12 @@
+/**
+ * @jest-environment jsdom
+ */
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 
 import JitsiEmbedModal from './JitsiEmbedModal';
 
-vi.mock('@letscareer/ui/JitsiEmbed', () => ({
+jest.mock('@letscareer/ui/JitsiEmbed', () => ({
+  __esModule: true,
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />
   ),
@@ -12,6 +15,14 @@ vi.mock('@letscareer/ui/JitsiEmbed', () => ({
 const TEST_URL = 'https://meet.jit.si/letscareer-x7k2p9';
 
 describe('JitsiEmbedModal (web)', () => {
+  beforeAll(() => {
+    if (!document.getElementById('modal')) {
+      const root = document.createElement('div');
+      root.id = 'modal';
+      document.body.appendChild(root);
+    }
+  });
+
   it('isOpen=false면 아무것도 렌더하지 않는다', () => {
     const { container } = render(
       <JitsiEmbedModal
