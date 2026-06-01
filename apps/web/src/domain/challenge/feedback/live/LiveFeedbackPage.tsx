@@ -52,7 +52,12 @@ const LiveFeedbackPage = () => {
   const needReservation = started.filter((m) => m.status === 'prev');
   const reserved = started.filter((m) => m.status === 'reserved');
   const done = started.filter((m) => m.status === 'completed');
-  const expired = started.filter((m) => m.status === 'expired');
+  const inactive = started.filter(
+    (m) =>
+      m.status === 'expired' ||
+      m.status === 'nonParticipation' ||
+      m.status === 'checkNeeded',
+  );
 
   return (
     <div className="md:mb-22 mb-10 flex flex-col gap-10">
@@ -80,10 +85,10 @@ const LiveFeedbackPage = () => {
         onMissionClick={handleMissionClick}
         onMobileClick={handleMobileClick}
       />
-      {expired.length > 0 && (
+      {inactive.length > 0 && (
         <LiveFeedbackSection
           label="미진행"
-          missions={expired}
+          missions={inactive}
           emptyMessage="기간이 만료된 미션이 없어요."
           challengeId={programId}
           onMissionClick={handleMissionClick}

@@ -77,6 +77,34 @@ export const useWrittenFeedbackListQuery = (challengeId?: number | string) => {
   });
 };
 
+/** PATCH /api/v1/feedback/{feedbackId} 라이브 피드백 후기 작성 */
+export const usePatchFeedbackReview = (feedbackId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ score, review }: { score: number; review: string }) =>
+      axios.patch(`/feedback/${feedbackId}`, { score, review }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['feedbackDetail', feedbackId],
+      });
+    },
+  });
+};
+
+/** PATCH /api/v1/feedback/{feedbackId}/meeting-url 회의실 URL 업데이트 */
+export const usePatchFeedbackMeetingUrl = (feedbackId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ meetingUrl }: { meetingUrl: string }) =>
+      axios.patch(`/feedback/${feedbackId}/meeting-url`, { meetingUrl }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['feedbackDetail', feedbackId],
+      });
+    },
+  });
+};
+
 /** POST /api/v1/challenge/{challengeId}/{missionId}/feedback/{feedbackSlotId} LIVE 피드백 예약 */
 export const usePostFeedbackReservation = (challengeId: string | number) => {
   const queryClient = useQueryClient();
@@ -90,7 +118,6 @@ export const usePostFeedbackReservation = (challengeId: string | number) => {
     }) =>
       axios.post(
         `/challenge/${challengeId}/${missionId}/feedback/${feedbackSlotId}`,
-        { preQuestion: '' }, // BE에서 preQuestion 필드 제거 후 삭제
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({

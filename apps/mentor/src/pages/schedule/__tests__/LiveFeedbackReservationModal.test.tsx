@@ -174,23 +174,34 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(modal).toHaveAttribute('data-feedback-id', '101');
   });
 
-  it('Jitsi env 미설정 시 "라이브 입장하기" 버튼이 disabled', () => {
-    vi.stubEnv('VITE_JITSI_BASE_URL', '');
+  it('meetingUrl 미생성(null) 이어도 멘토는 "라이브 입장하기" 버튼이 활성 (데드락 방지)', async () => {
+    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 인 상태.
+    // 데드락 방지: 멘토는 클릭해서 회의실을 생성해야 하므로 버튼이 활성이어야 한다.
+    axiosMock.get.mockResolvedValue({
+      data: { data: { feedbackInfo: makeMentorDetail({ meetingUrl: null }) } },
+    });
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: '라이브 입장하기' });
-    expect(btn).toBeDisabled();
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
   });
 
   // TODO(임시): 라이브 입장 시간 게이팅(T-10 룰)이 임시 해제됨 (PRD §13).
   // 정식 운영 복원 시 "T-10 이전 → disabled" 단언으로 되돌린다.
-  // 임시 동작: env(baseUrl+salt)만 설정되면 회의실 URL이 합성되어
+  // 임시 동작: BE meetingUrl(= base + 랜덤 meetingRoom)이 내려오면
   // 시간 무관(T-10 이전 포함) 항상 입장 가능.
-  it('Jitsi env 설정 시 T-10 이전이어도 "라이브 입장하기" 버튼이 활성 (시간 게이팅 임시 해제)', () => {
-    vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
-    vi.stubEnv('VITE_JITSI_ROOM_SALT', 'test-salt');
+  it('meetingUrl 존재 시 T-10 이전이어도 "라이브 입장하기" 버튼이 활성 (시간 게이팅 임시 해제)', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            meetingUrl: 'https://meet.jit.si/letscareer-x7k2p9',
+          }),
+        },
+      },
+    });
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: '라이브 입장하기' });
-    expect(btn).toBeEnabled();
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
   });
 
   it('예약 일시 라인이 "YYYY.MM.DD (요일) HH:mm~HH:mm" 형식으로 노출된다', () => {

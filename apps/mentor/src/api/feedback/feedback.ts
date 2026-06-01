@@ -215,6 +215,34 @@ export interface UpdateFeedbackByMentorVariables {
 }
 
 /**
+ * PATCH /api/v1/feedback/{feedbackId}/meeting-url — 회의실 URL 업데이트.
+ *
+ * 멘토 FE 가 Jitsi 도메인 헬스체크 후 healthy URL 을 보내면,
+ * BE 가 `jitsiUrl + meetingRoom` 으로 meetingUrl 을 합성·저장한다.
+ * 성공 시 멘토 피드백 캐시 전체를 invalidate.
+ */
+export const useUpdateFeedbackMeetingUrlMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      feedbackId,
+      meetingUrl,
+    }: {
+      feedbackId: number;
+      meetingUrl: string;
+    }) => {
+      await axios.patch(`${FEEDBACK_DETAIL_PATH}/${feedbackId}/meeting-url`, {
+        meetingUrl,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: FEEDBACK_MENTOR_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FEEDBACK_DETAIL_QUERY_KEY });
+    },
+  });
+};
+
+/**
  * PATCH /feedback/mentor/{feedbackId} — 멘티 출석 상태 수정.
  * 멘토는 `menteeStatus`만 적용 가능. 성공 시 멘토 피드백 캐시 전체를 invalidate.
  */

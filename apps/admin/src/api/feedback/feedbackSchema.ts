@@ -74,6 +74,12 @@ export const feedbackDetailAdminVoSchema = z.object({
   meetingUrl: z.string().nullable(),
   mentorStatus: feedbackAttendanceStatusSchema,
   menteeStatus: feedbackAttendanceStatusSchema,
+  /** 멘티 후기 점수(1~5). 미작성 시 null. (Phase 1 추가) */
+  score: z.number().nullable().optional(),
+  /** 멘티 후기 내용. 미작성 시 null. (Phase 1 추가) */
+  review: z.string().nullable().optional(),
+  /** 후기 공개 여부. (Phase 1 추가) */
+  reviewIsVisible: z.boolean().nullable().optional(),
 });
 export type FeedbackDetailAdminVo = z.infer<typeof feedbackDetailAdminVoSchema>;
 
@@ -84,6 +90,21 @@ export const getAdminFeedbackDetailResponseSchema = z.object({
 export type GetAdminFeedbackDetailResponse = z.infer<
   typeof getAdminFeedbackDetailResponseSchema
 >;
+
+/**
+ * [어드민] 라이브 피드백 수정 요청 (PATCH /admin/feedback/{feedbackId}).
+ * 모든 필드 optional — 보낸 필드만 갱신한다.
+ * score·review 는 `null` 을 명시 전송하면 기존 값을 초기화(미선택/빈 값)한다.
+ * (undefined 는 PATCH 특성상 기존 값 유지)
+ */
+export interface UpdateAdminFeedbackReq {
+  feedbackId: number;
+  mentorStatus?: FeedbackAttendanceStatus;
+  menteeStatus?: FeedbackAttendanceStatus;
+  score?: number | null;
+  review?: string | null;
+  reviewIsVisible?: boolean;
+}
 
 /**
  * 예약 변경(이동) 내역 항목 (GET /admin/feedback/{feedbackId}/history).

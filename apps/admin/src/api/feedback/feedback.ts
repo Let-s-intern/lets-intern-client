@@ -1,5 +1,10 @@
 import axios from '@/utils/axios';
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 
 import {
   type AdminFeedbackListParams,
@@ -8,6 +13,7 @@ import {
   type FeedbackHistoryItem,
   type FeedbackSlotVo,
   type MentorFeedbackSlotParams,
+  type UpdateAdminFeedbackReq,
   getAdminFeedbackDetailResponseSchema,
   getAdminFeedbackHistoryResponseSchema,
   getAdminFeedbacksResponseSchema,
@@ -151,5 +157,25 @@ export const useMentorFeedbackSlotsQuery = (
   return useQuery({
     ...mentorFeedbackSlotsQueryOptions(mentorId ?? 0, range),
     enabled: mentorId != null,
+  });
+};
+
+/**
+ * PATCH /admin/feedback/{feedbackId} — 라이브 피드백 1건 수정.
+ * 멘토/멘티 출석 상태, 후기 점수/내용/공개여부를 수정한다.
+ * 성공 시 해당 상세 + 목록 캐시를 invalidate.
+ */
+export const useUpdateAdminFeedbackMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ feedbackId, ...body }: UpdateAdminFeedbackReq) => {
+      await axios.patch(`/admin/feedback/${feedbackId}`, body);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_FEEDBACK_DETAIL_QUERY_KEY, variables.feedbackId],
+      });
+      queryClient.invalidateQueries({ queryKey: [ADMIN_FEEDBACK_QUERY_KEY] });
+    },
   });
 };

@@ -38,6 +38,8 @@ export const liveFeedbackItemSchema = z.object({
   missionStartDate: z.string(),
   missionEndDate: z.string(),
   feedbackId: z.number().nullable(),
+  feedbackStartDate: z.string().nullable(),
+  feedbackEndDate: z.string().nullable(),
   feedbackStatus: feedbackStatusSchema.nullable(),
   attendanceStatus: attendanceStatusSchema.nullable(),
   mentorStatus: feedbackAttendanceStatusSchema.nullable(),
@@ -66,6 +68,8 @@ export const feedbackDetailSchema = z.object({
     status: feedbackStatusSchema,
     mentorStatus: feedbackAttendanceStatusSchema.nullable(),
     menteeStatus: feedbackAttendanceStatusSchema.nullable(),
+    score: z.number().nullable(),
+    review: z.string().nullable(),
   }),
 });
 

@@ -2,9 +2,13 @@ import type {
   FeedbackAttendanceStatus,
   FeedbackDetailAdminVo,
 } from '@/api/feedback/feedbackSchema';
-import { useAdminFeedbackDetailQuery } from '@/api/feedback/feedback';
+import {
+  useAdminFeedbackDetailQuery,
+  useUpdateAdminFeedbackMutation,
+} from '@/api/feedback/feedback';
 import { twMerge } from '@/lib/twMerge';
 import { sanitizeUrl } from '@/utils/url';
+import { useEffect, useState } from 'react';
 import { formatReservationDateTime } from '../../utils/format';
 
 interface ReservationDetailModalProps {
@@ -120,7 +124,155 @@ function DetailBody({ detail }: { detail: FeedbackDetailAdminVo }) {
           </li>
         </ul>
       </section>
+
+      <EditPanel detail={detail} />
     </div>
+  );
+}
+
+/** 출석 상태 선택 옵션 */
+const ATTENDANCE_OPTIONS: ReadonlyArray<{
+  value: FeedbackAttendanceStatus;
+  label: string;
+}> = [
+  { value: 'PENDING', label: '대기' },
+  { value: 'PRESENT', label: '참석' },
+  { value: 'ABSENT', label: '불참' },
+];
+
+/**
+ * 어드민 수정 패널 — 멘토/멘티 출석, 후기 점수/내용/공개여부.
+ * PATCH /admin/feedback/{feedbackId} 로 저장한다.
+ */
+function EditPanel({ detail }: { detail: FeedbackDetailAdminVo }) {
+  const { mutate: updateFeedback, isPending } =
+    useUpdateAdminFeedbackMutation();
+
+  const [mentorStatus, setMentorStatus] = useState<FeedbackAttendanceStatus>(
+    detail.mentorStatus,
+  );
+  const [menteeStatus, setMenteeStatus] = useState<FeedbackAttendanceStatus>(
+    detail.menteeStatus,
+  );
+  const [score, setScore] = useState<number>(detail.score ?? 0);
+  const [review, setReview] = useState<string>(detail.review ?? '');
+  const [reviewIsVisible, setReviewIsVisible] = useState<boolean>(
+    detail.reviewIsVisible ?? false,
+  );
+
+  // 상세가 갱신되면 폼 값을 동기화 (다른 예약 선택 시)
+  useEffect(() => {
+    setMentorStatus(detail.mentorStatus);
+    setMenteeStatus(detail.menteeStatus);
+    setScore(detail.score ?? 0);
+    setReview(detail.review ?? '');
+    setReviewIsVisible(detail.reviewIsVisible ?? false);
+  }, [detail]);
+
+  const handleSave = () => {
+    // 미선택(score 0)·빈 후기는 null 로 명시 전송해 기존 값을 초기화한다.
+    const trimmedReview = review.trim();
+    updateFeedback({
+      feedbackId: detail.feedbackId,
+      mentorStatus,
+      menteeStatus,
+      score: score > 0 ? score : null,
+      review: trimmedReview ? trimmedReview : null,
+      reviewIsVisible,
+    });
+  };
+
+  return (
+    <section className="border-neutral-80 flex flex-col gap-3 rounded-xl border p-4">
+      <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+        출석 · 후기 수정
+      </h3>
+
+      <div className="flex items-center gap-3 py-1">
+        <span className="text-xxsmall12 text-neutral-40 w-24 shrink-0">
+          멘토 출석
+        </span>
+        <select
+          value={mentorStatus}
+          onChange={(e) =>
+            setMentorStatus(e.target.value as FeedbackAttendanceStatus)
+          }
+          className="border-neutral-80 text-xsmall14 rounded-md border px-2 py-1"
+        >
+          {ATTENDANCE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-3 py-1">
+        <span className="text-xxsmall12 text-neutral-40 w-24 shrink-0">
+          멘티 출석
+        </span>
+        <select
+          value={menteeStatus}
+          onChange={(e) =>
+            setMenteeStatus(e.target.value as FeedbackAttendanceStatus)
+          }
+          className="border-neutral-80 text-xsmall14 rounded-md border px-2 py-1"
+        >
+          {ATTENDANCE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-3 py-1">
+        <span className="text-xxsmall12 text-neutral-40 w-24 shrink-0">
+          후기 점수
+        </span>
+        <select
+          value={score}
+          onChange={(e) => setScore(Number(e.target.value))}
+          className="border-neutral-80 text-xsmall14 rounded-md border px-2 py-1"
+        >
+          <option value={0}>미선택</option>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <option key={n} value={n}>
+              {n}점
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-1.5 py-1">
+        <span className="text-xxsmall12 text-neutral-40">후기 내용</span>
+        <textarea
+          value={review}
+          onChange={(e) => setReview(e.target.value)}
+          rows={3}
+          className="border-neutral-80 text-xsmall14 w-full resize-none rounded-md border p-2 outline-none"
+          placeholder="멘티 후기 내용"
+        />
+      </div>
+
+      <label className="text-xsmall14 text-neutral-0 flex items-center gap-2 py-1">
+        <input
+          type="checkbox"
+          checked={reviewIsVisible}
+          onChange={(e) => setReviewIsVisible(e.target.checked)}
+        />
+        후기 공개
+      </label>
+
+      <button
+        type="button"
+        onClick={handleSave}
+        disabled={isPending}
+        className="bg-primary hover:bg-primary-hover text-xsmall14 mt-1 rounded-lg py-2.5 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isPending ? '저장 중…' : '저장하기'}
+      </button>
+    </section>
   );
 }
 
