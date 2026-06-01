@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import { useFeedbackMentorListQuery } from '@/api/feedback/feedback';
 import { useUserQuery } from '@/api/user/user';
@@ -8,8 +8,8 @@ import type { PeriodBarData } from '@/pages/schedule/types';
 
 import { useReservationFilters } from '../hooks/useReservationFilters';
 import { formatDateTimeRange } from '../utils/formatReservation';
-import CompletedReservationTable from './CompletedReservationTable';
 import ReservationFilterCard from './ReservationFilterCard';
+import ReservationHistoryPanel from './ReservationHistoryPanel';
 
 const sectionTitleClass = 'text-small18 text-neutral-10 font-semibold';
 const emptyBoxClass =
@@ -20,7 +20,9 @@ const emptyBoxClass =
  * (`ReservationListModal`) 양쪽에서 재사용하기 위해 추출됨.
  *
  * `GET /feedback/mentor` 단일 호출 결과를 클라이언트에서 필터/정렬해
- * 상단 필터 카드 / "예약 목록"(예정, RESERVED) / "예약 변경 내역"(COMPLETED) 테이블로 구성한다.
+ * 상단 필터 카드 + "예약 목록"(예정, RESERVED) 테이블로 구성한다.
+ * 예약의 변경(이동) 내역은 별도 테이블이 아니라 각 행의 "예약 변경 내역"
+ * 버튼을 누르면 행 아래로 펼쳐지는 드롭다운(`ReservationHistoryPanel`)으로 보여준다.
  * 자체적으로 query/필터/보기 모달을 포함하므로 어디서든 단독 마운트 가능하다.
  */
 const ReservationListContent = () => {
@@ -32,6 +34,8 @@ const ReservationListContent = () => {
   const { bars } = useLiveFeedbackData();
 
   const [detailFeedbackId, setDetailFeedbackId] = useState<number | null>(null);
+  // 행별 "예약 변경 내역" 펼침 — 한 번에 하나만 펼친다.
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   // "보기" 로 선택한 feedbackId 의 라이브 세션 바.
   const selectedBar = useMemo<PeriodBarData | null>(() => {
@@ -62,10 +66,6 @@ const ReservationListContent = () => {
     programTitleOptions,
     menteeNameOptions,
     reservedList,
-    completedList,
-    sortKey,
-    sortDirection,
-    toggleSort,
   } = useReservationFilters(data);
 
   if (isLoading) {
@@ -105,7 +105,7 @@ const ReservationListContent = () => {
           <div className={emptyBoxClass}>예정된 예약이 없습니다.</div>
         ) : (
           <div className="border-neutral-85 overflow-x-auto rounded-lg border bg-white">
-            <table className="w-full min-w-[720px] border-collapse">
+            <table className="w-full min-w-[840px] border-collapse">
               <thead>
                 <tr className="border-neutral-60 border-b-2 bg-white">
                   <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold">
@@ -123,56 +123,67 @@ const ReservationListContent = () => {
                   <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
                     상세
                   </th>
+                  <th className="text-xsmall14 text-neutral-0 px-4 py-3 text-center font-semibold">
+                    예약 변경 내역
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {reservedList.map((row) => (
-                  <tr
-                    key={row.feedbackId}
-                    className="border-neutral-90 border-b last:border-b-0"
-                  >
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
-                      {formatDateTimeRange(row.startDate, row.endDate)}
-                    </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
-                      {row.programTitle}
-                    </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
-                      {mentorName}
-                    </td>
-                    <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
-                      {row.menteeName}
-                    </td>
-                    <td className="text-xsmall14 px-4 py-3 text-center align-middle">
-                      <button
-                        type="button"
-                        className="text-primary text-xsmall14 font-medium hover:underline"
-                        onClick={() => setDetailFeedbackId(row.feedbackId)}
-                      >
-                        보기
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {reservedList.map((row) => {
+                  const isExpanded = expandedId === row.feedbackId;
+                  return (
+                    <Fragment key={row.feedbackId}>
+                      <tr className="border-neutral-90 border-b last:border-b-0">
+                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                          {formatDateTimeRange(row.startDate, row.endDate)}
+                        </td>
+                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 align-middle">
+                          {row.programTitle}
+                        </td>
+                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
+                          {mentorName}
+                        </td>
+                        <td className="text-xsmall14 text-neutral-20 px-4 py-3 text-center align-middle">
+                          {row.menteeName}
+                        </td>
+                        <td className="text-xsmall14 px-4 py-3 text-center align-middle">
+                          <button
+                            type="button"
+                            className="text-primary text-xsmall14 font-medium hover:underline"
+                            onClick={() => setDetailFeedbackId(row.feedbackId)}
+                          >
+                            보기
+                          </button>
+                        </td>
+                        <td className="text-xsmall14 px-4 py-3 text-center align-middle">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedId(isExpanded ? null : row.feedbackId)
+                            }
+                            aria-expanded={isExpanded}
+                            className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
+                          >
+                            예약 변경 내역
+                            <span className="text-xxsmall12">
+                              {isExpanded ? '▲' : '▼'}
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr className="border-neutral-90 border-b bg-white">
+                          <td colSpan={6} className="px-4 py-2">
+                            <ReservationHistoryPanel />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        )}
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <h2 className={sectionTitleClass}>예약 변경 내역</h2>
-        {completedList.length === 0 ? (
-          <div className={emptyBoxClass}>예약 변경 내역이 없습니다.</div>
-        ) : (
-          <CompletedReservationTable
-            rows={completedList}
-            mentorName={mentorName}
-            sortKey={sortKey}
-            sortDirection={sortDirection}
-            onToggleSort={toggleSort}
-            onViewDetail={setDetailFeedbackId}
-          />
         )}
       </section>
 

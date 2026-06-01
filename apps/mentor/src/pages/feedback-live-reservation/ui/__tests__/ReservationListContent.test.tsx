@@ -11,12 +11,19 @@ const useFeedbackMentorListQueryMock = vi.fn();
 const useUserQueryMock = vi.fn();
 const useFeedbackMentorDetailQueryMock = vi.fn();
 const useFeedbackMentorSlotsQueryMock = vi.fn();
+const noopMutation = {
+  mutate: vi.fn(),
+  mutateAsync: vi.fn(),
+  isPending: false,
+};
 
 vi.mock('@/api/feedback/feedback', () => ({
   useFeedbackMentorListQuery: () => useFeedbackMentorListQueryMock(),
   useFeedbackMentorDetailQuery: (id: number | null) =>
     useFeedbackMentorDetailQueryMock(id),
   useFeedbackMentorSlotsQuery: () => useFeedbackMentorSlotsQueryMock(),
+  useUpdateFeedbackByMentorMutation: () => noopMutation,
+  useUpdateFeedbackMeetingUrlMutation: () => noopMutation,
 }));
 
 vi.mock('@/api/user/user', () => ({
@@ -26,13 +33,13 @@ vi.mock('@/api/user/user', () => ({
 function makeFeedback(overrides: Partial<FeedbackMentor> = {}): FeedbackMentor {
   return {
     feedbackId: 1,
-    startDate: '2025-10-16T17:30:00',
-    endDate: '2025-10-16T18:00:00',
-    createDate: '2025-10-10T13:20:00',
+    startDate: '2026-05-20T10:00:00',
+    endDate: '2026-05-20T10:30:00',
+    createDate: '2026-05-17T09:30:00',
     meetingUrl: null,
-    mentorStatus: 'PRESENT',
-    menteeStatus: 'PRESENT',
-    status: 'COMPLETED',
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
+    status: 'RESERVED',
     programTitle: '한경닷컴 마케팅 과정 9기 1:1 멘토링',
     menteeName: '강하늘',
     ...overrides,
@@ -73,39 +80,38 @@ function mockBase(list: FeedbackMentor[]) {
   });
 }
 
-/** "예약 변경 내역" 섹션의 table 엘리먼트. (select option 텍스트와 충돌 방지용 스코프) */
-function getCompletedTable(): HTMLTableElement {
+/** "예약 목록" 섹션의 table 엘리먼트. (select option 텍스트와 충돌 방지용 스코프) */
+function getReservedTable(): HTMLTableElement {
   return screen
-    .getByRole('heading', { name: '예약 변경 내역' })
+    .getByRole('heading', { name: '예약 목록' })
     .parentElement!.querySelector('table')!;
 }
 
 describe('ReservationListContent', () => {
-  it('단독 마운트 시 두 섹션(예약 목록/예약 변경 내역)을 노출한다', () => {
+  it('단독 마운트 시 "예약 목록" 섹션을 노출하고, 별도 "예약 변경 내역" 섹션은 없다', () => {
     mockBase([]);
     renderContent();
     expect(
       screen.getByRole('heading', { name: '예약 목록' }),
     ).toBeInTheDocument();
+    // 변경 내역 전용 테이블 섹션(heading)은 제거됨.
     expect(
-      screen.getByRole('heading', { name: '예약 변경 내역' }),
-    ).toBeInTheDocument();
+      screen.queryByRole('heading', { name: '예약 변경 내역' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('RESERVED는 예정이 없으면 "예정된 예약이 없습니다."를 노출한다', () => {
+  it('예정 예약이 없으면 "예정된 예약이 없습니다."를 노출한다', () => {
     mockBase([makeFeedback({ status: 'COMPLETED' })]);
     renderContent();
     expect(screen.getByText('예정된 예약이 없습니다.')).toBeInTheDocument();
   });
 
-  it('RESERVED는 "예약 목록", COMPLETED는 "예약 변경 내역"으로 분리된다', () => {
+  it('RESERVED 항목만 "예약 목록" 테이블에 노출한다 (COMPLETED 제외)', () => {
     mockBase([
       makeFeedback({
         feedbackId: 1,
         status: 'RESERVED',
         menteeName: '이지수',
-        startDate: '2026-05-20T10:00:00',
-        endDate: '2026-05-20T10:30:00',
       }),
       makeFeedback({
         feedbackId: 2,
@@ -115,17 +121,9 @@ describe('ReservationListContent', () => {
     ]);
     renderContent();
 
-    const reservedTable = screen
-      .getByRole('heading', { name: '예약 목록' })
-      .parentElement!.querySelector('table')!;
+    const reservedTable = getReservedTable();
     expect(within(reservedTable).getByText('이지수')).toBeInTheDocument();
-    expect(within(getCompletedTable()).getByText('강하늘')).toBeInTheDocument();
-    expect(
-      within(getCompletedTable()).queryByText('이지수'),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('예정된 예약이 없습니다.'),
-    ).not.toBeInTheDocument();
+    expect(within(reservedTable).queryByText('강하늘')).not.toBeInTheDocument();
   });
 
   it('프로그램명 필터로 해당 프로그램 항목만 남는다', async () => {
@@ -133,13 +131,13 @@ describe('ReservationListContent', () => {
     mockBase([
       makeFeedback({
         feedbackId: 1,
-        status: 'COMPLETED',
+        status: 'RESERVED',
         menteeName: '강하늘',
         programTitle: '한경닷컴 마케팅 과정 9기 1:1 멘토링',
       }),
       makeFeedback({
         feedbackId: 2,
-        status: 'COMPLETED',
+        status: 'RESERVED',
         menteeName: '윤서아',
         programTitle: '포트폴리오 완성 챌린지 16기 1차 피드백',
       }),
@@ -151,33 +149,25 @@ describe('ReservationListContent', () => {
       '포트폴리오 완성 챌린지 16기 1차 피드백',
     );
 
-    expect(within(getCompletedTable()).getByText('윤서아')).toBeInTheDocument();
+    expect(within(getReservedTable()).getByText('윤서아')).toBeInTheDocument();
     expect(
-      within(getCompletedTable()).queryByText('강하늘'),
+      within(getReservedTable()).queryByText('강하늘'),
     ).not.toBeInTheDocument();
   });
 
   it('멘티명 필터로 해당 멘티 항목만 남는다', async () => {
     const user = userEvent.setup();
     mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-      }),
-      makeFeedback({
-        feedbackId: 2,
-        status: 'COMPLETED',
-        menteeName: '윤서아',
-      }),
+      makeFeedback({ feedbackId: 1, status: 'RESERVED', menteeName: '강하늘' }),
+      makeFeedback({ feedbackId: 2, status: 'RESERVED', menteeName: '윤서아' }),
     ]);
     renderContent();
 
     await user.selectOptions(screen.getByLabelText('멘티명 검색'), '윤서아');
 
-    expect(within(getCompletedTable()).getByText('윤서아')).toBeInTheDocument();
+    expect(within(getReservedTable()).getByText('윤서아')).toBeInTheDocument();
     expect(
-      within(getCompletedTable()).queryByText('강하늘'),
+      within(getReservedTable()).queryByText('강하늘'),
     ).not.toBeInTheDocument();
   });
 
@@ -186,14 +176,14 @@ describe('ReservationListContent', () => {
     mockBase([
       makeFeedback({
         feedbackId: 1,
-        status: 'COMPLETED',
+        status: 'RESERVED',
         menteeName: '강하늘',
         startDate: '2025-10-16T17:30:00',
         endDate: '2025-10-16T18:00:00',
       }),
       makeFeedback({
         feedbackId: 2,
-        status: 'COMPLETED',
+        status: 'RESERVED',
         menteeName: '윤서아',
         startDate: '2025-11-12T16:00:00',
         endDate: '2025-11-12T16:30:00',
@@ -203,88 +193,16 @@ describe('ReservationListContent', () => {
 
     await user.type(screen.getByLabelText('예약 시작 날짜'), '2025-11-01');
 
-    expect(within(getCompletedTable()).getByText('윤서아')).toBeInTheDocument();
+    expect(within(getReservedTable()).getByText('윤서아')).toBeInTheDocument();
     expect(
-      within(getCompletedTable()).queryByText('강하늘'),
+      within(getReservedTable()).queryByText('강하늘'),
     ).not.toBeInTheDocument();
   });
 
-  it('신청 날짜 필터 적용 시 createDate가 null이면 제외된다', async () => {
-    const user = userEvent.setup();
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-        createDate: '2025-10-10T13:20:00',
-      }),
-      makeFeedback({
-        feedbackId: 2,
-        status: 'COMPLETED',
-        menteeName: '윤서아',
-        createDate: null,
-      }),
-    ]);
+  it('예약 목록 테이블 헤더는 "신청 시간" 없이 6컬럼(날짜/시간·프로그램·멘토·멘티·상세·예약 변경 내역)이다', () => {
+    mockBase([makeFeedback({ feedbackId: 1, status: 'RESERVED' })]);
     renderContent();
-
-    await user.type(screen.getByLabelText('신청 시작 날짜'), '2025-10-01');
-
-    expect(within(getCompletedTable()).getByText('강하늘')).toBeInTheDocument();
-    expect(
-      within(getCompletedTable()).queryByText('윤서아'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('createDate가 null이면 신청 시간 컬럼에 "—"를 표기한다', () => {
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-        createDate: null,
-      }),
-    ]);
-    renderContent();
-    expect(screen.getByText('—')).toBeInTheDocument();
-  });
-
-  it('createDate가 있으면 완료 테이블 신청 시간 셀을 "YYYY-MM-DD HH:mm"로 표기한다', () => {
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-        createDate: '2025-10-10T13:20:00',
-      }),
-    ]);
-    renderContent();
-    // '—' 가 아니라 포맷된 신청 시간이 보여야 한다 (MSW/실데이터 createDate 회귀 가드).
-    expect(
-      within(getCompletedTable()).getByText('2025-10-10 13:20'),
-    ).toBeInTheDocument();
-    expect(
-      within(getCompletedTable()).queryByText('—'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('예약 목록(RESERVED) 테이블에는 "신청 시간" 컬럼이 없다 (예정 예약 불필요)', () => {
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'RESERVED',
-        menteeName: '이지수',
-        startDate: '2026-05-20T10:00:00',
-        endDate: '2026-05-20T10:30:00',
-        createDate: '2026-05-17T09:30:00',
-      }),
-    ]);
-    renderContent();
-    const reservedTable = screen
-      .getByRole('heading', { name: '예약 목록' })
-      .parentElement!.querySelector('table')!;
-
-    // 헤더는 5컬럼(날짜/시간·프로그램·멘토·멘티·상세), "신청 시간" 없음.
-    const headers = within(reservedTable)
+    const headers = within(getReservedTable())
       .getAllByRole('columnheader')
       .map((th) => th.textContent);
     expect(headers).toEqual([
@@ -293,109 +211,73 @@ describe('ReservationListContent', () => {
       '멘토',
       '멘티',
       '상세',
+      '예약 변경 내역',
     ]);
-    expect(
-      within(reservedTable).queryByText('신청 시간'),
-    ).not.toBeInTheDocument();
-    // 신청 시간 값 셀도 렌더되지 않는다.
-    expect(
-      within(reservedTable).queryByText('2026-05-17 09:30'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('멘티 헤더 클릭으로 완료 테이블 정렬이 토글된다', async () => {
-    const user = userEvent.setup();
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-      }),
-      makeFeedback({
-        feedbackId: 2,
-        status: 'COMPLETED',
-        menteeName: '윤서아',
-      }),
-      makeFeedback({
-        feedbackId: 3,
-        status: 'COMPLETED',
-        menteeName: '오지호',
-      }),
-    ]);
-    renderContent();
-
-    const completedTable = getCompletedTable();
-
-    // 기본 정렬은 datetime asc → 멘티 헤더 클릭 시 menteeName asc(강하늘, 오지호, 윤서아).
-    await user.click(
-      within(completedTable).getByRole('button', { name: /멘티/ }),
-    );
-    let rows = within(completedTable).getAllByRole('row').slice(1);
-    expect(within(rows[0]).getByText('강하늘')).toBeInTheDocument();
-
-    // 다시 클릭 → desc 토글(윤서아, 오지호, 강하늘).
-    await user.click(
-      within(completedTable).getByRole('button', { name: /멘티/ }),
-    );
-    rows = within(completedTable).getAllByRole('row').slice(1);
-    expect(within(rows[0]).getByText('윤서아')).toBeInTheDocument();
   });
 
   it('멘토 컬럼은 로그인 멘토 본인 이름으로 모든 행 동일하다', () => {
     mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-      }),
-      makeFeedback({
-        feedbackId: 2,
-        status: 'COMPLETED',
-        menteeName: '윤서아',
-      }),
+      makeFeedback({ feedbackId: 1, status: 'RESERVED', menteeName: '강하늘' }),
+      makeFeedback({ feedbackId: 2, status: 'RESERVED', menteeName: '윤서아' }),
     ]);
     renderContent();
-    expect(screen.getAllByText('테스트 멘토')).toHaveLength(2);
+    expect(within(getReservedTable()).getAllByText('테스트 멘토')).toHaveLength(
+      2,
+    );
+  });
+
+  it('행의 "예약 변경 내역" 버튼을 누르면 변경 내역 드롭다운이 펼쳐진다', async () => {
+    const user = userEvent.setup();
+    mockBase([makeFeedback({ feedbackId: 1, status: 'RESERVED' })]);
+    renderContent();
+
+    const reservedTable = getReservedTable();
+    // 펼치기 전: 변경 내역 패널 문구 없음.
+    expect(
+      within(reservedTable).queryByText('예약을 옮긴 내역이 없습니다.'),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      within(reservedTable).getByRole('button', { name: /예약 변경 내역/ }),
+    );
+
+    expect(
+      within(reservedTable).getByText('예약을 옮긴 내역이 없습니다.'),
+    ).toBeInTheDocument();
   });
 
   it('"보기" 클릭 시 라이브 피드백 모달을 열고 해당 feedbackId 상세를 fetch한다', async () => {
     const user = userEvent.setup();
-    mockBase([
-      makeFeedback({
-        feedbackId: 1,
-        status: 'COMPLETED',
-        menteeName: '강하늘',
-      }),
-    ]);
+    mockBase([makeFeedback({ feedbackId: 1, status: 'RESERVED' })]);
     useFeedbackMentorDetailQueryMock.mockReturnValue({
       data: {
         feedbackId: 1,
         startDate: '2025-10-16T17:30:00',
         endDate: '2025-10-16T18:00:00',
         meetingUrl: null,
-        status: 'COMPLETED',
+        status: 'RESERVED',
         programTitle: '한경닷컴 마케팅 과정 9기 1:1 멘토링',
         attendanceUrl: 'https://example.com/x',
-        attendanceStatus: 'PRESENT',
+        attendanceStatus: 'PENDING',
         menteeName: '강하늘',
         menteeWishField: '기획 / PM / PO',
         menteeWishIndustry: 'IT',
         menteeWishCompany: 'Toss',
         preQuestion: '자소서 피드백 받고 싶어요.',
-        mentorStatus: 'PRESENT',
-        menteeStatus: 'PRESENT',
+        mentorStatus: 'PENDING',
+        menteeStatus: 'PENDING',
       },
       isLoading: false,
       isError: false,
     });
     renderContent();
 
-    await user.click(screen.getByRole('button', { name: '보기' }));
+    await user.click(
+      within(getReservedTable()).getByRole('button', { name: '보기' }),
+    );
 
-    // 경량 모달 대신 LiveFeedbackReservationModal 이 열린다.
     expect(screen.getAllByText(/LIVE 피드백/).length).toBeGreaterThan(0);
     expect(screen.getByText('자소서 피드백 받고 싶어요.')).toBeInTheDocument();
-    // 열린 동안 클릭한 feedbackId(=1) 로 상세를 fetch한다.
     expect(useFeedbackMentorDetailQueryMock).toHaveBeenCalledWith(1);
   });
 

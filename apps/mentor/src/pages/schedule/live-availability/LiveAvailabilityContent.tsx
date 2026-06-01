@@ -471,74 +471,58 @@ const LiveAvailabilityContent = ({
         {/* 주 네비(좌) + 레전드(우) — 한 줄 */}
         <div className="mb-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handlePrevWeek}
-            disabled={!canGoPrev}
-            aria-label="이전 주"
-            className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-70 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
-          >
-            ‹
-          </button>
-          <p className="text-xsmall14 text-neutral-10 font-semibold tabular-nums">
-            {format(weekStart, 'MM.dd')} ~ {format(addDays(weekStart, 6), 'MM.dd')}
-          </p>
-          <button
-            type="button"
-            onClick={handleNextWeek}
-            aria-label="다음 주"
-            className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
-          >
-            ›
-          </button>
+            <button
+              type="button"
+              onClick={handlePrevWeek}
+              disabled={!canGoPrev}
+              aria-label="이전 주"
+              className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-70 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
+            >
+              ‹
+            </button>
+            <p className="text-xsmall14 text-neutral-10 font-semibold tabular-nums">
+              {format(weekStart, 'MM.dd')} ~{' '}
+              {format(addDays(weekStart, 6), 'MM.dd')}
+            </p>
+            <button
+              type="button"
+              onClick={handleNextWeek}
+              aria-label="다음 주"
+              className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+            >
+              ›
+            </button>
           </div>
 
           {/* 레전드 — 예약 가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
           <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
-          <span className="flex items-center gap-1.5">
-            <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
-            예약 가능
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="bg-neutral-90 text-neutral-40 flex h-3 w-3 items-center justify-center rounded-[3px]">
-              <LockIcon />
+            <span className="flex items-center gap-1.5">
+              <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+              예약 가능
             </span>
-            예약 완료
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
-            변경사항
-          </span>
+            <span className="flex items-center gap-1.5">
+              <span className="bg-neutral-90 text-neutral-40 flex h-3 w-3 items-center justify-center rounded-[3px]">
+                <LockIcon />
+              </span>
+              예약 완료
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
+              변경사항
+            </span>
           </div>
         </div>
 
-        {/* 라이브 피드백 기간 바 */}
-        {livePeriod && (
-          <div className="border-primary-20 bg-primary-5 mb-3 flex items-center gap-2 rounded-md border px-3 py-2">
-            <span className="bg-primary h-2 w-2 shrink-0 rounded-full" />
-            <span className="text-xsmall14 text-primary-90 min-w-0 truncate font-medium">
-              {livePeriod.challengeTitle}
-              {livePeriod.generation !== undefined &&
-                ` ${livePeriod.generation}기`}
-              {livePeriod.th !== undefined && ` ${livePeriod.th}회차`} LIVE
-              피드백 기간
-            </span>
-            <span className="text-xxsmall12 text-primary-90 ml-auto flex shrink-0 items-center gap-1 font-semibold">
-              <span aria-hidden>👥</span>
-              {livePeriod.reservedCount ?? 0}/{livePeriod.capacity ?? 0}
-            </span>
-          </div>
-        )}
-
         <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
-            <div className="bg-neutral-95 border-neutral-85 text-xxsmall12 text-neutral-40 sticky top-0 z-10 flex items-center justify-center border-b border-r px-2 py-2 text-center font-medium leading-tight">
-              멘토링 시작 시간
+            <div className="border-neutral-85 text-xxsmall12 text-neutral-40 sticky top-0 z-10 flex flex-col items-center justify-center border-b border-r bg-white px-2 py-2 text-center font-medium leading-tight">
+              <span>멘토링</span>
+              <span>시작 시간</span>
             </div>
             {days.map((day, index) => (
               <div
                 key={index}
-                className="bg-neutral-95 border-neutral-85 sticky top-0 z-10 border-b border-r px-2 py-2 text-center last:border-r-0"
+                className="border-neutral-85 sticky top-0 z-10 border-b border-r bg-white px-2 py-2 text-center last:border-r-0"
               >
                 <p className="text-xxsmall12 text-neutral-40">
                   {WEEK_DAYS[index]}
@@ -548,6 +532,24 @@ const LiveAvailabilityContent = ({
                 </p>
               </div>
             ))}
+
+            {/* 날짜 헤더 아래 — 그 주의 라이브 피드백 기간 바(간단 표기). 전체 컬럼 스팬. */}
+            {livePeriod && (
+              <div className="border-neutral-85 border-primary-20 bg-primary-5 col-span-full flex items-center gap-2 border-b px-3 py-1.5">
+                <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" />
+                <span className="text-xxsmall12 text-primary-90 min-w-0 truncate font-medium">
+                  {livePeriod.challengeTitle}
+                  {livePeriod.generation !== undefined &&
+                    ` ${livePeriod.generation}기`}
+                  {livePeriod.th !== undefined && ` ${livePeriod.th}회차`} LIVE
+                  피드백 기간
+                </span>
+                <span className="text-xxsmall12 text-primary-90 ml-auto flex shrink-0 items-center gap-1 font-semibold">
+                  <span aria-hidden>👥</span>
+                  {livePeriod.reservedCount ?? 0}/{livePeriod.capacity ?? 0}
+                </span>
+              </div>
+            )}
 
             {TIME_SLOTS.map((time) => (
               <div key={`row-${time}`} className="contents">
