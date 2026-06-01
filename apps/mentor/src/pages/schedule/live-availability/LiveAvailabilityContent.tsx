@@ -468,8 +468,9 @@ const LiveAvailabilityContent = ({
           </p>
         )}
 
-        {/* 주 네비게이션 — "‹ 03.02 ~ 03.08 ›" */}
-        <div className="mb-3 flex items-center justify-center gap-3">
+        {/* 주 네비(좌) + 레전드(우) — 한 줄 */}
+        <div className="mb-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={handlePrevWeek}
@@ -490,10 +491,10 @@ const LiveAvailabilityContent = ({
           >
             ›
           </button>
-        </div>
+          </div>
 
-        {/* 레전드 — 예약 가능 / 예약 완료(잠금) / 변경사항 */}
-        <div className="text-xxsmall12 text-neutral-40 mb-3 flex items-center gap-4">
+          {/* 레전드 — 예약 가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
+          <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
             예약 가능
@@ -508,6 +509,7 @@ const LiveAvailabilityContent = ({
             <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
             변경사항
           </span>
+          </div>
         </div>
 
         {/* 라이브 피드백 기간 바 */}
