@@ -66,6 +66,16 @@ export const feedbackModalDesign = {
   /** 필드 라벨(작은 회색 텍스트) */
   fieldLabel: 'text-xs text-neutral-500',
 
+  /** 서면 피드백 에디터 영역 */
+  writtenEditorSurface: 'rounded-[4px] border border-gray-200 bg-white p-6',
+  writtenEditorEmpty:
+    'rounded-[4px] border border-dashed border-neutral-200 bg-neutral-50/50 p-8',
+  /** 서면 피드백 하단 액션 버튼 */
+  writtenSubmitButton:
+    'bg-primary hover:bg-primary-hover whitespace-nowrap rounded-[4px] px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2',
+  writtenSaveButton:
+    'border-primary text-primary hover:bg-primary-5 whitespace-nowrap rounded-[4px] border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2',
+
   /** ⓘ 툴팁 박스(흰 네모 말풍선) — 위치(top/left)는 인라인 style 로 합성 */
   tooltipBox:
     'z-[1000] w-56 -translate-x-1/2 rounded-[4px] border border-neutral-200 bg-white px-3 py-2 text-xs leading-5 text-neutral-700 shadow-lg transition-opacity',

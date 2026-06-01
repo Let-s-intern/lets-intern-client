@@ -1,3 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
+import { scheduleDesign } from '../../scheduleDesign';
 import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
 /** "09:00" → "09:00", "18:30" → "18:30" */
@@ -71,26 +73,26 @@ const STATUS_BADGE: Record<
   Exclude<BadgeStatus, 'waiting'>,
   { label: string; badge: string }
 > = {
-  'in-progress': { label: '진행 중', badge: 'bg-primary-5 text-primary' },
+  'in-progress': { label: '진행 중', badge: scheduleDesign.cardBadgeActive },
   completed: {
     label: '진행 완료',
-    badge: 'border border-neutral-300 bg-white text-neutral-500',
+    badge: scheduleDesign.cardBadgeDone,
   },
   'mentor-absent': {
     label: '멘토 미참여',
-    badge: 'border border-neutral-300 bg-white text-neutral-500',
+    badge: scheduleDesign.cardBadgeDone,
   },
   'mentee-absent': {
     label: '멘티 미참여',
-    badge: 'border border-neutral-300 bg-white text-neutral-500',
+    badge: scheduleDesign.cardBadgeDone,
   },
   'mentor-late': {
     label: '멘토 지각',
-    badge: 'border border-neutral-300 bg-white text-neutral-500',
+    badge: scheduleDesign.cardBadgeDone,
   },
   'mentee-late': {
     label: '멘티 지각',
-    badge: 'border border-neutral-300 bg-white text-neutral-500',
+    badge: scheduleDesign.cardBadgeDone,
   },
 };
 
@@ -110,7 +112,12 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
     lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
 
   return (
-    <div className="border-neutral-80 flex h-full w-full flex-col gap-1.5 overflow-hidden rounded border bg-white px-2.5 py-2">
+    <div
+      className={twMerge(
+        scheduleDesign.surface,
+        'flex h-full w-full flex-col gap-1.5 overflow-hidden px-2.5 py-2',
+      )}
+    >
       {/* Row 1: 시작 시간 + 상태 배지 */}
       <div className="flex items-center justify-between gap-1">
         <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
@@ -118,7 +125,11 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         </span>
         {badge && (
           <span
-            className={`shrink-0 whitespace-nowrap rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium leading-none ${badge.badge}`}
+            className={twMerge(
+              'shrink-0 whitespace-nowrap',
+              scheduleDesign.cardBadge,
+              badge.badge,
+            )}
           >
             {badge.label}
           </span>

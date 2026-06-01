@@ -1,6 +1,8 @@
 'use client';
 
 import LiveFeedbackOpenIcon from '@/common/icon/feedback/LiveFeedbackOpenIcon';
+import { twMerge } from '@/lib/twMerge';
+import { scheduleDesign } from '../../scheduleDesign';
 import type { PeriodBarData } from '../../types';
 import { currentNow } from '../../constants/mockNow';
 
@@ -41,9 +43,11 @@ const LiveFeedbackOpenBar = ({
     <Tag
       type={interactive ? 'button' : undefined}
       onClick={interactive ? onMentorOpenClick : undefined}
-      className={`border-neutral-80 flex w-full flex-col gap-0.5 overflow-hidden rounded border bg-white px-3 py-2 text-left ${
-        interactive ? 'hover:bg-neutral-95 transition-colors' : ''
-      }`}
+      className={twMerge(
+        scheduleDesign.surface,
+        'flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left',
+        interactive ? 'hover:bg-neutral-95 transition-colors' : '',
+      )}
       aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}`}
     >
       {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}

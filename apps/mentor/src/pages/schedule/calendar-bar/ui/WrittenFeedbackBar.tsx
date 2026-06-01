@@ -1,6 +1,8 @@
 'use client';
 
 import WrittenFeedbackIcon from '@/common/icon/feedback/WrittenFeedbackIcon';
+import { twMerge } from '@/lib/twMerge';
+import { scheduleDesign } from '../../scheduleDesign';
 import { currentNow } from '../../constants/mockNow';
 import type { PeriodBarData } from '../../types';
 
@@ -31,7 +33,10 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
-      className="border-neutral-80 hover:bg-neutral-95 flex w-full flex-col gap-0.5 overflow-hidden rounded border bg-white px-3 py-2 text-left transition-colors"
+      className={twMerge(
+        scheduleDesign.surface,
+        'hover:bg-neutral-95 flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left transition-colors',
+      )}
       aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차`}
     >
       {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}

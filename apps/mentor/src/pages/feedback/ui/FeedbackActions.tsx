@@ -2,6 +2,7 @@
 
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import config from '@/constants/config';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 interface FeedbackActionsProps {
   attendanceId: number | null;
@@ -86,7 +87,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSave}
           disabled={isDisabled}
-          className="border-primary text-primary hover:bg-primary-5 whitespace-nowrap rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
+          className={feedbackModalDesign.writtenSaveButton}
         >
           저장
         </button>
@@ -94,7 +95,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSubmit}
           disabled={isDisabled}
-          className="bg-primary hover:bg-primary-hover whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
+          className={feedbackModalDesign.writtenSubmitButton}
         >
           피드백 제출
         </button>
