@@ -16,11 +16,6 @@ import ColumnDividers from './ui/ColumnDividers';
 import DayHeaderCell from './ui/DayHeaderCell';
 import TodayButton from './ui/TodayButton';
 
-// ─── 레이아웃 상수 ───────────────────────────────────────────────────────────
-// 날짜 헤더·상단 서면 섹션과 컬럼 정렬을 맞추기 위한 좌측 스페이서 폭 (px).
-// 하단 라이브 섹션은 시간 레이블을 표시하지 않고 동일 폭 빈 스페이서만 유지한다.
-const TIME_LABEL_W = 48;
-
 // ─── 타입 ────────────────────────────────────────────────────────────────────
 interface WeeklyCalendarProps {
   bars: PeriodBarData[];
@@ -219,11 +214,6 @@ const WeeklyCalendar = ({
         >
           {/* ── 날짜 헤더 행 ─────────────────────────────────────────────── */}
           <div className="border-neutral-80 flex border-b">
-            {/* 시간 레이블 열과 정렬을 맞추는 sticky 스페이서 */}
-            <div
-              className="border-neutral-80 sticky left-0 z-20 shrink-0 border-r bg-white"
-              style={{ width: TIME_LABEL_W }}
-            />
             <div
               className="flex-1"
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
@@ -244,11 +234,6 @@ const WeeklyCalendar = ({
 
           {/* ── 상단: 서면 피드백 period bar 영역 ────────────────────────── */}
           <div className="flex" style={{ minHeight: `${bodyMinHeight}px` }}>
-            {/* sticky 스페이서 */}
-            <div
-              className="border-neutral-80 sticky left-0 z-10 shrink-0 border-r bg-white"
-              style={{ width: TIME_LABEL_W }}
-            />
             {/* 바 렌더링 영역 */}
             <div className="relative flex-1">
               <ColumnDividers days={days} gridCols={gridCols} />
@@ -300,12 +285,6 @@ const WeeklyCalendar = ({
 
               {/* 시간순 스택 — 날짜별 열에 그날 세션을 시작시각 오름차순으로 쌓는다 */}
               <div className="border-neutral-80 flex border-t">
-                {/* 좌측 스페이서 — 시간 레이블은 제거하고 컬럼 정렬용 빈 폭만 유지 */}
-                <div
-                  className="border-neutral-80 sticky left-0 z-20 shrink-0 border-r bg-white"
-                  style={{ width: TIME_LABEL_W }}
-                />
-
                 {/* 날짜별 열 */}
                 <div
                   className="relative flex-1"

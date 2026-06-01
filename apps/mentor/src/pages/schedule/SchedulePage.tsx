@@ -13,6 +13,7 @@ import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
 import type { FeedbackTagType } from './constants/feedbackTag';
+import { currentNow } from './constants/mockNow';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
@@ -66,11 +67,10 @@ const SchedulePage = () => {
     if (nearest) setTargetScrollDate(nearest);
   };
 
-  /** "전체" 클릭 — 필터 해제 + 전체에서 가장 가까운 일정으로 이동 */
+  /** "전체" 클릭 — 필터 해제(전체 종류 표시) + 오늘로 이동 */
   const handleClearAll = () => {
     clearFeedbackTags();
-    const nearest = findNearestDateForTag(null);
-    setTargetScrollDate(nearest);
+    setTargetScrollDate(currentNow());
   };
 
   const isMobile = useMediaQuery('(max-width: 767px)');
