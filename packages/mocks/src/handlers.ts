@@ -41,8 +41,25 @@ const reservationEnd = new Date(now.getTime() + 35 * 60 * 1000).toISOString();
  *
  * 절대일자(2026-05-xx)를 사용 — mockNow(데모 시각)와 함께 보던 고정 시연 일정 재현.
  */
+/**
+ * 캘린더 개별 LIVE 카드의 상태 배지 시연을 위한 세션별 상태.
+ *
+ * `status`(BE FeedbackStatus) + 출석(mentorStatus/menteeStatus)으로
+ * `resolveSessionStatus` 매핑을 거쳐 카드 배지가 결정된다.
+ *  - COMPLETED                  → 진행 완료(회색 아웃라인)
+ *  - CANCELED + menteeStatus ABSENT → 멘티 미참여
+ *  - CANCELED (단순 취소)        → 취소(연빨강)
+ *  - RESERVED                   → 대기(배지 없음)
+ * 미지정 시 RESERVED(대기) 기본값.
+ */
+type CalendarSessionStatus = {
+  status: 'RESERVED' | 'COMPLETED' | 'CANCELED';
+  mentorStatus: 'PENDING' | 'PRESENT' | 'ABSENT';
+  menteeStatus: 'PENDING' | 'PRESENT' | 'ABSENT';
+};
+
 const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
-  readonly [string, string, string, string]
+  readonly [string, string, string, string, CalendarSessionStatus?]
 > = [
   // [챌린지1] 기필코 경험정리 챌린지 21기 — 5/4~5/6
   [
@@ -50,30 +67,35 @@ const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
     '2026-05-04T10:30:00',
     '기필코 경험정리 챌린지 21기',
     '이지수',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   [
     '2026-05-04T14:00:00',
     '2026-05-04T14:30:00',
     '기필코 경험정리 챌린지 21기',
     '박서연',
+    { status: 'CANCELED', mentorStatus: 'PENDING', menteeStatus: 'PENDING' },
   ],
   [
     '2026-05-05T10:00:00',
     '2026-05-05T10:30:00',
     '기필코 경험정리 챌린지 21기',
     '최지훈',
+    { status: 'CANCELED', mentorStatus: 'PRESENT', menteeStatus: 'ABSENT' },
   ],
   [
     '2026-05-05T15:00:00',
     '2026-05-05T15:30:00',
     '기필코 경험정리 챌린지 21기',
     '임채원',
+    // 미지정 → RESERVED(대기, 배지 없음)
   ],
   [
     '2026-05-06T09:00:00',
     '2026-05-06T09:30:00',
     '기필코 경험정리 챌린지 21기',
     '한도윤',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   // [챌린지2] 커리어 설계 챌린지 5기 — 5/6~5/8
   [
@@ -81,12 +103,14 @@ const CALENDAR_FEEDBACK_SESSIONS: ReadonlyArray<
     '2026-05-06T14:30:00',
     '커리어 설계 챌린지 5기',
     '문수아',
+    { status: 'CANCELED', mentorStatus: 'PENDING', menteeStatus: 'PENDING' },
   ],
   [
     '2026-05-07T10:00:00',
     '2026-05-07T10:30:00',
     '커리어 설계 챌린지 5기',
     '조예린',
+    { status: 'COMPLETED', mentorStatus: 'PRESENT', menteeStatus: 'PRESENT' },
   ],
   [
     '2026-05-08T15:00:00',
@@ -111,15 +135,15 @@ function deriveCreateDate(startDate: string, daysBefore: number): string {
 }
 
 const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
-  ([startDate, endDate, programTitle, menteeName], idx) => ({
+  ([startDate, endDate, programTitle, menteeName, sessionStatus], idx) => ({
     feedbackId: 70_000 + idx,
     startDate,
     endDate,
     createDate: deriveCreateDate(startDate, 3 + (idx % 3)),
     meetingUrl: null,
-    mentorStatus: 'PENDING',
-    menteeStatus: 'PENDING',
-    status: 'RESERVED',
+    mentorStatus: sessionStatus?.mentorStatus ?? 'PENDING',
+    menteeStatus: sessionStatus?.menteeStatus ?? 'PENDING',
+    status: sessionStatus?.status ?? 'RESERVED',
     programTitle,
     menteeName,
   }),

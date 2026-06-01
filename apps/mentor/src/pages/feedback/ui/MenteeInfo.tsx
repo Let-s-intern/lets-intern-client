@@ -32,7 +32,7 @@ function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
 }
 
 const EMPTY_STATE = (
-  <div className="border-neutral-80 rounded-lg border p-6 text-sm text-neutral-400">
+  <div className="border-neutral-80 rounded-[4px] border p-6 text-sm text-neutral-400">
     멘티를 선택해주세요.
   </div>
 );
@@ -47,9 +47,14 @@ const MenteeInfo = ({
   const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
   const isSubmitted = !isAbsent;
   const hasSubmissionLink = isSubmitted && !!mentee.link;
-  const feedbackStatusLabel = isAbsent
+  // 임시저장(저장만 하고 미제출)은 서버에서 IN_PROGRESS 로 보관된다 → 라벨에 표시.
+  const isDraftSaved = !isAbsent && mentee.feedbackStatus === 'IN_PROGRESS';
+  const baseFeedbackStatusLabel = isAbsent
     ? '미제출'
     : (FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전');
+  const feedbackStatusLabel = isDraftSaved
+    ? `${baseFeedbackStatusLabel} · 임시저장됨`
+    : baseFeedbackStatusLabel;
   const feedbackStatusStyle = isAbsent
     ? 'text-orange-500'
     : getFeedbackStatusStyle(mentee.feedbackStatus);
@@ -57,7 +62,7 @@ const MenteeInfo = ({
   // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
   if (collapsed) {
     return (
-      <div className="border-neutral-80 flex items-center gap-x-4 gap-y-1 rounded-lg border px-4 py-2.5">
+      <div className="border-neutral-80 flex items-center gap-x-4 gap-y-1 rounded-[4px] border px-4 py-2.5">
         <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
           <span className="text-sm font-semibold text-neutral-900">
             {mentee.name}
@@ -87,7 +92,7 @@ const MenteeInfo = ({
             href={mentee.link!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            className="inline-flex shrink-0 items-center gap-1 rounded-[4px] border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
             <svg
               width="14"
@@ -164,7 +169,30 @@ const MenteeInfo = ({
                 </svg>
                 제출물 보기
               </a>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                disabled
+                className={feedbackModalDesign.outlineButtonDisabled}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                제출물 보기
+              </button>
+            )}
           </div>
         </div>
 

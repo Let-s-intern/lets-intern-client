@@ -70,6 +70,7 @@ function buildSyntheticChallengeId(groupIndex: number): number {
  *  - COMPLETED → completed
  *  - CANCELED + menteeStatus ABSENT → mentee-absent
  *  - CANCELED + mentorStatus ABSENT → mentor-absent
+ *  - CANCELED (단순 취소) → cancelled
  *  - RESERVED → 시작 시각 기준 waiting (시작 전) / 미래 세션은 waiting
  */
 function resolveSessionStatus(
@@ -80,7 +81,8 @@ function resolveSessionStatus(
   if (session.status === 'CANCELED') {
     if (session.menteeStatus === 'ABSENT') return 'mentee-absent';
     if (session.mentorStatus === 'ABSENT') return 'mentor-absent';
-    return 'completed';
+    // 단순 취소는 라이브 세션 상태에 해당하지 않음 → 배지 미표시(waiting).
+    return 'waiting';
   }
   // RESERVED — 진행 시각이면 in-progress, 그 외 대기
   const start = new Date(session.startDate).getTime();

@@ -88,7 +88,9 @@ const FeedbackModal = ({
                 onSelectByIndex={handleSelectByIndex}
               />
             </div>
-            <SidebarGuideLinks labels={['피드백 가이드 라인']} />
+            <SidebarGuideLinks
+              labels={['자소서챌린지 피드백 가이드', '서면 피드백 가이드']}
+            />
           </div>
         }
         navigation={
@@ -122,6 +124,7 @@ const FeedbackModal = ({
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
             isAbsent={isAbsent}
+            hasMentee={!!currentMentee}
           />
         }
         actions={

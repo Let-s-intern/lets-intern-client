@@ -176,6 +176,21 @@ describe('deriveLiveFeedbackBars', () => {
     expect(mentorAbsent!.liveFeedback?.status).toBe('mentor-absent');
   });
 
+  it('상태 매핑: CANCELED(불참 표기 없는 단순 취소)→waiting(배지 미표시)', () => {
+    const canceled = deriveLiveFeedbackBars(
+      [
+        makeSession({
+          feedbackId: 4,
+          status: 'CANCELED',
+          mentorStatus: 'PENDING',
+          menteeStatus: 'PENDING',
+        }),
+      ],
+      [],
+    ).find((b) => b.barType === 'live-feedback');
+    expect(canceled!.liveFeedback?.status).toBe('waiting');
+  });
+
   it('빈 입력은 빈 배열을 반환한다', () => {
     expect(deriveLiveFeedbackBars([], [])).toEqual([]);
   });

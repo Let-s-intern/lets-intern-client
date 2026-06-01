@@ -78,6 +78,7 @@ const STATUS_BADGE: Record<
     label: '진행 완료',
     badge: scheduleDesign.cardBadgeDone,
   },
+  // '취소'(cancelled)는 라이브 세션 상태에서 제외 — 예약 취소는 별도 도메인.
   'mentor-absent': {
     label: '멘토 미참여',
     badge: scheduleDesign.cardBadgeDone,

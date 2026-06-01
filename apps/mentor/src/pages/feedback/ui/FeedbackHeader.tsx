@@ -36,7 +36,10 @@ const FeedbackHeader = ({
   isLive = false,
   onClose,
 }: FeedbackHeaderProps) => {
-  const sessionSuffix = isLive ? 'LIVE 피드백' : '피드백';
+  const sessionSuffix = isLive ? 'LIVE 피드백' : '서면 피드백';
+  // 서면(isLive=false)은 "진행 전 / 진행 중 / 승인 완료" 라벨, 라이브는 기존 유지.
+  const waitingLabel = isLive ? '대기' : '진행 전';
+  const completedLabel = isLive ? '완료' : '승인 완료';
   return (
     <div className="flex flex-col gap-2 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
@@ -58,7 +61,7 @@ const FeedbackHeader = ({
               statusBadgeOrMuted(waitingCount, 'waiting'),
             )}
           >
-            {isLive ? '대기' : '시작 전'} {waitingCount}
+            {waitingLabel} {waitingCount}
           </span>
           <span
             className={twMerge(
@@ -74,7 +77,7 @@ const FeedbackHeader = ({
               statusBadgeOrMuted(completedCount, 'completed'),
             )}
           >
-            완료 {completedCount}
+            {completedLabel} {completedCount}
           </span>
           {missedCount !== undefined && (
             <span
@@ -128,7 +131,7 @@ const FeedbackHeader = ({
             statusBadgeOrMuted(waitingCount, 'waiting'),
           )}
         >
-          {isLive ? '대기' : '시작 전'} {waitingCount}
+          {waitingLabel} {waitingCount}
         </span>
         <span
           className={twMerge(
@@ -144,7 +147,7 @@ const FeedbackHeader = ({
             statusBadgeOrMuted(completedCount, 'completed'),
           )}
         >
-          완료 {completedCount}
+          {completedLabel} {completedCount}
         </span>
         {missedCount !== undefined && (
           <span

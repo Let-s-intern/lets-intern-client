@@ -89,7 +89,7 @@ const FeedbackActions = ({
           disabled={isDisabled}
           className={feedbackModalDesign.writtenSaveButton}
         >
-          저장
+          임시저장
         </button>
         <button
           type="button"

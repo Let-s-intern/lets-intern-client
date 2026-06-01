@@ -187,9 +187,9 @@ const MenteeList = ({
                       type="button"
                       onClick={() => onSelectByIndex(idx)}
                       className={twMerge(
-                        'flex w-full items-center justify-between gap-2 border-b border-neutral-200 px-4 py-2 text-left transition-colors',
+                        'flex w-full items-center justify-between gap-2 px-4 py-2 text-left transition-colors',
                         isSelected
-                          ? 'bg-primary-5 rounded-md border-b-0'
+                          ? 'bg-primary-5 rounded-md'
                           : 'hover:bg-neutral-50',
                       )}
                     >
