@@ -1,4 +1,3 @@
-import LiveFeedbackIcon from '@/common/icon/feedback/LiveFeedbackIcon';
 import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
 /** "09:00" → "09:00", "18:30" → "18:30" */
@@ -61,6 +60,12 @@ type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
 
 /**
  * 상태별 태그 스타일 — 종료 상태(완료/미참여)는 dim 처리, 진행 상태(진행중/지각)는 강조.
+ *
+ * 디자인(이미지 #1): 솔리드 배지를 연한 톤(소프트) 배지로 정렬.
+ *  - 진행 중   : 연파랑 배경 / 파랑 글씨
+ *  - 진행 완료 : 회색 배경 / 회색 글씨
+ *  - 미참여·지각(종료 상태): 회색 배경 / 회색 글씨
+ * ⚠️ 라벨 텍스트·상태 매핑은 기존 그대로 유지하고 색/배경만 정렬한다(확정은 추후 기획).
  */
 const STATUS_BADGE: Record<
   Exclude<BadgeStatus, 'waiting'>,
@@ -68,28 +73,32 @@ const STATUS_BADGE: Record<
 > = {
   'in-progress': {
     label: '진행중',
-    badge: 'bg-red-500 text-white',
+    badge: 'bg-blue-50 text-blue-600',
     dim: false,
   },
-  completed: { label: '완료', badge: 'bg-green-500 text-white', dim: true },
+  completed: {
+    label: '완료',
+    badge: 'bg-neutral-95 text-neutral-40',
+    dim: true,
+  },
   'mentor-absent': {
     label: '멘토 미참여',
-    badge: 'bg-neutral-60 text-white',
+    badge: 'bg-neutral-95 text-neutral-40',
     dim: true,
   },
   'mentee-absent': {
     label: '멘티 미참여',
-    badge: 'bg-neutral-60 text-white',
+    badge: 'bg-neutral-95 text-neutral-40',
     dim: true,
   },
   'mentor-late': {
     label: '멘토 지각',
-    badge: 'bg-neutral-60 text-white',
+    badge: 'bg-neutral-95 text-neutral-40',
     dim: true,
   },
   'mentee-late': {
     label: '멘티 지각',
-    badge: 'bg-neutral-60 text-white',
+    badge: 'bg-neutral-95 text-neutral-40',
     dim: true,
   },
 };
@@ -115,9 +124,8 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         isDim ? 'bg-neutral-95' : 'bg-white'
       }`}
     >
-      {/* Row 1: 아이콘 + 시작 시간 + 상태 배지 (진행중 등) */}
+      {/* Row 1: 시작 시간 + 상태 배지 (진행중 등) */}
       <div className="flex min-w-0 items-center gap-1.5">
-        <LiveFeedbackIcon size={14} className="shrink-0" />
         <span
           className={`text-xxsmall12 shrink-0 font-bold leading-none ${
             isDim ? 'text-neutral-40' : 'text-neutral-10'

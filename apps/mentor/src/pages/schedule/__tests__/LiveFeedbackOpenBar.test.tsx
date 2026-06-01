@@ -126,6 +126,29 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
     expect(screen.queryByText('진행중')).not.toBeInTheDocument();
     expect(screen.queryByText('완료')).not.toBeInTheDocument();
   });
+
+  it('진행중 배지는 연파랑(소프트) 톤 색상을 가진다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
+    const badge = screen.getByText('진행중');
+    expect(badge.className).toContain('bg-blue-50');
+    expect(badge.className).toContain('text-blue-600');
+  });
+
+  it('완료 배지는 회색(소프트) 톤 색상을 가진다', () => {
+    render(<LiveFeedbackTimeBlock bar={makeLiveBar('completed')} />);
+    const badge = screen.getByText('완료');
+    expect(badge.className).toContain('bg-neutral-95');
+    expect(badge.className).toContain('text-neutral-40');
+  });
+
+  it('우하단 chevron(케밥 아님)을 유지한다', () => {
+    const { container } = render(
+      <LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />,
+    );
+    // chevron path(d="M9 6l6 6-6 6")가 존재한다
+    const chevron = container.querySelector('path[d="M9 6l6 6-6 6"]');
+    expect(chevron).not.toBeNull();
+  });
 });
 
 describe('LiveFeedbackCard (single-day card, 디자인 미변경 영역 회귀)', () => {
