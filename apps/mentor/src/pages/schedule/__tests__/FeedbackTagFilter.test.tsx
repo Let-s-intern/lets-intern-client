@@ -118,4 +118,34 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
     const writtenBtn = screen.getByRole('button', { name: /서면 피드백/ });
     expect(writtenBtn.className).toContain('bg-white');
   });
+
+  it('모든 칩 버튼에 px-3 py-2 패딩이 적용된다', () => {
+    const { container } = render(
+      <FeedbackTagFilter
+        selectedTags={new Set<FeedbackTagType>()}
+        onToggle={noop}
+        onClearAll={noop}
+      />,
+    );
+    const buttons = container.querySelectorAll('button');
+    buttons.forEach((btn) => {
+      expect(btn.className).toContain('px-3');
+      expect(btn.className).toContain('py-2');
+    });
+  });
+
+  it('"전체" 칩에는 아이콘이 없고, 나머지 3개 칩에는 아이콘이 있다', () => {
+    const { container } = render(
+      <FeedbackTagFilter
+        selectedTags={new Set<FeedbackTagType>()}
+        onToggle={noop}
+        onClearAll={noop}
+      />,
+    );
+    const allBtn = screen.getByRole('button', { name: '전체' });
+    expect(allBtn.querySelector('svg')).toBeNull();
+
+    const liveBtn = screen.getByRole('button', { name: /^LIVE 피드백$/ });
+    expect(liveBtn.querySelector('svg')).not.toBeNull();
+  });
 });
