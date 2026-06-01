@@ -96,9 +96,6 @@ describe('FeedbackLiveAvailabilityPage', () => {
         screen.getByRole('button', { name: '저장하기' }),
       ).toBeInTheDocument(),
     );
-    expect(
-      screen.getByRole('button', { name: '되돌리기' }),
-    ).toBeInTheDocument();
   });
 
   it('에러 발생 시 다시 시도 버튼을 노출한다', async () => {

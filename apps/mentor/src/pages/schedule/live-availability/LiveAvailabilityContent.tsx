@@ -233,12 +233,17 @@ const LiveAvailabilityContent = ({
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
     () => new Set(initialKeys),
   );
+  // 마지막 저장 시점의 슬롯 집합 — 되돌리기 기준 + 저장 직후 즉시 반영(변경사항 0)용.
+  const [savedKeys, setSavedKeys] = useState<Set<string>>(
+    () => new Set(initialKeys),
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [dragMode, setDragMode] = useState<'select' | 'deselect' | null>(null);
 
   // resetKey 변경 시 (모달 재오픈 등) 초기 상태로 리셋
   useEffect(() => {
     setSelectedKeys(toInitialSet(initialSlots));
+    setSavedKeys(toInitialSet(initialSlots));
     setWeekStart(minWeekStart);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
@@ -295,17 +300,17 @@ const LiveAvailabilityContent = ({
 
   const selectedCount = selectedKeys.size;
 
-  /** 초기 상태 대비 변경된(추가/삭제된) 셀 개수 — "변경사항 N개" 표기용 */
+  /** 마지막 저장 시점 대비 변경된(추가/삭제된) 셀 개수 — "변경사항 N개"·되돌리기 노출용 */
   const changedKeys = useMemo(() => {
     const set = new Set<string>();
     for (const key of selectedKeys) {
-      if (!initialKeys.has(key)) set.add(key);
+      if (!savedKeys.has(key)) set.add(key);
     }
-    for (const key of initialKeys) {
+    for (const key of savedKeys) {
       if (!selectedKeys.has(key)) set.add(key);
     }
     return set;
-  }, [selectedKeys, initialKeys]);
+  }, [selectedKeys, savedKeys]);
   const changedCount = changedKeys.size;
 
   const handleCellMouseDown = (date: string, time: string) => {
@@ -385,6 +390,8 @@ const LiveAvailabilityContent = ({
     try {
       // onSave 가 Promise 를 반환하면 await — 실패하면 throw 되어 onClose 가 호출되지 않는다.
       await onSave(nextSlots);
+      // 저장 성공 → 저장 기준을 현재 선택으로 갱신(즉시 반영: 변경사항 0).
+      setSavedKeys(new Set(selectedKeys));
       if (mode === 'modal') {
         onClose?.();
       }
@@ -395,13 +402,9 @@ const LiveAvailabilityContent = ({
     }
   };
 
+  // 되돌리기 — 마지막 저장 시점으로 복원(닫지 않음; 닫기는 헤더 X). 변경이 있을 때만 노출.
   const handleCancel = () => {
-    if (mode === 'modal') {
-      onClose?.();
-      return;
-    }
-    // 페이지 모드: 변경 폐기 후 초기 상태로 복귀
-    setSelectedKeys(toInitialSet(initialSlots));
+    setSelectedKeys(new Set(savedKeys));
   };
 
   return (
@@ -776,13 +779,15 @@ const LiveAvailabilityContent = ({
           </p>
         )}
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2 font-medium"
-          >
-            되돌리기
-          </button>
+          {changedCount > 0 && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2 font-medium"
+            >
+              되돌리기
+            </button>
+          )}
           <button
             type="button"
             onClick={handleSave}
