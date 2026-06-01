@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { resolveHealthyJitsiBaseUrl } from '../jitsiHealthCheck';
+import {
+  ensureLiveMeetingUrl,
+  resolveHealthyJitsiBaseUrl,
+} from './jitsiHealthCheck';
 
 describe('resolveHealthyJitsiBaseUrl', () => {
   afterEach(() => {
@@ -65,5 +68,59 @@ describe('resolveHealthyJitsiBaseUrl', () => {
 
     expect(result).toBe('https://only.example/');
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('ensureLiveMeetingUrl', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('meetingUrl 이 이미 있으면 헬스체크/등록 없이 ok 를 반환한다', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
+
+    const result = await ensureLiveMeetingUrl({
+      meetingUrl: 'https://meet.example/room-abc',
+      baseCandidates: ['https://primary.example'],
+      registerBaseUrl,
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(registerBaseUrl).not.toHaveBeenCalled();
+  });
+
+  it('meetingUrl 이 없으면 healthy base 를 registerBaseUrl 로 등록하고 ok', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response(null, { status: 200 })),
+    );
+    const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
+
+    const result = await ensureLiveMeetingUrl({
+      meetingUrl: null,
+      baseCandidates: ['https://primary.example'],
+      registerBaseUrl,
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(registerBaseUrl).toHaveBeenCalledWith('https://primary.example/');
+  });
+
+  it('살아있는 도메인이 없으면 등록하지 않고 no-healthy-domain 을 반환한다', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('down')));
+    const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
+
+    const result = await ensureLiveMeetingUrl({
+      meetingUrl: null,
+      baseCandidates: ['https://primary.example'],
+      registerBaseUrl,
+    });
+
+    expect(result).toEqual({ ok: false, reason: 'no-healthy-domain' });
+    expect(registerBaseUrl).not.toHaveBeenCalled();
   });
 });

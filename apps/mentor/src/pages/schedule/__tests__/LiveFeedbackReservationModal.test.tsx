@@ -41,8 +41,12 @@ vi.mock('@letscareer/chat/ui/ChatModal', () => ({
   ),
 }));
 
-// mockNow는 라이브 모달이 시연용으로 잡혀 있어 setInterval이 멈춰 있음.
-// 테스트는 그대로 사용 (시연 시각 = 2026-05-04 09:45)
+// MOCK_NOW=null → 카운트다운/입장 게이팅은 실제 시각 기준으로 동작한다.
+// 입장 버튼은 "시작 20분 전 ~ 종료 전"에만 활성(T-20 게이팅)이므로, 시간 의존
+// 테스트는 startDate/endDate 를 현재 시각 기준 상대값으로 만든다.
+function isoFromNowMin(offsetMinutes: number): string {
+  return new Date(Date.now() + offsetMinutes * 60_000).toISOString();
+}
 
 import LiveFeedbackReservationModal from '../modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '../types';
@@ -174,27 +178,16 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(modal).toHaveAttribute('data-feedback-id', '101');
   });
 
-  it('meetingUrl 미생성(null) 이어도 멘토는 "라이브 입장하기" 버튼이 활성 (데드락 방지)', async () => {
-    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 인 상태.
-    // 데드락 방지: 멘토는 클릭해서 회의실을 생성해야 하므로 버튼이 활성이어야 한다.
-    axiosMock.get.mockResolvedValue({
-      data: { data: { feedbackInfo: makeMentorDetail({ meetingUrl: null }) } },
-    });
-    renderModal(makeBar());
-    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
-    await waitFor(() => expect(btn).toBeEnabled());
-  });
-
-  // TODO(임시): 라이브 입장 시간 게이팅(T-10 룰)이 임시 해제됨 (PRD §13).
-  // 정식 운영 복원 시 "T-10 이전 → disabled" 단언으로 되돌린다.
-  // 임시 동작: BE meetingUrl(= base + 랜덤 meetingRoom)이 내려오면
-  // 시간 무관(T-10 이전 포함) 항상 입장 가능.
-  it('meetingUrl 존재 시 T-10 이전이어도 "라이브 입장하기" 버튼이 활성 (시간 게이팅 임시 해제)', async () => {
+  it('시작 20분 이내면 meetingUrl 이 null 이어도 입장 버튼이 활성 (데드락 방지)', async () => {
+    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 이어도,
+    // 시작 20분 전 ~ 종료 전 구간이면 클릭해 회의실을 생성할 수 있어야 한다.
     axiosMock.get.mockResolvedValue({
       data: {
         data: {
           feedbackInfo: makeMentorDetail({
-            meetingUrl: 'https://meet.jit.si/letscareer-x7k2p9',
+            meetingUrl: null,
+            startDate: isoFromNowMin(10),
+            endDate: isoFromNowMin(40),
           }),
         },
       },
@@ -202,6 +195,40 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     renderModal(makeBar());
     const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
     await waitFor(() => expect(btn).toBeEnabled());
+  });
+
+  it('시작 20분 이전이면 입장 버튼이 비활성 (T-20 게이팅)', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            meetingUrl: null,
+            startDate: isoFromNowMin(120),
+            endDate: isoFromNowMin(150),
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeDisabled());
+  });
+
+  it('종료 이후면 입장 버튼이 비활성', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            meetingUrl: null,
+            startDate: isoFromNowMin(-60),
+            endDate: isoFromNowMin(-30),
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeDisabled());
   });
 
   it('예약 일시 라인이 "YYYY.MM.DD (요일) HH:mm~HH:mm" 형식으로 노출된다', () => {

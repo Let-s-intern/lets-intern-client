@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 
 import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
+import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
 
 import {
   useFeedbackMentorDetailQuery,
@@ -24,7 +25,6 @@ import {
   getLiveFeedbackBadgeVisual,
   resolveLiveFeedbackStatus,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
-import { resolveHealthyJitsiBaseUrl } from '@/pages/feedback/utils/jitsiHealthCheck';
 
 import { currentNow } from '../constants/mockNow';
 import type { PeriodBarData } from '../types';
@@ -38,6 +38,9 @@ const GUIDE_LINK_LABELS = [
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
+
+/** 라이브 입장하기 활성화 리드타임 — 시작 20분 전부터 입장 가능. */
+const LIVE_ENTER_LEAD_MS = 20 * 60 * 1000;
 
 /** "피드백 참여" 라벨 옆 ⓘ 툴팁 안내 문구. */
 const PARTICIPATION_TOOLTIP_TEXT =
@@ -151,6 +154,15 @@ const LiveFeedbackReservationModal = ({
 
   const countdown = useFeedbackCountdown(startIso, endIso);
 
+  // 라이브 입장 게이트 — 시작 20분 전(LIVE_ENTER_LEAD_MS)부터 종료 전까지만 활성.
+  // 종료 후('after')·20분 전 이전·회의실 준비 중에는 비활성.
+  const canEnterLive =
+    feedbackId != null &&
+    !isPreparingRoom &&
+    (countdown.status === 'during' ||
+      (countdown.status === 'before' &&
+        countdown.remainingMs <= LIVE_ENTER_LEAD_MS));
+
   // 회의실 URL — BE 가 합성한 `meetingUrl`(= jitsi base + 랜덤 meetingRoom)을 그대로 사용.
   // 멘토/멘티/어드민이 동일 feedbackId 의 동일 meetingUrl 을 받아 같은 방으로 수렴하며,
   // 방 이름이 서버 생성 랜덤값이라 외부에서 추측·접속할 수 없다.
@@ -158,29 +170,30 @@ const LiveFeedbackReservationModal = ({
   const meetingUrl = feedbackDetail?.meetingUrl ?? null;
 
   /**
-   * 멘토 "라이브 입장하기" 핸들러.
+   * "라이브 입장하기" 핸들러 — 멘토·멘티 공통 로직(`ensureLiveMeetingUrl`)을 사용.
    *
-   * 데드락 방지: meetingUrl 이 없어도 멘토는 입장 버튼을 누를 수 있고,
-   * 누르는 순간 jitsi 도메인 헬스체크 후 healthy base URL 을
-   * `PATCH /feedback/{id}/meeting-url` 로 보내 회의실을 생성한다.
-   * (BE 가 base + meetingRoom 합성 → 다음 fetch 에서 meetingUrl 채워짐)
-   * 이미 meetingUrl 이 있으면 바로 Jitsi 모달을 연다.
+   * 데드락 방지: meetingUrl 이 없어도(아직 회의실 미생성) 입장 가능. 누르는 순간
+   * 헬스체크 후 healthy base 를 `PATCH /feedback/{id}/meeting-url` 로 보내 회의실을
+   * 생성한다(BE 가 base + meetingRoom 합성 → invalidate 후 채워짐). 이미 meetingUrl
+   * 이 있으면(상대가 먼저 입장해 등록함) 바로 Jitsi 모달을 연다.
    */
   const handleEnterLive = async () => {
     if (feedbackId == null || isPreparingRoom) return;
 
-    if (meetingUrl) {
-      setIsJitsiOpen(true);
-      return;
-    }
-
     setIsPreparingRoom(true);
     try {
-      const healthyBase = await resolveHealthyJitsiBaseUrl([
-        import.meta.env.VITE_JITSI_BASE_URL,
-        import.meta.env.VITE_JITSI_FALLBACK_URL,
-      ]);
-      if (!healthyBase) {
+      const result = await ensureLiveMeetingUrl({
+        meetingUrl,
+        baseCandidates: [
+          import.meta.env.VITE_JITSI_BASE_URL,
+          import.meta.env.VITE_JITSI_FALLBACK_URL,
+        ],
+        // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
+        registerBaseUrl: async (base) => {
+          await updateMeetingUrl({ feedbackId, meetingUrl: base });
+        },
+      });
+      if (!result.ok) {
         // 살아있는 도메인이 없으면 입장 불가 — 사용자에게 알림 후 종료.
         // TODO: 운영 전 MentorAlertModal 등 토스트 인프라로 교체.
         window.alert(
@@ -188,10 +201,8 @@ const LiveFeedbackReservationModal = ({
         );
         return;
       }
-      // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
-      await updateMeetingUrl({ feedbackId, meetingUrl: healthyBase });
-      // 캐시 invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만,
-      // 즉시 입장 경험을 위해 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
+      // invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만, 즉시 입장 경험을 위해
+      // 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
       setIsJitsiOpen(true);
     } finally {
       setIsPreparingRoom(false);
@@ -479,13 +490,18 @@ const LiveFeedbackReservationModal = ({
                             {selectedMentee.menteeAttendanceLabel}
                           </span>
                         </div>
-                        {/* 멘티 참여 상태 확인 모달 진입 — 프로그램 일정에서의 진입점.
-                          종료 후에만 저장 가능(모달 내부 게이트). */}
+                        {/* 멘티 참여 상태 확인 모달 진입 — 라이브 피드백 종료 후에만 활성화.
+                          (저장도 모달 내부 게이트로 종료 후에만 가능) */}
                         {feedbackId != null && (
                           <button
                             type="button"
+                            disabled={countdown.status !== 'after'}
                             onClick={() => setIsAttendanceOpen(true)}
-                            className={feedbackModalDesign.outlineButton}
+                            className={
+                              countdown.status === 'after'
+                                ? feedbackModalDesign.outlineButton
+                                : feedbackModalDesign.outlineButtonDisabled
+                            }
                           >
                             <CheckCircleIcon />
                             참여 확인하기
@@ -620,20 +636,17 @@ const LiveFeedbackReservationModal = ({
                 멘티와 대화하기
               </button>
 
-              {/* 라이브 입장하기
+              {/* 라이브 입장하기 — 시작 20분 전(LIVE_ENTER_LEAD_MS)부터 종료 전까지 활성.
                   데드락 방지: meetingUrl 이 없어도(아직 회의실 미생성) 멘토는 입장 가능.
                   클릭 시 handleEnterLive 가 헬스체크 + meeting-url PATCH 로 회의실을 생성한다.
-                  버튼은 feedbackId 부재 또는 회의실 준비 중일 때만 비활성.
-                  TODO(임시): 정식 운영 시 T-10 시간 게이팅 복원
-                    → resolveLiveFeedbackAccess(meetingUrl, start, end, now) 로
-                      'ended'(종료) 등 시간 조건을 disabled 에 추가. */}
+                  시작 20분 전 이전·종료 후·회의실 준비 중에는 비활성(canEnterLive). */}
               <button
                 type="button"
-                disabled={feedbackId == null || isPreparingRoom}
+                disabled={!canEnterLive}
                 onClick={handleEnterLive}
                 aria-label="라이브 입장하기"
                 className={
-                  feedbackId != null && !isPreparingRoom
+                  canEnterLive
                     ? feedbackModalDesign.footerPrimary
                     : feedbackModalDesign.footerPrimaryDisabled
                 }

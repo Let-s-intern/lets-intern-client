@@ -4,6 +4,9 @@ import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
+import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
+
+import { usePatchFeedbackMeetingUrl } from '@/api/feedback/feedback';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
@@ -34,6 +37,8 @@ const ReservationInfoSection = ({
 }: Props) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  // 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
+  const [isPreparingRoom, setIsPreparingRoom] = useState(false);
   // 모달을 열 때만 전체 멘토 로스터를 조회한다(좌측 목록용).
   const chatRooms = useMenteeChatRooms(isChatOpen);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
@@ -43,6 +48,44 @@ const ReservationInfoSection = ({
   // 임시 변경: 라이브 입장 시간 게이팅을 우회해 항상 입장 허용 (PRD §13).
   // isEntranceActive 함수는 ../utils 에 보존(복원 시 import 재추가).
   const entranceActive: boolean = true;
+
+  // feedbackId 가 없을 때도 hook 규칙상 항상 호출(0 → 핸들러에서 가드).
+  const patchMeetingUrl = usePatchFeedbackMeetingUrl(feedbackId ?? 0);
+
+  /**
+   * "LIVE 피드백 입장하기" — 멘토·멘티 공통 로직(`ensureLiveMeetingUrl`).
+   *
+   * 데드락 방지: 멘토가 먼저 입장하지 않았어도(meetingUrl=null) 멘티가 직접
+   * 헬스체크 후 healthy base 를 PATCH 로 보내 회의실을 생성한다. 이미 meetingUrl
+   * 이 있으면(멘토가 먼저 입장해 등록함) 바로 모달을 연다. 입장 순서 무관.
+   */
+  const handleEnterLive = async () => {
+    if (feedbackId == null || isPreparingRoom) return;
+
+    setIsPreparingRoom(true);
+    try {
+      const result = await ensureLiveMeetingUrl({
+        meetingUrl,
+        baseCandidates: [
+          process.env.NEXT_PUBLIC_JITSI_BASE_URL,
+          process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
+        ],
+        // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
+        registerBaseUrl: async (base) => {
+          await patchMeetingUrl.mutateAsync({ meetingUrl: base });
+        },
+      });
+      if (!result.ok) {
+        window.alert(
+          '회의실 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+        );
+        return;
+      }
+      setIsJitsiOpen(true);
+    } finally {
+      setIsPreparingRoom(false);
+    }
+  };
 
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
@@ -126,20 +169,19 @@ const ReservationInfoSection = ({
               <LiveFeedbackReview feedbackId={feedbackId} />
             )}
             {status === 'reserved' && (
-              // Jitsi 임베드 모달로 연결. BE 가 합성한 meetingUrl(= base + 랜덤 meetingRoom)을
-              // 그대로 사용해 멘토와 동일 방으로 입장한다. 멘토 입장 전(meetingUrl=null)이면
-              // 모달이 "회의실 준비 중" 안내를 표시한다.
+              // 입장 순서 무관: meetingUrl 이 없으면 멘티가 직접 헬스체크 + PATCH 로 회의실을
+              // 생성하고(handleEnterLive), 있으면 멘토가 만든 동일 방으로 바로 입장한다.
               <button
                 type="button"
-                onClick={() => setIsJitsiOpen(true)}
-                disabled={!entranceActive}
+                onClick={handleEnterLive}
+                disabled={!entranceActive || isPreparingRoom}
                 className={
-                  entranceActive
+                  entranceActive && !isPreparingRoom
                     ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
                     : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
                 }
               >
-                LIVE 피드백 입장하기
+                {isPreparingRoom ? '회의실 준비 중…' : 'LIVE 피드백 입장하기'}
               </button>
             )}
           </div>
