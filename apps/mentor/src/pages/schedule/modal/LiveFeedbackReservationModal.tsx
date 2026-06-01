@@ -15,6 +15,7 @@ import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdow
 import FeedbackHeader from '@/pages/feedback/ui/FeedbackHeader';
 import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
 import FeedbackMenteeNavigation from '@/pages/feedback/ui/FeedbackMenteeNavigation';
+import InfoTooltip from '@/pages/feedback/ui/InfoTooltip';
 import MenteeAttendanceCheckModal from '@/pages/feedback/ui/MenteeAttendanceCheckModal';
 import MenteeList from '@/pages/feedback/ui/MenteeList';
 import {
@@ -35,6 +36,10 @@ const GUIDEBOOK_BUTTONS: ReadonlyArray<{ label: string }> = [
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
+
+/** "피드백 참여" 라벨 옆 ⓘ 툴팁 안내 문구. */
+const PARTICIPATION_TOOLTIP_TEXT =
+  '피드백 종료 후 멘티 참여 상태를 저장해주세요. 참여 여부 저장 후 진행 완료 및 정산 대상에 반영됩니다.';
 
 /** 멘티 채팅 모달 — 열릴 때만 로드 (동적 import). */
 const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
@@ -365,48 +370,60 @@ const LiveFeedbackReservationModal = ({
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 text-xs text-neutral-500">
-                      <span>제출 상태</span>
-                      <span className="font-medium text-neutral-700">
-                        {selectedMentee.submissionStatusLabel}
-                      </span>
+                  {/* 2열 상태 영역 — 좌: 제출 상태 / 우: 피드백 참여 */}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {/* 좌: 제출 상태 */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2 text-xs text-neutral-500">
+                        <span>제출 상태</span>
+                        <span className="font-medium text-neutral-700">
+                          {selectedMentee.submissionStatusLabel}
+                        </span>
+                      </div>
+                      {selectedMentee.attendanceUrl ? (
+                        <a
+                          href={selectedMentee.attendanceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                        >
+                          제출물 보기
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled
+                          className="inline-flex w-fit items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
+                        >
+                          제출물 보기
+                        </button>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-neutral-500">
-                      <span>라이브 출석</span>
-                      <span className="font-medium text-neutral-700">
-                        {selectedMentee.menteeAttendanceLabel}
-                      </span>
+
+                    {/* 우: 피드백 참여 */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+                        <span>피드백 참여</span>
+                        <InfoTooltip
+                          label="피드백 참여 안내"
+                          text={PARTICIPATION_TOOLTIP_TEXT}
+                        />
+                        <span className="font-medium text-neutral-700">
+                          {selectedMentee.menteeAttendanceLabel}
+                        </span>
+                      </div>
                       {/* 멘티 참여 상태 확인 모달 진입 — 프로그램 일정에서의 진입점.
                           종료 후에만 저장 가능(모달 내부 게이트). */}
                       {feedbackId != null && (
                         <button
                           type="button"
                           onClick={() => setIsAttendanceOpen(true)}
-                          className="text-primary hover:bg-primary-5 border-primary ml-1 rounded border px-2 py-0.5 text-xs font-medium transition-colors"
+                          className="text-primary hover:bg-primary-5 border-primary inline-flex w-fit items-center gap-1 rounded border px-3 py-2 text-sm font-medium transition-colors"
                         >
-                          참여 상태 확인
+                          참여 확인하기
                         </button>
                       )}
                     </div>
-                    {selectedMentee.attendanceUrl ? (
-                      <a
-                        href={selectedMentee.attendanceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                      >
-                        제출물 보기
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled
-                        className="inline-flex w-fit items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300"
-                      >
-                        제출물 보기
-                      </button>
-                    )}
                   </div>
                 </div>
 
@@ -454,7 +471,29 @@ const LiveFeedbackReservationModal = ({
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}
                   <li className="flex items-center gap-3">
-                    <span className="w-20 shrink-0 text-xs font-medium text-neutral-400">
+                    <span className="flex w-20 shrink-0 items-center gap-1 text-xs font-medium text-neutral-400">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        aria-hidden
+                      >
+                        <circle
+                          cx="8"
+                          cy="8"
+                          r="6.5"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                        <path
+                          d="M8 4.5V8L10.2 9.5"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                       예약 일시
                     </span>
                     <span className="text-neutral-800">

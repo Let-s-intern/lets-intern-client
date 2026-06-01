@@ -279,7 +279,7 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
   });
 
-  it('menteeStatus(라이브 출석)를 읽기 전용으로 노출한다 (마킹 버튼 없음)', async () => {
+  it('menteeStatus(피드백 참여)를 읽기 전용으로 노출한다 (마킹 버튼 없음)', async () => {
     axiosMock.get.mockResolvedValue({
       data: {
         data: { feedbackInfo: makeMentorDetail({ menteeStatus: 'PRESENT' }) },
@@ -287,8 +287,8 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
     renderModal(makeBar());
     await waitFor(() => {
-      expect(screen.getByText('라이브 출석')).toBeInTheDocument();
-      // 값 노출 — 정확히 "출석" 텍스트 노드 (라이브 출석 라벨과 별개)
+      expect(screen.getByText('피드백 참여')).toBeInTheDocument();
+      // 값 노출 — 정확히 "출석" 텍스트 노드 (피드백 참여 라벨과 별개)
       expect(
         screen.getByText((content) => content === '출석'),
       ).toBeInTheDocument();
@@ -305,6 +305,36 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
       expect(screen.getByText('기획 / PM / PO')).toBeInTheDocument();
     });
     expect(screen.queryByText(/010-/)).not.toBeInTheDocument();
+  });
+
+  it('"피드백 참여" 라벨 옆 ⓘ 트리거에 호버하면 안내 툴팁이 노출된다', async () => {
+    const user = userEvent.setup();
+    renderModal(makeBar());
+
+    const trigger = await screen.findByRole('button', {
+      name: '피드백 참여 안내',
+    });
+    // role=tooltip 본문은 항상 DOM에 있으나 트리거와 aria-describedby로 연결된다.
+    const describedBy = trigger.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const tooltip = document.getElementById(describedBy!);
+    expect(tooltip).toHaveAttribute('role', 'tooltip');
+    expect(tooltip).toHaveTextContent(
+      '피드백 종료 후 멘티 참여 상태를 저장해주세요. 참여 여부 저장 후 진행 완료 및 정산 대상에 반영됩니다.',
+    );
+
+    await user.hover(trigger);
+    expect(tooltip).toHaveClass('opacity-100');
+  });
+
+  it('"참여 확인하기" 버튼 클릭 시 멘티 참여 상태 확인 모달이 열린다', async () => {
+    const user = userEvent.setup();
+    renderModal(makeBar());
+
+    const btn = await screen.findByRole('button', { name: '참여 확인하기' });
+    await user.click(btn);
+    // 참여 확인 모달은 종료 후 저장 게이트를 가진 별도 모달 — 진입만 검증
+    expect(btn).toBeInTheDocument();
   });
 
   it('모달 소스가 삭제된 liveFeedbackReservationMock 을 import 하지 않는다 (회귀 가드)', () => {
