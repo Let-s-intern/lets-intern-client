@@ -7,6 +7,7 @@ import {
   useFeedbackMentorSlotsQuery,
 } from '@/api/feedback/feedback';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
@@ -58,6 +59,24 @@ const FeedbackAvailabilityModal = ({
         .filter((c) => c.status === 'RESERVED')
         .map((c) => ({ date: c.date, time: c.time })),
     [beCells],
+  );
+
+  // 챌린지별 라이브 피드백 기간 바 — 날짜 헤더 아래 요일 컬럼에 걸쳐 표시.
+  // 모달이 닫혀 있을 때는 쿼리를 실행하지 않는다 (슬롯 쿼리 enabled 가드와 동일).
+  const { bars } = useLiveFeedbackData({ enabled: isOpen });
+  const livePeriods = useMemo(
+    () =>
+      bars
+        .filter((b) => b.barType === 'live-feedback-period')
+        .map((b) => ({
+          challengeTitle: b.challengeTitle,
+          th: b.th,
+          startDate: b.startDate,
+          endDate: b.endDate,
+          reservedCount: b.submittedCount,
+          capacity: b.submittedCount + b.notSubmittedCount,
+        })),
+    [bars],
   );
 
   const isSaving = createSlots.isPending || deleteSlots.isPending;
@@ -145,6 +164,7 @@ const FeedbackAvailabilityModal = ({
               resetKey={`${isOpen}-${resetCounter}`}
               focusDate={focusDate}
               onOpenReservation={() => setReservationOpen(true)}
+              livePeriods={livePeriods}
             />
           </>
         )}

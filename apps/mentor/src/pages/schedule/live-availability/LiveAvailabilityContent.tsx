@@ -43,7 +43,17 @@ export interface LiveFeedbackPeriodInfo {
   reservedCount?: number;
   /** 정원 */
   capacity?: number;
+  /** 'YYYY-MM-DD' — 이 기간에 해당하는 요일 컬럼에 걸쳐 표시 */
+  startDate: string;
+  endDate: string;
 }
+
+/** 기간 바 색상 팔레트 — 인덱스(i % 3)별 순환 */
+const PERIOD_COLORS = [
+  'border-green-200 bg-green-50 text-green-700',
+  'border-amber-200 bg-amber-50 text-amber-700',
+  'border-primary-20 bg-primary-5 text-primary',
+];
 
 const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
 const START_HOUR = 9;
@@ -151,10 +161,11 @@ export interface LiveAvailabilityContentProps {
    */
   onOpenReservation?: () => void;
   /**
-   * 그리드 상단에 표시할 그 주의 "라이브 피드백 기간" 바 정보.
+   * 그리드 상단(날짜 헤더 아래)에 표시할 "라이브 피드백 기간" 바 목록.
+   * 각 기간은 현재 보이는 주와 겹치는 요일 컬럼에 걸쳐 렌더된다.
    * 미지정 시 바를 렌더하지 않는다.
    */
-  livePeriod?: LiveFeedbackPeriodInfo;
+  livePeriods?: LiveFeedbackPeriodInfo[];
 }
 
 /**
@@ -176,7 +187,7 @@ const LiveAvailabilityContent = ({
   focusDate,
   showHeader = true,
   onOpenReservation,
-  livePeriod,
+  livePeriods = [],
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
 
@@ -251,6 +262,9 @@ const LiveAvailabilityContent = ({
     () => WEEK_DAYS.map((_, index) => addDays(weekStart, index)),
     [weekStart],
   );
+
+  /** 현재 보이는 주의 7일 'YYYY-MM-DD' 문자열 — 기간 바 컬럼 스팬 계산용 */
+  const dayStrs = useMemo(() => days.map(toDateString), [days]);
 
   /** key → 해당 슬롯을 점유한 다른 챌린지 정보 */
   const blockedMap = useMemo(() => {
@@ -533,23 +547,43 @@ const LiveAvailabilityContent = ({
               </div>
             ))}
 
-            {/* 날짜 헤더 아래 — 그 주의 라이브 피드백 기간 바(간단 표기). 전체 컬럼 스팬. */}
-            {livePeriod && (
-              <div className="border-neutral-85 border-primary-20 bg-primary-5 col-span-full flex items-center gap-2 border-b px-3 py-1.5">
-                <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" />
-                <span className="text-xxsmall12 text-primary-90 min-w-0 truncate font-medium">
-                  {livePeriod.challengeTitle}
-                  {livePeriod.generation !== undefined &&
-                    ` ${livePeriod.generation}기`}
-                  {livePeriod.th !== undefined && ` ${livePeriod.th}회차`} LIVE
-                  피드백 기간
-                </span>
-                <span className="text-xxsmall12 text-primary-90 ml-auto flex shrink-0 items-center gap-1 font-semibold">
-                  <span aria-hidden>👥</span>
-                  {livePeriod.reservedCount ?? 0}/{livePeriod.capacity ?? 0}
-                </span>
-              </div>
-            )}
+            {/* 날짜 헤더 아래 — 챌린지별 라이브 피드백 기간 바.
+                각 기간이 현재 보이는 주와 겹치면 겹치는 요일 컬럼에 걸쳐 1줄 렌더. */}
+            {livePeriods.map((period, i) => {
+              const within = dayStrs.map(
+                (ds) => ds >= period.startDate && ds <= period.endDate,
+              );
+              const startIdx = within.indexOf(true);
+              const endIdx = within.lastIndexOf(true);
+              if (startIdx === -1) return null;
+
+              return (
+                <div
+                  key={`live-period-${period.challengeTitle}-${period.startDate}-${i}`}
+                  className="border-neutral-85 col-span-full grid grid-cols-[96px_repeat(7,minmax(88px,1fr))] border-b"
+                >
+                  {/* 컬럼1 = 시간 라벨, 2~8 = 월~일. 겹치는 요일 컬럼에 걸쳐 배치. */}
+                  <div
+                    style={{ gridColumn: `${startIdx + 2} / ${endIdx + 3}` }}
+                    className={`mx-1 my-1 flex items-center gap-2 rounded-md border px-3 py-1 ${
+                      PERIOD_COLORS[i % PERIOD_COLORS.length]
+                    }`}
+                  >
+                    <span className="text-xxsmall12 min-w-0 truncate font-medium">
+                      {period.challengeTitle}
+                      {period.generation !== undefined &&
+                        ` ${period.generation}기`}
+                      {period.th !== undefined && ` ${period.th}회차`} LIVE 피드백
+                      기간
+                    </span>
+                    <span className="text-xxsmall12 ml-auto shrink-0 font-semibold">
+                      👥 {period.reservedCount ?? 0}
+                      {period.capacity !== undefined ? `/${period.capacity}` : ''}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
 
             {TIME_SLOTS.map((time) => (
               <div key={`row-${time}`} className="contents">

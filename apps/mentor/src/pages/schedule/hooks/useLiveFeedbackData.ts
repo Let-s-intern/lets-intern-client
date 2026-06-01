@@ -28,14 +28,17 @@ import { currentNow } from '../constants/mockNow';
  *  - `live-feedback-mentee-open`(멘티 신청기간)은 멘토 캘린더 비표시 →
  *    원본 API도 없어 생성하지 않는다.
  */
-export function useLiveFeedbackData(): {
+export function useLiveFeedbackData(
+  /** false면 내부 쿼리를 실행하지 않는다 (모달이 닫혀 있을 때 등) */
+  { enabled = true }: { enabled?: boolean } = {},
+): {
   bars: PeriodBarData[];
   isLoading: boolean;
 } {
   const { data: sessions, isLoading: isSessionsLoading } =
-    useFeedbackMentorListQuery();
+    useFeedbackMentorListQuery({ enabled });
   const { data: slotsData, isLoading: isSlotsLoading } =
-    useFeedbackMentorSlotsQuery();
+    useFeedbackMentorSlotsQuery({ enabled });
 
   const bars = useMemo(
     () =>

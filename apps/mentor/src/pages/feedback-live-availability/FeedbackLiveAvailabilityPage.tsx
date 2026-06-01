@@ -8,6 +8,7 @@ import {
 } from '@/api/feedback/feedback';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
 import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
@@ -56,6 +57,23 @@ const FeedbackLiveAvailabilityPage = () => {
         .filter((c) => c.status === 'RESERVED')
         .map((c) => ({ date: c.date, time: c.time })),
     [beCells],
+  );
+
+  // 챌린지별 라이브 피드백 기간 바 — 날짜 헤더 아래 요일 컬럼에 걸쳐 표시
+  const { bars } = useLiveFeedbackData();
+  const livePeriods = useMemo(
+    () =>
+      bars
+        .filter((b) => b.barType === 'live-feedback-period')
+        .map((b) => ({
+          challengeTitle: b.challengeTitle,
+          th: b.th,
+          startDate: b.startDate,
+          endDate: b.endDate,
+          reservedCount: b.submittedCount,
+          capacity: b.submittedCount + b.notSubmittedCount,
+        })),
+    [bars],
   );
 
   const isSaving = createSlots.isPending || deleteSlots.isPending;
@@ -162,6 +180,7 @@ const FeedbackLiveAvailabilityPage = () => {
               onSave={handleSave}
               resetKey={resetCounter}
               showHeader={false}
+              livePeriods={livePeriods}
             />
           </>
         )}
