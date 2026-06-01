@@ -340,7 +340,7 @@ const LiveFeedbackReservationModal = ({
       <BaseModal
         isOpen={isOpen}
         onClose={onClose}
-        className="mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
+        className="mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl"
       >
         <FeedbackHeader
           challengeTitle={selectedMentee.challengeTitle}
@@ -512,7 +512,7 @@ const LiveFeedbackReservationModal = ({
                 <p className="text-xs font-medium text-neutral-400">
                   사전 Q&amp;A
                 </p>
-                <p className="mt-3 h-28 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
+                <p className="mt-3 h-24 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-neutral-700">
                   {selectedMentee.questionAnswer}
                 </p>
               </div>
@@ -523,7 +523,7 @@ const LiveFeedbackReservationModal = ({
               {/* 액션 패널 — 예약 일시 / 피드백 상태 (하단 고정: 라이브 입장하기 바로 위) */}
               <section
                 aria-label="라이브 피드백 액션 패널"
-                className="border-neutral-80 mt-auto rounded-lg border p-4"
+                className="border-neutral-80 mt-auto shrink-0 rounded-lg border p-4"
               >
                 <ul className="flex flex-col gap-3 text-sm">
                   {/* 예약 일시 + 카운트다운 */}

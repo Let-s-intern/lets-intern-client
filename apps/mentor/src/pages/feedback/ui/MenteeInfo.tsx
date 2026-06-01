@@ -28,16 +28,8 @@ function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
   return 'text-red-500';
 }
 
-/** Reusable label-value row for mentee detail fields */
-const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-start gap-2">
-    <span className="shrink-0 text-xs text-neutral-500">{label}</span>
-    <span className="flex-1 text-xs font-medium text-neutral-700">{value}</span>
-  </div>
-);
-
 const EMPTY_STATE = (
-  <div className="rounded-xl border border-gray-200 p-6 text-sm text-neutral-400">
+  <div className="border-neutral-80 rounded-lg border p-6 text-sm text-neutral-400">
     멘티를 선택해주세요.
   </div>
 );
@@ -62,7 +54,7 @@ const MenteeInfo = ({
   // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
   if (collapsed) {
     return (
-      <div className="flex items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 px-4 py-2.5">
+      <div className="border-neutral-80 flex items-center gap-x-4 gap-y-1 rounded-lg border px-4 py-2.5">
         <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
           <span className="text-sm font-semibold text-neutral-900">
             {mentee.name}
@@ -92,12 +84,12 @@ const MenteeInfo = ({
             href={mentee.link!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
               <path
                 d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                stroke="#4D55F5"
+                stroke="currentColor"
                 strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -111,11 +103,10 @@ const MenteeInfo = ({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 md:gap-5 md:p-5">
-      <div className="flex flex-col gap-4 md:flex-row md:gap-7">
-        {/* Left column */}
-        <div className="flex flex-1 flex-col gap-7">
-          {/* Name + challenge */}
+    <section className="border-neutral-80 rounded-lg border p-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-7">
+        {/* 좌: 이름 + 제출 상태 */}
+        <div className="flex flex-1 flex-col gap-6">
           <div className="flex flex-wrap items-baseline gap-2">
             <h3 className="text-lg font-semibold text-neutral-900 md:text-2xl">
               {mentee.name}
@@ -125,23 +116,35 @@ const MenteeInfo = ({
             </span>
           </div>
 
-          {/* Submission status + link */}
-          <div className="flex flex-col gap-1.5">
-            <InfoRow
-              label="제출 상태"
-              value={isSubmitted ? '제출됨' : '미제출'}
-            />
+          <div className="flex flex-col gap-2">
+            <span className="text-xs text-neutral-500">제출 상태</span>
+            <div className="flex items-center gap-1.5 text-sm">
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  isSubmitted ? 'bg-green-500' : 'bg-neutral-300'
+                }`}
+              />
+              <span className="font-medium text-neutral-700">
+                {isSubmitted ? '제출됨' : '미제출'}
+              </span>
+            </div>
             {hasSubmissionLink ? (
               <a
                 href={mentee.link!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                >
                   <path
                     d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                    stroke="#4D55F5"
+                    stroke="currentColor"
                     strokeWidth="1.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -153,25 +156,34 @@ const MenteeInfo = ({
           </div>
         </div>
 
-        {/* Right column */}
-        <div className="flex flex-1 flex-col justify-between">
-          <div className="flex flex-col gap-3">
+        {/* 세로 구분선 — 제출 상태 ↔ 멘티 정보 */}
+        <div className="bg-neutral-80 hidden w-px shrink-0 self-stretch md:block" />
+
+        {/* 우: 희망 정보 + 피드백 상태 */}
+        <div className="flex flex-1 flex-col justify-between gap-3">
+          <div className="text-xsmall14 flex flex-col gap-2 text-neutral-600">
             {mentee.wishJob ? (
-              <InfoRow label="희망 직군" value={mentee.wishJob} />
+              <div className="flex gap-2">
+                <span className="w-16 shrink-0 text-neutral-400">희망 직군</span>
+                <span>{mentee.wishJob}</span>
+              </div>
             ) : null}
             {mentee.wishCompany ? (
-              <InfoRow label="희망 기업" value={mentee.wishCompany} />
+              <div className="flex gap-2">
+                <span className="w-16 shrink-0 text-neutral-400">희망 기업</span>
+                <span>{mentee.wishCompany}</span>
+              </div>
             ) : null}
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-xs text-neutral-500">피드백 상태</span>
-            <span className={`text-xs font-medium ${feedbackStatusStyle}`}>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-neutral-400">피드백 상태</span>
+            <span className={`font-medium ${feedbackStatusStyle}`}>
               {feedbackStatusLabel}
             </span>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
