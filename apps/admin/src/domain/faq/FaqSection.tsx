@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useDeleteFaq, useGetFaq } from '@/api/faq';
 import { CreateReportData, UpdateReportData } from '@/api/report';
+import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import {
   CreateChallengeReq,
   CreateLiveReq,
@@ -137,16 +138,15 @@ function FaqSection<
         customCategories={customCategories}
         onClose={() => setEditingFaq(null)}
       />
-      <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl font-medium">FAQ</h3>
+      <section className="flex w-full flex-col gap-y-4 py-8">
+        <div className="flex w-full items-center justify-between">
+          <Heading2>FAQ</Heading2>
           <Button variant="contained" onClick={() => setIsAddModalOpen(true)}>
             문항 추가
           </Button>
         </div>
 
         <CategoryTabs
-          className="mb-4"
           options={tabs}
           selected={selectedCategory}
           onChange={setSelectedCategory}
@@ -207,7 +207,7 @@ function FaqSection<
             ))}
           </div>
         )}
-      </div>
+      </section>
     </>
   );
 }
