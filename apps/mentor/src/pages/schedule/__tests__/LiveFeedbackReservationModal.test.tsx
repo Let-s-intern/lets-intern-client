@@ -174,14 +174,15 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(modal).toHaveAttribute('data-feedback-id', '101');
   });
 
-  it('meetingUrl 미생성(null) 시 "라이브 입장하기" 버튼이 disabled', () => {
-    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 인 상태
+  it('meetingUrl 미생성(null) 이어도 멘토는 "라이브 입장하기" 버튼이 활성 (데드락 방지)', async () => {
+    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 인 상태.
+    // 데드락 방지: 멘토는 클릭해서 회의실을 생성해야 하므로 버튼이 활성이어야 한다.
     axiosMock.get.mockResolvedValue({
       data: { data: { feedbackInfo: makeMentorDetail({ meetingUrl: null }) } },
     });
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: '라이브 입장하기' });
-    expect(btn).toBeDisabled();
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
   });
 
   // TODO(임시): 라이브 입장 시간 게이팅(T-10 룰)이 임시 해제됨 (PRD §13).
