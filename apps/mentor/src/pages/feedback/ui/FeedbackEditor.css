@@ -1,0 +1,41 @@
+/**
+ * 서면 피드백 모달 전용 Lexical 에디터 레이아웃 보정.
+ *
+ * 전역 lexical `index.css` 는 playground 기준이라 editor-shell 내부가
+ * 콘텐츠 높이대로 늘어나(block · min-height:150px · resize) 모달처럼
+ * 높이가 고정된 컨테이너 안에서는 바깥 슬롯이 스크롤되고 sticky 툴바가
+ * 위 카드와 겹친다. 여기서는 `.feedback-written-editor` 인스턴스 범위 안에서만
+ * editor-shell → editor-container → editor-scroller → editor 가 flex 컬럼으로
+ * 남은 높이를 채우고, 본문(editor-scroller)만 스크롤하도록 보정한다.
+ *
+ * 전역 lexical css 는 건드리지 않는다(이 클래스가 붙은 인스턴스에만 적용).
+ */
+
+.feedback-written-editor .editor-shell {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0%;
+  flex-direction: column;
+  margin: 0;
+}
+
+.feedback-written-editor .editor-container {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0%;
+  flex-direction: column;
+}
+
+/* 콘텐츠 높이가 아닌 남은 공간을 채우고, 본문만 스크롤하게 한다.
+   resize 핸들·고정 min-height 는 모달 안에서 불필요하므로 해제. */
+.feedback-written-editor .editor-scroller {
+  min-height: 0;
+  flex: 1 1 0%;
+  resize: none;
+  overflow: auto;
+}
+
+.feedback-written-editor .editor {
+  flex: 1 1 auto;
+  min-height: 0;
+}

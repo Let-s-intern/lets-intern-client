@@ -4,6 +4,7 @@ import EditorApp, { emptyEditorState } from '@/common/lexical/EditorApp';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import './FeedbackEditor.css';
 
 interface FeedbackEditorProps {
   initialEditorStateJsonString?: string;
@@ -80,7 +81,7 @@ const FeedbackEditor = ({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="feedback-written-editor flex min-h-0 flex-1 flex-col overflow-hidden">
       <EditorApp
         initialEditorStateJsonString={
           initialEditorStateJsonString || emptyEditorState
@@ -88,6 +89,8 @@ const FeedbackEditor = ({
         onChange={onChange}
         // editor-shell 기본 block·my-5 를 덮어 래퍼 높이를 꽉 채우고
         // 툴바(상단)·본문이 정상 배치되도록 flex 컬럼으로 전환.
+        // 내부(editor-container·scroller·editor) 보정은 FeedbackEditor.css
+        // 의 `.feedback-written-editor` 스코프에서 처리.
         shellClassName="my-0 flex min-h-0 flex-1 flex-col"
       />
     </div>
