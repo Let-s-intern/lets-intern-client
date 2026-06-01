@@ -15,8 +15,9 @@ interface InfoTooltipProps {
  * 라벨 옆 ⓘ 아이콘 툴팁.
  * hover/focus 모두에서 노출되며, 트리거는 aria-describedby 로 본문과 연결한다.
  *
- * 본문은 `position: fixed` 로 document.body 에 portal 렌더한다.
- * 모달 내부의 `overflow-auto`/`overflow-hidden` 컨테이너에 잘리지 않게 하기 위함이다.
+ * 본문은 document.body 에 portal 렌더하고 `position: absolute` + 페이지 좌표
+ * (rect + window.scroll*)로 배치한다. 모달 내부의 `overflow-*` 컨테이너에 잘리지 않으면서,
+ * 툴팁이 열린 채 스크롤해도 트리거와 어긋나지 않는다.
  */
 const InfoTooltip = ({ text, label }: InfoTooltipProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -31,7 +32,11 @@ const InfoTooltip = ({ text, label }: InfoTooltipProps) => {
     const el = triggerRef.current;
     if (el) {
       const rect = el.getBoundingClientRect();
-      setPos({ top: rect.bottom + 6, left: rect.left + rect.width / 2 });
+      // 페이지 기준 절대 좌표(스크롤 오프셋 반영) — 열린 채 스크롤해도 트리거에 붙어있다.
+      setPos({
+        top: rect.bottom + window.scrollY + 6,
+        left: rect.left + window.scrollX + rect.width / 2,
+      });
     }
     setIsVisible(true);
   };
@@ -43,7 +48,7 @@ const InfoTooltip = ({ text, label }: InfoTooltipProps) => {
         ref={triggerRef}
         type="button"
         aria-label={label}
-        aria-describedby={tooltipId}
+        aria-describedby={isVisible ? tooltipId : undefined}
         onMouseEnter={show}
         onMouseLeave={hide}
         onFocus={show}
@@ -70,7 +75,7 @@ const InfoTooltip = ({ text, label }: InfoTooltipProps) => {
         <span
           id={tooltipId}
           role="tooltip"
-          style={{ position: 'fixed', top: pos.top, left: pos.left }}
+          style={{ position: 'absolute', top: pos.top, left: pos.left }}
           className={twMerge(
             feedbackModalDesign.tooltipBox,
             isVisible ? 'opacity-100' : 'pointer-events-none opacity-0',

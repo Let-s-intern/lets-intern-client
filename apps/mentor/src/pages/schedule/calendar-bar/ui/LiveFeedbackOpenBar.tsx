@@ -11,13 +11,16 @@ interface LiveFeedbackOpenBarProps {
   onMentorOpenClick?: () => void;
 }
 
+/** 하루의 밀리초 — D-day 계산용 */
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 /** 오늘 기준 D-day (양수=남음, 0=오늘, 음수=경과). */
 function daysFromToday(iso: string): number {
   const now = currentNow();
   const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const t = new Date(iso);
   const b = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-  return Math.round((b.getTime() - a.getTime()) / 86400000);
+  return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
 }
 
 /**

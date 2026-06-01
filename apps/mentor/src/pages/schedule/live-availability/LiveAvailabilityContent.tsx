@@ -472,7 +472,7 @@ const LiveAvailabilityContent = ({
         </div>
 
         {/* 참고사항 배너 — 한 줄 */}
-        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 truncate rounded-md px-3 py-2">
+        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 break-keep rounded-md px-3 py-2">
           마우스로 드래그하여 여러 시간대를 선택한 후 "저장하기" 버튼을 클릭해야
           최종반영 됩니다, 저장하기 전까지는 임시 상태입니다.
         </div>

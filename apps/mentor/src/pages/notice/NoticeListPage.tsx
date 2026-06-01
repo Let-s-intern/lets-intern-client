@@ -40,6 +40,7 @@ function SearchBar({
     <div className="relative">
       <input
         type="text"
+        aria-label="공지 검색"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="검색어를 입력해주세요"
