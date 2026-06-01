@@ -65,13 +65,17 @@ function FaqEditModal({
 
   const handleSave = async () => {
     if (!faq || !isSaveEnabled) return;
-    await patchFaq({
-      ...faq,
-      question,
-      answer,
-      category: resolvedCategory.trim(),
-    });
-    onClose();
+    try {
+      await patchFaq({
+        ...faq,
+        question,
+        answer,
+        category: resolvedCategory.trim(),
+      });
+      onClose();
+    } catch {
+      alert('FAQ 수정에 실패했습니다.');
+    }
   };
 
   const categoryOptions = [

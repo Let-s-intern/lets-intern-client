@@ -55,13 +55,17 @@ function FaqAddModal({
 
   const handleSave = async () => {
     if (!isSaveEnabled) return;
-    await postFaq({
-      programType,
-      question,
-      answer,
-      category: resolvedCategory.trim(),
-    });
-    handleClose();
+    try {
+      await postFaq({
+        programType,
+        question,
+        answer,
+        category: resolvedCategory.trim(),
+      });
+      handleClose();
+    } catch {
+      alert('FAQ 등록에 실패했습니다.');
+    }
   };
 
   const categoryOptions = [
