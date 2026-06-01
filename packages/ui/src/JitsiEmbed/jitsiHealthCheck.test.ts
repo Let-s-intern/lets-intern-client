@@ -11,7 +11,7 @@ describe('resolveHealthyJitsiBaseUrl', () => {
     vi.unstubAllGlobals();
   });
 
-  it('첫 번째 도메인이 healthy 하면 그 base URL(슬래시 보정)을 반환한다', async () => {
+  it('여러 도메인이 healthy 하면 우선순위가 가장 높은 base URL(슬래시 보정)을 반환한다', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(new Response(null, { status: 200 })),
@@ -23,8 +23,8 @@ describe('resolveHealthyJitsiBaseUrl', () => {
     ]);
 
     expect(result).toBe('https://primary.example/');
-    // 첫 도메인에서 성공했으므로 fallback 은 호출되지 않는다.
-    expect(fetch).toHaveBeenCalledTimes(1);
+    // 병렬 헬스체크라 모든 후보를 ping 하되, 결과 순서를 보존해 primary 를 고른다.
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it('첫 번째가 실패하면 두 번째(fallback)로 폴백한다', async () => {

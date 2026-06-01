@@ -101,6 +101,12 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
     // (생성 성공 경로는 @letscareer/ui ensureLiveMeetingUrl 단위 테스트가 커버)
     const user = userEvent.setup();
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    // 환경에 따라 global.fetch 유무가 다르므로 헬스체크가 결정적으로 실패하도록 stub
+    // (실제 네트워크 호출/타임아웃 대기로 인한 flaky·지연 방지).
+    const originalFetch = global.fetch;
+    global.fetch = jest
+      .fn()
+      .mockRejectedValue(new Error('health-check down')) as typeof fetch;
 
     render(
       <ReservationInfoSection
@@ -115,10 +121,11 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
       screen.getByRole('button', { name: 'LIVE 피드백 입장하기' }),
     );
 
-    // jsdom 엔 fetch 가 없어 헬스체크가 모두 실패 → 살아있는 도메인 없음 → 알림·모달 미오픈.
+    // 살아있는 도메인 없음 → 알림·모달 미오픈.
     expect(alertSpy).toHaveBeenCalled();
     expect(screen.queryByTestId('jitsi-embed')).not.toBeInTheDocument();
 
+    global.fetch = originalFetch;
     alertSpy.mockRestore();
   });
 });

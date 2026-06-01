@@ -45,8 +45,13 @@ async function isDomainHealthy(baseUrl: string): Promise<boolean> {
 }
 
 /**
- * 후보 도메인들을 순서대로 헬스체크해 **처음으로 healthy 한 base URL** 을 반환한다.
+ * 후보 도메인들을 헬스체크해 **우선순위가 가장 높은 healthy base URL** 을 반환한다.
  * 모두 실패하면 null.
+ *
+ * 헬스체크는 서로 독립적이므로 `Promise.all` 로 **병렬** 수행한다(Vercel 베스트 프랙티스).
+ * 순차 실행이면 앞 도메인이 죽었을 때 타임아웃만큼 기다린 뒤 다음을 시도해 최악
+ * 대기가 후보 수에 비례하지만, 병렬이면 최악 대기가 단일 타임아웃으로 고정된다.
+ * 결과 배열은 입력 순서를 보존하므로 가장 먼저 성공한(우선순위 높은) 도메인을 고른다.
  *
  * @param candidates 우선순위 순 base URL 목록 (빈 값은 무시)
  */
@@ -54,12 +59,11 @@ export async function resolveHealthyJitsiBaseUrl(
   candidates: ReadonlyArray<string | undefined>,
 ): Promise<string | null> {
   const urls = candidates.filter((u): u is string => !!u && u.trim() !== '');
-  for (const url of urls) {
-    if (await isDomainHealthy(url)) {
-      return normalizeBase(url);
-    }
-  }
-  return null;
+  const results = await Promise.all(
+    urls.map(async (url) => ({ url, healthy: await isDomainHealthy(url) })),
+  );
+  const firstHealthy = results.find((r) => r.healthy);
+  return firstHealthy ? normalizeBase(firstHealthy.url) : null;
 }
 
 export interface EnsureLiveMeetingUrlOptions {
