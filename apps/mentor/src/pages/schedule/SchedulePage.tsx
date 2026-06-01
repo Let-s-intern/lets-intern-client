@@ -8,6 +8,7 @@ import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
 import FeedbackTagFilter from './ui/FeedbackTagFilter';
+import ScheduleHeader from './ui/ScheduleHeader';
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
@@ -136,11 +137,7 @@ const SchedulePage = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-20 md:gap-10">
-      <div className="flex items-center gap-2.5">
-        <h1 className="text-xl font-semibold leading-8 text-neutral-900">
-          프로그램 일정
-        </h1>
-      </div>
+      <ScheduleHeader />
 
       <WelcomeMessage />
 
