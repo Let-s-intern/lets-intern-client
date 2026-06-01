@@ -114,9 +114,10 @@ const FeedbackLiveAvailabilityPage = () => {
       return;
     }
 
-    // 모두 성공 시 — invalidate 가 트리거되어 최신 BE 데이터로 그리드 새로고침
-    // resetKey 변경으로 그리드 selectedKeys 도 초기 상태로 동기화
-    setResetCounter((n) => n + 1);
+    // 성공 시 resetCounter 를 건드리지 않는다.
+    // resetKey 변경은 아직 refetch 되지 않은 stale initialSlots 로 그리드를 되돌려
+    // 방금 저장한 선택을 지운다(저장이 한 번에 반영되지 않는 버그의 원인).
+    // 즉시 반영은 LiveAvailabilityContent 의 savedKeys 갱신이 담당한다.
   };
 
   return (

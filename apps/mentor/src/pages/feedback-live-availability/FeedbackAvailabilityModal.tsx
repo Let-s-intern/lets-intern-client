@@ -113,7 +113,10 @@ const FeedbackAvailabilityModal = ({
       throw new Error(failures.join(' · '));
     }
 
-    setResetCounter((n) => n + 1);
+    // 성공 시 resetCounter 를 건드리지 않는다 — refetch 전 stale initialSlots 로
+    // 그리드가 리셋되며 방금 저장한 선택이 사라지는 문제를 막는다.
+    // 즉시 반영은 LiveAvailabilityContent 의 savedKeys 갱신이, 재오픈 시 동기화는
+    // resetKey 의 isOpen 토글이 담당한다.
     // 정상 완료 — LiveAvailabilityContent 가 mode='modal' 이면 onClose 를 호출
   };
 
