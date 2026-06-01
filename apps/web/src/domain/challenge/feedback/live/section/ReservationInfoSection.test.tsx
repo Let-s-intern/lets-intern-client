@@ -38,10 +38,12 @@ const mentor: Mentor = {
   profileImgUrl: '',
 };
 
+// 입장 게이트(isEntranceActive)는 "시작 10분 전 ~ 종료 전"에만 활성이므로,
+// 입장 버튼을 누르는 테스트는 시작 +5분 / 종료 +35분(=현재 입장 가능)으로 둔다.
 const feedbackInfo: FeedbackInfo = {
   feedbackId: FEEDBACK_ID,
-  startDate: '2026-05-04T10:00:00+09:00',
-  endDate: '2026-05-04T10:30:00+09:00',
+  startDate: new Date(Date.now() + 5 * 60_000).toISOString(),
+  endDate: new Date(Date.now() + 35 * 60_000).toISOString(),
   meetingUrl: MEETING_URL,
   status: 'RESERVED',
   mentorStatus: null,
