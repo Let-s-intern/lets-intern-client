@@ -105,16 +105,16 @@ const ChallengeDuplicateModal = ({
       }
 
       await duplicateChallenge(sourceChallenge.id, {
-        title: effectiveTitle,
+        title: copyContent ? null : effectiveTitle,
         beginning: copyContent
-          ? ''
-          : (beginning?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
+          ? null
+          : (beginning?.format('YYYY-MM-DDTHH:mm:ss') ?? null),
         deadline: copyContent
-          ? ''
-          : (deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
+          ? null
+          : (deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? null),
         startDate: copyContent
-          ? ''
-          : (startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? ''),
+          ? null
+          : (startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? null),
         thumbnail: thumbnailUrl,
         desktopThumbnail: thumbnailUrl,
         copyContent,

@@ -858,10 +858,10 @@ export const useGetChallengeNotices = (
 };
 
 export interface DuplicateChallengeReq {
-  title: string;
-  beginning: string;
-  deadline: string;
-  startDate: string;
+  title: string | null;
+  beginning: string | null;
+  deadline: string | null;
+  startDate: string | null;
   thumbnail: string | null;
   desktopThumbnail: string | null;
   copyContent: boolean;
