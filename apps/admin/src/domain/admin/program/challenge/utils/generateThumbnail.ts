@@ -100,7 +100,7 @@ export async function drawBadgeOnCanvas(
 export async function fetchChallengeType(
   challengeId: number,
 ): Promise<ChallengeType> {
-  const res = await axios.get(`/challenge/${challengeId}`);
+  const res = await axios.get(`/challenge/${challengeId}/type`);
   return res.data.data.challengeType as ChallengeType;
 }
 
