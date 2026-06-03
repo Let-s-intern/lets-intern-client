@@ -23,6 +23,8 @@ const ProgramDetailReviewItem = ({
   color,
   bgColor,
 }: ProgramDetailReviewItemProps) => {
+  const hasScore = review.score !== undefined && review.npsScore !== undefined;
+
   return (
     <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
       {type !== 'live' && (
@@ -30,22 +32,26 @@ const ProgramDetailReviewItem = ({
           className="md:text-small18 line-clamp-2 flex w-full rounded-t-[10px] px-[22px] py-4 text-white"
           style={{ backgroundColor: color }}
         >
-          {`${review.passedState} 합격`}
+          {hasScore
+            ? `만족도 점수 ${review.score} / NPS 점수 ${review.npsScore}`
+            : `${review.passedState} 합격`}
         </div>
       )}
       <div
         className={`border-neutral-85 flex h-[152px] w-full flex-col gap-y-3 rounded-b-[10px] border-[1.5px] bg-white px-[22px] pb-9 pt-7 md:h-[160px] ${type === 'live' ? 'rounded-t-[10px]' : ''}`}
       >
-        <div
-          className={`rounded-xs flex w-fit items-center px-2 py-1.5`}
-          style={{ backgroundColor: bgColor }}
-        >
-          {Array(5)
-            .fill(0)
-            .map((_, index) => (
-              <StarIcon key={index} className={`h-4 w-4`} style={{ color }} />
-            ))}
-        </div>
+        {!hasScore && (
+          <div
+            className="rounded-xs flex w-fit items-center px-2 py-1.5"
+            style={{ backgroundColor: bgColor }}
+          >
+            {Array(5)
+              .fill(0)
+              .map((_, index) => (
+                <StarIcon key={index} className="h-4 w-4" style={{ color }} />
+              ))}
+          </div>
+        )}
         <p className="text-xsmall16 md:text-small20 line-clamp-2 break-keep font-bold">
           {review.title}
         </p>
