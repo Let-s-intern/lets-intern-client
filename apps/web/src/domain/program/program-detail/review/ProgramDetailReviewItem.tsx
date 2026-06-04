@@ -23,7 +23,8 @@ const ProgramDetailReviewItem = ({
   color,
   bgColor,
 }: ProgramDetailReviewItemProps) => {
-  const hasScore = review.score !== undefined && review.npsScore !== undefined;
+  const hasScore =
+    typeof review.score === 'number' && typeof review.npsScore === 'number';
 
   return (
     <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
