@@ -6,7 +6,7 @@ import {
   ProgramTypeUpperCase,
   reportTypeSchema,
 } from '@/schema';
-import { ContentReviewType } from '@/types/interface';
+import { ContentReviewType, ExternalBlogReview } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import {
@@ -299,15 +299,19 @@ const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
 export const useGetAdminBlogReviewList = ({
   page = 0,
   size = 20,
+  keyword,
+  isVisible,
 }: {
   page?: number;
   size?: number;
+  keyword?: string;
+  isVisible?: boolean;
 } = {}) => {
   return useQuery({
-    queryKey: [adminBlogReviewListQueryKey, page, size],
+    queryKey: [adminBlogReviewListQueryKey, page, size, keyword, isVisible],
     queryFn: async () => {
       const res = await axiosV2.get('/admin/review/blog', {
-        params: { page, size },
+        params: { page, size, keyword, isVisible },
       });
       return adminBlogReviewListSchema.parse(res.data.data);
     },
@@ -610,6 +614,37 @@ export async function fetchAutoFillChallengeReviews(
         npsScore: review.reviewInfo.npsScore ?? undefined,
       };
     });
+}
+
+export async function fetchAutoFillBlogReviews(
+  challengeTitle: string,
+): Promise<ExternalBlogReview[]> {
+  const keyword = challengeTitle
+    .replace(/^\[.*?\]\s*/, '')
+    .replace(/\s*\d+기\s*$/, '')
+    .trim();
+  if (!keyword) return [];
+
+  const res = await axiosV2.get('/admin/review/blog', {
+    params: {
+      keyword,
+      isVisible: true,
+      page: 0,
+      size: 30,
+      sort: 'createDate,desc',
+    },
+  });
+  const data = adminBlogReviewListSchema.parse(res.data.data);
+
+  return data.reviewList
+    .filter((r) => r.isVisible === true && r.thumbnail && r.url)
+    .slice(0, 3)
+    .map((r) => ({
+      thumbnail: r.thumbnail ?? '',
+      url: r.url ?? '',
+      programTitle: r.programTitle ?? '',
+      name: r.name ?? '',
+    }));
 }
 
 /** POST 블로그 보너스 미션 후기 제출 /api/v2/review/blog/bonus */
