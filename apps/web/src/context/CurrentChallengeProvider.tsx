@@ -4,7 +4,7 @@ import {
   RefetchOptions,
   useQuery,
 } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { createContext, useContext } from 'react';
 import { z } from 'zod';
 import {
@@ -58,6 +58,8 @@ export const CurrentChallengeProvider = ({
 }) => {
   const params = useParams<{ programId: string }>();
   const { isLoggedIn } = useAuthStore();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
   const { data: currentChallenge, isLoading: isChallengeLoading } = useQuery({
     enabled: isLoggedIn,
@@ -80,22 +82,25 @@ export const CurrentChallengeProvider = ({
     refetch: refetchSchedules,
   } = useQuery({
     enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'schedule'],
+    queryKey: ['challenge', params.programId, 'schedule', testDate],
     queryFn: async () => {
       if (!params.programId) {
         return null;
       }
-      const res = await axios.get(`/challenge/${params.programId}/schedule`);
+      const res = await axios.get(`/challenge/${params.programId}/schedule`, {
+        params: { testDate },
+      });
       return challengeSchedule.parse(res.data.data).scheduleList;
     },
   });
 
   const { data: dailyMission, isLoading: isDailyMissionLoading } = useQuery({
     enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'daily-mission'],
+    queryKey: ['challenge', params.programId, 'daily-mission', testDate],
     queryFn: async () => {
       const res = await axios.get(
         `/challenge/${params.programId}/daily-mission`,
+        { params: { testDate } },
       );
       return dailyMissionSchema.parse(res.data.data).dailyMission;
     },
@@ -104,6 +109,7 @@ export const CurrentChallengeProvider = ({
   const { data: myDailyMission, isLoading: isMyDailyMissionLoading } =
     useChallengeMyDailyMission(params.programId, {
       enabled: isLoggedIn,
+      testDate,
     });
 
   const {
@@ -111,11 +117,17 @@ export const CurrentChallengeProvider = ({
     isLoading: isSubmittedMissionsLoading,
   } = useQuery({
     enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'missions', 'submitted'],
+    queryKey: [
+      'challenge',
+      params.programId,
+      'missions',
+      'submitted',
+      testDate,
+    ],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${params.programId}/missions?type=SUBMITTED`,
-      );
+      const res = await axios.get(`/challenge/${params.programId}/missions`, {
+        params: { type: 'SUBMITTED', testDate },
+      });
       return myChallengeMissionsByType.parse(res.data.data).missionList;
     },
   });
@@ -125,11 +137,17 @@ export const CurrentChallengeProvider = ({
     isLoading: isRemainingMissionsLoading,
   } = useQuery({
     enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'missions', 'remaining'],
+    queryKey: [
+      'challenge',
+      params.programId,
+      'missions',
+      'remaining',
+      testDate,
+    ],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${params.programId}/missions?type=REMAINING`,
-      );
+      const res = await axios.get(`/challenge/${params.programId}/missions`, {
+        params: { type: 'REMAINING', testDate },
+      });
       return myChallengeMissionsByType.parse(res.data.data).missionList;
     },
   });
@@ -137,11 +155,11 @@ export const CurrentChallengeProvider = ({
   const { data: absentMissions = [], isLoading: isAbsentMissionsLoading } =
     useQuery({
       enabled: isLoggedIn,
-      queryKey: ['challenge', params.programId, 'missions', 'absent'],
+      queryKey: ['challenge', params.programId, 'missions', 'absent', testDate],
       queryFn: async () => {
-        const res = await axios.get(
-          `/challenge/${params.programId}/missions?type=ABSENT`,
-        );
+        const res = await axios.get(`/challenge/${params.programId}/missions`, {
+          params: { type: 'ABSENT', testDate },
+        });
         return myChallengeMissionsByType.parse(res.data.data).missionList;
       },
     });

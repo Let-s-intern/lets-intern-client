@@ -827,13 +827,15 @@ export const useChallengeApplicationsQuery = ({
 /** GET 챌린지 나의 기록장 데일리 미션 /api/v1/challenge/{challengeId}/my/daily-mission */
 export const useChallengeMyDailyMission = (
   programId?: string | number,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; testDate?: string },
 ) => {
   return useQuery({
     enabled: !!programId && options?.enabled,
-    queryKey: ['useChallengeDailyMission', programId],
+    queryKey: ['useChallengeDailyMission', programId, options?.testDate],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
+      const res = await axios.get(`/challenge/${programId}/my/daily-mission`, {
+        params: { testDate: options?.testDate },
+      });
       return myDailyMissionSchema.parse(res.data.data);
     },
   });

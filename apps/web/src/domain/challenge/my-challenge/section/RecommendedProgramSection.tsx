@@ -3,7 +3,12 @@ import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { challengeHomeSchema, ChallengeHome } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
 type RecommendSection = ChallengeHome['programRecommendList'][0];
@@ -86,12 +91,16 @@ const RecommendSection = ({ section }: { section: RecommendSection }) => {
 function RecommendedProgramSection() {
   const pathname = usePathname();
   const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
   const { data: homeData } = useQuery({
     enabled: !!params.programId && !isNaN(Number(params.programId)),
-    queryKey: ['challenge', Number(params.programId), 'home'],
+    queryKey: ['challenge', Number(params.programId), 'home', testDate],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${params.programId}/home`);
+      const res = await axios.get(`/challenge/${params.programId}/home`, {
+        params: { testDate },
+      });
       return challengeHomeSchema.parse(res.data.data);
     },
   });

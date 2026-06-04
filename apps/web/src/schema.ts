@@ -1395,6 +1395,7 @@ export const challengeHomeSchema = z.object({
   programRecommendList: z.array(
     z.object({
       id: z.number(),
+      programType: ProgramTypeEnum.optional().nullable(),
       title: z.string(),
       isMoreVisible: z.boolean(),
       moreUrl: z.string().nullable(),
@@ -1404,7 +1405,7 @@ export const challengeHomeSchema = z.object({
           programType: ProgramTypeEnum,
           title: z.string(),
           cta: z.string(),
-          thumbnail: z.string(),
+          thumbnail: z.string().nullable(),
         }),
       ),
     }),
