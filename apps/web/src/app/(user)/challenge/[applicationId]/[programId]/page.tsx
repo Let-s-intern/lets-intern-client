@@ -2,6 +2,8 @@
 
 import { useChallengeHome } from '@/api/challenge/challenge';
 import { useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
@@ -16,10 +18,10 @@ import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { challengeScore } from '@/schema';
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
-const MissionDetailSection = () => {
+function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
   const { isLastMissionSubmitted } = useMissionCalculation();
@@ -30,7 +32,7 @@ const MissionDetailSection = () => {
   // 레벨에 맞게 필터링된 schedules
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
-  const { data: programData } = useQuery({
+  const { data: programData } = useSuspenseQuery({
     queryKey: ['challenge', params.programId, 'application'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
@@ -54,17 +56,17 @@ const MissionDetailSection = () => {
       schedules={filteredSchedules}
     />
   );
-};
+}
 
-const getIsChallengeDone = (endDate: string) => {
+function getIsChallengeDone(endDate: string) {
   return dayjs(new Date()).isAfter(dayjs(endDate));
-};
+}
 
-const getIsChallengeSubmitDone = (endDate: string) => {
+function getIsChallengeSubmitDone(endDate: string) {
   return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
-};
+}
 
-const ChallengeDashboard = () => {
+function ChallengeDashboardContent() {
   const { currentChallenge, schedules } = useCurrentChallenge();
   const { todayTh } = useMissionCalculation();
 
@@ -106,9 +108,10 @@ const ChallengeDashboard = () => {
       const res = await axios.get(`/challenge/${currentChallenge?.id}/score`);
       return challengeScore.parse(res.data.data);
     },
+    throwOnError: true,
   });
 
-  const { data: programData } = useQuery({
+  const { data: programData } = useSuspenseQuery({
     queryKey: ['challenge', params.programId, 'application'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
@@ -181,6 +184,12 @@ const ChallengeDashboard = () => {
       </div>
     </main>
   );
-};
+}
 
-export default ChallengeDashboard;
+export default function ChallengeDashboard() {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <ChallengeDashboardContent />
+    </AsyncBoundary>
+  );
+}
