@@ -133,4 +133,45 @@ export const adminFeedbackHandlers = [
 
     return HttpResponse.json({ data: { feedbackSlotList: filtered } });
   }),
+
+  // 예약 일시 변경 (다른 OPEN 슬롯으로 이동)
+  // BE: POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId} (바디 없음, SuccessResponse<null>)
+  // 목 동작: 대상 슬롯이 OPEN 이 아니면 슬롯 경합(409)으로 응답해 실패 플로우를 검증할 수 있게 한다.
+  http.post(
+    `${BASE}/admin/feedback/:feedbackId/slot/:feedbackSlotId`,
+    ({ params }) => {
+      const feedbackId = Number(params.feedbackId);
+      const feedbackSlotId = Number(params.feedbackSlotId);
+
+      const feedback = seedFeedbacks.find(
+        (item) => item.vo.feedbackId === feedbackId,
+      );
+      if (!feedback) {
+        return HttpResponse.json(
+          { message: 'feedback not found' },
+          { status: 404 },
+        );
+      }
+
+      const slots = seedSlotsByMentorId[feedback.mentorId] ?? [];
+      const target = slots.find((s) => s.feedbackSlotId === feedbackSlotId);
+
+      if (!target) {
+        return HttpResponse.json(
+          { message: 'slot not found' },
+          { status: 404 },
+        );
+      }
+      if (target.status !== 'OPEN') {
+        // 다른 곳에서 먼저 예약됨 — 슬롯 경합
+        return HttpResponse.json(
+          { message: '이미 예약된 시간대입니다.' },
+          { status: 409 },
+        );
+      }
+
+      // 성공: BE 는 SuccessResponse<null> 반환. (목 상태는 무변경 — invalidate 후 재조회로 충분)
+      return HttpResponse.json({ data: null });
+    },
+  ),
 ];

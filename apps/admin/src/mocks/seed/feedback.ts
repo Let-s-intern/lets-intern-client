@@ -81,6 +81,8 @@ function buildFeedback(s: FeedbackSpec): SeedFeedback {
     vo: {
       feedbackId: s.feedbackId,
       programTitle: s.programTitle,
+      // BE 미배포 대비 optional 필드 — 목에서는 선반영해 예약 변경 플로우를 데모한다.
+      mentorId: s.mentorId,
       mentorName: s.mentorName,
       menteeName: s.menteeName,
       startDate: s.startDate,
@@ -93,6 +95,7 @@ function buildFeedback(s: FeedbackSpec): SeedFeedback {
     detail: {
       feedbackId: s.feedbackId,
       programTitle: s.programTitle,
+      mentorId: s.mentorId,
       mentorName: s.mentorName,
       mentorEmail: s.mentorEmail,
       menteeName: s.menteeName,

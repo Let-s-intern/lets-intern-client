@@ -31,6 +31,14 @@ describe('GET /admin/feedback', () => {
     expect(parsed.feedbackList.length).toBeGreaterThan(0);
   });
 
+  it('목록 행에 mentorId 를 포함한다 (예약 변경 슬롯 조회용)', async () => {
+    const data = await fetchData('/admin/feedback');
+    const parsed = getAdminFeedbacksResponseSchema.parse(data);
+    expect(
+      parsed.feedbackList.every((f) => typeof f.mentorId === 'number'),
+    ).toBe(true);
+  });
+
   it('challengeIdList 로 필터링한다', async () => {
     const data = await fetchData('/admin/feedback?challengeIdList=2');
     const parsed = getAdminFeedbacksResponseSchema.parse(data);
@@ -126,5 +134,32 @@ describe('GET /admin/feedback/slot/{mentorId}', () => {
     const data = await fetchData('/admin/feedback/slot/999');
     const parsed = getMentorFeedbackSlotsResponseSchema.parse(data);
     expect(parsed.feedbackSlotList).toHaveLength(0);
+  });
+});
+
+describe('POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId}', () => {
+  it('OPEN 슬롯으로의 변경은 성공한다 (data: null)', async () => {
+    // feedbackId=1(멘토 101), 10107 은 101 멘토의 OPEN 슬롯
+    const res = await fetch(`${BASE}/admin/feedback/1/slot/10107`, {
+      method: 'POST',
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { data: null };
+    expect(body.data).toBeNull();
+  });
+
+  it('OPEN 이 아닌(RESERVED) 슬롯으로의 변경은 409(슬롯 경합)를 반환한다', async () => {
+    // 10103 은 101 멘토의 RESERVED 슬롯
+    const res = await fetch(`${BASE}/admin/feedback/1/slot/10103`, {
+      method: 'POST',
+    });
+    expect(res.status).toBe(409);
+  });
+
+  it('없는 예약 id 는 404 를 반환한다', async () => {
+    const res = await fetch(`${BASE}/admin/feedback/9999/slot/10107`, {
+      method: 'POST',
+    });
+    expect(res.status).toBe(404);
   });
 });
