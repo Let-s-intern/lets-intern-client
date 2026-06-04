@@ -1,7 +1,7 @@
 import Input from '@/common/input/v1/Input';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { ContentReviewType } from '@/types/interface';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, TextField } from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
 interface ProgramBestReviewProps {
@@ -28,6 +28,8 @@ const ProgramBestReview = ({
                 passedState: '',
                 title: '',
                 content: '',
+                score: undefined,
+                npsScore: undefined,
               },
             ])
           }
@@ -119,12 +121,46 @@ const ProgramBestReview = ({
                   );
                 }}
               />
+              <TextField
+                label="만족도 점수"
+                size="small"
+                type="number"
+                fullWidth
+                value={reviewFields[index].score ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value
+                    ? Number(e.target.value)
+                    : undefined;
+                  setReviewFields(
+                    reviewFields.map((field, i) =>
+                      i === index ? { ...field, score: value } : field,
+                    ),
+                  );
+                }}
+              />
+              <TextField
+                label="NPS 점수"
+                size="small"
+                type="number"
+                fullWidth
+                value={reviewFields[index].npsScore ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value
+                    ? Number(e.target.value)
+                    : undefined;
+                  setReviewFields(
+                    reviewFields.map((field, i) =>
+                      i === index ? { ...field, npsScore: value } : field,
+                    ),
+                  );
+                }}
+              />
               <IconButton
                 color="warning"
                 sx={{ border: '1px solid red', borderRadius: '10%' }}
                 onClick={() => {
-                  if (reviewFields.length === 1) return;
-
+                  // 전체 삭제 허용: 0개가 되면 어드민 재진입 시 자동 채우기가 재실행됨
+                  // if (reviewFields.length === 1) return;
                   setReviewFields(reviewFields.filter((_, i) => i !== index));
                 }}
               >
