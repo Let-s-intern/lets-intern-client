@@ -14,9 +14,22 @@ const ProgramBestReview = ({
   setReviewFields,
 }: ProgramBestReviewProps) => {
   return (
-    <section className="flex w-full flex-col gap-y-4 py-8">
+    <section className="flex w-full flex-col gap-y-5 py-8">
       <div className="flex w-full items-center justify-between">
-        <Heading2>후기</Heading2>
+        <div className="flex items-center gap-3">
+          <Heading2>후기</Heading2>
+          <div className="flex gap-1">
+            <span className="text-xs text-neutral-50">** </span>
+            <span className="text-xs text-neutral-50">
+              <b>후기값 없이 저장 시 자동으로 후기 3항목이 세팅</b>
+              됩니다. 수동 입력 시 <b>3개의 후기값을 채워주세요</b> (초과 시
+              상단 3항목 노출)
+              <br />
+              만족도/NPS 점수 입력 시, 후기카드 UI 변경으로 합격현황 필드가
+              비활성화됩니다
+            </span>
+          </div>
+        </div>
         <Button
           variant="outlined"
           onClick={() =>
