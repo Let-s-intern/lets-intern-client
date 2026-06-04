@@ -406,4 +406,46 @@ describe('useUpdateFeedbackByMentorMutation', () => {
       queryKey: FEEDBACK_MENTOR_QUERY_KEY,
     });
   });
+
+  it('mentorStatus 만 보내면 본문에 mentorStatus 만 담긴다 (멘티 필드 미포함)', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useUpdateFeedbackByMentorMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        feedbackId: 11,
+        mentorStatus: 'PRESENT',
+      });
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/11', {
+      mentorStatus: 'PRESENT',
+    });
+  });
+
+  it('menteeStatus·mentorStatus 둘 다 보내면 본문에 둘 다 담긴다', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useUpdateFeedbackByMentorMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        feedbackId: 12,
+        menteeStatus: 'ABSENT',
+        mentorStatus: 'PRESENT',
+      });
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/12', {
+      menteeStatus: 'ABSENT',
+      mentorStatus: 'PRESENT',
+    });
+  });
 });

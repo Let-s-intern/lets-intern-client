@@ -200,10 +200,14 @@ export type GetMentorFeedbackDetailResponse = z.infer<
 
 /**
  * 멘토 PATCH 요청 본문.
- * 멘토는 멘티 출석 상태(`menteeStatus`)만 수정할 수 있다.
+ * BE `UpdateFeedbackMentorRequestDto`와 1:1 매핑 — `menteeStatus`/`mentorStatus`
+ * 모두 optional이며, BE는 null 아닌 필드만 업데이트한다.
+ * - `menteeStatus`: 멘토가 멘티 라이브 출석 상태를 마킹.
+ * - `mentorStatus`: 멘토가 라이브 입장 시 본인 출석을 자동 마킹(PRESENT).
  */
 export const updateFeedbackByMentorRequestSchema = z.object({
-  menteeStatus: feedbackAttendanceStatusSchema,
+  menteeStatus: feedbackAttendanceStatusSchema.optional(),
+  mentorStatus: feedbackAttendanceStatusSchema.optional(),
 });
 export type UpdateFeedbackByMentorRequest = z.infer<
   typeof updateFeedbackByMentorRequestSchema
