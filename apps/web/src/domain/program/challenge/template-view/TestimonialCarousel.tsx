@@ -6,7 +6,9 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { FreeMode, Mousewheel, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { maskingName } from '../../program-detail/review/ProgramDetailReviewItem';
+import ProgramDetailReviewItem, {
+  maskingName,
+} from '../../program-detail/review/ProgramDetailReviewItem';
 
 interface ReviewItem {
   name: string;
@@ -14,6 +16,8 @@ interface ReviewItem {
   passedState: string;
   title: string;
   content: string;
+  score?: number;
+  npsScore?: number;
 }
 
 interface Props {
@@ -88,16 +92,27 @@ const TestimonialCarousel: React.FC<Props> = ({
           className="w-full"
         >
           {displayedReviews.map((item, idx) => {
+            const hasScore =
+              item.score !== undefined && item.npsScore !== undefined;
             const meta = `${maskingName(item.name)} / ${item.passedState}`;
             return (
               <SwiperSlide key={idx} className="!w-[300px]">
-                <TestimonialCard
-                  title={item.title}
-                  content={item.content}
-                  meta={meta}
-                  starBadgeBgColor={starBadgeBgColor}
-                  starColor={starColor}
-                />
+                {hasScore ? (
+                  <ProgramDetailReviewItem
+                    type="challenge"
+                    review={item}
+                    color={starColor}
+                    bgColor={starBadgeBgColor}
+                  />
+                ) : (
+                  <TestimonialCard
+                    title={item.title}
+                    content={item.content}
+                    meta={meta}
+                    starBadgeBgColor={starBadgeBgColor}
+                    starColor={starColor}
+                  />
+                )}
               </SwiperSlide>
             );
           })}
@@ -106,8 +121,18 @@ const TestimonialCarousel: React.FC<Props> = ({
       {/* 데스크탑: 3개 고정 */}
       <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-[60px] md:flex lg:px-0">
         {displayedReviews.map((item, idx) => {
+          const hasScore =
+            item.score !== undefined && item.npsScore !== undefined;
           const meta = `${maskingName(item.name)} / ${item.passedState}`;
-          return (
+          return hasScore ? (
+            <ProgramDetailReviewItem
+              key={idx}
+              type="challenge"
+              review={item}
+              color={starColor}
+              bgColor={starBadgeBgColor}
+            />
+          ) : (
             <TestimonialCard
               key={idx}
               title={item.title}
