@@ -3,7 +3,7 @@ import { ExternalBlogReview, ProgramBlogReview } from '@/types/interface';
 const MAX_BLOG_REVIEWS = 3;
 
 export type BlogReviewCard = {
-  key: string;
+  id: string;
   thumbnail: string;
   label: string;
   href: string;
@@ -27,14 +27,14 @@ export function buildBlogReviewCards(
   );
   return [
     ...externalSlice.map((item, idx) => ({
-      key: `ext-${idx}`,
+      id: `ext-${idx}`,
       thumbnail: item.thumbnail,
       label: `${item.programTitle} / ${maskName(item.name)}`,
       href: item.url,
       isExternal: true,
     })),
     ...internalSlice.map((item) => ({
-      key: `int-${item.id}`,
+      id: `int-${item.id}`,
       thumbnail: item.thumbnail,
       label: item.title,
       href: `/blog/${item.id}`,

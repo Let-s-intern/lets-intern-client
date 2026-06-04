@@ -18,21 +18,21 @@ import TestimonialCarousel from '../template-view/TestimonialCarousel';
 
 const FALLBACK_BLOG_REVIEWS: BlogReviewCard[] = [
   {
-    key: 'fallback-0',
+    id: 'fallback-0',
     thumbnail: '/images/marketing/blog-review1.png',
     label: 'happyse*** / 첫 취업준비생',
     href: 'https://blog.naver.com/happyseed3/223959922519',
     isExternal: true,
   },
   {
-    key: 'fallback-1',
+    id: 'fallback-1',
     thumbnail: '/images/marketing/blog-review2.png',
     label: 'ysa0*** / 첫 마케팅 취업준비생',
     href: 'https://blog.naver.com/ysa0419/223809174754',
     isExternal: true,
   },
   {
-    key: 'fallback-2',
+    id: 'fallback-2',
     thumbnail: '/images/marketing/blog-review3.png',
     label: 'wldu*** / 취업준비 n년차 / 현직자 피드백',
     href: 'https://blog.naver.com/wldusyi/224109699677',
