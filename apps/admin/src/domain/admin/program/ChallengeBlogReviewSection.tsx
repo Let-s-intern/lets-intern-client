@@ -26,8 +26,8 @@ const ChallengeBlogReviewSection: React.FC<{
         <Heading2>블로그 후기</Heading2>
         <div className="flex gap-1">
           <span className="text-xs text-neutral-50">
-            ** <b>3개의 블로그 후기값을 채워주세요</b> (초과 시 외부블로그후기
-            선노출)
+            ** <b>3개의 블로그 후기값을 채워주세요</b> (외부 블로그 후기가
+            선노출됩니다)
           </span>
           <span className="text-xs text-neutral-50"></span>
         </div>
