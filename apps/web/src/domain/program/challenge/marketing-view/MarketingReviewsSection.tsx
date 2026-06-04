@@ -5,7 +5,10 @@ import {
   ProgramBlogReview,
 } from '@/types/interface';
 import BlogReviewsCarousel from '../BlogReviewsCarousel';
-import { type BlogReviewCard, buildBlogReviewCards } from '../utils/blogReviewUtils';
+import {
+  type BlogReviewCard,
+  buildBlogReviewCards,
+} from '../utils/blogReviewUtils';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
