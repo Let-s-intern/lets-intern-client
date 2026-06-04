@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useUserAdminQuery } from '@/api/user/user';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
+import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
@@ -14,6 +15,10 @@ const ReservationCalendarView = lazy(
 );
 const ReservationDetailModal = lazy(
   () => import('./ui/ReservationDetailModal'),
+);
+// 예약 변경 모달도 초기 진입에 불필요하므로 지연 로드한다.
+const ReservationChangeModal = lazy(
+  () => import('./modal/ReservationChangeModal'),
 );
 import {
   INITIAL_FILTER,
@@ -62,6 +67,9 @@ export default function ReservationManagement() {
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
     null,
   );
+  // 예약 변경 모달 대상. 한 번에 하나만 연다(상세 모달과 독립).
+  const [changingReservation, setChangingReservation] =
+    useState<FeedbackAdminVo | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -124,6 +132,7 @@ export default function ReservationManagement() {
           sort={sort}
           onToggleSort={toggleSort}
           onView={setSelectedFeedbackId}
+          onChange={setChangingReservation}
           isLoading={isLoading}
         />
       ) : (
@@ -136,6 +145,13 @@ export default function ReservationManagement() {
         <ReservationDetailModal
           feedbackId={selectedFeedbackId}
           onClose={() => setSelectedFeedbackId(null)}
+        />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <ReservationChangeModal
+          reservation={changingReservation}
+          onClose={() => setChangingReservation(null)}
         />
       </Suspense>
     </div>

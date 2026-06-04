@@ -6,6 +6,7 @@ import ReservationListView from './ReservationListView';
 const row: FeedbackAdminVo = {
   feedbackId: 7,
   programTitle: '면접준비 챌린지',
+  mentorId: 101,
   mentorName: '쥬디',
   menteeName: '홍길동',
   startDate: '2026-05-29T17:00:00',
@@ -26,6 +27,7 @@ describe('ReservationListView', () => {
         sort={sort}
         onToggleSort={vi.fn()}
         onView={vi.fn()}
+        onChange={vi.fn()}
         isLoading={false}
       />,
     );
@@ -45,6 +47,7 @@ describe('ReservationListView', () => {
         sort={sort}
         onToggleSort={vi.fn()}
         onView={vi.fn()}
+        onChange={vi.fn()}
         isLoading
       />,
     );
@@ -58,6 +61,7 @@ describe('ReservationListView', () => {
         sort={sort}
         onToggleSort={vi.fn()}
         onView={vi.fn()}
+        onChange={vi.fn()}
         isLoading={false}
       />,
     );
@@ -72,6 +76,7 @@ describe('ReservationListView', () => {
         sort={sort}
         onToggleSort={onToggleSort}
         onView={vi.fn()}
+        onChange={vi.fn()}
         isLoading={false}
       />,
     );
@@ -87,10 +92,55 @@ describe('ReservationListView', () => {
         sort={sort}
         onToggleSort={vi.fn()}
         onView={onView}
+        onChange={vi.fn()}
         isLoading={false}
       />,
     );
     fireEvent.click(screen.getByText('보기'));
     expect(onView).toHaveBeenCalledWith(7);
+  });
+
+  it('RESERVED 행에서 "예약 변경" 클릭 시 해당 행으로 onChange 를 호출한다', () => {
+    const onChange = vi.fn();
+    render(
+      <ReservationListView
+        reservations={[row]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        onChange={onChange}
+        isLoading={false}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '예약 변경' }));
+    expect(onChange).toHaveBeenCalledWith(row);
+  });
+
+  it('COMPLETED 행은 "예약 변경" 버튼이 비활성이다', () => {
+    render(
+      <ReservationListView
+        reservations={[{ ...row, status: 'COMPLETED' }]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        onChange={vi.fn()}
+        isLoading={false}
+      />,
+    );
+    expect(screen.getByRole('button', { name: '예약 변경' })).toBeDisabled();
+  });
+
+  it('mentorId 가 없으면 "예약 변경" 버튼이 비활성이다 (BE 미배포 대비)', () => {
+    render(
+      <ReservationListView
+        reservations={[{ ...row, mentorId: undefined }]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        onChange={vi.fn()}
+        isLoading={false}
+      />,
+    );
+    expect(screen.getByRole('button', { name: '예약 변경' })).toBeDisabled();
   });
 });
