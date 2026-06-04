@@ -47,6 +47,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { fetchAutoFillChallengeReviews } from '@/api/review/review';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -279,10 +280,18 @@ const ChallengeEdit: React.FC = () => {
       });
     }
 
+    const challengeReview = content.challengeReview?.length
+      ? content.challengeReview
+      : await fetchAutoFillChallengeReviews(input.challengeType).catch(
+          () => [],
+        );
+    const contentToSave = { ...content, challengeReview };
+    setContent(contentToSave);
+
     const req: Parameters<typeof patchChallenge>[0] = {
       ...input,
       challengeId: Number(challengeIdString),
-      desc: JSON.stringify(content),
+      desc: JSON.stringify(contentToSave),
       priceInfo: newPriceInfo,
     };
 

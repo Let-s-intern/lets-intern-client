@@ -6,6 +6,7 @@ import {
   ProgramTypeUpperCase,
   reportTypeSchema,
 } from '@/schema';
+import { ContentReviewType } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import {
@@ -558,6 +559,58 @@ export const useGetReviewCount = () => {
     },
   });
 };
+
+// 필터 조건: 챌린지 구분 일치, 만족도/NPS 점수 >= 10, 리뷰,GOAL_RESULT,GOOD_POINT 노출 true
+export async function fetchAutoFillChallengeReviews(
+  challengeType: ChallengeType,
+): Promise<ContentReviewType[]> {
+  const res = await axiosV2.get('/admin/review/CHALLENGE_REVIEW', {
+    params: {
+      challengeType,
+      isVisible: true,
+      minScore: 10,
+      minNpsScore: 10,
+      page: 0,
+      size: 30,
+      sort: 'createDate,desc',
+    },
+  });
+  const data = adminProgramReviewListSchema.parse(res.data.data);
+
+  return data.reviewList
+    .filter((review) => {
+      const goalResult = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOAL_RESULT',
+      );
+      const goodPoint = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOOD_POINT',
+      );
+      return (
+        goalResult?.isVisible === true &&
+        goodPoint?.isVisible === true &&
+        !!goalResult?.answer &&
+        !!goodPoint?.answer
+      );
+    })
+    .slice(0, 3)
+    .map((review) => {
+      const goalResult = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOAL_RESULT',
+      );
+      const goodPoint = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOOD_POINT',
+      );
+      return {
+        name: review.reviewInfo.name ?? '',
+        programName: review.reviewInfo.title ?? '',
+        passedState: '',
+        title: goalResult?.answer ?? '',
+        content: goodPoint?.answer ?? '',
+        score: review.reviewInfo.score ?? undefined,
+        npsScore: review.reviewInfo.npsScore ?? undefined,
+      };
+    });
+}
 
 /** POST 블로그 보너스 미션 후기 제출 /api/v2/review/blog/bonus */
 export const usePostBlogBonus = () => {

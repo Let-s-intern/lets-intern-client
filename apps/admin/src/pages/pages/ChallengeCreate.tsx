@@ -37,6 +37,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { fetchAutoFillChallengeReviews } from '@/api/review/review';
 import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -207,9 +208,17 @@ const ChallengeCreate: React.FC = () => {
       });
     }
 
+    const challengeReview = content.challengeReview?.length
+      ? content.challengeReview
+      : await fetchAutoFillChallengeReviews(input.challengeType).catch(
+          () => [],
+        );
+    const contentToSave = { ...content, challengeReview };
+    setContent(contentToSave);
+
     const req: CreateChallengeReq = {
       ...input,
-      desc: JSON.stringify(content),
+      desc: JSON.stringify(contentToSave),
       priceInfo: newPriceInfo,
     };
     console.log('req', req);
