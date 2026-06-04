@@ -1,5 +1,9 @@
-import { ContentReviewType } from '@/types/interface';
 import { ChallengeIdPrimitive } from '@/schema';
+import {
+  ContentReviewType,
+  ExternalBlogReview,
+  ProgramBlogReview,
+} from '@/types/interface';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -8,32 +12,65 @@ import MainTitle from '../ui/MainTitle';
 import BlogReviewsCarousel from './BlogReviewsCarousel';
 import TestimonialCarousel from '../template-view/TestimonialCarousel';
 
+function maskName(name: string): string {
+  if (name.length <= 1) return name;
+  if (name.length === 2) return name[0] + '*';
+  return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+}
+
+const FALLBACK_BLOG_REVIEWS = [
+  {
+    writer: 'happyse*** / 첫 취업준비생',
+    image: '/images/marketing/blog-review1.png',
+    url: 'https://blog.naver.com/happyseed3/223959922519',
+  },
+  {
+    writer: 'ysa0*** / 첫 마케팅 취업준비생',
+    image: '/images/marketing/blog-review2.png',
+    url: 'https://blog.naver.com/ysa0419/223809174754',
+  },
+  {
+    writer: 'wldu*** / 취업준비 n년차 / 현직자 피드백',
+    image: '/images/marketing/blog-review3.png',
+    url: 'https://blog.naver.com/wldusyi/224109699677',
+  },
+];
+
 interface Props {
   challenge: ChallengeIdPrimitive;
   challengeReview?: ContentReviewType[];
+  externalBlogReviews?: ExternalBlogReview[];
+  blogReview?: ProgramBlogReview;
 }
 
 const MarketingReviewsSection: React.FC<Props> = ({
   challenge,
   challengeReview,
+  externalBlogReviews,
+  blogReview,
 }) => {
-  const BLOG_REVIEWS = [
-    {
-      writer: 'happyse*** / 첫 취업준비생',
-      image: '/images/marketing/blog-review1.png',
-      url: 'https://blog.naver.com/happyseed3/223959922519',
-    },
-    {
-      writer: 'ysa0*** / 첫 마케팅 취업준비생',
-      image: '/images/marketing/blog-review2.png',
-      url: 'https://blog.naver.com/ysa0419/223809174754',
-    },
-    {
-      writer: 'wldu*** / 취업준비 n년차 / 현직자 피드백',
-      image: '/images/marketing/blog-review3.png',
-      url: 'https://blog.naver.com/wldusyi/224109699677',
-    },
+  const MAX = 3;
+  const externalSlice = (externalBlogReviews ?? []).slice(0, MAX);
+  const internalSlice = (blogReview?.list ?? []).slice(
+    0,
+    MAX - externalSlice.length,
+  );
+
+  const mergedReviews = [
+    ...externalSlice.map((item) => ({
+      writer: `${item.programTitle} / ${maskName(item.name)}`,
+      image: item.thumbnail,
+      url: item.url,
+    })),
+    ...internalSlice.map((item) => ({
+      writer: item.title,
+      image: item.thumbnail,
+      url: `/blog/${item.id}`,
+    })),
   ];
+
+  const blogReviews =
+    mergedReviews.length > 0 ? mergedReviews : FALLBACK_BLOG_REVIEWS;
 
   const hasReviews = challengeReview && challengeReview.length > 0;
 
@@ -96,7 +133,7 @@ const MarketingReviewsSection: React.FC<Props> = ({
         이전 기수 참여자들의 블로그 후기
       </MainTitle>
       <div className="flex w-full items-center justify-center overflow-x-hidden">
-        <BlogReviewsCarousel reviews={BLOG_REVIEWS} />
+        <BlogReviewsCarousel reviews={blogReviews} />
       </div>
 
       <div className="relative mt-20 flex flex-col items-center">
