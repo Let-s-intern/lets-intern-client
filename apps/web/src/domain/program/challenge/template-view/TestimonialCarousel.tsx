@@ -93,7 +93,8 @@ const TestimonialCarousel: React.FC<Props> = ({
         >
           {displayedReviews.map((item, idx) => {
             const hasScore =
-              item.score !== undefined && item.npsScore !== undefined;
+              typeof item.score === 'number' &&
+              typeof item.npsScore === 'number';
             const meta = `${maskingName(item.name)} / ${item.passedState}`;
             return (
               <SwiperSlide key={idx} className="!w-[300px]">
@@ -122,7 +123,7 @@ const TestimonialCarousel: React.FC<Props> = ({
       <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-[60px] md:flex lg:px-0">
         {displayedReviews.map((item, idx) => {
           const hasScore =
-            item.score !== undefined && item.npsScore !== undefined;
+            typeof item.score === 'number' && typeof item.npsScore === 'number';
           const meta = `${maskingName(item.name)} / ${item.passedState}`;
           return hasScore ? (
             <ProgramDetailReviewItem

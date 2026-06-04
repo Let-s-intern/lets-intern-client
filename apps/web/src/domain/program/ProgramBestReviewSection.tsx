@@ -61,7 +61,7 @@ const ProgramBestReviewSection = ({
 
   const averageScore = useMemo(() => {
     if (!reviews) return null;
-    const withScore = reviews.filter((r) => r.score !== undefined);
+    const withScore = reviews.filter((r) => typeof r.score === 'number');
     if (withScore.length === 0) return null;
     const avg =
       withScore.reduce((sum, r) => sum + r.score!, 0) / withScore.length;
