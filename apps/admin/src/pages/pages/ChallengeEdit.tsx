@@ -19,7 +19,7 @@ import ChallengePointEditor from '@/domain/admin/program/challenge/ChallengePoin
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
+import ChallengeBlogReviewSection from '@/domain/admin/program/ChallengeBlogReviewSection';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -47,7 +47,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { fetchAutoFillChallengeReviews } from '@/api/review/review';
+import {
+  fetchAutoFillBlogReviews,
+  fetchAutoFillChallengeReviews,
+} from '@/api/review/review';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -285,7 +288,13 @@ const ChallengeEdit: React.FC = () => {
       : await fetchAutoFillChallengeReviews(input.challengeType).catch(
           () => [],
         );
-    const contentToSave = { ...content, challengeReview };
+    const hasAnyBlogReview =
+      (content.externalBlogReviews?.length ?? 0) > 0 ||
+      (content.blogReview?.list?.length ?? 0) > 0;
+    const externalBlogReviews = hasAnyBlogReview
+      ? (content.externalBlogReviews ?? [])
+      : await fetchAutoFillBlogReviews(input.title ?? '').catch(() => []);
+    const contentToSave = { ...content, challengeReview, externalBlogReviews };
     setContent(contentToSave);
 
     const req: Parameters<typeof patchChallenge>[0] = {
@@ -681,14 +690,16 @@ const ChallengeEdit: React.FC = () => {
               setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
             }
           />
-
-          <ProgramBlogReviewEditor
+          <ChallengeBlogReviewSection
+            externalBlogReviews={content.externalBlogReviews ?? []}
+            onExternalChange={(externalBlogReviews) =>
+              setContent((prev) => ({ ...prev, externalBlogReviews }))
+            }
             blogReview={content.blogReview ?? { list: [] }}
-            setBlogReview={(blogReview) =>
+            onBlogReviewChange={(blogReview) =>
               setContent((prev) => ({ ...prev, blogReview }))
             }
           />
-
           <div className="my-6">
             <FaqSection
               programType={ProgramTypeEnum.enum.CHALLENGE}
