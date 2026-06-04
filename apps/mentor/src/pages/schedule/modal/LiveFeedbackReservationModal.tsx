@@ -113,7 +113,7 @@ const LiveFeedbackReservationModal = ({
   // 멘토 입장 시 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
 
-  const { mutate: updateMenteeStatus, isPending: isSavingAttendance } =
+  const { mutate: updateFeedbackByMentor, isPending: isSavingAttendance } =
     useUpdateFeedbackByMentorMutation();
   const { mutateAsync: updateMeetingUrl } =
     useUpdateFeedbackMeetingUrlMutation();
@@ -204,9 +204,32 @@ const LiveFeedbackReservationModal = ({
       // invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만, 즉시 입장 경험을 위해
       // 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
       setIsJitsiOpen(true);
+
+      // 입장 성공 시 멘토 본인 출석을 PRESENT 로 자동 마킹.
+      // - 멱등: 이미 PRESENT 면 중복 PATCH 생략(재입장 방지).
+      // - 논블로킹: 실패해도 Jitsi 입장은 유지하고 로깅만 한다(silent failure 금지).
+      if (feedbackDetail?.mentorStatus !== 'PRESENT') {
+        markMentorPresent(feedbackId);
+      }
     } finally {
       setIsPreparingRoom(false);
     }
+  };
+
+  /**
+   * 멘토 본인 라이브 출석을 PRESENT 로 마킹한다.
+   * 입장 흐름을 막지 않도록 논블로킹으로 호출하며, 실패 시 사용자 알림 없이 로깅만 한다.
+   * 성공 시 mutation 의 onSuccess 가 멘토 피드백 캐시(목록·상세)를 invalidate 해 표시가 갱신된다.
+   */
+  const markMentorPresent = (targetFeedbackId: number) => {
+    updateFeedbackByMentor(
+      { feedbackId: targetFeedbackId, mentorStatus: 'PRESENT' },
+      {
+        onError: (error) => {
+          console.error('멘토 라이브 출석 자동 마킹 실패', error);
+        },
+      },
+    );
   };
 
   // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
@@ -681,7 +704,7 @@ const LiveFeedbackReservationModal = ({
           currentStatus={feedbackDetail?.menteeStatus ?? null}
           isSaving={isSavingAttendance}
           onSave={(menteeStatus) =>
-            updateMenteeStatus(
+            updateFeedbackByMentor(
               { feedbackId, menteeStatus },
               { onSuccess: () => setIsAttendanceOpen(false) },
             )
