@@ -47,6 +47,13 @@ export type ProgramBlogReview = {
   }[];
 };
 
+export type ExternalBlogReview = {
+  thumbnail: string;
+  url: string;
+  programTitle: string;
+  name: string;
+};
+
 export type ContentReviewType = {
   name: string;
   programName: string;
@@ -95,8 +102,10 @@ export type ChallengeContent = {
     startDate?: string;
     endDate?: string;
   }[];
-  /** 블로그 후기 */
+  /** 블로그 후기 (내부 블로그 아티클) */
   blogReview?: ProgramBlogReview;
+  /** 외부 블로그 후기 (어드민 > 후기관리 > 블로그에서 자동 추출) */
+  externalBlogReviews?: ExternalBlogReview[];
   /**  후기 */
   challengeReview?: ContentReviewType[];
   /** FAQ 카테고리 순서 */
