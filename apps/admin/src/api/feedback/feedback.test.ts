@@ -1,9 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createElement, type ReactNode } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   serializeFeedbackListParams,
   serializeMentorSlotParams,
+  useChangeAdminFeedbackSlotMutation,
 } from './feedback';
+
+const post = vi.fn();
+vi.mock('@/utils/axios', () => ({
+  default: {
+    post: (...args: unknown[]) => post(...args),
+  },
+}));
 
 describe('serializeFeedbackListParams', () => {
   it('빈 파라미터는 모두 생략한다', () => {
@@ -75,5 +86,71 @@ describe('serializeMentorSlotParams', () => {
       statusList: [],
     });
     expect(result).toEqual({ startDate: '2026-06-01T00:00:00' });
+  });
+});
+
+describe('useChangeAdminFeedbackSlotMutation', () => {
+  let queryClient: QueryClient;
+
+  function wrapper({ children }: { children: ReactNode }) {
+    return createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
+  }
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    post.mockReset();
+    post.mockResolvedValue({ data: { data: null } });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId} 를 호출한다 (바디 없음)', async () => {
+    const { result } = renderHook(() => useChangeAdminFeedbackSlotMutation(), {
+      wrapper,
+    });
+
+    result.current.mutate({
+      feedbackId: 1,
+      feedbackSlotId: 10107,
+      mentorId: 101,
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(post).toHaveBeenCalledTimes(1);
+    expect(post).toHaveBeenCalledWith('/admin/feedback/1/slot/10107');
+  });
+
+  it('성공 시 목록·상세·변경내역·멘토 슬롯 쿼리를 invalidate 한다', async () => {
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useChangeAdminFeedbackSlotMutation(), {
+      wrapper,
+    });
+
+    result.current.mutate({
+      feedbackId: 7,
+      feedbackSlotId: 10301,
+      mentorId: 103,
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const invalidatedKeys = invalidateSpy.mock.calls.map(
+      ([arg]) => (arg as { queryKey: unknown[] }).queryKey,
+    );
+
+    expect(invalidatedKeys).toContainEqual(['adminFeedbackList']);
+    expect(invalidatedKeys).toContainEqual(['adminFeedbackDetail', 7]);
+    expect(invalidatedKeys).toContainEqual(['adminFeedbackHistory', 7]);
+    expect(invalidatedKeys).toContainEqual(['mentorFeedbackSlots', 103]);
   });
 });

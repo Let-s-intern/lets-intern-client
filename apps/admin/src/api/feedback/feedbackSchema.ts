@@ -33,6 +33,12 @@ export type FeedbackSlotStatus = z.infer<typeof feedbackSlotStatusSchema>;
 export const feedbackAdminVoSchema = z.object({
   feedbackId: z.number(),
   programTitle: z.string().default(''),
+  /**
+   * 담당 멘토 id. 예약 변경 시 슬롯 조회(GET /admin/feedback/slot/{mentorId})에 필요.
+   * BE 미배포 대비 optional — 없으면 "예약 변경" 버튼을 비활성 처리한다.
+   * (요청 메모: tasks/memos/be-request-admin-feedback-mentorid.md)
+   */
+  mentorId: z.number().optional(),
   mentorName: z.string(),
   menteeName: z.string(),
   startDate: z.string(),
@@ -62,6 +68,8 @@ export type GetAdminFeedbacksResponse = z.infer<
 export const feedbackDetailAdminVoSchema = z.object({
   feedbackId: z.number(),
   programTitle: z.string().default(''),
+  /** 담당 멘토 id. 예약 변경 시 슬롯 조회에 필요. BE 미배포 대비 optional. */
+  mentorId: z.number().optional(),
   mentorName: z.string(),
   mentorEmail: z.string().nullable(),
   menteeName: z.string(),
@@ -158,6 +166,17 @@ export interface AdminFeedbackListParams {
   createStartDate?: string;
   /** 신청 날짜 범위 끝 */
   createEndDate?: string;
+}
+
+/**
+ * 예약 일시 변경 요청 (POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId}).
+ * 바디 없음 — path param(예약 id + 옮길 대상 슬롯 id)만 전달한다.
+ */
+export interface ChangeAdminFeedbackSlotReq {
+  feedbackId: number;
+  feedbackSlotId: number;
+  /** 슬롯 쿼리 invalidate 용. 변경 후 해당 멘토 슬롯(기존 OPEN 복귀)을 갱신한다. */
+  mentorId: number;
 }
 
 /** 멘토 슬롯 조회 범위 (GET /admin/feedback/slot/{mentorId} query) — optional */

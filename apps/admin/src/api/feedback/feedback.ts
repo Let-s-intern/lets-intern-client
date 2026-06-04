@@ -8,6 +8,7 @@ import {
 
 import {
   type AdminFeedbackListParams,
+  type ChangeAdminFeedbackSlotReq,
   type FeedbackAdminVo,
   type FeedbackDetailAdminVo,
   type FeedbackHistoryItem,
@@ -176,6 +177,37 @@ export const useUpdateAdminFeedbackMutation = () => {
         queryKey: [ADMIN_FEEDBACK_DETAIL_QUERY_KEY, variables.feedbackId],
       });
       queryClient.invalidateQueries({ queryKey: [ADMIN_FEEDBACK_QUERY_KEY] });
+    },
+  });
+};
+
+/**
+ * POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId} — 예약 일시 변경.
+ * 예약을 같은 멘토의 다른 OPEN 슬롯으로 옮긴다(바디 없음).
+ * BE가 기존 슬롯을 RESERVED→OPEN 으로 자동 전환하므로 슬롯 쿼리도 invalidate.
+ *
+ * 성공 시 invalidate: 예약 목록 + 해당 상세 + 변경 내역(history) + 멘토 슬롯.
+ */
+export const useChangeAdminFeedbackSlotMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      feedbackId,
+      feedbackSlotId,
+    }: ChangeAdminFeedbackSlotReq) => {
+      await axios.post(`/admin/feedback/${feedbackId}/slot/${feedbackSlotId}`);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: [ADMIN_FEEDBACK_QUERY_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_FEEDBACK_DETAIL_QUERY_KEY, variables.feedbackId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_FEEDBACK_HISTORY_QUERY_KEY, variables.feedbackId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [MENTOR_FEEDBACK_SLOTS_QUERY_KEY, variables.mentorId],
+      });
     },
   });
 };

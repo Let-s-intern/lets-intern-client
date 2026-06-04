@@ -23,6 +23,10 @@ const useAdminFeedbackDetailQuery = vi.fn();
 
 vi.mock('@/api/feedback/feedback', () => ({
   useAdminFeedbackDetailQuery: (id?: number) => useAdminFeedbackDetailQuery(id),
+  useUpdateAdminFeedbackMutation: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+  }),
 }));
 
 import ReservationDetailModal from './ReservationDetailModal';
@@ -57,9 +61,9 @@ describe('ReservationDetailModal', () => {
     expect(screen.getByText('홍길동')).toBeInTheDocument();
     expect(screen.getByText('hong@example.com')).toBeInTheDocument();
     expect(screen.getByText('01012340001')).toBeInTheDocument();
-    // 출석 상태 한글 매핑
-    expect(screen.getByText('참석')).toBeInTheDocument();
-    expect(screen.getByText('대기')).toBeInTheDocument();
+    // 출석 상태 한글 매핑 (수정 패널 select 옵션과 표시 영역에 동시 노출되므로 존재만 확인)
+    expect(screen.getAllByText('참석').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('대기').length).toBeGreaterThan(0);
     // 사전 질문 / 미팅 URL
     expect(
       screen.getByText('면접에서 자기소개를 어떻게 시작하면 좋을까요?'),
