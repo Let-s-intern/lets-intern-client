@@ -23,7 +23,7 @@ import LexicalContent from '@/common/lexical/LexicalContent';
 import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
+import ChallengeDetailBlogReviewSection from './ChallengeDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
   PROGRAM_CURRICULUM_ID,
@@ -405,10 +405,9 @@ const ChallengeView: React.FC<{
                 </div>
               )}
               {hasBlogReviews && (
-                <ProgramDetailBlogReviewSection
+                <ChallengeDetailBlogReviewSection
                   review={receivedContent.blogReview}
                   externalBlogReviews={receivedContent.externalBlogReviews}
-                  programType="challenge"
                 />
               )}
             </section>
