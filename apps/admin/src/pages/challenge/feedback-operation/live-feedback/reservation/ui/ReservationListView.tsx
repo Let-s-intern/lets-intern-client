@@ -5,6 +5,7 @@ import {
   formatApplyDateTime,
   formatReservationDateTime,
 } from '../../utils/format';
+import type { ResolveMentorIdResult } from '../utils/resolveMentorId';
 import type { SortKey, SortState } from '../utils/sortReservations';
 import ReservationHistoryPanel from './ReservationHistoryPanel';
 
@@ -16,8 +17,13 @@ interface ReservationListViewProps {
   sort: SortState;
   onToggleSort: (key: SortKey) => void;
   onView: (feedbackId: number) => void;
-  /** "예약 변경" 클릭 — 변경 모달을 연다. */
+  /** "예약 변경" 클릭 — resolved mentorId 가 채워진 행으로 변경 모달을 연다. */
   onChange: (reservation: FeedbackAdminVo) => void;
+  /**
+   * 행의 유효 mentorId 해석. API 응답에 mentorId 가 없을 때 멘토 이름→id 폴백을 적용한다.
+   * (ReservationManagement 가 멘토 목록 인덱스를 주입)
+   */
+  resolveMentorId: (row: FeedbackAdminVo) => ResolveMentorIdResult;
   isLoading: boolean;
   /** 빈 목록일 때 표시할 문구. 섹션(예약 목록/예약 변경 내역)별로 다르게 줄 수 있다. */
   emptyMessage?: string;
@@ -60,29 +66,40 @@ function SortHeader({
 /**
  * "예약 변경" 진입 버튼.
  * - status 가 RESERVED 인 행만 활성(COMPLETED/CANCELED 는 변경 불가).
- * - mentorId 가 없으면(BE 미배포) 슬롯 조회 키가 없어 비활성 + 안내 툴팁.
+ * - 유효 mentorId 가 없으면(BE 미제공 + 이름 폴백 실패) 비활성 + 사유별 안내 툴팁.
+ * - 클릭 시 resolved mentorId 를 채운 행을 onChange 로 전달한다.
  */
 function ChangeButton({
   reservation,
   onChange,
+  resolveMentorId,
 }: {
   reservation: FeedbackAdminVo;
   onChange: (reservation: FeedbackAdminVo) => void;
+  resolveMentorId: (row: FeedbackAdminVo) => ResolveMentorIdResult;
 }) {
   const isReserved = reservation.status === 'RESERVED';
-  const hasMentorId = reservation.mentorId != null;
-  const disabled = !isReserved || !hasMentorId;
+  const resolved = resolveMentorId(reservation);
+  const disabled = !isReserved || resolved.mentorId == null;
 
   const tooltip = !isReserved
     ? '예약 상태일 때만 변경할 수 있습니다.'
-    : !hasMentorId
-      ? '멘토 정보(mentorId) 연동 후 사용할 수 있습니다.'
-      : undefined;
+    : resolved.mentorId != null
+      ? undefined
+      : resolved.reason === 'ambiguous'
+        ? '동명이인 멘토가 있어 자동 매칭할 수 없습니다 — BE mentorId 연동 필요'
+        : '멘토 정보(mentorId) 연동 후 사용할 수 있습니다.';
+
+  const handleClick = () => {
+    if (resolved.mentorId == null) return;
+    // resolved mentorId 를 채워 모달이 슬롯 조회에 바로 쓰도록 한다.
+    onChange({ ...reservation, mentorId: resolved.mentorId });
+  };
 
   return (
     <button
       type="button"
-      onClick={() => onChange(reservation)}
+      onClick={handleClick}
       disabled={disabled}
       title={tooltip}
       className="disabled:text-neutral-40 text-blue-600 hover:underline disabled:cursor-not-allowed disabled:no-underline"
@@ -98,6 +115,7 @@ export default function ReservationListView({
   onToggleSort,
   onView,
   onChange,
+  resolveMentorId,
   isLoading,
   emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
@@ -214,7 +232,11 @@ export default function ReservationListView({
                       ) : (
                         <span className="text-neutral-40">-</span>
                       )}
-                      <ChangeButton reservation={item} onChange={onChange} />
+                      <ChangeButton
+                        reservation={item}
+                        onChange={onChange}
+                        resolveMentorId={resolveMentorId}
+                      />
                     </div>
                   </td>
                 </tr>

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useUserAdminQuery } from '@/api/user/user';
@@ -25,6 +25,7 @@ import {
   buildListParams,
   type ReservationFilterState,
 } from './utils/buildListParams';
+import { buildMentorNameIndex, resolveMentorId } from './utils/resolveMentorId';
 import {
   filterByMenteeName,
   sortReservations,
@@ -100,6 +101,26 @@ export default function ReservationManagement() {
     [mentorData],
   );
 
+  // 멘토 이름 → id 인덱스. BE 목록 응답에 mentorId 가 없을 때 예약 변경 버튼의
+  // 폴백 매핑에 쓴다. 동명이인은 인덱스에서 ambiguous 로 표시되어 폴백되지 않는다.
+  // 한계: 멘토가 DROPDOWN_PAGE_SIZE(1000)명을 넘으면 페이지 밖 멘토는 인덱스에 없어
+  // 폴백 불가 → 해당 행은 버튼 비활성으로 자연 처리된다(오매칭 위험 없음).
+  const mentorNameIndex = useMemo(
+    () =>
+      buildMentorNameIndex(
+        (mentorData?.userAdminList ?? []).map((u) => ({
+          id: u.userInfo.id,
+          name: u.userInfo.name,
+        })),
+      ),
+    [mentorData],
+  );
+
+  const resolveRowMentorId = useCallback(
+    (row: FeedbackAdminVo) => resolveMentorId(row, mentorNameIndex),
+    [mentorNameIndex],
+  );
+
   const visibleReservations = useMemo(() => {
     const byName = filterByMenteeName(reservations ?? [], filter.menteeName);
     return sortReservations(byName, sort);
@@ -133,6 +154,7 @@ export default function ReservationManagement() {
           onToggleSort={toggleSort}
           onView={setSelectedFeedbackId}
           onChange={setChangingReservation}
+          resolveMentorId={resolveRowMentorId}
           isLoading={isLoading}
         />
       ) : (

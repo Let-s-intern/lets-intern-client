@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import type { ResolveMentorIdResult } from '../utils/resolveMentorId';
 import ReservationListView from './ReservationListView';
 
 const row: FeedbackAdminVo = {
@@ -19,6 +20,12 @@ const row: FeedbackAdminVo = {
 
 const sort = { key: 'dateTime' as const, direction: 'asc' as const };
 
+/** 기본 resolver — API mentorId 가 있으면 그 값, 없으면 미매칭(not-found). */
+const defaultResolve = (r: FeedbackAdminVo): ResolveMentorIdResult =>
+  r.mentorId != null
+    ? { mentorId: r.mentorId, reason: 'api' }
+    : { mentorId: null, reason: 'not-found' };
+
 describe('ReservationListView', () => {
   it('행 데이터와 날짜 포맷을 표시한다', () => {
     render(
@@ -28,6 +35,7 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
@@ -48,6 +56,7 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading
       />,
     );
@@ -62,6 +71,7 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
@@ -77,6 +87,7 @@ describe('ReservationListView', () => {
         onToggleSort={onToggleSort}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
@@ -93,6 +104,7 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={onView}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
@@ -109,6 +121,7 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={onChange}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
@@ -124,13 +137,14 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
         isLoading={false}
       />,
     );
     expect(screen.getByRole('button', { name: '예약 변경' })).toBeDisabled();
   });
 
-  it('mentorId 가 없으면 "예약 변경" 버튼이 비활성이다 (BE 미배포 대비)', () => {
+  it('mentorId 가 없고 폴백도 실패하면 "예약 변경" 버튼이 비활성이다', () => {
     render(
       <ReservationListView
         reservations={[{ ...row, mentorId: undefined }]}
@@ -138,6 +152,54 @@ describe('ReservationListView', () => {
         onToggleSort={vi.fn()}
         onView={vi.fn()}
         onChange={vi.fn()}
+        resolveMentorId={defaultResolve}
+        isLoading={false}
+      />,
+    );
+    expect(screen.getByRole('button', { name: '예약 변경' })).toBeDisabled();
+  });
+
+  it('mentorId 없어도 이름 폴백 성공 시 버튼이 활성이고 resolved id 로 onChange 한다', () => {
+    const onChange = vi.fn();
+    const rowNoId = { ...row, mentorId: undefined };
+    const resolve = (r: FeedbackAdminVo): ResolveMentorIdResult =>
+      r.mentorId != null
+        ? { mentorId: r.mentorId, reason: 'api' }
+        : { mentorId: 305, reason: 'name-fallback' };
+
+    render(
+      <ReservationListView
+        reservations={[rowNoId]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        onChange={onChange}
+        resolveMentorId={resolve}
+        isLoading={false}
+      />,
+    );
+
+    const button = screen.getByRole('button', { name: '예약 변경' });
+    expect(button).toBeEnabled();
+
+    fireEvent.click(button);
+    expect(onChange).toHaveBeenCalledWith({ ...rowNoId, mentorId: 305 });
+  });
+
+  it('동명이인으로 폴백 실패 시 버튼이 비활성이다', () => {
+    const resolve = (): ResolveMentorIdResult => ({
+      mentorId: null,
+      reason: 'ambiguous',
+    });
+
+    render(
+      <ReservationListView
+        reservations={[{ ...row, mentorId: undefined }]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        onChange={vi.fn()}
+        resolveMentorId={resolve}
         isLoading={false}
       />,
     );
