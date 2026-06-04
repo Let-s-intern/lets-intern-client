@@ -317,15 +317,31 @@ describe('feedbackSchema', () => {
   });
 
   describe('updateFeedbackByMentorRequestSchema', () => {
-    it('menteeStatus 만 허용한다', () => {
+    it('menteeStatus 만 보내도 파싱된다', () => {
       const parsed = updateFeedbackByMentorRequestSchema.parse({
         menteeStatus: 'PRESENT',
       });
       expect(parsed.menteeStatus).toBe('PRESENT');
+      expect(parsed.mentorStatus).toBeUndefined();
     });
 
-    it('menteeStatus 가 없으면 실패한다', () => {
-      expect(() => updateFeedbackByMentorRequestSchema.parse({})).toThrow();
+    it('mentorStatus 만 보내도 파싱된다', () => {
+      const parsed = updateFeedbackByMentorRequestSchema.parse({
+        mentorStatus: 'PRESENT',
+      });
+      expect(parsed.mentorStatus).toBe('PRESENT');
+      expect(parsed.menteeStatus).toBeUndefined();
+    });
+
+    it('두 필드 모두 optional 이라 빈 본문도 파싱된다', () => {
+      // BE UpdateFeedbackMentorRequestDto 는 null 아닌 필드만 업데이트한다.
+      expect(updateFeedbackByMentorRequestSchema.parse({})).toEqual({});
+    });
+
+    it('잘못된 enum 값은 거부한다', () => {
+      expect(() =>
+        updateFeedbackByMentorRequestSchema.parse({ menteeStatus: 'NOPE' }),
+      ).toThrow();
     });
   });
 });
