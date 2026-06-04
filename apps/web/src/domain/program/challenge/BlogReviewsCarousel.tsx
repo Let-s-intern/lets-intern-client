@@ -13,7 +13,12 @@ const BlogReviewCard = ({
   label,
   href,
   isExternal,
-}: BlogReviewCard) => {
+}: {
+  thumbnail: string;
+  label: string;
+  href: string;
+  isExternal: boolean;
+}) => {
   const imageBlock = (
     <div className="group relative aspect-[327/208] w-full overflow-hidden">
       <img
@@ -50,8 +55,8 @@ const BlogReviewsCarousel: React.FC<{ reviews: BlogReviewCard[] }> = ({
   if (!isMobile) {
     return (
       <div className="flex w-full max-w-[1137px] gap-3 px-5">
-        {reviews.map(({ key, ...rest }) => (
-          <div key={key} className="flex-1">
+        {reviews.map(({ id, ...rest }) => (
+          <div key={id} className="flex-1">
             <BlogReviewCard {...rest} />
           </div>
         ))}
@@ -71,8 +76,8 @@ const BlogReviewsCarousel: React.FC<{ reviews: BlogReviewCard[] }> = ({
         modules={[FreeMode, Scrollbar, Mousewheel]}
         className="marketing-swiper w-full"
       >
-        {reviews.map(({ key, ...rest }) => (
-          <SwiperSlide key={key} className="!w-[300px]">
+        {reviews.map(({ id, ...rest }) => (
+          <SwiperSlide key={id} className="!w-[300px]">
             <BlogReviewCard {...rest} />
           </SwiperSlide>
         ))}
