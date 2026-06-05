@@ -374,14 +374,17 @@ export const usePostChallengeAttendance = ({
       missionId,
       link,
       review,
+      preQuestion,
     }: {
       missionId: number;
       link?: string;
       review?: string;
+      preQuestion?: string;
     }) => {
       const res = await axios.post(`/attendance/${missionId}`, {
         link,
         review,
+        preQuestion,
       });
       return res.data;
     },
