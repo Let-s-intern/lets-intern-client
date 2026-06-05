@@ -16,14 +16,22 @@ interface MenteeExperienceContentProps {
   compact?: boolean;
 }
 
+/**
+ * "YYYY-MM-DD" → "YYYY. M. D." — new Date()는 UTC로 파싱해 음수 오프셋
+ * 타임존에서 날짜가 하루 밀릴 수 있으므로 문자열로 직접 포맷한다.
+ */
+const formatDate = (dateStr: string): string => {
+  const [year, month, day] = dateStr.split('-');
+  if (!year || !month || !day) return dateStr;
+  return `${year}. ${Number(month)}. ${Number(day)}.`;
+};
+
 const formatPeriod = (
   startDate?: string | null,
   endDate?: string | null,
 ): string => {
   if (!startDate || !endDate) return '-';
-  const start = new Date(startDate).toLocaleDateString('ko-KR');
-  const end = new Date(endDate).toLocaleDateString('ko-KR');
-  return `${start} ~ ${end}`;
+  return `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
 };
 
 const Field = ({ label, value }: { label: string; value?: string | null }) => (
