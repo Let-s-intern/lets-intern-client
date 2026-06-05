@@ -1,6 +1,5 @@
 import ConditionalLayout from '@/common/layout/ConditionalLayout';
 import Providers from '@/context/Providers';
-import MenteeChatLauncher from '@/domain/challenge/feedback/live/MenteeChatLauncher';
 import { getCanonicalSiteUrl, getRobotsMetadata } from '@/utils/url';
 import { Metadata } from 'next';
 import React from 'react';
@@ -36,9 +35,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Providers>
       <ConditionalLayout>{children}</ConditionalLayout>
-      {/* 멘티 전역 채팅 플로팅 버튼. QueryClientProvider(Providers) 안에 1회 마운트해
-          모든 유저 대상 페이지에 노출한다(루트 layout 은 QueryClient 부재로 불가). */}
-      <MenteeChatLauncher />
     </Providers>
   );
 };
