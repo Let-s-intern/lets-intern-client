@@ -41,7 +41,7 @@ const FeedbackLayout = ({
       <div
         className={`flex shrink-0 flex-col transition-all duration-300 ease-in-out ${
           sidePanel
-            ? 'max-h-64 opacity-100 md:max-h-none md:w-96'
+            ? 'max-h-64 opacity-100 md:max-h-none md:w-[480px]'
             : isExpanded
               ? 'max-h-0 overflow-hidden opacity-0 md:max-h-none md:w-0 md:opacity-0'
               : 'max-h-40 opacity-100 md:max-h-none md:w-56'

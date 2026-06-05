@@ -119,19 +119,22 @@ const MenteeLinkPanel = ({
           </a>
         </div>
       ) : (
-        <div className="relative min-h-0 flex-1">
+        <div className="relative min-h-0 flex-1 overflow-hidden">
           {status === 'loading' && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#f7f8fa] text-xs text-neutral-400">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#f7f8fa] text-xs text-neutral-400">
               제출물을 불러오는 중입니다...
             </div>
           )}
-          {/* sandbox 미적용: 쿠키 제한 시 노션이 리디렉션 루프에 빠짐. 노션 도메인 한정 임베드라 위험도 낮음 */}
+          {/*
+           * sandbox 미적용: 쿠키 제한 시 노션이 리디렉션 루프에 빠짐. 노션 도메인 한정 임베드라 위험도 낮음.
+           * 상단 음수 오프셋: 노션 임베드 자체 툴바(검색/공유/제작 배지)를 크롭해 숨김.
+           */}
           <iframe
             key={embedUrl}
             src={embedUrl}
             title={`${menteeName ?? '멘티'} 제출물`}
             onLoad={() => setStatus('loaded')}
-            className={`h-full w-full border-0 ${
+            className={`absolute inset-x-0 -top-[46px] h-[calc(100%+46px)] w-full border-0 ${
               status === 'loading' ? 'invisible' : ''
             }`}
             allowFullScreen
