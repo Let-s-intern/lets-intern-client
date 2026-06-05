@@ -17,6 +17,7 @@ import {
   type LiveFeedbackRound,
 } from './hooks/useLiveFeedbackList';
 import {
+  useLiveMissionIdSet,
   useMergedFeedbackRows,
   useWrittenMissionRangeMap,
   type WrittenMenteeAttendance,
@@ -63,11 +64,15 @@ const FeedbackManagementPage = () => {
   );
   const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
 
+  // LIVE 옵션 미션은 서면 행에서 제외한다 (라이브 행은 useLiveFeedbackList 소스가 담당).
+  const liveMissionIds = useLiveMissionIdSet(challengeIds);
+
   const allRows = useMergedFeedbackRows(
     challengeList,
     allLiveRounds,
     writtenAttendance,
     missionRangeMap,
+    liveMissionIds,
   );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();

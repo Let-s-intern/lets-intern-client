@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react';
-import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import type {
+  FeedbackAdminVo,
+  FeedbackSlotVo,
+} from '@/api/feedback/feedbackSchema';
 import {
   useChangeAdminFeedbackSlotMutation,
   useMentorFeedbackSlotsQuery,
@@ -42,6 +45,71 @@ function NoticeRow({ children }: { children: React.ReactNode }) {
 }
 
 /**
+ * 입력한 일시의 변경 가능 여부 안내.
+ * - 멘토가 OPEN 슬롯을 하나도 안 열었으면: 변경 불가 경고 (입력은 계속 가능)
+ * - 날짜만 선택: 그 날짜의 변경 가능 시간대 힌트
+ * - 일시 입력 완료: 슬롯 매칭 결과(가능/이미 예약됨/슬롯 없음)를 알려준다
+ */
+function SlotAvailabilityNotice({
+  hasNoOpenSlots,
+  date,
+  time,
+  matchedStatus,
+  openSlotsForDate,
+}: {
+  hasNoOpenSlots: boolean;
+  date: string;
+  time: string;
+  matchedStatus: FeedbackSlotVo['status'] | null;
+  openSlotsForDate: FeedbackSlotVo[];
+}) {
+  if (hasNoOpenSlots) {
+    return (
+      <p className="text-xxsmall12 text-system-error leading-5">
+        멘토가 열어둔 예약 가능 슬롯이 없어 일정을 변경할 수 없습니다. 멘토에게
+        슬롯 오픈을 요청해 주세요.
+      </p>
+    );
+  }
+
+  if (date && time) {
+    if (matchedStatus === 'OPEN') {
+      return (
+        <p className="text-xxsmall12 leading-5 text-blue-600">
+          변경 가능한 시간대입니다.
+        </p>
+      );
+    }
+    if (matchedStatus === 'RESERVED') {
+      return (
+        <p className="text-xxsmall12 text-system-error leading-5">
+          이미 예약된 시간대입니다. 다른 시간대를 선택해 주세요.
+        </p>
+      );
+    }
+    return (
+      <p className="text-xxsmall12 text-system-error leading-5">
+        멘토가 슬롯을 열지 않은 시간대라 일정을 변경할 수 없습니다.
+      </p>
+    );
+  }
+
+  if (date) {
+    return (
+      <p className="text-xxsmall12 text-neutral-40 leading-5">
+        {openSlotsForDate.length > 0
+          ? `이 날짜의 변경 가능 시간대: ${openSlotsForDate
+              .map(formatSlotTimeRange)
+              .join(', ')}`
+          : '이 날짜에는 멘토가 연 슬롯이 없습니다.'}
+      </p>
+    );
+  }
+
+  return null;
+}
+
+/**
  * 예약 정보·날짜/시간 선택·변경 실행을 담는 모달 본문.
  * reservation 이 확정된 상태에서만 렌더되어 내부 훅이 안전하게 동작한다.
  */
@@ -55,41 +123,42 @@ function ChangeBody({
   const { snackbar } = useAdminSnackbar();
   const mentorId = reservation.mentorId;
 
-  // 같은 멘토의 OPEN 슬롯만 후보로 조회한다.
-  const { data: openSlots, refetch } = useMentorFeedbackSlotsQuery(mentorId, {
-    statusList: ['OPEN'],
-  });
+  // 같은 멘토의 슬롯 전체를 조회한다. OPEN 외 상태도 받아
+  // "슬롯이 안 열림" vs "이미 예약됨" 안내를 구분한다.
+  const { data: slots, refetch } = useMentorFeedbackSlotsQuery(mentorId);
 
   const { mutate: changeSlot, isPending } =
     useChangeAdminFeedbackSlotMutation();
 
-  const dateGroups = useMemo(
-    () => groupSlotsByDate(openSlots ?? []),
-    [openSlots],
+  const openSlots = useMemo(
+    () => (slots ?? []).filter((s) => s.status === 'OPEN'),
+    [slots],
   );
+  const openGroups = useMemo(() => groupSlotsByDate(openSlots), [openSlots]);
 
-  const [selectedDateKey, setSelectedDateKey] = useState('');
-  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+  // 일시는 슬롯 유무와 무관하게 자유 입력한다(슬롯 미오픈 시 안내로 응답).
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
 
-  const selectedGroup = dateGroups.find((g) => g.dateKey === selectedDateKey);
-  const slotsForDate = selectedGroup?.slots ?? [];
+  // 입력한 일시와 정확히 시작시각이 일치하는 슬롯 (분 단위 비교)
+  const matchedSlot = useMemo(() => {
+    if (!date || !time) return null;
+    return (slots ?? []).find((s) => s.startDate.startsWith(`${date}T${time}`));
+  }, [slots, date, time]);
 
-  const hasNoSlots = dateGroups.length === 0;
+  const hasNoOpenSlots = openSlots.length === 0;
+  const openSlotsForDate =
+    openGroups.find((g) => g.dateKey === date)?.slots ?? [];
+
   const canSubmit =
-    !isPending && selectedSlotId != null && mentorId != null && !hasNoSlots;
-
-  const handleDateChange = (dateKey: string) => {
-    setSelectedDateKey(dateKey);
-    // 날짜가 바뀌면 이전 시간대 선택을 초기화한다.
-    setSelectedSlotId(null);
-  };
+    !isPending && mentorId != null && matchedSlot?.status === 'OPEN';
 
   const handleSubmit = () => {
-    if (!canSubmit || selectedSlotId == null || mentorId == null) return;
+    if (!canSubmit || matchedSlot == null || mentorId == null) return;
     changeSlot(
       {
         feedbackId: reservation.feedbackId,
-        feedbackSlotId: selectedSlotId,
+        feedbackSlotId: matchedSlot.feedbackSlotId,
         mentorId,
       },
       {
@@ -139,50 +208,31 @@ function ChangeBody({
               변경 후
             </span>
 
-            {hasNoSlots ? (
-              <span className="text-xsmall14 text-neutral-40">
-                변경 가능한 시간대가 없습니다.
-              </span>
-            ) : (
-              <div className="flex flex-1 flex-col gap-2 sm:flex-row">
-                <select
-                  aria-label="날짜 선택"
-                  value={selectedDateKey}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  className="border-neutral-80 text-xsmall14 flex-1 rounded-md border px-2 py-1.5"
-                >
-                  <option value="">날짜 선택</option>
-                  {dateGroups.map((group) => (
-                    <option key={group.dateKey} value={group.dateKey}>
-                      {group.dateLabel}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  aria-label="시간대 선택"
-                  value={selectedSlotId ?? ''}
-                  onChange={(e) =>
-                    setSelectedSlotId(
-                      e.target.value ? Number(e.target.value) : null,
-                    )
-                  }
-                  disabled={!selectedDateKey}
-                  className="border-neutral-80 text-xsmall14 flex-1 rounded-md border px-2 py-1.5 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">시간대 선택</option>
-                  {slotsForDate.map((slot) => (
-                    <option
-                      key={slot.feedbackSlotId}
-                      value={slot.feedbackSlotId}
-                    >
-                      {formatSlotTimeRange(slot)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div className="flex flex-1 flex-col gap-2 sm:flex-row">
+              <input
+                type="date"
+                aria-label="날짜 입력"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="border-neutral-80 text-xsmall14 flex-1 rounded-md border px-2 py-1.5"
+              />
+              <input
+                type="time"
+                aria-label="시간 입력"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="border-neutral-80 text-xsmall14 flex-1 rounded-md border px-2 py-1.5"
+              />
+            </div>
           </div>
+
+          <SlotAvailabilityNotice
+            hasNoOpenSlots={hasNoOpenSlots}
+            date={date}
+            time={time}
+            matchedStatus={matchedSlot?.status ?? null}
+            openSlotsForDate={openSlotsForDate}
+          />
         </div>
       </section>
 

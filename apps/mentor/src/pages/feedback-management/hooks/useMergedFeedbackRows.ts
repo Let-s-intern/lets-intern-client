@@ -216,6 +216,13 @@ export function useMergedFeedbackRows(
    * `useWrittenMissionRangeMap(challengeIds)`로 채워 주입한다. 미주입 시 일정은 '-'.
    */
   missionRangeMap?: MissionRangeMap,
+  /**
+   * LIVE_FEEDBACK 옵션 미션 id 집합 (`useLiveMissionIdSet`).
+   * feedback-management 목록에는 라이브 미션도 섞여 내려오는데(BE 공유 쿼리에서
+   * WRITTEN 필터 제거됨) 타입 필드가 없어, 미션 목록 API의 challengeOptionType 으로
+   * 식별해 서면 행 생성에서 제외한다. 라이브 행은 useLiveFeedbackList 가 담당.
+   */
+  liveMissionIds?: ReadonlySet<number>,
 ): FeedbackRow[] {
   return useMemo(() => {
     const now = currentNow();
@@ -224,6 +231,8 @@ export function useMergedFeedbackRows(
     // ── 서면 행 (멘티 1명당 1행) ─────────────────────────────────────
     for (const challenge of writtenChallenges) {
       for (const mission of challenge.feedbackMissions) {
+        // 라이브 미션은 서면 행으로 만들지 않는다 (라이브 행은 별도 소스).
+        if (liveMissionIds?.has(mission.missionId)) continue;
         const range = missionRangeMap?.get(mission.missionId);
         const scheduleStart = range?.start ?? '';
         const scheduleEnd = range?.end ?? '';
@@ -323,8 +332,23 @@ export function useMergedFeedbackRows(
     });
 
     return rows;
-  }, [writtenChallenges, liveRounds, missionRangeMap, writtenAttendanceMap]);
+  }, [
+    writtenChallenges,
+    liveRounds,
+    missionRangeMap,
+    writtenAttendanceMap,
+    liveMissionIds,
+  ]);
 }
+
+/** 챌린지 1개의 피드백 미션 목록 쿼리 옵션 — range/live-set 훅이 공유(요청 dedupe). */
+const challengeFeedbackMissionQueryOptions = (challengeId: number) => ({
+  queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+  queryFn: async () => {
+    const res = await axios.get(`/challenge/${challengeId}/mission/feedback`);
+    return challengeMissionFeedbackListSchema.parse(res.data.data);
+  },
+});
 
 /**
  * 여러 챌린지의 미션 날짜(`GET /challenge/:id/mission/feedback`)를 병렬 조회해
@@ -339,15 +363,7 @@ export function useWrittenMissionRangeMap(
   challengeIds: number[],
 ): MissionRangeMap {
   const results = useQueries({
-    queries: challengeIds.map((challengeId) => ({
-      queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
-      queryFn: async () => {
-        const res = await axios.get(
-          `/challenge/${challengeId}/mission/feedback`,
-        );
-        return challengeMissionFeedbackListSchema.parse(res.data.data);
-      },
-    })),
+    queries: challengeIds.map(challengeFeedbackMissionQueryOptions),
   });
 
   // 결과 배열의 미션 리스트를 평면화해 단일 키로 메모 (객체 참조 변동 최소화).
@@ -365,4 +381,48 @@ export function useWrittenMissionRangeMap(
     // missionListKey 가 같으면 같은 미션 집합 → 재계산 불필요.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [missionListKey]);
+}
+
+/**
+ * LIVE_FEEDBACK 옵션 미션 id 집합.
+ *
+ * feedback-management 목록은 BE 공유 쿼리에서 WRITTEN 타입 필터가 제거되어
+ * 라이브 미션도 함께 내려오지만 타입 필드가 없다. 같은 미션 목록 API의
+ * `challengeOptionType`(BE 미배포 동안 undefined)으로 라이브 미션을 식별해
+ * `useMergedFeedbackRows`의 서면 행 생성에서 제외하는 데 쓴다.
+ *
+ * `useWrittenMissionRangeMap`과 동일한 queryKey 를 공유하므로 추가 요청은 없다.
+ * 타입 미배포(undefined) 시 빈 집합 → 기존 동작(전부 서면 간주) 유지.
+ */
+export function useLiveMissionIdSet(
+  challengeIds: number[],
+): ReadonlySet<number> {
+  const results = useQueries({
+    queries: challengeIds.map(challengeFeedbackMissionQueryOptions),
+  });
+
+  const liveIdsKey = results
+    .map((r) =>
+      r.data
+        ? r.data.missionList
+            .filter((m) => m.challengeOptionType === 'LIVE_FEEDBACK')
+            .map((m) => m.id)
+            .join(',')
+        : '',
+    )
+    .join('|');
+
+  return useMemo(() => {
+    const liveIds = new Set<number>();
+    for (const result of results) {
+      for (const mission of result.data?.missionList ?? []) {
+        if (mission.challengeOptionType === 'LIVE_FEEDBACK') {
+          liveIds.add(mission.id);
+        }
+      }
+    }
+    return liveIds;
+    // liveIdsKey 가 같으면 같은 라이브 미션 집합 → 재계산 불필요.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [liveIdsKey]);
 }

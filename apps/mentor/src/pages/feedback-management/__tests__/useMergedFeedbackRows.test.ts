@@ -341,4 +341,37 @@ describe('useMergedFeedbackRows', () => {
     const { result } = renderHook(() => useMergedFeedbackRows([], []));
     expect(result.current).toEqual([]);
   });
+
+  it('liveMissionIds 에 포함된 미션은 서면 행으로 만들지 않는다 (LIVE 옵션 미션 제외)', () => {
+    // feedback-management 목록에 라이브 미션(1001)이 섞여 내려온 상황 —
+    // 출석 데이터가 있어도 서면 행을 만들면 안 된다.
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(
+        writtenMock,
+        [liveRound],
+        writtenAttendanceMap,
+        undefined,
+        new Set([1001]),
+      ),
+    );
+
+    const writtenRows = result.current.filter((r) => r.type === 'written');
+    expect(writtenRows.length).toBe(0);
+
+    // 라이브 행은 별도 소스(liveRounds)라 영향 없다.
+    expect(result.current.filter((r) => r.type === 'live').length).toBe(3);
+  });
+
+  it('liveMissionIds 가 빈 집합이면 기존 동작(전부 서면 간주)을 유지한다', () => {
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(
+        writtenMock,
+        [],
+        writtenAttendanceMap,
+        undefined,
+        new Set(),
+      ),
+    );
+    expect(result.current.filter((r) => r.type === 'written').length).toBe(3);
+  });
 });

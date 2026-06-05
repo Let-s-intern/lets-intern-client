@@ -92,13 +92,25 @@ export default function ReservationManagement() {
     [challengeData],
   );
 
+  // 멘토 = isMentor === true 인 일반 유저.
+  // BE 가 `?isMentor=true` 쿼리 파라미터를 무시하고 전체 유저를 반환하므로
+  // (be-request-admin-feedback-mentorid.md 참고) 클라이언트에서 한 번 더 거른다.
+  // 안 거르면 일반 유저 이름까지 인덱스에 들어가 멘토가 동명이인으로 오판된다.
+  const mentors = useMemo(
+    () =>
+      (mentorData?.userAdminList ?? [])
+        .filter((u) => u.userInfo.isMentor === true)
+        .map((u) => ({ id: u.userInfo.id, name: u.userInfo.name })),
+    [mentorData],
+  );
+
   const mentorOptions = useMemo(
     () =>
-      (mentorData?.userAdminList ?? []).map((u) => ({
-        value: String(u.userInfo.id),
-        label: u.userInfo.name,
+      mentors.map(({ id, name }) => ({
+        value: String(id),
+        label: name,
       })),
-    [mentorData],
+    [mentors],
   );
 
   // 멘토 이름 → id 인덱스. BE 목록 응답에 mentorId 가 없을 때 예약 변경 버튼의
@@ -106,14 +118,8 @@ export default function ReservationManagement() {
   // 한계: 멘토가 DROPDOWN_PAGE_SIZE(1000)명을 넘으면 페이지 밖 멘토는 인덱스에 없어
   // 폴백 불가 → 해당 행은 버튼 비활성으로 자연 처리된다(오매칭 위험 없음).
   const mentorNameIndex = useMemo(
-    () =>
-      buildMentorNameIndex(
-        (mentorData?.userAdminList ?? []).map((u) => ({
-          id: u.userInfo.id,
-          name: u.userInfo.name,
-        })),
-      ),
-    [mentorData],
+    () => buildMentorNameIndex(mentors),
+    [mentors],
   );
 
   const resolveRowMentorId = useCallback(

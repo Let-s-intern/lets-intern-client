@@ -19,7 +19,8 @@ const reservation: FeedbackAdminVo = {
   status: 'RESERVED',
 };
 
-const openSlots: FeedbackSlotVo[] = [
+/** OPEN 2개 + RESERVED 1개 — 자유 입력 매칭 분기(가능/예약됨/없음) 검증용 */
+const mentorSlots: FeedbackSlotVo[] = [
   {
     feedbackSlotId: 10106,
     startDate: '2026-06-03T17:30:00',
@@ -32,12 +33,18 @@ const openSlots: FeedbackSlotVo[] = [
     endDate: '2026-06-04T11:30:00',
     status: 'OPEN',
   },
+  {
+    feedbackSlotId: 10103,
+    startDate: '2026-06-01T17:00:00',
+    endDate: '2026-06-01T17:30:00',
+    status: 'RESERVED',
+  },
 ];
 
 const snackbar = vi.fn();
 const refetch = vi.fn();
 const changeMutate = vi.fn();
-let slotsData: FeedbackSlotVo[] = openSlots;
+let slotsData: FeedbackSlotVo[] = mentorSlots;
 let isPending = false;
 
 vi.mock('@/hooks/useAdminSnackbar', () => ({
@@ -54,12 +61,22 @@ vi.mock('@/api/feedback/feedback', () => ({
 
 import ReservationChangeModal from './ReservationChangeModal';
 
+/** 날짜·시간 자유 입력 헬퍼 */
+function typeDateTime(date: string, time: string) {
+  fireEvent.change(screen.getByLabelText('날짜 입력'), {
+    target: { value: date },
+  });
+  fireEvent.change(screen.getByLabelText('시간 입력'), {
+    target: { value: time },
+  });
+}
+
 describe('ReservationChangeModal', () => {
   beforeEach(() => {
     snackbar.mockReset();
     refetch.mockReset();
     changeMutate.mockReset();
-    slotsData = openSlots;
+    slotsData = mentorSlots;
     isPending = false;
   });
 
@@ -96,24 +113,32 @@ describe('ReservationChangeModal', () => {
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
-  it('슬롯 선택 전에는 변경하기 버튼이 비활성이다', () => {
+  it('일시 입력 전에는 변경하기 버튼이 비활성이다', () => {
     render(
       <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
     );
     expect(screen.getByRole('button', { name: '변경하기' })).toBeDisabled();
   });
 
-  it('날짜·시간대를 선택하면 변경하기가 활성화되고 클릭 시 mutation 을 호출한다', () => {
+  it('날짜만 입력하면 그 날짜의 변경 가능 시간대를 안내한다', () => {
+    render(
+      <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
+    );
+    fireEvent.change(screen.getByLabelText('날짜 입력'), {
+      target: { value: '2026-06-04' },
+    });
+    expect(
+      screen.getByText('이 날짜의 변경 가능 시간대: 11:00 ~ 11:30'),
+    ).toBeInTheDocument();
+  });
+
+  it('OPEN 슬롯과 일치하는 일시를 입력하면 변경하기가 활성화되고 클릭 시 mutation 을 호출한다', () => {
     render(
       <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
     );
 
-    fireEvent.change(screen.getByLabelText('날짜 선택'), {
-      target: { value: '2026-06-04' },
-    });
-    fireEvent.change(screen.getByLabelText('시간대 선택'), {
-      target: { value: '10107' },
-    });
+    typeDateTime('2026-06-04', '11:00');
+    expect(screen.getByText('변경 가능한 시간대입니다.')).toBeInTheDocument();
 
     const submit = screen.getByRole('button', { name: '변경하기' });
     expect(submit).toBeEnabled();
@@ -128,6 +153,36 @@ describe('ReservationChangeModal', () => {
     });
   });
 
+  it('슬롯이 없는 일시를 입력하면 변경 불가 안내를 띄우고 비활성을 유지한다', () => {
+    render(
+      <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
+    );
+
+    typeDateTime('2026-06-04', '13:00');
+
+    expect(
+      screen.getByText(
+        '멘토가 슬롯을 열지 않은 시간대라 일정을 변경할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '변경하기' })).toBeDisabled();
+  });
+
+  it('이미 예약된(RESERVED) 일시를 입력하면 예약됨 안내를 띄우고 비활성을 유지한다', () => {
+    render(
+      <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
+    );
+
+    typeDateTime('2026-06-01', '17:00');
+
+    expect(
+      screen.getByText(
+        '이미 예약된 시간대입니다. 다른 시간대를 선택해 주세요.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '변경하기' })).toBeDisabled();
+  });
+
   it('변경 성공 시 토스트를 띄우고 모달을 닫는다', () => {
     const onClose = vi.fn();
     changeMutate.mockImplementation((_vars, opts) => opts?.onSuccess?.());
@@ -136,12 +191,7 @@ describe('ReservationChangeModal', () => {
       <ReservationChangeModal reservation={reservation} onClose={onClose} />,
     );
 
-    fireEvent.change(screen.getByLabelText('날짜 선택'), {
-      target: { value: '2026-06-04' },
-    });
-    fireEvent.change(screen.getByLabelText('시간대 선택'), {
-      target: { value: '10107' },
-    });
+    typeDateTime('2026-06-04', '11:00');
     fireEvent.click(screen.getByRole('button', { name: '변경하기' }));
 
     expect(snackbar).toHaveBeenCalledWith('예약 일시가 변경되었습니다.');
@@ -156,12 +206,7 @@ describe('ReservationChangeModal', () => {
       <ReservationChangeModal reservation={reservation} onClose={onClose} />,
     );
 
-    fireEvent.change(screen.getByLabelText('날짜 선택'), {
-      target: { value: '2026-06-04' },
-    });
-    fireEvent.change(screen.getByLabelText('시간대 선택'), {
-      target: { value: '10107' },
-    });
+    typeDateTime('2026-06-04', '11:00');
     fireEvent.click(screen.getByRole('button', { name: '변경하기' }));
 
     expect(snackbar).toHaveBeenCalledWith(
@@ -171,14 +216,25 @@ describe('ReservationChangeModal', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('OPEN 슬롯이 없으면 안내 문구를 띄우고 변경하기를 비활성화한다', () => {
-    slotsData = [];
+  it('OPEN 슬롯이 하나도 없으면 슬롯 미오픈 경고를 띄우고, 입력해도 변경하기는 비활성이다', () => {
+    slotsData = [
+      {
+        feedbackSlotId: 10103,
+        startDate: '2026-06-01T17:00:00',
+        endDate: '2026-06-01T17:30:00',
+        status: 'RESERVED',
+      },
+    ];
     render(
       <ReservationChangeModal reservation={reservation} onClose={vi.fn()} />,
     );
+
     expect(
-      screen.getByText('변경 가능한 시간대가 없습니다.'),
+      screen.getByText(/멘토가 열어둔 예약 가능 슬롯이 없어/),
     ).toBeInTheDocument();
+
+    // 입력 자체는 가능하지만 제출은 막힌다
+    typeDateTime('2026-06-10', '10:00');
     expect(screen.getByRole('button', { name: '변경하기' })).toBeDisabled();
   });
 });

@@ -137,6 +137,8 @@ export const adminFeedbackHandlers = [
   // 예약 일시 변경 (다른 OPEN 슬롯으로 이동)
   // BE: POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId} (바디 없음, SuccessResponse<null>)
   // 목 동작: 대상 슬롯이 OPEN 이 아니면 슬롯 경합(409)으로 응답해 실패 플로우를 검증할 수 있게 한다.
+  // 성공 시 목 상태를 실제로 갱신해 재조회(invalidate) 후 화면이 기대대로 움직이게 한다:
+  // 예약 일시 ← 대상 슬롯, 이전 일시 → 변경 내역 추가, 기존 슬롯 OPEN 복귀, 대상 슬롯 RESERVED.
   http.post(
     `${BASE}/admin/feedback/:feedbackId/slot/:feedbackSlotId`,
     ({ params }) => {
@@ -170,7 +172,28 @@ export const adminFeedbackHandlers = [
         );
       }
 
-      // 성공: BE 는 SuccessResponse<null> 반환. (목 상태는 무변경 — invalidate 후 재조회로 충분)
+      // 1) 이전 일시를 변경 내역 맨 앞(최신순)에 추가
+      const history = (seedHistoryByFeedbackId[feedbackId] ??= []);
+      history.unshift({
+        id: Date.now(), // 목 전용 id — 유일하기만 하면 된다
+        changedAt: new Date().toISOString().slice(0, 19),
+        beforeStartDate: feedback.vo.startDate,
+        beforeEndDate: feedback.vo.endDate,
+      });
+
+      // 2) 기존 슬롯은 예약 가능(OPEN)으로 복귀
+      const previous = slots.find(
+        (s) => s.status === 'RESERVED' && s.startDate === feedback.vo.startDate,
+      );
+      if (previous) previous.status = 'OPEN';
+
+      // 3) 대상 슬롯 점유 + 예약 일시 갱신 (목록 vo·상세 동기화)
+      target.status = 'RESERVED';
+      feedback.vo.startDate = target.startDate;
+      feedback.vo.endDate = target.endDate;
+      feedback.detail.startDate = target.startDate;
+      feedback.detail.endDate = target.endDate;
+
       return HttpResponse.json({ data: null });
     },
   ),

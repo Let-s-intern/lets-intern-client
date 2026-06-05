@@ -138,18 +138,8 @@ describe('GET /admin/feedback/slot/{mentorId}', () => {
 });
 
 describe('POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId}', () => {
-  it('OPEN 슬롯으로의 변경은 성공한다 (data: null)', async () => {
-    // feedbackId=1(멘토 101), 10107 은 101 멘토의 OPEN 슬롯
-    const res = await fetch(`${BASE}/admin/feedback/1/slot/10107`, {
-      method: 'POST',
-    });
-    expect(res.status).toBe(200);
-    const body = (await res.json()) as { data: null };
-    expect(body.data).toBeNull();
-  });
-
   it('OPEN 이 아닌(RESERVED) 슬롯으로의 변경은 409(슬롯 경합)를 반환한다', async () => {
-    // 10103 은 101 멘토의 RESERVED 슬롯
+    // 10103 은 101 멘토의 RESERVED 슬롯 (아래 성공 테스트 전에 실행해야 RESERVED 상태)
     const res = await fetch(`${BASE}/admin/feedback/1/slot/10103`, {
       method: 'POST',
     });
@@ -161,5 +151,47 @@ describe('POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId}', () => {
       method: 'POST',
     });
     expect(res.status).toBe(404);
+  });
+
+  it('OPEN 슬롯으로의 변경은 성공하고 목 상태(예약 일시·내역·슬롯)를 갱신한다', async () => {
+    // 변경 전 내역 개수 확보
+    const before = getAdminFeedbackHistoryResponseSchema.parse(
+      await fetchData('/admin/feedback/1/history'),
+    );
+
+    // feedbackId=1(멘토 101, 2026-06-01T17:00), 10107 은 101 멘토의 OPEN 슬롯(2026-06-04T11:00)
+    const res = await fetch(`${BASE}/admin/feedback/1/slot/10107`, {
+      method: 'POST',
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { data: null };
+    expect(body.data).toBeNull();
+
+    // 목록 행이 새 일시로 바뀐다
+    const list = getAdminFeedbacksResponseSchema.parse(
+      await fetchData('/admin/feedback'),
+    );
+    const changed = list.feedbackList.find((f) => f.feedbackId === 1);
+    expect(changed?.startDate).toBe('2026-06-04T11:00:00');
+    expect(changed?.endDate).toBe('2026-06-04T11:30:00');
+    expect(changed?.rescheduleCount).toBe(before.historyList.length + 1);
+
+    // 이전 일시가 변경 내역 맨 앞에 추가된다
+    const after = getAdminFeedbackHistoryResponseSchema.parse(
+      await fetchData('/admin/feedback/1/history'),
+    );
+    expect(after.historyList).toHaveLength(before.historyList.length + 1);
+    expect(after.historyList[0].beforeStartDate).toBe('2026-06-01T17:00:00');
+
+    // 슬롯 상태: 기존(10103) OPEN 복귀, 대상(10107) RESERVED 점유
+    const slots = getMentorFeedbackSlotsResponseSchema.parse(
+      await fetchData('/admin/feedback/slot/101'),
+    );
+    expect(
+      slots.feedbackSlotList.find((s) => s.feedbackSlotId === 10103)?.status,
+    ).toBe('OPEN');
+    expect(
+      slots.feedbackSlotList.find((s) => s.feedbackSlotId === 10107)?.status,
+    ).toBe('RESERVED');
   });
 });

@@ -20,6 +20,13 @@ export const challengeValidUserSchema = z.object({
   isAccessible: z.boolean().nullable(),
 });
 
+/** 피드백 옵션 타입 — 서면/라이브 미션 구분 (admin ChallengeOptionTypeEnum 과 동일) */
+export const challengeOptionTypeSchema = z.enum([
+  'WRITTEN_FEEDBACK',
+  'LIVE_FEEDBACK',
+]);
+export type ChallengeOptionType = z.infer<typeof challengeOptionTypeSchema>;
+
 export const challengeMissionFeedbackListSchema = z.object({
   missionList: z.array(
     z.object({
@@ -30,6 +37,12 @@ export const challengeMissionFeedbackListSchema = z.object({
       endDate: z.string().datetime({ local: true }),
       challengeOptionCode: z.string().nullish(),
       challengeOptionTitle: z.string().nullish(),
+      /**
+       * 서면/라이브 구분. BE `FeedbackMissionAdminVo`에 미배포 동안 undefined —
+       * 없으면 LIVE 필터를 적용하지 못해 기존처럼 전부 서면으로 간주된다.
+       * (요청 메모: tasks/memos/be-request-feedback-mission-live-type-filtered.md)
+       */
+      challengeOptionType: challengeOptionTypeSchema.nullish(),
       submittedCount: z.number().default(0),
       totalCount: z.number().default(0),
     }),
