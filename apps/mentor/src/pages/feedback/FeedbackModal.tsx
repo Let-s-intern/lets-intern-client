@@ -1,8 +1,15 @@
 'use client';
 
+import { Suspense, lazy, useState } from 'react';
+
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '../ui/MentorAlertModal';
 import { useMentorAlert } from '../hooks/useMentorAlert';
+
+// 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
+const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
+const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
+const MenteeLinkPanel = lazy(() => import('./ui/MenteeLinkPanel'));
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
@@ -14,6 +21,7 @@ import FeedbackLayout from './ui/FeedbackLayout';
 import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useMenteeNavigation } from './hooks/useMenteeNavigation';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
+import { isNotionUrl } from './utils/notion';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -60,6 +68,24 @@ const FeedbackModal = ({
     useFeedbackStatus(attendanceList);
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
+
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+  // 왼쪽 사이드 패널 — 한번 열면 멘티를 전환해도 열린 상태 유지,
+  // 표시 내용(경험정리/노션 임베드)은 현재 멘티의 제출 유형에 따라 자동 결정
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+
+  const isMenteeSubmitted =
+    currentMentee != null &&
+    currentMentee.id != null &&
+    currentMentee.status !== 'ABSENT';
+  // 경험정리형 제출 멘티(제출됨·링크 없음)
+  const hasExperienceSubmission =
+    isMenteeSubmitted && !currentMentee.link && currentMentee.userId != null;
+  // 노션 링크 제출 멘티
+  const hasEmbeddableLink =
+    isMenteeSubmitted && isNotionUrl(currentMentee.link);
+  const showExperiencePanel = isSidePanelOpen && hasExperienceSubmission;
+  const showLinkPanel = isSidePanelOpen && hasEmbeddableLink;
 
   return (
     <BaseModal
@@ -161,11 +187,34 @@ const FeedbackModal = ({
             </button>
           </div>
         }
+        sidePanel={
+          showExperiencePanel ? (
+            <Suspense fallback={null}>
+              <MenteeExperiencePanel
+                onClose={() => setIsSidePanelOpen(false)}
+                missionId={missionId}
+                userId={currentMentee?.userId}
+                menteeName={currentMentee?.name}
+              />
+            </Suspense>
+          ) : showLinkPanel && currentMentee?.link ? (
+            <Suspense fallback={null}>
+              <MenteeLinkPanel
+                onClose={() => setIsSidePanelOpen(false)}
+                link={currentMentee.link}
+                menteeName={currentMentee.name}
+              />
+            </Suspense>
+          ) : undefined
+        }
         menteeInfo={(collapsed) => (
           <MenteeInfo
             mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
+            onViewExperience={() => setIsExperienceModalOpen(true)}
+            onViewExperienceSide={() => setIsSidePanelOpen(true)}
+            onViewLinkSide={() => setIsSidePanelOpen(true)}
           />
         )}
         editor={
@@ -213,6 +262,19 @@ const FeedbackModal = ({
 
       {/* Alert/Confirm modal for save/submit */}
       <MentorAlertModal {...alertProps} />
+
+      {/* 경험정리형 제출물 보기 서브모달 */}
+      {isExperienceModalOpen && (
+        <Suspense fallback={null}>
+          <MenteeExperienceModal
+            isOpen={isExperienceModalOpen}
+            onClose={() => setIsExperienceModalOpen(false)}
+            missionId={missionId}
+            userId={currentMentee?.userId}
+            menteeName={currentMentee?.name}
+          />
+        </Suspense>
+      )}
     </BaseModal>
   );
 };

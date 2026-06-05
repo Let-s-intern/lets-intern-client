@@ -3,6 +3,8 @@ import { useState, type ReactNode } from 'react';
 interface FeedbackLayoutProps {
   /** Left panel (mentee list) */
   sidebar: ReactNode;
+  /** 경험 등 참고자료 사이드 패널 — 있으면 멘티 목록 자리에 대신 표시 */
+  sidePanel?: ReactNode;
   /** Prev/next mentee navigation (large) - shown in normal mode top */
   navigation: ReactNode;
   /** Compact prev/next navigation - shown in expanded mode bottom */
@@ -17,6 +19,7 @@ interface FeedbackLayoutProps {
 
 const FeedbackLayout = ({
   sidebar,
+  sidePanel,
   navigation,
   navigationCompact,
   menteeInfo,
@@ -34,15 +37,17 @@ const FeedbackLayout = ({
       }`}
       style={{ height: 'calc(100% - 80px)' }}
     >
-      {/* Left panel: mentee list */}
+      {/* Left panel: 경험 패널이 열리면 멘티 목록 대신 표시 (확장 모드에서도 유지 — 보면서 타이핑) */}
       <div
         className={`flex shrink-0 flex-col transition-all duration-300 ease-in-out ${
-          isExpanded
-            ? 'max-h-0 overflow-hidden opacity-0 md:max-h-none md:w-0 md:opacity-0'
-            : 'max-h-40 opacity-100 md:max-h-none md:w-56'
+          sidePanel
+            ? 'max-h-64 opacity-100 md:max-h-none md:w-[360px]'
+            : isExpanded
+              ? 'max-h-0 overflow-hidden opacity-0 md:max-h-none md:w-0 md:opacity-0'
+              : 'max-h-40 opacity-100 md:max-h-none md:w-56'
         }`}
       >
-        {sidebar}
+        {sidePanel ?? sidebar}
       </div>
 
       {/* Right panel */}

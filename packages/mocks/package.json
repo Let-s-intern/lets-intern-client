@@ -1,0 +1,22 @@
+{
+  "name": "@letscareer/mocks",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./handlers": "./src/handlers.ts",
+    "./browser": "./src/browser.ts",
+    "./node": "./src/node.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "msw": "^2.14.6"
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@types/node": "^20.14.9",
+    "typescript": "^5.9.3"
+  }
+}
