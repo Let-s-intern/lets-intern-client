@@ -133,17 +133,7 @@ const LiveFeedbackMissionCard = ({
       mobilePrimaryAction={mobilePrimaryAction}
       notice={mission.status === 'expired' ? <ExpiredNotice /> : undefined}
     >
-      <LiveFeedbackDetail
-        challengeId={challengeId}
-        missionId={mission.missionId}
-        feedbackId={mission.feedbackId}
-        assignedMentor={mission.mentorInfo}
-        period={{
-          startDay: mission.feedbackStartDate,
-          endDay: mission.feedbackEndDate,
-        }}
-        status={mission.status}
-      />
+      <LiveFeedbackDetail challengeId={challengeId} mission={mission} />
     </FeedbackMissionCard>
   );
 };

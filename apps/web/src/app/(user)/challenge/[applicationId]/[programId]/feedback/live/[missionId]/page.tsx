@@ -41,17 +41,7 @@ const LiveMissionDetailPage = () => {
       <BackHeader to={backPath}>
         {HEADER_TITLE[mission.status] ?? 'LIVE 피드백'}
       </BackHeader>
-      <LiveFeedbackDetail
-        challengeId={programId}
-        missionId={mission.missionId}
-        feedbackId={mission.feedbackId}
-        assignedMentor={mission.mentorInfo}
-        period={{
-          startDay: mission.missionStartDate,
-          endDay: mission.missionEndDate,
-        }}
-        status={mission.status}
-      />
+      <LiveFeedbackDetail challengeId={programId} mission={mission} />
     </>
   );
 };

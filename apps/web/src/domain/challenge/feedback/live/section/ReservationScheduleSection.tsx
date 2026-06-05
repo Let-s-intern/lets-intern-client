@@ -2,7 +2,7 @@
 
 import { useFeedbackSlotListQuery } from '@/api/feedback/feedback';
 import { useTimeSlotState } from '../hooks/useTimeSlotState';
-import type { MissionPeriod, SelectedSlot } from '../types';
+import type { SelectedSlot } from '../types';
 import MonthCalendar from '../ui/MonthCalendar';
 import ReservationBar from '../ui/ReservationBar';
 import TimeSlotButtons from '../ui/TimeSlotButtons';
@@ -10,25 +10,28 @@ import TimeSlotButtons from '../ui/TimeSlotButtons';
 interface Props {
   challengeId: string | number;
   mentorName: string;
-  period: MissionPeriod;
+  feedbackStartDate: string;
+  feedbackEndDate: string;
   onConfirm: (slot: SelectedSlot) => void;
 }
 
 const ReservationScheduleSection = ({
   challengeId,
   mentorName,
-  period,
+  feedbackStartDate,
+  feedbackEndDate,
   onConfirm,
 }: Props) => {
   const { data } = useFeedbackSlotListQuery(
     challengeId,
-    `${period.startDay}T00:00:00`,
-    `${period.endDay}T23:59:59`,
+    `${feedbackStartDate}T00:00:00`,
+    `${feedbackEndDate}T23:59:59`,
   );
   const feedbackSlots = data?.feedbackSlotList ?? [];
 
   const { calendar, slots, bar } = useTimeSlotState(
-    period,
+    feedbackStartDate,
+    feedbackEndDate,
     feedbackSlots,
     onConfirm,
   );

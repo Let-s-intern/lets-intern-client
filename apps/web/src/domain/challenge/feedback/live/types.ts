@@ -1,12 +1,6 @@
 // 시간 슬롯 예약 상태
 export type SlotStatus = 'expired' | 'unavailable' | 'booked' | 'available';
 
-// 미션 기간
-export interface MissionPeriod {
-  startDay: string; // 'YYYY-MM-DD'
-  endDay: string; // 'YYYY-MM-DD'
-}
-
 // 사용자가 선택한 예약 슬롯 (날짜 + 시작 시간)
 export interface SelectedSlot {
   feedbackSlotId: number;
