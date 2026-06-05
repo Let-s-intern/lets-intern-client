@@ -32,6 +32,7 @@ export function toMission(
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
   const endDay = item.missionEndDate.slice(0, 10);
+  const feedbackStartDay = endDay;
   const feedbackEndDay = new Date(
     new Date(item.missionEndDate).getTime() + 3 * 24 * 60 * 60 * 1000,
   )
@@ -52,6 +53,7 @@ export function toMission(
     challengeType,
     missionStartDate: startDay,
     missionEndDate: endDay,
+    feedbackStartDate: feedbackStartDay,
     feedbackEndDate: feedbackEndDay,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
