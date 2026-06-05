@@ -1,5 +1,6 @@
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
+import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import BenefitCard from '@/domain/program/program-detail/different/BenefitCard';
 import DifferentCard, {
@@ -290,11 +291,18 @@ const ChallengeDifferent = ({
                 <br className="md:hidden" /> {deposit / 10000}
                 만원을 페이백해드려요!
               </p>
-              <img
-                className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                src={paypackImgSrc}
-                alt={`페이백 ${deposit / 10000}만원`}
-              />
+              {challengeType === PERSONAL_STATEMENT ? (
+                <PaybackTicket
+                  deposit={deposit}
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                />
+              ) : (
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                  src={paypackImgSrc}
+                  alt={`페이백 ${deposit / 10000}만원`}
+                />
+              )}
             </div>
           )}
         </div>
