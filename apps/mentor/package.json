@@ -20,6 +20,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@letscareer/api": "workspace:*",
     "@letscareer/hooks": "workspace:*",
+    "@letscareer/mocks": "workspace:*",
     "@letscareer/store": "workspace:*",
     "@letscareer/types": "workspace:*",
     "@letscareer/ui": "workspace:*",
@@ -88,5 +89,10 @@
     "typescript": "^5",
     "vite": "^8",
     "vitest": "^4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
