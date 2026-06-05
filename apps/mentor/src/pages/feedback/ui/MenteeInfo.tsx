@@ -22,6 +22,8 @@ interface MenteeInfoProps {
   collapsed?: boolean;
   /** 경험정리형 제출물(링크 없음·제출됨) 보기 진입 */
   onViewExperience?: () => void;
+  /** 경험을 모달 왼쪽 패널에 띄워 보면서 피드백 작성 */
+  onViewExperienceSide?: () => void;
 }
 
 const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
@@ -34,6 +36,43 @@ const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
       strokeLinejoin="round"
     />
   </svg>
+);
+
+/** 좌측 분할 패널 아이콘 */
+const SidePanelIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+    <rect
+      x="2"
+      y="3"
+      width="12"
+      height="10"
+      rx="1.5"
+      stroke="#4D55F5"
+      strokeWidth="1.2"
+    />
+    <path d="M6.5 3V13" stroke="#4D55F5" strokeWidth="1.2" />
+  </svg>
+);
+
+/** 경험을 왼쪽 패널로 띄우는 작은 버튼 (보면서 타이핑용) */
+const SideViewButton = ({
+  onClick,
+  size = 16,
+  className = '',
+}: {
+  onClick?: () => void;
+  size?: number;
+  className?: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title="옆에 두고 보기"
+    aria-label="경험을 옆에 두고 보기"
+    className={`inline-flex shrink-0 items-center justify-center rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 ${className}`}
+  >
+    <SidePanelIcon size={size} />
+  </button>
 );
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
@@ -62,6 +101,7 @@ const MenteeInfo = ({
   challengeTitle,
   collapsed = false,
   onViewExperience,
+  onViewExperienceSide,
 }: MenteeInfoProps) => {
   if (!mentee) return EMPTY_STATE;
 
@@ -117,14 +157,23 @@ const MenteeInfo = ({
             제출물 보기
           </a>
         ) : hasExperienceSubmission ? (
-          <button
-            type="button"
-            onClick={onViewExperience}
-            className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
-          >
-            <ExternalLinkIcon size={14} />
-            경험 보기
-          </button>
+          <span className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={onViewExperience}
+              className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            >
+              <ExternalLinkIcon size={14} />
+              경험 보기
+            </button>
+            {onViewExperienceSide && (
+              <SideViewButton
+                onClick={onViewExperienceSide}
+                size={14}
+                className="h-[26px] w-[26px]"
+              />
+            )}
+          </span>
         ) : isSubmitted ? (
           <span className="shrink-0 text-xs text-neutral-400">제출물 없음</span>
         ) : null}
@@ -164,14 +213,22 @@ const MenteeInfo = ({
                 제출물 보기
               </a>
             ) : hasExperienceSubmission ? (
-              <button
-                type="button"
-                onClick={onViewExperience}
-                className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-              >
-                <ExternalLinkIcon />
-                경험 보기
-              </button>
+              <span className="flex w-fit items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={onViewExperience}
+                  className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                >
+                  <ExternalLinkIcon />
+                  경험 보기
+                </button>
+                {onViewExperienceSide && (
+                  <SideViewButton
+                    onClick={onViewExperienceSide}
+                    className="h-[34px] w-[34px]"
+                  />
+                )}
+              </span>
             ) : isSubmitted ? (
               <span className="text-sm text-neutral-400">제출물 없음</span>
             ) : null}

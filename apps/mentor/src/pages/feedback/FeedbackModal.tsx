@@ -8,6 +8,7 @@ import { useMentorAlert } from '../hooks/useMentorAlert';
 
 // 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
+const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
@@ -67,6 +68,16 @@ const FeedbackModal = ({
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+  const [isExperiencePanelOpen, setIsExperiencePanelOpen] = useState(false);
+
+  // 경험정리형 제출 멘티(제출됨·링크 없음)일 때만 패널 유지 — 멘티 전환 시 자동 숨김
+  const hasExperienceSubmission =
+    currentMentee != null &&
+    currentMentee.id != null &&
+    currentMentee.status !== 'ABSENT' &&
+    !currentMentee.link &&
+    currentMentee.userId != null;
+  const showExperiencePanel = isExperiencePanelOpen && hasExperienceSubmission;
 
   return (
     <BaseModal
@@ -168,12 +179,25 @@ const FeedbackModal = ({
             </button>
           </div>
         }
+        sidePanel={
+          showExperiencePanel ? (
+            <Suspense fallback={null}>
+              <MenteeExperiencePanel
+                onClose={() => setIsExperiencePanelOpen(false)}
+                missionId={missionId}
+                userId={currentMentee?.userId}
+                menteeName={currentMentee?.name}
+              />
+            </Suspense>
+          ) : undefined
+        }
         menteeInfo={(collapsed) => (
           <MenteeInfo
             mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
             onViewExperience={() => setIsExperienceModalOpen(true)}
+            onViewExperienceSide={() => setIsExperiencePanelOpen(true)}
           />
         )}
         editor={
