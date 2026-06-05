@@ -9,6 +9,7 @@ import { useMentorAlert } from '../hooks/useMentorAlert';
 // 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
 const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
+const MenteeLinkPanel = lazy(() => import('./ui/MenteeLinkPanel'));
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
@@ -20,6 +21,7 @@ import FeedbackLayout from './ui/FeedbackLayout';
 import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useMenteeNavigation } from './hooks/useMenteeNavigation';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
+import { isNotionUrl } from './utils/notion';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -68,16 +70,22 @@ const FeedbackModal = ({
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
-  const [isExperiencePanelOpen, setIsExperiencePanelOpen] = useState(false);
+  // 왼쪽 사이드 패널 — 한번 열면 멘티를 전환해도 열린 상태 유지,
+  // 표시 내용(경험정리/노션 임베드)은 현재 멘티의 제출 유형에 따라 자동 결정
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
-  // 경험정리형 제출 멘티(제출됨·링크 없음)일 때만 패널 유지 — 멘티 전환 시 자동 숨김
-  const hasExperienceSubmission =
+  const isMenteeSubmitted =
     currentMentee != null &&
     currentMentee.id != null &&
-    currentMentee.status !== 'ABSENT' &&
-    !currentMentee.link &&
-    currentMentee.userId != null;
-  const showExperiencePanel = isExperiencePanelOpen && hasExperienceSubmission;
+    currentMentee.status !== 'ABSENT';
+  // 경험정리형 제출 멘티(제출됨·링크 없음)
+  const hasExperienceSubmission =
+    isMenteeSubmitted && !currentMentee.link && currentMentee.userId != null;
+  // 노션 링크 제출 멘티
+  const hasEmbeddableLink =
+    isMenteeSubmitted && isNotionUrl(currentMentee.link);
+  const showExperiencePanel = isSidePanelOpen && hasExperienceSubmission;
+  const showLinkPanel = isSidePanelOpen && hasEmbeddableLink;
 
   return (
     <BaseModal
@@ -183,10 +191,18 @@ const FeedbackModal = ({
           showExperiencePanel ? (
             <Suspense fallback={null}>
               <MenteeExperiencePanel
-                onClose={() => setIsExperiencePanelOpen(false)}
+                onClose={() => setIsSidePanelOpen(false)}
                 missionId={missionId}
                 userId={currentMentee?.userId}
                 menteeName={currentMentee?.name}
+              />
+            </Suspense>
+          ) : showLinkPanel && currentMentee?.link ? (
+            <Suspense fallback={null}>
+              <MenteeLinkPanel
+                onClose={() => setIsSidePanelOpen(false)}
+                link={currentMentee.link}
+                menteeName={currentMentee.name}
               />
             </Suspense>
           ) : undefined
@@ -197,7 +213,8 @@ const FeedbackModal = ({
             challengeTitle={challengeTitle}
             collapsed={collapsed}
             onViewExperience={() => setIsExperienceModalOpen(true)}
-            onViewExperienceSide={() => setIsExperiencePanelOpen(true)}
+            onViewExperienceSide={() => setIsSidePanelOpen(true)}
+            onViewLinkSide={() => setIsSidePanelOpen(true)}
           />
         )}
         editor={

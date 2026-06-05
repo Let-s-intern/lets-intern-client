@@ -57,7 +57,8 @@ const MOCK_MENTEES = [
     major: '컴퓨터공학과',
     wishJob: '백엔드 개발',
     wishCompany: '카카오',
-    link: 'https://www.notion.so/mock-mission-submission', // ← 링크형: 기존 외부 링크
+    // ← 링크형: 노션 퍼블리시 일반 공유 링크 → FE가 /ebd/ 임베드 URL로 변환
+    link: 'https://boggy-chestnut-60b.notion.site/3764740158fa80129663f64380a93d10',
     status: 'PRESENT',
     result: 'PASS',
     challengePricePlanType: 'STANDARD',
