@@ -2,6 +2,8 @@
 
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
+import { LetsCareerLogo } from './LetsCareerLogo';
+
 interface JitsiEmbedProps {
   /** 회의실 URL — 외부에서 buildJitsiRoomUrl로 생성해 전달 (셀프호스팅 단일 사용) */
   roomUrl: string;
@@ -88,11 +90,15 @@ export function JitsiEmbed({ roomUrl, onClose }: JitsiEmbedProps) {
 
   return (
     <div className="relative h-full w-full bg-neutral-900">
-      {/* Jitsi 좌측 상단 워터마크 마스킹 — interfaceConfig/configs로도 안 숨겨질 때 마지막 안전선 */}
+      {/* Jitsi 좌측 상단 워터마크 마스킹 + 렛츠커리어 로고 오버레이.
+          pointer-events 차단하지 않음(기본 auto) — 아래 깔린 Jitsi 워터마크 링크 클릭을 막는다. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 z-[5] h-16 w-32 bg-neutral-900"
-      />
+        data-watermark-cover
+        className="absolute left-0 top-0 z-[5] flex h-16 w-40 items-center justify-center bg-neutral-900"
+      >
+        <LetsCareerLogo className="h-5 w-auto" />
+      </div>
       <button
         type="button"
         onClick={onClose}
@@ -107,6 +113,24 @@ export function JitsiEmbed({ roomUrl, onClose }: JitsiEmbedProps) {
         configOverwrite={CONFIG_OVERWRITE}
         interfaceConfigOverwrite={INTERFACE_CONFIG_OVERWRITE}
         onReadyToClose={onClose}
+        onApiReady={(api) => {
+          // "일정 시간 후 모달이 저절로 닫힘" 추적용 — readyToClose 를 유발할 수 있는
+          // 종료/실패 계열 이벤트와 사유 payload 를 콘솔에 남긴다. (hangup 인지,
+          // 서버 연결 끊김인지, 강퇴인지 재현 시점 콘솔로 구분)
+          const diagnosticEvents = [
+            'videoConferenceLeft',
+            'connectionFailed',
+            'errorOccurred',
+            'participantKickedOut',
+            'suspendDetected',
+          ];
+          for (const event of diagnosticEvents) {
+            api.addListener(event, (payload: unknown) => {
+              // eslint-disable-next-line no-console
+              console.warn(`[JitsiEmbed] ${event}`, payload);
+            });
+          }
+        }}
         getIFrameRef={(node) => {
           node.style.height = '100%';
           node.style.width = '100%';

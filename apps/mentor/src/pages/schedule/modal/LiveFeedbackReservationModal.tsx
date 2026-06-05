@@ -1,11 +1,9 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import type { ChatRoomListItem } from '@letscareer/chat/ui/ChatModal';
 import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
 
 import {
   useFeedbackMentorDetailQuery,
-  useFeedbackMentorListQuery,
   useUpdateFeedbackByMentorMutation,
   useUpdateFeedbackMeetingUrlMutation,
 } from '@/api/feedback/feedback';
@@ -45,9 +43,6 @@ const LIVE_ENTER_LEAD_MS = 20 * 60 * 1000;
 /** "피드백 참여" 라벨 옆 ⓘ 툴팁 안내 문구. */
 const PARTICIPATION_TOOLTIP_TEXT =
   '피드백 종료 후 멘티 참여 상태를 저장해주세요. 참여 여부 저장 후 진행 완료 및 정산 대상에 반영됩니다.';
-
-/** 멘티 채팅 모달 — 열릴 때만 로드 (동적 import). */
-const ChatModal = lazy(() => import('@letscareer/chat/ui/ChatModal'));
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -108,7 +103,6 @@ const LiveFeedbackReservationModal = ({
   roundTh,
 }: LiveFeedbackReservationModalProps) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   // 멘토 입장 시 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
@@ -208,50 +202,6 @@ const LiveFeedbackReservationModal = ({
       setIsPreparingRoom(false);
     }
   };
-
-  // 채팅 방 — 선택된 멘티 세션 1건(feedbackId 단위). 멘티 이름/챌린지로 표시.
-  // 채팅 모달은 멘토관리처럼 전체 멘티 로스터를 좌측 목록으로 보여준다.
-  // (선택된 세션은 activeFeedbackId로 지정) — 방 단위는 feedbackId(세션).
-  const { data: allFeedbacks } = useFeedbackMentorListQuery();
-  const chatRooms: ChatRoomListItem[] = useMemo(() => {
-    const seen = new Set<number>();
-    const list: ChatRoomListItem[] = [];
-    for (const fb of allFeedbacks ?? []) {
-      if (seen.has(fb.feedbackId)) continue;
-      seen.add(fb.feedbackId);
-      list.push({
-        feedbackId: fb.feedbackId,
-        title: fb.menteeName,
-        subtitle: fb.programTitle,
-        meta: { menteeName: fb.menteeName, challengeTitle: fb.programTitle },
-      });
-    }
-    // 로스터 미로딩 시 현재 선택 세션만으로 fallback (모달이 항상 열리도록).
-    if (list.length === 0 && feedbackId != null) {
-      const menteeName =
-        feedbackDetail?.menteeName ??
-        selectedBar?.liveFeedback?.menteeName ??
-        '멘티';
-      const challengeTitle =
-        feedbackDetail?.programTitle ?? selectedBar?.challengeTitle ?? '';
-      return [
-        {
-          feedbackId,
-          title: menteeName,
-          subtitle: challengeTitle,
-          meta: { menteeName, challengeTitle },
-        },
-      ];
-    }
-    return list;
-  }, [
-    allFeedbacks,
-    feedbackId,
-    feedbackDetail?.menteeName,
-    feedbackDetail?.programTitle,
-    selectedBar?.liveFeedback?.menteeName,
-    selectedBar?.challengeTitle,
-  ]);
 
   if (!bar || !selectedBar) return null;
 
@@ -621,21 +571,6 @@ const LiveFeedbackReservationModal = ({
           }
           actions={
             <div className="flex items-center gap-3">
-              {/* 멘티와 대화하기 — @letscareer/chat 모달(role=mentor) 연결 */}
-              <button
-                type="button"
-                onClick={() => setIsChatOpen(true)}
-                disabled={feedbackId == null}
-                aria-label="멘티와 대화하기"
-                className={
-                  feedbackId != null
-                    ? feedbackModalDesign.footerSecondary
-                    : feedbackModalDesign.footerSecondaryDisabled
-                }
-              >
-                멘티와 대화하기
-              </button>
-
               {/* 라이브 입장하기 — 시작 20분 전(LIVE_ENTER_LEAD_MS)부터 종료 전까지 활성.
                   데드락 방지: meetingUrl 이 없어도(아직 회의실 미생성) 멘토는 입장 가능.
                   클릭 시 handleEnterLive 가 헬스체크 + meeting-url PATCH 로 회의실을 생성한다.
@@ -687,17 +622,6 @@ const LiveFeedbackReservationModal = ({
             )
           }
         />
-      )}
-
-      {isChatOpen && chatRooms.length > 0 && (
-        <Suspense fallback={null}>
-          <ChatModal
-            role="mentor"
-            rooms={chatRooms}
-            activeFeedbackId={feedbackId}
-            onClose={() => setIsChatOpen(false)}
-          />
-        </Suspense>
       )}
     </>
   );

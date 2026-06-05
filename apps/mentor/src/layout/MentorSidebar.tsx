@@ -33,7 +33,6 @@ const navItems: NavItem[] = [
         url: '/feedback/live-availability',
       },
       { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
-      { type: 'leaf', name: '채팅', url: '/feedback/live-mentee' },
     ],
   },
   { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },

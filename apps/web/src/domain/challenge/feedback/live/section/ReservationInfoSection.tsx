@@ -2,25 +2,15 @@
 
 import { useState } from 'react';
 
-import dynamic from 'next/dynamic';
-
 import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
 
 import { usePatchFeedbackMeetingUrl } from '@/api/feedback/feedback';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 
-import ChatIcon from '@/assets/icons/chat.svg?react';
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
-import { useMenteeChatRooms } from '../useMenteeChatRooms';
 import { formatReservationTime, isEntranceActive } from '../utils';
 import LiveFeedbackReview from './LiveFeedbackReview';
-
-// 채팅 모달은 PocketBase 클라이언트를 끌어오므로 동적 import 로 분리해
-// 모달을 실제로 열 때까지 초기 번들에서 제외한다.
-const ChatModal = dynamic(() => import('@letscareer/chat/ui/ChatModal'), {
-  ssr: false,
-});
 
 interface Props {
   mentor: Mentor;
@@ -37,11 +27,8 @@ const ReservationInfoSection = ({
   feedbackId,
 }: Props) => {
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   // 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
-  // 모달을 열 때만 전체 멘토 로스터를 조회한다(좌측 목록용).
-  const chatRooms = useMenteeChatRooms(isChatOpen);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
   const entranceActive = isEntranceActive(
@@ -140,16 +127,6 @@ const ReservationInfoSection = ({
 
             {/* 하단 액션 — 버튼 위치/구조는 LC-3021(예지) 기준, 입장 버튼만 데드락 수정 적용 */}
             <div className="flex flex-col gap-2">
-              {feedbackId != null && (
-                <button
-                  type="button"
-                  onClick={() => setIsChatOpen(true)}
-                  className="text-xsmall14 border-primary text-primary flex items-center justify-center gap-1.5 rounded-sm border py-3 font-semibold"
-                >
-                  <ChatIcon />
-                  멘토에게 연락하기
-                </button>
-              )}
               {status === 'completed' && feedbackId != null && (
                 <LiveFeedbackReview feedbackId={feedbackId} />
               )}
@@ -180,25 +157,6 @@ const ReservationInfoSection = ({
           onClose={() => setIsJitsiOpen(false)}
           meetingUrl={meetingUrl ?? null}
           spaceName={mentor.nickname}
-        />
-      )}
-
-      {feedbackId != null && isChatOpen && (
-        <ChatModal
-          role="mentee"
-          rooms={
-            chatRooms.length > 0
-              ? chatRooms
-              : [
-                  {
-                    feedbackId,
-                    title: mentor.nickname,
-                    meta: { mentorName: mentor.nickname },
-                  },
-                ]
-          }
-          activeFeedbackId={feedbackId}
-          onClose={() => setIsChatOpen(false)}
         />
       )}
     </div>
