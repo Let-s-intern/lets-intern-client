@@ -139,8 +139,8 @@ const LiveFeedbackMissionCard = ({
         feedbackId={mission.feedbackId}
         assignedMentor={mission.mentorInfo}
         period={{
-          startDay: mission.missionStartDate,
-          endDay: mission.missionEndDate,
+          startDay: mission.feedbackStartDate,
+          endDay: mission.feedbackEndDate,
         }}
         status={mission.status}
       />
