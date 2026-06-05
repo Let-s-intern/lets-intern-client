@@ -1,8 +1,13 @@
 'use client';
 
+import { Suspense, lazy, useState } from 'react';
+
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '../ui/MentorAlertModal';
 import { useMentorAlert } from '../hooks/useMentorAlert';
+
+// 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
+const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
@@ -60,6 +65,8 @@ const FeedbackModal = ({
     useFeedbackStatus(attendanceList);
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
+
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
 
   return (
     <BaseModal
@@ -166,6 +173,7 @@ const FeedbackModal = ({
             mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
+            onViewExperience={() => setIsExperienceModalOpen(true)}
           />
         )}
         editor={
@@ -213,6 +221,19 @@ const FeedbackModal = ({
 
       {/* Alert/Confirm modal for save/submit */}
       <MentorAlertModal {...alertProps} />
+
+      {/* 경험정리형 제출물 보기 서브모달 */}
+      {isExperienceModalOpen && (
+        <Suspense fallback={null}>
+          <MenteeExperienceModal
+            isOpen={isExperienceModalOpen}
+            onClose={() => setIsExperienceModalOpen(false)}
+            missionId={missionId}
+            userId={currentMentee?.userId}
+            menteeName={currentMentee?.name}
+          />
+        </Suspense>
+      )}
     </BaseModal>
   );
 };

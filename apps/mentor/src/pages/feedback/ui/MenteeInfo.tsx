@@ -7,6 +7,7 @@ import {
 
 interface MenteeData {
   id: number | null;
+  userId?: number | null;
   name: string;
   status: string | null;
   feedbackStatus: FeedbackStatus | null;
@@ -19,7 +20,21 @@ interface MenteeInfoProps {
   mentee: MenteeData | null;
   challengeTitle?: string;
   collapsed?: boolean;
+  /** 경험정리형 제출물(링크 없음·제출됨) 보기 진입 */
+  onViewExperience?: () => void;
 }
+
+const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+    <path
+      d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
+      stroke="#4D55F5"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
   const isCompleted = status === 'COMPLETED' || status === 'CONFIRMED';
@@ -46,12 +61,16 @@ const MenteeInfo = ({
   mentee,
   challengeTitle,
   collapsed = false,
+  onViewExperience,
 }: MenteeInfoProps) => {
   if (!mentee) return EMPTY_STATE;
 
   const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
   const isSubmitted = !isAbsent;
   const hasSubmissionLink = isSubmitted && !!mentee.link;
+  // 링크형이 아닌 제출물(경험정리형) → 경험 보기 진입점 노출
+  const hasExperienceSubmission =
+    isSubmitted && !mentee.link && mentee.userId != null;
   const feedbackStatusLabel = isAbsent
     ? '미제출'
     : (FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전');
@@ -87,25 +106,28 @@ const MenteeInfo = ({
             {feedbackStatusLabel}
           </span>
         </div>
-        {hasSubmissionLink && (
+        {hasSubmissionLink ? (
           <a
             href={mentee.link!}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                stroke="#4D55F5"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ExternalLinkIcon size={14} />
             제출물 보기
           </a>
-        )}
+        ) : hasExperienceSubmission ? (
+          <button
+            type="button"
+            onClick={onViewExperience}
+            className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+          >
+            <ExternalLinkIcon size={14} />
+            경험 보기
+          </button>
+        ) : isSubmitted ? (
+          <span className="shrink-0 text-xs text-neutral-400">제출물 없음</span>
+        ) : null}
       </div>
     );
   }
@@ -138,17 +160,20 @@ const MenteeInfo = ({
                 rel="noopener noreferrer"
                 className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                    stroke="#4D55F5"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ExternalLinkIcon />
                 제출물 보기
               </a>
+            ) : hasExperienceSubmission ? (
+              <button
+                type="button"
+                onClick={onViewExperience}
+                className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+              >
+                <ExternalLinkIcon />
+                경험 보기
+              </button>
+            ) : isSubmitted ? (
+              <span className="text-sm text-neutral-400">제출물 없음</span>
             ) : null}
           </div>
         </div>
