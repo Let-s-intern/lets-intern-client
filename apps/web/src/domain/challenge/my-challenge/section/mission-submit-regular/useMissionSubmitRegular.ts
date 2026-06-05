@@ -178,7 +178,7 @@ export function useMissionSubmitRegular({
         attendanceInfo?.submittedUserExperienceIds || [],
       );
       setIsEditing(false);
-      setIsLinkVerified(false);
+      setIsLinkVerified(!!attendanceInfo?.link);
     } else {
       setIsEditing(false);
     }
