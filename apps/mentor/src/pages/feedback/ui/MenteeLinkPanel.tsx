@@ -13,6 +13,15 @@ interface MenteeLinkPanelProps {
 /** X-Frame-Options 차단 시 load 이벤트가 오지 않으므로 타임아웃으로 판별 */
 const EMBED_LOAD_TIMEOUT_MS = 4000;
 
+/**
+ * 노션은 UA 기반이라 iframe에서 모바일 레이아웃을 강제할 수 없다.
+ * 대신 iframe을 가상으로 넓게 렌더한 뒤 scale로 축소해
+ * 폰트가 작아진 모바일 임베딩처럼 보이게 한다.
+ */
+const EMBED_SCALE = 0.67;
+/** 노션 임베드 자체 툴바(검색/공유/제작 배지) 높이 — 상단 크롭으로 숨김 */
+const NOTION_TOOLBAR_PX = 46;
+
 type EmbedStatus = 'loading' | 'loaded' | 'blocked';
 
 /**
@@ -125,18 +134,22 @@ const MenteeLinkPanel = ({
               제출물을 불러오는 중입니다...
             </div>
           )}
-          {/*
-           * sandbox 미적용: 쿠키 제한 시 노션이 리디렉션 루프에 빠짐. 노션 도메인 한정 임베드라 위험도 낮음.
-           * 상단 음수 오프셋: 노션 임베드 자체 툴바(검색/공유/제작 배지)를 크롭해 숨김.
-           */}
+          {/* sandbox 미적용: 쿠키 제한 시 노션이 리디렉션 루프에 빠짐. 노션 도메인 한정 임베드라 위험도 낮음 */}
           <iframe
             key={embedUrl}
             src={embedUrl}
             title={`${menteeName ?? '멘티'} 제출물`}
             onLoad={() => setStatus('loaded')}
-            className={`absolute inset-x-0 -top-[46px] h-[calc(100%+46px)] w-full border-0 ${
+            className={`absolute left-0 border-0 ${
               status === 'loading' ? 'invisible' : ''
             }`}
+            style={{
+              width: `${100 / EMBED_SCALE}%`,
+              height: `calc(${100 / EMBED_SCALE}% + ${NOTION_TOOLBAR_PX}px)`,
+              top: `-${Math.round(NOTION_TOOLBAR_PX * EMBED_SCALE)}px`,
+              transform: `scale(${EMBED_SCALE})`,
+              transformOrigin: 'top left',
+            }}
             allowFullScreen
           />
         </div>
