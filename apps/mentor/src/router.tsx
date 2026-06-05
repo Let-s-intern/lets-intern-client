@@ -19,9 +19,6 @@ const FeedbackLiveAvailabilityPage = lazy(
 const FeedbackLiveReservationPage = lazy(
   () => import('@/pages/feedback-live-reservation/FeedbackLiveReservationPage'),
 );
-const FeedbackLiveMenteePage = lazy(
-  () => import('@/pages/feedback-live-mentee/FeedbackLiveMenteePage'),
-);
 
 const RouteFallback = () => (
   <div className="text-xsmall14 text-neutral-40 px-4 py-10">
@@ -53,10 +50,6 @@ export const router = createBrowserRouter([
       {
         path: '/feedback/live-reservation',
         element: withSuspense(<FeedbackLiveReservationPage />),
-      },
-      {
-        path: '/feedback/live-mentee',
-        element: withSuspense(<FeedbackLiveMenteePage />),
       },
       { path: '/notice', element: <NoticeListPage /> },
       { path: '/notice/:noticeId', element: <NoticeDetailPage /> },
