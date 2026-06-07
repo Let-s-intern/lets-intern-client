@@ -76,7 +76,7 @@ const NavBar = () => {
                   'text-primary md:bg-primary-5 font-semibold':
                     activeStatus === 'INQUIRY',
                   'text-neutral-30 font-medium': activeStatus !== 'INQUIRY',
-                }
+                },
               )}
             >
               1:1 문의
