@@ -19,16 +19,18 @@ const questionsResponseSchema = z.object({
 });
 
 export const QUESTION_QUERY_KEY = 'challengeQuestions';
+const DEFAULT_INQUIRY_LIMIT = 100;
 
 export const useMyQuestionsQuery = (challengeId: number) =>
   useQuery({
     queryKey: [QUESTION_QUERY_KEY, challengeId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/questions`, {
-        params: { size: 100 },
+        params: { size: DEFAULT_INQUIRY_LIMIT },
       });
       return questionsResponseSchema.parse(res.data.data).questionList;
     },
+    enabled: !isNaN(challengeId) && challengeId > 0,
   });
 
 export const useCreateQuestionMutation = (challengeId: number) => {

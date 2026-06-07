@@ -62,21 +62,22 @@ const ChallengeInquiryPage = () => {
         field: 'answerStatus',
         headerName: '답변 상태',
         width: 100,
-        valueGetter: (_, row) =>
-          row.answerStatus === 'WAITING' ? '답변 대기' : '답변 완료',
+        valueGetter: (value) =>
+          value === 'WAITING' ? '답변 대기' : '답변 완료',
       },
       { field: 'title', headerName: '문의 제목', flex: 1 },
       {
         field: 'challengeTitle',
         headerName: '챌린지 명',
         width: 300,
-        valueGetter: (_, row) => row.challengeTitle ?? '-',
+        valueGetter: (value) => value ?? '-',
       },
       {
         field: 'createDate',
         headerName: '문의 등록일',
         width: 150,
-        valueGetter: (_, row) => row.createDate?.slice(0, 10) ?? '-',
+        valueGetter: (value: string | null | undefined) =>
+          value?.slice(0, 10) ?? '-',
       },
       {
         field: 'answer',

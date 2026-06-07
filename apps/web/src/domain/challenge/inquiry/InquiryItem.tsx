@@ -100,7 +100,14 @@ const InquiryItem = ({
               수정
             </button>
             <span>|</span>
-            <button className="hover:text-red-500" onClick={onDelete}>
+            <button
+              className="hover:text-red-500"
+              onClick={() => {
+                if (window.confirm('정말로 이 문의를 삭제하시겠습니까?')) {
+                  onDelete();
+                }
+              }}
+            >
               삭제
             </button>
           </div>
