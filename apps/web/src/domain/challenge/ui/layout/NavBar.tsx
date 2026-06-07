@@ -1,3 +1,4 @@
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
@@ -6,6 +7,7 @@ const NavBar = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
   const pathname = usePathname();
   const applicationId = params.applicationId;
+  const { withTestDate } = useChallengeNav();
 
   if (pathname.endsWith('user/info')) return null;
 
@@ -22,7 +24,9 @@ const NavBar = () => {
         <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              href={`/challenge/${applicationId}/${params.programId}`}
+              href={withTestDate(
+                `/challenge/${applicationId}/${params.programId}`,
+              )}
               className={clsx(
                 'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {
@@ -37,7 +41,9 @@ const NavBar = () => {
           </li>
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              href={`/challenge/${applicationId}/${params.programId}/me`}
+              href={withTestDate(
+                `/challenge/${applicationId}/${params.programId}/me`,
+              )}
               className={clsx(
                 'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {
@@ -52,7 +58,9 @@ const NavBar = () => {
           </li>
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              href={`/challenge/${applicationId}/${params.programId}/guides`}
+              href={withTestDate(
+                `/challenge/${applicationId}/${params.programId}/guides`,
+              )}
               className={clsx(
                 'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
                 {

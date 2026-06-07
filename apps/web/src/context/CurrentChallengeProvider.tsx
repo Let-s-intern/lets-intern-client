@@ -82,14 +82,12 @@ export const CurrentChallengeProvider = ({
     refetch: refetchSchedules,
   } = useQuery({
     enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'schedule', testDate],
+    queryKey: ['challenge', params.programId, 'schedule'],
     queryFn: async () => {
       if (!params.programId) {
         return null;
       }
-      const res = await axios.get(`/challenge/${params.programId}/schedule`, {
-        params: { testDate },
-      });
+      const res = await axios.get(`/challenge/${params.programId}/schedule`);
       return challengeSchedule.parse(res.data.data).scheduleList;
     },
   });
