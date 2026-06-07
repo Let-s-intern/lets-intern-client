@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Link } from 'react-router-dom';
 
 import { useIsAdminQuery } from '@/api/user/user';
 
@@ -40,6 +40,10 @@ const navData = [
       {
         name: '피드백 운영',
         url: '/challenge/feedback-operation',
+      },
+      {
+        name: '1:1 문의',
+        url: '/challenge/inquiry',
       },
     ],
   },

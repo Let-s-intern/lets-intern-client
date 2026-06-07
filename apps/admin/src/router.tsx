@@ -47,6 +47,12 @@ const ChallengeOperationFeedbackPage = lazy(
 const FeedbackOperationPage = lazy(
   () => import('./pages/challenge/feedback-operation/FeedbackOperationPage'),
 );
+const ChallengeInquiryPage = lazy(
+  () => import('./pages/pages/challenge/inquiry/ChallengeInquiryPage'),
+);
+const ChallengeInquiryAnswerPage = lazy(
+  () => import('./pages/pages/challenge/inquiry/ChallengeInquiryAnswerPage'),
+);
 const AttendanceUserExperiencesPage = lazy(
   () =>
     import('./pages/pages/challenge/operation/AttendanceUserExperiencesPage'),
@@ -265,6 +271,14 @@ export const router = createBrowserRouter([
       {
         path: '/challenge/feedback-operation',
         element: withSuspense(<FeedbackOperationPage />),
+      },
+      {
+        path: '/challenge/inquiry',
+        element: withSuspense(<ChallengeInquiryPage />),
+      },
+      {
+        path: '/challenge/inquiry/:challengeId/:questionId/answer',
+        element: withSuspense(<ChallengeInquiryAnswerPage />),
       },
       {
         path: '/challenge/operation/:programId',
