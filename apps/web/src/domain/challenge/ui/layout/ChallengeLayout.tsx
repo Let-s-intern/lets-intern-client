@@ -106,7 +106,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
         <NavBar />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
-      <RecommendedProgramSection />
+      {!pathname.endsWith('/inquiry') && <RecommendedProgramSection />}
     </div>
   );
 };

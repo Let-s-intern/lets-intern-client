@@ -43,6 +43,7 @@ const NavBar = () => {
       ],
     },
     { id: 'guide', label: '공지사항 / 챌린지 가이드', href: `${base}/guides` },
+    { id: 'inquiry', label: '1:1 문의', href: `${base}/inquiry` },
   ];
 
   const isActive = (href: string) => pathname === href;
