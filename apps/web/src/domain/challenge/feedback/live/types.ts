@@ -1,12 +1,6 @@
 // 시간 슬롯 예약 상태
 export type SlotStatus = 'expired' | 'unavailable' | 'booked' | 'available';
 
-// 미션 기간
-export interface MissionPeriod {
-  startDay: string; // 'YYYY-MM-DD'
-  endDay: string; // 'YYYY-MM-DD'
-}
-
 // 사용자가 선택한 예약 슬롯 (날짜 + 시작 시간)
 export interface SelectedSlot {
   feedbackSlotId: number;
@@ -41,8 +35,9 @@ export interface LiveFeedbackMission {
   challengeType: string;
   missionStartDate: string; // 'YYYY-MM-DD'
   missionEndDate: string; // 'YYYY-MM-DD'
-  feedbackStartDate: string; // 'YYYY-MM-DD' — missionEndDate와 동일 (API 지원 전 임시)
-  feedbackEndDate: string; // 'YYYY-MM-DD' — missionEndDate + 3일
+  feedbackStartDate: string; // 'YYYY-MM-DD'
+  feedbackEndDate: string; // 'YYYY-MM-DD'
+  attendanceResult: 'WAITING' | 'PASS' | 'WRONG' | 'FINAL_WRONG' | null;
   mentorInfo: Mentor | null;
   feedbackId: number | null;
   isMissionSubmitted: boolean;

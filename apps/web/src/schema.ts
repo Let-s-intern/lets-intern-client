@@ -1427,12 +1427,18 @@ export const challengeSchedule = z
           endDate: z.string().nullable(),
           status: MissionStatusEnum.nullable(),
           missionType: MissionTypeEnum.optional(),
+          hasFeedback: z.boolean().optional(),
+          feedbackType: z
+            .enum(['WRITTEN_FEEDBACK', 'LIVE_FEEDBACK'])
+            .nullable()
+            .optional(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),
           id: z.number().nullable(),
           link: z.string().nullable(),
           review: z.string().nullable().optional(),
+          preQuestion: z.string().nullable().optional(),
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
@@ -1684,6 +1690,7 @@ export const myDailyMission = z
         id: z.number().nullable(),
         link: z.string().nullable(),
         review: z.string().nullable().optional(),
+        preQuestion: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),

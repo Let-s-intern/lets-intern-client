@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
-import type { MissionPeriod, SelectedSlot, SlotStatus } from '../types';
+import type { SelectedSlot, SlotStatus } from '../types';
 import { toDateString } from '../utils';
 
 function generateSlotTimes(startHour: number, endHour: number): string[] {
@@ -15,10 +15,13 @@ function generateSlotTimes(startHour: number, endHour: number): string[] {
 
 const ALL_SLOT_TIMES = generateSlotTimes(9, 24);
 
-function getInitialDate(period: MissionPeriod): Date {
+function getInitialDate(
+  feedbackStartDate: string,
+  feedbackEndDate: string,
+): Date {
   const today = new Date();
-  const start = new Date(period.startDay);
-  const end = new Date(period.endDay);
+  const start = new Date(feedbackStartDate);
+  const end = new Date(feedbackEndDate);
   if (today < start) return start;
   if (today > end) return end;
   return today;
@@ -40,11 +43,12 @@ function toSlotStatus(
 }
 
 export function useTimeSlotState(
-  period: MissionPeriod,
+  feedbackStartDate: string,
+  feedbackEndDate: string,
   feedbackSlots: FeedbackSlot[],
   onConfirm: (slot: SelectedSlot) => void,
 ) {
-  const base = getInitialDate(period);
+  const base = getInitialDate(feedbackStartDate, feedbackEndDate);
 
   const [{ year, month }, setYearMonth] = useState({
     year: base.getFullYear(),
@@ -54,20 +58,20 @@ export function useTimeSlotState(
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
   const canGoPrev = useMemo(() => {
-    const start = new Date(period.startDay);
+    const start = new Date(feedbackStartDate);
     return (
       year > start.getFullYear() ||
       (year === start.getFullYear() && month > start.getMonth())
     );
-  }, [year, month, period.startDay]);
+  }, [year, month, feedbackStartDate]);
 
   const canGoNext = useMemo(() => {
-    const end = new Date(period.endDay);
+    const end = new Date(feedbackEndDate);
     return (
       year < end.getFullYear() ||
       (year === end.getFullYear() && month < end.getMonth())
     );
-  }, [year, month, period.endDay]);
+  }, [year, month, feedbackEndDate]);
 
   const monthAvailability = useMemo(() => {
     const result: Record<string, boolean> = {};

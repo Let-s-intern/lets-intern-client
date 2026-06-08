@@ -6,13 +6,14 @@ import type { ChallengeType } from '@/schema';
 import { challengeTypeToText } from '@/utils/convert';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
-function resolveStatus(
-  item: LiveFeedbackItem,
-  isMissionSubmitted: boolean,
-): LiveFeedbackStatus {
+function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
   const isExpired = new Date(item.missionEndDate) < new Date();
 
-  if (!item.feedbackId || !isMissionSubmitted) {
+  const isAdminConfirmed =
+    ['PRESENT', 'UPDATED'].includes(item.attendanceStatus ?? '') &&
+    item.attendanceResult === 'PASS';
+
+  if (!item.feedbackId || !isAdminConfirmed) {
     return isExpired ? 'expired' : 'prev';
   }
   if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
@@ -42,7 +43,7 @@ export function toMission(
   const isMissionSubmitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
     item.attendanceStatus ?? '',
   );
-  const status = resolveStatus(item, isMissionSubmitted);
+  const status = resolveStatus(item);
 
   return {
     missionId: item.missionId,
@@ -55,6 +56,7 @@ export function toMission(
     missionEndDate: endDay,
     feedbackStartDate: feedbackStartDay,
     feedbackEndDate: feedbackEndDay,
+    attendanceResult: item.attendanceResult,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
     isMissionSubmitted,
@@ -92,7 +94,7 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
 > = {
   prev: 'neutral',
   reserved: 'muted',
-  completed: 'active',
+  completed: 'muted',
   expired: 'muted',
   nonParticipation: 'muted',
   checkNeeded: 'error',
