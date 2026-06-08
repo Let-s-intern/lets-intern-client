@@ -45,7 +45,8 @@ describe('MentorSidebar', () => {
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
     expect(screen.getByText('예약 현황')).toBeInTheDocument();
-    expect(screen.getByText('채팅')).toBeInTheDocument();
+    // 채팅 기능 제거 — 메뉴 미노출
+    expect(screen.queryByText('채팅')).not.toBeInTheDocument();
     expect(screen.getByText('참여중인 챌린지')).toBeInTheDocument();
     expect(screen.getByText('프로필')).toBeInTheDocument();
   });
@@ -107,6 +108,5 @@ describe('MentorSidebar', () => {
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
     expect(screen.getByText('예약 현황')).toBeInTheDocument();
-    expect(screen.getByText('채팅')).toBeInTheDocument();
   });
 });

@@ -17,30 +17,6 @@ vi.mock('@/utils/axios', () => ({
   },
 }));
 
-// 채팅 모달은 PocketBase realtime에 연결되므로 테스트에서는 패키지 컴포넌트를 모킹해
-// 멘토 측 래핑(역할·feedbackId 전달)만 검증한다. (패키지 자체는 별도 테스트됨)
-vi.mock('@letscareer/chat/ui/ChatModal', () => ({
-  default: ({
-    role,
-    activeFeedbackId,
-    onClose,
-  }: {
-    role: string;
-    activeFeedbackId?: number | null;
-    onClose: () => void;
-  }) => (
-    <div
-      data-testid="chat-modal"
-      data-role={role}
-      data-feedback-id={String(activeFeedbackId)}
-    >
-      <button type="button" onClick={onClose}>
-        채팅 모달 닫기
-      </button>
-    </div>
-  ),
-}));
-
 // MOCK_NOW=null → 카운트다운/입장 게이팅은 실제 시각 기준으로 동작한다.
 // 입장 버튼은 "시작 20분 전 ~ 종료 전"에만 활성(T-20 게이팅)이므로, 시간 의존
 // 테스트는 startDate/endDate 를 현재 시각 기준 상대값으로 만든다.
@@ -161,21 +137,11 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(screen.queryByText('종료됨')).not.toBeInTheDocument();
   });
 
-  it('푸터의 "멘티와 대화하기" 버튼이 활성 상태로 노출된다', () => {
+  it('채팅 기능 제거 — "멘티와 대화하기" 버튼이 더 이상 노출되지 않는다', () => {
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: '멘티와 대화하기' });
-    expect(btn).toBeEnabled();
-  });
-
-  it('"멘티와 대화하기" 클릭 시 role=mentor·해당 feedbackId로 채팅 모달이 열린다', async () => {
-    const user = userEvent.setup();
-    renderModal(makeBar());
-
-    await user.click(screen.getByRole('button', { name: '멘티와 대화하기' }));
-
-    const modal = await screen.findByTestId('chat-modal');
-    expect(modal).toHaveAttribute('data-role', 'mentor');
-    expect(modal).toHaveAttribute('data-feedback-id', '101');
+    expect(
+      screen.queryByRole('button', { name: '멘티와 대화하기' }),
+    ).not.toBeInTheDocument();
   });
 
   it('시작 20분 이내면 meetingUrl 이 null 이어도 입장 버튼이 활성 (데드락 방지)', async () => {
@@ -341,7 +307,8 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     const trigger = await screen.findByRole('button', {
       name: '피드백 참여 안내',
     });
-    // role=tooltip 본문은 항상 DOM에 있으나 트리거와 aria-describedby로 연결된다.
+    // aria-describedby 는 노출 중일 때만 연결된다(efc1a6a4b a11y 변경) — 호버 후 검증.
+    await user.hover(trigger);
     const describedBy = trigger.getAttribute('aria-describedby');
     expect(describedBy).toBeTruthy();
     const tooltip = document.getElementById(describedBy!);
@@ -349,8 +316,6 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     expect(tooltip).toHaveTextContent(
       '피드백 종료 후 멘티 참여 상태를 저장해주세요. 참여 여부 저장 후 진행 완료 및 정산 대상에 반영됩니다.',
     );
-
-    await user.hover(trigger);
     expect(tooltip).toHaveClass('opacity-100');
   });
 

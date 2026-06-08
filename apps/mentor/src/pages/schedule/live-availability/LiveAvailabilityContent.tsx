@@ -1,6 +1,6 @@
 import { addDays, format, startOfWeek } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import OutlinedButton from '@/common/button/OutlinedButton';
@@ -76,6 +76,47 @@ function createTimeSlots(): string[] {
 }
 
 const TIME_SLOTS = createTimeSlots();
+
+/** 안내 배너 앞에 붙는 정보 아이콘 */
+const InfoIcon = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden
+    className="shrink-0"
+  >
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path
+      d="M12 11v5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="12" cy="7.5" r="1.25" fill="currentColor" />
+  </svg>
+);
+
+/** 기간 바의 예약 인원 표시용 사람 아이콘 (디자인 시안 제공 에셋) */
+const PeopleIcon = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden
+    className="shrink-0"
+  >
+    <path
+      d="M14 13.3359C14 12.1748 12.8869 11.187 11.3333 10.821M10 13.3359C10 11.8632 8.20914 10.6693 6 10.6693C3.79086 10.6693 2 11.8632 2 13.3359M10 8.66927C11.4728 8.66927 12.6667 7.47536 12.6667 6.0026C12.6667 4.52984 11.4728 3.33594 10 3.33594M6 8.66927C4.52724 8.66927 3.33333 7.47536 3.33333 6.0026C3.33333 4.52984 4.52724 3.33594 6 3.33594C7.47276 3.33594 8.66667 4.52984 8.66667 6.0026C8.66667 7.47536 7.47276 8.66927 6 8.66927Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 /** 예약 완료 셀/레전드에 쓰는 잠금 아이콘 */
 const LockIcon = () => (
@@ -221,14 +262,14 @@ const LiveAvailabilityContent = ({
       },
     });
   };
-  // 기본/최소 시작 주: focusDate가 있으면 그 주, 없으면 다음 주 월요일 (이번 주 이전은 편집 불가)
-  const minWeekStart = useMemo(() => {
+  // 기본 시작 주: focusDate가 있으면 그 주, 없으면 이번 주 월요일 (주 이동 제한 없음)
+  const initialWeekStart = useMemo(() => {
     if (focusDate) {
       return startOfWeek(new Date(focusDate), { weekStartsOn: 1 });
     }
-    return addDays(startOfWeek(currentNow(), { weekStartsOn: 1 }), 7);
+    return startOfWeek(currentNow(), { weekStartsOn: 1 });
   }, [focusDate]);
-  const [weekStart, setWeekStart] = useState<Date>(() => minWeekStart);
+  const [weekStart, setWeekStart] = useState<Date>(() => initialWeekStart);
   const initialKeys = useMemo(() => toInitialSet(initialSlots), [initialSlots]);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
     () => new Set(initialKeys),
@@ -244,7 +285,7 @@ const LiveAvailabilityContent = ({
   useEffect(() => {
     setSelectedKeys(toInitialSet(initialSlots));
     setSavedKeys(toInitialSet(initialSlots));
-    setWeekStart(minWeekStart);
+    setWeekStart(initialWeekStart);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
@@ -270,6 +311,25 @@ const LiveAvailabilityContent = ({
 
   /** 현재 보이는 주의 7일 'YYYY-MM-DD' 문자열 — 기간 바 컬럼 스팬 계산용 */
   const dayStrs = useMemo(() => days.map(toDateString), [days]);
+
+  /** 현재 주와 겹치는 기간 바 목록 — 헤더 블록 행 수·컬럼 스팬 계산용 */
+  const visiblePeriods = useMemo(
+    () =>
+      livePeriods
+        .map((period, colorIdx) => {
+          const within = dayStrs.map(
+            (ds) => ds >= period.startDate && ds <= period.endDate,
+          );
+          return {
+            period,
+            colorIdx,
+            startIdx: within.indexOf(true),
+            endIdx: within.lastIndexOf(true),
+          };
+        })
+        .filter(({ startIdx }) => startIdx !== -1),
+    [livePeriods, dayStrs],
+  );
 
   /** key → 해당 슬롯을 점유한 다른 챌린지 정보 */
   const blockedMap = useMemo(() => {
@@ -357,15 +417,8 @@ const LiveAvailabilityContent = ({
     });
   };
 
-  const canGoPrev = weekStart.getTime() > minWeekStart.getTime();
   const handlePrevWeek = () => {
-    if (!canGoPrev) return;
-    setWeekStart((prev) => {
-      const candidate = addDays(prev, -7);
-      return candidate.getTime() < minWeekStart.getTime()
-        ? minWeekStart
-        : candidate;
-    });
+    setWeekStart((prev) => addDays(prev, -7));
   };
 
   const handleNextWeek = () => {
@@ -472,9 +525,13 @@ const LiveAvailabilityContent = ({
         </div>
 
         {/* 참고사항 배너 — 한 줄 */}
-        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 break-keep rounded-md px-3 py-2">
-          마우스로 드래그하여 여러 시간대를 선택한 후 "저장하기" 버튼을 클릭해야
-          최종반영 됩니다, 저장하기 전까지는 임시 상태입니다.
+        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 flex items-center gap-1.5 break-keep rounded-md px-3 py-2">
+          <InfoIcon />
+          <span>
+            마우스로 드래그하여 여러 시간대를 선택한 후 &ldquo;저장하기&rdquo;
+            버튼을 클릭해야 최종반영이 됩니다, 저장하기 전까지는 임시
+            상태입니다.
+          </span>
         </div>
         {requiredSlotCount !== undefined && (
           <p className="text-xxsmall12 text-neutral-40 mb-3">
@@ -491,9 +548,8 @@ const LiveAvailabilityContent = ({
             <button
               type="button"
               onClick={handlePrevWeek}
-              disabled={!canGoPrev}
               aria-label="이전 주"
-              className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-70 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
+              className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
             >
               ‹
             </button>
@@ -511,11 +567,15 @@ const LiveAvailabilityContent = ({
             </button>
           </div>
 
-          {/* 레전드 — 예약 가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
+          {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
           <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
               예약 가능
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="bg-neutral-90 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+              예약 불가능
             </span>
             <span className="flex items-center gap-1.5">
               <span className="bg-neutral-90 text-neutral-40 flex h-3 w-3 items-center justify-center rounded-[3px]">
@@ -532,63 +592,99 @@ const LiveAvailabilityContent = ({
 
         <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
-            <div className="border-neutral-85 text-xxsmall12 text-neutral-40 sticky top-0 z-10 flex flex-col items-center justify-center border-b border-r bg-white px-2 py-2 text-center font-medium leading-tight">
-              <span>멘토링</span>
-              <span>시작 시간</span>
-            </div>
-            {days.map((day, index) => (
+            {/* 헤더 블록 — 요일/날짜 + 기간 바를 한 덩어리로 sticky 고정.
+                좌측 "멘토링 시작 시간" 라벨은 기간 바 행까지 세로 병합된다(시안 동일). */}
+            <div className="border-neutral-85 sticky top-0 z-10 col-span-full grid grid-cols-[96px_repeat(7,minmax(88px,1fr))] border-b bg-white">
               <div
-                key={index}
-                className="border-neutral-85 sticky top-0 z-10 border-b border-r bg-white px-2 py-2 text-center last:border-r-0"
+                style={{
+                  gridColumn: 1,
+                  gridRow: `1 / ${2 + visiblePeriods.length}`,
+                }}
+                className="border-neutral-85 text-xxsmall12 text-neutral-40 flex flex-col items-center justify-center border-r px-2 py-2 text-center font-medium leading-tight"
               >
-                <p className="text-xxsmall12 text-neutral-40">
-                  {WEEK_DAYS[index]}
-                </p>
-                <p className="text-small18 text-neutral-10 font-semibold">
-                  {format(day, 'd')}
-                </p>
+                <span>멘토링</span>
+                <span>시작 시간</span>
               </div>
-            ))}
-
-            {/* 날짜 헤더 아래 — 챌린지별 라이브 피드백 기간 바.
-                각 기간이 현재 보이는 주와 겹치면 겹치는 요일 컬럼에 걸쳐 1줄 렌더. */}
-            {livePeriods.map((period, i) => {
-              const within = dayStrs.map(
-                (ds) => ds >= period.startDate && ds <= period.endDate,
-              );
-              const startIdx = within.indexOf(true);
-              const endIdx = within.lastIndexOf(true);
-              if (startIdx === -1) return null;
-
-              return (
-                <div
-                  key={`live-period-${period.challengeTitle}-${period.startDate}-${i}`}
-                  className="border-neutral-85 col-span-full grid grid-cols-[96px_repeat(7,minmax(88px,1fr))] border-b"
-                >
-                  {/* 컬럼1 = 시간 라벨, 2~8 = 월~일. 겹치는 요일 컬럼에 걸쳐 배치. */}
+              {days.map((day, index) => {
+                // 일요일(마지막 컬럼)은 요일·날짜 모두 빨간색으로 강조
+                const isSunday = index === WEEK_DAYS.length - 1;
+                return (
                   <div
-                    style={{ gridColumn: `${startIdx + 2} / ${endIdx + 3}` }}
-                    className={`mx-1 my-1 flex items-center gap-2 rounded-md border px-3 py-1 ${
-                      PERIOD_COLORS[i % PERIOD_COLORS.length]
-                    }`}
+                    key={index}
+                    style={{ gridColumn: index + 2, gridRow: 1 }}
+                    className="px-2 py-2 text-center"
                   >
-                    <span className="text-xxsmall12 min-w-0 truncate font-medium">
-                      {period.challengeTitle}
-                      {period.generation !== undefined &&
-                        ` ${period.generation}기`}
-                      {period.th !== undefined && ` ${period.th}회차`} LIVE
-                      피드백 기간
-                    </span>
-                    <span className="text-xxsmall12 ml-auto shrink-0 font-semibold">
-                      👥 {period.reservedCount ?? 0}
-                      {period.capacity !== undefined
-                        ? `/${period.capacity}`
-                        : ''}
-                    </span>
+                    <p
+                      className={`text-xxsmall12 ${isSunday ? 'text-red-500' : 'text-neutral-40'}`}
+                    >
+                      {WEEK_DAYS[index]}
+                    </p>
+                    <p
+                      className={`text-small18 font-semibold ${isSunday ? 'text-red-500' : 'text-neutral-10'}`}
+                    >
+                      {format(day, 'd')}
+                    </p>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+
+              {/* 기간 바 행 — 컬럼 디바이더(배경 셀) 위에 바를 겹쳐 그린다.
+                  바는 기간 컬럼 폭을 최소로 하되, 제목이 길면 주 끝까지만 늘어나고 넘치면 말줄임. */}
+              {visiblePeriods.map(
+                ({ period, colorIdx, startIdx, endIdx }, row) => {
+                  const periodCols = endIdx - startIdx + 1;
+                  const colsToWeekEnd = WEEK_DAYS.length - startIdx;
+                  return (
+                    <Fragment
+                      key={`live-period-${period.challengeTitle}-${period.startDate}-${colorIdx}`}
+                    >
+                      {WEEK_DAYS.map((_, dayIndex) => (
+                        <div
+                          key={`divider-${dayIndex}`}
+                          style={{ gridColumn: dayIndex + 2, gridRow: row + 2 }}
+                          className={
+                            dayIndex === WEEK_DAYS.length - 1
+                              ? ''
+                              : 'border-neutral-85 border-r'
+                          }
+                        />
+                      ))}
+                      <div
+                        style={{
+                          gridColumn: `${startIdx + 2} / -1`,
+                          gridRow: row + 2,
+                        }}
+                        className="px-1 py-1"
+                      >
+                        <div
+                          style={{
+                            minWidth: `${(periodCols / colsToWeekEnd) * 100}%`,
+                          }}
+                          className={`flex w-max max-w-full items-center gap-2 rounded-md border px-3 py-1 ${
+                            PERIOD_COLORS[colorIdx % PERIOD_COLORS.length]
+                          }`}
+                        >
+                          <span className="text-xxsmall12 min-w-0 truncate font-medium">
+                            {period.challengeTitle}
+                            {period.generation !== undefined &&
+                              ` ${period.generation}기`}
+                            {period.th !== undefined && ` ${period.th}회차`}{' '}
+                            LIVE 피드백 기간
+                          </span>
+                          <span className="text-xxsmall12 ml-auto flex shrink-0 items-center gap-1 font-semibold">
+                            <PeopleIcon />
+                            {period.reservedCount ?? 0}
+                            {period.capacity !== undefined
+                              ? ` / ${period.capacity}`
+                              : ''}
+                          </span>
+                        </div>
+                      </div>
+                    </Fragment>
+                  );
+                },
+              )}
+            </div>
 
             {TIME_SLOTS.map((time) => (
               <div key={`row-${time}`} className="contents">

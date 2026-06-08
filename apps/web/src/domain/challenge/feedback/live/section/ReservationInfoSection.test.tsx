@@ -24,11 +24,6 @@ jest.mock('@/api/feedback/feedback', () => ({
   }),
 }));
 
-// 멘티 채팅 로스터 훅도 user api(axios) 체인을 끌어오므로 스텁으로 대체.
-jest.mock('../useMenteeChatRooms', () => ({
-  useMenteeChatRooms: () => [],
-}));
-
 const FEEDBACK_ID = 4242;
 const MEETING_URL = 'https://meet.jit.si/letscareer-x7k2p9';
 
