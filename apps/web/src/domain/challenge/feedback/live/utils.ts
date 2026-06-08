@@ -9,22 +9,26 @@ import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
   const isExpired = new Date(item.missionEndDate) < new Date();
 
+  // 피드백 세션이 존재하면 출석 결과를 우선 확인 (attendanceResult와 무관)
+  if (item.feedbackId) {
+    if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
+    if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
+    if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
+      return 'completed';
+    }
+    if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
+      return 'nonParticipation';
+    }
+  }
+
+  // 진행 예정: 정상제출 + 어드민 확인완료인 경우에만
   const isAdminConfirmed =
     ['PRESENT', 'UPDATED'].includes(item.attendanceStatus ?? '') &&
     item.attendanceResult === 'PASS';
 
-  if (!item.feedbackId || !isAdminConfirmed) {
-    return isExpired ? 'expired' : 'prev';
-  }
-  if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
-  if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
-  if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
-    return 'completed';
-  }
-  if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
-    return 'nonParticipation';
-  }
-  return 'reserved';
+  if (item.feedbackId && isAdminConfirmed) return 'reserved';
+
+  return isExpired ? 'expired' : 'prev';
 }
 
 export function toMission(
