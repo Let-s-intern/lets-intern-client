@@ -1,8 +1,14 @@
-import { useChallengeHome } from '@/api/challenge/challenge';
 import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
-import { ChallengeHome } from '@/schema';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { ChallengeHome, challengeHomeSchema } from '@/schema';
+import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
 type RecommendSection = ChallengeHome['programRecommendList'][0];
@@ -67,7 +73,11 @@ const RecommendSection = ({ section }: { section: RecommendSection }) => {
     <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
       <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
         <h2 className="text-xsmall16 md:text-small18 font-semibold">
-          {section.title}
+          챌린지 참여자들이 선택한 <br className="md:hidden" />
+          다른 프로그램도 확인해보세요{' '}
+          <span role="img" aria-label="돋보기">
+            🔍
+          </span>
         </h2>
         <MoreButton
           visible={section.isMoreVisible && !!section.moreUrl}
@@ -86,8 +96,19 @@ const RecommendSection = ({ section }: { section: RecommendSection }) => {
 function RecommendedProgramSection() {
   const pathname = usePathname();
   const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: homeData } = useChallengeHome(Number(params.programId));
+  const { data: homeData } = useQuery({
+    enabled: !!params.programId && !isNaN(Number(params.programId)),
+    queryKey: ['challenge', Number(params.programId), 'home', testDate],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${params.programId}/home`, {
+        params: { testDate },
+      });
+      return challengeHomeSchema.parse(res.data.data);
+    },
+  });
 
   const programRecommendList = homeData?.programRecommendList ?? [];
 

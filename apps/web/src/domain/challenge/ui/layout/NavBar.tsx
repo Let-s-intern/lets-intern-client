@@ -1,5 +1,6 @@
 'use client';
 
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
@@ -15,6 +16,8 @@ const NavBar = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
   const pathname = usePathname();
   const base = `/challenge/${params.applicationId}/${params.programId}`;
+  const applicationId = params.applicationId;
+  const { withTestDate } = useChallengeNav();
 
   if (pathname.endsWith('user/info')) return null;
 

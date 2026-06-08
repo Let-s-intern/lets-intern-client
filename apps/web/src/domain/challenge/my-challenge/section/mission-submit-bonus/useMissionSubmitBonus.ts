@@ -2,6 +2,7 @@ import { usePatchAttendance } from '@/api/attendance/attendance';
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useSubmitMissionBlogBonus } from '@/api/mission/mission';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useCallback, useEffect, useState } from 'react';
@@ -46,6 +47,7 @@ export function useMissionSubmitBonus({
 
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
+  const { testDate } = useChallengeNav();
 
   const disabled = isSubmitted && !isEditing;
 
@@ -82,6 +84,7 @@ export function useMissionSubmitBonus({
         url: linkValue,
         accountType: selectedBank,
         accountNum: cleanAccountNumber,
+        testDate,
       });
       await refetchSchedules?.();
       setIsSubmitted(true);

@@ -12,6 +12,7 @@ interface Props {
 
 const ExposureModal = ({ noticeId, onClose }: Props) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const challengesQuery = useGetNoticeChallenges(noticeId);
   const updateMutation = useUpdateNoticeChallengeMutation();
@@ -24,13 +25,14 @@ const ExposureModal = ({ noticeId, onClose }: Props) => {
     !isAllSelected && allIds.some((id) => selectedIds.includes(id));
 
   useEffect(() => {
-    if (!challengesQuery.data) return;
+    if (!challengesQuery.data || isInitialized) return;
     setSelectedIds(
       challengesQuery.data.challengeList
         .filter((c) => c.isVisible)
         .map((c) => c.id),
     );
-  }, [challengesQuery.data]);
+    setIsInitialized(true);
+  }, [challengesQuery.data, isInitialized]);
 
   const selectAllRef = useCallback(
     (node: HTMLInputElement | null) => {
