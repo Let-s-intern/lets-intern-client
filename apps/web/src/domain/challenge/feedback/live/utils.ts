@@ -12,7 +12,11 @@ function resolveStatus(
 ): LiveFeedbackStatus {
   const isExpired = new Date(item.missionEndDate) < new Date();
 
-  if (!item.feedbackId || !isMissionSubmitted) {
+  const isAdminConfirmed =
+    ['PRESENT', 'UPDATED'].includes(item.attendanceStatus ?? '') &&
+    item.attendanceResult === 'PASS';
+
+  if (!item.feedbackId || !isAdminConfirmed) {
     return isExpired ? 'expired' : 'prev';
   }
   if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
@@ -55,6 +59,7 @@ export function toMission(
     missionEndDate: endDay,
     feedbackStartDate: feedbackStartDay,
     feedbackEndDate: feedbackEndDay,
+    attendanceResult: item.attendanceResult,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
     isMissionSubmitted,
