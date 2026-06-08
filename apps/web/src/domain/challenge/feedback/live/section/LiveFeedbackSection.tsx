@@ -93,26 +93,37 @@ const EXPIRED_NOTICE = {
   },
 };
 
+const NoticeBox = ({ title, body }: { title: string; body: string }) => (
+  <div className="bg-primary-5 rounded-xs hidden gap-2 border px-4 py-2 md:flex">
+    <img src="/icons/info.svg" alt="" className="size-4" />
+    <div className="flex flex-col gap-0.5">
+      <p className="text-xxsmall12 text-system-positive-blue items-center">
+        {title}
+      </p>
+      <p className="text-xxsmall12 text-neutral-20">{body}</p>
+    </div>
+  </div>
+);
+
 const ExpiredNotice = ({ hasReservation }: { hasReservation: boolean }) => {
   const { title, body } = hasReservation
     ? EXPIRED_NOTICE.noSubmission
     : EXPIRED_NOTICE.noReservation;
 
   return (
-    <div className="bg-primary-5 rounded-xs hidden gap-2 border px-4 py-2 md:flex">
-      <img src="/icons/info.svg" alt="" className="size-4" />
-      <div className="flex flex-col gap-0.5">
-        <p className="text-xxsmall12 text-system-positive-blue items-center">
-          {title}
-        </p>
-        <p className="text-xxsmall12 text-neutral-20">
-          {body} 기간 내에 예약과 미션 제출이 모두 이루어져야 피드백을 받을 수
-          있습니다.
-        </p>
-      </div>
-    </div>
+    <NoticeBox
+      title={title}
+      body={`${body} 기간 내에 예약과 미션 제출이 모두 이루어져야 피드백을 받을 수 있습니다.`}
+    />
   );
 };
+
+const NonParticipationNotice = () => (
+  <NoticeBox
+    title="LIVE 피드백 시간이 종료되었습니다."
+    body="예약 시간 내 입장이 확인되지 않아 피드백이 진행되지 않았습니다."
+  />
+);
 
 interface MissionCardProps {
   mission: LiveFeedbackMission;
@@ -151,6 +162,8 @@ const LiveFeedbackMissionCard = ({
       notice={
         mission.status === 'expired' ? (
           <ExpiredNotice hasReservation={!!mission.feedbackId} />
+        ) : mission.status === 'nonParticipation' ? (
+          <NonParticipationNotice />
         ) : undefined
       }
     >
