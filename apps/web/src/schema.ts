@@ -1394,6 +1394,11 @@ export const challengeSchedule = z
           endDate: z.string().nullable(),
           status: MissionStatusEnum.nullable(),
           missionType: MissionTypeEnum.optional(),
+          hasFeedback: z.boolean().optional(),
+          feedbackType: z
+            .enum(['WRITTEN_FEEDBACK', 'LIVE_FEEDBACK'])
+            .nullable()
+            .optional(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),

@@ -39,6 +39,7 @@ const MissionSubmitRegularSection = ({
     setSelectedExperienceIds,
     setSelectedMission,
     textareaValue,
+    hasFeedback,
     preQuestionValue,
     isSubmitted,
     showToast,
@@ -102,11 +103,13 @@ const MissionSubmitRegularSection = ({
           onChange={handleTextareaChange}
           disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
         />
-        <MissionPreQuestionInputSection
-          value={preQuestionValue}
-          onChange={handlePreQuestionChange}
-          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
-        />
+        {hasFeedback && (
+          <MissionPreQuestionInputSection
+            value={preQuestionValue}
+            onChange={handlePreQuestionChange}
+            disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+          />
+        )}
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
