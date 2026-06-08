@@ -302,8 +302,8 @@ export const getChallengeIdPrimitiveSchema = z.object({
   endDate: z.string().optional(),
   beginning: z.string().optional(),
   deadline: z.string().optional(),
-  chatLink: z.string().optional(),
-  chatPassword: z.string().optional(),
+  chatLink: z.string().nullable().optional(),
+  chatPassword: z.string().nullable().optional(),
   challengeType: challengeTypeSchema,
   classificationInfo: z.array(
     z.object({
@@ -1427,12 +1427,18 @@ export const challengeSchedule = z
           endDate: z.string().nullable(),
           status: MissionStatusEnum.nullable(),
           missionType: MissionTypeEnum.optional(),
+          hasFeedback: z.boolean().optional(),
+          feedbackType: z
+            .enum(['WRITTEN_FEEDBACK', 'LIVE_FEEDBACK'])
+            .nullable()
+            .optional(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),
           id: z.number().nullable(),
           link: z.string().nullable(),
           review: z.string().nullable().optional(),
+          preQuestion: z.string().nullable().optional(),
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
@@ -1684,6 +1690,7 @@ export const myDailyMission = z
         id: z.number().nullable(),
         link: z.string().nullable(),
         review: z.string().nullable().optional(),
+        preQuestion: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),

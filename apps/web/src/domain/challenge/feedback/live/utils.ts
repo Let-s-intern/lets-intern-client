@@ -6,24 +6,29 @@ import type { ChallengeType } from '@/schema';
 import { challengeTypeToText } from '@/utils/convert';
 import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
-function resolveStatus(
-  item: LiveFeedbackItem,
-  isMissionSubmitted: boolean,
-): LiveFeedbackStatus {
+function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
   const isExpired = new Date(item.missionEndDate) < new Date();
 
-  if (!item.feedbackId || !isMissionSubmitted) {
-    return isExpired ? 'expired' : 'prev';
+  // 피드백 세션이 존재하면 출석 결과를 우선 확인 (attendanceResult와 무관)
+  if (item.feedbackId) {
+    if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
+    if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
+    if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
+      return 'completed';
+    }
+    if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
+      return 'nonParticipation';
+    }
   }
-  if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
-  if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
-  if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
-    return 'completed';
-  }
-  if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
-    return 'nonParticipation';
-  }
-  return 'reserved';
+
+  // 진행 예정: 정상제출 + 어드민 확인완료인 경우에만
+  const isAdminConfirmed =
+    ['PRESENT', 'UPDATED'].includes(item.attendanceStatus ?? '') &&
+    item.attendanceResult === 'PASS';
+
+  if (item.feedbackId && isAdminConfirmed) return 'reserved';
+
+  return isExpired ? 'expired' : 'prev';
 }
 
 export function toMission(
@@ -32,6 +37,7 @@ export function toMission(
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
   const endDay = item.missionEndDate.slice(0, 10);
+  const feedbackStartDay = endDay;
   const feedbackEndDay = new Date(
     new Date(item.missionEndDate).getTime() + 3 * 24 * 60 * 60 * 1000,
   )
@@ -41,7 +47,7 @@ export function toMission(
   const isMissionSubmitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
     item.attendanceStatus ?? '',
   );
-  const status = resolveStatus(item, isMissionSubmitted);
+  const status = resolveStatus(item);
 
   return {
     missionId: item.missionId,
@@ -52,7 +58,9 @@ export function toMission(
     challengeType,
     missionStartDate: startDay,
     missionEndDate: endDay,
+    feedbackStartDate: feedbackStartDay,
     feedbackEndDate: feedbackEndDay,
+    attendanceResult: item.attendanceResult,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
     isMissionSubmitted,
@@ -90,7 +98,7 @@ export const LIVE_FEEDBACK_STATUS_VARIANT: Record<
 > = {
   prev: 'neutral',
   reserved: 'muted',
-  completed: 'active',
+  completed: 'muted',
   expired: 'muted',
   nonParticipation: 'muted',
   checkNeeded: 'error',

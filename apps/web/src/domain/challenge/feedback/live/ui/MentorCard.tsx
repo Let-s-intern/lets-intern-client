@@ -10,7 +10,7 @@ interface MentorCardProps {
 
 const MentorCard = ({ mentor, onClick, className }: MentorCardProps) => {
   const cardClassName = twMerge(
-    'rounded-xs flex w-full items-center gap-4 p-4 text-left transition-colors',
+    'rounded-xs flex h-full w-full items-start gap-4 p-4 text-left transition-colors',
     onClick && 'cursor-pointer',
     className,
   );
@@ -31,11 +31,13 @@ const MentorCard = ({ mentor, onClick, className }: MentorCardProps) => {
           </span>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-1 py-2">
+      <div className="flex w-full flex-col gap-4 py-2">
         <p className="text-xsmall14 text-neutral-0 font-bold">
           {mentor.nickname}
         </p>
-        <p className="text-xxsmall12 text-neutral-30">{mentor.introduction}</p>
+        <p className="text-xxsmall12 text-neutral-30 line-clamp-4 whitespace-pre-line">
+          {mentor.introduction}
+        </p>
       </div>
     </>
   );

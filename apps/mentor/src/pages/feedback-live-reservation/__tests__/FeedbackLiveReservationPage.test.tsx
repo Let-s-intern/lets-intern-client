@@ -9,11 +9,19 @@ const useUserQueryMock = vi.fn();
 const useFeedbackMentorDetailQueryMock = vi.fn();
 const useFeedbackMentorSlotsQueryMock = vi.fn();
 
+const noopMutation = {
+  mutate: vi.fn(),
+  mutateAsync: vi.fn(),
+  isPending: false,
+};
+
 vi.mock('@/api/feedback/feedback', () => ({
   useFeedbackMentorListQuery: () => useFeedbackMentorListQueryMock(),
   useFeedbackMentorDetailQuery: (id: number | null) =>
     useFeedbackMentorDetailQueryMock(id),
   useFeedbackMentorSlotsQuery: () => useFeedbackMentorSlotsQueryMock(),
+  useUpdateFeedbackByMentorMutation: () => noopMutation,
+  useUpdateFeedbackMeetingUrlMutation: () => noopMutation,
 }));
 
 vi.mock('@/api/user/user', () => ({
@@ -58,8 +66,9 @@ describe('FeedbackLiveReservationPage', () => {
     expect(
       screen.getByRole('heading', { name: '예약 목록' }),
     ).toBeInTheDocument();
+    // 변경 내역은 별도 테이블이 아니라 예약 목록 행의 드롭다운으로 통합됨.
     expect(
-      screen.getByRole('heading', { name: '예약 변경 내역' }),
-    ).toBeInTheDocument();
+      screen.queryByRole('heading', { name: '예약 변경 내역' }),
+    ).not.toBeInTheDocument();
   });
 });

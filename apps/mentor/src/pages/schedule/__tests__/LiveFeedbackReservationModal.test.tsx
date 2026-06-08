@@ -17,32 +17,12 @@ vi.mock('@/utils/axios', () => ({
   },
 }));
 
-// 채팅 모달은 PocketBase realtime에 연결되므로 테스트에서는 패키지 컴포넌트를 모킹해
-// 멘토 측 래핑(역할·feedbackId 전달)만 검증한다. (패키지 자체는 별도 테스트됨)
-vi.mock('@letscareer/chat/ui/ChatModal', () => ({
-  default: ({
-    role,
-    activeFeedbackId,
-    onClose,
-  }: {
-    role: string;
-    activeFeedbackId?: number | null;
-    onClose: () => void;
-  }) => (
-    <div
-      data-testid="chat-modal"
-      data-role={role}
-      data-feedback-id={String(activeFeedbackId)}
-    >
-      <button type="button" onClick={onClose}>
-        채팅 모달 닫기
-      </button>
-    </div>
-  ),
-}));
-
-// mockNow는 라이브 모달이 시연용으로 잡혀 있어 setInterval이 멈춰 있음.
-// 테스트는 그대로 사용 (시연 시각 = 2026-05-04 09:45)
+// MOCK_NOW=null → 카운트다운/입장 게이팅은 실제 시각 기준으로 동작한다.
+// 입장 버튼은 "시작 20분 전 ~ 종료 전"에만 활성(T-20 게이팅)이므로, 시간 의존
+// 테스트는 startDate/endDate 를 현재 시각 기준 상대값으로 만든다.
+function isoFromNowMin(offsetMinutes: number): string {
+  return new Date(Date.now() + offsetMinutes * 60_000).toISOString();
+}
 
 import LiveFeedbackReservationModal from '../modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '../types';
@@ -157,44 +137,23 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     expect(screen.queryByText('종료됨')).not.toBeInTheDocument();
   });
 
-  it('푸터의 "멘티와 대화하기" 버튼이 활성 상태로 노출된다', () => {
+  it('채팅 기능 제거 — "멘티와 대화하기" 버튼이 더 이상 노출되지 않는다', () => {
     renderModal(makeBar());
-    const btn = screen.getByRole('button', { name: '멘티와 대화하기' });
-    expect(btn).toBeEnabled();
+    expect(
+      screen.queryByRole('button', { name: '멘티와 대화하기' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('"멘티와 대화하기" 클릭 시 role=mentor·해당 feedbackId로 채팅 모달이 열린다', async () => {
-    const user = userEvent.setup();
-    renderModal(makeBar());
-
-    await user.click(screen.getByRole('button', { name: '멘티와 대화하기' }));
-
-    const modal = await screen.findByTestId('chat-modal');
-    expect(modal).toHaveAttribute('data-role', 'mentor');
-    expect(modal).toHaveAttribute('data-feedback-id', '101');
-  });
-
-  it('meetingUrl 미생성(null) 이어도 멘토는 "라이브 입장하기" 버튼이 활성 (데드락 방지)', async () => {
-    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 인 상태.
-    // 데드락 방지: 멘토는 클릭해서 회의실을 생성해야 하므로 버튼이 활성이어야 한다.
-    axiosMock.get.mockResolvedValue({
-      data: { data: { feedbackInfo: makeMentorDetail({ meetingUrl: null }) } },
-    });
-    renderModal(makeBar());
-    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
-    await waitFor(() => expect(btn).toBeEnabled());
-  });
-
-  // TODO(임시): 라이브 입장 시간 게이팅(T-10 룰)이 임시 해제됨 (PRD §13).
-  // 정식 운영 복원 시 "T-10 이전 → disabled" 단언으로 되돌린다.
-  // 임시 동작: BE meetingUrl(= base + 랜덤 meetingRoom)이 내려오면
-  // 시간 무관(T-10 이전 포함) 항상 입장 가능.
-  it('meetingUrl 존재 시 T-10 이전이어도 "라이브 입장하기" 버튼이 활성 (시간 게이팅 임시 해제)', async () => {
+  it('시작 20분 이내면 meetingUrl 이 null 이어도 입장 버튼이 활성 (데드락 방지)', async () => {
+    // 멘토가 아직 입장(meeting-url PATCH)하지 않아 BE meetingUrl 이 null 이어도,
+    // 시작 20분 전 ~ 종료 전 구간이면 클릭해 회의실을 생성할 수 있어야 한다.
     axiosMock.get.mockResolvedValue({
       data: {
         data: {
           feedbackInfo: makeMentorDetail({
-            meetingUrl: 'https://meet.jit.si/letscareer-x7k2p9',
+            meetingUrl: null,
+            startDate: isoFromNowMin(10),
+            endDate: isoFromNowMin(40),
           }),
         },
       },
@@ -204,11 +163,45 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     await waitFor(() => expect(btn).toBeEnabled());
   });
 
+  it('시작 20분 이전이면 입장 버튼이 비활성 (T-20 게이팅)', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            meetingUrl: null,
+            startDate: isoFromNowMin(120),
+            endDate: isoFromNowMin(150),
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeDisabled());
+  });
+
+  it('종료 이후면 입장 버튼이 비활성', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            meetingUrl: null,
+            startDate: isoFromNowMin(-60),
+            endDate: isoFromNowMin(-30),
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeDisabled());
+  });
+
   it('예약 일시 라인이 "YYYY.MM.DD (요일) HH:mm~HH:mm" 형식으로 노출된다', () => {
     renderModal(makeBar());
     // 2026-05-04 = 월요일
     expect(
-      screen.getByText(/2026\.05\.04 \(월\) 10:00~10:30/),
+      screen.getByText(/2026\.05\.04 \(월\) 10:00 – 10:30/),
     ).toBeInTheDocument();
   });
 });
@@ -232,12 +225,12 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
   });
 
-  it('attendanceStatus 가 PRESENT 면 제출 상태가 "제출"로 표기된다', async () => {
+  it('attendanceStatus 가 PRESENT 면 제출 상태가 "제출됨"로 표기된다', async () => {
     renderModal(makeBar());
     await waitFor(() => {
       expect(screen.getByText('제출 상태')).toBeInTheDocument();
     });
-    expect(screen.getByText('제출')).toBeInTheDocument();
+    expect(screen.getByText('제출됨')).toBeInTheDocument();
   });
 
   it('attendanceStatus 가 ABSENT 면 제출 상태가 "미제출"로 표기된다', async () => {
@@ -279,7 +272,7 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
   });
 
-  it('menteeStatus(라이브 출석)를 읽기 전용으로 노출한다 (마킹 버튼 없음)', async () => {
+  it('menteeStatus(피드백 참여)를 읽기 전용으로 노출한다 (마킹 버튼 없음)', async () => {
     axiosMock.get.mockResolvedValue({
       data: {
         data: { feedbackInfo: makeMentorDetail({ menteeStatus: 'PRESENT' }) },
@@ -287,10 +280,10 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     });
     renderModal(makeBar());
     await waitFor(() => {
-      expect(screen.getByText('라이브 출석')).toBeInTheDocument();
-      // 값 노출 — 정확히 "출석" 텍스트 노드 (라이브 출석 라벨과 별개)
+      expect(screen.getByText('피드백 참여')).toBeInTheDocument();
+      // 값 노출 — 정확히 "참여" 텍스트 노드 (피드백 참여 라벨과 별개)
       expect(
-        screen.getByText((content) => content === '출석'),
+        screen.getByText((content) => content === '참여'),
       ).toBeInTheDocument();
     });
     // 출석 마킹 버튼(쓰기 UI)은 디자인 미확정으로 노출 금지
@@ -305,6 +298,35 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
       expect(screen.getByText('기획 / PM / PO')).toBeInTheDocument();
     });
     expect(screen.queryByText(/010-/)).not.toBeInTheDocument();
+  });
+
+  it('"피드백 참여" 라벨 옆 ⓘ 트리거에 호버하면 안내 툴팁이 노출된다', async () => {
+    const user = userEvent.setup();
+    renderModal(makeBar());
+
+    const trigger = await screen.findByRole('button', {
+      name: '피드백 참여 안내',
+    });
+    // aria-describedby 는 노출 중일 때만 연결된다(efc1a6a4b a11y 변경) — 호버 후 검증.
+    await user.hover(trigger);
+    const describedBy = trigger.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const tooltip = document.getElementById(describedBy!);
+    expect(tooltip).toHaveAttribute('role', 'tooltip');
+    expect(tooltip).toHaveTextContent(
+      '피드백 종료 후 멘티 참여 상태를 저장해주세요. 참여 여부 저장 후 진행 완료 및 정산 대상에 반영됩니다.',
+    );
+    expect(tooltip).toHaveClass('opacity-100');
+  });
+
+  it('"참여 확인하기" 버튼 클릭 시 멘티 참여 상태 확인 모달이 열린다', async () => {
+    const user = userEvent.setup();
+    renderModal(makeBar());
+
+    const btn = await screen.findByRole('button', { name: '참여 확인하기' });
+    await user.click(btn);
+    // 참여 확인 모달은 종료 후 저장 게이트를 가진 별도 모달 — 진입만 검증
+    expect(btn).toBeInTheDocument();
   });
 
   it('모달 소스가 삭제된 liveFeedbackReservationMock 을 import 하지 않는다 (회귀 가드)', () => {

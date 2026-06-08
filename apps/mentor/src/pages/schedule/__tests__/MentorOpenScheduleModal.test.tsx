@@ -22,7 +22,7 @@ describe('MentorOpenScheduleModal (콘텐츠 추출 후 회귀)', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('isOpen=true 일 때 콘텐츠가 마운트되고 모달 모드 라벨("취소") 노출', () => {
+  it('isOpen=true 일 때 콘텐츠가 마운트되고 저장 버튼이 노출된다 (되돌리기는 변경 시에만)', () => {
     render(
       <MentorOpenScheduleModal
         isOpen
@@ -35,10 +35,13 @@ describe('MentorOpenScheduleModal (콘텐츠 추출 후 회귀)', () => {
     expect(
       screen.getByRole('button', { name: '저장하기' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '취소' })).toBeInTheDocument();
+    // 되돌리기는 변경사항이 있을 때만 노출 → 초기엔 없음
+    expect(
+      screen.queryByRole('button', { name: '되돌리기' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('취소 버튼 클릭 시 onClose 호출', async () => {
+  it('닫기(X) 버튼 클릭 시 onClose 호출', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(
@@ -50,7 +53,7 @@ describe('MentorOpenScheduleModal (콘텐츠 추출 후 회귀)', () => {
         focusDate={focusDate}
       />,
     );
-    await user.click(screen.getByRole('button', { name: '취소' }));
+    await user.click(screen.getByRole('button', { name: '닫기' }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

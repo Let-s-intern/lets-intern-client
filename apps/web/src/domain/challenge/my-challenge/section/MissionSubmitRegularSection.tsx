@@ -6,6 +6,7 @@ import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import LinkInputSection from './LinkInputSection';
 import { MissionSubmitListForm } from './mission-submit-list-form';
+import { MissionPreQuestionInputSection } from './MissionPreQuestionInputSection';
 import { MissionReviewInputSection } from './MissionReviewInputSection';
 import {
   type MissionSubmitRegularAttendanceInfo,
@@ -38,6 +39,9 @@ const MissionSubmitRegularSection = ({
     setSelectedExperienceIds,
     setSelectedMission,
     textareaValue,
+    hasFeedback,
+    feedbackType,
+    preQuestionValue,
     isSubmitted,
     showToast,
     toastMessage,
@@ -53,6 +57,7 @@ const MissionSubmitRegularSection = ({
     isResubmitBlocked,
     canSubmit,
     handleTextareaChange,
+    handlePreQuestionChange,
     handleSubmit,
     handleCancelEdit,
     handleSaveEdit,
@@ -99,6 +104,14 @@ const MissionSubmitRegularSection = ({
           onChange={handleTextareaChange}
           disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
         />
+        {hasFeedback && (
+          <MissionPreQuestionInputSection
+            value={preQuestionValue}
+            onChange={handlePreQuestionChange}
+            disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+            feedbackType={feedbackType}
+          />
+        )}
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton

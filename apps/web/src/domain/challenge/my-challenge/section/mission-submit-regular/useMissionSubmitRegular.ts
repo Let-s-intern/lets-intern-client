@@ -21,6 +21,7 @@ export interface MissionSubmitRegularAttendanceInfo {
   comments: string | null;
   result: AttendanceResult | null;
   review?: string | null;
+  preQuestion?: string | null;
   submittedUserExperienceIds?: number[] | null;
 }
 
@@ -49,6 +50,9 @@ export function useMissionSubmitRegular({
   const currentSelectedMission = schedules.find(
     (schedule) => schedule.missionInfo.id === selectedMissionId,
   );
+  const hasFeedback = currentSelectedMission?.missionInfo?.hasFeedback ?? false;
+  const feedbackType =
+    currentSelectedMission?.missionInfo?.feedbackType ?? null;
   const regularMissions = schedules.filter(
     (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
   );
@@ -58,6 +62,9 @@ export function useMissionSubmitRegular({
 
   const [textareaValue, setTextareaValue] = useState(
     attendanceInfo?.review || '',
+  );
+  const [preQuestionValue, setPreQuestionValue] = useState(
+    attendanceInfo?.preQuestion || '',
   );
   const [isSubmitted, setIsSubmitted] = useState(
     attendanceInfo?.submitted === true,
@@ -87,6 +94,7 @@ export function useMissionSubmitRegular({
     const linkValue = attendanceInfo?.link || '';
 
     setTextareaValue(reviewValue);
+    setPreQuestionValue(attendanceInfo?.preQuestion || '');
     setIsSubmitted(attendanceInfo?.submitted === true);
     setLinkValue(linkValue);
     setIsLinkVerified(!!linkValue);
@@ -96,6 +104,12 @@ export function useMissionSubmitRegular({
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
+  };
+
+  const handlePreQuestionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setPreQuestionValue(e.target.value);
   };
 
   const isResubmitBlocked =
@@ -137,6 +151,7 @@ export function useMissionSubmitRegular({
         missionId,
         link: linkValue,
         review: textareaValue,
+        preQuestion: preQuestionValue,
         userExperienceIds: selectedExperienceIds,
         testDate,
       });
@@ -159,15 +174,17 @@ export function useMissionSubmitRegular({
   const handleCancelEdit = () => {
     const isChanged =
       attendanceInfo?.link !== linkValue ||
-      attendanceInfo.review !== textareaValue;
+      attendanceInfo.review !== textareaValue ||
+      attendanceInfo.preQuestion !== preQuestionValue;
     if (isChanged) {
       setLinkValue(attendanceInfo?.link ?? '');
       setTextareaValue(attendanceInfo?.review || '');
+      setPreQuestionValue(attendanceInfo?.preQuestion || '');
       setSelectedExperienceIds(
         attendanceInfo?.submittedUserExperienceIds || [],
       );
       setIsEditing(false);
-      setIsLinkVerified(false);
+      setIsLinkVerified(!!attendanceInfo?.link);
     } else {
       setIsEditing(false);
     }
@@ -181,6 +198,7 @@ export function useMissionSubmitRegular({
         attendanceId: attendanceInfo.id,
         link: linkValue,
         review: textareaValue,
+        preQuestion: preQuestionValue,
         userExperienceIds: selectedExperienceIds,
       });
       await refetchSchedules?.();
@@ -193,9 +211,11 @@ export function useMissionSubmitRegular({
     }
   };
 
-  const canSubmit = !currentSelectedMission?.missionInfo?.missionType
+  const preQuestionValid = !hasFeedback || preQuestionValue.trim().length > 0;
+  const baseSubmitValid = !currentSelectedMission?.missionInfo?.missionType
     ? isLinkVerified && textareaValue.trim().length > 0
     : selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
+  const canSubmit = baseSubmitValid && preQuestionValid;
 
   const handleLinkChange = (link: string) => {
     setLinkValue(link);
@@ -227,7 +247,11 @@ export function useMissionSubmitRegular({
     isSubmitPeriodEnded,
     isResubmitBlocked,
     canSubmit,
+    hasFeedback,
+    feedbackType,
+    preQuestionValue,
     handleTextareaChange,
+    handlePreQuestionChange,
     handleSubmit,
     handleCancelEdit,
     handleSaveEdit,

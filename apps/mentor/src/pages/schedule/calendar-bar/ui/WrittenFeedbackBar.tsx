@@ -1,6 +1,8 @@
 'use client';
 
 import WrittenFeedbackIcon from '@/common/icon/feedback/WrittenFeedbackIcon';
+import { twMerge } from '@/lib/twMerge';
+import { scheduleDesign } from '../../scheduleDesign';
 import { currentNow } from '../../constants/mockNow';
 import type { PeriodBarData } from '../../types';
 
@@ -9,72 +11,56 @@ interface WrittenFeedbackBarProps {
   onBarClick: (challengeId: number, missionId: number) => void;
 }
 
+/** 하루의 밀리초 — D-day 계산용 */
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** 오늘 기준 D-day (양수=남음, 0=오늘, 음수=경과). */
+function daysFromToday(iso: string): number {
+  const now = currentNow();
+  const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const t = new Date(iso);
+  const b = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
+}
+
 /**
- * 서면 피드백 기간 바 (PRD-0503 #3 디자인 갱신).
- *
- * 디자인 참조: `.claude/tasks/서면 피드백 일정.png`
- * - 흰 배경 + 옅은 회색 테두리 + 둥근 모서리
- * - 좌측: 그린 톤 말풍선(채팅) 아이콘
- * - "서면 피드백 기간" 라벨
- * - 완료 상태일 때만 옅은 배경의 "완료" 배지 노출
- * - 우측: 챌린지 제목 (예: "포트폴리오 챌린지 n기") + chevron-right
+ * 서면 피드백 기간 바 — 2줄 레이아웃 (디자인 시안 image #16).
+ * 1줄: [말풍선 아이콘] 서면 피드백 기간 + 챌린지명(회색)
+ * 2줄: [오늘 마감 ·] 남은 피드백 N건(강조) · 완료 N / 제출 N
  */
 const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
-  const totalMentees = bar.submittedCount + bar.notSubmittedCount;
-  const isPast = new Date(bar.endDate).getTime() < currentNow().getTime();
-  // 멘토 액션 완료 = 모든 제출자에게 피드백 작성, 또는 (제출자 0 + 기간 경과)
-  const allFeedbackDone =
-    bar.submittedCount > 0 && bar.completedCount >= bar.submittedCount;
-  const isCompleted = allFeedbackDone || (bar.submittedCount === 0 && isPast);
+  const remaining = Math.max(bar.submittedCount - bar.completedCount, 0);
+  const isDeadlineToday = daysFromToday(bar.feedbackDeadline) === 0;
 
   return (
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
-      className="border-neutral-80 hover:bg-neutral-95 flex h-10 w-full items-center gap-2 overflow-hidden rounded-sm border bg-white px-3 text-left transition-colors"
-      aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차${
-        isCompleted ? ' (완료)' : ''
-      } (총 ${totalMentees}명)`}
-    >
-      {/* 좌측: 말풍선 아이콘 */}
-      <WrittenFeedbackIcon size={18} className="shrink-0" />
-
-      {/* 라벨 */}
-      <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
-        서면 피드백 기간
-      </span>
-
-      {/* 완료 배지 */}
-      {isCompleted && (
-        <span className="bg-neutral-95 text-neutral-40 shrink-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-medium tracking-[-0.3px]">
-          완료
-        </span>
+      className={twMerge(
+        scheduleDesign.surface,
+        'hover:bg-neutral-95 flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left transition-colors',
       )}
+      aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차`}
+    >
+      {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}
+      <div className="flex items-center gap-2">
+        <WrittenFeedbackIcon size={18} className="shrink-0" />
+        <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
+          서면 피드백 기간
+        </span>
+        <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
+          {bar.challengeTitle}
+        </span>
+      </div>
 
-      {/* 가운데 spacer */}
-      <span className="flex-1" />
-
-      {/* 우측: 챌린지명 (포트폴리오 챌린지 n기) */}
-      <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
-        {bar.challengeTitle}
-      </span>
-
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="text-neutral-40 shrink-0"
-        aria-hidden
-      >
-        <path
-          d="M9 6l6 6-6 6"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {/* 2줄: 보조 정보 (아이콘 너비만큼 들여쓰기) */}
+      <div className="text-xxsmall12 text-neutral-40 pl-[26px] tracking-[-0.3px]">
+        {isDeadlineToday && <span>오늘 마감 · </span>}
+        <span className="text-primary font-medium">
+          남은 피드백 {remaining}건
+        </span>
+        {` · 완료 ${bar.completedCount} / 제출 ${bar.submittedCount}`}
+      </div>
     </button>
   );
 };

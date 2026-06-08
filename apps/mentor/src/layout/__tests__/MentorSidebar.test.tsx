@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -29,57 +28,85 @@ beforeAll(() => {
   }
 });
 
+const renderSidebar = (path: string) =>
+  render(
+    <MemoryRouter initialEntries={[path]}>
+      <MentorSidebar isOpen onClose={() => {}} />
+    </MemoryRouter>,
+  );
+
 describe('MentorSidebar', () => {
-  it('피드백 메뉴 라벨이 "피드백"으로 노출된다 (구 "피드백 현황" 아님)', () => {
-    render(
-      <MemoryRouter initialEntries={['/feedback-management']}>
-        <MentorSidebar isOpen onClose={() => {}} />
-      </MemoryRouter>,
-    );
+  it('재구성된 메뉴 라벨이 모두 노출된다', () => {
+    renderSidebar('/');
 
+    expect(screen.getByText('공지사항')).toBeInTheDocument();
     expect(screen.getByText('피드백')).toBeInTheDocument();
-    expect(screen.queryByText('피드백 현황')).not.toBeInTheDocument();
-  });
-
-  it('피드백 그룹은 자식 라우트에 진입하면 자동으로 펼쳐지고 3개 하위 메뉴가 노출된다', () => {
-    render(
-      <MemoryRouter initialEntries={['/feedback/live-availability']}>
-        <MentorSidebar isOpen onClose={() => {}} />
-      </MemoryRouter>,
-    );
-
-    // 펼쳐진 상태이므로 하위 메뉴가 모두 보여야 함
-    expect(screen.getByText('라이브 피드백 일정 열기')).toBeInTheDocument();
+    expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
+    expect(screen.getByText('피드백 내역')).toBeInTheDocument();
+    expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
     expect(screen.getByText('예약 현황')).toBeInTheDocument();
-    expect(screen.getByText('멘티관리')).toBeInTheDocument();
-    expect(screen.getByText('피드백 관리')).toBeInTheDocument();
-
-    const groupButton = screen.getByRole('button', { name: /피드백/ });
-    expect(groupButton).toHaveAttribute('aria-expanded', 'true');
+    // 채팅 기능 제거 — 메뉴 미노출
+    expect(screen.queryByText('채팅')).not.toBeInTheDocument();
+    expect(screen.getByText('참여중인 챌린지')).toBeInTheDocument();
+    expect(screen.getByText('프로필')).toBeInTheDocument();
   });
 
-  it('피드백 그룹 토글 버튼을 클릭하면 펼침/접힘이 전환된다', async () => {
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <MentorSidebar isOpen onClose={() => {}} />
-      </MemoryRouter>,
-    );
+  it('"멘티관리" 구 라벨은 노출되지 않는다', () => {
+    renderSidebar('/');
 
-    const groupButton = screen.getByRole('button', { name: /피드백/ });
-    expect(groupButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('멘티관리')).not.toBeInTheDocument();
+  });
+
+  it('구 라벨과 정산 메뉴는 노출되지 않는다', () => {
+    renderSidebar('/');
+
+    expect(screen.queryByText('프로그램 일정')).not.toBeInTheDocument();
+    expect(screen.queryByText('피드백 관리')).not.toBeInTheDocument();
     expect(
       screen.queryByText('라이브 피드백 일정 열기'),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('정산')).not.toBeInTheDocument();
+  });
 
-    await user.click(groupButton);
-    expect(groupButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('라이브 피드백 일정 열기')).toBeInTheDocument();
+  it('공지사항이 최상단에 위치한다', () => {
+    renderSidebar('/notice');
 
-    await user.click(groupButton);
-    expect(groupButton).toHaveAttribute('aria-expanded', 'false');
+    const labels = screen
+      .getAllByRole('listitem')
+      .map((li) => li.textContent ?? '');
+    expect(labels[0]).toContain('공지사항');
+  });
+
+  it('피드백 캘린더(/) 진입 시 캘린더가 활성 표시된다', () => {
+    renderSidebar('/');
+
+    const calendarLink = screen.getByRole('link', { name: '피드백 캘린더' });
+    expect(calendarLink).toHaveClass('text-primary');
+    expect(calendarLink).toHaveClass('font-semibold');
+  });
+
+  it('피드백 내역(/feedback-management) 진입 시 내역이 활성 표시된다', () => {
+    renderSidebar('/feedback-management');
+
+    const historyLink = screen.getByRole('link', { name: '피드백 내역' });
+    expect(historyLink).toHaveClass('text-primary');
+    expect(historyLink).toHaveClass('font-semibold');
+
+    // 같은 그룹의 다른 자식은 비활성
+    const calendarLink = screen.getByRole('link', { name: '피드백 캘린더' });
+    expect(calendarLink).not.toHaveClass('text-primary');
+  });
+
+  it('피드백 그룹 토글 버튼이 없고 하위 메뉴는 항상 펼쳐져 노출된다', () => {
+    // 피드백 그룹 밖 라우트에서도 하위 메뉴가 항상 보인다
+    renderSidebar('/profile');
+
     expect(
-      screen.queryByText('라이브 피드백 일정 열기'),
+      screen.queryByRole('button', { name: /피드백/ }),
     ).not.toBeInTheDocument();
+    expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
+    expect(screen.getByText('피드백 내역')).toBeInTheDocument();
+    expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
+    expect(screen.getByText('예약 현황')).toBeInTheDocument();
   });
 });

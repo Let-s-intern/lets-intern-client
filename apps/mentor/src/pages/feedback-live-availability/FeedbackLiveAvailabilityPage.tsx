@@ -8,6 +8,7 @@ import {
 } from '@/api/feedback/feedback';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
 import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
@@ -58,6 +59,23 @@ const FeedbackLiveAvailabilityPage = () => {
     [beCells],
   );
 
+  // 챌린지별 라이브 피드백 기간 바 — 날짜 헤더 아래 요일 컬럼에 걸쳐 표시
+  const { bars } = useLiveFeedbackData();
+  const livePeriods = useMemo(
+    () =>
+      bars
+        .filter((b) => b.barType === 'live-feedback-period')
+        .map((b) => ({
+          challengeTitle: b.challengeTitle,
+          th: b.th,
+          startDate: b.startDate,
+          endDate: b.endDate,
+          reservedCount: b.submittedCount,
+          capacity: b.submittedCount + b.notSubmittedCount,
+        })),
+    [bars],
+  );
+
   const isSaving = createSlots.isPending || deleteSlots.isPending;
 
   const handleSave = async (slots: MentorOpenSlot[]) => {
@@ -96,9 +114,10 @@ const FeedbackLiveAvailabilityPage = () => {
       return;
     }
 
-    // 모두 성공 시 — invalidate 가 트리거되어 최신 BE 데이터로 그리드 새로고침
-    // resetKey 변경으로 그리드 selectedKeys 도 초기 상태로 동기화
-    setResetCounter((n) => n + 1);
+    // 성공 시 resetCounter 를 건드리지 않는다.
+    // resetKey 변경은 아직 refetch 되지 않은 stale initialSlots 로 그리드를 되돌려
+    // 방금 저장한 선택을 지운다(저장이 한 번에 반영되지 않는 버그의 원인).
+    // 즉시 반영은 LiveAvailabilityContent 의 savedKeys 갱신이 담당한다.
   };
 
   return (
@@ -162,6 +181,7 @@ const FeedbackLiveAvailabilityPage = () => {
               onSave={handleSave}
               resetKey={resetCounter}
               showHeader={false}
+              livePeriods={livePeriods}
             />
           </>
         )}

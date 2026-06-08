@@ -53,6 +53,8 @@ export type ContentReviewType = {
   passedState: string;
   title: string;
   content: string;
+  score?: number;
+  npsScore?: number;
 };
 
 export type ProgramRecommend = {

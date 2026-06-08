@@ -40,20 +40,20 @@ describe('JitsiEmbed', () => {
     expect(capturedProps.current?.roomName).toBe('room-abcd');
   });
 
-  it('configOverwrite에 카메라 차단/480p/desktop FPS 정책이 전달된다', () => {
+  it('configOverwrite에 카메라 허용/480p/desktop FPS 정책이 전달된다', () => {
     renderEmbed();
     const config = capturedProps.current?.configOverwrite as Record<
       string,
       unknown
     >;
-    expect(config.startWithVideoMuted).toBe(true);
+    expect(config.startWithVideoMuted).toBe(false);
     expect(config.startWithAudioMuted).toBe(false);
-    expect(config.disableSelfView).toBe(true);
+    expect(config.disableSelfView).toBe(false);
     expect(config.resolution).toBe(480);
     expect(config.disableSimulcast).toBe(true);
     expect(config.toolbarButtons).toContain('microphone');
     expect(config.toolbarButtons).toContain('desktop');
-    expect(config.toolbarButtons).not.toContain('camera');
+    expect(config.toolbarButtons).toContain('camera');
   });
 
   it('interfaceConfigOverwrite로 Jitsi 로고/워터마크가 모두 숨겨진다', () => {
@@ -81,5 +81,27 @@ describe('JitsiEmbed', () => {
     renderEmbed({ onClose });
     fireEvent.click(screen.getByRole('button', { name: '닫기' }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('워터마크 커버가 렛츠커리어 로고를 포함하고 클릭을 차단한다(pointer-events-none 없음)', () => {
+    const { container } = renderEmbed();
+    const cover = container.querySelector('[data-watermark-cover]');
+    expect(cover).not.toBeNull();
+    // pointer-events-none 이면 클릭이 아래 Jitsi 워터마크 링크로 통과한다 — 금지
+    expect(cover?.className).not.toMatch(/pointer-events-none/);
+    expect(cover?.querySelector('svg')).not.toBeNull();
+  });
+
+  it('onApiReady가 종료/실패 계열 진단 이벤트 리스너를 등록한다', () => {
+    renderEmbed();
+    const onApiReady = capturedProps.current?.onApiReady as (api: {
+      addListener: (event: string, cb: (p: unknown) => void) => void;
+    }) => void;
+    const addListener = vi.fn();
+    onApiReady({ addListener });
+    const events = addListener.mock.calls.map(([event]) => event);
+    expect(events).toContain('videoConferenceLeft');
+    expect(events).toContain('connectionFailed');
+    expect(events).toContain('errorOccurred');
   });
 });

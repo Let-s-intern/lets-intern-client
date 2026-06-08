@@ -14,6 +14,7 @@
     "./Image": "./src/Image/index.tsx",
     "./JitsiEmbed": "./src/JitsiEmbed/index.tsx",
     "./JitsiEmbed/buildRoomUrl": "./src/JitsiEmbed/buildRoomUrl.ts",
+    "./JitsiEmbed/jitsiHealthCheck": "./src/JitsiEmbed/jitsiHealthCheck.ts",
     "./AlertDialog": "./src/AlertDialog/index.tsx",
     "./Popup": "./src/Popup/index.ts",
     "./Toast": "./src/Toast/index.tsx"

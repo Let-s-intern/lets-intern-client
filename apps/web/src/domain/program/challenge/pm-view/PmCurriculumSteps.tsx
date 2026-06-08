@@ -66,7 +66,7 @@ export const PmSeminar = ({ lectures }: SeminarProps) => {
     <div className="flex w-full flex-col items-center justify-center gap-6 md:gap-8">
       <div className="mx-auto w-full max-w-[900px]">
         <img
-          src="/images/live-seminar.gif"
+          src="/images/pm-live-seminar.gif"
           alt="PM LIVE 세미나"
           className="w-full rounded-xl"
         />

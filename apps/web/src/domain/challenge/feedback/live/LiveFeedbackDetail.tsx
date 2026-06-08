@@ -7,40 +7,26 @@ import {
 } from '@/api/feedback/feedback';
 import ReservationInfoSection from './section/ReservationInfoSection';
 import ReservationScheduleSection from './section/ReservationScheduleSection';
-import type {
-  LiveFeedbackStatus,
-  Mentor,
-  MissionPeriod,
-  SelectedSlot,
-} from './types';
+import type { LiveFeedbackMission, Mentor, SelectedSlot } from './types';
 
 interface Props {
   challengeId: string | number;
-  missionId: number;
-  feedbackId?: number | null;
-  assignedMentor: Mentor | null;
-  period: MissionPeriod;
-  status: LiveFeedbackStatus;
+  mission: LiveFeedbackMission;
 }
 
-const LiveFeedbackDetail = ({
-  challengeId,
-  missionId,
-  feedbackId,
-  assignedMentor,
-  period,
-  status,
-}: Props) => {
-  const { data: feedbackDetailData } = useFeedbackDetailQuery(feedbackId);
+const LiveFeedbackDetail = ({ challengeId, mission }: Props) => {
+  const { data: feedbackDetailData } = useFeedbackDetailQuery(
+    mission.feedbackId,
+  );
   const feedbackInfo = feedbackDetailData?.feedbackInfo ?? null;
 
   const { mutate: reserveFeedback } = usePostFeedbackReservation(challengeId);
 
   const { data: mentorData } = useMentorDetailQuery(
-    assignedMentor ? undefined : challengeId,
+    mission.mentorInfo ? undefined : challengeId,
   );
 
-  const mentor: Mentor = assignedMentor ??
+  const mentor: Mentor = mission.mentorInfo ??
     mentorData?.challengeMentorInfo ?? {
       nickname: '멘토',
       introduction: '멘토 정보를 불러오는 중입니다.',
@@ -49,7 +35,10 @@ const LiveFeedbackDetail = ({
 
   const handleConfirm = (selectedSlot: SelectedSlot) => {
     reserveFeedback(
-      { missionId, feedbackSlotId: selectedSlot.feedbackSlotId },
+      {
+        missionId: mission.missionId,
+        feedbackSlotId: selectedSlot.feedbackSlotId,
+      },
       {
         onError: (error) => {
           console.error('[예약 실패]', error);
@@ -63,14 +52,15 @@ const LiveFeedbackDetail = ({
       <ReservationInfoSection
         mentor={mentor}
         feedbackInfo={feedbackInfo}
-        status={status}
-        feedbackId={feedbackId}
+        status={mission.status}
+        feedbackId={mission.feedbackId}
       />
-      {status === 'prev' && !feedbackId && (
+      {mission.status === 'prev' && !mission.feedbackId && (
         <ReservationScheduleSection
           challengeId={challengeId}
           mentorName={mentor.nickname}
-          period={period}
+          feedbackStartDate={mission.feedbackStartDate}
+          feedbackEndDate={mission.feedbackEndDate}
           onConfirm={handleConfirm}
         />
       )}
