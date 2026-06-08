@@ -208,9 +208,11 @@ export function useMissionSubmitRegular({
     }
   };
 
-  const canSubmit = !currentSelectedMission?.missionInfo?.missionType
+  const preQuestionValid = !hasFeedback || preQuestionValue.trim().length > 0;
+  const baseSubmitValid = !currentSelectedMission?.missionInfo?.missionType
     ? isLinkVerified && textareaValue.trim().length > 0
     : selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
+  const canSubmit = baseSubmitValid && preQuestionValid;
 
   const handleLinkChange = (link: string) => {
     setLinkValue(link);
