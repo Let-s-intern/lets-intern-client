@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AttendanceResultEnum } from '@/schema';
 
 export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
 
@@ -42,6 +43,7 @@ export const liveFeedbackItemSchema = z.object({
   feedbackEndDate: z.string().nullable(),
   feedbackStatus: feedbackStatusSchema.nullable(),
   attendanceStatus: attendanceStatusSchema.nullable(),
+  attendanceResult: AttendanceResultEnum.nullable(),
   mentorStatus: feedbackAttendanceStatusSchema.nullable(),
   menteeStatus: feedbackAttendanceStatusSchema.nullable(),
   mentorInfo: challengeMentorInfoSchema.nullish(),

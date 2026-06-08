@@ -35,8 +35,9 @@ export interface LiveFeedbackMission {
   challengeType: string;
   missionStartDate: string; // 'YYYY-MM-DD'
   missionEndDate: string; // 'YYYY-MM-DD'
-  feedbackStartDate: string; // 'YYYY-MM-DD' — missionEndDate와 동일 (API 지원 전 임시)
-  feedbackEndDate: string; // 'YYYY-MM-DD' — missionEndDate + 3일
+  feedbackStartDate: string; // 'YYYY-MM-DD'
+  feedbackEndDate: string; // 'YYYY-MM-DD'
+  attendanceResult: 'WAITING' | 'PASS' | 'WRONG' | 'FINAL_WRONG' | null;
   mentorInfo: Mentor | null;
   feedbackId: number | null;
   isMissionSubmitted: boolean;
