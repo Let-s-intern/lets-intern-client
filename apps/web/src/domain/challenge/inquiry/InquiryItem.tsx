@@ -37,6 +37,8 @@ const InquiryItem = ({
 }: InquiryItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const isCompleted = item.answerStatus === 'COMPLETED';
+  // 답변 완료여도 비공개면 사용자 입장에선 대기 상태로 표시
+  const showAsCompleted = isCompleted && item.isVisible;
 
   return (
     <li className="border-neutral-90 border-b last:border-b-0">
@@ -71,47 +73,69 @@ const InquiryItem = ({
       >
         <span
           className={`text-md shrink-0 rounded px-2 py-0.5 font-medium ${
-            isCompleted
+            showAsCompleted
               ? 'bg-primary-5 text-primary'
               : 'bg-neutral-90 text-neutral-40'
           }`}
         >
-          {isCompleted ? '답변 완료' : '답변 대기'}
+          {showAsCompleted ? '답변 완료' : '답변 대기'}
         </span>
 
         <span className="text-md flex-1 truncate font-medium">
           {item.title}
         </span>
 
-        {isCompleted ? (
-          <button
-            className="text-xsmall16 text-neutral-40 flex shrink-0 items-center gap-0.5"
-            onClick={onToggleExpand}
-          >
-            답변 확인
-            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-        ) : (
-          <div className="text-xsmall16 text-neutral-40 flex shrink-0 items-center gap-2">
+        <div className="text-xsmall16 text-neutral-40 flex shrink-0 items-center gap-2">
+          {showAsCompleted ? (
             <button
-              className="hover:text-neutral-0"
-              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-0.5"
+              onClick={onToggleExpand}
             >
-              수정
+              답변 확인
+              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
-            <span>|</span>
-            <button
-              className="hover:text-red-500"
-              onClick={() => {
-                if (window.confirm('정말로 이 문의를 삭제하시겠습니까?')) {
-                  onDelete();
-                }
-              }}
-            >
-              삭제
-            </button>
-          </div>
-        )}
+          ) : (
+            <>
+              {isCompleted && (
+                <>
+                  <button
+                    className="flex items-center gap-0.5"
+                    onClick={onToggleExpand}
+                  >
+                    내용 확인
+                    {isExpanded ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    )}
+                  </button>
+                  <span>|</span>
+                </>
+              )}
+              {!isCompleted && (
+                <>
+                  <button
+                    className="hover:text-neutral-0"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    수정
+                  </button>
+                  <span>|</span>
+                </>
+              )}
+              <button
+                className="hover:text-red-500"
+                onClick={() => {
+                  if (window.confirm('정말로 이 문의를 삭제하시겠습니까?')) {
+                    onDelete();
+                  }
+                }}
+              >
+                삭제
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* 답변 확인 영역 — grid-rows로 높이 애니메이션 */}
