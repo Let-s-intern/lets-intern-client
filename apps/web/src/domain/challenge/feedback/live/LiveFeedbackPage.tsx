@@ -4,6 +4,7 @@ import { useLiveFeedbackListQuery } from '@/api/feedback/feedback';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LiveFeedbackSection from '@/domain/challenge/feedback/live/section/LiveFeedbackSection';
 import { toMission } from '@/domain/challenge/feedback/live/utils';
+import { useMissionStore } from '@/store/useMissionStore';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import type { LiveFeedbackMission } from './types';
@@ -34,16 +35,14 @@ const LiveFeedbackPage = () => {
     [pathname, router],
   );
 
+  const { setSelectedMission } = useMissionStore();
+
   const handleMissionClick = useCallback(
     (mission: LiveFeedbackMission) => {
-      const base = `/challenge/${applicationId}/${programId}/me`;
-      if (mission.status === 'prev') {
-        router.push(base);
-      } else {
-        router.push(`${base}#mission-submit`);
-      }
+      setSelectedMission(mission.missionId, mission.missionTh);
+      router.push(`/challenge/${applicationId}/${programId}/me#mission-submit`);
     },
-    [applicationId, programId, router],
+    [applicationId, programId, router, setSelectedMission],
   );
 
   const today = new Date();
