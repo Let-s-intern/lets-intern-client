@@ -40,6 +40,7 @@ const MissionSubmitRegularSection = ({
     setSelectedMission,
     textareaValue,
     hasFeedback,
+    feedbackType,
     preQuestionValue,
     isSubmitted,
     showToast,
@@ -108,6 +109,7 @@ const MissionSubmitRegularSection = ({
             value={preQuestionValue}
             onChange={handlePreQuestionChange}
             disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+            feedbackType={feedbackType}
           />
         )}
 

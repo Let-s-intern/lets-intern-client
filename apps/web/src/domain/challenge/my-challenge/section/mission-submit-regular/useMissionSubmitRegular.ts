@@ -49,6 +49,8 @@ export function useMissionSubmitRegular({
     (schedule) => schedule.missionInfo.id === selectedMissionId,
   );
   const hasFeedback = currentSelectedMission?.missionInfo?.hasFeedback ?? false;
+  const feedbackType =
+    currentSelectedMission?.missionInfo?.feedbackType ?? null;
   const regularMissions = schedules.filter(
     (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
   );
@@ -241,6 +243,7 @@ export function useMissionSubmitRegular({
     isResubmitBlocked,
     canSubmit,
     hasFeedback,
+    feedbackType,
     preQuestionValue,
     handleTextareaChange,
     handlePreQuestionChange,
