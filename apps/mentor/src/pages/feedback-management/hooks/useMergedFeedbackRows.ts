@@ -10,6 +10,10 @@ import type {
 import type { AttendanceStatus } from '@/schema';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { PeriodBarData } from '@/pages/schedule/types';
+import {
+  resolveLiveSessionStatus,
+  type LiveFeedbackUiStatus,
+} from '@/pages/feedback/utils/liveFeedbackStatus';
 
 import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
@@ -92,13 +96,24 @@ function summarizeWrittenMentee(mentee: WrittenMenteeAttendance): {
  *
  * Push 2 이후 라이브 세션 데이터 소스는 BE 멘토 목록(`useFeedbackMentorListQuery`)이며,
  * `useLiveFeedbackList`가 BE `status`/`menteeStatus`/`mentorStatus` 조합을 다음으로만 매핑한다:
- * - completed (status=COMPLETED) → 완료
- * - mentor-absent | mentee-absent (status=CANCELED) → 미완료
- * - undefined (status=RESERVED) → 시간 기준 분기 (시작 전: 진행 전, 진행 중, 종료 후: 미완료)
+ * - completed (status=COMPLETED) → 진행 완료
+ * - mentor-absent | mentee-absent (status=CANCELED) → 미진행
+ * - undefined (status=RESERVED) → 시간 기준 분기 (시작 전: 진행 예정, 진행 중, 종료 후: 미진행)
  *
  * ⚠️ in-progress / mentor-late / mentee-late 는 BE에 없는 세분 상태다.
  * `LiveFeedbackInfo.status` 타입에는 남아 있어 아래 분기를 유지하지만, API 데이터로는 도달하지 않는다.
  */
+/** 시간+출석으로 판정한 4종 UI 상태 → 표 라벨·색. */
+const UI_TO_ROW: Record<
+  LiveFeedbackUiStatus,
+  { statusLabel: string; statusTone: FeedbackRow['statusTone'] }
+> = {
+  waiting: { statusLabel: '진행 예정', statusTone: 'waiting' },
+  inProgress: { statusLabel: '진행 중', statusTone: 'inProgress' },
+  completed: { statusLabel: '진행 완료', statusTone: 'completed' },
+  missed: { statusLabel: '미진행', statusTone: 'absent' },
+};
+
 function resolveLiveRowStatus(
   bar: PeriodBarData,
   now: Date,
@@ -106,12 +121,27 @@ function resolveLiveRowStatus(
   statusLabel: string;
   statusTone: FeedbackRow['statusTone'];
 } {
-  const liveStatus = bar.liveFeedback?.status;
+  const lf = bar.liveFeedback;
+
+  // 실데이터(rawStatus 존재) → 시간+출석 정밀 판정.
+  if (lf?.rawStatus) {
+    const ui = resolveLiveSessionStatus({
+      rawStatus: lf.rawStatus,
+      mentorStatus: lf.mentorStatus,
+      menteeStatus: lf.menteeStatus,
+      startDate: `${bar.startDate}T${lf.startTime}:00`,
+      endDate: `${bar.startDate}T${lf.endTime}:00`,
+      now,
+    });
+    return UI_TO_ROW[ui];
+  }
+
+  const liveStatus = lf?.status;
 
   if (liveStatus === 'completed')
-    return { statusLabel: '완료', statusTone: 'completed' };
+    return { statusLabel: '진행 완료', statusTone: 'completed' };
   if (liveStatus === 'mentor-absent' || liveStatus === 'mentee-absent')
-    return { statusLabel: '미완료', statusTone: 'absent' };
+    return { statusLabel: '미진행', statusTone: 'absent' };
   if (
     liveStatus === 'in-progress' ||
     liveStatus === 'mentor-late' ||
@@ -127,11 +157,12 @@ function resolveLiveRowStatus(
   const nowMs = now.getTime();
 
   if (Number.isNaN(startMs) || Number.isNaN(endMs))
-    return { statusLabel: '진행 전', statusTone: 'waiting' };
-  if (nowMs < startMs) return { statusLabel: '진행 전', statusTone: 'waiting' };
+    return { statusLabel: '진행 예정', statusTone: 'waiting' };
+  if (nowMs < startMs)
+    return { statusLabel: '진행 예정', statusTone: 'waiting' };
   if (nowMs < endMs)
     return { statusLabel: '진행 중', statusTone: 'inProgress' };
-  return { statusLabel: '미완료', statusTone: 'absent' };
+  return { statusLabel: '미진행', statusTone: 'absent' };
 }
 
 /**
@@ -144,7 +175,20 @@ function resolveLiveParticipation(bar: PeriodBarData): {
   menteeParticipation: '참여' | '불참' | null;
   mentorParticipation: '참여' | '불참' | null;
 } {
-  const liveStatus = bar.liveFeedback?.status;
+  const lf = bar.liveFeedback;
+
+  // 실데이터(rawStatus 존재) → BE 원본 출석으로 직접 판정.
+  // PRESENT=참여 / ABSENT=불참 / PENDING(미체크)=null(빈 표시).
+  if (lf?.rawStatus) {
+    const toLabel = (s?: 'PENDING' | 'PRESENT' | 'ABSENT') =>
+      s === 'PRESENT' ? '참여' : s === 'ABSENT' ? '불참' : null;
+    return {
+      menteeParticipation: toLabel(lf.menteeStatus),
+      mentorParticipation: toLabel(lf.mentorStatus),
+    };
+  }
+
+  const liveStatus = lf?.status;
   if (liveStatus === 'completed') {
     return { menteeParticipation: '참여', mentorParticipation: '참여' };
   }

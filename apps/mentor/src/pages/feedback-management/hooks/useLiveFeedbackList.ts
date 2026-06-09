@@ -103,6 +103,10 @@ function toSessionBar(
       startTime: toTimeLabel(item.startDate),
       endTime: toTimeLabel(item.endDate),
       status: mapLiveStatus(item.status, item.menteeStatus, item.mentorStatus),
+      // 시간·출석 정밀 판정을 위해 BE 원본 값을 그대로 보존한다.
+      rawStatus: item.status,
+      mentorStatus: item.mentorStatus,
+      menteeStatus: item.menteeStatus,
     },
   };
 }

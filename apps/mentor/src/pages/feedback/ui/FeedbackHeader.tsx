@@ -11,7 +11,7 @@ interface FeedbackHeaderProps {
   inProgressCount: number;
   completedCount: number;
   /**
-   * LIVE 피드백 모달에서만 사용하는 4번째 카운터 ("미완료").
+   * LIVE 피드백 모달에서만 사용하는 4번째 카운터 ("미진행").
    * 서면 피드백 모달은 이 prop을 넘기지 않으므로 미렌더.
    */
   missedCount?: number;
@@ -37,9 +37,10 @@ const FeedbackHeader = ({
   onClose,
 }: FeedbackHeaderProps) => {
   const sessionSuffix = isLive ? 'LIVE 피드백' : '서면 피드백';
-  // 서면(isLive=false)은 "진행 전 / 진행 중 / 승인 완료" 라벨, 라이브는 기존 유지.
-  const waitingLabel = isLive ? '대기' : '진행 전';
-  const completedLabel = isLive ? '완료' : '승인 완료';
+  // 서면(isLive=false)은 "진행 전 / 진행 중 / 승인 완료", 라이브는 진리표 4종 라벨로 통일.
+  const waitingLabel = isLive ? '진행 예정' : '진행 전';
+  const completedLabel = isLive ? '진행 완료' : '승인 완료';
+  const missedLabel = '미진행';
   return (
     <div className="flex flex-col gap-2 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
       {/* 1줄 (모바일: 제목+닫기 / 데스크탑: 제목+통계+가이드+닫기) */}
@@ -86,7 +87,7 @@ const FeedbackHeader = ({
                 statusBadgeOrMuted(missedCount, 'absent'),
               )}
             >
-              미완료 {missedCount}
+              {missedLabel} {missedCount}
             </span>
           )}
         </div>
@@ -156,7 +157,7 @@ const FeedbackHeader = ({
               statusBadgeOrMuted(missedCount, 'absent'),
             )}
           >
-            미완료 {missedCount}
+            {missedLabel} {missedCount}
           </span>
         )}
       </div>

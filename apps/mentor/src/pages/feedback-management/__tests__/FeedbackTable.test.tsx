@@ -44,7 +44,7 @@ const liveRow: FeedbackRow = {
   startDate: '2026-05-04',
   startTime: '10:00',
   endTime: '10:30',
-  statusLabel: '진행 전',
+  statusLabel: '진행 예정',
   statusTone: 'waiting',
   reservationLabel: '예약 완료',
   submissionLabel: null,

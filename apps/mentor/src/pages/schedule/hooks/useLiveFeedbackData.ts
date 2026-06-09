@@ -12,6 +12,7 @@ import type {
 
 import type { LiveFeedbackInfo, PeriodBarData } from '../types';
 import { currentNow } from '../constants/mockNow';
+import { resolveLiveSessionStatus } from '@/pages/feedback/utils/liveFeedbackStatus';
 
 /**
  * 라이브 피드백 일정 데이터를 반환하는 훅.
@@ -69,30 +70,48 @@ function buildSyntheticChallengeId(groupIndex: number): number {
 }
 
 /**
- * BE 라이브 세션 상태 → 캘린더 배지 상태 매핑 (PRD §4.1 / push2 규칙 재사용).
+ * BE 라이브 세션 상태 → 캘린더 배지 상태 매핑.
+ *
+ * ⚠️ 종료된 RESERVED 보정: BE는 세션 종료 후에도 `status`를 RESERVED로 유지하고
+ * 출석(mentor/menteeStatus)만 채우는 경우가 있다. 과거엔 RESERVED를 무조건 'waiting'으로
+ * 떨궈 "지난 라이브가 모두 진행 예정"으로 보였다. → 공통 리졸버로 시간+출석을 함께 본다.
  *  - COMPLETED → completed
- *  - CANCELED + menteeStatus ABSENT → mentee-absent
- *  - CANCELED + mentorStatus ABSENT → mentor-absent
- *  - CANCELED (불참 표기 없는 단순 취소) → cancelled
- *  - RESERVED → 시작 시각 기준 waiting (시작 전) / 미래 세션은 waiting
+ *  - CANCELED + menteeStatus ABSENT → mentee-absent / + mentorStatus ABSENT → mentor-absent / 그 외 → cancelled
+ *  - RESERVED → 시작 전 waiting / 진행 중 in-progress / 종료 후 양측 참여 completed / 그 외 미진행
  */
 function resolveSessionStatus(
   session: FeedbackMentor,
   now: Date,
 ): LiveFeedbackInfo['status'] {
-  if (session.status === 'COMPLETED') return 'completed';
+  // 취소는 불참 주체를 보존(배지·집계 활용).
   if (session.status === 'CANCELED') {
     if (session.menteeStatus === 'ABSENT') return 'mentee-absent';
     if (session.mentorStatus === 'ABSENT') return 'mentor-absent';
-    // 불참 표기 없는 단순 취소 → cancelled('취소' 배지).
     return 'cancelled';
   }
-  // RESERVED — 진행 시각이면 in-progress, 그 외 대기
-  const start = new Date(session.startDate).getTime();
-  const end = new Date(session.endDate).getTime();
-  const nowMs = now.getTime();
-  if (nowMs >= start && nowMs <= end) return 'in-progress';
-  return 'waiting';
+
+  const ui = resolveLiveSessionStatus({
+    rawStatus: session.status,
+    mentorStatus: session.mentorStatus,
+    menteeStatus: session.menteeStatus,
+    startDate: session.startDate,
+    endDate: session.endDate,
+    now,
+  });
+  switch (ui) {
+    case 'inProgress':
+      return 'in-progress';
+    case 'completed':
+      return 'completed';
+    case 'missed':
+      // 종료 후 미충족 — 불참 주체가 있으면 보존, 없으면 일반 미진행(cancelled 배지=미진행).
+      if (session.menteeStatus === 'ABSENT') return 'mentee-absent';
+      if (session.mentorStatus === 'ABSENT') return 'mentor-absent';
+      return 'cancelled';
+    case 'waiting':
+    default:
+      return 'waiting';
+  }
 }
 
 /**

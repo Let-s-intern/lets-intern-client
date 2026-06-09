@@ -112,13 +112,13 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
     ).toBeInTheDocument();
   });
 
-  it('헤더 4종 카운터(대기/진행 중/완료/미완료)가 노출된다', () => {
+  it('헤더 4종 카운터(진행 예정/진행 중/진행 완료/미진행)가 노출된다', () => {
     renderModal(makeBar());
     // 데스크탑/모바일 양쪽에서 노출되므로 getAllByText 사용
-    expect(screen.getAllByText(/대기/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/진행 예정/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/진행 중/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/완료/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/미완료/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/진행 완료/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/미진행/).length).toBeGreaterThan(0);
   });
 
   it('액션 패널에 "예약 일시" / "피드백 상태" 행이 노출된다', () => {

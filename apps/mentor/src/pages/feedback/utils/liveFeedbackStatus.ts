@@ -1,6 +1,9 @@
 import dayjs from '@/lib/dayjs';
 
-import type { FeedbackStatus } from '@/api/feedback/feedbackSchema';
+import type {
+  FeedbackAttendanceStatus,
+  FeedbackStatus,
+} from '@/api/feedback/feedbackSchema';
 import { STATUS_BADGE } from '@/constants/statusColors';
 
 /**
@@ -19,17 +22,17 @@ export type LiveFeedbackUiStatus =
   | 'missed';
 
 export interface LiveFeedbackBadgeVisual {
-  /** 화면 표기 라벨 ("대기" / "진행중" / "완료" / "미완료") */
+  /** 화면 표기 라벨 ("진행 예정" / "진행 중" / "진행 완료" / "미진행") */
   label: string;
   /** STATUS_BADGE 토큰 (border + bg + text) */
   badgeClass: string;
 }
 
 const VISUALS: Record<LiveFeedbackUiStatus, LiveFeedbackBadgeVisual> = {
-  waiting: { label: '대기', badgeClass: STATUS_BADGE.waiting },
-  inProgress: { label: '진행중', badgeClass: STATUS_BADGE.inProgress },
-  completed: { label: '완료', badgeClass: STATUS_BADGE.completed },
-  missed: { label: '미완료', badgeClass: STATUS_BADGE.absent },
+  waiting: { label: '진행 예정', badgeClass: STATUS_BADGE.waiting },
+  inProgress: { label: '진행 중', badgeClass: STATUS_BADGE.inProgress },
+  completed: { label: '진행 완료', badgeClass: STATUS_BADGE.completed },
+  missed: { label: '미진행', badgeClass: STATUS_BADGE.absent },
 };
 
 /**
@@ -37,16 +40,36 @@ const VISUALS: Record<LiveFeedbackUiStatus, LiveFeedbackBadgeVisual> = {
  * 4종 UI 상태를 결정한다.
  *
  * 주의: BE의 자동 상태 전이는 미구현이므로 RESERVED 상태에서도 시간이
- * 지나면 FE가 "미완료"로 대체 표시한다 (PRD §5.4 mentor3.14 노트).
+ * 지나면 FE가 "미진행"으로 대체 표시한다 (PRD §5.4 mentor3.14 노트).
  */
-export function resolveLiveFeedbackStatus(
-  apiStatus: FeedbackStatus,
-  startDate: string,
-  endDate: string,
-  now: Date,
-): LiveFeedbackUiStatus {
-  if (apiStatus === 'COMPLETED') return 'completed';
-  if (apiStatus === 'CANCELED') return 'missed';
+/**
+ * 라이브 세션 진행 상태를 `BE status + 출석(멘토·멘티) + 시간`으로 결정한다.
+ *
+ * BE가 종료 후에도 `status`를 RESERVED로 유지하고 출석(mentorStatus/menteeStatus)만
+ * 채우는 경우가 있어, 시간만으로 판정하면 "정상 진행된 세션"이 '미진행'으로 잘못 표시된다.
+ * → 종료 후 RESERVED 건은 출석으로 완료/미진행을 가른다.
+ *
+ * - CANCELED            → missed
+ * - COMPLETED           → completed
+ * - 시작 전             → waiting
+ * - 진행 중             → inProgress
+ * - 종료 후 + 양측 참여  → completed
+ * - 종료 후 + 그 외      → missed
+ *
+ * 출석 인자를 생략하면 PENDING으로 보아 기존(시간 기준) 동작과 동일하다.
+ */
+export function resolveLiveSessionStatus(input: {
+  rawStatus: FeedbackStatus;
+  mentorStatus?: FeedbackAttendanceStatus;
+  menteeStatus?: FeedbackAttendanceStatus;
+  startDate: string;
+  endDate: string;
+  now: Date;
+}): LiveFeedbackUiStatus {
+  const { rawStatus, mentorStatus, menteeStatus, startDate, endDate, now } =
+    input;
+  if (rawStatus === 'CANCELED') return 'missed';
+  if (rawStatus === 'COMPLETED') return 'completed';
 
   // RESERVED: 시간으로 분기
   const nowMs = now.getTime();
@@ -54,11 +77,27 @@ export function resolveLiveFeedbackStatus(
   const endMs = dayjs(endDate).valueOf();
 
   if (Number.isNaN(startMs) || Number.isNaN(endMs)) return 'waiting';
-
   if (nowMs < startMs) return 'waiting';
   if (nowMs < endMs) return 'inProgress';
-  // 시간이 지났는데도 RESERVED → 미참여로 간주
+  // 종료 후 RESERVED → 출석으로 완료/미진행 분기
+  if (mentorStatus === 'PRESENT' && menteeStatus === 'PRESENT')
+    return 'completed';
   return 'missed';
+}
+
+/** @deprecated `resolveLiveSessionStatus` 사용. 출석 없이 status+시간만으로 판정(하위 호환). */
+export function resolveLiveFeedbackStatus(
+  apiStatus: FeedbackStatus,
+  startDate: string,
+  endDate: string,
+  now: Date,
+): LiveFeedbackUiStatus {
+  return resolveLiveSessionStatus({
+    rawStatus: apiStatus,
+    startDate,
+    endDate,
+    now,
+  });
 }
 
 export function getLiveFeedbackBadgeVisual(

@@ -6,7 +6,10 @@ export interface LiveFeedbackInfo {
   startTime: string;
   /** "HH:mm" 24시간 형식 */
   endTime: string;
-  /** undefined = 대기 중 (기본) */
+  /**
+   * 화면 표기용 축약 상태(목/하위 호환). undefined = 대기 중.
+   * 실데이터는 아래 raw 필드(rawStatus/mentor·menteeStatus)로 시간·출석을 함께 판정한다.
+   */
   status?:
     | 'waiting'
     | 'in-progress'
@@ -16,6 +19,12 @@ export interface LiveFeedbackInfo {
     | 'mentee-absent'
     | 'mentor-late'
     | 'mentee-late';
+  /** BE 원본 예약 상태 (RESERVED/COMPLETED/CANCELED). 상태/출석 정밀 판정용. */
+  rawStatus?: 'RESERVED' | 'COMPLETED' | 'CANCELED';
+  /** BE 멘토 출석 (PENDING/PRESENT/ABSENT). */
+  mentorStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
+  /** BE 멘티 출석 (PENDING/PRESENT/ABSENT). */
+  menteeStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
 }
 
 /** 캘린더 바 데이터 */

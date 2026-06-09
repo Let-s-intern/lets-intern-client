@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getLiveFeedbackBadgeVisual,
   resolveLiveFeedbackStatus,
+  resolveLiveSessionStatus,
 } from '../liveFeedbackStatus';
 
 describe('resolveLiveFeedbackStatus', () => {
@@ -65,12 +66,80 @@ describe('resolveLiveFeedbackStatus', () => {
   });
 });
 
+describe('resolveLiveSessionStatus — 종료 후 출석 반영', () => {
+  const start = '2026-05-20T11:00:00+09:00';
+  const end = '2026-05-20T11:30:00+09:00';
+  const afterEnd = new Date('2026-05-20T12:00:00+09:00');
+  const beforeStart = new Date('2026-05-20T10:00:00+09:00');
+
+  it('종료 후 RESERVED + 양측 참여 → completed (BE 미전이 보정)', () => {
+    expect(
+      resolveLiveSessionStatus({
+        rawStatus: 'RESERVED',
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+        startDate: start,
+        endDate: end,
+        now: afterEnd,
+      }),
+    ).toBe('completed');
+  });
+
+  it('종료 후 RESERVED + 한쪽 불참 → missed', () => {
+    expect(
+      resolveLiveSessionStatus({
+        rawStatus: 'RESERVED',
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'ABSENT',
+        startDate: start,
+        endDate: end,
+        now: afterEnd,
+      }),
+    ).toBe('missed');
+  });
+
+  it('종료 후 RESERVED + 출석 미체크(PENDING) → missed', () => {
+    expect(
+      resolveLiveSessionStatus({
+        rawStatus: 'RESERVED',
+        startDate: start,
+        endDate: end,
+        now: afterEnd,
+      }),
+    ).toBe('missed');
+  });
+
+  it('시작 전에는 출석과 무관하게 waiting', () => {
+    expect(
+      resolveLiveSessionStatus({
+        rawStatus: 'RESERVED',
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+        startDate: start,
+        endDate: end,
+        now: beforeStart,
+      }),
+    ).toBe('waiting');
+  });
+
+  it('COMPLETED는 시간과 무관하게 completed', () => {
+    expect(
+      resolveLiveSessionStatus({
+        rawStatus: 'COMPLETED',
+        startDate: start,
+        endDate: end,
+        now: beforeStart,
+      }),
+    ).toBe('completed');
+  });
+});
+
 describe('getLiveFeedbackBadgeVisual', () => {
   it('각 상태별 한국어 라벨을 반환한다', () => {
-    expect(getLiveFeedbackBadgeVisual('waiting').label).toBe('대기');
-    expect(getLiveFeedbackBadgeVisual('inProgress').label).toBe('진행중');
-    expect(getLiveFeedbackBadgeVisual('completed').label).toBe('완료');
-    expect(getLiveFeedbackBadgeVisual('missed').label).toBe('미완료');
+    expect(getLiveFeedbackBadgeVisual('waiting').label).toBe('진행 예정');
+    expect(getLiveFeedbackBadgeVisual('inProgress').label).toBe('진행 중');
+    expect(getLiveFeedbackBadgeVisual('completed').label).toBe('진행 완료');
+    expect(getLiveFeedbackBadgeVisual('missed').label).toBe('미진행');
   });
 
   it('badgeClass 가 STATUS_BADGE 토큰을 사용한다', () => {
