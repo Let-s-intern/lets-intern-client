@@ -105,24 +105,24 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
     expect(screen.getByText('진행 완료')).toBeInTheDocument();
   });
 
-  it('대기(waiting) 상태에서는 "진행 전" 배지를 표시한다', () => {
+  it('대기(waiting) 상태에서는 "진행 예정" 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('waiting')} />);
-    expect(screen.getByText('진행 전')).toBeInTheDocument();
+    expect(screen.getByText('진행 예정')).toBeInTheDocument();
   });
 
-  it('상태가 없으면(undefined) "진행 전" 배지를 표시한다', () => {
+  it('상태가 없으면(undefined) "진행 예정" 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar(undefined)} />);
-    expect(screen.getByText('진행 전')).toBeInTheDocument();
+    expect(screen.getByText('진행 예정')).toBeInTheDocument();
   });
 
-  it('취소(cancelled) 상태 배지를 표시한다', () => {
+  it('취소(cancelled) 상태는 "미진행" 배지를 표시한다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('cancelled')} />);
-    expect(screen.getByText('취소')).toBeInTheDocument();
+    expect(screen.getByText('미진행')).toBeInTheDocument();
   });
 
-  it('취소 배지는 연빨강 톤 색상을 가진다', () => {
+  it('취소(미진행) 배지는 연빨강 톤 색상을 가진다', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('cancelled')} />);
-    const badge = screen.getByText('취소');
+    const badge = screen.getByText('미진행');
     expect(badge.className).toContain('bg-red-50');
     expect(badge.className).toContain('text-red-500');
   });

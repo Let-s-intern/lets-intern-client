@@ -21,7 +21,7 @@ import MenteeList from '@/pages/feedback/ui/MenteeList';
 import SidebarGuideLinks from '@/pages/feedback/ui/SidebarGuideLinks';
 import {
   getLiveFeedbackBadgeVisual,
-  resolveLiveFeedbackStatus,
+  resolveLiveSessionStatus,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
 
 import { currentNow } from '../constants/mockNow';
@@ -256,7 +256,14 @@ const LiveFeedbackReservationModal = ({
   const apiStatus = feedbackDetail?.status ?? 'RESERVED';
   const liveUiStatus =
     startIso && endIso
-      ? resolveLiveFeedbackStatus(apiStatus, startIso, endIso, now)
+      ? resolveLiveSessionStatus({
+          rawStatus: apiStatus,
+          mentorStatus: feedbackDetail?.mentorStatus,
+          menteeStatus: feedbackDetail?.menteeStatus,
+          startDate: startIso,
+          endDate: endIso,
+          now,
+        })
       : 'waiting';
   const liveBadge = getLiveFeedbackBadgeVisual(liveUiStatus);
 

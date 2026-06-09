@@ -57,7 +57,7 @@ export default function ReservationManagement() {
   const [view, setView] = useState<ReservationView>('list');
   const [sort, setSort] = useState<SortState>({
     key: 'dateTime',
-    direction: 'asc',
+    direction: 'desc',
   });
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
     null,

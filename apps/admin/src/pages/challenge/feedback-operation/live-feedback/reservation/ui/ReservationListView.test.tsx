@@ -38,6 +38,25 @@ describe('ReservationListView', () => {
     expect(screen.getByText('2026-05-20 09:05')).toBeInTheDocument();
   });
 
+  it('진리표 상태 컬럼(출석/뱃지)을 렌더한다', () => {
+    // row: 2026-05-29 종료 = 과거, 멘토·멘티 PENDING → 멘토 미진행 / 멘티 미참여
+    render(
+      <ReservationListView
+        reservations={[row]}
+        sort={sort}
+        onToggleSort={vi.fn()}
+        onView={vi.fn()}
+        isLoading={false}
+      />,
+    );
+    expect(screen.getByText('멘토 출석')).toBeInTheDocument();
+    expect(screen.getByText('멘티 출석')).toBeInTheDocument();
+    expect(screen.getByText('멘토 뱃지')).toBeInTheDocument();
+    expect(screen.getByText('멘티 뱃지')).toBeInTheDocument();
+    expect(screen.getByText('미진행')).toBeInTheDocument();
+    expect(screen.getByText('미참여')).toBeInTheDocument();
+  });
+
   it('로딩 중에는 안내 문구를 표시한다', () => {
     render(
       <ReservationListView

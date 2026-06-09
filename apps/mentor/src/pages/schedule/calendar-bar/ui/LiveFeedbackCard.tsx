@@ -1,4 +1,9 @@
 import { twMerge } from '@/lib/twMerge';
+import {
+  resolveLiveSessionStatus,
+  type LiveFeedbackUiStatus,
+} from '@/pages/feedback/utils/liveFeedbackStatus';
+import { currentNow } from '../../constants/mockNow';
 import { scheduleDesign } from '../../scheduleDesign';
 import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
@@ -64,37 +69,48 @@ type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
  * 상태별 태그 스타일 — 종료 상태(완료/미참여)는 dim 처리, 진행 상태(진행중/지각)는 강조.
  *
  * 디자인(이미지 #1): 솔리드 배지를 연한 톤(소프트) 배지로 정렬.
- *  - 진행 전   : 연보라 배경 / 보라 글씨 (대기·undefined 기본)
+ *  - 진행 예정 : 연보라 배경 / 보라 글씨 (waiting·undefined 기본)
  *  - 진행 중   : 연파랑 배경 / 파랑 글씨
  *  - 진행 완료 : 회색 배경 / 회색 글씨
- *  - 취소      : 연빨강 배경 / 빨강 글씨
- *  - 미참여·지각(종료 상태): 회색 배경 / 회색 글씨
- * ⚠️ 라벨 텍스트·상태 매핑은 기존 그대로 유지하고 색/배경만 정렬한다(확정은 추후 기획).
+ *  - 미진행(취소·미참여 등 종료 상태): 회색 배경 / 회색 글씨
+ * LC-3124: 라이브 상태 라벨을 진리표 뱃지 4종(진행 예정/진행 중/진행 완료/미진행)으로 통일.
+ * 취소·미참여 세분 상태는 모두 '미진행'으로 표기하며 색/배경 토큰은 기존 그대로 둔다.
  */
 const STATUS_BADGE: Record<BadgeStatus, { label: string; badge: string }> = {
-  waiting: { label: '진행 전', badge: scheduleDesign.cardBadgeActive },
+  waiting: { label: '진행 예정', badge: scheduleDesign.cardBadgeActive },
   'in-progress': { label: '진행 중', badge: scheduleDesign.cardBadgeActive },
   completed: {
     label: '진행 완료',
     badge: scheduleDesign.cardBadgeDone,
   },
-  cancelled: { label: '취소', badge: scheduleDesign.cardBadgeCanceled },
+  cancelled: { label: '미진행', badge: scheduleDesign.cardBadgeCanceled },
   'mentor-absent': {
-    label: '멘토 미참여',
+    label: '미진행',
     badge: scheduleDesign.cardBadgeDone,
   },
   'mentee-absent': {
-    label: '멘티 미참여',
+    label: '미진행',
     badge: scheduleDesign.cardBadgeDone,
   },
   'mentor-late': {
-    label: '멘토 지각',
+    label: '미진행',
     badge: scheduleDesign.cardBadgeDone,
   },
   'mentee-late': {
-    label: '멘티 지각',
+    label: '미진행',
     badge: scheduleDesign.cardBadgeDone,
   },
+};
+
+/** 시간+출석으로 판정한 4종 UI 상태 → 캘린더 배지(라벨·색). */
+const UI_TO_BADGE: Record<
+  LiveFeedbackUiStatus,
+  { label: string; badge: string }
+> = {
+  waiting: { label: '진행 예정', badge: scheduleDesign.cardBadgeActive },
+  inProgress: { label: '진행 중', badge: scheduleDesign.cardBadgeActive },
+  completed: { label: '진행 완료', badge: scheduleDesign.cardBadgeDone },
+  missed: { label: '미진행', badge: scheduleDesign.cardBadgeDone },
 };
 
 /**
@@ -109,8 +125,21 @@ const STATUS_BADGE: Record<BadgeStatus, { label: string; badge: string }> = {
  */
 export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
-  // 항상 배지 노출 — 상태가 없으면(undefined) '진행 전'(waiting)으로 표시.
-  const badge = lf.status ? STATUS_BADGE[lf.status] : STATUS_BADGE.waiting;
+  // 실데이터(rawStatus 존재)는 시간+출석으로 정밀 판정, mock(status만)은 기존 매핑 유지.
+  const badge = lf.rawStatus
+    ? UI_TO_BADGE[
+        resolveLiveSessionStatus({
+          rawStatus: lf.rawStatus,
+          mentorStatus: lf.mentorStatus,
+          menteeStatus: lf.menteeStatus,
+          startDate: `${bar.startDate}T${lf.startTime}:00`,
+          endDate: `${bar.startDate}T${lf.endTime}:00`,
+          now: currentNow(),
+        })
+      ]
+    : lf.status
+      ? STATUS_BADGE[lf.status]
+      : STATUS_BADGE.waiting;
 
   return (
     <div
