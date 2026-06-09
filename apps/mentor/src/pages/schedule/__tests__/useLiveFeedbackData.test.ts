@@ -191,6 +191,39 @@ describe('deriveLiveFeedbackBars', () => {
     expect(canceled!.liveFeedback?.status).toBe('cancelled');
   });
 
+  it('종료된 RESERVED + 양측 참여 → completed (지난 라이브가 진행 예정으로 보이던 버그 보정)', () => {
+    const bar = deriveLiveFeedbackBars(
+      [
+        makeSession({
+          feedbackId: 7,
+          status: 'RESERVED',
+          mentorStatus: 'PRESENT',
+          menteeStatus: 'PRESENT',
+          startDate: '2020-01-01T10:00:00',
+          endDate: '2020-01-01T10:30:00',
+        }),
+      ],
+      [],
+    ).find((b) => b.barType === 'live-feedback');
+    expect(bar!.liveFeedback?.status).toBe('completed');
+  });
+
+  it('종료된 RESERVED + 출석 미체크 → waiting 이 아니라 미진행 처리된다', () => {
+    const bar = deriveLiveFeedbackBars(
+      [
+        makeSession({
+          feedbackId: 8,
+          status: 'RESERVED',
+          startDate: '2020-01-01T10:00:00',
+          endDate: '2020-01-01T10:30:00',
+        }),
+      ],
+      [],
+    ).find((b) => b.barType === 'live-feedback');
+    expect(bar!.liveFeedback?.status).not.toBe('waiting');
+    expect(bar!.liveFeedback?.status).toBe('cancelled');
+  });
+
   it('빈 입력은 빈 배열을 반환한다', () => {
     expect(deriveLiveFeedbackBars([], [])).toEqual([]);
   });

@@ -76,17 +76,15 @@ function getLiveStatusBadge(
     case 'in-progress':
       return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'mentor-late':
-      return { label: '멘토 지각', className: STATUS_BADGE.late };
     case 'mentee-late':
-      return { label: '멘티 지각', className: STATUS_BADGE.late };
     case 'mentor-absent':
-      return { label: '멘토 미참여', className: STATUS_BADGE.absent };
     case 'mentee-absent':
-      return { label: '멘티 미참여', className: STATUS_BADGE.absent };
+      // LC-3124: 지각·미참여 세분 상태는 진리표 4종 라벨로 통일 → '미진행'
+      return { label: '미진행', className: STATUS_BADGE.absent };
     case 'waiting':
     default:
       return {
-        label: '진행 전',
+        label: '진행 예정',
         className: imminent ? LIST_BADGE_COLOR.urgent : LIST_BADGE_COLOR.active,
       };
   }

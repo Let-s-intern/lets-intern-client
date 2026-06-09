@@ -5,11 +5,28 @@ import {
   formatApplyDateTime,
   formatReservationDateTime,
 } from '../../utils/format';
+import {
+  resolveAdminVoLiveSpec,
+  resolveRowTone,
+  type LiveBadge,
+  type RowTone,
+} from '../../utils/liveFeedbackSpec';
 import type { SortKey, SortState } from '../utils/sortReservations';
 import ReservationHistoryPanel from './ReservationHistoryPanel';
 
 /** 표 컬럼 수 (변경 내역 펼침 행의 colSpan 용) */
-const COLUMN_COUNT = 7;
+const COLUMN_COUNT = 11;
+
+/**
+ * 행 배경 톤 → Tailwind 클래스 (기획 2026-06-09).
+ * 진행 예정=흰색 / 둘 다 참여=초록 / 한쪽만 참여=빨강 / 둘 다 미참여=진한 회색.
+ */
+const ROW_TONE_CLASS: Record<RowTone, string> = {
+  green: 'bg-green-50',
+  red: 'bg-red-50',
+  gray: 'bg-neutral-90',
+  none: '',
+};
 
 interface ReservationListViewProps {
   reservations: FeedbackAdminVo[];
@@ -55,6 +72,12 @@ function SortHeader({
   );
 }
 
+/** 진리표 뱃지(색·테두리 없는 글자만) 또는 '-'. */
+function StatusBadge({ badge }: { badge: LiveBadge | null }) {
+  if (!badge) return <span className="text-neutral-40">-</span>;
+  return <span>{badge.label}</span>;
+}
+
 export default function ReservationListView({
   reservations,
   sort,
@@ -65,6 +88,8 @@ export default function ReservationListView({
 }: ReservationListViewProps) {
   // 행별 "예약 변경 내역" 펼침 — 한 번에 하나만 펼친다.
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  // 진행일시 분기 기준 시각. 목록 렌더 1회 기준으로 고정한다.
+  const now = new Date();
 
   if (isLoading) {
     return (
@@ -105,6 +130,10 @@ export default function ReservationListView({
                 onClick={() => onToggleSort('menteeName')}
               />
             </th>
+            <th className={twMerge(thClassName, 'text-center')}>멘토 출석</th>
+            <th className={twMerge(thClassName, 'text-center')}>멘티 출석</th>
+            <th className={twMerge(thClassName, 'text-center')}>멘토 뱃지</th>
+            <th className={twMerge(thClassName, 'text-center')}>멘티 뱃지</th>
             <th className={twMerge(thClassName, 'text-center')}>
               <SortHeader
                 label="신청 시간"
@@ -124,9 +153,17 @@ export default function ReservationListView({
             const changeCount = item.rescheduleCount ?? 0;
             const hasChanges = changeCount > 0;
             const isExpanded = hasChanges && expandedId === item.feedbackId;
+            const spec = resolveAdminVoLiveSpec(item, now);
+            // 멘토·멘티 진행 상태 조합으로 행 배경색을 구분한다.
+            const rowToneClassName = ROW_TONE_CLASS[resolveRowTone(spec)];
             return (
               <Fragment key={item.feedbackId}>
-                <tr className="border-neutral-80 border-b last:border-b-0">
+                <tr
+                  className={twMerge(
+                    'border-neutral-80 border-b last:border-b-0',
+                    rowToneClassName,
+                  )}
+                >
                   <td className={tdClassName}>
                     {formatReservationDateTime(item.startDate, item.endDate)}
                   </td>
@@ -140,6 +177,18 @@ export default function ReservationListView({
                   </td>
                   <td className={twMerge(tdClassName, 'text-center')}>
                     {item.menteeName}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    {spec.mentorAttendance}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    {spec.menteeAttendance}
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    <StatusBadge badge={spec.mentorBadge} />
+                  </td>
+                  <td className={twMerge(tdClassName, 'text-center')}>
+                    <StatusBadge badge={spec.menteeBadge} />
                   </td>
                   <td className={twMerge(tdClassName, 'text-center')}>
                     {formatApplyDateTime(item.createDate)}

@@ -249,17 +249,17 @@ describe('useMergedFeedbackRows', () => {
     // 10:00~10:30, now=09:45 → 진행 전
     const waiting = result.current.find((r) => r.id === 'live-101');
 
-    expect(completed?.statusLabel).toBe('완료');
+    expect(completed?.statusLabel).toBe('진행 완료');
     expect(completed?.statusTone).toBe('completed');
     expect(completed?.menteeParticipation).toBe('참여');
     expect(completed?.mentorParticipation).toBe('참여');
 
-    expect(absent?.statusLabel).toBe('미완료');
+    expect(absent?.statusLabel).toBe('미진행');
     expect(absent?.statusTone).toBe('absent');
     expect(absent?.menteeParticipation).toBe('불참');
     expect(absent?.mentorParticipation).toBe('참여');
 
-    expect(waiting?.statusLabel).toBe('진행 전');
+    expect(waiting?.statusLabel).toBe('진행 예정');
     expect(waiting?.statusTone).toBe('waiting');
     expect(waiting?.menteeParticipation).toBeNull();
     expect(waiting?.mentorParticipation).toBeNull();
