@@ -7,9 +7,11 @@ import {
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import { isNotionUrl } from '../utils/notion';
 
 interface MenteeData {
   id: number | null;
+  userId?: number | null;
   name: string;
   status: string | null;
   feedbackStatus: FeedbackStatus | null;
@@ -22,7 +24,62 @@ interface MenteeInfoProps {
   mentee: MenteeData | null;
   challengeTitle?: string;
   collapsed?: boolean;
+  /** 경험정리형 제출물(링크 없음·제출됨) 보기 진입 */
+  onViewExperience?: () => void;
+  /** 경험을 모달 왼쪽 패널에 띄워 보면서 피드백 작성 */
+  onViewExperienceSide?: () => void;
+  /** 노션 제출물을 모달 왼쪽 패널에 임베드해 보면서 피드백 작성 */
+  onViewLinkSide?: () => void;
 }
+
+const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+    <path
+      d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
+      stroke="#4D55F5"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** 좌측 분할 패널 아이콘 */
+const SidePanelIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+    <rect
+      x="2"
+      y="3"
+      width="12"
+      height="10"
+      rx="1.5"
+      stroke="#4D55F5"
+      strokeWidth="1.2"
+    />
+    <path d="M6.5 3V13" stroke="#4D55F5" strokeWidth="1.2" />
+  </svg>
+);
+
+/** 경험을 왼쪽 패널로 띄우는 작은 버튼 (보면서 타이핑용) */
+const SideViewButton = ({
+  onClick,
+  size = 16,
+  className = '',
+}: {
+  onClick?: () => void;
+  size?: number;
+  className?: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title="옆에 두고 보기"
+    aria-label="경험을 옆에 두고 보기"
+    className={`inline-flex shrink-0 items-center justify-center rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 ${className}`}
+  >
+    <SidePanelIcon size={size} />
+  </button>
+);
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
   const isCompleted = status === 'COMPLETED' || status === 'CONFIRMED';
@@ -41,12 +98,20 @@ const MenteeInfo = ({
   mentee,
   challengeTitle,
   collapsed = false,
+  onViewExperience,
+  onViewExperienceSide,
+  onViewLinkSide,
 }: MenteeInfoProps) => {
   if (!mentee) return EMPTY_STATE;
 
   const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
   const isSubmitted = !isAbsent;
   const hasSubmissionLink = isSubmitted && !!mentee.link;
+  // 노션 링크만 왼쪽 패널 임베드 진입점 노출
+  const canEmbedLink = hasSubmissionLink && isNotionUrl(mentee.link);
+  // 링크형이 아닌 제출물(경험정리형) → 경험 보기 진입점 노출
+  const hasExperienceSubmission =
+    isSubmitted && !mentee.link && mentee.userId != null;
   // 임시저장(저장만 하고 미제출)은 서버에서 IN_PROGRESS 로 보관된다 → 라벨에 표시.
   const isDraftSaved = !isAbsent && mentee.feedbackStatus === 'IN_PROGRESS';
   const baseFeedbackStatusLabel = isAbsent
@@ -87,31 +152,46 @@ const MenteeInfo = ({
             {feedbackStatusLabel}
           </span>
         </div>
-        {hasSubmissionLink && (
-          <a
-            href={mentee.link!}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 rounded-[4px] border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
+        {hasSubmissionLink ? (
+          <span className="flex shrink-0 items-center gap-1">
+            <a
+              href={mentee.link!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
             >
-              <path
-                d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <ExternalLinkIcon size={14} />
+              제출물 보기
+            </a>
+            {canEmbedLink && onViewLinkSide && (
+              <SideViewButton
+                onClick={onViewLinkSide}
+                size={14}
+                className="h-[26px] w-[26px]"
               />
-            </svg>
-            제출물 보기
-          </a>
-        )}
+            )}
+          </span>
+        ) : hasExperienceSubmission ? (
+          <span className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={onViewExperience}
+              className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            >
+              <ExternalLinkIcon size={14} />
+              경험 보기
+            </button>
+            {onViewExperienceSide && (
+              <SideViewButton
+                onClick={onViewExperienceSide}
+                size={14}
+                className="h-[26px] w-[26px]"
+              />
+            )}
+          </span>
+        ) : isSubmitted ? (
+          <span className="shrink-0 text-xs text-neutral-400">제출물 없음</span>
+        ) : null}
       </div>
     );
   }
@@ -146,53 +226,43 @@ const MenteeInfo = ({
               </span>
             </div>
             {hasSubmissionLink ? (
-              <a
-                href={mentee.link!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={feedbackModalDesign.outlineButton}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden
+              <span className="flex w-fit items-center gap-1.5">
+                <a
+                  href={mentee.link!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                 >
-                  <path
-                    d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                  <ExternalLinkIcon />
+                  제출물 보기
+                </a>
+                {canEmbedLink && onViewLinkSide && (
+                  <SideViewButton
+                    onClick={onViewLinkSide}
+                    className="h-[34px] w-[34px]"
                   />
-                </svg>
-                제출물 보기
-              </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className={feedbackModalDesign.outlineButtonDisabled}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden
+                )}
+              </span>
+            ) : hasExperienceSubmission ? (
+              <span className="flex w-fit items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={onViewExperience}
+                  className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                 >
-                  <path
-                    d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                  <ExternalLinkIcon />
+                  경험 보기
+                </button>
+                {onViewExperienceSide && (
+                  <SideViewButton
+                    onClick={onViewExperienceSide}
+                    className="h-[34px] w-[34px]"
                   />
-                </svg>
-                제출물 보기
-              </button>
-            )}
+                )}
+              </span>
+            ) : isSubmitted ? (
+              <span className="text-sm text-neutral-400">제출물 없음</span>
+            ) : null}
           </div>
         </div>
 

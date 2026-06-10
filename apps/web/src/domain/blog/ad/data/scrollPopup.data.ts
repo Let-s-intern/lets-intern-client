@@ -9,6 +9,9 @@ export const blogScrollPopupData = {
   baseHeight: 947, // 비율 유지 높이
   alt: '렛츠커리어의 이야기를 가장 빠르게 — 무료 뉴스레터 구독',
   link: NEWSLETTER_SUBSCRIBE_URL,
-  triggerRatio: 0.6, // 본문(<article>) 60% 읽은 시점에 노출 (페이지 전체 X)
+  // 트리거 임계값 폴백 기본값. 평상시 실측값은 PostHog 플래그 페이로드(ratio)에서 주입되며,
+  // 플래그 미로딩/실패/SDK 미초기화(킬 스위치 OFF) 시 이 값(본문 60% 지점)으로 현행 복귀한다.
+  // → experiment.ts의 FALLBACK_TRIGGER_RATIO와 동일 의미.
+  triggerRatio: 0.6,
   borderRadiusPx: 16, // 팝업 모달 모서리 둥글기(px) — 각지게 0, 더 둥글게 ↑(예 24)
 } as const;

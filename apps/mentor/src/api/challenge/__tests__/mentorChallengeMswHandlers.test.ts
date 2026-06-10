@@ -31,7 +31,9 @@ describe('멘토 서면 경로 MSW 핸들러', () => {
     const res = await fetch(`${BASE}/challenge-mentor`);
     const body = await res.json();
     const parsed = mentorChallengeListSchema.parse(body.data);
-    expect(parsed.myChallengeMentorVoList.length).toBe(2);
+    // 공유 mock 은 두 QA 시나리오의 챌린지를 합쳐 반환한다:
+    // 라이브 피드백(1·2 legacy) + 서면 경험정리(9901 신규) = 3건.
+    expect(parsed.myChallengeMentorVoList.length).toBe(3);
     expect(
       parsed.myChallengeMentorVoList.every(
         (c) => c.programStatusType === 'PROCEEDING',
