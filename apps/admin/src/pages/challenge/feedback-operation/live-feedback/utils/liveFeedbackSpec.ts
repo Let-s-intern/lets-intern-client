@@ -132,10 +132,11 @@ export function resolveAdminVoLiveSpec(
 }
 
 /** 예약 목록 행 배경 톤. */
-export type RowTone = 'green' | 'red' | 'gray' | 'none';
+export type RowTone = 'inProgress' | 'green' | 'red' | 'gray' | 'none';
 
 /**
  * 멘토·멘티 참여(출석) 조합으로 행 배경 톤을 결정한다(기획 2026-06-09).
+ * - 진행 중(now 가 예약 시간대 내) → 강조(inProgress) — 최우선
  * - 아직 진행 안 한 진행 예정 → 흰색(none)
  * - 둘 다 참여 → 초록(green)
  * - 둘 중 하나만 참여 → 빨강(red)
@@ -144,6 +145,12 @@ export type RowTone = 'green' | 'red' | 'gray' | 'none';
  */
 export function resolveRowTone(spec: AdminVoLiveSpec): RowTone {
   if (!spec.mentorBadge && !spec.menteeBadge) return 'none';
+  // 진행 중 세션은 출석 조합과 무관하게 강조한다(최우선).
+  if (
+    spec.mentorBadge?.tone === 'inProgress' ||
+    spec.menteeBadge?.tone === 'inProgress'
+  )
+    return 'inProgress';
   // 아직 시작 전(진행 예정) → 흰색
   if (
     spec.mentorBadge?.tone === 'scheduled' &&

@@ -18,7 +18,7 @@ import dayjs from '@/lib/dayjs';
 import { challengeHomeSchema, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
@@ -88,26 +88,18 @@ function ChallengeDashboardContent() {
       });
       return challengeHomeSchema.parse(res.data.data);
     },
+    throwOnError: true,
   });
 
-  const notices = (homeData?.noticeList ?? [])
-    .filter((item) => item.type === 'NOTICE')
-    .map((item) => ({
-      id: item.id,
-      type: null as null,
-      title: item.title,
-      link: item.url,
-      createDate: dayjs(item.createdAt),
-    }));
-
-  const guides = (homeData?.noticeList ?? [])
-    .filter((item) => item.type === 'GUIDE')
-    .map((item) => ({
-      id: item.id,
-      title: item.title,
-      link: item.url,
-      createDate: dayjs(item.createdAt),
-    }));
+  const { data: guides = [] } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: ['challenge', currentChallenge?.id, 'guides'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${currentChallenge?.id}/guides`);
+      return challengeGuides.parse(res.data.data).challengeGuideList;
+    },
+    throwOnError: true,
+  });
 
   const { data: user } = useUserQuery();
 

@@ -299,19 +299,15 @@ const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
 export const useGetAdminBlogReviewList = ({
   page = 0,
   size = 20,
-  keyword,
-  isVisible,
 }: {
   page?: number;
   size?: number;
-  keyword?: string;
-  isVisible?: boolean;
 } = {}) => {
   return useQuery({
-    queryKey: [adminBlogReviewListQueryKey, page, size, keyword, isVisible],
+    queryKey: [adminBlogReviewListQueryKey, page, size],
     queryFn: async () => {
       const res = await axiosV2.get('/admin/review/blog', {
-        params: { page, size, keyword, isVisible },
+        params: { page, size },
       });
       return adminBlogReviewListSchema.parse(res.data.data);
     },

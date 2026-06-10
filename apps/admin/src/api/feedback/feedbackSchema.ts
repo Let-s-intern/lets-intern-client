@@ -33,6 +33,8 @@ export type FeedbackSlotStatus = z.infer<typeof feedbackSlotStatusSchema>;
 export const feedbackAdminVoSchema = z.object({
   feedbackId: z.number(),
   programTitle: z.string().default(''),
+  /** 슬롯 조회(GET /admin/feedback/slot/{mentorId})·예약 변경에 필요 */
+  mentorId: z.number(),
   mentorName: z.string(),
   menteeName: z.string(),
   startDate: z.string(),

@@ -6,6 +6,7 @@ import ReservationListView from './ReservationListView';
 const row: FeedbackAdminVo = {
   feedbackId: 7,
   programTitle: '면접준비 챌린지',
+  mentorId: 101,
   mentorName: '쥬디',
   menteeName: '홍길동',
   startDate: '2026-05-29T17:00:00',
@@ -18,14 +19,19 @@ const row: FeedbackAdminVo = {
 
 const sort = { key: 'dateTime' as const, direction: 'asc' as const };
 
+const baseProps = {
+  sort,
+  onToggleSort: vi.fn(),
+  onView: vi.fn(),
+  onReschedule: vi.fn(),
+};
+
 describe('ReservationListView', () => {
   it('행 데이터와 날짜 포맷을 표시한다', () => {
     render(
       <ReservationListView
+        {...baseProps}
         reservations={[row]}
-        sort={sort}
-        onToggleSort={vi.fn()}
-        onView={vi.fn()}
         isLoading={false}
       />,
     );
@@ -42,10 +48,8 @@ describe('ReservationListView', () => {
     // row: 2026-05-29 종료 = 과거, 멘토·멘티 PENDING → 멘토 미진행 / 멘티 미참여
     render(
       <ReservationListView
+        {...baseProps}
         reservations={[row]}
-        sort={sort}
-        onToggleSort={vi.fn()}
-        onView={vi.fn()}
         isLoading={false}
       />,
     );
@@ -58,25 +62,15 @@ describe('ReservationListView', () => {
   });
 
   it('로딩 중에는 안내 문구를 표시한다', () => {
-    render(
-      <ReservationListView
-        reservations={[]}
-        sort={sort}
-        onToggleSort={vi.fn()}
-        onView={vi.fn()}
-        isLoading
-      />,
-    );
+    render(<ReservationListView {...baseProps} reservations={[]} isLoading />);
     expect(screen.getByText('불러오는 중...')).toBeInTheDocument();
   });
 
   it('빈 목록은 안내 문구를 표시한다', () => {
     render(
       <ReservationListView
+        {...baseProps}
         reservations={[]}
-        sort={sort}
-        onToggleSort={vi.fn()}
-        onView={vi.fn()}
         isLoading={false}
       />,
     );
@@ -87,10 +81,9 @@ describe('ReservationListView', () => {
     const onToggleSort = vi.fn();
     render(
       <ReservationListView
-        reservations={[row]}
-        sort={sort}
+        {...baseProps}
         onToggleSort={onToggleSort}
-        onView={vi.fn()}
+        reservations={[row]}
         isLoading={false}
       />,
     );
@@ -102,14 +95,27 @@ describe('ReservationListView', () => {
     const onView = vi.fn();
     render(
       <ReservationListView
-        reservations={[row]}
-        sort={sort}
-        onToggleSort={vi.fn()}
+        {...baseProps}
         onView={onView}
+        reservations={[row]}
         isLoading={false}
       />,
     );
     fireEvent.click(screen.getByText('보기'));
     expect(onView).toHaveBeenCalledWith(7);
+  });
+
+  it('예약 변경 클릭 시 해당 행으로 onReschedule 를 호출한다', () => {
+    const onReschedule = vi.fn();
+    render(
+      <ReservationListView
+        {...baseProps}
+        onReschedule={onReschedule}
+        reservations={[row]}
+        isLoading={false}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '예약 변경' }));
+    expect(onReschedule).toHaveBeenCalledWith(row);
   });
 });

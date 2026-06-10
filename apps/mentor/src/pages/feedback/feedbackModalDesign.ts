@@ -15,6 +15,8 @@ export const feedbackModalDesign = {
   /** 모달 컨테이너 — 가로 w-[..] · 세로 md:h-[..] · 라운드 */
   modalContainer:
     'mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl',
+  /** 사이드 패널(제출물 임베드)이 열렸을 때 넓힌 너비 — 임베드+에디터를 함께 넉넉히 표시 */
+  modalContainerWide: 'md:w-[1280px]',
 
   /** 카드 표면(테두리·라운드·패딩) — 멘티정보 카드 / 예약일시 카드 공통 */
   cardSurface: 'border-neutral-80 rounded-[4px] border p-4',
@@ -39,9 +41,9 @@ export const feedbackModalDesign = {
 
   /** 카드 내 아웃라인 버튼(제출물 보기 · 참여 확인하기) */
   outlineButton:
-    'inline-flex w-fit items-center gap-1.5 rounded-[4px] border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50',
+    'inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[4px] border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50',
   outlineButtonDisabled:
-    'inline-flex w-fit items-center gap-1.5 rounded-[4px] border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300',
+    'inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[4px] border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-300',
 
   /** 하단 보조 버튼(멘티와 대화하기) */
   footerSecondary:
