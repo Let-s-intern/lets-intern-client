@@ -111,21 +111,27 @@ export default function ReservationRescheduleModal({
     statusList: ['OPEN'],
   });
 
+  // 과거 시간대로는 변경할 수 없다 — 현재 이후(미래)의 OPEN 슬롯만 노출한다.
+  const futureSlots = useMemo(() => {
+    const nowMs = Date.now();
+    return (slots ?? []).filter((s) => dayjs(s.startDate).valueOf() > nowMs);
+  }, [slots]);
+
   // 멘토가 열어둔(OPEN) 슬롯이 있는 날짜만 선택지로 노출한다.
   const availableDates = useMemo(() => {
     const set = new Set(
-      (slots ?? []).map((s) => dayjs(s.startDate).format('YYYY-MM-DD')),
+      futureSlots.map((s) => dayjs(s.startDate).format('YYYY-MM-DD')),
     );
     return [...set].sort();
-  }, [slots]);
+  }, [futureSlots]);
 
   // 선택한 날짜의 OPEN 슬롯만 시간 옵션으로 노출한다.
   const timeOptions = useMemo(
     () =>
-      (slots ?? [])
+      futureSlots
         .filter((s) => dayjs(s.startDate).format('YYYY-MM-DD') === date)
         .sort((a, b) => a.startDate.localeCompare(b.startDate)),
-    [slots, date],
+    [futureSlots, date],
   );
 
   if (!feedback) return null;
