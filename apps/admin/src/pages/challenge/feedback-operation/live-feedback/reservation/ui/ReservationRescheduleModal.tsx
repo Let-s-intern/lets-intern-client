@@ -111,6 +111,14 @@ export default function ReservationRescheduleModal({
     statusList: ['OPEN'],
   });
 
+  // 멘토가 열어둔(OPEN) 슬롯이 있는 날짜만 선택지로 노출한다.
+  const availableDates = useMemo(() => {
+    const set = new Set(
+      (slots ?? []).map((s) => dayjs(s.startDate).format('YYYY-MM-DD')),
+    );
+    return [...set].sort();
+  }, [slots]);
+
   // 선택한 날짜의 OPEN 슬롯만 시간 옵션으로 노출한다.
   const timeOptions = useMemo(
     () =>
@@ -208,15 +216,26 @@ export default function ReservationRescheduleModal({
                   변경 후
                 </span>
                 <div className="flex flex-1 flex-wrap items-center gap-2">
-                  <input
-                    type="date"
+                  {/* 멘토가 열어둔 날짜만 노출 */}
+                  <select
                     value={date}
                     onChange={(e) => {
                       setDate(e.target.value);
                       setSlotId(null);
                     }}
                     className={twMerge(fieldClassName, 'flex-1')}
-                  />
+                  >
+                    <option value="">
+                      {availableDates.length === 0
+                        ? '열린 날짜 없음'
+                        : '날짜 선택'}
+                    </option>
+                    {availableDates.map((d) => (
+                      <option key={d} value={d}>
+                        {dayjs(d).format('YYYY.MM.DD (dd)')}
+                      </option>
+                    ))}
+                  </select>
                   <select
                     value={slotId ?? ''}
                     onChange={(e) =>
