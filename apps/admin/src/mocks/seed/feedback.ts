@@ -81,6 +81,7 @@ function buildFeedback(s: FeedbackSpec): SeedFeedback {
     vo: {
       feedbackId: s.feedbackId,
       programTitle: s.programTitle,
+      mentorId: s.mentorId,
       mentorName: s.mentorName,
       menteeName: s.menteeName,
       startDate: s.startDate,

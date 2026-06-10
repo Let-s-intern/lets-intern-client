@@ -80,6 +80,8 @@ const AdminMissionReviewListPage = () => {
 
   const { data, isLoading } = useGetAdminProgramReview({
     type: 'MISSION_REVIEW',
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
   });
 
   const handleRowClick = (e: React.MouseEvent, row: Row) => {
@@ -133,6 +135,8 @@ const AdminMissionReviewListPage = () => {
           disableColumnSelector
           disableDensitySelector
           pagination
+          paginationMode="server"
+          rowCount={data?.pageInfo.totalElements ?? 0}
           pageSizeOptions={[10, 20, 50, 100]}
           paginationModel={paginationModel}
           onPaginationModelChange={handlePaginationModelChange}

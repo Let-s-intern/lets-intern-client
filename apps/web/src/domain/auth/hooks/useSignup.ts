@@ -1,5 +1,6 @@
 'use client';
 
+import { sanitizeRedirect } from '@/domain/auth/utils/sanitizeRedirect';
 import useAuthStore from '@/store/useAuthStore';
 import { ErrorResonse } from '@/types/interface';
 import axios from '@/utils/axios';
@@ -87,7 +88,7 @@ const useSignup = () => {
       const token = JSON.parse(result);
       if (!token.isNew) {
         login(token.accessToken, token.refreshToken);
-        router.push(searchParams.get('redirect') || '/');
+        router.push(sanitizeRedirect(searchParams.get('redirect')));
         return;
       }
       setIsSocial(true);

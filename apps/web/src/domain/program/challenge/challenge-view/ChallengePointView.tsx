@@ -3,6 +3,7 @@ import HoleIcon from '@/assets/icons/hole.svg?react';
 import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
+import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
@@ -531,12 +532,19 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {paypackImgSrc && (
-                  <img
+                {challengeType === PERSONAL_STATEMENT ? (
+                  <PaybackTicket
+                    deposit={deposit}
                     className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                    src={paypackImgSrc}
-                    alt={`페이백 ${deposit / 10000}만원`}
                   />
+                ) : (
+                  paypackImgSrc && (
+                    <img
+                      className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                      src={paypackImgSrc}
+                      alt={`페이백 ${deposit / 10000}만원`}
+                    />
+                  )
                 )}
               </Box>
             </div>

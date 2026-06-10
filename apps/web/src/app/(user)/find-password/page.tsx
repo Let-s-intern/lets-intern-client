@@ -12,15 +12,7 @@ import axios from '../../../utils/axios';
 
 const SOCIAL_PROVIDER_KEYWORDS = ['카카오', '네이버', '구글'] as const;
 
-function extractSocialProviderLabel(serverMessage?: string): string | null {
-  if (!serverMessage) return null;
-  return (
-    SOCIAL_PROVIDER_KEYWORDS.find((label) => serverMessage.includes(label)) ??
-    null
-  );
-}
-
-const FindPassword = () => {
+export default function FindPassword() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
 
@@ -144,6 +136,12 @@ const FindPassword = () => {
       </div>
     </div>
   );
-};
+}
 
-export default FindPassword;
+function extractSocialProviderLabel(serverMessage?: string): string | null {
+  if (!serverMessage) return null;
+  return (
+    SOCIAL_PROVIDER_KEYWORDS.find((label) => serverMessage.includes(label)) ??
+    null
+  );
+}

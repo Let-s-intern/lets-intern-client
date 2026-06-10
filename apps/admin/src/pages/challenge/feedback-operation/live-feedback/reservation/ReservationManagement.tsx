@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useUserAdminQuery } from '@/api/user/user';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
+import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
@@ -14,6 +15,9 @@ const ReservationCalendarView = lazy(
 );
 const ReservationDetailModal = lazy(
   () => import('./ui/ReservationDetailModal'),
+);
+const ReservationRescheduleModal = lazy(
+  () => import('./ui/ReservationRescheduleModal'),
 );
 import {
   INITIAL_FILTER,
@@ -62,6 +66,9 @@ export default function ReservationManagement() {
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
     null,
   );
+  // 예약 변경 모달 대상. 슬롯 조회·일시 표시에 행 전체(mentorId 포함)가 필요하다.
+  const [rescheduleTarget, setRescheduleTarget] =
+    useState<FeedbackAdminVo | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   const { data: challengeData } = useChallengeDropdownQuery();
@@ -124,6 +131,7 @@ export default function ReservationManagement() {
           sort={sort}
           onToggleSort={toggleSort}
           onView={setSelectedFeedbackId}
+          onReschedule={setRescheduleTarget}
           isLoading={isLoading}
         />
       ) : (
@@ -138,6 +146,15 @@ export default function ReservationManagement() {
           onClose={() => setSelectedFeedbackId(null)}
         />
       </Suspense>
+
+      {rescheduleTarget && (
+        <Suspense fallback={null}>
+          <ReservationRescheduleModal
+            feedback={rescheduleTarget}
+            onClose={() => setRescheduleTarget(null)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
