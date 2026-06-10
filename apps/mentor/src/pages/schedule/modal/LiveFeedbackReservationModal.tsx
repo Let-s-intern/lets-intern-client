@@ -320,7 +320,11 @@ const LiveFeedbackReservationModal = ({
       <BaseModal
         isOpen={isOpen}
         onClose={onClose}
-        className={feedbackModalDesign.modalContainer}
+        className={twMerge(
+          feedbackModalDesign.modalContainer,
+          // 제출물 패널이 실제로 열렸을 때만 모달을 넓혀 임베드+정보를 함께 표시
+          showLinkPanel && feedbackModalDesign.modalContainerWide,
+        )}
       >
         <FeedbackHeader
           challengeTitle={selectedMentee.challengeTitle}

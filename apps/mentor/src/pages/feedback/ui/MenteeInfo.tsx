@@ -203,7 +203,7 @@ const MenteeInfo = ({
                     href={mentee.link!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                    className="inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                   >
                     <ExternalLinkIcon />
                     제출물 보기
@@ -220,7 +220,7 @@ const MenteeInfo = ({
                   <button
                     type="button"
                     onClick={onViewExperience}
-                    className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                    className="inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                   >
                     <ExternalLinkIcon />
                     경험 보기

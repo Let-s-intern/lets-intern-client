@@ -5,6 +5,7 @@ import { Suspense, lazy, useState } from 'react';
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 import FeedbackActions from './ui/FeedbackActions';
@@ -94,7 +95,12 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className={feedbackModalDesign.modalContainer}
+      className={twMerge(
+        feedbackModalDesign.modalContainer,
+        // 제출물 패널이 실제로 열렸을 때만 모달을 넓혀 임베드+에디터를 함께 표시
+        (showExperiencePanel || showLinkPanel) &&
+          feedbackModalDesign.modalContainerWide,
+      )}
     >
       <FeedbackHeader
         challengeTitle={challengeTitle}
