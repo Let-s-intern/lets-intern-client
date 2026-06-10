@@ -157,9 +157,12 @@ const ChallengePortfolioView: React.FC<{
 
   const weekText = receivedContent.challengePoint?.weekText ?? '2주';
 
-  const reviewExists =
-    (receivedContent.challengeReview ?? []).length > 0 &&
-    receivedContent.blogReview;
+  const hasChallengeReviews =
+    (receivedContent.challengeReview ?? []).length > 0;
+  const hasBlogReviews =
+    (receivedContent.blogReview?.list ?? []).length > 0 ||
+    (receivedContent.externalBlogReviews ?? []).length > 0;
+  const reviewExists = hasChallengeReviews || hasBlogReviews;
 
   const challengeTransformed = useMemo<ChallengeIdSchema>(() => {
     return {
@@ -564,9 +567,10 @@ const ChallengePortfolioView: React.FC<{
             weekText={weekText}
           />
 
-          {receivedContent.blogReview && (
+          {hasBlogReviews && (
             <ProgramChallengePortfolioDetailBlogReviewSection
               review={receivedContent.blogReview}
+              externalBlogReviews={receivedContent.externalBlogReviews}
               programType="challenge"
             />
           )}
@@ -596,24 +600,15 @@ const ChallengePortfolioView: React.FC<{
           className="flex w-full flex-col items-center"
           id={PROGRAM_REVIEW_ID}
         >
-          {reviewExists && (
-            <section className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40">
-              {(receivedContent.challengeReview ?? []).length > 0 &&
-                receivedContent.blogReview && (
-                  <div className="bg-neutral-95 flex w-full flex-col items-center py-[70px] md:py-[110px]">
-                    <ProgramBestReviewSection
-                      type="challenge"
-                      reviews={receivedContent.challengeReview}
-                      challengeType={challenge.challengeType}
-                    />
-                    {/* <MoreReviewButton
-                      type="CHALLENGE"
-                      challengeType={challenge.challengeType}
-                      mainColor={styles.moreReviewMainColor}
-                      subColor={styles.moreReviewSubColor}
-                    /> */}
-                  </div>
-                )}
+          {hasChallengeReviews && (
+            <section className="challenge_review flex w-full flex-col items-center">
+              <div className="bg-neutral-95 flex w-full flex-col items-center py-[70px] md:py-[110px]">
+                <ProgramBestReviewSection
+                  type="challenge"
+                  reviews={receivedContent.challengeReview}
+                  challengeType={challenge.challengeType}
+                />
+              </div>
             </section>
           )}
 
@@ -660,7 +655,6 @@ const ChallengePortfolioView: React.FC<{
         <ChallengeFaq
           faqData={faqData}
           challengeType={challenge.challengeType}
-          faqCategory={receivedContent.faqCategory}
         />
         <ChallengeInfoBottom challenge={challengeTransformed} />
       </div>

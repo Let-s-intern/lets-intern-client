@@ -101,4 +101,4 @@ const CategoryTabs = <Value extends string>({
   );
 };
 
-export default CategoryTabs;
+export { CategoryTabs };

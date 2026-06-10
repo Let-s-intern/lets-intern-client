@@ -34,7 +34,6 @@ import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
-import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
@@ -492,19 +491,6 @@ const ChallengeCreate: React.FC = () => {
           />
 
           <section className="my-6">
-            <div className="mb-6">
-              <ChallengeFaqCategory
-                faqCategory={content.faqCategory}
-                onChange={(e) => {
-                  setContent((prev) => ({
-                    ...prev,
-                    faqCategory: e.target.value
-                      .split(',')
-                      .map((item) => item.trim()),
-                  }));
-                }}
-              />
-            </div>
             <FaqSection
               programType={ProgramTypeEnum.enum.CHALLENGE}
               faqInfo={input.faqInfo}
