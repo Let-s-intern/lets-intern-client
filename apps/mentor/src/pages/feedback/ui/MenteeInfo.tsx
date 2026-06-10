@@ -8,6 +8,8 @@ import {
 } from '@/api/challenge/challengeSchema';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import { isNotionUrl } from '../utils/notion';
+import { getWrittenFeedbackBadgeVisual } from '../utils/writtenFeedbackStatus';
+import SideViewButton from './SideViewButton';
 
 interface MenteeData {
   id: number | null;
@@ -42,43 +44,6 @@ const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
       strokeLinejoin="round"
     />
   </svg>
-);
-
-/** 좌측 분할 패널 아이콘 */
-const SidePanelIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-    <rect
-      x="2"
-      y="3"
-      width="12"
-      height="10"
-      rx="1.5"
-      stroke="#4D55F5"
-      strokeWidth="1.2"
-    />
-    <path d="M6.5 3V13" stroke="#4D55F5" strokeWidth="1.2" />
-  </svg>
-);
-
-/** 경험을 왼쪽 패널로 띄우는 작은 버튼 (보면서 타이핑용) */
-const SideViewButton = ({
-  onClick,
-  size = 16,
-  className = '',
-}: {
-  onClick?: () => void;
-  size?: number;
-  className?: string;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    title="옆에 두고 보기"
-    aria-label="경험을 옆에 두고 보기"
-    className={`inline-flex shrink-0 items-center justify-center rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 ${className}`}
-  >
-    <SidePanelIcon size={size} />
-  </button>
 );
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
@@ -123,6 +88,11 @@ const MenteeInfo = ({
   const feedbackStatusStyle = isAbsent
     ? 'text-orange-500'
     : getFeedbackStatusStyle(mentee.feedbackStatus);
+  // 라이브 피드백과 동일 디자인의 상태 배지(STATUS_BADGE 토큰).
+  const feedbackBadge = getWrittenFeedbackBadgeVisual(
+    mentee.feedbackStatus,
+    isAbsent,
+  );
 
   // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
   if (collapsed) {
@@ -210,67 +180,85 @@ const MenteeInfo = ({
             </span>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-xs text-neutral-500">제출 상태</span>
-            <div className="flex items-center gap-1.5 text-sm">
-              <span
-                className={twMerge(
-                  feedbackModalDesign.dotBase,
-                  isSubmitted
-                    ? feedbackModalDesign.dotOk
-                    : feedbackModalDesign.dotNone,
+          <div className="grid gap-4 sm:grid-cols-2">
+            {/* 제출 상태 */}
+            <div className="flex flex-col gap-2">
+              <span className="text-xs text-neutral-500">제출 상태</span>
+              <div className="flex items-center gap-1.5 text-sm">
+                <span
+                  className={twMerge(
+                    feedbackModalDesign.dotBase,
+                    isSubmitted
+                      ? feedbackModalDesign.dotOk
+                      : feedbackModalDesign.dotNone,
+                  )}
+                />
+                <span className="font-medium text-neutral-700">
+                  {isSubmitted ? '제출됨' : '미제출'}
+                </span>
+              </div>
+              {hasSubmissionLink ? (
+                <span className="flex w-fit items-center gap-1.5">
+                  <a
+                    href={mentee.link!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                  >
+                    <ExternalLinkIcon />
+                    제출물 보기
+                  </a>
+                  {canEmbedLink && onViewLinkSide && (
+                    <SideViewButton
+                      onClick={onViewLinkSide}
+                      className="h-[34px] w-[34px]"
+                    />
+                  )}
+                </span>
+              ) : hasExperienceSubmission ? (
+                <span className="flex w-fit items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={onViewExperience}
+                    className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                  >
+                    <ExternalLinkIcon />
+                    경험 보기
+                  </button>
+                  {onViewExperienceSide && (
+                    <SideViewButton
+                      onClick={onViewExperienceSide}
+                      className="h-[34px] w-[34px]"
+                    />
+                  )}
+                </span>
+              ) : isSubmitted ? (
+                <span className="text-sm text-neutral-400">제출물 없음</span>
+              ) : null}
+            </div>
+
+            {/* 피드백 상태 — 라이브 피드백과 동일한 배지 디자인(STATUS_BADGE) */}
+            <div className="flex flex-col gap-2">
+              <span className="text-xs text-neutral-500">피드백 상태</span>
+              <span className="flex items-center gap-1.5">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${feedbackBadge.badgeClass}`}
+                >
+                  {feedbackBadge.label}
+                </span>
+                {isDraftSaved && (
+                  <span className="text-xs text-neutral-400">임시저장됨</span>
                 )}
-              />
-              <span className="font-medium text-neutral-700">
-                {isSubmitted ? '제출됨' : '미제출'}
               </span>
             </div>
-            {hasSubmissionLink ? (
-              <span className="flex w-fit items-center gap-1.5">
-                <a
-                  href={mentee.link!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-                >
-                  <ExternalLinkIcon />
-                  제출물 보기
-                </a>
-                {canEmbedLink && onViewLinkSide && (
-                  <SideViewButton
-                    onClick={onViewLinkSide}
-                    className="h-[34px] w-[34px]"
-                  />
-                )}
-              </span>
-            ) : hasExperienceSubmission ? (
-              <span className="flex w-fit items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={onViewExperience}
-                  className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-                >
-                  <ExternalLinkIcon />
-                  경험 보기
-                </button>
-                {onViewExperienceSide && (
-                  <SideViewButton
-                    onClick={onViewExperienceSide}
-                    className="h-[34px] w-[34px]"
-                  />
-                )}
-              </span>
-            ) : isSubmitted ? (
-              <span className="text-sm text-neutral-400">제출물 없음</span>
-            ) : null}
           </div>
         </div>
 
-        {/* 세로 구분선 — 제출 상태 ↔ 멘티 정보 */}
+        {/* 세로 구분선 — 제출/피드백 상태 ↔ 희망 정보 */}
         <div className={feedbackModalDesign.dividerVertical} />
 
-        {/* 우: 희망 정보 + 피드백 상태 */}
-        <div className="flex flex-1 flex-col justify-between gap-3">
+        {/* 우: 희망 정보 */}
+        <div className="flex flex-1 flex-col gap-3">
           <div className="text-xsmall14 flex flex-col gap-2 text-neutral-600">
             {mentee.wishJob ? (
               <div className="flex gap-2">
@@ -288,12 +276,6 @@ const MenteeInfo = ({
                 <span>{mentee.wishCompany}</span>
               </div>
             ) : null}
-          </div>
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-neutral-400">피드백 상태</span>
-            <span className={`font-medium ${feedbackStatusStyle}`}>
-              {feedbackStatusLabel}
-            </span>
           </div>
         </div>
       </div>

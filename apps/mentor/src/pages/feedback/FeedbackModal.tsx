@@ -164,8 +164,9 @@ const FeedbackModal = ({
             challengeTitle={challengeTitle}
             collapsed={collapsed}
             onViewExperience={() => setIsExperienceModalOpen(true)}
-            onViewExperienceSide={() => setIsSidePanelOpen(true)}
-            onViewLinkSide={() => setIsSidePanelOpen(true)}
+            // 한번 더 클릭하면 닫힘(토글)
+            onViewExperienceSide={() => setIsSidePanelOpen((prev) => !prev)}
+            onViewLinkSide={() => setIsSidePanelOpen((prev) => !prev)}
           />
         )}
         editor={

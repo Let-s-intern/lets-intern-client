@@ -17,12 +17,15 @@ import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
 import FeedbackMenteeNavigation from '@/pages/feedback/ui/FeedbackMenteeNavigation';
 import InfoTooltip from '@/pages/feedback/ui/InfoTooltip';
 import MenteeAttendanceCheckModal from '@/pages/feedback/ui/MenteeAttendanceCheckModal';
+import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
 import MenteeList from '@/pages/feedback/ui/MenteeList';
 import SidebarGuideLinks from '@/pages/feedback/ui/SidebarGuideLinks';
+import SideViewButton from '@/pages/feedback/ui/SideViewButton';
 import {
   getLiveFeedbackBadgeVisual,
   resolveLiveSessionStatus,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
+import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
 import { currentNow } from '../constants/mockNow';
 import type { PeriodBarData } from '../types';
@@ -106,6 +109,8 @@ const LiveFeedbackReservationModal = ({
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   // 멘토 입장 시 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  // 왼쪽 사이드 패널 — 제출물(노션)을 보면서 입장/확인. 한번 더 클릭하면 닫힘(토글).
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
   const { mutate: updateMenteeStatus, isPending: isSavingAttendance } =
     useUpdateFeedbackByMentorMutation();
@@ -299,6 +304,11 @@ const LiveFeedbackReservationModal = ({
     menteeAttendanceLabel,
   };
 
+  // 노션 제출물만 왼쪽 패널 임베드 가능(서면 피드백과 동일 기준).
+  const hasEmbeddableSubmission =
+    !!selectedMentee.attendanceUrl && isNotionUrl(selectedMentee.attendanceUrl);
+  const showLinkPanel = isSidePanelOpen && hasEmbeddableSubmission;
+
   const reservationDateLine = formatReservationDateLine(
     selectedBar.startDate,
     selectedBar.liveFeedback?.startTime,
@@ -339,6 +349,15 @@ const LiveFeedbackReservationModal = ({
               </div>
               <SidebarGuideLinks labels={GUIDE_LINK_LABELS} />
             </div>
+          }
+          sidePanel={
+            showLinkPanel ? (
+              <MenteeLinkPanel
+                onClose={() => setIsSidePanelOpen(false)}
+                link={selectedMentee.attendanceUrl}
+                menteeName={selectedMentee.name}
+              />
+            ) : undefined
           }
           navigation={
             <FeedbackMenteeNavigation
@@ -399,15 +418,26 @@ const LiveFeedbackReservationModal = ({
                           </span>
                         </div>
                         {selectedMentee.attendanceUrl ? (
-                          <a
-                            href={selectedMentee.attendanceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={feedbackModalDesign.outlineButton}
-                          >
-                            <LinkIcon />
-                            제출물 보기
-                          </a>
+                          <span className="flex w-fit items-center gap-1.5">
+                            <a
+                              href={selectedMentee.attendanceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={feedbackModalDesign.outlineButton}
+                            >
+                              <LinkIcon />
+                              제출물 보기
+                            </a>
+                            {/* 노션 제출물을 왼쪽 패널로 띄워 보면서 진행(한번 더 클릭하면 닫힘) */}
+                            {hasEmbeddableSubmission && (
+                              <SideViewButton
+                                onClick={() =>
+                                  setIsSidePanelOpen((prev) => !prev)
+                                }
+                                className="h-[38px] w-[38px]"
+                              />
+                            )}
+                          </span>
                         ) : (
                           <button
                             type="button"
