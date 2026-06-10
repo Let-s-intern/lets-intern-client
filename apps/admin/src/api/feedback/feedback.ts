@@ -179,3 +179,32 @@ export const useUpdateAdminFeedbackMutation = () => {
     },
   });
 };
+
+/**
+ * POST /admin/feedback/{feedbackId}/slot/{feedbackSlotId} — 라이브 피드백 예약 일정 변경.
+ * 기존 예약(feedbackId)을 멘토의 다른 OPEN 슬롯(feedbackSlotId)으로 옮긴다.
+ * BE 는 path 파라미터만 받는다(요청 바디 없음). 성공 시 목록·상세·슬롯 캐시 invalidate.
+ */
+export const useRescheduleAdminFeedbackMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      feedbackId,
+      feedbackSlotId,
+    }: {
+      feedbackId: number;
+      feedbackSlotId: number;
+    }) => {
+      await axios.post(`/admin/feedback/${feedbackId}/slot/${feedbackSlotId}`);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_FEEDBACK_DETAIL_QUERY_KEY, variables.feedbackId],
+      });
+      queryClient.invalidateQueries({ queryKey: [ADMIN_FEEDBACK_QUERY_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: [MENTOR_FEEDBACK_SLOTS_QUERY_KEY],
+      });
+    },
+  });
+};

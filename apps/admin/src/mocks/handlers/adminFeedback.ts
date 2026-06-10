@@ -110,6 +110,51 @@ export const adminFeedbackHandlers = [
     return HttpResponse.json({ data: { historyList } });
   }),
 
+  // 예약 일정 변경 — 기존 예약(feedbackId)을 다른 슬롯(feedbackSlotId)으로 이동.
+  // BE 는 path 파라미터만 받는다. 목은 seed 를 in-memory 로 갱신해 변경 결과를 반영한다.
+  http.post(
+    `${BASE}/admin/feedback/:feedbackId/slot/:feedbackSlotId`,
+    ({ params }) => {
+      const feedbackId = Number(params.feedbackId);
+      const feedbackSlotId = Number(params.feedbackSlotId);
+      const feedback = seedFeedbacks.find(
+        (item) => item.vo.feedbackId === feedbackId,
+      );
+      if (!feedback) {
+        return HttpResponse.json(
+          { message: 'feedback not found' },
+          { status: 404 },
+        );
+      }
+
+      const slots = seedSlotsByMentorId[feedback.mentorId] ?? [];
+      const newSlot = slots.find((s) => s.feedbackSlotId === feedbackSlotId);
+      if (!newSlot) {
+        return HttpResponse.json(
+          { message: 'slot not found' },
+          { status: 404 },
+        );
+      }
+
+      // 기존 예약 시간대를 점유하던 슬롯 → OPEN 으로 전환(다른 멘티가 예약 가능).
+      const oldSlot = slots.find(
+        (s) =>
+          s.startDate === feedback.vo.startDate &&
+          s.endDate === feedback.vo.endDate,
+      );
+      if (oldSlot) oldSlot.status = 'OPEN';
+      newSlot.status = 'RESERVED';
+
+      // 예약 일시 갱신 → 목록·상세 GET 이 변경된 일시를 반영.
+      feedback.vo.startDate = newSlot.startDate;
+      feedback.vo.endDate = newSlot.endDate;
+      feedback.detail.startDate = newSlot.startDate;
+      feedback.detail.endDate = newSlot.endDate;
+
+      return HttpResponse.json({ data: {} });
+    },
+  ),
+
   // 멘토 슬롯 (범위·상태 필터)
   http.get(`${BASE}/admin/feedback/slot/:mentorId`, ({ params, request }) => {
     const mentorId = Number(params.mentorId);

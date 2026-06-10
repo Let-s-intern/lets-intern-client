@@ -1,4 +1,3 @@
-import { Fragment, useState } from 'react';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -12,16 +11,13 @@ import {
   type RowTone,
 } from '../../utils/liveFeedbackSpec';
 import type { SortKey, SortState } from '../utils/sortReservations';
-import ReservationHistoryPanel from './ReservationHistoryPanel';
-
-/** 표 컬럼 수 (변경 내역 펼침 행의 colSpan 용) */
-const COLUMN_COUNT = 11;
 
 /**
  * 행 배경 톤 → Tailwind 클래스 (기획 2026-06-09).
- * 진행 예정=흰색 / 둘 다 참여=초록 / 한쪽만 참여=빨강 / 둘 다 미참여=진한 회색.
+ * 진행 중=브랜드 강조 / 진행 예정=흰색 / 둘 다 참여=초록 / 한쪽만 참여=빨강 / 둘 다 미참여=진한 회색.
  */
 const ROW_TONE_CLASS: Record<RowTone, string> = {
+  inProgress: 'bg-[#EEF0FF] font-medium',
   green: 'bg-green-50',
   red: 'bg-red-50',
   gray: 'bg-neutral-90',
@@ -33,6 +29,8 @@ interface ReservationListViewProps {
   sort: SortState;
   onToggleSort: (key: SortKey) => void;
   onView: (feedbackId: number) => void;
+  /** 예약 변경 모달 열기 */
+  onReschedule: (feedback: FeedbackAdminVo) => void;
   isLoading: boolean;
   /** 빈 목록일 때 표시할 문구. 섹션(예약 목록/예약 변경 내역)별로 다르게 줄 수 있다. */
   emptyMessage?: string;
@@ -83,11 +81,10 @@ export default function ReservationListView({
   sort,
   onToggleSort,
   onView,
+  onReschedule,
   isLoading,
   emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
-  // 행별 "예약 변경 내역" 펼침 — 한 번에 하나만 펼친다.
-  const [expandedId, setExpandedId] = useState<number | null>(null);
   // 진행일시 분기 기준 시각. 목록 렌더 1회 기준으로 고정한다.
   const now = new Date();
 
@@ -143,97 +140,68 @@ export default function ReservationListView({
               />
             </th>
             <th className={twMerge(thClassName, 'text-center')}>상세</th>
-            <th className={twMerge(thClassName, 'text-center')}>
-              예약 변경 내역
-            </th>
+            <th className={twMerge(thClassName, 'text-center')}>예약 변경</th>
           </tr>
         </thead>
         <tbody>
           {reservations.map((item) => {
-            const changeCount = item.rescheduleCount ?? 0;
-            const hasChanges = changeCount > 0;
-            const isExpanded = hasChanges && expandedId === item.feedbackId;
             const spec = resolveAdminVoLiveSpec(item, now);
             // 멘토·멘티 진행 상태 조합으로 행 배경색을 구분한다.
             const rowToneClassName = ROW_TONE_CLASS[resolveRowTone(spec)];
             return (
-              <Fragment key={item.feedbackId}>
-                <tr
-                  className={twMerge(
-                    'border-neutral-80 border-b last:border-b-0',
-                    rowToneClassName,
-                  )}
-                >
-                  <td className={tdClassName}>
-                    {formatReservationDateTime(item.startDate, item.endDate)}
-                  </td>
-                  <td
-                    className={twMerge(tdClassName, 'max-w-[260px] truncate')}
-                  >
-                    {item.programTitle || '-'}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {item.mentorName}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {item.menteeName}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {spec.mentorAttendance}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {spec.menteeAttendance}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    <StatusBadge badge={spec.mentorBadge} />
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    <StatusBadge badge={spec.menteeBadge} />
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {formatApplyDateTime(item.createDate)}
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    <button
-                      type="button"
-                      onClick={() => onView(item.feedbackId)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      보기
-                    </button>
-                  </td>
-                  <td className={twMerge(tdClassName, 'text-center')}>
-                    {hasChanges ? (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setExpandedId(isExpanded ? null : item.feedbackId)
-                        }
-                        aria-expanded={isExpanded}
-                        className="text-neutral-40 hover:text-neutral-0 inline-flex items-center gap-1"
-                      >
-                        예약 변경 내역
-                        <span className="font-semibold text-blue-600">
-                          {changeCount}
-                        </span>
-                        회
-                        <span className="text-xxsmall12">
-                          {isExpanded ? '▲' : '▼'}
-                        </span>
-                      </button>
-                    ) : (
-                      <span className="text-neutral-40">-</span>
-                    )}
-                  </td>
-                </tr>
-                {isExpanded && (
-                  <tr className="border-neutral-80 bg-neutral-95 border-b">
-                    <td colSpan={COLUMN_COUNT} className="px-4 py-2">
-                      <ReservationHistoryPanel feedbackId={item.feedbackId} />
-                    </td>
-                  </tr>
+              <tr
+                key={item.feedbackId}
+                className={twMerge(
+                  'border-neutral-80 border-b last:border-b-0',
+                  rowToneClassName,
                 )}
-              </Fragment>
+              >
+                <td className={tdClassName}>
+                  {formatReservationDateTime(item.startDate, item.endDate)}
+                </td>
+                <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
+                  {item.programTitle || '-'}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  {item.mentorName}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  {item.menteeName}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  {spec.mentorAttendance}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  {spec.menteeAttendance}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  <StatusBadge badge={spec.mentorBadge} />
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  <StatusBadge badge={spec.menteeBadge} />
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  {formatApplyDateTime(item.createDate)}
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  <button
+                    type="button"
+                    onClick={() => onView(item.feedbackId)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    보기
+                  </button>
+                </td>
+                <td className={twMerge(tdClassName, 'text-center')}>
+                  <button
+                    type="button"
+                    onClick={() => onReschedule(item)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    예약 변경
+                  </button>
+                </td>
+              </tr>
             );
           })}
         </tbody>

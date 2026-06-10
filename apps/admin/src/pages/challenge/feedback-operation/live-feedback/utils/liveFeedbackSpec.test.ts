@@ -125,8 +125,12 @@ describe('resolveRowTone — 행 배경 톤(참여 조합 기준)', () => {
     expect(toneOf({}, BEFORE)).toBe('none');
   });
 
-  it('진행 중(아직 미참여) → gray(진한 회색)', () => {
-    expect(toneOf({}, DURING)).toBe('gray');
+  it('진행 중 → inProgress(강조) — 출석 조합과 무관', () => {
+    expect(toneOf({}, DURING)).toBe('inProgress');
+    // 진행 중이면 한쪽만 참여여도 강조가 우선한다.
+    expect(
+      toneOf({ mentorStatus: 'PRESENT', menteeStatus: 'PENDING' }, DURING),
+    ).toBe('inProgress');
   });
 
   it('예약취소 → none(흰색)', () => {
