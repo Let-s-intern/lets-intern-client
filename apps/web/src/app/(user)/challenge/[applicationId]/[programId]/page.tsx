@@ -15,7 +15,7 @@ import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
-import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
+import { challengeHomeSchema, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
@@ -76,16 +76,17 @@ function ChallengeDashboardContent() {
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
   const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: notices = [] } = useQuery({
+  const { data: homeData } = useQuery({
     enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'notices', { size: 99 }],
+    queryKey: ['challenge', currentChallenge?.id, 'home', testDate],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${currentChallenge?.id}/notices`,
-        { params: { size: 99 } },
-      );
-      return challengeNotices.parse(res.data.data).challengeNoticeList;
+      const res = await axios.get(`/challenge/${currentChallenge?.id}/home`, {
+        params: { testDate },
+      });
+      return challengeHomeSchema.parse(res.data.data);
     },
     throwOnError: true,
   });

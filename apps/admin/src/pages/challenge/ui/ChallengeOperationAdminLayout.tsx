@@ -2,6 +2,7 @@ import {
   ChallengeList,
   getClickCopy,
   useGetChallengeList,
+  usePostTestParticipation,
 } from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -12,8 +13,10 @@ import useMentorAccessControl from '@/hooks/useMentorAccessControl';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Button, Checkbox } from '@mui/material';
-import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+
+const WEB_URL = import.meta.env.VITE_WEB_URL ?? '';
 
 const getNavLinks = (programId?: string | number) => {
   return [
@@ -52,6 +55,7 @@ const getNavLinks = (programId?: string | number) => {
 
 const Actions = ({ openModal }: { openModal: () => void }) => {
   const navigate = useNavigate();
+  const params = useParams<{ programId: string }>();
 
   const { data } = useGetChallengeList({
     pageable: {
@@ -63,10 +67,57 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
   const { currentChallenge } = useAdminCurrentChallenge();
   const isAfterStart = dayjs().isAfter(currentChallenge?.startDate, 'day');
 
+  const [testDate, setTestDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [applicationId, setApplicationId] = useState<number | null>(null);
+
+  const { mutate: postTestParticipation, isPending } =
+    usePostTestParticipation();
+
+  const handleTestParticipation = () => {
+    if (!params.programId) return;
+    postTestParticipation(params.programId, {
+      onSuccess: (data) => {
+        setApplicationId(data.applicationId);
+        alert('테스트 참여자로 등록되었습니다.');
+      },
+      onError: () => {
+        alert('테스트 참여 등록에 실패했습니다.');
+      },
+    });
+  };
+
+  const dashboardUrl = applicationId
+    ? `${WEB_URL}/challenge/${applicationId}/${params.programId}?testDate=${testDate}`
+    : null;
+
   if (!isAdmin) return null;
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="contained"
+        onClick={handleTestParticipation}
+        disabled={isPending}
+      >
+        테스트 참여
+      </Button>
+      {applicationId && (
+        <>
+          <input
+            type="date"
+            value={testDate}
+            onChange={(e) => setTestDate(e.target.value)}
+            className="border px-2 py-1 text-sm"
+          />
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => window.open(dashboardUrl!, '_blank')}
+          >
+            대시보드 접속
+          </Button>
+        </>
+      )}
       {/* 아직 시작하지 않은 챌린지만 대시보드 복제 가능 */}
       <Button disabled={isAfterStart} variant="outlined" onClick={openModal}>
         대시보드 복제

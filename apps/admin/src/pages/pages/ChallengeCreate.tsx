@@ -8,7 +8,7 @@ import ChallengePoint from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
+import ChallengeBlogReviewSection from '@/domain/admin/program/ChallengeBlogReviewSection';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -37,11 +37,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import {
+  fetchAutoFillBlogReviews,
+  fetchAutoFillChallengeReviews,
+} from '@/api/review/review';
 import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
-import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -208,9 +211,23 @@ const ChallengeCreate: React.FC = () => {
       });
     }
 
+    const challengeReview = content.challengeReview?.length
+      ? content.challengeReview
+      : await fetchAutoFillChallengeReviews(input.challengeType).catch(
+          () => [],
+        );
+    const hasAnyBlogReview =
+      (content.externalBlogReviews?.length ?? 0) > 0 ||
+      (content.blogReview?.list?.length ?? 0) > 0;
+    const externalBlogReviews = hasAnyBlogReview
+      ? (content.externalBlogReviews ?? [])
+      : await fetchAutoFillBlogReviews(input.title ?? '').catch(() => []);
+    const contentToSave = { ...content, challengeReview, externalBlogReviews };
+    setContent(contentToSave);
+
     const req: CreateChallengeReq = {
       ...input,
-      desc: JSON.stringify(content),
+      desc: JSON.stringify(contentToSave),
       priceInfo: newPriceInfo,
     };
     console.log('req', req);
@@ -555,27 +572,19 @@ const ChallengeCreate: React.FC = () => {
             }
           />
 
-          <ProgramBlogReviewEditor
+          <ChallengeBlogReviewSection
+            isCreate
+            externalBlogReviews={content.externalBlogReviews ?? []}
+            onExternalChange={(externalBlogReviews) =>
+              setContent((prev) => ({ ...prev, externalBlogReviews }))
+            }
             blogReview={content.blogReview || { list: [] }}
-            setBlogReview={(blogReview) =>
+            onBlogReviewChange={(blogReview) =>
               setContent((prev) => ({ ...prev, blogReview }))
             }
           />
 
           <section className="my-6">
-            <div className="mb-6">
-              <ChallengeFaqCategory
-                faqCategory={content.faqCategory}
-                onChange={(e) => {
-                  setContent((prev) => ({
-                    ...prev,
-                    faqCategory: e.target.value
-                      .split(',')
-                      .map((item) => item.trim()),
-                  }));
-                }}
-              />
-            </div>
             <FaqSection
               programType={ProgramTypeEnum.enum.CHALLENGE}
               faqInfo={input.faqInfo}

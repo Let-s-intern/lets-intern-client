@@ -5,6 +5,7 @@ import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { getRewardAmount } from '@/utils/getRewardAmount';
 import { isAxiosError } from 'axios';
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ const DailyMissionSection = ({
   const { currentChallenge } = useCurrentChallenge();
 
   const router = useRouter();
+  const { withTestDate } = useChallengeNav();
 
   const missionTh =
     dailyMission?.th === BONUS_MISSION_TH
@@ -81,7 +83,9 @@ const DailyMissionSection = ({
     if (!isValid()) return;
 
     setSelectedMission(mission.id, mission.th);
-    router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
+    router.push(
+      withTestDate(`/challenge/${params.applicationId}/${params.programId}/me`),
+    );
   };
 
   return (
@@ -110,7 +114,9 @@ const DailyMissionSection = ({
       <Link
         href={
           isSubmitEdit
-            ? `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`
+            ? withTestDate(
+                `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`,
+              )
             : '#'
         }
         onClick={handleMissionClick}

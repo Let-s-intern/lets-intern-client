@@ -1,13 +1,14 @@
 'use client';
 
 import StarIcon from '@/assets/icons/star.svg';
-import { useMediaQuery } from '@mui/material';
 import React from 'react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { FreeMode, Mousewheel, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { maskingName } from '../../program-detail/review/ProgramDetailReviewItem';
+import ProgramDetailReviewItem, {
+  maskingName,
+} from '../../program-detail/review/ProgramDetailReviewItem';
 
 interface ReviewItem {
   name: string;
@@ -15,6 +16,8 @@ interface ReviewItem {
   passedState: string;
   title: string;
   content: string;
+  score?: number;
+  npsScore?: number;
 }
 
 interface Props {
@@ -71,40 +74,78 @@ const TestimonialCarousel: React.FC<Props> = ({
   starBadgeBgColor,
   starColor,
 }) => {
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const displayedReviews = reviews.slice(0, 3);
 
   return (
-    <div className="w-full">
-      <Swiper
-        spaceBetween={12}
-        slidesPerView="auto"
-        centeredSlides={isMobile ? true : false}
-        freeMode={false}
-        initialSlide={0}
-        mousewheel={true}
-        scrollbar={true}
-        slidesOffsetAfter={isMobile ? 0 : 220}
-        slidesOffsetBefore={isMobile ? 0 : 220}
-        modules={[FreeMode, Scrollbar, Mousewheel]}
-        className="w-full"
-      >
-        {reviews.map((item, idx) => {
+    <>
+      {/* 모바일: Swiper */}
+      <div className="px-5 md:hidden">
+        <Swiper
+          spaceBetween={12}
+          slidesPerView="auto"
+          centeredSlides={true}
+          freeMode={false}
+          initialSlide={0}
+          mousewheel={true}
+          scrollbar={true}
+          modules={[FreeMode, Scrollbar, Mousewheel]}
+          className="w-full"
+        >
+          {displayedReviews.map((item, idx) => {
+            const hasScore =
+              typeof item.score === 'number' &&
+              typeof item.npsScore === 'number';
+            const meta = `${maskingName(item.name)} / ${item.passedState}`;
+            return (
+              <SwiperSlide key={idx} className="!w-[300px]">
+                {hasScore ? (
+                  <ProgramDetailReviewItem
+                    type="challenge"
+                    review={item}
+                    color={starColor}
+                    bgColor={starBadgeBgColor}
+                  />
+                ) : (
+                  <TestimonialCard
+                    title={item.title}
+                    content={item.content}
+                    meta={meta}
+                    starBadgeBgColor={starBadgeBgColor}
+                    starColor={starColor}
+                  />
+                )}
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
+      {/* 데스크탑: 3개 고정 */}
+      <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-[60px] md:flex lg:px-0">
+        {displayedReviews.map((item, idx) => {
+          const hasScore =
+            typeof item.score === 'number' && typeof item.npsScore === 'number';
           const meta = `${maskingName(item.name)} / ${item.passedState}`;
-
-          return (
-            <SwiperSlide key={idx} className="!w-[300px] md:!w-[371px]">
-              <TestimonialCard
-                title={item.title}
-                content={item.content}
-                meta={meta}
-                starBadgeBgColor={starBadgeBgColor}
-                starColor={starColor}
-              />
-            </SwiperSlide>
+          return hasScore ? (
+            <ProgramDetailReviewItem
+              key={idx}
+              type="challenge"
+              review={item}
+              color={starColor}
+              bgColor={starBadgeBgColor}
+            />
+          ) : (
+            <TestimonialCard
+              key={idx}
+              title={item.title}
+              content={item.content}
+              meta={meta}
+              starBadgeBgColor={starBadgeBgColor}
+              starColor={starColor}
+            />
           );
         })}
-      </Swiper>
-    </div>
+      </div>
+    </>
   );
 };
 

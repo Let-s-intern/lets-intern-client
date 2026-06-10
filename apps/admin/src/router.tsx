@@ -22,6 +22,9 @@ const ChallengeContents = lazy(
 const ChallengeMissionManagement = lazy(
   () => import('./pages/pages/challenge/ChallengeMissionManagement'),
 );
+const ChallengeNoticesPage = lazy(
+  () => import('./pages/pages/challenge/ChallengeNoticesPage'),
+);
 const ChallengeOperationOnboarding = lazy(
   () => import('./pages/pages/challenge/ChallengeOperationOnboarding'),
 );
@@ -46,6 +49,12 @@ const ChallengeOperationFeedbackPage = lazy(
 );
 const FeedbackOperationPage = lazy(
   () => import('./pages/challenge/feedback-operation/FeedbackOperationPage'),
+);
+const ChallengeInquiryPage = lazy(
+  () => import('./pages/pages/challenge/inquiry/ChallengeInquiryPage'),
+);
+const ChallengeInquiryAnswerPage = lazy(
+  () => import('./pages/pages/challenge/inquiry/ChallengeInquiryAnswerPage'),
 );
 const AttendanceUserExperiencesPage = lazy(
   () =>
@@ -259,12 +268,24 @@ export const router = createBrowserRouter([
         element: withSuspense(<ChallengeMissionManagement />),
       },
       {
+        path: '/challenge/notices',
+        element: withSuspense(<ChallengeNoticesPage />),
+      },
+      {
         path: '/challenge/operation',
         element: withSuspense(<ChallengeOperationOnboarding />),
       },
       {
         path: '/challenge/feedback-operation',
         element: withSuspense(<FeedbackOperationPage />),
+      },
+      {
+        path: '/challenge/inquiry',
+        element: withSuspense(<ChallengeInquiryPage />),
+      },
+      {
+        path: '/challenge/inquiry/:challengeId/:questionId/answer',
+        element: withSuspense(<ChallengeInquiryAnswerPage />),
       },
       {
         path: '/challenge/operation/:programId',

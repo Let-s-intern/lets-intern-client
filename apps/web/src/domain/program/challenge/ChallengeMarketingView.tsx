@@ -54,7 +54,12 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <MarketingCurriculumSection content={content} weekText={weekText} />
           <MarketingPlanSection />
           <MarketingTimelineSection />
-          <MarketingReviewsSection challenge={challenge} />
+          <MarketingReviewsSection
+            challenge={challenge}
+            challengeReview={content?.challengeReview}
+            externalBlogReviews={content?.externalBlogReviews}
+            blogReview={content?.blogReview}
+          />
           <MarketingApplicationStrategySection weekText={weekText} />
           <MarketingPricingSection
             priceInfoList={challenge.priceInfo}

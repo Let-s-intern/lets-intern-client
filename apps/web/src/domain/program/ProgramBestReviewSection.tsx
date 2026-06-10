@@ -59,6 +59,15 @@ const ProgramBestReviewSection = ({
     }
   }, [challengeType]);
 
+  const averageScore = useMemo(() => {
+    if (!reviews) return null;
+    const withScore = reviews.filter((r) => typeof r.score === 'number');
+    if (withScore.length === 0) return null;
+    const avg =
+      withScore.reduce((sum, r) => sum + r.score!, 0) / withScore.length;
+    return Math.round(avg * 10) / 10;
+  }, [reviews]);
+
   if (!reviews || reviews.length === 0) return;
 
   return (
@@ -82,17 +91,19 @@ const ProgramBestReviewSection = ({
                 color: type === 'challenge' ? styles.primaryColor : '#E98900',
               }}
             >
-              참여 만족도 4.9점
+              {averageScore !== null
+                ? `평균 만족도 점수 ${averageScore}점`
+                : '참여 만족도 4.9점'}
             </p>
             <p className="text-small20 text-neutral-0 md:text-xlarge28 whitespace-pre font-bold md:text-center">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
           </div>
         </div>
       </div>
-      {/* 슬라이드 */}
-      <div className="custom-scrollbar mx-auto w-screen">
+      {/* 모바일: 가로 스크롤 */}
+      <div className="custom-scrollbar mx-auto w-screen md:hidden">
         <div className="custom-scrollbar relative overflow-y-visible overflow-x-scroll pb-3">
-          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1000px)/2))] md:auto-cols-[371px]">
-            {reviews.map((review, index) => (
+          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1000px)/2))]">
+            {reviews.slice(0, 3).map((review, index) => (
               <ProgramDetailReviewItem
                 key={index}
                 type={type}
@@ -105,6 +116,20 @@ const ProgramBestReviewSection = ({
             ))}
           </div>
         </div>
+      </div>
+      {/* 데스크탑: 3개 고정 */}
+      <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-10 md:flex lg:px-0">
+        {reviews.slice(0, 3).map((review, index) => (
+          <ProgramDetailReviewItem
+            key={index}
+            type={type}
+            review={review}
+            color={type === 'challenge' ? styles.primaryColor : '#4d55f5'}
+            bgColor={
+              type === 'challenge' ? styles.primaryLightColor : '#edeefe'
+            }
+          />
+        ))}
       </div>
     </div>
   );

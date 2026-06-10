@@ -1,42 +1,38 @@
 import { useGetChallengeTitle } from '@/api/challenge/challenge';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
-import { ProgramRecommend } from '@/types/interface';
+import { ChallengeHome } from '@/schema';
 import { ChevronRight } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import HybridLink from '../../../../common/HybridLink';
 
 const TEXT_SHADOW_STYLE = {
   textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
 };
 
+type Program = ChallengeHome['programRecommendList'][0]['programs'][0];
+
 interface Props {
-  programs: ProgramRecommend['list'];
+  programs: Program[];
 }
 
 function RecommendedProgramSwiper({ programs }: Props) {
   const params = useParams<{ programId: string }>();
   const router = useRouter();
-  const programId = params.programId;
-
   const trackEvent = useGoogleAnalytics();
+  const { data: challengeTitleData } = useGetChallengeTitle(params.programId);
 
-  const { data: challengeTitleData } = useGetChallengeTitle(programId);
-
-  const handleClickSlide = (
-    clickProgramUrl: string,
-    clickProgramName: string | null,
-  ) => {
+  const handleClickSlide = (program: Program) => {
+    const url = `/program/${program.programType.toLowerCase()}/${program.programId}`;
     trackEvent({
       eventName: 'dashboard_programrec',
       eventData: {
-        click_program_url: clickProgramUrl,
-        click_program_name: clickProgramName,
+        click_program_url: url,
+        click_program_name: program.title,
         current_dashboard_challenge_name: challengeTitleData?.title,
       },
     });
-    router.push(clickProgramUrl);
+    router.push(url);
   };
 
   return (
@@ -55,43 +51,38 @@ function RecommendedProgramSwiper({ programs }: Props) {
         }}
         className="operation-recommend-swiper"
       >
-        {programs.map((item) => {
-          const info = item.programInfo;
-          const url = `/program/${info.programType.toLocaleLowerCase()}/${info.id}`;
-
-          return (
-            <SwiperSlide
-              key={info.id}
-              className="dashboard_programrec !w-[214px] cursor-pointer"
-              onClick={() => handleClickSlide(url, info.title ?? null)}
-            >
-              <div className="flex flex-col gap-2">
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
-                  <img
-                    src={info.thumbnail || undefined}
-                    className="h-full w-full object-cover"
-                    alt={info.title || '추천 프로그램 썸네일'}
-                  />
-                  <div className="absolute inset-x-0 top-0 h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 p-3">
-                    <span
-                      className="text-xsmall14 block w-fit font-semibold text-white"
-                      style={TEXT_SHADOW_STYLE}
-                    >
-                      {item.recommendTitle}
-                    </span>
-                  </div>
-                </div>
-
-                <HybridLink href={url} className="flex justify-between">
-                  <span className="text-neutral-0 font-medium">
-                    {item.recommendCTA || '자세히 보기'}
+        {programs.map((program) => (
+          <SwiperSlide
+            key={`${program.programId}-${program.programType}`}
+            className="dashboard_programrec !w-[214px] cursor-pointer"
+            onClick={() => handleClickSlide(program)}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
+                <img
+                  src={program.thumbnail || undefined}
+                  className="h-full w-full object-cover"
+                  alt={program.title}
+                />
+                <div className="absolute inset-x-0 top-0 h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 p-3">
+                  <span
+                    className="text-xsmall14 block w-fit font-semibold text-white"
+                    style={TEXT_SHADOW_STYLE}
+                  >
+                    {program.title}
                   </span>
-                  <ChevronRight className="mt-0.5" size={20} color="#CFCFCF" />
-                </HybridLink>
+                </div>
               </div>
-            </SwiperSlide>
-          );
-        })}
+
+              <div className="flex justify-between">
+                <span className="text-neutral-0 font-medium">
+                  {program.cta || '자세히 보기'}
+                </span>
+                <ChevronRight className="mt-0.5" size={20} color="#CFCFCF" />
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

@@ -3,6 +3,7 @@ import {
   useSubmitMission,
 } from '@/api/attendance/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
@@ -42,6 +43,7 @@ export function useMissionSubmitRegular({
   const { selectedMissionId, setSelectedMission } = useMissionStore();
   const { schedules, currentChallenge, refetchSchedules } =
     useCurrentChallenge();
+  const { testDate } = useChallengeNav();
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
@@ -151,6 +153,7 @@ export function useMissionSubmitRegular({
         review: textareaValue,
         preQuestion: preQuestionValue,
         userExperienceIds: selectedExperienceIds,
+        testDate,
       });
       await refetchSchedules?.();
       setToastMessage('미션 제출이 완료되었습니다.');

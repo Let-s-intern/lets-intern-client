@@ -35,18 +35,19 @@ export const useSubmitMissionBlogBonus = () => {
       url,
       accountType,
       accountNum,
+      testDate,
     }: {
       missionId: number;
       url: string;
       accountType: string;
       accountNum: string;
+      testDate?: string;
     }) => {
-      const res = await axiosV2.post(`/review/blog/bonus`, {
-        missionId,
-        url,
-        accountType,
-        accountNum,
-      });
+      const res = await axiosV2.post(
+        `/review/blog/bonus`,
+        { missionId, url, accountType, accountNum },
+        { params: { testDate } },
+      );
       return res.data;
     },
     onError(error: AxiosError<ErrorResponse>) {
@@ -83,11 +84,15 @@ export const usePostTalentPoolAttendanceMutation = () => {
     mutationFn: async ({
       missionId,
       req,
+      testDate,
     }: {
       missionId: number;
       req: TalentPoolDocumentReq[];
+      testDate?: string;
     }) => {
-      await axios.post(`/attendance/pool/${missionId}`, req);
+      await axios.post(`/attendance/pool/${missionId}`, req, {
+        params: { testDate },
+      });
     },
     onError(error: AxiosError<ErrorResponse>) {
       const errorMessage =

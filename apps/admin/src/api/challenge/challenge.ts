@@ -840,6 +840,25 @@ export const useChallengeMyDailyMission = (
   });
 };
 
+const testParticipationSchema = z.object({
+  applicationId: z.number(),
+  challengeId: z.number(),
+  userId: z.number(),
+  challengeOption: z.string(),
+});
+
+/** [어드민용] 어드민 본인을 챌린지 테스트 참여자로 등록 POST /api/v2/admin/challenge/{challengeId}/test-participation */
+export const usePostTestParticipation = () => {
+  return useMutation({
+    mutationFn: async (challengeId: number | string) => {
+      const res = await axiosV2.post(
+        `/admin/challenge/${challengeId}/test-participation`,
+      );
+      return testParticipationSchema.parse(res.data.data);
+    },
+  });
+};
+
 /** GET 챌린지 공지사항 조회 */
 export const useGetChallengeNotices = (
   challengeId?: string,
@@ -855,6 +874,29 @@ export const useGetChallengeNotices = (
       return challengeNotices.parse(res.data.data);
     },
   });
+};
+
+export interface DuplicateChallengeReq {
+  title: string | null;
+  beginning: string | null;
+  deadline: string | null;
+  startDate: string | null;
+  thumbnail: string | null;
+  desktopThumbnail: string | null;
+  copyContent: boolean;
+  copyDashboard: boolean;
+}
+
+/** POST 챌린지 복제 */
+export const duplicateChallenge = async (
+  sourceChallengeId: number,
+  req: DuplicateChallengeReq,
+): Promise<{ challengeId: number }> => {
+  const res = await axiosV2.post(
+    `/admin/challenge/${sourceChallengeId}/duplicate`,
+    req,
+  );
+  return res.data;
 };
 
 /** GET 챌린지 가이드 조회 */

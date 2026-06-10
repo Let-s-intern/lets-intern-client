@@ -2,7 +2,7 @@
 
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
-import CategoryTabs from '@/common/ui/CategoryTabs';
+import { CategoryTabs } from '@letscareer/ui';
 
 type TabValue = 'written' | 'live';
 
