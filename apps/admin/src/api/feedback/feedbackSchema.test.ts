@@ -14,6 +14,7 @@ describe('feedbackAdminVoSchema', () => {
     const data = {
       feedbackId: 1,
       programTitle: '면접 준비 챌린지 2기',
+      mentorId: 101,
       mentorName: '쥬디',
       menteeName: '홍길동',
       startDate: '2026-06-01T17:00:00',
@@ -31,6 +32,7 @@ describe('feedbackAdminVoSchema', () => {
   it('programTitle 누락 시 빈 문자열로 기본값 처리한다', () => {
     const data = {
       feedbackId: 2,
+      mentorId: 101,
       mentorName: '쥬디',
       menteeName: '김철수',
       startDate: '2026-06-02T18:00:00',
@@ -68,6 +70,7 @@ describe('getAdminFeedbacksResponseSchema', () => {
         {
           feedbackId: 1,
           programTitle: '챌린지',
+          mentorId: 101,
           mentorName: '멘토',
           menteeName: '멘티',
           startDate: '2026-06-01T17:00:00',
