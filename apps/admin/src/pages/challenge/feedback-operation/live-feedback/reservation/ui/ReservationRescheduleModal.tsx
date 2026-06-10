@@ -100,9 +100,6 @@ export default function ReservationRescheduleModal({
   // 선택한 날짜(YYYY-MM-DD)와 그 날짜의 슬롯(feedbackSlotId).
   const [date, setDate] = useState('');
   const [slotId, setSlotId] = useState<number | null>(null);
-  // 변경 전 시간대를 예약 가능으로 전환할지 — 디자인 요소. (BE 가 별도 파라미터를
-  // 받지 않아 현재는 UI 상태로만 유지된다. BE 가 플래그를 받으면 요청에 연결한다.)
-  const [convertOldToOpen, setConvertOldToOpen] = useState(true);
 
   const { mutate, isPending } = useRescheduleAdminFeedbackMutation();
 
@@ -279,22 +276,11 @@ export default function ReservationRescheduleModal({
             조율 후 진행해 주세요.
           </div>
 
-          {/* 변경 전 시간대 예약 가능 전환 */}
-          <label className="flex cursor-pointer flex-col gap-1">
-            <span className="text-xsmall14 text-neutral-0 flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={convertOldToOpen}
-                onChange={(e) => setConvertOldToOpen(e.target.checked)}
-                className="accent-primary h-4 w-4"
-              />
-              변경 전 시간대를 예약 가능으로 전환하기
-            </span>
-            <span className="text-xxsmall12 text-neutral-40 pl-6">
-              체크하면 변경 전 시간대가 다른 멘티에게 예약 가능 시간으로
-              노출됩니다.
-            </span>
-          </label>
+          {/* 변경 전 시간대는 항상 예약 가능으로 자동 전환된다(선택 불가). */}
+          <p className="text-xxsmall12 text-neutral-40">
+            변경 전 시간대는 다른 멘티가 예약할 수 있도록 자동으로 예약 가능
+            시간으로 전환됩니다.
+          </p>
         </div>
 
         {/* 푸터 — 예약 취소는 제외(취소 기능 없음) */}
