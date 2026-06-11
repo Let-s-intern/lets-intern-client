@@ -2,6 +2,7 @@ import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challeng
 import { usePostTalentPoolAttendanceMutation } from '@/api/mission/mission';
 import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
@@ -38,6 +39,7 @@ const MissionSubmitTalentPoolSection = ({
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
 
   const submitTalentPoolAttendance = usePostTalentPoolAttendanceMutation();
+  const { testDate } = useChallengeNav();
   const { data: missionData, refetch: refetchMissionData } =
     useChallengeMissionAttendanceInfoQuery({
       challengeId: currentChallenge?.id,
@@ -126,6 +128,7 @@ const MissionSubmitTalentPoolSection = ({
       await submitTalentPoolAttendance.mutateAsync({
         missionId,
         req: documentRequests,
+        testDate,
       });
 
       await refetchMissionData();

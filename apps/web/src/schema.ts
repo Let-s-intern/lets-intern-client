@@ -1381,6 +1381,39 @@ export type UpdateChallengeGuideReq = {
   link: string;
 };
 
+// GET /api/v1/challenge/{challengeId}/home
+export const challengeHomeSchema = z.object({
+  noticeList: z.array(
+    z.object({
+      id: z.number(),
+      type: z.enum(['NOTICE', 'GUIDE', 'PROGRAM']),
+      title: z.string().nullable(),
+      url: z.string().nullable(),
+      createdAt: z.string().nullable(),
+    }),
+  ),
+  programRecommendList: z.array(
+    z.object({
+      id: z.number(),
+      programType: ProgramTypeEnum.optional().nullable(),
+      title: z.string(),
+      isMoreVisible: z.boolean(),
+      moreUrl: z.string().nullable(),
+      programs: z.array(
+        z.object({
+          programId: z.number(),
+          programType: ProgramTypeEnum,
+          title: z.string(),
+          cta: z.string(),
+          thumbnail: z.string().nullable(),
+        }),
+      ),
+    }),
+  ),
+});
+
+export type ChallengeHome = z.infer<typeof challengeHomeSchema>;
+
 // GET /api/v1/challenge/{id}/schedule 챌린지 대시보드 일정 및 미션 제출 현황
 export const challengeSchedule = z
   .object({

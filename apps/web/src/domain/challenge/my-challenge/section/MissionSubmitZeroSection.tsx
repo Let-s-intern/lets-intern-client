@@ -5,6 +5,7 @@ import {
   useSubmitChallengeGoal,
 } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
 import dayjs from '@/lib/dayjs';
@@ -42,6 +43,7 @@ const MissionSubmitZeroSection = ({
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
+  const { testDate } = useChallengeNav();
 
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(true);
@@ -63,6 +65,7 @@ const MissionSubmitZeroSection = ({
         missionId,
         link: 'https://example.com',
         review: textareaValue,
+        testDate,
       });
 
       // 2. 출석 성공 후 목표 저장

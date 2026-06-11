@@ -1,5 +1,6 @@
 'use client';
 
+import { useChallengeHome } from '@/api/challenge/challenge';
 import { useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -15,10 +16,10 @@ import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
-import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
+import { challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
@@ -76,29 +77,31 @@ function ChallengeDashboardContent() {
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
   const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: notices = [] } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'notices', { size: 99 }],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${currentChallenge?.id}/notices`,
-        { params: { size: 99 } },
-      );
-      return challengeNotices.parse(res.data.data).challengeNoticeList;
-    },
-    throwOnError: true,
+  const { data: homeData } = useChallengeHome(currentChallenge?.id, {
+    testDate,
   });
 
-  const { data: guides = [] } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'guides'],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge/${currentChallenge?.id}/guides`);
-      return challengeGuides.parse(res.data.data).challengeGuideList;
-    },
-    throwOnError: true,
-  });
+  const notices = (homeData?.noticeList ?? [])
+    .filter((item) => item.type === 'NOTICE')
+    .map((item) => ({
+      id: item.id,
+      type: null as null,
+      title: item.title,
+      link: item.url,
+      createDate: dayjs(item.createdAt),
+    }));
+
+  const guides = (homeData?.noticeList ?? [])
+    .filter((item) => item.type === 'GUIDE')
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      link: item.url,
+      createDate: dayjs(item.createdAt),
+    }));
 
   const { data: user } = useUserQuery();
 

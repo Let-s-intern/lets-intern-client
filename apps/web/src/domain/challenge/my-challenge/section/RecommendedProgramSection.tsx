@@ -1,10 +1,16 @@
-import { useChallengeQuery } from '@/api/challenge/challenge';
+import { useChallengeHome } from '@/api/challenge/challenge';
 import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
-import { ChallengeContent } from '@/types/interface';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { ChallengeHome } from '@/schema';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
+
+type RecommendSection = ChallengeHome['programRecommendList'][0];
 
 const MoreButton = ({
   visible = false,
@@ -48,79 +54,68 @@ const MobileMoreButton = ({
   );
 };
 
-function RecommendedProgramSection() {
-  const pathname = usePathname();
+const RecommendSection = ({ section }: { section: RecommendSection }) => {
   const router = useRouter();
-  const params = useParams<{ programId: string }>();
   const trackEvent = useGoogleAnalytics();
-  const { data: challenge, isLoading } = useChallengeQuery({
-    challengeId: Number(params.programId),
-  });
 
-  const descJson = useMemo<ChallengeContent | null>(() => {
-    if (!challenge?.desc) return null;
-    try {
-      return JSON.parse(challenge.desc);
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }, [challenge?.desc]);
-
-  const programs = descJson?.operationRecommendProgram?.list ?? [];
-  const moreButtonInfo = descJson?.operationRecommendMoreButton;
-
-  const handleClickMore = (
-    clickUrl: string,
-    currentChallengeTitle?: string,
-  ) => {
+  const handleClickMore = () => {
+    if (!section.moreUrl) return;
     trackEvent({
       eventName: 'dashboard_moreprogramrec',
-      eventData: {
-        click_url: clickUrl,
-        current_dashboard_challenge_name: currentChallengeTitle,
-      },
+      eventData: { click_url: section.moreUrl },
     });
-    router.push(clickUrl);
+    router.push(section.moreUrl);
   };
 
+  return (
+    <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
+      <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
+        <h2 className="text-xsmall16 md:text-small18 font-semibold">
+          챌린지 참여자들이 선택한 <br className="md:hidden" />
+          다른 프로그램도 확인해보세요{' '}
+          <span role="img" aria-label="돋보기">
+            🔍
+          </span>
+        </h2>
+        <MoreButton
+          visible={section.isMoreVisible && !!section.moreUrl}
+          onClick={handleClickMore}
+        />
+      </div>
+      <RecommendedProgramSwiper programs={section.programs} />
+      <MobileMoreButton
+        visible={section.isMoreVisible && !!section.moreUrl}
+        onClick={handleClickMore}
+      />
+    </section>
+  );
+};
+
+function RecommendedProgramSection() {
+  const pathname = usePathname();
+  const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
+
+  const { data: homeData } = useChallengeHome(Number(params.programId), {
+    testDate,
+  });
+
+  const programRecommendList = homeData?.programRecommendList ?? [];
+
   const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
-  // 컴포넌트를 렌더링하지 않음
   const shouldHideSection = EXCLUDED_PATHS.some((path) =>
     pathname.includes(path),
   );
-  if (shouldHideSection) {
-    return null;
-  }
+  if (shouldHideSection) return null;
 
-  if (isLoading || programs.length === 0) return null;
+  if (programRecommendList.length === 0) return null;
 
   return (
     <>
-      <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
-        <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
-          <h2 className="text-xsmall16 md:text-small18 font-semibold">
-            챌린지 참여자들이 선택한 <br className="md:hidden" />
-            다른 프로그램도 확인해보세요{' '}
-            <span role="img" aria-label="돋보기">
-              🔍
-            </span>
-          </h2>
-          <MoreButton
-            visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
-            onClick={() =>
-              handleClickMore(moreButtonInfo?.url ?? '', challenge?.title)
-            }
-          />
-        </div>
-        <RecommendedProgramSwiper programs={programs} />
-        <MobileMoreButton
-          visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
-          onClick={() =>
-            handleClickMore(moreButtonInfo?.url ?? '', challenge?.title)
-          }
-        />
-      </section>
+      {programRecommendList.map((section) => (
+        <RecommendSection key={section.id} section={section} />
+      ))}
     </>
   );
 }

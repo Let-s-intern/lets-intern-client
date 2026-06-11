@@ -1,9 +1,10 @@
-import { fetchJson } from '@letscareer/api';
 import { userAttendanceExperienceSchema } from '@/api/experience/experienceSchema';
 import {
   activeChallengeResponse,
   attendances,
+  challengeApplicationsSchema,
   challengeGuides,
+  challengeHomeSchema,
   ChallengeIdPrimitive,
   challengeListSchema,
   challengeNotices,
@@ -17,12 +18,12 @@ import {
   Pageable,
   ProgramClassification,
   ProgramStatus,
-  challengeApplicationsSchema,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
+import { fetchJson } from '@letscareer/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -827,13 +828,15 @@ export const useChallengeApplicationsQuery = ({
 /** GET 챌린지 나의 기록장 데일리 미션 /api/v1/challenge/{challengeId}/my/daily-mission */
 export const useChallengeMyDailyMission = (
   programId?: string | number,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; testDate?: string },
 ) => {
   return useQuery({
     enabled: !!programId && options?.enabled,
-    queryKey: ['useChallengeDailyMission', programId],
+    queryKey: ['useChallengeDailyMission', programId, options?.testDate],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
+      const res = await axios.get(`/challenge/${programId}/my/daily-mission`, {
+        params: { testDate: options?.testDate },
+      });
       return myDailyMissionSchema.parse(res.data.data);
     },
   });
@@ -852,6 +855,23 @@ export const useGetChallengeNotices = (
         params,
       });
       return challengeNotices.parse(res.data.data);
+    },
+  });
+};
+
+/** GET 챌린지 홈 (공지·가이드·추천 프로그램) */
+export const useChallengeHome = (
+  challengeId?: number,
+  options?: { testDate?: string },
+) => {
+  return useQuery({
+    enabled: Boolean(challengeId),
+    queryKey: ['challenge', challengeId, 'home', options?.testDate],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/home`, {
+        params: { testDate: options?.testDate },
+      });
+      return challengeHomeSchema.parse(res.data.data);
     },
   });
 };

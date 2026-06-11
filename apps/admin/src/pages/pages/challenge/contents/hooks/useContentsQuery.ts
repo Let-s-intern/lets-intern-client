@@ -2,11 +2,11 @@ import { getContentsAdmin } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 
-const useContentsQuery = () => {
+const useContentsQuery = (page: number = 0, size: number = 20) => {
   return useQuery({
-    queryKey: ['contents', 'admin'],
+    queryKey: ['contents', 'admin', page, size],
     queryFn: async () => {
-      const res = await axios.get('/contents/admin?size=1000');
+      const res = await axios.get(`/contents/admin?page=${page}&size=${size}`);
       return getContentsAdmin.parse(res.data.data);
     },
   });

@@ -1,3 +1,4 @@
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -27,6 +28,7 @@ const MissionCalendarItem = ({
 
   const params = useParams<{ applicationId: string; programId: string }>();
   const router = useRouter();
+  const { withTestDate } = useChallengeNav();
 
   const { error } = useChallengeMissionAttendanceInfoQuery({
     challengeId: params.programId,
@@ -42,7 +44,11 @@ const MissionCalendarItem = ({
   const handleMissionClick = async () => {
     if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
-      router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
+      router.push(
+        withTestDate(
+          `/challenge/${params.applicationId}/${params.programId}/me`,
+        ),
+      );
     }
   };
 

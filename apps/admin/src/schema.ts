@@ -927,6 +927,7 @@ export const missionAdmin = z
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
+        waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
@@ -1214,6 +1215,7 @@ export const missionTemplateAdmin = z
         vodLink: z.string().nullish(),
       }),
     ),
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -1223,6 +1225,7 @@ export const missionTemplateAdmin = z
           createDate: dayjs(missionTemplate.createDate),
         }),
       ),
+      pageInfo: data.pageInfo,
     };
   });
 
@@ -2200,3 +2203,93 @@ export const programBannerAdminDetailSchema = z.object({
 });
 
 export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
+
+// 전체 공지 관리 notice type
+export const adminNoticeType = z.union([
+  z.literal('NOTICE'),
+  z.literal('GUIDE'),
+  z.literal('PROGRAM'),
+]);
+export type AdminNoticeType = z.infer<typeof adminNoticeType>;
+
+// GET /api/v1/admin/notice
+export const adminNoticeListSchema = z
+  .object({
+    noticeList: z.array(
+      z.object({
+        id: z.number(),
+        type: adminNoticeType.nullable(),
+        title: z.string().nullable(),
+        url: z.string().nullable(),
+        createdAt: z.string().nullable(),
+      }),
+    ),
+    pageInfo: z.object({
+      currentPage: z.number(),
+      totalPages: z.number(),
+      totalElements: z.number(),
+    }),
+  })
+  .transform((data) => ({
+    noticeList: data.noticeList.map((item) => ({
+      ...item,
+      createDate: item.createdAt ? dayjs(item.createdAt) : null,
+    })),
+    currentPage: data.pageInfo.currentPage,
+    totalPages: data.pageInfo.totalPages,
+    totalElements: data.pageInfo.totalElements,
+  }));
+
+export type AdminNoticeResItem = z.infer<
+  typeof adminNoticeListSchema
+>['noticeList'][number];
+
+export const adminNoticeDetailSchema = z.object({
+  id: z.number(),
+  type: adminNoticeType.nullable(),
+  title: z.string().nullable(),
+  url: z.string().nullable(),
+  isMoreVisible: z.boolean().nullable(),
+  moreUrl: z.string().nullable(),
+  programs: z
+    .array(
+      z.object({
+        programId: z.number(),
+        programType: ProgramTypeEnum.optional(),
+        title: z.string(),
+        cta: z.string(),
+        thumbnail: z.string().nullable(),
+      }),
+    )
+    .nullable(),
+});
+
+export type AdminNoticeDetail = z.infer<typeof adminNoticeDetailSchema>;
+
+export type AdminNoticeProgramItem = {
+  programId: number;
+  programType?: string;
+  title: string;
+  cta: string;
+  thumbnail: string;
+};
+
+// POST /api/v1/admin/notice
+export type CreateAdminNoticeReq = {
+  type: AdminNoticeType;
+  title: string;
+  url: string;
+  isMoreVisible?: boolean;
+  moreLink?: string;
+  programs?: AdminNoticeProgramItem[];
+};
+
+// PATCH /api/v1/admin/notice/{id}
+export type UpdateAdminNoticeReq = {
+  type: AdminNoticeType;
+  title: string;
+  url: string;
+  isMoreVisible?: boolean;
+  moreLink?: string;
+  programs?: AdminNoticeProgramItem[];
+};
