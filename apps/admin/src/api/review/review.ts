@@ -621,7 +621,7 @@ export async function fetchAutoFillBlogReviews(
 ): Promise<ExternalBlogReview[]> {
   const keyword = challengeTitle
     .replace(/^\[.*?\]\s*/, '')
-    .replace(/\s*\d+기\s*$/, '')
+    .replace(/\s*\d+기.*$/, '')
     .trim();
   if (!keyword) return [];
 
