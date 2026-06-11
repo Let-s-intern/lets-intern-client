@@ -294,7 +294,7 @@ const ChallengeEdit: React.FC = () => {
     const externalBlogReviews = hasAnyBlogReview
       ? (content.externalBlogReviews ?? [])
       : await fetchAutoFillBlogReviews(
-          input.title ?? challenge.title ?? '',
+          input.title ?? challenge?.title ?? '',
         ).catch(() => []);
     const contentToSave = { ...content, challengeReview, externalBlogReviews };
     setContent(contentToSave);
@@ -328,7 +328,7 @@ const ChallengeEdit: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     challengeIdString,
-    challenge.title,
+    challenge?.title,
     client,
     content,
     input,
