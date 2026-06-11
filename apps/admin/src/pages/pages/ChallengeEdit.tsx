@@ -293,7 +293,9 @@ const ChallengeEdit: React.FC = () => {
       (content.blogReview?.list?.length ?? 0) > 0;
     const externalBlogReviews = hasAnyBlogReview
       ? (content.externalBlogReviews ?? [])
-      : await fetchAutoFillBlogReviews(input.title ?? '').catch(() => []);
+      : await fetchAutoFillBlogReviews(
+          input.title ?? challenge.title ?? '',
+        ).catch(() => []);
     const contentToSave = { ...content, challengeReview, externalBlogReviews };
     setContent(contentToSave);
 
