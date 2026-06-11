@@ -328,6 +328,7 @@ const ChallengeEdit: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     challengeIdString,
+    challenge.title,
     client,
     content,
     input,
