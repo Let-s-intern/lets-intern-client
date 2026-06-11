@@ -13,6 +13,7 @@ export function toWrittenMission(
 ): WrittenFeedbackMission {
   return {
     id: item.attendanceId,
+    missionId: item.missionId,
     thumbnail: item.thumbnail,
     title: item.missionTitle,
     status: resolveStatus(item),

@@ -10,6 +10,7 @@ import {
   toWrittenCardConfig,
   toWrittenMission,
 } from '@/domain/challenge/feedback/written/utils';
+import { useMissionStore } from '@/store/useMissionStore';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
@@ -71,8 +72,11 @@ const WrittenFeedbackPage = () => {
   const today = new Date();
   const started = missions.filter((m) => new Date(m.startDay) <= today);
 
+  const { setSelectedMission } = useMissionStore();
+
   const handleClick = useCallback(
     (mission: WrittenFeedbackMission) => {
+      setSelectedMission(mission.missionId, mission.missionNumber);
       const base = `/challenge/${params.applicationId}/${params.programId}/me`;
       if (mission.status === 'confirmed') {
         router.push(`${base}#mentor-feedback`);
@@ -82,7 +86,7 @@ const WrittenFeedbackPage = () => {
         router.push(base);
       }
     },
-    [params.applicationId, params.programId, router],
+    [params.applicationId, params.programId, router, setSelectedMission],
   );
 
   return (
