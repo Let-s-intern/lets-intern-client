@@ -97,6 +97,7 @@ export const writtenFeedbackItemSchema = z.object({
   thumbnail: z.string(),
   desktopThumbnail: z.string(),
   attendanceId: z.number(),
+  missionId: z.number(),
   attendanceStatus: attendanceStatusSchema.nullable(),
   attendanceResult: z.string().nullable(),
   feedbackStatus: z.enum(['IN_PROGRESS', 'WAITING', 'CONFIRMED']).nullable(),

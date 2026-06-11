@@ -6,6 +6,7 @@ export type WrittenFeedbackStatus =
 
 export interface WrittenFeedbackMission {
   id: number;
+  missionId: number;
   thumbnail: string;
   title: string;
   description?: string;
