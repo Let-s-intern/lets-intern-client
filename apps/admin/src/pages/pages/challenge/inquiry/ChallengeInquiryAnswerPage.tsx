@@ -1,10 +1,10 @@
-import { useRef } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import EditorApp from '@/common/lexical/EditorApp';
 import {
   ChallengeQuestionItem,
   useAnswerQuestionMutation,
 } from '@/api/challenge-question/challengeQuestion';
+import EditorApp from '@/common/lexical/EditorApp';
+import { useRef } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeInquiryAnswerPage = () => {
   const { challengeId, questionId } = useParams<{
@@ -53,6 +53,9 @@ const ChallengeInquiryAnswerPage = () => {
         <ul className="text-xsmall14 space-y-1 text-gray-600">
           <li>· {question.challengeTitle}</li>
           <li>· {question.userName}</li>
+          {question.challengePricePlanType && (
+            <li>· {question.challengePricePlanType}</li>
+          )}
           {(question.wishJob || question.wishCompany) && (
             <li>
               ·{' '}

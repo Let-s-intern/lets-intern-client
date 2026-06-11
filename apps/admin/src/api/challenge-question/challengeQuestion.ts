@@ -1,3 +1,4 @@
+import { ChallengePricePlanEnum } from '@/schema';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -20,6 +21,7 @@ const challengeQuestionItemSchema = z.object({
   phoneNum: z.string().nullable().optional(),
   wishJob: z.string().nullable().optional(),
   wishCompany: z.string().nullable().optional(),
+  challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
   createDate: z.string(),
 });
 
@@ -117,7 +119,9 @@ export const useDeleteQuestionMutation = () => {
       challengeId: number;
       questionId: number;
     }) =>
-      axiosV2.delete(`/admin/challenge/${challengeId}/questions/${questionId}`),
+      axiosV2.delete(
+        `/admin/challenge/${challengeId}/questions/${questionId}/answer`,
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [CHALLENGE_QUESTIONS_QUERY_KEY],

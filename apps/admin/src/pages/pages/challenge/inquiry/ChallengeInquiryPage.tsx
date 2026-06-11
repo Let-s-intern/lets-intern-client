@@ -212,8 +212,8 @@ const ChallengeInquiryPage = () => {
 
       <WarningModal
         isOpen={deleteTarget !== null}
-        title="문의 삭제"
-        content="정말로 이 문의를 삭제하시겠습니까?"
+        title="문의 답변 삭제"
+        content="정말로 이 문의 답변을 삭제하시겠습니까?"
         confirmText="삭제"
         isLoading={isDeleting}
         onConfirm={() => {
