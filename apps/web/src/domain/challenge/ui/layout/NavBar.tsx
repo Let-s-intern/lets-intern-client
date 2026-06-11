@@ -13,7 +13,9 @@ const NavBar = () => {
     ? 'MY_MISSION'
     : pathname.endsWith('guides')
       ? 'GUIDE'
-      : 'DASHBOARD';
+      : pathname.endsWith('inquiry')
+        ? 'INQUIRY'
+        : 'DASHBOARD';
 
   return (
     <>
@@ -63,6 +65,21 @@ const NavBar = () => {
               )}
             >
               공지사항 / 챌린지 가이드
+            </Link>
+          </li>
+          <li className="flex-shrink-0 md:flex-shrink">
+            <Link
+              href={`/challenge/${applicationId}/${params.programId}/inquiry`}
+              className={clsx(
+                'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-semibold transition-colors md:h-[44px] md:px-3 md:font-medium',
+                {
+                  'text-primary md:bg-primary-5 font-semibold':
+                    activeStatus === 'INQUIRY',
+                  'text-neutral-30 font-medium': activeStatus !== 'INQUIRY',
+                },
+              )}
+            >
+              1:1 문의
             </Link>
           </li>
         </ul>

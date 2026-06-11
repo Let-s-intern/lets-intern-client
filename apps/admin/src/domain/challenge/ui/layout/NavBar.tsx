@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 const NavBar = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
   const pathname = useLocation().pathname;
