@@ -19,7 +19,7 @@ import dayjs from '@/lib/dayjs';
 import { challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
@@ -77,8 +77,12 @@ function ChallengeDashboardContent() {
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
   const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
+  const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: homeData } = useChallengeHome(currentChallenge?.id);
+  const { data: homeData } = useChallengeHome(currentChallenge?.id, {
+    testDate,
+  });
 
   const notices = (homeData?.noticeList ?? [])
     .filter((item) => item.type === 'NOTICE')

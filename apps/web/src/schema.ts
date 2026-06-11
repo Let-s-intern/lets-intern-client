@@ -1386,7 +1386,7 @@ export const challengeHomeSchema = z.object({
   noticeList: z.array(
     z.object({
       id: z.number(),
-      type: z.enum(['NOTICE', 'GUIDE']),
+      type: z.enum(['NOTICE', 'GUIDE', 'PROGRAM']),
       title: z.string().nullable(),
       url: z.string().nullable(),
       createdAt: z.string().nullable(),

@@ -1,3 +1,4 @@
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import { TabMenu } from '@/domain/program/challenge/ChallengeGuidePage';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -9,10 +10,13 @@ interface Props {
 
 function NoticeGuideLink({ tab }: Props) {
   const params = useParams<{ programId: string; applicationId: string }>();
+  const { withTestDate } = useChallengeNav();
 
   return (
     <Link
-      href={`/challenge/${params.applicationId}/${params.programId}/guides?tab=${tab}`}
+      href={withTestDate(
+        `/challenge/${params.applicationId}/${params.programId}/guides?tab=${tab}`,
+      )}
       aria-label="전체 공지사항/가이드 보기"
     >
       <ChevronRight width={20} height={20} color="#989BA2" />

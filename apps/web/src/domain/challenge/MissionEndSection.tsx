@@ -1,4 +1,5 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import useChallengeNav from './hooks/useChallengeNav';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -6,6 +7,7 @@ const MissionEndSection = () => {
   const params = useParams<{ applicationId: string }>();
   const applicationId = params.applicationId;
   const { currentChallenge } = useCurrentChallenge();
+  const { withTestDate } = useChallengeNav();
 
   return (
     <>
@@ -22,7 +24,9 @@ const MissionEndSection = () => {
           이전 미션들은 나의 기록장에서 확인하실 수 있습니다.
         </p>
         <Link
-          href={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
+          href={withTestDate(
+            `/challenge/${applicationId}/${currentChallenge?.id}/me`,
+          )}
           className="rounded-xs bg-primary m-3 p-3 text-center font-medium text-white"
         >
           이전 미션 돌아보기

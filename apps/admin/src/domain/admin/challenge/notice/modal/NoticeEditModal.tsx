@@ -24,13 +24,14 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
     defaultProgramRecommend,
   );
   const [moreButton, setMoreButton] = useState({ visible: false, url: '' });
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const detailQuery = useGetAdminNoticeDetail(editingId);
   const createMutation = useCreateAdminNoticeMutation();
   const updateMutation = useUpdateAdminNoticeMutation();
 
   useEffect(() => {
-    if (!detailQuery.data || mode !== 'edit') return;
+    if (!detailQuery.data || mode !== 'edit' || isInitialized) return;
     const detail = detailQuery.data;
     setForm({
       type: detail.type ?? 'NOTICE',
@@ -58,7 +59,8 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
         url: detail.moreUrl ?? '',
       });
     }
-  }, [detailQuery.data, mode]);
+    setIsInitialized(true);
+  }, [detailQuery.data, mode, isInitialized]);
 
   const isProgramType = form.type === 'PROGRAM';
 

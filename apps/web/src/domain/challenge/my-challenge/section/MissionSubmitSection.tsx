@@ -1,3 +1,4 @@
+import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
@@ -24,11 +25,11 @@ const MissionSubmitSection = ({
   onSubmitLastMission,
 }: MissionSubmitSectionProps) => {
   const { selectedMissionTh, selectedMissionId } = useMissionStore();
-  // 현재 시간이 startDate 이상인지 확인하는 함수
+  const { testDate } = useChallengeNav();
   const isMissionStarted = () => {
     if (!startDate) return false;
     const missionStartDate = dayjs(startDate);
-    const now = dayjs();
+    const now = testDate ? dayjs(testDate) : dayjs();
     return now.isAfter(missionStartDate) || now.isSame(missionStartDate);
   };
   const renderSection = () => {
