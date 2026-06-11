@@ -1,0 +1,2 @@
+# MSW가 생성하는 서비스 워커 (msw init으로 재생성됨 — 포맷하면 다음 생성 때 다시 어긋남)
+**/public/mockServiceWorker.js

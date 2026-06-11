@@ -65,8 +65,11 @@ const TableRow = ({
   return (
     <div
       className={clsx('flex w-full', {
-        'bg-[#F1F1F1]': bgColor === 'DARK',
-        'bg-[#F7F7F7]': bgColor === 'LIGHT',
+        'bg-yellow-100': attendanceItem.attendance.result === 'WAITING',
+        'bg-[#F1F1F1]':
+          attendanceItem.attendance.result !== 'WAITING' && bgColor === 'DARK',
+        'bg-[#F7F7F7]':
+          attendanceItem.attendance.result !== 'WAITING' && bgColor === 'LIGHT',
       })}
     >
       <ChoiceCheckbox

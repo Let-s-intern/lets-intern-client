@@ -1,8 +1,7 @@
+import { useChallengeHome } from '@/api/challenge/challenge';
 import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
-import { challengeHomeSchema, ChallengeHome } from '@/schema';
-import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { ChallengeHome } from '@/schema';
 import {
   useParams,
   usePathname,
@@ -98,15 +97,8 @@ function RecommendedProgramSection() {
   const searchParams = useSearchParams();
   const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: homeData } = useQuery({
-    enabled: !!params.programId && !isNaN(Number(params.programId)),
-    queryKey: ['challenge', Number(params.programId), 'home', testDate],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge/${params.programId}/home`, {
-        params: { testDate },
-      });
-      return challengeHomeSchema.parse(res.data.data);
-    },
+  const { data: homeData } = useChallengeHome(Number(params.programId), {
+    testDate,
   });
 
   const programRecommendList = homeData?.programRecommendList ?? [];

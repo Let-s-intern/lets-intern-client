@@ -18,6 +18,8 @@ function ReviewSection({ config, content, challengeType }: Props) {
   const reviews = content?.challengeReview ?? [];
   const { primaryColor, lightAccentColor, bubbleBgColor, buttonBgColor } =
     config;
+
+  if (reviews.length === 0) return null;
   const reviewLinkQuery = {
     program: 'challenge_review',
     challenge: challengeType.toLowerCase(),

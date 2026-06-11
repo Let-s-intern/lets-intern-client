@@ -1,6 +1,9 @@
 'use client';
 
+import { useChallengeHome } from '@/api/challenge/challenge';
 import { useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
@@ -13,12 +16,12 @@ import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
-import { challengeHomeSchema, challengeScore } from '@/schema';
+import { challengeScore } from '@/schema';
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 
-const MissionDetailSection = () => {
+function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
   const { isLastMissionSubmitted } = useMissionCalculation();
@@ -29,7 +32,7 @@ const MissionDetailSection = () => {
   // 레벨에 맞게 필터링된 schedules
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
-  const { data: programData } = useQuery({
+  const { data: programData } = useSuspenseQuery({
     queryKey: ['challenge', params.programId, 'application'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
@@ -53,17 +56,17 @@ const MissionDetailSection = () => {
       schedules={filteredSchedules}
     />
   );
-};
+}
 
-const getIsChallengeDone = (endDate: string) => {
+function getIsChallengeDone(endDate: string) {
   return dayjs(new Date()).isAfter(dayjs(endDate));
-};
+}
 
-const getIsChallengeSubmitDone = (endDate: string) => {
+function getIsChallengeSubmitDone(endDate: string) {
   return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
-};
+}
 
-const ChallengeDashboard = () => {
+function ChallengeDashboardContent() {
   const { currentChallenge, schedules } = useCurrentChallenge();
   const { todayTh } = useMissionCalculation();
 
@@ -77,15 +80,8 @@ const ChallengeDashboard = () => {
   const searchParams = useSearchParams();
   const testDate = searchParams.get('testDate') ?? undefined;
 
-  const { data: homeData } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'home', testDate],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge/${currentChallenge?.id}/home`, {
-        params: { testDate },
-      });
-      return challengeHomeSchema.parse(res.data.data);
-    },
+  const { data: homeData } = useChallengeHome(currentChallenge?.id, {
+    testDate,
   });
 
   const notices = (homeData?.noticeList ?? [])
@@ -95,7 +91,7 @@ const ChallengeDashboard = () => {
       type: null as null,
       title: item.title,
       link: item.url,
-      createDate: item.createdAt ? dayjs(item.createdAt) : null,
+      createDate: dayjs(item.createdAt),
     }));
 
   const guides = (homeData?.noticeList ?? [])
@@ -104,7 +100,7 @@ const ChallengeDashboard = () => {
       id: item.id,
       title: item.title,
       link: item.url,
-      createDate: item.createdAt ? dayjs(item.createdAt) : null,
+      createDate: dayjs(item.createdAt),
     }));
 
   const { data: user } = useUserQuery();
@@ -116,9 +112,10 @@ const ChallengeDashboard = () => {
       const res = await axios.get(`/challenge/${currentChallenge?.id}/score`);
       return challengeScore.parse(res.data.data);
     },
+    throwOnError: true,
   });
 
-  const { data: programData } = useQuery({
+  const { data: programData } = useSuspenseQuery({
     queryKey: ['challenge', params.programId, 'application'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
@@ -191,6 +188,12 @@ const ChallengeDashboard = () => {
       </div>
     </main>
   );
-};
+}
 
-export default ChallengeDashboard;
+export default function ChallengeDashboard() {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <ChallengeDashboardContent />
+    </AsyncBoundary>
+  );
+}

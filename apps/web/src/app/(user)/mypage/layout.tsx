@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user/user';
-import CategoryTabs from '@/common/ui/CategoryTabs';
+import { CategoryTabs } from '@letscareer/ui';
 import { Profile } from '@/domain/mypage/mypage/profile/Profile';
 import MyPageBanner from '@/domain/mypage/MyPageBanner';
 import useAuthStore from '@/store/useAuthStore';

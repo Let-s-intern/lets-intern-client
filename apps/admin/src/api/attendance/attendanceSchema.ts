@@ -36,6 +36,12 @@ export type PatchAdminAttendanceReq = {
   accountNum?: string;
 };
 
+/** [어드민] 출석 일괄 확인여부 변경 PATCH /api/v2/admin/attendance/bulk */
+export type BulkPatchAdminAttendanceReq = {
+  attendanceIdList: number[];
+  result: 'PASS' | 'WRONG' | 'FINAL_WRONG';
+};
+
 export const contentSchema = z.object({
   id: z.number(),
   title: z.string().nullish(),
