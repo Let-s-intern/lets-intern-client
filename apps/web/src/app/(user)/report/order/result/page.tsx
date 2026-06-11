@@ -6,13 +6,13 @@ import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
-import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import ReportCreditRow from '@/domain/mypage/credit/ui/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ui/ReportCreditSubRow';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
+import Card from '@/domain/report/ui/card/ProgramCard';
 import Heading1 from '@/domain/report/ui/heading/Heading1';
 import Heading2 from '@/domain/report/ui/heading/Heading2';
-import Card from '@/domain/report/ui/card/ProgramCard';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import dayjs from '@/lib/dayjs';

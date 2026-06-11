@@ -86,6 +86,7 @@ export const challengeTypeSchema = z.enum([
   'MARKETING',
   'EXPERIENCE_SUMMARY',
   'HR',
+  'PM',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -301,8 +302,8 @@ export const getChallengeIdPrimitiveSchema = z.object({
   endDate: z.string().optional(),
   beginning: z.string().optional(),
   deadline: z.string().optional(),
-  chatLink: z.string().optional(),
-  chatPassword: z.string().optional(),
+  chatLink: z.string().nullable().optional(),
+  chatPassword: z.string().nullable().optional(),
   challengeType: challengeTypeSchema,
   classificationInfo: z.array(
     z.object({

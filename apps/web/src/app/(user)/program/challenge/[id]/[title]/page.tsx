@@ -2,6 +2,7 @@ import { fetchChallengeData } from '@/api/challenge/challenge';
 import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
 import ChallengeHrView from '@/domain/program/challenge/ChallengeHrView';
 import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
+import ChallengePmView from '@/domain/program/challenge/ChallengePmView';
 import ChallengePortfolioView from '@/domain/program/challenge/ChallengePortfolioView';
 import ChallengeView from '@/domain/program/challenge/ChallengeView';
 import dayjs from '@/lib/dayjs';
@@ -99,6 +100,8 @@ const Page = async ({
         <ChallengePortfolioView challenge={challenge} />
       ) : challenge.challengeType === 'HR' ? (
         <ChallengeHrView challenge={challenge} />
+      ) : challenge.challengeType === 'PM' ? (
+        <ChallengePmView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />
       )}

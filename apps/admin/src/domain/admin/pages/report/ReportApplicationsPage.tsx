@@ -10,7 +10,6 @@ import {
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
   ReportApplicationStatus,
-  ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
   useGetReportDetailAdminQuery,
@@ -531,8 +530,7 @@ const ReportApplicationsPage = () => {
                   <h2 className="text-neutral-40 w-24">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      (applicationModal.application
-                        .reportPriceType as ReportPriceType) || '-',
+                      applicationModal.application.reportPriceType ?? undefined,
                     )}
                   </p>
                 </div>

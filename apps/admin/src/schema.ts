@@ -86,6 +86,7 @@ export const challengeTypeSchema = z.enum([
   'MARKETING',
   'EXPERIENCE_SUMMARY',
   'HR',
+  'PM',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -301,8 +302,8 @@ export const getChallengeIdPrimitiveSchema = z.object({
   endDate: z.string().optional(),
   beginning: z.string().optional(),
   deadline: z.string().optional(),
-  chatLink: z.string().optional(),
-  chatPassword: z.string().optional(),
+  chatLink: z.string().nullable().optional(),
+  chatPassword: z.string().nullable().optional(),
   challengeType: challengeTypeSchema,
   classificationInfo: z.array(
     z.object({
@@ -926,6 +927,7 @@ export const missionAdmin = z
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
+        waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
@@ -1213,6 +1215,7 @@ export const missionTemplateAdmin = z
         vodLink: z.string().nullish(),
       }),
     ),
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -1222,6 +1225,7 @@ export const missionTemplateAdmin = z
           createDate: dayjs(missionTemplate.createDate),
         }),
       ),
+      pageInfo: data.pageInfo,
     };
   });
 

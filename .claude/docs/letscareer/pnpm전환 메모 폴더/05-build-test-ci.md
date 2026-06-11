@@ -136,22 +136,33 @@ pnpm exec turbo run build --filter=@letscareer/web --filter=@letscareer/admin
 
 ## GitHub Actions 워크플로우
 
-[.github/workflows/](../../../../.github/workflows/) 아래 4개 워크플로우. 각 워크플로우는 *그 앱과 관련된 변경*에서만 트리거된다.
+[.github/workflows/](../../../../.github/workflows/) 아래 6개 워크플로우. 빌드 검증 3개 + 관리용 3개 구조.
+
+| 워크플로우 파일 | 이름 | 역할 |
+|---|---|---|
+| `build-web.yml` | 웹 검사 | apps/web 빌드 검증 |
+| `build-admin.yml` | 어드민 검사 | apps/admin 빌드 검증 |
+| `build-mentor.yml` | 멘토 검사 | apps/mentor 빌드 검증 |
+| `build-check.yml` | Build Check | branch protection 호환용 stub (항상 pass) |
+| `pr-lc-auto.yml` | Auto add LC ticket block | PR 제목·본문 자동화 |
+| `security-audit.yml` | 패키지 보안검사 | pnpm audit (report-only) |
+
+빌드 검증 3개 워크플로우는 *그 앱과 관련된 변경*에서만 트리거된다.
 
 ### 트리거 매트릭스
 
-| 변경 위치 | build-web | build-admin | build-mentor | build-shared |
-|---|:---:|:---:|:---:|:---:|
-| `apps/web/**` | ✅ | ❌ | ❌ | ❌ |
-| `apps/admin/**` | ❌ | ✅ | ❌ | ❌ |
-| `apps/mentor/**` | ❌ | ❌ | ✅ | ❌ |
-| `packages/**` | ✅ | ✅ | ✅ | ✅ |
-| `pnpm-lock.yaml` | ✅ | ✅ | ✅ | ✅ |
-| `pnpm-workspace.yaml` | ✅ | ✅ | ✅ | ✅ |
-| `turbo.json` | ✅ | ✅ | ✅ | ✅ |
-| `package.json` (루트) | ✅ | ✅ | ✅ | ✅ |
-| `.github/workflows/build-X.yml` | 자기 자신만 | 자기 자신만 | 자기 자신만 | 자기 자신만 |
-| `.claude/**`, `*.md`, `.cursor/**` | ❌ | ❌ | ❌ | ❌ |
+| 변경 위치 | build-web | build-admin | build-mentor |
+|---|:---:|:---:|:---:|
+| `apps/web/**` | ✅ | ❌ | ❌ |
+| `apps/admin/**` | ❌ | ✅ | ❌ |
+| `apps/mentor/**` | ❌ | ❌ | ✅ |
+| `packages/**` | ✅ | ✅ | ✅ |
+| `pnpm-lock.yaml` | ✅ | ✅ | ✅ |
+| `pnpm-workspace.yaml` | ✅ | ✅ | ✅ |
+| `turbo.json` | ✅ | ✅ | ✅ |
+| `package.json` (루트) | ✅ | ✅ | ✅ |
+| `.github/workflows/build-X.yml` | 자기 자신만 | 자기 자신만 | 자기 자신만 |
+| `.claude/**`, `*.md`, `.cursor/**` | ❌ | ❌ | ❌ |
 
 이 트리거 매트릭스는 [04-vercel-deployment.md](./04-vercel-deployment.md)의 Skip Unaffected Projects와 *같은 사고방식*이다. 둘 다 "앱별 격리 + 공용 변경 시 전체"를 다른 도구로 구현한 것.
 
@@ -194,7 +205,7 @@ jobs:
 - `cache: 'pnpm'` — node_modules + pnpm 스토어 캐시.
 - `--frozen-lockfile` — 락파일 일관성 검증.
 
-### 4개 워크플로우
+### 빌드 검증 3개 워크플로우
 
 #### [build-web.yml](../../../../.github/workflows/build-web.yml)
 
@@ -223,13 +234,7 @@ jobs:
     VITE_SERVER_API: ${{ secrets.VITE_SERVER_API || 'https://api.example.com/api/v1' }}
 ```
 
-#### [build-shared.yml](../../../../.github/workflows/build-shared.yml)
-
-```yaml
-- run: pnpm exec turbo run typecheck --filter='./packages/*'
-```
-
-공용 패키지 변경 시 타입체크만 돌린다. 앱 전체 빌드를 다시 돌리지는 않는다 (그건 build-web/admin/mentor가 알아서 트리거됨).
+공용 패키지(`packages/**`) 변경 시 3개 워크플로우 모두 트리거된다. 별도 shared 타입체크 워크플로우는 없다.
 
 ### secrets fallback 패턴
 

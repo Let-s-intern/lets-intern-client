@@ -10,6 +10,8 @@ export function getChallengeThemeColor(challengeType: ChallengeType): string {
   switch (challengeType) {
     case 'HR':
       return '#FF5E00';
+    case 'PM':
+      return '#1BC47D';
     default:
       return DEFAULT_COLOR;
   }

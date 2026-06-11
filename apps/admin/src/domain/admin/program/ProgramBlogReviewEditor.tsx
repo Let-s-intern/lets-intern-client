@@ -49,7 +49,9 @@ const footerStyle = {
 const ProgramBlogReviewEditor: React.FC<{
   blogReview: ProgramBlogReview;
   setBlogReview: (value: ProgramBlogReview) => void;
-}> = ({ blogReview, setBlogReview }) => {
+  showHeading?: boolean;
+  className?: string;
+}> = ({ blogReview, setBlogReview, showHeading = true, className }) => {
   const [selectModalOpen, setSelectModalOpen] = useState(false);
   const res = useBlogListQuery({
     pageable: { page: 1, size: 1000 },
@@ -79,8 +81,8 @@ const ProgramBlogReviewEditor: React.FC<{
   const onOpen = () => setSelectModalOpen(true);
 
   return (
-    <div className="my-10">
-      <Heading2 className="mb-2">블로그 후기</Heading2>
+    <div className={className ?? 'my-10'}>
+      {showHeading && <Heading2 className="mb-2">블로그 후기</Heading2>}
       <div className="mb-2">
         <Button variant="outlined" onClick={onOpen}>
           블로그 리뷰 선택

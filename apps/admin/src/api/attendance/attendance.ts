@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation } from '@tanstack/react-query';
 import {
+  BulkPatchAdminAttendanceReq,
   PatchAdminAttendanceReq,
   PatchAttendanceMentorReq,
   PatchAttendanceReq,
@@ -26,6 +27,16 @@ export const usePatchAttendanceMentor = () => {
       return axios.patch(`/attendance/${attendanceId}/mentor`, body);
     },
     onError: (error) => console.error('usePatchAttendanceMentor >>', error),
+  });
+};
+
+/** [어드민] 출석 일괄 확인여부 변경 PATCH /api/v2/admin/attendance/bulk */
+export const useBulkPatchAdminAttendance = () => {
+  return useMutation({
+    mutationFn: async (req: BulkPatchAdminAttendanceReq) => {
+      return axiosV2.patch('/admin/attendance/bulk', req);
+    },
+    onError: (error) => console.error('useBulkPatchAdminAttendance >>', error),
   });
 };
 

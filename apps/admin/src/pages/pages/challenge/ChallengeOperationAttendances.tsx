@@ -10,7 +10,7 @@ import LineTableBodyRow, {
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
 import { Mission } from '@/schema';
-import { missionStatusToText, TABLE_CONTENT } from '@/utils/convert';
+import { TABLE_CONTENT } from '@/utils/convert';
 import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
@@ -20,13 +20,13 @@ type Row = Mission &
 
 const cellWidthList = [
   'w-[140px]',
+  'w-[30%]',
+  'w-[300px]',
+  'w-[300px]',
   'w-[20%]',
-  'w-[200px]',
-  'w-[200px]',
-  'w-[20%]',
-  'w-[20%]',
+  'w-[15%]',
 ];
-const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황', '상태'];
+const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황', '확인여부'];
 
 const ChallengeOperationAttendances = () => {
   const { currentChallenge } = useAdminCurrentChallenge();
@@ -68,7 +68,7 @@ const ChallengeOperationAttendances = () => {
                   'startDate',
                   'endDate',
                   'currentAttendance',
-                  'missionStatusType',
+                  'waitingCount',
                 ]}
                 placeholders={colNames}
                 canEdits={[false, false, false, false, false, false]}
@@ -78,7 +78,14 @@ const ChallengeOperationAttendances = () => {
                   null,
                   null,
                   null,
-                  (status) => missionStatusToText[status],
+                  (count: number | null) =>
+                    count != null ? (
+                      <span className="font-bold text-red-500">
+                        확인중 {count}
+                      </span>
+                    ) : (
+                      '-'
+                    ),
                 ]}
                 contents={[
                   { type: TABLE_CONTENT.INPUT },

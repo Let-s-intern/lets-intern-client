@@ -11,6 +11,7 @@ const {
   PORTFOLIO,
   MARKETING,
   HR,
+  PM,
 } = challengeTypeSchema.enum;
 
 export default function useProgramCategoryNav() {
@@ -25,6 +26,7 @@ export default function useProgramCategoryNav() {
     useGetActiveChallenge(EXPERIENCE_SUMMARY);
   const { data: activeResume } = useGetActiveChallenge(CAREER_START);
   const { data: activeHr } = useGetActiveChallenge(HR);
+  const { data: activePm } = useGetActiveChallenge(PM);
   // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
   const {
     experienceSummary,
@@ -34,6 +36,7 @@ export default function useProgramCategoryNav() {
     portfolio,
     marketing,
     hr,
+    pm,
   } = useNavB2CChallenges();
 
   const getProgramHref = (
@@ -79,6 +82,10 @@ export default function useProgramCategoryNav() {
     {
       children: 'HR/인사 직무 챌린지',
       href: getProgramHref(activeHr, hr),
+    },
+    {
+      children: 'PM 직무 챌린지',
+      href: getProgramHref(activePm, pm),
     },
     {
       children: '대기업 완성 챌린지',

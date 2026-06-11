@@ -58,11 +58,21 @@ export const usePostFaq = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (programType: ProgramTypeUpperCase) => {
+    mutationFn: async ({
+      programType,
+      question,
+      answer,
+      category,
+    }: {
+      programType: ProgramTypeUpperCase;
+      question: string;
+      answer: string;
+      category: string;
+    }) => {
       const res = await axios.post('/faq', {
-        question: '',
-        answer: '',
-        category: '',
+        question,
+        answer,
+        category,
         type: programType,
       });
       return res.data;

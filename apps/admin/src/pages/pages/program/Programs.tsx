@@ -43,6 +43,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ChallengeDuplicateModal from '@/domain/admin/program/challenge/ChallengeDuplicateModal';
 import { useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
 
@@ -84,6 +85,11 @@ const Programs = () => {
     },
   });
   const [visibleLoading, setVisibleLoading] = useState(false);
+  const [duplicateModalChallenge, setDuplicateModalChallenge] = useState<{
+    id: number;
+    title: string;
+    thumbnail: string | null;
+  } | null>(null);
   const programList = data?.programList || [];
 
   const columns = useMemo<GridColDef<Row>[]>(
@@ -234,6 +240,14 @@ const Programs = () => {
               size="small"
               startIcon={<FaCopy />}
               onClick={async () => {
+                if (params.row.programInfo.programType === 'CHALLENGE') {
+                  setDuplicateModalChallenge({
+                    id: Number(id),
+                    title: params.row.programInfo.title ?? '',
+                    thumbnail: params.row.programInfo.thumbnail ?? null,
+                  });
+                  return;
+                }
                 if (
                   !window.confirm(
                     `<${params.row.programInfo.title}>  정말로 복제하시겠습니까?`,
@@ -406,6 +420,21 @@ const Programs = () => {
           </>
         )}
       </main>
+
+      {duplicateModalChallenge && (
+        <ChallengeDuplicateModal
+          isOpen={!!duplicateModalChallenge}
+          sourceChallenge={duplicateModalChallenge}
+          onClose={() => setDuplicateModalChallenge(null)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: [useGetProgramAdminQueryKey],
+            });
+            snackbar('복제가 완료되었습니다.');
+            setDuplicateModalChallenge(null);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -6,9 +6,15 @@ import {
   ProgramTypeUpperCase,
   reportTypeSchema,
 } from '@/schema';
+import { ContentReviewType, ExternalBlogReview } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { mypageApplicationsSchema } from '@/api/application';
@@ -284,19 +290,33 @@ export type AdminBlogReview = z.infer<typeof adminBlogReviewSchema>;
 
 export const adminBlogReviewListSchema = z.object({
   reviewList: z.array(adminBlogReviewSchema),
+  pageInfo,
 });
 
 // [어드민] 블로그 후기 전체 조회
 const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
 
-export const useGetAdminBlogReviewList = () => {
+export const useGetAdminBlogReviewList = ({
+  page = 0,
+  size = 20,
+  keyword,
+  isVisible,
+}: {
+  page?: number;
+  size?: number;
+  keyword?: string;
+  isVisible?: boolean;
+} = {}) => {
   return useQuery({
-    queryKey: [adminBlogReviewListQueryKey],
+    queryKey: [adminBlogReviewListQueryKey, page, size, keyword, isVisible],
     queryFn: async () => {
-      const res = await axiosV2.get('/admin/review/blog');
-      return adminBlogReviewListSchema.parse(res.data.data).reviewList;
+      const res = await axiosV2.get('/admin/review/blog', {
+        params: { page, size, keyword, isVisible },
+      });
+      return adminBlogReviewListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -407,6 +427,7 @@ export type AdminProgramReview = z.infer<typeof adminProgramReviewSchema>;
 
 export const adminProgramReviewListSchema = z.object({
   reviewList: z.array(adminProgramReviewSchema),
+  pageInfo,
 });
 
 // ADMIN 프로그램 리뷰 리스트 조회
@@ -421,13 +442,24 @@ export const getAdminProgramReviewQueryKey = (type: ReviewType) => [
  * @param param : type
  * @returns : ADMIN 프로그램 리뷰 리스트 조회
  */
-export const useGetAdminProgramReview = ({ type }: { type: ReviewType }) => {
+export const useGetAdminProgramReview = ({
+  type,
+  page = 0,
+  size = 20,
+}: {
+  type: ReviewType;
+  page?: number;
+  size?: number;
+}) => {
   return useQuery({
-    queryKey: getAdminProgramReviewQueryKey(type),
+    queryKey: [...getAdminProgramReviewQueryKey(type), page, size],
     queryFn: async () => {
-      const res = await axiosV2.get(`/admin/review/${type}`);
+      const res = await axiosV2.get(`/admin/review/${type}`, {
+        params: { page, size },
+      });
       return adminProgramReviewListSchema.parse(res.data.data);
     },
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -531,6 +563,89 @@ export const useGetReviewCount = () => {
     },
   });
 };
+
+// 필터 조건: 챌린지 구분 일치, 만족도/NPS 점수 >= 10, 리뷰,GOAL_RESULT,GOOD_POINT 노출 true
+export async function fetchAutoFillChallengeReviews(
+  challengeType: ChallengeType,
+): Promise<ContentReviewType[]> {
+  const res = await axiosV2.get('/admin/review/CHALLENGE_REVIEW', {
+    params: {
+      challengeType,
+      isVisible: true,
+      minScore: 10,
+      minNpsScore: 10,
+      page: 0,
+      size: 30,
+      sort: 'createDate,desc',
+    },
+  });
+  const data = adminProgramReviewListSchema.parse(res.data.data);
+
+  return data.reviewList
+    .filter((review) => {
+      const goalResult = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOAL_RESULT',
+      );
+      const goodPoint = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOOD_POINT',
+      );
+      return (
+        goalResult?.isVisible === true &&
+        goodPoint?.isVisible === true &&
+        !!goalResult?.answer &&
+        !!goodPoint?.answer
+      );
+    })
+    .slice(0, 3)
+    .map((review) => {
+      const goalResult = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOAL_RESULT',
+      );
+      const goodPoint = review.reviewItemList?.find(
+        (item) => item.questionType === 'GOOD_POINT',
+      );
+      return {
+        name: review.reviewInfo.name ?? '',
+        programName: review.reviewInfo.title ?? '',
+        passedState: '',
+        title: goalResult?.answer ?? '',
+        content: goodPoint?.answer ?? '',
+        score: review.reviewInfo.score ?? undefined,
+        npsScore: review.reviewInfo.npsScore ?? undefined,
+      };
+    });
+}
+
+export async function fetchAutoFillBlogReviews(
+  challengeTitle: string,
+): Promise<ExternalBlogReview[]> {
+  const keyword = challengeTitle
+    .replace(/^\[.*?\]\s*/, '')
+    .replace(/\s*\d+기\s*$/, '')
+    .trim();
+  if (!keyword) return [];
+
+  const res = await axiosV2.get('/admin/review/blog', {
+    params: {
+      keyword,
+      isVisible: true,
+      page: 0,
+      size: 30,
+      sort: 'createDate,desc',
+    },
+  });
+  const data = adminBlogReviewListSchema.parse(res.data.data);
+
+  return data.reviewList
+    .filter((r) => r.isVisible === true && r.thumbnail && r.url)
+    .slice(0, 3)
+    .map((r) => ({
+      thumbnail: r.thumbnail ?? '',
+      url: r.url ?? '',
+      programTitle: r.programTitle ?? '',
+      name: r.name ?? '',
+    }));
+}
 
 /** POST 블로그 보너스 미션 후기 제출 /api/v2/review/blog/bonus */
 export const usePostBlogBonus = () => {

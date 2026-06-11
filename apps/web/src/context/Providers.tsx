@@ -1,5 +1,6 @@
 'use client';
 
+import PostHogProvider from '@/context/PostHogProvider';
 import SentryUserSync from '@/context/SentryUserSync';
 import { ConfirmProvider, Toaster } from '@letscareer/ui';
 import {
@@ -42,7 +43,9 @@ const Providers: React.FC<{
     <QueryClientProvider client={queryClient}>
       <SentryUserSync />
       <ConfirmProvider>
-        <Toaster>{children}</Toaster>
+        <PostHogProvider>
+          <Toaster>{children}</Toaster>
+        </PostHogProvider>
       </ConfirmProvider>
     </QueryClientProvider>
   );

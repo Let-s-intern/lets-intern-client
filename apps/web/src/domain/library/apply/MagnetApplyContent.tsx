@@ -3,7 +3,6 @@
 import { usePostMagnetApplicationMutation } from '@/api/magnet/magnet';
 import { MagnetType } from '@/api/magnet/magnetSchema';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
-import MarketingConsentSection from '../ui/MarketingConsentSection';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,
@@ -22,6 +21,7 @@ import { getLibraryPathname } from '@/utils/url';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import MarketingConsentSection from '../ui/MarketingConsentSection';
 import EventExtraMagnetSection from './EventExtraMagnetSection';
 import LaunchAlertProgramSection from './LaunchAlertProgramSection';
 import LibraryApplyResultModal, {

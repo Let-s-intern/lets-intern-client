@@ -1,6 +1,6 @@
 import type { ApplicationDownloadType } from '@/api/application';
 import { MypageApplication } from '@/api/application';
-import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
+import { getReportThumbnail } from '@/domain/mypage/credit/ui/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import {
   challengePricePlanToText,

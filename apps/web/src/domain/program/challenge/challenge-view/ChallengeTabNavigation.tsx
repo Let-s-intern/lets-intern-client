@@ -2,8 +2,12 @@
 
 import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionStyle';
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeType } from '@/schema';
 import { ReactNode, useEffect, useState } from 'react';
-import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
+import {
+  DEFAULT_COLOR,
+  getChallengeThemeColor,
+} from '../utils/getChallengeThemeColor';
 
 interface TabItem {
   id: string;
@@ -49,12 +53,13 @@ const Tab = ({
 };
 
 interface Props {
-  themeColor?: string;
+  challengeType?: ChallengeType;
 }
 
-export default function ChallengeTabNavigation({
-  themeColor = DEFAULT_COLOR,
-}: Props) {
+export default function ChallengeTabNavigation({ challengeType }: Props) {
+  const themeColor = challengeType
+    ? getChallengeThemeColor(challengeType)
+    : DEFAULT_COLOR;
   const [active, setActive] = useState('intro');
 
   const scrollStyleClassName = useProgramScrollDirectionStyle();
