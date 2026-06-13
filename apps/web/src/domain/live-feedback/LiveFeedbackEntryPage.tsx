@@ -59,22 +59,35 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-5 py-10">
-      <ScheduleSummaryCard
-        counterpartLabel={role === 'MENTOR' ? '멘티' : '멘토'}
-        startDate={feedbackInfo?.startDate}
-        endDate={feedbackInfo?.endDate}
-        role={role}
-        isLoading={isLoading}
-      />
+    <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
+      <div className="flex w-full max-w-[420px] flex-col gap-5">
+        <ScheduleSummaryCard
+          programTitle={feedbackInfo?.programTitle ?? undefined}
+          missionLabel={
+            feedbackInfo?.missionTh
+              ? `${feedbackInfo.missionTh}회차`
+              : undefined
+          }
+          counterpartLabel={role === 'MENTOR' ? '멘티' : '멘토'}
+          counterpartName={
+            (role === 'MENTOR'
+              ? feedbackInfo?.menteeName
+              : feedbackInfo?.mentorName) ?? undefined
+          }
+          startDate={feedbackInfo?.startDate}
+          endDate={feedbackInfo?.endDate}
+          role={role}
+          isLoading={isLoading}
+        />
 
-      <EnterLiveButton
-        startDate={feedbackInfo?.startDate}
-        endDate={feedbackInfo?.endDate}
-        disabled={!feedbackInfo}
-        isPreparing={isPreparing}
-        onEnter={enter}
-      />
+        <EnterLiveButton
+          startDate={feedbackInfo?.startDate}
+          endDate={feedbackInfo?.endDate}
+          disabled={!feedbackInfo}
+          isPreparing={isPreparing}
+          onEnter={enter}
+        />
+      </div>
 
       <LiveFeedbackModal
         isOpen={isOpen}
@@ -88,7 +101,9 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
         startDate={feedbackInfo?.startDate}
         endDate={feedbackInfo?.endDate}
         menteeStatus={feedbackInfo?.menteeStatus ?? undefined}
-        onSaveAttendance={(menteeStatus) => patchStatus.mutate({ menteeStatus })}
+        onSaveAttendance={(menteeStatus) =>
+          patchStatus.mutate({ menteeStatus })
+        }
       />
     </main>
   );

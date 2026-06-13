@@ -68,7 +68,7 @@ describe('LiveFeedbackEntryPage', () => {
       isLoading: false,
     };
     render(<LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />);
-    expect(screen.getByText('라이브 피드백 입장')).toBeInTheDocument();
+    expect(screen.getByText('곧 피드백이 시작돼요')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.queryByTestId('login-gate')).not.toBeInTheDocument();
   });

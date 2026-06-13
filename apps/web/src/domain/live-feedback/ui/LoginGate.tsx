@@ -63,14 +63,21 @@ const LoginGate = ({ feedbackId, role }: Props) => {
   };
 
   return (
-    <section className="border-neutral-80 rounded-xxl flex flex-col gap-4 border p-5">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-small18 text-neutral-0 font-semibold">
-          라이브 피드백 입장
-        </h1>
-        <p className="text-xsmall14 text-neutral-30">
-          로그인 후 바로 입장할 수 있어요.
-        </p>
+    <section className="border-neutral-80 rounded-xxl flex flex-col gap-5 border bg-white p-6 shadow-sm">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <img
+          src="/logo/horizontal-logo.svg"
+          alt="렛츠커리어"
+          className="h-6 w-auto"
+        />
+        <div className="flex flex-col gap-1">
+          <h1 className="text-small18 text-neutral-0 font-bold">
+            멘토와 1:1 라이브 피드백
+          </h1>
+          <p className="text-xsmall14 text-neutral-40">
+            로그인하면 예약하신 세션에 바로 입장할 수 있어요.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -95,7 +102,7 @@ const LoginGate = ({ feedbackId, role }: Props) => {
         <button
           type="submit"
           disabled={!email || !password || loading}
-          className="text-small16 bg-primary flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold text-white disabled:opacity-40"
+          className="text-xsmall16 bg-primary flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold text-white disabled:opacity-40"
         >
           {loading ? '로그인 중…' : '로그인하고 입장'}
         </button>

@@ -977,8 +977,11 @@ export const handlers = [
           menteeStatus: base.menteeStatus,
           score: null,
           review: null,
-          // 입장 모달(웹) 표시용 — 상대방 이름·사전 질문·노션 제출물.
+          // 입장 페이지/모달(웹) 표시용 — 일정 요약·상대방·노션 제출물.
+          programTitle: base.programTitle,
+          missionTh: 2,
           menteeName: base.menteeName,
+          mentorName: '김멘토',
           preQuestion:
             '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
           attendanceUrl:
