@@ -8,6 +8,16 @@ interface MenteeLinkPanelProps {
   onClose: () => void;
   link: string;
   menteeName?: string;
+  /** 자체 헤더를 숨긴다 — 바깥에서 헤더/접기 UI를 제공하는 경우(예: 라이브 모달 아코디언). */
+  hideHeader?: boolean;
+  /**
+   * 임베드 맞춤 방식.
+   * - `scale`(기본): 넓게 렌더 후 축소 — 데스크톱 폭에서 폰트 작은 미니뷰.
+   * - `native`: 컨테이너 실제 폭으로 렌더 — 좁은 폭에서 노션이 반응형 좁은 레이아웃을 그린다.
+   */
+  fit?: 'scale' | 'native';
+  /** `scale` 모드의 축소 비율(0~1). 기본 EMBED_SCALE. 예: 0.7 → 70% 축소 임베드. */
+  scale?: number;
 }
 
 /** X-Frame-Options 차단 시 load 이벤트가 오지 않으므로 타임아웃으로 판별 */
@@ -35,7 +45,11 @@ const MenteeLinkPanel = ({
   onClose,
   link,
   menteeName,
+  hideHeader,
+  fit = 'scale',
+  scale,
 }: MenteeLinkPanelProps) => {
+  const scaleValue = scale ?? EMBED_SCALE;
   // notion.site → 공식 임베드 경로(/ebd/)로 변환, 변환 불가 시 원본으로 시도
   const embedUrl = toNotionEmbedUrl(link) ?? link;
 
@@ -53,46 +67,48 @@ const MenteeLinkPanel = ({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200">
-      <div className="flex shrink-0 items-center justify-between gap-1 border-b border-gray-200 px-3 py-2.5">
-        <h4 className="truncate text-sm font-semibold text-neutral-900">
-          {menteeName ? `${menteeName} 님의 ` : ''}제출물
-        </h4>
-        <div className="flex shrink-0 items-center gap-1">
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="새 탭에서 열기"
-            aria-label="제출물 새 탭에서 열기"
-            className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="제출물 패널 닫기"
-            className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M6 6L18 18M18 6L6 18"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+      {!hideHeader && (
+        <div className="flex shrink-0 items-center justify-between gap-1 border-b border-gray-200 px-3 py-2.5">
+          <h4 className="truncate text-sm font-semibold text-neutral-900">
+            {menteeName ? `${menteeName} 님의 ` : ''}제출물
+          </h4>
+          <div className="flex shrink-0 items-center gap-1">
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="새 탭에서 열기"
+              aria-label="제출물 새 탭에서 열기"
+              className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="제출물 패널 닫기"
+              className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {status === 'blocked' ? (
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 bg-[#f7f8fa] p-6 text-center">
@@ -143,13 +159,23 @@ const MenteeLinkPanel = ({
             className={`absolute left-0 border-0 ${
               status === 'loading' ? 'invisible' : ''
             }`}
-            style={{
-              width: `${100 / EMBED_SCALE}%`,
-              height: `calc(${100 / EMBED_SCALE}% + ${NOTION_TOOLBAR_PX}px)`,
-              top: `-${Math.round(NOTION_TOOLBAR_PX * EMBED_SCALE)}px`,
-              transform: `scale(${EMBED_SCALE})`,
-              transformOrigin: 'top left',
-            }}
+            style={
+              fit === 'native'
+                ? {
+                    // 컨테이너 실제 폭으로 렌더 → 좁은 폰 프레임에서 노션 반응형 좁은 레이아웃.
+                    // 상단 노션 툴바만 크롭해서 숨긴다.
+                    width: '100%',
+                    height: `calc(100% + ${NOTION_TOOLBAR_PX}px)`,
+                    top: `-${NOTION_TOOLBAR_PX}px`,
+                  }
+                : {
+                    width: `${100 / scaleValue}%`,
+                    height: `calc(${100 / scaleValue}% + ${NOTION_TOOLBAR_PX}px)`,
+                    top: `-${Math.round(NOTION_TOOLBAR_PX * scaleValue)}px`,
+                    transform: `scale(${scaleValue})`,
+                    transformOrigin: 'top left',
+                  }
+            }
             allowFullScreen
           />
         </div>

@@ -210,8 +210,10 @@ export const useFeedbackMentorDetailQuery = (
 
 export interface UpdateFeedbackByMentorVariables {
   feedbackId: number;
-  /** 멘토는 멘티 출석 상태만 수정할 수 있다. */
-  menteeStatus: FeedbackAttendanceStatus;
+  /** 멘티 출석 상태. 멘토가 멘티 참여 여부를 마킹할 때 사용. */
+  menteeStatus?: FeedbackAttendanceStatus;
+  /** 멘토 본인 출석 상태. 멘토 입장 시 mentorStatus=PRESENT 자동기록용. */
+  mentorStatus?: FeedbackAttendanceStatus;
 }
 
 /**
@@ -243,8 +245,10 @@ export const useUpdateFeedbackMeetingUrlMutation = () => {
 };
 
 /**
- * PATCH /feedback/mentor/{feedbackId} — 멘티 출석 상태 수정.
- * 멘토는 `menteeStatus`만 적용 가능. 성공 시 멘토 피드백 캐시 전체를 invalidate.
+ * PATCH /feedback/mentor/{feedbackId} — 멘토/멘티 출석 상태 수정.
+ * `menteeStatus`(멘티 출석)와 `mentorStatus`(멘토 본인 출석) 중 전달된 것만 본문에 담는다.
+ * (BE `PATCH /feedback/mentor/{id}`는 둘 다 수용하며, 미포함 필드는 그대로 유지한다.)
+ * 성공 시 멘토 피드백 캐시 전체를 invalidate.
  */
 export const useUpdateFeedbackByMentorMutation = () => {
   const queryClient = useQueryClient();
@@ -252,11 +256,17 @@ export const useUpdateFeedbackByMentorMutation = () => {
     mutationFn: async ({
       feedbackId,
       menteeStatus,
+      mentorStatus,
     }: UpdateFeedbackByMentorVariables) => {
+      // 정의된 상태만 payload에 포함 — 기존 menteeStatus 단독 호출부는 무영향.
+      const payload: {
+        menteeStatus?: FeedbackAttendanceStatus;
+        mentorStatus?: FeedbackAttendanceStatus;
+      } = {};
+      if (menteeStatus !== undefined) payload.menteeStatus = menteeStatus;
+      if (mentorStatus !== undefined) payload.mentorStatus = mentorStatus;
       // BE는 200 빈 본문을 반환한다.
-      await axios.patch(`${FEEDBACK_MENTOR_PATH}/${feedbackId}`, {
-        menteeStatus,
-      });
+      await axios.patch(`${FEEDBACK_MENTOR_PATH}/${feedbackId}`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

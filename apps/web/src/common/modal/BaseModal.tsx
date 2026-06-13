@@ -19,6 +19,8 @@ interface BaseModalProps {
   children?: React.ReactNode;
   className?: string;
   isLoading?: boolean;
+  /** 오버레이(모달 바깥) 클릭으로 닫을지 여부. 기본 true. */
+  closeOnOverlayClick?: boolean;
 }
 const BaseModal = ({
   isOpen,
@@ -26,6 +28,7 @@ const BaseModal = ({
   children,
   className,
   isLoading,
+  closeOnOverlayClick = true,
 }: BaseModalProps) => {
   // 스크롤 제어
   useControlScroll(isOpen);
@@ -39,7 +42,7 @@ const BaseModal = ({
         role="dialog"
         aria-modal="true"
       >
-        <ModalOverlay onClose={onClose} />
+        <ModalOverlay onClose={closeOnOverlayClick ? onClose : undefined} />
         <div
           className={twMerge(
             'rounded-ms relative w-full overflow-hidden bg-white',

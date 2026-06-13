@@ -17,6 +17,20 @@ vi.mock('@/utils/axios', () => ({
   },
 }));
 
+// Jitsi 회의실 입장 준비(헬스체크) — 항상 성공으로 고정.
+const ensureLiveMeetingUrlMock = vi.fn(async () => ({ ok: true as const }));
+vi.mock('@letscareer/ui/JitsiEmbed/jitsiHealthCheck', () => ({
+  ensureLiveMeetingUrl: (...args: unknown[]) =>
+    ensureLiveMeetingUrlMock(...args),
+}));
+
+// JitsiEmbed(@letscareer/ui)는 실제 @jitsi/react-sdk를 끌어오므로 목으로 대체
+vi.mock('@letscareer/ui/JitsiEmbed', () => ({
+  JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
+    <div data-testid="jitsi-embed" data-room-url={roomUrl} />
+  ),
+}));
+
 // MOCK_NOW=null → 카운트다운/입장 게이팅은 실제 시각 기준으로 동작한다.
 // 입장 버튼은 "시작 20분 전 ~ 종료 전"에만 활성(T-20 게이팅)이므로, 시간 의존
 // 테스트는 startDate/endDate 를 현재 시각 기준 상대값으로 만든다.
@@ -97,6 +111,9 @@ beforeEach(() => {
   axiosMock.get.mockResolvedValue({
     data: { data: { feedbackInfo: makeMentorDetail() } },
   });
+  axiosMock.patch.mockResolvedValue({ data: { data: null } });
+  ensureLiveMeetingUrlMock.mockResolvedValue({ ok: true as const });
+  vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
 });
 
 afterEach(() => {
@@ -340,5 +357,120 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     );
     expect(modalSource).not.toContain('liveFeedbackReservationMock');
     expect(modalSource).not.toContain('getLiveFeedbackReservationMock');
+  });
+});
+
+describe('LiveFeedbackReservationModal — 입장=출석 자동기록 / 종료 모달 동작 (Bug 4)', () => {
+  // 입장 게이트 통과를 위해 시작 10분 전 ~ 종료 전 구간으로 고정.
+  function makeEnterableDetail(overrides: Record<string, unknown> = {}) {
+    return makeMentorDetail({
+      meetingUrl: null,
+      startDate: isoFromNowMin(10),
+      endDate: isoFromNowMin(40),
+      ...overrides,
+    });
+  }
+
+  it('라이브 입장 시 mentorStatus=PRESENT PATCH 가 발생한다', async () => {
+    const user = userEvent.setup();
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeEnterableDetail({ mentorStatus: 'PENDING' }),
+        },
+      },
+    });
+    renderModal(makeBar());
+
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
+    await user.click(btn);
+
+    await waitFor(() => {
+      expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/101', {
+        mentorStatus: 'PRESENT',
+      });
+    });
+  });
+
+  it('이미 mentorStatus=PRESENT 면 입장 시 PRESENT PATCH 가 발생하지 않는다', async () => {
+    const user = userEvent.setup();
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeEnterableDetail({ mentorStatus: 'PRESENT' }),
+        },
+      },
+    });
+    renderModal(makeBar());
+
+    const btn = await screen.findByRole('button', { name: '라이브 입장하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
+    await user.click(btn);
+
+    // 회의실 헬스체크는 호출되지만 mentorStatus PATCH 는 없어야 한다.
+    await waitFor(() => expect(ensureLiveMeetingUrlMock).toHaveBeenCalled());
+    const mentorStatusPatch = axiosMock.patch.mock.calls.find(
+      ([, body]) =>
+        body &&
+        typeof body === 'object' &&
+        'mentorStatus' in (body as Record<string, unknown>),
+    );
+    expect(mentorStatusPatch).toBeUndefined();
+  });
+
+  it('Jitsi 회의실을 닫아도 참여 상태 확인 모달이 자동으로 열리지 않는다', async () => {
+    const user = userEvent.setup();
+    // meetingUrl 이 있으면 입장 시 Jitsi 화상 mock(jitsi-embed)이 떠 모달 오픈을 확인할 수 있다.
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeEnterableDetail({
+            meetingUrl: 'https://meet.jit.si/letscareer-x7k2p9',
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+
+    const enterBtn = await screen.findByRole('button', {
+      name: '라이브 입장하기',
+    });
+    await waitFor(() => expect(enterBtn).toBeEnabled());
+    await user.click(enterBtn);
+
+    // Jitsi 모달이 열렸음을 화상 mock 으로 확인.
+    await waitFor(() =>
+      expect(screen.getByTestId('jitsi-embed')).toBeInTheDocument(),
+    );
+
+    // 참여 상태 확인 모달은 자동으로 떠 있으면 안 된다.
+    expect(
+      screen.queryByText('LIVE 피드백 참여 상태를 확인해 주세요'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('"참여 확인하기" 버튼으로는 여전히 참여 상태 확인 모달이 열린다', async () => {
+    const user = userEvent.setup();
+    // 종료 후 구간이어야 "참여 확인하기" 가 활성화된다.
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          feedbackInfo: makeMentorDetail({
+            startDate: isoFromNowMin(-60),
+            endDate: isoFromNowMin(-30),
+          }),
+        },
+      },
+    });
+    renderModal(makeBar());
+
+    const btn = await screen.findByRole('button', { name: '참여 확인하기' });
+    await waitFor(() => expect(btn).toBeEnabled());
+    await user.click(btn);
+
+    expect(
+      screen.getByText('LIVE 피드백 참여 상태를 확인해 주세요'),
+    ).toBeInTheDocument();
   });
 });

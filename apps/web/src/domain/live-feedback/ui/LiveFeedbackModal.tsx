@@ -1,71 +1,52 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 
 import { JitsiEmbed } from '@letscareer/ui/JitsiEmbed';
 
-import type { FeedbackAttendanceStatus } from '@/api/feedback/feedbackSchema';
 import BaseModal from '@/common/modal/BaseModal';
+import { isAllowedNotionUrl } from '@/common/lexical/utils/notion';
 import { twMerge } from '@/lib/twMerge';
-import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
-import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
+import type { LiveRole } from '../hooks/liveRole';
 import LiveSessionTimer from './LiveSessionTimer';
+import NotionSubmissionPanel from './NotionSubmissionPanel';
 
-/**
- * Jitsi 회의실 모달.
- *
- * 방 URL 은 BE 가 합성한 `meetingUrl`(= jitsi base + 랜덤 `meetingRoom`)을 그대로 사용한다.
- * 멘토/멘티/어드민이 동일 `feedbackId` 의 동일 `meetingUrl` 을 받으므로 같은 방으로 수렴하며,
- * 방 이름이 서버 생성 랜덤값이라 외부에서 추측·접속할 수 없다.
- *
- * 레이아웃:
- * - 화상은 중앙에 최대폭 제한으로 배치(좌우 레터박스) — 너무 넓게 늘려 확대돼 보이는 것 방지.
- * - 상단 중앙: 세션 타이머 + (멘토) 멘티 출석 체크 — 반투명 플로팅.
- * - 좌하단: 사전 Q&A · 제출물을 각각 여는 반투명 동그란 버튼. 누르면 해당 자료만 띄운다.
- */
-interface JitsiEmbedModalProps {
+/** 멘티 라이브 출석 상태 */
+type AttendanceStatus = 'PENDING' | 'PRESENT' | 'ABSENT';
+
+interface LiveFeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
-  /** BE 가 합성한 회의실 URL. 아직 생성 전이면 null. */
   meetingUrl: string | null;
-  /** 모달 헤더 표시용 라벨 (선택). URL 에는 영향 없음. */
   spaceName?: string;
-  /** 멘티 사전 질문 — 사전 Q&A 버튼/패널. */
+  /** 이 세션에서의 역할 — 멘토일 때만 출석 체크 노출. */
+  role: LiveRole;
+  menteeName: string;
   preQuestion?: string;
-  /** 멘티 제출물 URL — 제출물 버튼/패널. */
   submissionUrl?: string;
-  /** 멘티 이름 — 자료/출석 체크 문구용. */
-  menteeName: string;
-  /** 세션 시작 ISO — 타이머용. */
   startDate?: string;
-  /** 세션 종료 ISO — 타이머용. */
   endDate?: string;
-  /** 멘토 시점 여부 — true일 때만 멘티 출석 체크 바 노출. */
-  isMentor?: boolean;
-  /** 멘티 라이브 출석 현재값 — 버튼 현재 상태 표시용. */
-  menteeStatus?: FeedbackAttendanceStatus;
-  /** 멘티 출석 상태 저장 핸들러. */
-  onSaveAttendance?: (status: FeedbackAttendanceStatus) => void;
-  /** 출석 저장 진행 중 여부 — 버튼 로딩. */
-  isSavingAttendance?: boolean;
+  menteeStatus?: AttendanceStatus;
+  /** 출석 저장(모달 닫힘/종료 시 일괄). */
+  onSaveAttendance?: (status: AttendanceStatus) => void;
 }
 
-interface MenteeAttendanceBarProps {
-  menteeName: string;
-  /** 현재 선택된 출석 상태(없으면 null). */
-  selected: FeedbackAttendanceStatus | null;
-  /** 참석/불참 클릭(같은 값 재클릭 시 null 로 해제). 저장은 모달 닫힘/종료 시 일괄. */
-  onSelect: (status: FeedbackAttendanceStatus | null) => void;
-}
+type MaterialPanel = 'qna' | 'submission';
 
-/** 출석 체크 바 — 참석/불참 토글. 한번 더 누르면 해제된다(저장은 지연). */
+/** 출석 체크 바 — 참석/불참 토글. 한번 더 누르면 해제(저장은 지연). */
 const MenteeAttendanceBar = ({
   menteeName,
   selected,
   onSelect,
-}: MenteeAttendanceBarProps) => {
+}: {
+  menteeName: string;
+  selected: AttendanceStatus | null;
+  onSelect: (status: AttendanceStatus | null) => void;
+}) => {
   const baseChip =
     'rounded-lg px-4 py-1.5 text-sm font-semibold transition disabled:opacity-50';
-  const toggle = (status: FeedbackAttendanceStatus) =>
+  const toggle = (status: AttendanceStatus) =>
     onSelect(selected === status ? null : status);
   return (
     <div className="flex items-center gap-2 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
@@ -101,8 +82,6 @@ const MenteeAttendanceBar = ({
   );
 };
 
-type MaterialPanel = 'qna' | 'submission';
-
 /** 반투명 플로팅 버튼(아이콘 + 글자) — 자료 토글용. */
 const SemiFab = ({
   label,
@@ -129,7 +108,7 @@ const SemiFab = ({
   </button>
 );
 
-/** 화상 위에 뜨는 자료 패널 — 내용은 축소 없이 원본 크기로 표시. */
+/** 화상 위에 뜨는 자료 패널. */
 const FloatingPanel = ({
   title,
   onClose,
@@ -211,26 +190,31 @@ const DocIcon = () => (
   </svg>
 );
 
-const JitsiEmbedModal = ({
+/**
+ * 라이브 피드백 입장 모달 — 멘토 앱 모달과 동일 디자인.
+ *
+ * - 4:3 모달, 좌상단 로고+타이머 아크릴(JitsiEmbed topLeftSlot), 좌하단 자료 버튼/패널.
+ * - 멘토 시점: 중앙 하단 출석 체크(토글). 저장은 닫힘/세션 종료 시 일괄(멘티 잠김 방지).
+ * - 멘티 시점: 출석 체크 없이 동일 레이아웃.
+ */
+const LiveFeedbackModal = ({
   isOpen,
   onClose,
   meetingUrl,
   spaceName,
+  role,
+  menteeName,
   preQuestion,
   submissionUrl,
-  menteeName,
   startDate,
   endDate,
-  isMentor,
   menteeStatus,
   onSaveAttendance,
-}: JitsiEmbedModalProps) => {
+}: LiveFeedbackModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
-  // 멘티 출석 — 클릭 즉시 저장하지 않고 선택만 보관한다(멘티 입장 잠김 방지).
-  // 실제 PATCH 는 모달이 닫히거나 세션 종료 시각에 일괄 전송한다.
   const [pendingAttendance, setPendingAttendance] =
-    useState<FeedbackAttendanceStatus | null>(
+    useState<AttendanceStatus | null>(
       menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT'
         ? menteeStatus
         : null,
@@ -242,21 +226,17 @@ const JitsiEmbedModal = ({
   const onSaveRef = useRef(onSaveAttendance);
   onSaveRef.current = onSaveAttendance;
 
-  /** 보관된 출석 선택을 서버에 전송(저장값과 다를 때만). */
   const flushAttendance = () => {
     const next = pendingRef.current;
     if (next && next !== savedRef.current) onSaveRef.current?.(next);
   };
-
-  /** 모달 닫힘(닫기/hangup) 시 출석을 먼저 전송하고 닫는다. */
   const handleClose = () => {
     flushAttendance();
     onClose();
   };
 
-  // 세션 종료 시각이 되면 보관된 출석을 전송한다.
   useEffect(() => {
-    if (!endDate) return;
+    if (!isOpen || !endDate) return;
     const ms = new Date(endDate).getTime() - Date.now();
     if (ms <= 0) {
       flushAttendance();
@@ -264,12 +244,22 @@ const JitsiEmbedModal = ({
     }
     const id = setTimeout(flushAttendance, ms);
     return () => clearTimeout(id);
-    // flushAttendance 는 ref 기반이라 endDate 변화에만 재설정하면 된다.
-  }, [endDate]);
+    // flushAttendance 는 ref 기반 — isOpen/endDate 변화에만 재설정.
+  }, [isOpen, endDate]);
 
+  const isMentor = role === 'MENTOR';
+  const isMentee = role === 'MENTEE';
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
   const hasSubmission = !!submissionUrl;
-  const isNotionSubmission = hasSubmission && isNotionUrl(submissionUrl);
+  const isNotionSubmission = hasSubmission && isAllowedNotionUrl(submissionUrl);
+
+  // 멘티 시점이면 "나의 ~", 멘토 시점이면 "멘티 ~"로 표기.
+  const qnaLabel = isMentee ? '나의 사전 QA' : '사전 QA';
+  const submissionLabel = isMentee ? '나의 제출물' : '멘티 제출물';
+  const qnaTitle = isMentee ? '나의 사전 Q&A' : '사전 Q&A';
+  const submissionTitle = isMentee
+    ? '나의 제출물'
+    : `${menteeName} 님의 제출물`;
 
   const toggle = (panel: MaterialPanel) =>
     setOpenPanel((prev) => (prev === panel ? null : panel));
@@ -282,8 +272,6 @@ const JitsiEmbedModal = ({
       className="rounded-xxl aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden bg-neutral-900"
     >
       <div className="relative h-full w-full">
-        {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다.
-            로고+현재/남은 시간은 JitsiEmbed 좌상단 아크릴 패널(topLeftSlot)에 한 덩어리로 묶는다. */}
         <div className="absolute inset-0">
           {meetingUrl ? (
             <JitsiEmbed
@@ -305,7 +293,7 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 중앙 하단 — 멘티 출석 체크(참석/불참 토글). 선택은 닫힘/종료 시 일괄 저장. */}
+        {/* 중앙 하단 — (멘토) 멘티 출석 체크 */}
         {isMentor && (
           <div
             className={twMerge(
@@ -322,12 +310,12 @@ const JitsiEmbedModal = ({
         )}
       </div>
 
-      {/* 자료 버튼/패널 — 모달 바깥(뷰포트 좌하단)에 고정. 넓은 화면에서 화상을 가리지 않는다. */}
+      {/* 자료 버튼/패널 — 뷰포트 좌하단 고정 */}
       {(hasPreQuestion || hasSubmission) && (
         <div className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3">
           {openPanel === 'qna' && hasPreQuestion && (
             <FloatingPanel
-              title="사전 Q&A"
+              title={qnaTitle}
               onClose={() => setOpenPanel(null)}
               className="max-h-[60vh] w-[340px] max-w-[80vw]"
             >
@@ -339,16 +327,12 @@ const JitsiEmbedModal = ({
 
           {openPanel === 'submission' && hasSubmission && (
             <FloatingPanel
-              title={`${menteeName} 님의 제출물`}
+              title={submissionTitle}
               onClose={() => setOpenPanel(null)}
               className="h-[70vh] w-[400px] max-w-[80vw]"
             >
               {isNotionSubmission ? (
-                <MenteeLinkPanel
-                  hideHeader
-                  fit="scale"
-                  scale={0.7}
-                  onClose={() => setOpenPanel(null)}
+                <NotionSubmissionPanel
                   link={submissionUrl!}
                   menteeName={menteeName}
                 />
@@ -370,7 +354,7 @@ const JitsiEmbedModal = ({
           <div className="flex flex-col gap-2.5">
             {hasPreQuestion && (
               <SemiFab
-                label="사전 QA"
+                label={qnaLabel}
                 active={openPanel === 'qna'}
                 onClick={() => toggle('qna')}
               >
@@ -379,7 +363,7 @@ const JitsiEmbedModal = ({
             )}
             {hasSubmission && (
               <SemiFab
-                label="멘티 제출물"
+                label={submissionLabel}
                 active={openPanel === 'submission'}
                 onClick={() => toggle('submission')}
               >
@@ -393,4 +377,4 @@ const JitsiEmbedModal = ({
   );
 };
 
-export default JitsiEmbedModal;
+export default LiveFeedbackModal;
