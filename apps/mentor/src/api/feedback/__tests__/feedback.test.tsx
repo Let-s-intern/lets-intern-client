@@ -406,4 +406,70 @@ describe('useUpdateFeedbackByMentorMutation', () => {
       queryKey: FEEDBACK_MENTOR_QUERY_KEY,
     });
   });
+
+  it('menteeStatus 만 전달하면 payload 에 mentorStatus 가 포함되지 않는다', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useUpdateFeedbackByMentorMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        feedbackId: 7,
+        menteeStatus: 'ABSENT',
+      });
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/7', {
+      menteeStatus: 'ABSENT',
+    });
+    const [, body] = axiosMock.patch.mock.calls[0];
+    expect(body).not.toHaveProperty('mentorStatus');
+  });
+
+  it('mentorStatus 만 전달하면 payload 에 menteeStatus 가 포함되지 않는다', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useUpdateFeedbackByMentorMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        feedbackId: 9,
+        mentorStatus: 'PRESENT',
+      });
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/9', {
+      mentorStatus: 'PRESENT',
+    });
+    const [, body] = axiosMock.patch.mock.calls[0];
+    expect(body).not.toHaveProperty('menteeStatus');
+  });
+
+  it('mentorStatus 와 menteeStatus 를 함께 전달하면 둘 다 payload 에 담는다', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useUpdateFeedbackByMentorMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        feedbackId: 11,
+        menteeStatus: 'PRESENT',
+        mentorStatus: 'PRESENT',
+      });
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith('/feedback/mentor/11', {
+      menteeStatus: 'PRESENT',
+      mentorStatus: 'PRESENT',
+    });
+  });
 });
