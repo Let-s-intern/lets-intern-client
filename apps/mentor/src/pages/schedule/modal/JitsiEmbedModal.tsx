@@ -242,13 +242,13 @@ const JitsiEmbedModal = ({
 }: JitsiEmbedModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
-  // 멘티 출석 바 — 이미 기록됐으면 처음부터 숨김, 확인 누르면 닫는다.
-  const [attendanceDismissed, setAttendanceDismissed] = useState(
+  // 멘티 출석 바 — 확인하면 숨기지 않고 투명도를 높여(dim) 완료를 표시한다.
+  const [attendanceConfirmed, setAttendanceConfirmed] = useState(
     menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT',
   );
   const handleConfirmAttendance = (status: FeedbackAttendanceStatus) => {
     onSaveAttendance?.(status);
-    setAttendanceDismissed(true);
+    setAttendanceConfirmed(true);
   };
 
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
@@ -283,16 +283,21 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 좌측 상단 로고 바로 아래 — 현재/남은 시간 일체형 타이머. 항상 표시. */}
+        {/* 좌측 상단 로고 바로 아래 — 현재/남은 시간 일체형 아크릴 타이머. 항상 표시. */}
         {startDate && endDate && (
           <div className="absolute left-3 top-[72px] z-10">
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
           </div>
         )}
 
-        {/* 중앙 상단 — 멘티 출석 체크. 확인 누르면 사라진다. */}
-        {isMentor && !attendanceDismissed && (
-          <div className="absolute left-1/2 top-20 z-10 -translate-x-1/2">
+        {/* 중앙 하단 — 멘티 출석 체크. 확인하면 숨기지 않고 투명도를 높여 완료 표시. */}
+        {isMentor && (
+          <div
+            className={twMerge(
+              'absolute bottom-20 left-1/2 z-10 -translate-x-1/2 transition-opacity duration-300',
+              attendanceConfirmed && 'opacity-40 hover:opacity-100',
+            )}
+          >
             <MenteeAttendanceBar
               menteeName={menteeName}
               menteeStatus={menteeStatus}

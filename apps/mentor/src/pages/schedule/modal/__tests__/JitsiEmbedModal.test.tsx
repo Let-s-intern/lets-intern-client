@@ -101,7 +101,7 @@ describe('JitsiEmbedModal', () => {
     expect(screen.getByText('남은')).toBeInTheDocument();
   });
 
-  it('isMentor=true 면 출석을 선택하고 확인하면 onSaveAttendance 호출 후 바가 사라진다', async () => {
+  it('isMentor=true 면 출석을 선택하고 확인하면 onSaveAttendance 호출 후에도 바가 남는다', async () => {
     const onSaveAttendance = vi.fn();
     const user = userEvent.setup();
     render(
@@ -121,25 +121,10 @@ describe('JitsiEmbedModal', () => {
     await user.click(screen.getByRole('button', { name: '참석' }));
     expect(onSaveAttendance).not.toHaveBeenCalled();
 
-    // 확인을 눌러야 저장되고 바가 사라진다.
+    // 확인을 눌러야 저장된다. 확인 후에도 바는 (투명하게) 유지된다.
     await user.click(screen.getByRole('button', { name: '확인' }));
     expect(onSaveAttendance).toHaveBeenCalledWith('PRESENT');
-    expect(screen.queryByText(/이지수 님 출석/)).not.toBeInTheDocument();
-  });
-
-  it('이미 출석이 기록된(PRESENT) 경우 출석 바를 처음부터 숨긴다', () => {
-    render(
-      <JitsiEmbedModal
-        isOpen
-        onClose={() => {}}
-        meetingUrl={TEST_URL}
-        menteeName="이지수"
-        isMentor
-        menteeStatus="PRESENT"
-        onSaveAttendance={vi.fn()}
-      />,
-    );
-    expect(screen.queryByText(/이지수 님 출석/)).not.toBeInTheDocument();
+    expect(screen.getByText(/이지수 님 출석/)).toBeInTheDocument();
   });
 
   it('isMentor=false(미지정) 면 멘티 출석 체크 버튼을 노출하지 않는다', () => {
