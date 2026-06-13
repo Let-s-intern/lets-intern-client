@@ -254,7 +254,7 @@ const JitsiEmbedModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="aspect-[4/3] h-[86vh] max-h-[860px] w-auto max-w-[94vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
+      className="aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
       <div className="relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다. */}
@@ -274,8 +274,8 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
-        <div className="pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
+        {/* 하단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
+        <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
           {startDate && endDate && (
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
           )}
