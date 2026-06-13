@@ -78,7 +78,7 @@ const MenteeAttendanceBar = ({
   const baseChip =
     'rounded-lg px-4 py-1.5 text-sm font-semibold transition disabled:opacity-50';
   return (
-    <div className="pointer-events-auto flex items-center gap-3 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
+    <div className="flex items-center gap-3 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
       <span className="text-xs font-medium text-white/70">
         {menteeName} 님 출석
       </span>
@@ -118,7 +118,7 @@ const MenteeAttendanceBar = ({
 
 type MaterialPanel = 'qna' | 'submission';
 
-/** 반투명 동그란 플로팅 버튼 — 자료 토글용. */
+/** 반투명 플로팅 버튼(아이콘 + 글자) — 자료 토글용. */
 const SemiFab = ({
   label,
   active,
@@ -133,14 +133,14 @@ const SemiFab = ({
   <button
     type="button"
     onClick={onClick}
-    aria-label={label}
     aria-pressed={active}
     className={twMerge(
-      'flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg backdrop-blur-md transition',
-      active ? 'bg-[#4d55f5]/85' : 'bg-black/45 hover:bg-black/60',
+      'flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition',
+      active ? 'bg-[#4d55f5]/90' : 'bg-black/55 hover:bg-black/70',
     )}
   >
     {children}
+    <span>{label}</span>
   </button>
 );
 
@@ -256,7 +256,7 @@ const JitsiEmbedModal = ({
       onClose={onClose}
       className="aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
-      <div className="relative h-full w-full">
+      <div className="group relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다. */}
         <div className="absolute inset-0">
           {meetingUrl ? (
@@ -274,8 +274,9 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 하단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
-        <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
+        {/* 하단 중앙 플로팅 — 타이머 + (멘토) 출석 체크.
+            Jitsi 컨트롤바 위(bottom-20)에 두고, 마우스 호버 시에만 나타난다. */}
+        <div className="pointer-events-none absolute bottom-20 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
           {startDate && endDate && (
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
           )}
@@ -338,7 +339,7 @@ const JitsiEmbedModal = ({
           <div className="flex flex-col gap-2.5">
             {hasPreQuestion && (
               <SemiFab
-                label="사전 Q&A 보기"
+                label="사전 QA"
                 active={openPanel === 'qna'}
                 onClick={() => toggle('qna')}
               >
@@ -347,7 +348,7 @@ const JitsiEmbedModal = ({
             )}
             {hasSubmission && (
               <SemiFab
-                label="제출물 보기"
+                label="멘티 제출물"
                 active={openPanel === 'submission'}
                 onClick={() => toggle('submission')}
               >

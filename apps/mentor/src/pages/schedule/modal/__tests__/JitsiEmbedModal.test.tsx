@@ -73,14 +73,14 @@ describe('JitsiEmbedModal', () => {
       screen.queryByText('자기소개서 피드백을 받고 싶습니다.'),
     ).not.toBeInTheDocument();
 
-    // 사전 Q&A 버튼 → 사전 Q&A만 표시
-    await user.click(screen.getByRole('button', { name: '사전 Q&A 보기' }));
+    // 사전 QA 버튼 → 사전 Q&A만 표시
+    await user.click(screen.getByRole('button', { name: '사전 QA' }));
     expect(
       screen.getByText('자기소개서 피드백을 받고 싶습니다.'),
     ).toBeInTheDocument();
 
-    // 제출물 버튼 → 제출물 패널로 전환
-    await user.click(screen.getByRole('button', { name: '제출물 보기' }));
+    // 멘티 제출물 버튼 → 제출물 패널로 전환
+    await user.click(screen.getByRole('button', { name: '멘티 제출물' }));
     expect(
       screen.getByRole('link', { name: '새 탭에서 열기' }),
     ).toBeInTheDocument();
