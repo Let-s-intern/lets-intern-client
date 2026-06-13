@@ -70,16 +70,18 @@ const ScheduleSummaryCard = ({
   return (
     <section className="border-neutral-80 rounded-xxl overflow-hidden border bg-white shadow-sm">
       {/* 헤더 — 브랜드 그라데이션 + 로고 */}
-      <div className="flex flex-col items-center gap-2 bg-gradient-to-br from-[#4D55F5] to-[#6B6FFF] px-6 py-7 text-center text-white">
+      <div className="flex flex-col items-center bg-gradient-to-br from-[#4D55F5] to-[#6B6FFF] px-6 pb-10 pt-8 text-center text-white">
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
           className="h-5 w-auto brightness-0 invert"
         />
-        <p className="text-xsmall14 text-white/80">
-          예약하신 라이브 피드백이에요
-        </p>
-        <h1 className="text-small20 font-bold">곧 피드백이 시작돼요</h1>
+        <div className="mt-5 flex flex-col gap-2">
+          <p className="text-xsmall14 text-white/80">
+            예약하신 라이브 피드백이에요
+          </p>
+          <h1 className="text-small20 font-bold">곧 피드백이 시작돼요</h1>
+        </div>
       </div>
 
       {/* 세션 정보 */}
