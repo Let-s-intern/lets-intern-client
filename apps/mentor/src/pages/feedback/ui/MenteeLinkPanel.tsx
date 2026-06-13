@@ -13,10 +13,11 @@ interface MenteeLinkPanelProps {
   /**
    * 임베드 맞춤 방식.
    * - `scale`(기본): 넓게 렌더 후 축소 — 데스크톱 폭에서 폰트 작은 미니뷰.
-   * - `native`: 컨테이너 실제 폭으로 렌더 — 좁은 폭(폰 프레임)에서 노션이 반응형
-   *   좁은 레이아웃을 그려 모바일에 가깝게 보인다.
+   * - `native`: 컨테이너 실제 폭으로 렌더 — 좁은 폭에서 노션이 반응형 좁은 레이아웃을 그린다.
    */
   fit?: 'scale' | 'native';
+  /** `scale` 모드의 축소 비율(0~1). 기본 EMBED_SCALE. 예: 0.7 → 70% 축소 임베드. */
+  scale?: number;
 }
 
 /** X-Frame-Options 차단 시 load 이벤트가 오지 않으므로 타임아웃으로 판별 */
@@ -46,7 +47,9 @@ const MenteeLinkPanel = ({
   menteeName,
   hideHeader,
   fit = 'scale',
+  scale,
 }: MenteeLinkPanelProps) => {
+  const scaleValue = scale ?? EMBED_SCALE;
   // notion.site → 공식 임베드 경로(/ebd/)로 변환, 변환 불가 시 원본으로 시도
   const embedUrl = toNotionEmbedUrl(link) ?? link;
 
@@ -166,10 +169,10 @@ const MenteeLinkPanel = ({
                     top: `-${NOTION_TOOLBAR_PX}px`,
                   }
                 : {
-                    width: `${100 / EMBED_SCALE}%`,
-                    height: `calc(${100 / EMBED_SCALE}% + ${NOTION_TOOLBAR_PX}px)`,
-                    top: `-${Math.round(NOTION_TOOLBAR_PX * EMBED_SCALE)}px`,
-                    transform: `scale(${EMBED_SCALE})`,
+                    width: `${100 / scaleValue}%`,
+                    height: `calc(${100 / scaleValue}% + ${NOTION_TOOLBAR_PX}px)`,
+                    top: `-${Math.round(NOTION_TOOLBAR_PX * scaleValue)}px`,
+                    transform: `scale(${scaleValue})`,
                     transformOrigin: 'top left',
                   }
             }

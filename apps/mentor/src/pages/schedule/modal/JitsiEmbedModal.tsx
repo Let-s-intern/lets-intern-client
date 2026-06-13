@@ -158,7 +158,7 @@ const FloatingPanel = ({
 }) => (
   <div
     className={twMerge(
-      'absolute bottom-5 left-20 z-20 flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl',
+      'flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl',
       className,
     )}
   >
@@ -257,21 +257,23 @@ const JitsiEmbedModal = ({
       className="mx-2 h-[92vh] w-[1280px] max-w-full overflow-hidden rounded-2xl bg-neutral-900 md:mx-4 md:h-[90vh] md:rounded-3xl"
     >
       <div className="relative h-full w-full">
-        {/* 화상 — 모달 전폭을 채운다(좌우 여백 없음). 비율 차이는 Jitsi가 내부 letterbox 처리. */}
-        <div className="absolute inset-0">
-          {meetingUrl ? (
-            <JitsiEmbed
-              roomUrl={meetingUrl}
-              spaceName={spaceName}
-              onClose={onClose}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
-              회의실이 아직 준비되지 않았습니다.
-              <br />
-              멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
-            </div>
-          )}
+        {/* 화상 — 16:9로 중앙 배치. 비율을 카메라(가로)에 맞춰 확대/크롭 없이 보이게 한다. */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="aspect-video max-h-full w-full">
+            {meetingUrl ? (
+              <JitsiEmbed
+                roomUrl={meetingUrl}
+                spaceName={spaceName}
+                onClose={onClose}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
+                회의실이 아직 준비되지 않았습니다.
+                <br />
+                멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
@@ -288,74 +290,75 @@ const JitsiEmbedModal = ({
             />
           )}
         </div>
+      </div>
 
-        {/* 좌하단 반투명 자료 버튼 — 사전 Q&A · 제출물 각각 토글 */}
-        <div className="absolute bottom-5 left-5 z-20 flex flex-col gap-2.5">
-          {hasPreQuestion && (
-            <SemiFab
-              label="사전 Q&A 보기"
-              active={openPanel === 'qna'}
-              onClick={() => toggle('qna')}
+      {/* 자료 버튼/패널 — 모달 바깥(뷰포트 좌하단)에 고정. 넓은 화면에서 화상을 가리지 않는다. */}
+      {(hasPreQuestion || hasSubmission) && (
+        <div className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3">
+          {openPanel === 'qna' && hasPreQuestion && (
+            <FloatingPanel
+              title="사전 Q&A"
+              onClose={() => setOpenPanel(null)}
+              className="max-h-[60vh] w-[340px] max-w-[80vw]"
             >
-              <QnaIcon />
-            </SemiFab>
+              <p className="whitespace-pre-wrap px-4 py-3 text-sm leading-6 text-neutral-700">
+                {preQuestion}
+              </p>
+            </FloatingPanel>
           )}
-          {hasSubmission && (
-            <SemiFab
-              label="제출물 보기"
-              active={openPanel === 'submission'}
-              onClick={() => toggle('submission')}
+
+          {openPanel === 'submission' && hasSubmission && (
+            <FloatingPanel
+              title={`${menteeName} 님의 제출물`}
+              onClose={() => setOpenPanel(null)}
+              className="h-[70vh] w-[400px] max-w-[80vw]"
             >
-              <DocIcon />
-            </SemiFab>
-          )}
-        </div>
-
-        {/* 사전 Q&A 패널 */}
-        {openPanel === 'qna' && hasPreQuestion && (
-          <FloatingPanel
-            title="사전 Q&A"
-            onClose={() => setOpenPanel(null)}
-            className="max-h-[60%] w-[360px] max-w-[78%]"
-          >
-            <p className="whitespace-pre-wrap px-4 py-3 text-sm leading-6 text-neutral-700">
-              {preQuestion}
-            </p>
-          </FloatingPanel>
-        )}
-
-        {/* 제출물 패널 — 노션은 모바일 폭 native 임베드(축소 없음), 그 외 새 탭 링크 */}
-        {openPanel === 'submission' && hasSubmission && (
-          <FloatingPanel
-            title={`${menteeName} 님의 제출물`}
-            onClose={() => setOpenPanel(null)}
-            className="h-[82%] w-[420px] max-w-[82%]"
-          >
-            {isNotionSubmission ? (
-              <div className="h-full p-2">
+              {isNotionSubmission ? (
                 <MenteeLinkPanel
                   hideHeader
-                  fit="native"
+                  fit="scale"
+                  scale={0.7}
                   onClose={() => setOpenPanel(null)}
                   link={submissionUrl!}
                   menteeName={menteeName}
                 />
-              </div>
-            ) : (
-              <div className="p-4">
-                <a
-                  href={submissionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-                >
-                  새 탭에서 열기
-                </a>
-              </div>
+              ) : (
+                <div className="p-4">
+                  <a
+                    href={submissionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                  >
+                    새 탭에서 열기
+                  </a>
+                </div>
+              )}
+            </FloatingPanel>
+          )}
+
+          <div className="flex flex-col gap-2.5">
+            {hasPreQuestion && (
+              <SemiFab
+                label="사전 Q&A 보기"
+                active={openPanel === 'qna'}
+                onClick={() => toggle('qna')}
+              >
+                <QnaIcon />
+              </SemiFab>
             )}
-          </FloatingPanel>
-        )}
-      </div>
+            {hasSubmission && (
+              <SemiFab
+                label="제출물 보기"
+                active={openPanel === 'submission'}
+                onClick={() => toggle('submission')}
+              >
+                <DocIcon />
+              </SemiFab>
+            )}
+          </div>
+        </div>
+      )}
     </BaseModal>
   );
 };
