@@ -15,10 +15,10 @@ import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
-import { challengeHomeSchema, challengeScore } from '@/schema';
+import { challengeGuides, challengeHomeSchema, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
@@ -129,6 +129,16 @@ function ChallengeDashboardContent() {
   const currentScore = scoreGroup?.currentScore || 0;
 
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
+
+  const notices = (homeData?.noticeList ?? [])
+    .filter((item) => item.type === 'NOTICE')
+    .map((item) => ({
+      id: item.id,
+      type: null as null,
+      title: item.title,
+      link: item.url,
+      createDate: dayjs(item.createdAt),
+    }));
 
   return (
     <main className="px-5 pt-8 md:pl-12 md:pr-0 md:pt-0">

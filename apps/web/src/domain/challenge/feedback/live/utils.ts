@@ -11,12 +11,22 @@ function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
 
   // 피드백 세션이 존재하면 출석 결과를 우선 확인 (attendanceResult와 무관)
   if (item.feedbackId) {
+    const sessionEnded =
+      !!item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date();
+
     if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
     if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
-    if (item.menteeStatus === 'PRESENT' && item.mentorStatus === 'PRESENT') {
+    // 양쪽 모두 PRESENT여도 세션이 끝나기 전이면 'completed'로 보지 않는다.
+    // 멘토가 라이브 중 출석을 미리 체크해도 멘티의 입장 버튼이 닫혀 못 들어가는
+    // 문제를 막기 위함 — 종료 시각이 지난 뒤에야 '진행 완료(회고)'로 전환한다.
+    if (
+      sessionEnded &&
+      item.menteeStatus === 'PRESENT' &&
+      item.mentorStatus === 'PRESENT'
+    ) {
       return 'completed';
     }
-    if (item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date()) {
+    if (sessionEnded) {
       return 'nonParticipation';
     }
   }

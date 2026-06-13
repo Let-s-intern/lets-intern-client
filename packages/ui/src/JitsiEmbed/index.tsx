@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 import { LetsCareerLogo } from './LetsCareerLogo';
@@ -11,6 +13,8 @@ interface JitsiEmbedProps {
   spaceName?: string;
   /** 닫기 버튼 또는 Jitsi hangup / End for all 시 호출 */
   onClose: () => void;
+  /** 좌상단 로고 패널 안(로고 아래)에 함께 묶어 보여줄 내용(예: 세션 타이머). */
+  topLeftSlot?: ReactNode;
 }
 
 /**
@@ -46,6 +50,10 @@ const CONFIG_OVERWRITE = {
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
   prejoinPageEnabled: false,
+  // 신버전 워터마크 로고 제거(클라이언트 측). 빈 문자열이면 로고를 그리지 않는다.
+  defaultLogoUrl: '',
+  // 좌상단 비디오 화질 라벨(예: 480p/HD) 숨김.
+  hideConferenceSubject: true,
 };
 
 const INTERFACE_CONFIG_OVERWRITE = {
@@ -62,6 +70,9 @@ const INTERFACE_CONFIG_OVERWRITE = {
   DISABLE_VIDEO_BACKGROUND: true,
   HIDE_DEEP_LINKING_LOGO: true,
   DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+  // 화면 화질(quality) 라벨/연결 표시 숨김
+  VIDEO_QUALITY_LABEL_DISABLED: true,
+  CONNECTION_INDICATOR_DISABLED: true,
   // 신 버전 deep linking 페이지에서도 로고 숨김
   GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
   DISPLAY_WELCOME_FOOTER: false,
@@ -85,19 +96,21 @@ function parseRoomUrl(roomUrl: string): { domain: string; roomName: string } {
  * - hangup / End for all → `onReadyToClose` → 모달 자동 닫힘
  * - 모달 셸은 각 앱에서 자체 BaseModal로 감싸 사용
  */
-export function JitsiEmbed({ roomUrl, onClose }: JitsiEmbedProps) {
+export function JitsiEmbed({ roomUrl, onClose, topLeftSlot }: JitsiEmbedProps) {
   const { domain, roomName } = parseRoomUrl(roomUrl);
 
   return (
     <div className="relative h-full w-full bg-neutral-900">
-      {/* Jitsi 좌측 상단 워터마크 마스킹 + 렛츠커리어 로고 오버레이.
-          pointer-events 차단하지 않음(기본 auto) — 아래 깔린 Jitsi 워터마크 링크 클릭을 막는다. */}
+      {/* 좌상단 — 로고 + (옵션)타이머를 하나의 반투명 아크릴 패널로 묶는다.
+          backdrop-blur로 뒤의 화상/잔여 Jitsi 워터마크를 흐리게 덮고, 워터마크 링크 클릭도 막는다. */}
       <div
-        aria-hidden="true"
         data-watermark-cover
-        className="absolute left-0 top-0 z-[5] flex h-16 w-40 items-center justify-center bg-neutral-900"
+        className="rounded-xxl absolute left-3 top-3 z-[5] flex flex-col gap-1.5 overflow-hidden bg-black/35 p-3 backdrop-blur-md"
       >
-        <LetsCareerLogo className="h-5 w-auto" />
+        <div className="flex h-8 items-center pl-1">
+          <LetsCareerLogo className="h-5 w-auto" />
+        </div>
+        {topLeftSlot}
       </div>
       <button
         type="button"

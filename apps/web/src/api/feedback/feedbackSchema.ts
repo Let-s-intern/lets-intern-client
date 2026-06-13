@@ -72,6 +72,14 @@ export const feedbackDetailSchema = z.object({
     menteeStatus: feedbackAttendanceStatusSchema.nullable(),
     score: z.number().nullable(),
     review: z.string().nullable(),
+    // 입장 페이지/모달 표시용(선택) — 일정 요약·상대방·자료.
+    // BE 입장 응답 확정 전까지 optional.
+    programTitle: z.string().nullish(),
+    missionTh: z.number().nullish(),
+    menteeName: z.string().nullish(),
+    mentorName: z.string().nullish(),
+    preQuestion: z.string().nullish(),
+    attendanceUrl: z.string().nullish(),
   }),
 });
 

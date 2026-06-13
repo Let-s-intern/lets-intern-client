@@ -912,7 +912,9 @@ export const handlers = [
           mentorStatus: base.mentorStatus,
           menteeStatus: base.menteeStatus,
           // 상세 전용 필드는 기본값 유지(세션별로 다를 필요 없음).
-          attendanceUrl: 'https://example.com/submission/' + feedbackId,
+          // 노션 제출물 — 라이브 모달 좌측 임베드 QA용(실제 공개 노션 페이지).
+          attendanceUrl:
+            'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2',
           attendanceStatus: 'PRESENT',
           menteeWishField: '기획 / PM / PO',
           menteeWishIndustry: 'IT · 플랫폼, 금융 · 핀테크',
@@ -975,6 +977,15 @@ export const handlers = [
           menteeStatus: base.menteeStatus,
           score: null,
           review: null,
+          // 입장 페이지/모달(웹) 표시용 — 일정 요약·상대방·노션 제출물.
+          programTitle: base.programTitle,
+          missionTh: 2,
+          menteeName: base.menteeName,
+          mentorName: '김멘토',
+          preQuestion:
+            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
+          attendanceUrl:
+            'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2',
         },
       },
     });
