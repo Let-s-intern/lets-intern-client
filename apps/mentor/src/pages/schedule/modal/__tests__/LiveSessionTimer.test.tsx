@@ -25,13 +25,14 @@ describe('LiveSessionTimer', () => {
     // 세션 진행 중(시작 10분 전 ~ 종료 20분 후)
     render(<LiveSessionTimer startDate={isoFrom(-10)} endDate={isoFrom(20)} />);
 
-    expect(screen.getByText('18:42:07')).toBeInTheDocument();
+    // 18:42:07(KST) → 오후 6:42:07
+    expect(screen.getByText('오후 6:42:07')).toBeInTheDocument();
 
     act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    expect(screen.getByText('18:42:08')).toBeInTheDocument();
+    expect(screen.getByText('오후 6:42:08')).toBeInTheDocument();
   });
 
   it('남은 시간이 12분 30초면 "12:30"을 표시한다', () => {

@@ -55,7 +55,8 @@ describe('JitsiEmbedModal', () => {
     ).toBeInTheDocument();
   });
 
-  it('split 레이아웃 — 좌측 자료 패널(사전 Q&A·제출물)을 함께 렌더한다', () => {
+  it('자료 FAB를 누르면 폰 프레임에 사전 Q&A·제출물이 보인다', async () => {
+    const user = userEvent.setup();
     render(
       <JitsiEmbedModal
         isOpen
@@ -66,19 +67,22 @@ describe('JitsiEmbedModal', () => {
         submissionUrl="https://example.com/submission/1"
       />,
     );
-    // 좌측 자료 패널
+    // 화상은 항상 노출, 자료는 처음엔 FAB 뒤에 숨어있다.
+    expect(screen.getByTestId('jitsi-embed')).toBeInTheDocument();
+    expect(screen.queryByText('사전 Q&A')).not.toBeInTheDocument();
+
+    // 동그란 자료 버튼을 누르면 폰 프레임에 표시된다.
+    await user.click(screen.getByRole('button', { name: '멘티 자료 보기' }));
     expect(screen.getByText('사전 Q&A')).toBeInTheDocument();
     expect(
       screen.getByText('자기소개서 피드백을 받고 싶습니다.'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: '제출물 보기' }),
+      screen.getByRole('link', { name: '새 탭에서 열기' }),
     ).toBeInTheDocument();
-    // 우측 화상은 그대로 노출
-    expect(screen.getByTestId('jitsi-embed')).toBeInTheDocument();
   });
 
-  it('startDate/endDate 가 있으면 세션 타이머(현재 시각/남은 시간)를 렌더한다', () => {
+  it('startDate/endDate 가 있으면 세션 타이머(현재/남은)를 렌더한다', () => {
     render(
       <JitsiEmbedModal
         isOpen
@@ -89,8 +93,8 @@ describe('JitsiEmbedModal', () => {
         endDate={new Date(Date.now() + 600_000).toISOString()}
       />,
     );
-    expect(screen.getByText('현재 시각')).toBeInTheDocument();
-    expect(screen.getByText('남은 시간')).toBeInTheDocument();
+    expect(screen.getByText('현재')).toBeInTheDocument();
+    expect(screen.getByText('남은')).toBeInTheDocument();
   });
 
   it('isMentor=true 면 멘티 출석 체크 버튼을 노출하고 클릭 시 onSaveAttendance 를 호출한다', async () => {
@@ -107,9 +111,7 @@ describe('JitsiEmbedModal', () => {
         onSaveAttendance={onSaveAttendance}
       />,
     );
-    expect(
-      screen.getByText(/이지수 님 출석 체크 — 참석\/불참/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/이지수 님 출석/)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: '참석' }));
     expect(onSaveAttendance).toHaveBeenCalledWith('PRESENT');

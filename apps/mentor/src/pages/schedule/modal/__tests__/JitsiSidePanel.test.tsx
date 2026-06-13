@@ -35,9 +35,9 @@ describe('JitsiSidePanel', () => {
     );
   });
 
-  it('노션이 아닌 제출물 URL 이면 "제출물 보기" 외부 링크를 렌더한다', () => {
+  it('노션이 아닌 제출물 URL 이면 "새 탭에서 열기" 외부 링크를 렌더한다', () => {
     render(<JitsiSidePanel submissionUrl={EXTERNAL_URL} menteeName="이지수" />);
-    const link = screen.getByRole('link', { name: '제출물 보기' });
+    const link = screen.getByRole('link', { name: '새 탭에서 열기' });
     expect(link).toHaveAttribute('href', EXTERNAL_URL);
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');

@@ -51,28 +51,27 @@ const LiveSessionTimer = ({ startDate, endDate }: LiveSessionTimerProps) => {
 
   const isEnded = countdown.status === 'after';
 
+  // 영상 위에 투명하게 떠 있는 컴팩트 타이머 칩.
+  // pointer-events-none 으로 Jitsi 자체 컨트롤 클릭을 가로채지 않는다.
   return (
-    <div className="flex items-center justify-between gap-3 rounded-[4px] border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-      <div className="flex flex-col">
-        <span className="text-[11px] font-medium text-neutral-400">
-          현재 시각
+    <div className="pointer-events-none inline-flex items-center gap-3 rounded-full bg-black/45 px-4 py-2 text-white shadow-lg backdrop-blur-md">
+      <span className="flex items-baseline gap-1.5">
+        <span className="text-[11px] font-medium text-white/55">현재</span>
+        <span className="text-[13px] font-semibold tabular-nums">
+          {dayjs(nowMs).format('A h:mm:ss')}
         </span>
-        <span className="text-sm font-semibold tabular-nums text-neutral-800">
-          {dayjs(nowMs).format('HH:mm:ss')}
-        </span>
-      </div>
-      <div className="flex flex-col items-end">
-        <span className="text-[11px] font-medium text-neutral-400">
-          남은 시간
-        </span>
+      </span>
+      <span className="h-3 w-px bg-white/25" />
+      <span className="flex items-baseline gap-1.5">
+        <span className="text-[11px] font-medium text-white/55">남은</span>
         <span
-          className={`text-sm font-semibold tabular-nums ${
-            isEnded ? 'text-neutral-400' : 'text-primary'
+          className={`text-[13px] font-semibold tabular-nums ${
+            isEnded ? 'text-white/50' : 'text-[#a9c1ff]'
           }`}
         >
           {isEnded ? '종료' : formatRemaining(countdown.remainingMs)}
         </span>
-      </div>
+      </span>
     </div>
   );
 };
