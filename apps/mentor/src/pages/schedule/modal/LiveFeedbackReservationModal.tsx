@@ -200,6 +200,17 @@ const LiveFeedbackReservationModal = ({
         );
         return;
       }
+      // 멘토 입장 = 출석(Bug 4). 아직 PRESENT 가 아닐 때만 mentorStatus=PRESENT 로 자동 기록.
+      // 실패해도 입장은 계속 진행한다(콘솔 경고만 — 출석은 부수적 기록).
+      if (feedbackDetail?.mentorStatus !== 'PRESENT') {
+        updateMenteeStatus(
+          { feedbackId, mentorStatus: 'PRESENT' },
+          {
+            onError: (err) =>
+              console.warn('멘토 출석 자동 기록 실패(입장은 계속 진행):', err),
+          },
+        );
+      }
       // invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만, 즉시 입장 경험을 위해
       // 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
       setIsJitsiOpen(true);
@@ -638,13 +649,24 @@ const LiveFeedbackReservationModal = ({
       {feedbackId != null && (
         <JitsiEmbedModal
           isOpen={isJitsiOpen}
-          onClose={() => {
-            // 멘토가 Jitsi 회의실을 닫으면 멘티 참여 상태 확인 모달을 자동으로 띄운다.
-            setIsJitsiOpen(false);
-            setIsAttendanceOpen(true);
-          }}
+          // 회의실을 닫아도 출석 확인 모달을 자동으로 띄우지 않는다.
+          // 출석 저장은 모달 내 멘티 출석 체크 버튼 또는 "참여 확인하기" 진입으로만 한다.
+          onClose={() => setIsJitsiOpen(false)}
           meetingUrl={meetingUrl}
           spaceName={selectedBar?.challengeTitle}
+          // 좌측 자료 패널 — 사전 Q&A(없으면 숨김) · 제출물.
+          // placeholder('-')/빈 문자열은 패널 빈 상태 판정을 위해 undefined 로 전달.
+          preQuestion={feedbackDetail?.preQuestion ?? undefined}
+          submissionUrl={selectedMentee.attendanceUrl || undefined}
+          menteeName={selectedMentee.name || '멘티'}
+          startDate={startIso ?? undefined}
+          endDate={endIso ?? undefined}
+          isMentor
+          menteeStatus={feedbackDetail?.menteeStatus}
+          onSaveAttendance={(menteeStatus) =>
+            updateMenteeStatus({ feedbackId, menteeStatus })
+          }
+          isSavingAttendance={isSavingAttendance}
         />
       )}
 
