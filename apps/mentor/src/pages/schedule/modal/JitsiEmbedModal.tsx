@@ -5,21 +5,22 @@ import { JitsiEmbed } from '@letscareer/ui/JitsiEmbed';
 import type { FeedbackAttendanceStatus } from '@/api/feedback/feedbackSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { twMerge } from '@/lib/twMerge';
+import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
+import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
-import JitsiSidePanel from './JitsiSidePanel';
 import LiveSessionTimer from './LiveSessionTimer';
 
 /**
- * Jitsi 회의실 모달 (split 레이아웃).
+ * Jitsi 회의실 모달.
  *
  * 방 URL 은 BE 가 합성한 `meetingUrl`(= jitsi base + 랜덤 `meetingRoom`)을 그대로 사용한다.
  * 멘토/멘티/어드민이 동일 `feedbackId` 의 동일 `meetingUrl` 을 받으므로 같은 방으로 수렴하며,
  * 방 이름이 서버 생성 랜덤값이라 외부에서 추측·접속할 수 없다.
  *
  * 레이아웃:
- * - 좌(드로어): 멘티 자료 패널(사전 Q&A · 제출물). 토글로 접고 펼침 — 접으면 화상이 전폭.
- * - 우: 화상(JitsiEmbed)이 영역을 가득 채우고, 그 위에 타이머가 투명하게 플로팅.
- *   멘토 시점이면 화상 위에 멘티 출석 체크 바를 띄운다.
+ * - 화상은 중앙에 최대폭 제한으로 배치(좌우 레터박스) — 너무 넓게 늘려 확대돼 보이는 것 방지.
+ * - 상단 중앙: 세션 타이머 + (멘토) 멘티 출석 체크 — 반투명 플로팅.
+ * - 좌하단: 사전 Q&A · 제출물을 각각 여는 반투명 동그란 버튼. 누르면 해당 자료만 띄운다.
  */
 interface JitsiEmbedModalProps {
   isOpen: boolean;
@@ -28,11 +29,11 @@ interface JitsiEmbedModalProps {
   meetingUrl: string | null;
   /** 모달 헤더 표시용 라벨 (선택). URL 에는 영향 없음. */
   spaceName?: string;
-  /** 멘티 사전 질문 — 좌측 자료 패널 상단. */
+  /** 멘티 사전 질문 — 사전 Q&A 버튼/패널. */
   preQuestion?: string;
-  /** 멘티 제출물 URL — 좌측 자료 패널 하단. */
+  /** 멘티 제출물 URL — 제출물 버튼/패널. */
   submissionUrl?: string;
-  /** 멘티 이름 — 자료 패널/출석 체크 문구용. */
+  /** 멘티 이름 — 자료/출석 체크 문구용. */
   menteeName: string;
   /** 세션 시작 ISO — 타이머용. */
   startDate?: string;
@@ -115,47 +116,58 @@ const MenteeAttendanceBar = ({
   );
 };
 
-/** 멘티 자료 FAB — 좌하단 동그란 플로팅 버튼. 누르면 폰 프레임이 열린다. */
-const MaterialsFab = ({ onClick }: { onClick: () => void }) => (
+type MaterialPanel = 'qna' | 'submission';
+
+/** 반투명 동그란 플로팅 버튼 — 자료 토글용. */
+const SemiFab = ({
+  label,
+  active,
+  onClick,
+  children,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => (
   <button
     type="button"
     onClick={onClick}
-    aria-label="멘티 자료 보기"
-    className="absolute bottom-5 left-5 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-700 shadow-xl ring-1 ring-black/5 transition hover:bg-neutral-50"
+    aria-label={label}
+    aria-pressed={active}
+    className={twMerge(
+      'flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg backdrop-blur-md transition',
+      active ? 'bg-[#4d55f5]/85' : 'bg-black/45 hover:bg-black/60',
+    )}
   >
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M7 3.5h7L18.5 8v11.5a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M13.5 3.5V8H18M9 12h6M9 15h6"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    {children}
   </button>
 );
 
-/** 휴대폰 화면처럼 보이는 자료 패널 — 좌하단에 세로(포트레이트)로 뜬다. */
-const PhoneFramePanel = ({
+/** 화상 위에 뜨는 자료 패널 — 내용은 축소 없이 원본 크기로 표시. */
+const FloatingPanel = ({
+  title,
   onClose,
+  className,
   children,
 }: {
+  title: string;
   onClose: () => void;
+  className?: string;
   children: React.ReactNode;
 }) => (
-  <div className="absolute bottom-5 left-5 z-20 flex h-[78%] max-h-[680px] w-[340px] max-w-[82%] flex-col overflow-hidden rounded-[2rem] border-[6px] border-neutral-900 bg-white shadow-2xl">
-    <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 px-4 py-3">
-      <span className="text-sm font-semibold text-neutral-800">멘티 자료</span>
+  <div
+    className={twMerge(
+      'absolute bottom-5 left-20 z-20 flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl',
+      className,
+    )}
+  >
+    <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 px-4 py-2.5">
+      <span className="text-sm font-semibold text-neutral-800">{title}</span>
       <button
         type="button"
         onClick={onClose}
-        aria-label="자료 닫기"
+        aria-label={`${title} 닫기`}
         className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -168,10 +180,44 @@ const PhoneFramePanel = ({
         </svg>
       </button>
     </div>
-    <div className="min-h-0 flex-1 overflow-y-auto bg-neutral-50 p-3">
-      {children}
-    </div>
+    <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
   </div>
+);
+
+const QnaIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path
+      d="M5 5.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3.5V6.5a1 1 0 0 1 1-1Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9.2 9.4a2.8 2.8 0 0 1 5.4 1c0 1.6-2.3 2-2.3 3.2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <circle cx="12.1" cy="15.6" r="0.5" fill="currentColor" stroke="currentColor" />
+  </svg>
+);
+
+const DocIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path
+      d="M7 3.5h7L18.5 8v11.5a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M13.5 3.5V8H18M9 12h6M9 15h6"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 
 const JitsiEmbedModal = ({
@@ -189,10 +235,14 @@ const JitsiEmbedModal = ({
   onSaveAttendance,
   isSavingAttendance,
 }: JitsiEmbedModalProps) => {
-  const [materialsOpen, setMaterialsOpen] = useState(false);
+  const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
-  const hasMaterials =
-    (!!preQuestion && preQuestion.trim().length > 0) || !!submissionUrl;
+  const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
+  const hasSubmission = !!submissionUrl;
+  const isNotionSubmission = hasSubmission && isNotionUrl(submissionUrl);
+
+  const toggle = (panel: MaterialPanel) =>
+    setOpenPanel((prev) => (prev === panel ? null : panel));
 
   return (
     <BaseModal
@@ -200,26 +250,27 @@ const JitsiEmbedModal = ({
       onClose={onClose}
       className="mx-2 h-[92vh] w-[1280px] max-w-full overflow-hidden rounded-2xl bg-neutral-900 md:mx-4 md:h-[90vh] md:rounded-3xl"
     >
-      {/* 화상이 모달을 가득 채우고, 그 위로 타이머·출석·자료를 플로팅한다. */}
       <div className="relative h-full w-full">
-        {meetingUrl ? (
-          <div className="absolute inset-0">
-            <JitsiEmbed
-              roomUrl={meetingUrl}
-              spaceName={spaceName}
-              onClose={onClose}
-            />
+        {/* 화상 — 중앙에 최대폭 제한(좌우 레터박스). 너무 넓게 늘려 확대돼 보이는 것 방지. */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative h-full w-full max-w-[960px]">
+            {meetingUrl ? (
+              <JitsiEmbed
+                roomUrl={meetingUrl}
+                spaceName={spaceName}
+                onClose={onClose}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
+                회의실이 아직 준비되지 않았습니다.
+                <br />
+                멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
-            회의실이 아직 준비되지 않았습니다.
-            <br />
-            멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
-          </div>
-        )}
+        </div>
 
-        {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크.
-            JitsiEmbed 자체 UI(좌상단 로고 · 우상단 닫기)를 피해 중앙에 둔다. */}
+        {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
         <div className="pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
           {startDate && endDate && (
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
@@ -234,20 +285,72 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 좌하단 — 자료 FAB / 폰 프레임(휴대폰 화면처럼) */}
-        {hasMaterials &&
-          (materialsOpen ? (
-            <PhoneFramePanel onClose={() => setMaterialsOpen(false)}>
-              <JitsiSidePanel
-                mobileView
-                preQuestion={preQuestion}
-                submissionUrl={submissionUrl}
-                menteeName={menteeName}
-              />
-            </PhoneFramePanel>
-          ) : (
-            <MaterialsFab onClick={() => setMaterialsOpen(true)} />
-          ))}
+        {/* 좌하단 반투명 자료 버튼 — 사전 Q&A · 제출물 각각 토글 */}
+        <div className="absolute bottom-5 left-5 z-20 flex flex-col gap-2.5">
+          {hasPreQuestion && (
+            <SemiFab
+              label="사전 Q&A 보기"
+              active={openPanel === 'qna'}
+              onClick={() => toggle('qna')}
+            >
+              <QnaIcon />
+            </SemiFab>
+          )}
+          {hasSubmission && (
+            <SemiFab
+              label="제출물 보기"
+              active={openPanel === 'submission'}
+              onClick={() => toggle('submission')}
+            >
+              <DocIcon />
+            </SemiFab>
+          )}
+        </div>
+
+        {/* 사전 Q&A 패널 */}
+        {openPanel === 'qna' && hasPreQuestion && (
+          <FloatingPanel
+            title="사전 Q&A"
+            onClose={() => setOpenPanel(null)}
+            className="max-h-[60%] w-[360px] max-w-[78%]"
+          >
+            <p className="whitespace-pre-wrap px-4 py-3 text-sm leading-6 text-neutral-700">
+              {preQuestion}
+            </p>
+          </FloatingPanel>
+        )}
+
+        {/* 제출물 패널 — 노션은 모바일 폭 native 임베드(축소 없음), 그 외 새 탭 링크 */}
+        {openPanel === 'submission' && hasSubmission && (
+          <FloatingPanel
+            title={`${menteeName} 님의 제출물`}
+            onClose={() => setOpenPanel(null)}
+            className="h-[82%] w-[420px] max-w-[82%]"
+          >
+            {isNotionSubmission ? (
+              <div className="h-full p-2">
+                <MenteeLinkPanel
+                  hideHeader
+                  fit="native"
+                  onClose={() => setOpenPanel(null)}
+                  link={submissionUrl!}
+                  menteeName={menteeName}
+                />
+              </div>
+            ) : (
+              <div className="p-4">
+                <a
+                  href={submissionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                >
+                  새 탭에서 열기
+                </a>
+              </div>
+            )}
+          </FloatingPanel>
+        )}
       </div>
     </BaseModal>
   );

@@ -55,7 +55,7 @@ describe('JitsiEmbedModal', () => {
     ).toBeInTheDocument();
   });
 
-  it('자료 FAB를 누르면 폰 프레임에 사전 Q&A·제출물이 보인다', async () => {
+  it('사전 Q&A·제출물 버튼을 각각 누르면 해당 자료만 보인다', async () => {
     const user = userEvent.setup();
     render(
       <JitsiEmbedModal
@@ -67,16 +67,20 @@ describe('JitsiEmbedModal', () => {
         submissionUrl="https://example.com/submission/1"
       />,
     );
-    // 화상은 항상 노출, 자료는 처음엔 FAB 뒤에 숨어있다.
+    // 화상은 항상 노출, 자료는 처음엔 버튼 뒤에 숨어있다.
     expect(screen.getByTestId('jitsi-embed')).toBeInTheDocument();
-    expect(screen.queryByText('사전 Q&A')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('자기소개서 피드백을 받고 싶습니다.'),
+    ).not.toBeInTheDocument();
 
-    // 동그란 자료 버튼을 누르면 폰 프레임에 표시된다.
-    await user.click(screen.getByRole('button', { name: '멘티 자료 보기' }));
-    expect(screen.getByText('사전 Q&A')).toBeInTheDocument();
+    // 사전 Q&A 버튼 → 사전 Q&A만 표시
+    await user.click(screen.getByRole('button', { name: '사전 Q&A 보기' }));
     expect(
       screen.getByText('자기소개서 피드백을 받고 싶습니다.'),
     ).toBeInTheDocument();
+
+    // 제출물 버튼 → 제출물 패널로 전환
+    await user.click(screen.getByRole('button', { name: '제출물 보기' }));
     expect(
       screen.getByRole('link', { name: '새 탭에서 열기' }),
     ).toBeInTheDocument();
