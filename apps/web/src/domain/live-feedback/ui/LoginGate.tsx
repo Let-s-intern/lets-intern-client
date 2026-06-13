@@ -72,7 +72,7 @@ const LoginGate = ({ feedbackId, role }: Props) => {
         />
         <div className="flex flex-col gap-1">
           <h1 className="text-small18 text-neutral-0 font-bold">
-            멘토와 1:1 라이브 피드백
+            {role === 'MENTOR' ? '멘티' : '멘토'}와 1:1 라이브 피드백
           </h1>
           <p className="text-xsmall14 text-neutral-40">
             로그인하면 예약하신 세션에 바로 입장할 수 있어요.

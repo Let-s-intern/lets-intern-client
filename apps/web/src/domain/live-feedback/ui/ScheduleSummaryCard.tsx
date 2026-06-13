@@ -70,7 +70,7 @@ const ScheduleSummaryCard = ({
   return (
     <section className="border-neutral-80 rounded-xxl overflow-hidden border bg-white shadow-sm">
       {/* 헤더 — 브랜드 그라데이션 + 로고 */}
-      <div className="flex flex-col gap-2 bg-gradient-to-br from-[#4D55F5] to-[#6B6FFF] px-6 py-6 text-white">
+      <div className="flex flex-col items-center gap-2 bg-gradient-to-br from-[#4D55F5] to-[#6B6FFF] px-6 py-7 text-center text-white">
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
