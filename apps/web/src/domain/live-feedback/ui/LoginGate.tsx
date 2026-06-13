@@ -101,14 +101,22 @@ const LoginGate = ({ feedbackId, role }: Props) => {
         </button>
       </form>
 
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-4">
         <span className="text-xsmall14 text-neutral-45">또는 SNS 로그인</span>
         <div className="flex gap-4">
-          <a href={getSocialLink('kakao')} aria-label="카카오로 로그인">
-            <img src="/images/social_kakao.svg" alt="" className="h-12 w-12" />
+          <a
+            href={getSocialLink('kakao')}
+            aria-label="카카오로 로그인"
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500] transition-opacity hover:opacity-80"
+          >
+            <img src="/icons/kakao-icon.svg" alt="" className="w-5" />
           </a>
-          <a href={getSocialLink('naver')} aria-label="네이버로 로그인">
-            <img src="/images/social_naver.svg" alt="" className="h-12 w-12" />
+          <a
+            href={getSocialLink('naver')}
+            aria-label="네이버로 로그인"
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400] transition-opacity hover:opacity-80"
+          >
+            <img src="/icons/naver-icon.svg" alt="" className="h-4 w-4" />
           </a>
         </div>
       </div>

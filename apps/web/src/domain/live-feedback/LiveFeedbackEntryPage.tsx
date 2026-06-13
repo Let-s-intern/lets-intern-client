@@ -50,8 +50,10 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
 
   if (!isLoggedIn) {
     return (
-      <main className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-5 py-10">
-        <LoginGate feedbackId={feedbackId} role={role} />
+      <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
+        <div className="w-full max-w-[400px]">
+          <LoginGate feedbackId={feedbackId} role={role} />
+        </div>
       </main>
     );
   }
