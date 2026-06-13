@@ -198,7 +198,13 @@ const QnaIcon = () => (
       strokeWidth="1.5"
       strokeLinecap="round"
     />
-    <circle cx="12.1" cy="15.6" r="0.5" fill="currentColor" stroke="currentColor" />
+    <circle
+      cx="12.1"
+      cy="15.6"
+      r="0.5"
+      fill="currentColor"
+      stroke="currentColor"
+    />
   </svg>
 );
 
@@ -251,23 +257,21 @@ const JitsiEmbedModal = ({
       className="mx-2 h-[92vh] w-[1280px] max-w-full overflow-hidden rounded-2xl bg-neutral-900 md:mx-4 md:h-[90vh] md:rounded-3xl"
     >
       <div className="relative h-full w-full">
-        {/* 화상 — 중앙에 최대폭 제한(좌우 레터박스). 너무 넓게 늘려 확대돼 보이는 것 방지. */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative h-full w-full max-w-[960px]">
-            {meetingUrl ? (
-              <JitsiEmbed
-                roomUrl={meetingUrl}
-                spaceName={spaceName}
-                onClose={onClose}
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
-                회의실이 아직 준비되지 않았습니다.
-                <br />
-                멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
-              </div>
-            )}
-          </div>
+        {/* 화상 — 모달 전폭을 채운다(좌우 여백 없음). 비율 차이는 Jitsi가 내부 letterbox 처리. */}
+        <div className="absolute inset-0">
+          {meetingUrl ? (
+            <JitsiEmbed
+              roomUrl={meetingUrl}
+              spaceName={spaceName}
+              onClose={onClose}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
+              회의실이 아직 준비되지 않았습니다.
+              <br />
+              멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
+            </div>
+          )}
         </div>
 
         {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}

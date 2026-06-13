@@ -46,6 +46,10 @@ const CONFIG_OVERWRITE = {
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
   prejoinPageEnabled: false,
+  // 신버전 워터마크 로고 제거(클라이언트 측). 빈 문자열이면 로고를 그리지 않는다.
+  defaultLogoUrl: '',
+  // 좌상단 비디오 화질 라벨(예: 480p/HD) 숨김.
+  hideConferenceSubject: true,
 };
 
 const INTERFACE_CONFIG_OVERWRITE = {
@@ -62,6 +66,9 @@ const INTERFACE_CONFIG_OVERWRITE = {
   DISABLE_VIDEO_BACKGROUND: true,
   HIDE_DEEP_LINKING_LOGO: true,
   DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+  // 화면 화질(quality) 라벨/연결 표시 숨김
+  VIDEO_QUALITY_LABEL_DISABLED: true,
+  CONNECTION_INDICATOR_DISABLED: true,
   // 신 버전 deep linking 페이지에서도 로고 숨김
   GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
   DISPLAY_WELCOME_FOOTER: false,
