@@ -139,16 +139,19 @@ export const usePostFeedbackReservation = (challengeId: string | number) => {
 };
 
 /**
- * PATCH /api/v1/feedback/mentor/{feedbackId} 멘토 출석 상태 업데이트.
+ * PATCH /api/v1/feedback/mentor/{feedbackId} 멘토용 출석 상태 업데이트.
  *
- * 멘토가 라이브 입장에 성공하면 mentorStatus 를 PRESENT 로 기록(자동 출석).
- * 출석 PATCH 실패는 입장 자체를 막지 않는다(호출 측에서 swallow).
+ * - mentorStatus: 멘토 입장 성공 시 PRESENT 자동 기록.
+ * - menteeStatus: 멘토가 멘티 출석을 기록(모달 닫힘/종료 시 일괄).
+ * 정의된 필드만 전송한다. 실패는 입장을 막지 않는다(호출 측 swallow).
  */
 export const usePatchMentorFeedbackStatus = (feedbackId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ mentorStatus }: { mentorStatus: FeedbackAttendanceStatus }) =>
-      axios.patch(`/feedback/mentor/${feedbackId}`, { mentorStatus }),
+    mutationFn: (body: {
+      mentorStatus?: FeedbackAttendanceStatus;
+      menteeStatus?: FeedbackAttendanceStatus;
+    }) => axios.patch(`/feedback/mentor/${feedbackId}`, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['feedbackDetail', feedbackId],

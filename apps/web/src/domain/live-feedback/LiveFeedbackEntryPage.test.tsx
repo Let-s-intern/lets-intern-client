@@ -19,16 +19,19 @@ let queryState: { data: unknown; isLoading: boolean } = {
 jest.mock('@/api/feedback/feedback', () => ({
   useLiveFeedbackEntryQuery: () => queryState,
   usePatchFeedbackMeetingUrl: () => ({ mutateAsync: jest.fn() }),
-  usePatchMentorFeedbackStatus: () => ({ mutateAsync: jest.fn() }),
+  usePatchMentorFeedbackStatus: () => ({
+    mutate: jest.fn(),
+    mutateAsync: jest.fn(),
+  }),
 }));
 
 jest.mock('./ui/LoginGate', () => ({
   __esModule: true,
   default: () => <div data-testid="login-gate" />,
 }));
-jest.mock('./ui/InlineJitsi', () => ({
+jest.mock('./ui/LiveFeedbackModal', () => ({
   __esModule: true,
-  default: () => <div data-testid="inline-jitsi" />,
+  default: () => <div data-testid="live-feedback-modal" />,
 }));
 
 import LiveFeedbackEntryPage from './LiveFeedbackEntryPage';

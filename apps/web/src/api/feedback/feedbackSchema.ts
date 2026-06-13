@@ -72,6 +72,11 @@ export const feedbackDetailSchema = z.object({
     menteeStatus: feedbackAttendanceStatusSchema.nullable(),
     score: z.number().nullable(),
     review: z.string().nullable(),
+    // 입장 모달 표시용(선택) — 상대방 이름·사전 질문·제출물 링크.
+    // BE 입장 응답 확정 전까지 optional.
+    menteeName: z.string().nullish(),
+    preQuestion: z.string().nullish(),
+    attendanceUrl: z.string().nullish(),
   }),
 });
 

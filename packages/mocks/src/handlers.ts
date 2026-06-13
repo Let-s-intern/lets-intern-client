@@ -977,6 +977,12 @@ export const handlers = [
           menteeStatus: base.menteeStatus,
           score: null,
           review: null,
+          // 입장 모달(웹) 표시용 — 상대방 이름·사전 질문·노션 제출물.
+          menteeName: base.menteeName,
+          preQuestion:
+            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
+          attendanceUrl:
+            'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2',
         },
       },
     });

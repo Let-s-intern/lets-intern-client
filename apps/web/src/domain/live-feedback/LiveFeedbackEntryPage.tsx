@@ -2,12 +2,15 @@
 
 import { useAuthStore } from '@letscareer/store';
 
-import { useLiveFeedbackEntryQuery } from '@/api/feedback/feedback';
+import {
+  useLiveFeedbackEntryQuery,
+  usePatchMentorFeedbackStatus,
+} from '@/api/feedback/feedback';
 
 import type { LiveRole } from './hooks/liveRole';
 import { useLiveEntry } from './hooks/useLiveEntry';
 import EnterLiveButton from './ui/EnterLiveButton';
-import InlineJitsi from './ui/InlineJitsi';
+import LiveFeedbackModal from './ui/LiveFeedbackModal';
 import LoginGate from './ui/LoginGate';
 import ScheduleSummaryCard from './ui/ScheduleSummaryCard';
 
@@ -39,13 +42,16 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
     role,
   });
 
+  // 멘티 출석은 멘토가 모달에서 기록(닫힘/종료 시 일괄 전송).
+  const patchStatus = usePatchMentorFeedbackStatus(feedbackId);
+
   // 스토어 초기화 전에는 깜빡임을 막기 위해 아무것도 렌더하지 않는다.
   if (!isInitialized) return null;
 
   if (!isLoggedIn) {
     return (
       <main className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-5 py-10">
-        <LoginGate feedbackId={feedbackId} />
+        <LoginGate feedbackId={feedbackId} role={role} />
       </main>
     );
   }
@@ -68,13 +74,20 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
         onEnter={enter}
       />
 
-      {isOpen && (
-        <InlineJitsi
-          meetingUrl={feedbackInfo?.meetingUrl ?? null}
-          spaceName={`live-feedback-${feedbackId}`}
-          onClose={closeJitsi}
-        />
-      )}
+      <LiveFeedbackModal
+        isOpen={isOpen}
+        onClose={closeJitsi}
+        meetingUrl={feedbackInfo?.meetingUrl ?? null}
+        spaceName={`live-feedback-${feedbackId}`}
+        role={role}
+        menteeName={feedbackInfo?.menteeName ?? '멘티'}
+        preQuestion={feedbackInfo?.preQuestion ?? undefined}
+        submissionUrl={feedbackInfo?.attendanceUrl ?? undefined}
+        startDate={feedbackInfo?.startDate}
+        endDate={feedbackInfo?.endDate}
+        menteeStatus={feedbackInfo?.menteeStatus ?? undefined}
+        onSaveAttendance={(menteeStatus) => patchStatus.mutate({ menteeStatus })}
+      />
     </main>
   );
 }
