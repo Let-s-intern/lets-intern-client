@@ -49,50 +49,41 @@ interface JitsiEmbedModalProps {
   isSavingAttendance?: boolean;
 }
 
-/** 멘티 라이브 출석 현재값 → 표시 라벨. */
-function attendanceLabel(status?: FeedbackAttendanceStatus): string {
-  switch (status) {
-    case 'PRESENT':
-      return '참석';
-    case 'ABSENT':
-      return '불참';
-    default:
-      return '확인 전';
-  }
-}
-
 interface MenteeAttendanceBarProps {
   menteeName: string;
   menteeStatus?: FeedbackAttendanceStatus;
   isSaving?: boolean;
-  onSave?: (status: FeedbackAttendanceStatus) => void;
+  /** 참석/불참 선택 후 "확인" 클릭 시 호출. 저장 + 바 닫기. */
+  onConfirm?: (status: FeedbackAttendanceStatus) => void;
 }
 
-/** 화상 위에 떠 있는 멘티 출석 체크 바 — 참석/불참 선택. */
+/** 출석 체크 바 — 참석/불참 선택 후 "확인"으로 확정한다. */
 const MenteeAttendanceBar = ({
   menteeName,
   menteeStatus,
   isSaving,
-  onSave,
+  onConfirm,
 }: MenteeAttendanceBarProps) => {
+  const [selected, setSelected] = useState<FeedbackAttendanceStatus | null>(
+    menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT'
+      ? menteeStatus
+      : null,
+  );
   const baseChip =
     'rounded-lg px-4 py-1.5 text-sm font-semibold transition disabled:opacity-50';
   return (
-    <div className="flex items-center gap-3 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
-      <span className="text-xs font-medium text-white/70">
+    <div className="flex items-center gap-2 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
+      <span className="text-xs font-medium text-white/80">
         {menteeName} 님 출석
-      </span>
-      <span className="text-xs font-semibold text-white/90">
-        {attendanceLabel(menteeStatus)}
       </span>
       <span className="h-4 w-px bg-white/20" />
       <button
         type="button"
         disabled={isSaving}
-        onClick={() => onSave?.('PRESENT')}
+        onClick={() => setSelected('PRESENT')}
         className={twMerge(
           baseChip,
-          menteeStatus === 'PRESENT'
+          selected === 'PRESENT'
             ? 'bg-[#4d55f5] text-white'
             : 'text-white/80 hover:bg-white/10',
         )}
@@ -102,15 +93,23 @@ const MenteeAttendanceBar = ({
       <button
         type="button"
         disabled={isSaving}
-        onClick={() => onSave?.('ABSENT')}
+        onClick={() => setSelected('ABSENT')}
         className={twMerge(
           baseChip,
-          menteeStatus === 'ABSENT'
+          selected === 'ABSENT'
             ? 'bg-[#fc5555] text-white'
             : 'text-white/80 hover:bg-white/10',
         )}
       >
         불참
+      </button>
+      <button
+        type="button"
+        disabled={!selected || isSaving}
+        onClick={() => selected && onConfirm?.(selected)}
+        className="rounded-lg bg-white px-4 py-1.5 text-sm font-bold text-neutral-900 transition hover:bg-neutral-100 disabled:opacity-40"
+      >
+        확인
       </button>
     </div>
   );
@@ -243,6 +242,15 @@ const JitsiEmbedModal = ({
 }: JitsiEmbedModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
+  // 멘티 출석 바 — 이미 기록됐으면 처음부터 숨김, 확인 누르면 닫는다.
+  const [attendanceDismissed, setAttendanceDismissed] = useState(
+    menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT',
+  );
+  const handleConfirmAttendance = (status: FeedbackAttendanceStatus) => {
+    onSaveAttendance?.(status);
+    setAttendanceDismissed(true);
+  };
+
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
   const hasSubmission = !!submissionUrl;
   const isNotionSubmission = hasSubmission && isNotionUrl(submissionUrl);
@@ -275,20 +283,24 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 로고 옆(상단 좌측) — 현재 시간 + (멘토) 출석 체크. 항상 표시. */}
-        <div className="absolute left-44 top-3 z-10 flex items-center gap-2">
-          {startDate && endDate && (
+        {/* 좌측 상단 로고 바로 아래 — 현재/남은 시간 일체형 타이머. 항상 표시. */}
+        {startDate && endDate && (
+          <div className="absolute left-3 top-[72px] z-10">
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
-          )}
-          {isMentor && (
+          </div>
+        )}
+
+        {/* 중앙 상단 — 멘티 출석 체크. 확인 누르면 사라진다. */}
+        {isMentor && !attendanceDismissed && (
+          <div className="absolute left-1/2 top-20 z-10 -translate-x-1/2">
             <MenteeAttendanceBar
               menteeName={menteeName}
               menteeStatus={menteeStatus}
               isSaving={isSavingAttendance}
-              onSave={onSaveAttendance}
+              onConfirm={handleConfirmAttendance}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* 자료 버튼/패널 — 모달 바깥(뷰포트 좌하단)에 고정. 넓은 화면에서 화상을 가리지 않는다. */}
