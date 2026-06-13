@@ -29,6 +29,16 @@ function formatRemaining(ms: number): string {
   return `${minutes}분`;
 }
 
+function formatCountdown(ms: number): string {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
 /**
  * 현재 시각 기준 버튼 상태 계산 (순수함수 — 테스트 용이).
  * - 시작 20분 전 이전 → 비활성 "입장까지 N시간 N분"
@@ -64,7 +74,11 @@ export function computeButtonState(
       active: true,
     };
   }
-  return { phase: 'open', label: '라이브 입장하기 · 진행 중', active: true };
+  return {
+    phase: 'open',
+    label: `라이브 입장하기 · 진행 중 · ${formatCountdown(end - now)}`,
+    active: true,
+  };
 }
 
 const COUNTDOWN_TICK_MS = 1000;
