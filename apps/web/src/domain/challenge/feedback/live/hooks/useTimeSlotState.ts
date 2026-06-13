@@ -13,7 +13,7 @@ function generateSlotTimes(startHour: number, endHour: number): string[] {
   return times;
 }
 
-const ALL_SLOT_TIMES = generateSlotTimes(9, 24);
+const ALL_SLOT_TIMES = generateSlotTimes(9, 23);
 
 function getInitialDate(
   feedbackStartDate: string,
