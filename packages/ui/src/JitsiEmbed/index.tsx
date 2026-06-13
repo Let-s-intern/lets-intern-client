@@ -105,7 +105,7 @@ export function JitsiEmbed({ roomUrl, onClose, topLeftSlot }: JitsiEmbedProps) {
           backdrop-blur로 뒤의 화상/잔여 Jitsi 워터마크를 흐리게 덮고, 워터마크 링크 클릭도 막는다. */}
       <div
         data-watermark-cover
-        className="absolute left-3 top-3 z-[5] flex flex-col gap-1.5 overflow-hidden rounded-2xl bg-black/35 p-3 backdrop-blur-md"
+        className="rounded-xxl absolute left-3 top-3 z-[5] flex flex-col gap-1.5 overflow-hidden bg-black/35 p-3 backdrop-blur-md"
       >
         <div className="flex h-8 items-center pl-1">
           <LetsCareerLogo className="h-5 w-auto" />
