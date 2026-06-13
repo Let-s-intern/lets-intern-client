@@ -254,26 +254,24 @@ const JitsiEmbedModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="mx-2 h-[92vh] w-[1280px] max-w-full overflow-hidden rounded-2xl bg-neutral-900 md:mx-4 md:h-[90vh] md:rounded-3xl"
+      className="aspect-video max-h-[92vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
       <div className="relative h-full w-full">
-        {/* 화상 — 16:9로 중앙 배치. 비율을 카메라(가로)에 맞춰 확대/크롭 없이 보이게 한다. */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="aspect-video max-h-full w-full">
-            {meetingUrl ? (
-              <JitsiEmbed
-                roomUrl={meetingUrl}
-                spaceName={spaceName}
-                onClose={onClose}
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
-                회의실이 아직 준비되지 않았습니다.
-                <br />
-                멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
-              </div>
-            )}
-          </div>
+        {/* 모달 자체가 16:9 → 화상이 박스를 꽉 채워 확대/크롭·레터박스 없이 보인다. */}
+        <div className="absolute inset-0">
+          {meetingUrl ? (
+            <JitsiEmbed
+              roomUrl={meetingUrl}
+              spaceName={spaceName}
+              onClose={onClose}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
+              회의실이 아직 준비되지 않았습니다.
+              <br />
+              멘토가 라이브 피드백에 입장하면 회의실이 열립니다.
+            </div>
+          )}
         </div>
 
         {/* 상단 중앙 플로팅 — 타이머 + (멘토) 출석 체크 */}
