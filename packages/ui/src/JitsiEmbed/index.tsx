@@ -98,11 +98,12 @@ export function JitsiEmbed({ roomUrl, onClose }: JitsiEmbedProps) {
   return (
     <div className="relative h-full w-full bg-neutral-900">
       {/* Jitsi 좌측 상단 워터마크 마스킹 + 렛츠커리어 로고 오버레이.
+          반투명 아크릴(backdrop-blur)로 뒤의 화상/잔여 워터마크를 흐리게 덮는다.
           pointer-events 차단하지 않음(기본 auto) — 아래 깔린 Jitsi 워터마크 링크 클릭을 막는다. */}
       <div
         aria-hidden="true"
         data-watermark-cover
-        className="absolute left-0 top-0 z-[5] flex h-16 w-40 items-center justify-center bg-neutral-900"
+        className="absolute left-0 top-0 z-[5] flex h-16 w-40 items-center justify-center rounded-br-2xl bg-black/30 backdrop-blur-md"
       >
         <LetsCareerLogo className="h-5 w-auto" />
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { JitsiEmbed } from '@letscareer/ui/JitsiEmbed';
 
@@ -243,21 +243,6 @@ const JitsiEmbedModal = ({
 }: JitsiEmbedModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
-  // 마우스를 움직이면 컨트롤(타이머·출석)을 보여주고, 잠시 멈추면 다시 숨긴다.
-  const [controlsVisible, setControlsVisible] = useState(true);
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const revealControls = () => {
-    setControlsVisible(true);
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    hideTimerRef.current = setTimeout(() => setControlsVisible(false), 2800);
-  };
-  useEffect(
-    () => () => {
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    },
-    [],
-  );
-
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
   const hasSubmission = !!submissionUrl;
   const isNotionSubmission = hasSubmission && isNotionUrl(submissionUrl);
@@ -272,11 +257,7 @@ const JitsiEmbedModal = ({
       closeOnOverlayClick={false}
       className="aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
-      <div
-        className="relative h-full w-full"
-        onMouseMove={revealControls}
-        onMouseEnter={revealControls}
-      >
+      <div className="relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다. */}
         <div className="absolute inset-0">
           {meetingUrl ? (
@@ -294,37 +275,20 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 상단 중앙 — 현재 시간 타이머. 상단에서 살짝 내려 Jitsi 로고/닫기와 안 겹치게.
-            마우스를 움직이면 나타나고 잠시 멈추면 사라진다. */}
-        {startDate && endDate && (
-          <div
-            className={twMerge(
-              'pointer-events-none absolute left-1/2 top-16 z-10 -translate-x-1/2 transition-opacity duration-300',
-              controlsVisible ? 'opacity-100' : 'opacity-0',
-            )}
-          >
+        {/* 로고 옆(상단 좌측) — 현재 시간 + (멘토) 출석 체크. 항상 표시. */}
+        <div className="absolute left-44 top-3 z-10 flex items-center gap-2">
+          {startDate && endDate && (
             <LiveSessionTimer startDate={startDate} endDate={endDate} />
-          </div>
-        )}
-
-        {/* 하단 중앙 — (멘토) 출석 체크. Jitsi 컨트롤바 위(bottom-20). */}
-        {isMentor && (
-          <div
-            className={twMerge(
-              'absolute bottom-20 left-1/2 z-10 -translate-x-1/2 transition-opacity duration-300',
-              controlsVisible
-                ? 'pointer-events-auto opacity-100'
-                : 'pointer-events-none opacity-0',
-            )}
-          >
+          )}
+          {isMentor && (
             <MenteeAttendanceBar
               menteeName={menteeName}
               menteeStatus={menteeStatus}
               isSaving={isSavingAttendance}
               onSave={onSaveAttendance}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* 자료 버튼/패널 — 모달 바깥(뷰포트 좌하단)에 고정. 넓은 화면에서 화상을 가리지 않는다. */}
