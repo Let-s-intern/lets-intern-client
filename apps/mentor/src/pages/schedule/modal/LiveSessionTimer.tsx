@@ -8,19 +8,16 @@ import { currentNow, MOCK_NOW } from '../constants/mockNow';
 /** 현재 시각 갱신 주기(ms) — 1초마다 시계를 다시 그린다. */
 const CLOCK_TICK_MS = 1000;
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
 const ONE_MINUTE_MS = 60 * 1000;
 const ONE_SECOND_MS = 1000;
 
-/** `남은 시간` 표기 — 1시간 이상이면 H:MM:SS, 미만이면 MM:SS. */
+/** `남은 시간` 표기 — 분:초(MM:SS)만 표시. */
 function formatRemaining(remainingMs: number): string {
   const safe = Math.max(remainingMs, 0);
-  const hours = Math.floor(safe / ONE_HOUR_MS);
-  const minutes = Math.floor((safe % ONE_HOUR_MS) / ONE_MINUTE_MS);
+  const minutes = Math.floor(safe / ONE_MINUTE_MS);
   const seconds = Math.floor((safe % ONE_MINUTE_MS) / ONE_SECOND_MS);
   const mm = String(minutes).padStart(2, '0');
   const ss = String(seconds).padStart(2, '0');
-  if (hours > 0) return `${hours}:${mm}:${ss}`;
   return `${mm}:${ss}`;
 }
 
