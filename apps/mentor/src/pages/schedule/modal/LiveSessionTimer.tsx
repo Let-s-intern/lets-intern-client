@@ -54,7 +54,7 @@ const LiveSessionTimer = ({ startDate, endDate }: LiveSessionTimerProps) => {
   // 영상 위에 투명하게 떠 있는 컴팩트 타이머 칩.
   // pointer-events-none 으로 Jitsi 자체 컨트롤 클릭을 가로채지 않는다.
   return (
-    <div className="pointer-events-none inline-flex items-center gap-3 rounded-2xl bg-black/30 px-4 py-2 text-white shadow-lg backdrop-blur-md">
+    <div className="pointer-events-none inline-flex items-center gap-3 px-1 text-white">
       <span className="flex items-baseline gap-1.5">
         <span className="text-[11px] font-medium text-white/55">현재</span>
         <span className="text-[13px] font-semibold tabular-nums">

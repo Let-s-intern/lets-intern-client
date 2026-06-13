@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { JitsiEmbed } from '@letscareer/ui/JitsiEmbed';
 
@@ -51,26 +51,22 @@ interface JitsiEmbedModalProps {
 
 interface MenteeAttendanceBarProps {
   menteeName: string;
-  menteeStatus?: FeedbackAttendanceStatus;
-  isSaving?: boolean;
-  /** 참석/불참 선택 후 "확인" 클릭 시 호출. 저장 + 바 닫기. */
-  onConfirm?: (status: FeedbackAttendanceStatus) => void;
+  /** 현재 선택된 출석 상태(없으면 null). */
+  selected: FeedbackAttendanceStatus | null;
+  /** 참석/불참 클릭(같은 값 재클릭 시 null 로 해제). 저장은 모달 닫힘/종료 시 일괄. */
+  onSelect: (status: FeedbackAttendanceStatus | null) => void;
 }
 
-/** 출석 체크 바 — 참석/불참 선택 후 "확인"으로 확정한다. */
+/** 출석 체크 바 — 참석/불참 토글. 한번 더 누르면 해제된다(저장은 지연). */
 const MenteeAttendanceBar = ({
   menteeName,
-  menteeStatus,
-  isSaving,
-  onConfirm,
+  selected,
+  onSelect,
 }: MenteeAttendanceBarProps) => {
-  const [selected, setSelected] = useState<FeedbackAttendanceStatus | null>(
-    menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT'
-      ? menteeStatus
-      : null,
-  );
   const baseChip =
     'rounded-lg px-4 py-1.5 text-sm font-semibold transition disabled:opacity-50';
+  const toggle = (status: FeedbackAttendanceStatus) =>
+    onSelect(selected === status ? null : status);
   return (
     <div className="flex items-center gap-2 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
       <span className="text-xs font-medium text-white/80">
@@ -79,8 +75,7 @@ const MenteeAttendanceBar = ({
       <span className="h-4 w-px bg-white/20" />
       <button
         type="button"
-        disabled={isSaving}
-        onClick={() => setSelected('PRESENT')}
+        onClick={() => toggle('PRESENT')}
         className={twMerge(
           baseChip,
           selected === 'PRESENT'
@@ -92,8 +87,7 @@ const MenteeAttendanceBar = ({
       </button>
       <button
         type="button"
-        disabled={isSaving}
-        onClick={() => setSelected('ABSENT')}
+        onClick={() => toggle('ABSENT')}
         className={twMerge(
           baseChip,
           selected === 'ABSENT'
@@ -102,14 +96,6 @@ const MenteeAttendanceBar = ({
         )}
       >
         불참
-      </button>
-      <button
-        type="button"
-        disabled={!selected || isSaving}
-        onClick={() => selected && onConfirm?.(selected)}
-        className="rounded-lg bg-white px-4 py-1.5 text-sm font-bold text-neutral-900 transition hover:bg-neutral-100 disabled:opacity-40"
-      >
-        확인
       </button>
     </div>
   );
@@ -157,7 +143,7 @@ const FloatingPanel = ({
 }) => (
   <div
     className={twMerge(
-      'flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl',
+      'flex flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-2xl',
       className,
     )}
   >
@@ -238,18 +224,48 @@ const JitsiEmbedModal = ({
   isMentor,
   menteeStatus,
   onSaveAttendance,
-  isSavingAttendance,
 }: JitsiEmbedModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
 
-  // 멘티 출석 바 — 확인하면 숨기지 않고 투명도를 높여(dim) 완료를 표시한다.
-  const [attendanceConfirmed, setAttendanceConfirmed] = useState(
-    menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT',
-  );
-  const handleConfirmAttendance = (status: FeedbackAttendanceStatus) => {
-    onSaveAttendance?.(status);
-    setAttendanceConfirmed(true);
+  // 멘티 출석 — 클릭 즉시 저장하지 않고 선택만 보관한다(멘티 입장 잠김 방지).
+  // 실제 PATCH 는 모달이 닫히거나 세션 종료 시각에 일괄 전송한다.
+  const [pendingAttendance, setPendingAttendance] =
+    useState<FeedbackAttendanceStatus | null>(
+      menteeStatus === 'PRESENT' || menteeStatus === 'ABSENT'
+        ? menteeStatus
+        : null,
+    );
+  const pendingRef = useRef(pendingAttendance);
+  pendingRef.current = pendingAttendance;
+  const savedRef = useRef(menteeStatus);
+  savedRef.current = menteeStatus;
+  const onSaveRef = useRef(onSaveAttendance);
+  onSaveRef.current = onSaveAttendance;
+
+  /** 보관된 출석 선택을 서버에 전송(저장값과 다를 때만). */
+  const flushAttendance = () => {
+    const next = pendingRef.current;
+    if (next && next !== savedRef.current) onSaveRef.current?.(next);
   };
+
+  /** 모달 닫힘(닫기/hangup) 시 출석을 먼저 전송하고 닫는다. */
+  const handleClose = () => {
+    flushAttendance();
+    onClose();
+  };
+
+  // 세션 종료 시각이 되면 보관된 출석을 전송한다.
+  useEffect(() => {
+    if (!endDate) return;
+    const ms = new Date(endDate).getTime() - Date.now();
+    if (ms <= 0) {
+      flushAttendance();
+      return;
+    }
+    const id = setTimeout(flushAttendance, ms);
+    return () => clearTimeout(id);
+    // flushAttendance 는 ref 기반이라 endDate 변화에만 재설정하면 된다.
+  }, [endDate]);
 
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
   const hasSubmission = !!submissionUrl;
@@ -261,18 +277,24 @@ const JitsiEmbedModal = ({
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       closeOnOverlayClick={false}
       className="aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
       <div className="relative h-full w-full">
-        {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다. */}
+        {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다.
+            로고+현재/남은 시간은 JitsiEmbed 좌상단 아크릴 패널(topLeftSlot)에 한 덩어리로 묶는다. */}
         <div className="absolute inset-0">
           {meetingUrl ? (
             <JitsiEmbed
               roomUrl={meetingUrl}
               spaceName={spaceName}
-              onClose={onClose}
+              onClose={handleClose}
+              topLeftSlot={
+                startDate && endDate ? (
+                  <LiveSessionTimer startDate={startDate} endDate={endDate} />
+                ) : undefined
+              }
             />
           ) : (
             <div className="flex h-full items-center justify-center p-8 text-center text-sm text-neutral-300">
@@ -283,26 +305,18 @@ const JitsiEmbedModal = ({
           )}
         </div>
 
-        {/* 좌측 상단 로고 바로 아래 — 현재/남은 시간 일체형 아크릴 타이머. 항상 표시. */}
-        {startDate && endDate && (
-          <div className="absolute left-3 top-[72px] z-10">
-            <LiveSessionTimer startDate={startDate} endDate={endDate} />
-          </div>
-        )}
-
-        {/* 중앙 하단 — 멘티 출석 체크. 확인하면 숨기지 않고 투명도를 높여 완료 표시. */}
+        {/* 중앙 하단 — 멘티 출석 체크(참석/불참 토글). 선택은 닫힘/종료 시 일괄 저장. */}
         {isMentor && (
           <div
             className={twMerge(
               'absolute bottom-20 left-1/2 z-10 -translate-x-1/2 transition-opacity duration-300',
-              attendanceConfirmed && 'opacity-40 hover:opacity-100',
+              pendingAttendance && 'opacity-50 hover:opacity-100',
             )}
           >
             <MenteeAttendanceBar
               menteeName={menteeName}
-              menteeStatus={menteeStatus}
-              isSaving={isSavingAttendance}
-              onConfirm={handleConfirmAttendance}
+              selected={pendingAttendance}
+              onSelect={setPendingAttendance}
             />
           </div>
         )}
