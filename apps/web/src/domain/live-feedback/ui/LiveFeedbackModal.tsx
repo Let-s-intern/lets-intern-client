@@ -122,7 +122,7 @@ const FloatingPanel = ({
 }) => (
   <div
     className={twMerge(
-      'flex flex-col overflow-hidden rounded-xxl border border-neutral-200 bg-white shadow-2xl',
+      'rounded-xxl flex flex-col overflow-hidden border border-neutral-200 bg-white shadow-2xl',
       className,
     )}
   >
@@ -248,9 +248,18 @@ const LiveFeedbackModal = ({
   }, [isOpen, endDate]);
 
   const isMentor = role === 'MENTOR';
+  const isMentee = role === 'MENTEE';
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
   const hasSubmission = !!submissionUrl;
   const isNotionSubmission = hasSubmission && isAllowedNotionUrl(submissionUrl);
+
+  // 멘티 시점이면 "나의 ~", 멘토 시점이면 "멘티 ~"로 표기.
+  const qnaLabel = isMentee ? '나의 사전 QA' : '사전 QA';
+  const submissionLabel = isMentee ? '나의 제출물' : '멘티 제출물';
+  const qnaTitle = isMentee ? '나의 사전 Q&A' : '사전 Q&A';
+  const submissionTitle = isMentee
+    ? '나의 제출물'
+    : `${menteeName} 님의 제출물`;
 
   const toggle = (panel: MaterialPanel) =>
     setOpenPanel((prev) => (prev === panel ? null : panel));
@@ -260,7 +269,7 @@ const LiveFeedbackModal = ({
       isOpen={isOpen}
       onClose={handleClose}
       closeOnOverlayClick={false}
-      className="aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-xxl bg-neutral-900"
+      className="rounded-xxl aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden bg-neutral-900"
     >
       <div className="relative h-full w-full">
         <div className="absolute inset-0">
@@ -306,7 +315,7 @@ const LiveFeedbackModal = ({
         <div className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3">
           {openPanel === 'qna' && hasPreQuestion && (
             <FloatingPanel
-              title="사전 Q&A"
+              title={qnaTitle}
               onClose={() => setOpenPanel(null)}
               className="max-h-[60vh] w-[340px] max-w-[80vw]"
             >
@@ -318,7 +327,7 @@ const LiveFeedbackModal = ({
 
           {openPanel === 'submission' && hasSubmission && (
             <FloatingPanel
-              title={`${menteeName} 님의 제출물`}
+              title={submissionTitle}
               onClose={() => setOpenPanel(null)}
               className="h-[70vh] w-[400px] max-w-[80vw]"
             >
@@ -345,7 +354,7 @@ const LiveFeedbackModal = ({
           <div className="flex flex-col gap-2.5">
             {hasPreQuestion && (
               <SemiFab
-                label="사전 QA"
+                label={qnaLabel}
                 active={openPanel === 'qna'}
                 onClick={() => toggle('qna')}
               >
@@ -354,7 +363,7 @@ const LiveFeedbackModal = ({
             )}
             {hasSubmission && (
               <SemiFab
-                label="멘티 제출물"
+                label={submissionLabel}
                 active={openPanel === 'submission'}
                 onClick={() => toggle('submission')}
               >
