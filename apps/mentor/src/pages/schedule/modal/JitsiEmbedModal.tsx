@@ -254,10 +254,10 @@ const JitsiEmbedModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="aspect-video max-h-[92vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
+      className="aspect-[4/3] h-[86vh] max-h-[860px] w-auto max-w-[94vw] overflow-hidden rounded-2xl bg-neutral-900 md:rounded-3xl"
     >
       <div className="relative h-full w-full">
-        {/* 모달 자체가 16:9 → 화상이 박스를 꽉 채워 확대/크롭·레터박스 없이 보인다. */}
+        {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다. */}
         <div className="absolute inset-0">
           {meetingUrl ? (
             <JitsiEmbed
