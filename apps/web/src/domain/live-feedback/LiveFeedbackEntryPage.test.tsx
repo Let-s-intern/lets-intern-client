@@ -36,13 +36,13 @@ import LiveFeedbackEntryPage from './LiveFeedbackEntryPage';
 describe('LiveFeedbackEntryPage', () => {
   it('초기화 전에는 아무것도 렌더하지 않는다', () => {
     authState = { isInitialized: false, isLoggedIn: false };
-    const { container } = render(<LiveFeedbackEntryPage feedbackId={1} />);
+    const { container } = render(<LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />);
     expect(container.firstChild).toBeNull();
   });
 
   it('비로그인이면 LoginGate를 렌더한다', () => {
     authState = { isInitialized: true, isLoggedIn: false };
-    render(<LiveFeedbackEntryPage feedbackId={1} />);
+    render(<LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />);
     expect(screen.getByTestId('login-gate')).toBeInTheDocument();
   });
 
@@ -64,7 +64,7 @@ describe('LiveFeedbackEntryPage', () => {
       },
       isLoading: false,
     };
-    render(<LiveFeedbackEntryPage feedbackId={1} />);
+    render(<LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />);
     expect(screen.getByText('라이브 피드백 입장')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.queryByTestId('login-gate')).not.toBeInTheDocument();

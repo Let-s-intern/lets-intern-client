@@ -10,7 +10,7 @@ import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
 
 import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
 
-import type { LiveRole } from './resolveMyRole';
+import type { LiveRole } from './liveRole';
 
 interface Params {
   feedbackId: number;

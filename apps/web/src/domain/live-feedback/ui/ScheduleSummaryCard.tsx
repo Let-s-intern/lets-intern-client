@@ -1,4 +1,4 @@
-import type { LiveRole } from '../hooks/resolveMyRole';
+import type { LiveRole } from '../hooks/liveRole';
 
 interface Props {
   /** 프로그램명 — §0.2 BE 미정, placeholder. */

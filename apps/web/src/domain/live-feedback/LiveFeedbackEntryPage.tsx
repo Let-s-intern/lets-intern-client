@@ -4,7 +4,7 @@ import { useAuthStore } from '@letscareer/store';
 
 import { useLiveFeedbackEntryQuery } from '@/api/feedback/feedback';
 
-import { resolveMyRole } from './hooks/resolveMyRole';
+import type { LiveRole } from './hooks/liveRole';
 import { useLiveEntry } from './hooks/useLiveEntry';
 import EnterLiveButton from './ui/EnterLiveButton';
 import InlineJitsi from './ui/InlineJitsi';
@@ -13,6 +13,8 @@ import ScheduleSummaryCard from './ui/ScheduleSummaryCard';
 
 interface Props {
   feedbackId: number;
+  /** 이 세션에서의 역할 — 알림톡 링크 경로(/live-feedback/[role]/...)에서 전달. */
+  role: LiveRole;
 }
 
 /**
@@ -20,8 +22,9 @@ interface Props {
  *
  * 흐름: 스토어 초기화 대기 → 비로그인(LoginGate) → 로그인(일정 요약 + 카운트다운 입장 버튼).
  * 입장 성공 시 인라인 Jitsi 를 같은 화면에 렌더한다.
+ * 역할은 알림톡 링크 경로에서 받는다(BE myRole 불필요).
  */
-export default function LiveFeedbackEntryPage({ feedbackId }: Props) {
+export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
   const isInitialized = useAuthStore((s) => s.isInitialized);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
@@ -29,9 +32,6 @@ export default function LiveFeedbackEntryPage({ feedbackId }: Props) {
     isLoggedIn ? feedbackId : null,
   );
   const feedbackInfo = data?.feedbackInfo ?? null;
-
-  // BE 역할판별 어댑터 — 확정 전엔 null 스텁(§0.1).
-  const role = resolveMyRole(feedbackInfo);
 
   const { isOpen, isPreparing, enter, closeJitsi } = useLiveEntry({
     feedbackId,
