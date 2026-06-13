@@ -1,6 +1,7 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  type FeedbackAttendanceStatus,
   feedbackDetailSchema,
   feedbackSlotListSchema,
   liveFeedbackListSchema,
@@ -65,6 +66,16 @@ export const useFeedbackDetailQuery = (feedbackId?: number | null) => {
   });
 };
 
+/**
+ * 라이브 입장 전용 상세 조회.
+ *
+ * 입장 화면용 추가 필드(programTitle/미션회차/상대방 이름/myRole 등)는 BE 미정이라
+ * 현재는 기본 상세(GET /feedback/{id})를 그대로 사용한다. BE 가 entry 전용 엔드포인트를
+ * 확정하면 이 별칭만 교체한다.
+ */
+// TODO(BE): GET /feedback/{id}/entry 확정 시 entry 전용 쿼리로 교체.
+export const useLiveFeedbackEntryQuery = useFeedbackDetailQuery;
+
 /** GET /api/v1/challenge/{challengeId}/feedback/written 서면 피드백 목록 조회 */
 export const useWrittenFeedbackListQuery = (challengeId?: number | string) => {
   return useQuery({
@@ -122,6 +133,25 @@ export const usePostFeedbackReservation = (challengeId: string | number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['liveFeedbackList', challengeId],
+      });
+    },
+  });
+};
+
+/**
+ * PATCH /api/v1/feedback/mentor/{feedbackId} 멘토 출석 상태 업데이트.
+ *
+ * 멘토가 라이브 입장에 성공하면 mentorStatus 를 PRESENT 로 기록(자동 출석).
+ * 출석 PATCH 실패는 입장 자체를 막지 않는다(호출 측에서 swallow).
+ */
+export const usePatchMentorFeedbackStatus = (feedbackId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ mentorStatus }: { mentorStatus: FeedbackAttendanceStatus }) =>
+      axios.patch(`/feedback/mentor/${feedbackId}`, { mentorStatus }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['feedbackDetail', feedbackId],
       });
     },
   });
