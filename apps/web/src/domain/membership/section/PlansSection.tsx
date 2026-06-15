@@ -1,11 +1,13 @@
 'use client';
 import { useState } from 'react';
+import { useMembershipApply } from '../hooks/useMembershipApply';
 
 type TabKey = 'a' | 'b' | 'c';
 
 export default function PlansSection() {
   const [activeTab, setActiveTab] = useState<TabKey>('a');
   const [openAcc, setOpenAcc] = useState<string | null>('standard');
+  const { handleApply } = useMembershipApply();
 
   return (
     <section className="plans" id="plans">
@@ -23,7 +25,7 @@ export default function PlansSection() {
           {(['a', 'b', 'c'] as TabKey[]).map((v) => (
             <button
               key={v}
-              className={`tab${activeTab === v ? 'on' : ''}`}
+              className={`tab${activeTab === v ? ' on' : ''}`}
               onClick={() => setActiveTab(v)}
             >
               {v === 'a' ? '카드형' : v === 'b' ? '비교표' : '펼침형'}
@@ -33,7 +35,7 @@ export default function PlansSection() {
 
         {/* VARIANT A — 카드형 */}
         <div
-          className={`variant${activeTab === 'a' ? 'on' : ''}`}
+          className={`variant${activeTab === 'a' ? ' on' : ''}`}
           style={activeTab !== 'a' ? { display: 'none' } : undefined}
         >
           <div className="pcards">
@@ -65,7 +67,7 @@ export default function PlansSection() {
               </ul>
               <button
                 className="btn btn-ghost"
-                onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                onClick={() => handleApply('BASIC')}
               >
                 베이직 선택
               </button>
@@ -103,7 +105,7 @@ export default function PlansSection() {
               </ul>
               <button
                 className="btn btn-blue"
-                onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                onClick={() => handleApply('STANDARD')}
               >
                 스탠다드 선택 →
               </button>
@@ -143,7 +145,7 @@ export default function PlansSection() {
               <button
                 className="btn"
                 style={{ background: 'var(--lc-yellow)', color: '#1C1C1C' }}
-                onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                onClick={() => handleApply('PREMIUM')}
               >
                 프리미엄 선택
               </button>
@@ -157,7 +159,7 @@ export default function PlansSection() {
 
         {/* VARIANT B — 비교표 */}
         <div
-          className={`variant${activeTab === 'b' ? 'on' : ''}`}
+          className={`variant${activeTab === 'b' ? ' on' : ''}`}
           style={activeTab !== 'b' ? { display: 'none' } : undefined}
         >
           <div className="matrix rv" id="matrix">
@@ -269,12 +271,12 @@ export default function PlansSection() {
 
         {/* VARIANT C — 펼침형 */}
         <div
-          className={`variant${activeTab === 'c' ? 'on' : ''}`}
+          className={`variant${activeTab === 'c' ? ' on' : ''}`}
           style={activeTab !== 'c' ? { display: 'none' } : undefined}
         >
           <div className="acc">
             <div
-              className={`arow rv${openAcc === 'basic' ? 'open' : ''}`}
+              className={`arow rv${openAcc === 'basic' ? ' open' : ''}`}
               style={{ ['--rvd' as string]: '0s' }}
             >
               <div
@@ -294,7 +296,7 @@ export default function PlansSection() {
                 </ul>
                 <button
                   className="btn btn-ghost"
-                  onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                  onClick={() => handleApply('BASIC')}
                 >
                   베이직 선택
                 </button>
@@ -302,7 +304,7 @@ export default function PlansSection() {
             </div>
 
             <div
-              className={`arow rv${openAcc === 'standard' ? 'open' : ''}`}
+              className={`arow rv${openAcc === 'standard' ? ' open' : ''}`}
               style={{ ['--rvd' as string]: '0.08s' }}
             >
               <div
@@ -325,7 +327,7 @@ export default function PlansSection() {
                 </ul>
                 <button
                   className="btn btn-blue"
-                  onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                  onClick={() => handleApply('STANDARD')}
                 >
                   스탠다드 선택 →
                 </button>
@@ -333,7 +335,7 @@ export default function PlansSection() {
             </div>
 
             <div
-              className={`arow rv${openAcc === 'premium' ? 'open' : ''}`}
+              className={`arow rv${openAcc === 'premium' ? ' open' : ''}`}
               style={{ ['--rvd' as string]: '0.16s' }}
             >
               <div
@@ -358,7 +360,7 @@ export default function PlansSection() {
                 <button
                   className="btn"
                   style={{ background: 'var(--lc-yellow)', color: '#1C1C1C' }}
-                  onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+                  onClick={() => handleApply('PREMIUM')}
                 >
                   프리미엄 선택
                 </button>

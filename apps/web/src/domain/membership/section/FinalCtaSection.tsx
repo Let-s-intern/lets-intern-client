@@ -1,8 +1,10 @@
 'use client';
 import Countdown from '../ui/Countdown';
 import { MEMBERSHIP_DEADLINE } from '../constants';
+import { useMembershipApply } from '../hooks/useMembershipApply';
 
 export default function FinalCtaSection() {
+  const { handleApply } = useMembershipApply();
   return (
     <section className="final">
       <div className="wrap">
@@ -21,7 +23,7 @@ export default function FinalCtaSection() {
         </div>
         <button
           className="btn btn-primary btn-lg rv"
-          onClick={() => alert('준비 중')} // TODO(MVP): Push 3에서 연결
+          onClick={() => handleApply('STANDARD')}
         >
           멤버십 신청하기 →
         </button>
