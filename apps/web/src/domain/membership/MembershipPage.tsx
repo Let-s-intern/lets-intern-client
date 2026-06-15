@@ -1,4 +1,5 @@
 import './styles/membership.css';
+import MembershipAnimations from './MembershipAnimations';
 import HeroSection from './section/HeroSection';
 import SolutionSection from './section/SolutionSection';
 import BenefitsSection from './section/BenefitsSection';
@@ -13,6 +14,7 @@ import MembershipCTAButtons from './MembershipCTAButtons';
 export default function MembershipPage() {
   return (
     <main>
+      <MembershipAnimations />
       <HeroSection />
       <SolutionSection />
       <BenefitsSection />

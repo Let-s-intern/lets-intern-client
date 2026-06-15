@@ -13,7 +13,7 @@ export default function MembershipCTAButtons() {
   }, []);
 
   return (
-    <div className={`stickybar${show ? 'show' : ''}`} id="stickybar">
+    <div className={`stickybar${show ? ' show' : ''}`} id="stickybar">
       <div className="in">
         <div className="txt">
           하반기 멤버십 · 선착순 <b className="num pulse">{seatsLeft}</b>석 남음
