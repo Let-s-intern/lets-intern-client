@@ -39,7 +39,9 @@ import LiveFeedbackEntryPage from './LiveFeedbackEntryPage';
 describe('LiveFeedbackEntryPage', () => {
   it('초기화 전에는 아무것도 렌더하지 않는다', () => {
     authState = { isInitialized: false, isLoggedIn: false };
-    const { container } = render(<LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />);
+    const { container } = render(
+      <LiveFeedbackEntryPage feedbackId={1} role="MENTOR" />,
+    );
     expect(container.firstChild).toBeNull();
   });
 
