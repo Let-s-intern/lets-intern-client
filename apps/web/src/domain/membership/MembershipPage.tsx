@@ -9,6 +9,7 @@ import ReviewsSection from './section/ReviewsSection';
 import RoadmapSection from './section/RoadmapSection';
 import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
+import MembershipFooter from './MembershipFooter';
 import MembershipCTAButtons from './MembershipCTAButtons';
 
 export default function MembershipPage() {
@@ -24,6 +25,7 @@ export default function MembershipPage() {
       <RoadmapSection />
       <FinalCtaSection />
       <FaqSection />
+      <MembershipFooter />
       <MembershipCTAButtons />
     </main>
   );
