@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import dayjs from '@/lib/dayjs';
 import { useMembershipApply } from '../hooks/useMembershipApply';
 import { formatKRW, useMembershipProgram } from '../hooks/useMembershipProgram';
 
@@ -9,7 +10,7 @@ export default function PlansSection() {
   const [activeTab, setActiveTab] = useState<TabKey>('a');
   const [openAcc, setOpenAcc] = useState<string | null>('standard');
   const { handleApply } = useMembershipApply();
-  const { plans } = useMembershipProgram();
+  const { plans, startDate, endDate } = useMembershipProgram();
 
   return (
     <section className="plans" id="plans">
@@ -162,8 +163,13 @@ export default function PlansSection() {
             </div>
           </div>
           <p className="plan-note">
-            모든 플랜은 <b>26.07.01 – 09.30</b> 3개월간 이용 가능 · 결제 시
-            등급별 혜택이 자동 적용돼요
+            모든 플랜은{' '}
+            <b>
+              {dayjs(startDate).format('YY.MM.DD')} –{' '}
+              {dayjs(endDate).format('MM.DD')}
+            </b>{' '}
+            {dayjs(endDate).diff(dayjs(startDate), 'month') + 1}개월간 이용 가능
+            · 결제 시 등급별 혜택이 자동 적용돼요
           </p>
         </div>
 

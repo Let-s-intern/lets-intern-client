@@ -1,9 +1,12 @@
 'use client';
 import { useGetChallengeQuery } from '@/api/program';
 import {
+  MEMBERSHIP_BEGINNING,
   MEMBERSHIP_CHALLENGE_ID,
   MEMBERSHIP_DEADLINE,
+  MEMBERSHIP_END_DATE,
   MEMBERSHIP_PLANS,
+  MEMBERSHIP_START_DATE,
   MembershipPlanKey,
 } from '../constants';
 
@@ -31,9 +34,16 @@ export function useMembershipProgram() {
     enabled: MEMBERSHIP_CHALLENGE_ID > 0,
   });
 
+  const beginning = data?.beginning
+    ? data.beginning.toDate()
+    : MEMBERSHIP_BEGINNING;
   const deadline = data?.deadline
     ? data.deadline.toDate()
     : MEMBERSHIP_DEADLINE;
+  const startDate = data?.startDate
+    ? data.startDate.toDate()
+    : MEMBERSHIP_START_DATE;
+  const endDate = data?.endDate ? data.endDate.toDate() : MEMBERSHIP_END_DATE;
 
   const planKeys = Object.keys(MEMBERSHIP_PLANS) as MembershipPlanKey[];
   const plans = planKeys.reduce(
@@ -57,7 +67,7 @@ export function useMembershipProgram() {
     {} as Record<MembershipPlanKey, MembershipPlanView>,
   );
 
-  return { deadline, plans };
+  return { beginning, deadline, startDate, endDate, plans };
 }
 
 /** 1,000 단위 콤마 (예: 79000 -> "79,000") */
