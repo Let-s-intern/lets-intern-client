@@ -29,6 +29,9 @@ export const MEMBERSHIP_PLANS = {
 
 export type MembershipPlanKey = keyof typeof MEMBERSHIP_PLANS;
 
+export const MEMBERSHIP_BEGINNING = new Date('2026-06-10T00:00:00+09:00');
 export const MEMBERSHIP_DEADLINE = new Date('2026-06-30T23:59:59+09:00');
+export const MEMBERSHIP_START_DATE = new Date('2026-07-01T00:00:00+09:00');
+export const MEMBERSHIP_END_DATE = new Date('2026-09-30T23:59:59+09:00');
 export const MEMBERSHIP_SEATS_TOTAL = 100;
 export const MEMBERSHIP_SEATS_TAKEN = 63;
