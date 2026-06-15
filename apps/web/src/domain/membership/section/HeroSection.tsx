@@ -1,13 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Countdown from '../ui/Countdown';
-import {
-  MEMBERSHIP_DEADLINE,
-  MEMBERSHIP_SEATS_TAKEN,
-  MEMBERSHIP_SEATS_TOTAL,
-} from '../constants';
+import { MEMBERSHIP_SEATS_TAKEN, MEMBERSHIP_SEATS_TOTAL } from '../constants';
+import { useMembershipProgram } from '../hooks/useMembershipProgram';
 
 export default function HeroSection() {
+  const { deadline } = useMembershipProgram();
   const [seats, setSeats] = useState(MEMBERSHIP_SEATS_TAKEN);
 
   useEffect(() => {
@@ -74,7 +72,7 @@ export default function HeroSection() {
           <div className="tag">🔥 선착순 100명 한정 모집</div>
           <h3>마감까지 남은 시간</h3>
           <div className="cd" id="hero-cd">
-            <Countdown deadline={MEMBERSHIP_DEADLINE} />
+            <Countdown deadline={deadline} />
           </div>
           <div className="seats-row">
             <span className="lbl">잔여 좌석</span>

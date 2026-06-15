@@ -4,7 +4,11 @@ import { getPayInfo, generateOrderId } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useRouter } from 'next/navigation';
-import { MEMBERSHIP_CHALLENGE_ID, MEMBERSHIP_PLANS, type MembershipPlanKey } from '../constants';
+import {
+  MEMBERSHIP_CHALLENGE_ID,
+  MEMBERSHIP_PLANS,
+  type MembershipPlanKey,
+} from '../constants';
 
 export function useMembershipApply() {
   const { setProgramApplicationForm } = useProgramStore();
@@ -34,24 +38,30 @@ export function useMembershipApply() {
     }
 
     const plan = MEMBERSHIP_PLANS[planKey];
-    const payInfo = application ? getPayInfo(application, plan.pricePlan) : null;
+    const payInfo = application
+      ? getPayInfo(application, plan.pricePlan)
+      : null;
 
     if (!payInfo) {
       alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
     }
 
-    const priceId = application?.priceList?.find(
+    // 어드민이 설정한 가격(priceList)을 우선 사용 — 미설정 시 constants 폴백
+    const priceItem = application?.priceList?.find(
       (item) => item.challengePricePlanType === plan.pricePlan,
-    )?.priceId;
+    );
+    const priceId = priceItem?.priceId;
+    const originalPrice = priceItem?.price ?? plan.originalPrice;
+    const discount = priceItem?.discount ?? plan.originalPrice - plan.price;
 
-    const totalPrice = Math.max(plan.originalPrice - (plan.originalPrice - plan.price), 0);
+    const totalPrice = Math.max(originalPrice - discount, 0);
     const isFree = totalPrice === 0;
 
     setProgramApplicationForm({
       priceId,
-      price: plan.originalPrice,
-      discount: plan.originalPrice - plan.price,
+      price: originalPrice,
+      discount,
       couponId: '',
       couponPrice: 0,
       totalPrice,

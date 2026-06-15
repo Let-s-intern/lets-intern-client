@@ -25,7 +25,9 @@ export default function MembershipAnimations() {
       { threshold: 0.12 },
     );
 
-    document.querySelectorAll('.rv').forEach((el) => revealObserver.observe(el));
+    document
+      .querySelectorAll('.rv')
+      .forEach((el) => revealObserver.observe(el));
 
     // 3. 타임라인 드로우 (.timeline)
     const timelineObserver = new IntersectionObserver(

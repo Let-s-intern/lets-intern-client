@@ -15,13 +15,19 @@ export default function ReviewsSection() {
           </p>
         </div>
         <div className="review-grid">
-          {/* TODO(MVP): rev-shot에 실제 후기 스크린샷 이미지 추가 후 <div className="rev-shot"><img src={url} .../></div> 삽입 */}
           <div className="rev-card rv" style={{ ['--rvd' as string]: '0s' }}>
             <div className="rev-meta">
               <span className="src">
                 <span className="dot"></span>인스타그램 DM
               </span>
               <span className="badge">서합·최합 🎉</span>
+            </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-instagram.jpg"
+                alt="인스타그램으로 받은 합격 후기"
+                loading="lazy"
+              />
             </div>
             <div className="rev-quote">
               렛커 챌린지로 이력서·자소서까지 다 참고했어요. 교육기업 서류 합격,
@@ -35,6 +41,13 @@ export default function ReviewsSection() {
                 <span className="dot"></span>멘토에게 온 메시지
               </span>
               <span className="badge">6개사 서류 합격</span>
+            </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-companies.png"
+                alt="주요 기업 서류 합격 후기"
+                loading="lazy"
+              />
             </div>
             <div className="rev-quote">
               경험 정리로 강점을 발견한 덕분에
@@ -50,6 +63,13 @@ export default function ReviewsSection() {
               </span>
               <span className="badge">정규직 합격 🎉</span>
             </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-coverletter.png"
+                alt="자기소개서 챌린지 후기"
+                loading="lazy"
+              />
+            </div>
             <div className="rev-quote">
               렛커 덕에 취뽀했습니다! 자기소개서 챌린지에서 방향성 설정, 경험
               정리에 큰 도움을 받아 F&amp;B 준대기업 PM 정규직으로 합격했어요
@@ -62,6 +82,13 @@ export default function ReviewsSection() {
                 <span className="dot"></span>챌린지 미션 후기
               </span>
               <span className="badge">면접 준비</span>
+            </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-interview.png"
+                alt="면접 준비 챌린지 미션 후기"
+                loading="lazy"
+              />
             </div>
             <div className="rev-quote">
               가장 유용했던 점은 기업 분석 하는 방법을 알게 된 것과 100개 이상의
@@ -77,6 +104,13 @@ export default function ReviewsSection() {
               </span>
               <span className="badge">동기부여</span>
             </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-letsrun.png"
+                alt="렛츠런 스터디 후기"
+                loading="lazy"
+              />
+            </div>
             <div className="rev-quote">
               이번 스터디를 하면서 확실히 동기부여도 받고 격려도 받을 수 있어서
               참 뿌듯한 것 같아요. 다들 열심히 사는 모습을 보며 매일 배워요
@@ -89,6 +123,13 @@ export default function ReviewsSection() {
                 <span className="dot"></span>챌린지 미션 후기
               </span>
               <span className="badge">콘텐츠 만족</span>
+            </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-renewal.jpg"
+                alt="리뉴얼된 챌린지 후기"
+                loading="lazy"
+              />
             </div>
             <div className="rev-quote">
               리뉴얼된 챌린지 콘텐츠가 정말 양질이라 계속 들여다보며 많은 도움
@@ -103,6 +144,13 @@ export default function ReviewsSection() {
               </span>
               <span className="badge">취준 루틴</span>
             </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-community.png"
+                alt="렛츠런 스터디 커뮤니티 대화"
+                loading="lazy"
+              />
+            </div>
             <div className="rev-quote">
               플젝하면서도 취준 놓고 싶지 않아 렛츠런 신청했어요. 같이 달리는
               분들 덕에 하루하루 덜 스트레스 받으며 작업하고 취준도 이어가요
@@ -115,6 +163,13 @@ export default function ReviewsSection() {
                 <span className="dot"></span>미션 소감
               </span>
               <span className="badge">기업 분석</span>
+            </div>
+            <div className="rev-shot">
+              <img
+                src="/images/membership/review-mission.png"
+                alt="미션 소감 후기"
+                loading="lazy"
+              />
             </div>
             <div className="rev-quote">
               산업군 분석에서 기업 분석 순서로 가니 자료 이해가 수월했어요. 취준

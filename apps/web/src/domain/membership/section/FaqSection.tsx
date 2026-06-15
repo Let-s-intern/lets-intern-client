@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
 import { useGetChallengeFaq } from '@/api/challenge/challenge';
+import FaqDropdown from '@/common/dropdown/FaqDropdown';
+import { Faq } from '@/schema';
 import { MEMBERSHIP_CHALLENGE_ID } from '../constants';
 
-const FALLBACK_FAQ = [
+const FALLBACK_FAQ: Faq[] = [
   {
     id: 0,
     question: '멤버십 이용 기간은 언제까지인가요?',
@@ -37,7 +38,6 @@ const FALLBACK_FAQ = [
 ];
 
 export default function FaqSection() {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
   const { data } = useGetChallengeFaq(MEMBERSHIP_CHALLENGE_ID);
 
   const items =
@@ -46,27 +46,13 @@ export default function FaqSection() {
   return (
     <section className="faq">
       <div className="wrap">
-        <div className="sec-head rv">
+        <div className="sec-head">
           <span className="eyebrow">자주 묻는 질문</span>
           <h2>궁금한 점이 있으신가요?</h2>
         </div>
         <div className="faqlist">
-          {items.map((item, i) => (
-            <div
-              key={item.id}
-              className={`fitem rv${openIdx === i ? ' open' : ''}`}
-              style={{ ['--rvd' as string]: `${i * 0.08}s` }}
-            >
-              <div
-                className="q"
-                onClick={() => setOpenIdx(openIdx === i ? null : i)}
-              >
-                <span className="mk">Q</span>
-                {item.question}
-                <span className="ind">＋</span>
-              </div>
-              <div className="a">{item.answer}</div>
-            </div>
+          {items.map((item) => (
+            <FaqDropdown key={item.id} faq={item} />
           ))}
         </div>
       </div>

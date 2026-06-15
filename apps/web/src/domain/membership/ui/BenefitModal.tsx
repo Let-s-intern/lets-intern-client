@@ -123,36 +123,26 @@ function getModalContents(
         <div className="modal-body">
           <h4>멤버 할인이 적용되는 챌린지</h4>
           <div className="m-gallery">
-            {/* TODO(MVP): 실제 챌린지 썸네일 이미지로 교체 */}
             {[
-              '경험정리 챌린지',
-              '이력서 1주 완성',
-              '자기소개서 완성',
-              '대기업 공채 자소서',
-              '포트폴리오 완성',
-              '면접 끝장 챌린지',
-              '마케팅 올인원',
-              'HR/인사 직무',
-              'PM/서비스기획',
-            ].map((label) => (
+              { label: '경험정리 챌린지', src: 'challenge-experience.jpg' },
+              { label: '이력서 1주 완성', src: 'challenge-resume.png' },
+              { label: '자기소개서 완성', src: 'challenge-coverletter.jpg' },
+              {
+                label: '대기업 공채 자소서',
+                src: 'challenge-major-coverletter.jpg',
+              },
+              { label: '포트폴리오 완성', src: 'challenge-portfolio.jpg' },
+              { label: '면접 끝장 챌린지', src: 'challenge-interview.png' },
+              { label: '마케팅 올인원', src: 'challenge-marketing.png' },
+              { label: 'HR/인사 직무', src: 'challenge-hr.png' },
+              { label: 'PM/서비스기획', src: 'challenge-pm.png' },
+            ].map(({ label, src }) => (
               <figure key={label}>
-                <div
-                  style={{
-                    background: 'var(--lc-tint-blue,#eef2ff)',
-                    borderRadius: 10,
-                    height: 90,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 11,
-                    color: 'var(--lc-blue,#4a76ff)',
-                    fontWeight: 600,
-                    textAlign: 'center',
-                    padding: '0 8px',
-                  }}
-                >
-                  {label}
-                </div>
+                <img
+                  src={`/images/membership/${src}`}
+                  alt={label}
+                  loading="lazy"
+                />
                 <figcaption>{label}</figcaption>
               </figure>
             ))}
@@ -263,7 +253,7 @@ export default function BenefitModal({ modalId, onClose }: BenefitModalProps) {
 
   return (
     <div
-      className={`modal-ov${modalId ? ' open' : ''}`}
+      className={`modal-ov ${modalId ? 'open' : ''}`}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

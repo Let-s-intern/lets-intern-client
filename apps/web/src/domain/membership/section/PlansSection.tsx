@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useMembershipApply } from '../hooks/useMembershipApply';
+import { formatKRW, useMembershipProgram } from '../hooks/useMembershipProgram';
 
 type TabKey = 'a' | 'b' | 'c';
 
@@ -8,6 +9,7 @@ export default function PlansSection() {
   const [activeTab, setActiveTab] = useState<TabKey>('a');
   const [openAcc, setOpenAcc] = useState<string | null>('standard');
   const { handleApply } = useMembershipApply();
+  const { plans } = useMembershipProgram();
 
   return (
     <section className="plans" id="plans">
@@ -25,7 +27,7 @@ export default function PlansSection() {
           {(['a', 'b', 'c'] as TabKey[]).map((v) => (
             <button
               key={v}
-              className={`tab${activeTab === v ? ' on' : ''}`}
+              className={`tab ${activeTab === v ? 'on' : ''}`}
               onClick={() => setActiveTab(v)}
             >
               {v === 'a' ? '카드형' : v === 'b' ? '비교표' : '펼침형'}
@@ -35,7 +37,7 @@ export default function PlansSection() {
 
         {/* VARIANT A — 카드형 */}
         <div
-          className={`variant${activeTab === 'a' ? ' on' : ''}`}
+          className={`variant ${activeTab === 'a' ? 'on' : ''}`}
           style={activeTab !== 'a' ? { display: 'none' } : undefined}
         >
           <div className="pcards">
@@ -47,9 +49,11 @@ export default function PlansSection() {
                 달리는 공채 2트 이상
               </div>
               <div className="price">
-                <span className="was num">99,000원</span>
+                <span className="was num">
+                  {formatKRW(plans.BASIC.originalPrice)}원
+                </span>
                 <br />
-                <span className="now num">79,000</span>
+                <span className="now num">{formatKRW(plans.BASIC.price)}</span>
                 <span className="won">원</span>
               </div>
               <span className="off">런칭 20% OFF</span>
@@ -85,9 +89,13 @@ export default function PlansSection() {
                 필요한 취준생
               </div>
               <div className="price">
-                <span className="was num">198,000원</span>
+                <span className="was num">
+                  {formatKRW(plans.STANDARD.originalPrice)}원
+                </span>
                 <br />
-                <span className="now num">149,000</span>
+                <span className="now num">
+                  {formatKRW(plans.STANDARD.price)}
+                </span>
                 <span className="won">원</span>
               </div>
               <span className="off">런칭 25% OFF</span>
@@ -123,10 +131,12 @@ export default function PlansSection() {
               </div>
               <div className="price">
                 <span className="was num" style={{ color: '#9aa0b5' }}>
-                  360,000원
+                  {formatKRW(plans.PREMIUM.originalPrice)}원
                 </span>
                 <br />
-                <span className="now num">299,000</span>
+                <span className="now num">
+                  {formatKRW(plans.PREMIUM.price)}
+                </span>
                 <span className="won">원</span>
               </div>
               <span className="off">런칭 17% OFF</span>
@@ -159,24 +169,30 @@ export default function PlansSection() {
 
         {/* VARIANT B — 비교표 */}
         <div
-          className={`variant${activeTab === 'b' ? ' on' : ''}`}
+          className={`variant ${activeTab === 'b' ? 'on' : ''}`}
           style={activeTab !== 'b' ? { display: 'none' } : undefined}
         >
-          <div className="matrix rv" id="matrix">
+          <div className="matrix" id="matrix">
             <div className="mrow head">
               <div></div>
               <div>
                 <span className="mname">베이직</span>
-                <span className="mprice num">79,000원</span>
+                <span className="mprice num">
+                  {formatKRW(plans.BASIC.price)}원
+                </span>
               </div>
               <div className="mcol-feat">
                 <span className="mhead-tag">가장 인기</span>
                 <span className="mname b">스탠다드</span>
-                <span className="mprice b num">149,000원</span>
+                <span className="mprice b num">
+                  {formatKRW(plans.STANDARD.price)}원
+                </span>
               </div>
               <div>
                 <span className="mname">프리미엄</span>
-                <span className="mprice num">299,000원</span>
+                <span className="mprice num">
+                  {formatKRW(plans.PREMIUM.price)}원
+                </span>
               </div>
             </div>
             <div className="mrow">
@@ -271,21 +287,18 @@ export default function PlansSection() {
 
         {/* VARIANT C — 펼침형 */}
         <div
-          className={`variant${activeTab === 'c' ? ' on' : ''}`}
+          className={`variant ${activeTab === 'c' ? 'on' : ''}`}
           style={activeTab !== 'c' ? { display: 'none' } : undefined}
         >
           <div className="acc">
-            <div
-              className={`arow rv${openAcc === 'basic' ? ' open' : ''}`}
-              style={{ ['--rvd' as string]: '0s' }}
-            >
+            <div className={`arow ${openAcc === 'basic' ? 'open' : ''}`}>
               <div
                 className="ahead"
                 onClick={() => setOpenAcc(openAcc === 'basic' ? null : 'basic')}
               >
                 <span className="nm">베이직</span>
                 <span className="tg">· 스스로 취준</span>
-                <span className="pr num">79,000</span>
+                <span className="pr num">{formatKRW(plans.BASIC.price)}</span>
                 <span className="ind">＋</span>
               </div>
               <div className="abody">
@@ -303,10 +316,7 @@ export default function PlansSection() {
               </div>
             </div>
 
-            <div
-              className={`arow rv${openAcc === 'standard' ? ' open' : ''}`}
-              style={{ ['--rvd' as string]: '0.08s' }}
-            >
+            <div className={`arow ${openAcc === 'standard' ? 'open' : ''}`}>
               <div
                 className="ahead"
                 onClick={() =>
@@ -315,7 +325,9 @@ export default function PlansSection() {
               >
                 <span className="ribbon-c">🔥 가장 인기</span>
                 <span className="nm">스탠다드</span>
-                <span className="pr num">149,000</span>
+                <span className="pr num">
+                  {formatKRW(plans.STANDARD.price)}
+                </span>
                 <span className="ind">＋</span>
               </div>
               <div className="abody">
@@ -334,10 +346,7 @@ export default function PlansSection() {
               </div>
             </div>
 
-            <div
-              className={`arow rv${openAcc === 'premium' ? ' open' : ''}`}
-              style={{ ['--rvd' as string]: '0.16s' }}
-            >
+            <div className={`arow ${openAcc === 'premium' ? 'open' : ''}`}>
               <div
                 className="ahead"
                 onClick={() =>
@@ -346,7 +355,7 @@ export default function PlansSection() {
               >
                 <span className="nm">프리미엄</span>
                 <span className="tg">· 1:1 멘토링 포함</span>
-                <span className="pr num">299,000</span>
+                <span className="pr num">{formatKRW(plans.PREMIUM.price)}</span>
                 <span className="ind">＋</span>
               </div>
               <div className="abody">
