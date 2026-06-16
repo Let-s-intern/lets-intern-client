@@ -43,7 +43,7 @@ function getMobilePrimaryAction(
   feedbackInfo: FeedbackInfo | null,
   onNavigate: () => void,
 ): MobilePrimaryAction | undefined {
-  const { status, feedbackId, isMissionSubmitted } = mission;
+  const { status, feedbackId } = mission;
 
   if (
     status === 'expired' ||
@@ -60,9 +60,6 @@ function getMobilePrimaryAction(
   }
 
   if (status === 'reserved') {
-    if (!isMissionSubmitted) {
-      return { label: '신청 내역 보기', onClick: onNavigate };
-    }
     const entranceActive = isEntranceActive(
       feedbackInfo?.startDate,
       feedbackInfo?.endDate,
