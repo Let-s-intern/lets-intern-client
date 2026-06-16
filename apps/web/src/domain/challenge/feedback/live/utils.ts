@@ -8,13 +8,19 @@ import type { LiveFeedbackMission, LiveFeedbackStatus } from './types';
 
 function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
   const isExpired = new Date(item.missionEndDate) < new Date();
+  const validSubmission =
+    ['PRESENT', 'UPDATED'].includes(item.attendanceStatus ?? '') &&
+    item.attendanceResult === 'PASS';
 
   // 피드백 세션이 존재하면 출석 결과를 우선 확인 (attendanceResult와 무관)
   if (item.feedbackId) {
     const sessionEnded =
       !!item.feedbackEndDate && new Date(item.feedbackEndDate) < new Date();
 
-    if (item.menteeStatus === 'ABSENT') return 'nonParticipation';
+    // 어드민 확인완료(PASS)된 미션 제출이 없으면 세션 불참은 기간 만료로 처리
+    if (item.menteeStatus === 'ABSENT') {
+      return validSubmission ? 'nonParticipation' : 'expired';
+    }
     if (item.mentorStatus === 'ABSENT') return 'checkNeeded';
     // 양쪽 모두 PRESENT여도 세션이 끝나기 전이면 'completed'로 보지 않는다.
     // 멘토가 라이브 중 출석을 미리 체크해도 멘티의 입장 버튼이 닫혀 못 들어가는
@@ -27,7 +33,7 @@ function resolveStatus(item: LiveFeedbackItem): LiveFeedbackStatus {
       return 'completed';
     }
     if (sessionEnded) {
-      return 'nonParticipation';
+      return validSubmission ? 'nonParticipation' : 'expired';
     }
   }
 
