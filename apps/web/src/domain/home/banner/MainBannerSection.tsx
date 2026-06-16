@@ -51,7 +51,10 @@ const MainBannerSection = () => {
             className="aspect-[3.2/1] rounded-sm md:aspect-[6.4/1]"
           >
             {bannerList.map((banner, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide
+                key={index}
+                data-swiper-autoplay={index === 0 ? 4500 : 2500}
+              >
                 <a
                   href={banner.landingUrl || '#'}
                   className="top_banner select-none"
