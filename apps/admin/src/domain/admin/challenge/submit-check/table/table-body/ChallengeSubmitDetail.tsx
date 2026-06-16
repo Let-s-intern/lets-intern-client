@@ -20,6 +20,7 @@ interface Props {
 }
 
 const ChallengeSubmitDetail = ({
+  mission,
   setIsDetailShown,
   attendances,
   refetch,
@@ -97,6 +98,7 @@ const ChallengeSubmitDetail = ({
             <TableRow
               key={item.attendance.id}
               attendanceItem={item}
+              missionDetail={mission}
               th={index + 1}
               bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
               isChecked={isCheckedList.includes(item.attendance.id)}
