@@ -52,6 +52,7 @@ export interface MagnetListItem {
   startDate: string | null;
   endDate: string | null;
   isVisible: boolean;
+  isAccessible: boolean;
   applicationCount: number;
 }
 
@@ -108,6 +109,7 @@ export interface MagnetPostDetail {
   startDate: string | null;
   endDate: string | null;
   isVisible: boolean;
+  isAccessible: boolean;
 }
 
 // --- 마그넷 신청폼 관리 ---

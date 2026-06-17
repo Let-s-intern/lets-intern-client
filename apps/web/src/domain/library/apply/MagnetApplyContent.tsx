@@ -288,6 +288,16 @@ const MagnetApplyContent = ({
         if (status === 409) {
           mainAlreadyApplied = true;
           libraryApplyMainConflict({ magnetId, magnetType });
+        } else if (status === 403) {
+          // 접속 불가 또는 노출 기간 종료 — 예상된 비즈니스 차단(Sentry 미보고).
+          setResultModal({
+            isOpen: true,
+            title: '신청이 마감되었어요',
+            message: '신청 기간이 종료되었거나 접속할 수 없는 자료집이에요.',
+            variant: 'error',
+            shouldNavigate: true,
+          });
+          return;
         } else {
           libraryApplyUnexpectedError(mainError, {
             stage: 'main_submit',

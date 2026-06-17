@@ -25,6 +25,11 @@ const magnetListItemSchema = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   isVisible: z.boolean(),
+  // 접속 가능 여부 — BE 백필 전(기존 행 NULL)에도 안전하도록 null/undefined → false.
+  isAccessible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? false),
   applicationCount: z.number(),
 });
 
@@ -57,6 +62,10 @@ const magnetInfoSchema = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   isVisible: z.boolean(),
+  isAccessible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? false),
 });
 
 const magnetQuestionSchema = z.object({
