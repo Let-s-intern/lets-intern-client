@@ -2,7 +2,6 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
-  "teammateMode": "tmux",
   "hooks": {
     "PostToolUse": [
       {
@@ -52,6 +51,5 @@
     "claude-md-management@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true
-  },
-  "teammateMode": "tmux"
+  }
 }

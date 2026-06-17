@@ -2,8 +2,10 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.*
+.pnpm-store
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -12,11 +14,26 @@
 
 # testing
 /coverage
+**/coverage/
+playwright-report/
+test-results/
+**/playwright-report/
+**/test-results/
+**/e2e-screenshots/
+apps/web/playwright/.cache/
+# Playwright storageState 산출물 — globalSetup 이 생성한 인증 쿠키/스토리지
+apps/web/e2e/.auth/
 
 # next.js
 /.next/
+**/.next/
 /out/
 /dist
+**/dist/
+
+# turbo
+.turbo
+**/.turbo
 
 # production
 /build
@@ -33,6 +50,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+!.env.test.local.example
 /.omc
 # vercel
 .vercel
@@ -53,3 +72,10 @@ next-env.d.ts
 .claude/tasks/
 .claude/settings.local.json
 .remember/
+
+# Playwright MCP 스크래치 (스냅샷 .yml / 콘솔 로그 / 임시 캡처 html·png)
+.playwright-mcp/
+# Playwright 스크린샷이 레포 루트로 떨어지는 임시 캡처
+/*-table.png
+.claude/skills/skill-creator/scripts/__pycache__/
+.claude/scheduled_tasks.lock

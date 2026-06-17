@@ -1,0 +1,138 @@
+name: 웹 검사
+
+# apps/web 또는 공용 패키지·모노레포 루트 설정 변경 시만 실행.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.prettierrc.mjs'
+      - '.github/workflows/build-web.yml'
+  # main 머지 시에도 빌드해 "기본 브랜치 스코프" 캐시를 시딩한다.
+  # GitHub Actions 캐시 규칙: 기본 브랜치(main)에서 만든 캐시는 모든 PR 이
+  # 복원 가능하지만, PR 브랜치가 만든 캐시는 그 PR 에서만 복원된다.
+  # 따라서 main 빌드가 공용 캐시 공급자 역할을 해야 매 PR 이 warm start 된다.
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.prettierrc.mjs'
+      - '.github/workflows/build-web.yml'
+
+concurrency:
+  group: build-web-${{ github.ref }}
+  # PR 은 새 푸시로 이전 실행 취소(빠른 피드백), main 은 캐시 시딩 빌드를 취소하지 않음.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    name: web 검사
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 변경 파일 diff 계산을 위해 풀 히스토리 필요
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      # turbo 로컬 캐시 — 입력(소스/env/lock)이 동일하면 빌드 태스크 자체를 스킵(FULL TURBO).
+      - name: Turbo 캐시
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-web-${{ github.sha }}
+          restore-keys: |
+            turbo-web-
+
+      # Next.js 증분 빌드 캐시 — turbo 미스 시 next build 콜드 컴파일 시간을 줄인다.
+      # turbo outputs 가 .next/cache 를 제외(turbo.json)하므로 별도 캐시가 필요.
+      - name: Next.js 빌드 캐시
+        uses: actions/cache@v4
+        with:
+          path: apps/web/.next/cache
+          key: nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-
+            nextjs-web-
+
+      - name: Prettier check
+        run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
+
+      - name: ESLint
+        run: pnpm --filter @letscareer/web lint
+        env:
+          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
+          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
+          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
+          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
+          NEXT_PUBLIC_SITE_URL: https://example.com
+
+      # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
+      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      # 변경 파일 기준이라 PR 에서만 의미가 있다(main push 는 base SHA 없음).
+      # → push 에선 스킵하고 캐시 시딩 빌드만 수행. typecheck 로직은 변경하지 않음.
+      - name: Typecheck (변경 파일 한정)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -e
+
+          # git pathspec은 ** 글로브를 지원하지 않으므로 prefix만 주고 확장자는 grep으로 필터.
+          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMR -- 'apps/web/src/' \
+            | grep -E '\.(ts|tsx)$' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "apps/web 내 TS/TSX 변경 없음 — typecheck 스킵"
+            exit 0
+          fi
+
+          echo "변경된 .ts/.tsx 파일:"
+          echo "$CHANGED"
+          echo ""
+
+          set +e
+          pnpm --filter @letscareer/web typecheck > /tmp/typecheck.log 2>&1
+          set -e
+
+          # tsc 출력의 파일경로는 'src/...' 형태 (apps/web 작업디렉토리 기준)이므로
+          # CHANGED 의 'apps/web/' 접두사 제거 후 패턴 매칭.
+          PATTERNS=$(echo "$CHANGED" | sed 's|^apps/web/||' | paste -sd '|')
+          RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
+
+          if [ -n "$RELEVANT" ]; then
+            echo "변경 파일에서 typecheck 에러 발견:"
+            echo ""
+            echo "$RELEVANT"
+            exit 1
+          fi
+
+          echo "변경 파일 typecheck 통과"
+
+      - name: Build (turbopack)
+        run: pnpm --filter @letscareer/web build
+        env:
+          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
+          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
+          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
+          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
+          NEXT_PUBLIC_SITE_URL: https://example.com

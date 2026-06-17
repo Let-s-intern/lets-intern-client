@@ -1,0 +1,49 @@
+import ArrowCircle from '@/assets/icons/arrow-circle.svg?react';
+import { ChallengeType, ProgramTypeUpperCase } from '@/schema';
+import { Link } from 'react-router-dom';
+
+interface MoreReviewButtonProps {
+  type: ProgramTypeUpperCase;
+  mainColor: string;
+  subColor: string;
+  subTextColor?: string;
+  challengeType?: ChallengeType;
+  liveJob?: string;
+}
+
+const MoreReviewButton = ({
+  mainColor,
+  subColor,
+  subTextColor = '#FFFFFF',
+  type,
+  challengeType,
+  liveJob,
+}: MoreReviewButtonProps) => {
+  return (
+    <>
+      <Link
+        className="more_reviews flex w-full items-center justify-center px-5 md:px-0"
+        to={`/review/program?program=${type.toLowerCase()}_review${challengeType ? `&challenge=${challengeType.toLowerCase()}` : ''}${liveJob ? `&liveJob=${liveJob}` : ''}`}
+        scroll
+      >
+        <div
+          className="relative mt-12 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-sm px-5 py-4 text-white md:mx-0 md:mt-20 md:w-fit"
+          style={{ backgroundColor: mainColor }}
+        >
+          <span className="text-xsmall16 md:text-medium22 font-semibold">
+            더 다양한 후기 보러가기
+          </span>
+          <ArrowCircle className="h-6 w-6" />
+          <div
+            className="rounded-xs text-xxsmall12 md:text-xsmall14 absolute bottom-[calc(100%-7px)] px-2.5 py-1.5 font-medium"
+            style={{ backgroundColor: subColor, color: subTextColor }}
+          >
+            자세한 수강생들의 후기가 궁금하다면?
+          </div>
+        </div>
+      </Link>
+    </>
+  );
+};
+
+export default MoreReviewButton;

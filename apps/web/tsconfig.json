@@ -1,0 +1,19 @@
+{
+  "extends": "@letscareer/tsconfig/nextjs",
+  "compilerOptions": {
+    "types": ["jest", "@testing-library/jest-dom", "node"],
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@/*": ["./src/*"],
+      "@renderer/*": ["./renderer/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "./dist/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

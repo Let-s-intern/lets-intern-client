@@ -1,0 +1,13 @@
+{
+  "name": "@letscareer/types",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}

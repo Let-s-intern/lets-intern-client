@@ -1,0 +1,27 @@
+{
+  "name": "@letscareer/utils",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "peerDependencies": {
+    "clsx": ">=2",
+    "colorthief": ">=2",
+    "lexical": ">=0.16",
+    "@lexical/selection": ">=0.16",
+    "nanoid": ">=5",
+    "tailwind-merge": ">=2"
+  },
+  "peerDependenciesMeta": {
+    "colorthief": { "optional": true },
+    "lexical": { "optional": true },
+    "@lexical/selection": { "optional": true },
+    "nanoid": { "optional": true }
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}

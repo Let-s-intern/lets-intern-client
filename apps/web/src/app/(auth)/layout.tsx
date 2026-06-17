@@ -1,0 +1,56 @@
+import ChannelTalkBtn from '@/common/layout/channel/ChannelTalkBtn';
+import Footer from '@/common/layout/footer/Footer';
+import LogoLink from '@/common/layout/header/LogoLink';
+import NavBar from '@/common/layout/header/NavBar';
+import Providers from '@/context/Providers';
+import { getCanonicalSiteUrl, getRobotsMetadata } from '@/utils/url';
+import { Metadata } from 'next';
+import React from 'react';
+
+const SITE_URL = getCanonicalSiteUrl();
+
+export const metadata: Metadata = {
+  title: '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
+  description:
+    '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
+  keywords:
+    '렛츠커리어, letscareer, 렛츠인턴, 챌린지, 인턴, 신입, 취업, 취업준비, 취뽀, 인턴합격, 신입합격, 서류합격, 면접합격',
+  openGraph: {
+    type: 'website',
+    title: '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
+    siteName: '렛츠커리어',
+    images:
+      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/banner/popup/%E1%84%85%E1%85%A6%E1%86%BA%E1%84%8E%E1%85%B3%E1%84%8F%E1%85%A5%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A5%20%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9%20og_image%201200_630.png',
+    url: SITE_URL,
+    description:
+      '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
+    locale: 'ko_KR',
+  },
+  alternates: {
+    canonical: '/',
+  },
+  robots: getRobotsMetadata(),
+};
+
+/**
+ * Auth 페이지 전용 레이아웃
+ * - 모바일: NavBar, Footer, ChannelTalkBtn 숨김
+ * - 데스크톱: 전체 표시
+ */
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Providers>
+      <div>
+        <NavBar className="hidden md:block" />
+        <nav className="border-neutral-90 box-content flex items-center border-b-[1.5px] px-5 py-2.5 md:hidden">
+          <LogoLink className="my-[2px] w-fit" />
+        </nav>
+        <div className="min-h-screen w-full md:min-h-[31rem]">{children}</div>
+        <Footer className="hidden md:block" />
+        <ChannelTalkBtn className="hidden md:block" />
+      </div>
+    </Providers>
+  );
+};
+
+export default AuthLayout;

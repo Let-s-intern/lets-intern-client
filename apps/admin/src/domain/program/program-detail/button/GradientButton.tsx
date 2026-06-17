@@ -1,0 +1,28 @@
+import { twMerge } from '@/lib/twMerge';
+
+interface GradientButtonProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+}
+
+export default function GradientButton({
+  children,
+  disabled,
+  onClick,
+  className,
+}: GradientButtonProps) {
+  return (
+    <button
+      className={twMerge(
+        'py-2.4 border-primary-80 text-xsmall16 text-static-100 rounded-sm border bg-slate-600 bg-gradient-to-r from-[#4B53FF] to-[#763CFF] px-5 py-3 font-semibold',
+        className,
+      )}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}

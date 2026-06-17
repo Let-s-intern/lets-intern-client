@@ -1,0 +1,348 @@
+import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog/blog';
+import { BlogContent, ProgramRecommendItem } from '@/api/blog/blogSchema';
+import { fetchProgramRecommend } from '@/api/program';
+import HorizontalRule from '@/common/HorizontalRule';
+import MoreHeader from '@/common/header/MoreHeader';
+import BlogKakaoShareBtn from '@/domain/blog/ui/BlogKakaoShareBtn';
+import BlogLikeBtn from '@/domain/blog/ui/BlogLikeBtn';
+import BlogLinkShareBtn from '@/domain/blog/ui/BlogLilnkShareBtn';
+import BlogRecommendCard from '@/domain/blog/ui/BlogRecommendCard';
+import ProgramRecommendCard from '@/domain/blog/ui/ProgramRecommendCard';
+import BlogArticle from '@/domain/blog/ui/BlogArticle';
+import Heading2 from '@/domain/blog/ui/BlogHeading2';
+import BlogNewsletterSidePanel from '@/domain/blog/ad/BlogNewsletterSidePanel';
+import { BlogNewsletterPopup } from '@/domain/blog/ad/BlogNewsletterPopup';
+import { twMerge } from '@/lib/twMerge';
+import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
+import {
+  getBaseUrlFromServer,
+  getBlogPathname,
+  getBlogSlug,
+  getBlogTitle,
+} from '@/utils/url';
+import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
+import { emitBlogRecommendFallbackSpan } from '@/domain/blog/utils/blogFallbackSpan';
+import * as Sentry from '@sentry/nextjs';
+import { CircleChevronRight } from 'lucide-react';
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { ReactNode } from 'react';
+
+const { CHALLENGE } = ProgramTypeEnum.enum;
+
+// SSR 메타데이터 생성
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  Sentry.setTag('domain', 'blog');
+  Sentry.setTag('blog.route', '/blog/[id]/[title]');
+  Sentry.setTag('blog.phase', 'metadata');
+
+  const { id } = await params;
+  Sentry.setTag('blog.id', id);
+  const blog = await fetchBlogData(id);
+
+  return {
+    title: getBlogTitle(blog.blogDetailInfo),
+    description: blog.blogDetailInfo.description,
+    openGraph: {
+      title: blog.blogDetailInfo.title || undefined,
+      description: blog.blogDetailInfo.description || undefined,
+      url: getBaseUrlFromServer() + getBlogPathname(blog.blogDetailInfo),
+      images: [
+        {
+          url: blog.blogDetailInfo.thumbnail || '',
+        },
+      ],
+    },
+    alternates: {
+      canonical: getBaseUrlFromServer() + getBlogPathname(blog.blogDetailInfo),
+    },
+  };
+}
+
+const BlogDetailPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string; title: string }>;
+}) => {
+  Sentry.setTag('domain', 'blog');
+  Sentry.setTag('blog.route', '/blog/[id]/[title]');
+  Sentry.setTag('blog.phase', 'render');
+
+  const { id, title: _title } = await params;
+  Sentry.setTag('blog.id', id);
+
+  const blog = await Sentry.startSpan(
+    { name: 'blog.detail.render', attributes: { blogId: id } },
+    () => fetchBlogData(id),
+  );
+
+  // 올바른 경로 생성
+  const correctPathname = getBlogPathname({
+    id,
+    title: blog.blogDetailInfo.title,
+  });
+
+  // 슬러그 비교 및 리디렉션
+  const correctSlug = getBlogSlug(blog.blogDetailInfo.title);
+  let currentSlug = _title || '';
+  try {
+    currentSlug = decodeURIComponent(currentSlug);
+  } catch {}
+  currentSlug = currentSlug.toLowerCase();
+  if (currentSlug !== correctSlug) {
+    redirect(correctPathname);
+  }
+
+  const blogInfo = blog.blogDetailInfo;
+  const contentJson: BlogContent = JSON.parse(
+    !blogInfo?.content || blogInfo?.content === '' ? '{}' : blogInfo.content,
+  );
+  // 구버전은 기존 content에서 렉시컬 내용 가져오기
+  const lexical = contentJson.blogRecommend
+    ? contentJson.lexical
+    : blogInfo?.content;
+  const [blogRecommendList, programRecommendList] = await Promise.all([
+    getBlogRecommendList().catch((err) => {
+      emitBlogRecommendFallbackSpan({ section: 'blogRecommendList', err });
+      captureBlogError(err, {
+        section: 'blogRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+    getProgramRecommendList().catch((err) => {
+      emitBlogRecommendFallbackSpan({ section: 'programRecommendList', err });
+      captureBlogError(err, {
+        section: 'programRecommendList',
+        extra: { blogId: id },
+      });
+      return [];
+    }),
+  ]);
+
+  async function getProgramRecommendList() {
+    const result = contentJson.programRecommend
+      ? contentJson.programRecommend.filter(
+          (item) => item.ctaTitle !== undefined,
+        )
+      : [];
+
+    if (result.length > 0) return result;
+
+    const data = await fetchProgramRecommend();
+    const list: ProgramRecommendItem[] = [];
+    const ctaTitles: Record<string, string> = {
+      CAREER_START: '경험 정리부터 이력서 완성까지',
+      PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
+      PORTFOLIO: '나를 돋보이게 하는 포트폴리오',
+      PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
+    };
+
+    if (data.challengeList.length > 0) {
+      const targets = data.challengeList.slice(0, 3).map((item) => ({
+        id: `${CHALLENGE}-${item.id}`,
+        ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
+        ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+      }));
+      list.push(...targets);
+    }
+
+    return list;
+  }
+
+  async function getBlogRecommendList() {
+    const data = await Promise.allSettled(
+      contentJson.blogRecommend
+        ?.filter((id) => id !== null)
+        ?.map((id) => fetchBlogData(id)) ?? [],
+    );
+    // 노출된 블로그만 추천
+    const list = data.map((item) => {
+      if (
+        item.status === 'fulfilled' &&
+        item.value.blogDetailInfo.isDisplayed
+      ) {
+        return {
+          id: item.value.blogDetailInfo.id,
+          title: item.value.blogDetailInfo.title,
+          category: item.value.blogDetailInfo.category,
+          thumbnail: item.value.blogDetailInfo.thumbnail,
+          displayDate: item.value.blogDetailInfo.displayDate,
+        };
+      }
+    });
+
+    if (list.length > 0) return list;
+
+    const recommendData = await fetchRecommendBlogData({
+      pageable: { page: 1, size: 10 },
+    });
+
+    return recommendData.blogInfos
+      .filter(
+        // 현재 블로그가 아니고
+        // 노출되어 있으며
+        // 게시일자가 과거인 게시글
+        (info) =>
+          info.blogThumbnailInfo.id !== Number(id) &&
+          info.blogThumbnailInfo.isDisplayed &&
+          info.blogThumbnailInfo.displayDate &&
+          new Date(info.blogThumbnailInfo.displayDate) <= new Date(),
+      )
+      .slice(0, 4)
+      .map((item) => ({
+        id: item.blogThumbnailInfo.id,
+        title: item.blogThumbnailInfo.title,
+        category: item.blogThumbnailInfo.category,
+        thumbnail: item.blogThumbnailInfo.thumbnail,
+        displayDate: item.blogThumbnailInfo.displayDate,
+      }));
+  }
+
+  return (
+    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
+      <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
+        {/* 본문 */}
+        <section className="w-full px-5 md:px-0">
+          {/* 본문 영역 (Push 3 팝업 60% 스크롤 계산 기준점) */}
+          <div id="blog-article-body">
+            <BlogArticle blogInfo={blogInfo} lexical={lexical} />
+          </div>
+
+          <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
+            {/* 좋아요 */}
+            <BlogLikeBtn likeCount={blogInfo.likeCount ?? 0} />
+            {/* 공유하기 */}
+            <div className="flex items-center">
+              <span className="text-xsmall14 text-neutral-35 mr-1.5 hidden font-medium md:block">
+                나만 보기 아깝다면 공유하기
+              </span>
+              <BlogLinkShareBtn
+                className="border-none p-2"
+                hideCaption
+                iconWidth={20}
+                iconHeight={20}
+              />
+              <BlogKakaoShareBtn
+                className="blog_share p-2"
+                title={blogInfo.title ?? ''}
+                description={blogInfo.description ?? ''}
+                thumbnail={blogInfo.thumbnail ?? ''}
+                pathname={getBlogPathname(blogInfo)}
+              />
+              <span className="text-xsmall14 text-neutral-35 font-medium md:hidden">
+                공유하기
+              </span>
+            </div>
+          </section>
+
+          <HorizontalRule className="-mx-5 h-3 md:hidden" />
+          <Link
+            href="/blog/list"
+            className="blog_home md:rounded-xs md:bg-neutral-95 flex w-full items-center justify-center gap-2 py-5"
+          >
+            <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-semibold md:font-medium">
+              <span className="text-primary font-semibold">블로그 홈</span>{' '}
+              바로가기
+            </p>
+            <CircleChevronRight
+              className="h-4 w-4 md:h-5 md:w-5"
+              color="#5F66F6"
+            />
+          </Link>
+          <HorizontalRule className="-mx-5 h-3 md:hidden" />
+        </section>
+
+        {/* 사이드바: 뉴스레터 사이드 패널(항상) + 추천 챌린지(있을 때만) */}
+        <aside className="w-full px-5 py-9 md:max-w-[20.5rem] md:px-0 md:py-0 lg:sticky lg:top-[124px]">
+          {/* 뉴스레터 사이드 패널 — 추천 챌린지 유무와 독립적으로 항상 노출 */}
+          <BlogNewsletterSidePanel />
+
+          {(programRecommendList ?? []).length > 0 && (
+            <div className="md:border-neutral-80 mt-6 md:rounded-md md:border md:px-6 md:py-5">
+              <Heading2 className="text-neutral-0 md:text-xsmall16">
+                렛츠커리어 프로그램 참여하고
+                <br />
+                취뽀 성공해요!
+              </Heading2>
+              <section className="mb-6 mt-5 flex flex-col gap-6">
+                {programRecommendList?.map((item) => (
+                  <ProgramRecommendCard key={item.id} program={item} />
+                ))}
+              </section>
+              <MoreLink
+                href={`/program/?status=${ProgramStatusEnum.enum.PROCEEDING}`}
+              >
+                모집 중인 프로그램 보기
+              </MoreLink>
+            </div>
+          )}
+        </aside>
+      </div>
+
+      <HorizontalRule className="h-3 md:hidden" />
+
+      {/* 다른 블로그 글 */}
+      {blogRecommendList.length > 0 && (
+        <section className="px-5 py-9 md:mt-[6.25rem] md:p-0">
+          <MoreHeader
+            href="/blog/list"
+            gaText="이 글을 읽으셨다면, 이런 글도 좋아하실 거예요."
+            hideMoreWhenMobile
+          >
+            이 글을 읽으셨다면, <br className="md:hidden" />
+            이런 글도 좋아하실 거예요.
+          </MoreHeader>
+          <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:items-start md:gap-5">
+            {blogRecommendList.map(
+              (blog) => blog && <BlogRecommendCard key={blog.id} blog={blog} />,
+            )}
+          </div>
+          <MoreLink href="/blog/list" className="md:hidden">
+            더 많은 블로그 글 보기
+          </MoreLink>
+        </section>
+      )}
+
+      {/* [삭제하지 마세요] 블로그 CTA */}
+      {/* {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
+        <BlogCTA
+          ctaText={blog.blogDetailInfo.ctaText}
+          ctaLink={blog.blogDetailInfo.ctaLink}
+        />
+      )} */}
+
+      {/* 스크롤 뉴스레터 팝업 (본문 60% 스크롤 시 노출, 자기완결 client island) */}
+      <BlogNewsletterPopup />
+    </main>
+  );
+};
+
+function MoreLink({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={twMerge(
+        'rounded-xs border-neutral-80 text-neutral-20 block w-full border px-5 py-3 text-center font-medium',
+        className,
+      )}
+    >
+      {children}
+    </Link>
+  );
+}
+
+export default BlogDetailPage;

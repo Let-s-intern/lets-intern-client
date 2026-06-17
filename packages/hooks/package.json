@@ -1,0 +1,33 @@
+{
+  "name": "@letscareer/hooks",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5",
+    "dayjs": ">=1",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": { "optional": true },
+    "dayjs": { "optional": true }
+  },
+  "devDependencies": {
+    "@letscareer/tsconfig": "workspace:*",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^18.3.3",
+    "jsdom": "^25.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
+  }
+}

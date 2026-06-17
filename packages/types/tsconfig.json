@@ -1,0 +1,7 @@
+{
+  "extends": "@letscareer/tsconfig/base",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"]
+}

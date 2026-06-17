@@ -1,0 +1,68 @@
+import { PersonaId } from '../types';
+import MobilePersonaSelector from './MobilePersonaSelector';
+import { PERSONAS } from './data/personas';
+
+interface PersonaSelectorProps {
+  selected?: PersonaId;
+  onSelect: (id: PersonaId) => void;
+}
+
+const PersonaSelector = ({ selected, onSelect }: PersonaSelectorProps) => {
+  return (
+    <>
+      {/* 모바일 */}
+      <div className="md:hidden">
+        <MobilePersonaSelector selected={selected} onSelect={onSelect} />
+      </div>
+
+      {/* 데스크톱 */}
+      <div className="hidden flex-col gap-3 md:flex">
+        <div className="grid grid-cols-3 gap-3">
+          {PERSONAS.filter((p) => p.id !== 'dontKnow').map((persona) => {
+            const isActive = selected === persona.id;
+            return (
+              <button
+                key={persona.id}
+                type="button"
+                onClick={() => onSelect(persona.id)}
+                className={`inline-flex h-20 w-full flex-col items-start justify-center gap-2 rounded-xl px-5 py-3 outline outline-1 -outline-offset-1 transition-all ${
+                  isActive
+                    ? 'bg-white outline-indigo-300'
+                    : 'bg-stone-50 outline-stone-300 hover:bg-white hover:outline-indigo-300'
+                }`}
+              >
+                <div className="flex flex-col items-start justify-start gap-3 self-stretch">
+                  <span className="self-stretch truncate text-left text-sm font-semibold leading-6 text-zinc-800">
+                    {persona.title}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        {(() => {
+          const dontKnow = PERSONAS.find((p) => p.id === 'dontKnow');
+          if (!dontKnow) return null;
+          const isActive = selected === dontKnow.id;
+          return (
+            <div className="flex justify-center pt-8">
+              <button
+                type="button"
+                onClick={() => onSelect(dontKnow.id)}
+                className={`text-base leading-6 underline underline-offset-4 transition-colors ${
+                  isActive
+                    ? 'font-bold text-indigo-500'
+                    : 'font-normal text-zinc-500 hover:text-zinc-800'
+                }`}
+              >
+                {dontKnow.title}
+              </button>
+            </div>
+          );
+        })()}
+      </div>
+    </>
+  );
+};
+
+export default PersonaSelector;
