@@ -59,12 +59,8 @@ const PaymentResultContent = () => {
     if (searchParams.get('postApplicationDone') === 'true') {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
-        const isMembership =
-          programApplicationData.programTitle?.includes('멤버십');
         router.push(
-          isMembership
-            ? '/membership'
-            : `/program/${programApplicationData.programType}/${programApplicationData.programId}`,
+          `/program/${programApplicationData.programType}/${programApplicationData.programId}`,
         );
       }, 100);
       return;
