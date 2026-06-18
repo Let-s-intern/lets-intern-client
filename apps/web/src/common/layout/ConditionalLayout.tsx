@@ -16,6 +16,13 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   const isLoginPage = pathname === '/login';
   const isDarkPage = pathname.startsWith('/challenge/feedback-mentoring');
   const isCurationPage = pathname.startsWith('/curation');
+  // 멤버십(이벤트) 랜딩은 전체화면 iframe 으로 임베드한다. 글로벌 크롬(푸터·채널톡·바텀바)
+  // 없이, 헤더(실제 NavBar)와 iframe 은 MembershipEmbed 가 직접 렌더·제어한다.
+  const isMembershipPage = pathname.startsWith('/membership');
+
+  if (isMembershipPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div>
