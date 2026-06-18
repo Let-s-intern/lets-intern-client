@@ -42,9 +42,6 @@ export const challengeMentorGuideListSchema = z.object({
 export type ChallengeMentorGuideItem = z.infer<
   typeof challengeMentorGuideItemSchema
 >;
-export type ChallengeMentorGuideList = z.infer<
-  typeof challengeMentorGuideListSchema
->;
 
 /** POST 요청 바디 */
 export interface CreateChallengeMentorGuideReq {

@@ -14,7 +14,6 @@ import {
   ProgramType,
   UserMagnetDetailResponse,
   UserMagnetListResponse,
-  UserMagnetQuestionListResponse,
   baseQuestionListResponseSchema,
   launchAlertResponseSchema,
   magnetDetailResponseSchema,
@@ -22,7 +21,6 @@ import {
   mypageMagnetListResponseSchema,
   userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
-  userMagnetQuestionListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
@@ -239,21 +237,6 @@ export const useGetLaunchAlertQuery = ({
   });
 };
 
-// 서버용 마그넷 목록 조회
-export async function fetchUserMagnetList(params?: {
-  page?: number;
-  size?: number;
-  typeList?: MagnetType[];
-}) {
-  const res = await axios.get('/magnet', {
-    params: {
-      page: params?.page ?? 1,
-      size: params?.size ?? 10,
-      typeList: params?.typeList,
-    },
-  });
-  return userMagnetListResponseSchema.parse(res.data.data);
-}
 
 // 유저용 마그넷 상세 조회
 export const userMagnetDetailQueryOptions = (magnetId: number) => ({
@@ -343,22 +326,6 @@ export const useGetMyMagnetListQuery = ({
   });
 };
 
-// 마그넷 신청 폼 조회
-const userMagnetQuestionsQueryKey = 'UserMagnetQuestionsQueryKey';
-
-export const useGetUserMagnetQuestionsQuery = (
-  magnetId: number,
-  options?: { enabled?: boolean },
-) => {
-  return useQuery({
-    queryKey: [userMagnetQuestionsQueryKey, magnetId],
-    queryFn: async (): Promise<UserMagnetQuestionListResponse> => {
-      const res = await axios.get(`/magnet/${magnetId}/questions`);
-      return userMagnetQuestionListResponseSchema.parse(res.data.data);
-    },
-    enabled: options?.enabled,
-  });
-};
 
 // 마그넷 조회일 기록
 export const usePatchMagnetViewDateMutation = () => {

@@ -7,7 +7,6 @@ import {
   reportTypeSchema,
 } from '@/schema';
 import { ContentReviewType, ExternalBlogReview } from '@/types/interface';
-import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import {
   keepPreviousData,
@@ -17,7 +16,6 @@ import {
 } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { mypageApplicationsSchema } from '@/api/application';
 import { getChallengeReviewStatusQueryKey } from '@/api/challenge/challenge';
 import {
   blogBonusSchema,
@@ -26,15 +24,6 @@ import {
 
 export const getAllApplicationsForReviewQueryKey = ['applications', 'review'];
 
-export const useGetAllApplicationsForReviewQuery = () => {
-  return useQuery({
-    queryKey: getAllApplicationsForReviewQueryKey,
-    queryFn: async () => {
-      const res = await axios.get('/user/review/applications');
-      return mypageApplicationsSchema.parse(res.data.data).applicationList;
-    },
-  });
-};
 
 export const reviewTypeSchema = z.enum([
   'CHALLENGE_REVIEW',
@@ -119,7 +108,6 @@ export const blogReviewListSchema = z.object({
 });
 
 export type BlogReview = z.infer<typeof blogReviewSchema>;
-export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
 
 // 블로그 후기 전체 조회
 

@@ -174,8 +174,6 @@ export const tossInfoType = z.object({
   version: z.string().nullable().optional(),
 });
 
-export type ProgramInfoType = z.infer<typeof programInfoType>;
-export type TossInfoType = z.infer<typeof tossInfoType>;
 
 // Payment schema
 export const paymentType = z.object({
@@ -245,7 +243,6 @@ export const applicationResultType = z.object({
   tossInfo: tossInfoType,
 });
 
-export type ApplicationResult = z.infer<typeof applicationResultType>;
 
 export const DiscountCardSchema = z.object({
   issuerCode: z.string(),

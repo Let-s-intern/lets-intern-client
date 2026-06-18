@@ -38,22 +38,6 @@ export const useAdminChallengeMentorGuideAllQuery = () => {
   });
 };
 
-/** @deprecated Push 2에서 useAdminChallengeMentorGuideAllQuery로 교체 예정 */
-export const useAdminChallengeMentorGuideListQuery = (
-  challengeMentorId?: string | number,
-) => {
-  return useQuery({
-    queryKey: [AdminChallengeMentorGuideQueryKey, challengeMentorId],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/admin/challenge-mentor-guide/${challengeMentorId}`,
-      );
-      return challengeMentorGuideListSchema.parse(res.data.data);
-    },
-    enabled: !!challengeMentorId,
-    refetchOnWindowFocus: false,
-  });
-};
 
 /** POST /api/v1/admin/challenge-mentor-guide 가이드 생성 */
 export const usePostAdminChallengeMentorGuide = () => {

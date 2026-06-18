@@ -17,23 +17,10 @@ import {
   challengeMentorVoSchema,
   isAdminSchema,
   isMentorSchema,
-  mentorListSchema,
   userAdminType,
   userDocumentListSchema,
   UserExperience,
 } from './userSchema';
-
-export const UseMentorListQueryKey = 'useMentorListQueryKey';
-
-export const useMentorListQuery = () => {
-  return useQuery({
-    queryKey: [UseMentorListQueryKey],
-    queryFn: async () => {
-      const res = await axiosV2.get('/admin/user/mentor');
-      return mentorListSchema.parse(res.data.data);
-    },
-  });
-};
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
@@ -114,29 +101,6 @@ export const useUserAdminQuery = ({
       return userAdminType.parse(res.data.data);
     },
     placeholderData: keepPreviousData,
-  });
-};
-
-export const useDeleteUserMutation = (
-  successCallback?: () => void,
-  errorCallback?: (error: Error) => void,
-) => {
-  const client = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (phoneNumber: string) => {
-      await axios.delete(`/user/admin?number=${phoneNumber}`);
-    },
-    onSuccess: () => {
-      client.invalidateQueries({
-        queryKey: [UseUserAdminQueryKey],
-      });
-
-      return successCallback && successCallback();
-    },
-    onError: (error: Error) => {
-      return errorCallback && errorCallback(error);
-    },
   });
 };
 
@@ -316,37 +280,10 @@ export const usePatchUser = (
   });
 };
 
-/** PATCH /api/v2/admin/user/{userId}/pool-up */
-export const usePatchUserPoolUpMutation = (
-  successCallback?: () => void,
-  errorCallback?: (error: Error) => void,
-) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      userId,
-      isPoolUp,
-    }: {
-      userId: number;
-      isPoolUp: boolean;
-    }) => {
-      return await axiosV2.patch(`/admin/user/${userId}/pool-up`, { isPoolUp });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
-      return successCallback && successCallback();
-    },
-    onError: (error: Error) => {
-      return errorCallback && errorCallback(error);
-    },
-  });
-};
-
 const mentorChallengeListSchema = z.object({
   myChallengeMentorVoList: z.array(challengeMentorVoSchema),
 });
 
-export type MentorChallengeList = z.infer<typeof mentorChallengeListSchema>;
 export type ChallengeMentorVo = z.infer<typeof challengeMentorVoSchema>;
 
 const UseMentorChallengeListQueryKey = 'useMentorChallengeListQueryKey';
@@ -364,8 +301,6 @@ export const useMentorChallengeListQuery = ({
     refetchOnWindowFocus: false,
   });
 };
-
-export type IsMentor = z.infer<typeof isMentorSchema>;
 
 const UseIsMentorQueryKey = 'useIsMentorQueryKey';
 

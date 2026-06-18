@@ -55,6 +55,3 @@ export const userExperienceSearchResponseSchema = z.object({
   currentPage: z.number(),
 });
 
-export type UserExperienceSearchResponse = z.infer<
-  typeof userExperienceSearchResponseSchema
->;

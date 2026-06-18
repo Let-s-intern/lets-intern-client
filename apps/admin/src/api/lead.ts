@@ -53,8 +53,6 @@ const joinParam = (value?: Array<string | number>) =>
 
 export type LeadHistory = z.infer<typeof leadHistoryItemSchema>;
 export type LeadEvent = z.infer<typeof leadEventItemSchema>;
-export type LeadHistoryListResponse = z.infer<typeof leadHistoryListSchema>;
-export type LeadEventListResponse = z.infer<typeof leadEventListSchema>;
 
 export const leadHistoryListQueryKey = 'leadHistoryListQueryKey';
 export const leadEventListQueryKey = 'leadEventListQueryKey';
