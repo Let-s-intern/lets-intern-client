@@ -8,14 +8,12 @@ import {
 
 export const UsePaymentQueryKey = 'usePaymentQueryKey';
 
-export const usePaymentQuery = () => {
-  return useQuery({
-    queryKey: [UsePaymentQueryKey],
-    queryFn: async () => {
-      const res = await axios.get(`/payment`);
-      return paymentListType.parse(res.data.data);
-    },
-  });
+export const paymentListQueryOptions = {
+  queryKey: [UsePaymentQueryKey],
+  queryFn: async () => {
+    const res = await axios.get(`/payment`);
+    return paymentListType.parse(res.data.data);
+  },
 };
 
 export const UsePaymentDetailQueryKey = 'usePaymentDetailQueryKey';
