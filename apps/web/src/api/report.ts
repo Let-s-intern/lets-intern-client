@@ -1151,6 +1151,14 @@ export type ReportPaymentInfo = z.infer<typeof reportPaymentInfoSchema>;
 
 export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
 
+export const reportPaymentDetailQueryOptions = (applicationId: number) => ({
+  queryKey: [useGetReportPaymentDetailQueryKey, applicationId],
+  queryFn: async () => {
+    const res = await axios.get(`/report/application/${applicationId}/payment`);
+    return reportPaymentDetailSchema.parse(res.data.data);
+  },
+});
+
 export const useGetReportPaymentDetailQuery = ({
   applicationId,
   enabled,
