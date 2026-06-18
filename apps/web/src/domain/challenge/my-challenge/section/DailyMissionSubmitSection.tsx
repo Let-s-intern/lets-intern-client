@@ -1,4 +1,4 @@
-import { usePatchAttendance } from '@/api/attendance/attendance';
+import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import {
   useGetChallengeReviewStatus,
   usePostChallengeAttendance,

@@ -1,4 +1,4 @@
-import { usePatchAttendance } from '@/api/attendance/attendance';
+import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { usePostBlogBonus } from '@/api/review/review';
 import { Schedule } from '@/schema';
 import { useEffect, useState } from 'react';

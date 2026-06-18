@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
+import { useMentorGuideListQuery } from '@/domain/mentor/api/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
-import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
+import type { ChallengeMentorGuideItem } from '@/domain/mentor/api/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
   const now = new Date();

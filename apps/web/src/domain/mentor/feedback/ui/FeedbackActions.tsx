@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
+import { usePatchAttendanceMentorMutation } from '@/domain/mentor/api/mentor';
 import config from '../../constants/config';
 
 interface FeedbackActionsProps {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
-import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
+import { useMentorGuideListQuery } from '@/domain/mentor/api/challengeMentorGuide';
+import type { ChallengeMentorGuideItem } from '@/domain/mentor/api/challengeMentorGuideSchema';
 import { useNotificationState } from '../hooks/useNotificationState';
 import NotificationDropdown from './NotificationDropdown';
 
