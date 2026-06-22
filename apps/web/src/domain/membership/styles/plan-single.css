@@ -142,15 +142,16 @@
 /* 올패스 카드 하단의 가로 와이드 카드. 구매자 전용 VOD 단독 구매 옵션. */
 .membership-root .vod-option {
   max-width: 720px;
-  margin: 22px auto 0;
+  margin: 20px auto 0;
   display: flex;
   align-items: center;
   gap: 22px 28px;
   flex-wrap: wrap;
-  background: #fff;
-  border: 1.5px solid #e7e9f0;
-  border-radius: 18px;
-  padding: 24px 28px;
+  background: linear-gradient(180deg, #fbfcff, #fff);
+  border: 1.5px solid var(--tint-blue);
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 18px 44px -28px rgba(74, 118, 255, 0.4);
 }
 .membership-root .vod-ic {
   flex: 0 0 auto;
@@ -174,8 +175,8 @@
   align-self: flex-start;
   font-weight: 800;
   font-size: 12px;
-  color: var(--lc-indigo);
-  background: var(--tint-lav);
+  color: var(--lc-blue);
+  background: var(--tint-blue);
   padding: 5px 12px;
   border-radius: 999px;
 }
@@ -218,7 +219,7 @@
   font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--lc-indigo);
+  color: var(--lc-blue);
   line-height: 1;
 }
 .membership-root .vod-unit {
@@ -249,6 +250,7 @@
   .membership-root .vod-option {
     padding: 22px;
     gap: 16px;
+    border-radius: 20px;
   }
   .membership-root .vod-aside {
     width: 100%;
