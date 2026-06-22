@@ -156,10 +156,12 @@ const MagnetTable = ({
       {
         field: 'startDate',
         headerName: '출시 알림 전송일',
+        description:
+          '출시알림(LAUNCH_ALERT) 구독자에게 알림을 보내는 날짜. 다른 타입에서는 사용하지 않습니다.',
         type: 'dateTime',
         width: 130,
         valueGetter: (_, row) =>
-          isMagnetVisibilityManageable(row.type) && row.startDate
+          row.type === 'LAUNCH_ALERT' && row.startDate
             ? dayjs(row.startDate).toDate()
             : null,
         valueFormatter: (value) => formatDateTimeCellValue(value),
