@@ -39,6 +39,7 @@ const buildDetailUrl = (magnetId: number, title: string) =>
 interface MagnetTableProps {
   data: MagnetListResponse;
   onToggleVisibility: (id: number, isVisible: boolean) => void;
+  onToggleAccessibility: (id: number, isAccessible: boolean) => void;
   onDelete: (id: number) => void;
 }
 
@@ -58,6 +59,7 @@ const magnetTypeOperators = createIncludesFilterOperators((props) => (
 const MagnetTable = ({
   data,
   onToggleVisibility,
+  onToggleAccessibility,
   onDelete,
 }: MagnetTableProps) => {
   const { snackbar } = useAdminSnackbar();
@@ -152,7 +154,7 @@ const MagnetTable = ({
       },
       {
         field: 'isVisible',
-        headerName: '노출여부',
+        headerName: '목록 노출',
         type: 'boolean',
         width: 90,
         renderCell: ({ row }) =>
@@ -161,6 +163,26 @@ const MagnetTable = ({
               checked={row.isVisible}
               onChange={(e) =>
                 onToggleVisibility(row.magnetId, e.target.checked)
+              }
+              size="small"
+            />
+          ) : (
+            '-'
+          ),
+      },
+      {
+        field: 'isAccessible',
+        headerName: '접속 가능',
+        description:
+          '목록에 안 떠도 링크로 접속·신청 가능. 노출 종료일이 지나면 자동 차단됩니다.',
+        type: 'boolean',
+        width: 90,
+        renderCell: ({ row }) =>
+          isMagnetVisibilityManageable(row.type) ? (
+            <Checkbox
+              checked={row.isAccessible}
+              onChange={(e) =>
+                onToggleAccessibility(row.magnetId, e.target.checked)
               }
               size="small"
             />
@@ -231,7 +253,7 @@ const MagnetTable = ({
         sortable: false,
         filterable: false,
         renderCell: ({ row }) =>
-          row.isVisible ? (
+          row.isAccessible ? (
             <Button
               variant="outlined"
               color="secondary"
@@ -251,7 +273,7 @@ const MagnetTable = ({
         sortable: false,
         filterable: false,
         renderCell: ({ row }) =>
-          row.isVisible ? (
+          row.isAccessible ? (
             <Button
               variant="outlined"
               color="secondary"
@@ -265,7 +287,13 @@ const MagnetTable = ({
           ),
       },
     ],
-    [onToggleVisibility, onDelete, handleCopyApplyLink, handleCopyDetailLink],
+    [
+      onToggleVisibility,
+      onToggleAccessibility,
+      onDelete,
+      handleCopyApplyLink,
+      handleCopyDetailLink,
+    ],
   );
 
   return (

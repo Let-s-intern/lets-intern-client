@@ -113,6 +113,39 @@ export const usePatchMagnetVisibilityMutation = ({
   });
 };
 
+/** 접속 가능 여부(목록 노출과 독립) 토글 — 링크 접속·신청 게이트 */
+export const usePatchMagnetAccessibilityMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      magnetId,
+      isAccessible,
+    }: {
+      magnetId: number;
+      isAccessible: boolean;
+    }) => {
+      const res = await axios.patch(`/admin/magnet/${magnetId}`, {
+        isAccessible,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
 export const magnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [magnetDetailQueryKey, magnetId],
   queryFn: async (): Promise<MagnetDetailResponse> => {
@@ -147,6 +180,7 @@ export interface PatchMagnetReqBody {
   startDate?: string | null;
   endDate?: string | null;
   isVisible?: boolean;
+  isAccessible?: boolean;
   magnetQuestionList?: unknown[];
 }
 
