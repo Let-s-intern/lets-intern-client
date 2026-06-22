@@ -13,6 +13,7 @@ import {
   PLAN_NAME,
   PLAN_PRICE,
 } from '../data/plans';
+import VodOptionCard from '../ui/VodOptionCard';
 
 // 단일 올패스 플랜 표시 섹션. 등급 비교/탭 제거 → 하나의 상품 카드.
 // 가격 위계(정가 취소선 → 특가 → 할인 배지)와 혜택 7종 스캔형 그리드로 구성.
@@ -76,6 +77,8 @@ export default function PlansSection() {
             {PLAN_CTA}
           </button>
         </div>
+
+        <VodOptionCard />
       </div>
     </section>
   );

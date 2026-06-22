@@ -131,6 +131,102 @@
   margin-top: 24px;
 }
 
+/* ===================== VOD 옵션 카드 ===================== */
+/* 올패스 카드 하단의 가로 와이드 카드. 구매자 전용 VOD 단독 구매 옵션. */
+.membership-root .vod-option {
+  max-width: 720px;
+  margin: 22px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 22px 28px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1.5px solid #e7e9f0;
+  border-radius: 18px;
+  padding: 24px 28px;
+}
+.membership-root .vod-ic {
+  flex: 0 0 auto;
+  width: 62px;
+  height: 62px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: var(--tint-lav);
+  border-radius: 16px;
+}
+.membership-root .vod-body {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.membership-root .vod-badge {
+  align-self: flex-start;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--lc-indigo);
+  background: var(--tint-lav);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+.membership-root .vod-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.membership-root .vod-sub {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.membership-root .vod-aside {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.membership-root .vod-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.membership-root .vod-was {
+  font-size: 14px;
+  color: var(--g500);
+  text-decoration: line-through;
+  font-weight: 600;
+}
+.membership-root .vod-now {
+  font-family: var(--num);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--lc-indigo);
+  line-height: 1;
+}
+.membership-root .vod-unit {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  margin-left: 3px;
+}
+.membership-root .vod-cta {
+  font-size: 15px;
+  padding: 11px 22px;
+  border-radius: 12px;
+  border-width: 1.5px;
+}
+
 @media (max-width: 600px) {
   .membership-root .allpass {
     padding: 28px 22px 26px;
@@ -142,5 +238,21 @@
   .membership-root .allpass-benefits {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  .membership-root .vod-option {
+    padding: 22px;
+    gap: 16px;
+  }
+  .membership-root .vod-aside {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .membership-root .vod-price {
+    align-items: flex-start;
+  }
+  .membership-root .vod-cta {
+    flex: 0 0 auto;
   }
 }
