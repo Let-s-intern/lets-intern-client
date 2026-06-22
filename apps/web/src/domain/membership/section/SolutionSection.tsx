@@ -1,4 +1,13 @@
-import { SOLUTION } from "../data/solution";
+import { SOLUTION, type SolutionSatellite } from '../data/solution';
+
+function SolutionSatelliteNode({ label, hint }: SolutionSatellite) {
+  return (
+    <div className="hub-sat">
+      <span className="hub-sat-label">{label}</span>
+      <span className="hub-sat-hint">{hint}</span>
+    </div>
+  );
+}
 
 export default function SolutionSection() {
   return (
@@ -15,18 +24,15 @@ export default function SolutionSection() {
             ))}
           </h2>
         </div>
-        <div className="flow rv">
-          <div className="messy">
-            {SOLUTION.chips.map((chip) => (
-              <span className="chip" key={chip}>
-                {chip}
-              </span>
-            ))}
-          </div>
-          <span className="arrow">→</span>
-          <div className="pass">
-            <div className="big">{SOLUTION.passBig}</div>
-            <div className="sm">{SOLUTION.passSm}</div>
+
+        {/* 허브 앤 스포크 — 위성 6종이 중앙 멤버십으로 수렴 */}
+        <div className="hub rv">
+          {SOLUTION.satellites.map((sat) => (
+            <SolutionSatelliteNode key={sat.label} {...sat} />
+          ))}
+          <div className="hub-core">
+            <div className="hub-core-title">{SOLUTION.hubTitle}</div>
+            <div className="hub-core-sub">{SOLUTION.hubSub}</div>
           </div>
         </div>
       </div>
