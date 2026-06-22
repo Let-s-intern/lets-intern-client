@@ -11,6 +11,7 @@ import {
 } from '../lib/membershipChallenge';
 import { onOpenPlanSheet } from '../lib/planSheet';
 import { useMembershipChallengeQuery } from '../lib/useMembershipChallengeQuery';
+import useMembershipSheetStore from '../store/useMembershipSheetStore';
 
 /**
  * 멤버십 결제 컨트롤러.
@@ -21,7 +22,19 @@ import { useMembershipChallengeQuery } from '../lib/useMembershipChallengeQuery'
 export default function MembershipPaymentSheet() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const setSheetOpen = useMembershipSheetStore((s) => s.setSheetOpen);
   const [isOpen, setIsOpen] = useState(false);
+
+  // 로컬 시트 상태를 store 에 동기화 → ApplyBar 가 겹치지 않도록 숨김 제어.
+  const openSheet = useCallback(() => {
+    setIsOpen(true);
+    setSheetOpen(true);
+  }, [setSheetOpen]);
+
+  const closeSheet = useCallback(() => {
+    setIsOpen(false);
+    setSheetOpen(false);
+  }, [setSheetOpen]);
 
   const challengeId = MEMBERSHIP_CHALLENGE_ID;
   const isConfigured = isValidMembershipChallengeId(challengeId);
@@ -49,8 +62,8 @@ export default function MembershipPaymentSheet() {
       return;
     }
 
-    setIsOpen(true);
-  }, [isConfigured, isLoggedIn, router]);
+    openSheet();
+  }, [isConfigured, isLoggedIn, router, openSheet]);
 
   useEffect(() => onOpenPlanSheet(handleOpen), [handleOpen]);
 
@@ -62,7 +75,7 @@ export default function MembershipPaymentSheet() {
       challenge={challenge}
       challengeId={String(challengeId)}
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={closeSheet}
     />
   );
 }

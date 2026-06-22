@@ -1,10 +1,18 @@
+"use client";
+
 import dayjs from "../lib/dayjs";
 import BarCountdown from "./BarCountdown";
 import { openPlanSheet } from "../lib/planSheet";
 import { MEMBERSHIP_DEADLINE } from "../data/membership";
+import useMembershipSheetStore from "../store/useMembershipSheetStore";
 
 // ApplyCTA.tsx(Desktop/MobileApplyCTA) 디자인 복사 — 하단 고정 신청 바.
 export default function ApplyBar() {
+  const isSheetOpen = useMembershipSheetStore((s) => s.isSheetOpen);
+
+  // 결제 시트가 열려 있으면 시트와 겹치므로 하단 바를 숨긴다.
+  if (isSheetOpen) return null;
+
   return (
     <div className="apply-bar">
       <div className="apply-bar-info">
