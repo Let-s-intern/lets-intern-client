@@ -1,0 +1,67 @@
+/* ===================== ROADMAP ===================== */
+.membership-root .roadmap {
+  padding: 84px 0;
+  background: var(--bg-cool);
+}
+.membership-root .timeline {
+  position: relative;
+  margin-top: 30px;
+}
+.membership-root .timeline .track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 34px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--rainbow);
+}
+.membership-root .tnodes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+}
+.membership-root .tnode {
+  text-align: center;
+}
+.membership-root .tnode .dot {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  border: 5px solid var(--lc-blue);
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--lc-blue);
+  position: relative;
+  z-index: 2;
+}
+.membership-root .tnode:nth-child(2) .dot {
+  border-color: var(--lc-coral);
+  color: var(--lc-coral);
+}
+.membership-root .tnode:nth-child(3) .dot {
+  border-color: var(--lc-sky);
+  color: #0892c7;
+}
+.membership-root .tnode .mon {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g500);
+}
+.membership-root .tnode h3 {
+  font-size: 21px;
+  font-weight: 800;
+  margin: 4px 0 8px;
+}
+.membership-root .tnode p {
+  font-size: 15px;
+  color: var(--g600);
+  font-weight: 500;
+}

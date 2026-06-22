@@ -1,0 +1,262 @@
+/* ApplyCTA / PricePlanBottomSheet 디자인 복사 (렛츠커리어 웹 → 단독 레포)
+   원본은 Tailwind/MUI 기반이라 시각적 동등 수준으로 자체 재현한다. */
+
+/* ===================== 하단 고정 신청 바 ===================== */
+.membership-root .apply-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  margin: 0 auto;
+  max-width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #e7e9f0;
+}
+@media (min-width: 1024px) {
+  .membership-root .apply-bar {
+    bottom: 16px;
+    border-radius: 14px;
+    border: 1px solid #e7e9f0;
+    box-shadow: 0 12px 40px rgba(20, 22, 31, 0.16);
+  }
+}
+.membership-root .apply-bar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.membership-root .apply-bar-title {
+  font-weight: 800;
+  font-size: 15px;
+  color: #14161f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.membership-root .apply-bar-deadline {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g600, #4b4f5a);
+}
+.membership-root .apply-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+.membership-root .apply-bar-count {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-weight: 700;
+  color: #14161f;
+  white-space: nowrap;
+}
+.membership-root .apply-bar-count .unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g500, #8b909e);
+}
+.membership-root .apply-bar-count .left {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g500, #8b909e);
+  margin-left: 2px;
+}
+.membership-root .apply-bar-btn {
+  flex: 0 0 auto;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 13px 26px;
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  background: linear-gradient(90deg, #4769ff 0%, #6a4bff 100%);
+  box-shadow: 0 6px 18px rgba(71, 105, 255, 0.32);
+  transition: transform 0.12s ease;
+}
+.membership-root .apply-bar-btn:hover {
+  transform: translateY(-1px);
+}
+@media (max-width: 600px) {
+  .membership-root .apply-bar-count {
+    display: none;
+  }
+  .membership-root .apply-bar-btn {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+  .membership-root .apply-bar-title {
+    font-size: 14px;
+  }
+}
+
+/* ===================== 플랜 선택 바텀 시트 ===================== */
+.membership-root .sheet-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(20, 22, 31, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.membership-root .sheet-ov.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.membership-root .sheet {
+  width: 100%;
+  max-width: 1000px;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 28px 24px calc(24px + env(safe-area-inset-bottom));
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: translateY(24px);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.membership-root .sheet-ov.open .sheet {
+  transform: translateY(0);
+}
+.membership-root .sheet-grip {
+  width: 44px;
+  height: 4px;
+  border-radius: 4px;
+  background: #e0e3ec;
+  margin: 0 auto 18px;
+}
+.membership-root .sheet-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #14161f;
+  margin-bottom: 14px;
+}
+.membership-root .sheet-label::before {
+  content: '* ';
+  color: #f0512f;
+}
+.membership-root .plan-opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 14px;
+  border: 1.5px solid #e7e9f0;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.membership-root .plan-opt.on {
+  border-color: var(--lc-blue, #4769ff);
+  background: rgba(71, 105, 255, 0.04);
+}
+.membership-root .plan-opt .radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #c4c8d2;
+  flex: 0 0 auto;
+  position: relative;
+}
+.membership-root .plan-opt.on .radio {
+  border-color: var(--lc-blue, #4769ff);
+}
+.membership-root .plan-opt.on .radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--lc-blue, #4769ff);
+}
+.membership-root .plan-opt .meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.membership-root .plan-opt .nm {
+  font-weight: 700;
+  font-size: 15px;
+  color: #14161f;
+}
+.membership-root .plan-opt .desc {
+  font-size: 13px;
+  color: var(--g500, #8b909e);
+  margin-top: 2px;
+}
+.membership-root .plan-opt .price {
+  text-align: right;
+  flex: 0 0 auto;
+}
+.membership-root .plan-opt .price .was {
+  display: block;
+  font-size: 12px;
+  color: #b0b4c0;
+  text-decoration: line-through;
+}
+.membership-root .plan-opt .price .now {
+  font-weight: 800;
+  font-size: 16px;
+  color: #14161f;
+}
+.membership-root .sheet-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #e7e9f0;
+}
+.membership-root .sheet-total .lbl {
+  font-size: 14px;
+  font-weight: 700;
+  color: #14161f;
+}
+.membership-root .sheet-total .amt {
+  font-size: 20px;
+  font-weight: 800;
+  color: #14161f;
+}
+.membership-root .sheet-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+.membership-root .sheet-actions button {
+  flex: 1;
+  border-radius: 12px;
+  padding: 15px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+}
+.membership-root .sheet-actions .cancel {
+  background: #fff;
+  border: 1.5px solid #d7dae3;
+  color: #4b4f5a;
+}
+.membership-root .sheet-actions .pay {
+  border: none;
+  color: #fff;
+  background: linear-gradient(90deg, #4769ff 0%, #6a4bff 100%);
+  box-shadow: 0 6px 18px rgba(71, 105, 255, 0.32);
+}
+
+/* 하단 고정 신청 바가 마지막 콘텐츠(FAQ)를 가리지 않도록 여백 확보 */
+.membership-root main {
+  padding-bottom: 96px;
+}

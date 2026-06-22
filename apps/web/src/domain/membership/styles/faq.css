@@ -1,0 +1,60 @@
+/* ===================== FAQ ===================== */
+.membership-root .faq {
+  padding: 84px 0;
+}
+.membership-root .faqlist {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.membership-root .fitem {
+  border: 1.5px solid #e7e9f0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.membership-root .fitem .q {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 26px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 17px;
+}
+.membership-root .fitem .q .mk {
+  color: var(--lc-blue);
+  font-weight: 800;
+  font-size: 20px;
+  flex: 0 0 auto;
+}
+.membership-root .fitem .q .ind {
+  margin-left: auto;
+  color: var(--g500);
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+.membership-root .fitem .a {
+  display: block;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 26px 0 62px;
+  color: var(--g600);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.6;
+  transition:
+    max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    padding 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.membership-root .fitem.open .ind {
+  transform: rotate(45deg);
+}
+.membership-root .fitem.open .a {
+  max-height: 220px;
+  opacity: 1;
+  padding-bottom: 24px;
+}

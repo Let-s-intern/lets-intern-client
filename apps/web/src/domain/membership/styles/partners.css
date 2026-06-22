@@ -1,0 +1,192 @@
+/* ===================== 멤버 전용 제휴 서비스 혜택 ===================== */
+.membership-root .partner-sec {
+  padding: 60px 0 20px;
+}
+.membership-root .partner-head {
+  text-align: center;
+  margin: 0 auto 36px;
+  max-width: 760px;
+}
+.membership-root .partner-head h2 {
+  font-size: 30px;
+  font-weight: 800;
+  position: relative;
+  display: inline-block;
+}
+.membership-root .partner-head .hl-p {
+  color: var(--lc-blue);
+}
+
+.membership-root .partner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.membership-root .partner-card {
+  display: grid;
+  grid-template-columns: 168px 1fr 188px;
+  gap: 28px;
+  align-items: center;
+  border: 1.5px solid #e7e9f0;
+  border-radius: 22px;
+  padding: 30px 34px;
+  background: #fff;
+  /* 카드 전체가 클릭 영역 — 누르면 상세 모달이 열린다 */
+  cursor: pointer;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+  /* 깔끔한 광택: 우상단 톤 글로우 + 부드러운 그림자(은은한 입체) */
+  box-shadow:
+    0 14px 30px -18px rgba(55, 65, 120, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.membership-root .partner-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 22px 42px -20px rgba(55, 65, 120, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.membership-root .partner-card:hover .partner-cta-link {
+  text-decoration: underline;
+}
+/* 색조별 — 우상단에서 톤 색이 은은하게 퍼지다 흰색으로 사라지는 글로우 */
+.membership-root .partner-card.green {
+  border-color: #b9e7ce;
+  background:
+    radial-gradient(140% 120% at 100% 0%, #d8f3e6 0%, rgba(216, 243, 230, 0) 52%),
+    #ffffff;
+}
+.membership-root .partner-card.lavender {
+  border-color: #d8d3fb;
+  background:
+    radial-gradient(140% 120% at 100% 0%, #e7e3ff 0%, rgba(231, 227, 255, 0) 52%),
+    #ffffff;
+}
+.membership-root .partner-card.blue {
+  border-color: #cfe0ff;
+  background:
+    radial-gradient(140% 120% at 100% 0%, #dfecff 0%, rgba(223, 236, 255, 0) 52%),
+    #ffffff;
+}
+
+/* 좌측: 로고 + 태그 */
+.membership-root .partner-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.membership-root .partner-logo {
+  width: 132px;
+  height: auto;
+  object-fit: contain;
+}
+/* 흰색 PNG 대신 텍스트 로고(슈퍼인턴 = "슈퍼" + 강조 "인턴") */
+.membership-root .partner-logo-text {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--lc-ink);
+  white-space: nowrap;
+}
+.membership-root .partner-logo-text b {
+  color: var(--lc-indigo);
+  font-weight: 800;
+}
+.membership-root .partner-tag {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--g600);
+  background: #fff;
+  border: 1px solid #e7e9f0;
+  box-shadow: 0 1px 2px rgba(20, 30, 70, 0.05);
+  border-radius: 999px;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+/* 중앙: 제목 + 설명 + 칩 */
+.membership-root .partner-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 21px;
+  font-weight: 800;
+}
+.membership-root .partner-new {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+.membership-root .partner-desc {
+  margin: 11px 0 16px;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--g600);
+  font-weight: 500;
+}
+.membership-root .partner-chips {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.membership-root .partner-chip {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  background: #fff;
+  border: 1.5px solid #e7e9f0;
+  box-shadow: 0 1px 3px rgba(20, 30, 70, 0.06);
+  border-radius: 999px;
+  padding: 9px 15px;
+}
+
+/* 우측: CTA */
+.membership-root .partner-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  text-align: right;
+}
+.membership-root .partner-cta-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  white-space: nowrap;
+  padding: 0;
+}
+.membership-root .partner-cta-link:hover {
+  text-decoration: underline;
+}
+.membership-root .partner-cta-sub {
+  font-size: 12.5px;
+  color: var(--g500);
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .membership-root .partner-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 24px;
+  }
+  .membership-root .partner-aside {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+  }
+  .membership-root .partner-cta {
+    align-items: flex-start;
+    text-align: left;
+  }
+}

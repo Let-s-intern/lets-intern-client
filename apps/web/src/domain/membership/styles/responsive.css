@@ -1,0 +1,441 @@
+@media (max-width: 920px) {
+  .membership-root .hero-in {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 54px 0 64px;
+  }
+  .membership-root .hero h1 {
+    font-size: 42px;
+  }
+  .membership-root .bgrid, .membership-root .stats, .membership-root .pcards {
+    grid-template-columns: 1fr;
+  }
+  .membership-root .pcard.feat {
+    transform: none;
+  }
+  .membership-root .sec-head h2, .membership-root .final h2 {
+    font-size: 32px;
+  }
+  .membership-root .tnodes {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .membership-root .timeline .track {
+    display: none;
+  }
+  /* matrix becomes horizontally scrollable so columns stay legible */
+  .membership-root .matrix {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .membership-root .matrix .mrow {
+    min-width: 560px;
+  }
+  .membership-root .mrow {
+    grid-template-columns: 1.3fr 0.9fr 1fr 0.9fr;
+  }
+  .membership-root .mrow > div {
+    padding: 14px 10px;
+    font-size: 13.5px;
+  }
+  .membership-root .pcard.feat .pname {
+    font-size: 22px;
+  }
+}
+@media (max-width: 600px) {
+  .membership-root .wrap {
+    padding: 0 18px;
+  }
+  .membership-root section {
+    scroll-margin-top: 64px;
+  }
+  .membership-root .nav-in {
+    padding: 12px 18px;
+    gap: 12px;
+  }
+  .membership-root .nav .logo {
+    height: 26px;
+  }
+  .membership-root .nav .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+  .membership-root .hero-in {
+    padding: 40px 0 52px;
+    gap: 30px;
+  }
+  .membership-root .hero-chips {
+    margin-bottom: 16px;
+  }
+  .membership-root .hero h1 {
+    font-size: 31px;
+    line-height: 1.2;
+  }
+  .membership-root .hero h1 .hl::after {
+    bottom: 3px;
+    height: 10px;
+  }
+  .membership-root .hero .lead {
+    font-size: 16px;
+    margin-top: 18px;
+    word-break: keep-all;
+  }
+  .membership-root .hero-cta {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .membership-root .hero-cta .btn {
+    width: 100%;
+  }
+  .membership-root .btn-lg {
+    font-size: 18px;
+    padding: 16px 26px;
+  }
+  .membership-root .offer {
+    padding: 22px;
+    border-radius: 20px;
+  }
+  .membership-root .cd {
+    gap: 7px;
+  }
+  .membership-root .cd .seg {
+    padding: 11px 0;
+    border-radius: 11px;
+  }
+  .membership-root .cd .seg .n {
+    font-size: 26px;
+  }
+  .membership-root .cd .seg .l {
+    font-size: 11px;
+  }
+  .membership-root .sec-head {
+    margin-bottom: 36px;
+  }
+  .membership-root .sec-head h2, .membership-root .final h2 {
+    font-size: 26px;
+  }
+  .membership-root .sec-head p {
+    font-size: 15.5px;
+  }
+  .membership-root .solution, .membership-root .benefits, .membership-root .proof, .membership-root .plans, .membership-root .reviews, .membership-root .roadmap, .membership-root .final, .membership-root .faq {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+  .membership-root .flow {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .membership-root .flow .arrow {
+    transform: rotate(90deg);
+  }
+  .membership-root .flow .messy {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .membership-root .bcard {
+    padding: 22px;
+  }
+  .membership-root .stat {
+    padding: 26px 20px;
+  }
+  .membership-root .stat .n {
+    font-size: 42px;
+  }
+  .membership-root .logo-chip {
+    height: 54px;
+    min-width: 120px;
+    font-size: 15px;
+  }
+  .membership-root .tabs {
+    gap: 8px;
+  }
+  .membership-root .tab {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  .membership-root .pcard {
+    padding: 26px 22px;
+  }
+  .membership-root .pcard.feat {
+    padding: 28px 22px;
+  }
+  .membership-root .arow .ahead {
+    padding: 18px 18px;
+    gap: 10px;
+  }
+  .membership-root .arow .ahead .nm {
+    font-size: 18px;
+  }
+  .membership-root .arow .ahead .pr {
+    font-size: 19px;
+  }
+  .membership-root .abody .agrid {
+    grid-template-columns: 1fr;
+  }
+  .membership-root .tnode .dot {
+    width: 58px;
+    height: 58px;
+    font-size: 20px;
+  }
+  .membership-root .fitem .q {
+    padding: 18px 18px;
+    font-size: 15.5px;
+  }
+  .membership-root .fitem .a {
+    padding-left: 46px;
+    padding-right: 18px;
+  }
+  .membership-root .rev-quote {
+    font-size: 14px;
+    padding: 13px 16px 16px;
+  }
+  .membership-root .final .cd {
+    max-width: 340px;
+  }
+  .membership-root .stickybar {
+    padding: 10px 0;
+  }
+  .membership-root .stickybar .in {
+    padding: 0 18px;
+    gap: 12px;
+  }
+  .membership-root .stickybar .txt {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .membership-root .stickybar .btn {
+    padding: 11px 16px;
+    font-size: 14px;
+  }
+  .membership-root .foot .row {
+    gap: 14px 20px;
+  }
+}
+
+/* ============================================================
+   모바일 디자인 개선 (≤600px) — PC 레이아웃 영향 없음.
+   1) 혜택 8카드 2단 압축  2) 후기 섹션 압축
+   3) 솔루션/로드맵 정렬     4) 여백·타이포 정리
+   기존 600px 블록 뒤에 두어 동일 우선순위에서 마지막 선언이 적용된다.
+   ============================================================ */
+@media (max-width: 600px) {
+  /* 4) 한글 제목이 단어 중간에서 줄바꿈되지 않도록(어절 단위 줄바꿈) */
+  .membership-root .sec-head h2, .membership-root .final h2, .membership-root .tnode h3, .membership-root .bcard h3 {
+    word-break: keep-all;
+  }
+
+  /* 1) 혜택 8카드 — 2단 압축 그리드 */
+  .membership-root .bgrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .membership-root .bcard {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+  .membership-root .bcard .ic {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 21px;
+    margin-bottom: 12px;
+  }
+  .membership-root .bcard h3 {
+    font-size: 15.5px;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .membership-root .bcard h3 .pill {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  .membership-root .bcard p {
+    font-size: 12.5px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .membership-root .bcard .tagline {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .membership-root .bcard-more {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  /* 3) 솔루션 flow — 간격 압축 */
+  .membership-root .flow {
+    gap: 12px;
+  }
+  .membership-root .flow .messy {
+    gap: 7px;
+  }
+  .membership-root .flow .chip {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .membership-root .flow .arrow {
+    font-size: 26px;
+  }
+  .membership-root .flow .pass {
+    padding: 16px 26px;
+    border-radius: 16px;
+  }
+  .membership-root .flow .pass .big {
+    font-size: 21px;
+  }
+
+  /* 3) 로드맵 — 좌측 정렬 세로 타임라인(가운데 정렬 빈 공간 제거) */
+  .membership-root .roadmap {
+    padding: 56px 0;
+  }
+  .membership-root .timeline {
+    margin-top: 20px;
+  }
+  .membership-root .tnodes {
+    gap: 8px;
+  }
+  .membership-root .tnode {
+    position: relative;
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-areas:
+      "dot mon"
+      "dot title"
+      "dot body";
+    column-gap: 16px;
+    text-align: left;
+    align-items: start;
+    padding-bottom: 24px;
+  }
+  /* 점과 점을 잇는 세로 연결선(top/bottom 앵커로 노드 높이에 자동 맞춤) */
+  .membership-root .tnode:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 25px;
+    top: 56px;
+    bottom: -8px;
+    width: 3px;
+    background: var(--g300);
+  }
+  .membership-root .tnode .dot {
+    grid-area: dot;
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+    margin: 0;
+    border-width: 4px;
+  }
+  .membership-root .tnode .mon {
+    grid-area: mon;
+    align-self: center;
+  }
+  .membership-root .tnode h3 {
+    grid-area: title;
+    font-size: 18px;
+    margin: 2px 0 6px;
+  }
+  .membership-root .tnode p {
+    grid-area: body;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* 2) 후기 — 이미지/미션 마퀴 카드 폭을 모바일에 맞게 축소 */
+  .membership-root .rev-quote {
+    padding: 12px 16px 15px;
+    font-size: 13.5px;
+  }
+  .membership-root .rev-sub {
+    margin: 36px auto 20px;
+  }
+  .membership-root .rev-sub h3 {
+    font-size: 20px;
+  }
+  .membership-root .rev-sub p {
+    font-size: 14px;
+  }
+  .membership-root .rev-note {
+    margin-top: 22px;
+    font-size: 12.5px;
+  }
+  .membership-root .rev-icard {
+    flex-basis: 86vw;
+    width: 86vw;
+  }
+  .membership-root .rev-icard .rev-shot {
+    height: 300px;
+  }
+  .membership-root .rev-icard .rev-quote {
+    padding: 13px 16px 22px;
+  }
+  .membership-root .rev-mcard {
+    flex: 0 0 80vw;
+    width: 80vw;
+  }
+
+  /* 상단(히어로) 좌우 마진 — .hero-in 의 padding 단축 지정이 .wrap 의 좌우
+     패딩을 덮어써 콘텐츠가 화면 끝에 붙던 문제 해결 */
+  .membership-root .hero-in {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  /* 비교표(matrix) — 가로 스크롤 + 헤더 셀 세로 정렬로 깨짐 방지 */
+  .membership-root .matrix .mrow {
+    min-width: 600px;
+  }
+  .membership-root .mrow > div {
+    padding: 14px 10px;
+    font-size: 13.5px;
+  }
+  .membership-root .mrow.head > div {
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 10px;
+  }
+  .membership-root .mrow.head .mhead-tag {
+    margin-bottom: 5px;
+  }
+  .membership-root .mname {
+    font-size: 15px;
+  }
+  .membership-root .mprice {
+    font-size: 12px;
+    margin-top: 1px;
+  }
+
+  /* 뷰인터 모달 — 모바일 좁은 폭에서 내용 잘림 방지 */
+  .membership-root .modal-head {
+    padding: 22px 18px 16px;
+    gap: 12px;
+  }
+  .membership-root .modal-body {
+    padding: 20px 18px 24px;
+  }
+  .membership-root .modal-foot {
+    padding: 14px 18px 18px;
+  }
+  /* 두 연습 모드 카드를 세로로 쌓음 */
+  .membership-root .vi-modes {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .membership-root .vi-mode {
+    padding: 16px;
+  }
+  /* 플랜·이용권 행: 라벨과 수량을 위아래로 쌓아 가로 넘침 제거 */
+  .membership-root .vi-alloc {
+    padding: 4px 16px;
+  }
+  .membership-root .vi-alloc .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 11px 0;
+  }
+}

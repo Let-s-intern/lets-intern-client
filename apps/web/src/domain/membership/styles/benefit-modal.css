@@ -1,0 +1,592 @@
+/* ===================== BENEFIT MODAL ===================== */
+.membership-root .bcard {
+  cursor: pointer;
+}
+.membership-root .bcard.soon {
+  cursor: pointer;
+}
+.membership-root .bcard-more {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--lc-blue);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: gap 0.14s ease;
+}
+.membership-root .bcard:hover .bcard-more {
+  gap: 9px;
+}
+.membership-root .bcard.soon .bcard-more {
+  color: var(--g500);
+}
+.membership-root .modal-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 22, 31, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.membership-root .modal-ov.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.membership-root .modal {
+  background: #fff;
+  border-radius: 24px;
+  width: min(860px, 100%);
+  min-width: 0;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(16px) scale(0.985);
+  transition: transform 0.26s cubic-bezier(0.25, 0.6, 0.3, 1);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.5);
+}
+.membership-root .modal-ov.open .modal {
+  transform: none;
+}
+.membership-root .modal-head {
+  padding: 28px 30px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #eef;
+}
+.membership-root .modal-head .ic {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex: 0 0 auto;
+}
+.membership-root .modal-head h3 {
+  font-size: 23px;
+  font-weight: 800;
+}
+.membership-root .modal-head p {
+  margin-top: 5px;
+  color: var(--g600);
+  font-weight: 500;
+  font-size: 15px;
+}
+.membership-root .modal-close {
+  margin-left: auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--g100);
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--g600);
+  flex: 0 0 auto;
+  transition: background 0.12s;
+}
+.membership-root .modal-close:hover {
+  background: var(--g300);
+}
+.membership-root .modal-body {
+  padding: 24px 30px 28px;
+  overflow-y: auto;
+}
+.membership-root .modal-body h4 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 14px;
+  color: var(--lc-ink);
+}
+.membership-root .m-para {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.62;
+  color: var(--g700);
+  margin-bottom: 16px;
+}
+.membership-root .m-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px 20px;
+  margin: 0 0 6px;
+}
+.membership-root .m-list.one {
+  grid-template-columns: 1fr;
+}
+.membership-root .m-list li {
+  display: flex;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--lc-ink);
+  line-height: 1.45;
+}
+.membership-root .m-list li::before {
+  content: \"✓\";
+  color: var(--lc-blue);
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+.membership-root .m-note {
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: var(--g600);
+  font-weight: 500;
+  line-height: 1.55;
+  background: var(--lc-tint-blue);
+  padding: 13px 15px;
+  border-radius: 12px;
+}
+.membership-root .m-note b {
+  color: var(--lc-blue);
+  font-weight: 700;
+}
+
+/* 렛츠런 스터디 유형(A·B) 카드 — 따뜻한 톤으로 두 유형을 구분 */
+.membership-root .stype-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 2px 0;
+}
+.membership-root .stype {
+  border: 1px solid #f1e6cf;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fffdf9;
+}
+.membership-root .stype-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  background: linear-gradient(90deg, #fff0d2, #fff8ec);
+}
+.membership-root .stype-num {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--lc-orange);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px -3px rgba(255, 111, 15, 0.55);
+}
+.membership-root .stype-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--g700);
+  letter-spacing: -0.02em;
+}
+.membership-root .stype-title b {
+  color: var(--lc-ink);
+  font-weight: 800;
+}
+.membership-root .stype-list {
+  list-style: none;
+  padding: 15px 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.membership-root .stype-list li {
+  position: relative;
+  padding-left: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--g700);
+  line-height: 1.5;
+}
+.membership-root .stype-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--lc-ink);
+  font-weight: 800;
+}
+.membership-root .stype-list li.hl {
+  color: var(--lc-orange);
+  font-weight: 800;
+}
+.membership-root .stype-list li.hl::before {
+  color: var(--lc-orange);
+}
+.membership-root .m-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.membership-root .m-gallery figure {
+  margin: 0;
+  border: 1px solid #eef;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.membership-root .m-gallery img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+.membership-root .m-gallery figcaption {
+  padding: 9px 11px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--lc-ink);
+}
+/* 가이드북 표지 갤러리 — 제목이 이미지에 포함돼 캡션 없이 3열(3+2) */
+.membership-root .m-books {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.membership-root .m-books figure {
+  margin: 0;
+  border: 1px solid #eef;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.membership-root .m-books img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+.membership-root .m-example {
+  background: var(--bg-cool);
+  border-radius: 14px;
+  padding: 8px 20px;
+}
+.membership-root .m-example .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 0;
+  border-bottom: 1px dashed #dfe3ee;
+}
+.membership-root .m-example .row:last-child {
+  border-bottom: none;
+}
+.membership-root .m-example .o {
+  color: var(--lc-orange);
+  font-weight: 800;
+}
+.membership-root .m-example .strike {
+  text-decoration: line-through;
+  color: var(--g500);
+  font-weight: 600;
+  margin-right: 8px;
+}
+.membership-root .m-example b {
+  color: var(--lc-blue);
+  font-weight: 800;
+}
+.membership-root .modal-foot {
+  padding: 16px 30px 22px;
+  border-top: 1px solid #eef;
+}
+.membership-root .modal-foot .btn {
+  width: 100%;
+}
+/* 갤러리 카드 클릭 링크 */
+.membership-root .m-gallery-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+}
+.membership-root .m-gallery-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -8px rgba(40, 60, 120, 0.28);
+}
+.membership-root .m-gallery-link figure {
+  cursor: pointer;
+}
+/* 푸터 — 주 버튼 아래 외부 링크 보조 버튼 */
+.membership-root .modal-foot-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.membership-root .modal-extbtn {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g600);
+  padding: 9px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition:
+    color 0.14s,
+    background 0.12s;
+}
+.membership-root .modal-extbtn:hover {
+  color: var(--lc-ink);
+  background: var(--g100);
+}
+/* 모달 안 단일 스크린샷 */
+.membership-root .m-shot {
+  margin: 14px 0 20px;
+  border: 1px solid #e7e9f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.membership-root .m-shot img {
+  width: 100%;
+  display: block;
+}
+
+/* 파트너 모달 이미지 위 소개 블록 */
+.membership-root .m-intro {
+  background: linear-gradient(135deg, #f0f4ff 0%, #f8f9ff 100%);
+  border: 1px solid #dde3f5;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 6px;
+}
+.membership-root .m-intro-hl {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  line-height: 1.4;
+  margin-bottom: 7px;
+}
+.membership-root .m-intro p {
+  font-size: 14px;
+  color: var(--g700);
+  line-height: 1.62;
+  font-weight: 500;
+}
+.membership-root .m-intro b {
+  color: var(--lc-blue);
+  font-weight: 700;
+}
+
+/* 슈퍼인턴 모달 — 혜택 2카드 */
+.membership-root .si-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.membership-root .si-card {
+  border: 1.5px solid #e7e9f0;
+  border-radius: 14px;
+  padding: 18px;
+  background: #fff;
+}
+.membership-root .si-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--lc-blue);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.membership-root .si-card strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--lc-ink);
+}
+.membership-root .si-card p {
+  font-size: 13px;
+  color: var(--g600);
+  line-height: 1.52;
+  font-weight: 500;
+}
+
+/* 산타토익 모달 — 통계 + 혜택 카드 */
+.membership-root .st-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.membership-root .st-stat {
+  background: var(--lc-tint-blue);
+  border-radius: 14px;
+  padding: 16px 14px;
+  text-align: center;
+}
+.membership-root .st-num {
+  display: block;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  margin-bottom: 4px;
+}
+.membership-root .st-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--g600);
+}
+.membership-root .st-offers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.membership-root .st-offer {
+  border: 1.5px solid #e7e9f0;
+  border-radius: 14px;
+  padding: 18px;
+  background: #fff;
+}
+.membership-root .st-offer-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.membership-root .st-offer strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--lc-ink);
+}
+.membership-root .st-offer p {
+  font-size: 13px;
+  color: var(--g600);
+  line-height: 1.52;
+  font-weight: 500;
+}
+
+/* 뷰인터 모달 — 두 가지 연습 모드 / 플랜별 제공 이용권 */
+.membership-root .vi-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.membership-root .vi-mode {
+  border: 1.5px solid #e7e9f0;
+  border-radius: 16px;
+  padding: 18px;
+  background: #fff;
+}
+.membership-root .vi-mode .tag {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 9px;
+}
+.membership-root .vi-mode h5 {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.membership-root .vi-mode .pts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.membership-root .vi-mode .pts li {
+  display: flex;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--lc-ink);
+}
+.membership-root .vi-mode .pts li span {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 2px 7px;
+  border-radius: 999px;
+  height: fit-content;
+  margin-top: 1px;
+}
+.membership-root .vi-clients {
+  margin-top: 6px;
+}
+.membership-root .vi-clients img {
+  width: 100%;
+  border: 1px solid #eef;
+  border-radius: 12px;
+  display: block;
+}
+.membership-root .vi-clients .cap {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--g500);
+  font-weight: 600;
+  margin-top: 10px;
+}
+.membership-root .vi-alloc {
+  background: var(--bg-cool);
+  border-radius: 14px;
+  padding: 6px 20px;
+  margin-bottom: 4px;
+}
+.membership-root .vi-alloc .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-bottom: 1px dashed #dfe3ee;
+}
+.membership-root .vi-alloc .row:last-child {
+  border-bottom: none;
+}
+.membership-root .vi-alloc .row .pl {
+  font-weight: 800;
+}
+.membership-root .vi-alloc .row .pl.feat {
+  color: var(--lc-blue);
+}
+.membership-root .vi-alloc .row .amt b {
+  color: var(--lc-blue);
+  font-weight: 800;
+}
