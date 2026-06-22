@@ -1,0 +1,266 @@
+/* =====================================================================
+   현직자 무료 세미나 — 라이브 세션 2회 카드
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   기존 --lc-* 토큰·eyebrow·sec-head·btn 패턴 재사용.
+
+   위계 전략:
+   - confirmed(LIVE 01): 흰 카드 + 오렌지 강조 + 그림자 → "지금 신청".
+   - tba(LIVE 02): 톤다운(쿨그레이 배경·점선) + "추후 공개" 1급 표시 → 사전 알림.
+   ===================================================================== */
+
+.membership-root .seminar {
+  padding: 74px 0;
+}
+
+.membership-root .sem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  max-width: 980px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+/* ---------- 카드 공통 ---------- */
+.membership-root .sem-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-radius: 22px;
+  padding: 26px 26px 24px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+}
+
+/* confirmed — 강조: 오렌지 테두리 + 위로 살짝 띄운 그림자 */
+.membership-root .sem-card[data-status='confirmed'] {
+  border-color: var(--cp-chal-bd, #ffd4c8);
+  box-shadow: 0 18px 44px -20px rgba(255, 111, 15, 0.45);
+}
+.membership-root .sem-card[data-status='confirmed']::before {
+  content: '';
+  display: block;
+  height: 4px;
+  width: 52px;
+  border-radius: 999px;
+  background: var(--rainbow);
+  margin-bottom: 2px;
+}
+
+/* tba — 톤다운: 쿨그레이 배경 + 점선 테두리(미정 신호) */
+.membership-root .sem-card[data-status='tba'] {
+  background: var(--bg-cool);
+  border-style: dashed;
+  border-color: var(--g300);
+}
+
+/* ---------- 카드 헤더 (LIVE 번호 + 상태) ---------- */
+.membership-root .sem-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.membership-root .sem-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: var(--lc-ink);
+}
+.membership-root .sem-live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--g300);
+}
+.membership-root .sem-card[data-status='confirmed'] .sem-live-dot {
+  background: var(--lc-orange);
+  box-shadow: 0 0 0 4px rgba(255, 111, 15, 0.18);
+  animation: sem-pulse 1.6s ease-in-out infinite;
+}
+@keyframes sem-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .sem-card[data-status='confirmed'] .sem-live-dot {
+    animation: none;
+  }
+}
+
+.membership-root .sem-status {
+  font-weight: 800;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+.membership-root .sem-status.is-open {
+  background: var(--lc-orange);
+  color: #fff;
+}
+.membership-root .sem-status.is-soon {
+  background: var(--g100);
+  color: var(--g500);
+}
+
+/* ---------- 정보 행 (날짜·시간·주제) ---------- */
+.membership-root .sem-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.membership-root .sem-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  word-break: keep-all;
+}
+.membership-root .sem-row-icon {
+  flex: none;
+  width: 20px;
+  text-align: center;
+  font-size: 15px;
+}
+.membership-root .sem-row-text {
+  flex: 1;
+  line-height: 1.4;
+}
+/* 미정 행 — 회색 + "추후 공개" 핀 */
+.membership-root .sem-row.is-tba .sem-row-text {
+  color: var(--g500);
+  font-weight: 500;
+}
+.membership-root .sem-soon-pill {
+  flex: none;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--g600);
+  background: #fff;
+  border: 1.5px dashed var(--g300);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+/* ---------- 멘토 카드 ---------- */
+.membership-root .sem-mentor {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: auto;
+  padding: 14px 15px;
+  border-radius: 16px;
+  background: var(--g100);
+  border: 1.5px solid transparent;
+}
+.membership-root .sem-card[data-status='confirmed'] .sem-mentor {
+  background: #fff7f4;
+  border-color: var(--cp-chal-bd, #ffd4c8);
+}
+.membership-root .sem-mentor.is-tba {
+  background: #fff;
+  border: 1.5px dashed var(--g300);
+}
+.membership-root .sem-mentor-avatar {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tint-peach);
+}
+.membership-root .sem-mentor.is-tba .sem-mentor-avatar {
+  background: var(--g100);
+}
+.membership-root .sem-mentor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.membership-root .sem-mentor-initial {
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--lc-orange-deep);
+}
+.membership-root .sem-mentor.is-tba .sem-mentor-initial {
+  color: var(--g500);
+}
+.membership-root .sem-mentor-body {
+  min-width: 0;
+}
+.membership-root .sem-mentor-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--lc-ink);
+}
+.membership-root .sem-mentor.is-tba .sem-mentor-name {
+  color: var(--g500);
+}
+.membership-root .sem-mentor-tag {
+  font-weight: 700;
+  font-size: 10.5px;
+  color: var(--lc-orange-deep);
+  background: var(--tint-peach);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.membership-root .sem-mentor-profile {
+  margin-top: 3px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--g600);
+  word-break: keep-all;
+}
+
+/* ---------- CTA ---------- */
+.membership-root .sem-cta {
+  width: 100%;
+  margin-top: 2px;
+}
+.membership-root .sem-cta:disabled {
+  background: var(--g100);
+  color: var(--g500);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.membership-root .sem-cta:disabled:hover {
+  transform: none;
+}
+.membership-root .sem-cta-note {
+  font-weight: 600;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 760px) {
+  .membership-root .sem-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .membership-root .seminar {
+    padding: 56px 0;
+  }
+  .membership-root .sem-card {
+    padding: 22px 20px 20px;
+  }
+}
