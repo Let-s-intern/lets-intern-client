@@ -99,7 +99,7 @@ function MarqueeRow({
 }) {
   return (
     <div className="rev-row">
-      <div className={`rev-track${reverse ? 'reverse' : ''}`}>
+      <div className={`rev-track ${reverse ? 'reverse' : ''}`}>
         {[...cards, ...cards].map((r, i) => (
           <article className="qcard rev-mcard" key={i}>
             <div className="qtop">
