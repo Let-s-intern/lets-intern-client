@@ -1,3 +1,4 @@
+import { MonitorPlay } from 'lucide-react';
 import { formatKRW } from '../data/membership';
 import { openPlanSheet } from '../lib/planSheet';
 
@@ -11,7 +12,7 @@ export default function VodOptionCard() {
   return (
     <div className="vod-option rv">
       <span className="vod-ic" aria-hidden>
-        🎬
+        <MonitorPlay size={28} strokeWidth={2} />
       </span>
 
       <div className="vod-body">

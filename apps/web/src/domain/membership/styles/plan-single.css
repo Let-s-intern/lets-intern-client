@@ -154,14 +154,14 @@
 }
 .membership-root .vod-ic {
   flex: 0 0 auto;
-  width: 62px;
-  height: 62px;
+  width: 56px;
+  height: 56px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
-  background: var(--tint-lav);
-  border-radius: 16px;
+  background: var(--tint-blue);
+  border-radius: 14px;
+  color: var(--lc-blue);
 }
 .membership-root .vod-body {
   flex: 1 1 240px;
