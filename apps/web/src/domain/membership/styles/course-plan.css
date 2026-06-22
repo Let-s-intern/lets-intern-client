@@ -401,17 +401,18 @@
   word-break: keep-all;
 }
 
-/* 다크 "한 줄 동선" 푸터 */
+/* "한 줄 동선" 푸터 — 페이지 다른 영역과 동일한 라이트 카드 톤(연한 틴트) */
 .membership-root .wk-flow {
-  background: #1b1e2b;
+  background: var(--bg-cool);
+  border: 1px solid #e7e9f0;
   border-radius: 20px;
   padding: 30px 32px;
   margin-top: 6px;
-  color: #fff;
+  color: var(--lc-ink);
 }
 .membership-root .wk-flow p {
   font-size: 14.5px;
-  color: #aeb4c8;
+  color: var(--g600);
   font-weight: 500;
   line-height: 1.85;
 }
@@ -419,23 +420,23 @@
   display: inline-block;
   font-weight: 800;
   font-size: 13px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--lc-blue);
+  background: var(--tint-blue);
   padding: 4px 12px;
   border-radius: 999px;
   margin-right: 12px;
 }
 .membership-root .wk-flow-chip {
-  color: #e7e9f0;
-  font-weight: 600;
+  color: var(--lc-ink);
+  font-weight: 700;
   white-space: nowrap;
 }
 .membership-root .wk-flow-chip:last-child {
-  color: var(--lc-yellow);
+  color: var(--lc-orange-deep);
   font-weight: 800;
 }
 .membership-root .wk-flow-arrow {
-  color: #5b6178;
+  color: var(--g500);
   font-weight: 700;
 }
 
