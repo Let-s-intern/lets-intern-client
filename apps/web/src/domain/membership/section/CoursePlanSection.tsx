@@ -1,34 +1,8 @@
 import { useState } from 'react';
-import {
-  COURSE_PLAN_HEADER,
-  OWNER_LEGEND,
-  type CoursePlanViewId,
-} from '../data/coursePlan';
+import { COURSE_PLAN_HEADER, type CoursePlanViewId } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
 import CoursePlanMatrix from '../ui/CoursePlanMatrix';
 import CoursePlanTimeline from '../ui/CoursePlanTimeline';
-
-// owner 4종 범례 — 매트릭스·타임라인이 공유하는 색 의미를 한 줄로 안내.
-// challenge/challenge-deep(멤버십이 메우는 구간)을 가장 강조한다.
-function CoursePlanLegend() {
-  return (
-    <div className="cp-legend">
-      {OWNER_LEGEND.map((item) => (
-        <span
-          className="cp-legend-item"
-          data-owner={item.owner}
-          key={item.owner}
-        >
-          <span className="cp-legend-dot" data-owner={item.owner} />
-          <span className="cp-legend-text">
-            <span className="cp-legend-label">{item.label}</span>
-            <span className="cp-legend-hint">{item.hint}</span>
-          </span>
-        </span>
-      ))}
-    </div>
-  );
-}
 
 export default function CoursePlanSection() {
   const [view, setView] = useState<CoursePlanViewId>('matrix');
@@ -44,7 +18,6 @@ export default function CoursePlanSection() {
 
         <div className="rv">
           <CoursePlanToggle active={view} onChange={setView} />
-          <CoursePlanLegend />
 
           {/* key 로 뷰 전환마다 페이드 애니메이션을 재실행(.rv 리빌과 독립) */}
           <div className="cp-view" key={view}>

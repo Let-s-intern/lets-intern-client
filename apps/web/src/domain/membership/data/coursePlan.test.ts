@@ -4,7 +4,6 @@ import {
   MATRIX_CELLS,
   matrixCellKey,
   MONTH_GROUPS,
-  OWNER_LEGEND,
   Owner,
   STEPS,
   WEEKS,
@@ -89,13 +88,6 @@ describe('coursePlan 데이터 무결성', () => {
       for (const item of WEEKS) {
         expect(item.title.length).toBeGreaterThan(0);
       }
-    });
-  });
-
-  describe('범례', () => {
-    it('범례는 4종 owner 를 모두 다룬다', () => {
-      const legendOwners = OWNER_LEGEND.map((l) => l.owner).sort();
-      expect(legendOwners).toEqual([...VALID_OWNERS].sort());
     });
   });
 });

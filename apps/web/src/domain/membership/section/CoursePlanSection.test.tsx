@@ -46,15 +46,4 @@ describe('CoursePlanSection 토글 전환', () => {
     expect(timelineBtn).toHaveAttribute('aria-pressed', 'true');
     expect(matrixBtn).toHaveAttribute('aria-pressed', 'false');
   });
-
-  it('owner 범례 3종(직접/무료 자료/챌린지)을 표시한다', () => {
-    render(<CoursePlanSection />);
-    const labels = screen
-      .getAllByText(/^(직접|무료 자료|챌린지)$/)
-      .map((el) => el.textContent);
-    // 범례에 세 라벨이 모두 한 번 이상 등장
-    expect(labels).toEqual(
-      expect.arrayContaining(['직접', '무료 자료', '챌린지']),
-    );
-  });
 });

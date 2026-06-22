@@ -85,24 +85,6 @@ export interface MonthGroup {
   badgeFg: string;
 }
 
-/** 수행 주체 범례 (라벨 + 한 줄 의미). 매트릭스·타임라인·범례가 공유. */
-export interface OwnerLegend {
-  owner: Owner;
-  label: string;
-  hint: string;
-}
-
-export const OWNER_LEGEND: OwnerLegend[] = [
-  { owner: 'challenge', label: '챌린지', hint: '멤버십이 함께하는 구간' },
-  {
-    owner: 'challenge-deep',
-    label: '챌린지 · 심화',
-    hint: '대기업 특화 등 집중 코스',
-  },
-  { owner: 'free', label: '무료 자료', hint: '무료 워크북·가이드 제공' },
-  { owner: 'self', label: '직접', hint: '스스로 준비하는 구간' },
-];
-
 export const STEPS: Step[] = [
   { id: 'step01', no: '01', label: '방향 설정', phase: 'prep' },
   { id: 'step02', no: '02', label: '기초 다지기', phase: 'prep' },

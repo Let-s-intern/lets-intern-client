@@ -38,62 +38,6 @@
   --cp-deep-tag-fg: #fff;
 }
 
-/* ---------- 범례 ---------- */
-.membership-root .cp-legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px 12px;
-  margin: 0 auto 30px;
-  max-width: 820px;
-}
-.membership-root .cp-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  border: 1.5px solid var(--g300);
-  border-radius: 999px;
-  padding: 7px 14px 7px 8px;
-}
-.membership-root .cp-legend-dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  flex: none;
-}
-.membership-root .cp-legend-dot[data-owner='self'] {
-  background: var(--cp-self-tag-bg);
-  border: 1.5px solid var(--cp-self-bd);
-}
-.membership-root .cp-legend-dot[data-owner='free'] {
-  background: var(--cp-free-tag-bg);
-}
-.membership-root .cp-legend-dot[data-owner='challenge'] {
-  background: var(--cp-chal-tag-bg);
-}
-.membership-root .cp-legend-dot[data-owner='challenge-deep'] {
-  background: var(--cp-deep-tag-bg);
-}
-.membership-root .cp-legend-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
-}
-.membership-root .cp-legend-label {
-  font-weight: 800;
-  font-size: 14px;
-}
-.membership-root .cp-legend-hint {
-  font-size: 11.5px;
-  color: var(--g500);
-}
-.membership-root .cp-legend-item[data-owner='challenge'],
-.membership-root .cp-legend-item[data-owner='challenge-deep'] {
-  border-color: var(--cp-chal-bd);
-  background: #fff7f4;
-}
-
 /* ---------- 토글 ---------- */
 .membership-root .cp-toggle {
   display: inline-flex;
@@ -556,12 +500,6 @@
   .membership-root .cp-toggle-btn {
     padding: 9px 18px;
     font-size: 14px;
-  }
-  .membership-root .cp-legend {
-    gap: 8px;
-  }
-  .membership-root .cp-legend-item {
-    padding: 6px 12px 6px 7px;
   }
   /* 매트릭스: STEP 1열 */
   .membership-root .cpm-cells {
