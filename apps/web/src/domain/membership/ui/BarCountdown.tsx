@@ -11,10 +11,19 @@ function calc(deadline: Date) {
   };
 }
 
+const ZERO: ReturnType<typeof calc> = {
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+};
+
 export default function BarCountdown({ deadline }: { deadline: Date }) {
-  const [t, setT] = useState(() => calc(deadline));
+  // SSR/CSR 일치를 위해 마운트 전에는 0으로 고정 렌더(Date.now()는 클라이언트에서만 호출).
+  const [t, setT] = useState<ReturnType<typeof calc>>(ZERO);
 
   useEffect(() => {
+    setT(calc(deadline));
     const timer = setInterval(() => setT(calc(deadline)), 1000);
     return () => clearInterval(timer);
   }, [deadline]);
