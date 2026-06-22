@@ -41,10 +41,13 @@ const buildDetailUrl = (magnetId: number, title: string) =>
 const isMagnetExpired = (row: MagnetListItem) =>
   !!row.endDate && dayjs(row.endDate).isBefore(dayjs());
 
-// 출시알림(LAUNCH_ALERT)은 BE에서 구독(신청) 게이트를 우회해 항상 신청 가능하다.
+// 출시알림(LAUNCH_ALERT)은 노출 종료일까지만 노출·구독되며 접속 가능 플래그는 안 본다.
+// (구독 신청 자체는 BE에서 종료 후에도 우회 허용되지만, 운영상 노출 기준으로 표시)
 // 그 외 타입은 접속 가능 + 노출 기간을 모두 만족해야 접속된다.
 const isMagnetAccessibleNow = (row: MagnetListItem) =>
-  row.type === 'LAUNCH_ALERT' || (row.isAccessible && !isMagnetExpired(row));
+  row.type === 'LAUNCH_ALERT'
+    ? !isMagnetExpired(row)
+    : row.isAccessible && !isMagnetExpired(row);
 
 // 어드민이 한눈에 이해할 수 있는 직관적 상태로 묶는다.
 // - 구독 가능 : 출시알림(LAUNCH_ALERT) — 구독은 BE에서 항상 허용(노출/기간과 무관)
@@ -55,7 +58,10 @@ const isMagnetAccessibleNow = (row: MagnetListItem) =>
 const getMagnetAccessState = (
   row: MagnetListItem,
 ): { label: string; color: 'success' | 'info' | 'warning' | 'default' } => {
-  if (row.type === 'LAUNCH_ALERT') return { label: '구독 가능', color: 'info' };
+  if (row.type === 'LAUNCH_ALERT')
+    return isMagnetExpired(row)
+      ? { label: '만료', color: 'default' }
+      : { label: '구독 가능', color: 'info' };
   if (isMagnetExpired(row)) return { label: '만료', color: 'default' };
   if (!row.isAccessible) return { label: '접속 차단', color: 'warning' };
   return row.isVisible
