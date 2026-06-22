@@ -1,3 +1,13 @@
+import type { LucideIcon } from 'lucide-react';
+import {
+  BookOpen,
+  Briefcase,
+  FileText,
+  Handshake,
+  Target,
+  Users,
+  Zap,
+} from 'lucide-react';
 import dayjs from '../lib/dayjs';
 import { openPlanSheet } from '../lib/planSheet';
 import {
@@ -12,8 +22,20 @@ import {
   PLAN_FOOTNOTE,
   PLAN_NAME,
   PLAN_PRICE,
+  type PlanBenefitIcon,
 } from '../data/plans';
 import VodOptionCard from '../ui/VodOptionCard';
+
+// 혜택 아이콘 식별자 → lucide 컴포넌트 매핑(모듈 스코프로 고정, 리렌더 시 재생성 방지).
+const BENEFIT_ICONS: Record<PlanBenefitIcon, LucideIcon> = {
+  fileText: FileText,
+  target: Target,
+  briefcase: Briefcase,
+  bookOpen: BookOpen,
+  users: Users,
+  handshake: Handshake,
+  zap: Zap,
+};
 
 // 단일 올패스 플랜 표시 섹션. 등급 비교/탭 제거 → 하나의 상품 카드.
 // 가격 위계(정가 취소선 → 특가 → 할인 배지)와 혜택 7종 스캔형 그리드로 구성.
@@ -57,15 +79,18 @@ export default function PlansSection() {
           </div>
 
           <ul className="allpass-benefits">
-            {PLAN_BENEFITS.map((b) => (
-              <li key={b.title} className="allpass-benefit">
-                <span className="allpass-ic" aria-hidden>
-                  {b.icon}
-                </span>
-                <span className="allpass-bt">{b.title}</span>
-                <span className="allpass-bd">{b.detail}</span>
-              </li>
-            ))}
+            {PLAN_BENEFITS.map((b) => {
+              const Icon = BENEFIT_ICONS[b.icon];
+              return (
+                <li key={b.title} className="allpass-benefit">
+                  <span className="allpass-ic" aria-hidden>
+                    <Icon size={18} strokeWidth={2} />
+                  </span>
+                  <span className="allpass-bt">{b.title}</span>
+                  <span className="allpass-bd">{b.detail}</span>
+                </li>
+              );
+            })}
           </ul>
 
           <p className="allpass-foot">{PLAN_FOOTNOTE}</p>
