@@ -10,6 +10,7 @@ import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
 import './styles/solution.css';
+import './styles/course-plan.css';
 import './styles/benefits.css';
 import './styles/benefit-modal.css';
 import './styles/proof.css';
@@ -29,6 +30,7 @@ import { startHeaderSync } from './lib/headerSync';
 import MembershipAnimations from './ui/MembershipAnimations';
 import HeroSection from './section/HeroSection';
 import SolutionSection from './section/SolutionSection';
+import CoursePlanSection from './section/CoursePlanSection';
 import BenefitsSection from './section/BenefitsSection';
 import PartnerBenefitsSection from './section/PartnerBenefitsSection';
 import PlansSection from './section/PlansSection';
@@ -49,6 +51,7 @@ export default function MembershipLanding() {
           <MembershipAnimations />
           <HeroSection />
           <SolutionSection />
+          <CoursePlanSection />
           <BenefitsSection />
           <PartnerBenefitsSection />
           <PlansSection />
