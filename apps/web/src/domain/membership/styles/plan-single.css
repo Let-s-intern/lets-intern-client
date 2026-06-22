@@ -4,13 +4,35 @@
 }
 
 .membership-root .allpass {
+  position: relative;
   max-width: 720px;
   margin: 0 auto;
   background: linear-gradient(180deg, #fbfcff, #fff);
   border: 2.5px solid var(--lc-blue);
   border-radius: 24px;
   padding: 40px 40px 36px;
-  box-shadow: 0 26px 60px -28px rgba(74, 118, 255, 0.5);
+  /* 다중 box-shadow 로 파란 보더 바깥으로 번지는 네온 글로우(가까울수록 진하고 멀수록 흐려짐) */
+  box-shadow:
+    0 0 0 1px rgba(74, 118, 255, 0.25),
+    0 0 14px -2px rgba(74, 118, 255, 0.55),
+    0 0 34px 0 rgba(74, 118, 255, 0.32),
+    0 0 64px 8px rgba(74, 118, 255, 0.18),
+    0 26px 60px -28px rgba(74, 118, 255, 0.5);
+}
+/* ::before blur 레이어 — 카드 뒤로 넓게 퍼지는 소프트 블룸(네온사인 잔광) */
+.membership-root .allpass::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -1;
+  border-radius: 32px;
+  background: radial-gradient(
+    60% 55% at 50% 45%,
+    rgba(74, 118, 255, 0.4),
+    rgba(74, 118, 255, 0) 70%
+  );
+  filter: blur(22px);
+  pointer-events: none;
 }
 
 .membership-root .allpass-head {
@@ -239,6 +261,22 @@
   .membership-root .allpass {
     padding: 28px 22px 26px;
     border-radius: 20px;
+    /* 모바일에서는 글로우 반경을 줄여 과하지 않게 */
+    box-shadow:
+      0 0 0 1px rgba(74, 118, 255, 0.25),
+      0 0 12px -2px rgba(74, 118, 255, 0.5),
+      0 0 28px 2px rgba(74, 118, 255, 0.22),
+      0 18px 44px -26px rgba(74, 118, 255, 0.45);
+  }
+  .membership-root .allpass::before {
+    inset: -6px;
+    border-radius: 26px;
+    filter: blur(16px);
+    background: radial-gradient(
+      60% 55% at 50% 45%,
+      rgba(74, 118, 255, 0.32),
+      rgba(74, 118, 255, 0) 70%
+    );
   }
   .membership-root .allpass-now {
     font-size: 38px;
