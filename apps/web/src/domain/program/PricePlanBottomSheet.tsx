@@ -237,7 +237,7 @@ function PricePlanBottomSheet({
         >
           <RadioGroup
             aria-labelledby="price-plan-group-label"
-            defaultValue={defaultValue}
+            value={pricePlan}
             onChange={(_, v) => setPricePlan(v as ChallengePricePlan)}
           >
             {lightPriceInfo && (

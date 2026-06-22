@@ -1,0 +1,536 @@
+/* =====================================================================
+   하반기 공채 13주 합격 플랜 — 전체 플랜(매트릭스) / 월별 플랜(타임라인) / 토글
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   기존 --lc-* / --g* / --tint-* / --num 토큰 재사용.
+   ===================================================================== */
+
+.membership-root .courseplan {
+  padding: 74px 0;
+  background: var(--bg-cool);
+}
+
+/* ---------- owner(수행 주체) 색 토큰 — 매트릭스·타임라인·범례 공유 ----------
+   self=중립 / free=정보(하늘) / challenge=멤버십 강조(오렌지) /
+   challenge-deep=심화(더 진한 오렌지). 멤버십이 메우는 챌린지 계열을 가장 강조. */
+.membership-root .courseplan {
+  --cp-self-bg: #fff;
+  --cp-self-bd: var(--g300);
+  --cp-self-fg: var(--g700);
+  --cp-self-tag-bg: var(--g100);
+  --cp-self-tag-fg: var(--g700);
+
+  --cp-free-bg: var(--tint-ice);
+  --cp-free-bd: #bfe8fb;
+  --cp-free-fg: #0577a3;
+  --cp-free-tag-bg: #d6f1fc;
+  --cp-free-tag-fg: #0577a3;
+
+  --cp-chal-bg: var(--tint-peach);
+  --cp-chal-bd: #ffd4c8;
+  --cp-chal-fg: var(--lc-orange-deep);
+  --cp-chal-tag-bg: var(--lc-orange);
+  --cp-chal-tag-fg: #fff;
+
+  --cp-deep-bg: #fff1ea;
+  --cp-deep-bd: #ffc0a8;
+  --cp-deep-fg: #c9430a;
+  --cp-deep-tag-bg: var(--lc-orange-deep);
+  --cp-deep-tag-fg: #fff;
+}
+
+/* ---------- 토글 ---------- */
+.membership-root .cp-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 999px;
+  margin: 0 auto 30px;
+}
+.membership-root .cp-toggle-wrap {
+  display: flex;
+  justify-content: center;
+}
+.membership-root .cp-toggle-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--g600);
+  padding: 10px 24px;
+  border-radius: 999px;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.membership-root .cp-toggle-btn[aria-pressed='true'] {
+  background: var(--lc-blue);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(74, 118, 255, 0.6);
+}
+
+/* ---------- 뷰 전환 페이드 (스크롤 리빌 .rv 와 독립) ---------- */
+.membership-root .cp-view {
+  animation: cp-fade-in 0.32s ease both;
+}
+@keyframes cp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .cp-view {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+   전체 플랜 — 매트릭스 (재디자인)
+   데스크탑: 카테고리 행 × STEP 5열 그리드. 시안의 빽빽함을 덜고
+   카드형 셀 + 카테고리 라벨 블록 + STEP 헤더로 위계를 명확히.
+   모바일: 카테고리 카드로 자연 분해되어 STEP 칸이 세로로 쌓임(가로 스크롤 없음).
+   ===================================================================== */
+.membership-root .cpm {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* STEP 헤더 행 (데스크탑 전용) */
+.membership-root .cpm-steps {
+  display: grid;
+  grid-template-columns: 168px repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.membership-root .cpm-steps-corner {
+  /* 카테고리 라벨 열 자리 비움 */
+}
+.membership-root .cpm-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  border-radius: 13px;
+  padding: 11px 8px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+}
+.membership-root .cpm-step-no {
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--lc-blue);
+}
+.membership-root .cpm-step-label {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--lc-ink);
+}
+
+/* 본문 — 카테고리 행 모음 */
+.membership-root .cpm-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.membership-root .cpm-row {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* 카테고리 라벨 블록 */
+.membership-root .cpm-cat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.membership-root .cpm-cat-label {
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--lc-ink);
+  word-break: keep-all;
+  line-height: 1.3;
+}
+.membership-root .cpm-cat-hint {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--g500);
+}
+
+/* STEP 5칸 */
+.membership-root .cpm-cells {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.membership-root .cpm-step-cell {
+  display: flex;
+  flex-direction: column;
+}
+/* 모바일에서만 노출되는 STEP 태그(데스크탑은 상단 헤더가 대신) */
+.membership-root .cpm-step-tag {
+  display: none;
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--lc-blue);
+  margin-bottom: 6px;
+}
+
+/* 한 칸 안의 셀(들) — document/step03 는 2셀 세로 적층 */
+.membership-root .cpm-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+/* 셀 기본 = 직접 준비 영역: 흐리게(회색)로 뒤로 물러나게 한다(태그 없음). */
+.membership-root .cpm-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  border-radius: 13px;
+  padding: 13px 13px 12px;
+  background: #f6f7fa;
+  border: 1.5px solid #eceef4;
+}
+/* 멤버십 제공 셀 — 밝게 강조 + "멤버십 제공" 스티커가 붙은 듯한 모서리 라벨 */
+.membership-root .cpm-cell[data-provided='true'] {
+  background: linear-gradient(180deg, #eef2ff, #ffffff);
+  border-color: #c6d2ff;
+  box-shadow: 0 12px 26px -18px rgba(74, 118, 255, 0.65);
+}
+.membership-root .cpm-cell-title {
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--g600);
+  word-break: keep-all;
+}
+.membership-root .cpm-cell-desc {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--g500);
+  word-break: keep-all;
+}
+.membership-root .cpm-cell[data-provided='true'] .cpm-cell-title {
+  color: var(--lc-ink);
+}
+.membership-root .cpm-cell[data-provided='true'] .cpm-cell-desc {
+  color: var(--g600);
+}
+/* "멤버십 제공" 스티커 — 셀 우상단 모서리에 비스듬히 붙인 듯한 라벨 */
+.membership-root .cpm-cell-tag {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  padding: 4px 9px;
+  border-radius: 7px;
+  box-shadow: 0 6px 14px -5px rgba(74, 118, 255, 0.7);
+  transform: rotate(3deg);
+  white-space: nowrap;
+  z-index: 2;
+}
+.membership-root .cpm-cell-tag::before {
+  content: '✓';
+  font-size: 9px;
+}
+/* 하단 안내 — 흐리게: 태그 없는 단계는 직접 준비 영역 */
+.membership-root .cpm-note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--g500);
+  word-break: keep-all;
+}
+.membership-root .cpm-note-chip {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-right: 3px;
+}
+
+/* =====================================================================
+   월별 플랜 — 타임라인 (기존 HTML wk-* 디자인 그대로 구현)
+   --m-accent / --m-badge-* 는 각 월 블록 래퍼에 인라인 주입.
+   ===================================================================== */
+.membership-root .wk-timeline {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.membership-root .wk-month {
+  background: #fff;
+  border: 1px solid #e7e9f0;
+  border-radius: 22px;
+  padding: 26px 28px 28px;
+}
+
+.membership-root .wk-mhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.membership-root .wk-mtitle {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  min-width: 0;
+}
+.membership-root .wk-mon {
+  font-family: var(--num);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--m-accent);
+  flex: 0 0 auto;
+}
+.membership-root .wk-mtitle-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.membership-root .wk-mtitle b {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--lc-ink);
+}
+.membership-root .wk-mtitle .wk-msub {
+  font-size: 14px;
+  color: var(--g500);
+  font-weight: 600;
+}
+.membership-root .wk-badge {
+  font-family: var(--num);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  background: var(--m-badge-bg);
+  color: var(--m-badge-fg);
+}
+.membership-root .wk-line {
+  height: 3px;
+  border-radius: 2px;
+  margin: 14px 0 18px;
+  background: var(--m-accent);
+}
+.membership-root .wk-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.membership-root .wk-card {
+  background: #fff;
+  border: 1px solid #e7e9f0;
+  border-left: 4px solid var(--m-accent);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.membership-root .wk-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.membership-root .wk-no {
+  font-family: var(--num);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--m-accent);
+  letter-spacing: -0.02em;
+}
+.membership-root .wk-wk {
+  font-family: var(--num);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--g500);
+  letter-spacing: 0.06em;
+}
+.membership-root .wk-ch {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 7px;
+  background: var(--m-accent);
+  color: #fff;
+}
+.membership-root .wk-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.membership-root .wk-card-desc {
+  font-size: 13px;
+  color: var(--g600);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+/* "한 줄 동선" 푸터 — 페이지 다른 영역과 동일한 라이트 카드 톤(연한 틴트) */
+.membership-root .wk-flow {
+  background: var(--bg-cool);
+  border: 1px solid #e7e9f0;
+  border-radius: 20px;
+  padding: 30px 32px;
+  margin-top: 6px;
+  color: var(--lc-ink);
+}
+.membership-root .wk-flow p {
+  font-size: 14.5px;
+  color: var(--g600);
+  font-weight: 500;
+  line-height: 1.85;
+}
+.membership-root .wk-flow-label {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-right: 12px;
+}
+.membership-root .wk-flow-chip {
+  color: var(--lc-ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.membership-root .wk-flow-chip:last-child {
+  color: var(--lc-orange-deep);
+  font-weight: 800;
+}
+.membership-root .wk-flow-arrow {
+  color: var(--g500);
+  font-weight: 700;
+}
+
+/* 플레이북 안내 풋노트 */
+.membership-root .cp-playbook {
+  max-width: 1080px;
+  margin: 30px auto 0;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--g600);
+  font-weight: 500;
+}
+.membership-root .cp-playbook strong {
+  color: var(--lc-orange-deep);
+  font-weight: 800;
+}
+
+/* ===================== 반응형 ===================== */
+/* 매트릭스: STEP 4열 카드가 좁아지는 920px 부근에서 카테고리 카드로 분해 */
+@media (max-width: 920px) {
+  .membership-root .cpm-steps {
+    display: none;
+  }
+  .membership-root .cpm-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: #fff;
+    border: 1.5px solid var(--g300);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .membership-root .cpm-cat {
+    border: none;
+    border-bottom: 1.5px solid var(--g100);
+    border-radius: 0;
+    padding: 0 0 12px;
+    margin-bottom: 14px;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .membership-root .cpm-cells {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .membership-root .cpm-step-tag {
+    display: block;
+  }
+}
+
+/* 월별: 4열 → 2열 */
+@media (max-width: 920px) {
+  .membership-root .wk-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .membership-root .courseplan {
+    padding: 56px 0;
+  }
+  .membership-root .cp-toggle-btn {
+    padding: 9px 18px;
+    font-size: 14px;
+  }
+  /* 매트릭스: STEP 1열 */
+  .membership-root .cpm-cells {
+    grid-template-columns: 1fr;
+  }
+  /* 월별: 2열 → 1열, 큰 숫자 축소 */
+  .membership-root .wk-cards {
+    grid-template-columns: 1fr;
+  }
+  .membership-root .wk-month {
+    padding: 22px 20px 24px;
+  }
+  .membership-root .wk-mon {
+    font-size: 28px;
+  }
+  .membership-root .wk-mhead {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .membership-root .wk-flow {
+    padding: 24px 22px;
+  }
+}

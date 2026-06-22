@@ -27,7 +27,7 @@ const DEFAULT_LABEL_SX = {
     fontWeight: 500,
     color: '#2A2D34',
     fontFamily: 'Pretendard Variable',
-    'white-space': 'pre-line',
+    whiteSpace: 'pre-line',
   },
 };
 

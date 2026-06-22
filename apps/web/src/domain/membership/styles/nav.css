@@ -1,0 +1,54 @@
+/* ===================== NAV / STICKY ===================== */
+.membership-root .nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #eee;
+}
+.membership-root .nav-in {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.membership-root .nav .logo {
+  height: 30px;
+  width: auto;
+}
+.membership-root .nav-deadline {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--g600);
+}
+.membership-root .nav-deadline .mini-cd {
+  display: flex;
+  gap: 5px;
+}
+.membership-root .nav-deadline .seg {
+  background: var(--lc-ink);
+  color: #fff;
+  border-radius: 7px;
+  padding: 3px 7px;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 30px;
+  text-align: center;
+}
+.membership-root .nav .btn {
+  padding: 11px 22px;
+  font-size: 15px;
+  border-radius: 11px;
+}
+@media (max-width: 760px) {
+  .membership-root .nav-deadline {
+    display: none;
+  }
+}

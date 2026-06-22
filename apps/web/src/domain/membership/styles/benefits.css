@@ -1,0 +1,95 @@
+/* ===================== BENEFITS ===================== */
+.membership-root .benefits {
+  padding: 30px 0 84px;
+}
+.membership-root .bgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.membership-root .bcard {
+  background: #fff;
+  border: 1px solid #eef;
+  border-radius: 20px;
+  padding: 28px;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+  position: relative;
+  overflow: hidden;
+}
+.membership-root .bcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -22px rgba(40, 60, 120, 0.35);
+}
+.membership-root .bcard .ic {
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27px;
+  margin-bottom: 18px;
+}
+/* 아이콘을 마스크로 단색(다크) 렌더 — 소스 SVG 색과 무관하게 일관된 심플 아이콘.
+   혜택 카드(.bcard)와 모달(.modal-head) 모두에서 사용한다. */
+.membership-root .ic-glyph {
+  width: 28px;
+  height: 28px;
+  background-color: #2b2e3a;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+/* 제휴 모달 헤더 — 아이콘 자리에 회사 로고를 그대로 노출 */
+.membership-root .modal-head .modal-logo {
+  height: 30px;
+  width: auto;
+  max-width: 132px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.membership-root .bcard h3 {
+  font-size: 21px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.membership-root .bcard p {
+  font-size: 15px;
+  color: var(--g600);
+  font-weight: 500;
+  line-height: 1.55;
+}
+.membership-root .bcard .tagline {
+  margin-top: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--lc-blue);
+}
+.membership-root .bcard.soon {
+  background: var(--g100);
+  border-style: dashed;
+  border-color: var(--g300);
+}
+.membership-root .ic-peach {
+  background: var(--tint-peach);
+}
+.membership-root .ic-lav {
+  background: var(--tint-lav);
+}
+.membership-root .ic-ice {
+  background: var(--tint-ice);
+}
+.membership-root .ic-blue {
+  background: var(--tint-blue);
+}
+.membership-root .ic-yel {
+  background: #fff6cc;
+}
+.membership-root .ic-gray {
+  background: #ececec;
+}

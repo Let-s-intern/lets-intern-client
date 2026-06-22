@@ -1,0 +1,335 @@
+/* ===================== PLANS — 단일 올패스 ===================== */
+.membership-root .plans {
+  padding: 84px 0;
+}
+
+.membership-root .allpass {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #fbfcff, #fff);
+  border: 2.5px solid var(--lc-blue);
+  border-radius: 24px;
+  padding: 30px 36px 28px;
+  /* 다중 box-shadow 로 파란 보더 바깥으로 번지는 네온 글로우(가까울수록 진하고 멀수록 흐려짐) */
+  box-shadow:
+    0 0 0 1px rgba(74, 118, 255, 0.25),
+    0 0 14px -2px rgba(74, 118, 255, 0.55),
+    0 0 34px 0 rgba(74, 118, 255, 0.32),
+    0 0 64px 8px rgba(74, 118, 255, 0.18),
+    0 26px 60px -28px rgba(74, 118, 255, 0.5);
+}
+/* ::before blur 레이어 — 카드 뒤로 넓게 퍼지는 소프트 블룸(네온사인 잔광) */
+.membership-root .allpass::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -1;
+  border-radius: 32px;
+  background: radial-gradient(
+    60% 55% at 50% 45%,
+    rgba(74, 118, 255, 0.4),
+    rgba(74, 118, 255, 0) 70%
+  );
+  filter: blur(22px);
+  pointer-events: none;
+}
+
+.membership-root .allpass-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid #e7e9f0;
+}
+.membership-root .allpass-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.03em;
+}
+.membership-root .allpass-period {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--g600);
+}
+
+/* 가격 위계 */
+.membership-root .allpass-price {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.membership-root .allpass-was {
+  font-size: 16px;
+  color: var(--g500);
+  text-decoration: line-through;
+  font-weight: 600;
+}
+.membership-root .allpass-now-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.membership-root .allpass-badge {
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  background: var(--lc-orange);
+  padding: 5px 12px;
+  border-radius: 9px;
+  letter-spacing: -0.01em;
+  align-self: center;
+}
+.membership-root .allpass-now {
+  font-family: var(--num);
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--lc-blue);
+  line-height: 1;
+}
+.membership-root .allpass-unit {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  margin-left: 4px;
+}
+.membership-root .allpass-vat {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g500);
+}
+
+/* 혜택 7종 스캔형 그리드 */
+.membership-root .allpass-benefits {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 22px;
+  padding: 18px 0;
+  border-top: 1.5px solid #e7e9f0;
+}
+.membership-root .allpass-benefit {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 2px;
+  align-items: start;
+}
+.membership-root .allpass-ic {
+  grid-row: 1 / span 2;
+  align-self: start;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tint-blue);
+  border-radius: 10px;
+  color: var(--lc-blue);
+}
+.membership-root .allpass-bt {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  line-height: 1.35;
+}
+.membership-root .allpass-bd {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.4;
+}
+
+.membership-root .allpass-foot {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g600);
+  background: var(--tint-blue);
+  border-radius: 12px;
+  padding: 12px 16px;
+  line-height: 1.5;
+}
+
+.membership-root .allpass-cta {
+  width: 100%;
+  margin-top: 18px;
+}
+
+/* ===================== 옵션 더하기 구분(+) ===================== */
+/* 올패스 카드와 VOD 카드 사이의 "+" — 옵션을 더할 수 있음을 한눈에 보여준다. */
+.membership-root .plan-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 18px auto 0;
+}
+.membership-root .plan-plus-icon {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  border-radius: 999px;
+  box-shadow: 0 10px 22px -8px rgba(74, 118, 255, 0.6);
+}
+.membership-root .plan-plus-label {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  letter-spacing: -0.01em;
+}
+
+/* ===================== VOD 옵션 카드 ===================== */
+/* 올패스 카드 하단의 가로 와이드 카드. 구매자 전용 VOD 단독 구매 옵션. */
+.membership-root .vod-option {
+  max-width: 720px;
+  margin: 14px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 22px 28px;
+  flex-wrap: wrap;
+  background: linear-gradient(180deg, #fbfcff, #fff);
+  border: 1.5px solid var(--tint-blue);
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 18px 44px -28px rgba(74, 118, 255, 0.4);
+}
+.membership-root .vod-ic {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tint-blue);
+  border-radius: 14px;
+  color: var(--lc-blue);
+}
+.membership-root .vod-body {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.membership-root .vod-badge {
+  align-self: flex-start;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+.membership-root .vod-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.membership-root .vod-sub {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.membership-root .vod-aside {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.membership-root .vod-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.membership-root .vod-was {
+  font-size: 14px;
+  color: var(--g500);
+  text-decoration: line-through;
+  font-weight: 600;
+}
+.membership-root .vod-now {
+  font-family: var(--num);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--lc-blue);
+  line-height: 1;
+}
+.membership-root .vod-unit {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  margin-left: 3px;
+}
+.membership-root .vod-cta {
+  font-size: 15px;
+  padding: 11px 22px;
+  border-radius: 12px;
+  border-width: 1.5px;
+}
+
+@media (max-width: 600px) {
+  .membership-root .allpass {
+    padding: 28px 22px 26px;
+    border-radius: 20px;
+    /* 모바일에서는 글로우 반경을 줄여 과하지 않게 */
+    box-shadow:
+      0 0 0 1px rgba(74, 118, 255, 0.25),
+      0 0 12px -2px rgba(74, 118, 255, 0.5),
+      0 0 28px 2px rgba(74, 118, 255, 0.22),
+      0 18px 44px -26px rgba(74, 118, 255, 0.45);
+  }
+  .membership-root .allpass::before {
+    inset: -6px;
+    border-radius: 26px;
+    filter: blur(16px);
+    background: radial-gradient(
+      60% 55% at 50% 45%,
+      rgba(74, 118, 255, 0.32),
+      rgba(74, 118, 255, 0) 70%
+    );
+  }
+  .membership-root .allpass-now {
+    font-size: 38px;
+  }
+  .membership-root .allpass-benefits {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .membership-root .vod-option {
+    padding: 22px;
+    gap: 16px;
+    border-radius: 20px;
+  }
+  .membership-root .vod-aside {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .membership-root .vod-price {
+    align-items: flex-start;
+  }
+  .membership-root .vod-cta {
+    flex: 0 0 auto;
+  }
+}

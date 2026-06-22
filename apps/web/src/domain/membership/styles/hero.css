@@ -1,0 +1,165 @@
+/* ===================== HERO ===================== */
+.membership-root .hero {
+  background:
+    radial-gradient(
+      120% 90% at 85% -10%,
+      rgba(74, 118, 255, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 80% at 5% 0%,
+      rgba(254, 128, 100, 0.1),
+      transparent 50%
+    ),
+    var(--bg-cool);
+  overflow: hidden;
+}
+.membership-root .hero-in {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 48px;
+  align-items: center;
+  padding: 74px 0 84px;
+}
+.membership-root .hero-chips {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.membership-root .hero h1 {
+  font-size: 54px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.membership-root .hero h1 .hl {
+  position: relative;
+  color: var(--lc-blue);
+  white-space: nowrap;
+}
+.membership-root .hero h1 .hl::after {
+  content: \"\";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: 6px;
+  height: 14px;
+  background: var(--lc-yellow);
+  z-index: -1;
+  border-radius: 3px;
+  opacity: 0.85;
+}
+.membership-root .hero .lead {
+  margin-top: 22px;
+  font-size: 20px;
+  color: var(--g600);
+  font-weight: 500;
+  line-height: 1.6;
+}
+.membership-root .hero .lead b {
+  color: var(--lc-ink);
+  font-weight: 700;
+}
+.membership-root .hero-cta {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.membership-root .hero-meta {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--g500);
+  font-weight: 500;
+}
+.membership-root .hero-meta b {
+  color: var(--lc-orange);
+  font-weight: 800;
+}
+
+/* hero card (offer) */
+.membership-root .offer {
+  background: #fff;
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 30px 70px -30px rgba(40, 60, 120, 0.35);
+  border: 1px solid #eef;
+}
+.membership-root .offer .tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--lc-orange);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.membership-root .offer h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+.membership-root .cd {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.membership-root .cd .seg {
+  flex: 1;
+  background: var(--bg-cool);
+  border-radius: 14px;
+  padding: 14px 0;
+  text-align: center;
+}
+.membership-root .cd .seg .n {
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 34px;
+  color: var(--lc-ink);
+  line-height: 1;
+}
+.membership-root .cd .seg .l {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--g500);
+  font-weight: 600;
+}
+.membership-root .seats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 9px;
+}
+.membership-root .seats-row .lbl {
+  font-weight: 700;
+  font-size: 15px;
+}
+.membership-root .seats-row .val {
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--lc-orange);
+}
+.membership-root .bar {
+  height: 11px;
+  border-radius: 999px;
+  background: #eef0f7;
+  overflow: hidden;
+}
+.membership-root .bar > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--lc-orange), var(--lc-coral));
+  border-radius: 999px;
+}
+.membership-root .offer .fine {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--g500);
+  text-align: center;
+  font-weight: 500;
+}
