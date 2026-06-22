@@ -155,7 +155,7 @@ const MagnetTable = ({
       },
       {
         field: 'startDate',
-        headerName: '노출 시작일',
+        headerName: '출시 알림 전송일',
         type: 'dateTime',
         width: 130,
         valueGetter: (_, row) =>
