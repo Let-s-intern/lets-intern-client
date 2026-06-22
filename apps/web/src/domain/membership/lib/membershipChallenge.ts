@@ -19,3 +19,17 @@ export function isValidMembershipChallengeId(id: number): boolean {
 export function isMembershipChallengeConfigured(): boolean {
   return isValidMembershipChallengeId(MEMBERSHIP_CHALLENGE_ID);
 }
+
+/**
+ * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).
+ * @param pathname window.location.pathname
+ * @param search   window.location.search (앞의 '?' 포함/미포함 모두 허용)
+ */
+export function buildLoginRedirectPath(
+  pathname: string,
+  search: string,
+): string {
+  const query = search.replace(/^\?/, '');
+  const target = query ? `${pathname}?${query}` : pathname;
+  return `/login?redirect=${encodeURIComponent(target)}`;
+}
