@@ -1,0 +1,146 @@
+/* ===================== PLANS — 단일 올패스 ===================== */
+.membership-root .plans {
+  padding: 84px 0;
+}
+
+.membership-root .allpass {
+  max-width: 720px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #fbfcff, #fff);
+  border: 2.5px solid var(--lc-blue);
+  border-radius: 24px;
+  padding: 40px 40px 36px;
+  box-shadow: 0 26px 60px -28px rgba(74, 118, 255, 0.5);
+}
+
+.membership-root .allpass-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 24px;
+  border-bottom: 1.5px solid #e7e9f0;
+}
+.membership-root .allpass-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.03em;
+}
+.membership-root .allpass-period {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--g600);
+}
+
+/* 가격 위계 */
+.membership-root .allpass-price {
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.membership-root .allpass-was {
+  font-size: 16px;
+  color: var(--g500);
+  text-decoration: line-through;
+  font-weight: 600;
+}
+.membership-root .allpass-now-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.membership-root .allpass-badge {
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  background: var(--lc-orange);
+  padding: 5px 12px;
+  border-radius: 9px;
+  letter-spacing: -0.01em;
+  align-self: center;
+}
+.membership-root .allpass-now {
+  font-family: var(--num);
+  font-size: 46px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--lc-blue);
+  line-height: 1;
+}
+.membership-root .allpass-unit {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  margin-left: 4px;
+}
+.membership-root .allpass-vat {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g500);
+}
+
+/* 혜택 7종 스캔형 그리드 */
+.membership-root .allpass-benefits {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 22px;
+  padding: 24px 0;
+  border-top: 1.5px solid #e7e9f0;
+}
+.membership-root .allpass-benefit {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 2px;
+  align-items: start;
+}
+.membership-root .allpass-ic {
+  grid-row: 1 / span 2;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.membership-root .allpass-bt {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  line-height: 1.35;
+}
+.membership-root .allpass-bd {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.4;
+}
+
+.membership-root .allpass-foot {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g600);
+  background: var(--tint-blue);
+  border-radius: 12px;
+  padding: 12px 16px;
+  line-height: 1.5;
+}
+
+.membership-root .allpass-cta {
+  width: 100%;
+  margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .membership-root .allpass {
+    padding: 28px 22px 26px;
+    border-radius: 20px;
+  }
+  .membership-root .allpass-now {
+    font-size: 38px;
+  }
+  .membership-root .allpass-benefits {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
