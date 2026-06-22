@@ -103,6 +103,11 @@ export default function PlansSection() {
           </button>
         </div>
 
+        <div className="plan-plus rv" aria-hidden>
+          <span className="plan-plus-icon">+</span>
+          <span className="plan-plus-label">옵션 추가</span>
+        </div>
+
         <VodOptionCard />
       </div>
     </section>

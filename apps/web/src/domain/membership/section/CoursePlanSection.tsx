@@ -12,8 +12,22 @@ export default function CoursePlanSection() {
       <div className="wrap">
         <div className="sec-head rv">
           <span className="eyebrow">{COURSE_PLAN_HEADER.badge}</span>
-          <h2>{COURSE_PLAN_HEADER.title}</h2>
-          <p>{COURSE_PLAN_HEADER.sub}</p>
+          <h2>
+            {COURSE_PLAN_HEADER.titleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < COURSE_PLAN_HEADER.titleLines.length - 1 && <br />}
+              </span>
+            ))}
+          </h2>
+          <p>
+            {COURSE_PLAN_HEADER.subLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < COURSE_PLAN_HEADER.subLines.length - 1 && <br />}
+              </span>
+            ))}
+          </p>
         </div>
 
         <div className="rv">

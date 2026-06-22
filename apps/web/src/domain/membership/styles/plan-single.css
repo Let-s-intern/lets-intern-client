@@ -10,7 +10,7 @@
   background: linear-gradient(180deg, #fbfcff, #fff);
   border: 2.5px solid var(--lc-blue);
   border-radius: 24px;
-  padding: 40px 40px 36px;
+  padding: 30px 36px 28px;
   /* 다중 box-shadow 로 파란 보더 바깥으로 번지는 네온 글로우(가까울수록 진하고 멀수록 흐려짐) */
   box-shadow:
     0 0 0 1px rgba(74, 118, 255, 0.25),
@@ -38,8 +38,8 @@
 .membership-root .allpass-head {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-bottom: 24px;
+  gap: 6px;
+  padding-bottom: 16px;
   border-bottom: 1.5px solid #e7e9f0;
 }
 .membership-root .allpass-name {
@@ -56,10 +56,10 @@
 
 /* 가격 위계 */
 .membership-root .allpass-price {
-  padding: 24px 0;
+  padding: 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .membership-root .allpass-was {
   font-size: 16px;
@@ -85,7 +85,7 @@
 }
 .membership-root .allpass-now {
   font-family: var(--num);
-  font-size: 46px;
+  font-size: 40px;
   font-weight: 800;
   letter-spacing: -0.04em;
   color: var(--lc-blue);
@@ -108,8 +108,8 @@
   list-style: none;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 22px;
-  padding: 24px 0;
+  gap: 12px 22px;
+  padding: 18px 0;
   border-top: 1.5px solid #e7e9f0;
 }
 .membership-root .allpass-benefit {
@@ -157,14 +157,45 @@
 
 .membership-root .allpass-cta {
   width: 100%;
-  margin-top: 24px;
+  margin-top: 18px;
+}
+
+/* ===================== 옵션 더하기 구분(+) ===================== */
+/* 올패스 카드와 VOD 카드 사이의 "+" — 옵션을 더할 수 있음을 한눈에 보여준다. */
+.membership-root .plan-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 18px auto 0;
+}
+.membership-root .plan-plus-icon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--lc-blue);
+  background: #fff;
+  border: 2px solid var(--tint-blue);
+  border-radius: 999px;
+  box-shadow: 0 6px 16px -8px rgba(74, 118, 255, 0.5);
+}
+.membership-root .plan-plus-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--lc-blue);
+  letter-spacing: -0.01em;
 }
 
 /* ===================== VOD 옵션 카드 ===================== */
 /* 올패스 카드 하단의 가로 와이드 카드. 구매자 전용 VOD 단독 구매 옵션. */
 .membership-root .vod-option {
   max-width: 720px;
-  margin: 20px auto 0;
+  margin: 14px auto 0;
   display: flex;
   align-items: center;
   gap: 22px 28px;
