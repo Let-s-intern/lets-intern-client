@@ -1,5 +1,6 @@
 import Countdown from '../ui/Countdown';
 import { openPlanSheet } from '../lib/planSheet';
+import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
 import { MEMBERSHIP_DEADLINE } from '../data/membership';
 import { FINAL_CTA } from '../data/finalCta';
 
@@ -23,8 +24,9 @@ export default function FinalCtaSection() {
         <button
           className="btn btn-primary btn-lg rv"
           onClick={() => openPlanSheet()}
+          disabled={!IS_MEMBERSHIP_LAUNCHED}
         >
-          {FINAL_CTA.cta}
+          {ctaLabel(FINAL_CTA.cta)}
         </button>
       </div>
     </section>

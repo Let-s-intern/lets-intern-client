@@ -26,8 +26,6 @@ import './styles/responsive.css';
 import './styles/partners.css';
 import './styles/apply.css';
 
-import { useEffect } from 'react';
-import { startHeaderSync } from './lib/headerSync';
 import MembershipAnimations from './ui/MembershipAnimations';
 import HeroSection from './section/HeroSection';
 import SolutionSection from './section/SolutionSection';
@@ -44,8 +42,6 @@ import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
 
 export default function MembershipLanding() {
-  useEffect(() => startHeaderSync(), []);
-
   return (
     <>
       <div className="membership-root">

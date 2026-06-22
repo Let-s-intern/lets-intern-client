@@ -5,6 +5,7 @@ import BarCountdown from './BarCountdown';
 import { openPlanSheet } from '../lib/planSheet';
 import { MEMBERSHIP_DEADLINE } from '../data/membership';
 import useMembershipSheetStore from '../store/useMembershipSheetStore';
+import { IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
 
 // ApplyCTA.tsx(Desktop/MobileApplyCTA) 디자인 복사 — 하단 고정 신청 바.
 export default function ApplyBar() {
@@ -23,8 +24,12 @@ export default function ApplyBar() {
       </div>
       <div className="apply-bar-right">
         <BarCountdown deadline={MEMBERSHIP_DEADLINE} />
-        <button className="apply-bar-btn" onClick={() => openPlanSheet()}>
-          지금 바로 신청
+        <button
+          className="apply-bar-btn"
+          onClick={() => openPlanSheet()}
+          disabled={!IS_MEMBERSHIP_LAUNCHED}
+        >
+          {IS_MEMBERSHIP_LAUNCHED ? '지금 바로 신청' : '출시 전'}
         </button>
       </div>
     </div>

@@ -188,3 +188,16 @@
   color: var(--g600);
   font-weight: 500;
 }
+
+/* 출시 전(env 미설정) — 비활성 CTA 표시 */
+.membership-root .btn:disabled,
+.membership-root .apply-bar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: grayscale(0.25);
+}
+.membership-root .btn:disabled:hover,
+.membership-root .apply-bar-btn:disabled:hover {
+  transform: none;
+}

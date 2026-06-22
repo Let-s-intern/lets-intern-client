@@ -51,14 +51,10 @@ export default function MembershipAnimations() {
         .querySelectorAll('.timeline:not(.in)')
         .forEach((el) => timelineObserver.observe(el));
     };
+    // .rv/.timeline 은 모두 마운트 시 존재하므로 1회 관찰로 충분하다.
+    // (MutationObserver 는 매초 갱신되는 Countdown 텍스트 변화에도 발화해 불필요한
+    //  querySelectorAll 비용이 컸기에 제거 — 토글 뷰는 .rv 를 쓰지 않아 누락 없음)
     observeAll();
-
-    let rafId = 0;
-    const mutationObserver = new MutationObserver(() => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(observeAll);
-    });
-    mutationObserver.observe(root, { childList: true, subtree: true });
 
     const safetyTimer = setTimeout(() => {
       root
@@ -73,8 +69,6 @@ export default function MembershipAnimations() {
     return () => {
       clearTimeout(heroTimer);
       clearTimeout(safetyTimer);
-      cancelAnimationFrame(rafId);
-      mutationObserver.disconnect();
       revealObserver.disconnect();
       timelineObserver.disconnect();
       document.body.classList.remove('heroin');

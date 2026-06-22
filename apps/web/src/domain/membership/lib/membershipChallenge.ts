@@ -21,6 +21,19 @@ export function isMembershipChallengeConfigured(): boolean {
 }
 
 /**
+ * 멤버십이 출시(결제 가능)된 상태인지 — 빌드 타임 env 로 결정되는 상수.
+ * false 면(=env 미설정) CTA 를 "출시 전" 비활성 상태로 표시한다.
+ */
+export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
+  MEMBERSHIP_CHALLENGE_ID,
+);
+
+/** CTA 라벨 — 출시 전이면 "출시 전", 출시됐으면 원래 라벨. */
+export function ctaLabel(label: string): string {
+  return IS_MEMBERSHIP_LAUNCHED ? label : '출시 전';
+}
+
+/**
  * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).
  * @param pathname window.location.pathname
  * @param search   window.location.search (앞의 '?' 포함/미포함 모두 허용)

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import dayjs from '../lib/dayjs';
 import { openPlanSheet } from '../lib/planSheet';
+import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
 import {
   formatKRW,
   MEMBERSHIP_END_DATE,
@@ -98,8 +99,9 @@ export default function PlansSection() {
           <button
             className="btn btn-primary btn-lg allpass-cta"
             onClick={() => openPlanSheet()}
+            disabled={!IS_MEMBERSHIP_LAUNCHED}
           >
-            {PLAN_CTA}
+            {ctaLabel(PLAN_CTA)}
           </button>
         </div>
 

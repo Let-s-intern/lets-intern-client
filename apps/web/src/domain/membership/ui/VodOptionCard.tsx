@@ -1,6 +1,7 @@
 import { MonitorPlay } from 'lucide-react';
 import { formatKRW } from '../data/membership';
 import { openPlanSheet } from '../lib/planSheet';
+import { IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
 
 // 취준위키 VOD 모음집 단독 구매 카드. 단일 올패스 카드 하단에 배치.
 // 결제는 별도 로직 없이 기존 결제 시트(openPlanSheet)에 위임한다.
@@ -35,8 +36,9 @@ export default function VodOptionCard() {
           type="button"
           className="btn btn-ghost vod-cta"
           onClick={() => openPlanSheet()}
+          disabled={!IS_MEMBERSHIP_LAUNCHED}
         >
-          VOD 옵션 추가
+          {IS_MEMBERSHIP_LAUNCHED ? 'VOD 옵션 추가' : '출시 전'}
         </button>
       </div>
     </div>
