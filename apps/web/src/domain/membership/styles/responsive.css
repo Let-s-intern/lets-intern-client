@@ -7,13 +7,16 @@
   .membership-root .hero h1 {
     font-size: 42px;
   }
-  .membership-root .bgrid, .membership-root .stats, .membership-root .pcards {
+  .membership-root .bgrid,
+  .membership-root .stats,
+  .membership-root .pcards {
     grid-template-columns: 1fr;
   }
   .membership-root .pcard.feat {
     transform: none;
   }
-  .membership-root .sec-head h2, .membership-root .final h2 {
+  .membership-root .sec-head h2,
+  .membership-root .final h2 {
     font-size: 32px;
   }
   .membership-root .tnodes {
@@ -113,13 +116,21 @@
   .membership-root .sec-head {
     margin-bottom: 36px;
   }
-  .membership-root .sec-head h2, .membership-root .final h2 {
+  .membership-root .sec-head h2,
+  .membership-root .final h2 {
     font-size: 26px;
   }
   .membership-root .sec-head p {
     font-size: 15.5px;
   }
-  .membership-root .solution, .membership-root .benefits, .membership-root .proof, .membership-root .plans, .membership-root .reviews, .membership-root .roadmap, .membership-root .final, .membership-root .faq {
+  .membership-root .solution,
+  .membership-root .benefits,
+  .membership-root .proof,
+  .membership-root .plans,
+  .membership-root .reviews,
+  .membership-root .roadmap,
+  .membership-root .final,
+  .membership-root .faq {
     padding-top: 56px;
     padding-bottom: 56px;
   }
@@ -221,7 +232,10 @@
    ============================================================ */
 @media (max-width: 600px) {
   /* 4) 한글 제목이 단어 중간에서 줄바꿈되지 않도록(어절 단위 줄바꿈) */
-  .membership-root .sec-head h2, .membership-root .final h2, .membership-root .tnode h3, .membership-root .bcard h3 {
+  .membership-root .sec-head h2,
+  .membership-root .final h2,
+  .membership-root .tnode h3,
+  .membership-root .bcard h3 {
     word-break: keep-all;
   }
 
@@ -304,9 +318,9 @@
     display: grid;
     grid-template-columns: 52px 1fr;
     grid-template-areas:
-      "dot mon"
-      "dot title"
-      "dot body";
+      'dot mon'
+      'dot title'
+      'dot body';
     column-gap: 16px;
     text-align: left;
     align-items: start;
@@ -314,7 +328,7 @@
   }
   /* 점과 점을 잇는 세로 연결선(top/bottom 앵커로 노드 높이에 자동 맞춤) */
   .membership-root .tnode:not(:last-child)::before {
-    content: "";
+    content: '';
     position: absolute;
     left: 25px;
     top: 56px;

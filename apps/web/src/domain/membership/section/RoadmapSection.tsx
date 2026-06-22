@@ -1,6 +1,6 @@
 // .timeline 진입 애니메이션은 MembershipAnimations 의 전역 IntersectionObserver 가
 // 처리하므로 여기서 별도 observer 를 두지 않는다.
-import { ROADMAP } from "../data/roadmap";
+import { ROADMAP } from '../data/roadmap';
 
 export default function RoadmapSection() {
   return (

@@ -273,7 +273,8 @@
 .membership-root .rev-track.reverse {
   animation-direction: reverse;
 }
-.membership-root .rev-row:hover .rev-track, .membership-root .rev-row:active .rev-track {
+.membership-root .rev-row:hover .rev-track,
+.membership-root .rev-row:active .rev-track {
   animation-play-state: paused;
 }
 .membership-root .rev-mcard {
@@ -327,12 +328,14 @@
   }
 }
 @media (max-width: 920px) {
-  .membership-root .quote-grid, .membership-root .review-grid {
+  .membership-root .quote-grid,
+  .membership-root .review-grid {
     column-count: 1;
   }
 }
 @media (min-width: 921px) and (max-width: 1100px) {
-  .membership-root .quote-grid, .membership-root .review-grid {
+  .membership-root .quote-grid,
+  .membership-root .review-grid {
     column-count: 2;
   }
 }

@@ -63,7 +63,8 @@
       opacity 0.8s cubic-bezier(0.25, 0.6, 0.3, 1) 0.3s,
       transform 0.8s cubic-bezier(0.25, 0.6, 0.3, 1) 0.3s;
   }
-  body.heroin .membership-root .hero .he, body.heroin .membership-root .hero .offer {
+  body.heroin .membership-root .hero .he,
+  body.heroin .membership-root .hero .offer {
     opacity: 1;
     transform: none;
   }
@@ -83,7 +84,8 @@
       transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
       opacity 0.4s ease;
   }
-  .membership-root .timeline.in .tnode:nth-child(1) .dot, .membership-root .timeline.in .tnodes .tnode:nth-child(1) .dot {
+  .membership-root .timeline.in .tnode:nth-child(1) .dot,
+  .membership-root .timeline.in .tnodes .tnode:nth-child(1) .dot {
     transition-delay: 0.25s;
   }
   .membership-root .timeline.in .tnodes .tnode:nth-child(2) .dot {
@@ -97,7 +99,8 @@
     opacity: 1;
   }
   /* countdown tick */
-  .membership-root .cd .seg .n.tick, .membership-root .mini-cd .seg.tick {
+  .membership-root .cd .seg .n.tick,
+  .membership-root .mini-cd .seg.tick {
     animation: tickPop 0.35s ease;
   }
   @keyframes tickPop {

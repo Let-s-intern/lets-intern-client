@@ -32,7 +32,8 @@
   --num: \"Inter\",var(--font);
   --maxw: 1180px;
 }
-.membership-root, .membership-root * {
+.membership-root,
+.membership-root * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -163,7 +164,9 @@
   background: var(--rainbow);
 }
 
-.membership-root h1, .membership-root h2, .membership-root h3 {
+.membership-root h1,
+.membership-root h2,
+.membership-root h3 {
   letter-spacing: -0.03em;
   line-height: 1.18;
 }

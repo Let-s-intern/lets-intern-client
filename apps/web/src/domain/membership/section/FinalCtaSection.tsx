@@ -1,7 +1,7 @@
-import Countdown from "../ui/Countdown";
-import { openPlanSheet } from "../lib/planSheet";
-import { MEMBERSHIP_DEADLINE } from "../data/membership";
-import { FINAL_CTA } from "../data/finalCta";
+import Countdown from '../ui/Countdown';
+import { openPlanSheet } from '../lib/planSheet';
+import { MEMBERSHIP_DEADLINE } from '../data/membership';
+import { FINAL_CTA } from '../data/finalCta';
 
 export default function FinalCtaSection() {
   return (

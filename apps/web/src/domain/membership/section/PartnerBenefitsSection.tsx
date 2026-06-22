@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import BenefitModal from "../ui/BenefitModal";
-import { setOverlayOpen } from "../lib/headerSync";
-import { PARTNER_CARDS } from "../data/partners";
+import { useEffect, useState } from 'react';
+import BenefitModal from '../ui/BenefitModal';
+import { setOverlayOpen } from '../lib/headerSync';
+import { PARTNER_CARDS } from '../data/partners';
 
 export default function PartnerBenefitsSection() {
   const [openModalId, setOpenModalId] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export default function PartnerBenefitsSection() {
             <div
               className={`partner-card ${card.tone} rv`}
               key={card.id}
-              style={{ ["--rvd" as string]: `${i * 0.08}s` }}
+              style={{ ['--rvd' as string]: `${i * 0.08}s` }}
               onClick={() => setOpenModalId(card.id)}
             >
               <div className="partner-aside">

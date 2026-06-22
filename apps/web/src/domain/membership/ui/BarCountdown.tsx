@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 // 하단 신청 바 전용 컴팩트 카운트다운 ("8일 17시간 0분 31초" 형태)
 function calc(deadline: Date) {

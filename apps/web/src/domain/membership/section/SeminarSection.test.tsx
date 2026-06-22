@@ -12,9 +12,7 @@ describe('SeminarSection', () => {
   it('데이터의 모든 세션 카드(LIVE 번호)를 렌더한다', () => {
     render(<SeminarSection />);
     for (const session of SEMINAR_SESSIONS) {
-      expect(
-        screen.getByText(`LIVE ${session.sessionNo}`),
-      ).toBeInTheDocument();
+      expect(screen.getByText(`LIVE ${session.sessionNo}`)).toBeInTheDocument();
     }
   });
 

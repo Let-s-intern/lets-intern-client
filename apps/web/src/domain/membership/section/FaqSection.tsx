@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FAQ_HEAD, FAQ_ITEMS } from "../data/faq";
+import { useState } from 'react';
+import { FAQ_HEAD, FAQ_ITEMS } from '../data/faq';
 
 export default function FaqSection() {
   const [openId, setOpenId] = useState<number | null>(null);
@@ -15,7 +15,7 @@ export default function FaqSection() {
           {FAQ_ITEMS.map((item) => (
             <div
               key={item.id}
-              className={`fitem ${openId === item.id ? "open" : ""}`}
+              className={`fitem ${openId === item.id ? 'open' : ''}`}
             >
               <div
                 className="q"

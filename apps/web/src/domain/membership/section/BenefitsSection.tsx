@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import BenefitModal from "../ui/BenefitModal";
-import { setOverlayOpen } from "../lib/headerSync";
-import { BENEFIT_CARDS } from "../data/benefits";
+import { useEffect, useState } from 'react';
+import BenefitModal from '../ui/BenefitModal';
+import { setOverlayOpen } from '../lib/headerSync';
+import { BENEFIT_CARDS } from '../data/benefits';
 
 export default function BenefitsSection() {
   const [openModalId, setOpenModalId] = useState<string | null>(null);
@@ -24,20 +24,20 @@ export default function BenefitsSection() {
             <div
               className="bcard rv"
               key={card.id}
-              style={{ ["--rvd" as string]: `${i * 0.08}s` }}
+              style={{ ['--rvd' as string]: `${i * 0.08}s` }}
               onClick={() => setOpenModalId(card.id)}
             >
               <div className={`ic ${card.iconClass}`}>
                 <span
                   className="ic-glyph"
-                  style={{ ["--icon" as string]: `url(${card.iconSvg})` }}
+                  style={{ ['--icon' as string]: `url(${card.iconSvg})` }}
                 />
               </div>
               <h3>
                 {card.title}
                 {card.pill && (
                   <>
-                    {" "}
+                    {' '}
                     <span className={`pill ${card.pill.cls}`}>
                       {card.pill.text}
                     </span>
@@ -47,7 +47,7 @@ export default function BenefitsSection() {
               <p>{card.desc}</p>
               <div
                 className="tagline"
-                style={card.taglineMuted ? { color: "var(--g500)" } : undefined}
+                style={card.taglineMuted ? { color: 'var(--g500)' } : undefined}
               >
                 {card.tagline}
               </div>

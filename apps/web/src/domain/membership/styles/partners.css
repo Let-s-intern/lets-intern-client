@@ -55,19 +55,31 @@
 .membership-root .partner-card.green {
   border-color: #b9e7ce;
   background:
-    radial-gradient(140% 120% at 100% 0%, #d8f3e6 0%, rgba(216, 243, 230, 0) 52%),
+    radial-gradient(
+      140% 120% at 100% 0%,
+      #d8f3e6 0%,
+      rgba(216, 243, 230, 0) 52%
+    ),
     #ffffff;
 }
 .membership-root .partner-card.lavender {
   border-color: #d8d3fb;
   background:
-    radial-gradient(140% 120% at 100% 0%, #e7e3ff 0%, rgba(231, 227, 255, 0) 52%),
+    radial-gradient(
+      140% 120% at 100% 0%,
+      #e7e3ff 0%,
+      rgba(231, 227, 255, 0) 52%
+    ),
     #ffffff;
 }
 .membership-root .partner-card.blue {
   border-color: #cfe0ff;
   background:
-    radial-gradient(140% 120% at 100% 0%, #dfecff 0%, rgba(223, 236, 255, 0) 52%),
+    radial-gradient(
+      140% 120% at 100% 0%,
+      #dfecff 0%,
+      rgba(223, 236, 255, 0) 52%
+    ),
     #ffffff;
 }
 

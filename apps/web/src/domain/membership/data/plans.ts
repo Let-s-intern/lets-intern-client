@@ -49,7 +49,11 @@ export const PLAN_BENEFITS: PlanBenefit[] = [
     title: '직무 챌린지 4종',
     detail: '마케팅 · HR · 기획 · 대기업',
   },
-  { icon: 'bookOpen', title: '가이드북 6종', detail: '핵심 취업 노하우 총정리' },
+  {
+    icon: 'bookOpen',
+    title: '가이드북 6종',
+    detail: '핵심 취업 노하우 총정리',
+  },
   { icon: 'users', title: '렛츠런 스터디', detail: '3개월 무료 참여' },
   {
     icon: 'handshake',

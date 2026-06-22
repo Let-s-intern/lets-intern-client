@@ -1,13 +1,13 @@
-import dayjs from "../lib/dayjs";
-import Countdown from "../ui/Countdown";
-import { openPlanSheet } from "../lib/planSheet";
+import dayjs from '../lib/dayjs';
+import Countdown from '../ui/Countdown';
+import { openPlanSheet } from '../lib/planSheet';
 import {
   MEMBERSHIP_BEGINNING,
   MEMBERSHIP_DEADLINE,
   MEMBERSHIP_END_DATE,
   MEMBERSHIP_START_DATE,
-} from "../data/membership";
-import { HERO } from "../data/hero";
+} from '../data/membership';
+import { HERO } from '../data/hero';
 
 export default function HeroSection() {
   const beginning = MEMBERSHIP_BEGINNING;
@@ -52,8 +52,8 @@ export default function HeroSection() {
               className="btn btn-ghost btn-lg"
               onClick={() =>
                 document
-                  .getElementById("benefits")
-                  ?.scrollIntoView({ behavior: "smooth" })
+                  .getElementById('benefits')
+                  ?.scrollIntoView({ behavior: 'smooth' })
               }
             >
               {HERO.ctaSecondary}
@@ -61,13 +61,13 @@ export default function HeroSection() {
           </div>
           <div className="hero-meta he he5">
             <span>
-              📍 모집기간{" "}
+              📍 모집기간{' '}
               <b className="num">
-                {dayjs(beginning).format("YYYY.MM.DD")} –{" "}
-                {dayjs(deadline).format("MM.DD")}
-              </b>{" "}
-              · {dayjs(startDate).format("M")}~{dayjs(endDate).format("M")}월{" "}
-              {dayjs(endDate).diff(dayjs(startDate), "month") + 1}개월 이용
+                {dayjs(beginning).format('YYYY.MM.DD')} –{' '}
+                {dayjs(deadline).format('MM.DD')}
+              </b>{' '}
+              · {dayjs(startDate).format('M')}~{dayjs(endDate).format('M')}월{' '}
+              {dayjs(endDate).diff(dayjs(startDate), 'month') + 1}개월 이용
             </span>
           </div>
         </div>

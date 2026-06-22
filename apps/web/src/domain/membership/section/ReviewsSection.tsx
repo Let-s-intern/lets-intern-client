@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { IMAGE_REVIEWS, MISSION_REVIEWS } from "../data/reviews";
-import type { ImageReview, MissionReview } from "../data/reviews";
-import ImageLightbox from "../ui/ImageLightbox";
-import { setOverlayOpen } from "../lib/headerSync";
+import { useEffect, useState } from 'react';
+import { IMAGE_REVIEWS, MISSION_REVIEWS } from '../data/reviews';
+import type { ImageReview, MissionReview } from '../data/reviews';
+import ImageLightbox from '../ui/ImageLightbox';
+import { setOverlayOpen } from '../lib/headerSync';
 
 const HALF = Math.ceil(MISSION_REVIEWS.length / 2);
 const ROW_A = MISSION_REVIEWS.slice(0, HALF);
@@ -10,16 +10,16 @@ const ROW_B = MISSION_REVIEWS.slice(HALF);
 
 /** 모바일(≤600px) 여부 — 데스크톱은 기존 그리드, 모바일은 마퀴로 렌더한다. */
 function useIsMobile() {
-  const query = "(max-width: 600px)";
+  const query = '(max-width: 600px)';
   const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia(query).matches : false,
+    typeof window !== 'undefined' ? window.matchMedia(query).matches : false,
   );
   useEffect(() => {
     const mq = window.matchMedia(query);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
+    mq.addEventListener('change', handler);
     setIsMobile(mq.matches);
-    return () => mq.removeEventListener("change", handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
   return isMobile;
 }
@@ -33,7 +33,7 @@ function ImageGrid({ onCardClick }: { onCardClick: (r: ImageReview) => void }) {
         <div
           className="rev-card rv"
           key={r.src}
-          style={{ ["--rvd" as string]: `${i * 0.08}s` }}
+          style={{ ['--rvd' as string]: `${i * 0.08}s` }}
           onClick={() => onCardClick(r)}
         >
           <div className="rev-meta">
@@ -99,7 +99,7 @@ function MarqueeRow({
 }) {
   return (
     <div className="rev-row">
-      <div className={`rev-track${reverse ? " reverse" : ""}`}>
+      <div className={`rev-track${reverse ? 'reverse' : ''}`}>
         {[...cards, ...cards].map((r, i) => (
           <article className="qcard rev-mcard" key={i}>
             <div className="qtop">
