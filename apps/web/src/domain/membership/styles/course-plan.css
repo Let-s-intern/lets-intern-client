@@ -1,0 +1,498 @@
+/* =====================================================================
+   하반기 공채 13주 합격 플랜 — 매트릭스 / 타임라인 / 토글
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   기존 --lc-* 토큰·eyebrow·sec-head 패턴 재사용.
+   ===================================================================== */
+
+.membership-root .courseplan {
+  padding: 74px 0;
+  background: var(--bg-cool);
+}
+
+/* ---------- owner(수행 주체) 색 토큰 — 매트릭스·타임라인·범례 공유 ----------
+   self=중립 / free=정보(하늘) / challenge=멤버십 강조(오렌지).
+   "챌린지=멤버십이 메우는 구간"이 색만으로 즉시 읽히도록 가장 강한 색을 부여. */
+.membership-root .courseplan {
+  --cp-self-bg: #fff;
+  --cp-self-bd: var(--g300);
+  --cp-self-fg: var(--g600);
+  --cp-self-tag-bg: var(--g100);
+  --cp-self-tag-fg: var(--g700);
+
+  --cp-free-bg: var(--tint-ice);
+  --cp-free-bd: #bfe8fb;
+  --cp-free-fg: #0892c7;
+  --cp-free-tag-bg: #d6f1fc;
+  --cp-free-tag-fg: #0577a3;
+
+  --cp-chal-bg: var(--tint-peach);
+  --cp-chal-bd: #ffd4c8;
+  --cp-chal-fg: var(--lc-orange-deep);
+  --cp-chal-tag-bg: var(--lc-orange);
+  --cp-chal-tag-fg: #fff;
+}
+
+/* ---------- 범례 ---------- */
+.membership-root .cp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  margin: 0 auto 30px;
+  max-width: 720px;
+}
+.membership-root .cp-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 999px;
+  padding: 7px 14px 7px 8px;
+}
+.membership-root .cp-legend-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  flex: none;
+}
+.membership-root .cp-legend-dot[data-owner='self'] {
+  background: var(--cp-self-tag-bg);
+  border: 1.5px solid var(--cp-self-bd);
+}
+.membership-root .cp-legend-dot[data-owner='free'] {
+  background: var(--cp-free-tag-bg);
+}
+.membership-root .cp-legend-dot[data-owner='challenge'] {
+  background: var(--cp-chal-tag-bg);
+}
+.membership-root .cp-legend-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.membership-root .cp-legend-label {
+  font-weight: 800;
+  font-size: 14px;
+}
+.membership-root .cp-legend-hint {
+  font-size: 11.5px;
+  color: var(--g500);
+}
+.membership-root .cp-legend-item[data-owner='challenge'] {
+  border-color: var(--cp-chal-bd);
+  background: #fff7f4;
+}
+
+/* ---------- 토글 ---------- */
+.membership-root .cp-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 999px;
+  margin: 0 auto 34px;
+}
+.membership-root .cp-toggle-wrap {
+  display: flex;
+  justify-content: center;
+}
+.membership-root .cp-toggle-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--g600);
+  padding: 10px 24px;
+  border-radius: 999px;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.membership-root .cp-toggle-btn[aria-pressed='true'] {
+  background: var(--lc-blue);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(74, 118, 255, 0.6);
+}
+
+/* ---------- 뷰 전환 페이드 (스크롤 리빌 .rv 와 독립) ---------- */
+.membership-root .cp-view {
+  animation: cp-fade-in 0.32s ease both;
+}
+@keyframes cp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .cp-view {
+    animation: none;
+  }
+}
+
+/* ===================== 매트릭스 ===================== */
+.membership-root .cp-matrix-wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+/* 준비/실전 구간 바 */
+.membership-root .cp-phase-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-left: 168px; /* 카테고리 헤더 열 폭만큼 들여쓰기 */
+}
+.membership-root .cp-phase {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 9px 14px;
+  font-size: 13px;
+}
+.membership-root .cp-phase[data-phase='prep'] {
+  background: var(--tint-lav);
+  color: var(--lc-indigo);
+}
+.membership-root .cp-phase[data-phase='live'] {
+  background: var(--tint-peach);
+  color: var(--lc-orange-deep);
+}
+.membership-root .cp-phase strong {
+  font-weight: 800;
+}
+.membership-root .cp-phase em {
+  font-style: normal;
+  font-weight: 700;
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.membership-root .cp-matrix-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 18px;
+}
+.membership-root .cp-matrix {
+  display: grid;
+  gap: 8px;
+  min-width: 720px;
+}
+.membership-root .cp-matrix-row {
+  display: grid;
+  grid-template-columns: 160px repeat(5, 1fr);
+  gap: 8px;
+}
+
+/* 헤더 행 */
+.membership-root .cp-corner {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--g500);
+  padding: 0 14px;
+}
+.membership-root .cp-step-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+  border-radius: 14px;
+  padding: 12px 10px;
+  background: #fff;
+  border: 1.5px solid var(--g300);
+}
+.membership-root .cp-step-head[data-phase='live'] {
+  border-color: var(--cp-chal-bd);
+}
+.membership-root .cp-step-no {
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--lc-blue);
+  letter-spacing: 0;
+}
+.membership-root .cp-step-head[data-phase='live'] .cp-step-no {
+  color: var(--lc-orange-deep);
+}
+.membership-root .cp-step-label {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--lc-ink);
+}
+
+/* 카테고리 행 헤더 */
+.membership-root .cp-cat-head {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--lc-ink);
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 0 14px;
+  word-break: keep-all;
+}
+
+/* 셀 */
+.membership-root .cp-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  min-height: 72px;
+  background: var(--cp-self-bg);
+  border: 1.5px solid var(--cp-self-bd);
+}
+.membership-root .cp-cell[data-owner='free'] {
+  background: var(--cp-free-bg);
+  border-color: var(--cp-free-bd);
+}
+.membership-root .cp-cell[data-owner='challenge'] {
+  background: var(--cp-chal-bg);
+  border-color: var(--cp-chal-bd);
+}
+.membership-root .cp-cell[data-owner='none'] {
+  background: var(--g100);
+  border-style: dashed;
+  border-color: var(--g300);
+}
+.membership-root .cp-cell-task {
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--lc-ink);
+  word-break: keep-all;
+}
+.membership-root .cp-cell-empty {
+  font-size: 12.5px;
+  color: var(--g500);
+  font-weight: 500;
+}
+
+/* 셀 안 owner 태그 */
+.membership-root .cp-tag {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-top: auto;
+}
+.membership-root .cp-tag[data-owner='self'] {
+  background: var(--cp-self-tag-bg);
+  color: var(--cp-self-tag-fg);
+}
+.membership-root .cp-tag[data-owner='free'] {
+  background: var(--cp-free-tag-bg);
+  color: var(--cp-free-tag-fg);
+}
+.membership-root .cp-tag[data-owner='challenge'] {
+  background: var(--cp-chal-tag-bg);
+  color: var(--cp-chal-tag-fg);
+}
+
+/* ===================== 13주 타임라인 ===================== */
+.membership-root .cp-timeline {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.membership-root .cp-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.membership-root .cp-month {
+  background: #fff;
+  border: 1.5px solid var(--g300);
+  border-radius: 20px;
+  padding: 20px 18px 22px;
+}
+.membership-root .cp-month-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1.5px solid var(--g100);
+}
+.membership-root .cp-month-name {
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--lc-blue);
+}
+.membership-root .cp-month-trait {
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--g600);
+  background: var(--g100);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+/* 주차 리스트 — 좌측 세로 라인 + 노드 */
+.membership-root .cp-weeks {
+  display: flex;
+  flex-direction: column;
+}
+.membership-root .cp-week {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  column-gap: 12px;
+  padding-bottom: 16px;
+}
+.membership-root .cp-week:last-child {
+  padding-bottom: 0;
+}
+.membership-root .cp-week:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 22px;
+  top: 30px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--g300);
+}
+.membership-root .cp-week-no {
+  z-index: 1;
+  width: 46px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 9px;
+  background: var(--g100);
+  color: var(--g600);
+}
+.membership-root .cp-week[data-owner='challenge'] .cp-week-no {
+  background: var(--cp-chal-tag-bg);
+  color: #fff;
+}
+.membership-root .cp-week[data-owner='free'] .cp-week-no {
+  background: var(--cp-free-tag-bg);
+  color: var(--cp-free-tag-fg);
+}
+.membership-root .cp-week-body {
+  padding-top: 1px;
+}
+.membership-root .cp-week-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--lc-ink);
+  word-break: keep-all;
+}
+.membership-root .cp-week-title.is-empty {
+  color: var(--g500);
+  font-weight: 600;
+}
+.membership-root .cp-week-desc {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--g600);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+/* 플레이북 안내 풋노트 */
+.membership-root .cp-playbook {
+  max-width: 1040px;
+  margin: 30px auto 0;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--g600);
+  font-weight: 500;
+}
+.membership-root .cp-playbook strong {
+  color: var(--lc-orange-deep);
+  font-weight: 800;
+}
+
+/* ===================== 반응형 ===================== */
+@media (max-width: 920px) {
+  .membership-root .cp-months {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .membership-root .cp-phase-bar {
+    padding-left: 0;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .membership-root .courseplan {
+    padding: 56px 0;
+  }
+  .membership-root .cp-toggle-btn {
+    padding: 9px 18px;
+    font-size: 14px;
+  }
+  .membership-root .cp-legend {
+    gap: 8px;
+  }
+  .membership-root .cp-legend-item {
+    padding: 6px 12px 6px 7px;
+  }
+  /* 매트릭스: 모바일은 가로 스크롤 유지, 컬럼 폭 확보로 가독성 보존 */
+  .membership-root .cp-matrix {
+    min-width: 640px;
+  }
+  .membership-root .cp-matrix-row {
+    grid-template-columns: 116px repeat(5, minmax(118px, 1fr));
+  }
+  .membership-root .cp-cat-head {
+    font-size: 12.5px;
+    padding: 0 10px;
+  }
+  .membership-root .cp-cell {
+    padding: 12px 11px 10px;
+    min-height: 66px;
+  }
+  .membership-root .cp-cell-task {
+    font-size: 12.5px;
+  }
+  .membership-root .cp-phase-bar {
+    padding-left: 0;
+  }
+  /* 매트릭스가 스크롤됨을 알리는 힌트 */
+  .membership-root .cp-scroll-hint {
+    display: block;
+  }
+}
+
+/* 데스크탑에선 스크롤 힌트 숨김 */
+.membership-root .cp-scroll-hint {
+  display: none;
+  text-align: center;
+  font-size: 12px;
+  color: var(--g500);
+  margin-top: 10px;
+}
