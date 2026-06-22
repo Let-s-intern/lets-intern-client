@@ -1,10 +1,38 @@
-import { SOLUTION, type SolutionSatellite } from '../data/solution';
+import {
+  BookOpen,
+  Flag,
+  Handshake,
+  MonitorPlay,
+  UserCheck,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
+import {
+  SOLUTION,
+  type SolutionSatellite,
+  type SolutionSatelliteIcon,
+} from '../data/solution';
 
-function SolutionSatelliteNode({ label, hint }: SolutionSatellite) {
+const SATELLITE_ICONS: Record<SolutionSatelliteIcon, LucideIcon> = {
+  flag: Flag,
+  bookOpen: BookOpen,
+  users: Users,
+  monitorPlay: MonitorPlay,
+  userCheck: UserCheck,
+  handshake: Handshake,
+};
+
+function SolutionSatelliteNode({ label, hint, icon }: SolutionSatellite) {
+  const Icon = SATELLITE_ICONS[icon];
   return (
     <div className="hub-sat">
-      <span className="hub-sat-label">{label}</span>
-      <span className="hub-sat-hint">{hint}</span>
+      <span className="hub-sat-ic" aria-hidden>
+        <Icon size={20} strokeWidth={2.2} />
+      </span>
+      <span className="hub-sat-text">
+        <span className="hub-sat-label">{label}</span>
+        <span className="hub-sat-hint">{hint}</span>
+      </span>
     </div>
   );
 }

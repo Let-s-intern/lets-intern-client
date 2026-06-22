@@ -13,9 +13,9 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: auto auto auto;
-  gap: 10px 40px;
+  gap: 10px 64px;
   align-items: center;
-  max-width: 880px;
+  max-width: 900px;
   margin: 14px auto 0;
 }
 /* 허브 — 중앙 한 칸의 컴팩트 박스. 6위성이 대각선 화살표로 이 중심에 모인다. */
@@ -44,22 +44,45 @@
   font-weight: 700;
 }
 
-/* 위성 카드 — 흰 카드 + 보더, 중앙을 향한 수렴 화살표를 가짐 */
+/* 위성 카드 — 아이콘 칩 + 텍스트의 입체 카드. "값진 것들이 하나로 모인다"는 무게감을 준다. */
 .membership-root .hub-sat {
   position: relative;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 13px;
+  background: linear-gradient(180deg, #ffffff, #f7f9ff);
+  border: 1.5px solid #e2e8ff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  text-align: left;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 26px -16px rgba(74, 118, 255, 0.55);
+}
+.membership-root .hub-sat-ic {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  color: #fff;
+  box-shadow: 0 8px 16px -8px rgba(74, 118, 255, 0.7);
+}
+.membership-root .hub-sat-text {
+  display: flex;
   flex-direction: column;
-  gap: 3px;
-  background: #fff;
-  border: 1.5px solid var(--g300);
-  border-radius: 14px;
-  padding: 14px 16px;
-  text-align: center;
+  gap: 2px;
+  min-width: 0;
 }
 .membership-root .hub-sat-label {
   font-weight: 800;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--lc-ink);
+  letter-spacing: -0.02em;
 }
 .membership-root .hub-sat-hint {
   font-size: 12px;
@@ -99,9 +122,9 @@
 .membership-root .hub-sat::after {
   content: '';
   position: absolute;
-  width: 46px;
-  height: 14px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='14' viewBox='0 0 46 14'%3E%3Cpath d='M0 7h36M32 2l8 5-8 5' fill='none' stroke='%234A76FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+  width: 34px;
+  height: 15px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='15' viewBox='0 0 34 15'%3E%3Cpath d='M1 7.5h23M21 2.5l6.5 5-6.5 5' fill='none' stroke='%234A76FF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
     center/contain no-repeat;
   z-index: 1;
 }
@@ -112,7 +135,7 @@
 .membership-root .hub-sat:nth-of-type(1)::after,
 .membership-root .hub-sat:nth-of-type(3)::after,
 .membership-root .hub-sat:nth-of-type(5)::after {
-  right: -50px;
+  right: -44px;
 }
 .membership-root .hub-sat:nth-of-type(1)::after {
   top: 64%;
@@ -130,7 +153,7 @@
 .membership-root .hub-sat:nth-of-type(2)::after,
 .membership-root .hub-sat:nth-of-type(4)::after,
 .membership-root .hub-sat:nth-of-type(6)::after {
-  left: -50px;
+  left: -44px;
 }
 .membership-root .hub-sat:nth-of-type(2)::after {
   top: 64%;
@@ -150,18 +173,12 @@
   .membership-root .hub {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    max-width: 420px;
-  }
-  .membership-root .hub {
-    gap: 18px;
+    gap: 20px;
+    max-width: 440px;
   }
   .membership-root .hub-sat {
-    flex-direction: row;
-    justify-content: center;
-    align-items: baseline;
-    gap: 8px;
-    text-align: left;
+    justify-content: flex-start;
+    align-items: center;
   }
   /* 세로 스택: 각 위성 아래 ↓ 화살표(SVG 90° 회전). nth 특이성에 맞춰 덮어쓴다 */
   .membership-root .hub-sat:nth-of-type(1)::after,
