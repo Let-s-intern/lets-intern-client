@@ -9,15 +9,11 @@ import {
   type Step,
 } from '../data/coursePlan';
 
-// owner → 셀 태그 라벨. 색은 CSS(data-owner)로 처리.
-const OWNER_LABEL: Record<Owner, string> = {
-  self: '직접',
-  free: '무료 자료',
-  challenge: '챌린지',
-  'challenge-deep': '챌린지 · 심화',
-};
+// 멤버십이 제공하는 셀(직접 준비 영역이 아닌 모든 셀)인지.
+const isProvided = (owner: Owner) => owner !== 'self';
 
 // 한 STEP 칸의 셀(들). document/step03 처럼 2셀이면 세로로 쌓는다.
+// 멤버십 제공 셀은 "멤버십 제공" 스티커로 강조, 직접 셀은 태그 없이 흐리게 둔다.
 function StepColumn({ cells }: { cells: MatrixCell[] }) {
   return (
     <div className="cpm-col">
@@ -26,12 +22,13 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
           key={cell.owner + cell.title}
           className="cpm-cell"
           data-owner={cell.owner}
+          data-provided={isProvided(cell.owner) ? 'true' : undefined}
         >
+          {isProvided(cell.owner) && (
+            <span className="cpm-cell-tag">멤버십 제공</span>
+          )}
           <p className="cpm-cell-title">{cell.title}</p>
           <p className="cpm-cell-desc">{cell.desc}</p>
-          <span className="cpm-cell-tag" data-owner={cell.owner}>
-            {OWNER_LABEL[cell.owner]}
-          </span>
         </article>
       ))}
     </div>
@@ -93,6 +90,10 @@ export default function CoursePlanMatrix() {
           <CategoryRow category={category} key={category.id} />
         ))}
       </div>
+      <p className="cpm-note">
+        <span className="cpm-note-chip">멤버십 제공</span> 표시가 없는 단계는
+        직접 준비하는 영역이에요.
+      </p>
     </div>
   );
 }

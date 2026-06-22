@@ -211,66 +211,86 @@
   gap: 8px;
   height: 100%;
 }
+/* 셀 기본 = 직접 준비 영역: 흐리게(회색)로 뒤로 물러나게 한다(태그 없음). */
 .membership-root .cpm-cell {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex: 1;
   border-radius: 13px;
   padding: 13px 13px 12px;
-  background: var(--cp-self-bg);
-  border: 1.5px solid var(--cp-self-bd);
+  background: #f6f7fa;
+  border: 1.5px solid #eceef4;
 }
-.membership-root .cpm-cell[data-owner='free'] {
-  background: var(--cp-free-bg);
-  border-color: var(--cp-free-bd);
-}
-.membership-root .cpm-cell[data-owner='challenge'] {
-  background: var(--cp-chal-bg);
-  border-color: var(--cp-chal-bd);
-}
-.membership-root .cpm-cell[data-owner='challenge-deep'] {
-  background: var(--cp-deep-bg);
-  border-color: var(--cp-deep-bd);
+/* 멤버십 제공 셀 — 밝게 강조 + "멤버십 제공" 스티커가 붙은 듯한 모서리 라벨 */
+.membership-root .cpm-cell[data-provided='true'] {
+  background: linear-gradient(180deg, #eef2ff, #ffffff);
+  border-color: #c6d2ff;
+  box-shadow: 0 12px 26px -18px rgba(74, 118, 255, 0.65);
 }
 .membership-root .cpm-cell-title {
   font-weight: 700;
   font-size: 13.5px;
   line-height: 1.35;
-  color: var(--lc-ink);
+  color: var(--g600);
   word-break: keep-all;
 }
 .membership-root .cpm-cell-desc {
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--g600);
+  color: var(--g500);
   word-break: keep-all;
 }
+.membership-root .cpm-cell[data-provided='true'] .cpm-cell-title {
+  color: var(--lc-ink);
+}
+.membership-root .cpm-cell[data-provided='true'] .cpm-cell-desc {
+  color: var(--g600);
+}
+/* "멤버십 제공" 스티커 — 셀 우상단 모서리에 비스듬히 붙인 듯한 라벨 */
 .membership-root .cpm-cell-tag {
+  position: absolute;
+  top: -8px;
+  right: -6px;
   display: inline-flex;
-  align-self: flex-start;
+  align-items: center;
+  gap: 3px;
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  padding: 4px 9px;
+  border-radius: 7px;
+  box-shadow: 0 6px 14px -5px rgba(74, 118, 255, 0.7);
+  transform: rotate(3deg);
+  white-space: nowrap;
+  z-index: 2;
+}
+.membership-root .cpm-cell-tag::before {
+  content: '✓';
+  font-size: 9px;
+}
+/* 하단 안내 — 흐리게: 태그 없는 단계는 직접 준비 영역 */
+.membership-root .cpm-note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--g500);
+  word-break: keep-all;
+}
+.membership-root .cpm-note-chip {
+  display: inline-flex;
   align-items: center;
   font-weight: 800;
-  font-size: 10.5px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  margin-top: auto;
-}
-.membership-root .cpm-cell-tag[data-owner='self'] {
-  background: var(--cp-self-tag-bg);
-  color: var(--cp-self-tag-fg);
-}
-.membership-root .cpm-cell-tag[data-owner='free'] {
-  background: var(--cp-free-tag-bg);
-  color: var(--cp-free-tag-fg);
-}
-.membership-root .cpm-cell-tag[data-owner='challenge'] {
-  background: var(--cp-chal-tag-bg);
-  color: var(--cp-chal-tag-fg);
-}
-.membership-root .cpm-cell-tag[data-owner='challenge-deep'] {
-  background: var(--cp-deep-tag-bg);
-  color: var(--cp-deep-tag-fg);
+  font-size: 11px;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-right: 3px;
 }
 
 /* =====================================================================
