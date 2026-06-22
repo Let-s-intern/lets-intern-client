@@ -12,11 +12,8 @@ import './styles/hero.css';
 import './styles/solution.css';
 import './styles/benefits.css';
 import './styles/benefit-modal.css';
-import './styles/plan-expand.css';
 import './styles/proof.css';
-import './styles/plans-cards.css';
-import './styles/plans-matrix.css';
-import './styles/plans-accordion.css';
+import './styles/plan-single.css';
 import './styles/reviews.css';
 import './styles/roadmap.css';
 import './styles/final-cta.css';
@@ -40,27 +37,31 @@ import RoadmapSection from './section/RoadmapSection';
 import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
-import PlanSheet from './ui/PlanSheet';
+import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
 
 export default function MembershipLanding() {
   useEffect(() => startHeaderSync(), []);
 
   return (
-    <div className="membership-root">
-      <main>
-        <MembershipAnimations />
-        <HeroSection />
-        <SolutionSection />
-        <BenefitsSection />
-        <PartnerBenefitsSection />
-        <PlansSection />
-        <ReviewsSection />
-        <RoadmapSection />
-        <FinalCtaSection />
-        <FaqSection />
-        <ApplyBar />
-        <PlanSheet />
-      </main>
-    </div>
+    <>
+      <div className="membership-root">
+        <main>
+          <MembershipAnimations />
+          <HeroSection />
+          <SolutionSection />
+          <BenefitsSection />
+          <PartnerBenefitsSection />
+          <PlansSection />
+          <ReviewsSection />
+          <RoadmapSection />
+          <FinalCtaSection />
+          <FaqSection />
+          <ApplyBar />
+        </main>
+      </div>
+      {/* 결제 컨트롤러는 앱 자체 Tailwind 컴포넌트(PricePlanBottomSheet)를 쓰므로
+          .membership-root 스코프 밖에 마운트한다(스코핑/포털 이슈 없음). */}
+      <MembershipPaymentSheet />
+    </>
   );
 }
