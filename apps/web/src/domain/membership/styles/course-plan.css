@@ -125,18 +125,11 @@
   background: #fff;
   border: 1.5px solid var(--g300);
 }
-.membership-root .cpm-step[data-phase='live'] {
-  border-color: var(--cp-chal-bd);
-  background: #fff8f5;
-}
 .membership-root .cpm-step-no {
   font-family: var(--num);
   font-weight: 800;
   font-size: 12px;
   color: var(--lc-blue);
-}
-.membership-root .cpm-step[data-phase='live'] .cpm-step-no {
-  color: var(--lc-orange-deep);
 }
 .membership-root .cpm-step-label {
   font-weight: 700;
@@ -199,9 +192,6 @@
   font-size: 11px;
   color: var(--lc-blue);
   margin-bottom: 6px;
-}
-.membership-root .cpm-step-cell[data-phase='live'] .cpm-step-tag {
-  color: var(--lc-orange-deep);
 }
 
 /* 한 칸 안의 셀(들) — document/step03 는 2셀 세로 적층 */

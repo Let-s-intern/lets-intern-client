@@ -19,7 +19,12 @@ const createJestConfig = nextJest({ dir: './' });
 const customConfig = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    // lucide-react 는 ESM 배포라 next/jest(SWC) 에서 파싱 실패한다. 테스트에서는
+    // 아이콘을 단순 stub 으로 매핑한다(앱 빌드는 실제 lucide-react 사용).
+    '^lucide-react$': '<rootDir>/test/mocks/lucide-react.js',
+  },
   coverageProvider: 'v8',
   coverageReporters: ['text', 'json-summary', 'html'],
   coverageDirectory: '<rootDir>/coverage',

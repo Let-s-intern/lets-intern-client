@@ -1,3 +1,4 @@
+import { Calendar, Clock, Target, type LucideIcon } from 'lucide-react';
 import {
   TBA_PLACEHOLDER,
   type SeminarMentor,
@@ -5,11 +6,17 @@ import {
 } from '../data/seminar';
 
 // 미정 필드 placeholder 한 줄 — "추후 공개"를 빈 값이 아닌 1급 상태로 표시.
-function PlaceholderRow({ icon, text }: { icon: string; text: string }) {
+function PlaceholderRow({
+  icon: Icon,
+  text,
+}: {
+  icon: LucideIcon;
+  text: string;
+}) {
   return (
     <div className="sem-row is-tba">
       <span className="sem-row-icon" aria-hidden>
-        {icon}
+        <Icon size={15} strokeWidth={2.2} />
       </span>
       <span className="sem-row-text">{text}</span>
       <span className="sem-soon-pill">추후 공개</span>
@@ -18,11 +25,11 @@ function PlaceholderRow({ icon, text }: { icon: string; text: string }) {
 }
 
 // 확정 정보 한 줄 (날짜·시간·주제).
-function InfoRow({ icon, text }: { icon: string; text: string }) {
+function InfoRow({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
   return (
     <div className="sem-row">
       <span className="sem-row-icon" aria-hidden>
-        {icon}
+        <Icon size={15} strokeWidth={2.2} />
       </span>
       <span className="sem-row-text">{text}</span>
     </div>
@@ -105,9 +112,9 @@ function ConfirmedBody({ session }: { session: SeminarSession }) {
   return (
     <>
       <div className="sem-rows">
-        {session.date && <InfoRow icon="📅" text={session.date} />}
-        {session.time && <InfoRow icon="⏰" text={session.time} />}
-        {session.topic && <InfoRow icon="🎯" text={session.topic} />}
+        {session.date && <InfoRow icon={Calendar} text={session.date} />}
+        {session.time && <InfoRow icon={Clock} text={session.time} />}
+        {session.topic && <InfoRow icon={Target} text={session.topic} />}
       </div>
       {session.mentor && <MentorCard mentor={session.mentor} />}
     </>
@@ -118,9 +125,9 @@ function TbaBody({ session }: { session: SeminarSession }) {
   return (
     <>
       <div className="sem-rows">
-        <InfoRow icon="📅" text={session.date ?? TBA_PLACEHOLDER.time} />
-        <PlaceholderRow icon="⏰" text={TBA_PLACEHOLDER.time} />
-        <PlaceholderRow icon="🎯" text={TBA_PLACEHOLDER.topic} />
+        <InfoRow icon={Calendar} text={session.date ?? TBA_PLACEHOLDER.time} />
+        <PlaceholderRow icon={Clock} text={TBA_PLACEHOLDER.time} />
+        <PlaceholderRow icon={Target} text={TBA_PLACEHOLDER.topic} />
       </div>
       <MentorPlaceholder />
     </>
