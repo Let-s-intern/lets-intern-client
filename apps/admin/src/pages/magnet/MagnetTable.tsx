@@ -53,29 +53,36 @@ const isMagnetAccessibleNow = (row: MagnetListItem) =>
     ? !isMagnetExpired(row)
     : row.isAccessible && !isMagnetExpired(row) && !isMagnetUpcoming(row);
 
-// 어드민이 한눈에 이해할 수 있는 직관적 상태로 묶는다. (웹 동작과 동일 기준)
-// - 구독 가능 : 출시알림(LAUNCH_ALERT) — 구독은 BE에서 항상 허용
-// - 만료      : 노출 종료일이 지나 접속·노출 모두 불가
-// - 접속 차단 : 접속 가능을 꺼서 어디에도 안 뜨고 링크도 막힘
-// - 공개 예정 : 노출 시작일 전 — 웹에서 '공개예정'으로 잠겨 표시(시작일에 공개)
-// - 노출 중   : 목록에도 뜨고 링크도 됨 (목록노출 + 접속 + 기간 안)
-// - 링크 전용 : 목록엔 없지만 링크로 접속 가능 (인플루언서)
+// 어드민이 한눈에 이해할 수 있게 상태를 세분화한다. (웹 동작과 동일 기준)
+// [일반 타입]
+// - 만료       : 노출 종료일이 지나 접속·노출 모두 불가
+// - 접속 차단  : 접속 가능을 꺼서 어디에도 안 뜨고 링크도 막힘
+// - 공개 예정  : 시작일 전 + 목록노출 ON — 시작일에 목록·링크로 공개 예정
+// - 예약·미노출: 시작일 전 + 목록노출 OFF — 시작일에 링크로만 열림(목록엔 안 뜸)
+// - 노출 중    : 진행 중 + 목록노출 ON — 목록에도 뜨고 링크도 됨
+// - 링크 전용  : 진행 중 + 목록노출 OFF — 목록엔 없고 링크로만(인플루언서)
+// [출시알림] 구독은 BE에서 항상 허용 — 발송일(시작일) 기준으로만 구분
+// - 출시 예정  : 발송일 전(구독 받는 중) · 구독 가능 : 발송일~종료일 · 만료 : 종료 후
 const getMagnetAccessState = (
   row: MagnetListItem,
 ): {
   label: string;
-  color: 'success' | 'info' | 'warning' | 'default' | 'secondary';
+  color: 'success' | 'info' | 'warning' | 'default' | 'secondary' | 'primary';
 } => {
-  if (row.type === 'LAUNCH_ALERT')
-    return isMagnetExpired(row)
-      ? { label: '만료', color: 'default' }
-      : { label: '구독 가능', color: 'info' };
+  if (row.type === 'LAUNCH_ALERT') {
+    if (isMagnetExpired(row)) return { label: '만료', color: 'default' };
+    if (isMagnetUpcoming(row)) return { label: '출시 예정', color: 'primary' };
+    return { label: '구독 가능', color: 'info' };
+  }
   if (isMagnetExpired(row)) return { label: '만료', color: 'default' };
   if (!row.isAccessible) return { label: '접속 차단', color: 'warning' };
-  if (isMagnetUpcoming(row)) return { label: '공개 예정', color: 'info' };
+  if (isMagnetUpcoming(row))
+    return row.isVisible
+      ? { label: '공개 예정', color: 'primary' }
+      : { label: '예약·미노출', color: 'secondary' };
   return row.isVisible
     ? { label: '노출 중', color: 'success' }
-    : { label: '링크 전용', color: 'secondary' };
+    : { label: '링크 전용', color: 'info' };
 };
 
 interface MagnetTableProps {
