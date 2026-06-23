@@ -30,9 +30,9 @@ export const BENEFIT_CARDS: BenefitCard[] = [
     id: 'challenge',
     iconSvg: '/images/membership/ic-challenge.svg',
     iconClass: 'ic-yel',
-    title: '챌린지 전체 무료 참여',
-    desc: '이력서·자소서·포트폴리오부터 인적성·대기업 자소서 완성 챌린지까지, 챌린지 9종 전체를 무료로 참여해보세요!',
-    tagline: '챌린지 9종 전액 무료',
+    title: '챌린지 종류별 1회 무료 참여',
+    desc: '이력서·자소서·포트폴리오부터 인적성·대기업 자소서 완성 챌린지까지, 챌린지 9종을 종류별 1회씩 베이직 플랜으로 무료 참여해보세요!',
+    tagline: '종류별 1회 · 베이직 플랜 무료',
     more: '참여 가능 챌린지 보기 →',
   },
   {

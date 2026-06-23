@@ -294,7 +294,7 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             />
           </div>
           <div>
-            <h3>챌린지 전체 무료 참여</h3>
+            <h3>챌린지 종류별 1회 무료 참여</h3>
             <p>멤버십에 포함된 렛츠커리어 챌린지</p>
           </div>
         </div>
@@ -304,8 +304,8 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
               멤버십 가입자는 챌린지를 추가 비용 없이
             </span>
             <p>
-              경험정리·이력서·면접 등 <b>렛츠커리어 챌린지</b>를 멤버십 기간
-              동안 무료로 참여할 수 있어요.
+              경험정리·이력서·면접 등 <b>렛츠커리어 챌린지</b>를{' '}
+              <b>종류별 1회씩</b> 베이직 플랜으로 무료 참여할 수 있어요.
             </p>
           </div>
           <h4>무료로 참여할 수 있는 챌린지</h4>
@@ -330,8 +330,8 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             ))}
           </div>
           <p className="m-note">
-            결제 즉시 모든 챌린지가 열려, 원하는 챌린지부터 바로 시작할 수
-            있어요.
+            각 챌린지의 <b>베이직 플랜</b>을 <b>종류별 1회씩</b> 무료로 참여할
+            수 있어요. 원하는 챌린지부터 바로 시작하세요.
           </p>
         </div>
         <div className="modal-foot">
