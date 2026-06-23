@@ -7,8 +7,8 @@ export type SolutionSatelliteIcon =
   | 'bookOpen'
   | 'users'
   | 'monitorPlay'
-  | 'userCheck'
-  | 'handshake';
+  | 'handshake'
+  | 'route';
 
 export interface SolutionSatellite {
   /** 위성 라벨 (구성 요소명) */
@@ -31,14 +31,18 @@ export const SOLUTION = {
   /** 허브로 수렴하는 위성 6종 */
   satellites: [
     { label: '챌린지', hint: '경험정리·이력서·자소서·면접', icon: 'flag' },
-    { label: '가이드북', hint: '합격 자소서·이력서 템플릿', icon: 'bookOpen' },
-    { label: '스터디', hint: '함께 완주하는 동료', icon: 'users' },
-    { label: 'VOD', hint: '직무·취업 인사이트 강의', icon: 'monitorPlay' },
-    { label: '현직자 멘토링', hint: '실무자 1:1 피드백', icon: 'userCheck' },
+    { label: '가이드북', hint: '이력서, 자소서 등 6종', icon: 'bookOpen' },
+    { label: '렛츠런 스터디', hint: '함께 완주하는 동료', icon: 'users' },
+    { label: 'VOD', hint: '현직자 세미나 20종 모음집', icon: 'monitorPlay' },
     {
       label: '외부 제휴 서비스',
-      hint: '제휴 혜택으로 비용 절감',
+      hint: '산타토익, 뷰인터, 슈피인턴',
       icon: 'handshake',
+    },
+    {
+      label: '13주 플레이북',
+      hint: '하반기 공채 주차별 합격 플랜',
+      icon: 'route',
     },
   ] satisfies SolutionSatellite[],
 } as const;

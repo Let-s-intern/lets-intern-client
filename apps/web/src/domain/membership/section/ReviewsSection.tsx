@@ -97,8 +97,13 @@ function MarqueeRow({
   cards: MissionReview[];
   reverse?: boolean;
 }) {
+  // 클릭하면 흐름이 멈췄다가 다시 클릭하면 재생된다(호버 정지 대체).
+  const [paused, setPaused] = useState(false);
   return (
-    <div className="rev-row">
+    <div
+      className={`rev-row${paused ? ' paused' : ''}`}
+      onClick={() => setPaused((p) => !p)}
+    >
       <div className={`rev-track ${reverse ? 'reverse' : ''}`}>
         {[...cards, ...cards].map((r, i) => (
           <article className="qcard rev-mcard" key={i}>
@@ -151,7 +156,7 @@ export default function ReviewsSection() {
         <div className="rev-sub">
           <h3>렛츠커리어에서 공채 준비한 후기</h3>
           <p>
-            챌린지부터 현직자 멘토링까지, 실제 렛츠커리어에서 공채를 준비하신
+            챌린지부터 세미나 VOD까지, 실제 렛츠커리어에서 공채를 준비하신
             분들이 남겨주신 회고를 모았어요.
           </p>
         </div>

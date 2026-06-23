@@ -273,9 +273,12 @@
 .membership-root .rev-track.reverse {
   animation-direction: reverse;
 }
-.membership-root .rev-row:hover .rev-track,
-.membership-root .rev-row:active .rev-track {
+/* 후기 마퀴는 호버가 아니라 클릭으로 멈춘다(.paused 토글). */
+.membership-root .rev-row.paused .rev-track {
   animation-play-state: paused;
+}
+.membership-root .rev-marquee .rev-row {
+  cursor: pointer;
 }
 .membership-root .rev-mcard {
   flex: 0 0 360px;
