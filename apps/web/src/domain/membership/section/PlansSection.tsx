@@ -2,12 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import dayjs from '../lib/dayjs';
-import {
-  formatKRW,
-  MEMBERSHIP_END_DATE,
-  MEMBERSHIP_START_DATE,
-} from '../data/membership';
-import { getDiscountRate, PLAN_NAME, PLAN_PRICE } from '../data/plans';
+import { formatKRW } from '../data/membership';
+import { getDiscountRate, PLAN_NAME } from '../data/plans';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import VodOptionCard from '../ui/VodOptionCard';
 
 // 대상 숫자를 0 → target 으로 카운트업한다. 요소가 60% 보일 때 1회 재생(빠른 스크롤 대응).
@@ -61,16 +58,16 @@ function useCountUpOnView(target: number, durationMs = 1200) {
 // 오픈 특가 금액은 화면 진입 시 0 → 특가로 카운트업된다.
 // 결제는 하단 고정 ApplyBar(openPlanSheet → MembershipPaymentSheet)에 위임한다.
 export default function PlansSection() {
-  const startDate = MEMBERSHIP_START_DATE;
-  const endDate = MEMBERSHIP_END_DATE;
+  const { startDate, endDate, regularPrice, salePrice } =
+    useMembershipChallengeData();
   const months = dayjs(endDate).diff(dayjs(startDate), 'month') + 1;
-  const discountRate = getDiscountRate(PLAN_PRICE.original, PLAN_PRICE.sale);
+  const discountRate = getDiscountRate(regularPrice, salePrice);
   // 월/일 환산(마케팅 표기) — 특가 하나에서 파생해 가격 변경 시 자동 갱신.
   const totalDays = dayjs(endDate).diff(dayjs(startDate), 'day') + 1;
-  const perMonth = Math.round(PLAN_PRICE.sale / months / 1000) * 1000;
-  const perDay = Math.round(PLAN_PRICE.sale / totalDays / 100) * 100;
+  const perMonth = Math.round(salePrice / months / 1000) * 1000;
+  const perDay = Math.round(salePrice / totalDays / 100) * 100;
   const { ref: saleRef, value: animatedSale } = useCountUpOnView(
-    PLAN_PRICE.sale,
+    salePrice,
     700,
   );
 
@@ -114,7 +111,7 @@ export default function PlansSection() {
                 <span className="allpass-was-label">정가</span>
                 <span className="allpass-was-figure">
                   <span className="allpass-was-num num">
-                    {formatKRW(PLAN_PRICE.original)}원
+                    {formatKRW(regularPrice)}원
                   </span>
                   {/* 취소선 — 비교 영역이 보이면(.struck) 좌→우로 그어진다 */}
                   <span className="allpass-strike" aria-hidden />
@@ -123,9 +120,8 @@ export default function PlansSection() {
             </div>
             <div className="allpass-permonth">
               <span className="allpass-permonth-eq">
-                {months}개월{' '}
-                <span className="num">{formatKRW(PLAN_PRICE.sale)}</span>원 ={' '}
-                <strong className="num">월 {formatKRW(perMonth)}원</strong>
+                {months}개월 <span className="num">{formatKRW(salePrice)}</span>
+                원 = <strong className="num">월 {formatKRW(perMonth)}원</strong>
               </span>
               <span className="allpass-permonth-day num">
                 하루 약 {formatKRW(perDay)}원 꼴

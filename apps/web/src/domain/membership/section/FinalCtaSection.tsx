@@ -1,10 +1,12 @@
 import Countdown from '../ui/Countdown';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
-import { MEMBERSHIP_DEADLINE } from '../data/membership';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import { FINAL_CTA } from '../data/finalCta';
 
 export default function FinalCtaSection() {
+  const { deadline } = useMembershipChallengeData();
+
   return (
     <section className="final">
       <div className="wrap">
@@ -19,7 +21,7 @@ export default function FinalCtaSection() {
         </h2>
         <p className="rv">{FINAL_CTA.desc}</p>
         <div className="cd rv">
-          <Countdown deadline={MEMBERSHIP_DEADLINE} />
+          <Countdown deadline={deadline} />
         </div>
         <button
           className="btn btn-primary btn-lg rv"

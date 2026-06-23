@@ -29,6 +29,7 @@ import './styles/partners.css';
 import './styles/apply.css';
 
 import MembershipAnimations from './ui/MembershipAnimations';
+import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
 import RecommendSection from './section/RecommendSection';
 import CompareSection from './section/CompareSection';
@@ -53,6 +54,7 @@ export default function MembershipLanding() {
         <main>
           <MembershipAnimations />
           <HeroSection />
+          <MembershipNav />
           <RecommendSection />
           <CompareSection />
           <SolutionSection />
