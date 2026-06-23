@@ -1,0 +1,214 @@
+/* =====================================================================
+   비교 — "공채 n번째 탈락자 vs 공채 단기간 합격자"
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   에디토리얼 대비: 탈락자=플랫·톤다운 회색, 합격자=화이트+은은한 틴트·글로우.
+   강조 그라데이션은 페이지 표준인 블루→인디고로 통일(세미나 confirmed 카드와 동일 언어).
+   ===================================================================== */
+
+.membership-root .compare {
+  padding: 80px 0;
+}
+
+/* ---------- 타이틀 (탈락자 / 합격자) ----------
+   카드 그리드(1fr 54px 1fr·max 940px·gap 18px)와 동일 레이아웃으로 깔아
+   좌측 타이틀=좌카드 위 중앙, 우측 타이틀=우카드 위 중앙에 정렬한다.
+   가운데(메달 위치)는 빈 칼럼으로 비우고, 텍스트 vs 는 두지 않는다(카드 사이 VS 메달만 사용).
+   (기존 sec-head 760px 폭 탓에 가운데로 몰리던 문제 해결) */
+.membership-root .compare .sec-head {
+  max-width: 940px;
+}
+.membership-root .compare .sec-head h2 {
+  display: grid;
+  grid-template-columns: 1fr 54px 1fr;
+  align-items: baseline;
+  gap: 0 18px;
+  max-width: 940px;
+  margin: 0 auto;
+}
+.membership-root .cmp-t-lose {
+  grid-column: 1;
+  text-align: center;
+  color: var(--g500);
+}
+.membership-root .cmp-t-win {
+  grid-column: 3;
+  text-align: center;
+}
+.membership-root .cmp-t-win {
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 카드 그리드 (가운데 VS 메달) ---------- */
+.membership-root .cmp-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0 18px;
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+/* VS 메달 — 브랜드 블루→인디고 */
+.membership-root .cmp-vs {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
+  box-shadow: 0 10px 24px -8px rgba(74, 118, 255, 0.55);
+  z-index: 2;
+}
+
+/* ---------- 카드 공통 ---------- */
+.membership-root .cmp-card {
+  align-self: stretch;
+  border-radius: 20px;
+  padding: 26px 26px 22px;
+  background: #fff;
+}
+
+.membership-root .cmp-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #eef0f6;
+}
+.membership-root .cmp-head h3 {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+.membership-root .cmp-tag {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* loser — 플랫·톤다운 회색(가라앉힘) */
+.membership-root .cmp-card[data-kind='loser'] {
+  background: var(--bg-cool);
+  border: 1px solid #e6e8f0;
+}
+.membership-root .cmp-card[data-kind='loser'] .cmp-head {
+  border-bottom-color: #e2e4ec;
+}
+.membership-root .cmp-card[data-kind='loser'] .cmp-head h3 {
+  color: var(--g500);
+}
+.membership-root .cmp-card[data-kind='loser'] .cmp-tag {
+  background: #e9ebf2;
+  color: var(--g500);
+}
+
+/* winner — 화이트+은은한 틴트+상단 액센트+글로우(세미나 confirmed 톤) */
+.membership-root .cmp-card[data-kind='winner'] {
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid #c6d2ff;
+  background: linear-gradient(180deg, #eef2ff, #ffffff 46%);
+  box-shadow: 0 22px 50px -26px rgba(74, 118, 255, 0.5);
+}
+.membership-root .cmp-card[data-kind='winner']::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--lc-blue), var(--lc-indigo));
+}
+.membership-root .cmp-card[data-kind='winner'] .cmp-head h3 {
+  color: var(--lc-blue);
+}
+.membership-root .cmp-card[data-kind='winner'] .cmp-tag {
+  background: var(--tint-blue);
+  color: var(--lc-blue);
+}
+
+/* ---------- 바디 (체크/엑스 항목) ---------- */
+.membership-root .cmp-body {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+.membership-root .cmp-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 0;
+}
+.membership-root .cmp-item:not(:last-child) {
+  border-bottom: 1px solid rgba(40, 60, 120, 0.06);
+}
+.membership-root .cmp-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.membership-root .cmp-card[data-kind='loser'] .cmp-ic {
+  color: var(--g300);
+}
+.membership-root .cmp-card[data-kind='winner'] .cmp-ic {
+  background: var(--tint-blue);
+  color: var(--lc-blue);
+}
+.membership-root .cmp-item p {
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.membership-root .cmp-card[data-kind='loser'] .cmp-item p {
+  color: var(--g500);
+  font-weight: 500;
+}
+.membership-root .cmp-card[data-kind='winner'] .cmp-item p {
+  color: var(--lc-ink);
+  font-weight: 600;
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 760px) {
+  .membership-root .cmp-grid {
+    grid-template-columns: 1fr;
+    gap: 14px 0;
+  }
+  .membership-root .cmp-vs {
+    margin: 2px auto;
+  }
+  /* 카드가 세로로 쌓이므로 타이틀은 자연 줄바꿈(가운데 정렬)으로 되돌린다 */
+  .membership-root .compare .sec-head h2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 10px;
+  }
+}
+@media (max-width: 600px) {
+  .membership-root .compare {
+    padding: 56px 0;
+  }
+  .membership-root .cmp-t-vs {
+    font-size: 20px;
+  }
+}

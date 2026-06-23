@@ -1,8 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import CoursePlanMatrix from './CoursePlanMatrix';
-import { CATEGORIES, MATRIX_CELLS } from '../data/coursePlan';
-
-const PROVIDED_COUNT = MATRIX_CELLS.filter((c) => c.owner !== 'self').length;
+import { CATEGORIES, COURSE_TAG_LABEL, MATRIX_CELLS } from '../data/coursePlan';
 
 describe('CoursePlanMatrix', () => {
   it('모든 카테고리 라벨을 렌더한다', () => {
@@ -20,11 +18,13 @@ describe('CoursePlanMatrix', () => {
     }
   });
 
-  it('멤버십 제공 셀에만 "멤버십 제공" 태그를 표시하고 직접 셀엔 태그가 없다', () => {
+  it('모든 셀에 분류 배지를 표시한다(태그별 = 셀 수 + 하단 범례 1)', () => {
     render(<CoursePlanMatrix />);
-    // 제공 셀 수만큼의 스티커 + 하단 안내 칩 1개 = PROVIDED_COUNT + 1.
-    expect(screen.getAllByText('멤버십 제공')).toHaveLength(PROVIDED_COUNT + 1);
-    // 직접 태그는 더 이상 렌더하지 않는다.
-    expect(screen.queryByText('직접')).not.toBeInTheDocument();
+    for (const [tag, label] of Object.entries(COURSE_TAG_LABEL)) {
+      const cellCount = MATRIX_CELLS.filter((c) => c.tag === tag).length;
+      expect(screen.getAllByText(label)).toHaveLength(cellCount + 1);
+    }
+    // 옛 "멤버십 제공" 스티커는 더 이상 렌더하지 않는다.
+    expect(screen.queryByText('멤버십 제공')).not.toBeInTheDocument();
   });
 });

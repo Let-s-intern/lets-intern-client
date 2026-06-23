@@ -9,6 +9,8 @@
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
+import './styles/recommend.css';
+import './styles/compare.css';
 import './styles/solution.css';
 import './styles/course-plan.css';
 import './styles/seminar.css';
@@ -28,6 +30,8 @@ import './styles/apply.css';
 
 import MembershipAnimations from './ui/MembershipAnimations';
 import HeroSection from './section/HeroSection';
+import RecommendSection from './section/RecommendSection';
+import CompareSection from './section/CompareSection';
 import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import SeminarSection from './section/SeminarSection';
@@ -49,6 +53,8 @@ export default function MembershipLanding() {
         <main>
           <MembershipAnimations />
           <HeroSection />
+          <RecommendSection />
+          <CompareSection />
           <SolutionSection />
           <CoursePlanSection />
           <SeminarSection />

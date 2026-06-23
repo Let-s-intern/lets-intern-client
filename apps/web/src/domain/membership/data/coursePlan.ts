@@ -24,6 +24,22 @@ export type CategoryId =
  */
 export type Owner = 'self' | 'free' | 'challenge' | 'challenge-deep';
 
+/**
+ * 셀 분류 배지 — 직접 준비 단계도 렛츠커리어가 무엇으로 돕는지 한눈에 보여준다.
+ * - free: 무료 자료(워크북·가이드)
+ * - template: 템플릿 제공
+ * - checklist: 체크리스트 제공
+ * - challenge: 멤버십에 포함되는 챌린지
+ */
+export type CourseTag = 'free' | 'template' | 'checklist' | 'challenge';
+
+export const COURSE_TAG_LABEL: Record<CourseTag, string> = {
+  free: '무료 자료',
+  template: '템플릿 제공',
+  checklist: '체크리스트 제공',
+  challenge: '챌린지',
+};
+
 /** 준비 흐름의 큰 구간 — STEP01–02 준비 / STEP03–05 실전. */
 export type Phase = 'prep' | 'live';
 
@@ -51,8 +67,10 @@ export interface MatrixCell {
   title: string;
   /** 보조 설명 */
   desc: string;
-  /** 수행 주체 */
+  /** 수행 주체 (셀 색 결정) */
   owner: Owner;
+  /** 분류 배지 (렛츠커리어 제공 형태) */
+  tag: CourseTag;
 }
 
 export interface WeekItem {
@@ -116,6 +134,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'industry',
     owner: 'self',
+    tag: 'template',
     title: '산업 분석',
     desc: '관심 산업 2~3개 시장·이슈·밸류체인',
   },
@@ -123,6 +142,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'industry',
     owner: 'self',
+    tag: 'template',
     title: '기업 분석',
     desc: '사업·인재상·JD → 1·2지망 구분',
   },
@@ -130,6 +150,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'industry',
     owner: 'free',
+    tag: 'free',
     title: '채용 캘린더',
     desc: '공채 일정 가이드로 마감일 정리',
   },
@@ -137,6 +158,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'industry',
     owner: 'self',
+    tag: 'checklist',
     title: '기업 이슈 업데이트',
     desc: '최신 뉴스·IR 체크',
   },
@@ -144,6 +166,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'industry',
     owner: 'self',
+    tag: 'template',
     title: '면접 기업 심화',
     desc: '직무·인재상 기반 질문 예측',
   },
@@ -152,6 +175,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'qualification',
     owner: 'self',
+    tag: 'checklist',
     title: '영어 성적 점검',
     desc: '유효기간 확인·즉시 접수',
   },
@@ -159,6 +183,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'qualification',
     owner: 'self',
+    tag: 'checklist',
     title: '성적표·졸업증명서',
     desc: '영문본 포함 미리 발급',
   },
@@ -166,6 +191,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'qualification',
     owner: 'self',
+    tag: 'checklist',
     title: '어학·자격 취합',
     desc: '지원서 첨부 파일 정리',
   },
@@ -173,6 +199,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'qualification',
     owner: 'self',
+    tag: 'checklist',
     title: '우대 요건 확인',
     desc: '기업별 가산점·자격 요건',
   },
@@ -180,6 +207,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'qualification',
     owner: 'self',
+    tag: 'checklist',
     title: '제출 서류 최종본',
     desc: '면접 지참 서류 스캔·정리',
   },
@@ -188,6 +216,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'experience',
     owner: 'free',
+    tag: 'free',
     title: '경험 브레인스토밍',
     desc: '무료 경험정리 워크북으로 소재 모으기',
   },
@@ -195,6 +224,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'experience',
     owner: 'challenge',
+    tag: 'challenge',
     title: '경험정리 챌린지',
     desc: '경험 전수조사 → STAR 구조로 정리',
   },
@@ -202,6 +232,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'experience',
     owner: 'self',
+    tag: 'template',
     title: '직무 역량 매칭',
     desc: '경험 ↔ 직무 키워드 연결',
   },
@@ -209,6 +240,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'experience',
     owner: 'self',
+    tag: 'template',
     title: '핵심 역량 3가지',
     desc: '자소서·면접 공통 메시지 추출',
   },
@@ -216,6 +248,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'experience',
     owner: 'self',
+    tag: 'template',
     title: '면접 소재화',
     desc: 'STAR 경험을 답변으로 변환',
   },
@@ -224,6 +257,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'document',
     owner: 'free',
+    tag: 'free',
     title: '합격 자소서 가이드북',
     desc: '구조·문항 감 잡기',
   },
@@ -231,6 +265,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'document',
     owner: 'free',
+    tag: 'free',
     title: '이력서·경력기술서 템플릿',
     desc: '양식 미리 준비',
   },
@@ -238,6 +273,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'document',
     owner: 'challenge',
+    tag: 'challenge',
     title: '이력서 챌린지',
     desc: '직무 맞춤 이력서·경력기술서 1주 완성',
   },
@@ -245,6 +281,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'document',
     owner: 'challenge-deep',
+    tag: 'challenge',
     title: '대기업 특화 자기소개서 챌린지',
     desc: '기업별 문항을 합격 구조로 첨삭',
   },
@@ -252,6 +289,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'document',
     owner: 'self',
+    tag: 'checklist',
     title: '기업별 커스터마이징',
     desc: '지원서 맞춤 수정·제출',
   },
@@ -259,6 +297,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'document',
     owner: 'self',
+    tag: 'template',
     title: '자소서 기반 질문 예측',
     desc: '제출 자소서에서 면접 질문 뽑기',
   },
@@ -267,6 +306,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'aptitude',
     owner: 'free',
+    tag: 'free',
     title: '인적성 유형 안내',
     desc: '기업별 검사 종류 파악',
   },
@@ -274,6 +314,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'aptitude',
     owner: 'self',
+    tag: 'checklist',
     title: '기초 문제풀이',
     desc: '언어·수리·추리 감 잡기',
   },
@@ -281,6 +322,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'aptitude',
     owner: 'self',
+    tag: 'checklist',
     title: '잡다 게임 연습',
     desc: '역량검사 게임 유형 익히기',
   },
@@ -288,6 +330,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'aptitude',
     owner: 'challenge',
+    tag: 'challenge',
     title: '인적성 대비 챌린지',
     desc: '약점 진단 → 실전 모의고사 반복',
   },
@@ -295,6 +338,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'aptitude',
     owner: 'self',
+    tag: 'checklist',
     title: '시험 직전 점검',
     desc: '오답 복습·컨디션 관리',
   },
@@ -303,6 +347,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step01',
     category: 'interview',
     owner: 'free',
+    tag: 'free',
     title: '면접 기본 가이드',
     desc: '면접 유형·평가 포인트',
   },
@@ -310,6 +355,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step02',
     category: 'interview',
     owner: 'self',
+    tag: 'template',
     title: '1분 자기소개 초안',
     desc: '기본 스크립트 작성',
   },
@@ -317,6 +363,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step03',
     category: 'interview',
     owner: 'self',
+    tag: 'template',
     title: '직무 PR 정리',
     desc: '강점·경험 연결',
   },
@@ -324,6 +371,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step04',
     category: 'interview',
     owner: 'self',
+    tag: 'template',
     title: '예상 질문 리스트업',
     desc: '기업·직무별 정리',
   },
@@ -331,6 +379,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     step: 'step05',
     category: 'interview',
     owner: 'challenge',
+    tag: 'challenge',
     title: '면접 준비 챌린지',
     desc: '모의면접·녹화 피드백, 1분 자기소개·직무 PR',
   },

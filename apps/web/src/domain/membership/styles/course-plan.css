@@ -104,37 +104,73 @@
   margin: 0 auto;
 }
 
-/* STEP 헤더 행 (데스크탑 전용) */
+/* STEP 헤더 행 (데스크탑 전용)
+   카드(흰 배경·테두리)를 벗겨 표(셀)와 헷갈리지 않는 "가로 축 헤더"로 둔다. */
 .membership-root .cpm-steps {
   display: grid;
   grid-template-columns: 168px repeat(5, 1fr);
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 .membership-root .cpm-steps-corner {
   /* 카테고리 라벨 열 자리 비움 */
 }
 .membership-root .cpm-step {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 2px;
-  border-radius: 13px;
-  padding: 11px 8px;
-  background: #fff;
-  border: 1.5px solid var(--g300);
+  gap: 3px;
+  padding: 4px 8px 12px;
+}
+/* STEP 사이 연결 화살표 — gap(12px) 중앙에 셰브론. 마지막 단계는 제외. */
+.membership-root .cpm-step:not(:last-child)::after {
+  content: '›';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translate(50%, -50%);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--lc-blue);
+  opacity: 0.45;
 }
 .membership-root .cpm-step-no {
   font-family: var(--num);
   font-weight: 800;
   font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--lc-blue);
 }
 .membership-root .cpm-step-label {
-  font-weight: 700;
-  font-size: 13.5px;
+  font-weight: 800;
+  font-size: 14.5px;
   color: var(--lc-ink);
+}
+
+/* STEP 헤더 — 왼쪽부터 차례로(스텝1→5) 천천히 등장.
+   조상 .rv 가 스크롤 진입(.in)할 때 재생되고, 뷰 토글로 매트릭스가
+   재마운트되면 .in 상태 조상 아래에서 다시 재생된다(직접 .rv 미사용 → 관찰 누락 없음). */
+@media (prefers-reduced-motion: no-preference) {
+  .membership-root .cpm-step {
+    opacity: 0;
+  }
+  .membership-root .rv.in .cpm-step {
+    animation: cpm-step-in 0.7s cubic-bezier(0.25, 0.6, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 0.26s);
+  }
+}
+@keyframes cpm-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* 본문 — 카테고리 행 모음 */
@@ -150,16 +186,26 @@
   align-items: stretch;
 }
 
-/* 카테고리 라벨 블록 */
+/* 카테고리 라벨 블록 — 카드(흰 배경·테두리)를 벗겨 "세로 축 행 헤더"로 둔다.
+   왼쪽 컬러 액센트 바로 축임을 표시해 셀(데이터 카드)과 구분한다. */
 .membership-root .cpm-cat {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 3px;
-  background: #fff;
-  border: 1.5px solid var(--g300);
-  border-radius: 14px;
-  padding: 14px 16px;
+  padding: 14px 14px 14px 18px;
+}
+.membership-root .cpm-cat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--lc-blue);
+  opacity: 0.5;
 }
 .membership-root .cpm-cat-label {
   font-weight: 800;
@@ -201,7 +247,7 @@
   gap: 8px;
   height: 100%;
 }
-/* 셀 기본 = 직접 준비 영역: 흐리게(회색)로 뒤로 물러나게 한다(태그 없음). */
+/* 셀 기본 = 자료 제공(무료 자료·템플릿·체크리스트): 흰 배경으로 담백하게. */
 .membership-root .cpm-cell {
   position: relative;
   display: flex;
@@ -210,10 +256,10 @@
   flex: 1;
   border-radius: 13px;
   padding: 13px 13px 12px;
-  background: #f6f7fa;
+  background: #fff;
   border: 1.5px solid #eceef4;
 }
-/* 멤버십 제공 셀 — 밝게 강조 + "멤버십 제공" 스티커가 붙은 듯한 모서리 라벨 */
+/* 챌린지 셀 — 렛츠커리어가 함께하는 단계라 밝게 강조 */
 .membership-root .cpm-cell[data-provided='true'] {
   background: linear-gradient(180deg, #eef2ff, #ffffff);
   border-color: #c6d2ff;
@@ -238,29 +284,35 @@
 .membership-root .cpm-cell[data-provided='true'] .cpm-cell-desc {
   color: var(--g600);
 }
-/* "멤버십 제공" 스티커 — 셀 우상단 모서리에 비스듬히 붙인 듯한 라벨 */
+/* 분류 배지 — 셀 상단의 알약형 라벨.
+   페이지 공통 배지 규약(eyebrow·rec-badge·partner-new)을 따른다:
+   같은 색조의 연한 틴트 배경 + 진한 글자색 + 굵게. 챌린지만 솔리드 블루 강조. */
 .membership-root .cpm-cell-tag {
-  position: absolute;
-  top: -8px;
-  right: -6px;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
   font-weight: 800;
-  font-size: 10px;
-  letter-spacing: -0.02em;
-  color: #fff;
-  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
-  padding: 4px 9px;
-  border-radius: 7px;
-  box-shadow: 0 6px 14px -5px rgba(74, 118, 255, 0.7);
-  transform: rotate(3deg);
+  font-size: 10.5px;
+  letter-spacing: -0.01em;
+  padding: 3px 9px;
+  border-radius: 999px;
   white-space: nowrap;
-  z-index: 2;
 }
-.membership-root .cpm-cell-tag::before {
-  content: '✓';
-  font-size: 9px;
+.membership-root .cpm-cell-tag[data-tag='free'] {
+  color: #2f5bd0;
+  background: var(--tint-blue);
+}
+.membership-root .cpm-cell-tag[data-tag='template'] {
+  color: #15803d;
+  background: #dcf3e4;
+}
+.membership-root .cpm-cell-tag[data-tag='checklist'] {
+  color: #b45309;
+  background: #fcefd6;
+}
+.membership-root .cpm-cell-tag[data-tag='challenge'] {
+  color: #fff;
+  background: var(--lc-blue);
 }
 /* 하단 안내 — 흐리게: 태그 없는 단계는 직접 준비 영역 */
 .membership-root .cpm-note {
@@ -271,16 +323,31 @@
   color: var(--g500);
   word-break: keep-all;
 }
+/* 범례 칩 — 셀 배지와 동일한 틴트 펄로 맞춰 1:1 매핑되게 한다. */
 .membership-root .cpm-note-chip {
   display: inline-flex;
   align-items: center;
   font-weight: 800;
   font-size: 11px;
-  color: var(--lc-blue);
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin: 0 2px;
+}
+.membership-root .cpm-note-chip[data-tag='free'] {
+  color: #2f5bd0;
   background: var(--tint-blue);
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-right: 3px;
+}
+.membership-root .cpm-note-chip[data-tag='template'] {
+  color: #15803d;
+  background: #dcf3e4;
+}
+.membership-root .cpm-note-chip[data-tag='checklist'] {
+  color: #b45309;
+  background: #fcefd6;
+}
+.membership-root .cpm-note-chip[data-tag='challenge'] {
+  color: #fff;
+  background: var(--lc-blue);
 }
 
 /* =====================================================================
@@ -479,14 +546,15 @@
     padding: 16px;
   }
   .membership-root .cpm-cat {
-    border: none;
     border-bottom: 1.5px solid var(--g100);
-    border-radius: 0;
     padding: 0 0 12px;
     margin-bottom: 14px;
     flex-direction: row;
     align-items: baseline;
     gap: 10px;
+  }
+  .membership-root .cpm-cat::before {
+    display: none;
   }
   .membership-root .cpm-cells {
     grid-template-columns: 1fr 1fr;
