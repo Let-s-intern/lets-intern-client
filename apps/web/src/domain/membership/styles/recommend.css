@@ -1,0 +1,144 @@
+/* =====================================================================
+   추천 대상 — "이런 분께 추천해요" 3컬럼 페인포인트
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   표준 LP standalone .recommend 규칙을 이식하고, 체크는 lucide 아이콘에 맞춰 조정.
+   ===================================================================== */
+
+.membership-root .recommend {
+  padding: 90px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.membership-root .rec-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.membership-root .rec-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.membership-root .rec-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+  background: var(--lc-blue);
+  padding: 6px 15px;
+  border-radius: 999px;
+  margin-bottom: 15px;
+  letter-spacing: 0;
+}
+
+.membership-root .rec-pain {
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.42;
+  letter-spacing: -0.025em;
+  color: var(--lc-ink);
+  margin-bottom: 18px;
+  min-height: 90px;
+  word-break: keep-all;
+}
+
+.membership-root .rec-pain .q {
+  color: var(--lc-blue);
+}
+
+.membership-root .rec-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.membership-root .rec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  background: #fff;
+  border: 1px solid #e7e9f0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 12px 30px -24px rgba(40, 60, 120, 0.45);
+}
+
+.membership-root .rec-item .ck {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lc-blue);
+  margin-top: 1px;
+}
+
+.membership-root .rec-item p {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.membership-root .rec-watermark {
+  position: absolute;
+  right: -56px;
+  bottom: -56px;
+  width: 340px;
+  height: 340px;
+  opacity: 0.05;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .membership-root .rec-row {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .membership-root .rec-pain {
+    min-height: 0;
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .membership-root .recommend {
+    padding: 56px 0;
+  }
+  /* 통일 모바일 타입스케일 — 카드 헤딩 16 / 본문 13 / 메타 12 */
+  .membership-root .rec-row {
+    gap: 24px;
+  }
+  .membership-root .rec-badge {
+    font-size: 12px;
+    padding: 5px 13px;
+    margin-bottom: 12px;
+  }
+  .membership-root .rec-pain {
+    font-size: 16px;
+    margin-bottom: 13px;
+  }
+  .membership-root .rec-cards {
+    gap: 9px;
+  }
+  .membership-root .rec-item {
+    gap: 9px;
+    padding: 13px 14px;
+    border-radius: 12px;
+  }
+  .membership-root .rec-item .ck svg {
+    width: 14px;
+    height: 14px;
+  }
+  .membership-root .rec-item p {
+    font-size: 13px;
+  }
+}

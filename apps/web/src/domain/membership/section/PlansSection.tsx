@@ -1,51 +1,81 @@
-import type { LucideIcon } from 'lucide-react';
-import {
-  BookOpen,
-  Briefcase,
-  FileText,
-  Handshake,
-  Target,
-  Users,
-  Zap,
-} from 'lucide-react';
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import dayjs from '../lib/dayjs';
-import { openPlanSheet } from '../lib/planSheet';
-import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
-import {
-  formatKRW,
-  MEMBERSHIP_END_DATE,
-  MEMBERSHIP_START_DATE,
-} from '../data/membership';
-import {
-  getDiscountRate,
-  PLAN_BENEFITS,
-  PLAN_CTA,
-  PLAN_FOOTNOTE,
-  PLAN_NAME,
-  PLAN_PRICE,
-  type PlanBenefitIcon,
-} from '../data/plans';
+import { formatKRW } from '../data/membership';
+import { getDiscountRate, PLAN_NAME } from '../data/plans';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import VodOptionCard from '../ui/VodOptionCard';
 
-// 혜택 아이콘 식별자 → lucide 컴포넌트 매핑(모듈 스코프로 고정, 리렌더 시 재생성 방지).
-const BENEFIT_ICONS: Record<PlanBenefitIcon, LucideIcon> = {
-  fileText: FileText,
-  target: Target,
-  briefcase: Briefcase,
-  bookOpen: BookOpen,
-  users: Users,
-  handshake: Handshake,
-  zap: Zap,
-};
+// 대상 숫자를 0 → target 으로 카운트업한다. 요소가 60% 보일 때 1회 재생(빠른 스크롤 대응).
+// 모션 최소화 환경/관측자 부재 시에는 즉시 최종값으로 둔다.
+function useCountUpOnView(target: number, durationMs = 1200) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [value, setValue] = useState(0);
+  // 폴백 가격 → API 가격으로 target 이 바뀔 때 0 부터 다시 세지 않고
+  // 직전 target 에서 보간해 깜빡임(점프)을 막는다.
+  const prevTargetRef = useRef(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      typeof IntersectionObserver === 'undefined'
+    ) {
+      setValue(target);
+      prevTargetRef.current = target;
+      return;
+    }
+    let raf = 0;
+    const startValue = prevTargetRef.current;
+    const animate = () => {
+      let startTs = 0;
+      const tick = (ts: number) => {
+        if (!startTs) startTs = ts;
+        const p = Math.min((ts - startTs) / durationMs, 1);
+        const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        setValue(Math.round(startValue + (target - startValue) * eased));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(
+      ([entry], obs) => {
+        if (entry.isIntersecting) {
+          animate();
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+      prevTargetRef.current = target;
+    };
+  }, [target, durationMs]);
+  return { ref, value };
+}
 
 // 단일 올패스 플랜 표시 섹션. 등급 비교/탭 제거 → 하나의 상품 카드.
-// 가격 위계(정가 취소선 → 특가 → 할인 배지)와 혜택 7종 스캔형 그리드로 구성.
-// 결제는 기존 챌린지 시트(openPlanSheet → MembershipPaymentSheet)에 위임한다.
+// 가격 위계(정가 취소선 → 할인 배지 → 오픈 특가 → 월/일 환산)만 보여준다.
+// 정가 취소선은 기본으로 그어져 있고, 카드 호버 시 긋는 애니메이션을 다시 재생한다(CSS).
+// 오픈 특가 금액은 화면 진입 시 0 → 특가로 카운트업된다.
+// 결제는 하단 고정 ApplyBar(openPlanSheet → MembershipPaymentSheet)에 위임한다.
 export default function PlansSection() {
-  const startDate = MEMBERSHIP_START_DATE;
-  const endDate = MEMBERSHIP_END_DATE;
+  const { startDate, endDate, regularPrice, salePrice } =
+    useMembershipChallengeData();
   const months = dayjs(endDate).diff(dayjs(startDate), 'month') + 1;
-  const discountRate = getDiscountRate(PLAN_PRICE.original, PLAN_PRICE.sale);
+  const discountRate = getDiscountRate(regularPrice, salePrice);
+  // 월/일 환산(마케팅 표기) — 특가 하나에서 파생해 가격 변경 시 자동 갱신.
+  const totalDays = dayjs(endDate).diff(dayjs(startDate), 'day') + 1;
+  const perMonth = Math.round(salePrice / months / 1000) * 1000;
+  const perDay = Math.round(salePrice / totalDays / 100) * 100;
+  const { ref: saleRef, value: animatedSale } = useCountUpOnView(
+    salePrice,
+    700,
+  );
 
   return (
     <section className="plans" id="plans">
@@ -66,43 +96,44 @@ export default function PlansSection() {
           </div>
 
           <div className="allpass-price">
-            <span className="allpass-was num">
-              {formatKRW(PLAN_PRICE.original)}원
-            </span>
-            <div className="allpass-now-row">
-              <span className="allpass-badge num">{discountRate}% OFF</span>
-              <span className="allpass-now num">
-                {formatKRW(PLAN_PRICE.sale)}
-                <span className="allpass-unit">원 / {months}개월</span>
+            <div className="allpass-compare">
+              {/* 왼쪽: 오픈 특가 히어로 */}
+              <div className="allpass-now-group">
+                <span className="allpass-now-label">오픈 특가</span>
+                <div className="allpass-now-line">
+                  <span className="allpass-now num" ref={saleRef}>
+                    {formatKRW(animatedSale)}
+                    <span className="allpass-unit">원 / {months}개월</span>
+                  </span>
+                  <span className="allpass-badge num">{discountRate}% OFF</span>
+                </div>
+                <span className="allpass-vat">
+                  부가세 포함 · 선착순 100명 한정
+                </span>
+              </div>
+
+              {/* 오른쪽: 정가(취소선) */}
+              <div className="allpass-was">
+                <span className="allpass-was-label">정가</span>
+                <span className="allpass-was-figure">
+                  <span className="allpass-was-num num">
+                    {formatKRW(regularPrice)}원
+                  </span>
+                  {/* 취소선 — 비교 영역이 보이면(.struck) 좌→우로 그어진다 */}
+                  <span className="allpass-strike" aria-hidden />
+                </span>
+              </div>
+            </div>
+            <div className="allpass-permonth">
+              <span className="allpass-permonth-eq">
+                {months}개월 <span className="num">{formatKRW(salePrice)}</span>
+                원 = <strong className="num">월 {formatKRW(perMonth)}원</strong>
+              </span>
+              <span className="allpass-permonth-day num">
+                하루 약 {formatKRW(perDay)}원 꼴
               </span>
             </div>
-            <span className="allpass-vat">부가세 포함 · 선착순 100명 한정</span>
           </div>
-
-          <ul className="allpass-benefits">
-            {PLAN_BENEFITS.map((b) => {
-              const Icon = BENEFIT_ICONS[b.icon];
-              return (
-                <li key={b.title} className="allpass-benefit">
-                  <span className="allpass-ic" aria-hidden>
-                    <Icon size={18} strokeWidth={2} />
-                  </span>
-                  <span className="allpass-bt">{b.title}</span>
-                  <span className="allpass-bd">{b.detail}</span>
-                </li>
-              );
-            })}
-          </ul>
-
-          <p className="allpass-foot">{PLAN_FOOTNOTE}</p>
-
-          <button
-            className="btn btn-primary btn-lg allpass-cta"
-            onClick={() => openPlanSheet()}
-            disabled={!IS_MEMBERSHIP_LAUNCHED}
-          >
-            {ctaLabel(PLAN_CTA)}
-          </button>
         </div>
 
         <div className="plan-plus rv" aria-hidden>

@@ -1,8 +1,8 @@
-// 혜택 섹션 카드 데이터(핵심 5종). 카드 그리드의 노출 문구를 관리한다.
+// 혜택 섹션 카드 데이터(핵심 4종). 카드 그리드의 노출 문구를 관리한다.
 // 모달 상세 본문은 표현(JSX)이 풍부해 BenefitModal.tsx 에 id 로 매핑한다.
 //
 // 제휴 3종(산타토익·뷰인터·슈퍼인턴)은 전용 "멤버 전용 제휴 서비스 혜택" 섹션
-// (partners.ts / PartnerBenefitsSection)으로 이동. 헤드라인 "혜택 8가지" = 그리드 5 + 제휴 3.
+// (partners.ts / PartnerBenefitsSection)으로 분리.
 
 export interface BenefitPill {
   text: string;
@@ -30,10 +30,10 @@ export const BENEFIT_CARDS: BenefitCard[] = [
     id: 'challenge',
     iconSvg: '/images/membership/ic-challenge.svg',
     iconClass: 'ic-yel',
-    title: '챌린지 최대 30% 할인',
-    desc: '이력서·자소서·포트폴리오 완성 챌린지를 멤버 전용가로. 대기업 챌린지 최대 30%, 그 외 최대 20% 할인.',
-    tagline: '최대 30% 멤버 전용가',
-    more: '할인 챌린지 보기 →',
+    title: '챌린지 종류별 1회 무료 참여',
+    desc: '이력서·자소서·포트폴리오부터 인적성·대기업 자소서 완성 챌린지까지, 챌린지 9종을 종류별 1회씩 베이직 플랜으로 무료 참여해보세요!',
+    tagline: '종류별 1회 · 베이직 플랜 무료',
+    more: '참여 가능 챌린지 보기 →',
   },
   {
     id: 'guidebook',
@@ -58,19 +58,9 @@ export const BENEFIT_CARDS: BenefitCard[] = [
     iconSvg: '/images/membership/ic-vod.svg',
     iconClass: 'ic-ice',
     title: '세미나 VOD 20종 무료',
-    pill: { text: 'NEW', cls: 'pill-new' },
-    desc: '현직자 세미나 VOD 라이브러리를 멤버십 기간 동안 전부 무료로 시청할 수 있어요.',
+    pill: { text: '옵션 구매자 대상', cls: 'pill-soon' },
+    desc: '현직자 세미나 VOD 20종을 멤버십 기간 동안 전부 무료로 시청할 수 있어요.',
     tagline: '전 강의 무료 시청',
-    more: '자세히 보기 →',
-  },
-  {
-    id: 'mentoring',
-    iconSvg: '/images/membership/ic-mentoring.svg',
-    iconClass: 'ic-blue',
-    title: '1:1 현직자 멘토링 제공',
-    pill: { text: '프리미엄', cls: 'pill-coral' },
-    desc: '지원 직무 현직자에게 서류·면접을 3개월간 월 1회, 총 3회 1:1로 피드백 받아요.',
-    tagline: '총 3회 1:1 멘토링',
     more: '자세히 보기 →',
   },
 ];

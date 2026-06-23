@@ -1,5 +1,7 @@
+import type { CSSProperties } from 'react';
 import {
   CATEGORIES,
+  COURSE_TAG_LABEL,
   MATRIX_CELL_MAP,
   matrixCellKey,
   type Category,
@@ -9,11 +11,14 @@ import {
   type Step,
 } from '../data/coursePlan';
 
-// 멤버십이 제공하는 셀(직접 준비 영역이 아닌 모든 셀)인지.
-const isProvided = (owner: Owner) => owner !== 'self';
+// 렛츠커리어가 직접 함께하는 챌린지 셀인지. (셀 색 강조용)
+// 무료 자료·템플릿·체크리스트(자료 제공) 셀은 강조 없이 흰 배경으로 둔다.
+const isProvided = (owner: Owner) =>
+  owner === 'challenge' || owner === 'challenge-deep';
 
 // 한 STEP 칸의 셀(들). document/step03 처럼 2셀이면 세로로 쌓는다.
-// 멤버십 제공 셀은 "멤버십 제공" 스티커로 강조, 직접 셀은 태그 없이 흐리게 둔다.
+// 모든 셀에 분류 배지(무료 자료·템플릿 제공·체크리스트 제공·챌린지)를 단다.
+// 셀 색은 owner 기준(data-owner/data-provided)으로 그대로 유지한다.
 function StepColumn({ cells }: { cells: MatrixCell[] }) {
   return (
     <div className="cpm-col">
@@ -24,9 +29,9 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
           data-owner={cell.owner}
           data-provided={isProvided(cell.owner) ? 'true' : undefined}
         >
-          {isProvided(cell.owner) && (
-            <span className="cpm-cell-tag">멤버십 제공</span>
-          )}
+          <span className="cpm-cell-tag" data-tag={cell.tag}>
+            {COURSE_TAG_LABEL[cell.tag]}
+          </span>
           <p className="cpm-cell-title">{cell.title}</p>
           <p className="cpm-cell-desc">{cell.desc}</p>
         </article>
@@ -40,8 +45,13 @@ function StepHeader() {
   return (
     <div className="cpm-steps" aria-hidden="true">
       <div className="cpm-steps-corner" />
-      {STEPS.map((step) => (
-        <div className="cpm-step" data-phase={step.phase} key={step.id}>
+      {STEPS.map((step, i) => (
+        <div
+          className="cpm-step"
+          data-phase={step.phase}
+          style={{ '--i': i } as CSSProperties}
+          key={step.id}
+        >
           <span className="cpm-step-no">STEP {step.no}</span>
           <span className="cpm-step-label">{step.label}</span>
         </div>
@@ -91,8 +101,20 @@ export default function CoursePlanMatrix() {
         ))}
       </div>
       <p className="cpm-note">
-        <span className="cpm-note-chip">멤버십 제공</span> 표시가 없는 단계는
-        직접 준비하는 영역이에요.
+        <span className="cpm-note-chip" data-tag="free">
+          무료 자료
+        </span>
+        <span className="cpm-note-chip" data-tag="template">
+          템플릿 제공
+        </span>
+        <span className="cpm-note-chip" data-tag="checklist">
+          체크리스트 제공
+        </span>
+        는 멤버십에 포함된 자료 제공,{' '}
+        <span className="cpm-note-chip" data-tag="challenge">
+          챌린지
+        </span>{' '}
+        는 렛츠커리어가 함께하는 단계예요.
       </p>
     </div>
   );

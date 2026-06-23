@@ -2,19 +2,12 @@ import dayjs from '../lib/dayjs';
 import Countdown from '../ui/Countdown';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
-import {
-  MEMBERSHIP_BEGINNING,
-  MEMBERSHIP_DEADLINE,
-  MEMBERSHIP_END_DATE,
-  MEMBERSHIP_START_DATE,
-} from '../data/membership';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import { HERO } from '../data/hero';
 
 export default function HeroSection() {
-  const beginning = MEMBERSHIP_BEGINNING;
-  const deadline = MEMBERSHIP_DEADLINE;
-  const startDate = MEMBERSHIP_START_DATE;
-  const endDate = MEMBERSHIP_END_DATE;
+  const { beginning, deadline, startDate, endDate } =
+    useMembershipChallengeData();
 
   return (
     <section className="hero">

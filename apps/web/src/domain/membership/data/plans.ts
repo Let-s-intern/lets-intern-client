@@ -11,12 +11,6 @@ export const PLAN_PRICE = {
 
 export const PLAN_NAME = '렛츠커리어 하반기 멤버십 (올패스)';
 
-export const PLAN_CTA = '올패스 신청하기';
-
-/** 보조 카피 — 콘텐츠(무기한) vs 챌린지(기간형) 안내 */
-export const PLAN_FOOTNOTE =
-  '가이드북 = 콘텐츠(무기한), 챌린지 = 기간형 운영. 둘 다 포함이라 따로 살 게 없어요.';
-
 /** 혜택 아이콘 식별자 — PlansSection 에서 lucide 컴포넌트로 매핑 렌더 */
 export type PlanBenefitIcon =
   | 'fileText'

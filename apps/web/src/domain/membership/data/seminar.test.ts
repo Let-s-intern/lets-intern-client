@@ -1,52 +1,44 @@
-import { SEMINAR_SESSIONS, type SeminarSession } from './seminar';
-
-const findByStatus = (status: SeminarSession['status']) =>
-  SEMINAR_SESSIONS.filter((session) => session.status === status);
+import { SEMINAR_SESSIONS } from './seminar';
 
 describe('seminar 데이터 무결성', () => {
-  it('세션은 2개다(LIVE 01·02)', () => {
+  it('세션은 2개다(SESSION 01·02)', () => {
     expect(SEMINAR_SESSIONS).toHaveLength(2);
   });
 
-  it('status 는 confirmed/tba 둘 다 하나씩 존재한다', () => {
-    expect(findByStatus('confirmed')).toHaveLength(1);
-    expect(findByStatus('tba')).toHaveLength(1);
-  });
-
-  it('모든 세션은 sessionNo 와 ctaLabel 을 가진다', () => {
+  it('모든 세션은 hero 이미지·일시·제목·멘토·신청 링크를 가진다', () => {
     for (const session of SEMINAR_SESSIONS) {
-      expect(session.sessionNo.length).toBeGreaterThan(0);
-      expect(session.ctaLabel.length).toBeGreaterThan(0);
+      expect(session.heroImage).toMatch(/^\/images\/membership\//);
+      expect(session.heroAlt.length).toBeGreaterThan(0);
+      expect(session.date.length).toBeGreaterThan(0);
+      expect(session.time.length).toBeGreaterThan(0);
+      expect(session.title.length).toBeGreaterThan(0);
+      expect(session.mentor.name.length).toBeGreaterThan(0);
+      expect(session.mentor.role.length).toBeGreaterThan(0);
+      expect(session.mentor.profile.length).toBeGreaterThan(0);
     }
   });
 
-  describe('confirmed 세션 가드', () => {
-    it('date·time·topic·mentor 가 모두 채워져 있다', () => {
-      for (const session of findByStatus('confirmed')) {
-        expect(session.date).toBeTruthy();
-        expect(session.time).toBeTruthy();
-        expect(session.topic).toBeTruthy();
-        expect(session.mentor?.name).toBeTruthy();
-        expect(session.mentor?.profile).toBeTruthy();
-      }
-    });
-  });
-
-  describe('tba 세션 가드', () => {
-    it('time·topic·mentor 미정(생략)을 허용한다', () => {
-      for (const session of findByStatus('tba')) {
-        expect(session.time).toBeUndefined();
-        expect(session.topic).toBeUndefined();
-        expect(session.mentor).toBeUndefined();
-      }
-    });
-  });
-
-  it('신청 링크 미확정 시 ctaHref 는 생략된다(비활성 CTA)', () => {
+  it('각 세션 커리큘럼은 4종이며 번호·주제·시간을 가진다', () => {
     for (const session of SEMINAR_SESSIONS) {
-      if (session.ctaHref !== undefined) {
-        expect(session.ctaHref.length).toBeGreaterThan(0);
+      expect(session.agenda).toHaveLength(4);
+      for (const item of session.agenda) {
+        expect(item.no.length).toBeGreaterThan(0);
+        expect(item.title.length).toBeGreaterThan(0);
+        expect(item.duration).toMatch(/분$/);
       }
     }
+  });
+
+  it('confirmed 신청 링크는 실제 program/live URL 이다', () => {
+    for (const session of SEMINAR_SESSIONS) {
+      expect(session.ctaHref).toMatch(
+        /^https:\/\/www\.letscareer\.co\.kr\/program\/live\/\d+\//,
+      );
+    }
+  });
+
+  it('두 번째 세션만 VOD 경고를 가진다', () => {
+    expect(SEMINAR_SESSIONS[0].notice).toBeUndefined();
+    expect(SEMINAR_SESSIONS[1].notice).toMatch(/VOD/);
   });
 });

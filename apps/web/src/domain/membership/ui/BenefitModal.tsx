@@ -294,21 +294,21 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             />
           </div>
           <div>
-            <h3>챌린지 할인</h3>
-            <p>멤버 전용가로 만나는 렛츠커리어 챌린지</p>
+            <h3>챌린지 종류별 1회 무료 참여</h3>
+            <p>멤버십에 포함된 렛츠커리어 챌린지</p>
           </div>
         </div>
         <div className="modal-body">
           <div className="m-intro">
             <span className="m-intro-hl">
-              멤버십 가입자는 챌린지를 더 저렴하게
+              멤버십 가입자는 챌린지를 추가 비용 없이
             </span>
             <p>
-              경험정리·이력서·면접 등 <b>렛츠커리어 챌린지 전 종류</b>를 멤버
-              전용 할인가로 만날 수 있어요.
+              경험정리·이력서·면접 등 <b>렛츠커리어 챌린지</b>를{' '}
+              <b>종류별 1회씩</b> 베이직 플랜으로 무료 참여할 수 있어요.
             </p>
           </div>
-          <h4>멤버 할인이 적용되는 챌린지</h4>
+          <h4>무료로 참여할 수 있는 챌린지</h4>
           <div className="m-gallery">
             {CHALLENGE_ITEMS.map(({ label, src, url }) => (
               <a
@@ -329,81 +329,14 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
               </a>
             ))}
           </div>
-          <h4 style={{ marginTop: '24px' }}>할인 예시</h4>
-          <div className="m-example">
-            <div className="row">
-              <span>대기업 공채 챌린지</span>
-              <span>
-                <span className="strike">정가</span>
-                <span className="o">최대 30% 할인</span>
-              </span>
-            </div>
-            <div className="row">
-              <span>직무·자소서·포폴·면접 챌린지</span>
-              <span>
-                <span className="strike">정가</span>
-                <span className="o">최대 20% 할인</span>
-              </span>
-            </div>
-            <div className="row">
-              <span>예) 대기업 공채 자소서 3주 완성</span>
-              <span>
-                <span className="strike">99,000원</span>
-                <b>69,300원</b>
-              </span>
-            </div>
-          </div>
           <p className="m-note">
-            할인율은 플랜 등급에 따라 달라져요. (베이직 기타 10% · 스탠다드
-            대기업 25%/기타 15% · 프리미엄 대기업 30%/기타 20%)
+            각 챌린지의 <b>베이직 플랜</b>을 <b>종류별 1회씩</b> 무료로 참여할
+            수 있어요. 원하는 챌린지부터 바로 시작하세요.
           </p>
         </div>
         <div className="modal-foot">
           <button className="btn btn-primary" onClick={handleGoToPlans}>
             플랜 보고 멤버십 신청 →
-          </button>
-        </div>
-      </>
-    ),
-    mentoring: (
-      <>
-        <div className="modal-head">
-          <div className="ic ic-blue">
-            <span
-              className="ic-glyph"
-              style={{
-                ['--icon' as string]:
-                  'url(/images/membership/ic-mentoring.svg)',
-              }}
-            />
-          </div>
-          <div>
-            <h3>1:1 현직자 멘토링</h3>
-            <p>프리미엄 전용 · 총 3회</p>
-          </div>
-        </div>
-        <div className="modal-body">
-          <div className="m-intro">
-            <span className="m-intro-hl">
-              지원 직무 현직자와 1:1로 만나는 서류·면접 피드백
-            </span>
-            <p>
-              내 강점을 어떻게 보여줄지, <b>현직자의 시선</b>으로 직접 듣고
-              마지막 관문을 준비해요.
-            </p>
-          </div>
-          <ul className="m-list one">
-            <li>지원 직무 현직자와 1:1 매칭</li>
-            <li>서류·면접 피드백 월 1회 × 3개월 = 총 3회</li>
-            <li>마이페이지에서 희망 직무·일정 선택 후 진행</li>
-          </ul>
-          <p className="m-note">
-            <b>프리미엄 플랜</b> 전용 혜택이에요.
-          </p>
-        </div>
-        <div className="modal-foot">
-          <button className="btn btn-primary" onClick={handleGoToPlans}>
-            프리미엄 플랜 보기 →
           </button>
         </div>
       </>

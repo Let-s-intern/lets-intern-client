@@ -1,11 +1,8 @@
 import { MonitorPlay } from 'lucide-react';
 import { formatKRW } from '../data/membership';
-import { openPlanSheet } from '../lib/planSheet';
-import { IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
 
 // 취준위키 VOD 모음집 단독 구매 카드. 단일 올패스 카드 하단에 배치.
-// 결제는 별도 로직 없이 기존 결제 시트(openPlanSheet)에 위임한다.
-// VOD 는 어드민의 +VOD 가격플랜 옵션으로 시트 안에서 선택·결제된다.
+// 구매는 하단 고정 ApplyBar 의 결제 시트에서 +VOD 옵션으로 선택·결제된다.
 const VOD_ORIGINAL_PRICE = 300000;
 const VOD_SALE_PRICE = 29900;
 
@@ -32,14 +29,6 @@ export default function VodOptionCard() {
             <span className="vod-unit">원</span>
           </span>
         </div>
-        <button
-          type="button"
-          className="btn btn-ghost vod-cta"
-          onClick={() => openPlanSheet()}
-          disabled={!IS_MEMBERSHIP_LAUNCHED}
-        >
-          {IS_MEMBERSHIP_LAUNCHED ? 'VOD 옵션 추가' : '출시 전'}
-        </button>
       </div>
     </div>
   );

@@ -61,103 +61,167 @@
   flex-direction: column;
   gap: 6px;
 }
-.membership-root .allpass-was {
-  font-size: 16px;
-  color: var(--g500);
-  text-decoration: line-through;
-  font-weight: 600;
-}
-.membership-root .allpass-now-row {
+/* 좌(오픈 특가 히어로) ↔ 우(정가 취소선) 양끝 배치로 카드 폭을 균형 있게 채운다.
+   하단 월/일 환산 바와 같은 space-between 리듬을 공유한다. */
+.membership-root .allpass-compare {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 12px 24px;
 }
-.membership-root .allpass-badge {
+/* 왼쪽: 오픈 특가 라벨 + 큰 금액 + 할인 배지 + 부가세 */
+.membership-root .allpass-now-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.membership-root .allpass-now-label {
+  font-size: 14px;
   font-weight: 800;
-  font-size: 15px;
-  color: #fff;
-  background: var(--lc-orange);
-  padding: 5px 12px;
-  border-radius: 9px;
-  letter-spacing: -0.01em;
-  align-self: center;
+  color: var(--lc-ink);
+  letter-spacing: -0.02em;
+}
+.membership-root .allpass-now-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
 }
 .membership-root .allpass-now {
   font-family: var(--num);
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 800;
   letter-spacing: -0.04em;
   color: var(--lc-blue);
   line-height: 1;
 }
 .membership-root .allpass-unit {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--lc-ink);
-  margin-left: 4px;
+  margin-left: 3px;
+}
+/* 할인 배지 — 핵심 후크. 깔끔한 알약형 + 노출 시 팝업. */
+.membership-root .allpass-badge {
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  background: var(--lc-orange);
+  padding: 6px 14px;
+  border-radius: 999px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -7px rgba(255, 111, 15, 0.75);
+}
+/* 카드 호버 시 배지를 한 번 더 팝업 (취소선 재드로잉과 함께) */
+.membership-root .allpass:hover .allpass-badge {
+  animation: badgePop 0.4s ease-out 0.1s both;
+}
+@keyframes badgePop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .membership-root .allpass-vat {
   font-size: 13px;
   font-weight: 600;
   color: var(--g500);
 }
-
-/* 혜택 7종 스캔형 그리드 */
-.membership-root .allpass-benefits {
-  list-style: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 22px;
-  padding: 18px 0;
-  border-top: 1.5px solid #e7e9f0;
+/* 오른쪽: 정가(라벨 + 취소선 처리되는 금액) */
+.membership-root .allpass-was {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
 }
-.membership-root .allpass-benefit {
-  display: grid;
-  grid-template-columns: 34px 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 12px;
-  row-gap: 2px;
-  align-items: start;
-}
-.membership-root .allpass-ic {
-  grid-row: 1 / span 2;
-  align-self: start;
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--tint-blue);
-  border-radius: 10px;
-  color: var(--lc-blue);
-}
-.membership-root .allpass-bt {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--lc-ink);
-  line-height: 1.35;
-}
-.membership-root .allpass-bd {
+.membership-root .allpass-was-label {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--g600);
-  line-height: 1.4;
+  font-weight: 600;
+  color: var(--g500);
 }
-
-.membership-root .allpass-foot {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--g600);
+.membership-root .allpass-was-figure {
+  position: relative;
+  display: inline-block;
+}
+.membership-root .allpass-was-num {
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--g500);
+}
+/* 취소선 — 기본으로 그어져 있고(scaleX 1), 카드 호버 시 좌→우로 다시 긋는다. */
+.membership-root .allpass-strike {
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  top: 53%;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #ff5a5f;
+  transform: scaleX(1);
+  transform-origin: left center;
+  pointer-events: none;
+}
+.membership-root .allpass:hover .allpass-strike {
+  animation: allpassStrike 0.5s ease-out;
+}
+@keyframes allpassStrike {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+/* 모션 최소화 환경: 호버 재생 없이 그어진 상태 유지 */
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .allpass:hover .allpass-strike,
+  .membership-root .allpass:hover .allpass-badge {
+    animation: none;
+  }
+}
+/* 월/일 환산 바 — 카드 블루 톤에 맞춘 풀폭 바. "월 단위로 보면 부담이 작다"를 강조. */
+.membership-root .allpass-permonth {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 14px;
+  padding: 14px 18px;
   background: var(--tint-blue);
-  border-radius: 12px;
-  padding: 12px 16px;
-  line-height: 1.5;
+  border-radius: 14px;
 }
-
-.membership-root .allpass-cta {
-  width: 100%;
-  margin-top: 18px;
+.membership-root .allpass-permonth-eq {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g600);
+  letter-spacing: -0.01em;
+}
+.membership-root .allpass-permonth-eq strong {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  margin-left: 2px;
+}
+.membership-root .allpass-permonth-day {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--lc-blue);
+  background: #fff;
+  padding: 6px 13px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px -6px rgba(74, 118, 255, 0.5);
 }
 
 /* ===================== 옵션 더하기 구분(+) ===================== */
@@ -280,12 +344,6 @@
   color: var(--lc-ink);
   margin-left: 3px;
 }
-.membership-root .vod-cta {
-  font-size: 15px;
-  padding: 11px 22px;
-  border-radius: 12px;
-  border-width: 1.5px;
-}
 
 @media (max-width: 600px) {
   .membership-root .allpass {
@@ -308,17 +366,29 @@
       rgba(74, 118, 255, 0) 70%
     );
   }
-  .membership-root .allpass-now {
-    font-size: 38px;
+  /* 통일 모바일 타입스케일 — 멤버십 가격 블록 축소 */
+  .membership-root .allpass-name {
+    font-size: 20px;
   }
-  .membership-root .allpass-benefits {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .membership-root .allpass-now {
+    font-size: 34px;
+  }
+  .membership-root .allpass-was-num {
+    font-size: 18px;
+  }
+  .membership-root .plan-plus {
+    font-size: 28px;
   }
   .membership-root .vod-option {
     padding: 22px;
     gap: 16px;
     border-radius: 20px;
+  }
+  .membership-root .vod-title {
+    font-size: 16px;
+  }
+  .membership-root .vod-now {
+    font-size: 26px;
   }
   .membership-root .vod-aside {
     width: 100%;
@@ -328,8 +398,5 @@
   }
   .membership-root .vod-price {
     align-items: flex-start;
-  }
-  .membership-root .vod-cta {
-    flex: 0 0 auto;
   }
 }

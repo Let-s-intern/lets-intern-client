@@ -3,7 +3,7 @@ import {
   Flag,
   Handshake,
   MonitorPlay,
-  UserCheck,
+  Route,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -18,8 +18,8 @@ const SATELLITE_ICONS: Record<SolutionSatelliteIcon, LucideIcon> = {
   bookOpen: BookOpen,
   users: Users,
   monitorPlay: MonitorPlay,
-  userCheck: UserCheck,
   handshake: Handshake,
+  route: Route,
 };
 
 function SolutionSatelliteNode({ label, hint, icon }: SolutionSatellite) {

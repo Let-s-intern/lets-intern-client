@@ -9,6 +9,8 @@
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
+import './styles/recommend.css';
+import './styles/compare.css';
 import './styles/solution.css';
 import './styles/course-plan.css';
 import './styles/seminar.css';
@@ -27,7 +29,10 @@ import './styles/partners.css';
 import './styles/apply.css';
 
 import MembershipAnimations from './ui/MembershipAnimations';
+import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
+import RecommendSection from './section/RecommendSection';
+import CompareSection from './section/CompareSection';
 import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import SeminarSection from './section/SeminarSection';
@@ -35,7 +40,8 @@ import BenefitsSection from './section/BenefitsSection';
 import PartnerBenefitsSection from './section/PartnerBenefitsSection';
 import PlansSection from './section/PlansSection';
 import ReviewsSection from './section/ReviewsSection';
-import RoadmapSection from './section/RoadmapSection';
+// 3개월 합격 로드맵 — 일단 숨김(삭제 예정). 복구하려면 아래 import·렌더 주석을 함께 해제.
+// import RoadmapSection from './section/RoadmapSection';
 import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
@@ -48,6 +54,9 @@ export default function MembershipLanding() {
         <main>
           <MembershipAnimations />
           <HeroSection />
+          <MembershipNav />
+          <RecommendSection />
+          <CompareSection />
           <SolutionSection />
           <CoursePlanSection />
           <SeminarSection />
@@ -55,7 +64,7 @@ export default function MembershipLanding() {
           <PartnerBenefitsSection />
           <PlansSection />
           <ReviewsSection />
-          <RoadmapSection />
+          {/* <RoadmapSection /> 일단 숨김(삭제 예정) */}
           <FinalCtaSection />
           <FaqSection />
           <ApplyBar />

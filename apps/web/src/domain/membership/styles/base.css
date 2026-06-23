@@ -53,6 +53,19 @@
   display: block;
   max-width: 100%;
 }
+/* 한글 줄바꿈 — 어절(띄어쓰기) 단위로 끊고(keep-all), 한 단어가 줄을 넘칠 때만
+   강제 분할(overflow-wrap). 모바일 좁은 폭에서 단어 중간이 깨지는 문제를 막는다. */
+.membership-root h1,
+.membership-root h2,
+.membership-root h3,
+.membership-root h4,
+.membership-root p,
+.membership-root li,
+.membership-root .eyebrow,
+.membership-root .btn {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
 .membership-root .num {
   font-family: var(--num);
   font-feature-settings: \"tnum\";

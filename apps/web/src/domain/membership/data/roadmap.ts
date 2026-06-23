@@ -27,7 +27,7 @@ export const ROADMAP = {
       dot: '9',
       mon: 'SEPTEMBER',
       title: '면접 마무리',
-      body: '1:1 현직자 멘토링과 면접 가이드로 마지막 관문까지 완주합니다.',
+      body: '면접 챌린지와 면접 가이드북으로 마지막 관문까지 완주합니다.',
     },
   ] as RoadmapNode[],
 } as const;

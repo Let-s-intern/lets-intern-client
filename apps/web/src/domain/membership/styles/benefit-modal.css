@@ -276,38 +276,6 @@
   aspect-ratio: 4/3;
   object-fit: cover;
 }
-.membership-root .m-example {
-  background: var(--bg-cool);
-  border-radius: 14px;
-  padding: 8px 20px;
-}
-.membership-root .m-example .row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 11px 0;
-  border-bottom: 1px dashed #dfe3ee;
-}
-.membership-root .m-example .row:last-child {
-  border-bottom: none;
-}
-.membership-root .m-example .o {
-  color: var(--lc-orange);
-  font-weight: 800;
-}
-.membership-root .m-example .strike {
-  text-decoration: line-through;
-  color: var(--g500);
-  font-weight: 600;
-  margin-right: 8px;
-}
-.membership-root .m-example b {
-  color: var(--lc-blue);
-  font-weight: 800;
-}
 .membership-root .modal-foot {
   padding: 16px 30px 22px;
   border-top: 1px solid #eef;

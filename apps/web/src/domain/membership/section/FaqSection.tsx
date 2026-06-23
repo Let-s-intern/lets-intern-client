@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { FAQ_HEAD, FAQ_ITEMS } from '../data/faq';
+import { FAQ_HEAD } from '../data/faq';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 
 export default function FaqSection() {
   const [openId, setOpenId] = useState<number | null>(null);
+  const { faqItems } = useMembershipChallengeData();
 
   return (
     <section className="faq">
@@ -12,7 +14,7 @@ export default function FaqSection() {
           <h2>{FAQ_HEAD.title}</h2>
         </div>
         <div className="faqlist">
-          {FAQ_ITEMS.map((item) => (
+          {faqItems.map((item) => (
             <div
               key={item.id}
               className={`fitem ${openId === item.id ? 'open' : ''}`}

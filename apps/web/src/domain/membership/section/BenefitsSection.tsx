@@ -16,7 +16,7 @@ export default function BenefitsSection() {
       <div className="wrap">
         <div className="sec-head rv">
           <span className="eyebrow">멤버십 혜택</span>
-          <h2>하나의 멤버십으로 받는 혜택 8가지</h2>
+          <h2>하나의 멤버십으로 받는 혜택</h2>
           <p>공채 시즌에 꼭 필요한 것만 모두 모았습니다.</p>
         </div>
         <div className="bgrid">
