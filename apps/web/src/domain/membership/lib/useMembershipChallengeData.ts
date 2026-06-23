@@ -40,8 +40,13 @@ export interface MembershipChallengeData {
   faqItems: MembershipFaqItem[];
 }
 
-const toDate = (value?: string | null): Date | null =>
-  value ? new Date(value) : null;
+// 유효하지 않은 날짜 문자열은 Invalid Date(=== null/undefined 아님)를 만들어 ?? 폴백을
+// 무력화하므로, getTime()이 NaN이면 null 로 떨어뜨려 정적 폴백이 동작하게 한다.
+const toDate = (value?: string | null): Date | null => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
 
 /**
  * 멤버십 랜딩의 날짜·가격·FAQ 단일 진입점.

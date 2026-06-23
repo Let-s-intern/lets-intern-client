@@ -12,6 +12,9 @@ import VodOptionCard from '../ui/VodOptionCard';
 function useCountUpOnView(target: number, durationMs = 1200) {
   const ref = useRef<HTMLSpanElement>(null);
   const [value, setValue] = useState(0);
+  // 폴백 가격 → API 가격으로 target 이 바뀔 때 0 부터 다시 세지 않고
+  // 직전 target 에서 보간해 깜빡임(점프)을 막는다.
+  const prevTargetRef = useRef(0);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -20,16 +23,18 @@ function useCountUpOnView(target: number, durationMs = 1200) {
       typeof IntersectionObserver === 'undefined'
     ) {
       setValue(target);
+      prevTargetRef.current = target;
       return;
     }
     let raf = 0;
+    const startValue = prevTargetRef.current;
     const animate = () => {
       let startTs = 0;
       const tick = (ts: number) => {
         if (!startTs) startTs = ts;
         const p = Math.min((ts - startTs) / durationMs, 1);
         const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
-        setValue(Math.round(target * eased));
+        setValue(Math.round(startValue + (target - startValue) * eased));
         if (p < 1) raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
@@ -47,6 +52,7 @@ function useCountUpOnView(target: number, durationMs = 1200) {
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
+      prevTargetRef.current = target;
     };
   }, [target, durationMs]);
   return { ref, value };

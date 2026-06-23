@@ -48,10 +48,17 @@ export default function MembershipNav() {
   const handleScroll = (id: string) => {
     const target = document.getElementById(id);
     if (!target) return;
-    // 네비 하단 위치만큼 오프셋(글로벌 NavBar + 보조 네비 높이 자동 반영).
-    const offset = (navRef.current?.getBoundingClientRect().bottom ?? 130) + 8;
-    const top = target.getBoundingClientRect().top - offset;
-    window.scrollBy({ top, behavior: 'smooth' });
+    const targetTop = target.getBoundingClientRect().top;
+    // 아래로 스크롤하면 글로벌 NavBar 가 숨으므로 최종 헤더 높이는 보조 네비뿐이고,
+    // 위로 스크롤하면 NavBar 가 다시 보이므로 NavBar + 보조 네비 높이를 빼야 한다.
+    const isScrollingDown = targetTop > 0;
+    const isDesktop =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(min-width: 768px)').matches;
+    const navBarHeight = isDesktop ? 115 : 84;
+    const mnavHeight = navRef.current?.getBoundingClientRect().height ?? 56;
+    const offset = isScrollingDown ? mnavHeight : navBarHeight + mnavHeight;
+    window.scrollBy({ top: targetTop - offset - 8, behavior: 'smooth' });
   };
 
   return (
