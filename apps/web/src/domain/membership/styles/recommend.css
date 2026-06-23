@@ -113,4 +113,32 @@
   .membership-root .recommend {
     padding: 56px 0;
   }
+  /* 통일 모바일 타입스케일 — 카드 헤딩 16 / 본문 13 / 메타 12 */
+  .membership-root .rec-row {
+    gap: 24px;
+  }
+  .membership-root .rec-badge {
+    font-size: 12px;
+    padding: 5px 13px;
+    margin-bottom: 12px;
+  }
+  .membership-root .rec-pain {
+    font-size: 16px;
+    margin-bottom: 13px;
+  }
+  .membership-root .rec-cards {
+    gap: 9px;
+  }
+  .membership-root .rec-item {
+    gap: 9px;
+    padding: 13px 14px;
+    border-radius: 12px;
+  }
+  .membership-root .rec-item .ck svg {
+    width: 14px;
+    height: 14px;
+  }
+  .membership-root .rec-item p {
+    font-size: 13px;
+  }
 }

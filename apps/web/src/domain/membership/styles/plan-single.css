@@ -366,13 +366,29 @@
       rgba(74, 118, 255, 0) 70%
     );
   }
+  /* 통일 모바일 타입스케일 — 멤버십 가격 블록 축소 */
+  .membership-root .allpass-name {
+    font-size: 20px;
+  }
   .membership-root .allpass-now {
-    font-size: 38px;
+    font-size: 34px;
+  }
+  .membership-root .allpass-was-num {
+    font-size: 18px;
+  }
+  .membership-root .plan-plus {
+    font-size: 28px;
   }
   .membership-root .vod-option {
     padding: 22px;
     gap: 16px;
     border-radius: 20px;
+  }
+  .membership-root .vod-title {
+    font-size: 16px;
+  }
+  .membership-root .vod-now {
+    font-size: 26px;
   }
   .membership-root .vod-aside {
     width: 100%;

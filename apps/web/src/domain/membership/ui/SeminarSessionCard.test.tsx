@@ -64,8 +64,6 @@ describe('SeminarSessionCard', () => {
         session={{ ...base, notice: 'VOD 미제공 · LIVE 참여 필수' }}
       />,
     );
-    expect(
-      screen.getByText('VOD 미제공 · LIVE 참여 필수'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('VOD 미제공 · LIVE 참여 필수')).toBeInTheDocument();
   });
 });

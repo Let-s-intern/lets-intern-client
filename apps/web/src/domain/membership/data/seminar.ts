@@ -68,7 +68,8 @@ export const SEMINAR_SESSIONS: SeminarSession[] = [
     sessionNo: '01',
     theme: 'blue',
     heroImage: '/images/membership/seminar-hero-01.png',
-    heroAlt: '대기업 하반기 공채 준비는 지금부터 — 삼성·CJ 계열사 현직자 멘토 무료 세미나',
+    heroAlt:
+      '대기업 하반기 공채 준비는 지금부터 — 삼성·CJ 계열사 현직자 멘토 무료 세미나',
     date: '6월 28일 (일)',
     time: '오전 10:30–11:30',
     title: '대기업 하반기 공채 준비는 지금부터',

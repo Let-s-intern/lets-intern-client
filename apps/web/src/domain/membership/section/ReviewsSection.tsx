@@ -101,7 +101,7 @@ function MarqueeRow({
   const [paused, setPaused] = useState(false);
   return (
     <div
-      className={`rev-row${paused ? ' paused' : ''}`}
+      className={`rev-row ${paused ? 'paused' : ''}`}
       onClick={() => setPaused((p) => !p)}
     >
       <div className={`rev-track ${reverse ? 'reverse' : ''}`}>

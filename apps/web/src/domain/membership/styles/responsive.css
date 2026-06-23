@@ -72,8 +72,8 @@
     margin-bottom: 16px;
   }
   .membership-root .hero h1 {
-    font-size: 31px;
-    line-height: 1.2;
+    font-size: 28px;
+    line-height: 1.22;
   }
   .membership-root .hero h1 .hl::after {
     bottom: 3px;
@@ -114,14 +114,19 @@
     font-size: 11px;
   }
   .membership-root .sec-head {
-    margin-bottom: 36px;
+    margin-bottom: 32px;
   }
+  /* 통일 모바일 타입스케일 — 섹션 타이틀/서브/eyebrow */
   .membership-root .sec-head h2,
   .membership-root .final h2 {
-    font-size: 26px;
+    font-size: 23px;
   }
   .membership-root .sec-head p {
-    font-size: 15.5px;
+    font-size: 14px;
+  }
+  .membership-root .eyebrow {
+    font-size: 13px;
+    padding: 6px 13px;
   }
   .membership-root .solution,
   .membership-root .benefits,

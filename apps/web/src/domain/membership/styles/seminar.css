@@ -229,4 +229,56 @@
   .membership-root .sem-body {
     padding: 20px 18px 20px;
   }
+  /* 통일 모바일 타입스케일 — 카드 헤딩 16 / 본문 13 / 메타 12 */
+  .membership-root .sem-session {
+    font-size: 11px;
+  }
+  .membership-root .sem-date {
+    font-size: 12.5px;
+  }
+  .membership-root .sem-title {
+    font-size: 16px;
+  }
+  .membership-root .sem-desc {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .membership-root .sem-agenda {
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+  .membership-root .sem-ag-no {
+    font-size: 12px;
+  }
+  .membership-root .sem-ag-title {
+    font-size: 13px;
+  }
+  .membership-root .sem-ag-dur {
+    font-size: 12px;
+  }
+  .membership-root .sem-notice {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+  .membership-root .sem-mentor {
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+  .membership-root .sem-mentor-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .membership-root .sem-mentor-initial {
+    font-size: 15px;
+  }
+  .membership-root .sem-mentor-name {
+    font-size: 13px;
+  }
+  .membership-root .sem-mentor-profile {
+    font-size: 12px;
+  }
+  .membership-root .sem-cta {
+    font-size: 15px;
+    padding: 14px 20px;
+  }
 }

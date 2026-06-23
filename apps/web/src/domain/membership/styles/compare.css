@@ -188,27 +188,76 @@
 }
 
 /* ---------- 반응형 ---------- */
+/* 모바일에서도 두 카드를 좌우(side-by-side)로 유지하고 전체를 축소한다(세로 스택 X) */
 @media (max-width: 760px) {
-  .membership-root .cmp-grid {
-    grid-template-columns: 1fr;
-    gap: 14px 0;
-  }
-  .membership-root .cmp-vs {
-    margin: 2px auto;
-  }
-  /* 카드가 세로로 쌓이므로 타이틀은 자연 줄바꿈(가운데 정렬)으로 되돌린다 */
-  .membership-root .compare .sec-head h2 {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 10px;
-  }
-}
-@media (max-width: 600px) {
   .membership-root .compare {
     padding: 56px 0;
   }
-  .membership-root .cmp-t-vs {
-    font-size: 20px;
+  .membership-root .cmp-grid {
+    gap: 0 8px;
+  }
+  .membership-root .cmp-vs {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+    box-shadow: 0 8px 18px -8px rgba(74, 118, 255, 0.55);
+  }
+  .membership-root .cmp-card {
+    padding: 14px 12px 12px;
+    border-radius: 14px;
+  }
+  .membership-root .cmp-head {
+    gap: 7px;
+    padding-bottom: 10px;
+    margin-bottom: 2px;
+  }
+  .membership-root .cmp-head h3 {
+    font-size: 13px;
+  }
+  .membership-root .cmp-tag {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+  }
+  .membership-root .cmp-tag svg {
+    width: 13px;
+    height: 13px;
+  }
+  .membership-root .cmp-item {
+    gap: 7px;
+    padding: 9px 0;
+  }
+  .membership-root .cmp-ic {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+  }
+  .membership-root .cmp-ic svg {
+    width: 12px;
+    height: 12px;
+  }
+  .membership-root .cmp-item p {
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  /* 타이틀도 카드와 동일하게 좌우 배치(축소) — 중앙 칼럼은 메달(36px)에 맞춤 */
+  .membership-root .compare .sec-head h2 {
+    grid-template-columns: 1fr 36px 1fr;
+    gap: 0 8px;
+    font-size: 16px;
+  }
+}
+@media (max-width: 400px) {
+  .membership-root .cmp-card {
+    padding: 12px 9px 10px;
+  }
+  .membership-root .cmp-head h3 {
+    font-size: 12px;
+  }
+  .membership-root .cmp-item p {
+    font-size: 11px;
+  }
+  .membership-root .compare .sec-head h2 {
+    font-size: 14px;
   }
 }

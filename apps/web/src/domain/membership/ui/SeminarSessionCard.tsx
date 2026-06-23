@@ -2,11 +2,7 @@ import { CalendarDays, TriangleAlert } from 'lucide-react';
 import type { SeminarSession } from '../data/seminar';
 
 // 커리큘럼 한 줄 — 번호 + 주제 + 소요 시간.
-function AgendaRow({
-  no,
-  title,
-  duration,
-}: SeminarSession['agenda'][number]) {
+function AgendaRow({ no, title, duration }: SeminarSession['agenda'][number]) {
   return (
     <li className="sem-ag-row">
       <span className="sem-ag-no">{no}</span>
