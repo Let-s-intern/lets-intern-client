@@ -71,6 +71,7 @@ export default function PlansSection() {
   const perDay = Math.round(PLAN_PRICE.sale / totalDays / 100) * 100;
   const { ref: saleRef, value: animatedSale } = useCountUpOnView(
     PLAN_PRICE.sale,
+    700,
   );
 
   return (
