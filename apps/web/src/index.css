@@ -324,7 +324,7 @@ input[type='number'] {
 /* Swiper */
 .swiper-button-prev,
 .swiper-button-next {
-  @apply hidden h-10 w-10 items-center justify-center rounded-full border border-neutral-80 bg-white/75 md:flex !important;
+  @apply border-neutral-80 hidden h-10 w-10 items-center justify-center rounded-full border bg-white/75 md:flex !important;
 }
 
 .swiper-button-prev::after,
@@ -372,6 +372,57 @@ input[type='number'] {
 .speech-bubble {
   position: relative;
   border-radius: 0.4em;
+}
+
+/* 멤버십 네비 메뉴 강조: 글자 샤인 스윕 + 좌상단 반짝이(MembershipNavLabel) */
+.membership-shine {
+  background: linear-gradient(
+    100deg,
+    #27272d 0%,
+    #27272d 42%,
+    #4d55f5 50%,
+    #27272d 58%,
+    #27272d 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: membership-shine 5s linear infinite;
+}
+
+@keyframes membership-shine {
+  0% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -130% 0;
+  }
+}
+
+.membership-sparkle {
+  transform-origin: center;
+  animation: membership-sparkle 1.8s ease-in-out infinite;
+}
+
+@keyframes membership-sparkle {
+  0%,
+  100% {
+    transform: scale(0.7) rotate(0deg);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.1) rotate(15deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .membership-shine,
+  .membership-sparkle {
+    animation: none;
+  }
 }
 
 .speech-bubble:after {

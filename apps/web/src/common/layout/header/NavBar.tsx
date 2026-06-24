@@ -19,6 +19,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
+import MembershipNavLabel from './MembershipNavLabel';
 import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
@@ -247,6 +248,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
+        <SideNavItem href="/membership" isNew>
+          <MembershipNavLabel />
+        </SideNavItem>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
         <SideNavItem href="/community">
           커뮤니티
