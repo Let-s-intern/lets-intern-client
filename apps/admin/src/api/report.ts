@@ -454,7 +454,6 @@ export const useGetActiveReports = () => {
   });
 };
 
-
 // GET /api/v1/report/{reportId}/admin
 const getReportDetailForAdminSchema = z.object({
   reportId: z.number(),

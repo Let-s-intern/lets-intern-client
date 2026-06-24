@@ -237,7 +237,6 @@ export const useGetLaunchAlertQuery = ({
   });
 };
 
-
 // 유저용 마그넷 상세 조회
 export const userMagnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [userMagnetDetailQueryKey, magnetId],
@@ -325,7 +324,6 @@ export const useGetMyMagnetListQuery = ({
     enabled,
   });
 };
-
 
 // 마그넷 조회일 기록
 export const usePatchMagnetViewDateMutation = () => {

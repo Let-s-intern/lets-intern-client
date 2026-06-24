@@ -756,7 +756,6 @@ export const useDeleteCommonBannerForAdmin = ({
   });
 };
 
-
 // 유저단 공통 배너 API
 const commonBannerUserItemRawSchema = z.object({
   type: z.string(),

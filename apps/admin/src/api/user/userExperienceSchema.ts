@@ -54,4 +54,3 @@ export const userExperienceSearchResponseSchema = z.object({
   totalPages: z.number(),
   currentPage: z.number(),
 });
-

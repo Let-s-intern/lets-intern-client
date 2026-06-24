@@ -24,7 +24,6 @@ import {
 
 export const getAllApplicationsForReviewQueryKey = ['applications', 'review'];
 
-
 export const reviewTypeSchema = z.enum([
   'CHALLENGE_REVIEW',
   'LIVE_REVIEW',

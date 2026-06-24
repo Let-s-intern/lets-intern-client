@@ -38,7 +38,6 @@ export const useAdminChallengeMentorGuideAllQuery = () => {
   });
 };
 
-
 /** POST /api/v1/admin/challenge-mentor-guide 가이드 생성 */
 export const usePostAdminChallengeMentorGuide = () => {
   const queryClient = useQueryClient();

@@ -58,7 +58,6 @@ export const useChallengeQuery = ({
   });
 };
 
-
 export const usePatchChallengePayback = ({
   challengeId,
   setIsPaybackFinished,
@@ -173,7 +172,6 @@ export const useGetTotalReview = ({
     refetchOnWindowFocus: false,
   });
 };
-
 
 // 모집 중인 챌린지 조회
 export const useGetActiveChallenge = (type: ChallengeType) => {

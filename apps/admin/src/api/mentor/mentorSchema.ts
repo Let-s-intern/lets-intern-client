@@ -76,4 +76,3 @@ export const patchAttendanceMentorReqSchema = z
 export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema
 >;
-

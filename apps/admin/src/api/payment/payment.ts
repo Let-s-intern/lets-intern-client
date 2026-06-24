@@ -1,9 +1,6 @@
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import {
-  CardPromotionSchema,
-  paymentListType,
-} from './paymentSchema';
+import { CardPromotionSchema, paymentListType } from './paymentSchema';
 
 export const UsePaymentQueryKey = 'usePaymentQueryKey';
 
