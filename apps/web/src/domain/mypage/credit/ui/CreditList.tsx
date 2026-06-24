@@ -2,6 +2,7 @@ import { paymentListQueryOptions } from '@/api/payment/payment';
 import { PaymentType } from '@/api/payment/paymentSchema';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import CreditDateContainer from './CreditDateContainer';
@@ -21,17 +22,24 @@ const groupByDate = (data: PaymentType[]) => {
 };
 
 export default function CreditList() {
+  // 로그인 상태에서만 suspense 쿼리를 실행한다.
+  // 빌드 타임 prerender 시점에는 인증 스토어가 미초기화(isLoggedIn=false)라
+  // 쿼리를 실행하지 않아 정적 생성 중 API 호출(prerender 에러)을 방지한다.
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+
+  const pendingFallback = (
+    <div className="flex w-full items-center justify-center gap-3 py-5">
+      <p className="text-neutral-0">결제내역을 불러오는 중입니다..</p>
+    </div>
+  );
+
   return (
     <section className="flex flex-col">
       <h1 className="text-lg font-semibold">결제내역</h1>
       <h2 className="pt-6 font-semibold">결제프로그램</h2>
       <div className="flex w-full flex-col gap-y-10 py-5">
         <AsyncBoundary
-          pendingFallback={
-            <div className="flex w-full items-center justify-center gap-3 py-5">
-              <p className="text-neutral-0">결제내역을 불러오는 중입니다..</p>
-            </div>
-          }
+          pendingFallback={pendingFallback}
           rejectedFallback={() => (
             <div className="flex w-full items-center justify-center gap-3 py-5">
               <p className="text-neutral-0">
@@ -40,7 +48,7 @@ export default function CreditList() {
             </div>
           )}
         >
-          <CreditListContent />
+          {isLoggedIn ? <CreditListContent /> : pendingFallback}
         </AsyncBoundary>
       </div>
     </section>
