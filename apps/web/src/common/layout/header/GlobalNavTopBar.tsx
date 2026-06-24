@@ -11,6 +11,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
+import MembershipNavLabel from './MembershipNavLabel';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
@@ -81,12 +82,23 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         <GlobalNavItem
           className={twMerge(
             'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            pathname.startsWith('/membership') && 'border-neutral-0',
+          )}
+          href="/membership"
+          isNew
+        >
+          <MembershipNavLabel />
+        </GlobalNavItem>
+        {/* 메뉴 정리: 멤버십 출시 메뉴 추가로 상단바가 혼잡해 잠시 숨김 (모바일 드로어에는 유지) */}
+        {/* <GlobalNavItem
+          className={twMerge(
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
             pathname === '/about' && 'border-neutral-0',
           )}
           href="/about"
         >
           렛츠커리어 스토리
-        </GlobalNavItem>
+        </GlobalNavItem> */}
         <GlobalNavItem
           className={twMerge(
             'b2b_landing_click mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
