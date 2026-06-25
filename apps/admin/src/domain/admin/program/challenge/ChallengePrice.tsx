@@ -267,7 +267,7 @@ export default function ChallengePrice<
             name="title"
             size="small"
             placeholder="라이트 플랜명을 입력해주세요"
-            maxLength={6}
+            maxLength={16}
             value={lightInfo.title}
             onChange={onChangeLightInfo}
           />
@@ -413,7 +413,7 @@ export default function ChallengePrice<
         name="title"
         size="small"
         placeholder="베이직 플랜명을 입력해주세요"
-        maxLength={6}
+        maxLength={16}
         value={basicInfo.title}
         onChange={(e) => onChangePricePlanInfo('BASIC', e)}
       />
@@ -457,7 +457,7 @@ export default function ChallengePrice<
             size="small"
             placeholder="스탠다드 플랜명을 입력해주세요"
             value={standardInfo.title}
-            maxLength={6}
+            maxLength={16}
             onChange={(e) => onChangePricePlanInfo('STANDARD', e)}
           />
           <OutlinedTextarea
@@ -501,7 +501,7 @@ export default function ChallengePrice<
             size="small"
             placeholder="프리미엄 플랜명을 입력해주세요"
             value={premiumInfo.title}
-            maxLength={6}
+            maxLength={16}
             onChange={(e) => onChangePricePlanInfo('PREMIUM', e)}
           />
           <OutlinedTextarea
