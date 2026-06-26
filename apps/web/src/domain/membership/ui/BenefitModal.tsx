@@ -173,58 +173,27 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
           </div>
         </div>
         <div className="modal-body">
-          <div className="m-intro">
-            <span className="m-intro-hl">
-              혼자가 아니라 함께 달리는 3개월 스터디
-            </span>
-            <p>
-              매주 목표를 인증하고 서로 응원하며 취준 루틴을 잡아요. 스터디는{' '}
-              <b>A·B 두 가지 유형</b>으로 구성돼, 원하는 유형을 골라 신청하면
-              됩니다.
-            </p>
-          </div>
-
-          <div className="stype-group">
-            <div className="stype">
-              <div className="stype-head">
-                <span className="stype-num">1</span>
-                <span className="stype-title">
-                  꾸준한 습관 만들기가 목표인 <b>A유형</b>
-                </span>
-              </div>
-              <ul className="stype-list">
-                <li>매일매일 가볍게 꾸준한 습관 만드는 게 목표예요</li>
-                <li>나 혼자서는 집중하기도 어렵고, 루틴도 자꾸 무너져요</li>
-                <li className="hl">
-                  매일 가볍게 인증하고, ‘꾸준히’에 초점을 맞추는 유형
-                </li>
-              </ul>
-            </div>
-
-            <div className="stype">
-              <div className="stype-head">
-                <span className="stype-num">2</span>
-                <span className="stype-title">
-                  상반기 서류 제출·합격이 목표인 <b>B유형</b>
-                </span>
-              </div>
-              <ul className="stype-list">
-                <li>이번 상반기에는 반드시 합격하는 게 목표예요</li>
-                <li>
-                  얼렁뚱땅 그만하고, 취준 제대로 준비하면서 진짜 서류 제출하고
-                  싶어요
-                </li>
-                <li className="hl">
-                  상반기 공채·수시 목표가 확실하고, 마감 기한을 향해 달리고 싶은
-                  유형
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <p className="m-note">
-            멤버십 혜택으로 <b>무료 참여</b>가 제공되며, 별도 페이백은 없어요.
-          </p>
+          <figure className="m-shot">
+            <img
+              src="/images/membership/study-banner.png"
+              alt="12,900원으로 탄탄한 취업습관 만들고 가자 — Lets Run! 취업 준비 스터디"
+              loading="lazy"
+            />
+          </figure>
+          <figure className="m-shot">
+            <img
+              src="/images/membership/study-mission.png"
+              alt="렛츠런 스터디 4가지 핵심 미션 — 취업 스터디, 기상 인증, 작업 회고, 공고 지원"
+              loading="lazy"
+            />
+          </figure>
+          <figure className="m-shot">
+            <img
+              src="/images/membership/study-value.png"
+              alt="하루 15분 딱 4주만 함께하면 막막했던 취업 준비가 시작돼요 — Lets Run! 함께 취업 준비 습관을 만들어가요"
+              loading="lazy"
+            />
+          </figure>
         </div>
         <div className="modal-foot">
           <button className="btn btn-primary" onClick={handleGoToPlans}>
