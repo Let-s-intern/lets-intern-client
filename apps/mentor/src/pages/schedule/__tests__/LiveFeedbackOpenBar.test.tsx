@@ -90,7 +90,7 @@ describe('LiveFeedbackTimeBlock (PRD-0503 #3 디자인)', () => {
     render(<LiveFeedbackTimeBlock bar={makeLiveBar('in-progress')} />);
 
     expect(screen.getByText('15:30')).toBeInTheDocument();
-    expect(screen.getByText('LIVE 피드백')).toBeInTheDocument();
+    expect(screen.getByText('1회차 LIVE 피드백')).toBeInTheDocument();
     expect(screen.getByText('김멋쟁 멘티')).toBeInTheDocument();
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });

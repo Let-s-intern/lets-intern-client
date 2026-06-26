@@ -186,7 +186,7 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
           <path d="M8.5 7.5L12.5 10L8.5 12.5V7.5Z" fill="#f64e39" />
         </svg>
         <span className="text-xxsmall12 text-neutral-10 shrink-0 font-bold leading-none">
-          LIVE 피드백
+          {bar.th}회차 LIVE 피드백
         </span>
       </div>
 

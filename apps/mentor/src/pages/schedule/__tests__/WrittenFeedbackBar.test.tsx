@@ -25,10 +25,10 @@ function makeBar(overrides: Partial<PeriodBarData> = {}): PeriodBarData {
 }
 
 describe('WrittenFeedbackBar (PRD-0503 #3 디자인)', () => {
-  it('"서면 피드백 기간" 라벨과 챌린지명을 노출한다', () => {
+  it('"N회차 서면 피드백 기간" 라벨(미션 회차 노출)과 챌린지명을 노출한다', () => {
     render(<WrittenFeedbackBar bar={makeBar()} onBarClick={() => {}} />);
 
-    expect(screen.getByText('서면 피드백 기간')).toBeInTheDocument();
+    expect(screen.getByText('1회차 서면 피드백 기간')).toBeInTheDocument();
     expect(screen.getByText('포트폴리오 챌린지 7기')).toBeInTheDocument();
   });
 
