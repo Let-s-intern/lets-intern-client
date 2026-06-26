@@ -170,6 +170,12 @@ function deriveCreateDate(startDate: string, daysBefore: number): string {
   return `${y}-${mo}-${d}T${hh}:${mm}:00`;
 }
 
+/** 프로그램 제목의 "N차"에서 회차(th)를 파생(없으면 1). */
+function thFromTitle(title: string): number {
+  const m = title.match(/(\d+)차/);
+  return m ? Number(m[1]) : 1;
+}
+
 const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
   ([startDate, endDate, programTitle, menteeName, sessionStatus], idx) => ({
     feedbackId: 70_000 + idx,
@@ -182,6 +188,13 @@ const calendarFeedbackList = CALENDAR_FEEDBACK_SESSIONS.map(
     status: sessionStatus?.status ?? 'RESERVED',
     programTitle,
     menteeName,
+    // 다회차 검증용: 기필코 경험정리 21기는 5/4=1차, 이후 날짜=2차. 그 외 챌린지는 1차.
+    th:
+      programTitle === '기필코 경험정리 챌린지 21기'
+        ? startDate.startsWith('2026-05-04')
+          ? 1
+          : 2
+        : 1,
   }),
 );
 
@@ -257,6 +270,7 @@ const completedFeedbackList = COMPLETED_FEEDBACK_SESSIONS.map(
     status: 'COMPLETED',
     programTitle,
     menteeName,
+    th: thFromTitle(programTitle),
   }),
 );
 
@@ -281,6 +295,7 @@ const MENTOR_FEEDBACK_SEED = [
     status: 'RESERVED',
     programTitle: '자소서 챌린지 7기',
     menteeName: '이지수',
+    th: 1,
   },
   ...calendarFeedbackList,
   ...completedFeedbackList,

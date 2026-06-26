@@ -71,12 +71,16 @@ describe('라이브 캘린더 MSW 시드', () => {
     );
   });
 
-  it('기간 바는 challenge(programTitle) 수만큼 생성된다', async () => {
+  it('기간 바는 (challenge × 회차) 조합 수만큼 생성된다', async () => {
     const { sessions } = await fetchSeed();
     const bars = deriveLiveFeedbackBars(sessions, []);
-    const uniqueTitles = new Set(sessions.map((s) => s.programTitle)).size;
-    expect(
-      bars.filter((b) => b.barType === 'live-feedback-period'),
-    ).toHaveLength(uniqueTitles);
+    // 같은 챌린지라도 회차(th)가 다르면 기간 바가 분리된다.
+    const uniquePairs = new Set(
+      sessions.map((s) => `${s.programTitle}|${s.th ?? 1}`),
+    ).size;
+    const periodBars = bars.filter((b) => b.barType === 'live-feedback-period');
+    expect(periodBars).toHaveLength(uniquePairs);
+    // 시드의 기필코 경험정리 21기는 1차/2차로 분리되어 th=2 기간 바가 존재한다.
+    expect(periodBars.some((b) => b.th === 2)).toBe(true);
   });
 });

@@ -87,7 +87,7 @@ function toSessionBar(
     // 서면 missionId와 충돌하지 않도록 feedbackId를 그대로 사용 (양수지만 라이브 식별자로만 쓰임)
     missionId: item.feedbackId,
     challengeTitle: item.programTitle,
-    th: 1,
+    th: item.th ?? 1,
     startDate: date,
     endDate: toDateLabel(item.endDate),
     feedbackStartDate: date,
@@ -132,10 +132,9 @@ function countByStatus(bars: PeriodBarData[]) {
 /**
  * 라이브 피드백을 챌린지 → 회차 단위로 묶어 반환.
  *
- * 옵션 A: BE `FeedbackMentorVo`에 `challengeId`/`missionTh`(회차)가 없으므로
- * `programTitle` 문자열로 챌린지를 묶고, 챌린지당 단일 회차(`th=1`)로 표기한다.
- * → "N차 피드백" 회차 표기는 항상 1차로 고정되며, 정밀 회차 구분은 불가하다.
- *   정밀 그룹핑이 필요하면 BE에 challengeId/missionTh 추가가 선행되어야 한다(PRD §6.1).
+ * 챌린지는 `programTitle` 문자열로 묶고(BE `FeedbackMentorVo`에 challengeId가 없음),
+ * 각 챌린지의 세션을 BE가 제공하는 회차(`FeedbackMentorVo.th`)로 서브그룹핑해
+ * 회차마다 `LiveFeedbackRound` 1개를 만든다. (`th`가 없는 응답은 `?? 1`로 폴백.)
  *
  * 동일 query key(`useFeedbackMentorListQuery`)를 예약현황 페이지와 공유해 중복 fetch를 막는다.
  */
@@ -181,38 +180,41 @@ export function useLiveFeedbackList(): {
 
       allSessionBars.push(...sessions);
 
-      if (sessions.length === 0) {
-        challenges.push({ challengeId, title: group.title, rounds: [] });
-        return;
+      // 세션을 회차(th)별로 묶어 회차마다 LiveFeedbackRound 1개 생성.
+      // 회차 기간은 해당 th 세션들의 min(startDate) ~ max(endDate).
+      const byTh = new Map<number, PeriodBarData[]>();
+      for (const s of sessions) {
+        const bucket = byTh.get(s.th);
+        if (bucket) bucket.push(s);
+        else byTh.set(s.th, [s]);
       }
 
-      // 옵션 A: 회차 정보가 없으므로 챌린지당 단일 회차(th=1).
-      // 회차 기간은 세션들의 min(startDate) ~ max(endDate)로 산출.
-      const startDate = sessions[0].startDate;
-      const endDate = sessions.reduce(
-        (max, s) => (s.endDate > max ? s.endDate : max),
-        sessions[0].endDate,
-      );
-      const { completed, inProgress, waiting } = countByStatus(sessions);
-
-      challenges.push({
-        challengeId,
-        title: group.title,
-        rounds: [
-          {
+      const rounds: LiveFeedbackRound[] = [...byTh.entries()]
+        .sort(([a], [b]) => a - b)
+        .map(([th, roundSessions]) => {
+          // sessions 가 이미 정렬돼 있어 roundSessions[0] 이 최소 시작일.
+          const startDate = roundSessions[0].startDate;
+          const endDate = roundSessions.reduce(
+            (max, s) => (s.endDate > max ? s.endDate : max),
+            roundSessions[0].endDate,
+          );
+          const { completed, inProgress, waiting } =
+            countByStatus(roundSessions);
+          return {
             challengeId,
             challengeTitle: group.title,
-            th: 1,
+            th,
             startDate,
             endDate,
-            totalMentees: sessions.length,
+            totalMentees: roundSessions.length,
             completedCount: completed,
             inProgressCount: inProgress,
             waitingCount: waiting,
-            sessionBars: sessions,
-          },
-        ],
-      });
+            sessionBars: roundSessions,
+          };
+        });
+
+      challenges.push({ challengeId, title: group.title, rounds });
     });
 
     return { challenges, allSessionBars };

@@ -102,15 +102,19 @@ const SchedulePage = () => {
   const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
     useState<PeriodBarData | null>(null);
 
-  // 선택된 라이브 세션의 라운드 회차(period 바의 th) — 모달 헤더 표시용
+  // 선택된 라이브 세션의 라운드 회차(period 바의 th) — 모달 헤더 표시용.
+  // 한 챌린지에 회차가 여럿이므로 challengeId 일치 + 세션 날짜가 포함되는 period 바로 매칭한다.
   const selectedRoundTh = useMemo(() => {
     if (!selectedLiveFeedbackBar) return undefined;
     const period = allBarsUnfiltered.find(
       (b) =>
         b.barType === 'live-feedback-period' &&
-        b.challengeId === selectedLiveFeedbackBar.challengeId,
+        b.challengeId === selectedLiveFeedbackBar.challengeId &&
+        selectedLiveFeedbackBar.startDate >= b.startDate &&
+        selectedLiveFeedbackBar.startDate <= b.endDate,
     );
-    return period?.th;
+    // 날짜 매칭 실패 시 세션 자체의 th로 폴백.
+    return period?.th ?? selectedLiveFeedbackBar.th;
   }, [selectedLiveFeedbackBar, allBarsUnfiltered]);
 
   // 모달 사이드바 멘티 리스트 — 선택된 세션의 challengeId 로 스코프.
