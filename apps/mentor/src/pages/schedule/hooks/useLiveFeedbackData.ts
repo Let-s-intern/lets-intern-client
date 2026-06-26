@@ -21,11 +21,11 @@ import { resolveLiveSessionStatus } from '@/pages/feedback/utils/liveFeedbackSta
  * 라이브 세션(`useFeedbackMentorListQuery`)과 멘토 오픈 슬롯
  * (`useFeedbackMentorSlotsQuery`)을 캘린더 바로 파생한다.
  *
- * ⚠️ BE 한계 (PRD §6):
- *  - `FeedbackMentorVo`에 `challengeId`/`missionTh`가 없다. 따라서
- *    라이브 챌린지 묶음은 `programTitle` 파생, 회차(`th`)는 1 고정.
- *    `challengeId`는 `programTitle` 그룹별 합성 음수 키(서면 실 challengeId와
- *    충돌 방지)로 부여한다.
+ * ⚠️ BE 한계:
+ *  - `FeedbackMentorVo`에 `challengeId`가 없어 라이브 챌린지 묶음은 `programTitle` 파생,
+ *    `challengeId`는 `programTitle` 그룹별 합성 음수 키(서면 실 challengeId와 충돌 방지)로 부여한다.
+ *    회차(`th`)는 BE가 제공하므로 `session.th`(없으면 `?? 1` 폴백)를 사용하고,
+ *    기간 바는 `(programTitle, th)`마다 분리한다.
  *  - `live-feedback-mentee-open`(멘티 신청기간)은 멘토 캘린더 비표시 →
  *    원본 API도 없어 생성하지 않는다.
  */
@@ -155,7 +155,7 @@ export function deriveLiveFeedbackBars(
       challengeId,
       missionId: -session.feedbackId,
       challengeTitle: session.programTitle,
-      th: 1,
+      th: session.th ?? 1,
       startDate: date,
       endDate: toDate(session.endDate),
       feedbackStartDate: date,
@@ -171,31 +171,45 @@ export function deriveLiveFeedbackBars(
     });
   }
 
-  // ── programTitle 그룹별 기간 바 ──
+  // ── (programTitle, th) 그룹별 기간 바 ──
+  // 같은 챌린지(programTitle)라도 회차(th)가 다르면 별도 기간 바로 분리한다.
   for (const title of groupTitles) {
     const groupSessions = sessions.filter((s) => s.programTitle === title);
     if (groupSessions.length === 0) continue;
-    const dates = groupSessions.map((s) => toDate(s.startDate));
-    const endDates = groupSessions.map((s) => toDate(s.endDate));
-    const min = dates.reduce((a, b) => (a < b ? a : b));
-    const max = endDates.reduce((a, b) => (a > b ? a : b));
     const groupIndex = groupIndexByTitle.get(title) ?? 0;
 
-    bars.push({
-      barType: 'live-feedback-period',
-      challengeId: buildSyntheticChallengeId(groupIndex),
-      // period 바는 세션과 동일 challengeId·다른 음수 missionId 로 식별
-      missionId: -(2_000_000 + groupIndex),
-      challengeTitle: title,
-      th: 1,
-      startDate: min,
-      endDate: max,
-      feedbackStartDate: min,
-      feedbackDeadline: max,
-      ...zeroCounts,
-      submittedCount: groupSessions.length,
-      waitingCount: groupSessions.length,
-    });
+    // 회차(th)별 버킷
+    const byTh = new Map<number, FeedbackMentor[]>();
+    for (const s of groupSessions) {
+      const th = s.th ?? 1;
+      const bucket = byTh.get(th);
+      if (bucket) bucket.push(s);
+      else byTh.set(th, [s]);
+    }
+
+    for (const [th, thSessions] of byTh) {
+      const dates = thSessions.map((s) => toDate(s.startDate));
+      const endDates = thSessions.map((s) => toDate(s.endDate));
+      const min = dates.reduce((a, b) => (a < b ? a : b));
+      const max = endDates.reduce((a, b) => (a > b ? a : b));
+
+      bars.push({
+        barType: 'live-feedback-period',
+        // 같은 챌린지의 세션과 동일 challengeId 유지(회차는 challengeId가 아닌 th로 구분)
+        challengeId: buildSyntheticChallengeId(groupIndex),
+        // (challengeId, th)마다 유일한 음수 missionId
+        missionId: -(2_000_000 + groupIndex * 100 + th),
+        challengeTitle: title,
+        th,
+        startDate: min,
+        endDate: max,
+        feedbackStartDate: min,
+        feedbackDeadline: max,
+        ...zeroCounts,
+        submittedCount: thSessions.length,
+        waitingCount: thSessions.length,
+      });
+    }
   }
 
   // ── 멘토 오픈 슬롯 전체 → 글로벌 오픈기간 바 1개 ──
