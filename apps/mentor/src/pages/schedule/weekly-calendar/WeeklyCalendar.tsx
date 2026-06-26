@@ -12,6 +12,8 @@ import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
 import WrittenFeedbackBar from '../calendar-bar/ui/WrittenFeedbackBar';
 import type { PeriodBarData } from '../types';
 import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
+import { useVisibleDateRange } from './hooks/useVisibleDateRange';
+import CalendarRangeHeader from './ui/CalendarRangeHeader';
 import ColumnDividers from './ui/ColumnDividers';
 import DayHeaderCell from './ui/DayHeaderCell';
 import TodayButton from './ui/TodayButton';
@@ -64,6 +66,13 @@ const WeeklyCalendar = ({
     scrollToToday,
   } = useTimelineScroll({ allBars });
 
+  // 상단 라벨용 — 스크롤 위치를 읽어 현재 보이는 날짜 범위만 관찰(읽기 전용).
+  const visibleRange = useVisibleDateRange(
+    containerRef,
+    timelineStart,
+    totalDays,
+  );
+
   // 부모가 지정한 타겟 날짜로 부드럽게 스크롤. ms 단위로 메모해 같은 날짜 재전송 시 noop.
   const targetMs = targetScrollDate?.getTime() ?? null;
   useEffect(() => {
@@ -75,13 +84,29 @@ const WeeklyCalendar = ({
     return () => cancelAnimationFrame(raf);
   }, [targetMs, scrollToDate]);
 
+  // 상단 고정 헤더의 요일·날짜 행 스크롤러 — body 가로 스크롤을 미러링한다.
+  // (요일 행을 별도 스크롤러로 분리해야 세로 sticky 가 가능 — overflow-x-auto 안에서는 불가)
+  const headerScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const body = containerRef.current;
+    const header = headerScrollRef.current;
+    if (!body || !header) return;
+    const sync = () => {
+      header.scrollLeft = body.scrollLeft;
+    };
+    sync();
+    body.addEventListener('scroll', sync, { passive: true });
+    return () => body.removeEventListener('scroll', sync);
+  }, [containerRef, totalDays]);
+
   const today = useMemo(() => new Date(), []);
   const todayColRef = useRef<HTMLDivElement>(null);
   const [isTodayVisible, setIsTodayVisible] = useState(true);
 
   useEffect(() => {
     const el = todayColRef.current;
-    const root = containerRef.current;
+    // 요일·날짜 행이 고정 헤더 스크롤러로 이동 → 가시성 판정 기준도 그 스크롤러.
+    const root = headerScrollRef.current;
     if (!el || !root) return;
     const observer = new IntersectionObserver(
       ([entry]) => setIsTodayVisible(entry.isIntersecting),
@@ -89,7 +114,7 @@ const WeeklyCalendar = ({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [containerRef, days]);
+  }, [days]);
 
   // 서면 피드백 바 레이아웃 — 챌린지별 그룹 + 그룹 내 row 충돌 시 인접 row.
   //   1) 한 챌린지의 모든 바는 연속된 row 블록을 차지 → 시각적으로 묶여 보임
@@ -203,35 +228,55 @@ const WeeklyCalendar = ({
   const isEmpty = barLayouts.length === 0 && liveBars.length === 0;
 
   return (
-    <div className="border-neutral-80 relative overflow-hidden rounded-2xl border">
-      {/* ── 수평 스크롤 컨테이너 ───────────────────────────────────────────── */}
-      <div ref={containerRef} className="overflow-x-auto">
+    <div className="border-neutral-80 relative rounded-2xl border bg-white">
+      {/* ── 상단 고정(sticky): 날짜 범위 라벨 + 요일·날짜 헤더 행 ──────────── */}
+      {/* -top-6: 페이지 스크롤 컨테이너(py-6=24px)의 상단 패딩만큼 끌어올려, 그 패딩
+          영역으로 본문이 비쳐 보이는 여백 버그를 막는다 (헤더가 패딩 구간까지 덮음). */}
+      <div className="sticky -top-6 z-20 overflow-hidden rounded-t-2xl bg-white">
+        <CalendarRangeHeader
+          range={visibleRange}
+          containerRef={containerRef}
+          totalDays={totalDays}
+        />
+
+        {/* 요일·날짜 헤더 — body 가로 스크롤을 미러링(자체 스크롤바 숨김) */}
+        <div ref={headerScrollRef} className="overflow-x-hidden">
+          <div
+            style={{
+              width: `${innerWidthPercent}%`,
+              minWidth: `${totalDays * 140}px`,
+            }}
+          >
+            <div className="border-neutral-80 flex border-b">
+              <div
+                className="flex-1"
+                style={{ display: 'grid', gridTemplateColumns: gridCols }}
+              >
+                {days.map((day, i) => (
+                  <DayHeaderCell
+                    key={i}
+                    ref={isSameDay(day, today) ? todayColRef : undefined}
+                    day={day}
+                    today={today}
+                    isMonthStart={
+                      i > 0 && getMonth(day) !== getMonth(days[i - 1])
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 본문 가로 스크롤 컨테이너 (요일 헤더는 위 고정 헤더로 분리) ─────── */}
+      <div ref={containerRef} className="overflow-x-auto rounded-b-2xl">
         <div
           style={{
             width: `${innerWidthPercent}%`,
             minWidth: `${totalDays * 140}px`,
           }}
         >
-          {/* ── 날짜 헤더 행 ─────────────────────────────────────────────── */}
-          <div className="border-neutral-80 flex border-b">
-            <div
-              className="flex-1"
-              style={{ display: 'grid', gridTemplateColumns: gridCols }}
-            >
-              {days.map((day, i) => (
-                <DayHeaderCell
-                  key={i}
-                  ref={isSameDay(day, today) ? todayColRef : undefined}
-                  day={day}
-                  today={today}
-                  isMonthStart={
-                    i > 0 && getMonth(day) !== getMonth(days[i - 1])
-                  }
-                />
-              ))}
-            </div>
-          </div>
-
           {/* ── 상단: 서면 피드백 period bar 영역 ────────────────────────── */}
           <div className="flex" style={{ minHeight: `${bodyMinHeight}px` }}>
             {/* 바 렌더링 영역 */}
@@ -337,7 +382,7 @@ const WeeklyCalendar = ({
 
       {/* ── Empty state ──────────────────────────────────────────────────── */}
       {isEmpty && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
           <div className="border-neutral-80 pointer-events-auto rounded-xl border bg-white px-8 py-6 shadow-lg">
             <p className="text-xsmall16 text-neutral-30 text-center font-medium">
               진행 예정인 피드백 일정이 없습니다.

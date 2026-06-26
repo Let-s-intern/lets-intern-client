@@ -46,7 +46,7 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
       <div className="flex items-center gap-2">
         <WrittenFeedbackIcon size={18} className="shrink-0" />
         <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
-          서면 피드백 기간
+          {bar.th}회차 서면 피드백 기간
         </span>
         <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
           {bar.challengeTitle}

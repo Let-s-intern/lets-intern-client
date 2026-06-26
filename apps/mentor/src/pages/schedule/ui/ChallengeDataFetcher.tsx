@@ -25,6 +25,7 @@ const MissionAttendanceFetcher = ({
     th: number;
     startDate: string;
     endDate: string;
+    challengeOptionType?: 'WRITTEN_FEEDBACK' | 'LIVE_FEEDBACK' | null;
   };
   onData: (key: string, bar: PeriodBarData) => void;
 }) => {
@@ -100,7 +101,11 @@ const MissionAttendanceFetcher = ({
 
     onData(`${challenge.challengeId}-${mission.id}-submit`, submitBar);
     onData(`${challenge.challengeId}-${mission.id}-review`, reviewBar);
-    onData(`${challenge.challengeId}-${mission.id}-feedback`, feedbackBar);
+    // 라이브 피드백 미션의 캘린더 표시는 useLiveFeedbackData(LIVE 바)가 담당한다.
+    // 여기서 서면 피드백 기간 바를 만들면 라이브가 서면으로 중복 노출되므로 제외.
+    if (mission.challengeOptionType !== 'LIVE_FEEDBACK') {
+      onData(`${challenge.challengeId}-${mission.id}-feedback`, feedbackBar);
+    }
   }, [attendanceData, challenge, mission, onData]);
 
   return null;

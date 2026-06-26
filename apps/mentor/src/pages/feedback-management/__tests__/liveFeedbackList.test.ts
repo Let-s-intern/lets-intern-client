@@ -36,7 +36,7 @@ function setList(list: FeedbackMentor[] | undefined) {
   mockUseFeedbackMentorListQuery.mockReturnValue({ data: list });
 }
 
-describe('useLiveFeedbackList (옵션 A — programTitle 그룹핑)', () => {
+describe('useLiveFeedbackList (programTitle 그룹핑 + 회차(th) 분리)', () => {
   it('data 가 undefined 면 빈 결과를 반환한다', () => {
     setList(undefined);
     const { result } = renderHook(() => useLiveFeedbackList());
@@ -70,7 +70,7 @@ describe('useLiveFeedbackList (옵션 A — programTitle 그룹핑)', () => {
 
     const first = result.current.challenges[0];
     expect(first.title).toBe('자소서 챌린지 7기');
-    expect(first.rounds).toHaveLength(1); // 옵션 A: 챌린지당 단일 회차
+    expect(first.rounds).toHaveLength(1); // 동일 th(미지정→1) → 단일 회차
     expect(first.rounds[0].th).toBe(1);
     expect(first.rounds[0].totalMentees).toBe(2);
 
@@ -82,6 +82,40 @@ describe('useLiveFeedbackList (옵션 A — programTitle 그룹핑)', () => {
     expect(result.current.allSessionBars).toHaveLength(3);
     const ids = result.current.allSessionBars.map((b) => b.liveFeedback?.id);
     expect(ids).toEqual(expect.arrayContaining([1, 2, 3]));
+  });
+
+  it('같은 챌린지의 세션을 회차(th)별로 분리해 회차마다 라운드를 만든다', () => {
+    setList([
+      // 1차 세션 2건
+      makeFeedback({ feedbackId: 1, th: 1, menteeName: '이지수' }),
+      makeFeedback({
+        feedbackId: 2,
+        th: 1,
+        startDate: '2026-05-20T11:00:00',
+        endDate: '2026-05-20T11:30:00',
+        menteeName: '김민준',
+      }),
+      // 2차 세션 1건 (같은 programTitle)
+      makeFeedback({
+        feedbackId: 3,
+        th: 2,
+        startDate: '2026-05-27T14:00:00',
+        endDate: '2026-05-27T14:30:00',
+        menteeName: '박서연',
+      }),
+    ]);
+
+    const { result } = renderHook(() => useLiveFeedbackList());
+
+    // 단일 챌린지, 회차 2개(1차/2차)
+    expect(result.current.challenges).toHaveLength(1);
+    const rounds = result.current.challenges[0].rounds;
+    expect(rounds.map((r) => r.th)).toEqual([1, 2]); // th 오름차순
+    expect(rounds[0].totalMentees).toBe(2);
+    expect(rounds[1].totalMentees).toBe(1);
+    // 회차 기간은 해당 th 세션 범위로만 산출
+    expect(rounds[1].startDate).toBe('2026-05-27');
+    expect(rounds[1].endDate).toBe('2026-05-27');
   });
 
   it('status/출석 조합으로 회차 카운트를 산출한다', () => {
