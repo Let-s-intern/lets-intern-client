@@ -288,6 +288,116 @@
   font-weight: 700;
 }
 
+/* 렛츠런 스터디 모달 — 배너 + 번호 혜택 카드 2단 */
+.membership-root .study-split {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin: 14px 0 20px;
+}
+.membership-root .study-split .m-shot {
+  margin: 0;
+  height: 100%;
+}
+.membership-root .study-split .m-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* 배너 썸네일 → 상세페이지 링크. 챌린지/가이드북 갤러리와 동일한 hover 반응 */
+.membership-root .study-banner-link {
+  display: block;
+  height: 100%;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+}
+.membership-root .study-banner-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -8px rgba(40, 60, 120, 0.28);
+}
+.membership-root .study-banner-link .m-shot {
+  height: 100%;
+  cursor: pointer;
+}
+.membership-root .study-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.membership-root .study-bcard {
+  border: 1.5px solid #e7e9f0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+}
+.membership-root .study-bhead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.membership-root .study-bnum {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--lc-blue);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.membership-root .study-bhead h5 {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--lc-ink);
+}
+.membership-root .study-bhead h5 b {
+  color: var(--lc-blue);
+  font-weight: 800;
+}
+.membership-root .study-pts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.membership-root .study-pts li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  row-gap: 1px;
+}
+.membership-root .study-pts li::before {
+  content: '✓';
+  grid-row: span 2;
+  color: var(--lc-blue);
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.membership-root .study-pts strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  line-height: 1.4;
+}
+.membership-root .study-pts span {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.5;
+}
+
 /* 슈퍼인턴 모달 — 혜택 2카드 */
 .membership-root .si-cards {
   display: grid;

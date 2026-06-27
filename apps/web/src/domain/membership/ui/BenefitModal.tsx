@@ -15,6 +15,10 @@ function goToPlans(onClose: () => void) {
   );
 }
 
+// 렛츠런 스터디 배너 클릭 시 이동할 상세페이지(lets run 3기)
+const STUDY_DETAIL_URL =
+  'https://www.letscareer.co.kr/program/challenge/288/lets-run-4주-스터디-3기';
+
 const CHALLENGE_ITEMS = [
   {
     label: '경험정리 챌린지',
@@ -168,32 +172,91 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             />
           </div>
           <div>
-            <h3>렛츠런 스터디 무료</h3>
-            <p>혼자가 아니라 함께 달리는 3개월</p>
+            <h3>렛츠런 스터디 무료 참여</h3>
+            <p>혼자가 아니라 함께 달리는 1개월 스터디</p>
           </div>
         </div>
         <div className="modal-body">
-          <figure className="m-shot">
-            <img
-              src="/images/membership/study-banner.png"
-              alt="12,900원으로 탄탄한 취업습관 만들고 가자 — Lets Run! 취업 준비 스터디"
-              loading="lazy"
-            />
-          </figure>
-          <figure className="m-shot">
-            <img
-              src="/images/membership/study-mission.png"
-              alt="렛츠런 스터디 4가지 핵심 미션 — 취업 스터디, 기상 인증, 작업 회고, 공고 지원"
-              loading="lazy"
-            />
-          </figure>
-          <figure className="m-shot">
-            <img
-              src="/images/membership/study-value.png"
-              alt="하루 15분 딱 4주만 함께하면 막막했던 취업 준비가 시작돼요 — Lets Run! 함께 취업 준비 습관을 만들어가요"
-              loading="lazy"
-            />
-          </figure>
+          <div className="m-intro">
+            <span className="m-intro-hl">
+              멤버십 가입자는 스터디를 추가 비용 없이
+            </span>
+            <p>
+              매주 목표를 인증하고 서로 응원하며 취준 루틴을 잡아요. 스터디는{' '}
+              <b>기본 습관 형성부터 취업 스터디 활동</b>으로 구성되어 있어요.
+            </p>
+          </div>
+          <div className="study-split">
+            <a
+              className="study-banner-link"
+              href={STUDY_DETAIL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure className="m-shot">
+                <img
+                  src="/images/membership/study-banner.png"
+                  alt="Lets Run 4주 스터디 3기 — 취업 준비를 함께 할 든든한 러닝 메이트"
+                  loading="lazy"
+                />
+              </figure>
+            </a>
+            <div className="study-cards">
+              <div className="study-bcard">
+                <div className="study-bhead">
+                  <span className="study-bnum">1</span>
+                  <h5>
+                    몸도 튼튼, 마음도 튼튼! <b>습관 형성</b>
+                  </h5>
+                </div>
+                <ul className="study-pts">
+                  <li>
+                    <strong>확실한 아침 기상 습관</strong>
+                    <span>습관 개선으로 기분 좋은 시작과 집중력까지 UP!</span>
+                  </li>
+                  <li>
+                    <strong>취준 방향성 정비</strong>
+                    <span>
+                      매일 회고하며 취업 준비 과정을 검토하고 방향성 조율
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div className="study-bcard">
+                <div className="study-bhead">
+                  <span className="study-bnum">2</span>
+                  <h5>
+                    렛츠커리어와 함께 <b>무조건 시작!</b>
+                  </h5>
+                </div>
+                <ul className="study-pts">
+                  <li>
+                    <strong>꾸준한 취업 준비 수행</strong>
+                    <span>
+                      미뤄왔던 서류 작업부터 다음을 위한 사전 작업까지
+                    </span>
+                  </li>
+                  <li>
+                    <strong>취업의 첫걸음 달성</strong>
+                    <span>꾸준한 공고 지원을 통해 기업별 지원 과정을 학습</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p className="m-para">
+            4주간 총 4가지 미션을 수행하며 취업 준비를 위한 습관을 형성해요.
+            <br />
+            스터디 활동은{' '}
+            <b>
+              기업/산업 분석·경험정리·자기소개서 개선·포트폴리오
+              개선·면접준비·어학공부·집중지원
+            </b>
+            으로 구성되어 있어요.
+          </p>
+          <p className="m-note">
+            멤버십 혜택으로 <b>무료 참여</b>가 제공되며, 별도 페이백은 없어요.
+          </p>
         </div>
         <div className="modal-foot">
           <button className="btn btn-primary" onClick={handleGoToPlans}>

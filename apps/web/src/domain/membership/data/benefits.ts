@@ -49,8 +49,8 @@ export const BENEFIT_CARDS: BenefitCard[] = [
     iconSvg: '/images/membership/ic-study.svg',
     iconClass: 'ic-lav',
     title: '렛츠런 스터디 무료 참여',
-    desc: '매주 인증하며 루틴을 잡는 렛츠런 스터디에 3개월간 무료로 참여하세요. 혼자가 아니라 함께 달립니다.',
-    tagline: '3개월 자유 참여',
+    desc: '매주 인증하며 루틴을 잡는 렛츠런 스터디에 1개월간 무료로 참여하세요. 혼자가 아니라 함께 달립니다.',
+    tagline: '1개월 무료 참여',
     more: '자세히 보기 →',
   },
   {
