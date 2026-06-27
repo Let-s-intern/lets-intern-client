@@ -439,6 +439,22 @@
   .membership-root .modal-foot {
     padding: 14px 18px 18px;
   }
+  /* 렛츠런 스터디 — 배너 위, 번호 카드 아래로 세로 스택 */
+  .membership-root .study-split {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  /* 세로 스택에서는 배너를 원래 비율(4:3)로 표시 — 높이 맞춤 크롭 해제 */
+  .membership-root .study-split .m-shot {
+    height: auto;
+  }
+  .membership-root .study-split .m-shot img {
+    height: auto;
+    object-fit: initial;
+  }
+  .membership-root .study-bcard {
+    padding: 16px;
+  }
   /* 두 연습 모드 카드를 세로로 쌓음 */
   .membership-root .vi-modes {
     grid-template-columns: 1fr;
