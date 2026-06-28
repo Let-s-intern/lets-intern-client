@@ -6,6 +6,7 @@ import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
@@ -103,7 +104,13 @@ const PaymentInputContent = () => {
   })();
   const isCouponDisabledType =
     COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
-  const showCouponSection = !isCouponDisabledType || hasB2BParam;
+  // 하반기 멤버십(위임 챌린지)은 별도 플랜가로 판매되어 쿠폰 입력을 막는다.
+  // TODO: 멤버십 프로모션 종료 후 이 분기(isMembership)와 위 import를 삭제할 것.
+  const isMembership =
+    programApplicationData.programType === 'challenge' &&
+    programApplicationData.programId === MEMBERSHIP_CHALLENGE_ID;
+  const showCouponSection =
+    (!isCouponDisabledType || hasB2BParam) && !isMembership;
 
   const setUserInfo = useCallback((info: UserInfo) => {
     const { contactEmail, email, name, phoneNumber, question } = info;
