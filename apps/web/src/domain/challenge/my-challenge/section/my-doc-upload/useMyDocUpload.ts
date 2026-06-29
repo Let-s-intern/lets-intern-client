@@ -1,6 +1,9 @@
 import { usePostDocumentMutation } from '@/api/mission/mission';
 import { DocumentType } from '@/api/mission/missionSchema';
-import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
+import {
+  getPresignedUrl,
+  uploadToS3,
+} from '@/domain/challenge/api/presignedUrl';
 import { convertReportTypeToPathname } from '@/api/report';
 import {
   useDeleteUserDocMutation,

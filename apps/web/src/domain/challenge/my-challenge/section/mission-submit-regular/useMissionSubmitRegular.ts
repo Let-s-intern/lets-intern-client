@@ -1,7 +1,7 @@
 import {
   usePatchAttendance,
   useSubmitMission,
-} from '@/api/attendance/attendance';
+} from '@/domain/challenge/api/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import dayjs from '@/lib/dayjs';

@@ -1,18 +1,12 @@
 import { IPageable } from '@/types/interface';
 import axios from '@/utils/axios';
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { z } from 'zod';
 import {
   adminBlogBannerListSchema,
   adminBlogBannerSchema,
   blogBannerListSchema,
-  BlogList,
   blogListSchema,
   blogRatingListSchema,
   BlogSchema,
@@ -78,52 +72,6 @@ export const useBlogListQuery = ({
       return blogListSchema.parse(res.data.data);
     },
     enabled,
-  });
-};
-
-export const useBlogListTypeQuery = ({
-  pageable,
-  types: type,
-}: BlogQueryParams) => {
-  return useQuery({
-    queryKey: [blogListQueryKey, pageable],
-    queryFn: async () => {
-      const res = await axios.get(`/blog`, {
-        params: {
-          ...pageable,
-          type,
-        },
-      });
-      return blogListSchema.parse(res.data.data);
-    },
-    enabled: !!type,
-  });
-};
-
-export const useInfiniteBlogListQuery = ({
-  types: type,
-  tagId,
-  pageable,
-}: BlogQueryParams) => {
-  return useInfiniteQuery({
-    queryKey: [blogListQueryKey, pageable, type, tagId],
-    queryFn: async ({ pageParam = pageable }) => {
-      const res = await axios.get('/blog', {
-        params: {
-          ...pageParam,
-          type,
-          tagId,
-        },
-      });
-      return blogListSchema.parse(res.data.data);
-    },
-    initialPageParam: pageable,
-    getNextPageParam: (lastPage) => {
-      return lastPage.pageInfo.totalElements === 0 ||
-        lastPage.pageInfo.totalPages - 1 === lastPage.pageInfo.pageNum
-        ? undefined
-        : { page: lastPage.pageInfo.pageNum + 2, size: pageable.size };
-    },
   });
 };
 
@@ -301,37 +249,6 @@ export const usePostBlogRatingMutation = ({
       console.error(error);
     },
   });
-};
-
-export const fetchBlogData = async (
-  id: string | number,
-): Promise<BlogSchema> => {
-  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/blog/${id}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch blog data');
-  }
-
-  const data = await res.json();
-  return blogSchema.parse(data.data);
-};
-
-// Fetching 추천 블로그 데이터
-export const fetchRecommendBlogData = async ({
-  pageable,
-  types: type,
-}: BlogQueryParams): Promise<BlogList> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/blog?type=${type}&page=${pageable.page}&size=${pageable.size}`,
-  );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch recommend blog data');
-  }
-
-  const data = await res.json();
-
-  return blogListSchema.parse(data.data);
 };
 
 /* 블로그 광고 배너 */

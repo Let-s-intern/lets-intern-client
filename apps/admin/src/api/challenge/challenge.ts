@@ -3,13 +3,11 @@ import {
   activeChallengeResponse,
   attendances,
   challengeGuides,
-  ChallengeIdPrimitive,
   challengeListSchema,
   challengeNotices,
   challengeTitleSchema,
   ChallengeType,
   faqSchema,
-  getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   missionAdmin,
   myDailyMission as myDailyMissionSchema,
@@ -58,21 +56,6 @@ export const useChallengeQuery = ({
       return getChallengeIdSchema.parse(res.data.data);
     },
   });
-};
-
-export const fetchChallengeData = async (
-  challengeId: string,
-): Promise<ChallengeIdPrimitive> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/challenge/${challengeId}`,
-  );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch challenge data');
-  }
-
-  const data = await res.json();
-  return getChallengeIdPrimitiveSchema.parse(data.data);
 };
 
 export const usePatchChallengePayback = ({
@@ -187,45 +170,6 @@ export const useGetTotalReview = ({
       return reviewTotalSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
-  });
-};
-
-export const useEditReviewVisible = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      type,
-      programTitle,
-      createDate,
-      reviewId,
-      isVisible,
-    }: {
-      type: string;
-      programTitle?: string | null;
-      createDate?: string | null;
-      reviewId: number;
-      isVisible: boolean;
-    }) => {
-      const res = await axios.patch(
-        `/review/${reviewId}/status`,
-        {},
-        {
-          params: {
-            isVisible,
-          },
-        },
-      );
-      return { data: res.data, type, programTitle, createDate };
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: getTotalReviewQueryKey(
-          data.type,
-          data.programTitle,
-          data.createDate,
-        ),
-      });
-    },
   });
 };
 

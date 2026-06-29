@@ -1,6 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
   challengeApplicationPriceType,
@@ -14,12 +14,6 @@ import {
 } from '../schema';
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
-import {
-  UsePaymentDetailQueryKey,
-  UsePaymentQueryKey,
-} from './payment/payment';
-import { tossInfoType } from './payment/paymentSchema';
-import { useUserQueryKey } from './user/user';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -46,21 +40,6 @@ export const programApplicationSchema = z.object({
 export type ProgramApplicationFormInfo = z.infer<
   typeof programApplicationSchema
 >;
-
-export const fetchProgramApplication = async (
-  programId: string,
-): Promise<ProgramApplicationFormInfo> => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SERVER_API}/challenge/${programId}/application`,
-  );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch application data');
-  }
-
-  const data = await res.json();
-  return programApplicationSchema.parse(data.data);
-};
 
 export const useProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
 
@@ -89,45 +68,6 @@ export interface PostApplicationInterface {
   motivate?: string;
   question?: string;
 }
-
-export const usePostApplicationMutation = ({
-  errorCallback,
-  successCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-} = {}) => {
-  return useMutation({
-    mutationFn: async ({
-      programId,
-      programType,
-      requestBody,
-    }: {
-      programId: number;
-      programType: string;
-      requestBody: PostApplicationInterface;
-    }) => {
-      return (
-        await axios.post(
-          `/application/${programId}?type=${programType.toUpperCase()}`,
-          requestBody,
-        )
-      ).data.data;
-    },
-    onSuccess: () => {
-      successCallback?.();
-    },
-    onError: (error) => {
-      errorCallback?.(error);
-    },
-  });
-};
-
-export const postApplicationResultSchema = z.object({
-  tossInfo: tossInfoType.nullable().optional(),
-});
-
-export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
 export type ApplicationDownloadType =
   | 'GUIDEBOOK'
@@ -170,115 +110,11 @@ export const getApplicationDownloadStatus = async ({
   return applicationDownloadResponseSchema.parse(res.data.data);
 };
 
-export const useApplicationDownloadQuery = ({
-  applicationId,
-  type,
-  enabled,
-}: {
-  applicationId: number | null | undefined;
-  type: ApplicationDownloadType;
-  enabled: boolean;
-}) =>
-  useQuery<ApplicationDownloadResponse>({
-    queryKey: ['applicationDownload', applicationId, type],
-    queryFn: () =>
-      getApplicationDownloadStatus({ applicationId: applicationId!, type }),
-    enabled: enabled && typeof applicationId === 'number',
-  });
-
-export const useCancelApplicationMutation = ({
-  applicationId,
-  paymentId,
-  successCallback,
-  errorCallback,
-}: {
-  applicationId: number;
-  paymentId: string | number;
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
-  const client = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ programType }: { programType: string }) => {
-      const res = await axios.delete(`/application/${applicationId}`, {
-        params: { type: programType.toUpperCase() },
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      if (successCallback) {
-        successCallback();
-      }
-      client.invalidateQueries({
-        queryKey: [UsePaymentQueryKey],
-      });
-      client.invalidateQueries({
-        queryKey: [UsePaymentDetailQueryKey, paymentId],
-      });
-    },
-    onError: (error) => {
-      if (errorCallback) {
-        errorCallback(error);
-      }
-    },
-  });
-};
-
 export interface PatchApplicationSurveyInterface {
   awarenessPath: string;
   decisionPeriod: string;
   paymentPath: string;
 }
-
-export type PatchApplicationSurveyField = keyof PatchApplicationSurveyInterface;
-
-export const usePatchApplicationSurveyMutation = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
-  const client = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      programType,
-      applicationId,
-      requestBody,
-    }: {
-      programType: string;
-      applicationId: number;
-      requestBody: PatchApplicationSurveyInterface;
-    }) => {
-      const res = await axios.patch(
-        `/application/${applicationId}/survey`,
-        requestBody,
-        {
-          params: { type: programType.toUpperCase() },
-        },
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      if (successCallback) {
-        successCallback();
-      }
-      client.invalidateQueries({
-        queryKey: [useUserQueryKey],
-      });
-      client.invalidateQueries({
-        queryKey: [useProgramApplicationQueryKey],
-      });
-    },
-    onError: (error) => {
-      if (errorCallback) {
-        errorCallback(error);
-      }
-    },
-  });
-};
 
 const applicationStatus = z.union([
   z.literal('WAITING'),
@@ -348,24 +184,6 @@ export const useMypageApplicationsQuery = () => {
         .applicationList.filter(
           (application) => application.programType !== 'REPORT',
         );
-    },
-  });
-};
-
-const participationInfoSchema = z.object({
-  name: z.string().nullable().optional(),
-  phoneNumber: z.string().nullable().optional(),
-  email: z.string().nullable().optional(),
-  contactEmail: z.string().nullable().optional(),
-});
-
-export const useGetParticipationInfo = () => {
-  return useQuery({
-    queryKey: ['getParticipationInfo'],
-    queryFn: async () => {
-      const res = await axios.get('/user/participation-info');
-
-      return participationInfoSchema.parse(res.data.data);
     },
   });
 };

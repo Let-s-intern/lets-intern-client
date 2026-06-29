@@ -111,18 +111,11 @@ export const blogPrimitiveSchema = z.object({
   tagDetailInfos,
 });
 
-export type BlogPrimitive = z.infer<typeof blogPrimitiveSchema>;
-
 export const blogInfoSchema = z.object({
   blogThumbnailInfo,
   tagDetailInfos,
 });
 export type BlogInfoSchema = z.infer<typeof blogInfoSchema>;
-
-export const blogInfoPrimitiveSchema = z.object({
-  blogThumbnailInfo: blogThumbnailInfoPrimitive,
-  tagDetailInfos,
-});
 
 export const blogListSchema = z.object({
   blogInfos: z.array(blogInfoSchema),
@@ -130,11 +123,6 @@ export const blogListSchema = z.object({
 });
 
 export type BlogList = z.infer<typeof blogListSchema>;
-
-export const blogListPrimitiveSchema = z.object({
-  blogInfos: z.array(blogThumbnailInfoPrimitive),
-  pageInfo,
-});
 
 export const blogTagSchema = z.object({
   tagDetailInfos,

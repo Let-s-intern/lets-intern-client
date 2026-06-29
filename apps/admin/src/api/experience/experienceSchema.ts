@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export type UserExperienceType = z.infer<typeof userExperienceSchema>;
-export type UserExperienceListType = z.infer<typeof userExperienceListSchema>;
 export type ActivityType = z.infer<typeof activitySchema>;
 export type CategoryType = z.infer<typeof categorySchema>;
 export type UserAttendanceExperience = z.infer<

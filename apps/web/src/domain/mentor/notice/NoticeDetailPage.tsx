@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import LexicalContent from '@/common/lexical/LexicalContent';
-import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
+import { useMentorGuideListQuery } from '@/domain/mentor/api/challengeMentorGuide';
 
 export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
   const { data, isLoading } = useMentorGuideListQuery();

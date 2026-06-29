@@ -45,8 +45,6 @@ export const adminUserMentorList = z.object({
   ),
 });
 
-export type AdminUserMentorList = z.infer<typeof adminUserMentorList>;
-
 export interface PostAdminChallengeMentorReq {
   challengeId: number;
   mentorIdList: number[];
@@ -78,26 +76,3 @@ export const patchAttendanceMentorReqSchema = z
 export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema
 >;
-
-/** 멘토 프로필 (신규 API 대비) */
-export const mentorProfileSchema = z.object({
-  name: z.string(),
-  nickname: z.string().nullable(),
-  phone: z.string().nullable(),
-  sns: z.string().nullable(),
-  email: z.string(),
-  profileImage: z.string().nullable(),
-  introduction: z.string().nullable(),
-  careers: z.array(
-    z.object({
-      company: z.string(),
-      field: z.string().nullable(),
-      position: z.string().nullable(),
-      department: z.string().nullable(),
-      startDate: z.string().nullable(),
-      endDate: z.string().nullable(),
-    }),
-  ),
-});
-
-export type MentorProfile = z.infer<typeof mentorProfileSchema>;

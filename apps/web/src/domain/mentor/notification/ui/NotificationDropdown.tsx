@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
+import type { ChallengeMentorGuideItem } from '@/domain/mentor/api/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
   const now = new Date();

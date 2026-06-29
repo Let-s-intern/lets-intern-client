@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
+import {
+  useDeleteFaq,
+  useGetFaq,
+  usePatchFaq,
+  usePostFaq,
+} from '@/domain/faq/api/faq';
 import { Faq, ProgramTypeUpperCase } from '@/schema';
 
 interface UseFaqListParams {

@@ -326,8 +326,6 @@ export const bannerUserListItemSchema = z.object({
   textColorCode: z.string().nullable().optional(),
 });
 
-export type BannerUserListItemType = z.infer<typeof bannerUserListItemSchema>;
-
 export const bannerUserListSchema = z.object({
   bannerList: z.array(bannerUserListItemSchema),
 });
@@ -754,20 +752,6 @@ export const useDeleteCommonBannerForAdmin = ({
     },
     onError: (error: Error) => {
       errorCallback?.(error);
-    },
-  });
-};
-
-export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
-  return useQuery({
-    queryKey: ['banner', type],
-    queryFn: async () => {
-      const res = await axios('/banner', {
-        params: {
-          type,
-        },
-      });
-      return bannerUserListSchema.parse(res.data.data);
     },
   });
 };

@@ -1,6 +1,9 @@
 'use client';
 
-import { useUserQuery } from '@/api/user/user';
+import { userQueryOptions } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import useAuthStore from '@/store/useAuthStore';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 function ProfileAvatar() {
@@ -55,47 +58,47 @@ function ProfileInfoRow({
 }
 
 export function Profile() {
-  const router = useRouter();
-  const { data: user, isLoading } = useUserQuery();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
-  const userName = user?.name || '사용자';
-  const wishJobDisplay = user?.wishJob || '미설정';
-  const wishCompanyDisplay = user?.wishCompany || '미설정';
-
-  const handleClickProfileEdit = () => {
-    router.push('/mypage/career/plan');
-  };
-
-  // 로딩 상태
-  if (isLoading) {
-    return (
-      <div className="border-neutral-80 flex flex-col rounded-sm border p-4">
-        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full">
-          <div className="bg-neutral-90 h-12 w-12 animate-pulse rounded-full" />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="bg-neutral-90 h-6 w-20 animate-pulse rounded" />
-          <ProfileInfoRow
-            label="희망직무"
-            value=""
-            isLoading
-            skeletonWidth="w-32"
-          />
-          <ProfileInfoRow
-            label="희망기업"
-            value=""
-            isLoading
-            skeletonWidth="w-24"
-          />
-        </div>
-
-        <div className="rounded-xxs bg-neutral-90 mt-5 h-9 w-full animate-pulse" />
-      </div>
-    );
+  // 비로그인: 요청 없이 기본값 카드 즉시 표시
+  if (!isLoggedIn) {
+    return <ProfileCard />;
   }
 
-  // (에러 시 기본값 표시)
+  return (
+    <AsyncBoundary
+      pendingFallback={<ProfileSkeleton />}
+      rejectedFallback={() => <ProfileCard />}
+    >
+      <ProfileContent />
+    </AsyncBoundary>
+  );
+}
+
+function ProfileContent() {
+  const { data: user } = useSuspenseQuery(userQueryOptions);
+
+  return (
+    <ProfileCard
+      userName={user.name || '사용자'}
+      wishJobDisplay={user.wishJob || '미설정'}
+      wishCompanyDisplay={user.wishCompany || '미설정'}
+    />
+  );
+}
+
+// 프로필 카드 (성공 데이터 / 에러·비로그인 시 기본값 표시 겸용)
+function ProfileCard({
+  userName = '사용자',
+  wishJobDisplay = '미설정',
+  wishCompanyDisplay = '미설정',
+}: {
+  userName?: string;
+  wishJobDisplay?: string;
+  wishCompanyDisplay?: string;
+}) {
+  const router = useRouter();
+
   return (
     <div className="border-neutral-80 flex flex-col rounded-sm border p-4">
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full">
@@ -113,10 +116,38 @@ export function Profile() {
 
       <button
         className="rounded-xxs border-neutral-80 text-xsmall14 text-neutral-20 mt-5 w-full border px-3 py-1.5 font-normal"
-        onClick={handleClickProfileEdit}
+        onClick={() => router.push('/mypage/career/plan')}
       >
         프로필 수정
       </button>
+    </div>
+  );
+}
+
+function ProfileSkeleton() {
+  return (
+    <div className="border-neutral-80 flex flex-col rounded-sm border p-4">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full">
+        <div className="bg-neutral-90 h-12 w-12 animate-pulse rounded-full" />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <div className="bg-neutral-90 h-6 w-20 animate-pulse rounded" />
+        <ProfileInfoRow
+          label="희망직무"
+          value=""
+          isLoading
+          skeletonWidth="w-32"
+        />
+        <ProfileInfoRow
+          label="희망기업"
+          value=""
+          isLoading
+          skeletonWidth="w-24"
+        />
+      </div>
+
+      <div className="rounded-xxs bg-neutral-90 mt-5 h-9 w-full animate-pulse" />
     </div>
   );
 }

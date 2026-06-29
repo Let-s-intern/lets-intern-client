@@ -1,4 +1,4 @@
-import { Content } from '@/api/attendance/attendanceSchema';
+import { Content } from '@/domain/challenge/api/attendanceSchema';
 import dayjs from '@/lib/dayjs';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';

@@ -11,12 +11,10 @@ import {
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   getGuidebookIdSchema,
-  getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getPublicGuidebookSchema,
   getPublicVodSchema,
   getVodIdSchema,
-  LiveIdPrimitive,
   LiveIdSchema,
   liveTitleSchema,
   Program,
@@ -25,7 +23,6 @@ import {
   programBannerAdminListSchema,
   programBannerUserListSchema,
   ProgramClassification,
-  ProgramRecommend,
   programRecommendSchema,
   programSchema,
   ProgramStatus,
@@ -311,19 +308,6 @@ export const useGetLiveQuery = ({
       return getLiveIdSchema.parse(res.data.data);
     },
   });
-};
-
-export const fetchLiveData = async (
-  liveId: string,
-): Promise<LiveIdPrimitive> => {
-  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/live/${liveId}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch live data');
-  }
-
-  const data = await res.json();
-  return getLiveIdPrimitiveSchema.parse(data.data);
 };
 
 /** 1회용으로 사용하기 위한 함수 */
@@ -814,11 +798,4 @@ export const getChallengeByKeyword = async (keyword: string) => {
   );
 
   return filtered[0];
-};
-
-export const fetchProgramRecommend = async () => {
-  const data = await client<ProgramRecommend>('/v1/program/recommend', {
-    method: 'GET',
-  });
-  return programRecommendSchema.parse(data);
 };

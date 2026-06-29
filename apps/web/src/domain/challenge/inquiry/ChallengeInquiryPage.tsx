@@ -5,7 +5,7 @@ import {
   useDeleteQuestionMutation,
   useEditQuestionMutation,
   useMyQuestionsQuery,
-} from '@/api/challenge-question/challengeQuestion';
+} from '@/domain/challenge/api/challengeQuestion';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import InquiryForm from './InquiryForm';

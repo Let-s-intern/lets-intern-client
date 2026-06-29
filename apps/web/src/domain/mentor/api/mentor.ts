@@ -7,7 +7,7 @@ import {
   adminUserMentorList,
   type PatchAttendanceMentorReq,
   PostAdminChallengeMentorReq,
-} from './mentorSchema';
+} from '@/api/mentor/mentorSchema';
 
 /** GET 챌린지 멘토 목록 조회 /api/v2/admin/challenge/{challengeId}/mentor */
 export const useAdminChallengeMentorListQuery = (

@@ -92,7 +92,6 @@ export const baseQuestionListResponseSchema = z.object({
 
 export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
 export type MagnetDetailQuestion = z.infer<typeof magnetQuestionSchema>;
-export type MagnetInfo = z.infer<typeof magnetInfoSchema>;
 
 // --- User-facing magnet detail ---
 
@@ -174,9 +173,6 @@ export const userMagnetQuestionListResponseSchema = z.object({
 
 export type UserMagnetQuestionListResponse = z.infer<
   typeof userMagnetQuestionListResponseSchema
->;
-export type UserMagnetQuestionItem = z.infer<
-  typeof userMagnetQuestionItemSchema
 >;
 
 // --- Mypage magnet (신청현황) ---

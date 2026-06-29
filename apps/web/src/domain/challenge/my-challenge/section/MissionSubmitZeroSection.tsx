@@ -1,4 +1,4 @@
-import { useSubmitMission } from '@/api/attendance/attendance';
+import { useSubmitMission } from '@/domain/challenge/api/attendance';
 import {
   ChallengeMissionQueryKey,
   useGetChallengeGoal,

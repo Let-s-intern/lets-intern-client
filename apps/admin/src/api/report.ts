@@ -102,21 +102,6 @@ export function convertParamToReportType(param?: string) {
   }
 }
 
-export function convertReportPriceTypeToDisplayName(
-  type: ReportPriceType | null | undefined,
-): string {
-  if (!type) {
-    return '';
-  }
-
-  switch (type) {
-    case 'BASIC':
-      return '베이직';
-    case 'PREMIUM':
-      return '프리미엄';
-  }
-}
-
 export function convertReportStatusToBadgeStatus(
   status: ReportApplicationStatus | null | undefined,
   isSubmitted: boolean,
@@ -405,7 +390,6 @@ const reportOptionInfo = z.object({
   discountPrice: z.number().nullable().optional(),
   optionTitle: z.string().nullable().optional(),
 });
-export type ReportOptionInfo = z.infer<typeof reportOptionInfo>;
 
 // GET /api/v1/report/{reportId}/price
 const getReportPriceDetailSchema = z.object({
@@ -470,54 +454,6 @@ export const useGetActiveReports = () => {
   });
 };
 
-/**
- * 진단서 데이터 조회
- * TODO: 구조 더 깔끔하게 정리하기. 현재 하나의 id라도 전체 Active Reports를 가져오는 구조
- */
-export const fetchReport = async ({
-  type,
-  id,
-}: {
-  type: ReportType;
-  id?: number;
-}): Promise<ReportDetail | null> => {
-  const res = await fetch(`${import.meta.env.VITE_SERVER_API}/report/active`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch report data');
-  }
-
-  const data = await res.json();
-
-  const activeReports = getActiveReportsSchema.parse(data.data);
-
-  let list: ReportDetail[];
-
-  if (type === 'PERSONAL_STATEMENT') {
-    list = activeReports.personalStatementInfoList;
-  } else if (type === 'PORTFOLIO') {
-    list = activeReports.portfolioInfoList;
-  } else if (type === 'RESUME') {
-    list = activeReports.resumeInfoList;
-  } else {
-    throw new Error('Invalid report type');
-  }
-  const visibleList = list.filter(
-    (item) =>
-      item.isVisible === true &&
-      item.visibleDate &&
-      new Date(item.visibleDate) <= new Date(),
-  );
-
-  const report = !id
-    ? visibleList.length > 0
-      ? visibleList[0]
-      : undefined
-    : list.find((item) => item.reportId === id);
-
-  return report ?? null;
-};
-
 // GET /api/v1/report/{reportId}/admin
 const getReportDetailForAdminSchema = z.object({
   reportId: z.number(),
@@ -562,8 +498,6 @@ const getReportDetailForAdminSchema = z.object({
     .nullable()
     .optional(),
 });
-
-export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
 
 export const getReportDetailForAdminQueryKey = 'getReportDetailForAdmin';
 
@@ -836,52 +770,6 @@ export const usePatchApplicationDocument = ({
   });
 };
 
-// 진단서 신처 업데이트 /api/v1/report/application/{applicationId}/my
-export const usePatchMyApplication = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      applicationId,
-      applyUrl,
-      recruitmentUrl,
-      desiredDate1,
-      desiredDate2,
-      desiredDate3,
-      wishJob,
-      message,
-    }: {
-      applicationId: number;
-      applyUrl: string;
-      recruitmentUrl: string;
-      desiredDate1: string;
-      desiredDate2: string;
-      desiredDate3: string;
-      wishJob: string;
-      message: string;
-    }) => {
-      const res = await axios.patch(`/report/application/${applicationId}/my`, {
-        applyUrl,
-        recruitmentUrl,
-        desiredDate1,
-        desiredDate2,
-        desiredDate3,
-        wishJob,
-        message,
-      });
-      return res.data.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [getMyReportsQueryKey],
-      });
-    },
-    onError: (error: Error) => {
-      console.error(error);
-    },
-  });
-};
-
 export const usePatchApplicationStatus = ({
   successCallback,
   errorCallback,
@@ -996,31 +884,6 @@ const createReportApplicationSchema = z.object({
 export type CreateReportApplication = z.infer<
   typeof createReportApplicationSchema
 >;
-
-export const useCreateReportApplication = () => {
-  return useMutation({
-    mutationFn: async (data: CreateReportApplication) => {
-      // Mock API call
-      console.log('Creating report application:', data);
-      return {
-        success: true,
-        message: 'Report application created successfully',
-        applicationId: 103,
-      };
-    },
-  });
-};
-
-// DELETE /api/v1/report/{reportId}
-export const useDeleteReport = () => {
-  return useMutation({
-    mutationFn: async (reportId: number) => {
-      // Mock API call
-      console.log('Deleting report:', reportId);
-      return { success: true, message: 'Report deleted successfully' };
-    },
-  });
-};
 
 // PATCH /api/v1/report/{reportId}
 const updateReportSchema = z.object({
@@ -1164,40 +1027,6 @@ export const useGetReportPaymentDetailQuery = ({
   });
 };
 
-export const useDeleteReportApplication = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (reportApplicationId: number) => {
-      const res = await axios.delete(
-        `/report/application/${reportApplicationId}`,
-      );
-      return res.data.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [useGetReportApplicationsForAdminQueryKey],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [useGetReportPaymentDetailQueryKey],
-      });
-      if (successCallback) {
-        successCallback();
-      }
-    },
-    onError: (error: Error) => {
-      if (errorCallback) {
-        errorCallback(error);
-      }
-    },
-  });
-};
-
 export const reportTitleSchema = z.object({
   title: z.string().optional().nullable(),
 });
@@ -1221,18 +1050,6 @@ export const getReportMessageQueryKey = (applicationId: number) => [
 export const reportMessageSchema = z.object({
   message: z.string(),
 });
-
-export const useGetReportMessage = (applicationId: number) => {
-  return useQuery({
-    queryKey: getReportMessageQueryKey(applicationId),
-    queryFn: async () => {
-      const res = await axios.get(
-        `/report/application/${applicationId}/message`,
-      );
-      return reportMessageSchema.parse(res.data.data);
-    },
-  });
-};
 
 export const fetchReportId = async (
   id: string | number,

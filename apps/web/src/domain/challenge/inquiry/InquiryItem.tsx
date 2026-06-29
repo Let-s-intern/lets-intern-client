@@ -1,6 +1,6 @@
 'use client';
 
-import { QuestionItem } from '@/api/challenge-question/challengeQuestion';
+import { QuestionItem } from '@/domain/challenge/api/challengeQuestion';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
