@@ -1159,25 +1159,6 @@ export const reportPaymentDetailQueryOptions = (applicationId: number) => ({
   },
 });
 
-export const useGetReportPaymentDetailQuery = ({
-  applicationId,
-  enabled,
-}: {
-  applicationId: number;
-  enabled?: boolean;
-}) => {
-  return useQuery({
-    queryKey: [useGetReportPaymentDetailQueryKey, applicationId],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/report/application/${applicationId}/payment`,
-      );
-      return reportPaymentDetailSchema.parse(res.data.data);
-    },
-    enabled,
-  });
-};
-
 export const useDeleteReportApplication = ({
   successCallback,
   errorCallback,
