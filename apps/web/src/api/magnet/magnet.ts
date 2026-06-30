@@ -96,26 +96,32 @@ export interface UserMagnetListQueryParams {
   enabled?: boolean;
 }
 
-export const useGetUserMagnetListQuery = ({
+export const userMagnetListQueryOptions = ({
   typeList,
   programTypeList,
   pageable,
+}: Omit<UserMagnetListQueryParams, 'enabled'>) => ({
+  queryKey: [userMagnetListQueryKey, typeList, programTypeList, pageable],
+  queryFn: async (): Promise<UserMagnetListResponse> => {
+    const res = await axios.get('/magnet', {
+      params: {
+        typeList,
+        programTypeList,
+        page: pageable.page,
+        size: pageable.size,
+        sort: pageable.sort,
+      },
+    });
+    return userMagnetListResponseSchema.parse(res.data.data);
+  },
+});
+
+export const useGetUserMagnetListQuery = ({
   enabled,
+  ...params
 }: UserMagnetListQueryParams) => {
   return useQuery({
-    queryKey: [userMagnetListQueryKey, typeList, programTypeList, pageable],
-    queryFn: async (): Promise<UserMagnetListResponse> => {
-      const res = await axios.get('/magnet', {
-        params: {
-          typeList,
-          programTypeList,
-          page: pageable.page,
-          size: pageable.size,
-          sort: pageable.sort,
-        },
-      });
-      return userMagnetListResponseSchema.parse(res.data.data);
-    },
+    ...userMagnetListQueryOptions(params),
     enabled,
   });
 };
@@ -131,24 +137,30 @@ export interface MyMagnetListQueryParams {
   enabled?: boolean;
 }
 
-export const useGetMyMagnetListQuery = ({
+export const myMagnetListQueryOptions = ({
   typeList,
   pageable,
+}: Omit<MyMagnetListQueryParams, 'enabled'>) => ({
+  queryKey: [myMagnetListQueryKey, typeList, pageable],
+  queryFn: async (): Promise<UserMagnetListResponse> => {
+    const res = await axios.get('/magnet/my', {
+      params: {
+        typeList,
+        page: pageable.page,
+        size: pageable.size,
+        sort: pageable.sort,
+      },
+    });
+    return userMagnetListResponseSchema.parse(res.data.data);
+  },
+});
+
+export const useGetMyMagnetListQuery = ({
   enabled,
+  ...params
 }: MyMagnetListQueryParams) => {
   return useQuery({
-    queryKey: [myMagnetListQueryKey, typeList, pageable],
-    queryFn: async (): Promise<UserMagnetListResponse> => {
-      const res = await axios.get('/magnet/my', {
-        params: {
-          typeList,
-          page: pageable.page,
-          size: pageable.size,
-          sort: pageable.sort,
-        },
-      });
-      return userMagnetListResponseSchema.parse(res.data.data);
-    },
+    ...myMagnetListQueryOptions(params),
     enabled,
   });
 };

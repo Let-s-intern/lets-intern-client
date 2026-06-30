@@ -13,6 +13,10 @@ import {
 } from '@/utils/log';
 import { useEffect, useMemo, useRef } from 'react';
 
+// TODO(추상화): 최종 목표는 다른 library 섹션처럼 AsyncBoundary + useSuspenseQuery 통일이다.
+// 단, 이 컴포넌트의 Sentry 로깅 계약("로딩 완료 시점에 1회만 emit")이 두 쿼리의 isLoading
+// 전환에 묶여 있고 EventExtraMagnetSection.test.tsx 가 isLoading 을 mock 하므로, 전환 시
+// 로깅 로직·테스트를 함께 재작성해야 한다. 별도 작업으로 분리(현재는 useQuery 유지).
 const EXTRA_MAGNET_PAGE_SIZE = 100;
 
 interface EventExtraMagnetSectionProps {

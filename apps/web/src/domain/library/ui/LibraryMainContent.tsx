@@ -1,13 +1,15 @@
 'use client';
 
 import {
-  useGetUserMagnetDetailQuery,
   useGetUserMagnetListQuery,
   usePatchMagnetViewDateMutation,
+  userMagnetDetailQueryOptions,
 } from '@/api/magnet/magnet';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import useAuthStore from '@/store/useAuthStore';
 import StickyApplyBox from './StickyApplyBox';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { SerializedLexicalNode } from 'lexical';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -28,12 +30,17 @@ interface Props {
   previewRoot?: SerializedLexicalNode | null;
 }
 
-export default function LibraryMainContent({
-  magnetId,
-  isUpcoming,
-  previewRoot,
-}: Props) {
-  const { data, isLoading } = useGetUserMagnetDetailQuery(magnetId);
+export default function LibraryMainContent(props: Props) {
+  // 로딩 중에는 아무것도 렌더하지 않는다(기존 `if (isLoading) return null` 동작 보존).
+  return (
+    <AsyncBoundary pendingFallback={null}>
+      <LibraryMainContentInner {...props} />
+    </AsyncBoundary>
+  );
+}
+
+function LibraryMainContentInner({ magnetId, isUpcoming, previewRoot }: Props) {
+  const { data } = useSuspenseQuery(userMagnetDetailQueryOptions(magnetId));
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
   const patchViewDate = usePatchMagnetViewDateMutation();
@@ -67,8 +74,6 @@ export default function LibraryMainContent({
     }
     router.push(path);
   };
-
-  if (isLoading) return null;
 
   if (isUpcoming) {
     return (

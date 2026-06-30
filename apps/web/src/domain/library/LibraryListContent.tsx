@@ -1,10 +1,11 @@
 'use client';
 
 import {
-  useGetMyMagnetListQuery,
-  useGetUserMagnetListQuery,
+  myMagnetListQueryOptions,
+  userMagnetListQueryOptions,
 } from '@/api/magnet/magnet';
 import { MagnetType, UserMagnetListItem } from '@/api/magnet/magnetSchema';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -14,6 +15,7 @@ import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Bell, LockKeyhole, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -98,19 +100,9 @@ function Content({ tab }: { tab: LibraryTab }) {
     router.push(`/login?${params.toString()}`);
   }, [isMyTab, isInitialized, isLoggedIn, pathname, router, searchParams]);
 
-  const contentsQuery = useGetUserMagnetListQuery({
-    typeList,
-    pageable: { page, size: pageSize },
-    enabled: !isMyTab,
-  });
-
-  const myQuery = useGetMyMagnetListQuery({
-    typeList,
-    pageable: { page, size: pageSize },
-    enabled: isMyTab && isLoggedIn,
-  });
-
-  const { data, isLoading } = isMyTab ? myQuery : contentsQuery;
+  // MY 탭은 로그인 상태에서만 조회 가능. 그 외 상황(미초기화/비로그인)에서는
+  // 위 redirect 이펙트가 로그인 페이지로 보내므로 그리드를 렌더하지 않는다.
+  const canFetch = isMyTab ? isLoggedIn : true;
 
   const qs = searchParams.toString();
   const browseContentsHref = qs ? `/library/list?${qs}` : '/library/list';
@@ -131,12 +123,59 @@ function Content({ tab }: { tab: LibraryTab }) {
         />
       </div>
 
+      {canFetch && (
+        <AsyncBoundary
+          pendingFallback={
+            <div className="text-neutral-40 flex min-h-[200px] items-center justify-center">
+              <LoadingContainer />
+            </div>
+          }
+        >
+          <MagnetListSection
+            isMyTab={isMyTab}
+            typeList={typeList}
+            page={page}
+            pageSize={pageSize}
+            browseContentsHref={browseContentsHref}
+            onPageChange={(newPage) => {
+              setPage(newPage);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </AsyncBoundary>
+      )}
+    </div>
+  );
+}
+
+function MagnetListSection({
+  isMyTab,
+  typeList,
+  page,
+  pageSize,
+  browseContentsHref,
+  onPageChange,
+}: {
+  isMyTab: boolean;
+  typeList: MagnetType[];
+  page: number;
+  pageSize: number;
+  browseContentsHref: string;
+  onPageChange: (page: number) => void;
+}) {
+  const { data } = useSuspenseQuery(
+    isMyTab
+      ? myMagnetListQueryOptions({ typeList, pageable: { page, size: pageSize } })
+      : userMagnetListQueryOptions({
+          typeList,
+          pageable: { page, size: pageSize },
+        }),
+  );
+
+  return (
+    <>
       {/* 카드 그리드 */}
-      {isLoading ? (
-        <div className="text-neutral-40 flex min-h-[200px] items-center justify-center">
-          <LoadingContainer />
-        </div>
-      ) : data && data.magnetList.length > 0 ? (
+      {data.magnetList.length > 0 ? (
         <LibraryGrid magnetList={data.magnetList} />
       ) : isMyTab ? (
         <div className="flex flex-col items-center gap-4 py-20">
@@ -172,18 +211,15 @@ function Content({ tab }: { tab: LibraryTab }) {
       )}
 
       {/* 페이지네이션 */}
-      {data && data.pageInfo.totalPages > 1 && (
+      {data.pageInfo.totalPages > 1 && (
         <MuiPagination
           className="flex justify-center"
           page={page}
           pageInfo={data.pageInfo}
-          onChange={(_, newPage) => {
-            setPage(newPage);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onChange={(_, newPage) => onPageChange(newPage)}
         />
       )}
-    </div>
+    </>
   );
 }
 
