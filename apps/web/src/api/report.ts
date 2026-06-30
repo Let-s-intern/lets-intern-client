@@ -637,22 +637,26 @@ export type MyReportInfoType = z.infer<
 
 export const getMyReportsQueryKey = 'getMyReports';
 
+export const myReportsQueryOptions = (reportType?: ReportType) => ({
+  queryKey: [getMyReportsQueryKey, reportType],
+  queryFn: async () => {
+    const res = await axios.get('/report/my', {
+      params: {
+        reportType,
+        size: 1000,
+      },
+    });
+
+    return getMyReportsSchema.parse(res.data.data);
+  },
+});
+
 export const useGetMyReports = (reportType?: ReportType) => {
   const { isLoggedIn } = useAuthStore();
 
   return useQuery({
+    ...myReportsQueryOptions(reportType),
     enabled: isLoggedIn,
-    queryKey: [getMyReportsQueryKey, reportType],
-    queryFn: async () => {
-      const res = await axios.get('/report/my', {
-        params: {
-          reportType,
-          size: 1000,
-        },
-      });
-
-      return getMyReportsSchema.parse(res.data.data);
-    },
   });
 };
 
