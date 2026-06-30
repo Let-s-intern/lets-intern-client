@@ -2,8 +2,10 @@ import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { REPORT_GUIDE_ID } from '@/domain/report/ui/ReportNavigation';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';
 import MainHeader from '@/domain/report/ui/header/MainHeader';

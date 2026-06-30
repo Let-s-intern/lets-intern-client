@@ -2,6 +2,7 @@
 
 import { ReportDetail, reportPriceDetailQueryOptions } from '@/api/report';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import { personalStatementColors } from '@/domain/report/reportColors';
 import PromoSection from '@/domain/report/sections/PromoSection';
 import ReportApplyBottomSheet from '@/domain/report/modal/ReportApplyBottomSheet';
 import ReportBasicInfo from '@/domain/report/ui/ReportBasicInfo';
@@ -17,15 +18,6 @@ import { ReportContent } from '@/types/interface';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import ReportNavigation from '@/domain/report/ui/ReportNavigation';
-
-export const personalStatementColors = {
-  C34AFF: '#C34AFF',
-  F9EEFF: '#F9EEFF',
-  CA60FF: '#CA60FF',
-  EB6CFF: '#EB6CFF',
-  F3A2FF: '#F3A2FF',
-  FCE9FF: '#FCE9FF',
-};
 
 const ReportPersonalStatementPage = ({
   report,

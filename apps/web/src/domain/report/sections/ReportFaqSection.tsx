@@ -1,6 +1,8 @@
 import { ReportType, reportFaqsQueryOptions } from '@/api/report';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import FaqDropdown from '@/common/dropdown/FaqDropdown';
 import FaqChat from '@/domain/faq/FaqChat';

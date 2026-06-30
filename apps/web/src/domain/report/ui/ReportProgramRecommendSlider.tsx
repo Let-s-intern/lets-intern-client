@@ -1,7 +1,9 @@
 import { programRecommendQueryOptions } from '@/api/program';
 import { ReportType } from '@/api/report';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import dayjs from '@/lib/dayjs';
 import { ReportProgramRecommend } from '@/types/interface';
@@ -65,7 +67,9 @@ function RecommendSliderContent({
 
   const router = useRouter();
 
-  const { data: recommendData } = useSuspenseQuery(programRecommendQueryOptions);
+  const { data: recommendData } = useSuspenseQuery(
+    programRecommendQueryOptions,
+  );
 
   const slideList = useMemo(() => {
     const list = [];

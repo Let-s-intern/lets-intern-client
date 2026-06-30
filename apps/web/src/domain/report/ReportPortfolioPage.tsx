@@ -20,7 +20,7 @@ import { ReportContent } from '@/types/interface';
 import { getReportLandingTitle } from '@/utils/url';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import ReportNavigation from '@/domain/report/ui/ReportNavigation';
-import { resumeColors } from './ReportResumePage';
+import { resumeColors } from './reportColors';
 
 const ReportPortfolioPage = ({ report }: { report: ReportDetail | null }) => {
   const description = portfolioReportDescription;

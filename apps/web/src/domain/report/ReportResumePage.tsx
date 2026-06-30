@@ -2,6 +2,7 @@
 
 import { ReportDetail, reportPriceDetailQueryOptions } from '@/api/report';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import { resumeColors } from '@/domain/report/reportColors';
 import PromoSection from '@/domain/report/sections/PromoSection';
 import ReportApplyBottomSheet from '@/domain/report/modal/ReportApplyBottomSheet';
 import ReportBasicInfo from '@/domain/report/ui/ReportBasicInfo';
@@ -17,21 +18,6 @@ import { ReportContent } from '@/types/interface';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import ReportNavigation from '@/domain/report/ui/ReportNavigation';
-
-export const resumeColors = {
-  E8FDF2: '#E8FDF2',
-  B1FFD6: '#B1FFD6',
-  A5FFCF: '#A5FFCF',
-  _4FDA46: '#4FDA46',
-  _2CE282: '#2CE282',
-  _06B259: '#06B259',
-  D8E36C: '#D8E36C',
-  F7FFAB: '#F7FFAB',
-  _14BCFF: '#14BCFF',
-  EEFAFF: '#EEFAFF',
-  _2CDDEA: '#2CDDEA',
-  _11AC5C: '#11AC5C',
-};
 
 const ReportResumePage = ({ report }: { report: ReportDetail | null }) => {
   const resumeContent: ReportContent = JSON.parse(report?.contents ?? '{}');
