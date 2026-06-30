@@ -650,15 +650,17 @@ export const useGetMyReports = (reportType?: ReportType) => {
 
 // 유저 - 진단서 faq 목록 조회
 //  GET /api/v1/report/{reportId}/faqs
-export const useGetReportFaqs = (reportId: string | number) => {
-  return useQuery({
-    queryKey: ['useGetReportFaq', reportId],
-    queryFn: async () => {
-      const res = await axios.get(`/report/${reportId}/faqs`);
+export const reportFaqsQueryOptions = (reportId: string | number) => ({
+  queryKey: ['useGetReportFaq', reportId],
+  queryFn: async () => {
+    const res = await axios.get(`/report/${reportId}/faqs`);
 
-      return faqSchema.parse(res.data.data);
-    },
-  });
+    return faqSchema.parse(res.data.data);
+  },
+});
+
+export const useGetReportFaqs = (reportId: string | number) => {
+  return useQuery(reportFaqsQueryOptions(reportId));
 };
 
 const SubmitTypeEnum = z.enum(['NORMAL', 'LATE']);
