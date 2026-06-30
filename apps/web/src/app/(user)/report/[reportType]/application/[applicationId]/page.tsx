@@ -14,13 +14,11 @@ import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
 import ReportSubmitModal from '@/domain/report/modal/ReportSubmitModal';
 import BottomSheet from '@/common/sheet/BottomSheeet';
-import {
-  AdditionalInfoSection,
-  CallOut,
-  DocumentSection,
-  PremiumSection,
-  ScheduleSection,
-} from '@/domain/report/ReportApplyPage';
+import { AdditionalInfoSection } from '@/domain/report/apply/AdditionalInfoSection';
+import { CallOut } from '@/domain/report/apply/CallOut';
+import { DocumentSection } from '@/domain/report/apply/DocumentSection';
+import { PremiumSection } from '@/domain/report/apply/PremiumSection';
+import { ScheduleSection } from '@/domain/report/apply/ScheduleSection';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
