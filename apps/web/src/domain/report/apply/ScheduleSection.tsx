@@ -26,6 +26,8 @@ export const ScheduleSection = () => {
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
+    if (!name) return;
+
     const hour = dayjs(data[name as Key] as ConfigType).hour();
 
     date?.set('hour', hour);
