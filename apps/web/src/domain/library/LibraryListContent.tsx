@@ -165,7 +165,10 @@ function MagnetListSection({
 }) {
   const { data } = useSuspenseQuery(
     isMyTab
-      ? myMagnetListQueryOptions({ typeList, pageable: { page, size: pageSize } })
+      ? myMagnetListQueryOptions({
+          typeList,
+          pageable: { page, size: pageSize },
+        })
       : userMagnetListQueryOptions({
           typeList,
           pageable: { page, size: pageSize },

@@ -86,11 +86,7 @@ function ReportPersonalStatementBody({
 
   return (
     <>
-      <ReportNavigation
-        color={personalStatementColors.CA60FF}
-        isDark
-        isReady
-      />
+      <ReportNavigation color={personalStatementColors.CA60FF} isDark isReady />
       <div
         id="content"
         data-page-type="personal-statement"
