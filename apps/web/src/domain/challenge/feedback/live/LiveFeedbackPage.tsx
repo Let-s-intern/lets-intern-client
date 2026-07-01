@@ -4,6 +4,7 @@ import { useLiveFeedbackListQuery } from '@/api/feedback/feedback';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LiveFeedbackSection from '@/domain/challenge/feedback/live/section/LiveFeedbackSection';
 import { toMission } from '@/domain/challenge/feedback/live/utils';
+import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useMissionStore } from '@/store/useMissionStore';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
@@ -16,16 +17,27 @@ const LiveFeedbackPage = () => {
     applicationId: string;
     programId: string;
   }>();
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const experienceLevel = useExperienceLevel(schedules);
 
   const { data } = useLiveFeedbackListQuery(programId);
 
+  const excludedMissionIds = useMemo(() => {
+    const typeToExclude =
+      experienceLevel === 'LV1' ? 'EXPERIENCE_2' : 'EXPERIENCE_1';
+    return new Set(
+      schedules
+        .filter((s) => s.missionInfo.missionType === typeToExclude)
+        .map((s) => s.missionInfo.id),
+    );
+  }, [schedules, experienceLevel]);
+
   const missions = useMemo(
     () =>
-      (data?.liveFeedbackList ?? []).map((item) =>
-        toMission(item, currentChallenge?.challengeType ?? ''),
-      ),
-    [data, currentChallenge?.challengeType],
+      (data?.liveFeedbackList ?? [])
+        .filter((item) => !excludedMissionIds.has(item.missionId))
+        .map((item) => toMission(item, currentChallenge?.challengeType ?? '')),
+    [data, currentChallenge?.challengeType, excludedMissionIds],
   );
 
   const handleMobileClick = useCallback(
