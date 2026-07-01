@@ -46,7 +46,11 @@ const LiveFeedbackPage = () => {
   );
 
   const today = new Date();
-  const started = missions.filter((m) => new Date(m.missionStartDate) <= today);
+  const started = missions.filter((m) => {
+    const start = new Date(m.missionStartDate);
+    start.setSeconds(0, 0);
+    return start <= today;
+  });
 
   const needReservation = started.filter((m) => m.status === 'prev');
   const reserved = started.filter((m) => m.status === 'reserved');
