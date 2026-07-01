@@ -41,7 +41,7 @@ function FeedbackSection({
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
           {missions.map((mission) => (
             <FeedbackMissionCard
-              key={mission.id}
+              key={mission.missionId}
               config={toWrittenCardConfig(mission)}
               buttonLabel={
                 WRITTEN_FEEDBACK_BUTTON_LABEL[mission.status] || undefined
