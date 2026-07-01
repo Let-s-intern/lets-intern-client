@@ -1,5 +1,9 @@
 import type { ApplicationDownloadType } from '@/api/application';
 import { MypageApplication } from '@/api/application';
+import {
+  isMembershipChallengeProgram,
+  MEMBERSHIP_GUIDE_URL,
+} from '@/domain/membership/lib/membershipChallenge';
 import { getReportThumbnail } from '@/domain/mypage/credit/ui/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import {
@@ -28,6 +32,7 @@ export interface MypageApplicationCardConfig {
     label: string;
     disabled?: boolean;
     href?: string;
+    external?: boolean;
     onClick?: () => void;
     confirm?: {
       title: string;
@@ -102,14 +107,23 @@ const toProgramCardConfig = (
     pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
   const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
 
+  const isMembership =
+    isChallenge && isMembershipChallengeProgram(programId ?? 0);
+
   const actionButton =
     isDashboardVisible && programType && programId != null && id != null
-      ? {
-          label: isChallenge ? '대시보드 입장' : '클래스 입장',
-          href: isChallenge
-            ? `/challenge/${id}/${programId}`
-            : `/program/live/${programId}`,
-        }
+      ? isMembership
+        ? {
+            label: '가이드 확인',
+            href: MEMBERSHIP_GUIDE_URL,
+            external: true,
+          }
+        : {
+            label: isChallenge ? '대시보드 입장' : '클래스 입장',
+            href: isChallenge
+              ? `/challenge/${id}/${programId}`
+              : `/program/live/${programId}`,
+          }
       : undefined;
 
   return {

@@ -58,6 +58,10 @@ export const MypageApplicationCard = ({
     }
 
     if (actionButton.href) {
+      if (actionButton.external) {
+        window.open(actionButton.href, '_blank', 'noopener,noreferrer');
+        return;
+      }
       router.push(actionButton.href);
       return;
     }

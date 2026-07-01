@@ -20,6 +20,18 @@ export function isMembershipChallengeConfigured(): boolean {
   return isValidMembershipChallengeId(MEMBERSHIP_CHALLENGE_ID);
 }
 
+/** 하반기 멤버십 안내 가이드(노션). 마이페이지 "가이드 확인" 버튼이 새 탭으로 연다. */
+export const MEMBERSHIP_GUIDE_URL =
+  'https://letsintern.notion.site/2026-38f5e77cbee180d7a77deab36a8ed88b';
+
+/** 주어진 programId 가 멤버십 위임 챌린지인지. env 미설정이면 항상 false. */
+export function isMembershipChallengeProgram(programId: number): boolean {
+  return (
+    isValidMembershipChallengeId(MEMBERSHIP_CHALLENGE_ID) &&
+    programId === MEMBERSHIP_CHALLENGE_ID
+  );
+}
+
 /**
  * 멤버십이 출시(결제 가능)된 상태인지 — 빌드 타임 env 로 결정되는 상수.
  * false 면(=env 미설정) CTA 를 "출시 전" 비활성 상태로 표시한다.
