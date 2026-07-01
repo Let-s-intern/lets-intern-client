@@ -2,9 +2,16 @@ import type { WrittenFeedbackItem } from '@/api/feedback/feedbackSchema';
 import type { WrittenFeedbackMission, WrittenFeedbackStatus } from './types';
 
 function resolveStatus(item: WrittenFeedbackItem): WrittenFeedbackStatus {
-  if (item.feedbackStatus === 'WAITING') return 'waiting';
+  const submitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
+    item.attendanceStatus ?? '',
+  );
+  const missionEnded = new Date(item.missionEndDate) < new Date();
+
+  if (!submitted) return missionEnded ? 'expired' : 'in_progress';
+
   if (item.feedbackStatus === 'CONFIRMED') return 'confirmed';
-  return new Date(item.missionEndDate) < new Date() ? 'expired' : 'in_progress';
+
+  return missionEnded ? 'expired' : 'waiting';
 }
 
 export function toWrittenMission(
@@ -92,7 +99,7 @@ export function toWrittenCardConfig(mission: WrittenFeedbackMission) {
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionNumber,
-    feedbackStartDay: mission.startDay,
-    feedbackEndDay: mission.endDay,
+    feedbackStartDay: mission.startDay.slice(0, 10),
+    feedbackEndDay: mission.endDay.slice(0, 10),
   };
 }
