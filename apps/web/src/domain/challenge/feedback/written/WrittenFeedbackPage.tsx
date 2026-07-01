@@ -1,8 +1,8 @@
 'use client';
 
 import { useWrittenFeedbackListQuery } from '@/api/feedback/feedback';
-import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import FeedbackMissionCard from '@/domain/challenge/feedback/FeedbackMissionCard';
 import type { WrittenFeedbackMission } from '@/domain/challenge/feedback/written/types';
 import {
   WRITTEN_FEEDBACK_BUTTON_LABEL,
@@ -10,6 +10,7 @@ import {
   toWrittenCardConfig,
   toWrittenMission,
 } from '@/domain/challenge/feedback/written/utils';
+import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useMissionStore } from '@/store/useMissionStore';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
@@ -57,16 +58,29 @@ function FeedbackSection({
 const WrittenFeedbackPage = () => {
   const router = useRouter();
   const params = useParams<{ applicationId: string; programId: string }>();
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const experienceLevel = useExperienceLevel(schedules);
 
   const { data } = useWrittenFeedbackListQuery(params.programId);
 
+  const excludedMissionIds = useMemo(() => {
+    const typeToExclude =
+      experienceLevel === 'LV1' ? 'EXPERIENCE_2' : 'EXPERIENCE_1';
+    return new Set(
+      schedules
+        .filter((s) => s.missionInfo.missionType === typeToExclude)
+        .map((s) => s.missionInfo.id),
+    );
+  }, [schedules, experienceLevel]);
+
   const missions = useMemo(
     () =>
-      (data?.writtenFeedbackList ?? []).map((item) =>
-        toWrittenMission(item, currentChallenge?.challengeType ?? ''),
-      ),
-    [data, currentChallenge?.challengeType],
+      (data?.writtenFeedbackList ?? [])
+        .filter((item) => !excludedMissionIds.has(item.missionId))
+        .map((item) =>
+          toWrittenMission(item, currentChallenge?.challengeType ?? ''),
+        ),
+    [data, currentChallenge?.challengeType, excludedMissionIds],
   );
 
   const today = new Date();
