@@ -59,8 +59,8 @@ const LiveFeedbackDetail = ({ challengeId, mission }: Props) => {
         <ReservationScheduleSection
           challengeId={challengeId}
           mentorName={mentor.nickname}
-          feedbackStartDate={mission.feedbackStartDate}
-          feedbackEndDate={mission.feedbackEndDate}
+          slotRangeStart={mission.slotRangeStart}
+          slotRangeEnd={mission.slotRangeEnd}
           onConfirm={handleConfirm}
         />
       )}

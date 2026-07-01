@@ -35,8 +35,8 @@ export interface LiveFeedbackMission {
   challengeType: string;
   missionStartDate: string; // 'YYYY-MM-DD'
   missionEndDate: string; // 'YYYY-MM-DD'
-  feedbackStartDate: string; // 'YYYY-MM-DD'
-  feedbackEndDate: string; // 'YYYY-MM-DD'
+  slotRangeStart: string; // 'YYYY-MM-DD'
+  slotRangeEnd: string; // 'YYYY-MM-DD'
   attendanceResult: 'WAITING' | 'PASS' | 'WRONG' | 'FINAL_WRONG' | null;
   mentorInfo: Mentor | null;
   feedbackId: number | null;

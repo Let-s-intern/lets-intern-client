@@ -78,8 +78,8 @@ export function toMission(
     challengeType,
     missionStartDate: startDay,
     missionEndDate: endDay,
-    feedbackStartDate: feedbackStartDay,
-    feedbackEndDate: feedbackEndDay,
+    slotRangeStart: feedbackStartDay,
+    slotRangeEnd: feedbackEndDay,
     attendanceResult: item.attendanceResult,
     mentorInfo: item.mentorInfo ?? null,
     feedbackId: item.feedbackId,
@@ -184,8 +184,8 @@ export function toCardConfig(
       mission.challengeType ??
       '',
     missionNumber: mission.missionTh,
-    feedbackStartDay: mission.feedbackStartDate,
-    feedbackEndDay: mission.feedbackEndDate,
+    feedbackStartDay: mission.slotRangeStart,
+    feedbackEndDay: mission.slotRangeEnd,
     startDay: mission.missionStartDate,
     endDay: mission.missionEndDate,
     reservationDateTime:

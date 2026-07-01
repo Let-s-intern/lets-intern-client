@@ -10,28 +10,28 @@ import TimeSlotButtons from '../ui/TimeSlotButtons';
 interface Props {
   challengeId: string | number;
   mentorName: string;
-  feedbackStartDate: string;
-  feedbackEndDate: string;
+  slotRangeStart: string;
+  slotRangeEnd: string;
   onConfirm: (slot: SelectedSlot) => void;
 }
 
 const ReservationScheduleSection = ({
   challengeId,
   mentorName,
-  feedbackStartDate,
-  feedbackEndDate,
+  slotRangeStart,
+  slotRangeEnd,
   onConfirm,
 }: Props) => {
   const { data } = useFeedbackSlotListQuery(
     challengeId,
-    `${feedbackStartDate}T00:00:00`,
-    `${feedbackEndDate}T23:59:59`,
+    `${slotRangeStart}T00:00:00`,
+    `${slotRangeEnd}T23:59:59`,
   );
   const feedbackSlots = data?.feedbackSlotList ?? [];
 
   const { calendar, slots, bar } = useTimeSlotState(
-    feedbackStartDate,
-    feedbackEndDate,
+    slotRangeStart,
+    slotRangeEnd,
     feedbackSlots,
     onConfirm,
   );
