@@ -13,6 +13,6 @@ export interface WrittenFeedbackMission {
   status: WrittenFeedbackStatus;
   challengeType?: string;
   missionNumber: number;
-  startDay: string; // 'YYYY-MM-DD'
-  endDay: string; // 'YYYY-MM-DD'
+  startDay: string; // 'YYYY-MM-DDTHH:mm:ss'
+  endDay: string; // 'YYYY-MM-DDTHH:mm:ss'
 }

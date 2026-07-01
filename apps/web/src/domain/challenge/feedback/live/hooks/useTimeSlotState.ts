@@ -15,13 +15,10 @@ function generateSlotTimes(startHour: number, endHour: number): string[] {
 
 const ALL_SLOT_TIMES = generateSlotTimes(9, 23);
 
-function getInitialDate(
-  feedbackStartDate: string,
-  feedbackEndDate: string,
-): Date {
+function getInitialDate(slotRangeStart: string, slotRangeEnd: string): Date {
   const today = new Date();
-  const start = new Date(feedbackStartDate);
-  const end = new Date(feedbackEndDate);
+  const start = new Date(slotRangeStart);
+  const end = new Date(slotRangeEnd);
   if (today < start) return start;
   if (today > end) return end;
   return today;
@@ -43,12 +40,12 @@ function toSlotStatus(
 }
 
 export function useTimeSlotState(
-  feedbackStartDate: string,
-  feedbackEndDate: string,
+  slotRangeStart: string,
+  slotRangeEnd: string,
   feedbackSlots: FeedbackSlot[],
   onConfirm: (slot: SelectedSlot) => void,
 ) {
-  const base = getInitialDate(feedbackStartDate, feedbackEndDate);
+  const base = getInitialDate(slotRangeStart, slotRangeEnd);
 
   const [{ year, month }, setYearMonth] = useState({
     year: base.getFullYear(),
@@ -58,20 +55,20 @@ export function useTimeSlotState(
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
   const canGoPrev = useMemo(() => {
-    const start = new Date(feedbackStartDate);
+    const start = new Date(slotRangeStart);
     return (
       year > start.getFullYear() ||
       (year === start.getFullYear() && month > start.getMonth())
     );
-  }, [year, month, feedbackStartDate]);
+  }, [year, month, slotRangeStart]);
 
   const canGoNext = useMemo(() => {
-    const end = new Date(feedbackEndDate);
+    const end = new Date(slotRangeEnd);
     return (
       year < end.getFullYear() ||
       (year === end.getFullYear() && month < end.getMonth())
     );
-  }, [year, month, feedbackEndDate]);
+  }, [year, month, slotRangeEnd]);
 
   const monthAvailability = useMemo(() => {
     const result: Record<string, boolean> = {};

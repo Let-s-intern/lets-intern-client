@@ -5,6 +5,7 @@ import {
 } from '@/api/challenge/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -21,6 +22,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const params = useParams<{ programId: string; applicationId: string }>();
   const { isLoggedIn, isInitialized } = useAuthStore();
+  const { isLoading: isChallengeContextLoading } = useCurrentChallenge();
 
   const [redirecting, setRedirecting] = useState(true);
 
@@ -47,7 +49,8 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
     isValidUserInfoLoading ||
     isValidUserAccessLoading ||
     challengeIsLoading ||
-    challengeGoalLoading;
+    challengeGoalLoading ||
+    isChallengeContextLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
   const hasChallengeGoal = challengeGoal?.goal != null;

@@ -2,9 +2,16 @@ import type { WrittenFeedbackItem } from '@/api/feedback/feedbackSchema';
 import type { WrittenFeedbackMission, WrittenFeedbackStatus } from './types';
 
 function resolveStatus(item: WrittenFeedbackItem): WrittenFeedbackStatus {
-  if (item.feedbackStatus === 'WAITING') return 'waiting';
+  const submitted = ['PRESENT', 'UPDATED', 'LATE'].includes(
+    item.attendanceStatus ?? '',
+  );
+  const missionEnded = new Date(item.missionEndDate) < new Date();
+
+  if (!submitted) return missionEnded ? 'expired' : 'in_progress';
+
   if (item.feedbackStatus === 'CONFIRMED') return 'confirmed';
-  return new Date(item.missionEndDate) < new Date() ? 'expired' : 'in_progress';
+
+  return missionEnded ? 'expired' : 'waiting';
 }
 
 export function toWrittenMission(
@@ -19,8 +26,8 @@ export function toWrittenMission(
     status: resolveStatus(item),
     challengeType,
     missionNumber: item.missionTh,
-    startDay: item.missionStartDate.slice(0, 10),
-    endDay: item.missionEndDate.slice(0, 10),
+    startDay: item.missionStartDate,
+    endDay: item.missionEndDate,
   };
 }
 
@@ -46,8 +53,8 @@ export const WRITTEN_FEEDBACK_SECTIONS: {
   },
   {
     status: 'expired',
-    label: '기간 만료',
-    emptyMessage: '기간이 만료됐어요',
+    label: '미진행',
+    emptyMessage: '기간이 만료된 미션이 없어요.',
   },
 ];
 
@@ -92,7 +99,7 @@ export function toWrittenCardConfig(mission: WrittenFeedbackMission) {
     },
     challengeType: mission.challengeType ?? '',
     missionNumber: mission.missionNumber,
-    feedbackStartDay: mission.startDay,
-    feedbackEndDay: mission.endDay,
+    feedbackStartDay: mission.startDay.slice(0, 10),
+    feedbackEndDay: mission.endDay.slice(0, 10),
   };
 }

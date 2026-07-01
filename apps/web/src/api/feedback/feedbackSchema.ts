@@ -108,7 +108,9 @@ export const writtenFeedbackItemSchema = z.object({
   missionId: z.number(),
   attendanceStatus: attendanceStatusSchema.nullable(),
   attendanceResult: z.string().nullable(),
-  feedbackStatus: z.enum(['IN_PROGRESS', 'WAITING', 'CONFIRMED']).nullable(),
+  feedbackStatus: z
+    .enum(['IN_PROGRESS', 'WAITING', 'CONFIRMED', 'COMPLETED'])
+    .nullable(),
   attendanceLink: z.string().nullable(),
   missionTitle: z.string(),
   missionTh: z.number(),

@@ -190,7 +190,7 @@ export default function LiveFeedbackSection({
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
           {missions.map((mission) => (
             <LiveFeedbackMissionCard
-              key={mission.missionTh}
+              key={mission.missionId}
               mission={mission}
               challengeId={challengeId}
               onMissionClick={onMissionClick}
