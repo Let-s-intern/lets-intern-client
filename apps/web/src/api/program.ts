@@ -193,14 +193,16 @@ export const useGetProgramAdminQuery = (params: {
   });
 };
 
+export const programRecommendQueryOptions = {
+  queryKey: ['useGetProgramRecommend'],
+  queryFn: async () => {
+    const res = await axios.get(`/program/recommend`);
+    return programRecommendSchema.parse(res.data.data);
+  },
+};
+
 export const useGetProgramRecommend = () => {
-  return useQuery({
-    queryKey: ['useGetProgramRecommend'],
-    queryFn: async () => {
-      const res = await axios.get(`/program/recommend`);
-      return programRecommendSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(programRecommendQueryOptions);
 };
 
 export const useGetChallengeQueryKey = 'challenge';

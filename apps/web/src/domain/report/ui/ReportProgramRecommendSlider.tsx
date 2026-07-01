@@ -1,9 +1,13 @@
-import { useGetProgramRecommend } from '@/api/program';
+import { programRecommendQueryOptions } from '@/api/program';
 import { ReportType } from '@/api/report';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import dayjs from '@/lib/dayjs';
 import { ReportProgramRecommend } from '@/types/interface';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
@@ -28,6 +32,31 @@ const ReportProgramRecommendSlider = ({
         ? personalStatementColors.C34AFF
         : resumeColors._11AC5C,
   };
+
+  return (
+    <section
+      data-section="recommend"
+      className="bg-neutral-95 w-full px-5 py-16 md:py-24 lg:px-0"
+    >
+      <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
+        {SUPER_TITLE}
+      </SubHeader>
+      <MainHeader>{HEADING}</MainHeader>
+
+      <AsyncBoundary pendingFallback={null}>
+        <RecommendSliderContent
+          reportType={reportType}
+          reportProgramRecommend={reportProgramRecommend}
+        />
+      </AsyncBoundary>
+    </section>
+  );
+};
+
+function RecommendSliderContent({
+  reportType,
+  reportProgramRecommend,
+}: ReportProgramRecommendSliderProps) {
   const buttonStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
@@ -38,7 +67,9 @@ const ReportProgramRecommendSlider = ({
 
   const router = useRouter();
 
-  const { data: recommendData } = useGetProgramRecommend();
+  const { data: recommendData } = useSuspenseQuery(
+    programRecommendQueryOptions,
+  );
 
   const slideList = useMemo(() => {
     const list = [];
@@ -228,23 +259,13 @@ const ReportProgramRecommendSlider = ({
   ]);
 
   return (
-    <section
-      data-section="recommend"
-      className="bg-neutral-95 w-full px-5 py-16 md:py-24 lg:px-0"
-    >
-      <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
-        {SUPER_TITLE}
-      </SubHeader>
-      <MainHeader>{HEADING}</MainHeader>
-
-      <ProgramRecommendSlider
-        className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
-        list={slideList}
-        buttonClassName="bg-white font-semibold"
-        buttonStyle={buttonStyle}
-      />
-    </section>
+    <ProgramRecommendSlider
+      className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
+      list={slideList}
+      buttonClassName="bg-white font-semibold"
+      buttonStyle={buttonStyle}
+    />
   );
-};
+}
 
 export default ReportProgramRecommendSlider;

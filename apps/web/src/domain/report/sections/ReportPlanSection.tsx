@@ -5,8 +5,10 @@ import {
   ReportType,
 } from '@/api/report';
 import { REPORT_PLAN_ID } from '@/domain/report/ui/ReportNavigation';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { twMerge } from '@/lib/twMerge';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { generateUUID } from '@/utils/random';

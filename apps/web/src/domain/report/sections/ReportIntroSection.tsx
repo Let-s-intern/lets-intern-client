@@ -4,8 +4,10 @@ import Profile2 from '@/assets/illust/report_profile_2.svg?react';
 import Profile3 from '@/assets/illust/report_profile_3.svg?react';
 import { REPORT_INTRO } from '@/data/reportConstant';
 import { REPORT_INTRO_ID } from '@/domain/report/ui/ReportNavigation';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { useMediaQuery } from '@mui/material';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import ResearchTeamSection from './ResearchTeamSection';

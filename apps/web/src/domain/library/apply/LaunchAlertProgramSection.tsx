@@ -1,8 +1,10 @@
 'use client';
 
-import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
+import { userMagnetListQueryOptions } from '@/api/magnet/magnet';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import CheckBox from '@/common/box/CheckBox';
 import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 const RADIO_COLOR = '#5F66F6';
 
@@ -13,18 +15,27 @@ interface LaunchAlertProgramSectionProps {
   onWantNotificationChange: (value: boolean) => void;
 }
 
-const LaunchAlertProgramSection = ({
+const LaunchAlertProgramSection = (props: LaunchAlertProgramSectionProps) => {
+  // 로딩·에러 시 폼 흐름을 방해하지 않도록 둘 다 아무것도 렌더하지 않는다(기존 동작 보존).
+  return (
+    <AsyncBoundary pendingFallback={null} rejectedFallback={() => null}>
+      <LaunchAlertProgramSectionContent {...props} />
+    </AsyncBoundary>
+  );
+};
+
+const LaunchAlertProgramSectionContent = ({
   selectedMagnetIds,
   onSelectedMagnetIdsChange,
   wantNotification,
   onWantNotificationChange,
 }: LaunchAlertProgramSectionProps) => {
-  const { data, isLoading } = useGetUserMagnetListQuery({
-    typeList: ['LAUNCH_ALERT'],
-    pageable: { page: 1, size: 100 },
-  });
-
-  if (isLoading || !data) return null;
+  const { data } = useSuspenseQuery(
+    userMagnetListQueryOptions({
+      typeList: ['LAUNCH_ALERT'],
+      pageable: { page: 1, size: 100 },
+    }),
+  );
 
   const magnetList = data.magnetList;
   if (magnetList.length === 0) return null;

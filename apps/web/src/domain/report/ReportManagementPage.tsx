@@ -1,6 +1,7 @@
 'use client';
 
 import dayjs from '@/lib/dayjs';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -19,8 +20,9 @@ import {
   convertReportTypeToDisplayName,
   convertReportTypeToPathname,
   MyReportInfoType,
-  useGetMyReports,
+  myReportsQueryOptions,
 } from '@/api/report';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import Badge from '@/common/badge/Badge';
 import Tooltip from '@/domain/report/ui/Tooltip';
 import useActiveReports from '@/hooks/useActiveReports';
@@ -199,8 +201,7 @@ const ReportManagementPage = () => {
   const router = useRouter();
 
   const { isLoggedIn, isInitialized } = useAuthStore();
-  const { initReportApplication, setReportApplication } =
-    useReportApplicationStore();
+  const { initReportApplication } = useReportApplicationStore();
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
     useActiveReports();
 
@@ -244,9 +245,79 @@ const ReportManagementPage = () => {
     return '/report/landing/resume';
   };
 
-  const { data, status } = useGetMyReports();
+  const onClickAddReport = () => {
+    const activeReportsCount = [
+      hasActiveResume,
+      hasActivePersonalStatement,
+      hasActivePortfolio,
+    ].filter(Boolean).length;
 
-  const filteredApplications = data?.myReportInfos.filter((report) => {
+    // Case3: 노출된 서류 피드백 리포트 상세페이지가 없는 경우
+    if (activeReportsCount === 0) {
+      window.alert('피드백 리포트 준비중입니다.');
+      return;
+    }
+
+    router.push(reportLink());
+  };
+
+  return (
+    <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
+      <header>
+        <h1 className="text-small20 py-6 font-semibold">MY 진단서 보기</h1>
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-xsmall16 font-bold">서류 피드백 리포트</h2>
+          <Tooltip className="text-xxsmall12 font-normal">
+            <p className="mb-1">진단서 발급 예상 소요기간</p>
+            <ul className="mb-3 list-disc pl-4">
+              <li>서류 진단서 (베이직): 최대 2일</li>
+              <li>서류 진단서 (프리미엄) 최대 3일</li>
+              <li>옵션 (현직자 온라인 상담): 최대 5일</li>
+            </ul>
+            <p>
+              *1:1 온라인 상담은 진단서 발급 이후 진행됩니다. 일정확정 이후
+              변경이 필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길
+              바랍니다.
+            </p>
+          </Tooltip>
+        </div>
+      </header>
+
+      <div className="my-3 -ml-2 flex gap-2">
+        {filters.map((filter) => (
+          <FilterNavLink
+            key={filter.value}
+            filter={filter}
+            filterStatus={filterStatus}
+            filterType={filterType}
+          />
+        ))}
+      </div>
+
+      {isLoggedIn && (
+        <AsyncBoundary>
+          <MyReportList filterType={filterType} />
+        </AsyncBoundary>
+      )}
+      <div className="my-3">
+        <button
+          onClick={onClickAddReport}
+          className="add_button_click border-primary text-primary-dark hover:border-primary-light flex h-12 w-full items-center justify-center rounded-md border-2 bg-neutral-100 font-medium transition hover:bg-white"
+        >
+          추가 신청하기
+        </button>
+      </div>
+    </div>
+  );
+};
+
+function MyReportList({ filterType }: { filterType: ReportFilter['type'] }) {
+  const router = useRouter();
+  const { setReportApplication } = useReportApplicationStore();
+
+  const { data } = useSuspenseQuery(myReportsQueryOptions());
+
+  const filteredApplications = data.myReportInfos.filter((report) => {
     switch (filterType) {
       case 'all':
         return true;
@@ -285,306 +356,243 @@ const ReportManagementPage = () => {
     );
   };
 
-  const onClickAddReport = () => {
-    const activeReportsCount = [
-      hasActiveResume,
-      hasActivePersonalStatement,
-      hasActivePortfolio,
-    ].filter(Boolean).length;
-
-    // Case3: 노출된 서류 피드백 리포트 상세페이지가 없는 경우
-    if (activeReportsCount === 0) {
-      window.alert('피드백 리포트 준비중입니다.');
-      return;
-    }
-
-    router.push(reportLink());
-  };
-
   useEffect(() => {
-    if (status === 'success' && data.myReportInfos.length === 0) {
+    if (data.myReportInfos.length === 0) {
       if (alerted.current) {
         return;
       }
       alerted.current = true;
       window.alert('서류 진단서 신청내역이 없습니다.');
     }
-  }, [data?.myReportInfos.length, router, status]);
+  }, [data.myReportInfos.length]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
-      <header>
-        <h1 className="text-small20 py-6 font-semibold">MY 진단서 보기</h1>
-        <div className="mb-3 flex items-center gap-2">
-          <h2 className="text-xsmall16 font-bold">서류 피드백 리포트</h2>
-          <Tooltip className="text-xxsmall12 font-normal">
-            <p className="mb-1">진단서 발급 예상 소요기간</p>
-            <ul className="mb-3 list-disc pl-4">
-              <li>서류 진단서 (베이직): 최대 2일</li>
-              <li>서류 진단서 (프리미엄) 최대 3일</li>
-              <li>옵션 (현직자 온라인 상담): 최대 5일</li>
-            </ul>
-            <p>
-              *1:1 온라인 상담은 진단서 발급 이후 진행됩니다. 일정확정 이후
-              변경이 필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길
-              바랍니다.
-            </p>
-          </Tooltip>
-        </div>
-      </header>
+    <div className="flex flex-col gap-3">
+      {filteredApplications?.map((item) => {
+        return (
+          <div
+            className="border-neutral-80 flex flex-col rounded-md border p-4"
+            key={item.applicationId}
+            data-application-id={item.applicationId}
+            data-report-id={item.reportId}
+            data-report-name={item.title}
+          >
+            <div>
+              <header className="mb-3 flex items-center gap-2">
+                <Badge
+                  status={convertReportStatusToBadgeStatus(
+                    item.applicationStatus,
+                    isReportSubmitted(item.applyUrl),
+                  )}
+                >
+                  {convertReportStatusToUserDisplayName(
+                    item.applicationStatus,
+                    isReportSubmitted(item.applyUrl),
+                  )}
+                </Badge>
+                <h2 className="text-xsmall14 font-medium">{item.title}</h2>
+              </header>
+              <table>
+                <tbody>
+                  <tr>
+                    <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
+                      진단유형
+                    </td>
+                    <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
+                      {convertReportTypeToDisplayName(item.reportType)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
+                      신청일자
+                    </td>
+                    <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
+                      {item.applicationTime.format('YYYY.MM.DD HH:mm')}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div className="flex items-center justify-between gap-4">
+                {(item.applyUrl || item.recruitmentUrl) && (
+                  <div className="-ml-1 mt-5 flex items-center gap-1">
+                    {item.applyUrl ? (
+                      <button
+                        onClick={() => handleDownloadOrOpen(item.applyUrl)}
+                        className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
+                      >
+                        <DocIcon />
+                        <span>제출서류</span>
+                      </button>
+                    ) : null}
 
-      <div className="my-3 -ml-2 flex gap-2">
-        {filters.map((filter) => (
-          <FilterNavLink
-            key={filter.value}
-            filter={filter}
-            filterStatus={filterStatus}
-            filterType={filterType}
-          />
-        ))}
-      </div>
+                    {item.recruitmentUrl ? (
+                      <button
+                        onClick={() => handleDownloadOrOpen(item.applyUrl)}
+                        className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
+                      >
+                        <CompanyBagIcon />
+                        <span>채용공고</span>
+                      </button>
+                    ) : null}
+                  </div>
+                )}
 
-      <div className="flex flex-col gap-3">
-        {filteredApplications?.map((item) => {
-          return (
-            <div
-              className="border-neutral-80 flex flex-col rounded-md border p-4"
-              key={item.applicationId}
-              data-application-id={item.applicationId}
-              data-report-id={item.reportId}
-              data-report-name={item.title}
-            >
-              <div>
-                <header className="mb-3 flex items-center gap-2">
-                  <Badge
-                    status={convertReportStatusToBadgeStatus(
-                      item.applicationStatus,
-                      isReportSubmitted(item.applyUrl),
-                    )}
-                  >
-                    {convertReportStatusToUserDisplayName(
-                      item.applicationStatus,
-                      isReportSubmitted(item.applyUrl),
-                    )}
-                  </Badge>
-                  <h2 className="text-xsmall14 font-medium">{item.title}</h2>
-                </header>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
-                        진단유형
-                      </td>
-                      <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
-                        {convertReportTypeToDisplayName(item.reportType)}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-xxsmall12 text-neutral-30 py-0.5 font-medium">
-                        신청일자
-                      </td>
-                      <td className="text-xxsmall12 py-0.5 pl-4 font-medium text-neutral-50">
-                        {item.applicationTime.format('YYYY.MM.DD HH:mm')}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className="flex items-center justify-between gap-4">
-                  {(item.applyUrl || item.recruitmentUrl) && (
-                    <div className="-ml-1 mt-5 flex items-center gap-1">
-                      {item.applyUrl ? (
-                        <button
-                          onClick={() => handleDownloadOrOpen(item.applyUrl)}
-                          className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
-                        >
-                          <DocIcon />
-                          <span>제출서류</span>
-                        </button>
-                      ) : null}
-
-                      {item.recruitmentUrl ? (
-                        <button
-                          onClick={() => handleDownloadOrOpen(item.applyUrl)}
-                          className="text-xxsmall12 text-neutral-40 hover:bg-neutral-0/5 flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 transition"
-                        >
-                          <CompanyBagIcon />
-                          <span>채용공고</span>
-                        </button>
-                      ) : null}
-                    </div>
+                {/* 서류 제출 X AND 온라인 상담 신청 X */}
+                {!isReportSubmitted(item.applyUrl) &&
+                  item.feedbackStatus !== 'APPLIED' && (
+                    <ReportManagementButton
+                      className="mt-5"
+                      onClick={() => onClickSubmit(item)}
+                    >
+                      서류 제출하기
+                    </ReportManagementButton>
                   )}
 
-                  {/* 서류 제출 X AND 온라인 상담 신청 X */}
-                  {!isReportSubmitted(item.applyUrl) &&
-                    item.feedbackStatus !== 'APPLIED' && (
-                      <ReportManagementButton
-                        className="mt-5"
-                        onClick={() => onClickSubmit(item)}
-                      >
-                        서류 제출하기
-                      </ReportManagementButton>
-                    )}
-
-                  {/* 서류를 제출했으면 */}
-                  {isReportSubmitted(item.applyUrl) &&
-                    (item.applicationStatus === 'APPLIED' ||
-                    item.applicationStatus === 'REPORTING' ||
-                    item.applicationStatus === 'REPORTED' ? (
-                      <ReportManagementButton
-                        className="max-w-40 flex-1"
-                        disabled
-                      >
-                        진단서 확인하기
-                      </ReportManagementButton>
-                    ) : (
-                      <ReportManagementButton
-                        as="button"
-                        onClick={() => handleDownloadOrOpen(item.reportUrl)}
-                        className="report_button_click max-w-40 flex-1"
-                      >
-                        진단서 확인하기
-                      </ReportManagementButton>
-                    ))}
-                </div>
+                {/* 서류를 제출했으면 */}
+                {isReportSubmitted(item.applyUrl) &&
+                  (item.applicationStatus === 'APPLIED' ||
+                  item.applicationStatus === 'REPORTING' ||
+                  item.applicationStatus === 'REPORTED' ? (
+                    <ReportManagementButton
+                      className="max-w-40 flex-1"
+                      disabled
+                    >
+                      진단서 확인하기
+                    </ReportManagementButton>
+                  ) : (
+                    <ReportManagementButton
+                      as="button"
+                      onClick={() => handleDownloadOrOpen(item.reportUrl)}
+                      className="report_button_click max-w-40 flex-1"
+                    >
+                      진단서 확인하기
+                    </ReportManagementButton>
+                  ))}
               </div>
-
-              {item.feedbackStatus && !item.feedbackIsCanceled ? (
-                <>
-                  <hr className="border-neutral-80 my-4 border-dashed" />
-                  <div>
-                    <header>
-                      <h3 className="text-xsmall14 text-primary-dark mb-3 font-medium">
-                        1:1 온라인 상담 현황
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          status={convertFeedbackStatusToBadgeStatus({
-                            now: dayjs(),
-                            reportFeedback: item.confirmedTime,
-                            status: item.feedbackStatus,
-                            isReportSubmitted: isReportSubmitted(item.applyUrl),
-                          })}
-                        >
-                          {convertFeedbackStatusToDisplayName({
-                            now: dayjs(),
-                            reportFeedback: item.confirmedTime,
-                            status: item.feedbackStatus,
-                            isReportSubmitted: isReportSubmitted(item.applyUrl),
-                          })}
-                        </Badge>
-                        <span className="text-xsmall14 font-medium">
-                          {item.title}
-                        </span>
-                      </div>
-                    </header>
-
-                    {/* 일정을 선택했으면 일정 테이블 표시 */}
-                    {isReportSubmitted(item.applyUrl) && (
-                      <table className="mt-3">
-                        <tbody>
-                          {/* 확인중 단계 일정 확인 */}
-                          {item.feedbackStatus === 'PENDING' ||
-                          item.feedbackStatus === 'APPLIED' ? (
-                            <tr>
-                              <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
-                                희망일자
-                              </td>
-                              <td className="text-xxsmall12 py-0.5 pl-4 font-medium leading-5 text-neutral-50">
-                                {item.desiredDate1 ? (
-                                  <p>
-                                    (1순위){' '}
-                                    {item.desiredDate1.format(
-                                      'YYYY.MM.DD HH:mm',
-                                    )}
-                                  </p>
-                                ) : null}
-                                {item.desiredDate2 ? (
-                                  <p>
-                                    (2순위){' '}
-                                    {item.desiredDate2.format(
-                                      'YYYY.MM.DD HH:mm',
-                                    )}
-                                  </p>
-                                ) : null}
-
-                                {item.desiredDate3 ? (
-                                  <p>
-                                    (3순위){' '}
-                                    {item.desiredDate3.format(
-                                      'YYYY.MM.DD HH:mm',
-                                    )}
-                                  </p>
-                                ) : null}
-                              </td>
-                            </tr>
-                          ) : null}
-
-                          {item.feedbackStatus === 'CONFIRMED' ||
-                          item.feedbackStatus === 'COMPLETED' ? (
-                            <tr>
-                              <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
-                                {item.feedbackStatus === 'CONFIRMED'
-                                  ? '확정일자'
-                                  : '완료일자'}
-                              </td>
-                              <td className="text-xxsmall12 text-primary py-0.5 pl-4 font-medium leading-5">
-                                {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
-                              </td>
-                            </tr>
-                          ) : null}
-                        </tbody>
-                      </table>
-                    )}
-
-                    {/* 일정을 선택하지 않았으면 */}
-                    {!isReportSubmitted(item.applyUrl) ? (
-                      <ReportManagementButton
-                        className="mt-5"
-                        onClick={() => onClickSubmit(item)}
-                      >
-                        서류 제출 / 상담 일정 선택하기
-                      </ReportManagementButton>
-                    ) : // 일정을 선택했으면
-                    item.feedbackStatus === 'APPLIED' ||
-                      item.feedbackStatus === 'PENDING' ||
-                      item.feedbackStatus === 'COMPLETED' ||
-                      (item.feedbackStatus === 'CONFIRMED' &&
-                        item.confirmedTime &&
-                        dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
-                      <ReportManagementButton
-                        className="feedback_button_click mt-5"
-                        disabled
-                      >
-                        온라인 상담 참여하기
-                      </ReportManagementButton>
-                    ) : (
-                      <ReportManagementButton
-                        className="feedback_button_click"
-                        as={Link}
-                        target="_blank"
-                        href={item.zoomLink || ''}
-                        rel="noreferrer"
-                      >
-                        온라인 상담 참여하기
-                      </ReportManagementButton>
-                    )}
-                  </div>
-                </>
-              ) : null}
             </div>
-          );
-        })}
-      </div>
-      <div className="my-3">
-        <button
-          onClick={onClickAddReport}
-          className="add_button_click border-primary text-primary-dark hover:border-primary-light flex h-12 w-full items-center justify-center rounded-md border-2 bg-neutral-100 font-medium transition hover:bg-white"
-        >
-          추가 신청하기
-        </button>
-      </div>
+
+            {item.feedbackStatus && !item.feedbackIsCanceled ? (
+              <>
+                <hr className="border-neutral-80 my-4 border-dashed" />
+                <div>
+                  <header>
+                    <h3 className="text-xsmall14 text-primary-dark mb-3 font-medium">
+                      1:1 온라인 상담 현황
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        status={convertFeedbackStatusToBadgeStatus({
+                          now: dayjs(),
+                          reportFeedback: item.confirmedTime,
+                          status: item.feedbackStatus,
+                          isReportSubmitted: isReportSubmitted(item.applyUrl),
+                        })}
+                      >
+                        {convertFeedbackStatusToDisplayName({
+                          now: dayjs(),
+                          reportFeedback: item.confirmedTime,
+                          status: item.feedbackStatus,
+                          isReportSubmitted: isReportSubmitted(item.applyUrl),
+                        })}
+                      </Badge>
+                      <span className="text-xsmall14 font-medium">
+                        {item.title}
+                      </span>
+                    </div>
+                  </header>
+
+                  {/* 일정을 선택했으면 일정 테이블 표시 */}
+                  {isReportSubmitted(item.applyUrl) && (
+                    <table className="mt-3">
+                      <tbody>
+                        {/* 확인중 단계 일정 확인 */}
+                        {item.feedbackStatus === 'PENDING' ||
+                        item.feedbackStatus === 'APPLIED' ? (
+                          <tr>
+                            <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
+                              희망일자
+                            </td>
+                            <td className="text-xxsmall12 py-0.5 pl-4 font-medium leading-5 text-neutral-50">
+                              {item.desiredDate1 ? (
+                                <p>
+                                  (1순위){' '}
+                                  {item.desiredDate1.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
+                              {item.desiredDate2 ? (
+                                <p>
+                                  (2순위){' '}
+                                  {item.desiredDate2.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
+
+                              {item.desiredDate3 ? (
+                                <p>
+                                  (3순위){' '}
+                                  {item.desiredDate3.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
+                            </td>
+                          </tr>
+                        ) : null}
+
+                        {item.feedbackStatus === 'CONFIRMED' ||
+                        item.feedbackStatus === 'COMPLETED' ? (
+                          <tr>
+                            <td className="text-xxsmall12 text-neutral-30 py-0.5 align-top font-medium leading-5">
+                              {item.feedbackStatus === 'CONFIRMED'
+                                ? '확정일자'
+                                : '완료일자'}
+                            </td>
+                            <td className="text-xxsmall12 text-primary py-0.5 pl-4 font-medium leading-5">
+                              {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
+                            </td>
+                          </tr>
+                        ) : null}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {/* 일정을 선택하지 않았으면 */}
+                  {!isReportSubmitted(item.applyUrl) ? (
+                    <ReportManagementButton
+                      className="mt-5"
+                      onClick={() => onClickSubmit(item)}
+                    >
+                      서류 제출 / 상담 일정 선택하기
+                    </ReportManagementButton>
+                  ) : // 일정을 선택했으면
+                  item.feedbackStatus === 'APPLIED' ||
+                    item.feedbackStatus === 'PENDING' ||
+                    item.feedbackStatus === 'COMPLETED' ||
+                    (item.feedbackStatus === 'CONFIRMED' &&
+                      item.confirmedTime &&
+                      dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
+                    <ReportManagementButton
+                      className="feedback_button_click mt-5"
+                      disabled
+                    >
+                      온라인 상담 참여하기
+                    </ReportManagementButton>
+                  ) : (
+                    <ReportManagementButton
+                      className="feedback_button_click"
+                      as={Link}
+                      target="_blank"
+                      href={item.zoomLink || ''}
+                      rel="noreferrer"
+                    >
+                      온라인 상담 참여하기
+                    </ReportManagementButton>
+                  )}
+                </div>
+              </>
+            ) : null}
+          </div>
+        );
+      })}
     </div>
   );
-};
+}
 
 export default ReportManagementPage;

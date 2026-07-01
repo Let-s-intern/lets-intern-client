@@ -34,6 +34,7 @@ import {
   OptionFormRadioControlLabel,
 } from '@/common/ControlLabel';
 import DrawerCloseBtn from '@/domain/report/ui/DrawerCloseBtn';
+import { useReportApplyPricing } from '@/domain/report/hooks/useReportApplyPricing';
 import OptionDropdown from '@/common/dropdown/OptionDropdown';
 import PaymentErrorNotification from '@/common/PaymentErrorNotification';
 import PriceView from '@/common/price/PriceView';
@@ -85,7 +86,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   const { isInstagram, showInstagramAlert, setShowInstagramAlert } =
     useInstagramAlert();
 
-  const { optionIds, isFeedbackApplied } = reportApplication;
+  const { optionIds } = reportApplication;
 
   useEffect(() => {
     // 드롭다운 열면 reportId 설정
@@ -241,102 +242,16 @@ const ReportApplyBottomSheet = React.forwardRef<
       'border-neutral-80 border-b': !isLastChild,
     });
 
-  // 현직자 피드백 옵션
-  const employeeOptionInfos = priceDetail.reportOptionInfos?.filter(
-    (info) => !info.optionTitle?.startsWith('+'),
-  );
-
-  // 자기소개서 문항 추가 옵션
-  const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
-    info.optionTitle?.startsWith('+'),
-  );
-  // 사용자가 추가한 문항 추가 옵션
-  const selectedQuestionOptions = useMemo(() => {
-    let length = 0;
-    const price = questionOptionInfos?.reduce((acc, curr) => {
-      if (reportApplication.optionIds.includes(curr.reportOptionId)) {
-        length++;
-        return acc + (curr.price ?? 0);
-      }
-      return acc;
-    }, 0);
-    const discount = questionOptionInfos?.reduce((acc, curr) => {
-      if (reportApplication.optionIds.includes(curr.reportOptionId))
-        return acc + (curr.discountPrice ?? 0);
-      return acc;
-    }, 0);
-    return { length, price, discount };
-  }, [reportApplication, questionOptionInfos]);
-
-  const reportFinalPrice = useMemo(() => {
-    let result = 0;
-
-    const reportPrice = priceDetail?.reportPriceInfos?.find(
-      (item) => item.reportPriceType === reportApplication.reportPriceType,
-    );
-
-    if (reportPrice) {
-      result += reportPrice.price ?? 0;
-    }
-
-    result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = priceDetail?.reportOptionInfos?.find(
-        (option) => option.reportOptionId === optionId,
-      );
-
-      if (!option) {
-        return acc;
-      }
-
-      return acc + (option.price ?? 0);
-    }, 0);
-
-    return result;
-  }, [
-    priceDetail?.reportOptionInfos,
-    priceDetail?.reportPriceInfos,
-    reportApplication,
-  ]);
-
-  const reportFinalDiscountPrice = useMemo(() => {
-    let result = 0;
-
-    const reportPrice = priceDetail?.reportPriceInfos?.find(
-      (item) => item.reportPriceType === reportApplication.reportPriceType,
-    );
-
-    if (reportPrice) {
-      result += reportPrice.discountPrice ?? 0;
-    }
-
-    result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = priceDetail?.reportOptionInfos?.find(
-        (option) => option.reportOptionId === optionId,
-      );
-
-      if (!option) {
-        return acc;
-      }
-
-      return acc + (option.discountPrice ?? 0);
-    }, 0);
-
-    return result;
-  }, [
-    priceDetail?.reportOptionInfos,
-    priceDetail?.reportPriceInfos,
-    reportApplication,
-  ]);
-
-  const feedbackFinalPrice = isFeedbackApplied
-    ? (priceDetail?.feedbackPriceInfo?.feedbackPrice ?? 0)
-    : 0;
-  const feedbackFinalDiscountPrice = isFeedbackApplied
-    ? (priceDetail?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
-    : 0;
-
-  const optionsAvailable =
-    priceDetail.reportOptionInfos && priceDetail.reportOptionInfos.length > 0;
+  const {
+    employeeOptionInfos,
+    questionOptionInfos,
+    selectedQuestionOptions,
+    reportFinalPrice,
+    reportFinalDiscountPrice,
+    feedbackFinalPrice,
+    feedbackFinalDiscountPrice,
+    optionsAvailable,
+  } = useReportApplyPricing({ priceDetail, reportApplication });
 
   useControlScroll(isDrawerOpen);
 

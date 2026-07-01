@@ -1,10 +1,14 @@
-import { ReportType, useGetReportFaqs } from '@/api/report';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import { ReportType, reportFaqsQueryOptions } from '@/api/report';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import FaqDropdown from '@/common/dropdown/FaqDropdown';
 import FaqChat from '@/domain/faq/FaqChat';
 import MainHeader from '@/domain/report/ui/header/MainHeader';
 import SubHeader from '@/domain/report/ui/header/SubHeader';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 const SUB_HEADER = '자주 묻는 질문';
 const MAIN_HEADER = '궁금한 점이 있으신가요?';
@@ -22,8 +26,6 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
         : resumeColors._11AC5C,
   };
 
-  const { data } = useGetReportFaqs(reportId);
-
   return (
     <section
       data-section="faq"
@@ -38,14 +40,26 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
 
       <main className="mx-auto mt-10 md:mt-20">
         <div className="mx-auto mb-10 flex max-w-[800px] flex-col gap-3 md:mb-16">
-          {data?.faqList.map((faq) => (
-            <FaqDropdown key={faq.id} faq={faq} />
-          ))}
+          <AsyncBoundary pendingFallback={null}>
+            <ReportFaqList reportId={reportId} />
+          </AsyncBoundary>
         </div>
         <FaqChat />
       </main>
     </section>
   );
 };
+
+function ReportFaqList({ reportId }: { reportId: number | string }) {
+  const { data } = useSuspenseQuery(reportFaqsQueryOptions(reportId));
+
+  return (
+    <>
+      {data.faqList.map((faq) => (
+        <FaqDropdown key={faq.id} faq={faq} />
+      ))}
+    </>
+  );
+}
 
 export default ReportFaqSection;

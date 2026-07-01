@@ -5,8 +5,10 @@ import {
   convertReportTypeToPathname,
   ReportType,
 } from '@/api/report';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';
 import MainHeader from '@/domain/report/ui/header/MainHeader';

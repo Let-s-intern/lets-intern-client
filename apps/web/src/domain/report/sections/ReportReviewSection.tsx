@@ -1,7 +1,9 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { REPORT_REVIEW_ID } from '@/domain/report/ui/ReportNavigation';
-import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/domain/report/ReportResumePage';
+import {
+  personalStatementColors,
+  resumeColors,
+} from '@/domain/report/reportColors';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
