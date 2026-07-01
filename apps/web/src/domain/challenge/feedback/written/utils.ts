@@ -19,8 +19,8 @@ export function toWrittenMission(
     status: resolveStatus(item),
     challengeType,
     missionNumber: item.missionTh,
-    startDay: item.missionStartDate.slice(0, 10),
-    endDay: item.missionEndDate.slice(0, 10),
+    startDay: item.missionStartDate,
+    endDay: item.missionEndDate,
   };
 }
 
@@ -46,8 +46,8 @@ export const WRITTEN_FEEDBACK_SECTIONS: {
   },
   {
     status: 'expired',
-    label: '기간 만료',
-    emptyMessage: '기간이 만료됐어요',
+    label: '미진행',
+    emptyMessage: '기간이 만료된 미션이 없어요.',
   },
 ];
 

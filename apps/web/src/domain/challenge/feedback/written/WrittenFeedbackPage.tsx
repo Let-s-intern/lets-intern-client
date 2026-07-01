@@ -70,7 +70,11 @@ const WrittenFeedbackPage = () => {
   );
 
   const today = new Date();
-  const started = missions.filter((m) => new Date(m.startDay) <= today);
+  const started = missions.filter((m) => {
+    const start = new Date(m.startDay);
+    start.setSeconds(0, 0);
+    return start <= today;
+  });
 
   const { setSelectedMission } = useMissionStore();
 
@@ -91,15 +95,19 @@ const WrittenFeedbackPage = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      {WRITTEN_FEEDBACK_SECTIONS.map(({ status, label, emptyMessage }) => (
-        <FeedbackSection
-          key={status}
-          label={label}
-          missions={started.filter((m) => m.status === status)}
-          emptyMessage={emptyMessage}
-          onCardClick={handleClick}
-        />
-      ))}
+      {WRITTEN_FEEDBACK_SECTIONS.map(({ status, label, emptyMessage }) => {
+        const sectionMissions = started.filter((m) => m.status === status);
+        if (status === 'expired' && sectionMissions.length === 0) return null;
+        return (
+          <FeedbackSection
+            key={status}
+            label={label}
+            missions={sectionMissions}
+            emptyMessage={emptyMessage}
+            onCardClick={handleClick}
+          />
+        );
+      })}
     </div>
   );
 };
