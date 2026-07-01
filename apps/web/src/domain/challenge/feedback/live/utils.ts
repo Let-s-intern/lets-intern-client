@@ -53,9 +53,13 @@ export function toMission(
 ): LiveFeedbackMission {
   const startDay = item.missionStartDate.slice(0, 10);
   const endDay = item.missionEndDate.slice(0, 10);
-  const feedbackStartDay = endDay;
+  const feedbackStartDay = new Date(
+    new Date(item.missionEndDate).getTime() + 2 * 24 * 60 * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 10);
   const feedbackEndDay = new Date(
-    new Date(item.missionEndDate).getTime() + 3 * 24 * 60 * 60 * 1000,
+    new Date(item.missionEndDate).getTime() + 4 * 24 * 60 * 60 * 1000,
   )
     .toISOString()
     .slice(0, 10);
@@ -180,7 +184,7 @@ export function toCardConfig(
       mission.challengeType ??
       '',
     missionNumber: mission.missionTh,
-    feedbackStartDay: mission.missionEndDate,
+    feedbackStartDay: mission.feedbackStartDate,
     feedbackEndDay: mission.feedbackEndDate,
     startDay: mission.missionStartDate,
     endDay: mission.missionEndDate,
