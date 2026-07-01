@@ -1,5 +1,9 @@
 import type { ApplicationDownloadType } from '@/api/application';
 import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
+import {
+  isMembershipChallengeProgram,
+  MEMBERSHIP_GUIDE_URL,
+} from '@/domain/membership/lib/membershipChallenge';
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
 import dayjs from '@/lib/dayjs';
 import { PROGRAM_TYPE } from '@/utils/programConst';
@@ -26,6 +30,7 @@ export interface CareerGrowthCardConfig {
     label: string;
     disabled?: boolean;
     href?: string;
+    external?: boolean;
     onClick?: () => void;
     confirm?: {
       title: string;
@@ -58,11 +63,18 @@ export const toProgramCardConfig = (
     purchasePlanText:
       isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
     actionButton: isChallenge
-      ? {
-          label: '대시보드 입장',
-          disabled: isDashboardDisabled,
-          href: `/challenge/${item.id}/${item.programId}`,
-        }
+      ? isMembershipChallengeProgram(item.programId)
+        ? {
+            label: '가이드 확인',
+            disabled: isDashboardDisabled,
+            href: MEMBERSHIP_GUIDE_URL,
+            external: true,
+          }
+        : {
+            label: '대시보드 입장',
+            disabled: isDashboardDisabled,
+            href: `/challenge/${item.id}/${item.programId}`,
+          }
       : undefined,
   };
 };

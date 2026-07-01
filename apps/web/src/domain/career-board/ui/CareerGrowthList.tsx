@@ -54,6 +54,10 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
     }
 
     if (actionButton.href) {
+      if (actionButton.external) {
+        window.open(actionButton.href, '_blank', 'noopener,noreferrer');
+        return;
+      }
       router.push(actionButton.href);
       return;
     }
