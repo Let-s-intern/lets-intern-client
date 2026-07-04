@@ -4,23 +4,16 @@ import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
-import { twMerge } from '@/lib/twMerge';
-import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { challengeTypeSchema, ChallengeType } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { Dayjs } from 'dayjs';
 import { josa } from 'es-hangul';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useMemo } from 'react';
-
-const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
-
-type ProgressItemType = {
-  index: number;
-  title: string;
-  subTitle?: string;
-};
+import { useMemo } from 'react';
+import Box from './other-program-recommend/Box';
+import BoxItem from './other-program-recommend/BoxItem';
+import ProgressItem from './other-program-recommend/ProgressItem';
 
 const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
 
@@ -33,128 +26,8 @@ const MISSION = {
   ],
 };
 
-const {
-  CAREER_START,
-  PERSONAL_STATEMENT,
-  PORTFOLIO,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  MARKETING,
-  EXPERIENCE_SUMMARY,
-  ETC,
-} = challengeTypeSchema.enum;
-
-const getProgramNotice = (
-  challengeType: ChallengeType,
-  isResumeTemplate: boolean,
-) => {
-  if (isResumeTemplate) {
-    return (
-      <>
-        본 프로그램은 취업의 기초가 되는
-        <br className="md:hidden" />{' '}
-        <span className="font-bold">경험 구조화 및 이력서 작성</span>을
-        다룹니다.
-        <br />
-        자기소개서 및 포트폴리오 완성 프로그램은
-        <br className="md:hidden" /> 별도로 준비되어 있습니다.
-      </>
-    );
-  }
-
-  if (challengeType === CAREER_START) {
-    return (
-      <>
-        본 프로그램은 취업의 기초가 되는
-        <br className="md:hidden" />{' '}
-        <span className="font-bold">퍼스널 브랜딩과 마스터 이력서 작성</span>을
-        다룹니다.
-        <br />
-        자기소개서 및 포트폴리오 완성 프로그램은
-        <br className="md:hidden" /> 별도로 준비되어 있습니다.
-      </>
-    );
-  }
-
-  if (
-    challengeType === PERSONAL_STATEMENT ||
-    challengeType === PERSONAL_STATEMENT_LARGE_CORP
-  ) {
-    return (
-      <>
-        본 프로그램은 취업의 기초가 되는
-        <br className="md:hidden" />{' '}
-        <span className="font-bold">자기소개서 작성</span>을 다룹니다.
-        <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
-        <br className="md:hidden" /> 별도로 준비되어 있습니다.
-      </>
-    );
-  }
-
-  if (challengeType === PORTFOLIO) {
-    return (
-      <>
-        본 프로그램은 나만의 필살기를 만들 수 있는
-        <br className="md:hidden" />{' '}
-        <span className="font-bold">포트폴리오 제작 방법</span>을 다룹니다.
-        <br /> 서류 기초 작성 및 자기소개서 프로그램은
-        <br className="md:hidden" /> 별도로 준비되어 있습니다.
-      </>
-    );
-  }
-
-  if (challengeType === EXPERIENCE_SUMMARY || challengeType === ETC) {
-    return (
-      <>
-        본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
-        <br className="hidden md:block" /> 이력서, 자기소개서, 포트폴리오
-        프로그램에 앞서 수강하기를 권장드립니다.
-      </>
-    );
-  }
-
-  return null;
-};
-
-const IntroHeading = ({
-  challengeType,
-  challengeTitle,
-  weekText,
-  isResumeTemplate,
-  introHeadingColor,
-}: {
-  challengeType: ChallengeType;
-  challengeTitle: string;
-  weekText: ChallengePoint['weekText'];
-  isResumeTemplate: boolean;
-  introHeadingColor: string;
-}) => {
-  if (isResumeTemplate) {
-    return (
-      <Heading2 className="mb-10 break-keep lg:mb-20">
-        매력적인 이력서를 완성하는 {weekText}
-        <br />
-        <span style={{ color: introHeadingColor }}>
-          합격 서류 확인하고 멘토 코멘트와 함께
-        </span>{' '}
-        이력서 완성해요!
-      </Heading2>
-    );
-  }
-
-  const isExperienceSummary =
-    challengeType === EXPERIENCE_SUMMARY || challengeType === ETC;
-  const taskText = isExperienceSummary ? '경험 정리' : '서류 준비';
-
-  return (
-    <Heading2 className="mb-10 break-keep lg:mb-20">
-      {josa(challengeTitle, '을/를')} 통해
-      <br />
-      <span style={{ color: introHeadingColor }}>하루 30분</span>, 단 {weekText}
-      만에 {taskText}를 <br className="lg:hidden" />
-      끝낼 수 있어요
-    </Heading2>
-  );
-};
+const { PERSONAL_STATEMENT_LARGE_CORP, MARKETING, EXPERIENCE_SUMMARY, ETC } =
+  challengeTypeSchema.enum;
 
 const styles = {
   primaryColor: challengeColors._4A76FF,
@@ -618,111 +491,5 @@ const Portfolio다른프로그램추천 = ({
     </div>
   );
 };
-
-// function PointList({
-//   item,
-//   index,
-//   listBgColor,
-//   listPointBgColor,
-// }: {
-//   item: {
-//     id: string;
-//     title: string;
-//     subtitle: string;
-//   };
-//   index: number;
-//   listBgColor: string;
-//   listPointBgColor: string;
-// }) {
-//   return (
-//     <li
-//       key={item.id}
-//       className="mx-auto flex w-full flex-col items-center gap-5 self-stretch rounded-md p-8 md:pb-10"
-//       style={{ backgroundColor: listBgColor }}
-//     >
-//       <div className="break-keep text-center">
-//         <span
-//           className="rounded-md px-3.5 py-1.5 text-xsmall14 font-semibold text-white md:text-small18"
-//           style={{ backgroundColor: listPointBgColor }}
-//         >
-//           Point {index + 1}
-//         </span>
-//       </div>
-//       <div>
-//         <h3 className="mb-2 break-keep text-center text-small20 font-bold text-neutral-0">
-//           <Balancer fallback={<span>{item.title}</span>}>{item.title}</Balancer>
-//         </h3>
-//         <p className="break-keep text-center text-xsmall16 font-medium text-neutral-40">
-//           <Balancer fallback={<span>{item.subtitle}</span>}>
-//             {item.subtitle}
-//           </Balancer>
-//         </p>
-//       </div>
-//     </li>
-//   );
-// }
-
-function ProgressItem({
-  item,
-  bgColor,
-}: {
-  item: ProgressItemType;
-  bgColor?: string;
-}) {
-  return (
-    <div key={item.index} className="flex gap-2">
-      <div
-        className="text-xsmall14 mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-semibold text-white"
-        style={{ backgroundColor: bgColor }}
-      >
-        {item.index}
-      </div>
-      <div className="flex flex-col gap-0.5">
-        <span className="text-xsmall16 text-neutral-0 whitespace-pre-line font-bold">
-          {item.title}
-        </span>
-        {item.subTitle && (
-          <span className="text-xsmall14 text-neutral-45 whitespace-pre-line">
-            {item.subTitle}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function Box({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={twMerge(
-        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-100 p-5',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-}
-
-function BoxItem({
-  title,
-  children,
-}: {
-  title?: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="text-xsmall16 text-neutral-0 flex flex-col gap-2">
-      <span className="whitespace-pre-line font-bold">{title}</span>
-      <span className="whitespace-pre-line break-keep">{children}</span>
-    </div>
-  );
-}
 
 export default Portfolio다른프로그램추천;
