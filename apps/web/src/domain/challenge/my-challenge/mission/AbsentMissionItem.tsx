@@ -30,6 +30,8 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
 
   const [isDetailShown, setIsDetailShown] = useState(false);
 
+  // NOTE: 리스트 아이템별 lazy 상세 조회 + detailError 기반 인라인 분기 때문에
+  // useSuspenseQuery 로 전환하지 않는다(YetMissionItem 주석 참조).
   const {
     data: missionDetail,
     isLoading: isDetailLoading,

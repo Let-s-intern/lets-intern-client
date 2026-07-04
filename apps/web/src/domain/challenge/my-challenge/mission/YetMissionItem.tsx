@@ -19,6 +19,10 @@ const YetMissionItem = ({ mission }: Props) => {
   const th =
     mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
 
+  // NOTE: 추상화 목표는 useSuspenseQuery 통일이지만 이 컴포넌트는 의도적으로 useQuery 유지.
+  // ① 리스트 아이템(<li>)별 상세를 각자 조회 → suspense화하면 로딩 중 제목까지 사라짐(회귀).
+  // ② detailError(400) 를 읽어 "0회차 먼저 완료" 인라인 안내를 처리 → suspense는 throw라
+  //    이 에러코드 분기가 error boundary로 밀려 UX가 깨진다. (AbsentMissionItem도 동일)
   const {
     data: missionDetail,
     isLoading: isDetailLoading,

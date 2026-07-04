@@ -1,7 +1,8 @@
+import { dailyMissionDetailQueryOptions } from '@/domain/challenge/api/missionDetail';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
-import { MyDailyMission, userChallengeMissionDetail } from '@/schema';
-import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { MyDailyMission } from '@/schema';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import DailyMissionInfoSection from './DailyMissionInfoSection';
@@ -12,9 +13,34 @@ interface Props {
 }
 
 const DailyMissionSection = ({ myDailyMission }: Props) => {
+  const { currentChallenge } = useOldCurrentChallenge();
+  const dailyMissionId = myDailyMission.dailyMission?.id;
+
+  // 챌린지/미션 id가 없으면 조회 불가(기존 enabled 조건 보존).
+  if (!currentChallenge?.id || !dailyMissionId) return null;
+
+  return (
+    <AsyncBoundary pendingFallback={null} rejectedFallback={() => null}>
+      <DailyMissionContent
+        myDailyMission={myDailyMission}
+        challengeId={currentChallenge.id}
+        dailyMissionId={dailyMissionId}
+      />
+    </AsyncBoundary>
+  );
+};
+
+const DailyMissionContent = ({
+  myDailyMission,
+  challengeId,
+  dailyMissionId,
+}: {
+  myDailyMission: MyDailyMission;
+  challengeId: number;
+  dailyMissionId: number;
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { currentChallenge } = useOldCurrentChallenge();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -26,21 +52,9 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     }
   }, [sectionRef, searchParams, router]);
 
-  const { data: missionDetail } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: [
-      'challenge',
-      currentChallenge?.id,
-      'mission',
-      'daily-mission-detail',
-    ],
-    queryFn: async () => {
-      const res = await axios.get(
-        `challenge/${currentChallenge?.id}/missions/${myDailyMission.dailyMission?.id}`,
-      );
-      return userChallengeMissionDetail.parse(res.data.data).missionInfo;
-    },
-  });
+  const { data: missionDetail } = useSuspenseQuery(
+    dailyMissionDetailQueryOptions(challengeId, dailyMissionId),
+  );
 
   if (!missionDetail) return null;
 
