@@ -10,11 +10,11 @@ import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
-import MissionSubmitButton from '../mission/MissionSubmitButton';
-import MissionToast from '../mission/MissionToast';
-import WishConditionInputSection from '../talent-pool/WishConditionInputSection';
-import DocumentUploadSection from './DocumentUploadSection';
-import PersonalInfoConsent from './PersonalInfoConsent';
+import MissionSubmitButton from '../../mission/MissionSubmitButton';
+import MissionToast from '../../mission/MissionToast';
+import WishConditionInputSection from '../../talent-pool/WishConditionInputSection';
+import DocumentUploadSection from '../DocumentUploadSection';
+import PersonalInfoConsent from '../PersonalInfoConsent';
 
 export interface UploadedFiles {
   resume: File | string | null;

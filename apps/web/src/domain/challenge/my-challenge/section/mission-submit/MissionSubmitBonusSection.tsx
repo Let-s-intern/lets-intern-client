@@ -2,13 +2,13 @@ import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { ReactNode } from 'react';
-import LinkChangeConfirmationModal from '../../modal/LinkChangeConfirmationModal';
-import BankSelectDropdown from '../mission/BankSelectDropdown';
-import MissionSubmitButton from '../mission/MissionSubmitButton';
-import MissionToast from '../mission/MissionToast';
-import LinkInputSection from './LinkInputSection';
-import AgreementSection from './mission-submit-bonus/AgreementSection';
-import { useMissionSubmitBonus } from './mission-submit-bonus/useMissionSubmitBonus';
+import LinkChangeConfirmationModal from '../../../modal/LinkChangeConfirmationModal';
+import BankSelectDropdown from '../../mission/BankSelectDropdown';
+import MissionSubmitButton from '../../mission/MissionSubmitButton';
+import MissionToast from '../../mission/MissionToast';
+import LinkInputSection from '../LinkInputSection';
+import AgreementSection from '../mission-submit-bonus/AgreementSection';
+import { useMissionSubmitBonus } from '../mission-submit-bonus/useMissionSubmitBonus';
 
 const DescriptionBox = ({
   children,

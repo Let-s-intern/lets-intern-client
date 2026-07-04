@@ -2,7 +2,7 @@ import { DocumentType } from '@/api/mission/missionSchema';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { LoaderCircle, Trash2, Upload } from 'lucide-react';
 import { type RefObject } from 'react';
-import { UploadedFiles } from '../MissionSubmitTalentPoolSection';
+import { UploadedFiles } from '../mission-submit/MissionSubmitTalentPoolSection';
 
 const handleFilePreview = (file: File | string) => {
   const url = typeof file === 'string' ? file : URL.createObjectURL(file);

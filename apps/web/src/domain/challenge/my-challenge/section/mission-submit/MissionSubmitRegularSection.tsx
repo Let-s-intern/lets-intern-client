@@ -1,16 +1,16 @@
 import { useParams } from 'next/navigation';
-import BonusMissionModal from '../../bonus-mission/BonusMissionModal';
-import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
-import MobileReviewModal from '../../modal/MobileReviewModal';
-import MissionSubmitButton from '../mission/MissionSubmitButton';
-import MissionToast from '../mission/MissionToast';
-import LinkInputSection from './LinkInputSection';
-import { MissionSubmitListForm } from './mission-submit-list-form';
-import { MissionReviewInputSection } from './MissionReviewInputSection';
+import BonusMissionModal from '../../../bonus-mission/BonusMissionModal';
+import DashboardCreateReviewModal from '../../../dashboard/modal/DashboardCreateReviewModal';
+import MobileReviewModal from '../../../modal/MobileReviewModal';
+import MissionSubmitButton from '../../mission/MissionSubmitButton';
+import MissionToast from '../../mission/MissionToast';
+import LinkInputSection from '../LinkInputSection';
+import { MissionSubmitListForm } from '../mission-submit-list-form';
+import { MissionReviewInputSection } from '../MissionReviewInputSection';
 import {
   type MissionSubmitRegularAttendanceInfo,
   useMissionSubmitRegular,
-} from './mission-submit-regular/useMissionSubmitRegular';
+} from '../mission-submit-regular/useMissionSubmitRegular';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;

@@ -3,9 +3,9 @@ import dayjs from '@/lib/dayjs';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
-import MissionFileLink from '../mission/MissionFileLink';
+import MissionFileLink from '../../mission/MissionFileLink';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
-import MissionHeaderSection from './MissionHeaderSection';
+import MissionHeaderSection from '../MissionHeaderSection';
 
 interface MissionGuideRegularSectionProps {
   className?: string;

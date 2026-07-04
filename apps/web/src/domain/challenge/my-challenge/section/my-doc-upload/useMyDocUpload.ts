@@ -10,7 +10,7 @@ import {
   useGetUserDocumentListQuery,
 } from '@/api/user/user';
 import { useEffect, useRef, useState } from 'react';
-import { UploadedFiles } from '../MissionSubmitTalentPoolSection';
+import { UploadedFiles } from '../mission-submit/MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
 

@@ -7,7 +7,7 @@ import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
-import MissionHeaderSection from './MissionHeaderSection';
+import MissionHeaderSection from '../MissionHeaderSection';
 
 const Heading3 = ({
   children,
