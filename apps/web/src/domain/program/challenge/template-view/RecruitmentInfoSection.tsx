@@ -1,170 +1,20 @@
-import { Fragment, ReactNode, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import SectionHeader from '@/common/header/SectionHeader';
-import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import MainTitle from '../ui/MainTitle';
 import { getChallengeThemeColor } from '../utils/getChallengeThemeColor';
-
-interface PriceInfo {
-  title: string;
-  originalPrice: number;
-  discountAmount: number;
-  description: string;
-  planType: 'BASIC' | 'STANDARD' | 'PREMIUM' | 'LIGHT';
-}
+import Box from './recruitment-info-section/Box';
+import InfoRow from './recruitment-info-section/InfoRow';
+import Label from './recruitment-info-section/Label';
+import PlanRow from './recruitment-info-section/PlanRow';
+import { PriceInfo } from './recruitment-info-section/types';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
-
-const Box = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={twMerge(
-        'bg-neutral-95 flex flex-col items-stretch rounded-sm px-4 py-7 md:flex-1',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
-const Label = ({
-  children,
-  themeColor,
-}: {
-  children?: ReactNode;
-  themeColor: string;
-}) => {
-  return (
-    <span
-      className="text-xsmall16 md:text-xsmall16 font-semibold"
-      style={{ color: themeColor }}
-    >
-      {children}
-    </span>
-  );
-};
-
-const InfoRow = ({
-  label,
-  value,
-  themeColor,
-}: {
-  label: string;
-  value: ReactNode;
-  themeColor: string;
-}) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label themeColor={themeColor}>{label}</Label>
-      <p className="text-xsmall16 text-neutral-0 md:text-xsmall16 whitespace-pre-line font-medium">
-        {value}
-      </p>
-    </div>
-  );
-};
-
-const PriceView = ({
-  originalPrice,
-  discountAmount,
-}: {
-  originalPrice: number;
-  discountAmount: number;
-}) => {
-  const hasDiscount = discountAmount > 0;
-  const sellingPrice = originalPrice - discountAmount;
-  const percent = hasDiscount
-    ? ((discountAmount / originalPrice) * 100).toFixed(0)
-    : null;
-
-  return (
-    <div className="mt-5 flex shrink-0 flex-col text-left md:mt-0 md:items-end md:text-right">
-      {hasDiscount && percent && (
-        <span className="text-xsmall14 inline-flex gap-1">
-          <span className="text-system-error/90 font-semibold">{percent}%</span>
-          <span className="text-neutral-40 font-medium line-through">
-            {originalPrice.toLocaleString()}원
-          </span>
-        </span>
-      )}
-
-      <span className="text-medium20 text-neutral-0 font-bold">
-        {sellingPrice.toLocaleString()}원
-      </span>
-    </div>
-  );
-};
-
-const PlanBenefits = ({
-  description,
-  isBasic,
-  showBasicIncluded,
-}: {
-  description: string;
-  isBasic: boolean;
-  showBasicIncluded?: boolean;
-}) => {
-  const lines = description
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  const displayLine = (line: string) =>
-    !isBasic && line.startsWith('✓') ? line.slice(1).trimStart() : line;
-
-  return (
-    <ul className="text-xsmall16 mt-3 space-y-1.5 text-left text-[#606060]">
-      {lines.map((line) => (
-        <li key={line} className="flex items-start gap-1.5">
-          <span className={twMerge('md:text-xsmall16 text-[#606060]')}>
-            {isBasic ? '' : '+'}
-          </span>
-          <span className="whitespace-pre-line">{displayLine(line)}</span>
-        </li>
-      ))}
-      {!isBasic && showBasicIncluded !== false && (
-        <li className="flex items-start gap-1.5">
-          <span className="md:text-xsmall16 text-[#606060]">✓</span>
-          <span className="whitespace-pre-line">
-            베이직에서 제공되는 모든 사항 포함
-          </span>
-        </li>
-      )}
-    </ul>
-  );
-};
-
-const PlanRow = ({ plan }: { plan: PriceInfo }) => {
-  return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-3.5">
-      <div className="flex-1">
-        <div className="text-xsmall16 text-neutral-0 font-semibold">
-          {plan.title}
-        </div>
-        <PlanBenefits
-          description={plan.description}
-          isBasic={plan.planType === 'BASIC'}
-          showBasicIncluded={plan.planType !== 'LIGHT'}
-        />
-      </div>
-      <PriceView
-        originalPrice={plan.originalPrice}
-        discountAmount={plan.discountAmount}
-      />
-    </div>
-  );
-};
 
 const RecruitmentInfoSection = ({ challenge }: Props) => {
   const themeColor = getChallengeThemeColor(challenge.challengeType);
