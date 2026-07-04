@@ -3,7 +3,7 @@ import HoleIcon from '@/assets/icons/hole.svg?react';
 import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import { challengeTypeSchema, ChallengeType } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { Dayjs } from 'dayjs';

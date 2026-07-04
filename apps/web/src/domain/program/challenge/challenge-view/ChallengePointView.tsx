@@ -21,7 +21,7 @@ import IntroHeading from '@/domain/program/challenge/challenge-view/challenge-po
 import PointList from '@/domain/program/challenge/challenge-view/challenge-point-view/PointList';
 import ProgressItem from '@/domain/program/challenge/challenge-view/challenge-point-view/ProgressItem';
 import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeType } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';

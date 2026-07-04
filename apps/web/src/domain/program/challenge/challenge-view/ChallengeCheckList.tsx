@@ -17,7 +17,7 @@ import {
   superTitle,
   title,
 } from '@/domain/program/challenge/challenge-view/challenge-check-list/constants';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import Description from '@/domain/program/program-detail/Description';
 import OutlinedBox from '@/domain/program/program-detail/OutlineBox';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';

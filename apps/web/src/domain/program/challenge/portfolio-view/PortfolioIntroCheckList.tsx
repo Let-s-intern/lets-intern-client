@@ -3,7 +3,7 @@ import { CSSProperties, ReactNode } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
 import Heading2 from '@/common/header/Heading2';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import Box from '@/domain/program/program-detail/Box';
 import Description from '@/domain/program/program-detail/Description';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';

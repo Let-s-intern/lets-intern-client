@@ -1,4 +1,4 @@
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import {
   ChallengePriceInfo,
   ChallengeType,

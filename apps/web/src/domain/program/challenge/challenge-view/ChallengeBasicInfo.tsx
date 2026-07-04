@@ -1,7 +1,7 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';
 import dayjs from '@/lib/dayjs';
 import {

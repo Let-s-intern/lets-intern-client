@@ -1,4 +1,4 @@
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { useMemo } from 'react';
 

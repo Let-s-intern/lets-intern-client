@@ -4,7 +4,7 @@ import { FaCheck } from 'react-icons/fa6';
 
 import { Break } from '@/common/Break';
 import Heading2 from '@/common/header/Heading2';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import BadgedBox from './challenge-result/BadgedBox';

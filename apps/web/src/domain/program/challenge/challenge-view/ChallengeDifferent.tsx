@@ -1,7 +1,7 @@
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import BenefitCard from '@/domain/program/program-detail/different/BenefitCard';
 import DifferentCard, {
   DifferentCardProps,

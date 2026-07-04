@@ -1,5 +1,5 @@
 import Heading2 from '@/common/header/Heading2';
-import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';

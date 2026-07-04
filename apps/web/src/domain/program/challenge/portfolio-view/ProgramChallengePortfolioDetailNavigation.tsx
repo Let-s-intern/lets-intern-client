@@ -12,7 +12,7 @@ import {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../../program/ProgramDetailNavigation';
-import { challengeColors } from '../ChallengeView';
+import { challengeColors } from '../challengeColors';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;
