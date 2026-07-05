@@ -1,5 +1,5 @@
 import HybridLink from '@/common/HybridLink';
-import NoticeGuideLink from '@/domain/challenge/ui/NoticeGuideLink';
+import NoticeGuideLink from '@/domain/challenge/dashboard/ui/NoticeGuideLink';
 import { TabMenu } from '@/domain/program/challenge/ChallengeGuidePage';
 import { useReadGuides } from '@/hooks/useReadItems';
 import { ChallengeGuide } from '@/schema';
