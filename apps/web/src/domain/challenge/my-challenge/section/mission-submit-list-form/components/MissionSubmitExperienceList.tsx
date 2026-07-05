@@ -1,5 +1,4 @@
 import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
-import { If } from '@/domain/challenge/ui/If';
 import { useMemo } from 'react';
 import { ExperienceData, isUserExperienceComplete } from '../data';
 import { EmptyState } from './EmptyState';
@@ -96,22 +95,22 @@ export const MissionSubmitExperienceList = ({
       {/* 작성된 경험 불러오는 컴포넌트 */}
       <div className="rounded-xxs border-neutral-80 flex min-h-[200px] items-center justify-center border bg-white">
         <div className="flex w-full flex-col items-center justify-center space-y-4">
-          <If condition={emptyStateText !== null}>
+          {emptyStateText && (
             <EmptyState
-              text={emptyStateText ?? ''}
+              text={emptyStateText}
               buttonText="경험 작성하기"
               onButtonClick={handleExperienceWriteClick}
             />
-          </If>
+          )}
 
-          <If condition={experienceCount >= 3}>
+          {experienceCount >= 3 && (
             <ExperienceList
               experiences={selectedExperiences}
               onDeleteExperience={onDeleteExperience}
               isSubmitted={isSubmitted}
               isEditing={isEditing}
             />
-          </If>
+          )}
         </div>
       </div>
     </section>

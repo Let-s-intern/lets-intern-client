@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
 import YetMissionItem from '../mission/YetMissionItem';
-import LastMissionSubmitModal from './LastMissionSubmitModal';
+import LastMissionSubmitModal from '../modal/LastMissionSubmitModal';
 
 interface Props {
   todayTh: number;
