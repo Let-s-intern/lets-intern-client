@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import BonusMissionInputSection from '../../../bonus-mission/BonusMissionInputSection';
 import DailyMissionLinkInputSection from '../../../daily-mission/DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../../daily-mission/DailyMissionReviewSection';
-import DailyMissionSubmitButton from '../../../daily-mission/DailyMissionSubmitButton';
+import DailyMissionSubmitButton from '../../../daily-mission/ui/DailyMissionSubmitButton';
 import LinkChangeConfirmationModal from '../../../modal/LinkChangeConfirmationModal';
 import OtMissionInputSection from '../../../ot-mission/OtMissionInputSection';
 import LastMissionSubmitModal from '../../modal/LastMissionSubmitModal';

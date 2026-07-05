@@ -10,7 +10,7 @@ import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
-import MissionSubmitButton from '../../mission/MissionSubmitButton';
+import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';
 import MissionToast from '../../mission/MissionToast';
 import WishConditionInputSection from '../../talent-pool/WishConditionInputSection';
 import DocumentUploadSection from '../DocumentUploadSection';

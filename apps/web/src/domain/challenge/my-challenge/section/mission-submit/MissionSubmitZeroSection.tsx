@@ -6,7 +6,7 @@ import {
 } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
-import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/MissionSubmitButton';
+import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
 import dayjs from '@/lib/dayjs';
 import { useQueryClient } from '@tanstack/react-query';

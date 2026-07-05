@@ -2,9 +2,9 @@ import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import MissionIcon from './MissionIcon';
-import MissionNotStartedIcon from './MissionNotStartedIcon';
-import MissionTodayIcon from './MissionTodayIcon';
+import MissionIcon from './ui/MissionIcon';
+import MissionNotStartedIcon from './ui/MissionNotStartedIcon';
+import MissionTodayIcon from './ui/MissionTodayIcon';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useMissionStore } from '@/store/useMissionStore';

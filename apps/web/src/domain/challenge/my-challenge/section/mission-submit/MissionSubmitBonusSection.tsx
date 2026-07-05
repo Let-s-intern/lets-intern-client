@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { ReactNode } from 'react';
 import LinkChangeConfirmationModal from '../../../modal/LinkChangeConfirmationModal';
 import BankSelectDropdown from '../../mission/BankSelectDropdown';
-import MissionSubmitButton from '../../mission/MissionSubmitButton';
+import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';
 import MissionToast from '../../mission/MissionToast';
 import LinkInputSection from '../LinkInputSection';
 import AgreementSection from '../mission-submit-bonus/AgreementSection';
