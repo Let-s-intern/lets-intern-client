@@ -1,7 +1,7 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import BankSelectDropdown from '../my-challenge/mission/BankSelectDropdown';
-import ParsedCommentBox from '../my-challenge/ParsedCommentBox';
+import BankSelectDropdown from '@/domain/challenge/my-challenge/mission/BankSelectDropdown';
+import ParsedCommentBox from '@/domain/challenge/my-challenge/ParsedCommentBox';
 import { useBonusMissionSubmitMenu } from './useBonusMissionSubmitMenu';
 
 interface Props {

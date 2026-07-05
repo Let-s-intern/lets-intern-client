@@ -3,8 +3,8 @@ import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { MyDailyMission } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
-import BankSelectDropdown from '../my-challenge/mission/BankSelectDropdown';
-import LinkChangeConfirmationModal from '../ui/LinkChangeConfirmationModal';
+import BankSelectDropdown from '@/domain/challenge/my-challenge/mission/BankSelectDropdown';
+import LinkChangeConfirmationModal from '@/domain/challenge/ui/LinkChangeConfirmationModal';
 
 interface Props {
   myDailyMission: MyDailyMission;

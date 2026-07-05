@@ -2,7 +2,7 @@ import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { ReactNode } from 'react';
-import LinkChangeConfirmationModal from '../../../ui/LinkChangeConfirmationModal';
+import LinkChangeConfirmationModal from '@/domain/challenge/ui/LinkChangeConfirmationModal';
 import BankSelectDropdown from '../../mission/BankSelectDropdown';
 import MissionToast from '../../mission/MissionToast';
 import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';

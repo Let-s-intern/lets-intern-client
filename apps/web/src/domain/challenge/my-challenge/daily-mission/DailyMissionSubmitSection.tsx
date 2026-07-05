@@ -7,13 +7,13 @@ import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { MyDailyMission, Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
-import BonusMissionInputSection from '../../../bonus-mission/BonusMissionInputSection';
-import DailyMissionLinkInputSection from '../../../daily-mission/DailyMissionLinkInputSection';
-import DailyMissionReviewSection from '../../../daily-mission/DailyMissionReviewSection';
-import DailyMissionSubmitButton from '../../../daily-mission/ui/DailyMissionSubmitButton';
-import OtMissionInputSection from '../../../ot-mission/OtMissionInputSection';
-import LinkChangeConfirmationModal from '../../../ui/LinkChangeConfirmationModal';
-import LastMissionSubmitModal from '../../modal/LastMissionSubmitModal';
+import BonusMissionInputSection from '@/domain/challenge/my-challenge/bonus-mission/BonusMissionInputSection';
+import DailyMissionLinkInputSection from '@/domain/challenge/my-challenge/daily-mission/DailyMissionLinkInputSection';
+import DailyMissionReviewSection from '@/domain/challenge/my-challenge/daily-mission/DailyMissionReviewSection';
+import DailyMissionSubmitButton from '@/domain/challenge/my-challenge/daily-mission/ui/DailyMissionSubmitButton';
+import OtMissionInputSection from '@/domain/challenge/my-challenge/ot-mission/OtMissionInputSection';
+import LinkChangeConfirmationModal from '@/domain/challenge/ui/LinkChangeConfirmationModal';
+import LastMissionSubmitModal from '@/domain/challenge/my-challenge/modal/LastMissionSubmitModal';
 
 interface Props {
   myDailyMission: MyDailyMission;
