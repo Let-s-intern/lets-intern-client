@@ -1,10 +1,10 @@
-import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { usePostBlogBonus } from '@/api/review/review';
+import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { MyDailyMission } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
-import LinkChangeConfirmationModal from '../modal/LinkChangeConfirmationModal';
 import BankSelectDropdown from '../my-challenge/mission/BankSelectDropdown';
+import LinkChangeConfirmationModal from '../ui/LinkChangeConfirmationModal';
 
 interface Props {
   myDailyMission: MyDailyMission;

@@ -1,5 +1,5 @@
 import { useParams } from 'next/navigation';
-import BonusMissionModal from '../../../bonus-mission/modal/BonusMissionModal';
+import BonusMissionModal from '../../modal/BonusMissionModal';
 import DashboardCreateReviewModal from '../../../dashboard/modal/DashboardCreateReviewModal';
 import MobileReviewModal from '../../modal/MobileReviewModal';
 import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';
