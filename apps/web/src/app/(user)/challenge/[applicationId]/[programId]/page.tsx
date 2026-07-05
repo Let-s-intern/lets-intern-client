@@ -10,7 +10,7 @@ import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
-import MissionCalendar from '@/domain/challenge/my-challenge/mission-calendar/MissionCalendar';
+import MissionCalendar from '@/domain/challenge/my-challenge/mission/calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/domain/challenge/ui/MissionTooltipQuestion';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';

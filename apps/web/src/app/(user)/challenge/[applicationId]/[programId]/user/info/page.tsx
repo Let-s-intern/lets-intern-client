@@ -8,9 +8,9 @@ import { usePatchChallengeGoal } from '@/api/challenge/challenge';
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
-import LoadingContainer from '@/common/loading/LoadingContainer';
 import Input from '@/common/input/v2/Input';
-import { DASHBOARD_FIRST_VISIT_GOAL } from '@/domain/challenge/my-challenge/mission-submit/MissionSubmitZeroSection';
+import LoadingContainer from '@/common/loading/LoadingContainer';
+import { DASHBOARD_FIRST_VISIT_GOAL } from '@/domain/challenge/my-challenge/mission/submit/MissionSubmitZeroSection';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,

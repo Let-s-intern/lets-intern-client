@@ -1,5 +1,5 @@
-import { CheckboxItem } from '@/domain/challenge/my-challenge/talent-pool/WishJobCheckBox';
 import { WishJobModal } from '@/common/modal/WishJobModal';
+import { CheckboxItem } from '@/domain/challenge/my-challenge/mission/talent/WishJobCheckBox';
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
 import { useEffect, useMemo, useState } from 'react';
 

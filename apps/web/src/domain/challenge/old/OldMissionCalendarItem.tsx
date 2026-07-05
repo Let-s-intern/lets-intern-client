@@ -1,6 +1,6 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import MissionTopStatusBar from '../my-challenge/mission-calendar/MissionTopStatusBar';
+import MissionTopStatusBar from './MissionTopStatusBar';
 import OldMissionIcon from './OldMissionIcon';
 import OldMissionNotStartedIcon from './OldMissionNotStartedIcon';
 import OldMissionTodayIcon from './OldMissionTodayIcon';

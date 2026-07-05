@@ -1,11 +1,11 @@
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
-import OtherMissionSection from '@/domain/challenge/my-challenge/mission/OtherMissionSection';
 import OldMissionCalendarSection from '@/domain/challenge/old/OldMissionCalendarSection';
 import OldMyDailyMissionSection from '@/domain/challenge/old/OldMyDailyMissionSection';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import OldOtherMissionSection from './OldOtherMissionSection';
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -53,7 +53,10 @@ const OldMyChallengeDashboard = () => {
         <OldMyDailyMissionSection myDailyMission={myDailyMission} />
       )}
       {typeof isChallengeSubmitDone === 'boolean' && (
-        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
+        <OldOtherMissionSection
+          todayTh={todayTh}
+          isDone={isChallengeSubmitDone}
+        />
       )}
     </main>
   );

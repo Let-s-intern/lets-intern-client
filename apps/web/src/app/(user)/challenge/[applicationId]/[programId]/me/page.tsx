@@ -3,10 +3,10 @@
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import MissionCalendarSection from '@/domain/challenge/my-challenge/mission-calendar/MissionCalendarSection';
-import MissionGuideSection from '@/domain/challenge/my-challenge/mission-guide/MissionGuideSection';
+import MissionCalendarSection from '@/domain/challenge/my-challenge/mission/calendar/MissionCalendarSection';
+import MissionGuideSection from '@/domain/challenge/my-challenge/mission/guide/MissionGuideSection';
 import MissionMentorCommentSection from '@/domain/challenge/my-challenge/mission/MissionMentorCommentSection';
-import MissionSubmitSection from '@/domain/challenge/my-challenge/mission-submit/MissionSubmitSection';
+import MissionSubmitSection from '@/domain/challenge/my-challenge/mission/submit/MissionSubmitSection';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';

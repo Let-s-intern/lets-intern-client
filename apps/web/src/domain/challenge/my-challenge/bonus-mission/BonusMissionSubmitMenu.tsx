@@ -1,7 +1,7 @@
+import BankSelectDropdown from '@/domain/challenge/my-challenge/ui/BankSelectDropdown';
+import ParsedCommentBox from '@/domain/challenge/my-challenge/ui/ParsedCommentBox';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import BankSelectDropdown from '@/domain/challenge/my-challenge/mission/BankSelectDropdown';
-import ParsedCommentBox from '@/domain/challenge/my-challenge/ui/ParsedCommentBox';
 import { useBonusMissionSubmitMenu } from './useBonusMissionSubmitMenu';
 
 interface Props {

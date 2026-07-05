@@ -1,16 +1,16 @@
 import { usePostDocumentMutation } from '@/api/mission/mission';
 import { DocumentType } from '@/api/mission/missionSchema';
-import {
-  getPresignedUrl,
-  uploadToS3,
-} from '@/domain/challenge/api/presignedUrl';
 import { convertReportTypeToPathname } from '@/api/report';
 import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
 } from '@/api/user/user';
+import {
+  getPresignedUrl,
+  uploadToS3,
+} from '@/domain/challenge/api/presignedUrl';
 import { useEffect, useRef, useState } from 'react';
-import { UploadedFiles } from '../mission-submit/MissionSubmitTalentPoolSection';
+import { UploadedFiles } from '../mission/talent/MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
