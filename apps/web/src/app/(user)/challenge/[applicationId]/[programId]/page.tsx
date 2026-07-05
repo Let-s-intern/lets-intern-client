@@ -11,7 +11,7 @@ import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
 import MissionCalendar from '@/domain/challenge/my-challenge/mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '@/domain/challenge/ui/tooltip-question/MissionTooltipQuestion';
+import MissionTooltipQuestion from '@/domain/challenge/ui/MissionTooltipQuestion';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';

@@ -1,9 +1,9 @@
-import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import {
   useGetChallengeReviewStatus,
   usePostChallengeAttendance,
 } from '@/api/challenge/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
+import { usePatchAttendance } from '@/domain/challenge/api/attendance';
 import { MyDailyMission, Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
@@ -11,8 +11,8 @@ import BonusMissionInputSection from '../../../bonus-mission/BonusMissionInputSe
 import DailyMissionLinkInputSection from '../../../daily-mission/DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../../daily-mission/DailyMissionReviewSection';
 import DailyMissionSubmitButton from '../../../daily-mission/ui/DailyMissionSubmitButton';
-import LinkChangeConfirmationModal from '../../../modal/LinkChangeConfirmationModal';
 import OtMissionInputSection from '../../../ot-mission/OtMissionInputSection';
+import LinkChangeConfirmationModal from '../../../ui/LinkChangeConfirmationModal';
 import LastMissionSubmitModal from '../../modal/LastMissionSubmitModal';
 
 interface Props {

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import ScoreTooltipQuestion from '../../ui/tooltip-question/ScoreTooltipQuestion';
+import ScoreTooltipQuestion from '../ui/ScoreTooltipQuestion';
 import CertificatePaper from '../CertificatePaper';
 
 interface Props {
