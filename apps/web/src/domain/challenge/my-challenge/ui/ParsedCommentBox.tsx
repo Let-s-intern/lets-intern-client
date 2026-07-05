@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
-import { parseLink } from './utils/parseLink';
+import { parseLink } from '../utils/parseLink';
 
 interface Props {
   comment?: string;

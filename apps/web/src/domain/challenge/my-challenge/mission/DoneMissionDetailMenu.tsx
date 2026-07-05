@@ -9,7 +9,7 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useParams } from 'next/navigation';
 import OtVideo from '@/domain/challenge/my-challenge/ot-mission/OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
-import ParsedCommentBox from '../ParsedCommentBox';
+import ParsedCommentBox from '../ui/ParsedCommentBox';
 interface Props {
   missionDetail: UserChallengeMissionDetail;
   missionByType: MyChallengeMissionByType;

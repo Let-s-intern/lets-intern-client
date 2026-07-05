@@ -7,7 +7,7 @@ import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { Schedule, UserChallengeMissionDetail } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import ParsedCommentBox from '../ParsedCommentBox';
+import ParsedCommentBox from '../ui/ParsedCommentBox';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
