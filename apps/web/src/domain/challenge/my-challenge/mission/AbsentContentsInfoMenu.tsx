@@ -1,7 +1,7 @@
 import { UserChallengeMissionDetail } from '@/schema';
 
 import Link from 'next/link';
-import AbsentContentsDropdown from '../dropdown/AbsentContentsDropdown';
+import AbsentContentsDropdown from './AbsentContentsDropdown';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;

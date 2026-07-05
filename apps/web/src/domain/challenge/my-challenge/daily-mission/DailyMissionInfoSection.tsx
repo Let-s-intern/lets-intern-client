@@ -2,7 +2,7 @@ import HybridLink from '@/common/HybridLink';
 import { UserChallengeMissionDetail } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import OtVideo from '@/domain/challenge/my-challenge/ot-mission/OtVideo';
-import ContentsDropdown from '@/domain/challenge/my-challenge/dropdown/ContentsDropdown';
+import ContentsDropdown from '@/domain/challenge/my-challenge/daily-mission/ContentsDropdown';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;

@@ -3,9 +3,9 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import BonusMissionSubmitMenu from '@/domain/challenge/my-challenge/bonus-mission/BonusMissionSubmitMenu';
 import OtMissionSubmitMenu from '@/domain/challenge/my-challenge/ot-mission/OtMissionSubmitMenu';
 import OtVideo from '@/domain/challenge/my-challenge/ot-mission/OtVideo';
-import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
-import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
-import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
+import MenuContentsDropdown from './MenuContentsDropdown';
+import AbsentContentsInfoMenu from './AbsentContentsInfoMenu';
+import AbsentMissionSubmitMenu from './AbsentMissionSubmitMenu';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
