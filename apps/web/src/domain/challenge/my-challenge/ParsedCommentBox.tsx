@@ -1,34 +1,7 @@
-import HybridLink from '@/common/HybridLink';
 import { memo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
-
-/** 링크는 Link element로 변경 */
-export const parseLink = (text: string, openInNewTab = true) => {
-  const regex = /\((.*?)\)\[(.*?)\]/g;
-  let startIndex = 0;
-  const result = [];
-
-  text.replace(regex, (match, caption, url, offset, string) => {
-    const element = (
-      <HybridLink
-        key={offset}
-        href={url}
-        className="text-primary underline"
-        {...(openInNewTab && { target: '_blank', rel: 'noopener noreferrer' })}
-      >
-        {caption}
-      </HybridLink>
-    );
-
-    result.push(string.substring(startIndex, offset), element);
-    startIndex = offset + match.length;
-    return '';
-  });
-  result.push(text.substring(startIndex));
-
-  return result;
-};
+import { parseLink } from './utils/parseLink';
 
 interface Props {
   comment?: string;
