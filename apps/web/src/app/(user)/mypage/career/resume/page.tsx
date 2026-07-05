@@ -1,7 +1,7 @@
 'use client';
 
-import { UploadedFiles } from '@/domain/challenge/my-challenge/section/mission-submit/MissionSubmitTalentPoolSection';
-import MyDocUploadSection from '@/domain/challenge/my-challenge/section/MyDocUploadSection';
+import { UploadedFiles } from '@/domain/challenge/my-challenge/mission-submit/MissionSubmitTalentPoolSection';
+import MyDocUploadSection from '@/domain/challenge/my-challenge/doc-upload/MyDocUploadSection';
 import { useCallback, useState } from 'react';
 
 export default function Page() {

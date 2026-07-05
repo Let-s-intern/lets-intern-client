@@ -1,14 +1,14 @@
+import LinkChangeConfirmationModal from '@/domain/challenge/ui/LinkChangeConfirmationModal';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { ReactNode } from 'react';
-import LinkChangeConfirmationModal from '@/domain/challenge/ui/LinkChangeConfirmationModal';
-import BankSelectDropdown from '../../mission/BankSelectDropdown';
-import MissionToast from '../../mission/MissionToast';
-import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';
-import LinkInputSection from '../LinkInputSection';
-import AgreementSection from '../mission-submit-bonus/AgreementSection';
-import { useMissionSubmitBonus } from '../mission-submit-bonus/useMissionSubmitBonus';
+import BankSelectDropdown from '@/domain/challenge/my-challenge/mission/BankSelectDropdown';
+import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
+import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
+import LinkInputSection from '@/domain/challenge/my-challenge/mission-submit/LinkInputSection';
+import AgreementSection from './AgreementSection';
+import { useMissionSubmitBonus } from './hooks/useMissionSubmitBonus';
 
 const DescriptionBox = ({
   children,

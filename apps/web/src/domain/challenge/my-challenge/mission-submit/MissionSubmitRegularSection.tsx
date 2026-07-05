@@ -1,16 +1,16 @@
 import { useParams } from 'next/navigation';
-import BonusMissionModal from '../../modal/BonusMissionModal';
-import DashboardCreateReviewModal from '../../../dashboard/modal/DashboardCreateReviewModal';
-import MobileReviewModal from '../../modal/MobileReviewModal';
-import MissionSubmitButton from '../../mission/ui/MissionSubmitButton';
-import MissionToast from '../../mission/MissionToast';
-import LinkInputSection from '../LinkInputSection';
-import { MissionSubmitListForm } from '../mission-submit-list-form';
-import { MissionReviewInputSection } from '../MissionReviewInputSection';
+import DashboardCreateReviewModal from '@/domain/challenge/dashboard/modal/DashboardCreateReviewModal';
+import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
+import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
+import BonusMissionModal from '@/domain/challenge/my-challenge/modal/BonusMissionModal';
+import MobileReviewModal from '@/domain/challenge/my-challenge/modal/MobileReviewModal';
+import LinkInputSection from '@/domain/challenge/my-challenge/mission-submit/LinkInputSection';
+import { MissionReviewInputSection } from '@/domain/challenge/my-challenge/mission-submit/MissionReviewInputSection';
 import {
   type MissionSubmitRegularAttendanceInfo,
   useMissionSubmitRegular,
-} from '../mission-submit-regular/useMissionSubmitRegular';
+} from './hooks/useMissionSubmitRegular';
+import { MissionSubmitListForm } from './mission-submit-list-form';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;

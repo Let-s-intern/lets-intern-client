@@ -1,6 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
-import AgreementCheckbox from '../../mission/AgreementCheckbox';
+import AgreementCheckbox from '@/domain/challenge/my-challenge/mission/AgreementCheckbox';
 
 const DescriptionBox = ({
   children,

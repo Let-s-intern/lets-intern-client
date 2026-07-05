@@ -9,7 +9,7 @@ import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
+import RecommendedProgramSection from '../../my-challenge/recommended-program/RecommendedProgramSection';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');

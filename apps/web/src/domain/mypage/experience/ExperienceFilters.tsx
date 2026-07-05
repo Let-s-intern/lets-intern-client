@@ -1,7 +1,7 @@
 import { useGetUserExperienceFiltersQuery } from '@/api/experience/experience';
 import { ActivityType, CategoryType } from '@/api/experience/experienceSchema';
-import { FilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
-import { MultiFilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
+import { FilterDropdown } from '@/domain/challenge/my-challenge/mission-submit/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
+import { MultiFilterDropdown } from '@/domain/challenge/my-challenge/mission-submit/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
 import { convertFilterResToUiFormat } from '@/utils/experience';
 import { useEffect, useMemo } from 'react';
 

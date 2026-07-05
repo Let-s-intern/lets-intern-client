@@ -1,8 +1,8 @@
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { clsx } from 'clsx';
-import { UploadedFiles } from './mission-submit/MissionSubmitTalentPoolSection';
-import { DocumentFileItem } from './my-doc-upload/DocumentFileItem';
-import { useMyDocUpload } from './my-doc-upload/useMyDocUpload';
+import { UploadedFiles } from '@/domain/challenge/my-challenge/mission-submit/MissionSubmitTalentPoolSection';
+import { DocumentFileItem } from '@/domain/challenge/my-challenge/doc-upload/DocumentFileItem';
+import { useMyDocUpload } from '@/domain/challenge/my-challenge/doc-upload/useMyDocUpload';
 
 interface MyDocUploadSectionProps {
   className?: string;
