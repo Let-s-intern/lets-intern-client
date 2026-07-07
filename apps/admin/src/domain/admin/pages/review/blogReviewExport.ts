@@ -66,6 +66,9 @@ export function downloadBlogReviewCsv(reviews: AdminBlogReview[]): void {
   const link = document.createElement('a');
   link.href = url;
   link.download = `blog-review-${dayjs().format('YYYYMMDD-HHmmss')}.csv`;
+  // Firefox 등에서 DOM 미부착 <a> 의 click() 이 무시될 수 있어 body 에 붙였다 제거
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 }
