@@ -8,6 +8,7 @@ export {
 export {
   CATEGORY_TEMPLATE_DEFAULTS,
   getPriceByDuration,
+  getLowestPrice,
   LIVE_MENTOR_CARDS,
   LIVE_MENTOR_DETAILS,
   LIVE_MENTORING_CATEGORIES,

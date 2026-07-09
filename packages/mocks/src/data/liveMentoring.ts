@@ -45,6 +45,23 @@ export function getPriceByDuration(durationMin: LiveMentoringDuration): number {
   return PRICE_BY_DURATION[durationMin];
 }
 
+/**
+ * 여러 진행시간이 선택된 경우 웹에는 **가장 낮은 금액**을 노출한다.
+ * (30분 35,000 < 50분 60,000 이므로 사실상 최소 진행시간의 가격)
+ * 빈 배열이면 0.
+ */
+export function getLowestPrice(durations: LiveMentoringDuration[]): number {
+  if (durations.length === 0) return 0;
+  return Math.min(...durations.map(getPriceByDuration));
+}
+
+/** 고정 시작일에 days 를 더한 YYYY-MM-DD 문자열 (목 피드백 기간 종료일 파생용). */
+function addDays(isoDate: string, days: number): string {
+  const d = new Date(isoDate);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 // ─────────────────────────────────────────────────────────────
 // 타입 정의 (PRD §4.2 ~ §4.7)
 // ─────────────────────────────────────────────────────────────
@@ -59,12 +76,17 @@ export interface LiveMentorCard {
   mosaicBlur: number;
   headline: string;
   mentoringPoints: string;
-  category: LiveMentoringCategory;
-  durationMin: LiveMentoringDuration;
+  /** 멘토가 오픈한 타입(다중). */
+  categories: LiveMentoringCategory[];
+  /** 멘토가 오픈한 진행시간(다중). */
+  durations: LiveMentoringDuration[];
+  /** 여러 진행시간 선택 시 최저가. */
   price: number;
   rating: number;
   reviewCount: number;
-  nextAvailableDate: string | null;
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+  feedbackStartDate: string;
+  feedbackEndDate: string;
 }
 
 /** 멘토 이력 1건 (노출 선택 가능) */
@@ -121,17 +143,23 @@ export interface LiveMentoringReview {
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export interface LiveMentorDetail {
   mentorId: number;
-  category: LiveMentoringCategory;
-  durationMin: LiveMentoringDuration;
+  categories: LiveMentoringCategory[];
+  durations: LiveMentoringDuration[];
   price: number;
   rating: number;
   reviewCount: number;
+  feedbackStartDate: string;
+  feedbackEndDate: string;
   profile: LiveMentorProfile;
   template: LiveMentoringTemplate;
   reviews: LiveMentoringReview[];
 }
 
-/** 오픈 설정(메타) (PRD §5 S3-a) */
+/**
+ * 오픈 설정(메타) (PRD §5 S3-a).
+ * 오픈은 하나만 가능하므로 이 설정이 곧 단일 오픈이다.
+ * 타입·진행시간은 다중 선택, 가격은 진행시간에 따라 파생(최저가)한다.
+ */
 export interface LiveMentoringSettings {
   profileVisible: boolean;
   mosaicEnabled: boolean;
@@ -140,9 +168,11 @@ export interface LiveMentoringSettings {
   profileImage: string | null;
   introduction: string;
   careers: LiveMentoringCareer[];
-  durationMin: LiveMentoringDuration;
-  price: number;
-  category: LiveMentoringCategory;
+  categories: LiveMentoringCategory[];
+  durations: LiveMentoringDuration[];
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+  feedbackStartDate: string;
+  feedbackEndDate: string;
 }
 
 /** 정산 현황 행 (PRD §4.6, read-only) */
@@ -153,11 +183,14 @@ export interface SettlementRow {
   status: 'PENDING' | 'PAID';
 }
 
-/** 오픈 현황 행 (PRD §4.7, read-only) */
+/** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
 export interface OpenStatusRow {
-  category: LiveMentoringCategory;
-  durationMin: LiveMentoringDuration;
+  categories: LiveMentoringCategory[];
+  durations: LiveMentoringDuration[];
   price: number;
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+  feedbackStartDate: string;
+  feedbackEndDate: string;
   status: 'OPEN' | 'CLOSED';
   reservationCount: number;
 }
@@ -296,8 +329,14 @@ interface MentorSeed {
   nickname: string;
   headline: string;
   mentoringPoints: string;
+  /** 대표 카테고리(템플릿 기본값 기준). */
   category: LiveMentoringCategory;
+  /** 기본 진행시간. */
   durationMin: LiveMentoringDuration;
+  /** 오픈한 타입(다중). 미지정 시 [category]. */
+  categories?: LiveMentoringCategory[];
+  /** 오픈한 진행시간(다중). 미지정 시 [durationMin]. */
+  durations?: LiveMentoringDuration[];
   rating: number;
   reviewCount: number;
   profileVisible: boolean;
@@ -318,6 +357,25 @@ function imageFor(seed: MentorSeed): string | null {
     : null;
 }
 
+/** 시드의 오픈 타입(다중) — 미지정 시 대표 카테고리 단일. */
+function categoriesFor(seed: MentorSeed): LiveMentoringCategory[] {
+  return seed.categories ?? [seed.category];
+}
+
+/** 시드의 오픈 진행시간(다중) — 미지정 시 기본 진행시간 단일. */
+function durationsFor(seed: MentorSeed): LiveMentoringDuration[] {
+  return seed.durations ?? [seed.durationMin];
+}
+
+/** 시드의 피드백 진행 일정(오픈 기간) — 시작은 nextAvailableDate, 종료는 +13일. */
+function periodFor(seed: MentorSeed): {
+  feedbackStartDate: string;
+  feedbackEndDate: string;
+} {
+  const feedbackStartDate = seed.nextAvailableDate ?? '2026-07-10';
+  return { feedbackStartDate, feedbackEndDate: addDays(feedbackStartDate, 13) };
+}
+
 /**
  * 멘토 시드 — 12명 이상(size=9 기준 2페이지 이상), 카테고리·30/50분·평점(0~5)·
  * 후기 수 분포를 다양화. 모자이크/프로필 비노출 케이스도 섞는다.
@@ -330,6 +388,9 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mentoringPoints: '두괄식 구조와 경험 소재 발굴 위주로 봅니다.',
     category: 'PERSONAL_STATEMENT',
     durationMin: 50,
+    // 다중 타입·진행시간 오픈 예시 → 웹에는 최저가(30분 35,000원)로 노출.
+    categories: ['PERSONAL_STATEMENT', 'RESUME'],
+    durations: [30, 50],
     rating: 4.9,
     reviewCount: 182,
     profileVisible: true,
@@ -689,22 +750,25 @@ const MENTOR_SEEDS: MentorSeed[] = [
 ];
 
 /** 리스트 카드 목록 — size=9 기준 2페이지 이상. */
-export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.map((seed) => ({
-  mentorId: seed.mentorId,
-  nickname: seed.nickname,
-  profileImage: imageFor(seed),
-  profileVisible: seed.profileVisible,
-  mosaicEnabled: seed.mosaicEnabled,
-  mosaicBlur: seed.mosaicBlur,
-  headline: seed.headline,
-  mentoringPoints: seed.mentoringPoints,
-  category: seed.category,
-  durationMin: seed.durationMin,
-  price: getPriceByDuration(seed.durationMin),
-  rating: seed.rating,
-  reviewCount: seed.reviewCount,
-  nextAvailableDate: seed.nextAvailableDate,
-}));
+export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.map((seed) => {
+  const durations = durationsFor(seed);
+  return {
+    mentorId: seed.mentorId,
+    nickname: seed.nickname,
+    profileImage: imageFor(seed),
+    profileVisible: seed.profileVisible,
+    mosaicEnabled: seed.mosaicEnabled,
+    mosaicBlur: seed.mosaicBlur,
+    headline: seed.headline,
+    mentoringPoints: seed.mentoringPoints,
+    categories: categoriesFor(seed),
+    durations,
+    price: getLowestPrice(durations),
+    rating: seed.rating,
+    reviewCount: seed.reviewCount,
+    ...periodFor(seed),
+  };
+});
 
 const REVIEW_CONTENTS = [
   '군더더기 없이 핵심만 짚어주셔서 방향이 확실해졌어요.',
@@ -759,11 +823,12 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
       seed.mentorId,
       {
         mentorId: seed.mentorId,
-        category: seed.category,
-        durationMin: seed.durationMin,
-        price: getPriceByDuration(seed.durationMin),
+        categories: categoriesFor(seed),
+        durations: durationsFor(seed),
+        price: getLowestPrice(durationsFor(seed)),
         rating: seed.rating,
         reviewCount: seed.reviewCount,
+        ...periodFor(seed),
         profile: {
           visible: seed.profileVisible,
           mosaicEnabled: seed.mosaicEnabled,
@@ -788,7 +853,7 @@ const MY_MENTOR_ID = 1;
 
 const mySeed = MENTOR_SEEDS[0];
 
-/** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. */
+/** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   profileVisible: mySeed.profileVisible,
   mosaicEnabled: mySeed.mosaicEnabled,
@@ -797,9 +862,9 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   profileImage: imageFor(mySeed),
   introduction: mySeed.introduction,
   careers: mySeed.careers,
-  durationMin: mySeed.durationMin,
-  price: getPriceByDuration(mySeed.durationMin),
-  category: mySeed.category,
+  categories: categoriesFor(mySeed),
+  durations: durationsFor(mySeed),
+  ...periodFor(mySeed),
 };
 
 /** GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분. */
@@ -828,27 +893,17 @@ export const SETTLEMENT_ROWS: SettlementRow[] = [
   },
 ];
 
-/** GET /mentor/live-mentoring/open-status — 오픈 현황(read-only). */
+/**
+ * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
+ * 오픈은 하나만 가능하므로 현재 오픈된 단일 건을 표시한다.
+ */
 export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
   {
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
-    price: getPriceByDuration(50),
+    categories: categoriesFor(mySeed),
+    durations: durationsFor(mySeed),
+    price: getLowestPrice(durationsFor(mySeed)),
+    ...periodFor(mySeed),
     status: 'OPEN',
-    reservationCount: 7,
-  },
-  {
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 30,
-    price: getPriceByDuration(30),
-    status: 'OPEN',
-    reservationCount: 3,
-  },
-  {
-    category: 'RESUME',
-    durationMin: 30,
-    price: getPriceByDuration(30),
-    status: 'CLOSED',
-    reservationCount: 0,
+    reservationCount: 10,
   },
 ];

@@ -1039,7 +1039,7 @@ export const handlers = [
 
     let list: LiveMentorCard[] =
       category && category !== 'ALL'
-        ? LIVE_MENTOR_CARDS.filter((c) => c.category === category)
+        ? LIVE_MENTOR_CARDS.filter((c) => c.categories.includes(category))
         : [...LIVE_MENTOR_CARDS];
 
     if (sort === 'rating') {

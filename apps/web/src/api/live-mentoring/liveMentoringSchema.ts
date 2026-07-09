@@ -31,12 +31,17 @@ export const liveMentorCardSchema = z.object({
   mosaicBlur: z.number(),
   headline: z.string(),
   mentoringPoints: z.string(),
-  category: liveMentoringCategorySchema,
-  durationMin: liveMentoringDurationSchema,
+  /** 멘토가 오픈한 타입(다중). */
+  categories: z.array(liveMentoringCategorySchema),
+  /** 멘토가 오픈한 진행시간(다중). */
+  durations: z.array(liveMentoringDurationSchema),
+  /** 여러 진행시간 선택 시 최저가. */
   price: z.number(),
   rating: z.number(),
   reviewCount: z.number(),
-  nextAvailableDate: z.string().nullable(),
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
 });
 export type LiveMentorCard = z.infer<typeof liveMentorCardSchema>;
 
@@ -116,11 +121,13 @@ export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export const liveMentorDetailSchema = z.object({
   mentorId: z.number(),
-  category: liveMentoringCategorySchema,
-  durationMin: liveMentoringDurationSchema,
+  categories: z.array(liveMentoringCategorySchema),
+  durations: z.array(liveMentoringDurationSchema),
   price: z.number(),
   rating: z.number(),
   reviewCount: z.number(),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),

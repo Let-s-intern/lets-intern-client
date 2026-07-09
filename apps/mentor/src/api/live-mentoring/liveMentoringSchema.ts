@@ -69,9 +69,13 @@ export const liveMentoringSettingsSchema = z.object({
   profileImage: z.string().nullable(),
   introduction: z.string(),
   careers: z.array(liveMentoringCareerSchema),
-  durationMin: liveMentoringDurationSchema,
-  price: z.number(),
-  category: liveMentoringCategorySchema,
+  /** 오픈한 타입(다중). */
+  categories: z.array(liveMentoringCategorySchema),
+  /** 오픈한 진행시간(다중). */
+  durations: z.array(liveMentoringDurationSchema),
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
 });
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
@@ -93,9 +97,11 @@ export type SettlementListResponse = z.infer<
 
 /** 오픈 현황 행 (PRD §4.7, read-only). */
 export const openStatusRowSchema = z.object({
-  category: liveMentoringCategorySchema,
-  durationMin: liveMentoringDurationSchema,
+  categories: z.array(liveMentoringCategorySchema),
+  durations: z.array(liveMentoringDurationSchema),
   price: z.number(),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
   status: z.enum(['OPEN', 'CLOSED']),
   reservationCount: z.number(),
 });
