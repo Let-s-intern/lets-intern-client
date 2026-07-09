@@ -1,6 +1,4 @@
 import { fetchLiveData } from '@/api/program';
-import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
-import LoadingContainer from '@/common/loading/LoadingContainer';
 import LiveView from '@/domain/program/live-view/LiveView';
 import LiveCTAButtons from '@/domain/program/live-view/ui/LiveCTAButtons';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
@@ -78,10 +76,10 @@ const Page = async ({
   }
 
   return (
-    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+    <>
       <LiveView live={live} />
       <LiveCTAButtons live={live} liveId={id} />
-    </AsyncBoundary>
+    </>
   );
 };
 
