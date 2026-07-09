@@ -18,6 +18,8 @@ interface FeedbackAvailabilityModalProps {
   onClose: () => void;
   /** 모달 오픈 시 그리드 포커스 주차의 기준 날짜 (예: 라이브 피드백 기간 startDate) */
   focusDate?: string;
+  /** 상단에 표시할 피드백 진행 일정(오픈 기간). 지정 시 배너로 노출한다. */
+  openPeriod?: { startDate: string; endDate: string };
 }
 
 /**
@@ -30,6 +32,7 @@ const FeedbackAvailabilityModal = ({
   isOpen,
   onClose,
   focusDate,
+  openPeriod,
 }: FeedbackAvailabilityModalProps) => {
   const [resetCounter, setResetCounter] = useState(0);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -128,6 +131,14 @@ const FeedbackAvailabilityModal = ({
         onClose={onClose}
         className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
       >
+        {openPeriod && (
+          <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+            피드백 진행 일정{' '}
+            <span className="font-semibold">
+              {openPeriod.startDate} ~ {openPeriod.endDate}
+            </span>
+          </div>
+        )}
         {slotsQuery.isPending ? (
           <div className="flex flex-1 items-center justify-center py-20">
             <p className="text-xsmall14 text-neutral-40">

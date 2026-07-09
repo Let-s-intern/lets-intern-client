@@ -158,4 +158,56 @@ describe('OpenSettingsPage — 저장 payload', () => {
     expect(payload.careers[1].visible).toBe(true);
     expect(payload.careers[0].visible).toBe(false);
   });
+
+  it('경력이 여러 개 visible 로 들어와도 대표는 하나로 정규화되어 라디오가 동작한다', () => {
+    // 두 경력 모두 visible=true 인 상태(실 목 데이터 케이스)
+    renderPage({
+      careers: [
+        {
+          company: '네이버',
+          position: '기획',
+          period: '2019-2026',
+          visible: true,
+        },
+        {
+          company: '카카오',
+          position: 'PM',
+          period: '2016-2019',
+          visible: true,
+        },
+      ],
+    });
+
+    // 정규화로 첫 경력만 선택됨
+    expect(screen.getByRole('radio', { name: /네이버/ })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /카카오/ })).not.toBeChecked();
+
+    // 두 번째로 전환 가능
+    fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    expect(payload.careers[0].visible).toBe(false);
+    expect(payload.careers[1].visible).toBe(true);
+  });
+});
+
+describe('OpenSettingsPage — 타입 필수', () => {
+  it('타입을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
+    renderPage({ categories: ['PERSONAL_STATEMENT'] });
+
+    // 유일 선택된 타입 해제 → 0개
+    fireEvent.click(screen.getByRole('button', { name: '자기소개서' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '타입을 최소 1개 이상 선택해야 저장할 수 있어요.',
+    );
+    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+  });
+
+  it('타입이 0개면 저장 클릭해도 mutate 가 호출되지 않는다', () => {
+    renderPage({ categories: [] });
+
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    expect(saveMock).not.toHaveBeenCalled();
+  });
 });

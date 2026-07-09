@@ -17,7 +17,6 @@ import type {
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
-import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import { CATEGORY_LABELS, formatPrice } from '../constants';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
@@ -52,10 +51,18 @@ const OpenSettingsPage = () => {
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
-  const [reservationModalOpen, setReservationModalOpen] = useState(false);
 
   useEffect(() => {
-    if (data) setForm(data);
+    if (!data) return;
+    // 대표 경력은 하나만 노출한다 — 로드 시 첫 번째 노출 경력(없으면 첫 경력)으로 정규화.
+    const repIndex = Math.max(
+      0,
+      data.careers.findIndex((c) => c.visible),
+    );
+    setForm({
+      ...data,
+      careers: data.careers.map((c, i) => ({ ...c, visible: i === repIndex })),
+    });
   }, [data]);
 
   if (!form) {
@@ -69,7 +76,7 @@ const OpenSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringSettings>) =>
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  // 진행시간·타입은 다중 선택. 최소 1개는 유지한다.
+  // 진행시간은 다중 선택(최소 1개 유지).
   const toggleDuration = (duration: LiveMentoringDuration) =>
     setForm((prev) => {
       if (!prev) return prev;
@@ -83,16 +90,13 @@ const OpenSettingsPage = () => {
       return { ...prev, durations };
     });
 
+  // 타입은 다중 선택이며 0개도 허용한다(단, 0개면 저장 불가).
   const toggleCategory = (category: LiveMentoringCategory) =>
     setForm((prev) => {
       if (!prev) return prev;
-      const has = prev.categories.includes(category);
-      const categories =
-        has && prev.categories.length > 1
-          ? prev.categories.filter((c) => c !== category)
-          : has
-            ? prev.categories
-            : [...prev.categories, category];
+      const categories = prev.categories.includes(category)
+        ? prev.categories.filter((c) => c !== category)
+        : [...prev.categories, category];
       return { ...prev, categories };
     });
 
@@ -110,13 +114,18 @@ const OpenSettingsPage = () => {
         : prev,
     );
 
-  const handleSave = () =>
+  const noCategorySelected = form.categories.length === 0;
+  const canSave = !noCategorySelected;
+
+  const handleSave = () => {
+    if (!canSave) return;
     save(form, {
       onSuccess: () =>
         showAlert({ title: '저장되었습니다.', variant: 'success' }),
       onError: () =>
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
     });
+  };
 
   // 오픈 닫기 — 현재 오픈을 마감한다(목: 확인 알럿).
   const handleCloseOpen = () =>
@@ -239,33 +248,9 @@ const OpenSettingsPage = () => {
           </section>
 
           <section className={cardClass}>
-            <h2 className={sectionTitleClass}>라이브 슬롯 · 예약</h2>
-            <p className="mb-3 text-xs text-gray-500">
-              라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미 예약·오픈된
-              시간과 겹치지 않게 슬롯을 열 수 있어요.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setSlotModalOpen(true)}
-                className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
-              >
-                라이브 슬롯 오픈
-              </button>
-              <button
-                type="button"
-                onClick={() => setReservationModalOpen(true)}
-                className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600"
-              >
-                멘티 예약 내역
-              </button>
-            </div>
-          </section>
-
-          <section className={cardClass}>
             <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
             <p className="mb-3 text-xs text-gray-500">
-              멘토링(피드백)을 진행할 오픈 기간을 설정하세요. 오픈은 하나만
+              멘토링(피드백)을 진행할 오픈 기간을 먼저 설정하세요. 오픈은 하나만
               가능합니다.
             </p>
             <div className="flex flex-wrap items-center gap-2">
@@ -286,6 +271,22 @@ const OpenSettingsPage = () => {
                 className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
               />
             </div>
+          </section>
+
+          <section className={cardClass}>
+            <h2 className={sectionTitleClass}>라이브 슬롯</h2>
+            <p className="mb-3 text-xs text-gray-500">
+              라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미 예약·오픈된
+              시간과 겹치지 않게 슬롯을 열 수 있어요. 위에서 설정한 피드백 진행
+              일정이 모달 상단에 표시됩니다.
+            </p>
+            <button
+              type="button"
+              onClick={() => setSlotModalOpen(true)}
+              className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+            >
+              라이브 슬롯 오픈
+            </button>
           </section>
 
           <section className={cardClass}>
@@ -337,6 +338,11 @@ const OpenSettingsPage = () => {
                 );
               })}
             </div>
+            {noCategorySelected && (
+              <p role="alert" className="text-system-error mt-3 text-xs">
+                타입을 최소 1개 이상 선택해야 저장할 수 있어요.
+              </p>
+            )}
           </section>
         </div>
 
@@ -357,7 +363,7 @@ const OpenSettingsPage = () => {
         <button
           type="button"
           onClick={handleSave}
-          disabled={isPending}
+          disabled={isPending || !canSave}
           className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? '저장 중...' : '저장'}
@@ -368,10 +374,10 @@ const OpenSettingsPage = () => {
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
         focusDate={form.feedbackStartDate}
-      />
-      <ReservationListModal
-        isOpen={reservationModalOpen}
-        onClose={() => setReservationModalOpen(false)}
+        openPeriod={{
+          startDate: form.feedbackStartDate,
+          endDate: form.feedbackEndDate,
+        }}
       />
       <MentorAlertModal {...alertProps} />
     </div>
