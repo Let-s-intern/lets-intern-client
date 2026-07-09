@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
@@ -86,11 +86,36 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
     ),
   );
 
+  // 클릭으로 연 그룹은 3초 뒤 자동 축소한다.
+  const collapseTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
+    {},
+  );
+
   const toggleGroup = (name: string) =>
-    setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+    setOpenGroups((prev) => {
+      const willOpen = !prev[name];
+      if (collapseTimers.current[name]) {
+        clearTimeout(collapseTimers.current[name]);
+        delete collapseTimers.current[name];
+      }
+      if (willOpen) {
+        collapseTimers.current[name] = setTimeout(() => {
+          setOpenGroups((p) => ({ ...p, [name]: false }));
+          delete collapseTimers.current[name];
+        }, 3000);
+      }
+      return { ...prev, [name]: willOpen };
+    });
 
   useEffect(() => {
     setIsPwa(window.matchMedia('(display-mode: standalone)').matches);
+  }, []);
+
+  useEffect(() => {
+    const timers = collapseTimers.current;
+    return () => {
+      Object.values(timers).forEach(clearTimeout);
+    };
   }, []);
 
   return (
