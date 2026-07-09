@@ -88,8 +88,21 @@ export const settlementRowSchema = z.object({
 });
 export type SettlementRow = z.infer<typeof settlementRowSchema>;
 
+/** 개별 정산 내역 항목 (완료 건별). */
+export const settlementItemSchema = z.object({
+  settlementId: z.number(),
+  date: z.string(),
+  menteeName: z.string(),
+  category: liveMentoringCategorySchema,
+  durationMin: liveMentoringDurationSchema,
+  amount: z.number(),
+  status: z.enum(['PENDING', 'PAID']),
+});
+export type SettlementItem = z.infer<typeof settlementItemSchema>;
+
 export const settlementListResponseSchema = z.object({
   settlementList: z.array(settlementRowSchema),
+  itemList: z.array(settlementItemSchema),
 });
 export type SettlementListResponse = z.infer<
   typeof settlementListResponseSchema

@@ -19,10 +19,12 @@ export {
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
+  SETTLEMENT_ITEMS,
 } from './data/liveMentoring';
 export type {
   ChecklistItem,
   LiveMentorCard,
+  LiveMentorChallenge,
   LiveMentorDetail,
   LiveMentoringCareer,
   LiveMentoringCategory,
@@ -33,4 +35,5 @@ export type {
   LiveMentorProfile,
   OpenStatusRow,
   SettlementRow,
+  SettlementItem,
 } from './data/liveMentoring';

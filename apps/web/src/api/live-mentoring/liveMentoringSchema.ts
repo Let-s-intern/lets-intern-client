@@ -131,5 +131,13 @@ export const liveMentorDetailSchema = z.object({
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),
+  /** 이 멘토가 참여 중인 챌린지 (공개 상세 하단). */
+  challenges: z.array(
+    z.object({
+      challengeId: z.number(),
+      title: z.string(),
+      thumbnail: z.string().nullable(),
+    }),
+  ),
 });
 export type LiveMentorDetail = z.infer<typeof liveMentorDetailSchema>;

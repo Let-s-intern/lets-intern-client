@@ -140,6 +140,13 @@ export interface LiveMentoringReview {
   createdAt: string;
 }
 
+/** 멘토가 참여 중인 챌린지 (공개 상세 하단 노출용) */
+export interface LiveMentorChallenge {
+  challengeId: number;
+  title: string;
+  thumbnail: string | null;
+}
+
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export interface LiveMentorDetail {
   mentorId: number;
@@ -153,6 +160,8 @@ export interface LiveMentorDetail {
   profile: LiveMentorProfile;
   template: LiveMentoringTemplate;
   reviews: LiveMentoringReview[];
+  /** 이 멘토가 참여 중인 챌린지. */
+  challenges: LiveMentorChallenge[];
 }
 
 /**
@@ -175,11 +184,22 @@ export interface LiveMentoringSettings {
   feedbackEndDate: string;
 }
 
-/** 정산 현황 행 (PRD §4.6, read-only) */
+/** 정산 현황 행 — 기간별 합계 (PRD §4.6, read-only) */
 export interface SettlementRow {
   period: string;
   completedCount: number;
   grossAmount: number;
+  status: 'PENDING' | 'PAID';
+}
+
+/** 개별 정산 내역 — 완료된 멘토링 건별 (read-only) */
+export interface SettlementItem {
+  settlementId: number;
+  date: string;
+  menteeName: string;
+  category: LiveMentoringCategory;
+  durationMin: LiveMentoringDuration;
+  amount: number;
   status: 'PENDING' | 'PAID';
 }
 
@@ -374,6 +394,22 @@ function periodFor(seed: MentorSeed): {
 } {
   const feedbackStartDate = seed.nextAvailableDate ?? '2026-07-10';
   return { feedbackStartDate, feedbackEndDate: addDays(feedbackStartDate, 13) };
+}
+
+/** 카테고리별 대표 챌린지 제목(공개 상세 하단 "참여 중인 챌린지"용 목). */
+const CHALLENGE_TITLE_BY_CATEGORY: Record<LiveMentoringCategory, string> = {
+  PERSONAL_STATEMENT: '자기소개서 완성 챌린지',
+  RESUME: '이력서 완성 챌린지',
+  PORTFOLIO: '포트폴리오 완성 챌린지',
+};
+
+/** 시드가 참여 중인 챌린지(다중 타입이면 각 타입별 대표 챌린지). */
+function challengesFor(seed: MentorSeed): LiveMentorChallenge[] {
+  return categoriesFor(seed).map((category, i) => ({
+    challengeId: seed.mentorId * 10 + i,
+    title: CHALLENGE_TITLE_BY_CATEGORY[category],
+    thumbnail: null,
+  }));
 }
 
 /**
@@ -840,6 +876,7 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
         },
         template: templateFor(seed),
         reviews: reviewsFor(seed),
+        challenges: challengesFor(seed),
       } satisfies LiveMentorDetail,
     ]),
   );
@@ -895,7 +932,7 @@ export const SETTLEMENT_ROWS: SettlementRow[] = [
 
 /**
  * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
- * 오픈은 하나만 가능하므로 현재 오픈된 단일 건을 표시한다.
+ * 오픈은 하나만 가능하므로 현재 OPEN 은 1건이며, 나머지는 과거 오픈 내역(CLOSED)이다.
  */
 export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
   {
@@ -905,5 +942,64 @@ export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
     ...periodFor(mySeed),
     status: 'OPEN',
     reservationCount: 10,
+  },
+  // 과거 오픈 내역
+  {
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
+    price: getLowestPrice([50]),
+    feedbackStartDate: '2026-06-10',
+    feedbackEndDate: '2026-06-23',
+    status: 'CLOSED',
+    reservationCount: 12,
+  },
+  {
+    categories: ['RESUME'],
+    durations: [30, 50],
+    price: getLowestPrice([30, 50]),
+    feedbackStartDate: '2026-05-12',
+    feedbackEndDate: '2026-05-25',
+    status: 'CLOSED',
+    reservationCount: 8,
+  },
+];
+
+/** GET /mentor/live-mentoring/settlement — 개별 정산 내역(완료 건별, read-only). */
+export const SETTLEMENT_ITEMS: SettlementItem[] = [
+  {
+    settlementId: 1,
+    date: '2026-06-28',
+    menteeName: '김**',
+    category: 'PERSONAL_STATEMENT',
+    durationMin: 50,
+    amount: 60000,
+    status: 'PAID',
+  },
+  {
+    settlementId: 2,
+    date: '2026-06-21',
+    menteeName: '이**',
+    category: 'RESUME',
+    durationMin: 30,
+    amount: 35000,
+    status: 'PAID',
+  },
+  {
+    settlementId: 3,
+    date: '2026-06-14',
+    menteeName: '박**',
+    category: 'PERSONAL_STATEMENT',
+    durationMin: 30,
+    amount: 35000,
+    status: 'PAID',
+  },
+  {
+    settlementId: 4,
+    date: '2026-04-30',
+    menteeName: '최**',
+    category: 'PORTFOLIO',
+    durationMin: 50,
+    amount: 60000,
+    status: 'PENDING',
   },
 ];

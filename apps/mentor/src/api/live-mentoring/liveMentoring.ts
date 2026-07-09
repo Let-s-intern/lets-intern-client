@@ -104,14 +104,14 @@ export const useUpdateLiveMentoringTemplateMutation = () => {
 
 /**
  * GET /mentor/live-mentoring/settlement — 정산 현황(read-only) 조회.
- * 응답 `settlementList`만 추출해 반환한다.
+ * 기간별 합계(`settlementList`)와 개별 정산 내역(`itemList`)을 함께 반환한다.
  */
 export const useLiveMentoringSettlementQuery = () => {
   return useQuery({
     queryKey: LIVE_MENTORING_SETTLEMENT_QUERY_KEY,
     queryFn: async () => {
       const res = await axios.get(SETTLEMENT_PATH);
-      return settlementListResponseSchema.parse(res.data.data).settlementList;
+      return settlementListResponseSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
   });

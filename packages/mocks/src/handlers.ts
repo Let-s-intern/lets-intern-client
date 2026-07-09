@@ -7,6 +7,7 @@ import {
   LIVE_MENTORING_TEMPLATE,
   OPEN_STATUS_ROWS,
   SETTLEMENT_ROWS,
+  SETTLEMENT_ITEMS,
   type LiveMentorCard,
   type LiveMentoringCategory,
 } from './data/liveMentoring';
@@ -1110,7 +1111,7 @@ export const handlers = [
   http.get('*/mentor/live-mentoring/settlement', () => {
     return HttpResponse.json({
       status: 200,
-      data: { settlementList: SETTLEMENT_ROWS },
+      data: { settlementList: SETTLEMENT_ROWS, itemList: SETTLEMENT_ITEMS },
     });
   }),
 
