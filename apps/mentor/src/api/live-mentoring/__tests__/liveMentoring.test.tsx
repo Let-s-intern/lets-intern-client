@@ -176,7 +176,7 @@ describe('useLiveMentoringTemplateQuery', () => {
 });
 
 describe('useLiveMentoringSettlementQuery', () => {
-  it('settlementList 만 추출해 반환한다', async () => {
+  it('settlementList 와 itemList 를 함께 반환한다', async () => {
     axiosMock.get.mockResolvedValue({
       data: {
         data: {
@@ -185,6 +185,17 @@ describe('useLiveMentoringSettlementQuery', () => {
               period: '2026-06',
               completedCount: 18,
               grossAmount: 1080000,
+              status: 'PAID',
+            },
+          ],
+          itemList: [
+            {
+              settlementId: 1,
+              date: '2026-06-28',
+              menteeName: '김**',
+              category: 'PERSONAL_STATEMENT',
+              durationMin: 50,
+              amount: 60000,
               status: 'PAID',
             },
           ],
@@ -197,8 +208,9 @@ describe('useLiveMentoringSettlementQuery', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
-    expect(result.current.data?.[0].status).toBe('PAID');
+    expect(result.current.data?.settlementList).toHaveLength(1);
+    expect(result.current.data?.settlementList[0].status).toBe('PAID');
+    expect(result.current.data?.itemList[0].menteeName).toBe('김**');
   });
 });
 

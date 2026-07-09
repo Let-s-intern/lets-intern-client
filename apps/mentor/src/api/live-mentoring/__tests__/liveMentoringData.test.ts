@@ -6,6 +6,7 @@ import {
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
+  SETTLEMENT_ITEMS,
 } from '@letscareer/mocks';
 import { describe, expect, it } from 'vitest';
 
@@ -72,10 +73,22 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(detail.template.faq.length).toBeGreaterThan(0);
       expect(detail.template.process.length).toBeGreaterThan(0);
       expect(detail.template.submissionSpec.title).toBeTruthy();
+      // 참여 중인 챌린지가 존재한다
+      expect(detail.challenges.length).toBeGreaterThan(0);
+      expect(detail.challenges[0].title).toBeTruthy();
       // 체크리스트 3-모드 enum 검증
       for (const item of detail.template.checklist) {
         expect(['SHOWN', 'HIDDEN', 'CUSTOM']).toContain(item.mode);
       }
+    }
+  });
+
+  it('개별 정산 내역이 존재하며 상태·금액이 유효하다', () => {
+    expect(SETTLEMENT_ITEMS.length).toBeGreaterThan(0);
+    for (const item of SETTLEMENT_ITEMS) {
+      expect(['PENDING', 'PAID']).toContain(item.status);
+      expect(item.amount).toBe(PRICE_BY_DURATION[item.durationMin]);
+      expect(item.menteeName).toBeTruthy();
     }
   });
 
@@ -102,8 +115,9 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(['PENDING', 'PAID']).toContain(row.status);
       expect(row.grossAmount).toBeGreaterThanOrEqual(0);
     }
-    // 오픈은 하나만 가능
-    expect(OPEN_STATUS_ROWS.length).toBe(1);
+    // 오픈은 하나만 가능(OPEN 1건) + 과거 오픈 내역(CLOSED)
+    expect(OPEN_STATUS_ROWS.filter((r) => r.status === 'OPEN').length).toBe(1);
+    expect(OPEN_STATUS_ROWS.some((r) => r.status === 'CLOSED')).toBe(true);
     for (const row of OPEN_STATUS_ROWS) {
       expect(['OPEN', 'CLOSED']).toContain(row.status);
       expect(row.price).toBe(getLowestPrice(row.durations));

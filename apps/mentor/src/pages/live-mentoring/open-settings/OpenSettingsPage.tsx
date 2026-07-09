@@ -16,6 +16,8 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
+import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import { CATEGORY_LABELS, formatPrice } from '../constants';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
@@ -49,6 +51,8 @@ const OpenSettingsPage = () => {
   const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
+  const [slotModalOpen, setSlotModalOpen] = useState(false);
+  const [reservationModalOpen, setReservationModalOpen] = useState(false);
 
   useEffect(() => {
     if (data) setForm(data);
@@ -92,14 +96,16 @@ const OpenSettingsPage = () => {
       return { ...prev, categories };
     });
 
-  const toggleCareer = (index: number) =>
+  // 대표 경력은 하나만 지정한다(라디오). 선택한 것만 visible=true.
+  const selectCareer = (index: number) =>
     setForm((prev) =>
       prev
         ? {
             ...prev,
-            careers: prev.careers.map((c, i) =>
-              i === index ? { ...c, visible: !c.visible } : c,
-            ),
+            careers: prev.careers.map((c, i) => ({
+              ...c,
+              visible: i === index,
+            })),
           }
         : prev,
     );
@@ -110,6 +116,14 @@ const OpenSettingsPage = () => {
         showAlert({ title: '저장되었습니다.', variant: 'success' }),
       onError: () =>
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
+    });
+
+  // 오픈 닫기 — 현재 오픈을 마감한다(목: 확인 알럿).
+  const handleCloseOpen = () =>
+    showAlert({
+      title: '오픈을 닫았습니다.',
+      description: '진행 중인 예약은 유지되며, 신규 예약은 받지 않습니다.',
+      variant: 'success',
     });
 
   return (
@@ -190,7 +204,10 @@ const OpenSettingsPage = () => {
           </section>
 
           <section className={cardClass}>
-            <h2 className={sectionTitleClass}>경력 노출</h2>
+            <h2 className={sectionTitleClass}>대표 경력 지정</h2>
+            <p className="mb-3 text-xs text-gray-500">
+              공개 화면에 노출할 대표 경력을 하나만 선택하세요.
+            </p>
             {form.careers.length === 0 ? (
               <p className="text-sm text-gray-500">등록된 경력이 없습니다.</p>
             ) : (
@@ -199,9 +216,10 @@ const OpenSettingsPage = () => {
                   <li key={`${career.company}-${index}`}>
                     <label className="flex cursor-pointer items-center gap-2">
                       <input
-                        type="checkbox"
+                        type="radio"
+                        name="representative-career"
                         checked={career.visible}
-                        onChange={() => toggleCareer(index)}
+                        onChange={() => selectCareer(index)}
                         className="accent-primary h-4 w-4"
                       />
                       <span className="text-sm text-gray-700">
@@ -212,6 +230,30 @@ const OpenSettingsPage = () => {
                 ))}
               </ul>
             )}
+          </section>
+
+          <section className={cardClass}>
+            <h2 className={sectionTitleClass}>라이브 슬롯 · 예약</h2>
+            <p className="mb-3 text-xs text-gray-500">
+              라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미 예약·오픈된
+              시간과 겹치지 않게 슬롯을 열 수 있어요.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setSlotModalOpen(true)}
+                className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+              >
+                라이브 슬롯 오픈
+              </button>
+              <button
+                type="button"
+                onClick={() => setReservationModalOpen(true)}
+                className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600"
+              >
+                멘티 예약 내역
+              </button>
+            </div>
           </section>
 
           <section className={cardClass}>
@@ -298,7 +340,14 @@ const OpenSettingsPage = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
+        <button
+          type="button"
+          onClick={handleCloseOpen}
+          className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors hover:bg-gray-50"
+        >
+          오픈 닫기
+        </button>
         <button
           type="button"
           onClick={handleSave}
@@ -309,6 +358,15 @@ const OpenSettingsPage = () => {
         </button>
       </div>
 
+      <FeedbackAvailabilityModal
+        isOpen={slotModalOpen}
+        onClose={() => setSlotModalOpen(false)}
+        focusDate={form.feedbackStartDate}
+      />
+      <ReservationListModal
+        isOpen={reservationModalOpen}
+        onClose={() => setReservationModalOpen(false)}
+      />
       <MentorAlertModal {...alertProps} />
     </div>
   );

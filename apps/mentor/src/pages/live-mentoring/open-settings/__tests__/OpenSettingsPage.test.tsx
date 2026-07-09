@@ -14,6 +14,15 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
 }));
 
+// 공유 라이브 슬롯/예약 모달은 이 단위 테스트 대상이 아니므로 스텁 처리
+// (실 컴포넌트는 feedback query 훅을 호출해 QueryClient 가 필요하다).
+vi.mock('@/pages/feedback-live-availability/FeedbackAvailabilityModal', () => ({
+  default: () => null,
+}));
+vi.mock('@/pages/feedback-live-reservation/ui/ReservationListModal', () => ({
+  default: () => null,
+}));
+
 import OpenSettingsPage from '../OpenSettingsPage';
 
 const baseSettings: LiveMentoringSettings = {
@@ -129,17 +138,16 @@ describe('OpenSettingsPage — 저장 payload', () => {
     expect(payload.feedbackStartDate).toBe('2026-08-01');
   });
 
-  it('경력 노출 체크 토글이 payload 에 반영된다', () => {
+  it('대표 경력은 하나만 선택되며 payload 에 반영된다(라디오)', () => {
     renderPage();
 
-    // 두 번째 경력(카카오, 초기 visible=false)을 체크
-    const kakao = screen.getByRole('checkbox', {
-      name: /카카오/,
-    });
+    // 두 번째 경력(카카오)을 대표로 선택 → 첫 경력은 해제
+    const kakao = screen.getByRole('radio', { name: /카카오/ });
     fireEvent.click(kakao);
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
     expect(payload.careers[1].visible).toBe(true);
+    expect(payload.careers[0].visible).toBe(false);
   });
 });

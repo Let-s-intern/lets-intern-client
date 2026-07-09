@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { SettlementRow } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  SettlementItem,
+  SettlementRow,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
-let queryState: { data?: SettlementRow[]; isLoading: boolean } = {
+type SettlementData = { settlementList: SettlementRow[]; itemList: SettlementItem[] };
+
+let queryState: { data?: SettlementData; isLoading: boolean } = {
   data: undefined,
   isLoading: false,
 };
@@ -14,18 +19,20 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 
 import SettlementPage from '../SettlementPage';
 
-const rows: SettlementRow[] = [
+const settlementList: SettlementRow[] = [
+  { period: '2026-06', completedCount: 18, grossAmount: 1080000, status: 'PAID' },
+  { period: '2026-04', completedCount: 9, grossAmount: 540000, status: 'PENDING' },
+];
+
+const itemList: SettlementItem[] = [
   {
-    period: '2026-06',
-    completedCount: 18,
-    grossAmount: 1080000,
+    settlementId: 1,
+    date: '2026-06-28',
+    menteeName: '김**',
+    category: 'PERSONAL_STATEMENT',
+    durationMin: 50,
+    amount: 60000,
     status: 'PAID',
-  },
-  {
-    period: '2026-04',
-    completedCount: 9,
-    grossAmount: 540000,
-    status: 'PENDING',
   },
 ];
 
@@ -34,28 +41,37 @@ afterEach(() => {
 });
 
 describe('SettlementPage', () => {
-  it('정산행을 표로 렌더한다', () => {
-    queryState = { data: rows, isLoading: false };
+  it('기간별 합계와 개별 정산 내역을 함께 렌더한다', () => {
+    queryState = { data: { settlementList, itemList }, isLoading: false };
     render(<SettlementPage />);
 
+    // 기간별 합계
     expect(screen.getByText('2026-06')).toBeInTheDocument();
     expect(screen.getByText('18건')).toBeInTheDocument();
     expect(screen.getByText('1,080,000원')).toBeInTheDocument();
-    expect(screen.getByText('정산 완료')).toBeInTheDocument();
-    expect(screen.getByText('정산 예정')).toBeInTheDocument();
+    // 개별 정산 내역
+    expect(screen.getByText('개별 정산 내역')).toBeInTheDocument();
+    expect(screen.getByText('2026-06-28')).toBeInTheDocument();
+    expect(screen.getByText('김**')).toBeInTheDocument();
+    expect(screen.getByText('자기소개서')).toBeInTheDocument();
+    expect(screen.getByText('60,000원')).toBeInTheDocument();
   });
 
-  it('데이터가 없으면 빈 상태 문구를 노출한다', () => {
-    queryState = { data: [], isLoading: false };
+  it('데이터가 없으면 각 표에 빈 상태 문구를 노출한다', () => {
+    queryState = {
+      data: { settlementList: [], itemList: [] },
+      isLoading: false,
+    };
     render(<SettlementPage />);
 
     expect(screen.getByText('정산 내역이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('개별 정산 내역이 없습니다.')).toBeInTheDocument();
   });
 
   it('로딩 중에는 로딩 문구를 노출한다', () => {
     queryState = { data: undefined, isLoading: true };
     render(<SettlementPage />);
 
-    expect(screen.getByText('불러오는 중...')).toBeInTheDocument();
+    expect(screen.getAllByText('불러오는 중...').length).toBeGreaterThan(0);
   });
 });
