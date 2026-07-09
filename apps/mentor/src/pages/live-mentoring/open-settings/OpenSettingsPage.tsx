@@ -69,6 +69,16 @@ const OpenSettingsPage = () => {
     setOriginal(normalized);
   }, [data]);
 
+  // 오픈 중(잠금 상태)에는 배경 스크롤을 막는다.
+  useEffect(() => {
+    if (!form?.isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [form?.isOpen]);
+
   if (!form || !original) {
     return (
       <div className="text-xsmall14 text-neutral-40 px-1 py-10">
@@ -80,17 +90,13 @@ const OpenSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringSettings>) =>
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  // 진행시간은 다중 선택(최소 1개 유지).
+  // 진행시간은 다중 선택이며 0개도 허용한다(단, 0개면 저장/오픈 불가).
   const toggleDuration = (duration: LiveMentoringDuration) =>
     setForm((prev) => {
       if (!prev) return prev;
-      const has = prev.durations.includes(duration);
-      const durations =
-        has && prev.durations.length > 1
-          ? prev.durations.filter((d) => d !== duration)
-          : has
-            ? prev.durations
-            : [...prev.durations, duration].sort((a, b) => a - b);
+      const durations = prev.durations.includes(duration)
+        ? prev.durations.filter((d) => d !== duration)
+        : [...prev.durations, duration].sort((a, b) => a - b);
       return { ...prev, durations };
     });
 
@@ -119,7 +125,8 @@ const OpenSettingsPage = () => {
     );
 
   const noCategorySelected = form.categories.length === 0;
-  const hasRequiredFields = !noCategorySelected;
+  const noDurationSelected = form.durations.length === 0;
+  const hasRequiredFields = !noCategorySelected && !noDurationSelected;
   const isCurrentlyOpen = form.isOpen;
   const isDirty = JSON.stringify(form) !== JSON.stringify(original);
   const canSave = hasRequiredFields && isDirty;
@@ -182,7 +189,7 @@ const OpenSettingsPage = () => {
         <div
           className={
             isCurrentlyOpen
-              ? 'pointer-events-none select-none blur-[2px]'
+              ? 'pointer-events-none select-none blur-[8px]'
               : undefined
           }
           aria-hidden={isCurrentlyOpen}
@@ -363,6 +370,11 @@ const OpenSettingsPage = () => {
                       (여러 개 선택 시 최저가로 노출)
                     </span>
                   </p>
+                  {noDurationSelected && (
+                    <p role="alert" className="text-system-error text-xs">
+                      진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.
+                    </p>
+                  )}
                 </div>
               </section>
 
@@ -398,26 +410,26 @@ const OpenSettingsPage = () => {
             </div>
           </div>
         </div>
-
-        {/* 오픈 중 잠금 오버레이 — 블러 위에 오픈 닫기 플로팅 버튼 */}
-        {isCurrentlyOpen && (
-          <div className="absolute inset-0 flex items-start justify-center pt-24">
-            <div className="sticky top-24 flex flex-col items-center gap-3">
-              <p className="rounded-md bg-white/90 px-4 py-2 text-sm font-medium text-gray-700 shadow">
-                오픈 중에는 설정을 수정할 수 없어요.
-              </p>
-              <button
-                type="button"
-                onClick={handleCloseOpen}
-                disabled={isPending}
-                className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-3 text-sm font-semibold text-white shadow-lg transition-colors disabled:opacity-50"
-              >
-                {isPending ? '처리 중...' : '오픈 닫기'}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* 오픈 중 잠금 오버레이 — 화면 전체를 덮고 정중앙에 오픈 닫기 버튼 */}
+      {isCurrentlyOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-white/40 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <p className="rounded-md bg-white/95 px-5 py-2.5 text-sm font-medium text-gray-700 shadow-lg">
+              오픈 중에는 설정을 수정할 수 없어요.
+            </p>
+            <button
+              type="button"
+              onClick={handleCloseOpen}
+              disabled={isPending}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-12 py-3.5 text-base font-semibold text-white shadow-xl transition-colors disabled:opacity-50"
+            >
+              {isPending ? '처리 중...' : '오픈 닫기'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 하단 버튼: 오픈 중이면 숨김. 변경사항 있으면 저장, 없으면 오픈하기. */}
       {!isCurrentlyOpen && (

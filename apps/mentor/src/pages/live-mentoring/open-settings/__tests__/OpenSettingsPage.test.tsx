@@ -192,7 +192,7 @@ describe('OpenSettingsPage — 저장 payload', () => {
   });
 });
 
-describe('OpenSettingsPage — 타입 필수', () => {
+describe('OpenSettingsPage — 타입/진행시간 필수', () => {
   it('타입을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
@@ -201,6 +201,18 @@ describe('OpenSettingsPage — 타입 필수', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       '타입을 최소 1개 이상 선택해야 저장할 수 있어요.',
+    );
+    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+  });
+
+  it('진행시간을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
+    renderPage({ durations: [30] });
+
+    // 유일 선택된 진행시간 해제 → 0개
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.',
     );
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
