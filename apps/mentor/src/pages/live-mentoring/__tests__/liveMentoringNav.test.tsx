@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -36,10 +36,17 @@ const renderSidebar = (path: string) =>
   );
 
 describe('1대1 라이브 멘토링 사이드바 그룹', () => {
-  it('그룹 라벨과 4개 하위 항목이 노출된다', () => {
+  it('그룹 라벨 클릭(드롭다운)으로 4개 하위 항목이 열린다', () => {
     renderSidebar('/');
 
+    // 다른 경로에서는 기본 접힘 — 클릭 전엔 하위 항목이 없다
     expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
+    );
+
     expect(screen.getByText('오픈 설정')).toBeInTheDocument();
     expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
     expect(screen.getByText('정산 현황')).toBeInTheDocument();
@@ -48,6 +55,9 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
 
   it('하위 항목의 url 매핑이 정확하다', () => {
     renderSidebar('/');
+    fireEvent.click(
+      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
+    );
 
     const cases: [string, string][] = [
       ['오픈 설정', '/live-mentoring/open-settings'],
@@ -60,15 +70,19 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     }
   });
 
-  it('그룹 대주제는 링크가 아니라 비링크 라벨이다(클릭 불가)', () => {
+  it('그룹 대주제는 클릭 가능한 토글 버튼이며, 다시 클릭하면 닫힌다', () => {
     renderSidebar('/');
+    const toggle = screen.getByRole('button', {
+      name: /1대1 라이브 멘토링/,
+    });
 
-    expect(
-      screen.queryByRole('link', { name: '1대1 라이브 멘토링' }),
-    ).not.toBeInTheDocument();
+    fireEvent.click(toggle); // 열기
+    expect(screen.getByText('오픈 설정')).toBeInTheDocument();
+    fireEvent.click(toggle); // 닫기
+    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
   });
 
-  it('하위 항목 진입 시 해당 항목이 활성 표시된다', () => {
+  it('하위 경로 진입 시 그룹이 자동으로 열리고 해당 항목이 활성 표시된다', () => {
     renderSidebar('/live-mentoring/settlement');
 
     const link = screen.getByRole('link', { name: '정산 현황' });
