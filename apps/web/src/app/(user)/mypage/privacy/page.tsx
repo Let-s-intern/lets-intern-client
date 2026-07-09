@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import MyPageKakaoChannel from '@/domain/mypage/privacy/section/MyPageKakaoChannel';
 import { DangerConfirmDialog } from '@letscareer/ui';
 import BasicInfo from '../../../../domain/mypage/privacy/section/BasicInfo';
@@ -12,7 +13,7 @@ import MarketingAgree from '../../../../domain/mypage/privacy/section/MarketingA
 import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
 
-const Privacy = () => {
+const PrivacyContent = () => {
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -65,6 +66,14 @@ const Privacy = () => {
         onConfirm={handleConfirm}
       />
     </main>
+  );
+};
+
+const Privacy = () => {
+  return (
+    <AsyncBoundary>
+      <PrivacyContent />
+    </AsyncBoundary>
   );
 };
 

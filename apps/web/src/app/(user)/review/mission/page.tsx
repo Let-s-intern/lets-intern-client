@@ -1,12 +1,12 @@
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import MissionReview from '@/domain/review/missionReview/MissionReview';
-import { Suspense } from 'react';
 
 const Page = () => {
   return (
     <div className="flex w-full flex-col md:gap-y-6">
-      <Suspense>
+      <AsyncBoundary pendingFallback={null}>
         <MissionReview />
-      </Suspense>
+      </AsyncBoundary>
     </div>
   );
 };

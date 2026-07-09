@@ -1,5 +1,6 @@
 // src/domain/home/components/HomeScreenSection.tsx
 
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import TopBanner from '@/domain/home/banner/TopBanner';
 import Popup from '@/domain/home/ui/Popup';
 
@@ -23,16 +24,32 @@ export default function HomeScreen() {
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-9 md:mb-44 md:pt-[68px]">
         <IntroSection />
         <MainBannerSection />
-        <MainCurationSection />
-        <ActiveProgramSection />
-        <LetsCareerSection />
-        <ReviewSection />
-        <ReviewCurationSection />
+        <AsyncBoundary pendingFallback={null}>
+          <MainCurationSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <ActiveProgramSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <LetsCareerSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <ReviewSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <ReviewCurationSection />
+        </AsyncBoundary>
         <LogoPlaySection />
         <BottomBannerSection />
-        <InterviewSection />
-        <CurrentBlogSection />
-        <BlogCurationSection />
+        <AsyncBoundary pendingFallback={null}>
+          <InterviewSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <CurrentBlogSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <BlogCurationSection />
+        </AsyncBoundary>
       </div>
       <Popup />
     </>

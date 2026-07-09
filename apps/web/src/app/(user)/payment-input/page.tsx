@@ -24,9 +24,10 @@ import useProgramStore, {
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -418,9 +419,9 @@ const PaymentInputContent = () => {
 
 const PaymentInputPage = () => {
   return (
-    <Suspense fallback={<LoadingContainer />}>
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
       <PaymentInputContent />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

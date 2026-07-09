@@ -5,10 +5,11 @@ import { paymentFailSearchParamsSchema } from '@/data/getPaymentSearchParams';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '@/domain/program/ProgramCard';
 import useProgramStore from '@/store/useProgramStore';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { searchParamsToObject } from '@/utils/network';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useMemo } from 'react';
+import { useMemo } from 'react';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult 에서 진행함. */
 const PaymentFailContent = () => {
@@ -150,9 +151,9 @@ const PaymentFailContent = () => {
 
 const PaymentFail = () => {
   return (
-    <Suspense fallback={null}>
+    <AsyncBoundary pendingFallback={null}>
       <PaymentFailContent />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

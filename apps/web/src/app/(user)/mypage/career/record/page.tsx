@@ -1,29 +1,33 @@
 'use client';
 
 import {
-  useGetUserCareerQuery,
+  userCareerQueryOptions,
   usePatchUserCareerMutation,
   usePostUserCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import CareerHeader from '@/common/career/CareerHeader';
 import CareerItem from '@/common/career/CareerItem';
 import CareerList from '@/common/career/CareerList';
 import { DEFAULT_CAREER, PAGE_SIZE } from '@/common/career/constants';
 import NoCareerView from '@/common/career/NoCareerView';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-const Career = () => {
+const CareerContent = () => {
   const [createMode, setCreateMode] = useState(false); // 신규 작성 모드
   const [editingId, setEditingId] = useState<number | null>(null); // 수정 중인 커리어 ID
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
-  const { data, isLoading } = useGetUserCareerQuery({
-    page: 0,
-    size: PAGE_SIZE,
-  });
+  const { data } = useSuspenseQuery(
+    userCareerQueryOptions({
+      page: 0,
+      size: PAGE_SIZE,
+    }),
+  );
 
   const { userCareers } = data ?? {};
 
@@ -65,9 +69,6 @@ const Career = () => {
 
   const isEmpty = userCareers?.length === 0;
 
-  if (isLoading)
-    return <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />;
-
   return (
     <>
       {isEmpty && !createMode ? (
@@ -98,6 +99,18 @@ const Career = () => {
         </section>
       )}
     </>
+  );
+};
+
+const Career = () => {
+  return (
+    <AsyncBoundary
+      pendingFallback={
+        <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />
+      }
+    >
+      <CareerContent />
+    </AsyncBoundary>
   );
 };
 

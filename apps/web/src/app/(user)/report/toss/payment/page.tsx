@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useGetParticipationInfo } from '@/api/application';
 import { useGetReportDetailQuery } from '@/api/report';
 import { useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 
@@ -131,4 +133,10 @@ const ReportTossPage = () => {
   );
 };
 
-export default ReportTossPage;
+const ReportTossPaymentPage = () => (
+  <AsyncBoundary pendingFallback={<LoadingContainer />}>
+    <ReportTossPage />
+  </AsyncBoundary>
+);
+
+export default ReportTossPaymentPage;

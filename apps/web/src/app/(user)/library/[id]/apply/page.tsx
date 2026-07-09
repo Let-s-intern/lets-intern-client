@@ -1,13 +1,14 @@
 'use client';
 
 import {
-  useGetUserMagnetDetailQuery,
   useGetUserMagnetQuestionsQuery,
+  userMagnetDetailQueryOptions,
 } from '@/api/magnet/magnet';
 import { UserMagnetQuestionItem } from '@/api/magnet/magnetSchema';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import MagnetApplyContent from '@/domain/library/apply/MagnetApplyContent';
 import { MagnetQuestion } from '@/domain/library/apply/MagnetSurveySection';
-import { notFound } from 'next/navigation';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 
 function toMagnetQuestion(item: UserMagnetQuestionItem): MagnetQuestion {
@@ -37,12 +38,28 @@ export default function LibraryApplyPage() {
     searchParams.get('type') === 'launch-alert' ? 'launch-alert' : 'apply';
 
   const magnetId = Number(params.id);
-  const { data, isLoading } = useGetUserMagnetDetailQuery(magnetId);
+
+  return (
+    <AsyncBoundary pendingFallback={null}>
+      <LibraryApplyContent magnetId={magnetId} variant={variant} />
+    </AsyncBoundary>
+  );
+}
+
+function LibraryApplyContent({
+  magnetId,
+  variant,
+}: {
+  magnetId: number;
+  variant: 'apply' | 'launch-alert';
+}) {
+  const { data } = useSuspenseQuery(userMagnetDetailQueryOptions(magnetId));
+  // 신청 폼 질문은 전용 query-options 팩토리가 없어(useSuspenseQuery 전환 시 queryKey 중복
+  // 또는 api/ 정의 수정 필요) useQuery 를 유지한다. 아래 AsyncBoundary 로 함께 격리됨.
   const { data: questionsData, isLoading: questionsLoading } =
     useGetUserMagnetQuestionsQuery(magnetId);
 
-  if (isLoading || questionsLoading) return null;
-  if (!data) notFound();
+  if (questionsLoading) return null;
 
   const { magnetInfo } = data;
   const questions = (questionsData?.magnetQuestionList ?? []).map(

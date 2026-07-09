@@ -1,6 +1,8 @@
 'use client';
 
-import { useMypageApplicationsQuery } from '@/api/application';
+import { mypageApplicationsQueryOptions } from '@/api/application';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { CategoryTabs } from '@letscareer/ui';
 import {
   APPLICATION_CATEGORY_OPTIONS,
@@ -13,10 +15,13 @@ import GuidebookSection from '@/domain/mypage/application/section/GuidebookSecti
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-const Application = () => {
-  const { data: applications, isLoading } = useMypageApplicationsQuery();
+const ApplicationContent = () => {
+  const { data: applications } = useSuspenseQuery(
+    mypageApplicationsQueryOptions,
+  );
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
   const programApplications =
@@ -43,8 +48,6 @@ const Application = () => {
   const vodClassApplicationList =
     applications?.filter((application) => application.programType === 'VOD') ??
     [];
-
-  if (isLoading) return <></>;
 
   const isProgramEmpty =
     programWaitingList.length === 0 &&
@@ -93,6 +96,14 @@ const Application = () => {
         )}
       </div>
     </main>
+  );
+};
+
+const Application = () => {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <ApplicationContent />
+    </AsyncBoundary>
   );
 };
 

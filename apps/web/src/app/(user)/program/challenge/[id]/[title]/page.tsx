@@ -1,4 +1,6 @@
 import { fetchChallengeData } from '@/api/challenge/challenge';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
 import ChallengeHrView from '@/domain/program/challenge/ChallengeHrView';
 import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
@@ -89,7 +91,7 @@ const Page = async ({
   }
 
   return (
-    <>
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
       {parseInt(id) > MARKETING_ID_THRESHOLD &&
       challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
@@ -106,7 +108,7 @@ const Page = async ({
         <ChallengeView challenge={challenge} />
       )}
       <ChallengeCTAButtons challenge={challenge} challengeId={id} />
-    </>
+    </AsyncBoundary>
   );
 };
 

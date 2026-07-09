@@ -17,8 +17,9 @@ import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import Link from 'next/link';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const PaymentResultContent = () => {
   const { data: programApplicationData, _hasHydrated } = useProgramStore();
@@ -318,9 +319,9 @@ const PaymentResultContent = () => {
 };
 
 const PaymentResult = () => (
-  <Suspense fallback={null}>
+  <AsyncBoundary pendingFallback={null}>
     <PaymentResultContent />
-  </Suspense>
+  </AsyncBoundary>
 );
 
 export default PaymentResult;

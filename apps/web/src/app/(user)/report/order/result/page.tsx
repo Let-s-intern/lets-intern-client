@@ -20,8 +20,9 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import Link from 'next/link';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const ReportPaymentResultContent = () => {
   const router = useRouter();
@@ -319,9 +320,9 @@ const ReportPaymentResultContent = () => {
 
 const ReportPaymentResult = () => {
   return (
-    <Suspense fallback={null}>
+    <AsyncBoundary pendingFallback={null}>
       <ReportPaymentResultContent />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 
