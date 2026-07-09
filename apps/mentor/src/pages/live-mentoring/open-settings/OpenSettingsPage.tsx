@@ -149,7 +149,8 @@ const OpenSettingsPage = () => {
                     프로필 노출
                   </span>
                   <span className="text-xs text-gray-500">
-                    끄면 공개 화면에 익명 타이틀로 표시됩니다.
+                    끄면 프로필 이미지 대신 &lsquo;○○ 멘토님의 멘토링&rsquo; 이
+                    표시됩니다.
                   </span>
                 </div>
                 <Toggle
@@ -159,46 +160,51 @@ const OpenSettingsPage = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-900">
-                    프로필 자동 모자이크
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    프로필 이미지 위에 블러 오버레이를 적용합니다.
-                  </span>
-                </div>
-                <Toggle
-                  label="프로필 자동 모자이크"
-                  checked={form.mosaicEnabled}
-                  onChange={(v) => patch({ mosaicEnabled: v })}
-                />
-              </div>
+              {/* 모자이크는 프로필 이미지를 노출할 때만 설정 가능 */}
+              {form.profileVisible && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-900">
+                        프로필 자동 모자이크
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        프로필 이미지 위에 블러 오버레이를 적용합니다.
+                      </span>
+                    </div>
+                    <Toggle
+                      label="프로필 자동 모자이크"
+                      checked={form.mosaicEnabled}
+                      onChange={(v) => patch({ mosaicEnabled: v })}
+                    />
+                  </div>
 
-              {form.mosaicEnabled && (
-                <div className="flex items-center gap-3">
-                  <label
-                    htmlFor="mosaic-blur"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    블러 강도
-                  </label>
-                  <input
-                    id="mosaic-blur"
-                    type="range"
-                    min={0}
-                    max={20}
-                    step={1}
-                    value={form.mosaicBlur}
-                    onChange={(e) =>
-                      patch({ mosaicBlur: Number(e.target.value) })
-                    }
-                    className="accent-primary min-w-0 flex-1"
-                  />
-                  <span className="w-12 text-right text-sm text-gray-600">
-                    {form.mosaicBlur}px
-                  </span>
-                </div>
+                  {form.mosaicEnabled && (
+                    <div className="flex items-center gap-3">
+                      <label
+                        htmlFor="mosaic-blur"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        블러 강도
+                      </label>
+                      <input
+                        id="mosaic-blur"
+                        type="range"
+                        min={0}
+                        max={20}
+                        step={1}
+                        value={form.mosaicBlur}
+                        onChange={(e) =>
+                          patch({ mosaicBlur: Number(e.target.value) })
+                        }
+                        className="accent-primary min-w-0 flex-1"
+                      />
+                      <span className="w-12 text-right text-sm text-gray-600">
+                        {form.mosaicBlur}px
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>

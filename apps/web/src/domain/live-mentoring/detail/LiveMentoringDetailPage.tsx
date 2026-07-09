@@ -8,7 +8,7 @@ import {
   priceLabel,
 } from '../constants';
 import {
-  displayTitle,
+  imagePlaceholderTitle,
   mosaicStyle,
   shouldShowImage,
   visibleChecklist,
@@ -41,15 +41,8 @@ const LiveMentoringDetailPage = ({
   }
 
   const { profile, template } = data;
-  // 상세의 profile 은 `visible`, 카드는 `profileVisible` 을 쓰므로 공용 헬퍼 입력으로 정규화.
-  const profileDisplay = {
-    nickname: profile.nickname,
-    profileVisible: profile.visible,
-    mosaicEnabled: profile.mosaicEnabled,
-    mosaicBlur: profile.mosaicBlur,
-  };
-  const title = displayTitle(profileDisplay);
-  const showImage = shouldShowImage(profileDisplay);
+  // 상세의 profile 은 `visible` 을 쓰므로 공용 헬퍼 입력으로 정규화.
+  const showImage = shouldShowImage({ profileVisible: profile.visible });
   const visibleCareers = template.careers.filter((c) => c.visible);
   const shownReviews = template.reviews.visible
     ? data.reviews.filter((r) =>
@@ -63,7 +56,11 @@ const LiveMentoringDetailPage = ({
       {/* 헤더: 프로필 + 메타 + CTA */}
       <div className="flex flex-col gap-6 pb-8 md:flex-row md:items-center">
         <div className="bg-neutral-90 flex aspect-[4/3] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-md">
-          {showImage && profile.profileImage ? (
+          {!showImage ? (
+            <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
+              {imagePlaceholderTitle(profile.nickname)}
+            </span>
+          ) : profile.profileImage ? (
             <img
               src={profile.profileImage}
               alt={profile.nickname}
@@ -72,7 +69,7 @@ const LiveMentoringDetailPage = ({
             />
           ) : (
             <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
-              {title}
+              {profile.nickname}
             </span>
           )}
         </div>
@@ -82,7 +79,9 @@ const LiveMentoringDetailPage = ({
             {data.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')} ·{' '}
             {data.durations.map(durationLabel).join('·')}
           </span>
-          <h1 className="text-medium22 md:text-medium24 font-bold">{title}</h1>
+          <h1 className="text-medium22 md:text-medium24 font-bold">
+            {profile.nickname}
+          </h1>
           <div className="text-neutral-40 text-xsmall14 flex items-center gap-2">
             <span className="text-primary font-semibold">
               ★ {data.rating.toFixed(1)}

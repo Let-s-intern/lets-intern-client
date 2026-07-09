@@ -31,6 +31,9 @@ export const LIVE_MENTORING_DURATIONS: readonly LiveMentoringDuration[] = [
   30, 50,
 ] as const;
 
+/** 모자이크 블러 기본값(중간 정도). 슬라이더 범위 0~20 기준. */
+export const DEFAULT_MOSAIC_BLUR = 10;
+
 /**
  * 진행시간 → 고정 가격. 멘토가 입력하지 않으며 카테고리·등급 등 다른 변수는 없다.
  * 30분 = 35,000원 / 50분 = 60,000원 (운영팀 소관, 이번엔 고정).
@@ -893,8 +896,9 @@ const mySeed = MENTOR_SEEDS[0];
 /** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   profileVisible: mySeed.profileVisible,
-  mosaicEnabled: mySeed.mosaicEnabled,
-  mosaicBlur: mySeed.mosaicBlur,
+  // 모자이크는 기본적으로 중간 정도로 켜둔다.
+  mosaicEnabled: true,
+  mosaicBlur: DEFAULT_MOSAIC_BLUR,
   nickname: mySeed.nickname,
   profileImage: imageFor(mySeed),
   introduction: mySeed.introduction,

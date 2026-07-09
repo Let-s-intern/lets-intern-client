@@ -8,7 +8,7 @@ import {
   priceLabel,
 } from '../constants';
 import {
-  displayTitle,
+  imagePlaceholderTitle,
   mosaicStyle,
   shouldShowImage,
 } from '../utils/profileDisplay';
@@ -23,16 +23,19 @@ interface MentorCardProps {
  */
 const MentorCard = ({ mentor }: MentorCardProps) => {
   const showImage = shouldShowImage(mentor);
-  const title = displayTitle(mentor);
 
   return (
     <Link
       href={`/live-mentoring/${mentor.mentorId}`}
       className="border-neutral-80 flex flex-col overflow-hidden rounded-md border bg-white transition hover:shadow-md"
     >
-      {/* 프로필 이미지 영역 */}
+      {/* 프로필 이미지 영역 — 노출 off면 이미지 대신 문구 */}
       <div className="bg-neutral-90 relative flex aspect-[4/3] items-center justify-center overflow-hidden">
-        {showImage && mentor.profileImage ? (
+        {!showImage ? (
+          <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
+            {imagePlaceholderTitle(mentor.nickname)}
+          </span>
+        ) : mentor.profileImage ? (
           <img
             src={mentor.profileImage}
             alt={mentor.nickname}
@@ -41,7 +44,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           />
         ) : (
           <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
-            {title}
+            {mentor.nickname}
           </span>
         )}
         <span className="text-xxsmall12 absolute left-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-medium text-white">
@@ -53,7 +56,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xsmall16 line-clamp-1 font-semibold">
-            {title}
+            {mentor.nickname}
           </span>
           <span className="text-primary text-xxsmall12 border-primary shrink-0 rounded-sm border px-1.5 py-0.5 font-medium">
             {mentor.durations.map(durationLabel).join('·')}

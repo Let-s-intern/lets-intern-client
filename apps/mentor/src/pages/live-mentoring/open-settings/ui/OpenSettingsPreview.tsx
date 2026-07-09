@@ -53,14 +53,11 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
             )
           ) : (
             <div
-              className="text-primary flex flex-col items-center gap-1 px-4 text-center"
-              data-testid="preview-anonymous-title"
+              className="flex flex-col items-center gap-1 px-4 text-center text-gray-700"
+              data-testid="preview-image-placeholder"
             >
-              <span className="text-xs font-medium text-gray-500">
-                비공개 프로필
-              </span>
               <span className="text-base font-semibold">
-                {nickname}의 1대1 라이브 멘토링
+                {nickname} 멘토님의 멘토링
               </span>
             </div>
           )}
@@ -76,9 +73,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
               {durations.map(durationLabel).join('·')}
             </span>
           </div>
-          {profileVisible && (
-            <p className="text-sm font-semibold text-gray-900">{nickname}</p>
-          )}
+          <p className="text-sm font-semibold text-gray-900">{nickname}</p>
           {visibleCareers.length > 0 && (
             <p className="text-xs text-gray-500">
               {visibleCareers[0].company} · {visibleCareers[0].position}

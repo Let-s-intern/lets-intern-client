@@ -57,12 +57,13 @@ describe('MentorCard', () => {
     expect(img.style.filter).toBe('blur(6px)');
   });
 
-  it('프로필 비노출이면 이미지 대신 익명 타이틀을 노출한다', () => {
+  it('프로필 비노출이면 이미지 대신 "○○ 멘토님의 멘토링" 문구를 노출하고 닉네임은 유지한다', () => {
     render(<MentorCard mentor={makeCard({ profileVisible: false })} />);
     expect(screen.queryByAltText('자소서장인')).not.toBeInTheDocument();
-    expect(
-      screen.getAllByText('자소서장인의 1대1 라이브 멘토링').length,
-    ).toBeGreaterThan(0);
+    // 이미지 자리 문구
+    expect(screen.getByText('자소서장인 멘토님의 멘토링')).toBeInTheDocument();
+    // 본문 닉네임은 그대로 노출(익명화 아님)
+    expect(screen.getByText('자소서장인')).toBeInTheDocument();
   });
 
   it('상세 페이지로 링크된다', () => {

@@ -1,7 +1,6 @@
 import type { ChecklistItem } from '@/api/live-mentoring/liveMentoringSchema';
 import {
-  anonymousTitle,
-  displayTitle,
+  imagePlaceholderTitle,
   mosaicStyle,
   shouldShowImage,
   visibleChecklist,
@@ -14,17 +13,15 @@ const base = {
   mosaicBlur: 0,
 };
 
-describe('displayTitle / shouldShowImage', () => {
-  it('프로필 노출이면 닉네임을 그대로 노출하고 이미지를 보여준다', () => {
-    expect(displayTitle(base)).toBe('자소서장인');
+describe('shouldShowImage / imagePlaceholderTitle', () => {
+  it('프로필 노출이면 이미지를 보여준다', () => {
     expect(shouldShowImage(base)).toBe(true);
   });
 
-  it('프로필 비노출이면 익명 타이틀을 쓰고 이미지를 감춘다', () => {
+  it('프로필 비노출이면 이미지를 감추고 이미지 자리에 "○○ 멘토님의 멘토링" 문구', () => {
     const hidden = { ...base, profileVisible: false };
-    expect(displayTitle(hidden)).toBe('자소서장인의 1대1 라이브 멘토링');
-    expect(anonymousTitle('홍길동')).toBe('홍길동의 1대1 라이브 멘토링');
     expect(shouldShowImage(hidden)).toBe(false);
+    expect(imagePlaceholderTitle('홍길동')).toBe('홍길동 멘토님의 멘토링');
   });
 });
 

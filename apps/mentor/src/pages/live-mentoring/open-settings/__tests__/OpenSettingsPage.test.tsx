@@ -92,11 +92,19 @@ describe('OpenSettingsPage — 모자이크 강도 반영', () => {
     expect(image).toHaveStyle({ filter: 'blur(15px)' });
   });
 
-  it('profileVisible=false 초기값은 익명 타이틀을 렌더한다', () => {
+  it('profileVisible=false 면 이미지 자리에 "○○ 멘토님의 멘토링" 문구를 렌더한다', () => {
     renderPage({ profileVisible: false });
-    expect(screen.getByTestId('preview-anonymous-title')).toHaveTextContent(
-      '자소서장인의 1대1 라이브 멘토링',
+    expect(screen.getByTestId('preview-image-placeholder')).toHaveTextContent(
+      '자소서장인 멘토님의 멘토링',
     );
+  });
+
+  it('프로필 노출이 꺼져 있으면 모자이크 설정이 보이지 않는다', () => {
+    renderPage({ profileVisible: false, mosaicEnabled: true });
+    expect(
+      screen.queryByRole('switch', { name: '프로필 자동 모자이크' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('블러 강도')).not.toBeInTheDocument();
   });
 });
 
