@@ -389,14 +389,16 @@ export const useDeleteLiveMutation = ({
   });
 };
 
+export const liveFaqQueryOptions = (liveId: number | string) => ({
+  queryKey: ['useGetLiveFaq', liveId],
+  queryFn: async () => {
+    const res = await axios.get(`/live/${liveId}/faqs`);
+    return faqSchema.parse(res.data.data);
+  },
+});
+
 export const useGetLiveFaq = (liveId: number | string) => {
-  return useQuery({
-    queryKey: ['useGetLiveFaq', liveId],
-    queryFn: async () => {
-      const res = await axios.get(`/live/${liveId}/faqs`);
-      return faqSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(liveFaqQueryOptions(liveId));
 };
 
 export const useGetGuidebookQueryKey = 'useGetGuidebookQueryKey';
