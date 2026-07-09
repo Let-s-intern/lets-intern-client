@@ -412,18 +412,18 @@ const OpenSettingsPage = () => {
         </div>
       </div>
 
-      {/* 오픈 중 잠금 오버레이 — 화면 전체를 덮고 정중앙에 오픈 닫기 버튼 */}
+      {/* 오픈 중 잠금 오버레이 — 좌측 네비를 제외한 콘텐츠 영역 정중앙에 오픈 닫기 버튼 */}
       {isCurrentlyOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-white/40 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-4">
-            <p className="rounded-md bg-white/95 px-5 py-2.5 text-sm font-medium text-gray-700 shadow-lg">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-white/40 backdrop-blur-sm lg:left-[296px]">
+          <div className="flex flex-col items-center gap-6">
+            <p className="rounded-md bg-white/95 px-6 py-3 text-base font-medium text-gray-700 shadow-lg">
               오픈 중에는 설정을 수정할 수 없어요.
             </p>
             <button
               type="button"
               onClick={handleCloseOpen}
               disabled={isPending}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-12 py-3.5 text-base font-semibold text-white shadow-xl transition-colors disabled:opacity-50"
+              className="bg-primary hover:bg-primary-hover rounded-2xl px-20 py-6 text-2xl font-bold text-white shadow-2xl transition-colors disabled:opacity-50"
             >
               {isPending ? '처리 중...' : '오픈 닫기'}
             </button>
