@@ -177,6 +177,16 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   취준위키 VOD
                 </GlobalNavItem>
               </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  isNew
+                  href="/live-mentoring"
+                  active={pathname.startsWith('/live-mentoring')}
+                >
+                  1대1 라이브 멘토링
+                </GlobalNavItem>
+              </SwiperSlide>
             </Swiper>
           )}
           {/* 데스크톱: 기존 flex 레이아웃 */}
@@ -215,6 +225,14 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 href="/program?type=VOD"
               >
                 취준위키 VOD
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                isNew
+                href="/live-mentoring"
+                active={pathname.startsWith('/live-mentoring')}
+              >
+                1대1 라이브 멘토링
               </GlobalNavItem>
             </div>
             <div
@@ -271,6 +289,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <SideNavItem href="/program?type=VOD" isNew>
           취준위키 VOD
+        </SideNavItem>
+        <SideNavItem href="/live-mentoring" isNew>
+          1대1 라이브 멘토링
         </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/review">수강생 솔직 후기</SideNavItem>
