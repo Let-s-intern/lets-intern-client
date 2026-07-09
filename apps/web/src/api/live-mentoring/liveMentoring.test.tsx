@@ -26,12 +26,13 @@ function makeCard(overrides: Record<string, unknown> = {}) {
     mosaicBlur: 0,
     headline: '네이버 · 기획 7년',
     mentoringPoints: '두괄식 구조',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
     price: 60000,
     rating: 4.9,
     reviewCount: 182,
-    nextAvailableDate: '2026-07-14',
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -143,11 +144,13 @@ describe('useLiveMentorDetailQuery', () => {
       data: {
         data: {
           mentorId: 3,
-          category: 'PORTFOLIO',
-          durationMin: 50,
+          categories: ['PORTFOLIO'],
+          durations: [50],
           price: 60000,
           rating: 5,
           reviewCount: 10,
+          feedbackStartDate: '2026-07-18',
+          feedbackEndDate: '2026-08-01',
           profile: {
             visible: true,
             mosaicEnabled: false,

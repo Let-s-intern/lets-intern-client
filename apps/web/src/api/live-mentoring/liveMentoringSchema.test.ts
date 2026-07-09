@@ -15,12 +15,13 @@ function makeCard(overrides: Record<string, unknown> = {}) {
     mosaicBlur: 0,
     headline: '네이버 · 기획 7년',
     mentoringPoints: '두괄식 구조 위주',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
     price: 60000,
     rating: 4.9,
     reviewCount: 182,
-    nextAvailableDate: '2026-07-14',
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -28,11 +29,13 @@ function makeCard(overrides: Record<string, unknown> = {}) {
 function makeDetail(overrides: Record<string, unknown> = {}) {
   return {
     mentorId: 1,
-    category: 'RESUME',
-    durationMin: 30,
+    categories: ['RESUME'],
+    durations: [30],
     price: 35000,
     rating: 4.7,
     reviewCount: 12,
+    feedbackStartDate: '2026-07-11',
+    feedbackEndDate: '2026-07-24',
     profile: {
       visible: true,
       mosaicEnabled: false,
@@ -93,13 +96,13 @@ describe('liveMentorCardSchema', () => {
 
   it('알 수 없는 카테고리는 파싱 실패', () => {
     expect(() =>
-      liveMentorCardSchema.parse(makeCard({ category: 'COVER_LETTER' })),
+      liveMentorCardSchema.parse(makeCard({ categories: ['COVER_LETTER'] })),
     ).toThrow();
   });
 
   it('진행시간이 30/50이 아니면 파싱 실패', () => {
     expect(() =>
-      liveMentorCardSchema.parse(makeCard({ durationMin: 40 })),
+      liveMentorCardSchema.parse(makeCard({ durations: [40] })),
     ).toThrow();
   });
 });

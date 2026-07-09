@@ -13,23 +13,40 @@ function makeCard(overrides: Partial<LiveMentorCard> = {}): LiveMentorCard {
     mosaicBlur: 0,
     headline: '네이버 · 기획 7년',
     mentoringPoints: '두괄식 구조로 첨삭',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
     price: 60000,
     rating: 4.9,
     reviewCount: 182,
-    nextAvailableDate: '2026-07-14',
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
 
 describe('MentorCard', () => {
-  it('가격은 원화 포맷, 카테고리 라벨·진행시간을 노출한다', () => {
+  it('가격은 원화 포맷, 카테고리 라벨·진행시간·피드백 기간을 노출한다', () => {
     render(<MentorCard mentor={makeCard()} />);
     expect(screen.getByText('60,000원')).toBeInTheDocument();
     expect(screen.getByText('자기소개서')).toBeInTheDocument();
     expect(screen.getByText('50분')).toBeInTheDocument();
     expect(screen.getByText('★ 4.9')).toBeInTheDocument();
+    expect(screen.getByText('07.14 ~ 07.28')).toBeInTheDocument();
+  });
+
+  it('타입·진행시간 다중이면 라벨을 합치고 최저가로 노출한다', () => {
+    render(
+      <MentorCard
+        mentor={makeCard({
+          categories: ['PERSONAL_STATEMENT', 'RESUME'],
+          durations: [30, 50],
+          price: 35000,
+        })}
+      />,
+    );
+    expect(screen.getByText('자기소개서 · 이력서')).toBeInTheDocument();
+    expect(screen.getByText('30분·50분')).toBeInTheDocument();
+    expect(screen.getByText('최저 35,000원')).toBeInTheDocument();
   });
 
   it('모자이크 on 이면 프로필 이미지에 blur 필터를 적용한다', () => {

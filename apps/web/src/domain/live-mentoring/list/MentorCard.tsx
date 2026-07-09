@@ -1,7 +1,12 @@
 import Link from 'next/link';
 
 import type { LiveMentorCard } from '@/api/live-mentoring/liveMentoringSchema';
-import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
+import {
+  CATEGORY_LABELS,
+  durationLabel,
+  formatFeedbackPeriod,
+  priceLabel,
+} from '../constants';
 import {
   displayTitle,
   mosaicStyle,
@@ -40,7 +45,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           </span>
         )}
         <span className="text-xxsmall12 absolute left-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-medium text-white">
-          {CATEGORY_LABELS[mentor.category]}
+          {mentor.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
         </span>
       </div>
 
@@ -51,7 +56,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             {title}
           </span>
           <span className="text-primary text-xxsmall12 border-primary shrink-0 rounded-sm border px-1.5 py-0.5 font-medium">
-            {durationLabel(mentor.durationMin)}
+            {mentor.durations.map(durationLabel).join('·')}
           </span>
         </div>
 
@@ -67,13 +72,16 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             ★ {mentor.rating.toFixed(1)}
           </span>
           <span>후기 {mentor.reviewCount}</span>
-          {mentor.nextAvailableDate && (
-            <span className="ml-auto">~{mentor.nextAvailableDate}</span>
-          )}
+          <span className="ml-auto">
+            {formatFeedbackPeriod(
+              mentor.feedbackStartDate,
+              mentor.feedbackEndDate,
+            )}
+          </span>
         </div>
 
         <div className="text-neutral-0 text-xsmall16 mt-1 text-right font-bold">
-          {formatPrice(mentor.price)}
+          {priceLabel(mentor.durations, mentor.price)}
         </div>
       </div>
     </Link>

@@ -21,12 +21,13 @@ function makeCard(id: number) {
     mosaicBlur: 0,
     headline: '회사 · 직무',
     mentoringPoints: '포인트',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 30,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [30],
     price: 35000,
     rating: 4.5,
     reviewCount: 10,
-    nextAvailableDate: null,
+    feedbackStartDate: '2026-07-10',
+    feedbackEndDate: '2026-07-23',
   };
 }
 

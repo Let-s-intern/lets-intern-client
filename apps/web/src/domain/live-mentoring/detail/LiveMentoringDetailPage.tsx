@@ -1,7 +1,12 @@
 'use client';
 
 import { useLiveMentorDetailQuery } from '@/api/live-mentoring/liveMentoring';
-import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
+import {
+  CATEGORY_LABELS,
+  durationLabel,
+  formatFeedbackPeriod,
+  priceLabel,
+} from '../constants';
 import {
   displayTitle,
   mosaicStyle,
@@ -74,7 +79,8 @@ const LiveMentoringDetailPage = ({
 
         <div className="flex flex-1 flex-col gap-3">
           <span className="text-primary text-xsmall14 font-semibold">
-            {CATEGORY_LABELS[data.category]} · {durationLabel(data.durationMin)}
+            {data.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')} ·{' '}
+            {data.durations.map(durationLabel).join('·')}
           </span>
           <h1 className="text-medium22 md:text-medium24 font-bold">{title}</h1>
           <div className="text-neutral-40 text-xsmall14 flex items-center gap-2">
@@ -83,9 +89,18 @@ const LiveMentoringDetailPage = ({
             </span>
             <span>후기 {data.reviewCount}</span>
           </div>
+          <p className="text-neutral-40 text-xsmall14">
+            피드백 진행 일정{' '}
+            <span className="text-neutral-20 font-medium">
+              {formatFeedbackPeriod(
+                data.feedbackStartDate,
+                data.feedbackEndDate,
+              )}
+            </span>
+          </p>
           <div className="mt-2 flex items-center justify-between gap-4">
             <span className="text-medium22 font-bold">
-              {formatPrice(data.price)}
+              {priceLabel(data.durations, data.price)}
             </span>
             <button
               type="button"

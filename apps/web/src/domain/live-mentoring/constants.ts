@@ -37,6 +37,18 @@ export const SORT_OPTIONS: { value: LiveMentorSort; label: string }[] = [
 export const durationLabel = (durationMin: LiveMentoringDuration): string =>
   `${durationMin}분`;
 
-/** 가격 표시 포맷 (예: "35,000원"). 금액은 진행시간 고정 매핑값이 그대로 들어온다. */
+/** 가격 표시 포맷 (예: "35,000원"). 여러 진행시간이면 최저가가 들어온다. */
 export const formatPrice = (price: number): string =>
   `${price.toLocaleString('ko-KR')}원`;
+
+/** 여러 진행시간이면 최저가임을 나타내는 접두("최저 "). */
+export const priceLabel = (
+  durations: LiveMentoringDuration[],
+  price: number,
+): string => `${durations.length > 1 ? '최저 ' : ''}${formatPrice(price)}`;
+
+/** 피드백 진행 일정(오픈 기간) 표시 (예: "07.14 ~ 07.28"). */
+export const formatFeedbackPeriod = (start: string, end: string): string => {
+  const md = (iso: string) => iso.slice(5).replace('-', '.');
+  return `${md(start)} ~ ${md(end)}`;
+};

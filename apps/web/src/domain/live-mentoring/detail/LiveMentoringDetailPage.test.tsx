@@ -16,11 +16,13 @@ function detail(overrides: Record<string, unknown> = {}) {
     data: {
       data: {
         mentorId: 3,
-        category: 'PORTFOLIO',
-        durationMin: 50,
+        categories: ['PORTFOLIO'],
+        durations: [50],
         price: 60000,
         rating: 4.8,
         reviewCount: 12,
+        feedbackStartDate: '2026-07-18',
+        feedbackEndDate: '2026-08-01',
         profile: {
           visible: true,
           mosaicEnabled: false,
