@@ -6,7 +6,9 @@ import {
   useDeleteFeedbackMentorSlotsMutation,
   useFeedbackMentorSlotsQuery,
 } from '@/api/feedback/feedback';
-import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import LiveAvailabilityContent, {
+  type LiveFeedbackPeriodInfo,
+} from '@/pages/schedule/live-availability/LiveAvailabilityContent';
 import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
@@ -68,20 +70,27 @@ const FeedbackAvailabilityModal = ({
   // 모달이 닫혀 있을 때는 쿼리를 실행하지 않는다 (슬롯 쿼리 enabled 가드와 동일).
   // slotOpenWindow: 모든 미션 오픈 윈도를 합성한 단일 게이팅 윈도(미션 일자 없으면 null).
   const { bars, slotOpenWindow } = useLiveFeedbackData({ enabled: isOpen });
-  const livePeriods = useMemo(
-    () =>
-      bars
-        .filter((b) => b.barType === 'live-feedback-period')
-        .map((b) => ({
-          challengeTitle: b.challengeTitle,
-          th: b.th,
-          startDate: b.startDate,
-          endDate: b.endDate,
-          reservedCount: b.submittedCount,
-          capacity: b.submittedCount + b.notSubmittedCount,
-        })),
-    [bars],
-  );
+  const livePeriods = useMemo<LiveFeedbackPeriodInfo[]>(() => {
+    const periods: LiveFeedbackPeriodInfo[] = bars
+      .filter((b) => b.barType === 'live-feedback-period')
+      .map((b) => ({
+        challengeTitle: b.challengeTitle,
+        th: b.th,
+        startDate: b.startDate,
+        endDate: b.endDate,
+        reservedCount: b.submittedCount,
+        capacity: b.submittedCount + b.notSubmittedCount,
+      }));
+    // 1대1 라이브 멘토링 오픈 기간도 챌린지 기간 바와 동일하게 날짜 밑에 표시.
+    if (openPeriod) {
+      periods.push({
+        challengeTitle: '1대1 라이브 멘토링',
+        startDate: openPeriod.startDate,
+        endDate: openPeriod.endDate,
+      });
+    }
+    return periods;
+  }, [bars, openPeriod]);
 
   const isSaving = createSlots.isPending || deleteSlots.isPending;
 
@@ -131,14 +140,6 @@ const FeedbackAvailabilityModal = ({
         onClose={onClose}
         className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
       >
-        {openPeriod && (
-          <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
-            피드백 진행 일정{' '}
-            <span className="font-semibold">
-              {openPeriod.startDate} ~ {openPeriod.endDate}
-            </span>
-          </div>
-        )}
         {slotsQuery.isPending ? (
           <div className="flex flex-1 items-center justify-center py-20">
             <p className="text-xsmall14 text-neutral-40">
