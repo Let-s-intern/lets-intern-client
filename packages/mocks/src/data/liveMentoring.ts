@@ -173,6 +173,8 @@ export interface LiveMentorDetail {
  * 타입·진행시간은 다중 선택, 가격은 진행시간에 따라 파생(최저가)한다.
  */
 export interface LiveMentoringSettings {
+  /** 현재 오픈 중인지 여부. 오픈 중에는 프로필·설정을 수정할 수 없다. */
+  isOpen: boolean;
   profileVisible: boolean;
   mosaicEnabled: boolean;
   mosaicBlur: number;
@@ -895,6 +897,8 @@ const mySeed = MENTOR_SEEDS[0];
 
 /** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
+  // 목 기본값: 아직 오픈 전(편집 가능). 오픈하기 → 잠금 흐름을 확인할 수 있다.
+  isOpen: false,
   profileVisible: mySeed.profileVisible,
   // 모자이크는 기본적으로 중간 정도로 켜둔다.
   mosaicEnabled: true,

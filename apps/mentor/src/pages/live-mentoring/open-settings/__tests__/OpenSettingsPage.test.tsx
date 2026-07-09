@@ -26,6 +26,7 @@ vi.mock('@/pages/feedback-live-reservation/ui/ReservationListModal', () => ({
 import OpenSettingsPage from '../OpenSettingsPage';
 
 const baseSettings: LiveMentoringSettings = {
+  isOpen: false,
   profileVisible: true,
   mosaicEnabled: false,
   mosaicBlur: 8,
@@ -204,10 +205,46 @@ describe('OpenSettingsPage — 타입 필수', () => {
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
 
-  it('타입이 0개면 저장 클릭해도 mutate 가 호출되지 않는다', () => {
+  it('타입이 0개면(미변경) 오픈하기가 비활성이고 mutate 가 호출되지 않는다', () => {
     renderPage({ categories: [] });
 
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    const openBtn = screen.getByRole('button', { name: '오픈하기' });
+    expect(openBtn).toBeDisabled();
+    fireEvent.click(openBtn);
     expect(saveMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('OpenSettingsPage — 오픈 상태/버튼', () => {
+  it('변경사항이 없고 미오픈이면 오픈하기 버튼을 보인다(저장 없음)', () => {
+    renderPage();
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: '저장' })).not.toBeInTheDocument();
+  });
+
+  it('변경사항이 생기면 저장 버튼으로 바뀐다', () => {
+    renderPage({ durations: [30] });
+    fireEvent.click(screen.getByRole('button', { name: '50분' })); // dirty
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '오픈하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('오픈하기 클릭 시 isOpen=true 로 저장을 호출한다', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    expect(payload.isOpen).toBe(true);
+  });
+
+  it('오픈 중이면 설정을 잠그고 오픈 닫기 버튼만 노출한다', () => {
+    renderPage({ isOpen: true });
+    expect(screen.getByRole('button', { name: /오픈 닫기/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '저장' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '오픈하기' }),
+    ).not.toBeInTheDocument();
   });
 });

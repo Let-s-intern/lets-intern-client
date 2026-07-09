@@ -50,6 +50,8 @@ const OpenSettingsPage = () => {
   const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
+  // 변경사항(dirty) 판정을 위한 로드 원본(정규화된 값).
+  const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
 
   useEffect(() => {
@@ -59,13 +61,15 @@ const OpenSettingsPage = () => {
       0,
       data.careers.findIndex((c) => c.visible),
     );
-    setForm({
+    const normalized = {
       ...data,
       careers: data.careers.map((c, i) => ({ ...c, visible: i === repIndex })),
-    });
+    };
+    setForm(normalized);
+    setOriginal(normalized);
   }, [data]);
 
-  if (!form) {
+  if (!form || !original) {
     return (
       <div className="text-xsmall14 text-neutral-40 px-1 py-10">
         설정을 불러오는 중...
@@ -115,25 +119,52 @@ const OpenSettingsPage = () => {
     );
 
   const noCategorySelected = form.categories.length === 0;
-  const canSave = !noCategorySelected;
+  const hasRequiredFields = !noCategorySelected;
+  const isCurrentlyOpen = form.isOpen;
+  const isDirty = JSON.stringify(form) !== JSON.stringify(original);
+  const canSave = hasRequiredFields && isDirty;
 
-  const handleSave = () => {
-    if (!canSave) return;
-    save(form, {
-      onSuccess: () =>
-        showAlert({ title: '저장되었습니다.', variant: 'success' }),
+  const persist = (
+    next: LiveMentoringSettings,
+    successTitle: string,
+    successDescription?: string,
+  ) =>
+    save(next, {
+      onSuccess: () => {
+        setForm(next);
+        setOriginal(next);
+        showAlert({
+          title: successTitle,
+          description: successDescription,
+          variant: 'success',
+        });
+      },
       onError: () =>
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
     });
+
+  const handleSave = () => {
+    if (!canSave) return;
+    persist(form, '저장되었습니다.');
   };
 
-  // 오픈 닫기 — 현재 오픈을 마감한다(목: 확인 알럿).
+  // 오픈하기 — 설정을 저장하면서 오픈 상태로 전환(이후 수정 잠금).
+  const handleOpen = () => {
+    if (!hasRequiredFields) return;
+    persist(
+      { ...form, isOpen: true },
+      '오픈되었습니다.',
+      '오픈 중에는 설정을 수정할 수 없습니다. 수정하려면 오픈을 닫아주세요.',
+    );
+  };
+
+  // 오픈 닫기 — 오픈을 마감하고 다시 수정 가능 상태로 전환.
   const handleCloseOpen = () =>
-    showAlert({
-      title: '오픈을 닫았습니다.',
-      description: '진행 중인 예약은 유지되며, 신규 예약은 받지 않습니다.',
-      variant: 'success',
-    });
+    persist(
+      { ...form, isOpen: false },
+      '오픈을 닫았습니다.',
+      '진행 중인 예약은 유지되며, 이제 설정을 수정할 수 있습니다.',
+    );
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -146,229 +177,272 @@ const OpenSettingsPage = () => {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-        {/* 좌: 설정 패널 */}
-        <div className="flex flex-col gap-6">
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>프로필</h2>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-900">
-                    프로필 노출
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    끄면 프로필 이미지 대신 &lsquo;○○ 멘토님의 멘토링&rsquo; 이
-                    표시됩니다.
-                  </span>
-                </div>
-                <Toggle
-                  label="프로필 노출"
-                  checked={form.profileVisible}
-                  onChange={(v) => patch({ profileVisible: v })}
-                />
-              </div>
-
-              {/* 모자이크는 프로필 이미지를 노출할 때만 설정 가능 */}
-              {form.profileVisible && (
-                <>
+      {/* 오픈 중에는 설정 전체를 블러 처리하고 상호작용을 막는다. */}
+      <div className="relative">
+        <div
+          className={
+            isCurrentlyOpen
+              ? 'pointer-events-none select-none blur-[2px]'
+              : undefined
+          }
+          aria-hidden={isCurrentlyOpen}
+        >
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+            {/* 좌: 설정 패널 */}
+            <div className="flex flex-col gap-6">
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>프로필</h2>
+                <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-gray-900">
-                        프로필 자동 모자이크
+                        프로필 노출
                       </span>
                       <span className="text-xs text-gray-500">
-                        프로필 이미지 위에 블러 오버레이를 적용합니다.
+                        끄면 프로필 이미지 대신 &lsquo;○○ 멘토님의 멘토링&rsquo;
+                        이 표시됩니다.
                       </span>
                     </div>
                     <Toggle
-                      label="프로필 자동 모자이크"
-                      checked={form.mosaicEnabled}
-                      onChange={(v) => patch({ mosaicEnabled: v })}
+                      label="프로필 노출"
+                      checked={form.profileVisible}
+                      onChange={(v) => patch({ profileVisible: v })}
                     />
                   </div>
 
-                  {form.mosaicEnabled && (
-                    <div className="flex items-center gap-3">
-                      <label
-                        htmlFor="mosaic-blur"
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        블러 강도
-                      </label>
-                      <input
-                        id="mosaic-blur"
-                        type="range"
-                        min={0}
-                        max={20}
-                        step={1}
-                        value={form.mosaicBlur}
-                        onChange={(e) =>
-                          patch({ mosaicBlur: Number(e.target.value) })
-                        }
-                        className="accent-primary min-w-0 flex-1"
-                      />
-                      <span className="w-12 text-right text-sm text-gray-600">
-                        {form.mosaicBlur}px
-                      </span>
-                    </div>
+                  {/* 모자이크는 프로필 이미지를 노출할 때만 설정 가능 */}
+                  {form.profileVisible && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-900">
+                            프로필 자동 모자이크
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            프로필 이미지 위에 블러 오버레이를 적용합니다.
+                          </span>
+                        </div>
+                        <Toggle
+                          label="프로필 자동 모자이크"
+                          checked={form.mosaicEnabled}
+                          onChange={(v) => patch({ mosaicEnabled: v })}
+                        />
+                      </div>
+
+                      {form.mosaicEnabled && (
+                        <div className="flex items-center gap-3">
+                          <label
+                            htmlFor="mosaic-blur"
+                            className="text-sm font-medium text-gray-700"
+                          >
+                            블러 강도
+                          </label>
+                          <input
+                            id="mosaic-blur"
+                            type="range"
+                            min={0}
+                            max={20}
+                            step={1}
+                            value={form.mosaicBlur}
+                            onChange={(e) =>
+                              patch({ mosaicBlur: Number(e.target.value) })
+                            }
+                            className="accent-primary min-w-0 flex-1"
+                          />
+                          <span className="w-12 text-right text-sm text-gray-600">
+                            {form.mosaicBlur}px
+                          </span>
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+                </div>
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>대표 경력 지정</h2>
+                <p className="mb-3 text-xs text-gray-500">
+                  공개 화면에 노출할 대표 경력을 하나만 선택하세요.
+                </p>
+                {form.careers.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    등록된 경력이 없습니다.
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {form.careers.map((career, index) => (
+                      <li key={`${career.company}-${index}`}>
+                        <label className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="radio"
+                            name="representative-career"
+                            checked={career.visible}
+                            onChange={() => selectCareer(index)}
+                            className="accent-primary h-4 w-4"
+                          />
+                          <span className="text-sm text-gray-700">
+                            {career.company} · {career.position} (
+                            {career.period})
+                          </span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
+                <p className="mb-3 text-xs text-gray-500">
+                  멘토링(피드백)을 진행할 오픈 기간을 먼저 설정하세요. 오픈은
+                  하나만 가능합니다.
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="date"
+                    aria-label="피드백 시작일"
+                    value={form.feedbackStartDate}
+                    onChange={(e) =>
+                      patch({ feedbackStartDate: e.target.value })
+                    }
+                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
+                  />
+                  <span className="text-gray-400">~</span>
+                  <input
+                    type="date"
+                    aria-label="피드백 종료일"
+                    min={form.feedbackStartDate}
+                    value={form.feedbackEndDate}
+                    onChange={(e) => patch({ feedbackEndDate: e.target.value })}
+                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
+                  />
+                </div>
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>라이브 슬롯</h2>
+                <p className="mb-3 text-xs text-gray-500">
+                  라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미
+                  예약·오픈된 시간과 겹치지 않게 슬롯을 열 수 있어요. 위에서
+                  설정한 피드백 진행 일정이 모달 상단에 표시됩니다.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSlotModalOpen(true)}
+                  className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+                >
+                  라이브 슬롯 오픈
+                </button>
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-2">
+                    {LIVE_MENTORING_DURATIONS.map((duration) => {
+                      const active = form.durations.includes(duration);
+                      return (
+                        <button
+                          key={duration}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => toggleDuration(duration)}
+                          className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                        >
+                          {duration}분
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    가격{' '}
+                    <span className="text-primary font-semibold">
+                      {formatPrice(getLowestPrice(form.durations))}
+                    </span>{' '}
+                    <span className="text-xs text-gray-400">
+                      (여러 개 선택 시 최저가로 노출)
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>타입 (다중 선택)</h2>
+                <div className="flex flex-wrap gap-2">
+                  {LIVE_MENTORING_CATEGORIES.map((category) => {
+                    const active = form.categories.includes(category);
+                    return (
+                      <button
+                        key={category}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => toggleCategory(category)}
+                        className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                      >
+                        {CATEGORY_LABELS[category]}
+                      </button>
+                    );
+                  })}
+                </div>
+                {noCategorySelected && (
+                  <p role="alert" className="text-system-error mt-3 text-xs">
+                    타입을 최소 1개 이상 선택해야 저장할 수 있어요.
+                  </p>
+                )}
+              </section>
             </div>
-          </section>
 
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>대표 경력 지정</h2>
-            <p className="mb-3 text-xs text-gray-500">
-              공개 화면에 노출할 대표 경력을 하나만 선택하세요.
-            </p>
-            {form.careers.length === 0 ? (
-              <p className="text-sm text-gray-500">등록된 경력이 없습니다.</p>
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {form.careers.map((career, index) => (
-                  <li key={`${career.company}-${index}`}>
-                    <label className="flex cursor-pointer items-center gap-2">
-                      <input
-                        type="radio"
-                        name="representative-career"
-                        checked={career.visible}
-                        onChange={() => selectCareer(index)}
-                        className="accent-primary h-4 w-4"
-                      />
-                      <span className="text-sm text-gray-700">
-                        {career.company} · {career.position} ({career.period})
-                      </span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
-            <p className="mb-3 text-xs text-gray-500">
-              멘토링(피드백)을 진행할 오픈 기간을 먼저 설정하세요. 오픈은 하나만
-              가능합니다.
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <input
-                type="date"
-                aria-label="피드백 시작일"
-                value={form.feedbackStartDate}
-                onChange={(e) => patch({ feedbackStartDate: e.target.value })}
-                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
-              />
-              <span className="text-gray-400">~</span>
-              <input
-                type="date"
-                aria-label="피드백 종료일"
-                min={form.feedbackStartDate}
-                value={form.feedbackEndDate}
-                onChange={(e) => patch({ feedbackEndDate: e.target.value })}
-                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
-              />
+            {/* 우: 미리보기 */}
+            <div className="lg:sticky lg:top-6 lg:self-start">
+              <OpenSettingsPreview settings={form} />
             </div>
-          </section>
+          </div>
+        </div>
 
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>라이브 슬롯</h2>
-            <p className="mb-3 text-xs text-gray-500">
-              라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미 예약·오픈된
-              시간과 겹치지 않게 슬롯을 열 수 있어요. 위에서 설정한 피드백 진행
-              일정이 모달 상단에 표시됩니다.
-            </p>
+        {/* 오픈 중 잠금 오버레이 — 블러 위에 오픈 닫기 플로팅 버튼 */}
+        {isCurrentlyOpen && (
+          <div className="absolute inset-0 flex items-start justify-center pt-24">
+            <div className="sticky top-24 flex flex-col items-center gap-3">
+              <p className="rounded-md bg-white/90 px-4 py-2 text-sm font-medium text-gray-700 shadow">
+                오픈 중에는 설정을 수정할 수 없어요.
+              </p>
+              <button
+                type="button"
+                onClick={handleCloseOpen}
+                disabled={isPending}
+                className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-3 text-sm font-semibold text-white shadow-lg transition-colors disabled:opacity-50"
+              >
+                {isPending ? '처리 중...' : '오픈 닫기'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 하단 버튼: 오픈 중이면 숨김. 변경사항 있으면 저장, 없으면 오픈하기. */}
+      {!isCurrentlyOpen && (
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+          {isDirty ? (
             <button
               type="button"
-              onClick={() => setSlotModalOpen(true)}
-              className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+              onClick={handleSave}
+              disabled={isPending || !canSave}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              라이브 슬롯 오픈
+              {isPending ? '저장 중...' : '저장'}
             </button>
-          </section>
-
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
-            <div className="flex flex-col gap-3">
-              <div className="flex gap-2">
-                {LIVE_MENTORING_DURATIONS.map((duration) => {
-                  const active = form.durations.includes(duration);
-                  return (
-                    <button
-                      key={duration}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => toggleDuration(duration)}
-                      className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
-                    >
-                      {duration}분
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-sm text-gray-600">
-                가격{' '}
-                <span className="text-primary font-semibold">
-                  {formatPrice(getLowestPrice(form.durations))}
-                </span>{' '}
-                <span className="text-xs text-gray-400">
-                  (여러 개 선택 시 최저가로 노출)
-                </span>
-              </p>
-            </div>
-          </section>
-
-          <section className={cardClass}>
-            <h2 className={sectionTitleClass}>타입 (다중 선택)</h2>
-            <div className="flex flex-wrap gap-2">
-              {LIVE_MENTORING_CATEGORIES.map((category) => {
-                const active = form.categories.includes(category);
-                return (
-                  <button
-                    key={category}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => toggleCategory(category)}
-                    className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
-                  >
-                    {CATEGORY_LABELS[category]}
-                  </button>
-                );
-              })}
-            </div>
-            {noCategorySelected && (
-              <p role="alert" className="text-system-error mt-3 text-xs">
-                타입을 최소 1개 이상 선택해야 저장할 수 있어요.
-              </p>
-            )}
-          </section>
+          ) : (
+            <button
+              type="button"
+              onClick={handleOpen}
+              disabled={isPending || !hasRequiredFields}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isPending ? '처리 중...' : '오픈하기'}
+            </button>
+          )}
         </div>
-
-        {/* 우: 미리보기 */}
-        <div className="lg:sticky lg:top-6 lg:self-start">
-          <OpenSettingsPreview settings={form} />
-        </div>
-      </div>
-
-      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        <button
-          type="button"
-          onClick={handleCloseOpen}
-          className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors hover:bg-gray-50"
-        >
-          오픈 닫기
-        </button>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isPending || !canSave}
-          className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isPending ? '저장 중...' : '저장'}
-        </button>
-      </div>
+      )}
 
       <FeedbackAvailabilityModal
         isOpen={slotModalOpen}

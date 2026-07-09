@@ -62,6 +62,8 @@ export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
 
 /** 오픈 설정(메타) (PRD §5 S3-a). */
 export const liveMentoringSettingsSchema = z.object({
+  /** 현재 오픈 중인지. 오픈 중에는 수정 불가. */
+  isOpen: z.boolean(),
   profileVisible: z.boolean(),
   mosaicEnabled: z.boolean(),
   mosaicBlur: z.number(),

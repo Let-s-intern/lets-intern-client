@@ -29,6 +29,7 @@ const axiosMock = vi.mocked(axios, true);
 
 function makeSettings(overrides: Record<string, unknown> = {}) {
   return {
+    isOpen: false,
     profileVisible: true,
     mosaicEnabled: false,
     mosaicBlur: 0,
