@@ -79,6 +79,9 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
         createdAt: '2026-06-10',
       },
     ],
+    challenges: [
+      { challengeId: 11, title: '이력서 완성 챌린지', thumbnail: null },
+    ],
     ...overrides,
   };
 }

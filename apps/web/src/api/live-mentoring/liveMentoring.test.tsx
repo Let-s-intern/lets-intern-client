@@ -172,6 +172,7 @@ describe('useLiveMentorDetailQuery', () => {
             checklist: [],
           },
           reviews: [],
+          challenges: [],
         },
       },
     });

@@ -76,6 +76,9 @@ function detail(overrides: Record<string, unknown> = {}) {
             createdAt: '2026-06-02',
           },
         ],
+        challenges: [
+          { challengeId: 31, title: '포트폴리오 완성 챌린지', thumbnail: null },
+        ],
         ...(overrides as object),
       },
     },
@@ -157,5 +160,15 @@ describe('LiveMentoringDetailPage', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: /신청하기/ })).toBeDisabled(),
     );
+  });
+
+  it('하단에 이 멘토가 참여 중인 챌린지를 노출한다', async () => {
+    axiosGet.mockResolvedValue(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('이 멘토가 참여 중인 챌린지')).toBeInTheDocument(),
+    );
+    expect(screen.getByText('포트폴리오 완성 챌린지')).toBeInTheDocument();
   });
 });

@@ -216,6 +216,35 @@ const LiveMentoringDetailPage = ({
           </ul>
         </DetailSection>
       )}
+
+      {/* 이 멘토가 참여 중인 챌린지 */}
+      {data.challenges.length > 0 && (
+        <DetailSection title="이 멘토가 참여 중인 챌린지">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {data.challenges.map((challenge) => (
+              <li key={challenge.challengeId}>
+                <a
+                  href={`/program/challenge/${challenge.challengeId}`}
+                  className="border-neutral-80 hover:border-primary flex items-center gap-3 rounded-md border p-4 transition"
+                >
+                  <div className="bg-neutral-90 h-12 w-12 shrink-0 overflow-hidden rounded-sm">
+                    {challenge.thumbnail && (
+                      <img
+                        src={challenge.thumbnail}
+                        alt={challenge.title}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <span className="text-xsmall14 font-medium">
+                    {challenge.title}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </DetailSection>
+      )}
     </div>
   );
 };
