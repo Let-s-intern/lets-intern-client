@@ -1,3 +1,4 @@
+import { getLowestPrice } from '@letscareer/mocks';
 import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
@@ -38,8 +39,8 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     const { data } = await res.json();
     expect(data.content.length).toBeGreaterThan(0);
     expect(
-      data.content.every(
-        (c: { category: string }) => c.category === 'PORTFOLIO',
+      data.content.every((c: { categories: string[] }) =>
+        c.categories.includes('PORTFOLIO'),
       ),
     ).toBe(true);
   });
@@ -71,17 +72,19 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     const { data } = await res.json();
     expect(data.mentorId).toBe(3);
     expect(data.profile).toBeDefined();
-    expect(data.template.category).toBe(data.category);
+    expect(data.template.category).toBe(data.categories[0]);
     expect(Array.isArray(data.reviews)).toBe(true);
-    expect(data.price).toBe(data.durationMin === 30 ? 35000 : 60000);
+    expect(data.price).toBe(getLowestPrice(data.durations));
   });
 
   it('GET /mentor/live-mentoring/settings → 오픈 설정 메타', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`);
     const { data } = await res.json();
     expect(data).toHaveProperty('profileVisible');
-    expect(data).toHaveProperty('durationMin');
-    expect(data).toHaveProperty('category');
+    expect(data).toHaveProperty('categories');
+    expect(data).toHaveProperty('durations');
+    expect(data).toHaveProperty('feedbackStartDate');
+    expect(data).toHaveProperty('feedbackEndDate');
   });
 
   it('PUT /mentor/live-mentoring/settings → 받은 body를 echo', async () => {

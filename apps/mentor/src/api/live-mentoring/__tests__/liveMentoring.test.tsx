@@ -43,9 +43,10 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
         visible: true,
       },
     ],
-    durationMin: 50,
-    price: 60000,
-    category: 'PERSONAL_STATEMENT',
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -97,9 +98,9 @@ describe('스키마 parse', () => {
     ).not.toThrow();
   });
 
-  it('durationMin이 30/50이 아니면 파싱 실패', () => {
+  it('durations에 30/50이 아닌 값이 있으면 파싱 실패', () => {
     expect(() =>
-      liveMentoringSettingsSchema.parse(makeSettings({ durationMin: 40 })),
+      liveMentoringSettingsSchema.parse(makeSettings({ durations: [40] })),
     ).toThrow();
   });
 
@@ -117,9 +118,11 @@ describe('스키마 parse', () => {
   it('오픈현황행 status가 enum 밖이면 파싱 실패', () => {
     expect(() =>
       openStatusRowSchema.parse({
-        category: 'RESUME',
-        durationMin: 30,
+        categories: ['RESUME'],
+        durations: [30],
         price: 35000,
+        feedbackStartDate: '2026-07-10',
+        feedbackEndDate: '2026-07-23',
         status: 'PAUSED',
         reservationCount: 0,
       }),
@@ -140,12 +143,12 @@ describe('useLiveMentoringSettingsQuery', () => {
     expect(axiosMock.get).toHaveBeenCalledWith(
       '/mentor/live-mentoring/settings',
     );
-    expect(result.current.data?.category).toBe('PERSONAL_STATEMENT');
+    expect(result.current.data?.categories).toEqual(['PERSONAL_STATEMENT']);
   });
 
   it('응답 스키마가 깨지면 isError 가 된다', async () => {
     axiosMock.get.mockResolvedValue({
-      data: { data: makeSettings({ durationMin: 40 }) },
+      data: { data: makeSettings({ durations: [40] }) },
     });
 
     const { result } = renderHook(() => useLiveMentoringSettingsQuery(), {
@@ -206,9 +209,11 @@ describe('useLiveMentoringOpenStatusQuery', () => {
         data: {
           openStatusList: [
             {
-              category: 'PERSONAL_STATEMENT',
-              durationMin: 50,
+              categories: ['PERSONAL_STATEMENT'],
+              durations: [50],
               price: 60000,
+              feedbackStartDate: '2026-07-14',
+              feedbackEndDate: '2026-07-28',
               status: 'OPEN',
               reservationCount: 7,
             },

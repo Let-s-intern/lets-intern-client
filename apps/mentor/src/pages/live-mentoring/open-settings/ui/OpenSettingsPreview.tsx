@@ -1,3 +1,5 @@
+import { getLowestPrice } from '@letscareer/mocks';
+
 import type { LiveMentoringSettings } from '@/api/live-mentoring/liveMentoringSchema';
 import { CATEGORY_LABELS, durationLabel, formatPrice } from '../../constants';
 
@@ -16,13 +18,15 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
     mosaicBlur,
     nickname,
     profileImage,
-    category,
-    durationMin,
-    price,
+    categories,
+    durations,
+    feedbackStartDate,
+    feedbackEndDate,
     careers,
   } = settings;
 
   const visibleCareers = careers.filter((c) => c.visible);
+  const price = getLowestPrice(durations);
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
@@ -66,10 +70,10 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
         <div className="flex flex-col gap-2 p-4">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="bg-primary-10 text-primary rounded px-2 py-0.5 text-xs font-medium">
-              {CATEGORY_LABELS[category]}
+              {categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
             </span>
             <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-              {durationLabel(durationMin)}
+              {durations.map(durationLabel).join('·')}
             </span>
           </div>
           {profileVisible && (
@@ -80,7 +84,11 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
               {visibleCareers[0].company} · {visibleCareers[0].position}
             </p>
           )}
+          <p className="text-xs text-gray-500">
+            피드백 {feedbackStartDate.slice(5)} ~ {feedbackEndDate.slice(5)}
+          </p>
           <p className="text-primary text-sm font-semibold">
+            {durations.length > 1 ? '최저 ' : ''}
             {formatPrice(price)}
           </p>
         </div>

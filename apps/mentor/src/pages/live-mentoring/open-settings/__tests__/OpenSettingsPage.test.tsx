@@ -27,9 +27,10 @@ const baseSettings: LiveMentoringSettings = {
     { company: '네이버', position: '기획', period: '2019-2026', visible: true },
     { company: '카카오', position: 'PM', period: '2016-2019', visible: false },
   ],
-  durationMin: 30,
-  price: 35000,
-  category: 'PERSONAL_STATEMENT',
+  categories: ['PERSONAL_STATEMENT'],
+  durations: [30],
+  feedbackStartDate: '2026-07-14',
+  feedbackEndDate: '2026-07-28',
 };
 
 const renderPage = (overrides: Partial<LiveMentoringSettings> = {}) => {
@@ -42,19 +43,22 @@ afterEach(() => {
   settingsData = undefined;
 });
 
-describe('OpenSettingsPage — 진행시간 → 가격 매핑', () => {
+describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
   it('초기 30분이면 35,000원을 표기한다', () => {
-    renderPage({ durationMin: 30, price: 35000 });
+    renderPage({ durations: [30] });
     expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
   });
 
-  it('50분 선택 시 60,000원으로 자동 갱신된다', () => {
-    renderPage({ durationMin: 30, price: 35000 });
+  it('여러 진행시간이면 최저가, 하나만 남기면 그 가격으로 갱신된다', () => {
+    renderPage({ durations: [30] });
 
+    // 50분 추가 → [30,50] → 최저가 35,000 유지
     fireEvent.click(screen.getByRole('button', { name: '50분' }));
+    expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
 
+    // 30분 해제 → [50] 만 남아 60,000
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
     expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
-    expect(screen.queryByText('35,000원')).not.toBeInTheDocument();
   });
 
   it('가격 입력 UI(number/text 가격 필드)가 없다', () => {
@@ -88,10 +92,10 @@ describe('OpenSettingsPage — 모자이크 강도 반영', () => {
 });
 
 describe('OpenSettingsPage — 저장 payload', () => {
-  it('저장 시 갱신된 진행시간/가격/모자이크 강도를 담아 mutate 를 호출한다', () => {
-    renderPage({ durationMin: 30, price: 35000, mosaicEnabled: true });
+  it('저장 시 갱신된 진행시간(다중)/모자이크 강도를 담아 mutate 를 호출한다', () => {
+    renderPage({ durations: [30], mosaicEnabled: true });
 
-    fireEvent.click(screen.getByRole('button', { name: '50분' }));
+    fireEvent.click(screen.getByRole('button', { name: '50분' })); // [30,50]
     fireEvent.change(screen.getByLabelText('블러 강도'), {
       target: { value: '12' },
     });
@@ -99,9 +103,30 @@ describe('OpenSettingsPage — 저장 payload', () => {
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
-    expect(payload.durationMin).toBe(50);
-    expect(payload.price).toBe(60000);
+    expect(payload.durations).toEqual([30, 50]);
     expect(payload.mosaicBlur).toBe(12);
+  });
+
+  it('타입을 여러 개 선택하면 payload categories 에 담긴다', () => {
+    renderPage({ categories: ['PERSONAL_STATEMENT'] });
+
+    fireEvent.click(screen.getByRole('button', { name: '이력서' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
+  });
+
+  it('피드백 기간 입력이 payload 에 반영된다', () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
+      target: { value: '2026-08-01' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    expect(payload.feedbackStartDate).toBe('2026-08-01');
   });
 
   it('경력 노출 체크 토글이 payload 에 반영된다', () => {

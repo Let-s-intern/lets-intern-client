@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  getPriceByDuration,
+  getLowestPrice,
   LIVE_MENTORING_CATEGORIES,
   LIVE_MENTORING_DURATIONS,
 } from '@letscareer/mocks';
@@ -10,6 +10,7 @@ import {
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
+  LiveMentoringCategory,
   LiveMentoringDuration,
   LiveMentoringSettings,
 } from '@/api/live-mentoring/liveMentoringSchema';
@@ -64,8 +65,32 @@ const OpenSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringSettings>) =>
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  const handleDurationChange = (durationMin: LiveMentoringDuration) =>
-    patch({ durationMin, price: getPriceByDuration(durationMin) });
+  // 진행시간·타입은 다중 선택. 최소 1개는 유지한다.
+  const toggleDuration = (duration: LiveMentoringDuration) =>
+    setForm((prev) => {
+      if (!prev) return prev;
+      const has = prev.durations.includes(duration);
+      const durations =
+        has && prev.durations.length > 1
+          ? prev.durations.filter((d) => d !== duration)
+          : has
+            ? prev.durations
+            : [...prev.durations, duration].sort((a, b) => a - b);
+      return { ...prev, durations };
+    });
+
+  const toggleCategory = (category: LiveMentoringCategory) =>
+    setForm((prev) => {
+      if (!prev) return prev;
+      const has = prev.categories.includes(category);
+      const categories =
+        has && prev.categories.length > 1
+          ? prev.categories.filter((c) => c !== category)
+          : has
+            ? prev.categories
+            : [...prev.categories, category];
+      return { ...prev, categories };
+    });
 
   const toggleCareer = (index: number) =>
     setForm((prev) =>
@@ -190,17 +215,43 @@ const OpenSettingsPage = () => {
           </section>
 
           <section className={cardClass}>
-            <h2 className={sectionTitleClass}>진행시간</h2>
+            <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
+            <p className="mb-3 text-xs text-gray-500">
+              멘토링(피드백)을 진행할 오픈 기간을 설정하세요. 오픈은 하나만
+              가능합니다.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="date"
+                aria-label="피드백 시작일"
+                value={form.feedbackStartDate}
+                onChange={(e) => patch({ feedbackStartDate: e.target.value })}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
+              />
+              <span className="text-gray-400">~</span>
+              <input
+                type="date"
+                aria-label="피드백 종료일"
+                min={form.feedbackStartDate}
+                value={form.feedbackEndDate}
+                onChange={(e) => patch({ feedbackEndDate: e.target.value })}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
+              />
+            </div>
+          </section>
+
+          <section className={cardClass}>
+            <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 {LIVE_MENTORING_DURATIONS.map((duration) => {
-                  const active = form.durationMin === duration;
+                  const active = form.durations.includes(duration);
                   return (
                     <button
                       key={duration}
                       type="button"
                       aria-pressed={active}
-                      onClick={() => handleDurationChange(duration)}
+                      onClick={() => toggleDuration(duration)}
                       className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                     >
                       {duration}분
@@ -211,26 +262,26 @@ const OpenSettingsPage = () => {
               <p className="text-sm text-gray-600">
                 가격{' '}
                 <span className="text-primary font-semibold">
-                  {formatPrice(form.price)}
+                  {formatPrice(getLowestPrice(form.durations))}
                 </span>{' '}
                 <span className="text-xs text-gray-400">
-                  (진행시간에 따라 자동 결정)
+                  (여러 개 선택 시 최저가로 노출)
                 </span>
               </p>
             </div>
           </section>
 
           <section className={cardClass}>
-            <h2 className={sectionTitleClass}>타입</h2>
+            <h2 className={sectionTitleClass}>타입 (다중 선택)</h2>
             <div className="flex flex-wrap gap-2">
               {LIVE_MENTORING_CATEGORIES.map((category) => {
-                const active = form.category === category;
+                const active = form.categories.includes(category);
                 return (
                   <button
                     key={category}
                     type="button"
                     aria-pressed={active}
-                    onClick={() => patch({ category })}
+                    onClick={() => toggleCategory(category)}
                     className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                   >
                     {CATEGORY_LABELS[category]}

@@ -35,6 +35,7 @@ const OpenStatusPage = () => {
             <tr>
               <th className={headerCellClass}>카테고리</th>
               <th className={headerCellClass}>진행시간</th>
+              <th className={headerCellClass}>피드백 기간</th>
               <th className={headerCellClass}>가격</th>
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>예약 수</th>
@@ -44,7 +45,7 @@ const OpenStatusPage = () => {
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -53,7 +54,7 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   오픈한 멘토링이 없습니다.
@@ -62,16 +63,23 @@ const OpenStatusPage = () => {
             ) : (
               data.map((row, index) => (
                 <tr
-                  key={`${row.category}-${row.durationMin}-${index}`}
+                  key={`${row.categories.join()}-${index}`}
                   className="border-b border-gray-100 last:border-b-0"
                 >
                   <td className={bodyCellClass}>
-                    {CATEGORY_LABELS[row.category]}
+                    {row.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
                   </td>
                   <td className={bodyCellClass}>
-                    {durationLabel(row.durationMin)}
+                    {row.durations.map(durationLabel).join('·')}
                   </td>
-                  <td className={bodyCellClass}>{formatPrice(row.price)}</td>
+                  <td className={bodyCellClass}>
+                    {row.feedbackStartDate.slice(5)} ~{' '}
+                    {row.feedbackEndDate.slice(5)}
+                  </td>
+                  <td className={bodyCellClass}>
+                    {row.durations.length > 1 ? '최저 ' : ''}
+                    {formatPrice(row.price)}
+                  </td>
                   <td className={bodyCellClass}>
                     <span
                       className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[row.status]}`}

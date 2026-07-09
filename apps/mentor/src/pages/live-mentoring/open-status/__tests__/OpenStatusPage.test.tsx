@@ -16,16 +16,20 @@ import OpenStatusPage from '../OpenStatusPage';
 
 const rows: OpenStatusRow[] = [
   {
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [50],
     price: 60000,
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
     status: 'OPEN',
     reservationCount: 7,
   },
   {
-    category: 'PORTFOLIO',
-    durationMin: 30,
+    categories: ['PORTFOLIO'],
+    durations: [30],
     price: 35000,
+    feedbackStartDate: '2026-07-11',
+    feedbackEndDate: '2026-07-24',
     status: 'CLOSED',
     reservationCount: 0,
   },

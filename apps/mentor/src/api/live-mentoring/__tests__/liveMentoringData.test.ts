@@ -1,4 +1,5 @@
 import {
+  getLowestPrice,
   LIVE_MENTOR_CARDS,
   LIVE_MENTOR_DETAILS,
   OPEN_STATUS_ROWS,
@@ -18,22 +19,26 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     expect(Math.ceil(LIVE_MENTOR_CARDS.length / 9)).toBeGreaterThanOrEqual(2);
   });
 
-  it('가격은 진행시간 고정 매핑(30→35,000 / 50→60,000)을 따른다', () => {
+  it('가격은 진행시간 고정 매핑(30→35,000 / 50→60,000)을 따르며 여러 진행시간이면 최저가다', () => {
     expect(PRICE_BY_DURATION[30]).toBe(35000);
     expect(PRICE_BY_DURATION[50]).toBe(60000);
     for (const card of LIVE_MENTOR_CARDS) {
-      expect(card.price).toBe(PRICE_BY_DURATION[card.durationMin]);
+      expect(card.price).toBe(getLowestPrice(card.durations));
     }
   });
 
   it('카테고리·진행시간·평점 분포가 다양하다', () => {
-    const categories = new Set(LIVE_MENTOR_CARDS.map((c) => c.category));
+    const categories = new Set(LIVE_MENTOR_CARDS.flatMap((c) => c.categories));
     expect(categories).toEqual(
       new Set(['PERSONAL_STATEMENT', 'RESUME', 'PORTFOLIO']),
     );
 
-    const durations = new Set(LIVE_MENTOR_CARDS.map((c) => c.durationMin));
+    const durations = new Set(LIVE_MENTOR_CARDS.flatMap((c) => c.durations));
     expect(durations).toEqual(new Set([30, 50]));
+
+    // 다중 타입·진행시간 오픈 케이스가 존재한다
+    expect(LIVE_MENTOR_CARDS.some((c) => c.categories.length > 1)).toBe(true);
+    expect(LIVE_MENTOR_CARDS.some((c) => c.durations.length > 1)).toBe(true);
 
     for (const card of LIVE_MENTOR_CARDS) {
       expect(card.rating).toBeGreaterThanOrEqual(0);
@@ -61,7 +66,8 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(detail).toBeDefined();
       expect(detail.mentorId).toBe(card.mentorId);
       expect(detail.price).toBe(card.price);
-      expect(detail.template.category).toBe(card.category);
+      // 템플릿 카테고리는 대표(첫) 카테고리를 따른다
+      expect(detail.template.category).toBe(card.categories[0]);
       // 편집 불가 영역은 기본 템플릿에서 채워진다
       expect(detail.template.faq.length).toBeGreaterThan(0);
       expect(detail.template.process.length).toBeGreaterThan(0);
@@ -75,8 +81,8 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
 
   it('카테고리별 기본 템플릿 기본값이 서로 다르다', () => {
     const psTitle = LIVE_MENTOR_DETAILS[1].template.submissionSpec.title; // PERSONAL_STATEMENT
-    const portfolioDetail = Object.values(LIVE_MENTOR_DETAILS).find(
-      (d) => d.category === 'PORTFOLIO',
+    const portfolioDetail = Object.values(LIVE_MENTOR_DETAILS).find((d) =>
+      d.categories.includes('PORTFOLIO'),
     );
     expect(portfolioDetail).toBeDefined();
     expect(portfolioDetail?.template.submissionSpec.title).not.toBe(psTitle);
@@ -96,9 +102,13 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(['PENDING', 'PAID']).toContain(row.status);
       expect(row.grossAmount).toBeGreaterThanOrEqual(0);
     }
+    // 오픈은 하나만 가능
+    expect(OPEN_STATUS_ROWS.length).toBe(1);
     for (const row of OPEN_STATUS_ROWS) {
       expect(['OPEN', 'CLOSED']).toContain(row.status);
-      expect(row.price).toBe(PRICE_BY_DURATION[row.durationMin]);
+      expect(row.price).toBe(getLowestPrice(row.durations));
+      expect(row.feedbackStartDate).toBeTruthy();
+      expect(row.feedbackEndDate).toBeTruthy();
     }
   });
 });
