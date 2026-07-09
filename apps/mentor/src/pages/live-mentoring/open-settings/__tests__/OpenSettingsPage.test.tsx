@@ -68,7 +68,9 @@ describe('OpenSettingsPage — 모자이크 강도 반영', () => {
     renderPage({ mosaicEnabled: false });
 
     // 모자이크 켜기
-    fireEvent.click(screen.getByRole('switch', { name: '프로필 자동 모자이크' }));
+    fireEvent.click(
+      screen.getByRole('switch', { name: '프로필 자동 모자이크' }),
+    );
 
     const slider = screen.getByLabelText('블러 강도');
     fireEvent.change(slider, { target: { value: '15' } });

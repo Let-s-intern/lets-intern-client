@@ -12,7 +12,8 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
 };
 
 /** 진행시간(분) 표시 라벨. */
-export const durationLabel = (durationMin: number): string => `${durationMin}분`;
+export const durationLabel = (durationMin: number): string =>
+  `${durationMin}분`;
 
 /** 가격 표시(원). 예: 35000 → "35,000원" */
 export const formatPrice = (price: number): string =>

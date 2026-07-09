@@ -72,23 +72,20 @@ describe('DetailSettingsPage — 편집 가능/불가 경계', () => {
     // FAQ 질문 텍스트는 노출되지만 textbox 로 편집 불가
     const faqQuestion = CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.faq[0].q;
     expect(screen.getAllByText(`Q. ${faqQuestion}`).length).toBeGreaterThan(0);
-    expect(
-      screen.queryByDisplayValue(faqQuestion),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue(faqQuestion)).not.toBeInTheDocument();
   });
 });
 
 describe('DetailSettingsPage — 체크리스트 3모드', () => {
   it('멘토 커스텀 선택 시 커스텀 문구 입력이 나타난다', () => {
     renderPage();
-    const label = CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
+    const label =
+      CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
 
     const group = screen.getByRole('radiogroup', {
       name: `${label} 노출 모드`,
     });
-    fireEvent.click(
-      screen.getAllByRole('radio', { name: '멘토 커스텀' })[0],
-    );
+    fireEvent.click(screen.getAllByRole('radio', { name: '멘토 커스텀' })[0]);
 
     expect(group).toBeInTheDocument();
     const customInput = screen.getByLabelText(`${label} 커스텀 문구`);
@@ -99,7 +96,8 @@ describe('DetailSettingsPage — 체크리스트 3모드', () => {
 
   it('비노출 선택 시 미리보기 체크리스트에서 사라진다', () => {
     renderPage();
-    const label = CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
+    const label =
+      CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
 
     // 편집폼 라벨(1) + 미리보기(1) 최소 노출 확인
     expect(screen.getAllByText(label).length).toBeGreaterThanOrEqual(1);

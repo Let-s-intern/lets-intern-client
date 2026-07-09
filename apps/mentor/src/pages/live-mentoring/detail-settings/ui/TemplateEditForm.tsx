@@ -167,7 +167,9 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
                       type="button"
                       role="radio"
                       aria-checked={active}
-                      onClick={() => updateChecklist(item.id, { mode: mode.value })}
+                      onClick={() =>
+                        updateChecklist(item.id, { mode: mode.value })
+                      }
                       className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                     >
                       {mode.label}

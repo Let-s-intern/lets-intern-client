@@ -12,8 +12,7 @@ const STATUS_CLASS: Record<OpenStatusRow['status'], string> = {
   CLOSED: 'bg-gray-100 text-gray-500',
 };
 
-const headerCellClass =
-  'px-4 py-3 text-left text-xs font-medium text-gray-500';
+const headerCellClass = 'px-4 py-3 text-left text-xs font-medium text-gray-500';
 const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
 
 const OpenStatusPage = () => {

@@ -15,7 +15,12 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 import SettlementPage from '../SettlementPage';
 
 const rows: SettlementRow[] = [
-  { period: '2026-06', completedCount: 18, grossAmount: 1080000, status: 'PAID' },
+  {
+    period: '2026-06',
+    completedCount: 18,
+    grossAmount: 1080000,
+    status: 'PAID',
+  },
   {
     period: '2026-04',
     completedCount: 9,

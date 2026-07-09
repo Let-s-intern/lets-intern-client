@@ -81,7 +81,8 @@ const OpenSettingsPage = () => {
 
   const handleSave = () =>
     save(form, {
-      onSuccess: () => showAlert({ title: '저장되었습니다.', variant: 'success' }),
+      onSuccess: () =>
+        showAlert({ title: '저장되었습니다.', variant: 'success' }),
       onError: () =>
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
     });

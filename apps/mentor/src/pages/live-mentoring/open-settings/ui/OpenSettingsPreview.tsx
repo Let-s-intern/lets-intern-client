@@ -1,9 +1,5 @@
 import type { LiveMentoringSettings } from '@/api/live-mentoring/liveMentoringSchema';
-import {
-  CATEGORY_LABELS,
-  durationLabel,
-  formatPrice,
-} from '../../constants';
+import { CATEGORY_LABELS, durationLabel, formatPrice } from '../../constants';
 
 interface OpenSettingsPreviewProps {
   settings: LiveMentoringSettings;
@@ -42,7 +38,9 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
                 alt="프로필 미리보기"
                 className="h-full w-full object-cover"
                 style={
-                  mosaicEnabled ? { filter: `blur(${mosaicBlur}px)` } : undefined
+                  mosaicEnabled
+                    ? { filter: `blur(${mosaicBlur}px)` }
+                    : undefined
                 }
                 data-testid="preview-profile-image"
               />

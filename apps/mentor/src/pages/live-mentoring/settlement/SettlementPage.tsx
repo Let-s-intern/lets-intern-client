@@ -12,8 +12,7 @@ const STATUS_CLASS: Record<SettlementRow['status'], string> = {
   PAID: 'bg-primary-10 text-primary',
 };
 
-const headerCellClass =
-  'px-4 py-3 text-left text-xs font-medium text-gray-500';
+const headerCellClass = 'px-4 py-3 text-left text-xs font-medium text-gray-500';
 const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
 
 const SettlementPage = () => {
@@ -67,7 +66,9 @@ const SettlementPage = () => {
                 >
                   <td className={bodyCellClass}>{row.period}</td>
                   <td className={bodyCellClass}>{row.completedCount}건</td>
-                  <td className={bodyCellClass}>{formatPrice(row.grossAmount)}</td>
+                  <td className={bodyCellClass}>
+                    {formatPrice(row.grossAmount)}
+                  </td>
                   <td className={bodyCellClass}>
                     <span
                       className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[row.status]}`}
