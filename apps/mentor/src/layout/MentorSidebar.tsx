@@ -35,6 +35,21 @@ const navItems: NavItem[] = [
       { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
     ],
   },
+  {
+    type: 'group',
+    name: '1대1 라이브 멘토링',
+    matchPrefix: '/live-mentoring',
+    children: [
+      { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },
+      {
+        type: 'leaf',
+        name: '상세 페이지 설정',
+        url: '/live-mentoring/detail-settings',
+      },
+      { type: 'leaf', name: '정산 현황', url: '/live-mentoring/settlement' },
+      { type: 'leaf', name: '오픈 현황', url: '/live-mentoring/open-status' },
+    ],
+  },
   { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
   { type: 'leaf', name: '프로필', url: '/profile' },
 ];
