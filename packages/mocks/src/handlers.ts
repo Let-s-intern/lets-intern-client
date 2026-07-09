@@ -1,5 +1,16 @@
 import { http, HttpResponse } from 'msw';
 
+import {
+  LIVE_MENTOR_CARDS,
+  LIVE_MENTOR_DETAILS,
+  LIVE_MENTORING_SETTINGS,
+  LIVE_MENTORING_TEMPLATE,
+  OPEN_STATUS_ROWS,
+  SETTLEMENT_ROWS,
+  type LiveMentorCard,
+  type LiveMentoringCategory,
+} from './data/liveMentoring';
+
 /**
  * MSW 핸들러 — 두 QA 시나리오를 **하나의 공유 핸들러 배열**로 통합한다.
  *
@@ -1003,6 +1014,113 @@ export const handlers = [
             'https://boggy-chestnut-60b.notion.site/35f4740158fa80b4b79cd69e01eddca2',
         },
       },
+    });
+  }),
+
+  // ─────────────────────────────────────────────────────────────
+  // 1대1 라이브 멘토링 (독립 마켓플레이스) — 전부 net-new, 결제/예약 실행 없음.
+  // 공유 목 데이터(./data/liveMentoring)를 그대로 서빙한다.
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * (공개) GET /live-mentoring/mentors?page&size&category&sort
+   * 서버 페이징 모킹. category 필터 + sort(rating|reviews|latest) 반영.
+   * 응답: { content, page, size, totalPages, totalElements }.
+   */
+  http.get('*/live-mentoring/mentors', ({ request }) => {
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? '0');
+    const size = Number(url.searchParams.get('size') ?? '9');
+    const category = url.searchParams.get('category') as
+      | LiveMentoringCategory
+      | 'ALL'
+      | null;
+    const sort = url.searchParams.get('sort');
+
+    let list: LiveMentorCard[] =
+      category && category !== 'ALL'
+        ? LIVE_MENTOR_CARDS.filter((c) => c.category === category)
+        : [...LIVE_MENTOR_CARDS];
+
+    if (sort === 'rating') {
+      list = [...list].sort((a, b) => b.rating - a.rating);
+    } else if (sort === 'reviews') {
+      list = [...list].sort((a, b) => b.reviewCount - a.reviewCount);
+    } else if (sort === 'latest') {
+      list = [...list].sort((a, b) => b.mentorId - a.mentorId);
+    }
+
+    const totalElements = list.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const start = page * size;
+    const content = list.slice(start, start + size);
+
+    return HttpResponse.json({
+      status: 200,
+      data: { content, page, size, totalPages, totalElements },
+    });
+  }),
+
+  /**
+   * (공개) GET /live-mentoring/mentors/:mentorId — 멘토 상세(+reviews).
+   * 존재하지 않는 id는 첫 멘토로 폴백하되 mentorId는 echo.
+   */
+  http.get('*/live-mentoring/mentors/:mentorId', ({ params }) => {
+    const mentorId = Number(params.mentorId);
+    const detail = LIVE_MENTOR_DETAILS[mentorId] ?? LIVE_MENTOR_DETAILS[1];
+    return HttpResponse.json({
+      status: 200,
+      data: { ...detail, mentorId },
+    });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/settings — 오픈 설정(메타) 조회.
+   */
+  http.get('*/mentor/live-mentoring/settings', () => {
+    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_SETTINGS });
+  }),
+
+  /**
+   * (멘토) PUT /mentor/live-mentoring/settings — 저장. 받은 body를 echo.
+   */
+  http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
+    const body = await request.json().catch(() => ({}));
+    return HttpResponse.json({ status: 200, data: body });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/template — 상세 페이지 템플릿 조회.
+   */
+  http.get('*/mentor/live-mentoring/template', () => {
+    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_TEMPLATE });
+  }),
+
+  /**
+   * (멘토) PUT /mentor/live-mentoring/template — 저장. 받은 body를 echo.
+   */
+  http.put('*/mentor/live-mentoring/template', async ({ request }) => {
+    const body = await request.json().catch(() => ({}));
+    return HttpResponse.json({ status: 200, data: body });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/settlement — 정산 현황(read-only).
+   */
+  http.get('*/mentor/live-mentoring/settlement', () => {
+    return HttpResponse.json({
+      status: 200,
+      data: { settlementList: SETTLEMENT_ROWS },
+    });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
+   */
+  http.get('*/mentor/live-mentoring/open-status', () => {
+    return HttpResponse.json({
+      status: 200,
+      data: { openStatusList: OPEN_STATUS_ROWS },
     });
   }),
 ];
