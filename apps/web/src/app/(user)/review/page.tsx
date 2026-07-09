@@ -1,6 +1,6 @@
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import MainBlogReviewSection from '@/domain/review/blog/MainBlogReviewSection';
-import ProgramInterviewSection from '@/domain/review/section/ProgramInterviewSection';
+import ProgramInterviewSection from '@/domain/review/section/ProgramInterviewSectionClient';
 import ProgramReviewSection from '@/domain/review/programReview/ProgramReviewSection';
 
 const Page = () => {
