@@ -38,6 +38,8 @@
 
 ## 관련
 
-- 신규 도메인 `jitsi-meet.letscareer.co.kr`을 web·mentor `.env.example` + mentor `.env.prod`의
-  `*_JITSI_BASE_URL` 값으로 반영함(같은 커밋).
+- 신규 도메인 `jitsi-meet.letscareer.co.kr`을 web·mentor `.env.example`의 `*_JITSI_BASE_URL`
+  값으로 반영함(이 PR 포함). `apps/mentor/.env.prod`는 gitignore 대상이라 로컬만 반영됨.
+  web 프로덕션은 Vercel env `NEXT_PUBLIC_JITSI_BASE_URL`을 별도 갱신해야 하며,
+  `ROOM_SALT`는 web·mentor 동일 값 유지 필요.
 - `GET /feedback/{id}` 3필드(`programTitle/mentorName/menteeName`, BE LC-3147) FE 스키마 반영함.
