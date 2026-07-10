@@ -66,6 +66,13 @@ export const feedbackSchema = z.object({
   endDate: z.string(),
   meetingUrl: z.string().nullable(),
   status: feedbackStatusSchema,
+  /**
+   * BE `FeedbackVo` 추가 필드 (LC-3147: programTitle·mentorName·menteeName).
+   * 멘토 대상 환경 배포 시점차로 비어 올 수 있어 nullish forward-compatible.
+   */
+  programTitle: z.string().nullish(),
+  mentorName: z.string().nullish(),
+  menteeName: z.string().nullish(),
 });
 export type Feedback = z.infer<typeof feedbackSchema>;
 
