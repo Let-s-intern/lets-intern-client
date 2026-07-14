@@ -927,12 +927,16 @@ export const missionAdmin = z
           .nullish()
           .transform((val) => val ?? ''),
         missionTag: z.string(),
-        missionType: MissionTypeEnum,
+        // BE 는 OT/0회차 등 일부 미션의 missionType 을 null 로 내려준다.
+        // 필수 enum 이면 항목 하나가 배열 전체 parse 를 throw 시켜 미션 목록이 전멸한다.
+        missionType: MissionTypeEnum.nullable(),
         missionStatusType: MissionStatusEnum,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
-        waitingAttendanceCount: z.number().nullable(),
+        // BE 응답(v2 MissionAdminResponseDto)의 실제 JSON 필드명은 waitingCount 다.
+        // waitingAttendanceCount 로 요구하면 키가 없어 parse 가 throw → 미션 전멸.
+        waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
@@ -968,12 +972,8 @@ export const missionAdmin = z
   })
   .transform((data) => {
     return {
-      missionList: data.missionList.map(
-        ({ waitingAttendanceCount, ...mission }) => ({
+      missionList: data.missionList.map((mission) => ({
           ...mission,
-          // BE는 대기(확인중) 인원을 waitingAttendanceCount 로 내려주므로
-          // 화면에서 사용하는 waitingCount 로 매핑한다.
-          waitingCount: waitingAttendanceCount,
           startDate: dayjs(mission.startDate),
           endDate: dayjs(mission.endDate),
         }),
