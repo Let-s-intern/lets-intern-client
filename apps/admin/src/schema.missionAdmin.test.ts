@@ -2,12 +2,17 @@ import { describe, expect, it } from 'vitest';
 
 import { missionAdmin } from './schema';
 
-// BE(MissionAdminResponseDto)는 대기(확인중) 인원을 waitingAttendanceCount 로 내려준다.
-// FE 화면(ChallengeOperationAttendances)은 waitingCount 로 읽으므로,
-// missionAdmin 스키마가 필드명을 올바르게 매핑하는지 검증한다.
-describe('missionAdmin 스키마 - waitingCount 필드명 정합', () => {
+// 회귀 방지: FE가 실제 호출하는 v2 엔드포인트
+// GET /api/v2/admin/challenge/{challengeId}/mission 의 응답 DTO
+// (MissionAdminResponseDto)는 대기 인원을 JSON 필드 `waitingCount` 로 내려준다.
+// (내부 VO 필드명은 waitingAttendanceCount 이지만 직렬화 시 waitingCount 로 나감)
+// 스키마가 `waitingCount` 를 그대로 파싱해야 미션 목록이 정상 렌더된다.
+// 필드명을 waitingAttendanceCount 로 바꾸면 실제 응답에 그 키가 없어
+// parse 가 throw → 미션이 아예 안 보이는 회귀가 발생한다.
+describe('missionAdmin 스키마 - v2 응답 waitingCount 파싱', () => {
   const baseMission = {
     id: 1,
+    title: '1주차 미션',
     th: 1,
     missionTag: '태그',
     missionType: 'OT',
@@ -15,7 +20,7 @@ describe('missionAdmin 스키마 - waitingCount 필드명 정합', () => {
     attendanceCount: 3,
     lateAttendanceCount: 0,
     wrongAttendanceCount: 0,
-    waitingAttendanceCount: 5,
+    waitingCount: 5,
     applicationCount: 10,
     score: 100,
     lateScore: 50,
@@ -28,23 +33,17 @@ describe('missionAdmin 스키마 - waitingCount 필드명 정합', () => {
     additionalContentsList: null,
   };
 
-  it('BE의 waitingAttendanceCount 를 화면용 waitingCount 로 매핑한다', () => {
+  it('v2 응답의 waitingCount 를 그대로 파싱한다', () => {
     const result = missionAdmin.parse({ missionList: [baseMission] });
 
     expect(result.missionList[0].waitingCount).toBe(5);
   });
 
-  it('waitingAttendanceCount 가 null 이면 waitingCount 도 null 로 유지한다', () => {
+  it('waitingCount 가 null 이어도 파싱된다', () => {
     const result = missionAdmin.parse({
-      missionList: [{ ...baseMission, waitingAttendanceCount: null }],
+      missionList: [{ ...baseMission, waitingCount: null }],
     });
 
     expect(result.missionList[0].waitingCount).toBeNull();
-  });
-
-  it('변환 후 결과에는 waitingAttendanceCount 키가 남지 않는다', () => {
-    const result = missionAdmin.parse({ missionList: [baseMission] });
-
-    expect('waitingAttendanceCount' in result.missionList[0]).toBe(false);
   });
 });

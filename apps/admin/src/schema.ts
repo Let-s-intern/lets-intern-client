@@ -927,7 +927,7 @@ export const missionAdmin = z
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
-        waitingAttendanceCount: z.number().nullable(),
+        waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
@@ -963,16 +963,11 @@ export const missionAdmin = z
   })
   .transform((data) => {
     return {
-      missionList: data.missionList.map(
-        ({ waitingAttendanceCount, ...mission }) => ({
-          ...mission,
-          // BE는 대기(확인중) 인원을 waitingAttendanceCount 로 내려주므로
-          // 화면에서 사용하는 waitingCount 로 매핑한다.
-          waitingCount: waitingAttendanceCount,
-          startDate: dayjs(mission.startDate),
-          endDate: dayjs(mission.endDate),
-        }),
-      ),
+      missionList: data.missionList.map((mission) => ({
+        ...mission,
+        startDate: dayjs(mission.startDate),
+        endDate: dayjs(mission.endDate),
+      })),
     };
   });
 
