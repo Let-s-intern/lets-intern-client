@@ -76,6 +76,11 @@
       ],
       "outputs": ["tsconfig.tsbuildinfo"]
     },
+    "build-storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"],
+      "env": ["VITE_*"]
+    },
     "test": {
       "cache": false,
       "dependsOn": []

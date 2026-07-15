@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd ../.. && pnpm turbo run build-storybook --filter=@letscareer/ui",
+  "outputDirectory": "storybook-static",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "framework": null
+}
