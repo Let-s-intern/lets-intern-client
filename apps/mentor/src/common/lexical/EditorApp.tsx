@@ -22,6 +22,7 @@ import {
   SerializedEditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
+import { twMerge } from '@/lib/twMerge';
 import { FlashMessageContext } from './context/FlashMessageContext';
 import { SettingsContext, useSettings } from './context/SettingsContext';
 import { SharedAutocompleteContext } from './context/SharedAutocompleteContext';
@@ -156,10 +157,12 @@ function App({
   initialEditorStateJsonString,
   onChange,
   onChangeSerializedEditorState,
+  shellClassName,
 }: {
   initialEditorStateJsonString: string;
   onChange: (jsonString: string) => void;
   onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
+  shellClassName?: string;
 }): JSX.Element {
   useEffect(() => {
     const handleError = (error: Event) => {
@@ -232,7 +235,7 @@ function App({
       <SharedHistoryContext>
         <TableContext>
           <SharedAutocompleteContext>
-            <div className="editor-shell">
+            <div className={twMerge('editor-shell', shellClassName)}>
               <Editor />
             </div>
             {/* <Settings /> */}
@@ -252,10 +255,13 @@ export default function EditorApp({
   initialEditorStateJsonString = emptyEditorState,
   onChange = () => {},
   onChangeSerializedEditorState,
+  shellClassName,
 }: {
   initialEditorStateJsonString?: string;
   onChange?: (jsonString: string) => void;
   onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
+  /** editor-shell 루트에 병합할 클래스(부모 높이 채우기 등 레이아웃 조정용). */
+  shellClassName?: string;
 }): JSX.Element {
   return (
     <SettingsContext>
@@ -264,6 +270,7 @@ export default function EditorApp({
           initialEditorStateJsonString={initialEditorStateJsonString}
           onChangeSerializedEditorState={onChangeSerializedEditorState}
           onChange={onChange}
+          shellClassName={shellClassName}
         />
       </FlashMessageContext>
     </SettingsContext>

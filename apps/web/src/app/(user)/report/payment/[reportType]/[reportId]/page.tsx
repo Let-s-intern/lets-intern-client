@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useGetParticipationInfo } from '@/api/application';
 import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
 import { usePatchUser } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import BaseButton from '@/common/button/BaseButton';
 import BackHeader from '@/common/header/BackHeader';
 import Input from '@/common/input/v2/Input';
@@ -90,7 +91,13 @@ const ReportPaymentPage = () => {
   );
 };
 
-export default ReportPaymentPage;
+const ReportPaymentPageWithBoundary = () => (
+  <AsyncBoundary>
+    <ReportPaymentPage />
+  </AsyncBoundary>
+);
+
+export default ReportPaymentPageWithBoundary;
 
 const ProgramInfoSection = () => {
   const { title, product, option } = useReportProgramInfo();

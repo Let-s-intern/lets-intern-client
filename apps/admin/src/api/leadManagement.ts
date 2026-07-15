@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import axios from '@/utils/axios';
@@ -51,5 +51,29 @@ export const useMagnetApplicationByMagnetIdQuery = (
         .array(magnetApplicationByMagnetSchema)
         .parse(res.data.data.magnetApplicationList);
     },
+  });
+};
+
+// DELETE /admin/magnet/{magnetId}/applications — 마그넷 신청자 삭제(단건/선택 공용)
+export const useDeleteMagnetApplicationsMutation = (
+  magnetId: number,
+  options?: { onSuccess?: () => void; onError?: () => void },
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (magnetApplicationIdList: number[]) => {
+      const res = await axios.delete(`/admin/magnet/${magnetId}/applications`, {
+        data: { magnetApplicationIdList },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [magnetApplicationByMagnetQueryKey, magnetId],
+      });
+      options?.onSuccess?.();
+    },
+    onError: () => options?.onError?.(),
   });
 };

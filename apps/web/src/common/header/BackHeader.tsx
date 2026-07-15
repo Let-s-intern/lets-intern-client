@@ -31,7 +31,7 @@ const BackHeader = ({
 
   return (
     <header
-      className={twMerge('flex items-center gap-4 py-5 md:py-6', className)}
+      className={twMerge('flex items-center gap-4 pb-5 md:py-6', className)}
     >
       {!hideBack && (
         <Link href={to ?? '#'} onClick={handleBackClick}>

@@ -1,3 +1,5 @@
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { z } from 'zod';
 import ProgramDetailLegacyPage from '../../ProgramDetailLegacyPage';
 
@@ -8,7 +10,11 @@ const paramsSchema = z.object({
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = paramsSchema.parse(await params);
 
-  return <ProgramDetailLegacyPage programId={id} programType="challenge" />;
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <ProgramDetailLegacyPage programId={id} programType="challenge" />
+    </AsyncBoundary>
+  );
 };
 
 export default Page;

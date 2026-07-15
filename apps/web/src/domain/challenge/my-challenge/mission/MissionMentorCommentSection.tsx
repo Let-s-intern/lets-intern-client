@@ -38,7 +38,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
       {comment && (
         <>
-          <div className="bg-neutral-80 mb-8 h-px" />
+          <div className="bg-neutral-80 mb-8" />
           <div className="mb-6">
             <div className="rounded-xs bg-primary-5 mb-2 p-3">
               <span className="text-xsmall16 text-primary font-semibold">

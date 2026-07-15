@@ -18,10 +18,12 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import {
   extractGeneration,
+  extractWeek,
   fetchChallengeType,
   generateAndUploadThumbnail,
   THUMBNAIL_IMAGES,
   THUMBNAIL_TYPE_LABELS,
+  WEEK_TITLE_TEMPLATES,
 } from './utils/generateThumbnail';
 
 interface Props {
@@ -61,8 +63,13 @@ const ChallengeDuplicateModal = ({
 
   const isSupportedType =
     challengeType !== null && challengeType in THUMBNAIL_IMAGES;
+  const needsWeek =
+    challengeType !== null && challengeType in WEEK_TITLE_TEMPLATES;
   const isThumbnailEnabled =
-    !copyContent && extractGeneration(title) !== null && isSupportedType;
+    !copyContent &&
+    extractGeneration(title) !== null &&
+    (!needsWeek || extractWeek(title) !== null) &&
+    isSupportedType;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -217,6 +224,8 @@ const ChallengeDuplicateModal = ({
               <p className="-mt-1 ml-8 text-xs text-gray-400">
                 * <strong>기수가 포함된 제목</strong> 입력 시 활성화됩니다. (ex.
                 포트폴리오 1주 완성 챌린지 32기)
+                <br />* 자기소개서, 포트폴리오 챌린지는{' '}
+                <strong>주차도 함께</strong> 입력해야 합니다.
                 <br />* <strong>{SUPPORTED_TYPE_LABELS}</strong> 챌린지만
                 가능합니다.
               </p>

@@ -2,17 +2,55 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
-const navItems = [
-  { name: '프로그램 일정', url: '/' },
-  { name: '피드백 현황', url: '/feedback-management' },
-  { name: '참여중인 챌린지', url: '/challenges' },
-  { name: '프로필', url: '/profile' },
-  { name: '공지사항', url: '/notice' },
+interface NavLeaf {
+  type: 'leaf';
+  name: string;
+  url: string;
+}
+
+interface NavGroup {
+  type: 'group';
+  name: string;
+  /** 그룹 활성 판정용 prefix */
+  matchPrefix: string;
+  children: NavLeaf[];
+}
+
+type NavItem = NavLeaf | NavGroup;
+
+const navItems: NavItem[] = [
+  { type: 'leaf', name: '공지사항', url: '/notice' },
+  {
+    type: 'group',
+    name: '피드백',
+    matchPrefix: '/feedback',
+    children: [
+      { type: 'leaf', name: '피드백 캘린더', url: '/' },
+      { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
+      {
+        type: 'leaf',
+        name: 'LIVE 슬롯 오픈',
+        url: '/feedback/live-availability',
+      },
+      { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
+    ],
+  },
+  { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
+  { type: 'leaf', name: '프로필', url: '/profile' },
 ];
 
 interface MentorSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+function isLeafActive(pathname: string, url: string): boolean {
+  if (url === '/') return pathname === '/';
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
+function isGroupActive(pathname: string, group: NavGroup): boolean {
+  return group.children.some((child) => isLeafActive(pathname, child.url));
 }
 
 export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
@@ -70,24 +108,57 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
             </div>
             <ul className="flex flex-col">
               {navItems.map((item) => {
-                const isActive =
-                  item.url === '/'
-                    ? pathname === '/'
-                    : pathname.startsWith(item.url);
+                if (item.type === 'leaf') {
+                  const isActive = isLeafActive(pathname, item.url);
+                  return (
+                    <li key={item.url}>
+                      <Link
+                        to={item.url}
+                        onClick={onClose}
+                        className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
+                          isActive
+                            ? 'bg-primary-5 text-primary font-semibold'
+                            : 'text-neutral-40 font-medium'
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  );
+                }
 
+                const groupActive = isGroupActive(pathname, item);
                 return (
-                  <li key={item.url}>
-                    <Link
-                      to={item.url}
-                      onClick={onClose}
-                      className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
-                        isActive
-                          ? 'bg-primary-5 text-primary font-semibold'
+                  <li key={item.name}>
+                    <p
+                      className={`text-xsmall16 rounded px-3 py-2.5 tracking-[-0.6px] ${
+                        groupActive
+                          ? 'text-primary font-semibold'
                           : 'text-neutral-40 font-medium'
                       }`}
                     >
                       {item.name}
-                    </Link>
+                    </p>
+                    <ul className="mt-0.5 flex flex-col">
+                      {item.children.map((child) => {
+                        const childActive = isLeafActive(pathname, child.url);
+                        return (
+                          <li key={child.url}>
+                            <Link
+                              to={child.url}
+                              onClick={onClose}
+                              className={`text-xsmall14 block rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
+                                childActive
+                                  ? 'bg-primary-5 text-primary font-semibold'
+                                  : 'text-neutral-40 font-medium'
+                              }`}
+                            >
+                              {child.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </li>
                 );
               })}

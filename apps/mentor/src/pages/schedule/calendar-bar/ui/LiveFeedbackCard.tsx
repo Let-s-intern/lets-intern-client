@@ -1,0 +1,151 @@
+import { LiveFeedbackIcon } from '@/common/icon/feedback';
+import { twMerge } from '@/lib/twMerge';
+import {
+  resolveLiveSessionStatus,
+  badgeStatusToUi,
+  getLiveFeedbackBadgeVisual,
+} from '@/pages/feedback/utils/liveFeedbackStatus';
+import { currentNow } from '../../constants/mockNow';
+import { scheduleDesign } from '../../scheduleDesign';
+import type { PeriodBarData } from '../../types';
+
+/** "09:00" → "09:00", "18:30" → "18:30" */
+function formatTimeRange(start: string, end: string): string {
+  return `${start} ~ ${end}`;
+}
+
+/**
+ * 캘린더 상단 태그 영역에 쓰이는 라이브 피드백 카드 (단일 날짜용).
+ *
+ * PRD-0503 #4: 챌린지별 색상 구분 제거 — 중성 톤 보더/배경으로 통일.
+ */
+const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
+  const lf = bar.liveFeedback!;
+
+  return (
+    <div className="flex w-full flex-col overflow-hidden text-left">
+      {/* Row 1: LIVE 인디케이터 + N회차 */}
+      <div className="flex h-6 items-center gap-1.5 overflow-hidden">
+        <span className="flex shrink-0 items-center gap-1">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+          <span className="text-xxsmall12 font-bold text-red-500">LIVE</span>
+        </span>
+        <span className="text-xxsmall12 text-neutral-10 whitespace-nowrap font-medium tracking-[-0.3px]">
+          [ {bar.th}회차 ]
+        </span>
+      </div>
+
+      {/* Row 2: 오전 9시 ~ 9시 30분 */}
+      <div className="text-xxsmall12 text-neutral-40 flex items-center whitespace-nowrap font-medium tracking-[-0.3px]">
+        {formatTimeRange(lf.startTime, lf.endTime)}
+      </div>
+
+      {/* Row 3: 구분선 */}
+      <div className="flex h-3 items-center">
+        <div className="bg-neutral-80 h-full w-0.5" />
+        <div className="bg-neutral-80 h-0.5 flex-1" />
+        <div className="bg-neutral-80 h-full w-0.5" />
+      </div>
+
+      {/* Row 4: 챌린지 배지 + 멘티 이름 */}
+      <div className="bg-neutral-95 flex flex-col gap-1 p-2">
+        <span className="text-xxsmall12 bg-neutral-30 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
+          {bar.challengeTitle}
+        </span>
+        <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
+          <span className="text-neutral-40">멘티</span>
+          <span className="text-neutral-10">{lf.menteeName}님</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * 시간별 일정(하단) 안에서 시간순으로 쌓이는 라이브 피드백 개별 카드.
+ *
+ * 디자인 시안 image #19:
+ * - 카드: 흰 배경 + 옅은 회색 테두리 + 둥근(4px) 모서리
+ * - 1줄: 시작시간(크게 굵게) + 상태 배지(진행 완료=회색 아웃라인 등)
+ * - 2줄: ▶(빨강 비디오 아이콘) LIVE 피드백(굵은 검정)
+ * - 멘티명, 챌린지명(회색)
+ * - 우하단: ⋮ (케밥)
+ */
+export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
+  const lf = bar.liveFeedback!;
+  // 실데이터(rawStatus)면 시간+출석으로 5상태 정밀 판정, 아니면 status를 5상태로 환산.
+  // 라벨·색은 liveFeedbackStatus.VISUALS(SSOT)에서 가져온다.
+  const ui = lf.rawStatus
+    ? resolveLiveSessionStatus({
+        rawStatus: lf.rawStatus,
+        mentorStatus: lf.mentorStatus,
+        menteeStatus: lf.menteeStatus,
+        attendanceStatus: lf.attendanceStatus,
+        startDate: `${bar.startDate}T${lf.startTime}:00`,
+        endDate: `${bar.startDate}T${lf.endTime}:00`,
+        now: currentNow(),
+      })
+    : badgeStatusToUi(lf.status);
+  const visual = getLiveFeedbackBadgeVisual(ui);
+
+  return (
+    <div
+      className={twMerge(
+        scheduleDesign.surface,
+        'flex h-full w-full flex-col gap-1.5 overflow-hidden px-2.5 py-2',
+      )}
+    >
+      {/* Row 1: 시작 시간 + 상태 배지 */}
+      <div className="flex items-center justify-between gap-1">
+        <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
+          {lf.startTime}
+        </span>
+        <span
+          className={twMerge(
+            'shrink-0 whitespace-nowrap',
+            scheduleDesign.cardBadge,
+            visual.cardBadgeClass,
+          )}
+        >
+          {visual.label}
+        </span>
+      </div>
+
+      {/* Row 2: ▶ LIVE 피드백 (빨강 비디오 아이콘 + 검정 라벨) */}
+      <div className="flex min-w-0 items-center gap-1.5">
+        <LiveFeedbackIcon size={18} className="shrink-0" />
+        <span className="text-xxsmall12 text-neutral-10 shrink-0 font-bold leading-none">
+          {bar.th}회차 LIVE 피드백
+        </span>
+      </div>
+
+      {/* Row 3: 멘티명 */}
+      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+        {lf.menteeName} 멘티
+      </span>
+
+      {/* Row 4: 챌린지명 */}
+      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+        {bar.challengeTitle}
+      </span>
+
+      {/* ⋮ 케밥 (우하단) */}
+      <div className="mt-auto flex justify-end">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="text-neutral-40 shrink-0"
+          aria-hidden
+        >
+          <circle cx="12" cy="5" r="1.7" />
+          <circle cx="12" cy="12" r="1.7" />
+          <circle cx="12" cy="19" r="1.7" />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+export default LiveFeedbackCard;

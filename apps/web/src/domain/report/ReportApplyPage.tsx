@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { uploadFile } from '@/api/file';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import BaseButton from '@/common/button/BaseButton';
 import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
@@ -18,7 +19,7 @@ import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 
-const ReportApplyPage = () => {
+const ReportApplyPageContent = () => {
   const router = useRouter();
   const params = useParams<{ reportType: string; reportId: string }>();
   const { reportType, reportId } = params;
@@ -188,6 +189,14 @@ const ReportApplyPage = () => {
         </BaseButton>
       </BottomSheet>
     </div>
+  );
+};
+
+const ReportApplyPage = () => {
+  return (
+    <AsyncBoundary>
+      <ReportApplyPageContent />
+    </AsyncBoundary>
   );
 };
 

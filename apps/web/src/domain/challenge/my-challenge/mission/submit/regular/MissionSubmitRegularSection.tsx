@@ -1,4 +1,5 @@
 import DashboardCreateReviewModal from '@/domain/challenge/dashboard/modal/DashboardCreateReviewModal';
+import { MissionPreQuestionInputSection } from '../ui/MissionPreQuestionInputSection';
 import { MissionReviewInputSection } from './MissionReviewInputSection';
 import BonusMissionModal from '@/domain/challenge/my-challenge/mission/submit/regular/BonusMissionModal';
 import LinkInputSection from '@/domain/challenge/my-challenge/mission/submit/ui/LinkInputSection';
@@ -38,6 +39,9 @@ const MissionSubmitRegularSection = ({
     setSelectedExperienceIds,
     setSelectedMission,
     textareaValue,
+    hasFeedback,
+    feedbackType,
+    preQuestionValue,
     isSubmitted,
     showToast,
     toastMessage,
@@ -53,6 +57,7 @@ const MissionSubmitRegularSection = ({
     isResubmitBlocked,
     canSubmit,
     handleTextareaChange,
+    handlePreQuestionChange,
     handleSubmit,
     handleCancelEdit,
     handleSaveEdit,
@@ -99,6 +104,14 @@ const MissionSubmitRegularSection = ({
           onChange={handleTextareaChange}
           disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
         />
+        {hasFeedback && (
+          <MissionPreQuestionInputSection
+            value={preQuestionValue}
+            onChange={handlePreQuestionChange}
+            disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+            feedbackType={feedbackType}
+          />
+        )}
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton

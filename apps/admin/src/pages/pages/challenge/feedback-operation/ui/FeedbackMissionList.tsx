@@ -6,6 +6,12 @@ import { useMemo } from 'react';
 import useFeedbackMissionRows from '../hooks/useFeedbackMissionRows';
 import type { Row } from '../types';
 
+// 피드백 마감기간 = 미션 종료일 + 3일. endDate 가 없으면 '-'.
+export function getFeedbackDeadlineLabel(endDate?: string | null): string {
+  if (!endDate) return '-';
+  return dayjs(endDate).add(3, 'day').format('YYYY년 M월 D일');
+}
+
 function FeedbackMissionList() {
   const rows = useFeedbackMissionRows();
 
@@ -90,14 +96,9 @@ function FeedbackMissionList() {
         width: 200,
         sortable: false,
         renderCell: (params: GridRenderCellParams<Row>) => {
-          const endDate = params.row.endDate;
-          if (!endDate) return '-';
-          const feedbackDeadline = dayjs(endDate).add(3, 'day');
-          return (
-            <span className="font-semibold">
-              {feedbackDeadline.format('YYYY년 M월 D일')}
-            </span>
-          );
+          const label = getFeedbackDeadlineLabel(params.row.endDate);
+          if (label === '-') return '-';
+          return <span className="font-semibold">{label}</span>;
         },
       },
     ],

@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
 
 /**
  * MSW 부트스트랩 — `VITE_API_MOCKING=enabled` 일 때만 worker 시작.
- * `pnpm dev:mock:mentor` 로 활성화.
+ * `pnpm dev:mock` 또는 `pnpm dev:mock:mentor` 로 활성화.
  */
 async function bootstrap() {
   if (import.meta.env.VITE_API_MOCKING === 'enabled') {

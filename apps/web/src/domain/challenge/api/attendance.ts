@@ -47,18 +47,20 @@ export const useSubmitMission = () => {
       missionId,
       link,
       review,
+      preQuestion,
       userExperienceIds,
       testDate,
     }: {
       missionId: number;
       link: string | null;
       review: string | null;
+      preQuestion?: string | null;
       userExperienceIds?: number[];
       testDate?: string;
     }) => {
       return axios.post(
         `/attendance/${missionId}`,
-        { link, review, userExperienceIds },
+        { link, review, preQuestion, userExperienceIds },
         { params: { testDate } },
       );
     },

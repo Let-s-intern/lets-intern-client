@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { twMerge } from '@/lib/twMerge';
 import MentorNoticeManagement from './MentorNoticeManagement';
 import OngoingChallenges from './OngoingChallenges';
 
-type Tab = 'notice' | 'ongoing';
+// LIVE 피드백 탭은 캘린더 등 무거운 의존성을 포함하므로 lazy import 한다.
+const LiveFeedbackTab = lazy(() => import('./live-feedback/LiveFeedbackTab'));
+
+type Tab = 'notice' | 'ongoing' | 'live';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'notice', label: '공지사항' },
   { id: 'ongoing', label: '진행중 챌린지' },
+  { id: 'live', label: 'LIVE 피드백' },
 ];
 
 export default function FeedbackOperationPage() {
@@ -32,10 +36,18 @@ export default function FeedbackOperationPage() {
         ))}
       </nav>
 
-      {activeTab === 'notice' ? (
-        <MentorNoticeManagement />
-      ) : (
-        <OngoingChallenges />
+      {activeTab === 'notice' && <MentorNoticeManagement />}
+      {activeTab === 'ongoing' && <OngoingChallenges />}
+      {activeTab === 'live' && (
+        <Suspense
+          fallback={
+            <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+              불러오는 중...
+            </div>
+          }
+        >
+          <LiveFeedbackTab />
+        </Suspense>
       )}
     </section>
   );

@@ -1,8 +1,9 @@
 'use client';
 
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import { ProgramTypeEnum } from '@/schema';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
 const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
@@ -26,7 +27,7 @@ function BlogReviewWrapper() {
   const [page, setPage] = useState(1);
 
   return (
-    <Suspense>
+    <AsyncBoundary pendingFallback={null}>
       <div className="py-6 md:pt-0">
         <FilterDropdown
           label="프로그램 유형"
@@ -39,7 +40,7 @@ function BlogReviewWrapper() {
         />
       </div>
       <BlogReviewListSection page={page} setPage={setPage} />
-    </Suspense>
+    </AsyncBoundary>
   );
 }
 

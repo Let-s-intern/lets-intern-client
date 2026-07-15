@@ -1,6 +1,7 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -38,7 +39,7 @@ const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
   </section>
 );
 
-export default function Page() {
+function PageContent() {
   const { data, isLoading } = useUserQuery();
   const patchUser = usePatchUser();
 
@@ -258,5 +259,13 @@ export default function Page() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
+      <PageContent />
+    </AsyncBoundary>
   );
 }

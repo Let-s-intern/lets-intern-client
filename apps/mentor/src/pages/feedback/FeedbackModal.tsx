@@ -3,25 +3,29 @@
 import { Suspense, lazy, useState } from 'react';
 
 import BaseModal from '@/common/modal/BaseModal';
-import MentorAlertModal from '../ui/MentorAlertModal';
-import { useMentorAlert } from '../hooks/useMentorAlert';
+import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+
+import FeedbackActions from './ui/FeedbackActions';
+import FeedbackEditor from './ui/FeedbackEditor';
+import FeedbackHeader from './ui/FeedbackHeader';
+import FeedbackLayout from './ui/FeedbackLayout';
+import FeedbackMenteeNavigation from './ui/FeedbackMenteeNavigation';
+import MenteeInfo from './ui/MenteeInfo';
+import MenteeList from './ui/MenteeList';
+import SidebarGuideLinks from './ui/SidebarGuideLinks';
+
+import { useFeedbackModal } from './hooks/useFeedbackModal';
+import { useFeedbackStatus } from './hooks/useFeedbackStatus';
+import { useMenteeNavigation } from './hooks/useMenteeNavigation';
+import { isNotionUrl } from './utils/notion';
 
 // 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
 const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
 const MenteeLinkPanel = lazy(() => import('./ui/MenteeLinkPanel'));
-
-import MenteeList from './ui/MenteeList';
-import MenteeInfo from './ui/MenteeInfo';
-import FeedbackEditor from './ui/FeedbackEditor';
-import FeedbackActions from './ui/FeedbackActions';
-import FeedbackHeader from './ui/FeedbackHeader';
-import FeedbackLayout from './ui/FeedbackLayout';
-
-import { useFeedbackModal } from './hooks/useFeedbackModal';
-import { useMenteeNavigation } from './hooks/useMenteeNavigation';
-import { useFeedbackStatus } from './hooks/useFeedbackStatus';
-import { isNotionUrl } from './utils/notion';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -91,7 +95,12 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className="mx-2 h-[85vh] w-[1200px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
+      className={twMerge(
+        feedbackModalDesign.modalContainer,
+        // 제출물 패널이 실제로 열렸을 때만 모달을 넓혀 임베드+에디터를 함께 표시
+        (showExperiencePanel || showLinkPanel) &&
+          feedbackModalDesign.modalContainerWide,
+      )}
     >
       <FeedbackHeader
         challengeTitle={challengeTitle}
@@ -105,87 +114,35 @@ const FeedbackModal = ({
 
       <FeedbackLayout
         sidebar={
-          <MenteeList
-            attendanceList={attendanceList}
-            selectedIndex={selectedIndex}
-            onSelectByIndex={handleSelectByIndex}
-          />
+          <div className="flex h-full flex-col gap-3">
+            <div className="min-h-0 flex-1">
+              <MenteeList
+                attendanceList={attendanceList}
+                selectedIndex={selectedIndex}
+                onSelectByIndex={handleSelectByIndex}
+              />
+            </div>
+            <SidebarGuideLinks
+              labels={['자소서챌린지 피드백 가이드', '서면 피드백 가이드']}
+            />
+          </div>
         }
         navigation={
-          <div className="flex items-center justify-between py-2">
-            <button
-              type="button"
-              onClick={handlePrevMentee}
-              disabled={!hasPrevMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M14 9L10 13L14 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              이전 멘티
-            </button>
-            <button
-              type="button"
-              onClick={handleNextMentee}
-              disabled={!hasNextMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              다음 멘티
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M10 9L14 13L10 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
+          <FeedbackMenteeNavigation
+            onPrev={handlePrevMentee}
+            onNext={handleNextMentee}
+            hasPrev={hasPrevMentee}
+            hasNext={hasNextMentee}
+          />
         }
         navigationCompact={
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={handlePrevMentee}
-              disabled={!hasPrevMentee}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M14 9L10 13L14 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              이전 멘티
-            </button>
-            <button
-              type="button"
-              onClick={handleNextMentee}
-              disabled={!hasNextMentee}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              다음 멘티
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M10 9L14 13L10 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
+          <FeedbackMenteeNavigation
+            compact
+            onPrev={handlePrevMentee}
+            onNext={handleNextMentee}
+            hasPrev={hasPrevMentee}
+            hasNext={hasNextMentee}
+          />
         }
         sidePanel={
           showExperiencePanel ? (
@@ -213,8 +170,9 @@ const FeedbackModal = ({
             challengeTitle={challengeTitle}
             collapsed={collapsed}
             onViewExperience={() => setIsExperienceModalOpen(true)}
-            onViewExperienceSide={() => setIsSidePanelOpen(true)}
-            onViewLinkSide={() => setIsSidePanelOpen(true)}
+            // 한번 더 클릭하면 닫힘(토글)
+            onViewExperienceSide={() => setIsSidePanelOpen((prev) => !prev)}
+            onViewLinkSide={() => setIsSidePanelOpen((prev) => !prev)}
           />
         )}
         editor={
@@ -224,6 +182,7 @@ const FeedbackModal = ({
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
             isAbsent={isAbsent}
+            hasMentee={!!currentMentee}
           />
         }
         actions={

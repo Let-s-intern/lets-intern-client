@@ -1,13 +1,31 @@
-'use client';
-
 import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import { STATUS_BADGE } from '@/constants/statusColors';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import {
+  badgeStatusToUi,
+  getLiveFeedbackBadgeVisual,
+} from '@/pages/feedback/utils/liveFeedbackStatus';
+import { currentNow } from '@/pages/schedule/constants/mockNow';
+import type { LiveFeedbackInfo } from '@/pages/schedule/types';
+
+type LiveStatus = NonNullable<LiveFeedbackInfo['status']>;
 
 interface MenteeItem {
   id: number | null;
   name: string;
   feedbackStatus: FeedbackStatus | null;
   status: string | null;
+  /** 라이브 피드백 세션 날짜 — 있으면 날짜별 구분선 렌더 */
+  date?: string;
+  /** "HH:mm" 시작 시각 */
+  startTime?: string;
+  /** "HH:mm" 종료 시각 */
+  endTime?: string;
+  /** 라이브 피드백용: 제출물 제출 여부 — 있으면 두 줄 태그 레이아웃 */
+  submissionLabel?: '제출' | '미제출';
+  /** 라이브 피드백용: 실제 피드백 진행 상태 */
+  liveStatus?: LiveStatus;
 }
 
 interface MenteeListProps {
@@ -17,6 +35,16 @@ interface MenteeListProps {
   isLoading?: boolean;
 }
 
+/**
+ * 서면 멘티 리스트 상태 뱃지 색(getFeedbackBadge 전용).
+ * - 진행 중 / 진행 전: 보라(primary)  - 진행 완료: 회색 아웃라인
+ * (라이브는 getLiveStatusBadge가 캘린더 팔레트를 쓴다. 헤더 칩 STATUS_BADGE 와도 분리.)
+ */
+const LIST_BADGE_COLOR = {
+  active: 'bg-primary-5 text-primary',
+  done: 'border border-neutral-300 bg-white text-neutral-500',
+} as const;
+
 function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   label: string;
   className: string;
@@ -24,22 +52,43 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
   switch (feedbackStatus) {
     case 'COMPLETED':
     case 'CONFIRMED':
-      return {
-        label: '완료',
-        className: 'border border-green-200 bg-green-50 text-green-700',
-      };
+      return { label: '진행 완료', className: LIST_BADGE_COLOR.done };
     case 'IN_PROGRESS':
-      return {
-        label: '진행 중',
-        className: 'border border-blue-200 bg-blue-50 text-blue-600',
-      };
+      return { label: '진행 중', className: LIST_BADGE_COLOR.active };
     case 'WAITING':
     default:
-      return {
-        label: '시작 전',
-        className: 'border border-red-200 bg-red-50 text-red-500',
-      };
+      return { label: '진행 전', className: LIST_BADGE_COLOR.active };
   }
+}
+
+/**
+ * 라이브 피드백 상태 → 배지 스타일.
+ * 캘린더/모달 하단과 동일하게 4종 UI 상태 + 캘린더 팔레트(getLiveFeedbackBadgeVisual)로 통일.
+ */
+function getLiveStatusBadge(status: LiveStatus | undefined): {
+  label: string;
+  className: string;
+} {
+  const visual = getLiveFeedbackBadgeVisual(badgeStatusToUi(status));
+  return { label: visual.label, className: visual.badgeClass };
+}
+
+function getSubmissionBadge(label: '제출' | '미제출'): string {
+  return label === '제출' ? STATUS_BADGE.submitted : STATUS_BADGE.notSubmitted;
+}
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+/** 세션 시작이 현재 시각으로부터 1시간 이내(미래)면 true */
+function isSessionImminent(
+  date: string | undefined,
+  startTime: string | undefined,
+): boolean {
+  if (!date || !startTime) return false;
+  const target = new Date(`${date}T${startTime}:00`).getTime();
+  if (Number.isNaN(target)) return false;
+  const diff = target - currentNow().getTime();
+  return diff > 0 && diff <= ONE_HOUR_MS;
 }
 
 const MenteeList = ({
@@ -64,40 +113,109 @@ const MenteeList = ({
             <div className="flex-1 overflow-y-auto">
               {attendanceList.map((mentee, idx) => {
                 const isSelected = idx === selectedIndex;
-                const feedbackBadge = getFeedbackBadge(mentee.feedbackStatus);
                 const isAbsent =
                   mentee.status === 'ABSENT' || mentee.id == null;
+                const hasTime = !!(mentee.startTime && mentee.endTime);
+                const imminent = isSessionImminent(
+                  mentee.date,
+                  mentee.startTime,
+                );
+
+                // 라이브 피드백 모드: submissionLabel 또는 liveStatus 제공되면 두 줄 태그
+                const isLiveMode =
+                  mentee.submissionLabel !== undefined ||
+                  mentee.liveStatus !== undefined;
 
                 return (
-                  <button
-                    key={mentee.id ?? `no-attendance-${idx}`}
-                    type="button"
-                    onClick={() => onSelectByIndex(idx)}
-                    className={twMerge(
-                      'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
-                      isSelected
-                        ? 'bg-primary-5 rounded-md border-b-0'
-                        : 'hover:bg-neutral-50',
-                    )}
-                  >
-                    <span className="line-clamp-1 text-sm text-neutral-900">
-                      {mentee.name}
-                    </span>
-                    {isAbsent ? (
-                      <span className="ml-2 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
-                        미제출
-                      </span>
-                    ) : (
-                      <span
-                        className={twMerge(
-                          'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
-                          feedbackBadge.className,
+                  <div key={mentee.id ?? `no-attendance-${idx}`}>
+                    <button
+                      type="button"
+                      onClick={() => onSelectByIndex(idx)}
+                      className={twMerge(
+                        'flex w-full items-center justify-between gap-2 px-4 py-2 text-left transition-colors',
+                        isSelected
+                          ? 'bg-primary-5 rounded-md'
+                          : 'hover:bg-neutral-50',
+                      )}
+                    >
+                      <div className="flex min-w-0 flex-col gap-0.5">
+                        <span
+                          className={twMerge(
+                            'line-clamp-1 text-sm',
+                            imminent
+                              ? 'text-primary font-semibold'
+                              : 'text-neutral-900',
+                          )}
+                        >
+                          {mentee.name}
+                        </span>
+                        {hasTime && (
+                          <span
+                            className={twMerge(
+                              'text-[11px]',
+                              imminent
+                                ? 'text-primary font-medium'
+                                : 'text-neutral-500',
+                            )}
+                          >
+                            {mentee.startTime} ~ {mentee.endTime}
+                          </span>
                         )}
-                      >
-                        {feedbackBadge.label}
-                      </span>
-                    )}
-                  </button>
+                      </div>
+
+                      {isLiveMode ? (
+                        <div className="ml-2 flex shrink-0 flex-col items-end gap-1">
+                          {mentee.submissionLabel && (
+                            <span
+                              className={twMerge(
+                                feedbackModalDesign.listBadgeSm,
+                                getSubmissionBadge(mentee.submissionLabel),
+                              )}
+                            >
+                              {mentee.submissionLabel}
+                            </span>
+                          )}
+                          {(() => {
+                            const badge = getLiveStatusBadge(mentee.liveStatus);
+                            return (
+                              <span
+                                className={twMerge(
+                                  feedbackModalDesign.listBadgeSm,
+                                  badge.className,
+                                )}
+                              >
+                                {badge.label}
+                              </span>
+                            );
+                          })()}
+                        </div>
+                      ) : isAbsent ? (
+                        <span
+                          className={twMerge(
+                            feedbackModalDesign.listBadgeMd,
+                            'ml-2 shrink-0 border border-orange-200 bg-orange-50 text-orange-600',
+                          )}
+                        >
+                          미제출
+                        </span>
+                      ) : (
+                        (() => {
+                          const badge = getFeedbackBadge(mentee.feedbackStatus);
+                          return (
+                            <span
+                              className={twMerge(
+                                feedbackModalDesign.listBadgeMd,
+                                'ml-2 shrink-0',
+                                badge.className,
+                              )}
+                            >
+                              {badge.label}
+                            </span>
+                          );
+                        })()
+                      )}
+                    </button>
+                  </div>
                 );
               })}
             </div>

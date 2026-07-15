@@ -15,6 +15,8 @@ interface FeedbackModalState {
 
 /**
  * Manages feedback management page data and modal state.
+ *
+ * PRD-0503 #4: 챌린지 색상 매핑 제거 — colorIndex 의존성 제거.
  */
 export function useFeedbackManagement() {
   const { data, isLoading } = useMentorFeedbackManagementQuery();
@@ -40,6 +42,25 @@ export function useFeedbackManagement() {
     });
   };
 
+  /**
+   * 표 형태 페이지에서 평면화된 FeedbackRow 데이터로 모달을 여는 헬퍼.
+   * `handleMissionClick`은 카드형 호환을 위해 그대로 유지한다.
+   */
+  const openWrittenFeedbackModal = (params: {
+    challengeId: number;
+    challengeTitle?: string;
+    missionId: number;
+    missionTh: number;
+  }) => {
+    setFeedbackModal({
+      isOpen: true,
+      challengeId: params.challengeId,
+      missionId: params.missionId,
+      challengeTitle: params.challengeTitle,
+      missionTh: params.missionTh,
+    });
+  };
+
   const handleCloseModal = () => {
     setFeedbackModal((prev) => ({ ...prev, isOpen: false }));
   };
@@ -49,6 +70,7 @@ export function useFeedbackManagement() {
     isLoading,
     feedbackModal,
     handleMissionClick,
+    openWrittenFeedbackModal,
     handleCloseModal,
   };
 }

@@ -3,10 +3,11 @@
 import { useMemo } from 'react';
 
 import { useGetAllApplicationsForReviewQuery } from '@/api/review/review';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import DoneSection from '@/domain/mypage/review/section/DoneSection';
 import WaitingSection from '@/domain/mypage/review/section/WaitingSection';
 
-const Review = () => {
+const ReviewContent = () => {
   const { data: applications } = useGetAllApplicationsForReviewQuery();
 
   const doneList = useMemo(() => {
@@ -34,6 +35,14 @@ const Review = () => {
       <WaitingSection applicationList={waitingList} />
       <DoneSection applicationList={doneList} />
     </main>
+  );
+};
+
+const Review = () => {
+  return (
+    <AsyncBoundary>
+      <ReviewContent />
+    </AsyncBoundary>
   );
 };
 

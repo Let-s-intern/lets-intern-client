@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import config from '../../constants/config';
+import config from '@/constants/config';
 
 interface MentorChallengeCardProps {
   challengeId: number;

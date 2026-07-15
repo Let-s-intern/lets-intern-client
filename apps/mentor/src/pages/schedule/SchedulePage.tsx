@@ -1,57 +1,76 @@
-'use client';
-
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
-import WelcomeMessage from './ui/WelcomeMessage';
-import WeeklySummary from './ui/WeeklySummary';
-import ChallengeFilter from './ui/ChallengeFilter';
-import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
-import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
+import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
+
 import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
+import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
+import FeedbackTagFilter from './ui/FeedbackTagFilter';
+import ScheduleHeader from './ui/ScheduleHeader';
+import WelcomeMessage from './ui/WelcomeMessage';
+import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 
-import { useWeeklySummary } from './hooks/useWeeklySummary';
+import type { FeedbackTagType } from './constants/feedbackTag';
+import { currentNow } from './constants/mockNow';
+import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
+import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
+import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
+  // 라이브 바는 실 API 파생. 서면 바는 ChallengeDataFetcher(실 API) 단일 경로로
+  // 일원화되어 별도 extraBars 주입이 필요 없다 (중복 오버레이 제거).
+  const { bars: liveFeedbackBars } = useLiveFeedbackData();
+
+  const extraBars = liveFeedbackBars;
+
   const {
     challenges,
-    selectedChallengeId,
-    setSelectedChallengeId,
+    selectedFeedbackTags,
+    toggleFeedbackTag,
+    clearFeedbackTags,
     allBarsUnfiltered,
     filteredBars,
     handleData,
-    challengeFilterItems,
-    findNearestDate,
-    findNextDate,
-  } = useScheduleData();
+    findNearestDateForTag,
+    findNextDateForTag,
+  } = useScheduleData({ extraBars });
 
-  const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBarsUnfiltered);
+  // 라이브 세션 바만 따로 추출 — LiveFeedbackReservationModal 네비게이션용
+  const filteredLiveSessionBars = useMemo(
+    () => filteredBars.filter((b) => b.barType === 'live-feedback'),
+    [filteredBars],
+  );
 
+  // 캘린더 가로 스크롤 타겟 — 태그 클릭/재클릭으로 갱신.
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
-  const handleChallengeSelect = (challengeId: number | null) => {
-    if (challengeId === null) {
-      setSelectedChallengeId(null);
-      setTargetScrollDate(null);
+  /**
+   * 태그 클릭 동작 — 단일 선택 토글 + 해당 일정 위치로 스크롤.
+   *  1) 비선택 태그 클릭: 그 태그만 선택 + 가장 가까운 일정으로 이동
+   *  2) 선택된 태그 재클릭: 같은 태그의 다음 일정으로 순환
+   */
+  const handleTagClick = (tag: FeedbackTagType) => {
+    if (selectedFeedbackTags.has(tag)) {
+      const current = targetScrollDate ?? findNearestDateForTag(tag);
+      const next = current
+        ? findNextDateForTag(tag, current)
+        : findNearestDateForTag(tag);
+      if (next) setTargetScrollDate(next);
       return;
     }
-    if (challengeId === selectedChallengeId && targetScrollDate) {
-      // 같은 태그 재클릭 → 다음 피드백 일정으로 이동
-      const next = findNextDate(challengeId, targetScrollDate);
-      if (next) {
-        setTargetScrollDate(next);
-      }
-      return;
-    }
-    setSelectedChallengeId(challengeId);
-    const nearest = findNearestDate(challengeId);
-    if (nearest) {
-      setTargetScrollDate(nearest);
-    }
+    clearFeedbackTags();
+    toggleFeedbackTag(tag);
+    const nearest = findNearestDateForTag(tag);
+    if (nearest) setTargetScrollDate(nearest);
+  };
+
+  /** "전체" 클릭 — 필터 해제(전체 종류 표시) + 오늘로 이동 */
+  const handleClearAll = () => {
+    clearFeedbackTags();
+    setTargetScrollDate(currentNow());
   };
 
   const isMobile = useMediaQuery('(max-width: 767px)');
@@ -63,6 +82,49 @@ const SchedulePage = () => {
     challengeTitle?: string;
     missionTh?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
+
+  const [isMentorOpenModalOpen, setIsMentorOpenModalOpen] = useState(false);
+  const [mentorOpenChallengeBar, setMentorOpenChallengeBar] =
+    useState<PeriodBarData | null>(null);
+
+  // 모달에 전달할 focusDate (해당 챌린지 라이브 피드백 기간 시작일) — BE 슬롯 통합 운영으로
+  // 챌린지 단위 분리 로직은 폐기.
+  const mentorOpenFocusDate = useMemo(() => {
+    if (!mentorOpenChallengeBar) return undefined;
+    const periodBar = allBarsUnfiltered.find(
+      (b) =>
+        b.barType === 'live-feedback-period' &&
+        b.challengeId === mentorOpenChallengeBar.challengeId,
+    );
+    return periodBar?.startDate;
+  }, [mentorOpenChallengeBar, allBarsUnfiltered]);
+
+  const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
+    useState<PeriodBarData | null>(null);
+
+  // 선택된 라이브 세션의 라운드 회차(period 바의 th) — 모달 헤더 표시용.
+  // 한 챌린지에 회차가 여럿이므로 challengeId 일치 + 세션 날짜가 포함되는 period 바로 매칭한다.
+  const selectedRoundTh = useMemo(() => {
+    if (!selectedLiveFeedbackBar) return undefined;
+    const period = allBarsUnfiltered.find(
+      (b) =>
+        b.barType === 'live-feedback-period' &&
+        b.challengeId === selectedLiveFeedbackBar.challengeId &&
+        selectedLiveFeedbackBar.startDate >= b.startDate &&
+        selectedLiveFeedbackBar.startDate <= b.endDate,
+    );
+    // 날짜 매칭 실패 시 세션 자체의 th로 폴백.
+    return period?.th ?? selectedLiveFeedbackBar.th;
+  }, [selectedLiveFeedbackBar, allBarsUnfiltered]);
+
+  // 모달 사이드바 멘티 리스트 — 선택된 세션의 challengeId 로 스코프.
+  // 서면 모달이 챌린지별인 것과 일치하도록 해당 챌린지 세션만 노출한다.
+  const modalLiveFeedbackBars = useMemo(() => {
+    if (!selectedLiveFeedbackBar) return filteredLiveSessionBars;
+    return filteredLiveSessionBars.filter(
+      (b) => b.challengeId === selectedLiveFeedbackBar.challengeId,
+    );
+  }, [filteredLiveSessionBars, selectedLiveFeedbackBar]);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
@@ -79,28 +141,17 @@ const SchedulePage = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-20 md:gap-10">
-      <div className="flex items-center gap-2.5">
-        <h1 className="text-xl font-semibold leading-8 text-neutral-900">
-          프로그램 일정
-        </h1>
-      </div>
+      <ScheduleHeader />
 
       <WelcomeMessage />
 
       <div className="flex flex-col gap-14">
         <div className="flex flex-col gap-6">
-          <WeeklySummary
-            totalCount={totalCount}
-            todayDueCount={todayDueCount}
-            incompleteCount={incompleteCount}
-            completedCount={completedCount}
-          />
-
           <div className="flex flex-col gap-4">
-            <ChallengeFilter
-              challenges={challengeFilterItems}
-              selectedChallengeId={selectedChallengeId}
-              onSelect={handleChallengeSelect}
+            <FeedbackTagFilter
+              selectedTags={selectedFeedbackTags}
+              onToggle={handleTagClick}
+              onClearAll={handleClearAll}
             />
 
             <WeeklyCalendar
@@ -108,16 +159,34 @@ const SchedulePage = () => {
               allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
               targetScrollDate={targetScrollDate}
+              onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
+              onMentorOpenPeriodBarClick={(bar) => {
+                setMentorOpenChallengeBar(bar);
+                setIsMentorOpenModalOpen(true);
+              }}
+              onLiveFeedbackTimeBlockClick={(bar) =>
+                setSelectedLiveFeedbackBar(bar)
+              }
+              onLiveFeedbackPeriodClick={(periodBar) => {
+                // 해당 기간의 첫 세션 바를 선택 → 모달이 세션 기반으로 열림
+                const firstSession = allBarsUnfiltered.find(
+                  (b) =>
+                    b.barType === 'live-feedback' &&
+                    b.challengeId === periodBar.challengeId &&
+                    b.startDate >= periodBar.startDate &&
+                    b.startDate <= periodBar.endDate,
+                );
+                if (firstSession) setSelectedLiveFeedbackBar(firstSession);
+              }}
             />
           </div>
         </div>
       </div>
 
-      {challenges.map((c, i) => (
+      {challenges.map((c) => (
         <ChallengeDataFetcher
           key={c.challengeId}
           challenge={c}
-          colorIndex={i}
           onData={handleData}
         />
       ))}
@@ -145,6 +214,23 @@ const SchedulePage = () => {
           missionTh={feedbackModal.missionTh}
         />
       )}
+
+      <FeedbackAvailabilityModal
+        isOpen={isMentorOpenModalOpen}
+        onClose={() => {
+          setIsMentorOpenModalOpen(false);
+          setMentorOpenChallengeBar(null);
+        }}
+        focusDate={mentorOpenFocusDate}
+      />
+      <LiveFeedbackReservationModal
+        isOpen={!!selectedLiveFeedbackBar}
+        onClose={() => setSelectedLiveFeedbackBar(null)}
+        bar={selectedLiveFeedbackBar}
+        liveFeedbackBars={modalLiveFeedbackBars}
+        onSelectBar={setSelectedLiveFeedbackBar}
+        roundTh={selectedRoundTh}
+      />
     </div>
   );
 };

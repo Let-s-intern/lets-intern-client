@@ -81,3 +81,5 @@ next-env.d.ts
 
 # Storybook 빌드 산출물
 storybook-static/
+
+.claude/scheduled_tasks.lock

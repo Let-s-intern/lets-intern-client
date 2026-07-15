@@ -20,6 +20,12 @@ export const challengeValidUserSchema = z.object({
   isAccessible: z.boolean().nullable(),
 });
 
+/** 피드백 미션의 챌린지 옵션(피드백) 종류 — 라이브/서면 구분의 단일 진실원. */
+export const ChallengeOptionTypeEnum = z.enum([
+  'WRITTEN_FEEDBACK',
+  'LIVE_FEEDBACK',
+]);
+
 export const challengeMissionFeedbackListSchema = z.object({
   missionList: z.array(
     z.object({
@@ -30,6 +36,8 @@ export const challengeMissionFeedbackListSchema = z.object({
       endDate: z.string().datetime({ local: true }),
       challengeOptionCode: z.string().nullish(),
       challengeOptionTitle: z.string().nullish(),
+      // BE가 미션별로 내려주는 라이브/서면 구분값 (LC-3065). 없으면 서면으로 폴백.
+      challengeOptionType: ChallengeOptionTypeEnum.nullish(),
       submittedCount: z.number().default(0),
       totalCount: z.number().default(0),
     }),

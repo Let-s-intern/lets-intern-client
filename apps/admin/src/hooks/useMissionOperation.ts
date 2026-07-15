@@ -20,6 +20,9 @@ import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
+// 페이지네이션된 /mission-template/admin 에서 전체 템플릿을 한 번에 받기 위한 큰 페이지 크기.
+const ALL_TEMPLATES_PAGE_SIZE = 1000;
+
 export const useMissionOperations = (
   apiRef: React.RefObject<GridApiCommunity>,
 ) => {
@@ -62,7 +65,13 @@ export const useMissionOperations = (
     queryKey: ['admin', 'challenge', 'missionTemplates'],
     enabled: Boolean(currentChallenge),
     queryFn: async (): Promise<MissionTemplateResItem[]> => {
-      const res = await axios.get(`/mission-template/admin`);
+      // BE 가 /mission-template/admin 을 size 20 으로 페이지네이션(LC-3067)한 이후
+      // size 없이 호출하면 최신 20개만 수신돼 옛 템플릿 미션의 미션명이 공백이 된다.
+      // /admin/simple 은 {id, title} 만 반환해 missionTag 파생(태그 컬럼)이 깨지므로
+      // 기존 스키마를 유지한 채 size 를 크게 부여해 전량 로드한다.
+      const res = await axios.get(
+        `/mission-template/admin?size=${ALL_TEMPLATES_PAGE_SIZE}`,
+      );
       return missionTemplateAdmin.parse(res.data.data).missionTemplateAdminList;
     },
   });
@@ -112,8 +121,26 @@ export const useMissionOperations = (
       action: 'create' | 'edit' | 'delete' | 'cancel';
       row: Row;
     }) => {
+      // 미션 title 은 선택한 템플릿에서 파생한다. create 시에는 title 확정을 강제하지만,
+      // edit 시에는 미해석이어도 기존 title 을 유지한 채(생략) 나머지 필드를 저장한다.
+      const resolvedTitle = row.missionTemplateId
+        ? row.missionTemplatesOptions?.find(
+            (t) => t.id === row.missionTemplateId,
+          )?.title
+        : undefined;
+
       switch (action) {
         case 'create':
+          if (!row.missionTemplateId) {
+            setSnackbar('미션 템플릿을 선택해주세요.');
+            return;
+          }
+          if (!resolvedTitle) {
+            setSnackbar(
+              '존재하지 않거나 삭제된 미션 템플릿입니다. 다른 템플릿을 선택해주세요.',
+            );
+            return;
+          }
           await createMissionMutation.mutateAsync({
             additionalContentsIdList:
               row.additionalContentsList
@@ -132,10 +159,7 @@ export const useMissionOperations = (
               .tz()
               .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
-            title:
-              row.missionTemplatesOptions.find(
-                (t) => t.id === row.missionTemplateId,
-              )?.title ?? '',
+            title: resolvedTitle,
             missionType: row.missionType,
           });
           if (apiRef?.current?.getRowMode(row.id) === 'edit') {
@@ -148,8 +172,12 @@ export const useMissionOperations = (
 
         case 'edit':
           if (!row.missionTemplateId) {
+            setSnackbar('미션 템플릿을 선택해주세요.');
             return;
           }
+          // 템플릿 목록 미로딩·템플릿 삭제 등으로 title 이 해석되지 않아도
+          // 일자 등 다른 편집까지 막지 않는다. title 은 PATCH 에서 생략(optional)해
+          // 빈 문자열로 덮어쓰지 않고 기존 미션명을 그대로 유지한다.
           await updateMission.mutateAsync({
             additionalContentsIdList:
               row.additionalContentsList
@@ -170,10 +198,7 @@ export const useMissionOperations = (
               .tz()
               .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
-            title:
-              row.missionTemplatesOptions.find(
-                (t) => t.id === row.missionTemplateId,
-              )?.title ?? '',
+            ...(resolvedTitle ? { title: resolvedTitle } : {}),
           });
           if (apiRef?.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({ id: row.id });
@@ -220,6 +245,7 @@ export const useMissionOperations = (
       lateScore: 5,
       score: 10,
       th: 1,
+      title: '',
       missionTemplateId: null,
       missionStatusType: 'WAITING',
       lateAttendanceCount: 0,
@@ -236,6 +262,8 @@ export const useMissionOperations = (
   const rows = useMemo((): Row[] => {
     const result: Row[] = (missions ?? []).map((m) => ({
       ...m,
+      challengeOptionId: m.challengeOptionId ?? null,
+      challengeOptionCode: m.challengeOptionCode ?? null,
       mode: 'normal',
       additionalContentsOptions: additionalContents,
       essentialContentsOptions: essentialContents,
@@ -246,6 +274,8 @@ export const useMissionOperations = (
     if (editingMission) {
       result.push({
         ...editingMission,
+        challengeOptionId: editingMission.challengeOptionId ?? null,
+        challengeOptionCode: editingMission.challengeOptionCode ?? null,
         mode: 'create',
         additionalContentsOptions: additionalContents,
         essentialContentsOptions: essentialContents,

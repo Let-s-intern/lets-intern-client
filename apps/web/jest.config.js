@@ -20,6 +20,9 @@ const customConfig = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
+    // SVGR(`*.svg?react`) 컴포넌트 import 는 jest 에 로더가 없어 경량 목으로 대체.
+    // (반드시 '^@/' 보다 먼저 — '@/...svg?react' 가 양쪽에 매칭되므로 순서가 중요)
+    '\\.svg\\?react$': '<rootDir>/jest/svgrMock.tsx',
     '^@/(.*)$': '<rootDir>/src/$1',
     // lucide-react 는 ESM 배포라 next/jest(SWC) 에서 파싱 실패한다. 테스트에서는
     // 아이콘을 단순 stub 으로 매핑한다(앱 빌드는 실제 lucide-react 사용).

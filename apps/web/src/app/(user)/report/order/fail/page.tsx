@@ -11,10 +11,11 @@ import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { searchParamsToObject } from '@/utils/network';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useMemo } from 'react';
+import { useMemo } from 'react';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult에서 진행함. */
 const ReportPaymentFailContent = () => {
@@ -153,9 +154,9 @@ const ReportPaymentFailContent = () => {
 
 const ReportPaymentFail = () => {
   return (
-    <Suspense fallback={null}>
+    <AsyncBoundary pendingFallback={null}>
       <ReportPaymentFailContent />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

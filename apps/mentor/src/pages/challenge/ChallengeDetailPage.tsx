@@ -4,6 +4,7 @@ import { useMediaQuery } from '@mui/material';
 
 import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
+import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
 import ChallengeDetailContent from './ui/ChallengeDetailContent';
 import { useChallengeDetail } from './hooks/useChallengeDetail';
 
@@ -17,6 +18,13 @@ const ChallengeDetailPage = () => {
     feedbackModal,
     handleClickFeedback,
     handleCloseModal,
+    liveModalBar,
+    liveSelectedRound,
+    allSessionBars,
+    setLiveModalBar,
+    closeLiveModal,
+    canOpenLiveMission,
+    liveMenteeCount,
   } = useChallengeDetail();
 
   const isMobile = useMediaQuery('(max-width: 767px)');
@@ -36,6 +44,8 @@ const ChallengeDetailPage = () => {
         missions={missions}
         isLoading={isLoading}
         onClickFeedback={handleClickFeedback}
+        canOpenLiveMission={canOpenLiveMission}
+        liveMenteeCount={liveMenteeCount}
       />
 
       {isMobile ? (
@@ -57,6 +67,16 @@ const ChallengeDetailPage = () => {
           missionTh={feedbackModal.missionTh}
         />
       )}
+
+      {/* 라이브 피드백 미션 → 라이브 예약/진행 모달 (피드백 현황과 동일 컴포넌트 재사용) */}
+      <LiveFeedbackReservationModal
+        isOpen={!!liveModalBar}
+        onClose={closeLiveModal}
+        bar={liveModalBar}
+        liveFeedbackBars={liveSelectedRound?.sessionBars ?? allSessionBars}
+        onSelectBar={setLiveModalBar}
+        roundTh={liveSelectedRound?.th}
+      />
     </div>
   );
 };

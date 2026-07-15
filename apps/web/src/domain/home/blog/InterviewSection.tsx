@@ -1,24 +1,24 @@
 'use client';
 
-import { BlogType, useBlogListQuery } from '@/api/blog/blog';
-import LoadingContainer from '@/common/loading/LoadingContainer';
+import { BlogType, blogListQueryOptions } from '@/api/blog/blog';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import BlogContainer from './BlogContainer';
 
 const InterviewSection = () => {
-  const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 4 },
-    types: [BlogType.CAREER_STORIES],
-  });
+  const { data } = useSuspenseQuery(
+    blogListQueryOptions({
+      pageable: { page: 1, size: 4 },
+      types: [BlogType.CAREER_STORIES],
+    }),
+  );
 
   return (
     <>
       <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
-        {isLoading ? (
-          <LoadingContainer />
-        ) : !data || data.blogInfos.length === 0 ? null : (
+        {data.blogInfos.length === 0 ? null : (
           <BlogContainer
             gaItem="home_blogreview"
             title="렛츠커리어 챌린지부터\n합격까지"

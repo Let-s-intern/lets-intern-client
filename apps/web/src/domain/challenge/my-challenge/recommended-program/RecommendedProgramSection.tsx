@@ -67,6 +67,7 @@ const RecommendSection = ({ section }: { section: RecommendSection }) => {
     router.push(section.moreUrl);
   };
 
+  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'live/'];
   return (
     <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
       <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">

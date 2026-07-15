@@ -13,13 +13,13 @@ export default function MentorShell() {
 
   return (
     <MentorGuard>
-      <div className="flex min-h-screen bg-white">
+      <div className="flex h-screen overflow-hidden bg-white">
         <MentorSidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-neutral-80 flex h-14 items-center border-b px-4 lg:hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <header className="border-neutral-80 flex h-14 shrink-0 items-center border-b px-4 lg:hidden">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
@@ -36,7 +36,7 @@ export default function MentorShell() {
               </svg>
             </button>
           </header>
-          <main className="flex-1 px-4 py-6 md:px-8">
+          <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
             <Outlet />
           </main>
         </div>

@@ -1,23 +1,21 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog/blog';
-import LoadingContainer from '@/common/loading/LoadingContainer';
+import { blogListQueryOptions } from '@/api/blog/blog';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import BlogContainer from './BlogContainer';
 
 const CurrentBlogSection = () => {
-  const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 20 },
-  });
+  const { data } = useSuspenseQuery(
+    blogListQueryOptions({ pageable: { page: 1, size: 20 } }),
+  );
 
   return (
     <>
       <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-24 xl:px-0">
-        {isLoading ? (
-          <LoadingContainer />
-        ) : !data || data.blogInfos.length === 0 ? null : (
+        {data.blogInfos.length === 0 ? null : (
           <BlogContainer
             gaItem="home_blogrec"
             title="지금 가장 인기있는\n블로그 게시글"

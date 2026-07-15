@@ -42,7 +42,7 @@ function MyChallengeDashboardContent() {
       />
       <div className="mt-10">
         <MissionGuideSection todayTh={todayTh} />
-        <div className="mt-6">
+        <div id="mission-submit" className="mt-6 scroll-mt-[160px]">
           <MissionSubmitSection
             attendanceInfo={
               filteredSchedules.find(
@@ -55,7 +55,10 @@ function MyChallengeDashboardContent() {
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
-        <div className="mt-8">
+        <div
+          id="mentor-feedback"
+          className="mb-3 mt-8 scroll-mt-[140px] md:mb-20"
+        >
           <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>

@@ -28,6 +28,7 @@ export type PatchAdminAttendanceReq = {
   comments?: string;
   review?: string;
   reviewIsVisible?: boolean;
+  preQuestion?: string;
   mentorUserId?: number | null;
   challengeMentorId?: number | null;
   feedback?: string | null;

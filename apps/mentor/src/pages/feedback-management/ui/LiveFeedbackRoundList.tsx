@@ -1,0 +1,120 @@
+/**
+ * @deprecated Use FeedbackTable instead.
+ *
+ * 2026-05-17 PRD §7.2 — 피드백 현황 페이지가 카드 → 통합 표 형태로 개편됨에 따라
+ * 본 컴포넌트(`LiveRoundRow`, `LiveFeedbackRoundList`)는 더 이상 사용되지 않는다.
+ * 후속 정리 task에서 `ChallengeFeedbackCard`와 함께 삭제 예정.
+ */
+import { STATUS_BADGE, STATUS_TEXT } from '@/constants/statusColors';
+import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
+
+interface LiveRoundRowProps {
+  round: LiveFeedbackRound;
+  /** 챌린지 내 통합 시퀀스 번호 (서면+라이브 날짜순). 없으면 round.th 사용 */
+  displayTh?: number;
+  onClick?: (round: LiveFeedbackRound) => void;
+}
+
+export const LiveRoundRow = ({
+  round,
+  displayTh,
+  onClick,
+}: LiveRoundRowProps) => {
+  // ⚠️ 회차 한계: BE에 missionTh(회차)가 없어 round.th는 옵션 A로 항상 1.
+  // displayTh(서면+라이브 통합 시퀀스)가 있으면 그것을, 없으면 1회차로 표기된다.
+  const thLabel = displayTh ?? round.th;
+  const activeLabel =
+    round.totalMentees === 0
+      ? null
+      : round.completedCount >= round.totalMentees
+        ? { label: '완료', className: STATUS_BADGE.completed }
+        : round.inProgressCount > 0
+          ? { label: '진행중', className: STATUS_BADGE.inProgress }
+          : { label: '진행전', className: STATUS_BADGE.none };
+
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="shrink-0 rounded-lg bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600">
+            {thLabel}회차 라이브
+          </span>
+          <h3 className="text-sm font-medium text-gray-900 md:text-base">
+            라이브 피드백
+          </h3>
+        </div>
+
+        {activeLabel && (
+          <span
+            className={`shrink-0 rounded-[4px] px-2.5 py-0.5 text-xs font-medium ${activeLabel.className}`}
+          >
+            {activeLabel.label}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        <div className="text-xs text-gray-500 md:text-right">
+          <p>
+            예약{' '}
+            <span className="font-semibold text-gray-700">
+              {round.totalMentees}
+            </span>
+            명
+          </p>
+          <p>
+            피드백 완료{' '}
+            <span className={`font-semibold ${STATUS_TEXT.completed}`}>
+              {round.completedCount}
+            </span>{' '}
+            / {round.totalMentees}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onClick?.(round)}
+          className="bg-primary hover:bg-primary-hover min-h-[44px] w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors md:min-h-0 md:w-auto"
+        >
+          피드백 확인
+        </button>
+      </div>
+    </div>
+  );
+};
+
+interface LiveFeedbackRoundListProps {
+  rounds: LiveFeedbackRound[];
+  /** round.th → 챌린지 내 통합 시퀀스 번호 맵 */
+  displayThMap?: Map<number, number>;
+  onRoundClick?: (round: LiveFeedbackRound) => void;
+}
+
+const LiveFeedbackRoundList = ({
+  rounds,
+  displayThMap,
+  onRoundClick,
+}: LiveFeedbackRoundListProps) => {
+  if (rounds.length === 0) {
+    return (
+      <div className="py-4 text-center text-sm text-gray-400">
+        라이브 피드백 일정이 없습니다.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {rounds.map((round) => (
+        <LiveRoundRow
+          key={`${round.challengeId}-${round.th}`}
+          round={round}
+          displayTh={displayThMap?.get(round.th)}
+          onClick={onRoundClick}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default LiveFeedbackRoundList;
