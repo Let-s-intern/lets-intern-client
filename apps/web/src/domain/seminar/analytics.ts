@@ -1,6 +1,7 @@
 import posthog from 'posthog-js';
 
-export type SeminarStatusForEvent = 'RECRUITING' | 'POST';
+// 실제 프로그램 모집상태값과 일치시킨다: 모집중=PROCEEDING, 모집종료=POST.
+export type SeminarStatusForEvent = 'PROCEEDING' | 'POST';
 
 /**
  * 세미나 앵콜 요청 이벤트 캡처(PostHog).
@@ -28,7 +29,7 @@ export function captureSeminarEncore(params: {
 
 /**
  * 세미나 카드 클릭(상세로 이동) 이벤트 캡처(PostHog).
- * status로 모집중(RECRUITING)/모집종료(POST) 클릭을 구분해 비교할 수 있게 한다.
+ * status로 모집중(PROCEEDING)/모집종료(POST) 클릭을 구분해 비교할 수 있게 한다.
  */
 export function captureSeminarCardClick(params: {
   seminarId: number;
