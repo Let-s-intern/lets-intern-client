@@ -279,7 +279,9 @@ const PaymentInputContent = () => {
     );
   }
 
-  if (programLoading || !program) {
+  // 인증 초기화 전에는 로딩을 유지한다(초기화 완료 전 결제 폼이 잠깐 노출되는
+  // FOUC 방지 — invalidAccess 판정도 초기화 후에만 이뤄지므로).
+  if (!isInitialized || programLoading || !program) {
     return <LoadingContainer />;
   }
 
