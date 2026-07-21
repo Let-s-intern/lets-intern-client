@@ -17,7 +17,8 @@
     "./JitsiEmbed/jitsiHealthCheck": "./src/JitsiEmbed/jitsiHealthCheck.ts",
     "./AlertDialog": "./src/AlertDialog/index.tsx",
     "./Popup": "./src/Popup/index.ts",
-    "./Toast": "./src/Toast/index.tsx"
+    "./Toast": "./src/Toast/index.tsx",
+    "./Button": "./src/components/Button/index.ts"
   },
   "dependencies": {
     "@jitsi/react-sdk": "^1.4.4",
