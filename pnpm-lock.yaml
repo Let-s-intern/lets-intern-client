@@ -1028,6 +1028,9 @@ importers:
         specifier: ^2.3.0
         version: 2.6.0
     devDependencies:
+      '@letscareer/eslint-config':
+        specifier: workspace:*
+        version: link:../config/eslint
       '@letscareer/tailwind-config':
         specifier: workspace:*
         version: link:../config/tailwind
@@ -1058,6 +1061,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.22(postcss@8.5.13)
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@1.21.7)
       jsdom:
         specifier: ^25.0.0
         version: 25.0.1(bufferutil@4.0.9)
