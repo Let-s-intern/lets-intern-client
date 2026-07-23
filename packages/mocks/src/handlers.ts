@@ -1324,11 +1324,26 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) PUT /mentor/live-mentoring/settings — 저장. 받은 body를 echo.
+   * (멘토) PUT /mentor/live-mentoring/settings — 저장.
+   * 실 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받고,
+   * nickname/profileImage/introduction/careers는 프로필 도메인에서 조회해 응답에 얹어줄 뿐
+   * 수정 대상이 아니다 — 여기서도 동일하게 흉내낸다(목 프로필 값과 병합해 echo).
    */
   http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
-    const body = await request.json().catch(() => ({}));
-    return HttpResponse.json({ status: 200, data: body });
+    const editable = (await request.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >;
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        nickname: LIVE_MENTORING_SETTINGS.nickname,
+        profileImage: LIVE_MENTORING_SETTINGS.profileImage,
+        introduction: LIVE_MENTORING_SETTINGS.introduction,
+        careers: LIVE_MENTORING_SETTINGS.careers,
+        ...editable,
+      },
+    });
   }),
 
   /**

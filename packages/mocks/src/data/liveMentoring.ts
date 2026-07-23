@@ -18,8 +18,11 @@ export type LiveMentoringCategory =
   | 'RESUME'
   | 'PORTFOLIO';
 
-/** 진행시간(분). 가격을 결정하는 유일한 변수. */
-export type LiveMentoringDuration = 30 | 50;
+/**
+ * 진행시간(분). 가격을 결정하는 유일한 변수.
+ * 백엔드 `LiveMentoringDuration` enum(`MINUTES_30(30)`, `MINUTES_60(60)`) 기준 — 50이 아니라 60이다.
+ */
+export type LiveMentoringDuration = 30 | 60;
 
 export const LIVE_MENTORING_CATEGORIES: readonly LiveMentoringCategory[] = [
   'PERSONAL_STATEMENT',
@@ -28,7 +31,7 @@ export const LIVE_MENTORING_CATEGORIES: readonly LiveMentoringCategory[] = [
 ] as const;
 
 export const LIVE_MENTORING_DURATIONS: readonly LiveMentoringDuration[] = [
-  30, 50,
+  30, 60,
 ] as const;
 
 /** 모자이크 블러 기본값(중간 정도). 슬라이더 범위 0~20 기준. */
@@ -36,11 +39,11 @@ export const DEFAULT_MOSAIC_BLUR = 10;
 
 /**
  * 진행시간 → 고정 가격. 멘토가 입력하지 않으며 카테고리·등급 등 다른 변수는 없다.
- * 30분 = 35,000원 / 50분 = 60,000원 (운영팀 소관, 이번엔 고정).
+ * 30분 = 35,000원 / 60분 = 60,000원 (운영팀 소관, 이번엔 고정).
  */
 export const PRICE_BY_DURATION: Record<LiveMentoringDuration, number> = {
   30: 35000,
-  50: 60000,
+  60: 60000,
 };
 
 /** 진행시간에 해당하는 고정 가격을 반환한다. */
@@ -50,7 +53,7 @@ export function getPriceByDuration(durationMin: LiveMentoringDuration): number {
 
 /**
  * 여러 진행시간이 선택된 경우 웹에는 **가장 낮은 금액**을 노출한다.
- * (30분 35,000 < 50분 60,000 이므로 사실상 최소 진행시간의 가격)
+ * (30분 35,000 < 60분 60,000 이므로 사실상 최소 진행시간의 가격)
  * 빈 배열이면 0.
  */
 export function getLowestPrice(durations: LiveMentoringDuration[]): number {
@@ -168,25 +171,45 @@ export interface LiveMentorDetail {
 }
 
 /**
+ * 오픈 설정 화면에서 보여주는 경력 1건 — 백엔드 `UserCareerVo` 형태를 그대로 따른다.
+ * 공개 상세 페이지용 `LiveMentoringCareer`(company/position/period/visible)와는 다른 타입이다:
+ * 이 필드들은 프로필(UserCareer) 도메인이 소유하며 오픈 설정 화면은 참조만 한다 — 수정 불가.
+ */
+export interface LiveMentoringSettingsCareer {
+  id: number;
+  company: string | null;
+  field: string | null;
+  job: string | null;
+  position: string | null;
+  department: string | null;
+  employmentType: string | null;
+  /** YearMonth 형식, 예: "2020-01" */
+  startDate: string | null;
+  endDate: string | null;
+  isAddedByAdmin: boolean;
+}
+
+/**
  * 오픈 설정(메타) (PRD §5 S3-a).
  * 오픈은 하나만 가능하므로 이 설정이 곧 단일 오픈이다.
  * 타입·진행시간은 다중 선택, 가격은 진행시간에 따라 파생(최저가)한다.
+ * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드 —
+ * 이 오픈 설정 화면에서 수정할 수 없다(수정은 프로필 페이지에서).
  */
 export interface LiveMentoringSettings {
-  /** 현재 오픈 중인지 여부. 오픈 중에는 프로필·설정을 수정할 수 없다. */
-  isOpen: boolean;
-  profileVisible: boolean;
-  mosaicEnabled: boolean;
-  mosaicBlur: number;
-  nickname: string;
+  nickname: string | null;
   profileImage: string | null;
-  introduction: string;
-  careers: LiveMentoringCareer[];
+  introduction: string | null;
+  careers: LiveMentoringSettingsCareer[];
+  /** 1대1 멘토링 타이틀(상품명). 한 번도 오픈한 적 없으면 null. */
+  title: string | null;
+  /** 현재 오픈 중인지 여부. 오픈 중에는 설정을 수정할 수 없다. */
+  isOpen: boolean;
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
-  feedbackStartDate: string;
-  feedbackEndDate: string;
+  /** 피드백 진행 일정(오픈 기간) 시작·종료일. 한 번도 오픈한 적 없으면 null. */
+  feedbackStartDate: string | null;
+  feedbackEndDate: string | null;
 }
 
 /** 정산 현황 행 — 기간별 합계 (PRD §4.6, read-only) */
@@ -210,6 +233,7 @@ export interface SettlementItem {
 
 /** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
 export interface OpenStatusRow {
+  title: string;
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
   price: number;
@@ -238,7 +262,7 @@ export const CATEGORY_TEMPLATE_DEFAULTS: Record<
     faq: [
       {
         q: '자기소개서 몇 개 문항까지 봐주시나요?',
-        a: '30분은 1~2문항, 50분은 3~4문항까지 집중적으로 봐드립니다.',
+        a: '30분은 1~2문항, 60분은 3~4문항까지 집중적으로 봐드립니다.',
       },
       {
         q: '완성본이 없어도 신청할 수 있나요?',
@@ -418,7 +442,7 @@ function challengesFor(seed: MentorSeed): LiveMentorChallenge[] {
 }
 
 /**
- * 멘토 시드 — 12명 이상(size=9 기준 2페이지 이상), 카테고리·30/50분·평점(0~5)·
+ * 멘토 시드 — 12명 이상(size=9 기준 2페이지 이상), 카테고리·30/60분·평점(0~5)·
  * 후기 수 분포를 다양화. 모자이크/프로필 비노출 케이스도 섞는다.
  */
 const MENTOR_SEEDS: MentorSeed[] = [
@@ -428,10 +452,10 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '네이버 · 서비스 기획 7년',
     mentoringPoints: '두괄식 구조와 경험 소재 발굴 위주로 봅니다.',
     category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    durationMin: 60,
     // 다중 타입·진행시간 오픈 예시 → 웹에는 최저가(30분 35,000원)로 노출.
     categories: ['PERSONAL_STATEMENT', 'RESUME'],
-    durations: [30, 50],
+    durations: [30, 60],
     rating: 4.9,
     reviewCount: 182,
     profileVisible: true,
@@ -493,7 +517,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '토스 · 프로덕트 디자이너 5년',
     mentoringPoints: '프로젝트 서사와 문제-해결 흐름을 강화합니다.',
     category: 'PORTFOLIO',
-    durationMin: 50,
+    durationMin: 60,
     rating: 5.0,
     reviewCount: 210,
     profileVisible: true,
@@ -543,7 +567,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '시리즈B 스타트업 · PM 4년',
     mentoringPoints: '경험을 임팩트 중심으로 재구성합니다.',
     category: 'RESUME',
-    durationMin: 50,
+    durationMin: 60,
     rating: 4.3,
     reviewCount: 28,
     profileVisible: true,
@@ -599,7 +623,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '컨설팅 · 커리어 코치 10년',
     mentoringPoints: '지원 전략과 자소서 방향을 함께 잡습니다.',
     category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    durationMin: 60,
     rating: 4.6,
     reviewCount: 77,
     profileVisible: true,
@@ -649,7 +673,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '외국계 · 마케팅 매니저',
     mentoringPoints: '브랜드/퍼포먼스 경험을 정리합니다.',
     category: 'PORTFOLIO',
-    durationMin: 50,
+    durationMin: 60,
     rating: 3.9,
     reviewCount: 8,
     profileVisible: false,
@@ -674,7 +698,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '라인 · 데이터 분석 6년',
     mentoringPoints: '분석 프로젝트를 성과 스토리로 재구성합니다.',
     category: 'RESUME',
-    durationMin: 50,
+    durationMin: 60,
     rating: 4.4,
     reviewCount: 53,
     profileVisible: true,
@@ -769,7 +793,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
     headline: '무신사 · 서비스 기획 5년',
     mentoringPoints: '경험을 문항 의도에 맞게 배치합니다.',
     category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    durationMin: 60,
     rating: 4.65,
     reviewCount: 64,
     profileVisible: true,
@@ -814,7 +838,7 @@ export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.map((seed) => {
 const REVIEW_CONTENTS = [
   '군더더기 없이 핵심만 짚어주셔서 방향이 확실해졌어요.',
   '제가 놓친 강점을 발견해 주셔서 큰 도움이 됐습니다.',
-  '50분이 짧게 느껴질 만큼 알찬 피드백이었어요.',
+  '60분이 짧게 느껴질 만큼 알찬 피드백이었어요.',
   '실제 평가 기준으로 봐주셔서 현실감이 있었습니다.',
   '문장 구조를 바로 고쳐주셔서 바로 적용할 수 있었어요.',
 ];
@@ -895,18 +919,43 @@ const MY_MENTOR_ID = 1;
 
 const mySeed = MENTOR_SEEDS[0];
 
+/** "나"(mySeed)의 경력을 오픈 설정 화면의 읽기 전용 `UserCareerVo` 형태로 변환한 목값. */
+const MY_SETTINGS_CAREERS: LiveMentoringSettingsCareer[] = [
+  {
+    id: 1,
+    company: '네이버',
+    field: '서비스 기획',
+    job: '기획',
+    position: '서비스 기획',
+    department: null,
+    employmentType: '정규직',
+    startDate: '2019-03',
+    endDate: null,
+    isAddedByAdmin: false,
+  },
+  {
+    id: 2,
+    company: '라인',
+    field: '서비스 기획',
+    job: '기획',
+    position: '기획 인턴',
+    department: null,
+    employmentType: '전환형 인턴',
+    startDate: '2018-01',
+    endDate: '2019-02',
+    isAddedByAdmin: false,
+  },
+];
+
 /** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
-  // 목 기본값: 아직 오픈 전(편집 가능). 오픈하기 → 잠금 흐름을 확인할 수 있다.
-  isOpen: false,
-  profileVisible: mySeed.profileVisible,
-  // 모자이크는 기본적으로 중간 정도로 켜둔다.
-  mosaicEnabled: true,
-  mosaicBlur: DEFAULT_MOSAIC_BLUR,
   nickname: mySeed.nickname,
   profileImage: imageFor(mySeed),
   introduction: mySeed.introduction,
-  careers: mySeed.careers,
+  careers: MY_SETTINGS_CAREERS,
+  title: '자소서 실전 첨삭 멘토링',
+  // 목 기본값: 아직 오픈 전(편집 가능). 오픈하기 → 잠금 흐름을 확인할 수 있다.
+  isOpen: false,
   categories: categoriesFor(mySeed),
   durations: durationsFor(mySeed),
   ...periodFor(mySeed),
@@ -944,6 +993,7 @@ export const SETTLEMENT_ROWS: SettlementRow[] = [
  */
 export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
   {
+    title: '자소서 실전 첨삭 멘토링',
     categories: categoriesFor(mySeed),
     durations: durationsFor(mySeed),
     price: getLowestPrice(durationsFor(mySeed)),
@@ -953,18 +1003,20 @@ export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
   },
   // 과거 오픈 내역
   {
+    title: '자소서 첨삭 멘토링',
     categories: ['PERSONAL_STATEMENT'],
-    durations: [50],
-    price: getLowestPrice([50]),
+    durations: [60],
+    price: getLowestPrice([60]),
     feedbackStartDate: '2026-06-10',
     feedbackEndDate: '2026-06-23',
     status: 'CLOSED',
     reservationCount: 12,
   },
   {
+    title: '이력서 클리닉',
     categories: ['RESUME'],
-    durations: [30, 50],
-    price: getLowestPrice([30, 50]),
+    durations: [30, 60],
+    price: getLowestPrice([30, 60]),
     feedbackStartDate: '2026-05-12',
     feedbackEndDate: '2026-05-25',
     status: 'CLOSED',
@@ -979,7 +1031,7 @@ export const SETTLEMENT_ITEMS: SettlementItem[] = [
     date: '2026-06-28',
     menteeName: '김**',
     category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    durationMin: 60,
     amount: 60000,
     status: 'PAID',
   },
@@ -1006,7 +1058,7 @@ export const SETTLEMENT_ITEMS: SettlementItem[] = [
     date: '2026-04-30',
     menteeName: '최**',
     category: 'PORTFOLIO',
-    durationMin: 50,
+    durationMin: 60,
     amount: 60000,
     status: 'PENDING',
   },

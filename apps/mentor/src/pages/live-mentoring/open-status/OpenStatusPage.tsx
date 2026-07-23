@@ -27,12 +27,17 @@ const OpenStatusPage = () => {
         <p className="text-xsmall14 text-neutral-40">
           내가 오픈한 1대1 라이브 멘토링의 상태와 예약 수를 확인하세요.
         </p>
+        {/* 예약/결제 시스템이 아직 없어 서버가 예약 수를 항상 0으로 준다 — 의도된 한계. */}
+        <p className="text-xs text-gray-400">
+          * 예약 수는 예약 시스템 연동 전까지 0으로 표시됩니다.
+        </p>
       </header>
 
       <div className="overflow-hidden rounded-xl border border-gray-200">
         <table className="w-full min-w-[560px]">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
+              <th className={headerCellClass}>타이틀</th>
               <th className={headerCellClass}>카테고리</th>
               <th className={headerCellClass}>진행시간</th>
               <th className={headerCellClass}>피드백 기간</th>
@@ -45,7 +50,7 @@ const OpenStatusPage = () => {
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -54,7 +59,7 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   오픈한 멘토링이 없습니다.
@@ -66,6 +71,7 @@ const OpenStatusPage = () => {
                   key={`${row.categories.join()}-${index}`}
                   className="border-b border-gray-100 last:border-b-0"
                 >
+                  <td className={bodyCellClass}>{row.title}</td>
                   <td className={bodyCellClass}>
                     {row.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
                   </td>

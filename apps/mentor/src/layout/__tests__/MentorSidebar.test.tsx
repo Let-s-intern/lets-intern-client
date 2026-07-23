@@ -44,10 +44,12 @@ describe('MentorSidebar', () => {
     expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
-    expect(screen.getByText('예약 현황')).toBeInTheDocument();
+    // '예약 현황'·'참여중인 챌린지'는 임시 숨김 처리됨(dusvlf111, 2026-07-17) —
+    // 라우트는 유지, 진입점만 가려짐.
+    expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
     // 채팅 기능 제거 — 메뉴 미노출
     expect(screen.queryByText('채팅')).not.toBeInTheDocument();
-    expect(screen.getByText('참여중인 챌린지')).toBeInTheDocument();
+    expect(screen.queryByText('참여중인 챌린지')).not.toBeInTheDocument();
     expect(screen.getByText('프로필')).toBeInTheDocument();
   });
 
@@ -107,6 +109,7 @@ describe('MentorSidebar', () => {
     expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
-    expect(screen.getByText('예약 현황')).toBeInTheDocument();
+    // '예약 현황'은 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
+    expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
   });
 });

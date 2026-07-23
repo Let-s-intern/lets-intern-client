@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   getLowestPrice,
   LIVE_MENTORING_CATEGORIES,
@@ -13,36 +14,32 @@ import type {
   LiveMentoringCategory,
   LiveMentoringDuration,
   LiveMentoringSettings,
+  LiveMentoringSettingsUpdate,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
-import { CATEGORY_LABELS, formatPrice } from '../constants';
+import {
+  CATEGORY_LABELS,
+  formatCareerPeriod,
+  formatPrice,
+} from '../constants';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
-
-interface ToggleProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label: string;
-}
-
-const Toggle = ({ checked, onChange, label }: ToggleProps) => (
-  <button
-    type="button"
-    role="switch"
-    aria-checked={checked}
-    aria-label={label}
-    onClick={() => onChange(!checked)}
-    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-gray-300'}`}
-  >
-    <span
-      className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${checked ? 'translate-x-[22px]' : 'translate-x-0.5'}`}
-    />
-  </button>
-);
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
+
+/** PUT 요청은 이 6개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
+const toUpdatePayload = (
+  form: LiveMentoringSettings,
+): LiveMentoringSettingsUpdate => ({
+  title: form.title ?? '',
+  isOpen: form.isOpen,
+  categories: form.categories,
+  durations: form.durations,
+  feedbackStartDate: form.feedbackStartDate ?? '',
+  feedbackEndDate: form.feedbackEndDate ?? '',
+});
 
 const OpenSettingsPage = () => {
   const { data } = useLiveMentoringSettingsQuery();
@@ -50,23 +47,26 @@ const OpenSettingsPage = () => {
   const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
-  // 변경사항(dirty) 판정을 위한 로드 원본(정규화된 값).
-  const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
+  // 변경사항(dirty) 판정을 위한 로드 원본.
+  const [original, setOriginal] = useState<LiveMentoringSettings | null>(
+    null,
+  );
   const [slotModalOpen, setSlotModalOpen] = useState(false);
+  // 백엔드 UserCareerVo에 공개/대표 지정 필드가 없어 로컬 상태로만 관리한다.
+  // 서버에 저장되지 않고 이 화면의 미리보기 노출용으로만 쓰인다(§PRD 오픈 설정 실 백엔드 연동).
+  const [representativeCareerId, setRepresentativeCareerId] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     if (!data) return;
-    // 대표 경력은 하나만 노출한다 — 로드 시 첫 번째 노출 경력(없으면 첫 경력)으로 정규화.
-    const repIndex = Math.max(
-      0,
-      data.careers.findIndex((c) => c.visible),
+    setForm(data);
+    setOriginal(data);
+    setRepresentativeCareerId((prev) =>
+      prev !== null && data.careers.some((c) => c.id === prev)
+        ? prev
+        : (data.careers[0]?.id ?? null),
     );
-    const normalized = {
-      ...data,
-      careers: data.careers.map((c, i) => ({ ...c, visible: i === repIndex })),
-    };
-    setForm(normalized);
-    setOriginal(normalized);
   }, [data]);
 
   // 오픈 중(잠금 상태)에는 배경 스크롤을 막는다.
@@ -110,23 +110,15 @@ const OpenSettingsPage = () => {
       return { ...prev, categories };
     });
 
-  // 대표 경력은 하나만 지정한다(라디오). 선택한 것만 visible=true.
-  const selectCareer = (index: number) =>
-    setForm((prev) =>
-      prev
-        ? {
-            ...prev,
-            careers: prev.careers.map((c, i) => ({
-              ...c,
-              visible: i === index,
-            })),
-          }
-        : prev,
-    );
-
+  const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
   const noDurationSelected = form.durations.length === 0;
-  const hasRequiredFields = !noCategorySelected && !noDurationSelected;
+  const noFeedbackDates = !form.feedbackStartDate || !form.feedbackEndDate;
+  const hasRequiredFields =
+    !noTitleEntered &&
+    !noCategorySelected &&
+    !noDurationSelected &&
+    !noFeedbackDates;
   const isCurrentlyOpen = form.isOpen;
   const isDirty = JSON.stringify(form) !== JSON.stringify(original);
   const canSave = hasRequiredFields && isDirty;
@@ -136,10 +128,11 @@ const OpenSettingsPage = () => {
     successTitle: string,
     successDescription?: string,
   ) =>
-    save(next, {
-      onSuccess: () => {
-        setForm(next);
-        setOriginal(next);
+    save(toUpdatePayload(next), {
+      // 저장 응답이 곧 서버의 최신 전체 상태(프로필 참조 필드 포함)라 그대로 반영한다.
+      onSuccess: (saved) => {
+        setForm(saved);
+        setOriginal(saved);
         showAlert({
           title: successTitle,
           description: successDescription,
@@ -180,7 +173,7 @@ const OpenSettingsPage = () => {
           오픈 설정
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          1대1 라이브 멘토링 오픈에 필요한 프로필·진행시간·타입을 설정하세요.
+          1대1 라이브 멘토링 오픈에 필요한 타이틀·진행시간·타입을 설정하세요.
         </p>
       </header>
 
@@ -199,77 +192,63 @@ const OpenSettingsPage = () => {
             <div className="flex flex-col gap-6">
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-900">
-                        프로필 노출
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        끄면 프로필 이미지 대신 &lsquo;○○ 멘토님의 멘토링&rsquo;
-                        이 표시됩니다.
-                      </span>
-                    </div>
-                    <Toggle
-                      label="프로필 노출"
-                      checked={form.profileVisible}
-                      onChange={(v) => patch({ profileVisible: v })}
-                    />
+                <p className="mb-4 text-xs text-gray-500">
+                  닉네임·프로필 이미지·한줄 소개·경력은 프로필 페이지에서
+                  관리해요. 이 화면에서는 조회만 됩니다.
+                </p>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                    {form.profileImage ? (
+                      <img
+                        src={form.profileImage}
+                        alt="프로필 이미지"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-gray-400">이미지</span>
+                    )}
                   </div>
-
-                  {/* 모자이크는 프로필 이미지를 노출할 때만 설정 가능 */}
-                  {form.profileVisible && (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-gray-900">
-                            프로필 자동 모자이크
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            프로필 이미지 위에 블러 오버레이를 적용합니다.
-                          </span>
-                        </div>
-                        <Toggle
-                          label="프로필 자동 모자이크"
-                          checked={form.mosaicEnabled}
-                          onChange={(v) => patch({ mosaicEnabled: v })}
-                        />
-                      </div>
-
-                      {form.mosaicEnabled && (
-                        <div className="flex items-center gap-3">
-                          <label
-                            htmlFor="mosaic-blur"
-                            className="text-sm font-medium text-gray-700"
-                          >
-                            블러 강도
-                          </label>
-                          <input
-                            id="mosaic-blur"
-                            type="range"
-                            min={0}
-                            max={20}
-                            step={1}
-                            value={form.mosaicBlur}
-                            onChange={(e) =>
-                              patch({ mosaicBlur: Number(e.target.value) })
-                            }
-                            className="accent-primary min-w-0 flex-1"
-                          />
-                          <span className="w-12 text-right text-sm text-gray-600">
-                            {form.mosaicBlur}px
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  )}
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {form.nickname || '닉네임 없음'}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {form.introduction || '한줄 소개가 없습니다.'}
+                    </p>
+                  </div>
                 </div>
+                <Link
+                  to="/profile"
+                  className="text-primary mt-3 inline-block text-xs font-medium underline"
+                >
+                  프로필 페이지에서 수정하기
+                </Link>
+              </section>
+
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>1대1 멘토링 타이틀</h2>
+                <p className="mb-3 text-xs text-gray-500">
+                  공개 리스트·상세 페이지에 노출될 상품명이에요.
+                </p>
+                <input
+                  type="text"
+                  aria-label="1대1 멘토링 타이틀"
+                  value={form.title ?? ''}
+                  onChange={(e) => patch({ title: e.target.value })}
+                  placeholder="예) 자소서 실전 첨삭 멘토링"
+                  className="focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
+                />
+                {noTitleEntered && (
+                  <p role="alert" className="text-system-error mt-2 text-xs">
+                    타이틀을 입력해야 저장할 수 있어요.
+                  </p>
+                )}
               </section>
 
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>대표 경력 지정</h2>
                 <p className="mb-3 text-xs text-gray-500">
-                  공개 화면에 노출할 대표 경력을 하나만 선택하세요.
+                  미리보기에 노출할 대표 경력을 하나만 선택하세요.
                 </p>
                 {form.careers.length === 0 ? (
                   <p className="text-sm text-gray-500">
@@ -277,19 +256,31 @@ const OpenSettingsPage = () => {
                   </p>
                 ) : (
                   <ul className="flex flex-col gap-2">
-                    {form.careers.map((career, index) => (
-                      <li key={`${career.company}-${index}`}>
+                    {form.careers.map((career) => (
+                      <li key={career.id}>
                         <label className="flex cursor-pointer items-center gap-2">
                           <input
                             type="radio"
                             name="representative-career"
-                            checked={career.visible}
-                            onChange={() => selectCareer(index)}
+                            checked={representativeCareerId === career.id}
+                            onChange={() =>
+                              setRepresentativeCareerId(career.id)
+                            }
                             className="accent-primary h-4 w-4"
                           />
                           <span className="text-sm text-gray-700">
-                            {career.company} · {career.position} (
-                            {career.period})
+                            {career.company} · {career.position}
+                            {career.startDate && (
+                              <span className="text-gray-400">
+                                {' '}
+                                (
+                                {formatCareerPeriod(
+                                  career.startDate,
+                                  career.endDate,
+                                )}
+                                )
+                              </span>
+                            )}
                           </span>
                         </label>
                       </li>
@@ -308,7 +299,7 @@ const OpenSettingsPage = () => {
                   <input
                     type="date"
                     aria-label="피드백 시작일"
-                    value={form.feedbackStartDate}
+                    value={form.feedbackStartDate ?? ''}
                     onChange={(e) =>
                       patch({ feedbackStartDate: e.target.value })
                     }
@@ -318,12 +309,17 @@ const OpenSettingsPage = () => {
                   <input
                     type="date"
                     aria-label="피드백 종료일"
-                    min={form.feedbackStartDate}
-                    value={form.feedbackEndDate}
+                    min={form.feedbackStartDate ?? undefined}
+                    value={form.feedbackEndDate ?? ''}
                     onChange={(e) => patch({ feedbackEndDate: e.target.value })}
                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
                   />
                 </div>
+                {noFeedbackDates && (
+                  <p role="alert" className="text-system-error mt-2 text-xs">
+                    시작일과 종료일을 모두 입력해야 저장할 수 있어요.
+                  </p>
+                )}
               </section>
 
               <section className={cardClass}>
@@ -406,7 +402,10 @@ const OpenSettingsPage = () => {
 
             {/* 우: 미리보기 */}
             <div className="lg:sticky lg:top-6 lg:self-start">
-              <OpenSettingsPreview settings={form} />
+              <OpenSettingsPreview
+                settings={form}
+                representativeCareerId={representativeCareerId}
+              />
             </div>
           </div>
         </div>
@@ -459,10 +458,10 @@ const OpenSettingsPage = () => {
       <FeedbackAvailabilityModal
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
-        focusDate={form.feedbackStartDate}
+        focusDate={form.feedbackStartDate ?? undefined}
         openPeriod={{
-          startDate: form.feedbackStartDate,
-          endDate: form.feedbackEndDate,
+          startDate: form.feedbackStartDate ?? '',
+          endDate: form.feedbackEndDate ?? '',
         }}
       />
       <MentorAlertModal {...alertProps} />

@@ -2,7 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
-  type LiveMentoringSettings,
+  type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
@@ -52,12 +52,14 @@ export const useLiveMentoringSettingsQuery = () => {
 
 /**
  * PUT /mentor/live-mentoring/settings — 오픈 설정 저장.
- * 성공 시 설정 캐시를 invalidate. (MSW는 body를 echo)
+ * 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받는다 —
+ * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 수정 요청에 포함하지 않는다.
+ * 응답은 전체 설정(프로필 참조 필드 포함)이라 저장 성공 시 곧바로 최신 상태로 갱신할 수 있다.
  */
 export const useUpdateLiveMentoringSettingsMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (settings: LiveMentoringSettings) => {
+    mutationFn: async (settings: LiveMentoringSettingsUpdate) => {
       const res = await axios.put(SETTINGS_PATH, settings);
       return liveMentoringSettingsSchema.parse(res.data.data);
     },

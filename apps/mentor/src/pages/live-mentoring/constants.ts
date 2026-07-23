@@ -18,3 +18,16 @@ export const durationLabel = (durationMin: number): string =>
 /** 가격 표시(원). 예: 35000 → "35,000원" */
 export const formatPrice = (price: number): string =>
   `${price.toLocaleString('ko-KR')}원`;
+
+/**
+ * 경력 기간 표시. YearMonth("2020-01") → "2020.01".
+ * endDate가 없으면(재직 중) "재직중"으로 표시한다.
+ */
+export const formatCareerPeriod = (
+  startDate: string | null,
+  endDate: string | null,
+): string => {
+  if (!startDate) return '';
+  const fmt = (yearMonth: string) => yearMonth.replace('-', '.');
+  return `${fmt(startDate)} ~ ${endDate ? fmt(endDate) : '재직중'}`;
+};

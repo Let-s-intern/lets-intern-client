@@ -29,23 +29,39 @@ const axiosMock = vi.mocked(axios, true);
 
 function makeSettings(overrides: Record<string, unknown> = {}) {
   return {
-    isOpen: false,
-    profileVisible: true,
-    mosaicEnabled: false,
-    mosaicBlur: 0,
     nickname: '자소서장인',
     profileImage: null,
     introduction: '소개',
     careers: [
       {
+        id: 1,
         company: '네이버',
+        field: '기획',
+        job: '기획',
         position: '기획',
-        period: '2019-2026',
-        visible: true,
+        department: null,
+        employmentType: '정규직',
+        startDate: '2019-01',
+        endDate: null,
+        isAddedByAdmin: false,
       },
     ],
+    title: '자소서 실전 첨삭 멘토링',
+    isOpen: false,
     categories: ['PERSONAL_STATEMENT'],
-    durations: [50],
+    durations: [60],
+    feedbackStartDate: '2026-07-14',
+    feedbackEndDate: '2026-07-28',
+    ...overrides,
+  };
+}
+
+function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
+  return {
+    title: '자소서 실전 첨삭 멘토링',
+    isOpen: false,
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [60],
     feedbackStartDate: '2026-07-14',
     feedbackEndDate: '2026-07-28',
     ...overrides,
@@ -99,7 +115,7 @@ describe('스키마 parse', () => {
     ).not.toThrow();
   });
 
-  it('durations에 30/50이 아닌 값이 있으면 파싱 실패', () => {
+  it('durations에 30/60이 아닌 값이 있으면 파싱 실패', () => {
     expect(() =>
       liveMentoringSettingsSchema.parse(makeSettings({ durations: [40] })),
     ).toThrow();
@@ -195,7 +211,7 @@ describe('useLiveMentoringSettlementQuery', () => {
               date: '2026-06-28',
               menteeName: '김**',
               category: 'PERSONAL_STATEMENT',
-              durationMin: 50,
+              durationMin: 60,
               amount: 60000,
               status: 'PAID',
             },
@@ -222,8 +238,9 @@ describe('useLiveMentoringOpenStatusQuery', () => {
         data: {
           openStatusList: [
             {
+              title: '자소서 실전 첨삭 멘토링',
               categories: ['PERSONAL_STATEMENT'],
-              durations: [50],
+              durations: [60],
               price: 60000,
               feedbackStartDate: '2026-07-14',
               feedbackEndDate: '2026-07-28',
@@ -244,11 +261,12 @@ describe('useLiveMentoringOpenStatusQuery', () => {
   });
 });
 
-// ── mutation 훅 (PUT echo) ────────────────────────────────────
+// ── mutation 훅 (PUT — 6개 필드만 보내고, 응답은 전체 설정) ────
 describe('useUpdateLiveMentoringSettingsMutation', () => {
-  it('PUT settings 에 body 를 보내고 echo 를 파싱, 캐시를 invalidate 한다', async () => {
-    const settings = makeSettings({ mosaicEnabled: true, mosaicBlur: 12 });
-    axiosMock.put.mockResolvedValue({ data: { data: settings } });
+  it('PUT settings 에 6개 필드만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
+    const update = makeSettingsUpdate({ isOpen: true });
+    const responseSettings = makeSettings({ isOpen: true });
+    axiosMock.put.mockResolvedValue({ data: { data: responseSettings } });
 
     const client = newClient();
     const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
@@ -259,13 +277,14 @@ describe('useUpdateLiveMentoringSettingsMutation', () => {
     );
 
     await act(async () => {
-      await result.current.mutateAsync(settings as never);
+      await result.current.mutateAsync(update as never);
     });
 
     expect(axiosMock.put).toHaveBeenCalledWith(
       '/mentor/live-mentoring/settings',
-      settings,
+      update,
     );
+    expect(result.current.data?.nickname).toBe('자소서장인');
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
     });

@@ -1,7 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { LiveMentoringSettings } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringSettings,
+  LiveMentoringSettingsUpdate,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
@@ -26,17 +30,37 @@ vi.mock('@/pages/feedback-live-reservation/ui/ReservationListModal', () => ({
 import OpenSettingsPage from '../OpenSettingsPage';
 
 const baseSettings: LiveMentoringSettings = {
-  isOpen: false,
-  profileVisible: true,
-  mosaicEnabled: false,
-  mosaicBlur: 8,
   nickname: '자소서장인',
   profileImage: 'https://example.test/p.png',
   introduction: '소개',
   careers: [
-    { company: '네이버', position: '기획', period: '2019-2026', visible: true },
-    { company: '카카오', position: 'PM', period: '2016-2019', visible: false },
+    {
+      id: 1,
+      company: '네이버',
+      field: '기획',
+      job: '기획',
+      position: '기획',
+      department: null,
+      employmentType: '정규직',
+      startDate: '2019-01',
+      endDate: null,
+      isAddedByAdmin: false,
+    },
+    {
+      id: 2,
+      company: '카카오',
+      field: '기획',
+      job: 'PM',
+      position: 'PM',
+      department: null,
+      employmentType: '정규직',
+      startDate: '2016-01',
+      endDate: '2019-01',
+      isAddedByAdmin: false,
+    },
   ],
+  title: '자소서 실전 첨삭 멘토링',
+  isOpen: false,
   categories: ['PERSONAL_STATEMENT'],
   durations: [30],
   feedbackStartDate: '2026-07-14',
@@ -45,12 +69,66 @@ const baseSettings: LiveMentoringSettings = {
 
 const renderPage = (overrides: Partial<LiveMentoringSettings> = {}) => {
   settingsData = { ...baseSettings, ...overrides };
-  return render(<OpenSettingsPage />);
+  return render(
+    <MemoryRouter>
+      <OpenSettingsPage />
+    </MemoryRouter>,
+  );
 };
 
 afterEach(() => {
   saveMock.mockReset();
   settingsData = undefined;
+});
+
+describe('OpenSettingsPage — 프로필은 읽기 전용', () => {
+  it('닉네임·소개·경력을 표시만 하고, 프로필 페이지로 이동하는 링크를 보여준다', () => {
+    renderPage();
+    // 프로필 섹션과 우측 미리보기 양쪽에 표시되므로 복수 매치를 허용한다.
+    expect(screen.getAllByText('자소서장인').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/네이버/).length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole('link', { name: '프로필 페이지에서 수정하기' }),
+    ).toHaveAttribute('href', '/profile');
+  });
+
+  it('모자이크/프로필 노출 토글은 더 이상 렌더되지 않는다', () => {
+    renderPage();
+    expect(
+      screen.queryByRole('switch', { name: '프로필 노출' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('switch', { name: '프로필 자동 모자이크' }),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe('OpenSettingsPage — 대표 경력 지정(로컬 전용, 서버 미저장)', () => {
+  it('기본으로 첫 경력이 선택되고 미리보기에 반영된다', () => {
+    renderPage();
+    expect(screen.getByRole('radio', { name: /네이버/ })).toBeChecked();
+  });
+
+  it('다른 경력을 선택하면 라디오 상태가 바뀐다', () => {
+    renderPage();
+
+    const kakao = screen.getByRole('radio', { name: /카카오/ });
+    fireEvent.click(kakao);
+
+    expect(kakao).toBeChecked();
+    expect(screen.getByRole('radio', { name: /네이버/ })).not.toBeChecked();
+  });
+
+  it('대표 경력을 바꿔도 저장 payload 에는 포함되지 않는다(백엔드 미지원 필드)', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const payload = saveMock.mock.calls[0][0];
+    expect(payload).not.toHaveProperty('careers');
+  });
 });
 
 describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
@@ -62,11 +140,11 @@ describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
   it('여러 진행시간이면 최저가, 하나만 남기면 그 가격으로 갱신된다', () => {
     renderPage({ durations: [30] });
 
-    // 50분 추가 → [30,50] → 최저가 35,000 유지
-    fireEvent.click(screen.getByRole('button', { name: '50분' }));
+    // 60분 추가 → [30,60] → 최저가 35,000 유지
+    fireEvent.click(screen.getByRole('button', { name: '60분' }));
     expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
 
-    // 30분 해제 → [50] 만 남아 60,000
+    // 30분 해제 → [60] 만 남아 60,000
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
     expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
   });
@@ -77,52 +155,23 @@ describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
   });
 });
 
-describe('OpenSettingsPage — 모자이크 강도 반영', () => {
-  it('모자이크 ON + 강도 조절이 미리보기 블러에 반영된다', () => {
-    renderPage({ mosaicEnabled: false });
-
-    // 모자이크 켜기
-    fireEvent.click(
-      screen.getByRole('switch', { name: '프로필 자동 모자이크' }),
-    );
-
-    const slider = screen.getByLabelText('블러 강도');
-    fireEvent.change(slider, { target: { value: '15' } });
-
-    const image = screen.getByTestId('preview-profile-image');
-    expect(image).toHaveStyle({ filter: 'blur(15px)' });
-  });
-
-  it('profileVisible=false 면 이미지 자리에 "○○ 멘토님의 멘토링" 문구를 렌더한다', () => {
-    renderPage({ profileVisible: false });
-    expect(screen.getByTestId('preview-image-placeholder')).toHaveTextContent(
-      '자소서장인 멘토님의 멘토링',
-    );
-  });
-
-  it('프로필 노출이 꺼져 있으면 모자이크 설정이 보이지 않는다', () => {
-    renderPage({ profileVisible: false, mosaicEnabled: true });
-    expect(
-      screen.queryByRole('switch', { name: '프로필 자동 모자이크' }),
-    ).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('블러 강도')).not.toBeInTheDocument();
-  });
-});
-
 describe('OpenSettingsPage — 저장 payload', () => {
-  it('저장 시 갱신된 진행시간(다중)/모자이크 강도를 담아 mutate 를 호출한다', () => {
-    renderPage({ durations: [30], mosaicEnabled: true });
+  it('저장 시 title/isOpen/categories/durations/feedbackDates 6개 필드만 담아 mutate 를 호출한다', () => {
+    renderPage({ durations: [30] });
 
-    fireEvent.click(screen.getByRole('button', { name: '50분' })); // [30,50]
-    fireEvent.change(screen.getByLabelText('블러 강도'), {
-      target: { value: '12' },
-    });
+    fireEvent.click(screen.getByRole('button', { name: '60분' })); // [30,60]
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
-    expect(payload.durations).toEqual([30, 50]);
-    expect(payload.mosaicBlur).toBe(12);
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload).toEqual({
+      title: baseSettings.title,
+      isOpen: false,
+      categories: baseSettings.categories,
+      durations: [30, 60],
+      feedbackStartDate: baseSettings.feedbackStartDate,
+      feedbackEndDate: baseSettings.feedbackEndDate,
+    });
   });
 
   it('타입을 여러 개 선택하면 payload categories 에 담긴다', () => {
@@ -131,7 +180,7 @@ describe('OpenSettingsPage — 저장 payload', () => {
     fireEvent.click(screen.getByRole('button', { name: '이력서' }));
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
   });
 
@@ -143,60 +192,27 @@ describe('OpenSettingsPage — 저장 payload', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.feedbackStartDate).toBe('2026-08-01');
   });
 
-  it('대표 경력은 하나만 선택되며 payload 에 반영된다(라디오)', () => {
+  it('타이틀을 입력하면 payload 에 반영된다', () => {
     renderPage();
 
-    // 두 번째 경력(카카오)을 대표로 선택 → 첫 경력은 해제
-    const kakao = screen.getByRole('radio', { name: /카카오/ });
-    fireEvent.click(kakao);
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
-    expect(payload.careers[1].visible).toBe(true);
-    expect(payload.careers[0].visible).toBe(false);
-  });
-
-  it('경력이 여러 개 visible 로 들어와도 대표는 하나로 정규화되어 라디오가 동작한다', () => {
-    // 두 경력 모두 visible=true 인 상태(실 목 데이터 케이스)
-    renderPage({
-      careers: [
-        {
-          company: '네이버',
-          position: '기획',
-          period: '2019-2026',
-          visible: true,
-        },
-        {
-          company: '카카오',
-          position: 'PM',
-          period: '2016-2019',
-          visible: true,
-        },
-      ],
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '이력서 클리닉' },
     });
-
-    // 정규화로 첫 경력만 선택됨
-    expect(screen.getByRole('radio', { name: /네이버/ })).toBeChecked();
-    expect(screen.getByRole('radio', { name: /카카오/ })).not.toBeChecked();
-
-    // 두 번째로 전환 가능
-    fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
-    expect(payload.careers[0].visible).toBe(false);
-    expect(payload.careers[1].visible).toBe(true);
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.title).toBe('이력서 클리닉');
   });
 });
 
-describe('OpenSettingsPage — 타입/진행시간 필수', () => {
+describe('OpenSettingsPage — 필수 필드', () => {
   it('타입을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
-    // 유일 선택된 타입 해제 → 0개
     fireEvent.click(screen.getByRole('button', { name: '자기소개서' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent(
@@ -208,12 +224,24 @@ describe('OpenSettingsPage — 타입/진행시간 필수', () => {
   it('진행시간을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
     renderPage({ durations: [30] });
 
-    // 유일 선택된 진행시간 해제 → 0개
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       '진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.',
     );
+    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+  });
+
+  it('타이틀을 비우면 경고문구가 뜨고 저장이 비활성화된다', () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '' },
+    });
+
+    expect(
+      screen.getByText('타이틀을 입력해야 저장할 수 있어요.'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
 
@@ -236,7 +264,7 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
 
   it('변경사항이 생기면 저장 버튼으로 바뀐다', () => {
     renderPage({ durations: [30] });
-    fireEvent.click(screen.getByRole('button', { name: '50분' })); // dirty
+    fireEvent.click(screen.getByRole('button', { name: '60분' })); // dirty
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
@@ -247,7 +275,7 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
     renderPage();
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettings;
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.isOpen).toBe(true);
   });
 

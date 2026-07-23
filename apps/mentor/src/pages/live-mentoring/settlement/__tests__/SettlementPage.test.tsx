@@ -30,7 +30,7 @@ const itemList: SettlementItem[] = [
     date: '2026-06-28',
     menteeName: '김**',
     category: 'PERSONAL_STATEMENT',
-    durationMin: 50,
+    durationMin: 60,
     amount: 60000,
     status: 'PAID',
   },

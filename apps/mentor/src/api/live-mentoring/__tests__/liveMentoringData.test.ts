@@ -20,9 +20,9 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     expect(Math.ceil(LIVE_MENTOR_CARDS.length / 9)).toBeGreaterThanOrEqual(2);
   });
 
-  it('가격은 진행시간 고정 매핑(30→35,000 / 50→60,000)을 따르며 여러 진행시간이면 최저가다', () => {
+  it('가격은 진행시간 고정 매핑(30→35,000 / 60→60,000)을 따르며 여러 진행시간이면 최저가다', () => {
     expect(PRICE_BY_DURATION[30]).toBe(35000);
-    expect(PRICE_BY_DURATION[50]).toBe(60000);
+    expect(PRICE_BY_DURATION[60]).toBe(60000);
     for (const card of LIVE_MENTOR_CARDS) {
       expect(card.price).toBe(getLowestPrice(card.durations));
     }
@@ -35,7 +35,7 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     );
 
     const durations = new Set(LIVE_MENTOR_CARDS.flatMap((c) => c.durations));
-    expect(durations).toEqual(new Set([30, 50]));
+    expect(durations).toEqual(new Set([30, 60]));
 
     // 다중 타입·진행시간 오픈 케이스가 존재한다
     expect(LIVE_MENTOR_CARDS.some((c) => c.categories.length > 1)).toBe(true);

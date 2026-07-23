@@ -80,22 +80,34 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
   it('GET /mentor/live-mentoring/settings → 오픈 설정 메타', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`);
     const { data } = await res.json();
-    expect(data).toHaveProperty('profileVisible');
+    expect(data).toHaveProperty('title');
+    expect(data).toHaveProperty('nickname');
+    expect(data).toHaveProperty('careers');
     expect(data).toHaveProperty('categories');
     expect(data).toHaveProperty('durations');
     expect(data).toHaveProperty('feedbackStartDate');
     expect(data).toHaveProperty('feedbackEndDate');
   });
 
-  it('PUT /mentor/live-mentoring/settings → 받은 body를 echo', async () => {
-    const body = { profileVisible: false, mosaicEnabled: true, mosaicBlur: 12 };
+  it('PUT /mentor/live-mentoring/settings → 6개 편집 필드를 echo하고, 프로필 참조 필드를 함께 내려준다', async () => {
+    const body = {
+      title: '수정된 타이틀',
+      isOpen: false,
+      categories: ['RESUME'],
+      durations: [60],
+      feedbackStartDate: '2026-08-01',
+      feedbackEndDate: '2026-08-14',
+    };
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     const { data } = await res.json();
-    expect(data).toEqual(body);
+    expect(data).toMatchObject(body);
+    // 프로필 참조 필드(nickname 등)는 요청에 없어도 응답엔 딸려온다.
+    expect(data).toHaveProperty('nickname');
+    expect(data).toHaveProperty('careers');
   });
 
   it('GET /mentor/live-mentoring/template → 템플릿', async () => {

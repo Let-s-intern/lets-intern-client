@@ -94,7 +94,8 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     renderSidebar('/');
 
     expect(screen.getByText('피드백')).toBeInTheDocument();
+    // '예약 현황'은 main 병합분에서 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
-    expect(screen.getByText('예약 현황')).toBeInTheDocument();
+    expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
   });
 });
