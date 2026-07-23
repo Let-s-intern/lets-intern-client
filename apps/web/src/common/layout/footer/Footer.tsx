@@ -2,15 +2,25 @@
 
 import useActiveReports from '@/hooks/useActiveReports';
 import { twMerge } from '@/lib/twMerge';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BottomLinkSection from './BottomLinkSection';
 import BusinessInfo from './BusinessInfo';
 import CustomerSupport from './CustomerSupport';
 import MainLink from './MainLink';
+// [TEMP·UI테스트] 멘티 Jitsi 모달을 게이팅 없이 바로 여는 임시 버튼용. 커밋/배포 전 제거.
+import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
+
+// [TEMP·UI테스트] 고정 방 URL — 두 창(멘토/멘티)이 같은 방에 모이도록 동일 값 사용.
+const UI_TEST_MEETING_URL = `${(
+  process.env.NEXT_PUBLIC_JITSI_BASE_URL ?? 'https://meet.jit.si/'
+).replace(/\/?$/, '/')}letscareer-uitest-room`;
 
 type FooterProps = React.ComponentProps<'footer'>;
 
 const Footer = (props: FooterProps) => {
+  // [TEMP·UI테스트] 멘티 Jitsi 모달 열림 상태.
+  const [isUiTestJitsiOpen, setIsUiTestJitsiOpen] = useState(false);
+
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
     useActiveReports();
 
@@ -96,6 +106,25 @@ const Footer = (props: FooterProps) => {
         <BottomLinkSection />
       </div>
       <hr className="mb-10 mt-8" />
+
+      {/* [TEMP·UI테스트] 멘티 Jitsi 모달을 게이팅(예약/시간창/reserved) 없이 바로 여는 버튼.
+          창을 두 개 띄우고 각각 이 버튼을 누르면 같은 방(UI_TEST_MEETING_URL)에서 2인 모달 UI 확인 가능.
+          커밋/배포 전 반드시 제거. */}
+      <div className="flex justify-center pb-8">
+        <button
+          type="button"
+          onClick={() => setIsUiTestJitsiOpen(true)}
+          className="rounded-sm border border-dashed border-red-400 px-4 py-2 text-xs font-semibold text-red-500"
+        >
+          [TEMP] 멘티 Jitsi 모달 열기 (UI 테스트)
+        </button>
+      </div>
+      <JitsiEmbedModal
+        isOpen={isUiTestJitsiOpen}
+        onClose={() => setIsUiTestJitsiOpen(false)}
+        meetingUrl={UI_TEST_MEETING_URL}
+        spaceName="UI 테스트"
+      />
     </footer>
   );
 };
