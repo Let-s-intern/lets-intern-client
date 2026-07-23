@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/domain/mypage/privacy/section/BasicInfo.tsx
+ *   - apps/web/src/domain/mypage/privacy/section/ChangePassword.tsx
+ */
+
 import * as React from 'react';
 
 import { ConfirmDialog, type ConfirmDialogProps } from './ConfirmDialog';

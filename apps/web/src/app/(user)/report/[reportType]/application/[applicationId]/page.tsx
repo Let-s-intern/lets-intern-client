@@ -9,6 +9,7 @@ import {
   ReportType,
   usePatchMyApplication,
 } from '@/api/report';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import BaseButton from '@/common/button/BaseButton';
 import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
@@ -23,7 +24,7 @@ import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 
-const ReportApplicationPage = () => {
+const ReportApplicationPageContent = () => {
   const router = useRouter();
   const params = useParams<{ reportType: string; applicationId: string }>();
   const { reportType, applicationId } = params;
@@ -206,6 +207,14 @@ const ReportApplicationPage = () => {
         }}
       />
     </div>
+  );
+};
+
+const ReportApplicationPage = () => {
+  return (
+    <AsyncBoundary>
+      <ReportApplicationPageContent />
+    </AsyncBoundary>
   );
 };
 

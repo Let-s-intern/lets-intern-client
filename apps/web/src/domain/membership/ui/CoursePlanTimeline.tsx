@@ -8,7 +8,7 @@ import {
   type WeekItem,
 } from '../data/coursePlan';
 import CarouselDots from './CarouselDots';
-import { useCarouselDots } from './useCarouselDots';
+import { useCarouselDots } from '@letscareer/hooks';
 
 // 주차 번호 표기. 12·13 묶음이면 "12·13".
 function weekNo(item: WeekItem): string {

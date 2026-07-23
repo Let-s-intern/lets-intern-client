@@ -1,6 +1,15 @@
 'use client';
 
 /**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/domain/mypage/privacy/section/BasicInfo.tsx
+ *   - apps/web/src/domain/mypage/privacy/section/ChangePassword.tsx
+ *   - apps/web/src/domain/mypage/application/section/LaunchAlertSection.tsx
+ *   - apps/web/src/domain/seminar/section/SuggestSeminarCta.tsx
+ *   - apps/web/src/domain/seminar/modal/SuggestSeminarModal.tsx
+ */
+
+/**
  * imperative Toast API.
  *
  * 어떤 훅인가:
@@ -21,6 +30,8 @@
  *     비밀번호 변경 성공/실패/검증 에러 알림 (success 1 + error 4)
  *   • apps/web/src/domain/mypage/privacy/section/BasicInfo.tsx
  *     기본 정보 수정 성공/실패 알림 (success 1 + error 1)
+ *   • apps/web/src/domain/mypage/application/section/LaunchAlertSection.tsx
+ *     출시알림 신청취소 성공/실패 알림 (success 1 + error 1)
  *
  *   새 호출처 추가 시 위 목록과 packages/ui/src/Toast/index.tsx 상단 매핑에 같이
  *   갱신해주세요.

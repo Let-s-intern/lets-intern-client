@@ -11,7 +11,7 @@ import {
   type Step,
 } from '../data/coursePlan';
 import CarouselDots from './CarouselDots';
-import { useCarouselDots } from './useCarouselDots';
+import { useCarouselDots } from '@letscareer/hooks';
 
 // 렛츠커리어가 직접 함께하는 챌린지 셀인지. (셀 색 강조용)
 // 무료 자료·템플릿·체크리스트(자료 제공) 셀은 강조 없이 흰 배경으로 둔다.

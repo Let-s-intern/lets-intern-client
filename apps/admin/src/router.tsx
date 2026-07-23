@@ -5,6 +5,7 @@ import NotFound from './pages/NotFound';
 
 // 무거운 페이지는 lazy로 분리하여 초기 번들 최소화
 const AdminHome = lazy(() => import('./pages/pages/AdminHome'));
+const Stats = lazy(() => import('./pages/pages/Stats'));
 const Programs = lazy(() => import('./pages/pages/program/Programs'));
 const ChallengeCreate = lazy(() => import('./pages/pages/ChallengeCreate'));
 const ChallengeEdit = lazy(() => import('./pages/pages/ChallengeEdit'));
@@ -238,6 +239,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: '/', element: withSuspense(<AdminHome />) },
+      { path: '/stats', element: withSuspense(<Stats />) },
+      { path: '/stats/:tab', element: withSuspense(<Stats />) },
       { path: '/programs', element: withSuspense(<Programs />) },
       { path: '/challenge/create', element: withSuspense(<ChallengeCreate />) },
       {

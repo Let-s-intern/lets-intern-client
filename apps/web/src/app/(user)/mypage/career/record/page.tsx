@@ -1,103 +1,26 @@
 'use client';
 
-import {
-  useGetUserCareerQuery,
-  usePatchUserCareerMutation,
-  usePostUserCareerMutation,
-} from '@/api/career/career';
-import { UserCareerType } from '@/api/career/careerSchema';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import CareerHeader from '@/common/career/CareerHeader';
-import CareerItem from '@/common/career/CareerItem';
-import CareerList from '@/common/career/CareerList';
-import { DEFAULT_CAREER, PAGE_SIZE } from '@/common/career/constants';
-import NoCareerView from '@/common/career/NoCareerView';
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// 커리어 기록은 클라이언트에서만 fetch 하는 인증 데이터다.
+// ssr:false 로 서버 렌더(빌드 타임 prerender)에서 제외해야
+// 내부 useSuspenseQuery 가 빌드 중 실행돼 API 를 호출(prerender 에러)하지 않는다.
+const CareerRecordContent = dynamic(
+  () => import('@/domain/mypage/career/record/CareerRecordContent'),
+  { ssr: false },
+);
 
 const Career = () => {
-  const [createMode, setCreateMode] = useState(false); // 신규 작성 모드
-  const [editingId, setEditingId] = useState<number | null>(null); // 수정 중인 커리어 ID
-
-  const createCareerMutation = usePostUserCareerMutation();
-  const patchCareerMutation = usePatchUserCareerMutation();
-  const { data, isLoading } = useGetUserCareerQuery({
-    page: 0,
-    size: PAGE_SIZE,
-  });
-
-  const { userCareers } = data ?? {};
-
-  const handleCloseForm = () => {
-    setCreateMode(false);
-    setEditingId(null);
-  };
-
-  const handleSubmitForm = async (career: UserCareerType) => {
-    const formData = new FormData();
-
-    const requestDto = new Blob([JSON.stringify(career)], {
-      type: 'application/json',
-    });
-
-    formData.append('requestDto', requestDto);
-
-    if (editingId === null) {
-      await createCareerMutation.mutateAsync(formData);
-    } else {
-      await patchCareerMutation.mutateAsync({
-        careerId: editingId,
-        careerData: formData,
-      });
-    }
-
-    handleCloseForm();
-  };
-
-  const handleCreateBtnClick = () => {
-    setCreateMode(true);
-    setEditingId(null);
-  };
-
-  const handleEditBtnClick = (id: number) => {
-    setCreateMode(false);
-    setEditingId(id);
-  };
-
-  const isEmpty = userCareers?.length === 0;
-
-  if (isLoading)
-    return <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />;
-
   return (
-    <>
-      {isEmpty && !createMode ? (
-        <NoCareerView handleCreateNew={handleCreateBtnClick} />
-      ) : (
-        <section className="flex w-full flex-col gap-3">
-          <CareerHeader
-            showCreateButton={editingId === null && !createMode}
-            handleCreateBtnClick={handleCreateBtnClick}
-          />
-
-          {createMode && (
-            <CareerItem
-              career={DEFAULT_CAREER}
-              writeMode
-              handleCancel={handleCloseForm}
-              handleSubmit={handleSubmitForm}
-              handleEdit={handleEditBtnClick}
-            />
-          )}
-
-          <CareerList
-            editingId={editingId}
-            handleCancel={handleCloseForm}
-            handleSubmit={handleSubmitForm}
-            handleEdit={handleEditBtnClick}
-          />
-        </section>
-      )}
-    </>
+    <AsyncBoundary
+      pendingFallback={
+        <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />
+      }
+    >
+      <CareerRecordContent />
+    </AsyncBoundary>
   );
 };
 

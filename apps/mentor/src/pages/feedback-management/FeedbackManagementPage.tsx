@@ -94,6 +94,7 @@ const FeedbackManagementPage = () => {
         challengeTitle: row.source.challengeTitle,
         missionId: row.source.missionId,
         missionTh: row.source.missionTh,
+        attendanceId: row.source.attendanceId,
       });
       return;
     }
@@ -143,6 +144,7 @@ const FeedbackManagementPage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          initialAttendanceId={feedbackModal.initialAttendanceId}
         />
       ) : (
         <FeedbackModal
@@ -152,6 +154,7 @@ const FeedbackManagementPage = () => {
           missionId={feedbackModal.missionId}
           challengeTitle={feedbackModal.challengeTitle}
           missionTh={feedbackModal.missionTh}
+          initialAttendanceId={feedbackModal.initialAttendanceId}
         />
       )}
 

@@ -65,6 +65,8 @@ export interface FeedbackRow {
         missionId: number;
         missionTh: number;
         challengeTitle: string;
+        /** 클릭한 멘티의 출석 id — 모달 초기 선택용 (미제출자는 null) */
+        attendanceId: number | null;
       }
     | {
         type: 'live';

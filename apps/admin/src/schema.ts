@@ -921,12 +921,21 @@ export const missionAdmin = z
       z.object({
         id: z.number(),
         th: z.number(),
+        // 레거시/누락 데이터로 title 이 null 이어도 전체 파싱이 깨지지 않도록 방어한다.
+        title: z
+          .string()
+          .nullish()
+          .transform((val) => val ?? ''),
         missionTag: z.string(),
-        missionType: MissionTypeEnum,
+        // BE 는 OT/0회차 등 일부 미션의 missionType 을 null 로 내려준다.
+        // 필수 enum 이면 항목 하나가 배열 전체 parse 를 throw 시켜 미션 목록이 전멸한다.
+        missionType: MissionTypeEnum.nullable(),
         missionStatusType: MissionStatusEnum,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
+        // BE 응답(v2 MissionAdminResponseDto)의 실제 JSON 필드명은 waitingCount 다.
+        // waitingAttendanceCount 로 요구하면 키가 없어 parse 가 throw → 미션 전멸.
         waitingCount: z.number().nullable(),
         applicationCount: z.number(),
         score: z.number(),
@@ -1207,10 +1216,26 @@ export const missionTemplateAdmin = z
       z.object({
         id: z.number(),
         createDate: z.string(),
-        missionTag: z.string(),
-        title: z.string(),
-        description: z.string(),
-        guide: z.string(),
+        // 전량 로드(size=1000) 시 과거 레거시 템플릿까지 파싱한다.
+        // 옛 데이터는 이 문자열 필드들이 null 일 수 있는데, 필수 z.string() 이면
+        // 항목 하나가 배열 전체 parse 를 throw 시켜 미션명 드롭다운이 전멸한다.
+        // null 을 허용하고 '' 로 방어해 한 건의 레거시가 기능을 죽이지 않게 한다.
+        missionTag: z
+          .string()
+          .nullish()
+          .transform((v) => v ?? ''),
+        title: z
+          .string()
+          .nullish()
+          .transform((v) => v ?? ''),
+        description: z
+          .string()
+          .nullish()
+          .transform((v) => v ?? ''),
+        guide: z
+          .string()
+          .nullish()
+          .transform((v) => v ?? ''),
         templateLink: z.string().nullish(),
         vodLink: z.string().nullish(),
       }),

@@ -256,6 +256,22 @@ export const usePostMagnetApplicationMutation = () => {
   });
 };
 
+// 마그넷 신청취소 (출시알림 등)
+export const useDeleteMagnetApplicationMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (magnetId: number) => {
+      const res = await axios.delete(`/magnet-application/${magnetId}`);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [mypageMagnetListQueryKey],
+      });
+    },
+  });
+};
+
 // 마이페이지 MY 마그넷 신청현황 조회
 export const mypageMagnetListQueryOptions = (typeList?: MagnetType[]) => ({
   queryKey: [mypageMagnetListQueryKey, typeList] as const,

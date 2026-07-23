@@ -25,6 +25,16 @@ export interface PostDocumentReq {
   wishIndustry: string;
 }
 
+export interface TalentPoolDocumentReq {
+  attendanceId: number;
+  documentType: string;
+  fileUrl: string;
+  fileName: string;
+  wishField: string;
+  wishJob: string;
+  wishIndustry: string;
+}
+
 export type DocumentType = 'RESUME' | 'PORTFOLIO' | 'PERSONAL_STATEMENT';
 
 /** POST [유저] 인재풀 미션 제출 */

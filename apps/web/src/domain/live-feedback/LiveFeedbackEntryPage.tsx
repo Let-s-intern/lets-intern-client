@@ -36,7 +36,14 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
   );
   const feedbackInfo = data?.feedbackInfo ?? null;
 
-  const { isOpen, isPreparing, enter, closeJitsi } = useLiveEntry({
+  const {
+    isOpen,
+    isPreparing,
+    enter,
+    closeJitsi,
+    baseCandidates,
+    registerBaseUrl,
+  } = useLiveEntry({
     feedbackId,
     feedbackInfo,
     role,
@@ -103,6 +110,15 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
         menteeStatus={feedbackInfo?.menteeStatus ?? undefined}
         onSaveAttendance={(menteeStatus) =>
           patchStatus.mutate({ menteeStatus })
+        }
+        // 입장 후 현재 서버가 죽어있으면(external_api.js 로드 실패) 다음 후보로 자동
+        // 재등록(failover). BE 는 base + meetingRoom 을 덮어써 합성한다.
+        baseCandidates={baseCandidates}
+        registerBaseUrl={registerBaseUrl}
+        onExhausted={() =>
+          window.alert(
+            '회의실 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+          )
         }
       />
     </main>

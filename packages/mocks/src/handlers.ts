@@ -455,6 +455,90 @@ const MOCK_MENTEES = [
   },
 ];
 
+/**
+ * 경험정리 EXPERIENCE_1/EXPERIENCE_2 페어 그룹핑 QA(챌린지 9902)용 미션별 출석.
+ * missionId 3401~3602 각각에 대해 같은 멘티(이름 동일, id/userId만 미션마다 다름)를
+ * 다른 status로 배치해, 케이스 A(한쪽만 제출)/B(반대)/C(둘 다 제출)가 실제로
+ * `WrittenMenteeAttendanceFetcher` → `useMergedFeedbackRows` 파이프라인을 거쳐도
+ * 재현되게 한다. feedbackMissions의 submittedCount만 다르고 출석 데이터가 같으면
+ * (기존 문제) 필터링 로직을 실제 화면에서 검증할 수 없다.
+ */
+const EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION: Record<
+  number,
+  Array<{
+    id: number | null;
+    userId: number | null;
+    mentorName: string;
+    name: string;
+    status: 'PRESENT' | 'ABSENT';
+    feedbackStatus: 'WAITING' | 'IN_PROGRESS' | 'COMPLETED';
+  }>
+> = {
+  // 케이스 A(4회차): EXPERIENCE_1(3401)만 제출, EXPERIENCE_2(3402)는 미제출.
+  3401: [
+    {
+      id: 9401,
+      userId: 601,
+      mentorName: '테스트 멘토',
+      name: '강경험',
+      status: 'PRESENT',
+      feedbackStatus: 'COMPLETED',
+    },
+  ],
+  3402: [
+    {
+      id: null,
+      userId: 601,
+      mentorName: '테스트 멘토',
+      name: '강경험',
+      status: 'ABSENT',
+      feedbackStatus: 'WAITING',
+    },
+  ],
+  // 케이스 B(5회차): EXPERIENCE_1(3501)은 미제출, EXPERIENCE_2(3502)만 제출.
+  3501: [
+    {
+      id: null,
+      userId: 602,
+      mentorName: '테스트 멘토',
+      name: '노선택',
+      status: 'ABSENT',
+      feedbackStatus: 'WAITING',
+    },
+  ],
+  3502: [
+    {
+      id: 9502,
+      userId: 602,
+      mentorName: '테스트 멘토',
+      name: '노선택',
+      status: 'PRESENT',
+      feedbackStatus: 'IN_PROGRESS',
+    },
+  ],
+  // 케이스 C(6회차): EXPERIENCE_1(3601)/EXPERIENCE_2(3602) 둘 다 제출(예외 케이스, PRD §5-④).
+  3601: [
+    {
+      id: 9601,
+      userId: 603,
+      mentorName: '테스트 멘토',
+      name: '두번제출',
+      status: 'PRESENT',
+      feedbackStatus: 'COMPLETED',
+    },
+  ],
+  3602: [
+    {
+      id: 9602,
+      userId: 603,
+      mentorName: '테스트 멘토',
+      name: '두번제출',
+      status: 'PRESENT',
+      feedbackStatus: 'WAITING',
+    },
+  ],
+};
+
 /** 김경험(userId 501)의 경험정리 제출물 — STAR 전체 필드 채움 */
 const MOCK_EXPERIENCES_BY_USER: Record<string, unknown[]> = {
   '501': [
@@ -558,7 +642,82 @@ const MOCK_USER = {
   sns: null,
 };
 
+/**
+ * (마이페이지 출시알림 QA) 사용자가 신청한 LAUNCH_ALERT 마그넷 시드 —
+ * BE mypageMagnetListItemSchema 형태와 일치.
+ *
+ * DELETE(신청취소)가 실제로 목록에서 항목을 제거하도록 mutable 배열로 둔다.
+ * 취소 후 재조회(invalidate)에서 해당 카드가 사라지는 흐름을 실 BE 없이 QA 한다.
+ */
+const LAUNCH_ALERT_MAGNET_SEED = [
+  {
+    magnetId: 90_001,
+    type: 'LAUNCH_ALERT' as const,
+    title: 'AI 취업 특강 출시알림',
+    description: '출시되면 가장 먼저 알려드릴게요.',
+    desktopThumbnail: '',
+    mobileThumbnail: '',
+    applicationCreateDate: deriveCreateDate(reservationStart, 5),
+  },
+  {
+    magnetId: 90_002,
+    type: 'LAUNCH_ALERT' as const,
+    title: '포트폴리오 완성 챌린지 출시알림',
+    description: '신규 기수 오픈 소식을 받아보실 수 있어요.',
+    desktopThumbnail: '',
+    mobileThumbnail: '',
+    applicationCreateDate: deriveCreateDate(reservationStart, 12),
+  },
+  {
+    magnetId: 90_003,
+    type: 'LAUNCH_ALERT' as const,
+    title: '현직자 커피챗 프로그램 출시알림',
+    description: '출시 일정이 확정되면 알림을 보내드려요.',
+    desktopThumbnail: '',
+    mobileThumbnail: '',
+    applicationCreateDate: deriveCreateDate(reservationStart, 20),
+  },
+];
+
+let launchAlertMagnetList = [...LAUNCH_ALERT_MAGNET_SEED];
+
 export const handlers = [
+  /**
+   * (마이페이지) GET /user/applications — 신청현황 탭의 프로그램 신청목록.
+   * 출시알림 탭 QA에서 페이지(ApplicationContent)가 백엔드 없이 렌더되도록
+   * 빈 목록을 반환한다. 프로그램/가이드북/VOD 탭은 빈 상태로 보인다.
+   */
+  http.get('*/user/applications', () => {
+    return HttpResponse.json({ status: 200, data: { applicationList: [] } });
+  }),
+
+  /**
+   * (마이페이지) GET /magnet/mypage — 사용자가 신청한 마그넷 신청현황.
+   * BE mypageMagnetListResponseSchema 일치. typeList 쿼리로 필터한다.
+   * 출시알림 탭(typeList=LAUNCH_ALERT)에서 mutable 시드를 반환한다.
+   */
+  http.get('*/magnet/mypage', ({ request }) => {
+    const typeList = new URL(request.url).searchParams.getAll('typeList');
+    const magnetList =
+      typeList.length === 0
+        ? launchAlertMagnetList
+        : launchAlertMagnetList.filter((m) => typeList.includes(m.type));
+    return HttpResponse.json({ status: 200, data: { magnetList } });
+  }),
+
+  /**
+   * (마이페이지) DELETE /magnet-application/:magnetId — 사용자 출시알림 신청취소.
+   * 신규 BE API(§4.3) 목업. 성공 시 mutable 시드에서 해당 항목을 제거해
+   * 이후 재조회에서 카드가 사라지도록 한다.
+   */
+  http.delete('*/magnet-application/:magnetId', ({ params }) => {
+    const magnetId = Number(params.magnetId);
+    launchAlertMagnetList = launchAlertMagnetList.filter(
+      (m) => m.magnetId !== magnetId,
+    );
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
   /**
    * (인증) POST /user/signin — 아무 이메일/비밀번호로 로그인 통과.
    * 실 BE 없이 단독 실행 가능하게 한다.
@@ -665,6 +824,82 @@ export const handlers = [
               },
             ],
           },
+          {
+            // 경험정리(EXPERIENCE_1/EXPERIENCE_2) 그룹핑 검증용 — 같은 th에 미션 2개.
+            // BE `missionType` 필드 도착 전 선개발용 목업 (PRD §6.1). 필드 도착 시 이 챌린지만 정리.
+            // ⚠️ 230 이상이어야 신규 mentee 출석 경로(`.../attendances/mentee`)를 타서
+            // EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION(아래)로 미션별 차등 출석이 적용된다.
+            challengeId: 9902,
+            title: '경험정리 페어 시나리오 챌린지',
+            shortDesc: '경험정리 Lv.1/Lv.2 미션 그룹핑 검증용 목업',
+            startDate: '2026-04-14',
+            endDate: '2026-05-04',
+            feedbackMissions: [
+              // 케이스 A: EXPERIENCE_1만 제출됨, EXPERIENCE_2는 미제출 (같은 4회차)
+              {
+                missionId: 3401,
+                missionTitle: '4회차 — 경험정리(Lv.1)',
+                th: 4,
+                missionType: 'EXPERIENCE_1',
+                submittedCount: 6,
+                notSubmittedCount: 0,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'COMPLETED', count: 6 },
+                ],
+              },
+              {
+                missionId: 3402,
+                missionTitle: '4회차 — 경험정리(Lv.2)',
+                th: 4,
+                missionType: 'EXPERIENCE_2',
+                submittedCount: 0,
+                notSubmittedCount: 6,
+                feedbackStatusCounts: [],
+              },
+              // 케이스 B: EXPERIENCE_2만 제출됨 (같은 5회차)
+              {
+                missionId: 3501,
+                missionTitle: '5회차 — 경험정리(Lv.1)',
+                th: 5,
+                missionType: 'EXPERIENCE_1',
+                submittedCount: 0,
+                notSubmittedCount: 5,
+                feedbackStatusCounts: [],
+              },
+              {
+                missionId: 3502,
+                missionTitle: '5회차 — 경험정리(Lv.2)',
+                th: 5,
+                missionType: 'EXPERIENCE_2',
+                submittedCount: 5,
+                notSubmittedCount: 0,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'IN_PROGRESS', count: 5 },
+                ],
+              },
+              // 케이스 C: 두 미션 모두 제출 기록 있음 (같은 6회차, 예외 케이스 PRD §5-④)
+              {
+                missionId: 3601,
+                missionTitle: '6회차 — 경험정리(Lv.1)',
+                th: 6,
+                missionType: 'EXPERIENCE_1',
+                submittedCount: 3,
+                notSubmittedCount: 1,
+                feedbackStatusCounts: [
+                  { feedbackStatus: 'COMPLETED', count: 3 },
+                ],
+              },
+              {
+                missionId: 3602,
+                missionTitle: '6회차 — 경험정리(Lv.2)',
+                th: 6,
+                missionType: 'EXPERIENCE_2',
+                submittedCount: 2,
+                notSubmittedCount: 2,
+                feedbackStatusCounts: [{ feedbackStatus: 'WAITING', count: 2 }],
+              },
+            ],
+          },
         ],
       },
     });
@@ -721,6 +956,8 @@ export const handlers = [
   /**
    * (멘토) GET /challenge/:challengeId/mission/:missionId/feedback/attendances/mentee
    * 신규(≥230) 챌린지 멘티 제출 내역. BE mentorMenteeAttendanceListSchema 일치.
+   *  - missionId가 EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION에 있으면 그 미션 전용 출석
+   *    (챌린지 9902 경험정리 페어 QA — 미션마다 달라야 케이스 A/B/C가 실제로 재현됨)
    *  - 9901 → 서면 경험정리 4케이스(MOCK_MENTEES)
    *  - 그 외(1·2) → 라이브 피드백 분포(MOCK_ATTENDANCE_LIST)
    *
@@ -731,8 +968,12 @@ export const handlers = [
     '*/challenge/:challengeId/mission/:missionId/feedback/attendances/mentee',
     ({ params }) => {
       const challengeId = Number(params.challengeId);
+      const missionId = Number(params.missionId);
       const attendanceList =
-        challengeId === MOCK_CHALLENGE_ID ? MOCK_MENTEES : MOCK_ATTENDANCE_LIST;
+        EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION[missionId] ??
+        (challengeId === MOCK_CHALLENGE_ID
+          ? MOCK_MENTEES
+          : MOCK_ATTENDANCE_LIST);
       return HttpResponse.json({
         status: 200,
         data: { attendanceList },

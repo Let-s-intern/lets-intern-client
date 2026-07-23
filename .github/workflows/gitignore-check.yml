@@ -1,0 +1,41 @@
+# ============================================================
+# gitignore 검사 — 추적 중(tracked)인데 .gitignore 대상인 파일 차단
+# ============================================================
+# .gitignore 는 아직 추적되지 않은 파일에만 적용되고, 이미 커밋된 파일에는
+# 소급 적용되지 않는다. 즉 누군가 `git add -f` 나 IDE 자동 스테이징으로
+# gitignore 대상 파일을 강제로 커밋하면 이후에도 계속 추적·push 된다.
+# 이 워크플로는 그런 파일이 새로 들어오는 것을 PR 단계에서 막는다.
+#
+# path 필터 없이 모든 PR 에서 실행 — gitignore 위반은 어느 경로에서나
+# 발생할 수 있다. git 만 있으면 되므로 checkout 외 별도 설치가 필요 없다.
+# ============================================================
+# Security note: untrusted input(issue/PR title 등) 사용하지 않음 → 안전.
+
+name: gitignore 검사
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check:
+    name: gitignore 검사
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 추적 중인 gitignore 대상 파일 확인
+        run: |
+          TRACKED_IGNORED=$(git ls-files -ci --exclude-standard)
+
+          if [ -n "$TRACKED_IGNORED" ]; then
+            echo "::error::.gitignore 대상인데 git에 추적 중인 파일이 있습니다."
+            echo ""
+            echo "$TRACKED_IGNORED"
+            echo ""
+            echo "해결 방법: git rm --cached <파일> 로 추적에서 제거한 뒤 커밋하세요."
+            exit 1
+          fi
+
+          echo "통과: gitignore 대상 파일 중 추적 중인 것이 없습니다."

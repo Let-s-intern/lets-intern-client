@@ -18,6 +18,7 @@ type ActiveLinks =
   | 'ABOUT'
   | 'LIBRARY'
   | 'PROGRAM'
+  | 'SEMINAR'
   | 'ADMIN'
   | 'BLOG'
   | 'REPORT'
@@ -31,6 +32,8 @@ export default function useActiveLink(pathname: string) {
     // Active 링크 설정
     if (pathname.startsWith('/about')) {
       setActiveLink('ABOUT');
+    } else if (pathname.startsWith('/seminar')) {
+      setActiveLink('SEMINAR');
     } else if (pathname.startsWith('/program')) {
       setActiveLink('PROGRAM');
     } else if (pathname.startsWith('/library')) {

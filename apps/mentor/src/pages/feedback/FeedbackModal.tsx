@@ -34,6 +34,7 @@ interface FeedbackModalProps {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  initialAttendanceId?: number | null;
 }
 
 const FeedbackModal = ({
@@ -43,6 +44,7 @@ const FeedbackModal = ({
   missionId,
   challengeTitle,
   missionTh,
+  initialAttendanceId,
 }: FeedbackModalProps) => {
   const {
     selectedIndex,
@@ -50,6 +52,7 @@ const FeedbackModal = ({
     editorContent,
     setEditorContent,
     currentMentee,
+    preQuestion,
     isReadOnly,
     isAbsent,
     attendanceList,
@@ -59,7 +62,13 @@ const FeedbackModal = ({
     editorKey,
     confirmModal,
     handleConfirmResult,
-  } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
+  } = useFeedbackModal({
+    isOpen,
+    onClose,
+    challengeId,
+    missionId,
+    initialAttendanceId,
+  });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
@@ -169,6 +178,7 @@ const FeedbackModal = ({
             mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
+            preQuestion={preQuestion}
             onViewExperience={() => setIsExperienceModalOpen(true)}
             // 한번 더 클릭하면 닫힘(토글)
             onViewExperienceSide={() => setIsSidePanelOpen((prev) => !prev)}

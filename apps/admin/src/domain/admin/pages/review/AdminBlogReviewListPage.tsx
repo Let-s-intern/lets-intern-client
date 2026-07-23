@@ -1,5 +1,6 @@
 import {
   AdminBlogReview,
+  getAdminBlogReviewList,
   useDeleteAdminBlogReview,
   useGetAdminBlogReviewList,
   usePatchAdminBlogReview,
@@ -13,7 +14,7 @@ import { ProgramTypeEnum } from '@/schema';
 import { bankTypeToText } from '@/utils/convert';
 import { generateUUID } from '@/utils/random';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
-import { Button, Checkbox } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Switch } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -27,20 +28,63 @@ import {
   GridRowModesModel,
   GridRowParams,
   GridToolbarContainer,
-  GridToolbarExport,
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useReactToPrint } from 'react-to-print';
 
-function CustomToolbar() {
-  const csvOptions = {
-    fileName: `blog-review-${Date.now().toString()}`,
-    utf8WithBom: true,
-  };
+import {
+  BLOG_REVIEW_EXPORT_COLUMNS,
+  downloadBlogReviewCsv,
+} from './blogReviewExport';
 
+// 커스텀 툴바 props 를 MUI DataGrid slotProps.toolbar 타입에 등록 (slotProps 로 주입 가능하게)
+declare module '@mui/x-data-grid' {
+  interface ToolbarPropsOverrides {
+    onExportCsv: () => void;
+    onPrint: () => void;
+    isBusy: boolean;
+    showRowNumber: boolean;
+    onToggleRowNumber: (next: boolean) => void;
+  }
+}
+
+/**
+ * 서버 페이지네이션 도입 후 MUI GridToolbarExport 는 현재 페이지만 내보내므로,
+ * 클릭 시 전량을 별도 조회해 CSV/인쇄하는 커스텀 버튼으로 대체한다. (핸들러는 페이지에서 주입)
+ */
+function CustomToolbar({
+  onExportCsv,
+  onPrint,
+  isBusy,
+  showRowNumber,
+  onToggleRowNumber,
+}: {
+  onExportCsv: () => void;
+  onPrint: () => void;
+  isBusy: boolean;
+  showRowNumber: boolean;
+  onToggleRowNumber: (next: boolean) => void;
+}) {
   return (
     <GridToolbarContainer>
-      <GridToolbarExport csvOptions={csvOptions} />
+      <Button size="small" onClick={onExportCsv} disabled={isBusy}>
+        {isBusy ? '준비 중…' : 'CSV 다운로드'}
+      </Button>
+      <Button size="small" onClick={onPrint} disabled={isBusy}>
+        인쇄
+      </Button>
+      <FormControlLabel
+        sx={{ marginLeft: 'auto', marginRight: 0 }}
+        control={
+          <Switch
+            size="small"
+            checked={showRowNumber}
+            onChange={(e) => onToggleRowNumber(e.target.checked)}
+          />
+        }
+        label="번호"
+      />
     </GridToolbarContainer>
   );
 }
@@ -62,7 +106,23 @@ export default function AdminBlogReviewListPage() {
   const patchReview = usePatchAdminBlogReview();
   const deleteReview = useDeleteAdminBlogReview();
 
+  // 번호(No.) 컬럼은 기본 숨김, 툴바 토글로 표시
+  const [showRowNumber, setShowRowNumber] = useState(false);
+
   const columns: GridColDef<Row>[] = [
+    {
+      field: '__rowNum',
+      headerName: 'No.',
+      width: 64,
+      sortable: false,
+      filterable: false,
+      editable: false,
+      // 서버 페이지네이션이라 페이지가 넘어가도 이어지는 절대 순번(예: 6페이지 → 101~)
+      renderCell: (params) => {
+        const idx = params.api.getRowIndexRelativeToVisibleRows(params.id);
+        return paginationModel.page * paginationModel.pageSize + idx + 1;
+      },
+    },
     {
       field: 'postDate',
       type: 'dateTime',
@@ -249,6 +309,82 @@ export default function AdminBlogReviewListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
+  // ── 전량 내보내기/인쇄 (서버 페이지네이션 우회: 클릭 시 전체를 별도 조회) ──
+  const [isExporting, setIsExporting] = useState(false);
+  const [printReviews, setPrintReviews] = useState<AdminBlogReview[]>([]);
+  const printRef = useRef<HTMLDivElement>(null);
+  const pendingPrint = useRef(false);
+  const reactToPrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: '블로그 후기 목록',
+    // 인쇄 후 화면 밖 대량 DOM 을 정리(불필요한 리렌더 방지)
+    onAfterPrint: () => setPrintReviews([]),
+  });
+
+  const totalElements = data?.pageInfo.totalElements ?? 0;
+
+  // 전체 후기 조회 (화면 목록은 page/size 만 쓰므로 필터 없이 전량)
+  // BE 최대 페이지 크기 제한을 고려해 청크 단위로 순회하며 병합한다.
+  const fetchAllReviews = async () => {
+    const CHUNK_SIZE = 1000;
+    const all: AdminBlogReview[] = [];
+    let page = 0;
+    while (true) {
+      const res = await getAdminBlogReviewList({ page, size: CHUNK_SIZE });
+      all.push(...res.reviewList);
+      if (
+        res.reviewList.length < CHUNK_SIZE ||
+        all.length >= res.pageInfo.totalElements
+      ) {
+        break;
+      }
+      page += 1;
+    }
+    return all;
+  };
+
+  const handleExportCsv = async () => {
+    if (totalElements === 0) {
+      window.alert('내보낼 후기가 없습니다.');
+      return;
+    }
+    setIsExporting(true);
+    try {
+      downloadBlogReviewCsv(await fetchAllReviews());
+    } catch (e) {
+      console.error(e);
+      window.alert('CSV 내보내기에 실패했습니다.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleRequestPrint = async () => {
+    if (totalElements === 0) {
+      window.alert('인쇄할 후기가 없습니다.');
+      return;
+    }
+    setIsExporting(true);
+    try {
+      pendingPrint.current = true;
+      setPrintReviews(await fetchAllReviews());
+    } catch (e) {
+      console.error(e);
+      pendingPrint.current = false;
+      window.alert('인쇄 준비에 실패했습니다.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // 인쇄 DOM(printReviews) 이 렌더된 다음 프레임에 인쇄 실행
+  useEffect(() => {
+    if (pendingPrint.current && printReviews.length > 0) {
+      pendingPrint.current = false;
+      reactToPrint();
+    }
+  }, [printReviews, reactToPrint]);
+
   const handleSaveClick = (id: GridRowId) => () => {
     setRowModesModel({
       ...rowModesModel,
@@ -424,8 +560,61 @@ export default function AdminBlogReviewListPage() {
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
+        columnVisibilityModel={{ __rowNum: showRowNumber }}
         slots={{ toolbar: CustomToolbar }}
+        slotProps={{
+          toolbar: {
+            onExportCsv: handleExportCsv,
+            onPrint: handleRequestPrint,
+            isBusy: isExporting,
+            showRowNumber,
+            onToggleRowNumber: setShowRowNumber,
+          },
+        }}
       />
+
+      {/* 인쇄 전용 DOM — 화면 밖에 두고 react-to-print 가 클론해 인쇄. 전량(printReviews) 렌더 */}
+      <div className="pointer-events-none fixed left-[-10000px] top-0 -z-10">
+        <div ref={printRef} className="p-6">
+          <h1 className="mb-3 text-lg font-bold">
+            블로그 후기 목록 ({printReviews.length}건)
+          </h1>
+          <table className="w-full border-collapse text-[11px]">
+            <thead>
+              <tr>
+                <th className="border border-neutral-400 px-1.5 py-1 text-left">
+                  No.
+                </th>
+                {BLOG_REVIEW_EXPORT_COLUMNS.map((c) => (
+                  <th
+                    key={c.header}
+                    className="border border-neutral-400 px-1.5 py-1 text-left"
+                  >
+                    {c.header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {printReviews.map((review, index) => (
+                <tr key={review.blogReviewId}>
+                  <td className="border border-neutral-400 px-1.5 py-1 align-top">
+                    {index + 1}
+                  </td>
+                  {BLOG_REVIEW_EXPORT_COLUMNS.map((c) => (
+                    <td
+                      key={c.header}
+                      className="border border-neutral-400 px-1.5 py-1 align-top"
+                    >
+                      {c.value(review)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

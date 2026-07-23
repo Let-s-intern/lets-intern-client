@@ -1,12 +1,11 @@
 'use client';
 
-import { useGetLiveFaq } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdPrimitive, LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import BackHeader from '../../../common/header/BackHeader';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
@@ -20,7 +19,7 @@ import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import LiveBasicInfo from './ui/LiveBasicInfo';
 import LiveCurriculum from './ui/LiveCurriculum';
-import LiveFaq from './ui/LiveFaq';
+import LiveFaqSection from './LiveFaqSection';
 import LiveInfoBottom from './ui/LiveInfoBottom';
 import LiveInformation from './ui/LiveInformation';
 import LiveIntro from './ui/LiveIntro';
@@ -47,7 +46,8 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
     [live.desc],
   );
 
-  const { data: faqData, isLoading: faqIsLoading } = useGetLiveFaq(id ?? '');
+  const [faqSettled, setFaqSettled] = useState(false);
+  const handleFaqSettle = useCallback(() => setFaqSettled(true), []);
 
   const liveTransformed = useMemo<LiveIdSchema>(() => {
     return {
@@ -83,7 +83,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
         <ProgramDetailNavigation
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
-          isReady={!faqIsLoading}
+          isReady={faqSettled}
         />
 
         <div className="flex w-full flex-col items-center overflow-x-hidden">
@@ -149,7 +149,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
               )}
             </section>
           )}
-          <LiveFaq faqData={faqData} />
+          <LiveFaqSection liveId={id ?? ''} onSettle={handleFaqSettle} />
           <LiveInfoBottom live={liveTransformed} />
         </div>
       </div>

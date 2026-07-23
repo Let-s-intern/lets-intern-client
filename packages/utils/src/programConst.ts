@@ -41,7 +41,7 @@ export const PROGRAM_FILTER_CLASSIFICATION = {
 
 export const PROGRAM_FILTER_TYPE = {
   CHALLENGE: '챌린지',
-  LIVE: 'LIVE 클래스',
+  LIVE: '무료 세미나',
   VOD: 'VOD 클래스',
   GUIDEBOOK: '가이드북',
 };

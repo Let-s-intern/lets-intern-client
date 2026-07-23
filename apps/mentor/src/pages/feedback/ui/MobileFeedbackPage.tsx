@@ -20,6 +20,7 @@ interface MobileFeedbackPageProps {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  initialAttendanceId?: number | null;
 }
 
 const MobileFeedbackPage = ({
@@ -29,6 +30,7 @@ const MobileFeedbackPage = ({
   missionId,
   challengeTitle,
   missionTh,
+  initialAttendanceId,
 }: MobileFeedbackPageProps) => {
   const {
     selectedIndex,
@@ -36,6 +38,7 @@ const MobileFeedbackPage = ({
     editorContent,
     setEditorContent,
     currentMentee,
+    preQuestion,
     isReadOnly,
     isAbsent,
     attendanceList,
@@ -45,7 +48,13 @@ const MobileFeedbackPage = ({
     editorKey,
     confirmModal,
     handleConfirmResult,
-  } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
+  } = useFeedbackModal({
+    isOpen,
+    onClose,
+    challengeId,
+    missionId,
+    initialAttendanceId,
+  });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
@@ -242,7 +251,11 @@ const MobileFeedbackPage = ({
       </div>
 
       <div className="shrink-0 border-b border-gray-100 px-4 py-3">
-        <MenteeInfo mentee={currentMentee} challengeTitle={challengeTitle} />
+        <MenteeInfo
+          mentee={currentMentee}
+          challengeTitle={challengeTitle}
+          preQuestion={preQuestion}
+        />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-3">

@@ -1,10 +1,17 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 import { LetsCareerLogo } from './LetsCareerLogo';
+import { useJitsiConnection } from './useJitsiConnection';
+
+export { default as LiveSessionTimer } from './LiveSessionTimer';
+export {
+  LiveFeedbackMaterials,
+  type LiveFeedbackMaterialsProps,
+} from './LiveFeedbackMaterials';
 
 interface JitsiEmbedProps {
   /** 회의실 URL — 외부에서 buildJitsiRoomUrl로 생성해 전달 (셀프호스팅 단일 사용) */
@@ -15,6 +22,15 @@ interface JitsiEmbedProps {
   onClose: () => void;
   /** 좌상단 로고 패널 안(로고 아래)에 함께 묶어 보여줄 내용(예: 세션 타이머). */
   topLeftSlot?: ReactNode;
+  /**
+   * 우선순위 순 jitsi base 후보 (앱별 env). 지정하면 현재 서버 로드 실패 시
+   * 다음 후보로 자동 재등록(failover)한다. 없으면 프로브 후 에러 UI 만 노출.
+   */
+  baseCandidates?: ReadonlyArray<string | undefined>;
+  /** 다음 base 를 BE 에 재등록하는 콜백 (앱별 `PATCH /feedback/{id}/meeting-url`). */
+  registerBaseUrl?: (base: string) => Promise<void>;
+  /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
+  onExhausted?: () => void;
 }
 
 /**
@@ -38,6 +54,16 @@ const ALLOWED_TOOLBAR_BUTTONS = [
   'hangup',
 ];
 
+// 모바일: 좁은 툴바에서 채팅·설정을 숨겨 핵심 컨트롤만 노출.
+const MOBILE_TOOLBAR_BUTTONS = ALLOWED_TOOLBAR_BUTTONS.filter(
+  (b) => b !== 'chat' && b !== 'settings',
+);
+
+/** 모바일 뷰포트 판정(768px 미만). SSR 안전(window 없으면 false). */
+function isMobileViewport(): boolean {
+  return typeof window !== 'undefined' && window.innerWidth < 768;
+}
+
 const CONFIG_OVERWRITE = {
   startWithVideoMuted: false,
   startWithAudioMuted: false,
@@ -50,6 +76,9 @@ const CONFIG_OVERWRITE = {
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
   prejoinPageEnabled: false,
+  // 모바일 웹에서 "이 회의에 어떻게 참여하시겠습니까?"(앱으로 열기/브라우저 참여) 딥링킹
+  // 인터스티셜을 건너뛰고 바로 브라우저 회의로 입장. (HIDE_DEEP_LINKING_LOGO는 로고만 숨김)
+  disableDeepLinking: true,
   // 신버전 워터마크 로고 제거(클라이언트 측). 빈 문자열이면 로고를 그리지 않는다.
   defaultLogoUrl: '',
   // 좌상단 비디오 화질 라벨(예: 480p/HD) 숨김.
@@ -89,6 +118,36 @@ function parseRoomUrl(roomUrl: string): { domain: string; roomName: string } {
   };
 }
 
+/** 회의실 마운트 전/실패 시 상태 안내 패널 (프로브·재연결·종단 에러). */
+function JitsiConnectionPanel({
+  variant,
+}: {
+  variant: 'probing' | 'reconnecting' | 'failed';
+}) {
+  const message =
+    variant === 'failed'
+      ? '회의 서버에 연결할 수 없습니다.\n잠시 후 다시 시도해 주세요.'
+      : variant === 'reconnecting'
+        ? '다른 회의 서버로 연결하고 있어요…'
+        : '회의실에 연결하고 있어요…';
+
+  return (
+    <div className="flex h-full w-full items-center justify-center p-8">
+      <div className="flex flex-col items-center gap-4 text-center">
+        {variant !== 'failed' && (
+          <span
+            aria-hidden
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/25 border-t-white/80"
+          />
+        )}
+        <p className="whitespace-pre-line text-sm text-neutral-300">
+          {message}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Jitsi 회의실을 임베드하는 본문 컴포넌트.
  *
@@ -96,8 +155,29 @@ function parseRoomUrl(roomUrl: string): { domain: string; roomName: string } {
  * - hangup / End for all → `onReadyToClose` → 모달 자동 닫힘
  * - 모달 셸은 각 앱에서 자체 BaseModal로 감싸 사용
  */
-export function JitsiEmbed({ roomUrl, onClose, topLeftSlot }: JitsiEmbedProps) {
+export function JitsiEmbed({
+  roomUrl,
+  onClose,
+  topLeftSlot,
+  baseCandidates,
+  registerBaseUrl,
+  onExhausted,
+}: JitsiEmbedProps) {
   const { domain, roomName } = parseRoomUrl(roomUrl);
+  const { status, reportRuntimeError } = useJitsiConnection({
+    roomUrl,
+    baseCandidates,
+    registerBaseUrl,
+    onExhausted,
+  });
+
+  // 툴바 버튼은 Jitsi 마운트 시 1회 고정 → 렌더 시점 뷰포트로 모바일 여부 결정(mount당 1회).
+  const [configOverwrite] = useState(() => ({
+    ...CONFIG_OVERWRITE,
+    toolbarButtons: isMobileViewport()
+      ? MOBILE_TOOLBAR_BUTTONS
+      : ALLOWED_TOOLBAR_BUTTONS,
+  }));
 
   return (
     <div className="relative h-full w-full bg-neutral-900">
@@ -120,36 +200,51 @@ export function JitsiEmbed({ roomUrl, onClose, topLeftSlot }: JitsiEmbedProps) {
       >
         닫기
       </button>
-      <JitsiMeeting
-        domain={domain}
-        roomName={roomName}
-        configOverwrite={CONFIG_OVERWRITE}
-        interfaceConfigOverwrite={INTERFACE_CONFIG_OVERWRITE}
-        onReadyToClose={onClose}
-        onApiReady={(api) => {
-          // "일정 시간 후 모달이 저절로 닫힘" 추적용 — readyToClose 를 유발할 수 있는
-          // 종료/실패 계열 이벤트와 사유 payload 를 콘솔에 남긴다. (hangup 인지,
-          // 서버 연결 끊김인지, 강퇴인지 재현 시점 콘솔로 구분)
-          const diagnosticEvents = [
-            'videoConferenceLeft',
-            'connectionFailed',
-            'errorOccurred',
-            'participantKickedOut',
-            'suspendDetected',
-          ];
-          for (const event of diagnosticEvents) {
-            api.addListener(event, (payload: unknown) => {
-              // eslint-disable-next-line no-console
-              console.warn(`[JitsiEmbed] ${event}`, payload);
+      {status === 'ready' ? (
+        <JitsiMeeting
+          domain={domain}
+          roomName={roomName}
+          configOverwrite={configOverwrite}
+          interfaceConfigOverwrite={INTERFACE_CONFIG_OVERWRITE}
+          onReadyToClose={onClose}
+          onApiReady={(api) => {
+            // "일정 시간 후 모달이 저절로 닫힘" 추적용 — readyToClose 를 유발할 수 있는
+            // 종료/실패 계열 이벤트와 사유 payload 를 콘솔에 남긴다. (hangup 인지,
+            // 서버 연결 끊김인지, 강퇴인지 재현 시점 콘솔로 구분)
+            const diagnosticEvents = [
+              'videoConferenceLeft',
+              'connectionFailed',
+              'errorOccurred',
+              'participantKickedOut',
+              'suspendDetected',
+            ];
+            for (const event of diagnosticEvents) {
+              api.addListener(event, (payload: unknown) => {
+                // eslint-disable-next-line no-console
+                console.warn(`[JitsiEmbed] ${event}`, payload);
+              });
+            }
+            // 회의 참가 성공 여부 추적 — 참가 후의 일시적 connectionFailed(네트워크
+            // 블립)에는 서버를 갈아타지 않는다(멘토·멘티 방이 통째로 바뀌는 것 방지).
+            // 참가 전 실패(external_api.js 는 떴지만 회의 백엔드가 죽은 경우)만 다음
+            // 후보 서버로 failover 한다.
+            let joined = false;
+            api.addListener('videoConferenceJoined', () => {
+              joined = true;
             });
-          }
-        }}
-        getIFrameRef={(node) => {
-          node.style.height = '100%';
-          node.style.width = '100%';
-          node.style.border = '0';
-        }}
-      />
+            api.addListener('connectionFailed', () => {
+              if (!joined) reportRuntimeError();
+            });
+          }}
+          getIFrameRef={(node) => {
+            node.style.height = '100%';
+            node.style.width = '100%';
+            node.style.border = '0';
+          }}
+        />
+      ) : (
+        <JitsiConnectionPanel variant={status} />
+      )}
     </div>
   );
 }

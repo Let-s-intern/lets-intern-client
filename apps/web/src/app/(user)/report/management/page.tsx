@@ -1,11 +1,10 @@
-import { Suspense } from 'react';
-
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import ReportManagementPage from '@/domain/report/ReportManagementPage';
 
 const ReportManagementPageWithSuspense = () => (
-  <Suspense fallback={null}>
+  <AsyncBoundary>
     <ReportManagementPage />
-  </Suspense>
+  </AsyncBoundary>
 );
 
 export default ReportManagementPageWithSuspense;

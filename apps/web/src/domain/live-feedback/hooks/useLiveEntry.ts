@@ -27,7 +27,17 @@ interface LiveEntry {
   enter: () => Promise<void>;
   /** 인라인 Jitsi 닫기. */
   closeJitsi: () => void;
+  /** 우선순위 순 jitsi base 후보 — JitsiEmbed failover 주입용. */
+  baseCandidates: ReadonlyArray<string | undefined>;
+  /** 다음 base 재등록(overwrite PATCH) — JitsiEmbed failover 주입용. */
+  registerBaseUrl: (base: string) => Promise<void>;
 }
+
+/** 우선순위 순 jitsi base 후보 (env). 모듈 상수로 두어 안정적 참조. */
+const JITSI_BASE_CANDIDATES: ReadonlyArray<string | undefined> = [
+  process.env.NEXT_PUBLIC_JITSI_BASE_URL,
+  process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
+];
 
 /**
  * 라이브 입장 핵심 로직 (멘토·멘티 공통).
@@ -52,20 +62,20 @@ export function useLiveEntry({
   const patchMeetingUrl = usePatchFeedbackMeetingUrl(feedbackId);
   const patchMentorStatus = usePatchMentorFeedbackStatus(feedbackId);
 
+  // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
+  // 최초 등록(ensureLiveMeetingUrl)과 실행 중 failover(JitsiEmbed)가 함께 쓴다.
+  const registerBaseUrl = async (base: string) => {
+    await patchMeetingUrl.mutateAsync({ meetingUrl: base });
+  };
+
   const enter = async () => {
     if (isPreparing) return;
     setIsPreparing(true);
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: feedbackInfo?.meetingUrl,
-        baseCandidates: [
-          process.env.NEXT_PUBLIC_JITSI_BASE_URL,
-          process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
-        ],
-        // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
-        registerBaseUrl: async (base) => {
-          await patchMeetingUrl.mutateAsync({ meetingUrl: base });
-        },
+        baseCandidates: JITSI_BASE_CANDIDATES,
+        registerBaseUrl,
       });
 
       if (!result.ok) {
@@ -85,6 +95,12 @@ export function useLiveEntry({
       }
 
       setIsOpen(true);
+    } catch (error) {
+      // 헬스체크/등록 중 네트워크·서버 오류 — 미처리 시 unhandled rejection.
+      console.error('라이브 입장 준비 중 오류:', error);
+      window.alert(
+        '회의실 연결을 준비하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      );
     } finally {
       setIsPreparing(false);
     }
@@ -92,5 +108,12 @@ export function useLiveEntry({
 
   const closeJitsi = () => setIsOpen(false);
 
-  return { isOpen, isPreparing, enter, closeJitsi };
+  return {
+    isOpen,
+    isPreparing,
+    enter,
+    closeJitsi,
+    baseCandidates: JITSI_BASE_CANDIDATES,
+    registerBaseUrl,
+  };
 }

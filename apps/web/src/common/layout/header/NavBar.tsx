@@ -2,7 +2,11 @@
 
 import { useGetUserAdmin, useIsMentorQuery } from '@/api/user/user';
 import useActiveLink from '@/hooks/useActiveLink';
-import useActiveReportNav from '@/hooks/useActiveReportNav';
+// [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 전용 훅.
+// 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
+// 지금은 메뉴 노출만 차단(주석 처리)한 상태이며, 복원이 아니라 '삭제 대기'다.
+// TODO(1:1 라이브 멘토링): 아래 서류 피드백 REPORT 메뉴 블록들과 함께 이 import도 제거할 것.
+// import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
@@ -59,7 +63,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const activeLink = useActiveLink(pathname);
-  const reportNavList = useActiveReportNav();
+  // [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴용 목록.
+  // 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
+  // TODO(1:1 라이브 멘토링): 아래 서류 피드백 REPORT 메뉴 블록들과 함께 제거할 것.
+  // const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -149,14 +156,30 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
-                  active={activeLink === 'REPORT'}
-                  href={
-                    reportNavList.length === 0 ? '#' : reportNavList[0].href
-                  }
+                  isNew
+                  href="/seminar"
+                  active={activeLink === 'SEMINAR'}
                 >
-                  서류 피드백 REPORT
+                  무료 세미나
                 </GlobalNavItem>
               </SwiperSlide>
+              {/*
+                [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (모바일 Swiper)
+                - 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
+                - 지금은 노출만 차단(주석 처리). 복원이 아니라 '삭제 대기' 상태.
+                - TODO(1:1 라이브 멘토링): 이 블록 + reportNavList/useActiveReportNav 함께 제거.
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    active={activeLink === 'REPORT'}
+                    href={
+                      reportNavList.length === 0 ? '#' : reportNavList[0].href
+                    }
+                  >
+                    서류 피드백 REPORT
+                  </GlobalNavItem>
+                </SwiperSlide>
+              */}
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
@@ -171,7 +194,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
-                  isNew
                   href="/program?type=VOD"
                 >
                   취준위키 VOD
@@ -204,12 +226,26 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall16"
-                active={activeLink === 'REPORT'}
-                href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                subNavList={reportNavList}
+                isNew
+                href="/seminar"
+                active={activeLink === 'SEMINAR'}
               >
-                서류 피드백 REPORT
+                무료 세미나
               </GlobalNavItem>
+              {/*
+                [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (데스크톱 GNB)
+                - 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
+                - 지금은 노출만 차단(주석 처리). 복원이 아니라 '삭제 대기' 상태.
+                - TODO(1:1 라이브 멘토링): 이 블록 + reportNavList/useActiveReportNav 함께 제거.
+                <GlobalNavItem
+                  className="text-xsmall16"
+                  active={activeLink === 'REPORT'}
+                  href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
+                  subNavList={reportNavList}
+                >
+                  서류 피드백 REPORT
+                </GlobalNavItem>
+              */}
               <GlobalNavItem
                 className="text-xsmall16"
                 isNew
@@ -219,11 +255,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               >
                 무료 자료집
               </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall16"
-                isNew
-                href="/program?type=VOD"
-              >
+              <GlobalNavItem className="text-xsmall16" href="/program?type=VOD">
                 취준위키 VOD
               </GlobalNavItem>
               <GlobalNavItem
@@ -281,15 +313,22 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
-        <SideNavItem href="/review" subNavList={reportNavList}>
-          서류 피드백 REPORT
+        <SideNavItem href="/seminar" isNew>
+          무료 세미나
         </SideNavItem>
+        {/*
+          [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (사이드 네비)
+          - 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
+          - 지금은 노출만 차단(주석 처리). 복원이 아니라 '삭제 대기' 상태.
+          - TODO(1:1 라이브 멘토링): 이 블록 + reportNavList/useActiveReportNav 함께 제거.
+          <SideNavItem href="/review" subNavList={reportNavList}>
+            서류 피드백 REPORT
+          </SideNavItem>
+        */}
         <SideNavItem href="/library/list" isNew>
           무료 자료집
         </SideNavItem>
-        <SideNavItem href="/program?type=VOD" isNew>
-          취준위키 VOD
-        </SideNavItem>
+        <SideNavItem href="/program?type=VOD">취준위키 VOD</SideNavItem>
         <SideNavItem href="/live-mentoring" isNew>
           1대1 라이브 멘토링
         </SideNavItem>

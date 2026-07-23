@@ -216,6 +216,12 @@ const preset = {
           '25%': { transform: 'rotate(-6deg)' },
           '75%': { transform: 'rotate(6deg)' },
         },
+        // 거부 피드백용 은은한 좌우 흔들림(예: 비활성 버튼 클릭)
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%, 60%': { transform: 'translateX(-4px)' },
+          '40%, 80%': { transform: 'translateX(4px)' },
+        },
       },
       animation: {
         'live-infinite-scroll-desktop':
@@ -227,6 +233,7 @@ const preset = {
         'slide-in-right': 'slide-in-right 0.2s ease-out',
         'infinite-scroll': 'infinite-scroll 40s linear infinite',
         wobble: 'wobble 0.4s ease-in-out',
+        shake: 'shake 0.4s ease-in-out',
       },
     },
     borderRadius: {

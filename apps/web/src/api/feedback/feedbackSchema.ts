@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { AttendanceResultEnum } from '@/schema';
+import { z } from 'zod';
 
 export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
 
@@ -23,9 +23,18 @@ export type FeedbackAttendanceStatus = z.infer<
 >;
 
 export const challengeMentorInfoSchema = z.object({
-  nickname: z.string(),
-  introduction: z.string(),
-  profileImgUrl: z.string(),
+  nickname: z
+    .string()
+    .nullish()
+    .transform((val) => val ?? '멘토명'),
+  introduction: z
+    .string()
+    .nullish()
+    .transform((val) => val ?? '등록된 멘토 소개글이 없습니다.'),
+  profileImgUrl: z
+    .string()
+    .nullish()
+    .transform((val) => val ?? ''),
 });
 
 export type ChallengeMentorInfo = z.infer<typeof challengeMentorInfoSchema>;

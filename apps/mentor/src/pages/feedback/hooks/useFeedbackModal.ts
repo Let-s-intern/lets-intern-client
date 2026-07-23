@@ -17,6 +17,8 @@ interface UseFeedbackModalParams {
   onClose: () => void;
   challengeId: number;
   missionId: number;
+  /** 진입 시 초기 선택할 멘티의 출석 id (없으면 첫 멘티). */
+  initialAttendanceId?: number | null;
 }
 
 export function useFeedbackModal({
@@ -24,6 +26,7 @@ export function useFeedbackModal({
   onClose,
   challengeId,
   missionId,
+  initialAttendanceId,
 }: UseFeedbackModalParams) {
   const queryClient = useQueryClient();
 
@@ -47,7 +50,11 @@ export function useFeedbackModal({
     enabled: isOpen && !!challengeId && !!missionId,
   });
 
-  const attendanceList = attendanceData?.attendanceList ?? [];
+  // 초기 선택 effect가 배열 참조를 dep 으로 쓰므로 안정적인 참조로 메모.
+  const attendanceList = useMemo(
+    () => attendanceData?.attendanceList ?? [],
+    [attendanceData],
+  );
 
   // Current mentee from list
   const currentMentee = attendanceList[selectedIndex] ?? null;
@@ -60,12 +67,16 @@ export function useFeedbackModal({
     attendanceId: selectedAttendanceId ?? undefined,
   });
 
-  // Auto-select first mentee when modal opens
+  // 진입 시 초기 선택: 클릭한 멘티(initialAttendanceId)를 우선, 못 찾으면 첫 멘티.
   useEffect(() => {
     if (isOpen && attendanceList.length > 0 && selectedIndex === -1) {
-      setSelectedIndex(0);
+      const targetIndex =
+        initialAttendanceId != null
+          ? attendanceList.findIndex((a) => a.id === initialAttendanceId)
+          : -1;
+      setSelectedIndex(targetIndex >= 0 ? targetIndex : 0);
     }
-  }, [isOpen, attendanceList.length, selectedIndex]);
+  }, [isOpen, attendanceList, selectedIndex, initialAttendanceId]);
 
   // Sync editor content when selected mentee or feedbackData changes
   useEffect(() => {
@@ -142,6 +153,9 @@ export function useFeedbackModal({
     });
   }, [queryClient, challengeId, missionId, selectedAttendanceId]);
 
+  // 멘티 사전 질문 — 서면 상세 응답(attendanceDetailVo)에서 파생. BE 미배포 시 null.
+  const preQuestion = feedbackData?.attendanceDetailVo?.preQuestion ?? null;
+
   const isReadOnly =
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
@@ -155,6 +169,7 @@ export function useFeedbackModal({
     editorContent,
     setEditorContent,
     currentMentee,
+    preQuestion,
     isReadOnly,
     isAbsent,
     attendanceList,

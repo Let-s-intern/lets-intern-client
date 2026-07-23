@@ -34,7 +34,10 @@ const navItems: NavItem[] = [
         name: 'LIVE 슬롯 오픈',
         url: '/feedback/live-availability',
       },
-      { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
+      // [임시 숨김] 예약 현황 (dusvlf111, 2026-07-17)
+      // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
+      // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
+      // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
     ],
   },
   {
@@ -53,7 +56,10 @@ const navItems: NavItem[] = [
       { type: 'leaf', name: '오픈 현황', url: '/live-mentoring/open-status' },
     ],
   },
-  { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
+  // [임시 숨김] 참여중인 챌린지 (dusvlf111, 2026-07-17)
+  // 멘토가 참여 중인 챌린지 목록 페이지(/challenges).
+  // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
+  // { type: 'leaf', name: '참여중인 챌린지', url: '/challenges' },
   { type: 'leaf', name: '프로필', url: '/profile' },
 ];
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMentorChallengeListQuery, useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import MobileCarousel from '@/domain/mypage/ui/MobileCarousel';
 import FeedbackCard from '@/domain/mypage/ui/card/FeedbackCard';
 import useAuthStore from '@/store/useAuthStore';
@@ -14,7 +15,7 @@ interface Challenge {
   endDate: string;
 }
 
-const Feedback = () => {
+const FeedbackContent = () => {
   const { isLoggedIn } = useAuthStore();
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
   const { data: mentorChallengeData, isLoading } =
@@ -44,6 +45,14 @@ const Feedback = () => {
         </>
       )}
     </section>
+  );
+};
+
+const Feedback = () => {
+  return (
+    <AsyncBoundary>
+      <FeedbackContent />
+    </AsyncBoundary>
   );
 };
 

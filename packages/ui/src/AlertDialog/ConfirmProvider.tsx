@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/context/Providers.tsx
+ */
+
 import * as React from 'react';
 
 import { ConfirmDialog, type ConfirmVariant } from './ConfirmDialog';

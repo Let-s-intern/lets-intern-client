@@ -13,6 +13,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 import {
+  isMagnetFormManageable,
   isMagnetManageable,
   isMagnetPostEditable,
   isMagnetVisibilityManageable,
@@ -281,7 +282,7 @@ const MagnetTable = ({
         sortable: false,
         filterable: false,
         renderCell: ({ row }) => {
-          const manageable = isMagnetManageable(row.type);
+          const formManageable = isMagnetFormManageable(row.type);
           const postEditable = isMagnetPostEditable(row.type);
           return (
             <div className="inline-flex items-center gap-2">
@@ -292,7 +293,7 @@ const MagnetTable = ({
                   </Button>
                 </Link>
               )}
-              {manageable && (
+              {formManageable && (
                 <Link to={`/magnet/${row.magnetId}/form`}>
                   <Button variant="outlined" color="info" size="small">
                     신청 폼 관리

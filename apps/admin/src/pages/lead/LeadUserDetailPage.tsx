@@ -1,17 +1,26 @@
 import {
   MagnetApplicationByMagnet,
+  useDeleteMagnetApplicationsMutation,
   useMagnetApplicationByMagnetIdQuery,
 } from '@/api/leadManagement';
+import WarningModal from '@/common/alert/WarningModal';
 import { formatDateTimeCellValue } from '@/domain/admin/ui/table/TableFilter';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
-import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
-import { useMemo } from 'react';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  useGridApiRef,
+} from '@mui/x-data-grid';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MagnetApplicationDailyChart from './ui/MagnetApplicationDailyChart';
 import MagnetApplicationMonthlyChart from './ui/MagnetApplicationMonthlyChart';
 import MarketingAgreeStat from './ui/MarketingAgreeStat';
 import QuestionAnswerStat from './ui/QuestionAnswerStat';
+import SelectionDeleteBar from './ui/SelectionDeleteBar';
 import TodayApplicationCountStat from './ui/TodayApplicationCountStat';
 import WishFieldPieChart from './ui/WishFieldPieChart';
 import WishIndustryPieChart from './ui/WishIndustryPieChart';
@@ -32,11 +41,28 @@ const LeadUserDetailPage = () => {
   const params = useParams<{ id: string }>();
   const magnetId = Number(params.id);
   const apiRef = useGridApiRef();
+  const { snackbar } = useAdminSnackbar();
+
+  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
+    [],
+  );
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const { data: applications = [], isLoading } =
     useMagnetApplicationByMagnetIdQuery(magnetId, {
       enabled: !isNaN(magnetId),
     });
+
+  const selectedIds = selectionModel as number[];
+
+  const deleteMutation = useDeleteMagnetApplicationsMutation(magnetId, {
+    onSuccess: () => {
+      setIsConfirmOpen(false);
+      setSelectionModel([]);
+      snackbar(`${selectedIds.length}명의 신청자를 삭제했어요.`);
+    },
+    onError: () => snackbar('삭제에 실패했어요. 다시 시도해 주세요.'),
+  });
 
   const columns = useMemo<GridColDef<MagnetApplicationByMagnet>[]>(
     () => [
@@ -197,6 +223,10 @@ const LeadUserDetailPage = () => {
         columns={columns}
         getRowId={(row) => row.magnetApplicationId}
         loading={isLoading}
+        checkboxSelection
+        disableRowSelectionOnClick
+        rowSelectionModel={selectionModel}
+        onRowSelectionModelChange={setSelectionModel}
         getRowHeight={() => 'auto'}
         pageSizeOptions={[25, 50, 100]}
         initialState={{
@@ -216,6 +246,23 @@ const LeadUserDetailPage = () => {
             wordBreak: 'break-word',
           },
         }}
+      />
+
+      <SelectionDeleteBar
+        selectedCount={selectedIds.length}
+        onDelete={() => setIsConfirmOpen(true)}
+        isDeleting={deleteMutation.isPending}
+      />
+
+      <WarningModal
+        isOpen={isConfirmOpen}
+        isLoading={deleteMutation.isPending}
+        title="신청자를 삭제할까요?"
+        content={`선택한 ${selectedIds.length}명의 신청자를 삭제합니다. 삭제된 데이터는 복구할 수 없습니다.`}
+        confirmText="삭제"
+        cancelText="취소"
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={() => deleteMutation.mutate(selectedIds)}
       />
     </div>
   );

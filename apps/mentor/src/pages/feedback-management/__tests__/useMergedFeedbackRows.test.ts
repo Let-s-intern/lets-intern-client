@@ -201,6 +201,8 @@ describe('useMergedFeedbackRows', () => {
       missionId: 1001,
       missionTh: 1,
       challengeTitle: '기필코 경험정리 챌린지 21기',
+      // 클릭한 멘티 본인 상세 진입용 출석 id (row id 'written-1-1001-11'의 11).
+      attendanceId: 11,
     });
     expect(row?.thLabel).toBe('1회차');
   });
@@ -398,5 +400,151 @@ describe('useMergedFeedbackRows', () => {
   it('빈 입력은 빈 배열을 반환한다', () => {
     const { result } = renderHook(() => useMergedFeedbackRows([], []));
     expect(result.current).toEqual([]);
+  });
+});
+
+// ── 경험정리 EXPERIENCE_1/EXPERIENCE_2 페어 그룹핑 (PRD §5-③④) ──
+describe('useMergedFeedbackRows — 경험정리 페어 그룹핑', () => {
+  // 같은 challengeId(3)+th(4)에 경험정리 미션 2개(3401/3402)를 등록한 챌린지.
+  const experienceChallenge: Challenge = {
+    challengeId: 3,
+    title: '경험정리 페어 챌린지',
+    shortDesc: null,
+    startDate: '2026-04-14',
+    endDate: '2026-05-04',
+    feedbackMissions: [
+      {
+        missionId: 3401,
+        missionTitle: '4회차 — 경험정리(Lv.1)',
+        th: 4,
+        missionType: 'EXPERIENCE_1',
+        submittedCount: 0,
+        notSubmittedCount: 0,
+        feedbackStatusCounts: [],
+      },
+      {
+        missionId: 3402,
+        missionTitle: '4회차 — 경험정리(Lv.2)',
+        th: 4,
+        missionType: 'EXPERIENCE_2',
+        submittedCount: 0,
+        notSubmittedCount: 0,
+        feedbackStatusCounts: [],
+      },
+    ],
+  };
+
+  /** 멘티가 exp1(3401)/exp2(3402) 각각에서 어떤 status로 잡히는지 구성한다. */
+  const buildAttendanceMap = (
+    menteeName: string,
+    exp1Status: 'PRESENT' | 'ABSENT',
+    exp2Status: 'PRESENT' | 'ABSENT',
+  ) =>
+    new Map<string, WrittenMenteeAttendance[]>([
+      [
+        '3-3401',
+        [
+          {
+            id: 3411,
+            name: menteeName,
+            status: exp1Status,
+            feedbackStatus: exp1Status === 'ABSENT' ? 'WAITING' : 'COMPLETED',
+          },
+        ],
+      ],
+      [
+        '3-3402',
+        [
+          {
+            id: 3421,
+            name: menteeName,
+            status: exp2Status,
+            feedbackStatus: exp2Status === 'ABSENT' ? 'WAITING' : 'COMPLETED',
+          },
+        ],
+      ],
+    ]);
+
+  it('한쪽만 제출 → 제출한 쪽 행만 남고 반대쪽 미제출 행은 제거된다', () => {
+    // 김멘티: exp1(3401) 제출, exp2(3402) 미제출.
+    const attendanceMap = buildAttendanceMap('김멘티', 'PRESENT', 'ABSENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([experienceChallenge], [], attendanceMap),
+    );
+    const rows = result.current.filter((r) => r.type === 'written');
+    expect(rows.length).toBe(1);
+    expect(rows[0].source.type === 'written' && rows[0].source.missionId).toBe(
+      3401,
+    );
+    expect(rows[0].submissionLabel).toBe('제출');
+  });
+
+  it('반대 케이스: exp2만 제출 → exp2 행만 남는다', () => {
+    const attendanceMap = buildAttendanceMap('이멘티', 'ABSENT', 'PRESENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([experienceChallenge], [], attendanceMap),
+    );
+    const rows = result.current.filter((r) => r.type === 'written');
+    expect(rows.length).toBe(1);
+    expect(rows[0].source.type === 'written' && rows[0].source.missionId).toBe(
+      3402,
+    );
+    expect(rows[0].submissionLabel).toBe('제출');
+  });
+
+  it('둘 다 미제출 → 대표(th 더 작은 EXPERIENCE_1) 1행만 남는다', () => {
+    const attendanceMap = buildAttendanceMap('박멘티', 'ABSENT', 'ABSENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([experienceChallenge], [], attendanceMap),
+    );
+    const rows = result.current.filter((r) => r.type === 'written');
+    expect(rows.length).toBe(1);
+    // 대표 = EXPERIENCE_1(3401)
+    expect(rows[0].source.type === 'written' && rows[0].source.missionId).toBe(
+      3401,
+    );
+    expect(rows[0].submissionLabel).toBe('미제출');
+  });
+
+  it('둘 다 제출 → 두 행 모두 유지된다(병합 안 함)', () => {
+    const attendanceMap = buildAttendanceMap('최멘티', 'PRESENT', 'PRESENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([experienceChallenge], [], attendanceMap),
+    );
+    const rows = result.current.filter((r) => r.type === 'written');
+    expect(rows.length).toBe(2);
+    const missionIds = rows.map(
+      (r) => r.source.type === 'written' && r.source.missionId,
+    );
+    expect(missionIds).toContain(3401);
+    expect(missionIds).toContain(3402);
+  });
+
+  it('thLabel: 한쪽만 제출한 멘티에게 "4회차"가 1번만 나타난다', () => {
+    const attendanceMap = buildAttendanceMap('정멘티', 'PRESENT', 'ABSENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([experienceChallenge], [], attendanceMap),
+    );
+    const thLabels = result.current
+      .filter((r) => r.type === 'written' && r.menteeNameLabel === '정멘티')
+      .map((r) => r.thLabel);
+    // 페어 그룹핑으로 반대쪽(미제출) 행이 제거돼 "4회차"가 멘티당 1번만 표시된다.
+    expect(thLabels).toEqual(['4회차']);
+  });
+
+  it('missionType이 없으면(페어 없음) 기존처럼 모든 행을 그대로 둔다', () => {
+    const plainChallenge: Challenge = {
+      ...experienceChallenge,
+      feedbackMissions: experienceChallenge.feedbackMissions.map((m) => ({
+        ...m,
+        missionType: undefined,
+      })),
+    };
+    const attendanceMap = buildAttendanceMap('한멘티', 'PRESENT', 'ABSENT');
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows([plainChallenge], [], attendanceMap),
+    );
+    // 페어 그룹핑이 적용되지 않아 두 미션 행(3401 제출 + 3402 미제출)이 모두 남는다.
+    expect(result.current.filter((r) => r.type === 'written').length).toBe(2);
   });
 });

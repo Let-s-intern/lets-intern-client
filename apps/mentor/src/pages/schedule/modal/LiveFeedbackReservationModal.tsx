@@ -213,6 +213,12 @@ const LiveFeedbackReservationModal = ({
       // invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만, 즉시 입장 경험을 위해
       // 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
       setIsJitsiOpen(true);
+    } catch (error) {
+      // 헬스체크/등록 중 네트워크·서버 오류 — 미처리 시 unhandled rejection.
+      console.error('라이브 입장 준비 중 오류:', error);
+      window.alert(
+        '회의실 연결을 준비하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      );
     } finally {
       setIsPreparingRoom(false);
     }
@@ -647,6 +653,20 @@ const LiveFeedbackReservationModal = ({
           onClose={() => setIsJitsiOpen(false)}
           meetingUrl={meetingUrl}
           spaceName={selectedBar?.challengeTitle}
+          // 입장 후 현재 서버가 죽어있으면(external_api.js 로드 실패) 다음 후보로 자동
+          // 재등록(failover). BE 는 base + meetingRoom 을 덮어써 합성한다.
+          baseCandidates={[
+            import.meta.env.VITE_JITSI_BASE_URL,
+            import.meta.env.VITE_JITSI_FALLBACK_URL,
+          ]}
+          registerBaseUrl={async (base) => {
+            await updateMeetingUrl({ feedbackId, meetingUrl: base });
+          }}
+          onExhausted={() =>
+            window.alert(
+              '회의실 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+            )
+          }
           // 좌측 자료 패널 — 사전 Q&A(없으면 숨김) · 제출물.
           // placeholder('-')/빈 문자열은 패널 빈 상태 판정을 위해 undefined 로 전달.
           preQuestion={feedbackDetail?.preQuestion ?? undefined}

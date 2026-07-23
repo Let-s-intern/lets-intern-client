@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { router } from './router';
 import { AdminSnackbarProvider } from './hooks/useAdminSnackbar';
 import './lib/dayjs';
+import 'pretendard/dist/web/variable/pretendardvariable.css';
 import './index.css';
 
 // MUI X Pro 라이선스 (필요 시 env로 주입)

@@ -78,4 +78,8 @@ next-env.d.ts
 # Playwright 스크린샷이 레포 루트로 떨어지는 임시 캡처
 /*-table.png
 .claude/skills/skill-creator/scripts/__pycache__/
+
+# Storybook 빌드 산출물
+storybook-static/
+
 .claude/scheduled_tasks.lock

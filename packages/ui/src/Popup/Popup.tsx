@@ -1,6 +1,11 @@
 'use client';
 
 /**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/domain/blog/ad/BlogNewsletterPopup.tsx
+ */
+
+/**
  * 헤드리스 범용 Popup (Radix Dialog 기반).
  *
  * 어떤 컴포넌트인가:

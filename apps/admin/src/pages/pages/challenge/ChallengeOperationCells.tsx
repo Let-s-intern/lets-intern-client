@@ -183,11 +183,15 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
       editable: true,
       width: 140,
       valueFormatter(_, row) {
-        return `${row.missionTemplateId ? `(${row.missionTemplateId}) ` : ''}${
-          row.missionTemplatesOptions.find(
-            (t) => t.id === row.missionTemplateId,
-          )?.title || ''
-        }`;
+        // 서버가 준 미션명(row.title)을 우선 표시해 템플릿 목록 완전성에 의존하지 않는다.
+        // 신규 생성/템플릿 재선택 등 title 이 아직 없을 때만 템플릿에서 파생 폴백한다.
+        const templateTitle = row.missionTemplateId
+          ? row.missionTemplatesOptions.find(
+              (t) => t.id === row.missionTemplateId,
+            )?.title
+          : undefined;
+        const name = row.title || templateTitle || '';
+        return `${row.missionTemplateId ? `(${row.missionTemplateId}) ` : ''}${name}`;
       },
       renderCell(params) {
         return (

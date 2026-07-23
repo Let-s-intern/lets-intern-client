@@ -2,6 +2,8 @@
 
 import { useProgramQuery } from '@/api/program';
 import { useUserQuery } from '@/api/user/user';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import useProgramStore from '@/store/useProgramStore';
 import {
@@ -146,4 +148,10 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+const PaymentPage = () => (
+  <AsyncBoundary pendingFallback={<LoadingContainer />}>
+    <Payment />
+  </AsyncBoundary>
+);
+
+export default PaymentPage;

@@ -20,6 +20,19 @@ export const MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
 export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
   MANAGEABLE_MAGNET_TYPES.includes(type);
 
+/**
+ * 신청폼(질문) 관리가 가능한 타입 — 자료집류 + 출시알림.
+ * 출시알림(LAUNCH_ALERT)도 신청 시 추가 질문(예: "듣고 싶은 세미나 주제")을 받을 수 있어야 한다.
+ * BE는 마그넷 타입과 무관하게 ADDITIONAL 질문을 허용하므로 어드민에서 폼 관리 진입만 열어준다.
+ */
+export const FORM_MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
+  ...MANAGEABLE_MAGNET_TYPES,
+  'LAUNCH_ALERT',
+];
+
+export const isMagnetFormManageable = (type: MagnetTypeKey): boolean =>
+  FORM_MANAGEABLE_MAGNET_TYPES.includes(type);
+
 /** 글 관리 페이지에 접근 가능한 타입 (manageable + 출시알림 + 이벤트) */
 export const POST_EDITABLE_MAGNET_TYPES: MagnetTypeKey[] = [
   'MATERIAL',

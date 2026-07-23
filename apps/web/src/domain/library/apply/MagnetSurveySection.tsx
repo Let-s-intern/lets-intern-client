@@ -6,6 +6,40 @@ import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 
 const RADIO_COLOR = '#5F66F6';
 
+/** 객관식 "기타(직접입력)" 항목 값 — 어드민 신청폼 세팅과 동일 규약. */
+export const OTHER_ITEM_VALUE = '기타(직접입력)';
+
+/** 선택된 항목 중 "기타(직접입력)"이 있으면 직접 입력값을 받는 인풋. */
+function OtherInput({
+  question,
+  currentAnswer,
+  onAnswerChange,
+}: {
+  question: MagnetQuestion;
+  currentAnswer: MagnetSurveyAnswer;
+  onAnswerChange: (questionId: number, answer: MagnetSurveyAnswer) => void;
+}) {
+  const otherSelected = question.items.some(
+    (item) =>
+      item.value === OTHER_ITEM_VALUE &&
+      currentAnswer?.selectedItemIds.includes(item.itemId),
+  );
+  if (!otherSelected) return null;
+  return (
+    <LineInput
+      className="text-xsmall14 md:text-xsmall16 mt-1"
+      placeholder="기타 내용을 직접 입력해 주세요."
+      value={currentAnswer?.subjectiveText ?? ''}
+      onChange={(e) =>
+        onAnswerChange(question.questionId, {
+          ...currentAnswer,
+          subjectiveText: e.target.value,
+        })
+      }
+    />
+  );
+}
+
 export interface MagnetQuestion {
   questionId: number;
   questionType: string;
@@ -124,6 +158,11 @@ function QuestionRenderer({
               }}
             />
           ))}
+          <OtherInput
+            question={question}
+            currentAnswer={currentAnswer}
+            onAnswerChange={onAnswerChange}
+          />
         </div>
       </div>
     );
@@ -166,6 +205,11 @@ function QuestionRenderer({
             </button>
           );
         })}
+        <OtherInput
+          question={question}
+          currentAnswer={currentAnswer}
+          onAnswerChange={onAnswerChange}
+        />
       </div>
     </div>
   );

@@ -5,13 +5,13 @@
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*/index.tsx",
-    "./Link": "./src/Link/index.tsx",
-    "./Image": "./src/Image/index.tsx",
     "./JitsiEmbed": "./src/JitsiEmbed/index.tsx",
     "./JitsiEmbed/buildRoomUrl": "./src/JitsiEmbed/buildRoomUrl.ts",
     "./JitsiEmbed/jitsiHealthCheck": "./src/JitsiEmbed/jitsiHealthCheck.ts",
@@ -31,16 +31,24 @@
     "react-dom": ">=18"
   },
   "devDependencies": {
+    "@letscareer/tailwind-config": "workspace:*",
     "@letscareer/tsconfig": "workspace:*",
+    "@storybook/addon-docs": "^10.5.0",
+    "@storybook/react-vite": "^10.5.0",
     "@testing-library/jest-dom": "^6.4.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
     "jsdom": "^25.0.0",
+    "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "storybook": "^10.5.0",
+    "tailwindcss": "^3.4.7",
     "typescript": "^5.9.3",
+    "vite": "^8",
     "vitest": "^4.1.5"
   }
 }

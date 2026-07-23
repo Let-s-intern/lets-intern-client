@@ -390,7 +390,7 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             플랜 보고 멤버십 신청 →
           </button>
           <a
-            href="https://www.aitoeic.kr/"
+            href="https://kr.aitutorsanta.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="modal-extbtn"
@@ -550,7 +550,7 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
             플랜 보고 멤버십 신청 →
           </button>
           <a
-            href="https://www.superintern.com/"
+            href="https://www.superpasshr.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="modal-extbtn"

@@ -101,10 +101,27 @@ const feedbackStatusCountSchema = z.object({
   count: z.number(),
 });
 
+/**
+ * 미션 타입 — Admin의 `MissionTypeEnum`과 동일(`apps/admin/src/schema.ts`).
+ * 경험정리 미션은 같은 회차(`th`)에 EXPERIENCE_1/EXPERIENCE_2 두 미션으로 등록되며,
+ * 멘토 피드백 표에서 이 둘을 하나로 묶어 표시한다.
+ */
+export const MentorMissionTypeEnum = z.enum([
+  'OT',
+  'POOL',
+  'BONUS',
+  'EXPERIENCE_1',
+  'EXPERIENCE_2',
+]);
+
+export type MentorMissionType = z.infer<typeof MentorMissionTypeEnum>;
+
 const mentorFeedbackMissionSummarySchema = z.object({
   missionId: z.number(),
   missionTitle: z.string().nullable(),
   th: z.number(),
+  // BE 필드 도착 전 대비 optional/nullable — 경험정리 아닌 미션은 null/미노출 (PRD §6.1)
+  missionType: MentorMissionTypeEnum.nullable().optional(),
   submittedCount: z.number().default(0),
   notSubmittedCount: z.number().default(0),
   feedbackStatusCounts: z.array(feedbackStatusCountSchema).default([]),
@@ -180,6 +197,8 @@ export const challengeMissionFeedbackSchema = z.object({
 export const feedbackAttendanceSchema = z.object({
   attendanceDetailVo: z.object({
     feedback: z.string().nullish(),
+    // 멘티 사전 질문 — BE 추가 예정. 미배포 시 undefined 라 forward-compatible.
+    preQuestion: z.string().nullish(),
   }),
 });
 

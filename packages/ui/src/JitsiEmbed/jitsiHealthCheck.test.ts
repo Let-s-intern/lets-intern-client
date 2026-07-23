@@ -1,9 +1,28 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 import {
   ensureLiveMeetingUrl,
   resolveHealthyJitsiBaseUrl,
 } from './jitsiHealthCheck';
+
+/** base 의 health.json 응답을 흉내내는 fetch mock 을 설치한다. */
+function stubHealthFetch(
+  impl: (url: string) => { ok: boolean; body?: unknown } | Error,
+): Mock {
+  const fetchMock = vi.fn(async (input: string) => {
+    const result = impl(input);
+    if (result instanceof Error) throw result;
+    return {
+      ok: result.ok,
+      json: async () => result.body,
+    } as Response;
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock as unknown as Mock;
+}
+
+const BASE = 'https://primary.example/';
+const FALLBACK = 'https://fallback.example/';
 
 describe('resolveHealthyJitsiBaseUrl', () => {
   afterEach(() => {
@@ -11,63 +30,71 @@ describe('resolveHealthyJitsiBaseUrl', () => {
     vi.unstubAllGlobals();
   });
 
-  it('여러 도메인이 healthy 하면 우선순위가 가장 높은 base URL(슬래시 보정)을 반환한다', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(new Response(null, { status: 200 })),
+  it('base 가 healthy(status HEALTHY)면 base 를 반환한다', async () => {
+    stubHealthFetch(() => ({ ok: true, body: { status: 'HEALTHY' } }));
+    await expect(resolveHealthyJitsiBaseUrl([BASE, FALLBACK])).resolves.toBe(
+      BASE,
     );
-
-    const result = await resolveHealthyJitsiBaseUrl([
-      'https://primary.example',
-      'https://fallback.example',
-    ]);
-
-    expect(result).toBe('https://primary.example/');
-    // 병렬 헬스체크라 모든 후보를 ping 하되, 결과 순서를 보존해 primary 를 고른다.
-    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it('첫 번째가 실패하면 두 번째(fallback)로 폴백한다', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockRejectedValueOnce(new Error('network'))
-      .mockResolvedValueOnce(new Response(null, { status: 200 }));
-    vi.stubGlobal('fetch', fetchMock);
+  it('base 의 health.json 만 조회하며 캐시 우회 쿼리(?t=)를 붙인다', async () => {
+    const fetchMock = stubHealthFetch(() => ({
+      ok: true,
+      body: { status: 'HEALTHY' },
+    }));
 
-    const result = await resolveHealthyJitsiBaseUrl([
-      'https://primary.example/',
-      'https://fallback.example/',
-    ]);
+    await resolveHealthyJitsiBaseUrl([BASE, FALLBACK]);
 
-    expect(result).toBe('https://fallback.example/');
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it('모든 도메인이 실패하면 null 을 반환한다', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('down')));
-
-    const result = await resolveHealthyJitsiBaseUrl([
-      'https://a.example',
-      'https://b.example',
-    ]);
-
-    expect(result).toBeNull();
-  });
-
-  it('빈/undefined 후보는 건너뛴다', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(new Response(null, { status: 200 }));
-    vi.stubGlobal('fetch', fetchMock);
-
-    const result = await resolveHealthyJitsiBaseUrl([
-      undefined,
-      '',
-      'https://only.example',
-    ]);
-
-    expect(result).toBe('https://only.example/');
+    const requested = fetchMock.mock.calls[0][0] as string;
+    expect(requested).toMatch(
+      /^https:\/\/primary\.example\/health\.json\?t=\d+$/,
+    );
+    // base 만 확인하고 fallback 은 건드리지 않는다.
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('base 가 unhealthy(status 가 HEALTHY 아님)면 fallback 을 반환한다', async () => {
+    stubHealthFetch(() => ({ ok: true, body: { status: 'DOWN' } }));
+    await expect(resolveHealthyJitsiBaseUrl([BASE, FALLBACK])).resolves.toBe(
+      FALLBACK,
+    );
+  });
+
+  it('base 가 503(!ok)이면 fallback 을 반환한다', async () => {
+    stubHealthFetch(() => ({ ok: false }));
+    await expect(resolveHealthyJitsiBaseUrl([BASE, FALLBACK])).resolves.toBe(
+      FALLBACK,
+    );
+  });
+
+  it('base fetch 가 실패(CORS/네트워크)해도 fallback 으로 넘어간다', async () => {
+    stubHealthFetch(() => new TypeError('Failed to fetch'));
+    await expect(resolveHealthyJitsiBaseUrl([BASE, FALLBACK])).resolves.toBe(
+      FALLBACK,
+    );
+  });
+
+  it('base 가 죽었고 fallback 도 없으면 null', async () => {
+    stubHealthFetch(() => ({ ok: false }));
+    await expect(resolveHealthyJitsiBaseUrl([BASE])).resolves.toBeNull();
+  });
+
+  it('후보가 하나도 없으면 fetch 없이 null', async () => {
+    const fetchMock = stubHealthFetch(() => ({
+      ok: true,
+      body: { status: 'HEALTHY' },
+    }));
+    await expect(
+      resolveHealthyJitsiBaseUrl([undefined, '', '  ']),
+    ).resolves.toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('trailing slash 가 없는 base 도 정규화해서 반환한다', async () => {
+    stubHealthFetch(() => ({ ok: true, body: { status: 'HEALTHY' } }));
+    await expect(
+      resolveHealthyJitsiBaseUrl(['https://primary.example']),
+    ).resolves.toBe(BASE);
   });
 });
 
@@ -78,13 +105,12 @@ describe('ensureLiveMeetingUrl', () => {
   });
 
   it('meetingUrl 이 이미 있으면 헬스체크/등록 없이 ok 를 반환한다', async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
+    const fetchMock = stubHealthFetch(() => ({ ok: true }));
     const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
 
     const result = await ensureLiveMeetingUrl({
       meetingUrl: 'https://meet.example/room-abc',
-      baseCandidates: ['https://primary.example'],
+      baseCandidates: [BASE],
       registerBaseUrl,
     });
 
@@ -94,29 +120,40 @@ describe('ensureLiveMeetingUrl', () => {
   });
 
   it('meetingUrl 이 없으면 healthy base 를 registerBaseUrl 로 등록하고 ok', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(new Response(null, { status: 200 })),
-    );
+    stubHealthFetch(() => ({ ok: true, body: { status: 'HEALTHY' } }));
     const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
 
     const result = await ensureLiveMeetingUrl({
       meetingUrl: null,
-      baseCandidates: ['https://primary.example'],
+      baseCandidates: [BASE],
       registerBaseUrl,
     });
 
     expect(result).toEqual({ ok: true });
-    expect(registerBaseUrl).toHaveBeenCalledWith('https://primary.example/');
+    expect(registerBaseUrl).toHaveBeenCalledWith(BASE);
   });
 
-  it('살아있는 도메인이 없으면 등록하지 않고 no-healthy-domain 을 반환한다', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('down')));
+  it('base 가 죽으면 fallback 을 등록한다', async () => {
+    stubHealthFetch(() => ({ ok: false }));
     const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
 
     const result = await ensureLiveMeetingUrl({
       meetingUrl: null,
-      baseCandidates: ['https://primary.example'],
+      baseCandidates: [BASE, FALLBACK],
+      registerBaseUrl,
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(registerBaseUrl).toHaveBeenCalledWith(FALLBACK);
+  });
+
+  it('base 가 죽었고 fallback 도 없으면 등록하지 않고 no-healthy-domain', async () => {
+    stubHealthFetch(() => ({ ok: false }));
+    const registerBaseUrl = vi.fn().mockResolvedValue(undefined);
+
+    const result = await ensureLiveMeetingUrl({
+      meetingUrl: null,
+      baseCandidates: [BASE],
       registerBaseUrl,
     });
 

@@ -11,6 +11,8 @@ interface FeedbackModalState {
   missionId: number;
   challengeTitle?: string;
   missionTh?: number;
+  /** 진입 시 초기 선택할 멘티의 출석 id (없으면 첫 멘티). */
+  initialAttendanceId?: number | null;
 }
 
 /**
@@ -51,6 +53,7 @@ export function useFeedbackManagement() {
     challengeTitle?: string;
     missionId: number;
     missionTh: number;
+    attendanceId?: number | null;
   }) => {
     setFeedbackModal({
       isOpen: true,
@@ -58,6 +61,7 @@ export function useFeedbackManagement() {
       missionId: params.missionId,
       challengeTitle: params.challengeTitle,
       missionTh: params.missionTh,
+      initialAttendanceId: params.attendanceId ?? null,
     });
   };
 

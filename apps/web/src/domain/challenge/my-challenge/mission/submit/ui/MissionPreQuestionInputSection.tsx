@@ -1,5 +1,7 @@
 import { clsx } from 'clsx';
 
+const PRE_QUESTION_MAX_LENGTH = 500;
+
 type FeedbackType = 'LIVE_FEEDBACK' | 'WRITTEN_FEEDBACK' | null;
 
 const LABEL: Record<NonNullable<FeedbackType>, string> = {
@@ -30,6 +32,13 @@ export const MissionPreQuestionInputSection = ({
     ? PLACEHOLDER[feedbackType]
     : '피드백에서 물어보고 싶은 점을 자유롭게 작성해 주세요.';
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length > PRE_QUESTION_MAX_LENGTH) {
+      e.target.value = e.target.value.slice(0, PRE_QUESTION_MAX_LENGTH);
+    }
+    onChange(e);
+  };
+
   return (
     <section>
       <div className="mb-1.5 mt-7">
@@ -48,9 +57,13 @@ export const MissionPreQuestionInputSection = ({
         )}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         disabled={disabled}
+        maxLength={PRE_QUESTION_MAX_LENGTH}
       />
+      <div className="text-xxsmall12 mt-1 text-right text-neutral-50">
+        {value.length}/{PRE_QUESTION_MAX_LENGTH}
+      </div>
     </section>
   );
 };

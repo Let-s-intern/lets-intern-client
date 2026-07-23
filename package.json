@@ -34,7 +34,8 @@
     "format:web": "prettier --write \"apps/web/**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:admin": "prettier --write \"apps/admin/**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:mentor": "prettier --write \"apps/mentor/**/*.{ts,tsx,js,jsx,json,md}\"",
-    "check": "pnpm format:check && pnpm lint",
+    "check": "pnpm check:gitignore && pnpm format:check && pnpm lint",
+    "check:gitignore": "node scripts/check-gitignore-tracked.mjs",
     "check:web": "prettier --check \"apps/web/**/*.{ts,tsx,js,jsx,json,md}\" && pnpm lint:web",
     "check:admin": "prettier --check \"apps/admin/**/*.{ts,tsx,js,jsx,json,md}\" && pnpm lint:admin",
     "check:mentor": "prettier --check \"apps/mentor/**/*.{ts,tsx,js,jsx,json,md}\" && pnpm lint:mentor",
@@ -62,7 +63,8 @@
     "overrides": {
       "protobufjs@<7.5.5": "^7.5.5",
       "path-to-regexp@<6.3.0": "6.3.0",
-      "undici@6": "^6.24.0"
+      "undici@6": "^6.24.0",
+      "websocket-driver@<0.7.5": "^0.7.5"
     }
   }
 }

@@ -51,6 +51,10 @@
  *     기본 정보 수정 결과 알림 — success 1건 + error 1건
  *      ├ 성공: "정보가 수정되었습니다"
  *      └ 실패: "정보 수정에 실패했습니다"
+ *   • apps/web/src/domain/mypage/application/section/LaunchAlertSection.tsx
+ *     출시알림 신청취소 결과 알림 — success 1건 + error 1건
+ *      ├ 성공: "출시알림이 취소되었어요"
+ *      └ 실패: "출시알림 취소에 실패했어요"
  *
  *  SuccessToast / ErrorToast (선언적 사용 케이스)
  *   • 직접 호출처 0건. 호출 케이스가 생기면 여기에 기록해주세요.

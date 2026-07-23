@@ -283,21 +283,38 @@ export const adminBlogReviewListSchema = z.object({
 // [어드민] 블로그 후기 전체 조회
 const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
 
+interface GetAdminBlogReviewListParams {
+  page?: number;
+  size?: number;
+  keyword?: string;
+  isVisible?: boolean;
+}
+
+/**
+ * 블로그 후기 목록 순수 fetcher. 훅(useGetAdminBlogReviewList)의 queryFn 이자,
+ * CSV 내보내기·인쇄처럼 캐시 밖에서 전량(size 크게)을 명령형으로 받을 때 재사용한다.
+ */
+export const getAdminBlogReviewList = async ({
+  page = 0,
+  size = 20,
+  keyword,
+  isVisible,
+}: GetAdminBlogReviewListParams = {}) => {
+  const res = await axiosV2.get('/admin/review/blog', {
+    params: { page, size, keyword, isVisible },
+  });
+  return adminBlogReviewListSchema.parse(res.data.data);
+};
+
 export const useGetAdminBlogReviewList = ({
   page = 0,
   size = 20,
-}: {
-  page?: number;
-  size?: number;
-} = {}) => {
+  keyword,
+  isVisible,
+}: GetAdminBlogReviewListParams = {}) => {
   return useQuery({
-    queryKey: [adminBlogReviewListQueryKey, page, size],
-    queryFn: async () => {
-      const res = await axiosV2.get('/admin/review/blog', {
-        params: { page, size },
-      });
-      return adminBlogReviewListSchema.parse(res.data.data);
-    },
+    queryKey: [adminBlogReviewListQueryKey, page, size, keyword, isVisible],
+    queryFn: () => getAdminBlogReviewList({ page, size, keyword, isVisible }),
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
   });

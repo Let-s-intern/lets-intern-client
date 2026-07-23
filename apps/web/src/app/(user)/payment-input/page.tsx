@@ -12,6 +12,7 @@ import CouponSection, {
   CouponSectionProps,
 } from '@/domain/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
+import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
@@ -24,9 +25,11 @@ import useProgramStore, {
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import { NoticeDialog } from '@letscareer/ui';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -49,8 +52,11 @@ const PaymentInputContent = () => {
   const [allowNavigation, setAllowNavigation] = useState(false);
   const [nextPath, setNextPath] = useState('');
 
+  // 잘못된 접근(새로고침 등) 안내 다이얼로그 노출 여부. window.alert 대체.
+  const [invalidAccess, setInvalidAccess] = useState(false);
+
   const { data: programApplicationData } = useProgramStore();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
   const { isLoading, months, banks } = useInstallmentPayment();
   const patchUserMutation = usePatchUser();
 
@@ -179,6 +185,7 @@ const PaymentInputContent = () => {
     setAllowNavigation(true);
   }, []);
 
+  // 약관 동의 가드·흔들림은 PaymentSubmitSection이 담당한다(동의 시에만 호출됨).
   const onPaymentClick = useCallback(async () => {
     try {
       await patchUserMutation.mutateAsync({
@@ -204,6 +211,10 @@ const PaymentInputContent = () => {
     programApplicationData.programOrderId,
     totalPrice,
   ]);
+
+  // 폼 자체 유효성(이메일 등). 약관 동의는 PaymentSubmitSection 내부에서 가드한다.
+  const isFormValid =
+    userInfo.initialized && isValidEmail(userInfo.contactEmail);
 
   useEffect(() => {
     // 페이지 이탈 시 실행될 함수
@@ -237,19 +248,36 @@ const PaymentInputContent = () => {
   }, [allowNavigation, nextPath, router]);
 
   useEffect(() => {
+    // 인증 스토어 하이드레이션 완료(isInitialized) 전에는 isLoggedIn이 일시적으로
+    // false일 수 있어 정상 사용자에게 오탐이 난다. 초기화 완료 후에만 검증한다.
+    if (!isInitialized) return;
     if (checkInvalidate() || !isLoggedIn) {
-      // eslint-disable-next-line no-console
-      console.log(
-        'checkInvalidate()',
-        checkInvalidate(),
-        'isLoggedIn',
-        isLoggedIn,
-      );
-      alert('잘못된 접근입니다.');
-      router.push('/');
-      initProgramApplicationForm();
+      // 기존 window.alert('잘못된 접근입니다.') 를 헤드리스 NoticeDialog(@letscareer/ui)로
+      // 대체. 실제 이동/폼 초기화는 다이얼로그 확인(goHome) 시점으로 미룬다.
+      setInvalidAccess(true);
     }
-  }, [isLoggedIn, router]);
+  }, [isInitialized, isLoggedIn]);
+
+  const goHome = useCallback(() => {
+    initProgramApplicationForm();
+    router.push('/');
+  }, [router]);
+
+  // 잘못된 접근이면 폼 대신 안내 다이얼로그만 렌더(program 로딩 여부와 무관하게 노출).
+  // 확인 버튼·Escape 등 어떤 방식으로 닫혀도 잘못된 접근이므로 항상 홈으로 이동한다
+  // (onOpenChange에서만 goHome을 호출해 우회 방지 + 중복 호출 방지).
+  if (invalidAccess) {
+    return (
+      <NoticeDialog
+        open={invalidAccess}
+        onOpenChange={(open) => {
+          if (!open) goHome();
+        }}
+        title="잘못된 접근입니다."
+        description="정상적인 경로로 다시 접근해 주세요."
+      />
+    );
+  }
 
   if (programLoading || !program) {
     return <LoadingContainer />;
@@ -389,38 +417,20 @@ const PaymentInputContent = () => {
         </div>
       )}
 
-      <div className="shadow-05 fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 md:hidden">
-        <button
-          className="next_button border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 hover:disabled:opacity-100"
-          onClick={onPaymentClick}
-          disabled={
-            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
-          }
-        >
-          {buttonText}
-        </button>
-      </div>
-
-      <div className="mx-5 hidden md:block">
-        <button
-          className="next_button border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 block w-full justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 hover:disabled:opacity-100"
-          onClick={onPaymentClick}
-          disabled={
-            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
-          }
-        >
-          {buttonText}
-        </button>
-      </div>
+      <PaymentSubmitSection
+        onSubmit={onPaymentClick}
+        buttonText={buttonText}
+        disabled={!isFormValid}
+      />
     </div>
   );
 };
 
 const PaymentInputPage = () => {
   return (
-    <Suspense fallback={<LoadingContainer />}>
+    <AsyncBoundary pendingFallback={<LoadingContainer />}>
       <PaymentInputContent />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

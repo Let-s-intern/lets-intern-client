@@ -95,7 +95,7 @@ export default function useProgramCategoryNav() {
       ),
     },
     {
-      children: '현직자 LIVE 클래스',
+      children: '무료 세미나',
       href: '/program?type=LIVE',
     },
     {

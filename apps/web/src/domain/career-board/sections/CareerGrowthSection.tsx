@@ -26,8 +26,16 @@ import {
 const TITLE = '커리어 성장';
 const HREF = '/mypage/application';
 
+// 커리어 성장 위젯은 출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
+type CareerGrowthCategory = Exclude<ApplicationCategory, 'LAUNCH_ALERT'>;
+
+const CAREER_GROWTH_CATEGORY_OPTIONS = APPLICATION_CATEGORY_OPTIONS.filter(
+  (option): option is { value: CareerGrowthCategory; label: string } =>
+    option.value !== 'LAUNCH_ALERT',
+);
+
 const EMPTY_CONFIG_BY_CATEGORY: Record<
-  ApplicationCategory,
+  CareerGrowthCategory,
   { description: string; href: string; buttonText: string }
 > = {
   PROGRAM: {
@@ -87,7 +95,7 @@ const CareerGrowthContent = () => {
     mypageApplicationsQueryOptions,
   );
   const { setHasCareerData } = useCareerDataStatus();
-  const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
+  const [category, setCategory] = useState<CareerGrowthCategory>('PROGRAM');
 
   const isLibraryTab = category === 'LIBRARY';
 
@@ -133,7 +141,7 @@ const CareerGrowthContent = () => {
       body={
         <div className="flex flex-col gap-6 pt-1">
           <CategoryChips
-            options={APPLICATION_CATEGORY_OPTIONS}
+            options={CAREER_GROWTH_CATEGORY_OPTIONS}
             selected={category}
             onChange={setCategory}
           />

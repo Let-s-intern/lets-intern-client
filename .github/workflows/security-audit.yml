@@ -5,9 +5,8 @@
 # 검사한다. 공유 pnpm-lock.yaml 전체를 검사하므로 path 필터 없이 모든
 # PR에서 실행한다.
 #
-# ▶ 현재 단계: report-only (머지 차단 안 함, branch protection 비필수)
-#   critical 취약점이 있어도 통과시키고 결과만 출력한다. 안정화 후
-#   아래 audit 스텝의 `|| true` 를 제거하면 critical 발견 시 빨간불이 되고,
+# ▶ 현재 단계: 차단 모드 (critical 취약점 발견 시 실패)
+#   critical 취약점이 있으면 이 스텝이 실패해 PR 체크가 빨간불이 된다.
 #   필요 시 GitHub Settings → Branches 에서 '패키지 보안검사'를 필수 체크로
 #   추가하면 머지 차단 게이트가 된다.
 # ============================================================
@@ -34,10 +33,8 @@ jobs:
           node-version: '20'
 
       # pnpm audit 은 pnpm-lock.yaml 만 읽으므로 `pnpm install` 불필요.
-      # TODO(차단 모드 전환): 안정화 후 `|| true` 제거.
-      - name: pnpm audit (critical, report-only)
+      - name: pnpm audit (critical)
         run: |
           echo "::group::pnpm audit (critical, prod deps)"
-          pnpm audit --audit-level critical --prod --ignore-registry-errors || true
+          pnpm audit --audit-level critical --prod --ignore-registry-errors
           echo "::endgroup::"
-          echo "ℹ️ 현재 report-only 모드입니다. 안정화 후 차단 모드로 전환 예정."

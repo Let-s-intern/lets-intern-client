@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogType, useBlogListQuery } from '@/api/blog/blog';
+import { BlogType, blogListQueryOptions } from '@/api/blog/blog';
 import {
   GetReview,
   QuestionType,
@@ -13,6 +13,7 @@ import Button from '@/common/button/Button';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { questionTypeToText } from '@/utils/convert';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -24,10 +25,12 @@ const ReviewSection = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const { data: reviewCount } = useGetReviewCount();
-  const { data: blogData } = useBlogListQuery({
-    pageable: { page: 1, size: 0 },
-    types: [BlogType.PROGRAM_REVIEWS],
-  });
+  const { data: blogData } = useSuspenseQuery(
+    blogListQueryOptions({
+      pageable: { page: 1, size: 0 },
+      types: [BlogType.PROGRAM_REVIEWS],
+    }),
+  );
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
     useGetProgramReview({

@@ -9,7 +9,7 @@
 | `packages/api`                                          | `@letscareer/api`                                                       | axios 인스턴스 생성기, env 상수                    | [api.md](./api.md)       |
 | `packages/hooks`                                        | `@letscareer/hooks`                                                     | 공유 React 훅 (스크롤·라이프사이클·React Query 등) | [hooks.md](./hooks.md)   |
 | `packages/store`                                        | `@letscareer/store`                                                     | zustand 스토어 (auth·scroll·program·report 등)     | [store.md](./store.md)   |
-| `packages/ui`                                           | `@letscareer/ui`                                                        | 공유 UI 컴포넌트 (Link·Image)                      | [ui.md](./ui.md)         |
+| `packages/ui`                                           | `@letscareer/ui`                                                        | 공유 UI 컴포넌트 (Radix 기반 AlertDialog·Toast·Popup·CategoryTabs + JitsiEmbed) | [ui.md](./ui.md)         |
 | `packages/utils`                                        | `@letscareer/utils`                                                     | 순수 함수 유틸 (cn·debounce·throttle·invariant 등) | [utils.md](./utils.md)   |
 | `packages/types`                                        | `@letscareer/types`                                                     | 공유 타입 (User·Banner·common)                     | [types.md](./types.md)   |
 | `packages/config/{eslint,prettier,tailwind,typescript}` | `@letscareer/{eslint,prettier,tailwind}-config`, `@letscareer/tsconfig` | 공유 도구 설정                                     | [config.md](./config.md) |
@@ -23,7 +23,7 @@ import { useMounted, useScrollDirection } from '@letscareer/hooks';
 import { cn, debounce, invariant } from '@letscareer/utils';
 import { createAuthorizedAxios, SERVER_API } from '@letscareer/api';
 import { useAuthStore, useProgramStore } from '@letscareer/store';
-import { Link, Image } from '@letscareer/ui';
+import { CategoryTabs, useToast } from '@letscareer/ui';
 import type { User, Banner } from '@letscareer/types';
 ```
 

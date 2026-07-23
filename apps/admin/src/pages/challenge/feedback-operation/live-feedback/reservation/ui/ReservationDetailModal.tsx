@@ -6,10 +6,24 @@ import {
   useAdminFeedbackDetailQuery,
   useUpdateAdminFeedbackMutation,
 } from '@/api/feedback/feedback';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { twMerge } from '@/lib/twMerge';
 import { sanitizeUrl } from '@/utils/url';
 import { useEffect, useState } from 'react';
 import { formatReservationDateTime } from '../../utils/format';
+
+/**
+ * 웹 입장 페이지(`/live-feedback/[role]/[feedbackId]`) base URL.
+ * VITE_WEB_URL 미설정 시 어드민 호스트에서 웹 호스트를 유추한다
+ * (test-admin.→test. / admin.→www.).
+ */
+function getWebBaseUrl(): string {
+  const configured = import.meta.env.VITE_WEB_URL;
+  if (configured) return configured.replace(/\/$/, '');
+  return window.location.origin
+    .replace('//test-admin.', '//test.')
+    .replace('//admin.', '//www.');
+}
 
 interface ReservationDetailModalProps {
   /** 선택된 예약 id. null 이면 모달을 렌더하지 않는다(닫힘). */
@@ -30,6 +44,52 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
       <span className="text-neutral-40 w-20 shrink-0">{label}</span>
       <span className="break-words">{value || '-'}</span>
     </div>
+  );
+}
+
+/**
+ * 알림톡 입장 링크 복사 — 멘토/멘티 각각의 딥링크를 클립보드에 복사한다.
+ * 링크 형식: `{web}/live-feedback/{role}/{feedbackId}` (역할별 경로).
+ */
+function EntryLinkPanel({ feedbackId }: { feedbackId: number }) {
+  const { snackbar } = useAdminSnackbar();
+
+  const copyLink = async (role: 'mentor' | 'mentee') => {
+    const url = `${getWebBaseUrl()}/live-feedback/${role}/${feedbackId}`;
+    const roleLabel = role === 'mentor' ? '멘토' : '멘티';
+    try {
+      await navigator.clipboard.writeText(url);
+      snackbar(`${roleLabel} 입장 링크를 복사했습니다.`);
+    } catch {
+      snackbar('링크 복사에 실패했습니다. 다시 시도해 주세요.');
+    }
+  };
+
+  return (
+    <section
+      aria-label="입장 링크"
+      className="border-neutral-80 rounded-xl border p-4"
+    >
+      <p className="text-xxsmall12 text-neutral-40 font-medium">
+        입장 링크 복사
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => copyLink('mentor')}
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+        >
+          멘토 입장 링크 복사
+        </button>
+        <button
+          type="button"
+          onClick={() => copyLink('mentee')}
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+        >
+          멘티 입장 링크 복사
+        </button>
+      </div>
+    </section>
   );
 }
 
@@ -124,6 +184,8 @@ function DetailBody({ detail }: { detail: FeedbackDetailAdminVo }) {
           </li>
         </ul>
       </section>
+
+      <EntryLinkPanel feedbackId={detail.feedbackId} />
 
       <EditPanel detail={detail} />
     </div>

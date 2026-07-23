@@ -1,6 +1,11 @@
 'use client';
 
 /**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/context/Providers.tsx
+ */
+
+/**
  * Toast Provider + Viewport 통합 (앱 루트 마운트용).
  *
  * 어떤 컴포넌트인가:

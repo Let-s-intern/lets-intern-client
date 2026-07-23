@@ -1,6 +1,7 @@
 export { default as useActiveLink } from './useActiveLink';
 export { default as useBeforeUnloadWarning } from './useBeforeUnloadWarning';
 export { useCareerModals } from './useCareerModals';
+export { useCarouselDots } from './useCarouselDots';
 export { useChangeDetection } from './useChangeDetectionHook';
 export { useControlScroll } from './useControlScroll';
 export { default as useDecimalCounter } from './useDecimalCounter';
