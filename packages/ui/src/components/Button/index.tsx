@@ -7,8 +7,8 @@
  * as="a"로 렌더 시, 버튼 스타일을 링크에 입힘 (href 필수)
  */
 
+import { twMerge } from '@letscareer/utils/twMerge';
 import { cva, type VariantProps } from 'class-variance-authority';
-import clsx from 'clsx';
 import * as React from 'react';
 
 export const buttonVariants = cva(
@@ -64,7 +64,10 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsAnchorProps;
 
 export function Button(props: ButtonProps) {
   const { variant, size, display, className, children, ...rest } = props;
-  const classes = clsx(buttonVariants({ variant, size, display }), className);
+  const classes = twMerge(
+    buttonVariants({ variant, size, display }),
+    className,
+  );
 
   if (rest.as === 'a') {
     const { as, ...anchorRest } = rest;
