@@ -70,7 +70,7 @@ export function Button(props: ButtonProps) {
   );
 
   if (rest.as === 'a') {
-    const { as, ...anchorRest } = rest;
+    const { as: _as, ...anchorRest } = rest;
     return (
       <a className={classes} {...anchorRest}>
         {children}
@@ -78,7 +78,7 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  const { as, type = 'button', ...buttonRest } = rest;
+  const { as: _as, type = 'button', ...buttonRest } = rest;
   return (
     <button type={type} className={classes} {...buttonRest}>
       {children}
