@@ -18,7 +18,7 @@
     "./AlertDialog": "./src/AlertDialog/index.tsx",
     "./Popup": "./src/Popup/index.ts",
     "./Toast": "./src/Toast/index.tsx",
-    "./Button": "./src/components/Button/index.ts"
+    "./Button": "./src/components/Button/index.tsx"
   },
   "dependencies": {
     "@jitsi/react-sdk": "^1.4.4",
