@@ -19,6 +19,10 @@ import {
 
 import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
+import {
+  filterExperiencePairRows,
+  findExperienceMissionPairs,
+} from './experiencePairGrouping';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 
@@ -326,6 +330,8 @@ export function useMergedFeedbackRows(
               missionId: mission.missionId,
               missionTh: mission.th,
               challengeTitle: challenge.title ?? '챌린지',
+              // 클릭한 멘티 본인 상세로 진입하기 위한 출석 id (index 0 폴백 방지).
+              attendanceId: mentee.id,
             },
           });
         });
@@ -370,10 +376,25 @@ export function useMergedFeedbackRows(
       }
     }
 
+    // ── 경험정리(EXPERIENCE_1/2) 페어 후처리 ─────────────────────────────────
+    // 같은 회차의 경험정리 미션 2개로 멘티가 중복 표시되는 행을 규칙대로 걸러낸다.
+    // 페어가 없으면(경험정리 없음/BE missionType 미노출) rows를 그대로 반환한다.
+    const experiencePairs = findExperienceMissionPairs(
+      writtenChallenges.flatMap((challenge) =>
+        challenge.feedbackMissions.map((mission) => ({
+          challengeId: challenge.challengeId,
+          th: mission.th,
+          missionId: mission.missionId,
+          missionType: mission.missionType,
+        })),
+      ),
+    );
+    const filteredRows = filterExperiencePairRows(rows, experiencePairs);
+
     // ── 정렬 ─────────────────────────────────────
     // 날짜 내림차순(최신 먼저). 단 날짜 미상 행은 항상 마지막으로 민다.
     // 같은 날 안에서는 시간 오름차순(이른 세션 먼저) → 멘티명 순서 유지.
-    rows.sort((a, b) => {
+    filteredRows.sort((a, b) => {
       const hasA = !!a.startDate;
       const hasB = !!b.startDate;
       if (hasA !== hasB) return hasA ? -1 : 1;
@@ -387,7 +408,7 @@ export function useMergedFeedbackRows(
       return a.menteeNameLabel.localeCompare(b.menteeNameLabel);
     });
 
-    return rows;
+    return filteredRows;
   }, [writtenChallenges, liveRounds, missionRangeMap, writtenAttendanceMap]);
 }
 

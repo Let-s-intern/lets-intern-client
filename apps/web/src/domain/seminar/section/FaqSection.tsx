@@ -1,15 +1,24 @@
 'use client';
 
-import { Accordion } from '@letscareer/ui';
+import { useState } from 'react';
 import channelService from '@/ChannelService';
 import { SEMINAR_FAQ_HEAD, SEMINAR_FAQS } from '../data/faqs';
 import FaqItem from '../ui/FaqItem';
 
 /**
- * S10 FAQ 섹션 — Push1 헤드리스 Accordion(single)을 소비한다.
+ * S10 FAQ 섹션 — 세미나 도메인 자체 아코디언(하드코딩, single).
  * 한 번에 하나의 항목만 열리며, 해소되지 않은 문의는 채널톡으로 연결한다.
+ *
+ * [이력] 이전엔 공용 헤드리스 Accordion(@letscareer/ui · packages/ui/src/Accordion)을 소비했다.
+ * 그 프리미티브의 실제 호출처는 아래 두 곳이 전부였고(유일 소비처), 제거 후 도메인 로컬 구현으로 되돌렸다.
+ *   - FaqSection.tsx  : Accordion (root, type="single")
+ *   - FaqItem.tsx     : AccordionItem / AccordionTrigger / AccordionContent
  */
 const FaqSection = () => {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id));
+
   return (
     <section className="w-full px-5 py-16 md:py-24">
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
@@ -22,11 +31,16 @@ const FaqSection = () => {
           </h2>
         </div>
 
-        <Accordion type="single" className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           {SEMINAR_FAQS.map((faq) => (
-            <FaqItem key={faq.id} faq={faq} />
+            <FaqItem
+              key={faq.id}
+              faq={faq}
+              isOpen={openId === faq.id}
+              onToggle={() => toggle(faq.id)}
+            />
           ))}
-        </Accordion>
+        </div>
 
         <div className="bg-neutral-95 flex flex-col items-center gap-3 rounded-md px-6 py-5 md:flex-row md:justify-between">
           <span className="text-xsmall14 md:text-small18 text-neutral-35 font-semibold">

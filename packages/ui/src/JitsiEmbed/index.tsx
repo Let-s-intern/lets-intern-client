@@ -1,11 +1,17 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 import { LetsCareerLogo } from './LetsCareerLogo';
 import { useJitsiConnection } from './useJitsiConnection';
+
+export { default as LiveSessionTimer } from './LiveSessionTimer';
+export {
+  LiveFeedbackMaterials,
+  type LiveFeedbackMaterialsProps,
+} from './LiveFeedbackMaterials';
 
 interface JitsiEmbedProps {
   /** 회의실 URL — 외부에서 buildJitsiRoomUrl로 생성해 전달 (셀프호스팅 단일 사용) */
@@ -48,6 +54,16 @@ const ALLOWED_TOOLBAR_BUTTONS = [
   'hangup',
 ];
 
+// 모바일: 좁은 툴바에서 채팅·설정을 숨겨 핵심 컨트롤만 노출.
+const MOBILE_TOOLBAR_BUTTONS = ALLOWED_TOOLBAR_BUTTONS.filter(
+  (b) => b !== 'chat' && b !== 'settings',
+);
+
+/** 모바일 뷰포트 판정(768px 미만). SSR 안전(window 없으면 false). */
+function isMobileViewport(): boolean {
+  return typeof window !== 'undefined' && window.innerWidth < 768;
+}
+
 const CONFIG_OVERWRITE = {
   startWithVideoMuted: false,
   startWithAudioMuted: false,
@@ -60,6 +76,9 @@ const CONFIG_OVERWRITE = {
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
   prejoinPageEnabled: false,
+  // 모바일 웹에서 "이 회의에 어떻게 참여하시겠습니까?"(앱으로 열기/브라우저 참여) 딥링킹
+  // 인터스티셜을 건너뛰고 바로 브라우저 회의로 입장. (HIDE_DEEP_LINKING_LOGO는 로고만 숨김)
+  disableDeepLinking: true,
   // 신버전 워터마크 로고 제거(클라이언트 측). 빈 문자열이면 로고를 그리지 않는다.
   defaultLogoUrl: '',
   // 좌상단 비디오 화질 라벨(예: 480p/HD) 숨김.
@@ -152,6 +171,14 @@ export function JitsiEmbed({
     onExhausted,
   });
 
+  // 툴바 버튼은 Jitsi 마운트 시 1회 고정 → 렌더 시점 뷰포트로 모바일 여부 결정(mount당 1회).
+  const [configOverwrite] = useState(() => ({
+    ...CONFIG_OVERWRITE,
+    toolbarButtons: isMobileViewport()
+      ? MOBILE_TOOLBAR_BUTTONS
+      : ALLOWED_TOOLBAR_BUTTONS,
+  }));
+
   return (
     <div className="relative h-full w-full bg-neutral-900">
       {/* 좌상단 — 로고 + (옵션)타이머를 하나의 반투명 아크릴 패널로 묶는다.
@@ -177,7 +204,7 @@ export function JitsiEmbed({
         <JitsiMeeting
           domain={domain}
           roomName={roomName}
-          configOverwrite={CONFIG_OVERWRITE}
+          configOverwrite={configOverwrite}
           interfaceConfigOverwrite={INTERFACE_CONFIG_OVERWRITE}
           onReadyToClose={onClose}
           onApiReady={(api) => {

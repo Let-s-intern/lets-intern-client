@@ -14,6 +14,8 @@ jest.mock('@letscareer/ui/JitsiEmbed', () => ({
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />
   ),
+  LiveSessionTimer: () => <div data-testid="live-session-timer" />,
+  LiveFeedbackMaterials: () => <div data-testid="live-feedback-materials" />,
 }));
 
 // 입장 핸들러가 쓰는 회의실 URL PATCH 훅 스텁 — axios(@letscareer/api)·QueryClient 체인 차단.

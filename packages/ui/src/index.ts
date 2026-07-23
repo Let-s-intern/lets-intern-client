@@ -17,5 +17,3 @@ export * from './AlertDialog';
 export * from './Popup';
 export * from './Toast';
 export * from './CategoryTabs';
-export * from './Accordion';
-export * from './SectionAnchor';

@@ -30,6 +30,7 @@ function formatTimeRange(startDate?: string, endDate?: string): string {
   const fmt: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   };
   const startTime = new Date(startDate).toLocaleTimeString('ko-KR', fmt);
   if (!endDate) return startTime;
@@ -43,7 +44,7 @@ function Row({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex items-start justify-between gap-3 py-3">
       <span className="text-xsmall14 text-neutral-45 shrink-0">{label}</span>
-      <span className="text-xsmall14 text-neutral-0 text-right font-medium">
+      <span className="text-xsmall14 text-neutral-0 whitespace-nowrap text-right font-medium">
         {value}
       </span>
     </div>

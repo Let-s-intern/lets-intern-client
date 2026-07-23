@@ -18,6 +18,8 @@ interface BaseModalProps {
   onClose: () => void;
   children?: React.ReactNode;
   className?: string;
+  /** 오버레이(모달 바깥 딤) 커스텀 클래스 — 미전달 시 기본(bg-black/50) 유지. */
+  overlayClassName?: string;
   isLoading?: boolean;
   /** 오버레이(모달 바깥) 클릭으로 닫을지 여부. 기본 true. */
   closeOnOverlayClick?: boolean;
@@ -27,6 +29,7 @@ const BaseModal = ({
   onClose,
   children,
   className,
+  overlayClassName,
   isLoading,
   closeOnOverlayClick = true,
 }: BaseModalProps) => {
@@ -42,7 +45,10 @@ const BaseModal = ({
         role="dialog"
         aria-modal="true"
       >
-        <ModalOverlay onClose={closeOnOverlayClick ? onClose : undefined} />
+        <ModalOverlay
+          onClose={closeOnOverlayClick ? onClose : undefined}
+          className={overlayClassName}
+        />
         <div
           className={twMerge(
             'rounded-ms relative w-full overflow-hidden bg-white',

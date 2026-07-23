@@ -132,7 +132,7 @@ describe('JitsiEmbedModal', () => {
     );
 
     // 참석 클릭만으로는 저장되지 않는다(지연 저장).
-    await user.click(screen.getByRole('button', { name: '참석' }));
+    await user.click(screen.getByRole('button', { name: '출석' }));
     expect(onSaveAttendance).not.toHaveBeenCalled();
 
     // 모달이 닫히면 보관된 출석이 전송된다.
@@ -156,8 +156,8 @@ describe('JitsiEmbedModal', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: '참석' }));
-    await user.click(screen.getByRole('button', { name: '참석' })); // 해제
+    await user.click(screen.getByRole('button', { name: '출석' }));
+    await user.click(screen.getByRole('button', { name: '출석' })); // 해제
     await user.click(screen.getByRole('button', { name: 'jitsi-close' }));
     expect(onSaveAttendance).not.toHaveBeenCalled();
   });
@@ -173,7 +173,7 @@ describe('JitsiEmbedModal', () => {
     );
     expect(screen.queryByText(/출석 체크/)).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: '참석' }),
+      screen.queryByRole('button', { name: '출석' }),
     ).not.toBeInTheDocument();
   });
 });

@@ -30,6 +30,22 @@ describe('ScheduleSummaryCard', () => {
     expect(screen.getByText('3회차')).toBeInTheDocument();
     expect(screen.getByText('김멘티')).toBeInTheDocument();
     expect(screen.getByText('멘티')).toBeInTheDocument();
+    expect(screen.getByText(/10:00 ~ 11:00/)).toBeInTheDocument();
+  });
+
+  it('일시 값은 한 줄 유지 스타일(whitespace-nowrap)을 가진다', () => {
+    render(
+      <ScheduleSummaryCard
+        counterpartLabel="멘토"
+        counterpartName="관리자"
+        startDate="2026-07-22T17:30:00+09:00"
+        endDate="2026-07-22T18:00:00+09:00"
+        role="MENTEE"
+      />,
+    );
+
+    const dateValue = screen.getByText(/17:30 ~ 18:00/);
+    expect(dateValue).toHaveClass('whitespace-nowrap');
   });
 
   it('role이 null이면 역할 확인 안내를 보여준다', () => {

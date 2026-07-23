@@ -26,6 +26,8 @@ interface MenteeInfoProps {
   mentee: MenteeData | null;
   challengeTitle?: string;
   collapsed?: boolean;
+  /** 멘티가 작성한 사전 질문 (서면 상세 응답에서 전달). 없으면 미표시. */
+  preQuestion?: string | null;
   /** 경험정리형 제출물(링크 없음·제출됨) 보기 진입 */
   onViewExperience?: () => void;
   /** 경험을 모달 왼쪽 패널에 띄워 보면서 피드백 작성 */
@@ -63,6 +65,7 @@ const MenteeInfo = ({
   mentee,
   challengeTitle,
   collapsed = false,
+  preQuestion,
   onViewExperience,
   onViewExperienceSide,
   onViewLinkSide,
@@ -274,6 +277,14 @@ const MenteeInfo = ({
                   희망 기업
                 </span>
                 <span>{mentee.wishCompany}</span>
+              </div>
+            ) : null}
+            {preQuestion ? (
+              <div className="flex gap-2">
+                <span className="w-16 shrink-0 text-neutral-400">
+                  사전 질문
+                </span>
+                <span className="whitespace-pre-wrap">{preQuestion}</span>
               </div>
             ) : null}
           </div>

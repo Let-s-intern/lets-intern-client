@@ -1,6 +1,10 @@
 @.claude/behavioral.md
 @AGENTS.md
 
+# 필수 규칙
+
+`packages/ui`(`@letscareer/ui`)에는 공통 컴포넌트를 새로 추가하지 않는다. 기존 컴포넌트를 import·호출하는 것도 금지한다. 새 UI는 사용하는 도메인 폴더(`src/domain/{도메인}/`) 안에 두며, 여러 도메인에서 쓰이더라도 공용화 대신 도메인 내 구현을 사용한다.
+
 # .claude/ 길잡이
 
 ```
@@ -26,7 +30,6 @@
 │   ├── dev-docs-updater/                 # .claude/docs 개발문서 갱신·3계층 동기화
 │   ├── folder-structure/                 # DDD + 프랙탈 폴더 구조
 │   ├── git-branch-report/                # 브랜치 작업 → 팀 공유 HTML/PDF 보고서
-│   ├── headless-component/               # 헤드리스 컴포넌트 제작·공용화 기준
 │   ├── quality-check/                     # 변경 파일 포맷·린트·타입체크 실행
 │   ├── seo/                              # SEO 규칙
 │   ├── server-code-reference/            # 백엔드(Spring) 실제 소스 직접 확인
@@ -88,7 +91,7 @@
 | 커밋 전 포맷·린트·타입체크 | `skills/quality-check/SKILL.md` |
 | 공유 훅/컴포넌트 찾기 | `docs/letscareer/packages/` |
 | 디자인 토큰·스타일링 컨벤션 | `docs/letscareer/design-system.md` |
-| 헤드리스 컴포넌트 제작·공용화 판단 | `skills/headless-component/SKILL.md` (사례집: `docs/letscareer/headless-components.md`) |
+| 헤드리스 컴포넌트 제작·공용화 판단 | `docs/letscareer/headless-components.md` (사례집) |
 | 도메인 로직 이해 | `docs/letscareer/apps/<app>/domain/<도메인>.md` |
 | API 엔드포인트·요청/응답 스펙 찾기 | `skills/swagger-api-finder/SKILL.md` (원문 URL: `docs/letscareer/API_docs/swagger_url.md`) |
 | BE 실제 동작·DB 저장 구조·쿼리 확인 | `skills/server-code-reference/SKILL.md` (소스: `../lets-career-server`) |

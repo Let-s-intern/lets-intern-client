@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
+ *   - apps/web/src/app/(user)/mypage/layout.tsx
+ *   - apps/web/src/app/(user)/challenge/[applicationId]/[programId]/feedback/layout.tsx
+ *   - apps/web/src/domain/mypage/application/ApplicationContent.tsx
+ *   - apps/web/src/domain/program/section/ProgramStatusTabs.tsx
+ *   - apps/web/src/domain/seminar/section/SeminarStatusTabs.tsx
+ *   - apps/admin/src/domain/faq/FaqSection.tsx
+ */
+
 import clsx from 'clsx';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 

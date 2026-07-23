@@ -69,39 +69,64 @@ const MenteeAttendanceBar = ({
   selected,
   onSelect,
 }: MenteeAttendanceBarProps) => {
+  // 이름 라벨과 출석/결석 칩의 글자 크기를 통일(text-xs).
   const baseChip =
-    'rounded-lg px-4 py-1.5 text-sm font-semibold transition disabled:opacity-50';
+    'shrink-0 whitespace-nowrap rounded-lg px-3 py-1 text-xs font-semibold transition disabled:opacity-50 md:py-1.5';
   const toggle = (status: FeedbackAttendanceStatus) =>
     onSelect(selected === status ? null : status);
   return (
-    <div className="flex items-center gap-2 rounded-full bg-black/45 py-1.5 pl-4 pr-1.5 text-white shadow-lg backdrop-blur-md">
-      <span className="text-xs font-medium text-white/80">
-        {menteeName} 님 출석
+    <div
+      className={twMerge(
+        // 체크 전: 흰 아크릴(반투명·잘 보임). 체크 후: 배경 거의 투명(화면 덜 가림).
+        'flex max-w-[calc(100vw-1rem)] items-center gap-1.5 rounded-full py-1 pl-3 pr-1 shadow-lg backdrop-blur-md transition-colors',
+        selected
+          ? 'border border-transparent bg-white/10 text-white'
+          : 'border border-white/40 bg-white/70 text-neutral-800',
+      )}
+    >
+      <span
+        className={twMerge(
+          'shrink-0 whitespace-nowrap text-xs font-semibold',
+          selected ? 'text-white/80' : 'text-neutral-900',
+        )}
+      >
+        {menteeName}님의 출석여부를 체크해 주세요
       </span>
-      <span className="h-4 w-px bg-white/20" />
+      <span
+        className={twMerge(
+          'h-4 w-px shrink-0',
+          selected ? 'bg-white/25' : 'bg-neutral-400',
+        )}
+      />
       <button
         type="button"
         onClick={() => toggle('PRESENT')}
         className={twMerge(
           baseChip,
+          // 체크 후엔 선택 칩도 반투명(bg .../70)으로 빠져 전체가 균일하게 은은해진다.
           selected === 'PRESENT'
-            ? 'bg-[#4d55f5] text-white'
-            : 'text-white/80 hover:bg-white/10',
+            ? 'bg-[#4d55f5]/70 text-white'
+            : selected // 다른 항목 선택됨 → 투명 배경 위라 밝은 글자
+              ? 'text-white/70 hover:bg-white/10'
+              : 'bg-black/5 text-neutral-800 hover:bg-black/10', // 클릭 전 — 또렷하게
         )}
       >
-        참석
+        출석
       </button>
       <button
         type="button"
         onClick={() => toggle('ABSENT')}
         className={twMerge(
           baseChip,
+          // 체크 후엔 선택 칩도 반투명(bg .../70)으로 빠져 전체가 균일하게 은은해진다.
           selected === 'ABSENT'
-            ? 'bg-[#fc5555] text-white'
-            : 'text-white/80 hover:bg-white/10',
+            ? 'bg-[#fc5555]/70 text-white'
+            : selected // 다른 항목 선택됨 → 투명 배경 위라 밝은 글자
+              ? 'text-white/70 hover:bg-white/10'
+              : 'bg-black/5 text-neutral-800 hover:bg-black/10', // 클릭 전 — 또렷하게
         )}
       >
-        불참
+        결석
       </button>
     </div>
   );
@@ -288,7 +313,10 @@ const JitsiEmbedModal = ({
       isOpen={isOpen}
       onClose={handleClose}
       closeOnOverlayClick={false}
-      className="rounded-xxl aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden bg-neutral-900"
+      // 뒷배경 딤 + 블러(frosted). 이 모달에만 적용(opt-in prop). web과 동일.
+      overlayClassName="bg-black/50 backdrop-blur-sm"
+      // 크기·위치 web LiveFeedbackModal과 동일: 모바일 96dvh×98vw, 데스크탑 4:3·96vh·위쪽정렬.
+      className="rounded-xxl relative z-10 h-[96dvh] max-h-[96dvh] w-[98vw] overflow-hidden bg-black md:mt-3 md:aspect-[4/3] md:h-[96vh] md:max-h-[1080px] md:w-auto md:max-w-[96vw] md:self-start"
     >
       <div className="relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다.

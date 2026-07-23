@@ -82,3 +82,34 @@ describe('MenteeInfo 제출물 진입점', () => {
     expect(onViewExperience).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('MenteeInfo 사전 질문', () => {
+  const submitted = { ...base, id: 1, userId: 2, link: null };
+
+  it('preQuestion 전달 시 "사전 질문" 라벨과 내용을 노출한다', () => {
+    render(
+      <MenteeInfo mentee={submitted} preQuestion="자소서 3번 문항 봐주세요" />,
+    );
+
+    expect(screen.getByText('사전 질문')).toBeInTheDocument();
+    expect(screen.getByText('자소서 3번 문항 봐주세요')).toBeInTheDocument();
+  });
+
+  it('preQuestion 미전달 시 "사전 질문"을 노출하지 않는다', () => {
+    render(<MenteeInfo mentee={submitted} />);
+
+    expect(screen.queryByText('사전 질문')).toBeNull();
+  });
+
+  it('collapsed(컴팩트) 모드에서는 사전 질문을 노출하지 않는다', () => {
+    render(
+      <MenteeInfo
+        mentee={submitted}
+        collapsed
+        preQuestion="자소서 3번 문항 봐주세요"
+      />,
+    );
+
+    expect(screen.queryByText('사전 질문')).toBeNull();
+  });
+});
