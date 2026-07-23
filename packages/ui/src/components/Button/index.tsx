@@ -1,8 +1,6 @@
 'use client';
 
-/**
- * 디자인 전용 기본 Button.
- *
+/*
  * variant: solid(채움, 기본값) / soft(연한 채움) / outline(테두리) / text(텍스트만)
  * size: xs / sm / md(기본값) / lg / xl
  * display: inline(기본값) / full
