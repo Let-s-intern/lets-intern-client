@@ -10,7 +10,7 @@ export const VOD_DETAIL_URL =
 
 /**
  * VOD 훅 섹션 자소서 카드 "VOD 확인하기" 이동 대상 —
- * [🎁무료] 대기업 서류 합격률 2배 높이는 필살기 경험과 마스터 자소서 작성법.
+ * [렛츠 VOD] 대기업 서류 합격률 2배 높이는 필살기 경험과 마스터 자소서 작성법.
  */
 export const VOD_JASOSEO_URL =
-  'https://www.letscareer.co.kr/program/live/101/%5B%F0%9F%8E%81%EB%AC%B4%EB%A3%8C%5D-%EB%8C%80%EA%B8%B0%EC%97%85-%EC%84%9C%EB%A5%98-%ED%95%A9%EA%B2%A9%EB%A5%A0-2%EB%B0%B0-%EB%86%92%EC%9D%B4%EB%8A%94--%ED%95%84%EC%82%B4%EA%B8%B0-%EA%B2%BD%ED%97%98%EA%B3%BC-%EB%A7%88%EC%8A%A4%ED%84%B0-%EC%9E%90%EC%86%8C%EC%84%9C-%EC%9E%91%EC%84%B1%EB%B2%95';
+  'https://www.letscareer.co.kr/program/vod/33/%5B%EB%A0%9B%EC%B8%A0-vod%5D-%EB%8C%80%EA%B8%B0%EC%97%85-%EC%84%9C%EB%A5%98-%ED%95%A9%EA%B2%A9%EB%A5%A0-2%EB%B0%B0-%EB%86%92%EC%9D%B4%EB%8A%94-%ED%95%84%EC%82%B4%EA%B8%B0-%EA%B2%BD%ED%97%98%EA%B3%BC-%EB%A7%88%EC%8A%A4%ED%84%B0-%EC%9E%90%EC%86%8C%EC%84%9C-%EC%9E%91%EC%84%B1%EB%B2%95';
