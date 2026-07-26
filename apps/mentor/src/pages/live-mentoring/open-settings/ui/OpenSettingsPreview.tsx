@@ -6,19 +6,15 @@ import {
   durationLabel,
   formatCareerPeriod,
   formatPrice,
+  representativeCareerLabel,
 } from '../../constants';
 
 interface OpenSettingsPreviewProps {
   settings: LiveMentoringSettings;
-  /** 대표 경력 id — 백엔드에 대표 지정 필드가 없어 로컬 선택값을 그대로 받는다. */
-  representativeCareerId: number | null;
 }
 
 /** 오픈 설정 요약 카드 미리보기 (공개 리스트 카드 형태 근사). */
-const OpenSettingsPreview = ({
-  settings,
-  representativeCareerId,
-}: OpenSettingsPreviewProps) => {
+const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
   const {
     title,
     nickname,
@@ -30,8 +26,10 @@ const OpenSettingsPreview = ({
     careers,
   } = settings;
 
+  // 공개 카드는 **대표 경력만** 노출하고, 미지정이면 경력 줄 자체를 렌더하지 않는다.
+  // 여기서 첫 경력으로 폴백하면 실제 노출과 달라져 미리보기가 거짓말을 하게 된다.
   const representativeCareer =
-    careers.find((c) => c.id === representativeCareerId) ?? careers[0];
+    careers.find((career) => career.isRepresentative) ?? null;
   const price = getLowestPrice(durations);
 
   return (
@@ -68,7 +66,7 @@ const OpenSettingsPreview = ({
           <p className="text-xs text-gray-500">{nickname}</p>
           {representativeCareer && (
             <p className="text-xs text-gray-500">
-              {representativeCareer.company} · {representativeCareer.position}
+              {representativeCareerLabel(representativeCareer)}
               {representativeCareer.startDate && (
                 <>
                   {' '}

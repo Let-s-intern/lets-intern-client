@@ -44,6 +44,7 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
         startDate: '2019-01',
         endDate: null,
         isAddedByAdmin: false,
+        isRepresentative: true,
       },
     ],
     title: '자소서 실전 첨삭 멘토링',

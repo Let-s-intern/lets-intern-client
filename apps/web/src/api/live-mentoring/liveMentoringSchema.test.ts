@@ -1,25 +1,31 @@
 import {
   checklistItemSchema,
-  liveMentorCardSchema,
   liveMentorDetailSchema,
-  liveMentorListResponseSchema,
+  liveMentoringOpeningListSchema,
+  liveMentoringOpeningSchema,
 } from './liveMentoringSchema';
 
-function makeCard(overrides: Record<string, unknown> = {}) {
+function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
+    id: 100,
     mentorId: 1,
-    nickname: '자소서장인',
-    profileImage: null,
-    profileVisible: true,
-    mosaicEnabled: false,
-    mosaicBlur: 0,
-    headline: '네이버 · 기획 7년',
-    mentoringPoints: '두괄식 구조 위주',
+    mentorNickname: '자소서장인',
+    mentorProfileImage: null,
+    mentorIntroduction: '두괄식 구조 위주',
+    representativeCareer: {
+      id: 7,
+      company: '네이버',
+      field: 'IT',
+      job: '서비스 기획',
+      position: '리드',
+      department: '기획팀',
+      startDate: '2020-01',
+      endDate: null,
+    },
+    title: '자소서장인 멘토의 1대1 라이브 멘토링',
     categories: ['PERSONAL_STATEMENT'],
-    durations: [50],
-    price: 60000,
-    rating: 4.9,
-    reviewCount: 182,
+    durations: [60],
+    minimumPrice: 60000,
     feedbackStartDate: '2026-07-14',
     feedbackEndDate: '2026-07-28',
     ...overrides,
@@ -86,51 +92,88 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('liveMentorCardSchema', () => {
-  it('유효한 카드를 파싱한다', () => {
-    expect(() => liveMentorCardSchema.parse(makeCard())).not.toThrow();
+describe('liveMentoringOpeningSchema', () => {
+  it('유효한 개설을 파싱한다', () => {
+    expect(() => liveMentoringOpeningSchema.parse(makeOpening())).not.toThrow();
   });
 
-  it('rating이 문자열이면 파싱 실패', () => {
+  it('대표 경력 미지정(null)을 허용한다', () => {
+    const parsed = liveMentoringOpeningSchema.parse(
+      makeOpening({ representativeCareer: null }),
+    );
+    expect(parsed.representativeCareer).toBeNull();
+  });
+
+  it('대표 경력의 개별 필드가 null이어도 파싱한다', () => {
+    const parsed = liveMentoringOpeningSchema.parse(
+      makeOpening({
+        representativeCareer: {
+          id: 7,
+          company: null,
+          field: null,
+          job: null,
+          position: null,
+          department: null,
+          startDate: null,
+          endDate: null,
+        },
+      }),
+    );
+    expect(parsed.representativeCareer?.company).toBeNull();
+  });
+
+  it('닉네임·소개·타이틀이 null이어도 파싱한다', () => {
     expect(() =>
-      liveMentorCardSchema.parse(makeCard({ rating: '4.9' })),
-    ).toThrow();
+      liveMentoringOpeningSchema.parse(
+        makeOpening({
+          mentorNickname: null,
+          mentorIntroduction: null,
+          title: null,
+        }),
+      ),
+    ).not.toThrow();
   });
 
   it('알 수 없는 카테고리는 파싱 실패', () => {
     expect(() =>
-      liveMentorCardSchema.parse(makeCard({ categories: ['COVER_LETTER'] })),
+      liveMentoringOpeningSchema.parse(
+        makeOpening({ categories: ['COVER_LETTER'] }),
+      ),
     ).toThrow();
   });
 
-  it('진행시간이 30/50이 아니면 파싱 실패', () => {
+  it('진행시간이 30/60이 아니면 파싱 실패', () => {
     expect(() =>
-      liveMentorCardSchema.parse(makeCard({ durations: [40] })),
+      liveMentoringOpeningSchema.parse(makeOpening({ durations: [50] })),
     ).toThrow();
   });
 });
 
-describe('liveMentorListResponseSchema', () => {
-  it('페이징 응답을 파싱한다', () => {
-    const parsed = liveMentorListResponseSchema.parse({
-      content: [makeCard()],
-      page: 0,
-      size: 9,
-      totalPages: 2,
-      totalElements: 14,
+describe('liveMentoringOpeningListSchema', () => {
+  it('openingList + pageInfo 응답을 파싱한다', () => {
+    const parsed = liveMentoringOpeningListSchema.parse({
+      openingList: [makeOpening()],
+      pageInfo: {
+        pageNum: 1,
+        pageSize: 9,
+        totalElements: 14,
+        totalPages: 2,
+      },
     });
-    expect(parsed.content).toHaveLength(1);
-    expect(parsed.totalPages).toBe(2);
+    expect(parsed.openingList).toHaveLength(1);
+    expect(parsed.pageInfo.totalPages).toBe(2);
   });
 
-  it('content가 배열이 아니면 파싱 실패', () => {
+  it('openingList가 배열이 아니면 파싱 실패', () => {
     expect(() =>
-      liveMentorListResponseSchema.parse({
-        content: makeCard(),
-        page: 0,
-        size: 9,
-        totalPages: 2,
-        totalElements: 14,
+      liveMentoringOpeningListSchema.parse({
+        openingList: makeOpening(),
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 9,
+          totalElements: 14,
+          totalPages: 2,
+        },
       }),
     ).toThrow();
   });

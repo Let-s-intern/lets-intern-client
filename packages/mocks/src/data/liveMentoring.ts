@@ -187,6 +187,12 @@ export interface LiveMentoringSettingsCareer {
   startDate: string | null;
   endDate: string | null;
   isAddedByAdmin: boolean;
+  /**
+   * 대표 경력 여부. 멘토당 최대 1건만 true 이며, 한 번도 지정하지 않았으면 전부 false 다.
+   * 이 경력이 공개 리스트 멘토 카드에 노출된다
+   * (지정: `PATCH /user-career/my/{careerId}/representative`).
+   */
+  isRepresentative: boolean;
 }
 
 /**
@@ -932,6 +938,7 @@ const MY_SETTINGS_CAREERS: LiveMentoringSettingsCareer[] = [
     startDate: '2019-03',
     endDate: null,
     isAddedByAdmin: false,
+    isRepresentative: true,
   },
   {
     id: 2,
@@ -944,6 +951,7 @@ const MY_SETTINGS_CAREERS: LiveMentoringSettingsCareer[] = [
     startDate: '2018-01',
     endDate: '2019-02',
     isAddedByAdmin: false,
+    isRepresentative: false,
   },
 ];
 

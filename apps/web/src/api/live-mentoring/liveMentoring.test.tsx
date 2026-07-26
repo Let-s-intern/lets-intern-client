@@ -16,21 +16,18 @@ jest.mock('@/utils/axios', () => ({
 
 const axiosGet = axios.get as jest.Mock;
 
-function makeCard(overrides: Record<string, unknown> = {}) {
+function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
+    id: 100,
     mentorId: 1,
-    nickname: '자소서장인',
-    profileImage: null,
-    profileVisible: true,
-    mosaicEnabled: false,
-    mosaicBlur: 0,
-    headline: '네이버 · 기획 7년',
-    mentoringPoints: '두괄식 구조',
+    mentorNickname: '자소서장인',
+    mentorProfileImage: null,
+    mentorIntroduction: '두괄식 구조',
+    representativeCareer: null,
+    title: '자소서장인 멘토의 1대1 라이브 멘토링',
     categories: ['PERSONAL_STATEMENT'],
-    durations: [50],
-    price: 60000,
-    rating: 4.9,
-    reviewCount: 182,
+    durations: [60],
+    minimumPrice: 60000,
     feedbackStartDate: '2026-07-14',
     feedbackEndDate: '2026-07-28',
     ...overrides,
@@ -41,15 +38,20 @@ function listResponse() {
   return {
     data: {
       data: {
-        content: [makeCard()],
-        page: 0,
-        size: 9,
-        totalPages: 2,
-        totalElements: 14,
+        openingList: [makeOpening()],
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 9,
+          totalElements: 14,
+          totalPages: 2,
+        },
       },
     },
   };
 }
+
+/** 모든 목록 호출에 공통으로 붙는 axios 옵션(배열 파라미터 직렬화 교정). */
+const PARAMS_SERIALIZER = { indexes: null };
 
 function createWrapper(client: QueryClient) {
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -70,24 +72,47 @@ beforeEach(() => {
 });
 
 describe('useLiveMentorListQuery', () => {
-  it('page/size/sort 를 쿼리로 전달하고 응답을 파싱한다', async () => {
+  it('page/size/sortType 을 쿼리로 전달하고 응답을 파싱한다', async () => {
     axiosGet.mockResolvedValue(listResponse());
 
     const { result } = renderHook(
-      () => useLiveMentorListQuery({ page: 1, sort: 'rating' }),
+      () => useLiveMentorListQuery({ page: 2, sort: 'LATEST' }),
       { wrapper: createWrapper(newClient()) },
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors', {
-      params: { page: 1, size: 9, category: undefined, sort: 'rating' },
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
+      params: {
+        page: 2,
+        size: 9,
+        categories: undefined,
+        sortType: 'LATEST',
+      },
+      paramsSerializer: PARAMS_SERIALIZER,
     });
-    expect(result.current.data?.content).toHaveLength(1);
-    expect(result.current.data?.totalPages).toBe(2);
+    expect(result.current.data?.openingList).toHaveLength(1);
+    expect(result.current.data?.pageInfo.totalPages).toBe(2);
   });
 
-  it("category='ALL'이면 category 쿼리를 전달하지 않는다", async () => {
+  it('page 기본값은 1이다 (서버가 one-indexed)', async () => {
+    axiosGet.mockResolvedValue(listResponse());
+
+    const { result } = renderHook(() => useLiveMentorListQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosGet).toHaveBeenCalledWith(
+      '/live-mentoring',
+      expect.objectContaining({
+        params: expect.objectContaining({ page: 1 }),
+      }),
+    );
+  });
+
+  it("category='ALL'이면 categories 쿼리를 전달하지 않는다", async () => {
     axiosGet.mockResolvedValue(listResponse());
 
     const { result } = renderHook(
@@ -97,12 +122,18 @@ describe('useLiveMentorListQuery', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors', {
-      params: { page: 0, size: 9, category: undefined, sort: undefined },
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
+      params: {
+        page: 1,
+        size: 9,
+        categories: undefined,
+        sortType: undefined,
+      },
+      paramsSerializer: PARAMS_SERIALIZER,
     });
   });
 
-  it('구체 카테고리는 그대로 쿼리에 담는다', async () => {
+  it('구체 카테고리는 배열로 감싸 categories 쿼리에 담는다', async () => {
     axiosGet.mockResolvedValue(listResponse());
 
     const { result } = renderHook(
@@ -112,8 +143,14 @@ describe('useLiveMentorListQuery', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors', {
-      params: { page: 0, size: 9, category: 'PORTFOLIO', sort: undefined },
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
+      params: {
+        page: 1,
+        size: 9,
+        categories: ['PORTFOLIO'],
+        sortType: undefined,
+      },
+      paramsSerializer: PARAMS_SERIALIZER,
     });
   });
 
@@ -121,11 +158,13 @@ describe('useLiveMentorListQuery', () => {
     axiosGet.mockResolvedValue({
       data: {
         data: {
-          content: [makeCard({ rating: 'x' })],
-          page: 0,
-          size: 9,
-          totalPages: 1,
-          totalElements: 1,
+          openingList: [makeOpening({ minimumPrice: 'x' })],
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 9,
+            totalElements: 1,
+            totalPages: 1,
+          },
         },
       },
     });
@@ -145,7 +184,7 @@ describe('useLiveMentorDetailQuery', () => {
         data: {
           mentorId: 3,
           categories: ['PORTFOLIO'],
-          durations: [50],
+          durations: [60],
           price: 60000,
           rating: 5,
           reviewCount: 10,

@@ -78,6 +78,12 @@ export const liveMentoringSettingsCareerSchema = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   isAddedByAdmin: z.boolean(),
+  /**
+   * 대표 경력 여부. 멘토당 최대 1건만 true 이고, 한 번도 지정하지 않았으면 전부 false 다.
+   * 이 경력이 공개 리스트 멘토 카드에 노출된다
+   * (지정: `PATCH /user-career/my/{careerId}/representative`).
+   */
+  isRepresentative: z.boolean(),
 });
 export type LiveMentoringSettingsCareer = z.infer<
   typeof liveMentoringSettingsCareerSchema

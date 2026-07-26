@@ -18,9 +18,11 @@ import SortSelect from './SortSelect';
  * 서버 컴포넌트 라우트(page.tsx)가 이 클라이언트 컴포넌트를 렌더한다.
  */
 const LiveMentoringListPage = () => {
-  const [page, setPage] = useState(0); // 0-based
+  // 서버가 `one-indexed-parameters: true` 라 페이지 번호는 1-based로 다룬다.
+  // (MuiPagination 도 1-based라 변환 없이 그대로 주고받는다.)
+  const [page, setPage] = useState(1);
   const [category, setCategory] = useState<LiveMentorCategoryFilter>('ALL');
-  const [sort, setSort] = useState<LiveMentorSort>('rating');
+  const [sort, setSort] = useState<LiveMentorSort>('LATEST');
 
   const { data, isLoading, isError } = useLiveMentorListQuery({
     page,
@@ -30,12 +32,12 @@ const LiveMentoringListPage = () => {
 
   const handleCategoryChange = (next: LiveMentorCategoryFilter) => {
     setCategory(next);
-    setPage(0);
+    setPage(1);
   };
 
   const handleSortChange = (next: LiveMentorSort) => {
     setSort(next);
-    setPage(0);
+    setPage(1);
   };
 
   return (
@@ -60,21 +62,21 @@ const LiveMentoringListPage = () => {
         </p>
       ) : isLoading ? (
         <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>
-      ) : data && data.content.length > 0 ? (
+      ) : data && data.openingList.length > 0 ? (
         <>
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data.content.map((mentor) => (
-              <li key={mentor.mentorId}>
-                <MentorCard mentor={mentor} />
+            {data.openingList.map((opening) => (
+              <li key={opening.id}>
+                <MentorCard opening={opening} />
               </li>
             ))}
           </ul>
-          {data.totalPages > 1 && (
+          {data.pageInfo.totalPages > 1 && (
             <MuiPagination
               className="mt-6"
-              pageInfo={{ totalPages: data.totalPages }}
-              page={page + 1}
-              onChange={(_, next) => setPage(next - 1)}
+              pageInfo={{ totalPages: data.pageInfo.totalPages }}
+              page={page}
+              onChange={(_, next) => setPage(next)}
             />
           )}
         </>

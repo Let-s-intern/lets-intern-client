@@ -8,12 +8,21 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
+const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringSettingsQuery: () => ({ data: settingsData }),
   useUpdateLiveMentoringSettingsMutation: () => ({
     mutate: saveMock,
+    isPending: false,
+  }),
+}));
+
+// 대표 경력은 오픈 설정 저장과 별개로 UserCareer 전용 API 로 즉시 저장된다.
+vi.mock('@/api/career/career', () => ({
+  useSetRepresentativeCareerMutation: () => ({
+    mutate: setRepresentativeCareerMock,
     isPending: false,
   }),
 }));
@@ -45,6 +54,7 @@ const baseSettings: LiveMentoringSettings = {
       startDate: '2019-01',
       endDate: null,
       isAddedByAdmin: false,
+      isRepresentative: true,
     },
     {
       id: 2,
@@ -57,6 +67,7 @@ const baseSettings: LiveMentoringSettings = {
       startDate: '2016-01',
       endDate: '2019-01',
       isAddedByAdmin: false,
+      isRepresentative: false,
     },
   ],
   title: '자소서 실전 첨삭 멘토링',
@@ -103,23 +114,51 @@ describe('OpenSettingsPage — 프로필은 읽기 전용', () => {
   });
 });
 
-describe('OpenSettingsPage — 대표 경력 지정(로컬 전용, 서버 미저장)', () => {
-  it('기본으로 첫 경력이 선택되고 미리보기에 반영된다', () => {
+describe('OpenSettingsPage — 대표 경력 지정(전용 API 로 즉시 저장)', () => {
+  it('서버가 내려준 isRepresentative 경력이 선택된 상태로 보인다', () => {
     renderPage();
     expect(screen.getByRole('radio', { name: /네이버/ })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /카카오/ })).not.toBeChecked();
   });
 
-  it('다른 경력을 선택하면 라디오 상태가 바뀐다', () => {
-    renderPage();
+  it('첫 경력이 아니라 isRepresentative 가 true 인 경력을 따른다', () => {
+    const settings = baseSettings;
+    renderPage({
+      careers: settings.careers.map((career) => ({
+        ...career,
+        isRepresentative: career.id === 2,
+      })),
+    });
 
-    const kakao = screen.getByRole('radio', { name: /카카오/ });
-    fireEvent.click(kakao);
-
-    expect(kakao).toBeChecked();
+    expect(screen.getByRole('radio', { name: /카카오/ })).toBeChecked();
     expect(screen.getByRole('radio', { name: /네이버/ })).not.toBeChecked();
   });
 
-  it('대표 경력을 바꿔도 저장 payload 에는 포함되지 않는다(백엔드 미지원 필드)', () => {
+  it('대표 경력이 없으면 아무것도 선택되지 않고 안내를 노출한다', () => {
+    renderPage({
+      careers: baseSettings.careers.map((career) => ({
+        ...career,
+        isRepresentative: false,
+      })),
+    });
+
+    expect(screen.getByRole('radio', { name: /네이버/ })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /카카오/ })).not.toBeChecked();
+    expect(screen.getByText(/대표 경력을 지정하지 않으면/)).toBeInTheDocument();
+  });
+
+  it('경력을 선택하면 대표 경력 지정 API 를 즉시 호출한다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
+
+    expect(setRepresentativeCareerMock).toHaveBeenCalledTimes(1);
+    expect(setRepresentativeCareerMock.mock.calls[0][0]).toBe(2);
+    // 오픈 설정 저장(PUT)과는 무관한 별도 API 다.
+    expect(saveMock).not.toHaveBeenCalled();
+  });
+
+  it('대표 경력은 오픈 설정 저장 payload 에 포함되지 않는다', () => {
     renderPage();
 
     fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
@@ -259,7 +298,9 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
   it('변경사항이 없고 미오픈이면 오픈하기 버튼을 보인다(저장 없음)', () => {
     renderPage();
     expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
-    expect(screen.queryByRole('button', { name: '저장' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
   });
 
   it('변경사항이 생기면 저장 버튼으로 바뀐다', () => {
@@ -281,8 +322,12 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
 
   it('오픈 중이면 설정을 잠그고 오픈 닫기 버튼만 노출한다', () => {
     renderPage({ isOpen: true });
-    expect(screen.getByRole('button', { name: /오픈 닫기/ })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '저장' })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /오픈 닫기/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();

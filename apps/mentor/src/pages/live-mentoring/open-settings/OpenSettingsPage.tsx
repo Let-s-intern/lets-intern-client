@@ -6,6 +6,7 @@ import {
   LIVE_MENTORING_DURATIONS,
 } from '@letscareer/mocks';
 
+import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
   useLiveMentoringSettingsQuery,
   useUpdateLiveMentoringSettingsMutation,
@@ -23,11 +24,29 @@ import {
   CATEGORY_LABELS,
   formatCareerPeriod,
   formatPrice,
+  representativeCareerLabel,
 } from '../constants';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
+
+/**
+ * 저장 실패 사유를 사용자에게 그대로 보여준다.
+ *
+ * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
+ * `code`/`message`/`status` 를 **최상위 속성**으로 올린다(`error.response` 는 남지 않는다).
+ * 이걸 감추고 "저장에 실패했습니다"만 띄우면 멘토도 개발자도 원인을 알 수 없다 —
+ * 오픈 중 수정(`LIVE_MENTORING_LOCKED`)인지, 미지원 진행시간
+ * (`INVALID_LIVE_MENTORING_DURATION`)인지, 서버 장애(`INTERNAL_SERVER_ERROR`)인지가 갈린다.
+ */
+const saveErrorDescription = (error: unknown): string | undefined => {
+  const apiError = error as { code?: string; message?: string } | null;
+  if (!apiError?.message) return undefined;
+  return apiError.code
+    ? `${apiError.message} (${apiError.code})`
+    : apiError.message;
+};
 
 /** PUT 요청은 이 6개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
 const toUpdatePayload = (
@@ -44,29 +63,21 @@ const toUpdatePayload = (
 const OpenSettingsPage = () => {
   const { data } = useLiveMentoringSettingsQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringSettingsMutation();
+  const {
+    mutate: setRepresentativeCareer,
+    isPending: isSettingRepresentativeCareer,
+  } = useSetRepresentativeCareerMutation();
   const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   // 변경사항(dirty) 판정을 위한 로드 원본.
-  const [original, setOriginal] = useState<LiveMentoringSettings | null>(
-    null,
-  );
+  const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
-  // 백엔드 UserCareerVo에 공개/대표 지정 필드가 없어 로컬 상태로만 관리한다.
-  // 서버에 저장되지 않고 이 화면의 미리보기 노출용으로만 쓰인다(§PRD 오픈 설정 실 백엔드 연동).
-  const [representativeCareerId, setRepresentativeCareerId] = useState<
-    number | null
-  >(null);
 
   useEffect(() => {
     if (!data) return;
     setForm(data);
     setOriginal(data);
-    setRepresentativeCareerId((prev) =>
-      prev !== null && data.careers.some((c) => c.id === prev)
-        ? prev
-        : (data.careers[0]?.id ?? null),
-    );
   }, [data]);
 
   // 오픈 중(잠금 상태)에는 배경 스크롤을 막는다.
@@ -123,6 +134,41 @@ const OpenSettingsPage = () => {
   const isDirty = JSON.stringify(form) !== JSON.stringify(original);
   const canSave = hasRequiredFields && isDirty;
 
+  // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
+  // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
+  const representativeCareerId =
+    form.careers.find((career) => career.isRepresentative)?.id ?? null;
+
+  /**
+   * 대표 경력 지정을 즉시 서버에 반영한다.
+   *
+   * 저장에 성공하면 `form`/`original` 의 careers 플래그를 **함께** 갱신한다.
+   * 한쪽만 바꾸면 오픈 설정에 변경사항이 생긴 것으로 오인해(`isDirty`)
+   * 버튼이 "오픈하기"에서 "저장"으로 바뀌어 버린다.
+   */
+  const handleRepresentativeCareerChange = (careerId: number) => {
+    const markRepresentative = (settings: LiveMentoringSettings) => ({
+      ...settings,
+      careers: settings.careers.map((career) => ({
+        ...career,
+        isRepresentative: career.id === careerId,
+      })),
+    });
+
+    setRepresentativeCareer(careerId, {
+      onSuccess: () => {
+        setForm((prev) => (prev ? markRepresentative(prev) : prev));
+        setOriginal((prev) => (prev ? markRepresentative(prev) : prev));
+      },
+      onError: (error) =>
+        showAlert({
+          title: '대표 경력 지정에 실패했습니다.',
+          description: saveErrorDescription(error),
+          variant: 'error',
+        }),
+    });
+  };
+
   const persist = (
     next: LiveMentoringSettings,
     successTitle: string,
@@ -139,8 +185,12 @@ const OpenSettingsPage = () => {
           variant: 'success',
         });
       },
-      onError: () =>
-        showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
+      onError: (error) =>
+        showAlert({
+          title: '저장에 실패했습니다.',
+          description: saveErrorDescription(error),
+          variant: 'error',
+        }),
     });
 
   const handleSave = () => {
@@ -248,7 +298,8 @@ const OpenSettingsPage = () => {
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>대표 경력 지정</h2>
                 <p className="mb-3 text-xs text-gray-500">
-                  미리보기에 노출할 대표 경력을 하나만 선택하세요.
+                  공개 리스트 멘토 카드에 노출할 대표 경력을 하나만 선택하세요.
+                  선택하면 바로 저장돼요.
                 </p>
                 {form.careers.length === 0 ? (
                   <p className="text-sm text-gray-500">
@@ -256,6 +307,17 @@ const OpenSettingsPage = () => {
                   </p>
                 ) : (
                   <ul className="flex flex-col gap-2">
+                    {representativeCareerId === null && (
+                      <li>
+                        <p
+                          role="alert"
+                          className="text-system-error mb-1 text-xs"
+                        >
+                          대표 경력을 지정하지 않으면 공개 카드에 경력이
+                          노출되지 않아요.
+                        </p>
+                      </li>
+                    )}
                     {form.careers.map((career) => (
                       <li key={career.id}>
                         <label className="flex cursor-pointer items-center gap-2">
@@ -263,13 +325,14 @@ const OpenSettingsPage = () => {
                             type="radio"
                             name="representative-career"
                             checked={representativeCareerId === career.id}
+                            disabled={isSettingRepresentativeCareer}
                             onChange={() =>
-                              setRepresentativeCareerId(career.id)
+                              handleRepresentativeCareerChange(career.id)
                             }
                             className="accent-primary h-4 w-4"
                           />
                           <span className="text-sm text-gray-700">
-                            {career.company} · {career.position}
+                            {representativeCareerLabel(career)}
                             {career.startDate && (
                               <span className="text-gray-400">
                                 {' '}
@@ -402,10 +465,7 @@ const OpenSettingsPage = () => {
 
             {/* 우: 미리보기 */}
             <div className="lg:sticky lg:top-6 lg:self-start">
-              <OpenSettingsPreview
-                settings={form}
-                representativeCareerId={representativeCareerId}
-              />
+              <OpenSettingsPreview settings={form} />
             </div>
           </div>
         </div>

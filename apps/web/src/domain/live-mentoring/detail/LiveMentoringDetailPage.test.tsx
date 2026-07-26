@@ -17,7 +17,7 @@ function detail(overrides: Record<string, unknown> = {}) {
       data: {
         mentorId: 3,
         categories: ['PORTFOLIO'],
-        durations: [50],
+        durations: [60],
         price: 60000,
         rating: 4.8,
         reviewCount: 12,
@@ -167,7 +167,9 @@ describe('LiveMentoringDetailPage', () => {
     renderDetail();
 
     await waitFor(() =>
-      expect(screen.getByText('이 멘토가 참여 중인 챌린지')).toBeInTheDocument(),
+      expect(
+        screen.getByText('이 멘토가 참여 중인 챌린지'),
+      ).toBeInTheDocument(),
     );
     expect(screen.getByText('포트폴리오 완성 챌린지')).toBeInTheDocument();
   });

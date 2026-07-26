@@ -681,6 +681,61 @@ const LAUNCH_ALERT_MAGNET_SEED = [
 
 let launchAlertMagnetList = [...LAUNCH_ALERT_MAGNET_SEED];
 
+/**
+ * 대표 경력은 오픈 설정 저장(PUT)과 무관하게 전용 API 로 즉시 저장된다.
+ * 목에서도 상태를 들고 있어야 "지정 → 재조회 시 반영"이라는 실제 동작을 재현할 수 있다.
+ */
+let representativeCareerId: number | null =
+  LIVE_MENTORING_SETTINGS.careers.find((career) => career.isRepresentative)
+    ?.id ?? null;
+
+/** 현재 대표 경력 지정 상태를 반영한 경력 목록. */
+const settingsCareers = () =>
+  LIVE_MENTORING_SETTINGS.careers.map((career) => ({
+    ...career,
+    isRepresentative: career.id === representativeCareerId,
+  }));
+
+/**
+ * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
+ *
+ * 목 데이터는 PRD 기준(평점·후기·모자이크)이고 실제 개설 목록 응답은 그 필드가 없으므로,
+ * 공개 목록이 실제로 받는 필드만 남겨 매핑한다.
+ * `headline`("네이버 · 서비스 기획 7년")을 회사/직무로 쪼개 대표 경력을 만들고,
+ * **대표 경력 미지정(null)** 케이스도 재현하도록 5번째 멘토마다 null 을 준다.
+ */
+function toOpeningDto(card: LiveMentorCard) {
+  const [company, job] = card.headline.split('·').map((part) => part.trim());
+  const hasRepresentativeCareer = card.mentorId % 5 !== 0;
+
+  return {
+    id: card.mentorId,
+    mentorId: card.mentorId,
+    mentorNickname: card.nickname,
+    // 프로필 이미지를 끈 멘토는 백엔드도 이미지를 내려주지 않는다.
+    mentorProfileImage: card.profileVisible ? card.profileImage : null,
+    mentorIntroduction: card.mentoringPoints,
+    representativeCareer: hasRepresentativeCareer
+      ? {
+          id: card.mentorId,
+          company: company ?? null,
+          field: null,
+          job: job ?? null,
+          position: null,
+          department: null,
+          startDate: '2020-01',
+          endDate: null,
+        }
+      : null,
+    title: `${card.nickname} 멘토의 1대1 라이브 멘토링`,
+    categories: card.categories,
+    durations: card.durations,
+    minimumPrice: card.price,
+    feedbackStartDate: card.feedbackStartDate,
+    feedbackEndDate: card.feedbackEndDate,
+  };
+}
+
 export const handlers = [
   /**
    * (마이페이지) GET /user/applications — 신청현황 탭의 프로그램 신청목록.
@@ -1265,41 +1320,48 @@ export const handlers = [
   // ─────────────────────────────────────────────────────────────
 
   /**
-   * (공개) GET /live-mentoring/mentors?page&size&category&sort
-   * 서버 페이징 모킹. category 필터 + sort(rating|reviews|latest) 반영.
-   * 응답: { content, page, size, totalPages, totalElements }.
+   * (공개) GET /live-mentoring?page&size&categories&sortType
+   *
+   * 실제 백엔드 `GetLiveMentoringOpeningsResponseDto` 계약을 그대로 흉내낸다:
+   * 응답은 `{ openingList, pageInfo }`, `page`는 1-based
+   * (서버 `spring.data.web.pageable.one-indexed-parameters: true`),
+   * `categories`는 반복 파라미터(`categories=A&categories=B`)다.
    */
-  http.get('*/live-mentoring/mentors', ({ request }) => {
+  http.get('*/live-mentoring', ({ request }) => {
     const url = new URL(request.url);
-    const page = Number(url.searchParams.get('page') ?? '0');
+    const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
     const size = Number(url.searchParams.get('size') ?? '9');
-    const category = url.searchParams.get('category') as
-      | LiveMentoringCategory
-      | 'ALL'
-      | null;
-    const sort = url.searchParams.get('sort');
+    const categories = url.searchParams.getAll(
+      'categories',
+    ) as LiveMentoringCategory[];
+    const sortType = url.searchParams.get('sortType');
 
     let list: LiveMentorCard[] =
-      category && category !== 'ALL'
-        ? LIVE_MENTOR_CARDS.filter((c) => c.categories.includes(category))
+      categories.length > 0
+        ? LIVE_MENTOR_CARDS.filter((c) =>
+            c.categories.some((each) => categories.includes(each)),
+          )
         : [...LIVE_MENTOR_CARDS];
 
-    if (sort === 'rating') {
-      list = [...list].sort((a, b) => b.rating - a.rating);
-    } else if (sort === 'reviews') {
-      list = [...list].sort((a, b) => b.reviewCount - a.reviewCount);
-    } else if (sort === 'latest') {
+    if (sortType === 'LATEST') {
       list = [...list].sort((a, b) => b.mentorId - a.mentorId);
+    } else if (sortType === 'FEEDBACK_START_DATE') {
+      list = [...list].sort((a, b) =>
+        a.feedbackStartDate.localeCompare(b.feedbackStartDate),
+      );
     }
 
     const totalElements = list.length;
     const totalPages = Math.max(1, Math.ceil(totalElements / size));
-    const start = page * size;
-    const content = list.slice(start, start + size);
+    const start = (page - 1) * size;
+    const openingList = list.slice(start, start + size).map(toOpeningDto);
 
     return HttpResponse.json({
       status: 200,
-      data: { content, page, size, totalPages, totalElements },
+      data: {
+        openingList,
+        pageInfo: { pageNum: page, pageSize: size, totalElements, totalPages },
+      },
     });
   }),
 
@@ -1320,7 +1382,19 @@ export const handlers = [
    * (멘토) GET /mentor/live-mentoring/settings — 오픈 설정(메타) 조회.
    */
   http.get('*/mentor/live-mentoring/settings', () => {
-    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_SETTINGS });
+    return HttpResponse.json({
+      status: 200,
+      data: { ...LIVE_MENTORING_SETTINGS, careers: settingsCareers() },
+    });
+  }),
+
+  /**
+   * (멘토) PATCH /user-career/my/:careerId/representative — 대표 경력 지정.
+   * 요청 바디는 없고, 기존 대표 경력은 서버가 자동 해제한다(단일 값으로 덮어쓰기).
+   */
+  http.patch('*/user-career/my/:careerId/representative', ({ params }) => {
+    representativeCareerId = Number(params.careerId);
+    return HttpResponse.json({ status: 200, data: { isSuccess: true } });
   }),
 
   /**
@@ -1340,7 +1414,7 @@ export const handlers = [
         nickname: LIVE_MENTORING_SETTINGS.nickname,
         profileImage: LIVE_MENTORING_SETTINGS.profileImage,
         introduction: LIVE_MENTORING_SETTINGS.introduction,
-        careers: LIVE_MENTORING_SETTINGS.careers,
+        careers: settingsCareers(),
         ...editable,
       },
     });

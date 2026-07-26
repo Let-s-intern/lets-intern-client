@@ -1,6 +1,7 @@
 import type {
   LiveMentoringCategory,
   LiveMentoringDuration,
+  RepresentativeCareer,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import type { LiveMentorSort } from '@/api/live-mentoring/liveMentoring';
 
@@ -26,11 +27,13 @@ export const CATEGORY_FILTERS: {
   { value: 'PORTFOLIO', label: CATEGORY_LABELS.PORTFOLIO },
 ];
 
-/** 정렬 옵션. */
+/**
+ * 정렬 옵션 — 백엔드 `sortType` 이 받는 값만 노출한다.
+ * 평점순·후기순은 목록 응답에 평점/후기 필드가 없어 아직 제공하지 않는다.
+ */
 export const SORT_OPTIONS: { value: LiveMentorSort; label: string }[] = [
-  { value: 'rating', label: '평점순' },
-  { value: 'reviews', label: '후기순' },
-  { value: 'latest', label: '최신순' },
+  { value: 'LATEST', label: '최신순' },
+  { value: 'FEEDBACK_START_DATE', label: '진행일정 빠른순' },
 ];
 
 /** 진행시간 라벨 (예: "30분"). */
@@ -51,4 +54,33 @@ export const priceLabel = (
 export const formatFeedbackPeriod = (start: string, end: string): string => {
   const md = (iso: string) => iso.slice(5).replace('-', '.');
   return `${md(start)} ~ ${md(end)}`;
+};
+
+/**
+ * 대표 경력 한 줄 표시 (예: "네이버 · 프로덕트 기획").
+ *
+ * 대표 경력은 **미지정일 수 있고**(`null`) 개별 필드도 모두 nullable 이라,
+ * 표시할 내용이 하나도 없으면 빈 문자열을 돌려준다(호출부에서 렌더를 건너뛴다).
+ */
+export const representativeCareerLabel = (
+  career: RepresentativeCareer | null,
+): string => {
+  if (!career) return '';
+  return [career.company, career.job ?? career.position]
+    .filter((part): part is string => Boolean(part))
+    .join(' · ');
+};
+
+/**
+ * 대표 경력 재직 기간 표시 (예: "2020.01 ~ 재직중").
+ * `YearMonth` 문자열("2020-01")을 점 표기로 바꾸고, 종료일이 없으면 재직 중으로 본다.
+ * 시작일이 없으면 빈 문자열(기간 미표시).
+ */
+export const formatCareerPeriod = (
+  startDate: string | null,
+  endDate: string | null,
+): string => {
+  if (!startDate) return '';
+  const ym = (yearMonth: string) => yearMonth.replace('-', '.');
+  return `${ym(startDate)} ~ ${endDate ? ym(endDate) : '재직중'}`;
 };

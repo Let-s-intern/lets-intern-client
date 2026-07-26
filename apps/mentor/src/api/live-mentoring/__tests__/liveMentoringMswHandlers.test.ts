@@ -14,57 +14,58 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('1대1 라이브 멘토링 MSW 핸들러', () => {
-  it('GET /live-mentoring/mentors → 서버 페이징 응답(content/totalPages/totalElements)', async () => {
-    const res = await fetch(`${BASE}/live-mentoring/mentors?page=0&size=9`);
+  it('GET /live-mentoring → 개설 목록 응답(openingList/pageInfo)', async () => {
+    const res = await fetch(`${BASE}/live-mentoring?page=1&size=9`);
     const { data } = await res.json();
-    expect(data.page).toBe(0);
-    expect(data.size).toBe(9);
-    expect(data.content).toHaveLength(9);
-    expect(data.totalElements).toBeGreaterThanOrEqual(12);
-    expect(data.totalPages).toBeGreaterThanOrEqual(2);
+    expect(data.pageInfo.pageNum).toBe(1);
+    expect(data.pageInfo.pageSize).toBe(9);
+    expect(data.openingList).toHaveLength(9);
+    expect(data.pageInfo.totalElements).toBeGreaterThanOrEqual(12);
+    expect(data.pageInfo.totalPages).toBeGreaterThanOrEqual(2);
   });
 
-  it('page=1 은 나머지 항목을 반환한다(2페이지 검증)', async () => {
-    const res = await fetch(`${BASE}/live-mentoring/mentors?page=1&size=9`);
+  it('page=2 는 나머지 항목을 반환한다(1-based 페이징 검증)', async () => {
+    const res = await fetch(`${BASE}/live-mentoring?page=2&size=9`);
     const { data } = await res.json();
-    expect(data.page).toBe(1);
-    expect(data.content.length).toBeGreaterThan(0);
-    expect(data.content.length).toBeLessThanOrEqual(9);
+    expect(data.pageInfo.pageNum).toBe(2);
+    expect(data.openingList.length).toBeGreaterThan(0);
+    expect(data.openingList.length).toBeLessThanOrEqual(9);
   });
 
-  it('category 필터가 반영된다', async () => {
+  it('categories 필터가 반영된다', async () => {
     const res = await fetch(
-      `${BASE}/live-mentoring/mentors?category=PORTFOLIO&size=50`,
+      `${BASE}/live-mentoring?categories=PORTFOLIO&size=50`,
     );
     const { data } = await res.json();
-    expect(data.content.length).toBeGreaterThan(0);
+    expect(data.openingList.length).toBeGreaterThan(0);
     expect(
-      data.content.every((c: { categories: string[] }) =>
-        c.categories.includes('PORTFOLIO'),
+      data.openingList.every((o: { categories: string[] }) =>
+        o.categories.includes('PORTFOLIO'),
       ),
     ).toBe(true);
   });
 
-  it('sort=rating 은 평점 내림차순 정렬한다', async () => {
+  it('sortType=FEEDBACK_START_DATE 는 진행 시작일 오름차순 정렬한다', async () => {
     const res = await fetch(
-      `${BASE}/live-mentoring/mentors?sort=rating&size=50`,
+      `${BASE}/live-mentoring?sortType=FEEDBACK_START_DATE&size=50`,
     );
     const { data } = await res.json();
-    const ratings = data.content.map((c: { rating: number }) => c.rating);
-    const sorted = [...ratings].sort((a, b) => b - a);
-    expect(ratings).toEqual(sorted);
+    const dates = data.openingList.map(
+      (o: { feedbackStartDate: string }) => o.feedbackStartDate,
+    );
+    const sorted = [...dates].sort((a, b) => a.localeCompare(b));
+    expect(dates).toEqual(sorted);
   });
 
-  it('sort=reviews 는 후기 많은순으로 정렬한다', async () => {
-    const res = await fetch(
-      `${BASE}/live-mentoring/mentors?sort=reviews&size=50`,
-    );
+  it('대표 경력은 미지정(null)일 수 있다', async () => {
+    const res = await fetch(`${BASE}/live-mentoring?size=50`);
     const { data } = await res.json();
-    const counts = data.content.map(
-      (c: { reviewCount: number }) => c.reviewCount,
+    const careers = data.openingList.map(
+      (o: { representativeCareer: unknown }) => o.representativeCareer,
     );
-    const sorted = [...counts].sort((a, b) => b - a);
-    expect(counts).toEqual(sorted);
+    // 실제 백엔드도 대표 경력 미지정 멘토는 null 을 내려주므로 목에서도 재현한다.
+    expect(careers.some((c: unknown) => c === null)).toBe(true);
+    expect(careers.some((c: unknown) => c !== null)).toBe(true);
   });
 
   it('GET /live-mentoring/mentors/:id → 상세(+reviews, template)', async () => {
