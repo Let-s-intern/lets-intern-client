@@ -19,13 +19,13 @@ vi.mock('@/utils/axios', () => ({
 
 // Jitsi 회의실 입장 준비(헬스체크) — 항상 성공으로 고정.
 const ensureLiveMeetingUrlMock = vi.fn(async () => ({ ok: true as const }));
-vi.mock('@letscareer/ui/JitsiEmbed/jitsiHealthCheck', () => ({
+vi.mock('@letscareer/live-session/JitsiEmbed/jitsiHealthCheck', () => ({
   ensureLiveMeetingUrl: (...args: unknown[]) =>
     ensureLiveMeetingUrlMock(...args),
 }));
 
 // JitsiEmbed(@letscareer/ui)는 실제 @jitsi/react-sdk를 끌어오므로 목으로 대체
-vi.mock('@letscareer/ui/JitsiEmbed', () => ({
+vi.mock('@letscareer/live-session/JitsiEmbed', () => ({
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />
   ),

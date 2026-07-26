@@ -6,7 +6,7 @@ import {
   JitsiEmbed,
   LiveFeedbackMaterials,
   LiveSessionTimer,
-} from '@letscareer/ui/JitsiEmbed';
+} from '@letscareer/live-session/JitsiEmbed';
 
 import BaseModal from '@/common/modal/BaseModal';
 import { twMerge } from '@/lib/twMerge';
