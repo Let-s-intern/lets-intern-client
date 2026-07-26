@@ -28,6 +28,7 @@ import {
 import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
 import type { PeriodBarData } from '../types';
+import { createGoogleCalendarUrl } from '../utils/googleCalendar';
 import JitsiEmbedModal from './JitsiEmbedModal';
 
 /** 좌측 사이드바 하단 가이드 링크 (세로 정렬). */
@@ -323,6 +324,28 @@ const LiveFeedbackReservationModal = ({
     selectedBar.liveFeedback?.startTime,
     selectedBar.liveFeedback?.endTime,
   );
+
+  // 구글 캘린더 "일정 추가" 프리필 링크 — 멘토가 예약 세션을 자기 캘린더에 담도록.
+  // 회의 링크는 웹 라이브 피드백 입장 URL(/live-feedback/mentor/{feedbackId})을 사용.
+  const round = roundTh ?? selectedBar.th;
+  const liveEntryUrl =
+    feedbackId != null
+      ? `${import.meta.env.VITE_WEB_URL ?? ''}/live-feedback/mentor/${feedbackId}`
+      : null;
+  const googleCalendarUrl =
+    startIso && endIso
+      ? createGoogleCalendarUrl({
+          // 캘린더 칩에서 잘려도 "누구와의 일정"인지 남도록 멘티 이름을 앞쪽에 둔다.
+          title: `[렛츠커리어] ${selectedMentee.name} 멘티 라이브 피드백 · ${selectedMentee.challengeTitle} ${round}차`,
+          startAt: startIso,
+          endAt: endIso,
+          // 위치(location)는 지도 핀으로 렌더돼 지저분하므로 쓰지 않고,
+          // 설명(details)에 입장 링크만 한 줄로 넣는다(구글이 자동 하이퍼링크 처리).
+          details: liveEntryUrl
+            ? `라이브 피드백 입장 링크\n${liveEntryUrl}`
+            : undefined,
+        })
+      : null;
 
   return (
     <>
@@ -622,6 +645,18 @@ const LiveFeedbackReservationModal = ({
           }
           actions={
             <div className="flex items-center gap-3">
+              {/* 구글 캘린더에 추가 — 예약 시각이 있으면 항상 노출(입장 게이트와 무관).
+                  프리필 링크라 새 탭에서 열려 사용자가 저장을 눌러 등록한다. */}
+              {googleCalendarUrl && (
+                <a
+                  href={googleCalendarUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary bg-primary-10 hover:bg-primary-15 rounded-[4px] px-4 py-2 text-sm font-semibold transition-colors"
+                >
+                  구글 캘린더에 추가
+                </a>
+              )}
               {/* 라이브 입장하기 — 시작 20분 전(LIVE_ENTER_LEAD_MS)부터 종료 전까지 활성.
                   데드락 방지: meetingUrl 이 없어도(아직 회의실 미생성) 멘토는 입장 가능.
                   클릭 시 handleEnterLive 가 헬스체크 + meeting-url PATCH 로 회의실을 생성한다.

@@ -105,7 +105,7 @@ const EnterLiveButton = ({
       type="button"
       disabled={isDisabled}
       onClick={onEnter}
-      className="text-small16 bg-primary disabled:bg-neutral-80 flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:text-neutral-50"
+      className="text-small16 bg-primary disabled:bg-neutral-85 disabled:text-neutral-45 flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold text-white disabled:cursor-not-allowed"
     >
       {isPreparing ? '회의실 준비 중...' : state.label}
     </button>
