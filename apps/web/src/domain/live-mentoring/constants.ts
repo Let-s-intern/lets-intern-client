@@ -72,40 +72,13 @@ export const formatOpeningPeriod = (start: string, end: string): string => {
 };
 
 /**
- * `YearMonth` 문자열("2020-01") 기준 재직 연차(내림).
- * 종료일이 없으면 재직 중으로 보고 `now` 까지로 계산한다.
- */
-const careerYears = (
-  startDate: string,
-  endDate: string | null,
-  now: Date,
-): number => {
-  const toMonths = (yearMonth: string) => {
-    const [year, month] = yearMonth.split('-').map(Number);
-    return year * 12 + month;
-  };
-  const endMonths = endDate
-    ? toMonths(endDate)
-    : now.getFullYear() * 12 + (now.getMonth() + 1);
-  return Math.max(0, Math.floor((endMonths - toMonths(startDate)) / 12));
-};
-
-/**
- * 리스트 카드 썸네일 좌상단 배지 (예: "PM 5년+").
+ * 리스트 카드 썸네일 좌상단 배지 (예: "PM").
  *
- * 대표 경력의 **직무 + 재직 연차**로 조합한다. 대표 경력은 미지정일 수 있고(`null`)
- * 개별 필드도 모두 nullable 이라, 직무가 없으면 빈 문자열을 돌려준다(배지 미렌더).
- * 1년 미만이면 연차를 빼고 직무만 표기한다.
+ * 대표 경력의 **직무**만 표기한다. 목록 응답에는 대표 경력 1건만 실려 총 경력을 알 수
+ * 없는데, 그 1건의 재직 기간을 연차처럼 보여주면 실제 경력과 어긋나기 때문이다.
  *
- * 연차는 **대표 경력 1건 기준**이다 — 총 경력 합산 값이 목록 응답에 없다.
+ * 대표 경력은 미지정일 수 있고(`null`) 개별 필드도 모두 nullable 이라,
+ * 직무가 없으면 빈 문자열을 돌려준다(배지 미렌더).
  */
-export const careerBadgeLabel = (
-  career: RepresentativeCareer | null,
-  now: Date = new Date(),
-): string => {
-  const job = career?.job ?? career?.position;
-  if (!job) return '';
-  if (!career?.startDate) return job;
-  const years = careerYears(career.startDate, career.endDate, now);
-  return years >= 1 ? `${job} ${years}년+` : job;
-};
+export const careerBadgeLabel = (career: RepresentativeCareer | null): string =>
+  career?.job ?? career?.position ?? '';
