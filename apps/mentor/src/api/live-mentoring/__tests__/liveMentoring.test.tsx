@@ -285,7 +285,9 @@ describe('useUpdateLiveMentoringSettingsMutation', () => {
       '/mentor/live-mentoring/settings',
       update,
     );
-    expect(result.current.data?.nickname).toBe('자소서장인');
+    await waitFor(() =>
+      expect(result.current.data?.nickname).toBe('자소서장인'),
+    );
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
     });
