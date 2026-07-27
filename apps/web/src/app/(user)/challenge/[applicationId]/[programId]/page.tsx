@@ -2,6 +2,7 @@
 
 import { useChallengeHome } from '@/api/challenge/challenge';
 import { useUserQuery } from '@/api/user/user';
+import CouponBanner from '@/common/banner/CouponBanner';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
@@ -9,9 +10,12 @@ import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissi
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
+import useCouponRewardPopup from '@/domain/challenge/hooks/useCouponRewardPopup';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
 import MissionCalendar from '@/domain/challenge/my-challenge/mission/calendar/MissionCalendar';
+import CouponRewardPopup from '@/domain/challenge/ui/CouponRewardPopup';
 import MissionTooltipQuestion from '@/domain/challenge/ui/MissionTooltipQuestion';
+import ProgramRecommendSnackbar from '@/domain/challenge/ui/ProgramRecommendSnackbar';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
@@ -76,7 +80,15 @@ function ChallengeDashboardContent() {
   // 레벨에 맞게 필터링된 schedules
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
-  const params = useParams<{ programId: string }>();
+  const couponPopup = useCouponRewardPopup({
+    challengeType: currentChallenge?.challengeType,
+    challengeEndDate: currentChallenge?.endDate,
+    todayTh,
+    schedules: filteredSchedules,
+  });
+
+  const params = useParams<{ programId: string; applicationId: string }>();
+
   const searchParams = useSearchParams();
   const testDate = searchParams.get('testDate') ?? undefined;
 
@@ -133,7 +145,7 @@ function ChallengeDashboardContent() {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="px-5 pt-8 md:pl-12 md:pr-0 md:pt-0">
+    <main className="px-5 py-8 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
@@ -174,7 +186,7 @@ function ChallengeDashboardContent() {
               </h2>
               <MissionTooltipQuestion />
             </div>
-            {filteredSchedules && (
+            {filteredSchedules.length > 0 && (
               // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
                 className="mt-3 gap-2"
@@ -185,7 +197,21 @@ function ChallengeDashboardContent() {
             )}
           </section>
         </div>
+
+        {getIsChallengeDone(programEndDate) && <ProgramRecommendSnackbar />}
+
+        <div className="md:hidden">
+          <CouponBanner />
+        </div>
       </div>
+
+      <CouponRewardPopup
+        isOpen={couponPopup.isOpen}
+        onClose={couponPopup.close}
+        challengeName={currentChallenge?.title ?? ''}
+        amount={couponPopup.amount}
+        endDate={couponPopup.endDate}
+      />
     </main>
   );
 }

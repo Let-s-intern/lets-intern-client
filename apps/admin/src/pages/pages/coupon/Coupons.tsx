@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
+import { Link } from 'react-router-dom';
 
 import AlertModal from '@/common/alert/AlertModal';
 import dayjs from '@/lib/dayjs';
@@ -50,7 +50,7 @@ const Coupons = () => {
   });
 
   const couponCellWidth = {
-    couponType: 'w-28',
+    couponType: 'w-40',
     name: 'w-40',
     code: 'flex-1',
     // createdDate: 'w-40',

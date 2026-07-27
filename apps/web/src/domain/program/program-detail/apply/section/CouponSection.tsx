@@ -1,14 +1,16 @@
+'use client';
+
+import { CouponItem, useMyCoupons } from '@/api/coupon/coupon';
+import CloseIcon from '@/assets/icons/close.svg?react';
 import { ICouponForm } from '@/types/interface';
-import axios from '@/utils/axios';
-import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import Input from '../../../../../common/input/v2/Input';
+import CouponSelectModal from '../ui/CouponSelectModal';
 
 export interface CouponSectionProps {
   setCoupon: (
     coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
   ) => void;
-  maxAmount?: number; // 최대로 적용할 수 있는 쿠폰 금액
+  maxAmount?: number;
   programType: string;
 }
 
@@ -17,89 +19,71 @@ const CouponSection = ({
   programType,
   maxAmount = Infinity,
 }: CouponSectionProps) => {
-  const [code, setCode] = useState('');
-  const [validationMsg, setValidationMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [isCoupon, setIsCoupon] = useState(false);
+  const { data: coupons = [] } = useMyCoupons(programType);
+  const [selectedCoupon, setSelectedCoupon] = useState<CouponItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const clickApply = async () => {
-    if (isCoupon) {
-      setCoupon({
-        id: null,
-        price: 0,
-      });
-      setCode('');
-      setIsCoupon(false);
-      setSuccessMsg('');
-      setValidationMsg('');
+  const availableCount = coupons.length;
+
+  const handleApply = (coupon: CouponItem | null) => {
+    setSelectedCoupon(coupon);
+    if (!coupon) {
+      setCoupon({ id: null, price: 0 });
       return;
     }
-
-    if (code === '') return;
-    await fetchCouponAvailability();
-  };
-
-  const fetchCouponAvailability = async () => {
-    try {
-      const res = await axios.get(`/coupon`, {
-        params: {
-          code,
-          programType: programType.toUpperCase(),
-        },
-      });
-      const { couponId, discount } = res.data.data;
-      setCoupon({
-        id: couponId,
-        price: discount === -1 ? maxAmount : Math.min(discount, maxAmount),
-      });
-      setValidationMsg('');
-      setSuccessMsg('쿠폰이 등록되었습니다.');
-      setIsCoupon(true);
-    } catch (error) {
-      if (isAxiosError(error)) {
-        setSuccessMsg('');
-        setValidationMsg(error.response?.data.message);
-      }
-      setCoupon((prevCoupon: ICouponForm) => ({
-        ...prevCoupon,
-        couponId: null,
-        couponPrice: 0,
-      }));
-      setIsCoupon(false);
-    }
-  };
-
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCode(e.target.value);
-    setValidationMsg('');
+    const price =
+      coupon.discount === -1
+        ? maxAmount === Infinity
+          ? 0
+          : maxAmount
+        : Math.min(coupon.discount, maxAmount);
+    setCoupon({ id: coupon.couponId, price });
   };
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex gap-2.5">
-        <Input
-          className="w-full"
-          type="text"
-          placeholder="쿠폰 번호를 입력해주세요."
-          value={code}
-          onChange={handleCodeChange}
-        />
+    <>
+      <div className="flex items-center gap-3">
+        <div className="bg-neutral-95 flex flex-1 items-center justify-between rounded-md p-3">
+          <span className="text-xsmall14 md:text-xsmall16 font-normal">
+            {selectedCoupon ? (
+              <span className="font-medium">{selectedCoupon.name}</span>
+            ) : (
+              <>
+                적용 가능한 쿠폰이{' '}
+                <span className="text-primary">{availableCount}장</span>
+                있습니다.
+              </>
+            )}
+          </span>
+          {selectedCoupon && (
+            <button
+              className="text-neutral-45"
+              onClick={() => {
+                setSelectedCoupon(null);
+                setCoupon({ id: null, price: 0 });
+              }}
+            >
+              <CloseIcon className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <button
-          className={`flex shrink-0 items-center justify-center rounded-sm ${isCoupon ? 'border-primary text-primary border-2 bg-neutral-100' : 'bg-primary text-neutral-100'} px-4 py-1.5 text-sm font-medium`}
-          onClick={clickApply}
+          className="bg-primary text-xsmall16 rounded-sm px-5 py-[9px] text-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+          onClick={() => setIsModalOpen(true)}
+          disabled={availableCount === 0}
         >
-          {isCoupon ? '쿠폰 취소' : '쿠폰 적용'}
+          쿠폰 적용
         </button>
       </div>
-      {validationMsg && (
-        <div className="text-0.875 text-system-error h-3">{validationMsg}</div>
-      )}
-      {successMsg && (
-        <div className="text-0.875 text-system-positive-blue h-3">
-          {successMsg}
-        </div>
-      )}
-    </div>
+      <CouponSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onApply={handleApply}
+        currentCouponId={selectedCoupon?.couponId ?? null}
+        coupons={coupons}
+        maxAmount={maxAmount}
+      />
+    </>
   );
 };
 

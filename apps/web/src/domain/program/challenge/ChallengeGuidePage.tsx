@@ -181,6 +181,26 @@ const ChallengeGuidePage = () => {
           </ul>
         </div>
       </section>
+
+      {currentChallenge && (
+        <div className="bg-primary-5 rounded-xs mt-10 flex flex-col items-start justify-between gap-5 p-[18px] md:flex-row md:items-center">
+          <div className="flex flex-col gap-1">
+            <p className="text-small18 font-medium tracking-[-0.094px]">
+              재구매 할인 쿠폰으로 {currentChallenge.title}을 더 저렴하게
+              들어보세요!
+            </p>
+            <p className="text-primary-dark text-xsmall14 font-semibold">
+              ~~~쿠폰 유효기간 노출 예정~~~
+            </p>
+          </div>
+          <Link
+            href="/mypage/coupon"
+            className="bg-primary-light text-static-100 rounded-xxs text-xsmall16 shrink-0 px-3 py-1 font-semibold"
+          >
+            쿠폰함 바로가기
+          </Link>
+        </div>
+      )}
     </main>
   );
 };

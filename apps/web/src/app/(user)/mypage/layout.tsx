@@ -100,6 +100,12 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
         active: pathname.startsWith('/mypage/credit'),
       },
       {
+        id: 'coupon',
+        label: '쿠폰함',
+        path: '/mypage/coupon',
+        active: pathname.startsWith('/mypage/coupon'),
+      },
+      {
         id: 'privacy',
         label: '개인 정보',
         path: '/mypage/privacy',
