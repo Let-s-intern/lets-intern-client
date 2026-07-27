@@ -111,19 +111,65 @@ export interface ChecklistItem {
   customText?: string;
 }
 
-/** 타입별 기본 + 멘토 편집분 템플릿 (PRD §4.4) */
+/** 노출 토글이 있는 섹션의 공통 골격 (시안 3·4·5). */
+interface SectionWithVisible {
+  visible: boolean;
+  title: string;
+  subtitle: string;
+}
+
+/**
+ * 상세 페이지 템플릿 — 시안 10개 섹션 중 멘토가 편집하는 1~5번 + 고정 섹션.
+ * 6·9·10(플랜·다른 멘토·모집개요)은 오픈 설정·목록 API 에서 파생되므로 담지 않는다.
+ */
 export interface LiveMentoringTemplate {
   category: LiveMentoringCategory;
-  // --- 편집 불가 (기본 템플릿 고정) ---
-  faq: { q: string; a: string }[];
-  process: { step: number; title: string; desc: string }[];
-  submissionSpec: { title: string; desc: string };
-  // --- 편집 가능 ---
-  introduction: string;
-  careers: LiveMentoringCareer[];
-  mentoringPoints: string;
+
+  // --- 멘토 편집 영역 (시안 0~5) ---
+  /** 시안 0 · 히어로 불릿 */
+  hero: { bullets: string[] };
+  /** 시안 1 · 멘토 소개 */
+  intro: {
+    passedCount: number | null;
+    profileImage: string | null;
+    affiliation: string;
+    careerLines: string[];
+    oneLiner: string;
+  };
+  /** 시안 2 · 멘토링 유형 */
+  mentoringTypes: {
+    title: string;
+    subtitle: string;
+    items: {
+      typeName: string;
+      title: string;
+      description: string;
+      tags: string[];
+    }[];
+  };
+  /** 시안 3 · 취업 성공 전략 */
+  strategy: SectionWithVisible & {
+    points: { image: string | null; title: string; description: string }[];
+  };
+  /** 시안 4 · 이렇게 도와드려요(영상) */
+  video: SectionWithVisible & { videoUrl: string | null; caption: string };
+  /** 시안 5 · 결과 사례(Before/After) */
+  results: SectionWithVisible & {
+    cases: {
+      beforeImage: string | null;
+      afterImage: string | null;
+      beforeCaption: string;
+      afterCaption: string;
+    }[];
+  };
+
+  // --- 편집 불가 ---
+  /** 시안 8 · 후기 노출 제어 */
   reviews: { visible: boolean; selectedReviewIds: number[] };
-  checklist: ChecklistItem[];
+  /*
+   * 시안 7(진행 프로세스)·10(FAQ)은 계약에 없다.
+   * 운영 확정 문구라 웹 상세 페이지에 하드코딩한다 — 목도 내려주지 않는다.
+   */
 }
 
 /** 상세 페이지 프로필 블록 (PRD §4.3) */
@@ -156,8 +202,13 @@ export interface LiveMentorChallenge {
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export interface LiveMentorDetail {
   mentorId: number;
+  /** 상품명 — 히어로 제목. */
+  title: string;
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
+  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
+  durationPrices: { duration: LiveMentoringDuration; price: number }[];
+  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
   price: number;
   rating: number;
   reviewCount: number;
@@ -251,131 +302,6 @@ export interface OpenStatusRow {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 카테고리별 기본 템플릿 (편집 불가 영역 + 기본 체크리스트)
-// 타입(자소서/이력서/포폴)에 따라 기본값이 달라진다. (PRD §6)
-// ─────────────────────────────────────────────────────────────
-
-type CategoryTemplateDefault = Pick<
-  LiveMentoringTemplate,
-  'faq' | 'process' | 'submissionSpec' | 'checklist'
->;
-
-export const CATEGORY_TEMPLATE_DEFAULTS: Record<
-  LiveMentoringCategory,
-  CategoryTemplateDefault
-> = {
-  PERSONAL_STATEMENT: {
-    faq: [
-      {
-        q: '자기소개서 몇 개 문항까지 봐주시나요?',
-        a: '30분은 1~2문항, 60분은 3~4문항까지 집중적으로 봐드립니다.',
-      },
-      {
-        q: '완성본이 없어도 신청할 수 있나요?',
-        a: '초안이나 개요만 있어도 방향을 함께 잡아드립니다.',
-      },
-    ],
-    process: [
-      {
-        step: 1,
-        title: '사전 제출',
-        desc: '자소서 문항과 초안을 미리 공유합니다.',
-      },
-      {
-        step: 2,
-        title: '라이브 첨삭',
-        desc: '문항별 강약과 소재를 함께 다듬습니다.',
-      },
-      { step: 3, title: '정리', desc: '수정 방향을 요약해 전달드립니다.' },
-    ],
-    submissionSpec: {
-      title: '자기소개서 초안',
-      desc: '지원 회사·문항과 함께 작성한 초안을 제출해 주세요.',
-    },
-    checklist: [
-      { id: 1, label: '지원 직무/회사', mode: 'SHOWN' },
-      { id: 2, label: '자소서 문항 원문', mode: 'SHOWN' },
-      { id: 3, label: '작성 초안', mode: 'SHOWN' },
-      { id: 4, label: '핵심 경험 요약', mode: 'HIDDEN' },
-    ],
-  },
-  RESUME: {
-    faq: [
-      {
-        q: '경력기술서도 함께 봐주시나요?',
-        a: '네, 이력서와 경력기술서를 함께 검토합니다.',
-      },
-      {
-        q: '신입도 신청 가능한가요?',
-        a: '신입/경력 모두 가능하며 경험 정리부터 도와드립니다.',
-      },
-    ],
-    process: [
-      { step: 1, title: '사전 제출', desc: '이력서와 지원 직무를 공유합니다.' },
-      {
-        step: 2,
-        title: '라이브 리뷰',
-        desc: '핵심 성과 표현과 구조를 점검합니다.',
-      },
-      {
-        step: 3,
-        title: '정리',
-        desc: '개선 포인트를 항목별로 정리해 드립니다.',
-      },
-    ],
-    submissionSpec: {
-      title: '이력서 파일',
-      desc: '지원 직무 기준으로 정리한 이력서를 제출해 주세요.',
-    },
-    checklist: [
-      { id: 1, label: '지원 직무/회사', mode: 'SHOWN' },
-      { id: 2, label: '이력서 파일', mode: 'SHOWN' },
-      { id: 3, label: '경력기술서', mode: 'SHOWN' },
-      { id: 4, label: '희망 연봉', mode: 'HIDDEN' },
-    ],
-  },
-  PORTFOLIO: {
-    faq: [
-      {
-        q: '어떤 직군 포트폴리오를 봐주시나요?',
-        a: '기획·디자인·개발 포트폴리오 모두 검토 가능합니다.',
-      },
-      {
-        q: '노션 링크로 제출해도 되나요?',
-        a: '네, 노션/PDF/웹 링크 모두 가능합니다.',
-      },
-    ],
-    process: [
-      {
-        step: 1,
-        title: '사전 제출',
-        desc: '포트폴리오 링크와 목표를 공유합니다.',
-      },
-      {
-        step: 2,
-        title: '라이브 리뷰',
-        desc: '프로젝트 서사와 구성 흐름을 점검합니다.',
-      },
-      {
-        step: 3,
-        title: '정리',
-        desc: '보완할 프로젝트와 우선순위를 정리합니다.',
-      },
-    ],
-    submissionSpec: {
-      title: '포트폴리오 링크/파일',
-      desc: '대표 프로젝트가 담긴 포트폴리오를 제출해 주세요.',
-    },
-    checklist: [
-      { id: 1, label: '지원 직무/회사', mode: 'SHOWN' },
-      { id: 2, label: '포트폴리오 링크', mode: 'SHOWN' },
-      { id: 3, label: '대표 프로젝트 설명', mode: 'SHOWN' },
-      { id: 4, label: '기여도/역할', mode: 'HIDDEN' },
-    ],
-  },
-};
-
-// ─────────────────────────────────────────────────────────────
 // 멘토 시드 → 카드/상세/후기 파생
 // ─────────────────────────────────────────────────────────────
 
@@ -455,7 +381,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 1,
     nickname: '자소서장인',
-    headline: '네이버 · 서비스 기획 7년',
+    headline: '네이버 · 서비스 기획',
     mentoringPoints: '두괄식 구조와 경험 소재 발굴 위주로 봅니다.',
     category: 'PERSONAL_STATEMENT',
     durationMin: 60,
@@ -489,7 +415,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 2,
     nickname: '이력서닥터',
-    headline: '카카오 · 백엔드 개발 6년',
+    headline: '카카오 · 백엔드 개발',
     mentoringPoints: '성과를 숫자로 드러내는 표현을 집중적으로 다듬습니다.',
     category: 'RESUME',
     durationMin: 30,
@@ -520,7 +446,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 3,
     nickname: '포폴메이커',
-    headline: '토스 · 프로덕트 디자이너 5년',
+    headline: '토스 · 프로덕트 디자이너',
     mentoringPoints: '프로젝트 서사와 문제-해결 흐름을 강화합니다.',
     category: 'PORTFOLIO',
     durationMin: 60,
@@ -570,7 +496,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 5,
     nickname: '스타트업PM',
-    headline: '시리즈B 스타트업 · PM 4년',
+    headline: '시리즈B 스타트업 · PM',
     mentoringPoints: '경험을 임팩트 중심으로 재구성합니다.',
     category: 'RESUME',
     durationMin: 60,
@@ -601,7 +527,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 6,
     nickname: '디자인리드',
-    headline: '쿠팡 · UX 리드 8년',
+    headline: '쿠팡 · UX 리드',
     mentoringPoints: '케이스 스터디 구성과 시각 위계를 봅니다.',
     category: 'PORTFOLIO',
     durationMin: 30,
@@ -626,7 +552,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 7,
     nickname: '취업연구소',
-    headline: '컨설팅 · 커리어 코치 10년',
+    headline: '컨설팅 · 커리어 코치',
     mentoringPoints: '지원 전략과 자소서 방향을 함께 잡습니다.',
     category: 'PERSONAL_STATEMENT',
     durationMin: 60,
@@ -651,7 +577,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 8,
     nickname: '현직개발자',
-    headline: '배민 · 프론트엔드 5년',
+    headline: '배민 · 프론트엔드',
     mentoringPoints: '기술 이력서의 프로젝트 서술을 다듬습니다.',
     category: 'RESUME',
     durationMin: 30,
@@ -701,7 +627,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 10,
     nickname: '데이터멘토',
-    headline: '라인 · 데이터 분석 6년',
+    headline: '라인 · 데이터 분석',
     mentoringPoints: '분석 프로젝트를 성과 스토리로 재구성합니다.',
     category: 'RESUME',
     durationMin: 60,
@@ -726,7 +652,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 11,
     nickname: '자소서코치',
-    headline: '공기업 · 인사 7년',
+    headline: '공기업 · 인사',
     mentoringPoints: '공기업 자소서 항목별 대응을 봅니다.',
     category: 'PERSONAL_STATEMENT',
     durationMin: 30,
@@ -751,7 +677,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 12,
     nickname: '포폴클리닉',
-    headline: '당근 · 프로덕트 디자이너 4년',
+    headline: '당근 · 프로덕트 디자이너',
     mentoringPoints: '주니어 포트폴리오의 첫인상을 강화합니다.',
     category: 'PORTFOLIO',
     durationMin: 30,
@@ -776,7 +702,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 13,
     nickname: '이력서멘토',
-    headline: '삼성 · HRD 9년',
+    headline: '삼성 · HRD',
     mentoringPoints: '대기업 지원 이력서 표준화를 봅니다.',
     category: 'RESUME',
     durationMin: 30,
@@ -796,7 +722,7 @@ const MENTOR_SEEDS: MentorSeed[] = [
   {
     mentorId: 14,
     nickname: '기획자J',
-    headline: '무신사 · 서비스 기획 5년',
+    headline: '무신사 · 서비스 기획',
     mentoringPoints: '경험을 문항 의도에 맞게 배치합니다.',
     category: 'PERSONAL_STATEMENT',
     durationMin: 60,
@@ -869,17 +795,136 @@ export const REVIEWS_BY_MENTOR: Record<number, LiveMentoringReview[]> =
   );
 
 /** 시드 + 카테고리 기본 템플릿으로 상세 템플릿 파생 */
+/** 시안 2 · 카테고리별 멘토링 유형 카드 기본값. 멘토가 연 타입 수만큼 만든다. */
+const MENTORING_TYPE_DEFAULTS: Record<
+  LiveMentoringCategory,
+  LiveMentoringTemplate['mentoringTypes']['items'][number]
+> = {
+  PERSONAL_STATEMENT: {
+    typeName: '자기소개서 피드백',
+    title: '지원 직무에 맞게\n자기소개서를 다듬고 싶다면',
+    description:
+      '문항 의도에 맞는 답변 방향, 경험 구조화,\n설득력 있는 표현까지 함께 점검할 수 있어요.',
+    tags: ['문항 분석', '경험 정리', '표현 개선'],
+  },
+  RESUME: {
+    typeName: '이력서 피드백',
+    title: '내 경험이 강점으로 보이도록\n이력서를 정리하고 싶다면',
+    description:
+      '실무자 관점에서 경험과 역량이 더 잘 보이도록\n이력서 구성을 점검할 수 있어요.',
+    tags: ['경험 정리', '역량 강조', '실무자 피드백'],
+  },
+  PORTFOLIO: {
+    typeName: '포트폴리오 피드백',
+    title: '포트폴리오에서 핵심 역량이\n잘 드러나는지 점검받고 싶다면',
+    description:
+      '프로젝트의 핵심 역할과 문제 해결 과정이 잘 드러나도록\n포트폴리오 구성을 점검할 수 있어요.',
+    tags: ['구성 점검', '역량 강조', '프로젝트 정리'],
+  },
+};
+
+/**
+ * 상품명(1:1 멘토링 타이틀).
+ * 목록 카드·상세 히어로가 **같은 문자열**을 써야 하므로 한 곳에서 만든다.
+ * (`headline` 은 "네이버 · 서비스 기획 7년" 같은 경력 한 줄이라 상품명이 아니다.)
+ */
+export function mentoringTitleFor(seed: Pick<MentorSeed, 'nickname'>): string {
+  return `${seed.nickname}의 1:1 멘토링`;
+}
+
+/**
+ * 결과 사례(Before/After) 자리 이미지.
+ * 시드+슬롯으로 seed 를 고정해 새로고침해도 같은 그림이 나오게 한다.
+ */
+function resultImage(seed: MentorSeed, slot: string): string {
+  return `https://picsum.photos/seed/lm-${seed.mentorId}-${slot}/640/420`;
+}
+
+/** 시드의 경력 배열 → 시안 1의 자유 텍스트 줄. */
+function careerLinesFor(seed: MentorSeed): string[] {
+  return seed.careers
+    .filter((career) => career.visible)
+    .map(
+      (career) => `${career.company} | ${career.position} (${career.period})`,
+    );
+}
+
 function templateFor(seed: MentorSeed): LiveMentoringTemplate {
-  const base = CATEGORY_TEMPLATE_DEFAULTS[seed.category];
+  const hasImage = seed.hasImage;
   return {
     category: seed.category,
-    faq: base.faq,
-    process: base.process,
-    submissionSpec: base.submissionSpec,
-    checklist: base.checklist,
-    introduction: seed.introduction,
-    careers: seed.careers,
-    mentoringPoints: seed.mentoringPoints,
+
+    hero: {
+      bullets: [
+        '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+        '다양한 커리어 고민에 대한 자유로운 QNA',
+        '사이드 프로젝트 기획, 진행, 성과 만드는 방법',
+      ],
+    },
+
+    intro: {
+      // 짝수 mentorId 는 합격자 수 미입력 상태를 만들어 헤드라인 폴백을 확인할 수 있게 한다.
+      passedCount: seed.mentorId % 2 === 1 ? 30 + seed.mentorId * 7 : null,
+      profileImage: imageFor(seed),
+      affiliation: seed.careers[0]
+        ? `${seed.careers[0].company} | ${seed.careers[0].position}`
+        : '',
+      careerLines: careerLinesFor(seed),
+      oneLiner: seed.introduction,
+    },
+
+    mentoringTypes: {
+      title: `${seed.nickname} 멘토에게 이런 도움을 받을 수 있어요`,
+      subtitle:
+        '현재 고민에 맞는 멘토링 유형을 살펴보고, 필요한 도움을 받아보세요.',
+      items: categoriesFor(seed).map(
+        (category) => MENTORING_TYPE_DEFAULTS[category],
+      ),
+    },
+
+    strategy: {
+      // 이미지 없는 시드는 섹션을 꺼둬 "노출 안 하면 완전히 제외" 동작을 확인할 수 있게 한다.
+      visible: hasImage,
+      title: `${seed.nickname} 멘토만의 취업 성공 전략`,
+      subtitle: '멘토링을 통해 다 알려드립니다.',
+      points: [1, 2, 3].map((n) => ({
+        image: hasImage
+          ? `${PROFILE_IMAGE_BASE}/${200 + seed.mentorId}?v=${n}`
+          : null,
+        title: '2026년 취업 시장 핵심 키워드 5가지',
+        description:
+          '3,000개 이상의 이력서/포트폴리오/자소서를 피드백하여 쌓은 경험, 채용공고 분석을 통해 얻은 인사이트, 현직자 멘토의 최신 합격자들과의 만남을 통해 발견한 키워드를 알려드립니다.',
+      })),
+    },
+
+    video: {
+      visible: hasImage,
+      title: `${seed.nickname} 멘토는 이렇게 도와드려요`,
+      subtitle: '1:1 LIVE 멘토링, 영상으로 미리 확인하세요!',
+      videoUrl: hasImage ? 'https://www.youtube.com/embed/dQw4w9WgXcQ' : null,
+      caption: '라이브로 주고 받는 맞춤형 피드백으로, 서류 완성도 UP!',
+    },
+
+    results: {
+      visible: true,
+      title: `혼자 해결하기 어려웠던 부분을, ${seed.nickname} 멘토와 함께 완성해요`,
+      subtitle: '결과 사례',
+      cases: [
+        {
+          beforeImage: resultImage(seed, 'before-1'),
+          afterImage: resultImage(seed, 'after-1'),
+          beforeCaption: '누구나 쓸 수 있는 추상적인 지원동기',
+          afterCaption: 'A사의 가치 기술과 관련된 경험 연결',
+        },
+        {
+          beforeImage: resultImage(seed, 'before-2'),
+          afterImage: resultImage(seed, 'after-2'),
+          beforeCaption: '직무 경험을 구구절절 나열하는 방식',
+          afterCaption: '직무 키워드 선정 후, 관련된 경험 구체화',
+        },
+      ],
+    },
+
     reviews: {
       visible: seed.reviewCount > 0,
       selectedReviewIds: reviewsFor(seed).map((r) => r.reviewId),
@@ -894,8 +939,13 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
       seed.mentorId,
       {
         mentorId: seed.mentorId,
+        title: mentoringTitleFor(seed),
         categories: categoriesFor(seed),
         durations: durationsFor(seed),
+        durationPrices: durationsFor(seed).map((duration) => ({
+          duration,
+          price: getPriceByDuration(duration),
+        })),
         price: getLowestPrice(durationsFor(seed)),
         rating: seed.rating,
         reviewCount: seed.reviewCount,

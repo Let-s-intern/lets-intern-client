@@ -72,14 +72,53 @@ function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
     category: 'RESUME',
-    faq: [{ q: 'q', a: 'a' }],
-    process: [{ step: 1, title: 't', desc: 'd' }],
-    submissionSpec: { title: 't', desc: 'd' },
-    introduction: '소개',
-    careers: [],
-    mentoringPoints: 'p',
+    hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
+    intro: {
+      passedCount: 120,
+      profileImage: null,
+      affiliation: '카카오 | 백엔드',
+      careerLines: ['카카오 | 백엔드 (3년)'],
+      oneLiner: '소개',
+    },
+    mentoringTypes: {
+      title: '이런 도움을 받을 수 있어요',
+      subtitle: '고민에 맞는 유형을 골라보세요.',
+      items: [
+        {
+          typeName: '이력서 피드백',
+          title: '이력서를 정리하고 싶다면',
+          description: '경험과 역량이 잘 보이도록 점검해요.',
+          tags: ['경험 정리'],
+        },
+      ],
+    },
+    strategy: {
+      visible: true,
+      title: '취업 성공 전략',
+      subtitle: '알려드립니다.',
+      points: [{ image: null, title: '핵심 키워드', description: '설명' }],
+    },
+    video: {
+      visible: true,
+      title: '이렇게 도와드려요',
+      subtitle: '미리 확인하세요',
+      videoUrl: 'https://www.youtube.com/embed/xyz',
+      caption: '완성도 UP!',
+    },
+    results: {
+      visible: true,
+      title: '함께 완성해요',
+      subtitle: '결과 사례',
+      cases: [
+        {
+          beforeImage: null,
+          afterImage: null,
+          beforeCaption: '전',
+          afterCaption: '후',
+        },
+      ],
+    },
     reviews: { visible: true, selectedReviewIds: [1] },
-    checklist: [{ id: 1, label: 'x', mode: 'SHOWN' }],
     ...overrides,
   };
 }
@@ -189,7 +228,8 @@ describe('useLiveMentoringTemplateQuery', () => {
     expect(axiosMock.get).toHaveBeenCalledWith(
       '/mentor/live-mentoring/template',
     );
-    expect(result.current.data?.checklist[0].mode).toBe('SHOWN');
+    expect(result.current.data?.intro.passedCount).toBe(120);
+    expect(result.current.data?.mentoringTypes.items).toHaveLength(1);
   });
 });
 

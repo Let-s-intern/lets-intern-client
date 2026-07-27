@@ -69,16 +69,19 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(detail.price).toBe(card.price);
       // 템플릿 카테고리는 대표(첫) 카테고리를 따른다
       expect(detail.template.category).toBe(card.categories[0]);
-      // 편집 불가 영역은 기본 템플릿에서 채워진다
-      expect(detail.template.faq.length).toBeGreaterThan(0);
-      expect(detail.template.process.length).toBeGreaterThan(0);
-      expect(detail.template.submissionSpec.title).toBeTruthy();
+      // 멘토 편집 영역은 기본값이 채워진다
+      expect(detail.template.intro.oneLiner).toBeTruthy();
+      expect(detail.template.mentoringTypes.items.length).toBeGreaterThan(0);
       // 참여 중인 챌린지가 존재한다
       expect(detail.challenges.length).toBeGreaterThan(0);
       expect(detail.challenges[0].title).toBeTruthy();
-      // 체크리스트 3-모드 enum 검증
-      for (const item of detail.template.checklist) {
-        expect(['SHOWN', 'HIDDEN', 'CUSTOM']).toContain(item.mode);
+      // 노출 토글 섹션은 boolean 을 갖는다
+      for (const section of [
+        detail.template.strategy,
+        detail.template.video,
+        detail.template.results,
+      ]) {
+        expect(typeof section.visible).toBe('boolean');
       }
     }
   });
@@ -90,15 +93,6 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(item.amount).toBe(PRICE_BY_DURATION[item.durationMin]);
       expect(item.menteeName).toBeTruthy();
     }
-  });
-
-  it('카테고리별 기본 템플릿 기본값이 서로 다르다', () => {
-    const psTitle = LIVE_MENTOR_DETAILS[1].template.submissionSpec.title; // PERSONAL_STATEMENT
-    const portfolioDetail = Object.values(LIVE_MENTOR_DETAILS).find((d) =>
-      d.categories.includes('PORTFOLIO'),
-    );
-    expect(portfolioDetail).toBeDefined();
-    expect(portfolioDetail?.template.submissionSpec.title).not.toBe(psTitle);
   });
 
   it('후기는 멘토별로 존재하며 점수는 1~5 범위다', () => {

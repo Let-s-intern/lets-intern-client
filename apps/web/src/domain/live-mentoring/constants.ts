@@ -65,6 +65,22 @@ export const formatFeedbackPeriod = (start: string, end: string): string => {
   return `${md(start)} ~ ${md(end)}`;
 };
 
+/**
+ * 상세 히어로의 진행 기간 표시 (예: "2026년 07월 14일(월) ~ 07월 27일(일)").
+ * 시안 0 의 "2000년 00월 00일(수) 00시 00분 - 00시 00분" 형식을 따르되,
+ * 시각은 계약에 없어 날짜까지만 표기한다.
+ */
+export const formatDetailPeriod = (start: string, end: string): string => {
+  const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  const label = (iso: string, withYear: boolean) => {
+    const date = new Date(`${iso}T00:00:00`);
+    const [y, m, d] = iso.split('-');
+    const weekday = WEEKDAYS[date.getDay()];
+    return `${withYear ? `${y}년 ` : ''}${m}월 ${d}일(${weekday})`;
+  };
+  return `${label(start, true)} ~ ${label(end, false)}`;
+};
+
 /** 리스트 카드의 진행기간 표시 (예: "25.02.15 ~ 25.02.28"). */
 export const formatOpeningPeriod = (start: string, end: string): string => {
   const yymmdd = (iso: string) => iso.slice(2).split('-').join('.');
@@ -72,13 +88,16 @@ export const formatOpeningPeriod = (start: string, end: string): string => {
 };
 
 /**
- * 리스트 카드 썸네일 좌상단 배지 (예: "PM").
+ * 리스트 카드 썸네일 좌상단 배지 (예: "네이버 · 서비스 기획").
  *
- * 대표 경력의 **직무**만 표기한다. 목록 응답에는 대표 경력 1건만 실려 총 경력을 알 수
- * 없는데, 그 1건의 재직 기간을 연차처럼 보여주면 실제 경력과 어긋나기 때문이다.
+ * 대표 경력의 **회사명 · 직무**를 표기한다. 연차는 넣지 않는다 —
+ * 목록 응답에는 대표 경력 1건만 실려 총 경력을 알 수 없고, 그 1건의 재직 기간을
+ * 연차처럼 보여주면 실제와 어긋난다.
  *
  * 대표 경력은 미지정일 수 있고(`null`) 개별 필드도 모두 nullable 이라,
- * 직무가 없으면 빈 문자열을 돌려준다(배지 미렌더).
+ * 표시할 게 하나도 없으면 빈 문자열을 돌려준다(배지 미렌더).
  */
 export const careerBadgeLabel = (career: RepresentativeCareer | null): string =>
-  career?.job ?? career?.position ?? '';
+  [career?.company, career?.job ?? career?.position]
+    .filter((part): part is string => Boolean(part))
+    .join(' · ');

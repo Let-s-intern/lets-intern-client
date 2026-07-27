@@ -1,141 +1,208 @@
-import { CATEGORY_TEMPLATE_DEFAULTS } from '@letscareer/mocks';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringCategory,
+  LiveMentoringSettings,
   LiveMentoringTemplate,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
 let templateData: LiveMentoringTemplate | undefined;
+let isOpen = false;
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringTemplateQuery: () => ({ data: templateData }),
+  // 미리보기 헤드라인에 쓸 닉네임만 참조한다.
+  useLiveMentoringSettingsQuery: () => ({
+    data: { nickname: '쥬디', isOpen } as unknown as LiveMentoringSettings,
+  }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
     isPending: false,
   }),
 }));
 
+// 이미지 업로드는 파일 API 를 타므로 편집 폼 테스트에서는 라벨만 남긴다.
+vi.mock('../ui/ImageField', () => ({
+  default: ({ label }: { label: string }) => <div>{label}</div>,
+}));
+
 import DetailSettingsPage from '../DetailSettingsPage';
 
-/** 타입별 기본값(공유 목) + 편집분을 합쳐 완전한 템플릿을 만든다. */
+/** 멘토 편집 대상 전체가 채워진 템플릿을 만든다. */
 const makeTemplate = (
   category: LiveMentoringCategory,
 ): LiveMentoringTemplate => {
-  const base = CATEGORY_TEMPLATE_DEFAULTS[category];
   return {
     category,
-    faq: base.faq,
-    process: base.process,
-    submissionSpec: base.submissionSpec,
-    checklist: base.checklist,
-    introduction: '안녕하세요',
-    careers: [
-      {
-        company: '네이버',
-        position: '기획',
-        period: '2019-2026',
-        visible: true,
-      },
-    ],
-    mentoringPoints: '핵심 위주',
+    hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
+    intro: {
+      passedCount: 300,
+      profileImage: null,
+      affiliation: '렛츠커리어 | CEO',
+      careerLines: ['(현) 렛츠커리어 대표 멘토'],
+      oneLiner: '안녕하세요',
+    },
+    mentoringTypes: {
+      title: '이런 도움을 받을 수 있어요',
+      subtitle: '고민에 맞는 유형을 골라보세요.',
+      items: [
+        {
+          typeName: '자기소개서 피드백',
+          title: '자기소개서를 다듬고 싶다면',
+          description: '문항 의도에 맞게 점검해요.',
+          tags: ['문항 분석', '표현 개선'],
+        },
+      ],
+    },
+    strategy: {
+      visible: true,
+      title: '취업 성공 전략',
+      subtitle: '멘토링을 통해 다 알려드립니다.',
+      points: [{ image: null, title: '핵심 키워드', description: '설명' }],
+    },
+    video: {
+      visible: true,
+      title: '이렇게 도와드려요',
+      subtitle: '영상으로 미리 확인하세요!',
+      videoUrl: 'https://www.youtube.com/embed/xyz',
+      caption: '서류 완성도 UP!',
+    },
+    results: {
+      visible: true,
+      title: '함께 완성해요',
+      subtitle: '결과 사례',
+      cases: [
+        {
+          beforeImage: null,
+          afterImage: null,
+          beforeCaption: '추상적인 지원동기',
+          afterCaption: '경험 연결',
+        },
+      ],
+    },
     reviews: { visible: true, selectedReviewIds: [1, 2] },
   };
 };
 
 const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
   templateData = makeTemplate(category);
-  return render(<DetailSettingsPage />);
+  return render(
+    <MemoryRouter>
+      <DetailSettingsPage />
+    </MemoryRouter>,
+  );
 };
 
 afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
+  isOpen = false;
 });
 
-describe('DetailSettingsPage — 편집 가능/불가 경계', () => {
-  it('편집 가능 필드는 입력 요소로 렌더된다', () => {
+describe('DetailSettingsPage — 편집 영역', () => {
+  it('시안 1~5 섹션을 모두 편집 폼으로 렌더한다', () => {
     renderPage();
-    expect(screen.getByLabelText('멘토 자기소개')).toBeInTheDocument();
-    expect(screen.getByLabelText('멘토링 포인트')).toBeInTheDocument();
+
+    // 멘토 소개는 프로필·서버 소유라 편집 폼이 아니라 안내만 있다
+    expect(screen.getByRole('heading', { name: '멘토 소개' })).toBeVisible();
+    expect(screen.getByRole('link', { name: '프로필 페이지' })).toHaveAttribute(
+      'href',
+      '/profile',
+    );
+    expect(screen.queryByLabelText('합격시킨 인원 수')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '멘토링 유형' })).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: '취업 성공 전략' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: '이렇게 도와드려요 (영상)' }),
+    ).toBeVisible();
+    expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
   });
 
-  it('FAQ·피드백 과정·제출물 설정은 "편집 불가" 로 표시된다', () => {
+  it('노출 토글을 끄면 미리보기에서 해당 섹션이 제외된다고 알린다', () => {
     renderPage();
-    expect(screen.getAllByText('편집 불가')).toHaveLength(3);
+
+    // 첫 번째 노출 토글 = 취업 성공 전략
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    expect(
+      screen.getByText(/취업 성공 전략 섹션은 노출 안 함 상태입니다/),
+    ).toBeInTheDocument();
   });
 
-  it('편집 불가 영역(FAQ)에는 편집용 입력 요소가 없다', () => {
+  it('기본은 읽기 모드 — 수정하기·오픈하러 가기만 보인다', () => {
     renderPage();
-    // FAQ 질문 텍스트는 노출되지만 textbox 로 편집 불가
-    const faqQuestion = CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.faq[0].q;
-    expect(screen.getAllByText(`Q. ${faqQuestion}`).length).toBeGreaterThan(0);
-    expect(screen.queryByDisplayValue(faqQuestion)).not.toBeInTheDocument();
-  });
-});
 
-describe('DetailSettingsPage — 체크리스트 3모드', () => {
-  it('멘토 커스텀 선택 시 커스텀 문구 입력이 나타난다', () => {
+    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+    expect(screen.getByRole('link', { name: '오픈하러 가기' })).toHaveAttribute(
+      'href',
+      '/live-mentoring/open-settings',
+    );
+    expect(
+      screen.queryByRole('button', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('수정하기를 누르면 저장하기·취소로 바뀌고, 저장 시 읽기 모드로 돌아온다', () => {
     renderPage();
-    const label =
-      CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
 
-    const group = screen.getByRole('radiogroup', {
-      name: `${label} 노출 모드`,
-    });
-    fireEvent.click(screen.getAllByRole('radio', { name: '멘토 커스텀' })[0]);
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    expect(screen.getByRole('button', { name: '취소' })).toBeVisible();
 
-    expect(group).toBeInTheDocument();
-    const customInput = screen.getByLabelText(`${label} 커스텀 문구`);
-    fireEvent.change(customInput, { target: { value: '이력서 최신본' } });
-    // 미리보기에 커스텀 문구 반영
-    expect(screen.getByText(/이력서 최신본/)).toBeInTheDocument();
-  });
-
-  it('비노출 선택 시 미리보기 체크리스트에서 사라진다', () => {
-    renderPage();
-    const label =
-      CATEGORY_TEMPLATE_DEFAULTS.PERSONAL_STATEMENT.checklist[0].label;
-
-    // 편집폼 라벨(1) + 미리보기(1) 최소 노출 확인
-    expect(screen.getAllByText(label).length).toBeGreaterThanOrEqual(1);
-
-    fireEvent.click(screen.getAllByRole('radio', { name: '비노출' })[0]);
-
-    // 첫 항목 라벨이 편집폼에만 남고 미리보기에서는 제거됨 → 총 1개
-    expect(screen.getAllByText(label)).toHaveLength(1);
-  });
-});
-
-describe('DetailSettingsPage — 타입에 따른 기본 템플릿 로드', () => {
-  it('RESUME 템플릿은 이력서용 FAQ 를 로드한다', () => {
-    renderPage('RESUME');
-    const q = CATEGORY_TEMPLATE_DEFAULTS.RESUME.faq[0].q;
-    expect(screen.getAllByText(`Q. ${q}`).length).toBeGreaterThan(0);
-  });
-
-  it('PORTFOLIO 템플릿은 포트폴리오용 FAQ 를 로드한다', () => {
-    renderPage('PORTFOLIO');
-    const q = CATEGORY_TEMPLATE_DEFAULTS.PORTFOLIO.faq[0].q;
-    expect(screen.getAllByText(`Q. ${q}`).length).toBeGreaterThan(0);
-    // 다른 타입의 FAQ 는 노출되지 않음
-    const otherQ = CATEGORY_TEMPLATE_DEFAULTS.RESUME.faq[0].q;
-    expect(screen.queryByText(`Q. ${otherQ}`)).not.toBeInTheDocument();
-  });
-});
-
-describe('DetailSettingsPage — 저장', () => {
-  it('편집한 자기소개를 담아 mutate 를 호출한다', () => {
-    renderPage();
-    fireEvent.change(screen.getByLabelText('멘토 자기소개'), {
-      target: { value: '수정된 소개' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringTemplate;
-    expect(payload.introduction).toBe('수정된 소개');
+  });
+
+  it('취소하면 읽기 모드로 돌아간다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '취소' }));
+    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+  });
+});
+
+describe('DetailSettingsPage — 오픈 중 잠금', () => {
+  it('오픈 중이면 상단에 안내 배너를 노출하고 수정 버튼을 감춘다', () => {
+    isOpen = true;
+    renderPage();
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
+    ).toHaveAttribute('href', '/live-mentoring/open-settings');
+    expect(
+      screen.queryByRole('button', { name: '수정하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('오픈 중이 아니면 배너를 렌더하지 않는다', () => {
+    renderPage();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+});
+
+describe('DetailSettingsPage — 미리보기', () => {
+  it('공개 상세와 같은 헤드라인·섹션 문구를 보여준다', () => {
+    renderPage();
+
+    expect(
+      screen.getByText('확실한 전략으로 300명을 합격시킨 쥬디 멘토가 함께해요'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('💬 멘토님의 한마디')).toBeInTheDocument();
+    expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
+  });
+
+  it('파생 섹션은 편집 대상이 아님을 미리보기 하단에 안내한다', () => {
+    renderPage();
+
+    expect(
+      screen.getByText(/오픈 설정과 운영 값에서 자동으로 채워집니다/),
+    ).toBeInTheDocument();
   });
 });

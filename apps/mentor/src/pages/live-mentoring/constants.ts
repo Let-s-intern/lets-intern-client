@@ -45,12 +45,20 @@ export const formatOpeningPeriod = (
 };
 
 /**
- * 카드 썸네일 좌상단 배지 — 대표 경력의 **직무**만 표기한다.
- * (연차는 목록 응답으로 총 경력을 알 수 없어 웹 카드에서도 표기하지 않는다.)
+ * 카드 썸네일 좌상단 배지 — 대표 경력의 **회사명 · 직무**.
+ * 웹 공개 카드(`apps/web/.../constants.ts` careerBadgeLabel)와 동일 규칙이어야
+ * 미리보기가 실제 노출과 일치한다. 연차는 양쪽 모두 표기하지 않는다.
  */
 export const careerBadgeLabel = (
-  career: { job: string | null; position: string | null } | null,
-): string => career?.job ?? career?.position ?? '';
+  career: {
+    company: string | null;
+    job: string | null;
+    position: string | null;
+  } | null,
+): string =>
+  [career?.company, career?.job ?? career?.position]
+    .filter((part): part is string => Boolean(part))
+    .join(' · ');
 
 /** 프로필 이미지가 없을 때 썸네일에 대신 넣는 문구. */
 export const imagePlaceholderTitle = (nickname: string): string =>
