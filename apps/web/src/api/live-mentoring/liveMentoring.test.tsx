@@ -85,7 +85,7 @@ describe('useLiveMentorListQuery', () => {
     expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
       params: {
         page: 2,
-        size: 9,
+        size: 12,
         categories: undefined,
         sortType: 'LATEST',
       },
@@ -112,11 +112,11 @@ describe('useLiveMentorListQuery', () => {
     );
   });
 
-  it("category='ALL'이면 categories 쿼리를 전달하지 않는다", async () => {
+  it('선택한 카테고리가 없으면 categories 쿼리를 전달하지 않는다', async () => {
     axiosGet.mockResolvedValue(listResponse());
 
     const { result } = renderHook(
-      () => useLiveMentorListQuery({ category: 'ALL' }),
+      () => useLiveMentorListQuery({ categories: [] }),
       { wrapper: createWrapper(newClient()) },
     );
 
@@ -125,7 +125,7 @@ describe('useLiveMentorListQuery', () => {
     expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
       params: {
         page: 1,
-        size: 9,
+        size: 12,
         categories: undefined,
         sortType: undefined,
       },
@@ -133,11 +133,11 @@ describe('useLiveMentorListQuery', () => {
     });
   });
 
-  it('구체 카테고리는 배열로 감싸 categories 쿼리에 담는다', async () => {
+  it('선택한 카테고리를 categories 쿼리에 그대로 담는다(다중 선택)', async () => {
     axiosGet.mockResolvedValue(listResponse());
 
     const { result } = renderHook(
-      () => useLiveMentorListQuery({ category: 'PORTFOLIO' }),
+      () => useLiveMentorListQuery({ categories: ['PORTFOLIO', 'RESUME'] }),
       { wrapper: createWrapper(newClient()) },
     );
 
@@ -146,8 +146,8 @@ describe('useLiveMentorListQuery', () => {
     expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
       params: {
         page: 1,
-        size: 9,
-        categories: ['PORTFOLIO'],
+        size: 12,
+        categories: ['PORTFOLIO', 'RESUME'],
         sortType: undefined,
       },
       paramsSerializer: PARAMS_SERIALIZER,

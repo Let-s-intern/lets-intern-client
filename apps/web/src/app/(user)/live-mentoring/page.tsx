@@ -1,15 +1,12 @@
-import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
-import LiveMentoringListPage from '@/domain/live-mentoring/list/LiveMentoringListPage';
-
-export const metadata: Metadata = {
-  title: '1대1 라이브 멘토링 | 렛츠커리어',
-  description:
-    '현직자 멘토와 1:1 라이브로 자기소개서·이력서·포트폴리오를 점검받으세요.',
-};
-
+/**
+ * 멘토링 목록은 프로그램 페이지의 카탈로그 탭(`/program?catalog=mentoring`)으로 일원화됐다.
+ * 기존 링크·북마크가 깨지지 않도록 여기로 들어오면 탭으로 넘긴다.
+ * (멘토 상세 `/live-mentoring/[mentorId]` 는 그대로 유지된다.)
+ */
 const Page = () => {
-  return <LiveMentoringListPage />;
+  redirect('/program?catalog=mentoring');
 };
 
 export default Page;

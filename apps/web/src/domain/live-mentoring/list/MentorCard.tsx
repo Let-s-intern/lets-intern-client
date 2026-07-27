@@ -3,11 +3,10 @@ import Link from 'next/link';
 import type { LiveMentoringOpening } from '@/api/live-mentoring/liveMentoringSchema';
 import {
   CATEGORY_LABELS,
-  durationLabel,
-  formatCareerPeriod,
-  formatFeedbackPeriod,
-  priceLabel,
-  representativeCareerLabel,
+  cardPriceLabel,
+  careerBadgeLabel,
+  durationsLabel,
+  formatOpeningPeriod,
 } from '../constants';
 import { imagePlaceholderTitle } from '../utils/profileDisplay';
 
@@ -18,87 +17,96 @@ interface MentorCardProps {
 /**
  * 공개 리스트 멘토 카드 (PRD §5 S1).
  *
- * 백엔드 `LiveMentoringOpeningResponseDto` 를 그대로 렌더한다. 닉네임·소개·대표 경력·
- * 타이틀은 모두 nullable 이라 값이 없으면 해당 줄을 통째로 렌더하지 않는다.
- * (평점·후기 수는 목록 응답에 없어 표시하지 않는다.)
+ * 상단은 썸네일 블록(경력 배지 + 진행시간/가격 바), 하단은 카드 밖 정보 영역
+ * (멘토링 제목 + 진행기간 + 타입 태그)이다.
+ * 썸네일 텍스트는 **프로필 이미지가 없을 때의 대체 표시**라, 이미지가 있으면 렌더하지 않는다.
+ *
+ * 백엔드 `LiveMentoringOpeningResponseDto` 를 그대로 렌더한다. 닉네임·대표 경력·
+ * 타이틀이 모두 nullable 이라 제목은 닉네임 기반 문구로, 배지는 미렌더로 폴백한다.
+ * (참여자 수·평점은 목록 응답에 없어 표시하지 않는다.)
  */
 const MentorCard = ({ opening }: MentorCardProps) => {
   const nickname = opening.mentorNickname ?? '멘토';
-  const careerLabel = representativeCareerLabel(opening.representativeCareer);
-  const careerPeriod = opening.representativeCareer
-    ? formatCareerPeriod(
-        opening.representativeCareer.startDate,
-        opening.representativeCareer.endDate,
-      )
-    : '';
+  const badge = careerBadgeLabel(opening.representativeCareer);
 
   return (
     <Link
       href={`/live-mentoring/${opening.mentorId}`}
-      className="border-neutral-80 flex flex-col overflow-hidden rounded-md border bg-white transition hover:shadow-md"
+      className="row-span-3 grid w-full grid-rows-subgrid gap-3 overflow-hidden"
     >
-      {/* 프로필 이미지 영역 — 이미지가 없으면 문구로 대체 */}
-      <div className="bg-neutral-90 relative flex aspect-[4/3] items-center justify-center overflow-hidden">
-        {opening.mentorProfileImage ? (
+      {/* 썸네일 — 프로필 이미지가 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
+      <div
+        className={`md:rounded-xs relative aspect-[540/421] overflow-hidden rounded-sm ${
+          opening.mentorProfileImage ? 'bg-white' : 'bg-primary'
+        }`}
+      >
+        {opening.mentorProfileImage && (
           <img
             src={opening.mentorProfileImage}
             alt={nickname}
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
-        ) : (
-          <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
-            {imagePlaceholderTitle(nickname)}
+        )}
+
+        {/* 대표 직무 배지 — 프로그램 카드의 마감임박 배지와 같은 규격 */}
+        {badge && (
+          <span className="rounded-xs bg-neutral-0/80 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 px-2.5 py-1 font-semibold">
+            {badge}
           </span>
         )}
-        {opening.categories.length > 0 && (
-          <span className="text-xxsmall12 absolute left-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-medium text-white">
-            {opening.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
-          </span>
+
+        {!opening.mentorProfileImage && (
+          <p
+            className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${
+              badge ? 'pt-11' : 'pt-4'
+            }`}
+          >
+            {opening.title ?? imagePlaceholderTitle(nickname)}
+          </p>
         )}
+
+        {/*
+          진행시간 / 가격 바.
+          썸네일 아래가 아니라 **위에 겹쳐서** 둔다. 아래에 쌓으면 이 블록 높이가
+          `aspect-[540/421] + 바 높이` 가 되어 프로그램 카드보다 카드가 길어진다.
+        */}
+        <div className="bg-neutral-0 text-xsmall14 absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-2.5 text-white">
+          <span>{durationsLabel(opening.durations)}</span>
+          <span className="font-bold">
+            {cardPriceLabel(opening.durations, opening.minimumPrice)}
+          </span>
+        </div>
       </div>
 
-      {/* 본문 */}
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xsmall16 line-clamp-1 font-semibold">
-            {nickname}
+      <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16 line-clamp-2">
+        {opening.title ?? `${nickname}의 1:1 멘토링`}
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+          <span className="text-xxsmall12 text-neutral-0 font-normal">
+            진행기간
           </span>
-          {opening.durations.length > 0 && (
-            <span className="text-primary text-xxsmall12 border-primary shrink-0 rounded-sm border px-1.5 py-0.5 font-medium">
-              {opening.durations.map(durationLabel).join('·')}
-            </span>
-          )}
+          <span className="text-0.75-medium text-primary-dark">
+            {formatOpeningPeriod(
+              opening.feedbackStartDate,
+              opening.feedbackEndDate,
+            )}
+          </span>
         </div>
 
-        {careerLabel && (
-          <p className="text-neutral-40 text-xxsmall12 line-clamp-1">
-            {careerLabel}
-            {careerPeriod && ` · ${careerPeriod}`}
-          </p>
+        {opening.categories.length > 0 && (
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {opening.categories.map((category) => (
+              <div
+                key={category}
+                className="text-xxsmall12 border-neutral-95 bg-neutral-95 text-neutral-40 flex items-center justify-center rounded-[3px] border px-2 py-1 text-center font-normal"
+              >
+                {CATEGORY_LABELS[category]}
+              </div>
+            ))}
+          </div>
         )}
-
-        {opening.title && (
-          <p className="text-neutral-0 text-xsmall14 line-clamp-2 font-medium">
-            {opening.title}
-          </p>
-        )}
-
-        {opening.mentorIntroduction && (
-          <p className="text-neutral-30 text-xsmall14 line-clamp-2 flex-1">
-            {opening.mentorIntroduction}
-          </p>
-        )}
-
-        <div className="text-xxsmall12 text-neutral-40 mt-auto">
-          {formatFeedbackPeriod(
-            opening.feedbackStartDate,
-            opening.feedbackEndDate,
-          )}
-        </div>
-
-        <div className="text-neutral-0 text-xsmall16 text-right font-bold">
-          {priceLabel(opening.durations, opening.minimumPrice)}
-        </div>
       </div>
     </Link>
   );

@@ -40,8 +40,8 @@ function listResponse(count: number, totalPages = 2) {
         ),
         pageInfo: {
           pageNum: 1,
-          pageSize: 9,
-          totalElements: 14,
+          pageSize: 12,
+          totalElements: 20,
           totalPages,
         },
       },
@@ -62,14 +62,18 @@ function renderPage() {
 
 beforeEach(() => {
   axiosGet.mockReset();
-  axiosGet.mockResolvedValue(listResponse(9));
+  axiosGet.mockResolvedValue(listResponse(12));
 });
 
 describe('LiveMentoringListPage', () => {
-  it('한 페이지에 카드 9개(3×3)를 렌더한다', async () => {
+  it('한 페이지에 카드 12개(4×3)를 렌더한다', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByText('멘토1')).toBeInTheDocument());
-    expect(screen.getAllByRole('link')).toHaveLength(9);
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getAllByRole('link')).toHaveLength(12);
   });
 
   it('기본은 1페이지·최신순으로 조회한다', async () => {
@@ -78,7 +82,7 @@ describe('LiveMentoringListPage', () => {
       expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
         params: {
           page: 1,
-          size: 9,
+          size: 12,
           categories: undefined,
           sortType: 'LATEST',
         },
@@ -87,18 +91,46 @@ describe('LiveMentoringListPage', () => {
     );
   });
 
-  it('카테고리 필터를 바꾸면 1페이지로 해당 카테고리를 조회한다', async () => {
+  it('사이드바에서 카테고리를 체크하면 1페이지로 해당 카테고리를 조회한다', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByText('멘토1')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
 
-    fireEvent.click(screen.getByRole('button', { name: '포트폴리오' }));
+    fireEvent.click(screen.getByText('포트폴리오'));
 
     await waitFor(() =>
       expect(axiosGet).toHaveBeenLastCalledWith('/live-mentoring', {
         params: {
           page: 1,
-          size: 9,
+          size: 12,
           categories: ['PORTFOLIO'],
+          sortType: 'LATEST',
+        },
+        paramsSerializer: PARAMS_SERIALIZER,
+      }),
+    );
+  });
+
+  it('카테고리를 여러 개 체크하면 함께 조회한다(다중 선택)', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByText('포트폴리오'));
+    fireEvent.click(screen.getByText('이력서'));
+
+    await waitFor(() =>
+      expect(axiosGet).toHaveBeenLastCalledWith('/live-mentoring', {
+        params: {
+          page: 1,
+          size: 12,
+          categories: ['PORTFOLIO', 'RESUME'],
           sortType: 'LATEST',
         },
         paramsSerializer: PARAMS_SERIALIZER,
@@ -108,7 +140,11 @@ describe('LiveMentoringListPage', () => {
 
   it('정렬을 바꾸면 해당 sortType 으로 조회한다', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByText('멘토1')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
 
     fireEvent.change(screen.getByLabelText('정렬'), {
       target: { value: 'FEEDBACK_START_DATE' },
@@ -118,7 +154,7 @@ describe('LiveMentoringListPage', () => {
       expect(axiosGet).toHaveBeenLastCalledWith('/live-mentoring', {
         params: {
           page: 1,
-          size: 9,
+          size: 12,
           categories: undefined,
           sortType: 'FEEDBACK_START_DATE',
         },
@@ -129,7 +165,11 @@ describe('LiveMentoringListPage', () => {
 
   it('페이지를 넘기면 1-based page 를 그대로 전달한다', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByText('멘토1')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
 
@@ -137,7 +177,7 @@ describe('LiveMentoringListPage', () => {
       expect(axiosGet).toHaveBeenLastCalledWith('/live-mentoring', {
         params: {
           page: 2,
-          size: 9,
+          size: 12,
           categories: undefined,
           sortType: 'LATEST',
         },
