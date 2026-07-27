@@ -114,9 +114,8 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
   it('GET /mentor/live-mentoring/template → 템플릿', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/template`);
     const { data } = await res.json();
-    expect(data.faq.length).toBeGreaterThan(0);
-    expect(data.process.length).toBeGreaterThan(0);
-    expect(data.checklist.length).toBeGreaterThan(0);
+    expect(data.intro.careerLines.length).toBeGreaterThan(0);
+    expect(data.mentoringTypes.items.length).toBeGreaterThan(0);
   });
 
   it('PUT /mentor/live-mentoring/template → 받은 body를 echo', async () => {

@@ -6,7 +6,6 @@ export {
 } from './handlers';
 
 export {
-  CATEGORY_TEMPLATE_DEFAULTS,
   getPriceByDuration,
   getLowestPrice,
   LIVE_MENTOR_CARDS,
