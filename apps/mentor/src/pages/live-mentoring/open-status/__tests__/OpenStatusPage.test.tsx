@@ -51,6 +51,16 @@ describe('OpenStatusPage', () => {
     expect(screen.getByText('7건')).toBeInTheDocument();
   });
 
+  // 이전에는 "{시작} ~" 와 "{종료}" 가 별도 텍스트 노드라 좁은 열에서 중간이 끊겼다.
+  // 한 덩어리로 렌더되는지(= 끊기지 않는지) 고정한다.
+  it('피드백 기간을 끊기지 않는 한 덩어리로 렌더한다', () => {
+    queryState = { data: rows, isLoading: false };
+    render(<OpenStatusPage />);
+
+    expect(screen.getByText('07-14 ~ 07-28')).toBeInTheDocument();
+    expect(screen.getByText('07-11 ~ 07-24')).toBeInTheDocument();
+  });
+
   it('상태 뱃지(오픈중/마감)를 노출한다', () => {
     queryState = { data: rows, isLoading: false };
     render(<OpenStatusPage />);
