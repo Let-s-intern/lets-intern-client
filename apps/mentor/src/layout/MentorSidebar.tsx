@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import LiveMentoringOpenBadge from '@/pages/live-mentoring/ui/LiveMentoringOpenBadge';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
 interface NavLeaf {
@@ -16,6 +17,8 @@ interface NavGroup {
   children: NavLeaf[];
   /** true 면 대주제 클릭으로 하위 항목을 열고 닫는 드롭다운으로 동작한다. */
   collapsible?: boolean;
+  /** true 면 그룹 이름 옆에 1대1 라이브 멘토링 오픈 상태 배지를 붙인다. */
+  showLiveMentoringStatus?: boolean;
 }
 
 type NavItem = NavLeaf | NavGroup;
@@ -45,6 +48,7 @@ const navItems: NavItem[] = [
     name: '1대1 라이브 멘토링',
     matchPrefix: '/live-mentoring',
     collapsible: true,
+    showLiveMentoringStatus: true,
     children: [
       { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },
       {
@@ -173,6 +177,13 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                     ? 'text-primary font-semibold'
                     : 'text-neutral-40 font-medium'
                 }`;
+                // 이름 옆 상태 배지 — 오픈 중이 아니면 배지 컴포넌트가 스스로 null 을 낸다.
+                const groupLabel = (
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate">{item.name}</span>
+                    {item.showLiveMentoringStatus && <LiveMentoringOpenBadge />}
+                  </span>
+                );
                 return (
                   <li key={item.name}>
                     {isCollapsible ? (
@@ -180,9 +191,9 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                         type="button"
                         aria-expanded={expanded}
                         onClick={() => toggleGroup(item.name)}
-                        className={`${parentClass} flex w-full items-center justify-between`}
+                        className={`${parentClass} flex w-full items-center justify-between gap-2`}
                       >
-                        {item.name}
+                        {groupLabel}
                         <svg
                           width="16"
                           height="16"
@@ -201,7 +212,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                         </svg>
                       </button>
                     ) : (
-                      <p className={parentClass}>{item.name}</p>
+                      <p className={parentClass}>{groupLabel}</p>
                     )}
                     {expanded && (
                       <ul className="mt-0.5 flex flex-col">

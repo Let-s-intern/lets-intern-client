@@ -19,6 +19,43 @@ export const durationLabel = (durationMin: number): string =>
 export const formatPrice = (price: number): string =>
   `${price.toLocaleString('ko-KR')}원`;
 
+/*
+ * 아래 4개는 **웹 공개 카드와 픽셀 단위로 같은 미리보기**를 만들기 위한 포맷터다.
+ * 원본: apps/web/src/domain/live-mentoring/constants.ts
+ * 앱 간 코드를 공유하지 않는 규칙 때문에 의도적으로 복제했다 —
+ * 웹 카드 표기 규칙이 바뀌면 여기도 같이 고쳐야 미리보기가 거짓말을 하지 않는다.
+ */
+
+/** 카드 하단 바의 진행시간 표기 (예: "30분 / 60분"). */
+export const durationsLabel = (durations: number[]): string =>
+  durations.map(durationLabel).join(' / ');
+
+/** 카드 하단 바의 가격 표기 (예: "30,000원~"). 여러 진행시간이면 최저가라 물결을 붙인다. */
+export const cardPriceLabel = (durations: number[], price: number): string =>
+  `${formatPrice(price)}${durations.length > 1 ? '~' : ''}`;
+
+/** 카드 진행기간 표시 (예: "25.02.15 ~ 25.02.28"). 값이 없으면 "미정". */
+export const formatOpeningPeriod = (
+  start: string | null,
+  end: string | null,
+): string => {
+  const yymmdd = (iso: string | null) =>
+    iso ? iso.slice(2).split('-').join('.') : '미정';
+  return `${yymmdd(start)} ~ ${yymmdd(end)}`;
+};
+
+/**
+ * 카드 썸네일 좌상단 배지 — 대표 경력의 **직무**만 표기한다.
+ * (연차는 목록 응답으로 총 경력을 알 수 없어 웹 카드에서도 표기하지 않는다.)
+ */
+export const careerBadgeLabel = (
+  career: { job: string | null; position: string | null } | null,
+): string => career?.job ?? career?.position ?? '';
+
+/** 프로필 이미지가 없을 때 썸네일에 대신 넣는 문구. */
+export const imagePlaceholderTitle = (nickname: string): string =>
+  `${nickname} 멘토님의 멘토링`;
+
 /**
  * 대표 경력 한 줄 표시 (예: "네이버 · 프로덕트 기획").
  *
