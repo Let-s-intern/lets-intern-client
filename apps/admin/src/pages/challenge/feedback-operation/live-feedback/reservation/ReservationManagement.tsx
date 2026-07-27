@@ -1,7 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import { useUserAdminQuery } from '@/api/user/user';
+import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import axios from '@/utils/axios';
@@ -71,11 +71,10 @@ export default function ReservationManagement() {
     useState<FeedbackAdminVo | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
+  // 멘토는 전용 API(/admin/user/mentor, 서버 isMentor 필터)를 쓴다.
+  // /admin/user 는 isMentor 파라미터를 무시해 전체 유저가 오는 버그가 있었다.
   const { data: challengeData } = useChallengeDropdownQuery();
-  const { data: mentorData } = useUserAdminQuery({
-    isMentor: true,
-    pageable: { page: 1, size: DROPDOWN_PAGE_SIZE },
-  });
+  const { data: mentorData } = useAdminUserMentorListQuery();
 
   const listParams = useMemo(() => buildListParams(filter), [filter]);
   const { data: reservations, isLoading } =
@@ -92,9 +91,9 @@ export default function ReservationManagement() {
 
   const mentorOptions = useMemo(
     () =>
-      (mentorData?.userAdminList ?? []).map((u) => ({
-        value: String(u.userInfo.id),
-        label: u.userInfo.name,
+      (mentorData?.mentorList ?? []).map((m) => ({
+        value: String(m.id),
+        label: m.name,
       })),
     [mentorData],
   );
@@ -121,7 +120,7 @@ export default function ReservationManagement() {
         mentorOptions={mentorOptions}
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-start">
         <ViewToggle value={view} onChange={setView} />
       </div>
 
@@ -136,7 +135,10 @@ export default function ReservationManagement() {
         />
       ) : (
         <Suspense fallback={null}>
-          <ReservationCalendarView reservations={visibleReservations} />
+          <ReservationCalendarView
+            reservations={visibleReservations}
+            onView={setSelectedFeedbackId}
+          />
         </Suspense>
       )}
 
@@ -144,6 +146,15 @@ export default function ReservationManagement() {
         <ReservationDetailModal
           feedbackId={selectedFeedbackId}
           onClose={() => setSelectedFeedbackId(null)}
+          onReschedule={() => {
+            const target = (reservations ?? []).find(
+              (r) => r.feedbackId === selectedFeedbackId,
+            );
+            if (target) {
+              setSelectedFeedbackId(null);
+              setRescheduleTarget(target);
+            }
+          }}
         />
       </Suspense>
 

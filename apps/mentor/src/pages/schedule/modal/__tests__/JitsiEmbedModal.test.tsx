@@ -6,7 +6,7 @@ import JitsiEmbedModal from '../JitsiEmbedModal';
 
 // JitsiEmbed(@letscareer/ui)는 실제 @jitsi/react-sdk를 끌어오므로 목으로 대체.
 // topLeftSlot(타이머)과 onClose(닫기)를 그대로 노출해 테스트에서 검증할 수 있게 한다.
-vi.mock('@letscareer/ui/JitsiEmbed', () => ({
+vi.mock('@letscareer/live-session/JitsiEmbed', () => ({
   JitsiEmbed: ({
     roomUrl,
     onClose,

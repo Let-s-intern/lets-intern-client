@@ -1,6 +1,4 @@
 import type { FeedbackSlotVo } from '@/api/feedback/feedbackSchema';
-import { twMerge } from '@/lib/twMerge';
-import { getMentorColor } from '../constants/colors';
 import type { GridBlock } from '../weekly-calendar/WeeklyGrid';
 import { getSlotPosition } from '../weekly-calendar/weekUtils';
 
@@ -17,40 +15,44 @@ const SLOT_STATUS_LABEL: Record<FeedbackSlotVo['status'], string> = {
 };
 
 /**
- * 멘토별 슬롯을 주간 그리드 블록으로 합산·변환한다.
- *
- * - 색상 hue 는 멘토명 기준(getMentorColor).
- * - 상태 구분: RESERVED 는 채움(진한 배경), OPEN 은 점선 테두리 + 옅은 표시.
+ * 슬롯 상태별 스타일. 예약과 오픈을 색으로 확실히 구분한다.
+ * (이전 점선/흰배경은 흰 그리드에서 잘 안 보여 색 채움으로 교체)
+ */
+const SLOT_STATUS_CLASS: Record<FeedbackSlotVo['status'], string> = {
+  // 예약: 채운 인디고 블록(강조)
+  RESERVED: 'border-indigo-600 bg-indigo-500 text-white shadow-sm',
+  // 오픈: 가용 시간 표시. 강조하지 않도록 아주 연한 회색.
+  OPEN: 'border-neutral-80 bg-neutral-95 text-neutral-40',
+};
+
+/**
+ * 선택된 멘토의 슬롯을 주간 그리드 블록으로 변환한다.
+ * 상태(예약/오픈)를 색으로 구분한다.
  */
 export function buildSlotBlocks(
   mentorSlots: MentorSlots[],
   weekStart: string,
 ): GridBlock[] {
-  return mentorSlots.flatMap(({ mentorId, mentorName, slots }) => {
-    const color = getMentorColor(mentorName);
-    return slots.map((slot) => {
+  return mentorSlots.flatMap(({ mentorId, slots }) =>
+    slots.map((slot) => {
       const { dayIndex, slotIndex, slotSpan } = getSlotPosition(
         slot.startDate,
         slot.endDate,
         weekStart,
       );
-      const statusClass =
-        slot.status === 'RESERVED'
-          ? twMerge(color.bg, color.border, color.text)
-          : twMerge('border-dashed bg-white', color.border, color.text);
       return {
         key: `${mentorId}-${slot.feedbackSlotId}`,
         dayIndex,
         slotIndex,
         slotSpan,
-        className: statusClass,
+        className: SLOT_STATUS_CLASS[slot.status],
+        title: SLOT_STATUS_LABEL[slot.status],
         content: (
-          <>
-            <div className="truncate font-semibold">{mentorName}</div>
-            <div className="truncate">{SLOT_STATUS_LABEL[slot.status]}</div>
-          </>
+          <span className="truncate text-center font-semibold">
+            {SLOT_STATUS_LABEL[slot.status]}
+          </span>
         ),
       };
-    });
-  });
+    }),
+  );
 }

@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import JitsiEmbedModal from './JitsiEmbedModal';
 
-jest.mock('@letscareer/ui/JitsiEmbed', () => ({
+jest.mock('@letscareer/live-session/JitsiEmbed', () => ({
   __esModule: true,
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />

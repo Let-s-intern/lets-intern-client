@@ -113,3 +113,36 @@ export function formatWeekLabel(weekStart: string): string {
 export function formatDayHeader(day: string): string {
   return dayjs(day).format('M/D ddd');
 }
+
+export interface NowIndicator {
+  /** 0=월 ... 6=일 */
+  dayIndex: number;
+  /** 그리드 시작 시각(GRID_START_HOUR) 기준 슬롯 단위 오프셋(소수 가능). */
+  slotOffset: number;
+}
+
+/**
+ * 현재 시각이 표시 주와 그리드 시간 범위(09~22시) 안이면 위치를, 아니면 null 을 반환한다.
+ * 호출부에서 이 위치에 "지금" 라인을 그린다.
+ */
+export function getNowIndicator(
+  weekStart: string,
+  now: Date,
+): NowIndicator | null {
+  const monday = dayjs(weekStart).startOf('day');
+  const current = dayjs(now);
+  const dayIndex = current.startOf('day').diff(monday, 'day');
+  if (dayIndex < 0 || dayIndex > 6) return null;
+
+  const minutesFromStart =
+    current.hour() * 60 + current.minute() - GRID_START_HOUR * 60;
+  const totalMinutes = (GRID_END_HOUR - GRID_START_HOUR) * 60;
+  if (minutesFromStart < 0 || minutesFromStart > totalMinutes) return null;
+
+  return { dayIndex, slotOffset: minutesFromStart / SLOT_MINUTES };
+}
+
+/** 현재 날짜·시각 라벨(예: 2026.07.23 (목) 14:32). */
+export function formatNowLabel(now: Date): string {
+  return dayjs(now).format('YYYY.MM.DD (ddd) HH:mm');
+}
