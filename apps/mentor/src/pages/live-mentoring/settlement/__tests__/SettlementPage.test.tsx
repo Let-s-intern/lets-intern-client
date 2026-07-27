@@ -6,7 +6,10 @@ import type {
   SettlementRow,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
-type SettlementData = { settlementList: SettlementRow[]; itemList: SettlementItem[] };
+type SettlementData = {
+  settlementList: SettlementRow[];
+  itemList: SettlementItem[];
+};
 
 let queryState: { data?: SettlementData; isLoading: boolean } = {
   data: undefined,
@@ -20,8 +23,18 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 import SettlementPage from '../SettlementPage';
 
 const settlementList: SettlementRow[] = [
-  { period: '2026-06', completedCount: 18, grossAmount: 1080000, status: 'PAID' },
-  { period: '2026-04', completedCount: 9, grossAmount: 540000, status: 'PENDING' },
+  {
+    period: '2026-06',
+    completedCount: 18,
+    grossAmount: 1080000,
+    status: 'PAID',
+  },
+  {
+    period: '2026-04',
+    completedCount: 9,
+    grossAmount: 540000,
+    status: 'PENDING',
+  },
 ];
 
 const itemList: SettlementItem[] = [

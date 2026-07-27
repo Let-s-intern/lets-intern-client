@@ -43,9 +43,7 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
     expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
 
     expect(screen.getByText('오픈 설정')).toBeInTheDocument();
     expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
@@ -55,9 +53,7 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
 
   it('하위 항목의 url 매핑이 정확하다', () => {
     renderSidebar('/');
-    fireEvent.click(
-      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
 
     const cases: [string, string][] = [
       ['오픈 설정', '/live-mentoring/open-settings'],
