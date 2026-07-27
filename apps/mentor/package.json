@@ -20,6 +20,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@letscareer/api": "workspace:*",
     "@letscareer/hooks": "workspace:*",
+    "@letscareer/live-session": "workspace:*",
     "@letscareer/mocks": "workspace:*",
     "@letscareer/store": "workspace:*",
     "@letscareer/types": "workspace:*",

@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 
 import LiveFeedbackModal from './LiveFeedbackModal';
 
-jest.mock('@letscareer/ui/JitsiEmbed', () => ({
+jest.mock('@letscareer/live-session/JitsiEmbed', () => ({
   __esModule: true,
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />

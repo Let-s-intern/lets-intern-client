@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
+import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import {
   useFeedbackMentorDetailQuery,

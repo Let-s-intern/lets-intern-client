@@ -1,5 +1,4 @@
 import { VOD_HOOK } from '../data/vodHook';
-import { VOD_DETAIL_URL } from '../data/links';
 
 // 4각 반짝임(sparkle) 별 — 이모지 대신 브랜드 컬러로 자연스럽게 녹여낸다.
 function Sparkle({ className }: { className?: string }) {
@@ -39,46 +38,50 @@ export default function VodHookSection() {
             </h2>
           </div>
 
-          <article className="vod-card rv">
-            <img
-              className="vod-thumb-img"
-              src={VOD_HOOK.thumbnailImage}
-              alt={VOD_HOOK.thumbnailAlt}
-            />
+          <div className="vod-cards rv">
+            {VOD_HOOK.cards.map((card) => (
+              <article className="vod-card" key={card.title}>
+                <img
+                  className="vod-thumb-img"
+                  src={card.thumbnailImage}
+                  alt={card.thumbnailAlt}
+                />
 
-            <div className="vod-info">
-              <span className="vodhook-badge">{VOD_HOOK.badge}</span>
-              <h3 className="vod-card-title">{VOD_HOOK.title}</h3>
-              <ul className="vod-meta">
-                {VOD_HOOK.meta.map((m) => (
-                  <li key={m}>{m}</li>
-                ))}
-              </ul>
-              <ul className="vod-bullets">
-                {VOD_HOOK.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-              <div className="vod-cardfoot">
-                <div className="vodhook-price">
-                  <span className="vodhook-price-old">
-                    {VOD_HOOK.priceOriginal}
-                  </span>
-                  <span className="vodhook-price-free">
-                    {VOD_HOOK.priceFree}
-                  </span>
+                <div className="vod-info">
+                  <span className="vodhook-badge">{card.badge}</span>
+                  <h3 className="vod-card-title">{card.title}</h3>
+                  <ul className="vod-meta">
+                    {card.meta.map((m) => (
+                      <li key={m}>{m}</li>
+                    ))}
+                  </ul>
+                  <ul className="vod-bullets">
+                    {card.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                  <div className="vod-cardfoot">
+                    <div className="vodhook-price">
+                      <span className="vodhook-price-old">
+                        {card.priceOriginal}
+                      </span>
+                      <span className="vodhook-price-free">
+                        {card.priceFree}
+                      </span>
+                    </div>
+                    <a
+                      className="btn btn-blue vod-cta"
+                      href={card.detailUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {card.cta}
+                    </a>
+                  </div>
                 </div>
-                <a
-                  className="btn btn-blue vod-cta"
-                  href={VOD_DETAIL_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {VOD_HOOK.cta}
-                </a>
-              </div>
-            </div>
-          </article>
+              </article>
+            ))}
+          </div>
 
           <p className="vod-foot rv">
             {VOD_HOOK.footnoteLead}
