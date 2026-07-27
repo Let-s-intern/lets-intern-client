@@ -1,7 +1,7 @@
 import dayjs from '../lib/dayjs';
 import Countdown from '../ui/Countdown';
 import { openPlanSheet } from '../lib/planSheet';
-import { ctaLabel, IS_MEMBERSHIP_LAUNCHED } from '../lib/membershipChallenge';
+import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import { HERO } from '../data/hero';
 
@@ -39,7 +39,7 @@ export default function HeroSection() {
             <button
               className="btn btn-primary btn-lg"
               onClick={() => openPlanSheet()}
-              disabled={!IS_MEMBERSHIP_LAUNCHED}
+              disabled={IS_CTA_DISABLED}
             >
               {ctaLabel(HERO.ctaPrimary)}
             </button>

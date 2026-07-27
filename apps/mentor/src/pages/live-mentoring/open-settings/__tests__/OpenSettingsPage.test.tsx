@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -331,5 +331,52 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('오픈 중이면 상단에 오픈 중 상태 배너를 노출한다', () => {
+    renderPage({ isOpen: true });
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByRole('button', { name: /오픈 닫기/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('오픈 중이 아니면 상태 배너를 렌더하지 않는다', () => {
+    renderPage();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  // 미리보기는 웹 공개 카드(MentorCard)를 복제한 것이라, 표기 규칙이 어긋나면
+  // 멘토가 실제와 다른 화면을 보고 오픈하게 된다. 핵심 표기만 고정한다.
+  it('미리보기가 공개 카드와 같은 표기 규칙을 따른다', () => {
+    renderPage({ durations: [30, 60], feedbackStartDate: '2026-07-14' });
+
+    // 진행시간은 "/"로 잇고, 여러 개면 최저가에 물결을 붙인다
+    expect(screen.getByText('30분 / 60분')).toBeInTheDocument();
+    expect(screen.getByText(/^[\d,]+원~$/)).toBeInTheDocument();
+    // 진행기간은 YY.MM.DD 형식
+    expect(screen.getByText('26.07.14 ~ 26.07.28')).toBeInTheDocument();
+    // 카드 제목은 타이틀 그대로 (미입력 시에만 닉네임 기반 문구로 폴백)
+    expect(screen.getByText('자소서 실전 첨삭 멘토링')).toBeInTheDocument();
+  });
+
+  it('미리보기 카드 제목은 타이틀이 비면 닉네임 기반 문구로 폴백한다', () => {
+    renderPage({ title: '' });
+    expect(screen.getByText('자소서장인의 1:1 멘토링')).toBeInTheDocument();
+  });
+
+  it('미리보기 진행기간은 날짜가 비면 미정으로 표시한다', () => {
+    renderPage({ feedbackStartDate: null, feedbackEndDate: null });
+    expect(screen.getByText('미정 ~ 미정')).toBeInTheDocument();
+  });
+
+  it('오픈 중에는 설정 입력이 비활성화되지만 값은 그대로 읽을 수 있다', () => {
+    renderPage({ isOpen: true, title: '자소서 실전 첨삭' });
+    // 화면을 가리지 않으므로 설정한 타이틀이 그대로 보인다
+    const titleInput = screen.getByDisplayValue('자소서 실전 첨삭');
+    expect(titleInput).toBeInTheDocument();
+    // 다만 fieldset disabled 로 입력은 잠긴다
+    expect(titleInput).toBeDisabled();
   });
 });

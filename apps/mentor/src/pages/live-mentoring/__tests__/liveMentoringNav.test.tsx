@@ -7,6 +7,11 @@ vi.mock('@/pages/notification/ui/NotificationBell', () => ({
   default: () => <div data-testid="notification-bell" />,
 }));
 
+// 오픈 상태 배지도 react-query 를 쓰므로 같은 이유로 모킹한다(사이드바는 provider 없이 렌더).
+vi.mock('@/pages/live-mentoring/ui/LiveMentoringOpenBadge', () => ({
+  default: () => null,
+}));
+
 import { MentorSidebar } from '@/layout/MentorSidebar';
 
 beforeAll(() => {

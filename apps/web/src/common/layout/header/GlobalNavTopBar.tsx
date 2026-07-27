@@ -11,7 +11,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
-import MembershipNavLabel from './MembershipNavLabel';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
@@ -79,16 +78,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         >
           홈
         </GlobalNavItem>
-        <GlobalNavItem
-          className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
-            pathname.startsWith('/membership') && 'border-neutral-0',
-          )}
-          href="/membership"
-          isNew
-        >
-          <MembershipNavLabel />
-        </GlobalNavItem>
+        {/* 2026 하반기 멤버십 모집 종료로 메뉴 제거 (랜딩 /membership 은 유지) */}
         {/* 메뉴 정리: 멤버십 출시 메뉴 추가로 상단바가 혼잡해 잠시 숨김 (모바일 드로어에는 유지) */}
         {/* <GlobalNavItem
           className={twMerge(

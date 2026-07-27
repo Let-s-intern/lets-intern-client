@@ -40,10 +40,25 @@ export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
   MEMBERSHIP_CHALLENGE_ID,
 );
 
-/** CTA 라벨 — 출시 전이면 "출시 전", 출시됐으면 원래 라벨. */
+/**
+ * 2026 하반기 멤버십 모집 종료 여부 (마감 2026-07-26).
+ *
+ * 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다 — 링크를 아는 사람이 종료된 상품을
+ * 결제하는 걸 방지하기 위해서다. 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar,
+ * HeroSection, FinalCtaSection) 모두 이 상수를 통해 잠긴다.
+ *
+ * 다음 시즌에 다시 열 때는 이 값을 `false` 로 되돌리면 카운트다운·결제 CTA 가 복구된다.
+ */
+export const IS_RECRUITMENT_CLOSED = true;
+
+/** CTA 라벨 — 모집 종료면 "모집 종료", 출시 전이면 "출시 전", 아니면 원래 라벨. */
 export function ctaLabel(label: string): string {
+  if (IS_RECRUITMENT_CLOSED) return '모집 종료';
   return IS_MEMBERSHIP_LAUNCHED ? label : '출시 전';
 }
+
+/** 결제 CTA 를 비활성화할지 — 모집이 끝났거나 아직 출시 전이면 잠근다. */
+export const IS_CTA_DISABLED = IS_RECRUITMENT_CLOSED || !IS_MEMBERSHIP_LAUNCHED;
 
 /**
  * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).
