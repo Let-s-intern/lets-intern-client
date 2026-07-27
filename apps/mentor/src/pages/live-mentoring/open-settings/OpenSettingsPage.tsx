@@ -227,15 +227,45 @@ const OpenSettingsPage = () => {
         </p>
       </header>
 
-      {/* 오픈 중에는 설정 전체를 블러 처리하고 상호작용을 막는다. */}
-      <div className="relative">
+      {/*
+        오픈 중 상태 배너.
+        오픈 중에도 멘토는 "내가 어떤 조건으로 열었는지" 확인해야 하므로 설정을 가리지 않고,
+        상태와 해제 방법만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
+      */}
+      {isCurrentlyOpen && (
         <div
-          className={
-            isCurrentlyOpen
-              ? 'pointer-events-none select-none blur-[8px]'
-              : undefined
-          }
-          aria-hidden={isCurrentlyOpen}
+          role="status"
+          className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex flex-col gap-1">
+            <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
+              <span
+                className="bg-primary h-1.5 w-1.5 rounded-full"
+                aria-hidden="true"
+              />
+              오픈 중
+            </span>
+            <p className="text-xs text-gray-600">
+              설정을 수정하려면 오픈을 닫아주세요. 진행 중인 예약은 유지됩니다.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleCloseOpen}
+            disabled={isPending}
+            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPending ? '처리 중...' : '오픈 닫기'}
+          </button>
+        </div>
+      )}
+
+      <div className="relative">
+        {/* 오픈 중에는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
+            키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
+        <fieldset
+          disabled={isCurrentlyOpen}
+          className="m-0 min-w-0 border-0 p-0"
         >
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             {/* 좌: 설정 패널 */}
@@ -468,27 +498,8 @@ const OpenSettingsPage = () => {
               <OpenSettingsPreview settings={form} />
             </div>
           </div>
-        </div>
+        </fieldset>
       </div>
-
-      {/* 오픈 중 잠금 오버레이 — 좌측 네비를 제외한 콘텐츠 영역 정중앙에 오픈 닫기 버튼 */}
-      {isCurrentlyOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-white/40 backdrop-blur-sm lg:left-[296px]">
-          <div className="flex flex-col items-center gap-6">
-            <p className="rounded-md bg-white/95 px-6 py-3 text-base font-medium text-gray-700 shadow-lg">
-              오픈 중에는 설정을 수정할 수 없어요.
-            </p>
-            <button
-              type="button"
-              onClick={handleCloseOpen}
-              disabled={isPending}
-              className="bg-primary hover:bg-primary-hover rounded-2xl px-20 py-6 text-2xl font-bold text-white shadow-2xl transition-colors disabled:opacity-50"
-            >
-              {isPending ? '처리 중...' : '오픈 닫기'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* 하단 버튼: 오픈 중이면 숨김. 변경사항 있으면 저장, 없으면 오픈하기. */}
       {!isCurrentlyOpen && (
