@@ -7,11 +7,14 @@ import {
 import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
+//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
+import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
 const DetailSettingsPage = () => {
-  const { data } = useLiveMentoringTemplateQuery();
+  const { data, isError } = useLiveMentoringTemplateQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
   const { alertProps, showAlert } = useMentorAlert();
 
@@ -21,6 +24,29 @@ const DetailSettingsPage = () => {
   useEffect(() => {
     if (data) setTemplate(data);
   }, [data]);
+
+  const header = (
+    <header className="flex flex-col gap-2">
+      <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+        상세 페이지 설정
+      </h1>
+      <p className="text-xsmall14 text-neutral-40">
+        공개 상세 페이지에 노출될 콘텐츠를 편집하세요. 좌측 편집 내용이 우측
+        미리보기에 즉시 반영됩니다.
+      </p>
+    </header>
+  );
+
+  // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 미완성이라 목 없이는 조회가 실패한다.
+  //    백엔드 연동 후 이 분기를 통째로 제거할 것(제거하면 아래 로딩 분기만 남는다).
+  if (isError) {
+    return (
+      <div className="flex flex-col gap-6 pb-24">
+        {header}
+        <UnderDevelopmentNotice feature="상세 페이지 설정" />
+      </div>
+    );
+  }
 
   if (!template) {
     return (
@@ -43,15 +69,7 @@ const DetailSettingsPage = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-24">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-          상세 페이지 설정
-        </h1>
-        <p className="text-xsmall14 text-neutral-40">
-          공개 상세 페이지에 노출될 콘텐츠를 편집하세요. 좌측 편집 내용이 우측
-          미리보기에 즉시 반영됩니다.
-        </p>
-      </header>
+      {header}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
         <TemplateEditForm template={template} onChange={patch} />

@@ -1,6 +1,9 @@
 import { useLiveMentoringSettlementQuery } from '@/api/live-mentoring/liveMentoring';
 import type { SettlementRow } from '@/api/live-mentoring/liveMentoringSchema';
 import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
+// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
+//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
+import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
 
 const STATUS_LABEL: Record<SettlementRow['status'], string> = {
   PENDING: '정산 예정',
@@ -24,21 +27,36 @@ const StatusBadge = ({ status }: { status: SettlementRow['status'] }) => (
 );
 
 const SettlementPage = () => {
-  const { data, isLoading } = useLiveMentoringSettlementQuery();
+  const { data, isLoading, isError } = useLiveMentoringSettlementQuery();
 
   const settlementList = data?.settlementList ?? [];
   const itemList = data?.itemList ?? [];
 
+  const header = (
+    <header className="flex flex-col gap-2">
+      <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+        정산 현황
+      </h1>
+      <p className="text-xsmall14 text-neutral-40">
+        1대1 라이브 멘토링 완료 건에 대한 정산 내역을 확인하세요.
+      </p>
+    </header>
+  );
+
+  // ⚠️ 임시 — GET /mentor/live-mentoring/settlement 이 미완성이라 목 없이는 조회가 실패한다.
+  //    백엔드 연동 후 이 분기를 통째로 제거할 것(제거하면 실패 시 다시 빈 표가 뜬다).
+  if (isError) {
+    return (
+      <div className="flex flex-col gap-8 pb-20">
+        {header}
+        <UnderDevelopmentNotice feature="정산 현황" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8 pb-20">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-          정산 현황
-        </h1>
-        <p className="text-xsmall14 text-neutral-40">
-          1대1 라이브 멘토링 완료 건에 대한 정산 내역을 확인하세요.
-        </p>
-      </header>
+      {header}
 
       {/* 기간별 합계 */}
       <section className="flex flex-col gap-3">
