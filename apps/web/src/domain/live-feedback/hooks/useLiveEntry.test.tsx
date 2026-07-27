@@ -14,7 +14,7 @@ jest.mock('@/api/feedback/feedback', () => ({
 }));
 
 const ensureMock = jest.fn();
-jest.mock('@letscareer/ui/JitsiEmbed/jitsiHealthCheck', () => ({
+jest.mock('@letscareer/live-session/JitsiEmbed/jitsiHealthCheck', () => ({
   ensureLiveMeetingUrl: (opts: unknown) => ensureMock(opts),
 }));
 

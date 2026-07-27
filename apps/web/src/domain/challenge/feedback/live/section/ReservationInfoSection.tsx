@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
+import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import { usePatchFeedbackMeetingUrl } from '@/api/feedback/feedback';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';

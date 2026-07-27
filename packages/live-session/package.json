@@ -1,54 +1,39 @@
 {
-  "name": "@letscareer/ui",
+  "name": "@letscareer/live-session",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./*": "./src/*/index.tsx",
-    "./AlertDialog": "./src/AlertDialog/index.tsx",
-    "./Popup": "./src/Popup/index.ts",
-    "./Toast": "./src/Toast/index.tsx",
-    "./Button": "./src/components/Button/index.tsx"
+    "./JitsiEmbed": "./src/JitsiEmbed/index.tsx",
+    "./JitsiEmbed/buildRoomUrl": "./src/JitsiEmbed/buildRoomUrl.ts",
+    "./JitsiEmbed/jitsiHealthCheck": "./src/JitsiEmbed/jitsiHealthCheck.ts"
   },
   "dependencies": {
-    "@letscareer/utils": "workspace:*",
-    "@radix-ui/react-alert-dialog": "^1.1.4",
-    "@radix-ui/react-dialog": "^1.1.4",
-    "@radix-ui/react-toast": "^1.2.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.3.0"
+    "@jitsi/react-sdk": "^1.4.4",
+    "clsx": "^2.1.1"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
   },
   "devDependencies": {
-    "@letscareer/eslint-config": "workspace:*",
     "@letscareer/tailwind-config": "workspace:*",
     "@letscareer/tsconfig": "workspace:*",
-    "@storybook/addon-docs": "^10.5.0",
-    "@storybook/react-vite": "^10.5.0",
     "@testing-library/jest-dom": "^6.4.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9",
     "jsdom": "^25.0.0",
     "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "storybook": "^10.5.0",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.9.3",
     "vite": "^8",

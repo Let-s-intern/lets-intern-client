@@ -9,7 +9,7 @@ import ReservationInfoSection from './ReservationInfoSection';
 
 // @jitsi/react-sdk(ESM)는 jest가 그대로 파싱하지 못하므로 임베드 본문을 경량 스텁으로
 // 대체한다. 방 URL 은 BE meetingUrl 을 그대로 받는다(스텁의 data-room-url 로 검증).
-jest.mock('@letscareer/ui/JitsiEmbed', () => ({
+jest.mock('@letscareer/live-session/JitsiEmbed', () => ({
   __esModule: true,
   JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
     <div data-testid="jitsi-embed" data-room-url={roomUrl} />

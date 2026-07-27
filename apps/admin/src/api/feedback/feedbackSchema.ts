@@ -43,6 +43,10 @@ export const feedbackAdminVoSchema = z.object({
   mentorStatus: feedbackAttendanceStatusSchema,
   menteeStatus: feedbackAttendanceStatusSchema,
   status: feedbackStatusSchema,
+  /** 라이브 피드백 순번(BE feedback.th) — 실제 미션 회차가 아님. 표시는 missionTh 사용. */
+  th: z.number().nullable().optional(),
+  /** 실제 미션 회차(BE mission.th). 캘린더/리스트의 "N회차"는 이 값을 쓴다. */
+  missionTh: z.number().nullable().optional(),
   /**
    * 예약을 다른 날로 옮긴 횟수.
    * BE 미제공(예약 변경 내역 자체가 LC-3065 미구현) → 목 전용. 실 API 에 없으면 undefined → 0 으로 본다.
@@ -143,6 +147,17 @@ export type FeedbackSlotVo = z.infer<typeof feedbackSlotVoSchema>;
 export const getMentorFeedbackSlotsResponseSchema = z.object({
   feedbackSlotList: z.array(feedbackSlotVoSchema),
 });
+
+/** 멘토별 슬롯 오픈/예약 건수 집계 (GET /admin/feedback/slot/count) */
+export const mentorSlotCountVoSchema = z.object({
+  mentorId: z.number(),
+  openCount: z.number(),
+  reservedCount: z.number(),
+});
+export const getMentorSlotCountsResponseSchema = z.object({
+  mentorSlotCountList: z.array(mentorSlotCountVoSchema),
+});
+export type MentorSlotCountVo = z.infer<typeof mentorSlotCountVoSchema>;
 export type GetMentorFeedbackSlotsResponse = z.infer<
   typeof getMentorFeedbackSlotsResponseSchema
 >;

@@ -9,6 +9,7 @@ import {
 
 import type { LiveRole } from './hooks/liveRole';
 import { useLiveEntry } from './hooks/useLiveEntry';
+import AddToCalendarButton from './ui/AddToCalendarButton';
 import EnterLiveButton from './ui/EnterLiveButton';
 import LiveFeedbackModal from './ui/LiveFeedbackModal';
 import LoginGate from './ui/LoginGate';
@@ -65,6 +66,24 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
     );
   }
 
+  // 상대방(멘토 화면이면 멘티, 멘티 화면이면 멘토) 호칭·이름.
+  const counterpartLabel = role === 'MENTOR' ? '멘티' : '멘토';
+  const counterpartName =
+    (role === 'MENTOR' ? feedbackInfo?.menteeName : feedbackInfo?.mentorName) ??
+    undefined;
+
+  // 캘린더 일정 제목 — 캘린더 칩에서 잘려도 "누구와의 일정"인지 남도록 상대방 이름을
+  // 브랜드 태그 바로 뒤(앞쪽)에 둔다. 프로그램·회차는 뒤로 보내 잘려도 무방하게.
+  const calendarTitle = [
+    '[렛츠커리어]',
+    counterpartName ? `${counterpartName} ${counterpartLabel}` : null,
+    '라이브 피드백',
+    feedbackInfo?.programTitle ? `· ${feedbackInfo.programTitle}` : null,
+    feedbackInfo?.missionTh != null ? `${feedbackInfo.missionTh}차` : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
       <div className="flex w-full max-w-[420px] flex-col gap-5">
@@ -75,12 +94,8 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
               ? `${feedbackInfo.missionTh}회차`
               : undefined
           }
-          counterpartLabel={role === 'MENTOR' ? '멘티' : '멘토'}
-          counterpartName={
-            (role === 'MENTOR'
-              ? feedbackInfo?.menteeName
-              : feedbackInfo?.mentorName) ?? undefined
-          }
+          counterpartLabel={counterpartLabel}
+          counterpartName={counterpartName}
           startDate={feedbackInfo?.startDate}
           endDate={feedbackInfo?.endDate}
           role={role}
@@ -93,6 +108,13 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
           disabled={!feedbackInfo}
           isPreparing={isPreparing}
           onEnter={enter}
+        />
+
+        {/* 구글 캘린더에 추가 — 입장 버튼 아래. 시작 1시간 전부터 자동으로 숨겨진다. */}
+        <AddToCalendarButton
+          title={calendarTitle}
+          startDate={feedbackInfo?.startDate}
+          endDate={feedbackInfo?.endDate}
         />
       </div>
 

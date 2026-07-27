@@ -55,32 +55,38 @@
   transform: translateY(0.14em); /* 앞쪽 작은 별은 살짝 아래로 — 비대칭 배치 */
 }
 
-/* ---------- VOD 카드 ---------- */
-.membership-root .vod-card {
-  max-width: 900px;
+/* ---------- VOD 카드 (가로 2개 배치, 세로형) ---------- */
+.membership-root .vod-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 940px;
   margin: 0 auto;
+}
+.membership-root .vod-card {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 22px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
 }
 
-/* 실제 썸네일 이미지 — 정보 컬럼 높이에 근접한 4:3 고정 크기로 노출(크롭 없음). */
+/* 썸네일 이미지 — 카드 상단 풀폭 4:3 (크롭 없음). */
 .membership-root .vod-thumb-img {
-  flex: 0 0 400px;
-  width: 400px;
+  width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 14px;
 }
 
-/* 카드 정보 */
+/* 카드 정보 — 세로 플렉스로 두어 CTA(하단)를 카드 바닥에 정렬(카드 높이 균등). */
 .membership-root .vod-info {
   flex: 1 1 auto;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 .membership-root .vodhook-badge {
   display: inline-flex;
@@ -95,20 +101,20 @@
   margin-bottom: 14px;
 }
 .membership-root .vod-card-title {
-  font-size: 21px;
+  font-size: 18px;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.35;
   margin-bottom: 8px;
 }
 .membership-root .vod-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
+  gap: 6px 16px;
   list-style: none;
   margin-bottom: 12px;
 }
 .membership-root .vod-meta li {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #b9bdd0;
 }
@@ -122,7 +128,7 @@
 .membership-root .vod-bullets li {
   position: relative;
   padding-left: 24px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #dfe1ea;
 }
@@ -139,9 +145,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-top: 18px;
-  padding-top: 18px;
+  gap: 16px;
+  margin-top: auto; /* 카드 바닥에 정렬 — 두 카드 CTA 높이 맞춤 */
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 .membership-root .vodhook-price {
@@ -152,21 +158,21 @@
   line-height: 1.1;
 }
 .membership-root .vodhook-price-old {
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 500;
   color: #8a90a6;
   text-decoration: line-through;
 }
 .membership-root .vodhook-price-free {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--lc-blue-light);
 }
-/* CTA 는 디자인 시스템 .btn .btn-blue 를 사용; 폭 조정만 오버라이드 */
+/* CTA 는 디자인 시스템 .btn .btn-blue 를 사용; 좁은 카드에 맞춰 폭/여백만 오버라이드 */
 .membership-root .vod-cta {
   flex: 0 0 auto;
-  font-size: 16px;
-  padding: 14px 26px;
+  font-size: 15px;
+  padding: 11px 20px;
 }
 
 /* ---------- 하단 안내 ---------- */
@@ -213,14 +219,15 @@
   .membership-root .vod-br-m {
     display: inline;
   }
-  .membership-root .vod-card {
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+  /* 좁은 화면에서는 2열 → 1열 스택 */
+  .membership-root .vod-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 460px;
   }
-  .membership-root .vod-thumb-img {
-    flex-basis: auto;
-    width: 100%;
+  .membership-root .vod-card {
+    gap: 18px;
+    padding: 20px;
   }
   .membership-root .vod-card-title {
     font-size: 19px;

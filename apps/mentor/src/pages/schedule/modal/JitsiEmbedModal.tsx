@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { JitsiEmbed } from '@letscareer/ui/JitsiEmbed';
+import { JitsiEmbed } from '@letscareer/live-session/JitsiEmbed';
 
 import type { FeedbackAttendanceStatus } from '@/api/feedback/feedbackSchema';
 import BaseModal from '@/common/modal/BaseModal';

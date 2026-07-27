@@ -14,17 +14,17 @@ interface ViewToggleProps {
 
 export default function ViewToggle({ value, onChange }: ViewToggleProps) {
   return (
-    <div className="border-neutral-80 inline-flex rounded-md border p-0.5">
+    <div className="bg-neutral-95 inline-flex gap-0.5 rounded-full p-1">
       {views.map((view) => (
         <button
           type="button"
           key={view.id}
           onClick={() => onChange(view.id)}
           className={twMerge(
-            'text-xsmall14 rounded px-3 py-1.5',
+            'text-xsmall14 rounded-full px-4 py-1.5 font-medium transition',
             value === view.id
-              ? 'bg-neutral-0 text-white'
-              : 'text-neutral-40 bg-transparent',
+              ? 'text-neutral-0 bg-white shadow-sm'
+              : 'text-neutral-40 hover:text-neutral-0',
           )}
         >
           {view.label}

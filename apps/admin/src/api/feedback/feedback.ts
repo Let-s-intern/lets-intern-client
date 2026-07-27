@@ -18,6 +18,7 @@ import {
   getAdminFeedbackHistoryResponseSchema,
   getAdminFeedbacksResponseSchema,
   getMentorFeedbackSlotsResponseSchema,
+  getMentorSlotCountsResponseSchema,
 } from './feedbackSchema';
 
 /**
@@ -157,6 +158,24 @@ export const useMentorFeedbackSlotsQuery = (
   return useQuery({
     ...mentorFeedbackSlotsQueryOptions(mentorId ?? 0, range),
     enabled: mentorId != null,
+  });
+};
+
+/**
+ * GET /admin/feedback/slot/count — 멘토별 오픈/예약 슬롯 건수 집계.
+ * 멘토 태그의 "오픈 N" 표시에 쓴다(멘토 1명씩 조회하던 N+1을 1콜로 대체).
+ * startDate 를 주면 그 시각 이후 슬롯만 집계한다(미래 오픈 슬롯).
+ */
+export const useAdminMentorSlotCountsQuery = (startDate?: string) => {
+  return useQuery({
+    queryKey: ['adminMentorSlotCounts', startDate],
+    queryFn: async () => {
+      const res = await axios.get('/admin/feedback/slot/count', {
+        params: startDate ? { startDate } : {},
+      });
+      return getMentorSlotCountsResponseSchema.parse(res.data.data)
+        .mentorSlotCountList;
+    },
   });
 };
 

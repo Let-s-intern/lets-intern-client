@@ -8,7 +8,7 @@ import {
 } from '@/api/feedback/feedback';
 import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
 
-import { ensureLiveMeetingUrl } from '@letscareer/ui/JitsiEmbed/jitsiHealthCheck';
+import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import type { LiveRole } from './liveRole';
 
