@@ -12,12 +12,15 @@ import {
 
 interface ReservationCalendarViewProps {
   reservations: FeedbackAdminVo[];
+  /** 블록 클릭 시 상세 열기. 리스트 뷰의 "상세"와 동일 동작. */
+  onView?: (feedbackId: number) => void;
 }
 
 /** 예약(FeedbackAdminVo)을 주간 시간대 그리드 블록으로 변환한다. */
 export function buildReservationBlocks(
   reservations: FeedbackAdminVo[],
   weekStart: string,
+  onView?: (feedbackId: number) => void,
 ): GridBlock[] {
   return reservations.map((r) => {
     const { dayIndex, slotIndex, slotSpan } = getSlotPosition(
@@ -26,16 +29,23 @@ export function buildReservationBlocks(
       weekStart,
     );
     const color = getMentorColor(r.mentorName);
+    const roundLabel = r.missionTh != null ? `${r.missionTh}회차 · ` : '';
+    const subLine = `${roundLabel}${r.mentorName} · ${r.menteeName}`;
     return {
       key: String(r.feedbackId),
       dayIndex,
       slotIndex,
       slotSpan,
       className: twMerge(color.bg, color.border, color.text),
+      onClick: onView ? () => onView(r.feedbackId) : undefined,
+      title: `${r.programTitle || '-'} · ${subLine}`,
+      isSession: true,
       content: (
         <>
-          <div className="truncate font-semibold">{r.menteeName}</div>
-          <div className="truncate">{r.programTitle || '-'}</div>
+          <span className="truncate font-semibold">
+            {r.programTitle || '-'}
+          </span>
+          <span className="truncate opacity-80">{subLine}</span>
         </>
       ),
     };
@@ -45,12 +55,13 @@ export function buildReservationBlocks(
 /** 예약 관리 캘린더 뷰. 표시 주의 예약만 그리드에 배치한다. */
 export default function ReservationCalendarView({
   reservations,
+  onView,
 }: ReservationCalendarViewProps) {
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
 
   const blocks = useMemo(
-    () => buildReservationBlocks(reservations, weekStart),
-    [reservations, weekStart],
+    () => buildReservationBlocks(reservations, weekStart, onView),
+    [reservations, weekStart, onView],
   );
 
   return (

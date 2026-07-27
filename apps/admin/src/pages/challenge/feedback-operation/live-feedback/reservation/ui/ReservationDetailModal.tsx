@@ -29,6 +29,8 @@ interface ReservationDetailModalProps {
   /** 선택된 예약 id. null 이면 모달을 렌더하지 않는다(닫힘). */
   feedbackId: number | null;
   onClose: () => void;
+  /** 지정 시 헤더에 "예약 변경" 버튼을 노출하고, 클릭하면 예약 변경 모달로 전환한다. */
+  onReschedule?: () => void;
 }
 
 const ATTENDANCE_LABEL: Record<FeedbackAttendanceStatus, string> = {
@@ -341,6 +343,7 @@ function EditPanel({ detail }: { detail: FeedbackDetailAdminVo }) {
 export default function ReservationDetailModal({
   feedbackId,
   onClose,
+  onReschedule,
 }: ReservationDetailModalProps) {
   const {
     data: detail,
@@ -372,14 +375,25 @@ export default function ReservationDetailModal({
           <h3 className="text-medium16 text-neutral-0 font-semibold">
             예약 상세
           </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="닫기"
-            className="text-neutral-40 hover:text-neutral-0 text-lg"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-2">
+            {onReschedule && (
+              <button
+                type="button"
+                onClick={onReschedule}
+                className="border-primary text-xsmall14 text-primary hover:bg-primary/5 rounded-md border px-3 py-1.5 font-semibold transition-colors"
+              >
+                예약 변경
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="닫기"
+              className="text-neutral-40 hover:text-neutral-0 text-lg"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <div className="overflow-y-auto px-6 py-5">

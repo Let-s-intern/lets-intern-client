@@ -1,4 +1,5 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
 import ReservationManagement from './reservation/ReservationManagement';
 
@@ -14,8 +15,22 @@ const subTabs: { id: SubTab; label: string }[] = [
   { id: 'schedule', label: '멘토 스케줄' },
 ];
 
+function isSubTab(value: string | null): value is SubTab {
+  return value === 'reservation' || value === 'schedule';
+}
+
 export default function LiveFeedbackTab() {
-  const [subTab, setSubTab] = useState<SubTab>('reservation');
+  // 하위 탭 상태도 URL(?sub=)에 둔다. 새로고침 시 예약 관리로 리셋되며
+  // 그 조회가 다시 나가는 것을 막는다.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const subParam = searchParams.get('sub');
+  const subTab: SubTab = isSubTab(subParam) ? subParam : 'reservation';
+
+  const setSubTab = (id: SubTab) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('sub', id);
+    setSearchParams(next, { replace: true });
+  };
 
   return (
     <div className="flex flex-col gap-6">

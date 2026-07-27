@@ -1,4 +1,5 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
 import MentorNoticeManagement from './MentorNoticeManagement';
 import OngoingChallenges from './OngoingChallenges';
@@ -14,8 +15,22 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'live', label: 'LIVE 피드백' },
 ];
 
+function isTab(value: string | null): value is Tab {
+  return value === 'notice' || value === 'ongoing' || value === 'live';
+}
+
 export default function FeedbackOperationPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('notice');
+  // 탭 상태를 URL(?tab=)에 둔다. 새로고침해도 보던 탭이 유지되어
+  // 공지 탭으로 리셋되며 불필요한 재조회가 나가는 문제를 막는다.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: Tab = isTab(tabParam) ? tabParam : 'notice';
+
+  const setActiveTab = (tab: Tab) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', tab);
+    setSearchParams(next, { replace: true });
+  };
 
   return (
     <section className="p-5">
