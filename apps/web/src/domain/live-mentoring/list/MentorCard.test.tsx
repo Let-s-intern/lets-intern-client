@@ -61,9 +61,9 @@ describe('MentorCard', () => {
     expect(screen.getByText('이력서')).toBeInTheDocument();
   });
 
-  it('대표 경력의 직무를 배지로 노출한다(연차는 표기하지 않는다)', () => {
+  it('대표 경력의 회사명 · 직무를 배지로 노출한다(연차는 표기하지 않는다)', () => {
     render(<MentorCard opening={makeOpening()} />);
-    expect(screen.getByText('서비스 기획')).toBeInTheDocument();
+    expect(screen.getByText('네이버 · 서비스 기획')).toBeInTheDocument();
     expect(screen.queryByText(/년\+/)).not.toBeInTheDocument();
   });
 
@@ -84,7 +84,7 @@ describe('MentorCard', () => {
         })}
       />,
     );
-    expect(screen.getByText('리드')).toBeInTheDocument();
+    expect(screen.getByText('네이버 · 리드')).toBeInTheDocument();
   });
 
   it('대표 경력이 없으면(null) 배지를 렌더하지 않는다', () => {

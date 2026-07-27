@@ -1,21 +1,21 @@
 'use client';
 
 import { useLiveMentorDetailQuery } from '@/api/live-mentoring/liveMentoring';
-import {
-  CATEGORY_LABELS,
-  durationLabel,
-  formatFeedbackPeriod,
-  priceLabel,
-} from '../constants';
-import {
-  imagePlaceholderTitle,
-  mosaicStyle,
-  shouldShowImage,
-  visibleChecklist,
-} from '../utils/profileDisplay';
+import { formatDetailPeriod } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
+import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
+import DetailHero from './DetailHero';
+import DetailCTAButtons from './DetailCTAButtons';
+import DetailImageSection from './DetailImageSection';
+import DetailNavigation, {
+  LM_DIFFERENT_ID,
+  LM_FAQ_ID,
+  LM_MENTOR_INFO_ID,
+  LM_MENTORING_INTRO_ID,
+  LM_REVIEW_ID,
+} from './DetailNavigation';
 import DetailSection from './DetailSection';
 
 interface LiveMentoringDetailPageProps {
@@ -24,8 +24,13 @@ interface LiveMentoringDetailPageProps {
 
 /**
  * 공개 멘토 상세 페이지 (PRD §5 S2).
- * 멘토가 상세 페이지 설정에서 편집한 template 콘텐츠를 렌더한다.
- * 결제/예약은 범위 밖 — "신청" CTA 는 비활성(표시만).
+ *
+ * 시안 0~10 순서로 렌더한다.
+ * - 0~5 : 멘토가 상세 페이지 설정에서 편집한 template 콘텐츠
+ * - 6·7·9·10 : 운영 확정 마케팅 콘텐츠 → 시안 이미지 그대로 (`DetailFixedSections`)
+ * - 8 : 후기 (노출 여부·대상만 멘토가 고름)
+ *
+ * 결제/예약은 범위 밖 — 히어로의 플랜은 표시만 하고 선택되지 않는다.
  */
 const LiveMentoringDetailPage = ({
   mentorId,
@@ -43,209 +48,291 @@ const LiveMentoringDetailPage = ({
   }
 
   const { profile, template } = data;
-  // 상세의 profile 은 `visible` 을 쓰므로 공용 헬퍼 입력으로 정규화.
-  const showImage = shouldShowImage({ profileVisible: profile.visible });
-  const visibleCareers = template.careers.filter((c) => c.visible);
+  const { intro, mentoringTypes, strategy, video, results } = template;
   const shownReviews = template.reviews.visible
     ? data.reviews.filter((r) =>
         template.reviews.selectedReviewIds.includes(r.reviewId),
       )
     : [];
-  const checklist = visibleChecklist(template.checklist);
 
   return (
-    <div className="mw-1180 flex flex-col px-5 py-10">
-      {/* 헤더: 프로필 + 메타 + CTA */}
-      <div className="flex flex-col gap-6 pb-8 md:flex-row md:items-center">
-        <div className="bg-neutral-90 flex aspect-[4/3] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-md">
-          {!showImage ? (
-            <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
-              {imagePlaceholderTitle(profile.nickname)}
-            </span>
-          ) : profile.profileImage ? (
+    <div className="flex flex-col">
+      <DetailHero
+        detail={data}
+        period={formatDetailPeriod(
+          data.feedbackStartDate,
+          data.feedbackEndDate,
+        )}
+      />
+
+      <DetailNavigation isReady={!isLoading} />
+
+      {/* 시안 0-1 · 특별 혜택 */}
+      <DetailImageSection section="benefit" priority />
+      {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
+      <DetailImageSection section="pain" />
+      {/* 시안 0-3 · 멘토링 소개 */}
+      <DetailImageSection section="mentoringIntro" id={LM_MENTORING_INTRO_ID} />
+
+      {/* 시안 1 · 멘토 소개 */}
+      <DetailSection
+        id={LM_MENTOR_INFO_ID}
+        label="멘토 소개"
+        title={
+          intro.passedCount !== null
+            ? `확실한 전략으로 ${intro.passedCount.toLocaleString('ko-KR')}명을 합격시킨 ${profile.nickname} 멘토가 함께해요`
+            : `${profile.nickname} 멘토가 함께해요`
+        }
+      >
+        <div className="mx-auto grid w-full max-w-[900px] grid-cols-1 gap-6 md:grid-cols-[280px_1fr] md:items-stretch md:gap-10">
+          {intro.profileImage && (
             <img
-              src={profile.profileImage}
+              src={intro.profileImage}
               alt={profile.nickname}
-              className="h-full w-full object-cover"
-              style={mosaicStyle(profile)}
+              className="aspect-[3/4] w-full rounded-md object-cover"
             />
-          ) : (
-            <span className="text-neutral-40 text-xsmall14 px-4 text-center font-medium">
-              {profile.nickname}
-            </span>
           )}
-        </div>
 
-        <div className="flex flex-1 flex-col gap-3">
-          <span className="text-primary text-xsmall14 font-semibold">
-            {data.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')} ·{' '}
-            {data.durations.map(durationLabel).join('·')}
-          </span>
-          <h1 className="text-medium22 md:text-medium24 font-bold">
-            {profile.nickname}
-          </h1>
-          <div className="text-neutral-40 text-xsmall14 flex items-center gap-2">
-            <span className="text-primary font-semibold">
-              ★ {data.rating.toFixed(1)}
-            </span>
-            <span>후기 {data.reviewCount}</span>
-          </div>
-          <p className="text-neutral-40 text-xsmall14">
-            피드백 진행 일정{' '}
-            <span className="text-neutral-20 font-medium">
-              {formatFeedbackPeriod(
-                data.feedbackStartDate,
-                data.feedbackEndDate,
-              )}
-            </span>
-          </p>
-          <div className="mt-2 flex items-center justify-between gap-4">
-            <span className="text-medium22 font-bold">
-              {priceLabel(data.durations, data.price)}
-            </span>
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="bg-neutral-70 text-neutral-40 rounded-sm px-6 py-3 text-sm font-semibold"
-            >
-              신청하기 (준비 중)
-            </button>
+          <div className="flex h-full flex-col gap-2 text-left">
+            <p className="text-small20 md:text-medium24 font-bold">
+              {profile.nickname}
+            </p>
+            {intro.affiliation && (
+              <p className="text-xsmall14 md:text-xsmall16 font-semibold">
+                {intro.affiliation}
+              </p>
+            )}
+            {intro.careerLines.length > 0 && (
+              <ul className="mt-2 flex flex-col gap-1.5">
+                {intro.careerLines.map((line, i) => (
+                  <li key={i} className="text-neutral-30 text-xsmall14">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {intro.oneLiner && (
+              <div className="bg-primary-5 mt-auto flex flex-col gap-2 rounded-md p-5">
+                <p className="text-primary text-xsmall14 flex items-center gap-1.5 font-semibold">
+                  <span aria-hidden="true">💬</span> 멘토님의 한마디
+                </p>
+                <p className="text-neutral-30 text-xsmall14 whitespace-pre-line leading-relaxed">
+                  {intro.oneLiner}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      </DetailSection>
 
-      {/* 멘토 자기소개 + 이력 (편집 가능) */}
-      <DetailSection title="멘토 소개">
-        <p className="text-neutral-20 text-xsmall16 whitespace-pre-line">
-          {template.introduction}
-        </p>
-        {visibleCareers.length > 0 && (
-          <ul className="mt-2 flex flex-col gap-1">
-            {visibleCareers.map((c, i) => (
-              <li key={i} className="text-neutral-30 text-xsmall14">
-                {c.company} · {c.position}
-                <span className="text-neutral-50"> ({c.period})</span>
+      {/* 시안 2 · 멘토링 유형 */}
+      {mentoringTypes.items.length > 0 && (
+        <DetailSection
+          label="멘토링 유형"
+          title={mentoringTypes.title}
+          subtitle={mentoringTypes.subtitle}
+        >
+          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {mentoringTypes.items.map((item, i) => (
+              <li
+                key={i}
+                className="bg-neutral-95 flex flex-col gap-3 rounded-md p-6"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-semibold text-white">
+                    멘토링 유형 {i + 1}
+                  </span>
+                  <span className="text-xsmall14 font-medium">
+                    {item.typeName}
+                  </span>
+                </div>
+                <p className="text-small18 whitespace-pre-line font-bold leading-snug">
+                  {item.title}
+                </p>
+                <p className="text-neutral-40 text-xsmall14 whitespace-pre-line">
+                  {item.description}
+                </p>
+                {item.tags.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-neutral-90 text-neutral-40 text-xxsmall12 rounded-sm px-2 py-1"
+                      >
+                        # {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
-        )}
-      </DetailSection>
+        </DetailSection>
+      )}
 
-      {/* 멘토링 포인트 (편집 가능) */}
-      <DetailSection title="이런 점을 위주로 멘토링해요">
-        <p className="text-neutral-20 text-xsmall16 whitespace-pre-line">
-          {template.mentoringPoints}
-        </p>
-      </DetailSection>
-
-      {/* 후기 (노출 여부·선택 편집 가능) */}
-      {shownReviews.length > 0 && (
-        <DetailSection title="멘티 후기">
+      {/* 시안 3 · 취업 성공 전략 — visible=false 면 섹션 자체를 렌더하지 않는다 */}
+      {strategy.visible && strategy.points.length > 0 && (
+        <DetailSection
+          id={LM_DIFFERENT_ID}
+          title={strategy.title}
+          subtitle={strategy.subtitle}
+        >
           <ul className="flex flex-col gap-4">
+            {strategy.points.map((point, i) => (
+              <li
+                key={i}
+                className="bg-primary-5 grid grid-cols-1 items-center gap-5 rounded-md p-5 md:grid-cols-[minmax(0,380px)_1fr] md:gap-8"
+              >
+                {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
+                {point.image ? (
+                  <img
+                    src={point.image}
+                    alt=""
+                    className="aspect-[4/3] max-h-[220px] w-full rounded-sm object-cover"
+                  />
+                ) : (
+                  <div className="bg-neutral-90 aspect-[4/3] max-h-[220px] w-full rounded-sm" />
+                )}
+                <div className="flex flex-col gap-2">
+                  <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
+                    Point {i + 1}
+                  </span>
+                  <p className="text-xsmall16 md:text-small18 font-bold">
+                    {point.title}
+                  </p>
+                  <p className="text-neutral-40 text-xsmall14 leading-relaxed">
+                    {point.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </DetailSection>
+      )}
+
+      {/* 시안 4 · 이렇게 도와드려요(영상) — 다크 배경 */}
+      {video.visible && video.videoUrl && (
+        <DetailSection dark title={video.title} subtitle={video.subtitle}>
+          {/* 폭을 안 잡으면 mw-1180 에서 16:9 높이가 660px 을 넘어 한 화면에 안 들어온다 */}
+          <div className="mx-auto aspect-video w-full max-w-[820px] overflow-hidden rounded-md bg-black">
+            <iframe
+              src={video.videoUrl}
+              title={video.title}
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          {video.caption && (
+            <p className="text-xsmall14 md:text-xsmall16 text-center text-white/80">
+              {video.caption}
+            </p>
+          )}
+        </DetailSection>
+      )}
+
+      {/* 시안 5 · 결과 사례(Before/After) — 다크 배경 */}
+      {results.visible && results.cases.length > 0 && (
+        <DetailSection dark label={results.subtitle} title={results.title}>
+          {/* 카드 폭을 안 잡으면 mw-1180 절반(약 570px)까지 이미지가 커져 한눈에 안 들어온다 */}
+          <ul className="mx-auto flex w-full max-w-[840px] flex-col gap-8">
+            {results.cases.map((item, i) => (
+              <li key={i} className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="flex flex-col gap-3">
+                  <div className="overflow-hidden rounded-md">
+                    <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
+                      Before
+                    </p>
+                    <div className="bg-neutral-85 p-4">
+                      {item.beforeImage && (
+                        <img
+                          src={item.beforeImage}
+                          alt=""
+                          className="aspect-[4/3] max-h-[220px] w-full rounded-sm bg-white object-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xsmall14 text-center text-white/70">
+                    {item.beforeCaption}
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <div className="overflow-hidden rounded-md">
+                    <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
+                      After
+                    </p>
+                    <div className="bg-primary-20 p-4">
+                      {item.afterImage && (
+                        <img
+                          src={item.afterImage}
+                          alt=""
+                          className="aspect-[4/3] max-h-[220px] w-full rounded-sm bg-white object-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xsmall14 text-center font-medium text-white">
+                    ✓ {item.afterCaption}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </DetailSection>
+      )}
+
+      {/* 시안 6 · 플랜 */}
+      <DetailImageSection section="plan" />
+
+      {/* 시안 7 · 진행 프로세스 */}
+      <DetailProcessSection
+        period={formatDetailPeriod(
+          data.feedbackStartDate,
+          data.feedbackEndDate,
+        )}
+      />
+
+      {/* 시안 8 · 후기 (노출 여부·대상만 멘토가 고름) */}
+      {shownReviews.length > 0 && (
+        <DetailSection
+          id={LM_REVIEW_ID}
+          label="후기"
+          title={`${data.reviewCount}명이 만족한 렛츠커리어 수강생의 솔직한 멘토링 후기`}
+          subtitle="이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!"
+        >
+          <ul className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {shownReviews.map((r) => (
               <li
                 key={r.reviewId}
-                className="border-neutral-85 rounded-md border p-4"
+                className="border-neutral-85 flex flex-col gap-3 rounded-md border p-5"
               >
-                <div className="text-neutral-40 text-xxsmall12 mb-1 flex items-center gap-2">
+                <div className="text-neutral-40 text-xxsmall12 flex items-center gap-2">
                   <span className="text-primary font-semibold">
                     ★ {r.score}
                   </span>
                   <span>{r.menteeName}</span>
                   <span className="ml-auto">{r.createdAt}</span>
                 </div>
-                <p className="text-neutral-20 text-xsmall14">{r.content}</p>
+                <p className="text-neutral-20 text-xsmall14 leading-relaxed">
+                  {r.content}
+                </p>
               </li>
             ))}
           </ul>
         </DetailSection>
       )}
 
-      {/* 피드백 과정 (편집 불가) */}
-      {template.process.length > 0 && (
-        <DetailSection title="피드백 과정">
-          <ol className="flex flex-col gap-3">
-            {template.process.map((step) => (
-              <li key={step.step} className="flex gap-3">
-                <span className="bg-primary text-xxsmall12 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-bold text-white">
-                  {step.step}
-                </span>
-                <div>
-                  <p className="text-xsmall16 font-semibold">{step.title}</p>
-                  <p className="text-neutral-40 text-xsmall14">{step.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </DetailSection>
-      )}
+      {/* 시안 10 · 자주 묻는 질문 */}
+      <DetailFaqSection id={LM_FAQ_ID} />
 
-      {/* 제출물 + 체크리스트 (제출물 설정 편집 불가 / 체크리스트 편집 가능) */}
-      <DetailSection title="제출물 안내">
-        <p className="text-xsmall16 font-semibold">
-          {template.submissionSpec.title}
-        </p>
-        <p className="text-neutral-40 text-xsmall14">
-          {template.submissionSpec.desc}
-        </p>
-        {checklist.length > 0 && (
-          <ul className="mt-2 flex flex-col gap-1.5">
-            {checklist.map((item) => (
-              <li
-                key={item.id}
-                className="text-neutral-30 text-xsmall14 flex items-start gap-2"
-              >
-                <span className="text-primary">✓</span>
-                {item.text}
-              </li>
-            ))}
-          </ul>
-        )}
-      </DetailSection>
-
-      {/* 자주 묻는 질문 (편집 불가) */}
-      {template.faq.length > 0 && (
-        <DetailSection title="자주 묻는 질문">
-          <ul className="flex flex-col gap-4">
-            {template.faq.map((item, i) => (
-              <li key={i}>
-                <p className="text-xsmall16 font-semibold">Q. {item.q}</p>
-                <p className="text-neutral-40 text-xsmall14">A. {item.a}</p>
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      )}
-
-      {/* 이 멘토가 참여 중인 챌린지 */}
-      {data.challenges.length > 0 && (
-        <DetailSection title="이 멘토가 참여 중인 챌린지">
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {data.challenges.map((challenge) => (
-              <li key={challenge.challengeId}>
-                <a
-                  href={`/program/challenge/${challenge.challengeId}`}
-                  className="border-neutral-80 hover:border-primary flex items-center gap-3 rounded-md border p-4 transition"
-                >
-                  <div className="bg-neutral-90 h-12 w-12 shrink-0 overflow-hidden rounded-sm">
-                    {challenge.thumbnail && (
-                      <img
-                        src={challenge.thumbnail}
-                        alt={challenge.title}
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <span className="text-xsmall14 font-medium">
-                    {challenge.title}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      )}
+      {/* 하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트 */}
+      <DetailCTAButtons
+        title={data.title}
+        beginning={data.feedbackStartDate}
+        deadline={data.feedbackEndDate}
+      />
     </div>
   );
 };
