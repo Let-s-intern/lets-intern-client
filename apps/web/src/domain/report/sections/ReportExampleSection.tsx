@@ -191,7 +191,7 @@ const ReportExampleSection = ({
                   {clickedExample + 1}
                 </div>
                 <CloseIcon
-                  className="h-6 w-6 cursor-pointer"
+                  className="text-neutral-0 h-6 w-6 cursor-pointer"
                   onClick={() => setClickedExample(null)}
                 />
               </div>

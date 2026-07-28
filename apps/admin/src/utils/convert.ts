@@ -254,6 +254,7 @@ export const couponTypeToText: Record<string, string> = {
   PARTNERSHIP: '제휴',
   EVENT: '이벤트',
   GRADE: '등급별 할인',
+  CHALLENGE: '자동생성(챌린지)',
 };
 
 export const couponTypeEnum = {

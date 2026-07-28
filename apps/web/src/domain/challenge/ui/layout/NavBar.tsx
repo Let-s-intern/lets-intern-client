@@ -1,5 +1,6 @@
 'use client';
 
+import CouponBanner from '@/common/banner/CouponBanner';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -60,7 +61,10 @@ const NavBar = () => {
 
   return (
     <nav
-      className={clsx('w-full md:w-[220px]', isDetailPage && 'hidden md:block')}
+      className={clsx(
+        'flex w-full flex-col md:w-[220px]',
+        isDetailPage && 'hidden md:flex',
+      )}
     >
       <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
         {navItems.map((item) => {
@@ -122,6 +126,10 @@ const NavBar = () => {
           );
         })}
       </ul>
+      {/* 데스크탑: 사이드바 하단 쿠폰 배너 */}
+      <div className="hidden md:mt-4 md:block">
+        <CouponBanner />
+      </div>
     </nav>
   );
 };

@@ -1,3 +1,4 @@
+import CouponBanner from '@/common/banner/CouponBanner';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 
@@ -182,6 +183,7 @@ const FilterSideBar = ({
             {index < sections.length - 1 && <hr className="border-[#EFEFEF]" />}
           </React.Fragment>
         ))}
+        <CouponBanner compact />
       </aside>
 
       {/* 모바일: 바텀시트 */}

@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
+import CouponBanner from '@/common/banner/CouponBanner';
 import FilterSideBar from '@/domain/program/filter/FilterSideBar';
 import ProgramBanner from '@/domain/program/section/ProgramBanner';
 import ProgramGrid from '@/domain/program/section/ProgramGrid';
@@ -239,6 +240,10 @@ const Programs = () => {
             onResetFilter={resetAllFilters}
           />
           <ProgramRecommendCTA />
+          {/* 모바일: 쿠폰 배너 */}
+          <div className="lg:hidden">
+            <CouponBanner />
+          </div>
           <ProgramBanner />
         </main>
       </div>
