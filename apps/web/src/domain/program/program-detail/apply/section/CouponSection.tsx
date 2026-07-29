@@ -5,7 +5,7 @@ import CloseIcon from '@/assets/icons/close.svg?react';
 import { ICouponForm } from '@/types/interface';
 import { useState } from 'react';
 import { useApplyCoupon } from '../hooks/useApplyCoupon';
-import CouponSelectModal from '../ui/CouponSelectModal';
+import CouponSelectModal from '../modal/CouponSelectModal';
 
 export interface CouponSectionProps {
   setCoupon: (
@@ -31,6 +31,7 @@ const CouponSection = ({
   });
 
   const availableCount = coupons.length;
+  const isEmpty = availableCount === 0;
 
   const handleApply = (coupon: CouponItem | null) => {
     setSelectedCoupon(coupon);
@@ -49,6 +50,21 @@ const CouponSection = ({
             <span className="text-xsmall14 md:text-xsmall16 font-normal">
               {selectedCoupon ? (
                 <span className="font-medium">{selectedCoupon.name}</span>
+              ) : isEmpty ? (
+                <div>
+                  <span className="text-neutral-45 hidden md:inline">
+                    해당 프로그램에 적용 가능한 쿠폰이 없습니다.{' '}
+                  </span>
+                  <span className="text-neutral-45">
+                    <button
+                      className="text-primary underline"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      쿠폰 등록
+                    </button>{' '}
+                    후 사용해주세요.
+                  </span>
+                </div>
               ) : (
                 <>
                   적용 가능한 쿠폰이{' '}
@@ -70,11 +86,10 @@ const CouponSection = ({
             )}
           </div>
           <button
-            className="bg-primary text-xsmall16 rounded-sm px-5 py-[9px] text-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+            className="bg-primary text-xsmall16 rounded-sm px-5 py-[9px] text-neutral-100"
             onClick={() => setIsModalOpen(true)}
-            disabled={availableCount === 0}
           >
-            쿠폰 적용
+            {isEmpty ? '쿠폰 등록' : '쿠폰 적용'}
           </button>
         </div>
         {applyError && (

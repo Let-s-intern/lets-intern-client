@@ -2,7 +2,7 @@
 
 import BaseModal from '@/common/modal/BaseModal';
 import { useState } from 'react';
-import { useRegisterCoupon } from '../hooks/useRegisterCoupon';
+import { useRegisterCoupon } from '@/api/coupon/coupon';
 
 interface CouponRegisterModalProps {
   isOpen: boolean;

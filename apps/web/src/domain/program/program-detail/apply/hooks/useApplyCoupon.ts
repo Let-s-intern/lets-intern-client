@@ -18,12 +18,10 @@ interface Params {
 }
 
 export function useApplyCoupon({ programType, maxAmount, setCoupon }: Params) {
-  const [isApplying, setIsApplying] = useState(false);
   const [applyError, setApplyError] = useState<string | null>(null);
 
   const applyCoupon = async (code: string) => {
     setApplyError(null);
-    setIsApplying(true);
     try {
       const res = await axios.get('/coupon', {
         params: { code, programType: programType.toUpperCase() },
@@ -40,10 +38,8 @@ export function useApplyCoupon({ programType, maxAmount, setCoupon }: Params) {
       const errorCode = (error as ApiError).code;
       setApplyError(ERROR_MESSAGES[errorCode] ?? '쿠폰 적용에 실패했습니다.');
       setCoupon({ id: null, price: 0 });
-    } finally {
-      setIsApplying(false);
     }
   };
 
-  return { applyCoupon, isApplying, applyError };
+  return { applyCoupon, applyError };
 }
