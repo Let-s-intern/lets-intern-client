@@ -1,6 +1,10 @@
 'use client';
 
-import { COUPON_TYPE_LABEL, CouponItem, useRegisterCoupon } from '@/api/coupon/coupon';
+import {
+  COUPON_TYPE_LABEL,
+  CouponItem,
+  useRegisterCoupon,
+} from '@/api/coupon/coupon';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import BaseModal from '@/common/modal/BaseModal';
@@ -40,13 +44,11 @@ const CouponSelectModal = ({
     isPending: isRegistering,
     errorMessage: registerError,
     clearError,
-  } = useRegisterCoupon(
-    () => {
-      setRegisterCode('');
-      setSuccessMessage('쿠폰이 등록되었습니다.');
-      setTimeout(() => setSuccessMessage(''), 2000);
-    },
-  );
+  } = useRegisterCoupon(() => {
+    setRegisterCode('');
+    setSuccessMessage('쿠폰이 등록되었습니다.');
+    setTimeout(() => setSuccessMessage(''), 2000);
+  });
 
   const handleClose = () => {
     setRegisterCode('');
