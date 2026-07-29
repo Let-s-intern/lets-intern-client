@@ -1,5 +1,7 @@
+import MentorsListPage from '@/domain/mentors/list/MentorsListPage';
+
 const Page = () => {
-  return <main>멘토 목록페이지</main>;
+  return <MentorsListPage />;
 };
 
 export default Page;
