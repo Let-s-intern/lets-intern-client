@@ -26,6 +26,23 @@ interface FeedbackLayoutProps {
    * 미전달 시 확장은 이 컴포넌트 내부에서만 처리되어 기존 동작 그대로다.
    */
   onExpandedChange?: (isExpanded: boolean) => void;
+  /**
+   * 확장 상태를 바깥에서 제어할 때 전달(controlled). 미전달 시 이 컴포넌트가
+   * 내부 state 로 관리한다(기존 동작). 미리보기 카드처럼 토글 버튼 밖에서
+   * 확장을 열어야 하는 화면이 controlled 로 쓴다.
+   */
+  isExpanded?: boolean;
+  /**
+   * 확장 토글 라벨. 라이브는 확장이 곧 "피드백 작성 화면 열기"라 의미가 달라진다.
+   * 미전달 시 "크게 보기 / 작게 보기".
+   */
+  expandLabel?: string;
+  collapseLabel?: string;
+  /**
+   * 확장 버튼 아이콘 교체 — 라이브는 확장이 "작성 시작"이라 연필이 더 직관적이다.
+   * 미전달 시 기본 확대/축소 아이콘.
+   */
+  expandIcon?: ReactNode;
 }
 
 const FeedbackLayout = ({
@@ -40,16 +57,22 @@ const FeedbackLayout = ({
   leftActions,
   showExpandToggle = true,
   onExpandedChange,
+  expandLabel = '크게 보기',
+  collapseLabel = '작게 보기',
+  expandIcon,
+  isExpanded: controlledExpanded,
 }: FeedbackLayoutProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(false);
+  const isExpanded = controlledExpanded ?? uncontrolledExpanded;
   const shouldShowCompactNavigation = showExpandToggle && isExpanded;
 
-  const toggleExpanded = () =>
-    setIsExpanded((prev) => {
-      const next = !prev;
-      onExpandedChange?.(next);
-      return next;
-    });
+  // 업데이터 안에서 부모 setState 를 부르면 안 된다(업데이터는 순수해야 하고
+  // StrictMode 는 이를 두 번 호출한다). 값을 먼저 계산해 각각 따로 알린다.
+  const toggleExpanded = () => {
+    const next = !isExpanded;
+    if (controlledExpanded === undefined) setUncontrolledExpanded(next);
+    onExpandedChange?.(next);
+  };
   // menteeInfo 가 null 이면(예: 라이브 모달은 정보 카드를 editor 로 이동) 빈 래퍼·여백을 렌더하지 않는다.
   const menteeInfoContent = menteeInfo(isExpanded);
 
@@ -113,34 +136,43 @@ const FeedbackLayout = ({
             <div className="flex items-center">{leftActions}</div>
           ) : (
             showExpandToggle && (
-              <button
-                type="button"
-                onClick={toggleExpanded}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 hover:text-gray-800"
-              >
-                {isExpanded ? (
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M10 2.5L13.5 2.5L13.5 6M6 13.5L2.5 13.5L2.5 10"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M2.5 6L2.5 2.5L6 2.5M13.5 10L13.5 13.5L10 13.5"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-                {isExpanded ? '작게 보기' : '크게 보기'}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={toggleExpanded}
+                  className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 hover:text-gray-800"
+                >
+                  {isExpanded ? (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M10 2.5L13.5 2.5L13.5 6M6 13.5L2.5 13.5L2.5 10"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    (expandIcon ?? (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
+                        <path
+                          d="M2.5 6L2.5 2.5L6 2.5M13.5 10L13.5 13.5L10 13.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    ))
+                  )}
+                  {isExpanded ? collapseLabel : expandLabel}
+                </button>
+              </div>
             )
           )}
 

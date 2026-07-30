@@ -1187,7 +1187,14 @@ export const handlers = [
           menteeWishIndustry: 'IT · 플랫폼, 금융 · 핀테크',
           menteeWishCompany: 'Toss, Kakao',
           preQuestion:
-            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
+            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.\n' +
+            '특히 지원 동기 문항에서 회사와 제 경험을 연결하는 부분이 계속 겉도는 느낌이라, 어떤 축으로 엮어야 설득력이 생길지 듣고 싶습니다.\n' +
+            '그리고 결론을 앞에 두는 두괄식으로 고쳐봤는데 오히려 근거가 빈약해 보이는 것 같아 구성도 봐주시면 감사하겠습니다.',
+          // LC-3181 — 라이브에서 서면 피드백 작성. BE 미배포 필드(§3.3 요청 대상).
+          attendanceId: 9001,
+          // 작성 이력이 있는 상태 — 미리보기 카드 QA 용.
+          feedback: "{\"root\": {\"children\": [{\"children\": [{\"detail\": 0, \"format\": 0, \"mode\": \"normal\", \"style\": \"\", \"text\": \"지원 동기 문항은 회사 이야기보다 본인 경험이 앞서야 설득이 됩니다.\", \"type\": \"text\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"paragraph\", \"version\": 1}, {\"children\": [{\"detail\": 0, \"format\": 0, \"mode\": \"normal\", \"style\": \"\", \"text\": \"STAR 는 Situation 을 한 문장으로 줄이고 Action 에 분량을 몰아주세요.\", \"type\": \"text\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"paragraph\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"root\", \"version\": 1}}",
+          feedbackStatus: 'IN_PROGRESS',
         },
       },
     });

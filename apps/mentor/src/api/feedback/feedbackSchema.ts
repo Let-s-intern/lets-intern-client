@@ -217,6 +217,25 @@ export const feedbackDetailMentorSchema = z.object({
    */
   missionStartDate: z.string().nullable().optional(),
   missionEndDate: z.string().nullable().optional(),
+  /**
+   * 라이브 세션에서 작성하는 서면 피드백 (LC-3181).
+   *
+   * ⚠️ 현재 BE `FeedbackDetailMentorVo` 에는 이 3개 필드가 없다.
+   * forward-compatible: optional/nullable 이라 응답에 없어도 parse 통과한다.
+   *
+   * 저장은 서면 피드백과 **같은 계약**(`PATCH /attendance/{attendanceId}/mentor`)을 쓴다.
+   * 인가도 그대로 통과한다 — `validateAuthorizedMentor` 가 확인하는
+   * `challengeApplication.challengeMentor.mentor` 가 곧 `Feedback.mentor` 다.
+   * 막는 건 `attendanceId` 부재 하나뿐이며, 상세 쿼리가 이미 attendance 를 조인하고
+   * 있어 projection 추가만으로 채워진다. (prd-LC-3181 §3.3 참고)
+   *
+   * 값이 없으면 작성 UI 는 읽기 전용으로 잠긴다.
+   */
+  attendanceId: z.number().nullish(),
+  /** 작성 중이거나 제출된 피드백 본문 (Lexical editor state JSON 문자열) */
+  feedback: z.string().nullish(),
+  /** WAITING | IN_PROGRESS | COMPLETED | CONFIRMED */
+  feedbackStatus: z.string().nullish(),
 });
 export type FeedbackDetailMentor = z.infer<typeof feedbackDetailMentorSchema>;
 

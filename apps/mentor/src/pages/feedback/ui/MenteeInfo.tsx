@@ -6,6 +6,8 @@ import { type FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import { isNotionUrl } from '../utils/notion';
 import { getWrittenFeedbackBadgeVisual } from '../utils/writtenFeedbackStatus';
+import MenteeInfoCompactRow from './MenteeInfoCompactRow';
+import PanelEntryButton from './PanelEntryButton';
 import SideViewButton from './SideViewButton';
 
 interface MenteeData {
@@ -34,34 +36,6 @@ interface MenteeInfoProps {
   /** 사전 질문을 모달 오른쪽 패널에 띄워 보면서 피드백 작성 */
   onViewPreQuestion?: () => void;
 }
-
-/** 오른쪽 분할 패널 아이콘 — 좌측 패널용 SideViewButton 아이콘의 좌우 대칭. */
-const RightPanelIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-    <rect
-      x="2"
-      y="3"
-      width="12"
-      height="10"
-      rx="1.5"
-      stroke="#4D55F5"
-      strokeWidth="1.2"
-    />
-    <path d="M9.5 3V13" stroke="#4D55F5" strokeWidth="1.2" />
-  </svg>
-);
-
-const ExternalLinkIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-    <path
-      d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
-      stroke="#4D55F5"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
 
 const EMPTY_STATE = (
   <div className="border-neutral-80 rounded-[4px] border p-6 text-sm text-neutral-400">
@@ -112,83 +86,64 @@ const MenteeInfo = ({
     </span>
   );
 
-  // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
+  // 최소화 모드 — 라이브 모달과 같은 컴팩트 행(공통 컴포넌트)을 쓴다.
   if (collapsed) {
     return (
-      <div className="border-neutral-80 flex items-center gap-x-4 gap-y-1 rounded-[4px] border px-4 py-2.5">
-        <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
-          <span className="text-sm font-semibold text-neutral-900">
-            {mentee.name}
-          </span>
-          {mentee.wishJob && (
-            <span className="text-xs text-neutral-500">
-              희망 직군:{' '}
-              <span className="font-medium text-neutral-700">
-                {mentee.wishJob}
+      <MenteeInfoCompactRow
+        name={mentee.name}
+        wishJob={mentee.wishJob}
+        wishCompany={mentee.wishCompany}
+        badge={feedbackBadge}
+        badgeSuffix={
+          isDraftSaved ? (
+            <span className="text-xs text-neutral-400">임시저장됨</span>
+          ) : null
+        }
+        actions={
+          <>
+            {hasSubmissionLink ? (
+              <span className="flex shrink-0 items-center gap-1">
+                <PanelEntryButton compact href={mentee.link!}>
+                  제출물 보기
+                </PanelEntryButton>
+                {canEmbedLink && onViewLinkSide && (
+                  <SideViewButton
+                    onClick={onViewLinkSide}
+                    size={14}
+                    className="h-[30px] w-[30px]"
+                  />
+                )}
               </span>
-            </span>
-          )}
-          {mentee.wishCompany && (
-            <span className="text-xs text-neutral-500">
-              희망 기업:{' '}
-              <span className="font-medium text-neutral-700">
-                {mentee.wishCompany}
+            ) : hasExperienceSubmission ? (
+              <span className="flex shrink-0 items-center gap-1">
+                <PanelEntryButton compact onClick={onViewExperience}>
+                  경험 보기
+                </PanelEntryButton>
+                {onViewExperienceSide && (
+                  <SideViewButton
+                    onClick={onViewExperienceSide}
+                    size={14}
+                    className="h-[30px] w-[30px]"
+                  />
+                )}
               </span>
-            </span>
-          )}
-          {statusBadge}
-        </div>
-        {hasSubmissionLink ? (
-          <span className="flex shrink-0 items-center gap-1">
-            <a
-              href={mentee.link!}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={feedbackModalDesign.panelEntryButtonCompact}
-            >
-              <ExternalLinkIcon size={14} />
-              제출물 보기
-            </a>
-            {canEmbedLink && onViewLinkSide && (
-              <SideViewButton
-                onClick={onViewLinkSide}
-                size={14}
-                className="h-[30px] w-[30px]"
-              />
+            ) : isSubmitted ? (
+              <span className="shrink-0 text-xs text-neutral-400">
+                제출물 없음
+              </span>
+            ) : null}
+            {hasPreQuestion && (
+              <PanelEntryButton
+                compact
+                icon="right-panel"
+                onClick={onViewPreQuestion}
+              >
+                사전 질문 보기
+              </PanelEntryButton>
             )}
-          </span>
-        ) : hasExperienceSubmission ? (
-          <span className="flex shrink-0 items-center gap-1">
-            <button
-              type="button"
-              onClick={onViewExperience}
-              className={feedbackModalDesign.panelEntryButtonCompact}
-            >
-              <ExternalLinkIcon size={14} />
-              경험 보기
-            </button>
-            {onViewExperienceSide && (
-              <SideViewButton
-                onClick={onViewExperienceSide}
-                size={14}
-                className="h-[30px] w-[30px]"
-              />
-            )}
-          </span>
-        ) : isSubmitted ? (
-          <span className="shrink-0 text-xs text-neutral-400">제출물 없음</span>
-        ) : null}
-        {hasPreQuestion && (
-          <button
-            type="button"
-            onClick={onViewPreQuestion}
-            className={feedbackModalDesign.panelEntryButtonCompact}
-          >
-            <RightPanelIcon size={14} />
-            사전 질문 보기
-          </button>
-        )}
-      </div>
+          </>
+        }
+      />
     );
   }
 
@@ -225,15 +180,9 @@ const MenteeInfo = ({
               </div>
               {hasSubmissionLink ? (
                 <span className="flex w-fit items-center gap-1.5">
-                  <a
-                    href={mentee.link!}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={feedbackModalDesign.panelEntryButton}
-                  >
-                    <ExternalLinkIcon />
+                  <PanelEntryButton href={mentee.link!}>
                     제출물 보기
-                  </a>
+                  </PanelEntryButton>
                   {canEmbedLink && onViewLinkSide && (
                     <SideViewButton
                       onClick={onViewLinkSide}
@@ -243,14 +192,9 @@ const MenteeInfo = ({
                 </span>
               ) : hasExperienceSubmission ? (
                 <span className="flex w-fit items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={onViewExperience}
-                    className={feedbackModalDesign.panelEntryButton}
-                  >
-                    <ExternalLinkIcon />
+                  <PanelEntryButton onClick={onViewExperience}>
                     경험 보기
-                  </button>
+                  </PanelEntryButton>
                   {onViewExperienceSide && (
                     <SideViewButton
                       onClick={onViewExperienceSide}
@@ -297,17 +241,13 @@ const MenteeInfo = ({
 
           {/* 사전 질문 진입 — 좌측 열의 "경험 보기"와 같은 줄에 놓이도록 하단 정렬 */}
           {hasPreQuestion ? (
-            <button
-              type="button"
+            <PanelEntryButton
+              icon="right-panel"
               onClick={onViewPreQuestion}
-              className={twMerge(
-                feedbackModalDesign.panelEntryButton,
-                'mt-auto',
-              )}
+              className="mt-auto"
             >
-              <RightPanelIcon />
               사전 질문 보기
-            </button>
+            </PanelEntryButton>
           ) : null}
         </div>
       </div>

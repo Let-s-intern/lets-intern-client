@@ -4,6 +4,8 @@ interface MenteePreQuestionPanelProps {
   onClose: () => void;
   preQuestion?: string | null;
   menteeName?: string;
+  /** 제목 어휘 — 서면은 "사전 질문", 라이브는 "사전 Q&A" 를 쓴다. */
+  title?: string;
 }
 
 /**
@@ -18,6 +20,7 @@ const MenteePreQuestionPanel = ({
   onClose,
   preQuestion,
   menteeName,
+  title = '사전 질문',
 }: MenteePreQuestionPanelProps) => {
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
 
@@ -25,12 +28,13 @@ const MenteePreQuestionPanel = ({
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200">
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-3 py-2.5">
         <h4 className="truncate text-sm font-semibold text-neutral-900">
-          {menteeName ? `${menteeName} 님의 ` : ''}사전 질문
+          {menteeName ? `${menteeName} 님의 ` : ''}
+          {title}
         </h4>
         <button
           type="button"
           onClick={onClose}
-          aria-label="사전 질문 패널 닫기"
+          aria-label={`${title} 패널 닫기`}
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -50,9 +54,7 @@ const MenteePreQuestionPanel = ({
             {preQuestion}
           </p>
         ) : (
-          <p className="text-sm text-neutral-400">
-            작성한 사전 질문이 없습니다.
-          </p>
+          <p className="text-sm text-neutral-400">작성한 내용이 없습니다.</p>
         )}
       </div>
     </div>

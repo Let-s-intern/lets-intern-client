@@ -44,9 +44,7 @@ describe('MenteePreQuestionPanel', () => {
   it('내용이 없으면 안내 문구를 노출한다', () => {
     render(<MenteePreQuestionPanel onClose={noop} preQuestion="   " />);
 
-    expect(
-      screen.getByText('작성한 사전 질문이 없습니다.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('작성한 내용이 없습니다.')).toBeInTheDocument();
   });
 
   it('본문 영역이 자체 스크롤 컨테이너를 유지한다 (에디터 높이 침범 방지)', () => {
