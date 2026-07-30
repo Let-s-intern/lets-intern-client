@@ -5,6 +5,8 @@ interface FeedbackLayoutProps {
   sidebar: ReactNode;
   /** 경험 등 참고자료 사이드 패널 — 있으면 멘티 목록 자리에 대신 표시 */
   sidePanel?: ReactNode;
+  /** 사전 질문 등 오른쪽 참고 패널 — 제출물 패널(왼쪽) 반대편에 표시 */
+  rightPanel?: ReactNode;
   /** Prev/next mentee navigation (large) - shown in normal mode top */
   navigation: ReactNode;
   /** Compact prev/next navigation - shown in expanded mode bottom */
@@ -19,11 +21,17 @@ interface FeedbackLayoutProps {
   leftActions?: ReactNode;
   /** Show expand/collapse toggle button */
   showExpandToggle?: boolean;
+  /**
+   * 확장 상태 변화 알림 — 모달 컨테이너 크기를 호출처가 바꿀 때 쓴다(전체화면 전환).
+   * 미전달 시 확장은 이 컴포넌트 내부에서만 처리되어 기존 동작 그대로다.
+   */
+  onExpandedChange?: (isExpanded: boolean) => void;
 }
 
 const FeedbackLayout = ({
   sidebar,
   sidePanel,
+  rightPanel,
   navigation,
   navigationCompact,
   menteeInfo,
@@ -31,9 +39,17 @@ const FeedbackLayout = ({
   actions,
   leftActions,
   showExpandToggle = true,
+  onExpandedChange,
 }: FeedbackLayoutProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldShowCompactNavigation = showExpandToggle && isExpanded;
+
+  const toggleExpanded = () =>
+    setIsExpanded((prev) => {
+      const next = !prev;
+      onExpandedChange?.(next);
+      return next;
+    });
   // menteeInfo 가 null 이면(예: 라이브 모달은 정보 카드를 editor 로 이동) 빈 래퍼·여백을 렌더하지 않는다.
   const menteeInfoContent = menteeInfo(isExpanded);
 
@@ -59,7 +75,7 @@ const FeedbackLayout = ({
         {sidePanel ?? sidebar}
       </div>
 
-      {/* Right panel */}
+      {/* 가운데 본문(네비게이션·정보카드·에디터·액션) */}
       <div
         className={`flex min-w-0 flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out ${
           isExpanded ? 'gap-0' : 'gap-3'
@@ -99,7 +115,7 @@ const FeedbackLayout = ({
             showExpandToggle && (
               <button
                 type="button"
-                onClick={() => setIsExpanded((prev) => !prev)}
+                onClick={toggleExpanded}
                 className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 hover:text-gray-800"
               >
                 {isExpanded ? (
@@ -146,6 +162,14 @@ const FeedbackLayout = ({
           <div className="flex items-center">{actions}</div>
         </div>
       </div>
+
+      {/* 오른쪽 참고 패널(사전 질문) — 열렸을 때만 자리를 차지한다.
+          제출물 패널과 달리 대체할 대상이 없어 조건부 렌더한다. */}
+      {rightPanel && (
+        <div className="flex max-h-64 shrink-0 flex-col opacity-100 transition-all duration-300 ease-in-out md:max-h-none md:w-[320px]">
+          {rightPanel}
+        </div>
+      )}
     </div>
   );
 };

@@ -26,6 +26,9 @@ import { isNotionUrl } from './utils/notion';
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
 const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
 const MenteeLinkPanel = lazy(() => import('./ui/MenteeLinkPanel'));
+const MenteePreQuestionPanel = lazy(
+  () => import('./ui/MenteePreQuestionPanel'),
+);
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -86,6 +89,10 @@ const FeedbackModal = ({
   // 왼쪽 사이드 패널 — 한번 열면 멘티를 전환해도 열린 상태 유지,
   // 표시 내용(경험정리/노션 임베드)은 현재 멘티의 제출 유형에 따라 자동 결정
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  // 오른쪽 사전 질문 패널 — 멘티를 전환해도 열린 상태 유지(내용만 교체)
+  const [isPreQuestionPanelOpen, setIsPreQuestionPanelOpen] = useState(false);
+  // "크게 보기" — 모달을 전체화면으로 넓힌다(상태는 FeedbackLayout 이 소유).
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const isMenteeSubmitted =
     currentMentee != null &&
@@ -99,6 +106,10 @@ const FeedbackModal = ({
     isMenteeSubmitted && isNotionUrl(currentMentee.link);
   const showExperiencePanel = isSidePanelOpen && hasExperienceSubmission;
   const showLinkPanel = isSidePanelOpen && hasEmbeddableLink;
+  const showLeftPanel = showExperiencePanel || showLinkPanel;
+  // 사전 질문이 없는 멘티로 전환하면 패널을 띄우지 않는다(빈 패널 방지).
+  const showPreQuestionPanel =
+    isPreQuestionPanelOpen && !!preQuestion && preQuestion.trim().length > 0;
 
   return (
     <BaseModal
@@ -106,9 +117,14 @@ const FeedbackModal = ({
       onClose={handleClose}
       className={twMerge(
         feedbackModalDesign.modalContainer,
-        // 제출물 패널이 실제로 열렸을 때만 모달을 넓혀 임베드+에디터를 함께 표시
-        (showExperiencePanel || showLinkPanel) &&
+        // 패널이 실제로 열렸을 때만 모달을 넓혀 패널+에디터를 함께 표시
+        (showLeftPanel || showPreQuestionPanel) &&
           feedbackModalDesign.modalContainerWide,
+        showLeftPanel &&
+          showPreQuestionPanel &&
+          feedbackModalDesign.modalContainerWidest,
+        // 전체화면은 위 폭 지정을 모두 덮어야 하므로 마지막에 합성한다.
+        isFullscreen && feedbackModalDesign.modalContainerFullscreen,
       )}
     >
       <FeedbackHeader
@@ -122,6 +138,7 @@ const FeedbackModal = ({
       />
 
       <FeedbackLayout
+        onExpandedChange={setIsFullscreen}
         sidebar={
           <div className="flex h-full flex-col gap-3">
             <div className="min-h-0 flex-1">
@@ -173,6 +190,17 @@ const FeedbackModal = ({
             </Suspense>
           ) : undefined
         }
+        rightPanel={
+          showPreQuestionPanel ? (
+            <Suspense fallback={null}>
+              <MenteePreQuestionPanel
+                onClose={() => setIsPreQuestionPanelOpen(false)}
+                preQuestion={preQuestion}
+                menteeName={currentMentee?.name}
+              />
+            </Suspense>
+          ) : undefined
+        }
         menteeInfo={(collapsed) => (
           <MenteeInfo
             mentee={currentMentee}
@@ -183,6 +211,7 @@ const FeedbackModal = ({
             // 한번 더 클릭하면 닫힘(토글)
             onViewExperienceSide={() => setIsSidePanelOpen((prev) => !prev)}
             onViewLinkSide={() => setIsSidePanelOpen((prev) => !prev)}
+            onViewPreQuestion={() => setIsPreQuestionPanelOpen((prev) => !prev)}
           />
         )}
         editor={

@@ -83,33 +83,65 @@ describe('MenteeInfo 제출물 진입점', () => {
   });
 });
 
+/**
+ * 사전 질문은 카드에 인라인으로 펼치지 않고 오른쪽 패널 진입 버튼만 노출한다.
+ * 인라인이던 시절엔 장문일수록 카드가 제한 없이 늘어나 에디터를 0px까지 밀어냈다.
+ */
 describe('MenteeInfo 사전 질문', () => {
   const submitted = { ...base, id: 1, userId: 2, link: null };
 
-  it('preQuestion 전달 시 "사전 질문" 라벨과 내용을 노출한다', () => {
+  it('preQuestion 전달 시 진입 버튼을 노출하고 내용은 카드에 펼치지 않는다', () => {
     render(
       <MenteeInfo mentee={submitted} preQuestion="자소서 3번 문항 봐주세요" />,
     );
 
-    expect(screen.getByText('사전 질문')).toBeInTheDocument();
-    expect(screen.getByText('자소서 3번 문항 봐주세요')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /사전 질문 보기/ }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('자소서 3번 문항 봐주세요')).toBeNull();
   });
 
-  it('preQuestion 미전달 시 "사전 질문"을 노출하지 않는다', () => {
+  it('진입 버튼 클릭 시 onViewPreQuestion 을 호출한다', async () => {
+    const onViewPreQuestion = vi.fn();
+    render(
+      <MenteeInfo
+        mentee={submitted}
+        preQuestion="자소서 3번 문항 봐주세요"
+        onViewPreQuestion={onViewPreQuestion}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /사전 질문 보기/ }),
+    );
+    expect(onViewPreQuestion).toHaveBeenCalledTimes(1);
+  });
+
+  it('preQuestion 미전달 시 진입 버튼을 노출하지 않는다', () => {
     render(<MenteeInfo mentee={submitted} />);
 
-    expect(screen.queryByText('사전 질문')).toBeNull();
+    expect(screen.queryByText(/사전 질문/)).toBeNull();
   });
 
-  it('collapsed(컴팩트) 모드에서는 사전 질문을 노출하지 않는다', () => {
+  it('공백만 있는 preQuestion 은 없는 것으로 취급한다', () => {
+    render(<MenteeInfo mentee={submitted} preQuestion="   " />);
+
+    expect(screen.queryByText(/사전 질문/)).toBeNull();
+  });
+
+  it('collapsed(컴팩트) 모드에서도 진입 버튼을 노출한다', async () => {
+    const onViewPreQuestion = vi.fn();
     render(
       <MenteeInfo
         mentee={submitted}
         collapsed
         preQuestion="자소서 3번 문항 봐주세요"
+        onViewPreQuestion={onViewPreQuestion}
       />,
     );
 
-    expect(screen.queryByText('사전 질문')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: /사전 질문/ }));
+    expect(onViewPreQuestion).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText('자소서 3번 문항 봐주세요')).toBeNull();
   });
 });

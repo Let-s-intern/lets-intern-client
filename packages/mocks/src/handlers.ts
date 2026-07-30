@@ -973,13 +973,24 @@ export const handlers = [
    * (멘토) GET /challenge/:cid/mission/:mid/feedback/attendances/:attendanceId
    * 멘토가 작성한 피드백 단건 — 작성 전 상태(null).
    * 주의: `.../mentee`(위) 뒤에 등록해야 `mentee`가 `:attendanceId`로 매칭되지 않는다.
+   *
+   * `preQuestion` 은 멘티 정보 영역(MenteeInfo)의 "사전 질문" 행으로 렌더된다.
+   * 실제 멘티는 줄바꿈 포함 장문을 넣는 경우가 많아 목도 장문으로 둔다.
    */
   http.get(
     '*/challenge/:challengeId/mission/:missionId/feedback/attendances/:attendanceId',
     () => {
       return HttpResponse.json({
         status: 200,
-        data: { attendanceDetailVo: { feedback: null } },
+        data: {
+          attendanceDetailVo: {
+            feedback: null,
+            preQuestion:
+              '이번 경험정리에서 서비스 기획 직무에 맞춰 프로젝트 경험을 정리했는데, 제가 맡은 역할이 기획보다는 운영에 가까웠던 것 같아 이 경험을 기획 직무 지원서에 그대로 써도 될지 고민입니다.\n' +
+              '또 STAR 구조로 쓰다 보니 Situation 과 Task 가 계속 겹쳐서 분량만 늘어나는 느낌인데, 어느 정도까지 압축하는 게 좋을까요?\n' +
+              '마지막으로 네이버처럼 규모가 큰 회사에 지원할 때 소규모 팀 프로젝트 경험이 약점으로 보일지, 아니면 오히려 주도적으로 일한 근거로 쓸 수 있을지 의견이 궁금합니다.',
+          },
+        },
       });
     },
   ),
