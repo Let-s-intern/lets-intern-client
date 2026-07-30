@@ -4,6 +4,7 @@ export interface MentorDetail {
   company: string;
   position: string;
   profileImage: string;
+  badgeImage: string;
   representativeInfo: {
     label: string;
     isActive: boolean;
@@ -26,6 +27,7 @@ export const DUMMY_MENTOR_DETAIL: MentorDetail = {
   company: '렛츠커리어',
   position: 'CEO',
   profileImage: '/images/marketing/profile2.png',
+  badgeImage: '/logo/logo-simple.svg',
   representativeInfo: {
     label: '렛츠커리어 | 대표 멘토/컨설턴트 5년',
     isActive: true,
@@ -35,6 +37,17 @@ export const DUMMY_MENTOR_DETAIL: MentorDetail = {
   },
   bullets: [
     '당근, CJ푸드빌, 컬리, 패스트캠퍼스, 캐시워크 등 합격 이력 보유',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
+    '2,500명 규모 취준 QNA 특방 운영',
     '2,500명 규모 취준 QNA 특방 운영',
   ],
   stats: {
