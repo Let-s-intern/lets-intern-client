@@ -1,6 +1,6 @@
-import BannerSection from './BannerSection';
-import MentorCardSection from './MentorCardSection';
-import MentorFilterSection from './MentorFilterSection';
+import BannerSection from './section/BannerSection';
+import MentorCardSection from './section/MentorCardSection';
+import MentorFilterSection from './section/MentorFilterSection';
 
 const MentorsListPage = () => {
   return (

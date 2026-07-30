@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 
-import FilterChips from './FilterChips';
+import FilterChips from '../ui/FilterChips';
 import {
   CONCERN_FILTER_OPTIONS,
   ConcernFilterValue,
   JOB_FILTER_OPTIONS,
   JobFilterValue,
-} from './constants';
+} from '../constants';
 
 const MentorFilterSection = () => {
   const [concern, setConcern] = useState<ConcernFilterValue>('all');

@@ -1,4 +1,4 @@
-import { MentorTagValue } from './constants';
+import { MentorTagValue } from '../constants';
 
 export interface DummyMentor {
   mentorId: string;

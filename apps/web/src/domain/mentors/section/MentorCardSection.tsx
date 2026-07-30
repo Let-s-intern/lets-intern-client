@@ -1,5 +1,5 @@
-import { DUMMY_MENTORS } from './dummyMentors';
-import MentorCard from './MentorCard';
+import { DUMMY_MENTORS } from '../data/dummyMentors';
+import MentorCard from '../ui/MentorCard';
 
 const MentorCardSection = () => {
   return (

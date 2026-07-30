@@ -1,4 +1,4 @@
-import MentorsListPage from '@/domain/mentors/list/MentorsListPage';
+import MentorsListPage from '@/domain/mentors/MentorsListPage';
 
 const Page = () => {
   return <MentorsListPage />;
