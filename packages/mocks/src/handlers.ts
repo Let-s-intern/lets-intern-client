@@ -1193,7 +1193,8 @@ export const handlers = [
           // LC-3181 — 라이브에서 서면 피드백 작성. BE 미배포 필드(§3.3 요청 대상).
           attendanceId: 9001,
           // 작성 이력이 있는 상태 — 미리보기 카드 QA 용.
-          feedback: "{\"root\": {\"children\": [{\"children\": [{\"detail\": 0, \"format\": 0, \"mode\": \"normal\", \"style\": \"\", \"text\": \"지원 동기 문항은 회사 이야기보다 본인 경험이 앞서야 설득이 됩니다.\", \"type\": \"text\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"paragraph\", \"version\": 1}, {\"children\": [{\"detail\": 0, \"format\": 0, \"mode\": \"normal\", \"style\": \"\", \"text\": \"STAR 는 Situation 을 한 문장으로 줄이고 Action 에 분량을 몰아주세요.\", \"type\": \"text\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"paragraph\", \"version\": 1}], \"direction\": \"ltr\", \"format\": \"\", \"indent\": 0, \"type\": \"root\", \"version\": 1}}",
+          feedback:
+            '{"root": {"children": [{"children": [{"detail": 0, "format": 0, "mode": "normal", "style": "", "text": "지원 동기 문항은 회사 이야기보다 본인 경험이 앞서야 설득이 됩니다.", "type": "text", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "paragraph", "version": 1}, {"children": [{"detail": 0, "format": 0, "mode": "normal", "style": "", "text": "STAR 는 Situation 을 한 문장으로 줄이고 Action 에 분량을 몰아주세요.", "type": "text", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "paragraph", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "root", "version": 1}}',
           feedbackStatus: 'IN_PROGRESS',
         },
       },
