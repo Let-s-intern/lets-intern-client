@@ -29,7 +29,8 @@ import MenteeInfoCompactRow from '@/pages/feedback/ui/MenteeInfoCompactRow';
 import MenteeList from '@/pages/feedback/ui/MenteeList';
 import MenteePreQuestionPanel from '@/pages/feedback/ui/MenteePreQuestionPanel';
 import PanelEntryButton from '@/pages/feedback/ui/PanelEntryButton';
-import SidebarGuideLinks from '@/pages/feedback/ui/SidebarGuideLinks';
+// 가이드 링크 임시 숨김 — 아래 렌더부 주석과 함께 되살린다.
+// import SidebarGuideLinks from '@/pages/feedback/ui/SidebarGuideLinks';
 import SideViewButton from '@/pages/feedback/ui/SideViewButton';
 import {
   badgeStatusToUi,
@@ -41,11 +42,11 @@ import type { PeriodBarData } from '../types';
 import { createGoogleCalendarUrl } from '../utils/googleCalendar';
 import JitsiEmbedModal from './JitsiEmbedModal';
 
-/** 좌측 사이드바 하단 가이드 링크 (세로 정렬). */
-const GUIDE_LINK_LABELS = [
-  '자소서챌린지 피드백 가이드',
-  '라이브 피드백 가이드',
-] as const;
+/** 좌측 사이드바 하단 가이드 링크 (세로 정렬). 문서 갱신 전까지 숨김 — 렌더부 주석 참고. */
+// const GUIDE_LINK_LABELS = [
+//   '자소서챌린지 피드백 가이드',
+//   '라이브 피드백 가이드',
+// ] as const;
 
 /** 빈 값 대체용 placeholder */
 const EMPTY_PLACEHOLDER = '-';
@@ -636,7 +637,10 @@ const LiveFeedbackReservationModal = ({
                   }}
                 />
               </div>
-              <SidebarGuideLinks labels={GUIDE_LINK_LABELS} />
+              {/* 가이드 링크 — 라이브용 문서가 아직 갱신되지 않아 임시로 숨긴다.
+                  문서가 준비되면 아래 한 줄과 GUIDE_LINK_LABELS 주석을 함께 되살린다.
+                  (서면 피드백 모달의 가이드 링크는 그대로 노출한다.) */}
+              {/* <SidebarGuideLinks labels={GUIDE_LINK_LABELS} /> */}
             </div>
           }
           sidePanel={

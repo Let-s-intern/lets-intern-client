@@ -5,6 +5,7 @@ import {
   useMentorDetailQuery,
   usePostFeedbackReservation,
 } from '@/api/feedback/feedback';
+import MentorWrittenFeedbackSection from './section/MentorWrittenFeedbackSection';
 import ReservationInfoSection from './section/ReservationInfoSection';
 import ReservationScheduleSection from './section/ReservationScheduleSection';
 import type { LiveFeedbackMission, Mentor, SelectedSlot } from './types';
@@ -55,6 +56,14 @@ const LiveFeedbackDetail = ({ challengeId, mission }: Props) => {
         status={mission.status}
         feedbackId={mission.feedbackId}
       />
+      {/* 진행이 끝난 회차는 멘토가 남긴 서면 피드백을 함께 보여준다.
+          ("피드백 내역 보기" 아코디언이 예약 정보만 보여주고 있었다) */}
+      {mission.status === 'completed' && (
+        <MentorWrittenFeedbackSection
+          challengeId={challengeId}
+          missionId={mission.missionId}
+        />
+      )}
       {mission.status === 'prev' && !mission.feedbackId && (
         <ReservationScheduleSection
           challengeId={challengeId}
