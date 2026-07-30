@@ -4,7 +4,7 @@ import LexicalContent from '@/common/lexical/LexicalContent';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
-import { PencilIcon } from './panelIcons';
+import { EyeIcon, PencilIcon } from './panelIcons';
 
 interface FeedbackPreviewCardProps {
   /** 저장된 피드백 본문 (Lexical editor state JSON 문자열). */
@@ -13,6 +13,11 @@ interface FeedbackPreviewCardProps {
   onOpen: () => void;
   /** 상태 보조 문구(예: "임시저장됨" / "제출 완료"). */
   statusLabel?: string | null;
+  /**
+   * 수정 가능 여부. 제출 완료(또는 attendanceId 부재)면 false.
+   * 진입 문구·아이콘이 이 값에 따라 "수정" 과 "보기" 로 갈린다.
+   */
+  canEdit?: boolean;
 }
 
 /** JSON 파싱 실패까지 흡수해 렌더 가능한 root 만 돌려준다. */
@@ -39,17 +44,23 @@ const FeedbackPreviewCard = ({
   content,
   onOpen,
   statusLabel,
+  canEdit = true,
 }: FeedbackPreviewCardProps) => {
   const root = parseRoot(content);
   const hasContent = root != null;
+  // 제출을 마치면 더 이상 고칠 수 없으므로 "보기" 로 바뀌어야 한다.
+  // 본문 존재만으로 "이어서 수정하기" 를 띄우면 제출 후에도 수정 가능한 것처럼 읽힌다.
+  const entryLabel = !hasContent
+    ? '피드백 작성하기'
+    : canEdit
+      ? '이어서 수정하기'
+      : '피드백 보기';
 
   return (
     <button
       type="button"
       onClick={onOpen}
-      aria-label={
-        hasContent ? '작성한 피드백 이어서 수정하기' : '피드백 작성하기'
-      }
+      aria-label={hasContent ? `작성한 피드백 ${entryLabel}` : entryLabel}
       className={twMerge(
         feedbackModalDesign.cardSurface,
         // 클릭 가능한 카드임을 커서와 테두리 강조로 알린다(배경은 칠하지 않는다 —
@@ -71,8 +82,12 @@ const FeedbackPreviewCard = ({
             'ml-auto transition-colors group-hover:bg-neutral-100',
           )}
         >
-          <PencilIcon size={14} />
-          {hasContent ? '이어서 수정하기' : '피드백 작성하기'}
+          {hasContent && !canEdit ? (
+            <EyeIcon size={14} />
+          ) : (
+            <PencilIcon size={14} />
+          )}
+          {entryLabel}
         </span>
       </div>
 
@@ -85,7 +100,9 @@ const FeedbackPreviewCard = ({
           <p className="text-sm text-neutral-400">
             아직 작성한 피드백이 없습니다
           </p>
-          <p className="text-xs text-neutral-300">눌러서 작성을 시작하세요</p>
+          {canEdit && (
+            <p className="text-xs text-neutral-300">눌러서 작성을 시작하세요</p>
+          )}
         </div>
       )}
     </button>

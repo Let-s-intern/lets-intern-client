@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import {
+  mentorDetailQueryKey,
   useFeedbackMentorDetailQuery,
   useUpdateFeedbackByMentorMutation,
   useUpdateFeedbackMeetingUrlMutation,
@@ -92,6 +94,30 @@ const CheckCircleIcon = () => (
   </svg>
 );
 
+/** Lexical editor state JSON 에서 순수 텍스트만 뽑는다(공백 판정용). */
+function extractLexicalText(node: unknown): string {
+  if (node == null || typeof node !== 'object') return '';
+  const n = node as { text?: unknown; children?: unknown };
+  const own = typeof n.text === 'string' ? n.text : '';
+  const kids = Array.isArray(n.children)
+    ? n.children.map(extractLexicalText).join('')
+    : '';
+  return own + kids;
+}
+
+/**
+ * 본문이 실질적으로 비었는지. 빈 에디터도 `{"root":{...}}` 형태의 JSON 이라
+ * 문자열 비교만으로는 "내용 없음" 을 알 수 없다.
+ */
+function isBlankFeedback(json?: string | null): boolean {
+  if (!json) return true;
+  try {
+    return extractLexicalText(JSON.parse(json)?.root).trim().length === 0;
+  } catch {
+    return true;
+  }
+}
+
 const LiveFeedbackReservationModal = ({
   isOpen,
   onClose,
@@ -112,8 +138,19 @@ const LiveFeedbackReservationModal = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   // 라이브 중 작성하는 서면 피드백 본문 (Lexical editor state JSON).
   const [feedbackContent, setFeedbackContent] = useState('');
+  /**
+   * 마지막으로 저장에 성공한 본문.
+   *
+   * dirty 판정을 서버 refetch 에 의존하면, 저장 직후 refetch 가 도착하기 전에 닫을 때
+   * "미저장" 경고가 잘못 뜬다(invalidate 는 fire-and-forget 이다). 저장 성공은 그 자체로
+   * 확정된 사실이므로 로컬에 기록해 즉시 dirty 를 해제한다.
+   */
+  const [lastSavedFeedback, setLastSavedFeedback] = useState<string | null>(
+    null,
+  );
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
+  const queryClient = useQueryClient();
 
   // 모달을 닫으면 화면 상태를 초기화한다.
   // 부모(SchedulePage)가 이 컴포넌트를 항상 마운트해 두고 isOpen 만 토글하므로,
@@ -125,6 +162,7 @@ const LiveFeedbackReservationModal = ({
     setIsPreQuestionPanelOpen(false);
     setIsSidePanelOpen(false);
     setFeedbackContent('');
+    setLastSavedFeedback(null);
   }, [isOpen]);
 
   const { mutate: updateMenteeStatus, isPending: isSavingAttendance } =
@@ -148,6 +186,14 @@ const LiveFeedbackReservationModal = ({
 
   const selectedBar = bar?.liveFeedback ? bar : (reservationBars[0] ?? null);
   const feedbackId = selectedBar?.liveFeedback?.id ?? null;
+
+  // 멘티(세션)를 바꾸면 초안을 비운다.
+  // 초안은 세션별이 아니라 이 컴포넌트에 하나뿐이라, 비우지 않으면 다음 멘티 화면에
+  // 이전 멘티의 글이 그대로 보이고 그 상태로 저장될 수 있다.
+  useEffect(() => {
+    setFeedbackContent('');
+    setLastSavedFeedback(null);
+  }, [feedbackId]);
 
   // BE 멘토 단건 상세 — 모달이 열려있을 때만 fetch.
   // 모달은 항상 mount 되어 있기 때문에 isOpen 게이트가 없으면 페이지 로드 시점에
@@ -230,6 +276,11 @@ const LiveFeedbackReservationModal = ({
           },
         );
       }
+      // 에디터는 한 번에 하나만 마운트한다.
+      // Lexical 은 초기 상태를 마운트 시에만 읽으므로, 전체화면 작성 화면과 화상 위
+      // 작성 패널이 동시에 떠 있으면 한쪽 입력이 다른 쪽에 반영되지 않고 갈라진다.
+      // 입장 시 작성 화면을 접어 두면 화상 패널이 현재 초안을 그대로 이어받는다.
+      setIsFullscreen(false);
       // invalidate 로 feedbackDetail.meetingUrl 이 곧 채워지지만, 즉시 입장 경험을 위해
       // 모달을 바로 연다(JitsiEmbedModal 이 갱신된 URL 수신).
       setIsJitsiOpen(true);
@@ -373,25 +424,106 @@ const LiveFeedbackReservationModal = ({
   const openComposer = () => setIsFullscreen(true);
 
   /**
-   * 실제로 보낼 본문.
-   * 기본 상태에서는 에디터가 마운트되지 않아 `feedbackContent` 가 '' 다.
-   * 그대로 보내면 저장돼 있던 피드백을 지워버리므로 저장본으로 폴백한다.
-   * (에디터에서 내용을 비우면 빈 Lexical JSON 문자열이라 '' 가 아니다 → 의도한 삭제는 그대로 전달된다.)
+   * 저장하지 않은 편집이 있는지.
+   *
+   * 서버 저장본과 현재 초안을 비교한다. 단, 빈 에디터도 `{"root":…}` JSON 이라
+   * 문자열만 비교하면 **아무것도 입력하지 않아도** 다르게 나온다(에디터 마운트 시
+   * OnChangePlugin 이 빈 상태를 한 번 흘린다). 양쪽이 실질적으로 비었으면 같다고 본다.
    */
-  const effectiveFeedbackContent =
-    feedbackContent || initialFeedbackContent || '';
+  const savedFeedbackBaseline =
+    lastSavedFeedback ?? feedbackDetail?.feedback ?? '';
+  const isFeedbackDirty =
+    feedbackContent !== '' &&
+    feedbackContent !== savedFeedbackBaseline &&
+    !(
+      isBlankFeedback(feedbackContent) && isBlankFeedback(savedFeedbackBaseline)
+    );
+
+  /**
+   * 모달 닫기 — 미저장 초안이 있으면 먼저 알린다.
+   * 닫는 순간 초안 state 가 초기화되어(useEffect) 작성한 내용이 사라진다.
+   */
+  const handleCloseModal = () => {
+    if (!isFeedbackDirty) {
+      onClose();
+      return;
+    }
+    showConfirm({
+      title: '작성 중인 피드백이 저장되지 않았습니다',
+      description:
+        '지금 닫으면 작성한 내용이 사라집니다. 임시저장 후 닫아 주세요.',
+      confirmText: '저장하지 않고 닫기',
+      cancelText: '계속 작성',
+      onConfirm: onClose,
+    });
+  };
+
+  /**
+   * 작성 화면(전체화면)에서 닫기 — 기본 화면으로 돌아간다.
+   *
+   * 접는 것만으로는 초안이 사라지지 않지만(state 유지), 작성 화면을 벗어나는 시점에
+   * 저장을 상기시킨다. 여기서 안 알리면 멘토는 이후 모달을 닫을 때 처음 경고를 보고
+   * 그때는 이미 저장할 마음이 떠난 상태다. 문구는 "사라진다"가 아니라 사실대로 쓴다.
+   */
+  const handleCollapseComposer = () => {
+    if (!isFeedbackDirty) {
+      setIsFullscreen(false);
+      return;
+    }
+    showConfirm({
+      title: '아직 임시저장하지 않았습니다',
+      description:
+        '작성한 내용은 유지되지만 모달을 닫으면 사라집니다. 임시저장을 권장합니다.',
+      confirmText: '그대로 나가기',
+      cancelText: '계속 작성',
+      onConfirm: () => setIsFullscreen(false),
+    });
+  };
+
+  /**
+   * 지금 보여주고 저장할 본문 — 이 화면의 단일 소스.
+   *
+   * 편집을 시작하면 로컬 초안(`feedbackContent`)이 서버 저장본을 대신한다.
+   * 미리보기 카드 · 전체화면 에디터 · 화상 위 작성 패널이 **모두 이 값을 읽어야**
+   * 한쪽에서 쓴 글이 다른 쪽에 바로 나타난다. 세 곳이 서버 값을 따로 읽던 동안에는
+   * 방금 입력한 내용이 화면을 옮길 때마다 사라진 것처럼 보였다.
+   *
+   * 기본 상태에서는 에디터가 마운트되지 않아 `feedbackContent` 가 '' 이므로 저장본으로
+   * 폴백한다 — 그대로 보내면 저장돼 있던 피드백을 지워버린다. 에디터에서 내용을 비우면
+   * 빈 Lexical JSON 문자열이라 '' 가 아니므로 의도한 삭제는 그대로 전달된다.
+   */
+  const draftFeedbackContent = feedbackContent || initialFeedbackContent || '';
+
+  /**
+   * 저장·제출 후 멘토 상세를 다시 읽는다.
+   *
+   * `usePatchAttendanceMentorMutation` 은 캐시를 무효화하지 않는다(서면 모달은
+   * 호출부에서 직접 처리한다). 무효화하지 않으면 `feedbackStatus` 가 갱신되지 않아
+   * 제출 완료인데도 에디터가 편집 가능 상태로 남고, 미리보기 문구·상태 배지도
+   * 그대로다 — "저장이 안 된다" 로 보이는 원인.
+   *
+   * 공유 훅을 고치는 대신 호출부에서 무효화한다(서면 쪽 이중 무효화 방지).
+   */
+  const refetchFeedbackDetail = () => {
+    queryClient.invalidateQueries({
+      queryKey: mentorDetailQueryKey(feedbackId),
+    });
+  };
 
   const handleSaveWrittenFeedback = () => {
     if (attendanceId == null) return;
     saveWrittenFeedback(
       {
         attendanceId,
-        feedback: effectiveFeedbackContent,
+        feedback: draftFeedbackContent,
         feedbackStatus: 'IN_PROGRESS',
       },
       {
-        onSuccess: () =>
-          showAlert({ title: '임시저장했습니다.', variant: 'success' }),
+        onSuccess: () => {
+          setLastSavedFeedback(draftFeedbackContent);
+          refetchFeedbackDetail();
+          showAlert({ title: '임시저장했습니다.', variant: 'success' });
+        },
         onError: () =>
           showAlert({ title: '임시저장에 실패했습니다.', variant: 'error' }),
       },
@@ -407,15 +539,18 @@ const LiveFeedbackReservationModal = ({
         saveWrittenFeedback(
           {
             attendanceId,
-            feedback: effectiveFeedbackContent,
+            feedback: draftFeedbackContent,
             feedbackStatus: 'COMPLETED',
           },
           {
-            onSuccess: () =>
+            onSuccess: () => {
+              setLastSavedFeedback(draftFeedbackContent);
+              refetchFeedbackDetail();
               showAlert({
                 title: '피드백을 제출했습니다.',
                 variant: 'success',
-              }),
+              });
+            },
             onError: () =>
               showAlert({ title: '제출에 실패했습니다.', variant: 'error' }),
           },
@@ -455,7 +590,7 @@ const LiveFeedbackReservationModal = ({
     <>
       <BaseModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleCloseModal}
         className={twMerge(
           feedbackModalDesign.modalContainer,
           // 패널이 실제로 열렸을 때만 모달을 넓혀 패널+에디터를 함께 표시
@@ -480,12 +615,15 @@ const LiveFeedbackReservationModal = ({
           isLive
           // 작성(전체화면) 중에는 닫기가 모달 종료가 아니라 기본 화면 복귀다.
           // 글을 쓰다 실수로 눌러 세션 화면을 통째로 잃는 것을 막는다.
-          onClose={isFullscreen ? () => setIsFullscreen(false) : onClose}
+          onClose={isFullscreen ? handleCollapseComposer : handleCloseModal}
         />
 
         <FeedbackLayout
           isExpanded={isFullscreen}
-          onExpandedChange={setIsFullscreen}
+          // 확장은 그대로 열고, 접을 때만 미저장 가드를 태운다(헤더 닫기와 동일 경로).
+          onExpandedChange={(next) =>
+            next ? setIsFullscreen(true) : handleCollapseComposer()
+          }
           sidebar={
             <div className="flex h-full flex-col gap-3">
               <div className="min-h-0 flex-1">
@@ -744,7 +882,7 @@ const LiveFeedbackReservationModal = ({
               {isFullscreen && (
                 <FeedbackComposer
                   editorKey={editorKey}
-                  initialEditorStateJsonString={initialFeedbackContent}
+                  initialEditorStateJsonString={draftFeedbackContent}
                   onChange={setFeedbackContent}
                   isReadOnly={!canEditWrittenFeedback}
                   hint={writtenFeedbackHint}
@@ -755,8 +893,9 @@ const LiveFeedbackReservationModal = ({
                   누르면 그대로 작성 화면(전체화면)으로 넘어간다. */}
               {!isFullscreen && (
                 <FeedbackPreviewCard
-                  content={feedbackDetail?.feedback}
+                  content={draftFeedbackContent}
                   statusLabel={writtenFeedbackStatusLabel}
+                  canEdit={canEditWrittenFeedback}
                   onOpen={() => openComposer()}
                 />
               )}
@@ -932,7 +1071,7 @@ const LiveFeedbackReservationModal = ({
           // 세션을 보면서 서면 피드백을 바로 작성·전송 (LC-3181).
           // 본문 state 를 공유하므로 회의실을 닫아도 쓰던 초안이 그대로 남는다.
           onFeedbackChange={setFeedbackContent}
-          initialFeedbackContent={initialFeedbackContent}
+          initialFeedbackContent={draftFeedbackContent}
           feedbackEditorKey={editorKey}
           canEditFeedback={canEditWrittenFeedback}
           feedbackHint={writtenFeedbackHint}

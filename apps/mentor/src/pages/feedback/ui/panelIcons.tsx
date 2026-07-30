@@ -37,6 +37,19 @@ export const PencilIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
+/** 눈 — 수정 불가(제출 완료) 상태의 "보기" 진입 표시. */
+export const EyeIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
+    <path
+      d="M1.8 8c1.4-2.6 3.6-4 6.2-4s4.8 1.4 6.2 4c-1.4 2.6-3.6 4-6.2 4s-4.8-1.4-6.2-4Z"
+      stroke="#4D55F5"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+    />
+    <circle cx="8" cy="8" r="1.8" stroke="#4D55F5" strokeWidth="1.2" />
+  </svg>
+);
+
 /** 오른쪽 분할 패널(사전 질문) — 위 아이콘의 좌우 대칭 */
 export const RightPanelIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
