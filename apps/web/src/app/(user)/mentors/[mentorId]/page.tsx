@@ -1,5 +1,12 @@
-const Page = () => {
-  return <main>멘토 상세페이지</main>;
+import MentorDetailPage from '@/domain/mentors/detail/MentorDetailPage';
+
+const Page = async ({
+  params,
+}: {
+  params: Promise<{ mentorId: string }>;
+}) => {
+  const { mentorId } = await params;
+  return <MentorDetailPage mentorId={mentorId} />;
 };
 
 export default Page;
