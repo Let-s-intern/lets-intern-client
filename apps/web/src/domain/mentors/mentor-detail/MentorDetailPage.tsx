@@ -1,17 +1,16 @@
 import { DUMMY_MENTOR_DETAIL } from '../data/dummyMentorDetail';
+import MentorHeroSection from './MentorHeroSection';
 
 interface MentorDetailPageProps {
   mentorId: string;
 }
 
-const MentorDetailPage = ({ mentorId }: MentorDetailPageProps) => {
+const MentorDetailPage = (_props: MentorDetailPageProps) => {
   const mentor = DUMMY_MENTOR_DETAIL;
 
   return (
     <main className="flex w-full flex-col">
-      <p>
-        {mentor.name} 상세페이지 (mentorId: {mentorId})
-      </p>
+      <MentorHeroSection mentor={mentor} />
     </main>
   );
 };
