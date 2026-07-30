@@ -1,4 +1,4 @@
-import MentorDetailPage from '@/domain/mentors/detail/MentorDetailPage';
+import MentorDetailPage from '@/domain/mentors/mentor-detail/MentorDetailPage';
 
 const Page = async ({
   params,

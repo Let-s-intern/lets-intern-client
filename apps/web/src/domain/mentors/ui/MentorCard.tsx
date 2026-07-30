@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import { getTagLabel } from './constants';
-import { DummyMentor } from './dummyMentors';
+import { getTagLabel } from '../constants';
+import { DummyMentor } from '../data/dummyMentors';
 
 interface MentorCardProps {
   mentor: DummyMentor;
