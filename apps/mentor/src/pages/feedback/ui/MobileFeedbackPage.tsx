@@ -1,10 +1,9 @@
-import { useState, type ReactNode } from 'react';
+import { Suspense, lazy, useState, type ReactNode } from 'react';
 
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 
 import MenteeInfo from './MenteeInfo';
-import FeedbackEditor from './FeedbackEditor';
 import FeedbackActions from './FeedbackActions';
 import FeedbackHeader from './FeedbackHeader';
 import MobileMenteeSelector from './MobileMenteeSelector';
@@ -12,6 +11,13 @@ import MobileMenteeSelector from './MobileMenteeSelector';
 import { useFeedbackModal } from '../hooks/useFeedbackModal';
 import { useMenteeNavigation } from '../hooks/useMenteeNavigation';
 import { useFeedbackStatus } from '../hooks/useFeedbackStatus';
+
+// 에디터(Lexical)는 작성 화면에서만 필요 → 동적 임포트로 초기 번들에서 뺀다.
+// FeedbackComposer·JitsiEmbedModal 과 참조 방식을 맞춰야 한다. 한 곳이라도 정적
+// 으로 남으면 엔트리 청크가 에디터 청크를 정적 참조하게 되고, 그 청크는 다시
+// 엔트리에서 lexical `ElementNode` 를 가져오면서 순환이 생긴다. 그러면 노드 클래스
+// 상속 시점에 상위 클래스가 undefined 라 앱 전체가 뜨지 않는다 (LC-3184).
+const FeedbackEditor = lazy(() => import('./FeedbackEditor'));
 
 interface MobileFeedbackPageProps {
   isOpen: boolean;
@@ -73,14 +79,16 @@ const MobileFeedbackPage = ({
   if (!isOpen) return null;
 
   const editorBlock = (
-    <FeedbackEditor
-      key={editorKey}
-      initialEditorStateJsonString={editorContent}
-      onChange={setEditorContent}
-      isReadOnly={isReadOnly}
-      isAbsent={isAbsent}
-      hasMentee={!!currentMentee}
-    />
+    <Suspense fallback={null}>
+      <FeedbackEditor
+        key={editorKey}
+        initialEditorStateJsonString={editorContent}
+        onChange={setEditorContent}
+        isReadOnly={isReadOnly}
+        isAbsent={isAbsent}
+        hasMentee={!!currentMentee}
+      />
+    </Suspense>
   );
 
   const actionsBlock = (
