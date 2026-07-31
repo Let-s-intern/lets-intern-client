@@ -2,6 +2,7 @@ import { DUMMY_MENTOR_DETAIL } from '../data/dummyMentorDetail';
 import MentorHeroSection from './MentorHeroSection';
 import MentorIntroSection from './MentorIntroSection';
 import MentorProgramSection from './MentorProgramSection';
+import MentorReviewSection from './MentorReviewSection';
 
 interface MentorDetailPageProps {
   mentorId: string;
@@ -15,6 +16,7 @@ const MentorDetailPage = (_props: MentorDetailPageProps) => {
       <MentorHeroSection mentor={mentor} />
       <MentorIntroSection mentor={mentor} />
       <MentorProgramSection />
+      <MentorReviewSection mentor={mentor} />
     </main>
   );
 };
