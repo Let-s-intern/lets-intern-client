@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
         ? [
             sentryVitePlugin({
               org: 'letscareer',
-              project: 'mentor',
+              project: 'letscareer-mentor',
               authToken: process.env.SENTRY_AUTH_TOKEN,
             }),
           ]
