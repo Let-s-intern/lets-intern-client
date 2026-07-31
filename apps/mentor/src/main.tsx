@@ -1,9 +1,15 @@
+import * as Sentry from '@sentry/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AppErrorFallback from './common/error/AppErrorFallback';
 import { router } from './router';
+import { initSentry } from './sentry';
 import './index.css';
+
+// 다른 어떤 것보다 먼저 — 부트스트랩 도중 발생한 에러도 잡히도록.
+initSentry();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,9 +35,15 @@ async function bootstrap() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <Sentry.ErrorBoundary
+        fallback={({ resetError }) => (
+          <AppErrorFallback resetError={resetError} />
+        )}
+      >
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </Sentry.ErrorBoundary>
     </React.StrictMode>,
   );
 }

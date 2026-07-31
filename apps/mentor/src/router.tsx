@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -30,7 +31,11 @@ const withSuspense = (node: React.ReactNode) => (
   <Suspense fallback={<RouteFallback />}>{node}</Suspense>
 );
 
-export const router = createBrowserRouter([
+// 라우트 전환을 트랜잭션 경계로 잡아, 에러가 어느 화면에서 났는지 자동으로 남긴다.
+// (DSN 이 없으면 Sentry 가 no-op 이라 래핑해도 동작에 차이가 없다.)
+const createRouter = Sentry.wrapCreateBrowserRouterV6(createBrowserRouter);
+
+export const router = createRouter([
   {
     path: '/login',
     element: <OAuthCallbackPage />,

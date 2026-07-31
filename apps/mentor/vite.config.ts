@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
@@ -23,8 +24,28 @@ export default defineConfig(({ mode }) => {
     );
   }
 
+  // 소스맵 업로드는 토큰이 있을 때만 켠다. 없으면 플러그인이 빌드를 실패시킨다.
+  // 미니파이된 스택(`class e extends Ut`)만 남으면 원인 추적이 사실상 불가능하므로
+  // 운영 빌드에서는 CI 에 SENTRY_AUTH_TOKEN 을 넣어 반드시 활성화한다.
+  const sentrySourcemapEnabled = Boolean(process.env.SENTRY_AUTH_TOKEN);
+
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      ...(sentrySourcemapEnabled
+        ? [
+            sentryVitePlugin({
+              org: 'letscareer',
+              project: 'letscareer-mentor',
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
+          ]
+        : []),
+    ],
+    build: {
+      // 업로드 후 플러그인이 배포 산출물에서 소스맵을 제거한다.
+      sourcemap: sentrySourcemapEnabled,
+    },
     resolve: {
       alias: {
         '@': resolve(__dirname, './src'),
