@@ -11,6 +11,7 @@ import {
   liveMentoringSettingsSchema,
   liveMentoringSettingsUpdateSchema,
   liveMentoringStatusSchema,
+  liveMentoringTemplateSchema,
 } from '../liveMentoringSchema';
 
 /** 서버 `GetLiveMentoringSettingsResponseDto` 그대로의 응답. */
@@ -168,5 +169,140 @@ describe('liveMentoringSettingsUpdateSchema', () => {
     expect(() =>
       liveMentoringSettingsUpdateSchema.parse({ categories: ['RESUME'] }),
     ).toThrow();
+  });
+});
+
+/** 서버 `GetLiveMentoringDetailPageResponseDto` 그대로의 응답. */
+function makeTemplate(overrides: Record<string, unknown> = {}) {
+  return {
+    mentoring: {
+      liveMentoringId: 12,
+      title: '자소서 실전 첨삭 멘토링',
+      status: 'DRAFT',
+      editable: true,
+      category: 'RESUME',
+    },
+    currentOpening: null,
+    category: 'RESUME',
+    hero: { bullets: ['이력서 피드백 및 첨삭'] },
+    intro: {
+      passedCount: 120,
+      profileImage: null,
+      affiliation: '카카오 | 백엔드',
+      careerLines: ['카카오 | 백엔드'],
+      oneLiner: '소개',
+    },
+    mentoringTypes: {
+      title: '이런 도움을 받을 수 있어요',
+      subtitle: '고민에 맞는 유형을 골라보세요.',
+      items: [
+        {
+          typeName: '이력서 피드백',
+          title: '이력서를 정리하고 싶다면',
+          description: '경험과 역량이 잘 보이도록 점검해요.',
+          tags: ['경험 정리'],
+        },
+      ],
+    },
+    strategy: {
+      visible: true,
+      title: '취업 성공 전략',
+      subtitle: '알려드립니다.',
+      points: [{ image: null, title: '핵심 키워드', description: '설명' }],
+    },
+    video: {
+      visible: true,
+      title: '이렇게 도와드려요',
+      subtitle: '미리 확인하세요',
+      videoUrl: 'https://www.youtube.com/embed/xyz',
+      caption: '완성도 UP!',
+    },
+    results: {
+      visible: true,
+      title: '함께 완성해요',
+      subtitle: '결과 사례',
+      cases: [
+        {
+          beforeImage: null,
+          afterImage: null,
+          beforeCaption: '전',
+          afterCaption: '후',
+        },
+      ],
+    },
+    reviews: { visible: true, selectedReviewIds: [1] },
+    ...overrides,
+  };
+}
+
+describe('liveMentoringTemplateSchema', () => {
+  it('개설이 없는 응답(currentOpening: null)을 파싱한다', () => {
+    const parsed = liveMentoringTemplateSchema.parse(makeTemplate());
+    expect(parsed.currentOpening).toBeNull();
+    expect(parsed.mentoring.editable).toBe(true);
+    expect(parsed.mentoring.status).toBe('DRAFT');
+  });
+
+  it('활성 개설이 있는 응답을 파싱한다', () => {
+    const parsed = liveMentoringTemplateSchema.parse(
+      makeTemplate({
+        mentoring: {
+          liveMentoringId: 12,
+          title: '자소서 실전 첨삭 멘토링',
+          status: 'APPROVED',
+          editable: false,
+          category: 'RESUME',
+        },
+        currentOpening: {
+          openingId: 77,
+          status: 'OPEN',
+          durationPrices: [
+            { duration: 30, price: 35000 },
+            { duration: 60, price: 60000 },
+          ],
+          feedbackStartDate: '2026-08-01',
+          feedbackEndDate: '2026-08-14',
+        },
+      }),
+    );
+    expect(parsed.currentOpening?.openingId).toBe(77);
+    expect(parsed.currentOpening?.durationPrices).toHaveLength(2);
+    expect(parsed.mentoring.editable).toBe(false);
+  });
+
+  it('서버가 함께 내려주는 잉여 필드가 있어도 파싱되고 결과에서 버려진다', () => {
+    const parsed = liveMentoringTemplateSchema.parse(
+      makeTemplate({
+        faq: [],
+        process: [],
+        reviewItems: [],
+        intro: {
+          passedCount: null,
+          nickname: '자소서장인',
+          profileImage: null,
+          affiliation: '',
+          careerLines: [],
+          careers: [{ id: 1, company: '네이버' }],
+          oneLiner: '소개',
+        },
+      }),
+    );
+    expect(parsed).not.toHaveProperty('faq');
+    expect(parsed).not.toHaveProperty('process');
+    expect(parsed).not.toHaveProperty('reviewItems');
+    expect(parsed.intro).not.toHaveProperty('nickname');
+    expect(parsed.intro).not.toHaveProperty('careers');
+  });
+
+  it('mentoring 블록이 없으면 파싱 실패', () => {
+    const template = makeTemplate();
+    delete (template as Record<string, unknown>).mentoring;
+    expect(() => liveMentoringTemplateSchema.parse(template)).toThrow();
+  });
+
+  it('currentOpening 키 자체가 없으면 파싱 실패 (null 과 구분한다)', () => {
+    const template = makeTemplate();
+    delete (template as Record<string, unknown>).currentOpening;
+    expect(() => liveMentoringTemplateSchema.parse(template)).toThrow();
   });
 });

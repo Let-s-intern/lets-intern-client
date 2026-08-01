@@ -65,6 +65,14 @@ function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
 
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
+    mentoring: {
+      liveMentoringId: 12,
+      title: '자소서 실전 첨삭 멘토링',
+      status: 'DRAFT',
+      editable: true,
+      category: 'RESUME',
+    },
+    currentOpening: null,
     category: 'RESUME',
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {

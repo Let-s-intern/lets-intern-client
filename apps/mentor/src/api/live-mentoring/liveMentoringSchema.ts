@@ -96,6 +96,18 @@ export const templateStrategyPointSchema = z.object({
   description: z.string(),
 });
 
+/**
+ * 개설의 진행시간별 판매가 1건 — 서버 `DurationPriceResponse`.
+ * 가격은 서버 고정값이라 멘토가 보내지 않는다(30분 35,000원 / 60분 60,000원).
+ */
+export const liveMentoringDurationPriceSchema = z.object({
+  duration: liveMentoringDurationSchema,
+  price: z.number(),
+});
+export type LiveMentoringDurationPrice = z.infer<
+  typeof liveMentoringDurationPriceSchema
+>;
+
 /** 시안 5 · 결과 사례(Before/After) 1쌍. */
 export const templateResultCaseSchema = z.object({
   beforeImage: z.string().nullable(),
@@ -112,6 +124,29 @@ export const templateResultCaseSchema = z.object({
  * 파생되므로 템플릿에 담지 않는다. 후기는 노출 여부만 여기서 제어한다.
  */
 export const liveMentoringTemplateSchema = z.object({
+  /**
+   * 상품 상태 블록 — 서버 `GetLiveMentoringDetailPageResponseDto.mentoring`.
+   * 상세 설정 잠금 판정의 근거다.
+   */
+  mentoring: z.object({
+    liveMentoringId: z.number(),
+    title: z.string(),
+    status: liveMentoringStatusSchema,
+    /** 서버 `LiveMentoring.isEditable()` — 상태가 `DRAFT`·`REJECTED` 이고 활성 개설이 없을 때만 true. */
+    editable: z.boolean(),
+    category: liveMentoringCategorySchema,
+  }),
+  /** 활성(`OPEN`) 개설. 개설한 적이 없거나 모두 종료됐으면 null. */
+  currentOpening: z
+    .object({
+      openingId: z.number(),
+      status: liveMentoringOpeningStatusSchema,
+      durationPrices: z.array(liveMentoringDurationPriceSchema),
+      feedbackStartDate: z.string(),
+      feedbackEndDate: z.string(),
+    })
+    .nullable(),
+
   category: liveMentoringCategorySchema,
 
   // ── 멘토 편집 영역 (시안 0~5) ────────────────────────────
@@ -147,6 +182,10 @@ export const liveMentoringTemplateSchema = z.object({
    * 멘토가 편집하지 않고 운영 확정 문구라, 서버를 거치지 않고
    * 웹 상세 페이지(`DetailFixedSections.tsx`)에 하드코딩한다.
    * 멘토 미리보기에도 노출하지 않는다.
+   *
+   * 서버 응답에는 `faq`·`process`·`reviewItems`(현재 전부 빈 배열)와
+   * `intro.nickname`·`intro.careers` 도 딸려오지만 여기에 선언하지 않는다.
+   * zod 가 잉여 키를 버리므로 파싱은 통과하고, 화면이 쓰지 않는 값을 타입에 들이지 않는다.
    */
 });
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
