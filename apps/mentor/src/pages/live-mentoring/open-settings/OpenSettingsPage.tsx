@@ -8,6 +8,7 @@ import {
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
+  useCreateLiveMentoringOpeningMutation,
   useLiveMentoringSettingsQuery,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
@@ -78,7 +79,10 @@ const toUpdatePayload = (
 
 const OpenSettingsPage = () => {
   const { data } = useLiveMentoringSettingsQuery();
-  const { mutate: save, isPending } = useUpdateLiveMentoringSettingsMutation();
+  const { mutate: save, isPending: isSaving } =
+    useUpdateLiveMentoringSettingsMutation();
+  const { mutate: createOpening, isPending: isCreatingOpening } =
+    useCreateLiveMentoringOpeningMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
@@ -221,13 +225,37 @@ const OpenSettingsPage = () => {
     persist(form, '저장되었습니다.');
   };
 
-  // 오픈하기 — 설정을 저장하면서 오픈 상태로 전환(이후 수정 잠금).
+  /**
+   * 오픈하기 — 개설(`POST /openings`)을 만든다.
+   *
+   * 제목·카테고리는 같은 트랜잭션에서 상품 설정으로 함께 갱신되므로
+   * 개설 직전 별도 `PUT /settings` 를 보내지 않는다.
+   */
   const handleOpen = () => {
     if (!hasRequiredFields) return;
-    persist(
-      { ...form, isOpen: true },
-      '오픈되었습니다.',
-      '오픈 중에는 설정을 수정할 수 없습니다. 수정하려면 오픈을 닫아주세요.',
+    createOpening(
+      {
+        title: form.title ?? '',
+        categories: form.categories,
+        durations: openingForm.durations,
+        feedbackStartDate: openingForm.feedbackStartDate,
+        feedbackEndDate: openingForm.feedbackEndDate,
+      },
+      {
+        onSuccess: () =>
+          showAlert({
+            title: '개설되었습니다.',
+            description:
+              '개설 중에는 설정을 수정할 수 없어요. 신청 기간이 지나면 자동으로, 그전에는 관리자 요청으로만 종료됩니다.',
+            variant: 'success',
+          }),
+        onError: (error) =>
+          showAlert({
+            title: '개설에 실패했습니다.',
+            description: saveErrorDescription(error),
+            variant: 'error',
+          }),
+      },
     );
   };
 
@@ -275,7 +303,7 @@ const OpenSettingsPage = () => {
           <button
             type="button"
             onClick={handleCloseOpen}
-            disabled={isPending}
+            disabled={isSaving}
             className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? '처리 중...' : '오픈 닫기'}
@@ -544,19 +572,19 @@ const OpenSettingsPage = () => {
             <button
               type="button"
               onClick={handleSave}
-              disabled={isPending || !canSave}
+              disabled={isSaving || !canSave}
               className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isPending ? '저장 중...' : '저장'}
+              {isSaving ? '저장 중...' : '저장'}
             </button>
           ) : (
             <button
               type="button"
               onClick={handleOpen}
-              disabled={isPending || !hasRequiredFields}
+              disabled={isCreatingOpening || !hasRequiredFields}
               className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isPending ? '처리 중...' : '오픈하기'}
+              {isCreatingOpening ? '처리 중...' : '오픈하기'}
             </button>
           )}
         </div>

@@ -8,6 +8,7 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
+const createOpeningMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
 
@@ -15,6 +16,10 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringSettingsQuery: () => ({ data: settingsData }),
   useUpdateLiveMentoringSettingsMutation: () => ({
     mutate: saveMock,
+    isPending: false,
+  }),
+  useCreateLiveMentoringOpeningMutation: () => ({
+    mutate: createOpeningMock,
     isPending: false,
   }),
 }));
@@ -111,6 +116,7 @@ const makeDirty = (title = '이력서 클리닉') =>
 
 afterEach(() => {
   saveMock.mockReset();
+  createOpeningMock.mockReset();
   settingsData = undefined;
 });
 
@@ -382,6 +388,92 @@ describe('OpenSettingsPage — 하단 버튼 2단 구조', () => {
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();
+  });
+});
+
+// 3.3.T1 — 오픈하기는 PUT /settings 가 아니라 POST /openings 다.
+describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
+  it('개설 요청에 title/categories/durations/피드백 기간을 담아 보낸다', () => {
+    renderPage();
+
+    fillOpeningForm({ duration: '60분' });
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+
+    expect(createOpeningMock).toHaveBeenCalledTimes(1);
+    expect(createOpeningMock.mock.calls[0][0]).toEqual({
+      title: baseSettings.title,
+      categories: baseSettings.categories,
+      durations: [60],
+      feedbackStartDate: '2026-07-14',
+      feedbackEndDate: '2026-07-28',
+    });
+    // 개설이 같은 트랜잭션에서 제목·카테고리를 갱신하므로 별도 저장은 보내지 않는다.
+    expect(saveMock).not.toHaveBeenCalled();
+  });
+
+  it('개설에 성공하면 종료 방법을 함께 안내한다', () => {
+    createOpeningMock.mockImplementation((_payload, options) =>
+      options.onSuccess(),
+    );
+    renderPage();
+
+    fillOpeningForm();
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+
+    expect(screen.getByText('개설되었습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText(/관리자 요청으로만 종료됩니다/),
+    ).toBeInTheDocument();
+  });
+
+  it('409 로 막히면 사유 코드를 그대로 보여준다', () => {
+    createOpeningMock.mockImplementation((_payload, options) =>
+      options.onError({
+        status: 409,
+        code: 'LIVE_MENTORING_LOCKED',
+        message: '이미 진행 중인 개설이 있습니다.',
+      }),
+    );
+    renderPage();
+
+    fillOpeningForm();
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+
+    expect(screen.getByText('개설에 실패했습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        '이미 진행 중인 개설이 있습니다. (LIVE_MENTORING_LOCKED)',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('미지원 진행시간(400)도 코드를 구분해 보여준다', () => {
+    createOpeningMock.mockImplementation((_payload, options) =>
+      options.onError({
+        status: 400,
+        code: 'INVALID_LIVE_MENTORING_DURATION',
+        message: '지원하지 않는 진행시간입니다.',
+      }),
+    );
+    renderPage();
+
+    fillOpeningForm();
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+
+    expect(
+      screen.getByText(
+        '지원하지 않는 진행시간입니다. (INVALID_LIVE_MENTORING_DURATION)',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('진행시간·기간이 비어 있으면 개설 요청을 보내지 않는다', () => {
+    renderPage();
+
+    const openButton = screen.getByRole('button', { name: '오픈하기' });
+    expect(openButton).toBeDisabled();
+    fireEvent.click(openButton);
+    expect(createOpeningMock).not.toHaveBeenCalled();
   });
 });
 
