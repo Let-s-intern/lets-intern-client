@@ -4,7 +4,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import axios from '@/utils/axios';
 
 import {
-  useLiveMentorDetailQuery,
+  LIVE_MENTOR_DETAIL_QUERY_KEY,
+  useLiveMentoringDetailQuery,
   useLiveMentorListQuery,
 } from './liveMentoring';
 
@@ -178,76 +179,118 @@ describe('useLiveMentorListQuery', () => {
   });
 });
 
-describe('useLiveMentorDetailQuery', () => {
-  it('mentorId 가 있으면 GET /live-mentoring/mentors/{id} 를 호출한다', async () => {
-    axiosGet.mockResolvedValue({
-      data: {
-        data: {
-          liveMentoringId: 50,
-          openingId: 100,
-          mentorId: 3,
-          title: '포폴메이커 멘토의 1:1 멘토링',
-          categories: ['PORTFOLIO'],
-          durations: [60],
-          durationPrices: [{ duration: 60, price: 60000 }],
-          price: 60000,
-          rating: 5,
-          reviewCount: 10,
-          feedbackStartDate: '2026-07-18',
-          feedbackEndDate: '2026-08-01',
-          profile: {
-            visible: true,
-            mosaicEnabled: false,
-            mosaicBlur: 0,
-            nickname: '포폴메이커',
-            profileImage: null,
-            introduction: '소개',
-            careers: [],
-          },
-          template: {
-            category: 'PORTFOLIO',
-            hero: { bullets: ['불릿'] },
-            intro: {
-              passedCount: null,
-              profileImage: null,
-              affiliation: '',
-              careerLines: [],
-              oneLiner: '소개',
-            },
-            mentoringTypes: { title: 't', subtitle: 's', items: [] },
-            strategy: { visible: false, title: 't', subtitle: 's', points: [] },
-            video: {
-              visible: false,
-              title: 't',
-              subtitle: 's',
-              videoUrl: null,
-              caption: '',
-            },
-            results: { visible: false, title: 't', subtitle: 's', cases: [] },
-            reviews: { visible: true, selectedReviewIds: [] },
-          },
-          reviews: [],
-          challenges: [],
-        },
+/** 서버 `GetLiveMentoringPublicDetailResponseDto` 형태의 상세 응답. */
+function detailResponseData() {
+  return {
+    liveMentoringId: 50,
+    openingId: 100,
+    mentorId: 3,
+    title: '포폴메이커 멘토의 1:1 멘토링',
+    categories: ['PORTFOLIO'],
+    durations: [60],
+    durationPrices: [{ duration: 60, price: 60000 }],
+    price: 60000,
+    rating: 5,
+    reviewCount: 10,
+    feedbackStartDate: '2026-07-18',
+    feedbackEndDate: '2026-08-01',
+    profile: {
+      visible: true,
+      mosaicEnabled: false,
+      mosaicBlur: 0,
+      nickname: '포폴메이커',
+      profileImage: null,
+      introduction: '소개',
+      careers: [],
+    },
+    template: {
+      category: 'PORTFOLIO',
+      hero: { bullets: ['불릿'] },
+      intro: {
+        passedCount: null,
+        profileImage: null,
+        affiliation: '',
+        careerLines: [],
+        oneLiner: '소개',
       },
-    });
+      mentoringTypes: { title: 't', subtitle: 's', items: [] },
+      strategy: { visible: false, title: 't', subtitle: 's', points: [] },
+      video: {
+        visible: false,
+        title: 't',
+        subtitle: 's',
+        videoUrl: null,
+        caption: '',
+      },
+      results: { visible: false, title: 't', subtitle: 's', cases: [] },
+      reviews: { visible: true, selectedReviewIds: [] },
+    },
+    reviews: [],
+    challenges: [],
+  };
+}
 
-    const { result } = renderHook(() => useLiveMentorDetailQuery(3), {
-      wrapper: createWrapper(newClient()),
+describe('useLiveMentoringDetailQuery', () => {
+  it('liveMentoringId 가 있으면 GET /live-mentoring/{liveMentoringId} 를 호출한다', async () => {
+    axiosGet.mockResolvedValue({ data: { data: detailResponseData() } });
+
+    const client = newClient();
+    const { result } = renderHook(() => useLiveMentoringDetailQuery(50), {
+      wrapper: createWrapper(client),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors/3');
-    expect(result.current.data?.mentorId).toBe(3);
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/50');
+    expect(result.current.data?.liveMentoringId).toBe(50);
+    // query key 는 mentorId 가 아니라 liveMentoringId 로 캐시를 가른다.
+    expect(
+      client.getQueryData([
+        ...LIVE_MENTOR_DETAIL_QUERY_KEY,
+        { liveMentoringId: 50 },
+      ]),
+    ).toBeDefined();
   });
 
-  it('mentorId 가 null 이면 axios 를 호출하지 않는다', async () => {
-    renderHook(() => useLiveMentorDetailQuery(null), {
+  it('liveMentoringId 가 null 이면 axios 를 호출하지 않는다', async () => {
+    renderHook(() => useLiveMentoringDetailQuery(null), {
       wrapper: createWrapper(newClient()),
     });
 
     await new Promise((r) => setTimeout(r, 10));
     expect(axiosGet).not.toHaveBeenCalled();
+  });
+
+  it('liveMentoringId 가 0 이면 axios 를 호출하지 않는다', async () => {
+    renderHook(() => useLiveMentoringDetailQuery(0), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+
+  it('개설 이력이 없는 상품(openingId·price·기간 null)도 성공으로 반환한다', async () => {
+    axiosGet.mockResolvedValue({
+      data: {
+        data: {
+          ...detailResponseData(),
+          openingId: null,
+          durations: [],
+          durationPrices: [],
+          price: null,
+          feedbackStartDate: null,
+          feedbackEndDate: null,
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useLiveMentoringDetailQuery(50), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.openingId).toBeNull();
+    expect(result.current.data?.price).toBeNull();
   });
 });

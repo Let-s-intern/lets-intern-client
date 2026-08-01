@@ -64,19 +64,22 @@ export const useLiveMentorListQuery = (
 };
 
 /**
- * GET /live-mentoring/mentors/{mentorId} — 공개 멘토 상세(+reviews) 조회.
+ * GET /live-mentoring/{liveMentoringId} — 공개 라이브 멘토링 상세(+reviews) 조회.
  *
- * `mentorId`가 falsy면 query를 실행하지 않는다.
+ * 서버는 멘토 기준 경로(`/live-mentoring/mentors/{mentorId}`)를 호환용으로 남겨 두었지만
+ * 정식 경로는 상품 기준이다. `상품 1 : 개설 N` 분리로 한 멘토가 여러 상품을 가질 수 있어서다.
+ *
+ * `liveMentoringId`가 falsy면 query를 실행하지 않는다.
  */
-export const useLiveMentorDetailQuery = (
-  mentorId: number | string | null | undefined,
+export const useLiveMentoringDetailQuery = (
+  liveMentoringId: number | string | null | undefined,
 ) => {
   return useQuery({
-    queryKey: [...LIVE_MENTOR_DETAIL_QUERY_KEY, { mentorId }],
+    queryKey: [...LIVE_MENTOR_DETAIL_QUERY_KEY, { liveMentoringId }],
     queryFn: async () => {
-      const res = await axios.get(`/live-mentoring/mentors/${mentorId}`);
+      const res = await axios.get(`/live-mentoring/${liveMentoringId}`);
       return liveMentorDetailSchema.parse(res.data.data);
     },
-    enabled: !!mentorId,
+    enabled: !!liveMentoringId,
   });
 };
