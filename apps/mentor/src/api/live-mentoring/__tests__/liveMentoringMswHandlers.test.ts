@@ -1,10 +1,15 @@
-import { getLowestPrice, MY_LIVE_MENTORING_ID } from '@letscareer/mocks';
+import {
+  getLowestPrice,
+  MY_LIVE_MENTORING_ID,
+  resetLiveMentoringOpeningHistory,
+} from '@letscareer/mocks';
 import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import {
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
+  openingHistoryResponseSchema,
 } from '../liveMentoringSchema';
 
 /**
@@ -15,7 +20,11 @@ import {
 const BASE = 'https://example.test';
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  // 개설 생성·강제 종료는 목 상태를 바꾸므로 테스트 간 격리한다.
+  resetLiveMentoringOpeningHistory();
+});
 afterAll(() => server.close());
 
 describe('1대1 라이브 멘토링 MSW 핸들러', () => {
@@ -171,10 +180,62 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data.settlementList[0]).toHaveProperty('status');
   });
 
-  it('GET /mentor/live-mentoring/open-status → 오픈현황 목록', async () => {
+  it('GET /mentor/live-mentoring/open-status → 개설 이력 스키마로 파싱되고 openingId 내림차순이다', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/open-status`);
-    const { data } = await res.json();
-    expect(Array.isArray(data.openStatusList)).toBe(true);
-    expect(data.openStatusList[0]).toHaveProperty('reservationCount');
+    const history = openingHistoryResponseSchema.parse((await res.json()).data);
+
+    expect(history.liveMentoringId).toBe(MY_LIVE_MENTORING_ID);
+    const ids = history.openings.map((opening) => opening.openingId);
+    expect(ids).toEqual([...ids].sort((a, b) => b - a));
+
+    // 종료된 개설은 종료 시각·사유를 갖는다.
+    const closed = history.openings.filter(
+      (opening) => opening.status === 'CLOSED',
+    );
+    expect(closed.length).toBeGreaterThan(0);
+    for (const opening of closed) {
+      expect(opening.closedAt).toBeTruthy();
+      expect(['PERIOD_EXPIRED', 'ADMIN_FORCED']).toContain(opening.closeReason);
+    }
+  });
+
+  it('POST /mentor/live-mentoring/openings → 새 개설이 이력 맨 앞에 붙고 이력 전체를 돌려준다', async () => {
+    const before = openingHistoryResponseSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/open-status`)).json())
+        .data,
+    );
+
+    const res = await fetch(`${BASE}/mentor/live-mentoring/openings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: '새 개설',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30, 60],
+        feedbackStartDate: '2026-08-10',
+        feedbackEndDate: '2026-08-23',
+      }),
+    });
+    const after = openingHistoryResponseSchema.parse((await res.json()).data);
+
+    expect(after.openings).toHaveLength(before.openings.length + 1);
+    const created = after.openings[0];
+    expect(created.openingId).toBeGreaterThan(before.openings[0].openingId);
+    expect(created.status).toBe('OPEN');
+    expect(created.closedAt).toBeNull();
+    expect(created.closeReason).toBeNull();
+    expect(created.feedbackStartDate).toBe('2026-08-10');
+    // 가격은 서버 고정값이라 요청에 없고 진행시간에서 파생된다.
+    expect(created.durationPrices).toEqual([
+      { duration: 30, price: 35000 },
+      { duration: 60, price: 60000 },
+    ]);
+
+    // 생성 결과는 이어지는 조회에도 반영된다.
+    const reloaded = openingHistoryResponseSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/open-status`)).json())
+        .data,
+    );
+    expect(reloaded.openings[0].openingId).toBe(created.openingId);
   });
 });

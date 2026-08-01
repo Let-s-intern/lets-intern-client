@@ -5,12 +5,15 @@ import {
   LIVE_MENTOR_DETAILS,
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
-  OPEN_STATUS_ROWS,
+  MY_LIVE_MENTORING_ID,
+  OPENING_HISTORY_ROWS,
   SETTLEMENT_ROWS,
   SETTLEMENT_ITEMS,
   mentoringTitleFor,
+  toDurationPrices,
   type LiveMentorCard,
   type LiveMentoringCategory,
+  type LiveMentoringDuration,
   type LiveMentoringSettings,
 } from './data/liveMentoring';
 
@@ -697,6 +700,30 @@ const settingsCareers = () =>
     ...career,
     isRepresentative: career.id === representativeCareerId,
   }));
+
+/**
+ * 개설 이력은 개설 생성(POST)·관리자 강제 종료(PATCH)로 바뀌므로 목에서도 상태를 들고 있어야
+ * "개설하면 목록 맨 앞에 붙는다", "종료하면 상태가 바뀐다"는 실제 동작을 재현할 수 있다.
+ */
+let openingHistoryRows = [...OPENING_HISTORY_ROWS];
+
+/**
+ * 개설 이력 목 상태를 시드로 되돌린다.
+ * `server.resetHandlers()` 는 핸들러만 되돌리고 이 상태는 건드리지 않으므로,
+ * 개설 생성·강제 종료를 검증하는 테스트는 이 함수로 격리한다.
+ */
+export const resetLiveMentoringOpeningHistory = () => {
+  openingHistoryRows = [...OPENING_HISTORY_ROWS];
+};
+
+/** 자바 `LocalDateTime` 직렬화 형태(초 단위, 타임존 표기 없음). */
+const toLocalDateTime = (date: Date) => date.toISOString().slice(0, 19);
+
+/** `GET /open-status`·`POST /openings` 공통 응답. 정렬은 `openingId` 내림차순이다. */
+const openingHistory = () => ({
+  liveMentoringId: MY_LIVE_MENTORING_ID,
+  openings: [...openingHistoryRows].sort((a, b) => b.openingId - a.openingId),
+});
 
 /**
  * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
@@ -1460,12 +1487,43 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
+   * (멘토) GET /mentor/live-mentoring/open-status — 개설 이력(read-only).
+   * 응답은 `{liveMentoringId, openings}` 이고 정렬은 `openingId` 내림차순이다.
    */
   http.get('*/mentor/live-mentoring/open-status', () => {
-    return HttpResponse.json({
-      status: 200,
-      data: { openStatusList: OPEN_STATUS_ROWS },
-    });
+    return HttpResponse.json({ status: 200, data: openingHistory() });
+  }),
+
+  /**
+   * (멘토) POST /mentor/live-mentoring/openings — 개설 생성.
+   *
+   * 가격은 서버 고정값이라 요청에 없고 진행시간으로 파생한다.
+   * 성공 응답은 생성 건이 아니라 `GET /open-status` 와 같은 **개설 이력 전체**다.
+   * 전제 조건(`APPROVED` 이고 활성 개설 없음)은 화면이 버튼으로 막는 영역이라 목에서 강제하지 않는다.
+   */
+  http.post('*/mentor/live-mentoring/openings', async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      durations?: LiveMentoringDuration[];
+      feedbackStartDate?: string;
+      feedbackEndDate?: string;
+    };
+    const nextOpeningId =
+      Math.max(0, ...openingHistoryRows.map((row) => row.openingId)) + 1;
+
+    openingHistoryRows = [
+      {
+        openingId: nextOpeningId,
+        status: 'OPEN',
+        durationPrices: toDurationPrices(body.durations ?? []),
+        feedbackStartDate: body.feedbackStartDate ?? '',
+        feedbackEndDate: body.feedbackEndDate ?? '',
+        openedAt: toLocalDateTime(new Date()),
+        closedAt: null,
+        closeReason: null,
+      },
+      ...openingHistoryRows,
+    ];
+
+    return HttpResponse.json({ status: 200, data: openingHistory() });
   }),
 ];

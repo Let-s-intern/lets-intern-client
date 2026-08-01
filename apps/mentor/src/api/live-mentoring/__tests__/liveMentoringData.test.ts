@@ -2,7 +2,9 @@ import {
   getLowestPrice,
   LIVE_MENTOR_CARDS,
   LIVE_MENTOR_DETAILS,
-  OPEN_STATUS_ROWS,
+  LIVE_MENTORING_SETTINGS,
+  LIVE_MENTORING_TEMPLATE,
+  OPENING_HISTORY_ROWS,
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
@@ -104,19 +106,47 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     }
   });
 
-  it('정산행/오픈현황행 상태 enum이 스펙과 일치한다', () => {
+  it('정산행 상태 enum이 스펙과 일치한다', () => {
     for (const row of SETTLEMENT_ROWS) {
       expect(['PENDING', 'PAID']).toContain(row.status);
       expect(row.grossAmount).toBeGreaterThanOrEqual(0);
     }
-    // 오픈은 하나만 가능(OPEN 1건) + 과거 오픈 내역(CLOSED)
-    expect(OPEN_STATUS_ROWS.filter((r) => r.status === 'OPEN').length).toBe(1);
-    expect(OPEN_STATUS_ROWS.some((r) => r.status === 'CLOSED')).toBe(true);
-    for (const row of OPEN_STATUS_ROWS) {
-      expect(['OPEN', 'CLOSED']).toContain(row.status);
-      expect(row.price).toBe(getLowestPrice(row.durations));
+  });
+
+  it('개설 이력은 openingId 내림차순이고 종료된 개설은 종료 시각·사유를 갖는다', () => {
+    const ids = OPENING_HISTORY_ROWS.map((row) => row.openingId);
+    expect(ids).toEqual([...ids].sort((a, b) => b - a));
+
+    for (const row of OPENING_HISTORY_ROWS) {
+      expect(row.durationPrices.length).toBeGreaterThan(0);
+      for (const { duration, price } of row.durationPrices) {
+        expect(price).toBe(PRICE_BY_DURATION[duration]);
+      }
       expect(row.feedbackStartDate).toBeTruthy();
       expect(row.feedbackEndDate).toBeTruthy();
+      expect(row.openedAt).toBeTruthy();
+
+      if (row.status === 'OPEN') {
+        expect(row.closedAt).toBeNull();
+        expect(row.closeReason).toBeNull();
+      } else {
+        expect(row.closedAt).toBeTruthy();
+        expect(['PERIOD_EXPIRED', 'ADMIN_FORCED']).toContain(row.closeReason);
+      }
     }
+
+    // 종료 사유 두 가지를 모두 담아 표시 분기를 확인할 수 있게 한다.
+    const reasons = new Set(OPENING_HISTORY_ROWS.map((row) => row.closeReason));
+    expect(reasons).toEqual(new Set(['PERIOD_EXPIRED', 'ADMIN_FORCED']));
+  });
+
+  it('상품 설정은 DRAFT 이고 활성 개설이 없다(실서버가 만들 수 없는 조합을 만들지 않는다)', () => {
+    expect(LIVE_MENTORING_SETTINGS.status).toBe('DRAFT');
+    expect(OPENING_HISTORY_ROWS.some((row) => row.status === 'OPEN')).toBe(
+      false,
+    );
+    // DRAFT + 활성 개설 없음이므로 상세 설정은 편집 가능하다.
+    expect(LIVE_MENTORING_TEMPLATE.mentoring.editable).toBe(true);
+    expect(LIVE_MENTORING_TEMPLATE.currentOpening).toBeNull();
   });
 });

@@ -1,5 +1,6 @@
 export {
   handlers,
+  resetLiveMentoringOpeningHistory,
   MOCK_FEEDBACK_ID,
   MOCK_CHALLENGE_ID,
   MOCK_MISSION_ID,
@@ -15,7 +16,7 @@ export {
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
   MY_LIVE_MENTORING_ID,
-  OPEN_STATUS_ROWS,
+  OPENING_HISTORY_ROWS,
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
@@ -39,7 +40,7 @@ export type {
   LiveMentoringTemplate,
   LiveMentorProfile,
   MentorLiveMentoringTemplate,
-  OpenStatusRow,
+  OpeningHistoryItem,
   SettlementRow,
   SettlementItem,
 } from './data/liveMentoring';

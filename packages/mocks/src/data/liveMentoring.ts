@@ -348,17 +348,26 @@ export interface SettlementItem {
   status: 'PENDING' | 'PAID';
 }
 
-/** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
-export interface OpenStatusRow {
-  title: string;
-  categories: LiveMentoringCategory[];
-  durations: LiveMentoringDuration[];
-  price: number;
+/**
+ * 개설 이력 1건 — 백엔드 `GetLiveMentoringOpeningHistoryResponseDto.OpeningHistoryItemResponse`.
+ *
+ * 타이틀·카테고리는 개설이 아니라 상품 소유라 여기에 없다(`LiveMentoringSettings` 참고).
+ * 예약 수도 서버가 더 이상 주지 않는다.
+ */
+export interface OpeningHistoryItem {
+  openingId: number;
+  status: LiveMentoringOpeningStatus;
+  /** 진행시간별 판매가. 표시 가격은 이 중 최저가다. */
+  durationPrices: LiveMentoringDurationPrice[];
   /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
   feedbackStartDate: string;
   feedbackEndDate: string;
-  status: 'OPEN' | 'CLOSED';
-  reservationCount: number;
+  /** 개설 시각(`LocalDateTime`). 서버가 개설 생성 시 항상 채운다. */
+  openedAt: string;
+  /** 종료 시각. `status === 'OPEN'` 이면 null. */
+  closedAt: string | null;
+  /** 종료 사유. `status === 'OPEN'` 이면 null. */
+  closeReason: LiveMentoringCloseReason | null;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1136,39 +1145,35 @@ export const SETTLEMENT_ROWS: SettlementRow[] = [
 ];
 
 /**
- * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
- * 오픈은 하나만 가능하므로 현재 OPEN 은 1건이며, 나머지는 과거 오픈 내역(CLOSED)이다.
+ * GET /mentor/live-mentoring/open-status — "나"의 개설 이력. 정렬은 `openingId` 내림차순.
+ *
+ * 활성(`OPEN`) 개설을 두지 않는다. 상품 상태가 `DRAFT` 인데 활성 개설이 있는 조합은
+ * 실서버가 만들 수 없기 때문이다(`LiveMentoring.startEditing()` 이 활성 개설이 있으면 막는다).
+ * `OPEN` 상태는 `POST /mentor/live-mentoring/openings` 로 만들어 확인한다.
+ *
+ * 종료 사유 두 가지(기간 만료 / 관리자 강제 종료)를 모두 담아 표시 분기를 확인할 수 있게 한다.
  */
-export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
+export const OPENING_HISTORY_ROWS: OpeningHistoryItem[] = [
   {
-    title: '자소서 실전 첨삭 멘토링',
-    categories: categoriesFor(mySeed),
-    durations: durationsFor(mySeed),
-    price: getLowestPrice(durationsFor(mySeed)),
-    ...periodFor(mySeed),
-    status: 'OPEN',
-    reservationCount: 10,
-  },
-  // 과거 오픈 내역
-  {
-    title: '자소서 첨삭 멘토링',
-    categories: ['PERSONAL_STATEMENT'],
-    durations: [60],
-    price: getLowestPrice([60]),
+    openingId: 902,
+    status: 'CLOSED',
+    durationPrices: toDurationPrices([60]),
     feedbackStartDate: '2026-06-10',
     feedbackEndDate: '2026-06-23',
-    status: 'CLOSED',
-    reservationCount: 12,
+    openedAt: '2026-06-09T09:12:00',
+    // 기간 만료 자동 종료 배치는 매일 00:05 KST 에 돈다.
+    closedAt: '2026-06-24T00:05:00',
+    closeReason: 'PERIOD_EXPIRED',
   },
   {
-    title: '이력서 클리닉',
-    categories: ['RESUME'],
-    durations: [30, 60],
-    price: getLowestPrice([30, 60]),
+    openingId: 901,
+    status: 'CLOSED',
+    durationPrices: toDurationPrices([30, 60]),
     feedbackStartDate: '2026-05-12',
     feedbackEndDate: '2026-05-25',
-    status: 'CLOSED',
-    reservationCount: 8,
+    openedAt: '2026-05-11T10:03:00',
+    closedAt: '2026-05-20T14:30:00',
+    closeReason: 'ADMIN_FORCED',
   },
 ];
 
