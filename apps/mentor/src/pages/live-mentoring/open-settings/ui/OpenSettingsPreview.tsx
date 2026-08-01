@@ -1,5 +1,3 @@
-import { getLowestPrice } from '@letscareer/mocks';
-
 import type {
   LiveMentoringDuration,
   LiveMentoringSettings,
@@ -10,6 +8,7 @@ import {
   careerBadgeLabel,
   durationsLabel,
   formatOpeningPeriod,
+  getLowestPrice,
   imagePlaceholderTitle,
 } from '../../constants';
 

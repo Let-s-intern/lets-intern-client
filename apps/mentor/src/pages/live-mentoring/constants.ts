@@ -1,4 +1,45 @@
-import type { LiveMentoringCategory } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringCategory,
+  LiveMentoringDuration,
+} from '@/api/live-mentoring/liveMentoringSchema';
+
+/**
+ * 선택지·가격 상수.
+ *
+ * 목 패키지(`@letscareer/mocks`)에도 같은 값이 있지만 그쪽은 **목 데이터 생성용**이다.
+ * 실행 코드가 목 패키지를 참조하면 목을 끄는 순간 화면이 따라 사라지므로 여기에 둔다.
+ * 서버 `LiveMentoringCategory`·`LiveMentoringDuration` enum 과 같은 값이어야 한다.
+ */
+export const LIVE_MENTORING_CATEGORIES: readonly LiveMentoringCategory[] = [
+  'PERSONAL_STATEMENT',
+  'RESUME',
+  'PORTFOLIO',
+] as const;
+
+export const LIVE_MENTORING_DURATIONS: readonly LiveMentoringDuration[] = [
+  30, 60,
+] as const;
+
+/** 진행시간 → 서버 고정가(원). 멘토가 입력하지 않고 개설 요청에도 싣지 않는다. */
+const PRICE_BY_DURATION: Record<LiveMentoringDuration, number> = {
+  30: 35000,
+  60: 60000,
+};
+
+/**
+ * 여러 진행시간을 고르면 공개 카드에 **최저가**를 노출한다. 빈 배열이면 0.
+ * 최솟값 하나만 필요하므로 정렬 없이 한 번만 순회한다.
+ */
+export const getLowestPrice = (
+  durations: readonly LiveMentoringDuration[],
+): number => {
+  let lowest: number | null = null;
+  for (const duration of durations) {
+    const price = PRICE_BY_DURATION[duration];
+    if (lowest === null || price < lowest) lowest = price;
+  }
+  return lowest ?? 0;
+};
 
 /**
  * 카테고리 enum → 한글 라벨 (UI 레이어 정의).

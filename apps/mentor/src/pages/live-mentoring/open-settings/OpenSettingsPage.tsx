@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  getLowestPrice,
-  LIVE_MENTORING_CATEGORIES,
-  LIVE_MENTORING_DURATIONS,
-} from '@letscareer/mocks';
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
@@ -27,6 +22,9 @@ import {
   CATEGORY_LABELS,
   formatCareerPeriod,
   formatPrice,
+  getLowestPrice,
+  LIVE_MENTORING_CATEGORIES,
+  LIVE_MENTORING_DURATIONS,
   representativeCareerLabel,
 } from '../constants';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
