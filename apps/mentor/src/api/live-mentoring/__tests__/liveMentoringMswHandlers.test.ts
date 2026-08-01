@@ -104,6 +104,72 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data.price).toBe(getLowestPrice(data.durations));
   });
 
+  it('PATCH /admin/live-mentoring/openings/:openingId/close → OPEN 개설을 ADMIN_FORCED 로 종료한다', async () => {
+    const created = openingHistoryResponseSchema.parse(
+      (
+        await (
+          await fetch(`${BASE}/mentor/live-mentoring/openings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: '종료 대상 개설',
+              categories: ['PERSONAL_STATEMENT'],
+              durations: [30],
+              feedbackStartDate: '2026-08-10',
+              feedbackEndDate: '2026-08-23',
+            }),
+          })
+        ).json()
+      ).data,
+    ).openings[0];
+
+    const closeRes = await fetch(
+      `${BASE}/admin/live-mentoring/openings/${created.openingId}/close`,
+      { method: 'PATCH' },
+    );
+    expect(closeRes.status).toBe(200);
+    // 서버는 본문 없이 성공만 돌려준다.
+    expect((await closeRes.json()).data).toBeNull();
+
+    const history = openingHistoryResponseSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/open-status`)).json())
+        .data,
+    );
+    const closed = history.openings.find(
+      (opening) => opening.openingId === created.openingId,
+    );
+    expect(closed?.status).toBe('CLOSED');
+    expect(closed?.closeReason).toBe('ADMIN_FORCED');
+    expect(closed?.closedAt).toBeTruthy();
+    // 종료 후에는 활성 개설이 없다.
+    expect(history.openings.some((opening) => opening.status === 'OPEN')).toBe(
+      false,
+    );
+  });
+
+  it('PATCH .../close → 이미 종료된 개설에 다시 요청해도 멱등 성공이다', async () => {
+    const before = openingHistoryResponseSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/open-status`)).json())
+        .data,
+    );
+    const alreadyClosed = before.openings.find(
+      (opening) => opening.closeReason === 'PERIOD_EXPIRED',
+    );
+
+    const res = await fetch(
+      `${BASE}/admin/live-mentoring/openings/${alreadyClosed?.openingId}/close`,
+      { method: 'PATCH' },
+    );
+    expect(res.status).toBe(200);
+
+    const after = openingHistoryResponseSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/open-status`)).json())
+        .data,
+    );
+    // 종료 사유·시각이 덮어써지지 않는다.
+    expect(after.openings).toEqual(before.openings);
+  });
+
   it('GET /live-mentoring/:liveMentoringId → 호환 경로와 같은 상세를 준다', async () => {
     const detail = LIVE_MENTOR_DETAILS[3];
     const [byProduct, byMentor] = await Promise.all([

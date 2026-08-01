@@ -1535,6 +1535,50 @@ export const handlers = [
   }),
 
   /**
+   * (관리자) PATCH /admin/live-mentoring/openings/:openingId/close — 개설 강제 종료.
+   *
+   * admin 화면은 이번 범위 밖이고 계약 확인용으로만 둔다.
+   * 서버는 본문 없이 성공만 돌려주고(`SuccessResponse.ok(null)`),
+   * 이미 `CLOSED` 인 개설에 대한 재요청은 아무 것도 하지 않고 성공으로 끝낸다
+   * (`LiveMentoringLifecycleServiceImpl.closeOpening`).
+   */
+  http.patch(
+    '*/admin/live-mentoring/openings/:openingId/close',
+    ({ params }) => {
+      const openingId = Number(params.openingId);
+      const target = openingHistoryRows.find(
+        (row) => row.openingId === openingId,
+      );
+
+      if (!target) {
+        return HttpResponse.json(
+          {
+            status: 404,
+            code: 'LIVE_MENTORING_NOT_FOUND',
+            message: '존재하지 않는 개설입니다.',
+          },
+          { status: 404 },
+        );
+      }
+
+      if (target.status === 'OPEN') {
+        openingHistoryRows = openingHistoryRows.map((row) =>
+          row.openingId === openingId
+            ? {
+                ...row,
+                status: 'CLOSED',
+                closedAt: toLocalDateTime(new Date()),
+                closeReason: 'ADMIN_FORCED',
+              }
+            : row,
+        );
+      }
+
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
    * (공개) GET /live-mentoring/:liveMentoringId — 상품 상세(+reviews). 정식 경로다.
    *
    * `*` prefix 패턴이라 `*​/mentor/live-mentoring/settings` 같은 경로에도 매칭되므로
