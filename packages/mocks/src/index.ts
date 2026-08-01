@@ -20,6 +20,7 @@ export {
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
   SETTLEMENT_ITEMS,
+  toDurationPrices,
 } from './data/liveMentoring';
 export type {
   ChecklistItem,
@@ -30,10 +31,14 @@ export type {
   LiveMentoringCategory,
   LiveMentoringDuration,
   LiveMentoringReview,
+  LiveMentoringCloseReason,
+  LiveMentoringDurationPrice,
+  LiveMentoringOpeningStatus,
   LiveMentoringSettings,
   LiveMentoringStatus,
   LiveMentoringTemplate,
   LiveMentorProfile,
+  MentorLiveMentoringTemplate,
   OpenStatusRow,
   SettlementRow,
   SettlementItem,

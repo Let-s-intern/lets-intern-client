@@ -2,7 +2,10 @@ import { getLowestPrice, MY_LIVE_MENTORING_ID } from '@letscareer/mocks';
 import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { liveMentoringSettingsSchema } from '../liveMentoringSchema';
+import {
+  liveMentoringSettingsSchema,
+  liveMentoringTemplateSchema,
+} from '../liveMentoringSchema';
 
 /**
  * 공유 MSW 핸들러(@letscareer/mocks)가 1대1 라이브 멘토링 엔드포인트에 대해
@@ -111,22 +114,54 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(settings.careers.length).toBeGreaterThan(0);
   });
 
-  it('GET /mentor/live-mentoring/template → 템플릿', async () => {
+  it('GET /mentor/live-mentoring/template → 템플릿 스키마로 파싱된다', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/template`);
     const { data } = await res.json();
-    expect(data.intro.careerLines.length).toBeGreaterThan(0);
-    expect(data.mentoringTypes.items.length).toBeGreaterThan(0);
+    const template = liveMentoringTemplateSchema.parse(data);
+    expect(template.intro.careerLines.length).toBeGreaterThan(0);
+    expect(template.mentoringTypes.items.length).toBeGreaterThan(0);
+    expect(template.mentoring.liveMentoringId).toBe(MY_LIVE_MENTORING_ID);
+    expect(template.mentoring.status).toBe('DRAFT');
+    // DRAFT 이고 활성 개설이 없으므로 편집 가능하다.
+    expect(template.mentoring.editable).toBe(true);
+    expect(template.currentOpening).toBeNull();
   });
 
-  it('PUT /mentor/live-mentoring/template → 받은 body를 echo', async () => {
-    const body = { category: 'RESUME', mentoringPoints: '수정본' };
+  it('PUT /mentor/live-mentoring/template → 편집분에 상태 블록을 얹어 GET 과 같은 전문을 돌려준다', async () => {
+    const getRes = await fetch(`${BASE}/mentor/live-mentoring/template`);
+    const current = liveMentoringTemplateSchema.parse(
+      (await getRes.json()).data,
+    );
+    const body = {
+      ...current,
+      hero: { bullets: ['수정된 불릿'] },
+    };
     const res = await fetch(`${BASE}/mentor/live-mentoring/template`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    const { data } = await res.json();
-    expect(data).toEqual(body);
+    const saved = liveMentoringTemplateSchema.parse((await res.json()).data);
+    expect(saved.hero.bullets).toEqual(['수정된 불릿']);
+    // 요청 바디가 상태 블록을 잃어도 응답에는 남아 있어야 한다.
+    expect(saved.mentoring.liveMentoringId).toBe(MY_LIVE_MENTORING_ID);
+    expect(saved.currentOpening).toBeNull();
+  });
+
+  it('PUT /mentor/live-mentoring/template → 편집 영역만 보내도 상태 블록이 붙는다', async () => {
+    const getRes = await fetch(`${BASE}/mentor/live-mentoring/template`);
+    const {
+      mentoring: _m,
+      currentOpening: _c,
+      ...editable
+    } = (await getRes.json()).data;
+    const res = await fetch(`${BASE}/mentor/live-mentoring/template`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editable),
+    });
+    const saved = liveMentoringTemplateSchema.parse((await res.json()).data);
+    expect(saved.mentoring.status).toBe('DRAFT');
   });
 
   it('GET /mentor/live-mentoring/settlement → 정산행 목록', async () => {

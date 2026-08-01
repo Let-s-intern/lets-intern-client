@@ -45,6 +45,21 @@ export type LiveMentoringStatus =
   | 'REJECTED'
   | 'INACTIVE';
 
+/** 개설 상태 — 백엔드 `LiveMentoringOpeningStatus`. `OPEN → CLOSED` 단방향이다. */
+export type LiveMentoringOpeningStatus = 'OPEN' | 'CLOSED';
+
+/**
+ * 개설 종료 사유 — 백엔드 `LiveMentoringCloseReason`.
+ * 멘토가 직접 종료하는 경로는 없다. 기간 만료 자동 종료와 관리자 강제 종료뿐이다.
+ */
+export type LiveMentoringCloseReason = 'PERIOD_EXPIRED' | 'ADMIN_FORCED';
+
+/** 개설의 진행시간별 판매가 1건 — 백엔드 `DurationPriceResponse`. */
+export interface LiveMentoringDurationPrice {
+  duration: LiveMentoringDuration;
+  price: number;
+}
+
 /** 모자이크 블러 기본값(중간 정도). 슬라이더 범위 0~20 기준. */
 export const DEFAULT_MOSAIC_BLUR = 10;
 
@@ -60,6 +75,15 @@ export const PRICE_BY_DURATION: Record<LiveMentoringDuration, number> = {
 /** 진행시간에 해당하는 고정 가격을 반환한다. */
 export function getPriceByDuration(durationMin: LiveMentoringDuration): number {
   return PRICE_BY_DURATION[durationMin];
+}
+
+/** 진행시간 목록 → 진행시간별 판매가 목록. 서버는 진행시간 오름차순으로 내려준다. */
+export function toDurationPrices(
+  durations: readonly LiveMentoringDuration[],
+): LiveMentoringDurationPrice[] {
+  return [...durations]
+    .sort((a, b) => a - b)
+    .map((duration) => ({ duration, price: getPriceByDuration(duration) }));
 }
 
 /**
@@ -181,6 +205,32 @@ export interface LiveMentoringTemplate {
    * 시안 7(진행 프로세스)·10(FAQ)은 계약에 없다.
    * 운영 확정 문구라 웹 상세 페이지에 하드코딩한다 — 목도 내려주지 않는다.
    */
+}
+
+/**
+ * 멘토용 상세 페이지 템플릿 — 백엔드 `GetLiveMentoringDetailPageResponseDto`.
+ *
+ * 공개 상세(`LiveMentoringTemplate`)와 편집 영역은 같고, 잠금 판정에 쓰는
+ * 상품 상태 블록(`mentoring`)과 활성 개설(`currentOpening`)이 더 붙는다.
+ * 공개 상세 응답에는 이 두 블록이 없으므로 타입을 나눠 둔다.
+ */
+export interface MentorLiveMentoringTemplate extends LiveMentoringTemplate {
+  mentoring: {
+    liveMentoringId: number;
+    title: string;
+    status: LiveMentoringStatus;
+    /** 서버 `LiveMentoring.isEditable()` — 상태가 `DRAFT`·`REJECTED` 이고 활성 개설이 없을 때만 true. */
+    editable: boolean;
+    category: LiveMentoringCategory;
+  };
+  /** 활성(`OPEN`) 개설. 개설한 적이 없거나 모두 종료됐으면 null. */
+  currentOpening: {
+    openingId: number;
+    status: LiveMentoringOpeningStatus;
+    durationPrices: LiveMentoringDurationPrice[];
+    feedbackStartDate: string;
+    feedbackEndDate: string;
+  } | null;
 }
 
 /** 상세 페이지 프로필 블록 (PRD §4.3) */
@@ -1045,9 +1095,23 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   categories: [mySeed.category],
 };
 
-/** GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분. */
-export const LIVE_MENTORING_TEMPLATE: LiveMentoringTemplate =
-  LIVE_MENTOR_DETAILS[MY_MENTOR_ID].template;
+/**
+ * GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분.
+ *
+ * `mentoring`·`currentOpening` 은 상품 설정(`LIVE_MENTORING_SETTINGS`)·개설 이력과
+ * 어긋나지 않게 파생시킨다. `DRAFT` 이고 활성 개설이 없으므로 편집 가능 상태다.
+ */
+export const LIVE_MENTORING_TEMPLATE: MentorLiveMentoringTemplate = {
+  ...LIVE_MENTOR_DETAILS[MY_MENTOR_ID].template,
+  mentoring: {
+    liveMentoringId: MY_LIVE_MENTORING_ID,
+    title: LIVE_MENTORING_SETTINGS.title ?? '',
+    status: LIVE_MENTORING_SETTINGS.status,
+    editable: true,
+    category: LIVE_MENTORING_SETTINGS.categories[0],
+  },
+  currentOpening: null,
+};
 
 /** GET /mentor/live-mentoring/settlement — 정산 현황(read-only). */
 export const SETTLEMENT_ROWS: SettlementRow[] = [

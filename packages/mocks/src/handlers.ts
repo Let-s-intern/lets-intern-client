@@ -1429,11 +1429,24 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) PUT /mentor/live-mentoring/template — 저장. 받은 body를 echo.
+   * (멘토) PUT /mentor/live-mentoring/template — 저장.
+   *
+   * 실서버 PUT 은 GET 과 같은 전문을 돌려준다. 요청 바디에는 편집 영역만 담기고
+   * `mentoring`·`currentOpening` 은 서버가 채우므로, echo 대신 목 상태에 병합해 반환한다.
    */
   http.put('*/mentor/live-mentoring/template', async ({ request }) => {
-    const body = await request.json().catch(() => ({}));
-    return HttpResponse.json({ status: 200, data: body });
+    const body = (await request.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >;
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        ...body,
+        mentoring: LIVE_MENTORING_TEMPLATE.mentoring,
+        currentOpening: LIVE_MENTORING_TEMPLATE.currentOpening,
+      },
+    });
   }),
 
   /**
