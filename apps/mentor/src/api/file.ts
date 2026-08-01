@@ -18,6 +18,7 @@ export const fileType = z.enum([
   'BANNER_MAIN_BOTTOM',
   'COMMON_BANNER',
   'USER_PROFILE',
+  'LIVE_MENTORING',
 ]);
 
 export type FileType = z.infer<typeof fileType>;
