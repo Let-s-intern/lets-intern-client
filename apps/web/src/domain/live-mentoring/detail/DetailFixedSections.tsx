@@ -59,8 +59,11 @@ const FAQ_ITEMS = [
 ] as const;
 
 interface DetailProcessSectionProps {
-  /** "2026년 07월 14일(화) ~ 07월 27일(월)" 형태. 오픈 설정 값에서 온다. */
-  period: string;
+  /**
+   * "2026년 07월 14일(화) ~ 07월 27일(월)" 형태. 개설의 피드백 진행 일정에서 온다.
+   * 개설이 없으면 null 이고, 그때는 진행 기간 줄만 빼고 나머지는 그대로 렌더한다.
+   */
+  period: string | null;
 }
 
 /** 시안 7 · 멘토링 진행 프로세스. */
@@ -73,11 +76,17 @@ export const DetailProcessSection = ({ period }: DetailProcessSectionProps) => (
   >
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="flex flex-col gap-2 rounded-md bg-white/10 p-5">
-        <p className="text-xsmall14 text-primary-light font-semibold">
-          진행 기간
-        </p>
-        <p className="text-xsmall14">{period}</p>
-        <p className="text-xsmall14 text-primary-light mt-2 font-semibold">
+        {period !== null && (
+          <>
+            <p className="text-xsmall14 text-primary-light font-semibold">
+              진행 기간
+            </p>
+            <p className="text-xsmall14">{period}</p>
+          </>
+        )}
+        <p
+          className={`text-xsmall14 text-primary-light font-semibold ${period !== null ? 'mt-2' : ''}`}
+        >
           진행 방식
         </p>
         <p className="text-xsmall14">

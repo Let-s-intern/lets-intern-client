@@ -57,15 +57,25 @@ const LiveMentoringDetailPage = ({
       )
     : [];
 
+  /*
+   * 개설이 없는 상품(`openingId === null`)도 상세는 200 으로 내려온다 —
+   * 상세만 저장하고 승인·개설을 아직 안 한 상태다. 이때 판매에서 파생되는 값
+   * (기간·가격)이 전부 null 이라 기간·가격·신청 CTA 를 렌더에서 제외하고
+   * 상세 콘텐츠만 보여준다. 시안 섹션 순서는 그대로다.
+   */
+  const opening =
+    data.openingId !== null &&
+    data.feedbackStartDate !== null &&
+    data.feedbackEndDate !== null
+      ? { beginning: data.feedbackStartDate, deadline: data.feedbackEndDate }
+      : null;
+  const period = opening
+    ? formatDetailPeriod(opening.beginning, opening.deadline)
+    : null;
+
   return (
     <div className="flex flex-col">
-      <DetailHero
-        detail={data}
-        period={formatDetailPeriod(
-          data.feedbackStartDate,
-          data.feedbackEndDate,
-        )}
-      />
+      <DetailHero detail={data} period={period} />
 
       <DetailNavigation isReady={!isLoading} />
 
@@ -289,12 +299,7 @@ const LiveMentoringDetailPage = ({
       <DetailImageSection section="plan" />
 
       {/* 시안 7 · 진행 프로세스 */}
-      <DetailProcessSection
-        period={formatDetailPeriod(
-          data.feedbackStartDate,
-          data.feedbackEndDate,
-        )}
-      />
+      <DetailProcessSection period={period} />
 
       {/* 시안 8 · 후기 (노출 여부·대상만 멘토가 고름) */}
       {shownReviews.length > 0 && (
@@ -330,11 +335,13 @@ const LiveMentoringDetailPage = ({
       <DetailFaqSection id={LM_FAQ_ID} />
 
       {/* 하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트 */}
-      <DetailCTAButtons
-        title={data.title}
-        beginning={data.feedbackStartDate}
-        deadline={data.feedbackEndDate}
-      />
+      {opening && (
+        <DetailCTAButtons
+          title={data.title}
+          beginning={opening.beginning}
+          deadline={opening.deadline}
+        />
+      )}
     </div>
   );
 };

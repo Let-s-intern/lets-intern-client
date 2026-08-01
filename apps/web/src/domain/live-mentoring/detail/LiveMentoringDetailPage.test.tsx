@@ -256,6 +256,63 @@ describe('LiveMentoringDetailPage', () => {
     );
   });
 
+  it('개설이 있으면 기간·가격·신청 CTA 를 모두 노출한다', async () => {
+    axiosGet.mockResolvedValue(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    expect(screen.queryAllByText(/진행 기간/).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/2026년 07월 18일\(토\) ~ 08월 01일\(토\)/).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('지금 바로 신청').length).toBeGreaterThan(0);
+  });
+
+  /*
+   * 개설 없는 상품 — 상세만 저장하고 승인·개설을 아직 안 한 상태.
+   * 서버가 200 으로 내려주므로 화면은 떠야 하고, 판매에서 파생되는 값만 빠진다.
+   */
+  it('개설이 없으면 기간·가격·신청 CTA 를 렌더하지 않고 상세 콘텐츠만 보여준다', async () => {
+    axiosGet.mockResolvedValue(
+      detail({
+        openingId: null,
+        durations: [],
+        durationPrices: [],
+        price: null,
+        feedbackStartDate: null,
+        feedbackEndDate: null,
+      }),
+    );
+    renderDetail();
+
+    // 상세 콘텐츠(시안 0~10)는 그대로 렌더된다
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    expect(screen.getByText('포트폴리오 피드백')).toBeInTheDocument();
+    expect(screen.getByText('멘토링은 이렇게 진행돼요!')).toBeInTheDocument();
+    expect(screen.getByText('궁금한 점이 있으신가요?')).toBeInTheDocument();
+    expect(
+      screen.getAllByText('포폴메이커 멘토의 1:1 멘토링').length,
+    ).toBeGreaterThan(0);
+
+    // 기간(히어로 바 + 진행 프로세스 카드)
+    expect(screen.queryAllByText(/진행 기간/)).toEqual([]);
+    expect(screen.queryByText(/2026년 07월 18일/)).not.toBeInTheDocument();
+    // 진행 방식은 기간과 무관하므로 그대로 남는다
+    expect(screen.getByText('진행 방식')).toBeInTheDocument();
+
+    // 가격·플랜
+    expect(screen.queryByText('60,000원')).not.toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+
+    // 하단 고정 신청 CTA
+    expect(screen.queryByText('지금 바로 신청')).not.toBeInTheDocument();
+  });
+
   // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.
   //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
   it('상세 조회에 실패하면 담당자와 함께 개발 중 안내를 노출한다', async () => {

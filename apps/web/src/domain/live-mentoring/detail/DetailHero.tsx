@@ -13,8 +13,8 @@ const LIST_PRICE_BY_DURATION: Record<number, number> = {
 
 interface DetailHeroProps {
   detail: LiveMentorDetail;
-  /** 진행 기간 표시 문자열. */
-  period: string;
+  /** 진행 기간 표시 문자열. 개설이 없으면 null 이고, 그때는 기간 바를 렌더하지 않는다. */
+  period: string | null;
 }
 
 /**
@@ -33,7 +33,9 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
   );
   const listPrice = LIST_PRICE_BY_DURATION[cheapest?.duration] ?? price;
   const discountRate =
-    listPrice > price ? Math.round((1 - price / listPrice) * 100) : 0;
+    price !== null && listPrice !== null && listPrice > price
+      ? Math.round((1 - price / listPrice) * 100)
+      : 0;
 
   return (
     <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
@@ -82,63 +84,71 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
           <span>후기 {detail.reviewCount}건</span>
         </div>
 
-        {/* 진행 기간 바 */}
-        <div className="bg-neutral-95 text-neutral-0 flex flex-col gap-1 rounded-md px-5 py-4 md:flex-row md:items-center md:justify-between">
-          <span className="text-xsmall14 md:text-xsmall16 flex items-center gap-2 font-semibold">
-            <span aria-hidden="true">📢</span> 진행 기간
-          </span>
-          <span className="text-xsmall14 text-neutral-30">{period}</span>
-        </div>
-
-        {/* 플랜 선택 카드 — 결제 연동 전이라 표시 전용 */}
-        <div className="bg-neutral-95 text-neutral-0 flex flex-col gap-4 rounded-md px-5 py-6">
-          <p className="text-xsmall16 font-bold">{detail.title}</p>
-
-          <div className="flex flex-col gap-0.5">
-            {discountRate > 0 && (
-              <span className="text-neutral-45 text-xsmall14 line-through">
-                {formatPrice(listPrice)}
-              </span>
-            )}
-            <span className="text-medium22 flex items-baseline gap-2 font-bold">
-              {discountRate > 0 && (
-                <span className="text-system-error">{discountRate}%</span>
-              )}
-              {formatPrice(price)}
+        {/* 진행 기간 바 — 개설이 없으면 기간 자체가 없어 렌더하지 않는다 */}
+        {period !== null && (
+          <div className="bg-neutral-95 text-neutral-0 flex flex-col gap-1 rounded-md px-5 py-4 md:flex-row md:items-center md:justify-between">
+            <span className="text-xsmall14 md:text-xsmall16 flex items-center gap-2 font-semibold">
+              <span aria-hidden="true">📢</span> 진행 기간
             </span>
+            <span className="text-xsmall14 text-neutral-30">{period}</span>
           </div>
+        )}
 
-          <ul className="flex flex-col gap-3">
-            {durationPrices.map((option) => {
-              const optionList =
-                LIST_PRICE_BY_DURATION[option.duration] ?? option.price;
-              return (
-                <li
-                  key={option.duration}
-                  className="text-xsmall14 flex items-center justify-between gap-3"
-                >
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      disabled
-                      aria-label={`[LIVE] 1:1 멘토링 (${durationLabel(option.duration)})`}
-                      className="accent-primary h-4 w-4"
-                    />
-                    [LIVE] 1:1 멘토링 ({durationLabel(option.duration)})
-                  </span>
-                  <span className="text-neutral-45 flex items-center gap-2">
-                    <span className="line-through">
-                      {formatPrice(optionList)}
+        {/*
+          플랜 선택 카드 — 결제 연동 전이라 표시 전용.
+          개설이 없으면 판매가(`price`)가 null 이고 `durationPrices` 도 비어 있어
+          카드에 남는 게 상품명뿐이다. 통째로 렌더하지 않는다.
+        */}
+        {price !== null && (
+          <div className="bg-neutral-95 text-neutral-0 flex flex-col gap-4 rounded-md px-5 py-6">
+            <p className="text-xsmall16 font-bold">{detail.title}</p>
+
+            <div className="flex flex-col gap-0.5">
+              {discountRate > 0 && (
+                <span className="text-neutral-45 text-xsmall14 line-through">
+                  {formatPrice(listPrice)}
+                </span>
+              )}
+              <span className="text-medium22 flex items-baseline gap-2 font-bold">
+                {discountRate > 0 && (
+                  <span className="text-system-error">{discountRate}%</span>
+                )}
+                {formatPrice(price)}
+              </span>
+            </div>
+
+            <ul className="flex flex-col gap-3">
+              {durationPrices.map((option) => {
+                const optionList =
+                  LIST_PRICE_BY_DURATION[option.duration] ?? option.price;
+                return (
+                  <li
+                    key={option.duration}
+                    className="text-xsmall14 flex items-center justify-between gap-3"
+                  >
+                    <span className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        disabled
+                        aria-label={`[LIVE] 1:1 멘토링 (${durationLabel(option.duration)})`}
+                        className="accent-primary h-4 w-4"
+                      />
+                      [LIVE] 1:1 멘토링 ({durationLabel(option.duration)})
                     </span>
-                    <span className="text-neutral-0 font-bold">
-                      {formatPrice(option.price)}
+                    <span className="text-neutral-45 flex items-center gap-2">
+                      <span className="line-through">
+                        {formatPrice(optionList)}
+                      </span>
+                      <span className="text-neutral-0 font-bold">
+                        {formatPrice(option.price)}
+                      </span>
                     </span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </div>
     </section>
   );
