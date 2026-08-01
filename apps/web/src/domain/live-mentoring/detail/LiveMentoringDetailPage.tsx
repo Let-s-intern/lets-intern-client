@@ -55,6 +55,12 @@ const LiveMentoringDetailPage = ({
 
   const { profile, template } = data;
   const { intro, mentoringTypes, strategy, video, results } = template;
+  /*
+   * 서버는 아직 `reviews: []`·`reviewCount: 0` 을 고정으로 준다. 그래서
+   * 노출 토글·선택 id 와 무관하게 `shownReviews` 가 항상 비고, 시안 8(후기)
+   * 섹션이 자동으로 빠진다. 의도된 동작이라 별도 분기를 두지 않는다 —
+   * 후기 계약이 붙으면 이 코드가 그대로 동작한다.
+   */
   const shownReviews = template.reviews.visible
     ? data.reviews.filter((r) =>
         template.reviews.selectedReviewIds.includes(r.reviewId),

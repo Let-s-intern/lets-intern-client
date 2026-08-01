@@ -313,6 +313,19 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('지금 바로 신청')).not.toBeInTheDocument();
   });
 
+  // 서버가 아직 후기를 주지 않는다(`reviews: []`·`reviewCount: 0` 고정).
+  // 노출 토글이 켜져 있어도 섹션이 빠지는 것이 의도된 동작이다.
+  it('노출 on 이어도 후기가 비어 있으면 후기 섹션을 렌더하지 않는다', async () => {
+    axiosGet.mockResolvedValue(detail({ reviews: [], reviewCount: 0 }));
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/솔직한 멘토링 후기/)).not.toBeInTheDocument();
+    expect(screen.queryByText('좋았어요')).not.toBeInTheDocument();
+  });
+
   it('없는 상품(404)이면 찾을 수 없다고 알린다', async () => {
     axiosGet.mockRejectedValue({
       isAxiosError: true,
