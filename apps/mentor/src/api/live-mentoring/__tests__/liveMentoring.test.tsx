@@ -5,8 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import axios from '@/utils/axios';
 
 import {
+  LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
   LIVE_MENTORING_SETTINGS_QUERY_KEY,
   LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+  useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useLiveMentoringSettlementQuery,
@@ -22,7 +24,7 @@ import {
 
 // axios 모듈 자체를 모킹 (default export)
 vi.mock('@/utils/axios', () => ({
-  default: { get: vi.fn(), put: vi.fn() },
+  default: { get: vi.fn(), put: vi.fn(), post: vi.fn() },
 }));
 
 const axiosMock = vi.mocked(axios, true);
@@ -143,6 +145,7 @@ function newClient() {
 beforeEach(() => {
   axiosMock.get.mockReset();
   axiosMock.put.mockReset();
+  axiosMock.post.mockReset();
 });
 
 afterEach(() => {
@@ -360,6 +363,89 @@ describe('useUpdateLiveMentoringTemplateMutation', () => {
       '/mentor/live-mentoring/template',
       template,
     );
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+    });
+  });
+});
+
+describe('useCreateLiveMentoringOpeningMutation', () => {
+  const request = {
+    title: '자소서 실전 첨삭 멘토링',
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [30, 60],
+    feedbackStartDate: '2026-08-01',
+    feedbackEndDate: '2026-08-14',
+  };
+
+  function openingHistoryResponse() {
+    return {
+      data: {
+        data: {
+          liveMentoringId: 12,
+          openings: [
+            {
+              openingId: 77,
+              status: 'OPEN',
+              durationPrices: [
+                { duration: 30, price: 35000 },
+                { duration: 60, price: 60000 },
+              ],
+              feedbackStartDate: '2026-08-01',
+              feedbackEndDate: '2026-08-14',
+              openedAt: '2026-08-01T09:00:00',
+              closedAt: null,
+              closeReason: null,
+            },
+          ],
+        },
+      },
+    };
+  }
+
+  it('POST openings 에 요청 바디를 보내고 개설 이력 전체를 파싱해 반환한다', async () => {
+    axiosMock.post.mockResolvedValue(openingHistoryResponse());
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(newClient()) },
+    );
+
+    let created: Awaited<ReturnType<typeof result.current.mutateAsync>> | null =
+      null;
+    await act(async () => {
+      created = await result.current.mutateAsync(request as never);
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/openings',
+      request,
+    );
+    expect(created!.liveMentoringId).toBe(12);
+    expect(created!.openings[0].openingId).toBe(77);
+  });
+
+  it('성공 시 openStatus·settings·template 세 캐시를 invalidate 한다', async () => {
+    axiosMock.post.mockResolvedValue(openingHistoryResponse());
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync(request as never);
+    });
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
     });

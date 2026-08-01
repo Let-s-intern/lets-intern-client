@@ -1,7 +1,9 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 
 import {
+  type CreateOpeningRequest,
   type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
@@ -14,6 +16,13 @@ const SETTINGS_PATH = '/mentor/live-mentoring/settings';
 const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const SETTLEMENT_PATH = '/mentor/live-mentoring/settlement';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
+const OPENINGS_PATH = '/mentor/live-mentoring/openings';
+
+/** TanStack Query 기본 재시도 횟수. */
+const DEFAULT_RETRY_COUNT = 3;
+
+const isNotFound = (error: unknown) =>
+  isAxiosError(error) && error.response?.status === 404;
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
@@ -51,8 +60,8 @@ export const useLiveMentoringSettingsQuery = () => {
 };
 
 /**
- * PUT /mentor/live-mentoring/settings — 오픈 설정 저장.
- * 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받는다 —
+ * PUT /mentor/live-mentoring/settings — 상품 설정 저장.
+ * 백엔드는 title/categories 2개 필드만 받는다 —
  * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 수정 요청에 포함하지 않는다.
  * 응답은 전체 설정(프로필 참조 필드 포함)이라 저장 성공 시 곧바로 최신 상태로 갱신할 수 있다.
  */
@@ -82,10 +91,10 @@ export const useLiveMentoringTemplateQuery = () => {
       return liveMentoringTemplateSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
-    // ⚠️ 임시 — 백엔드에 아직 없는 엔드포인트라 재시도해도 성공하지 않는다.
-    //    기본 3회 재시도(약 7초)를 끄고 개발 중 안내를 바로 띄우려는 것이다.
-    //    API 연동 후 이 줄을 지워 기본 재시도로 되돌릴 것.
-    retry: false,
+    // 404(LIVE_MENTORING_NOT_FOUND)는 오류가 아니라 "상품을 아직 저장하지 않음"이라
+    // 재시도해도 결과가 바뀌지 않는다. 그 외 오류는 기본 3회 재시도를 그대로 쓴다.
+    retry: (failureCount, error) =>
+      !isNotFound(error) && failureCount < DEFAULT_RETRY_COUNT,
   });
 };
 
@@ -142,5 +151,35 @@ export const useLiveMentoringOpenStatusQuery = () => {
       return openingHistoryResponseSchema.parse(res.data.data).openings;
     },
     refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/openings — 개설 생성.
+ *
+ * 전제는 `settings.status === 'APPROVED'` 이고 활성 `OPEN` 개설이 없을 때다.
+ * 응답은 생성 건이 아니라 개설 이력 전체(`GET /open-status` 와 같은 형태)다.
+ *
+ * 성공 시 세 캐시를 모두 invalidate 한다. 개설이 같은 트랜잭션에서 상품의 제목·카테고리를
+ * 갱신하고(settings), 활성 개설(`currentOpening`)을 만들기(template) 때문이다.
+ */
+export const useCreateLiveMentoringOpeningMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (request: CreateOpeningRequest) => {
+      const res = await axios.post(OPENINGS_PATH, request);
+      return openingHistoryResponseSchema.parse(res.data.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+      });
+    },
   });
 };
