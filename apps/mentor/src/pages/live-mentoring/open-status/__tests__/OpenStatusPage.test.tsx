@@ -1,15 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { OpenStatusRow } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringSettings,
+  OpenStatusRow,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
 let queryState: { data?: OpenStatusRow[]; isLoading: boolean } = {
   data: undefined,
   isLoading: false,
 };
+let settingsState: { data?: LiveMentoringSettings } = { data: undefined };
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringOpenStatusQuery: () => queryState,
+  useLiveMentoringSettingsQuery: () => settingsState,
 }));
 
 import OpenStatusPage from '../OpenStatusPage';
@@ -35,17 +40,27 @@ const rows: OpenStatusRow[] = [
   },
 ];
 
+const settings: LiveMentoringSettings = {
+  liveMentoringId: 1,
+  nickname: '멘토',
+  profileImage: null,
+  introduction: null,
+  careers: [],
+  title: '자소서 실전 첨삭 멘토링',
+  status: 'APPROVED',
+  categories: ['PERSONAL_STATEMENT'],
+};
+
 afterEach(() => {
   queryState = { data: undefined, isLoading: false };
+  settingsState = { data: undefined };
 });
 
 describe('OpenStatusPage', () => {
-  it('오픈 현황행을 카테고리 한글 라벨과 함께 렌더한다', () => {
+  it('개설 행의 진행시간과 가격을 렌더한다', () => {
     queryState = { data: rows, isLoading: false };
     render(<OpenStatusPage />);
 
-    expect(screen.getByText('자기소개서')).toBeInTheDocument();
-    expect(screen.getByText('포트폴리오')).toBeInTheDocument();
     expect(screen.getByText('50분')).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
     expect(screen.getByText('7건')).toBeInTheDocument();
@@ -74,5 +89,31 @@ describe('OpenStatusPage', () => {
     render(<OpenStatusPage />);
 
     expect(screen.getByText('오픈한 멘토링이 없습니다.')).toBeInTheDocument();
+  });
+
+  // 타이틀·카테고리는 상품 값이라 개설이 2건이어도 요약 한 줄에만 나와야 한다.
+  // 행마다 반복하면 과거 개설에 현재 제목이 붙는다.
+  it('상품 타이틀과 카테고리를 표 상단 요약에 한 번만 노출한다', () => {
+    queryState = { data: rows, isLoading: false };
+    settingsState = { data: settings };
+    render(<OpenStatusPage />);
+
+    expect(screen.getAllByText('자소서 실전 첨삭 멘토링')).toHaveLength(1);
+    expect(screen.getAllByText('자기소개서')).toHaveLength(1);
+  });
+
+  it('상품이 없으면 요약 대신 오픈 설정 안내를 노출한다', () => {
+    queryState = { data: [], isLoading: false };
+    settingsState = {
+      data: { ...settings, liveMentoringId: null, title: null },
+    };
+    render(<OpenStatusPage />);
+
+    expect(
+      screen.getByText(
+        '아직 만들어진 상품이 없습니다. 오픈 설정에서 타이틀과 타입을 먼저 저장해주세요.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('자기소개서')).not.toBeInTheDocument();
   });
 });

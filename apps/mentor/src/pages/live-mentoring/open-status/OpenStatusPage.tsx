@@ -1,4 +1,7 @@
-import { useLiveMentoringOpenStatusQuery } from '@/api/live-mentoring/liveMentoring';
+import {
+  useLiveMentoringOpenStatusQuery,
+  useLiveMentoringSettingsQuery,
+} from '@/api/live-mentoring/liveMentoring';
 import type { OpenStatusRow } from '@/api/live-mentoring/liveMentoringSchema';
 import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
 
@@ -24,15 +27,14 @@ const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
  */
 const atomicCellClass = `${bodyCellClass} whitespace-nowrap`;
 
-/**
- * 길어질 수 있는 한글 텍스트 셀 — 줄바꿈은 허용하되 **어절 단위로만** 끊는다.
- * `break-keep`(word-break: keep-all) 이 없으면 "자소서 실전 첨" / "삭 멘토링" 처럼
- * 단어 중간에서 잘린다.
- */
-const textCellClass = `${bodyCellClass} break-keep`;
-
 const OpenStatusPage = () => {
   const { data, isLoading } = useLiveMentoringOpenStatusQuery();
+  /*
+   * 타이틀·카테고리는 개설이 아니라 **상품** 소유라 개설 이력 행에 들어 있지 않다.
+   * 표 상단 요약 한 곳에만 둔다 — 행마다 반복하면 과거 개설에 현재 제목이 붙어
+   * "그때 이 제목으로 열었다"는 거짓 정보가 된다.
+   */
+  const { data: settings } = useLiveMentoringSettingsQuery();
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -49,6 +51,28 @@ const OpenStatusPage = () => {
         </p>
       </header>
 
+      {settings &&
+        (settings.liveMentoringId === null ? (
+          <p className="text-xsmall14 text-neutral-40">
+            아직 만들어진 상품이 없습니다. 오픈 설정에서 타이틀과 타입을 먼저
+            저장해주세요.
+          </p>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            {/*
+              표에서 옮겨온 타이틀이라 줄바꿈 규칙도 같이 가져온다 —
+              `break-keep`(word-break: keep-all) 이 없으면 좁은 화면에서
+              "자소서 실전 첨" / "삭 멘토링" 처럼 단어 중간이 끊긴다.
+            */}
+            <span className="text-xsmall16 text-neutral-10 break-keep font-semibold">
+              {settings.title}
+            </span>
+            <span className="text-xsmall14 text-neutral-40">
+              {settings.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
+            </span>
+          </div>
+        ))}
+
       {/*
         표가 `min-w-[560px]` 라 좁은 화면에서는 컨테이너를 넘친다.
         `overflow-hidden` 이면 넘친 열이 잘린 채 접근할 방법이 없으므로 가로 스크롤을 준다.
@@ -57,8 +81,6 @@ const OpenStatusPage = () => {
         <table className="w-full min-w-[560px]">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              <th className={headerCellClass}>타이틀</th>
-              <th className={headerCellClass}>카테고리</th>
               <th className={headerCellClass}>진행시간</th>
               <th className={headerCellClass}>피드백 기간</th>
               <th className={headerCellClass}>가격</th>
@@ -70,7 +92,7 @@ const OpenStatusPage = () => {
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={5}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -79,7 +101,7 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={5}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   오픈한 멘토링이 없습니다.
@@ -91,10 +113,6 @@ const OpenStatusPage = () => {
                   key={`${row.categories.join()}-${index}`}
                   className="border-b border-gray-100 last:border-b-0"
                 >
-                  <td className={textCellClass}>{row.title}</td>
-                  <td className={textCellClass}>
-                    {row.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
-                  </td>
                   <td className={atomicCellClass}>
                     {row.durations.map(durationLabel).join('·')}
                   </td>
