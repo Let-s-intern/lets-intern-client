@@ -1,10 +1,9 @@
 'use client';
 
+import { isAxiosError } from 'axios';
+
 import { useLiveMentoringDetailQuery } from '@/api/live-mentoring/liveMentoring';
 import { formatDetailPeriod } from '../constants';
-// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
-//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
@@ -36,17 +35,22 @@ interface LiveMentoringDetailPageProps {
 const LiveMentoringDetailPage = ({
   liveMentoringId,
 }: LiveMentoringDetailPageProps) => {
-  const { data, isLoading, isError } =
+  const { data, isLoading, isError, error } =
     useLiveMentoringDetailQuery(liveMentoringId);
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
   }
-  // ⚠️ 임시 — `GET /live-mentoring/mentors/{mentorId}` 가 미완성이라 실서버에서 500 이 온다.
-  //    백엔드 연동 후 아래 한 줄을 지우고 원래 문구로 되돌릴 것:
-  //      <p className="text-neutral-40 py-20 text-center">멘토 정보를 불러오지 못했습니다.</p>
   if (isError || !data) {
-    return <UnderDevelopmentNotice />;
+    // 404 는 없는 상품이라 재시도해도 소용없다 — 일시적 장애와 구분해 알린다.
+    const notFound = isAxiosError(error) && error.response?.status === 404;
+    return (
+      <p className="text-neutral-40 py-20 text-center">
+        {notFound
+          ? '해당 멘토링을 찾을 수 없습니다.'
+          : '멘토 정보를 불러오지 못했습니다.'}
+      </p>
+    );
   }
 
   const { profile, template } = data;

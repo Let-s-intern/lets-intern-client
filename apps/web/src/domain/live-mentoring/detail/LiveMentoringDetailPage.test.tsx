@@ -313,15 +313,37 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('지금 바로 신청')).not.toBeInTheDocument();
   });
 
-  // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.
-  //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-  it('상세 조회에 실패하면 담당자와 함께 개발 중 안내를 노출한다', async () => {
-    axiosGet.mockRejectedValue(new Error('500'));
+  it('없는 상품(404)이면 찾을 수 없다고 알린다', async () => {
+    axiosGet.mockRejectedValue({
+      isAxiosError: true,
+      response: { status: 404 },
+    });
     renderDetail();
 
     await waitFor(() =>
-      expect(screen.getByText('개발 중인 페이지입니다.')).toBeInTheDocument(),
+      expect(
+        screen.getByText('해당 멘토링을 찾을 수 없습니다.'),
+      ).toBeInTheDocument(),
     );
-    expect(screen.getByText('담당자 임성빈')).toBeInTheDocument();
+    expect(
+      screen.queryByText('멘토 정보를 불러오지 못했습니다.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('그 밖의 오류(500)면 일반 조회 실패 문구를 노출한다', async () => {
+    axiosGet.mockRejectedValue({
+      isAxiosError: true,
+      response: { status: 500 },
+    });
+    renderDetail();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토 정보를 불러오지 못했습니다.'),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText('해당 멘토링을 찾을 수 없습니다.'),
+    ).not.toBeInTheDocument();
   });
 });
