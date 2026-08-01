@@ -26,6 +26,24 @@ beforeAll(() => {
   } as unknown as typeof IntersectionObserver;
 });
 
+/**
+ * 신청 CTA 문구는 오늘이 신청 기간에 포함되는지로 갈린다.
+ * 픽스처 기간(2026-07-18 ~ 08-01) 안쪽으로 시계를 고정하지 않으면
+ * 그 기간이 지나는 순간 테스트가 깨진다 — 실제로 08-02 에 깨졌다.
+ * 기간 표기까지 단언하므로 픽스처는 고정 날짜로 두고 시계를 묶는다.
+ */
+const FROZEN_TODAY = new Date('2026-07-25T09:00:00+09:00');
+
+beforeEach(() => {
+  // advanceTimers 를 켜야 waitFor 의 폴링이 멈추지 않는다.
+  jest.useFakeTimers({ advanceTimers: true });
+  jest.setSystemTime(FROZEN_TODAY);
+});
+
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 function detail(overrides: Record<string, unknown> = {}) {
   return {
     data: {
