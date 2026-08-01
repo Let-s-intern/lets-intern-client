@@ -769,6 +769,13 @@ const templateStatusBlock = () => {
   };
 };
 
+/** 상품·개설을 못 찾을 때 서버가 주는 404 — `EntityNotFoundException(LIVE_MENTORING_NOT_FOUND)`. */
+const liveMentoringNotFound = (message: string) =>
+  HttpResponse.json(
+    { status: 404, code: 'LIVE_MENTORING_NOT_FOUND', message },
+    { status: 404 },
+  );
+
 /** 상태 전이가 막힐 때 서버가 주는 409 — `LiveMentoringLifecycleServiceImpl.transition`. */
 const liveMentoringInvalidState = () =>
   HttpResponse.json(
@@ -1622,9 +1629,50 @@ export const handlers = [
   }),
 
   /**
+   * (관리자) PATCH /admin/live-mentoring/:liveMentoringId/approve — 상품 승인.
+   *
+   * 목이 들고 있는 상품은 "나"(`MY_LIVE_MENTORING_ID`) 하나뿐이라 다른 id 는 404 다.
+   * 상태 전이는 서버 `LiveMentoringStatus.canTransitionTo` 그대로 —
+   * `PENDING_REVIEW` 에서만 `APPROVED` 로 간다. 그 외에는 409 로 막아
+   * 어드민 화면의 오류 코드 표시를 확인할 수 있게 한다.
+   *
+   * 이 핸들러가 `liveMentoringStatus` 를 실제로 바꾸므로 멘토 화면의 검토 제출과
+   * 이어져 `제출 → 승인 → 개설 가능` 전 구간이 목에서 한 번에 돈다.
+   */
+  http.patch(
+    '*/admin/live-mentoring/:liveMentoringId/approve',
+    ({ params }) => {
+      if (Number(params.liveMentoringId) !== MY_LIVE_MENTORING_ID) {
+        return liveMentoringNotFound('존재하지 않는 라이브 멘토링입니다.');
+      }
+      if (liveMentoringStatus !== 'PENDING_REVIEW') {
+        return liveMentoringInvalidState();
+      }
+      liveMentoringStatus = 'APPROVED';
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (관리자) PATCH /admin/live-mentoring/:liveMentoringId/reject — 상품 반려.
+   *
+   * 서버가 Request Body 를 받지 않아 반려 사유가 없다. 승인과 같은 전이 규칙이고
+   * `PENDING_REVIEW` 에서만 `REJECTED` 로 간다.
+   */
+  http.patch('*/admin/live-mentoring/:liveMentoringId/reject', ({ params }) => {
+    if (Number(params.liveMentoringId) !== MY_LIVE_MENTORING_ID) {
+      return liveMentoringNotFound('존재하지 않는 라이브 멘토링입니다.');
+    }
+    if (liveMentoringStatus !== 'PENDING_REVIEW') {
+      return liveMentoringInvalidState();
+    }
+    liveMentoringStatus = 'REJECTED';
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /**
    * (관리자) PATCH /admin/live-mentoring/openings/:openingId/close — 개설 강제 종료.
    *
-   * admin 화면은 이번 범위 밖이고 계약 확인용으로만 둔다.
    * 서버는 본문 없이 성공만 돌려주고(`SuccessResponse.ok(null)`),
    * 이미 `CLOSED` 인 개설에 대한 재요청은 아무 것도 하지 않고 성공으로 끝낸다
    * (`LiveMentoringLifecycleServiceImpl.closeOpening`).
@@ -1638,14 +1686,7 @@ export const handlers = [
       );
 
       if (!target) {
-        return HttpResponse.json(
-          {
-            status: 404,
-            code: 'LIVE_MENTORING_NOT_FOUND',
-            message: '존재하지 않는 개설입니다.',
-          },
-          { status: 404 },
-        );
+        return liveMentoringNotFound('존재하지 않는 개설입니다.');
       }
 
       if (target.status === 'OPEN') {
