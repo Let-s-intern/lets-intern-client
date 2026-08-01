@@ -17,6 +17,11 @@ const GuidebookCreate = lazy(() => import('./pages/pages/GuidebookCreate'));
 const GuidebookEdit = lazy(() => import('./pages/pages/GuidebookEdit'));
 const ProgramUsers = lazy(() => import('./pages/pages/program/ProgramUsers'));
 
+// 1대1 라이브 멘토링 관리
+const AdminLiveMentoringPage = lazy(
+  () => import('./domain/live-mentoring/AdminLiveMentoringPage'),
+);
+
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
 );
@@ -259,6 +264,12 @@ export const router = createBrowserRouter([
       {
         path: '/programs/:programId/users',
         element: withSuspense(<ProgramUsers />),
+      },
+
+      // 1대1 라이브 멘토링 관리
+      {
+        path: '/live-mentoring',
+        element: withSuspense(<AdminLiveMentoringPage />),
       },
 
       // 챌린지 운영
