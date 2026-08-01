@@ -1,6 +1,8 @@
-import { getLowestPrice } from '@letscareer/mocks';
+import { getLowestPrice, MY_LIVE_MENTORING_ID } from '@letscareer/mocks';
 import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+
+import { liveMentoringSettingsSchema } from '../liveMentoringSchema';
 
 /**
  * 공유 MSW 핸들러(@letscareer/mocks)가 1대1 라이브 멘토링 엔드포인트에 대해
@@ -78,37 +80,35 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data.price).toBe(getLowestPrice(data.durations));
   });
 
-  it('GET /mentor/live-mentoring/settings → 오픈 설정 메타', async () => {
+  it('GET /mentor/live-mentoring/settings → 상품 설정 스키마로 파싱된다', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`);
     const { data } = await res.json();
-    expect(data).toHaveProperty('title');
-    expect(data).toHaveProperty('nickname');
-    expect(data).toHaveProperty('careers');
-    expect(data).toHaveProperty('categories');
-    expect(data).toHaveProperty('durations');
-    expect(data).toHaveProperty('feedbackStartDate');
-    expect(data).toHaveProperty('feedbackEndDate');
+    const settings = liveMentoringSettingsSchema.parse(data);
+    expect(settings.liveMentoringId).toBe(MY_LIVE_MENTORING_ID);
+    expect(settings.status).toBe('DRAFT');
+    // 개설에 딸린 값은 더 이상 상품 설정에 없다.
+    expect(data).not.toHaveProperty('isOpen');
+    expect(data).not.toHaveProperty('durations');
+    expect(data).not.toHaveProperty('feedbackStartDate');
+    expect(data).not.toHaveProperty('feedbackEndDate');
   });
 
-  it('PUT /mentor/live-mentoring/settings → 6개 편집 필드를 echo하고, 프로필 참조 필드를 함께 내려준다', async () => {
-    const body = {
-      title: '수정된 타이틀',
-      isOpen: false,
-      categories: ['RESUME'],
-      durations: [60],
-      feedbackStartDate: '2026-08-01',
-      feedbackEndDate: '2026-08-14',
-    };
+  it('PUT /mentor/live-mentoring/settings → body echo 가 아니라 상품 정보 전체를 돌려준다', async () => {
+    const body = { title: '수정된 타이틀', categories: ['RESUME'] };
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     const { data } = await res.json();
-    expect(data).toMatchObject(body);
-    // 프로필 참조 필드(nickname 등)는 요청에 없어도 응답엔 딸려온다.
-    expect(data).toHaveProperty('nickname');
-    expect(data).toHaveProperty('careers');
+    const settings = liveMentoringSettingsSchema.parse(data);
+    expect(settings.title).toBe('수정된 타이틀');
+    expect(settings.categories).toEqual(['RESUME']);
+    // 요청에 없던 필드도 응답에 실린다(서버는 GetLiveMentoringSettingsResponseDto 전체를 돌려준다).
+    expect(settings.liveMentoringId).toBe(MY_LIVE_MENTORING_ID);
+    expect(settings.status).toBe('DRAFT');
+    expect(settings.nickname).toBeTruthy();
+    expect(settings.careers.length).toBeGreaterThan(0);
   });
 
   it('GET /mentor/live-mentoring/template → 템플릿', async () => {

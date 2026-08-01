@@ -11,6 +11,7 @@ import {
   mentoringTitleFor,
   type LiveMentorCard,
   type LiveMentoringCategory,
+  type LiveMentoringSettings,
 } from './data/liveMentoring';
 
 /**
@@ -1400,23 +1401,22 @@ export const handlers = [
 
   /**
    * (멘토) PUT /mentor/live-mentoring/settings — 저장.
-   * 실 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받고,
-   * nickname/profileImage/introduction/careers는 프로필 도메인에서 조회해 응답에 얹어줄 뿐
-   * 수정 대상이 아니다 — 여기서도 동일하게 흉내낸다(목 프로필 값과 병합해 echo).
+   *
+   * 실 백엔드는 `{title, categories}` 2개만 받고 응답으로는 상품 정보 전체
+   * (`GetLiveMentoringSettingsResponseDto`)를 돌려준다 — body echo 가 아니다.
+   * `liveMentoringId`·`status` 와 프로필 참조 필드(nickname 등)는 요청에 없어도 응답에 실린다.
    */
   http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
-    const editable = (await request.json().catch(() => ({}))) as Record<
-      string,
-      unknown
+    const body = (await request.json().catch(() => ({}))) as Partial<
+      Pick<LiveMentoringSettings, 'title' | 'categories'>
     >;
     return HttpResponse.json({
       status: 200,
       data: {
-        nickname: LIVE_MENTORING_SETTINGS.nickname,
-        profileImage: LIVE_MENTORING_SETTINGS.profileImage,
-        introduction: LIVE_MENTORING_SETTINGS.introduction,
+        ...LIVE_MENTORING_SETTINGS,
         careers: settingsCareers(),
-        ...editable,
+        title: body.title ?? LIVE_MENTORING_SETTINGS.title,
+        categories: body.categories ?? LIVE_MENTORING_SETTINGS.categories,
       },
     });
   }),

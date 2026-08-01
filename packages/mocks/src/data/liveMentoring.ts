@@ -34,6 +34,17 @@ export const LIVE_MENTORING_DURATIONS: readonly LiveMentoringDuration[] = [
   30, 60,
 ] as const;
 
+/**
+ * 상품 상태 — 백엔드 `LiveMentoringStatus`.
+ * 편집 가능한 상태는 `DRAFT`·`REJECTED` 이고, 공개 노출은 `APPROVED` 뿐이다.
+ */
+export type LiveMentoringStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'INACTIVE';
+
 /** 모자이크 블러 기본값(중간 정도). 슬라이더 범위 0~20 기준. */
 export const DEFAULT_MOSAIC_BLUR = 10;
 
@@ -247,26 +258,25 @@ export interface LiveMentoringSettingsCareer {
 }
 
 /**
- * 오픈 설정(메타) (PRD §5 S3-a).
- * 오픈은 하나만 가능하므로 이 설정이 곧 단일 오픈이다.
- * 타입·진행시간은 다중 선택, 가격은 진행시간에 따라 파생(최저가)한다.
+ * 상품 설정 — 백엔드 `GetLiveMentoringSettingsResponseDto`.
+ *
+ * `상품 1 : 개설 N` 분리 이후 이 응답은 **상품 정보만** 담는다.
+ * 개설에 딸린 값(오픈 여부·진행시간·피드백 기간)은 개설 이력(`OpeningHistoryItem`)에 있다.
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드 —
  * 이 오픈 설정 화면에서 수정할 수 없다(수정은 프로필 페이지에서).
  */
 export interface LiveMentoringSettings {
+  /** 상품 식별자. 상품을 한 번도 저장하지 않았으면 null. */
+  liveMentoringId: number | null;
   nickname: string | null;
   profileImage: string | null;
   introduction: string | null;
   careers: LiveMentoringSettingsCareer[];
-  /** 1대1 멘토링 타이틀(상품명). 한 번도 오픈한 적 없으면 null. */
+  /** 1대1 멘토링 타이틀(상품명). 상품을 한 번도 저장하지 않았으면 null. */
   title: string | null;
-  /** 현재 오픈 중인지 여부. 오픈 중에는 설정을 수정할 수 없다. */
-  isOpen: boolean;
+  /** 상품 상태. 상품이 없어도 서버가 `DRAFT` 로 채워 주므로 null 이 아니다. */
+  status: LiveMentoringStatus;
   categories: LiveMentoringCategory[];
-  durations: LiveMentoringDuration[];
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. 한 번도 오픈한 적 없으면 null. */
-  feedbackStartDate: string | null;
-  feedbackEndDate: string | null;
 }
 
 /** 정산 현황 행 — 기간별 합계 (PRD §4.6, read-only) */
@@ -973,6 +983,16 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
 /** 로그인 멘토로 간주하는 시드 mentorId */
 const MY_MENTOR_ID = 1;
 
+/**
+ * 상품 식별자는 멘토 식별자와 겹치지 않도록 100 을 더해 만든다.
+ * `상품 1 : 개설 N` 분리로 `mentorId`·`liveMentoringId`·`openingId` 세 값이 공존하게 됐고,
+ * 값이 겹쳐 있으면 잘못된 id 를 넘기는 회귀가 목에서 드러나지 않는다.
+ */
+const LIVE_MENTORING_ID_OFFSET = 100;
+
+/** "나"(mySeed)의 상품 식별자. */
+export const MY_LIVE_MENTORING_ID = LIVE_MENTORING_ID_OFFSET + MY_MENTOR_ID;
+
 const mySeed = MENTOR_SEEDS[0];
 
 /** "나"(mySeed)의 경력을 오픈 설정 화면의 읽기 전용 `UserCareerVo` 형태로 변환한 목값. */
@@ -1005,18 +1025,24 @@ const MY_SETTINGS_CAREERS: LiveMentoringSettingsCareer[] = [
   },
 ];
 
-/** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
+/**
+ * GET /mentor/live-mentoring/settings — 상품 설정 기본값.
+ *
+ * 기본 상태를 `DRAFT` 로 둬 오픈 설정·상세 설정을 편집 가능한 상태로 띄운다.
+ * 개설 이력(`OPENING_HISTORY_ROWS`)에 활성 개설을 두지 않은 것도 같은 이유다 —
+ * 서버 `LiveMentoring.startEditing()` 이 활성 개설이 있으면 `DRAFT` 로 되돌리지 못하게 막으므로
+ * `DRAFT` + 활성 개설은 실서버가 만들 수 없는 조합이다.
+ */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
+  liveMentoringId: MY_LIVE_MENTORING_ID,
   nickname: mySeed.nickname,
   profileImage: imageFor(mySeed),
   introduction: mySeed.introduction,
   careers: MY_SETTINGS_CAREERS,
   title: '자소서 실전 첨삭 멘토링',
-  // 목 기본값: 아직 오픈 전(편집 가능). 오픈하기 → 잠금 흐름을 확인할 수 있다.
-  isOpen: false,
-  categories: categoriesFor(mySeed),
-  durations: durationsFor(mySeed),
-  ...periodFor(mySeed),
+  status: 'DRAFT',
+  /** 서버 `@Size(min = 1, max = 1)` 이라 상품 타입은 항상 1개다. */
+  categories: [mySeed.category],
 };
 
 /** GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분. */
