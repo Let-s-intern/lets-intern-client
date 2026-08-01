@@ -16,6 +16,7 @@ import {
   type LiveMentoringCategory,
   type LiveMentoringDuration,
   type LiveMentoringSettings,
+  type LiveMentoringStatus,
 } from './data/liveMentoring';
 
 /**
@@ -727,6 +728,59 @@ const openingHistory = () => ({
 });
 
 /**
+ * 상품 상태는 검토 제출(`POST /submit`)·수정 시작(`POST /start-edit`)으로 바뀌므로
+ * 목에서도 상태를 들고 있어야 "제출하면 편집이 잠긴다"는 실제 동작을 재현할 수 있다.
+ * `GET /settings` 와 `GET /template` 이 이 값을 함께 반영한다.
+ */
+let liveMentoringStatus: LiveMentoringStatus = LIVE_MENTORING_SETTINGS.status;
+
+/** 상품 상태 목 상태를 시드(`DRAFT`)로 되돌린다 — 개설 이력과 같은 이유로 테스트가 직접 격리한다. */
+export const resetLiveMentoringStatus = () => {
+  liveMentoringStatus = LIVE_MENTORING_SETTINGS.status;
+};
+
+/** 서버 `LiveMentoring.hasActiveOpening()` — 활성 개설은 `OPEN` 개설이다. */
+const activeOpening = () =>
+  openingHistoryRows.find((row) => row.status === 'OPEN') ?? null;
+
+/** 서버 `LiveMentoring.isEditable()` — 상태가 `DRAFT`·`REJECTED` 이고 활성 개설이 없을 때만 true. */
+const isLiveMentoringEditable = () =>
+  (liveMentoringStatus === 'DRAFT' || liveMentoringStatus === 'REJECTED') &&
+  activeOpening() === null;
+
+/** `GET /template`·`PUT /template` 이 공통으로 얹는 상태 블록. */
+const templateStatusBlock = () => {
+  const opening = activeOpening();
+  return {
+    mentoring: {
+      ...LIVE_MENTORING_TEMPLATE.mentoring,
+      status: liveMentoringStatus,
+      editable: isLiveMentoringEditable(),
+    },
+    currentOpening: opening
+      ? {
+          openingId: opening.openingId,
+          status: opening.status,
+          durationPrices: opening.durationPrices,
+          feedbackStartDate: opening.feedbackStartDate,
+          feedbackEndDate: opening.feedbackEndDate,
+        }
+      : null,
+  };
+};
+
+/** 상태 전이가 막힐 때 서버가 주는 409 — `LiveMentoringLifecycleServiceImpl.transition`. */
+const liveMentoringInvalidState = () =>
+  HttpResponse.json(
+    {
+      status: 409,
+      code: 'LIVE_MENTORING_INVALID_STATE',
+      message: '현재 상태에서는 요청을 처리할 수 없습니다.',
+    },
+    { status: 409 },
+  );
+
+/**
  * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
  *
  * 목 데이터는 PRD 기준(평점·후기·모자이크)이고 실제 개설 목록 응답은 그 필드가 없으므로,
@@ -1420,7 +1474,11 @@ export const handlers = [
   http.get('*/mentor/live-mentoring/settings', () => {
     return HttpResponse.json({
       status: 200,
-      data: { ...LIVE_MENTORING_SETTINGS, careers: settingsCareers() },
+      data: {
+        ...LIVE_MENTORING_SETTINGS,
+        careers: settingsCareers(),
+        status: liveMentoringStatus,
+      },
     });
   }),
 
@@ -1449,6 +1507,7 @@ export const handlers = [
       data: {
         ...LIVE_MENTORING_SETTINGS,
         careers: settingsCareers(),
+        status: liveMentoringStatus,
         title: body.title ?? LIVE_MENTORING_SETTINGS.title,
         categories: body.categories ?? LIVE_MENTORING_SETTINGS.categories,
       },
@@ -1459,7 +1518,39 @@ export const handlers = [
    * (멘토) GET /mentor/live-mentoring/template — 상세 페이지 템플릿 조회.
    */
   http.get('*/mentor/live-mentoring/template', () => {
-    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_TEMPLATE });
+    return HttpResponse.json({
+      status: 200,
+      data: { ...LIVE_MENTORING_TEMPLATE, ...templateStatusBlock() },
+    });
+  }),
+
+  /**
+   * (멘토) POST /mentor/live-mentoring/submit — 관리자 검토 제출.
+   *
+   * 서버는 본문 없이 성공만 돌려주고(`SuccessResponse.ok(null)`),
+   * `DRAFT`·`REJECTED` 에서만 `PENDING_REVIEW` 로 보낸다(`LiveMentoringStatus.canTransitionTo`).
+   * 상세 페이지 미저장도 같은 409 로 막지만, 목 상품은 상세가 항상 있어 재현하지 않는다.
+   */
+  http.post('*/mentor/live-mentoring/submit', () => {
+    if (liveMentoringStatus !== 'DRAFT' && liveMentoringStatus !== 'REJECTED') {
+      return liveMentoringInvalidState();
+    }
+    liveMentoringStatus = 'PENDING_REVIEW';
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /**
+   * (멘토) POST /mentor/live-mentoring/start-edit — 승인본 수정 시작.
+   *
+   * 서버 `LiveMentoring.startEditing()` 그대로 — `APPROVED` 가 아니거나
+   * 활성 개설이 있으면 409 다. 성공하면 `DRAFT` 로 되돌아가 편집이 풀린다.
+   */
+  http.post('*/mentor/live-mentoring/start-edit', () => {
+    if (liveMentoringStatus !== 'APPROVED' || activeOpening() !== null) {
+      return liveMentoringInvalidState();
+    }
+    liveMentoringStatus = 'DRAFT';
+    return HttpResponse.json({ status: 200, data: null });
   }),
 
   /**
@@ -1475,11 +1566,7 @@ export const handlers = [
     >;
     return HttpResponse.json({
       status: 200,
-      data: {
-        ...body,
-        mentoring: LIVE_MENTORING_TEMPLATE.mentoring,
-        currentOpening: LIVE_MENTORING_TEMPLATE.currentOpening,
-      },
+      data: { ...body, ...templateStatusBlock() },
     });
   }),
 

@@ -3,6 +3,7 @@ import {
   LIVE_MENTOR_DETAILS,
   MY_LIVE_MENTORING_ID,
   resetLiveMentoringOpeningHistory,
+  resetLiveMentoringStatus,
 } from '@letscareer/mocks';
 import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
@@ -25,6 +26,8 @@ afterEach(() => {
   server.resetHandlers();
   // 개설 생성·강제 종료는 목 상태를 바꾸므로 테스트 간 격리한다.
   resetLiveMentoringOpeningHistory();
+  // 검토 제출·수정 시작도 마찬가지다.
+  resetLiveMentoringStatus();
 });
 afterAll(() => server.close());
 
@@ -356,5 +359,72 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
         .data,
     );
     expect(reloaded.openings[0].openingId).toBe(created.openingId);
+  });
+});
+
+describe('1대1 라이브 멘토링 상태 전이 MSW 핸들러', () => {
+  const submit = () =>
+    fetch(`${BASE}/mentor/live-mentoring/submit`, { method: 'POST' });
+  const startEdit = () =>
+    fetch(`${BASE}/mentor/live-mentoring/start-edit`, { method: 'POST' });
+  const settings = async () =>
+    liveMentoringSettingsSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/settings`)).json())
+        .data,
+    );
+  const template = async () =>
+    liveMentoringTemplateSchema.parse(
+      (await (await fetch(`${BASE}/mentor/live-mentoring/template`)).json())
+        .data,
+    );
+
+  it('POST /submit → DRAFT 가 PENDING_REVIEW 로 바뀌고 편집이 잠긴다', async () => {
+    const res = await submit();
+    expect(res.status).toBe(200);
+    // 서버는 본문 없이 성공만 돌려준다.
+    expect((await res.json()).data).toBeNull();
+
+    expect((await settings()).status).toBe('PENDING_REVIEW');
+    const after = await template();
+    expect(after.mentoring.status).toBe('PENDING_REVIEW');
+    expect(after.mentoring.editable).toBe(false);
+  });
+
+  it('POST /submit → 검토 대기 상태에서 다시 제출하면 409 다', async () => {
+    await submit();
+
+    const res = await submit();
+    expect(res.status).toBe(409);
+    expect((await res.json()).code).toBe('LIVE_MENTORING_INVALID_STATE');
+    // 실패해도 상태는 그대로다.
+    expect((await settings()).status).toBe('PENDING_REVIEW');
+  });
+
+  it('POST /start-edit → APPROVED 가 아니면 409 다', async () => {
+    const res = await startEdit();
+    expect(res.status).toBe(409);
+    expect((await res.json()).code).toBe('LIVE_MENTORING_INVALID_STATE');
+    expect((await settings()).status).toBe('DRAFT');
+  });
+
+  it('활성 개설이 생기면 DRAFT 여도 편집이 잠기고 currentOpening 이 채워진다', async () => {
+    await fetch(`${BASE}/mentor/live-mentoring/openings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: '진행 중 개설',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30],
+        feedbackStartDate: '2026-08-10',
+        feedbackEndDate: '2026-08-23',
+      }),
+    });
+
+    const after = await template();
+    expect(after.mentoring.editable).toBe(false);
+    expect(after.currentOpening?.status).toBe('OPEN');
+    expect(after.currentOpening?.durationPrices).toEqual([
+      { duration: 30, price: 35000 },
+    ]);
   });
 });
