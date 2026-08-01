@@ -31,7 +31,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
 
   return (
     <Link
-      href={`/live-mentoring/${opening.mentorId}`}
+      href={`/live-mentoring/${opening.liveMentoringId}`}
       className="row-span-3 grid w-full grid-rows-subgrid gap-3 overflow-hidden"
     >
       {/* 썸네일 — 프로필 이미지가 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}

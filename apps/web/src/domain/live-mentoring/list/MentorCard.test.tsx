@@ -7,7 +7,8 @@ function makeOpening(
   overrides: Partial<LiveMentoringOpening> = {},
 ): LiveMentoringOpening {
   return {
-    id: 100,
+    liveMentoringId: 100,
+    openingId: 200,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: 'https://example.com/p.png',
@@ -147,11 +148,19 @@ describe('MentorCard', () => {
     expect(screen.getByText('멘토의 1:1 멘토링')).toBeInTheDocument();
   });
 
-  it('멘토 상세 페이지로 링크된다', () => {
-    render(<MentorCard opening={makeOpening({ mentorId: 42 })} />);
+  it('멘토가 아니라 상품(liveMentoringId) 상세로 링크된다', () => {
+    render(
+      <MentorCard
+        opening={makeOpening({
+          liveMentoringId: 142,
+          openingId: 242,
+          mentorId: 42,
+        })}
+      />,
+    );
     expect(screen.getByRole('link')).toHaveAttribute(
       'href',
-      '/live-mentoring/42',
+      '/live-mentoring/142',
     );
   });
 });

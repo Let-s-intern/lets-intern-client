@@ -16,7 +16,10 @@ const PARAMS_SERIALIZER = { indexes: null };
 
 function makeOpening(id: number) {
   return {
-    id: id * 100,
+    // 상품·개설·멘토 식별자를 서로 다른 대역에서 만든다 —
+    // 값이 겹치면 잘못된 id 를 쓰는 회귀가 드러나지 않는다.
+    liveMentoringId: 100 + id,
+    openingId: 200 + id,
     mentorId: id,
     mentorNickname: `멘토${id}`,
     mentorProfileImage: 'https://example.com/p.png',
@@ -74,6 +77,23 @@ describe('LiveMentoringListPage', () => {
       ).toBeInTheDocument(),
     );
     expect(screen.getAllByRole('link')).toHaveLength(12);
+  });
+
+  // key(개설 식별자)는 DOM 에 드러나지 않아 단언할 수 없다. `opening.id` 가
+  // 스키마에서 사라졌으므로 잘못된 key 는 타입체크가 잡는다.
+  it('카드는 멘토가 아니라 상품(liveMentoringId) 상세로 링크된다', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
+
+    expect(
+      screen.getAllByRole('link').map((link) => link.getAttribute('href')),
+    ).toEqual(
+      Array.from({ length: 12 }, (_, i) => `/live-mentoring/${101 + i}`),
+    );
   });
 
   it('기본은 1페이지·최신순으로 조회한다', async () => {
