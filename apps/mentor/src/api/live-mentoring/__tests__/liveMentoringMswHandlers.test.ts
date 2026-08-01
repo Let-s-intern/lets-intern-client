@@ -1,5 +1,6 @@
 import {
   getLowestPrice,
+  LIVE_MENTOR_DETAILS,
   MY_LIVE_MENTORING_ID,
   resetLiveMentoringOpeningHistory,
 } from '@letscareer/mocks';
@@ -82,6 +83,17 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(careers.some((c: unknown) => c !== null)).toBe(true);
   });
 
+  it('개설 목록 원소는 상품·개설 식별자를 나눠 갖는다', async () => {
+    const res = await fetch(`${BASE}/live-mentoring?size=50`);
+    const { data } = await res.json();
+    for (const opening of data.openingList) {
+      expect(typeof opening.liveMentoringId).toBe('number');
+      expect(typeof opening.openingId).toBe('number');
+      // 구계약의 단일 id 는 사라졌다.
+      expect(opening).not.toHaveProperty('id');
+    }
+  });
+
   it('GET /live-mentoring/mentors/:id → 상세(+reviews, template)', async () => {
     const res = await fetch(`${BASE}/live-mentoring/mentors/3`);
     const { data } = await res.json();
@@ -90,6 +102,47 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data.template.category).toBe(data.categories[0]);
     expect(Array.isArray(data.reviews)).toBe(true);
     expect(data.price).toBe(getLowestPrice(data.durations));
+  });
+
+  it('GET /live-mentoring/:liveMentoringId → 호환 경로와 같은 상세를 준다', async () => {
+    const detail = LIVE_MENTOR_DETAILS[3];
+    const [byProduct, byMentor] = await Promise.all([
+      fetch(`${BASE}/live-mentoring/${detail.liveMentoringId}`),
+      fetch(`${BASE}/live-mentoring/mentors/3`),
+    ]);
+    expect((await byProduct.json()).data).toEqual((await byMentor.json()).data);
+  });
+
+  it('GET /live-mentoring/:liveMentoringId → 개설 없는 상품도 200 으로 내려준다', async () => {
+    const noOpening = Object.values(LIVE_MENTOR_DETAILS).find(
+      (each) => each.openingId === null,
+    );
+    const res = await fetch(
+      `${BASE}/live-mentoring/${noOpening?.liveMentoringId}`,
+    );
+    const { data } = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.openingId).toBeNull();
+    expect(data.price).toBeNull();
+    expect(data.feedbackStartDate).toBeNull();
+    expect(data.feedbackEndDate).toBeNull();
+    expect(data.durations).toEqual([]);
+    expect(data.durationPrices).toEqual([]);
+    // 상세 콘텐츠는 정상이다.
+    expect(data.template.mentoringTypes.items.length).toBeGreaterThan(0);
+  });
+
+  it('GET /live-mentoring/:liveMentoringId → 없는 상품은 404 (mentorId 를 넘기면 걸린다)', async () => {
+    const res = await fetch(`${BASE}/live-mentoring/3`);
+    expect(res.status).toBe(404);
+    expect((await res.json()).code).toBe('LIVE_MENTORING_NOT_FOUND');
+  });
+
+  it('상품 상세 경로가 멘토 전용 경로를 가로채지 않는다', async () => {
+    const res = await fetch(`${BASE}/mentor/live-mentoring/settings`);
+    const { data } = await res.json();
+    expect(data).toHaveProperty('careers');
   });
 
   it('GET /mentor/live-mentoring/settings → 상품 설정 스키마로 파싱된다', async () => {

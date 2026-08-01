@@ -1,8 +1,9 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse, passthrough } from 'msw';
 
 import {
   LIVE_MENTOR_CARDS,
   LIVE_MENTOR_DETAILS,
+  LIVE_MENTOR_DETAILS_BY_LIVE_MENTORING_ID,
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
   MY_LIVE_MENTORING_ID,
@@ -738,7 +739,10 @@ function toOpeningDto(card: LiveMentorCard) {
   const hasRepresentativeCareer = card.mentorId % 5 !== 0;
 
   return {
-    id: card.mentorId,
+    // `상품 1 : 개설 N` 분리로 기존 `id` 하나가 상품·개설 둘로 갈라졌다.
+    // 상세 링크는 상품(liveMentoringId), 목록 key 는 개설(openingId)을 쓴다.
+    liveMentoringId: card.liveMentoringId,
+    openingId: card.openingId,
     mentorId: card.mentorId,
     mentorNickname: card.nickname,
     // 프로필 이미지를 끈 멘토는 백엔드도 이미지를 내려주지 않는다.
@@ -1396,6 +1400,9 @@ export const handlers = [
 
   /**
    * (공개) GET /live-mentoring/mentors/:mentorId — 멘토 상세(+reviews).
+   *
+   * 서버가 호환용으로 계속 제공하는 경로다. 정식 경로는
+   * `GET /live-mentoring/:liveMentoringId`(핸들러 배열 맨 끝)이고 같은 전문을 돌려준다.
    * 존재하지 않는 id는 첫 멘토로 폴백하되 mentorId는 echo.
    */
   http.get('*/live-mentoring/mentors/:mentorId', ({ params }) => {
@@ -1525,5 +1532,33 @@ export const handlers = [
     ];
 
     return HttpResponse.json({ status: 200, data: openingHistory() });
+  }),
+
+  /**
+   * (공개) GET /live-mentoring/:liveMentoringId — 상품 상세(+reviews). 정식 경로다.
+   *
+   * `*` prefix 패턴이라 `*​/mentor/live-mentoring/settings` 같은 경로에도 매칭되므로
+   * **반드시 핸들러 배열 맨 끝에 둔다**. MSW 는 배열 순서대로 먼저 매칭된 핸들러를 쓴다.
+   * 잘못된 id 로 조회하면(예: liveMentoringId 자리에 mentorId) 폴백 없이 404 를 준다.
+   */
+  http.get('*/live-mentoring/:liveMentoringId', ({ params }) => {
+    const liveMentoringId = Number(params.liveMentoringId);
+    if (!Number.isInteger(liveMentoringId)) {
+      return passthrough();
+    }
+
+    const detail = LIVE_MENTOR_DETAILS_BY_LIVE_MENTORING_ID[liveMentoringId];
+    if (!detail) {
+      return HttpResponse.json(
+        {
+          status: 404,
+          code: 'LIVE_MENTORING_NOT_FOUND',
+          message: '존재하지 않는 라이브 멘토링입니다.',
+        },
+        { status: 404 },
+      );
+    }
+
+    return HttpResponse.json({ status: 200, data: detail });
   }),
 ];

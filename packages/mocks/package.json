@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
+    "./data/live-mentoring": "./src/data/liveMentoring.ts",
     "./handlers": "./src/handlers.ts",
     "./browser": "./src/browser.ts",
     "./node": "./src/node.ts"

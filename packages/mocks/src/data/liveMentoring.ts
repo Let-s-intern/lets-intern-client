@@ -110,6 +110,10 @@ function addDays(isoDate: string, days: number): string {
 /** 리스트 카드용 멘토 요약 (PRD §4.2) */
 export interface LiveMentorCard {
   mentorId: number;
+  /** 상품 식별자. 공개 상세 경로 `/live-mentoring/{liveMentoringId}` 에 쓴다. */
+  liveMentoringId: number;
+  /** 개설 식별자. 목록은 개설 단위라 카드마다 활성 개설이 하나씩 있다. */
+  openingId: number;
   nickname: string;
   profileImage: string | null;
   profileVisible: boolean;
@@ -260,21 +264,33 @@ export interface LiveMentorChallenge {
   thumbnail: string | null;
 }
 
-/** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
+/**
+ * 멘토 상세 (상세 페이지 렌더용, +reviews) — 백엔드 `GetLiveMentoringPublicDetailResponseDto`.
+ *
+ * 서버는 **상세만 저장하고 개설이 없는 상품도 200 으로 내려준다**
+ * (`LiveMentoringPublicDetailMapper.toResponse`). 그때 개설에서 파생되는 값이 전부 null 이고
+ * `durations`·`durationPrices` 는 빈 배열이다.
+ */
 export interface LiveMentorDetail {
   mentorId: number;
+  /** 상품 식별자. 정식 조회 경로 `/live-mentoring/{liveMentoringId}` 의 대상이다. */
+  liveMentoringId: number;
+  /** 활성 개설 식별자. 개설이 없으면 null 이고, 그때는 판매(기간·가격·CTA)를 노출하지 않는다. */
+  openingId: number | null;
   /** 상품명 — 히어로 제목. */
   title: string;
   categories: LiveMentoringCategory[];
+  /** 개설이 없으면 빈 배열. */
   durations: LiveMentoringDuration[];
-  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
-  durationPrices: { duration: LiveMentoringDuration; price: number }[];
-  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
-  price: number;
+  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. 개설이 없으면 빈 배열. */
+  durationPrices: LiveMentoringDurationPrice[];
+  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). 개설이 없으면 null. */
+  price: number | null;
   rating: number;
   reviewCount: number;
-  feedbackStartDate: string;
-  feedbackEndDate: string;
+  /** 피드백 진행 일정. 개설이 없으면 null. */
+  feedbackStartDate: string | null;
+  feedbackEndDate: string | null;
   profile: LiveMentorProfile;
   template: LiveMentoringTemplate;
   reviews: LiveMentoringReview[];
@@ -387,6 +403,12 @@ interface MentorSeed {
   categories?: LiveMentoringCategory[];
   /** 오픈한 진행시간(다중). 미지정 시 [durationMin]. */
   durations?: LiveMentoringDuration[];
+  /**
+   * 활성 개설 보유 여부. 미지정 시 true.
+   * false 면 상세만 저장하고 개설하지 않은 상품이라 공개 목록에는 실리지 않고
+   * 공개 상세만 개설 관련 값이 비어 있는 채로 조회된다.
+   */
+  hasOpening?: boolean;
   rating: number;
   reviewCount: number;
   profileVisible: boolean;
@@ -412,9 +434,27 @@ function categoriesFor(seed: MentorSeed): LiveMentoringCategory[] {
   return seed.categories ?? [seed.category];
 }
 
-/** 시드의 오픈 진행시간(다중) — 미지정 시 기본 진행시간 단일. */
+/** 시드의 오픈 진행시간(다중) — 개설이 없으면 빈 배열, 미지정 시 기본 진행시간 단일. */
 function durationsFor(seed: MentorSeed): LiveMentoringDuration[] {
+  if (seed.hasOpening === false) return [];
   return seed.durations ?? [seed.durationMin];
+}
+
+/**
+ * 상품·개설 식별자는 멘토 식별자와 겹치지 않게 서로 다른 대역에서 만든다.
+ * `상품 1 : 개설 N` 분리로 세 값이 공존하게 됐고, 값이 겹쳐 있으면
+ * 잘못된 id 를 넘기는 회귀가 목에서 드러나지 않는다.
+ */
+const LIVE_MENTORING_ID_OFFSET = 100;
+const OPENING_ID_OFFSET = 200;
+
+function liveMentoringIdFor(seed: Pick<MentorSeed, 'mentorId'>): number {
+  return LIVE_MENTORING_ID_OFFSET + seed.mentorId;
+}
+
+/** 활성 개설 식별자. 개설이 없는 상품은 null. */
+function openingIdFor(seed: MentorSeed): number | null {
+  return seed.hasOpening === false ? null : OPENING_ID_OFFSET + seed.mentorId;
 }
 
 /** 시드의 피드백 진행 일정(오픈 기간) — 시작은 nextAvailableDate, 종료는 +13일. */
@@ -813,13 +853,52 @@ const MENTOR_SEEDS: MentorSeed[] = [
       },
     ],
   },
+  /**
+   * 개설 없음 케이스 — 상세 페이지만 저장하고 아직 개설하지 않은 상품.
+   *
+   * 실서버는 승인·개설을 기다리지 않고 이 상태의 공개 상세를 200 으로 내려준다.
+   * 공개 목록(`APPROVED` + `OPEN` 만 노출)에는 실리지 않으므로 카드도 만들지 않는다.
+   */
+  {
+    mentorId: 15,
+    nickname: '개설준비멘토',
+    headline: '카카오페이 · 데이터 사이언티스트',
+    mentoringPoints: '분석 직무 지원 서류의 논리 구조를 봅니다.',
+    category: 'PORTFOLIO',
+    durationMin: 60,
+    hasOpening: false,
+    rating: 0,
+    reviewCount: 0,
+    profileVisible: true,
+    mosaicEnabled: false,
+    mosaicBlur: 0,
+    hasImage: true,
+    nextAvailableDate: null,
+    introduction:
+      '데이터 사이언티스트로 분석 프로젝트를 채용 관점의 서사로 정리하도록 돕습니다.',
+    careers: [
+      {
+        company: '카카오페이',
+        position: '데이터 사이언티스트',
+        period: '2020-2026',
+        visible: true,
+      },
+    ],
+  },
 ];
 
-/** 리스트 카드 목록 — size=9 기준 2페이지 이상. */
-export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.map((seed) => {
+/**
+ * 리스트 카드 목록 — size=9 기준 2페이지 이상.
+ * 공개 목록은 활성 개설이 있는 상품만 노출하므로 개설 없는 시드는 제외한다.
+ */
+export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.filter(
+  (seed) => seed.hasOpening !== false,
+).map((seed) => {
   const durations = durationsFor(seed);
   return {
     mentorId: seed.mentorId,
+    liveMentoringId: liveMentoringIdFor(seed),
+    openingId: openingIdFor(seed) as number,
     nickname: seed.nickname,
     profileImage: imageFor(seed),
     profileVisible: seed.profileVisible,
@@ -1001,39 +1080,57 @@ function templateFor(seed: MentorSeed): LiveMentoringTemplate {
   };
 }
 
-/** 멘토 상세(+reviews) — mentorId로 조회. */
+/**
+ * 시드 → 공개 상세.
+ * 개설이 없는 시드는 개설에서 파생되는 값(기간·가격·진행시간)이 전부 비어 있고,
+ * 상세 콘텐츠(프로필·템플릿·챌린지)는 정상으로 채워진다.
+ */
+function detailFor(seed: MentorSeed): LiveMentorDetail {
+  const openingId = openingIdFor(seed);
+  const durations = durationsFor(seed);
+  const period = openingId === null ? null : periodFor(seed);
+
+  return {
+    mentorId: seed.mentorId,
+    liveMentoringId: liveMentoringIdFor(seed),
+    openingId,
+    title: mentoringTitleFor(seed),
+    categories: categoriesFor(seed),
+    durations,
+    durationPrices: toDurationPrices(durations),
+    price: openingId === null ? null : getLowestPrice(durations),
+    rating: seed.rating,
+    reviewCount: seed.reviewCount,
+    feedbackStartDate: period?.feedbackStartDate ?? null,
+    feedbackEndDate: period?.feedbackEndDate ?? null,
+    profile: {
+      visible: seed.profileVisible,
+      mosaicEnabled: seed.mosaicEnabled,
+      mosaicBlur: seed.mosaicBlur,
+      nickname: seed.nickname,
+      profileImage: imageFor(seed),
+      introduction: seed.introduction,
+      careers: seed.careers,
+    },
+    template: templateFor(seed),
+    reviews: reviewsFor(seed),
+    challenges: challengesFor(seed),
+  };
+}
+
+/** 멘토 상세(+reviews) — mentorId로 조회(서버 호환 경로 `/live-mentoring/mentors/{mentorId}`). */
 export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
   Object.fromEntries(
-    MENTOR_SEEDS.map((seed) => [
-      seed.mentorId,
-      {
-        mentorId: seed.mentorId,
-        title: mentoringTitleFor(seed),
-        categories: categoriesFor(seed),
-        durations: durationsFor(seed),
-        durationPrices: durationsFor(seed).map((duration) => ({
-          duration,
-          price: getPriceByDuration(duration),
-        })),
-        price: getLowestPrice(durationsFor(seed)),
-        rating: seed.rating,
-        reviewCount: seed.reviewCount,
-        ...periodFor(seed),
-        profile: {
-          visible: seed.profileVisible,
-          mosaicEnabled: seed.mosaicEnabled,
-          mosaicBlur: seed.mosaicBlur,
-          nickname: seed.nickname,
-          profileImage: imageFor(seed),
-          introduction: seed.introduction,
-          careers: seed.careers,
-        },
-        template: templateFor(seed),
-        reviews: reviewsFor(seed),
-        challenges: challengesFor(seed),
-      } satisfies LiveMentorDetail,
-    ]),
+    MENTOR_SEEDS.map((seed) => [seed.mentorId, detailFor(seed)]),
   );
+
+/** 멘토 상세 — liveMentoringId로 조회(정식 경로 `/live-mentoring/{liveMentoringId}`). */
+export const LIVE_MENTOR_DETAILS_BY_LIVE_MENTORING_ID: Record<
+  number,
+  LiveMentorDetail
+> = Object.fromEntries(
+  MENTOR_SEEDS.map((seed) => [liveMentoringIdFor(seed), detailFor(seed)]),
+);
 
 // ─────────────────────────────────────────────────────────────
 // 멘토 마이페이지 목 — "나"(mentorId 1) 기준 (PRD §5 S3-a/b/c/d)
@@ -1042,15 +1139,10 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
 /** 로그인 멘토로 간주하는 시드 mentorId */
 const MY_MENTOR_ID = 1;
 
-/**
- * 상품 식별자는 멘토 식별자와 겹치지 않도록 100 을 더해 만든다.
- * `상품 1 : 개설 N` 분리로 `mentorId`·`liveMentoringId`·`openingId` 세 값이 공존하게 됐고,
- * 값이 겹쳐 있으면 잘못된 id 를 넘기는 회귀가 목에서 드러나지 않는다.
- */
-const LIVE_MENTORING_ID_OFFSET = 100;
-
 /** "나"(mySeed)의 상품 식별자. */
-export const MY_LIVE_MENTORING_ID = LIVE_MENTORING_ID_OFFSET + MY_MENTOR_ID;
+export const MY_LIVE_MENTORING_ID = liveMentoringIdFor({
+  mentorId: MY_MENTOR_ID,
+});
 
 const mySeed = MENTOR_SEEDS[0];
 
