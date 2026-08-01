@@ -48,16 +48,32 @@ const saveErrorDescription = (error: unknown): string | undefined => {
     : apiError.message;
 };
 
-/** PUT 요청은 이 6개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
+/**
+ * 개설 입력값 — 진행시간과 피드백 기간.
+ *
+ * `상품 1 : 개설 N` 분리 이후 이 셋은 상품(설정)이 아니라 **개설**에 딸린 값이라
+ * `GET /settings` 가 주지도, `PUT /settings` 가 받지도 않는다.
+ * 화면에는 있던 자리에 그대로 두되 값은 `POST /openings` 로만 나가므로,
+ * 서버 값을 복사해 오는 `form` 과 섞지 않고 별도 state 로 둔다.
+ */
+interface OpeningForm {
+  durations: LiveMentoringDuration[];
+  feedbackStartDate: string;
+  feedbackEndDate: string;
+}
+
+const EMPTY_OPENING_FORM: OpeningForm = {
+  durations: [],
+  feedbackStartDate: '',
+  feedbackEndDate: '',
+};
+
+/** PUT 요청은 이 2개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
 const toUpdatePayload = (
   form: LiveMentoringSettings,
 ): LiveMentoringSettingsUpdate => ({
   title: form.title ?? '',
-  isOpen: form.isOpen,
   categories: form.categories,
-  durations: form.durations,
-  feedbackStartDate: form.feedbackStartDate ?? '',
-  feedbackEndDate: form.feedbackEndDate ?? '',
 });
 
 const OpenSettingsPage = () => {
@@ -72,6 +88,8 @@ const OpenSettingsPage = () => {
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   // 변경사항(dirty) 판정을 위한 로드 원본.
   const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
+  const [openingForm, setOpeningForm] =
+    useState<OpeningForm>(EMPTY_OPENING_FORM);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
 
   useEffect(() => {
@@ -101,15 +119,14 @@ const OpenSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringSettings>) =>
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  // 진행시간은 다중 선택이며 0개도 허용한다(단, 0개면 저장/오픈 불가).
+  // 진행시간은 다중 선택이며 0개도 허용한다(단, 0개면 개설 불가).
   const toggleDuration = (duration: LiveMentoringDuration) =>
-    setForm((prev) => {
-      if (!prev) return prev;
-      const durations = prev.durations.includes(duration)
+    setOpeningForm((prev) => ({
+      ...prev,
+      durations: prev.durations.includes(duration)
         ? prev.durations.filter((d) => d !== duration)
-        : [...prev.durations, duration].sort((a, b) => a - b);
-      return { ...prev, durations };
-    });
+        : [...prev.durations, duration].sort((a, b) => a - b),
+    }));
 
   // 타입은 다중 선택이며 0개도 허용한다(단, 0개면 저장 불가).
   const toggleCategory = (category: LiveMentoringCategory) =>
@@ -123,16 +140,24 @@ const OpenSettingsPage = () => {
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
-  const noDurationSelected = form.durations.length === 0;
-  const noFeedbackDates = !form.feedbackStartDate || !form.feedbackEndDate;
+  const noDurationSelected = openingForm.durations.length === 0;
+  const noFeedbackDates =
+    !openingForm.feedbackStartDate || !openingForm.feedbackEndDate;
   const hasRequiredFields =
     !noTitleEntered &&
     !noCategorySelected &&
     !noDurationSelected &&
     !noFeedbackDates;
   const isCurrentlyOpen = form.isOpen;
-  const isDirty = JSON.stringify(form) !== JSON.stringify(original);
-  const canSave = hasRequiredFields && isDirty;
+  /*
+   * 저장(PUT)이 실제로 보내는 필드만 비교한다.
+   * 진행시간·기간은 개설 요청으로만 나가므로, 그것만 바꿨을 때 하단 버튼이
+   * "오픈하기"에서 "저장"으로 바뀌면 눌러도 아무 값이 저장되지 않는 거짓 버튼이 된다.
+   */
+  const isDirty =
+    (form.title ?? '') !== (original.title ?? '') ||
+    form.categories.join() !== original.categories.join();
+  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -392,9 +417,12 @@ const OpenSettingsPage = () => {
                   <input
                     type="date"
                     aria-label="피드백 시작일"
-                    value={form.feedbackStartDate ?? ''}
+                    value={openingForm.feedbackStartDate}
                     onChange={(e) =>
-                      patch({ feedbackStartDate: e.target.value })
+                      setOpeningForm((prev) => ({
+                        ...prev,
+                        feedbackStartDate: e.target.value,
+                      }))
                     }
                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
                   />
@@ -402,15 +430,20 @@ const OpenSettingsPage = () => {
                   <input
                     type="date"
                     aria-label="피드백 종료일"
-                    min={form.feedbackStartDate ?? undefined}
-                    value={form.feedbackEndDate ?? ''}
-                    onChange={(e) => patch({ feedbackEndDate: e.target.value })}
+                    min={openingForm.feedbackStartDate || undefined}
+                    value={openingForm.feedbackEndDate}
+                    onChange={(e) =>
+                      setOpeningForm((prev) => ({
+                        ...prev,
+                        feedbackEndDate: e.target.value,
+                      }))
+                    }
                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
                   />
                 </div>
                 {noFeedbackDates && (
                   <p role="alert" className="text-system-error mt-2 text-xs">
-                    시작일과 종료일을 모두 입력해야 저장할 수 있어요.
+                    시작일과 종료일을 모두 입력해야 개설할 수 있어요.
                   </p>
                 )}
               </section>
@@ -436,7 +469,7 @@ const OpenSettingsPage = () => {
                 <div className="flex flex-col gap-3">
                   <div className="flex gap-2">
                     {LIVE_MENTORING_DURATIONS.map((duration) => {
-                      const active = form.durations.includes(duration);
+                      const active = openingForm.durations.includes(duration);
                       return (
                         <button
                           key={duration}
@@ -453,7 +486,7 @@ const OpenSettingsPage = () => {
                   <p className="text-sm text-gray-600">
                     가격{' '}
                     <span className="text-primary font-semibold">
-                      {formatPrice(getLowestPrice(form.durations))}
+                      {formatPrice(getLowestPrice(openingForm.durations))}
                     </span>{' '}
                     <span className="text-xs text-gray-400">
                       (여러 개 선택 시 최저가로 노출)
@@ -461,7 +494,7 @@ const OpenSettingsPage = () => {
                   </p>
                   {noDurationSelected && (
                     <p role="alert" className="text-system-error text-xs">
-                      진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.
+                      진행시간을 최소 1개 이상 선택해야 개설할 수 있어요.
                     </p>
                   )}
                 </div>
@@ -495,7 +528,12 @@ const OpenSettingsPage = () => {
 
             {/* 우: 미리보기 */}
             <div className="lg:sticky lg:top-6 lg:self-start">
-              <OpenSettingsPreview settings={form} />
+              <OpenSettingsPreview
+                settings={form}
+                durations={openingForm.durations}
+                feedbackStartDate={openingForm.feedbackStartDate || null}
+                feedbackEndDate={openingForm.feedbackEndDate || null}
+              />
             </div>
           </div>
         </fieldset>
@@ -529,10 +567,10 @@ const OpenSettingsPage = () => {
       <FeedbackAvailabilityModal
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
-        focusDate={form.feedbackStartDate ?? undefined}
+        focusDate={openingForm.feedbackStartDate || undefined}
         openPeriod={{
-          startDate: form.feedbackStartDate ?? '',
-          endDate: form.feedbackEndDate ?? '',
+          startDate: openingForm.feedbackStartDate,
+          endDate: openingForm.feedbackEndDate,
         }}
       />
       <MentorAlertModal {...alertProps} />

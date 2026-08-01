@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -39,6 +39,7 @@ vi.mock('@/pages/feedback-live-reservation/ui/ReservationListModal', () => ({
 import OpenSettingsPage from '../OpenSettingsPage';
 
 const baseSettings: LiveMentoringSettings = {
+  liveMentoringId: 1,
   nickname: '자소서장인',
   profileImage: 'https://example.test/p.png',
   introduction: '소개',
@@ -71,11 +72,8 @@ const baseSettings: LiveMentoringSettings = {
     },
   ],
   title: '자소서 실전 첨삭 멘토링',
-  isOpen: false,
+  status: 'DRAFT',
   categories: ['PERSONAL_STATEMENT'],
-  durations: [30],
-  feedbackStartDate: '2026-07-14',
-  feedbackEndDate: '2026-07-28',
 };
 
 const renderPage = (overrides: Partial<LiveMentoringSettings> = {}) => {
@@ -86,6 +84,30 @@ const renderPage = (overrides: Partial<LiveMentoringSettings> = {}) => {
     </MemoryRouter>,
   );
 };
+
+/**
+ * 진행시간·피드백 기간은 상품 설정이 아니라 개설 입력값이라 서버가 내려주지 않는다.
+ * 화면 진입 시 항상 비어 있으므로 개설 관련 단언은 이 헬퍼로 채운 뒤에 한다.
+ */
+const fillOpeningForm = ({
+  duration = '30분',
+  startDate = '2026-07-14',
+  endDate = '2026-07-28',
+}: { duration?: string; startDate?: string; endDate?: string } = {}) => {
+  fireEvent.click(screen.getByRole('button', { name: duration }));
+  fireEvent.change(screen.getByLabelText('피드백 시작일'), {
+    target: { value: startDate },
+  });
+  fireEvent.change(screen.getByLabelText('피드백 종료일'), {
+    target: { value: endDate },
+  });
+};
+
+/** 타이틀을 바꿔 저장(PUT) 대상 필드에 변경사항을 만든다. */
+const makeDirty = (title = '이력서 클리닉') =>
+  fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+    target: { value: title },
+  });
 
 afterEach(() => {
   saveMock.mockReset();
@@ -162,7 +184,8 @@ describe('OpenSettingsPage — 대표 경력 지정(전용 API 로 즉시 저장
     renderPage();
 
     fireEvent.click(screen.getByRole('radio', { name: /카카오/ }));
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    makeDirty();
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const payload = saveMock.mock.calls[0][0];
@@ -171,14 +194,18 @@ describe('OpenSettingsPage — 대표 경력 지정(전용 API 로 즉시 저장
 });
 
 describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
-  it('초기 30분이면 35,000원을 표기한다', () => {
-    renderPage({ durations: [30] });
+  it('30분을 고르면 35,000원을 표기한다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+
     expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
   });
 
   it('여러 진행시간이면 최저가, 하나만 남기면 그 가격으로 갱신된다', () => {
-    renderPage({ durations: [30] });
+    renderPage();
 
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
     // 60분 추가 → [30,60] → 최저가 35,000 유지
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
     expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
@@ -195,52 +222,63 @@ describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
 });
 
 describe('OpenSettingsPage — 저장 payload', () => {
-  it('저장 시 title/isOpen/categories/durations/feedbackDates 6개 필드만 담아 mutate 를 호출한다', () => {
-    renderPage({ durations: [30] });
+  // 3.1.T1 — 상품 1 : 개설 N 분리로 PUT /settings 바디가 2개 필드로 줄었다.
+  it('저장 시 title/categories 2개 필드만 담아 mutate 를 호출한다', () => {
+    renderPage();
 
-    fireEvent.click(screen.getByRole('button', { name: '60분' })); // [30,60]
+    makeDirty('이력서 클리닉');
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload).toEqual({
-      title: baseSettings.title,
-      isOpen: false,
+      title: '이력서 클리닉',
       categories: baseSettings.categories,
-      durations: [30, 60],
-      feedbackStartDate: baseSettings.feedbackStartDate,
-      feedbackEndDate: baseSettings.feedbackEndDate,
     });
   });
 
-  it('타입을 여러 개 선택하면 payload categories 에 담긴다', () => {
+  // 3.1.T1 — 개설로 옮겨간 4개 필드가 저장 요청에 남아 있으면 서버가 무시하거나 400 이다.
+  it('개설로 옮겨간 isOpen·durations·피드백 기간은 저장 요청에 싣지 않는다', () => {
+    renderPage();
+
+    fillOpeningForm();
+    makeDirty();
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    const payload = saveMock.mock.calls[0][0];
+    expect(payload).not.toHaveProperty('isOpen');
+    expect(payload).not.toHaveProperty('durations');
+    expect(payload).not.toHaveProperty('feedbackStartDate');
+    expect(payload).not.toHaveProperty('feedbackEndDate');
+  });
+
+  it('진행시간·피드백 기간만 바꾸면 저장할 것이 없으므로 저장 버튼이 뜨지 않는다', () => {
+    renderPage();
+
+    fillOpeningForm();
+
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '오픈하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('타입 선택이 payload categories 에 담긴다', () => {
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
     fireEvent.click(screen.getByRole('button', { name: '이력서' }));
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
-    expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
-  });
-
-  it('피드백 기간 입력이 payload 에 반영된다', () => {
-    renderPage();
-
-    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
-      target: { value: '2026-08-01' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
-    expect(payload.feedbackStartDate).toBe('2026-08-01');
+    expect(payload.categories).toContain('RESUME');
   });
 
   it('타이틀을 입력하면 payload 에 반영된다', () => {
     renderPage();
 
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '이력서 클리닉' },
-    });
+    makeDirty('이력서 클리닉');
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
@@ -254,103 +292,75 @@ describe('OpenSettingsPage — 필수 필드', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '자기소개서' }));
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      '타입을 최소 1개 이상 선택해야 저장할 수 있어요.',
-    );
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
 
-  it('진행시간을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
-    renderPage({ durations: [30] });
+  it('진행시간을 고르지 않으면 개설 안내 문구를 노출한다', () => {
+    renderPage();
 
-    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+    expect(
+      screen.getByText('진행시간을 최소 1개 이상 선택해야 개설할 수 있어요.'),
+    ).toBeInTheDocument();
+  });
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      '진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.',
-    );
-    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+  it('피드백 기간을 입력하지 않으면 개설 안내 문구를 노출한다', () => {
+    renderPage();
+
+    expect(
+      screen.getByText('시작일과 종료일을 모두 입력해야 개설할 수 있어요.'),
+    ).toBeInTheDocument();
   });
 
   it('타이틀을 비우면 경고문구가 뜨고 저장이 비활성화된다', () => {
     renderPage();
 
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '' },
-    });
+    makeDirty('');
 
     expect(
       screen.getByText('타이틀을 입력해야 저장할 수 있어요.'),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
-
-  it('타입이 0개면(미변경) 오픈하기가 비활성이고 mutate 가 호출되지 않는다', () => {
-    renderPage({ categories: [] });
-
-    const openBtn = screen.getByRole('button', { name: '오픈하기' });
-    expect(openBtn).toBeDisabled();
-    fireEvent.click(openBtn);
-    expect(saveMock).not.toHaveBeenCalled();
-  });
 });
 
-describe('OpenSettingsPage — 오픈 상태/버튼', () => {
-  it('변경사항이 없고 미오픈이면 오픈하기 버튼을 보인다(저장 없음)', () => {
+describe('OpenSettingsPage — 하단 버튼 2단 구조', () => {
+  it('변경사항이 없으면 오픈하기 버튼을 보인다(저장 없음)', () => {
     renderPage();
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: '오픈하기' }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '저장' }),
     ).not.toBeInTheDocument();
   });
 
-  it('변경사항이 생기면 저장 버튼으로 바뀐다', () => {
-    renderPage({ durations: [30] });
-    fireEvent.click(screen.getByRole('button', { name: '60분' })); // dirty
+  it('저장 대상에 변경사항이 생기면 저장 버튼으로 바뀐다', () => {
+    renderPage();
+
+    makeDirty();
+
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();
   });
+});
 
-  it('오픈하기 클릭 시 isOpen=true 로 저장을 호출한다', () => {
-    renderPage();
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    expect(saveMock).toHaveBeenCalledTimes(1);
-    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
-    expect(payload.isOpen).toBe(true);
-  });
-
-  it('오픈 중이면 설정을 잠그고 오픈 닫기 버튼만 노출한다', () => {
-    renderPage({ isOpen: true });
-    expect(
-      screen.getByRole('button', { name: /오픈 닫기/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '저장' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '오픈하기' }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('오픈 중이면 상단에 오픈 중 상태 배너를 노출한다', () => {
-    renderPage({ isOpen: true });
-    const banner = screen.getByRole('status');
-    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
-    expect(
-      within(banner).getByRole('button', { name: /오픈 닫기/ }),
-    ).toBeInTheDocument();
-  });
-
-  it('오픈 중이 아니면 상태 배너를 렌더하지 않는다', () => {
-    renderPage();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-  });
-
+describe('OpenSettingsPage — 미리보기', () => {
   // 미리보기는 웹 공개 카드(MentorCard)를 복제한 것이라, 표기 규칙이 어긋나면
-  // 멘토가 실제와 다른 화면을 보고 오픈하게 된다. 핵심 표기만 고정한다.
-  it('미리보기가 공개 카드와 같은 표기 규칙을 따른다', () => {
-    renderPage({ durations: [30, 60], feedbackStartDate: '2026-07-14' });
+  // 멘토가 실제와 다른 화면을 보고 개설하게 된다. 핵심 표기만 고정한다.
+  // 3.6.T1 — 진행시간·기간은 이제 개설 폼 입력값으로 넘어온다.
+  it('진행시간·기간 입력이 미리보기에 그대로 반영된다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+    fireEvent.click(screen.getByRole('button', { name: '60분' }));
+    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
+      target: { value: '2026-07-14' },
+    });
+    fireEvent.change(screen.getByLabelText('피드백 종료일'), {
+      target: { value: '2026-07-28' },
+    });
 
     // 진행시간은 "/"로 잇고, 여러 개면 최저가에 물결을 붙인다
     expect(screen.getByText('30분 / 60분')).toBeInTheDocument();
@@ -367,16 +377,7 @@ describe('OpenSettingsPage — 오픈 상태/버튼', () => {
   });
 
   it('미리보기 진행기간은 날짜가 비면 미정으로 표시한다', () => {
-    renderPage({ feedbackStartDate: null, feedbackEndDate: null });
+    renderPage();
     expect(screen.getByText('미정 ~ 미정')).toBeInTheDocument();
-  });
-
-  it('오픈 중에는 설정 입력이 비활성화되지만 값은 그대로 읽을 수 있다', () => {
-    renderPage({ isOpen: true, title: '자소서 실전 첨삭' });
-    // 화면을 가리지 않으므로 설정한 타이틀이 그대로 보인다
-    const titleInput = screen.getByDisplayValue('자소서 실전 첨삭');
-    expect(titleInput).toBeInTheDocument();
-    // 다만 fieldset disabled 로 입력은 잠긴다
-    expect(titleInput).toBeDisabled();
   });
 });

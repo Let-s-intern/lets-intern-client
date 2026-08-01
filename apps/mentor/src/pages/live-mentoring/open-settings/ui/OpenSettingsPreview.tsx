@@ -1,6 +1,9 @@
 import { getLowestPrice } from '@letscareer/mocks';
 
-import type { LiveMentoringSettings } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringDuration,
+  LiveMentoringSettings,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import {
   CATEGORY_LABELS,
   cardPriceLabel,
@@ -12,6 +15,13 @@ import {
 
 interface OpenSettingsPreviewProps {
   settings: LiveMentoringSettings;
+  /**
+   * 개설 입력값. 진행시간·피드백 기간은 상품(설정)이 아니라 개설에 딸린 값이라
+   * `settings` 에 없다 — 화면의 개설 폼 state 에서 그대로 받아 미리보기에 반영한다.
+   */
+  durations: LiveMentoringDuration[];
+  feedbackStartDate: string | null;
+  feedbackEndDate: string | null;
 }
 
 /**
@@ -25,17 +35,13 @@ interface OpenSettingsPreviewProps {
  *  1. 링크가 아니다(설정 화면에서 이동시킬 이유가 없다).
  *  2. `grid-rows-subgrid` 대신 `flex` — subgrid 는 목록 그리드 안에서만 의미가 있다.
  */
-const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
-  const {
-    title,
-    nickname,
-    profileImage,
-    categories,
-    durations,
-    feedbackStartDate,
-    feedbackEndDate,
-    careers,
-  } = settings;
+const OpenSettingsPreview = ({
+  settings,
+  durations,
+  feedbackStartDate,
+  feedbackEndDate,
+}: OpenSettingsPreviewProps) => {
+  const { title, nickname, profileImage, categories, careers } = settings;
 
   // 공개 카드는 **대표 경력만** 노출하고, 미지정이면 배지 자체를 렌더하지 않는다.
   // 여기서 첫 경력으로 폴백하면 실제 노출과 달라져 미리보기가 거짓말을 하게 된다.
