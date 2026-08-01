@@ -2,20 +2,35 @@ import {
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
 } from '@/api/live-mentoring/liveMentoring';
-import type { OpenStatusRow } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringDurationPrice,
+  OpeningHistoryItem,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
 
-const STATUS_LABEL: Record<OpenStatusRow['status'], string> = {
+const STATUS_LABEL: Record<OpeningHistoryItem['status'], string> = {
   OPEN: '오픈중',
   CLOSED: '마감',
 };
 
-const STATUS_CLASS: Record<OpenStatusRow['status'], string> = {
+const STATUS_CLASS: Record<OpeningHistoryItem['status'], string> = {
   OPEN: 'bg-primary-10 text-primary',
   CLOSED: 'bg-gray-100 text-gray-500',
 };
 
-// 헤더는 "피드백 기간"·"예약 수"처럼 공백이 있어 좁은 열에서 두 줄로 쪼개진다.
+/**
+ * 표시 가격은 진행시간별 판매가 중 최저가다.
+ * 최솟값 하나만 필요하므로 정렬하지 않고 한 번만 순회한다.
+ */
+const lowestPrice = (durationPrices: LiveMentoringDurationPrice[]): number => {
+  let lowest: number | null = null;
+  for (const { price } of durationPrices) {
+    if (lowest === null || price < lowest) lowest = price;
+  }
+  return lowest ?? 0;
+};
+
+// 헤더는 "피드백 기간"처럼 공백이 있어 좁은 열에서 두 줄로 쪼개진다.
 const headerCellClass =
   'whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-gray-500';
 const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
@@ -43,11 +58,7 @@ const OpenStatusPage = () => {
           오픈 현황
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          내가 오픈한 1대1 라이브 멘토링의 상태와 예약 수를 확인하세요.
-        </p>
-        {/* 예약/결제 시스템이 아직 없어 서버가 예약 수를 항상 0으로 준다 — 의도된 한계. */}
-        <p className="text-xs text-gray-400">
-          * 예약 수는 예약 시스템 연동 전까지 0으로 표시됩니다.
+          내가 오픈한 1대1 라이브 멘토링의 개설 이력과 상태를 확인하세요.
         </p>
       </header>
 
@@ -85,14 +96,13 @@ const OpenStatusPage = () => {
               <th className={headerCellClass}>피드백 기간</th>
               <th className={headerCellClass}>가격</th>
               <th className={headerCellClass}>상태</th>
-              <th className={headerCellClass}>예약 수</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={4}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -101,27 +111,30 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={4}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   오픈한 멘토링이 없습니다.
                 </td>
               </tr>
             ) : (
-              data.map((row, index) => (
+              data.map((row) => (
                 <tr
-                  key={`${row.categories.join()}-${index}`}
+                  key={row.openingId}
                   className="border-b border-gray-100 last:border-b-0"
                 >
+                  {/* 서버가 duration 오름차순으로 주므로 화면에서 다시 정렬하지 않는다. */}
                   <td className={atomicCellClass}>
-                    {row.durations.map(durationLabel).join('·')}
+                    {row.durationPrices
+                      .map(({ duration }) => durationLabel(duration))
+                      .join('·')}
                   </td>
                   <td className={atomicCellClass}>
                     {`${row.feedbackStartDate.slice(5)} ~ ${row.feedbackEndDate.slice(5)}`}
                   </td>
                   <td className={atomicCellClass}>
-                    {row.durations.length > 1 ? '최저 ' : ''}
-                    {formatPrice(row.price)}
+                    {row.durationPrices.length > 1 ? '최저 ' : ''}
+                    {formatPrice(lowestPrice(row.durationPrices))}
                   </td>
                   <td className={bodyCellClass}>
                     <span
@@ -130,7 +143,6 @@ const OpenStatusPage = () => {
                       {STATUS_LABEL[row.status]}
                     </span>
                   </td>
-                  <td className={atomicCellClass}>{row.reservationCount}건</td>
                 </tr>
               ))
             )}

@@ -3,10 +3,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringSettings,
-  OpenStatusRow,
+  OpeningHistoryItem,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
-let queryState: { data?: OpenStatusRow[]; isLoading: boolean } = {
+let queryState: { data?: OpeningHistoryItem[]; isLoading: boolean } = {
   data: undefined,
   isLoading: false,
 };
@@ -19,24 +19,29 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 
 import OpenStatusPage from '../OpenStatusPage';
 
-const rows: OpenStatusRow[] = [
+const rows: OpeningHistoryItem[] = [
   {
-    categories: ['PERSONAL_STATEMENT'],
-    durations: [50],
-    price: 60000,
+    openingId: 12,
+    status: 'OPEN',
+    durationPrices: [
+      { duration: 30, price: 35000 },
+      { duration: 60, price: 60000 },
+    ],
     feedbackStartDate: '2026-07-14',
     feedbackEndDate: '2026-07-28',
-    status: 'OPEN',
-    reservationCount: 7,
+    openedAt: '2026-07-14T09:00:00',
+    closedAt: null,
+    closeReason: null,
   },
   {
-    categories: ['PORTFOLIO'],
-    durations: [30],
-    price: 35000,
+    openingId: 11,
+    status: 'CLOSED',
+    durationPrices: [{ duration: 60, price: 60000 }],
     feedbackStartDate: '2026-07-11',
     feedbackEndDate: '2026-07-24',
-    status: 'CLOSED',
-    reservationCount: 0,
+    openedAt: '2026-07-11T09:00:00',
+    closedAt: '2026-07-24T23:59:59',
+    closeReason: 'PERIOD_EXPIRED',
   },
 ];
 
@@ -57,13 +62,33 @@ afterEach(() => {
 });
 
 describe('OpenStatusPage', () => {
-  it('개설 행의 진행시간과 가격을 렌더한다', () => {
+  it('개설 이력 행을 durationPrices 기준으로 렌더한다', () => {
     queryState = { data: rows, isLoading: false };
     render(<OpenStatusPage />);
 
-    expect(screen.getByText('50분')).toBeInTheDocument();
+    expect(screen.getByText('30분·60분')).toBeInTheDocument();
+    expect(screen.getByText('60분')).toBeInTheDocument();
+  });
+
+  // 진행시간이 여러 개면 최저가에 "최저" 접두를, 하나면 그 가격만 표기한다.
+  it('진행시간 개수에 따라 가격 표기를 나눈다', () => {
+    queryState = { data: rows, isLoading: false };
+    render(<OpenStatusPage />);
+
+    expect(screen.getByText('최저 35,000원')).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
-    expect(screen.getByText('7건')).toBeInTheDocument();
+  });
+
+  // 서버가 예약 수를 더 이상 주지 않는다. 열도 안내 문구도 남아 있으면 안 된다.
+  it('예약 수 열을 노출하지 않는다', () => {
+    queryState = { data: rows, isLoading: false };
+    render(<OpenStatusPage />);
+
+    expect(screen.getAllByRole('columnheader')).toHaveLength(4);
+    expect(screen.queryByText('예약 수')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/예약 수는 예약 시스템 연동 전까지/),
+    ).not.toBeInTheDocument();
   });
 
   // 이전에는 "{시작} ~" 와 "{종료}" 가 별도 텍스트 노드라 좁은 열에서 중간이 끊겼다.
