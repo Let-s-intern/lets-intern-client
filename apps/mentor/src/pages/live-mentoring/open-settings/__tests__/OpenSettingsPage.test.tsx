@@ -272,7 +272,7 @@ describe('OpenSettingsPage — 저장 payload', () => {
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
-    expect(payload.categories).toContain('RESUME');
+    expect(payload.categories).toEqual(['RESUME']);
   });
 
   it('타이틀을 입력하면 payload 에 반영된다', () => {
@@ -286,15 +286,54 @@ describe('OpenSettingsPage — 저장 payload', () => {
   });
 });
 
-describe('OpenSettingsPage — 필수 필드', () => {
-  it('타입을 모두 해제하면 경고문구가 뜨고 저장이 비활성화된다', () => {
+// 3.2.T1 — 서버 `@Size(min = 1, max = 1)` 이라 2개를 보내면 400 이다.
+describe('OpenSettingsPage — 타입은 단일 선택', () => {
+  it('다른 타입을 누르면 이전 선택이 해제되고 1개만 남는다', () => {
+    renderPage({ categories: ['PERSONAL_STATEMENT'] });
+
+    fireEvent.click(screen.getByRole('button', { name: '이력서' }));
+
+    expect(screen.getByRole('button', { name: '자기소개서' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    expect(screen.getByRole('button', { name: '이력서' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.categories).toHaveLength(1);
+  });
+
+  it('이미 선택된 타입을 다시 눌러도 선택이 유지된다', () => {
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
     fireEvent.click(screen.getByRole('button', { name: '자기소개서' }));
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '자기소개서' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(
+      screen.queryByText('타입을 1개 선택해야 저장할 수 있어요.'),
+    ).not.toBeInTheDocument();
   });
 
+  it('타입이 비어 있으면 1개를 고르라는 안내를 노출하고 저장을 막는다', () => {
+    renderPage({ categories: [] });
+
+    expect(
+      screen.getByText('타입을 1개 선택해야 저장할 수 있어요.'),
+    ).toBeInTheDocument();
+
+    makeDirty();
+    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+  });
+});
+
+describe('OpenSettingsPage — 필수 필드', () => {
   it('진행시간을 고르지 않으면 개설 안내 문구를 노출한다', () => {
     renderPage();
 

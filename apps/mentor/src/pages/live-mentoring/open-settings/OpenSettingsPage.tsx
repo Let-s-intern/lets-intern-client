@@ -128,15 +128,13 @@ const OpenSettingsPage = () => {
         : [...prev.durations, duration].sort((a, b) => a - b),
     }));
 
-  // 타입은 다중 선택이며 0개도 허용한다(단, 0개면 저장 불가).
-  const toggleCategory = (category: LiveMentoringCategory) =>
-    setForm((prev) => {
-      if (!prev) return prev;
-      const categories = prev.categories.includes(category)
-        ? prev.categories.filter((c) => c !== category)
-        : [...prev.categories, category];
-      return { ...prev, categories };
-    });
+  /*
+   * 타입은 단일 선택이다 — 서버 `@Size(min = 1, max = 1)` 이라 2개를 보내면 400 이다.
+   * 이미 선택된 항목을 다시 눌러도 해제하지 않는다. 해제하면 곧바로 저장 불가 상태가 되는데,
+   * 되돌릴 방법이 다른 타입을 고르는 것뿐이라 해제를 허용할 이유가 없다.
+   */
+  const selectCategory = (category: LiveMentoringCategory) =>
+    setForm((prev) => (prev ? { ...prev, categories: [category] } : prev));
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
@@ -501,7 +499,7 @@ const OpenSettingsPage = () => {
               </section>
 
               <section className={cardClass}>
-                <h2 className={sectionTitleClass}>타입 (다중 선택)</h2>
+                <h2 className={sectionTitleClass}>타입 (1개 선택)</h2>
                 <div className="flex flex-wrap gap-2">
                   {LIVE_MENTORING_CATEGORIES.map((category) => {
                     const active = form.categories.includes(category);
@@ -510,7 +508,7 @@ const OpenSettingsPage = () => {
                         key={category}
                         type="button"
                         aria-pressed={active}
-                        onClick={() => toggleCategory(category)}
+                        onClick={() => selectCategory(category)}
                         className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                       >
                         {CATEGORY_LABELS[category]}
@@ -520,7 +518,7 @@ const OpenSettingsPage = () => {
                 </div>
                 {noCategorySelected && (
                   <p role="alert" className="text-system-error mt-3 text-xs">
-                    타입을 최소 1개 이상 선택해야 저장할 수 있어요.
+                    타입을 1개 선택해야 저장할 수 있어요.
                   </p>
                 )}
               </section>
