@@ -10,13 +10,12 @@ import type {
 
 const saveMock = vi.fn();
 let templateData: LiveMentoringTemplate | undefined;
-let isOpen = false;
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringTemplateQuery: () => ({ data: templateData }),
   // 미리보기 헤드라인에 쓸 닉네임만 참조한다.
   useLiveMentoringSettingsQuery: () => ({
-    data: { nickname: '쥬디', isOpen } as unknown as LiveMentoringSettings,
+    data: { nickname: '쥬디' } as unknown as LiveMentoringSettings,
   }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
@@ -31,11 +30,19 @@ vi.mock('../ui/ImageField', () => ({
 
 import DetailSettingsPage from '../DetailSettingsPage';
 
-/** 멘토 편집 대상 전체가 채워진 템플릿을 만든다. */
+/** 멘토 편집 대상 전체가 채워진 템플릿을 만든다. 기본은 편집 가능한 `DRAFT` 상품이다. */
 const makeTemplate = (
   category: LiveMentoringCategory,
 ): LiveMentoringTemplate => {
   return {
+    mentoring: {
+      liveMentoringId: 1,
+      title: '자기소개서 첨삭 멘토링',
+      status: 'DRAFT',
+      editable: true,
+      category,
+    },
+    currentOpening: null,
     category,
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
@@ -87,8 +94,12 @@ const makeTemplate = (
   };
 };
 
-const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
+const renderPage = (
+  category: LiveMentoringCategory = 'PERSONAL_STATEMENT',
+  patch?: (template: LiveMentoringTemplate) => void,
+) => {
   templateData = makeTemplate(category);
+  patch?.(templateData);
   return render(
     <MemoryRouter>
       <DetailSettingsPage />
@@ -96,10 +107,18 @@ const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
   );
 };
 
+/** 활성 개설 1건 — `mentoring.editable` 이 false 인 이유가 개설임을 나타낸다. */
+const activeOpening: NonNullable<LiveMentoringTemplate['currentOpening']> = {
+  openingId: 10,
+  status: 'OPEN',
+  durationPrices: [{ duration: 30, price: 35000 }],
+  feedbackStartDate: '2026-08-01',
+  feedbackEndDate: '2026-08-31',
+};
+
 afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
-  isOpen = false;
 });
 
 describe('DetailSettingsPage — 편집 영역', () => {
@@ -166,13 +185,19 @@ describe('DetailSettingsPage — 편집 영역', () => {
   });
 });
 
-describe('DetailSettingsPage — 오픈 중 잠금', () => {
-  it('오픈 중이면 상단에 안내 배너를 노출하고 수정 버튼을 감춘다', () => {
-    isOpen = true;
-    renderPage();
+describe('DetailSettingsPage — 편집 잠금', () => {
+  it('활성 개설이 있으면 오픈 중 배너를 노출하고 수정 버튼을 감춘다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'APPROVED';
+      template.mentoring.editable = false;
+      template.currentOpening = activeOpening;
+    });
 
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByText(/진행 중인 개설이 있어/),
+    ).toBeInTheDocument();
     expect(
       within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
     ).toHaveAttribute('href', '/live-mentoring/open-settings');
@@ -181,9 +206,45 @@ describe('DetailSettingsPage — 오픈 중 잠금', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('오픈 중이 아니면 배너를 렌더하지 않는다', () => {
+  it('검토 중이면 검토 중 문구로 잠근다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'PENDING_REVIEW';
+      template.mentoring.editable = false;
+    });
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('검토 중')).toBeInTheDocument();
+    expect(within(banner).getByText(/관리자 검토 중이라/)).toBeInTheDocument();
+  });
+
+  it('승인 완료면 승인 문구로 잠근다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'APPROVED';
+      template.mentoring.editable = false;
+    });
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('승인 완료')).toBeInTheDocument();
+    expect(
+      within(banner).getByText(/승인된 상세 페이지는 수정할 수 없습니다/),
+    ).toBeInTheDocument();
+  });
+
+  it('비활성 상품이면 비활성 문구로 잠근다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'INACTIVE';
+      template.mentoring.editable = false;
+    });
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('비활성')).toBeInTheDocument();
+    expect(within(banner).getByText(/비활성 상품이라/)).toBeInTheDocument();
+  });
+
+  it('editable 이면 배너를 렌더하지 않는다', () => {
     renderPage();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
   });
 });
 

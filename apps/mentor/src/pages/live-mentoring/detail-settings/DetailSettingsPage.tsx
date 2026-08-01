@@ -6,7 +6,10 @@ import {
   useLiveMentoringTemplateQuery,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringStatus,
+  LiveMentoringTemplate,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
@@ -14,6 +17,41 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
+
+/**
+ * 상태별 편집 잠금 안내 — PRD 4장 표 그대로.
+ *
+ * `null` 은 그 상태에서 잠기지 않는다는 뜻이다(서버 `LiveMentoringStatus.isEditable()` —
+ * `DRAFT`·`REJECTED` 만 편집 가능).
+ */
+const LOCK_NOTICE_BY_STATUS: Record<
+  LiveMentoringStatus,
+  { label: string; description: string } | null
+> = {
+  DRAFT: null,
+  PENDING_REVIEW: {
+    label: '검토 중',
+    description:
+      '관리자 검토 중이라 상세 페이지를 수정할 수 없습니다. 검토 결과를 기다려주세요.',
+  },
+  APPROVED: {
+    label: '승인 완료',
+    description:
+      '승인된 상세 페이지는 수정할 수 없습니다. 오픈 설정에서 개설할 수 있습니다.',
+  },
+  REJECTED: null,
+  INACTIVE: {
+    label: '비활성',
+    description: '비활성 상품이라 상세 페이지를 수정할 수 없습니다.',
+  },
+};
+
+/** 활성 개설이 있으면 상태와 무관하게 잠긴다 — 서버 `isEditable()` 의 두 번째 조건. */
+const ACTIVE_OPENING_LOCK_NOTICE = {
+  label: '오픈 중',
+  description:
+    '진행 중인 개설이 있어 상세 페이지를 수정할 수 없습니다. 개설이 종료된 뒤에 수정할 수 있습니다.',
+};
 
 const DetailSettingsPage = () => {
   const { data, isError } = useLiveMentoringTemplateQuery();
@@ -31,12 +69,11 @@ const DetailSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   /**
-   * 오픈 중에는 상세 페이지도 수정할 수 없다.
-   * 이미 노출 중인 판매 페이지가 멘티가 보는 도중에 바뀌면 안 되기 때문이고,
-   * 오픈 설정 화면과 같은 규칙이라 안내도 같은 모양으로 맞춘다.
+   * 편집 가능 여부는 서버가 계산해 준 `mentoring.editable` 하나로 판정한다 —
+   * 상태(`DRAFT`·`REJECTED`)와 활성 개설 유무를 FE 가 다시 조합하지 않는다.
    */
-  const isCurrentlyOpen = settings?.isOpen ?? false;
-  const canEdit = isEditing && !isCurrentlyOpen;
+  const isEditable = template?.mentoring.editable ?? false;
+  const canEdit = isEditing && isEditable;
 
   // 오픈 설정 타입에 따라 서버가 내려준 기본 템플릿을 로드한다.
   useEffect(() => {
@@ -75,6 +112,13 @@ const DetailSettingsPage = () => {
     );
   }
 
+  /** 잠금 사유 — 활성 개설이 상태보다 구체적이라 먼저 본다. */
+  const lockNotice = isEditable
+    ? null
+    : template.currentOpening
+      ? ACTIVE_OPENING_LOCK_NOTICE
+      : LOCK_NOTICE_BY_STATUS[template.mentoring.status];
+
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
 
@@ -98,7 +142,7 @@ const DetailSettingsPage = () => {
     <div className="flex flex-col gap-6 pb-24">
       {header}
 
-      {isCurrentlyOpen && (
+      {lockNotice && (
         <div
           role="status"
           className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -109,12 +153,9 @@ const DetailSettingsPage = () => {
                 className="bg-primary h-1.5 w-1.5 rounded-full"
                 aria-hidden="true"
               />
-              오픈 중
+              {lockNotice.label}
             </span>
-            <p className="text-xs text-gray-600">
-              오픈 중에는 상세 페이지를 수정할 수 없습니다. 수정하려면 오픈을
-              닫아주세요.
-            </p>
+            <p className="text-xs text-gray-600">{lockNotice.description}</p>
           </div>
           <Link
             to="/live-mentoring/open-settings"
@@ -148,7 +189,7 @@ const DetailSettingsPage = () => {
 
       {/* 하단 고정 액션 — 읽기 모드: 수정하기 / 오픈하러 가기, 편집 모드: 취소 / 저장하기 */}
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        {isCurrentlyOpen ? null : canEdit ? (
+        {!isEditable ? null : canEdit ? (
           <>
             <button
               type="button"
