@@ -1,4 +1,5 @@
 import axios from '@/utils/axios';
+import { ApiError } from '@letscareer/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
@@ -21,8 +22,16 @@ const OPENINGS_PATH = '/mentor/live-mentoring/openings';
 /** TanStack Query 기본 재시도 횟수. */
 const DEFAULT_RETRY_COUNT = 3;
 
-const isNotFound = (error: unknown) =>
-  isAxiosError(error) && error.response?.status === 404;
+/**
+ * 404 판정.
+ *
+ * 공용 axios 인터셉터(`@letscareer/api`)가 응답 에러를 `ApiError` 로 재포장하면서
+ * `error.response` 를 남기지 않으므로, 실서버 404 는 `AxiosError` 가 아니라 `ApiError` 로 온다.
+ * 인터셉터를 타지 않는 경로(테스트 목 등)를 위해 두 형태를 모두 본다.
+ */
+export const isNotFound = (error: unknown) =>
+  (error instanceof ApiError && error.status === 404) ||
+  (isAxiosError(error) && error.response?.status === 404);
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [

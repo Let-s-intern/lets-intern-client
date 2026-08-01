@@ -1,3 +1,4 @@
+import { ApiError } from '@letscareer/api';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -10,9 +11,19 @@ import type {
 
 const saveMock = vi.fn();
 let templateData: LiveMentoringTemplate | undefined;
+let templateError: unknown = null;
 
-vi.mock('@/api/live-mentoring/liveMentoring', () => ({
-  useLiveMentoringTemplateQuery: () => ({ data: templateData }),
+// 모듈을 통째로 갈아끼우지 않고 훅만 대체한다 — 404 판정(`isNotFound`)은 실제 구현을 그대로 쓴다.
+vi.mock('@/utils/axios', () => ({ default: { get: vi.fn(), put: vi.fn() } }));
+vi.mock('@/api/live-mentoring/liveMentoring', async (importOriginal) => ({
+  ...(await importOriginal<
+    typeof import('@/api/live-mentoring/liveMentoring')
+  >()),
+  useLiveMentoringTemplateQuery: () => ({
+    data: templateData,
+    isError: templateError !== null,
+    error: templateError,
+  }),
   // 미리보기 헤드라인에 쓸 닉네임만 참조한다.
   useLiveMentoringSettingsQuery: () => ({
     data: { nickname: '쥬디' } as unknown as LiveMentoringSettings,
@@ -116,9 +127,30 @@ const activeOpening: NonNullable<LiveMentoringTemplate['currentOpening']> = {
   feedbackEndDate: '2026-08-31',
 };
 
+/** 인터셉터가 재포장해 던지는 것과 같은 형태의 서버 오류. */
+const apiError = (status: number, code: string) =>
+  new ApiError({
+    code,
+    message: '오류',
+    status,
+    endpoint: '/mentor/live-mentoring/template',
+    method: 'GET',
+  });
+
+/** 조회 실패 상태로 렌더한다 — 이때 템플릿 데이터는 없다. */
+const renderError = (error: unknown) => {
+  templateError = error;
+  return render(
+    <MemoryRouter>
+      <DetailSettingsPage />
+    </MemoryRouter>,
+  );
+};
+
 afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
+  templateError = null;
 });
 
 describe('DetailSettingsPage — 편집 영역', () => {
@@ -245,6 +277,33 @@ describe('DetailSettingsPage — 편집 잠금', () => {
     renderPage();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+  });
+});
+
+describe('DetailSettingsPage — 조회 실패 분기', () => {
+  it('404 는 오류가 아니라 상품을 먼저 만들라는 안내와 오픈 설정 링크로 분기한다', () => {
+    renderError(apiError(404, 'LIVE_MENTORING_NOT_FOUND'));
+
+    expect(screen.getByText('아직 만들어진 상품이 없습니다.')).toBeVisible();
+    expect(
+      screen.getByText(/오픈 설정에서 제목·카테고리를 먼저 저장하면/),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('link', { name: '오픈 설정으로 이동' }),
+    ).toHaveAttribute('href', '/live-mentoring/open-settings');
+    // 어느 화면인지 알 수 있도록 제목은 남긴다
+    expect(screen.getByText('상세 페이지 설정')).toBeVisible();
+  });
+
+  it('그 외 오류는 일반 오류 문구로 되돌린다', () => {
+    renderError(apiError(500, 'INTERNAL_SERVER_ERROR'));
+
+    expect(
+      screen.getByText('상세 페이지를 불러오지 못했습니다.'),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('link', { name: '오픈 설정으로 이동' }),
+    ).not.toBeInTheDocument();
   });
 });
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
+  isNotFound,
   useLiveMentoringSettingsQuery,
   useLiveMentoringTemplateQuery,
   useUpdateLiveMentoringTemplateMutation,
@@ -12,9 +13,6 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
-//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
@@ -54,7 +52,7 @@ const ACTIVE_OPENING_LOCK_NOTICE = {
 };
 
 const DetailSettingsPage = () => {
-  const { data, isError } = useLiveMentoringTemplateQuery();
+  const { data, isError, error } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
@@ -93,13 +91,43 @@ const DetailSettingsPage = () => {
     </header>
   );
 
-  // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 미완성이라 목 없이는 조회가 실패한다.
-  //    백엔드 연동 후 이 분기를 통째로 제거할 것(제거하면 아래 로딩 분기만 남는다).
+  /*
+   * 404(`LIVE_MENTORING_NOT_FOUND`)는 오류가 아니라 정상 흐름이다 —
+   * 오픈 설정을 한 번도 저장하지 않은 멘토에게는 상품 자체가 없다.
+   * 오류 화면 대신 무엇을 먼저 해야 하는지 알린다.
+   */
   if (isError) {
     return (
       <div className="flex flex-col gap-6 pb-24">
         {header}
-        <UnderDevelopmentNotice feature="상세 페이지 설정" />
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-6 py-16 text-center">
+          {isNotFound(error) ? (
+            <>
+              <p className="text-xsmall16 text-neutral-10 font-semibold">
+                아직 만들어진 상품이 없습니다.
+              </p>
+              <p className="text-xsmall14 text-neutral-40">
+                오픈 설정에서 제목·카테고리를 먼저 저장하면 상세 페이지를 편집할
+                수 있습니다.
+              </p>
+              <Link
+                to="/live-mentoring/open-settings"
+                className="border-primary text-primary hover:bg-primary mt-4 rounded-lg border bg-white px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
+              >
+                오픈 설정으로 이동
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="text-xsmall16 text-neutral-10 font-semibold">
+                상세 페이지를 불러오지 못했습니다.
+              </p>
+              <p className="text-xsmall14 text-neutral-40">
+                잠시 후 다시 시도해주세요.
+              </p>
+            </>
+          )}
+        </div>
       </div>
     );
   }

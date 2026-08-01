@@ -2,28 +2,26 @@
  * ⚠️ 임시 코드 — 백엔드 연동이 끝나면 **이 파일을 통째로 삭제**할 것.
  *
  * ── 왜 있는가 ────────────────────────────────────────────────
- * 상세 페이지 설정·정산 현황은 아직 MSW 목(`VITE_API_MOCKING=enabled`)으로만 동작한다.
+ * 정산 현황은 아직 MSW 목(`VITE_API_MOCKING=enabled`)으로만 동작한다.
  * 목이 꺼진 환경에서는 서버에 엔드포인트 자체가 없어 조회가 실패하는데, 그때 화면이
- * "고장난 것"처럼 보였다:
- *   - 상세 페이지 설정: "템플릿을 불러오는 중..." 에서 영원히 멈춤
- *   - 정산 현황: 정상처럼 보이는 **빈 표** → "정산 내역이 없다"로 오독됨
+ * 정상처럼 보이는 **빈 표** 로 그려져 "정산 내역이 없다"로 오독됐다.
  * 개발 중임을 명시하고 담당자를 알리기 위한 임시 안내다.
  * (목이 붙어 데이터가 내려오면 이 안내 대신 실제 화면이 그대로 렌더된다.)
  *
+ * 상세 페이지 설정은 `GET /mentor/live-mentoring/template` 이 열려 실서버에 붙었고,
+ * 이 안내를 더 이상 쓰지 않는다(404 는 오류가 아니라 상품 미생성 안내로 분기한다).
+ *
  * ── 언제 지우는가 (삭제 조건) ─────────────────────────────────
- * 아래 두 엔드포인트가 실서버에서 정상 응답하면 즉시. 하나만 열렸다면 그쪽 화면만 정리한다.
- *   - GET /mentor/live-mentoring/template
- *   - GET /mentor/live-mentoring/settlement
+ * `GET /mentor/live-mentoring/settlement` 가 실서버에서 정상 응답하면 즉시.
  *
  * ── 무엇을 지우는가 (삭제 목록) ───────────────────────────────
  * 1. 이 파일 (`pages/live-mentoring/ui/UnderDevelopmentNotice.tsx`)
- * 2. `detail-settings/DetailSettingsPage.tsx` — import 와 `isError` 분기.
+ * 2. `settlement/SettlementPage.tsx` — import 와 `isError` 분기.
  *    `header` 를 변수로 뽑아둔 것도 이 분기 때문이므로 원래처럼 JSX 안으로 되돌려도 된다.
- * 3. `settlement/SettlementPage.tsx` — import 와 `isError` 분기(위와 동일).
- * 4. `api/live-mentoring/liveMentoring.ts` 의 `retry: false` 2곳.
+ * 3. `api/live-mentoring/liveMentoring.ts` 의 정산 쿼리 `retry: false`.
  *    없는 엔드포인트를 3회 재시도하느라 안내가 늦게 뜨는 걸 막으려던 것이라,
  *    API 가 생기면 기본 재시도(3회)로 되돌리는 편이 낫다.
- * 5. `pages/live-mentoring/__tests__/underDevelopmentFallback.test.tsx` — 파일 전체.
+ * 4. `pages/live-mentoring/__tests__/underDevelopmentFallback.test.tsx` — 파일 전체.
  *    단, '목 데이터가 내려오면 실제 표를 렌더한다' 케이스는 살려서
  *    `settlement/__tests__/SettlementPage.test.tsx` 로 옮길 만하다.
  *
