@@ -90,6 +90,7 @@
   },
   "devDependencies": {
     "@letscareer/eslint-config": "workspace:*",
+    "@letscareer/mocks": "workspace:*",
     "@letscareer/tailwind-config": "workspace:*",
     "@letscareer/tsconfig": "workspace:*",
     "@testing-library/jest-dom": "^6.4.0",

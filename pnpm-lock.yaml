@@ -255,6 +255,9 @@ importers:
       '@letscareer/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config/eslint
+      '@letscareer/mocks':
+        specifier: workspace:*
+        version: link:../../packages/mocks
       '@letscareer/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/config/tailwind
