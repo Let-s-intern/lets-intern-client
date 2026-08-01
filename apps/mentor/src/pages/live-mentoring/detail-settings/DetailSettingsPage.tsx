@@ -5,6 +5,8 @@ import {
   isNotFound,
   useLiveMentoringSettingsQuery,
   useLiveMentoringTemplateQuery,
+  useStartEditLiveMentoringMutation,
+  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
@@ -23,16 +25,20 @@ import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
 /**
- * 상태별 편집 잠금 안내 — PRD 4장 표 그대로.
+ * 상태별 안내 — PRD 4장 표 그대로. 잠긴 상태는 이유를, 편집 가능한 상태는 다음 할 일을 알린다.
  *
- * `null` 은 그 상태에서 잠기지 않는다는 뜻이다(서버 `LiveMentoringStatus.isEditable()` —
- * `DRAFT`·`REJECTED` 만 편집 가능).
+ * 편집 가능 여부는 서버 `LiveMentoringStatus.isEditable()` 을 따른다
+ * (`DRAFT`·`REJECTED` 만 편집 가능).
  */
-const LOCK_NOTICE_BY_STATUS: Record<
+const STATUS_NOTICE: Record<
   LiveMentoringStatus,
-  { label: string; description: string } | null
+  { label: string; description: string }
 > = {
-  DRAFT: null,
+  DRAFT: {
+    label: '작성 중',
+    description:
+      '상세 작성을 마쳤다면 검토 제출을 눌러주세요. 관리자 승인 후 개설할 수 있습니다.',
+  },
   PENDING_REVIEW: {
     label: '검토 중',
     description:
@@ -41,9 +47,12 @@ const LOCK_NOTICE_BY_STATUS: Record<
   APPROVED: {
     label: '승인 완료',
     description:
-      '승인된 상세 페이지는 수정할 수 없습니다. 오픈 설정에서 개설할 수 있습니다.',
+      '승인된 상세 페이지는 수정할 수 없습니다. 내용을 고치려면 수정 시작을 눌러주세요.',
   },
-  REJECTED: null,
+  REJECTED: {
+    label: '반려',
+    description: '반려됐습니다. 내용을 수정한 뒤 다시 제출해주세요.',
+  },
   INACTIVE: {
     label: '비활성',
     description: '비활성 상품이라 상세 페이지를 수정할 수 없습니다.',
@@ -51,10 +60,29 @@ const LOCK_NOTICE_BY_STATUS: Record<
 };
 
 /** 활성 개설이 있으면 상태와 무관하게 잠긴다 — 서버 `isEditable()` 의 두 번째 조건. */
-const ACTIVE_OPENING_LOCK_NOTICE = {
+const ACTIVE_OPENING_NOTICE = {
   label: '오픈 중',
   description:
     '진행 중인 개설이 있어 상세 페이지를 수정할 수 없습니다. 개설이 종료된 뒤에 수정할 수 있습니다.',
+};
+
+/** 활성 개설이 있으면 승인본 수정을 시작할 수 없다 — 서버 `LiveMentoring.startEditing()`. */
+const START_EDIT_BLOCKED_REASON =
+  '진행 중인 개설이 있어 수정을 시작할 수 없습니다. 개설이 종료된 뒤에 가능합니다.';
+
+/**
+ * 상태 전이 실패 사유를 그대로 보여준다 — 오픈 설정 화면의 `saveErrorDescription` 과 같은 방식이다.
+ *
+ * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
+ * `code`/`message` 를 최상위 속성으로 올린다. 이걸 감추면 상태가 이미 바뀐 것인지
+ * (`LIVE_MENTORING_INVALID_STATE`), 상품이 없는 것인지(`LIVE_MENTORING_NOT_FOUND`)를 알 수 없다.
+ */
+const transitionErrorDescription = (error: unknown): string | undefined => {
+  const apiError = error as { code?: string; message?: string } | null;
+  if (!apiError?.message) return undefined;
+  return apiError.code
+    ? `${apiError.message} (${apiError.code})`
+    : apiError.message;
 };
 
 const DetailSettingsPage = () => {
@@ -62,7 +90,11 @@ const DetailSettingsPage = () => {
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { mutate: submitForReview, isPending: isSubmitting } =
+    useSubmitLiveMentoringMutation();
+  const { mutate: startEdit, isPending: isStartingEdit } =
+    useStartEditLiveMentoringMutation();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringTemplate | null>(null);
   /**
@@ -146,12 +178,19 @@ const DetailSettingsPage = () => {
     );
   }
 
-  /** 잠금 사유 — 활성 개설이 상태보다 구체적이라 먼저 본다. */
-  const lockNotice = isEditable
-    ? null
-    : template.currentOpening
-      ? ACTIVE_OPENING_LOCK_NOTICE
-      : LOCK_NOTICE_BY_STATUS[template.mentoring.status];
+  const status = template.mentoring.status;
+  const hasActiveOpening = template.currentOpening !== null;
+
+  /** 잠긴 이유는 활성 개설이 상태보다 구체적이라 먼저 본다. */
+  const notice =
+    !isEditable && hasActiveOpening
+      ? ACTIVE_OPENING_NOTICE
+      : STATUS_NOTICE[status];
+
+  /** 검토 제출 가능 상태 — 서버 `LiveMentoringStatus.canTransitionTo` 와 같다. 활성 개설은 조건이 아니다. */
+  const canSubmitForReview = status === 'DRAFT' || status === 'REJECTED';
+  /** 수정 시작은 `APPROVED` 에서만, 활성 개설이 없을 때만 가능하다 — 서버 `startEditing()`. */
+  const canStartEdit = status === 'APPROVED';
 
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
@@ -193,6 +232,59 @@ const DetailSettingsPage = () => {
     });
   };
 
+  /**
+   * 검토 제출 — 성공하면 `PENDING_REVIEW` 가 되어 편집이 잠기므로 한 번 되묻는다.
+   * 되돌리는 경로는 관리자 승인·반려뿐이라 멘토가 스스로 취소할 수 없다.
+   */
+  const handleSubmitForReview = () => {
+    showConfirm({
+      title: '관리자 검토를 요청할까요?',
+      description:
+        '제출하면 검토가 끝날 때까지 상세 페이지를 수정할 수 없습니다.',
+      confirmText: '제출하기',
+      onConfirm: () =>
+        submitForReview(undefined, {
+          onSuccess: () =>
+            showAlert({
+              title: '검토를 요청했습니다.',
+              description: '관리자 검토 결과를 기다려주세요.',
+              variant: 'success',
+            }),
+          onError: (error) =>
+            showAlert({
+              title: '검토 제출에 실패했습니다.',
+              description: transitionErrorDescription(error),
+              variant: 'error',
+            }),
+        }),
+    });
+  };
+
+  /** 수정 시작 — 승인본이 `DRAFT` 로 돌아가 공개 노출에서 빠지므로 한 번 되묻는다. */
+  const handleStartEdit = () => {
+    showConfirm({
+      title: '수정을 시작할까요?',
+      description:
+        '승인 상태가 초안으로 돌아가고, 다시 제출해 승인받아야 개설할 수 있습니다.',
+      confirmText: '수정 시작하기',
+      onConfirm: () =>
+        startEdit(undefined, {
+          onSuccess: () =>
+            showAlert({
+              title: '수정을 시작했습니다.',
+              description: '내용을 고친 뒤 다시 검토를 제출해주세요.',
+              variant: 'success',
+            }),
+          onError: (error) =>
+            showAlert({
+              title: '수정을 시작하지 못했습니다.',
+              description: transitionErrorDescription(error),
+              variant: 'error',
+            }),
+        }),
+    });
+  };
+
   /** 편집 취소 — 서버가 준 값으로 되돌린다(로컬 수정분 폐기). */
   const handleCancel = () => {
     if (data) setTemplate(data);
@@ -203,29 +295,27 @@ const DetailSettingsPage = () => {
     <div className="flex flex-col gap-6 pb-24">
       {header}
 
-      {lockNotice && (
-        <div
-          role="status"
-          className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
-              <span
-                className="bg-primary h-1.5 w-1.5 rounded-full"
-                aria-hidden="true"
-              />
-              {lockNotice.label}
-            </span>
-            <p className="text-xs text-gray-600">{lockNotice.description}</p>
-          </div>
-          <Link
-            to="/live-mentoring/open-settings"
-            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
-          >
-            오픈 설정으로 이동
-          </Link>
+      <div
+        role="status"
+        className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
+            <span
+              className="bg-primary h-1.5 w-1.5 rounded-full"
+              aria-hidden="true"
+            />
+            {notice.label}
+          </span>
+          <p className="text-xs text-gray-600">{notice.description}</p>
         </div>
-      )}
+        <Link
+          to="/live-mentoring/open-settings"
+          className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+        >
+          오픈 설정으로 이동
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
         {/* 읽기 모드에서는 입력만 잠근다 — 내용은 그대로 읽을 수 있어야 한다. */}
@@ -248,44 +338,82 @@ const DetailSettingsPage = () => {
         </div>
       </div>
 
-      {/* 하단 고정 액션 — 읽기 모드: 수정하기 / 오픈하러 가기, 편집 모드: 취소 / 저장하기 */}
-      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        {!isEditable ? null : canEdit ? (
-          <>
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={isPending}
-              className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isPending}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isPending ? '저장 중...' : '저장하기'}
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
-            >
-              수정하기
-            </button>
-            <Link
-              to="/live-mentoring/open-settings"
-              className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors"
-            >
-              오픈하러 가기
-            </Link>
-          </>
+      {/*
+        하단 고정 액션 —
+        편집 모드: 취소 / 저장하기,
+        읽기 모드: 수정하기 / 검토 제출 / 수정 시작 / 오픈하러 가기 중 상태가 허용하는 것만.
+      */}
+      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
+        {canStartEdit && hasActiveOpening && (
+          <p className="rounded-lg bg-white/95 px-4 py-2 text-xs text-gray-600 shadow-lg">
+            {START_EDIT_BLOCKED_REASON}
+          </p>
         )}
+        <div className="flex gap-2">
+          {canEdit ? (
+            <>
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isPending}
+                className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isPending}
+                className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isPending ? '저장 중...' : '저장하기'}
+              </button>
+            </>
+          ) : (
+            <>
+              {isEditable && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
+                >
+                  수정하기
+                </button>
+              )}
+              {canSubmitForReview && (
+                <button
+                  type="button"
+                  onClick={handleSubmitForReview}
+                  disabled={isSubmitting}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSubmitting ? '제출 중...' : '검토 제출'}
+                </button>
+              )}
+              {canStartEdit && (
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  disabled={hasActiveOpening || isStartingEdit}
+                  title={
+                    hasActiveOpening ? START_EDIT_BLOCKED_REASON : undefined
+                  }
+                  className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isStartingEdit ? '처리 중...' : '수정 시작'}
+                </button>
+              )}
+              {isEditable && (
+                <Link
+                  to="/live-mentoring/open-settings"
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors"
+                >
+                  오픈하러 가기
+                </Link>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       <MentorAlertModal {...alertProps} />

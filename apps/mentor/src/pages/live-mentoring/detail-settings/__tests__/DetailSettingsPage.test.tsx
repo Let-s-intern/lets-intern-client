@@ -10,6 +10,8 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
+const submitMock = vi.fn();
+const startEditMock = vi.fn();
 let templateData: LiveMentoringTemplate | undefined;
 let templateError: unknown = null;
 
@@ -30,6 +32,14 @@ vi.mock('@/api/live-mentoring/liveMentoring', async (importOriginal) => ({
   }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
+    isPending: false,
+  }),
+  useSubmitLiveMentoringMutation: () => ({
+    mutate: submitMock,
+    isPending: false,
+  }),
+  useStartEditLiveMentoringMutation: () => ({
+    mutate: startEditMock,
     isPending: false,
   }),
 }));
@@ -149,6 +159,8 @@ const renderError = (error: unknown) => {
 
 afterEach(() => {
   saveMock.mockReset();
+  submitMock.mockReset();
+  startEditMock.mockReset();
   templateData = undefined;
   templateError = null;
 });
@@ -318,10 +330,113 @@ describe('DetailSettingsPage — 편집 잠금', () => {
     expect(within(banner).getByText(/비활성 상품이라/)).toBeInTheDocument();
   });
 
-  it('editable 이면 배너를 렌더하지 않는다', () => {
+  it('editable 이면 잠금 대신 다음 할 일을 알린다', () => {
     renderPage();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('작성 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByText(/검토 제출을 눌러주세요/),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+  });
+
+  it('반려 상태면 다시 제출하라고 알린다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'REJECTED';
+    });
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('반려')).toBeInTheDocument();
+    expect(
+      within(banner).getByText(/내용을 수정한 뒤 다시 제출해주세요/),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('DetailSettingsPage — 검토 제출', () => {
+  it('DRAFT 면 검토 제출 버튼을 노출하고, 확인을 받은 뒤에만 제출한다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '검토 제출' }));
+    // 확인 전에는 요청을 보내지 않는다 — 제출하면 편집이 잠긴다.
+    expect(submitMock).not.toHaveBeenCalled();
+    expect(screen.getByText('관리자 검토를 요청할까요?')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: '제출하기' }));
+    expect(submitMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('REJECTED 에서도 다시 제출할 수 있다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'REJECTED';
+    });
+
+    expect(screen.getByRole('button', { name: '검토 제출' })).toBeVisible();
+  });
+
+  it('검토 중·승인·비활성에서는 검토 제출 버튼이 없다', () => {
+    for (const status of ['PENDING_REVIEW', 'APPROVED', 'INACTIVE'] as const) {
+      const { unmount } = renderPage('PERSONAL_STATEMENT', (template) => {
+        template.mentoring.status = status;
+        template.mentoring.editable = false;
+      });
+
+      expect(
+        screen.queryByRole('button', { name: '검토 제출' }),
+      ).not.toBeInTheDocument();
+      unmount();
+    }
+  });
+
+  it('제출에 실패하면 서버 오류 코드를 그대로 보여준다', () => {
+    submitMock.mockImplementation((_input, options) =>
+      options.onError(apiError(409, 'LIVE_MENTORING_INVALID_STATE')),
+    );
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '검토 제출' }));
+    fireEvent.click(screen.getByRole('button', { name: '제출하기' }));
+
+    expect(screen.getByText('검토 제출에 실패했습니다.')).toBeVisible();
+    expect(screen.getByText(/LIVE_MENTORING_INVALID_STATE/)).toBeVisible();
+  });
+});
+
+describe('DetailSettingsPage — 수정 시작', () => {
+  it('APPROVED 면 수정 시작 버튼을 노출하고, 확인을 받은 뒤에만 요청한다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'APPROVED';
+      template.mentoring.editable = false;
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '수정 시작' }));
+    expect(startEditMock).not.toHaveBeenCalled();
+    expect(screen.getByText('수정을 시작할까요?')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: '수정 시작하기' }));
+    expect(startEditMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('활성 개설이 있으면 수정 시작을 막고 사유를 보여준다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.mentoring.status = 'APPROVED';
+      template.mentoring.editable = false;
+      template.currentOpening = activeOpening;
+    });
+
+    expect(screen.getByRole('button', { name: '수정 시작' })).toBeDisabled();
+    expect(
+      screen.getByText(/진행 중인 개설이 있어 수정을 시작할 수 없습니다/),
+    ).toBeVisible();
+  });
+
+  it('DRAFT 에는 수정 시작 버튼이 없다', () => {
+    renderPage();
+
+    expect(
+      screen.queryByRole('button', { name: '수정 시작' }),
+    ).not.toBeInTheDocument();
   });
 });
 
