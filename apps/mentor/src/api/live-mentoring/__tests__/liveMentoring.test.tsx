@@ -13,6 +13,8 @@ import {
   useLiveMentoringSettingsQuery,
   useLiveMentoringSettlementQuery,
   useLiveMentoringTemplateQuery,
+  useStartEditLiveMentoringMutation,
+  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '../liveMentoring';
@@ -443,6 +445,93 @@ describe('useCreateLiveMentoringOpeningMutation', () => {
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
     });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+    });
+  });
+});
+
+// ── 상태 전이 mutation (응답 본문 없음) ────────────────────────
+describe('useSubmitLiveMentoringMutation', () => {
+  it('POST submit 을 바디 없이 호출한다', async () => {
+    axiosMock.post.mockResolvedValue({ data: { status: 200, data: null } });
+
+    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync();
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith('/mentor/live-mentoring/submit');
+  });
+
+  it('성공 시 settings·template 캐시를 함께 invalidate 한다', async () => {
+    axiosMock.post.mockResolvedValue({ data: { status: 200, data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync();
+    });
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+    });
+  });
+
+  it('서버가 409 를 주면 실패로 남고 캐시를 건드리지 않는다', async () => {
+    axiosMock.post.mockRejectedValue({
+      code: 'LIVE_MENTORING_INVALID_STATE',
+      message: '상태가 올바르지 않습니다.',
+    });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync().catch(() => undefined);
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(invalidateSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('useStartEditLiveMentoringMutation', () => {
+  it('POST start-edit 을 바디 없이 호출하고 두 캐시를 invalidate 한다', async () => {
+    axiosMock.post.mockResolvedValue({ data: { status: 200, data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => useStartEditLiveMentoringMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync();
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/start-edit',
+    );
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
     });

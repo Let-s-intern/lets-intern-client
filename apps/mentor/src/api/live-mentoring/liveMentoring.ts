@@ -1,6 +1,11 @@
 import axios from '@/utils/axios';
 import { ApiError } from '@letscareer/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import {
@@ -18,6 +23,8 @@ const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const SETTLEMENT_PATH = '/mentor/live-mentoring/settlement';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
+const SUBMIT_PATH = '/mentor/live-mentoring/submit';
+const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
 
 /** TanStack Query 기본 재시도 횟수. */
 const DEFAULT_RETRY_COUNT = 3;
@@ -190,5 +197,58 @@ export const useCreateLiveMentoringOpeningMutation = () => {
         queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
       });
     },
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/submit — 관리자 검토 제출 (`DRAFT`·`REJECTED` → `PENDING_REVIEW`).
+ *
+ * 요청 바디도 응답 본문도 없다 — 컨트롤러가 `SuccessResponse.ok(null)` 을 돌려주므로 파싱하지 않는다.
+ * 서버는 상태 전이 외에 **상세 페이지 저장 여부**도 확인해
+ * (`LiveMentoringLifecycleServiceImpl.submit` 의 `detailPageRepository.existsByLiveMentoringId`),
+ * 상세를 한 번도 저장하지 않았으면 409 `LIVE_MENTORING_INVALID_STATE` 로 막는다.
+ */
+export const useSubmitLiveMentoringMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await axios.post(SUBMIT_PATH);
+    },
+    onSuccess: () => {
+      invalidateLiveMentoringStatus(queryClient);
+    },
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/start-edit — 승인본 수정 시작 (`APPROVED` → `DRAFT`).
+ *
+ * 서버 `LiveMentoring.startEditing()` 이 `APPROVED` 가 아니거나 활성 개설이 있으면
+ * 409 `LIVE_MENTORING_INVALID_STATE` 로 막는다. 응답 본문은 없다.
+ */
+export const useStartEditLiveMentoringMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await axios.post(START_EDIT_PATH);
+    },
+    onSuccess: () => {
+      invalidateLiveMentoringStatus(queryClient);
+    },
+  });
+};
+
+/**
+ * 상태 전이 후 다시 읽어야 하는 캐시.
+ *
+ * 두 응답이 상태를 함께 담고 있어 한쪽만 갱신하면 화면이 어긋난다 —
+ * `settings.status` 와 `template.mentoring.status`·`mentoring.editable` 이 같이 바뀐다.
+ */
+const invalidateLiveMentoringStatus = (queryClient: QueryClient) => {
+  queryClient.invalidateQueries({
+    queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+  });
+  queryClient.invalidateQueries({
+    queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
   });
 };
