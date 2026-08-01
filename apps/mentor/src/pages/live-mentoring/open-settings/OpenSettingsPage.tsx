@@ -9,6 +9,7 @@ import {
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
   useCreateLiveMentoringOpeningMutation,
+  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
@@ -17,6 +18,7 @@ import type {
   LiveMentoringDuration,
   LiveMentoringSettings,
   LiveMentoringSettingsUpdate,
+  LiveMentoringStatus,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
@@ -69,6 +71,20 @@ const EMPTY_OPENING_FORM: OpeningForm = {
   feedbackEndDate: '',
 };
 
+/**
+ * 상품 상태별 개설 불가 사유 — PRD 4장 표 그대로.
+ *
+ * 제출·재제출 버튼은 이번 범위 밖이라, 멘토가 막히는 지점에서 **무엇이 필요한지만** 알린다.
+ * `APPROVED` 는 개설 가능 상태라 사유가 없다(활성 개설 여부는 따로 본다).
+ */
+const OPENING_BLOCKED_REASON: Record<LiveMentoringStatus, string | null> = {
+  DRAFT: '관리자 승인 후 개설할 수 있어요',
+  PENDING_REVIEW: '관리자 검토 중이라 수정할 수 없어요',
+  APPROVED: null,
+  REJECTED: '반려됐어요. 수정 후 다시 제출이 필요해요',
+  INACTIVE: '비활성 상품이에요',
+};
+
 /** PUT 요청은 이 2개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
 const toUpdatePayload = (
   form: LiveMentoringSettings,
@@ -79,6 +95,8 @@ const toUpdatePayload = (
 
 const OpenSettingsPage = () => {
   const { data } = useLiveMentoringSettingsQuery();
+  // 활성 개설 여부. 오픈 현황·사이드바 배지와 같은 query key 라 요청이 겹치지 않는다.
+  const { data: openings } = useLiveMentoringOpenStatusQuery();
   const { mutate: save, isPending: isSaving } =
     useUpdateLiveMentoringSettingsMutation();
   const { mutate: createOpening, isPending: isCreatingOpening } =
@@ -101,16 +119,6 @@ const OpenSettingsPage = () => {
     setForm(data);
     setOriginal(data);
   }, [data]);
-
-  // 오픈 중(잠금 상태)에는 배경 스크롤을 막는다.
-  useEffect(() => {
-    if (!form?.isOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [form?.isOpen]);
 
   if (!form || !original) {
     return (
@@ -150,7 +158,23 @@ const OpenSettingsPage = () => {
     !noCategorySelected &&
     !noDurationSelected &&
     !noFeedbackDates;
-  const isCurrentlyOpen = form.isOpen;
+  /*
+   * 잠금·활성화 판정은 전부 서버가 계산해 준 값(`status`·개설 이력)에서 나온다 —
+   * FE 가 재구성하지 않는다. 다만 잠금 범위는 둘로 갈린다.
+   *  - 상품(타이틀·타입)은 `DRAFT`·`REJECTED` 에서만 고칠 수 있다(서버 `isEditable()`).
+   *  - 개설 입력(피드백 기간·라이브 슬롯·진행시간)은 활성 개설이 없으면 언제든 채울 수 있다.
+   * 개설은 `APPROVED` 에서만 가능한데 그때 상품이 잠긴다. 둘을 한 덩어리로 잠그면
+   * 승인받은 멘토가 진행시간·기간을 입력할 수 없어 개설 자체가 막힌다.
+   */
+  const hasActiveOpening =
+    openings?.some((opening) => opening.status === 'OPEN') ?? false;
+  const isProductEditable =
+    (form.status === 'DRAFT' || form.status === 'REJECTED') &&
+    !hasActiveOpening;
+  const canCreateOpening = form.status === 'APPROVED' && !hasActiveOpening;
+  const openingBlockedReason = hasActiveOpening
+    ? '이미 진행 중인 개설이 있어요. 종료된 뒤에 다시 개설할 수 있어요'
+    : OPENING_BLOCKED_REASON[form.status];
   /*
    * 저장(PUT)이 실제로 보내는 필드만 비교한다.
    * 진행시간·기간은 개설 요청으로만 나가므로, 그것만 바꿨을 때 하단 버튼이
@@ -232,7 +256,7 @@ const OpenSettingsPage = () => {
    * 개설 직전 별도 `PUT /settings` 를 보내지 않는다.
    */
   const handleOpen = () => {
-    if (!hasRequiredFields) return;
+    if (!hasRequiredFields || !canCreateOpening) return;
     createOpening(
       {
         title: form.title ?? '',
@@ -259,14 +283,6 @@ const OpenSettingsPage = () => {
     );
   };
 
-  // 오픈 닫기 — 오픈을 마감하고 다시 수정 가능 상태로 전환.
-  const handleCloseOpen = () =>
-    persist(
-      { ...form, isOpen: false },
-      '오픈을 닫았습니다.',
-      '진행 중인 예약은 유지되며, 이제 설정을 수정할 수 있습니다.',
-    );
-
   return (
     <div className="flex flex-col gap-6 pb-24">
       <header className="flex flex-col gap-2">
@@ -281,9 +297,10 @@ const OpenSettingsPage = () => {
       {/*
         오픈 중 상태 배너.
         오픈 중에도 멘토는 "내가 어떤 조건으로 열었는지" 확인해야 하므로 설정을 가리지 않고,
-        상태와 해제 방법만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
+        상태와 종료 경로만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
+        멘토가 직접 종료하는 API 가 없어 여기에 둘 버튼도 없다.
       */}
-      {isCurrentlyOpen && (
+      {hasActiveOpening && (
         <div
           role="status"
           className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -297,25 +314,18 @@ const OpenSettingsPage = () => {
               오픈 중
             </span>
             <p className="text-xs text-gray-600">
-              설정을 수정하려면 오픈을 닫아주세요. 진행 중인 예약은 유지됩니다.
+              관리자 종료 또는 기간 만료 시 종료됩니다.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={handleCloseOpen}
-            disabled={isSaving}
-            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isPending ? '처리 중...' : '오픈 닫기'}
-          </button>
         </div>
       )}
 
       <div className="relative">
         {/* 오픈 중에는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
-            키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
+            키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다).
+            상품 필드(타이틀·타입)는 승인 이후에도 잠기므로 컨트롤별로 따로 막는다. */}
         <fieldset
-          disabled={isCurrentlyOpen}
+          disabled={hasActiveOpening}
           className="m-0 min-w-0 border-0 p-0"
         >
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
@@ -364,6 +374,7 @@ const OpenSettingsPage = () => {
                 <input
                   type="text"
                   aria-label="1대1 멘토링 타이틀"
+                  disabled={!isProductEditable}
                   value={form.title ?? ''}
                   onChange={(e) => patch({ title: e.target.value })}
                   placeholder="예) 자소서 실전 첨삭 멘토링"
@@ -536,6 +547,7 @@ const OpenSettingsPage = () => {
                         key={category}
                         type="button"
                         aria-pressed={active}
+                        disabled={!isProductEditable}
                         onClick={() => selectCategory(category)}
                         className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                       >
@@ -565,30 +577,37 @@ const OpenSettingsPage = () => {
         </fieldset>
       </div>
 
-      {/* 하단 버튼: 오픈 중이면 숨김. 변경사항 있으면 저장, 없으면 오픈하기. */}
-      {!isCurrentlyOpen && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-          {isDirty ? (
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving || !canSave}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isSaving ? '저장 중...' : '저장'}
-            </button>
-          ) : (
+      {/* 하단 버튼: 변경사항 있으면 저장, 없으면 오픈하기. 개설 불가면 사유를 한 줄로 붙인다. */}
+      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-1.5">
+        {isDirty ? (
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || !canSave}
+            className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSaving ? '저장 중...' : '저장'}
+          </button>
+        ) : (
+          <>
             <button
               type="button"
               onClick={handleOpen}
-              disabled={isCreatingOpening || !hasRequiredFields}
+              disabled={
+                isCreatingOpening || !canCreateOpening || !hasRequiredFields
+              }
               className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCreatingOpening ? '처리 중...' : '오픈하기'}
             </button>
-          )}
-        </div>
-      )}
+            {openingBlockedReason && (
+              <p className="rounded bg-white/90 px-2 py-0.5 text-xs text-gray-500 shadow-sm">
+                {openingBlockedReason}
+              </p>
+            )}
+          </>
+        )}
+      </div>
 
       <FeedbackAvailabilityModal
         isOpen={slotModalOpen}

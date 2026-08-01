@@ -1,19 +1,22 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringSettings,
   LiveMentoringSettingsUpdate,
+  OpeningHistoryItem,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
 const createOpeningMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
+let openings: OpeningHistoryItem[] | undefined;
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringSettingsQuery: () => ({ data: settingsData }),
+  useLiveMentoringOpenStatusQuery: () => ({ data: openings }),
   useUpdateLiveMentoringSettingsMutation: () => ({
     mutate: saveMock,
     isPending: false,
@@ -81,14 +84,32 @@ const baseSettings: LiveMentoringSettings = {
   categories: ['PERSONAL_STATEMENT'],
 };
 
-const renderPage = (overrides: Partial<LiveMentoringSettings> = {}) => {
+const opening = (status: OpeningHistoryItem['status']): OpeningHistoryItem => ({
+  openingId: 1,
+  status,
+  durationPrices: [{ duration: 30, price: 35000 }],
+  feedbackStartDate: '2026-07-14',
+  feedbackEndDate: '2026-07-28',
+  openedAt: '2026-07-10T09:00:00',
+  closedAt: status === 'CLOSED' ? '2026-07-29T00:05:00' : null,
+  closeReason: status === 'CLOSED' ? 'PERIOD_EXPIRED' : null,
+});
+
+const renderPage = (
+  overrides: Partial<LiveMentoringSettings> = {},
+  openingHistory: OpeningHistoryItem[] = [],
+) => {
   settingsData = { ...baseSettings, ...overrides };
+  openings = openingHistory;
   return render(
     <MemoryRouter>
       <OpenSettingsPage />
     </MemoryRouter>,
   );
 };
+
+/** 개설이 가능한 상태(승인·활성 개설 없음)로 렌더한다. */
+const renderApproved = () => renderPage({ status: 'APPROVED' });
 
 /**
  * 진행시간·피드백 기간은 상품 설정이 아니라 개설 입력값이라 서버가 내려주지 않는다.
@@ -118,6 +139,7 @@ afterEach(() => {
   saveMock.mockReset();
   createOpeningMock.mockReset();
   settingsData = undefined;
+  openings = undefined;
 });
 
 describe('OpenSettingsPage — 프로필은 읽기 전용', () => {
@@ -394,7 +416,7 @@ describe('OpenSettingsPage — 하단 버튼 2단 구조', () => {
 // 3.3.T1 — 오픈하기는 PUT /settings 가 아니라 POST /openings 다.
 describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
   it('개설 요청에 title/categories/durations/피드백 기간을 담아 보낸다', () => {
-    renderPage();
+    renderApproved();
 
     fillOpeningForm({ duration: '60분' });
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
@@ -415,7 +437,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
     createOpeningMock.mockImplementation((_payload, options) =>
       options.onSuccess(),
     );
-    renderPage();
+    renderApproved();
 
     fillOpeningForm();
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
@@ -434,7 +456,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
         message: '이미 진행 중인 개설이 있습니다.',
       }),
     );
-    renderPage();
+    renderApproved();
 
     fillOpeningForm();
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
@@ -455,7 +477,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
         message: '지원하지 않는 진행시간입니다.',
       }),
     );
-    renderPage();
+    renderApproved();
 
     fillOpeningForm();
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
@@ -468,12 +490,133 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
   });
 
   it('진행시간·기간이 비어 있으면 개설 요청을 보내지 않는다', () => {
-    renderPage();
+    renderApproved();
 
     const openButton = screen.getByRole('button', { name: '오픈하기' });
     expect(openButton).toBeDisabled();
     fireEvent.click(openButton);
     expect(createOpeningMock).not.toHaveBeenCalled();
+  });
+});
+
+// 3.4.T1 — isOpen 불리언이 사라져 잠금·활성화는 상품 상태와 개설 이력에서만 나온다.
+describe('OpenSettingsPage — 상태별 편집·개설 가능 여부', () => {
+  const openButton = () => screen.getByRole('button', { name: '오픈하기' });
+  const titleInput = () => screen.getByLabelText('1대1 멘토링 타이틀');
+  const categoryButton = () =>
+    screen.getByRole('button', { name: '자기소개서' });
+
+  it('DRAFT — 상품을 고칠 수 있고, 개설은 승인 안내와 함께 막힌다', () => {
+    renderPage({ status: 'DRAFT' });
+
+    expect(titleInput()).toBeEnabled();
+    expect(categoryButton()).toBeEnabled();
+    expect(openButton()).toBeDisabled();
+    expect(
+      screen.getByText('관리자 승인 후 개설할 수 있어요'),
+    ).toBeInTheDocument();
+  });
+
+  it('REJECTED — 상품을 고칠 수 있고, 재제출 안내를 보여준다', () => {
+    renderPage({ status: 'REJECTED' });
+
+    expect(titleInput()).toBeEnabled();
+    expect(openButton()).toBeDisabled();
+    expect(
+      screen.getByText('반려됐어요. 수정 후 다시 제출이 필요해요'),
+    ).toBeInTheDocument();
+  });
+
+  it('PENDING_REVIEW — 상품이 잠기고 검토 중 안내를 보여준다', () => {
+    renderPage({ status: 'PENDING_REVIEW' });
+
+    expect(titleInput()).toBeDisabled();
+    expect(categoryButton()).toBeDisabled();
+    expect(openButton()).toBeDisabled();
+    expect(
+      screen.getByText('관리자 검토 중이라 수정할 수 없어요'),
+    ).toBeInTheDocument();
+  });
+
+  it('INACTIVE — 상품이 잠기고 비활성 안내를 보여준다', () => {
+    renderPage({ status: 'INACTIVE' });
+
+    expect(titleInput()).toBeDisabled();
+    expect(openButton()).toBeDisabled();
+    expect(screen.getByText('비활성 상품이에요')).toBeInTheDocument();
+  });
+
+  it('APPROVED — 상품은 잠기지만 개설 입력은 채울 수 있고 개설 버튼이 열린다', () => {
+    renderApproved();
+
+    // 상품 필드는 승인 이후 잠긴다
+    expect(titleInput()).toBeDisabled();
+    expect(categoryButton()).toBeDisabled();
+    // 개설 입력은 잠기지 않는다 — 잠기면 개설 자체가 불가능해진다
+    expect(screen.getByLabelText('피드백 시작일')).toBeEnabled();
+    expect(screen.getByRole('button', { name: '30분' })).toBeEnabled();
+
+    fillOpeningForm();
+
+    expect(openButton()).toBeEnabled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('APPROVED + 활성 개설 — 입력이 잠기고 개설 버튼도 사유와 함께 막힌다', () => {
+    renderPage({ status: 'APPROVED' }, [opening('OPEN')]);
+
+    expect(screen.getByLabelText('피드백 시작일')).toBeDisabled();
+    expect(screen.getByRole('button', { name: '30분' })).toBeDisabled();
+    expect(openButton()).toBeDisabled();
+    expect(
+      screen.getByText(
+        '이미 진행 중인 개설이 있어요. 종료된 뒤에 다시 개설할 수 있어요',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('종료된 개설만 있으면 활성 개설로 보지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [opening('CLOSED')]);
+
+    fillOpeningForm();
+
+    expect(openButton()).toBeEnabled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+});
+
+describe('OpenSettingsPage — 오픈 중 배너', () => {
+  it('활성 개설이 있으면 오픈 중 배너에 종료 경로를 안내한다', () => {
+    renderPage({ status: 'APPROVED' }, [opening('OPEN')]);
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByText('관리자 종료 또는 기간 만료 시 종료됩니다.'),
+    ).toBeInTheDocument();
+  });
+
+  it('멘토가 직접 종료하는 경로가 없으므로 오픈 닫기 버튼을 두지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [opening('OPEN')]);
+
+    expect(
+      screen.queryByRole('button', { name: /오픈 닫기/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('활성 개설이 없으면 배너를 렌더하지 않는다', () => {
+    renderPage();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('오픈 중에도 설정 값은 그대로 읽을 수 있다', () => {
+    renderPage({ status: 'APPROVED', title: '자소서 실전 첨삭' }, [
+      opening('OPEN'),
+    ]);
+
+    const input = screen.getByDisplayValue('자소서 실전 첨삭');
+    expect(input).toBeInTheDocument();
+    expect(input).toBeDisabled();
   });
 });
 
