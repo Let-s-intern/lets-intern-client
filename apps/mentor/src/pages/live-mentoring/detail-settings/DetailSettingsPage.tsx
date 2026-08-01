@@ -13,6 +13,7 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { findBlankRequiredFields, toTemplatePayload } from './templatePayload';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
@@ -150,8 +151,20 @@ const DetailSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  const handleSave = () =>
-    save(template, {
+  // 검증 결과는 렌더마다 다시 계산한다 — state 로 들고 있으면 입력과 어긋난다.
+  const blankRequiredFields = findBlankRequiredFields(template);
+
+  const handleSave = () => {
+    if (blankRequiredFields.length > 0) {
+      showAlert({
+        title: '아직 채우지 않은 항목이 있습니다.',
+        description: blankRequiredFields.join(', '),
+        variant: 'error',
+      });
+      return;
+    }
+
+    save(toTemplatePayload(template), {
       onSuccess: () => {
         setIsEditing(false);
         showAlert({ title: '저장되었습니다.', variant: 'success' });
@@ -159,6 +172,7 @@ const DetailSettingsPage = () => {
       onError: () =>
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
     });
+  };
 
   /** 편집 취소 — 서버가 준 값으로 되돌린다(로컬 수정분 폐기). */
   const handleCancel = () => {

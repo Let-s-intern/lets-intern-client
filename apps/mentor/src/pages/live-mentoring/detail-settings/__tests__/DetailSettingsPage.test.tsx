@@ -217,6 +217,37 @@ describe('DetailSettingsPage — 편집 영역', () => {
   });
 });
 
+describe('DetailSettingsPage — 저장 직전 검증', () => {
+  it('이미지·영상을 넣지 않으면 빈 문자열이 아니라 null 로 보낸다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.strategy.points[0].image = '';
+      template.results.cases[0].beforeImage = '';
+      template.video.videoUrl = '';
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringTemplate;
+    expect(payload.strategy.points[0].image).toBeNull();
+    expect(payload.results.cases[0].beforeImage).toBeNull();
+    expect(payload.video.videoUrl).toBeNull();
+  });
+
+  it('필수 문자열이 공백이면 저장을 보내지 않고 어느 항목인지 알린다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.hero.bullets[0] = '   ';
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(screen.getByText('아직 채우지 않은 항목이 있습니다.')).toBeVisible();
+    expect(screen.getByText(/히어로 · 소개 불릿 1번/)).toBeVisible();
+  });
+});
+
 describe('DetailSettingsPage — 편집 잠금', () => {
   it('활성 개설이 있으면 오픈 중 배너를 노출하고 수정 버튼을 감춘다', () => {
     renderPage('PERSONAL_STATEMENT', (template) => {
