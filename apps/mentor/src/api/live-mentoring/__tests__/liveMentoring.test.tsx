@@ -16,7 +16,7 @@ import {
 } from '../liveMentoring';
 import {
   liveMentoringSettingsSchema,
-  openStatusRowSchema,
+  openingHistoryItemSchema,
   settlementRowSchema,
 } from '../liveMentoringSchema';
 
@@ -174,16 +174,17 @@ describe('스키마 parse', () => {
     ).toThrow();
   });
 
-  it('오픈현황행 status가 enum 밖이면 파싱 실패', () => {
+  it('개설 이력 status가 enum 밖이면 파싱 실패', () => {
     expect(() =>
-      openStatusRowSchema.parse({
-        categories: ['RESUME'],
-        durations: [30],
-        price: 35000,
+      openingHistoryItemSchema.parse({
+        openingId: 1,
+        status: 'PAUSED',
+        durationPrices: [{ duration: 30, price: 35000 }],
         feedbackStartDate: '2026-07-10',
         feedbackEndDate: '2026-07-23',
-        status: 'PAUSED',
-        reservationCount: 0,
+        openedAt: '2026-07-10T09:00:00',
+        closedAt: null,
+        closeReason: null,
       }),
     ).toThrow();
   });
@@ -275,20 +276,21 @@ describe('useLiveMentoringSettlementQuery', () => {
 });
 
 describe('useLiveMentoringOpenStatusQuery', () => {
-  it('openStatusList 만 추출해 반환한다', async () => {
+  it('openings 배열만 추출해 반환한다', async () => {
     axiosMock.get.mockResolvedValue({
       data: {
         data: {
-          openStatusList: [
+          liveMentoringId: 12,
+          openings: [
             {
-              title: '자소서 실전 첨삭 멘토링',
-              categories: ['PERSONAL_STATEMENT'],
-              durations: [60],
-              price: 60000,
+              openingId: 77,
+              status: 'OPEN',
+              durationPrices: [{ duration: 60, price: 60000 }],
               feedbackStartDate: '2026-07-14',
               feedbackEndDate: '2026-07-28',
-              status: 'OPEN',
-              reservationCount: 7,
+              openedAt: '2026-07-14T09:00:00',
+              closedAt: null,
+              closeReason: null,
             },
           ],
         },
@@ -300,7 +302,8 @@ describe('useLiveMentoringOpenStatusQuery', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.[0].reservationCount).toBe(7);
+    expect(Array.isArray(result.current.data)).toBe(true);
+    expect(result.current.data?.[0].openingId).toBe(77);
   });
 });
 

@@ -6,12 +6,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  createOpeningRequestSchema,
   liveMentoringCloseReasonSchema,
   liveMentoringOpeningStatusSchema,
   liveMentoringSettingsSchema,
   liveMentoringSettingsUpdateSchema,
   liveMentoringStatusSchema,
   liveMentoringTemplateSchema,
+  openingHistoryResponseSchema,
 } from '../liveMentoringSchema';
 
 /** 서버 `GetLiveMentoringSettingsResponseDto` 그대로의 응답. */
@@ -304,5 +306,108 @@ describe('liveMentoringTemplateSchema', () => {
     const template = makeTemplate();
     delete (template as Record<string, unknown>).currentOpening;
     expect(() => liveMentoringTemplateSchema.parse(template)).toThrow();
+  });
+});
+
+/** 서버 `GetLiveMentoringOpeningHistoryResponseDto.OpeningHistoryItemResponse` 그대로. */
+function makeOpening(overrides: Record<string, unknown> = {}) {
+  return {
+    openingId: 77,
+    status: 'OPEN',
+    durationPrices: [
+      { duration: 30, price: 35000 },
+      { duration: 60, price: 60000 },
+    ],
+    feedbackStartDate: '2026-08-01',
+    feedbackEndDate: '2026-08-14',
+    openedAt: '2026-08-01T09:00:00',
+    closedAt: null,
+    closeReason: null,
+    ...overrides,
+  };
+}
+
+describe('openingHistoryResponseSchema', () => {
+  it('상품이 없을 때(liveMentoringId: null, openings: []) 파싱한다', () => {
+    const parsed = openingHistoryResponseSchema.parse({
+      liveMentoringId: null,
+      openings: [],
+    });
+    expect(parsed.liveMentoringId).toBeNull();
+    expect(parsed.openings).toEqual([]);
+  });
+
+  it('진행 중 개설(closedAt·closeReason null)을 파싱한다', () => {
+    const parsed = openingHistoryResponseSchema.parse({
+      liveMentoringId: 12,
+      openings: [makeOpening()],
+    });
+    expect(parsed.openings[0].status).toBe('OPEN');
+    expect(parsed.openings[0].closeReason).toBeNull();
+    expect(parsed.openings[0].durationPrices[0]).toEqual({
+      duration: 30,
+      price: 35000,
+    });
+  });
+
+  it('종료된 개설의 종료 사유를 파싱한다', () => {
+    const parsed = openingHistoryResponseSchema.parse({
+      liveMentoringId: 12,
+      openings: [
+        makeOpening({
+          status: 'CLOSED',
+          closedAt: '2026-08-15T00:05:00',
+          closeReason: 'PERIOD_EXPIRED',
+        }),
+      ],
+    });
+    expect(parsed.openings[0].closeReason).toBe('PERIOD_EXPIRED');
+  });
+
+  it('구계약(openStatusList) 응답은 파싱되지 않는다', () => {
+    expect(() =>
+      openingHistoryResponseSchema.parse({ openStatusList: [] }),
+    ).toThrow();
+  });
+
+  it('알 수 없는 종료 사유는 파싱 실패', () => {
+    expect(() =>
+      openingHistoryResponseSchema.parse({
+        liveMentoringId: 12,
+        openings: [makeOpening({ closeReason: 'MENTOR_CLOSED' })],
+      }),
+    ).toThrow();
+  });
+});
+
+describe('createOpeningRequestSchema', () => {
+  it('개설 요청 5개 필드를 파싱하고 가격은 담지 않는다', () => {
+    const parsed = createOpeningRequestSchema.parse({
+      title: '자소서 실전 첨삭 멘토링',
+      categories: ['RESUME'],
+      durations: [30, 60],
+      feedbackStartDate: '2026-08-01',
+      feedbackEndDate: '2026-08-14',
+      price: 35000,
+    });
+    expect(Object.keys(parsed).sort()).toEqual([
+      'categories',
+      'durations',
+      'feedbackEndDate',
+      'feedbackStartDate',
+      'title',
+    ]);
+  });
+
+  it('진행시간이 30/60이 아니면 파싱 실패', () => {
+    expect(() =>
+      createOpeningRequestSchema.parse({
+        title: '자소서 실전 첨삭 멘토링',
+        categories: ['RESUME'],
+        durations: [45],
+        feedbackStartDate: '2026-08-01',
+        feedbackEndDate: '2026-08-14',
+      }),
+    ).toThrow();
   });
 });

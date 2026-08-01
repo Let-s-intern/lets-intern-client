@@ -290,22 +290,54 @@ export type SettlementListResponse = z.infer<
   typeof settlementListResponseSchema
 >;
 
-/** 오픈 현황 행 (PRD §4.7, read-only). */
-export const openStatusRowSchema = z.object({
-  title: z.string(),
-  categories: z.array(liveMentoringCategorySchema),
-  durations: z.array(liveMentoringDurationSchema),
-  price: z.number(),
+/**
+ * 개설 이력 1건 — 서버 `GetLiveMentoringOpeningHistoryResponseDto.OpeningHistoryItemResponse`.
+ *
+ * 타이틀·카테고리는 개설이 아니라 상품 소유라 여기에 없다(`liveMentoringSettingsSchema` 참고).
+ * 예약 수도 서버가 더 이상 주지 않는다.
+ */
+export const openingHistoryItemSchema = z.object({
+  openingId: z.number(),
+  status: liveMentoringOpeningStatusSchema,
+  /** 진행시간별 판매가. 표시 가격은 이 중 최저가다. */
+  durationPrices: z.array(liveMentoringDurationPriceSchema),
   feedbackStartDate: z.string(),
   feedbackEndDate: z.string(),
-  status: z.enum(['OPEN', 'CLOSED']),
-  reservationCount: z.number(),
+  /** 개설 시각. 서버가 개설 생성 시 항상 채운다. */
+  openedAt: z.string(),
+  /** 종료 시각. `status === 'OPEN'` 이면 null. */
+  closedAt: z.string().nullable(),
+  /** 종료 사유. `status === 'OPEN'` 이면 null. */
+  closeReason: liveMentoringCloseReasonSchema.nullable(),
 });
-export type OpenStatusRow = z.infer<typeof openStatusRowSchema>;
+export type OpeningHistoryItem = z.infer<typeof openingHistoryItemSchema>;
 
-export const openStatusListResponseSchema = z.object({
-  openStatusList: z.array(openStatusRowSchema),
+/**
+ * 개설 이력 응답 — `GET /mentor/live-mentoring/open-status`,
+ * `POST /mentor/live-mentoring/openings` 공통. 정렬은 `openingId` 내림차순이다.
+ * 상품이 없으면 `{liveMentoringId: null, openings: []}` 으로 200 이다.
+ */
+export const openingHistoryResponseSchema = z.object({
+  liveMentoringId: z.number().nullable(),
+  openings: z.array(openingHistoryItemSchema),
 });
-export type OpenStatusListResponse = z.infer<
-  typeof openStatusListResponseSchema
+export type OpeningHistoryResponse = z.infer<
+  typeof openingHistoryResponseSchema
 >;
+
+/**
+ * POST /mentor/live-mentoring/openings 요청 바디 — 서버 `CreateLiveMentoringOpeningRequestDto`.
+ *
+ * 가격은 서버 고정값이라 보내지 않는다.
+ * 같은 트랜잭션에서 상품의 제목·카테고리도 갱신되므로 개설 직전 별도 `PUT /settings` 는 필요 없다.
+ */
+export const createOpeningRequestSchema = z.object({
+  title: z.string(),
+  /** 서버 `@Size(min = 1, max = 1)` — 정확히 1개여야 한다. */
+  categories: z.array(liveMentoringCategorySchema),
+  /** 서버 `@NotEmpty` — 1개 이상. */
+  durations: z.array(liveMentoringDurationSchema),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
+});
+export type CreateOpeningRequest = z.infer<typeof createOpeningRequestSchema>;

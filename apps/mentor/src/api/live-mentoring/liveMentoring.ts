@@ -6,7 +6,7 @@ import {
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
-  openStatusListResponseSchema,
+  openingHistoryResponseSchema,
   settlementListResponseSchema,
 } from './liveMentoringSchema';
 
@@ -128,15 +128,18 @@ export const useLiveMentoringSettlementQuery = () => {
 };
 
 /**
- * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only) 조회.
- * 응답 `openStatusList`만 추출해 반환한다.
+ * GET /mentor/live-mentoring/open-status — 개설 이력(read-only) 조회.
+ *
+ * 응답은 `{liveMentoringId, openings}` 이지만 **`openings` 배열만 반환한다**.
+ * 화면이 `data.map` 으로 표를 그리는 형태를 유지하기 위해서다.
+ * `liveMentoringId` 가 필요하면 별도 셀렉터를 둔다.
  */
 export const useLiveMentoringOpenStatusQuery = () => {
   return useQuery({
     queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
     queryFn: async () => {
       const res = await axios.get(OPEN_STATUS_PATH);
-      return openStatusListResponseSchema.parse(res.data.data).openStatusList;
+      return openingHistoryResponseSchema.parse(res.data.data).openings;
     },
     refetchOnWindowFocus: false,
   });
