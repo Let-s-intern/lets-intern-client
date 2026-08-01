@@ -183,37 +183,40 @@ export type LiveMentoringSettingsCareer = z.infer<
 >;
 
 /**
- * 오픈 설정(메타) (PRD §5 S3-a).
+ * 상품 설정 — 서버 `GetLiveMentoringSettingsResponseDto`.
+ *
+ * `상품 1 : 개설 N` 분리 이후 이 응답은 **상품 정보만** 담는다.
+ * 개설에 딸린 값(`isOpen`·`durations`·`feedbackStartDate`·`feedbackEndDate`)은 서버가 더 이상 주지 않고,
+ * 개설 이력(`openingHistoryResponseSchema`)에서 가져온다.
+ *
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드다 —
  * PUT 요청 바디에는 포함되지 않는다(`liveMentoringSettingsUpdateSchema` 참고).
  */
 export const liveMentoringSettingsSchema = z.object({
+  /** 상품 식별자. 상품을 한 번도 저장하지 않았으면 null. */
+  liveMentoringId: z.number().nullable(),
   nickname: z.string().nullable(),
   profileImage: z.string().nullable(),
   introduction: z.string().nullable(),
+  /** 프로필(UserCareer) 도메인 소유. 서버 `UserCareerVo` 11필드 그대로이며 계약 변경이 없다 — 제거 아님. */
   careers: z.array(liveMentoringSettingsCareerSchema),
-  /** 1대1 멘토링 타이틀(상품명). 한 번도 오픈한 적 없으면 null. */
+  /** 1대1 멘토링 타이틀(상품명). 상품을 한 번도 저장하지 않았으면 null. */
   title: z.string().nullable(),
-  /** 현재 오픈 중인지. 오픈 중에는 수정 불가. */
-  isOpen: z.boolean(),
-  /** 오픈한 타입(다중). */
+  /** 상품 상태. 상품이 없어도 서버가 `DRAFT` 로 채워 주므로 null 이 아니다. */
+  status: liveMentoringStatusSchema,
+  /** 상품 타입. 서버가 정확히 1개만 저장하지만 응답은 배열이다. */
   categories: z.array(liveMentoringCategorySchema),
-  /** 오픈한 진행시간(다중). */
-  durations: z.array(liveMentoringDurationSchema),
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. 한 번도 오픈한 적 없으면 null. */
-  feedbackStartDate: z.string().nullable(),
-  feedbackEndDate: z.string().nullable(),
 });
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
-/** PUT /mentor/live-mentoring/settings 요청 바디 — 백엔드가 실제로 받는 6개 필드뿐. */
+/**
+ * PUT /mentor/live-mentoring/settings 요청 바디 — 서버 `UpdateLiveMentoringSettingsRequestDto`.
+ * 개설 관련 필드가 빠져 `{title, categories}` 2개뿐이다.
+ */
 export const liveMentoringSettingsUpdateSchema = z.object({
   title: z.string(),
-  isOpen: z.boolean(),
+  /** 서버 `@Size(min = 1, max = 1)` — 정확히 1개여야 하고, 2개를 보내면 400 이다. */
   categories: z.array(liveMentoringCategorySchema),
-  durations: z.array(liveMentoringDurationSchema),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
 });
 export type LiveMentoringSettingsUpdate = z.infer<
   typeof liveMentoringSettingsUpdateSchema

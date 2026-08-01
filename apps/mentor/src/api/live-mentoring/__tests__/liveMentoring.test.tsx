@@ -29,6 +29,7 @@ const axiosMock = vi.mocked(axios, true);
 
 function makeSettings(overrides: Record<string, unknown> = {}) {
   return {
+    liveMentoringId: 12,
     nickname: '자소서장인',
     profileImage: null,
     introduction: '소개',
@@ -48,11 +49,8 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
       },
     ],
     title: '자소서 실전 첨삭 멘토링',
-    isOpen: false,
+    status: 'DRAFT',
     categories: ['PERSONAL_STATEMENT'],
-    durations: [60],
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -60,11 +58,7 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
 function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
   return {
     title: '자소서 실전 첨삭 멘토링',
-    isOpen: false,
     categories: ['PERSONAL_STATEMENT'],
-    durations: [60],
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -155,9 +149,9 @@ describe('스키마 parse', () => {
     ).not.toThrow();
   });
 
-  it('durations에 30/60이 아닌 값이 있으면 파싱 실패', () => {
+  it('status가 상품 상태 enum 밖이면 파싱 실패', () => {
     expect(() =>
-      liveMentoringSettingsSchema.parse(makeSettings({ durations: [40] })),
+      liveMentoringSettingsSchema.parse(makeSettings({ status: 'OPEN' })),
     ).toThrow();
   });
 
@@ -205,7 +199,7 @@ describe('useLiveMentoringSettingsQuery', () => {
 
   it('응답 스키마가 깨지면 isError 가 된다', async () => {
     axiosMock.get.mockResolvedValue({
-      data: { data: makeSettings({ durations: [40] }) },
+      data: { data: makeSettings({ status: 'OPEN' }) },
     });
 
     const { result } = renderHook(() => useLiveMentoringSettingsQuery(), {
@@ -304,9 +298,9 @@ describe('useLiveMentoringOpenStatusQuery', () => {
 
 // ── mutation 훅 (PUT — 6개 필드만 보내고, 응답은 전체 설정) ────
 describe('useUpdateLiveMentoringSettingsMutation', () => {
-  it('PUT settings 에 6개 필드만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
-    const update = makeSettingsUpdate({ isOpen: true });
-    const responseSettings = makeSettings({ isOpen: true });
+  it('PUT settings 에 title·categories 2개만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
+    const update = makeSettingsUpdate();
+    const responseSettings = makeSettings();
     axiosMock.put.mockResolvedValue({ data: { data: responseSettings } });
 
     const client = newClient();
