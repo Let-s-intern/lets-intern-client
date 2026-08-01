@@ -54,12 +54,15 @@ export type RepresentativeCareer = z.infer<typeof representativeCareerSchema>;
  * 라이브 멘토링 개설 1건 — 백엔드 `LiveMentoringOpeningResponseDto`.
  * (GET /live-mentoring 의 `openingList` 원소)
  *
- * 리스트 카드는 "멘토"가 아니라 "개설(opening)" 단위다: `id`가 개설 식별자,
- * `mentorId`는 그 개설을 연 멘토다.
+ * 리스트 카드는 "멘토"가 아니라 "개설(opening)" 단위다.
+ * `상품 1 : 개설 N` 분리로 기존 `id` 하나가 상품(`liveMentoringId`)과
+ * 개설(`openingId`) 둘로 갈라졌다. 상세 링크는 상품, 목록 key 는 개설을 쓴다.
  */
 export const liveMentoringOpeningSchema = z.object({
+  /** 상품 식별자. 공개 상세 경로 `/live-mentoring/{liveMentoringId}` 에 쓴다. */
+  liveMentoringId: z.number(),
   /** 개설 식별자. */
-  id: z.number(),
+  openingId: z.number(),
   mentorId: z.number(),
   mentorNickname: z.string().nullable(),
   mentorProfileImage: z.string().nullable(),
@@ -212,26 +215,39 @@ export const liveMentorProfileSchema = z.object({
 });
 export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
 
-/** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
+/**
+ * 멘토 상세 (상세 페이지 렌더용, +reviews) — 백엔드 `GetLiveMentoringPublicDetailResponseDto`.
+ *
+ * 서버는 **상세만 저장하고 개설이 없는 상품도 200 으로 내려준다**
+ * (`LiveMentoringPublicDetailMapper.toResponse`). 승인·개설을 기다리지 않고 상세를 연동하라는 뜻이다.
+ * 이때 개설에서 파생되는 값이 전부 null 이라 `price`·`feedbackStartDate`·`feedbackEndDate` 를
+ * nullable 로 둔다. `durations`·`durationPrices` 는 같은 상황에서 빈 배열이다.
+ */
 export const liveMentorDetailSchema = z.object({
+  /** 상품 식별자. 정식 조회 경로 `/live-mentoring/{liveMentoringId}` 의 대상이다. */
+  liveMentoringId: z.number(),
+  /** 활성 개설 식별자. 개설이 없으면 null 이고, 그때는 판매(기간·가격·CTA)를 노출하지 않는다. */
+  openingId: z.number().nullable(),
   mentorId: z.number(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
+  /** 개설이 없으면 빈 배열. */
   durations: z.array(liveMentoringDurationSchema),
-  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
+  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. 개설이 없으면 빈 배열. */
   durationPrices: z.array(
     z.object({
       duration: liveMentoringDurationSchema,
       price: z.number(),
     }),
   ),
-  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
-  price: z.number(),
+  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). 개설이 없으면 null. */
+  price: z.number().nullable(),
   rating: z.number(),
   reviewCount: z.number(),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
+  /** 피드백 진행 일정. 개설이 없으면 null. */
+  feedbackStartDate: z.string().nullable(),
+  feedbackEndDate: z.string().nullable(),
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),

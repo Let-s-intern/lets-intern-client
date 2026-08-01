@@ -6,7 +6,8 @@ import {
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
-    id: 100,
+    liveMentoringId: 50,
+    openingId: 100,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: null,
@@ -33,6 +34,8 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
 
 function makeDetail(overrides: Record<string, unknown> = {}) {
   return {
+    liveMentoringId: 50,
+    openingId: 100,
     title: '자소서장인 멘토의 1:1 멘토링',
     mentorId: 1,
     categories: ['RESUME'],
@@ -226,5 +229,63 @@ describe('liveMentorDetailSchema', () => {
     const detail = makeDetail();
     delete (detail as Record<string, unknown>).template;
     expect(() => liveMentorDetailSchema.parse(detail)).toThrow();
+  });
+});
+
+describe('liveMentorDetailSchema — 개설 이력이 없는 상품', () => {
+  /**
+   * 서버는 상세만 저장하고 개설이 없는 상품도 200 으로 내려준다.
+   * 이 케이스가 파싱되지 않으면 승인·개설 전 상세 페이지가 통째로 뜨지 않는다.
+   */
+  const noOpening = {
+    openingId: null,
+    price: null,
+    feedbackStartDate: null,
+    feedbackEndDate: null,
+    durations: [],
+    durationPrices: [],
+  };
+
+  it('openingId·price·기간이 null 이어도 파싱한다', () => {
+    const parsed = liveMentorDetailSchema.parse(makeDetail(noOpening));
+    expect(parsed.openingId).toBeNull();
+    expect(parsed.price).toBeNull();
+    expect(parsed.feedbackStartDate).toBeNull();
+    expect(parsed.feedbackEndDate).toBeNull();
+    expect(parsed.durationPrices).toEqual([]);
+  });
+
+  it('liveMentoringId 는 개설이 없어도 항상 있다', () => {
+    const parsed = liveMentorDetailSchema.parse(makeDetail(noOpening));
+    expect(parsed.liveMentoringId).toBe(50);
+  });
+
+  it('liveMentoringId 가 없으면 파싱 실패', () => {
+    const detail = makeDetail();
+    delete (detail as Record<string, unknown>).liveMentoringId;
+    expect(() => liveMentorDetailSchema.parse(detail)).toThrow();
+  });
+
+  it('openingId 키 자체가 없으면 파싱 실패 (null 과 구분한다)', () => {
+    const detail = makeDetail();
+    delete (detail as Record<string, unknown>).openingId;
+    expect(() => liveMentorDetailSchema.parse(detail)).toThrow();
+  });
+});
+
+describe('liveMentoringOpeningSchema — 식별자 분리', () => {
+  it('liveMentoringId 와 openingId 를 모두 파싱한다', () => {
+    const parsed = liveMentoringOpeningSchema.parse(makeOpening());
+    expect(parsed.liveMentoringId).toBe(50);
+    expect(parsed.openingId).toBe(100);
+  });
+
+  it('구계약의 단일 id 응답은 파싱되지 않는다', () => {
+    const opening = makeOpening();
+    delete (opening as Record<string, unknown>).liveMentoringId;
+    delete (opening as Record<string, unknown>).openingId;
+    expect(() =>
+      liveMentoringOpeningSchema.parse({ ...opening, id: 100 }),
+    ).toThrow();
   });
 });

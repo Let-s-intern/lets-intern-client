@@ -18,7 +18,8 @@ const axiosGet = axios.get as jest.Mock;
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
-    id: 100,
+    liveMentoringId: 50,
+    openingId: 100,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: null,
@@ -182,6 +183,8 @@ describe('useLiveMentorDetailQuery', () => {
     axiosGet.mockResolvedValue({
       data: {
         data: {
+          liveMentoringId: 50,
+          openingId: 100,
           mentorId: 3,
           title: '포폴메이커 멘토의 1:1 멘토링',
           categories: ['PORTFOLIO'],
