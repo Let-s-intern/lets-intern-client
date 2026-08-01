@@ -23,6 +23,40 @@ export const liveMentoringDurationSchema = z.union([
 export type LiveMentoringDuration = z.infer<typeof liveMentoringDurationSchema>;
 
 /**
+ * 상품 상태 — 서버 `LiveMentoringStatus.java`.
+ *
+ * 편집 가능(`isEditable`)은 `DRAFT`·`REJECTED`, 공개 노출(`isPubliclyVisible`)은 `APPROVED` 뿐이다.
+ * 상품을 한 번도 저장하지 않은 멘토에게도 서버가 `DRAFT` 를 채워 주므로 null 로 오지 않는다
+ * (`LiveMentoringMapper.toGetLiveMentoringSettingsResponseDto`).
+ */
+export const liveMentoringStatusSchema = z.enum([
+  'DRAFT',
+  'PENDING_REVIEW',
+  'APPROVED',
+  'REJECTED',
+  'INACTIVE',
+]);
+export type LiveMentoringStatus = z.infer<typeof liveMentoringStatusSchema>;
+
+/** 개설 상태 — 서버 `LiveMentoringOpeningStatus.java`. `OPEN → CLOSED` 단방향이다. */
+export const liveMentoringOpeningStatusSchema = z.enum(['OPEN', 'CLOSED']);
+export type LiveMentoringOpeningStatus = z.infer<
+  typeof liveMentoringOpeningStatusSchema
+>;
+
+/**
+ * 개설 종료 사유 — 서버 `LiveMentoringCloseReason.java`.
+ * 멘토가 직접 종료하는 경로는 없다. 기간 만료 자동 종료와 관리자 강제 종료뿐이다.
+ */
+export const liveMentoringCloseReasonSchema = z.enum([
+  'PERIOD_EXPIRED',
+  'ADMIN_FORCED',
+]);
+export type LiveMentoringCloseReason = z.infer<
+  typeof liveMentoringCloseReasonSchema
+>;
+
+/**
  * 노출 토글이 있는 섹션의 공통 골격 (시안 3·4·5번).
  * `visible === false` 면 공개 상세에서 섹션을 **통째로 제외**한다.
  */
