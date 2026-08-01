@@ -30,6 +30,9 @@ function detail(overrides: Record<string, unknown> = {}) {
   return {
     data: {
       data: {
+        // 상품·개설·멘토 식별자는 서로 다른 대역이다(목과 같은 규칙).
+        liveMentoringId: 103,
+        openingId: 203,
         mentorId: 3,
         title: '포폴메이커 멘토의 1:1 멘토링',
         categories: ['PORTFOLIO'],
@@ -141,7 +144,7 @@ function renderDetail() {
   });
   return render(
     <QueryClientProvider client={client}>
-      <LiveMentoringDetailPage mentorId="3" />
+      <LiveMentoringDetailPage liveMentoringId="103" />
     </QueryClientProvider>,
   );
 }
@@ -149,6 +152,15 @@ function renderDetail() {
 beforeEach(() => axiosGet.mockReset());
 
 describe('LiveMentoringDetailPage', () => {
+  it('멘토가 아니라 상품 기준 경로로 상세를 조회한다', async () => {
+    axiosGet.mockResolvedValue(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/103'),
+    );
+  });
+
   it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 이미지 섹션을 렌더한다', async () => {
     axiosGet.mockResolvedValue(detail());
     renderDetail();

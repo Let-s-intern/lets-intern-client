@@ -1,6 +1,6 @@
 'use client';
 
-import { useLiveMentorDetailQuery } from '@/api/live-mentoring/liveMentoring';
+import { useLiveMentoringDetailQuery } from '@/api/live-mentoring/liveMentoring';
 import { formatDetailPeriod } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
@@ -19,7 +19,8 @@ import DetailNavigation, {
 import DetailSection from './DetailSection';
 
 interface LiveMentoringDetailPageProps {
-  mentorId: string;
+  /** 상품 식별자. 멘토 한 명이 여러 상품을 가질 수 있어 `mentorId` 가 아니다. */
+  liveMentoringId: string;
 }
 
 /**
@@ -33,9 +34,10 @@ interface LiveMentoringDetailPageProps {
  * 결제/예약은 범위 밖 — 히어로의 플랜은 표시만 하고 선택되지 않는다.
  */
 const LiveMentoringDetailPage = ({
-  mentorId,
+  liveMentoringId,
 }: LiveMentoringDetailPageProps) => {
-  const { data, isLoading, isError } = useLiveMentorDetailQuery(mentorId);
+  const { data, isLoading, isError } =
+    useLiveMentoringDetailQuery(liveMentoringId);
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
