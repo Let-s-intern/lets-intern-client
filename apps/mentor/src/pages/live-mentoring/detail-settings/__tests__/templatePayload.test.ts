@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
-import { findBlankRequiredFields, toTemplatePayload } from '../templatePayload';
+import {
+  findBlankRequiredFields,
+  isValidVideoUrl,
+  toTemplatePayload,
+} from '../templatePayload';
 
 /** 서버 검증을 모두 통과하는 최소 템플릿. */
 const makeTemplate = (): LiveMentoringTemplate => ({
@@ -97,6 +101,37 @@ describe('toTemplatePayload — nullable 필드 정규화', () => {
     toTemplatePayload(template);
 
     expect(template.video.videoUrl).toBe('');
+  });
+});
+
+describe('isValidVideoUrl — YouTube embed 형식', () => {
+  it('비워 두면 통과한다 — 서버도 null 은 검사하지 않는다', () => {
+    expect(isValidVideoUrl(null)).toBe(true);
+  });
+
+  it.each([
+    'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    'https://youtube.com/embed/dQw4w9WgXcQ',
+    'https://www.youtube.com/embed/a_b-c123',
+  ])('허용: %s', (url) => {
+    expect(isValidVideoUrl(url)).toBe(true);
+  });
+
+  it.each([
+    // watch 경로
+    'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    // query 포함
+    'https://www.youtube.com/embed/dQw4w9WgXcQ?start=10',
+    // http
+    'http://www.youtube.com/embed/dQw4w9WgXcQ',
+    // fragment 포함
+    'https://www.youtube.com/embed/dQw4w9WgXcQ#t=10',
+    // 포트 포함
+    'https://www.youtube.com:443/embed/dQw4w9WgXcQ',
+    // 다른 호스트
+    'https://youtu.be/dQw4w9WgXcQ',
+  ])('차단: %s', (url) => {
+    expect(isValidVideoUrl(url)).toBe(false);
   });
 });
 

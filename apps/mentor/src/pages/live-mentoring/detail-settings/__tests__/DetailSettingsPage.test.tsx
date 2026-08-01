@@ -234,6 +234,20 @@ describe('DetailSettingsPage — 저장 직전 검증', () => {
     expect(payload.video.videoUrl).toBeNull();
   });
 
+  it('영상 URL 형식이 맞지 않으면 저장을 보내지 않고 허용 형식을 알린다', () => {
+    renderPage('PERSONAL_STATEMENT', (template) => {
+      template.video.videoUrl = 'https://www.youtube.com/watch?v=abc';
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('영상 임베드 URL 형식이 올바르지 않습니다.'),
+    ).toBeVisible();
+  });
+
   it('필수 문자열이 공백이면 저장을 보내지 않고 어느 항목인지 알린다', () => {
     renderPage('PERSONAL_STATEMENT', (template) => {
       template.hero.bullets[0] = '   ';

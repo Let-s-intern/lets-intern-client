@@ -4,6 +4,7 @@ import type {
   TemplateResultCase,
   TemplateStrategyPoint,
 } from '@/api/live-mentoring/liveMentoringSchema';
+import { VIDEO_URL_FORMAT_HINT } from '../templatePayload';
 import ImageField from './ImageField';
 import ListField from './ListField';
 
@@ -300,6 +301,9 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
             />
             <p className="mt-1 text-xs text-gray-400">
               YouTube 는 공유 → 퍼가기의 embed 주소를 넣어주세요.
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              {VIDEO_URL_FORMAT_HINT}
             </p>
           </div>
           <input

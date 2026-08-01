@@ -13,7 +13,12 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import { findBlankRequiredFields, toTemplatePayload } from './templatePayload';
+import {
+  findBlankRequiredFields,
+  isValidVideoUrl,
+  toTemplatePayload,
+  VIDEO_URL_FORMAT_HINT,
+} from './templatePayload';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
@@ -151,8 +156,13 @@ const DetailSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  // 검증 결과는 렌더마다 다시 계산한다 — state 로 들고 있으면 입력과 어긋난다.
-  const blankRequiredFields = findBlankRequiredFields(template);
+  /*
+   * 검증은 실제로 보낼 payload 를 대상으로 렌더마다 다시 계산한다 —
+   * state 로 들고 있으면 입력과 어긋나고, 정규화 전 값을 검사하면 판정이 달라진다.
+   */
+  const payload = toTemplatePayload(template);
+  const blankRequiredFields = findBlankRequiredFields(payload);
+  const hasInvalidVideoUrl = !isValidVideoUrl(payload.video.videoUrl);
 
   const handleSave = () => {
     if (blankRequiredFields.length > 0) {
@@ -164,7 +174,16 @@ const DetailSettingsPage = () => {
       return;
     }
 
-    save(toTemplatePayload(template), {
+    if (hasInvalidVideoUrl) {
+      showAlert({
+        title: '영상 임베드 URL 형식이 올바르지 않습니다.',
+        description: VIDEO_URL_FORMAT_HINT,
+        variant: 'error',
+      });
+      return;
+    }
+
+    save(payload, {
       onSuccess: () => {
         setIsEditing(false);
         showAlert({ title: '저장되었습니다.', variant: 'success' });

@@ -11,6 +11,17 @@ import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSc
  * 노출 토글(`visible`)을 꺼도 서버 검증은 그대로 도므로 섹션을 가려도 검사에서 빼지 않는다.
  */
 
+/**
+ * 서버 `LiveMentoringUrlPolicy.validateYoutubeEmbedUrl` 과 같은 조건.
+ * query·fragment·포트·`http`·watch 경로는 모두 400 이다.
+ */
+const YOUTUBE_EMBED_URL =
+  /^https:\/\/(www\.)?youtube\.com\/embed\/[A-Za-z0-9_-]+$/;
+
+/** 폼 안내와 저장 차단 문구에 같이 쓴다 — 두 곳이 어긋나면 멘토가 원인을 못 찾는다. */
+export const VIDEO_URL_FORMAT_HINT =
+  'https://www.youtube.com/embed/{영상ID} 형식만 저장할 수 있습니다. 물음표 뒤 값이 붙어 있으면 지워주세요.';
+
 const isBlank = (value: string) => value.trim().length === 0;
 
 /** 비어 있거나 공백뿐이면 `null` — 서버가 `""` 를 거부한다. */
@@ -42,6 +53,13 @@ export const toTemplatePayload = (
     })),
   },
 });
+
+/**
+ * 저장 가능한 영상 URL 인지.
+ * 비워 둔 경우(`null`)는 허용된다 — 서버도 null 이면 검사하지 않는다.
+ */
+export const isValidVideoUrl = (videoUrl: string | null) =>
+  videoUrl === null || YOUTUBE_EMBED_URL.test(videoUrl);
 
 /**
  * 서버 `@NotBlank` 대상 중 비어 있는 항목의 이름 목록.
