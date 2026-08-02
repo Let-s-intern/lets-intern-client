@@ -24,7 +24,7 @@
  * ── 언제 지우는가 (해제 조건) ─────────────────────────────────
  * 관리자용 상품 목록 API(`GET /api/v1/admin/live-mentoring?status=&page=&size=`)와
  * 그 응답의 `currentOpening` 이 실서버에 배포되면 즉시.
- * 요청 문서는 `.claude/tasks/memos/be-request-라이브멘토링-관리자개설목록-*.md`.
+ * 요청 문서는 `.claude/tasks/memos/be-request-라이브멘토링-오픈흐름-*.md`.
  *
  * ── 무엇을 지우는가 (제거 대상) ───────────────────────────────
  * 1. 이 파일 (`domain/live-mentoring/ManualActionPanel.tsx`)
