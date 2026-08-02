@@ -6,6 +6,7 @@ import {
   useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
+  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
@@ -70,17 +71,43 @@ const EMPTY_OPENING_FORM: OpeningForm = {
 };
 
 /**
- * 상품 상태별 개설 불가 사유 — PRD 4장 표 그대로.
+ * 오픈하기 버튼이 실제로 하는 일 — 상태마다 다르다.
  *
- * 제출·재제출 버튼은 이번 범위 밖이라, 멘토가 막히는 지점에서 **무엇이 필요한지만** 알린다.
- * `APPROVED` 는 개설 가능 상태라 사유가 없다(활성 개설 여부는 따로 본다).
+ * 멘토가 알아야 할 버튼은 `오픈하기` 하나다. 승인은 상품 단위로 최초 1회만 필요하고
+ * (서버 `LiveMentoringStatus.canTransitionTo`), 개설이 끝나도 상품은 `APPROVED` 로 남아
+ * 두 번째 오픈부터는 승인 없이 곧바로 개설된다. 그래서 첫 오픈의 검토 요청(`POST /submit`)과
+ * 실제 개설(`POST /openings`)을 한 버튼에 묶고, 무엇이 일어나는지는 확인 모달에서 알린다.
  */
-const OPENING_BLOCKED_REASON: Record<LiveMentoringStatus, string | null> = {
-  DRAFT: '관리자 승인 후 개설할 수 있어요',
-  PENDING_REVIEW: '관리자 검토 중이라 수정할 수 없어요',
-  APPROVED: null,
-  REJECTED: '반려됐어요. 수정 후 다시 제출이 필요해요',
-  INACTIVE: '비활성 상품이에요',
+type OpenAction =
+  | { kind: 'submit' }
+  | { kind: 'open' }
+  | { kind: 'blocked'; reason: string };
+
+/** 활성 개설은 상태보다 구체적인 차단 사유라 상태 분기보다 먼저 본다. */
+const ACTIVE_OPENING_BLOCKED_REASON =
+  '이미 진행 중인 개설이 있어요. 종료된 뒤에 다시 개설할 수 있어요';
+
+const resolveOpenAction = (
+  status: LiveMentoringStatus,
+  hasActiveOpening: boolean,
+): OpenAction => {
+  if (hasActiveOpening) {
+    return { kind: 'blocked', reason: ACTIVE_OPENING_BLOCKED_REASON };
+  }
+  switch (status) {
+    case 'DRAFT':
+    case 'REJECTED':
+      return { kind: 'submit' };
+    case 'APPROVED':
+      return { kind: 'open' };
+    case 'PENDING_REVIEW':
+      return {
+        kind: 'blocked',
+        reason: '관리자 검토 중이에요. 승인되면 오픈할 수 있어요',
+      };
+    case 'INACTIVE':
+      return { kind: 'blocked', reason: '비활성 상품이에요' };
+  }
 };
 
 /** PUT 요청은 이 2개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
@@ -99,11 +126,13 @@ const OpenSettingsPage = () => {
     useUpdateLiveMentoringSettingsMutation();
   const { mutate: createOpening, isPending: isCreatingOpening } =
     useCreateLiveMentoringOpeningMutation();
+  const { mutate: submitForReview, isPending: isSubmitting } =
+    useSubmitLiveMentoringMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
   } = useSetRepresentativeCareerMutation();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   // 변경사항(dirty) 판정을 위한 로드 원본.
@@ -151,11 +180,6 @@ const OpenSettingsPage = () => {
   const noDurationSelected = openingForm.durations.length === 0;
   const noFeedbackDates =
     !openingForm.feedbackStartDate || !openingForm.feedbackEndDate;
-  const hasRequiredFields =
-    !noTitleEntered &&
-    !noCategorySelected &&
-    !noDurationSelected &&
-    !noFeedbackDates;
   /*
    * 잠금·활성화 판정은 전부 서버가 계산해 준 값(`status`·개설 이력)에서 나온다 —
    * FE 가 재구성하지 않는다. 다만 잠금 범위는 둘로 갈린다.
@@ -169,10 +193,17 @@ const OpenSettingsPage = () => {
   const isProductEditable =
     (form.status === 'DRAFT' || form.status === 'REJECTED') &&
     !hasActiveOpening;
-  const canCreateOpening = form.status === 'APPROVED' && !hasActiveOpening;
-  const openingBlockedReason = hasActiveOpening
-    ? '이미 진행 중인 개설이 있어요. 종료된 뒤에 다시 개설할 수 있어요'
-    : OPENING_BLOCKED_REASON[form.status];
+  const openAction = resolveOpenAction(form.status, hasActiveOpening);
+  /*
+   * 입력 필수 조건도 버튼이 보낼 요청에 따라 다르다.
+   * 검토 요청(`POST /submit`)은 바디가 없어 진행시간·기간을 받지 않는다 —
+   * 여기서 그걸 요구하면 승인도 못 받은 멘토가 개설 입력부터 채워야 한다.
+   */
+  const hasProductFields = !noTitleEntered && !noCategorySelected;
+  const hasRequiredFields =
+    openAction.kind === 'open'
+      ? hasProductFields && !noDurationSelected && !noFeedbackDates
+      : hasProductFields;
   /*
    * 저장(PUT)이 실제로 보내는 필드만 비교한다.
    * 진행시간·기간은 개설 요청으로만 나가므로, 그것만 바꿨을 때 하단 버튼이
@@ -248,13 +279,42 @@ const OpenSettingsPage = () => {
   };
 
   /**
-   * 오픈하기 — 개설(`POST /openings`)을 만든다.
+   * 첫 오픈 — 관리자 검토를 요청한다(`POST /submit`).
+   *
+   * 서버 submit 은 상세 페이지를 한 번도 저장하지 않았을 때도 409
+   * `LIVE_MENTORING_INVALID_STATE` 로 막는다
+   * (`LiveMentoringLifecycleServiceImpl.submit` 의 `existsByLiveMentoringId`).
+   * 이 화면에서는 상세를 건드릴 수 없으므로 코드만 보여주면 멘토가 다음에 뭘 해야 할지 알 수 없다.
+   */
+  const requestReview = () =>
+    submitForReview(undefined, {
+      onSuccess: () =>
+        showAlert({
+          title: '검토를 요청했습니다.',
+          description:
+            '승인되면 오픈하기를 한 번 더 눌러 개설할 수 있어요. 검토 중에는 설정을 수정할 수 없습니다.',
+          variant: 'success',
+        }),
+      onError: (error) =>
+        showAlert({
+          title: '검토 요청에 실패했습니다.',
+          description: [
+            saveErrorDescription(error),
+            '상세 페이지 설정을 한 번도 저장하지 않았다면 먼저 저장해주세요.',
+          ]
+            .filter(Boolean)
+            .join(' '),
+          variant: 'error',
+        }),
+    });
+
+  /**
+   * 승인 이후 오픈 — 개설(`POST /openings`)을 만든다.
    *
    * 제목·카테고리는 같은 트랜잭션에서 상품 설정으로 함께 갱신되므로
    * 개설 직전 별도 `PUT /settings` 를 보내지 않는다.
    */
-  const handleOpen = () => {
-    if (!hasRequiredFields || !canCreateOpening) return;
+  const openNow = () =>
     createOpening(
       {
         title: form.title ?? '',
@@ -279,6 +339,32 @@ const OpenSettingsPage = () => {
           }),
       },
     );
+
+  /**
+   * 오픈하기 — 버튼 문구는 하나지만 상태에 따라 요청이 갈린다.
+   * 되돌릴 수 없는 요청이라 어느 쪽이든 무엇이 일어나는지 알리고 확인을 받는다.
+   */
+  const handleOpen = () => {
+    if (openAction.kind === 'blocked' || !hasRequiredFields) return;
+
+    if (openAction.kind === 'submit') {
+      showConfirm({
+        title: '관리자 검토를 요청할까요?',
+        description:
+          '첫 오픈은 관리자 확인이 필요해요. 승인되면 오픈하기를 다시 눌러 개설합니다. 검토 중에는 설정을 수정할 수 없습니다.',
+        confirmText: '검토 요청하기',
+        onConfirm: requestReview,
+      });
+      return;
+    }
+
+    showConfirm({
+      title: '지금 오픈할까요?',
+      description: `진행시간 ${openingForm.durations.map((duration) => `${duration}분`).join(' / ')}, 기간 ${openingForm.feedbackStartDate} ~ ${openingForm.feedbackEndDate} 으로 개설합니다. 개설되면 공개 목록에 바로 노출돼요.`,
+      // 하단 버튼과 같은 문구를 쓰면 모달이 열린 화면에 '오픈하기' 버튼이 둘이 된다.
+      confirmText: '지금 오픈하기',
+      onConfirm: openNow,
+    });
   };
 
   return (
@@ -575,7 +661,11 @@ const OpenSettingsPage = () => {
         </fieldset>
       </div>
 
-      {/* 하단 버튼: 변경사항 있으면 저장, 없으면 오픈하기. 개설 불가면 사유를 한 줄로 붙인다. */}
+      {/*
+        하단 버튼: 변경사항 있으면 저장, 없으면 오픈하기.
+        오픈하기 문구는 상태와 무관하게 고정한다 — 멘토가 외울 버튼은 하나여야 하고,
+        검토 요청인지 실제 개설인지는 확인 모달이 알린다. 막힌 상태면 사유를 한 줄로 붙인다.
+      */}
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-1.5">
         {isDirty ? (
           <button
@@ -592,15 +682,18 @@ const OpenSettingsPage = () => {
               type="button"
               onClick={handleOpen}
               disabled={
-                isCreatingOpening || !canCreateOpening || !hasRequiredFields
+                isCreatingOpening ||
+                isSubmitting ||
+                openAction.kind === 'blocked' ||
+                !hasRequiredFields
               }
               className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isCreatingOpening ? '처리 중...' : '오픈하기'}
+              {isCreatingOpening || isSubmitting ? '처리 중...' : '오픈하기'}
             </button>
-            {openingBlockedReason && (
+            {openAction.kind === 'blocked' && (
               <p className="rounded bg-white/90 px-2 py-0.5 text-xs text-gray-500 shadow-sm">
-                {openingBlockedReason}
+                {openAction.reason}
               </p>
             )}
           </>

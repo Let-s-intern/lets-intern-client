@@ -10,6 +10,7 @@ import type {
 
 const saveMock = vi.fn();
 const createOpeningMock = vi.fn();
+const submitMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
 let openings: OpeningHistoryItem[] | undefined;
@@ -23,6 +24,10 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useCreateLiveMentoringOpeningMutation: () => ({
     mutate: createOpeningMock,
+    isPending: false,
+  }),
+  useSubmitLiveMentoringMutation: () => ({
+    mutate: submitMock,
     isPending: false,
   }),
 }));
@@ -135,9 +140,16 @@ const makeDirty = (title = '이력서 클리닉') =>
     target: { value: title },
   });
 
+/** 오픈하기를 누르고 확인 모달까지 통과시킨다 — 어느 요청이든 확인을 한 번 받는다. */
+const confirmOpen = (confirmText: string) => {
+  fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+  fireEvent.click(screen.getByRole('button', { name: confirmText }));
+};
+
 afterEach(() => {
   saveMock.mockReset();
   createOpeningMock.mockReset();
+  submitMock.mockReset();
   settingsData = undefined;
   openings = undefined;
 });
@@ -419,7 +431,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
     renderApproved();
 
     fillOpeningForm({ duration: '60분' });
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    confirmOpen('지금 오픈하기');
 
     expect(createOpeningMock).toHaveBeenCalledTimes(1);
     expect(createOpeningMock.mock.calls[0][0]).toEqual({
@@ -440,7 +452,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
     renderApproved();
 
     fillOpeningForm();
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    confirmOpen('지금 오픈하기');
 
     expect(screen.getByText('개설되었습니다.')).toBeInTheDocument();
     expect(
@@ -459,7 +471,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
     renderApproved();
 
     fillOpeningForm();
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    confirmOpen('지금 오픈하기');
 
     expect(screen.getByText('개설에 실패했습니다.')).toBeInTheDocument();
     expect(
@@ -480,7 +492,7 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
     renderApproved();
 
     fillOpeningForm();
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    confirmOpen('지금 오픈하기');
 
     expect(
       screen.getByText(
@@ -499,6 +511,155 @@ describe('OpenSettingsPage — 오픈하기는 개설 생성', () => {
   });
 });
 
+/*
+ * 멘토가 알아야 할 버튼은 `오픈하기` 하나다. 승인은 상품 단위로 최초 1회만 필요하므로
+ * 같은 버튼이 승인 전에는 검토 요청(POST /submit)을, 승인 후에는 개설(POST /openings)을 보낸다.
+ * 이 표가 어긋나면 멘토가 아무리 눌러도 오픈이 안 되거나, 승인도 없이 개설이 나간다.
+ */
+describe('OpenSettingsPage — 오픈하기 한 버튼이 상태에 따라 요청을 가른다', () => {
+  const openButton = () => screen.getByRole('button', { name: '오픈하기' });
+
+  it('DRAFT 는 검토 요청을 보낸다 — 개설 요청이 아니다', () => {
+    renderPage({ status: 'DRAFT' });
+
+    confirmOpen('검토 요청하기');
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+    expect(createOpeningMock).not.toHaveBeenCalled();
+  });
+
+  it('REJECTED 도 검토 요청을 보낸다', () => {
+    renderPage({ status: 'REJECTED' });
+
+    confirmOpen('검토 요청하기');
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+    expect(createOpeningMock).not.toHaveBeenCalled();
+  });
+
+  it('APPROVED 는 개설을 보낸다 — 검토 요청이 아니다', () => {
+    renderApproved();
+
+    fillOpeningForm();
+    confirmOpen('지금 오픈하기');
+
+    expect(createOpeningMock).toHaveBeenCalledTimes(1);
+    expect(submitMock).not.toHaveBeenCalled();
+  });
+
+  // 서버 submit 은 바디가 없다 — 여기서 개설 입력을 요구하면 승인도 못 받은 멘토가 막힌다.
+  it('검토 요청은 진행시간·피드백 기간이 비어 있어도 보낼 수 있다', () => {
+    renderPage({ status: 'DRAFT' });
+
+    expect(openButton()).toBeEnabled();
+    confirmOpen('검토 요청하기');
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('타입이 비어 있으면 검토 요청도 막는다', () => {
+    renderPage({ status: 'DRAFT', categories: [] });
+
+    expect(openButton()).toBeDisabled();
+  });
+
+  it('타이틀이 비어 있으면 검토 요청도 막는다', () => {
+    renderPage({ status: 'DRAFT', title: '' });
+
+    expect(openButton()).toBeDisabled();
+  });
+
+  it('확인 전에는 어느 요청도 보내지 않는다', () => {
+    renderPage({ status: 'DRAFT' });
+
+    fireEvent.click(openButton());
+
+    expect(submitMock).not.toHaveBeenCalled();
+    expect(createOpeningMock).not.toHaveBeenCalled();
+  });
+
+  it('확인 모달은 승인 전에 관리자 확인과 재클릭 절차를 알린다', () => {
+    renderPage({ status: 'DRAFT' });
+
+    fireEvent.click(openButton());
+
+    expect(screen.getByText('관리자 검토를 요청할까요?')).toBeVisible();
+    expect(screen.getByText(/첫 오픈은 관리자 확인이 필요해요/)).toBeVisible();
+    expect(
+      screen.getByText(/승인되면 오픈하기를 다시 눌러 개설합니다/),
+    ).toBeVisible();
+  });
+
+  it('확인 모달은 승인 후에 개설 조건과 공개 노출을 알린다', () => {
+    renderApproved();
+
+    fillOpeningForm({ duration: '60분' });
+    fireEvent.click(openButton());
+
+    expect(screen.getByText('지금 오픈할까요?')).toBeVisible();
+    expect(
+      screen.getByText(
+        /진행시간 60분, 기간 2026-07-14 ~ 2026-07-28 으로 개설합니다/,
+      ),
+    ).toBeVisible();
+    expect(screen.getByText(/공개 목록에 바로 노출돼요/)).toBeVisible();
+  });
+
+  it('검토 요청에 성공하면 승인 뒤 다시 누르라고 알린다', () => {
+    submitMock.mockImplementation((_input, options) => options.onSuccess());
+    renderPage({ status: 'DRAFT' });
+
+    confirmOpen('검토 요청하기');
+
+    expect(screen.getByText('검토를 요청했습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText(/오픈하기를 한 번 더 눌러 개설할 수 있어요/),
+    ).toBeInTheDocument();
+  });
+
+  // 서버 submit 은 상세 페이지를 한 번도 저장하지 않아도 같은 409 를 던진다.
+  // 이 화면에서는 상세를 손댈 수 없어 코드만 보여주면 다음 할 일을 알 수 없다.
+  it('검토 요청 실패는 오류 코드와 상세 페이지 저장 안내를 함께 보여준다', () => {
+    submitMock.mockImplementation((_input, options) =>
+      options.onError({
+        status: 409,
+        code: 'LIVE_MENTORING_INVALID_STATE',
+        message: '제출할 수 없는 상태입니다.',
+      }),
+    );
+    renderPage({ status: 'DRAFT' });
+
+    confirmOpen('검토 요청하기');
+
+    expect(screen.getByText('검토 요청에 실패했습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText(/LIVE_MENTORING_INVALID_STATE/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/상세 페이지 설정을 한 번도 저장하지 않았다면/),
+    ).toBeInTheDocument();
+  });
+
+  it('PENDING_REVIEW·INACTIVE·활성 개설에서는 아무 요청도 보내지 않는다', () => {
+    const cases: Array<[Partial<LiveMentoringSettings>, OpeningHistoryItem[]]> =
+      [
+        [{ status: 'PENDING_REVIEW' }, []],
+        [{ status: 'INACTIVE' }, []],
+        [{ status: 'APPROVED' }, [opening('OPEN')]],
+      ];
+
+    for (const [overrides, history] of cases) {
+      const { unmount } = renderPage(overrides, history);
+
+      fireEvent.click(openButton());
+
+      expect(submitMock).not.toHaveBeenCalled();
+      expect(createOpeningMock).not.toHaveBeenCalled();
+      unmount();
+    }
+  });
+});
+
 // 3.4.T1 — isOpen 불리언이 사라져 잠금·활성화는 상품 상태와 개설 이력에서만 나온다.
 describe('OpenSettingsPage — 상태별 편집·개설 가능 여부', () => {
   const openButton = () => screen.getByRole('button', { name: '오픈하기' });
@@ -506,25 +667,19 @@ describe('OpenSettingsPage — 상태별 편집·개설 가능 여부', () => {
   const categoryButton = () =>
     screen.getByRole('button', { name: '자기소개서' });
 
-  it('DRAFT — 상품을 고칠 수 있고, 개설은 승인 안내와 함께 막힌다', () => {
+  it('DRAFT — 상품을 고칠 수 있고, 오픈하기가 열려 있다', () => {
     renderPage({ status: 'DRAFT' });
 
     expect(titleInput()).toBeEnabled();
     expect(categoryButton()).toBeEnabled();
-    expect(openButton()).toBeDisabled();
-    expect(
-      screen.getByText('관리자 승인 후 개설할 수 있어요'),
-    ).toBeInTheDocument();
+    expect(openButton()).toBeEnabled();
   });
 
-  it('REJECTED — 상품을 고칠 수 있고, 재제출 안내를 보여준다', () => {
+  it('REJECTED — 상품을 고칠 수 있고, 오픈하기로 다시 검토를 요청한다', () => {
     renderPage({ status: 'REJECTED' });
 
     expect(titleInput()).toBeEnabled();
-    expect(openButton()).toBeDisabled();
-    expect(
-      screen.getByText('반려됐어요. 수정 후 다시 제출이 필요해요'),
-    ).toBeInTheDocument();
+    expect(openButton()).toBeEnabled();
   });
 
   it('PENDING_REVIEW — 상품이 잠기고 검토 중 안내를 보여준다', () => {
@@ -534,7 +689,7 @@ describe('OpenSettingsPage — 상태별 편집·개설 가능 여부', () => {
     expect(categoryButton()).toBeDisabled();
     expect(openButton()).toBeDisabled();
     expect(
-      screen.getByText('관리자 검토 중이라 수정할 수 없어요'),
+      screen.getByText('관리자 검토 중이에요. 승인되면 오픈할 수 있어요'),
     ).toBeInTheDocument();
   });
 
