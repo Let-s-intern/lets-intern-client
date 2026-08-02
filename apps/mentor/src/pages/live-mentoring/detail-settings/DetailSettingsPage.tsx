@@ -6,7 +6,6 @@ import {
   useLiveMentoringSettingsQuery,
   useLiveMentoringTemplateQuery,
   useStartEditLiveMentoringMutation,
-  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
@@ -29,6 +28,10 @@ import TemplatePreview from './ui/TemplatePreview';
  *
  * 편집 가능 여부는 서버 `LiveMentoringStatus.isEditable()` 을 따른다
  * (`DRAFT`·`REJECTED` 만 편집 가능).
+ *
+ * 검토 요청은 이 화면이 아니라 오픈 설정의 `오픈하기` 버튼이 보낸다. 멘토는 상세 설정을 자주 열지
+ * 않으므로, 다음 할 일은 여기서 누를 버튼이 아니라 오픈 설정으로 가는 길로 안내한다
+ * (배너 우측에 오픈 설정 링크가 붙어 있다).
  */
 const STATUS_NOTICE: Record<
   LiveMentoringStatus,
@@ -37,7 +40,7 @@ const STATUS_NOTICE: Record<
   DRAFT: {
     label: '작성 중',
     description:
-      '상세 작성을 마쳤다면 검토 제출을 눌러주세요. 관리자 승인 후 개설할 수 있습니다.',
+      '상세 작성을 마쳤다면 오픈 설정에서 오픈하기를 누르면 검토가 요청됩니다. 관리자 승인 후 개설할 수 있습니다.',
   },
   PENDING_REVIEW: {
     label: '검토 중',
@@ -51,7 +54,8 @@ const STATUS_NOTICE: Record<
   },
   REJECTED: {
     label: '반려',
-    description: '반려됐습니다. 내용을 수정한 뒤 다시 제출해주세요.',
+    description:
+      '반려됐습니다. 내용을 수정한 뒤 오픈 설정에서 오픈하기를 누르면 다시 검토가 요청됩니다.',
   },
   INACTIVE: {
     label: '비활성',
@@ -90,8 +94,6 @@ const DetailSettingsPage = () => {
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
-  const { mutate: submitForReview, isPending: isSubmitting } =
-    useSubmitLiveMentoringMutation();
   const { mutate: startEdit, isPending: isStartingEdit } =
     useStartEditLiveMentoringMutation();
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
@@ -187,8 +189,6 @@ const DetailSettingsPage = () => {
       ? ACTIVE_OPENING_NOTICE
       : STATUS_NOTICE[status];
 
-  /** 검토 제출 가능 상태 — 서버 `LiveMentoringStatus.canTransitionTo` 와 같다. 활성 개설은 조건이 아니다. */
-  const canSubmitForReview = status === 'DRAFT' || status === 'REJECTED';
   /** 수정 시작은 `APPROVED` 에서만, 활성 개설이 없을 때만 가능하다 — 서버 `startEditing()`. */
   const canStartEdit = status === 'APPROVED';
 
@@ -233,46 +233,22 @@ const DetailSettingsPage = () => {
   };
 
   /**
-   * 검토 제출 — 성공하면 `PENDING_REVIEW` 가 되어 편집이 잠기므로 한 번 되묻는다.
-   * 되돌리는 경로는 관리자 승인·반려뿐이라 멘토가 스스로 취소할 수 없다.
+   * 수정 시작 — 승인본이 `DRAFT` 로 돌아가 공개 노출에서 빠지므로 한 번 되묻는다.
+   * 되돌리면 재승인이 필요하다는 것과, 그 재승인이 어디서 시작되는지를 함께 알린다.
    */
-  const handleSubmitForReview = () => {
-    showConfirm({
-      title: '관리자 검토를 요청할까요?',
-      description:
-        '제출하면 검토가 끝날 때까지 상세 페이지를 수정할 수 없습니다.',
-      confirmText: '제출하기',
-      onConfirm: () =>
-        submitForReview(undefined, {
-          onSuccess: () =>
-            showAlert({
-              title: '검토를 요청했습니다.',
-              description: '관리자 검토 결과를 기다려주세요.',
-              variant: 'success',
-            }),
-          onError: (error) =>
-            showAlert({
-              title: '검토 제출에 실패했습니다.',
-              description: transitionErrorDescription(error),
-              variant: 'error',
-            }),
-        }),
-    });
-  };
-
-  /** 수정 시작 — 승인본이 `DRAFT` 로 돌아가 공개 노출에서 빠지므로 한 번 되묻는다. */
   const handleStartEdit = () => {
     showConfirm({
       title: '수정을 시작할까요?',
       description:
-        '승인 상태가 초안으로 돌아가고, 다시 제출해 승인받아야 개설할 수 있습니다.',
+        '승인이 취소되고 초안으로 돌아갑니다. 다시 승인받아야 개설할 수 있고, 재승인은 오픈 설정에서 오픈하기를 눌러 요청합니다.',
       confirmText: '수정 시작하기',
       onConfirm: () =>
         startEdit(undefined, {
           onSuccess: () =>
             showAlert({
               title: '수정을 시작했습니다.',
-              description: '내용을 고친 뒤 다시 검토를 제출해주세요.',
+              description:
+                '내용을 고친 뒤 오픈 설정에서 오픈하기를 누르면 다시 검토가 요청됩니다.',
               variant: 'success',
             }),
           onError: (error) =>
@@ -341,7 +317,8 @@ const DetailSettingsPage = () => {
       {/*
         하단 고정 액션 —
         편집 모드: 취소 / 저장하기,
-        읽기 모드: 수정하기 / 검토 제출 / 수정 시작 / 오픈하러 가기 중 상태가 허용하는 것만.
+        읽기 모드: 수정하기 / 수정 시작 / 오픈하러 가기 중 상태가 허용하는 것만.
+        검토 요청 버튼은 여기 두지 않는다 — 오픈 설정의 오픈하기 하나로 모았다.
       */}
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
         {canStartEdit && hasActiveOpening && (
@@ -378,16 +355,6 @@ const DetailSettingsPage = () => {
                   className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
                 >
                   수정하기
-                </button>
-              )}
-              {canSubmitForReview && (
-                <button
-                  type="button"
-                  onClick={handleSubmitForReview}
-                  disabled={isSubmitting}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSubmitting ? '제출 중...' : '검토 제출'}
                 </button>
               )}
               {canStartEdit && (
