@@ -736,14 +736,144 @@ function toOpeningDto(card: LiveMentorCard) {
   };
 }
 
+/** 오픈채팅방 QA용 링크 — 실제 열리는 카카오 오픈채팅 도메인 형태. */
+const MOCK_CHAT_LINK = 'https://open.kakao.com/o/gMockChat';
+
+const daysFromNow = (days: number) =>
+  new Date(now.getTime() + days * DAY_MS).toISOString();
+
+/**
+ * (마이페이지 신청현황) 프로그램 신청 시드 — LC-3190 오픈채팅방 입장 버튼 QA.
+ *
+ * 액션 버튼 노출 규칙이 세 조건(프로그램 타입 · chatLink 유무 · 참여 상태)의 곱이라
+ * 한 화면에서 6가지 경우를 모두 눈으로 비교할 수 있게 배치한다.
+ * 각 섹션은 데스크톱에서 3개까지 노출되므로 섹션당 3개를 넘기지 않는다.
+ *
+ *  참여예정  1) 코드 있음   → 오픈채팅방만 (클릭 시 참여코드 모달)
+ *            2) 코드 없음   → 오픈채팅방만 (클릭 시 새 탭 직행)
+ *  참여중    3) 베이직      → 대시보드 입장 + 오픈채팅방 (버튼 2개 레이아웃)
+ *            4) 라이트      → 오픈채팅방만 (라이트는 대시보드 진입 불가)
+ *            5) 라이브      → 클래스 입장만 (챌린지 아님 = 회귀 확인)
+ *  참여완료  6) 링크 있음   → 대시보드 입장만 (종료 후 오픈채팅방 숨김)
+ */
+const MOCK_PROGRAM_APPLICATIONS = [
+  {
+    id: 5001,
+    programId: 4001,
+    programType: 'CHALLENGE',
+    programStatusType: 'PREV',
+    programTitle: '[QA] 참여예정 · 참여코드 있음',
+    programShortDesc: '클릭하면 참여코드 모달이 떠야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(14),
+    programEndDate: daysFromNow(45),
+    createDate: daysFromNow(-2),
+    status: 'WAITING',
+    pricePlanType: 'PREMIUM',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5002,
+    programId: 4002,
+    programType: 'CHALLENGE',
+    programStatusType: 'PREV',
+    programTitle: '[QA] 참여예정 · 참여코드 없음',
+    programShortDesc: '모달 없이 새 탭으로 바로 이동해야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(20),
+    programEndDate: daysFromNow(50),
+    createDate: daysFromNow(-1),
+    status: 'WAITING',
+    pricePlanType: 'BASIC',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: null,
+  },
+  {
+    id: 5003,
+    programId: 4003,
+    programType: 'CHALLENGE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 베이직 (버튼 2개)',
+    programShortDesc: '대시보드 입장과 오픈채팅방 입장이 같이 보여야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-7),
+    programEndDate: daysFromNow(21),
+    createDate: daysFromNow(-20),
+    status: 'IN_PROGRESS',
+    pricePlanType: 'BASIC',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5004,
+    programId: 4004,
+    programType: 'CHALLENGE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 라이트',
+    programShortDesc: '라이트는 대시보드에 못 들어가므로 오픈채팅방만 보인다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-5),
+    programEndDate: daysFromNow(25),
+    createDate: daysFromNow(-18),
+    status: 'IN_PROGRESS',
+    pricePlanType: 'LIGHT',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5005,
+    programId: 4005,
+    programType: 'LIVE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 라이브 클래스',
+    programShortDesc: '챌린지가 아니므로 클래스 입장만 보여야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-3),
+    programEndDate: daysFromNow(10),
+    createDate: daysFromNow(-15),
+    status: 'IN_PROGRESS',
+    pricePlanType: null,
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5006,
+    programId: 4006,
+    programType: 'CHALLENGE',
+    programStatusType: 'POST',
+    programTitle: '[QA] 참여완료 · 링크 있음',
+    programShortDesc: '종료된 챌린지는 오픈채팅방 버튼을 감춘다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-60),
+    programEndDate: daysFromNow(-30),
+    createDate: daysFromNow(-70),
+    status: 'DONE',
+    pricePlanType: 'STANDARD',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+];
+
 export const handlers = [
   /**
    * (마이페이지) GET /user/applications — 신청현황 탭의 프로그램 신청목록.
-   * 출시알림 탭 QA에서 페이지(ApplicationContent)가 백엔드 없이 렌더되도록
-   * 빈 목록을 반환한다. 프로그램/가이드북/VOD 탭은 빈 상태로 보인다.
+   *
+   * LC-3190 오픈채팅방 입장 버튼 QA 시드를 반환한다(MOCK_PROGRAM_APPLICATIONS).
+   * chatLink/chatPassword 는 BE 미배포 필드라 여기서 먼저 넣어 화면을 검증한다.
+   * 출시알림 탭 QA 는 이 목록과 무관하게 /magnet/mypage 를 쓴다.
    */
   http.get('*/user/applications', () => {
-    return HttpResponse.json({ status: 200, data: { applicationList: [] } });
+    return HttpResponse.json({
+      status: 200,
+      data: { applicationList: MOCK_PROGRAM_APPLICATIONS },
+    });
   }),
 
   /**
