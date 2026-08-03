@@ -54,6 +54,15 @@ const navData = [
     ],
   },
   {
+    title: '결제 관리',
+    itemList: [
+      {
+        name: '전액 환불 히스토리',
+        url: '/refund-history',
+      },
+    ],
+  },
+  {
     title: '사용자 관리',
     itemList: [
       {
