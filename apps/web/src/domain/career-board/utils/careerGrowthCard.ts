@@ -26,6 +26,11 @@ export interface CareerGrowthCardConfig {
   contentFileUrl?: string;
   downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
+  /** 오픈채팅방 입장 버튼. 챌린지에서만 채워진다. */
+  openChat?: {
+    link: string;
+    password?: string;
+  };
   actionButton?: {
     label: string;
     disabled?: boolean;
@@ -62,6 +67,11 @@ export const toProgramCardConfig = (
     dateText: period,
     purchasePlanText:
       isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
+    // 커리어 성장은 참여중·참여예정만 노출하므로 종료 여부를 따로 볼 필요가 없다.
+    openChat:
+      isChallenge && item.chatLink
+        ? { link: item.chatLink, password: item.chatPassword || undefined }
+        : undefined,
     actionButton: isChallenge
       ? isMembershipChallengeProgram(item.programId)
         ? {
