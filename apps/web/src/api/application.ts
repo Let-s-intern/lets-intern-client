@@ -311,6 +311,10 @@ export const mypageApplicationsSchema = z
         contentUrl: z.string().nullable().optional(),
         contentFileUrl: z.string().nullable().optional(),
         isDownloaded: z.boolean().nullable().optional(),
+        // 챌린지 오픈채팅방. 어드민이 챌린지 기본정보에서 입력한 값(Challenge.chatLink/chatPassword)이며
+        // BE 응답 추가 전까지는 undefined 라 오픈채팅방 버튼이 렌더되지 않는다.
+        chatLink: z.string().nullable().optional(),
+        chatPassword: z.string().nullable().optional(),
       }),
     ),
   })
