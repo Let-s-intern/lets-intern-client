@@ -1,10 +1,12 @@
 import { IPageable } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   adminChallengeMentorListSchema,
   adminUserMentorList,
+  mentorHashTagListSchema,
+  type MentorHashTagReq,
   type PatchAttendanceMentorReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
@@ -99,6 +101,73 @@ export const usePatchAttendanceMentorMutation = () => {
     ) => {
       const { attendanceId, ...body } = data;
       return axios.patch(`/attendance/${attendanceId}/mentor`, body);
+    },
+  });
+};
+
+export const AdminMentorHashTagQueryKey = 'adminMentorHashTagListQuery';
+
+/** GET 멘토 해시태그 목록 조회 /api/v1/admin/mentor-hash-tag */
+export const useAdminMentorHashTagListQuery = () => {
+  return useQuery({
+    queryKey: [AdminMentorHashTagQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/mentor-hash-tag');
+      return mentorHashTagListSchema.parse(res.data).mentorHashTagList;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** POST 멘토 해시태그 생성 /api/v1/admin/mentor-hash-tag */
+export const usePostAdminMentorHashTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: MentorHashTagReq) => {
+      const res = await axios.post('/admin/mentor-hash-tag', body);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminMentorHashTagQueryKey],
+      });
+    },
+  });
+};
+
+/** PATCH 멘토 해시태그 수정 /api/v1/admin/mentor-hash-tag/{mentorHashTagId} */
+export const usePatchAdminMentorHashTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      mentorHashTagId,
+      ...body
+    }: MentorHashTagReq & { mentorHashTagId: number }) => {
+      const res = await axios.patch(
+        `/admin/mentor-hash-tag/${mentorHashTagId}`,
+        body,
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminMentorHashTagQueryKey],
+      });
+    },
+  });
+};
+
+/** DELETE 멘토 해시태그 삭제 /api/v1/admin/mentor-hash-tag/{mentorHashTagId} */
+export const useDeleteAdminMentorHashTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (mentorHashTagId: number) => {
+      return axios.delete(`/admin/mentor-hash-tag/${mentorHashTagId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminMentorHashTagQueryKey],
+      });
     },
   });
 };
