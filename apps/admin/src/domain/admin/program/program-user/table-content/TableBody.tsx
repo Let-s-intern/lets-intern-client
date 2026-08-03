@@ -5,6 +5,7 @@ import {
   ProgramTypeUpperCase,
   VodApplication,
 } from '@/schema';
+import { RefundTarget } from '../ui/RefundModal';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
@@ -15,6 +16,10 @@ interface UserTableBodyProps {
     | VodApplication
   )[];
   programType: ProgramTypeUpperCase;
+  programTitle: string;
+  /** 어드민 환불로 취소된 신청서 id. 유저 환불과 라벨을 구분하는 데 쓴다. */
+  adminRefundedIds: Set<number>;
+  onRefundClick: (target: RefundTarget) => void;
 }
 
 const getRowKey = (
@@ -31,7 +36,13 @@ const getRowKey = (
   return (item as LiveApplication | GuidebookApplication | VodApplication).id;
 };
 
-const UserTableBody = ({ applications, programType }: UserTableBodyProps) => {
+const UserTableBody = ({
+  applications,
+  programType,
+  programTitle,
+  adminRefundedIds,
+  onRefundClick,
+}: UserTableBodyProps) => {
   return (
     <tbody>
       {applications.map((item) => (
@@ -39,6 +50,9 @@ const UserTableBody = ({ applications, programType }: UserTableBodyProps) => {
           key={getRowKey(item, programType)}
           applicationItem={item}
           programType={programType}
+          programTitle={programTitle}
+          adminRefundedIds={adminRefundedIds}
+          onRefundClick={onRefundClick}
         />
       ))}
     </tbody>
