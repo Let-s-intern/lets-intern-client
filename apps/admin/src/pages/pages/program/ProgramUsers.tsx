@@ -1,4 +1,12 @@
+import {
+  useAdminRefundedApplicationIds,
+  useAdminRefundMutation,
+} from '@/api/adminRefund';
 import BottomAction from '@/domain/admin/program/program-user/bottom-action/BottomAction';
+import RefundModal, {
+  RefundTarget,
+} from '@/domain/admin/program/program-user/ui/RefundModal';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import UserTableBody from '@/domain/admin/program/program-user/table-content/TableBody';
 import TableHead, {
   UserTableHeadProps,
@@ -221,6 +229,22 @@ const ProgramUsers = () => {
 
   const programTitle = programTitleData?.data?.title;
 
+  const { snackbar } = useAdminSnackbar();
+  const [refundTarget, setRefundTarget] = useState<RefundTarget | null>(null);
+
+  // 어드민 환불 건만 따로 받아 라벨을 구분한다. 신청자 API 에 필드를 추가하는 대신
+  // 이 조회로 매칭하면 프로그램 타입 네 개의 응답을 건드리지 않아도 된다.
+  const adminRefundedIds = useAdminRefundedApplicationIds(programId);
+
+  const refundMutation = useAdminRefundMutation({
+    onSuccess: (refundedAmount) => {
+      setRefundTarget(null);
+      snackbar(`${refundedAmount.toLocaleString()}원이 환불되었습니다.`);
+    },
+    // 서버 메시지를 그대로 보여준다. 뭉개면 운영이 다음 행동을 정할 수 없다.
+    onError: (message) => snackbar(message),
+  });
+
   return (
     <div className="p-8">
       <div className="mb-4 flex items-center justify-between">
@@ -271,6 +295,9 @@ const ProgramUsers = () => {
           <UserTableBody
             applications={filteredApplicationList}
             programType={programType as ProgramTypeUpperCase}
+            programTitle={programTitle ?? ''}
+            adminRefundedIds={adminRefundedIds}
+            onRefundClick={setRefundTarget}
           />
         </Table>
       </main>
@@ -280,6 +307,20 @@ const ProgramUsers = () => {
         programType={programType}
         programTitle={programTitle}
       />
+
+      {refundTarget && (
+        <RefundModal
+          target={refundTarget}
+          isSubmitting={refundMutation.isPending}
+          onSubmit={(body) =>
+            refundMutation.mutate({
+              applicationId: refundTarget.applicationId,
+              body,
+            })
+          }
+          onClose={() => setRefundTarget(null)}
+        />
+      )}
     </div>
   );
 };

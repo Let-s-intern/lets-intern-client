@@ -53,6 +53,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
           </>
         )}
         <TH>신청일자</TH>
+        <TH>관리</TH>
       </tr>
     </thead>
   );
