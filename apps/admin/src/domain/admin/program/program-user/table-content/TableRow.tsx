@@ -185,7 +185,7 @@ const TableRow = ({
             className="rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
             onClick={handleRefundClick}
           >
-            전액 환불
+            환불
           </button>
         ) : (
           <span className="text-xs text-gray-400">{refundable.reason}</span>
