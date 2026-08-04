@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { useMentorHashTagListQuery } from '@/api/mentor/mentor';
 
 import FilterChips from '../ui/FilterChips';
@@ -26,21 +24,19 @@ const MentorFilterSection = ({
   onChange,
 }: MentorFilterSectionProps) => {
   const { data } = useMentorHashTagListQuery();
-  const hashTags = useMemo(() => data ?? [], [data]);
+  const hashTags = data ?? [];
 
-  const groups = useMemo(() => {
-    const byType = new Map<string, { value: string; label: string }[]>();
-    for (const tag of hashTags) {
-      const options = byType.get(tag.type) ?? [];
-      options.push({ value: String(tag.id), label: tag.title });
-      byType.set(tag.type, options);
-    }
-    return Array.from(byType.entries()).map(([type, options]) => ({
-      type,
-      label: getTypeLabel(type),
-      options: [ALL_OPTION, ...options],
-    }));
-  }, [hashTags]);
+  const byType = new Map<string, { value: string; label: string }[]>();
+  for (const tag of hashTags) {
+    const options = byType.get(tag.type) ?? [];
+    options.push({ value: String(tag.id), label: tag.title });
+    byType.set(tag.type, options);
+  }
+  const groups = Array.from(byType.entries()).map(([type, options]) => ({
+    type,
+    label: getTypeLabel(type),
+    options: [ALL_OPTION, ...options],
+  }));
 
   return (
     <section className="mt-12 flex w-full flex-col gap-10">
