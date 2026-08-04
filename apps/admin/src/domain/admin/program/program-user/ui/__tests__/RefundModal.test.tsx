@@ -2,7 +2,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import RefundModal, { CONFIRM_SENTENCE, RefundTarget } from '../RefundModal';
+import { buildRefundConfirmSentence } from '../../utils/refundConfirm';
+import RefundModal, { RefundTarget } from '../RefundModal';
+
+const FULL_SENTENCE = buildRefundConfirmSentence({
+  isFullRefund: true,
+  refundAmount: 330000,
+});
 
 const target: RefundTarget = {
   applicationId: 5001,
@@ -34,13 +40,6 @@ const amountInput = () => screen.getByLabelText('환불 금액');
 const submitButton = () => screen.getByRole('button', { name: '환불 실행' });
 const confirmInput = () => screen.getByLabelText('확인 문장');
 
-/** 금액 외 조건을 모두 채운다. 금액 검증만 남긴다. */
-const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.type(screen.getByLabelText('담당자'), '임호정');
-  await user.type(screen.getByLabelText('환불 사유'), '프로그램 오결제');
-  await user.type(confirmInput(), CONFIRM_SENTENCE);
-};
-
 const setAmount = async (
   user: ReturnType<typeof userEvent.setup>,
   value: string,
@@ -48,6 +47,22 @@ const setAmount = async (
   await user.clear(amountInput());
   if (value) await user.type(amountInput(), value);
 };
+
+/**
+ * 담당자·사유와 확인 문장을 채운다.
+ *
+ * 문장은 금액에 따라 달라지므로 화면에 떠 있는 문장을 그대로 옮겨 적는다.
+ * 금액을 바꾼 뒤에 호출해야 한다.
+ */
+const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.type(screen.getByLabelText('담당자'), '임호정');
+  await user.type(screen.getByLabelText('환불 사유'), '프로그램 오결제');
+  await user.type(confirmInput(), currentSentence());
+};
+
+/** 화면이 제시하는 확인 문장. 실행 버튼 바로 위에 그대로 적혀 있다. */
+const currentSentence = () =>
+  screen.getByText(/이 유저를|이 유저에게/).textContent ?? '';
 
 describe('RefundModal 환불 금액', () => {
   it('기본값은 실결제액이다', () => {
@@ -79,8 +94,8 @@ describe('RefundModal 환불 금액', () => {
     const user = userEvent.setup();
     renderModal();
 
-    await fillRequiredFields(user);
     await setAmount(user, '330001');
+    await fillRequiredFields(user);
 
     expect(
       screen.getByText('실결제액 330,000원을 넘을 수 없습니다.'),
@@ -92,8 +107,8 @@ describe('RefundModal 환불 금액', () => {
     const user = userEvent.setup();
     const { onSubmit } = renderModal();
 
-    await fillRequiredFields(user);
     await setAmount(user, '330000');
+    await fillRequiredFields(user);
     await user.click(submitButton());
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -106,8 +121,8 @@ describe('RefundModal 환불 금액', () => {
     const user = userEvent.setup();
     renderModal();
 
-    await fillRequiredFields(user);
     await setAmount(user, '0');
+    await fillRequiredFields(user);
 
     expect(
       screen.getByText('환불 금액은 1원 이상이어야 합니다.'),
@@ -119,8 +134,8 @@ describe('RefundModal 환불 금액', () => {
     const user = userEvent.setup();
     renderModal();
 
-    await fillRequiredFields(user);
     await setAmount(user, '');
+    await fillRequiredFields(user);
 
     expect(submitButton()).toBeDisabled();
   });
@@ -129,8 +144,8 @@ describe('RefundModal 환불 금액', () => {
     const user = userEvent.setup();
     const { onSubmit } = renderModal();
 
-    await fillRequiredFields(user);
     await setAmount(user, '1');
+    await fillRequiredFields(user);
     await user.click(submitButton());
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -145,6 +160,43 @@ describe('RefundModal 환불 금액', () => {
 
     await fillRequiredFields(user);
 
+    expect(submitButton()).toBeDisabled();
+  });
+});
+
+describe('RefundModal 확인 문장', () => {
+  it('전액이면 전체 환불 문장을 요구한다', () => {
+    renderModal();
+
+    expect(
+      screen.getByText(
+        '이 유저를 전체 환불 시킵니다. 이 유저는 대시보드에 입장할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('부분이면 금액이 들어간 문장으로 바뀐다', async () => {
+    // 문장이 실제 결과와 다르면 확인 절차가 무의미해진다.
+    const user = userEvent.setup();
+    renderModal();
+
+    await setAmount(user, '220000');
+
+    expect(
+      screen.getByText(
+        '이 유저에게 220,000원을 환불합니다. 이 유저는 대시보드에 입장할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('금액을 바꾸면 이전 문장으로는 실행할 수 없다', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await fillRequiredFields(user);
+    expect(submitButton()).toBeEnabled();
+
+    await setAmount(user, '220000');
     expect(submitButton()).toBeDisabled();
   });
 });
@@ -165,7 +217,7 @@ describe('RefundModal 실행 조건', () => {
     const user = userEvent.setup();
     renderModal();
 
-    await user.type(confirmInput(), CONFIRM_SENTENCE);
+    await user.type(confirmInput(), FULL_SENTENCE);
     expect(submitButton()).toBeDisabled();
 
     await user.type(screen.getByLabelText('담당자'), '임호정');

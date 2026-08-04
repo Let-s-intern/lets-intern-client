@@ -1,10 +1,7 @@
 import { AdminRefundRequest } from '@/api/adminRefund';
 import { ChallengePricePlanEnum } from '@/schema';
 import { useMemo, useState } from 'react';
-
-/** 실행 전에 그대로 입력해야 하는 문장. 클릭 두 번으로 남의 결제가 취소되는 것을 막는다. */
-export const CONFIRM_SENTENCE =
-  '이 유저를 전체 환불 시킵니다. 이 유저는 대시보드에 입장할 수 없습니다.';
+import { buildRefundConfirmSentence } from '../utils/refundConfirm';
 
 export interface RefundTarget {
   applicationId: number;
@@ -75,14 +72,26 @@ const RefundModal = ({
     return null;
   }, [refundAmount, target.finalPrice]);
 
+  const confirmSentence = buildRefundConfirmSentence({
+    isFullRefund: refundAmount === target.finalPrice,
+    refundAmount,
+  });
+
   const canSubmit = useMemo(
     () =>
       !isSubmitting &&
       !amountError &&
       managerName.trim().length > 0 &&
       reason.trim().length > 0 &&
-      normalize(confirmText) === normalize(CONFIRM_SENTENCE),
-    [isSubmitting, amountError, managerName, reason, confirmText],
+      normalize(confirmText) === normalize(confirmSentence),
+    [
+      isSubmitting,
+      amountError,
+      managerName,
+      reason,
+      confirmText,
+      confirmSentence,
+    ],
   );
 
   const handleSubmit = () => {
@@ -123,9 +132,7 @@ const RefundModal = ({
           <dd>{formatCoupon(target.couponName, target.couponDiscount)}</dd>
 
           <dt className="text-neutral-500">실결제액</dt>
-          <dd className="font-bold">
-            {target.finalPrice.toLocaleString()}원
-          </dd>
+          <dd className="font-bold">{target.finalPrice.toLocaleString()}원</dd>
         </dl>
 
         <div className="mb-3">
@@ -153,7 +160,8 @@ const RefundModal = ({
             <p className="mt-1 text-sm text-red-600">{amountError}</p>
           ) : (
             <p className="mt-1 text-sm text-neutral-500">
-              최대 {target.finalPrice.toLocaleString()}원까지 환불할 수 있습니다.
+              최대 {target.finalPrice.toLocaleString()}원까지 환불할 수
+              있습니다.
             </p>
           )}
         </div>
@@ -191,7 +199,7 @@ const RefundModal = ({
           <p className="mb-2 text-sm text-neutral-600">
             아래 문장을 그대로 입력해야 실행됩니다.
           </p>
-          <p className="mb-2 text-sm font-medium">{CONFIRM_SENTENCE}</p>
+          <p className="mb-2 text-sm font-medium">{confirmSentence}</p>
           <input
             className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
             aria-label="확인 문장"
