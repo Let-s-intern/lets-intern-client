@@ -57,12 +57,16 @@ export const adminRefundRequestSchema = z.object({
   reason: z.string().min(1),
   sendNotification: z.boolean(),
   /**
-   * 환불 금액. 0 초과, 실결제액 이하의 정수다.
+   * 환불 금액. 보내지 않으면 전체 환불이고 서버가 payment.finalPrice 를 쓴다.
+   *
+   * 값을 보내면 부분 환불이라 0 초과, 실결제액 미만의 정수여야 한다. 실결제액과 같은
+   * 금액은 서버가 거절한다 — 전체 환불로 요청하라는 뜻이다.
    *
    * 0 을 허용하면 토스가 취소 요청을 조용히 무시해 "성공했는데 돈이 안 나간" 상태가 된다.
-   * 화면에서도 막지만 여기서 한 번 더 거른다.
+   * 다만 실결제액이 0원인 결제(100% 할인 쿠폰, 어드민 테스트 참여)는 전체 환불 경로로만
+   * 처리되므로 여기를 지나지 않는다.
    */
-  refundAmount: z.number().int().positive(),
+  refundAmount: z.number().int().positive().optional(),
 });
 export type AdminRefundRequest = z.infer<typeof adminRefundRequestSchema>;
 

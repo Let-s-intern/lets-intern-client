@@ -120,6 +120,15 @@ describe('adminRefundRequestSchema', () => {
     );
   });
 
+  it('금액이 없으면 전체 환불로 통과시킨다', () => {
+    // 서버가 payment.finalPrice 를 쓴다. 실결제액이 0원인 건도 이 경로로만 취소된다.
+    const { refundAmount: _refundAmount, ...fullRequest } = validRequest;
+
+    const parsed = adminRefundRequestSchema.parse(fullRequest);
+
+    expect(parsed).not.toHaveProperty('refundAmount');
+  });
+
   it('0원 환불을 거절한다', () => {
     // TossProvider 가 cancelAmount 0 을 조용히 무시한다.
     // 성공 응답을 받고도 돈이 나가지 않은 상태가 된다.
