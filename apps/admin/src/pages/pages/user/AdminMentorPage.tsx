@@ -11,7 +11,6 @@ import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 
 const PAGE_SIZE = 1000;
 
@@ -126,13 +125,12 @@ function MentorManagementTable() {
 
 export default function AdminMentorPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState(0);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (newValue === 1) {
       navigate('/mentors/register');
-    } else {
-      setTab(newValue);
+    } else if (newValue === 2) {
+      navigate('/mentors/keywords');
     }
   };
 
@@ -140,9 +138,10 @@ export default function AdminMentorPage() {
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <Tabs value={tab} onChange={handleTabChange} className="mb-4">
+      <Tabs value={0} onChange={handleTabChange} className="mb-4">
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
+        <Tab label="멘토 키워드" />
       </Tabs>
 
       <MentorManagementTable />
