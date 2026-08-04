@@ -57,14 +57,32 @@ const RefundModal = ({
   const [reason, setReason] = useState('');
   const [sendNotification, setSendNotification] = useState(true);
   const [confirmText, setConfirmText] = useState('');
+  // 기본값은 실결제액이다. 대부분의 건이 전액이라 그대로 실행하는 쪽이 오타를 줄인다.
+  const [amountInput, setAmountInput] = useState(String(target.finalPrice));
+
+  const refundAmount = amountInput === '' ? 0 : Number(amountInput);
+
+  /**
+   * 규정상 환불액을 계산해 보여주지 않는다.
+   * 어드민 환불은 애초에 규정을 무시하는 작업이라 규정값이 판단 근거가 되지 않는다.
+   * 금액은 CS 협의값이고 화면은 상한(실결제액)만 알려준다.
+   */
+  const amountError = useMemo(() => {
+    if (refundAmount <= 0) return '환불 금액은 1원 이상이어야 합니다.';
+    if (refundAmount > target.finalPrice) {
+      return `실결제액 ${target.finalPrice.toLocaleString()}원을 넘을 수 없습니다.`;
+    }
+    return null;
+  }, [refundAmount, target.finalPrice]);
 
   const canSubmit = useMemo(
     () =>
       !isSubmitting &&
+      !amountError &&
       managerName.trim().length > 0 &&
       reason.trim().length > 0 &&
       normalize(confirmText) === normalize(CONFIRM_SENTENCE),
-    [isSubmitting, managerName, reason, confirmText],
+    [isSubmitting, amountError, managerName, reason, confirmText],
   );
 
   const handleSubmit = () => {
@@ -73,14 +91,14 @@ const RefundModal = ({
       managerName: managerName.trim(),
       reason: reason.trim(),
       sendNotification,
-      refundAmount: target.finalPrice,
+      refundAmount,
     });
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-md bg-white p-6">
-        <h2 className="text-1.25-bold mb-4">전액 환불</h2>
+        <h2 className="text-1.25-bold mb-4">환불</h2>
 
         <dl className="mb-5 grid grid-cols-[7rem_1fr] gap-y-2 text-sm">
           <dt className="text-neutral-500">참여자</dt>
@@ -104,13 +122,41 @@ const RefundModal = ({
           <dt className="text-neutral-500">쿠폰</dt>
           <dd>{formatCoupon(target.couponName, target.couponDiscount)}</dd>
 
-          <dt className="text-neutral-500">환불 금액</dt>
+          <dt className="text-neutral-500">실결제액</dt>
           <dd className="font-bold">
-            {target.finalPrice > 0
-              ? `${target.finalPrice.toLocaleString()}원 (실결제액 전액)`
-              : '0원 (결제 금액 없음)'}
+            {target.finalPrice.toLocaleString()}원
           </dd>
         </dl>
+
+        <div className="mb-3">
+          <span className="mb-1 block text-sm text-neutral-500">환불 금액</span>
+          <div className="flex items-center gap-2">
+            <input
+              className="w-40 rounded border border-neutral-300 px-3 py-2 text-right text-sm"
+              inputMode="numeric"
+              aria-label="환불 금액"
+              value={amountInput === '' ? '' : refundAmount.toLocaleString()}
+              onChange={(e) =>
+                setAmountInput(e.target.value.replace(/[^0-9]/g, ''))
+              }
+            />
+            <span className="text-sm">원</span>
+            <button
+              type="button"
+              className="rounded border border-neutral-300 px-3 py-2 text-sm"
+              onClick={() => setAmountInput(String(target.finalPrice))}
+            >
+              전액
+            </button>
+          </div>
+          {amountError ? (
+            <p className="mt-1 text-sm text-red-600">{amountError}</p>
+          ) : (
+            <p className="mt-1 text-sm text-neutral-500">
+              최대 {target.finalPrice.toLocaleString()}원까지 환불할 수 있습니다.
+            </p>
+          )}
+        </div>
 
         <label className="mb-3 block">
           <span className="mb-1 block text-sm text-neutral-500">담당자</span>
@@ -148,6 +194,7 @@ const RefundModal = ({
           <p className="mb-2 text-sm font-medium">{CONFIRM_SENTENCE}</p>
           <input
             className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            aria-label="확인 문장"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
           />
