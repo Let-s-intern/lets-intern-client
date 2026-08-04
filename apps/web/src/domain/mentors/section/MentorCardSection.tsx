@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import { mentorListQueryOptions } from '@/api/mentor/mentor';
+import Logo from '@/assets/logo/logo_gray.svg?react';
+import OutlinedButton from '@/common/button/OutlinedButton';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/common/pagination/MuiPagination';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
@@ -16,9 +18,13 @@ const MOBILE_PAGE_SIZE = 8;
 
 interface MentorCardSectionProps {
   hashTagIdList: number[];
+  onResetFilters: () => void;
 }
 
-const MentorCardSection = ({ hashTagIdList }: MentorCardSectionProps) => {
+const MentorCardSection = ({
+  hashTagIdList,
+  onResetFilters,
+}: MentorCardSectionProps) => {
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
   const pageSize = isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE;
 
@@ -62,8 +68,17 @@ const MentorCardSection = ({ hashTagIdList }: MentorCardSectionProps) => {
 
   if (mentors.length === 0) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-        조건에 맞는 멘토가 없습니다.
+      <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-8 py-20">
+        <div className="flex w-full flex-col items-center gap-6">
+          <Logo width={34} height={34} />
+          <div className="text-neutral-20 text-xsmall16 flex flex-col items-center gap-1 text-center">
+            <p>선택한 조건에 맞는 멘토가 없어요.</p>
+            <p>관심 직무나 취업 고민을 변경해 보세요!</p>
+          </div>
+        </div>
+        <OutlinedButton onClick={onResetFilters} size="sm">
+          다른 멘토 둘러보기
+        </OutlinedButton>
       </div>
     );
   }
