@@ -117,6 +117,23 @@ const finalPriceOf = (applicationId: number) =>
   mockApplications.find((application) => application.id === applicationId)
     ?.finalPrice ?? null;
 
+/**
+ * 환불 후 결제 행의 흔적.
+ *
+ * Payment.updateRefundPrice 가 원 결제액을 originalPrice 로 옮기고 finalPrice 에
+ * 환불액을 덮어쓴다. 참여자 목록 라벨이 이 두 값으로 전체·부분을 가르므로 목도 같이 옮긴다.
+ */
+const markRefunded = (applicationId: number, refundAmount: number) => {
+  const application = mockApplications.find(
+    (item) => item.id === applicationId,
+  );
+  if (!application) return;
+
+  application.originalPrice = application.finalPrice;
+  application.finalPrice = refundAmount;
+  application.isCanceled = true;
+};
+
 export const adminRefundHandlers = [
   http.post(
     `${BASE}/admin/application/:applicationId/refund`,
@@ -185,6 +202,8 @@ export const adminRefundHandlers = [
       }
 
       const now = new Date().toISOString();
+
+      markRefunded(applicationId, refundAmount);
 
       refundLogs = [
         {
