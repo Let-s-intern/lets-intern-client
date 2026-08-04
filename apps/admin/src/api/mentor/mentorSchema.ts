@@ -41,9 +41,21 @@ export const adminUserMentorList = z.object({
       nickname: z.string().nullable().optional(),
       email: z.string().nullable().optional(),
       phoneNum: z.string().nullable().optional(),
+      hashTagList: z
+        .array(
+          z.object({
+            id: z.number(),
+            type: z.string(),
+            title: z.string(),
+          }),
+        )
+        .optional()
+        .default([]),
     }),
   ),
 });
+
+export type AdminUserMentorList = z.infer<typeof adminUserMentorList>;
 
 export interface PostAdminChallengeMentorReq {
   challengeId: number;
