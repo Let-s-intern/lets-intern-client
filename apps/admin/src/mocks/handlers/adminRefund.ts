@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 import type { AdminRefundLog } from '@/api/adminRefund';
-import { seedRefundLogs } from '../seed/adminRefund';
+import { seedRefundLogs, seedUserRefunds } from '../seed/adminRefund';
 
 /**
  * 어드민 환불 MSW 핸들러.
@@ -25,7 +25,7 @@ const alreadyRefunded = (applicationId: number) =>
 /**
  * 참여자 목록 목.
  *
- * 환불여부 라벨 다섯 갈래와 버튼 비활성 세 갈래를 한 화면에서 확인할 수 있게 구성한다.
+ * 환불여부 라벨 다섯 갈래와 버튼 비활성 두 갈래를 한 화면에서 확인할 수 있게 구성한다.
  * 서버는 취소 건도 함께 내려주므로(어드민 조회에는 isCanceled 필터가 없다) 여기서도 섞어 둔다.
  */
 const mockApplication = (over: Record<string, unknown>) => ({
@@ -51,7 +51,8 @@ const mockApplication = (over: Record<string, unknown>) => ({
 const mockApplications = [
   // 정상 — 환불 버튼 활성
   mockApplication({ id: 5001, name: '박서현', orderId: 'letsBX385104' }),
-  // 100% 할인 쿠폰 — 쿠폰 표기와 0원 처리 확인. 0원은 환불할 수 없다
+  mockApplication({ id: 5009, name: '이전액', orderId: 'letsQW771208' }),
+  // 100% 할인 쿠폰 — 0원 결제. 전체 환불만 되고 부분 환불은 비활성이다
   mockApplication({
     id: 5002,
     name: '안한나',
@@ -84,11 +85,12 @@ const mockApplications = [
     finalPrice: 220000,
     originalPrice: 330000,
   }),
-  // 테스트 결제 — 버튼 비활성
+  // 어드민 테스트 참여 — 0원 결제라 전체 환불로 취소할 수 있다
   mockApplication({
     id: 5006,
     name: '테스트참여',
     orderId: 'TEST_CHALLENGE_5006',
+    finalPrice: 0,
   }),
   // 고아 신청서 — 이름이 비어 버튼 비활성
   mockApplication({
@@ -141,23 +143,38 @@ export const adminRefundHandlers = [
       }
 
       // 금액은 요청 바디로 들어오므로 조작할 수 있다. 서버 재검증이 방어의 전부다.
-      const refundAmount = body.refundAmount;
-      if (
-        typeof refundAmount !== 'number' ||
-        !Number.isInteger(refundAmount) ||
-        refundAmount <= 0
-      ) {
+      // 금액이 없으면 전체 환불이고 서버가 payment.finalPrice 를 쓴다. 실결제액이 0원인
+      // 결제는 이 경로로만 취소되며 PG 호출 없이 참여만 취소된다.
+      const limit = finalPriceOf(applicationId);
+      const requested = body.refundAmount;
+      let refundAmount: number;
+
+      if (requested == null) {
+        refundAmount = limit ?? 0;
+      } else if (!Number.isInteger(requested) || requested <= 0) {
         return HttpResponse.json(
-          { message: '환불 금액은 1원 이상의 정수여야 합니다.' },
+          {
+            message:
+              '환불 금액은 1원 이상의 정수여야 합니다. 전액 환불은 금액 없이 요청하세요.',
+          },
           { status: 400 },
         );
-      }
-      const limit = finalPriceOf(applicationId);
-      if (limit != null && refundAmount > limit) {
+      } else if (limit != null && requested > limit) {
         return HttpResponse.json(
           { message: `환불 금액이 실결제액 ${limit}원을 초과합니다.` },
           { status: 400 },
         );
+      } else if (limit != null && requested === limit) {
+        // 구제책이 다르다. 초과는 숫자를 고치는 것이고 동일은 다른 버튼을 누르는 것이다.
+        return HttpResponse.json(
+          {
+            message:
+              '환불 금액이 실결제액과 같습니다. 전액 환불로 요청해주세요.',
+          },
+          { status: 400 },
+        );
+      } else {
+        refundAmount = requested;
       }
 
       if (alreadyRefunded(applicationId)) {
@@ -233,6 +250,60 @@ export const adminRefundHandlers = [
     return HttpResponse.json({
       data: {
         refundLogList: filtered.slice(start, start + size),
+        pageInfo: {
+          pageNum: page,
+          pageSize: size,
+          totalElements: filtered.length,
+          totalPages: Math.max(1, Math.ceil(filtered.length / size)),
+        },
+      },
+    });
+  }),
+
+  /**
+   * 유저 환불 조회.
+   *
+   * refundScope·refundSource 는 서버가 계산해 내려주는 값이라 시드에 그대로 들어 있다.
+   * 처리경로는 필터로 쓰지 않는다 — 애플리케이션 레벨 판별이라 걸러 내면 페이지마다
+   * 개수가 달라지고 totalElements 가 실제와 어긋난다.
+   */
+  http.get(`${BASE}/admin/refund-history/user`, ({ request }) => {
+    const url = new URL(request.url);
+    const programId = url.searchParams.get('programId');
+    const programType = url.searchParams.get('programType');
+    const keyword = url.searchParams.get('keyword');
+    const startDate = url.searchParams.get('startDate');
+    const endDate = url.searchParams.get('endDate');
+    const page = Number(url.searchParams.get('page') ?? 0);
+    const size = Number(url.searchParams.get('size') ?? 20);
+
+    // 어드민 환불을 실행한 신청서는 어드민 탭으로 옮겨간다. 서버는 NOT EXISTS 로 뺀다.
+    const adminRefundedIds = new Set(
+      refundLogs
+        .filter((log) => log.status === 'SUCCESS')
+        .map((log) => log.applicationId),
+    );
+
+    const filtered = seedUserRefunds.filter((refund) => {
+      if (adminRefundedIds.has(refund.applicationId)) return false;
+      if (programId && refund.programId !== Number(programId)) return false;
+      if (programType && refund.programType !== programType) return false;
+      if (keyword) {
+        const matched =
+          refund.userName?.includes(keyword) ||
+          refund.userEmail?.includes(keyword);
+        if (!matched) return false;
+      }
+      if (startDate && (refund.refundedAt ?? '') < startDate) return false;
+      if (endDate && (refund.refundedAt ?? '') > endDate) return false;
+      return true;
+    });
+
+    const start = page * size;
+
+    return HttpResponse.json({
+      data: {
+        refundList: filtered.slice(start, start + size),
         pageInfo: {
           pageNum: page,
           pageSize: size,
