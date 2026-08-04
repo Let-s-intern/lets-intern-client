@@ -1,11 +1,12 @@
 'use client';
 
 import { mentorHashTagListQueryOptions } from '@/api/mentor/mentor';
+import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
+import { twMerge } from '@/lib/twMerge';
 import { useQuery } from '@tanstack/react-query';
 
 import FilterChips from '../ui/FilterChips';
 
-/** 백엔드 해시태그 type 값 → 유저 페이지 표시 라벨. 어드민 표시 라벨과는 별개로 관리한다. */
 const MENTOR_HASH_TAG_TYPE_LABELS: Record<string, string> = {
   JOB: '관심 직무',
 };
@@ -41,12 +42,22 @@ const MentorFilterSection = ({
 
   if (isLoading) {
     return (
-      <section className="mt-2 min-h-10 w-full md:mt-[54px] md:min-h-20" />
+      <section
+        className={twMerge(
+          'bg-static-100 sticky z-20 min-h-10 w-full md:static md:mt-[54px] md:min-h-20',
+          FULL_NAVBAR_HEIGHT_OFFSET,
+        )}
+      />
     );
   }
 
   return (
-    <section className="mt-4 flex w-full flex-col gap-5 md:mt-12 md:gap-10">
+    <section
+      className={twMerge(
+        'bg-static-100 sticky z-20 flex w-full flex-col gap-5 py-2 md:static md:mt-12 md:gap-10 md:py-0',
+        FULL_NAVBAR_HEIGHT_OFFSET,
+      )}
+    >
       {groups.map((group) => (
         <div
           key={group.type}
