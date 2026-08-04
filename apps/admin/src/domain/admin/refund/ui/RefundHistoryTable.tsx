@@ -82,15 +82,7 @@ const RefundHistoryTable = ({ logs, isLoading }: Props) => {
               </td>
               <td className="px-3 py-2">
                 {/* 동명이인 구분을 위해 이메일을 함께 보여준다. */}
-                <div>
-                  {log.userName}
-                  {log.isDeleted && (
-                    // 참여자 행이 지워져 이 이력 말고는 남은 흔적이 없다.
-                    <span className="ml-1 rounded bg-neutral-800 px-1.5 py-0.5 text-xs text-white">
-                      삭제됨
-                    </span>
-                  )}
-                </div>
+                <div>{log.userName}</div>
                 <div className="text-xs text-neutral-500">{log.userEmail}</div>
               </td>
               <td className="whitespace-nowrap px-3 py-2">{log.managerName}</td>

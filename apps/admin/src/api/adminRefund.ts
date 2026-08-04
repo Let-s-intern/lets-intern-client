@@ -31,8 +31,6 @@ export const adminRefundLogSchema = z.object({
   paidAt: z.string().nullable().optional(),
   couponName: z.string().nullable().optional(),
   couponDiscount: z.number().nullable().optional(),
-  /** 환불과 함께 참여자 행을 지웠는가. 삭제 이력은 별도 로그 없이 여기 남는다. */
-  isDeleted: z.boolean().nullable().optional(),
 });
 export type AdminRefundLog = z.infer<typeof adminRefundLogSchema>;
 
@@ -65,16 +63,8 @@ export const adminRefundRequestSchema = z.object({
    * 화면에서도 막지만 여기서 한 번 더 거른다.
    */
   refundAmount: z.number().int().positive(),
-  /**
-   * 참여자 행을 함께 지운다. 신청서·결제·미션 제출물이 사라지고 되돌릴 수 없다.
-   *
-   * 삭제는 독립 동작이 아니라 환불의 옵션이다. 환불 없이 지우면 결제는 살아 있는데
-   * 참여 기록만 사라진다.
-   */
-  hardDelete: z.boolean().default(false),
 });
-/** 호출부는 hardDelete 를 생략할 수 있다. parse 가 false 를 채운다. */
-export type AdminRefundRequest = z.input<typeof adminRefundRequestSchema>;
+export type AdminRefundRequest = z.infer<typeof adminRefundRequestSchema>;
 
 /**
  * 환불 실행.
