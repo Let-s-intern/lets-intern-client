@@ -4,6 +4,7 @@ import {
 } from '@/api/adminRefund';
 import BottomAction from '@/domain/admin/program/program-user/bottom-action/BottomAction';
 import RefundModal, {
+  RefundMode,
   RefundTarget,
 } from '@/domain/admin/program/program-user/ui/RefundModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -216,7 +217,10 @@ const ProgramUsers = () => {
   const programTitle = programTitleData?.data?.title;
 
   const { snackbar } = useAdminSnackbar();
-  const [refundTarget, setRefundTarget] = useState<RefundTarget | null>(null);
+  const [refundRequest, setRefundRequest] = useState<{
+    target: RefundTarget;
+    mode: RefundMode;
+  } | null>(null);
 
   // 어드민 환불 건만 따로 받아 라벨을 구분한다. 신청자 API 에 필드를 추가하는 대신
   // 이 조회로 매칭하면 프로그램 타입 네 개의 응답을 건드리지 않아도 된다.
@@ -224,7 +228,7 @@ const ProgramUsers = () => {
 
   const refundMutation = useAdminRefundMutation({
     onSuccess: (refundedAmount) => {
-      setRefundTarget(null);
+      setRefundRequest(null);
       snackbar(`${refundedAmount.toLocaleString()}원이 환불되었습니다.`);
     },
     // 서버 메시지를 그대로 보여준다. 뭉개면 운영이 다음 행동을 정할 수 없다.
@@ -283,7 +287,7 @@ const ProgramUsers = () => {
             programType={programType as ProgramTypeUpperCase}
             programTitle={programTitle ?? ''}
             adminRefundedIds={adminRefundedIds}
-            onRefundClick={setRefundTarget}
+            onRefundClick={(target, mode) => setRefundRequest({ target, mode })}
           />
         </Table>
       </main>
@@ -294,17 +298,18 @@ const ProgramUsers = () => {
         programTitle={programTitle}
       />
 
-      {refundTarget && (
+      {refundRequest && (
         <RefundModal
-          target={refundTarget}
+          target={refundRequest.target}
+          mode={refundRequest.mode}
           isSubmitting={refundMutation.isPending}
           onSubmit={(body) =>
             refundMutation.mutate({
-              applicationId: refundTarget.applicationId,
+              applicationId: refundRequest.target.applicationId,
               body,
             })
           }
-          onClose={() => setRefundTarget(null)}
+          onClose={() => setRefundRequest(null)}
         />
       )}
     </div>
