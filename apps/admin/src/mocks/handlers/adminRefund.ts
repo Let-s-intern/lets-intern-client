@@ -48,7 +48,7 @@ const mockApplication = (over: Record<string, unknown>) => ({
   ...over,
 });
 
-const mockApplications = [
+let mockApplications = [
   // 정상 — 환불 버튼 활성
   mockApplication({ id: 5001, name: '박서현', orderId: 'letsBX385104' }),
   // 100% 할인 쿠폰 — 쿠폰 표기와 0원 처리 확인. 0원은 환불할 수 없다
@@ -124,6 +124,7 @@ export const adminRefundHandlers = [
         managerName?: string;
         reason?: string;
         refundAmount?: number;
+        hardDelete?: boolean;
       } | null;
 
       // 서버도 공백을 거절한다. 프론트 검증에만 맡기면 빈 이력이 쌓인다.
@@ -168,6 +169,15 @@ export const adminRefundHandlers = [
       }
 
       const now = new Date().toISOString();
+      const hardDelete = body.hardDelete === true;
+
+      // 삭제는 환불이 성공한 뒤에만 일어난다. 돈이 안 돌아간 채 근거만 사라지는 게
+      // 가장 나쁜 결과다.
+      if (hardDelete) {
+        mockApplications = mockApplications.filter(
+          (application) => application.id !== applicationId,
+        );
+      }
 
       refundLogs = [
         {
@@ -191,6 +201,7 @@ export const adminRefundHandlers = [
           paidAt: '2026-07-20T10:00:00',
           couponName: null,
           couponDiscount: null,
+          isDeleted: hardDelete,
         },
         ...refundLogs,
       ];
