@@ -31,6 +31,18 @@ describe('resolveRefundLabel', () => {
     expect(label.isAdmin).toBe(true);
   });
 
+  it('어드민이 부분 환불하면 환불액이 원 결제액보다 작다', () => {
+    const label = resolveRefundLabel({
+      isCanceled: true,
+      isAdminRefunded: true,
+      finalPrice: 220000,
+      originalPrice: 330000,
+    });
+
+    expect(label.text).toBe('어드민 부분 환불');
+    expect(label.isAdmin).toBe(true);
+  });
+
   it('유저가 전액 환불하면 환불액과 원 결제액이 같다', () => {
     // Payment.updateRefundPrice 가 원 결제액을 originalPrice 로 옮기고
     // finalPrice 에 환불액을 덮어쓴다. 두 값이 같으면 전액이다.
@@ -68,6 +80,7 @@ describe('resolveRefundLabel', () => {
   });
 
   it('어드민 환불이면 금액 정보가 없어도 어드민으로 표시한다', () => {
+    // 어드민 환불이 전액뿐이던 시절의 이력. 전체로 둔다.
     const label = resolveRefundLabel({
       isCanceled: true,
       isAdminRefunded: true,
@@ -76,6 +89,49 @@ describe('resolveRefundLabel', () => {
     });
 
     expect(label.text).toBe('어드민 전체 환불');
+  });
+
+  it('다섯 갈래가 서로 겹치지 않는다', () => {
+    const labels = [
+      resolveRefundLabel({
+        isCanceled: false,
+        isAdminRefunded: false,
+        finalPrice: 330000,
+        originalPrice: null,
+      }),
+      resolveRefundLabel({
+        isCanceled: true,
+        isAdminRefunded: true,
+        finalPrice: 330000,
+        originalPrice: 330000,
+      }),
+      resolveRefundLabel({
+        isCanceled: true,
+        isAdminRefunded: true,
+        finalPrice: 220000,
+        originalPrice: 330000,
+      }),
+      resolveRefundLabel({
+        isCanceled: true,
+        isAdminRefunded: false,
+        finalPrice: 330000,
+        originalPrice: 330000,
+      }),
+      resolveRefundLabel({
+        isCanceled: true,
+        isAdminRefunded: false,
+        finalPrice: 220000,
+        originalPrice: 330000,
+      }),
+    ].map((label) => label.text);
+
+    expect(labels).toEqual([
+      'N',
+      '어드민 전체 환불',
+      '어드민 부분 환불',
+      '유저 전체 환불',
+      '유저 부분 환불',
+    ]);
   });
 });
 
