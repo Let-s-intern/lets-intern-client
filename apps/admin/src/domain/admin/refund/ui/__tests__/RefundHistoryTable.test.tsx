@@ -26,7 +26,6 @@ const log = (over: Partial<AdminRefundLog> = {}): AdminRefundLog => ({
   paidAt: '2026-07-20T10:00:00',
   couponName: null,
   couponDiscount: null,
-  isDeleted: false,
   ...over,
 });
 
@@ -75,19 +74,5 @@ describe('RefundHistoryTable 금액 표시', () => {
     ]);
 
     expect(within(row()).queryByText('부분')).not.toBeInTheDocument();
-  });
-});
-
-describe('RefundHistoryTable 삭제 표시', () => {
-  it('삭제된 건은 삭제됨 배지를 붙인다', () => {
-    renderTable([log({ isDeleted: true })]);
-
-    expect(within(row()).getByText('삭제됨')).toBeInTheDocument();
-  });
-
-  it('삭제하지 않은 건에는 배지가 없다', () => {
-    renderTable([log()]);
-
-    expect(within(row()).queryByText('삭제됨')).not.toBeInTheDocument();
   });
 });

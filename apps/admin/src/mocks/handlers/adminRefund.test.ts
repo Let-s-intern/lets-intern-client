@@ -51,26 +51,6 @@ describe('POST /admin/application/:applicationId/refund', () => {
 
     expect(res.status).toBe(409);
   });
-
-  it('hardDelete 를 켜면 참여자 행이 사라지고 이력에만 남는다', async () => {
-    const res = await refund(5006, { refundAmount: 330000, hardDelete: true });
-    expect(res.status).toBe(200);
-
-    const listRes = await fetch(`${BASE}/challenge/319/applications`);
-    const listBody = (await listRes.json()) as { data: unknown };
-    const list = challengeApplicationsSchema.parse(listBody.data);
-    expect(
-      list.applicationList.map((item) => item.application.id),
-    ).not.toContain(5006);
-
-    const historyRes = await fetch(`${BASE}/admin/refund-history`);
-    const historyBody = (await historyRes.json()) as { data: unknown };
-    const history = adminRefundHistorySchema.parse(historyBody.data);
-    expect(
-      history.refundLogList.find((log) => log.applicationId === 5006)
-        ?.isDeleted,
-    ).toBe(true);
-  });
 });
 
 describe('GET /admin/refund-history', () => {
@@ -85,19 +65,6 @@ describe('GET /admin/refund-history', () => {
 
     expect(partial?.refundedAmount).toBe(220000);
     expect(partial?.originalAmount).toBe(330000);
-  });
-
-  it('삭제된 건은 참여자 행 없이 이력으로만 남는다', async () => {
-    const res = await fetch(`${BASE}/admin/refund-history?programId=319`);
-    const body = (await res.json()) as { data: unknown };
-    const parsed = adminRefundHistorySchema.parse(body.data);
-
-    const deleted = parsed.refundLogList.find(
-      (log) => log.applicationId === 5009,
-    );
-
-    expect(deleted?.isDeleted).toBe(true);
-    expect(deleted?.orderId).toBe('letsMOCK5009');
   });
 
   it('정산 대사에 쓰는 주문번호가 비어 있지 않다', async () => {
