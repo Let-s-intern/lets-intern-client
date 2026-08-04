@@ -62,14 +62,15 @@ describe('POST /admin/application/:applicationId/refund', () => {
 
   it('실결제액을 넘는 금액을 거절한다', async () => {
     // 화면에서도 막지만 금액이 요청 바디에 있어 조작할 수 있다.
-    const res = await refund(5001, { refundAmount: 330001 });
+    // 금액 검증이 먼저라 이 요청은 결제 행을 건드리지 않는다.
+    const res = await refund(5004, { refundAmount: 330001 });
 
     expect(res.status).toBe(400);
   });
 
   it('실결제액과 같은 금액을 거절한다', async () => {
     // 전액이면 금액 없이 요청해야 한다. 초과와 구제책이 달라 메시지를 따로 준다.
-    const res = await refund(5001, { refundAmount: 330000 });
+    const res = await refund(5004, { refundAmount: 330000 });
     const body = (await res.json()) as { message: string };
 
     expect(res.status).toBe(400);

@@ -58,12 +58,16 @@ const setAmount = async (
 const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.type(screen.getByLabelText('담당자'), '임호정');
   await user.type(screen.getByLabelText('환불 사유'), '프로그램 오결제');
-  await user.type(confirmInput(), currentSentence());
+  const sentence = currentSentence();
+  if (sentence) await user.type(confirmInput(), sentence);
 };
 
-/** 화면이 제시하는 확인 문장. 실행 버튼 바로 위에 그대로 적혀 있다. */
+/**
+ * 화면이 제시하는 확인 문장. 실행 버튼 바로 위에 그대로 적혀 있다.
+ * 금액이 정해지기 전에는 문장이 걸리지 않으므로 빈 문자열이 된다.
+ */
 const currentSentence = () =>
-  screen.getByText(/이 유저를|이 유저에게/).textContent ?? '';
+  screen.queryByText(/이 유저를|이 유저에게/)?.textContent ?? '';
 
 describe('RefundModal 전체 환불', () => {
   it('금액 입력을 두지 않는다', () => {
@@ -197,6 +201,22 @@ describe('RefundModal 부분 환불 금액', () => {
     await fillRequiredFields(user);
 
     expect(submitButton()).toBeDisabled();
+  });
+
+  it('금액이 정해지기 전에는 확인 문장을 내걸지 않는다', async () => {
+    // 빈 칸을 0 으로 읽어 "0원을 환불합니다"를 요구하면 실제 결과와 어긋난다.
+    const user = userEvent.setup();
+    renderModal('partial');
+
+    expect(
+      screen.getByText('환불 금액을 먼저 입력하세요.'),
+    ).toBeInTheDocument();
+
+    await setAmount(user, '220000');
+
+    expect(
+      screen.queryByText('환불 금액을 먼저 입력하세요.'),
+    ).not.toBeInTheDocument();
   });
 
   it('1원은 실행할 수 있다', async () => {

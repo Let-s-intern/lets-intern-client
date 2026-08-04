@@ -88,6 +88,9 @@ const RefundModal = ({
     return null;
   }, [isFull, amountInput, refundAmount, target.finalPrice]);
 
+  /** 환불 금액이 확정됐는가. 확정 전에는 확인 문장을 내걸 수 없다. */
+  const amountSettled = isFull || (amountInput !== '' && !amountError);
+
   const confirmSentence = buildRefundConfirmSentence({
     isFullRefund: isFull,
     refundAmount,
@@ -96,16 +99,13 @@ const RefundModal = ({
   const canSubmit = useMemo(
     () =>
       !isSubmitting &&
-      !amountError &&
-      (isFull || amountInput !== '') &&
+      amountSettled &&
       managerName.trim().length > 0 &&
       reason.trim().length > 0 &&
       normalize(confirmText) === normalize(confirmSentence),
     [
       isSubmitting,
-      amountError,
-      isFull,
-      amountInput,
+      amountSettled,
       managerName,
       reason,
       confirmText,
@@ -230,7 +230,17 @@ const RefundModal = ({
           <p className="mb-2 text-sm text-neutral-600">
             아래 문장을 그대로 입력해야 실행됩니다.
           </p>
-          <p className="mb-2 text-sm font-medium">{confirmSentence}</p>
+          {/*
+            금액이 정해지기 전에는 문장을 내걸지 않는다. 문장에 금액이 들어가는데
+            빈 칸을 0 으로 읽어 "0원을 환불합니다"를 요구하면 실제 결과와 어긋난다.
+          */}
+          {amountSettled ? (
+            <p className="mb-2 text-sm font-medium">{confirmSentence}</p>
+          ) : (
+            <p className="mb-2 text-sm text-neutral-500">
+              환불 금액을 먼저 입력하세요.
+            </p>
+          )}
           <input
             className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
             aria-label="확인 문장"
