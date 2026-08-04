@@ -79,6 +79,16 @@ describe('adminRefundLogSchema', () => {
     expect(parsed.couponDiscount).toBe(-1);
   });
 
+  it('삭제된 건은 isDeleted 로 남는다', () => {
+    // 원본 행이 사라져 히스토리가 유일한 흔적이 된다.
+    const parsed = adminRefundLogSchema.parse({
+      ...successLog,
+      isDeleted: true,
+    });
+
+    expect(parsed.isDeleted).toBe(true);
+  });
+
   it('부분 환불 건은 환불액과 원 결제액을 함께 보존한다', () => {
     const parsed = adminRefundLogSchema.parse({
       ...successLog,
@@ -138,6 +148,18 @@ describe('adminRefundRequestSchema', () => {
     expect(() =>
       adminRefundRequestSchema.parse({ ...validRequest, refundAmount: 1000.5 }),
     ).toThrow();
+  });
+
+  it('hardDelete 를 생략하면 false 로 채운다', () => {
+    // 삭제는 명시적으로 켰을 때만 일어나야 한다.
+    expect(adminRefundRequestSchema.parse(validRequest).hardDelete).toBe(false);
+  });
+
+  it('hardDelete 를 켠 요청을 그대로 보낸다', () => {
+    expect(
+      adminRefundRequestSchema.parse({ ...validRequest, hardDelete: true })
+        .hardDelete,
+    ).toBe(true);
   });
 
   it('담당자와 사유가 비면 거절한다', () => {
