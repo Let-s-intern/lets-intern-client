@@ -28,10 +28,7 @@ import type { ErrorResonse } from '@/types/interface';
 
 import { MENTOR_HASH_TAG_TYPE_OPTIONS } from './constants';
 
-type ModalState =
-  | { open: false }
-  | { open: true; mode: 'create' }
-  | { open: true; mode: 'edit'; item: MentorHashTagItem };
+type ModalMode = { mode: 'create' } | { mode: 'edit'; item: MentorHashTagItem };
 
 const getTypeLabel = (type: string) =>
   MENTOR_HASH_TAG_TYPE_OPTIONS.find((option) => option.value === type)?.label ??
@@ -51,7 +48,8 @@ export default function MentorHashTagManagement() {
   const { data, isLoading } = useAdminMentorHashTagListQuery();
   const hashTags = useMemo(() => data ?? [], [data]);
 
-  const [modalState, setModalState] = useState<ModalState>({ open: false });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>({ mode: 'create' });
   const [type, setType] = useState<MentorHashTagType>(
     MENTOR_HASH_TAG_TYPE_OPTIONS[0].value,
   );
@@ -64,28 +62,29 @@ export default function MentorHashTagManagement() {
   const openCreateModal = () => {
     setType(MENTOR_HASH_TAG_TYPE_OPTIONS[0].value);
     setTitle('');
-    setModalState({ open: true, mode: 'create' });
+    setModalMode({ mode: 'create' });
+    setIsDialogOpen(true);
   };
 
   const openEditModal = (item: MentorHashTagItem) => {
     setType(item.type as MentorHashTagType);
     setTitle(item.title);
-    setModalState({ open: true, mode: 'edit', item });
+    setModalMode({ mode: 'edit', item });
+    setIsDialogOpen(true);
   };
 
-  const closeModal = () => setModalState({ open: false });
+  const closeModal = () => setIsDialogOpen(false);
 
   const handleSubmit = async () => {
-    if (!modalState.open) return;
     const body: MentorHashTagReq = { type, title };
 
     try {
-      if (modalState.mode === 'create') {
+      if (modalMode.mode === 'create') {
         await postMutation.mutateAsync(body);
         snackbar('키워드가 생성되었습니다.');
       } else {
         await patchMutation.mutateAsync({
-          mentorHashTagId: modalState.item.id,
+          mentorHashTagId: modalMode.item.id,
           ...body,
         });
         snackbar('키워드가 수정되었습니다.');
@@ -95,7 +94,7 @@ export default function MentorHashTagManagement() {
       snackbar(
         getErrorMessage(
           error,
-          modalState.mode === 'create'
+          modalMode.mode === 'create'
             ? '키워드 생성에 실패했습니다.'
             : '키워드 수정에 실패했습니다.',
         ),
@@ -186,16 +185,9 @@ export default function MentorHashTagManagement() {
         localeText={DATA_GRID_LOCALE_TEXT}
       />
 
-      <Dialog
-        open={modalState.open}
-        onClose={closeModal}
-        fullWidth
-        maxWidth="xs"
-      >
+      <Dialog open={isDialogOpen} onClose={closeModal} fullWidth maxWidth="xs">
         <DialogTitle>
-          {modalState.open && modalState.mode === 'edit'
-            ? '키워드 수정'
-            : '키워드 생성'}
+          {modalMode.mode === 'edit' ? '키워드 수정' : '키워드 생성'}
         </DialogTitle>
         <DialogContent className="flex flex-col gap-4">
           <TextField
