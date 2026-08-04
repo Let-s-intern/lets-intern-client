@@ -2,31 +2,36 @@
 
 import { useEffect, useState } from 'react';
 
-import { useMentorListQuery } from '@/api/mentor/mentor';
+import { mentorListQueryOptions } from '@/api/mentor/mentor';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/common/pagination/MuiPagination';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
+import { useMediaQuery } from '@mui/material';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import MentorCard from '../ui/MentorCard';
 
-const PAGE_SIZE = 12;
+const DESKTOP_PAGE_SIZE = 12;
+const MOBILE_PAGE_SIZE = 8;
 
 interface MentorCardSectionProps {
   hashTagIdList: number[];
 }
 
 const MentorCardSection = ({ hashTagIdList }: MentorCardSectionProps) => {
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
+  const pageSize = isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE;
+
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     setPage(1);
-  }, [hashTagIdList]);
+  }, [hashTagIdList, pageSize]);
 
-  const { data, isLoading } = useMentorListQuery({
-    hashTagIdList,
-    page,
-    size: PAGE_SIZE,
+  const { data, isLoading, isError } = useQuery({
+    ...mentorListQueryOptions({ hashTagIdList, page, size: pageSize }),
+    placeholderData: keepPreviousData,
   });
-  const mentors = data?.mentorList ?? [];
-  const pageInfo = data?.pageInfo;
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
@@ -36,13 +41,24 @@ const MentorCardSection = ({ hashTagIdList }: MentorCardSectionProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
-        불러오는 중...
+      <div className="mt-10 flex min-h-[60vh] w-full items-center justify-center">
+        <LoadingContainer />
       </div>
     );
   }
+
+  if (isError) {
+    return (
+      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        멘토 목록을 불러오지 못했습니다.
+      </div>
+    );
+  }
+
+  const mentors = data.mentorList;
+  const pageInfo = data.pageInfo;
 
   if (mentors.length === 0) {
     return (
@@ -54,13 +70,13 @@ const MentorCardSection = ({ hashTagIdList }: MentorCardSectionProps) => {
 
   return (
     <div className="mb-[60px] mt-10 flex flex-col gap-8">
-      <section className="grid w-full grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-4">
+      <section className="grid w-full grid-cols-2 gap-x-5 gap-y-5 md:grid-cols-4 md:gap-x-4">
         {mentors.map((mentor) => (
           <MentorCard key={mentor.mentorId} mentor={mentor} />
         ))}
       </section>
 
-      {pageInfo && pageInfo.totalPages > 1 && (
+      {pageInfo.totalPages > 1 && (
         <MuiPagination
           page={page}
           pageInfo={pageInfo}
