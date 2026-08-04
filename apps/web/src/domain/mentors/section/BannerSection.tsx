@@ -15,7 +15,7 @@ const BannerSection = () => {
 
         <button
           type="button"
-          className="text-primary hover:text-primary-hover flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full bg-neutral-100 px-5 py-2 font-normal"
+          className="text-primary hover:text-primary-hover flex shrink-0 items-center gap-2.5 self-end whitespace-nowrap rounded-full bg-neutral-100 px-5 py-2 font-normal md:self-auto"
         >
           <img src="/logo/logo-gradient.svg" alt="" className="h-6 w-6" />
           현직자 멘토와 1:1 LIVE 멘토링하기

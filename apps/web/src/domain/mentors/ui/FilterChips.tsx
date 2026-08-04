@@ -50,7 +50,7 @@ const FilterChips = <Value extends string>({
               type="button"
               onClick={() => onChange(option.value)}
               className={twMerge(
-                'text-xsmall14 rounded-full border px-4 py-2 transition-colors',
+                'text-xxsmall12 md:text-xsmall14 rounded-full border px-3.5 py-1.5 transition-colors md:px-4 md:py-2',
                 textColor,
                 isActive
                   ? 'border-[#152B65] bg-[#152B65] font-medium'
