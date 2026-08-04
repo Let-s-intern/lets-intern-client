@@ -23,7 +23,7 @@ const STATUSES: { value: '' | AdminRefundStatus; label: string }[] = [
 ];
 
 /**
- * 어드민 주도 전액 환불 이력.
+ * 어드민 주도 환불 이력.
  *
  * 프로그램별로 흩지 않고 한 화면에서 전체를 본다. "이번 달 예외 환불이 몇 건인가",
  * "한 담당자가 몰아서 처리했나" 같은 질문은 통합 조회로만 답할 수 있다.
@@ -50,9 +50,9 @@ const RefundHistoryPage = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-1.5-bold mb-1">전액 환불 히스토리</h1>
+      <h1 className="text-1.5-bold mb-1">환불 히스토리</h1>
       <p className="mb-4 text-sm text-neutral-500">
-        어드민에서 실행한 전액 환불만 기록됩니다. 사용자가 직접 신청한 환불은
+        어드민에서 실행한 환불만 기록됩니다. 사용자가 직접 신청한 환불은
         포함되지 않습니다.
       </p>
 
