@@ -1,11 +1,12 @@
 import type { AdminRefundLog } from '@/api/adminRefund';
 
 /**
- * 어드민 전액 환불 목 시드.
+ * 어드민 환불 목 시드.
  *
- * 참여자 목록의 환불여부 라벨이 네 갈래로 갈리는데, 그 분기를 한 화면에서 모두 확인할 수
+ * 참여자 목록의 환불여부 라벨이 다섯 갈래로 갈리는데, 그 분기를 한 화면에서 모두 확인할 수
  * 있도록 챌린지 319 에 어드민 환불 건을 섞어 둔다.
- *   applicationId 5003 → 어드민 전체 환불 (아래 로그에 있음)
+ *   applicationId 5003 → 어드민 전체 환불 (아래 로그에 있음 + 환불액 === 원 결제액)
+ *   applicationId 5008 → 어드민 부분 환불 (아래 로그에 있음 + 환불액 < 원 결제액)
  *   applicationId 5004 → 유저 전체 환불   (로그 없음 + finalPrice === originalPrice)
  *   applicationId 5005 → 유저 부분 환불   (로그 없음 + finalPrice < originalPrice)
  *   그 외              → N
@@ -28,6 +29,35 @@ export const seedRefundLogs: AdminRefundLog[] = [
     status: 'SUCCESS',
     failureMessage: null,
     applicationId: 5003,
+    orderId: 'letsMOCK5003',
+    paymentKey: 'tviva20260720100000aaaa',
+    originalAmount: 330000,
+    paidAt: '2026-07-20T10:00:00',
+    couponName: null,
+    couponDiscount: null,
+  },
+  {
+    // 부분 환불. 원 결제액이 함께 있어야 220,000 이 얼마 중 얼마인지 읽힌다.
+    id: 4,
+    refundedAt: '2026-08-03T16:10:00',
+    programType: 'CHALLENGE',
+    programId: MOCK_REFUND_PROGRAM_ID,
+    programTitle: '[스타트업 Ver.] 면접 준비 7일 끝장 챌린지 7기',
+    userId: 13024,
+    userName: '정부분',
+    userEmail: 'partial@example.com',
+    managerName: '임호정',
+    refundedAmount: 220000,
+    reason: '중도 이탈 — 진행분 제외하고 정산 (CS 협의값)',
+    status: 'SUCCESS',
+    failureMessage: null,
+    applicationId: 5008,
+    orderId: 'letsMOCK5008',
+    paymentKey: 'tviva20260720100000bbbb',
+    originalAmount: 330000,
+    paidAt: '2026-07-20T11:30:00',
+    couponName: null,
+    couponDiscount: null,
   },
   {
     id: 2,
@@ -44,6 +74,12 @@ export const seedRefundLogs: AdminRefundLog[] = [
     status: 'SUCCESS',
     failureMessage: null,
     applicationId: 5101,
+    orderId: 'letsMOCK5101',
+    paymentKey: 'tviva20260715090000cccc',
+    originalAmount: 60000,
+    paidAt: '2026-07-15T09:00:00',
+    couponName: '얼리버드 쿠폰',
+    couponDiscount: 10000,
   },
   {
     id: 3,
@@ -61,5 +97,11 @@ export const seedRefundLogs: AdminRefundLog[] = [
     status: 'FAILED',
     failureMessage: '이미 취소된 결제입니다. (TOSS: ALREADY_CANCELED_PAYMENT)',
     applicationId: 5202,
+    orderId: 'letsMOCK5202',
+    paymentKey: 'tviva20260701080000dddd',
+    originalAmount: 250000,
+    paidAt: '2026-07-01T08:00:00',
+    couponName: null,
+    couponDiscount: null,
   },
 ];
