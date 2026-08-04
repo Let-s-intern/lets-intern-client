@@ -8,7 +8,6 @@ import RefundModal, { RefundTarget } from '../RefundModal';
 const FULL_SENTENCE = buildRefundConfirmSentence({
   isFullRefund: true,
   refundAmount: 330000,
-  hardDelete: false,
 });
 
 const target: RefundTarget = {
@@ -22,11 +21,7 @@ const target: RefundTarget = {
   couponName: null,
   couponDiscount: null,
   finalPrice: 330000,
-  submittedMissionCount: 3,
 };
-
-const deleteCheckbox = () =>
-  screen.getByRole('checkbox', { name: '참여자를 목록에서 완전히 삭제' });
 
 const renderModal = (over: Partial<RefundTarget> = {}) => {
   const onSubmit = vi.fn();
@@ -42,10 +37,8 @@ const renderModal = (over: Partial<RefundTarget> = {}) => {
 };
 
 const amountInput = () => screen.getByLabelText('환불 금액');
+const submitButton = () => screen.getByRole('button', { name: '환불 실행' });
 const confirmInput = () => screen.getByLabelText('확인 문장');
-/** 실행 버튼. 라벨이 삭제 여부에 따라 바뀌므로 둘 다 받는다. */
-const submitButton = () =>
-  screen.getByRole('button', { name: /환불 실행|환불 후 삭제/ });
 
 const setAmount = async (
   user: ReturnType<typeof userEvent.setup>,
@@ -204,157 +197,6 @@ describe('RefundModal 확인 문장', () => {
     expect(submitButton()).toBeEnabled();
 
     await setAmount(user, '220000');
-    expect(submitButton()).toBeDisabled();
-  });
-});
-
-describe('RefundModal 완전 삭제 체크박스', () => {
-  it('기본은 꺼짐이고 주의 문구를 띄우지 않는다', () => {
-    // 꺼진 상태에서 시선을 끌면 정작 켰을 때의 경고가 묻힌다.
-    renderModal();
-
-    expect(deleteCheckbox()).not.toBeChecked();
-    expect(screen.queryByText(/되돌릴 수 없고/)).not.toBeInTheDocument();
-  });
-
-  it('켜면 무엇이 지워지는지 세 줄로 알린다', async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.click(deleteCheckbox());
-
-    expect(
-      screen.getByText(
-        '신청 기록·결제 기록·제출한 미션 3건이 함께 지워집니다.',
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('되돌릴 수 없고 환불 히스토리에만 남습니다.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        '환불한 뒤에는 이 창을 다시 열 수 없어 나중에 삭제할 수 없습니다.',
-      ),
-    ).toBeInTheDocument();
-  });
-
-  it('제출물 건수를 모르면 건수 없이 알린다', async () => {
-    const user = userEvent.setup();
-    renderModal({ submittedMissionCount: null });
-
-    await user.click(deleteCheckbox());
-
-    expect(
-      screen.getByText('신청 기록·결제 기록·제출한 미션이 함께 지워집니다.'),
-    ).toBeInTheDocument();
-  });
-
-  it('끈 채로 실행하면 hardDelete 를 false 로 보낸다', async () => {
-    const user = userEvent.setup();
-    const { onSubmit } = renderModal();
-
-    await fillRequiredFields(user);
-    await user.click(submitButton());
-
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ hardDelete: false }),
-    );
-  });
-
-  it('켜고 실행하면 hardDelete 를 true 로 보낸다', async () => {
-    const user = userEvent.setup();
-    const { onSubmit } = renderModal();
-
-    await user.click(deleteCheckbox());
-    await fillRequiredFields(user);
-    await user.click(submitButton());
-
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ hardDelete: true, refundAmount: 330000 }),
-    );
-  });
-});
-
-describe('RefundModal 삭제 여부에 따른 문장과 라벨', () => {
-  it('전액 + 삭제 끔', () => {
-    renderModal();
-
-    expect(
-      screen.getByText(
-        '이 유저를 전체 환불 시킵니다. 이 유저는 대시보드에 입장할 수 없습니다.',
-      ),
-    ).toBeInTheDocument();
-    expect(submitButton()).toHaveTextContent('환불 실행');
-  });
-
-  it('부분 + 삭제 끔', async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await setAmount(user, '220000');
-
-    expect(
-      screen.getByText(
-        '이 유저에게 220,000원을 환불합니다. 이 유저는 대시보드에 입장할 수 없습니다.',
-      ),
-    ).toBeInTheDocument();
-    expect(submitButton()).toHaveTextContent('환불 실행');
-  });
-
-  it('전액 + 삭제 켬', async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.click(deleteCheckbox());
-
-    expect(
-      screen.getByText(
-        '이 유저를 전체 환불하고 제출한 미션까지 완전히 삭제합니다. 되돌릴 수 없습니다.',
-      ),
-    ).toBeInTheDocument();
-    expect(submitButton()).toHaveTextContent('환불 후 삭제');
-  });
-
-  it('부분 + 삭제 켬', async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await setAmount(user, '220000');
-    await user.click(deleteCheckbox());
-
-    expect(
-      screen.getByText(
-        '이 유저에게 220,000원을 환불하고 제출한 미션까지 완전히 삭제합니다. 되돌릴 수 없습니다.',
-      ),
-    ).toBeInTheDocument();
-    expect(submitButton()).toHaveTextContent('환불 후 삭제');
-  });
-
-  it('체크 상태를 바꾸면 이미 입력한 확인 문장을 비운다', async () => {
-    // 안 비우면 삭제를 끈 상태의 문장을 넣어두고 체크만 켜서 통과시킬 수 있다.
-    const user = userEvent.setup();
-    renderModal();
-
-    await fillRequiredFields(user);
-    expect(submitButton()).toBeEnabled();
-
-    await user.click(deleteCheckbox());
-
-    expect(confirmInput()).toHaveValue('');
-    expect(submitButton()).toBeDisabled();
-  });
-
-  it('체크를 다시 끄면 삭제용 문장도 비운다', async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.click(deleteCheckbox());
-    await fillRequiredFields(user);
-    expect(submitButton()).toBeEnabled();
-
-    await user.click(deleteCheckbox());
-
-    expect(confirmInput()).toHaveValue('');
     expect(submitButton()).toBeDisabled();
   });
 });

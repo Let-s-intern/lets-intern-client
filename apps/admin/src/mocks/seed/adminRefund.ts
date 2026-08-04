@@ -10,9 +10,6 @@ import type { AdminRefundLog } from '@/api/adminRefund';
  *   applicationId 5004 → 유저 전체 환불   (로그 없음 + finalPrice === originalPrice)
  *   applicationId 5005 → 유저 부분 환불   (로그 없음 + finalPrice < originalPrice)
  *   그 외              → N
- *
- * applicationId 5009 는 환불 후 삭제된 건이다. 참여자 행이 없어 목록에는 나타나지 않고
- * 히스토리에만 `삭제됨` 으로 남는다.
  */
 export const MOCK_REFUND_PROGRAM_ID = 319;
 
@@ -38,7 +35,6 @@ export const seedRefundLogs: AdminRefundLog[] = [
     paidAt: '2026-07-20T10:00:00',
     couponName: null,
     couponDiscount: null,
-    isDeleted: false,
   },
   {
     // 부분 환불. 원 결제액이 함께 있어야 220,000 이 얼마 중 얼마인지 읽힌다.
@@ -62,31 +58,6 @@ export const seedRefundLogs: AdminRefundLog[] = [
     paidAt: '2026-07-20T11:30:00',
     couponName: null,
     couponDiscount: null,
-    isDeleted: false,
-  },
-  {
-    // 환불 후 완전 삭제한 건. 참여자 행이 없어 목록에는 나타나지 않는다.
-    id: 5,
-    refundedAt: '2026-08-03T17:00:00',
-    programType: 'CHALLENGE',
-    programId: MOCK_REFUND_PROGRAM_ID,
-    programTitle: '[스타트업 Ver.] 면접 준비 7일 끝장 챌린지 7기',
-    userId: 13025,
-    userName: '한삭제',
-    userEmail: 'deleted@example.com',
-    managerName: '송다예',
-    refundedAmount: 330000,
-    reason: '정책상 부분이나 유저가 전액을 요구 — 없던 일로 처리',
-    status: 'SUCCESS',
-    failureMessage: null,
-    applicationId: 5009,
-    orderId: 'letsMOCK5009',
-    paymentKey: 'tviva20260720120000eeee',
-    originalAmount: 330000,
-    paidAt: '2026-07-20T12:00:00',
-    couponName: null,
-    couponDiscount: null,
-    isDeleted: true,
   },
   {
     id: 2,
@@ -109,7 +80,6 @@ export const seedRefundLogs: AdminRefundLog[] = [
     paidAt: '2026-07-15T09:00:00',
     couponName: '얼리버드 쿠폰',
     couponDiscount: 10000,
-    isDeleted: false,
   },
   {
     id: 3,
@@ -133,6 +103,5 @@ export const seedRefundLogs: AdminRefundLog[] = [
     paidAt: '2026-07-01T08:00:00',
     couponName: null,
     couponDiscount: null,
-    isDeleted: false,
   },
 ];

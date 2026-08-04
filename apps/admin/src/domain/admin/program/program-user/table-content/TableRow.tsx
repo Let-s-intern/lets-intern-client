@@ -130,8 +130,6 @@ const TableRow = ({
       couponName: applicationInfo.couponName ?? null,
       couponDiscount: applicationInfo.couponDiscount ?? null,
       finalPrice: applicationInfo.finalPrice ?? 0,
-      // 신청자 조회 응답에 제출물 건수가 없다. 서버가 내려주면 여기서 넘긴다.
-      submittedMissionCount: null,
     });
   };
 

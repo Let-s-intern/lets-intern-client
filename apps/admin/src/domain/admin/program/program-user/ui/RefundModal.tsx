@@ -14,13 +14,6 @@ export interface RefundTarget {
   couponName: string | null;
   couponDiscount: number | null;
   finalPrice: number;
-  /**
-   * 함께 지워질 미션 제출물 건수.
-   *
-   * 챌린지가 아니면 제출물 개념이 없고, 참여자 목록 API 가 아직 건수를 내려주지 않아
-   * 그 경우 null 이다. null 이면 건수 없이 항목만 알린다.
-   */
-  submittedMissionCount: number | null;
 }
 
 interface RefundModalProps {
@@ -44,16 +37,6 @@ const formatCoupon = (name: string | null, discount: number | null) => {
   return `${name} (${discount.toLocaleString()}원 할인)`;
 };
 
-/**
- * 무엇이 지워지는지 알린다.
- *
- * 건수를 알면 함께 적는다. 개수가 있어야 운영이 무게를 안다.
- */
-const deletionScopeText = (submittedMissionCount: number | null) =>
-  submittedMissionCount == null
-    ? '신청 기록·결제 기록·제출한 미션이 함께 지워집니다.'
-    : `신청 기록·결제 기록·제출한 미션 ${submittedMissionCount}건이 함께 지워집니다.`;
-
 const planLabel: Record<string, string> = {
   [ChallengePricePlanEnum.enum.BASIC]: '베이직',
   [ChallengePricePlanEnum.enum.STANDARD]: '스탠다드',
@@ -73,8 +56,6 @@ const RefundModal = ({
   const [confirmText, setConfirmText] = useState('');
   // 기본값은 실결제액이다. 대부분의 건이 전액이라 그대로 실행하는 쪽이 오타를 줄인다.
   const [amountInput, setAmountInput] = useState(String(target.finalPrice));
-  // 기본 꺼짐. 꺼진 상태에서는 시선을 끌지 않고, 켰을 때만 위험을 강조한다.
-  const [hardDelete, setHardDelete] = useState(false);
 
   const refundAmount = amountInput === '' ? 0 : Number(amountInput);
 
@@ -94,18 +75,7 @@ const RefundModal = ({
   const confirmSentence = buildRefundConfirmSentence({
     isFullRefund: refundAmount === target.finalPrice,
     refundAmount,
-    hardDelete,
   });
-
-  /**
-   * 체크 상태를 바꾸면 이미 입력한 확인 문장을 비운다.
-   *
-   * 안 비우면 삭제를 끈 상태의 문장을 넣어두고 체크만 켜서 통과시킬 수 있다.
-   */
-  const handleHardDeleteChange = (checked: boolean) => {
-    setHardDelete(checked);
-    setConfirmText('');
-  };
 
   const canSubmit = useMemo(
     () =>
@@ -131,7 +101,6 @@ const RefundModal = ({
       reason: reason.trim(),
       sendNotification,
       refundAmount,
-      hardDelete,
     });
   };
 
@@ -226,27 +195,6 @@ const RefundModal = ({
           환불 안내 알림톡 발송
         </label>
 
-        <div className="mb-5 border-t border-neutral-200 pt-4">
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={hardDelete}
-              onChange={(e) => handleHardDeleteChange(e.target.checked)}
-            />
-            참여자를 목록에서 완전히 삭제
-          </label>
-
-          {hardDelete && (
-            <ul className="mt-2 space-y-1 rounded bg-red-50 p-3 text-sm text-red-700">
-              <li>{deletionScopeText(target.submittedMissionCount)}</li>
-              <li>되돌릴 수 없고 환불 히스토리에만 남습니다.</li>
-              <li>
-                환불한 뒤에는 이 창을 다시 열 수 없어 나중에 삭제할 수 없습니다.
-              </li>
-            </ul>
-          )}
-        </div>
-
         <div className="mb-5 rounded bg-neutral-100 p-3">
           <p className="mb-2 text-sm text-neutral-600">
             아래 문장을 그대로 입력해야 실행됩니다.
@@ -275,11 +223,7 @@ const RefundModal = ({
             onClick={handleSubmit}
             disabled={!canSubmit}
           >
-            {isSubmitting
-              ? '환불 처리 중...'
-              : hardDelete
-                ? '환불 후 삭제'
-                : '환불 실행'}
+            {isSubmitting ? '환불 처리 중...' : '환불 실행'}
           </button>
         </div>
       </div>
