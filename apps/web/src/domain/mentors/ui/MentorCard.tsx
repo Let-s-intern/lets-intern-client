@@ -13,9 +13,9 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
   return (
     <Link
       href={`/mentors/${mentor.mentorId}`}
-      className="flex w-full flex-col items-center p-4 text-center"
+      className="flex w-full flex-col items-center px-1 py-2 text-center md:p-4"
     >
-      <div className="relative aspect-square w-full max-w-[200px]">
+      <div className="relative aspect-square w-full max-w-[140px] md:max-w-[200px]">
         <div className="bg-neutral-70 relative h-full w-full overflow-hidden rounded-full">
           <img
             src={mentor.profileImgUrl ?? '/icons/user-fill.svg'}
@@ -24,13 +24,13 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 px-2 py-3">
-            <span className="text-xsmall14 text-static-100 font-normal">
+            <span className="text-xxsmall12 md:text-xsmall14 text-static-100 font-normal">
               {nickname} 멘토
             </span>
           </div>
         </div>
 
-        <div className="border-neutral-80 bg-static-100 absolute right-0 top-0 h-[54px] w-[54px] overflow-hidden rounded-full border-2">
+        <div className="border-neutral-80 bg-static-100 absolute right-0 top-0 h-8 w-8 overflow-hidden rounded-full border-2 md:h-[54px] md:w-[54px]">
           <img
             src="/logo/logo-simple.svg"
             alt=""
@@ -39,10 +39,10 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
         </div>
       </div>
 
-      <p className="text-xsmall14 text-neutral-40 mt-2 line-clamp-1">
+      <p className="text-xxsmall10 md:text-xsmall14 text-neutral-40 mt-2 line-clamp-1">
         하드코딩하드코딩 회사 | 하드코딩 직무 하드코딩 직무
       </p>
-      <p className="text-small18 text-neutral-20 mt-0.5 line-clamp-1 font-semibold">
+      <p className="text-xxsmall12 md:text-small18 text-neutral-20 mt-0.5 line-clamp-1 font-semibold">
         하드코딩 대표경력대표경력대표경력대표경력
       </p>
 
@@ -50,7 +50,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
 
       <div
         className={twMerge(
-          'text-xxsmall12 text-neutral-0 mt-2 min-h-8 w-full truncate rounded-[6px] px-3 py-2',
+          'text-xxsmall10 md:text-xxsmall12 text-neutral-0 mx-1.5 mt-2 min-h-5 w-full truncate rounded-[6px] py-1 md:min-h-8 md:px-3 md:py-2',
           mentor.hashTagList.length > 0 ? 'bg-neutral-90' : 'bg-static-100',
         )}
       >
