@@ -1,7 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { useMentorHashTagListQuery } from '@/api/mentor/mentor';
-import { useMemo, useState } from 'react';
 
 import FilterChips from '../ui/FilterChips';
 
@@ -15,7 +16,15 @@ const getTypeLabel = (type: string) =>
 
 const ALL_OPTION = { value: 'all', label: '전체' };
 
-const MentorFilterSection = () => {
+interface MentorFilterSectionProps {
+  selected: Record<string, string>;
+  onChange: (selected: Record<string, string>) => void;
+}
+
+const MentorFilterSection = ({
+  selected,
+  onChange,
+}: MentorFilterSectionProps) => {
   const { data } = useMentorHashTagListQuery();
   const hashTags = useMemo(() => data ?? [], [data]);
 
@@ -33,8 +42,6 @@ const MentorFilterSection = () => {
     }));
   }, [hashTags]);
 
-  const [selected, setSelected] = useState<Record<string, string>>({});
-
   return (
     <section className="mt-12 flex w-full flex-col gap-10">
       {groups.map((group) => (
@@ -45,9 +52,7 @@ const MentorFilterSection = () => {
           <FilterChips
             options={group.options}
             selected={selected[group.type] ?? 'all'}
-            onChange={(value) =>
-              setSelected((prev) => ({ ...prev, [group.type]: value }))
-            }
+            onChange={(value) => onChange({ ...selected, [group.type]: value })}
           />
         </div>
       ))}
