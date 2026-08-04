@@ -1,20 +1,17 @@
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
 
 import { mentorHashTagListSchema, mentorListSchema } from './mentorSchema';
 
 export const MENTOR_HASH_TAG_QUERY_KEY = ['mentorHashTag', 'list'] as const;
 
 /** GET /mentor-hash-tag — 공개 멘토 해시태그(필터링 옵션) 전체 목록 조회 */
-export const useMentorHashTagListQuery = () => {
-  return useQuery({
-    queryKey: MENTOR_HASH_TAG_QUERY_KEY,
-    queryFn: async () => {
-      const res = await axios.get('/mentor-hash-tag');
-      return mentorHashTagListSchema.parse(res.data.data).mentorHashTagList;
-    },
-  });
-};
+export const mentorHashTagListQueryOptions = () => ({
+  queryKey: MENTOR_HASH_TAG_QUERY_KEY,
+  queryFn: async () => {
+    const res = await axios.get('/mentor-hash-tag');
+    return mentorHashTagListSchema.parse(res.data.data).mentorHashTagList;
+  },
+});
 
 export interface UseMentorListQueryParams {
   /** 해시태그 필터(다중 선택). 비어 있으면 전체. */
@@ -26,9 +23,11 @@ export interface UseMentorListQueryParams {
 export const MENTOR_LIST_QUERY_KEY = ['mentor', 'list'] as const;
 
 /** GET /mentor — 멘토 전체 목록 조회 */
-export const useMentorListQuery = (params: UseMentorListQueryParams = {}) => {
+export const mentorListQueryOptions = (
+  params: UseMentorListQueryParams = {},
+) => {
   const { hashTagIdList = [], page = 1, size = 100 } = params;
-  return useQuery({
+  return {
     queryKey: [...MENTOR_LIST_QUERY_KEY, { hashTagIdList, page, size }],
     queryFn: async () => {
       const res = await axios.get('/mentor', {
@@ -41,5 +40,5 @@ export const useMentorListQuery = (params: UseMentorListQueryParams = {}) => {
       });
       return mentorListSchema.parse(res.data.data);
     },
-  });
+  };
 };

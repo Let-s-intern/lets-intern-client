@@ -1,6 +1,7 @@
 'use client';
 
-import { useMentorHashTagListQuery } from '@/api/mentor/mentor';
+import { mentorHashTagListQueryOptions } from '@/api/mentor/mentor';
+import { useQuery } from '@tanstack/react-query';
 
 import FilterChips from '../ui/FilterChips';
 
@@ -23,7 +24,7 @@ const MentorFilterSection = ({
   selected,
   onChange,
 }: MentorFilterSectionProps) => {
-  const { data } = useMentorHashTagListQuery();
+  const { data, isLoading } = useQuery(mentorHashTagListQueryOptions());
   const hashTags = data ?? [];
 
   const byType = new Map<string, { value: string; label: string }[]>();
@@ -38,18 +39,31 @@ const MentorFilterSection = ({
     options: [ALL_OPTION, ...options],
   }));
 
+  if (isLoading) {
+    return (
+      <section className="mt-2 min-h-10 w-full md:mt-[54px] md:min-h-20" />
+    );
+  }
+
   return (
-    <section className="mt-12 flex w-full flex-col gap-10">
+    <section className="mt-4 flex w-full flex-col gap-5 md:mt-12 md:gap-10">
       {groups.map((group) => (
-        <div key={group.type} className="flex flex-col gap-5">
-          <h2 className="text-small18 text-neutral-0 font-semibold">
+        <div
+          key={group.type}
+          className="flex flex-row items-center gap-5 md:flex-col md:items-start"
+        >
+          <h2 className="text-xsmall14 md:text-small18 text-neutral-0 shrink-0 whitespace-nowrap font-semibold">
             {group.label}
           </h2>
-          <FilterChips
-            options={group.options}
-            selected={selected[group.type] ?? 'all'}
-            onChange={(value) => onChange({ ...selected, [group.type]: value })}
-          />
+          <div className="min-w-0 flex-1">
+            <FilterChips
+              options={group.options}
+              selected={selected[group.type] ?? 'all'}
+              onChange={(value) =>
+                onChange({ ...selected, [group.type]: value })
+              }
+            />
+          </div>
         </div>
       ))}
     </section>
