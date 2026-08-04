@@ -8,6 +8,7 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
 import CareerSection from './ui/CareerSection';
 import Introduction from './ui/Introduction';
+import MentorHashTagSection from './ui/MentorHashTagSection';
 
 const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
@@ -174,6 +175,7 @@ export default function ProfilePage() {
         />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
+        <MentorHashTagSection />
       </div>
 
       {/* Floating save / discard buttons */}
