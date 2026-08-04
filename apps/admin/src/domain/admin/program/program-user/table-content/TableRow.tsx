@@ -130,6 +130,8 @@ const TableRow = ({
       couponName: applicationInfo.couponName ?? null,
       couponDiscount: applicationInfo.couponDiscount ?? null,
       finalPrice: applicationInfo.finalPrice ?? 0,
+      // 신청자 조회 응답에 제출물 건수가 없다. 서버가 내려주면 여기서 넘긴다.
+      submittedMissionCount: null,
     });
   };
 
@@ -185,7 +187,7 @@ const TableRow = ({
             className="rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
             onClick={handleRefundClick}
           >
-            전액 환불
+            환불
           </button>
         ) : (
           <span className="text-xs text-gray-400">{refundable.reason}</span>

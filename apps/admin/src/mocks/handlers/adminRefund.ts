@@ -4,13 +4,14 @@ import type { AdminRefundLog } from '@/api/adminRefund';
 import { seedRefundLogs } from '../seed/adminRefund';
 
 /**
- * 어드민 전액 환불 MSW 핸들러.
+ * 어드민 환불 MSW 핸들러.
  *
  * axios 응답 본문이 `{ data: <payload> }` 엔벨로프(`res.data.data`)이므로 모두 `{ data }` 로 감싼다.
  * 경로는 `VITE_SERVER_API` 와 프록시를 고려해 와일드카드로 매칭한다.
  *
  * 실행 결과가 다음 조회에 반영되도록 시드를 mutable 로 둔다. 환불 버튼을 누른 뒤
- * 히스토리에 새 줄이 생기고 참여자 목록 라벨이 `어드민 전체 환불` 로 바뀌는 흐름을 재현한다.
+ * 히스토리에 새 줄이 생기고 참여자 목록 라벨이 `어드민 전체 환불` 또는 `어드민 부분 환불` 로
+ * 바뀌는 흐름을 재현한다.
  */
 
 const BASE = '*/api/v1';
@@ -21,6 +22,99 @@ let refundLogs: AdminRefundLog[] = [...seedRefundLogs];
 const alreadyRefunded = (applicationId: number) =>
   refundLogs.some((log) => log.applicationId === applicationId);
 
+/**
+ * 참여자 목록 목.
+ *
+ * 환불여부 라벨 다섯 갈래와 버튼 비활성 세 갈래를 한 화면에서 확인할 수 있게 구성한다.
+ * 서버는 취소 건도 함께 내려주므로(어드민 조회에는 isCanceled 필터가 없다) 여기서도 섞어 둔다.
+ */
+const mockApplication = (over: Record<string, unknown>) => ({
+  id: 0,
+  paymentId: 1,
+  name: '홍길동',
+  email: 'hong@example.com',
+  phoneNum: '010-0000-0000',
+  couponName: null,
+  couponDiscount: null,
+  isCanceled: false,
+  createDate: '2026-07-20T10:00:00',
+  orderId: 'letsMOCK0001',
+  finalPrice: 330000,
+  programDiscount: 15000,
+  programPrice: 345000,
+  refundPrice: 30000,
+  challengePricePlanType: 'BASIC',
+  originalPrice: null,
+  ...over,
+});
+
+let mockApplications = [
+  // 정상 — 환불 버튼 활성
+  mockApplication({ id: 5001, name: '박서현', orderId: 'letsBX385104' }),
+  // 100% 할인 쿠폰 — 쿠폰 표기와 0원 처리 확인. 0원은 환불할 수 없다
+  mockApplication({
+    id: 5002,
+    name: '안한나',
+    orderId: 'letsip113875',
+    couponName: '렛츠커리어 2026 하반기 멤버십 구매자 전용 쿠폰',
+    couponDiscount: -1,
+    finalPrice: 0,
+  }),
+  // 어드민 전체 환불 — 히스토리 로그에 applicationId 5003 이 있다
+  mockApplication({
+    id: 5003,
+    name: '김채원',
+    isCanceled: true,
+    finalPrice: 330000,
+    originalPrice: 330000,
+  }),
+  // 유저 전체 환불 — 로그 없음 + 환불액 === 원 결제액
+  mockApplication({
+    id: 5004,
+    name: '이유저',
+    isCanceled: true,
+    finalPrice: 330000,
+    originalPrice: 330000,
+  }),
+  // 유저 부분 환불 — 환불액 < 원 결제액
+  mockApplication({
+    id: 5005,
+    name: '최부분',
+    isCanceled: true,
+    finalPrice: 220000,
+    originalPrice: 330000,
+  }),
+  // 테스트 결제 — 버튼 비활성
+  mockApplication({
+    id: 5006,
+    name: '테스트참여',
+    orderId: 'TEST_CHALLENGE_5006',
+  }),
+  // 고아 신청서 — 이름이 비어 버튼 비활성
+  mockApplication({
+    id: 5007,
+    name: null,
+    email: null,
+    phoneNum: null,
+    orderId: null,
+    finalPrice: null,
+    challengePricePlanType: null,
+  }),
+  // 어드민 부분 환불 — 히스토리 로그에 applicationId 5008 이 있다
+  mockApplication({
+    id: 5008,
+    name: '정부분',
+    isCanceled: true,
+    finalPrice: 220000,
+    originalPrice: 330000,
+  }),
+];
+
+/** 상한 검증에 쓰는 실결제액. 서버는 payment.finalPrice 로 같은 검증을 한다. */
+const finalPriceOf = (applicationId: number) =>
+  mockApplications.find((application) => application.id === applicationId)
+    ?.finalPrice ?? null;
+
 export const adminRefundHandlers = [
   http.post(
     `${BASE}/admin/application/:applicationId/refund`,
@@ -29,6 +123,8 @@ export const adminRefundHandlers = [
       const body = (await request.json().catch(() => null)) as {
         managerName?: string;
         reason?: string;
+        refundAmount?: number;
+        hardDelete?: boolean;
       } | null;
 
       // 서버도 공백을 거절한다. 프론트 검증에만 맡기면 빈 이력이 쌓인다.
@@ -44,6 +140,27 @@ export const adminRefundHandlers = [
           { status: 400 },
         );
       }
+
+      // 금액은 요청 바디로 들어오므로 조작할 수 있다. 서버 재검증이 방어의 전부다.
+      const refundAmount = body.refundAmount;
+      if (
+        typeof refundAmount !== 'number' ||
+        !Number.isInteger(refundAmount) ||
+        refundAmount <= 0
+      ) {
+        return HttpResponse.json(
+          { message: '환불 금액은 1원 이상의 정수여야 합니다.' },
+          { status: 400 },
+        );
+      }
+      const limit = finalPriceOf(applicationId);
+      if (limit != null && refundAmount > limit) {
+        return HttpResponse.json(
+          { message: `환불 금액이 실결제액 ${limit}원을 초과합니다.` },
+          { status: 400 },
+        );
+      }
+
       if (alreadyRefunded(applicationId)) {
         return HttpResponse.json(
           { message: '이미 취소된 신청 내역입니다.' },
@@ -51,8 +168,16 @@ export const adminRefundHandlers = [
         );
       }
 
-      const refundedAmount = 330000;
       const now = new Date().toISOString();
+      const hardDelete = body.hardDelete === true;
+
+      // 삭제는 환불이 성공한 뒤에만 일어난다. 돈이 안 돌아간 채 근거만 사라지는 게
+      // 가장 나쁜 결과다.
+      if (hardDelete) {
+        mockApplications = mockApplications.filter(
+          (application) => application.id !== applicationId,
+        );
+      }
 
       refundLogs = [
         {
@@ -65,18 +190,25 @@ export const adminRefundHandlers = [
           userName: '목 참여자',
           userEmail: 'mock@example.com',
           managerName: body.managerName.trim(),
-          refundedAmount,
+          refundedAmount: refundAmount,
           reason: body.reason.trim(),
           status: 'SUCCESS',
           failureMessage: null,
           applicationId,
+          orderId: `letsMOCK${applicationId}`,
+          paymentKey: `mock_payment_${applicationId}`,
+          originalAmount: limit,
+          paidAt: '2026-07-20T10:00:00',
+          couponName: null,
+          couponDiscount: null,
+          isDeleted: hardDelete,
         },
         ...refundLogs,
       ];
 
       return HttpResponse.json({
         data: {
-          refundedAmount,
+          refundedAmount: refundAmount,
           canceledAt: now,
           paymentKey: `mock_payment_${applicationId}`,
         },
@@ -123,121 +255,15 @@ export const adminRefundHandlers = [
   }),
 ];
 
-/**
- * 참여자 목록 목.
- *
- * 환불여부 라벨 네 갈래와 버튼 비활성 세 갈래를 한 화면에서 확인할 수 있게 구성한다.
- * 서버는 취소 건도 함께 내려주므로(어드민 조회에는 isCanceled 필터가 없다) 여기서도 섞어 둔다.
- */
-const mockApplication = (over: Record<string, unknown>) => ({
-  id: 0,
-  paymentId: 1,
-  name: '홍길동',
-  email: 'hong@example.com',
-  phoneNum: '010-0000-0000',
-  couponName: null,
-  couponDiscount: null,
-  isCanceled: false,
-  createDate: '2026-07-20T10:00:00',
-  orderId: 'letsMOCK0001',
-  finalPrice: 330000,
-  programDiscount: 15000,
-  programPrice: 345000,
-  refundPrice: 30000,
-  challengePricePlanType: 'BASIC',
-  originalPrice: null,
-  ...over,
-});
-
 export const adminParticipantHandlers = [
   http.get(`${BASE}/challenge/:challengeId/applications`, () =>
     HttpResponse.json({
       data: {
-        applicationList: [
-          // 정상 — 환불 버튼 활성
-          {
-            application: mockApplication({
-              id: 5001,
-              name: '박서현',
-              orderId: 'letsBX385104',
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 100% 할인 쿠폰 — 쿠폰 표기와 0원 처리 확인
-          {
-            application: mockApplication({
-              id: 5002,
-              name: '안한나',
-              orderId: 'letsip113875',
-              couponName: '렛츠커리어 2026 하반기 멤버십 구매자 전용 쿠폰',
-              couponDiscount: -1,
-              finalPrice: 0,
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 어드민 전체 환불 — 히스토리 로그에 applicationId 5003 이 있다
-          {
-            application: mockApplication({
-              id: 5003,
-              name: '김채원',
-              isCanceled: true,
-              finalPrice: 330000,
-              originalPrice: 330000,
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 유저 전체 환불 — 로그 없음 + 환불액 === 원 결제액
-          {
-            application: mockApplication({
-              id: 5004,
-              name: '이유저',
-              isCanceled: true,
-              finalPrice: 330000,
-              originalPrice: 330000,
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 유저 부분 환불 — 환불액 < 원 결제액
-          {
-            application: mockApplication({
-              id: 5005,
-              name: '최부분',
-              isCanceled: true,
-              finalPrice: 220000,
-              originalPrice: 330000,
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 테스트 결제 — 버튼 비활성
-          {
-            application: mockApplication({
-              id: 5006,
-              name: '테스트참여',
-              orderId: 'TEST_CHALLENGE_5006',
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-          // 고아 신청서 — 이름이 비어 버튼 비활성
-          {
-            application: mockApplication({
-              id: 5007,
-              name: null,
-              email: null,
-              phoneNum: null,
-              orderId: null,
-              finalPrice: null,
-              challengePricePlanType: null,
-            }),
-            optionPriceSum: 0,
-            optionDiscountPriceSum: 0,
-          },
-        ],
+        applicationList: mockApplications.map((application) => ({
+          application,
+          optionPriceSum: 0,
+          optionDiscountPriceSum: 0,
+        })),
       },
     }),
   ),

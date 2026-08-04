@@ -2,7 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-/** 어드민 주도 전액 환불. 유저가 규정대로 받은 환불은 여기 들어오지 않는다. */
+/** 어드민 주도 환불. 유저가 규정대로 받은 환불은 여기 들어오지 않는다. */
 export const adminRefundStatusSchema = z.enum(['PENDING', 'SUCCESS', 'FAILED']);
 export type AdminRefundStatus = z.infer<typeof adminRefundStatusSchema>;
 
@@ -21,6 +21,18 @@ export const adminRefundLogSchema = z.object({
   status: adminRefundStatusSchema,
   failureMessage: z.string().nullable().optional(),
   applicationId: z.number().nullable().optional(),
+  // 아래는 감사 로그 스냅샷 확장분이다. 하드 삭제하면 원본 행이 사라져
+  // 이 로그가 정산 대사의 유일한 근거가 된다.
+  /** 정산 대사의 기준값. 토스 콘솔에서 이 값으로 거래를 찾는다. */
+  orderId: z.string().nullable().optional(),
+  paymentKey: z.string().nullable().optional(),
+  /** 환불 전 실결제액. 부분 환불에서 얼마 중 얼마인지 판별한다. */
+  originalAmount: z.number().nullable().optional(),
+  paidAt: z.string().nullable().optional(),
+  couponName: z.string().nullable().optional(),
+  couponDiscount: z.number().nullable().optional(),
+  /** 환불과 함께 참여자 행을 지웠는가. 삭제 이력은 별도 로그 없이 여기 남는다. */
+  isDeleted: z.boolean().nullable().optional(),
 });
 export type AdminRefundLog = z.infer<typeof adminRefundLogSchema>;
 
@@ -41,18 +53,33 @@ const adminRefundResultSchema = z.object({
   paymentKey: z.string().nullable().optional(),
 });
 
-export interface AdminRefundRequest {
+export const adminRefundRequestSchema = z.object({
   /** 실행 담당자. 어드민 계정을 공유해 쓰고 있어 이 값이 유일한 담당자 정보다. */
-  managerName: string;
-  reason: string;
-  sendNotification: boolean;
-}
+  managerName: z.string().min(1),
+  reason: z.string().min(1),
+  sendNotification: z.boolean(),
+  /**
+   * 환불 금액. 0 초과, 실결제액 이하의 정수다.
+   *
+   * 0 을 허용하면 토스가 취소 요청을 조용히 무시해 "성공했는데 돈이 안 나간" 상태가 된다.
+   * 화면에서도 막지만 여기서 한 번 더 거른다.
+   */
+  refundAmount: z.number().int().positive(),
+  /**
+   * 참여자 행을 함께 지운다. 신청서·결제·미션 제출물이 사라지고 되돌릴 수 없다.
+   *
+   * 삭제는 독립 동작이 아니라 환불의 옵션이다. 환불 없이 지우면 결제는 살아 있는데
+   * 참여 기록만 사라진다.
+   */
+  hardDelete: z.boolean().default(false),
+});
+/** 호출부는 hardDelete 를 생략할 수 있다. parse 가 false 를 채운다. */
+export type AdminRefundRequest = z.input<typeof adminRefundRequestSchema>;
 
 /**
- * 전액 환불 실행.
+ * 환불 실행.
  *
- * 금액을 보내지 않는다. 어드민 환불은 언제나 전액이라 서버가 결제 금액을 그대로 쓰고,
- * 클라이언트가 금액을 보내지 않으니 조작할 여지도 없다.
+ * 금액을 요청 바디로 보내므로 조작 여지가 생겼다. 서버 재검증이 방어의 전부다.
  */
 export const useAdminRefundMutation = ({
   onSuccess,
@@ -73,7 +100,7 @@ export const useAdminRefundMutation = ({
     }) => {
       const res = await axios.post(
         `/admin/application/${applicationId}/refund`,
-        body,
+        adminRefundRequestSchema.parse(body),
       );
       return adminRefundResultSchema.parse(res.data.data);
     },
