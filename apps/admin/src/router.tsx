@@ -99,6 +99,9 @@ const AdminMentorDetailPage = lazy(
 const AdminMentorRegisterPage = lazy(
   () => import('./pages/pages/user/AdminMentorRegisterPage'),
 );
+const AdminMentorKeywordPage = lazy(
+  () => import('./pages/pages/user/AdminMentorKeywordPage'),
+);
 
 const Coupons = lazy(() => import('./pages/pages/coupon/Coupons'));
 const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
@@ -386,6 +389,10 @@ export const router = createBrowserRouter([
       {
         path: '/mentors/register',
         element: withSuspense(<AdminMentorRegisterPage />),
+      },
+      {
+        path: '/mentors/keywords',
+        element: withSuspense(<AdminMentorKeywordPage />),
       },
       {
         path: '/mentors/:mentorId',

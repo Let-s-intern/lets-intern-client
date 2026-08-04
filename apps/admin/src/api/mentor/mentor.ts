@@ -113,7 +113,7 @@ export const useAdminMentorHashTagListQuery = () => {
     queryKey: [AdminMentorHashTagQueryKey],
     queryFn: async () => {
       const res = await axios.get('/admin/mentor-hash-tag');
-      return mentorHashTagListSchema.parse(res.data).mentorHashTagList;
+      return mentorHashTagListSchema.parse(res.data.data).mentorHashTagList;
     },
     refetchOnWindowFocus: false,
   });

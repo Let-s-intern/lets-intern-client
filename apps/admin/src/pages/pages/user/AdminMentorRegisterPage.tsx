@@ -200,6 +200,8 @@ export default function AdminMentorRegisterPage() {
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (newValue === 0) {
       navigate('/mentors');
+    } else if (newValue === 2) {
+      navigate('/mentors/keywords');
     }
   };
 
@@ -210,6 +212,7 @@ export default function AdminMentorRegisterPage() {
       <Tabs value={1} onChange={handleTabChange} className="mb-4">
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
+        <Tab label="멘토 키워드" />
       </Tabs>
 
       <MentorFilter />
