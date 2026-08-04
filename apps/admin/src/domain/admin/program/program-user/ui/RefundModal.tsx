@@ -94,7 +94,18 @@ const RefundModal = ({
   const confirmSentence = buildRefundConfirmSentence({
     isFullRefund: refundAmount === target.finalPrice,
     refundAmount,
+    hardDelete,
   });
+
+  /**
+   * 체크 상태를 바꾸면 이미 입력한 확인 문장을 비운다.
+   *
+   * 안 비우면 삭제를 끈 상태의 문장을 넣어두고 체크만 켜서 통과시킬 수 있다.
+   */
+  const handleHardDeleteChange = (checked: boolean) => {
+    setHardDelete(checked);
+    setConfirmText('');
+  };
 
   const canSubmit = useMemo(
     () =>
@@ -220,7 +231,7 @@ const RefundModal = ({
             <input
               type="checkbox"
               checked={hardDelete}
-              onChange={(e) => setHardDelete(e.target.checked)}
+              onChange={(e) => handleHardDeleteChange(e.target.checked)}
             />
             참여자를 목록에서 완전히 삭제
           </label>
@@ -264,7 +275,11 @@ const RefundModal = ({
             onClick={handleSubmit}
             disabled={!canSubmit}
           >
-            {isSubmitting ? '환불 처리 중...' : '환불 실행'}
+            {isSubmitting
+              ? '환불 처리 중...'
+              : hardDelete
+                ? '환불 후 삭제'
+                : '환불 실행'}
           </button>
         </div>
       </div>
