@@ -8,6 +8,7 @@ import RefundModal, { RefundTarget } from '../RefundModal';
 const FULL_SENTENCE = buildRefundConfirmSentence({
   isFullRefund: true,
   refundAmount: 330000,
+  hardDelete: false,
 });
 
 const target: RefundTarget = {
@@ -41,8 +42,10 @@ const renderModal = (over: Partial<RefundTarget> = {}) => {
 };
 
 const amountInput = () => screen.getByLabelText('환불 금액');
-const submitButton = () => screen.getByRole('button', { name: '환불 실행' });
 const confirmInput = () => screen.getByLabelText('확인 문장');
+/** 실행 버튼. 라벨이 삭제 여부에 따라 바뀌므로 둘 다 받는다. */
+const submitButton = () =>
+  screen.getByRole('button', { name: /환불 실행|환불 후 삭제/ });
 
 const setAmount = async (
   user: ReturnType<typeof userEvent.setup>,
@@ -256,6 +259,103 @@ describe('RefundModal 완전 삭제 체크박스', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ hardDelete: false }),
     );
+  });
+
+  it('켜고 실행하면 hardDelete 를 true 로 보낸다', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderModal();
+
+    await user.click(deleteCheckbox());
+    await fillRequiredFields(user);
+    await user.click(submitButton());
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ hardDelete: true, refundAmount: 330000 }),
+    );
+  });
+});
+
+describe('RefundModal 삭제 여부에 따른 문장과 라벨', () => {
+  it('전액 + 삭제 끔', () => {
+    renderModal();
+
+    expect(
+      screen.getByText(
+        '이 유저를 전체 환불 시킵니다. 이 유저는 대시보드에 입장할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(submitButton()).toHaveTextContent('환불 실행');
+  });
+
+  it('부분 + 삭제 끔', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await setAmount(user, '220000');
+
+    expect(
+      screen.getByText(
+        '이 유저에게 220,000원을 환불합니다. 이 유저는 대시보드에 입장할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(submitButton()).toHaveTextContent('환불 실행');
+  });
+
+  it('전액 + 삭제 켬', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(deleteCheckbox());
+
+    expect(
+      screen.getByText(
+        '이 유저를 전체 환불하고 제출한 미션까지 완전히 삭제합니다. 되돌릴 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(submitButton()).toHaveTextContent('환불 후 삭제');
+  });
+
+  it('부분 + 삭제 켬', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await setAmount(user, '220000');
+    await user.click(deleteCheckbox());
+
+    expect(
+      screen.getByText(
+        '이 유저에게 220,000원을 환불하고 제출한 미션까지 완전히 삭제합니다. 되돌릴 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(submitButton()).toHaveTextContent('환불 후 삭제');
+  });
+
+  it('체크 상태를 바꾸면 이미 입력한 확인 문장을 비운다', async () => {
+    // 안 비우면 삭제를 끈 상태의 문장을 넣어두고 체크만 켜서 통과시킬 수 있다.
+    const user = userEvent.setup();
+    renderModal();
+
+    await fillRequiredFields(user);
+    expect(submitButton()).toBeEnabled();
+
+    await user.click(deleteCheckbox());
+
+    expect(confirmInput()).toHaveValue('');
+    expect(submitButton()).toBeDisabled();
+  });
+
+  it('체크를 다시 끄면 삭제용 문장도 비운다', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(deleteCheckbox());
+    await fillRequiredFields(user);
+    expect(submitButton()).toBeEnabled();
+
+    await user.click(deleteCheckbox());
+
+    expect(confirmInput()).toHaveValue('');
+    expect(submitButton()).toBeDisabled();
   });
 });
 
