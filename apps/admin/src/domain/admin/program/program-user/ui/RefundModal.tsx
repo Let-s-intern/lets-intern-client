@@ -73,6 +73,7 @@ const RefundModal = ({
       managerName: managerName.trim(),
       reason: reason.trim(),
       sendNotification,
+      refundAmount: target.finalPrice,
     });
   };
 
