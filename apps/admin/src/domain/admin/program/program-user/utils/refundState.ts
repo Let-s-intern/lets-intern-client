@@ -24,7 +24,7 @@ export interface RefundLabel {
  *
  * 전체·부분 판별은 Payment.updateRefundPrice 가 남기는 흔적을 쓴다. 환불하면 원 결제액이
  * originalPrice 로 옮겨가고 finalPrice 에 환불액이 덮어써지므로, 두 값이 같으면 전액이다.
- * 어드민 환불은 언제나 전액이라 범위를 따로 계산하지 않는다.
+ * 어드민 환불도 금액을 지정할 수 있게 되면서 같은 기준을 쓴다.
  */
 export const resolveRefundLabel = ({
   isCanceled,
@@ -34,17 +34,25 @@ export const resolveRefundLabel = ({
 }: RefundLabelInput): RefundLabel => {
   if (!isCanceled) return { text: 'N', isRefunded: false, isAdmin: false };
 
-  if (isAdminRefunded) {
-    return { text: '어드민 전체 환불', isRefunded: true, isAdmin: true };
-  }
-
   // originalPrice 가 없으면 전체·부분을 판단할 근거가 없다. 단정하지 않는다.
-  if (originalPrice == null || finalPrice == null) {
-    return { text: '유저 환불', isRefunded: true, isAdmin: false };
+  const scope =
+    originalPrice == null || finalPrice == null
+      ? null
+      : finalPrice === originalPrice
+        ? '전체'
+        : '부분';
+
+  if (isAdminRefunded) {
+    // 금액을 모르는 과거 이력은 전체로 둔다. 어드민 환불이 전액뿐이던 시절의 건이다.
+    return {
+      text: `어드민 ${scope ?? '전체'} 환불`,
+      isRefunded: true,
+      isAdmin: true,
+    };
   }
 
   return {
-    text: finalPrice === originalPrice ? '유저 전체 환불' : '유저 부분 환불',
+    text: scope == null ? '유저 환불' : `유저 ${scope} 환불`,
     isRefunded: true,
     isAdmin: false,
   };
