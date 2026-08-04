@@ -3,6 +3,8 @@ import {
   adminRefundHistorySchema,
   adminRefundLogSchema,
   adminRefundRequestSchema,
+  userRefundHistorySchema,
+  userRefundItemSchema,
 } from '../adminRefund';
 
 const successLog = {
@@ -182,5 +184,92 @@ describe('adminRefundHistorySchema', () => {
     });
 
     expect(parsed.refundLogList).toEqual([]);
+  });
+});
+
+describe('userRefundItemSchema', () => {
+  const userRefund = {
+    applicationId: 14486,
+    paymentId: 9001,
+    refundedAt: '2026-08-01T09:12:00',
+    paidAt: '2026-07-20T10:00:00',
+    programType: 'CHALLENGE',
+    programId: 319,
+    programTitle: '[스타트업 Ver.] 면접 준비 7일 끝장 챌린지 7기',
+    userId: 13023,
+    userName: '홍길동',
+    userEmail: 'hong@example.com',
+    refundedAmount: 330000,
+    originalAmount: 330000,
+    orderId: 'letsBX385104',
+    paymentKey: 'tviva20260720100000abcd',
+    refundScope: 'FULL',
+    refundSource: 'USER',
+  };
+
+  it('유저 환불 한 줄을 파싱한다', () => {
+    const parsed = userRefundItemSchema.parse(userRefund);
+
+    expect(parsed.refundScope).toBe('FULL');
+    expect(parsed.refundSource).toBe('USER');
+  });
+
+  it('SQL 환불 건은 처리경로로 구분된다', () => {
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      refundSource: 'SQL',
+      refundedAt: null,
+    });
+
+    expect(parsed.refundSource).toBe('SQL');
+    expect(parsed.refundedAt).toBeNull();
+  });
+
+  it('판별 결과가 없으면 거절한다', () => {
+    // 서버가 계산해 내려주는 값이다. 비면 화면이 다시 판별하려 들게 되므로 계약을 지킨다.
+    const { refundScope: _refundScope, ...withoutScope } = userRefund;
+
+    expect(() => userRefundItemSchema.parse(withoutScope)).toThrow();
+  });
+
+  it('알 수 없는 처리경로는 거절한다', () => {
+    expect(() =>
+      userRefundItemSchema.parse({ ...userRefund, refundSource: 'BATCH' }),
+    ).toThrow();
+  });
+
+  it('탈퇴로 FK 가 끊겨도 스냅샷만으로 파싱된다', () => {
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      userId: null,
+      applicationId: null,
+      programId: null,
+    });
+
+    expect(parsed.userName).toBe('홍길동');
+  });
+
+  it('0원 결제 취소도 목록에 들어온다', () => {
+    // 100% 할인 쿠폰과 어드민 테스트 참여. 금액이 0 이라 조건에서 빠지면 안 된다.
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      refundedAmount: 0,
+      originalAmount: 0,
+    });
+
+    expect(parsed.refundedAmount).toBe(0);
+  });
+});
+
+describe('userRefundHistorySchema', () => {
+  it('refundList 와 pageInfo 를 파싱한다', () => {
+    // 어드민 탭은 refundLogList, 유저 탭은 refundList 다. 키 이름이 다르다.
+    const parsed = userRefundHistorySchema.parse({
+      refundList: [],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 0, totalPages: 0 },
+    });
+
+    expect(parsed.refundList).toEqual([]);
+    expect(parsed.pageInfo.pageSize).toBe(20);
   });
 });
