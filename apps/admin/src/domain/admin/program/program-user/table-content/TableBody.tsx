@@ -5,7 +5,7 @@ import {
   ProgramTypeUpperCase,
   VodApplication,
 } from '@/schema';
-import { RefundTarget } from '../ui/RefundModal';
+import { RefundMode, RefundTarget } from '../ui/RefundModal';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
@@ -19,7 +19,7 @@ interface UserTableBodyProps {
   programTitle: string;
   /** 어드민 환불로 취소된 신청서 id. 유저 환불과 라벨을 구분하는 데 쓴다. */
   adminRefundedIds: Set<number>;
-  onRefundClick: (target: RefundTarget) => void;
+  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
 }
 
 const getRowKey = (
