@@ -119,18 +119,18 @@ describe('GET /admin/refund-history/user', () => {
 
   it('처리경로 두 갈래가 한 목록에 보인다', async () => {
     const parsed = await fetchUserRefunds();
-    const sources = parsed.refundList.map((refund) => refund.refundSource);
+    const sources = parsed.refundList.map((refund) => refund.source);
 
     expect(sources).toContain('USER');
-    expect(sources).toContain('SQL');
+    expect(sources).toContain('BATCH');
   });
 
   it('환불 범위 두 갈래가 한 목록에 보인다', async () => {
     const parsed = await fetchUserRefunds();
-    const scopes = parsed.refundList.map((refund) => refund.refundScope);
+    const types = parsed.refundList.map((refund) => refund.refundType);
 
-    expect(scopes).toContain('FULL');
-    expect(scopes).toContain('PARTIAL');
+    expect(types).toContain('ALL');
+    expect(types).toContain('TWO_THIRD');
   });
 
   it('0원 결제 취소도 목록에 남는다', async () => {
