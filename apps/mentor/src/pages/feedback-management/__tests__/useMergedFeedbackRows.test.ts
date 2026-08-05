@@ -190,6 +190,61 @@ describe('useMergedFeedbackRows', () => {
     expect(absent?.canOpenDetail).toBe(false);
   });
 
+  it('지각 제출(LATE) — 목록에 남되 "지각 제출 / 진행 불가"로 구분되고 상세는 열린다', () => {
+    const lateMap = new Map<string, WrittenMenteeAttendance[]>([
+      [
+        '1-1001',
+        [
+          { id: 21, name: '박서연', status: 'LATE', feedbackStatus: 'WAITING' },
+          // 지각 제출인데 이미 피드백이 완료된 건 — 제출 상태가 피드백 상태보다 우선한다.
+          {
+            id: 22,
+            name: '정하늘',
+            status: 'LATE',
+            feedbackStatus: 'COMPLETED',
+          },
+        ],
+      ],
+    ]);
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(writtenMock, [], lateMap),
+    );
+
+    const late = result.current.find((r) => r.id === 'written-1-1001-21');
+    expect(late?.submissionLabel).toBe('지각 제출');
+    expect(late?.statusLabel).toBe('진행 불가');
+    expect(late?.statusTone).toBe('liveCancelled');
+    // 멘토가 "왜 진행 불가인지" 확인할 수 있어야 하므로 모달은 열어 둔다.
+    expect(late?.canOpenDetail).toBe(true);
+
+    const lateCompleted = result.current.find(
+      (r) => r.id === 'written-1-1001-22',
+    );
+    expect(lateCompleted?.statusLabel).toBe('진행 불가');
+  });
+
+  it('UPDATED(제출 후 수정)는 정상 제출로 본다', () => {
+    const updatedMap = new Map<string, WrittenMenteeAttendance[]>([
+      [
+        '1-1001',
+        [
+          {
+            id: 31,
+            name: '한지우',
+            status: 'UPDATED',
+            feedbackStatus: 'IN_PROGRESS',
+          },
+        ],
+      ],
+    ]);
+    const { result } = renderHook(() =>
+      useMergedFeedbackRows(writtenMock, [], updatedMap),
+    );
+    const row = result.current.find((r) => r.id === 'written-1-1001-31');
+    expect(row?.submissionLabel).toBe('제출');
+    expect(row?.statusLabel).toBe('진행 중');
+  });
+
   it('서면 멘티 행도 미션 모달 진입용 source(written)를 유지한다', () => {
     const { result } = renderHook(() =>
       useMergedFeedbackRows(writtenMock, [], writtenAttendanceMap),

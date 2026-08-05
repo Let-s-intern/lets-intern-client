@@ -6,6 +6,10 @@ import {
   badgeStatusToUi,
   getLiveFeedbackBadgeVisual,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
+import {
+  resolveWrittenSubmissionState,
+  WRITTEN_SUBMISSION_LABEL,
+} from '@/pages/feedback/utils/writtenSubmissionState';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { LiveFeedbackInfo } from '@/pages/schedule/types';
 
@@ -113,8 +117,10 @@ const MenteeList = ({
             <div className="flex-1 overflow-y-auto">
               {attendanceList.map((mentee, idx) => {
                 const isSelected = idx === selectedIndex;
-                const isAbsent =
-                  mentee.status === 'ABSENT' || mentee.id == null;
+                const submissionState = resolveWrittenSubmissionState({
+                  status: mentee.status,
+                  attendanceId: mentee.id,
+                });
                 const hasTime = !!(mentee.startTime && mentee.endTime);
                 const imminent = isSessionImminent(
                   mentee.date,
@@ -189,14 +195,25 @@ const MenteeList = ({
                             );
                           })()}
                         </div>
-                      ) : isAbsent ? (
+                      ) : submissionState === 'notSubmitted' ? (
                         <span
                           className={twMerge(
                             feedbackModalDesign.listBadgeMd,
                             'ml-2 shrink-0 border border-orange-200 bg-orange-50 text-orange-600',
                           )}
                         >
-                          미제출
+                          {WRITTEN_SUBMISSION_LABEL.notSubmitted}
+                        </span>
+                      ) : submissionState === 'late' ? (
+                        // 지각 제출 — 목록에서 빼지 않고 배지로 구분한다(라이브 '취소'와 같은 톤).
+                        <span
+                          className={twMerge(
+                            feedbackModalDesign.listBadgeMd,
+                            'ml-2 shrink-0',
+                            STATUS_BADGE.liveCancelled,
+                          )}
+                        >
+                          {WRITTEN_SUBMISSION_LABEL.late}
                         </span>
                       ) : (
                         (() => {

@@ -1,5 +1,6 @@
 import { type FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { STATUS_BADGE } from '@/constants/statusColors';
+import type { WrittenSubmissionState } from './writtenSubmissionState';
 
 /**
  * 서면 피드백 "피드백 상태" 배지 시각 정보.
@@ -34,15 +35,21 @@ const LABEL_BY_STATUS: Record<FeedbackStatus, string> = {
 
 /**
  * 서면 피드백 상태 배지 시각 정보를 도출한다.
- * - 미제출(ABSENT) → '미제출' (notSubmitted 톤)
- * - 그 외          → feedbackStatus 매핑 라벨 + 상태별 색
+ *
+ * 라이브(`resolveLiveSessionStatus`)와 같이 **제출 상태가 피드백 상태보다 우선**이다.
+ * - 미제출     → '미제출' (notSubmitted 톤)
+ * - 지각 제출  → '진행 불가' (라이브 '취소'와 같은 liveCancelled 톤)
+ * - 그 외      → feedbackStatus 매핑 라벨 + 상태별 색
  */
 export function getWrittenFeedbackBadgeVisual(
   status: FeedbackStatus | null,
-  isAbsent: boolean,
+  submissionState: WrittenSubmissionState,
 ): WrittenFeedbackBadgeVisual {
-  if (isAbsent) {
+  if (submissionState === 'notSubmitted') {
     return { label: '미제출', badgeClass: STATUS_BADGE.notSubmitted };
+  }
+  if (submissionState === 'late') {
+    return { label: '진행 불가', badgeClass: STATUS_BADGE.liveCancelled };
   }
   const resolved = status ?? 'WAITING';
   return {

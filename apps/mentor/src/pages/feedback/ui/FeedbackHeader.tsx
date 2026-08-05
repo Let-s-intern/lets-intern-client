@@ -16,8 +16,8 @@ interface FeedbackHeaderProps {
    */
   missedCount?: number;
   /**
-   * LIVE 피드백 모달 전용 5번째 카운터 ("취소" — 예약 후 미제출·예약취소).
-   * 서면 피드백 모달은 이 prop을 넘기지 않으므로 미렌더.
+   * 5번째 카운터. 라이브는 "취소"(예약 후 미제출·예약취소), 서면은 "진행 불가"(지각 제출).
+   * 넘기지 않으면 미렌더.
    */
   cancelledCount?: number;
   /** 헤더 좌상단 회차 라벨을 "LIVE 피드백"으로 표시 (디자인 image copy 3.png). */
@@ -47,6 +47,8 @@ const FeedbackHeader = ({
   const waitingLabel = isLive ? '진행 예정' : '진행 전';
   const completedLabel = isLive ? '진행 완료' : '승인 완료';
   const missedLabel = '미진행';
+  // 라이브는 예약 취소, 서면은 지각 제출로 사유가 다르지만 자리와 색은 같다.
+  const cancelledLabel = isLive ? '취소' : '진행 불가';
   // 라이브는 캘린더 4상태 팔레트(indigo/blue/neutral/red)로 통일. 서면은 기존 유지.
   const waitingKey = isLive ? 'liveWaiting' : 'waiting';
   const completedKey = isLive ? 'liveCompleted' : 'completed';
@@ -107,7 +109,7 @@ const FeedbackHeader = ({
                 statusBadgeOrMuted(cancelledCount, 'liveCancelled'),
               )}
             >
-              취소 {cancelledCount}
+              {cancelledLabel} {cancelledCount}
             </span>
           )}
         </div>
