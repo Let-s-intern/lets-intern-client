@@ -47,24 +47,27 @@ export const adminRefundHistorySchema = z.object({
 });
 export type AdminRefundHistory = z.infer<typeof adminRefundHistorySchema>;
 
-/** 환불 범위. 서버가 환불액과 원 결제액을 비교해 내려준다. */
-export const refundScopeSchema = z.enum(['FULL', 'PARTIAL']);
-export type RefundScope = z.infer<typeof refundScopeSchema>;
+/**
+ * 규정 환불 비율. 유저 환불은 어드민 환불과 달리 임의 금액이 아니라 이 값으로 계산된다.
+ * 금액만 보면 "왜 이 금액인지"를 되짚을 수 없어 함께 기록한다.
+ */
+export const refundTypeSchema = z.enum(['ZERO', 'ALL', 'TWO_THIRD', 'HALF', 'PAYBACK']);
+export type RefundType = z.infer<typeof refundTypeSchema>;
 
 /**
- * 처리 경로.
+ * 환불이 어떤 경로로 일어났는지. 기록 시점에 남긴 값이라 추정이 아니다.
  *
- * 환불 시각이 어디에도 저장되지 않아 payment.lastModifiedDate 가 유일한 근사치다.
- * 그 값이 createDate 와 사실상 같으면 JPA 를 거치지 않은 수동 SQL 처리로 본다.
- * 휴리스틱이라 판별을 서버 한 곳에서만 한다. 여기서 다시 계산하지 않는다.
+ * 예전에는 payment.lastModifiedDate 로 추정했는데, 0원 결제는 updateRefundPrice(0) 이 값을
+ * 바꾸지 않아 UPDATE 가 나가지 않고 시각이 생성 시점에 머문다. 그 탓에 정상 환불 51건이
+ * 전부 수동 SQL 처리로 오분류됐다.
  */
-export const refundSourceSchema = z.enum(['USER', 'SQL']);
-export type RefundSource = z.infer<typeof refundSourceSchema>;
+export const userRefundSourceSchema = z.enum(['USER', 'BATCH']);
+export type UserRefundSource = z.infer<typeof userRefundSourceSchema>;
 
 export const userRefundItemSchema = z.object({
   applicationId: z.number().nullable().optional(),
   paymentId: z.number().nullable().optional(),
-  /** SQL 환불이면 신뢰할 수 없는 값이다. 화면에서 `-` 로 둔다. */
+  /** 환불 실행 시점에 기록된 값이다. 추정이 아니라 사실이다. */
   refundedAt: z.string().nullable().optional(),
   paidAt: z.string().nullable().optional(),
   programType: z.string().nullable().optional(),
@@ -77,8 +80,9 @@ export const userRefundItemSchema = z.object({
   originalAmount: z.number().nullable().optional(),
   orderId: z.string().nullable().optional(),
   paymentKey: z.string().nullable().optional(),
-  refundScope: refundScopeSchema,
-  refundSource: refundSourceSchema,
+  refundType: refundTypeSchema.nullable().optional(),
+  source: userRefundSourceSchema,
+  id: z.number().nullable().optional(),
 });
 export type UserRefundItem = z.infer<typeof userRefundItemSchema>;
 
@@ -93,6 +97,32 @@ const adminRefundResultSchema = z.object({
   canceledAt: z.string().nullable().optional(),
   paymentKey: z.string().nullable().optional(),
 });
+
+/**
+ * 요청한 부분 환불 금액과 서버가 처리한 금액이 어긋났는지. 어긋나면 사용자에게 보일 문구를 돌려준다.
+ *
+ * 서버가 refundAmount 를 모르는 구버전이면 이 필드를 조용히 버리고 실결제액 전액을 환불한다.
+ * Spring 이 모르는 필드를 기본으로 무시해서 400 도 나지 않는다. 운영에서 실제로 이 일이 있었고,
+ * 35,000원을 입력한 건이 40,000원 환불로 나갔는데 화면은 성공이라고 말했다.
+ *
+ * 배포가 어긋나도 여기서 걸린다. 돈은 이미 나갔지만 성공으로 표시되지는 않으므로, 운영이 그
+ * 자리에서 알고 토스 콘솔을 확인할 수 있다.
+ *
+ * 전액 환불(refundAmount 미전송)은 대조하지 않는다. 서버가 실결제액을 쓰는 것이 정상이라
+ * 클라이언트가 아는 값과 다를 수 있다.
+ */
+export const findRefundAmountMismatch = (
+  requestedAmount: number | undefined,
+  processedAmount: number | null | undefined,
+): string | null => {
+  if (requestedAmount == null || processedAmount == null) return null;
+  if (processedAmount === requestedAmount) return null;
+  return (
+    `부분 환불을 요청했으나 서버가 ${processedAmount.toLocaleString()}원을 처리했습니다. ` +
+    `요청한 금액은 ${requestedAmount.toLocaleString()}원입니다. ` +
+    `토스 콘솔에서 실제 취소 금액을 확인해주세요.`
+  );
+};
 
 export const adminRefundRequestSchema = z.object({
   /** 실행 담당자. 어드민 계정을 공유해 쓰고 있어 이 값이 유일한 담당자 정보다. */
@@ -135,11 +165,19 @@ export const useAdminRefundMutation = ({
       applicationId: number;
       body: AdminRefundRequest;
     }) => {
+      const requested = adminRefundRequestSchema.parse(body);
       const res = await axios.post(
         `/admin/application/${applicationId}/refund`,
-        adminRefundRequestSchema.parse(body),
+        requested,
       );
-      return adminRefundResultSchema.parse(res.data.data);
+      const result = adminRefundResultSchema.parse(res.data.data);
+
+      const mismatch = findRefundAmountMismatch(
+        requested.refundAmount,
+        result.refundedAmount,
+      );
+      if (mismatch) throw new Error(mismatch);
+      return result;
     },
     onSuccess: (data) => {
       // 참여자 목록과 환불 히스토리 양쪽이 바뀐다.
