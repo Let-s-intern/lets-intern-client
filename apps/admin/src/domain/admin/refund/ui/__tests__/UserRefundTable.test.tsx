@@ -20,8 +20,8 @@ const refund = (over: Partial<UserRefundItem> = {}): UserRefundItem => ({
   originalAmount: 330000,
   orderId: 'letsMOCK5301',
   paymentKey: 'tviva20260720100000eeee',
-  refundScope: 'FULL',
-  refundSource: 'USER',
+  refundType: 'ALL',
+  source: 'USER',
   ...over,
 });
 
@@ -67,17 +67,20 @@ describe('UserRefundTable 환불 범위', () => {
     expect(within(row()).getByText('전액')).toBeInTheDocument();
   });
 
-  it('서버가 준 PARTIAL 을 부분으로 표시한다', () => {
-    // 금액을 다시 비교하지 않는다. 판별은 서버 한 곳에서만 한다.
-    renderTable([
-      refund({
-        refundScope: 'PARTIAL',
-        refundedAmount: 330000,
-        originalAmount: 330000,
-      }),
-    ]);
+  it('환불액이 원 결제액보다 적으면 부분으로 표시한다', () => {
+    // 두 값 모두 기록 시점의 사실이라 화면에서 비교해도 흔들리지 않는다.
+    renderTable([refund({ refundedAmount: 220000, originalAmount: 330000 })]);
 
     expect(within(row()).getByText('부분')).toBeInTheDocument();
+  });
+
+  it('규정 비율을 함께 보여준다', () => {
+    // 금액만으로는 왜 이 금액인지 되짚을 수 없다.
+    renderTable([
+      refund({ refundedAmount: 220000, originalAmount: 330000, refundType: 'TWO_THIRD' }),
+    ]);
+
+    expect(within(row()).getByText('2/3')).toBeInTheDocument();
   });
 });
 
@@ -89,23 +92,27 @@ describe('UserRefundTable 처리경로', () => {
     expect(within(row()).getByText('유저 환불')).toBeInTheDocument();
   });
 
-  it('SQL 환불은 환불일시를 - 로 둔다', () => {
-    // payment.lastModifiedDate 가 결제 시각과 사실상 같아 환불 시각이 아니다.
-    // 시각 칸에 "SQL 환불"이라고 쓰면 시각을 기대하고 보는 눈에 걸린다.
-    renderTable([refund({ refundSource: 'SQL' })]);
+  it('배치 자동환불은 자동 환불로 표시한다', () => {
+    // 유저가 직접 취소한 것이 아니다. 같은 라벨로 두면 운영이 오독한다.
+    renderTable([refund({ source: 'BATCH' })]);
+
+    expect(within(row()).getByText('자동 환불')).toBeInTheDocument();
+  });
+
+  it('환불일시가 없으면 - 로 둔다', () => {
+    renderTable([refund({ refundedAt: null })]);
 
     const cells = within(row()).getAllByRole('cell');
     expect(cells[0]).toHaveTextContent('-');
-    expect(within(row()).getByText('SQL 환불')).toBeInTheDocument();
   });
 
   it('두 처리경로가 한 목록에 함께 보인다', () => {
     renderTable([
       refund(),
-      refund({ paymentId: 9302, refundSource: 'SQL', userName: '오세훈' }),
+      refund({ paymentId: 9302, source: 'BATCH', userName: '오세훈' }),
     ]);
 
     expect(within(row(0)).getByText('유저 환불')).toBeInTheDocument();
-    expect(within(row(1)).getByText('SQL 환불')).toBeInTheDocument();
+    expect(within(row(1)).getByText('자동 환불')).toBeInTheDocument();
   });
 });
