@@ -77,7 +77,11 @@ describe('UserRefundTable 환불 범위', () => {
   it('규정 비율을 함께 보여준다', () => {
     // 금액만으로는 왜 이 금액인지 되짚을 수 없다.
     renderTable([
-      refund({ refundedAmount: 220000, originalAmount: 330000, refundType: 'TWO_THIRD' }),
+      refund({
+        refundedAmount: 220000,
+        originalAmount: 330000,
+        refundType: 'TWO_THIRD',
+      }),
     ]);
 
     expect(within(row()).getByText('2/3')).toBeInTheDocument();
