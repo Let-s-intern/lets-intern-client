@@ -282,7 +282,7 @@ export const adminRefundHandlers = [
   /**
    * 유저 환불 조회.
    *
-   * refundScope·refundSource 는 서버가 계산해 내려주는 값이라 시드에 그대로 들어 있다.
+   * refundType·source 는 환불 실행 시점에 기록되는 값이라 시드에 그대로 들어 있다.
    * 처리경로는 필터로 쓰지 않는다 — 애플리케이션 레벨 판별이라 걸러 내면 페이지마다
    * 개수가 달라지고 totalElements 가 실제와 어긋난다.
    */

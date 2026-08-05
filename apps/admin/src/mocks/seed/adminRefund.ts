@@ -131,8 +131,8 @@ export const seedUserRefunds: UserRefundItem[] = [
     originalAmount: 330000,
     orderId: 'letsMOCK5004',
     paymentKey: 'tviva20260720100000eeee',
-    refundScope: 'FULL',
-    refundSource: 'USER',
+    refundType: 'ALL',
+    source: 'USER',
   },
   {
     // 규정 환불. 진행분을 뺀 금액만 돌려받는다.
@@ -150,8 +150,8 @@ export const seedUserRefunds: UserRefundItem[] = [
     originalAmount: 330000,
     orderId: 'letsMOCK5005',
     paymentKey: 'tviva20260718132000ffff',
-    refundScope: 'PARTIAL',
-    refundSource: 'USER',
+    refundType: 'TWO_THIRD',
+    source: 'USER',
   },
   {
     // 리포트 배치 자동환불. 서버가 유저 환불과 구분할 단서가 없어 USER 로 분류된다.
@@ -169,8 +169,8 @@ export const seedUserRefunds: UserRefundItem[] = [
     originalAmount: 19900,
     orderId: 'letsMOCK5401',
     paymentKey: 'tviva20260722211000gggg',
-    refundScope: 'FULL',
-    refundSource: 'USER',
+    refundType: 'ALL',
+    source: 'USER',
   },
   {
     // SQL 로 직접 처리한 건. lastModifiedDate 가 createDate 와 사실상 같아
@@ -189,8 +189,8 @@ export const seedUserRefunds: UserRefundItem[] = [
     originalAmount: 60000,
     orderId: 'letsMOCK5402',
     paymentKey: 'tviva20260710110000hhhh',
-    refundScope: 'FULL',
-    refundSource: 'SQL',
+    refundType: 'ALL',
+    source: 'BATCH',
   },
   {
     // 0원 결제 취소. originalPrice > 0 을 조건에 넣으면 이 행이 통째로 사라진다.
@@ -208,7 +208,7 @@ export const seedUserRefunds: UserRefundItem[] = [
     originalAmount: 0,
     orderId: 'letsMOCK5403',
     paymentKey: 'tviva20260721083000iiii',
-    refundScope: 'FULL',
-    refundSource: 'USER',
+    refundType: 'ALL',
+    source: 'USER',
   },
 ];

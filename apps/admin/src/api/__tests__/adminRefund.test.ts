@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  findRefundAmountMismatch,
   adminRefundHistorySchema,
   adminRefundLogSchema,
   adminRefundRequestSchema,
@@ -203,39 +204,48 @@ describe('userRefundItemSchema', () => {
     originalAmount: 330000,
     orderId: 'letsBX385104',
     paymentKey: 'tviva20260720100000abcd',
-    refundScope: 'FULL',
-    refundSource: 'USER',
+    refundType: 'ALL',
+    source: 'USER',
   };
 
   it('유저 환불 한 줄을 파싱한다', () => {
     const parsed = userRefundItemSchema.parse(userRefund);
 
-    expect(parsed.refundScope).toBe('FULL');
-    expect(parsed.refundSource).toBe('USER');
+    expect(parsed.refundType).toBe('ALL');
+    expect(parsed.source).toBe('USER');
   });
 
-  it('SQL 환불 건은 처리경로로 구분된다', () => {
+  it('배치 자동환불은 처리경로로 구분된다', () => {
+    // 유저가 직접 취소한 것이 아니다. 라벨만으로는 운영이 오독한다.
     const parsed = userRefundItemSchema.parse({
       ...userRefund,
-      refundSource: 'SQL',
-      refundedAt: null,
+      source: 'BATCH',
     });
 
-    expect(parsed.refundSource).toBe('SQL');
-    expect(parsed.refundedAt).toBeNull();
+    expect(parsed.source).toBe('BATCH');
   });
 
-  it('판별 결과가 없으면 거절한다', () => {
-    // 서버가 계산해 내려주는 값이다. 비면 화면이 다시 판별하려 들게 되므로 계약을 지킨다.
-    const { refundScope: _refundScope, ...withoutScope } = userRefund;
+  it('처리경로가 없으면 거절한다', () => {
+    // 환불 실행 시점에 반드시 기록되는 값이다. 비어 있다면 계약이 깨진 것이다.
+    const { source: _source, ...withoutSource } = userRefund;
 
-    expect(() => userRefundItemSchema.parse(withoutScope)).toThrow();
+    expect(() => userRefundItemSchema.parse(withoutSource)).toThrow();
   });
 
   it('알 수 없는 처리경로는 거절한다', () => {
     expect(() =>
-      userRefundItemSchema.parse({ ...userRefund, refundSource: 'BATCH' }),
+      userRefundItemSchema.parse({ ...userRefund, source: 'SQL' }),
     ).toThrow();
+  });
+
+  it('규정 비율이 없어도 파싱된다', () => {
+    // 환불 시각·금액과 달리 규정 비율은 못 남기는 경로가 있을 수 있다. 표시만 비운다.
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      refundType: null,
+    });
+
+    expect(parsed.refundType).toBeNull();
   });
 
   it('탈퇴로 FK 가 끊겨도 스냅샷만으로 파싱된다', () => {
@@ -271,5 +281,28 @@ describe('userRefundHistorySchema', () => {
 
     expect(parsed.refundList).toEqual([]);
     expect(parsed.pageInfo.pageSize).toBe(20);
+  });
+});
+
+describe('findRefundAmountMismatch', () => {
+  it('요청 금액과 처리 금액이 같으면 어긋나지 않는다', () => {
+    expect(findRefundAmountMismatch(35000, 35000)).toBeNull();
+  });
+
+  it('서버가 전액을 처리하면 어긋남을 알린다', () => {
+    // 구버전 서버가 refundAmount 를 버리고 실결제액 전액을 환불한 경우다.
+    const message = findRefundAmountMismatch(35000, 40000);
+
+    expect(message).toContain('40,000원을 처리했습니다');
+    expect(message).toContain('35,000원');
+  });
+
+  it('전액 환불은 대조하지 않는다', () => {
+    // 금액을 보내지 않으면 서버가 실결제액을 쓴다. 클라이언트가 아는 값과 달라도 정상이다.
+    expect(findRefundAmountMismatch(undefined, 40000)).toBeNull();
+  });
+
+  it('서버가 금액을 돌려주지 않으면 판단하지 않는다', () => {
+    expect(findRefundAmountMismatch(35000, null)).toBeNull();
   });
 });

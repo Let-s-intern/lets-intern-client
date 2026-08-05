@@ -10,14 +10,20 @@ const programTypeLabel: Record<string, string> = {
   REPORT: '서류진단',
 };
 
-const scopeLabel: Record<string, string> = {
-  FULL: '전액',
-  PARTIAL: '부분',
+/** 규정 환불 비율. 유저 환불액이 왜 이 금액인지의 근거다. */
+const refundTypeLabel: Record<string, string> = {
+  // 규정 100% 는 "전액"이 아니라 "규정 100%" 로 쓴다. 옆의 전액·부분 배지와 뜻이 다르다.
+  // 배지는 실제 환불 비율이고 이건 규정이 정한 비율이다. 둘이 어긋날 수 있다.
+  ALL: '규정 100%',
+  TWO_THIRD: '2/3',
+  HALF: '1/2',
+  ZERO: '환불 불가',
+  PAYBACK: '페이백',
 };
 
 const sourceLabel: Record<string, string> = {
   USER: '유저 환불',
-  SQL: 'SQL 환불',
+  BATCH: '자동 환불',
 };
 
 interface Props {
@@ -66,17 +72,21 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
       </thead>
       <tbody>
         {refunds.map((refund) => {
-          const isSql = refund.refundSource === 'SQL';
+          // 환불액과 원 결제액을 비교해 전액인지 본다. 둘 다 기록 시점의 사실이라
+          // 서버가 따로 계산해 줄 이유가 없다.
+          const isFull =
+            refund.originalAmount != null &&
+            refund.refundedAmount === refund.originalAmount;
 
           return (
             <tr
-              key={refund.paymentId ?? refund.applicationId}
+              key={refund.id ?? refund.paymentId ?? refund.applicationId}
               className="border-b align-top"
             >
               <td className="whitespace-nowrap px-3 py-2">
-                {isSql || !refund.refundedAt
-                  ? '-'
-                  : dayjs(refund.refundedAt).format('YYYY-MM-DD HH:mm')}
+                {refund.refundedAt
+                  ? dayjs(refund.refundedAt).format('YYYY-MM-DD HH:mm')
+                  : '-'}
               </td>
               <td className="px-3 py-2">
                 {/* 동명이인 구분을 위해 이메일을 함께 보여준다. */}
@@ -104,8 +114,14 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
               <td className="whitespace-nowrap px-3 py-2 text-right">
                 {(refund.refundedAmount ?? 0).toLocaleString()}원
                 <span className="ml-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
-                  {scopeLabel[refund.refundScope]}
+                  {isFull ? '전액' : '부분'}
                 </span>
+                {refund.refundType ? (
+                  // 규정 비율을 함께 보여준다. 금액만으로는 산정 근거를 알 수 없다.
+                  <span className="ml-1 text-xs text-neutral-500">
+                    {refundTypeLabel[refund.refundType] ?? refund.refundType}
+                  </span>
+                ) : null}
               </td>
               <td className="whitespace-nowrap px-3 py-2 text-right">
                 {refund.originalAmount == null
@@ -113,7 +129,7 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
                   : `${refund.originalAmount.toLocaleString()}원`}
               </td>
               <td className="whitespace-nowrap px-3 py-2">
-                {sourceLabel[refund.refundSource]}
+                {sourceLabel[refund.source] ?? refund.source}
               </td>
             </tr>
           );
