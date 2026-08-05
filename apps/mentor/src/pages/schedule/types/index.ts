@@ -56,6 +56,12 @@ export interface PeriodBarData {
   feedbackDeadline: string;
   submittedCount: number;
   notSubmittedCount: number;
+  /**
+   * 서면 피드백 작성 대상 수 — 제출자 중 지각 제출(LATE) 제외.
+   * "완료 N / 제출 N"의 분모는 이 값이어야 한다. `submittedCount` 를 쓰면 지각 제출자가
+   * 영영 완료되지 않아 남은 건수가 0이 되지 않는다. 미주입 시 `submittedCount` 로 폴백.
+   */
+  feedbackTargetCount?: number;
   waitingCount: number;
   inProgressCount: number;
   completedCount: number;

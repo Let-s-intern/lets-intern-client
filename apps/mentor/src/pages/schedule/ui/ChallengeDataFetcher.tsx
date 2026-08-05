@@ -9,6 +9,7 @@ function normalizeDate(iso: string): string {
 import type { ChallengeMentorVo } from '@/api/user/user';
 import { useMentorMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import { useMentorAttendanceQuery } from '@/pages/feedback/hooks/useMentorAttendanceQuery';
+import { resolveWrittenSubmissionState } from '@/pages/feedback/utils/writtenSubmissionState';
 import type { PeriodBarData } from '../types';
 import { computeDatesFromConfig } from '../constants/scheduleConfig';
 import { WRITTEN_FEEDBACK_CONFIG } from '../challenge-content/writtenFeedback';
@@ -37,8 +38,21 @@ const MissionAttendanceFetcher = ({
 
   useEffect(() => {
     const list = attendanceData?.attendanceList ?? [];
-    const submitted = list.filter((a) => a.status !== 'ABSENT');
-    const notSubmitted = list.filter((a) => a.status === 'ABSENT');
+    const withState = list.map((a) => ({
+      attendance: a,
+      state: resolveWrittenSubmissionState({
+        status: a.status,
+        attendanceId: a.id,
+      }),
+    }));
+    const submitted = withState
+      .filter((s) => s.state !== 'notSubmitted')
+      .map((s) => s.attendance);
+    const notSubmitted = withState.filter((s) => s.state === 'notSubmitted');
+    // 지각 제출은 제출로 세되(전체 인원 유지) 피드백 진행 집계에서는 뺀다.
+    const feedbackTargets = withState
+      .filter((s) => s.state === 'submitted')
+      .map((s) => s.attendance);
 
     const missionStart = normalizeDate(mission.startDate);
     const missionEnd = normalizeDate(mission.endDate);
@@ -54,12 +68,14 @@ const MissionAttendanceFetcher = ({
     const counts = {
       submittedCount: submitted.length,
       notSubmittedCount: notSubmitted.length,
-      waitingCount: submitted.filter((a) => a.feedbackStatus === 'WAITING')
-        .length,
-      inProgressCount: submitted.filter(
+      feedbackTargetCount: feedbackTargets.length,
+      waitingCount: feedbackTargets.filter(
+        (a) => a.feedbackStatus === 'WAITING',
+      ).length,
+      inProgressCount: feedbackTargets.filter(
         (a) => a.feedbackStatus === 'IN_PROGRESS',
       ).length,
-      completedCount: submitted.filter(
+      completedCount: feedbackTargets.filter(
         (a) =>
           a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
       ).length,
