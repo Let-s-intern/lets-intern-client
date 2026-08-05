@@ -1,19 +1,32 @@
-import { Link, useNavigate } from 'react-router-dom';
 import {
-  UseAdminUserMentorListQueryKey,
   useAdminUserMentorListQuery,
+  UseAdminUserMentorListQueryKey,
 } from '@/api/mentor/mentor';
+import type { AdminUserMentorList } from '@/api/mentor/mentorSchema';
 import {
   usePatchUserAdminMutation,
   UseUserAdminQueryKey,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button, Tab, Tabs } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Tab,
+  Tabs,
+} from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { IoCloseOutline } from 'react-icons/io5';
+import { Link, useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 1000;
+
+type Mentor = AdminUserMentorList['mentorList'][number];
+type MentorHashTag = Mentor['hashTagList'][number];
 
 function MentorManagementTable() {
   const queryClient = useQueryClient();
@@ -26,6 +39,9 @@ function MentorManagementTable() {
   const mentors = data?.mentorList ?? [];
 
   const patchUser = usePatchUserAdminMutation({});
+  const [viewingMentor, setViewingMentor] = useState<Mentor | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const closeViewDialog = () => setIsViewDialogOpen(false);
 
   const handleDelete = async (
     e: React.MouseEvent,
@@ -76,6 +92,9 @@ function MentorManagementTable() {
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   이메일
                 </th>
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                  키워드
+                </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
                   멘토 삭제
                 </th>
@@ -104,6 +123,23 @@ function MentorManagementTable() {
                   <td className="text-xsmall14 px-6 py-4">
                     {mentor.email ?? '-'}
                   </td>
+                  <td className="text-xsmall14 px-6 py-4">
+                    {mentor.hashTagList.length === 0 ? (
+                      '-'
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-blue-500 underline transition hover:text-blue-300"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setViewingMentor(mentor);
+                          setIsViewDialogOpen(true);
+                        }}
+                      >
+                        조회
+                      </button>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-center">
                     <Button
                       variant="text"
@@ -120,19 +156,48 @@ function MentorManagementTable() {
           </table>
         )}
       </div>
+
+      <Dialog
+        open={isViewDialogOpen}
+        onClose={closeViewDialog}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle className="border-neutral-80 border-b">
+          {viewingMentor?.name}님 멘토키워드
+        </DialogTitle>
+        <IconButton
+          aria-label="닫기"
+          onClick={closeViewDialog}
+          sx={{ position: 'absolute', right: 10, top: 12 }}
+        >
+          <IoCloseOutline size={20} />
+        </IconButton>
+        <DialogContent>
+          <div className="flex flex-wrap gap-2">
+            {viewingMentor?.hashTagList.map((tag: MentorHashTag) => (
+              <span
+                key={tag.id}
+                className="border-neutral-80 text-xsmall14 text-neutral-30 rounded-full border px-3 py-1.5"
+              >
+                # {tag.title}
+              </span>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 export default function AdminMentorPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState(0);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (newValue === 1) {
       navigate('/mentors/register');
-    } else {
-      setTab(newValue);
+    } else if (newValue === 2) {
+      navigate('/mentors/keywords');
     }
   };
 
@@ -140,9 +205,10 @@ export default function AdminMentorPage() {
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <Tabs value={tab} onChange={handleTabChange} className="mb-4">
+      <Tabs value={0} onChange={handleTabChange} className="mb-4">
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
+        <Tab label="멘토 키워드" />
       </Tabs>
 
       <MentorManagementTable />

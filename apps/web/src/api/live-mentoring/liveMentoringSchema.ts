@@ -106,15 +106,6 @@ export const liveMentoringCareerSchema = z.object({
 });
 export type LiveMentoringCareer = z.infer<typeof liveMentoringCareerSchema>;
 
-/** 멘티 제출물 체크리스트 항목 (PRD §4.4) */
-export const checklistItemSchema = z.object({
-  id: z.number(),
-  label: z.string(),
-  mode: z.enum(['SHOWN', 'HIDDEN', 'CUSTOM']),
-  customText: z.string().optional(),
-});
-export type ChecklistItem = z.infer<typeof checklistItemSchema>;
-
 /** 후기 (PRD §4.5) */
 export const liveMentoringReviewSchema = z.object({
   reviewId: z.number(),
@@ -125,24 +116,87 @@ export const liveMentoringReviewSchema = z.object({
 });
 export type LiveMentoringReview = z.infer<typeof liveMentoringReviewSchema>;
 
-/** 타입별 기본 + 멘토 편집분 템플릿 (PRD §4.4) */
+/**
+ * 노출 토글이 있는 섹션의 공통 골격 (시안 3·4·5).
+ * `visible === false` 면 상세 페이지에서 섹션을 **통째로 제외**한다.
+ */
+const sectionWithVisible = <T extends z.ZodRawShape>(extra: T) =>
+  z.object({
+    visible: z.boolean(),
+    title: z.string(),
+    subtitle: z.string(),
+    ...extra,
+  });
+
+/**
+ * 상세 페이지 템플릿 — 멘토가 상세 페이지 설정에서 편집한 시안 1~5번 섹션 + 고정 섹션.
+ * mentor 앱(`apps/mentor/src/api/live-mentoring/liveMentoringSchema.ts`)과 **동일 형태**여야
+ * 같은 목/응답을 양쪽에서 파싱할 수 있다.
+ */
 export const liveMentoringTemplateSchema = z.object({
   category: liveMentoringCategorySchema,
-  // 편집 불가
-  faq: z.array(z.object({ q: z.string(), a: z.string() })),
-  process: z.array(
-    z.object({ step: z.number(), title: z.string(), desc: z.string() }),
-  ),
-  submissionSpec: z.object({ title: z.string(), desc: z.string() }),
-  // 편집 가능
-  introduction: z.string(),
-  careers: z.array(liveMentoringCareerSchema),
-  mentoringPoints: z.string(),
+
+  /** 시안 0 · 히어로 — 제목 아래 불릿 소개. */
+  hero: z.object({ bullets: z.array(z.string()) }),
+
+  /** 시안 1 · 멘토 소개 */
+  intro: z.object({
+    passedCount: z.number().nullable(),
+    profileImage: z.string().nullable(),
+    affiliation: z.string(),
+    careerLines: z.array(z.string()),
+    oneLiner: z.string(),
+  }),
+  /** 시안 2 · 멘토링 유형 */
+  mentoringTypes: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    items: z.array(
+      z.object({
+        typeName: z.string(),
+        title: z.string(),
+        description: z.string(),
+        tags: z.array(z.string()),
+      }),
+    ),
+  }),
+  /** 시안 3 · 취업 성공 전략 */
+  strategy: sectionWithVisible({
+    points: z.array(
+      z.object({
+        image: z.string().nullable(),
+        title: z.string(),
+        description: z.string(),
+      }),
+    ),
+  }),
+  /** 시안 4 · 이렇게 도와드려요(영상) */
+  video: sectionWithVisible({
+    videoUrl: z.string().nullable(),
+    caption: z.string(),
+  }),
+  /** 시안 5 · 결과 사례(Before/After) */
+  results: sectionWithVisible({
+    cases: z.array(
+      z.object({
+        beforeImage: z.string().nullable(),
+        afterImage: z.string().nullable(),
+        beforeCaption: z.string(),
+        afterCaption: z.string(),
+      }),
+    ),
+  }),
+
+  // ── 편집 불가 ───────────────────────────────────────────
   reviews: z.object({
     visible: z.boolean(),
     selectedReviewIds: z.array(z.number()),
   }),
-  checklist: z.array(checklistItemSchema),
+  /*
+   * 시안 7(진행 프로세스)·10(FAQ)은 계약에 없다.
+   * 멘토가 편집하지 않고 운영 확정 문구라, 서버를 거치지 않고
+   * `detail/DetailFixedSections.tsx` 에 하드코딩한다.
+   */
 });
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
 
@@ -161,8 +215,18 @@ export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export const liveMentorDetailSchema = z.object({
   mentorId: z.number(),
+  /** 상품명 — 히어로 제목. */
+  title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
+  /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
+  durationPrices: z.array(
+    z.object({
+      duration: liveMentoringDurationSchema,
+      price: z.number(),
+    }),
+  ),
+  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
   price: z.number(),
   rating: z.number(),
   reviewCount: z.number(),

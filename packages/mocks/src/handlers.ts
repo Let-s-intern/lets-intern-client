@@ -8,6 +8,7 @@ import {
   OPEN_STATUS_ROWS,
   SETTLEMENT_ROWS,
   SETTLEMENT_ITEMS,
+  mentoringTitleFor,
   type LiveMentorCard,
   type LiveMentoringCategory,
 } from './data/liveMentoring';
@@ -727,7 +728,7 @@ function toOpeningDto(card: LiveMentorCard) {
           endDate: null,
         }
       : null,
-    title: `${card.nickname} 멘토의 1대1 라이브 멘토링`,
+    title: mentoringTitleFor(card),
     categories: card.categories,
     durations: card.durations,
     minimumPrice: card.price,

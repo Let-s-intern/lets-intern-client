@@ -1,5 +1,4 @@
 import {
-  checklistItemSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringOpeningSchema,
@@ -34,9 +33,11 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
 
 function makeDetail(overrides: Record<string, unknown> = {}) {
   return {
+    title: '자소서장인 멘토의 1:1 멘토링',
     mentorId: 1,
     categories: ['RESUME'],
     durations: [30],
+    durationPrices: [{ duration: 60, price: 60000 }],
     price: 35000,
     rating: 4.7,
     reviewCount: 12,
@@ -60,21 +61,55 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
     },
     template: {
       category: 'RESUME',
-      faq: [{ q: '질문?', a: '답변.' }],
-      process: [{ step: 1, title: '사전 제출', desc: '이력서 공유' }],
-      submissionSpec: { title: '이력서 파일', desc: '제출해 주세요.' },
-      introduction: '현직 개발자입니다.',
-      careers: [
-        {
-          company: '카카오',
-          position: '백엔드',
-          period: '2020-2026',
-          visible: true,
-        },
-      ],
-      mentoringPoints: '성과 표현 위주',
+      hero: { bullets: ['이력서 피드백 및 첨삭'] },
+      intro: {
+        passedCount: 120,
+        profileImage: null,
+        affiliation: '카카오 | 백엔드',
+        careerLines: ['카카오 | 백엔드 (2020-2026)'],
+        oneLiner: '현직 개발자입니다.',
+      },
+      mentoringTypes: {
+        title: '이런 도움을 받을 수 있어요',
+        subtitle: '고민에 맞는 유형을 골라보세요.',
+        items: [
+          {
+            typeName: '이력서 피드백',
+            title: '이력서를 정리하고 싶다면',
+            description: '경험과 역량이 잘 보이도록 점검해요.',
+            tags: ['경험 정리', '역량 강조'],
+          },
+        ],
+      },
+      strategy: {
+        visible: true,
+        title: '취업 성공 전략',
+        subtitle: '멘토링을 통해 알려드립니다.',
+        points: [
+          { image: null, title: '핵심 키워드', description: '설명입니다.' },
+        ],
+      },
+      video: {
+        visible: true,
+        title: '이렇게 도와드려요',
+        subtitle: '영상으로 미리 확인하세요',
+        videoUrl: 'https://www.youtube.com/embed/xyz',
+        caption: '서류 완성도 UP!',
+      },
+      results: {
+        visible: true,
+        title: '함께 완성해요',
+        subtitle: '결과 사례',
+        cases: [
+          {
+            beforeImage: null,
+            afterImage: null,
+            beforeCaption: '추상적인 지원동기',
+            afterCaption: '경험 연결',
+          },
+        ],
+      },
       reviews: { visible: true, selectedReviewIds: [101, 102] },
-      checklist: [{ id: 1, label: '지원 직무', mode: 'SHOWN' }],
     },
     reviews: [
       {
@@ -182,7 +217,8 @@ describe('liveMentoringOpeningListSchema', () => {
 describe('liveMentorDetailSchema', () => {
   it('프로필·템플릿·후기를 포함한 상세를 파싱한다', () => {
     const parsed = liveMentorDetailSchema.parse(makeDetail());
-    expect(parsed.template.checklist[0].mode).toBe('SHOWN');
+    expect(parsed.template.intro.passedCount).toBe(120);
+    expect(parsed.template.strategy.points).toHaveLength(1);
     expect(parsed.reviews[0].reviewId).toBe(101);
   });
 
@@ -190,23 +226,5 @@ describe('liveMentorDetailSchema', () => {
     const detail = makeDetail();
     delete (detail as Record<string, unknown>).template;
     expect(() => liveMentorDetailSchema.parse(detail)).toThrow();
-  });
-});
-
-describe('checklistItemSchema', () => {
-  it('mode가 3-모드 밖이면 파싱 실패', () => {
-    expect(() =>
-      checklistItemSchema.parse({ id: 1, label: 'x', mode: 'MAYBE' }),
-    ).toThrow();
-  });
-
-  it('CUSTOM 모드는 customText를 허용한다', () => {
-    const parsed = checklistItemSchema.parse({
-      id: 1,
-      label: 'x',
-      mode: 'CUSTOM',
-      customText: '커스텀 안내',
-    });
-    expect(parsed.customText).toBe('커스텀 안내');
   });
 });

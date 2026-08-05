@@ -1,7 +1,11 @@
 import type {
-  ChecklistItem,
   LiveMentoringTemplate,
+  TemplateMentoringType,
+  TemplateResultCase,
+  TemplateStrategyPoint,
 } from '@/api/live-mentoring/liveMentoringSchema';
+import ImageField from './ImageField';
+import ListField from './ListField';
 
 interface TemplateEditFormProps {
   template: LiveMentoringTemplate;
@@ -10,231 +14,373 @@ interface TemplateEditFormProps {
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const titleClass = 'text-base font-semibold text-gray-900';
-const textareaClass =
-  'focus:border-primary w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors';
+const labelClass = 'mb-1 block text-xs font-medium text-gray-600';
+const inputClass =
+  'focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors';
 
-const CHECKLIST_MODES: { value: ChecklistItem['mode']; label: string }[] = [
-  { value: 'SHOWN', label: '노출' },
-  { value: 'HIDDEN', label: '비노출' },
-  { value: 'CUSTOM', label: '멘토 커스텀' },
-];
-
-const ReadOnlyBadge = () => (
-  <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
-    편집 불가
-  </span>
+/** 노출 토글 — 끄면 공개 상세에서 섹션이 통째로 빠진다는 걸 문구로 알린다. */
+const VisibleToggle = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+}) => (
+  <label className="flex cursor-pointer items-center gap-2">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="accent-primary h-4 w-4"
+    />
+    <span className="text-xs text-gray-600">
+      {checked ? '상세 페이지에 노출' : '노출 안 함 (섹션 전체 제외)'}
+    </span>
+  </label>
 );
 
 /**
- * 상세 페이지 템플릿 편집 폼.
- * 편집 가능: 자기소개 / 이력(노출) / 멘토링 포인트 / 후기 노출 / 체크리스트(3모드).
- * 편집 불가(read-only 렌더): FAQ / 피드백 과정 / 제출물 설정.
+ * 상세 페이지 설정 편집 폼 — 시안 1~5번 섹션만 편집한다.
+ *
+ * 6~10번(플랜·진행 프로세스·후기 목록·다른 멘토·FAQ)은 오픈 설정 값이나 운영 고정값에서
+ * 파생되므로 여기서 다루지 않는다. 후기는 노출 여부만 제어한다.
  */
 const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
-  const toggleCareer = (index: number) =>
-    onChange({
-      careers: template.careers.map((c, i) =>
-        i === index ? { ...c, visible: !c.visible } : c,
-      ),
-    });
-
-  const updateChecklist = (id: number, partial: Partial<ChecklistItem>) =>
-    onChange({
-      checklist: template.checklist.map((item) =>
-        item.id === id ? { ...item, ...partial } : item,
-      ),
-    });
-
-  const removeReview = (reviewId: number) =>
-    onChange({
-      reviews: {
-        ...template.reviews,
-        selectedReviewIds: template.reviews.selectedReviewIds.filter(
-          (id) => id !== reviewId,
-        ),
-      },
-    });
+  const { hero, mentoringTypes, strategy, video, results } = template;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 자기소개 (편집 가능) */}
+      {/* 시안 0 · 히어로 */}
       <section className={cardClass}>
-        <h2 className={`mb-4 ${titleClass}`}>멘토 자기소개</h2>
-        <textarea
-          aria-label="멘토 자기소개"
-          value={template.introduction}
-          onChange={(e) => onChange({ introduction: e.target.value })}
-          className={`h-28 ${textareaClass}`}
-        />
-      </section>
+        <h2 className={titleClass}>히어로 (최상단)</h2>
+        <p className="mb-4 mt-1 text-xs text-gray-500">
+          상품명·가격·진행 기간은 오픈 설정 값을 그대로 씁니다. 여기서는 제목
+          아래 소개 불릿만 편집합니다.
+        </p>
 
-      {/* 이력 (편집 가능 — 노출 선택) */}
-      <section className={cardClass}>
-        <h2 className={`mb-4 ${titleClass}`}>이력 (노출 선택)</h2>
-        {template.careers.length === 0 ? (
-          <p className="text-sm text-gray-500">등록된 이력이 없습니다.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {template.careers.map((career, index) => (
-              <li key={`${career.company}-${index}`}>
-                <label className="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={career.visible}
-                    onChange={() => toggleCareer(index)}
-                    className="accent-primary h-4 w-4"
-                  />
-                  <span className="text-sm text-gray-700">
-                    {career.company} · {career.position} ({career.period})
-                  </span>
-                </label>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* 멘토링 포인트 (편집 가능) */}
-      <section className={cardClass}>
-        <h2 className={`mb-4 ${titleClass}`}>멘토링 포인트</h2>
-        <textarea
-          aria-label="멘토링 포인트"
-          value={template.mentoringPoints}
-          onChange={(e) => onChange({ mentoringPoints: e.target.value })}
-          className={`h-24 ${textareaClass}`}
-        />
-      </section>
-
-      {/* 후기 (편집 가능 — 노출 여부 + 선택) */}
-      <section className={cardClass}>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className={titleClass}>후기</h2>
-          <label className="flex cursor-pointer items-center gap-2">
+        <ListField<string>
+          label="소개 불릿"
+          items={hero.bullets}
+          makeEmpty={() => ''}
+          renderItem={(bullet, update) => (
             <input
-              type="checkbox"
-              checked={template.reviews.visible}
+              className={inputClass}
+              value={bullet}
+              placeholder="이력서, 자기소개서, 포트폴리오 피드백 및 첨삭"
+              onChange={(e) => update(e.target.value)}
+            />
+          )}
+          onChange={(bullets) => onChange({ hero: { bullets } })}
+        />
+      </section>
+
+      {/*
+        시안 1 · 멘토 소개는 여기서 편집하지 않는다.
+        프로필 이미지·소속·경력·한마디는 프로필 도메인이 소유하고,
+        합격시킨 인원 수는 서버가 집계한다. 두 곳에서 고칠 수 있으면 어느 쪽이
+        진짜인지 알 수 없어진다.
+      */}
+      <section className={cardClass}>
+        <h2 className={titleClass}>멘토 소개</h2>
+        <p className="mt-1 text-xs text-gray-500">
+          프로필 이미지·소속·경력·한마디는{' '}
+          <a href="/profile" className="text-primary underline">
+            프로필 페이지
+          </a>
+          에서 수정합니다. 합격시킨 인원 수는 서버에서 자동 집계됩니다.
+        </p>
+      </section>
+
+      {/* 시안 2 · 멘토링 유형 */}
+      <section className={cardClass}>
+        <h2 className={titleClass}>멘토링 유형</h2>
+        <p className="mb-4 mt-1 text-xs text-gray-500">
+          멘티가 고민에 맞는 유형을 고를 수 있도록 안내합니다.
+        </p>
+
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className={labelClass} htmlFor="typesTitle">
+              섹션 제목
+            </label>
+            <input
+              id="typesTitle"
+              className={inputClass}
+              value={mentoringTypes.title}
               onChange={(e) =>
                 onChange({
-                  reviews: {
-                    ...template.reviews,
-                    visible: e.target.checked,
+                  mentoringTypes: { ...mentoringTypes, title: e.target.value },
+                })
+              }
+            />
+          </div>
+          <div>
+            <label className={labelClass} htmlFor="typesSubtitle">
+              섹션 설명
+            </label>
+            <input
+              id="typesSubtitle"
+              className={inputClass}
+              value={mentoringTypes.subtitle}
+              onChange={(e) =>
+                onChange({
+                  mentoringTypes: {
+                    ...mentoringTypes,
+                    subtitle: e.target.value,
                   },
                 })
               }
-              className="accent-primary h-4 w-4"
             />
-            <span className="text-sm text-gray-700">후기 노출</span>
-          </label>
-        </div>
-        {template.reviews.selectedReviewIds.length === 0 ? (
-          <p className="text-sm text-gray-500">선택된 후기가 없습니다.</p>
-        ) : (
-          <ul className="flex flex-wrap gap-2">
-            {template.reviews.selectedReviewIds.map((reviewId) => (
-              <li key={reviewId}>
-                <button
-                  type="button"
-                  onClick={() => removeReview(reviewId)}
-                  className="bg-primary-5 text-primary flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium"
-                  aria-label={`후기 ${reviewId} 선택 해제`}
-                >
-                  후기 #{reviewId}
-                  <span aria-hidden>×</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+          </div>
 
-      {/* 체크리스트 (편집 가능 — 3모드) */}
-      <section className={cardClass}>
-        <h2 className={`mb-4 ${titleClass}`}>멘티 제출물 체크리스트</h2>
-        <ul className="flex flex-col gap-4">
-          {template.checklist.map((item) => (
-            <li key={item.id} className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-gray-800">{item.label}</p>
-              <div
-                role="radiogroup"
-                aria-label={`${item.label} 노출 모드`}
-                className="flex gap-2"
-              >
-                {CHECKLIST_MODES.map((mode) => {
-                  const active = item.mode === mode.value;
-                  return (
-                    <button
-                      key={mode.value}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() =>
-                        updateChecklist(item.id, { mode: mode.value })
-                      }
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
-                    >
-                      {mode.label}
-                    </button>
-                  );
-                })}
-              </div>
-              {item.mode === 'CUSTOM' && (
+          <ListField<TemplateMentoringType>
+            label="유형 카드"
+            items={mentoringTypes.items}
+            makeEmpty={() => ({
+              typeName: '',
+              title: '',
+              description: '',
+              tags: [],
+            })}
+            renderItem={(item, update) => (
+              <div className="flex flex-col gap-2">
                 <input
-                  type="text"
-                  aria-label={`${item.label} 커스텀 문구`}
-                  value={item.customText ?? ''}
+                  className={inputClass}
+                  value={item.typeName}
+                  placeholder="유형명 (예: 자기소개서 피드백)"
                   onChange={(e) =>
-                    updateChecklist(item.id, { customText: e.target.value })
+                    update({ ...item, typeName: e.target.value })
                   }
-                  placeholder="멘토가 직접 표시할 문구를 입력하세요"
-                  className="focus:border-primary rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
                 />
-              )}
-            </li>
-          ))}
-        </ul>
+                <textarea
+                  rows={2}
+                  className={inputClass}
+                  value={item.title}
+                  placeholder="카드 제목 (줄바꿈 가능)"
+                  onChange={(e) => update({ ...item, title: e.target.value })}
+                />
+                <textarea
+                  rows={2}
+                  className={inputClass}
+                  value={item.description}
+                  placeholder="설명"
+                  onChange={(e) =>
+                    update({ ...item, description: e.target.value })
+                  }
+                />
+                <input
+                  className={inputClass}
+                  value={item.tags.join(', ')}
+                  placeholder="태그 (쉼표로 구분)"
+                  onChange={(e) =>
+                    update({
+                      ...item,
+                      tags: e.target.value
+                        .split(',')
+                        .map((tag) => tag.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                />
+              </div>
+            )}
+            onChange={(items) =>
+              onChange({ mentoringTypes: { ...mentoringTypes, items } })
+            }
+          />
+        </div>
       </section>
 
-      {/* ── 편집 불가 영역 (read-only 렌더) ── */}
+      {/* 시안 3 · 취업 성공 전략 */}
       <section className={cardClass}>
-        <div className="mb-4 flex items-center gap-2">
-          <h2 className={titleClass}>피드백 과정</h2>
-          <ReadOnlyBadge />
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className={titleClass}>취업 성공 전략</h2>
+          <VisibleToggle
+            checked={strategy.visible}
+            onChange={(visible) =>
+              onChange({ strategy: { ...strategy, visible } })
+            }
+          />
         </div>
-        <ol className="flex flex-col gap-2">
-          {template.process.map((step) => (
-            <li key={step.step} className="text-sm text-gray-600">
-              {step.step}. {step.title} — {step.desc}
-            </li>
-          ))}
-        </ol>
+
+        <div className="flex flex-col gap-4">
+          <input
+            className={inputClass}
+            value={strategy.title}
+            placeholder="섹션 제목"
+            onChange={(e) =>
+              onChange({ strategy: { ...strategy, title: e.target.value } })
+            }
+          />
+          <input
+            className={inputClass}
+            value={strategy.subtitle}
+            placeholder="섹션 설명"
+            onChange={(e) =>
+              onChange({ strategy: { ...strategy, subtitle: e.target.value } })
+            }
+          />
+
+          <ListField<TemplateStrategyPoint>
+            label="Point"
+            items={strategy.points}
+            makeEmpty={() => ({ image: null, title: '', description: '' })}
+            renderItem={(point, update) => (
+              <div className="flex flex-col gap-2">
+                <ImageField
+                  label="이미지"
+                  value={point.image}
+                  onChange={(image) => update({ ...point, image })}
+                />
+                <input
+                  className={inputClass}
+                  value={point.title}
+                  placeholder="Point 제목"
+                  onChange={(e) => update({ ...point, title: e.target.value })}
+                />
+                <textarea
+                  rows={3}
+                  className={inputClass}
+                  value={point.description}
+                  placeholder="설명"
+                  onChange={(e) =>
+                    update({ ...point, description: e.target.value })
+                  }
+                />
+              </div>
+            )}
+            onChange={(points) =>
+              onChange({ strategy: { ...strategy, points } })
+            }
+          />
+        </div>
       </section>
 
+      {/* 시안 4 · 이렇게 도와드려요 (영상) */}
       <section className={cardClass}>
-        <div className="mb-4 flex items-center gap-2">
-          <h2 className={titleClass}>제출물 설정</h2>
-          <ReadOnlyBadge />
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className={titleClass}>이렇게 도와드려요 (영상)</h2>
+          <VisibleToggle
+            checked={video.visible}
+            onChange={(visible) => onChange({ video: { ...video, visible } })}
+          />
         </div>
-        <p className="text-sm font-medium text-gray-800">
-          {template.submissionSpec.title}
-        </p>
-        <p className="mt-1 text-sm text-gray-600">
-          {template.submissionSpec.desc}
-        </p>
+
+        <div className="flex flex-col gap-4">
+          <input
+            className={inputClass}
+            value={video.title}
+            placeholder="섹션 제목"
+            onChange={(e) =>
+              onChange({ video: { ...video, title: e.target.value } })
+            }
+          />
+          <input
+            className={inputClass}
+            value={video.subtitle}
+            placeholder="섹션 설명"
+            onChange={(e) =>
+              onChange({ video: { ...video, subtitle: e.target.value } })
+            }
+          />
+          <div>
+            <label className={labelClass} htmlFor="videoUrl">
+              영상 임베드 URL
+            </label>
+            <input
+              id="videoUrl"
+              className={inputClass}
+              value={video.videoUrl ?? ''}
+              placeholder="https://www.youtube.com/embed/..."
+              onChange={(e) =>
+                onChange({
+                  video: { ...video, videoUrl: e.target.value || null },
+                })
+              }
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              YouTube 는 공유 → 퍼가기의 embed 주소를 넣어주세요.
+            </p>
+          </div>
+          <input
+            className={inputClass}
+            value={video.caption}
+            placeholder="영상 하단 문구"
+            onChange={(e) =>
+              onChange({ video: { ...video, caption: e.target.value } })
+            }
+          />
+        </div>
       </section>
 
+      {/* 시안 5 · 결과 사례 */}
       <section className={cardClass}>
-        <div className="mb-4 flex items-center gap-2">
-          <h2 className={titleClass}>자주 묻는 질문</h2>
-          <ReadOnlyBadge />
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className={titleClass}>결과 사례</h2>
+          <VisibleToggle
+            checked={results.visible}
+            onChange={(visible) =>
+              onChange({ results: { ...results, visible } })
+            }
+          />
         </div>
-        <ul className="flex flex-col gap-3">
-          {template.faq.map((item, i) => (
-            <li key={i} className="flex flex-col gap-0.5">
-              <p className="text-sm font-medium text-gray-700">Q. {item.q}</p>
-              <p className="text-sm text-gray-500">A. {item.a}</p>
-            </li>
-          ))}
-        </ul>
+
+        <div className="flex flex-col gap-4">
+          <input
+            className={inputClass}
+            value={results.title}
+            placeholder="섹션 제목"
+            onChange={(e) =>
+              onChange({ results: { ...results, title: e.target.value } })
+            }
+          />
+
+          <ListField<TemplateResultCase>
+            label="Before / After"
+            items={results.cases}
+            makeEmpty={() => ({
+              beforeImage: null,
+              afterImage: null,
+              beforeCaption: '',
+              afterCaption: '',
+            })}
+            renderItem={(item, update) => (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <ImageField
+                    label="Before 이미지"
+                    value={item.beforeImage}
+                    onChange={(beforeImage) => update({ ...item, beforeImage })}
+                  />
+                  <input
+                    className={inputClass}
+                    value={item.beforeCaption}
+                    placeholder="Before 설명"
+                    onChange={(e) =>
+                      update({ ...item, beforeCaption: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <ImageField
+                    label="After 이미지"
+                    value={item.afterImage}
+                    onChange={(afterImage) => update({ ...item, afterImage })}
+                  />
+                  <input
+                    className={inputClass}
+                    value={item.afterCaption}
+                    placeholder="After 설명"
+                    onChange={(e) =>
+                      update({ ...item, afterCaption: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+            onChange={(cases) => onChange({ results: { ...results, cases } })}
+          />
+        </div>
       </section>
     </div>
   );
