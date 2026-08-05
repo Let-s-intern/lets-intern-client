@@ -17,22 +17,24 @@ interface WrittenSubmissionInput {
 /**
  * 서면 제출 상태를 판정한다.
  *
- * - notSubmitted: 출석 행이 없거나(id null) 미제출(ABSENT·null)
+ * - notSubmitted: 출석 행이 없거나(id null) 미제출(ABSENT)
  * - late:         지각 제출. 제출물은 있으나 서면 피드백 대상이 아니다
- * - submitted:    PRESENT·UPDATED
+ * - submitted:    그 외(PRESENT·UPDATED)
  *
  * 라이브(`resolveLiveSessionStatus`)가 `LATE|ABSENT` 를 한 덩어리로 '취소' 처리하는
  * 것과 같은 규칙이되, 서면은 제출물 열람 허용 여부가 갈리므로 두 상태를 분리한다.
  *
- * `status` 가 비어 있으면 미제출로 본다. 목록 스키마가 null 을 'ABSENT' 로
- * 채워 내려주므로(`challengeSchema.ts`) 같은 결론을 방어적으로 한 번 더 둔 것이다.
+ * `status` 가 비어 있으면 미제출로 **보지 않는다.** 서면 목록 스키마는 null 을
+ * 'ABSENT' 로 채워 내려주므로(`challengeSchema.ts`) 서면 경로에서는 애초에 null 이
+ * 오지 않는다. 반면 `MenteeList` 를 공유하는 라이브 모달은 `status: null` 을 그대로
+ * 넘긴다(`LiveFeedbackReservationModal.tsx`). null 을 미제출로 판정하면 예약만 된
+ * 라이브 세션이 전부 '미제출' 배지가 된다 — 그래서 판정을 명시적 ABSENT 로만 좁힌다.
  */
 export function resolveWrittenSubmissionState({
   status,
   attendanceId,
 }: WrittenSubmissionInput): WrittenSubmissionState {
-  if (attendanceId == null || status == null || status === 'ABSENT')
-    return 'notSubmitted';
+  if (attendanceId == null || status === 'ABSENT') return 'notSubmitted';
   if (status === 'LATE') return 'late';
   return 'submitted';
 }

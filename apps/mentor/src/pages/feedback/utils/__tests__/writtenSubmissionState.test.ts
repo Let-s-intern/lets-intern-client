@@ -31,10 +31,18 @@ describe('resolveWrittenSubmissionState', () => {
     ).toBe('notSubmitted');
   });
 
-  it('status 가 null 이면 notSubmitted (스키마 기본값이 ABSENT)', () => {
+  /**
+   * 라이브 모달은 `MenteeList` 를 공유하면서 `status: null` 을 넘긴다.
+   * null 을 미제출로 판정하면 예약만 된 라이브 세션이 전부 '미제출' 배지가 된다.
+   * 서면 목록은 스키마가 null 을 'ABSENT' 로 채우므로 여기서 막을 필요가 없다.
+   */
+  it('status 가 null 이면 미제출로 보지 않는다 (라이브 리스트 회귀 방지)', () => {
     expect(
       resolveWrittenSubmissionState({ status: null, attendanceId: 1 }),
-    ).toBe('notSubmitted');
+    ).toBe('submitted');
+    expect(
+      resolveWrittenSubmissionState({ status: undefined, attendanceId: 1 }),
+    ).toBe('submitted');
   });
 
   it('출석 행이 없으면(id null) status 와 무관하게 notSubmitted', () => {
