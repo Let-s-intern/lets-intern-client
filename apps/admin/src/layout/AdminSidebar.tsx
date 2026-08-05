@@ -57,8 +57,7 @@ const navData = [
     title: '결제 관리',
     itemList: [
       {
-        name: '환불 히스토리',
-        // 경로는 그대로 둔다. 바꾸면 북마크가 깨진다.
+        name: '전액 환불 히스토리',
         url: '/refund-history',
       },
     ],

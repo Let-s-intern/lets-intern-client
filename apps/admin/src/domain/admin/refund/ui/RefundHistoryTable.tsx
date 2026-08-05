@@ -1,7 +1,6 @@
 import { AdminRefundLog } from '@/api/adminRefund';
 import dayjs from '@/lib/dayjs';
 import { Link } from 'react-router-dom';
-import { resolveRefundScope } from '../utils/refundScope';
 
 const programTypeLabel: Record<string, string> = {
   CHALLENGE: '챌린지',
@@ -47,78 +46,62 @@ const RefundHistoryTable = ({ logs, isLoading }: Props) => {
           <th className="px-3 py-2">프로그램</th>
           <th className="px-3 py-2">참여자</th>
           <th className="px-3 py-2">담당자</th>
-          {/* 부분 환불은 비교 대상이 있어야 금액이 의미를 갖는다. */}
-          <th className="px-3 py-2 text-right">원 결제액</th>
           <th className="px-3 py-2 text-right">환불 금액</th>
           <th className="px-3 py-2">사유</th>
           <th className="px-3 py-2">상태</th>
         </tr>
       </thead>
       <tbody>
-        {logs.map((log) => {
-          const scope = resolveRefundScope(log);
-
-          return (
-            <tr key={log.id} className="border-b align-top">
-              <td className="whitespace-nowrap px-3 py-2">
-                {log.refundedAt
-                  ? dayjs(log.refundedAt).format('YYYY-MM-DD HH:mm')
-                  : '-'}
-              </td>
-              <td className="px-3 py-2">
-                <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
-                  {programTypeLabel[log.programType ?? ''] ?? log.programType}
+        {logs.map((log) => (
+          <tr key={log.id} className="border-b align-top">
+            <td className="whitespace-nowrap px-3 py-2">
+              {log.refundedAt
+                ? dayjs(log.refundedAt).format('YYYY-MM-DD HH:mm')
+                : '-'}
+            </td>
+            <td className="px-3 py-2">
+              <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
+                {programTypeLabel[log.programType ?? ''] ?? log.programType}
+              </span>
+              {log.programId ? (
+                <Link
+                  className="underline"
+                  to={`/programs/${log.programId}/users?programType=${log.programType}`}
+                >
+                  {log.programTitle}
+                </Link>
+              ) : (
+                log.programTitle
+              )}
+            </td>
+            <td className="px-3 py-2">
+              {/* 동명이인 구분을 위해 이메일을 함께 보여준다. */}
+              <div>{log.userName}</div>
+              <div className="text-xs text-neutral-500">{log.userEmail}</div>
+            </td>
+            <td className="whitespace-nowrap px-3 py-2">{log.managerName}</td>
+            <td className="whitespace-nowrap px-3 py-2 text-right">
+              {(log.refundedAmount ?? 0).toLocaleString()}원
+            </td>
+            <td className="px-3 py-2">
+              <span className="line-clamp-2" title={log.reason ?? ''}>
+                {log.reason}
+              </span>
+            </td>
+            <td className="whitespace-nowrap px-3 py-2">
+              {log.status === 'FAILED' ? (
+                <span
+                  className="font-bold text-red-600"
+                  title={log.failureMessage ?? ''}
+                >
+                  {statusLabel[log.status]}
                 </span>
-                {log.programId ? (
-                  <Link
-                    className="underline"
-                    to={`/programs/${log.programId}/users?programType=${log.programType}`}
-                  >
-                    {log.programTitle}
-                  </Link>
-                ) : (
-                  log.programTitle
-                )}
-              </td>
-              <td className="px-3 py-2">
-                {/* 동명이인 구분을 위해 이메일을 함께 보여준다. */}
-                <div>{log.userName}</div>
-                <div className="text-xs text-neutral-500">{log.userEmail}</div>
-              </td>
-              <td className="whitespace-nowrap px-3 py-2">{log.managerName}</td>
-              <td className="whitespace-nowrap px-3 py-2 text-right">
-                {log.originalAmount == null
-                  ? '-'
-                  : `${log.originalAmount.toLocaleString()}원`}
-              </td>
-              <td className="whitespace-nowrap px-3 py-2 text-right">
-                {(log.refundedAmount ?? 0).toLocaleString()}원
-                {scope && (
-                  <span className="ml-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
-                    {scope}
-                  </span>
-                )}
-              </td>
-              <td className="px-3 py-2">
-                <span className="line-clamp-2" title={log.reason ?? ''}>
-                  {log.reason}
-                </span>
-              </td>
-              <td className="whitespace-nowrap px-3 py-2">
-                {log.status === 'FAILED' ? (
-                  <span
-                    className="font-bold text-red-600"
-                    title={log.failureMessage ?? ''}
-                  >
-                    {statusLabel[log.status]}
-                  </span>
-                ) : (
-                  <span>{statusLabel[log.status] ?? log.status}</span>
-                )}
-              </td>
-            </tr>
-          );
-        })}
+              ) : (
+                <span>{statusLabel[log.status] ?? log.status}</span>
+              )}
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

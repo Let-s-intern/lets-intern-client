@@ -10,8 +10,9 @@ import {
 import { gradeToText } from '@/utils/convert';
 import { useMemo } from 'react';
 import TD from '../../../ui/table/regacy/TD';
-import { RefundMode, RefundTarget } from '../ui/RefundModal';
+import { RefundTarget } from '../ui/RefundModal';
 import {
+  isTestPayment,
   resolveRefundableState,
   resolveRefundLabel,
 } from '../utils/refundState';
@@ -46,7 +47,7 @@ interface Props {
   programType: ProgramTypeUpperCase;
   programTitle: string;
   adminRefundedIds: Set<number>;
-  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
+  onRefundClick: (target: RefundTarget) => void;
 }
 
 const TableRow = ({
@@ -111,28 +112,25 @@ const TableRow = ({
   const refundable = resolveRefundableState({
     isCanceled: applicationInfo.isCanceled ?? false,
     hasUser: !!applicationInfo.name,
-    finalPrice: applicationInfo.finalPrice ?? null,
+    isTestPayment: isTestPayment(applicationInfo.orderId ?? null),
   });
 
-  const handleRefundClick = (mode: RefundMode) => {
-    onRefundClick(
-      {
-        applicationId,
-        name: applicationInfo.name ?? '',
-        email: applicationInfo.email ?? '',
-        phoneNum: applicationInfo.phoneNum ?? '',
-        programTitle,
-        orderId: applicationInfo.orderId ?? '',
-        pricePlanType:
-          programType === CHALLENGE
-            ? (challengeApp.application.challengePricePlanType ?? null)
-            : null,
-        couponName: applicationInfo.couponName ?? null,
-        couponDiscount: applicationInfo.couponDiscount ?? null,
-        finalPrice: applicationInfo.finalPrice ?? 0,
-      },
-      mode,
-    );
+  const handleRefundClick = () => {
+    onRefundClick({
+      applicationId,
+      name: applicationInfo.name ?? '',
+      email: applicationInfo.email ?? '',
+      phoneNum: applicationInfo.phoneNum ?? '',
+      programTitle,
+      orderId: applicationInfo.orderId ?? '',
+      pricePlanType:
+        programType === CHALLENGE
+          ? (challengeApp.application.challengePricePlanType ?? null)
+          : null,
+      couponName: applicationInfo.couponName ?? null,
+      couponDiscount: applicationInfo.couponDiscount ?? null,
+      finalPrice: applicationInfo.finalPrice ?? 0,
+    });
   };
 
   return (
@@ -182,28 +180,13 @@ const TableRow = ({
       <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
       <TD>
         {refundable.canRefund ? (
-          <div className="flex gap-1">
-            <button
-              type="button"
-              className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-              onClick={() => handleRefundClick('full')}
-            >
-              환불
-            </button>
-            <button
-              type="button"
-              className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
-              onClick={() => handleRefundClick('partial')}
-              disabled={!refundable.canPartialRefund}
-              title={
-                refundable.canPartialRefund
-                  ? undefined
-                  : '실결제액이 0원이라 나눌 금액이 없습니다.'
-              }
-            >
-              부분환불
-            </button>
-          </div>
+          <button
+            type="button"
+            className="rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+            onClick={handleRefundClick}
+          >
+            전액 환불
+          </button>
         ) : (
           <span className="text-xs text-gray-400">{refundable.reason}</span>
         )}
