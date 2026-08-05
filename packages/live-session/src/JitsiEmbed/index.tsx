@@ -76,6 +76,18 @@ const CONFIG_OVERWRITE = {
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
   prejoinPageEnabled: false,
+  /*
+   * P2P 비활성 — 항상 JVB(미디어 서버)를 거치게 한다.
+   *
+   * Jitsi 는 참가자가 2명일 때 기본으로 P2P 로 붙어 브라우저끼리 미디어를 직접 주고받는다.
+   * 우리 세션은 멘토·멘티 1:1 이라 기본값이면 사실상 항상 P2P 다.
+   *
+   * P2P 는 JVB 를 우회하므로 위에서 건 정책(resolution·constraints·disableSimulcast)이
+   * 그대로 먹지 않고, 서버가 스트림을 보지 못해 녹화·통계도 잡히지 않는다.
+   * 참가자끼리 직접 연결하는 특성상 서로의 IP 도 노출된다.
+   * 멘토·멘티 양쪽이 이 설정을 공유하므로 여기 한 곳만 끄면 된다.
+   */
+  p2p: { enabled: false },
   // 모바일 웹에서 "이 회의에 어떻게 참여하시겠습니까?"(앱으로 열기/브라우저 참여) 딥링킹
   // 인터스티셜을 건너뛰고 바로 브라우저 회의로 입장. (HIDE_DEEP_LINKING_LOGO는 로고만 숨김)
   disableDeepLinking: true,

@@ -85,6 +85,20 @@ describe('JitsiEmbed', () => {
     expect(config.toolbarButtons).toContain('camera');
   });
 
+  /*
+   * 1:1 세션은 기본값이면 항상 P2P 로 붙어 JVB 를 우회한다.
+   * 그러면 위 480p·simulcast 정책이 먹지 않고 서버가 스트림을 보지 못한다.
+   * 멘토·멘티가 이 설정을 공유하므로 여기서 한 번 고정한다.
+   */
+  it('configOverwrite로 P2P가 꺼져 항상 JVB를 거친다', async () => {
+    await renderReady();
+    const config = capturedProps.current?.configOverwrite as Record<
+      string,
+      unknown
+    >;
+    expect(config.p2p).toEqual({ enabled: false });
+  });
+
   it('interfaceConfigOverwrite로 Jitsi 로고/워터마크가 모두 숨겨진다', async () => {
     await renderReady();
     const iface = capturedProps.current?.interfaceConfigOverwrite as Record<
