@@ -217,7 +217,10 @@ describe('userRefundItemSchema', () => {
 
   it('배치 자동환불은 처리경로로 구분된다', () => {
     // 유저가 직접 취소한 것이 아니다. 라벨만으로는 운영이 오독한다.
-    const parsed = userRefundItemSchema.parse({ ...userRefund, source: 'BATCH' });
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      source: 'BATCH',
+    });
 
     expect(parsed.source).toBe('BATCH');
   });
@@ -237,7 +240,10 @@ describe('userRefundItemSchema', () => {
 
   it('규정 비율이 없어도 파싱된다', () => {
     // 환불 시각·금액과 달리 규정 비율은 못 남기는 경로가 있을 수 있다. 표시만 비운다.
-    const parsed = userRefundItemSchema.parse({ ...userRefund, refundType: null });
+    const parsed = userRefundItemSchema.parse({
+      ...userRefund,
+      refundType: null,
+    });
 
     expect(parsed.refundType).toBeNull();
   });

@@ -51,7 +51,13 @@ export type AdminRefundHistory = z.infer<typeof adminRefundHistorySchema>;
  * 규정 환불 비율. 유저 환불은 어드민 환불과 달리 임의 금액이 아니라 이 값으로 계산된다.
  * 금액만 보면 "왜 이 금액인지"를 되짚을 수 없어 함께 기록한다.
  */
-export const refundTypeSchema = z.enum(['ZERO', 'ALL', 'TWO_THIRD', 'HALF', 'PAYBACK']);
+export const refundTypeSchema = z.enum([
+  'ZERO',
+  'ALL',
+  'TWO_THIRD',
+  'HALF',
+  'PAYBACK',
+]);
 export type RefundType = z.infer<typeof refundTypeSchema>;
 
 /**
