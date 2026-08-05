@@ -16,6 +16,12 @@ import {
   getLiveFeedbackBadgeVisual,
   type LiveFeedbackUiStatus,
 } from '@/pages/feedback/utils/liveFeedbackStatus';
+import {
+  resolveWrittenSubmissionState,
+  WRITTEN_SUBMISSION_LABEL,
+  type WrittenSubmissionLabel,
+  type WrittenSubmissionState,
+} from '@/pages/feedback/utils/writtenSubmissionState';
 
 import type { FeedbackRow } from '../types';
 import type { LiveFeedbackRound } from './useLiveFeedbackList';
@@ -65,48 +71,44 @@ function formatLiveSchedule(
 /**
  * 서면 멘티 1명 행 — 제출(status)/피드백(feedbackStatus) 기준 상태 라벨.
  * 라벨은 서면 어휘(진행 전/진행 중/완료), 색(tone)만 라이브에 맞춘다(statusColors.ts 재사용).
- * - status === 'ABSENT' → 미제출 (피드백 미시작이므로 '진행 전')
+ * - 미제출(ABSENT) → 미제출 (피드백 미시작이므로 '진행 전')
+ * - 지각 제출(LATE) → 지각 제출 / '진행 불가' (피드백 대상이 아니다)
  * - feedbackStatus COMPLETED/CONFIRMED → 완료
  * - feedbackStatus IN_PROGRESS → 진행 중
  * - 그 외(WAITING/null) → 진행 전
  */
 function summarizeWrittenMentee(mentee: WrittenMenteeAttendance): {
-  submissionLabel: '제출' | '미제출';
+  submissionState: WrittenSubmissionState;
+  submissionLabel: WrittenSubmissionLabel;
   statusLabel: string;
   statusTone: FeedbackRow['statusTone'];
 } {
-  const submissionLabel: '제출' | '미제출' =
-    mentee.status === 'ABSENT' ? '미제출' : '제출';
+  const submissionState = resolveWrittenSubmissionState({
+    status: mentee.status,
+    attendanceId: mentee.id,
+  });
+  const base = {
+    submissionState,
+    submissionLabel: WRITTEN_SUBMISSION_LABEL[submissionState],
+  };
 
-  if (submissionLabel === '미제출') {
-    return {
-      submissionLabel,
-      statusLabel: '진행 전',
-      statusTone: 'liveWaiting',
-    };
+  if (submissionState === 'notSubmitted') {
+    return { ...base, statusLabel: '진행 전', statusTone: 'liveWaiting' };
+  }
+  if (submissionState === 'late') {
+    // 목록에서 빼지 않고 남긴다 — 배정 인원과 카운트 분모가 어긋나지 않게.
+    return { ...base, statusLabel: '진행 불가', statusTone: 'liveCancelled' };
   }
   if (
     mentee.feedbackStatus === 'COMPLETED' ||
     mentee.feedbackStatus === 'CONFIRMED'
   ) {
-    return {
-      submissionLabel,
-      statusLabel: '완료',
-      statusTone: 'liveCompleted',
-    };
+    return { ...base, statusLabel: '완료', statusTone: 'liveCompleted' };
   }
   if (mentee.feedbackStatus === 'IN_PROGRESS') {
-    return {
-      submissionLabel,
-      statusLabel: '진행 중',
-      statusTone: 'inProgress',
-    };
+    return { ...base, statusLabel: '진행 중', statusTone: 'inProgress' };
   }
-  return {
-    submissionLabel,
-    statusLabel: '진행 전',
-    statusTone: 'liveWaiting',
-  };
+  return { ...base, statusLabel: '진행 전', statusTone: 'liveWaiting' };
 }
 
 /**
@@ -323,7 +325,8 @@ export function useMergedFeedbackRows(
             scheduleLabel,
             menteeNameLabel: mentee.name,
             // 서면 상세 — 멘티 행이어도 미션 모달로 진입(제출자 있을 때).
-            canOpenDetail: mentee.status !== 'ABSENT',
+            // 지각 제출도 열어 준다. 멘토가 "왜 진행 불가인지" 화면에서 확인해야 한다.
+            canOpenDetail: summary.submissionState !== 'notSubmitted',
             source: {
               type: 'written',
               challengeId: challenge.challengeId,

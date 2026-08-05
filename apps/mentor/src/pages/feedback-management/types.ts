@@ -39,8 +39,12 @@ export interface FeedbackRow {
 
   /** 컬럼: 멘티 예약 — 라이브 전용 ('예약 전' | '예약 완료'). 서면 = null */
   reservationLabel: '예약 전' | '예약 완료' | null;
-  /** 컬럼: 멘티 제출 — '제출' | '미제출'. 라이브에서는 제출물 미연동 영역이라 null 가능 */
-  submissionLabel: '제출' | '미제출' | null;
+  /**
+   * 컬럼: 멘티 제출 — '제출' | '지각 제출' | '미제출'.
+   * '지각 제출'은 서면 행 전용(피드백 대상이 아님을 표에서 구분). 라이브는 제출물
+   * 미연동 영역이라 null 가능.
+   */
+  submissionLabel: '제출' | '지각 제출' | '미제출' | null;
   /** 컬럼: 멘티 — 참여 표시 (라이브 전용). 서면 = null */
   menteeParticipation: '참여' | '불참' | null;
   /** 컬럼: 멘토 — 참여 표시 (라이브 전용). 서면 = null */
