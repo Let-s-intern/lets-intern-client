@@ -21,6 +21,10 @@ import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
 import { useMenteeNavigation } from './hooks/useMenteeNavigation';
 import { isNotionUrl } from './utils/notion';
+import {
+  canViewSubmission,
+  LATE_SUBMISSION_NOTICE,
+} from './utils/writtenSubmissionState';
 
 // 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
@@ -57,7 +61,7 @@ const FeedbackModal = ({
     currentMentee,
     preQuestion,
     isReadOnly,
-    isAbsent,
+    submissionState,
     attendanceList,
     handleSelectByIndex,
     handleClose,
@@ -80,7 +84,7 @@ const FeedbackModal = ({
       onSelectByIndex: handleSelectByIndex,
     });
 
-  const { waitingCount, inProgressCount, completedCount } =
+  const { waitingCount, inProgressCount, completedCount, blockedCount } =
     useFeedbackStatus(attendanceList);
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
@@ -103,10 +107,9 @@ const FeedbackModal = ({
     setIsExperienceModalOpen(false);
   }, [isOpen]);
 
+  // 지각 제출도 제출물 열람은 허용한다 — 막는 것은 작성이지 열람이 아니다.
   const isMenteeSubmitted =
-    currentMentee != null &&
-    currentMentee.id != null &&
-    currentMentee.status !== 'ABSENT';
+    currentMentee != null && canViewSubmission(submissionState);
   // 경험정리형 제출 멘티(제출됨·링크 없음)
   const hasExperienceSubmission =
     isMenteeSubmitted && !currentMentee.link && currentMentee.userId != null;
@@ -143,6 +146,8 @@ const FeedbackModal = ({
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
         completedCount={completedCount}
+        // 지각 제출이 있을 때만 "진행 불가 N" 칩을 띄운다.
+        cancelledCount={blockedCount || undefined}
         // 크게 보기 중에는 닫기가 모달 종료가 아니라 기본 화면 복귀다(라이브와 동일).
         onClose={isFullscreen ? () => setIsFullscreen(false) : handleClose}
       />
@@ -232,8 +237,14 @@ const FeedbackModal = ({
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
-            hint={isReadOnly ? '제출 완료되어 수정할 수 없습니다' : null}
-            isAbsent={isAbsent}
+            hint={
+              submissionState === 'late'
+                ? LATE_SUBMISSION_NOTICE
+                : isReadOnly
+                  ? '제출 완료되어 수정할 수 없습니다'
+                  : null
+            }
+            submissionState={submissionState}
             hasMentee={!!currentMentee}
           />
         }
@@ -242,7 +253,7 @@ const FeedbackModal = ({
             attendanceId={selectedAttendanceId}
             editorContent={editorContent}
             feedbackStatus={currentMentee?.feedbackStatus ?? null}
-            isAbsent={isAbsent}
+            submissionState={submissionState}
             onSaveSuccess={handleMutationSuccess}
             onSubmitSuccess={handleMutationSuccess}
             onAlert={(opts) =>

@@ -6,6 +6,12 @@ import { type FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import { isNotionUrl } from '../utils/notion';
 import { getWrittenFeedbackBadgeVisual } from '../utils/writtenFeedbackStatus';
+import {
+  canViewSubmission,
+  canWriteWrittenFeedback,
+  resolveWrittenSubmissionState,
+  WRITTEN_SUBMISSION_LABEL,
+} from '../utils/writtenSubmissionState';
 import MenteeInfoCompactRow from './MenteeInfoCompactRow';
 import PanelEntryButton from './PanelEntryButton';
 import SideViewButton from './SideViewButton';
@@ -56,8 +62,13 @@ const MenteeInfo = ({
   if (!mentee) return EMPTY_STATE;
 
   const hasPreQuestion = !!preQuestion && preQuestion.trim().length > 0;
-  const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
-  const isSubmitted = !isAbsent;
+  const submissionState = resolveWrittenSubmissionState({
+    status: mentee.status,
+    attendanceId: mentee.id,
+  });
+  const isLate = submissionState === 'late';
+  // 지각 제출도 제출물은 있다 — 막는 것은 작성이지 열람이 아니다.
+  const isSubmitted = canViewSubmission(submissionState);
   const hasSubmissionLink = isSubmitted && !!mentee.link;
   // 노션 링크만 왼쪽 패널 임베드 진입점 노출
   const canEmbedLink = hasSubmissionLink && isNotionUrl(mentee.link);
@@ -65,11 +76,14 @@ const MenteeInfo = ({
   const hasExperienceSubmission =
     isSubmitted && !mentee.link && mentee.userId != null;
   // 임시저장(저장만 하고 미제출)은 서버에서 IN_PROGRESS 로 보관된다 → 라벨에 표시.
-  const isDraftSaved = !isAbsent && mentee.feedbackStatus === 'IN_PROGRESS';
+  // 지각 제출은 진행 불가이므로 임시저장분이 있어도 "임시저장됨"을 띄우지 않는다(오해 방지).
+  const isDraftSaved =
+    canWriteWrittenFeedback(submissionState) &&
+    mentee.feedbackStatus === 'IN_PROGRESS';
   // 라이브 피드백과 동일 디자인의 상태 배지(STATUS_BADGE 토큰).
   const feedbackBadge = getWrittenFeedbackBadgeVisual(
     mentee.feedbackStatus,
-    isAbsent,
+    submissionState,
   );
   // 기본·컴팩트 모드가 같은 표기를 쓰도록 배지를 한 곳에서 만든다.
   // (컴팩트가 별도 어휘·맨텍스트를 쓰던 시절엔 "진행전"이 빨간 글씨로 떠 에러처럼 읽혔다.)
@@ -169,13 +183,19 @@ const MenteeInfo = ({
                 <span
                   className={twMerge(
                     feedbackModalDesign.dotBase,
-                    isSubmitted
-                      ? feedbackModalDesign.dotOk
-                      : feedbackModalDesign.dotNone,
+                    isLate
+                      ? feedbackModalDesign.dotAbsent
+                      : isSubmitted
+                        ? feedbackModalDesign.dotOk
+                        : feedbackModalDesign.dotNone,
                   )}
                 />
                 <span className="font-medium text-neutral-700">
-                  {isSubmitted ? '제출됨' : '미제출'}
+                  {isLate
+                    ? WRITTEN_SUBMISSION_LABEL.late
+                    : isSubmitted
+                      ? '제출됨'
+                      : WRITTEN_SUBMISSION_LABEL.notSubmitted}
                 </span>
               </div>
               {hasSubmissionLink ? (

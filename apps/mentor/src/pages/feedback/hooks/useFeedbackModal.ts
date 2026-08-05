@@ -11,6 +11,7 @@ import {
 } from './useMentorAttendanceQuery';
 import { emptyEditorState } from '@/common/lexical/EditorApp';
 import mentorConfig from '@/constants/config';
+import { resolveWrittenSubmissionState } from '../utils/writtenSubmissionState';
 
 interface UseFeedbackModalParams {
   isOpen: boolean;
@@ -160,8 +161,11 @@ export function useFeedbackModal({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
-  const isAbsent =
-    currentMentee?.status === 'ABSENT' || currentMentee?.id == null;
+  // 제출 상태(미제출/지각 제출/제출) — 표기와 작성 가능 여부의 단일 판정.
+  const submissionState = resolveWrittenSubmissionState({
+    status: currentMentee?.status,
+    attendanceId: currentMentee?.id,
+  });
 
   return {
     selectedIndex,
@@ -171,7 +175,7 @@ export function useFeedbackModal({
     currentMentee,
     preQuestion,
     isReadOnly,
-    isAbsent,
+    submissionState,
     attendanceList,
     handleSelectByIndex,
     handleClose,

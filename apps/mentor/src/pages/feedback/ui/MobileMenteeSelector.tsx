@@ -1,6 +1,10 @@
 'use client';
 
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import {
+  resolveWrittenSubmissionState,
+  WRITTEN_SUBMISSION_LABEL,
+} from '@/pages/feedback/utils/writtenSubmissionState';
 
 interface AttendanceItem {
   id: number | null;
@@ -52,10 +56,15 @@ const MobileMenteeSelector = ({
           </option>
         ) : null}
         {attendanceList.map((mentee, i) => {
-          const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
-          const label = isAbsent
-            ? '미제출'
-            : getFeedbackLabel(mentee.feedbackStatus);
+          const submissionState = resolveWrittenSubmissionState({
+            status: mentee.status,
+            attendanceId: mentee.id,
+          });
+          // 미제출·지각 제출은 피드백 진행 라벨 대신 제출 상태를 보여준다.
+          const label =
+            submissionState === 'submitted'
+              ? getFeedbackLabel(mentee.feedbackStatus)
+              : WRITTEN_SUBMISSION_LABEL[submissionState];
 
           return (
             <option key={mentee.id ?? `idx-${i}`} value={i}>

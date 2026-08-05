@@ -46,7 +46,7 @@ const MobileFeedbackPage = ({
     currentMentee,
     preQuestion,
     isReadOnly,
-    isAbsent,
+    submissionState,
     attendanceList,
     handleSelectByIndex,
     handleClose,
@@ -69,7 +69,7 @@ const MobileFeedbackPage = ({
       onSelectByIndex: handleSelectByIndex,
     });
 
-  const { waitingCount, inProgressCount, completedCount } =
+  const { waitingCount, inProgressCount, completedCount, blockedCount } =
     useFeedbackStatus(attendanceList);
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
@@ -85,7 +85,7 @@ const MobileFeedbackPage = ({
         initialEditorStateJsonString={editorContent}
         onChange={setEditorContent}
         isReadOnly={isReadOnly}
-        isAbsent={isAbsent}
+        submissionState={submissionState}
         hasMentee={!!currentMentee}
       />
     </Suspense>
@@ -96,7 +96,7 @@ const MobileFeedbackPage = ({
       attendanceId={selectedAttendanceId}
       editorContent={editorContent}
       feedbackStatus={currentMentee?.feedbackStatus ?? null}
-      isAbsent={isAbsent}
+      submissionState={submissionState}
       onSaveSuccess={handleMutationSuccess}
       onSubmitSuccess={handleMutationSuccess}
       onAlert={(opts) =>
@@ -139,6 +139,7 @@ const MobileFeedbackPage = ({
           waitingCount={waitingCount}
           inProgressCount={inProgressCount}
           completedCount={completedCount}
+          cancelledCount={blockedCount || undefined}
           onClose={handleClose}
         />
 

@@ -4,6 +4,7 @@ import { Suspense, lazy } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import type { WrittenSubmissionState } from '@/pages/feedback/utils/writtenSubmissionState';
 
 // 에디터(Lexical)는 작성 화면에서만 필요 → 동적 임포트로 초기 번들에서 뺀다.
 // (Vercel BP: bundle-dynamic-imports)
@@ -18,7 +19,7 @@ interface FeedbackComposerProps {
   editorKey?: string;
   /** 라벨 옆 보조 문구(예: "제출 완료되어 수정할 수 없습니다"). */
   hint?: string | null;
-  isAbsent?: boolean;
+  submissionState?: WrittenSubmissionState;
   hasMentee?: boolean;
 }
 
@@ -34,7 +35,7 @@ const FeedbackComposer = ({
   isReadOnly,
   editorKey,
   hint,
-  isAbsent,
+  submissionState,
   hasMentee,
 }: FeedbackComposerProps) => (
   <section
@@ -54,7 +55,7 @@ const FeedbackComposer = ({
           initialEditorStateJsonString={initialEditorStateJsonString}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          isAbsent={isAbsent}
+          submissionState={submissionState}
           hasMentee={hasMentee}
         />
       </Suspense>
