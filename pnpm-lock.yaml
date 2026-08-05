@@ -1073,6 +1073,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@letscareer/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.4
         version: 1.1.15(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1082,10 +1085,19 @@ importers:
       '@radix-ui/react-toast':
         specifier: ^1.2.4
         version: 1.2.15(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.6.0
     devDependencies:
+      '@letscareer/eslint-config':
+        specifier: workspace:*
+        version: link:../config/eslint
       '@letscareer/tailwind-config':
         specifier: workspace:*
         version: link:../config/tailwind
@@ -1116,6 +1128,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.22(postcss@8.5.13)
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@1.21.7)
       jsdom:
         specifier: ^25.0.0
         version: 25.0.1(bufferutil@4.0.9)
@@ -5690,6 +5705,9 @@ packages:
 
   cjs-module-lexer@1.2.3:
     resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
+
+  class-variance-authority@0.7.1:
+    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
 
   classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
@@ -14681,6 +14699,10 @@ snapshots:
   ci-info@3.9.0: {}
 
   cjs-module-lexer@1.2.3: {}
+
+  class-variance-authority@0.7.1:
+    dependencies:
+      clsx: 2.1.1
 
   classnames@2.5.1: {}
 
