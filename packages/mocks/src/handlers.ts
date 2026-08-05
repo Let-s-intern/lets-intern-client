@@ -369,6 +369,16 @@ const MOCK_ATTENDANCE_LIST = [
     status: 'ABSENT',
     feedbackStatus: 'WAITING',
   },
+  {
+    // 지각 제출 — 목록에는 남고 '지각 제출 / 진행 불가'로 구분돼야 한다.
+    // 완료 분모(feedbackTargetCount)에서는 빠지되 전체 인원에서는 빠지지 않는다.
+    id: 6,
+    userId: 106,
+    mentorName: '테스트 멘토',
+    name: '한지각',
+    status: 'LATE',
+    feedbackStatus: 'WAITING',
+  },
 ];
 
 /**
@@ -426,6 +436,39 @@ const MOCK_MENTEES = [
     optionCode: 'WRITTEN_1',
   },
   {
+    id: 9004,
+    userId: 505,
+    challengeMentorId: 301,
+    mentorName: '테스트 멘토',
+    name: '한지각',
+    major: '산업공학과',
+    wishJob: '데이터 분석',
+    wishCompany: '배민',
+    link: null, // ← 지각 제출(경험정리형): 열람은 되고 작성만 막혀야 한다
+    status: 'LATE',
+    result: 'PASS',
+    challengePricePlanType: 'BASIC',
+    feedbackStatus: 'WAITING',
+    optionCode: 'WRITTEN_1',
+  },
+  {
+    id: 9005,
+    userId: 506,
+    challengeMentorId: 301,
+    mentorName: '테스트 멘토',
+    name: '오지각',
+    major: '통계학과',
+    wishJob: '프로덕트 매니저',
+    wishCompany: '당근',
+    // ← 지각 제출 + 이미 작성된 피드백: 내용은 읽기 전용으로 남고 수정·완료만 막혀야 한다
+    link: 'https://boggy-chestnut-60b.notion.site/3764740158fa80129663f64380a93d10',
+    status: 'LATE',
+    result: 'PASS',
+    challengePricePlanType: 'STANDARD',
+    feedbackStatus: 'IN_PROGRESS',
+    optionCode: 'WRITTEN_1',
+  },
+  {
     id: null, // ← 미제출: 경험 조회 API가 호출되지 않아야 함
     userId: 504,
     challengeMentorId: 301,
@@ -442,6 +485,42 @@ const MOCK_MENTEES = [
     optionCode: 'WRITTEN_1',
   },
 ];
+
+/**
+ * 이미 저장된 서면 피드백 본문 (Lexical editor state JSON).
+ * 지각 제출인데 멘토가 이미 써 둔 건을 재현해, 화면이 내용을 지우지 않고
+ * 읽기 전용으로 남기는지 확인하는 데 쓴다.
+ */
+const MOCK_SAVED_FEEDBACK = JSON.stringify({
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: '경험 정리 구조는 좋습니다. STAR 중 Result 를 수치로 바꿔 보세요.',
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+        textFormat: 0,
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+});
 
 /**
  * 경험정리 EXPERIENCE_1/EXPERIENCE_2 페어 그룹핑 QA(챌린지 9902)용 미션별 출석.
@@ -529,6 +608,27 @@ const EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION: Record<
 
 /** 김경험(userId 501)의 경험정리 제출물 — STAR 전체 필드 채움 */
 const MOCK_EXPERIENCES_BY_USER: Record<string, unknown[]> = {
+  // 한지각(505) — 지각 제출자도 제출물 열람은 가능해야 하므로 경험을 1건 둔다.
+  '505': [
+    {
+      id: 91,
+      title: '지역 소상공인 배달 데이터 분석 프로젝트',
+      activityType: 'TEAM',
+      experienceCategory: 'CLUB',
+      organ: '교내 데이터분석 학회',
+      role: '분석 담당',
+      startDate: '2025-03-01',
+      endDate: '2025-06-30',
+      situation: '동네 상권의 배달 매출이 요일별로 크게 흔들렸음.',
+      task: '요일·시간대별 수요 패턴을 찾아 프로모션 시점을 제안해야 했음.',
+      action:
+        '3개월치 주문 로그를 시간대로 쪼개 회귀 분석하고 대시보드로 공유함.',
+      result: '제안한 시간대에 쿠폰을 집행해 주말 객단가 8% 상승.',
+      reflection: '분석보다 전달 형식이 실행 여부를 갈랐다.',
+      coreCompetency: '데이터 분석',
+      isAdminAdded: false,
+    },
+  ],
   '501': [
     {
       id: 81,
@@ -1109,12 +1209,15 @@ export const handlers = [
    */
   http.get(
     '*/challenge/:challengeId/mission/:missionId/feedback/attendances/:attendanceId',
-    () => {
+    ({ params }) => {
       return HttpResponse.json({
         status: 200,
         data: {
           attendanceDetailVo: {
-            feedback: null,
+            // 9005(지각 제출 + 기작성)만 저장된 피드백을 돌려준다.
+            // 지각 제출이라도 이미 쓴 내용을 숨기면 멘토가 혼란스러우므로 읽기 전용으로 남긴다.
+            feedback:
+              Number(params.attendanceId) === 9005 ? MOCK_SAVED_FEEDBACK : null,
             preQuestion:
               '이번 경험정리에서 서비스 기획 직무에 맞춰 프로젝트 경험을 정리했는데, 제가 맡은 역할이 기획보다는 운영에 가까웠던 것 같아 이 경험을 기획 직무 지원서에 그대로 써도 될지 고민입니다.\n' +
               '또 STAR 구조로 쓰다 보니 Situation 과 Task 가 계속 겹쳐서 분량만 늘어나는 느낌인데, 어느 정도까지 압축하는 게 좋을까요?\n' +
