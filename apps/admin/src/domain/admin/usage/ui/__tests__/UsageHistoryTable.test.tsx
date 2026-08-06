@@ -574,3 +574,37 @@ describe('결제일 표기', () => {
     expect(screen.getAllByText('-').length).toBeGreaterThan(0);
   });
 });
+
+describe('참여자 화면이 없는 타입', () => {
+  const link = () => screen.queryByRole('link', { name: /참여자 목록/ });
+
+  it('REPORT 는 링크를 만들지 않는다', () => {
+    // 참여자 화면이 없어 넘어가면 빈 목록이 뜨고, 환불 분쟁 중에 그것을
+    // "이용 내역이 없다"로 읽는다. 화면이 없어서 빈 것과 미이용이 같아 보인다.
+    renderTable([row({ programType: 'REPORT', programId: 45 })]);
+
+    expect(link()).not.toBeInTheDocument();
+  });
+
+  it('LIVE 는 링크를 만든다', () => {
+    // 적재 대상이 아닌 것과 참여자 화면이 없는 것은 다른 이야기다.
+    // ProgramUsers 가 LIVE 조회를 켜므로 막으면 멀쩡한 링크를 죽인다.
+    renderTable([row({ programType: 'LIVE', programId: 77 })]);
+
+    expect(link()).toHaveAttribute(
+      'href',
+      '/programs/77/users?programType=LIVE#application-6001',
+    );
+  });
+
+  it('모르는 새 타입도 링크를 만든다', () => {
+    // 차단 목록이라 새 타입에는 링크가 자동으로 붙는다. 허용 목록이었다면
+    // 서버가 타입을 늘릴 때마다 멀쩡한 링크가 조용히 사라졌을 것이다.
+    renderTable([row({ programType: 'MENTORING', programId: 88 })]);
+
+    expect(link()).toHaveAttribute(
+      'href',
+      '/programs/88/users?programType=MENTORING#application-6001',
+    );
+  });
+});

@@ -2,7 +2,10 @@ import type { AccessLogRow } from '@/api/accessLog';
 import { twMerge } from '@/lib/twMerge';
 import { Fragment, useState } from 'react';
 
-import { formatProgramType } from '../constants/programType';
+import {
+  formatProgramType,
+  hasParticipantsPage,
+} from '../constants/programType';
 import { formatDateTime } from '../utils/formatDateTime';
 import {
   formatTargetSummary,
@@ -55,6 +58,13 @@ const COLUMN_COUNT = 8;
  */
 const buildParticipantsHref = (row: AccessLogRow): string | null => {
   if (row.programId == null || !row.programType) return null;
+
+  /*
+    참여자 화면이 없는 타입으로는 보내지 않는다. 그 화면은 조회가 하나도 켜지지 않아
+    빈 목록이 뜨는데, 환불 분쟁 중에 그것을 보면 "이용 내역이 없다"로 읽힌다.
+    화면이 없어서 빈 것과 이용을 안 해서 빈 것이 같은 모양이 된다.
+  */
+  if (!hasParticipantsPage(row.programType)) return null;
 
   const query = new URLSearchParams({ programType: row.programType });
   return `/programs/${row.programId}/users?${query}#application-${row.applicationId}`;
