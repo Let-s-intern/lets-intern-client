@@ -1,8 +1,10 @@
 import { useAccessLogListQuery } from '@/api/accessLog';
 import UsageFilterBar from '@/domain/admin/usage/ui/UsageFilterBar';
+import UsageFilterChips from '@/domain/admin/usage/ui/UsageFilterChips';
 import UsageHistoryTable from '@/domain/admin/usage/ui/UsageHistoryTable';
 import UsagePagination from '@/domain/admin/usage/ui/UsagePagination';
 import {
+  describeUsageFilters,
   readUsageFilters,
   toAccessLogListParams,
   type UsageFilterKey,
@@ -53,6 +55,10 @@ const UsageHistoryPage = () => {
     toAccessLogListParams(filters, page, PAGE_SIZE),
   );
 
+  const appliedFilters = describeUsageFilters(filters);
+  const rows = data?.accessLogList ?? [];
+  const isEmpty = !isLoading && !isError && rows.length === 0;
+
   return (
     <div className="p-8">
       <h1 className="text-1.5-bold mb-4">이용 히스토리</h1>
@@ -64,6 +70,17 @@ const UsageHistoryPage = () => {
 
       <UsageFilterBar filters={filters} onChange={updateFilter} />
 
+      <UsageFilterChips
+        chips={appliedFilters}
+        onRemove={(chip) =>
+          updateFilter(
+            Object.fromEntries(chip.clears.map((key) => [key, ''])) as Partial<
+              Record<UsageFilterKey, string>
+            >,
+          )
+        }
+      />
+
       {isError ? (
         /* 못 읽은 것을 "이력 없음"으로 보이게 하지 않는다. 둘은 다르다(PRD 7.4). */
         <p className="text-neutral-40 py-10 text-center text-sm">
@@ -72,10 +89,25 @@ const UsageHistoryPage = () => {
       ) : (
         <>
           <UsageHistoryTable
-            rows={data?.accessLogList ?? []}
+            rows={rows}
             trackedFrom={data?.trackedFrom}
             isLoading={isLoading}
           />
+
+          {/*
+            0건일 때 걸려 있는 조건을 함께 적는다. "없습니다"로 끝내면 특히 `집계 이전` 을
+            걸어 둔 채 본 빈 목록이 "미이용이 없다"로 읽히는데, 정반대의 결론이다.
+          */}
+          {isEmpty && appliedFilters.length > 0 && (
+            <div className="text-neutral-40 mt-2 text-center text-sm">
+              <p>아래 조건이 걸려 있습니다. 해제하면 더 많은 건이 보입니다.</p>
+              <ul className="mt-1">
+                {appliedFilters.map((chip) => (
+                  <li key={chip.key}>{chip.label}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <UsagePagination
             page={page}

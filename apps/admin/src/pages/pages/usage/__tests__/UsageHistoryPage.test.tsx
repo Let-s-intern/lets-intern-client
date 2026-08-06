@@ -373,6 +373,93 @@ describe('UsageHistoryPage 상세 조건', () => {
   });
 });
 
+describe('UsageHistoryPage 적용 중인 조건', () => {
+  it('조건이 없으면 아무것도 띄우지 않는다', () => {
+    renderPage();
+
+    expect(screen.queryByText('적용 중인 조건')).not.toBeInTheDocument();
+  });
+
+  it('접어 둔 자리의 조건까지 한 줄로 모아 보여준다', () => {
+    renderPage(
+      '/admin/usage-history?programKeyword=챌린지&usageStatus=BEFORE_TRACKING&sort=PAID_ASC',
+    );
+
+    // 0건 안내에도 같은 문구가 나오므로 존재만 본다.
+    expect(screen.getByText('적용 중인 조건')).toBeInTheDocument();
+    expect(screen.getAllByText('프로그램: 챌린지').length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText('이용 상태: 기록 없음 (집계 이전)').length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('조건을 하나씩 해제한다', async () => {
+    const user = userEvent.setup();
+    renderPage('/admin/usage-history?programKeyword=챌린지&userKeyword=김렛츠');
+
+    await user.click(
+      screen.getByRole('button', { name: '프로그램: 챌린지 해제' }),
+    );
+
+    expect(urlQuery()).not.toContain('programKeyword');
+    expect(urlQuery()).toContain('userKeyword=');
+    // 검색칸도 함께 비어야 한다. 남아 있으면 걸리지 않은 조건이 걸린 것처럼 보인다.
+    expect(programSearch()).toHaveValue('');
+  });
+
+  it('날짜 범위는 시작과 종료를 함께 해제한다', async () => {
+    const user = userEvent.setup();
+    renderPage('/admin/usage-history?paidFrom=2026-07-01&paidTo=2026-08-06');
+
+    await user.click(
+      screen.getByRole('button', {
+        name: '결제일: 2026-07-01 ~ 2026-08-06 해제',
+      }),
+    );
+
+    expect(urlQuery()).not.toContain('paidFrom');
+    expect(urlQuery()).not.toContain('paidTo');
+  });
+});
+
+describe('UsageHistoryPage 결과가 없을 때', () => {
+  it('걸려 있는 조건을 함께 보여준다', () => {
+    // "없습니다"로 끝내면 `집계 이전` 을 걸어 둔 채 본 빈 목록이
+    // "미이용이 없다"로 읽힌다. 정반대의 결론이다.
+    renderPage('/admin/usage-history?usageStatus=BEFORE_TRACKING');
+
+    expect(
+      screen.getByText('조건에 맞는 이용 이력이 없습니다.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/아래 조건이 걸려 있습니다/)).toBeInTheDocument();
+    expect(
+      screen.getAllByText('이용 상태: 기록 없음 (집계 이전)').length,
+    ).toBeGreaterThan(1);
+  });
+
+  it('조건이 없으면 조건 안내를 띄우지 않는다', () => {
+    renderPage();
+
+    expect(
+      screen.queryByText(/아래 조건이 걸려 있습니다/),
+    ).not.toBeInTheDocument();
+  });
+
+  it('조회 실패에는 조건 안내를 붙이지 않는다', () => {
+    // 못 읽은 것은 조건 때문이 아니다. 조건을 지우라고 하면 잘못 유도한다.
+    listQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    });
+    renderPage('/admin/usage-history?usageStatus=NOT_USED');
+
+    expect(
+      screen.queryByText(/아래 조건이 걸려 있습니다/),
+    ).not.toBeInTheDocument();
+  });
+});
+
 describe('UsageHistoryPage 조회 상태', () => {
   it('조회 실패를 이력 없음과 구분해 알린다', () => {
     // 못 읽은 것과 없는 것은 다르다(PRD 7.4).
