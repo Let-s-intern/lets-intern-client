@@ -1,6 +1,6 @@
 import { type AccessLogDetail, useAccessLogDetailQuery } from '@/api/accessLog';
-import dayjs from '@/lib/dayjs';
 
+import { formatDateTime } from '../utils/formatDateTime';
 import { USAGE_STATUS_LABEL, type UsageStatus } from '../utils/usageDisplay';
 
 /**
@@ -31,9 +31,6 @@ interface Props {
   /** 펼침 버튼의 `aria-controls` 가 가리키는 대상. */
   id?: string;
 }
-
-const formatDateTime = (value: string | null | undefined) =>
-  value ? dayjs(value).format('YYYY-MM-DD HH:mm') : '-';
 
 /** 대상을 가리킬 다른 단서가 없을 때 남기는 식별자. */
 const targetRef = (targetId: number | null | undefined) =>

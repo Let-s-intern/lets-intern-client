@@ -4,6 +4,7 @@ import { twMerge } from '@/lib/twMerge';
 import { Fragment, useState } from 'react';
 
 import { formatProgramType } from '../constants/programType';
+import { formatDateTime } from '../utils/formatDateTime';
 import {
   formatTargetSummary,
   isRecentUnused,
@@ -37,11 +38,9 @@ interface Props {
   now?: Date | number;
 }
 
+/** 결제일은 날짜까지만 본다. 이용 시각과 달리 시·분이 판단에 쓰이지 않는다. */
 const formatDate = (value: string | null | undefined) =>
   value ? dayjs(value).format('YYYY-MM-DD') : '-';
-
-const formatDateTime = (value: string | null | undefined) =>
-  value ? dayjs(value).format('YYYY-MM-DD HH:mm') : '-';
 
 /** 상세 행이 표 전체 너비를 차지하도록 맞춘다. 컬럼을 늘리면 여기도 함께 늘린다. */
 const COLUMN_COUNT = 8;
