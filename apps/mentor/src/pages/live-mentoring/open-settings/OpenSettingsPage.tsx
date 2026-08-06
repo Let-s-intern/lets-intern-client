@@ -9,6 +9,7 @@ import {
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import { useUserQuery } from '@/api/user/user';
 import {
+  useCloseLiveMentoringOpeningMutation,
   useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
@@ -33,6 +34,7 @@ import {
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
+import OpenedNoticeModal from './ui/OpenedNoticeModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
@@ -79,6 +81,8 @@ const OpenSettingsPage = () => {
     useCreateLiveMentoringOpeningMutation();
   const { mutate: startEdit, isPending: isStartingEdit } =
     useStartEditLiveMentoringMutation();
+  const { mutate: closeOpening, isPending: isClosingOpening } =
+    useCloseLiveMentoringOpeningMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
@@ -89,6 +93,8 @@ const OpenSettingsPage = () => {
   // 제목·타입의 변경사항(dirty) 판정을 위한 로드 원본.
   const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
+  /** 오픈 직후 안내 모달이 종료 대상으로 삼을 개설. null 이면 모달을 닫는다. */
+  const [openedOpeningId, setOpenedOpeningId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!data) return;
@@ -279,13 +285,23 @@ const OpenSettingsPage = () => {
         feedbackEndDate: form.feedbackEndDate ?? '',
       },
       {
-        onSuccess: () =>
-          showAlert({
-            title: '다시 오픈했습니다.',
-            description:
-              '오늘이 설정한 기간 안이면 공개 리스트에 바로 노출됩니다.',
-            variant: 'success',
-          }),
+        /*
+         * 성공 알림 대신 안내 모달을 띄운다. 오픈은 되돌리기 번거로운 행동이라
+         * "됐습니다" 한 줄로 끝내지 않고, 확인할 주소와 즉시 내리는 길을 함께 준다.
+         */
+        onSuccess: (history) => {
+          const opened = history.openings.find(
+            (opening) => opening.status === 'OPEN',
+          );
+          if (opened) setOpenedOpeningId(opened.openingId);
+          else
+            showAlert({
+              title: '다시 오픈했습니다.',
+              description:
+                '오늘이 설정한 기간 안이면 공개 리스트에 바로 노출됩니다.',
+              variant: 'success',
+            });
+        },
         onError: handleMutationError('재오픈에 실패했습니다.'),
       },
     );
@@ -746,6 +762,30 @@ const OpenSettingsPage = () => {
           endDate: form.feedbackEndDate ?? '',
         }}
       />
+      {user?.userId != null && (
+        <OpenedNoticeModal
+          isOpen={openedOpeningId !== null}
+          publicUrl={publicDetailUrl(user.userId)}
+          isClosing={isClosingOpening}
+          onDismiss={() => setOpenedOpeningId(null)}
+          onCloseOpening={() => {
+            if (openedOpeningId === null) return;
+            closeOpening(openedOpeningId, {
+              onSuccess: () => {
+                setOpenedOpeningId(null);
+                showAlert({
+                  title: '오픈을 내렸습니다.',
+                  description:
+                    '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
+                  variant: 'success',
+                });
+              },
+              onError: handleMutationError('오픈을 내리지 못했습니다.'),
+            });
+          }}
+        />
+      )}
+
       <MentorAlertModal {...alertProps} />
     </div>
   );

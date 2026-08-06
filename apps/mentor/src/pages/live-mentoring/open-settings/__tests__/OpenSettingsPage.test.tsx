@@ -12,6 +12,7 @@ import type {
 const saveMock = vi.fn();
 const submitMock = vi.fn();
 const reopenMock = vi.fn();
+const closeOpeningMock = vi.fn();
 const startEditMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
@@ -38,6 +39,10 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useCreateLiveMentoringOpeningMutation: () => ({
     mutate: reopenMock,
+    isPending: false,
+  }),
+  useCloseLiveMentoringOpeningMutation: () => ({
+    mutate: closeOpeningMock,
     isPending: false,
   }),
   useStartEditLiveMentoringMutation: () => ({
@@ -147,6 +152,7 @@ afterEach(() => {
   saveMock.mockReset();
   submitMock.mockReset();
   reopenMock.mockReset();
+  closeOpeningMock.mockReset();
   startEditMock.mockReset();
   setRepresentativeCareerMock.mockReset();
   settingsData = undefined;
@@ -418,6 +424,49 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
       feedbackStartDate: FUTURE_START,
       feedbackEndDate: FUTURE_END,
     });
+  });
+
+  // 오픈은 되돌리기 번거로운 행동이라 "됐습니다" 한 줄로 끝내지 않는다.
+  it('재개설에 성공하면 공개 주소와 즉시 내리기를 안내한다', () => {
+    reopenMock.mockImplementation((_body, options) =>
+      options?.onSuccess?.({
+        liveMentoringId: 1,
+        openings: [{ ...openOpening, openingId: 777 }],
+      }),
+    );
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+
+    const dialog = screen.getByRole('dialog', { name: '오픈 완료 안내' });
+    // 지연 노출은 서버 기능이라 프론트가 흉내내지 않는다 — 지금 공개됐다고 적는다.
+    expect(
+      within(dialog).getByText('지금부터 공개 리스트에 노출됩니다'),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByText(/live-mentoring\/500/)).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('link', { name: '상세 페이지 확인하기' }),
+    ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
+  });
+
+  it('안내에서 바로 내리면 방금 만든 개설을 종료한다', () => {
+    reopenMock.mockImplementation((_body, options) =>
+      options?.onSuccess?.({
+        liveMentoringId: 1,
+        openings: [{ ...openOpening, openingId: 777 }],
+      }),
+    );
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '바로 내리기' }));
+
+    expect(closeOpeningMock).toHaveBeenCalledTimes(1);
+    expect(closeOpeningMock.mock.calls[0][0]).toBe(777);
   });
 
   it('오픈 중이면 재개설 버튼 없이 잠근다', () => {

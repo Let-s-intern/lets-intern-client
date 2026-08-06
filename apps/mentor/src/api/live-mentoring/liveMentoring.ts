@@ -108,8 +108,13 @@ export const useSubmitLiveMentoringMutation = () => {
 export const useCreateLiveMentoringOpeningMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
+    /*
+     * 응답은 개설 이력이다. 방금 만들어진 개설의 id 가 필요하다 —
+     * 오픈 직후 "바로 내리기"를 하려면 종료 API 에 넘길 openingId 가 있어야 한다.
+     */
     mutationFn: async (body: LiveMentoringOpeningCreate) => {
-      await axios.post(OPENINGS_PATH, body);
+      const res = await axios.post(OPENINGS_PATH, body);
+      return openingHistoryResponseSchema.parse(res.data.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
