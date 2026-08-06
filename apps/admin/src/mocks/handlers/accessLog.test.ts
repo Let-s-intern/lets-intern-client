@@ -1,7 +1,10 @@
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { accessLogListSchema } from '@/api/accessLog';
+import {
+  accessLogApplicationDetailSchema,
+  accessLogListSchema,
+} from '@/api/accessLog';
 
 import { accessLogHandlers } from './accessLog';
 
@@ -160,5 +163,160 @@ describe('GET /admin/access-log', () => {
     expect(second.accessLogList[0]?.applicationId).not.toBe(
       first.accessLogList[0]?.applicationId,
     );
+  });
+
+  it('적재 대상이 아닌 타입의 신청서도 행으로 내려온다', async () => {
+    // 목록이 신청서 기준 left join 이라 LIVE 도 행이 된다. 화면이 이 행을 `미이용` 이
+    // 아니라 `집계 대상 아님` 으로 표시하는지 확인하려면 목에 실물이 있어야 한다.
+    const row = rowOf(await fetchAccessLogs(), 6009);
+
+    expect(row?.programType).toBe('LIVE');
+    expect(row?.firstAccessedAt).toBeNull();
+    expect(elapsedDays(row!.paidAt!)).toBeLessThan(7);
+  });
+});
+
+const fetchAccessLogDetail = async (applicationId: number) => {
+  const res = await fetch(
+    `${BASE}/admin/access-log/application/${applicationId}`,
+  );
+  const body = (await res.json()) as { data: unknown };
+  return accessLogApplicationDetailSchema.parse(body.data);
+};
+
+describe('GET /admin/access-log/application/{applicationId}', () => {
+  it('PRD 7.3 예시대로 대시보드 한 줄과 미션 세 줄을 내려준다', async () => {
+    const detail = await fetchAccessLogDetail(6001);
+
+    expect(detail.details).toHaveLength(4);
+    expect(
+      detail.details?.map((item) => [item.targetType, item.missionTh]),
+    ).toEqual([
+      ['CHALLENGE_DASHBOARD', null],
+      ['MISSION', 3],
+      ['MISSION', 5],
+      ['MISSION', 7],
+    ]);
+  });
+
+  it('미션 줄은 회차와 제목을 함께 담는다', async () => {
+    // target_id 숫자만으로는 운영이 무슨 미션인지 알 수 없다(PRD 7.3).
+    const detail = await fetchAccessLogDetail(6001);
+    const missions = detail.details?.filter(
+      (item) => item.targetType === 'MISSION',
+    );
+
+    missions?.forEach((item) => {
+      expect(item.missionTh).toBeTypeOf('number');
+      expect(item.targetTitle).toBeTruthy();
+    });
+  });
+
+  it('대시보드만 이용한 건은 상세도 한 줄이다', async () => {
+    const detail = await fetchAccessLogDetail(6005);
+
+    expect(detail.details).toHaveLength(1);
+    expect(detail.details?.[0]?.accessCount).toBe(12);
+  });
+
+  it('VOD·가이드북은 펼쳐도 한 줄이다', async () => {
+    for (const id of [6006, 6007]) {
+      const detail = await fetchAccessLogDetail(id);
+
+      expect(detail.details).toHaveLength(1);
+      expect(detail.details?.[0]?.targetType).toBe('PROGRAM');
+    }
+  });
+
+  it('기록이 없는 건들은 상세도 빈 배열이다', async () => {
+    // 왜 비었는지는 상세가 말하지 않는다. 상위 행의 판정이 구분해 준다(PRD 7.4).
+    for (const id of [6002, 6003, 6008, 6009]) {
+      const detail = await fetchAccessLogDetail(id);
+
+      expect(detail.details).toEqual([]);
+    }
+  });
+
+  it('없는 신청서는 404 로 답한다', async () => {
+    // 빈 상세를 돌려주면 화면이 조회 실패와 내역 없음을 구분할 수 없다.
+    const res = await fetch(`${BASE}/admin/access-log/application/999999`);
+
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('목록과 상세의 정합성', () => {
+  /**
+   * 목록이 `미션 3건` 이라고 적어 놓고 펼치면 두 줄만 나오는 목은 검증에 쓸 수 없다.
+   * 버그인지 목이 틀린 건지 구분할 수 없기 때문이다.
+   */
+  it('상세 줄의 횟수 합계가 목록의 이용 횟수와 같다', async () => {
+    const list = await fetchAccessLogs('?size=100');
+
+    for (const row of list.accessLogList) {
+      const detail = await fetchAccessLogDetail(row.applicationId);
+      const sum = (detail.details ?? []).reduce(
+        (acc, item) => acc + (item.accessCount ?? 0),
+        0,
+      );
+
+      expect(sum).toBe(row.accessCount ?? 0);
+    }
+  });
+
+  it('상세의 대상 개수가 목록의 이용 항목 요약과 같다', async () => {
+    // targetSummary.count 는 접근 횟수가 아니라 구별되는 대상 개수다(PRD 5.5.1).
+    const list = await fetchAccessLogs('?size=100');
+
+    for (const row of list.accessLogList) {
+      const detail = await fetchAccessLogDetail(row.applicationId);
+
+      const distinctByType = new Map<string, Set<number | null>>();
+      (detail.details ?? []).forEach((item) => {
+        const type = item.targetType ?? '';
+        const bucket = distinctByType.get(type) ?? new Set();
+        bucket.add(item.targetId ?? null);
+        distinctByType.set(type, bucket);
+      });
+
+      const summary = (row.targetSummary ?? []).map((item) => [
+        item.targetType,
+        item.count,
+      ]);
+      const fromDetail = [...distinctByType].map(([type, ids]) => [
+        type,
+        ids.size,
+      ]);
+
+      expect(fromDetail).toEqual(summary);
+    }
+  });
+
+  it('상세의 요약 필드가 목록 행과 어긋나지 않는다', async () => {
+    const list = await fetchAccessLogs('?size=100');
+
+    for (const row of list.accessLogList) {
+      const detail = await fetchAccessLogDetail(row.applicationId);
+
+      expect(detail.firstAccessedAt).toBe(row.firstAccessedAt);
+      expect(detail.lastAccessedAt).toBe(row.lastAccessedAt);
+      expect(detail.paidAt).toBe(row.paidAt);
+      expect(detail.daysFromPaymentToFirstAccess).toBe(
+        row.daysFromPaymentToFirstAccess,
+      );
+    }
+  });
+
+  it('상세의 최초·최근 이용이 낱개 줄의 범위와 맞는다', async () => {
+    const detail = await fetchAccessLogDetail(6001);
+    const times = (detail.details ?? []).flatMap((item) => [
+      new Date(item.firstAccessedAt!).getTime(),
+      new Date(item.lastAccessedAt!).getTime(),
+    ]);
+
+    expect(new Date(detail.firstAccessedAt!).getTime()).toBe(
+      Math.min(...times),
+    );
+    expect(new Date(detail.lastAccessedAt!).getTime()).toBe(Math.max(...times));
   });
 });

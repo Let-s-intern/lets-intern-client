@@ -1,4 +1,8 @@
-import type { AccessLogRow } from '@/api/accessLog';
+import type {
+  AccessLogApplicationDetail,
+  AccessLogDetail,
+  AccessLogRow,
+} from '@/api/accessLog';
 
 /**
  * 이용 로그 목 시드 (LC-3201).
@@ -166,4 +170,132 @@ export const seedAccessLogs: AccessLogRow[] = [
     daysFromPaymentToFirstAccess: null,
     targetSummary: [],
   },
+  // 8. 적재 대상이 아닌 타입(LIVE) — 목록 API 가 신청서 기준 left join 이라 행으로는 내려온다.
+  //    결제 7일 이내 · 기록 없음이라 방어가 없으면 `미이용` 으로 강조까지 되는 행이다.
+  //    실제로는 애초에 기록하지 않는 타입이라 이용 여부를 말할 수 없다(PRD 5.2).
+  {
+    applicationId: 6009,
+    userId: 13109,
+    userName: '강라이',
+    userEmail: 'live@example.com',
+    programType: 'LIVE',
+    programId: 501,
+    programTitle: '현직자 라이브 클래스 3기',
+    paidAt: daysAgo(3),
+    firstAccessedAt: null,
+    lastAccessedAt: null,
+    accessCount: 0,
+    daysFromPaymentToFirstAccess: null,
+    targetSummary: [],
+  },
 ];
+
+/**
+ * 행을 펼쳤을 때 보이는 대상별 낱개 내역 (PRD 7.3).
+ *
+ * 목록의 `targetSummary` 와 개수가, `accessCount` 와 합계가 맞아야 한다.
+ * 어긋나면 목으로 화면을 검증하는 의미가 사라진다 — 표가 `미션 3건` 이라고 적어 놓고
+ * 펼치면 두 줄만 나오는 화면을 보고도 버그인지 목이 틀린 건지 알 수 없다.
+ *
+ * 그래서 여기에는 `details` 만 적고, 요약 필드는 아래에서 목록 시드로부터 그대로 가져온다.
+ */
+const seedDetailsByApplicationId: Record<number, AccessLogDetail[]> = {
+  // 6001 — PRD 7.3 예시와 같은 모양. 대시보드 1 + 미션 3, 횟수 합계 8+2+1+1 = 12
+  6001: [
+    {
+      targetType: 'CHALLENGE_DASHBOARD',
+      targetId: 319,
+      targetTitle: '[스타트업 Ver.] 면접 준비 7일 끝장 챌린지 7기',
+      missionTh: null,
+      firstAccessedAt: daysAgo(8),
+      lastAccessedAt: daysAgo(1),
+      accessCount: 8,
+    },
+    {
+      targetType: 'MISSION',
+      targetId: 9001,
+      targetTitle: '경험 정리하기',
+      missionTh: 3,
+      firstAccessedAt: daysAgo(7),
+      lastAccessedAt: daysAgo(7),
+      accessCount: 2,
+    },
+    {
+      targetType: 'MISSION',
+      targetId: 9002,
+      targetTitle: '직무 탐색하기',
+      missionTh: 5,
+      firstAccessedAt: daysAgo(5),
+      lastAccessedAt: daysAgo(5),
+      accessCount: 1,
+    },
+    {
+      targetType: 'MISSION',
+      targetId: 9003,
+      targetTitle: '면접 예상 질문 뽑기',
+      missionTh: 7,
+      firstAccessedAt: daysAgo(2),
+      lastAccessedAt: daysAgo(2),
+      accessCount: 1,
+    },
+  ],
+  // 6005 — 대시보드만 12회. 펼쳐야 "12회가 전부 대시보드였다"는 사실이 드러난다.
+  6005: [
+    {
+      targetType: 'CHALLENGE_DASHBOARD',
+      targetId: 319,
+      targetTitle: '[스타트업 Ver.] 면접 준비 7일 끝장 챌린지 7기',
+      missionTh: null,
+      firstAccessedAt: daysAgo(14),
+      lastAccessedAt: daysAgo(3),
+      accessCount: 12,
+    },
+  ],
+  // 6006 · 6007 — VOD·가이드북은 대상이 하나뿐이라 펼쳐도 한 줄이다.
+  6006: [
+    {
+      targetType: 'PROGRAM',
+      targetId: 88,
+      targetTitle: '자소서 완성 VOD',
+      missionTh: null,
+      firstAccessedAt: daysAgo(12),
+      lastAccessedAt: daysAgo(12),
+      accessCount: 1,
+    },
+  ],
+  6007: [
+    {
+      targetType: 'PROGRAM',
+      targetId: 45,
+      targetTitle: '취업 준비 가이드북',
+      missionTh: null,
+      firstAccessedAt: daysAgo(29),
+      lastAccessedAt: daysAgo(29),
+      accessCount: 1,
+    },
+  ],
+  // 6002 · 6003 · 6004 · 6008 · 6009 는 이용 기록이 없어 details 가 빈 배열이다.
+  // 빈 배열은 "왜 없는지"를 말해 주지 않는다 — 상세 화면이 상위 행의 판정을 물려받아
+  // 집계 대상 아님 / 집계 이전 / 미이용 / 확인 불가 를 구분해 적어야 한다(PRD 7.4).
+};
+
+/**
+ * 단건 조회 응답. 요약 필드는 목록 시드에서 그대로 가져온다.
+ *
+ * 손으로 다시 적으면 목록과 상세가 서로 다른 숫자를 말하게 된다.
+ */
+export const seedAccessLogDetails: Record<number, AccessLogApplicationDetail> =
+  Object.fromEntries(
+    seedAccessLogs.map((row) => [
+      row.applicationId,
+      {
+        firstAccessedAt: row.firstAccessedAt ?? null,
+        lastAccessedAt: row.lastAccessedAt ?? null,
+        accessCount: row.accessCount ?? 0,
+        paidAt: row.paidAt ?? null,
+        daysFromPaymentToFirstAccess: row.daysFromPaymentToFirstAccess ?? null,
+        trackedFrom: MOCK_TRACKED_FROM,
+        details: seedDetailsByApplicationId[row.applicationId] ?? [],
+      },
+    ]),
+  );

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { accessLogListSchema, accessLogRowSchema } from '../accessLog';
+import {
+  accessLogApplicationDetailSchema,
+  accessLogDetailSchema,
+  accessLogListSchema,
+  accessLogRowSchema,
+} from '../accessLog';
 
 /**
  * 스키마는 "정확히 파싱한다"보다 "죽지 않는다"가 더 중요하다.
@@ -149,5 +154,137 @@ describe('accessLogListSchema', () => {
     const parsed = accessLogListSchema.parse(wrap([]));
 
     expect(parsed.accessLogList).toHaveLength(0);
+  });
+});
+
+describe('accessLogDetailSchema', () => {
+  const mission = {
+    targetType: 'MISSION',
+    targetId: 9001,
+    targetTitle: '경험 정리하기',
+    missionTh: 3,
+    firstAccessedAt: '2026-07-31T20:05:00',
+    lastAccessedAt: '2026-07-31T20:07:00',
+    accessCount: 2,
+  };
+
+  it('미션 한 줄을 회차·제목까지 파싱한다', () => {
+    const parsed = accessLogDetailSchema.parse(mission);
+
+    expect(parsed.missionTh).toBe(3);
+    expect(parsed.targetTitle).toBe('경험 정리하기');
+  });
+
+  it('미션이 아닌 대상은 회차가 null 이다', () => {
+    const parsed = accessLogDetailSchema.parse({
+      ...mission,
+      targetType: 'CHALLENGE_DASHBOARD',
+      missionTh: null,
+    });
+
+    expect(parsed.missionTh).toBeNull();
+  });
+
+  it('제목 조인이 실패해 null 로 와도 파싱한다', () => {
+    // 제목은 로그에 복제하지 않고 조회 시점에 조인한다(PRD 5.4).
+    // 대상이 삭제됐으면 null 이 오는데, 그 줄을 버리면 이용한 사실 자체가 사라진다.
+    const parsed = accessLogDetailSchema.parse({
+      ...mission,
+      targetTitle: null,
+    });
+
+    expect(parsed.targetTitle).toBeNull();
+    expect(parsed.targetId).toBe(9001);
+  });
+
+  it('모르는 targetType 이 와도 파싱이 터지지 않는다', () => {
+    const parsed = accessLogDetailSchema.parse({
+      ...mission,
+      targetType: 'LIVE_SESSION',
+    });
+
+    expect(parsed.targetType).toBe('LIVE_SESSION');
+  });
+
+  it('선택 필드가 아예 빠져도 파싱한다', () => {
+    const parsed = accessLogDetailSchema.parse({});
+
+    expect(parsed.targetType).toBeUndefined();
+  });
+});
+
+describe('accessLogApplicationDetailSchema', () => {
+  const detailResponse = {
+    firstAccessedAt: '2026-07-30T14:22:00',
+    lastAccessedAt: '2026-08-05T09:11:00',
+    accessCount: 12,
+    paidAt: '2026-07-28T10:00:00',
+    daysFromPaymentToFirstAccess: 2,
+    trackedFrom: '2026-06-01T00:00:00',
+    details: [
+      {
+        targetType: 'CHALLENGE_DASHBOARD',
+        targetId: 319,
+        targetTitle: '면접 준비 7일 끝장 챌린지 7기',
+        missionTh: null,
+        firstAccessedAt: '2026-07-30T14:22:00',
+        lastAccessedAt: '2026-08-05T09:11:00',
+        accessCount: 8,
+      },
+      {
+        targetType: 'MISSION',
+        targetId: 9001,
+        targetTitle: '경험 정리하기',
+        missionTh: 3,
+        firstAccessedAt: '2026-07-31T20:05:00',
+        lastAccessedAt: '2026-07-31T20:07:00',
+        accessCount: 2,
+      },
+    ],
+  };
+
+  it('대상별 내역을 담은 응답을 파싱한다', () => {
+    const parsed = accessLogApplicationDetailSchema.parse(detailResponse);
+
+    expect(parsed.details).toHaveLength(2);
+    expect(parsed.accessCount).toBe(12);
+  });
+
+  it('내역이 빈 배열이어도 파싱한다', () => {
+    // 기록이 없는 건이다. 왜 없는지는 상위 행의 판정이 말해 준다(PRD 7.4).
+    const parsed = accessLogApplicationDetailSchema.parse({
+      ...detailResponse,
+      firstAccessedAt: null,
+      lastAccessedAt: null,
+      accessCount: 0,
+      daysFromPaymentToFirstAccess: null,
+      details: [],
+    });
+
+    expect(parsed.details).toEqual([]);
+  });
+
+  it('내역 필드가 없거나 null 이어도 파싱한다', () => {
+    expect(
+      accessLogApplicationDetailSchema.parse({
+        ...detailResponse,
+        details: null,
+      }).details,
+    ).toBeNull();
+    expect(accessLogApplicationDetailSchema.parse({}).details).toBeUndefined();
+  });
+
+  it('한 줄이 모르는 targetType 이어도 응답 전체가 살아남는다', () => {
+    // 서버가 대상을 하나 추가했다고 상세가 통째로 사라지면, 이용한 건이
+    // `내역 없음` 으로 보여 정반대의 결론이 나온다.
+    const parsed = accessLogApplicationDetailSchema.parse({
+      ...detailResponse,
+      details: [
+        ...detailResponse.details,
+        { targetType: 'LIVE_SESSION', targetId: 7, accessCount: 1 },
+      ],
+    });
+
+    expect(parsed.details).toHaveLength(3);
   });
 });

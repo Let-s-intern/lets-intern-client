@@ -1,6 +1,10 @@
 import { http, HttpResponse } from 'msw';
 
-import { MOCK_TRACKED_FROM, seedAccessLogs } from '../seed/accessLog';
+import {
+  MOCK_TRACKED_FROM,
+  seedAccessLogDetails,
+  seedAccessLogs,
+} from '../seed/accessLog';
 
 /**
  * 이용 로그 조회 MSW 핸들러 (LC-3201).
@@ -50,4 +54,21 @@ export const accessLogHandlers = [
       },
     });
   }),
+
+  /**
+   * 행을 펼쳤을 때만 호출되는 단건 조회 (PRD 5.5).
+   *
+   * 없는 신청서는 404 로 답한다. 빈 상세를 돌려주면 화면이 조회 실패와 내역 없음을
+   * 구분할 수 없고, 실패가 `내역 없음` 으로 보이는 것이 이 기능에서 가장 위험한 오독이다.
+   */
+  http.get(
+    `${BASE}/admin/access-log/application/:applicationId`,
+    ({ params }) => {
+      const detail = seedAccessLogDetails[Number(params.applicationId)];
+
+      if (!detail) return new HttpResponse(null, { status: 404 });
+
+      return HttpResponse.json({ data: detail });
+    },
+  ),
 ];

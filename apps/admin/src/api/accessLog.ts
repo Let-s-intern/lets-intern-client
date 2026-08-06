@@ -119,3 +119,77 @@ export const useAccessLogListQuery = (
       return accessLogListSchema.parse(res.data.data);
     },
   });
+
+/**
+ * 신청서 하나 안의 대상별 낱개 내역 (PRD 5.5 단건, 7.3 행 펼침).
+ *
+ * 목록의 `targetSummary` 가 `미션 3건` 까지만 말해 주는 것을 여기서 회차·제목으로 편다.
+ *
+ * `targetTitle` 은 서버가 조회 시점에 조인해 내려준다. 로그 테이블에 제목을 복제해 두지
+ * 않기 때문이다(PRD 5.4). 조인이 실패하거나 대상이 삭제되면 null 로 온다.
+ */
+export const accessLogDetailSchema = z.object({
+  targetType: z.string().nullable().optional(),
+  targetId: z.number().nullable().optional(),
+  targetTitle: z.string().nullable().optional(),
+  /** 미션 회차. 미션이 아닌 대상이면 null 이다. */
+  missionTh: z.number().nullable().optional(),
+  firstAccessedAt: z.string().nullable().optional(),
+  lastAccessedAt: z.string().nullable().optional(),
+  accessCount: z.number().nullable().optional(),
+});
+export type AccessLogDetail = z.infer<typeof accessLogDetailSchema>;
+
+/**
+ * 단건 조회 응답. 목록 행과 같은 요약 필드에 `details` 가 더해진 모양이다.
+ *
+ * 목록과 마찬가지로 필수 필드를 두지 않는다. 상세가 파싱 오류로 통째로 사라지면
+ * 운영은 펼쳐도 아무것도 못 보고, 그것이 `내역 없음` 으로 읽히면 정반대의 결론이 나온다.
+ */
+export const accessLogApplicationDetailSchema = z.object({
+  firstAccessedAt: z.string().nullable().optional(),
+  lastAccessedAt: z.string().nullable().optional(),
+  accessCount: z.number().nullable().optional(),
+  paidAt: z.string().nullable().optional(),
+  daysFromPaymentToFirstAccess: z.number().nullable().optional(),
+  trackedFrom: z.string().nullable().optional(),
+  details: z.array(accessLogDetailSchema).nullable().optional(),
+});
+export type AccessLogApplicationDetail = z.infer<
+  typeof accessLogApplicationDetailSchema
+>;
+
+export const ACCESS_LOG_DETAIL_KEY = 'accessLogDetail';
+
+/**
+ * 상세를 신선하다고 보는 시간.
+ *
+ * 행을 접으면 이 훅이 언마운트되고 다시 펼치면 새로 마운트된다. `staleTime` 이 기본값(0)이면
+ * 여닫을 때마다 요청이 나가 운영이 행 몇 개를 훑는 동안 서버를 계속 때린다.
+ *
+ * 어드민 QueryClient 기본값과 같은 값을 여기에 한 번 더 적는다. 이 화면의 요청 수가
+ * provider 설정 변경에 조용히 끌려다니지 않게 하기 위해서다.
+ */
+const DETAIL_STALE_TIME_MS = 60 * 1000;
+
+/**
+ * 신청서 한 건의 대상별 상세 조회.
+ *
+ * **펼친 행에 대해서만 호출한다.** 목록을 그릴 때 전부 가져오면 한 페이지에 요청이
+ * 스무 개 더 붙는다. 호출부는 이 훅을 펼쳤을 때만 마운트하거나 `enabled` 로 끈다.
+ */
+export const useAccessLogDetailQuery = (
+  applicationId: number,
+  enabled = true,
+) =>
+  useQuery({
+    queryKey: [ACCESS_LOG_DETAIL_KEY, applicationId],
+    enabled,
+    staleTime: DETAIL_STALE_TIME_MS,
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/access-log/application/${applicationId}`,
+      );
+      return accessLogApplicationDetailSchema.parse(res.data.data);
+    },
+  });
