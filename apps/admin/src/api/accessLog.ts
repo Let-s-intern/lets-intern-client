@@ -98,11 +98,54 @@ export type AccessLogList = z.infer<typeof accessLogListSchema>;
 
 export const ACCESS_LOG_LIST_KEY = 'accessLogList';
 
+/**
+ * 이용 상태 필터 (PRD 5.5.2).
+ *
+ * **`NOT_USED` 와 `BEFORE_TRACKING` 을 하나로 묶지 마라.** "기록 없음" 같은 선택지를 만들면
+ * 집계 이전 결제가 미이용 목록에 섞이고, 그 목록이 곧 잘못된 전액 환불의 근거가 된다.
+ * 화면 판정(usageDisplay)이 행 단위로 가르는 것과 같은 구분을 필터에서도 지킨다.
+ *
+ * 적재 대상이 아닌 타입(LIVE·REPORT)은 이 값에 없다. 프로그램 타입 필터가 맡는다.
+ */
+export const ACCESS_LOG_USAGE_STATUSES = [
+  'USED',
+  'NOT_USED',
+  'BEFORE_TRACKING',
+] as const;
+export type AccessLogUsageStatus = (typeof ACCESS_LOG_USAGE_STATUSES)[number];
+
+export const ACCESS_LOG_SORTS = [
+  'LAST_ACCESSED_DESC',
+  'PAID_DESC',
+  'PAID_ASC',
+] as const;
+export type AccessLogSort = (typeof ACCESS_LOG_SORTS)[number];
+
+export const ACCESS_LOG_DEFAULT_SORT: AccessLogSort = 'LAST_ACCESSED_DESC';
+
 export interface AccessLogListParams {
+  /**
+   * 프로그램 단건 지정.
+   *
+   * 지금 화면에는 입력 칸이 없다(어드민이 ID 를 외워 넣을 수 없어 제목 검색으로 바꿨다).
+   * 서버는 계속 받으므로 다른 화면에서 프로그램을 지목해 넘어올 때 쓴다.
+   */
   programId?: number;
   programType?: string;
+  /** 프로그램 제목 부분 일치. */
+  programKeyword?: string;
   /** 이름·이메일 부분 일치. */
   userKeyword?: string;
+  /** 결제일 범위. 날짜(`YYYY-MM-DD`)이고 경계를 포함한다. */
+  paidFrom?: string;
+  paidTo?: string;
+  /** 최초 이용일 범위. 이용 기록이 없는 건은 이 조건이 걸리면 빠진다. */
+  firstAccessedFrom?: string;
+  firstAccessedTo?: string;
+  usageStatus?: AccessLogUsageStatus;
+  /** 기본 `true`. 취소 건도 분쟁이 이어지므로 기본으로 포함한다. */
+  includeCanceled?: boolean;
+  sort?: AccessLogSort;
   page?: number;
   size?: number;
 }

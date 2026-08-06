@@ -24,9 +24,24 @@ const fetchAccessLogs = async (query = '') => {
 const rowOf = (list: Awaited<ReturnType<typeof fetchAccessLogs>>, id: number) =>
   list.accessLogList.find((row) => row.applicationId === id);
 
+const idsOf = (list: Awaited<ReturnType<typeof fetchAccessLogs>>) =>
+  list.accessLogList.map((row) => row.applicationId);
+
+/** 순서를 보지 않는 단언용. 정렬은 별도 테스트가 본다. */
+const sortedIdsOf = (list: Awaited<ReturnType<typeof fetchAccessLogs>>) =>
+  [...idsOf(list)].sort();
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 const elapsedDays = (value: string) =>
   (Date.now() - new Date(value).getTime()) / DAY_MS;
+
+/** 시드와 같은 방식으로 로컬 날짜를 만든다(UTC 로 밀면 하루가 어긋난다). */
+const dateDaysAgo = (days: number) => {
+  const date = new Date(Date.now() - days * DAY_MS);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+    .toISOString()
+    .slice(0, 10);
+};
 
 describe('GET /admin/access-log', () => {
   it('응답 전체가 스키마를 통과한다', async () => {
@@ -150,6 +165,129 @@ describe('GET /admin/access-log', () => {
     expect(parsed.accessLogList.map((row) => row.applicationId)).toEqual([
       6007,
     ]);
+  });
+
+  it('프로그램 제목 부분 일치로 거른다', async () => {
+    // 어드민은 programId 를 외우고 있지 않다. 제목으로 찾을 수 있어야 한다.
+    const parsed = await fetchAccessLogs(
+      `?programKeyword=${encodeURIComponent('가이드북')}`,
+    );
+
+    expect(idsOf(parsed)).toEqual([6007]);
+  });
+
+  it('제목 검색과 유저 검색은 AND 로 걸린다', async () => {
+    const both = await fetchAccessLogs(
+      `?programKeyword=${encodeURIComponent('챌린지')}&userKeyword=${encodeURIComponent('렛츠')}`,
+    );
+    const 어긋난조합 = await fetchAccessLogs(
+      `?programKeyword=${encodeURIComponent('가이드북')}&userKeyword=${encodeURIComponent('렛츠')}`,
+    );
+
+    expect(idsOf(both)).toEqual([6001]);
+    expect(idsOf(어긋난조합)).toEqual([]);
+  });
+
+  it('제목 검색과 프로그램 타입도 AND 로 걸린다', async () => {
+    const parsed = await fetchAccessLogs(
+      `?programKeyword=${encodeURIComponent('가이드북')}&programType=VOD`,
+    );
+
+    expect(idsOf(parsed)).toEqual([]);
+  });
+
+  it('결제일 범위로 거른다', async () => {
+    const 최근 = await fetchAccessLogs(`?paidFrom=${dateDaysAgo(5)}`);
+    const 오래됨 = await fetchAccessLogs(`?paidTo=${dateDaysAgo(25)}`);
+
+    expect(sortedIdsOf(최근)).toEqual([6003, 6009]);
+    expect(sortedIdsOf(오래됨)).toEqual([6002, 6007]);
+  });
+
+  it('결제 시각을 모르는 건은 결제일 범위에서 빠진다', async () => {
+    // 날짜를 물었는데 날짜가 없는 행을 끼워 넣으면 범위가 의미를 잃는다.
+    const parsed = await fetchAccessLogs(
+      `?paidFrom=${dateDaysAgo(365)}&paidTo=${dateDaysAgo(0)}`,
+    );
+
+    expect(idsOf(parsed)).not.toContain(6008);
+  });
+
+  it('최초 이용일 범위로 거른다', async () => {
+    const parsed = await fetchAccessLogs(
+      `?firstAccessedFrom=${dateDaysAgo(10)}`,
+    );
+
+    // 이용 기록이 없는 건은 최초 이용일로 찾을 수 없다(PRD 5.5.1).
+    expect(sortedIdsOf(parsed)).toEqual([6001]);
+  });
+
+  it('이용 상태 USED 는 기록이 있는 건만 남긴다', async () => {
+    const parsed = await fetchAccessLogs('?usageStatus=USED');
+
+    expect(sortedIdsOf(parsed)).toEqual([6001, 6005, 6006, 6007]);
+  });
+
+  it('미이용 목록에 집계 이전 결제가 섞이지 않는다', async () => {
+    // 이 화면이 막으려는 사고가 필터 단위에서 재현되는 자리다.
+    // 6002 는 집계 시작 이전 결제라 이용 여부를 말할 수 없다.
+    const parsed = await fetchAccessLogs('?usageStatus=NOT_USED');
+
+    expect(sortedIdsOf(parsed)).toEqual([6003, 6004, 6009]);
+    expect(idsOf(parsed)).not.toContain(6002);
+  });
+
+  it('집계 이전만 따로 볼 수 있다', async () => {
+    const parsed = await fetchAccessLogs('?usageStatus=BEFORE_TRACKING');
+
+    expect(idsOf(parsed)).toEqual([6002]);
+  });
+
+  it('결제 시각을 모르는 건은 미이용에도 집계 이전에도 들어가지 않는다', async () => {
+    // 판정 근거가 없는 건이 전액 환불 후보 목록에 섞이면 안 된다(PRD 7.4).
+    for (const status of ['NOT_USED', 'BEFORE_TRACKING', 'USED']) {
+      const parsed = await fetchAccessLogs(`?usageStatus=${status}`);
+
+      expect(idsOf(parsed)).not.toContain(6008);
+    }
+  });
+
+  it('결제 7일 이내 · 미이용 조합이 실제로 걸러진다', async () => {
+    // 이 화면이 존재하는 이유인 질의다(PRD 5.5.3). 프리셋 파라미터 없이 조합으로 만든다.
+    const parsed = await fetchAccessLogs(
+      `?paidFrom=${dateDaysAgo(7)}&usageStatus=NOT_USED`,
+    );
+
+    expect(sortedIdsOf(parsed)).toEqual([6003, 6009]);
+  });
+
+  it('취소 건은 기본 포함이고 끄면 빠진다', async () => {
+    const 기본 = await fetchAccessLogs();
+    const 제외 = await fetchAccessLogs('?includeCanceled=false');
+
+    expect(idsOf(기본)).toContain(6004);
+    expect(idsOf(제외)).not.toContain(6004);
+    expect(idsOf(await fetchAccessLogs('?includeCanceled=true'))).toContain(
+      6004,
+    );
+  });
+
+  it('정렬 기준을 바꿀 수 있다', async () => {
+    const 기본 = await fetchAccessLogs();
+    const 결제최신 = await fetchAccessLogs('?sort=PAID_DESC');
+    const 결제오래 = await fetchAccessLogs('?sort=PAID_ASC');
+
+    // 기본은 최근 이용순이다. 6001 의 최근 이용이 가장 최신이다.
+    expect(idsOf(기본)[0]).toBe(6001);
+    expect(idsOf(결제최신)[0]).toBe(6003);
+    expect(idsOf(결제오래)[0]).toBe(6002);
+  });
+
+  it('값이 없는 행은 정렬 방향과 무관하게 뒤로 간다', async () => {
+    // 결제 시각을 모르는 행이 맨 위에 몰리면 목록이 비어 보인다.
+    const 결제오래 = await fetchAccessLogs('?sort=PAID_ASC');
+
+    expect(idsOf(결제오래).at(-1)).toBe(6008);
   });
 
   it('페이지네이션이 동작한다', async () => {
