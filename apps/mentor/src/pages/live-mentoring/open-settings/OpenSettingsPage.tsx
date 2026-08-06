@@ -285,23 +285,30 @@ const OpenSettingsPage = () => {
     );
   };
 
-  /** 상세 페이지까지 고치려면 초안으로 되돌린다. 이후 다시 검토 제출이 필요하다. */
+  /**
+   * 상세 페이지까지 고치려면 서버가 상품을 `DRAFT` 로 되돌린다(`start-edit`).
+   *
+   * 문구에 "초안"을 쓰지 않는다 — 서버 상태 이름일 뿐 멘토에게는 아무 의미가 없다.
+   * 멘토가 실제로 겪는 일, 즉 "검토를 다시 받아야 하고 그동안 오픈이 멈춘다"를 말한다.
+   */
   const handleStartEdit = () => {
     showConfirm({
-      title: '상세 수정을 위해 초안으로 되돌릴까요?',
+      title: '상세 페이지를 수정할까요?',
       description:
-        '초안이 되면 상세 페이지까지 수정할 수 있지만, 다시 열려면 관리자 승인을 한 번 더 받아야 합니다.',
-      confirmText: '초안으로 되돌리기',
+        '수정하려면 관리자 검토를 다시 받아야 해요. 검토가 끝날 때까지는 오픈할 수 없습니다. 진행시간·기간·타입만 바꾸는 거라면 이 화면에서 고치고 바로 다시 오픈하면 돼요.',
+      confirmText: '검토 다시 받기',
+      cancelText: '그만두기',
       onConfirm: () => {
         if (isStartingEdit) return;
         startEdit(undefined, {
           onSuccess: () =>
             showAlert({
-              title: '초안으로 되돌렸습니다.',
-              description: '수정한 뒤 다시 검토를 제출해주세요.',
+              title: '이제 상세 페이지를 수정할 수 있어요.',
+              description:
+                '수정을 마치면 검토를 제출해주세요. 승인되면 다시 오픈됩니다.',
               variant: 'success',
             }),
-          onError: handleMutationError('초안 전환에 실패했습니다.'),
+          onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
         });
       },
     });
@@ -683,7 +690,7 @@ const OpenSettingsPage = () => {
                   disabled={isPending}
                   className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isStartingEdit ? '전환 중...' : '상세 수정하기'}
+                  {isStartingEdit ? '처리 중...' : '상세 수정하기'}
                 </button>
                 <button
                   type="button"
