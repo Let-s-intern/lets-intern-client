@@ -12,19 +12,10 @@ import { z } from 'zod';
  * 값이 비어 한 행이 `확인 불가` 로 보이는 편이 운영에 훨씬 낫다.
  */
 
-/**
- * 화면이 알고 있는 이용 대상. 서버가 값을 추가해도 파싱이 터지지 않게 문자열로 받는다.
- *
- * 미션 자료 셋(`MISSION_TEMPLATE`·`MISSION_ESSENTIAL_CONTENT`·`MISSION_ADDITIONAL_CONTENT`)은
- * 자료 링크를 실제로 열었을 때 쌓인다. 미션 페이지를 방문한 것(`MISSION`)과 다른 대상이다 —
- * 자료를 열어본 것이 콘텐츠를 이용했다의 더 강한 증거다.
- */
+/** 화면이 알고 있는 이용 대상. 서버가 값을 추가해도 파싱이 터지지 않게 문자열로 받는다. */
 export const ACCESS_LOG_TARGET_TYPES = [
   'CHALLENGE_DASHBOARD',
   'MISSION',
-  'MISSION_TEMPLATE',
-  'MISSION_ESSENTIAL_CONTENT',
-  'MISSION_ADDITIONAL_CONTENT',
   'PROGRAM',
 ] as const;
 export type KnownAccessLogTargetType = (typeof ACCESS_LOG_TARGET_TYPES)[number];
