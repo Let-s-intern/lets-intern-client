@@ -10,13 +10,13 @@ import type {
 
 const saveMock = vi.fn();
 let templateData: LiveMentoringTemplate | undefined;
-let isOpen = false;
+let status: LiveMentoringSettings['status'] = 'DRAFT';
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringTemplateQuery: () => ({ data: templateData }),
   // 미리보기 헤드라인에 쓸 닉네임만 참조한다.
   useLiveMentoringSettingsQuery: () => ({
-    data: { nickname: '쥬디', isOpen } as unknown as LiveMentoringSettings,
+    data: { nickname: '쥬디', status } as unknown as LiveMentoringSettings,
   }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
@@ -99,7 +99,7 @@ const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
 afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
-  isOpen = false;
+  status = 'DRAFT';
 });
 
 describe('DetailSettingsPage — 편집 영역', () => {
@@ -166,13 +166,13 @@ describe('DetailSettingsPage — 편집 영역', () => {
   });
 });
 
-describe('DetailSettingsPage — 오픈 중 잠금', () => {
-  it('오픈 중이면 상단에 안내 배너를 노출하고 수정 버튼을 감춘다', () => {
-    isOpen = true;
+describe('DetailSettingsPage — 상태 잠금', () => {
+  it('승인된 뒤에는 안내 배너를 노출하고 수정 버튼을 감춘다', () => {
+    status = 'APPROVED';
     renderPage();
 
     const banner = screen.getByRole('status');
-    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(within(banner).getByText('승인됨')).toBeInTheDocument();
     expect(
       within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
     ).toHaveAttribute('href', '/live-mentoring/open-settings');
@@ -181,9 +181,22 @@ describe('DetailSettingsPage — 오픈 중 잠금', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('오픈 중이 아니면 배너를 렌더하지 않는다', () => {
+  it('검토 대기 중에도 잠그고, 상태를 그대로 알린다', () => {
+    status = 'PENDING_REVIEW';
+    renderPage();
+
+    expect(
+      within(screen.getByRole('status')).getByText('검토 대기'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '수정하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('초안이면 배너 없이 편집할 수 있다', () => {
     renderPage();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
   });
 });
 

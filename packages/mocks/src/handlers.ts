@@ -5,12 +5,14 @@ import {
   LIVE_MENTOR_DETAILS,
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
-  OPEN_STATUS_ROWS,
+  OPENING_HISTORY,
   SETTLEMENT_ROWS,
   SETTLEMENT_ITEMS,
+  getPriceByDuration,
   mentoringTitleFor,
   type LiveMentorCard,
   type LiveMentoringCategory,
+  type LiveMentoringDuration,
 } from './data/liveMentoring';
 
 /**
@@ -698,6 +700,178 @@ const settingsCareers = () =>
   }));
 
 /**
+ * 라이브 멘토링 상품·개설 목 상태.
+ *
+ * 저장 → 검토 제출 → 관리자 승인 → 개설 → 종료가 한 줄기로 이어지는지 확인하려면
+ * 목이 상태를 들고 있어야 한다. 응답만 고정으로 돌려주면 "승인했는데 목록이 그대로"인
+ * 상태가 되어 화면 흐름을 검증할 수 없다.
+ */
+const liveMentoringState = {
+  liveMentoringId: LIVE_MENTORING_SETTINGS.liveMentoringId,
+  title: LIVE_MENTORING_SETTINGS.title,
+  status: LIVE_MENTORING_SETTINGS.status,
+  categories: [...LIVE_MENTORING_SETTINGS.categories],
+  durations: [...LIVE_MENTORING_SETTINGS.durations],
+  feedbackStartDate: LIVE_MENTORING_SETTINGS.feedbackStartDate,
+  feedbackEndDate: LIVE_MENTORING_SETTINGS.feedbackEndDate,
+  approvedAt: null as string | null,
+  approvedByUserId: null as number | null,
+  openings: OPENING_HISTORY.map((opening) => ({ ...opening })),
+};
+
+let nextOpeningId = 200;
+
+/**
+ * 목 상태를 초기값으로 되돌린다.
+ *
+ * 핸들러가 모듈 스코프 상태를 들고 있어 `server.resetHandlers()` 만으로는 지워지지 않는다.
+ * 상태를 바꾸는 테스트(제출·승인·종료)는 `afterEach` 에서 이걸 불러 서로 간섭하지 않게 한다.
+ */
+export const resetLiveMentoringMockState = () => {
+  liveMentoringState.liveMentoringId = LIVE_MENTORING_SETTINGS.liveMentoringId;
+  liveMentoringState.title = LIVE_MENTORING_SETTINGS.title;
+  liveMentoringState.status = LIVE_MENTORING_SETTINGS.status;
+  liveMentoringState.categories = [...LIVE_MENTORING_SETTINGS.categories];
+  liveMentoringState.durations = [...LIVE_MENTORING_SETTINGS.durations];
+  liveMentoringState.feedbackStartDate =
+    LIVE_MENTORING_SETTINGS.feedbackStartDate;
+  liveMentoringState.feedbackEndDate = LIVE_MENTORING_SETTINGS.feedbackEndDate;
+  liveMentoringState.approvedAt = null;
+  liveMentoringState.approvedByUserId = null;
+  liveMentoringState.openings = OPENING_HISTORY.map((opening) => ({
+    ...opening,
+  }));
+  nextOpeningId = 200;
+};
+
+const liveMentoringToday = () => new Date().toISOString().slice(0, 10);
+const liveMentoringNow = () => new Date().toISOString().slice(0, 19);
+
+/** 서버 `LiveMentoringErrorCode` 를 그대로 흉내낸 에러 응답. */
+const liveMentoringError = (status: number, code: string, message: string) =>
+  HttpResponse.json({ status, code, message }, { status });
+
+const activeOpening = () =>
+  liveMentoringState.openings.find((opening) => opening.status === 'OPEN') ??
+  null;
+
+/** 서버 `LiveMentoring.isEditable()` — 상태와 활성 개설 유무를 함께 본다. */
+const isSettingsEditable = () =>
+  (liveMentoringState.status === null ||
+    liveMentoringState.status === 'DRAFT' ||
+    liveMentoringState.status === 'REJECTED') &&
+  activeOpening() === null;
+
+const settingsResponse = () => ({
+  liveMentoringId: liveMentoringState.liveMentoringId,
+  nickname: LIVE_MENTORING_SETTINGS.nickname,
+  profileImage: LIVE_MENTORING_SETTINGS.profileImage,
+  introduction: LIVE_MENTORING_SETTINGS.introduction,
+  careers: settingsCareers(),
+  title: liveMentoringState.title,
+  status: liveMentoringState.status,
+  categories: liveMentoringState.categories,
+  durations: liveMentoringState.durations,
+  feedbackStartDate: liveMentoringState.feedbackStartDate,
+  feedbackEndDate: liveMentoringState.feedbackEndDate,
+});
+
+const openingHistoryResponse = () => ({
+  liveMentoringId: liveMentoringState.liveMentoringId,
+  openings: liveMentoringState.openings,
+});
+
+const closeOpeningById = (
+  openingId: number,
+  closeReason: 'ADMIN_FORCED' | 'MENTOR_CANCELED',
+  closedByUserId: number,
+) => {
+  const opening = liveMentoringState.openings.find(
+    (each) => each.openingId === openingId,
+  );
+  if (!opening) return false;
+  // 이미 종료된 개설은 사유를 덮어쓰지 않고 그대로 성공 처리한다(서버와 동일).
+  if (opening.status === 'OPEN') {
+    opening.status = 'CLOSED';
+    opening.closedAt = liveMentoringNow();
+    opening.closeReason = closeReason;
+    Object.assign(opening, { closedByUserId });
+  }
+  return true;
+};
+
+/**
+ * 관리자 목록 응답 1건. 로그인 멘토("나")의 상품만 상태를 실제로 반영하고,
+ * 나머지는 상태 필터·정렬을 확인하기 위한 고정 행이다.
+ */
+const adminLiveMentoringVo = () => {
+  const opening = activeOpening();
+  return {
+    liveMentoringId: liveMentoringState.liveMentoringId,
+    mentorId: 1,
+    mentorNickname: LIVE_MENTORING_SETTINGS.nickname,
+    mentorProfileImage: LIVE_MENTORING_SETTINGS.profileImage,
+    title: liveMentoringState.title,
+    status: liveMentoringState.status,
+    categories: liveMentoringState.categories,
+    hasDetailPage: true,
+    approvedAt: liveMentoringState.approvedAt,
+    approvedByUserId: liveMentoringState.approvedByUserId,
+    createDate: '2026-08-01T09:00:00',
+    lastModifiedDate: liveMentoringNow(),
+    currentOpening: opening
+      ? {
+          openingId: opening.openingId,
+          status: opening.status,
+          durationPrices: opening.durationPrices,
+          feedbackStartDate: opening.feedbackStartDate,
+          feedbackEndDate: opening.feedbackEndDate,
+          openedAt: opening.openedAt,
+          closedAt: opening.closedAt,
+          closeReason: opening.closeReason,
+          closedByUserId: null,
+          createDate: opening.openedAt,
+          lastModifiedDate: opening.openedAt,
+        }
+      : null,
+  };
+};
+
+/** 상태 필터·페이징을 확인하기 위한 고정 행들("나" 이외의 멘토). */
+const ADMIN_FIXTURE_ROWS = [
+  {
+    liveMentoringId: 20,
+    mentorId: 2,
+    mentorNickname: '박멘토',
+    mentorProfileImage: null,
+    title: '이력서 클리닉',
+    status: 'PENDING_REVIEW' as const,
+    categories: ['RESUME' as const],
+    hasDetailPage: true,
+    approvedAt: null,
+    approvedByUserId: null,
+    createDate: '2026-08-02T11:00:00',
+    lastModifiedDate: '2026-08-03T11:00:00',
+    currentOpening: null,
+  },
+  {
+    liveMentoringId: 21,
+    mentorId: 3,
+    mentorNickname: '최멘토',
+    mentorProfileImage: null,
+    title: '포트폴리오 집중 피드백',
+    status: 'REJECTED' as const,
+    categories: ['PORTFOLIO' as const],
+    hasDetailPage: false,
+    approvedAt: null,
+    approvedByUserId: null,
+    createDate: '2026-07-28T15:00:00',
+    lastModifiedDate: '2026-07-30T09:00:00',
+    currentOpening: null,
+  },
+];
+
+/**
  * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
  *
  * 목 데이터는 PRD 기준(평점·후기·모자이크)이고 실제 개설 목록 응답은 그 필드가 없으므로,
@@ -710,7 +884,10 @@ function toOpeningDto(card: LiveMentorCard) {
   const hasRepresentativeCareer = card.mentorId % 5 !== 0;
 
   return {
-    id: card.mentorId,
+    // 서버는 상품(liveMentoring)과 개설(opening)을 별도 식별자로 내려준다.
+    // 목 멘토는 상품·개설을 1:1 로 갖고 있어 mentorId 를 그대로 파생시킨다.
+    liveMentoringId: card.mentorId,
+    openingId: card.mentorId,
     mentorId: card.mentorId,
     mentorNickname: card.nickname,
     // 프로필 이미지를 끈 멘토는 백엔드도 이미지를 내려주지 않는다.
@@ -1321,6 +1498,42 @@ export const handlers = [
   // ─────────────────────────────────────────────────────────────
 
   /**
+   * (관리자) GET /admin/live-mentoring — 상품 목록.
+   *
+   * 공개 목록과 달리 기간·노출 조건을 걸지 않는다. `page` 는 1-based 다.
+   *
+   * **공개 목록 핸들러보다 먼저 등록해야 한다** — 아래 공개 목록의 와일드카드 패턴이
+   * `/admin/live-mentoring` 까지 삼켜버려서, 순서가 뒤바뀌면 관리자 요청이
+   * 공개 목록 응답을 받는다.
+   */
+  http.get('*/admin/live-mentoring', ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
+    const size = Number(url.searchParams.get('size') ?? '20');
+
+    const all = [adminLiveMentoringVo(), ...ADMIN_FIXTURE_ROWS];
+    const filtered = status ? all.filter((row) => row.status === status) : all;
+    const totalElements = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const start = (page - 1) * size;
+
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        liveMentoringList: filtered.slice(start, start + size),
+        pageInfo: {
+          // 서버 `PageInfo` 는 0-based 인덱스를 담는다(요청은 1-based).
+          pageNum: page - 1,
+          pageSize: size,
+          totalElements,
+          totalPages,
+        },
+      },
+    });
+  }),
+
+  /**
    * (공개) GET /live-mentoring?page&size&categories&sortType
    *
    * 실제 백엔드 `GetLiveMentoringOpeningsResponseDto` 계약을 그대로 흉내낸다:
@@ -1383,10 +1596,7 @@ export const handlers = [
    * (멘토) GET /mentor/live-mentoring/settings — 오픈 설정(메타) 조회.
    */
   http.get('*/mentor/live-mentoring/settings', () => {
-    return HttpResponse.json({
-      status: 200,
-      data: { ...LIVE_MENTORING_SETTINGS, careers: settingsCareers() },
-    });
+    return HttpResponse.json({ status: 200, data: settingsResponse() });
   }),
 
   /**
@@ -1399,27 +1609,204 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) PUT /mentor/live-mentoring/settings — 저장.
-   * 실 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받고,
-   * nickname/profileImage/introduction/careers는 프로필 도메인에서 조회해 응답에 얹어줄 뿐
-   * 수정 대상이 아니다 — 여기서도 동일하게 흉내낸다(목 프로필 값과 병합해 echo).
+   * (멘토) PUT /mentor/live-mentoring/settings — 상품 설정 저장.
+   *
+   * 백엔드가 받는 건 title/categories 두 개뿐이다. 진행시간·기간은 검토 제출에서 받는다.
+   * 상품이 없으면 이 요청이 `DRAFT` 로 상품을 만든다.
    */
   http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
-    const editable = (await request.json().catch(() => ({}))) as Record<
-      string,
-      unknown
-    >;
-    return HttpResponse.json({
-      status: 200,
-      data: {
-        nickname: LIVE_MENTORING_SETTINGS.nickname,
-        profileImage: LIVE_MENTORING_SETTINGS.profileImage,
-        introduction: LIVE_MENTORING_SETTINGS.introduction,
-        careers: settingsCareers(),
-        ...editable,
-      },
-    });
+    const body = (await request.json().catch(() => ({}))) as {
+      title?: string;
+      categories?: LiveMentoringCategory[];
+    };
+
+    if (!isSettingsEditable()) {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_LOCKED',
+        '현재 상태에서는 라이브 멘토링 설정을 수정할 수 없습니다.',
+      );
+    }
+    if (!body.title?.trim() || !body.categories?.length) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+
+    liveMentoringState.title = body.title;
+    liveMentoringState.categories = body.categories;
+    if (liveMentoringState.liveMentoringId === null) {
+      liveMentoringState.liveMentoringId = 1;
+      liveMentoringState.status = 'DRAFT';
+    }
+    return HttpResponse.json({ status: 200, data: settingsResponse() });
   }),
+
+  /**
+   * (멘토) POST /mentor/live-mentoring/submit — 관리자 검토 제출.
+   * 진행시간·기간이 여기서 처음 서버에 저장되고 상품이 `PENDING_REVIEW` 로 전이한다.
+   */
+  http.post('*/mentor/live-mentoring/submit', async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      durations?: number[];
+      feedbackStartDate?: string;
+      feedbackEndDate?: string;
+    };
+
+    if (liveMentoringState.liveMentoringId === null) {
+      return liveMentoringError(
+        404,
+        'LIVE_MENTORING_NOT_FOUND',
+        '라이브 멘토링을 찾을 수 없습니다.',
+      );
+    }
+    if (!body.durations?.length) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    if (body.durations.some((duration) => duration !== 30 && duration !== 60)) {
+      return liveMentoringError(
+        400,
+        'INVALID_LIVE_MENTORING_DURATION',
+        '지원하지 않는 라이브 멘토링 진행 시간입니다.',
+      );
+    }
+    const { feedbackStartDate, feedbackEndDate } = body;
+    if (
+      !feedbackStartDate ||
+      !feedbackEndDate ||
+      feedbackStartDate > feedbackEndDate ||
+      feedbackEndDate < liveMentoringToday()
+    ) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    if (
+      liveMentoringState.status !== 'DRAFT' &&
+      liveMentoringState.status !== 'REJECTED'
+    ) {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_INVALID_STATE',
+        '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+      );
+    }
+
+    liveMentoringState.durations = body.durations as LiveMentoringDuration[];
+    liveMentoringState.feedbackStartDate = feedbackStartDate;
+    liveMentoringState.feedbackEndDate = feedbackEndDate;
+    liveMentoringState.status = 'PENDING_REVIEW';
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /**
+   * (멘토) PATCH /mentor/live-mentoring/openings/:openingId/close — 본인 개설 종료.
+   * 예약 존재 여부를 검사하지 않고 종료한다. 이미 종료된 개설도 200 이다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/openings/:openingId/close',
+    ({ params }) => {
+      const found = closeOpeningById(
+        Number(params.openingId),
+        'MENTOR_CANCELED',
+        1,
+      );
+      if (!found) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (관리자) PATCH /admin/live-mentoring/:liveMentoringId/approve — 승인.
+   * 승인이 곧 개설이다 — 검토 제출 때 저장한 진행시간·기간으로 `OPEN` 개설을 함께 만든다.
+   */
+  http.patch(
+    '*/admin/live-mentoring/:liveMentoringId/approve',
+    ({ params }) => {
+      if (
+        Number(params.liveMentoringId) !== liveMentoringState.liveMentoringId
+      ) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const invalidState =
+        liveMentoringState.status !== 'PENDING_REVIEW' ||
+        liveMentoringState.durations.length === 0 ||
+        !liveMentoringState.feedbackStartDate ||
+        !liveMentoringState.feedbackEndDate ||
+        liveMentoringState.feedbackEndDate < liveMentoringToday();
+      if (invalidState) {
+        return liveMentoringError(
+          409,
+          'LIVE_MENTORING_INVALID_STATE',
+          '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+        );
+      }
+
+      liveMentoringState.status = 'APPROVED';
+      liveMentoringState.approvedAt = liveMentoringNow();
+      liveMentoringState.approvedByUserId = 1;
+      liveMentoringState.openings.unshift({
+        openingId: nextOpeningId++,
+        status: 'OPEN',
+        durationPrices: liveMentoringState.durations.map((duration) => ({
+          duration,
+          price: getPriceByDuration(duration),
+        })),
+        feedbackStartDate: liveMentoringState.feedbackStartDate!,
+        feedbackEndDate: liveMentoringState.feedbackEndDate!,
+        openedAt: liveMentoringNow(),
+        closedAt: null,
+        closeReason: null,
+      });
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /** (관리자) PATCH /admin/live-mentoring/:liveMentoringId/reject — 반려. */
+  http.patch('*/admin/live-mentoring/:liveMentoringId/reject', ({ params }) => {
+    if (Number(params.liveMentoringId) !== liveMentoringState.liveMentoringId) {
+      return liveMentoringError(
+        404,
+        'LIVE_MENTORING_NOT_FOUND',
+        '라이브 멘토링을 찾을 수 없습니다.',
+      );
+    }
+    if (liveMentoringState.status !== 'PENDING_REVIEW') {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_INVALID_STATE',
+        '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+      );
+    }
+    liveMentoringState.status = 'REJECTED';
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /** (관리자) PATCH /admin/live-mentoring/openings/:openingId/close — 강제 종료. */
+  http.patch(
+    '*/admin/live-mentoring/openings/:openingId/close',
+    ({ params }) => {
+      const found = closeOpeningById(
+        Number(params.openingId),
+        'ADMIN_FORCED',
+        99,
+      );
+      if (!found) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
 
   /**
    * (멘토) GET /mentor/live-mentoring/template — 상세 페이지 템플릿 조회.
@@ -1447,12 +1834,9 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
+   * (멘토) GET /mentor/live-mentoring/open-status — 개설 이력.
    */
   http.get('*/mentor/live-mentoring/open-status', () => {
-    return HttpResponse.json({
-      status: 200,
-      data: { openStatusList: OPEN_STATUS_ROWS },
-    });
+    return HttpResponse.json({ status: 200, data: openingHistoryResponse() });
   }),
 ];

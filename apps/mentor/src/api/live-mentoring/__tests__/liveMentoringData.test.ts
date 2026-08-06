@@ -2,7 +2,7 @@ import {
   getLowestPrice,
   LIVE_MENTOR_CARDS,
   LIVE_MENTOR_DETAILS,
-  OPEN_STATUS_ROWS,
+  OPENING_HISTORY,
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
   SETTLEMENT_ROWS,
@@ -67,8 +67,8 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       expect(detail).toBeDefined();
       expect(detail.mentorId).toBe(card.mentorId);
       expect(detail.price).toBe(card.price);
-      // 템플릿 카테고리는 대표(첫) 카테고리를 따른다
-      expect(detail.template.category).toBe(card.categories[0]);
+      // 템플릿 카테고리는 상품 카테고리(다중)를 그대로 따른다
+      expect(detail.template.categories).toEqual(card.categories);
       // 멘토 편집 영역은 기본값이 채워진다
       expect(detail.template.intro.oneLiner).toBeTruthy();
       expect(detail.template.mentoringTypes.items.length).toBeGreaterThan(0);
@@ -104,19 +104,31 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     }
   });
 
-  it('정산행/오픈현황행 상태 enum이 스펙과 일치한다', () => {
+  it('정산행/개설이력 상태 enum이 스펙과 일치한다', () => {
     for (const row of SETTLEMENT_ROWS) {
       expect(['PENDING', 'PAID']).toContain(row.status);
       expect(row.grossAmount).toBeGreaterThanOrEqual(0);
     }
-    // 오픈은 하나만 가능(OPEN 1건) + 과거 오픈 내역(CLOSED)
-    expect(OPEN_STATUS_ROWS.filter((r) => r.status === 'OPEN').length).toBe(1);
-    expect(OPEN_STATUS_ROWS.some((r) => r.status === 'CLOSED')).toBe(true);
-    for (const row of OPEN_STATUS_ROWS) {
-      expect(['OPEN', 'CLOSED']).toContain(row.status);
-      expect(row.price).toBe(getLowestPrice(row.durations));
-      expect(row.feedbackStartDate).toBeTruthy();
-      expect(row.feedbackEndDate).toBeTruthy();
+    // 활성 개설은 최대 1건이다(서버 `LiveMentoring.addOpening` 제약).
+    expect(
+      OPENING_HISTORY.filter((o) => o.status === 'OPEN').length,
+    ).toBeLessThanOrEqual(1);
+    for (const opening of OPENING_HISTORY) {
+      expect(['OPEN', 'CLOSED']).toContain(opening.status);
+      // 가격은 서버 고정 정책이라 진행시간에서 결정된다.
+      for (const { duration, price } of opening.durationPrices) {
+        expect(price).toBe(PRICE_BY_DURATION[duration]);
+      }
+      expect(opening.feedbackStartDate).toBeTruthy();
+      expect(opening.feedbackEndDate).toBeTruthy();
+      // 종료된 개설은 종료일시·사유가 함께 있어야 한다.
+      if (opening.status === 'CLOSED') {
+        expect(opening.closedAt).toBeTruthy();
+        expect(opening.closeReason).toBeTruthy();
+      } else {
+        expect(opening.closedAt).toBeNull();
+        expect(opening.closeReason).toBeNull();
+      }
     }
   });
 });

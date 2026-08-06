@@ -3,10 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   type LiveMentoringSettingsUpdate,
+  type LiveMentoringSubmit,
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
-  openStatusListResponseSchema,
+  openingHistoryResponseSchema,
   settlementListResponseSchema,
 } from './liveMentoringSchema';
 
@@ -14,6 +15,7 @@ const SETTINGS_PATH = '/mentor/live-mentoring/settings';
 const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const SETTLEMENT_PATH = '/mentor/live-mentoring/settlement';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
+const SUBMIT_PATH = '/mentor/live-mentoring/submit';
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
@@ -64,6 +66,50 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
       return liveMentoringSettingsSchema.parse(res.data.data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/submit — 관리자 검토 제출.
+ *
+ * 진행시간·기간은 이 요청에서만 서버에 저장된다(오픈 설정 PUT 은 제목·타입만 받는다).
+ * 성공하면 상품이 `PENDING_REVIEW` 로 전이해 설정이 잠기므로 설정 캐시를 무효화한다.
+ * 응답 `data` 는 null 이라 파싱하지 않는다.
+ */
+export const useSubmitLiveMentoringMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: LiveMentoringSubmit) => {
+      await axios.post(SUBMIT_PATH, body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/**
+ * PATCH /mentor/live-mentoring/openings/{openingId}/close — 본인 개설 종료.
+ *
+ * 서버는 예약 존재 여부를 검사하지 않고 종료한다. 이미 종료된 개설은 그대로 200 이다.
+ * 종료 후에는 개설 이력뿐 아니라 설정 화면의 잠금 표시도 달라지므로 두 캐시를 함께 무효화한다.
+ */
+export const useCloseLiveMentoringOpeningMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (openingId: number) => {
+      await axios.patch(`/mentor/live-mentoring/openings/${openingId}/close`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+      });
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
       });
@@ -128,15 +174,15 @@ export const useLiveMentoringSettlementQuery = () => {
 };
 
 /**
- * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only) 조회.
- * 응답 `openStatusList`만 추출해 반환한다.
+ * GET /mentor/live-mentoring/open-status — 개설 이력 조회.
+ * 최신 개설이 먼저 온다(서버 `id DESC`). 응답 `openings`만 추출해 반환한다.
  */
 export const useLiveMentoringOpenStatusQuery = () => {
   return useQuery({
     queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
     queryFn: async () => {
       const res = await axios.get(OPEN_STATUS_PATH);
-      return openStatusListResponseSchema.parse(res.data.data).openStatusList;
+      return openingHistoryResponseSchema.parse(res.data.data).openings;
     },
     refetchOnWindowFocus: false,
   });

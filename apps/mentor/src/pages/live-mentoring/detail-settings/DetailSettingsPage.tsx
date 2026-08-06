@@ -31,12 +31,14 @@ const DetailSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   /**
-   * 오픈 중에는 상세 페이지도 수정할 수 없다.
+   * 검토 대기·승인 상태에서는 상세 페이지도 수정할 수 없다.
    * 이미 노출 중인 판매 페이지가 멘티가 보는 도중에 바뀌면 안 되기 때문이고,
+   * 서버도 상품 상태가 `DRAFT`/`REJECTED` 일 때만 편집을 허용한다 —
    * 오픈 설정 화면과 같은 규칙이라 안내도 같은 모양으로 맞춘다.
    */
-  const isCurrentlyOpen = settings?.isOpen ?? false;
-  const canEdit = isEditing && !isCurrentlyOpen;
+  const status = settings?.status ?? null;
+  const isLocked = status === 'PENDING_REVIEW' || status === 'APPROVED';
+  const canEdit = isEditing && !isLocked;
 
   // 오픈 설정 타입에 따라 서버가 내려준 기본 템플릿을 로드한다.
   useEffect(() => {
@@ -98,7 +100,7 @@ const DetailSettingsPage = () => {
     <div className="flex flex-col gap-6 pb-24">
       {header}
 
-      {isCurrentlyOpen && (
+      {isLocked && (
         <div
           role="status"
           className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -109,11 +111,12 @@ const DetailSettingsPage = () => {
                 className="bg-primary h-1.5 w-1.5 rounded-full"
                 aria-hidden="true"
               />
-              오픈 중
+              {status === 'PENDING_REVIEW' ? '검토 대기' : '승인됨'}
             </span>
             <p className="text-xs text-gray-600">
-              오픈 중에는 상세 페이지를 수정할 수 없습니다. 수정하려면 오픈을
-              닫아주세요.
+              {status === 'PENDING_REVIEW'
+                ? '관리자 검토 중에는 상세 페이지를 수정할 수 없습니다.'
+                : '승인된 뒤에는 상세 페이지를 수정할 수 없습니다.'}
             </p>
           </div>
           <Link
@@ -148,7 +151,7 @@ const DetailSettingsPage = () => {
 
       {/* 하단 고정 액션 — 읽기 모드: 수정하기 / 오픈하러 가기, 편집 모드: 취소 / 저장하기 */}
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        {isCurrentlyOpen ? null : canEdit ? (
+        {isLocked ? null : canEdit ? (
           <>
             <button
               type="button"

@@ -8,14 +8,15 @@ import {
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
+  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
+  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
   LiveMentoringCategory,
   LiveMentoringDuration,
   LiveMentoringSettings,
-  LiveMentoringSettingsUpdate,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
@@ -32,15 +33,15 @@ const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
 
 /**
- * 저장 실패 사유를 사용자에게 그대로 보여준다.
+ * 저장·제출 실패 사유를 사용자에게 그대로 보여준다.
  *
  * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
  * `code`/`message`/`status` 를 **최상위 속성**으로 올린다(`error.response` 는 남지 않는다).
- * 이걸 감추고 "저장에 실패했습니다"만 띄우면 멘토도 개발자도 원인을 알 수 없다 —
- * 오픈 중 수정(`LIVE_MENTORING_LOCKED`)인지, 미지원 진행시간
- * (`INVALID_LIVE_MENTORING_DURATION`)인지, 서버 장애(`INTERNAL_SERVER_ERROR`)인지가 갈린다.
+ * 이걸 감추고 "실패했습니다"만 띄우면 멘토도 개발자도 원인을 알 수 없다 —
+ * 수정 잠금(`LIVE_MENTORING_LOCKED`)인지, 상태 전이 불가(`LIVE_MENTORING_INVALID_STATE`)인지,
+ * 미지원 진행시간(`INVALID_LIVE_MENTORING_DURATION`)인지가 갈린다.
  */
-const saveErrorDescription = (error: unknown): string | undefined => {
+const errorDescription = (error: unknown): string | undefined => {
   const apiError = error as { code?: string; message?: string } | null;
   if (!apiError?.message) return undefined;
   return apiError.code
@@ -48,21 +49,24 @@ const saveErrorDescription = (error: unknown): string | undefined => {
     : apiError.message;
 };
 
-/** PUT 요청은 이 6개 필드만 받는다 — nickname/profileImage/introduction/careers는 프로필 참조용. */
-const toUpdatePayload = (
-  form: LiveMentoringSettings,
-): LiveMentoringSettingsUpdate => ({
-  title: form.title ?? '',
-  isOpen: form.isOpen,
-  categories: form.categories,
-  durations: form.durations,
-  feedbackStartDate: form.feedbackStartDate ?? '',
-  feedbackEndDate: form.feedbackEndDate ?? '',
-});
+/** 다른 창에서 상태가 바뀐 경우 — 화면 값이 이미 낡았으므로 다시 읽어오게 안내한다. */
+const isStateConflict = (error: unknown) => {
+  const code = (error as { code?: string } | null)?.code;
+  return (
+    code === 'LIVE_MENTORING_INVALID_STATE' || code === 'LIVE_MENTORING_LOCKED'
+  );
+};
+
+const todayISO = () => new Date().toISOString().slice(0, 10);
 
 const OpenSettingsPage = () => {
-  const { data } = useLiveMentoringSettingsQuery();
-  const { mutate: save, isPending } = useUpdateLiveMentoringSettingsMutation();
+  const { data, refetch } = useLiveMentoringSettingsQuery();
+  // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
+  const { data: openings } = useLiveMentoringOpenStatusQuery();
+  const { mutate: save, isPending: isSaving } =
+    useUpdateLiveMentoringSettingsMutation();
+  const { mutate: submit, isPending: isSubmitting } =
+    useSubmitLiveMentoringMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
@@ -70,7 +74,7 @@ const OpenSettingsPage = () => {
   const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
-  // 변경사항(dirty) 판정을 위한 로드 원본.
+  // 제목·타입의 변경사항(dirty) 판정을 위한 로드 원본.
   const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
 
@@ -79,16 +83,6 @@ const OpenSettingsPage = () => {
     setForm(data);
     setOriginal(data);
   }, [data]);
-
-  // 오픈 중(잠금 상태)에는 배경 스크롤을 막는다.
-  useEffect(() => {
-    if (!form?.isOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [form?.isOpen]);
 
   if (!form || !original) {
     return (
@@ -101,7 +95,7 @@ const OpenSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringSettings>) =>
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  // 진행시간은 다중 선택이며 0개도 허용한다(단, 0개면 저장/오픈 불가).
+  // 진행시간은 다중 선택이며 0개도 허용한다(단, 0개면 제출 불가).
   const toggleDuration = (duration: LiveMentoringDuration) =>
     setForm((prev) => {
       if (!prev) return prev;
@@ -121,31 +115,48 @@ const OpenSettingsPage = () => {
       return { ...prev, categories };
     });
 
+  /*
+   * 잠금은 상품 상태가 결정한다. 서버 `LiveMentoring.isEditable()` 은
+   * "상태가 DRAFT/REJECTED" 이면서 "활성 개설 없음"을 함께 보는데,
+   * 활성 개설이 있는 상품은 반드시 APPROVED 라(개설 후에는 DRAFT 로 되돌릴 수 없다)
+   * 상태만 봐도 판정이 같아진다.
+   */
+  const status = form.status;
+  const isEditable =
+    status === null || status === 'DRAFT' || status === 'REJECTED';
+  const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
+
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
   const noDurationSelected = form.durations.length === 0;
   const noFeedbackDates = !form.feedbackStartDate || !form.feedbackEndDate;
-  const hasRequiredFields =
+  const endDatePassed =
+    !!form.feedbackEndDate && form.feedbackEndDate < todayISO();
+  const invertedPeriod =
+    !!form.feedbackStartDate &&
+    !!form.feedbackEndDate &&
+    form.feedbackStartDate > form.feedbackEndDate;
+
+  // 저장(PUT)이 받는 건 제목·타입뿐이라 dirty 판정도 그 둘만 본다.
+  const isDirty =
+    (form.title ?? '') !== (original.title ?? '') ||
+    JSON.stringify(form.categories) !== JSON.stringify(original.categories);
+  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
+  const canSubmit =
     !noTitleEntered &&
     !noCategorySelected &&
     !noDurationSelected &&
-    !noFeedbackDates;
-  const isCurrentlyOpen = form.isOpen;
-  const isDirty = JSON.stringify(form) !== JSON.stringify(original);
-  const canSave = hasRequiredFields && isDirty;
+    !noFeedbackDates &&
+    !endDatePassed &&
+    !invertedPeriod &&
+    !isDirty;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
   const representativeCareerId =
     form.careers.find((career) => career.isRepresentative)?.id ?? null;
 
-  /**
-   * 대표 경력 지정을 즉시 서버에 반영한다.
-   *
-   * 저장에 성공하면 `form`/`original` 의 careers 플래그를 **함께** 갱신한다.
-   * 한쪽만 바꾸면 오픈 설정에 변경사항이 생긴 것으로 오인해(`isDirty`)
-   * 버튼이 "오픈하기"에서 "저장"으로 바뀌어 버린다.
-   */
+  /** 대표 경력 지정을 즉시 서버에 반영한다. form/original 을 함께 갱신해 dirty 오인을 막는다. */
   const handleRepresentativeCareerChange = (careerId: number) => {
     const markRepresentative = (settings: LiveMentoringSettings) => ({
       ...settings,
@@ -163,58 +174,76 @@ const OpenSettingsPage = () => {
       onError: (error) =>
         showAlert({
           title: '대표 경력 지정에 실패했습니다.',
-          description: saveErrorDescription(error),
+          description: errorDescription(error),
           variant: 'error',
         }),
     });
   };
 
-  const persist = (
-    next: LiveMentoringSettings,
-    successTitle: string,
-    successDescription?: string,
-  ) =>
-    save(toUpdatePayload(next), {
-      // 저장 응답이 곧 서버의 최신 전체 상태(프로필 참조 필드 포함)라 그대로 반영한다.
-      onSuccess: (saved) => {
-        setForm(saved);
-        setOriginal(saved);
-        showAlert({
-          title: successTitle,
-          description: successDescription,
-          variant: 'success',
-        });
-      },
-      onError: (error) =>
-        showAlert({
-          title: '저장에 실패했습니다.',
-          description: saveErrorDescription(error),
-          variant: 'error',
-        }),
+  const handleMutationError = (title: string) => (error: unknown) => {
+    if (isStateConflict(error)) {
+      refetch();
+      showAlert({
+        title: '다른 곳에서 상태가 바뀌었습니다.',
+        description: '최신 상태를 다시 불러왔어요. 확인 후 다시 시도해주세요.',
+        variant: 'error',
+      });
+      return;
+    }
+    showAlert({
+      title,
+      description: errorDescription(error),
+      variant: 'error',
     });
+  };
 
+  /** 제목·타입 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
   const handleSave = () => {
     if (!canSave) return;
-    persist(form, '저장되었습니다.');
-  };
-
-  // 오픈하기 — 설정을 저장하면서 오픈 상태로 전환(이후 수정 잠금).
-  const handleOpen = () => {
-    if (!hasRequiredFields) return;
-    persist(
-      { ...form, isOpen: true },
-      '오픈되었습니다.',
-      '오픈 중에는 설정을 수정할 수 없습니다. 수정하려면 오픈을 닫아주세요.',
+    save(
+      { title: form.title ?? '', categories: form.categories },
+      {
+        onSuccess: (saved) => {
+          // 응답이 서버의 최신 전체 상태다. 다만 아직 제출하지 않은 진행시간·기간은
+          // 서버에 없으므로(빈 배열·null) 사용자가 입력해 둔 값을 덮어쓰지 않는다.
+          const merged: LiveMentoringSettings = {
+            ...saved,
+            durations: form.durations,
+            feedbackStartDate: form.feedbackStartDate,
+            feedbackEndDate: form.feedbackEndDate,
+          };
+          setForm(merged);
+          setOriginal(merged);
+          showAlert({ title: '저장되었습니다.', variant: 'success' });
+        },
+        onError: handleMutationError('저장에 실패했습니다.'),
+      },
     );
   };
 
-  // 오픈 닫기 — 오픈을 마감하고 다시 수정 가능 상태로 전환.
-  const handleCloseOpen = () =>
-    persist(
-      { ...form, isOpen: false },
-      '오픈을 닫았습니다.',
-      '진행 중인 예약은 유지되며, 이제 설정을 수정할 수 있습니다.',
+  /** 검토 제출. 진행시간·기간은 이 요청에서만 서버에 저장된다. */
+  const handleSubmitForReview = () => {
+    if (!canSubmit) return;
+    submit(
+      {
+        durations: form.durations,
+        feedbackStartDate: form.feedbackStartDate ?? '',
+        feedbackEndDate: form.feedbackEndDate ?? '',
+      },
+      {
+        onSuccess: () =>
+          showAlert({
+            title: '검토 제출이 완료되었습니다.',
+            description:
+              '관리자 승인 전까지 설정을 수정할 수 없어요. 승인되면 바로 오픈됩니다.',
+            variant: 'success',
+          }),
+        onError: handleMutationError('검토 제출에 실패했습니다.'),
+      },
     );
+  };
+
+  const isPending = isSaving || isSubmitting;
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -223,16 +252,46 @@ const OpenSettingsPage = () => {
           오픈 설정
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          1대1 라이브 멘토링 오픈에 필요한 타이틀·진행시간·타입을 설정하세요.
+          1대1 라이브 멘토링 오픈에 필요한 타이틀·타입·진행시간·기간을 설정하고
+          검토를 제출하세요.
         </p>
       </header>
 
       {/*
-        오픈 중 상태 배너.
-        오픈 중에도 멘토는 "내가 어떤 조건으로 열었는지" 확인해야 하므로 설정을 가리지 않고,
-        상태와 해제 방법만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
+        상태 배너.
+        잠긴 상태에서도 멘토는 "내가 어떤 조건으로 냈는지" 확인해야 하므로 설정을 가리지 않고,
+        상태와 다음 행동만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
       */}
-      {isCurrentlyOpen && (
+      {status === 'PENDING_REVIEW' && (
+        <div
+          role="status"
+          className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
+        >
+          <span className="text-sm font-semibold text-amber-700">
+            검토 대기
+          </span>
+          <p className="text-xs text-gray-600">
+            관리자 검토 중이에요. 승인되면 제출한 진행시간·기간으로 바로
+            오픈됩니다. 검토 중에는 설정을 수정할 수 없어요.
+          </p>
+        </div>
+      )}
+
+      {status === 'REJECTED' && (
+        <div
+          role="status"
+          className="border-system-error/30 flex flex-col gap-1 rounded-xl border bg-red-50 px-5 py-4"
+        >
+          <span className="text-system-error text-sm font-semibold">
+            반려됨
+          </span>
+          <p className="text-xs text-gray-600">
+            관리자가 반려했어요. 설정을 수정한 뒤 다시 검토를 제출해주세요.
+          </p>
+        </div>
+      )}
+
+      {status === 'APPROVED' && (
         <div
           role="status"
           className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -243,30 +302,27 @@ const OpenSettingsPage = () => {
                 className="bg-primary h-1.5 w-1.5 rounded-full"
                 aria-hidden="true"
               />
-              오픈 중
+              {currentOpening ? '오픈 중' : '승인됨'}
             </span>
             <p className="text-xs text-gray-600">
-              설정을 수정하려면 오픈을 닫아주세요. 진행 중인 예약은 유지됩니다.
+              {currentOpening
+                ? '오픈 중에는 설정을 수정할 수 없어요. 종료하려면 오픈 현황에서 개설을 종료해주세요.'
+                : '승인된 상품이에요. 현재 열려 있는 개설은 없습니다.'}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={handleCloseOpen}
-            disabled={isPending}
-            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          <Link
+            to="/live-mentoring/open-status"
+            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
           >
-            {isPending ? '처리 중...' : '오픈 닫기'}
-          </button>
+            오픈 현황 보기
+          </Link>
         </div>
       )}
 
       <div className="relative">
-        {/* 오픈 중에는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
+        {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
             키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
-        <fieldset
-          disabled={isCurrentlyOpen}
-          className="m-0 min-w-0 border-0 p-0"
-        >
+        <fieldset disabled={!isEditable} className="m-0 min-w-0 border-0 p-0">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             {/* 좌: 설정 패널 */}
             <div className="flex flex-col gap-6">
@@ -385,8 +441,8 @@ const OpenSettingsPage = () => {
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
                 <p className="mb-3 text-xs text-gray-500">
-                  멘토링(피드백)을 진행할 오픈 기간을 먼저 설정하세요. 오픈은
-                  하나만 가능합니다.
+                  멘토링(피드백)을 진행할 오픈 기간이에요. 이 값은 검토 제출과
+                  함께 저장됩니다.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <input
@@ -410,9 +466,24 @@ const OpenSettingsPage = () => {
                 </div>
                 {noFeedbackDates && (
                   <p role="alert" className="text-system-error mt-2 text-xs">
-                    시작일과 종료일을 모두 입력해야 저장할 수 있어요.
+                    시작일과 종료일을 모두 입력해야 제출할 수 있어요.
                   </p>
                 )}
+                {invertedPeriod && (
+                  <p role="alert" className="text-system-error mt-2 text-xs">
+                    시작일은 종료일보다 늦을 수 없어요.
+                  </p>
+                )}
+                {endDatePassed && (
+                  <p role="alert" className="text-system-error mt-2 text-xs">
+                    종료일이 이미 지났어요. 오늘 이후 날짜로 다시 잡아주세요.
+                  </p>
+                )}
+                {/* 공개 리스트는 오늘이 기간 안에 있을 때만 노출한다 — 승인만으로는 뜨지 않는다. */}
+                <p className="mt-2 text-xs text-gray-500">
+                  시작일이 오늘보다 늦으면 승인 후에도 시작일 전까지는 공개
+                  리스트에 보이지 않아요.
+                </p>
               </section>
 
               <section className={cardClass}>
@@ -456,12 +527,12 @@ const OpenSettingsPage = () => {
                       {formatPrice(getLowestPrice(form.durations))}
                     </span>{' '}
                     <span className="text-xs text-gray-400">
-                      (여러 개 선택 시 최저가로 노출)
+                      (가격은 서버 고정값이며 여러 개 선택 시 최저가로 노출)
                     </span>
                   </p>
                   {noDurationSelected && (
                     <p role="alert" className="text-system-error text-xs">
-                      진행시간을 최소 1개 이상 선택해야 저장할 수 있어요.
+                      진행시간을 최소 1개 이상 선택해야 제출할 수 있어요.
                     </p>
                   )}
                 </div>
@@ -501,28 +572,35 @@ const OpenSettingsPage = () => {
         </fieldset>
       </div>
 
-      {/* 하단 버튼: 오픈 중이면 숨김. 변경사항 있으면 저장, 없으면 오픈하기. */}
-      {!isCurrentlyOpen && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-          {isDirty ? (
+      {/*
+        하단 버튼. 저장(제목·타입)과 검토 제출(진행시간·기간)은 서로 다른 API 라 버튼도 나눈다.
+        하나로 합쳐 자동 연쇄 호출하면 둘 중 어느 쪽이 실패했는지 화면에서 알 수 없다.
+      */}
+      {isEditable && (
+        <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
+          {isDirty && (
+            <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
+              제목·타입을 바꿨어요. 먼저 저장해야 제출할 수 있어요.
+            </p>
+          )}
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={handleSave}
               disabled={isPending || !canSave}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isPending ? '저장 중...' : '저장'}
+              {isSaving ? '저장 중...' : '저장'}
             </button>
-          ) : (
             <button
               type="button"
-              onClick={handleOpen}
-              disabled={isPending || !hasRequiredFields}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleSubmitForReview}
+              disabled={isPending || !canSubmit}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isPending ? '처리 중...' : '오픈하기'}
+              {isSubmitting ? '제출 중...' : '검토 제출'}
             </button>
-          )}
+          </div>
         </div>
       )}
 

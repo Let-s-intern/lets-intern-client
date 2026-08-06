@@ -1,18 +1,34 @@
-import { useLiveMentoringOpenStatusQuery } from '@/api/live-mentoring/liveMentoring';
-import type { OpenStatusRow } from '@/api/live-mentoring/liveMentoringSchema';
-import { CATEGORY_LABELS, durationLabel, formatPrice } from '../constants';
+import {
+  useCloseLiveMentoringOpeningMutation,
+  useLiveMentoringOpenStatusQuery,
+} from '@/api/live-mentoring/liveMentoring';
+import type {
+  LiveMentoringCloseReason,
+  LiveMentoringOpeningStatus,
+  OpeningHistoryItem,
+} from '@/api/live-mentoring/liveMentoringSchema';
+import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { durationLabel, formatPrice } from '../constants';
 
-const STATUS_LABEL: Record<OpenStatusRow['status'], string> = {
+const STATUS_LABEL: Record<LiveMentoringOpeningStatus, string> = {
   OPEN: '오픈중',
-  CLOSED: '마감',
+  CLOSED: '종료',
 };
 
-const STATUS_CLASS: Record<OpenStatusRow['status'], string> = {
+const STATUS_CLASS: Record<LiveMentoringOpeningStatus, string> = {
   OPEN: 'bg-primary-10 text-primary',
   CLOSED: 'bg-gray-100 text-gray-500',
 };
 
-// 헤더는 "피드백 기간"·"예약 수"처럼 공백이 있어 좁은 열에서 두 줄로 쪼개진다.
+/** 서버 `LiveMentoringCloseReason` 표시 라벨. */
+const CLOSE_REASON_LABEL: Record<LiveMentoringCloseReason, string> = {
+  PERIOD_EXPIRED: '기간 만료',
+  ADMIN_FORCED: '관리자 종료',
+  MENTOR_CANCELED: '멘토 취소',
+};
+
+// 헤더는 "피드백 기간"처럼 공백이 있어 좁은 열에서 두 줄로 쪼개진다.
 const headerCellClass =
   'whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-gray-500';
 const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
@@ -24,15 +40,62 @@ const bodyCellClass = 'px-4 py-3 text-sm text-gray-700';
  */
 const atomicCellClass = `${bodyCellClass} whitespace-nowrap`;
 
-/**
- * 길어질 수 있는 한글 텍스트 셀 — 줄바꿈은 허용하되 **어절 단위로만** 끊는다.
- * `break-keep`(word-break: keep-all) 이 없으면 "자소서 실전 첨" / "삭 멘토링" 처럼
- * 단어 중간에서 잘린다.
- */
-const textCellClass = `${bodyCellClass} break-keep`;
+/** "2026-08-04T16:00:00" → "08-04 16:00". 값이 없으면 하이픈. */
+const formatDateTime = (value: string | null): string => {
+  if (!value) return '-';
+  const [date, time] = value.split('T');
+  return `${date.slice(5)} ${time?.slice(0, 5) ?? ''}`.trim();
+};
 
+/** 진행시간별 가격 표기 (예: "30분 35,000원 / 60분 60,000원"). */
+const durationPricesLabel = (
+  durationPrices: OpeningHistoryItem['durationPrices'],
+): string =>
+  durationPrices
+    .map(
+      ({ duration, price }) =>
+        `${durationLabel(duration)} ${formatPrice(price)}`,
+    )
+    .join(' / ');
+
+/**
+ * 오픈 현황 — 개설(opening) 이력.
+ *
+ * 상품이 아니라 개설 단위라 제목·타입은 여기에 실리지 않는다(상품에 하나뿐이라
+ * 오픈 설정 화면에서 본다). 예약 수도 서버 응답에 아직 없어 열을 두지 않는다 —
+ * 응답에 없는 값을 0으로 채워 보여주면 화면이 사실과 달라진다.
+ */
 const OpenStatusPage = () => {
   const { data, isLoading } = useLiveMentoringOpenStatusQuery();
+  const { mutate: closeOpening, isPending } =
+    useCloseLiveMentoringOpeningMutation();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
+
+  const handleClose = (openingId: number) =>
+    showConfirm({
+      title: '이 개설을 종료할까요?',
+      // 서버는 예약 존재 여부를 검사하지 않고 종료한다 — 화면 문구도 그대로 적는다.
+      description:
+        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.',
+      confirmText: '종료하기',
+      // 확인 모달은 onConfirm 후에도 닫히지 않는다(공용 훅 동작) — 연타로 두 번 나가지 않게 막는다.
+      onConfirm: () =>
+        isPending
+          ? undefined
+          : closeOpening(openingId, {
+              onSuccess: () =>
+                showAlert({
+                  title: '개설을 종료했습니다.',
+                  variant: 'success',
+                }),
+              onError: (error) =>
+                showAlert({
+                  title: '종료에 실패했습니다.',
+                  description: (error as { message?: string } | null)?.message,
+                  variant: 'error',
+                }),
+            }),
+    });
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -41,36 +104,33 @@ const OpenStatusPage = () => {
           오픈 현황
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          내가 오픈한 1대1 라이브 멘토링의 상태와 예약 수를 확인하세요.
-        </p>
-        {/* 예약/결제 시스템이 아직 없어 서버가 예약 수를 항상 0으로 준다 — 의도된 한계. */}
-        <p className="text-xs text-gray-400">
-          * 예약 수는 예약 시스템 연동 전까지 0으로 표시됩니다.
+          내가 개설한 1대1 라이브 멘토링의 이력과 상태를 확인하세요.
         </p>
       </header>
 
       {/*
-        표가 `min-w-[560px]` 라 좁은 화면에서는 컨테이너를 넘친다.
+        표가 `min-w-[720px]` 라 좁은 화면에서는 컨테이너를 넘친다.
         `overflow-hidden` 이면 넘친 열이 잘린 채 접근할 방법이 없으므로 가로 스크롤을 준다.
       */}
       <div className="overflow-x-auto rounded-xl border border-gray-200">
-        <table className="w-full min-w-[560px]">
+        <table className="w-full min-w-[720px]">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              <th className={headerCellClass}>타이틀</th>
-              <th className={headerCellClass}>카테고리</th>
-              <th className={headerCellClass}>진행시간</th>
-              <th className={headerCellClass}>피드백 기간</th>
-              <th className={headerCellClass}>가격</th>
+              <th className={headerCellClass}>개설 번호</th>
               <th className={headerCellClass}>상태</th>
-              <th className={headerCellClass}>예약 수</th>
+              <th className={headerCellClass}>진행시간·가격</th>
+              <th className={headerCellClass}>피드백 기간</th>
+              <th className={headerCellClass}>개설일시</th>
+              <th className={headerCellClass}>종료일시</th>
+              <th className={headerCellClass}>종료 사유</th>
+              <th className={headerCellClass}>관리</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -79,46 +139,65 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
-                  오픈한 멘토링이 없습니다.
+                  개설 이력이 없습니다. 오픈 설정에서 검토를 제출해주세요.
                 </td>
               </tr>
             ) : (
-              data.map((row, index) => (
+              data.map((opening) => (
                 <tr
-                  key={`${row.categories.join()}-${index}`}
+                  key={opening.openingId}
                   className="border-b border-gray-100 last:border-b-0"
                 >
-                  <td className={textCellClass}>{row.title}</td>
-                  <td className={textCellClass}>
-                    {row.categories.map((c) => CATEGORY_LABELS[c]).join(' · ')}
-                  </td>
-                  <td className={atomicCellClass}>
-                    {row.durations.map(durationLabel).join('·')}
-                  </td>
-                  <td className={atomicCellClass}>
-                    {`${row.feedbackStartDate.slice(5)} ~ ${row.feedbackEndDate.slice(5)}`}
-                  </td>
-                  <td className={atomicCellClass}>
-                    {row.durations.length > 1 ? '최저 ' : ''}
-                    {formatPrice(row.price)}
-                  </td>
+                  <td className={atomicCellClass}>{opening.openingId}</td>
                   <td className={bodyCellClass}>
                     <span
-                      className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[row.status]}`}
+                      className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[opening.status]}`}
                     >
-                      {STATUS_LABEL[row.status]}
+                      {STATUS_LABEL[opening.status]}
                     </span>
                   </td>
-                  <td className={atomicCellClass}>{row.reservationCount}건</td>
+                  <td className={atomicCellClass}>
+                    {durationPricesLabel(opening.durationPrices)}
+                  </td>
+                  <td className={atomicCellClass}>
+                    {`${opening.feedbackStartDate.slice(5)} ~ ${opening.feedbackEndDate.slice(5)}`}
+                  </td>
+                  <td className={atomicCellClass}>
+                    {formatDateTime(opening.openedAt)}
+                  </td>
+                  <td className={atomicCellClass}>
+                    {formatDateTime(opening.closedAt)}
+                  </td>
+                  <td className={atomicCellClass}>
+                    {opening.closeReason
+                      ? CLOSE_REASON_LABEL[opening.closeReason]
+                      : '-'}
+                  </td>
+                  <td className={bodyCellClass}>
+                    {opening.status === 'OPEN' ? (
+                      <button
+                        type="button"
+                        onClick={() => handleClose(opening.openingId)}
+                        disabled={isPending}
+                        className="text-system-error whitespace-nowrap rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        종료하기
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-400">-</span>
+                    )}
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <MentorAlertModal {...alertProps} />
     </div>
   );
 };
