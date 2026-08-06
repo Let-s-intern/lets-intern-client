@@ -88,11 +88,45 @@ const compareNullable = (
   return a < b ? -direction : a > b ? direction : 0;
 };
 
+/** 신청서 ID 는 고유하다. 정렬의 마지막 키로 두면 순서가 한 가지로 정해진다. */
+const compareId = (a: AccessLogRow, b: AccessLogRow, direction: 1 | -1) =>
+  (a.applicationId - b.applicationId) * direction;
+
+/** 앞 비교가 동률이면 다음으로 넘긴다. */
+const chain =
+  (...comparators: ((a: AccessLogRow, b: AccessLogRow) => number)[]) =>
+  (a: AccessLogRow, b: AccessLogRow) => {
+    for (const compare of comparators) {
+      const result = compare(a, b);
+      if (result !== 0) return result;
+    }
+    return 0;
+  };
+
+/**
+ * 정렬은 반드시 **고유 키로 끝난다**(서버와 같은 규칙).
+ *
+ * 마지막 키가 고유하지 않으면 동률 행들의 순서가 매 조회마다 달라진다. 페이지네이션은
+ * 정렬 결과를 잘라 내는 방식이라, 순서가 흔들리면 **어떤 행은 두 페이지에 나오고 어떤 행은
+ * 어느 페이지에도 안 나온다.** 실제로 1페이지와 2페이지가 같아 보이는 제보로 드러났다.
+ *
+ * 목이 이 결함을 함께 갖고 있으면 목으로 개발하는 동안 영원히 보이지 않는다.
+ * 실서버에 붙여야만 드러나는 버그를 목이 가려 주는 셈이라 목의 존재 이유와 반대다.
+ */
 const SORTERS: Record<string, (a: AccessLogRow, b: AccessLogRow) => number> = {
-  LAST_ACCESSED_DESC: (a, b) =>
-    compareNullable(a.lastAccessedAt, b.lastAccessedAt, -1),
-  PAID_DESC: (a, b) => compareNullable(a.paidAt, b.paidAt, -1),
-  PAID_ASC: (a, b) => compareNullable(a.paidAt, b.paidAt, 1),
+  LAST_ACCESSED_DESC: chain(
+    (a, b) => compareNullable(a.lastAccessedAt, b.lastAccessedAt, -1),
+    (a, b) => compareNullable(a.paidAt, b.paidAt, -1),
+    (a, b) => compareId(a, b, -1),
+  ),
+  PAID_DESC: chain(
+    (a, b) => compareNullable(a.paidAt, b.paidAt, -1),
+    (a, b) => compareId(a, b, -1),
+  ),
+  PAID_ASC: chain(
+    (a, b) => compareNullable(a.paidAt, b.paidAt, 1),
+    (a, b) => compareId(a, b, 1),
+  ),
 };
 
 export const accessLogHandlers = [

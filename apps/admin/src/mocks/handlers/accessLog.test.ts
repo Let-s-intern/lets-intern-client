@@ -477,3 +477,96 @@ describe('목록과 상세의 정합성', () => {
     expect(new Date(detail.lastAccessedAt!).getTime()).toBe(Math.max(...times));
   });
 });
+
+describe('페이지네이션 안정성', () => {
+  /*
+    정렬이 고유 키로 끝나지 않으면 동률 행의 순서가 조회마다 달라진다. 페이지네이션은
+    정렬 결과를 잘라 내므로, 순서가 흔들리면 어떤 행은 두 페이지에 나오고 어떤 행은
+    어느 페이지에도 안 나온다. 1페이지와 2페이지가 같아 보인다는 제보로 드러난 결함이다.
+  */
+  const SORTS = ['LAST_ACCESSED_DESC', 'PAID_DESC', 'PAID_ASC'];
+
+  it.each(SORTS)('%s — 페이지 사이에 겹치는 행이 없다', async (sort) => {
+    const first = await fetchAccessLogs(`?sort=${sort}&page=0&size=3`);
+    const second = await fetchAccessLogs(`?sort=${sort}&page=1&size=3`);
+
+    const overlap = idsOf(first).filter((id) => idsOf(second).includes(id));
+
+    expect(overlap).toEqual([]);
+  });
+
+  it.each(SORTS)('%s — 전 페이지를 이으면 전체와 같다', async (sort) => {
+    // 겹침만 보면 누락을 놓친다. 빠진 행은 어느 페이지에도 안 나온다.
+    const all = await fetchAccessLogs(`?sort=${sort}&size=100`);
+    const total = all.pageInfo.totalElements;
+
+    const collected: number[] = [];
+    for (let page = 0; page * 3 < total; page += 1) {
+      const chunk = await fetchAccessLogs(`?sort=${sort}&page=${page}&size=3`);
+      collected.push(...idsOf(chunk));
+    }
+
+    expect(collected).toHaveLength(total);
+    expect([...collected].sort()).toEqual([...idsOf(all)].sort());
+  });
+
+  it.each(SORTS)('%s — 같은 조회를 반복해도 순서가 같다', async (sort) => {
+    const once = await fetchAccessLogs(`?sort=${sort}&size=100`);
+    const twice = await fetchAccessLogs(`?sort=${sort}&size=100`);
+
+    expect(idsOf(once)).toEqual(idsOf(twice));
+  });
+
+  it('정렬을 지정하지 않아도 순서가 정해진다', async () => {
+    const first = await fetchAccessLogs('?page=0&size=3');
+    const second = await fetchAccessLogs('?page=1&size=3');
+
+    expect(idsOf(first).filter((id) => idsOf(second).includes(id))).toEqual([]);
+  });
+
+  it('이용 기록이 없는 건은 최근 이용순에서 뒤로 밀린다', async () => {
+    // 서버가 NULL 을 내림차순 뒤로 보내는 것과 같아야 한다.
+    const rows = (await fetchAccessLogs('?sort=LAST_ACCESSED_DESC&size=100'))
+      .accessLogList;
+
+    const lastAccessedIndexes = rows.map((row) => Boolean(row.lastAccessedAt));
+    const firstEmpty = lastAccessedIndexes.indexOf(false);
+
+    if (firstEmpty !== -1) {
+      expect(lastAccessedIndexes.slice(firstEmpty)).not.toContain(true);
+    }
+  });
+});
+
+describe('동률 행의 순서 규칙', () => {
+  /*
+    겹침·누락 테스트만으로는 tie-breaker 가 있는지 알 수 없다. JS 의 Array.sort 는
+    안정 정렬이고 시드가 고정 배열이라, 비교자가 0 을 돌려줘도 순서가 그대로 유지된다.
+    즉 tie-breaker 를 지워도 그 테스트들은 통과한다.
+
+    그래서 순서 자체를 단언한다. 서버가 쓰는 규칙과 같은 결과여야 한다.
+  */
+
+  it('최근 이용순 — 이용 기록이 없는 건끼리는 결제일 최신순이다', async () => {
+    const rows = (await fetchAccessLogs('?sort=LAST_ACCESSED_DESC&size=100'))
+      .accessLogList;
+
+    const unusedIds = rows
+      .filter((row) => !row.lastAccessedAt)
+      .map((row) => row.applicationId);
+
+    // 결제일 desc: 6003(2일 전) → 6004(20일) → 6002(90일) → 6008(결제일 없음)
+    // tie-breaker 가 없으면 시드 순서(6002, 6003, 6004, 6008)가 그대로 나온다.
+    expect(unusedIds).toEqual([6003, 6004, 6002, 6008]);
+  });
+
+  it('결제일 정렬은 오름차순과 내림차순이 서로 뒤집힌 결과다', async () => {
+    const desc = await fetchAccessLogs('?sort=PAID_DESC&size=100');
+    const asc = await fetchAccessLogs('?sort=PAID_ASC&size=100');
+
+    // 결제일을 아는 건만 본다. 없는 건의 자리는 방향과 무관하게 뒤다.
+    const known = (list: number[]) => list.filter((id) => id !== 6008);
+
+    expect(known(idsOf(desc))).toEqual([...known(idsOf(asc))].reverse());
+  });
+});
