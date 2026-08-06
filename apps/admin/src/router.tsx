@@ -19,6 +19,9 @@ const ProgramUsers = lazy(() => import('./pages/pages/program/ProgramUsers'));
 const RefundHistoryPage = lazy(
   () => import('./pages/pages/refund/RefundHistoryPage'),
 );
+const UsageHistoryPage = lazy(
+  () => import('./pages/pages/usage/UsageHistoryPage'),
+);
 
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
@@ -387,6 +390,10 @@ export const router = createBrowserRouter([
         // 프로그램별로 흩으면 전체 현황을 볼 수 없다.
         path: '/refund-history',
         element: withSuspense(<RefundHistoryPage />),
+      },
+      {
+        path: '/usage-history',
+        element: withSuspense(<UsageHistoryPage />),
       },
       { path: '/users', element: withSuspense(<AdminUsersPage />) },
       { path: '/users/:userId', element: withSuspense(<UserDetail />) },
