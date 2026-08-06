@@ -9,6 +9,11 @@ let queryState: { data?: OpeningHistoryItem[]; isLoading: boolean } = {
   isLoading: false,
 };
 
+// 공개 페이지 링크가 mentorId 를 필요로 한다.
+vi.mock('@/api/user/user', () => ({
+  useUserQuery: () => ({ data: { userId: 500 } }),
+}));
+
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringOpenStatusQuery: () => queryState,
   useCloseLiveMentoringOpeningMutation: () => ({
@@ -54,7 +59,8 @@ describe('OpenStatusPage', () => {
 
     expect(screen.getByText('60분 60,000원')).toBeInTheDocument();
     expect(screen.getByText('30분 35,000원')).toBeInTheDocument();
-    expect(screen.getByText('102')).toBeInTheDocument();
+    // 서버 개설 id 는 전역 PK 라 멘토에게 의미가 없다 — 표에 내보내지 않는다.
+    expect(screen.queryByText('102')).not.toBeInTheDocument();
   });
 
   // 이전에는 "{시작} ~" 와 "{종료}" 가 별도 텍스트 노드라 좁은 열에서 중간이 끊겼다.

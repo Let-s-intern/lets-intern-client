@@ -56,8 +56,8 @@ const navItems: NavItem[] = [
         name: '상세 페이지 설정',
         url: '/live-mentoring/detail-settings',
       },
-      { type: 'leaf', name: '정산 현황', url: '/live-mentoring/settlement' },
       { type: 'leaf', name: '오픈 현황', url: '/live-mentoring/open-status' },
+      { type: 'leaf', name: '정산 현황', url: '/live-mentoring/settlement' },
     ],
   },
   // [임시 숨김] 참여중인 챌린지 (dusvlf111, 2026-07-17)

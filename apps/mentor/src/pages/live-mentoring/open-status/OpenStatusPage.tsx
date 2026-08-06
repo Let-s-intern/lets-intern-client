@@ -7,9 +7,10 @@ import type {
   LiveMentoringOpeningStatus,
   OpeningHistoryItem,
 } from '@/api/live-mentoring/liveMentoringSchema';
+import { useUserQuery } from '@/api/user/user';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import { durationLabel, formatPrice } from '../constants';
+import { durationLabel, formatPrice, publicDetailUrl } from '../constants';
 
 const STATUS_LABEL: Record<LiveMentoringOpeningStatus, string> = {
   OPEN: '오픈중',
@@ -69,6 +70,8 @@ const OpenStatusPage = () => {
   const { data, isLoading } = useLiveMentoringOpenStatusQuery();
   const { mutate: closeOpening, isPending } =
     useCloseLiveMentoringOpeningMutation();
+  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
+  const { data: user } = useUserQuery();
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const handleClose = (openingId: number) =>
@@ -106,6 +109,20 @@ const OpenStatusPage = () => {
         <p className="text-xsmall14 text-neutral-40">
           내가 개설한 1대1 라이브 멘토링의 이력과 상태를 확인하세요.
         </p>
+        {/*
+          공개 페이지 링크는 이 화면에 둔다.
+          "지금 열려 있는지"가 표에 이미 나와 있어, 링크와 상태를 한자리에서 볼 수 있다.
+        */}
+        {user?.userId != null && (
+          <a
+            href={publicDetailUrl(user.userId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary text-xsmall14 w-fit font-medium underline"
+          >
+            공개 페이지 보기
+          </a>
+        )}
       </header>
 
       {/*
@@ -113,10 +130,9 @@ const OpenStatusPage = () => {
         `overflow-hidden` 이면 넘친 열이 잘린 채 접근할 방법이 없으므로 가로 스크롤을 준다.
       */}
       <div className="overflow-x-auto rounded-xl border border-gray-200">
-        <table className="w-full min-w-[720px]">
+        <table className="w-full min-w-[640px]">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              <th className={headerCellClass}>개설 번호</th>
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>진행시간·가격</th>
               <th className={headerCellClass}>피드백 기간</th>
@@ -130,7 +146,7 @@ const OpenStatusPage = () => {
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   불러오는 중...
@@ -139,7 +155,7 @@ const OpenStatusPage = () => {
             ) : !data || data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
                   개설 이력이 없습니다. 오픈 설정에서 검토를 제출해주세요.
@@ -151,7 +167,6 @@ const OpenStatusPage = () => {
                   key={opening.openingId}
                   className="border-b border-gray-100 last:border-b-0"
                 >
-                  <td className={atomicCellClass}>{opening.openingId}</td>
                   <td className={bodyCellClass}>
                     <span
                       className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[opening.status]}`}

@@ -137,7 +137,7 @@ const AdminLiveMentoringTable = () => {
               <th className={headerCellClass}>타입</th>
               <th className={headerCellClass}>상세</th>
               <th className={headerCellClass}>현재 개설</th>
-              <th className={headerCellClass}>승인</th>
+              <th className={headerCellClass}>최근 승인</th>
               <th className={headerCellClass}>최종 수정</th>
               <th className={headerCellClass}>관리</th>
             </tr>
@@ -250,12 +250,18 @@ const AdminLiveMentoringTable = () => {
                         <span className="text-neutral-40">없음</span>
                       )}
                     </td>
+                    {/*
+                      승인 이력은 상태와 별개로 남는다. 재제출한 상품은 "검토 대기"인데도
+                      과거 승인 일시가 찍혀 있어, 그냥 "승인"이라고 두면 이미 승인된 것처럼
+                      읽힌다. 지금 상태가 승인이 아닐 때는 지난 이력임을 밝힌다.
+                    */}
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
                       {row.approvedAt ? (
                         <div className="flex flex-col gap-0.5">
                           <span>{formatDateTime(row.approvedAt)}</span>
                           <span className="text-neutral-40 text-xs">
-                            승인자 #{row.approvedByUserId ?? '-'}
+                            관리자 #{row.approvedByUserId ?? '-'}
+                            {row.status !== 'APPROVED' && ' · 지난 이력'}
                           </span>
                         </div>
                       ) : (

@@ -76,8 +76,12 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
         </ul>
 
         <div className="text-xsmall14 md:text-xsmall16 flex flex-wrap items-center gap-x-5 gap-y-2">
-          {/* 후기가 없으면 서버 평점이 null 이다 — 별점을 0.0 으로 꾸미지 않고 통째로 뺀다. */}
-          {detail.rating !== null && (
+          {/*
+            후기가 없으면 별점을 아예 빼고 "후기 0건"만 남긴다.
+            서버는 평점을 null 로 줄 때도, 0.0 으로 줄 때도 있어 둘 다 걸러낸다 —
+            ★★★★★ 옆의 (0.0) 은 "최악의 평점"으로 읽힌다.
+          */}
+          {detail.rating !== null && detail.reviewCount > 0 && (
             <span className="flex items-center gap-1.5">
               <span className="text-[#FFB800]" aria-hidden="true">
                 ★★★★★

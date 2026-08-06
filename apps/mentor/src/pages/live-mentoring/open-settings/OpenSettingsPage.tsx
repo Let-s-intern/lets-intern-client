@@ -347,21 +347,6 @@ const OpenSettingsPage = () => {
           1대1 라이브 멘토링 오픈에 필요한 타이틀·타입·진행시간·기간을 설정하고
           검토를 제출하세요.
         </p>
-        {/*
-          공개 페이지 미리보기.
-          공개 상세는 승인 여부를 따지지 않으므로 검토 전에도 결과물을 볼 수 있다.
-          다만 목록 노출은 승인·개설·기간을 모두 만족해야 하므로 그 차이를 함께 적는다.
-        */}
-        {user?.userId != null && (
-          <a
-            href={publicDetailUrl(user.userId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary text-xsmall14 w-fit font-medium underline"
-          >
-            공개 페이지 미리보기 (승인 전에도 열려요 · 목록 노출은 승인 후)
-          </a>
-        )}
       </header>
 
       {/*
