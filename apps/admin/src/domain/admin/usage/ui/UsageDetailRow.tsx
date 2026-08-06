@@ -96,21 +96,22 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
    * 특히 조회 실패가 `내역 없음` 으로 보이면 없는 것과 못 읽은 것이 같아진다.
    */
   const body = isLoading ? (
-    <p className="text-neutral-500">상세 내역을 불러오는 중...</p>
+    <p className="text-neutral-35">상세 내역을 불러오는 중...</p>
   ) : isError ? (
-    <p className="text-neutral-500">
+    <p className="text-neutral-35">
       상세 내역을 불러오지 못했습니다 (확인 불가).
     </p>
   ) : details.length === 0 ? (
-    <p className="text-neutral-500">{emptyDetailText(status)}</p>
+    <p className="text-neutral-35">{emptyDetailText(status)}</p>
   ) : (
     <table className="w-full border-collapse">
       <thead>
-        <tr className="border-b text-left text-neutral-500">
-          <th className="px-3 py-1 font-normal">항목</th>
-          <th className="px-3 py-1 font-normal">최초 이용</th>
-          <th className="px-3 py-1 font-normal">최근 이용</th>
-          <th className="px-3 py-1 text-right font-normal">횟수</th>
+        {/* 목록 표 헤더와 같은 위계로 읽히게 한다. 흐리게 두면 상세가 부록처럼 보인다. */}
+        <tr className="border-neutral-75 text-neutral-20 border-b text-left">
+          <th className="px-3 py-1.5 font-medium">항목</th>
+          <th className="px-3 py-1.5 font-medium">최초 이용</th>
+          <th className="px-3 py-1.5 font-medium">최근 이용</th>
+          <th className="px-3 py-1.5 text-right font-medium">횟수</th>
         </tr>
       </thead>
       <tbody>
@@ -137,9 +138,17 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
   );
 
   return (
-    <tr id={id} className="border-b bg-neutral-50">
-      <td colSpan={colSpan} className="px-6 py-3 text-xs">
-        {body}
+    /*
+      배경을 어둡게 해서 계층을 만들지 않는다. 펼침 영역은 본문의 일부지 별개 블록이 아니다.
+      종속 관계는 왼쪽 보더와 들여쓰기로 나타낸다.
+
+      이 프로젝트의 neutral 스케일은 뒤집혀 있다 — `neutral-0` 이 가장 어둡고(#27272D)
+      `neutral-100` 이 가장 밝다(#FAFAFA). 여느 Tailwind 감각으로 `bg-neutral-50` 을 쓰면
+      거의 흰색이 아니라 중간 회색(#ACAFB6)이 깔려 글자가 묻힌다.
+    */
+    <tr id={id} className="bg-neutral-95 border-b">
+      <td colSpan={colSpan} className="px-6 py-3 text-sm">
+        <div className="border-neutral-75 border-l-2 pl-4">{body}</div>
       </td>
     </tr>
   );
