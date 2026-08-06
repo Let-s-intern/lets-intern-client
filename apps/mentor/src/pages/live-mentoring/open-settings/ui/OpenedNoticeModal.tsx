@@ -6,7 +6,7 @@ interface OpenedNoticeModalProps {
   isOpen: boolean;
   /** 공개 상세 페이지 주소. 멘토가 바로 열어 확인한다. */
   publicUrl: string;
-  /** 방금 만들어진 개설. "바로 내리기"가 이 개설을 종료한다. */
+  /** 방금 만들어진 개설. "바로 종료하기"가 이 개설을 종료한다. */
   onCloseOpening: () => void;
   isClosing: boolean;
   onDismiss: () => void;
@@ -21,7 +21,7 @@ interface OpenedNoticeModalProps {
  *
  * 이 모달이 하는 일은 두 가지다.
  *  1. 지금 공개됐다는 사실과 확인할 주소를 준다.
- *  2. 이상하면 여기서 곧바로 내릴 수 있게 한다 — 오픈 현황 화면까지 찾아가지 않아도 된다.
+ *  2. 이상하면 여기서 곧바로 종료할 수 있게 한다 — 오픈 현황 화면까지 찾아가지 않아도 된다.
  */
 const OpenedNoticeModal = ({
   isOpen,
@@ -73,7 +73,7 @@ const OpenedNoticeModal = ({
             </h3>
             <p className="text-sm text-neutral-500">
               공개 리스트에 노출되고 멘티가 슬롯을 예약할 수 있어요. 상세
-              페이지가 의도대로 보이는지 확인하고, 이상하면 바로 내리세요.
+              페이지가 의도대로 보이는지 확인하고, 이상하면 바로 종료하세요.
             </p>
           </div>
 
@@ -107,7 +107,7 @@ const OpenedNoticeModal = ({
               disabled={isClosing}
               className="text-system-error flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isClosing ? '내리는 중...' : '바로 내리기'}
+              {isClosing ? '종료하는 중...' : '바로 종료하기'}
             </button>
             <button
               type="button"

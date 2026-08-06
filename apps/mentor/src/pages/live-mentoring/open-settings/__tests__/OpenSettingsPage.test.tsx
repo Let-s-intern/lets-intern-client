@@ -475,7 +475,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
   });
 
-  it('안내에서 바로 내리면 방금 만든 개설을 종료한다', () => {
+  it('안내에서 바로 종료하면 방금 만든 오픈을 종료한다', () => {
     reopenMock.mockImplementation((_body, options) =>
       options?.onSuccess?.({
         liveMentoringId: 1,
@@ -488,7 +488,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
     passPreOpenCheck('오픈하기');
-    fireEvent.click(screen.getByRole('button', { name: '바로 내리기' }));
+    fireEvent.click(screen.getByRole('button', { name: '바로 종료하기' }));
 
     expect(closeOpeningMock).toHaveBeenCalledTimes(1);
     expect(closeOpeningMock.mock.calls[0][0]).toBe(777);

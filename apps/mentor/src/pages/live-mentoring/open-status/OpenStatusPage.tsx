@@ -12,9 +12,10 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { durationLabel, formatPrice, publicDetailUrl } from '../constants';
 
+/** 다른 화면(오픈 설정·상세 설정)과 같은 말을 쓴다. 같은 상태를 화면마다 다르게 부르면 안 된다. */
 const STATUS_LABEL: Record<LiveMentoringOpeningStatus, string> = {
-  OPEN: '오픈중',
-  CLOSED: '종료',
+  OPEN: '오픈 중',
+  CLOSED: '종료됨',
 };
 
 const STATUS_CLASS: Record<LiveMentoringOpeningStatus, string> = {
@@ -76,7 +77,7 @@ const OpenStatusPage = () => {
 
   const handleClose = (openingId: number) =>
     showConfirm({
-      title: '이 개설을 종료할까요?',
+      title: '이 오픈을 종료할까요?',
       // 서버는 예약 존재 여부를 검사하지 않고 종료한다 — 화면 문구도 그대로 적는다.
       description:
         '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.',
@@ -107,7 +108,7 @@ const OpenStatusPage = () => {
           오픈 현황
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          내가 개설한 1대1 라이브 멘토링의 이력과 상태를 확인하세요.
+          지금까지 오픈한 1대1 라이브 멘토링의 이력과 상태를 확인하세요.
         </p>
         {/*
           공개 페이지 링크는 이 화면에 둔다.
@@ -136,7 +137,7 @@ const OpenStatusPage = () => {
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>진행시간·가격</th>
               <th className={headerCellClass}>피드백 기간</th>
-              <th className={headerCellClass}>개설일시</th>
+              <th className={headerCellClass}>오픈일시</th>
               <th className={headerCellClass}>종료일시</th>
               <th className={headerCellClass}>종료 사유</th>
               <th className={headerCellClass}>관리</th>

@@ -77,8 +77,8 @@ describe('OpenStatusPage', () => {
     queryState = { data: openings, isLoading: false };
     render(<OpenStatusPage />);
 
-    expect(screen.getByText('오픈중')).toBeInTheDocument();
-    expect(screen.getByText('종료')).toBeInTheDocument();
+    expect(screen.getByText('오픈 중')).toBeInTheDocument();
+    expect(screen.getByText('종료됨')).toBeInTheDocument();
     expect(screen.getByText('멘토 취소')).toBeInTheDocument();
   });
 

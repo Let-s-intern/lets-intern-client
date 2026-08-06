@@ -280,9 +280,9 @@ const OpenSettingsPage = () => {
       {
         onSuccess: () =>
           showAlert({
-            title: '오픈했어요.',
+            title: '오픈을 처리하고 있어요.',
             description:
-              '설정한 조건으로 모집이 시작됩니다. 오픈 중에는 설정을 수정할 수 없어요.',
+              '곧 모집이 시작됩니다. 처리 중에는 설정을 수정할 수 없어요.',
             variant: 'success',
           }),
         onError: handleMutationError('오픈에 실패했습니다.'),
@@ -313,13 +313,12 @@ const OpenSettingsPage = () => {
           if (opened) setOpenedOpeningId(opened.openingId);
           else
             showAlert({
-              title: '다시 오픈했습니다.',
-              description:
-                '오늘이 설정한 기간 안이면 공개 리스트에 바로 노출됩니다.',
+              title: '오픈했어요.',
+              description: '설정한 기간 안이면 지금부터 모집이 시작됩니다.',
               variant: 'success',
             });
         },
-        onError: handleMutationError('재오픈에 실패했습니다.'),
+        onError: handleMutationError('오픈에 실패했습니다.'),
       },
     );
   };
@@ -426,7 +425,7 @@ const OpenSettingsPage = () => {
             </span>
             <p className="text-xs text-gray-600">
               {currentOpening
-                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 종료하려면 오픈 현황에서 개설을 종료해주세요.'
+                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 오픈 현황에서 종료하면 다시 고칠 수 있습니다.'
                 : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.'}
             </p>
           </div>
@@ -748,7 +747,7 @@ const OpenSettingsPage = () => {
                   disabled={isPending || !canReopenNow}
                   className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isReopening ? '오픈 중...' : '다시 오픈하기'}
+                  {isReopening ? '오픈하는 중...' : '다시 오픈하기'}
                 </button>
               </>
             ) : (
@@ -820,13 +819,13 @@ const OpenSettingsPage = () => {
               onSuccess: () => {
                 setOpenedOpeningId(null);
                 showAlert({
-                  title: '오픈을 내렸습니다.',
+                  title: '오픈을 종료했습니다.',
                   description:
                     '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
                   variant: 'success',
                 });
               },
-              onError: handleMutationError('오픈을 내리지 못했습니다.'),
+              onError: handleMutationError('오픈을 종료하지 못했습니다.'),
             });
           }}
         />
