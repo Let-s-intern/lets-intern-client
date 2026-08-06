@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'msw';
 
+import { accessLogHandlers } from './accessLog';
 import { adminFeedbackHandlers } from './adminFeedback';
 import { adminParticipantHandlers, adminRefundHandlers } from './adminRefund';
 
@@ -15,4 +16,5 @@ export const handlers: RequestHandler[] = [
   ...adminFeedbackHandlers,
   ...adminRefundHandlers,
   ...adminParticipantHandlers,
+  ...accessLogHandlers,
 ];
