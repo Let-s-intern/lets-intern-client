@@ -28,6 +28,19 @@ const BASE = '*/api/v1';
  */
 const MOCK_CANCELED_APPLICATION_IDS = new Set([6004]);
 
+/**
+ * 목록에서 빼는 프로그램 타입.
+ *
+ * 서버가 목록 쿼리에서 LIVE·REPORT 를 걸러 낸다. 적재 대상이 아니라 이용 여부를 말할 수
+ * 없는 타입이라 아예 내려보내지 않는다. 단건 조회는 다르다 — 존재하는 신청서에 404 를
+ * 주는 것이 더 나쁜 거짓말이라 거르지 않고, 화면이 `집계 대상 아님` 으로 답한다.
+ *
+ * 목이 이 차이를 흉내 내지 않으면 목록에 없어야 할 행이 보이고, `미이용` 으로 조회했을 때
+ * 그 행이 결과에 섞인다. 목으로 QA 하는 동안 실서버에 없는 상태를 정상으로 보게 된다.
+ * 시드에는 LIVE 행을 그대로 둔다 — 단건·환불 모달 경로에서는 서버도 내려주기 때문이다.
+ */
+const LIST_EXCLUDED_PROGRAM_TYPES = new Set(['LIVE', 'REPORT']);
+
 /** 날짜 범위는 날짜까지만 본다(`2026-08-06T09:00:00` → `2026-08-06`). 경계는 포함이다. */
 const dateOf = (value: string | null | undefined) =>
   value?.slice(0, 10) ?? null;
@@ -101,6 +114,10 @@ export const accessLogHandlers = [
 
     // 모든 조건은 AND 다. 하나라도 어긋나면 행이 빠진다.
     const filtered = seedAccessLogs.filter((row) => {
+      // 서버가 목록에서 빼는 타입은 목도 빼야 한다. 다른 조건보다 먼저 본다.
+      if (row.programType && LIST_EXCLUDED_PROGRAM_TYPES.has(row.programType)) {
+        return false;
+      }
       if (programId && row.programId !== Number(programId)) return false;
       if (programType && row.programType !== programType) return false;
       // 제목이 없는 행은 제목으로 찾을 수 없다. 걸러지는 것이 맞다.

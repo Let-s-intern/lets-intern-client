@@ -200,7 +200,7 @@ describe('GET /admin/access-log', () => {
     const 최근 = await fetchAccessLogs(`?paidFrom=${dateDaysAgo(5)}`);
     const 오래됨 = await fetchAccessLogs(`?paidTo=${dateDaysAgo(25)}`);
 
-    expect(sortedIdsOf(최근)).toEqual([6003, 6009]);
+    expect(sortedIdsOf(최근)).toEqual([6003]);
     expect(sortedIdsOf(오래됨)).toEqual([6002, 6007]);
   });
 
@@ -233,7 +233,7 @@ describe('GET /admin/access-log', () => {
     // 6002 는 집계 시작 이전 결제라 이용 여부를 말할 수 없다.
     const parsed = await fetchAccessLogs('?usageStatus=NOT_USED');
 
-    expect(sortedIdsOf(parsed)).toEqual([6003, 6004, 6009]);
+    expect(sortedIdsOf(parsed)).toEqual([6003, 6004]);
     expect(idsOf(parsed)).not.toContain(6002);
   });
 
@@ -258,7 +258,9 @@ describe('GET /admin/access-log', () => {
       `?paidFrom=${dateDaysAgo(7)}&usageStatus=NOT_USED`,
     );
 
-    expect(sortedIdsOf(parsed)).toEqual([6003, 6009]);
+    // 적재 대상이 아닌 LIVE 행은 여기 섞이지 않는다. 전액 환불 후보를 찾는 질의라
+    // 기록하지 않는 타입이 들어오면 그게 곧 잘못된 환불 근거가 된다.
+    expect(sortedIdsOf(parsed)).toEqual([6003]);
   });
 
   it('취소 건은 기본 포함이고 끄면 빠진다', async () => {
@@ -303,14 +305,31 @@ describe('GET /admin/access-log', () => {
     );
   });
 
-  it('적재 대상이 아닌 타입의 신청서도 행으로 내려온다', async () => {
-    // 목록이 신청서 기준 left join 이라 LIVE 도 행이 된다. 화면이 이 행을 `미이용` 이
-    // 아니라 `집계 대상 아님` 으로 표시하는지 확인하려면 목에 실물이 있어야 한다.
-    const row = rowOf(await fetchAccessLogs(), 6009);
+  it('적재 대상이 아닌 타입은 목록에 내려오지 않는다', async () => {
+    // 서버가 목록 쿼리에서 LIVE·REPORT 를 걸러 낸다. 목이 흉내 내지 않으면
+    // 실서버에 없는 행이 보이고, `미이용` 으로 조회했을 때 그 행이 결과에 섞인다.
+    const rows = (await fetchAccessLogs()).accessLogList;
 
-    expect(row?.programType).toBe('LIVE');
-    expect(row?.firstAccessedAt).toBeNull();
-    expect(elapsedDays(row!.paidAt!)).toBeLessThan(7);
+    expect(rowOf(await fetchAccessLogs(), 6009)).toBeUndefined();
+    expect(rows.some((row) => row.programType === 'LIVE')).toBe(false);
+    expect(rows.some((row) => row.programType === 'REPORT')).toBe(false);
+  });
+
+  it('미이용으로 걸러도 적재 대상이 아닌 행은 섞이지 않는다', async () => {
+    // 이 화면이 막으려는 오류의 필터 단위 재현이다. 기록하지 않는 타입이
+    // 미이용 목록에 들어가면 운영이 전액 환불 대상으로 읽는다.
+    const rows = (await fetchAccessLogs('?usageStatus=NOT_USED')).accessLogList;
+
+    expect(rows.some((row) => row.programType === 'LIVE')).toBe(false);
+  });
+
+  it('단건 조회는 적재 대상이 아닌 신청서도 내려준다', async () => {
+    // 목록과 반대다. 존재하는 신청서에 404 를 주는 것이 더 나쁜 거짓말이라
+    // 서버가 거르지 않고, 화면이 `집계 대상 아님` 으로 답한다.
+    const detail = await fetchAccessLogDetail(6009);
+
+    expect(detail.programType).toBe('LIVE');
+    expect(detail.firstAccessedAt).toBeNull();
   });
 });
 
