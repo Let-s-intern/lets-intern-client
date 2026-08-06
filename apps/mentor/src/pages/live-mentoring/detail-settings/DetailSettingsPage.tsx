@@ -210,11 +210,11 @@ const DetailSettingsPage = () => {
           className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
         >
           <span className="text-sm font-semibold text-amber-700">
-            승인 대기
+            오픈 처리 중
           </span>
           <p className="text-xs text-gray-600">
-            오픈 신청을 검토 중이에요. 결과가 나올 때까지는 상세 페이지를 수정할
-            수 없습니다.
+            오픈을 처리하고 있어요. 처리가 끝날 때까지는 상세 페이지를 수정할 수
+            없습니다.
           </p>
         </div>
       )}
@@ -245,7 +245,7 @@ const DetailSettingsPage = () => {
             <p className="text-xs text-gray-600">
               {currentOpening
                 ? '멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 수정하려면 오픈 현황에서 개설을 먼저 종료해주세요.'
-                : '수정하려면 관리자 검토를 다시 받아야 해요. 아래 "상세 수정하기"를 누르면 바로 시작할 수 있습니다.'}
+                : '수정하려면 오픈을 잠시 내려야 해요. 아래 "상세 수정하기"를 누르면 바로 시작할 수 있습니다.'}
             </p>
           </div>
           {currentOpening && (

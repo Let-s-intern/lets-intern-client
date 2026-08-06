@@ -224,12 +224,12 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('승인 대기 중에도 잠그고, 상태를 그대로 알린다', () => {
+  it('오픈 처리 중에도 잠그고, 상태를 그대로 알린다', () => {
     status = 'PENDING_REVIEW';
     renderPage();
 
     expect(
-      within(screen.getByRole('status')).getByText('승인 대기'),
+      within(screen.getByRole('status')).getByText('오픈 처리 중'),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '수정하기' }),

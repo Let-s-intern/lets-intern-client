@@ -280,12 +280,12 @@ const OpenSettingsPage = () => {
       {
         onSuccess: () =>
           showAlert({
-            title: '오픈 요청을 보냈어요.',
+            title: '오픈했어요.',
             description:
-              '승인되면 설정한 조건으로 바로 모집이 시작됩니다. 그 전까지는 설정을 수정할 수 없어요.',
+              '설정한 조건으로 모집이 시작됩니다. 오픈 중에는 설정을 수정할 수 없어요.',
             variant: 'success',
           }),
-        onError: handleMutationError('오픈 요청에 실패했습니다.'),
+        onError: handleMutationError('오픈에 실패했습니다.'),
       },
     );
   };
@@ -372,8 +372,8 @@ const OpenSettingsPage = () => {
             검토 대기
           </span>
           <p className="text-xs text-gray-600">
-            관리자 검토 중이에요. 승인되면 제출한 진행시간·기간으로 바로
-            오픈됩니다. 검토 중에는 설정을 수정할 수 없어요.
+            오픈을 처리하고 있어요. 곧 모집이 시작됩니다. 처리 중에는 설정을
+            수정할 수 없어요.
           </p>
         </div>
       )}
@@ -427,7 +427,7 @@ const OpenSettingsPage = () => {
             <p className="text-xs text-gray-600">
               {currentOpening
                 ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 종료하려면 오픈 현황에서 개설을 종료해주세요.'
-                : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 열립니다(관리자 승인 불필요).'}
+                : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.'}
             </p>
           </div>
           <Link
@@ -789,11 +789,7 @@ const OpenSettingsPage = () => {
           isOpen={pendingOpen !== null}
           publicUrl={publicDetailUrl(user.userId)}
           confirmLabel="오픈하기"
-          resultDescription={
-            pendingOpen === 'reopen'
-              ? '확인을 마치면 곧바로 모집이 시작됩니다. 이상하면 바로 내릴 수 있어요.'
-              : '확인을 마치면 오픈 요청이 접수됩니다. 승인되면 바로 모집이 시작돼요.'
-          }
+          resultDescription="확인을 마치면 모집이 시작됩니다. 이상하면 바로 내릴 수 있어요."
           /*
            * 제목·타입·기간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
            * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면
