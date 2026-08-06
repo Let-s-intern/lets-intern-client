@@ -3,7 +3,16 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
-const DEV_API_TARGET = 'https://letsintern.kr';
+/**
+ * dev 프록시가 `/api` 요청을 보낼 곳.
+ *
+ * 기본값은 배포된 dev 서버다. 로컬 백엔드(`./gradlew bootRun`, 8080)와 붙여 개발하려면
+ * `VITE_DEV_API_TARGET=http://localhost:8080` 을 주면 된다 — 루트의 `pnpm local` 이 그렇게 한다.
+ *
+ * 기본값을 localhost 로 두지 않는 이유는, 백엔드를 띄우지 않은 사람이 `pnpm dev` 만으로
+ * 화면을 볼 수 있어야 하기 때문이다.
+ */
+const DEFAULT_DEV_API_TARGET = 'https://letsintern.kr';
 
 const REQUIRED_ENV_KEYS = [
   'VITE_API_BASE_PATH',
@@ -23,6 +32,11 @@ export default defineConfig(({ mode }) => {
         `Set them in apps/mentor/.env (see .env.example).`,
     );
   }
+
+  const apiTarget = env.VITE_DEV_API_TARGET || DEFAULT_DEV_API_TARGET;
+  // 로컬 백엔드는 자기 자신을 허용 origin 으로 두므로 헤더를 위장할 필요가 없다.
+  // 배포 서버로 보낼 때만 origin 검사를 통과하도록 바꿔 끼운다.
+  const isLocalTarget = apiTarget.includes('localhost');
 
   // 소스맵 업로드는 토큰이 있을 때만 켠다. 없으면 플러그인이 빌드를 실패시킨다.
   // 미니파이된 스택(`class e extends Ut`)만 남으면 원인 추적이 사실상 불가능하므로
@@ -60,13 +74,14 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       proxy: {
         '/api': {
-          target: DEV_API_TARGET,
+          target: apiTarget,
           changeOrigin: true,
-          secure: true,
+          secure: !isLocalTarget,
           configure: (proxy) => {
+            if (isLocalTarget) return;
             proxy.on('proxyReq', (proxyReq) => {
-              proxyReq.setHeader('Origin', DEV_API_TARGET);
-              proxyReq.setHeader('Referer', `${DEV_API_TARGET}/`);
+              proxyReq.setHeader('Origin', apiTarget);
+              proxyReq.setHeader('Referer', `${apiTarget}/`);
             });
           },
         },
