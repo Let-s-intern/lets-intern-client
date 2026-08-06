@@ -7,6 +7,7 @@ import MissionNotStartedIcon from './ui/MissionNotStartedIcon';
 import MissionTodayIcon from './ui/MissionTodayIcon';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
+import { logMissionAccess } from '@/domain/challenge/api/missionAccessLog';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
@@ -43,6 +44,13 @@ const MissionCalendarItem = ({
 
   const handleMissionClick = async () => {
     if (mission.th !== null && isValid()) {
+      // 사용자가 실제로 누른 미션만 이용으로 남긴다. 상세 조회는 달력이 항목을 그리며
+      // 미리 부르므로 거기에 기록을 걸면 누르지 않은 미션까지 전부 잡힌다(LC-3201).
+      logMissionAccess({
+        challengeId: Number(params.programId),
+        missionId: mission.id,
+      });
+
       setSelectedMission(mission.id, mission.th);
       router.push(
         withTestDate(

@@ -5,6 +5,7 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
+import { logMissionAccess } from '../api/missionAccessLog';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
 
 /** 아직 시작하지 않은 미션 */
@@ -46,6 +47,16 @@ const YetMissionItem = ({ mission }: Props) => {
 
   const toggle = () => {
     if (!isDetailShown && !isValid()) return;
+
+    // 펼치는 순간에만 이용으로 남긴다. 상세 조회는 이 목록이 항목을 그리며 미리 부르므로
+    // 거기에 기록을 걸면 누르지 않은 미션까지 전부 이용으로 잡힌다(LC-3201).
+    if (!isDetailShown) {
+      logMissionAccess({
+        challengeId: currentChallenge?.id,
+        missionId: mission.id,
+      });
+    }
+
     setIsDetailShown(!isDetailShown);
   };
 
