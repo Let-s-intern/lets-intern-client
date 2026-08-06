@@ -103,6 +103,20 @@ describe('UsageHistoryPage 검색', () => {
     );
   });
 
+  it('검색칸에서 엔터로도 제출된다', async () => {
+    // 검색 버튼이 따로 있어도 엔터가 먹어야 한다. 운영이 조건을 자주 바꾸는
+    // 화면이라 매번 마우스로 버튼을 눌러야 하면 조회가 번거로워진다.
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.type(userSearch(), '김렛츠{Enter}');
+
+    expect(urlQuery()).toContain('userKeyword=');
+    expect(listQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ userKeyword: '김렛츠' }),
+    );
+  });
+
   it('프로그램 검색도 타자마다 조회하지 않고 제출할 때 나간다', async () => {
     // 두 검색칸의 동작이 서로 달라서는 안 된다. 한쪽만 즉시 나가면 운영이 두 칸을
     // 다른 것으로 오해하고, 서버는 타자 수만큼 맞는다.

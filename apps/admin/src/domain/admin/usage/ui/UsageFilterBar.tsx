@@ -27,7 +27,21 @@ import UsageDateRangeFilter from './UsageDateRangeFilter';
  */
 
 const FIELD_CLASS = 'rounded border border-neutral-75 px-2 py-1';
+
+/**
+ * 주 액션(`검색`)이 가장 강해야 한다.
+ *
+ * 빠른 조회를 검정 배경으로 두었더니 이 영역에서 가장 강한 요소가 되어, 정작 주 액션인
+ * 검색보다 시선을 먼저 가져갔다. 보조 기능이 주 기능보다 강하면 위계가 뒤집힌다.
+ * 강조 방식은 환불 히스토리의 탭(`bg-neutral-0` + 흰 글자)과 같게 맞춘다.
+ */
+const PRIMARY_BUTTON_CLASS =
+  'rounded border border-neutral-0 bg-neutral-0 px-3 py-1 text-sm text-white';
 const BUTTON_CLASS = 'rounded border border-neutral-75 px-3 py-1 text-sm';
+
+/** 날짜 입력 옆에 붙는 작은 버튼. 입력 높이를 넘지 않게 둔다. */
+const QUICK_RANGE_CLASS =
+  'rounded border border-neutral-75 px-2 py-1 text-xs whitespace-nowrap';
 
 interface Props {
   filters: UsageFilterState;
@@ -125,41 +139,45 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
           onChange={setUserKeywordInput}
         />
 
-        <div>
-          <UsageDateRangeFilter
-            label="결제일"
-            from={filters.paidFrom}
-            to={filters.paidTo}
-            onChange={(range) =>
-              onChange({ paidFrom: range.from, paidTo: range.to })
-            }
-          />
-          {/* 손으로 날짜를 두 번 고르는 일이 가장 잦다. */}
-          <div className="mt-1 flex gap-1">
-            {PAID_QUICK_RANGES.map((range) => (
+        <UsageDateRangeFilter
+          label="결제일"
+          from={filters.paidFrom}
+          to={filters.paidTo}
+          onChange={(range) =>
+            onChange({ paidFrom: range.from, paidTo: range.to })
+          }
+          /*
+            손으로 날짜를 두 번 고르는 일이 가장 잦아 빠른 선택을 붙인다.
+            날짜 입력 아래가 아니라 같은 줄에 둔다 — 아래에 두면 이 칸만 2단이 되어
+            같은 줄의 다른 입력들과 기준선이 어긋난다.
+          */
+          trailing={
+            <div className="ml-1 flex gap-1">
+              {PAID_QUICK_RANGES.map((range) => (
+                <button
+                  key={range.days}
+                  type="button"
+                  className={QUICK_RANGE_CLASS}
+                  onClick={() =>
+                    onChange({
+                      paidFrom: dateDaysAgo(range.days, baseTime),
+                      paidTo: '',
+                    })
+                  }
+                >
+                  {range.label}
+                </button>
+              ))}
               <button
-                key={range.days}
                 type="button"
-                className="border-neutral-75 rounded border px-2 py-0.5 text-xs"
-                onClick={() =>
-                  onChange({
-                    paidFrom: dateDaysAgo(range.days, baseTime),
-                    paidTo: '',
-                  })
-                }
+                className={QUICK_RANGE_CLASS}
+                onClick={() => onChange({ paidFrom: '', paidTo: '' })}
               >
-                {range.label}
+                전체
               </button>
-            ))}
-            <button
-              type="button"
-              className="border-neutral-75 rounded border px-2 py-0.5 text-xs"
-              onClick={() => onChange({ paidFrom: '', paidTo: '' })}
-            >
-              전체
-            </button>
-          </div>
-        </div>
+            </div>
+          }
+        />
 
         <label className="text-sm">
           <span className="text-neutral-40 mb-1 block">이용 상태</span>
@@ -181,27 +199,34 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
           </select>
         </label>
 
-        <button type="submit" className={BUTTON_CLASS}>
-          검색
-        </button>
-
         {/*
-          이 화면이 존재하는 이유인 질의다(PRD 5.5.3). 조건을 감추지 않고 필터에 채워 넣어,
-          누른 뒤에도 무엇이 걸렸는지 보이고 손으로 6일·10일로 고칠 수 있게 한다.
+          버튼도 다른 칸과 같은 줄에 선다. 라벨 자리를 비워 두어 입력들과 바닥선을 맞춘다 —
+          라벨이 있는 칸과 없는 칸이 섞이면 눈이 줄을 찾지 못한다.
         */}
-        <button
-          type="button"
-          className="text-xsmall14 border-neutral-0 bg-neutral-0 rounded border px-3 py-1 text-white"
-          onClick={() =>
-            onChange({
-              paidFrom: dateDaysAgo(RECENT_UNUSED_PRESET_DAYS, baseTime),
-              paidTo: '',
-              usageStatus: 'NOT_USED',
-            })
-          }
-        >
-          {RECENT_UNUSED_PRESET_LABEL}
-        </button>
+        <div className="flex items-end gap-2">
+          <button type="submit" className={PRIMARY_BUTTON_CLASS}>
+            검색
+          </button>
+
+          {/*
+            이 화면이 존재하는 이유인 질의다(PRD 5.5.3). 조건을 감추지 않고 필터에 채워 넣어,
+            누른 뒤에도 무엇이 걸렸는지 보이고 손으로 6일·10일로 고칠 수 있게 한다.
+            다만 보조 기능이라 주 액션인 `검색` 보다 약하게 둔다.
+          */}
+          <button
+            type="button"
+            className={BUTTON_CLASS}
+            onClick={() =>
+              onChange({
+                paidFrom: dateDaysAgo(RECENT_UNUSED_PRESET_DAYS, baseTime),
+                paidTo: '',
+                usageStatus: 'NOT_USED',
+              })
+            }
+          >
+            {RECENT_UNUSED_PRESET_LABEL}
+          </button>
+        </div>
       </div>
 
       <div className="mt-3">

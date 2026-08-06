@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 /**
  * 날짜 범위 필터 (LC-3201, PRD 7.3).
@@ -20,9 +20,22 @@ interface Props {
   from: string;
   to: string;
   onChange: (range: Range) => void;
+  /**
+   * 날짜 입력과 **같은 줄**에 붙는 것(빠른 선택 등).
+   *
+   * 밖에서 아래에 덧붙이면 이 칸만 2단이 되어, `items-end` 로 정렬된 필터 줄에서
+   * 이 열의 입력만 위로 떠오른다. 같은 줄에 두어야 다른 칸과 기준선이 맞는다.
+   */
+  trailing?: ReactNode;
 }
 
-const UsageDateRangeFilter = ({ label, from, to, onChange }: Props) => {
+const UsageDateRangeFilter = ({
+  label,
+  from,
+  to,
+  onChange,
+  trailing,
+}: Props) => {
   /*
     입력값을 따로 들고 있는다. 잘못된 범위를 그 자리에서 되돌려 버리면 무엇을 입력했는지
     화면에서 사라져 무엇이 잘못됐는지 볼 수 없다. 입력은 남기고 조회만 막는다.
@@ -66,6 +79,7 @@ const UsageDateRangeFilter = ({ label, from, to, onChange }: Props) => {
           min={draft.from || undefined}
           onChange={(e) => change({ to: e.target.value })}
         />
+        {trailing}
       </div>
       {invalid && (
         <p className="text-system-error mt-1 text-xs">
