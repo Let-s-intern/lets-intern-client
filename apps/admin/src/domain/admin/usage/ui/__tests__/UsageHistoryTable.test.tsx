@@ -1,14 +1,26 @@
 import type { AccessLogRow } from '@/api/accessLog';
 import { render, screen, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { RECENT_UNUSED_NOTICE } from '../../utils/usageDisplay';
 import UsageHistoryTable from '../UsageHistoryTable';
 
 /**
- * 이 표에서 가장 사고가 나기 쉬운 지점은 "기록이 없다"의 세 갈래가 뭉개지는 것이다.
- * 집계 이전 결제가 `미이용` 으로 보이면 운영이 잘못된 전액 환불을 실행하고, 그 방향의
- * 오류는 되돌릴 수 없다. 그래서 세 표기와 강조 조건을 각각 못 박아 둔다.
+ * 상세 조회는 목으로 둔다. 여기서 확인할 것은 응답 모양이 아니라
+ * **언제 조회가 나가는가**다. 상세 표기는 UsageDetailRow 테스트가 덮는다.
+ */
+const detailQuery = vi.fn();
+
+vi.mock('@/api/accessLog', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  useAccessLogDetailQuery: (...args: unknown[]) => detailQuery(...args),
+}));
+
+/**
+ * 이 표에서 가장 사고가 나기 쉬운 지점은 "기록이 없다"의 갈래가 뭉개지는 것이다.
+ * 집계 이전 결제나 적재 대상이 아닌 타입이 `미이용` 으로 보이면 운영이 잘못된 전액
+ * 환불을 실행하고, 그 방향의 오류는 되돌릴 수 없다. 그래서 표기와 강조 조건을 각각 못 박아 둔다.
  *
  * 기준 시각을 인자로 주입한다. 실제 시계를 쓰면 7일 경계가 시간이 지나며 조용히 뒤집힌다.
  */
@@ -51,8 +63,17 @@ const renderTable = (
 
 const firstRow = () => screen.getAllByRole('row')[1];
 
+beforeEach(() => {
+  detailQuery.mockReset();
+  detailQuery.mockReturnValue({
+    data: { details: [] },
+    isLoading: false,
+    isError: false,
+  });
+});
+
 describe('UsageHistoryTable 컬럼', () => {
-  it('일곱 컬럼을 모두 보여준다', () => {
+  it('여덟 컬럼을 모두 보여준다', () => {
     renderTable([row()]);
 
     const headers = screen
@@ -60,6 +81,7 @@ describe('UsageHistoryTable 컬럼', () => {
       .map((th) => th.textContent);
 
     expect(headers).toEqual([
+      '상세',
       '유저',
       '프로그램',
       '결제일',
@@ -75,20 +97,20 @@ describe('UsageHistoryTable 컬럼', () => {
 
     const cells = within(firstRow()).getAllByRole('cell');
 
-    expect(cells[0]).toHaveTextContent('김렛츠');
-    expect(cells[0]).toHaveTextContent('lets@example.com');
-    expect(cells[1]).toHaveTextContent('챌린지 · 기필코 경험정리 21기');
-    expect(cells[2]).toHaveTextContent('2026-07-28');
-    expect(cells[3]).toHaveTextContent('2026-07-30 14:22');
-    expect(cells[4]).toHaveTextContent('2026-08-05 09:11');
-    expect(cells[6]).toHaveTextContent('12회');
+    expect(cells[1]).toHaveTextContent('김렛츠');
+    expect(cells[1]).toHaveTextContent('lets@example.com');
+    expect(cells[2]).toHaveTextContent('챌린지 · 기필코 경험정리 21기');
+    expect(cells[3]).toHaveTextContent('2026-07-28');
+    expect(cells[4]).toHaveTextContent('2026-07-30 14:22');
+    expect(cells[5]).toHaveTextContent('2026-08-05 09:11');
+    expect(cells[7]).toHaveTextContent('12회');
   });
 
   it('무엇을 이용했는지 항목으로 보여준다', () => {
     // "12회"만으로는 대시보드 새로고침인지 미션 열람인지 알 수 없다(PRD 4.6).
     renderTable([row()]);
 
-    expect(within(firstRow()).getAllByRole('cell')[5]).toHaveTextContent(
+    expect(within(firstRow()).getAllByRole('cell')[6]).toHaveTextContent(
       '대시보드, 미션 3건',
     );
   });
@@ -154,10 +176,29 @@ describe('UsageHistoryTable 기록 없음 표기', () => {
     expect(within(firstRow()).queryByText('미이용')).not.toBeInTheDocument();
   });
 
+  it('적재 대상이 아닌 타입을 미이용으로 보여주지 않는다', () => {
+    // 목록이 신청서 기준 left join 이라 LIVE 도 행으로 내려온다. 애초에 기록하지
+    // 않는 타입이라 이용 여부를 말할 수 없다(PRD 5.2).
+    renderTable([
+      row({
+        programType: 'LIVE',
+        paidAt: '2026-08-04T10:00:00',
+        firstAccessedAt: null,
+        lastAccessedAt: null,
+        accessCount: 0,
+        daysFromPaymentToFirstAccess: null,
+        targetSummary: [],
+      }),
+    ]);
+
+    expect(within(firstRow()).getByText('집계 대상 아님')).toBeInTheDocument();
+    expect(within(firstRow()).queryByText('미이용')).not.toBeInTheDocument();
+  });
+
   it('이용 항목이 하나도 없으면 없음으로 적는다', () => {
     renderTable([row({ targetSummary: [] })]);
 
-    expect(within(firstRow()).getAllByRole('cell')[5]).toHaveTextContent(
+    expect(within(firstRow()).getAllByRole('cell')[6]).toHaveTextContent(
       '없음',
     );
   });
@@ -184,6 +225,15 @@ describe('UsageHistoryTable 강조', () => {
 
   it('결제 후 7일이 지난 미이용 행에는 붙이지 않는다', () => {
     renderTable([unused('2026-07-01T10:00:00')]);
+
+    expect(
+      within(firstRow()).queryByText(RECENT_UNUSED_NOTICE),
+    ).not.toBeInTheDocument();
+  });
+
+  it('적재 대상이 아닌 타입은 7일 이내여도 붙이지 않는다', () => {
+    // 기록하지 않는 타입을 강조하면 그 강조가 곧 잘못된 환불 근거가 된다.
+    renderTable([{ ...unused('2026-08-04T10:00:00'), programType: 'LIVE' }]);
 
     expect(
       within(firstRow()).queryByText(RECENT_UNUSED_NOTICE),
@@ -234,5 +284,167 @@ describe('UsageHistoryTable 조회 상태', () => {
       screen.getByText('조건에 맞는 이용 이력이 없습니다.'),
     ).toBeInTheDocument();
     expect(screen.queryByText('불러오는 중...')).not.toBeInTheDocument();
+  });
+});
+
+describe('UsageHistoryTable 행 펼침', () => {
+  const twoRows = () => [
+    row({ applicationId: 6001 }),
+    row({ applicationId: 6005, userName: '오새로' }),
+  ];
+
+  it('펼치기 전에는 상세를 조회하지 않는다', () => {
+    // 목록을 그릴 때 전부 가져오면 한 페이지에 요청이 행 수만큼 더 붙는다.
+    renderTable(twoRows());
+
+    expect(detailQuery).not.toHaveBeenCalled();
+  });
+
+  it('펼치면 그 행의 신청서만 조회한다', async () => {
+    const user = userEvent.setup();
+    renderTable(twoRows());
+
+    await user.click(screen.getAllByRole('button', { name: '펼치기' })[0]);
+
+    expect(detailQuery).toHaveBeenCalledWith(6001);
+    expect(detailQuery).not.toHaveBeenCalledWith(6005);
+  });
+
+  it('여러 행을 동시에 펼칠 수 있다', async () => {
+    // 같은 유저의 결제 두 건을 나란히 견주는 것이 이 화면의 흔한 사용법이다.
+    const user = userEvent.setup();
+    renderTable(twoRows());
+
+    await user.click(screen.getAllByRole('button', { name: '펼치기' })[0]);
+    await user.click(screen.getAllByRole('button', { name: '펼치기' })[0]);
+
+    expect(screen.getAllByRole('button', { name: '접기' })).toHaveLength(2);
+    expect(detailQuery).toHaveBeenCalledWith(6001);
+    expect(detailQuery).toHaveBeenCalledWith(6005);
+  });
+
+  it('다시 누르면 접히고 그 행만 닫힌다', async () => {
+    const user = userEvent.setup();
+    renderTable(twoRows());
+
+    await user.click(screen.getAllByRole('button', { name: '펼치기' })[0]);
+    await user.click(screen.getAllByRole('button', { name: '펼치기' })[0]);
+    await user.click(screen.getAllByRole('button', { name: '접기' })[0]);
+
+    expect(screen.getAllByRole('button', { name: '접기' })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: '펼치기' })).toHaveLength(1);
+  });
+
+  it('펼침 상태를 aria-expanded 로 알린다', async () => {
+    // div 에 onClick 만 걸면 키보드로 닿지 않고 여닫이라는 사실이 읽히지 않는다.
+    const user = userEvent.setup();
+    renderTable([row()]);
+
+    const toggle = screen.getByRole('button', { name: '펼치기' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(toggle);
+
+    expect(screen.getByRole('button', { name: '접기' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+  });
+
+  it('상세를 불러오는 중임을 내역 없음과 구분해 알린다', async () => {
+    const user = userEvent.setup();
+    detailQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    });
+    renderTable([row()]);
+
+    await user.click(screen.getByRole('button', { name: '펼치기' }));
+
+    expect(screen.getByText('상세 내역을 불러오는 중...')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/대상별 내역이 없습니다/),
+    ).not.toBeInTheDocument();
+  });
+
+  it('상세 조회 실패를 내역 없음으로 보여주지 않는다', async () => {
+    // 못 읽은 것과 없는 것은 다르다(PRD 7.4).
+    const user = userEvent.setup();
+    detailQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    });
+    renderTable([row()]);
+
+    await user.click(screen.getByRole('button', { name: '펼치기' }));
+
+    expect(
+      screen.getByText(/상세 내역을 불러오지 못했습니다/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/대상별 내역이 없습니다/),
+    ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['LIVE', '2026-08-04T10:00:00', '집계 대상 아님'],
+    ['CHALLENGE', '2026-05-01T10:00:00', '기록 없음 (집계 이전)'],
+    ['CHALLENGE', '2026-08-04T10:00:00', '미이용'],
+  ])(
+    '상세가 비었을 때 %s / %s 는 %s 로 구분해 적는다',
+    async (programType, paidAt, label) => {
+      // `내역 없음` 하나로 뭉개면 기록하지 않는 건과 이용하지 않은 건이 같아진다.
+      const user = userEvent.setup();
+      renderTable([
+        row({
+          programType,
+          paidAt,
+          firstAccessedAt: null,
+          lastAccessedAt: null,
+          accessCount: 0,
+          daysFromPaymentToFirstAccess: null,
+          targetSummary: [],
+        }),
+      ]);
+
+      await user.click(screen.getByRole('button', { name: '펼치기' }));
+
+      expect(
+        screen.getByText(`${label} · 대상별 내역이 없습니다.`),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it('판정 근거가 없으면 상세에서도 확인 불가로 적는다', async () => {
+    const user = userEvent.setup();
+    renderTable(
+      [
+        row({
+          firstAccessedAt: null,
+          lastAccessedAt: null,
+          accessCount: 0,
+          daysFromPaymentToFirstAccess: null,
+          targetSummary: [],
+        }),
+      ],
+      null,
+    );
+
+    await user.click(screen.getByRole('button', { name: '펼치기' }));
+
+    expect(
+      screen.getByText('확인 불가 · 대상별 내역이 없습니다.'),
+    ).toBeInTheDocument();
+  });
+
+  it('여닫는 표시에 아이콘을 쓰지 않는다', () => {
+    // 화살표는 방향의 의미가 사람마다 갈리고 폰트·플랫폼마다 다르게 렌더된다.
+    renderTable([row()]);
+
+    expect(screen.getByRole('button', { name: '펼치기' }).textContent).toBe(
+      '펼치기',
+    );
   });
 });
