@@ -20,6 +20,14 @@ interface LogMissionContentAccessParams {
    */
   contentId?: number | null;
   contentType: MissionContentType;
+  /**
+   * 자료 이름. 화면에 렌더되는 그 값이다.
+   *
+   * 대상 종류를 자료별로 나누지 않기로 하면서(그러려면 DB DDL 과 새 enum 값이 필요했다)
+   * **이름이 무엇을 열었는지 말해 주는 유일한 수단**이 됐다. 서버는 이 값을 그대로
+   * 보관하고 조회 시 `targetTitle` 로 돌려준다.
+   */
+  contentTitle?: string | null;
 }
 
 interface MissionContentAccessLogBody {
@@ -27,6 +35,7 @@ interface MissionContentAccessLogBody {
   missionId: number;
   contentType: MissionContentType;
   contentId?: number;
+  contentTitle?: string;
 }
 
 /**
@@ -49,6 +58,7 @@ export const logMissionContentAccess = ({
   missionId,
   contentId,
   contentType,
+  contentTitle,
 }: LogMissionContentAccessParams): void => {
   // 어느 미션의 자료인지 모르는 기록은 환불 분쟁에서 증빙이 되지 않는다. 보내지 않는다.
   if (!challengeId || !missionId) {
@@ -64,6 +74,13 @@ export const logMissionContentAccess = ({
   // 없는 id 를 임의값으로 채우지 않고 키 자체를 생략한다.
   if (contentId !== null && contentId !== undefined) {
     body.contentId = contentId;
+  }
+
+  // 빈 이름은 보내지 않는다. 빈 문자열이 저장되면 운영이 조회했을 때
+  // 이름이 없는 것인지 이름이 비어 있는 것인지 구분할 수 없다.
+  const trimmedTitle = contentTitle?.trim();
+  if (trimmedTitle) {
+    body.contentTitle = trimmedTitle;
   }
 
   axios

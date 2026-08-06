@@ -117,6 +117,35 @@ describe('logMissionContentAccess', () => {
     expect(rejections).toEqual([]);
   });
 
+  it('자료 이름을 함께 보낸다', () => {
+    // 대상 종류를 자료별로 나누지 않기로 하면서 이름이 무엇을 열었는지 말해 주는
+    // 유일한 수단이 됐다. 빠지면 어느 자료를 봤는지 되짚을 방법이 없다.
+    logMissionContentAccess({
+      challengeId: 12,
+      missionId: 34,
+      contentId: 56,
+      contentType: 'ESSENTIAL',
+      contentTitle: '경험 STAR 정리',
+    });
+
+    expect(postMock).toHaveBeenCalledWith(
+      '/access-log/mission-content',
+      expect.objectContaining({ contentTitle: '경험 STAR 정리' }),
+    );
+  });
+
+  it('이름이 비어 있으면 키를 생략한다', () => {
+    // 빈 문자열이 저장되면 이름이 없는 것인지 비어 있는 것인지 구분할 수 없다.
+    logMissionContentAccess({
+      challengeId: 12,
+      missionId: 34,
+      contentType: 'TEMPLATE',
+      contentTitle: '   ',
+    });
+
+    expect(postMock.mock.calls[0][1]).not.toHaveProperty('contentTitle');
+  });
+
   it('응답을 기다리지 않는다 — 반환값이 없다', () => {
     postMock.mockReturnValue(new Promise(() => {})); // 영원히 pending
 

@@ -83,6 +83,7 @@ describe('MissionGuideZeroSection 미션 자료 열람 기록', () => {
       missionId: 34,
       contentId: 56,
       contentType: 'ESSENTIAL',
+      contentTitle: '필수 자료',
     });
   });
 
@@ -96,6 +97,7 @@ describe('MissionGuideZeroSection 미션 자료 열람 기록', () => {
       missionId: 34,
       contentId: 78,
       contentType: 'ADDITIONAL',
+      contentTitle: '추가 자료',
     });
   });
 

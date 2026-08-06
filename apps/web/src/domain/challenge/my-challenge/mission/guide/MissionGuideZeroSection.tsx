@@ -122,6 +122,7 @@ const MissionGuideZeroSection = ({
                           missionId,
                           contentId: content.id,
                           contentType: 'ESSENTIAL',
+                          contentTitle: content.title,
                         });
                       }
                     }}
@@ -148,6 +149,7 @@ const MissionGuideZeroSection = ({
                           missionId,
                           contentId: content.id,
                           contentType: 'ADDITIONAL',
+                          contentTitle: content.title,
                         });
                       }
                     }}

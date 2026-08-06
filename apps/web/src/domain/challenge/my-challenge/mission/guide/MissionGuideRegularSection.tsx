@@ -122,6 +122,8 @@ const MissionGuideRegularSection = ({
                         challengeId,
                         missionId,
                         contentType: 'TEMPLATE',
+                        // 자료 이름이 무엇을 열었는지 말해 주는 유일한 수단이다.
+                        contentTitle: '미션 템플릿',
                       });
                     }
                   }}
@@ -146,6 +148,7 @@ const MissionGuideRegularSection = ({
                           missionId,
                           contentId: content.id,
                           contentType: 'ESSENTIAL',
+                          contentTitle: content.title,
                         });
                       }
                     }}
@@ -173,6 +176,7 @@ const MissionGuideRegularSection = ({
                             missionId,
                             contentId: content.id,
                             contentType: 'ADDITIONAL',
+                            contentTitle: content.title,
                           });
                         }
                       }}
