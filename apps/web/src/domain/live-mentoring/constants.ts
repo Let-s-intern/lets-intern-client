@@ -70,7 +70,12 @@ export const formatFeedbackPeriod = (start: string, end: string): string => {
  * 시안 0 의 "2000년 00월 00일(수) 00시 00분 - 00시 00분" 형식을 따르되,
  * 시각은 계약에 없어 날짜까지만 표기한다.
  */
-export const formatDetailPeriod = (start: string, end: string): string => {
+export const formatDetailPeriod = (
+  start: string | null,
+  end: string | null,
+): string => {
+  // 아직 개설한 적 없는 상품(승인 전 미리보기)은 기간이 없다.
+  if (!start || !end) return '오픈 준비 중';
   const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
   const label = (iso: string, withYear: boolean) => {
     const date = new Date(`${iso}T00:00:00`);

@@ -297,13 +297,13 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
           />
           <div>
             <label className={labelClass} htmlFor="videoUrl">
-              영상 임베드 URL
+              유튜브 영상 주소
             </label>
             <input
               id="videoUrl"
               className={inputClass}
               value={video.videoUrl ?? ''}
-              placeholder="https://www.youtube.com/embed/... 또는 공유 링크"
+              placeholder="https://youtu.be/... 또는 https://www.youtube.com/watch?v=..."
               onChange={(e) =>
                 onChange({
                   video: { ...video, videoUrl: e.target.value || null },
@@ -327,7 +327,8 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
               </p>
             ) : (
               <p className="mt-1 text-xs text-gray-400">
-                공유 링크를 붙여넣어도 embed 주소로 자동 변환됩니다.
+                유튜브 주소를 그대로 붙여넣으면 됩니다. 임베드 주소로 자동
+                변환돼요.
               </p>
             )}
           </div>

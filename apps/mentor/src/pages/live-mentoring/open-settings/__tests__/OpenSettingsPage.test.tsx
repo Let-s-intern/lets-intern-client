@@ -17,6 +17,11 @@ const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
 let openingsData: OpeningHistoryItem[] = [];
 
+// 공개 페이지 미리보기 링크가 mentorId 를 필요로 한다.
+vi.mock('@/api/user/user', () => ({
+  useUserQuery: () => ({ data: { userId: 500 } }),
+}));
+
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringSettingsQuery: () => ({
     data: settingsData,

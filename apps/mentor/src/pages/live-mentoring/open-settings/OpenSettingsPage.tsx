@@ -7,6 +7,7 @@ import {
 } from '@letscareer/mocks';
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
+import { useUserQuery } from '@/api/user/user';
 import {
   useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
@@ -28,6 +29,7 @@ import {
   START_EDIT_CONFIRM,
   START_EDIT_SUCCESS,
   formatCareerPeriod,
+  publicDetailUrl,
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
@@ -67,6 +69,8 @@ const OpenSettingsPage = () => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
   const { data: openings } = useLiveMentoringOpenStatusQuery();
+  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
+  const { data: user } = useUserQuery();
   const { mutate: save, isPending: isSaving } =
     useUpdateLiveMentoringSettingsMutation();
   const { mutate: submit, isPending: isSubmitting } =
@@ -319,6 +323,21 @@ const OpenSettingsPage = () => {
           1대1 라이브 멘토링 오픈에 필요한 타이틀·타입·진행시간·기간을 설정하고
           검토를 제출하세요.
         </p>
+        {/*
+          공개 페이지 미리보기.
+          공개 상세는 승인 여부를 따지지 않으므로 검토 전에도 결과물을 볼 수 있다.
+          다만 목록 노출은 승인·개설·기간을 모두 만족해야 하므로 그 차이를 함께 적는다.
+        */}
+        {user?.userId != null && (
+          <a
+            href={publicDetailUrl(user.userId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary text-xsmall14 w-fit font-medium underline"
+          >
+            공개 페이지 미리보기 (승인 전에도 열려요 · 목록 노출은 승인 후)
+          </a>
+        )}
       </header>
 
       {/*

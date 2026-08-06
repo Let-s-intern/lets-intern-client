@@ -20,6 +20,7 @@ import {
   formatDateTime,
   formatPeriod,
   isExpired,
+  publicDetailUrl,
   STATUS_CLASSES,
   STATUS_FILTERS,
   STATUS_LABELS,
@@ -193,7 +194,18 @@ const AdminLiveMentoringTable = () => {
                       </div>
                     </td>
                     <td className={`${bodyCellClass} break-keep`}>
-                      {row.title ?? '-'}
+                      <div className="flex flex-col gap-0.5">
+                        <span>{row.title ?? '-'}</span>
+                        {/* 승인 전에도 열린다 — 검토는 실제 화면을 보고 해야 한다. */}
+                        <a
+                          href={publicDetailUrl(row.mentorId)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary w-fit text-xs underline"
+                        >
+                          공개 페이지 보기
+                        </a>
+                      </div>
                     </td>
                     <td className={bodyCellClass}>
                       <span

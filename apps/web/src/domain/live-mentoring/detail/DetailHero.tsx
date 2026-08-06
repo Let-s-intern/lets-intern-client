@@ -31,9 +31,12 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
     (min, option) => (option.price < min.price ? option : min),
     durationPrices[0],
   );
+  // 개설이 없으면 가격이 null 이다(승인 전 미리보기). 할인 계산도 생략한다.
   const listPrice = LIST_PRICE_BY_DURATION[cheapest?.duration] ?? price;
   const discountRate =
-    listPrice > price ? Math.round((1 - price / listPrice) * 100) : 0;
+    price !== null && listPrice !== null && listPrice > price
+      ? Math.round((1 - price / listPrice) * 100)
+      : 0;
 
   return (
     <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
@@ -102,14 +105,14 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
           <div className="flex flex-col gap-0.5">
             {discountRate > 0 && (
               <span className="text-neutral-45 text-xsmall14 line-through">
-                {formatPrice(listPrice)}
+                {formatPrice(listPrice as number)}
               </span>
             )}
             <span className="text-medium22 flex items-baseline gap-2 font-bold">
               {discountRate > 0 && (
                 <span className="text-system-error">{discountRate}%</span>
               )}
-              {formatPrice(price)}
+              {price === null ? '가격 준비 중' : formatPrice(price)}
             </span>
           </div>
 

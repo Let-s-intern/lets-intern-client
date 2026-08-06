@@ -46,6 +46,15 @@ export const STATUS_FILTERS: {
   { label: '전체', value: undefined },
 ];
 
+/**
+ * 공개 상세 페이지 주소.
+ *
+ * 서버 공개 상세 조회는 상품 상태를 검사하지 않아 승인 전에도 열린다.
+ * 검토 담당자가 승인 전에 실제 화면을 보고 판단할 수 있어야 한다.
+ */
+export const publicDetailUrl = (mentorId: number): string =>
+  `${import.meta.env.VITE_WEB_URL ?? ''}/live-mentoring/${mentorId}`;
+
 export const formatPrice = (price: number): string =>
   `${price.toLocaleString('ko-KR')}원`;
 

@@ -34,6 +34,16 @@ export const START_EDIT_SUCCESS = {
 } as const;
 
 /**
+ * 공개 상세 페이지 주소.
+ *
+ * 승인 여부와 무관하게 열린다 — 서버 공개 상세 조회는 상품 상태를 검사하지 않는다.
+ * 목록 노출만 승인·개설·기간의 영향을 받으므로, 멘토는 승인 전에도 이 주소로 결과물을
+ * 미리 볼 수 있다.
+ */
+export const publicDetailUrl = (mentorId: number): string =>
+  `${import.meta.env.VITE_WEB_URL ?? ''}/live-mentoring/${mentorId}`;
+
+/**
  * YouTube 링크를 서버가 받는 embed 주소로 정규화한다.
  *
  * 서버(`LiveMentoringUrlPolicy`)는 `https://www.youtube.com/embed/{id}` 형태만 받는다.

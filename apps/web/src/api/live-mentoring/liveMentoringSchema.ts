@@ -234,13 +234,17 @@ export const liveMentorDetailSchema = z.object({
       price: z.number(),
     }),
   ),
-  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
-  price: z.number(),
+  /**
+   * 여러 진행시간을 열었을 때의 최저가(대표 표시용).
+   * 아직 한 번도 개설하지 않은 상품은 null 이다 — 승인 전 미리보기로 들어올 수 있다.
+   */
+  price: z.number().nullable(),
   /** 후기가 한 건도 없으면 서버가 null 을 준다. */
   rating: z.number().nullable(),
   reviewCount: z.number(),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
+  /** 개설이 없으면 null. 공개 목록에는 안 뜨지만 상세 URL 로는 열린다. */
+  feedbackStartDate: z.string().nullable(),
+  feedbackEndDate: z.string().nullable(),
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),

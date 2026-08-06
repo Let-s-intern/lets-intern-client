@@ -14,6 +14,11 @@ let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
 let templateData: LiveMentoringTemplate | undefined;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
 
+// 공개 페이지 미리보기 링크가 mentorId 를 필요로 한다.
+vi.mock('@/api/user/user', () => ({
+  useUserQuery: () => ({ data: { userId: 500 } }),
+}));
+
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringTemplateQuery: () => ({ data: templateData }),
   // 미리보기 헤드라인에 쓸 닉네임만 참조한다.

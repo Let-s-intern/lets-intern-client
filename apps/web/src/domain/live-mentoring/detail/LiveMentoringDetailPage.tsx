@@ -329,12 +329,17 @@ const LiveMentoringDetailPage = ({
       {/* 시안 10 · 자주 묻는 질문 */}
       <DetailFaqSection id={LM_FAQ_ID} />
 
-      {/* 하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트 */}
-      <DetailCTAButtons
-        title={data.title}
-        beginning={data.feedbackStartDate}
-        deadline={data.feedbackEndDate}
-      />
+      {/*
+        하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트.
+        아직 개설한 적 없는 상품(승인 전 미리보기)은 신청 기간이 없어 CTA 를 띄우지 않는다.
+      */}
+      {data.feedbackStartDate && data.feedbackEndDate && (
+        <DetailCTAButtons
+          title={data.title}
+          beginning={data.feedbackStartDate}
+          deadline={data.feedbackEndDate}
+        />
+      )}
     </div>
   );
 };

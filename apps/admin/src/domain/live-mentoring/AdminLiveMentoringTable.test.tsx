@@ -179,7 +179,9 @@ describe('AdminLiveMentoringTable — 조회', () => {
 
   it('목록이 비면 빈 상태 문구를 노출한다', () => {
     renderTable([]);
-    expect(screen.getByText('해당 조건의 상품이 없습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText('해당 조건의 상품이 없습니다.'),
+    ).toBeInTheDocument();
   });
 });
 
@@ -200,13 +202,17 @@ describe('AdminLiveMentoringTable — 액션', () => {
   it('승인은 확인 모달을 거친 뒤 상품 id 로 호출한다', () => {
     renderTable([pendingRow]);
 
-    fireEvent.click(within(screen.getByRole('table')).getByRole('button', {
-      name: '승인',
-    }));
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '승인',
+      }),
+    );
     // 모달이 먼저 뜨고, 이 시점에는 요청이 나가지 않는다.
     expect(approveMock).not.toHaveBeenCalled();
     // 승인이 곧 오픈이라는 사실을 문구로 알린다.
-    expect(screen.getByText(/승인하면 이 상품이 곧바로 오픈됩니다/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/승인하면 이 상품이 곧바로 오픈됩니다/),
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '승인하고 오픈' }));
     expect(approveMock).toHaveBeenCalledTimes(1);
@@ -216,9 +222,11 @@ describe('AdminLiveMentoringTable — 액션', () => {
   it('반려는 확인 후 상품 id 로 호출한다', () => {
     renderTable([pendingRow]);
 
-    fireEvent.click(within(screen.getByRole('table')).getByRole('button', {
-      name: '반려',
-    }));
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '반려',
+      }),
+    );
     fireEvent.click(
       screen.getAllByRole('button', { name: '반려' }).slice(-1)[0],
     );
@@ -244,9 +252,11 @@ describe('AdminLiveMentoringTable — 액션', () => {
   it('취소하면 아무 요청도 보내지 않는다', () => {
     renderTable([pendingRow]);
 
-    fireEvent.click(within(screen.getByRole('table')).getByRole('button', {
-      name: '승인',
-    }));
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '승인',
+      }),
+    );
     fireEvent.click(screen.getByRole('button', { name: '취소' }));
 
     expect(approveMock).not.toHaveBeenCalled();

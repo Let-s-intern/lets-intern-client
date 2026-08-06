@@ -11,9 +11,11 @@ import {
 import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { useUserQuery } from '@/api/user/user';
 import {
   START_EDIT_CONFIRM,
   START_EDIT_SUCCESS,
+  publicDetailUrl,
   toYoutubeEmbedUrl,
 } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
@@ -28,6 +30,8 @@ const DetailSettingsPage = () => {
   const { data: settings } = useLiveMentoringSettingsQuery();
   // "지금 열려 있는지"는 상품 상태가 아니라 활성 개설의 존재로 판단한다.
   const { data: openings } = useLiveMentoringOpenStatusQuery();
+  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
+  const { data: user } = useUserQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
   const { mutate: startEdit, isPending: isStartingEdit } =
     useStartEditLiveMentoringMutation();
@@ -74,6 +78,17 @@ const DetailSettingsPage = () => {
             ? '공개 상세 페이지에 지금 나가고 있는 내용입니다.'
             : '공개 상세 페이지에 지금 나가고 있는 내용입니다. 고치려면 수정하기를 눌러주세요.'}
       </p>
+      {/* 미리보기는 축소판이라 실제 화면과 다를 수 있다 — 진짜 페이지로 갈 길을 준다. */}
+      {user?.userId != null && (
+        <a
+          href={publicDetailUrl(user.userId)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary text-xsmall14 w-fit font-medium underline"
+        >
+          실제 공개 페이지로 확인하기
+        </a>
+      )}
     </header>
   );
 
