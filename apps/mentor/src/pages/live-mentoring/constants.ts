@@ -11,6 +11,28 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
   PORTFOLIO: '포트폴리오',
 };
 
+/**
+ * 상세 수정 시작(`POST /start-edit`) 안내 문구.
+ *
+ * 오픈 설정과 상세 페이지 설정 두 화면에서 같은 행동을 제공하므로 문구를 한곳에 둔다.
+ * 화면마다 따로 적으면 한쪽만 고쳐져 같은 버튼이 다른 말을 하게 된다.
+ *
+ * "초안"(서버 `DRAFT`) 같은 상태 이름을 쓰지 않는다 — 멘토에게 필요한 건 상태명이 아니라
+ * "검토를 다시 받아야 하고 그동안 오픈이 멈춘다"는 결과다.
+ */
+export const START_EDIT_CONFIRM = {
+  title: '상세 페이지를 수정할까요?',
+  description:
+    '수정하려면 관리자 검토를 다시 받아야 해요. 검토가 끝날 때까지는 오픈할 수 없습니다. 진행시간·기간·타입만 바꾸는 거라면 오픈 설정에서 고치고 바로 다시 오픈하면 돼요.',
+  confirmText: '검토 다시 받기',
+  cancelText: '그만두기',
+} as const;
+
+export const START_EDIT_SUCCESS = {
+  title: '이제 상세 페이지를 수정할 수 있어요.',
+  description: '수정을 마치면 검토를 제출해주세요. 승인되면 다시 오픈됩니다.',
+} as const;
+
 /** 진행시간(분) 표시 라벨. */
 export const durationLabel = (durationMin: number): string =>
   `${durationMin}분`;

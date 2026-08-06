@@ -9,6 +9,8 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
+const startEditMock = vi.fn();
+let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
 let templateData: LiveMentoringTemplate | undefined;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
 
@@ -20,6 +22,11 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
+    isPending: false,
+  }),
+  useLiveMentoringOpenStatusQuery: () => ({ data: openings }),
+  useStartEditLiveMentoringMutation: () => ({
+    mutate: startEditMock,
     isPending: false,
   }),
 }));
@@ -100,6 +107,8 @@ afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
   status = 'DRAFT';
+  startEditMock.mockReset();
+  openings = [];
 });
 
 describe('DetailSettingsPage — 편집 영역', () => {
@@ -167,17 +176,46 @@ describe('DetailSettingsPage — 편집 영역', () => {
 });
 
 describe('DetailSettingsPage — 상태 잠금', () => {
-  it('승인된 뒤에는 안내 배너를 노출하고 수정 버튼을 감춘다', () => {
+  // 상품 상태(APPROVED)가 아니라 "지금 열려 있는지"로 말해야 오해가 없다.
+  it('오픈 중이면 오픈 중으로 알리고 종료하러 갈 링크를 준다', () => {
     status = 'APPROVED';
+    openings = [{ status: 'OPEN' }];
     renderPage();
 
     const banner = screen.getByRole('status');
-    expect(within(banner).getByText('승인됨')).toBeInTheDocument();
+    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
     expect(
-      within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
-    ).toHaveAttribute('href', '/live-mentoring/open-settings');
+      within(banner).getByRole('link', { name: '오픈 현황 보기' }),
+    ).toHaveAttribute('href', '/live-mentoring/open-status');
+    // 노출 중에는 수정도, 상세 수정 시작도 불가하다.
     expect(
       screen.queryByRole('button', { name: '수정하기' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '상세 수정하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('오픈이 닫혀 있으면 이 화면에서 바로 상세 수정을 시작할 수 있다', () => {
+    status = 'APPROVED';
+    openings = [{ status: 'CLOSED' }];
+    renderPage();
+
+    const banner = screen.getByRole('status');
+    expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
+    // 글로만 다른 화면으로 보내지 않고 여기서 누를 수 있어야 한다.
+    expect(
+      screen.getByRole('button', { name: '상세 수정하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('잠긴 상태에서는 없는 수정하기 버튼을 안내하지 않는다', () => {
+    status = 'APPROVED';
+    openings = [{ status: 'CLOSED' }];
+    renderPage();
+
+    expect(
+      screen.queryByText(/고치려면 수정하기를 눌러주세요/),
     ).not.toBeInTheDocument();
   });
 

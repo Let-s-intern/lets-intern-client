@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
+  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useLiveMentoringTemplateQuery,
+  useStartEditLiveMentoringMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
+import { START_EDIT_CONFIRM, START_EDIT_SUCCESS } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
@@ -19,8 +22,12 @@ const DetailSettingsPage = () => {
   const { data, isError } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
+  // "지금 열려 있는지"는 상품 상태가 아니라 활성 개설의 존재로 판단한다.
+  const { data: openings } = useLiveMentoringOpenStatusQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { mutate: startEdit, isPending: isStartingEdit } =
+    useStartEditLiveMentoringMutation();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringTemplate | null>(null);
   /**
@@ -31,14 +38,19 @@ const DetailSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   /**
-   * 검토 대기·승인 상태에서는 상세 페이지도 수정할 수 없다.
+   * 검토 대기·승인 상태에서는 상세 페이지를 바로 수정할 수 없다.
    * 이미 노출 중인 판매 페이지가 멘티가 보는 도중에 바뀌면 안 되기 때문이고,
-   * 서버도 상품 상태가 `DRAFT`/`REJECTED` 일 때만 편집을 허용한다 —
-   * 오픈 설정 화면과 같은 규칙이라 안내도 같은 모양으로 맞춘다.
+   * 서버도 상품 상태가 `DRAFT`/`REJECTED` 일 때만 편집을 허용한다.
+   *
+   * 다만 "수정할 수 없다"로 끝내면 멘토가 막힌다. 오픈이 닫혀 있으면 이 화면에서
+   * 바로 검토를 다시 걸어(`start-edit`) 편집으로 넘어갈 수 있게 한다.
    */
   const status = settings?.status ?? null;
   const isLocked = status === 'PENDING_REVIEW' || status === 'APPROVED';
   const canEdit = isEditing && !isLocked;
+  const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
+  /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
+  const canStartEdit = status === 'APPROVED' && !currentOpening;
 
   // 오픈 설정 타입에 따라 서버가 내려준 기본 템플릿을 로드한다.
   useEffect(() => {
@@ -50,10 +62,13 @@ const DetailSettingsPage = () => {
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
         상세 페이지 설정
       </h1>
+      {/* 잠긴 상태에서 "수정하기를 눌러주세요"라고 하면 없는 버튼을 찾게 만든다. */}
       <p className="text-xsmall14 text-neutral-40">
         {canEdit
           ? '좌측에서 고친 내용이 우측 미리보기에 즉시 반영됩니다.'
-          : '공개 상세 페이지에 지금 나가고 있는 내용입니다. 고치려면 수정하기를 눌러주세요.'}
+          : isLocked
+            ? '공개 상세 페이지에 지금 나가고 있는 내용입니다.'
+            : '공개 상세 페이지에 지금 나가고 있는 내용입니다. 고치려면 수정하기를 눌러주세요.'}
       </p>
     </header>
   );
@@ -90,6 +105,30 @@ const DetailSettingsPage = () => {
         showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
     });
 
+  /**
+   * 상세 수정 시작 — 서버가 상품을 편집 가능 상태로 되돌린다.
+   * 성공하면 곧바로 편집 모드로 넣는다. 이 버튼을 누른 의도가 "고치겠다"이므로
+   * 한 번 더 "수정하기"를 누르게 하지 않는다.
+   */
+  const handleStartEdit = () =>
+    showConfirm({
+      ...START_EDIT_CONFIRM,
+      onConfirm: () => {
+        if (isStartingEdit) return;
+        startEdit(undefined, {
+          onSuccess: () => {
+            setIsEditing(true);
+            showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
+          },
+          onError: () =>
+            showAlert({
+              title: '상세 수정 준비에 실패했습니다.',
+              variant: 'error',
+            }),
+        });
+      },
+    });
+
   /** 편집 취소 — 서버가 준 값으로 되돌린다(로컬 수정분 폐기). */
   const handleCancel = () => {
     if (data) setTemplate(data);
@@ -100,35 +139,65 @@ const DetailSettingsPage = () => {
     <div className="flex flex-col gap-6 pb-24">
       {header}
 
-      {isLocked && (
+      {/*
+        상태 배너.
+
+        상품 상태(`APPROVED`)가 아니라 **지금 열려 있는지**를 말한다. "승인됨"은 서버
+        상태 이름이라 멘토에게는 "계속 열려 있음"으로 읽힌다. 색도 같은 이유로 가른다 —
+        열려 있을 때만 강조색을 쓴다.
+      */}
+      {status === 'PENDING_REVIEW' && (
         <div
           role="status"
-          className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
+        >
+          <span className="text-sm font-semibold text-amber-700">
+            검토 대기
+          </span>
+          <p className="text-xs text-gray-600">
+            관리자 검토 중이에요. 검토가 끝날 때까지는 상세 페이지를 수정할 수
+            없습니다.
+          </p>
+        </div>
+      )}
+
+      {status === 'APPROVED' && (
+        <div
+          role="status"
+          className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
+            currentOpening
+              ? 'border-primary/20 bg-primary-10'
+              : 'border-gray-200 bg-gray-50'
+          }`}
         >
           <div className="flex flex-col gap-1">
-            <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
-              <span
-                className="bg-primary h-1.5 w-1.5 rounded-full"
-                aria-hidden="true"
-              />
-              {status === 'PENDING_REVIEW' ? '검토 대기' : '승인됨'}
+            <span
+              className={`flex items-center gap-1.5 text-sm font-semibold ${
+                currentOpening ? 'text-primary' : 'text-gray-700'
+              }`}
+            >
+              {currentOpening && (
+                <span
+                  className="bg-primary h-1.5 w-1.5 rounded-full"
+                  aria-hidden="true"
+                />
+              )}
+              {currentOpening ? '오픈 중' : '오픈 종료됨'}
             </span>
             <p className="text-xs text-gray-600">
-              {status === 'PENDING_REVIEW'
-                ? '관리자 검토 중에는 상세 페이지를 수정할 수 없습니다.'
-                : /*
-                   * 잠겼다는 사실만 알리면 멘토는 여기서 막힌다. 빠져나가는 경로를 함께 알린다.
-                   * "초안"은 서버 상태 이름이라 쓰지 않고, 실제로 겪는 일로 적는다.
-                   */
-                  '지금은 상세 페이지를 수정할 수 없어요. 오픈 설정에서 "상세 수정하기"를 누르면 수정할 수 있고, 수정한 내용은 관리자 검토를 다시 거쳐야 공개됩니다(열려 있는 개설이 없을 때만 가능).'}
+              {currentOpening
+                ? '멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 수정하려면 오픈 현황에서 개설을 먼저 종료해주세요.'
+                : '수정하려면 관리자 검토를 다시 받아야 해요. 아래 "상세 수정하기"를 누르면 바로 시작할 수 있습니다.'}
             </p>
           </div>
-          <Link
-            to="/live-mentoring/open-settings"
-            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
-          >
-            오픈 설정으로 이동
-          </Link>
+          {currentOpening && (
+            <Link
+              to="/live-mentoring/open-status"
+              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+            >
+              오픈 현황 보기
+            </Link>
+          )}
         </div>
       )}
 
@@ -153,9 +222,25 @@ const DetailSettingsPage = () => {
         </div>
       </div>
 
-      {/* 하단 고정 액션 — 읽기 모드: 수정하기 / 오픈하러 가기, 편집 모드: 취소 / 저장하기 */}
+      {/*
+        하단 고정 액션.
+        잠긴 상태라도 할 수 있는 일이 있으면 버튼을 준다 — 오픈이 닫혀 있으면
+        여기서 바로 상세 수정을 시작할 수 있다. 버튼 없이 글로만 "오픈 설정으로 가라"고
+        하면 멘토가 화면을 옮겨 다니며 길을 찾아야 한다.
+      */}
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        {isLocked ? null : canEdit ? (
+        {isLocked ? (
+          canStartEdit ? (
+            <button
+              type="button"
+              onClick={handleStartEdit}
+              disabled={isStartingEdit}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isStartingEdit ? '처리 중...' : '상세 수정하기'}
+            </button>
+          ) : null
+        ) : canEdit ? (
           <>
             <button
               type="button"

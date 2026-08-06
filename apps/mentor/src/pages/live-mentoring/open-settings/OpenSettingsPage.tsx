@@ -25,6 +25,8 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
 import {
   CATEGORY_LABELS,
+  START_EDIT_CONFIRM,
+  START_EDIT_SUCCESS,
   formatCareerPeriod,
   formatPrice,
   representativeCareerLabel,
@@ -293,21 +295,12 @@ const OpenSettingsPage = () => {
    */
   const handleStartEdit = () => {
     showConfirm({
-      title: '상세 페이지를 수정할까요?',
-      description:
-        '수정하려면 관리자 검토를 다시 받아야 해요. 검토가 끝날 때까지는 오픈할 수 없습니다. 진행시간·기간·타입만 바꾸는 거라면 이 화면에서 고치고 바로 다시 오픈하면 돼요.',
-      confirmText: '검토 다시 받기',
-      cancelText: '그만두기',
+      ...START_EDIT_CONFIRM,
       onConfirm: () => {
         if (isStartingEdit) return;
         startEdit(undefined, {
           onSuccess: () =>
-            showAlert({
-              title: '이제 상세 페이지를 수정할 수 있어요.',
-              description:
-                '수정을 마치면 검토를 제출해주세요. 승인되면 다시 오픈됩니다.',
-              variant: 'success',
-            }),
+            showAlert({ ...START_EDIT_SUCCESS, variant: 'success' }),
           onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
         });
       },
