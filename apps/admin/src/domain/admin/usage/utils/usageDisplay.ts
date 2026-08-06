@@ -176,6 +176,10 @@ export const isRecentUnused = (
 const TARGET_TYPE_LABEL: Record<KnownAccessLogTargetType, string> = {
   CHALLENGE_DASHBOARD: '대시보드',
   MISSION: '미션',
+  // 자료를 실제로 연 것이다. 미션 페이지 방문보다 강한 증거라 따로 적는다.
+  MISSION_TEMPLATE: '미션 템플릿',
+  MISSION_ESSENTIAL_CONTENT: '필수 자료',
+  MISSION_ADDITIONAL_CONTENT: '추가 자료',
   PROGRAM: '프로그램',
 };
 

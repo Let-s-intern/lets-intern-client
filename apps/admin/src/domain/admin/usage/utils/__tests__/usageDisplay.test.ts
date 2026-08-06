@@ -465,3 +465,37 @@ describe('적재 대상이 아닌 프로그램 타입', () => {
     ).toBe('집계 대상 아님');
   });
 });
+
+describe('미션 자료 대상', () => {
+  // 자료를 실제로 연 것이 콘텐츠를 이용했다의 가장 강한 증거다.
+  // 미션 페이지 방문(MISSION)과 대상이 달라 이용 항목에서 구분돼야 한다.
+
+  it('자료 종류를 각각 이름으로 적는다', () => {
+    expect(
+      formatTargetSummary([
+        { targetType: 'MISSION_TEMPLATE', count: 1 },
+        { targetType: 'MISSION_ESSENTIAL_CONTENT', count: 2 },
+        { targetType: 'MISSION_ADDITIONAL_CONTENT', count: 3 },
+      ]),
+    ).toBe('미션 템플릿, 필수 자료 2건, 추가 자료 3건');
+  });
+
+  it('자료 열람이 기타로 밀려나지 않는다', () => {
+    // 서버가 새로 보내기 시작한 값이라, 라벨을 안 넣으면 `기타(MISSION_TEMPLATE)` 로 보인다.
+    const formatted = formatTargetSummary([
+      { targetType: 'MISSION_ESSENTIAL_CONTENT', count: 1 },
+    ]);
+
+    expect(formatted).not.toContain('기타');
+    expect(formatted).toBe('필수 자료');
+  });
+
+  it('미션 방문과 자료 열람이 한 줄에서 구분된다', () => {
+    expect(
+      formatTargetSummary([
+        { targetType: 'MISSION', count: 3 },
+        { targetType: 'MISSION_ESSENTIAL_CONTENT', count: 2 },
+      ]),
+    ).toBe('미션 3건, 필수 자료 2건');
+  });
+});

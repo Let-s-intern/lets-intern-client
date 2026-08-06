@@ -58,6 +58,27 @@ const formatDetailTarget = (detail: AccessLogDetail): string => {
   if (type === 'CHALLENGE_DASHBOARD') return '대시보드';
   if (type === 'PROGRAM') return '콘텐츠 수령';
 
+  /*
+    미션 자료를 실제로 연 기록이다. 미션 페이지를 방문한 것(`MISSION`)과 대상이 다르다 —
+    자료 열람이 콘텐츠를 이용했다의 더 강한 증거라 환불 판단에서 무게가 다르다.
+    제목이 오면 함께 적는다. 어느 자료인지가 곧 판단 근거다.
+  */
+  if (
+    type === 'MISSION_TEMPLATE' ||
+    type === 'MISSION_ESSENTIAL_CONTENT' ||
+    type === 'MISSION_ADDITIONAL_CONTENT'
+  ) {
+    const name =
+      type === 'MISSION_TEMPLATE'
+        ? '미션 템플릿'
+        : type === 'MISSION_ESSENTIAL_CONTENT'
+          ? '필수 자료'
+          : '추가 자료';
+    const round = detail.missionTh != null ? `${detail.missionTh}회차 ` : '';
+
+    return [`${round}${name}`, title].filter(Boolean).join(' · ');
+  }
+
   if (type === 'MISSION') {
     const round =
       detail.missionTh != null ? `${detail.missionTh}회차 미션` : '';
