@@ -448,3 +448,43 @@ describe('UsageHistoryTable 행 펼침', () => {
     );
   });
 });
+
+describe('결제일 표기', () => {
+  it('결제일에 시각까지 적는다', () => {
+    renderTable([row({ paidAt: '2026-08-05T16:08:07' })]);
+
+    expect(screen.getByText('2026-08-05 16:08')).toBeInTheDocument();
+  });
+
+  it('같은 날 여러 번 결제한 건이 서로 구분된다', () => {
+    // 날짜만 보이면 다섯 줄이 똑같아 보여 중복 행으로 오해된다.
+    // 실제로 같은 날 20~60분 간격의 결제 다섯 건이 버그로 신고된 적이 있다.
+    renderTable([
+      row({ applicationId: 750, paidAt: '2026-08-05T16:08:07' }),
+      row({ applicationId: 749, paidAt: '2026-08-05T15:34:38' }),
+      row({ applicationId: 748, paidAt: '2026-08-05T14:59:34' }),
+    ]);
+
+    expect(screen.getByText('2026-08-05 16:08')).toBeInTheDocument();
+    expect(screen.getByText('2026-08-05 15:34')).toBeInTheDocument();
+    expect(screen.getByText('2026-08-05 14:59')).toBeInTheDocument();
+  });
+
+  it('결제일과 이용 시각이 같은 형식이라 눈으로 비교된다', () => {
+    renderTable([
+      row({
+        paidAt: '2026-07-28T10:00:00',
+        firstAccessedAt: '2026-07-30T14:22:00',
+      }),
+    ]);
+
+    expect(screen.getByText('2026-07-28 10:00')).toBeInTheDocument();
+    expect(screen.getByText('2026-07-30 14:22')).toBeInTheDocument();
+  });
+
+  it('결제일이 없으면 빈칸이 아니라 표시를 남긴다', () => {
+    renderTable([row({ paidAt: null })]);
+
+    expect(screen.getAllByText('-').length).toBeGreaterThan(0);
+  });
+});

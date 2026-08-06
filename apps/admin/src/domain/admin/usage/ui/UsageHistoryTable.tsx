@@ -1,5 +1,4 @@
 import type { AccessLogRow } from '@/api/accessLog';
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Fragment, useState } from 'react';
 
@@ -37,10 +36,6 @@ interface Props {
    */
   now?: Date | number;
 }
-
-/** 결제일은 날짜까지만 본다. 이용 시각과 달리 시·분이 판단에 쓰이지 않는다. */
-const formatDate = (value: string | null | undefined) =>
-  value ? dayjs(value).format('YYYY-MM-DD') : '-';
 
 /** 상세 행이 표 전체 너비를 차지하도록 맞춘다. 컬럼을 늘리면 여기도 함께 늘린다. */
 const COLUMN_COUNT = 8;
@@ -155,8 +150,14 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
                   </div>
                 </td>
                 <td className="px-3 py-2">{programText || '-'}</td>
+                {/*
+                  결제일에 시각까지 적는다. 날짜만 보이면 같은 날 여러 번 결제한 건이
+                  전부 같은 줄로 보여 어느 결제인지 구분되지 않는다. 실제로 같은 날
+                  20~60분 간격의 결제 다섯 건이 중복 행으로 오해된 적이 있다.
+                  이용 시각과 같은 형식이라 눈으로 바로 비교된다.
+                */}
                 <td className="whitespace-nowrap px-3 py-2">
-                  {formatDate(row.paidAt)}
+                  {formatDateTime(row.paidAt)}
                 </td>
                 <td className="px-3 py-2">
                   {status === 'USED' ? (
