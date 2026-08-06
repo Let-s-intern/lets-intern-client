@@ -120,6 +120,6 @@ describe('OpenStatusPage', () => {
     queryState = { data: [], isLoading: false };
     render(<OpenStatusPage />);
 
-    expect(screen.getByText(/개설 이력이 없습니다/)).toBeInTheDocument();
+    expect(screen.getByText(/아직 오픈한 적이 없어요/)).toBeInTheDocument();
   });
 });

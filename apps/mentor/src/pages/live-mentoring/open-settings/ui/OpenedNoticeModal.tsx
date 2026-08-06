@@ -69,11 +69,11 @@ const OpenedNoticeModal = ({
               오픈됨
             </span>
             <h3 className="text-base font-semibold text-neutral-900">
-              지금부터 공개 리스트에 노출됩니다
+              지금부터 모집이 시작됩니다
             </h3>
             <p className="text-sm text-neutral-500">
-              상세 페이지가 의도대로 보이는지 확인해주세요. 이상하면 아래에서
-              바로 내릴 수 있어요.
+              공개 리스트에 노출되고 멘티가 슬롯을 예약할 수 있어요. 상세
+              페이지가 의도대로 보이는지 확인하고, 이상하면 바로 내리세요.
             </p>
           </div>
 

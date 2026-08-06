@@ -139,7 +139,7 @@ const openOpening: OpeningHistoryItem = {
  * 오픈 전 확인 모달을 통과한다.
  * 체크 없이는 진행 버튼이 열리지 않는다 — 확인 절차 자체가 요구사항이다.
  */
-const passPreOpenCheck = (confirmLabel: '검토 제출' | '오픈하기') => {
+const passPreOpenCheck = (confirmLabel: '오픈 신청하기' | '오픈하기') => {
   const dialog = screen.getByRole('dialog', {
     name: '오픈 전 상세 페이지 확인',
   });
@@ -276,8 +276,8 @@ describe('OpenSettingsPage — 검토 제출', () => {
   it('진행시간·기간을 담아 제출한다(가격은 보내지 않는다)', () => {
     renderPage({ durations: [30, 60] });
 
-    fireEvent.click(screen.getByRole('button', { name: '검토 제출' }));
-    passPreOpenCheck('검토 제출');
+    fireEvent.click(screen.getByRole('button', { name: '오픈 신청하기' }));
+    passPreOpenCheck('오픈 신청하기');
 
     expect(submitMock).toHaveBeenCalledTimes(1);
     const payload = submitMock.mock.calls[0][0] as LiveMentoringSubmit;
@@ -295,9 +295,11 @@ describe('OpenSettingsPage — 검토 제출', () => {
       target: { value: '이력서 클리닉' },
     });
 
-    expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
     expect(
-      screen.getByText(/먼저 저장해야 제출할 수 있어요/),
+      screen.getByRole('button', { name: '오픈 신청하기' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByText(/먼저 저장해야 오픈을 신청할 수 있어요/),
     ).toBeInTheDocument();
   });
 
@@ -307,9 +309,13 @@ describe('OpenSettingsPage — 검토 제출', () => {
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
 
     expect(
-      screen.getByText('진행시간을 최소 1개 이상 선택해야 제출할 수 있어요.'),
+      screen.getByText(
+        '진행시간을 최소 1개 이상 선택해야 오픈을 신청할 수 있어요.',
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '오픈 신청하기' }),
+    ).toBeDisabled();
   });
 
   it('종료일이 지났으면 경고와 함께 제출이 비활성화된다', () => {
@@ -319,7 +325,9 @@ describe('OpenSettingsPage — 검토 제출', () => {
     });
 
     expect(screen.getByText(/종료일이 이미 지났어요/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '오픈 신청하기' }),
+    ).toBeDisabled();
   });
 
   it('시작일이 종료일보다 늦으면 제출이 비활성화된다', () => {
@@ -332,7 +340,9 @@ describe('OpenSettingsPage — 검토 제출', () => {
     expect(
       screen.getByText('시작일은 종료일보다 늦을 수 없어요.'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '오픈 신청하기' }),
+    ).toBeDisabled();
   });
 
   it('타이틀이 비면 저장도 제출도 비활성화된다', () => {
@@ -343,7 +353,9 @@ describe('OpenSettingsPage — 검토 제출', () => {
     });
 
     expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '오픈 신청하기' }),
+    ).toBeDisabled();
   });
 
   // 시작일이 미래면 오픈해도 그날까지 모집이 시작되지 않는다(서버 노출 조건).
@@ -369,7 +381,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: '검토 제출' }),
+      screen.getByRole('button', { name: '오픈 신청하기' }),
     ).toBeInTheDocument();
   });
 
@@ -379,7 +391,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('검토 대기')).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: '검토 제출' }),
+      screen.queryByRole('button', { name: '오픈 신청하기' }),
     ).not.toBeInTheDocument();
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
   });
@@ -392,7 +404,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
     expect(
-      screen.getByRole('button', { name: '검토 제출' }),
+      screen.getByRole('button', { name: '오픈 신청하기' }),
     ).toBeInTheDocument();
   });
 
@@ -467,7 +479,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     const dialog = screen.getByRole('dialog', { name: '오픈 완료 안내' });
     // 지연 노출은 서버 기능이라 프론트가 흉내내지 않는다 — 지금 공개됐다고 적는다.
     expect(
-      within(dialog).getByText('지금부터 공개 리스트에 노출됩니다'),
+      within(dialog).getByText('지금부터 모집이 시작됩니다'),
     ).toBeInTheDocument();
     expect(within(dialog).getByText(/live-mentoring\/500/)).toBeInTheDocument();
     expect(

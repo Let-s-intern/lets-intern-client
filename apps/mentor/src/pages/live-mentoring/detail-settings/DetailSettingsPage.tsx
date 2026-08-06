@@ -210,11 +210,11 @@ const DetailSettingsPage = () => {
           className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
         >
           <span className="text-sm font-semibold text-amber-700">
-            검토 대기
+            승인 대기
           </span>
           <p className="text-xs text-gray-600">
-            관리자 검토 중이에요. 검토가 끝날 때까지는 상세 페이지를 수정할 수
-            없습니다.
+            오픈 신청을 검토 중이에요. 결과가 나올 때까지는 상세 페이지를 수정할
+            수 없습니다.
           </p>
         </div>
       )}
