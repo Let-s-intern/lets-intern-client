@@ -136,7 +136,11 @@ const TableRow = ({
   };
 
   return (
-    <tr>
+    /*
+      이용 히스토리에서 `#application-{id}` 로 이 행을 지목해 들어온다(LC-3201).
+      표시에는 영향이 없고 찾아갈 자리만 만든다.
+    */
+    <tr id={`application-${applicationId}`}>
       <TD>{applicationInfo.orderId}</TD>
       <TD>
         <span>{applicationInfo.name}</span>
