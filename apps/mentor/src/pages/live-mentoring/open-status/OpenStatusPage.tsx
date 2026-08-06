@@ -158,7 +158,7 @@ const OpenStatusPage = () => {
                   colSpan={7}
                   className="px-4 py-10 text-center text-sm text-gray-400"
                 >
-                  아직 오픈한 적이 없어요. 오픈 설정에서 오픈을 신청해주세요.
+                  아직 오픈한 적이 없어요. 오픈 설정에서 오픈해주세요.
                 </td>
               </tr>
             ) : (

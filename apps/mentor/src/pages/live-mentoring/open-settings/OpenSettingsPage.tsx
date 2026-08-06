@@ -280,12 +280,12 @@ const OpenSettingsPage = () => {
       {
         onSuccess: () =>
           showAlert({
-            title: '오픈을 신청했습니다.',
+            title: '오픈 요청을 보냈어요.',
             description:
               '승인되면 설정한 조건으로 바로 모집이 시작됩니다. 그 전까지는 설정을 수정할 수 없어요.',
             variant: 'success',
           }),
-        onError: handleMutationError('오픈 신청에 실패했습니다.'),
+        onError: handleMutationError('오픈 요청에 실패했습니다.'),
       },
     );
   };
@@ -353,7 +353,7 @@ const OpenSettingsPage = () => {
           오픈 설정
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          타이틀·타입·진행시간과 피드백 진행 일정을 설정하고 오픈을 신청하세요.
+          타이틀·타입·진행시간과 피드백 진행 일정을 설정하고 오픈하세요.
           오픈되면 바로 모집이 시작됩니다.
         </p>
       </header>
@@ -590,7 +590,7 @@ const OpenSettingsPage = () => {
                 </div>
                 {noFeedbackDates && (
                   <p role="alert" className="text-system-error mt-2 text-xs">
-                    시작일과 종료일을 모두 입력해야 오픈을 신청할 수 있어요.
+                    시작일과 종료일을 모두 입력해야 오픈할 수 있어요.
                   </p>
                 )}
                 {invertedPeriod && (
@@ -666,7 +666,7 @@ const OpenSettingsPage = () => {
                   </p>
                   {noDurationSelected && (
                     <p role="alert" className="text-system-error text-xs">
-                      진행시간을 최소 1개 이상 선택해야 오픈을 신청할 수 있어요.
+                      진행시간을 최소 1개 이상 선택해야 오픈할 수 있어요.
                     </p>
                   )}
                 </div>
@@ -714,7 +714,7 @@ const OpenSettingsPage = () => {
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
           {isDraftLike && isDirty && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
-              제목·타입을 바꿨어요. 먼저 저장해야 오픈을 신청할 수 있어요.
+              제목·타입을 바꿨어요. 먼저 저장해야 오픈할 수 있어요.
             </p>
           )}
           {/*
@@ -767,7 +767,7 @@ const OpenSettingsPage = () => {
                   disabled={isPending || !canSubmit}
                   className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isSubmitting ? '신청 중...' : '오픈 신청하기'}
+                  {isSubmitting ? '처리 중...' : '오픈하기'}
                 </button>
               </>
             )}
@@ -788,11 +788,11 @@ const OpenSettingsPage = () => {
         <PreOpenCheckModal
           isOpen={pendingOpen !== null}
           publicUrl={publicDetailUrl(user.userId)}
-          confirmLabel={pendingOpen === 'reopen' ? '오픈하기' : '오픈 신청하기'}
+          confirmLabel="오픈하기"
           resultDescription={
             pendingOpen === 'reopen'
               ? '확인을 마치면 곧바로 모집이 시작됩니다. 이상하면 바로 내릴 수 있어요.'
-              : '확인을 마치면 오픈 신청이 접수됩니다. 승인되면 바로 모집이 시작돼요.'
+              : '확인을 마치면 오픈 요청이 접수됩니다. 승인되면 바로 모집이 시작돼요.'
           }
           /*
            * 제목·타입·기간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
