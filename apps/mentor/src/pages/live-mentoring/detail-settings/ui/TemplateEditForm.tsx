@@ -19,7 +19,15 @@ const labelClass = 'mb-1 block text-xs font-medium text-gray-600';
 const inputClass =
   'focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors';
 
-/** 노출 토글 — 끄면 공개 상세에서 섹션이 통째로 빠진다는 걸 문구로 알린다. */
+/**
+ * 노출 토글.
+ *
+ * 라벨은 상태에 따라 바꾸지 않는다. 예전에는 꺼진 상태에서 "노출 안 함 (섹션 전체 제외)"
+ * 으로 글자가 바뀌었는데, 체크박스 옆 문구는 "지금 상태"가 아니라 "체크하면 일어날 일"로도
+ * 읽힌다 — 노출시키려던 사람이 오히려 체크를 하지 않게 된다.
+ *
+ * 그래서 라벨은 "체크 = 노출"로 고정하고, 현재 상태는 배지로 따로 보여준다.
+ */
 const VisibleToggle = ({
   checked,
   onChange,
@@ -34,9 +42,12 @@ const VisibleToggle = ({
       onChange={(e) => onChange(e.target.checked)}
       className="accent-primary h-4 w-4"
     />
-    <span className="text-xs text-gray-600">
-      {checked ? '상세 페이지에 노출' : '노출 안 함 (섹션 전체 제외)'}
-    </span>
+    <span className="text-xs text-gray-600">상세 페이지에 노출</span>
+    {!checked && (
+      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500">
+        지금은 숨김
+      </span>
+    )}
   </label>
 );
 
