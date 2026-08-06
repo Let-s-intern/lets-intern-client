@@ -12,21 +12,16 @@ interface OpenedNoticeModalProps {
   onDismiss: () => void;
 }
 
-/** 확인을 재촉하는 시간. 이 시간이 지나도 노출은 유지된다 — 안내가 사라질 뿐이다. */
-const CHECK_SECONDS = 30;
-
 /**
  * 오픈 직후 안내 모달.
  *
- * 오픈은 **즉시** 반영된다. 공개 목록 쿼리가 개설이 생기는 순간부터 그 상품을 잡아가므로
- * 프론트가 노출을 늦출 방법은 없다. 그래서 "30초 뒤에 노출된다"고 적지 않는다 —
- * 화면이 사실과 다른 말을 하면 멘토는 그 30초를 안전한 시간으로 착각한다.
+ * 오픈은 멘토가 확인하고 누른 즉시 반영된다. 지연이나 카운트다운은 두지 않는다 —
+ * 확인은 이미 오픈 전 단계에서 받았고, 여기서 시간을 끌면 "아직 안 열린 시간"이
+ * 있는 것처럼 읽힌다.
  *
- * 대신 이 모달이 하는 일은 두 가지다.
+ * 이 모달이 하는 일은 두 가지다.
  *  1. 지금 공개됐다는 사실과 확인할 주소를 준다.
  *  2. 이상하면 여기서 곧바로 내릴 수 있게 한다 — 오픈 현황 화면까지 찾아가지 않아도 된다.
- *
- * 카운트다운은 "지금 확인하라"는 재촉이지 유예 시간이 아니다. 문구도 그렇게 적는다.
  */
 const OpenedNoticeModal = ({
   isOpen,
@@ -35,17 +30,11 @@ const OpenedNoticeModal = ({
   isClosing,
   onDismiss,
 }: OpenedNoticeModalProps) => {
-  const [remain, setRemain] = useState(CHECK_SECONDS);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    setRemain(CHECK_SECONDS);
     setCopied(false);
-    const timer = setInterval(() => {
-      setRemain((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -110,13 +99,6 @@ const OpenedNoticeModal = ({
               상세 페이지 확인하기
             </a>
           </div>
-
-          {/* 남은 시간은 재촉일 뿐이라 0 이 되어도 모달만 조용해진다. */}
-          <p className="mb-4 text-center text-xs text-neutral-400">
-            {remain > 0
-              ? `${remain}초 안에 확인해보세요. 시간이 지나도 노출은 계속됩니다.`
-              : '확인이 끝나면 닫아주세요. 노출은 계속됩니다.'}
-          </p>
 
           <div className="flex gap-3">
             <button
