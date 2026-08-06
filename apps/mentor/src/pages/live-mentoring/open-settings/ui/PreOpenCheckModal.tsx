@@ -10,6 +10,8 @@ interface PreOpenCheckModalProps {
   confirmLabel: string;
   /** 확인을 마쳤을 때 실제로 일어나는 일 — 검토 제출인지 즉시 오픈인지 알린다. */
   resultDescription: string;
+  /** 아직 서버에 반영되지 않아 이 페이지에서는 볼 수 없는 값이 있을 때의 안내. */
+  pendingNotice?: string;
   isPending: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -30,6 +32,7 @@ const PreOpenCheckModal = ({
   publicUrl,
   confirmLabel,
   resultDescription,
+  pendingNotice,
   isPending,
   onConfirm,
   onCancel,
@@ -96,6 +99,12 @@ const PreOpenCheckModal = ({
               상세 페이지 열어보기
             </a>
           </div>
+
+          {pendingNotice && (
+            <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              {pendingNotice}
+            </p>
+          )}
 
           <label className="mt-4 flex cursor-pointer items-start gap-2">
             <input

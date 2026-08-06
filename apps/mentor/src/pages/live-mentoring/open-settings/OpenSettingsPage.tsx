@@ -188,6 +188,12 @@ const OpenSettingsPage = () => {
   const canSubmit = hasValidOpeningInput && !isDirty;
   // 재개설은 제목·타입까지 한 요청에 담으므로 미리 저장할 필요가 없다.
   const canReopenNow = hasValidOpeningInput;
+  /** 아직 서버에 없는 변경이 있는지 — 확인 모달에서 "지금 안 보이는 값"을 안내한다. */
+  const isDirtyForOpen =
+    isDirty ||
+    JSON.stringify(form.durations) !== JSON.stringify(original.durations) ||
+    form.feedbackStartDate !== original.feedbackStartDate ||
+    form.feedbackEndDate !== original.feedbackEndDate;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -698,6 +704,16 @@ const OpenSettingsPage = () => {
               제목·타입을 바꿨어요. 먼저 저장해야 제출할 수 있어요.
             </p>
           )}
+          {/*
+            재개설 모드에는 "저장"이 없다. 승인 상태에서 서버가 `PUT /settings` 를 잠가
+            제목·타입을 따로 저장할 수 없고, 재개설 요청에 함께 실어 보내기 때문이다.
+            버튼만 없애 두면 "저장이 안 된다"로 읽히므로 이유를 적어 둔다.
+          */}
+          {canReopen && (
+            <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
+              여기서 바꾼 내용은 다시 오픈할 때 함께 저장돼요.
+            </p>
+          )}
           <div className="flex gap-2">
             {canReopen ? (
               /*
@@ -764,6 +780,16 @@ const OpenSettingsPage = () => {
             pendingOpen === 'reopen'
               ? '확인을 마치면 곧바로 공개 리스트에 노출됩니다. 이상하면 바로 내릴 수 있어요.'
               : '확인을 마치면 관리자 검토로 넘어갑니다. 승인되면 제출한 진행시간·기간으로 오픈됩니다.'
+          }
+          /*
+           * 제목·타입·기간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
+           * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면
+           * "바꾼 게 안 보인다"로 읽힌다.
+           */
+          pendingNotice={
+            isDirtyForOpen
+              ? '방금 바꾼 제목·타입·기간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
+              : undefined
           }
           isPending={isPending}
           onCancel={() => setPendingOpen(null)}
