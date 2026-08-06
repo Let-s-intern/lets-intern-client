@@ -1,8 +1,12 @@
 import { useAccessLogListQuery } from '@/api/accessLog';
-import { PROGRAM_TYPE_OPTIONS } from '@/domain/admin/usage/constants/programType';
+import UsageFilterBar from '@/domain/admin/usage/ui/UsageFilterBar';
 import UsageHistoryTable from '@/domain/admin/usage/ui/UsageHistoryTable';
 import UsagePagination from '@/domain/admin/usage/ui/UsagePagination';
-import { useEffect, useState } from 'react';
+import {
+  readUsageFilters,
+  toAccessLogListParams,
+  type UsageFilterKey,
+} from '@/domain/admin/usage/utils/usageFilterParams';
 import { useSearchParams } from 'react-router-dom';
 
 /**
@@ -25,18 +29,11 @@ const parsePage = (value: string | null) => {
 const UsageHistoryPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const programType = searchParams.get('programType') ?? '';
-  const userKeyword = searchParams.get('userKeyword') ?? '';
+  const filters = readUsageFilters(searchParams);
   const page = parsePage(searchParams.get('page'));
 
-  // 입력 중에는 URL 을 건드리지 않는다. 타자마다 조회가 나가면 서버를 계속 때린다.
-  const [keywordInput, setKeywordInput] = useState(userKeyword);
-
-  // 뒤로 가기로 조건이 바뀌면 입력칸도 그 조건을 보여줘야 한다.
-  useEffect(() => setKeywordInput(userKeyword), [userKeyword]);
-
   /** 조건이 바뀌면 항상 첫 페이지로 돌아간다. 3페이지를 보던 중이면 빈 결과가 나온다. */
-  const updateFilter = (patch: Record<string, string>) => {
+  const updateFilter = (patch: Partial<Record<UsageFilterKey, string>>) => {
     const next = new URLSearchParams(searchParams);
     Object.entries(patch).forEach(([key, value]) => {
       if (value) next.set(key, value);
@@ -52,66 +49,24 @@ const UsageHistoryPage = () => {
     setSearchParams(next, { replace: true });
   };
 
-  const { data, isLoading, isError } = useAccessLogListQuery({
-    programType: programType || undefined,
-    userKeyword: userKeyword || undefined,
-    page,
-    size: PAGE_SIZE,
-  });
+  const { data, isLoading, isError } = useAccessLogListQuery(
+    toAccessLogListParams(filters, page, PAGE_SIZE),
+  );
 
   return (
     <div className="p-8">
       <h1 className="text-1.5-bold mb-4">이용 히스토리</h1>
 
-      <p className="mb-4 text-sm text-neutral-500">
+      <p className="text-neutral-40 mb-4 text-sm">
         결제 후 콘텐츠를 이용했는지 기록된 사실만 보여줍니다. 환불 가부는 규정에
         따라 판단해 주세요.
       </p>
 
-      <form
-        className="mb-4 flex flex-wrap items-end gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          updateFilter({ userKeyword: keywordInput.trim() });
-        }}
-      >
-        <label className="text-sm">
-          <span className="mb-1 block text-neutral-500">프로그램 타입</span>
-          <select
-            className="rounded border border-neutral-300 px-2 py-1"
-            value={programType}
-            onChange={(e) => updateFilter({ programType: e.target.value })}
-          >
-            <option value="">전체</option>
-            {PROGRAM_TYPE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-sm">
-          <span className="mb-1 block text-neutral-500">유저</span>
-          <input
-            className="rounded border border-neutral-300 px-2 py-1"
-            placeholder="이름 또는 이메일"
-            value={keywordInput}
-            onChange={(e) => setKeywordInput(e.target.value)}
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="rounded border border-neutral-300 px-3 py-1 text-sm"
-        >
-          검색
-        </button>
-      </form>
+      <UsageFilterBar filters={filters} onChange={updateFilter} />
 
       {isError ? (
         /* 못 읽은 것을 "이력 없음"으로 보이게 하지 않는다. 둘은 다르다(PRD 7.4). */
-        <p className="py-10 text-center text-sm text-neutral-500">
+        <p className="text-neutral-40 py-10 text-center text-sm">
           이용 이력을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
         </p>
       ) : (
