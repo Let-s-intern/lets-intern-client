@@ -35,6 +35,7 @@ import {
   representativeCareerLabel,
 } from '../constants';
 import OpenedNoticeModal from './ui/OpenedNoticeModal';
+import PreOpenCheckModal from './ui/PreOpenCheckModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
@@ -95,6 +96,13 @@ const OpenSettingsPage = () => {
   const [slotModalOpen, setSlotModalOpen] = useState(false);
   /** 오픈 직후 안내 모달이 종료 대상으로 삼을 개설. null 이면 모달을 닫는다. */
   const [openedOpeningId, setOpenedOpeningId] = useState<number | null>(null);
+  /**
+   * 오픈 전 확인 모달. 검토 제출과 재개설이 같은 절차를 쓰되 결과가 달라
+   * 어느 쪽을 실행할지 함께 들고 있는다.
+   */
+  const [pendingOpen, setPendingOpen] = useState<'submit' | 'reopen' | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!data) return;
@@ -253,7 +261,7 @@ const OpenSettingsPage = () => {
 
   /** 검토 제출. 진행시간·기간은 이 요청에서만 서버에 저장된다. */
   const handleSubmitForReview = () => {
-    if (!canSubmit) return;
+    setPendingOpen(null);
     submit(
       {
         durations: form.durations,
@@ -275,7 +283,7 @@ const OpenSettingsPage = () => {
 
   /** 재개설. 승인된 상품을 관리자 재승인 없이 곧바로 다시 연다. */
   const handleReopen = () => {
-    if (!canReopenNow) return;
+    setPendingOpen(null);
     reopen(
       {
         title: form.title ?? '',
@@ -722,7 +730,7 @@ const OpenSettingsPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleReopen}
+                  onClick={() => setPendingOpen('reopen')}
                   disabled={isPending || !canReopenNow}
                   className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -741,7 +749,7 @@ const OpenSettingsPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleSubmitForReview}
+                  onClick={() => setPendingOpen('submit')}
                   disabled={isPending || !canSubmit}
                   className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -762,6 +770,24 @@ const OpenSettingsPage = () => {
           endDate: form.feedbackEndDate ?? '',
         }}
       />
+      {user?.userId != null && (
+        <PreOpenCheckModal
+          isOpen={pendingOpen !== null}
+          publicUrl={publicDetailUrl(user.userId)}
+          confirmLabel={pendingOpen === 'reopen' ? '오픈하기' : '검토 제출'}
+          resultDescription={
+            pendingOpen === 'reopen'
+              ? '확인을 마치면 곧바로 공개 리스트에 노출됩니다. 이상하면 바로 내릴 수 있어요.'
+              : '확인을 마치면 관리자 검토로 넘어갑니다. 승인되면 제출한 진행시간·기간으로 오픈됩니다.'
+          }
+          isPending={isPending}
+          onCancel={() => setPendingOpen(null)}
+          onConfirm={
+            pendingOpen === 'reopen' ? handleReopen : handleSubmitForReview
+          }
+        />
+      )}
+
       {user?.userId != null && (
         <OpenedNoticeModal
           isOpen={openedOpeningId !== null}

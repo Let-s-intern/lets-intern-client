@@ -135,6 +135,18 @@ const openOpening: OpeningHistoryItem = {
   closeReason: null,
 };
 
+/**
+ * 오픈 전 확인 모달을 통과한다.
+ * 체크 없이는 진행 버튼이 열리지 않는다 — 확인 절차 자체가 요구사항이다.
+ */
+const passPreOpenCheck = (confirmLabel: '검토 제출' | '오픈하기') => {
+  const dialog = screen.getByRole('dialog', {
+    name: '오픈 전 상세 페이지 확인',
+  });
+  fireEvent.click(within(dialog).getByRole('checkbox'));
+  fireEvent.click(within(dialog).getByRole('button', { name: confirmLabel }));
+};
+
 const renderPage = (
   overrides: Partial<LiveMentoringSettings> = {},
   openings: OpeningHistoryItem[] = [],
@@ -265,6 +277,7 @@ describe('OpenSettingsPage — 검토 제출', () => {
     renderPage({ durations: [30, 60] });
 
     fireEvent.click(screen.getByRole('button', { name: '검토 제출' }));
+    passPreOpenCheck('검토 제출');
 
     expect(submitMock).toHaveBeenCalledTimes(1);
     const payload = submitMock.mock.calls[0][0] as LiveMentoringSubmit;
@@ -415,6 +428,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    passPreOpenCheck('오픈하기');
 
     expect(reopenMock).toHaveBeenCalledTimes(1);
     expect(reopenMock.mock.calls[0][0]).toEqual({
@@ -439,6 +453,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    passPreOpenCheck('오픈하기');
 
     const dialog = screen.getByRole('dialog', { name: '오픈 완료 안내' });
     // 지연 노출은 서버 기능이라 프론트가 흉내내지 않는다 — 지금 공개됐다고 적는다.
@@ -463,10 +478,55 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    passPreOpenCheck('오픈하기');
     fireEvent.click(screen.getByRole('button', { name: '바로 내리기' }));
 
     expect(closeOpeningMock).toHaveBeenCalledTimes(1);
     expect(closeOpeningMock.mock.calls[0][0]).toBe(777);
+  });
+
+  // 오픈은 되돌리는 비용이 크고 잘못 나간 상세는 멘티에게 그대로 보인다.
+  it('확인 체크 전에는 진행 버튼이 열리지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+
+    const dialog = screen.getByRole('dialog', {
+      name: '오픈 전 상세 페이지 확인',
+    });
+    expect(
+      within(dialog).getByRole('button', { name: '오픈하기' }),
+    ).toBeDisabled();
+    // 확인할 주소를 바로 열 수 있어야 확인이 형식적이지 않다.
+    expect(
+      within(dialog).getByRole('link', { name: '상세 페이지 열어보기' }),
+    ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
+
+    fireEvent.click(within(dialog).getByRole('checkbox'));
+    expect(
+      within(dialog).getByRole('button', { name: '오픈하기' }),
+    ).toBeEnabled();
+    expect(reopenMock).not.toHaveBeenCalled();
+  });
+
+  it('취소하면 아무것도 실행하지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    fireEvent.click(
+      within(
+        screen.getByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
+      ).getByRole('button', { name: '취소' }),
+    );
+
+    expect(reopenMock).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
+    ).not.toBeInTheDocument();
   });
 
   it('오픈 중이면 재개설 버튼 없이 잠근다', () => {
