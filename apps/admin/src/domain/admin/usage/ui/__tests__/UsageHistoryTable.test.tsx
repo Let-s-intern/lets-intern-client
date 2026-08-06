@@ -449,6 +449,92 @@ describe('UsageHistoryTable 행 펼침', () => {
   });
 });
 
+describe('UsageHistoryTable 참여자 목록 링크', () => {
+  const link = () => screen.queryByRole('link', { name: /참여자 목록/ });
+
+  it('프로그램과 신청서를 정확히 지목하는 주소로 건너간다', () => {
+    // 환불은 참여자 목록에서 실행한다. 이 화면은 거기로 보내기만 한다.
+    renderTable([
+      row({ applicationId: 6001, programId: 319, programType: 'CHALLENGE' }),
+    ]);
+
+    expect(link()).toHaveAttribute(
+      'href',
+      '/programs/319/users?programType=CHALLENGE#application-6001',
+    );
+  });
+
+  it('programType 이 없으면 링크를 아예 만들지 않는다', () => {
+    /*
+      받는 화면이 `searchParams.get('programType') ?? CHALLENGE` 로 읽는다.
+      파라미터를 빼고 보내면 VOD 신청서인데도 챌린지 참여자 목록이 뜨고,
+      운영이 그 잘못된 화면에서 환불을 누른다. 이 테스트가 그 경로를 막는다.
+    */
+    renderTable([row({ programId: 319, programType: null })]);
+
+    expect(link()).not.toBeInTheDocument();
+  });
+
+  it('programId 가 없으면 링크를 만들지 않는다', () => {
+    renderTable([row({ programId: null, programType: 'VOD' })]);
+
+    expect(link()).not.toBeInTheDocument();
+  });
+
+  it('링크를 못 만든 자리를 빈칸으로 두지 않는다', () => {
+    // 빈칸은 "링크가 없다"가 아니라 "화면이 깨졌다"로 읽힌다.
+    renderTable([row({ programId: null, programType: null })]);
+
+    expect(within(firstRow()).getAllByText('-').length).toBeGreaterThan(0);
+  });
+
+  it('챌린지가 아닌 타입도 자기 타입 그대로 넘긴다', () => {
+    renderTable([
+      row({ applicationId: 7002, programId: 42, programType: 'GUIDEBOOK' }),
+    ]);
+
+    expect(link()).toHaveAttribute(
+      'href',
+      '/programs/42/users?programType=GUIDEBOOK#application-7002',
+    );
+  });
+
+  it('새 탭으로 열어 보던 목록을 잃지 않는다', () => {
+    // 같은 탭에서 넘어가면 걸어 둔 필터와 펼쳐 둔 상세가 사라진다.
+    renderTable([row()]);
+
+    expect(link()).toHaveAttribute('target', '_blank');
+    expect(link()).toHaveAttribute('rel', 'noreferrer');
+  });
+
+  it('링크를 넣어도 컬럼 수는 그대로다', async () => {
+    /*
+      링크를 프로그램 칸 안에 두고 열을 늘리지 않았다. 열을 늘렸다면 COLUMN_COUNT 와
+      상세 행 colSpan 을 함께 올려야 하고, 빠뜨리면 펼침 영역 너비가 어긋난다.
+    */
+    const user = userEvent.setup();
+    renderTable([row()]);
+
+    expect(screen.getAllByRole('columnheader')).toHaveLength(8);
+
+    await user.click(screen.getByRole('button', { name: '펼치기' }));
+
+    const detailCell = screen
+      .getAllByRole('cell')
+      .find((cell) => cell.hasAttribute('colspan'));
+
+    expect(detailCell).toHaveAttribute('colspan', '8');
+  });
+
+  it('링크 문구로 환불 가부를 말하지 않는다', () => {
+    // 규정 판단은 운영의 몫이다. 링크는 이동 수단이지 결론이 아니다.
+    renderTable([row()]);
+
+    expect(link()).toHaveTextContent('참여자 목록');
+    expect(screen.queryByText(/환불/)).not.toBeInTheDocument();
+  });
+});
+
 describe('결제일 표기', () => {
   it('결제일에 시각까지 적는다', () => {
     renderTable([row({ paidAt: '2026-08-05T16:08:07' })]);

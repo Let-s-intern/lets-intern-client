@@ -40,6 +40,26 @@ interface Props {
 /** 상세 행이 표 전체 너비를 차지하도록 맞춘다. 컬럼을 늘리면 여기도 함께 늘린다. */
 const COLUMN_COUNT = 8;
 
+/**
+ * 참여자 목록 링크.
+ *
+ * 환불은 이 화면에서 하지 않는다. 여기서 이용 기록을 보고 환불이 필요하다고 판단하면
+ * 참여자 목록으로 건너가 거기서 실행한다. 환불 실행이 두 화면에 걸치면 갱신·에러·중복
+ * 실행을 양쪽에서 관리하게 된다.
+ *
+ * `programType` 이 없으면 링크를 만들지 않는다. 받는 화면이
+ * `searchParams.get('programType') ?? CHALLENGE` 로 읽어 **파라미터가 없으면 무조건
+ * 챌린지로 조회**한다. VOD·가이드북 신청서를 `programId` 만 들고 보내면 엉뚱한 목록이
+ * 뜨고, 그 잘못된 화면에서 환불 버튼을 누르는 경로가 열린다.
+ * 깨진 링크를 주는 것보다 링크가 없는 편이 낫다.
+ */
+const buildParticipantsHref = (row: AccessLogRow): string | null => {
+  if (row.programId == null || !row.programType) return null;
+
+  const query = new URLSearchParams({ programType: row.programType });
+  return `/programs/${row.programId}/users?${query}#application-${row.applicationId}`;
+};
+
 const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
   /**
    * 펼침은 행 단위다. 하나만 열리게 하면 두 신청서를 나란히 비교할 수 없는데,
@@ -119,6 +139,8 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
             .filter(Boolean)
             .join(' · ');
 
+          const participantsHref = buildParticipantsHref(row);
+
           return (
             <Fragment key={row.applicationId}>
               <tr
@@ -149,7 +171,28 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
                     {row.userEmail ?? '-'}
                   </div>
                 </td>
-                <td className="px-3 py-2">{programText || '-'}</td>
+                <td className="px-3 py-2">
+                  <div>{programText || '-'}</div>
+                  {/*
+                    링크는 작게 둔다. 이 화면의 목적은 조회지 환불 실행이 아니다.
+                    새 탭으로 연다. 같은 탭에서 넘어가면 걸어 둔 필터와 펼쳐 둔 상세가
+                    사라져, 여러 건을 훑다가 한 건을 확인하는 실제 사용법이 끊긴다.
+                  */}
+                  {participantsHref ? (
+                    <a
+                      href={participantsHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-neutral-40 text-xs underline underline-offset-2"
+                      aria-label={`${programText || '이 프로그램'} 참여자 목록 (새 탭)`}
+                    >
+                      참여자 목록
+                    </a>
+                  ) : (
+                    /* 링크를 못 만든 자리를 비워 두지 않는다. 빈칸은 누락으로 읽힌다. */
+                    <div className="text-neutral-40 text-xs">-</div>
+                  )}
+                </td>
                 {/*
                   결제일에 시각까지 적는다. 날짜만 보이면 같은 날 여러 번 결제한 건이
                   전부 같은 줄로 보여 어느 결제인지 구분되지 않는다. 실제로 같은 날
