@@ -335,3 +335,133 @@ describe('formatTargetSummary', () => {
     expect(formatTargetSummary(undefined)).toBe(TARGET_SUMMARY_EMPTY);
   });
 });
+
+describe('적재 대상이 아닌 프로그램 타입', () => {
+  // 목록 API 가 신청서 기준 left join 이라 LIVE·REPORT 신청서도 행으로 내려온다.
+  // 로그가 없어 firstAccessedAt 이 null 이므로, 타입을 보지 않으면 `미이용` 이 된다.
+  // 적재하지도 않는 건이 미이용으로 보이면 운영이 전액 환불 대상으로 읽는다.
+
+  it('LIVE 는 집계 대상이 아니라고 말한다', () => {
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'LIVE',
+      }),
+    ).toBe('NOT_TRACKED');
+  });
+
+  it('REPORT 도 집계 대상이 아니다', () => {
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'REPORT',
+      }),
+    ).toBe('NOT_TRACKED');
+  });
+
+  it('집계 시작 이전 결제여도 집계 이전이 아니라 집계 대상 아님이다', () => {
+    // 순서가 중요하다. 이 타입은 결제 시점과 무관하게 애초에 기록하지 않는다.
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: '2026-01-01T00:00:00',
+        trackedFrom: TRACKED_FROM,
+        programType: 'LIVE',
+      }),
+    ).toBe('NOT_TRACKED');
+  });
+
+  it('적재 대상 타입은 영향을 받지 않는다', () => {
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'CHALLENGE',
+      }),
+    ).toBe('NOT_USED');
+
+    ['VOD', 'GUIDEBOOK'].forEach((programType) => {
+      expect(
+        resolveUsageStatus({
+          firstAccessedAt: null,
+          paidAt: daysBefore(2),
+          trackedFrom: TRACKED_FROM,
+          programType,
+        }),
+      ).toBe('NOT_USED');
+    });
+  });
+
+  it('이용 기록이 있으면 타입과 무관하게 이용함이다', () => {
+    // 적재 대상이 아닌데 기록이 있다면 그 기록이 사실이다. 지우지 않는다.
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: daysBefore(1),
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'LIVE',
+      }),
+    ).toBe('USED');
+  });
+
+  it('모르는 타입은 어느 쪽으로도 단정하지 않는다', () => {
+    // 미이용으로 두면 기록하지 않는 타입에 전액 환불이 나가고,
+    // 집계 대상 아님으로 두면 실제 적재되는 타입의 미이용을 가린다. 둘 다 틀리다.
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'MENTORING',
+      }),
+    ).toBe('UNKNOWN');
+  });
+
+  it('타입을 넘기지 않으면 기존 판정을 그대로 따른다', () => {
+    expect(
+      resolveUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+      }),
+    ).toBe('NOT_USED');
+  });
+
+  it('집계 대상이 아닌 행은 강조하지 않는다', () => {
+    // 강조는 "결제 7일 이내 · 이용 기록 없음"을 뜻하는데,
+    // 이 타입은 이용 여부 자체를 말할 수 없어 강조의 전제가 성립하지 않는다.
+    expect(
+      isRecentUnused(
+        {
+          firstAccessedAt: null,
+          paidAt: daysBefore(2),
+          trackedFrom: TRACKED_FROM,
+          programType: 'LIVE',
+        },
+        NOW,
+      ),
+    ).toBe(false);
+  });
+
+  it('라벨이 필터에서 쓰는 문구와 같다', () => {
+    // 필터 선택지의 `(집계 대상 아님)` 과 같은 말이어야 화면 안에서 말이 맞는다.
+    expect(USAGE_STATUS_LABEL.NOT_TRACKED).toBe('집계 대상 아님');
+    expect(USAGE_STATUS_LABEL.NOT_TRACKED).not.toMatch(/환불/);
+  });
+
+  it('formatUsageStatus 도 같은 라벨을 준다', () => {
+    expect(
+      formatUsageStatus({
+        firstAccessedAt: null,
+        paidAt: daysBefore(2),
+        trackedFrom: TRACKED_FROM,
+        programType: 'REPORT',
+      }),
+    ).toBe('집계 대상 아님');
+  });
+});

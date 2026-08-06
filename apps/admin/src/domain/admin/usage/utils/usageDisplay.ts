@@ -1,17 +1,21 @@
 import {
+  ACCESS_LOG_PROGRAM_TYPES,
   ACCESS_LOG_TARGET_TYPES,
   type AccessLogTargetSummary,
   type KnownAccessLogTargetType,
 } from '@/api/accessLog';
 
+import { TRACKED_PROGRAM_TYPES } from '../constants/programType';
+
 /**
  * 이용 기록 표시 판정 (LC-3201, PRD 7.4).
  *
- * 이 파일이 하는 일은 "기록이 없다"의 세 가지 이유를 가르는 것이다.
+ * 이 파일이 하는 일은 "기록이 없다"의 네 가지 이유를 가르는 것이다.
  *
- *   집계 이전 — 로그 도입 전 결제라 소급이 불가능하다. 이용하지 않았다는 뜻이 아니다
- *   미이용   — 도입 이후 결제인데 이용 기록이 없다. 환불 판단의 근거가 된다
- *   확인 불가 — 판정할 근거 자체가 없다. 없는 것과 못 읽은 것은 다르다
+ *   집계 대상 아님 — 애초에 기록하지 않는 프로그램 타입이다. 이용 여부를 말할 수 없다
+ *   집계 이전     — 로그 도입 전 결제라 소급이 불가능하다. 이용하지 않았다는 뜻이 아니다
+ *   미이용       — 도입 이후 결제인데 이용 기록이 없다. 환불 판단의 근거가 된다
+ *   확인 불가     — 판정할 근거 자체가 없다. 없는 것과 못 읽은 것은 다르다
  *
  * 이 구분이 없으면 과거 결제가 전부 `미이용` 으로 보여 운영이 잘못된 전액 환불을 실행한다.
  * 이 기능에서 가장 사고가 나기 쉬운 지점이라 애매하면 언제나 `확인 불가` 로 간다.
@@ -20,10 +24,16 @@ import {
  * 예외 상황에서 잘못된 근거가 된다(PRD 7.3). 이 유틸은 사실만 표현한다.
  */
 
-export type UsageStatus = 'USED' | 'BEFORE_TRACKING' | 'NOT_USED' | 'UNKNOWN';
+export type UsageStatus =
+  | 'USED'
+  | 'NOT_TRACKED'
+  | 'BEFORE_TRACKING'
+  | 'NOT_USED'
+  | 'UNKNOWN';
 
 export const USAGE_STATUS_LABEL: Record<UsageStatus, string> = {
   USED: '이용함',
+  NOT_TRACKED: '집계 대상 아님',
   BEFORE_TRACKING: '기록 없음 (집계 이전)',
   NOT_USED: '미이용',
   UNKNOWN: '확인 불가',
@@ -34,6 +44,14 @@ export interface UsageRecord {
   paidAt?: string | null;
   /** 집계 시작 시각. 목록 응답 최상위에서 온다. */
   trackedFrom?: string | null;
+  /**
+   * 프로그램 타입. 적재 대상이 아닌 타입을 가려내는 데 쓴다.
+   *
+   * 목록 API 가 신청서 기준 left join 이라 LIVE·REPORT 신청서도 행으로 내려오고,
+   * 로그가 없으니 `firstAccessedAt` 이 null 이다. 이 값을 넘기지 않으면
+   * 적재하지도 않는 건이 `미이용` 으로 표시된다.
+   */
+  programType?: string | null;
 }
 
 /**
@@ -47,6 +65,35 @@ const toTime = (value: string | null | undefined): number | null => {
   if (!value) return null;
   const time = new Date(value).getTime();
   return Number.isNaN(time) ? null : time;
+};
+
+/**
+ * 적재 대상이 아닌 프로그램 타입인가.
+ *
+ * 값을 넘기지 않았으면(`null`·`undefined`) 판단하지 않고 기존 흐름에 맡긴다.
+ * 타입 정보 없이 `집계 대상 아님` 이라고 말할 근거가 없다.
+ */
+const isUntrackedProgramType = (value: string | null | undefined): boolean => {
+  if (!value) return false;
+  if ((TRACKED_PROGRAM_TYPES as readonly string[]).includes(value)) {
+    return false;
+  }
+  // 아는 타입인데 적재 대상이 아닌 경우만 단정한다(LIVE·REPORT).
+  return (ACCESS_LOG_PROGRAM_TYPES as readonly string[]).includes(value);
+};
+
+/**
+ * 서버가 우리가 모르는 타입을 보냈는가.
+ *
+ * 새 타입이 적재 대상인지 아닌지 화면은 알 수 없다. `미이용` 으로 떨어뜨리면
+ * 기록하지 않는 타입에 전액 환불이 나가고, `집계 대상 아님` 으로 단정하면
+ * 실제로 적재되는 타입의 미이용 건을 가린다. 둘 다 틀리므로 판단을 미룬다.
+ */
+const isUnrecognizedProgramType = (
+  value: string | null | undefined,
+): boolean => {
+  if (!value) return false;
+  return !(ACCESS_LOG_PROGRAM_TYPES as readonly string[]).includes(value);
 };
 
 /**
@@ -64,6 +111,14 @@ export const resolveUsageStatus = (
   if (record.firstAccessedAt) {
     return toTime(record.firstAccessedAt) == null ? 'UNKNOWN' : 'USED';
   }
+
+  // 적재 대상이 아닌 타입을 가장 먼저 가른다. 시점 비교보다 앞이어야 한다.
+  // LIVE 신청서가 집계 시작 이전 결제면 `집계 이전` 으로 떨어지는데 그것도 틀린 표시다.
+  // 이 타입들은 결제 시점과 무관하게 애초에 기록하지 않아 이용 여부를 말할 수 없다.
+  if (isUntrackedProgramType(record.programType)) return 'NOT_TRACKED';
+
+  // 모르는 타입은 적재 대상인지 알 수 없다. 어느 쪽으로도 단정하지 않는다.
+  if (isUnrecognizedProgramType(record.programType)) return 'UNKNOWN';
 
   const paidAt = toTime(record.paidAt);
   const trackedFrom = toTime(record.trackedFrom);
