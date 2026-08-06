@@ -143,7 +143,18 @@ export const accessLogHandlers = [
     const usageStatus = url.searchParams.get('usageStatus');
     const includeCanceled = url.searchParams.get('includeCanceled');
     const sort = url.searchParams.get('sort');
-    const page = Number(url.searchParams.get('page') ?? 0);
+    /*
+      서버가 `one-indexed-parameters: true` 라 `page=1` 이 첫 페이지다.
+      목이 0-indexed 를 받으면 화면을 1-indexed 로 고친 순간 목에서만 페이징이 어긋난다.
+      목·서버·화면 셋이 같은 규칙이어야 목으로 확인한 것이 실서버에서도 성립한다.
+
+      서버는 `page=0` 도 첫 페이지로 접어 준다(0 과 1 이 같은 결과). 그 동작까지 흉내 낸다 —
+      목만 엄격하면 목에서는 안 나던 문제가 실서버에서만 나거나 그 반대가 된다.
+    */
+    const requestedPage = Number(url.searchParams.get('page') ?? 1);
+    const page = Number.isFinite(requestedPage)
+      ? Math.max(1, requestedPage)
+      : 1;
     const size = Number(url.searchParams.get('size') ?? 20);
 
     // 모든 조건은 AND 다. 하나라도 어긋나면 행이 빠진다.
@@ -184,13 +195,18 @@ export const accessLogHandlers = [
       SORTERS[sort ?? ''] ?? SORTERS.LAST_ACCESSED_DESC,
     );
 
-    const start = page * size;
+    const start = (page - 1) * size;
 
     return HttpResponse.json({
       data: {
         accessLogList: sorted.slice(start, start + size),
         pageInfo: {
-          pageNum: page,
+          /*
+            응답의 `pageNum` 은 0 부터다. 서버가 요청은 1-indexed 로 받으면서
+            `Page.getNumber()` 는 0-based 를 그대로 내보낸다(page=1 → pageNum 0).
+            요청과 응답의 기준이 다르다는 것이 이 API 의 함정이라 목도 같게 둔다.
+          */
+          pageNum: page - 1,
           pageSize: size,
           totalElements: sorted.length,
           totalPages: Math.max(1, Math.ceil(sorted.length / size)),

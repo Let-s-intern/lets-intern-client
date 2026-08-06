@@ -23,9 +23,22 @@ import { useSearchParams } from 'react-router-dom';
 
 const PAGE_SIZE = 20;
 
+/**
+ * 페이지 번호는 **1 부터 시작한다.**
+ *
+ * 서버가 `spring.data.web.pageable.one-indexed-parameters: true` 로 떠 있어
+ * `page=0` 과 `page=1` 이 **둘 다 첫 페이지**로 접힌다. 0 부터 세면 1페이지와 2페이지가
+ * 같은 내용을 보여주는데, 에러가 없어 화면만 봐서는 알아채기 어렵다.
+ *
+ * 요청 직전에 `+1` 하지 않고 상태 자체를 1 부터 센다. 변환을 한 곳에 두면 다른 경로로
+ * 이 API 를 부르는 사람이 그것을 빠뜨리고, 증상은 똑같이 조용하다.
+ * 이 레포의 다른 어드민 목록도 1 부터 센다(`BlogRatingTable` 등).
+ */
+const FIRST_PAGE = 1;
+
 const parsePage = (value: string | null) => {
   const page = Number(value);
-  return Number.isInteger(page) && page >= 0 ? page : 0;
+  return Number.isInteger(page) && page >= FIRST_PAGE ? page : FIRST_PAGE;
 };
 
 const UsageHistoryPage = () => {

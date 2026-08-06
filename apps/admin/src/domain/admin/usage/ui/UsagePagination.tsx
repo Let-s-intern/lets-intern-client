@@ -5,10 +5,13 @@
  * 한 쪽을 고치면 다른 쪽이 따라 바뀌는 결합을 만들지 않는다.
  */
 interface Props {
+  /** 1 부터 센다. 서버가 1-indexed 라 상태도 같은 규칙으로 둔다. */
   page: number;
   totalPages: number;
   onChange: (page: number) => void;
 }
+
+const FIRST_PAGE = 1;
 
 const UsagePagination = ({ page, totalPages, onChange }: Props) => {
   if (totalPages <= 1) return null;
@@ -18,19 +21,20 @@ const UsagePagination = ({ page, totalPages, onChange }: Props) => {
       <button
         type="button"
         className="rounded border border-neutral-300 px-3 py-1 disabled:text-neutral-300"
-        onClick={() => onChange(Math.max(0, page - 1))}
-        disabled={page === 0}
+        onClick={() => onChange(Math.max(FIRST_PAGE, page - 1))}
+        disabled={page <= FIRST_PAGE}
       >
         이전
       </button>
+      {/* 표시에 보정이 없다. 상태와 서버가 같은 기준이면 변환할 것이 남지 않는다. */}
       <span>
-        {page + 1} / {totalPages}
+        {page} / {totalPages}
       </span>
       <button
         type="button"
         className="rounded border border-neutral-300 px-3 py-1 disabled:text-neutral-300"
-        onClick={() => onChange(Math.min(totalPages - 1, page + 1))}
-        disabled={page >= totalPages - 1}
+        onClick={() => onChange(Math.min(totalPages, page + 1))}
+        disabled={page >= totalPages}
       >
         다음
       </button>

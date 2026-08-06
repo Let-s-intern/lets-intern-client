@@ -293,8 +293,8 @@ describe('GET /admin/access-log', () => {
   });
 
   it('페이지네이션이 동작한다', async () => {
-    const first = await fetchAccessLogs('?page=0&size=3');
-    const second = await fetchAccessLogs('?page=1&size=3');
+    const first = await fetchAccessLogs('?page=1&size=3');
+    const second = await fetchAccessLogs('?page=2&size=3');
 
     expect(first.accessLogList).toHaveLength(3);
     expect(first.pageInfo.totalPages).toBe(
@@ -487,8 +487,8 @@ describe('페이지네이션 안정성', () => {
   const SORTS = ['LAST_ACCESSED_DESC', 'PAID_DESC', 'PAID_ASC'];
 
   it.each(SORTS)('%s — 페이지 사이에 겹치는 행이 없다', async (sort) => {
-    const first = await fetchAccessLogs(`?sort=${sort}&page=0&size=3`);
-    const second = await fetchAccessLogs(`?sort=${sort}&page=1&size=3`);
+    const first = await fetchAccessLogs(`?sort=${sort}&page=1&size=3`);
+    const second = await fetchAccessLogs(`?sort=${sort}&page=2&size=3`);
 
     const overlap = idsOf(first).filter((id) => idsOf(second).includes(id));
 
@@ -501,7 +501,7 @@ describe('페이지네이션 안정성', () => {
     const total = all.pageInfo.totalElements;
 
     const collected: number[] = [];
-    for (let page = 0; page * 3 < total; page += 1) {
+    for (let page = 1; (page - 1) * 3 < total; page += 1) {
       const chunk = await fetchAccessLogs(`?sort=${sort}&page=${page}&size=3`);
       collected.push(...idsOf(chunk));
     }
@@ -518,8 +518,8 @@ describe('페이지네이션 안정성', () => {
   });
 
   it('정렬을 지정하지 않아도 순서가 정해진다', async () => {
-    const first = await fetchAccessLogs('?page=0&size=3');
-    const second = await fetchAccessLogs('?page=1&size=3');
+    const first = await fetchAccessLogs('?page=1&size=3');
+    const second = await fetchAccessLogs('?page=2&size=3');
 
     expect(idsOf(first).filter((id) => idsOf(second).includes(id))).toEqual([]);
   });

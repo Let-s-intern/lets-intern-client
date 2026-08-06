@@ -206,7 +206,28 @@ describe('UsageHistoryPage 검색', () => {
 
     expect(urlQuery()).not.toContain('page=');
     expect(listQuery).toHaveBeenLastCalledWith(
-      expect.objectContaining({ usageStatus: 'NOT_USED', page: 0 }),
+      expect.objectContaining({ usageStatus: 'NOT_USED', page: 1 }),
+    );
+  });
+
+  it('첫 페이지 요청이 page=1 로 나간다', () => {
+    /*
+      서버가 one-indexed-parameters 라 page=0 과 page=1 이 둘 다 첫 페이지로 접힌다.
+      0 부터 세면 화면 1페이지와 2페이지가 같은 내용을 보여주는데, 에러가 없어
+      화면만 봐서는 알아채기 어렵다. 이 단언이 그 버그를 직접 잡는다.
+    */
+    renderPage();
+
+    expect(listQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 1 }),
+    );
+  });
+
+  it('page 파라미터가 없어도 0 을 보내지 않는다', () => {
+    renderPage('/admin/usage-history?userKeyword=김');
+
+    expect(listQuery).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 0 }),
     );
   });
 });
