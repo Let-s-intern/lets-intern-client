@@ -295,6 +295,12 @@ export const seedAccessLogDetails: Record<number, AccessLogApplicationDetail> =
         paidAt: row.paidAt ?? null,
         daysFromPaymentToFirstAccess: row.daysFromPaymentToFirstAccess ?? null,
         trackedFrom: MOCK_TRACKED_FROM,
+        /*
+          환불 모달이 이 값으로 `집계 대상 아님` 을 가른다. 서버는 단건 응답 최상위에
+          내려주는데 목에서 빠뜨리면, LIVE 신청서의 모달이 `미이용` 으로 보인다.
+          목으로 QA 할 때만 틀리게 보이는 종류라 화면도 테스트도 멀쩡해 보인다.
+        */
+        programType: row.programType ?? null,
         details: seedDetailsByApplicationId[row.applicationId] ?? [],
       },
     ]),
