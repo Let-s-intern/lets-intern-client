@@ -33,6 +33,50 @@ export const START_EDIT_SUCCESS = {
   description: '수정을 마치면 검토를 제출해주세요. 승인되면 다시 오픈됩니다.',
 } as const;
 
+/**
+ * YouTube 링크를 서버가 받는 embed 주소로 정규화한다.
+ *
+ * 서버(`LiveMentoringUrlPolicy`)는 `https://www.youtube.com/embed/{id}` 형태만 받는다.
+ * 호스트가 `youtu.be` 거나 `?si=...` 같은 쿼리가 붙으면 전부 거부하고, 그 결과 상세
+ * 페이지 저장 **전체**가 400 으로 실패한다. 멘토는 보통 공유 버튼으로 얻은 링크를
+ * 붙여넣으므로, 흔한 형태를 받아 embed 로 바꿔준다.
+ *
+ * 변환할 수 없으면 null 을 돌려주고 호출부가 저장을 막는다 — 서버까지 보내 400 을
+ * 받는 것보다 입력 옆에서 알려주는 편이 낫다.
+ */
+export const toYoutubeEmbedUrl = (input: string): string | null => {
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  const host = url.hostname.toLowerCase();
+  let videoId: string | null = null;
+
+  if (host === 'youtu.be') {
+    videoId = url.pathname.slice(1);
+  } else if (
+    host === 'www.youtube.com' ||
+    host === 'youtube.com' ||
+    host === 'm.youtube.com'
+  ) {
+    if (url.pathname === '/watch') videoId = url.searchParams.get('v');
+    else if (url.pathname.startsWith('/embed/'))
+      videoId = url.pathname.slice('/embed/'.length);
+    else if (url.pathname.startsWith('/shorts/'))
+      videoId = url.pathname.slice('/shorts/'.length);
+  }
+
+  // 서버 패턴(`^/embed/[A-Za-z0-9_-]+$`)과 같은 문자 집합만 통과시킨다.
+  if (!videoId || !/^[A-Za-z0-9_-]+$/.test(videoId)) return null;
+  return `https://www.youtube.com/embed/${videoId}`;
+};
+
 /** 진행시간(분) 표시 라벨. */
 export const durationLabel = (durationMin: number): string =>
   `${durationMin}분`;

@@ -4,6 +4,7 @@ import type {
   TemplateResultCase,
   TemplateStrategyPoint,
 } from '@/api/live-mentoring/liveMentoringSchema';
+import { toYoutubeEmbedUrl } from '../../constants';
 import ImageField from './ImageField';
 import ListField from './ListField';
 
@@ -291,16 +292,33 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
               id="videoUrl"
               className={inputClass}
               value={video.videoUrl ?? ''}
-              placeholder="https://www.youtube.com/embed/..."
+              placeholder="https://www.youtube.com/embed/... 또는 공유 링크"
               onChange={(e) =>
                 onChange({
                   video: { ...video, videoUrl: e.target.value || null },
                 })
               }
+              /*
+               * 붙여넣은 공유 링크를 포커스가 빠질 때 embed 주소로 바꿔 넣는다.
+               * 값을 조용히 바꾸지 않고 입력창에 그대로 보여줘 무엇이 저장될지 드러낸다.
+               */
+              onBlur={(e) => {
+                const normalized = toYoutubeEmbedUrl(e.target.value);
+                if (normalized && normalized !== e.target.value) {
+                  onChange({ video: { ...video, videoUrl: normalized } });
+                }
+              }}
             />
-            <p className="mt-1 text-xs text-gray-400">
-              YouTube 는 공유 → 퍼가기의 embed 주소를 넣어주세요.
-            </p>
+            {video.videoUrl && !toYoutubeEmbedUrl(video.videoUrl) ? (
+              <p role="alert" className="text-system-error mt-1 text-xs">
+                YouTube 주소만 넣을 수 있어요. 공유 링크나
+                youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-gray-400">
+                공유 링크를 붙여넣어도 embed 주소로 자동 변환됩니다.
+              </p>
+            )}
           </div>
           <input
             className={inputClass}

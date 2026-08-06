@@ -11,7 +11,11 @@ import {
 import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import { START_EDIT_CONFIRM, START_EDIT_SUCCESS } from '../constants';
+import {
+  START_EDIT_CONFIRM,
+  START_EDIT_SUCCESS,
+  toYoutubeEmbedUrl,
+} from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
@@ -95,15 +99,54 @@ const DetailSettingsPage = () => {
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  const handleSave = () =>
-    save(template, {
+  /**
+   * 저장.
+   *
+   * 영상 URL 은 서버가 `https://www.youtube.com/embed/{id}` 형태만 받는다. 공유 링크를
+   * 그대로 두면 저장 **전체**가 400 으로 실패하는데, 화면에는 어느 필드 때문인지
+   * 드러나지 않아 원인을 찾을 수 없다. 보내기 전에 정규화하고, 못 고치면 여기서 막는다.
+   */
+  const handleSave = () => {
+    let payload = template;
+
+    if (template.video.videoUrl) {
+      const embedUrl = toYoutubeEmbedUrl(template.video.videoUrl);
+      if (!embedUrl) {
+        showAlert({
+          title: '영상 URL 을 확인해주세요.',
+          description:
+            'YouTube 주소만 넣을 수 있어요. 영상 페이지의 공유 링크를 붙여넣으면 자동으로 변환됩니다.',
+          variant: 'error',
+        });
+        return;
+      }
+      payload = {
+        ...template,
+        video: { ...template.video, videoUrl: embedUrl },
+      };
+      setTemplate(payload);
+    }
+
+    save(payload, {
       onSuccess: () => {
         setIsEditing(false);
         showAlert({ title: '저장되었습니다.', variant: 'success' });
       },
-      onError: () =>
-        showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
+      // 서버가 왜 거부했는지 감추면 멘토도 개발자도 원인을 알 수 없다.
+      onError: (error) => {
+        const apiError = error as { code?: string; message?: string } | null;
+        showAlert({
+          title: '저장에 실패했습니다.',
+          description: apiError?.message
+            ? apiError.code
+              ? `${apiError.message} (${apiError.code})`
+              : apiError.message
+            : undefined,
+          variant: 'error',
+        });
+      },
     });
+  };
 
   /**
    * 상세 수정 시작 — 서버가 상품을 편집 가능 상태로 되돌린다.
