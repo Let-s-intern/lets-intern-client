@@ -7,7 +7,8 @@ function makeOpening(
   overrides: Partial<LiveMentoringOpening> = {},
 ): LiveMentoringOpening {
   return {
-    id: 100,
+    liveMentoringId: 100,
+    openingId: 500,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: 'https://example.com/p.png',

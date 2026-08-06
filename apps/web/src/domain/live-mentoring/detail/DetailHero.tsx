@@ -73,12 +73,17 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
         </ul>
 
         <div className="text-xsmall14 md:text-xsmall16 flex flex-wrap items-center gap-x-5 gap-y-2">
-          <span className="flex items-center gap-1.5">
-            <span className="text-[#FFB800]" aria-hidden="true">
-              ★★★★★
+          {/* 후기가 없으면 서버 평점이 null 이다 — 별점을 0.0 으로 꾸미지 않고 통째로 뺀다. */}
+          {detail.rating !== null && (
+            <span className="flex items-center gap-1.5">
+              <span className="text-[#FFB800]" aria-hidden="true">
+                ★★★★★
+              </span>
+              <span className="font-semibold">
+                ({detail.rating.toFixed(1)})
+              </span>
             </span>
-            <span className="font-semibold">({detail.rating.toFixed(1)})</span>
-          </span>
+          )}
           <span>후기 {detail.reviewCount}건</span>
         </div>
 

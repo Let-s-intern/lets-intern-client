@@ -6,7 +6,8 @@ import {
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
-    id: 100,
+    liveMentoringId: 100,
+    openingId: 500,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: null,
@@ -60,7 +61,7 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
       ],
     },
     template: {
-      category: 'RESUME',
+      categories: ['RESUME'],
       hero: { bullets: ['이력서 피드백 및 첨삭'] },
       intro: {
         passedCount: 120,
@@ -182,6 +183,15 @@ describe('liveMentoringOpeningSchema', () => {
       liveMentoringOpeningSchema.parse(makeOpening({ durations: [50] })),
     ).toThrow();
   });
+
+  // 서버가 단일 `id` 를 상품·개설 두 식별자로 쪼갠 뒤로, 옛 응답은 더 이상 유효하지 않다.
+  it('옛 단일 id 응답은 파싱 실패한다', () => {
+    const legacy = makeOpening() as Record<string, unknown>;
+    delete legacy.liveMentoringId;
+    delete legacy.openingId;
+    legacy.id = 100;
+    expect(() => liveMentoringOpeningSchema.parse(legacy)).toThrow();
+  });
 });
 
 describe('liveMentoringOpeningListSchema', () => {
@@ -220,6 +230,24 @@ describe('liveMentorDetailSchema', () => {
     expect(parsed.template.intro.passedCount).toBe(120);
     expect(parsed.template.strategy.points).toHaveLength(1);
     expect(parsed.reviews[0].reviewId).toBe(101);
+  });
+
+  it('후기가 없어 평점이 null 이어도 파싱한다', () => {
+    const parsed = liveMentorDetailSchema.parse(
+      makeDetail({ rating: null, reviewCount: 0 }),
+    );
+    expect(parsed.rating).toBeNull();
+  });
+
+  it('프로필 닉네임·소개가 null 이어도 파싱한다', () => {
+    const detail = makeDetail() as Record<string, unknown>;
+    const profile = detail.profile as Record<string, unknown>;
+    expect(() =>
+      liveMentorDetailSchema.parse({
+        ...detail,
+        profile: { ...profile, nickname: null, introduction: null },
+      }),
+    ).not.toThrow();
   });
 
   it('template이 빠지면 파싱 실패', () => {

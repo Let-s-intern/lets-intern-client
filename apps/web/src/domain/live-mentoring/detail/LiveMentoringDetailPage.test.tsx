@@ -50,7 +50,7 @@ function detail(overrides: Record<string, unknown> = {}) {
           careers: [],
         },
         template: {
-          category: 'PORTFOLIO',
+          categories: ['PORTFOLIO'],
           hero: {
             bullets: [
               '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',

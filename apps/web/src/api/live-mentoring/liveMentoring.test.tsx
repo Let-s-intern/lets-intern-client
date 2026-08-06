@@ -18,7 +18,8 @@ const axiosGet = axios.get as jest.Mock;
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
-    id: 100,
+    liveMentoringId: 100,
+    openingId: 500,
     mentorId: 1,
     mentorNickname: '자소서장인',
     mentorProfileImage: null,
@@ -202,7 +203,7 @@ describe('useLiveMentorDetailQuery', () => {
             careers: [],
           },
           template: {
-            category: 'PORTFOLIO',
+            categories: ['PORTFOLIO'],
             hero: { bullets: ['불릿'] },
             intro: {
               passedCount: null,
