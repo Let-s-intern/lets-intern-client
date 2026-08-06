@@ -1,4 +1,5 @@
 import { AdminRefundRequest } from '@/api/adminRefund';
+import RefundUsageSummary from '@/domain/admin/usage/ui/RefundUsageSummary';
 import { ChallengePricePlanEnum } from '@/schema';
 import { useMemo, useState } from 'react';
 import { buildRefundConfirmSentence } from '../utils/refundConfirm';
@@ -157,6 +158,16 @@ const RefundModal = ({
           <dt className="text-neutral-500">실결제액</dt>
           <dd className="font-bold">{target.finalPrice.toLocaleString()}원</dd>
         </dl>
+
+        {/*
+          이용 이력은 대상 정보와 금액 입력 **사이**에 둔다(PRD 7.1).
+          금액 입력 아래에 있으면 운영이 이미 금액을 정한 뒤에 보게 되어 의미가 없다.
+
+          이 블록은 환불의 전제 조건이 아니다. 조회가 실패하거나 로딩 중이어도
+          아래의 금액 입력과 실행 버튼은 그대로 동작한다 — 실행 조건(`canSubmit`)이
+          이 블록을 참조하지 않는 것이 그 보장이다.
+        */}
+        <RefundUsageSummary applicationId={target.applicationId} />
 
         {isFull ? (
           <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">

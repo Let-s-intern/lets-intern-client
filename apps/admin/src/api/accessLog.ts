@@ -190,6 +190,13 @@ export type AccessLogDetail = z.infer<typeof accessLogDetailSchema>;
  * 운영은 펼쳐도 아무것도 못 보고, 그것이 `내역 없음` 으로 읽히면 정반대의 결론이 나온다.
  */
 export const accessLogApplicationDetailSchema = z.object({
+  /**
+   * 프로그램 타입. 적재 대상이 아닌 타입(LIVE·REPORT)을 가려내는 데 쓴다.
+   *
+   * 환불 모달은 목록 행을 거치지 않고 이 응답만으로 판정한다. 이 값이 없으면
+   * 기록하지 않는 타입이 `미이용` 으로 보이고, 그 자리에서 곧바로 전액 환불이 실행된다.
+   */
+  programType: z.string().nullable().optional(),
   firstAccessedAt: z.string().nullable().optional(),
   lastAccessedAt: z.string().nullable().optional(),
   accessCount: z.number().nullable().optional(),

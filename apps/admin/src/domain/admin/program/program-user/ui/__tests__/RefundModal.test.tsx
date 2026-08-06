@@ -1,9 +1,52 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildRefundConfirmSentence } from '../../utils/refundConfirm';
 import RefundModal, { RefundMode, RefundTarget } from '../RefundModal';
+
+/**
+ * 모달 안의 이용 이력 블록은 서버 조회를 한다(LC-3201, PRD 7.1).
+ * 그 조회가 환불 동작에 끼어들지 않는지 보려면 상태를 테스트가 쥐고 있어야 한다.
+ */
+const detailQuery = vi.fn();
+
+vi.mock('@/api/accessLog', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  useAccessLogDetailQuery: (...args: unknown[]) => detailQuery(...args),
+}));
+
+const usageLoading = () =>
+  detailQuery.mockReturnValue({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+  });
+
+const usageFailed = () =>
+  detailQuery.mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    isError: true,
+  });
+
+beforeEach(() => {
+  detailQuery.mockReset();
+  detailQuery.mockReturnValue({
+    data: {
+      programType: 'CHALLENGE',
+      firstAccessedAt: '2026-07-30T14:22:00',
+      lastAccessedAt: '2026-08-05T09:11:00',
+      accessCount: 12,
+      paidAt: '2026-07-28T10:00:00',
+      daysFromPaymentToFirstAccess: 2,
+      trackedFrom: '2026-06-01T00:00:00',
+      details: [{ targetType: 'CHALLENGE_DASHBOARD', targetId: 1 }],
+    },
+    isLoading: false,
+    isError: false,
+  });
+});
 
 const FULL_SENTENCE = buildRefundConfirmSentence({
   isFullRefund: true,
@@ -258,6 +301,61 @@ describe('RefundModal 확인 문장', () => {
 
     await setAmount(user, '110000');
     expect(submitButton()).toBeDisabled();
+  });
+});
+
+describe('RefundModal 이용 이력', () => {
+  const usageSection = () => screen.getByText('이용 내역').closest('section');
+
+  it('대상 정보와 금액 입력 사이에 둔다', () => {
+    // 금액 입력 아래에 있으면 운영이 이미 금액을 정한 뒤에 보게 되어 의미가 없다(PRD 7.1).
+    renderModal('partial');
+
+    const section = usageSection();
+    const finalPrice = screen.getByText('330,000원');
+
+    expect(
+      finalPrice.compareDocumentPosition(section!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      section!.compareDocumentPosition(amountInput()) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('조회에 실패해도 환불을 실행할 수 있다', async () => {
+    // 이 블록은 판단을 돕는 정보지 환불의 전제 조건이 아니다(PRD 7.1).
+    // 여기서 버튼이 잠기면 이용 로그 장애가 곧 환불 업무 중단이 된다.
+    usageFailed();
+    const user = userEvent.setup();
+    const { onSubmit } = renderModal('full');
+
+    await fillRequiredFields(user);
+
+    expect(submitButton()).toBeEnabled();
+
+    await user.click(submitButton());
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('조회 중에도 환불 버튼이 잠기지 않는다', async () => {
+    usageLoading();
+    const user = userEvent.setup();
+    renderModal('partial');
+
+    await setAmount(user, '220000');
+    await fillRequiredFields(user);
+
+    expect(submitButton()).toBeEnabled();
+  });
+
+  it('환불 가부를 판정하지 않는다', () => {
+    renderModal('partial');
+
+    expect(screen.queryByText(/환불 가능/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/환불 불가/)).not.toBeInTheDocument();
   });
 });
 
