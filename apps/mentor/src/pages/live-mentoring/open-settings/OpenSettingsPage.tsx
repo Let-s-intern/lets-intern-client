@@ -165,6 +165,9 @@ const OpenSettingsPage = () => {
   const noFeedbackDates = !form.feedbackStartDate || !form.feedbackEndDate;
   const endDatePassed =
     !!form.feedbackEndDate && form.feedbackEndDate < todayISO();
+  /** 시작일이 미래면 오픈해도 그날까지 목록에 뜨지 않는다(서버 노출 조건). */
+  const startDateInFuture =
+    !!form.feedbackStartDate && form.feedbackStartDate > todayISO();
   const invertedPeriod =
     !!form.feedbackStartDate &&
     !!form.feedbackEndDate &&
@@ -562,8 +565,8 @@ const OpenSettingsPage = () => {
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
                 <p className="mb-3 text-xs text-gray-500">
-                  멘토링(피드백)을 진행할 오픈 기간이에요. 이 값은 검토 제출과
-                  함께 저장됩니다.
+                  멘티가 이 기간 안에서 피드백 슬롯을 예약합니다. 오픈하면 바로
+                  모집이 시작돼요.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <input
@@ -600,11 +603,21 @@ const OpenSettingsPage = () => {
                     종료일이 이미 지났어요. 오늘 이후 날짜로 다시 잡아주세요.
                   </p>
                 )}
-                {/* 공개 리스트는 오늘이 기간 안에 있을 때만 노출한다 — 승인만으로는 뜨지 않는다. */}
-                <p className="mt-2 text-xs text-gray-500">
-                  시작일이 오늘보다 늦으면 승인 후에도 시작일 전까지는 공개
-                  리스트에 보이지 않아요.
-                </p>
+                {/*
+                  공개 목록은 `시작일 <= 오늘 <= 종료일` 일 때만 상품을 잡아간다.
+                  시작일을 미래로 두면 오픈해도 그날까지 모집이 시작되지 않는데,
+                  화면에서는 이미 열린 것처럼 보여 놓치기 쉽다. 그때만 경고한다.
+                */}
+                {startDateInFuture && (
+                  <p
+                    role="alert"
+                    className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+                  >
+                    시작일이 오늘 이후예요. 지금 오픈해도 시작일 전까지는 공개
+                    리스트에 노출되지 않아 모집이 시작되지 않습니다. 바로
+                    모집하려면 시작일을 오늘로 맞춰주세요.
+                  </p>
+                )}
               </section>
 
               <section className={cardClass}>

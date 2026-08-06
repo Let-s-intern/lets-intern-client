@@ -346,10 +346,19 @@ describe('OpenSettingsPage — 검토 제출', () => {
     expect(screen.getByRole('button', { name: '검토 제출' })).toBeDisabled();
   });
 
-  it('공개 노출 조건(시작일 이후부터 보임)을 화면에서 알린다', () => {
+  // 시작일이 미래면 오픈해도 그날까지 모집이 시작되지 않는다(서버 노출 조건).
+  it('시작일이 미래일 때만 모집이 시작되지 않는다고 경고한다', () => {
     renderPage();
     expect(
-      screen.getByText(/시작일이 오늘보다 늦으면 승인 후에도/),
+      screen.queryByText(/시작일 전까지는 공개 리스트에 노출되지 않아/),
+    ).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
+      target: { value: dateFromToday(3) },
+    });
+
+    expect(
+      screen.getByText(/시작일 전까지는 공개 리스트에 노출되지 않아/),
     ).toBeInTheDocument();
   });
 });
