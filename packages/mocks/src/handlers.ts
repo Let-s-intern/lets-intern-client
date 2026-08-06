@@ -741,6 +741,7 @@ export const resetLiveMentoringMockState = () => {
   liveMentoringState.openings = OPENING_HISTORY.map((opening) => ({
     ...opening,
   }));
+  adminFixtureRows = makeAdminFixtureRows();
   nextOpeningId = 200;
 };
 
@@ -829,7 +830,7 @@ const adminLiveMentoringVo = () => {
           openedAt: opening.openedAt,
           closedAt: opening.closedAt,
           closeReason: opening.closeReason,
-          closedByUserId: null,
+          closedByUserId: null as number | null,
           createDate: opening.openedAt,
           lastModifiedDate: opening.openedAt,
         }
@@ -837,16 +838,22 @@ const adminLiveMentoringVo = () => {
   };
 };
 
-/** 상태 필터·페이징을 확인하기 위한 고정 행들("나" 이외의 멘토). */
-const ADMIN_FIXTURE_ROWS = [
+type AdminFixtureRow = ReturnType<typeof adminLiveMentoringVo>;
+
+/**
+ * "나" 이외의 멘토 행. 상태 필터·정렬 확인용이면서, 관리자 화면에서 승인·반려·종료를
+ * 실제로 눌러볼 수 있도록 상태를 들고 있다(읽기 전용 고정 행이면 승인 버튼이 404 로 떨어져
+ * 화면이 고장 난 것처럼 보인다).
+ */
+const makeAdminFixtureRows = (): AdminFixtureRow[] => [
   {
     liveMentoringId: 20,
     mentorId: 2,
     mentorNickname: '박멘토',
     mentorProfileImage: null,
     title: '이력서 클리닉',
-    status: 'PENDING_REVIEW' as const,
-    categories: ['RESUME' as const],
+    status: 'PENDING_REVIEW',
+    categories: ['RESUME'],
     hasDetailPage: true,
     approvedAt: null,
     approvedByUserId: null,
@@ -860,8 +867,8 @@ const ADMIN_FIXTURE_ROWS = [
     mentorNickname: '최멘토',
     mentorProfileImage: null,
     title: '포트폴리오 집중 피드백',
-    status: 'REJECTED' as const,
-    categories: ['PORTFOLIO' as const],
+    status: 'REJECTED',
+    categories: ['PORTFOLIO'],
     hasDetailPage: false,
     approvedAt: null,
     approvedByUserId: null,
@@ -870,6 +877,29 @@ const ADMIN_FIXTURE_ROWS = [
     currentOpening: null,
   },
 ];
+
+let adminFixtureRows = makeAdminFixtureRows();
+
+/** 픽스처 행 승인 — 서버처럼 상태 전이와 개설 생성을 함께 처리한다. */
+const approveFixtureRow = (row: AdminFixtureRow) => {
+  row.status = 'APPROVED';
+  row.approvedAt = liveMentoringNow();
+  row.approvedByUserId = 1;
+  row.lastModifiedDate = liveMentoringNow();
+  row.currentOpening = {
+    openingId: nextOpeningId++,
+    status: 'OPEN',
+    durationPrices: [{ duration: 30, price: getPriceByDuration(30) }],
+    feedbackStartDate: liveMentoringToday(),
+    feedbackEndDate: liveMentoringToday(),
+    openedAt: liveMentoringNow(),
+    closedAt: null,
+    closeReason: null,
+    closedByUserId: null,
+    createDate: liveMentoringNow(),
+    lastModifiedDate: liveMentoringNow(),
+  };
+};
 
 /**
  * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
@@ -1512,7 +1542,7 @@ export const handlers = [
     const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
     const size = Number(url.searchParams.get('size') ?? '20');
 
-    const all = [adminLiveMentoringVo(), ...ADMIN_FIXTURE_ROWS];
+    const all = [adminLiveMentoringVo(), ...adminFixtureRows];
     const filtered = status ? all.filter((row) => row.status === status) : all;
     const totalElements = filtered.length;
     const totalPages = Math.max(1, Math.ceil(totalElements / size));
@@ -1725,14 +1755,27 @@ export const handlers = [
   http.patch(
     '*/admin/live-mentoring/:liveMentoringId/approve',
     ({ params }) => {
-      if (
-        Number(params.liveMentoringId) !== liveMentoringState.liveMentoringId
-      ) {
-        return liveMentoringError(
-          404,
-          'LIVE_MENTORING_NOT_FOUND',
-          '라이브 멘토링을 찾을 수 없습니다.',
+      const liveMentoringId = Number(params.liveMentoringId);
+      if (liveMentoringId !== liveMentoringState.liveMentoringId) {
+        const row = adminFixtureRows.find(
+          (each) => each.liveMentoringId === liveMentoringId,
         );
+        if (!row) {
+          return liveMentoringError(
+            404,
+            'LIVE_MENTORING_NOT_FOUND',
+            '라이브 멘토링을 찾을 수 없습니다.',
+          );
+        }
+        if (row.status !== 'PENDING_REVIEW') {
+          return liveMentoringError(
+            409,
+            'LIVE_MENTORING_INVALID_STATE',
+            '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+          );
+        }
+        approveFixtureRow(row);
+        return HttpResponse.json({ status: 200, data: null });
       }
       const invalidState =
         liveMentoringState.status !== 'PENDING_REVIEW' ||
@@ -1770,12 +1813,28 @@ export const handlers = [
 
   /** (관리자) PATCH /admin/live-mentoring/:liveMentoringId/reject — 반려. */
   http.patch('*/admin/live-mentoring/:liveMentoringId/reject', ({ params }) => {
-    if (Number(params.liveMentoringId) !== liveMentoringState.liveMentoringId) {
-      return liveMentoringError(
-        404,
-        'LIVE_MENTORING_NOT_FOUND',
-        '라이브 멘토링을 찾을 수 없습니다.',
+    const liveMentoringId = Number(params.liveMentoringId);
+    if (liveMentoringId !== liveMentoringState.liveMentoringId) {
+      const row = adminFixtureRows.find(
+        (each) => each.liveMentoringId === liveMentoringId,
       );
+      if (!row) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      if (row.status !== 'PENDING_REVIEW') {
+        return liveMentoringError(
+          409,
+          'LIVE_MENTORING_INVALID_STATE',
+          '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+        );
+      }
+      row.status = 'REJECTED';
+      row.lastModifiedDate = liveMentoringNow();
+      return HttpResponse.json({ status: 200, data: null });
     }
     if (liveMentoringState.status !== 'PENDING_REVIEW') {
       return liveMentoringError(
@@ -1792,11 +1851,18 @@ export const handlers = [
   http.patch(
     '*/admin/live-mentoring/openings/:openingId/close',
     ({ params }) => {
-      const found = closeOpeningById(
-        Number(params.openingId),
-        'ADMIN_FORCED',
-        99,
+      const openingId = Number(params.openingId);
+      const fixture = adminFixtureRows.find(
+        (row) => row.currentOpening?.openingId === openingId,
       );
+      if (fixture?.currentOpening) {
+        fixture.currentOpening.status = 'CLOSED';
+        fixture.currentOpening.closedAt = liveMentoringNow();
+        fixture.currentOpening.closeReason = 'ADMIN_FORCED';
+        fixture.currentOpening.closedByUserId = 99;
+        return HttpResponse.json({ status: 200, data: null });
+      }
+      const found = closeOpeningById(openingId, 'ADMIN_FORCED', 99);
       if (!found) {
         return liveMentoringError(
           404,
