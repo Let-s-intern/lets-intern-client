@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
   type LiveMentoringSubmit,
   type LiveMentoringTemplate,
@@ -16,6 +17,8 @@ const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const SETTLEMENT_PATH = '/mentor/live-mentoring/settlement';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const SUBMIT_PATH = '/mentor/live-mentoring/submit';
+const OPENINGS_PATH = '/mentor/live-mentoring/openings';
+const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
@@ -53,10 +56,11 @@ export const useLiveMentoringSettingsQuery = () => {
 };
 
 /**
- * PUT /mentor/live-mentoring/settings — 오픈 설정 저장.
- * 백엔드는 title/isOpen/categories/durations/feedbackDates 6개 필드만 받는다 —
- * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 수정 요청에 포함하지 않는다.
+ * PUT /mentor/live-mentoring/settings — 상품 설정 저장.
+ * 백엔드가 받는 건 title/categories 둘뿐이다 — 진행시간·기간은 검토 제출이 받고,
+ * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 요청에 포함하지 않는다.
  * 응답은 전체 설정(프로필 참조 필드 포함)이라 저장 성공 시 곧바로 최신 상태로 갱신할 수 있다.
+ * 승인 이후에는 서버가 잠그므로(409 `LIVE_MENTORING_LOCKED`) 재개설은 `POST /openings` 를 쓴다.
  */
 export const useUpdateLiveMentoringSettingsMutation = () => {
   const queryClient = useQueryClient();
@@ -85,6 +89,50 @@ export const useSubmitLiveMentoringMutation = () => {
   return useMutation({
     mutationFn: async (body: LiveMentoringSubmit) => {
       await axios.post(SUBMIT_PATH, body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/openings — 승인된 상품 재개설.
+ *
+ * 종료 후에는 상품이 `APPROVED` 로 남아 `PUT /settings` 가 잠긴다. 그래서 재개설은
+ * 제목·타입·진행시간·기간을 한 요청에 담아 보내고, 관리자 재승인 없이 바로 열린다.
+ * 활성 개설이 있으면 서버가 409 `LIVE_MENTORING_LOCKED` 로 막는다.
+ */
+export const useCreateLiveMentoringOpeningMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: LiveMentoringOpeningCreate) => {
+      await axios.post(OPENINGS_PATH, body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/**
+ * POST /mentor/live-mentoring/start-edit — 승인된 상품을 다시 초안으로.
+ *
+ * 상세 페이지까지 고쳐 재검토를 받고 싶을 때 쓴다. 활성 개설이 있으면 서버가 막는다.
+ * 성공하면 상품이 `DRAFT` 가 되어 설정·상세 편집이 다시 열리고, 재제출이 필요해진다.
+ */
+export const useStartEditLiveMentoringMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await axios.post(START_EDIT_PATH);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

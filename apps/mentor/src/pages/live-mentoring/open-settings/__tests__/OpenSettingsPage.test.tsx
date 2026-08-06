@@ -11,6 +11,8 @@ import type {
 
 const saveMock = vi.fn();
 const submitMock = vi.fn();
+const reopenMock = vi.fn();
+const startEditMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
 let settingsData: LiveMentoringSettings | undefined;
 let openingsData: OpeningHistoryItem[] = [];
@@ -27,6 +29,14 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useSubmitLiveMentoringMutation: () => ({
     mutate: submitMock,
+    isPending: false,
+  }),
+  useCreateLiveMentoringOpeningMutation: () => ({
+    mutate: reopenMock,
+    isPending: false,
+  }),
+  useStartEditLiveMentoringMutation: () => ({
+    mutate: startEditMock,
     isPending: false,
   }),
 }));
@@ -131,6 +141,8 @@ const renderPage = (
 afterEach(() => {
   saveMock.mockReset();
   submitMock.mockReset();
+  reopenMock.mockReset();
+  startEditMock.mockReset();
   setRepresentativeCareerMock.mockReset();
   settingsData = undefined;
   openingsData = [];
@@ -362,13 +374,54 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
   });
 
-  it('승인이지만 활성 개설이 없으면 승인됨으로 표시한다', () => {
+  // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
+  // 내부 용어(승인됨)를 그대로 쓰면 닫힌 상태가 열린 것처럼 읽힌다.
+  it('승인이지만 활성 개설이 없으면 오픈 종료됨으로 표시하고 재개설 버튼을 준다', () => {
     renderPage({ status: 'APPROVED' }, [
       { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
     ]);
 
     const banner = screen.getByRole('status');
-    expect(within(banner).getByText('승인됨')).toBeInTheDocument();
+    expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
+    expect(within(banner).queryByText('오픈 중')).not.toBeInTheDocument();
+    // 종료 상태에서는 설정이 다시 열리고 재개설·상세수정 경로가 보인다.
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: '다시 오픈하기' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '상세 수정하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('재개설은 제목·타입까지 한 요청에 담아 보낸다(저장 버튼 없음)', () => {
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+
+    expect(reopenMock).toHaveBeenCalledTimes(1);
+    expect(reopenMock.mock.calls[0][0]).toEqual({
+      title: baseSettings.title,
+      categories: baseSettings.categories,
+      durations: baseSettings.durations,
+      feedbackStartDate: FUTURE_START,
+      feedbackEndDate: FUTURE_END,
+    });
+  });
+
+  it('오픈 중이면 재개설 버튼 없이 잠근다', () => {
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    expect(
+      screen.queryByRole('button', { name: '다시 오픈하기' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
   });
 });
 

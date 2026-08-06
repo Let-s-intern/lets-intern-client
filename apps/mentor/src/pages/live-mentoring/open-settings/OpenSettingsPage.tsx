@@ -8,8 +8,10 @@ import {
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
+  useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
+  useStartEditLiveMentoringMutation,
   useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
@@ -67,11 +69,15 @@ const OpenSettingsPage = () => {
     useUpdateLiveMentoringSettingsMutation();
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitLiveMentoringMutation();
+  const { mutate: reopen, isPending: isReopening } =
+    useCreateLiveMentoringOpeningMutation();
+  const { mutate: startEdit, isPending: isStartingEdit } =
+    useStartEditLiveMentoringMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
   } = useSetRepresentativeCareerMutation();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   // 제목·타입의 변경사항(dirty) 판정을 위한 로드 원본.
@@ -115,16 +121,23 @@ const OpenSettingsPage = () => {
       return { ...prev, categories };
     });
 
-  /*
-   * 잠금은 상품 상태가 결정한다. 서버 `LiveMentoring.isEditable()` 은
-   * "상태가 DRAFT/REJECTED" 이면서 "활성 개설 없음"을 함께 보는데,
-   * 활성 개설이 있는 상품은 반드시 APPROVED 라(개설 후에는 DRAFT 로 되돌릴 수 없다)
-   * 상태만 봐도 판정이 같아진다.
-   */
   const status = form.status;
-  const isEditable =
-    status === null || status === 'DRAFT' || status === 'REJECTED';
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
+
+  /*
+   * 편집 가능 조건은 두 갈래다.
+   *
+   * 1. 초안·반려 — 아직 승인 전이라 `PUT /settings` 로 저장하고 검토를 제출한다.
+   * 2. 승인됐고 활성 개설이 없음 — 종료 후 다시 여는 경우다. 이때 서버는
+   *    `PUT /settings` 를 잠그므로(409 LOCKED) 저장이 아니라 `POST /openings` 로
+   *    제목·타입·진행시간·기간을 한 번에 보내 즉시 재개설한다(관리자 재승인 불필요).
+   *
+   * 검토 대기와 "승인 + 오픈 중"은 잠근다.
+   */
+  const isDraftLike =
+    status === null || status === 'DRAFT' || status === 'REJECTED';
+  const canReopen = status === 'APPROVED' && !currentOpening;
+  const isEditable = isDraftLike || canReopen;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
@@ -137,19 +150,24 @@ const OpenSettingsPage = () => {
     !!form.feedbackEndDate &&
     form.feedbackStartDate > form.feedbackEndDate;
 
-  // 저장(PUT)이 받는 건 제목·타입뿐이라 dirty 판정도 그 둘만 본다.
-  const isDirty =
-    (form.title ?? '') !== (original.title ?? '') ||
-    JSON.stringify(form.categories) !== JSON.stringify(original.categories);
-  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
-  const canSubmit =
+  /** 오픈에 필요한 값이 모두 유효한지. 검토 제출과 재개설이 같은 조건을 쓴다. */
+  const hasValidOpeningInput =
     !noTitleEntered &&
     !noCategorySelected &&
     !noDurationSelected &&
     !noFeedbackDates &&
     !endDatePassed &&
-    !invertedPeriod &&
-    !isDirty;
+    !invertedPeriod;
+
+  // 저장(PUT)이 받는 건 제목·타입뿐이라 dirty 판정도 그 둘만 본다.
+  const isDirty =
+    (form.title ?? '') !== (original.title ?? '') ||
+    JSON.stringify(form.categories) !== JSON.stringify(original.categories);
+  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
+  // 검토 제출은 제목·타입이 저장된 뒤에만 의미가 있다(제출은 그 둘을 보내지 않는다).
+  const canSubmit = hasValidOpeningInput && !isDirty;
+  // 재개설은 제목·타입까지 한 요청에 담으므로 미리 저장할 필요가 없다.
+  const canReopenNow = hasValidOpeningInput;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -243,7 +261,53 @@ const OpenSettingsPage = () => {
     );
   };
 
-  const isPending = isSaving || isSubmitting;
+  /** 재개설. 승인된 상품을 관리자 재승인 없이 곧바로 다시 연다. */
+  const handleReopen = () => {
+    if (!canReopenNow) return;
+    reopen(
+      {
+        title: form.title ?? '',
+        categories: form.categories,
+        durations: form.durations,
+        feedbackStartDate: form.feedbackStartDate ?? '',
+        feedbackEndDate: form.feedbackEndDate ?? '',
+      },
+      {
+        onSuccess: () =>
+          showAlert({
+            title: '다시 오픈했습니다.',
+            description:
+              '오늘이 설정한 기간 안이면 공개 리스트에 바로 노출됩니다.',
+            variant: 'success',
+          }),
+        onError: handleMutationError('재오픈에 실패했습니다.'),
+      },
+    );
+  };
+
+  /** 상세 페이지까지 고치려면 초안으로 되돌린다. 이후 다시 검토 제출이 필요하다. */
+  const handleStartEdit = () => {
+    showConfirm({
+      title: '상세 수정을 위해 초안으로 되돌릴까요?',
+      description:
+        '초안이 되면 상세 페이지까지 수정할 수 있지만, 다시 열려면 관리자 승인을 한 번 더 받아야 합니다.',
+      confirmText: '초안으로 되돌리기',
+      onConfirm: () => {
+        if (isStartingEdit) return;
+        startEdit(undefined, {
+          onSuccess: () =>
+            showAlert({
+              title: '초안으로 되돌렸습니다.',
+              description: '수정한 뒤 다시 검토를 제출해주세요.',
+              variant: 'success',
+            }),
+          onError: handleMutationError('초안 전환에 실패했습니다.'),
+        });
+      },
+    });
+  };
+
+  const isPending = isSaving || isSubmitting || isReopening || isStartingEdit;
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -291,28 +355,51 @@ const OpenSettingsPage = () => {
         </div>
       )}
 
+      {/*
+        승인 상태 배너.
+
+        멘토가 알고 싶은 건 "승인됐는지"가 아니라 **지금 열려 있는지**다.
+        `APPROVED` 는 내부 상태 용어라 그대로 쓰면 "승인=계속 열려 있음"으로 읽힌다.
+        그래서 문구도 색도 오픈 여부를 기준으로 가른다 —
+        열려 있을 때만 강조색을 쓰고, 닫혀 있으면 중립 회색으로 둔다.
+        같은 파란 배너를 양쪽에 쓰면 닫힌 상태가 열린 것처럼 보인다.
+      */}
       {status === 'APPROVED' && (
         <div
           role="status"
-          className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+          className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
+            currentOpening
+              ? 'border-primary/20 bg-primary-10'
+              : 'border-gray-200 bg-gray-50'
+          }`}
         >
           <div className="flex flex-col gap-1">
-            <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
-              <span
-                className="bg-primary h-1.5 w-1.5 rounded-full"
-                aria-hidden="true"
-              />
-              {currentOpening ? '오픈 중' : '승인됨'}
+            <span
+              className={`flex items-center gap-1.5 text-sm font-semibold ${
+                currentOpening ? 'text-primary' : 'text-gray-700'
+              }`}
+            >
+              {currentOpening && (
+                <span
+                  className="bg-primary h-1.5 w-1.5 rounded-full"
+                  aria-hidden="true"
+                />
+              )}
+              {currentOpening ? '오픈 중' : '오픈 종료됨'}
             </span>
             <p className="text-xs text-gray-600">
               {currentOpening
-                ? '오픈 중에는 설정을 수정할 수 없어요. 종료하려면 오픈 현황에서 개설을 종료해주세요.'
-                : '승인된 상품이에요. 현재 열려 있는 개설은 없습니다.'}
+                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 종료하려면 오픈 현황에서 개설을 종료해주세요.'
+                : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 열립니다(관리자 승인 불필요).'}
             </p>
           </div>
           <Link
             to="/live-mentoring/open-status"
-            className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+            className={`shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors ${
+              currentOpening
+                ? 'border-primary text-primary hover:bg-primary hover:text-white'
+                : 'border-gray-300 text-gray-600 hover:bg-gray-100'
+            }`}
           >
             오픈 현황 보기
           </Link>
@@ -578,28 +665,55 @@ const OpenSettingsPage = () => {
       */}
       {isEditable && (
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
-          {isDirty && (
+          {isDraftLike && isDirty && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
               제목·타입을 바꿨어요. 먼저 저장해야 제출할 수 있어요.
             </p>
           )}
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isPending || !canSave}
-              className="rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isSaving ? '저장 중...' : '저장'}
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmitForReview}
-              disabled={isPending || !canSubmit}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isSubmitting ? '제출 중...' : '검토 제출'}
-            </button>
+            {canReopen ? (
+              /*
+               * 재개설 모드. 승인 상태에서는 서버가 `PUT /settings` 를 잠그므로 "저장"이
+               * 없다 — 제목·타입까지 재개설 요청에 함께 실어 보낸다.
+               */
+              <>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  disabled={isPending}
+                  className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isStartingEdit ? '전환 중...' : '상세 수정하기'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReopen}
+                  disabled={isPending || !canReopenNow}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isReopening ? '오픈 중...' : '다시 오픈하기'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isPending || !canSave}
+                  className="rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSaving ? '저장 중...' : '저장'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitForReview}
+                  disabled={isPending || !canSubmit}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSubmitting ? '제출 중...' : '검토 제출'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

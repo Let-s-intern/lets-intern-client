@@ -247,6 +247,23 @@ export const liveMentoringSubmitSchema = z.object({
 });
 export type LiveMentoringSubmit = z.infer<typeof liveMentoringSubmitSchema>;
 
+/**
+ * POST /mentor/live-mentoring/openings 요청 바디 — 승인된 상품의 재개설.
+ *
+ * 승인 이후에는 `PUT /settings` 가 잠기기 때문에, 재개설은 제목·타입까지 **한 요청에**
+ * 담아 보낸다(서버 `updateSettingsForOpening`). 관리자 재승인 없이 바로 열린다.
+ */
+export const liveMentoringOpeningCreateSchema = z.object({
+  title: z.string(),
+  categories: z.array(liveMentoringCategorySchema),
+  durations: z.array(liveMentoringDurationSchema),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
+});
+export type LiveMentoringOpeningCreate = z.infer<
+  typeof liveMentoringOpeningCreateSchema
+>;
+
 /** 정산 현황 행 (PRD §4.6, read-only). */
 export const settlementRowSchema = z.object({
   period: z.string(),
