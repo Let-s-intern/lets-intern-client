@@ -1,10 +1,12 @@
 import { Content } from '@/domain/challenge/api/attendanceSchema';
+import { logMissionContentAccess } from '@/domain/challenge/api/missionContentAccessLog';
 import MissionFileLink from '@/domain/challenge/my-challenge/mission/guide/MissionFileLink';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
 import dayjs from '@/lib/dayjs';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
+import { useParams } from 'next/navigation';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
 interface MissionGuideRegularSectionProps {
@@ -29,6 +31,11 @@ const MissionGuideRegularSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideRegularSectionProps) => {
+  // 자료 열람 기록에 쓸 챌린지 id. 라우트가 /challenge/[applicationId]/[programId]/me 라
+  // programId 가 곧 challengeId 다. 부모에서 prop 으로 내려받지 않아도 여기서 읽을 수 있다.
+  const params = useParams<{ programId: string }>();
+  const challengeId = Number(params?.programId) || null;
+
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
@@ -41,6 +48,8 @@ const MissionGuideRegularSection = ({
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="regular" />;
   }
+
+  const missionId = missionData.missionInfo.id;
 
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
@@ -99,10 +108,22 @@ const MissionGuideRegularSection = ({
                   fileName={'미션 템플릿'}
                   disabled={false}
                   onClick={() => {
-                    window.open(
-                      missionData?.missionInfo?.templateLink || '',
-                      '_blank',
-                    );
+                    const templateLink =
+                      missionData?.missionInfo?.templateLink || '';
+                    // window.open 을 먼저, 동기적으로 호출한다.
+                    // 기록 요청을 await 한 뒤로 밀면 사용자 제스처 컨텍스트를 잃어
+                    // 브라우저가 팝업을 차단한다.
+                    window.open(templateLink, '_blank');
+                    // 열지 않은 자료를 이용한 것으로 남기면 안 되므로 링크가 있을 때만 기록한다.
+                    if (templateLink) {
+                      // 템플릿은 콘텐츠 엔티티가 아니라 미션의 단일 필드라
+                      // contentId 가 없다. 바디에서도 생략된다.
+                      logMissionContentAccess({
+                        challengeId,
+                        missionId,
+                        contentType: 'TEMPLATE',
+                      });
+                    }
                   }}
                 />
               )}
@@ -115,7 +136,18 @@ const MissionGuideRegularSection = ({
                     fileName={content.title || '필수 콘텐츠'}
                     disabled={false}
                     onClick={() => {
+                      // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
+                      // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
                       window.open(content.link || '#', '_blank');
+                      // 링크가 없으면 자료를 연 것이 아니므로 기록하지 않는다.
+                      if (content.link) {
+                        logMissionContentAccess({
+                          challengeId,
+                          missionId,
+                          contentId: content.id,
+                          contentType: 'ESSENTIAL',
+                        });
+                      }
                     }}
                   />
                 ),
@@ -131,7 +163,18 @@ const MissionGuideRegularSection = ({
                       fileName={content.title ?? '추가 콘텐츠'}
                       disabled={false}
                       onClick={() => {
+                        // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
+                        // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
                         window.open(content.link || '#', '_blank');
+                        // 링크가 없으면 자료를 연 것이 아니므로 기록하지 않는다.
+                        if (content.link) {
+                          logMissionContentAccess({
+                            challengeId,
+                            missionId,
+                            contentId: content.id,
+                            contentType: 'ADDITIONAL',
+                          });
+                        }
                       }}
                     />
                   ),

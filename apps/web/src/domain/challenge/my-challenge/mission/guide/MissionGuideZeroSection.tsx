@@ -1,8 +1,10 @@
+import { logMissionContentAccess } from '@/domain/challenge/api/missionContentAccessLog';
 import MissionFileLink from '@/domain/challenge/my-challenge/mission/guide/MissionFileLink';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
+import { useParams } from 'next/navigation';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
 interface MissionGuideZeroSectionProps {
@@ -18,10 +20,17 @@ const MissionGuideZeroSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideZeroSectionProps) => {
+  // 자료 열람 기록에 쓸 챌린지 id. 라우트가 /challenge/[applicationId]/[programId]/me 라
+  // programId 가 곧 challengeId 다. 부모에서 prop 으로 내려받지 않아도 여기서 읽을 수 있다.
+  const params = useParams<{ programId: string }>();
+  const challengeId = Number(params?.programId) || null;
+
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="zero" />;
   }
+
+  const missionId = missionData.missionInfo.id;
 
   // endDate를 월일 시간 형식으로 변환
   const formatDeadline = (endDate?: Dayjs | null) => {
@@ -105,7 +114,15 @@ const MissionGuideZeroSection = ({
                     disabled={false}
                     onClick={() => {
                       if (content?.link) {
+                        // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
+                        // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
                         window.open(content?.link, '_blank');
+                        logMissionContentAccess({
+                          challengeId,
+                          missionId,
+                          contentId: content.id,
+                          contentType: 'ESSENTIAL',
+                        });
                       }
                     }}
                   />
@@ -123,7 +140,15 @@ const MissionGuideZeroSection = ({
                     disabled={false}
                     onClick={() => {
                       if (content?.link) {
+                        // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
+                        // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
                         window.open(content?.link, '_blank');
+                        logMissionContentAccess({
+                          challengeId,
+                          missionId,
+                          contentId: content.id,
+                          contentType: 'ADDITIONAL',
+                        });
                       }
                     }}
                   />
