@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Fragment } from 'react';
 
 import { type AccessLogDetail, useAccessLogDetailQuery } from '@/api/accessLog';
@@ -188,7 +189,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
           <tr
             // 대상 삭제 등으로 targetId 가 비어 올 수 있어 키를 단독으로 맡기지 못한다.
             key={`${detail.targetType ?? ''}-${detail.targetId ?? index}`}
-            className="border-b last:border-b-0"
+            className="hover:bg-neutral-90 border-b last:border-b-0"
           >
             <td className="px-3 py-1">{formatDetailTarget(detail)}</td>
             <td className="whitespace-nowrap px-3 py-1">
@@ -205,7 +206,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
 
         {groups.map((group) => (
           <Fragment key={`mission-${group.missionTh}`}>
-            <tr className="border-b last:border-b-0">
+            <tr className="hover:bg-neutral-90 border-b last:border-b-0">
               {/*
                 미션은 대시보드를 거쳐야 닿는 자리라 한 단계 안으로 들인다.
                 대시보드 · 미션 · 자료가 0.75rem 씩 계단을 이룬다.
@@ -242,13 +243,27 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
             {group.contents.map((content, index) => (
               <tr
                 key={`content-${content.targetId ?? index}`}
-                className="border-b last:border-b-0"
+                className="hover:bg-neutral-90 border-b last:border-b-0"
               >
                 {/*
-                  종속을 들여쓰기로만 나타낸다. 아이콘이나 배경색을 쓰면 자료가 미션과 다른
-                  종류의 것처럼 보이는데, 둘 다 그 회차에서 일어난 같은 성격의 이용이다.
+                  종속을 선으로 잇는다. 문자(└)가 아니라 보더로 그리는 이유는, 문자는 폰트마다
+                  너비와 높이가 달라 줄마다 어긋나기 때문이다. 보더는 셀 높이를 따라간다.
+
+                  마지막 자료는 세로선을 절반만 그린다. 끝까지 내리면 다음 미션으로 이어지는
+                  것처럼 보여 소속을 잘못 읽는다.
                 */}
-                <td className="text-neutral-20 py-1 pl-9 pr-3">
+                <td className="text-neutral-20 relative py-1 pl-9 pr-3">
+                  <span
+                    aria-hidden
+                    className={clsx(
+                      'border-neutral-70 absolute left-7 top-0 border-l',
+                      index === group.contents.length - 1 ? 'h-1/2' : 'h-full',
+                    )}
+                  />
+                  <span
+                    aria-hidden
+                    className="border-neutral-70 absolute left-7 top-1/2 w-2 border-t"
+                  />
                   {formatContentLabel(content)}
                 </td>
                 <td className="whitespace-nowrap px-3 py-1">
