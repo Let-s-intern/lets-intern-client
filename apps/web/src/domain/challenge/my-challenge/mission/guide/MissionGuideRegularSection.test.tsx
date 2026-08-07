@@ -118,6 +118,43 @@ describe('MissionGuideRegularSection 미션 자료 열람 기록', () => {
     });
   });
 
+  it('missionContentsId 가 오면 자료 id 대신 그것으로 기록한다', async () => {
+    // 자료는 공용 라이브러리라 같은 자료가 여러 미션에 붙는다. 자료 id 로 기록하면
+    // 3회차에서 연 것과 7회차에서 연 것이 서버에서 한 행으로 합쳐져, 어느 미션 자료를
+    // 봤는지 말할 수 없다. (미션, 자료) 쌍 번호라야 갈린다.
+    renderSection({
+      essentialContentsList: [
+        {
+          id: 56,
+          missionContentsId: 9001,
+          title: '필수 자료',
+          link: 'https://e',
+        },
+      ],
+    });
+    await clickLink('필수 자료');
+
+    expect(lastBody()).toMatchObject({ contentId: 9001 });
+  });
+
+  it('missionContentsId 가 없으면 자료 id 로 기록해 빈 구간을 만들지 않는다', async () => {
+    // 서버 배포 전에는 응답에 이 필드가 없다. 그때 기록을 건너뛰면 그 기간의 자료 열람이
+    // 통째로 빈다. 로그는 소급이 불가능하므로 옛 번호로라도 남긴다.
+    renderSection({
+      essentialContentsList: [
+        {
+          id: 56,
+          missionContentsId: null,
+          title: '필수 자료',
+          link: 'https://e',
+        },
+      ],
+    });
+    await clickLink('필수 자료');
+
+    expect(lastBody()).toMatchObject({ contentId: 56 });
+  });
+
   // 이 단언이 팝업 차단 회귀를 잡는 유일한 수단이다.
   // 기록 요청을 await 한 뒤로 window.open 을 옮기면 여기서 깨진다.
   it.each([['미션 템플릿'], ['필수 자료'], ['추가 자료']])(

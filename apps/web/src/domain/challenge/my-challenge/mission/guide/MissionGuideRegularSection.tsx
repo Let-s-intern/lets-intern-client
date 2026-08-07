@@ -146,7 +146,10 @@ const MissionGuideRegularSection = ({
                         logMissionContentAccess({
                           challengeId,
                           missionId,
-                          contentId: content.id,
+                          // 서버 배포 전에는 missionContentsId 가 없다. 그때는 자료 번호로 남겨
+                          // 기록이 비는 구간을 만들지 않는다. 두 번호가 섞이는 건 배포 직후
+                          // 로그를 비우면서 정리된다(LC-3201).
+                          contentId: content.missionContentsId ?? content.id,
                           contentType: 'ESSENTIAL',
                           contentTitle: content.title,
                         });
@@ -174,7 +177,10 @@ const MissionGuideRegularSection = ({
                           logMissionContentAccess({
                             challengeId,
                             missionId,
-                            contentId: content.id,
+                            // 서버 배포 전에는 missionContentsId 가 없다. 그때는 자료 번호로 남겨
+                            // 기록이 비는 구간을 만들지 않는다. 두 번호가 섞이는 건 배포 직후
+                            // 로그를 비우면서 정리된다(LC-3201).
+                            contentId: content.missionContentsId ?? content.id,
                             contentType: 'ADDITIONAL',
                             contentTitle: content.title,
                           });
