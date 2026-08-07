@@ -3,10 +3,10 @@ const VIEW_WIDTH = 193;
 const VIEW_HEIGHT = 150;
 
 /** "Pay back" 라벨과 같은 기울기·정렬로 금액을 배치하기 위한 위치 (원본 벡터에서 측정) */
-const AMOUNT_CENTER_X = 88;
+const AMOUNT_CENTER_X = 94;
 const AMOUNT_CENTER_Y = 84;
 const TEXT_ROTATE_DEG = -15.6;
-const AMOUNT_FONT_SIZE = 20;
+const AMOUNT_FONT_SIZE = 19;
 
 /**
  * 티켓 바탕 색상. styles.primaryLightColor(섹션 배경용, 매우 옅음)를 그대로 쓰면
