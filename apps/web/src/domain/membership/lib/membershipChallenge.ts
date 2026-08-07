@@ -51,14 +51,38 @@ export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
  */
 export const IS_RECRUITMENT_CLOSED = true;
 
-/** CTA 라벨 — 모집 종료면 "모집 종료", 출시 전이면 "출시 전", 아니면 원래 라벨. */
+/**
+ * 멤버십 출시 알림을 받는 라이브러리 자석 ID.
+ *
+ * 숫자를 링크에 그대로 박지 않는다. 다음 시즌에 자석을 새로 만들면 이 값만 바꾸면 되고,
+ * 코드를 읽는 사람이 `/library/52` 가 무엇인지 되짚지 않아도 된다.
+ */
+export const MEMBERSHIP_LAUNCH_ALERT_MAGNET_ID = 52;
+
+/** 출시 알림 신청 경로. 이 페이지가 `type=launch-alert` 를 알림 신청으로 해석한다. */
+export const MEMBERSHIP_LAUNCH_ALERT_PATH = `/library/${MEMBERSHIP_LAUNCH_ALERT_MAGNET_ID}/apply?type=launch-alert`;
+
+/**
+ * CTA 라벨.
+ *
+ * 모집이 끝나면 "모집 종료" 대신 <b>"출시 알림"</b> 을 보여준다. 종료를 알리는 것으로 끝내면
+ * 광고로 들어온 사람이 아무것도 남기지 못하고 나간다. 다음 시즌을 기다릴 의사가 있는 사람을
+ * 여기서 받는다.
+ */
 export function ctaLabel(label: string): string {
-  if (IS_RECRUITMENT_CLOSED) return '모집 종료';
+  if (IS_RECRUITMENT_CLOSED) return '출시 알림 신청';
   return IS_MEMBERSHIP_LAUNCHED ? label : '출시 전';
 }
 
-/** 결제 CTA 를 비활성화할지 — 모집이 끝났거나 아직 출시 전이면 잠근다. */
-export const IS_CTA_DISABLED = IS_RECRUITMENT_CLOSED || !IS_MEMBERSHIP_LAUNCHED;
+/**
+ * 결제 CTA 를 비활성화할지.
+ *
+ * 모집 종료 중에는 <b>비활성화하지 않는다</b> — 버튼이 결제가 아니라 출시 알림 신청으로
+ * 동작하기 때문이다. 결제 진입을 막는 것은 `IS_RECRUITMENT_CLOSED` 분기가 맡는다.
+ * 출시 전(env 미설정)일 때만 잠근다. 그때는 보낼 곳도 결제할 곳도 없다.
+ */
+export const IS_CTA_DISABLED =
+  !IS_RECRUITMENT_CLOSED && !IS_MEMBERSHIP_LAUNCHED;
 
 /**
  * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).

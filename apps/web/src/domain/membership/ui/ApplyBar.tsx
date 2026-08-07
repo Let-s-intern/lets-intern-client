@@ -23,9 +23,13 @@ export default function ApplyBar() {
     <div className="apply-bar">
       <div className="apply-bar-info">
         <span className="apply-bar-title">렛츠커리어 하반기 멤버십</span>
+        {/*
+          모집이 끝났다는 사실만 적으면 옆의 "출시 알림 신청" 버튼과 어긋난다. 끝났다는 것과
+          다음이 있다는 것을 함께 말해야 버튼을 누를 이유가 생긴다.
+        */}
         <span className="apply-bar-deadline">
           {IS_RECRUITMENT_CLOSED
-            ? '모집이 종료되었습니다'
+            ? '이번 기수 모집은 마감되었어요'
             : `${dayjs(deadline).format('M월 D일 (dd)')} 마감까지 🚀`}
         </span>
       </div>
