@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import { type AccessLogDetail, useAccessLogDetailQuery } from '@/api/accessLog';
 
 import { formatDateTime } from '../utils/formatDateTime';
@@ -75,6 +77,69 @@ const formatDetailTarget = (detail: AccessLogDetail): string => {
 };
 
 /**
+ * 자료 줄의 이름. 회차는 부모 줄이 이미 말하므로 자료 이름만 남긴다.
+ *
+ * `3회차 · Resume` 를 `3회차 미션` 아래에 그대로 넣으면 회차가 두 번 읽힌다.
+ */
+const formatContentLabel = (detail: AccessLogDetail): string =>
+  detail.targetTitle?.trim() || `자료 (${targetRef(detail.targetId)})`;
+
+/**
+ * 미션 회차로 묶은 상세 줄.
+ *
+ * 자료가 어느 미션 소속인지는 들여쓰기로만 드러난다. 평평한 목록에서는 `3회차 · Resume` 와
+ * `7회차 · Resume` 가 이름으로만 갈려, 자료가 많아지면 소속을 눈으로 따라가야 한다.
+ *
+ * 미션 회차를 모르는 줄(대시보드·콘텐츠 수령·회차 미상)은 묶지 않고 위에 그대로 둔다.
+ * 억지로 묶으면 소속이 없는 것을 있는 것처럼 보이게 만든다.
+ */
+interface DetailGroup {
+  /** 부모 줄. 미션 열람 기록이 없으면 null 이고 자료만 들여쓰기로 나온다. */
+  mission: AccessLogDetail | null;
+  missionTh: number;
+  contents: AccessLogDetail[];
+}
+
+const isMission = (detail: AccessLogDetail) =>
+  detail.targetType?.trim() === 'MISSION';
+
+/**
+ * 미션 줄과 자료 줄을 가른다.
+ *
+ * 서버는 자료에만 이름을 저장한다. 미션 열람은 이름 없이 회차로만 남으므로, 이름 유무가
+ * 곧 자료인지 여부다. 템플릿은 미션 열람과 한 행이라 부모 줄에 남는다 - 유니크 키에
+ * 이름이 들어가면 그때 자료 줄로 갈린다.
+ */
+const groupDetails = (details: AccessLogDetail[]) => {
+  const ungrouped: AccessLogDetail[] = [];
+  const groups = new Map<number, DetailGroup>();
+
+  const groupOf = (missionTh: number) => {
+    const found = groups.get(missionTh);
+    if (found) return found;
+    const created: DetailGroup = { mission: null, missionTh, contents: [] };
+    groups.set(missionTh, created);
+    return created;
+  };
+
+  for (const detail of details) {
+    if (!isMission(detail) || detail.missionTh == null) {
+      ungrouped.push(detail);
+      continue;
+    }
+
+    const group = groupOf(detail.missionTh);
+    if (detail.targetTitle?.trim()) group.contents.push(detail);
+    else group.mission = detail;
+  }
+
+  return {
+    ungrouped,
+    groups: [...groups.values()].sort((a, b) => a.missionTh - b.missionTh),
+  };
+};
+
+/**
  * 내역이 하나도 없을 때의 문구.
  *
  * `내역 없음` 하나로 뭉개지 않는다. 집계 대상이 아닌 건과 미이용이 같은 문구로 보이면
@@ -90,6 +155,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
   const { data, isLoading, isError } = useAccessLogDetailQuery(applicationId);
 
   const details = data?.details ?? [];
+  const { ungrouped, groups } = groupDetails(details);
 
   /**
    * 로딩 · 조회 실패 · 내역 없음이 서로 배타적이어야 한다(PRD 7.4).
@@ -115,7 +181,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {details.map((detail, index) => (
+        {ungrouped.map((detail, index) => (
           <tr
             // 대상 삭제 등으로 targetId 가 비어 올 수 있어 키를 단독으로 맡기지 못한다.
             key={`${detail.targetType ?? ''}-${detail.targetId ?? index}`}
@@ -132,6 +198,60 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
               {detail.accessCount ?? 0}회
             </td>
           </tr>
+        ))}
+
+        {groups.map((group) => (
+          <Fragment key={`mission-${group.missionTh}`}>
+            <tr className="border-b last:border-b-0">
+              <td className="px-3 py-1">
+                {group.mission
+                  ? formatDetailTarget(group.mission)
+                  : `${group.missionTh}회차 미션`}
+              </td>
+              {/*
+                미션 열람 기록 없이 자료만 열린 경우가 있다. 그때 시각·횟수 칸을 0 이나 빈칸으로
+                두면 "미션을 0회 봤다" 로 읽히는데, 실제로는 그 미션을 연 기록이 없는 것이다.
+                값이 없다는 뜻의 `-` 를 그대로 쓴다.
+              */}
+              <td className="whitespace-nowrap px-3 py-1">
+                {group.mission
+                  ? formatDateTime(group.mission.firstAccessedAt)
+                  : '-'}
+              </td>
+              <td className="whitespace-nowrap px-3 py-1">
+                {group.mission
+                  ? formatDateTime(group.mission.lastAccessedAt)
+                  : '-'}
+              </td>
+              <td className="whitespace-nowrap px-3 py-1 text-right">
+                {group.mission ? `${group.mission.accessCount ?? 0}회` : '-'}
+              </td>
+            </tr>
+
+            {group.contents.map((content, index) => (
+              <tr
+                key={`content-${content.targetId ?? index}`}
+                className="border-b last:border-b-0"
+              >
+                {/*
+                  종속을 들여쓰기로만 나타낸다. 아이콘이나 배경색을 쓰면 자료가 미션과 다른
+                  종류의 것처럼 보이는데, 둘 다 그 회차에서 일어난 같은 성격의 이용이다.
+                */}
+                <td className="text-neutral-20 py-1 pl-9 pr-3">
+                  {formatContentLabel(content)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1">
+                  {formatDateTime(content.firstAccessedAt)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1">
+                  {formatDateTime(content.lastAccessedAt)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1 text-right">
+                  {content.accessCount ?? 0}회
+                </td>
+              </tr>
+            ))}
+          </Fragment>
         ))}
       </tbody>
     </table>

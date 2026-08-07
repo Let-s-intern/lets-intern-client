@@ -111,12 +111,65 @@ describe('UsageDetailRow 항목 이름', () => {
       },
     ]);
 
-  it('미션은 회차와 제목을 함께 보여준다', () => {
-    // target_id 숫자만으로는 운영이 무슨 미션인지 알 수 없다(PRD 7.3).
+  it('자료는 미션 회차 아래에 이름만 들여쓴다', () => {
+    // 회차를 자료 줄에도 적으면 부모 줄과 두 번 읽힌다. 소속은 들여쓰기가 말한다.
     target({});
     renderDetail();
 
-    expect(screen.getByText('3회차 미션 · 경험 정리하기')).toBeInTheDocument();
+    const rows = detailRows();
+    expect(within(rows[0]).getAllByRole('cell')[0]).toHaveTextContent(
+      '3회차 미션',
+    );
+    expect(within(rows[1]).getAllByRole('cell')[0]).toHaveTextContent(
+      '경험 정리하기',
+    );
+  });
+
+  it('같은 자료라도 미션이 다르면 각 회차 아래에 따로 붙는다', () => {
+    // 자료는 공용 라이브러리라 여러 미션에 붙는다. 한 줄로 합쳐지면 어느 미션 자료를
+    // 봤는지 말할 수 없어, 이 화면이 존재하는 이유가 사라진다(LC-3201).
+    succeed([
+      {
+        targetType: 'MISSION',
+        targetId: 9001,
+        targetTitle: 'Resume, CV, Cover Letter',
+        missionTh: 3,
+        firstAccessedAt: '2026-07-31T20:05:00',
+        lastAccessedAt: '2026-07-31T20:05:00',
+        accessCount: 1,
+      },
+      {
+        targetType: 'MISSION',
+        targetId: 9002,
+        targetTitle: 'Resume, CV, Cover Letter',
+        missionTh: 7,
+        firstAccessedAt: '2026-08-02T11:40:00',
+        lastAccessedAt: '2026-08-02T11:42:00',
+        accessCount: 2,
+      },
+    ]);
+    renderDetail();
+
+    const labels = detailRows().map(
+      (row) => within(row).getAllByRole('cell')[0].textContent,
+    );
+    expect(labels).toEqual([
+      '3회차 미션',
+      'Resume, CV, Cover Letter',
+      '7회차 미션',
+      'Resume, CV, Cover Letter',
+    ]);
+  });
+
+  it('미션 열람 기록이 없으면 부모 줄의 시각·횟수를 비운다', () => {
+    // 자료만 열고 미션을 연 기록이 없을 수 있다. 0회로 적으면 "미션을 0번 봤다" 로
+    // 읽히는데, 실제로는 그 미션을 연 기록 자체가 없는 것이다.
+    target({});
+    renderDetail();
+
+    const parentCells = within(detailRows()[0]).getAllByRole('cell');
+    expect(parentCells[1]).toHaveTextContent('-');
+    expect(parentCells[3]).toHaveTextContent('-');
   });
 
   it('회차를 모르면 제목만 보여준다', () => {
