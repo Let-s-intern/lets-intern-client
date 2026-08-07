@@ -6,18 +6,20 @@ import { useEffect, useState } from 'react';
 interface OpenChatModalProps {
   chatLink: string;
   chatPassword: string;
+  isSlack?: boolean;
   onClose: () => void;
 }
 
 /**
- * 오픈채팅방 참여코드 안내 모달.
+ * 오픈채팅방(또는 슬랙 채널) 참여코드 안내 모달.
  *
- * 카카오톡이 참여코드를 요구하는 시점에는 이미 우리 페이지를 벗어난 뒤라
+ * 카카오톡/슬랙이 참여코드를 요구하는 시점에는 이미 우리 페이지를 벗어난 뒤라
  * 코드를 보러 돌아와야 한다. 그래서 입장 전에 한 번 끊어 코드를 복사하게 한다.
  */
 const OpenChatModal = ({
   chatLink,
   chatPassword,
+  isSlack = false,
   onClose,
 }: OpenChatModalProps) => {
   const [copied, setCopied] = useState(false);
@@ -45,7 +47,7 @@ const OpenChatModal = ({
   return (
     <AlertModal
       className="m-5 md:m-0"
-      title="오픈채팅방 참여코드"
+      title={isSlack ? '슬랙 채널 참여코드' : '오픈채팅방 참여코드'}
       confirmText="입장하기"
       cancelText="닫기"
       onConfirm={handleEnter}
@@ -53,7 +55,8 @@ const OpenChatModal = ({
     >
       <div className="flex flex-col gap-3">
         <p className="text-xsmall14 text-neutral-20">
-          카카오톡에서 참여코드를 입력해야 입장할 수 있어요.
+          {isSlack ? '슬랙에서' : '카카오톡에서'} 참여코드를 입력해야 입장할 수
+          있어요.
           <br />
           코드를 복사한 뒤 입장하기를 눌러주세요.
         </p>
