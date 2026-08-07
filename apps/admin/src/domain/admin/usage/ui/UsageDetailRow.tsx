@@ -227,12 +227,17 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
           <th className="px-3 py-1.5 text-right font-medium">횟수</th>
         </tr>
       </thead>
+      {/*
+        데이터 행에는 구분선을 두지 않는다. 트리 선이 이미 세로로 흐르고 있어 가로선을
+        더하면 격자가 되어 계층이 묻힌다. 어느 줄을 보는지는 호버가 알려준다.
+        헤더 아래 선만 남긴다 - 그건 계층이 아니라 표의 시작을 긋는 선이다.
+      */}
       <tbody>
         {ungrouped.map((detail, index) => (
           <tr
             // 대상 삭제 등으로 targetId 가 비어 올 수 있어 키를 단독으로 맡기지 못한다.
             key={`${detail.targetType ?? ''}-${detail.targetId ?? index}`}
-            className="hover:bg-neutral-90 border-b last:border-b-0"
+            className="hover:bg-neutral-90"
           >
             <td className="px-3 py-1">{formatDetailTarget(detail)}</td>
             <td className="whitespace-nowrap px-3 py-1">
@@ -249,7 +254,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
 
         {groups.map((group, groupIndex) => (
           <Fragment key={`mission-${group.missionTh}`}>
-            <tr className="hover:bg-neutral-90 border-b last:border-b-0">
+            <tr className="hover:bg-neutral-90">
               {/*
                 미션은 대시보드를 거쳐야 닿는 자리라 한 단계 안으로 들인다.
                 대시보드 · 미션 · 자료가 0.75rem 씩 계단을 이룬다.
@@ -293,7 +298,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
             {group.contents.map((content, index) => (
               <tr
                 key={`content-${content.targetId ?? index}`}
-                className="hover:bg-neutral-90 border-b last:border-b-0"
+                className="hover:bg-neutral-90"
               >
                 {/*
                   종속을 선으로 잇는다. 문자(└)가 아니라 보더로 그리는 이유는, 문자는 폰트마다
