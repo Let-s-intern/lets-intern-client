@@ -21,6 +21,7 @@ import IntroHeading from '@/domain/program/challenge/challenge-view/challenge-po
 import PointList from '@/domain/program/challenge/challenge-view/challenge-point-view/PointList';
 import ProgressItem from '@/domain/program/challenge/challenge-view/challenge-point-view/ProgressItem';
 import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
+import PaybackTicketIcon from '@/domain/program/challenge/challenge-view/PaybackTicketIcon';
 import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeType } from '@/schema';
@@ -39,7 +40,6 @@ const ChallengePointView = ({
   programRecommend,
   curationCard,
   deposit,
-  challengeId,
   isResumeTemplate,
 }: {
   point: ChallengePoint;
@@ -51,7 +51,6 @@ const ChallengePointView = ({
   /** 챌린지 상세: 추천 슬라이더 큐레이션 카드 노출 토글 (undefined → true 규약) */
   curationCard?: { visible: boolean };
   deposit: number;
-  challengeId: number;
   isResumeTemplate: boolean;
 }) => {
   const router = useRouter();
@@ -106,39 +105,22 @@ const ChallengePointView = ({
     },
   ];
 
-  const [paypackImgSrc, recommendLogoSrc] = useMemo(() => {
+  const recommendLogoSrc = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
-        return [
-          '/images/payback-portfolio.png',
-          '/icons/bg-logo-portfolio.svg',
-        ];
+        return '/icons/bg-logo-portfolio.svg';
       case CAREER_START:
-        return [
-          challengeId >= 143
-            ? '/images/payback-career-start157.png'
-            : '/images/payback-career-start.png',
-          '/icons/bg-logo-career-start.svg',
-        ];
+        return '/icons/bg-logo-career-start.svg';
       case EXPERIENCE_SUMMARY:
-        return [
-          '/images/payback-experience-summary.svg',
-          '/icons/bg-logo-experience-summary.svg',
-        ];
+        return '/icons/bg-logo-experience-summary.svg';
       case ETC:
-        return [
-          '/images/payback-experience-summary.svg',
-          '/icons/bg-logo-experience-summary.svg',
-        ];
+        return '/icons/bg-logo-experience-summary.svg';
       case PERSONAL_STATEMENT:
-        return [
-          '/images/payback-personal-statement.png',
-          '/icons/bg-logo-personal-statement.svg',
-        ];
+        return '/icons/bg-logo-personal-statement.svg';
       default:
-        return [null, null];
+        return null;
     }
-  }, [challengeType, challengeId]);
+  }, [challengeType]);
 
   // 큐레이션 카드 노출 시 추천은 최대 2개로 제한 (사용자 페이지 안전장치)
   const effectiveList = useMemo(() => {
@@ -411,11 +393,15 @@ const ChallengePointView = ({
                     className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                   />
                 ) : (
-                  paypackImgSrc && (
-                    <img
+                  (challengeType === PORTFOLIO ||
+                    challengeType === CAREER_START ||
+                    challengeType === EXPERIENCE_SUMMARY ||
+                    challengeType === ETC) && (
+                    <PaybackTicketIcon
+                      deposit={deposit}
+                      backgroundColor={styles.primaryLightColor}
+                      accentColor={styles.primaryColor}
                       className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                      src={paypackImgSrc}
-                      alt={`페이백 ${deposit / 10000}만원`}
                     />
                   )
                 )}

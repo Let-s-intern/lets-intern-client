@@ -1,11 +1,13 @@
 import PaybackTicket from '@/domain/program/challenge/challenge-view/PaybackTicket';
+import PaybackTicketIcon from '@/domain/program/challenge/challenge-view/PaybackTicketIcon';
 import DifferentCard, {
   DifferentCardProps,
 } from '@/domain/program/program-detail/different/DifferentCard';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 
-const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
+const { PERSONAL_STATEMENT, PORTFOLIO, CAREER_START, EXPERIENCE_SUMMARY, ETC } =
+  challengeTypeSchema.enum;
 
 interface DifferentSectionProps {
   challengeType: ChallengeType;
@@ -13,7 +15,6 @@ interface DifferentSectionProps {
   deposit: number;
   isResumeTemplate: boolean;
   iconName?: string;
-  paypackImgSrc?: string;
   differentList: DifferentCardProps[];
   styles: DifferentCardProps['styles'];
 }
@@ -24,7 +25,6 @@ const DifferentSection = ({
   deposit,
   isResumeTemplate,
   iconName,
-  paypackImgSrc,
   differentList,
   styles,
 }: DifferentSectionProps) => {
@@ -96,11 +96,17 @@ const DifferentSection = ({
                 className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
               />
             ) : (
-              <img
-                className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                src={paypackImgSrc}
-                alt={`페이백 ${deposit / 10000}만원`}
-              />
+              (challengeType === PORTFOLIO ||
+                challengeType === CAREER_START ||
+                challengeType === EXPERIENCE_SUMMARY ||
+                challengeType === ETC) && (
+                <PaybackTicketIcon
+                  deposit={deposit}
+                  backgroundColor={styles.primaryLightColor}
+                  accentColor={styles.primaryColor}
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                />
+              )
             )}
           </div>
         )}
