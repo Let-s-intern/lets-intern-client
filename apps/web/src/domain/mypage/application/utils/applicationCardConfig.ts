@@ -10,6 +10,7 @@ import {
   challengePricePlanToText,
   newProgramTypeToText,
 } from '@/utils/convert';
+import { normalizeChatPassword } from './chatLinkProvider';
 
 export interface MypageApplicationCardConfig {
   id: number;
@@ -136,7 +137,7 @@ const toProgramCardConfig = (
   // 참여종료된 챌린지는 운영이 채팅방을 닫았을 수 있어 노출하지 않는다.
   const openChat =
     isChallenge && chatLink && !isCompleted
-      ? { link: chatLink, password: chatPassword ?? undefined }
+      ? { link: chatLink, password: normalizeChatPassword(chatPassword) }
       : undefined;
 
   return {

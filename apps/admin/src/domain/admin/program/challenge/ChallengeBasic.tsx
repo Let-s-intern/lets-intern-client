@@ -230,18 +230,18 @@ const ChallengeBasic = React.memo(
           onChange={onChange}
         />
         <Input
-          label="카카오톡 오픈채팅 링크"
+          label="오픈채팅방 링크 (카카오톡/슬랙)"
           name="chatLink"
           size="small"
-          placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+          placeholder="카카오톡 오픈채팅 또는 슬랙 채널 링크를 입력하세요"
           defaultValue={defaultValue?.chatLink}
           onChange={onChange}
         />
         <Input
-          label="카카오톡 오픈채팅 비밀번호"
+          label="참여코드 (선택)"
           name="chatPassword"
           size="small"
-          placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+          placeholder="참여코드가 있을 때만 입력하세요 (없으면 비워두세요)"
           defaultValue={defaultValue?.chatPassword}
           onChange={onChange}
         />

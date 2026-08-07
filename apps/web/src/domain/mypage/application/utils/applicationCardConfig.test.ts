@@ -39,6 +39,13 @@ describe('toMypageApplicationCardConfig - 오픈채팅방', () => {
     });
   });
 
+  it('참여코드가 "없음" 류 값이어도 코드 없음으로 취급한다 - 운영 오입력 방어', () => {
+    expect(openChatOf({ ...baseChallenge, chatPassword: '없음' })).toEqual({
+      link: 'https://open.kakao.com/o/abc123',
+      password: undefined,
+    });
+  });
+
   it('chatLink 가 없으면 노출하지 않는다', () => {
     expect(openChatOf({ ...baseChallenge, chatLink: null })).toBeUndefined();
   });
