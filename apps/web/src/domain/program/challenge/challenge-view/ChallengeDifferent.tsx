@@ -69,25 +69,6 @@ const ChallengeDifferent = ({
 
   const differentList = getDifferentList(isResumeTemplate, styles);
 
-  const paypackImgSrc = (() => {
-    if (isResumeTemplate) return '/images/payback-career-start157.png';
-    switch (challengeType) {
-      case PORTFOLIO:
-        return '/images/payback-portfolio.png';
-      case CAREER_START:
-        return '/images/payback-career-start.png';
-      case EXPERIENCE_SUMMARY:
-        return '/images/payback-experience-summary.svg';
-      case ETC:
-        return '/images/payback-experience-summary.svg';
-      // 자소서
-      case PERSONAL_STATEMENT:
-        return '/images/payback-personal-statement.png';
-      default:
-        return undefined;
-    }
-  })();
-
   const iconName = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
@@ -117,7 +98,6 @@ const ChallengeDifferent = ({
         deposit={deposit}
         isResumeTemplate={isResumeTemplate}
         iconName={iconName}
-        paypackImgSrc={paypackImgSrc}
         differentList={differentList}
         styles={styles}
       />
