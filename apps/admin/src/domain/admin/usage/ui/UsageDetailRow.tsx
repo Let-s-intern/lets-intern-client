@@ -1,3 +1,6 @@
+import clsx from 'clsx';
+import { Fragment } from 'react';
+
 import { type AccessLogDetail, useAccessLogDetailQuery } from '@/api/accessLog';
 
 import { formatDateTime } from '../utils/formatDateTime';
@@ -75,6 +78,115 @@ const formatDetailTarget = (detail: AccessLogDetail): string => {
 };
 
 /**
+ * 자료 줄의 이름. 회차는 부모 줄이 이미 말하므로 자료 이름만 남긴다.
+ *
+ * `3회차 · Resume` 를 `3회차 미션` 아래에 그대로 넣으면 회차가 두 번 읽힌다.
+ */
+const formatContentLabel = (detail: AccessLogDetail): string =>
+  detail.contentTitle?.trim() || `자료 (${targetRef(detail.targetId)})`;
+
+/**
+ * 미션 회차로 묶은 상세 줄.
+ *
+ * 자료가 어느 미션 소속인지는 들여쓰기로만 드러난다. 평평한 목록에서는 `3회차 · Resume` 와
+ * `7회차 · Resume` 가 이름으로만 갈려, 자료가 많아지면 소속을 눈으로 따라가야 한다.
+ *
+ * 미션 회차를 모르는 줄(대시보드·콘텐츠 수령·회차 미상)은 묶지 않고 위에 그대로 둔다.
+ * 억지로 묶으면 소속이 없는 것을 있는 것처럼 보이게 만든다.
+ */
+interface DetailGroup {
+  /** 부모 줄. 미션 열람 기록이 없으면 null 이고 자료만 들여쓰기로 나온다. */
+  mission: AccessLogDetail | null;
+  missionTh: number;
+  contents: AccessLogDetail[];
+}
+
+const isMission = (detail: AccessLogDetail) =>
+  detail.targetType?.trim() === 'MISSION';
+
+/**
+ * 미션 줄과 자료 줄을 가른다.
+ *
+ * `contentTitle` 로 가른다. `targetTitle` 은 미션 열람 행에도 미션 제목이 채워져 오므로
+ * 그것으로 판단하면 <b>미션 열람이 전부 자료로 분류되어 부모 줄이 늘 비어 보인다.</b>
+ * 실제로 그렇게 만들었다가 화면에서 잡았다.
+ *
+ * 템플릿은 미션 열람과 한 행이라 부모 줄에 남는다 - 유니크 키에 이름이 들어가면 그때
+ * 자료 줄로 갈린다.
+ */
+const groupDetails = (details: AccessLogDetail[]) => {
+  const ungrouped: AccessLogDetail[] = [];
+  const groups = new Map<number, DetailGroup>();
+
+  const groupOf = (missionTh: number) => {
+    const found = groups.get(missionTh);
+    if (found) return found;
+    const created: DetailGroup = { mission: null, missionTh, contents: [] };
+    groups.set(missionTh, created);
+    return created;
+  };
+
+  for (const detail of details) {
+    if (!isMission(detail) || detail.missionTh == null) {
+      ungrouped.push(detail);
+      continue;
+    }
+
+    const group = groupOf(detail.missionTh);
+    if (detail.contentTitle?.trim()) group.contents.push(detail);
+    else group.mission = detail;
+  }
+
+  return {
+    ungrouped,
+    groups: [...groups.values()].sort((a, b) => a.missionTh - b.missionTh),
+  };
+};
+
+/**
+ * 트리 연결선.
+ *
+ * 문자(└)가 아니라 보더로 그린다. 문자는 폰트마다 너비·높이가 달라 줄마다 어긋나는데
+ * 보더는 셀 높이를 따라간다.
+ *
+ * `last` 면 세로선을 절반만 그린다. 끝까지 내리면 다음 형제로 이어지는 것처럼 보여
+ * 소속을 잘못 읽는다.
+ *
+ * `throughLeft` 는 조상의 세로선이다. 자료 줄에서 미션의 선이 끊기면 자료가 어느 미션에
+ * 매달렸는지 도중에 사라진다.
+ */
+const TreeBranch = ({
+  left,
+  last,
+  throughLeft,
+}: {
+  left: string;
+  last: boolean;
+  throughLeft?: string;
+}) => (
+  <>
+    {throughLeft && (
+      <span
+        aria-hidden
+        className={`border-neutral-70 absolute top-0 h-full border-l ${throughLeft}`}
+      />
+    )}
+    <span
+      aria-hidden
+      className={clsx(
+        'border-neutral-70 absolute top-0 border-l',
+        left,
+        last ? 'h-1/2' : 'h-full',
+      )}
+    />
+    <span
+      aria-hidden
+      className={`border-neutral-70 absolute top-1/2 w-2 border-t ${left}`}
+    />
+  </>
+);
+
+/**
  * 내역이 하나도 없을 때의 문구.
  *
  * `내역 없음` 하나로 뭉개지 않는다. 집계 대상이 아닌 건과 미이용이 같은 문구로 보이면
@@ -90,6 +202,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
   const { data, isLoading, isError } = useAccessLogDetailQuery(applicationId);
 
   const details = data?.details ?? [];
+  const { ungrouped, groups } = groupDetails(details);
 
   /**
    * 로딩 · 조회 실패 · 내역 없음이 서로 배타적이어야 한다(PRD 7.4).
@@ -114,12 +227,17 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
           <th className="px-3 py-1.5 text-right font-medium">횟수</th>
         </tr>
       </thead>
+      {/*
+        데이터 행에는 구분선을 두지 않는다. 트리 선이 이미 세로로 흐르고 있어 가로선을
+        더하면 격자가 되어 계층이 묻힌다. 어느 줄을 보는지는 호버가 알려준다.
+        헤더 아래 선만 남긴다 - 그건 계층이 아니라 표의 시작을 긋는 선이다.
+      */}
       <tbody>
-        {details.map((detail, index) => (
+        {ungrouped.map((detail, index) => (
           <tr
             // 대상 삭제 등으로 targetId 가 비어 올 수 있어 키를 단독으로 맡기지 못한다.
             key={`${detail.targetType ?? ''}-${detail.targetId ?? index}`}
-            className="border-b last:border-b-0"
+            className="hover:bg-neutral-90"
           >
             <td className="px-3 py-1">{formatDetailTarget(detail)}</td>
             <td className="whitespace-nowrap px-3 py-1">
@@ -132,6 +250,85 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
               {detail.accessCount ?? 0}회
             </td>
           </tr>
+        ))}
+
+        {groups.map((group, groupIndex) => (
+          <Fragment key={`mission-${group.missionTh}`}>
+            <tr className="hover:bg-neutral-90">
+              {/*
+                미션은 대시보드를 거쳐야 닿는 자리라 한 단계 안으로 들인다.
+                대시보드 · 미션 · 자료가 0.75rem 씩 계단을 이룬다.
+
+                대시보드 열람 기록이 없어도 들여쓰기는 유지한다. 기록의 유무와 무관하게
+                미션이 대시보드 안에 있다는 사실은 변하지 않고, 조건부로 바꾸면 같은 화면이
+                신청서마다 다른 모양으로 보인다.
+              */}
+              <td className="relative py-1 pl-6 pr-3">
+                <TreeBranch
+                  left="left-4"
+                  last={
+                    groupIndex === groups.length - 1 &&
+                    group.contents.length === 0
+                  }
+                />
+                {group.mission
+                  ? formatDetailTarget(group.mission)
+                  : `${group.missionTh}회차 미션`}
+              </td>
+              {/*
+                미션 열람 기록 없이 자료만 열린 경우가 있다. 그때 시각·횟수 칸을 0 이나 빈칸으로
+                두면 "미션을 0회 봤다" 로 읽히는데, 실제로는 그 미션을 연 기록이 없는 것이다.
+                값이 없다는 뜻의 `-` 를 그대로 쓴다.
+              */}
+              <td className="whitespace-nowrap px-3 py-1">
+                {group.mission
+                  ? formatDateTime(group.mission.firstAccessedAt)
+                  : '-'}
+              </td>
+              <td className="whitespace-nowrap px-3 py-1">
+                {group.mission
+                  ? formatDateTime(group.mission.lastAccessedAt)
+                  : '-'}
+              </td>
+              <td className="whitespace-nowrap px-3 py-1 text-right">
+                {group.mission ? `${group.mission.accessCount ?? 0}회` : '-'}
+              </td>
+            </tr>
+
+            {group.contents.map((content, index) => (
+              <tr
+                key={`content-${content.targetId ?? index}`}
+                className="hover:bg-neutral-90"
+              >
+                {/*
+                  종속을 선으로 잇는다. 문자(└)가 아니라 보더로 그리는 이유는, 문자는 폰트마다
+                  너비와 높이가 달라 줄마다 어긋나기 때문이다. 보더는 셀 높이를 따라간다.
+
+                  마지막 자료는 세로선을 절반만 그린다. 끝까지 내리면 다음 미션으로 이어지는
+                  것처럼 보여 소속을 잘못 읽는다.
+                */}
+                <td className="text-neutral-20 relative py-1 pl-9 pr-3">
+                  <TreeBranch
+                    left="left-7"
+                    last={index === group.contents.length - 1}
+                    throughLeft={
+                      groupIndex === groups.length - 1 ? undefined : 'left-4'
+                    }
+                  />
+                  {formatContentLabel(content)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1">
+                  {formatDateTime(content.firstAccessedAt)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1">
+                  {formatDateTime(content.lastAccessedAt)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1 text-right">
+                  {content.accessCount ?? 0}회
+                </td>
+              </tr>
+            ))}
+          </Fragment>
         ))}
       </tbody>
     </table>

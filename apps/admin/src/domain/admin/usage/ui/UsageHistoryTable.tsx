@@ -153,10 +153,15 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
 
           return (
             <Fragment key={row.applicationId}>
+              {/*
+                호버 색을 강조 행과 나눈다. 결제 후 미이용(amber) 행에 회색 호버를 얹으면
+                강조가 지워져, 마우스를 올리는 동안 그 행이 눈여겨볼 건이라는 사실이 사라진다.
+                같은 계열에서 한 단계 진하게 해 강조를 유지한 채 위치만 알린다.
+              */}
               <tr
                 className={twMerge(
-                  'border-b align-top',
-                  recentUnused && 'bg-amber-50',
+                  'hover:bg-neutral-95 border-b align-top',
+                  recentUnused && 'bg-amber-50 hover:bg-amber-100',
                 )}
               >
                 <td className="px-3 py-2">
