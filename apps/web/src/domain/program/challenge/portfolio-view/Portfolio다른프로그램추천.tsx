@@ -383,7 +383,7 @@ const Portfolio다른프로그램추천 = ({
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
                 <PaybackTicketIcon
                   deposit={deposit}
-                  backgroundColor={styles.primaryLightColor}
+                  challengeType="PORTFOLIO"
                   accentColor={styles.primaryColor}
                   className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                 />
