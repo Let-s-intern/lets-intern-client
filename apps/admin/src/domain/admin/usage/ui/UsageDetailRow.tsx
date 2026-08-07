@@ -203,7 +203,15 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
         {groups.map((group) => (
           <Fragment key={`mission-${group.missionTh}`}>
             <tr className="border-b last:border-b-0">
-              <td className="px-3 py-1">
+              {/*
+                미션은 대시보드를 거쳐야 닿는 자리라 한 단계 안으로 들인다.
+                대시보드 · 미션 · 자료가 0.75rem 씩 계단을 이룬다.
+
+                대시보드 열람 기록이 없어도 들여쓰기는 유지한다. 기록의 유무와 무관하게
+                미션이 대시보드 안에 있다는 사실은 변하지 않고, 조건부로 바꾸면 같은 화면이
+                신청서마다 다른 모양으로 보인다.
+              */}
+              <td className="py-1 pl-6 pr-3">
                 {group.mission
                   ? formatDetailTarget(group.mission)
                   : `${group.missionTh}회차 미션`}
