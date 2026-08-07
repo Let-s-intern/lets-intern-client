@@ -102,7 +102,7 @@ const DifferentSection = ({
                 challengeType === ETC) && (
                 <PaybackTicketIcon
                   deposit={deposit}
-                  backgroundColor={styles.primaryLightColor}
+                  challengeType={challengeType}
                   accentColor={styles.primaryColor}
                   className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
                 />

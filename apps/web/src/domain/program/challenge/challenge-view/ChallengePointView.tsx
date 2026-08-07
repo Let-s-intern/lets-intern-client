@@ -399,7 +399,7 @@ const ChallengePointView = ({
                     challengeType === ETC) && (
                     <PaybackTicketIcon
                       deposit={deposit}
-                      backgroundColor={styles.primaryLightColor}
+                      challengeType={challengeType}
                       accentColor={styles.primaryColor}
                       className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                     />

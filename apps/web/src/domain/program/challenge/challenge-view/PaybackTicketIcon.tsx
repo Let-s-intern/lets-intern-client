@@ -3,15 +3,25 @@ const VIEW_WIDTH = 193;
 const VIEW_HEIGHT = 150;
 
 /** "Pay back" 라벨과 같은 기울기·정렬로 금액을 배치하기 위한 위치 (원본 벡터에서 측정) */
-const AMOUNT_CENTER_X = 96;
-const AMOUNT_CENTER_Y = 82;
+const AMOUNT_CENTER_X = 103;
+const AMOUNT_CENTER_Y = 80;
 const TEXT_ROTATE_DEG = -15.6;
-const AMOUNT_FONT_SIZE = 27;
+const AMOUNT_FONT_SIZE = 19;
+
+/**
+ * 티켓 바탕 색상. styles.primaryLightColor(섹션 배경용, 매우 옅음)를 그대로 쓰면
+ * 원본 디자인보다 색이 너무 연해져서, 실제 배포된 이미지에서 직접 픽셀 측정한 값을 쓴다.
+ */
+const TICKET_BACKGROUND_COLOR = {
+  PORTFOLIO: '#DAE3FF',
+  CAREER_START: '#E2E4FF',
+  EXPERIENCE_SUMMARY: '#FFEDE9',
+  ETC: '#FFEDE9',
+} as const;
 
 interface PaybackTicketIconProps {
   deposit: number;
-  /** 티켓 바탕 색상 (챌린지 타입별 primaryLightColor에 해당하는 옅은 톤) */
-  backgroundColor: string;
+  challengeType: keyof typeof TICKET_BACKGROUND_COLOR;
   /** "Pay back" 라벨·금액 텍스트 색상 (챌린지 타입별 primaryColor) */
   accentColor: string;
   className?: string;
@@ -26,10 +36,12 @@ interface PaybackTicketIconProps {
  */
 const PaybackTicketIcon = ({
   deposit,
-  backgroundColor,
+  challengeType,
   accentColor,
   className,
 }: PaybackTicketIconProps) => {
+  const backgroundColor = TICKET_BACKGROUND_COLOR[challengeType];
+
   return (
     <svg
       viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
