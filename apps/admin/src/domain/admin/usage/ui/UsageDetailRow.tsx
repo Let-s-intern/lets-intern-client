@@ -144,6 +144,49 @@ const groupDetails = (details: AccessLogDetail[]) => {
 };
 
 /**
+ * 트리 연결선.
+ *
+ * 문자(└)가 아니라 보더로 그린다. 문자는 폰트마다 너비·높이가 달라 줄마다 어긋나는데
+ * 보더는 셀 높이를 따라간다.
+ *
+ * `last` 면 세로선을 절반만 그린다. 끝까지 내리면 다음 형제로 이어지는 것처럼 보여
+ * 소속을 잘못 읽는다.
+ *
+ * `throughLeft` 는 조상의 세로선이다. 자료 줄에서 미션의 선이 끊기면 자료가 어느 미션에
+ * 매달렸는지 도중에 사라진다.
+ */
+const TreeBranch = ({
+  left,
+  last,
+  throughLeft,
+}: {
+  left: string;
+  last: boolean;
+  throughLeft?: string;
+}) => (
+  <>
+    {throughLeft && (
+      <span
+        aria-hidden
+        className={`border-neutral-70 absolute top-0 h-full border-l ${throughLeft}`}
+      />
+    )}
+    <span
+      aria-hidden
+      className={clsx(
+        'border-neutral-70 absolute top-0 border-l',
+        left,
+        last ? 'h-1/2' : 'h-full',
+      )}
+    />
+    <span
+      aria-hidden
+      className={`border-neutral-70 absolute top-1/2 w-2 border-t ${left}`}
+    />
+  </>
+);
+
+/**
  * 내역이 하나도 없을 때의 문구.
  *
  * `내역 없음` 하나로 뭉개지 않는다. 집계 대상이 아닌 건과 미이용이 같은 문구로 보이면
@@ -204,7 +247,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
           </tr>
         ))}
 
-        {groups.map((group) => (
+        {groups.map((group, groupIndex) => (
           <Fragment key={`mission-${group.missionTh}`}>
             <tr className="hover:bg-neutral-90 border-b last:border-b-0">
               {/*
@@ -215,7 +258,14 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
                 미션이 대시보드 안에 있다는 사실은 변하지 않고, 조건부로 바꾸면 같은 화면이
                 신청서마다 다른 모양으로 보인다.
               */}
-              <td className="py-1 pl-6 pr-3">
+              <td className="relative py-1 pl-6 pr-3">
+                <TreeBranch
+                  left="left-4"
+                  last={
+                    groupIndex === groups.length - 1 &&
+                    group.contents.length === 0
+                  }
+                />
                 {group.mission
                   ? formatDetailTarget(group.mission)
                   : `${group.missionTh}회차 미션`}
@@ -253,16 +303,12 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
                   것처럼 보여 소속을 잘못 읽는다.
                 */}
                 <td className="text-neutral-20 relative py-1 pl-9 pr-3">
-                  <span
-                    aria-hidden
-                    className={clsx(
-                      'border-neutral-70 absolute left-7 top-0 border-l',
-                      index === group.contents.length - 1 ? 'h-1/2' : 'h-full',
-                    )}
-                  />
-                  <span
-                    aria-hidden
-                    className="border-neutral-70 absolute left-7 top-1/2 w-2 border-t"
+                  <TreeBranch
+                    left="left-7"
+                    last={index === group.contents.length - 1}
+                    throughLeft={
+                      groupIndex === groups.length - 1 ? undefined : 'left-4'
+                    }
                   />
                   {formatContentLabel(content)}
                 </td>
