@@ -82,7 +82,7 @@ const formatDetailTarget = (detail: AccessLogDetail): string => {
  * `3회차 · Resume` 를 `3회차 미션` 아래에 그대로 넣으면 회차가 두 번 읽힌다.
  */
 const formatContentLabel = (detail: AccessLogDetail): string =>
-  detail.targetTitle?.trim() || `자료 (${targetRef(detail.targetId)})`;
+  detail.contentTitle?.trim() || `자료 (${targetRef(detail.targetId)})`;
 
 /**
  * 미션 회차로 묶은 상세 줄.
@@ -106,9 +106,12 @@ const isMission = (detail: AccessLogDetail) =>
 /**
  * 미션 줄과 자료 줄을 가른다.
  *
- * 서버는 자료에만 이름을 저장한다. 미션 열람은 이름 없이 회차로만 남으므로, 이름 유무가
- * 곧 자료인지 여부다. 템플릿은 미션 열람과 한 행이라 부모 줄에 남는다 - 유니크 키에
- * 이름이 들어가면 그때 자료 줄로 갈린다.
+ * `contentTitle` 로 가른다. `targetTitle` 은 미션 열람 행에도 미션 제목이 채워져 오므로
+ * 그것으로 판단하면 <b>미션 열람이 전부 자료로 분류되어 부모 줄이 늘 비어 보인다.</b>
+ * 실제로 그렇게 만들었다가 화면에서 잡았다.
+ *
+ * 템플릿은 미션 열람과 한 행이라 부모 줄에 남는다 - 유니크 키에 이름이 들어가면 그때
+ * 자료 줄로 갈린다.
  */
 const groupDetails = (details: AccessLogDetail[]) => {
   const ungrouped: AccessLogDetail[] = [];
@@ -129,7 +132,7 @@ const groupDetails = (details: AccessLogDetail[]) => {
     }
 
     const group = groupOf(detail.missionTh);
-    if (detail.targetTitle?.trim()) group.contents.push(detail);
+    if (detail.contentTitle?.trim()) group.contents.push(detail);
     else group.mission = detail;
   }
 

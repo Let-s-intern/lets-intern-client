@@ -175,6 +175,14 @@ export const accessLogDetailSchema = z.object({
   targetType: z.string().nullable().optional(),
   targetId: z.number().nullable().optional(),
   targetTitle: z.string().nullable().optional(),
+  /**
+   * 미션 자료를 연 행이면 그 자료 이름, 미션 자체를 연 행이면 null.
+   *
+   * `targetTitle` 로는 둘을 가릴 수 없다. 미션 열람 행에는 거기에 미션 제목이 채워져
+   * 들어오기 때문이다. 그래서 **자료인지 여부를 판단할 때는 이 필드를 본다** — 미션을
+   * 부모 줄로, 자료를 자식 줄로 그리는 기준이다.
+   */
+  contentTitle: z.string().nullable().optional(),
   /** 미션 회차. 미션이 아닌 대상이면 null 이다. */
   missionTh: z.number().nullable().optional(),
   firstAccessedAt: z.string().nullable().optional(),
