@@ -26,7 +26,9 @@ import useProgramStore, {
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+import { captureDomainError } from '@/utils/captureError';
 import { NoticeDialog } from '@letscareer/ui';
+import { ApiError } from '@letscareer/api';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -200,9 +202,20 @@ const PaymentInputContent = () => {
         );
       }
     } catch (e) {
-      if (e instanceof AxiosError) {
-        alert(e.response?.data?.message);
+      // axios 인터셉터가 응답 에러를 ApiError로 래핑한다([packages/api/src/createAuthorizedAxios.ts]).
+      // 네트워크 실패는 래핑되지 않고 raw AxiosError로 도착하므로 두 타입 모두 처리한다.
+      let serverMessage: string | undefined;
+      if (e instanceof ApiError) {
+        serverMessage = e.serverMessage;
+      } else if (e instanceof AxiosError) {
+        serverMessage = (e.response?.data as { message?: string })?.message;
       }
+
+      captureDomainError(e, { domain: 'common', section: 'payment-input' });
+      alert(
+        serverMessage ??
+          '결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      );
     }
   }, [
     handleSafeNavigation,
