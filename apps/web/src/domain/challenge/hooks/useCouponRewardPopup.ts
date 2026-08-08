@@ -4,13 +4,14 @@ import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 
 // 챌린지 종류별 재구매 할인 쿠폰 금액. 목록에 없는 챌린지 종류는 쿠폰이 없다(=팝업 미노출).
-export const COUPON_AMOUNT_BY_CHALLENGE_TYPE: Partial<Record<ChallengeType, number>> =
-  {
-    CAREER_START: 5000, // 이력서 챌린지
-    EXPERIENCE_SUMMARY: 5000, // 경험정리 챌린지
-    PERSONAL_STATEMENT: 8000, // 자기소개서 챌린지
-    PORTFOLIO: 8000, // 포트폴리오 챌린지
-  };
+export const COUPON_AMOUNT_BY_CHALLENGE_TYPE: Partial<
+  Record<ChallengeType, number>
+> = {
+  CAREER_START: 5000, // 이력서 챌린지
+  EXPERIENCE_SUMMARY: 5000, // 경험정리 챌린지
+  PERSONAL_STATEMENT: 8000, // 자기소개서 챌린지
+  PORTFOLIO: 8000, // 포트폴리오 챌린지
+};
 
 interface Params {
   challengeType: ChallengeType | undefined;
