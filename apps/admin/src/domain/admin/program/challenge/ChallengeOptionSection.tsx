@@ -90,6 +90,20 @@ function ChallengeOptionSection({ options }: Props) {
   };
 
   const handleSave = () => {
+    // 피드백 옵션(isFeedback)은 유형(서면/라이브)이 반드시 있어야 한다.
+    // type 이 비면 LIVE/서면 피드백 조회·집계·알림이 전부 type 일치 필터에서 탈락한다.
+    // (일반 옵션은 type 이 없어도 되므로 isFeedback 인 옵션만 검사한다.)
+    const missingType = editingOptions.filter(
+      (opt) => opt.isFeedback && !opt.type,
+    );
+    if (missingType.length > 0) {
+      snackbar(
+        `⚠️ 피드백 옵션은 유형(서면/라이브)을 선택해야 합니다: ${missingType
+          .map((opt) => opt.code || opt.title || `#${opt.challengeOptionId}`)
+          .join(', ')}`,
+      );
+      return;
+    }
     Promise.all(editingOptions.map((opt) => patchChallengeOpt(opt))).then(() =>
       snackbar('✅ 옵션 저장 완료'),
     );
