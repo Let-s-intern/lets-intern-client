@@ -6,6 +6,7 @@ import {
   useGetUserCareerQuery,
   usePostUserCareerMutation,
   usePatchUserCareerMutation,
+  useSetRepresentativeCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
 import CareerHeader from '@/common/career/CareerHeader';
@@ -20,6 +21,7 @@ export default function CareerSection() {
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
+  const setRepresentativeCareerMutation = useSetRepresentativeCareerMutation();
   const { data, isLoading } = useGetUserCareerQuery({
     page: 0,
     size: PAGE_SIZE,
@@ -33,8 +35,9 @@ export default function CareerSection() {
   };
 
   const handleSubmitForm = async (career: UserCareerType) => {
+    const { isRepresentative, ...careerFields } = career;
     const formData = new FormData();
-    const requestDto = new Blob([JSON.stringify(career)], {
+    const requestDto = new Blob([JSON.stringify(careerFields)], {
       type: 'application/json',
     });
     formData.append('requestDto', requestDto);
@@ -46,6 +49,10 @@ export default function CareerSection() {
         careerId: editingId,
         careerData: formData,
       });
+
+      if (isRepresentative) {
+        await setRepresentativeCareerMutation.mutateAsync(editingId);
+      }
     }
 
     handleCloseForm();
