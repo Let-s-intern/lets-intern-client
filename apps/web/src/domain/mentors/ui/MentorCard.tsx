@@ -60,7 +60,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           mentor.hashTagList.length > 0 ? 'bg-neutral-90' : 'bg-static-100',
         )}
       >
-        {mentor.hashTagList.map((tag) => `#${tag.title}`).join('  ')}
+        {mentor.hashTagList.map((tag) => `#${tag.title}`).join('  ')}
       </div>
     </Link>
   );
