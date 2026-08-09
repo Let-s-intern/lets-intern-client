@@ -10,6 +10,7 @@ export const DEFAULT_CAREER: CareerFormType = {
   field: '',
   position: '',
   department: '',
+  isRepresentative: false,
 } as const;
 
 export const DEFAULT_PAGE_INFO = {
