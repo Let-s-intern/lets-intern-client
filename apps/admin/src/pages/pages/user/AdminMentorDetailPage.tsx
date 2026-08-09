@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
-  usePatchUserAdminMutation,
-  useUserDetailAdminQuery,
-  UseUserDetailAdminQueryKey,
-} from '@/api/user/user';
-import {
+  useDeleteAdminCareerMutation,
   useGetAdminUserCareerQuery,
   usePostAdminCareerMutation,
-  useDeleteAdminCareerMutation,
 } from '@/api/career/career';
 import { uploadFile } from '@/api/file';
+import {
+  AdminUserDetailQueryKey,
+  useAdminUserDetailQuery,
+  usePatchUserAdminMutation,
+} from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
@@ -56,6 +56,7 @@ interface LocalCareer {
   position: string;
   department: string;
   isAddedByAdmin: boolean;
+  isRepresentative: boolean;
 }
 
 export default function AdminMentorDetailPage() {
@@ -65,10 +66,7 @@ export default function AdminMentorDetailPage() {
   const { snackbar } = useAdminSnackbar();
   const mentorId = Number(params.mentorId || 0);
 
-  const { data: userDetail, isLoading } = useUserDetailAdminQuery({
-    userId: mentorId,
-    enabled: !!mentorId,
-  });
+  const { data: userDetail, isLoading } = useAdminUserDetailQuery(mentorId);
 
   const { data: careerData } = useGetAdminUserCareerQuery(mentorId, {
     page: 0,
@@ -80,7 +78,7 @@ export default function AdminMentorDetailPage() {
     successCallback: () => {
       snackbar('프로필이 저장되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: [UseUserDetailAdminQueryKey, mentorId],
+        queryKey: [AdminUserDetailQueryKey, mentorId],
       });
     },
     errorCallback: () => snackbar('저장에 실패했습니다.'),
@@ -119,6 +117,7 @@ export default function AdminMentorDetailPage() {
           position: c.position ?? '',
           department: c.department ?? '',
           isAddedByAdmin: c.isAddedByAdmin ?? false,
+          isRepresentative: c.isRepresentative ?? false,
         }))
         .sort((a, b) => b.startDate.localeCompare(a.startDate)),
     [careerData],
@@ -361,10 +360,19 @@ export default function AdminMentorDetailPage() {
                         ) : null}
                       </div>
                     ) : null}
-                    {!career.isAddedByAdmin ? (
-                      <span className="text-xxsmall12 mt-1 text-neutral-50">
-                        멘토 등록
-                      </span>
+                    {!career.isAddedByAdmin || career.isRepresentative ? (
+                      <div className="mt-1 flex items-center gap-1.5">
+                        {!career.isAddedByAdmin ? (
+                          <span className="text-xxsmall12 text-neutral-50">
+                            멘토 등록
+                          </span>
+                        ) : null}
+                        {career.isRepresentative ? (
+                          <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
+                            대표 경력
+                          </span>
+                        ) : null}
+                      </div>
                     ) : null}
                   </div>
                 );
