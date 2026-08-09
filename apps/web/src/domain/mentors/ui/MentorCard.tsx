@@ -30,21 +30,27 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           </div>
         </div>
 
-        <div className="border-neutral-80 bg-static-100 absolute right-0 top-0 h-8 w-8 overflow-hidden rounded-full border-2 md:h-[54px] md:w-[54px]">
-          <img
-            src="/logo/logo-simple.svg"
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </div>
+        {mentor.corpImgUrl && (
+          <div className="border-neutral-80 bg-static-100 absolute right-0 top-0 h-8 w-8 overflow-hidden rounded-full border-2 md:h-[54px] md:w-[54px]">
+            <img
+              src={mentor.corpImgUrl}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
       </div>
 
-      <p className="text-xxsmall10 md:text-xsmall14 text-neutral-40 mt-2 line-clamp-1">
-        하드코딩하드코딩 회사 | 하드코딩 직무 하드코딩 직무
-      </p>
-      <p className="text-xxsmall12 md:text-small18 text-neutral-20 mt-0.5 line-clamp-1 font-semibold">
-        하드코딩 대표경력대표경력대표경력대표경력
-      </p>
+      {mentor.company && (
+        <p className="text-xxsmall10 md:text-xsmall14 text-neutral-40 mt-2 line-clamp-1">
+          {mentor.company}
+        </p>
+      )}
+      {mentor.job && (
+        <p className="text-xxsmall12 md:text-small18 text-neutral-20 mt-0.5 line-clamp-1 font-semibold">
+          {mentor.job}
+        </p>
+      )}
 
       <div className="flex-1" />
 

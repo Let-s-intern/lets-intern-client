@@ -54,7 +54,7 @@ const MentorFilterSection = ({
   return (
     <section
       className={twMerge(
-        'bg-static-100 sticky z-20 flex w-full flex-col gap-5 py-2 md:static md:mt-12 md:gap-10 md:py-0',
+        'bg-static-100 sticky z-20 flex w-full flex-col gap-5 py-4 md:static md:mt-12 md:gap-10 md:py-0',
         FULL_NAVBAR_HEIGHT_OFFSET,
       )}
     >
