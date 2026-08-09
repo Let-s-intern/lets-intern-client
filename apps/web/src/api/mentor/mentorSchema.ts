@@ -17,6 +17,9 @@ export const mentorListItemSchema = z.object({
   mentorId: z.number(),
   nickname: z.string().nullable(),
   profileImgUrl: z.string().nullable(),
+  corpImgUrl: z.string().nullable(),
+  company: z.string().nullable(),
+  job: z.string().nullable(),
   hashTagList: z.array(mentorHashTagItemSchema),
   challengeList: z.array(
     z.object({
