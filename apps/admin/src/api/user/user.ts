@@ -157,6 +157,7 @@ export type PatchUserType = {
   nickname?: string | null;
   introduction?: string | null;
   profileImgUrl?: string | null;
+  corpImgUrl?: string | null;
   sns?: string | null;
 };
 
