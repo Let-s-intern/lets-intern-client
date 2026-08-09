@@ -24,6 +24,7 @@ interface BasicFormData {
   email: string;
   sns: string;
   profileImgUrl: string;
+  corpImgUrl: string;
   introduction: string;
 }
 
@@ -34,6 +35,7 @@ const INITIAL_FORM: BasicFormData = {
   email: '',
   sns: '',
   profileImgUrl: '',
+  corpImgUrl: '',
   introduction: '',
 };
 
@@ -99,6 +101,7 @@ export default function AdminMentorDetailPage() {
       email: userInfo.email ?? '',
       sns: userInfo.sns ?? '',
       profileImgUrl: userInfo.profileImgUrl ?? '',
+      corpImgUrl: userInfo.corpImgUrl ?? '',
       introduction: userInfo.introduction ?? '',
     });
   }, [userDetail]);
@@ -131,6 +134,7 @@ export default function AdminMentorDetailPage() {
       nickname: form.nickname || null,
       sns: form.sns || null,
       profileImgUrl: form.profileImgUrl || null,
+      corpImgUrl: form.corpImgUrl || null,
       introduction: form.introduction || null,
     });
   };
@@ -186,6 +190,24 @@ export default function AdminMentorDetailPage() {
     }
   };
 
+  const handleCorpImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const isFileTooLarge = file.size > 5 * 1024 * 1024;
+    if (isFileTooLarge) {
+      snackbar('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+    try {
+      const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
+      setForm((prev) => ({ ...prev, corpImgUrl: fileUrl }));
+    } catch {
+      snackbar('이미지 업로드에 실패했습니다.');
+    }
+  };
+
   if (isLoading) {
     return (
       <section className="p-5">
@@ -224,27 +246,61 @@ export default function AdminMentorDetailPage() {
         <div className="border-neutral-80 rounded-lg border p-6">
           <h2 className="text-medium18 mb-4 font-semibold">기본 정보</h2>
 
-          <div className="mb-6 flex items-center gap-4">
-            <div className="border-neutral-80 bg-neutral-95 relative flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border">
-              {form.profileImgUrl ? (
-                <img
-                  src={form.profileImgUrl}
-                  alt="프로필"
-                  className="h-full w-full object-cover"
+          <div className="mb-10 flex items-center gap-5">
+            <div className="flex w-[200px] flex-col">
+              <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+                프로필 이미지
+              </label>
+              <label className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+                {form.profileImgUrl ? (
+                  <img
+                    src={form.profileImgUrl}
+                    alt="멘토 프로필"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xsmall14 text-neutral-40">프로필</span>
+                )}
+                <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  이미지
+                  <br />
+                  업로드
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
                 />
-              ) : (
-                <span className="text-xsmall14 text-neutral-40">이미지</span>
-              )}
+              </label>
             </div>
-            <label className="border-neutral-80 text-xsmall14 hover:bg-neutral-95 cursor-pointer rounded border px-3 py-1.5">
-              이미지 업로드
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
+            <div className="item-center flex h-[184px] w-[200px] flex-col">
+              <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+                로고 이미지
+              </label>
+              <label className="border-neutral-80 bg-neutral-95 group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+                {form.corpImgUrl ? (
+                  <img
+                    src={form.corpImgUrl}
+                    alt="로고"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xsmall14 text-neutral-40">로고</span>
+                )}
+                <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  이미지
+                  <br />
+                  업로드
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCorpImageUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
 
           <div className="flex flex-col gap-4">
