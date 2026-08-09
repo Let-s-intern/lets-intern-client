@@ -15,12 +15,14 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { twMerge } from '@/lib/twMerge';
 
-const TYPE_FILTER_OPTIONS = [
-  { value: 'all', label: '전체' },
-  { value: 'JOB', label: '관련 직무' },
-] as const;
+const MENTOR_HASH_TAG_TYPE_LABELS: Record<string, string> = {
+  JOB: '관련 직무',
+};
 
-type TypeFilterValue = (typeof TYPE_FILTER_OPTIONS)[number]['value'];
+const getTypeLabel = (type: string) =>
+  MENTOR_HASH_TAG_TYPE_LABELS[type] ?? type;
+
+const ALL_OPTION = { value: 'all', label: '전체' };
 
 export default function MentorHashTagSection() {
   const { data: allTags, isLoading: isAllLoading } =
@@ -30,7 +32,7 @@ export default function MentorHashTagSection() {
   const putMutation = usePutMyMentorHashTag();
   const { alertProps, showAlert } = useMentorAlert();
 
-  const [typeFilter, setTypeFilter] = useState<TypeFilterValue>('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
 
@@ -40,6 +42,19 @@ export default function MentorHashTagSection() {
     setSelectedIds(ids);
     setSavedIds(ids);
   }, [myTags]);
+
+  const typeOptions = useMemo(() => {
+    const uniqueTypes = Array.from(
+      new Set((allTags ?? []).map((tag) => tag.type)),
+    );
+    return [
+      ALL_OPTION,
+      ...uniqueTypes.map((type) => ({
+        value: type,
+        label: getTypeLabel(type),
+      })),
+    ];
+  }, [allTags]);
 
   const visibleTags = useMemo(() => {
     const tags = allTags ?? [];
@@ -102,7 +117,7 @@ export default function MentorHashTagSection() {
       ) : (
         <div className="mt-4 flex flex-col gap-5 md:gap-6">
           <CategoryTabs
-            options={[...TYPE_FILTER_OPTIONS]}
+            options={typeOptions}
             selected={typeFilter}
             onChange={setTypeFilter}
             className="pl-0"
