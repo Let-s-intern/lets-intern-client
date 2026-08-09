@@ -89,10 +89,6 @@ export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema
 >;
 
-export const MENTOR_HASH_TAG_TYPES = ['JOB'] as const;
-
-export type MentorHashTagType = (typeof MENTOR_HASH_TAG_TYPES)[number];
-
 export const mentorHashTagItemSchema = z.object({
   id: z.number(),
   type: z.string(),
@@ -108,6 +104,6 @@ export const mentorHashTagListSchema = z.object({
 
 /** POST, PATCH /api/v1/admin/mentor-hash-tag 요청 바디 */
 export interface MentorHashTagReq {
-  type: MentorHashTagType;
+  type: string;
   title: string;
 }
