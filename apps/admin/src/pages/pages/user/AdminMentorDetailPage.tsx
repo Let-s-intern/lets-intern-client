@@ -348,93 +348,119 @@ export default function AdminMentorDetailPage() {
         </div>
 
         {/* 경력 사항 */}
-        <div className="border-neutral-80 rounded-lg border p-6">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-medium18 font-semibold">경력사항</h2>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleAddCareer}
-              disabled={postCareer.isPending}
-            >
-              경력 추가 +
-            </Button>
-          </div>
-          <p className="text-xxsmall12 text-neutral-40 mb-4">
-            멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
-          </p>
-
-          {careers.length === 0 ? (
-            <div className="text-xsmall14 text-neutral-40 py-8 text-center">
-              등록된 경력이 없습니다.
+        <div className="flex flex-col gap-8">
+          <div className="border-neutral-80 rounded-lg border p-6">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-medium18 font-semibold">경력사항</h2>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={handleAddCareer}
+                disabled={postCareer.isPending}
+              >
+                경력 추가 +
+              </Button>
             </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {careers.map((career, index) => {
-                const isDeletable = career.isAddedByAdmin && career.id;
-                const hasDetails =
-                  career.field || career.position || career.department;
-                return (
-                  <div
-                    key={career.id ?? index}
-                    className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xsmall14 text-neutral-0">
-                        {career.job || '-'}
-                      </span>
-                      {isDeletable ? (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteCareer(career)}
-                          className="text-xxsmall12 text-red-500 hover:text-red-700"
-                        >
-                          삭제
-                        </button>
+            <p className="text-xxsmall12 text-neutral-40 mb-4">
+              멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
+            </p>
+
+            {careers.length === 0 ? (
+              <div className="text-xsmall14 text-neutral-40 py-8 text-center">
+                등록된 경력이 없습니다.
+              </div>
+            ) : (
+              <div className="flex max-h-[28rem] flex-col gap-3 overflow-y-auto">
+                {careers.map((career, index) => {
+                  const isDeletable = career.isAddedByAdmin && career.id;
+                  const hasDetails =
+                    career.field || career.position || career.department;
+                  return (
+                    <div
+                      key={career.id ?? index}
+                      className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xsmall14 text-neutral-0">
+                          {career.job || '-'}
+                        </span>
+                        {isDeletable ? (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCareer(career)}
+                            className="text-xxsmall12 text-red-500 hover:text-red-700"
+                          >
+                            삭제
+                          </button>
+                        ) : null}
+                      </div>
+                      <div className="text-xsmall14 text-neutral-0 font-medium">
+                        {career.company || '-'}
+                      </div>
+                      <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                        <span>{career.employmentType || '-'}</span>
+                        <span className="text-neutral-40">
+                          {career.startDate || '-'}
+                          {career.endDate
+                            ? ` - ${career.endDate}`
+                            : ' - 재직중'}
+                        </span>
+                      </div>
+                      {hasDetails ? (
+                        <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                          {career.field ? (
+                            <span>업무분야: {career.field}</span>
+                          ) : null}
+                          {career.position ? (
+                            <span>직책: {career.position}</span>
+                          ) : null}
+                          {career.department ? (
+                            <span>부서: {career.department}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {!career.isAddedByAdmin || career.isRepresentative ? (
+                        <div className="mt-1 flex items-center gap-1.5">
+                          {!career.isAddedByAdmin ? (
+                            <span className="text-xxsmall12 text-neutral-50">
+                              멘토 등록
+                            </span>
+                          ) : null}
+                          {career.isRepresentative ? (
+                            <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
+                              대표 경력
+                            </span>
+                          ) : null}
+                        </div>
                       ) : null}
                     </div>
-                    <div className="text-xsmall14 text-neutral-0 font-medium">
-                      {career.company || '-'}
-                    </div>
-                    <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
-                      <span>{career.employmentType || '-'}</span>
-                      <span className="text-neutral-40">
-                        {career.startDate || '-'}
-                        {career.endDate ? ` - ${career.endDate}` : ' - 재직중'}
-                      </span>
-                    </div>
-                    {hasDetails ? (
-                      <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                        {career.field ? (
-                          <span>업무분야: {career.field}</span>
-                        ) : null}
-                        {career.position ? (
-                          <span>직책: {career.position}</span>
-                        ) : null}
-                        {career.department ? (
-                          <span>부서: {career.department}</span>
-                        ) : null}
-                      </div>
-                    ) : null}
-                    {!career.isAddedByAdmin || career.isRepresentative ? (
-                      <div className="mt-1 flex items-center gap-1.5">
-                        {!career.isAddedByAdmin ? (
-                          <span className="text-xxsmall12 text-neutral-50">
-                            멘토 등록
-                          </span>
-                        ) : null}
-                        {career.isRepresentative ? (
-                          <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
-                            대표 경력
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* 키워드 */}
+          <div className="border-neutral-80 min-h-40 rounded-lg border p-6">
+            <h2 className="text-medium18 mb-4 font-semibold">키워드</h2>
+            {userDetail.mentorHashTagInfos &&
+            userDetail.mentorHashTagInfos.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {userDetail.mentorHashTagInfos.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="text-xxsmall12 border-neutral-80 bg-neutral-95 text-neutral-20 rounded-full border px-2.5 py-1.5"
+                  >
+                    #{tag.title}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xsmall14 text-neutral-40 py-4 text-center">
+                등록된 해시태그가 없습니다.
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
