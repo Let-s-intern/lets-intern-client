@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
+  adminUserDetailSchema,
   challengeMentorVoSchema,
   isAdminSchema,
   isMentorSchema,
@@ -120,6 +121,20 @@ export const useUserDetailAdminQuery = ({
       const res = await axios.get(`/user/${userId}`);
       return userAdminDetailType.parse(res.data.data);
     },
+  });
+};
+
+export const AdminUserDetailQueryKey = 'adminUserDetailQuery';
+
+/** GET 어드민 유저 상세 정보 조회 (v2) /api/v2/admin/user/{userId} */
+export const useAdminUserDetailQuery = (userId: number) => {
+  return useQuery({
+    queryKey: [AdminUserDetailQueryKey, userId],
+    queryFn: async () => {
+      const res = await axiosV2.get(`/admin/user/${userId}`);
+      return adminUserDetailSchema.parse(res.data.data);
+    },
+    enabled: !!userId,
   });
 };
 
