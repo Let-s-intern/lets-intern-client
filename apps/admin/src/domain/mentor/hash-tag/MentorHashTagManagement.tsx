@@ -1,13 +1,6 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  MenuItem,
-  TextField,
-} from '@mui/material';
+import { ApiError } from '@letscareer/api';
+import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { AxiosError } from 'axios';
 import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -15,29 +8,14 @@ import { FaTrashCan } from 'react-icons/fa6';
 import {
   useAdminMentorHashTagListQuery,
   useDeleteAdminMentorHashTag,
-  usePatchAdminMentorHashTag,
-  usePostAdminMentorHashTag,
 } from '@/api/mentor/mentor';
-import type {
-  MentorHashTagItem,
-  MentorHashTagReq,
-  MentorHashTagType,
-} from '@/api/mentor/mentorSchema';
+import type { MentorHashTagItem } from '@/api/mentor/mentorSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import type { ErrorResonse } from '@/types/interface';
 
-import { MENTOR_HASH_TAG_TYPE_OPTIONS } from './constants';
+import MentorHashTagFormDialog from './MentorHashTagFormDialog';
 
-type ModalMode = { mode: 'create' } | { mode: 'edit'; item: MentorHashTagItem };
-
-const getTypeLabel = (type: string) =>
-  MENTOR_HASH_TAG_TYPE_OPTIONS.find((option) => option.value === type)?.label ??
-  type;
-
-const getErrorMessage = (error: unknown, fallback: string) => {
-  const axiosError = error as AxiosError<ErrorResonse>;
-  return axiosError.response?.data?.message || fallback;
-};
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof ApiError ? error.message : fallback;
 
 const DATA_GRID_LOCALE_TEXT = {
   noRowsLabel: '등록된 키워드가 없습니다.',
@@ -48,59 +26,29 @@ export default function MentorHashTagManagement() {
   const { data, isLoading } = useAdminMentorHashTagListQuery();
   const hashTags = useMemo(() => data ?? [], [data]);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<ModalMode>({ mode: 'create' });
-  const [type, setType] = useState<MentorHashTagType>(
-    MENTOR_HASH_TAG_TYPE_OPTIONS[0].value,
+  const existingTypes = useMemo(
+    () => Array.from(new Set(hashTags.map((tag) => tag.type))),
+    [hashTags],
   );
-  const [title, setTitle] = useState('');
 
-  const postMutation = usePostAdminMentorHashTag();
-  const patchMutation = usePatchAdminMentorHashTag();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<MentorHashTagItem | null>(
+    null,
+  );
+
   const deleteMutation = useDeleteAdminMentorHashTag();
 
   const openCreateModal = () => {
-    setType(MENTOR_HASH_TAG_TYPE_OPTIONS[0].value);
-    setTitle('');
-    setModalMode({ mode: 'create' });
+    setEditingItem(null);
     setIsDialogOpen(true);
   };
 
   const openEditModal = (item: MentorHashTagItem) => {
-    setType(item.type as MentorHashTagType);
-    setTitle(item.title);
-    setModalMode({ mode: 'edit', item });
+    setEditingItem(item);
     setIsDialogOpen(true);
   };
 
   const closeModal = () => setIsDialogOpen(false);
-
-  const handleSubmit = async () => {
-    const body: MentorHashTagReq = { type, title };
-
-    try {
-      if (modalMode.mode === 'create') {
-        await postMutation.mutateAsync(body);
-        snackbar('키워드가 생성되었습니다.');
-      } else {
-        await patchMutation.mutateAsync({
-          mentorHashTagId: modalMode.item.id,
-          ...body,
-        });
-        snackbar('키워드가 수정되었습니다.');
-      }
-      closeModal();
-    } catch (error) {
-      snackbar(
-        getErrorMessage(
-          error,
-          modalMode.mode === 'create'
-            ? '키워드 생성에 실패했습니다.'
-            : '키워드 수정에 실패했습니다.',
-        ),
-      );
-    }
-  };
 
   const handleDelete = async (item: MentorHashTagItem) => {
     if (!window.confirm(`'${item.title}' 키워드를 삭제하시겠습니까?`)) return;
@@ -118,13 +66,7 @@ export default function MentorHashTagManagement() {
       {
         field: 'type',
         headerName: '타입',
-        width: 100,
-      },
-      {
-        field: 'typeLabel',
-        headerName: '카테고리명',
-        width: 300,
-        valueGetter: (_, row) => getTypeLabel(row.type),
+        width: 200,
       },
       {
         field: 'title',
@@ -185,53 +127,12 @@ export default function MentorHashTagManagement() {
         localeText={DATA_GRID_LOCALE_TEXT}
       />
 
-      <Dialog open={isDialogOpen} onClose={closeModal} fullWidth maxWidth="xs">
-        <DialogTitle>
-          {modalMode.mode === 'edit' ? '키워드 수정' : '키워드 생성'}
-        </DialogTitle>
-        <DialogContent className="flex flex-col gap-4">
-          <TextField
-            select
-            label="타입"
-            value={type}
-            onChange={(e) => setType(e.target.value as MentorHashTagType)}
-            fullWidth
-            margin="dense"
-          >
-            {MENTOR_HASH_TAG_TYPE_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.value} ({option.label})
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="키워드명"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-          />
-
-          <div className="mt-2 flex gap-2 pb-2">
-            <Button
-              variant="outlined"
-              size="large"
-              onClick={closeModal}
-              className="flex-1"
-            >
-              취소
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              className="flex-1 disabled:cursor-not-allowed"
-              onClick={handleSubmit}
-              disabled={!title.trim()}
-            >
-              저장
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <MentorHashTagFormDialog
+        open={isDialogOpen}
+        item={editingItem}
+        existingTypes={existingTypes}
+        onClose={closeModal}
+      />
     </div>
   );
 }
