@@ -78,10 +78,11 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
 };
 
 /**
- * POST /mentor/live-mentoring/submit — 관리자 검토 제출.
+ * POST /mentor/live-mentoring/submit — 자가승인 및 개설.
  *
  * 진행시간·기간은 이 요청에서만 서버에 저장된다(오픈 설정 PUT 은 제목·타입만 받는다).
- * 성공하면 상품이 `PENDING_REVIEW` 로 전이해 설정이 잠기므로 설정 캐시를 무효화한다.
+ * 성공하면 서버가 한 트랜잭션에서 상품을 `DRAFT → APPROVED` 로 전이시키고 곧바로 개설까지
+ * 만든다(관리자 검토 없음). 전이로 설정이 잠기므로 설정 캐시를 무효화한다.
  * 응답 `data` 는 null 이라 파싱하지 않는다.
  */
 export const useSubmitLiveMentoringMutation = () => {
