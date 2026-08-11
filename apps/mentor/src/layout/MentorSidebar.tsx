@@ -47,7 +47,7 @@ const navItems: NavItem[] = [
     type: 'group',
     name: '1대1 라이브 멘토링',
     matchPrefix: '/live-mentoring',
-    collapsible: true,
+    // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 드롭다운으로 접어둘 필요가 없다.
     showLiveMentoringStatus: true,
     children: [
       { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },

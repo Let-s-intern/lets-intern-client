@@ -557,7 +557,14 @@ const OpenSettingsPage = () => {
               </section>
 
               <section className={cardClass}>
-                <h2 className={sectionTitleClass}>피드백 진행 일정</h2>
+                <div className="mb-4 flex items-center gap-2">
+                  <h2 className="text-base font-semibold text-gray-900">
+                    피드백 진행 일정
+                  </h2>
+                  <span className="rounded-xs bg-red-50 px-2 py-1 text-xs font-medium text-red-600">
+                    삭제 예정
+                  </span>
+                </div>
                 <p className="mb-3 text-xs text-gray-500">
                   멘티가 이 기간 안에서 피드백 슬롯을 예약합니다. 오픈하면 바로
                   모집이 시작돼요.

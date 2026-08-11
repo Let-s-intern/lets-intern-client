@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -41,17 +41,18 @@ const renderSidebar = (path: string) =>
   );
 
 describe('1대1 라이브 멘토링 사이드바 그룹', () => {
-  it('그룹 라벨 클릭(드롭다운)으로 2개 하위 항목이 열린다', () => {
+  // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 더 이상 접이식이 아니다 —
+  // 항상 펼쳐진 채로 보인다.
+  it('접힘 없이 하위 항목 2개가 항상 노출된다', () => {
     renderSidebar('/');
 
-    // 다른 경로에서는 기본 접힘 — 클릭 전엔 하위 항목이 없다
     expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
-    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
-
     expect(screen.getByText('오픈 설정')).toBeInTheDocument();
     expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
+    // 그룹 라벨은 더 이상 토글 버튼이 아니다.
+    expect(
+      screen.queryByRole('button', { name: /1대1 라이브 멘토링/ }),
+    ).not.toBeInTheDocument();
     // 오픈 현황·정산 현황은 폐지됐다 — 오픈/닫기는 오픈 설정 상단에서 바로 한다.
     expect(screen.queryByText('정산 현황')).not.toBeInTheDocument();
     expect(screen.queryByText('오픈 현황')).not.toBeInTheDocument();
@@ -59,7 +60,6 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
 
   it('하위 항목의 url 매핑이 정확하다', () => {
     renderSidebar('/');
-    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
 
     const cases: [string, string][] = [
       ['오픈 설정', '/live-mentoring/open-settings'],
@@ -70,19 +70,7 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     }
   });
 
-  it('그룹 대주제는 클릭 가능한 토글 버튼이며, 다시 클릭하면 닫힌다', () => {
-    renderSidebar('/');
-    const toggle = screen.getByRole('button', {
-      name: /1대1 라이브 멘토링/,
-    });
-
-    fireEvent.click(toggle); // 열기
-    expect(screen.getByText('오픈 설정')).toBeInTheDocument();
-    fireEvent.click(toggle); // 닫기
-    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
-  });
-
-  it('하위 경로 진입 시 그룹이 자동으로 열리고 해당 항목이 활성 표시된다', () => {
+  it('하위 경로 진입 시 해당 항목이 활성 표시된다', () => {
     renderSidebar('/live-mentoring/open-settings');
 
     const link = screen.getByRole('link', { name: '오픈 설정' });
