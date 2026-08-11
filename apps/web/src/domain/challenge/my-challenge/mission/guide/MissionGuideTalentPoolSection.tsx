@@ -28,7 +28,7 @@ const Heading3 = ({
 
 interface MissionGuideTalentPoolSectionProps {
   className?: string;
-  todayTh: number;
+  todayTh: number | null;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
   isLoading?: boolean; // 로딩 상태 추가

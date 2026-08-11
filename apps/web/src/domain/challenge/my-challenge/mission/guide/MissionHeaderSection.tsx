@@ -6,7 +6,8 @@ interface MissionHeaderSectionProps {
   className?: string;
   missionType: string;
   deadline: string;
-  selectedMissionTh: number;
+  /** 선택된 회차. 오늘 회차도 선택된 회차도 없으면 null 이다. */
+  selectedMissionTh: number | null;
   isSubmitted?: boolean;
   missionStartDate?: Dayjs | null;
 }
@@ -20,6 +21,9 @@ const MissionHeaderSection = ({
   missionStartDate,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
+    // 회차를 알 수 없는 경우. 가이드는 미션을 골라야 열리므로 실제로는 닿기 어렵지만
+    // "null회차 미션" 이 그려지는 것보다 낫다.
+    if (selectedMissionTh === null) return '미션';
     if (selectedMissionTh === 100) return '보너스 미션';
     if (selectedMissionTh === 99) return '인재풀 미션';
     return `${selectedMissionTh}회차 미션`;
@@ -72,7 +76,10 @@ const MissionHeaderSection = ({
   };
 
   const shouldShowError =
-    selectedMissionTh >= 1 && selectedMissionTh <= 8 && isSubmitted === false;
+    selectedMissionTh !== null &&
+    selectedMissionTh >= 1 &&
+    selectedMissionTh <= 8 &&
+    isSubmitted === false;
   const isBeforeMissionStart = missionStartDate?.isBefore(dayjs());
 
   return (
