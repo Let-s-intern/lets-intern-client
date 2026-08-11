@@ -2,6 +2,7 @@ import { Schedule } from '@/schema';
 import clsx from 'clsx';
 
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { MissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 
@@ -9,9 +10,10 @@ interface Props {
   className?: string;
   schedule: Schedule;
   isDone: boolean;
+  timeState: MissionTimeState;
 }
 
-const MissionIcon = ({ className, schedule, isDone }: Props) => {
+const MissionIcon = ({ className, schedule, isDone, timeState }: Props) => {
   const { currentChallenge } = useCurrentChallenge();
 
   const mission = schedule.missionInfo;
@@ -19,12 +21,13 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const isSpecialMissionPassed =
     (mission.th === 0 || mission.th === 99) && attendance.result === 'PASS';
 
+  // 출석 행이 없다고 결석으로 바꿔 넘기지 않는다. 기록 없음의 뜻은 시점이 정한다.
+  // 마감된 회차면 미제출, 아직 열리지 않았으면 예정이다.
   const { text, style, icon } = missionSubmitToBadge({
-    status: isSpecialMissionPassed
-      ? 'PRESENT'
-      : (attendance.status ?? 'ABSENT'),
+    status: isSpecialMissionPassed ? 'PRESENT' : attendance.status,
     result: attendance.result,
     challengeEndDate: currentChallenge?.endDate,
+    timeState,
   });
 
   const isWaiting = attendance.result === 'WAITING';

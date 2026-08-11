@@ -1,5 +1,6 @@
 import { CurationLocationType, CurationType } from '@/api/curation';
 import { QuestionType } from '@/api/review/review';
+import type { MissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import {
@@ -296,14 +297,26 @@ export const absent = {
   style: 'text-system-error text-[13px]',
 };
 
+export const upcoming = {
+  text: '예정',
+  icon: '/icons/submit_absent.svg',
+  style: 'text-neutral-30 text-[13px]',
+};
+
 export const missionSubmitToBadge = ({
   status,
   result,
   challengeEndDate,
+  timeState,
 }: {
   status?: AttendanceStatus | null;
   result?: AttendanceResult | null;
   challengeEndDate?: Dayjs | null;
+  /**
+   * 미션의 시점 상태. `status` 가 null 일 때(=출석 행이 아직 없을 때) 그 뜻을 가른다.
+   * 넘기지 않으면 기존 호출부와 같이 '진행중' 으로 본다.
+   */
+  timeState?: MissionTimeState;
 }) => {
   const isChallengePeriodOver = challengeEndDate
     ?.add(2, 'day')
@@ -318,6 +331,11 @@ export const missionSubmitToBadge = ({
   }
 
   if (status === null) {
+    // 출석 행이 없는 것과 결석은 다르다. 마감됐는데 기록이 없으면 미제출,
+    // 아직 열리지 않았으면 예정이다. 시점을 모르면 예전대로 진행중으로 둔다.
+    if (timeState === 'PAST') return absent;
+    if (timeState === 'UPCOMING') return upcoming;
+
     return {
       text: '진행중',
       style: 'text-primary-90 text-sm',

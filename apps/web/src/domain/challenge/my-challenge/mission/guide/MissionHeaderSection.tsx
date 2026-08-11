@@ -1,3 +1,4 @@
+import { getMissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
@@ -5,75 +6,67 @@ import { Dayjs } from 'dayjs';
 interface MissionHeaderSectionProps {
   className?: string;
   missionType: string;
-  deadline: string;
-  selectedMissionTh: number;
+  /** 선택된 회차. 오늘 회차도 선택된 회차도 없으면 null 이다. */
+  selectedMissionTh: number | null;
   isSubmitted?: boolean;
   missionStartDate?: Dayjs | null;
+  missionEndDate?: Dayjs | null;
 }
 
 const MissionHeaderSection = ({
   className,
   selectedMissionTh,
   missionType,
-  deadline,
   isSubmitted,
   missionStartDate,
+  missionEndDate,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
+    // 회차를 알 수 없는 경우. 가이드는 미션을 골라야 열리므로 실제로는 닿기 어렵지만
+    // "null회차 미션" 이 그려지는 것보다 낫다.
+    if (selectedMissionTh === null) return '미션';
     if (selectedMissionTh === 100) return '보너스 미션';
     if (selectedMissionTh === 99) return '인재풀 미션';
     return `${selectedMissionTh}회차 미션`;
   };
 
-  const isDeadlinePassed = () => {
-    try {
-      // deadline 문자열에서 날짜와 시간 추출 (예: "8월3일 22:44까지" -> "8월3일 22:44")
-      const deadlineText = deadline.replace(/까지$/, '').trim();
+  const now = dayjs();
+  const timeState = getMissionTimeState(
+    { startDate: missionStartDate ?? null, endDate: missionEndDate ?? null },
+    now,
+  );
 
-      // 현재 연도 추가해서 파싱
-      const currentYear = dayjs().year();
-      let deadlineDate: Dayjs | null = null;
+  const isDeadlinePassed = timeState === 'PAST';
 
-      if (deadlineText.includes('월') && deadlineText.includes('일')) {
-        // "8월3일 22:44" 형태
-        const match = deadlineText.match(/(\d+)월(\d+)일\s*(\d{1,2}):(\d{2})?/);
-        if (match) {
-          const [, month, day, hour, minute] = match;
-          const timeString = minute
-            ? `${hour.padStart(2, '0')}:${minute}`
-            : `${hour.padStart(2, '0')}:00`;
-          deadlineDate = dayjs(
-            `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${timeString}`,
-          );
-        }
-      } else if (deadlineText.includes('.')) {
-        // "MM.DD" 또는 "MM.DD HH:mm" 형태
-        const [datePart, timePart] = deadlineText.split(' ');
-        const [month, day] = datePart.split('.');
-        const timeString = timePart || '23:59'; // 시간이 없으면 23:59로 설정
-        deadlineDate = dayjs(
-          `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${timeString}`,
-        );
-      } else {
-        // 다른 형태의 날짜 문자열
-        deadlineDate = dayjs(deadlineText);
-      }
+  /**
+   * 기간 문구. 시작 전에는 언제 열리는지, 열린 뒤로는 언제까지 낼 수 있는지 말한다.
+   *
+   * 예전에는 `deadline` 문자열을 받아 정규식으로 되파싱해 마감 여부를 판정했다.
+   * Dayjs 를 문자열로 만들었다가 다시 읽는 구조라 포맷이 바뀌면 조용히 깨졌고,
+   * 파싱할 때 연도를 올해로 가정해 연말·연초에도 어긋났다. Dayjs 를 직접 받는다.
+   */
+  const getPeriodText = () => {
+    // 0회차(OT)는 기간을 말하지 않는다. 기존 동작 그대로다.
+    if (selectedMissionTh === 0) return null;
 
-      if (!deadlineDate || !deadlineDate.isValid()) {
-        return false;
-      }
-
-      // 현재 시간과 마감 시간을 비교 (분 단위까지 정확하게)
-      return dayjs().startOf('minute').isAfter(deadlineDate.startOf('minute'));
-    } catch {
-      // 파싱 실패 시 기본값 false 반환
-      return false;
+    if (missionStartDate && timeState === 'UPCOMING') {
+      return `${missionStartDate.format('M월 D일 HH:mm')} 오픈`;
     }
+
+    if (missionEndDate) {
+      return `마감기한 ${missionEndDate.format('MM.DD HH:mm')}까지`;
+    }
+
+    return null;
   };
 
+  const periodText = getPeriodText();
+
   const shouldShowError =
-    selectedMissionTh >= 1 && selectedMissionTh <= 8 && isSubmitted === false;
-  const isBeforeMissionStart = missionStartDate?.isBefore(dayjs());
+    selectedMissionTh !== null &&
+    selectedMissionTh >= 1 &&
+    selectedMissionTh <= 8 &&
+    isSubmitted === false;
 
   return (
     <section className={clsx('flex flex-col gap-1', className)}>
@@ -88,20 +81,19 @@ const MissionHeaderSection = ({
             {missionType}
           </h2>
         </div>
-        {!missionStartDate ||
-          (selectedMissionTh !== 0 && isBeforeMissionStart && (
-            <p
-              className={clsx(
-                'text-xsmall14 md:text-xsmall16 flex flex-row items-end font-medium',
-                {
-                  'text-neutral-60': isDeadlinePassed(),
-                  'text-primary-90': !isDeadlinePassed(),
-                },
-              )}
-            >
-              마감기한 {deadline}까지
-            </p>
-          ))}
+        {periodText && (
+          <p
+            className={clsx(
+              'text-xsmall14 md:text-xsmall16 flex flex-row items-end font-medium',
+              {
+                'text-neutral-60': isDeadlinePassed,
+                'text-primary-90': !isDeadlinePassed,
+              },
+            )}
+          >
+            {periodText}
+          </p>
+        )}
       </div>
 
       {/* 에러 메시지 */}
