@@ -149,6 +149,13 @@ const DetailSettingsPage = () => {
     setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });
   };
 
+  /** 편집 폼에서 포커스가 옮겨간 섹션으로 미리보기를 따라 스크롤한다. */
+  const handleSectionFocus = (section: string) => {
+    document
+      .getElementById(`preview-section-${section}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
@@ -318,7 +325,11 @@ const DetailSettingsPage = () => {
           disabled={!canEdit}
           className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
         >
-          <TemplateEditForm template={template} onChange={patch} />
+          <TemplateEditForm
+            template={template}
+            onChange={patch}
+            onSectionFocus={handleSectionFocus}
+          />
         </fieldset>
         {/*
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
@@ -393,7 +404,7 @@ const DetailSettingsPage = () => {
                 disabled={isPending}
                 className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
               >
-                취소
+                수정 취소
               </button>
             )}
             <button

@@ -160,7 +160,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
       '/live-mentoring/open-settings',
     );
     expect(
-      screen.queryByRole('button', { name: '취소' }),
+      screen.queryByRole('button', { name: '수정 취소' }),
     ).not.toBeInTheDocument();
   });
 
@@ -174,13 +174,13 @@ describe('DetailSettingsPage — 편집 영역', () => {
     fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
 
     expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: '취소' })).toBeVisible();
+    expect(screen.getByRole('button', { name: '수정 취소' })).toBeVisible();
 
     fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
   });
 
-  it('취소하면 변경사항을 되돌리고 취소 버튼이 사라진다', () => {
+  it('수정 취소하면 변경사항을 되돌리고 버튼이 사라진다', () => {
     renderPage();
 
     const heroSection = screen
@@ -189,11 +189,11 @@ describe('DetailSettingsPage — 편집 영역', () => {
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
 
-    fireEvent.click(screen.getByRole('button', { name: '취소' }));
+    fireEvent.click(screen.getByRole('button', { name: '수정 취소' }));
 
     expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
     expect(
-      screen.queryByRole('button', { name: '취소' }),
+      screen.queryByRole('button', { name: '수정 취소' }),
     ).not.toBeInTheDocument();
   });
 
@@ -217,6 +217,18 @@ describe('DetailSettingsPage — 편집 영역', () => {
     expect(payload.hero.bullets).toEqual([
       '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
     ]);
+  });
+});
+
+describe('DetailSettingsPage — 미리보기 자동 스크롤', () => {
+  it('편집 폼에서 섹션에 포커스하면 미리보기가 해당 섹션으로 스크롤한다', () => {
+    const scrollIntoViewMock = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoViewMock;
+    renderPage();
+
+    fireEvent.focus(screen.getByLabelText('섹션 제목'));
+
+    expect(scrollIntoViewMock).toHaveBeenCalled();
   });
 });
 

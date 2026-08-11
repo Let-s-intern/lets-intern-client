@@ -1,3 +1,5 @@
+import type { FocusEvent } from 'react';
+
 import type {
   LiveMentoringTemplate,
   TemplateMentoringType,
@@ -11,6 +13,8 @@ import ListField from './ListField';
 interface TemplateEditFormProps {
   template: LiveMentoringTemplate;
   onChange: (partial: Partial<LiveMentoringTemplate>) => void;
+  /** 입력 포커스가 옮겨간 섹션을 알린다 — 미리보기가 해당 섹션으로 따라 스크롤한다. */
+  onSectionFocus?: (section: string) => void;
 }
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
@@ -57,13 +61,25 @@ const VisibleToggle = ({
  * 6~10번(플랜·진행 프로세스·후기 목록·다른 멘토·FAQ)은 오픈 설정 값이나 운영 고정값에서
  * 파생되므로 여기서 다루지 않는다. 후기는 노출 여부만 제어한다.
  */
-const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
+const TemplateEditForm = ({
+  template,
+  onChange,
+  onSectionFocus,
+}: TemplateEditFormProps) => {
   const { hero, mentoringTypes, strategy, video, results } = template;
 
+  // 미리보기 자동 스크롤 — 포커스가 어느 섹션으로 들어왔는지는 캡처 단계에서 한 번에 잡는다.
+  const handleFocusCapture = (e: FocusEvent<HTMLDivElement>) => {
+    const section = (e.target as HTMLElement)
+      .closest<HTMLElement>('[data-section]')
+      ?.getAttribute('data-section');
+    if (section) onSectionFocus?.(section);
+  };
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" onFocusCapture={handleFocusCapture}>
       {/* 시안 0 · 히어로 */}
-      <section className={cardClass}>
+      <section className={cardClass} data-section="hero">
         <h2 className={titleClass}>히어로 (최상단)</h2>
         <p className="mb-4 mt-1 text-xs text-gray-500">
           상품명·가격·진행 기간은 오픈 설정 값을 그대로 씁니다. 여기서는 제목
@@ -104,7 +120,7 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
       </section>
 
       {/* 시안 2 · 멘토링 유형 */}
-      <section className={cardClass}>
+      <section className={cardClass} data-section="mentoringTypes">
         <h2 className={titleClass}>멘토링 유형</h2>
         <p className="mb-4 mt-1 text-xs text-gray-500">
           멘티가 고민에 맞는 유형을 고를 수 있도록 안내합니다.
@@ -204,7 +220,7 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
       </section>
 
       {/* 시안 3 · 취업 성공 전략 */}
-      <section className={cardClass}>
+      <section className={cardClass} data-section="strategy">
         <div className="mb-4 flex items-center justify-between">
           <h2 className={titleClass}>취업 성공 전략</h2>
           <VisibleToggle
@@ -269,7 +285,7 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
       </section>
 
       {/* 시안 4 · 이렇게 도와드려요 (영상) */}
-      <section className={cardClass}>
+      <section className={cardClass} data-section="video">
         <div className="mb-4 flex items-center justify-between">
           <h2 className={titleClass}>이렇게 도와드려요 (영상)</h2>
           <VisibleToggle
@@ -344,7 +360,7 @@ const TemplateEditForm = ({ template, onChange }: TemplateEditFormProps) => {
       </section>
 
       {/* 시안 5 · 결과 사례 */}
-      <section className={cardClass}>
+      <section className={cardClass} data-section="results">
         <div className="mb-4 flex items-center justify-between">
           <h2 className={titleClass}>결과 사례</h2>
           <VisibleToggle
