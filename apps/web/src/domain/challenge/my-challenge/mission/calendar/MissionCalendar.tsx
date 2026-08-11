@@ -1,6 +1,7 @@
 import {
   countFinishedMissions,
   findLastFinishedSchedule,
+  getMissionTimeState,
 } from '@/domain/challenge/utils/missionTimeState';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -32,7 +33,8 @@ const SWIPER_STYLE = { paddingTop: 16 };
 
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
   // 카드 상태 판정의 기준 시각. 여기서 한 번만 만들어 카드 전체가 같은 '지금' 을 보게 한다.
-  const now = dayjs();
+  // 렌더마다 새로 만들면 카드 24개에 매번 다른 객체가 내려가 memo 가 걸리지 않는다.
+  const now = useMemo(() => dayjs(), []);
 
   const swiperRef = useRef<SwiperType | null>(null);
   const { selectedMissionTh } = useMissionStore();
@@ -69,13 +71,28 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
     swiper.slideTo(centeredIndex, 0);
   };
 
+  // wrapperEl 을 의존성에 둔다. swiper 가 준비되기 전 첫 렌더에서는 아래 effect 가
+  // 그냥 빠져나가는데, 준비 시점에 onSwiper 가 wrapperEl 을 채우며 다시 돌게 만든다.
+  // 이게 없으면 trackWidth 가 undefined 로 남아 폴백 계산값에 머문다.
   useEffect(() => {
     const swiper = swiperRef.current;
     if (!swiper) return;
     setTrackWidth(getContentWidth(swiper));
     focusTodayMission(swiper);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetTh, schedules.length, schedules]);
+  }, [targetTh, schedules.length, schedules, wrapperEl]);
+
+  // 카드 폭은 창 크기에 따라 달라진다. 진행바 트랙만 옛 폭에 머물면 카드와 어긋난다.
+  useEffect(() => {
+    const handleResize = () => {
+      const swiper = swiperRef.current;
+      if (!swiper) return;
+      setTrackWidth(getContentWidth(swiper));
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getStep = (swiper: SwiperType) => {
     return Math.max(Math.round(swiper.slidesPerViewDynamic() / 2), 1);
@@ -102,19 +119,34 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
     );
   };
 
-  const todaySchedule =
-    todayTh === null
-      ? undefined
-      : schedules.find((s) => s.missionInfo.th === todayTh);
-  const isTodayDone = todaySchedule?.attendanceInfo.result === 'PASS';
+  /**
+   * 진행바가 가리킬 카드의 자리. **회차 번호가 아니라 카드 인덱스다.**
+   *
+   * 예전에는 `todayTh` 를 그대로 인덱스처럼 썼다. 그 계산은 0회차가 있는 편성
+   * (th 가 곧 인덱스)에서만 맞고, 0회차가 없으면 인덱스는 th - 1 이라 한 칸씩 앞섰다.
+   * 1회차가 진행 중인데 점이 2회차 위에 놓이던 것이 그 때문이다.
+   *
+   * 진행 중인 카드가 있으면 그 자리, 없으면 마감된 개수(=다음 카드 자리)를 쓴다.
+   * 두 경우 모두 회차 번호를 보지 않으므로 편성이 어떻든 어긋나지 않는다.
+   */
+  const inProgressIndex = schedules.findIndex(
+    (schedule) => getMissionTimeState(schedule.missionInfo, now) === 'IN_PROGRESS',
+  );
+  const finishedCount = countFinishedMissions(schedules, now);
+  const progressIndex = inProgressIndex === -1 ? finishedCount : inProgressIndex;
 
-  // 진행 위치는 마감된 회차 수로 잡는다. 예전에는 todayTh 를 카드 인덱스처럼 썼는데
-  // 오늘 회차가 없는 시간대에는 그 값이 101 로 부풀어 진행바가 늘 가득 찼다.
-  // 0회차가 있는 편성은 회차 번호가 곧 카드 인덱스라 예전 계산과 결과가 같고,
-  // 0회차가 없는 편성은 예전처럼 한 칸 앞선 자리에 둔다 — 이번 Push 는 화면을 바꾸지 않는다.
-  const startsFromZero = schedules[0]?.missionInfo?.th === 0;
-  const progressIndex =
-    countFinishedMissions(schedules, now) + (startsFromZero ? 0 : 1);
+  /**
+   * 진행 중인 회차를 이미 냈는가.
+   *
+   * 예전에는 `result === 'PASS'` 를 봤는데, 그건 어드민이 확인 완료 처리한 뒤에야 붙는 값이다.
+   * 유저가 제출을 마쳐도 한동안 '확인중'(WAITING)이라 진행바가 꿈쩍하지 않았다.
+   * 제출 직후 움직이도록 출석 상태로 판정한다. 결과가 반려여도 낸 것은 낸 것이다.
+   * 어드민이 만든 결석(ABSENT) 행은 제출로 치지 않는다.
+   */
+  const inProgressSchedule =
+    inProgressIndex === -1 ? undefined : schedules[inProgressIndex];
+  const attendanceStatus = inProgressSchedule?.attendanceInfo.status;
+  const isTodayDone = attendanceStatus != null && attendanceStatus !== 'ABSENT';
 
   const progress = isDone
     ? 100

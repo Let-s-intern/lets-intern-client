@@ -42,6 +42,7 @@ jest.mock('swiper/react', () => ({
   ),
 }));
 
+import { Schedule } from '@/schema';
 import {
   buildChallengeSchedules,
   dawnAfterMission,
@@ -65,14 +66,32 @@ const mockSwiper = {
 
 const schedules = buildChallengeSchedules();
 
-const setup = (now: { valueOf: () => number }, todayTh: number | null) => {
+/** 특정 회차에만 출석 기록을 붙인 스케줄 목록 */
+const schedulesWithAttendance = (
+  th: number,
+  attendance: Partial<Schedule['attendanceInfo']>,
+): Schedule[] =>
+  schedules.map((schedule) =>
+    schedule.missionInfo.th === th
+      ? {
+          ...schedule,
+          attendanceInfo: { ...schedule.attendanceInfo, ...attendance },
+        }
+      : schedule,
+  );
+
+const setup = (
+  now: { valueOf: () => number },
+  todayTh: number | null,
+  overrideSchedules?: Schedule[],
+) => {
   jest.useFakeTimers().setSystemTime(now.valueOf());
   const wrapperEl = document.createElement('div');
   mockSwiper.wrapperEl = wrapperEl;
 
   const { container } = render(
     <MissionCalendarSection
-      schedules={schedules}
+      schedules={overrideSchedules ?? schedules}
       todayTh={todayTh}
       isDone={false}
     />,
@@ -122,15 +141,59 @@ describe('MissionCalendarSection 진행바', () => {
     expect(progressPercent()).toBeLessThan(100);
   });
 
-  it('정상 시간대의 위치는 예전 계산과 같다', () => {
-    // 3회차 진행 중, 0회차가 없는 편성. 예전 계산은 (todayTh + 0.456) / 24 였다.
+  // 예전에는 todayTh(회차 번호)를 카드 인덱스처럼 썼다. 그 계산은 0회차가 있는 편성에서만
+  // 맞고, 0회차가 없으면 인덱스가 th - 1 이라 점이 한 칸씩 앞섰다.
+  // 1회차가 진행 중인데 점이 2회차 위에 놓이던 것이 그 때문이다.
+  it('진행 중인 회차의 카드 자리를 가리킨다 (0회차 없는 편성)', () => {
+    // 1~23회차 + 보너스. 3회차 진행 중이면 카드 인덱스는 2 다.
     const { progressPercent } = setup(noonOfMission(3), 3);
 
     const CARD_CENTER_FRACTION = 74.8 / (2 * 82);
     expect(progressPercent()).toBeCloseTo(
-      ((3 + CARD_CENTER_FRACTION) / schedules.length) * 100,
+      ((2 + CARD_CENTER_FRACTION) / schedules.length) * 100,
       5,
     );
+  });
+
+  it('예전처럼 한 칸 앞선 자리를 가리키지 않는다', () => {
+    const { progressPercent } = setup(noonOfMission(3), 3);
+
+    const CARD_CENTER_FRACTION = 74.8 / (2 * 82);
+    const oneCardAhead =
+      ((3 + CARD_CENTER_FRACTION) / schedules.length) * 100;
+
+    expect(progressPercent()).not.toBeCloseTo(oneCardAhead, 5);
+  });
+
+  // 예전에는 result === 'PASS' 를 봤다. 그건 어드민이 확인 완료 처리한 뒤에야 붙는 값이라,
+  // 유저가 제출을 마쳐도 '확인중'(WAITING) 동안 진행바가 꿈쩍하지 않았다.
+  it('제출하면 확인 전이어도 앞으로 나아간다', () => {
+    const before = setup(noonOfMission(3), 3).progressPercent();
+
+    const submittedWaiting = schedulesWithAttendance(3, {
+      submitted: true,
+      id: 1,
+      status: 'PRESENT',
+      result: 'WAITING',
+    });
+    const after = setup(noonOfMission(3), 3, submittedWaiting).progressPercent();
+
+    expect(after).toBeGreaterThan(before);
+  });
+
+  // 어드민이 만든 결석 행은 제출이 아니다.
+  it('결석 처리된 회차는 제출로 치지 않는다', () => {
+    const before = setup(noonOfMission(3), 3).progressPercent();
+
+    const markedAbsent = schedulesWithAttendance(3, {
+      submitted: true,
+      id: 1,
+      status: 'ABSENT',
+      result: null,
+    });
+    const after = setup(noonOfMission(3), 3, markedAbsent).progressPercent();
+
+    expect(after).toBeCloseTo(before, 5);
   });
 
   it('회차가 지날수록 늘어난다', () => {
