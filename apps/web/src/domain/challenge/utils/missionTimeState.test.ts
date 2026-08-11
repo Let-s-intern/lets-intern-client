@@ -1,5 +1,15 @@
 import dayjs from '@/lib/dayjs';
-import { getMissionTimeState } from './missionTimeState';
+import {
+  buildChallengeSchedules,
+  buildSchedule,
+  dawnAfterMission,
+  noonOfMission,
+} from './__fixtures__/challengeSchedule';
+import {
+  countFinishedMissions,
+  findLastFinishedSchedule,
+  getMissionTimeState,
+} from './missionTimeState';
 
 // 챌린지 369 편성과 같은 하루 창(08:00~23:59)을 쓴다.
 const START = dayjs('2026-08-11T08:00:00+09:00');
@@ -67,5 +77,57 @@ describe('getMissionTimeState 날짜 누락', () => {
         dayjs('2026-08-20T12:00:00+09:00'),
       ),
     ).toBe('UPCOMING');
+  });
+});
+
+describe('countFinishedMissions', () => {
+  const schedules = buildChallengeSchedules();
+
+  it('3회차 진행 중이면 마감된 회차는 2개', () => {
+    expect(countFinishedMissions(schedules, noonOfMission(3))).toBe(2);
+  });
+
+  it('3회차가 끝난 새벽이면 마감된 회차는 3개', () => {
+    expect(countFinishedMissions(schedules, dawnAfterMission(3))).toBe(3);
+  });
+
+  it('챌린지 시작 전이면 0개', () => {
+    expect(
+      countFinishedMissions(schedules, dayjs('2026-07-01T12:00:00+09:00')),
+    ).toBe(0);
+  });
+});
+
+describe('findLastFinishedSchedule', () => {
+  const schedules = buildChallengeSchedules();
+
+  it('마감된 회차 중 가장 늦게 끝난 것을 고른다', () => {
+    expect(
+      findLastFinishedSchedule(schedules, dawnAfterMission(3))?.missionInfo.th,
+    ).toBe(3);
+  });
+
+  it('진행 중인 회차는 고르지 않는다', () => {
+    expect(
+      findLastFinishedSchedule(schedules, noonOfMission(3))?.missionInfo.th,
+    ).toBe(2);
+  });
+
+  it('마감된 회차가 없으면 undefined', () => {
+    expect(
+      findLastFinishedSchedule(schedules, dayjs('2026-07-01T12:00:00+09:00')),
+    ).toBeUndefined();
+  });
+
+  it('편성 순서가 뒤섞여 있어도 endDate 로 고른다', () => {
+    const shuffled = [
+      buildSchedule({ th: 2, day: 1 }),
+      buildSchedule({ th: 3, day: 2 }),
+      buildSchedule({ th: 1, day: 0 }),
+    ];
+
+    expect(
+      findLastFinishedSchedule(shuffled, dawnAfterMission(3))?.missionInfo.th,
+    ).toBe(3);
   });
 });

@@ -1,4 +1,4 @@
-import { ScheduleMission } from '@/schema';
+import { Schedule, ScheduleMission } from '@/schema';
 import { Dayjs } from 'dayjs';
 
 export type MissionTimeState = 'UPCOMING' | 'IN_PROGRESS' | 'PAST';
@@ -30,4 +30,33 @@ export const getMissionTimeState = (
   if (now.isAfter(endDate)) return 'PAST';
 
   return 'IN_PROGRESS';
+};
+
+/** 이미 마감된 회차 수. 진행률처럼 "얼마나 왔는가" 를 재는 자리에 쓴다. */
+export const countFinishedMissions = (schedules: Schedule[], now: Dayjs) =>
+  schedules.filter(
+    (schedule) => getMissionTimeState(schedule.missionInfo, now) === 'PAST',
+  ).length;
+
+/**
+ * 마감된 회차 중 가장 늦게 끝난 것.
+ * 진행 중인 미션이 없는 시간대에 "지금 보고 있어야 할 회차" 다.
+ */
+export const findLastFinishedSchedule = (
+  schedules: Schedule[],
+  now: Dayjs,
+): Schedule | undefined => {
+  let latest: Schedule | undefined;
+
+  for (const schedule of schedules) {
+    if (getMissionTimeState(schedule.missionInfo, now) !== 'PAST') continue;
+
+    const endDate = schedule.missionInfo.endDate;
+    if (!endDate) continue;
+
+    const latestEndDate = latest?.missionInfo.endDate;
+    if (!latestEndDate || endDate.isAfter(latestEndDate)) latest = schedule;
+  }
+
+  return latest;
 };
