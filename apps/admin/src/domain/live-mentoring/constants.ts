@@ -13,17 +13,13 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
 
 export const STATUS_LABELS: Record<LiveMentoringStatus, string> = {
   DRAFT: '초안',
-  PENDING_REVIEW: '검토 대기',
   APPROVED: '승인',
-  REJECTED: '반려',
   INACTIVE: '비활성',
 };
 
 export const STATUS_CLASSES: Record<LiveMentoringStatus, string> = {
   DRAFT: 'bg-neutral-95 text-neutral-40',
-  PENDING_REVIEW: 'bg-amber-50 text-amber-700',
   APPROVED: 'bg-primary-10 text-primary',
-  REJECTED: 'bg-red-50 text-red-600',
   INACTIVE: 'bg-neutral-95 text-neutral-40',
 };
 
@@ -38,12 +34,10 @@ export const STATUS_FILTERS: {
   label: string;
   value: LiveMentoringStatus | undefined;
 }[] = [
-  { label: '검토 대기', value: 'PENDING_REVIEW' },
-  { label: '승인', value: 'APPROVED' },
-  { label: '반려', value: 'REJECTED' },
-  { label: '초안', value: 'DRAFT' },
-  { label: '비활성', value: 'INACTIVE' },
   { label: '전체', value: undefined },
+  { label: '초안', value: 'DRAFT' },
+  { label: '승인', value: 'APPROVED' },
+  { label: '비활성', value: 'INACTIVE' },
 ];
 
 /**
