@@ -685,7 +685,9 @@ const OpenSettingsPage = () => {
         "지금 취할 수 있는 주요 행동"이 항상 같은 위치에 있게 한다.
       */}
       {currentOpening && (
-        <div className="fixed bottom-6 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 sm:w-auto">
+        // 사이드바(lg 이상에서 296px)를 뺀 콘텐츠 영역 기준으로 폭을 맞춘다 —
+        // 뷰포트 전체 기준 left-1/2 는 사이드바만큼 왼쪽으로 치우쳐 보인다.
+        <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px]">
           <div
             role="status"
             className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between"
