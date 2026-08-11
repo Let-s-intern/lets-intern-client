@@ -273,6 +273,17 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
 
     expect(screen.getByRole('button', { name: '저장' })).toBeEnabled();
   });
+
+  it('저장 버튼은 변경사항이 있을 때만 파란색(primary)으로 바뀐다', () => {
+    renderPage({ durations: [30] });
+
+    const saveButton = screen.getByRole('button', { name: '저장' });
+    expect(saveButton.className).not.toContain('bg-primary');
+
+    fireEvent.click(screen.getByRole('button', { name: '60분' }));
+
+    expect(saveButton.className).toContain('bg-primary');
+  });
 });
 
 describe('OpenSettingsPage — 검토 제출', () => {
@@ -557,17 +568,6 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(
       screen.queryByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
     ).not.toBeInTheDocument();
-  });
-
-  // 저장 버튼을 없앤 채로 두면 "저장이 안 된다"로 읽힌다.
-  it('재개설 모드에서는 저장이 함께 이뤄진다는 걸 알린다', () => {
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
-
-    expect(
-      screen.getByText('여기서 바꾼 내용은 다시 오픈할 때 함께 저장돼요.'),
-    ).toBeInTheDocument();
   });
 
   it('수정 후 아직 저장되지 않은 값이 있으면 확인 모달에서 짚어준다', () => {

@@ -746,28 +746,19 @@ const OpenSettingsPage = () => {
               제목·타입을 바꿨어요. 먼저 저장해야 오픈할 수 있어요.
             </p>
           )}
-          {/*
-            재개설 지름길에는 "저장"이 없다. 승인 상태에서 서버가 `PUT /settings` 를
-            잠가 제목·타입을 따로 저장할 수 없고, 재개설 요청에 함께 실어 보내기
-            때문이다. 버튼만 없애 두면 "저장이 안 된다"로 읽히므로 이유를 적어 둔다.
-          */}
-          {showReopenShortcut && (
-            <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
-              여기서 바꾼 내용은 다시 오픈할 때 함께 저장돼요.
-            </p>
-          )}
           <div className="flex gap-2">
             {showReopenShortcut ? (
               /*
                * 재개설 지름길. 값을 바꾸지 않고 그대로 다시 열 때만 쓴다 — 뭔가
                * 고치려면 "수정"을 눌러 아래 초안 모드(저장→제출)로 넘어가야 한다.
+               * 둘 다 지금 바로 누를 수 있는 행동이라 같은 파란색(primary)을 쓴다.
                */
               <>
                 <button
                   type="button"
                   onClick={handleStartEdit}
                   disabled={isPending}
-                  className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isStartingEdit ? '처리 중...' : '수정'}
                 </button>
@@ -782,11 +773,16 @@ const OpenSettingsPage = () => {
               </>
             ) : (
               <>
+                {/* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */}
                 <button
                   type="button"
                   onClick={handleSave}
                   disabled={isPending || !canSave}
-                  className="rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  className={
+                    canSave
+                      ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                      : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                  }
                 >
                   {isSaving ? '저장 중...' : '저장'}
                 </button>
