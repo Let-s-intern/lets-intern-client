@@ -140,8 +140,19 @@ const DetailSettingsPage = () => {
         ...template,
         video: { ...template.video, videoUrl: embedUrl },
       };
-      setTemplate(payload);
     }
+
+    /*
+     * 히어로 소개 불릿 — "+추가"로 빈 칸을 만들어 놓고 안 채운 채 저장하면 서버가
+     * `hero.bullets[i]` 공백을 막아(`@NotBlank`) 저장 전체가 400으로 실패한다.
+     * 빈 배열 자체는 서버가 허용하므로, 안 채운 칸은 실릴 내용이 없는 것과 같게
+     * 보고 조용히 걸러내고 보낸다(같은 폼의 태그 필드와 동일한 처리).
+     */
+    const cleanedBullets = payload.hero.bullets
+      .map((bullet) => bullet.trim())
+      .filter(Boolean);
+    payload = { ...payload, hero: { bullets: cleanedBullets } };
+    setTemplate(payload);
 
     save(payload, {
       onSuccess: () => {

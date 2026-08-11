@@ -178,6 +178,30 @@ describe('DetailSettingsPage — 편집 영역', () => {
     fireEvent.click(screen.getByRole('button', { name: '취소' }));
     expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
   });
+
+  it('히어로 불릿에 빈 칸을 추가하고 안 채운 채 저장하면, 빈 칸을 걸러내고 보낸다', () => {
+    // 회귀 케이스: 서버가 hero.bullets 각 항목에 공백을 막아(@NotBlank) 그대로
+    // 보내면 "[hero.bullets[1]] 공백일 수 없습니다 (BAD_REQUEST)" 로 저장 전체가 실패했다.
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+
+    // "+ 추가" 버튼은 유형 카드·Point·Before/After 리스트에도 있어 히어로 섹션
+    // 안으로 범위를 좁혀야 한다.
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.hero.bullets).toEqual([
+      '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+    ]);
+  });
 });
 
 describe('DetailSettingsPage — 상태 잠금', () => {
