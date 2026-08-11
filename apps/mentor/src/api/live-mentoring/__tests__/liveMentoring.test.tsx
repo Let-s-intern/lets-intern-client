@@ -334,7 +334,10 @@ describe('useLiveMentoringOpenStatusQuery', () => {
 });
 
 describe('useSubmitLiveMentoringMutation', () => {
-  it('POST submit 에 진행시간·기간을 보내고 설정 캐시를 invalidate 한다', async () => {
+  it('POST submit 에 진행시간·기간을 보내고 설정·오픈현황 캐시를 함께 invalidate 한다', async () => {
+    // 회귀 케이스: 자가승인 전환으로 제출이 곧바로 개설까지 만드는데, 오픈현황 캐시를
+    // 안 지우면 승인 상태는 반영돼도 "지금 열려 있는지"가 낡은 값으로 남아
+    // 화면이 오픈 중을 못 보여준다.
     axiosMock.post.mockResolvedValue({ data: { data: null } });
 
     const client = newClient();
@@ -359,6 +362,9 @@ describe('useSubmitLiveMentoringMutation', () => {
     );
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
     });
   });
 });
