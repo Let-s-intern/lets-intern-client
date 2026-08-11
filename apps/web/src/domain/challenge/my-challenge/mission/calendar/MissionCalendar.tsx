@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -25,6 +26,9 @@ const getContentWidth = (swiper: SwiperType) => {
 const SWIPER_STYLE = { paddingTop: 16 };
 
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
+  // 카드 상태 판정의 기준 시각. 여기서 한 번만 만들어 카드 전체가 같은 '지금' 을 보게 한다.
+  const now = dayjs();
+
   const swiperRef = useRef<SwiperType | null>(null);
   const { selectedMissionTh } = useMissionStore();
   const pathname = usePathname();
@@ -137,7 +141,7 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
           <SwiperSlide key={index} className="mt-3 !w-[82px]">
             <MissionCalendarItem
               schedule={schedule}
-              todayTh={todayTh}
+              now={now}
               isDone={isDone}
               className="w-full cursor-pointer"
             />
