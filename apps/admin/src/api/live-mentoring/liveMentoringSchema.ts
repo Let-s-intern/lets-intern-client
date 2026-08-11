@@ -15,13 +15,7 @@ export const liveMentoringCategorySchema = z.enum([
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 
 /** 상품 상태 — 서버 `LiveMentoringStatus`. */
-export const liveMentoringStatusSchema = z.enum([
-  'DRAFT',
-  'PENDING_REVIEW',
-  'APPROVED',
-  'REJECTED',
-  'INACTIVE',
-]);
+export const liveMentoringStatusSchema = z.enum(['DRAFT', 'APPROVED', 'INACTIVE']);
 export type LiveMentoringStatus = z.infer<typeof liveMentoringStatusSchema>;
 
 /** 개설 상태 — 서버 `LiveMentoringOpeningStatus`. */
@@ -70,8 +64,6 @@ export const adminLiveMentoringSchema = z.object({
   categories: z.array(liveMentoringCategorySchema),
   /** 상세 페이지 저장 여부. 정상 제출 상품은 서버가 기본 골격을 만들어 두므로 true 다. */
   hasDetailPage: z.boolean(),
-  approvedAt: z.string().nullable(),
-  approvedByUserId: z.number().nullable(),
   createDate: z.string(),
   lastModifiedDate: z.string(),
   /** 활성 개설이 없거나 이미 종료됐으면 null. */
