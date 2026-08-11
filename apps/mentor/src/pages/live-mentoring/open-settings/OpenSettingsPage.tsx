@@ -27,7 +27,6 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
 import {
   CATEGORY_LABELS,
-  START_EDIT_CONFIRM,
   START_EDIT_SUCCESS,
   formatCareerPeriod,
   publicDetailUrl,
@@ -352,21 +351,16 @@ const OpenSettingsPage = () => {
 
   /**
    * 상세 페이지까지 고치려면 서버가 상품을 `DRAFT` 로 되돌린다(`start-edit`).
-   *
-   * 문구에 "초안"을 쓰지 않는다 — 서버 상태 이름일 뿐 멘토에게는 아무 의미가 없다.
-   * 멘토가 실제로 겪는 일, 즉 "검토를 다시 받아야 하고 그동안 오픈이 멈춘다"를 말한다.
+   * 이 버튼은 오픈이 이미 닫혀 있을 때만 보이므로("다시 오픈하기" 대신 상세까지
+   * 고치겠다는 의도) 확인 모달 없이 바로 실행한다 — 상세 페이지 자체의 저장은
+   * `DetailSettingsPage`에서 dirty 상태일 때만 활성화되고 이탈 시 경고가 뜬다.
    */
   const handleStartEdit = () => {
-    showConfirm({
-      ...START_EDIT_CONFIRM,
-      onConfirm: () => {
-        if (isStartingEdit) return;
-        startEdit(undefined, {
-          onSuccess: () =>
-            showAlert({ ...START_EDIT_SUCCESS, variant: 'success' }),
-          onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
-        });
-      },
+    if (isStartingEdit) return;
+    startEdit(undefined, {
+      onSuccess: () =>
+        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' }),
+      onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
     });
   };
 

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   useLiveMentoringOpenStatusQuery,
@@ -13,7 +13,6 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { useUserQuery } from '@/api/user/user';
 import {
-  START_EDIT_CONFIRM,
   START_EDIT_SUCCESS,
   publicDetailUrl,
   toYoutubeEmbedUrl,
@@ -25,6 +24,7 @@ import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
 const DetailSettingsPage = () => {
+  const navigate = useNavigate();
   const { data, isError } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
@@ -35,15 +35,27 @@ const DetailSettingsPage = () => {
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
   const { mutate: startEdit, isPending: isStartingEdit } =
     useStartEditLiveMentoringMutation();
-  const { alertProps, showAlert, showConfirm } = useMentorAlert();
+  const { alertProps, showAlert } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringTemplate | null>(null);
+  // 변경사항(dirty) 판정을 위한 로드 원본 — 저장 버튼 활성화·이탈 경고에 쓴다.
+  const [originalTemplate, setOriginalTemplate] =
+    useState<LiveMentoringTemplate | null>(null);
   /**
-   * 기본은 읽기 모드다.
-   * 멘토가 이 화면에 오는 이유는 대부분 "지금 뭐라고 나가고 있나" 확인이라,
-   * 곧바로 편집 상태로 두면 실수로 값을 바꾸기 쉽다.
+   * "상세 수정하기" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐
+   * 낡은 `APPROVED` 로 남는다. 그 사이에도 곧바로 편집으로 들어가야 하므로
+   * `isLocked` 를 잠시 무시하는 용도로만 쓴다 — 그 밖의 경우 편집 가능 여부는
+   * 오직 `!isLocked` 로만 정해진다(별도의 읽기/쓰기 모드 토글은 없다).
    */
   const [isEditing, setIsEditing] = useState(false);
+
+  // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
+  const [navGuard, setNavGuard] = useState<{
+    isOpen: boolean;
+    pendingHref: string | null;
+    pendingAction: 'push' | 'back' | null;
+  }>({ isOpen: false, pendingHref: null, pendingAction: null });
+  const isNavigatingRef = useRef(false);
 
   /**
    * 승인 상태에서는 상세 페이지를 바로 수정할 수 없다.
@@ -56,28 +68,96 @@ const DetailSettingsPage = () => {
    */
   const status = settings?.status ?? null;
   const isLocked = status === 'APPROVED';
-  const canEdit = isEditing && !isLocked;
+  const canEdit = !isLocked || isEditing;
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
   const canStartEdit = status === 'APPROVED' && !currentOpening;
 
   // 오픈 설정 타입에 따라 서버가 내려준 기본 템플릿을 로드한다.
   useEffect(() => {
-    if (data) setTemplate(data);
+    if (data) {
+      setTemplate(data);
+      setOriginalTemplate(data);
+    }
   }, [data]);
+
+  // 저장 버튼 활성화·이탈 경고 판정 기준. 구조가 깊어 얕은 비교로는 못 잡아 직렬화로 비교한다.
+  const isDirty =
+    canEdit &&
+    template !== null &&
+    originalTemplate !== null &&
+    JSON.stringify(template) !== JSON.stringify(originalTemplate);
+
+  // 이탈 경고 — 저장하지 않은 변경이 있을 때만 걸어둔다. 프로필 화면과 동일 패턴
+  // (beforeunload + 뒤로가기(popstate) + 앱 내부 링크 클릭 가로채기).
+  useEffect(() => {
+    if (!isDirty) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
+    const handlePopState = () => {
+      if (!isNavigatingRef.current) {
+        window.history.pushState(null, '', window.location.href);
+        setNavGuard({ isOpen: true, pendingHref: null, pendingAction: 'back' });
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (
+        anchor?.href &&
+        anchor.href !== window.location.href &&
+        anchor.href.startsWith(window.location.origin)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        setNavGuard({
+          isOpen: true,
+          pendingHref: anchor.href,
+          pendingAction: 'push',
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+    document.addEventListener('click', handleClick, true);
+    window.history.pushState(null, '', window.location.href);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('click', handleClick, true);
+    };
+  }, [isDirty]);
+
+  const handleNavConfirm = () => {
+    isNavigatingRef.current = true;
+    const { pendingHref, pendingAction } = navGuard;
+    setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });
+    if (pendingAction === 'back') {
+      navigate(-1);
+    } else if (pendingHref) {
+      navigate(pendingHref);
+    }
+  };
+
+  const handleNavCancel = () => {
+    setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });
+  };
 
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
         상세 페이지 설정
       </h1>
-      {/* 잠긴 상태에서 "수정하기를 눌러주세요"라고 하면 없는 버튼을 찾게 만든다. */}
       <p className="text-xsmall14 text-neutral-40">
         {canEdit
           ? '좌측에서 고친 내용이 우측 미리보기에 즉시 반영됩니다.'
-          : isLocked
-            ? '공개 상세 페이지에 실리는 내용입니다.'
-            : '공개 상세 페이지에 지금 나가고 있는 내용입니다. 고치려면 수정하기를 눌러주세요.'}
+          : '공개 상세 페이지에 실리는 내용입니다.'}
       </p>
       {/* 미리보기는 축소판이라 실제 화면과 다를 수 있다 — 진짜 페이지로 갈 길을 준다. */}
       {user?.userId != null && (
@@ -156,7 +236,9 @@ const DetailSettingsPage = () => {
 
     save(payload, {
       onSuccess: () => {
-        setIsEditing(false);
+        // 이후 refetch 로도 갱신되지만, 그 전까지 dirty 판정이 틀리지 않도록
+        // 방금 저장한 값을 곧바로 새 기준선으로 삼는다.
+        setOriginalTemplate(payload);
         showAlert({ title: '저장되었습니다.', variant: 'success' });
       },
       // 서버가 왜 거부했는지 감추면 멘토도 개발자도 원인을 알 수 없다.
@@ -179,30 +261,29 @@ const DetailSettingsPage = () => {
    * 상세 수정 시작 — 서버가 상품을 편집 가능 상태로 되돌린다.
    * 성공하면 곧바로 편집 모드로 넣는다. 이 버튼을 누른 의도가 "고치겠다"이므로
    * 한 번 더 "수정하기"를 누르게 하지 않는다.
+   *
+   * 확인 모달 없이 바로 실행한다 — 저장 버튼이 실제로 뭔가 바꾸기 전엔 비활성이고,
+   * 나가려 하면 이탈 경고가 뜨므로(아래) "누르면 무슨 일이 벌어지는지" 미리 설명하는
+   * 별도 단계 없이도 실수로 뭔가 잃을 위험이 없다.
    */
-  const handleStartEdit = () =>
-    showConfirm({
-      ...START_EDIT_CONFIRM,
-      onConfirm: () => {
-        if (isStartingEdit) return;
-        startEdit(undefined, {
-          onSuccess: () => {
-            setIsEditing(true);
-            showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
-          },
-          onError: () =>
-            showAlert({
-              title: '상세 수정 준비에 실패했습니다.',
-              variant: 'error',
-            }),
-        });
+  const handleStartEdit = () => {
+    if (isStartingEdit) return;
+    startEdit(undefined, {
+      onSuccess: () => {
+        setIsEditing(true);
+        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
       },
+      onError: () =>
+        showAlert({
+          title: '상세 수정 준비에 실패했습니다.',
+          variant: 'error',
+        }),
     });
+  };
 
-  /** 편집 취소 — 서버가 준 값으로 되돌린다(로컬 수정분 폐기). */
+  /** 편집 취소 — 저장된 기준선으로 되돌린다(로컬 수정분 폐기). */
   const handleCancel = () => {
-    if (data) setTemplate(data);
-    setIsEditing(false);
+    if (originalTemplate) setTemplate(originalTemplate);
   };
 
   return (
@@ -303,37 +384,29 @@ const DetailSettingsPage = () => {
               {isStartingEdit ? '처리 중...' : '상세 수정하기'}
             </button>
           ) : null
-        ) : canEdit ? (
+        ) : (
           <>
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={isPending}
-              className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
-            >
-              취소
-            </button>
+            {isDirty && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isPending}
+                className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
+              >
+                취소
+              </button>
+            )}
             <button
               type="button"
               onClick={handleSave}
-              disabled={isPending}
+              disabled={isPending || !isDirty}
               className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending ? '저장 중...' : '저장하기'}
             </button>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
-            >
-              수정하기
-            </button>
             <Link
               to="/live-mentoring/open-settings"
-              className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors"
+              className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
             >
               오픈하러 가기
             </Link>
@@ -342,6 +415,18 @@ const DetailSettingsPage = () => {
       </div>
 
       <MentorAlertModal {...alertProps} />
+
+      {/* 이탈 경고 — 위 alertProps(저장 성공·실패 등)와 별개 모달이다. */}
+      <MentorAlertModal
+        isOpen={navGuard.isOpen}
+        onClose={handleNavCancel}
+        onConfirm={handleNavConfirm}
+        title="변경사항이 저장되지 않았습니다"
+        description="저장하지 않고 페이지를 나가시겠습니까?"
+        confirmText="나가기"
+        cancelText="취소"
+        variant="confirm"
+      />
     </div>
   );
 };

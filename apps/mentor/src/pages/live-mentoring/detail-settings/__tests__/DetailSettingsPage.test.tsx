@@ -148,43 +148,59 @@ describe('DetailSettingsPage — 편집 영역', () => {
     ).toBeInTheDocument();
   });
 
-  it('기본은 읽기 모드 — 수정하기·오픈하러 가기만 보인다', () => {
+  it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장하기는 비활성이다', () => {
     renderPage();
 
-    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: '수정하기' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
     expect(screen.getByRole('link', { name: '오픈하러 가기' })).toHaveAttribute(
       'href',
       '/live-mentoring/open-settings',
     );
     expect(
-      screen.queryByRole('button', { name: '저장하기' }),
+      screen.queryByRole('button', { name: '취소' }),
     ).not.toBeInTheDocument();
   });
 
-  it('수정하기를 누르면 저장하기·취소로 바뀌고, 저장 시 읽기 모드로 돌아온다', () => {
+  it('값을 바꾸면 저장하기가 활성화되고, 저장하면 다시 비활성화된다', () => {
     renderPage();
 
-    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
     expect(screen.getByRole('button', { name: '취소' })).toBeVisible();
 
     fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
   });
 
-  it('취소하면 읽기 모드로 돌아간다', () => {
+  it('취소하면 변경사항을 되돌리고 취소 버튼이 사라진다', () => {
     renderPage();
 
-    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+
     fireEvent.click(screen.getByRole('button', { name: '취소' }));
-    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: '취소' }),
+    ).not.toBeInTheDocument();
   });
 
   it('히어로 불릿에 빈 칸을 추가하고 안 채운 채 저장하면, 빈 칸을 걸러내고 보낸다', () => {
     // 회귀 케이스: 서버가 hero.bullets 각 항목에 공백을 막아(@NotBlank) 그대로
     // 보내면 "[hero.bullets[1]] 공백일 수 없습니다 (BAD_REQUEST)" 로 저장 전체가 실패했다.
     renderPage();
-
-    fireEvent.click(screen.getByRole('button', { name: '수정하기' }));
 
     // "+ 추가" 버튼은 유형 카드·Point·Before/After 리스트에도 있어 히어로 섹션
     // 안으로 범위를 좁혀야 한다.
@@ -201,6 +217,34 @@ describe('DetailSettingsPage — 편집 영역', () => {
     expect(payload.hero.bullets).toEqual([
       '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
     ]);
+  });
+});
+
+describe('DetailSettingsPage — 이탈 경고', () => {
+  it('저장하지 않은 변경이 있으면 앱 내 링크로 이동할 때 경고 모달을 띄운다', () => {
+    renderPage();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+
+    fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
+
+    expect(
+      screen.getByText('변경사항이 저장되지 않았습니다'),
+    ).toBeInTheDocument();
+  });
+
+  it('변경사항이 없으면 링크 이동 시 경고 없이 바로 이동한다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
+
+    expect(
+      screen.queryByText('변경사항이 저장되지 않았습니다'),
+    ).not.toBeInTheDocument();
   });
 });
 
@@ -252,7 +296,7 @@ describe('DetailSettingsPage — 상태 잠금', () => {
   it('초안이면 배너 없이 편집할 수 있다', () => {
     renderPage();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '수정하기' })).toBeVisible();
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeVisible();
   });
 });
 
