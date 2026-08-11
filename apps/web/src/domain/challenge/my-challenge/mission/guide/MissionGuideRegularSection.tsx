@@ -36,14 +36,6 @@ const MissionGuideRegularSection = ({
   const params = useParams<{ programId: string }>();
   const challengeId = Number(params?.programId) || null;
 
-  // 현재 시간이 startDate 이상인지 확인하는 함수
-  const isMissionStarted = () => {
-    if (!missionData?.missionInfo?.startDate) return false;
-    const startDate = dayjs(missionData.missionInfo.startDate);
-    const now = dayjs();
-    return now.isAfter(startDate) || now.isSame(startDate);
-  };
-
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="regular" />;
@@ -86,56 +78,90 @@ const MissionGuideRegularSection = ({
           </p>
         </section>
 
-        {/* 미션 자료 모음 섹션 - startDate 이후에만 노출 */}
-        {isMissionStarted() && (
-          <section className="rounded-xxs bg-neutral-95 flex flex-col gap-4 p-3 pb-5">
-            <div className="flex flex-col">
-              <h3 className="text-xsmall16 text-neutral-0 font-semibold">
-                미션 자료 모음
-              </h3>
-              <p className="text-xsmall14 text-neutral-10 md:text-xsmall16">
-                자료를 확인하고 미션을 진행해 주세요.
-              </p>
-            </div>
+        {/*
+          미션 자료 모음 — 시작 전 회차도 포함해 항상 노출한다.
+          결제 직후 콘텐츠를 실제로 받았다는 사실이 남아야 환불 판단 근거가 선다.
+          제출은 여전히 해당 미션 날짜에만 가능하고, 서버가 400 으로 막는다.
+        */}
+        <section className="rounded-xxs bg-neutral-95 flex flex-col gap-4 p-3 pb-5">
+          <div className="flex flex-col">
+            <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+              미션 자료 모음
+            </h3>
+            <p className="text-xsmall14 text-neutral-10 md:text-xsmall16">
+              자료를 확인하고 미션을 진행해 주세요.
+            </p>
+          </div>
 
-            {/* 자료 링크들 */}
-            <div className="flex flex-col gap-2">
-              {/* 미션 템플릿 */}
-              {missionData?.missionInfo?.templateLink && (
+          {/* 자료 링크들 */}
+          <div className="flex flex-col gap-2">
+            {/* 미션 템플릿 */}
+            {missionData?.missionInfo?.templateLink && (
+              <MissionFileLink
+                key={missionData?.missionInfo?.templateLink}
+                title="미션 템플릿"
+                fileName={'미션 템플릿'}
+                disabled={false}
+                onClick={() => {
+                  const templateLink =
+                    missionData?.missionInfo?.templateLink || '';
+                  // window.open 을 먼저, 동기적으로 호출한다.
+                  // 기록 요청을 await 한 뒤로 밀면 사용자 제스처 컨텍스트를 잃어
+                  // 브라우저가 팝업을 차단한다.
+                  window.open(templateLink, '_blank');
+                  // 열지 않은 자료를 이용한 것으로 남기면 안 되므로 링크가 있을 때만 기록한다.
+                  if (templateLink) {
+                    // 템플릿은 콘텐츠 엔티티가 아니라 미션의 단일 필드라
+                    // contentId 가 없다. 바디에서도 생략된다.
+                    logMissionContentAccess({
+                      challengeId,
+                      missionId,
+                      contentType: 'TEMPLATE',
+                      // 자료 이름이 무엇을 열었는지 말해 주는 유일한 수단이다.
+                      contentTitle: '미션 템플릿',
+                    });
+                  }
+                }}
+              />
+            )}
+            {/* 필수 콘텐츠 */}
+            {missionData?.missionInfo?.essentialContentsList?.map(
+              (content: Content, index: number) => (
                 <MissionFileLink
-                  key={missionData?.missionInfo?.templateLink}
-                  title="미션 템플릿"
-                  fileName={'미션 템플릿'}
+                  key={content.id || index}
+                  title="필수 콘텐츠"
+                  fileName={content.title || '필수 콘텐츠'}
                   disabled={false}
                   onClick={() => {
-                    const templateLink =
-                      missionData?.missionInfo?.templateLink || '';
-                    // window.open 을 먼저, 동기적으로 호출한다.
-                    // 기록 요청을 await 한 뒤로 밀면 사용자 제스처 컨텍스트를 잃어
-                    // 브라우저가 팝업을 차단한다.
-                    window.open(templateLink, '_blank');
-                    // 열지 않은 자료를 이용한 것으로 남기면 안 되므로 링크가 있을 때만 기록한다.
-                    if (templateLink) {
-                      // 템플릿은 콘텐츠 엔티티가 아니라 미션의 단일 필드라
-                      // contentId 가 없다. 바디에서도 생략된다.
+                    // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
+                    // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
+                    window.open(content.link || '#', '_blank');
+                    // 링크가 없으면 자료를 연 것이 아니므로 기록하지 않는다.
+                    if (content.link) {
                       logMissionContentAccess({
                         challengeId,
                         missionId,
-                        contentType: 'TEMPLATE',
-                        // 자료 이름이 무엇을 열었는지 말해 주는 유일한 수단이다.
-                        contentTitle: '미션 템플릿',
+                        // 서버 배포 전에는 missionContentsId 가 없다. 그때는 자료 번호로 남겨
+                        // 기록이 비는 구간을 만들지 않는다. 두 번호가 섞이는 건 배포 직후
+                        // 로그를 비우면서 정리된다(LC-3201).
+                        contentId: content.missionContentsId ?? content.id,
+                        contentType: 'ESSENTIAL',
+                        contentTitle: content.title,
                       });
                     }
                   }}
                 />
-              )}
-              {/* 필수 콘텐츠 */}
-              {missionData?.missionInfo?.essentialContentsList?.map(
+              ),
+            )}
+
+            {/* 추가 콘텐츠 */}
+            <div className="flex flex-col gap-2">
+              {missionData?.missionInfo?.additionalContentsList?.map(
                 (content: Content, index: number) => (
                   <MissionFileLink
                     key={content.id || index}
-                    title="필수 콘텐츠"
-                    fileName={content.title || '필수 콘텐츠'}
+                    title={index === 0 ? '추가 콘텐츠' : ''}
+                    fileName={content.title ?? '추가 콘텐츠'}
                     disabled={false}
                     onClick={() => {
                       // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
@@ -150,7 +176,7 @@ const MissionGuideRegularSection = ({
                           // 기록이 비는 구간을 만들지 않는다. 두 번호가 섞이는 건 배포 직후
                           // 로그를 비우면서 정리된다(LC-3201).
                           contentId: content.missionContentsId ?? content.id,
-                          contentType: 'ESSENTIAL',
+                          contentType: 'ADDITIONAL',
                           contentTitle: content.title,
                         });
                       }
@@ -158,41 +184,9 @@ const MissionGuideRegularSection = ({
                   />
                 ),
               )}
-
-              {/* 추가 콘텐츠 */}
-              <div className="flex flex-col gap-2">
-                {missionData?.missionInfo?.additionalContentsList?.map(
-                  (content: Content, index: number) => (
-                    <MissionFileLink
-                      key={content.id || index}
-                      title={index === 0 ? '추가 콘텐츠' : ''}
-                      fileName={content.title ?? '추가 콘텐츠'}
-                      disabled={false}
-                      onClick={() => {
-                        // window.open 을 먼저, 동기적으로 호출한다. 기록 요청 뒤로 밀면
-                        // 사용자 제스처 컨텍스트를 잃어 팝업이 차단된다.
-                        window.open(content.link || '#', '_blank');
-                        // 링크가 없으면 자료를 연 것이 아니므로 기록하지 않는다.
-                        if (content.link) {
-                          logMissionContentAccess({
-                            challengeId,
-                            missionId,
-                            // 서버 배포 전에는 missionContentsId 가 없다. 그때는 자료 번호로 남겨
-                            // 기록이 비는 구간을 만들지 않는다. 두 번호가 섞이는 건 배포 직후
-                            // 로그를 비우면서 정리된다(LC-3201).
-                            contentId: content.missionContentsId ?? content.id,
-                            contentType: 'ADDITIONAL',
-                            contentTitle: content.title,
-                          });
-                        }
-                      }}
-                    />
-                  ),
-                )}
-              </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
       </section>
     </div>
   );
