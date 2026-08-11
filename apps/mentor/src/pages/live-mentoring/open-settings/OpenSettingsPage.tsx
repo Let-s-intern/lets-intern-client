@@ -429,7 +429,7 @@ const OpenSettingsPage = () => {
               type="button"
               onClick={handleCloseCurrentOpening}
               disabled={isClosingOpening}
-              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-system-error text-system-error hover:bg-system-error shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isClosingOpening ? '처리 중...' : '오픈 닫기'}
             </button>
