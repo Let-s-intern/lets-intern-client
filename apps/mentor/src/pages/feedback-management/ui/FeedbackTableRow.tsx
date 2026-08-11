@@ -145,8 +145,13 @@ const ReservationCell = ({
   );
 };
 
-const SubmissionCell = ({ label }: { label: '제출' | '미제출' | null }) => {
+const SubmissionCell = ({
+  label,
+}: {
+  label: FeedbackRow['submissionLabel'];
+}) => {
   if (!label) return <EmptyCell />;
+  // 지각 제출은 제출을 하긴 했지만 피드백 대상이 아니므로 미제출과 같은 경고색을 쓴다.
   const isSubmitted = label === '제출';
   return (
     <span className="inline-flex items-center gap-1 text-xs">

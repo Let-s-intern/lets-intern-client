@@ -32,6 +32,10 @@ function MyChallengeDashboardContent() {
   // 레벨에 맞게 필터링된 schedules
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
+  const selectedSchedule = filteredSchedules.find(
+    (schedule) => schedule.missionInfo.id === selectedMissionId,
+  );
+
   return (
     <main className="px-5 md:px-0 md:pl-12">
       <h2 className="text-medium22 mt-8 font-semibold md:mt-0">나의 미션</h2>
@@ -44,14 +48,8 @@ function MyChallengeDashboardContent() {
         <MissionGuideSection todayTh={todayTh} />
         <div id="mission-submit" className="mt-6 scroll-mt-[160px]">
           <MissionSubmitSection
-            attendanceInfo={
-              filteredSchedules.find(
-                (schedule) => schedule.missionInfo.id === selectedMissionId,
-              )?.attendanceInfo
-            }
-            startDate={filteredSchedules
-              .find((schedule) => schedule.missionInfo.id === selectedMissionId)
-              ?.missionInfo.startDate?.toString()}
+            attendanceInfo={selectedSchedule?.attendanceInfo}
+            mission={selectedSchedule?.missionInfo}
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}

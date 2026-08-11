@@ -344,7 +344,10 @@ describe('ReservationListContent', () => {
     );
 
     expect(screen.getAllByText(/LIVE 피드백/).length).toBeGreaterThan(0);
-    expect(screen.getByText('자소서 피드백 받고 싶어요.')).toBeInTheDocument();
+    // 사전 Q&A 는 패널 진입 버튼으로만 노출한다(카드 인라인 아님).
+    expect(
+      screen.getByRole('button', { name: /사전 Q&A 보기/ }),
+    ).toBeInTheDocument();
     expect(useFeedbackMentorDetailQueryMock).toHaveBeenCalledWith(1);
   });
 

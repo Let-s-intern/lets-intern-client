@@ -4,6 +4,7 @@ import { MypageApplication } from '@/api/application';
 import AlertModal from '@/common/alert/AlertModal';
 import HybridLink from '@/common/HybridLink';
 import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
+import OpenChatLink from '@/domain/mypage/application/ui/OpenChatLink';
 import {
   MypageApplicationCardConfig,
   toMypageApplicationCardConfig,
@@ -146,14 +147,25 @@ export const MypageApplicationCard = ({
             )}
           </div>
 
-          {config.purchasePlanText && (
-            <div className="mt-2 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:justify-between">
-              <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
-                구매플랜
-                <p className="text-xxsmall12 text-primary-dark">
-                  {config.purchasePlanText}
-                </p>
-              </span>
+          {(config.purchasePlanText || config.openChat) && (
+            <div className="mt-2 flex flex-wrap items-center gap-2 md:mt-0">
+              {config.purchasePlanText && (
+                <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
+                  구매플랜
+                  <p className="text-xxsmall12 text-primary-dark">
+                    {config.purchasePlanText}
+                  </p>
+                </span>
+              )}
+              {config.purchasePlanText && config.openChat && (
+                <div className="bg-neutral-80 h-3 w-px" />
+              )}
+              {config.openChat && (
+                <OpenChatLink
+                  link={config.openChat.link}
+                  password={config.openChat.password}
+                />
+              )}
             </div>
           )}
         </div>

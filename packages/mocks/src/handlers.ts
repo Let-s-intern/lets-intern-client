@@ -382,6 +382,16 @@ const MOCK_ATTENDANCE_LIST = [
     status: 'ABSENT',
     feedbackStatus: 'WAITING',
   },
+  {
+    // 지각 제출 — 목록에는 남고 '지각 제출 / 진행 불가'로 구분돼야 한다.
+    // 완료 분모(feedbackTargetCount)에서는 빠지되 전체 인원에서는 빠지지 않는다.
+    id: 6,
+    userId: 106,
+    mentorName: '테스트 멘토',
+    name: '한지각',
+    status: 'LATE',
+    feedbackStatus: 'WAITING',
+  },
 ];
 
 /**
@@ -439,6 +449,39 @@ const MOCK_MENTEES = [
     optionCode: 'WRITTEN_1',
   },
   {
+    id: 9004,
+    userId: 505,
+    challengeMentorId: 301,
+    mentorName: '테스트 멘토',
+    name: '한지각',
+    major: '산업공학과',
+    wishJob: '데이터 분석',
+    wishCompany: '배민',
+    link: null, // ← 지각 제출(경험정리형): 열람은 되고 작성만 막혀야 한다
+    status: 'LATE',
+    result: 'PASS',
+    challengePricePlanType: 'BASIC',
+    feedbackStatus: 'WAITING',
+    optionCode: 'WRITTEN_1',
+  },
+  {
+    id: 9005,
+    userId: 506,
+    challengeMentorId: 301,
+    mentorName: '테스트 멘토',
+    name: '오지각',
+    major: '통계학과',
+    wishJob: '프로덕트 매니저',
+    wishCompany: '당근',
+    // ← 지각 제출 + 이미 작성된 피드백: 내용은 읽기 전용으로 남고 수정·완료만 막혀야 한다
+    link: 'https://boggy-chestnut-60b.notion.site/3764740158fa80129663f64380a93d10',
+    status: 'LATE',
+    result: 'PASS',
+    challengePricePlanType: 'STANDARD',
+    feedbackStatus: 'IN_PROGRESS',
+    optionCode: 'WRITTEN_1',
+  },
+  {
     id: null, // ← 미제출: 경험 조회 API가 호출되지 않아야 함
     userId: 504,
     challengeMentorId: 301,
@@ -455,6 +498,42 @@ const MOCK_MENTEES = [
     optionCode: 'WRITTEN_1',
   },
 ];
+
+/**
+ * 이미 저장된 서면 피드백 본문 (Lexical editor state JSON).
+ * 지각 제출인데 멘토가 이미 써 둔 건을 재현해, 화면이 내용을 지우지 않고
+ * 읽기 전용으로 남기는지 확인하는 데 쓴다.
+ */
+const MOCK_SAVED_FEEDBACK = JSON.stringify({
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: '경험 정리 구조는 좋습니다. STAR 중 Result 를 수치로 바꿔 보세요.',
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+        textFormat: 0,
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+});
 
 /**
  * 경험정리 EXPERIENCE_1/EXPERIENCE_2 페어 그룹핑 QA(챌린지 9902)용 미션별 출석.
@@ -542,6 +621,27 @@ const EXPERIENCE_PAIR_ATTENDANCE_BY_MISSION: Record<
 
 /** 김경험(userId 501)의 경험정리 제출물 — STAR 전체 필드 채움 */
 const MOCK_EXPERIENCES_BY_USER: Record<string, unknown[]> = {
+  // 한지각(505) — 지각 제출자도 제출물 열람은 가능해야 하므로 경험을 1건 둔다.
+  '505': [
+    {
+      id: 91,
+      title: '지역 소상공인 배달 데이터 분석 프로젝트',
+      activityType: 'TEAM',
+      experienceCategory: 'CLUB',
+      organ: '교내 데이터분석 학회',
+      role: '분석 담당',
+      startDate: '2025-03-01',
+      endDate: '2025-06-30',
+      situation: '동네 상권의 배달 매출이 요일별로 크게 흔들렸음.',
+      task: '요일·시간대별 수요 패턴을 찾아 프로모션 시점을 제안해야 했음.',
+      action:
+        '3개월치 주문 로그를 시간대로 쪼개 회귀 분석하고 대시보드로 공유함.',
+      result: '제안한 시간대에 쿠폰을 집행해 주말 객단가 8% 상승.',
+      reflection: '분석보다 전달 형식이 실행 여부를 갈랐다.',
+      coreCompetency: '데이터 분석',
+      isAdminAdded: false,
+    },
+  ],
   '501': [
     {
       id: 81,
@@ -934,14 +1034,144 @@ function toOpeningDto(card: LiveMentorCard) {
   };
 }
 
+/** 오픈채팅방 QA용 링크 — 실제 열리는 카카오 오픈채팅 도메인 형태. */
+const MOCK_CHAT_LINK = 'https://open.kakao.com/o/gMockChat';
+
+const daysFromNow = (days: number) =>
+  new Date(now.getTime() + days * DAY_MS).toISOString();
+
+/**
+ * (마이페이지 신청현황) 프로그램 신청 시드 — LC-3190 오픈채팅방 입장 버튼 QA.
+ *
+ * 액션 버튼 노출 규칙이 세 조건(프로그램 타입 · chatLink 유무 · 참여 상태)의 곱이라
+ * 한 화면에서 6가지 경우를 모두 눈으로 비교할 수 있게 배치한다.
+ * 각 섹션은 데스크톱에서 3개까지 노출되므로 섹션당 3개를 넘기지 않는다.
+ *
+ *  참여예정  1) 코드 있음   → 오픈채팅방만 (클릭 시 참여코드 모달)
+ *            2) 코드 없음   → 오픈채팅방만 (클릭 시 새 탭 직행)
+ *  참여중    3) 베이직      → 대시보드 입장 + 오픈채팅방 (버튼 2개 레이아웃)
+ *            4) 라이트      → 오픈채팅방만 (라이트는 대시보드 진입 불가)
+ *            5) 라이브      → 클래스 입장만 (챌린지 아님 = 회귀 확인)
+ *  참여완료  6) 링크 있음   → 대시보드 입장만 (종료 후 오픈채팅방 숨김)
+ */
+const MOCK_PROGRAM_APPLICATIONS = [
+  {
+    id: 5001,
+    programId: 4001,
+    programType: 'CHALLENGE',
+    programStatusType: 'PREV',
+    programTitle: '[QA] 참여예정 · 참여코드 있음',
+    programShortDesc: '클릭하면 참여코드 모달이 떠야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(14),
+    programEndDate: daysFromNow(45),
+    createDate: daysFromNow(-2),
+    status: 'WAITING',
+    pricePlanType: 'PREMIUM',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5002,
+    programId: 4002,
+    programType: 'CHALLENGE',
+    programStatusType: 'PREV',
+    programTitle: '[QA] 참여예정 · 참여코드 없음',
+    programShortDesc: '모달 없이 새 탭으로 바로 이동해야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(20),
+    programEndDate: daysFromNow(50),
+    createDate: daysFromNow(-1),
+    status: 'WAITING',
+    pricePlanType: 'BASIC',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: null,
+  },
+  {
+    id: 5003,
+    programId: 4003,
+    programType: 'CHALLENGE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 베이직 (버튼 2개)',
+    programShortDesc: '대시보드 입장과 오픈채팅방 입장이 같이 보여야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-7),
+    programEndDate: daysFromNow(21),
+    createDate: daysFromNow(-20),
+    status: 'IN_PROGRESS',
+    pricePlanType: 'BASIC',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5004,
+    programId: 4004,
+    programType: 'CHALLENGE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 라이트',
+    programShortDesc: '라이트는 대시보드에 못 들어가므로 오픈채팅방만 보인다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-5),
+    programEndDate: daysFromNow(25),
+    createDate: daysFromNow(-18),
+    status: 'IN_PROGRESS',
+    pricePlanType: 'LIGHT',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5005,
+    programId: 4005,
+    programType: 'LIVE',
+    programStatusType: 'PROCEEDING',
+    programTitle: '[QA] 참여중 · 라이브 클래스',
+    programShortDesc: '챌린지가 아니므로 클래스 입장만 보여야 한다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-3),
+    programEndDate: daysFromNow(10),
+    createDate: daysFromNow(-15),
+    status: 'IN_PROGRESS',
+    pricePlanType: null,
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+  {
+    id: 5006,
+    programId: 4006,
+    programType: 'CHALLENGE',
+    programStatusType: 'POST',
+    programTitle: '[QA] 참여완료 · 링크 있음',
+    programShortDesc: '종료된 챌린지는 오픈채팅방 버튼을 감춘다.',
+    programThumbnail: '',
+    programStartDate: daysFromNow(-60),
+    programEndDate: daysFromNow(-30),
+    createDate: daysFromNow(-70),
+    status: 'DONE',
+    pricePlanType: 'STANDARD',
+    challengeOptionList: [],
+    chatLink: MOCK_CHAT_LINK,
+    chatPassword: 'lets2026',
+  },
+];
+
 export const handlers = [
   /**
    * (마이페이지) GET /user/applications — 신청현황 탭의 프로그램 신청목록.
-   * 출시알림 탭 QA에서 페이지(ApplicationContent)가 백엔드 없이 렌더되도록
-   * 빈 목록을 반환한다. 프로그램/가이드북/VOD 탭은 빈 상태로 보인다.
+   *
+   * LC-3190 오픈채팅방 입장 버튼 QA 시드를 반환한다(MOCK_PROGRAM_APPLICATIONS).
+   * chatLink/chatPassword 는 BE 미배포 필드라 여기서 먼저 넣어 화면을 검증한다.
+   * 출시알림 탭 QA 는 이 목록과 무관하게 /magnet/mypage 를 쓴다.
    */
   http.get('*/user/applications', () => {
-    return HttpResponse.json({ status: 200, data: { applicationList: [] } });
+    return HttpResponse.json({
+      status: 200,
+      data: { applicationList: MOCK_PROGRAM_APPLICATIONS },
+    });
   }),
 
   /**
@@ -1238,13 +1468,27 @@ export const handlers = [
    * (멘토) GET /challenge/:cid/mission/:mid/feedback/attendances/:attendanceId
    * 멘토가 작성한 피드백 단건 — 작성 전 상태(null).
    * 주의: `.../mentee`(위) 뒤에 등록해야 `mentee`가 `:attendanceId`로 매칭되지 않는다.
+   *
+   * `preQuestion` 은 멘티 정보 영역(MenteeInfo)의 "사전 질문" 행으로 렌더된다.
+   * 실제 멘티는 줄바꿈 포함 장문을 넣는 경우가 많아 목도 장문으로 둔다.
    */
   http.get(
     '*/challenge/:challengeId/mission/:missionId/feedback/attendances/:attendanceId',
-    () => {
+    ({ params }) => {
       return HttpResponse.json({
         status: 200,
-        data: { attendanceDetailVo: { feedback: null } },
+        data: {
+          attendanceDetailVo: {
+            // 9005(지각 제출 + 기작성)만 저장된 피드백을 돌려준다.
+            // 지각 제출이라도 이미 쓴 내용을 숨기면 멘토가 혼란스러우므로 읽기 전용으로 남긴다.
+            feedback:
+              Number(params.attendanceId) === 9005 ? MOCK_SAVED_FEEDBACK : null,
+            preQuestion:
+              '이번 경험정리에서 서비스 기획 직무에 맞춰 프로젝트 경험을 정리했는데, 제가 맡은 역할이 기획보다는 운영에 가까웠던 것 같아 이 경험을 기획 직무 지원서에 그대로 써도 될지 고민입니다.\n' +
+              '또 STAR 구조로 쓰다 보니 Situation 과 Task 가 계속 겹쳐서 분량만 늘어나는 느낌인데, 어느 정도까지 압축하는 게 좋을까요?\n' +
+              '마지막으로 네이버처럼 규모가 큰 회사에 지원할 때 소규모 팀 프로젝트 경험이 약점으로 보일지, 아니면 오히려 주도적으로 일한 근거로 쓸 수 있을지 의견이 궁금합니다.',
+          },
+        },
       });
     },
   ),
@@ -1441,7 +1685,15 @@ export const handlers = [
           menteeWishIndustry: 'IT · 플랫폼, 금융 · 핀테크',
           menteeWishCompany: 'Toss, Kakao',
           preQuestion:
-            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.',
+            '작성한 자기소개서 피드백을 받고 싶어서 신청하게 되었습니다.\n' +
+            '특히 지원 동기 문항에서 회사와 제 경험을 연결하는 부분이 계속 겉도는 느낌이라, 어떤 축으로 엮어야 설득력이 생길지 듣고 싶습니다.\n' +
+            '그리고 결론을 앞에 두는 두괄식으로 고쳐봤는데 오히려 근거가 빈약해 보이는 것 같아 구성도 봐주시면 감사하겠습니다.',
+          // LC-3181 — 라이브에서 서면 피드백 작성. BE 미배포 필드(§3.3 요청 대상).
+          attendanceId: 9001,
+          // 작성 이력이 있는 상태 — 미리보기 카드 QA 용.
+          feedback:
+            '{"root": {"children": [{"children": [{"detail": 0, "format": 0, "mode": "normal", "style": "", "text": "지원 동기 문항은 회사 이야기보다 본인 경험이 앞서야 설득이 됩니다.", "type": "text", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "paragraph", "version": 1}, {"children": [{"detail": 0, "format": 0, "mode": "normal", "style": "", "text": "STAR 는 Situation 을 한 문장으로 줄이고 Action 에 분량을 몰아주세요.", "type": "text", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "paragraph", "version": 1}], "direction": "ltr", "format": "", "indent": 0, "type": "root", "version": 1}}',
+          feedbackStatus: 'IN_PROGRESS',
         },
       },
     });

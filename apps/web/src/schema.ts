@@ -1488,6 +1488,16 @@ export const userChallengeMissionDetail = z
       essentialContentsList: z.array(
         z.object({
           id: z.number(),
+          /**
+           * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+           *
+           * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+           * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+           * 7회차에서 연 것이 한 행으로 합쳐진다.
+           *
+           * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+           */
+          missionContentsId: z.number().nullable().optional(),
           title: z.string().nullable(),
           link: z.string().nullable(),
         }),
@@ -1495,6 +1505,16 @@ export const userChallengeMissionDetail = z
       additionalContentsList: z.array(
         z.object({
           id: z.number(),
+          /**
+           * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+           *
+           * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+           * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+           * 7회차에서 연 것이 한 행으로 합쳐진다.
+           *
+           * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+           */
+          missionContentsId: z.number().nullable().optional(),
           title: z.string().nullable(),
           link: z.string().nullable(),
         }),
@@ -1537,6 +1557,16 @@ export const userChallengeMissionWithAttendance = z
       essentialContentsList: z.array(
         z.object({
           id: z.number(),
+          /**
+           * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+           *
+           * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+           * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+           * 7회차에서 연 것이 한 행으로 합쳐진다.
+           *
+           * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+           */
+          missionContentsId: z.number().nullable().optional(),
           title: z.string().nullable(),
           link: z.string().nullable(),
         }),
@@ -1544,6 +1574,16 @@ export const userChallengeMissionWithAttendance = z
       additionalContentsList: z.array(
         z.object({
           id: z.number(),
+          /**
+           * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+           *
+           * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+           * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+           * 7회차에서 연 것이 한 행으로 합쳐진다.
+           *
+           * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+           */
+          missionContentsId: z.number().nullable().optional(),
           title: z.string().nullable(),
           link: z.string().nullable(),
         }),
@@ -1664,6 +1704,16 @@ export const myDailyMission = z
         essentialContentsList: z.array(
           z.object({
             id: z.number(),
+            /**
+             * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+             *
+             * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+             * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+             * 7회차에서 연 것이 한 행으로 합쳐진다.
+             *
+             * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+             */
+            missionContentsId: z.number().nullable().optional(),
             title: z.string().nullable(),
             link: z.string().nullable(),
           }),
@@ -1671,6 +1721,16 @@ export const myDailyMission = z
         additionalContentsList: z.array(
           z.object({
             id: z.number(),
+            /**
+             * 이 자료가 **이 미션에 붙어 있다**는 사실의 식별자 (LC-3201).
+             *
+             * `id` 는 자료 자체의 번호라 어느 미션에서 열었는지 말해 주지 못한다. 자료는 공용
+             * 라이브러리라 같은 자료가 여러 미션에 붙어, 자료 번호만 남기면 3회차에서 연 것과
+             * 7회차에서 연 것이 한 행으로 합쳐진다.
+             *
+             * 서버 배포 전 응답에는 없으므로 optional 이다. 없으면 기록을 보내지 않는다.
+             */
+            missionContentsId: z.number().nullable().optional(),
             title: z.string().nullable(),
             link: z.string().nullable(),
           }),

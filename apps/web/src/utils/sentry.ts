@@ -41,11 +41,12 @@ export function extractHttpStatus(err: unknown): number | undefined {
  * - 'translator': Google 번역기/브라우저 번역 확장이 유발하는 DOM 충돌 에러
  * - 'wallet': MetaMask/Web3 지갑 확장 에러
  * - 'stale-deploy': 배포 직후 stale chunk 로딩 실패 에러
+ * - 'webview-bridge': 인앱 브라우저가 주입한 네이티브 통신 스크립트 에러
  * - null: 노이즈가 아닌 실제 에러
  */
 export function classifyNoise(
   error: Error,
-): 'translator' | 'wallet' | 'stale-deploy' | null {
+): 'translator' | 'wallet' | 'stale-deploy' | 'webview-bridge' | null {
   const message = error.message.toLowerCase();
   const name = error.name.toLowerCase();
 
@@ -79,6 +80,22 @@ export function classifyNoise(
     message.includes('chunkloaderror')
   ) {
     return 'stale-deploy';
+  }
+
+  // 인앱 브라우저(카카오톡·인스타그램 등)가 페이지에 주입하는 네이티브 통신
+  // 스크립트가 자기 앱 밖에서 실행되며 내는 에러.
+  //
+  //   TypeError: undefined is not an object (evaluating 'window.webkit.messageHandlers')
+  //     at sendDataToNative (app:///library/46/...)
+  //
+  // `webkit.messageHandlers`(iOS WKWebView)·`ReactNativeWebView` 는 웹뷰 브리지
+  // 전용 전역이라 우리 코드에는 등장하지 않는다. 남의 앱 코드라 고칠 수단이 없어
+  // 격리만 한다. 식별자 자체로만 판정해 실제 에러를 잘못 묻지 않게 한다.
+  if (
+    message.includes('messagehandlers') ||
+    message.includes('reactnativewebview')
+  ) {
+    return 'webview-bridge';
   }
 
   return null;

@@ -17,9 +17,30 @@ export const feedbackModalDesign = {
     'mx-2 h-[85vh] w-[1040px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl',
   /** 사이드 패널(제출물 임베드)이 열렸을 때 넓힌 너비 — 임베드+에디터를 함께 넉넉히 표시 */
   modalContainerWide: 'md:w-[1280px]',
+  /** 좌(제출물)·우(사전 질문) 패널이 동시에 열렸을 때 — 에디터 폭 확보용 */
+  modalContainerWidest: 'md:w-[1560px]',
+  /**
+   * "크게 보기" 전체화면 — 뷰포트를 꽉 채운다.
+   * 기본/넓힘 토큰의 여백·크기·라운드를 모두 덮어야 하므로 무접두사와 `md:` 를 함께 지정한다
+   * (twMerge 는 접두사가 다르면 별개 키로 보아 하나만으로는 덮이지 않는다).
+   * 이 토큰은 항상 마지막에 합성한다.
+   */
+  modalContainerFullscreen:
+    'mx-0 h-[100dvh] max-h-none w-screen max-w-none rounded-none md:mx-0 md:h-[100dvh] md:w-screen md:rounded-none',
 
   /** 카드 표면(테두리·라운드·패딩) — 멘티정보 카드 / 예약일시 카드 공통 */
   cardSurface: 'border-neutral-80 rounded-[4px] border p-4',
+
+  /**
+   * 참고자료 진입 버튼 — 제출물 보기 / 경험 보기 / 사전 질문 보기 공통.
+   * 셋이 같은 줄 높이로 보여야 하므로 모양을 한 곳에서 관리한다.
+   * (옆에 두고 보는 `SideViewButton` 과 높이 34px 로 맞춰져 있다.)
+   */
+  panelEntryButton:
+    'inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50',
+  /** 위 버튼의 컴팩트(크게 보기) 변형 */
+  panelEntryButtonCompact:
+    'inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50',
 
   /** 구분선 */
   dividerVertical: 'hidden w-px shrink-0 self-stretch bg-gray-200 md:block',

@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
@@ -9,7 +9,7 @@ import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 
 import FeedbackActions from './ui/FeedbackActions';
-import FeedbackEditor from './ui/FeedbackEditor';
+import FeedbackComposer from './ui/FeedbackComposer';
 import FeedbackHeader from './ui/FeedbackHeader';
 import FeedbackLayout from './ui/FeedbackLayout';
 import FeedbackMenteeNavigation from './ui/FeedbackMenteeNavigation';
@@ -21,11 +21,18 @@ import { useFeedbackModal } from './hooks/useFeedbackModal';
 import { useFeedbackStatus } from './hooks/useFeedbackStatus';
 import { useMenteeNavigation } from './hooks/useMenteeNavigation';
 import { isNotionUrl } from './utils/notion';
+import {
+  canViewSubmission,
+  LATE_SUBMISSION_NOTICE,
+} from './utils/writtenSubmissionState';
 
 // 열기 전 번들 로드 불필요 → 동적 임포트 (Vercel BP: bundle-dynamic-imports)
 const MenteeExperienceModal = lazy(() => import('./ui/MenteeExperienceModal'));
 const MenteeExperiencePanel = lazy(() => import('./ui/MenteeExperiencePanel'));
 const MenteeLinkPanel = lazy(() => import('./ui/MenteeLinkPanel'));
+const MenteePreQuestionPanel = lazy(
+  () => import('./ui/MenteePreQuestionPanel'),
+);
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -54,7 +61,7 @@ const FeedbackModal = ({
     currentMentee,
     preQuestion,
     isReadOnly,
-    isAbsent,
+    submissionState,
     attendanceList,
     handleSelectByIndex,
     handleClose,
@@ -77,7 +84,7 @@ const FeedbackModal = ({
       onSelectByIndex: handleSelectByIndex,
     });
 
-  const { waitingCount, inProgressCount, completedCount } =
+  const { waitingCount, inProgressCount, completedCount, blockedCount } =
     useFeedbackStatus(attendanceList);
 
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
@@ -86,11 +93,23 @@ const FeedbackModal = ({
   // 왼쪽 사이드 패널 — 한번 열면 멘티를 전환해도 열린 상태 유지,
   // 표시 내용(경험정리/노션 임베드)은 현재 멘티의 제출 유형에 따라 자동 결정
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  // 오른쪽 사전 질문 패널 — 멘티를 전환해도 열린 상태 유지(내용만 교체)
+  const [isPreQuestionPanelOpen, setIsPreQuestionPanelOpen] = useState(false);
+  // "크게 보기" — 모달을 전체화면으로 넓힌다(상태는 FeedbackLayout 이 소유).
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // 모달을 닫으면 화면 상태를 초기화한다(라이브 모달과 동일 사유 — 부모가 항상 마운트).
+  useEffect(() => {
+    if (isOpen) return;
+    setIsFullscreen(false);
+    setIsPreQuestionPanelOpen(false);
+    setIsSidePanelOpen(false);
+    setIsExperienceModalOpen(false);
+  }, [isOpen]);
+
+  // 지각 제출도 제출물 열람은 허용한다 — 막는 것은 작성이지 열람이 아니다.
   const isMenteeSubmitted =
-    currentMentee != null &&
-    currentMentee.id != null &&
-    currentMentee.status !== 'ABSENT';
+    currentMentee != null && canViewSubmission(submissionState);
   // 경험정리형 제출 멘티(제출됨·링크 없음)
   const hasExperienceSubmission =
     isMenteeSubmitted && !currentMentee.link && currentMentee.userId != null;
@@ -99,6 +118,10 @@ const FeedbackModal = ({
     isMenteeSubmitted && isNotionUrl(currentMentee.link);
   const showExperiencePanel = isSidePanelOpen && hasExperienceSubmission;
   const showLinkPanel = isSidePanelOpen && hasEmbeddableLink;
+  const showLeftPanel = showExperiencePanel || showLinkPanel;
+  // 사전 질문이 없는 멘티로 전환하면 패널을 띄우지 않는다(빈 패널 방지).
+  const showPreQuestionPanel =
+    isPreQuestionPanelOpen && !!preQuestion && preQuestion.trim().length > 0;
 
   return (
     <BaseModal
@@ -106,9 +129,14 @@ const FeedbackModal = ({
       onClose={handleClose}
       className={twMerge(
         feedbackModalDesign.modalContainer,
-        // 제출물 패널이 실제로 열렸을 때만 모달을 넓혀 임베드+에디터를 함께 표시
-        (showExperiencePanel || showLinkPanel) &&
+        // 패널이 실제로 열렸을 때만 모달을 넓혀 패널+에디터를 함께 표시
+        (showLeftPanel || showPreQuestionPanel) &&
           feedbackModalDesign.modalContainerWide,
+        showLeftPanel &&
+          showPreQuestionPanel &&
+          feedbackModalDesign.modalContainerWidest,
+        // 전체화면은 위 폭 지정을 모두 덮어야 하므로 마지막에 합성한다.
+        isFullscreen && feedbackModalDesign.modalContainerFullscreen,
       )}
     >
       <FeedbackHeader
@@ -118,10 +146,15 @@ const FeedbackModal = ({
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}
         completedCount={completedCount}
-        onClose={handleClose}
+        // 지각 제출이 있을 때만 "진행 불가 N" 칩을 띄운다.
+        cancelledCount={blockedCount || undefined}
+        // 크게 보기 중에는 닫기가 모달 종료가 아니라 기본 화면 복귀다(라이브와 동일).
+        onClose={isFullscreen ? () => setIsFullscreen(false) : handleClose}
       />
 
       <FeedbackLayout
+        isExpanded={isFullscreen}
+        onExpandedChange={setIsFullscreen}
         sidebar={
           <div className="flex h-full flex-col gap-3">
             <div className="min-h-0 flex-1">
@@ -173,6 +206,17 @@ const FeedbackModal = ({
             </Suspense>
           ) : undefined
         }
+        rightPanel={
+          showPreQuestionPanel ? (
+            <Suspense fallback={null}>
+              <MenteePreQuestionPanel
+                onClose={() => setIsPreQuestionPanelOpen(false)}
+                preQuestion={preQuestion}
+                menteeName={currentMentee?.name}
+              />
+            </Suspense>
+          ) : undefined
+        }
         menteeInfo={(collapsed) => (
           <MenteeInfo
             mentee={currentMentee}
@@ -183,15 +227,24 @@ const FeedbackModal = ({
             // 한번 더 클릭하면 닫힘(토글)
             onViewExperienceSide={() => setIsSidePanelOpen((prev) => !prev)}
             onViewLinkSide={() => setIsSidePanelOpen((prev) => !prev)}
+            onViewPreQuestion={() => setIsPreQuestionPanelOpen((prev) => !prev)}
           />
         )}
         editor={
-          <FeedbackEditor
-            key={editorKey}
+          // 라이브 모달과 동일한 작성 카드(라벨 + 에디터).
+          <FeedbackComposer
+            editorKey={editorKey}
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
-            isAbsent={isAbsent}
+            hint={
+              submissionState === 'late'
+                ? LATE_SUBMISSION_NOTICE
+                : isReadOnly
+                  ? '제출 완료되어 수정할 수 없습니다'
+                  : null
+            }
+            submissionState={submissionState}
             hasMentee={!!currentMentee}
           />
         }
@@ -200,7 +253,7 @@ const FeedbackModal = ({
             attendanceId={selectedAttendanceId}
             editorContent={editorContent}
             feedbackStatus={currentMentee?.feedbackStatus ?? null}
-            isAbsent={isAbsent}
+            submissionState={submissionState}
             onSaveSuccess={handleMutationSuccess}
             onSubmitSuccess={handleMutationSuccess}
             onAlert={(opts) =>

@@ -22,11 +22,12 @@ import {
 } from '@/utils/url';
 import { captureBlogError } from '@/domain/blog/utils/captureBlogError';
 import { emitBlogRecommendFallbackSpan } from '@/domain/blog/utils/blogFallbackSpan';
+import { isValidBlogId } from '@/domain/blog/utils/blogId';
 import * as Sentry from '@sentry/nextjs';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
@@ -43,6 +44,7 @@ export async function generateMetadata({
 
   const { id } = await params;
   Sentry.setTag('blog.id', id);
+  if (!isValidBlogId(id)) notFound();
   const blog = await fetchBlogData(id);
 
   return {
@@ -75,6 +77,7 @@ const BlogDetailPage = async ({
 
   const { id, title: _title } = await params;
   Sentry.setTag('blog.id', id);
+  if (!isValidBlogId(id)) notFound();
 
   const blog = await Sentry.startSpan(
     { name: 'blog.detail.render', attributes: { blogId: id } },

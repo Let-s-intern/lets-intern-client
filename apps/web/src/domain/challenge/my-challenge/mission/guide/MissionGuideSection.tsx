@@ -10,7 +10,7 @@ import MissionGuideZeroSection from './MissionGuideZeroSection';
 
 interface MissionGuideSectionProps {
   className?: string;
-  todayTh: number;
+  todayTh: number | null;
 }
 
 const MissionGuideSection = ({

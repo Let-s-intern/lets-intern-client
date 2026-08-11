@@ -1801,6 +1801,9 @@ export const liveApplicationsSchema = z
         finalPrice: z.number().nullable().optional(),
         programDiscount: z.number().nullable().optional(),
         programPrice: z.number().nullable().optional(),
+        // 서버는 이미 내려주고 있었는데 스키마에 없어 버려지고 있었다.
+        // 환불 전체·부분 판별에 필요하다.
+        originalPrice: z.number().nullable().optional(),
       }),
     ),
   })

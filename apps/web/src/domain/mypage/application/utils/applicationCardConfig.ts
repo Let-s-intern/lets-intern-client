@@ -10,6 +10,7 @@ import {
   challengePricePlanToText,
   newProgramTypeToText,
 } from '@/utils/convert';
+import { normalizeChatPassword } from './chatLinkProvider';
 
 export interface MypageApplicationCardConfig {
   id: number;
@@ -28,6 +29,11 @@ export interface MypageApplicationCardConfig {
   contentFileUrl?: string;
   downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
+  /** 오픈채팅방 입장 버튼. 카드 우측 하단(구매플랜 행)에 별도로 렌더된다. */
+  openChat?: {
+    link: string;
+    password?: string;
+  };
   actionButton?: {
     label: string;
     disabled?: boolean;
@@ -61,6 +67,8 @@ const toProgramCardConfig = (
     programEndDate,
     createDate,
     pricePlanType,
+    chatLink,
+    chatPassword,
   } = application;
 
   const isChallenge = programType === 'CHALLENGE';
@@ -126,6 +134,12 @@ const toProgramCardConfig = (
           }
       : undefined;
 
+  // 참여종료된 챌린지는 운영이 채팅방을 닫았을 수 있어 노출하지 않는다.
+  const openChat =
+    isChallenge && chatLink && !isCompleted
+      ? { link: chatLink, password: normalizeChatPassword(chatPassword) }
+      : undefined;
+
   return {
     id: id ?? 0,
     programId: programId ?? 0,
@@ -138,6 +152,7 @@ const toProgramCardConfig = (
     dateLabel,
     dateText,
     purchasePlanText,
+    openChat,
     actionButton,
     isCompleted,
   };

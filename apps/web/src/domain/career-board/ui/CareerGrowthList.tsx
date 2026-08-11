@@ -5,6 +5,7 @@ import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDown
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
+import OpenChatLink from '@/domain/mypage/application/ui/OpenChatLink';
 import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
@@ -115,14 +116,25 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                 </p>
               )}
             </div>
-            {config.purchasePlanText && (
-              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
-                  구매플랜
-                  <p className="text-xxsmall12 text-primary">
-                    {config.purchasePlanText}
-                  </p>
-                </span>
+            {(config.purchasePlanText || config.openChat) && (
+              <div className="flex flex-wrap items-center gap-2">
+                {config.purchasePlanText && (
+                  <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
+                    구매플랜
+                    <p className="text-xxsmall12 text-primary">
+                      {config.purchasePlanText}
+                    </p>
+                  </span>
+                )}
+                {config.purchasePlanText && config.openChat && (
+                  <div className="bg-neutral-80 h-3 w-px" />
+                )}
+                {config.openChat && (
+                  <OpenChatLink
+                    link={config.openChat.link}
+                    password={config.openChat.password}
+                  />
+                )}
               </div>
             )}
           </div>

@@ -3,6 +3,7 @@ import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challeng
 import { useSubmitMissionBlogBonus } from '@/api/mission/mission';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
+import { getSubmitErrorMessage } from '@/domain/challenge/utils/submitErrorMessage';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useCallback, useEffect, useState } from 'react';
@@ -91,7 +92,7 @@ export function useMissionSubmitBonus({
       setShowToast(true);
     } catch (error) {
       console.error('제출 실패:', error);
-      alert('미션 제출에 실패했습니다. 다시 시도해주세요.');
+      alert(getSubmitErrorMessage(error));
     }
   };
 

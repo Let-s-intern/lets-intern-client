@@ -1,7 +1,8 @@
 import { fetchBlogData } from '@/api/blog/blog';
+import { isValidBlogId } from '@/domain/blog/utils/blogId';
 import { getBlogPathname } from '@/utils/url';
 import * as Sentry from '@sentry/nextjs';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   Sentry.setTag('domain', 'blog');
@@ -9,6 +10,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   const { id } = await params;
   Sentry.setTag('blog.id', id);
+  if (!isValidBlogId(id)) notFound();
   const blog = await fetchBlogData(id);
 
   redirect(

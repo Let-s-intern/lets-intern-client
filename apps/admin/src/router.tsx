@@ -16,6 +16,12 @@ const VodEdit = lazy(() => import('./pages/pages/VodEdit'));
 const GuidebookCreate = lazy(() => import('./pages/pages/GuidebookCreate'));
 const GuidebookEdit = lazy(() => import('./pages/pages/GuidebookEdit'));
 const ProgramUsers = lazy(() => import('./pages/pages/program/ProgramUsers'));
+const RefundHistoryPage = lazy(
+  () => import('./pages/pages/refund/RefundHistoryPage'),
+);
+const UsageHistoryPage = lazy(
+  () => import('./pages/pages/usage/UsageHistoryPage'),
+);
 
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
@@ -385,6 +391,16 @@ export const router = createBrowserRouter([
       },
 
       // 유저/멘토
+      {
+        // 프로그램 하위가 아니라 최상위에 둔다. 통합 조회가 목적이라
+        // 프로그램별로 흩으면 전체 현황을 볼 수 없다.
+        path: '/refund-history',
+        element: withSuspense(<RefundHistoryPage />),
+      },
+      {
+        path: '/usage-history',
+        element: withSuspense(<UsageHistoryPage />),
+      },
       { path: '/users', element: withSuspense(<AdminUsersPage />) },
       { path: '/users/:userId', element: withSuspense(<UserDetail />) },
       { path: '/users/:userId/edit', element: withSuspense(<UserEdit />) },

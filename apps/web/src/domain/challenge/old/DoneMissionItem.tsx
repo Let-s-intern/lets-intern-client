@@ -6,6 +6,7 @@ import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { logMissionAccess } from '../api/missionAccessLog';
 import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {
@@ -41,6 +42,19 @@ const DoneMissionItem = ({ mission }: Props) => {
   const currentSchedule = schedules.find((schedule) => {
     return schedule.missionInfo.id === mission.id;
   });
+
+  const toggle = () => {
+    // 펼치는 순간에만 이용으로 남긴다. 상세 조회는 이 목록이 항목을 그리며 미리 부르므로
+    // 거기에 기록을 걸면 누르지 않은 미션까지 전부 이용으로 잡힌다(LC-3201).
+    if (!isDetailShown) {
+      logMissionAccess({
+        challengeId: currentChallenge?.id,
+        missionId: mission.id,
+      });
+    }
+
+    setIsDetailShown(!isDetailShown);
+  };
 
   useEffect(() => {
     const scrollToMission = searchParams.get('scroll_to_mission');
@@ -95,7 +109,7 @@ const DoneMissionItem = ({ mission }: Props) => {
               }
             </span>
           </div>
-          <button onClick={() => setIsDetailShown(!isDetailShown)}>
+          <button onClick={toggle}>
             {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}
           </button>
         </div>

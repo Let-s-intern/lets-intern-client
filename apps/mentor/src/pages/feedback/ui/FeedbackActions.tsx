@@ -3,12 +3,17 @@
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import config from '@/constants/config';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import {
+  canWriteWrittenFeedback,
+  type WrittenSubmissionState,
+} from '@/pages/feedback/utils/writtenSubmissionState';
 
 interface FeedbackActionsProps {
   attendanceId: number | null;
   editorContent: string;
   feedbackStatus: string | null;
-  isAbsent?: boolean;
+  /** 제출 상태 — 미제출·지각 제출은 저장·완료를 막는다. */
+  submissionState?: WrittenSubmissionState;
   onSaveSuccess: () => void;
   onSubmitSuccess: () => void;
   onAlert: (opts: { title: string; variant: 'success' | 'error' }) => void;
@@ -23,7 +28,7 @@ const FeedbackActions = ({
   attendanceId,
   editorContent,
   feedbackStatus,
-  isAbsent = false,
+  submissionState = 'submitted',
   onSaveSuccess,
   onSubmitSuccess,
   onAlert,
@@ -33,7 +38,11 @@ const FeedbackActions = ({
 
   const isCompleted =
     feedbackStatus === 'COMPLETED' || feedbackStatus === 'CONFIRMED';
-  const isDisabled = isPending || !attendanceId || isCompleted || isAbsent;
+  const isDisabled =
+    isPending ||
+    !attendanceId ||
+    isCompleted ||
+    !canWriteWrittenFeedback(submissionState);
 
   const submitFeedback = (
     status: 'IN_PROGRESS' | 'COMPLETED',

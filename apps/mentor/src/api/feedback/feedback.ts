@@ -198,7 +198,7 @@ export const useFeedbackMentorListQuery = (
  * 단건 훅(`useFeedbackMentorDetailQuery`)과 목록+상세 병합 훅
  * (`useFeedbackMentorListWithAttendance`)이 동일 키를 써 캐시를 공유한다.
  */
-const mentorDetailQueryKey = (feedbackId: number | null | undefined) =>
+export const mentorDetailQueryKey = (feedbackId: number | null | undefined) =>
   [...FEEDBACK_MENTOR_QUERY_KEY, 'detail', { feedbackId }] as const;
 
 /**

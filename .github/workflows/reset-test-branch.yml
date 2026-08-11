@@ -1,0 +1,231 @@
+# 테스트 브랜치를 main 과 똑같이 되돌린다.
+#
+# 수동 실행 전용이다. Actions 탭 → "테스트 브랜치 리셋" → Run workflow.
+#
+# 무엇을 하나
+#   대상 브랜치를 main 의 최신 커밋으로 강제 이동시킨다(force update).
+#   브랜치가 없으면 새로 만든다. 결과적으로 main 과 완전히 같아진다.
+#
+# 되돌릴 수 없다
+#   대상 브랜치에만 있던 커밋은 사라진다. 실행 전에 무엇이 사라지는지
+#   요약(Summary)에 남기지만, 이미 지운 뒤에는 복구를 보장하지 않는다.
+#   사라진 커밋은 한동안 GitHub 의 reflog 에 남아 SHA 를 알면 되살릴 수 있으나
+#   기대지 말 것. 살릴 작업이 있으면 먼저 다른 브랜치로 옮겨 두어야 한다.
+#
+# 안전장치
+#   1. 대상은 `test` 로 시작하는 브랜치만 허용한다. main·master·production 은 이름 자체로 거부
+#   2. 확인란에 브랜치 이름을 그대로 다시 입력해야 실행된다. 오타로 엉뚱한 브랜치를 날리지 못한다
+#   3. dry_run 을 켜면 무엇이 사라지는지만 보고 실제로는 바꾸지 않는다
+#
+# 입력값은 반드시 env 를 거쳐 process.env 로 읽는다
+#   `${{ inputs.branch }}` 를 script 본문에 직접 박으면 입력값이 코드로 합쳐져
+#   따옴표·백틱을 섞은 값으로 임의 JS 를 실행시킬 수 있다. 이 잡은 contents:write 를
+#   들고 있어 그 경로가 열리면 아무 브랜치나 조작할 수 있다.
+#   워크플로 수정 시 이 규칙을 깨지 말 것.
+#   https://github.blog/security/vulnerability-research/how-to-catch-github-actions-workflow-injections-before-attackers-do/
+#
+# 배포 트리거
+#   GITHUB_TOKEN 으로 만든 push 는 다른 GitHub Actions 워크플로를 트리거하지 않는다.
+#   다만 Vercel 같은 외부 GitHub App 연동은 이 변경을 그대로 감지해 재배포할 수 있다.
+#   테스트 환경이 자동 배포로 묶여 있다면 실행 시점을 고려할 것.
+
+name: 테스트 브랜치 리셋
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: '리셋할 테스트 브랜치 (예: test-260424). test 로 시작해야 한다'
+        required: true
+        type: string
+      confirm:
+        description: '확인 — 위 브랜치 이름을 그대로 다시 입력'
+        required: true
+        type: string
+      dry_run:
+        description: '실제로 바꾸지 않고 사라질 커밋만 확인'
+        required: false
+        type: boolean
+        default: false
+
+# 같은 브랜치를 동시에 두 번 리셋하지 않는다.
+concurrency:
+  group: reset-test-branch-${{ inputs.branch }}
+  cancel-in-progress: false
+
+jobs:
+  reset:
+    name: 테스트 브랜치를 main 으로
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      TARGET_BRANCH: ${{ inputs.branch }}
+      CONFIRM_BRANCH: ${{ inputs.confirm }}
+      DRY_RUN: ${{ inputs.dry_run }}
+
+    steps:
+      - name: 입력 검증
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = (process.env.TARGET_BRANCH ?? '').trim();
+            const confirm = (process.env.CONFIRM_BRANCH ?? '').trim();
+
+            if (!branch) {
+              core.setFailed('브랜치 이름이 비어 있습니다.');
+              return;
+            }
+
+            if (branch !== confirm) {
+              core.setFailed(
+                '확인란이 브랜치 이름과 다릅니다.\n' +
+                `  브랜치: ${branch}\n` +
+                `  확인란: ${confirm}\n` +
+                '오타로 엉뚱한 브랜치를 날리는 것을 막기 위한 장치입니다.',
+              );
+              return;
+            }
+
+            // 이름 규칙으로 보호 대상을 걸러낸다.
+            // 정규식 부분 일치가 아니라 접두어로 검사해 예외를 만들 여지를 두지 않는다.
+            if (!branch.startsWith('test')) {
+              core.setFailed(
+                `대상은 'test' 로 시작하는 브랜치만 허용합니다. 받은 값: ${branch}\n` +
+                'main·master·production 등 운영 브랜치는 이 워크플로로 건드릴 수 없습니다.',
+              );
+              return;
+            }
+
+            // ref 로 쓸 수 없는 문자를 거른다. `..`, 공백, 제어문자 등을 함께 막는다.
+            if (!/^[A-Za-z0-9._\-\/]+$/.test(branch) || branch.includes('..')) {
+              core.setFailed(`브랜치 이름에 쓸 수 없는 문자가 있습니다: ${branch}`);
+              return;
+            }
+
+            core.info(`검증 통과. 대상 브랜치: ${branch}`);
+
+      - name: 사라질 커밋 확인
+        id: diff
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = (process.env.TARGET_BRANCH ?? '').trim();
+            const isDryRun = (process.env.DRY_RUN ?? '') === 'true';
+            const { owner, repo } = context.repo;
+
+            const main = await github.rest.git.getRef({ owner, repo, ref: 'heads/main' });
+            const mainSha = main.data.object.sha;
+            core.setOutput('main_sha', mainSha);
+
+            let branchSha = null;
+            try {
+              const ref = await github.rest.git.getRef({ owner, repo, ref: `heads/${branch}` });
+              branchSha = ref.data.object.sha;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            const exists = branchSha !== null;
+            core.setOutput('exists', String(exists));
+
+            const short = (sha) => sha.slice(0, 9);
+            const lines = [`## 테스트 브랜치 리셋: \`${branch}\``, ''];
+
+            lines.push('| 항목 | 값 |', '|---|---|');
+            lines.push(`| main | \`${short(mainSha)}\` |`);
+            lines.push(`| ${branch} (현재) | ${exists ? `\`${short(branchSha)}\`` : '없음 — 새로 만든다'} |`);
+            lines.push(`| 모드 | ${isDryRun ? '확인만 (dry run)' : '실제 리셋'} |`);
+            lines.push('');
+
+            if (!exists) {
+              lines.push('브랜치가 없어 main 과 같은 지점에 새로 만듭니다. 사라지는 커밋은 없습니다.');
+            } else if (branchSha === mainSha) {
+              lines.push('이미 main 과 같습니다. 바뀌는 것이 없습니다.');
+            } else {
+              // base=main, head=branch → branch 에만 있는 커밋이 ahead_by 로 잡힌다.
+              const cmp = await github.rest.repos.compareCommitsWithBasehead({
+                owner,
+                repo,
+                basehead: `main...${branch}`,
+              });
+
+              lines.push(
+                `main 기준으로 **앞선 커밋 ${cmp.data.ahead_by}개 · 뒤처진 커밋 ${cmp.data.behind_by}개**`,
+                '',
+              );
+
+              if (cmp.data.ahead_by > 0) {
+                lines.push(`### 사라지는 커밋 ${cmp.data.ahead_by}개`, '');
+                lines.push('이 브랜치에만 있고 main 에는 없는 커밋입니다. **되돌릴 수 없습니다.**', '');
+                lines.push('| SHA | 메시지 | 작성자 |', '|---|---|---|');
+
+                for (const commit of cmp.data.commits) {
+                  // 커밋 메시지는 신뢰할 수 없는 입력이다. 표를 깨뜨리지 않게 이스케이프한다.
+                  const subject = (commit.commit.message || '')
+                    .split('\n')[0]
+                    .replace(/\|/g, '\\|');
+                  const author = (commit.commit.author?.name ?? '').replace(/\|/g, '\\|');
+                  lines.push(`| \`${short(commit.sha)}\` | ${subject} | ${author} |`);
+                }
+
+                if (cmp.data.commits.length < cmp.data.ahead_by) {
+                  lines.push(
+                    '',
+                    `목록은 최대 250개까지만 표시됩니다. 실제로는 ${cmp.data.ahead_by}개가 사라집니다.`,
+                  );
+                }
+
+                lines.push(
+                  '',
+                  `살려야 할 작업이 있으면 지금 멈추고 \`git branch <새이름> ${short(branchSha)}\` 로 옮겨 두세요.`,
+                );
+              } else {
+                lines.push('이 브랜치에만 있는 커밋은 없습니다. main 을 따라잡기만 합니다.');
+              }
+            }
+
+            await core.summary.addRaw(lines.join('\n')).write();
+
+      - name: 리셋 실행
+        if: ${{ !inputs.dry_run }}
+        uses: actions/github-script@v7
+        env:
+          MAIN_SHA: ${{ steps.diff.outputs.main_sha }}
+          BRANCH_EXISTS: ${{ steps.diff.outputs.exists }}
+        with:
+          script: |
+            const branch = (process.env.TARGET_BRANCH ?? '').trim();
+            const mainSha = (process.env.MAIN_SHA ?? '').trim();
+            const exists = (process.env.BRANCH_EXISTS ?? '') === 'true';
+            const { owner, repo } = context.repo;
+
+            if (exists) {
+              // force 없이는 non-fast-forward 라 거부된다. 되돌리는 것이 목적이므로 강제한다.
+              await github.rest.git.updateRef({
+                owner,
+                repo,
+                ref: `heads/${branch}`,
+                sha: mainSha,
+                force: true,
+              });
+              core.info(`${branch} 를 main(${mainSha.slice(0, 9)})으로 되돌렸습니다.`);
+            } else {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: `refs/heads/${branch}`,
+                sha: mainSha,
+              });
+              core.info(`${branch} 를 main(${mainSha.slice(0, 9)})에서 새로 만들었습니다.`);
+            }
+
+            await core.summary
+              .addRaw(`\n\n---\n\n완료. \`${branch}\` 가 main \`${mainSha.slice(0, 9)}\` 과 같아졌습니다.\n`)
+              .write();
+
+      - name: dry run 안내
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "dry run 이라 아무것도 바꾸지 않았습니다."
+          echo "실제로 리셋하려면 dry_run 을 끄고 다시 실행하세요."

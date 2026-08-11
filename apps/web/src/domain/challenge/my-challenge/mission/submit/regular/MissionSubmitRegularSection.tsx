@@ -6,6 +6,7 @@ import LinkInputSection from '@/domain/challenge/my-challenge/mission/submit/ui/
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
 import MobileReviewModal from './MobileReviewModal';
+import { logMissionAccess } from '@/domain/challenge/api/missionAccessLog';
 import { useParams } from 'next/navigation';
 import {
   type MissionSubmitRegularAttendanceInfo,
@@ -151,6 +152,13 @@ const MissionSubmitRegularSection = ({
           onClickModal={() => {
             const { id, th } = bonusMission.missionInfo;
             if (!th) return;
+
+            // 보너스 미션도 사용자가 누른 것이다. 달력 클릭과 같은 기준으로 남긴다(LC-3201).
+            logMissionAccess({
+              challengeId: Number(params.programId),
+              missionId: id,
+            });
+
             setSelectedMission(id, th);
           }}
         />
