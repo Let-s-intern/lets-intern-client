@@ -23,6 +23,7 @@ const CareerCard = ({
     field,
     position,
     department,
+    isRepresentative,
   },
   handleEdit,
 }: CareerCardProps) => {
@@ -35,8 +36,15 @@ const CareerCard = ({
 
   return (
     <div className="rounded-xs border-neutral-80 flex w-full flex-col gap-1 border p-4">
-      <div className="flex items-center justify-between">
-        <span className="text-neutral-0 text-sm">{job}</span>
+      <div className="flex items-center justify-between md:items-end">
+        <div className="flex flex-1 items-center justify-between md:flex-none md:gap-1.5">
+          <span className="text-neutral-0 text-sm">{job}</span>
+          {isRepresentative && (
+            <span className="bg-primary text-static-100 text-xxsmall10 shrink-0 rounded-full border px-1.5 py-0.5 font-medium">
+              대표경력
+            </span>
+          )}
+        </div>
 
         <div className="text-neutral-35 hidden items-center gap-2 text-sm md:flex">
           <span className="cursor-pointer px-2" onClick={() => handleEdit(id!)}>

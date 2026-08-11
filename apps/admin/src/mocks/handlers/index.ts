@@ -2,6 +2,7 @@ import type { RequestHandler } from 'msw';
 
 import { accessLogHandlers } from './accessLog';
 import { adminFeedbackHandlers } from './adminFeedback';
+import { adminLiveMentoringHandlers } from './adminLiveMentoring';
 import { adminParticipantHandlers, adminRefundHandlers } from './adminRefund';
 
 /**
@@ -14,6 +15,7 @@ import { adminParticipantHandlers, adminRefundHandlers } from './adminRefund';
  */
 export const handlers: RequestHandler[] = [
   ...adminFeedbackHandlers,
+  ...adminLiveMentoringHandlers,
   ...adminRefundHandlers,
   ...adminParticipantHandlers,
   ...accessLogHandlers,

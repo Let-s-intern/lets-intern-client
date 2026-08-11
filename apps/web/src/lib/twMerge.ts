@@ -28,6 +28,7 @@ export const twMerge = extendTailwindMerge({
         'text-xsmall16',
         'text-xsmall14',
         'text-xxsmall12',
+        'text-xxsmall10',
       ],
     },
   },

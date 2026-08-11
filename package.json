@@ -9,9 +9,7 @@
   },
   "scripts": {
     "dev": "turbo run dev",
-    "local": "VITE_DEV_API_TARGET=http://localhost:8080 turbo run dev",
-    "local:admin": "VITE_DEV_API_TARGET=http://localhost:8080 turbo run dev --filter=@letscareer/admin",
-    "local:mentor": "VITE_DEV_API_TARGET=http://localhost:8080 turbo run dev --filter=@letscareer/mentor",
+    "local": "node scripts/local.mjs",
     "dev:web": "turbo run dev --filter=@letscareer/web",
     "dev:admin": "turbo run dev --filter=@letscareer/admin",
     "dev:mentor": "turbo run dev --filter=@letscareer/mentor",

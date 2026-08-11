@@ -60,3 +60,28 @@ export const findLastFinishedSchedule = (
 
   return latest;
 };
+
+/**
+ * 아직 열리지 않은 회차 중 가장 먼저 열릴 것.
+ * 진행 중인 미션이 없는 시간대에 "다음은 이것" 이라고 알려 줄 자리다.
+ */
+export const findNextUpcomingSchedule = (
+  schedules: Schedule[],
+  now: Dayjs,
+): Schedule | undefined => {
+  let earliest: Schedule | undefined;
+
+  for (const schedule of schedules) {
+    if (getMissionTimeState(schedule.missionInfo, now) !== 'UPCOMING') continue;
+
+    const startDate = schedule.missionInfo.startDate;
+    if (!startDate) continue;
+
+    const earliestStartDate = earliest?.missionInfo.startDate;
+    if (!earliestStartDate || startDate.isBefore(earliestStartDate)) {
+      earliest = schedule;
+    }
+  }
+
+  return earliest;
+};

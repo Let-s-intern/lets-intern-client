@@ -85,6 +85,10 @@ const navData = [
         url: '/mentors',
       },
       {
+        name: '1대1 라이브 멘토링',
+        url: '/live-mentoring',
+      },
+      {
         name: '리드 관리',
         url: '/leads/managements',
       },

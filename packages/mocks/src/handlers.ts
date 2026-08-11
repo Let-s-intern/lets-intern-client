@@ -1,5 +1,18 @@
 import { http, HttpResponse } from 'msw';
 
+import {
+  LIVE_MENTOR_CARDS,
+  LIVE_MENTOR_DETAILS,
+  LIVE_MENTORING_SETTINGS,
+  LIVE_MENTORING_TEMPLATE,
+  OPENING_HISTORY,
+  getPriceByDuration,
+  mentoringTitleFor,
+  type LiveMentorCard,
+  type LiveMentoringCategory,
+  type LiveMentoringDuration,
+} from './data/liveMentoring';
+
 /**
  * MSW 핸들러 — 두 QA 시나리오를 **하나의 공유 핸들러 배열**로 통합한다.
  *
@@ -769,6 +782,258 @@ const LAUNCH_ALERT_MAGNET_SEED = [
 
 let launchAlertMagnetList = [...LAUNCH_ALERT_MAGNET_SEED];
 
+/**
+ * 대표 경력은 오픈 설정 저장(PUT)과 무관하게 전용 API 로 즉시 저장된다.
+ * 목에서도 상태를 들고 있어야 "지정 → 재조회 시 반영"이라는 실제 동작을 재현할 수 있다.
+ */
+let representativeCareerId: number | null =
+  LIVE_MENTORING_SETTINGS.careers.find((career) => career.isRepresentative)
+    ?.id ?? null;
+
+/** 현재 대표 경력 지정 상태를 반영한 경력 목록. */
+const settingsCareers = () =>
+  LIVE_MENTORING_SETTINGS.careers.map((career) => ({
+    ...career,
+    isRepresentative: career.id === representativeCareerId,
+  }));
+
+/**
+ * 라이브 멘토링 상품·개설 목 상태.
+ *
+ * 저장 → 제출(자가승인+개설) → 종료가 한 줄기로 이어지는지 확인하려면 목이 상태를
+ * 들고 있어야 한다. 응답만 고정으로 돌려주면 "제출했는데 목록이 그대로"인 상태가 되어
+ * 화면 흐름을 검증할 수 없다.
+ */
+const liveMentoringState = {
+  liveMentoringId: LIVE_MENTORING_SETTINGS.liveMentoringId,
+  title: LIVE_MENTORING_SETTINGS.title,
+  status: LIVE_MENTORING_SETTINGS.status,
+  categories: [...LIVE_MENTORING_SETTINGS.categories],
+  durations: [...LIVE_MENTORING_SETTINGS.durations],
+  feedbackStartDate: LIVE_MENTORING_SETTINGS.feedbackStartDate,
+  feedbackEndDate: LIVE_MENTORING_SETTINGS.feedbackEndDate,
+  approvedAt: null as string | null,
+  approvedByUserId: null as number | null,
+  openings: OPENING_HISTORY.map((opening) => ({ ...opening })),
+};
+
+let nextOpeningId = 200;
+
+/**
+ * 목 상태를 초기값으로 되돌린다.
+ *
+ * 핸들러가 모듈 스코프 상태를 들고 있어 `server.resetHandlers()` 만으로는 지워지지 않는다.
+ * 상태를 바꾸는 테스트(제출·종료)는 `afterEach` 에서 이걸 불러 서로 간섭하지 않게 한다.
+ */
+export const resetLiveMentoringMockState = () => {
+  liveMentoringState.liveMentoringId = LIVE_MENTORING_SETTINGS.liveMentoringId;
+  liveMentoringState.title = LIVE_MENTORING_SETTINGS.title;
+  liveMentoringState.status = LIVE_MENTORING_SETTINGS.status;
+  liveMentoringState.categories = [...LIVE_MENTORING_SETTINGS.categories];
+  liveMentoringState.durations = [...LIVE_MENTORING_SETTINGS.durations];
+  liveMentoringState.feedbackStartDate =
+    LIVE_MENTORING_SETTINGS.feedbackStartDate;
+  liveMentoringState.feedbackEndDate = LIVE_MENTORING_SETTINGS.feedbackEndDate;
+  liveMentoringState.approvedAt = null;
+  liveMentoringState.approvedByUserId = null;
+  liveMentoringState.openings = OPENING_HISTORY.map((opening) => ({
+    ...opening,
+  }));
+  adminFixtureRows = makeAdminFixtureRows();
+  nextOpeningId = 200;
+};
+
+const liveMentoringToday = () => new Date().toISOString().slice(0, 10);
+const liveMentoringNow = () => new Date().toISOString().slice(0, 19);
+
+/** 서버 `LiveMentoringErrorCode` 를 그대로 흉내낸 에러 응답. */
+const liveMentoringError = (status: number, code: string, message: string) =>
+  HttpResponse.json({ status, code, message }, { status });
+
+const activeOpening = () =>
+  liveMentoringState.openings.find((opening) => opening.status === 'OPEN') ??
+  null;
+
+/** 서버 `LiveMentoring.isEditable()` — 상태와 활성 개설 유무를 함께 본다. */
+const isSettingsEditable = () =>
+  (liveMentoringState.status === null ||
+    liveMentoringState.status === 'DRAFT') &&
+  activeOpening() === null;
+
+const settingsResponse = () => ({
+  liveMentoringId: liveMentoringState.liveMentoringId,
+  nickname: LIVE_MENTORING_SETTINGS.nickname,
+  profileImage: LIVE_MENTORING_SETTINGS.profileImage,
+  introduction: LIVE_MENTORING_SETTINGS.introduction,
+  careers: settingsCareers(),
+  title: liveMentoringState.title,
+  status: liveMentoringState.status,
+  categories: liveMentoringState.categories,
+  durations: liveMentoringState.durations,
+  feedbackStartDate: liveMentoringState.feedbackStartDate,
+  feedbackEndDate: liveMentoringState.feedbackEndDate,
+});
+
+const openingHistoryResponse = () => ({
+  liveMentoringId: liveMentoringState.liveMentoringId,
+  openings: liveMentoringState.openings,
+});
+
+const closeOpeningById = (
+  openingId: number,
+  closeReason: 'ADMIN_FORCED' | 'MENTOR_CANCELED',
+  closedByUserId: number,
+) => {
+  const opening = liveMentoringState.openings.find(
+    (each) => each.openingId === openingId,
+  );
+  if (!opening) return false;
+  // 이미 종료된 개설은 사유를 덮어쓰지 않고 그대로 성공 처리한다(서버와 동일).
+  if (opening.status === 'OPEN') {
+    opening.status = 'CLOSED';
+    opening.closedAt = liveMentoringNow();
+    opening.closeReason = closeReason;
+    Object.assign(opening, { closedByUserId });
+  }
+  return true;
+};
+
+/**
+ * 관리자 목록 응답 1건. 로그인 멘토("나")의 상품만 상태를 실제로 반영하고,
+ * 나머지는 상태 필터·정렬을 확인하기 위한 고정 행이다.
+ */
+const adminLiveMentoringVo = () => {
+  const opening = activeOpening();
+  return {
+    liveMentoringId: liveMentoringState.liveMentoringId,
+    mentorId: 1,
+    mentorNickname: LIVE_MENTORING_SETTINGS.nickname,
+    mentorProfileImage: LIVE_MENTORING_SETTINGS.profileImage,
+    title: liveMentoringState.title,
+    status: liveMentoringState.status,
+    categories: liveMentoringState.categories,
+    hasDetailPage: true,
+    approvedAt: liveMentoringState.approvedAt,
+    approvedByUserId: liveMentoringState.approvedByUserId,
+    createDate: '2026-08-01T09:00:00',
+    lastModifiedDate: liveMentoringNow(),
+    currentOpening: opening
+      ? {
+          openingId: opening.openingId,
+          status: opening.status,
+          durationPrices: opening.durationPrices,
+          feedbackStartDate: opening.feedbackStartDate,
+          feedbackEndDate: opening.feedbackEndDate,
+          openedAt: opening.openedAt,
+          closedAt: opening.closedAt,
+          closeReason: opening.closeReason,
+          closedByUserId: null as number | null,
+          createDate: opening.openedAt,
+          lastModifiedDate: opening.openedAt,
+        }
+      : null,
+  };
+};
+
+type AdminFixtureRow = ReturnType<typeof adminLiveMentoringVo>;
+
+/**
+ * "나" 이외의 멘토 행. 상태 필터·정렬 확인용 고정 행이다.
+ * 관리자 화면에는 조회·강제 종료만 있고 승인·반려 자체가 없으므로(백엔드에 대응 API가
+ * 없음), 상태를 실제 API 로 전이시키지 않는다 — 대신 세 상태(DRAFT/APPROVED/INACTIVE)를
+ * 미리 다양하게 박아 필터·정렬을 검증한다. 개설이 있는 행(20번)은 강제 종료 핸들러가
+ * `fixture.currentOpening` 을 그대로 찾아 종료 처리한다.
+ */
+const makeAdminFixtureRows = (): AdminFixtureRow[] => [
+  {
+    liveMentoringId: 20,
+    mentorId: 2,
+    mentorNickname: '박멘토',
+    mentorProfileImage: null,
+    title: '이력서 클리닉',
+    status: 'APPROVED',
+    categories: ['RESUME'],
+    hasDetailPage: true,
+    approvedAt: '2026-08-03T11:00:00',
+    approvedByUserId: 1,
+    createDate: '2026-08-02T11:00:00',
+    lastModifiedDate: '2026-08-03T11:00:00',
+    currentOpening: {
+      openingId: 220,
+      status: 'OPEN',
+      durationPrices: [{ duration: 30, price: getPriceByDuration(30) }],
+      feedbackStartDate: '2026-08-03',
+      feedbackEndDate: '2026-08-17',
+      openedAt: '2026-08-03T11:00:00',
+      closedAt: null,
+      closeReason: null,
+      closedByUserId: null,
+      createDate: '2026-08-03T11:00:00',
+      lastModifiedDate: '2026-08-03T11:00:00',
+    },
+  },
+  {
+    liveMentoringId: 21,
+    mentorId: 3,
+    mentorNickname: '최멘토',
+    mentorProfileImage: null,
+    title: '포트폴리오 집중 피드백',
+    status: 'INACTIVE',
+    categories: ['PORTFOLIO'],
+    hasDetailPage: false,
+    approvedAt: '2026-07-28T15:00:00',
+    approvedByUserId: 1,
+    createDate: '2026-07-28T15:00:00',
+    lastModifiedDate: '2026-07-30T09:00:00',
+    currentOpening: null,
+  },
+];
+
+let adminFixtureRows = makeAdminFixtureRows();
+
+/**
+ * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
+ *
+ * 목 데이터는 PRD 기준(평점·후기·모자이크)이고 실제 개설 목록 응답은 그 필드가 없으므로,
+ * 공개 목록이 실제로 받는 필드만 남겨 매핑한다.
+ * `headline`("네이버 · 서비스 기획 7년")을 회사/직무로 쪼개 대표 경력을 만들고,
+ * **대표 경력 미지정(null)** 케이스도 재현하도록 5번째 멘토마다 null 을 준다.
+ */
+function toOpeningDto(card: LiveMentorCard) {
+  const [company, job] = card.headline.split('·').map((part) => part.trim());
+  const hasRepresentativeCareer = card.mentorId % 5 !== 0;
+
+  return {
+    // 서버는 상품(liveMentoring)과 개설(opening)을 별도 식별자로 내려준다.
+    // 목 멘토는 상품·개설을 1:1 로 갖고 있어 mentorId 를 그대로 파생시킨다.
+    liveMentoringId: card.mentorId,
+    openingId: card.mentorId,
+    mentorId: card.mentorId,
+    mentorNickname: card.nickname,
+    // 프로필 이미지를 끈 멘토는 백엔드도 이미지를 내려주지 않는다.
+    mentorProfileImage: card.profileVisible ? card.profileImage : null,
+    mentorIntroduction: card.mentoringPoints,
+    representativeCareer: hasRepresentativeCareer
+      ? {
+          id: card.mentorId,
+          company: company ?? null,
+          field: null,
+          job: job ?? null,
+          position: null,
+          department: null,
+          startDate: '2020-01',
+          endDate: null,
+        }
+      : null,
+    title: mentoringTitleFor(card),
+    categories: card.categories,
+    durations: card.durations,
+    minimumPrice: card.price,
+    feedbackStartDate: card.feedbackStartDate,
+    feedbackEndDate: card.feedbackEndDate,
+  };
+}
+
 /** 오픈채팅방 QA용 링크 — 실제 열리는 카카오 오픈채팅 도메인 형태. */
 const MOCK_CHAT_LINK = 'https://open.kakao.com/o/gMockChat';
 
@@ -1497,5 +1762,305 @@ export const handlers = [
         },
       },
     });
+  }),
+
+  // ─────────────────────────────────────────────────────────────
+  // 1대1 라이브 멘토링 (독립 마켓플레이스) — 전부 net-new, 결제/예약 실행 없음.
+  // 공유 목 데이터(./data/liveMentoring)를 그대로 서빙한다.
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * (관리자) GET /admin/live-mentoring — 상품 목록.
+   *
+   * 공개 목록과 달리 기간·노출 조건을 걸지 않는다. `page` 는 1-based 다.
+   *
+   * **공개 목록 핸들러보다 먼저 등록해야 한다** — 아래 공개 목록의 와일드카드 패턴이
+   * `/admin/live-mentoring` 까지 삼켜버려서, 순서가 뒤바뀌면 관리자 요청이
+   * 공개 목록 응답을 받는다.
+   */
+  http.get('*/admin/live-mentoring', ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
+    const size = Number(url.searchParams.get('size') ?? '20');
+
+    const all = [adminLiveMentoringVo(), ...adminFixtureRows];
+    const filtered = status ? all.filter((row) => row.status === status) : all;
+    const totalElements = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const start = (page - 1) * size;
+
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        liveMentoringList: filtered.slice(start, start + size),
+        pageInfo: {
+          // 서버 `PageInfo` 는 0-based 인덱스를 담는다(요청은 1-based).
+          pageNum: page - 1,
+          pageSize: size,
+          totalElements,
+          totalPages,
+        },
+      },
+    });
+  }),
+
+  /**
+   * (공개) GET /live-mentoring?page&size&categories&sortType
+   *
+   * 실제 백엔드 `GetLiveMentoringOpeningsResponseDto` 계약을 그대로 흉내낸다:
+   * 응답은 `{ openingList, pageInfo }`, `page`는 1-based
+   * (서버 `spring.data.web.pageable.one-indexed-parameters: true`),
+   * `categories`는 반복 파라미터(`categories=A&categories=B`)다.
+   */
+  http.get('*/live-mentoring', ({ request }) => {
+    const url = new URL(request.url);
+    const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
+    const size = Number(url.searchParams.get('size') ?? '9');
+    const categories = url.searchParams.getAll(
+      'categories',
+    ) as LiveMentoringCategory[];
+    const sortType = url.searchParams.get('sortType');
+
+    let list: LiveMentorCard[] =
+      categories.length > 0
+        ? LIVE_MENTOR_CARDS.filter((c) =>
+            c.categories.some((each) => categories.includes(each)),
+          )
+        : [...LIVE_MENTOR_CARDS];
+
+    if (sortType === 'LATEST') {
+      list = [...list].sort((a, b) => b.mentorId - a.mentorId);
+    } else if (sortType === 'FEEDBACK_START_DATE') {
+      list = [...list].sort((a, b) =>
+        a.feedbackStartDate.localeCompare(b.feedbackStartDate),
+      );
+    }
+
+    const totalElements = list.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const start = (page - 1) * size;
+    const openingList = list.slice(start, start + size).map(toOpeningDto);
+
+    return HttpResponse.json({
+      status: 200,
+      data: {
+        openingList,
+        pageInfo: { pageNum: page, pageSize: size, totalElements, totalPages },
+      },
+    });
+  }),
+
+  /**
+   * (공개) GET /live-mentoring/mentors/:mentorId — 멘토 상세(+reviews).
+   * 존재하지 않는 id는 첫 멘토로 폴백하되 mentorId는 echo.
+   */
+  http.get('*/live-mentoring/mentors/:mentorId', ({ params }) => {
+    const mentorId = Number(params.mentorId);
+    const detail = LIVE_MENTOR_DETAILS[mentorId] ?? LIVE_MENTOR_DETAILS[1];
+    return HttpResponse.json({
+      status: 200,
+      data: { ...detail, mentorId },
+    });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/settings — 오픈 설정(메타) 조회.
+   */
+  http.get('*/mentor/live-mentoring/settings', () => {
+    return HttpResponse.json({ status: 200, data: settingsResponse() });
+  }),
+
+  /**
+   * (멘토) PATCH /user-career/my/:careerId/representative — 대표 경력 지정.
+   * 요청 바디는 없고, 기존 대표 경력은 서버가 자동 해제한다(단일 값으로 덮어쓰기).
+   */
+  http.patch('*/user-career/my/:careerId/representative', ({ params }) => {
+    representativeCareerId = Number(params.careerId);
+    return HttpResponse.json({ status: 200, data: { isSuccess: true } });
+  }),
+
+  /**
+   * (멘토) PUT /mentor/live-mentoring/settings — 상품 설정 저장.
+   *
+   * 백엔드가 받는 건 title/categories 두 개뿐이다. 진행시간·기간은 검토 제출에서 받는다.
+   * 상품이 없으면 이 요청이 `DRAFT` 로 상품을 만든다.
+   */
+  http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      title?: string;
+      categories?: LiveMentoringCategory[];
+    };
+
+    if (!isSettingsEditable()) {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_LOCKED',
+        '현재 상태에서는 라이브 멘토링 설정을 수정할 수 없습니다.',
+      );
+    }
+    if (!body.title?.trim() || !body.categories?.length) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+
+    liveMentoringState.title = body.title;
+    liveMentoringState.categories = body.categories;
+    if (liveMentoringState.liveMentoringId === null) {
+      liveMentoringState.liveMentoringId = 1;
+      liveMentoringState.status = 'DRAFT';
+    }
+    return HttpResponse.json({ status: 200, data: settingsResponse() });
+  }),
+
+  /**
+   * (멘토) POST /mentor/live-mentoring/submit — 제출.
+   *
+   * 관리자 검토 단계가 없다(자가승인). 백엔드
+   * `LiveMentoringLifecycleServiceImpl.submit()`과 동일하게, 한 트랜잭션에서
+   * 진행시간·기간 저장 → `DRAFT → APPROVED` 전이 → 개설(opening) 생성까지 이 핸들러가 처리한다.
+   */
+  http.post('*/mentor/live-mentoring/submit', async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      durations?: number[];
+      feedbackStartDate?: string;
+      feedbackEndDate?: string;
+    };
+
+    if (liveMentoringState.liveMentoringId === null) {
+      return liveMentoringError(
+        404,
+        'LIVE_MENTORING_NOT_FOUND',
+        '라이브 멘토링을 찾을 수 없습니다.',
+      );
+    }
+    if (!body.durations?.length) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    if (body.durations.some((duration) => duration !== 30 && duration !== 60)) {
+      return liveMentoringError(
+        400,
+        'INVALID_LIVE_MENTORING_DURATION',
+        '지원하지 않는 라이브 멘토링 진행 시간입니다.',
+      );
+    }
+    const { feedbackStartDate, feedbackEndDate } = body;
+    if (
+      !feedbackStartDate ||
+      !feedbackEndDate ||
+      feedbackStartDate > feedbackEndDate ||
+      feedbackEndDate < liveMentoringToday()
+    ) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    // 재제출은 없다 — 검토 단계가 없으므로 제출은 `DRAFT`에서만 가능하다.
+    if (liveMentoringState.status !== 'DRAFT') {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_INVALID_STATE',
+        '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+      );
+    }
+
+    const durations = body.durations as LiveMentoringDuration[];
+    liveMentoringState.durations = durations;
+    liveMentoringState.feedbackStartDate = feedbackStartDate;
+    liveMentoringState.feedbackEndDate = feedbackEndDate;
+    liveMentoringState.status = 'APPROVED';
+    liveMentoringState.approvedAt = liveMentoringNow();
+    liveMentoringState.approvedByUserId = 1;
+    liveMentoringState.openings.unshift({
+      openingId: nextOpeningId++,
+      status: 'OPEN',
+      durationPrices: durations.map((duration) => ({
+        duration,
+        price: getPriceByDuration(duration),
+      })),
+      feedbackStartDate,
+      feedbackEndDate,
+      openedAt: liveMentoringNow(),
+      closedAt: null,
+      closeReason: null,
+    });
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /**
+   * (멘토) PATCH /mentor/live-mentoring/openings/:openingId/close — 본인 개설 종료.
+   * 예약 존재 여부를 검사하지 않고 종료한다. 이미 종료된 개설도 200 이다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/openings/:openingId/close',
+    ({ params }) => {
+      const found = closeOpeningById(
+        Number(params.openingId),
+        'MENTOR_CANCELED',
+        1,
+      );
+      if (!found) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (관리자) 승인·반려 엔드포인트는 없다.
+   * `LiveMentoringV1AdminController`에는 목록 조회와 강제 종료 두 API뿐이다 — 자가승인
+   * 전환으로 검토·승인·반려 단계 자체가 사라졌다(제출 즉시 `submit()`이 승인+개설까지
+   * 처리한다, 4.2 참고). 등록하지 않은 라우트는 `onUnhandledRequest` 설정에 따라
+   * bypass/에러 처리된다 — 존재하지 않는 API라는 걸 목도 동일하게 반영한다.
+   */
+
+  /** (관리자) PATCH /admin/live-mentoring/openings/:openingId/close — 강제 종료. */
+  http.patch(
+    '*/admin/live-mentoring/openings/:openingId/close',
+    ({ params }) => {
+      const openingId = Number(params.openingId);
+      const fixture = adminFixtureRows.find(
+        (row) => row.currentOpening?.openingId === openingId,
+      );
+      if (fixture?.currentOpening) {
+        fixture.currentOpening.status = 'CLOSED';
+        fixture.currentOpening.closedAt = liveMentoringNow();
+        fixture.currentOpening.closeReason = 'ADMIN_FORCED';
+        fixture.currentOpening.closedByUserId = 99;
+        return HttpResponse.json({ status: 200, data: null });
+      }
+      const found = closeOpeningById(openingId, 'ADMIN_FORCED', 99);
+      if (!found) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/template — 상세 페이지 템플릿 조회.
+   */
+  http.get('*/mentor/live-mentoring/template', () => {
+    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_TEMPLATE });
+  }),
+
+  /**
+   * (멘토) PUT /mentor/live-mentoring/template — 저장. 받은 body를 echo.
+   */
+  http.put('*/mentor/live-mentoring/template', async ({ request }) => {
+    const body = await request.json().catch(() => ({}));
+    return HttpResponse.json({ status: 200, data: body });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/open-status — 개설 이력.
+   */
+  http.get('*/mentor/live-mentoring/open-status', () => {
+    return HttpResponse.json({ status: 200, data: openingHistoryResponse() });
   }),
 ];

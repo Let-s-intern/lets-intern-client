@@ -1,4 +1,14 @@
-import { accountType, pageInfo } from '@/schema';
+import {
+  activitySchema,
+  categorySchema,
+} from '@/api/experience/experienceSchema';
+import { mentorHashTagItemSchema } from '@/api/mentor/mentorSchema';
+import {
+  accountType,
+  authProviderSchema,
+  pageInfo,
+  reportTypeSchema,
+} from '@/schema';
 import { z } from 'zod';
 
 // GET 유저 관리자 여부
@@ -244,3 +254,100 @@ export const userExperienceInfoSchema = userExperienceBaseSchema.extend({
 });
 
 export type UserExperienceInfo = z.infer<typeof userExperienceInfoSchema>;
+
+/**
+ * 어드민 유저 상세 정보 조회 (v2 — GET /api/v2/admin/user/{userId}).
+ * userAdminDetailType(v1, GET /api/v1/user/{userId}) 어드민 버전
+ */
+export const adminUserDetailSchema = z.object({
+  userInfo: z.object({
+    userId: z.number(),
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    contactEmail: z.string().nullable(),
+    phoneNum: z.string(),
+    university: z.string().nullable(),
+    inflowPath: z.string().nullable(),
+    grade: z.string().nullable(),
+    major: z.string().nullable(),
+    wishField: z.string().nullable(),
+    wishJob: z.string().nullable(),
+    wishIndustry: z.string().nullable(),
+    wishEmploymentType: z.string().nullable(),
+    wishCompany: z.string().nullable(),
+    sns: z.string().nullable(),
+    nickname: z.string().nullable(),
+    introduction: z.string().nullable(),
+    description: z.string().nullable(),
+    accountType: accountType.nullable(),
+    accountNum: z.string().nullable(),
+    marketingAgree: z.boolean().nullable(),
+    authProvider: authProviderSchema.nullable(),
+    role: z.string().nullable(),
+    careerType: z.string().nullable(),
+    memo: z.string().nullable(),
+    isPoolUp: z.boolean().nullable(),
+    profileImgUrl: z.string().nullable(),
+    corpImgUrl: z.string().nullable(),
+  }),
+  applicationInfo: z.array(
+    z.object({
+      programId: z.number().nullable(),
+      programTitle: z.string(),
+    }),
+  ),
+  userDocumentInfo: z
+    .array(
+      z.object({
+        userDocumentId: z.number(),
+        userDocumentType: reportTypeSchema,
+        fileUrl: z.string().nullable(),
+        fileName: z.string().nullable(),
+        wishField: z.string().nullable(),
+        wishJob: z.string().nullable(),
+        wishIndustry: z.string().nullable(),
+      }),
+    )
+    .nullable(),
+  careerInfos: z
+    .array(
+      z.object({
+        company: z.string().nullable(),
+        field: z.string().nullable(),
+        job: z.string().nullable(),
+        position: z.string().nullable(),
+        department: z.string().nullable(),
+        employmentType: z.string().nullable(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        verificationFile: z.string().nullable(),
+        isRepresentative: z.boolean(),
+      }),
+    )
+    .nullable(),
+  experienceInfos: z
+    .array(
+      z.object({
+        title: z.string().nullable().optional(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional(),
+        activityType: activitySchema.nullable().optional(),
+        experienceCategory: categorySchema.nullable().optional(),
+        role: z.string().nullable().optional(),
+        situation: z.string().nullable().optional(),
+        task: z.string().nullable().optional(),
+        action: z.string().nullable().optional(),
+        result: z.string().nullable().optional(),
+        coreCompetency: z.string().nullable().optional(),
+        customCategoryName: z.string().nullable().optional(),
+        reflection: z.string().nullable().optional(),
+        organ: z.string().nullable().optional(),
+        yearBadges: z.array(z.number()).optional(),
+      }),
+    )
+    .nullable(),
+  mentorHashTagInfos: z.array(mentorHashTagItemSchema).nullable(),
+});
+
+export type AdminUserDetail = z.infer<typeof adminUserDetailSchema>;
