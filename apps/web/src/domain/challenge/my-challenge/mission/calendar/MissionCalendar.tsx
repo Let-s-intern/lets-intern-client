@@ -1,3 +1,8 @@
+import {
+  countFinishedMissions,
+  findLastFinishedSchedule,
+} from '@/domain/challenge/utils/missionTimeState';
+import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -12,7 +17,8 @@ import MissionCalendarItem from './MissionCalendarItem';
 interface Props {
   className?: string;
   schedules: Schedule[];
-  todayTh: number;
+  /** 오늘 진행 중인 회차. 진행 중인 미션이 없는 시간대에는 null 이다. */
+  todayTh: number | null;
   isDone: boolean;
 }
 
@@ -25,6 +31,9 @@ const getContentWidth = (swiper: SwiperType) => {
 const SWIPER_STYLE = { paddingTop: 16 };
 
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
+  // 카드 상태 판정의 기준 시각. 여기서 한 번만 만들어 카드 전체가 같은 '지금' 을 보게 한다.
+  const now = dayjs();
+
   const swiperRef = useRef<SwiperType | null>(null);
   const { selectedMissionTh } = useMissionStore();
   const pathname = usePathname();
@@ -37,18 +46,25 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
 
   const isMissionPage = useMemo(() => pathname.includes('/me'), [pathname]);
 
-  const targetIndex = useMemo(() => {
-    return isMissionPage ? (selectedMissionTh ?? todayTh) : todayTh;
-  }, [isMissionPage, selectedMissionTh, todayTh]);
+  // 진행 중인 미션이 없는 시간대에 맞춰 갈 자리. 가장 최근에 마감된 회차다.
+  const lastFinishedTh =
+    findLastFinishedSchedule(schedules, now)?.missionInfo.th ?? null;
+
+  // 챌린지 시작 전이라 마감된 회차도 없으면 null 이고, 첫 카드에 머문다.
+  const targetTh = isMissionPage
+    ? (selectedMissionTh ?? todayTh ?? lastFinishedTh)
+    : (todayTh ?? lastFinishedTh);
 
   const focusTodayMission = (swiper: SwiperType) => {
+    if (targetTh === null) return;
+
     const startsFromZero = schedules[0]?.missionInfo?.th === 0;
     const visibleCount = swiper.slidesPerViewDynamic();
     const visibleLimit = startsFromZero ? visibleCount - 1 : visibleCount;
 
-    if (targetIndex <= visibleLimit) return;
+    if (targetTh <= visibleLimit) return;
 
-    const rawIndex = startsFromZero ? targetIndex : targetIndex - 1;
+    const rawIndex = startsFromZero ? targetTh : targetTh - 1;
     const centeredIndex = Math.max(rawIndex - Math.floor(visibleCount / 2), 0);
     swiper.slideTo(centeredIndex, 0);
   };
@@ -59,7 +75,7 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
     setTrackWidth(getContentWidth(swiper));
     focusTodayMission(swiper);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetIndex, schedules.length, schedules]);
+  }, [targetTh, schedules.length, schedules]);
 
   const getStep = (swiper: SwiperType) => {
     return Math.max(Math.round(swiper.slidesPerViewDynamic() / 2), 1);
@@ -86,15 +102,26 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
     );
   };
 
-  const todaySchedule = schedules.find((s) => s.missionInfo.th === todayTh);
+  const todaySchedule =
+    todayTh === null
+      ? undefined
+      : schedules.find((s) => s.missionInfo.th === todayTh);
   const isTodayDone = todaySchedule?.attendanceInfo.result === 'PASS';
+
+  // 진행 위치는 마감된 회차 수로 잡는다. 예전에는 todayTh 를 카드 인덱스처럼 썼는데
+  // 오늘 회차가 없는 시간대에는 그 값이 101 로 부풀어 진행바가 늘 가득 찼다.
+  // 0회차가 있는 편성은 회차 번호가 곧 카드 인덱스라 예전 계산과 결과가 같고,
+  // 0회차가 없는 편성은 예전처럼 한 칸 앞선 자리에 둔다 — 이번 Push 는 화면을 바꾸지 않는다.
+  const startsFromZero = schedules[0]?.missionInfo?.th === 0;
+  const progressIndex =
+    countFinishedMissions(schedules, now) + (startsFromZero ? 0 : 1);
 
   const progress = isDone
     ? 100
     : isTodayDone
-      ? Math.min(((todayTh + 1) / schedules.length) * 100, 100)
+      ? Math.min(((progressIndex + 1) / schedules.length) * 100, 100)
       : Math.min(
-          ((todayTh + CARD_CENTER_FRACTION) / schedules.length) * 100,
+          ((progressIndex + CARD_CENTER_FRACTION) / schedules.length) * 100,
           100,
         );
 
@@ -137,7 +164,7 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
           <SwiperSlide key={index} className="mt-3 !w-[82px]">
             <MissionCalendarItem
               schedule={schedule}
-              todayTh={todayTh}
+              now={now}
               isDone={isDone}
               className="w-full cursor-pointer"
             />

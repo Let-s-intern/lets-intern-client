@@ -83,7 +83,6 @@ function ChallengeDashboardContent() {
   const couponPopup = useCouponRewardPopup({
     challengeType: currentChallenge?.challengeType,
     challengeEndDate: currentChallenge?.endDate,
-    todayTh,
     schedules: filteredSchedules,
   });
 

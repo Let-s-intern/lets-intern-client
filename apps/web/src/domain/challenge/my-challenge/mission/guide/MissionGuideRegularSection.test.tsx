@@ -29,7 +29,8 @@ const buildMissionData = (
     id: 34,
     th: 3,
     title: '직무 탐색',
-    // 미션 자료 모음은 startDate 이후에만 노출된다.
+    // LC-3207 Push 2 부터 미션 자료 모음은 시작 전 회차에도 노출된다.
+    // 여기 날짜는 "진행 중" 상태를 만들 뿐, 자료 노출 조건이 아니다.
     startDate: dayjs().subtract(1, 'day'),
     endDate: dayjs().add(1, 'day'),
     essentialContentsList: [{ id: 56, title: '필수 자료', link: 'https://e' }],
@@ -60,6 +61,63 @@ const clickLink = async (name: string) => {
 
 /** 마지막 post 호출의 바디 */
 const lastBody = () => postMock.mock.calls.at(-1)?.[1];
+
+// LC-3207 Push 2 에서 계약이 뒤집혔다. 예전에는 startDate 이후에만 자료가 보였다.
+// 지금은 시작 전 회차의 자료도 공개한다 — 결제 직후 콘텐츠를 실제로 받았다는 사실이
+// 남아야 환불 판단 근거가 서기 때문이다. 제출은 여전히 해당 날짜에만 가능하다.
+describe('MissionGuideRegularSection 미션 자료 공개 시점', () => {
+  const 자료링크이름 = ['미션 템플릿', '필수 자료', '추가 자료'];
+
+  beforeEach(() => {
+    postMock.mockReset();
+    postMock.mockResolvedValue({ data: {} });
+  });
+
+  it.each([
+    [
+      '시작 전 회차',
+      { startDate: dayjs().add(3, 'day'), endDate: dayjs().add(4, 'day') },
+    ],
+    [
+      '진행 중 회차',
+      { startDate: dayjs().subtract(1, 'day'), endDate: dayjs().add(1, 'day') },
+    ],
+    [
+      '마감된 회차',
+      {
+        startDate: dayjs().subtract(4, 'day'),
+        endDate: dayjs().subtract(3, 'day'),
+      },
+    ],
+    ['날짜를 모르는 회차', { startDate: null, endDate: null }],
+  ])('%s 에서도 미션 자료 모음이 보인다', (_, dates) => {
+    renderSection(dates);
+
+    expect(screen.getByText('미션 자료 모음')).toBeInTheDocument();
+    for (const name of 자료링크이름) {
+      expect(
+        screen.getByRole('button', { name: new RegExp(name) }),
+      ).toBeInTheDocument();
+    }
+  });
+
+  it('시작 전 회차에서 연 자료도 이용 기록으로 남는다', async () => {
+    // 전체 공개의 목적은 자료를 여는 것이 아니라 그 열람이 로그에 남는 것이다.
+    jest.spyOn(window, 'open').mockImplementation(() => null);
+    renderSection({
+      startDate: dayjs().add(3, 'day'),
+      endDate: dayjs().add(4, 'day'),
+    });
+
+    await clickLink('필수 자료');
+
+    expect(postMock).toHaveBeenCalledWith(
+      '/access-log/mission-content',
+      expect.objectContaining({ missionId: 34, contentType: 'ESSENTIAL' }),
+    );
+    jest.restoreAllMocks();
+  });
+});
 
 describe('MissionGuideRegularSection 미션 자료 열람 기록', () => {
   let openSpy: jest.SpyInstance;

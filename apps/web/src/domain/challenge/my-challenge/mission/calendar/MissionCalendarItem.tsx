@@ -8,24 +8,27 @@ import MissionTodayIcon from './ui/MissionTodayIcon';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { logMissionAccess } from '@/domain/challenge/api/missionAccessLog';
+import { getMissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
+import { Dayjs } from 'dayjs';
 interface Props {
   schedule: Schedule;
-  todayTh: number;
+  /** 캘린더가 한 번 만들어 내려준다. 카드마다 다른 시각을 보면 안 된다. */
+  now: Dayjs;
   className?: string;
   isDone: boolean;
 }
 
-const MissionCalendarItem = ({
-  schedule,
-  todayTh,
-  className,
-  isDone,
-}: Props) => {
+const MissionCalendarItem = ({ schedule, now, className, isDone }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+
+  // 카드 상태는 회차 번호 대소비교가 아니라 미션 날짜로 정한다. 번호로 정하면
+  // 오늘 회차가 없는 시간대에 전 회차가 '지나간 회차' 가 된다(LC-3207).
+  const timeState = getMissionTimeState(mission, now);
+  const isInProgress = timeState === 'IN_PROGRESS';
 
   const params = useParams<{ applicationId: string; programId: string }>();
   const router = useRouter();
@@ -75,15 +78,15 @@ const MissionCalendarItem = ({
 
   const isCardActive = () => {
     if (!isMissionPage) {
-      // 대시보드 페이지: todayTh 활성화
-      return mission.th === todayTh;
+      // 대시보드 페이지: 진행 중인 미션 활성화
+      return isInProgress;
     } else {
       if (selectedMissionId) {
         // 특정 미션이 선택된 경우: 선택된 미션 활성화
         return isSelected;
       } else {
-        // 직접 진입한 경우: todayTh 활성화
-        return mission.th === todayTh;
+        // 직접 진입한 경우: 진행 중인 미션 활성화
+        return isInProgress;
       }
     }
   };
@@ -101,23 +104,29 @@ const MissionCalendarItem = ({
         {(mission.th === BONUS_MISSION_TH ||
           mission.th === TALENT_POOL_MISSION_TH) &&
         attendance?.submitted ? (
-          <MissionIcon schedule={schedule} isDone={isDone} />
-        ) : mission.th === todayTh ? (
+          <MissionIcon
+            schedule={schedule}
+            isDone={isDone}
+            timeState={timeState}
+          />
+        ) : isInProgress ? (
           <MissionTodayIcon
             mission={mission}
             attendance={attendance}
             isDone={isDone}
           />
-        ) : (mission.th ?? 0) > todayTh ? (
+        ) : timeState === 'UPCOMING' ? (
           <MissionNotStartedIcon schedule={schedule} />
         ) : (
-          (mission.th ?? 0) < todayTh && (
-            <MissionIcon schedule={schedule} isDone={isDone} />
-          )
+          <MissionIcon
+            schedule={schedule}
+            isDone={isDone}
+            timeState={timeState}
+          />
         )}
         <span
           className={clsx('text-xxsmall10 block w-full leading-3', {
-            'text-primary': mission.th === todayTh,
+            'text-primary': isInProgress,
           })}
         >
           {mission.startDate?.format('MM.DD(ddd)')}
