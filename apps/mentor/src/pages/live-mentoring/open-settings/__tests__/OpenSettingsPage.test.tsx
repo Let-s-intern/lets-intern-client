@@ -302,6 +302,22 @@ describe('OpenSettingsPage — 검토 제출', () => {
     });
   });
 
+  it('제출 성공 직후에는 리페치를 기다리지 않고 바로 편집을 잠근다', () => {
+    // 회귀 케이스: 제출 성공 후 설정 쿼리가 리페치되기 전까지 화면이 그대로
+    // 초안 모드로 남아 있으면, 그 사이 한 번 더 저장을 누를 때 서버는 이미
+    // 잠근 상태라(승인) "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
+    submitMock.mockImplementation((_body, options) => options?.onSuccess?.());
+    renderPage({ durations: [30, 60] });
+
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    passPreOpenCheck('오픈하기');
+
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('제목·타입에 변경사항이 있으면 먼저 저장하라고 알리고 제출을 막는다', () => {
     renderPage();
 
@@ -505,6 +521,15 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(
       within(dialog).getByRole('link', { name: '상세 페이지 확인하기' }),
     ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
+
+    // 회귀 케이스: 서버는 이미 오픈을 잠갔는데(승인+개설) 설정 쿼리가 리페치되기
+    // 전까지 화면이 재개설 지름길에 그대로 남아 있으면, 한 번 더 저장·재개설을
+    // 눌렀을 때 서버가 막아(409) "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
+    // 리페치를 기다리지 않고 성공 즉시 잠가야 한다.
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: '수정' }),
+    ).not.toBeInTheDocument();
   });
 
   it('안내에서 바로 종료하면 방금 만든 오픈을 종료한다', () => {

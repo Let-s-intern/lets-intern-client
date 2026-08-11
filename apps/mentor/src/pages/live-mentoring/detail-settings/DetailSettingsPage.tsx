@@ -13,7 +13,7 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { useUserQuery } from '@/api/user/user';
 import {
-  START_EDIT_SUCCESS,
+  START_EDIT_SUCCESS_DETAIL,
   publicDetailUrl,
   toYoutubeEmbedUrl,
 } from '../constants';
@@ -278,7 +278,7 @@ const DetailSettingsPage = () => {
     startEdit(undefined, {
       onSuccess: () => {
         setIsEditing(true);
-        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
+        showAlert({ ...START_EDIT_SUCCESS_DETAIL, variant: 'success' });
       },
       onError: () =>
         showAlert({

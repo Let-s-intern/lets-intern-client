@@ -12,18 +12,27 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
 };
 
 /**
- * 상세 수정 시작(`POST /start-edit`) 성공 안내 문구.
+ * "수정"(`POST /start-edit`) 성공 안내 문구.
  *
- * 오픈 설정과 상세 페이지 설정 두 화면에서 같은 행동을 제공하므로 문구를 한곳에 둔다.
- * 화면마다 따로 적으면 한쪽만 고쳐져 같은 버튼이 다른 말을 하게 된다.
+ * 서버가 하는 일(상품을 초안으로 되돌림)은 두 화면에서 같지만, 그 결과 "지금
+ * 이 화면에서 뭘 할 수 있게 됐는지"는 화면마다 다르다 — 오픈 설정에서는 이
+ * 화면의 제목·타입·진행시간·기간이 바로 편집 가능해지고, 상세 페이지
+ * 설정에서는 좌측 편집 폼이 바로 열린다. 하나의 문구로 합쳐 두면 오픈
+ * 설정에서 눌렀을 때 "상세 페이지를 수정할 수 있다"는 엉뚱한 안내가 된다.
  *
  * 확인 모달 없이 버튼 클릭 즉시 실행한다(저장 버튼이 dirty일 때만 활성화되고
  * 이탈 시 경고가 뜨므로 사전 확인이 없어도 실수로 잃을 게 없다). 그래서 "이후에
  * 뭘 해야 하는지"만 이 성공 토스트로 짧게 알린다.
  */
-export const START_EDIT_SUCCESS = {
+export const START_EDIT_SUCCESS_DETAIL = {
   title: '이제 상세 페이지를 수정할 수 있어요.',
   description: '수정을 마치면 오픈 설정에서 다시 오픈해주세요.',
+} as const;
+
+/** "수정"(`POST /start-edit`) 성공 안내 문구 — 오픈 설정 화면용. */
+export const START_EDIT_SUCCESS_SETTINGS = {
+  title: '이제 설정을 다시 고칠 수 있어요.',
+  description: '고친 내용을 저장한 뒤 오픈하기를 누르면 다시 열립니다.',
 } as const;
 
 /**

@@ -27,7 +27,7 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
 import {
   CATEGORY_LABELS,
-  START_EDIT_SUCCESS,
+  START_EDIT_SUCCESS_SETTINGS,
   formatCareerPeriod,
   publicDetailUrl,
   formatPrice,
@@ -108,11 +108,21 @@ const OpenSettingsPage = () => {
    * 하므로 그 순간만 이 값으로 재개설 지름길을 건너뛴다.
    */
   const [isEditingOverride, setIsEditingOverride] = useState(false);
+  /**
+   * 제출·재개설 성공 직후, 상품은 이미 서버에서 잠겼는데(APPROVED+개설) 설정·개설
+   * 쿼리가 리페치되기 전까지는 화면이 그대로 "초안/재개설" 모드로 남는다. 그 사이에
+   * 멘토가 한 번 더 저장·재개설을 누르면 서버가 진짜 상태로 막아(409 LOCKED/
+   * INVALID_STATE) "다른 곳에서 상태가 바뀌었습니다" 에러가 뜬다 — 사실은 다른 곳이
+   * 아니라 방금 이 화면에서 바뀐 건데 화면이 못 따라간 것이다. 리페치를 기다리지
+   * 않고 성공 즉시 이 값으로 편집을 잠가 그 틈을 없앤다.
+   */
+  const [justLocked, setJustLocked] = useState(false);
 
   useEffect(() => {
     if (!data) return;
     setForm(data);
     setOriginal(data);
+    setJustLocked(false);
   }, [data]);
 
   if (!form || !original) {
@@ -169,8 +179,10 @@ const OpenSettingsPage = () => {
    * 설정과 같은 규칙(잠김 → 수정 클릭 → 편집)으로 통일한다.
    */
   const showReopenShortcut = canReopen && !isEditingOverride;
-  const canAct = isDraftLike || canReopen;
-  const canEditFields = isDraftLike || isEditingOverride;
+  // justLocked — 방금 제출·재개설에 성공해 서버는 이미 잠갔지만 쿼리가 아직
+  // 그 사실을 모르는 순간을 가린다. 자세한 이유는 justLocked 선언부 참고.
+  const canAct = (isDraftLike || canReopen) && !justLocked;
+  const canEditFields = (isDraftLike || isEditingOverride) && !justLocked;
   const actingAsDraft = canAct && !showReopenShortcut;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
@@ -325,13 +337,15 @@ const OpenSettingsPage = () => {
         feedbackEndDate: form.feedbackEndDate ?? '',
       },
       {
-        onSuccess: () =>
+        onSuccess: () => {
+          setJustLocked(true);
           showAlert({
             title: '오픈을 처리하고 있어요.',
             description:
               '곧 모집이 시작됩니다. 처리 중에는 설정을 수정할 수 없어요.',
             variant: 'success',
-          }),
+          });
+        },
         onError: handleMutationError('오픈에 실패했습니다.'),
       },
     );
@@ -354,6 +368,7 @@ const OpenSettingsPage = () => {
          * "됐습니다" 한 줄로 끝내지 않고, 확인할 주소와 즉시 내리는 길을 함께 준다.
          */
         onSuccess: (history) => {
+          setJustLocked(true);
           const opened = history.openings.find(
             (opening) => opening.status === 'OPEN',
           );
@@ -383,7 +398,7 @@ const OpenSettingsPage = () => {
     startEdit(undefined, {
       onSuccess: () => {
         setIsEditingOverride(true);
-        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
+        showAlert({ ...START_EDIT_SUCCESS_SETTINGS, variant: 'success' });
       },
       onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
     });
