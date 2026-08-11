@@ -4,6 +4,7 @@ import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import { challengeColors } from '@/domain/program/challenge/challengeColors';
+import PaybackTicketIcon from '@/domain/program/challenge/challenge-view/PaybackTicketIcon';
 import { challengeTypeSchema, ChallengeType } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { Dayjs } from 'dayjs';
@@ -115,7 +116,6 @@ const Portfolio다른프로그램추천 = ({
     },
   ];
 
-  const paypackImgSrc = '/images/payback-portfolio.png';
   const recommendLogoSrc = '/icons/bg-logo-portfolio.svg';
 
   // 큐레이션 카드 노출 시 추천은 최대 2개로 제한 (사용자 페이지 안전장치)
@@ -381,13 +381,12 @@ const Portfolio다른프로그램추천 = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {paypackImgSrc && (
-                  <img
-                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                    src={paypackImgSrc}
-                    alt={`페이백 ${deposit / 10000}만원`}
-                  />
-                )}
+                <PaybackTicketIcon
+                  deposit={deposit}
+                  challengeType="PORTFOLIO"
+                  accentColor={styles.primaryColor}
+                  className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                />
               </Box>
             </div>
           </div>

@@ -1,20 +1,6 @@
 'use client';
 
-/** 좌측 분할 패널 아이콘 */
-const SidePanelIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-    <rect
-      x="2"
-      y="3"
-      width="12"
-      height="10"
-      rx="1.5"
-      stroke="#4D55F5"
-      strokeWidth="1.2"
-    />
-    <path d="M6.5 3V13" stroke="#4D55F5" strokeWidth="1.2" />
-  </svg>
-);
+import { SidePanelIcon } from './panelIcons';
 
 interface SideViewButtonProps {
   onClick?: () => void;

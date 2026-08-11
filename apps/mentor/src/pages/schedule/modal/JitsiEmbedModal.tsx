@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import { JitsiEmbed } from '@letscareer/live-session/JitsiEmbed';
 
 import type { FeedbackAttendanceStatus } from '@/api/feedback/feedbackSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
+import { PencilIcon } from '@/pages/feedback/ui/panelIcons';
 import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
 import LiveSessionTimer from './LiveSessionTimer';
@@ -22,6 +24,9 @@ import LiveSessionTimer from './LiveSessionTimer';
  * - 상단 중앙: 세션 타이머 + (멘토) 멘티 출석 체크 — 반투명 플로팅.
  * - 좌하단: 사전 Q&A · 제출물을 각각 여는 반투명 동그란 버튼. 누르면 해당 자료만 띄운다.
  */
+// 에디터(Lexical)는 작성 패널을 열 때만 필요 → 동적 임포트.
+const FeedbackEditor = lazy(() => import('@/pages/feedback/ui/FeedbackEditor'));
+
 interface JitsiEmbedModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -53,6 +58,24 @@ interface JitsiEmbedModalProps {
   registerBaseUrl?: (base: string) => Promise<void>;
   /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
   onExhausted?: () => void;
+
+  /* ── 서면 피드백 작성 (LC-3181) ─────────────────────────────────────────
+     세션을 보면서 바로 쓰고 보낼 수 있게 우하단 플로팅 패널로 제공한다.
+     본문 state 는 부모가 소유한다 — 예약 모달의 작성 화면과 같은 초안을 공유해
+     회의실을 닫아도 쓰던 내용이 남는다. */
+  /** 본문 변경 콜백. 미전달 시 작성 패널을 렌더하지 않는다(멘티 시점 등). */
+  onFeedbackChange?: (jsonString: string) => void;
+  /** 에디터 초기값 — 저장돼 있던 본문. */
+  initialFeedbackContent?: string;
+  /** 멘티 전환 시 에디터를 새로 마운트하기 위한 key. */
+  feedbackEditorKey?: string;
+  /** 작성 가능 여부(attendanceId 부재·제출 완료면 false). */
+  canEditFeedback?: boolean;
+  /** 잠긴 이유 안내 문구. */
+  feedbackHint?: string | null;
+  onSaveFeedback?: () => void;
+  onSubmitFeedback?: () => void;
+  isSavingFeedback?: boolean;
 }
 
 interface MenteeAttendanceBarProps {
@@ -258,8 +281,18 @@ const JitsiEmbedModal = ({
   baseCandidates,
   registerBaseUrl,
   onExhausted,
+  onFeedbackChange,
+  initialFeedbackContent,
+  feedbackEditorKey,
+  canEditFeedback = false,
+  feedbackHint,
+  onSaveFeedback,
+  onSubmitFeedback,
+  isSavingFeedback = false,
 }: JitsiEmbedModalProps) => {
   const [openPanel, setOpenPanel] = useState<MaterialPanel | null>(null);
+  // 우하단 서면 피드백 작성 패널 — 세션을 보면서 쓰도록 화상 위에 띄운다.
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
 
   // 멘티 출석 — 클릭 즉시 저장하지 않고 선택만 보관한다(멘티 입장 잠김 방지).
   // 실제 PATCH 는 모달이 닫히거나 세션 종료 시각에 일괄 전송한다.
@@ -361,6 +394,63 @@ const JitsiEmbedModal = ({
           </div>
         )}
       </div>
+
+      {/* 피드백 작성 — 뷰포트 우하단 고정. 자료 패널(좌하단) 반대편이라 서로 가리지 않는다. */}
+      {onFeedbackChange && (
+        <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-3">
+          {isComposerOpen && (
+            <FloatingPanel
+              title="피드백 작성"
+              onClose={() => setIsComposerOpen(false)}
+              className="flex h-[70vh] w-[420px] max-w-[80vw] flex-col"
+            >
+              <div className="flex h-full min-h-0 flex-col">
+                {feedbackHint && (
+                  <p className="shrink-0 px-4 pt-3 text-xs text-neutral-400">
+                    {feedbackHint}
+                  </p>
+                )}
+                <div className="flex min-h-0 flex-1 flex-col px-4 py-3">
+                  <Suspense fallback={null}>
+                    <FeedbackEditor
+                      key={feedbackEditorKey}
+                      initialEditorStateJsonString={initialFeedbackContent}
+                      onChange={onFeedbackChange}
+                      isReadOnly={!canEditFeedback}
+                    />
+                  </Suspense>
+                </div>
+                <div className="flex shrink-0 items-center justify-end gap-2 border-t border-neutral-100 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={onSaveFeedback}
+                    disabled={!canEditFeedback || isSavingFeedback}
+                    className={feedbackModalDesign.writtenSaveButton}
+                  >
+                    임시저장
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onSubmitFeedback}
+                    disabled={!canEditFeedback || isSavingFeedback}
+                    className={feedbackModalDesign.writtenSubmitButton}
+                  >
+                    피드백 제출
+                  </button>
+                </div>
+              </div>
+            </FloatingPanel>
+          )}
+
+          <SemiFab
+            label="피드백 작성"
+            active={isComposerOpen}
+            onClick={() => setIsComposerOpen((prev) => !prev)}
+          >
+            <PencilIcon size={20} />
+          </SemiFab>
+        </div>
+      )}
 
       {/* 자료 버튼/패널 — 모달 바깥(뷰포트 좌하단)에 고정. 넓은 화면에서 화상을 가리지 않는다. */}
       {(hasPreQuestion || hasSubmission) && (

@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
@@ -8,6 +9,9 @@ import { defineConfig, loadEnv } from 'vite';
  * `.env` 의 `VITE_API_BASE_PATH` 를 그대로 쓴다. 예전에는 이 값이 소스에 하드코딩돼 있어
  * `.env` 를 로컬 서버로 바꿔도 요청은 계속 배포 서버로 나갔다 — 화면만 보고는 어느 서버에
  * 붙었는지 알 수 없어 QA 결과를 통째로 오해하게 만든다.
+ *
+ * 로컬 백엔드(`./gradlew bootRun`, 8080)와 붙이려면 `.env` 의 `VITE_API_BASE_PATH` 를
+ * `http://localhost:8080` 으로 두면 된다 — 루트의 `pnpm local` 이 그렇게 한다.
  */
 const FALLBACK_API_TARGET = 'https://letsintern.kr';
 
@@ -31,9 +35,32 @@ export default defineConfig(({ mode }) => {
   }
 
   const apiTarget = env.VITE_API_BASE_PATH || FALLBACK_API_TARGET;
+  // 로컬 백엔드는 자기 자신을 허용 origin 으로 두므로 헤더를 위장할 필요가 없다.
+  // 배포 서버로 보낼 때만 origin 검사를 통과하도록 바꿔 끼운다.
+  const isLocalTarget = apiTarget.includes('localhost');
+
+  // 소스맵 업로드는 토큰이 있을 때만 켠다. 없으면 플러그인이 빌드를 실패시킨다.
+  // 미니파이된 스택(`class e extends Ut`)만 남으면 원인 추적이 사실상 불가능하므로
+  // 운영 빌드에서는 CI 에 SENTRY_AUTH_TOKEN 을 넣어 반드시 활성화한다.
+  const sentrySourcemapEnabled = Boolean(process.env.SENTRY_AUTH_TOKEN);
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      ...(sentrySourcemapEnabled
+        ? [
+            sentryVitePlugin({
+              org: 'letscareer',
+              project: 'letscareer-mentor',
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
+          ]
+        : []),
+    ],
+    build: {
+      // 업로드 후 플러그인이 배포 산출물에서 소스맵을 제거한다.
+      sourcemap: sentrySourcemapEnabled,
+    },
     resolve: {
       alias: {
         '@': resolve(__dirname, './src'),
@@ -50,8 +77,9 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: apiTarget,
           changeOrigin: true,
-          secure: true,
+          secure: !isLocalTarget,
           configure: (proxy) => {
+            if (isLocalTarget) return;
             proxy.on('proxyReq', (proxyReq) => {
               proxyReq.setHeader('Origin', apiTarget);
               proxyReq.setHeader('Referer', `${apiTarget}/`);

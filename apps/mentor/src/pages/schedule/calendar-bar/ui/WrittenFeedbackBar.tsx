@@ -29,7 +29,9 @@ function daysFromToday(iso: string): number {
  * 2줄: [오늘 마감 ·] 남은 피드백 N건(강조) · 완료 N / 제출 N
  */
 const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
-  const remaining = Math.max(bar.submittedCount - bar.completedCount, 0);
+  // 분모는 피드백 작성 대상(지각 제출 제외). 미주입 바는 기존대로 제출 수를 쓴다.
+  const feedbackTargetCount = bar.feedbackTargetCount ?? bar.submittedCount;
+  const remaining = Math.max(feedbackTargetCount - bar.completedCount, 0);
   const isDeadlineToday = daysFromToday(bar.feedbackDeadline) === 0;
 
   return (
@@ -59,7 +61,7 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
         <span className="text-primary font-medium">
           남은 피드백 {remaining}건
         </span>
-        {` · 완료 ${bar.completedCount} / 제출 ${bar.submittedCount}`}
+        {` · 완료 ${bar.completedCount} / 제출 ${feedbackTargetCount}`}
       </div>
     </button>
   );

@@ -1,11 +1,9 @@
 import { CurrentChallenge } from '@/context/CurrentChallengeProvider';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { getRewardAmount } from '@/utils/getRewardAmount';
 import { clsx } from 'clsx';
-import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
@@ -30,7 +28,7 @@ const Heading3 = ({
 
 interface MissionGuideBonusSectionProps {
   className?: string;
-  todayTh: number;
+  todayTh: number | null;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
   isLoading?: boolean; // 로딩 상태 추가
@@ -72,13 +70,6 @@ const MissionGuideBonusSection = ({
     return <MissionGuideSkeleton variant="bonus" />;
   }
 
-  // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate?: Dayjs | null) => {
-    if (!endDate) return '99.99 99:99';
-    const date = dayjs(endDate);
-    return date.format('MM.DD HH:mm');
-  };
-
   return (
     <>
       <div className={clsx('flex flex-col gap-3', className)}>
@@ -86,7 +77,7 @@ const MissionGuideBonusSection = ({
         <MissionHeaderSection
           selectedMissionTh={selectedMissionTh || todayTh}
           missionType="블로그 후기 작성하고 현금 리워드 받기!"
-          deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+          missionEndDate={missionData?.missionInfo?.endDate}
           missionStartDate={missionData.missionInfo.startDate}
         />
 

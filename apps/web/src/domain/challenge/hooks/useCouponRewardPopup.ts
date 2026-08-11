@@ -1,28 +1,28 @@
+import { countFinishedMissions } from '@/domain/challenge/utils/missionTimeState';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType, Schedule } from '@/schema';
 import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 
 // 챌린지 종류별 재구매 할인 쿠폰 금액. 목록에 없는 챌린지 종류는 쿠폰이 없다(=팝업 미노출).
-const COUPON_AMOUNT_BY_CHALLENGE_TYPE: Partial<Record<ChallengeType, number>> =
-  {
-    CAREER_START: 5000, // 이력서 챌린지
-    EXPERIENCE_SUMMARY: 5000, // 경험정리 챌린지
-    PERSONAL_STATEMENT: 8000, // 자기소개서 챌린지
-    PORTFOLIO: 8000, // 포트폴리오 챌린지
-  };
+export const COUPON_AMOUNT_BY_CHALLENGE_TYPE: Partial<
+  Record<ChallengeType, number>
+> = {
+  CAREER_START: 5000, // 이력서 챌린지
+  EXPERIENCE_SUMMARY: 5000, // 경험정리 챌린지
+  PERSONAL_STATEMENT: 8000, // 자기소개서 챌린지
+  PORTFOLIO: 8000, // 포트폴리오 챌린지
+};
 
 interface Params {
   challengeType: ChallengeType | undefined;
   challengeEndDate: Dayjs | null | undefined;
-  todayTh: number;
   schedules: Schedule[];
 }
 
 const useCouponRewardPopup = ({
   challengeType,
   challengeEndDate,
-  todayTh,
   schedules,
 }: Params) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,13 +51,15 @@ const useCouponRewardPopup = ({
     );
     if (!missionSchedules.length) return;
 
+    // 절반 지점은 마감된 회차 수로 잰다. 예전에는 todayTh 로 쟀는데, 오늘 회차가 없는
+    // 시간대에는 그 값이 (가장 큰 th + 1) 로 부풀어 챌린지 첫날에도 이 검사를 통과했다.
     const halfPoint = Math.ceil(missionSchedules.length / 2);
-    if (todayTh < halfPoint) return;
+    if (countFinishedMissions(missionSchedules, dayjs()) < halfPoint) return;
 
     if (!couponEndDate || dayjs().isAfter(couponEndDate)) return;
 
     setIsOpen(true);
-  }, [todayTh, schedules, couponEndDate, amount]);
+  }, [schedules, couponEndDate, amount]);
 
   return {
     isOpen,

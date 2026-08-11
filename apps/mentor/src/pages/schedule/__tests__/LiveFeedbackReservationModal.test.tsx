@@ -233,13 +233,27 @@ describe('LiveFeedbackReservationModal — 멘토 상세 API 연동', () => {
     expect(screen.getByText('Toss')).toBeInTheDocument();
   });
 
-  it('상세 응답의 사전 질문(preQuestion)을 렌더한다', async () => {
+  // 사전 Q&A 는 카드에 펼치지 않고 오른쪽 패널 진입 버튼으로만 노출한다.
+  // 인라인이던 시절엔 장문일수록 카드가 늘어나 아래 영역을 밀어냈다.
+  it('사전 질문이 있으면 진입 버튼을 노출하고 본문은 카드에 펼치지 않는다', async () => {
     renderModal(makeBar());
     await waitFor(() => {
       expect(
-        screen.getByText('자기소개서 피드백을 받고 싶습니다.'),
+        screen.getByRole('button', { name: /사전 Q&A 보기/ }),
       ).toBeInTheDocument();
     });
+    expect(
+      screen.queryByText('자기소개서 피드백을 받고 싶습니다.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('진입 버튼을 누르면 사전 Q&A 패널에 본문이 노출된다', async () => {
+    renderModal(makeBar());
+    const button = await screen.findByRole('button', { name: /사전 Q&A 보기/ });
+    await userEvent.click(button);
+    expect(
+      await screen.findByText('자기소개서 피드백을 받고 싶습니다.'),
+    ).toBeInTheDocument();
   });
 
   it('attendanceStatus 가 PRESENT 면 제출 상태가 "제출됨"로 표기된다', async () => {

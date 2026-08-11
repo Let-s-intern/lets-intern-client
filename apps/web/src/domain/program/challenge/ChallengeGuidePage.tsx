@@ -1,6 +1,8 @@
 import { useChallengeHome } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { COUPON_AMOUNT_BY_CHALLENGE_TYPE } from '@/domain/challenge/hooks/useCouponRewardPopup';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -127,6 +129,13 @@ const ChallengeGuidePage = () => {
 
   const { data: homeData } = useChallengeHome(currentChallenge?.id);
 
+  const couponAmount = currentChallenge?.challengeType
+    ? COUPON_AMOUNT_BY_CHALLENGE_TYPE[currentChallenge.challengeType]
+    : undefined;
+  const couponEndDate = currentChallenge?.endDate?.add(2, 'month');
+  const showCouponBanner =
+    couponAmount && couponEndDate && dayjs().isBefore(couponEndDate);
+
   const notices = (homeData?.noticeList ?? []).filter(
     (item) => item.type === 'NOTICE',
   );
@@ -182,15 +191,15 @@ const ChallengeGuidePage = () => {
         </div>
       </section>
 
-      {currentChallenge && (
+      {showCouponBanner && (
         <div className="bg-primary-5 rounded-xs mt-10 flex flex-col items-start justify-between gap-5 p-[18px] md:flex-row md:items-center">
           <div className="flex flex-col gap-1">
             <p className="text-small18 font-medium tracking-[-0.094px]">
-              재구매 할인 쿠폰으로 {currentChallenge.title}을 더 저렴하게
+              재구매 할인 쿠폰으로 {currentChallenge!.title}을 더 저렴하게
               들어보세요!
             </p>
             <p className="text-primary-dark text-xsmall14 font-semibold">
-              ~~~쿠폰 유효기간 노출 예정~~~
+              유효기간 : ~ {couponEndDate!.format('YYYY년 MM월 DD일 HH시 mm분')}
             </p>
           </div>
           <Link

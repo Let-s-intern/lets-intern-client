@@ -7,10 +7,12 @@ import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
+import MissionNotOpenSection from '@/domain/challenge/dashboard/section/MissionNotOpenSection';
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
 import useCouponRewardPopup from '@/domain/challenge/hooks/useCouponRewardPopup';
+import { findNextUpcomingSchedule } from '@/domain/challenge/utils/missionTimeState';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
 import MissionCalendar from '@/domain/challenge/my-challenge/mission/calendar/MissionCalendar';
 import CouponRewardPopup from '@/domain/challenge/ui/CouponRewardPopup';
@@ -28,7 +30,6 @@ import { useParams, useSearchParams } from 'next/navigation';
 function MissionDetailSection() {
   const params = useParams<{ programId: string }>();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
-  const { isLastMissionSubmitted } = useMissionCalculation();
 
   // 경험정리 레벨 판별
   const experienceLevel = useExperienceLevel(schedules);
@@ -51,15 +52,36 @@ function MissionDetailSection() {
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
 
-  if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
+  // 완주 축하는 챌린지가 실제로 끝났을 때만 띄운다.
+  //
+  // 예전에는 `!dailyMission` 도 같은 조건에 묶여 있었다. 그 값이 null 이라는 것은
+  // "다 끝났다" 가 아니라 "지금은 진행 중인 미션이 없다" 는 뜻이다. 미션이 매일 08:00 에
+  // 열리는 편성이면 매일 자정~오전 8시가 그 상태인데, 2회차를 하고 있는 사람에게
+  // 완주 축하가 나가고 "미션 수행하기" 버튼까지 사라졌다(LC-3207).
+  //
+  // `isLastMissionSubmitted` 도 뺐다. 그 값은 마지막 회차에 출석 행이 있기만 하면 참이라
+  // (서버 `submitted = attendance != null`), 어드민이 만든 결석 행 하나로도 완주가 된다.
+  if (isChallengeDone) {
     return <MissionEndSection />;
   }
-  return (
-    <DailyMissionSection
-      dailyMission={dailyMission}
-      schedules={filteredSchedules}
-    />
-  );
+
+  if (dailyMission) {
+    return (
+      <DailyMissionSection
+        dailyMission={dailyMission}
+        schedules={filteredSchedules}
+      />
+    );
+  }
+
+  // 아직 열리지 않은 회차가 남아 있으면 언제 열리는지 알려 준다.
+  const nextSchedule = findNextUpcomingSchedule(filteredSchedules, dayjs());
+  if (nextSchedule) {
+    return <MissionNotOpenSection nextSchedule={nextSchedule} />;
+  }
+
+  // 남은 회차가 없다 — 챌린지 종료일 전에 모든 미션이 마감된 경우다.
+  return <MissionEndSection />;
 }
 
 function getIsChallengeDone(endDate: string) {
@@ -83,7 +105,6 @@ function ChallengeDashboardContent() {
   const couponPopup = useCouponRewardPopup({
     challengeType: currentChallenge?.challengeType,
     challengeEndDate: currentChallenge?.endDate,
-    todayTh,
     schedules: filteredSchedules,
   });
 

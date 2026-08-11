@@ -4,6 +4,7 @@ import {
 } from '@/domain/challenge/api/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
+import { getSubmitErrorMessage } from '@/domain/challenge/utils/submitErrorMessage';
 import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
@@ -167,7 +168,7 @@ export function useMissionSubmitRegular({
       }
     } catch (error) {
       console.error('미션 제출 실패:', error);
-      alert('미션 제출에 실패했습니다. 다시 시도해주세요.');
+      alert(getSubmitErrorMessage(error));
     }
   };
 

@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 
 import { useMentorAttendanceQuery } from '@/pages/feedback/hooks/useMentorAttendanceQuery';
+import { resolveWrittenSubmissionState } from '@/pages/feedback/utils/writtenSubmissionState';
 import { deriveMissionStatus } from '@/pages/utils/deriveMissionStatus';
 
 const formatDate = (dateStr: string) => {
@@ -51,18 +52,26 @@ const MissionRow = ({
   // Single-pass aggregation: submitted count + feedback status
   const { submittedCount, completedCount, missionStatus } = useMemo(() => {
     let submitted = 0;
+    // 피드백 작성 대상 = 제출자 중 지각 제출 제외. 미션 완료 판정의 분모다.
+    // 지각 제출을 분모에 남기면 완료가 될 수 없어 미션이 영영 '진행중'에 머문다.
+    let feedbackTarget = 0;
     let completed = 0;
     let feedbackStarted = 0;
 
     for (const a of attendanceList) {
-      if (a.status !== 'ABSENT') submitted++;
+      const state = resolveWrittenSubmissionState({
+        status: a.status,
+        attendanceId: a.id,
+      });
+      if (state !== 'notSubmitted') submitted++;
+      if (state === 'submitted') feedbackTarget++;
       const status = a.feedbackStatus ?? 'WAITING';
       if (status === 'COMPLETED' || status === 'CONFIRMED') completed++;
       if (status !== 'WAITING') feedbackStarted++;
     }
 
     const missionStatus = deriveMissionStatus(
-      submitted,
+      feedbackTarget,
       completed,
       feedbackStarted,
     );

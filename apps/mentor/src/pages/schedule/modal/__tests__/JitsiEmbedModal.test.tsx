@@ -176,4 +176,103 @@ describe('JitsiEmbedModal', () => {
       screen.queryByRole('button', { name: '출석' }),
     ).not.toBeInTheDocument();
   });
+
+  // ── 세션 중 서면 피드백 작성 (LC-3181) ──────────────────────────────────
+  // 화상을 보면서 바로 쓰고 보낼 수 있어야 한다. 본문 state 는 부모가 소유하므로
+  // 이 컴포넌트는 "패널을 열고 콜백을 올려보내는지"만 책임진다.
+  describe('피드백 작성 패널', () => {
+    const composerProps = {
+      onFeedbackChange: () => {},
+      canEditFeedback: true,
+    };
+
+    it('onFeedbackChange 미전달 시 작성 진입 버튼을 노출하지 않는다', () => {
+      render(
+        <JitsiEmbedModal
+          isOpen
+          onClose={() => {}}
+          meetingUrl={TEST_URL}
+          menteeName="이지수"
+        />,
+      );
+      expect(
+        screen.queryByRole('button', { name: /피드백 작성/ }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('작성 진입 버튼을 누르면 패널이 열리고 저장·제출 버튼이 나타난다', async () => {
+      const user = userEvent.setup();
+      render(
+        <JitsiEmbedModal
+          isOpen
+          onClose={() => {}}
+          meetingUrl={TEST_URL}
+          menteeName="이지수"
+          {...composerProps}
+        />,
+      );
+
+      expect(
+        screen.queryByRole('button', { name: '피드백 제출' }),
+      ).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /피드백 작성/ }));
+
+      expect(
+        await screen.findByRole('button', { name: '임시저장' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: '피드백 제출' }),
+      ).toBeInTheDocument();
+    });
+
+    it('저장·제출 버튼이 콜백을 호출한다', async () => {
+      const user = userEvent.setup();
+      const onSaveFeedback = vi.fn();
+      const onSubmitFeedback = vi.fn();
+      render(
+        <JitsiEmbedModal
+          isOpen
+          onClose={() => {}}
+          meetingUrl={TEST_URL}
+          menteeName="이지수"
+          {...composerProps}
+          onSaveFeedback={onSaveFeedback}
+          onSubmitFeedback={onSubmitFeedback}
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: /피드백 작성/ }));
+      await user.click(await screen.findByRole('button', { name: '임시저장' }));
+      await user.click(screen.getByRole('button', { name: '피드백 제출' }));
+
+      expect(onSaveFeedback).toHaveBeenCalledTimes(1);
+      expect(onSubmitFeedback).toHaveBeenCalledTimes(1);
+    });
+
+    it('작성 불가(canEditFeedback=false)면 저장·제출을 막고 사유를 안내한다', async () => {
+      const user = userEvent.setup();
+      render(
+        <JitsiEmbedModal
+          isOpen
+          onClose={() => {}}
+          meetingUrl={TEST_URL}
+          menteeName="이지수"
+          onFeedbackChange={() => {}}
+          canEditFeedback={false}
+          feedbackHint="작성 기능 준비 중입니다"
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: /피드백 작성/ }));
+
+      expect(
+        await screen.findByText('작성 기능 준비 중입니다'),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '임시저장' })).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: '피드백 제출' }),
+      ).toBeDisabled();
+    });
+  });
 });
