@@ -385,55 +385,28 @@ const OpenSettingsPage = () => {
       </header>
 
       {/*
-        상태 배너(승인 상태에서만 노출).
+        상태 배너 — 오픈 종료됨(승인 + 활성 개설 없음)일 때만 상단에 둔다.
         잠긴 상태에서도 멘토는 "내가 어떤 조건으로 냈는지" 확인해야 하므로 설정을 가리지 않고,
-        상태와 다음 행동만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
+        상태와 다음 행동만 상단에 알린다.
 
-        멘토가 알고 싶은 건 "승인됐는지"가 아니라 **지금 열려 있는지**다.
-        `APPROVED` 는 내부 상태 용어라 그대로 쓰면 "승인=계속 열려 있음"으로 읽힌다.
-        그래서 문구도 색도 오픈 여부를 기준으로 가른다 —
-        열려 있을 때만 강조색을 쓰고, 닫혀 있으면 중립 회색으로 둔다.
-        같은 파란 배너를 양쪽에 쓰면 닫힌 상태가 열린 것처럼 보인다.
+        오픈 중일 때는 이 배너를 하단 플로팅 영역으로 옮긴다(아래) — 오픈 닫기가
+        "저장"·"오픈하기"와 같은 종류의 주요 행동이라, 다른 화면 액션들과 같은
+        자리(하단 플로팅)에 있는 편이 더 직관적이다.
       */}
-      {status === 'APPROVED' && (
+      {status === 'APPROVED' && !currentOpening && (
         <div
           role="status"
-          className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
-            currentOpening
-              ? 'border-primary/20 bg-primary-10'
-              : 'border-gray-200 bg-gray-50'
-          }`}
+          className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex flex-col gap-1">
-            <span
-              className={`flex items-center gap-1.5 text-sm font-semibold ${
-                currentOpening ? 'text-primary' : 'text-gray-700'
-              }`}
-            >
-              {currentOpening && (
-                <span
-                  className="bg-primary h-1.5 w-1.5 rounded-full"
-                  aria-hidden="true"
-                />
-              )}
-              {currentOpening ? '오픈 중' : '오픈 종료됨'}
+            <span className="text-sm font-semibold text-gray-700">
+              오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              {currentOpening
-                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 오픈을 닫으면 다시 고칠 수 있습니다.'
-                : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.'}
+              지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤
+              "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.
             </p>
           </div>
-          {currentOpening && (
-            <button
-              type="button"
-              onClick={handleCloseCurrentOpening}
-              disabled={isClosingOpening}
-              className="border-system-error text-system-error hover:bg-system-error shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isClosingOpening ? '처리 중...' : '오픈 닫기'}
-            </button>
-          )}
         </div>
       )}
 
@@ -706,6 +679,41 @@ const OpenSettingsPage = () => {
           </div>
         </fieldset>
       </div>
+
+      {/*
+        오픈 중 상태 — 하단 플로팅. 다른 화면 액션(저장·오픈하기 등)과 같은 자리에 둬서
+        "지금 취할 수 있는 주요 행동"이 항상 같은 위치에 있게 한다.
+      */}
+      {currentOpening && (
+        <div className="fixed bottom-6 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 sm:w-auto">
+          <div
+            role="status"
+            className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
+                <span
+                  className="bg-primary h-1.5 w-1.5 rounded-full"
+                  aria-hidden="true"
+                />
+                오픈 중
+              </span>
+              <p className="text-xs text-gray-600">
+                공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수
+                없어요 — 오픈을 닫으면 다시 고칠 수 있습니다.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleCloseCurrentOpening}
+              disabled={isClosingOpening}
+              className="border-system-error text-system-error hover:bg-system-error shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isClosingOpening ? '처리 중...' : '오픈 닫기'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/*
         하단 버튼. 저장(제목·타입)과 검토 제출(진행시간·기간)은 서로 다른 API 라 버튼도 나눈다.

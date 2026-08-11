@@ -210,49 +210,24 @@ const DetailSettingsPage = () => {
       {header}
 
       {/*
-        상태 배너.
-
-        상품 상태(`APPROVED`)가 아니라 **지금 열려 있는지**를 말한다. "승인됨"은 서버
-        상태 이름이라 멘토에게는 "계속 열려 있음"으로 읽힌다. 색도 같은 이유로 가른다 —
-        열려 있을 때만 강조색을 쓴다.
+        상태 배너 — 오픈 종료됨(승인 + 활성 개설 없음)일 때만 상단에 둔다.
+        오픈 중일 때는 하단 플로팅 영역으로 옮긴다(아래) — "오픈 설정으로 이동"이
+        이 화면에서 할 수 있는 주요 행동이라, 다른 화면 액션과 같은 자리에 둔다.
       */}
-      {status === 'APPROVED' && (
+      {status === 'APPROVED' && !currentOpening && (
         <div
           role="status"
-          className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
-            currentOpening
-              ? 'border-primary/20 bg-primary-10'
-              : 'border-gray-200 bg-gray-50'
-          }`}
+          className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex flex-col gap-1">
-            <span
-              className={`flex items-center gap-1.5 text-sm font-semibold ${
-                currentOpening ? 'text-primary' : 'text-gray-700'
-              }`}
-            >
-              {currentOpening && (
-                <span
-                  className="bg-primary h-1.5 w-1.5 rounded-full"
-                  aria-hidden="true"
-                />
-              )}
-              {currentOpening ? '오픈 중' : '오픈 종료됨'}
+            <span className="text-sm font-semibold text-gray-700">
+              오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              {currentOpening
-                ? '멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 오픈 설정에서 오픈을 먼저 종료해주세요.'
-                : '수정을 시작하면 오픈이 잠시 멈춰요. 아래 "상세 수정하기"를 누르면 바로 시작할 수 있습니다.'}
+              수정을 시작하면 오픈이 잠시 멈춰요. 아래 "상세 수정하기"를
+              누르면 바로 시작할 수 있습니다.
             </p>
           </div>
-          {currentOpening && (
-            <Link
-              to="/live-mentoring/open-settings"
-              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
-            >
-              오픈 설정으로 이동
-            </Link>
-          )}
         </div>
       )}
 
@@ -282,7 +257,39 @@ const DetailSettingsPage = () => {
         잠긴 상태라도 할 수 있는 일이 있으면 버튼을 준다 — 오픈이 닫혀 있으면
         여기서 바로 상세 수정을 시작할 수 있다. 버튼 없이 글로만 "오픈 설정으로 가라"고
         하면 멘토가 화면을 옮겨 다니며 길을 찾아야 한다.
+
+        오픈 중(잠김 + canStartEdit 불가)일 때는 상태 설명 + "오픈 설정으로 이동"을
+        여기(하단 플로팅)에 둔다 — 다른 화면 액션들과 같은 자리라 더 직관적이다.
       */}
+      {isLocked && !canStartEdit && (
+        <div className="fixed bottom-6 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 sm:w-auto">
+          <div
+            role="status"
+            className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
+                <span
+                  className="bg-primary h-1.5 w-1.5 rounded-full"
+                  aria-hidden="true"
+                />
+                오픈 중
+              </span>
+              <p className="text-xs text-gray-600">
+                멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 오픈
+                설정에서 오픈을 먼저 종료해주세요.
+              </p>
+            </div>
+            <Link
+              to="/live-mentoring/open-settings"
+              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+            >
+              오픈 설정으로 이동
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
         {isLocked ? (
           canStartEdit ? (
