@@ -243,6 +243,34 @@ const OpenSettingsPage = () => {
     });
   };
 
+  /**
+   * 현재 오픈을 종료한다 — 별도 "오픈 현황" 화면 없이 이 화면 상단 배너에서 바로 한다.
+   * 서버는 예약 존재 여부를 검사하지 않고 종료하므로 화면 문구도 그대로 적는다.
+   */
+  const handleCloseCurrentOpening = () => {
+    if (!currentOpening) return;
+    showConfirm({
+      title: '이 오픈을 종료할까요?',
+      description:
+        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.',
+      confirmText: '종료하기',
+      // 확인 모달은 onConfirm 후에도 닫히지 않는다(공용 훅 동작) — 연타로 두 번 나가지 않게 막는다.
+      onConfirm: () =>
+        isClosingOpening
+          ? undefined
+          : closeOpening(currentOpening.openingId, {
+              onSuccess: () =>
+                showAlert({
+                  title: '오픈을 종료했습니다.',
+                  description:
+                    '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
+                  variant: 'success',
+                }),
+              onError: handleMutationError('오픈을 종료하지 못했습니다.'),
+            }),
+    });
+  };
+
   /** 제목·타입 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
   const handleSave = () => {
     if (!canSave) return;
@@ -392,20 +420,20 @@ const OpenSettingsPage = () => {
             </span>
             <p className="text-xs text-gray-600">
               {currentOpening
-                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 오픈 현황에서 종료하면 다시 고칠 수 있습니다.'
+                ? '공개 리스트에 노출 중이에요. 오픈 중에는 설정을 수정할 수 없어요 — 오픈을 닫으면 다시 고칠 수 있습니다.'
                 : '지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤 "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.'}
             </p>
           </div>
-          <Link
-            to="/live-mentoring/open-status"
-            className={`shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors ${
-              currentOpening
-                ? 'border-primary text-primary hover:bg-primary hover:text-white'
-                : 'border-gray-300 text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            오픈 현황 보기
-          </Link>
+          {currentOpening && (
+            <button
+              type="button"
+              onClick={handleCloseCurrentOpening}
+              disabled={isClosingOpening}
+              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isClosingOpening ? '처리 중...' : '오픈 닫기'}
+            </button>
+          )}
         </div>
       )}
 
@@ -755,7 +783,7 @@ const OpenSettingsPage = () => {
           isOpen={pendingOpen !== null}
           publicUrl={publicDetailUrl(user.userId)}
           confirmLabel="오픈하기"
-          resultDescription="확인을 마치면 모집이 시작됩니다. 이상하면 바로 내릴 수 있어요."
+          resultDescription="상세 페이지에 노출되는 내용에 대한 책임은 멘토 본인에게 있음에 동의합니다. 확인을 마치면 바로 모집이 시작되며, 이상이 있으면 언제든 오픈을 닫을 수 있어요."
           /*
            * 제목·타입·기간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
            * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면

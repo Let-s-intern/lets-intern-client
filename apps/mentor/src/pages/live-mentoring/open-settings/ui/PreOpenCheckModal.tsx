@@ -8,7 +8,11 @@ interface PreOpenCheckModalProps {
   publicUrl: string;
   /** 진행 버튼 라벨. 검토 제출과 재개설이 같은 확인 절차를 쓴다. */
   confirmLabel: string;
-  /** 확인을 마쳤을 때 실제로 일어나는 일 — 검토 제출인지 즉시 오픈인지 알린다. */
+  /**
+   * 오픈 전 유의사항. 상세 페이지 내용에 대한 책임이 멘토 본인에게 있음을
+   * 명시해 동의를 받는다 — 뒤에 이어지는 확인 체크박스와 함께 "직접 확인했고
+   * 책임진다"는 의미가 되도록 체크박스 바로 위에 둔다.
+   */
   resultDescription: string;
   /** 아직 서버에 반영되지 않아 이 페이지에서는 볼 수 없는 값이 있을 때의 안내. */
   pendingNotice?: string;
@@ -106,6 +110,11 @@ const PreOpenCheckModal = ({
             </p>
           )}
 
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+            <p className="text-xs font-semibold text-amber-900">유의사항</p>
+            <p className="mt-1 text-xs text-amber-800">{resultDescription}</p>
+          </div>
+
           <label className="mt-4 flex cursor-pointer items-start gap-2">
             <input
               type="checkbox"
@@ -117,10 +126,6 @@ const PreOpenCheckModal = ({
               상세 페이지를 직접 확인했고, 이대로 공개해도 괜찮습니다.
             </span>
           </label>
-
-          <p className="mt-3 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
-            {resultDescription}
-          </p>
 
           <div className="mt-5 flex gap-3">
             <button

@@ -389,15 +389,21 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('승인 + 활성 개설이면 오픈 중으로 알리고 오픈 현황으로 보낸다', () => {
+  it('승인 + 활성 개설이면 오픈 중으로 알리고, 배너에서 바로 오픈을 닫을 수 있다', () => {
+    // 오픈 현황 화면이 폐지되면서, 종료도 이 배너에서 바로 한다.
     renderPage({ status: 'APPROVED' }, [openOpening]);
 
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
-    expect(
-      within(banner).getByRole('link', { name: '오픈 현황 보기' }),
-    ).toHaveAttribute('href', '/live-mentoring/open-status');
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+
+    fireEvent.click(within(banner).getByRole('button', { name: '오픈 닫기' }));
+    // 되돌릴 수 없는 동작이라 확인 절차를 한 번 거친다.
+    expect(screen.getByText('이 오픈을 종료할까요?')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '종료하기' }));
+    expect(closeOpeningMock).toHaveBeenCalledTimes(1);
+    expect(closeOpeningMock.mock.calls[0][0]).toBe(openOpening.openingId);
   });
 
   // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
