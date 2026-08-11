@@ -25,13 +25,6 @@ const LiveMentoringOpenSettingsPage = lazy(
 const LiveMentoringDetailSettingsPage = lazy(
   () => import('@/pages/live-mentoring/detail-settings/DetailSettingsPage'),
 );
-const LiveMentoringSettlementPage = lazy(
-  () => import('@/pages/live-mentoring/settlement/SettlementPage'),
-);
-const LiveMentoringOpenStatusPage = lazy(
-  () => import('@/pages/live-mentoring/open-status/OpenStatusPage'),
-);
-
 const RouteFallback = () => (
   <div className="text-xsmall14 text-neutral-40 px-4 py-10">
     페이지를 불러오는 중...
@@ -70,14 +63,6 @@ export const router = createBrowserRouter([
       {
         path: '/live-mentoring/detail-settings',
         element: withSuspense(<LiveMentoringDetailSettingsPage />),
-      },
-      {
-        path: '/live-mentoring/settlement',
-        element: withSuspense(<LiveMentoringSettlementPage />),
-      },
-      {
-        path: '/live-mentoring/open-status',
-        element: withSuspense(<LiveMentoringOpenStatusPage />),
       },
       { path: '/notice', element: <NoticeListPage /> },
       { path: '/notice/:noticeId', element: <NoticeDetailPage /> },

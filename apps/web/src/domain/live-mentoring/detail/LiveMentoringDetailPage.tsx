@@ -49,6 +49,8 @@ const LiveMentoringDetailPage = ({
 
   const { profile, template } = data;
   const { intro, mentoringTypes, strategy, video, results } = template;
+  // 프로필을 덜 채운 멘토는 닉네임이 null 로 온다. 문구가 "null 멘토가 함께해요"가 되지 않게 폴백한다.
+  const nickname = profile.nickname ?? '멘토';
   const shownReviews = template.reviews.visible
     ? data.reviews.filter((r) =>
         template.reviews.selectedReviewIds.includes(r.reviewId),
@@ -80,22 +82,22 @@ const LiveMentoringDetailPage = ({
         label="멘토 소개"
         title={
           intro.passedCount !== null
-            ? `확실한 전략으로 ${intro.passedCount.toLocaleString('ko-KR')}명을 합격시킨 ${profile.nickname} 멘토가 함께해요`
-            : `${profile.nickname} 멘토가 함께해요`
+            ? `확실한 전략으로 ${intro.passedCount.toLocaleString('ko-KR')}명을 합격시킨 ${nickname} 멘토가 함께해요`
+            : `${nickname} 멘토가 함께해요`
         }
       >
         <div className="mx-auto grid w-full max-w-[900px] grid-cols-1 gap-6 md:grid-cols-[280px_1fr] md:items-stretch md:gap-10">
           {intro.profileImage && (
             <img
               src={intro.profileImage}
-              alt={profile.nickname}
+              alt={nickname}
               className="aspect-[3/4] w-full rounded-md object-cover"
             />
           )}
 
           <div className="flex h-full flex-col gap-2 text-left">
             <p className="text-small20 md:text-medium24 font-bold">
-              {profile.nickname}
+              {nickname}
             </p>
             {intro.affiliation && (
               <p className="text-xsmall14 md:text-xsmall16 font-semibold">
@@ -327,12 +329,17 @@ const LiveMentoringDetailPage = ({
       {/* 시안 10 · 자주 묻는 질문 */}
       <DetailFaqSection id={LM_FAQ_ID} />
 
-      {/* 하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트 */}
-      <DetailCTAButtons
-        title={data.title}
-        beginning={data.feedbackStartDate}
-        deadline={data.feedbackEndDate}
-      />
+      {/*
+        하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트.
+        아직 개설한 적 없는 상품(승인 전 미리보기)은 신청 기간이 없어 CTA 를 띄우지 않는다.
+      */}
+      {data.feedbackStartDate && data.feedbackEndDate && (
+        <DetailCTAButtons
+          title={data.title}
+          beginning={data.feedbackStartDate}
+          deadline={data.feedbackEndDate}
+        />
+      )}
     </div>
   );
 };

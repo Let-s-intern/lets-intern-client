@@ -123,7 +123,8 @@ interface SectionWithVisible {
  * 6·9·10(플랜·다른 멘토·모집개요)은 오픈 설정·목록 API 에서 파생되므로 담지 않는다.
  */
 export interface LiveMentoringTemplate {
-  category: LiveMentoringCategory;
+  /** 카테고리 다중 선택 전환으로 단수 `category` 는 사라졌다(호환 필드 없음). */
+  categories: LiveMentoringCategory[];
 
   // --- 멘토 편집 영역 (시안 0~5) ---
   /** 시안 0 · 히어로 불릿 */
@@ -253,52 +254,55 @@ export interface LiveMentoringSettingsCareer {
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드 —
  * 이 오픈 설정 화면에서 수정할 수 없다(수정은 프로필 페이지에서).
  */
+/**
+ * 상품 상태 — 백엔드 `LiveMentoringStatus`.
+ * 자가승인 전환으로 `PENDING_REVIEW`/`REJECTED`는 사라졌다 — `submit()`이 검토 단계 없이
+ * `DRAFT → APPROVED`로 곧장 전이시킨다.
+ */
+export type LiveMentoringStatus = 'DRAFT' | 'APPROVED' | 'INACTIVE';
+
+/** 개설 상태 — 백엔드 `LiveMentoringOpeningStatus`. */
+export type LiveMentoringOpeningStatus = 'OPEN' | 'CLOSED';
+
+/** 개설 종료 사유 — 백엔드 `LiveMentoringCloseReason`. */
+export type LiveMentoringCloseReason =
+  | 'PERIOD_EXPIRED'
+  | 'ADMIN_FORCED'
+  | 'MENTOR_CANCELED';
+
 export interface LiveMentoringSettings {
+  /** 상품 식별자. 설정을 한 번도 저장한 적 없으면 null. */
+  liveMentoringId: number | null;
   nickname: string | null;
   profileImage: string | null;
   introduction: string | null;
   careers: LiveMentoringSettingsCareer[];
-  /** 1대1 멘토링 타이틀(상품명). 한 번도 오픈한 적 없으면 null. */
+  /** 1대1 멘토링 타이틀(상품명). 상품이 없으면 null. */
   title: string | null;
-  /** 현재 오픈 중인지 여부. 오픈 중에는 설정을 수정할 수 없다. */
-  isOpen: boolean;
+  /** 상품 상태. 잠금 판정의 근거다 — 백엔드에 `isOpen` 같은 단일 불리언은 없다. */
+  status: LiveMentoringStatus | null;
   categories: LiveMentoringCategory[];
+  /** 검토 제출 때 저장한 진행시간. 제출 전이면 빈 배열. */
   durations: LiveMentoringDuration[];
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. 한 번도 오픈한 적 없으면 null. */
+  /** 검토 제출 때 저장한 피드백 진행 일정. 제출 전이면 null. */
   feedbackStartDate: string | null;
   feedbackEndDate: string | null;
 }
 
-/** 정산 현황 행 — 기간별 합계 (PRD §4.6, read-only) */
-export interface SettlementRow {
-  period: string;
-  completedCount: number;
-  grossAmount: number;
-  status: 'PENDING' | 'PAID';
-}
-
-/** 개별 정산 내역 — 완료된 멘토링 건별 (read-only) */
-export interface SettlementItem {
-  settlementId: number;
-  date: string;
-  menteeName: string;
-  category: LiveMentoringCategory;
-  durationMin: LiveMentoringDuration;
-  amount: number;
-  status: 'PENDING' | 'PAID';
-}
-
 /** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
-export interface OpenStatusRow {
-  title: string;
-  categories: LiveMentoringCategory[];
-  durations: LiveMentoringDuration[];
-  price: number;
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
+/**
+ * 개설 이력 1건 — `GET /mentor/live-mentoring/open-status` 의 `openings[]`.
+ * 상품이 아니라 개설 단위라 제목·타입은 실리지 않고, 예약 수도 아직 응답에 없다.
+ */
+export interface OpeningHistoryItem {
+  openingId: number;
+  status: LiveMentoringOpeningStatus;
+  durationPrices: { duration: LiveMentoringDuration; price: number }[];
   feedbackStartDate: string;
   feedbackEndDate: string;
-  status: 'OPEN' | 'CLOSED';
-  reservationCount: number;
+  openedAt: string;
+  closedAt: string | null;
+  closeReason: LiveMentoringCloseReason | null;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -852,7 +856,7 @@ function careerLinesFor(seed: MentorSeed): string[] {
 function templateFor(seed: MentorSeed): LiveMentoringTemplate {
   const hasImage = seed.hasImage;
   return {
-    category: seed.category,
+    categories: categoriesFor(seed),
 
     hero: {
       bullets: [
@@ -1005,119 +1009,57 @@ const MY_SETTINGS_CAREERS: LiveMentoringSettingsCareer[] = [
   },
 ];
 
-/** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. 오픈은 하나. */
+/** GET /mentor/live-mentoring/settings — 오픈 설정(메타) 기본값. */
 export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
+  liveMentoringId: 1,
   nickname: mySeed.nickname,
   profileImage: imageFor(mySeed),
   introduction: mySeed.introduction,
   careers: MY_SETTINGS_CAREERS,
   title: '자소서 실전 첨삭 멘토링',
-  // 목 기본값: 아직 오픈 전(편집 가능). 오픈하기 → 잠금 흐름을 확인할 수 있다.
-  isOpen: false,
+  // 목 기본값: 초안(편집 가능). 저장 → 검토 제출 → 잠금 흐름을 확인할 수 있다.
+  status: 'DRAFT',
   categories: categoriesFor(mySeed),
-  durations: durationsFor(mySeed),
-  ...periodFor(mySeed),
+  // 검토 제출 전이라 진행시간·기간은 아직 서버에 없다.
+  durations: [],
+  feedbackStartDate: null,
+  feedbackEndDate: null,
 };
 
 /** GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분. */
 export const LIVE_MENTORING_TEMPLATE: LiveMentoringTemplate =
   LIVE_MENTOR_DETAILS[MY_MENTOR_ID].template;
 
-/** GET /mentor/live-mentoring/settlement — 정산 현황(read-only). */
-export const SETTLEMENT_ROWS: SettlementRow[] = [
-  {
-    period: '2026-06',
-    completedCount: 18,
-    grossAmount: 1080000,
-    status: 'PAID',
-  },
-  {
-    period: '2026-05',
-    completedCount: 12,
-    grossAmount: 720000,
-    status: 'PAID',
-  },
-  {
-    period: '2026-04',
-    completedCount: 9,
-    grossAmount: 540000,
-    status: 'PENDING',
-  },
-];
+/** 진행시간 목록을 서버 응답 형태(`durationPrices`)로 변환한다. 가격은 고정 정책값. */
+const durationPricesFor = (durations: LiveMentoringDuration[]) =>
+  durations.map((duration) => ({
+    duration,
+    price: getPriceByDuration(duration),
+  }));
 
 /**
- * GET /mentor/live-mentoring/open-status — 오픈 현황(read-only).
- * 오픈은 하나만 가능하므로 현재 OPEN 은 1건이며, 나머지는 과거 오픈 내역(CLOSED)이다.
+ * GET /mentor/live-mentoring/open-status — 개설 이력.
+ * 활성 개설은 최대 1건이며, 나머지는 종료된 과거 개설이다. 최신이 먼저 온다(서버 `id DESC`).
  */
-export const OPEN_STATUS_ROWS: OpenStatusRow[] = [
+export const OPENING_HISTORY: OpeningHistoryItem[] = [
   {
-    title: '자소서 실전 첨삭 멘토링',
-    categories: categoriesFor(mySeed),
-    durations: durationsFor(mySeed),
-    price: getLowestPrice(durationsFor(mySeed)),
-    ...periodFor(mySeed),
-    status: 'OPEN',
-    reservationCount: 10,
-  },
-  // 과거 오픈 내역
-  {
-    title: '자소서 첨삭 멘토링',
-    categories: ['PERSONAL_STATEMENT'],
-    durations: [60],
-    price: getLowestPrice([60]),
+    openingId: 102,
+    status: 'CLOSED',
+    durationPrices: durationPricesFor([60]),
     feedbackStartDate: '2026-06-10',
     feedbackEndDate: '2026-06-23',
-    status: 'CLOSED',
-    reservationCount: 12,
+    openedAt: '2026-06-09T10:00:00',
+    closedAt: '2026-06-24T00:10:00',
+    closeReason: 'PERIOD_EXPIRED',
   },
   {
-    title: '이력서 클리닉',
-    categories: ['RESUME'],
-    durations: [30, 60],
-    price: getLowestPrice([30, 60]),
+    openingId: 101,
+    status: 'CLOSED',
+    durationPrices: durationPricesFor([30, 60]),
     feedbackStartDate: '2026-05-12',
     feedbackEndDate: '2026-05-25',
-    status: 'CLOSED',
-    reservationCount: 8,
-  },
-];
-
-/** GET /mentor/live-mentoring/settlement — 개별 정산 내역(완료 건별, read-only). */
-export const SETTLEMENT_ITEMS: SettlementItem[] = [
-  {
-    settlementId: 1,
-    date: '2026-06-28',
-    menteeName: '김**',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 60,
-    amount: 60000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 2,
-    date: '2026-06-21',
-    menteeName: '이**',
-    category: 'RESUME',
-    durationMin: 30,
-    amount: 35000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 3,
-    date: '2026-06-14',
-    menteeName: '박**',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 30,
-    amount: 35000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 4,
-    date: '2026-04-30',
-    menteeName: '최**',
-    category: 'PORTFOLIO',
-    durationMin: 60,
-    amount: 60000,
-    status: 'PENDING',
+    openedAt: '2026-05-11T09:30:00',
+    closedAt: '2026-05-20T14:00:00',
+    closeReason: 'MENTOR_CANCELED',
   },
 ];

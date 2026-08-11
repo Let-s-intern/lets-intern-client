@@ -31,9 +31,12 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
     (min, option) => (option.price < min.price ? option : min),
     durationPrices[0],
   );
+  // 개설이 없으면 가격이 null 이다(승인 전 미리보기). 할인 계산도 생략한다.
   const listPrice = LIST_PRICE_BY_DURATION[cheapest?.duration] ?? price;
   const discountRate =
-    listPrice > price ? Math.round((1 - price / listPrice) * 100) : 0;
+    price !== null && listPrice !== null && listPrice > price
+      ? Math.round((1 - price / listPrice) * 100)
+      : 0;
 
   return (
     <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
@@ -73,12 +76,21 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
         </ul>
 
         <div className="text-xsmall14 md:text-xsmall16 flex flex-wrap items-center gap-x-5 gap-y-2">
-          <span className="flex items-center gap-1.5">
-            <span className="text-[#FFB800]" aria-hidden="true">
-              ★★★★★
+          {/*
+            후기가 없으면 별점을 아예 빼고 "후기 0건"만 남긴다.
+            서버는 평점을 null 로 줄 때도, 0.0 으로 줄 때도 있어 둘 다 걸러낸다 —
+            ★★★★★ 옆의 (0.0) 은 "최악의 평점"으로 읽힌다.
+          */}
+          {detail.rating !== null && detail.reviewCount > 0 && (
+            <span className="flex items-center gap-1.5">
+              <span className="text-[#FFB800]" aria-hidden="true">
+                ★★★★★
+              </span>
+              <span className="font-semibold">
+                ({detail.rating.toFixed(1)})
+              </span>
             </span>
-            <span className="font-semibold">({detail.rating.toFixed(1)})</span>
-          </span>
+          )}
           <span>후기 {detail.reviewCount}건</span>
         </div>
 
@@ -97,14 +109,14 @@ const DetailHero = ({ detail, period }: DetailHeroProps) => {
           <div className="flex flex-col gap-0.5">
             {discountRate > 0 && (
               <span className="text-neutral-45 text-xsmall14 line-through">
-                {formatPrice(listPrice)}
+                {formatPrice(listPrice as number)}
               </span>
             )}
             <span className="text-medium22 flex items-baseline gap-2 font-bold">
               {discountRate > 0 && (
                 <span className="text-system-error">{discountRate}%</span>
               )}
-              {formatPrice(price)}
+              {price === null ? '가격 준비 중' : formatPrice(price)}
             </span>
           </div>
 

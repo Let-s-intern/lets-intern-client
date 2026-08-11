@@ -1,6 +1,7 @@
 import type { RequestHandler } from 'msw';
 
 import { adminFeedbackHandlers } from './adminFeedback';
+import { adminLiveMentoringHandlers } from './adminLiveMentoring';
 
 /**
  * MSW 핸들러 집합.
@@ -10,4 +11,7 @@ import { adminFeedbackHandlers } from './adminFeedback';
  * BE 미병합 API를 목으로 동작시키기 위한 용도이며,
  * VITE_ENABLE_MSW=true 일 때만 활성화된다.
  */
-export const handlers: RequestHandler[] = [...adminFeedbackHandlers];
+export const handlers: RequestHandler[] = [
+  ...adminFeedbackHandlers,
+  ...adminLiveMentoringHandlers,
+];

@@ -7,28 +7,31 @@ import axios from '@/utils/axios';
 import {
   LIVE_MENTORING_SETTINGS_QUERY_KEY,
   LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+  LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+  useCloseLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
-  useLiveMentoringSettlementQuery,
   useLiveMentoringTemplateQuery,
+  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '../liveMentoring';
 import {
   liveMentoringSettingsSchema,
-  openStatusRowSchema,
-  settlementRowSchema,
+  liveMentoringStatusSchema,
+  openingHistoryItemSchema,
 } from '../liveMentoringSchema';
 
 // axios 모듈 자체를 모킹 (default export)
 vi.mock('@/utils/axios', () => ({
-  default: { get: vi.fn(), put: vi.fn() },
+  default: { get: vi.fn(), put: vi.fn(), post: vi.fn(), patch: vi.fn() },
 }));
 
 const axiosMock = vi.mocked(axios, true);
 
 function makeSettings(overrides: Record<string, unknown> = {}) {
   return {
+    liveMentoringId: 1,
     nickname: '자소서장인',
     profileImage: null,
     introduction: '소개',
@@ -48,19 +51,7 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
       },
     ],
     title: '자소서 실전 첨삭 멘토링',
-    isOpen: false,
-    categories: ['PERSONAL_STATEMENT'],
-    durations: [60],
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
-    ...overrides,
-  };
-}
-
-function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
-  return {
-    title: '자소서 실전 첨삭 멘토링',
-    isOpen: false,
+    status: 'DRAFT',
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     feedbackStartDate: '2026-07-14',
@@ -71,7 +62,7 @@ function makeSettingsUpdate(overrides: Record<string, unknown> = {}) {
 
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
-    category: 'RESUME',
+    categories: ['RESUME'],
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 120,
@@ -161,29 +152,54 @@ describe('스키마 parse', () => {
     ).toThrow();
   });
 
-  it('정산행 status가 enum 밖이면 파싱 실패', () => {
+  it('개설 이력 status가 enum 밖이면 파싱 실패', () => {
     expect(() =>
-      settlementRowSchema.parse({
-        period: '2026-06',
-        completedCount: 1,
-        grossAmount: 1000,
-        status: 'DONE',
+      openingHistoryItemSchema.parse({
+        openingId: 100,
+        status: 'PAUSED',
+        durationPrices: [{ duration: 30, price: 35000 }],
+        feedbackStartDate: '2026-07-10',
+        feedbackEndDate: '2026-07-23',
+        openedAt: '2026-07-09T10:00:00',
+        closedAt: null,
+        closeReason: null,
       }),
     ).toThrow();
   });
 
-  it('오픈현황행 status가 enum 밖이면 파싱 실패', () => {
+  it('상품이 없는 멘토의 설정(전부 null·빈 배열)도 파싱된다', () => {
     expect(() =>
-      openStatusRowSchema.parse({
-        categories: ['RESUME'],
-        durations: [30],
-        price: 35000,
-        feedbackStartDate: '2026-07-10',
-        feedbackEndDate: '2026-07-23',
-        status: 'PAUSED',
-        reservationCount: 0,
-      }),
-    ).toThrow();
+      liveMentoringSettingsSchema.parse(
+        makeSettings({
+          liveMentoringId: null,
+          title: null,
+          status: null,
+          categories: [],
+          durations: [],
+          feedbackStartDate: null,
+          feedbackEndDate: null,
+        }),
+      ),
+    ).not.toThrow();
+  });
+
+  it('서버에 없는 isOpen 에 기대지 않는다 — status 로 잠금을 판정한다', () => {
+    const parsed = liveMentoringSettingsSchema.parse(
+      makeSettings({ status: 'APPROVED' }),
+    );
+    expect(parsed.status).toBe('APPROVED');
+    expect('isOpen' in parsed).toBe(false);
+  });
+
+  it('백엔드 LiveMentoringStatus 3종(DRAFT/APPROVED/INACTIVE)만 파싱한다', () => {
+    expect(() => liveMentoringStatusSchema.parse('DRAFT')).not.toThrow();
+    expect(() => liveMentoringStatusSchema.parse('APPROVED')).not.toThrow();
+    expect(() => liveMentoringStatusSchema.parse('INACTIVE')).not.toThrow();
+  });
+
+  it('더 이상 존재하지 않는 PENDING_REVIEW/REJECTED 는 파싱 실패한다', () => {
+    expect(() => liveMentoringStatusSchema.parse('PENDING_REVIEW')).toThrow();
+    expect(() => liveMentoringStatusSchema.parse('REJECTED')).toThrow();
   });
 });
 
@@ -233,60 +249,22 @@ describe('useLiveMentoringTemplateQuery', () => {
   });
 });
 
-describe('useLiveMentoringSettlementQuery', () => {
-  it('settlementList 와 itemList 를 함께 반환한다', async () => {
-    axiosMock.get.mockResolvedValue({
-      data: {
-        data: {
-          settlementList: [
-            {
-              period: '2026-06',
-              completedCount: 18,
-              grossAmount: 1080000,
-              status: 'PAID',
-            },
-          ],
-          itemList: [
-            {
-              settlementId: 1,
-              date: '2026-06-28',
-              menteeName: '김**',
-              category: 'PERSONAL_STATEMENT',
-              durationMin: 60,
-              amount: 60000,
-              status: 'PAID',
-            },
-          ],
-        },
-      },
-    });
-
-    const { result } = renderHook(() => useLiveMentoringSettlementQuery(), {
-      wrapper: createWrapper(newClient()),
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.settlementList).toHaveLength(1);
-    expect(result.current.data?.settlementList[0].status).toBe('PAID');
-    expect(result.current.data?.itemList[0].menteeName).toBe('김**');
-  });
-});
-
 describe('useLiveMentoringOpenStatusQuery', () => {
-  it('openStatusList 만 추출해 반환한다', async () => {
+  it('openings 만 추출해 반환한다', async () => {
     axiosMock.get.mockResolvedValue({
       data: {
         data: {
-          openStatusList: [
+          liveMentoringId: 1,
+          openings: [
             {
-              title: '자소서 실전 첨삭 멘토링',
-              categories: ['PERSONAL_STATEMENT'],
-              durations: [60],
-              price: 60000,
+              openingId: 100,
+              status: 'OPEN',
+              durationPrices: [{ duration: 60, price: 60000 }],
               feedbackStartDate: '2026-07-14',
               feedbackEndDate: '2026-07-28',
-              status: 'OPEN',
-              reservationCount: 7,
+              openedAt: '2026-07-13T10:00:00',
+              closedAt: null,
+              closeReason: null,
             },
           ],
         },
@@ -298,15 +276,83 @@ describe('useLiveMentoringOpenStatusQuery', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.[0].reservationCount).toBe(7);
+    expect(result.current.data?.[0].openingId).toBe(100);
+    expect(result.current.data?.[0].durationPrices[0].price).toBe(60000);
   });
 });
 
-// ── mutation 훅 (PUT — 6개 필드만 보내고, 응답은 전체 설정) ────
+describe('useSubmitLiveMentoringMutation', () => {
+  it('POST submit 에 진행시간·기간을 보내고 설정·오픈현황 캐시를 함께 invalidate 한다', async () => {
+    // 회귀 케이스: 자가승인 전환으로 제출이 곧바로 개설까지 만드는데, 오픈현황 캐시를
+    // 안 지우면 승인 상태는 반영돼도 "지금 열려 있는지"가 낡은 값으로 남아
+    // 화면이 오픈 중을 못 보여준다.
+    axiosMock.post.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    const body = {
+      durations: [30, 60] as (30 | 60)[],
+      feedbackStartDate: '2026-08-01',
+      feedbackEndDate: '2026-08-31',
+    };
+    await act(async () => {
+      await result.current.mutateAsync(body);
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/submit',
+      body,
+    );
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+    });
+  });
+});
+
+describe('useCloseLiveMentoringOpeningMutation', () => {
+  it('PATCH close 를 호출하고 개설 이력·설정 캐시를 함께 invalidate 한다', async () => {
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCloseLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync(100);
+    });
+
+    expect(axiosMock.patch).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/openings/100/close',
+    );
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+  });
+});
+
+// ── mutation 훅 (PUT — 제목·타입만 보내고, 응답은 전체 설정) ────
 describe('useUpdateLiveMentoringSettingsMutation', () => {
-  it('PUT settings 에 6개 필드만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
-    const update = makeSettingsUpdate({ isOpen: true });
-    const responseSettings = makeSettings({ isOpen: true });
+  it('PUT settings 에 제목·타입만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
+    const update = {
+      title: '자소서 실전 첨삭 멘토링',
+      categories: ['PERSONAL_STATEMENT'] as ('PERSONAL_STATEMENT' | 'RESUME')[],
+    };
+    const responseSettings = makeSettings();
     axiosMock.put.mockResolvedValue({ data: { data: responseSettings } });
 
     const client = newClient();

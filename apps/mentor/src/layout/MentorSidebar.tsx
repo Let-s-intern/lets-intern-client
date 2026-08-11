@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import DetailSettingsLockIcon from '@/pages/live-mentoring/ui/DetailSettingsLockIcon';
 import LiveMentoringOpenBadge from '@/pages/live-mentoring/ui/LiveMentoringOpenBadge';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
@@ -7,6 +8,8 @@ interface NavLeaf {
   type: 'leaf';
   name: string;
   url: string;
+  /** true 면 항목 이름 옆에 "오픈 중이라 수정 잠김" 아이콘을 붙인다. */
+  showDetailSettingsLock?: boolean;
 }
 
 interface NavGroup {
@@ -47,7 +50,7 @@ const navItems: NavItem[] = [
     type: 'group',
     name: '1대1 라이브 멘토링',
     matchPrefix: '/live-mentoring',
-    collapsible: true,
+    // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 드롭다운으로 접어둘 필요가 없다.
     showLiveMentoringStatus: true,
     children: [
       { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },
@@ -55,9 +58,8 @@ const navItems: NavItem[] = [
         type: 'leaf',
         name: '상세 페이지 설정',
         url: '/live-mentoring/detail-settings',
+        showDetailSettingsLock: true,
       },
-      { type: 'leaf', name: '정산 현황', url: '/live-mentoring/settlement' },
-      { type: 'leaf', name: '오픈 현황', url: '/live-mentoring/open-status' },
     ],
   },
   // [임시 숨김] 참여중인 챌린지 (dusvlf111, 2026-07-17)
@@ -223,13 +225,18 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                               <Link
                                 to={child.url}
                                 onClick={onClose}
-                                className={`text-xsmall14 block rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
+                                className={`text-xsmall14 flex items-center gap-1.5 rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
                                   childActive
                                     ? 'bg-primary-5 text-primary font-semibold'
                                     : 'text-neutral-40 font-medium'
                                 }`}
                               >
-                                {child.name}
+                                <span className="truncate">{child.name}</span>
+                                {child.showDetailSettingsLock && (
+                                  <DetailSettingsLockIcon
+                                    active={childActive}
+                                  />
+                                )}
                               </Link>
                             </li>
                           );

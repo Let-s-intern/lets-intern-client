@@ -54,12 +54,15 @@ export type RepresentativeCareer = z.infer<typeof representativeCareerSchema>;
  * 라이브 멘토링 개설 1건 — 백엔드 `LiveMentoringOpeningResponseDto`.
  * (GET /live-mentoring 의 `openingList` 원소)
  *
- * 리스트 카드는 "멘토"가 아니라 "개설(opening)" 단위다: `id`가 개설 식별자,
- * `mentorId`는 그 개설을 연 멘토다.
+ * 리스트 카드는 "멘토"가 아니라 "개설(opening)" 단위다: `openingId`가 개설 식별자,
+ * `liveMentoringId`는 그 개설이 속한 상품, `mentorId`는 상품을 가진 멘토다.
+ * (예전 단일 `id` 는 서버에서 `liveMentoringId`/`openingId` 로 분리됐다.)
  */
 export const liveMentoringOpeningSchema = z.object({
-  /** 개설 식별자. */
-  id: z.number(),
+  /** 상품 식별자. 공개 상세(`GET /live-mentoring/{liveMentoringId}`)의 키다. */
+  liveMentoringId: z.number(),
+  /** 개설 식별자. 같은 상품이 여러 번 열리면 매번 새 값이다. */
+  openingId: z.number(),
   mentorId: z.number(),
   mentorNickname: z.string().nullable(),
   mentorProfileImage: z.string().nullable(),
@@ -134,7 +137,8 @@ const sectionWithVisible = <T extends z.ZodRawShape>(extra: T) =>
  * 같은 목/응답을 양쪽에서 파싱할 수 있다.
  */
 export const liveMentoringTemplateSchema = z.object({
-  category: liveMentoringCategorySchema,
+  /** 카테고리 다중 선택 전환으로 단수 `category` 는 사라졌다(호환 필드 없음). */
+  categories: z.array(liveMentoringCategorySchema),
 
   /** 시안 0 · 히어로 — 제목 아래 불릿 소개. */
   hero: z.object({ bullets: z.array(z.string()) }),
@@ -205,9 +209,13 @@ export const liveMentorProfileSchema = z.object({
   visible: z.boolean(),
   mosaicEnabled: z.boolean(),
   mosaicBlur: z.number(),
-  nickname: z.string(),
+  /**
+   * 닉네임·한줄소개는 프로필 도메인 값을 그대로 참조하므로 미입력 멘토는 null 로 온다.
+   * non-null 로 잡으면 프로필을 덜 채운 멘토의 상세가 파싱 단계에서 통째로 죽는다.
+   */
+  nickname: z.string().nullable(),
   profileImage: z.string().nullable(),
-  introduction: z.string(),
+  introduction: z.string().nullable(),
   careers: z.array(liveMentoringCareerSchema),
 });
 export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
@@ -226,12 +234,17 @@ export const liveMentorDetailSchema = z.object({
       price: z.number(),
     }),
   ),
-  /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
-  price: z.number(),
-  rating: z.number(),
+  /**
+   * 여러 진행시간을 열었을 때의 최저가(대표 표시용).
+   * 아직 한 번도 개설하지 않은 상품은 null 이다 — 승인 전 미리보기로 들어올 수 있다.
+   */
+  price: z.number().nullable(),
+  /** 후기가 한 건도 없으면 서버가 null 을 준다. */
+  rating: z.number().nullable(),
   reviewCount: z.number(),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
+  /** 개설이 없으면 null. 공개 목록에는 안 뜨지만 상세 URL 로는 열린다. */
+  feedbackStartDate: z.string().nullable(),
+  feedbackEndDate: z.string().nullable(),
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),

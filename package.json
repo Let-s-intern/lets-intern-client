@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "turbo run dev",
+    "local": "node scripts/local.mjs",
     "dev:web": "turbo run dev --filter=@letscareer/web",
     "dev:admin": "turbo run dev --filter=@letscareer/admin",
     "dev:mentor": "turbo run dev --filter=@letscareer/mentor",

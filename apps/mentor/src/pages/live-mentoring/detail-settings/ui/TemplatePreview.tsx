@@ -10,8 +10,11 @@ const sectionLabel = 'text-center text-xs font-medium text-gray-500';
 const sectionTitle = 'text-center text-base font-bold text-gray-900';
 
 /** 노출 off 인 섹션 자리에 "빠집니다"를 알려주는 자리표시. */
-const HiddenNotice = ({ name }: { name: string }) => (
-  <div className="rounded-lg border border-dashed border-gray-300 py-6 text-center text-xs text-gray-400">
+const HiddenNotice = ({ id, name }: { id: string; name: string }) => (
+  <div
+    id={id}
+    className="rounded-lg border border-dashed border-gray-300 py-6 text-center text-xs text-gray-400"
+  >
     {name} 섹션은 노출 안 함 상태입니다 — 상세 페이지에서 제외됩니다.
   </div>
 );
@@ -33,7 +36,10 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
 
       <div className="flex flex-col gap-8 rounded-lg bg-gray-50 p-4">
         {/* 시안 0 · 히어로 */}
-        <div className="bg-neutral-0 -m-4 mb-0 flex flex-col gap-2 rounded-t-lg p-4 text-white">
+        <div
+          id="preview-section-hero"
+          className="bg-neutral-0 -m-4 mb-0 flex flex-col gap-2 rounded-t-lg p-4 text-white"
+        >
           <div className="flex items-center gap-1">
             <span className="bg-primary rounded px-1.5 py-0.5 text-[10px] font-bold">
               BEST
@@ -102,7 +108,10 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
         </div>
 
         {/* 시안 2 · 멘토링 유형 */}
-        <div className="flex flex-col gap-3">
+        <div
+          id="preview-section-mentoringTypes"
+          className="flex flex-col gap-3"
+        >
           <p className={sectionLabel}>멘토링 유형</p>
           <p className={sectionTitle}>{mentoringTypes.title}</p>
           <p className="text-center text-xs text-gray-500">
@@ -144,7 +153,7 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
 
         {/* 시안 3 · 취업 성공 전략 */}
         {strategy.visible ? (
-          <div className="flex flex-col gap-3">
+          <div id="preview-section-strategy" className="flex flex-col gap-3">
             <p className={sectionTitle}>{strategy.title}</p>
             <p className="text-center text-xs text-gray-500">
               {strategy.subtitle}
@@ -173,12 +182,12 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
             </ul>
           </div>
         ) : (
-          <HiddenNotice name="취업 성공 전략" />
+          <HiddenNotice id="preview-section-strategy" name="취업 성공 전략" />
         )}
 
         {/* 시안 4 · 이렇게 도와드려요 (영상) */}
         {video.visible ? (
-          <div className="flex flex-col gap-3">
+          <div id="preview-section-video" className="flex flex-col gap-3">
             <p className={sectionTitle}>{video.title}</p>
             <p className="text-center text-xs text-gray-500">
               {video.subtitle}
@@ -204,12 +213,12 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
             )}
           </div>
         ) : (
-          <HiddenNotice name="이렇게 도와드려요" />
+          <HiddenNotice id="preview-section-video" name="이렇게 도와드려요" />
         )}
 
         {/* 시안 5 · 결과 사례 */}
         {results.visible ? (
-          <div className="flex flex-col gap-3">
+          <div id="preview-section-results" className="flex flex-col gap-3">
             <p className={sectionLabel}>{results.subtitle}</p>
             <p className={sectionTitle}>{results.title}</p>
             <ul className="flex flex-col gap-3">
@@ -242,7 +251,7 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
             </ul>
           </div>
         ) : (
-          <HiddenNotice name="결과 사례" />
+          <HiddenNotice id="preview-section-results" name="결과 사례" />
         )}
 
         <p className="border-t border-gray-200 pt-4 text-center text-[10px] text-gray-400">

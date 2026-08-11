@@ -16,7 +16,8 @@ const PARAMS_SERIALIZER = { indexes: null };
 
 function makeOpening(id: number) {
   return {
-    id: id * 100,
+    liveMentoringId: id * 100,
+    openingId: id * 1000,
     mentorId: id,
     mentorNickname: `멘토${id}`,
     mentorProfileImage: 'https://example.com/p.png',

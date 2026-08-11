@@ -23,6 +23,44 @@ export const liveMentoringDurationSchema = z.union([
 export type LiveMentoringDuration = z.infer<typeof liveMentoringDurationSchema>;
 
 /**
+ * 상품 상태 — 백엔드 `LiveMentoringStatus`.
+ *
+ * 개설 상태(`liveMentoringOpeningStatusSchema`)와 **다른 축**이다. 상품은 승인 여부를,
+ * 개설은 지금 열려 있는지를 나타낸다. 화면 문구에서 둘을 섞지 않는다.
+ */
+export const liveMentoringStatusSchema = z.enum([
+  'DRAFT',
+  'APPROVED',
+  'INACTIVE',
+]);
+export type LiveMentoringStatus = z.infer<typeof liveMentoringStatusSchema>;
+
+/** 개설 상태 — 백엔드 `LiveMentoringOpeningStatus`. `OPEN` → `CLOSED` 단방향. */
+export const liveMentoringOpeningStatusSchema = z.enum(['OPEN', 'CLOSED']);
+export type LiveMentoringOpeningStatus = z.infer<
+  typeof liveMentoringOpeningStatusSchema
+>;
+
+/** 개설 종료 사유 — 백엔드 `LiveMentoringCloseReason`. */
+export const liveMentoringCloseReasonSchema = z.enum([
+  'PERIOD_EXPIRED',
+  'ADMIN_FORCED',
+  'MENTOR_CANCELED',
+]);
+export type LiveMentoringCloseReason = z.infer<
+  typeof liveMentoringCloseReasonSchema
+>;
+
+/** 진행시간별 확정 가격. 가격은 서버 고정 정책이라 요청에 담지 않고 응답으로만 받는다. */
+export const liveMentoringDurationPriceSchema = z.object({
+  duration: liveMentoringDurationSchema,
+  price: z.number(),
+});
+export type LiveMentoringDurationPrice = z.infer<
+  typeof liveMentoringDurationPriceSchema
+>;
+
+/**
  * 노출 토글이 있는 섹션의 공통 골격 (시안 3·4·5번).
  * `visible === false` 면 공개 상세에서 섹션을 **통째로 제외**한다.
  */
@@ -78,7 +116,8 @@ export const templateResultCaseSchema = z.object({
  * 파생되므로 템플릿에 담지 않는다. 후기는 노출 여부만 여기서 제어한다.
  */
 export const liveMentoringTemplateSchema = z.object({
-  category: liveMentoringCategorySchema,
+  /** 카테고리 다중 선택 전환으로 단수 `category` 는 사라졌다(호환 필드 없음). */
+  categories: z.array(liveMentoringCategorySchema),
 
   // ── 멘토 편집 영역 (시안 0~5) ────────────────────────────
   /** 시안 0 · 히어로 — 제목 아래 불릿 소개. */
@@ -149,87 +188,104 @@ export type LiveMentoringSettingsCareer = z.infer<
 >;
 
 /**
- * 오픈 설정(메타) (PRD §5 S3-a).
+ * 오픈 설정(메타) — `GET`/`PUT /mentor/live-mentoring/settings` 공통 응답.
+ *
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드다 —
  * PUT 요청 바디에는 포함되지 않는다(`liveMentoringSettingsUpdateSchema` 참고).
+ *
+ * 상품을 한 번도 만들지 않은 멘토는 `liveMentoringId`·`title`·`status`·날짜가 null 이고
+ * 배열은 빈 배열이다. 프로필 필드는 그래도 채워져 온다.
  */
 export const liveMentoringSettingsSchema = z.object({
+  /** 상품 식별자. 설정을 한 번도 저장한 적 없으면 null. */
+  liveMentoringId: z.number().nullable(),
   nickname: z.string().nullable(),
   profileImage: z.string().nullable(),
   introduction: z.string().nullable(),
   careers: z.array(liveMentoringSettingsCareerSchema),
-  /** 1대1 멘토링 타이틀(상품명). 한 번도 오픈한 적 없으면 null. */
+  /** 1대1 멘토링 타이틀(상품명). 상품이 없으면 null. */
   title: z.string().nullable(),
-  /** 현재 오픈 중인지. 오픈 중에는 수정 불가. */
-  isOpen: z.boolean(),
+  /**
+   * 상품 상태. 잠금 판정의 근거다.
+   * 백엔드에 `isOpen` 같은 단일 불리언은 없다 — 개설 여부는 오픈 현황(개설 이력)에서 본다.
+   */
+  status: liveMentoringStatusSchema.nullable(),
   /** 오픈한 타입(다중). */
   categories: z.array(liveMentoringCategorySchema),
-  /** 오픈한 진행시간(다중). */
+  /** 검토 제출 때 저장한 진행시간(다중). 제출 전이면 빈 배열. */
   durations: z.array(liveMentoringDurationSchema),
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. 한 번도 오픈한 적 없으면 null. */
+  /** 검토 제출 때 저장한 피드백 진행 일정. 제출 전이면 null. */
   feedbackStartDate: z.string().nullable(),
   feedbackEndDate: z.string().nullable(),
 });
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
-/** PUT /mentor/live-mentoring/settings 요청 바디 — 백엔드가 실제로 받는 6개 필드뿐. */
+/**
+ * PUT /mentor/live-mentoring/settings 요청 바디 — 백엔드가 받는 건 이 2개뿐이다.
+ *
+ * 진행시간·기간은 이 요청이 아니라 검토 제출(`liveMentoringSubmitSchema`)로 보낸다.
+ * 상품이 없으면 이 요청이 상품을 `DRAFT` 로 생성한다.
+ */
 export const liveMentoringSettingsUpdateSchema = z.object({
   title: z.string(),
-  isOpen: z.boolean(),
   categories: z.array(liveMentoringCategorySchema),
-  durations: z.array(liveMentoringDurationSchema),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
 });
 export type LiveMentoringSettingsUpdate = z.infer<
   typeof liveMentoringSettingsUpdateSchema
 >;
 
-/** 정산 현황 행 (PRD §4.6, read-only). */
-export const settlementRowSchema = z.object({
-  period: z.string(),
-  completedCount: z.number(),
-  grossAmount: z.number(),
-  status: z.enum(['PENDING', 'PAID']),
+/**
+ * POST /mentor/live-mentoring/submit 요청 바디.
+ * 가격은 서버 고정 정책(30분 35,000원 / 60분 60,000원)이라 보내지 않는다.
+ */
+export const liveMentoringSubmitSchema = z.object({
+  durations: z.array(liveMentoringDurationSchema),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
 });
-export type SettlementRow = z.infer<typeof settlementRowSchema>;
+export type LiveMentoringSubmit = z.infer<typeof liveMentoringSubmitSchema>;
 
-/** 개별 정산 내역 항목 (완료 건별). */
-export const settlementItemSchema = z.object({
-  settlementId: z.number(),
-  date: z.string(),
-  menteeName: z.string(),
-  category: liveMentoringCategorySchema,
-  durationMin: liveMentoringDurationSchema,
-  amount: z.number(),
-  status: z.enum(['PENDING', 'PAID']),
-});
-export type SettlementItem = z.infer<typeof settlementItemSchema>;
-
-export const settlementListResponseSchema = z.object({
-  settlementList: z.array(settlementRowSchema),
-  itemList: z.array(settlementItemSchema),
-});
-export type SettlementListResponse = z.infer<
-  typeof settlementListResponseSchema
->;
-
-/** 오픈 현황 행 (PRD §4.7, read-only). */
-export const openStatusRowSchema = z.object({
+/**
+ * POST /mentor/live-mentoring/openings 요청 바디 — 승인된 상품의 재개설.
+ *
+ * 승인 이후에는 `PUT /settings` 가 잠기기 때문에, 재개설은 제목·타입까지 **한 요청에**
+ * 담아 보낸다(서버 `updateSettingsForOpening`). 관리자 재승인 없이 바로 열린다.
+ */
+export const liveMentoringOpeningCreateSchema = z.object({
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
-  price: z.number(),
   feedbackStartDate: z.string(),
   feedbackEndDate: z.string(),
-  status: z.enum(['OPEN', 'CLOSED']),
-  reservationCount: z.number(),
 });
-export type OpenStatusRow = z.infer<typeof openStatusRowSchema>;
+export type LiveMentoringOpeningCreate = z.infer<
+  typeof liveMentoringOpeningCreateSchema
+>;
 
-export const openStatusListResponseSchema = z.object({
-  openStatusList: z.array(openStatusRowSchema),
+/**
+ * 개설 이력 1건 — `GET /mentor/live-mentoring/open-status` 의 `openings[]`.
+ *
+ * 상품(제목·타입)이 아니라 **개설** 단위다. 제목·타입은 상품에 하나뿐이라 이 행에 실리지 않는다.
+ * 예약 수도 응답에 없다 — 예약·결제 연동 전까지는 표에 넣지 않는다.
+ */
+export const openingHistoryItemSchema = z.object({
+  openingId: z.number(),
+  status: liveMentoringOpeningStatusSchema,
+  durationPrices: z.array(liveMentoringDurationPriceSchema),
+  feedbackStartDate: z.string(),
+  feedbackEndDate: z.string(),
+  openedAt: z.string(),
+  /** 종료 전이면 null. */
+  closedAt: z.string().nullable(),
+  closeReason: liveMentoringCloseReasonSchema.nullable(),
 });
-export type OpenStatusListResponse = z.infer<
-  typeof openStatusListResponseSchema
+export type OpeningHistoryItem = z.infer<typeof openingHistoryItemSchema>;
+
+/** 개설 이력 응답. 상품이 없으면 `liveMentoringId: null`, `openings: []`. */
+export const openingHistoryResponseSchema = z.object({
+  liveMentoringId: z.number().nullable(),
+  openings: z.array(openingHistoryItemSchema),
+});
+export type OpeningHistoryResponse = z.infer<
+  typeof openingHistoryResponseSchema
 >;

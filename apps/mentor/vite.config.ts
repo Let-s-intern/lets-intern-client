@@ -2,7 +2,14 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
-const DEV_API_TARGET = 'https://letsintern.kr';
+/**
+ * dev 프록시가 바라볼 API 서버.
+ *
+ * `.env` 의 `VITE_API_BASE_PATH` 를 그대로 쓴다. 예전에는 이 값이 소스에 하드코딩돼 있어
+ * `.env` 를 로컬 서버로 바꿔도 요청은 계속 배포 서버로 나갔다 — 화면만 보고는 어느 서버에
+ * 붙었는지 알 수 없어 QA 결과를 통째로 오해하게 만든다.
+ */
+const FALLBACK_API_TARGET = 'https://letsintern.kr';
 
 const REQUIRED_ENV_KEYS = [
   'VITE_API_BASE_PATH',
@@ -23,6 +30,8 @@ export default defineConfig(({ mode }) => {
     );
   }
 
+  const apiTarget = env.VITE_API_BASE_PATH || FALLBACK_API_TARGET;
+
   return {
     plugins: [react()],
     resolve: {
@@ -39,13 +48,13 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       proxy: {
         '/api': {
-          target: DEV_API_TARGET,
+          target: apiTarget,
           changeOrigin: true,
           secure: true,
           configure: (proxy) => {
             proxy.on('proxyReq', (proxyReq) => {
-              proxyReq.setHeader('Origin', DEV_API_TARGET);
-              proxyReq.setHeader('Referer', `${DEV_API_TARGET}/`);
+              proxyReq.setHeader('Origin', apiTarget);
+              proxyReq.setHeader('Referer', `${apiTarget}/`);
             });
           },
         },

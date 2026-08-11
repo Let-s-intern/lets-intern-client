@@ -102,6 +102,9 @@ const AdminMentorRegisterPage = lazy(
 const AdminMentorKeywordPage = lazy(
   () => import('./pages/pages/user/AdminMentorKeywordPage'),
 );
+const AdminLiveMentoringPage = lazy(
+  () => import('./pages/pages/live-mentoring/AdminLiveMentoringPage'),
+);
 
 const Coupons = lazy(() => import('./pages/pages/coupon/Coupons'));
 const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
@@ -397,6 +400,10 @@ export const router = createBrowserRouter([
       {
         path: '/mentors/:mentorId',
         element: withSuspense(<AdminMentorDetailPage />),
+      },
+      {
+        path: '/live-mentoring',
+        element: withSuspense(<AdminLiveMentoringPage />),
       },
 
       // 쿠폰

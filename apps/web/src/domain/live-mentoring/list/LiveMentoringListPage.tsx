@@ -68,7 +68,7 @@ const LiveMentoringListPage = () => {
             {/* 카드가 grid-rows-subgrid 로 행 높이를 공유하므로 래퍼 없이 직속 자식으로 둔다 */}
             <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-y-11">
               {data.openingList.map((opening) => (
-                <MentorCard key={opening.id} opening={opening} />
+                <MentorCard key={opening.openingId} opening={opening} />
               ))}
             </div>
             {data.pageInfo.totalPages > 1 && (

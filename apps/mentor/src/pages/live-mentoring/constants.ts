@@ -11,6 +11,84 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
   PORTFOLIO: '포트폴리오',
 };
 
+/**
+ * "수정"(`POST /start-edit`) 성공 안내 문구.
+ *
+ * 서버가 하는 일(상품을 초안으로 되돌림)은 두 화면에서 같지만, 그 결과 "지금
+ * 이 화면에서 뭘 할 수 있게 됐는지"는 화면마다 다르다 — 오픈 설정에서는 이
+ * 화면의 제목·타입·진행시간·기간이 바로 편집 가능해지고, 상세 페이지
+ * 설정에서는 좌측 편집 폼이 바로 열린다. 하나의 문구로 합쳐 두면 오픈
+ * 설정에서 눌렀을 때 "상세 페이지를 수정할 수 있다"는 엉뚱한 안내가 된다.
+ *
+ * 확인 모달 없이 버튼 클릭 즉시 실행한다(저장 버튼이 dirty일 때만 활성화되고
+ * 이탈 시 경고가 뜨므로 사전 확인이 없어도 실수로 잃을 게 없다). 그래서 "이후에
+ * 뭘 해야 하는지"만 이 성공 토스트로 짧게 알린다.
+ */
+export const START_EDIT_SUCCESS_DETAIL = {
+  title: '이제 상세 페이지를 수정할 수 있어요.',
+  description: '수정을 마치면 오픈 설정에서 다시 오픈해주세요.',
+} as const;
+
+/** "수정"(`POST /start-edit`) 성공 안내 문구 — 오픈 설정 화면용. */
+export const START_EDIT_SUCCESS_SETTINGS = {
+  title: '이제 설정을 다시 고칠 수 있어요.',
+  description: '고친 내용을 저장한 뒤 오픈하기를 누르면 다시 열립니다.',
+} as const;
+
+/**
+ * 공개 상세 페이지 주소.
+ *
+ * 승인 여부와 무관하게 열린다 — 서버 공개 상세 조회는 상품 상태를 검사하지 않는다.
+ * 목록 노출만 승인·개설·기간의 영향을 받으므로, 멘토는 승인 전에도 이 주소로 결과물을
+ * 미리 볼 수 있다.
+ */
+export const publicDetailUrl = (mentorId: number): string =>
+  `${import.meta.env.VITE_WEB_URL ?? ''}/live-mentoring/${mentorId}`;
+
+/**
+ * YouTube 링크를 서버가 받는 embed 주소로 정규화한다.
+ *
+ * 서버(`LiveMentoringUrlPolicy`)는 `https://www.youtube.com/embed/{id}` 형태만 받는다.
+ * 호스트가 `youtu.be` 거나 `?si=...` 같은 쿼리가 붙으면 전부 거부하고, 그 결과 상세
+ * 페이지 저장 **전체**가 400 으로 실패한다. 멘토는 보통 공유 버튼으로 얻은 링크를
+ * 붙여넣으므로, 흔한 형태를 받아 embed 로 바꿔준다.
+ *
+ * 변환할 수 없으면 null 을 돌려주고 호출부가 저장을 막는다 — 서버까지 보내 400 을
+ * 받는 것보다 입력 옆에서 알려주는 편이 낫다.
+ */
+export const toYoutubeEmbedUrl = (input: string): string | null => {
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  const host = url.hostname.toLowerCase();
+  let videoId: string | null = null;
+
+  if (host === 'youtu.be') {
+    videoId = url.pathname.slice(1);
+  } else if (
+    host === 'www.youtube.com' ||
+    host === 'youtube.com' ||
+    host === 'm.youtube.com'
+  ) {
+    if (url.pathname === '/watch') videoId = url.searchParams.get('v');
+    else if (url.pathname.startsWith('/embed/'))
+      videoId = url.pathname.slice('/embed/'.length);
+    else if (url.pathname.startsWith('/shorts/'))
+      videoId = url.pathname.slice('/shorts/'.length);
+  }
+
+  // 서버 패턴(`^/embed/[A-Za-z0-9_-]+$`)과 같은 문자 집합만 통과시킨다.
+  if (!videoId || !/^[A-Za-z0-9_-]+$/.test(videoId)) return null;
+  return `https://www.youtube.com/embed/${videoId}`;
+};
+
 /** 진행시간(분) 표시 라벨. */
 export const durationLabel = (durationMin: number): string =>
   `${durationMin}분`;
