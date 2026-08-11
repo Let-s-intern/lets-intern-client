@@ -278,7 +278,7 @@ describe('DetailSettingsPage — 상태 잠금', () => {
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: '상세 수정하기' }),
+      screen.queryByRole('button', { name: '수정' }),
     ).not.toBeInTheDocument();
   });
 
@@ -291,7 +291,7 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
     // 글로만 다른 화면으로 보내지 않고 여기서 누를 수 있어야 한다.
     expect(
-      screen.getByRole('button', { name: '상세 수정하기' }),
+      screen.getByRole('button', { name: '수정' }),
     ).toBeInTheDocument();
   });
 

@@ -419,14 +419,33 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
     expect(within(banner).queryByText('오픈 중')).not.toBeInTheDocument();
-    // 종료 상태에서는 설정이 다시 열리고 재개설·상세수정 경로가 보인다.
-    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
+    // 종료 상태에서는 재개설·수정 버튼이 보이지만, 값을 바꾸려면 "수정"을
+    // 먼저 눌러야 한다 — 상세 페이지 설정과 같은 규칙이다.
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
     expect(
       screen.getByRole('button', { name: '다시 오픈하기' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: '상세 수정하기' }),
+      screen.getByRole('button', { name: '수정' }),
     ).toBeInTheDocument();
+  });
+
+  it('수정을 누르면 설정 필드가 바로 편집 가능해지고 저장하기가 나타난다', () => {
+    // 회귀 케이스: start-edit 성공 직후 설정 쿼리가 아직 리페치 전이라
+    // status 가 낡은 APPROVED 로 남는데, 그걸 그대로 따르면 수정을 눌러도
+    // 화면이 재개설 지름길에 그대로 머물러 있어 "눌러도 반응이 없다"로 읽혔다.
+    startEditMock.mockImplementation((_arg, options) => options?.onSuccess?.());
+    renderPage({ status: 'APPROVED' }, [
+      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: '수정' }));
+
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '다시 오픈하기' }),
+    ).not.toBeInTheDocument();
   });
 
   it('재개설은 제목·타입까지 한 요청에 담아 보낸다(저장 버튼 없음)', () => {
@@ -551,16 +570,21 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).toBeInTheDocument();
   });
 
-  it('아직 저장되지 않은 값이 있으면 확인 모달에서 짚어준다', () => {
+  it('수정 후 아직 저장되지 않은 값이 있으면 확인 모달에서 짚어준다', () => {
+    // 필드가 "수정"을 누르기 전까지 잠겨 있으므로, 재개설 지름길로는 값을
+    // 바꿀 수 없다 — 이 시나리오는 수정을 눌러 초안 모드로 넘어간 뒤에만
+    // 일어난다(제목·타입은 그대로 두고 기간만 바꾼 채 바로 제출하는 경우).
+    startEditMock.mockImplementation((_arg, options) => options?.onSuccess?.());
     renderPage({ status: 'APPROVED' }, [
       { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
     ]);
+    fireEvent.click(screen.getByRole('button', { name: '수정' }));
 
     // 기간을 바꾸면 그 값은 아직 서버에 없다 — 지금 여는 페이지에는 안 보인다.
     fireEvent.change(screen.getByLabelText('피드백 종료일'), {
       target: { value: dateFromToday(40) },
     });
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
 
     expect(
       screen.getByText(/방금 바꾼 제목·타입·기간은 오픈할 때 함께 저장돼요/),

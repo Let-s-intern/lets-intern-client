@@ -42,7 +42,7 @@ const DetailSettingsPage = () => {
   const [originalTemplate, setOriginalTemplate] =
     useState<LiveMentoringTemplate | null>(null);
   /**
-   * "상세 수정하기" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐
+   * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐
    * 낡은 `APPROVED` 로 남는다. 그 사이에도 곧바로 편집으로 들어가야 하므로
    * `isLocked` 를 잠시 무시하는 용도로만 쓴다 — 그 밖의 경우 편집 가능 여부는
    * 오직 `!isLocked` 로만 정해진다(별도의 읽기/쓰기 모드 토글은 없다).
@@ -312,8 +312,8 @@ const DetailSettingsPage = () => {
               오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              수정을 시작하면 오픈이 잠시 멈춰요. 아래 "상세 수정하기"를
-              누르면 바로 시작할 수 있습니다.
+              수정을 시작하면 오픈이 잠시 멈춰요. 아래 "수정"을 누르면 바로
+              시작할 수 있습니다.
             </p>
           </div>
         </div>
@@ -392,7 +392,7 @@ const DetailSettingsPage = () => {
               disabled={isStartingEdit}
               className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isStartingEdit ? '처리 중...' : '상세 수정하기'}
+              {isStartingEdit ? '처리 중...' : '수정'}
             </button>
           ) : null
         ) : (

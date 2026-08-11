@@ -102,6 +102,12 @@ const OpenSettingsPage = () => {
   const [pendingOpen, setPendingOpen] = useState<'submit' | 'reopen' | null>(
     null,
   );
+  /**
+   * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐 낡은
+   * `APPROVED` 로 남는다. 그 사이에도 곧바로 초안 모드(저장·제출)로 넘어가야
+   * 하므로 그 순간만 이 값으로 재개설 지름길을 건너뛴다.
+   */
+  const [isEditingOverride, setIsEditingOverride] = useState(false);
 
   useEffect(() => {
     if (!data) return;
@@ -155,7 +161,17 @@ const OpenSettingsPage = () => {
    */
   const isDraftLike = status === null || status === 'DRAFT';
   const canReopen = status === 'APPROVED' && !currentOpening;
-  const isEditable = isDraftLike || canReopen;
+  /**
+   * "수정"을 누르기 전까지는 재개설 가능(승인+오픈종료) 상태를 값만 훑어보는
+   * 화면으로 잠가 둔다. 필드가 바로 고쳐지는 지름길(재개설)과, "수정"을 눌러
+   * 검토를 다시 걸고(start-edit) 초안처럼 저장→제출하는 경로가 동시에 있으면
+   * "여기는 그냥 고쳐지고 저기는 눌러야 고쳐진다"는 혼란이 생긴다 — 상세 페이지
+   * 설정과 같은 규칙(잠김 → 수정 클릭 → 편집)으로 통일한다.
+   */
+  const showReopenShortcut = canReopen && !isEditingOverride;
+  const canAct = isDraftLike || canReopen;
+  const canEditFields = isDraftLike || isEditingOverride;
+  const actingAsDraft = canAct && !showReopenShortcut;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
@@ -355,16 +371,20 @@ const OpenSettingsPage = () => {
   };
 
   /**
-   * 상세 페이지까지 고치려면 서버가 상품을 `DRAFT` 로 되돌린다(`start-edit`).
-   * 이 버튼은 오픈이 이미 닫혀 있을 때만 보이므로("다시 오픈하기" 대신 상세까지
-   * 고치겠다는 의도) 확인 모달 없이 바로 실행한다 — 상세 페이지 자체의 저장은
-   * `DetailSettingsPage`에서 dirty 상태일 때만 활성화되고 이탈 시 경고가 뜬다.
+   * "수정" — 서버가 상품을 `DRAFT` 로 되돌린다(`start-edit`). 오픈이 이미 닫혀
+   * 있을 때만 보이므로 확인 모달 없이 바로 실행한다 — 이후 저장은 dirty 상태일
+   * 때만 활성화되고(설정·상세 페이지 공통), 이탈 시 경고가 뜬다.
+   * 성공 즉시 `isEditingOverride` 를 켜 재개설 지름길을 걷어내고 초안 모드로
+   * 넘긴다 — 설정 쿼리 리페치를 기다리면 그 사이 화면이 그대로라 눌러도
+   * 아무 반응이 없는 것처럼 보인다.
    */
   const handleStartEdit = () => {
     if (isStartingEdit) return;
     startEdit(undefined, {
-      onSuccess: () =>
-        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' }),
+      onSuccess: () => {
+        setIsEditingOverride(true);
+        showAlert({ ...START_EDIT_SUCCESS, variant: 'success' });
+      },
       onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
     });
   };
@@ -412,7 +432,7 @@ const OpenSettingsPage = () => {
       <div className="relative">
         {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
             키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
-        <fieldset disabled={!isEditable} className="m-0 min-w-0 border-0 p-0">
+        <fieldset disabled={!canEditFields} className="m-0 min-w-0 border-0 p-0">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             {/* 좌: 설정 패널 */}
             <div className="flex flex-col gap-6">
@@ -719,28 +739,28 @@ const OpenSettingsPage = () => {
         하단 버튼. 저장(제목·타입)과 검토 제출(진행시간·기간)은 서로 다른 API 라 버튼도 나눈다.
         하나로 합쳐 자동 연쇄 호출하면 둘 중 어느 쪽이 실패했는지 화면에서 알 수 없다.
       */}
-      {isEditable && (
+      {canAct && (
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
-          {isDraftLike && isTitleOrCategoryDirty && (
+          {actingAsDraft && isTitleOrCategoryDirty && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
               제목·타입을 바꿨어요. 먼저 저장해야 오픈할 수 있어요.
             </p>
           )}
           {/*
-            재개설 모드에는 "저장"이 없다. 승인 상태에서 서버가 `PUT /settings` 를 잠가
-            제목·타입을 따로 저장할 수 없고, 재개설 요청에 함께 실어 보내기 때문이다.
-            버튼만 없애 두면 "저장이 안 된다"로 읽히므로 이유를 적어 둔다.
+            재개설 지름길에는 "저장"이 없다. 승인 상태에서 서버가 `PUT /settings` 를
+            잠가 제목·타입을 따로 저장할 수 없고, 재개설 요청에 함께 실어 보내기
+            때문이다. 버튼만 없애 두면 "저장이 안 된다"로 읽히므로 이유를 적어 둔다.
           */}
-          {canReopen && (
+          {showReopenShortcut && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
               여기서 바꾼 내용은 다시 오픈할 때 함께 저장돼요.
             </p>
           )}
           <div className="flex gap-2">
-            {canReopen ? (
+            {showReopenShortcut ? (
               /*
-               * 재개설 모드. 승인 상태에서는 서버가 `PUT /settings` 를 잠그므로 "저장"이
-               * 없다 — 제목·타입까지 재개설 요청에 함께 실어 보낸다.
+               * 재개설 지름길. 값을 바꾸지 않고 그대로 다시 열 때만 쓴다 — 뭔가
+               * 고치려면 "수정"을 눌러 아래 초안 모드(저장→제출)로 넘어가야 한다.
                */
               <>
                 <button
@@ -749,7 +769,7 @@ const OpenSettingsPage = () => {
                   disabled={isPending}
                   className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isStartingEdit ? '처리 중...' : '상세 수정하기'}
+                  {isStartingEdit ? '처리 중...' : '수정'}
                 </button>
                 <button
                   type="button"
