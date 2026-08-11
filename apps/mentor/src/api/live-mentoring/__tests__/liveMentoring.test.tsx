@@ -19,6 +19,7 @@ import {
 } from '../liveMentoring';
 import {
   liveMentoringSettingsSchema,
+  liveMentoringStatusSchema,
   openingHistoryItemSchema,
   settlementRowSchema,
 } from '../liveMentoringSchema';
@@ -197,10 +198,21 @@ describe('스키마 parse', () => {
 
   it('서버에 없는 isOpen 에 기대지 않는다 — status 로 잠금을 판정한다', () => {
     const parsed = liveMentoringSettingsSchema.parse(
-      makeSettings({ status: 'PENDING_REVIEW' }),
+      makeSettings({ status: 'APPROVED' }),
     );
-    expect(parsed.status).toBe('PENDING_REVIEW');
+    expect(parsed.status).toBe('APPROVED');
     expect('isOpen' in parsed).toBe(false);
+  });
+
+  it('백엔드 LiveMentoringStatus 3종(DRAFT/APPROVED/INACTIVE)만 파싱한다', () => {
+    expect(() => liveMentoringStatusSchema.parse('DRAFT')).not.toThrow();
+    expect(() => liveMentoringStatusSchema.parse('APPROVED')).not.toThrow();
+    expect(() => liveMentoringStatusSchema.parse('INACTIVE')).not.toThrow();
+  });
+
+  it('더 이상 존재하지 않는 PENDING_REVIEW/REJECTED 는 파싱 실패한다', () => {
+    expect(() => liveMentoringStatusSchema.parse('PENDING_REVIEW')).toThrow();
+    expect(() => liveMentoringStatusSchema.parse('REJECTED')).toThrow();
   });
 });
 
