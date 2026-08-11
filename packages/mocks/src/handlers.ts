@@ -1671,8 +1671,11 @@ export const handlers = [
   }),
 
   /**
-   * (멘토) POST /mentor/live-mentoring/submit — 관리자 검토 제출.
-   * 진행시간·기간이 여기서 처음 서버에 저장되고 상품이 `PENDING_REVIEW` 로 전이한다.
+   * (멘토) POST /mentor/live-mentoring/submit — 제출.
+   *
+   * 관리자 검토 단계가 없다(자가승인). 백엔드
+   * `LiveMentoringLifecycleServiceImpl.submit()`과 동일하게, 한 트랜잭션에서
+   * 진행시간·기간 저장 → `DRAFT → APPROVED` 전이 → 개설(opening) 생성까지 이 핸들러가 처리한다.
    */
   http.post('*/mentor/live-mentoring/submit', async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as {
@@ -1707,10 +1710,8 @@ export const handlers = [
     ) {
       return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
     }
-    if (
-      liveMentoringState.status !== 'DRAFT' &&
-      liveMentoringState.status !== 'REJECTED'
-    ) {
+    // 재제출은 없다 — 검토 단계가 없으므로 제출은 `DRAFT`에서만 가능하다.
+    if (liveMentoringState.status !== 'DRAFT') {
       return liveMentoringError(
         409,
         'LIVE_MENTORING_INVALID_STATE',
@@ -1718,10 +1719,26 @@ export const handlers = [
       );
     }
 
-    liveMentoringState.durations = body.durations as LiveMentoringDuration[];
+    const durations = body.durations as LiveMentoringDuration[];
+    liveMentoringState.durations = durations;
     liveMentoringState.feedbackStartDate = feedbackStartDate;
     liveMentoringState.feedbackEndDate = feedbackEndDate;
-    liveMentoringState.status = 'PENDING_REVIEW';
+    liveMentoringState.status = 'APPROVED';
+    liveMentoringState.approvedAt = liveMentoringNow();
+    liveMentoringState.approvedByUserId = 1;
+    liveMentoringState.openings.unshift({
+      openingId: nextOpeningId++,
+      status: 'OPEN',
+      durationPrices: durations.map((duration) => ({
+        duration,
+        price: getPriceByDuration(duration),
+      })),
+      feedbackStartDate,
+      feedbackEndDate,
+      openedAt: liveMentoringNow(),
+      closedAt: null,
+      closeReason: null,
+    });
     return HttpResponse.json({ status: 200, data: null });
   }),
 
