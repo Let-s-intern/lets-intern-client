@@ -50,7 +50,7 @@ export const useAdminLiveMentoringListQuery = ({
   });
 };
 
-/** 승인·반려·강제 종료는 모두 목록 화면에서만 쓰므로 성공 시 목록 전체를 무효화한다. */
+/** 강제 종료는 목록 화면에서만 쓰므로 성공 시 목록 전체를 무효화한다. */
 const useAdminLiveMentoringMutation = <TVariables>(
   request: (variables: TVariables) => Promise<unknown>,
 ) => {
@@ -64,22 +64,6 @@ const useAdminLiveMentoringMutation = <TVariables>(
     },
   });
 };
-
-/**
- * PATCH /admin/live-mentoring/{liveMentoringId}/approve — 승인.
- * 서버가 한 트랜잭션에서 상품을 `APPROVED` 로 바꾸고 저장된 진행시간·기간으로 개설까지 만든다.
- * 승인이 곧 오픈이라 별도 개설 요청이 필요 없다.
- */
-export const useApproveLiveMentoringMutation = () =>
-  useAdminLiveMentoringMutation((liveMentoringId: number) =>
-    axios.patch(`${ADMIN_PATH}/${liveMentoringId}/approve`),
-  );
-
-/** PATCH /admin/live-mentoring/{liveMentoringId}/reject — 반려. 사유는 서버가 받지 않는다. */
-export const useRejectLiveMentoringMutation = () =>
-  useAdminLiveMentoringMutation((liveMentoringId: number) =>
-    axios.patch(`${ADMIN_PATH}/${liveMentoringId}/reject`),
-  );
 
 /** PATCH /admin/live-mentoring/openings/{openingId}/close — 강제 종료. 사유는 `ADMIN_FORCED`. */
 export const useCloseLiveMentoringOpeningMutation = () =>
