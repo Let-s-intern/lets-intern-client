@@ -108,7 +108,10 @@ const TemplatePreview = ({ template, nickname }: TemplatePreviewProps) => {
         </div>
 
         {/* 시안 2 · 멘토링 유형 */}
-        <div id="preview-section-mentoringTypes" className="flex flex-col gap-3">
+        <div
+          id="preview-section-mentoringTypes"
+          className="flex flex-col gap-3"
+        >
           <p className={sectionLabel}>멘토링 유형</p>
           <p className={sectionTitle}>{mentoringTypes.title}</p>
           <p className="text-center text-xs text-gray-500">

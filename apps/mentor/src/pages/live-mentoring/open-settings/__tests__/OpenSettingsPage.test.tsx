@@ -452,9 +452,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(
       screen.getByRole('button', { name: '다시 오픈하기' }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: '수정' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
   });
 
   it('수정을 누르면 설정 필드가 바로 편집 가능해지고 저장하기가 나타난다', () => {

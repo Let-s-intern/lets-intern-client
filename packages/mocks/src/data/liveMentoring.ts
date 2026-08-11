@@ -289,7 +289,6 @@ export interface LiveMentoringSettings {
   feedbackEndDate: string | null;
 }
 
-
 /** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
 /**
  * 개설 이력 1건 — `GET /mentor/live-mentoring/open-status` 의 `openings[]`.
@@ -1064,4 +1063,3 @@ export const OPENING_HISTORY: OpeningHistoryItem[] = [
     closeReason: 'MENTOR_CANCELED',
   },
 ];
-

@@ -233,7 +233,9 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                               >
                                 <span className="truncate">{child.name}</span>
                                 {child.showDetailSettingsLock && (
-                                  <DetailSettingsLockIcon active={childActive} />
+                                  <DetailSettingsLockIcon
+                                    active={childActive}
+                                  />
                                 )}
                               </Link>
                             </li>

@@ -28,7 +28,11 @@ export type LiveMentoringDuration = z.infer<typeof liveMentoringDurationSchema>;
  * 개설 상태(`liveMentoringOpeningStatusSchema`)와 **다른 축**이다. 상품은 승인 여부를,
  * 개설은 지금 열려 있는지를 나타낸다. 화면 문구에서 둘을 섞지 않는다.
  */
-export const liveMentoringStatusSchema = z.enum(['DRAFT', 'APPROVED', 'INACTIVE']);
+export const liveMentoringStatusSchema = z.enum([
+  'DRAFT',
+  'APPROVED',
+  'INACTIVE',
+]);
 export type LiveMentoringStatus = z.infer<typeof liveMentoringStatusSchema>;
 
 /** 개설 상태 — 백엔드 `LiveMentoringOpeningStatus`. `OPEN` → `CLOSED` 단방향. */

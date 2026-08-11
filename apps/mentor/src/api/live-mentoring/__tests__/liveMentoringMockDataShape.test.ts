@@ -34,5 +34,4 @@ describe('공유 목 데이터 형상 — 프론트 zod 스키마 정합', () =>
       expect(() => openingHistoryItemSchema.parse(opening)).not.toThrow();
     }
   });
-
 });

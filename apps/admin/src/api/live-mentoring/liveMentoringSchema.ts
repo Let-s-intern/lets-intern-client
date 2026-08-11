@@ -15,7 +15,11 @@ export const liveMentoringCategorySchema = z.enum([
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 
 /** 상품 상태 — 서버 `LiveMentoringStatus`. */
-export const liveMentoringStatusSchema = z.enum(['DRAFT', 'APPROVED', 'INACTIVE']);
+export const liveMentoringStatusSchema = z.enum([
+  'DRAFT',
+  'APPROVED',
+  'INACTIVE',
+]);
 export type LiveMentoringStatus = z.infer<typeof liveMentoringStatusSchema>;
 
 /** 개설 상태 — 서버 `LiveMentoringOpeningStatus`. */

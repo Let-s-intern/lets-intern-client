@@ -45,7 +45,9 @@ describe('ConfirmActionDialog', () => {
       />,
     );
 
-    expect(screen.getByText('이 개설을 강제로 종료합니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText('이 개설을 강제로 종료합니다.'),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: '강제 종료' }),
     ).toBeInTheDocument();

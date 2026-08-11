@@ -447,7 +447,10 @@ const OpenSettingsPage = () => {
       <div className="relative">
         {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
             키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
-        <fieldset disabled={!canEditFields} className="m-0 min-w-0 border-0 p-0">
+        <fieldset
+          disabled={!canEditFields}
+          className="m-0 min-w-0 border-0 p-0"
+        >
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             {/* 좌: 설정 패널 */}
             <div className="flex flex-col gap-6">

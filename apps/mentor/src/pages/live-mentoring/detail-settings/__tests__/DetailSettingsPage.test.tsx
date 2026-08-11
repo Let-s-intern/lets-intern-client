@@ -171,7 +171,9 @@ describe('DetailSettingsPage — 편집 영역', () => {
       .getByRole('heading', { name: '히어로 (최상단)' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+    fireEvent.click(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    );
 
     expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
     expect(screen.getByRole('button', { name: '수정 취소' })).toBeVisible();
@@ -187,7 +189,9 @@ describe('DetailSettingsPage — 편집 영역', () => {
       .getByRole('heading', { name: '히어로 (최상단)' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+    fireEvent.click(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    );
 
     fireEvent.click(screen.getByRole('button', { name: '수정 취소' }));
 
@@ -208,7 +212,9 @@ describe('DetailSettingsPage — 편집 영역', () => {
       .getByRole('heading', { name: '히어로 (최상단)' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+    fireEvent.click(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    );
 
     fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
 
@@ -240,7 +246,9 @@ describe('DetailSettingsPage — 이탈 경고', () => {
       .getByRole('heading', { name: '히어로 (최상단)' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+    fireEvent.click(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    );
 
     fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
 
@@ -290,9 +298,7 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
     // 글로만 다른 화면으로 보내지 않고 여기서 누를 수 있어야 한다.
-    expect(
-      screen.getByRole('button', { name: '수정' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
   });
 
   it('잠긴 상태에서는 없는 수정하기 버튼을 안내하지 않는다', () => {

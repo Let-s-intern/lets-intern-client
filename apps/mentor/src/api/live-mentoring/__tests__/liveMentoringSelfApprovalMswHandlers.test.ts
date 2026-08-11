@@ -40,9 +40,9 @@ describe('POST /mentor/live-mentoring/submit — 자가승인', () => {
     });
     expect(res.status).toBe(200);
 
-    const settings = await fetch(
-      `${BASE}/mentor/live-mentoring/settings`,
-    ).then((r) => r.json());
+    const settings = await fetch(`${BASE}/mentor/live-mentoring/settings`).then(
+      (r) => r.json(),
+    );
     expect(settings.data.status).toBe('APPROVED');
     expect(settings.data.durations).toEqual([30, 60]);
 
@@ -143,7 +143,9 @@ describe('GET /admin/live-mentoring — 상태 필터 (DRAFT/APPROVED/INACTIVE)'
     const statuses = all.data.liveMentoringList.map(
       (row: { status: string }) => row.status,
     );
-    expect(new Set(statuses)).toEqual(new Set(['DRAFT', 'APPROVED', 'INACTIVE']));
+    expect(new Set(statuses)).toEqual(
+      new Set(['DRAFT', 'APPROVED', 'INACTIVE']),
+    );
 
     for (const status of ['DRAFT', 'APPROVED', 'INACTIVE']) {
       const filtered = await fetch(

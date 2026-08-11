@@ -10,9 +10,11 @@ import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchem
 import { durationPricesLabel, formatPeriod } from '../constants';
 
 /** 확인 모달이 어떤 액션을 대기 중인지. 닫혀 있으면 null. */
-export type PendingAction =
-  | { type: 'close'; row: AdminLiveMentoring; openingId: number }
-  | null;
+export type PendingAction = {
+  type: 'close';
+  row: AdminLiveMentoring;
+  openingId: number;
+} | null;
 
 interface ConfirmActionDialogProps {
   action: PendingAction;
