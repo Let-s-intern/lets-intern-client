@@ -254,13 +254,12 @@ export interface LiveMentoringSettingsCareer {
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드 —
  * 이 오픈 설정 화면에서 수정할 수 없다(수정은 프로필 페이지에서).
  */
-/** 상품 상태 — 백엔드 `LiveMentoringStatus`. */
-export type LiveMentoringStatus =
-  | 'DRAFT'
-  | 'PENDING_REVIEW'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'INACTIVE';
+/**
+ * 상품 상태 — 백엔드 `LiveMentoringStatus`.
+ * 자가승인 전환으로 `PENDING_REVIEW`/`REJECTED`는 사라졌다 — `submit()`이 검토 단계 없이
+ * `DRAFT → APPROVED`로 곧장 전이시킨다.
+ */
+export type LiveMentoringStatus = 'DRAFT' | 'APPROVED' | 'INACTIVE';
 
 /** 개설 상태 — 백엔드 `LiveMentoringOpeningStatus`. */
 export type LiveMentoringOpeningStatus = 'OPEN' | 'CLOSED';
