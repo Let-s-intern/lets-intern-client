@@ -9,12 +9,10 @@ import {
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
   openingHistoryResponseSchema,
-  settlementListResponseSchema,
 } from './liveMentoringSchema';
 
 const SETTINGS_PATH = '/mentor/live-mentoring/settings';
 const TEMPLATE_PATH = '/mentor/live-mentoring/template';
-const SETTLEMENT_PATH = '/mentor/live-mentoring/settlement';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const SUBMIT_PATH = '/mentor/live-mentoring/submit';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
@@ -29,11 +27,6 @@ export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
 export const LIVE_MENTORING_TEMPLATE_QUERY_KEY = [
   'liveMentoring',
   'template',
-] as const;
-/** 정산 현황 query key. */
-export const LIVE_MENTORING_SETTLEMENT_QUERY_KEY = [
-  'liveMentoring',
-  'settlement',
 ] as const;
 /** 오픈 현황 query key. */
 export const LIVE_MENTORING_OPEN_STATUS_QUERY_KEY = [
@@ -210,25 +203,6 @@ export const useUpdateLiveMentoringTemplateMutation = () => {
         queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
       });
     },
-  });
-};
-
-/**
- * GET /mentor/live-mentoring/settlement — 정산 현황(read-only) 조회.
- * 기간별 합계(`settlementList`)와 개별 정산 내역(`itemList`)을 함께 반환한다.
- */
-export const useLiveMentoringSettlementQuery = () => {
-  return useQuery({
-    queryKey: LIVE_MENTORING_SETTLEMENT_QUERY_KEY,
-    queryFn: async () => {
-      const res = await axios.get(SETTLEMENT_PATH);
-      return settlementListResponseSchema.parse(res.data.data);
-    },
-    refetchOnWindowFocus: false,
-    // ⚠️ 임시 — 백엔드에 아직 없는 엔드포인트라 재시도해도 성공하지 않는다.
-    //    기본 3회 재시도(약 7초)를 끄고 개발 중 안내를 바로 띄우려는 것이다.
-    //    API 연동 후 이 줄을 지워 기본 재시도로 되돌릴 것.
-    retry: false,
   });
 };
 

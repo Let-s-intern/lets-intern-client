@@ -2,8 +2,6 @@ import {
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
   OPENING_HISTORY,
-  SETTLEMENT_ITEMS,
-  SETTLEMENT_ROWS,
 } from '@letscareer/mocks';
 import { describe, expect, it } from 'vitest';
 
@@ -11,8 +9,6 @@ import {
   liveMentoringSettingsSchema,
   liveMentoringTemplateSchema,
   openingHistoryItemSchema,
-  settlementItemSchema,
-  settlementRowSchema,
 } from '../liveMentoringSchema';
 
 /**
@@ -39,12 +35,4 @@ describe('공유 목 데이터 형상 — 프론트 zod 스키마 정합', () =>
     }
   });
 
-  it('SETTLEMENT_ROWS/SETTLEMENT_ITEMS 가 각각의 스키마를 통과한다', () => {
-    for (const row of SETTLEMENT_ROWS) {
-      expect(() => settlementRowSchema.parse(row)).not.toThrow();
-    }
-    for (const item of SETTLEMENT_ITEMS) {
-      expect(() => settlementItemSchema.parse(item)).not.toThrow();
-    }
-  });
 });

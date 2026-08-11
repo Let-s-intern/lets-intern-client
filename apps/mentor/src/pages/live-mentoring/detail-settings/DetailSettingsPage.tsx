@@ -241,16 +241,16 @@ const DetailSettingsPage = () => {
             </span>
             <p className="text-xs text-gray-600">
               {currentOpening
-                ? '멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 오픈 현황에서 오픈을 먼저 종료해주세요.'
+                ? '멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 오픈 설정에서 오픈을 먼저 종료해주세요.'
                 : '수정을 시작하면 오픈이 잠시 멈춰요. 아래 "상세 수정하기"를 누르면 바로 시작할 수 있습니다.'}
             </p>
           </div>
           {currentOpening && (
             <Link
-              to="/live-mentoring/open-status"
+              to="/live-mentoring/open-settings"
               className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
             >
-              오픈 현황 보기
+              오픈 설정으로 이동
             </Link>
           )}
         </div>

@@ -206,7 +206,8 @@ describe('DetailSettingsPage — 편집 영역', () => {
 
 describe('DetailSettingsPage — 상태 잠금', () => {
   // 상품 상태(APPROVED)가 아니라 "지금 열려 있는지"로 말해야 오해가 없다.
-  it('오픈 중이면 오픈 중으로 알리고 종료하러 갈 링크를 준다', () => {
+  it('오픈 중이면 오픈 중으로 알리고 오픈 설정으로 갈 링크를 준다', () => {
+    // 오픈 현황 화면이 폐지되면서, 종료는 오픈 설정 화면 상단에서 한다.
     status = 'APPROVED';
     openings = [{ status: 'OPEN' }];
     renderPage();
@@ -214,8 +215,8 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
     expect(
-      within(banner).getByRole('link', { name: '오픈 현황 보기' }),
-    ).toHaveAttribute('href', '/live-mentoring/open-status');
+      within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
+    ).toHaveAttribute('href', '/live-mentoring/open-settings');
     // 노출 중에는 수정도, 상세 수정 시작도 불가하다.
     expect(
       screen.queryByRole('button', { name: '수정하기' }),

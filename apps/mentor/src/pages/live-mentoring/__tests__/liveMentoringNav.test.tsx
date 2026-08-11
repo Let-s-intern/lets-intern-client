@@ -41,7 +41,7 @@ const renderSidebar = (path: string) =>
   );
 
 describe('1대1 라이브 멘토링 사이드바 그룹', () => {
-  it('그룹 라벨 클릭(드롭다운)으로 4개 하위 항목이 열린다', () => {
+  it('그룹 라벨 클릭(드롭다운)으로 2개 하위 항목이 열린다', () => {
     renderSidebar('/');
 
     // 다른 경로에서는 기본 접힘 — 클릭 전엔 하위 항목이 없다
@@ -52,8 +52,9 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
 
     expect(screen.getByText('오픈 설정')).toBeInTheDocument();
     expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
-    expect(screen.getByText('정산 현황')).toBeInTheDocument();
-    expect(screen.getByText('오픈 현황')).toBeInTheDocument();
+    // 오픈 현황·정산 현황은 폐지됐다 — 오픈/닫기는 오픈 설정 상단에서 바로 한다.
+    expect(screen.queryByText('정산 현황')).not.toBeInTheDocument();
+    expect(screen.queryByText('오픈 현황')).not.toBeInTheDocument();
   });
 
   it('하위 항목의 url 매핑이 정확하다', () => {
@@ -63,8 +64,6 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     const cases: [string, string][] = [
       ['오픈 설정', '/live-mentoring/open-settings'],
       ['상세 페이지 설정', '/live-mentoring/detail-settings'],
-      ['정산 현황', '/live-mentoring/settlement'],
-      ['오픈 현황', '/live-mentoring/open-status'],
     ];
     for (const [name, url] of cases) {
       expect(screen.getByRole('link', { name })).toHaveAttribute('href', url);
@@ -84,9 +83,9 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
   });
 
   it('하위 경로 진입 시 그룹이 자동으로 열리고 해당 항목이 활성 표시된다', () => {
-    renderSidebar('/live-mentoring/settlement');
+    renderSidebar('/live-mentoring/open-settings');
 
-    const link = screen.getByRole('link', { name: '정산 현황' });
+    const link = screen.getByRole('link', { name: '오픈 설정' });
     expect(link).toHaveClass('text-primary');
     expect(link).toHaveClass('font-semibold');
   });

@@ -18,8 +18,6 @@ export {
   OPENING_HISTORY,
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
-  SETTLEMENT_ROWS,
-  SETTLEMENT_ITEMS,
 } from './data/liveMentoring';
 export type {
   ChecklistItem,
@@ -37,6 +35,4 @@ export type {
   LiveMentoringTemplate,
   LiveMentorProfile,
   OpeningHistoryItem,
-  SettlementRow,
-  SettlementItem,
 } from './data/liveMentoring';

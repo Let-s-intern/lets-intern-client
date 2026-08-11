@@ -6,8 +6,6 @@ import {
   LIVE_MENTORING_SETTINGS,
   LIVE_MENTORING_TEMPLATE,
   OPENING_HISTORY,
-  SETTLEMENT_ROWS,
-  SETTLEMENT_ITEMS,
   getPriceByDuration,
   mentoringTitleFor,
   type LiveMentorCard,
@@ -1805,16 +1803,6 @@ export const handlers = [
   http.put('*/mentor/live-mentoring/template', async ({ request }) => {
     const body = await request.json().catch(() => ({}));
     return HttpResponse.json({ status: 200, data: body });
-  }),
-
-  /**
-   * (멘토) GET /mentor/live-mentoring/settlement — 정산 현황(read-only).
-   */
-  http.get('*/mentor/live-mentoring/settlement', () => {
-    return HttpResponse.json({
-      status: 200,
-      data: { settlementList: SETTLEMENT_ROWS, itemList: SETTLEMENT_ITEMS },
-    });
   }),
 
   /**

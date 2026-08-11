@@ -224,13 +224,6 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data).toEqual(body);
   });
 
-  it('GET /mentor/live-mentoring/settlement → 정산행 목록', async () => {
-    const res = await fetch(`${BASE}/mentor/live-mentoring/settlement`);
-    const { data } = await res.json();
-    expect(Array.isArray(data.settlementList)).toBe(true);
-    expect(data.settlementList[0]).toHaveProperty('status');
-  });
-
   it('GET /mentor/live-mentoring/open-status → 개설 이력', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/open-status`);
     const { data } = await res.json();

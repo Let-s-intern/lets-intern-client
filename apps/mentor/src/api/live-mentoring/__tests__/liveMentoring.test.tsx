@@ -11,7 +11,6 @@ import {
   useCloseLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
-  useLiveMentoringSettlementQuery,
   useLiveMentoringTemplateQuery,
   useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
@@ -21,7 +20,6 @@ import {
   liveMentoringSettingsSchema,
   liveMentoringStatusSchema,
   openingHistoryItemSchema,
-  settlementRowSchema,
 } from '../liveMentoringSchema';
 
 // axios 모듈 자체를 모킹 (default export)
@@ -154,17 +152,6 @@ describe('스키마 parse', () => {
     ).toThrow();
   });
 
-  it('정산행 status가 enum 밖이면 파싱 실패', () => {
-    expect(() =>
-      settlementRowSchema.parse({
-        period: '2026-06',
-        completedCount: 1,
-        grossAmount: 1000,
-        status: 'DONE',
-      }),
-    ).toThrow();
-  });
-
   it('개설 이력 status가 enum 밖이면 파싱 실패', () => {
     expect(() =>
       openingHistoryItemSchema.parse({
@@ -259,45 +246,6 @@ describe('useLiveMentoringTemplateQuery', () => {
     );
     expect(result.current.data?.intro.passedCount).toBe(120);
     expect(result.current.data?.mentoringTypes.items).toHaveLength(1);
-  });
-});
-
-describe('useLiveMentoringSettlementQuery', () => {
-  it('settlementList 와 itemList 를 함께 반환한다', async () => {
-    axiosMock.get.mockResolvedValue({
-      data: {
-        data: {
-          settlementList: [
-            {
-              period: '2026-06',
-              completedCount: 18,
-              grossAmount: 1080000,
-              status: 'PAID',
-            },
-          ],
-          itemList: [
-            {
-              settlementId: 1,
-              date: '2026-06-28',
-              menteeName: '김**',
-              category: 'PERSONAL_STATEMENT',
-              durationMin: 60,
-              amount: 60000,
-              status: 'PAID',
-            },
-          ],
-        },
-      },
-    });
-
-    const { result } = renderHook(() => useLiveMentoringSettlementQuery(), {
-      wrapper: createWrapper(newClient()),
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.settlementList).toHaveLength(1);
-    expect(result.current.data?.settlementList[0].status).toBe('PAID');
-    expect(result.current.data?.itemList[0].menteeName).toBe('김**');
   });
 });
 

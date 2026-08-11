@@ -289,24 +289,6 @@ export interface LiveMentoringSettings {
   feedbackEndDate: string | null;
 }
 
-/** 정산 현황 행 — 기간별 합계 (PRD §4.6, read-only) */
-export interface SettlementRow {
-  period: string;
-  completedCount: number;
-  grossAmount: number;
-  status: 'PENDING' | 'PAID';
-}
-
-/** 개별 정산 내역 — 완료된 멘토링 건별 (read-only) */
-export interface SettlementItem {
-  settlementId: number;
-  date: string;
-  menteeName: string;
-  category: LiveMentoringCategory;
-  durationMin: LiveMentoringDuration;
-  amount: number;
-  status: 'PENDING' | 'PAID';
-}
 
 /** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
 /**
@@ -1049,28 +1031,6 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
 export const LIVE_MENTORING_TEMPLATE: LiveMentoringTemplate =
   LIVE_MENTOR_DETAILS[MY_MENTOR_ID].template;
 
-/** GET /mentor/live-mentoring/settlement — 정산 현황(read-only). */
-export const SETTLEMENT_ROWS: SettlementRow[] = [
-  {
-    period: '2026-06',
-    completedCount: 18,
-    grossAmount: 1080000,
-    status: 'PAID',
-  },
-  {
-    period: '2026-05',
-    completedCount: 12,
-    grossAmount: 720000,
-    status: 'PAID',
-  },
-  {
-    period: '2026-04',
-    completedCount: 9,
-    grossAmount: 540000,
-    status: 'PENDING',
-  },
-];
-
 /** 진행시간 목록을 서버 응답 형태(`durationPrices`)로 변환한다. 가격은 고정 정책값. */
 const durationPricesFor = (durations: LiveMentoringDuration[]) =>
   durations.map((duration) => ({
@@ -1105,42 +1065,3 @@ export const OPENING_HISTORY: OpeningHistoryItem[] = [
   },
 ];
 
-/** GET /mentor/live-mentoring/settlement — 개별 정산 내역(완료 건별, read-only). */
-export const SETTLEMENT_ITEMS: SettlementItem[] = [
-  {
-    settlementId: 1,
-    date: '2026-06-28',
-    menteeName: '김**',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 60,
-    amount: 60000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 2,
-    date: '2026-06-21',
-    menteeName: '이**',
-    category: 'RESUME',
-    durationMin: 30,
-    amount: 35000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 3,
-    date: '2026-06-14',
-    menteeName: '박**',
-    category: 'PERSONAL_STATEMENT',
-    durationMin: 30,
-    amount: 35000,
-    status: 'PAID',
-  },
-  {
-    settlementId: 4,
-    date: '2026-04-30',
-    menteeName: '최**',
-    category: 'PORTFOLIO',
-    durationMin: 60,
-    amount: 60000,
-    status: 'PENDING',
-  },
-];

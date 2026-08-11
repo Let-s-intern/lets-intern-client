@@ -21,7 +21,8 @@
  *
  * 관련: apps/mentor 에도 같은 목적의 `UnderDevelopmentNotice` 가 따로 있다
  * (앱 간 컴포넌트를 공유하지 않는 규칙 때문에 의도적으로 중복). 그쪽은
- * `/mentor/live-mentoring/template`·`/settlement` 가 열리면 함께 정리한다.
+ * `/mentor/live-mentoring/template` 이 열리면 함께 정리한다(정산 현황 화면은
+ * 폐지되어 이 조건에서 빠졌다).
  */
 
 /** 미구현 화면 문의를 받는 담당자. */

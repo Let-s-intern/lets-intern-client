@@ -5,8 +5,6 @@ import {
   OPENING_HISTORY,
   PRICE_BY_DURATION,
   REVIEWS_BY_MENTOR,
-  SETTLEMENT_ROWS,
-  SETTLEMENT_ITEMS,
 } from '@letscareer/mocks';
 import { describe, expect, it } from 'vitest';
 
@@ -86,15 +84,6 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     }
   });
 
-  it('개별 정산 내역이 존재하며 상태·금액이 유효하다', () => {
-    expect(SETTLEMENT_ITEMS.length).toBeGreaterThan(0);
-    for (const item of SETTLEMENT_ITEMS) {
-      expect(['PENDING', 'PAID']).toContain(item.status);
-      expect(item.amount).toBe(PRICE_BY_DURATION[item.durationMin]);
-      expect(item.menteeName).toBeTruthy();
-    }
-  });
-
   it('후기는 멘토별로 존재하며 점수는 1~5 범위다', () => {
     for (const reviews of Object.values(REVIEWS_BY_MENTOR)) {
       for (const review of reviews) {
@@ -104,11 +93,7 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
     }
   });
 
-  it('정산행/개설이력 상태 enum이 스펙과 일치한다', () => {
-    for (const row of SETTLEMENT_ROWS) {
-      expect(['PENDING', 'PAID']).toContain(row.status);
-      expect(row.grossAmount).toBeGreaterThanOrEqual(0);
-    }
+  it('개설이력 상태 enum이 스펙과 일치한다', () => {
     // 활성 개설은 최대 1건이다(서버 `LiveMentoring.addOpening` 제약).
     expect(
       OPENING_HISTORY.filter((o) => o.status === 'OPEN').length,
