@@ -104,7 +104,11 @@ const MissionCalendarItem = ({ schedule, now, className, isDone }: Props) => {
         {(mission.th === BONUS_MISSION_TH ||
           mission.th === TALENT_POOL_MISSION_TH) &&
         attendance?.submitted ? (
-          <MissionIcon schedule={schedule} isDone={isDone} timeState={timeState} />
+          <MissionIcon
+            schedule={schedule}
+            isDone={isDone}
+            timeState={timeState}
+          />
         ) : isInProgress ? (
           <MissionTodayIcon
             mission={mission}
@@ -114,7 +118,11 @@ const MissionCalendarItem = ({ schedule, now, className, isDone }: Props) => {
         ) : timeState === 'UPCOMING' ? (
           <MissionNotStartedIcon schedule={schedule} />
         ) : (
-          <MissionIcon schedule={schedule} isDone={isDone} timeState={timeState} />
+          <MissionIcon
+            schedule={schedule}
+            isDone={isDone}
+            timeState={timeState}
+          />
         )}
         <span
           className={clsx('text-xxsmall10 block w-full leading-3', {

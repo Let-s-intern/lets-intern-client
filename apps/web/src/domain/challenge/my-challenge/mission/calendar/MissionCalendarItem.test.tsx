@@ -43,9 +43,8 @@ import MissionCalendarItem from './MissionCalendarItem';
 const mockChallengeEndDate = dayjs('2026-08-20T23:59:00+09:00');
 
 const renderItem = (schedule: Schedule, now: Dayjs) =>
-  render(
-    <MissionCalendarItem schedule={schedule} now={now} isDone={false} />,
-  ).container;
+  render(<MissionCalendarItem schedule={schedule} now={now} isDone={false} />)
+    .container;
 
 /** 시작 전 회차는 회색 '미션' 아이콘을 쓴다. 제출 배지와 아이콘 alt 로 갈린다. */
 const isNotStarted = (container: HTMLElement) =>

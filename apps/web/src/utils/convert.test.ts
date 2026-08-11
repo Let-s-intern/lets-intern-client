@@ -45,7 +45,10 @@ describe('missionSubmitToBadge — 기존 케이스 회귀', () => {
   it.each([
     ['확인중', { status: 'PRESENT' as const, result: 'WAITING' as const }],
     ['제출 반려', { status: 'PRESENT' as const, result: 'WRONG' as const }],
-    ['최종 반려', { status: 'PRESENT' as const, result: 'FINAL_WRONG' as const }],
+    [
+      '최종 반려',
+      { status: 'PRESENT' as const, result: 'FINAL_WRONG' as const },
+    ],
     ['지각 제출', { status: 'LATE' as const, result: 'PASS' as const }],
     ['지각 제출', { status: 'UPDATED' as const, result: 'PASS' as const }],
     ['미제출', { status: 'ABSENT' as const, result: null }],

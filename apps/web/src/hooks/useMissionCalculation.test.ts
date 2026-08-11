@@ -121,7 +121,9 @@ describe('todayMissionId', () => {
   });
 
   it('마감된 회차가 없으면 (챌린지 시작 전) 가장 이른 회차를 고른다', () => {
-    freezeAt({ valueOf: () => new Date('2026-07-01T12:00:00+09:00').getTime() });
+    freezeAt({
+      valueOf: () => new Date('2026-07-01T12:00:00+09:00').getTime(),
+    });
     const { current } = setup({ todayThFromServer: null });
 
     expect(current.todayMissionId).toBe(1001);

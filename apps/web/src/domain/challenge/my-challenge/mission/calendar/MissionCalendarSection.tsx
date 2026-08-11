@@ -82,7 +82,8 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
   // 모든 미션이 끝났는지는 마지막 미션의 마감 시각으로 본다.
   // 예전에는 maxTh < todayTh 로 봤는데, todayTh 폴백이 늘 maxTh + 1 이라 항상 참이었다.
   const lastEndDate = getLastEndDate(schedules);
-  const isAllMissionFinished = lastEndDate !== null && dayjs().isAfter(lastEndDate);
+  const isAllMissionFinished =
+    lastEndDate !== null && dayjs().isAfter(lastEndDate);
   const isBonusMission = todayTh === 100;
   const bonusMissionSchedule = schedules.find(
     (item) => item.missionInfo.th === 100,
