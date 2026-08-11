@@ -4,21 +4,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchema';
 
 const listQuery = vi.fn();
-const approveMock = vi.fn();
-const rejectMock = vi.fn();
 const closeMock = vi.fn();
 const snackbarMock = vi.fn();
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useAdminLiveMentoringListQuery: (params: unknown) => listQuery(params),
-  useApproveLiveMentoringMutation: () => ({
-    mutate: approveMock,
-    isPending: false,
-  }),
-  useRejectLiveMentoringMutation: () => ({
-    mutate: rejectMock,
-    isPending: false,
-  }),
   useCloseLiveMentoringOpeningMutation: () => ({
     mutate: closeMock,
     isPending: false,
@@ -38,29 +28,25 @@ const dateFromToday = (offsetDays: number): string => {
   return date.toISOString().slice(0, 10);
 };
 
-const pendingRow: AdminLiveMentoring = {
+const draftRow: AdminLiveMentoring = {
   liveMentoringId: 10,
   mentorId: 21,
   mentorNickname: '렛츠멘토',
   mentorProfileImage: null,
   title: '이력서 피드백',
-  status: 'PENDING_REVIEW',
+  status: 'DRAFT',
   categories: ['RESUME', 'PORTFOLIO'],
   hasDetailPage: true,
-  approvedAt: null,
-  approvedByUserId: null,
   createDate: '2026-08-03T12:00:00',
   lastModifiedDate: '2026-08-03T12:00:00',
   currentOpening: null,
 };
 
 const approvedRow: AdminLiveMentoring = {
-  ...pendingRow,
+  ...draftRow,
   liveMentoringId: 11,
   mentorNickname: '오픈멘토',
   status: 'APPROVED',
-  approvedAt: '2026-08-04T14:30:00',
-  approvedByUserId: 1,
   currentOpening: {
     openingId: 100,
     status: 'OPEN',
@@ -101,25 +87,23 @@ const renderTable = (rows: AdminLiveMentoring[]) => {
 
 afterEach(() => {
   listQuery.mockReset();
-  approveMock.mockReset();
-  rejectMock.mockReset();
   closeMock.mockReset();
   snackbarMock.mockReset();
 });
 
 describe('AdminLiveMentoringTable — 조회', () => {
-  it('기본 필터는 검토 대기이고, 1-based 페이지로 요청한다', () => {
-    renderTable([pendingRow]);
+  it('기본 필터는 전체이고, 1-based 페이지로 요청한다', () => {
+    renderTable([draftRow]);
 
     expect(listQuery).toHaveBeenCalledWith({
-      status: 'PENDING_REVIEW',
+      status: undefined,
       page: 1,
       size: 20,
     });
   });
 
   it('필터를 바꾸면 해당 상태로 다시 조회한다', () => {
-    renderTable([pendingRow]);
+    renderTable([draftRow]);
 
     fireEvent.click(within(filterBar()).getByRole('button', { name: '승인' }));
 
@@ -131,8 +115,9 @@ describe('AdminLiveMentoringTable — 조회', () => {
   });
 
   it('전체 필터는 status 파라미터를 보내지 않는다', () => {
-    renderTable([pendingRow]);
+    renderTable([draftRow]);
 
+    fireEvent.click(within(filterBar()).getByRole('button', { name: '승인' }));
     fireEvent.click(within(filterBar()).getByRole('button', { name: '전체' }));
 
     expect(listQuery).toHaveBeenLastCalledWith({
@@ -143,13 +128,13 @@ describe('AdminLiveMentoringTable — 조회', () => {
   });
 
   it('상품 정보를 한글 라벨로 렌더한다', () => {
-    renderTable([pendingRow]);
+    renderTable([draftRow]);
 
     expect(screen.getByText('렛츠멘토')).toBeInTheDocument();
     expect(screen.getByText('이력서 피드백')).toBeInTheDocument();
     expect(screen.getByText('이력서 · 포트폴리오')).toBeInTheDocument();
     expect(
-      within(screen.getByRole('table')).getByText('검토 대기'),
+      within(screen.getByRole('table')).getByText('초안'),
     ).toBeInTheDocument();
   });
 
@@ -186,56 +171,28 @@ describe('AdminLiveMentoringTable — 조회', () => {
 });
 
 describe('AdminLiveMentoringTable — 액션', () => {
-  it('검토 대기 행에만 승인·반려 버튼이 있다', () => {
-    renderTable([approvedRow]);
+  it('백엔드에 없는 승인·반려 버튼은 어떤 상태 행에도 없다', () => {
+    renderTable([draftRow, approvedRow]);
 
-    // 필터 버튼과 구분하기 위해 표 안에서 찾는다.
     const table = screen.getByRole('table');
     expect(
       within(table).queryByRole('button', { name: '승인' }),
     ).not.toBeInTheDocument();
     expect(
-      within(table).getByRole('button', { name: '개설 강제 종료' }),
-    ).toBeInTheDocument();
+      within(table).queryByRole('button', { name: '반려' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('승인은 확인 모달을 거친 뒤 상품 id 로 호출한다', () => {
-    renderTable([pendingRow]);
+  it('개설 중(OPEN)인 행에만 강제 종료 버튼이 있다', () => {
+    renderTable([draftRow, approvedRow]);
 
-    fireEvent.click(
-      within(screen.getByRole('table')).getByRole('button', {
-        name: '승인',
-      }),
-    );
-    // 모달이 먼저 뜨고, 이 시점에는 요청이 나가지 않는다.
-    expect(approveMock).not.toHaveBeenCalled();
-    // 승인이 곧 오픈이라는 사실을 문구로 알린다.
+    const table = screen.getByRole('table');
     expect(
-      screen.getByText(/승인하면 이 상품이 곧바로 오픈됩니다/),
-    ).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: '승인하고 오픈' }));
-    expect(approveMock).toHaveBeenCalledTimes(1);
-    expect(approveMock.mock.calls[0][0]).toBe(10);
+      within(table).getAllByRole('button', { name: '개설 강제 종료' }),
+    ).toHaveLength(1);
   });
 
-  it('반려는 확인 후 상품 id 로 호출한다', () => {
-    renderTable([pendingRow]);
-
-    fireEvent.click(
-      within(screen.getByRole('table')).getByRole('button', {
-        name: '반려',
-      }),
-    );
-    fireEvent.click(
-      screen.getAllByRole('button', { name: '반려' }).slice(-1)[0],
-    );
-
-    expect(rejectMock).toHaveBeenCalledTimes(1);
-    expect(rejectMock.mock.calls[0][0]).toBe(10);
-  });
-
-  it('강제 종료는 상품 id 가 아니라 개설 id 로 호출한다', () => {
+  it('강제 종료는 확인 모달을 거친 뒤 개설 id 로 호출한다', () => {
     renderTable([approvedRow]);
 
     fireEvent.click(
@@ -243,25 +200,30 @@ describe('AdminLiveMentoringTable — 액션', () => {
         name: '개설 강제 종료',
       }),
     );
-    fireEvent.click(screen.getByRole('button', { name: '강제 종료' }));
+    // 모달이 먼저 뜨고, 이 시점에는 요청이 나가지 않는다.
+    expect(closeMock).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('이 개설을 강제로 종료합니다.'),
+    ).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole('button', { name: '강제 종료' }));
     expect(closeMock).toHaveBeenCalledTimes(1);
     expect(closeMock.mock.calls[0][0]).toBe(100);
   });
 
   it('취소하면 아무 요청도 보내지 않는다', () => {
-    renderTable([pendingRow]);
+    renderTable([approvedRow]);
 
     fireEvent.click(
       within(screen.getByRole('table')).getByRole('button', {
-        name: '승인',
+        name: '개설 강제 종료',
       }),
     );
     fireEvent.click(screen.getByRole('button', { name: '취소' }));
 
-    expect(approveMock).not.toHaveBeenCalled();
+    expect(closeMock).not.toHaveBeenCalled();
     expect(
-      screen.queryByText(/승인하면 이 상품이 곧바로 오픈됩니다/),
+      screen.queryByText('이 개설을 강제로 종료합니다.'),
     ).not.toBeInTheDocument();
   });
 });

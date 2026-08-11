@@ -44,7 +44,7 @@ export const STATUS_FILTERS: {
  * 공개 상세 페이지 주소.
  *
  * 서버 공개 상세 조회는 상품 상태를 검사하지 않아 승인 전에도 열린다.
- * 검토 담당자가 승인 전에 실제 화면을 보고 판단할 수 있어야 한다.
+ * 운영자가 실제 화면을 직접 확인할 수 있어야 한다.
  */
 export const publicDetailUrl = (mentorId: number): string =>
   `${import.meta.env.VITE_WEB_URL ?? ''}/live-mentoring/${mentorId}`;
@@ -75,8 +75,8 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 /**
  * 기간이 이미 지났는지.
  *
- * 승인은 저장된 종료일이 오늘 이전이면 서버가 409 로 막는다. 목록에서 미리 구분해 두지 않으면
- * 운영자가 승인 버튼을 눌러본 뒤에야 실패를 알게 된다.
+ * 만료 자동 종료 배치가 서버에 없어 기간이 지나도 개설이 OPEN 으로 남는다.
+ * 목록에서 미리 구분해 둬야 운영자가 강제 종료가 필요한 개설을 알아볼 수 있다.
  */
 export const isExpired = (endDate: string | null | undefined): boolean =>
   !!endDate && endDate < todayISO();

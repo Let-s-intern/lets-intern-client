@@ -3,9 +3,7 @@ import { Button } from '@mui/material';
 
 import {
   useAdminLiveMentoringListQuery,
-  useApproveLiveMentoringMutation,
   useCloseLiveMentoringOpeningMutation,
-  useRejectLiveMentoringMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringStatus } from '@/api/live-mentoring/liveMentoringSchema';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
@@ -43,14 +41,13 @@ const errorMessage = (error: unknown): string => {
 /**
  * 관리자 라이브 멘토링 상품 목록.
  *
- * 승인은 곧 오픈이다 — 승인하면 서버가 같은 트랜잭션에서 개설까지 만든다.
- * 그래서 이 화면 하나로 검토 → 승인/반려 → 강제 종료가 모두 끝난다.
+ * 승인은 멘토가 검토 제출 시 자가승인으로 처리되고, 서버가 같은 트랜잭션에서
+ * 개설까지 만든다. 관리자는 별도로 승인·반려하지 않고 조회와 강제 종료만 한다.
  */
 const AdminLiveMentoringTable = () => {
   const { snackbar } = useAdminSnackbar();
-  // 운영자가 가장 자주 보는 화면이 검토 대기라 기본 필터로 둔다.
   const [status, setStatus] = useState<LiveMentoringStatus | undefined>(
-    'PENDING_REVIEW',
+    undefined,
   );
   const [page, setPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -61,13 +58,9 @@ const AdminLiveMentoringTable = () => {
     size: PAGE_SIZE,
   });
 
-  const { mutate: approve, isPending: isApproving } =
-    useApproveLiveMentoringMutation();
-  const { mutate: reject, isPending: isRejecting } =
-    useRejectLiveMentoringMutation();
   const { mutate: closeOpening, isPending: isClosing } =
     useCloseLiveMentoringOpeningMutation();
-  const isMutating = isApproving || isRejecting || isClosing;
+  const isMutating = isClosing;
 
   const handleFilterChange = (next: LiveMentoringStatus | undefined) => {
     setStatus(next);
@@ -76,30 +69,17 @@ const AdminLiveMentoringTable = () => {
 
   const runPendingAction = () => {
     if (!pendingAction) return;
-    const successMessage = {
-      approve: '승인했습니다. 개설이 함께 생성됐습니다.',
-      reject: '반려했습니다.',
-      close: '개설을 종료했습니다.',
-    }[pendingAction.type];
 
-    const options = {
+    closeOpening(pendingAction.openingId, {
       onSuccess: () => {
-        snackbar(successMessage);
+        snackbar('개설을 종료했습니다.');
         setPendingAction(null);
       },
       onError: (error: unknown) => {
         snackbar(errorMessage(error));
         setPendingAction(null);
       },
-    };
-
-    if (pendingAction.type === 'approve') {
-      approve(pendingAction.row.liveMentoringId, options);
-    } else if (pendingAction.type === 'reject') {
-      reject(pendingAction.row.liveMentoringId, options);
-    } else {
-      closeOpening(pendingAction.openingId, options);
-    }
+    });
   };
 
   const rows = data?.liveMentoringList ?? [];
@@ -137,7 +117,6 @@ const AdminLiveMentoringTable = () => {
               <th className={headerCellClass}>타입</th>
               <th className={headerCellClass}>상세</th>
               <th className={headerCellClass}>현재 개설</th>
-              <th className={headerCellClass}>최근 승인</th>
               <th className={headerCellClass}>최종 수정</th>
               <th className={headerCellClass}>관리</th>
             </tr>
@@ -146,7 +125,7 @@ const AdminLiveMentoringTable = () => {
             {isError ? (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={8}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   목록을 불러오지 못했습니다.
@@ -155,7 +134,7 @@ const AdminLiveMentoringTable = () => {
             ) : isLoading ? (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={8}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   불러오는 중...
@@ -164,7 +143,7 @@ const AdminLiveMentoringTable = () => {
             ) : rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={8}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   해당 조건의 상품이 없습니다.
@@ -196,7 +175,7 @@ const AdminLiveMentoringTable = () => {
                     <td className={`${bodyCellClass} break-keep`}>
                       <div className="flex flex-col gap-0.5">
                         <span>{row.title ?? '-'}</span>
-                        {/* 승인 전에도 열린다 — 검토는 실제 화면을 보고 해야 한다. */}
+                        {/* 승인 전에도 열린다 — 운영자가 실제 화면을 직접 확인할 수 있다. */}
                         <a
                           href={publicDetailUrl(row.mentorId)}
                           target="_blank"
@@ -250,54 +229,11 @@ const AdminLiveMentoringTable = () => {
                         <span className="text-neutral-40">없음</span>
                       )}
                     </td>
-                    {/*
-                      승인 이력은 상태와 별개로 남는다. 재제출한 상품은 "검토 대기"인데도
-                      과거 승인 일시가 찍혀 있어, 그냥 "승인"이라고 두면 이미 승인된 것처럼
-                      읽힌다. 지금 상태가 승인이 아닐 때는 지난 이력임을 밝힌다.
-                    */}
-                    <td className={`${bodyCellClass} whitespace-nowrap`}>
-                      {row.approvedAt ? (
-                        <div className="flex flex-col gap-0.5">
-                          <span>{formatDateTime(row.approvedAt)}</span>
-                          <span className="text-neutral-40 text-xs">
-                            관리자 #{row.approvedByUserId ?? '-'}
-                            {row.status !== 'APPROVED' && ' · 지난 이력'}
-                          </span>
-                        </div>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
                       {formatDateTime(row.lastModifiedDate)}
                     </td>
                     <td className={bodyCellClass}>
                       <div className="flex flex-wrap gap-2">
-                        {row.status === 'PENDING_REVIEW' && (
-                          <>
-                            <Button
-                              variant="contained"
-                              size="small"
-                              disabled={isMutating}
-                              onClick={() =>
-                                setPendingAction({ type: 'approve', row })
-                              }
-                            >
-                              승인
-                            </Button>
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              color="error"
-                              disabled={isMutating}
-                              onClick={() =>
-                                setPendingAction({ type: 'reject', row })
-                              }
-                            >
-                              반려
-                            </Button>
-                          </>
-                        )}
                         {opening?.status === 'OPEN' && (
                           <Button
                             variant="outlined"
