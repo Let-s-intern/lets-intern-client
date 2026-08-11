@@ -2,10 +2,8 @@ import { Content } from '@/domain/challenge/api/attendanceSchema';
 import { logMissionContentAccess } from '@/domain/challenge/api/missionContentAccessLog';
 import MissionFileLink from '@/domain/challenge/my-challenge/mission/guide/MissionFileLink';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
-import dayjs from '@/lib/dayjs';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
-import { Dayjs } from 'dayjs';
 import { useParams } from 'next/navigation';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
@@ -16,13 +14,6 @@ interface MissionGuideRegularSectionProps {
   selectedMissionTh?: number; // 선택된 미션의 회차
   isLoading?: boolean; // 로딩 상태 추가
 }
-
-// endDate를 월일 시간 형식으로 변환
-const formatDeadline = (endDate?: Dayjs | null) => {
-  if (!endDate) return '99.99 99:99';
-  const date = dayjs(endDate);
-  return date.format('MM.DD HH:mm');
-};
 
 const MissionGuideRegularSection = ({
   className,
@@ -49,7 +40,7 @@ const MissionGuideRegularSection = ({
       <MissionHeaderSection
         selectedMissionTh={selectedMissionTh || todayTh}
         missionType={missionData?.missionInfo?.title || '직무 탐색'}
-        deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+        missionEndDate={missionData?.missionInfo?.endDate}
         missionStartDate={missionData.missionInfo.startDate}
       />
 

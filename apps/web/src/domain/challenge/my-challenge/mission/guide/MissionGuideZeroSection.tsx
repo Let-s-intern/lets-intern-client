@@ -3,7 +3,6 @@ import MissionFileLink from '@/domain/challenge/my-challenge/mission/guide/Missi
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
-import { Dayjs } from 'dayjs';
 import { useParams } from 'next/navigation';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
@@ -32,13 +31,6 @@ const MissionGuideZeroSection = ({
 
   const missionId = missionData.missionInfo.id;
 
-  // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate?: Dayjs | null) => {
-    if (!endDate) return '99.99 99:99';
-
-    return endDate.format('MM.DD HH:mm');
-  };
-
   // YouTube 링크를 임베드 링크로 변환
   const convertToEmbedUrl = (url: string) => {
     if (!url) return null;
@@ -66,7 +58,7 @@ const MissionGuideZeroSection = ({
       <MissionHeaderSection
         selectedMissionTh={selectedMissionTh ?? 0}
         missionType={missionData?.missionInfo?.title || 'OT 시청'}
-        deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+        missionEndDate={missionData?.missionInfo?.endDate}
         missionStartDate={missionData.missionInfo.startDate}
       />
       {/* 미션 가이드 섹션 */}
