@@ -690,16 +690,16 @@ const OpenSettingsPage = () => {
         <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:pr-[416px]">
           <div
             role="status"
-            className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-xl"
+            className="shadow-05 flex items-center justify-between gap-3 rounded-xl bg-gray-900/80 px-4 py-3"
           >
             <div className="flex min-w-0 items-center gap-2">
               <span
-                className="bg-primary h-2 w-2 shrink-0 rounded-full"
+                className="h-2 w-2 shrink-0 rounded-full bg-white"
                 aria-hidden="true"
               />
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900">오픈 중</p>
-                <p className="truncate text-xs text-gray-500">
+                <p className="text-sm font-semibold text-white">오픈 중</p>
+                <p className="truncate text-xs text-gray-300">
                   공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.
                 </p>
               </div>
@@ -708,7 +708,7 @@ const OpenSettingsPage = () => {
               type="button"
               onClick={handleCloseCurrentOpening}
               disabled={isClosingOpening}
-              className="bg-system-error shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-center text-sm font-semibold text-white shadow transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-system-error shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isClosingOpening ? '처리 중...' : '오픈 닫기'}
             </button>
