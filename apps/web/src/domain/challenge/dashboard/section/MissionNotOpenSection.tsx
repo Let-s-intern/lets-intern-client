@@ -1,15 +1,10 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import {
   formatMissionOpenTime,
   isWithinMinuteCountdown,
 } from '@/domain/challenge/utils/missionOpenTime';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
-import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const missionLabel = (th: number | null) => {
@@ -24,22 +19,17 @@ interface Props {
 }
 
 /**
- * 진행 중인 미션이 없는 시간대에 오늘의 미션 카드 자리를 대신한다.
+ * 미션과 미션 사이에 빈 시간이 있을 때만 오늘의 미션 카드 자리를 대신한다.
+ *
+ * 앞 회차 마감 직후 다음 회차가 열리는 편성이면 이 카드는 뜨지 않는다. `dailyMission` 이
+ * 한 순간도 비지 않아 카드가 1회차에서 2회차로 바로 갈아끼워지기 때문이다.
+ * 편성에 빈틈이 있을 때만 나타나는 안전망이고, 편성이 정리되면 저절로 사라진다.
  *
  * 예전에는 이 자리에 "모든 미션이 완료되었습니다" 가 떴다. `dailyMission` 이 null 인 것을
  * "다 끝났다" 로 읽었기 때문인데, 실제 뜻은 "지금은 미션 시간이 아니다" 다.
- * 2회차를 하고 있는 사람에게 완주 축하가 나가고, 그와 함께 "미션 수행하기" 버튼도
- * "이전 미션 돌아보기" 로 바뀌어 제출 진입로가 사라졌다(LC-3207).
- *
- * 자료는 시작 전에도 볼 수 있으므로(LC-3207 미션 전체 공개) 막다른 길로 두지 않고
- * 미리 보기로 이어 준다.
+ * 2회차를 하고 있는 사람에게 완주 축하가 나갔다(LC-3207).
  */
 const MissionNotOpenSection = ({ nextSchedule }: Props) => {
-  const params = useParams<{ applicationId: string }>();
-  const { currentChallenge } = useCurrentChallenge();
-  const { withTestDate } = useChallengeNav();
-  const { setSelectedMission } = useMissionStore();
-
   const mission = nextSchedule.missionInfo;
   const startDate = mission.startDate;
 
@@ -56,35 +46,20 @@ const MissionNotOpenSection = ({ nextSchedule }: Props) => {
     return () => clearInterval(timer);
   }, [needsTick]);
 
-  const label = missionLabel(mission.th);
-
   return (
     <section className="rounded-xs border-neutral-80 flex min-h-[240px] shrink-0 flex-col border md:h-[360px] md:min-h-[180px] md:w-[488px]">
       <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:gap-2 md:py-4">
         <h2 className="text-neutral-10 font-semibold">다음 미션</h2>
         <span className="text-xsmall14 text-neutral-30 md:text-xsmall16">
-          {label} {mission.title}
+          {missionLabel(mission.th)} {mission.title}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-6">
+      <div className="flex flex-1 items-center justify-center px-4 py-6">
         <p className="text-small18 text-neutral-0 md:text-medium22 text-center font-semibold">
           {startDate ? formatMissionOpenTime(startDate, now) : '곧 열려요'}
         </p>
-        <p className="text-xsmall14 text-neutral-30 md:text-xsmall16 text-center">
-          미리 자료를 확인하고 준비해 두세요
-        </p>
       </div>
-
-      <Link
-        href={withTestDate(
-          `/challenge/${params.applicationId}/${currentChallenge?.id}/me`,
-        )}
-        onClick={() => setSelectedMission(mission.id, mission.th ?? 0)}
-        className="rounded-xs bg-primary m-3 p-3 text-center font-medium text-white"
-      >
-        {label} 자료 미리 보기
-      </Link>
     </section>
   );
 };
