@@ -1,9 +1,7 @@
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
-import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
 import MissionGuideSkeleton from './MissionGuideSkeleton';
 
@@ -46,13 +44,6 @@ const MissionGuideTalentPoolSection = ({
     return <MissionGuideSkeleton variant="bonus" />;
   }
 
-  // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate?: Dayjs | null) => {
-    if (!endDate) return '99.99 99:99';
-    const date = dayjs(endDate);
-    return date.format('MM.DD HH:mm');
-  };
-
   return (
     <>
       <div className={clsx('flex flex-col gap-3', className)}>
@@ -60,7 +51,7 @@ const MissionGuideTalentPoolSection = ({
         <MissionHeaderSection
           selectedMissionTh={selectedMissionTh || todayTh}
           missionType="인재풀 등록하고 채용 제안받기"
-          deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+          missionEndDate={missionData?.missionInfo?.endDate}
           missionStartDate={missionData.missionInfo.startDate}
         />
 
