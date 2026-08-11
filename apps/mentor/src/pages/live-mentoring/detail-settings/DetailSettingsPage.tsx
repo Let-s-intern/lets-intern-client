@@ -46,15 +46,16 @@ const DetailSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   /**
-   * 검토 대기·승인 상태에서는 상세 페이지를 바로 수정할 수 없다.
+   * 승인 상태에서는 상세 페이지를 바로 수정할 수 없다.
    * 이미 노출 중인 판매 페이지가 멘티가 보는 도중에 바뀌면 안 되기 때문이고,
-   * 서버도 상품 상태가 `DRAFT`/`REJECTED` 일 때만 편집을 허용한다.
+   * 서버도 상품 상태가 `DRAFT` 일 때만 편집을 허용한다. (자가승인 전환으로
+   * `submit()` 이 검토 단계 없이 곧바로 `APPROVED` 로 전이하므로 그 사이 상태는 없다.)
    *
    * 다만 "수정할 수 없다"로 끝내면 멘토가 막힌다. 오픈이 닫혀 있으면 이 화면에서
    * 바로 검토를 다시 걸어(`start-edit`) 편집으로 넘어갈 수 있게 한다.
    */
   const status = settings?.status ?? null;
-  const isLocked = status === 'PENDING_REVIEW' || status === 'APPROVED';
+  const isLocked = status === 'APPROVED';
   const canEdit = isEditing && !isLocked;
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
@@ -204,21 +205,6 @@ const DetailSettingsPage = () => {
         상태 이름이라 멘토에게는 "계속 열려 있음"으로 읽힌다. 색도 같은 이유로 가른다 —
         열려 있을 때만 강조색을 쓴다.
       */}
-      {status === 'PENDING_REVIEW' && (
-        <div
-          role="status"
-          className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
-        >
-          <span className="text-sm font-semibold text-amber-700">
-            오픈 처리 중
-          </span>
-          <p className="text-xs text-gray-600">
-            오픈을 처리하고 있어요. 처리가 끝날 때까지는 상세 페이지를 수정할 수
-            없습니다.
-          </p>
-        </div>
-      )}
-
       {status === 'APPROVED' && (
         <div
           role="status"

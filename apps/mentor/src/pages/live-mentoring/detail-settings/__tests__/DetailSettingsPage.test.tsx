@@ -224,18 +224,6 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('오픈 처리 중에도 잠그고, 상태를 그대로 알린다', () => {
-    status = 'PENDING_REVIEW';
-    renderPage();
-
-    expect(
-      within(screen.getByRole('status')).getByText('오픈 처리 중'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '수정하기' }),
-    ).not.toBeInTheDocument();
-  });
-
   it('초안이면 배너 없이 편집할 수 있다', () => {
     renderPage();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
