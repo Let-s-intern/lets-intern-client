@@ -364,36 +364,29 @@ describe('OpenSettingsPage — 검토 제출', () => {
 });
 
 describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
-  it('초안이면 배너 없이 저장·제출 버튼을 보인다', () => {
+  it('초안(DRAFT)이면 배너 없이 저장·제출 버튼을 보인다', () => {
     renderPage({ status: 'DRAFT' });
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: '오픈하기' }),
     ).toBeInTheDocument();
+    // 백엔드는 PENDING_REVIEW/REJECTED 상태를 더 이상 보내지 않는다 — 해당 배너도 없다.
+    expect(screen.queryByText('검토 대기')).not.toBeInTheDocument();
+    expect(screen.queryByText('반려됨')).not.toBeInTheDocument();
   });
 
-  it('검토 대기면 입력을 잠그고 버튼을 감춘다', () => {
-    renderPage({ status: 'PENDING_REVIEW' });
+  it('비활성(INACTIVE)이면 배너 없이 입력을 잠근다', () => {
+    renderPage({ status: 'INACTIVE' });
 
-    const banner = screen.getByRole('status');
-    expect(within(banner).getByText('검토 대기')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
-  });
-
-  it('반려면 다시 편집할 수 있다', () => {
-    renderPage({ status: 'REJECTED' });
-
-    expect(
-      within(screen.getByRole('status')).getByText('반려됨'),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
-    expect(
-      screen.getByRole('button', { name: '오픈하기' }),
-    ).toBeInTheDocument();
   });
 
   it('승인 + 활성 개설이면 오픈 중으로 알리고 오픈 현황으로 보낸다', () => {

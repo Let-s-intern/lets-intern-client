@@ -147,15 +147,14 @@ const OpenSettingsPage = () => {
   /*
    * 편집 가능 조건은 두 갈래다.
    *
-   * 1. 초안·반려 — 아직 승인 전이라 `PUT /settings` 로 저장하고 검토를 제출한다.
+   * 1. 초안 — 아직 제출 전이라 `PUT /settings` 로 저장하고 제출(=자가승인+개설)한다.
    * 2. 승인됐고 활성 개설이 없음 — 종료 후 다시 여는 경우다. 이때 서버는
    *    `PUT /settings` 를 잠그므로(409 LOCKED) 저장이 아니라 `POST /openings` 로
    *    제목·타입·진행시간·기간을 한 번에 보내 즉시 재개설한다(관리자 재승인 불필요).
    *
-   * 검토 대기와 "승인 + 오픈 중"은 잠근다.
+   * "승인 + 오픈 중"은 잠근다.
    */
-  const isDraftLike =
-    status === null || status === 'DRAFT' || status === 'REJECTED';
+  const isDraftLike = status === null || status === 'DRAFT';
   const canReopen = status === 'APPROVED' && !currentOpening;
   const isEditable = isDraftLike || canReopen;
 
@@ -358,41 +357,9 @@ const OpenSettingsPage = () => {
       </header>
 
       {/*
-        상태 배너.
+        상태 배너(승인 상태에서만 노출).
         잠긴 상태에서도 멘토는 "내가 어떤 조건으로 냈는지" 확인해야 하므로 설정을 가리지 않고,
         상태와 다음 행동만 상단에 알린다. 잠그는 대상은 화면이 아니라 입력이다.
-      */}
-      {status === 'PENDING_REVIEW' && (
-        <div
-          role="status"
-          className="flex flex-col gap-1 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
-        >
-          <span className="text-sm font-semibold text-amber-700">
-            검토 대기
-          </span>
-          <p className="text-xs text-gray-600">
-            오픈을 처리하고 있어요. 곧 모집이 시작됩니다. 처리 중에는 설정을
-            수정할 수 없어요.
-          </p>
-        </div>
-      )}
-
-      {status === 'REJECTED' && (
-        <div
-          role="status"
-          className="border-system-error/30 flex flex-col gap-1 rounded-xl border bg-red-50 px-5 py-4"
-        >
-          <span className="text-system-error text-sm font-semibold">
-            반려됨
-          </span>
-          <p className="text-xs text-gray-600">
-            관리자가 반려했어요. 설정을 수정한 뒤 다시 검토를 제출해주세요.
-          </p>
-        </div>
-      )}
-
-      {/*
-        승인 상태 배너.
 
         멘토가 알고 싶은 건 "승인됐는지"가 아니라 **지금 열려 있는지**다.
         `APPROVED` 는 내부 상태 용어라 그대로 쓰면 "승인=계속 열려 있음"으로 읽힌다.
