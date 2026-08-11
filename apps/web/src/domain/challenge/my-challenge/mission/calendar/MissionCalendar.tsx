@@ -130,10 +130,12 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
    * 두 경우 모두 회차 번호를 보지 않으므로 편성이 어떻든 어긋나지 않는다.
    */
   const inProgressIndex = schedules.findIndex(
-    (schedule) => getMissionTimeState(schedule.missionInfo, now) === 'IN_PROGRESS',
+    (schedule) =>
+      getMissionTimeState(schedule.missionInfo, now) === 'IN_PROGRESS',
   );
   const finishedCount = countFinishedMissions(schedules, now);
-  const progressIndex = inProgressIndex === -1 ? finishedCount : inProgressIndex;
+  const progressIndex =
+    inProgressIndex === -1 ? finishedCount : inProgressIndex;
 
   /**
    * 진행 중인 회차를 이미 냈는가.

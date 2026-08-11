@@ -159,8 +159,7 @@ describe('MissionCalendarSection 진행바', () => {
     const { progressPercent } = setup(noonOfMission(3), 3);
 
     const CARD_CENTER_FRACTION = 74.8 / (2 * 82);
-    const oneCardAhead =
-      ((3 + CARD_CENTER_FRACTION) / schedules.length) * 100;
+    const oneCardAhead = ((3 + CARD_CENTER_FRACTION) / schedules.length) * 100;
 
     expect(progressPercent()).not.toBeCloseTo(oneCardAhead, 5);
   });
@@ -176,7 +175,11 @@ describe('MissionCalendarSection 진행바', () => {
       status: 'PRESENT',
       result: 'WAITING',
     });
-    const after = setup(noonOfMission(3), 3, submittedWaiting).progressPercent();
+    const after = setup(
+      noonOfMission(3),
+      3,
+      submittedWaiting,
+    ).progressPercent();
 
     expect(after).toBeGreaterThan(before);
   });
