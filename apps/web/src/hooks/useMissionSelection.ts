@@ -10,7 +10,6 @@ export const useMissionSelection = () => {
     isZeroMissionPassed,
     todayMissionId,
     schedules,
-    myDailyMission,
   } = useMissionCalculation();
 
   // 사용자가 선택한 미션의 스케줄 정보
@@ -27,15 +26,22 @@ export const useMissionSelection = () => {
   }, [selectedSchedule]);
 
   // 0회차 미션으로 이동해야 하는지 확인
-  const shouldMoveToZeroMission = useMemo(() => {
-    // 0회차 미션을 성공하지 않았으면 무조건 0회차로 이동
-    if (!isZeroMissionPassed) return true;
+  //
+  // 0회차 미션을 성공하지 않았으면 무조건 0회차로 이동한다(OT 선행).
+  //
+  // 예전에는 `!myDailyMission?.dailyMission?.th` 조건이 하나 더 있었다. 두 가지가 틀렸다.
+  // falsy 검사라 오늘 회차가 0회차(OT)일 때도 참이었고, 진행 중인 미션이 없는 시간대에
+  // 0회차로 튕겨 보냈다. 그 시간대에는 아래 todayMissionId(가장 최근에 마감된 회차)를 쓴다.
+  const shouldMoveToZeroMission = !isZeroMissionPassed;
 
-    // myDailyMission이 null인 경우 0회차 미션으로 이동
-    if (!myDailyMission?.dailyMission?.th) return true;
-
-    return false;
-  }, [isZeroMissionPassed, myDailyMission?.dailyMission?.th]);
+  // todayTh 가 null 인 시간대에는 todayMissionId 가 가장 최근에 마감된 회차를 가리킨다.
+  // 스토어에는 그 미션의 회차 번호를 함께 넣어야 가이드·헤더가 맞는 회차를 그린다.
+  const defaultMissionTh = useMemo(() => {
+    const defaultSchedule = schedules.find(
+      (schedule) => schedule.missionInfo.id === todayMissionId,
+    );
+    return defaultSchedule?.missionInfo.th ?? todayTh ?? 0;
+  }, [schedules, todayMissionId, todayTh]);
 
   // useEffect를 사용하여 todayTh가 변경될 때만 setSelectedMission 실행
   useEffect(() => {
@@ -50,11 +56,10 @@ export const useMissionSelection = () => {
       return;
     }
 
-    // 기본 로직: todayTh 기반으로 미션 설정
-    const todayId = todayMissionId;
-    setSelectedMission(todayId, todayTh);
+    // 기본 로직: 오늘 회차, 없으면 가장 최근에 마감된 회차
+    setSelectedMission(todayMissionId, defaultMissionTh);
   }, [
-    todayTh,
+    defaultMissionTh,
     setSelectedMission,
     isUserSelectedMissionValid,
     shouldMoveToZeroMission,
