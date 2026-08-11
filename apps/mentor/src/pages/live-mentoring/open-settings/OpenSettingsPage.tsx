@@ -180,21 +180,26 @@ const OpenSettingsPage = () => {
     !endDatePassed &&
     !invertedPeriod;
 
-  // 저장(PUT)이 받는 건 제목·타입뿐이라 dirty 판정도 그 둘만 본다.
-  const isDirty =
+  // 저장(PUT)이 실제로 서버에 반영하는 건 제목·타입뿐이라, 제출을 막을지는 이 둘만 본다.
+  const isTitleOrCategoryDirty =
     (form.title ?? '') !== (original.title ?? '') ||
     JSON.stringify(form.categories) !== JSON.stringify(original.categories);
-  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
-  // 검토 제출은 제목·타입이 저장된 뒤에만 의미가 있다(제출은 그 둘을 보내지 않는다).
-  const canSubmit = hasValidOpeningInput && !isDirty;
-  // 재개설은 제목·타입까지 한 요청에 담으므로 미리 저장할 필요가 없다.
-  const canReopenNow = hasValidOpeningInput;
-  /** 아직 서버에 없는 변경이 있는지 — 확인 모달에서 "지금 안 보이는 값"을 안내한다. */
-  const isDirtyForOpen =
-    isDirty ||
+  /*
+   * "저장" 버튼 활성화는 화면에서 뭔가 하나라도 바뀌었으면 켠다 — 진행시간·기간만
+   * 고쳤을 때 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 클릭하면 PUT은 여전히
+   * 제목·타입만 보내지만, 성공 시 handleSave 가 현재 폼 값 전체를 새 기준선으로
+   * 삼으므로(merged) 진행시간·기간의 미저장 상태도 함께 정리된다.
+   */
+  const isDirty =
+    isTitleOrCategoryDirty ||
     JSON.stringify(form.durations) !== JSON.stringify(original.durations) ||
     form.feedbackStartDate !== original.feedbackStartDate ||
     form.feedbackEndDate !== original.feedbackEndDate;
+  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
+  // 검토 제출은 제목·타입이 저장된 뒤에만 의미가 있다(제출은 그 둘을 보내지 않는다).
+  const canSubmit = hasValidOpeningInput && !isTitleOrCategoryDirty;
+  // 재개설은 제목·타입까지 한 요청에 담으므로 미리 저장할 필요가 없다.
+  const canReopenNow = hasValidOpeningInput;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -716,7 +721,7 @@ const OpenSettingsPage = () => {
       */}
       {isEditable && (
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
-          {isDraftLike && isDirty && (
+          {isDraftLike && isTitleOrCategoryDirty && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
               제목·타입을 바꿨어요. 먼저 저장해야 오픈할 수 있어요.
             </p>
@@ -800,7 +805,7 @@ const OpenSettingsPage = () => {
            * "바꾼 게 안 보인다"로 읽힌다.
            */
           pendingNotice={
-            isDirtyForOpen
+            isDirty
               ? '방금 바꾼 제목·타입·기간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
               : undefined
           }

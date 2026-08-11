@@ -263,12 +263,15 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
   });
 
-  it('진행시간·기간만 바꾸면 저장은 비활성이다(저장 대상이 아니다)', () => {
+  it('진행시간·기간만 바꿔도 저장이 활성화된다', () => {
+    // 회귀 케이스: PUT이 실제로 반영하는 건 제목·타입뿐이지만, 저장 버튼의
+    // 활성화 여부는 화면에서 뭐든 하나라도 바뀌면 켜져야 한다 — 아니면
+    // "저장이 안 된다"는 잘못된 인상을 준다.
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '저장' })).toBeEnabled();
   });
 });
 
