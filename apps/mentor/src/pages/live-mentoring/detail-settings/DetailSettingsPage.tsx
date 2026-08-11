@@ -262,31 +262,30 @@ const DetailSettingsPage = () => {
         여기(하단 플로팅)에 둔다 — 다른 화면 액션들과 같은 자리라 더 직관적이다.
       */}
       {isLocked && !canStartEdit && (
-        // 사이드바(lg 이상에서 296px)를 뺀 콘텐츠 영역 기준으로 폭을 맞춘다 —
-        // 뷰포트 전체 기준 left-1/2 는 사이드바만큼 왼쪽으로 치우쳐 보인다.
-        <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px]">
+        // 사이드바(296px)와 우측 미리보기 컬럼(380px + gap-6)을 뺀 콘텐츠 영역
+        // 기준으로 폭을 맞춘다 — 그냥 right-0 이면 미리보기 위로 넘어가 버린다.
+        <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:pr-[436px]">
           <div
             role="status"
-            className="border-primary/20 bg-primary-10 flex flex-col gap-3 rounded-xl border px-5 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between"
+            className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-xl"
           >
-            <div className="flex flex-col gap-1">
-              <span className="text-primary flex items-center gap-1.5 text-sm font-semibold">
-                <span
-                  className="bg-primary h-1.5 w-1.5 rounded-full"
-                  aria-hidden="true"
-                />
-                오픈 중
-              </span>
-              <p className="text-xs text-gray-600">
-                멘티에게 노출 중이라 상세 페이지를 수정할 수 없어요. 오픈
-                설정에서 오픈을 먼저 종료해주세요.
-              </p>
+            <div className="flex min-w-0 items-center gap-2">
+              <span
+                className="bg-primary h-2 w-2 shrink-0 rounded-full"
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900">오픈 중</p>
+                <p className="truncate text-xs text-gray-500">
+                  멘티에게 노출 중이라 수정할 수 없어요.
+                </p>
+              </div>
             </div>
             <Link
               to="/live-mentoring/open-settings"
-              className="border-primary text-primary hover:bg-primary shrink-0 rounded-lg border bg-white px-6 py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+              className="bg-primary hover:bg-primary-hover shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-center text-sm font-semibold text-white shadow transition-colors"
             >
-              오픈 설정으로 이동
+              오픈 설정으로
             </Link>
           </div>
         </div>

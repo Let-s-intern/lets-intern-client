@@ -215,7 +215,7 @@ describe('DetailSettingsPage — 상태 잠금', () => {
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
     expect(
-      within(banner).getByRole('link', { name: '오픈 설정으로 이동' }),
+      within(banner).getByRole('link', { name: '오픈 설정으로' }),
     ).toHaveAttribute('href', '/live-mentoring/open-settings');
     // 노출 중에는 수정도, 상세 수정 시작도 불가하다.
     expect(
