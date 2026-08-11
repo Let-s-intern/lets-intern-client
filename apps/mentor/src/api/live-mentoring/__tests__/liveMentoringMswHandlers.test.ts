@@ -6,6 +6,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
  * 공유 MSW 핸들러(@letscareer/mocks)가 1대1 라이브 멘토링 엔드포인트에 대해
  * 페이징/필터/정렬/PUT echo를 올바르게 처리하는지 스모크 검증한다.
  * 와일드카드 prefix 패턴이라 임의 origin으로 요청해도 매칭된다.
+ *
+ * 자가승인 전환(제출 즉시 승인+개설, 관리자 승인/반려 없음) 관련 계약은
+ * `liveMentoringSelfApprovalMswHandlers.test.ts`에서 검증한다 — 이 파일에서는
+ * 그 계약과 겹치지 않는 나머지 스모크(목록/상세/설정/템플릿/정산/멘토측 개설 종료)만 다룬다.
  */
 const BASE = 'https://example.test';
 
@@ -122,25 +126,6 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data).toHaveProperty('careers');
   });
 
-  it('POST /submit → 진행시간·기간을 저장하고 PENDING_REVIEW 로 전이한다', async () => {
-    const res = await fetch(`${BASE}/mentor/live-mentoring/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        durations: [30, 60],
-        feedbackStartDate: dateFromToday(-1),
-        feedbackEndDate: dateFromToday(20),
-      }),
-    });
-    expect(res.status).toBe(200);
-
-    const settings = await fetch(`${BASE}/mentor/live-mentoring/settings`).then(
-      (r) => r.json(),
-    );
-    expect(settings.data.status).toBe('PENDING_REVIEW');
-    expect(settings.data.durations).toEqual([30, 60]);
-  });
-
   it('POST /submit → 지원하지 않는 진행시간은 400 INVALID_LIVE_MENTORING_DURATION', async () => {
     const res = await fetch(`${BASE}/mentor/live-mentoring/submit`, {
       method: 'POST',
@@ -168,41 +153,8 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(res.status).toBe(400);
   });
 
-  it('승인하면 개설이 함께 생성되고 상품이 APPROVED 가 된다', async () => {
-    await fetch(`${BASE}/mentor/live-mentoring/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        durations: [30],
-        feedbackStartDate: dateFromToday(-1),
-        feedbackEndDate: dateFromToday(20),
-      }),
-    });
-
-    const approve = await fetch(`${BASE}/admin/live-mentoring/1/approve`, {
-      method: 'PATCH',
-    });
-    expect(approve.status).toBe(200);
-
-    const { data } = await fetch(
-      `${BASE}/mentor/live-mentoring/open-status`,
-    ).then((r) => r.json());
-    const opened = data.openings.filter(
-      (o: { status: string }) => o.status === 'OPEN',
-    );
-    expect(opened).toHaveLength(1);
-    expect(opened[0].durationPrices).toEqual([{ duration: 30, price: 35000 }]);
-  });
-
-  it('검토 대기가 아닌 상품을 승인하면 409 LIVE_MENTORING_INVALID_STATE', async () => {
-    const res = await fetch(`${BASE}/admin/live-mentoring/1/approve`, {
-      method: 'PATCH',
-    });
-    expect(res.status).toBe(409);
-    expect((await res.json()).code).toBe('LIVE_MENTORING_INVALID_STATE');
-  });
-
   it('멘토가 개설을 종료하면 CLOSED·MENTOR_CANCELED 로 기록된다', async () => {
+    // 자가승인 전환 이후 submit() 자체가 즉시 승인+개설이라, 별도 관리자 승인 호출이 없다.
     await fetch(`${BASE}/mentor/live-mentoring/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -212,7 +164,6 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
         feedbackEndDate: dateFromToday(20),
       }),
     });
-    await fetch(`${BASE}/admin/live-mentoring/1/approve`, { method: 'PATCH' });
 
     const before = await fetch(
       `${BASE}/mentor/live-mentoring/open-status`,
@@ -245,12 +196,12 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     // 요청은 1-based, 응답 pageNum 은 0-based(서버 `PageInfo`).
     expect(all.data.pageInfo.pageNum).toBe(0);
 
-    const pending = await fetch(
-      `${BASE}/admin/live-mentoring?status=PENDING_REVIEW`,
+    const approved = await fetch(
+      `${BASE}/admin/live-mentoring?status=APPROVED`,
     ).then((r) => r.json());
     expect(
-      pending.data.liveMentoringList.every(
-        (row: { status: string }) => row.status === 'PENDING_REVIEW',
+      approved.data.liveMentoringList.every(
+        (row: { status: string }) => row.status === 'APPROVED',
       ),
     ).toBe(true);
   });
