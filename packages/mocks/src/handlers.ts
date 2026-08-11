@@ -702,9 +702,9 @@ const settingsCareers = () =>
 /**
  * 라이브 멘토링 상품·개설 목 상태.
  *
- * 저장 → 검토 제출 → 관리자 승인 → 개설 → 종료가 한 줄기로 이어지는지 확인하려면
- * 목이 상태를 들고 있어야 한다. 응답만 고정으로 돌려주면 "승인했는데 목록이 그대로"인
- * 상태가 되어 화면 흐름을 검증할 수 없다.
+ * 저장 → 제출(자가승인+개설) → 종료가 한 줄기로 이어지는지 확인하려면 목이 상태를
+ * 들고 있어야 한다. 응답만 고정으로 돌려주면 "제출했는데 목록이 그대로"인 상태가 되어
+ * 화면 흐름을 검증할 수 없다.
  */
 const liveMentoringState = {
   liveMentoringId: LIVE_MENTORING_SETTINGS.liveMentoringId,
@@ -725,7 +725,7 @@ let nextOpeningId = 200;
  * 목 상태를 초기값으로 되돌린다.
  *
  * 핸들러가 모듈 스코프 상태를 들고 있어 `server.resetHandlers()` 만으로는 지워지지 않는다.
- * 상태를 바꾸는 테스트(제출·승인·종료)는 `afterEach` 에서 이걸 불러 서로 간섭하지 않게 한다.
+ * 상태를 바꾸는 테스트(제출·종료)는 `afterEach` 에서 이걸 불러 서로 간섭하지 않게 한다.
  */
 export const resetLiveMentoringMockState = () => {
   liveMentoringState.liveMentoringId = LIVE_MENTORING_SETTINGS.liveMentoringId;
@@ -759,8 +759,7 @@ const activeOpening = () =>
 /** 서버 `LiveMentoring.isEditable()` — 상태와 활성 개설 유무를 함께 본다. */
 const isSettingsEditable = () =>
   (liveMentoringState.status === null ||
-    liveMentoringState.status === 'DRAFT' ||
-    liveMentoringState.status === 'REJECTED') &&
+    liveMentoringState.status === 'DRAFT') &&
   activeOpening() === null;
 
 const settingsResponse = () => ({
@@ -841,9 +840,11 @@ const adminLiveMentoringVo = () => {
 type AdminFixtureRow = ReturnType<typeof adminLiveMentoringVo>;
 
 /**
- * "나" 이외의 멘토 행. 상태 필터·정렬 확인용이면서, 관리자 화면에서 승인·반려·종료를
- * 실제로 눌러볼 수 있도록 상태를 들고 있다(읽기 전용 고정 행이면 승인 버튼이 404 로 떨어져
- * 화면이 고장 난 것처럼 보인다).
+ * "나" 이외의 멘토 행. 상태 필터·정렬 확인용 고정 행이다.
+ * 관리자 화면에는 조회·강제 종료만 있고 승인·반려 자체가 없으므로(백엔드에 대응 API가
+ * 없음), 상태를 실제 API 로 전이시키지 않는다 — 대신 세 상태(DRAFT/APPROVED/INACTIVE)를
+ * 미리 다양하게 박아 필터·정렬을 검증한다. 개설이 있는 행(20번)은 강제 종료 핸들러가
+ * `fixture.currentOpening` 을 그대로 찾아 종료 처리한다.
  */
 const makeAdminFixtureRows = (): AdminFixtureRow[] => [
   {
@@ -852,14 +853,26 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     mentorNickname: '박멘토',
     mentorProfileImage: null,
     title: '이력서 클리닉',
-    status: 'PENDING_REVIEW',
+    status: 'APPROVED',
     categories: ['RESUME'],
     hasDetailPage: true,
-    approvedAt: null,
-    approvedByUserId: null,
+    approvedAt: '2026-08-03T11:00:00',
+    approvedByUserId: 1,
     createDate: '2026-08-02T11:00:00',
     lastModifiedDate: '2026-08-03T11:00:00',
-    currentOpening: null,
+    currentOpening: {
+      openingId: 220,
+      status: 'OPEN',
+      durationPrices: [{ duration: 30, price: getPriceByDuration(30) }],
+      feedbackStartDate: '2026-08-03',
+      feedbackEndDate: '2026-08-17',
+      openedAt: '2026-08-03T11:00:00',
+      closedAt: null,
+      closeReason: null,
+      closedByUserId: null,
+      createDate: '2026-08-03T11:00:00',
+      lastModifiedDate: '2026-08-03T11:00:00',
+    },
   },
   {
     liveMentoringId: 21,
@@ -867,11 +880,11 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     mentorNickname: '최멘토',
     mentorProfileImage: null,
     title: '포트폴리오 집중 피드백',
-    status: 'REJECTED',
+    status: 'INACTIVE',
     categories: ['PORTFOLIO'],
     hasDetailPage: false,
-    approvedAt: null,
-    approvedByUserId: null,
+    approvedAt: '2026-07-28T15:00:00',
+    approvedByUserId: 1,
     createDate: '2026-07-28T15:00:00',
     lastModifiedDate: '2026-07-30T09:00:00',
     currentOpening: null,
@@ -879,27 +892,6 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
 ];
 
 let adminFixtureRows = makeAdminFixtureRows();
-
-/** 픽스처 행 승인 — 서버처럼 상태 전이와 개설 생성을 함께 처리한다. */
-const approveFixtureRow = (row: AdminFixtureRow) => {
-  row.status = 'APPROVED';
-  row.approvedAt = liveMentoringNow();
-  row.approvedByUserId = 1;
-  row.lastModifiedDate = liveMentoringNow();
-  row.currentOpening = {
-    openingId: nextOpeningId++,
-    status: 'OPEN',
-    durationPrices: [{ duration: 30, price: getPriceByDuration(30) }],
-    feedbackStartDate: liveMentoringToday(),
-    feedbackEndDate: liveMentoringToday(),
-    openedAt: liveMentoringNow(),
-    closedAt: null,
-    closeReason: null,
-    closedByUserId: null,
-    createDate: liveMentoringNow(),
-    lastModifiedDate: liveMentoringNow(),
-  };
-};
 
 /**
  * 목 카드 → 백엔드 `LiveMentoringOpeningResponseDto` 형태 변환.
@@ -1766,103 +1758,12 @@ export const handlers = [
   ),
 
   /**
-   * (관리자) PATCH /admin/live-mentoring/:liveMentoringId/approve — 승인.
-   * 승인이 곧 개설이다 — 검토 제출 때 저장한 진행시간·기간으로 `OPEN` 개설을 함께 만든다.
+   * (관리자) 승인·반려 엔드포인트는 없다.
+   * `LiveMentoringV1AdminController`에는 목록 조회와 강제 종료 두 API뿐이다 — 자가승인
+   * 전환으로 검토·승인·반려 단계 자체가 사라졌다(제출 즉시 `submit()`이 승인+개설까지
+   * 처리한다, 4.2 참고). 등록하지 않은 라우트는 `onUnhandledRequest` 설정에 따라
+   * bypass/에러 처리된다 — 존재하지 않는 API라는 걸 목도 동일하게 반영한다.
    */
-  http.patch(
-    '*/admin/live-mentoring/:liveMentoringId/approve',
-    ({ params }) => {
-      const liveMentoringId = Number(params.liveMentoringId);
-      if (liveMentoringId !== liveMentoringState.liveMentoringId) {
-        const row = adminFixtureRows.find(
-          (each) => each.liveMentoringId === liveMentoringId,
-        );
-        if (!row) {
-          return liveMentoringError(
-            404,
-            'LIVE_MENTORING_NOT_FOUND',
-            '라이브 멘토링을 찾을 수 없습니다.',
-          );
-        }
-        if (row.status !== 'PENDING_REVIEW') {
-          return liveMentoringError(
-            409,
-            'LIVE_MENTORING_INVALID_STATE',
-            '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
-          );
-        }
-        approveFixtureRow(row);
-        return HttpResponse.json({ status: 200, data: null });
-      }
-      const invalidState =
-        liveMentoringState.status !== 'PENDING_REVIEW' ||
-        liveMentoringState.durations.length === 0 ||
-        !liveMentoringState.feedbackStartDate ||
-        !liveMentoringState.feedbackEndDate ||
-        liveMentoringState.feedbackEndDate < liveMentoringToday();
-      if (invalidState) {
-        return liveMentoringError(
-          409,
-          'LIVE_MENTORING_INVALID_STATE',
-          '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
-        );
-      }
-
-      liveMentoringState.status = 'APPROVED';
-      liveMentoringState.approvedAt = liveMentoringNow();
-      liveMentoringState.approvedByUserId = 1;
-      liveMentoringState.openings.unshift({
-        openingId: nextOpeningId++,
-        status: 'OPEN',
-        durationPrices: liveMentoringState.durations.map((duration) => ({
-          duration,
-          price: getPriceByDuration(duration),
-        })),
-        feedbackStartDate: liveMentoringState.feedbackStartDate!,
-        feedbackEndDate: liveMentoringState.feedbackEndDate!,
-        openedAt: liveMentoringNow(),
-        closedAt: null,
-        closeReason: null,
-      });
-      return HttpResponse.json({ status: 200, data: null });
-    },
-  ),
-
-  /** (관리자) PATCH /admin/live-mentoring/:liveMentoringId/reject — 반려. */
-  http.patch('*/admin/live-mentoring/:liveMentoringId/reject', ({ params }) => {
-    const liveMentoringId = Number(params.liveMentoringId);
-    if (liveMentoringId !== liveMentoringState.liveMentoringId) {
-      const row = adminFixtureRows.find(
-        (each) => each.liveMentoringId === liveMentoringId,
-      );
-      if (!row) {
-        return liveMentoringError(
-          404,
-          'LIVE_MENTORING_NOT_FOUND',
-          '라이브 멘토링을 찾을 수 없습니다.',
-        );
-      }
-      if (row.status !== 'PENDING_REVIEW') {
-        return liveMentoringError(
-          409,
-          'LIVE_MENTORING_INVALID_STATE',
-          '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
-        );
-      }
-      row.status = 'REJECTED';
-      row.lastModifiedDate = liveMentoringNow();
-      return HttpResponse.json({ status: 200, data: null });
-    }
-    if (liveMentoringState.status !== 'PENDING_REVIEW') {
-      return liveMentoringError(
-        409,
-        'LIVE_MENTORING_INVALID_STATE',
-        '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
-      );
-    }
-    liveMentoringState.status = 'REJECTED';
-    return HttpResponse.json({ status: 200, data: null });
-  }),
 
   /** (관리자) PATCH /admin/live-mentoring/openings/:openingId/close — 강제 종료. */
   http.patch(

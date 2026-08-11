@@ -110,3 +110,67 @@ describe('POST /mentor/live-mentoring/submit — 자가승인', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('관리자 승인·반려 엔드포인트 — 제거됨', () => {
+  it('approve/reject 경로는 더 이상 핸들러가 없다 (MSW request:unhandled)', async () => {
+    const unhandledUrls: string[] = [];
+    const onUnhandled = ({ request }: { request: Request }) => {
+      unhandledUrls.push(request.url);
+    };
+    server.events.on('request:unhandled', onUnhandled);
+
+    await fetch(`${BASE}/admin/live-mentoring/1/approve`, {
+      method: 'PATCH',
+    }).catch(() => {});
+    await fetch(`${BASE}/admin/live-mentoring/1/reject`, {
+      method: 'PATCH',
+    }).catch(() => {});
+
+    server.events.removeListener('request:unhandled', onUnhandled);
+
+    expect(unhandledUrls).toEqual([
+      `${BASE}/admin/live-mentoring/1/approve`,
+      `${BASE}/admin/live-mentoring/1/reject`,
+    ]);
+  });
+});
+
+describe('GET /admin/live-mentoring — 상태 필터 (DRAFT/APPROVED/INACTIVE)', () => {
+  it('세 상태가 픽스처에 모두 존재하고, status 필터가 정확히 걸러낸다', async () => {
+    const all = await fetch(`${BASE}/admin/live-mentoring?page=1&size=20`).then(
+      (r) => r.json(),
+    );
+    const statuses = all.data.liveMentoringList.map(
+      (row: { status: string }) => row.status,
+    );
+    expect(new Set(statuses)).toEqual(new Set(['DRAFT', 'APPROVED', 'INACTIVE']));
+
+    for (const status of ['DRAFT', 'APPROVED', 'INACTIVE']) {
+      const filtered = await fetch(
+        `${BASE}/admin/live-mentoring?status=${status}`,
+      ).then((r) => r.json());
+      expect(
+        filtered.data.liveMentoringList.every(
+          (row: { status: string }) => row.status === status,
+        ),
+      ).toBe(true);
+      expect(filtered.data.liveMentoringList.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('강제 종료는 APPROVED 픽스처 행의 개설을 CLOSED·ADMIN_FORCED 로 만든다', async () => {
+    const res = await fetch(`${BASE}/admin/live-mentoring/openings/220/close`, {
+      method: 'PATCH',
+    });
+    expect(res.status).toBe(200);
+
+    const all = await fetch(`${BASE}/admin/live-mentoring?page=1&size=20`).then(
+      (r) => r.json(),
+    );
+    const row = all.data.liveMentoringList.find(
+      (each: { liveMentoringId: number }) => each.liveMentoringId === 20,
+    );
+    expect(row.currentOpening.status).toBe('CLOSED');
+    expect(row.currentOpening.closeReason).toBe('ADMIN_FORCED');
+  });
+});
