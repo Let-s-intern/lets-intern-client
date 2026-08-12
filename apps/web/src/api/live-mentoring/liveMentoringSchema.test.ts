@@ -2,6 +2,7 @@ import {
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringOpeningSchema,
+  liveMentoringSlotListSchema,
 } from './liveMentoringSchema';
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
@@ -26,8 +27,6 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -42,8 +41,6 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
     price: 35000,
     rating: 4.7,
     reviewCount: 12,
-    feedbackStartDate: '2026-07-11',
-    feedbackEndDate: '2026-07-24',
     profile: {
       visible: true,
       mosaicEnabled: false,
@@ -254,5 +251,55 @@ describe('liveMentorDetailSchema', () => {
     const detail = makeDetail();
     delete (detail as Record<string, unknown>).template;
     expect(() => liveMentorDetailSchema.parse(detail)).toThrow();
+  });
+
+  // LC-3206 — 모집 기간 필드가 응답에서 사라졌다. 남겨 두면 배포 즉시 상세가 통째로 죽는다.
+  it('모집 기간 필드가 없어도 파싱되고, 섞여 와도 버린다', () => {
+    const parsed = liveMentorDetailSchema.parse(
+      makeDetail({
+        feedbackStartDate: '2026-07-11',
+        feedbackEndDate: '2026-07-24',
+      }),
+    );
+    expect(parsed).not.toHaveProperty('feedbackStartDate');
+    expect(parsed).not.toHaveProperty('feedbackEndDate');
+  });
+});
+
+describe('liveMentoringSlotListSchema', () => {
+  it('공개 슬롯 조회 응답을 파싱한다', () => {
+    const parsed = liveMentoringSlotListSchema.parse({
+      liveMentoringSlotList: [
+        {
+          slotId: 101,
+          startDate: '2026-09-01T10:00:00',
+          endDate: '2026-09-01T10:30:00',
+          status: 'OPEN',
+        },
+      ],
+    });
+    expect(parsed.liveMentoringSlotList[0].slotId).toBe(101);
+  });
+
+  it('활성 개설이 없으면 빈 배열이 온다', () => {
+    const parsed = liveMentoringSlotListSchema.parse({
+      liveMentoringSlotList: [],
+    });
+    expect(parsed.liveMentoringSlotList).toEqual([]);
+  });
+
+  it('알 수 없는 status 는 파싱 실패', () => {
+    expect(() =>
+      liveMentoringSlotListSchema.parse({
+        liveMentoringSlotList: [
+          {
+            slotId: 101,
+            startDate: '2026-09-01T10:00:00',
+            endDate: '2026-09-01T10:30:00',
+            status: 'CLOSED',
+          },
+        ],
+      }),
+    ).toThrow();
   });
 });
