@@ -59,9 +59,6 @@ export const formatDateTime = (value: string | null): string => {
   return `${date} ${time?.slice(0, 5) ?? ''}`.trim();
 };
 
-export const formatPeriod = (start: string, end: string): string =>
-  `${start} ~ ${end}`;
-
 /** 진행시간별 가격 (예: "30분 35,000원 / 60분 60,000원"). */
 export const durationPricesLabel = (
   durationPrices: AdminCurrentOpening['durationPrices'],

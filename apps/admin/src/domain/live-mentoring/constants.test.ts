@@ -43,13 +43,14 @@ describe('live-mentoring constants — 상태', () => {
  * 근거가 없어져 삭제했다. 다른 화면에서 다시 끌어 쓰지 않도록 부재를 고정한다.
  */
 describe('live-mentoring constants — 기간 관련 상수 삭제', () => {
-  it('isExpired 를 더 이상 export 하지 않는다', () => {
+  it('formatPeriod 와 isExpired 를 더 이상 export 하지 않는다', () => {
+    expect(constants).not.toHaveProperty('formatPeriod');
     expect(constants).not.toHaveProperty('isExpired');
   });
 
   it('가격 관련 export 는 그대로 남는다', () => {
-    expect(constants.durationPricesLabel([{ duration: 30, price: 35000 }])).toBe(
-      '30분 35,000원',
-    );
+    expect(
+      constants.durationPricesLabel([{ duration: 30, price: 35000 }]),
+    ).toBe('30분 35,000원');
   });
 });
