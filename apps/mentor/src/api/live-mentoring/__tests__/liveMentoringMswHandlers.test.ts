@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
  * 페이징/필터/정렬/PUT echo를 올바르게 처리하는지 스모크 검증한다.
  * 와일드카드 prefix 패턴이라 임의 origin으로 요청해도 매칭된다.
  *
- * 자가승인 전환(제출 즉시 승인+개설, 관리자 승인/반려 없음) 관련 계약은
+ * 자가승인 전환(개설 즉시 승인, 관리자 승인/반려 없음) 관련 계약은
  * `liveMentoringSelfApprovalMswHandlers.test.ts`에서 검증한다 — 이 파일에서는
  * 그 계약과 겹치지 않는 나머지 스모크(목록/상세/설정/템플릿/정산/멘토측 개설 종료)만 다룬다.
  */
@@ -16,16 +16,16 @@ const BASE = 'https://example.test';
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
 afterEach(() => {
   server.resetHandlers();
-  // 제출·승인·종료 핸들러는 모듈 상태를 바꾼다 — 테스트 간 간섭을 끊는다.
+  // 개설·종료 핸들러는 모듈 상태를 바꾼다 — 테스트 간 간섭을 끊는다.
   resetLiveMentoringMockState();
 });
 afterAll(() => server.close());
 
-/** 오늘 기준 상대 날짜(YYYY-MM-DD). 기간 검증이 실행 시점에 좌우되지 않게 한다. */
-const dateFromToday = (offsetDays: number): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
+/** 최초 개설 요청 바디. LC-3206 이후 날짜는 담지 않는다. */
+const OPENING_BODY = {
+  title: '자소서 실전 첨삭 멘토링',
+  categories: ['PERSONAL_STATEMENT'],
+  durations: [60],
 };
 
 describe('1대1 라이브 멘토링 MSW 핸들러', () => {
@@ -60,16 +60,13 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     ).toBe(true);
   });
 
-  it('sortType=FEEDBACK_START_DATE 는 진행 시작일 오름차순 정렬한다', async () => {
-    const res = await fetch(
-      `${BASE}/live-mentoring?sortType=FEEDBACK_START_DATE&size=50`,
-    );
+  it('개설 목록 항목에는 모집 기간이 실리지 않는다', async () => {
+    const res = await fetch(`${BASE}/live-mentoring?size=50`);
     const { data } = await res.json();
-    const dates = data.openingList.map(
-      (o: { feedbackStartDate: string }) => o.feedbackStartDate,
-    );
-    const sorted = [...dates].sort((a, b) => a.localeCompare(b));
-    expect(dates).toEqual(sorted);
+    for (const opening of data.openingList) {
+      expect(opening).not.toHaveProperty('feedbackStartDate');
+      expect(opening).not.toHaveProperty('feedbackEndDate');
+    }
   });
 
   it('대표 경력은 미지정(null)일 수 있다', async () => {
@@ -102,8 +99,9 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data).toHaveProperty('careers');
     expect(data).toHaveProperty('categories');
     expect(data).toHaveProperty('durations');
-    expect(data).toHaveProperty('feedbackStartDate');
-    expect(data).toHaveProperty('feedbackEndDate');
+    // LC-3206 — 모집 기간은 응답에서 사라졌다.
+    expect(data).not.toHaveProperty('feedbackStartDate');
+    expect(data).not.toHaveProperty('feedbackEndDate');
     expect(data.status).toBe('DRAFT');
     // 백엔드에 없는 필드를 목이 만들어내면 실서버에서만 깨지는 코드가 통과한다.
     expect(data).not.toHaveProperty('isOpen');
@@ -118,51 +116,38 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     });
     const { data } = await res.json();
     expect(data).toMatchObject(body);
-    // 진행시간·기간은 이 요청으로 저장되지 않는다(검토 제출의 몫).
+    // 진행시간은 이 요청으로 저장되지 않는다(개설의 몫).
     expect(data.durations).toEqual([]);
-    expect(data.feedbackStartDate).toBeNull();
     // 프로필 참조 필드(nickname 등)는 요청에 없어도 응답엔 딸려온다.
     expect(data).toHaveProperty('nickname');
     expect(data).toHaveProperty('careers');
   });
 
-  it('POST /submit → 지원하지 않는 진행시간은 400 INVALID_LIVE_MENTORING_DURATION', async () => {
-    const res = await fetch(`${BASE}/mentor/live-mentoring/submit`, {
+  it('POST /openings → 지원하지 않는 진행시간은 400 INVALID_LIVE_MENTORING_DURATION', async () => {
+    const res = await fetch(`${BASE}/mentor/live-mentoring/openings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        durations: [45],
-        feedbackStartDate: dateFromToday(0),
-        feedbackEndDate: dateFromToday(10),
-      }),
+      body: JSON.stringify({ ...OPENING_BODY, durations: [45] }),
     });
     expect(res.status).toBe(400);
     expect((await res.json()).code).toBe('INVALID_LIVE_MENTORING_DURATION');
   });
 
-  it('POST /submit → 종료일이 지났으면 400', async () => {
-    const res = await fetch(`${BASE}/mentor/live-mentoring/submit`, {
+  it('POST /openings → 진행시간이 비어 있으면 400', async () => {
+    const res = await fetch(`${BASE}/mentor/live-mentoring/openings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        durations: [30],
-        feedbackStartDate: dateFromToday(-20),
-        feedbackEndDate: dateFromToday(-1),
-      }),
+      body: JSON.stringify({ ...OPENING_BODY, durations: [] }),
     });
     expect(res.status).toBe(400);
   });
 
   it('멘토가 개설을 종료하면 CLOSED·MENTOR_CANCELED 로 기록된다', async () => {
-    // 자가승인 전환 이후 submit() 자체가 즉시 승인+개설이라, 별도 관리자 승인 호출이 없다.
-    await fetch(`${BASE}/mentor/live-mentoring/submit`, {
+    // 자가승인이라 별도 관리자 승인 호출이 없다 — 개설 요청이 곧 승인+개설이다.
+    await fetch(`${BASE}/mentor/live-mentoring/openings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        durations: [60],
-        feedbackStartDate: dateFromToday(-1),
-        feedbackEndDate: dateFromToday(20),
-      }),
+      body: JSON.stringify(OPENING_BODY),
     });
 
     const before = await fetch(
