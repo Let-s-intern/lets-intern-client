@@ -6,8 +6,8 @@ export default function AdminLiveMentoringPage() {
     <section className="p-5">
       <Heading className="mb-1">1대1 라이브 멘토링 관리</Heading>
       <p className="text-xsmall14 text-neutral-40 mb-4">
-        멘토가 제출한 상품을 검토하고 승인합니다. 승인하면 제출한 진행시간·기간
-        으로 개설이 함께 생성되어 곧바로 오픈됩니다.
+        멘토가 만든 1대1 라이브 멘토링 상품과 현재 개설을 조회합니다. 개설은
+        멘토가 직접 열고 닫으며, 필요하면 여기서 강제 종료할 수 있습니다.
       </p>
 
       <AdminLiveMentoringTable />
