@@ -893,8 +893,35 @@ const closeOpeningById = (
     opening.closedAt = liveMentoringNow();
     opening.closeReason = closeReason;
     Object.assign(opening, { closedByUserId });
+    // 서버는 종료와 함께 슬롯을 전부 지운다. 목이 남겨 두면 종료 후에도 화면에
+    // 지워진 슬롯이 그대로 보여 회귀를 못 잡는다.
+    liveMentoringState.slots = [];
   }
   return true;
+};
+
+/** 슬롯 목록을 시작 시각 오름차순으로 정렬한다(서버 정렬과 동일). */
+const sortSlots = (slots: LiveMentoringSlot[]) =>
+  [...slots].sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+const slotListResponse = (slots: LiveMentoringSlot[]) =>
+  HttpResponse.json({
+    status: 200,
+    data: { liveMentoringSlotList: sortSlots(slots) },
+  });
+
+/**
+ * 슬롯 시간 규칙 — 서버 `LiveMentoringScheduleSlotServiceImpl` 이 강제한다.
+ * 분은 `00` 또는 `30`, 초·나노초 0, 길이 정확히 30분, 시작이 미래.
+ */
+const isValidSlotTime = (slot: { startDate: string; endDate: string }) => {
+  const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:(00|30):00$/;
+  if (!pattern.test(slot.startDate) || !pattern.test(slot.endDate))
+    return false;
+  const start = new Date(slot.startDate).getTime();
+  const end = new Date(slot.endDate).getTime();
+  if (end - start !== 30 * 60 * 1000) return false;
+  return start > Date.now();
 };
 
 /**
@@ -1842,6 +1869,32 @@ export const handlers = [
   }),
 
   /**
+   * (공개) GET /live-mentoring/mentors/:mentorId/slots — 예약 가능 슬롯.
+   *
+   * 서버 `getAvailableSlots` 는 활성 개설이 없으면 빈 배열, 있으면 `OPEN` 이면서
+   * 시작이 미래인 슬롯만 내려준다. 프론트는 개설 상태와 슬롯 상태를 조합하지 않는다.
+   *
+   * **멘토 상세 핸들러보다 먼저 등록한다** — 경로가 한 세그먼트 더 길어 매칭 자체는
+   * 갈리지만, 순서에 기대지 않도록 위에 둔다.
+   */
+  http.get('*/live-mentoring/mentors/:mentorId/slots', ({ params }) => {
+    const mentorId = Number(params.mentorId);
+    // "나"(mentorId 1)는 개설·슬롯 상태를 실제로 들고 있다. 나머지 시드 멘토는
+    // 공개 목록에 떠 있는 = 활성 개설이 있는 상태로 취급한다.
+    const isMe = mentorId === 1;
+    if (isMe && activeOpening() === null) {
+      return slotListResponse([]);
+    }
+    const slots = isMe
+      ? liveMentoringState.slots
+      : (LIVE_MENTORING_SLOTS_BY_MENTOR[mentorId] ?? []);
+    const now = liveMentoringNow();
+    return slotListResponse(
+      slots.filter((slot) => slot.status === 'OPEN' && slot.startDate > now),
+    );
+  }),
+
+  /**
    * (공개) GET /live-mentoring/mentors/:mentorId — 멘토 상세(+reviews).
    * 존재하지 않는 id는 첫 멘토로 폴백하되 mentorId는 echo.
    */
@@ -2052,5 +2105,99 @@ export const handlers = [
    */
   http.get('*/mentor/live-mentoring/open-status', () => {
     return HttpResponse.json({ status: 200, data: openingHistoryResponse() });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/slots — 내 슬롯 목록.
+   * `startDate`/`endDate` 는 포함 범위, `statusList` 는 반복 파라미터다.
+   */
+  http.get('*/mentor/live-mentoring/slots', ({ request }) => {
+    const url = new URL(request.url);
+    const startDate = url.searchParams.get('startDate');
+    const endDate = url.searchParams.get('endDate');
+    const statusList = url.searchParams.getAll('statusList');
+
+    return slotListResponse(
+      liveMentoringState.slots.filter((slot) => {
+        if (startDate && slot.startDate < startDate) return false;
+        if (endDate && slot.startDate > endDate) return false;
+        if (statusList.length > 0 && !statusList.includes(slot.status)) {
+          return false;
+        }
+        return true;
+      }),
+    );
+  }),
+
+  /**
+   * (멘토) PUT /mentor/live-mentoring/slots — 슬롯 전체 치환.
+   *
+   * 요청 바디는 래핑 객체가 아니라 `[{ startDate, endDate }]` 배열 그 자체다.
+   * 서버 `saveSlots` 와 같은 순서로 검사한다:
+   *   1. 시간 규칙(30분 단위·길이·미래) 위반 → 400 LIVE_MENTORING_INVALID_SLOT_TIME
+   *   2. 삭제 대상에 RESERVED 가 있으면 → 409 LIVE_MENTORING_SLOT_LOCKED (전체 실패)
+   *   3. 같은 시작 시각이 겹치면 → 409 LIVE_MENTORING_SLOT_CONFLICT
+   */
+  http.put('*/mentor/live-mentoring/slots', async ({ request }) => {
+    const body = (await request.json().catch(() => null)) as
+      | { startDate: string; endDate: string }[]
+      | null;
+
+    if (!Array.isArray(body)) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    if (liveMentoringState.liveMentoringId === null) {
+      return liveMentoringError(
+        404,
+        'LIVE_MENTORING_NOT_FOUND',
+        '라이브 멘토링을 찾을 수 없습니다.',
+      );
+    }
+    if (body.some((slot) => !isValidSlotTime(slot))) {
+      return liveMentoringError(
+        400,
+        'LIVE_MENTORING_INVALID_SLOT_TIME',
+        '유효하지 않은 슬롯 시간입니다.',
+      );
+    }
+
+    const requested = body.map((slot) => slot.startDate);
+    // 같은 시작 시각을 두 번 담아 보내는 경우. 실제로는 챌린지 라이브 피드백이
+    // 이미 점유한 시각도 여기서 유니크 위반으로 걸린다.
+    if (new Set(requested).size !== requested.length) {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_SLOT_CONFLICT',
+        '이미 등록된 시간입니다.',
+      );
+    }
+
+    const removed = liveMentoringState.slots.filter(
+      (slot) => !requested.includes(slot.startDate),
+    );
+    if (removed.some((slot) => slot.status === 'RESERVED')) {
+      return liveMentoringError(
+        409,
+        'LIVE_MENTORING_SLOT_LOCKED',
+        '예약된 일정은 삭제할 수 없습니다.',
+      );
+    }
+
+    // 유지되는 슬롯은 id·상태를 그대로 두고, 요청에만 있는 시간을 새로 만든다.
+    liveMentoringState.slots = body.map((slot) => {
+      const kept = liveMentoringState.slots.find(
+        (each) => each.startDate === slot.startDate,
+      );
+      return (
+        kept ?? {
+          slotId: nextSlotId++,
+          startDate: slot.startDate,
+          endDate: slot.endDate,
+          status: 'OPEN' as const,
+        }
+      );
+    });
+
+    return slotListResponse(liveMentoringState.slots);
   }),
 ];
