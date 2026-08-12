@@ -275,3 +275,52 @@ export const openingHistoryResponseSchema = z.object({
 export type OpeningHistoryResponse = z.infer<
   typeof openingHistoryResponseSchema
 >;
+
+/**
+ * 슬롯 상태 — 백엔드 `FeedbackSlotStatus`.
+ *
+ * 1대1 멘토링 슬롯은 독립 테이블이 아니라 챌린지 라이브 피드백과 같은 `feedback_slot`
+ * 행을 가리킨다(`api/feedback/feedbackSchema.ts` 의 동명 스키마와 같은 값). 그래서
+ * 한 멘토는 같은 시작 시각에 슬롯을 두 개 가질 수 없다 — 챌린지로 이미 연 시각을
+ * 1대1 로 저장하면 409 `LIVE_MENTORING_SLOT_CONFLICT` 가 난다.
+ */
+export const feedbackSlotStatusSchema = z.enum(['OPEN', 'RESERVED']);
+export type FeedbackSlotStatus = z.infer<typeof feedbackSlotStatusSchema>;
+
+/**
+ * 예약 가능 슬롯 1건 — 백엔드 `LiveMentoringScheduleSlotResponseDto`.
+ * `startDate`/`endDate` 는 `LocalDateTime`(예: `"2026-09-01T10:00:00"`)이고 길이는 30분 고정이다.
+ */
+export const liveMentoringSlotSchema = z.object({
+  slotId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: feedbackSlotStatusSchema,
+});
+export type LiveMentoringSlot = z.infer<typeof liveMentoringSlotSchema>;
+
+/**
+ * 슬롯 목록 응답 — `GET`/`PUT /mentor/live-mentoring/slots` 공통.
+ * 시작 시각 오름차순으로 온다.
+ */
+export const liveMentoringSlotListSchema = z.object({
+  liveMentoringSlotList: z.array(liveMentoringSlotSchema),
+});
+export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;
+
+/**
+ * PUT /mentor/live-mentoring/slots 요청 바디 — 래핑 객체가 아니라 **배열 그 자체**다.
+ *
+ * 전체 치환이라 요청에 없는 기존 슬롯은 삭제된다. 삭제 대상에 `RESERVED` 가 하나라도
+ * 있으면 409 `LIVE_MENTORING_SLOT_LOCKED` 로 저장 전체가 실패하므로, 사용자가 건드리지
+ * 않았더라도 예약된 슬롯은 payload 에 항상 포함해야 한다.
+ */
+export const liveMentoringSlotSaveRequestSchema = z.array(
+  z.object({
+    startDate: z.string(),
+    endDate: z.string(),
+  }),
+);
+export type LiveMentoringSlotSaveRequest = z.infer<
+  typeof liveMentoringSlotSaveRequestSchema
+>;
