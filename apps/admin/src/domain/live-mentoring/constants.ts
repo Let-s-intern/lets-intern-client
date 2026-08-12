@@ -69,14 +69,3 @@ export const durationPricesLabel = (
   durationPrices
     .map(({ duration, price }) => `${duration}분 ${formatPrice(price)}`)
     .join(' / ');
-
-const todayISO = () => new Date().toISOString().slice(0, 10);
-
-/**
- * 기간이 이미 지났는지.
- *
- * 만료 자동 종료 배치가 서버에 없어 기간이 지나도 개설이 OPEN 으로 남는다.
- * 목록에서 미리 구분해 둬야 운영자가 강제 종료가 필요한 개설을 알아볼 수 있다.
- */
-export const isExpired = (endDate: string | null | undefined): boolean =>
-  !!endDate && endDate < todayISO();

@@ -129,6 +129,26 @@ describe('AdminLiveMentoringTable — 조회', () => {
     ).toBeInTheDocument();
   });
 
+  /** 기간이 빠지고 가격만 남은 칸이라 헤더도 "가격" 으로 부른다. */
+  it('개설 칸의 헤더를 가격으로 표기한다', () => {
+    renderTable([approvedRow]);
+
+    const headers = within(screen.getByRole('table'))
+      .getAllByRole('columnheader')
+      .map((header) => header.textContent);
+
+    expect(headers).toEqual([
+      '멘토',
+      '상품명',
+      '상태',
+      '타입',
+      '상세',
+      '가격',
+      '최종 수정',
+      '관리',
+    ]);
+  });
+
   it('현재 개설의 진행시간별 가격을 보여준다', () => {
     renderTable([approvedRow]);
 

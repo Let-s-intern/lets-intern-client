@@ -114,7 +114,7 @@ const AdminLiveMentoringTable = () => {
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>타입</th>
               <th className={headerCellClass}>상세</th>
-              <th className={headerCellClass}>현재 개설</th>
+              <th className={headerCellClass}>가격</th>
               <th className={headerCellClass}>최종 수정</th>
               <th className={headerCellClass}>관리</th>
             </tr>
