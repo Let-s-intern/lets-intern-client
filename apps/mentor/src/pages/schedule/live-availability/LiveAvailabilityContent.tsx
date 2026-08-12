@@ -803,6 +803,9 @@ const LiveAvailabilityContent = ({
 
                   if (blocker) {
                     const isLocked = !!blocker.menteeName;
+                    const canSwap =
+                      !!onSwapFromOtherChallenge &&
+                      blocker.challengeId !== undefined;
                     const handleBlockerClick = () => {
                       if (isLocked) {
                         handleAppliedSlotClick({
@@ -814,11 +817,7 @@ const LiveAvailabilityContent = ({
                         });
                         return;
                       }
-                      if (
-                        !onSwapFromOtherChallenge ||
-                        blocker.challengeId === undefined
-                      )
-                        return;
+                      if (!canSwap) return;
                       showConfirm({
                         title: '이 일정을 지금 챌린지로 옮길까요?',
                         description: `현재 '${blocker.challengeTitle ?? '다른 챌린지'}'가 점유한 시간대입니다.`,
@@ -845,9 +844,16 @@ const LiveAvailabilityContent = ({
                         title={
                           isLocked
                             ? `${blocker.menteeName}님 신청 완료 — 클릭해 안내 확인`
-                            : blocker.challengeTitle
+                            : /*
+                               * 스왑 콜백을 넘기지 않으면 클릭해도 아무 일이 없다.
+                               * 1대1 라이브 멘토링처럼 이전이 계약에 없는 화면에서
+                               * "클릭 시 이동"이라고 적으면 눌러도 반응이 없는 것처럼 읽힌다.
+                               */
+                              canSwap
                               ? `${blocker.challengeTitle} 일정 · 클릭 시 현재 챌린지로 이동`
-                              : '다른 챌린지 일정'
+                              : blocker.challengeTitle
+                                ? `${blocker.challengeTitle}(으)로 이미 열어 둔 시간이라 선택할 수 없습니다`
+                                : '다른 일정이 점유한 시간입니다'
                         }
                         className={`border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 border-b border-r px-2 py-1.5 text-center font-medium transition-opacity last:border-r-0 hover:opacity-70 ${
                           isLocked ? 'opacity-80' : ''
@@ -863,7 +869,11 @@ const LiveAvailabilityContent = ({
                             </span>
                           </span>
                         ) : (
-                          '다른 일정'
+                          // 왜 못 고르는지가 셀에서 바로 보여야 한다 — 사유를 모르면
+                          // 멘토는 "왜 여기만 안 눌리지"로 읽는다.
+                          <span className="block truncate">
+                            {blocker.challengeTitle ?? '다른 일정'}
+                          </span>
                         )}
                       </button>
                     );

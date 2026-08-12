@@ -59,12 +59,10 @@ vi.mock('@/api/career/career', () => ({
   }),
 }));
 
-// 공유 라이브 슬롯/예약 모달은 이 단위 테스트 대상이 아니므로 스텁 처리
-// (실 컴포넌트는 feedback query 훅을 호출해 QueryClient 가 필요하다).
-vi.mock('@/pages/feedback-live-availability/FeedbackAvailabilityModal', () => ({
-  default: () => null,
-}));
-vi.mock('@/pages/feedback-live-reservation/ui/ReservationListModal', () => ({
+// 슬롯 편집 모달은 이 단위 테스트 대상이 아니므로 스텁 처리
+// (실 컴포넌트는 슬롯·피드백 query 훅을 호출해 QueryClient 가 필요하다).
+// 모달 자체는 `ui/__tests__/LiveMentoringSlotModal.test.tsx` 에서 따로 검증한다.
+vi.mock('../ui/LiveMentoringSlotModal', () => ({
   default: () => null,
 }));
 

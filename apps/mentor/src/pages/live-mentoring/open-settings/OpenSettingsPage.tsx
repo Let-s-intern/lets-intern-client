@@ -24,7 +24,6 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
 import {
   CATEGORY_LABELS,
   START_EDIT_SUCCESS_SETTINGS,
@@ -33,6 +32,7 @@ import {
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
+import LiveMentoringSlotModal from './ui/LiveMentoringSlotModal';
 import OpenedNoticeModal from './ui/OpenedNoticeModal';
 import PreOpenCheckModal from './ui/PreOpenCheckModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
@@ -632,18 +632,18 @@ const OpenSettingsPage = () => {
               </section>
 
               <section className={cardClass}>
-                <h2 className={sectionTitleClass}>라이브 슬롯</h2>
+                <h2 className={sectionTitleClass}>멘토링 일정</h2>
                 <p className="mb-3 text-xs text-gray-500">
-                  라이브 피드백과 동일한 일정 그리드를 공유합니다. 이미
-                  예약·오픈된 시간과 겹치지 않게 슬롯을 열 수 있어요. 위에서
-                  설정한 피드백 진행 일정이 모달 상단에 표시됩니다.
+                  멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
+                  라이브 피드백과 같은 일정 그리드를 쓰며, 이미 라이브
+                  피드백으로 열어 둔 시간은 선택할 수 없습니다.
                 </p>
                 <button
                   type="button"
                   onClick={() => setSlotModalOpen(true)}
                   className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
                 >
-                  라이브 슬롯 오픈
+                  일정 등록하기
                 </button>
               </section>
 
@@ -818,14 +818,9 @@ const OpenSettingsPage = () => {
         </div>
       )}
 
-      <FeedbackAvailabilityModal
+      <LiveMentoringSlotModal
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
-        focusDate={form.feedbackStartDate ?? undefined}
-        openPeriod={{
-          startDate: form.feedbackStartDate ?? '',
-          endDate: form.feedbackEndDate ?? '',
-        }}
       />
       {user?.userId != null && (
         <PreOpenCheckModal
