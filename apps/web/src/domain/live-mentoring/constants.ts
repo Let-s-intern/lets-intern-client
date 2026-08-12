@@ -25,11 +25,14 @@ export const CATEGORY_FILTER_ORDER: LiveMentoringCategory[] = [
 
 /**
  * 정렬 옵션 — 백엔드 `sortType` 이 받는 값만 노출한다.
+ *
+ * 지금은 최신순 하나뿐이다. 개설에서 모집 기간이 사라지면서(LC-3206) 서버
+ * `LiveMentoringSortType` enum 에서 `FEEDBACK_START_DATE` 가 빠졌다.
  * 평점순·후기순은 목록 응답에 평점/후기 필드가 없어 아직 제공하지 않는다.
+ * 선택지가 하나여도 셀렉트는 그대로 둔다 — 정렬이 다시 늘어날 때 되돌릴 일이 없다.
  */
 export const SORT_OPTIONS: { value: LiveMentorSort; label: string }[] = [
   { value: 'LATEST', label: '최신순' },
-  { value: 'FEEDBACK_START_DATE', label: '진행일정 빠른순' },
 ];
 
 /** 진행시간 라벨 (예: "30분"). */

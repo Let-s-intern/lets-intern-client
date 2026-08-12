@@ -12,9 +12,12 @@ export const LIVE_MENTOR_LIST_SIZE = 12;
 
 /**
  * 리스트 정렬 옵션 — 백엔드 `sortType` 파라미터 값.
+ *
+ * 서버 `LiveMentoringSortType` enum 에는 `LATEST` 하나만 있다. 슬롯 오픈(LC-3206)으로
+ * 개설에서 모집 기간이 사라지면서 `FEEDBACK_START_DATE` 도 함께 없어졌다 — 보내면 400 이다.
  * 평점순·후기순은 응답에 평점/후기 필드 자체가 없어 아직 지원되지 않는다.
  */
-export type LiveMentorSort = 'LATEST' | 'FEEDBACK_START_DATE';
+export type LiveMentorSort = 'LATEST';
 
 export interface UseLiveMentorListQueryParams {
   /** 1-based 페이지 번호. 기본 1 (서버가 `one-indexed-parameters: true`). */

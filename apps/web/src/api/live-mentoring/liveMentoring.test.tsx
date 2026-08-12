@@ -29,8 +29,6 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
