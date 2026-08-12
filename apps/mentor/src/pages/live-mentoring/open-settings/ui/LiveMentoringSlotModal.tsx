@@ -210,16 +210,24 @@ const LiveMentoringSlotModal = ({
             라이브 피드백으로 이미 열어 둔 시간은 선택할 수 없어요. 같은 시각에
             두 일정을 함께 열 수 없습니다.
           </p>
-          <LiveAvailabilityContent
-            mode="modal"
-            showHeader={false}
-            initialSlots={initialSlots}
-            reservedSlots={reservedSlots}
-            blockedSlots={blockedSlots}
-            onSave={handleSave}
-            onClose={handleClose}
-            resetKey={isOpen}
-          />
+          {/*
+            그리드는 루트가 `h-full` 이라 부모 높이를 그대로 요구한다. 모달은
+            `h-[85vh] overflow-hidden` 이고 위에 헤더·안내문이 이미 자리를 먹으므로,
+            남은 공간을 주지 않으면 합이 85vh 를 넘어 하단 저장 버튼이 잘린다.
+            `min-h-0` 이 없으면 flex 자식이 콘텐츠 크기 아래로 줄지 않는다.
+          */}
+          <div className="flex min-h-0 flex-1 flex-col">
+            <LiveAvailabilityContent
+              mode="modal"
+              showHeader={false}
+              initialSlots={initialSlots}
+              reservedSlots={reservedSlots}
+              blockedSlots={blockedSlots}
+              onSave={handleSave}
+              onClose={handleClose}
+              resetKey={isOpen}
+            />
+          </div>
         </>
       )}
     </BaseModal>
