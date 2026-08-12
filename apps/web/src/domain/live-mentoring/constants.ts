@@ -89,12 +89,6 @@ export const formatDetailPeriod = (
   return `${label(start, true)} ~ ${label(end, false)}`;
 };
 
-/** 리스트 카드의 진행기간 표시 (예: "25.02.15 ~ 25.02.28"). */
-export const formatOpeningPeriod = (start: string, end: string): string => {
-  const yymmdd = (iso: string) => iso.slice(2).split('-').join('.');
-  return `${yymmdd(start)} ~ ${yymmdd(end)}`;
-};
-
 /**
  * 리스트 카드 썸네일 좌상단 배지 (예: "네이버 · 서비스 기획").
  *

@@ -27,8 +27,6 @@ function makeOpening(id: number) {
     categories: ['PERSONAL_STATEMENT'],
     durations: [30],
     minimumPrice: 35000,
-    feedbackStartDate: '2026-07-10',
-    feedbackEndDate: '2026-07-23',
   };
 }
 
