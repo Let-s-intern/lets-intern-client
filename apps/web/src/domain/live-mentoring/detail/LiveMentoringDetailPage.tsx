@@ -1,7 +1,10 @@
 'use client';
 
-import { useLiveMentorDetailQuery } from '@/api/live-mentoring/liveMentoring';
-import { formatDetailPeriod } from '../constants';
+import {
+  useLiveMentorDetailQuery,
+  useLiveMentorSlotsQuery,
+} from '@/api/live-mentoring/liveMentoring';
+import { formatDetailPeriod, slotPeriod } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
@@ -36,6 +39,9 @@ const LiveMentoringDetailPage = ({
   mentorId,
 }: LiveMentoringDetailPageProps) => {
   const { data, isLoading, isError } = useLiveMentorDetailQuery(mentorId);
+  // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
+  // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
+  const { data: slots } = useLiveMentorSlotsQuery(mentorId);
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
@@ -51,6 +57,12 @@ const LiveMentoringDetailPage = ({
   const { intro, mentoringTypes, strategy, video, results } = template;
   // 프로필을 덜 채운 멘토는 닉네임이 null 로 온다. 문구가 "null 멘토가 함께해요"가 되지 않게 폴백한다.
   const nickname = profile.nickname ?? '멘토';
+  const period = slotPeriod(slots?.liveMentoringSlotList ?? []);
+  // `formatDetailPeriod` 는 `YYYY-MM-DD` 를 받는다. 슬롯은 `LocalDateTime` 이라 날짜만 자른다.
+  const periodLabel = formatDetailPeriod(
+    period?.beginning.slice(0, 10) ?? null,
+    period?.deadline.slice(0, 10) ?? null,
+  );
   const shownReviews = template.reviews.visible
     ? data.reviews.filter((r) =>
         template.reviews.selectedReviewIds.includes(r.reviewId),
@@ -59,13 +71,7 @@ const LiveMentoringDetailPage = ({
 
   return (
     <div className="flex flex-col">
-      <DetailHero
-        detail={data}
-        period={formatDetailPeriod(
-          data.feedbackStartDate,
-          data.feedbackEndDate,
-        )}
-      />
+      <DetailHero detail={data} period={periodLabel} />
 
       <DetailNavigation isReady={!isLoading} />
 
@@ -289,12 +295,7 @@ const LiveMentoringDetailPage = ({
       <DetailImageSection section="plan" />
 
       {/* 시안 7 · 진행 프로세스 */}
-      <DetailProcessSection
-        period={formatDetailPeriod(
-          data.feedbackStartDate,
-          data.feedbackEndDate,
-        )}
-      />
+      <DetailProcessSection period={periodLabel} />
 
       {/* 시안 8 · 후기 (노출 여부·대상만 멘토가 고름) */}
       {shownReviews.length > 0 && (
@@ -331,15 +332,14 @@ const LiveMentoringDetailPage = ({
 
       {/*
         하단 고정 신청 CTA — 챌린지·라이브 상페와 같은 공용 컴포넌트.
-        아직 개설한 적 없는 상품(승인 전 미리보기)은 신청 기간이 없어 CTA 를 띄우지 않는다.
+        예약 가능한 슬롯이 없어도 바는 남긴다. 감추면 상품이 없는 것처럼 보인다 —
+        비활성 상태로 두는 판단은 `DetailCTAButtons` 안에 있다.
       */}
-      {data.feedbackStartDate && data.feedbackEndDate && (
-        <DetailCTAButtons
-          title={data.title}
-          beginning={data.feedbackStartDate}
-          deadline={data.feedbackEndDate}
-        />
-      )}
+      <DetailCTAButtons
+        title={data.title}
+        beginning={period?.beginning ?? null}
+        deadline={period?.deadline ?? null}
+      />
     </div>
   );
 };

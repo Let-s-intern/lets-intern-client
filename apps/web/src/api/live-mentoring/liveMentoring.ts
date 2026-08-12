@@ -102,9 +102,7 @@ export const useLiveMentorSlotsQuery = (
   return useQuery({
     queryKey: [...LIVE_MENTOR_SLOTS_QUERY_KEY, { mentorId }],
     queryFn: async () => {
-      const res = await axios.get(
-        `/live-mentoring/mentors/${mentorId}/slots`,
-      );
+      const res = await axios.get(`/live-mentoring/mentors/${mentorId}/slots`);
       return liveMentoringSlotListSchema.parse(res.data.data);
     },
     enabled: !!mentorId,

@@ -52,7 +52,9 @@ describe('MentorCard', () => {
       />,
     );
     expect(screen.queryByText('진행기간')).not.toBeInTheDocument();
-    expect(screen.queryByText(/\d{2}\.\d{2}\.\d{2} ~ /)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/\d{2}\.\d{2}\.\d{2} ~ /),
+    ).not.toBeInTheDocument();
     expect(screen.getByText('자기소개서')).toBeInTheDocument();
     expect(screen.getByText('이력서')).toBeInTheDocument();
   });
