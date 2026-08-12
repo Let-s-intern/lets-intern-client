@@ -6,12 +6,15 @@ import axios from '@/utils/axios';
 
 import {
   LIVE_MENTORING_SETTINGS_QUERY_KEY,
+  LIVE_MENTORING_SLOTS_QUERY_KEY,
   LIVE_MENTORING_TEMPLATE_QUERY_KEY,
   LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
   useCloseLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
+  useLiveMentoringSlotsQuery,
   useLiveMentoringTemplateQuery,
+  useSaveLiveMentoringSlotsMutation,
   useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
   useUpdateLiveMentoringTemplateMutation,
@@ -278,6 +281,134 @@ describe('useLiveMentoringOpenStatusQuery', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.[0].openingId).toBe(100);
     expect(result.current.data?.[0].durationPrices[0].price).toBe(60000);
+  });
+});
+
+describe('useLiveMentoringSlotsQuery', () => {
+  const slotResponse = {
+    liveMentoringSlotList: [
+      {
+        slotId: 901,
+        startDate: '2026-09-01T10:00:00',
+        endDate: '2026-09-01T10:30:00',
+        status: 'OPEN',
+      },
+      {
+        slotId: 902,
+        startDate: '2026-09-01T10:30:00',
+        endDate: '2026-09-01T11:00:00',
+        status: 'RESERVED',
+      },
+    ],
+  };
+
+  it('래퍼를 벗겨 슬롯 배열만 반환한다', async () => {
+    axiosMock.get.mockResolvedValue({ data: { data: slotResponse } });
+
+    const { result } = renderHook(() => useLiveMentoringSlotsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data?.[1].status).toBe('RESERVED');
+  });
+
+  it('배열 쿼리를 대괄호 없이 직렬화한다', async () => {
+    // 회귀 케이스: axios 기본 직렬화(`statusList[]=OPEN`)를 Spring 이 바인딩하지
+    // 못해 필터가 통째로 무시된다. 목록 API 와 같은 `indexes: null` 이 필요하다.
+    axiosMock.get.mockResolvedValue({ data: { data: slotResponse } });
+
+    const { result } = renderHook(
+      () =>
+        useLiveMentoringSlotsQuery({
+          startDate: '2026-09-01T00:00:00',
+          endDate: '2026-09-30T23:59:59',
+          statusList: ['OPEN', 'RESERVED'],
+        }),
+      { wrapper: createWrapper(newClient()) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.get).toHaveBeenCalledWith('/mentor/live-mentoring/slots', {
+      params: {
+        startDate: '2026-09-01T00:00:00',
+        endDate: '2026-09-30T23:59:59',
+        statusList: ['OPEN', 'RESERVED'],
+      },
+      paramsSerializer: { indexes: null },
+    });
+  });
+
+  it('enabled: false 면 요청하지 않는다', () => {
+    renderHook(() => useLiveMentoringSlotsQuery({ enabled: false }), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    expect(axiosMock.get).not.toHaveBeenCalled();
+  });
+
+  it('status 가 enum 밖이면 isError 가 된다', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          liveMentoringSlotList: [
+            {
+              slotId: 901,
+              startDate: '2026-09-01T10:00:00',
+              endDate: '2026-09-01T10:30:00',
+              status: 'CANCELED',
+            },
+          ],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useLiveMentoringSlotsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+describe('useSaveLiveMentoringSlotsMutation', () => {
+  it('PUT 에 배열 그대로 보내고, 응답을 파싱해 슬롯 캐시를 invalidate 한다', async () => {
+    const saved = {
+      liveMentoringSlotList: [
+        {
+          slotId: 901,
+          startDate: '2026-09-01T10:00:00',
+          endDate: '2026-09-01T10:30:00',
+          status: 'OPEN',
+        },
+      ],
+    };
+    axiosMock.put.mockResolvedValue({ data: { data: saved } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => useSaveLiveMentoringSlotsMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    const body = [
+      { startDate: '2026-09-01T10:00:00', endDate: '2026-09-01T10:30:00' },
+    ];
+    await act(async () => {
+      await result.current.mutateAsync(body);
+    });
+
+    // 래핑 객체가 아니라 배열 그 자체다.
+    expect(axiosMock.put).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/slots',
+      body,
+    );
+    expect(result.current.data?.[0].slotId).toBe(901);
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
+    });
   });
 });
 

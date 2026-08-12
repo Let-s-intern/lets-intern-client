@@ -2,11 +2,14 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  type FeedbackSlotStatus,
   type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
+  type LiveMentoringSlotSaveRequest,
   type LiveMentoringSubmit,
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
+  liveMentoringSlotListSchema,
   liveMentoringTemplateSchema,
   openingHistoryResponseSchema,
 } from './liveMentoringSchema';
@@ -17,6 +20,7 @@ const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const SUBMIT_PATH = '/mentor/live-mentoring/submit';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
 const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
+const SLOTS_PATH = '/mentor/live-mentoring/slots';
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
@@ -32,6 +36,14 @@ export const LIVE_MENTORING_TEMPLATE_QUERY_KEY = [
 export const LIVE_MENTORING_OPEN_STATUS_QUERY_KEY = [
   'liveMentoring',
   'openStatus',
+] as const;
+/**
+ * 예약 가능 슬롯 query key prefix.
+ * 필터(기간·상태)별 캐시가 이 prefix 를 공유하므로 저장·종료 후 한 번에 무효화된다.
+ */
+export const LIVE_MENTORING_SLOTS_QUERY_KEY = [
+  'liveMentoring',
+  'slots',
 ] as const;
 
 /**
@@ -218,5 +230,71 @@ export const useLiveMentoringOpenStatusQuery = () => {
       return openingHistoryResponseSchema.parse(res.data.data).openings;
     },
     refetchOnWindowFocus: false,
+  });
+};
+
+export interface UseLiveMentoringSlotsQueryParams {
+  /** `LocalDateTime` 문자열. 서버는 `startDate <= 슬롯 시작` 조건으로 쓴다. */
+  startDate?: string;
+  /** `LocalDateTime` 문자열. 서버는 `슬롯 시작 <= endDate` 조건으로 쓴다. */
+  endDate?: string;
+  /** 미지정이면 서버가 전체(OPEN + RESERVED)를 준다. */
+  statusList?: FeedbackSlotStatus[];
+  /** false 면 조회하지 않는다(모달이 닫혀 있을 때 등). */
+  enabled?: boolean;
+}
+
+/**
+ * GET /mentor/live-mentoring/slots — 내 예약 가능 슬롯 목록.
+ *
+ * 응답 래퍼(`liveMentoringSlotList`)를 벗겨 배열만 반환한다 — 개설 이력 훅과 같은 규칙이다.
+ * 편집 그리드는 예약 슬롯도 함께 그려야 하므로(예약 슬롯을 payload 에서 빠뜨리면
+ * 저장 전체가 409 로 실패한다) 기본값으로 상태를 좁히지 않는다.
+ */
+export const useLiveMentoringSlotsQuery = (
+  params: UseLiveMentoringSlotsQueryParams = {},
+) => {
+  const { startDate, endDate, statusList, enabled = true } = params;
+  return useQuery({
+    queryKey: [
+      ...LIVE_MENTORING_SLOTS_QUERY_KEY,
+      { startDate, endDate, statusList },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(SLOTS_PATH, {
+        params: { startDate, endDate, statusList },
+        // axios 기본 직렬화는 배열을 `statusList[]=OPEN` 으로 보내는데 Spring 은
+        // `statusList=OPEN` 반복 형태만 바인딩한다. indexes:null 로 대괄호를 없앤다.
+        paramsSerializer: { indexes: null },
+      });
+      return liveMentoringSlotListSchema.parse(res.data.data)
+        .liveMentoringSlotList;
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * PUT /mentor/live-mentoring/slots — 슬롯 전체 치환.
+ *
+ * 요청 바디는 래핑 객체가 아니라 `[{ startDate, endDate }]` 배열 그 자체다.
+ * 요청에 없는 기존 슬롯은 삭제되므로, 사용자가 건드리지 않은 `RESERVED` 슬롯까지
+ * 호출부가 반드시 담아 보내야 한다 — 빠지면 409 `LIVE_MENTORING_SLOT_LOCKED` 로
+ * 저장 전체가 실패한다(`utils/slotMapping.ts` 의 `toSlotSaveRequest` 참고).
+ */
+export const useSaveLiveMentoringSlotsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (slots: LiveMentoringSlotSaveRequest) => {
+      const res = await axios.put(SLOTS_PATH, slots);
+      return liveMentoringSlotListSchema.parse(res.data.data)
+        .liveMentoringSlotList;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
+      });
+    },
   });
 };
