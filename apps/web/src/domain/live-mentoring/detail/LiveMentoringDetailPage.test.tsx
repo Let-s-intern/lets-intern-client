@@ -38,8 +38,6 @@ function detail(overrides: Record<string, unknown> = {}) {
         price: 60000,
         rating: 4.8,
         reviewCount: 12,
-        feedbackStartDate: '2026-07-18',
-        feedbackEndDate: '2026-08-01',
         profile: {
           visible: true,
           mosaicEnabled: false,
@@ -135,6 +133,34 @@ function detail(overrides: Record<string, unknown> = {}) {
   };
 }
 
+/** 예약 가능 슬롯 기본 시드 — 진행기간이 "09월 01일 ~ 09월 30일" 로 잡힌다. */
+const SLOTS = [
+  {
+    slotId: 1,
+    startDate: '2030-09-01T10:00:00',
+    endDate: '2030-09-01T10:30:00',
+    status: 'OPEN',
+  },
+  {
+    slotId: 2,
+    startDate: '2030-09-30T17:00:00',
+    endDate: '2030-09-30T17:30:00',
+    status: 'OPEN',
+  },
+];
+
+/**
+ * 상세와 슬롯은 별개의 API 다. URL 로 갈라 응답한다.
+ * 상세 응답에는 기간이 없어 진행기간은 슬롯에서만 나온다.
+ */
+function mockApis(detailResponse: unknown, slots: unknown[] = SLOTS) {
+  axiosGet.mockImplementation((url: string) =>
+    url.endsWith('/slots')
+      ? Promise.resolve({ data: { data: { liveMentoringSlotList: slots } } })
+      : Promise.resolve(detailResponse),
+  );
+}
+
 function renderDetail() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
@@ -150,7 +176,7 @@ beforeEach(() => axiosGet.mockReset());
 
 describe('LiveMentoringDetailPage', () => {
   it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 이미지 섹션을 렌더한다', async () => {
-    axiosGet.mockResolvedValue(detail());
+    mockApis(detail());
     renderDetail();
 
     await waitFor(() =>
@@ -174,7 +200,7 @@ describe('LiveMentoringDetailPage', () => {
   });
 
   it('노출 선택된 후기만 보여주고, 경력 줄을 노출한다', async () => {
-    axiosGet.mockResolvedValue(detail());
+    mockApis(detail());
     renderDetail();
 
     await waitFor(() =>
@@ -189,7 +215,7 @@ describe('LiveMentoringDetailPage', () => {
     const detailData = detail();
     detailData.data.data.template.strategy.visible = false;
     detailData.data.data.template.video.visible = false;
-    axiosGet.mockResolvedValue(detailData);
+    mockApis(detailData);
     renderDetail();
 
     await waitFor(() =>
@@ -200,7 +226,7 @@ describe('LiveMentoringDetailPage', () => {
   });
 
   it('후기 노출 off 면 후기 섹션을 렌더하지 않는다', async () => {
-    axiosGet.mockResolvedValue(
+    mockApis(
       detail({
         template: {
           ...(detail().data.data.template as object),
@@ -217,7 +243,7 @@ describe('LiveMentoringDetailPage', () => {
   });
 
   it('히어로에 상품명·평점·멘티 수와 플랜을 보여주고, 플랜 선택은 잠겨 있다', async () => {
-    axiosGet.mockResolvedValue(detail());
+    mockApis(detail());
     renderDetail();
 
     await waitFor(() =>
@@ -234,7 +260,7 @@ describe('LiveMentoringDetailPage', () => {
   });
 
   it('히어로 불릿을 노출한다', async () => {
-    axiosGet.mockResolvedValue(detail());
+    mockApis(detail());
     renderDetail();
 
     await waitFor(() =>
@@ -242,6 +268,62 @@ describe('LiveMentoringDetailPage', () => {
         screen.getByText('- 이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'),
       ).toBeInTheDocument(),
     );
+  });
+
+  /*
+    상세 응답에는 기간이 없다. 진행기간은 슬롯 API 의
+    첫 슬롯 시작 ~ 마지막 슬롯 종료로 만든다.
+  */
+  it('예약 가능 슬롯이 있으면 첫 시작 ~ 마지막 종료를 진행기간으로 보여준다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    // 히어로와 진행 프로세스(시안 7) 두 곳에 같은 값이 들어간다
+    expect(
+      screen.getAllByText('2030년 09월 01일(일) ~ 09월 30일(월)'),
+    ).toHaveLength(2);
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors/3/slots');
+  });
+
+  it('예약 가능 슬롯이 없으면 진행기간 자리에 오픈 준비 중을 보여준다', async () => {
+    mockApis(detail(), []);
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    expect(screen.getAllByText('오픈 준비 중')).toHaveLength(2);
+  });
+
+  it('예약 가능 슬롯이 없어도 하단 신청 바를 감추지 않고 비활성으로 남긴다', async () => {
+    mockApis(detail(), []);
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    const buttons = screen.getAllByRole('button', {
+      name: '현재 예약 가능한 일정이 없습니다',
+    });
+    expect(buttons).toHaveLength(2);
+    buttons.forEach((button) => expect(button).toBeDisabled());
+    expect(screen.queryByText('출시알림신청')).not.toBeInTheDocument();
+  });
+
+  it('예약 가능 슬롯이 있으면 하단 신청 바가 정상 동작한다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2);
+    expect(
+      screen.queryByText('현재 예약 가능한 일정이 없습니다'),
+    ).not.toBeInTheDocument();
   });
 
   // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.
