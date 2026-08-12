@@ -10,6 +10,7 @@ import {
   LIVE_MENTORING_TEMPLATE_QUERY_KEY,
   LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
   useCloseLiveMentoringOpeningMutation,
+  useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useLiveMentoringSlotsQuery,
@@ -396,8 +397,9 @@ describe('useSaveLiveMentoringSlotsMutation', () => {
     const body = [
       { startDate: '2026-09-01T10:00:00', endDate: '2026-09-01T10:30:00' },
     ];
+    let returned: Awaited<ReturnType<typeof result.current.mutateAsync>> = [];
     await act(async () => {
-      await result.current.mutateAsync(body);
+      returned = await result.current.mutateAsync(body);
     });
 
     // 래핑 객체가 아니라 배열 그 자체다.
@@ -405,7 +407,7 @@ describe('useSaveLiveMentoringSlotsMutation', () => {
       '/mentor/live-mentoring/slots',
       body,
     );
-    expect(result.current.data?.[0].slotId).toBe(901);
+    expect(returned[0].slotId).toBe(901);
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
     });
@@ -472,6 +474,70 @@ describe('useCloseLiveMentoringOpeningMutation', () => {
     });
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+  });
+
+  it('슬롯 캐시도 무효화한다 — 서버가 종료와 함께 슬롯을 전부 지운다', async () => {
+    // 회귀 케이스: 이걸 빼면 종료 후에도 화면에 이미 삭제된 슬롯이 그대로 남는다.
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCloseLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync(100);
+    });
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
+    });
+  });
+});
+
+describe('useCreateLiveMentoringOpeningMutation', () => {
+  it('개설 후 오픈현황·설정·슬롯 캐시를 함께 invalidate 한다', async () => {
+    // 개설 유무가 고객용 슬롯 노출 조건이라 슬롯 캐시도 낡는다.
+    axiosMock.post.mockResolvedValue({
+      data: { data: { liveMentoringId: 1, openings: [] } },
+    });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        title: '자소서 실전 첨삭 멘토링',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30],
+      });
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/openings',
+      {
+        title: '자소서 실전 첨삭 멘토링',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30],
+      },
+    );
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
     });
   });
 });

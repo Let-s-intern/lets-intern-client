@@ -110,11 +110,15 @@ export const useSubmitLiveMentoringMutation = () => {
 };
 
 /**
- * POST /mentor/live-mentoring/openings — 승인된 상품 재개설.
+ * POST /mentor/live-mentoring/openings — 최초 개설과 재개설 공통.
  *
- * 종료 후에는 상품이 `APPROVED` 로 남아 `PUT /settings` 가 잠긴다. 그래서 재개설은
- * 제목·타입·진행시간·기간을 한 요청에 담아 보내고, 관리자 재승인 없이 바로 열린다.
- * 활성 개설이 있으면 서버가 409 `LIVE_MENTORING_LOCKED` 로 막는다.
+ * 검토 제출(`POST /submit`)이 사라지면서 개설 경로가 이 하나로 합쳐졌다. `DRAFT`
+ * 상품이면 서버가 `APPROVED` 로 전이시키며 첫 개설을 만들고, `APPROVED` 상품이면
+ * 새 개설을 만든다. 승인 이후에는 `PUT /settings` 가 잠기므로 제목·타입·진행시간을
+ * 한 요청에 담아 보낸다. 활성 개설이 있으면 서버가 409 `LIVE_MENTORING_LOCKED` 로 막는다.
+ *
+ * 예약 가능 일정은 개설에 담기지 않는다 — 슬롯(`PUT /slots`)으로 따로 등록한다.
+ * 다만 개설 유무가 고객용 슬롯 노출 조건이라 슬롯 캐시도 함께 무효화한다.
  */
 export const useCreateLiveMentoringOpeningMutation = () => {
   const queryClient = useQueryClient();
@@ -133,6 +137,9 @@ export const useCreateLiveMentoringOpeningMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
       });
     },
   });
@@ -163,6 +170,9 @@ export const useStartEditLiveMentoringMutation = () => {
  *
  * 서버는 예약 존재 여부를 검사하지 않고 종료한다. 이미 종료된 개설은 그대로 200 이다.
  * 종료 후에는 개설 이력뿐 아니라 설정 화면의 잠금 표시도 달라지므로 두 캐시를 함께 무효화한다.
+ *
+ * 서버가 종료와 함께 슬롯을 전부 지우므로 슬롯 캐시도 무효화한다 — 빼먹으면 종료 후에도
+ * 화면에 이미 지워진 슬롯이 그대로 남는다.
  */
 export const useCloseLiveMentoringOpeningMutation = () => {
   const queryClient = useQueryClient();
@@ -176,6 +186,9 @@ export const useCloseLiveMentoringOpeningMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
       });
     },
   });
