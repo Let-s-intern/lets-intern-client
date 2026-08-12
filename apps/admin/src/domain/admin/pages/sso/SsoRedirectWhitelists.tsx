@@ -11,7 +11,7 @@ import useSsoRedirectWhitelists from './useSsoRedirectWhitelists';
  * 이 화면에서 지운 URL 은 즉시 그 서비스의 SSO 로그인을 끊는다.
  */
 
-const formatCreatedAt = (value: string | null | undefined) =>
+const formatCreateDate = (value: string | null | undefined) =>
   value ? dayjs(value).format('YYYY-MM-DD HH:mm') : '-';
 
 const SsoRedirectWhitelists = () => {
@@ -95,7 +95,7 @@ const SsoRedirectWhitelists = () => {
                     </button>
                   </td>
                   <td className="px-3 py-2">
-                    {formatCreatedAt(item.createdAt)}
+                    {formatCreateDate(item.createDate)}
                   </td>
                   <td className="px-3 py-2">
                     <button

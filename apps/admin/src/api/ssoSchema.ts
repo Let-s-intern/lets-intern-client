@@ -12,7 +12,7 @@ import { z } from 'zod';
 /**
  * 목록 한 행.
  *
- * `createdAt` 만 무르게 받는다. 나머지 넷은 행을 이루는 값이라 비면 행 자체가 뜻이 없다 —
+ * `createDate` 만 무르게 받는다. 나머지 넷은 행을 이루는 값이라 비면 행 자체가 뜻이 없다 —
  * 서비스명 없는 화이트리스트나 URI 없는 화이트리스트는 운영이 판단할 수 없고,
  * 그런 행을 조용히 그려 두면 화면이 서버 계약 불일치를 감춘다.
  */
@@ -21,7 +21,7 @@ export const ssoRedirectWhitelistSchema = z.object({
   serviceName: z.string(),
   allowedRedirectUri: z.string(),
   isActive: z.boolean(),
-  createdAt: z.string().nullable().optional(),
+  createDate: z.string().nullable().optional(),
 });
 
 export type SsoRedirectWhitelist = z.infer<typeof ssoRedirectWhitelistSchema>;
@@ -29,13 +29,11 @@ export type SsoRedirectWhitelist = z.infer<typeof ssoRedirectWhitelistSchema>;
 /**
  * 목록 응답에서 배열을 꺼낸다.
  *
- * 서버 Push 1 이 아직 없어 **감싸는 키 이름이 확정되지 않았다.** 이 저장소의 다른 목록은
- * `{ bannerList: [...] }`·`{ accessLogList: [...] }` 처럼 이름 붙은 래퍼를 쓰고, 서버도
- * `GetFaqResponseDto` 처럼 래퍼 DTO 를 두는 편이지만 단순 배열로 내려올 수도 있다.
- *
- * 그래서 키 이름을 찍지 않고 "배열이면 그대로, 배열 하나만 든 객체면 그 배열" 로 푼다.
- * 둘 다 아니면 아래 `z.array` 가 그대로 실패한다 — 모양이 어긋난 응답을 빈 목록으로
- * 흘려보내지 않는다. 실제 계약은 작업 4.6(실서버 연동 확인)에서 확정한다.
+ * 작업 4.6에서 서버 Push 1 실제 코드(`SsoRedirectWhitelistV2AdminController.getSsoRedirectWhitelistList`)
+ * 를 확인한 결과, 응답 `data` 는 래퍼 없이 **배열 그대로**다(`SuccessResponse.ok(responseDtos)`
+ * 에서 `responseDtos` 가 곧바로 `List<SsoRedirectWhitelistResponseDto>`). 그래도 전처리를
+ * 남겨 둔다 — 배열이면 그대로 통과시키므로 실제 계약과 다르게 동작하지 않고, 나중에 서버가
+ * 래퍼 DTO 로 바뀌어도(이 저장소 다른 목록 API처럼) 화면 코드를 안 고쳐도 되게 한다.
  */
 const unwrapList = (payload: unknown): unknown => {
   if (Array.isArray(payload)) return payload;

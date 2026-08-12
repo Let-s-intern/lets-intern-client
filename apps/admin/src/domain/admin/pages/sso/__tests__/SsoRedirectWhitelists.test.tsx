@@ -38,14 +38,14 @@ const rows: SsoRedirectWhitelist[] = [
     serviceName: 'FreeSeminarVodHub',
     allowedRedirectUri: 'https://vod.letscareer.co.kr/auth/callback',
     isActive: true,
-    createdAt: '2026-08-01T10:00:00',
+    createDate: '2026-08-01T10:00:00',
   },
   {
     id: 2,
     serviceName: '인적성 모의고사',
     allowedRedirectUri: 'https://exam.letscareer.co.kr/auth/callback',
     isActive: false,
-    createdAt: null,
+    createDate: null,
   },
 ];
 

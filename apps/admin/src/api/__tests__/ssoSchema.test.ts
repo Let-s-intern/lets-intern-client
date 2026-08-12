@@ -19,7 +19,7 @@ const row = {
   serviceName: 'FreeSeminarVodHub',
   allowedRedirectUri: 'https://vod.letscareer.co.kr/auth/callback',
   isActive: true,
-  createdAt: '2026-08-01T10:00:00',
+  createDate: '2026-08-01T10:00:00',
 };
 
 describe('ssoRedirectWhitelistSchema', () => {
@@ -29,13 +29,13 @@ describe('ssoRedirectWhitelistSchema', () => {
 
   it('생성 시각이 없어도 행은 성립한다', () => {
     // 목록 정렬·표시용 부가 정보다. 이것 때문에 행 전체가 사라지면 손해가 더 크다.
-    const { createdAt: _createdAt, ...withoutCreatedAt } = row;
+    const { createDate: _createDate, ...withoutCreateDate } = row;
 
-    expect(ssoRedirectWhitelistSchema.parse(withoutCreatedAt)).toEqual(
-      withoutCreatedAt,
+    expect(ssoRedirectWhitelistSchema.parse(withoutCreateDate)).toEqual(
+      withoutCreateDate,
     );
     expect(
-      ssoRedirectWhitelistSchema.parse({ ...row, createdAt: null }).createdAt,
+      ssoRedirectWhitelistSchema.parse({ ...row, createDate: null }).createDate,
     ).toBeNull();
   });
 

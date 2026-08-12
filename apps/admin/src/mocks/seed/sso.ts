@@ -16,20 +16,20 @@ export const seedSsoRedirectWhitelists: SsoRedirectWhitelist[] = [
     serviceName: 'FreeSeminarVodHub',
     allowedRedirectUri: 'https://vod.letscareer.co.kr/auth/callback',
     isActive: true,
-    createdAt: '2026-08-01T10:00:00',
+    createDate: '2026-08-01T10:00:00',
   },
   {
     id: 2,
     serviceName: '인적성 모의고사',
     allowedRedirectUri: 'https://exam.letscareer.co.kr/auth/callback',
     isActive: false,
-    createdAt: '2026-08-03T14:30:00',
+    createDate: '2026-08-03T14:30:00',
   },
   {
     id: 3,
     serviceName: 'VOD 로컬 개발',
     allowedRedirectUri: 'http://localhost:3000/auth/callback',
     isActive: true,
-    createdAt: '2026-08-05T09:15:00',
+    createDate: '2026-08-05T09:15:00',
   },
 ];

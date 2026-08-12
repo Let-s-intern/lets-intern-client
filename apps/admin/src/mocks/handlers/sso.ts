@@ -66,7 +66,7 @@ export const ssoHandlers = [
       allowedRedirectUri: body.allowedRedirectUri,
       // 등록 즉시 열린다. 꺼진 채로 만들면 등록했는데 로그인이 안 된다는 문의가 늘 붙는다.
       isActive: true,
-      createdAt: new Date().toISOString(),
+      createDate: new Date().toISOString(),
     };
     whitelists = [...whitelists, created];
 
