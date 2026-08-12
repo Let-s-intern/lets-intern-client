@@ -91,6 +91,16 @@ const navData = [
     ],
   },
   {
+    // 계정·로그인에 딸린 설정이라 사용자 관리 바로 뒤에 둔다.
+    title: 'SSO 관리',
+    itemList: [
+      {
+        name: '리다이렉트 화이트리스트',
+        url: '/sso/redirect-whitelist',
+      },
+    ],
+  },
+  {
     title: '홈 관리',
     itemList: [
       {
