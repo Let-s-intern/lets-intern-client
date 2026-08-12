@@ -14,7 +14,6 @@ import {
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useStartEditLiveMentoringMutation,
-  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
@@ -65,8 +64,6 @@ const isStateConflict = (error: unknown) => {
   );
 };
 
-const todayISO = () => new Date().toISOString().slice(0, 10);
-
 const OpenSettingsPage = () => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
@@ -75,9 +72,7 @@ const OpenSettingsPage = () => {
   const { data: user } = useUserQuery();
   const { mutate: save, isPending: isSaving } =
     useUpdateLiveMentoringSettingsMutation();
-  const { mutate: submit, isPending: isSubmitting } =
-    useSubmitLiveMentoringMutation();
-  const { mutate: reopen, isPending: isReopening } =
+  const { mutate: openMentoring, isPending: isOpening } =
     useCreateLiveMentoringOpeningMutation();
   const { mutate: startEdit, isPending: isStartingEdit } =
     useStartEditLiveMentoringMutation();
@@ -96,12 +91,12 @@ const OpenSettingsPage = () => {
   /** 오픈 직후 안내 모달이 종료 대상으로 삼을 개설. null 이면 모달을 닫는다. */
   const [openedOpeningId, setOpenedOpeningId] = useState<number | null>(null);
   /**
-   * 오픈 전 확인 모달. 검토 제출과 재개설이 같은 절차를 쓰되 결과가 달라
-   * 어느 쪽을 실행할지 함께 들고 있는다.
+   * 오픈 전 확인 모달 노출 여부.
+   *
+   * 검토 제출이 사라지고 최초 개설·재개설이 `POST /openings` 하나로 합쳐지면서
+   * 어느 쪽을 실행할지 들고 있을 이유도 없어졌다.
    */
-  const [pendingOpen, setPendingOpen] = useState<'submit' | 'reopen' | null>(
-    null,
-  );
+  const [isOpenConfirmVisible, setIsOpenConfirmVisible] = useState(false);
   /**
    * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐 낡은
    * `APPROVED` 로 남는다. 그 사이에도 곧바로 초안 모드(저장·제출)로 넘어가야
@@ -162,10 +157,11 @@ const OpenSettingsPage = () => {
   /*
    * 편집 가능 조건은 두 갈래다.
    *
-   * 1. 초안 — 아직 제출 전이라 `PUT /settings` 로 저장하고 제출(=자가승인+개설)한다.
+   * 1. 초안 — `PUT /settings` 로 제목·타입을 저장한다. 상품이 없으면 이 저장이
+   *    상품을 만든다(개설은 상품이 있어야 한다).
    * 2. 승인됐고 활성 개설이 없음 — 종료 후 다시 여는 경우다. 이때 서버는
    *    `PUT /settings` 를 잠그므로(409 LOCKED) 저장이 아니라 `POST /openings` 로
-   *    제목·타입·진행시간·기간을 한 번에 보내 즉시 재개설한다(관리자 재승인 불필요).
+   *    제목·타입·진행시간을 한 번에 보내 즉시 재개설한다(관리자 재승인 불필요).
    *
    * "승인 + 오픈 중"은 잠근다.
    */
@@ -188,46 +184,38 @@ const OpenSettingsPage = () => {
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
   const noDurationSelected = form.durations.length === 0;
-  const noFeedbackDates = !form.feedbackStartDate || !form.feedbackEndDate;
-  const endDatePassed =
-    !!form.feedbackEndDate && form.feedbackEndDate < todayISO();
-  /** 시작일이 미래면 오픈해도 그날까지 목록에 뜨지 않는다(서버 노출 조건). */
-  const startDateInFuture =
-    !!form.feedbackStartDate && form.feedbackStartDate > todayISO();
-  const invertedPeriod =
-    !!form.feedbackStartDate &&
-    !!form.feedbackEndDate &&
-    form.feedbackStartDate > form.feedbackEndDate;
+  /**
+   * 상품이 아직 없으면 개설이 404 로 막힌다 — `POST /openings` 는 기존 상품을 찾아
+   * 갱신·개설하는 API 다. 저장을 한 번 거쳐 상품을 만들어야 한다.
+   */
+  const hasNoProduct = form.liveMentoringId === null;
 
-  /** 오픈에 필요한 값이 모두 유효한지. 검토 제출과 재개설이 같은 조건을 쓴다. */
+  /*
+   * 오픈에 필요한 값. 예약 가능 일정은 여기 들어가지 않는다 — 슬롯이 하나도 없어도
+   * 서버가 개설을 허용하므로, 프론트가 임의로 막지 않는다.
+   */
   const hasValidOpeningInput =
-    !noTitleEntered &&
-    !noCategorySelected &&
-    !noDurationSelected &&
-    !noFeedbackDates &&
-    !endDatePassed &&
-    !invertedPeriod;
+    !noTitleEntered && !noCategorySelected && !noDurationSelected;
 
-  // 저장(PUT)이 실제로 서버에 반영하는 건 제목·타입뿐이라, 제출을 막을지는 이 둘만 본다.
+  // 저장(PUT)이 실제로 서버에 반영하는 건 제목·타입뿐이다.
   const isTitleOrCategoryDirty =
     (form.title ?? '') !== (original.title ?? '') ||
     JSON.stringify(form.categories) !== JSON.stringify(original.categories);
   /*
-   * "저장" 버튼 활성화는 화면에서 뭔가 하나라도 바뀌었으면 켠다 — 진행시간·기간만
-   * 고쳤을 때 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 클릭하면 PUT은 여전히
-   * 제목·타입만 보내지만, 성공 시 handleSave 가 현재 폼 값 전체를 새 기준선으로
-   * 삼으므로(merged) 진행시간·기간의 미저장 상태도 함께 정리된다.
+   * "저장" 버튼 활성화는 화면에서 뭔가 하나라도 바뀌었으면 켠다 — 진행시간만 고쳤을 때
+   * 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 클릭하면 PUT은 여전히 제목·타입만
+   * 보내지만, 성공 시 handleSave 가 현재 폼 값 전체를 새 기준선으로 삼으므로(merged)
+   * 진행시간의 미저장 상태도 함께 정리된다.
    */
   const isDirty =
     isTitleOrCategoryDirty ||
-    JSON.stringify(form.durations) !== JSON.stringify(original.durations) ||
-    form.feedbackStartDate !== original.feedbackStartDate ||
-    form.feedbackEndDate !== original.feedbackEndDate;
+    JSON.stringify(form.durations) !== JSON.stringify(original.durations);
   const canSave = !noTitleEntered && !noCategorySelected && isDirty;
-  // 검토 제출은 제목·타입이 저장된 뒤에만 의미가 있다(제출은 그 둘을 보내지 않는다).
-  const canSubmit = hasValidOpeningInput && !isTitleOrCategoryDirty;
-  // 재개설은 제목·타입까지 한 요청에 담으므로 미리 저장할 필요가 없다.
-  const canReopenNow = hasValidOpeningInput;
+  /*
+   * 개설은 제목·타입·진행시간을 한 요청에 담으므로 미리 저장할 필요가 없다 —
+   * 상품이 아직 없을 때만 저장이 선행돼야 한다.
+   */
+  const canOpen = hasValidOpeningInput && !hasNoProduct;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -284,7 +272,7 @@ const OpenSettingsPage = () => {
     showConfirm({
       title: '이 오픈을 종료할까요?',
       description:
-        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.',
+        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.\n종료하면 등록한 일정이 모두 삭제됩니다. 다시 열 때 일정을 새로 등록해야 합니다.',
       confirmText: '종료하기',
       // 확인 모달은 onConfirm 후에도 닫히지 않는다(공용 훅 동작) — 연타로 두 번 나가지 않게 막는다.
       onConfirm: () =>
@@ -310,13 +298,11 @@ const OpenSettingsPage = () => {
       { title: form.title ?? '', categories: form.categories },
       {
         onSuccess: (saved) => {
-          // 응답이 서버의 최신 전체 상태다. 다만 아직 제출하지 않은 진행시간·기간은
-          // 서버에 없으므로(빈 배열·null) 사용자가 입력해 둔 값을 덮어쓰지 않는다.
+          // 응답이 서버의 최신 전체 상태다. 다만 아직 개설하지 않은 진행시간은 서버에
+          // 없으므로(빈 배열) 사용자가 골라 둔 값을 덮어쓰지 않는다.
           const merged: LiveMentoringSettings = {
             ...saved,
             durations: form.durations,
-            feedbackStartDate: form.feedbackStartDate,
-            feedbackEndDate: form.feedbackEndDate,
           };
           setForm(merged);
           setOriginal(merged);
@@ -327,40 +313,17 @@ const OpenSettingsPage = () => {
     );
   };
 
-  /** 검토 제출. 진행시간·기간은 이 요청에서만 서버에 저장된다. */
-  const handleSubmitForReview = () => {
-    setPendingOpen(null);
-    submit(
-      {
-        durations: form.durations,
-        feedbackStartDate: form.feedbackStartDate ?? '',
-        feedbackEndDate: form.feedbackEndDate ?? '',
-      },
-      {
-        onSuccess: () => {
-          setJustLocked(true);
-          showAlert({
-            title: '오픈을 처리하고 있어요.',
-            description:
-              '곧 모집이 시작됩니다. 처리 중에는 설정을 수정할 수 없어요.',
-            variant: 'success',
-          });
-        },
-        onError: handleMutationError('오픈에 실패했습니다.'),
-      },
-    );
-  };
-
-  /** 재개설. 승인된 상품을 관리자 재승인 없이 곧바로 다시 연다. */
-  const handleReopen = () => {
-    setPendingOpen(null);
-    reopen(
+  /**
+   * 오픈. 최초 개설과 재개설이 같은 요청이다 — 초안이면 서버가 승인까지 전이시키고,
+   * 승인된 상품이면 관리자 재승인 없이 곧바로 새 개설을 만든다.
+   */
+  const handleOpen = () => {
+    setIsOpenConfirmVisible(false);
+    openMentoring(
       {
         title: form.title ?? '',
         categories: form.categories,
         durations: form.durations,
-        feedbackStartDate: form.feedbackStartDate ?? '',
-        feedbackEndDate: form.feedbackEndDate ?? '',
       },
       {
         /*
@@ -376,7 +339,8 @@ const OpenSettingsPage = () => {
           else
             showAlert({
               title: '오픈했어요.',
-              description: '설정한 기간 안이면 지금부터 모집이 시작됩니다.',
+              description:
+                '지금부터 공개 리스트에 노출됩니다. 등록해 둔 일정에서 멘티가 예약할 수 있어요.',
               variant: 'success',
             });
         },
@@ -404,7 +368,7 @@ const OpenSettingsPage = () => {
     });
   };
 
-  const isPending = isSaving || isSubmitting || isReopening || isStartingEdit;
+  const isPending = isSaving || isOpening || isStartingEdit;
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -413,8 +377,8 @@ const OpenSettingsPage = () => {
           오픈 설정
         </h1>
         <p className="text-xsmall14 text-neutral-40">
-          타이틀·타입·진행시간과 피드백 진행 일정을 설정하고 오픈하세요.
-          오픈되면 바로 모집이 시작됩니다.
+          타이틀·타입·진행시간을 설정하고, 멘티가 예약할 수 있는 일정을 등록한
+          뒤 오픈하세요. 오픈되면 바로 공개 리스트에 노출됩니다.
         </p>
       </header>
 
@@ -437,8 +401,9 @@ const OpenSettingsPage = () => {
               오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              지금은 공개 리스트에 노출되지 않아요. 아래에서 조건을 고친 뒤
-              "다시 오픈하기"를 누르면 바로 모집이 시작됩니다.
+              지금은 공개 리스트에 노출되지 않아요. 종료할 때 등록해 둔 일정이
+              모두 삭제됐으니, 일정을 다시 등록한 뒤 "다시 오픈하기"를
+              눌러주세요.
             </p>
           </div>
         </div>
@@ -567,71 +532,6 @@ const OpenSettingsPage = () => {
               </section>
 
               <section className={cardClass}>
-                <div className="mb-4 flex items-center gap-2">
-                  <h2 className="text-base font-semibold text-gray-900">
-                    피드백 진행 일정
-                  </h2>
-                  <span className="rounded-xs bg-red-50 px-2 py-1 text-xs font-medium text-red-600">
-                    삭제 예정
-                  </span>
-                </div>
-                <p className="mb-3 text-xs text-gray-500">
-                  멘티가 이 기간 안에서 피드백 슬롯을 예약합니다. 오픈하면 바로
-                  모집이 시작돼요.
-                </p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <input
-                    type="date"
-                    aria-label="피드백 시작일"
-                    value={form.feedbackStartDate ?? ''}
-                    onChange={(e) =>
-                      patch({ feedbackStartDate: e.target.value })
-                    }
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
-                  />
-                  <span className="text-gray-400">~</span>
-                  <input
-                    type="date"
-                    aria-label="피드백 종료일"
-                    min={form.feedbackStartDate ?? undefined}
-                    value={form.feedbackEndDate ?? ''}
-                    onChange={(e) => patch({ feedbackEndDate: e.target.value })}
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
-                  />
-                </div>
-                {noFeedbackDates && (
-                  <p role="alert" className="text-system-error mt-2 text-xs">
-                    시작일과 종료일을 모두 입력해야 오픈할 수 있어요.
-                  </p>
-                )}
-                {invertedPeriod && (
-                  <p role="alert" className="text-system-error mt-2 text-xs">
-                    시작일은 종료일보다 늦을 수 없어요.
-                  </p>
-                )}
-                {endDatePassed && (
-                  <p role="alert" className="text-system-error mt-2 text-xs">
-                    종료일이 이미 지났어요. 오늘 이후 날짜로 다시 잡아주세요.
-                  </p>
-                )}
-                {/*
-                  공개 목록은 `시작일 <= 오늘 <= 종료일` 일 때만 상품을 잡아간다.
-                  시작일을 미래로 두면 오픈해도 그날까지 모집이 시작되지 않는데,
-                  화면에서는 이미 열린 것처럼 보여 놓치기 쉽다. 그때만 경고한다.
-                */}
-                {startDateInFuture && (
-                  <p
-                    role="alert"
-                    className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800"
-                  >
-                    시작일이 오늘 이후예요. 지금 오픈해도 시작일 전까지는 공개
-                    리스트에 노출되지 않아 모집이 시작되지 않습니다. 바로
-                    모집하려면 시작일을 오늘로 맞춰주세요.
-                  </p>
-                )}
-              </section>
-
-              <section className={cardClass}>
                 <h2 className={sectionTitleClass}>멘토링 일정</h2>
                 <p className="mb-3 text-xs text-gray-500">
                   멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
@@ -754,66 +654,58 @@ const OpenSettingsPage = () => {
       )}
 
       {/*
-        하단 버튼. 저장(제목·타입)과 검토 제출(진행시간·기간)은 서로 다른 API 라 버튼도 나눈다.
-        하나로 합쳐 자동 연쇄 호출하면 둘 중 어느 쪽이 실패했는지 화면에서 알 수 없다.
+        하단 버튼. 오픈은 상태와 무관하게 `POST /openings` 하나로 끝나므로 버튼도 하나다.
+        저장(`PUT /settings`)은 초안일 때만 남는다 — 승인 이후에는 서버가 잠그고(409
+        LOCKED), 제목·타입은 오픈 요청이 함께 보내므로 따로 저장할 이유도 없다.
       */}
       {canAct && (
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
-          {actingAsDraft && isTitleOrCategoryDirty && (
+          {actingAsDraft && hasNoProduct && (
             <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
-              제목·타입을 바꿨어요. 먼저 저장해야 오픈할 수 있어요.
+              먼저 저장해 상품을 만들어야 오픈할 수 있어요.
             </p>
           )}
           <div className="flex gap-2">
-            {showReopenShortcut ? (
-              /*
-               * 재개설 지름길. 값을 바꾸지 않고 그대로 다시 열 때만 쓴다 — 뭔가
-               * 고치려면 "수정"을 눌러 아래 초안 모드(저장→제출)로 넘어가야 한다.
-               * 둘 다 지금 바로 누를 수 있는 행동이라 같은 파란색(primary)을 쓴다.
-               */
-              <>
-                <button
-                  type="button"
-                  onClick={handleStartEdit}
-                  disabled={isPending}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isStartingEdit ? '처리 중...' : '수정'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPendingOpen('reopen')}
-                  disabled={isPending || !canReopenNow}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isReopening ? '오픈하는 중...' : '다시 오픈하기'}
-                </button>
-              </>
+            {/*
+             * 초안일 때만 저장을 붙인다. 승인된 상품을 고치려면 "수정"(start-edit)으로
+             * 초안으로 되돌린 뒤여야 한다 — 상세 페이지 설정과 같은 규칙이다.
+             */}
+            {actingAsDraft ? (
+              /* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isPending || !canSave}
+                className={
+                  canSave
+                    ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                    : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                }
+              >
+                {isSaving ? '저장 중...' : '저장'}
+              </button>
             ) : (
-              <>
-                {/* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */}
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isPending || !canSave}
-                  className={
-                    canSave
-                      ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                      : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                  }
-                >
-                  {isSaving ? '저장 중...' : '저장'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPendingOpen('submit')}
-                  disabled={isPending || !canSubmit}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSubmitting ? '처리 중...' : '오픈하기'}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleStartEdit}
+                disabled={isPending}
+                className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isStartingEdit ? '처리 중...' : '수정'}
+              </button>
             )}
+            <button
+              type="button"
+              onClick={() => setIsOpenConfirmVisible(true)}
+              disabled={isPending || !canOpen}
+              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isOpening
+                ? '오픈하는 중...'
+                : showReopenShortcut
+                  ? '다시 오픈하기'
+                  : '오픈하기'}
+            </button>
           </div>
         </div>
       )}
@@ -824,25 +716,23 @@ const OpenSettingsPage = () => {
       />
       {user?.userId != null && (
         <PreOpenCheckModal
-          isOpen={pendingOpen !== null}
+          isOpen={isOpenConfirmVisible}
           publicUrl={publicDetailUrl(user.userId)}
           confirmLabel="오픈하기"
-          resultDescription="상세 페이지에 노출되는 내용에 대한 책임은 멘토 본인에게 있음에 동의합니다. 확인을 마치면 바로 모집이 시작되며, 이상이 있으면 언제든 오픈을 닫을 수 있어요."
+          resultDescription="상세 페이지에 노출되는 내용에 대한 책임은 멘토 본인에게 있음에 동의합니다. 확인을 마치면 바로 공개 리스트에 노출되며, 이상이 있으면 언제든 오픈을 닫을 수 있어요."
           /*
-           * 제목·타입·기간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
+           * 제목·타입·진행시간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
            * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면
            * "바꾼 게 안 보인다"로 읽힌다.
            */
           pendingNotice={
             isDirty
-              ? '방금 바꾼 제목·타입·기간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
+              ? '방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
               : undefined
           }
           isPending={isPending}
-          onCancel={() => setPendingOpen(null)}
-          onConfirm={
-            pendingOpen === 'reopen' ? handleReopen : handleSubmitForReview
-          }
+          onCancel={() => setIsOpenConfirmVisible(false)}
+          onConfirm={handleOpen}
         />
       )}
 

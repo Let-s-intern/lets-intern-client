@@ -3,15 +3,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
+  LiveMentoringOpeningCreate,
   LiveMentoringSettings,
   LiveMentoringSettingsUpdate,
-  LiveMentoringSubmit,
   OpeningHistoryItem,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
-const submitMock = vi.fn();
-const reopenMock = vi.fn();
+const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
 const startEditMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
@@ -33,12 +32,8 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
     mutate: saveMock,
     isPending: false,
   }),
-  useSubmitLiveMentoringMutation: () => ({
-    mutate: submitMock,
-    isPending: false,
-  }),
   useCreateLiveMentoringOpeningMutation: () => ({
-    mutate: reopenMock,
+    mutate: openMock,
     isPending: false,
   }),
   useCloseLiveMentoringOpeningMutation: () => ({
@@ -67,19 +62,6 @@ vi.mock('../ui/LiveMentoringSlotModal', () => ({
 }));
 
 import OpenSettingsPage from '../OpenSettingsPage';
-
-/**
- * 검토 제출은 "종료일이 오늘 이상"을 요구한다. 고정 날짜를 쓰면 시간이 지나면서
- * 테스트가 저절로 깨지므로 오늘 기준 상대 날짜를 만든다.
- */
-const dateFromToday = (offsetDays: number): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-};
-
-const FUTURE_START = dateFromToday(-1);
-const FUTURE_END = dateFromToday(20);
 
 const baseSettings: LiveMentoringSettings = {
   liveMentoringId: 1,
@@ -118,19 +100,21 @@ const baseSettings: LiveMentoringSettings = {
   status: 'DRAFT',
   categories: ['PERSONAL_STATEMENT'],
   durations: [30],
-  feedbackStartDate: FUTURE_START,
-  feedbackEndDate: FUTURE_END,
 };
 
 const openOpening: OpeningHistoryItem = {
   openingId: 100,
   status: 'OPEN',
   durationPrices: [{ duration: 30, price: 35000 }],
-  feedbackStartDate: FUTURE_START,
-  feedbackEndDate: FUTURE_END,
   openedAt: '2026-08-01T10:00:00',
   closedAt: null,
   closeReason: null,
+};
+
+const closedOpening: OpeningHistoryItem = {
+  ...openOpening,
+  status: 'CLOSED',
+  closeReason: 'MENTOR_CANCELED',
 };
 
 /**
@@ -160,8 +144,7 @@ const renderPage = (
 
 afterEach(() => {
   saveMock.mockReset();
-  submitMock.mockReset();
-  reopenMock.mockReset();
+  openMock.mockReset();
   closeOpeningMock.mockReset();
   startEditMock.mockReset();
   setRepresentativeCareerMock.mockReset();
@@ -234,6 +217,30 @@ describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
   });
 });
 
+describe('OpenSettingsPage — 피드백 진행 일정이 화면에서 사라졌다', () => {
+  it('기간 입력이 없다', () => {
+    // 계약에서 기간 필드가 사라졌다. 남겨 두면 입력해도 서버에 가지 않는다.
+    renderPage();
+    expect(screen.queryByLabelText('피드백 시작일')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('피드백 종료일')).not.toBeInTheDocument();
+  });
+
+  it('기간 기반 문구가 남아 있지 않다', () => {
+    renderPage();
+    expect(screen.queryByText(/피드백 진행 일정/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/진행기간/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/시작일/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/종료일/)).not.toBeInTheDocument();
+  });
+
+  it('예약 가능 일정은 슬롯 등록으로 안내한다', () => {
+    renderPage();
+    expect(
+      screen.getByRole('button', { name: '일정 등록하기' }),
+    ).toBeInTheDocument();
+  });
+});
+
 describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
   it('저장은 title/categories 두 필드만 담아 mutate 를 호출한다', () => {
     renderPage();
@@ -261,7 +268,7 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
   });
 
-  it('진행시간·기간만 바꿔도 저장이 활성화된다', () => {
+  it('진행시간만 바꿔도 저장이 활성화된다', () => {
     // 회귀 케이스: PUT이 실제로 반영하는 건 제목·타입뿐이지만, 저장 버튼의
     // 활성화 여부는 화면에서 뭐든 하나라도 바뀌면 켜져야 한다 — 아니면
     // "저장이 안 된다"는 잘못된 인상을 준다.
@@ -284,31 +291,67 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
   });
 });
 
-describe('OpenSettingsPage — 검토 제출', () => {
-  it('진행시간·기간을 담아 제출한다(가격은 보내지 않는다)', () => {
-    renderPage({ durations: [30, 60] });
+describe('OpenSettingsPage — 개설은 상태와 무관하게 한 경로다', () => {
+  it('초안에서 제목·타입·진행시간을 한 요청에 담아 개설한다', () => {
+    renderPage({ status: 'DRAFT', durations: [30, 60] });
 
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    passPreOpenCheck('오픈하기');
+    passPreOpenCheck();
 
-    expect(submitMock).toHaveBeenCalledTimes(1);
-    const payload = submitMock.mock.calls[0][0] as LiveMentoringSubmit;
+    expect(openMock).toHaveBeenCalledTimes(1);
+    const payload = openMock.mock.calls[0][0] as LiveMentoringOpeningCreate;
+    // 날짜는 담지 않는다 — 예약 가능 일정은 슬롯으로 따로 등록한다.
     expect(payload).toEqual({
+      title: baseSettings.title,
+      categories: baseSettings.categories,
       durations: [30, 60],
-      feedbackStartDate: FUTURE_START,
-      feedbackEndDate: FUTURE_END,
     });
   });
 
-  it('제출 성공 직후에는 리페치를 기다리지 않고 바로 편집을 잠근다', () => {
-    // 회귀 케이스: 제출 성공 후 설정 쿼리가 리페치되기 전까지 화면이 그대로
-    // 초안 모드로 남아 있으면, 그 사이 한 번 더 저장을 누를 때 서버는 이미
-    // 잠근 상태라(승인) "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
-    submitMock.mockImplementation((_body, options) => options?.onSuccess?.());
-    renderPage({ durations: [30, 60] });
+  it('승인 후 재개설도 같은 요청을 쓴다', () => {
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
+    passPreOpenCheck();
+
+    expect(openMock).toHaveBeenCalledTimes(1);
+    expect(openMock.mock.calls[0][0]).toEqual({
+      title: baseSettings.title,
+      categories: baseSettings.categories,
+      durations: baseSettings.durations,
+    });
+  });
+
+  it('제목·타입을 바꿔도 저장 없이 바로 오픈할 수 있다', () => {
+    // 개설 요청이 제목·타입까지 함께 보내므로 저장을 선행할 이유가 없다.
+    renderPage({ status: 'DRAFT' });
+
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '이력서 클리닉' },
+    });
+
+    const openButton = screen.getByRole('button', { name: '오픈하기' });
+    expect(openButton).toBeEnabled();
+
+    fireEvent.click(openButton);
+    passPreOpenCheck();
+
+    expect(openMock.mock.calls[0][0]).toMatchObject({
+      title: '이력서 클리닉',
+    });
+  });
+
+  it('개설 성공 직후에는 리페치를 기다리지 않고 바로 편집을 잠근다', () => {
+    // 회귀 케이스: 성공 후 설정 쿼리가 리페치되기 전까지 화면이 그대로 초안
+    // 모드로 남아 있으면, 그 사이 한 번 더 누를 때 서버는 이미 잠근 상태라
+    // "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
+    openMock.mockImplementation((_body, options) =>
+      options?.onSuccess?.({ liveMentoringId: 1, openings: [] }),
+    );
+    renderPage({ status: 'DRAFT' });
 
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    passPreOpenCheck('오픈하기');
+    passPreOpenCheck();
 
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
     expect(
@@ -316,20 +359,7 @@ describe('OpenSettingsPage — 검토 제출', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('제목·타입에 변경사항이 있으면 먼저 저장하라고 알리고 제출을 막는다', () => {
-    renderPage();
-
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '이력서 클리닉' },
-    });
-
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-    expect(
-      screen.getByText(/먼저 저장해야 오픈할 수 있어요/),
-    ).toBeInTheDocument();
-  });
-
-  it('진행시간이 0개면 경고와 함께 제출이 비활성화된다', () => {
+  it('진행시간이 0개면 경고와 함께 오픈이 비활성화된다', () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
@@ -340,30 +370,7 @@ describe('OpenSettingsPage — 검토 제출', () => {
     expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
   });
 
-  it('종료일이 지났으면 경고와 함께 제출이 비활성화된다', () => {
-    renderPage({
-      feedbackStartDate: dateFromToday(-30),
-      feedbackEndDate: dateFromToday(-1),
-    });
-
-    expect(screen.getByText(/종료일이 이미 지났어요/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-  });
-
-  it('시작일이 종료일보다 늦으면 제출이 비활성화된다', () => {
-    renderPage();
-
-    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
-      target: { value: dateFromToday(30) },
-    });
-
-    expect(
-      screen.getByText('시작일은 종료일보다 늦을 수 없어요.'),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-  });
-
-  it('타이틀이 비면 저장도 제출도 비활성화된다', () => {
+  it('타이틀이 비면 저장도 오픈도 비활성화된다', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
@@ -374,25 +381,25 @@ describe('OpenSettingsPage — 검토 제출', () => {
     expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
   });
 
-  // 시작일이 미래면 오픈해도 그날까지 모집이 시작되지 않는다(서버 노출 조건).
-  it('시작일이 미래일 때만 모집이 시작되지 않는다고 경고한다', () => {
-    renderPage();
-    expect(
-      screen.queryByText(/시작일 전까지는 공개 리스트에 노출되지 않아/),
-    ).not.toBeInTheDocument();
+  // 슬롯이 하나도 없어도 서버는 개설을 허용한다(PRD §8-10).
+  it('등록한 일정이 없어도 오픈을 막지 않는다', () => {
+    renderPage({ status: 'DRAFT' });
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
+  });
 
-    fireEvent.change(screen.getByLabelText('피드백 시작일'), {
-      target: { value: dateFromToday(3) },
-    });
+  it('상품이 아직 없으면 먼저 저장하라고 알리고 오픈을 막는다', () => {
+    // `POST /openings` 는 기존 상품을 찾아 갱신·개설한다 — 상품이 없으면 404 다.
+    renderPage({ liveMentoringId: null, status: null });
 
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
     expect(
-      screen.getByText(/시작일 전까지는 공개 리스트에 노출되지 않아/),
+      screen.getByText('먼저 저장해 상품을 만들어야 오픈할 수 있어요.'),
     ).toBeInTheDocument();
   });
 });
 
 describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
-  it('초안(DRAFT)이면 배너 없이 저장·제출 버튼을 보인다', () => {
+  it('초안(DRAFT)이면 배너 없이 저장·오픈 버튼을 보인다', () => {
     renderPage({ status: 'DRAFT' });
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
@@ -434,12 +441,24 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(closeOpeningMock.mock.calls[0][0]).toBe(openOpening.openingId);
   });
 
+  it('종료 확인에서 일정이 모두 삭제된다고 경고한다', () => {
+    // 서버가 종료와 함께 슬롯을 전부 지운다. 미리 알리지 않으면 멘토는
+    // 다시 열었을 때 일정이 비어 있는 이유를 알 수 없다.
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    fireEvent.click(screen.getByRole('button', { name: '오픈 닫기' }));
+
+    expect(
+      screen.getByText(
+        /종료하면 등록한 일정이 모두 삭제됩니다\. 다시 열 때 일정을 새로 등록해야 합니다\./,
+      ),
+    ).toBeInTheDocument();
+  });
+
   // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
   // 내부 용어(승인됨)를 그대로 쓰면 닫힌 상태가 열린 것처럼 읽힌다.
   it('승인이지만 활성 개설이 없으면 오픈 종료됨으로 표시하고 재개설 버튼을 준다', () => {
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
@@ -453,14 +472,31 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
   });
 
+  it('종료됨 배너가 일정을 다시 등록해야 한다고 알린다', () => {
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
+
+    expect(
+      within(screen.getByRole('status')).getByText(
+        /등록해 둔 일정이 모두 삭제됐으니, 일정을 다시 등록한 뒤/,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  // PRD §8-9 — 승인 이후에는 서버가 `PUT /settings` 를 409 로 잠근다.
+  it('승인 상태에서는 저장 버튼을 아예 노출하지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
+
+    expect(
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('수정을 누르면 설정 필드가 바로 편집 가능해지고 저장하기가 나타난다', () => {
     // 회귀 케이스: start-edit 성공 직후 설정 쿼리가 아직 리페치 전이라
     // status 가 낡은 APPROVED 로 남는데, 그걸 그대로 따르면 수정을 눌러도
     // 화면이 재개설 지름길에 그대로 머물러 있어 "눌러도 반응이 없다"로 읽혔다.
     startEditMock.mockImplementation((_arg, options) => options?.onSuccess?.());
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '수정' }));
 
@@ -471,42 +507,18 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('재개설은 제목·타입까지 한 요청에 담아 보낸다(저장 버튼 없음)', () => {
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
-
-    expect(
-      screen.queryByRole('button', { name: '저장' }),
-    ).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck('오픈하기');
-
-    expect(reopenMock).toHaveBeenCalledTimes(1);
-    expect(reopenMock.mock.calls[0][0]).toEqual({
-      title: baseSettings.title,
-      categories: baseSettings.categories,
-      durations: baseSettings.durations,
-      feedbackStartDate: FUTURE_START,
-      feedbackEndDate: FUTURE_END,
-    });
-  });
-
   // 오픈은 되돌리기 번거로운 행동이라 "됐습니다" 한 줄로 끝내지 않는다.
-  it('재개설에 성공하면 공개 주소와 즉시 내리기를 안내한다', () => {
-    reopenMock.mockImplementation((_body, options) =>
+  it('개설에 성공하면 공개 주소와 즉시 내리기를 안내한다', () => {
+    openMock.mockImplementation((_body, options) =>
       options?.onSuccess?.({
         liveMentoringId: 1,
         openings: [{ ...openOpening, openingId: 777 }],
       }),
     );
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck('오픈하기');
+    passPreOpenCheck();
 
     const dialog = screen.getByRole('dialog', { name: '오픈 완료 안내' });
     // 지연 노출은 서버 기능이라 프론트가 흉내내지 않는다 — 지금 공개됐다고 적는다.
@@ -519,9 +531,8 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
 
     // 회귀 케이스: 서버는 이미 오픈을 잠갔는데(승인+개설) 설정 쿼리가 리페치되기
-    // 전까지 화면이 재개설 지름길에 그대로 남아 있으면, 한 번 더 저장·재개설을
-    // 눌렀을 때 서버가 막아(409) "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
-    // 리페치를 기다리지 않고 성공 즉시 잠가야 한다.
+    // 전까지 화면이 재개설 지름길에 그대로 남아 있으면, 한 번 더 눌렀을 때
+    // 서버가 막아(409) "다른 곳에서 상태가 바뀌었습니다" 에러가 났다.
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
     expect(
       screen.queryByRole('button', { name: '수정' }),
@@ -529,18 +540,16 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
   });
 
   it('안내에서 바로 종료하면 방금 만든 오픈을 종료한다', () => {
-    reopenMock.mockImplementation((_body, options) =>
+    openMock.mockImplementation((_body, options) =>
       options?.onSuccess?.({
         liveMentoringId: 1,
         openings: [{ ...openOpening, openingId: 777 }],
       }),
     );
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck('오픈하기');
+    passPreOpenCheck();
     fireEvent.click(screen.getByRole('button', { name: '바로 종료하기' }));
 
     expect(closeOpeningMock).toHaveBeenCalledTimes(1);
@@ -549,9 +558,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
 
   // 오픈은 되돌리는 비용이 크고 잘못 나간 상세는 멘티에게 그대로 보인다.
   it('확인 체크 전에는 진행 버튼이 열리지 않는다', () => {
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
 
@@ -570,13 +577,11 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(
       within(dialog).getByRole('button', { name: '오픈하기' }),
     ).toBeEnabled();
-    expect(reopenMock).not.toHaveBeenCalled();
+    expect(openMock).not.toHaveBeenCalled();
   });
 
   it('취소하면 아무것도 실행하지 않는다', () => {
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
     fireEvent.click(
@@ -585,7 +590,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
       ).getByRole('button', { name: '취소' }),
     );
 
-    expect(reopenMock).not.toHaveBeenCalled();
+    expect(openMock).not.toHaveBeenCalled();
     expect(
       screen.queryByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
     ).not.toBeInTheDocument();
@@ -593,22 +598,18 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
 
   it('수정 후 아직 저장되지 않은 값이 있으면 확인 모달에서 짚어준다', () => {
     // 필드가 "수정"을 누르기 전까지 잠겨 있으므로, 재개설 지름길로는 값을
-    // 바꿀 수 없다 — 이 시나리오는 수정을 눌러 초안 모드로 넘어간 뒤에만
-    // 일어난다(제목·타입은 그대로 두고 기간만 바꾼 채 바로 제출하는 경우).
+    // 바꿀 수 없다 — 이 시나리오는 수정을 눌러 초안 모드로 넘어간 뒤에만 일어난다.
     startEditMock.mockImplementation((_arg, options) => options?.onSuccess?.());
-    renderPage({ status: 'APPROVED' }, [
-      { ...openOpening, status: 'CLOSED', closeReason: 'MENTOR_CANCELED' },
-    ]);
+    renderPage({ status: 'APPROVED' }, [closedOpening]);
     fireEvent.click(screen.getByRole('button', { name: '수정' }));
 
-    // 기간을 바꾸면 그 값은 아직 서버에 없다 — 지금 여는 페이지에는 안 보인다.
-    fireEvent.change(screen.getByLabelText('피드백 종료일'), {
-      target: { value: dateFromToday(40) },
-    });
+    fireEvent.click(screen.getByRole('button', { name: '60분' }));
     fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
 
     expect(
-      screen.getByText(/방금 바꾼 제목·타입·기간은 오픈할 때 함께 저장돼요/),
+      screen.getByText(
+        /방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요/,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -624,7 +625,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
 
 describe('OpenSettingsPage — 미리보기', () => {
   // 미리보기는 웹 공개 카드(MentorCard)를 복제한 것이라, 표기 규칙이 어긋나면
-  // 멘토가 실제와 다른 화면을 보고 제출하게 된다. 핵심 표기만 고정한다.
+  // 멘토가 실제와 다른 화면을 보고 오픈하게 된다. 핵심 표기만 고정한다.
   it('공개 카드와 같은 표기 규칙을 따른다', () => {
     renderPage({ durations: [30, 60] });
 
@@ -638,8 +639,10 @@ describe('OpenSettingsPage — 미리보기', () => {
     expect(screen.getByText('자소서장인의 1:1 멘토링')).toBeInTheDocument();
   });
 
-  it('진행기간은 날짜가 비면 미정으로 표시한다', () => {
-    renderPage({ feedbackStartDate: null, feedbackEndDate: null });
-    expect(screen.getByText('미정 ~ 미정')).toBeInTheDocument();
+  it('공개 카드와 같이 진행기간 줄을 넣지 않는다', () => {
+    // 목록 응답에 일정 정보가 없어 웹 카드에서도 기간을 표시하지 않는다.
+    renderPage();
+    expect(screen.queryByText('진행기간')).not.toBeInTheDocument();
+    expect(screen.queryByText('미정 ~ 미정')).not.toBeInTheDocument();
   });
 });

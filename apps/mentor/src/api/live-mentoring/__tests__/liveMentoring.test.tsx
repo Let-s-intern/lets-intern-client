@@ -16,15 +16,16 @@ import {
   useLiveMentoringSlotsQuery,
   useLiveMentoringTemplateQuery,
   useSaveLiveMentoringSlotsMutation,
-  useSubmitLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '../liveMentoring';
+import * as liveMentoringApi from '../liveMentoring';
 import {
   liveMentoringSettingsSchema,
   liveMentoringStatusSchema,
   openingHistoryItemSchema,
 } from '../liveMentoringSchema';
+import * as liveMentoringSchemas from '../liveMentoringSchema';
 
 // axios 모듈 자체를 모킹 (default export)
 vi.mock('@/utils/axios', () => ({
@@ -414,39 +415,12 @@ describe('useSaveLiveMentoringSlotsMutation', () => {
   });
 });
 
-describe('useSubmitLiveMentoringMutation', () => {
-  it('POST submit 에 진행시간·기간을 보내고 설정·오픈현황 캐시를 함께 invalidate 한다', async () => {
-    // 회귀 케이스: 자가승인 전환으로 제출이 곧바로 개설까지 만드는데, 오픈현황 캐시를
-    // 안 지우면 승인 상태는 반영돼도 "지금 열려 있는지"가 낡은 값으로 남아
-    // 화면이 오픈 중을 못 보여준다.
-    axiosMock.post.mockResolvedValue({ data: { data: null } });
-
-    const client = newClient();
-    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
-
-    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
-      wrapper: createWrapper(client),
-    });
-
-    const body = {
-      durations: [30, 60] as (30 | 60)[],
-      feedbackStartDate: '2026-08-01',
-      feedbackEndDate: '2026-08-31',
-    };
-    await act(async () => {
-      await result.current.mutateAsync(body);
-    });
-
-    expect(axiosMock.post).toHaveBeenCalledWith(
-      '/mentor/live-mentoring/submit',
-      body,
-    );
-    expect(invalidateSpy).toHaveBeenCalledWith({
-      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
-    });
-    expect(invalidateSpy).toHaveBeenCalledWith({
-      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
-    });
+describe('검토 제출(POST /submit) 제거', () => {
+  it('submit 훅과 요청 타입을 더 이상 export 하지 않는다', () => {
+    // 서버 컨트롤러에서 엔드포인트가 사라졌다. 남겨 두면 호출할 수 있는 것처럼 보이고,
+    // 개설 경로가 둘로 갈라져 "어느 쪽이 실제로 여는지"가 흐려진다.
+    expect('useSubmitLiveMentoringMutation' in liveMentoringApi).toBe(false);
+    expect('liveMentoringSubmitSchema' in liveMentoringSchemas).toBe(false);
   });
 });
 

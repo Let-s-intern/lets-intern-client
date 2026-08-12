@@ -6,7 +6,6 @@ import {
   type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
   type LiveMentoringSlotSaveRequest,
-  type LiveMentoringSubmit,
   type LiveMentoringTemplate,
   liveMentoringSettingsSchema,
   liveMentoringSlotListSchema,
@@ -17,7 +16,6 @@ import {
 const SETTINGS_PATH = '/mentor/live-mentoring/settings';
 const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
-const SUBMIT_PATH = '/mentor/live-mentoring/submit';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
 const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
 const SLOTS_PATH = '/mentor/live-mentoring/slots';
@@ -62,9 +60,11 @@ export const useLiveMentoringSettingsQuery = () => {
 
 /**
  * PUT /mentor/live-mentoring/settings — 상품 설정 저장.
- * 백엔드가 받는 건 title/categories 둘뿐이다 — 진행시간·기간은 검토 제출이 받고,
+ * 백엔드가 받는 건 title/categories 둘뿐이다 — 진행시간은 개설(`POST /openings`)이 받고,
  * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 요청에 포함하지 않는다.
  * 응답은 전체 설정(프로필 참조 필드 포함)이라 저장 성공 시 곧바로 최신 상태로 갱신할 수 있다.
+ * 상품이 없는 멘토는 이 요청이 상품을 `DRAFT` 로 만든다 — 개설은 상품이 있어야 하므로
+ * (없으면 404 `LIVE_MENTORING_NOT_FOUND`) 첫 오픈 전에 한 번은 저장을 거쳐야 한다.
  * 승인 이후에는 서버가 잠그므로(409 `LIVE_MENTORING_LOCKED`) 재개설은 `POST /openings` 를 쓴다.
  */
 export const useUpdateLiveMentoringSettingsMutation = () => {
@@ -77,33 +77,6 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
-      });
-    },
-  });
-};
-
-/**
- * POST /mentor/live-mentoring/submit — 자가승인 및 개설.
- *
- * 진행시간·기간은 이 요청에서만 서버에 저장된다(오픈 설정 PUT 은 제목·타입만 받는다).
- * 성공하면 서버가 한 트랜잭션에서 상품을 `DRAFT → APPROVED` 로 전이시키고 곧바로 개설까지
- * 만든다(관리자 검토 없음). 전이로 설정이 잠기므로 설정 캐시를 무효화하고, 개설도 함께
- * 생기므로 오픈 현황 캐시도 무효화한다 — 이걸 빼먹으면 승인은 반영돼도 "지금 열려 있는지"
- * 판단에 쓰는 개설 목록이 낡아 화면이 오픈 상태를 못 보여준다(재개설 mutation과 동일 패턴).
- * 응답 `data` 는 null 이라 파싱하지 않는다.
- */
-export const useSubmitLiveMentoringMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (body: LiveMentoringSubmit) => {
-      await axios.post(SUBMIT_PATH, body);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
-      });
-      queryClient.invalidateQueries({
-        queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
       });
     },
   });
