@@ -314,9 +314,8 @@ const HR_CALENDAR_ITEMS = (lectureCount: number): CalendarItemConfig[] => [
     description: (
       <div className="leading-[20px] md:leading-[22px]">
         스페셜 미션으로, IT기업/스타트업/대기업의 <br />
-        과제 전형을 3일 만에 수행해보며 <br />
-        실제 채용 과정을 미리 경험하고 <br />
-        대비해볼 수 있어요.
+        과제 전형을 3일 간 수행해보며 채용 과정을 <br />
+        미리 경험하고 대비해 볼 수 있어요.
       </div>
     ),
   },
