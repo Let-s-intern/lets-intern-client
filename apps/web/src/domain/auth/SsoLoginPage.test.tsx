@@ -6,11 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-function makeApiError(
-  status: number,
-  code: string,
-  message: string,
-): ApiError {
+function makeApiError(status: number, code: string, message: string): ApiError {
   return new ApiError({
     code,
     message,
@@ -116,7 +112,11 @@ describe('SsoLoginPage', () => {
   it('자격 증명이 틀리면 중립적인 에러 문구를 보여주고 이동하지 않는다', async () => {
     const user = userEvent.setup();
     postMock.mockRejectedValue(
-      makeApiError(400, 'SSO_INVALID_CREDENTIALS', '이메일 또는 비밀번호가 올바르지 않습니다.'),
+      makeApiError(
+        400,
+        'SSO_INVALID_CREDENTIALS',
+        '이메일 또는 비밀번호가 올바르지 않습니다.',
+      ),
     );
     renderSsoLoginPage();
 
@@ -132,7 +132,11 @@ describe('SsoLoginPage', () => {
   it('화이트리스트에 없는 서비스면 폼을 숨기고 재시도를 막는다', async () => {
     const user = userEvent.setup();
     postMock.mockRejectedValue(
-      makeApiError(400, 'SSO_REDIRECT_URI_MISMATCH', '허용되지 않은 리다이렉트 URI입니다.'),
+      makeApiError(
+        400,
+        'SSO_REDIRECT_URI_MISMATCH',
+        '허용되지 않은 리다이렉트 URI입니다.',
+      ),
     );
     renderSsoLoginPage();
 
@@ -175,9 +179,7 @@ describe('SsoLoginPage', () => {
   it('service_name 쿼리가 없으면 "로그인"만 제목으로 보여준다 — 렛츠커리어라는 문구는 어디에도 없다', () => {
     renderSsoLoginPage();
 
-    expect(
-      screen.getByRole('heading', { name: '로그인' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '로그인' })).toBeInTheDocument();
     expect(screen.queryByText(/렛츠커리어/)).not.toBeInTheDocument();
   });
 

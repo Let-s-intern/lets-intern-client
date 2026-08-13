@@ -37,8 +37,8 @@ const SsoLoginPage = () => {
   // redirect_uri 자체가 없으면 서버에 물어볼 것도 없다 — 어디로도 보낼 수 없는 요청이다.
   if (isMissingRedirectUri) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-95 px-4">
-        <div className="w-full max-w-[360px] rounded-xl border border-neutral-90 bg-white p-8 text-center shadow-04">
+      <div className="bg-neutral-95 flex min-h-screen items-center justify-center px-4">
+        <div className="border-neutral-90 shadow-04 w-full max-w-[360px] rounded-xl border bg-white p-8 text-center">
           <p className="text-xsmall14 text-neutral-40">
             이동할 서비스 정보가 없습니다. 로그인 버튼을 눌렀던 곳에서 다시
             시도해주세요.
@@ -51,9 +51,9 @@ const SsoLoginPage = () => {
   return (
     // 렛츠커리어 사이트라는 티가 나면 안 된다 — 로고·네비 없이 모달 크기의 카드 하나만
     // 화면 가운데에 고정한다. 배경은 중립색이라 뒤에 다른 사이트가 있어도 위화감이 적다.
-    <div className="flex min-h-screen items-center justify-center bg-neutral-95 px-4">
-      <div className="w-full max-w-[360px] rounded-xl border border-neutral-90 bg-white p-8 shadow-04">
-        <h1 className="mb-7 text-center text-small18 font-semibold text-neutral-0">
+    <div className="bg-neutral-95 flex min-h-screen items-center justify-center px-4">
+      <div className="border-neutral-90 shadow-04 w-full max-w-[360px] rounded-xl border bg-white p-8">
+        <h1 className="text-small18 text-neutral-0 mb-7 text-center font-semibold">
           {title}
         </h1>
 
@@ -61,7 +61,7 @@ const SsoLoginPage = () => {
           // 화이트리스트에 없는 서비스다 — 다시 시도해도 결과가 같으므로 폼을 보여주지 않는다.
           <p
             role="alert"
-            className="rounded-ms bg-red-50 p-4 text-center text-xsmall14 font-medium text-red-600"
+            className="rounded-ms text-xsmall14 bg-red-50 p-4 text-center font-medium text-red-600"
           >
             {errorMessage}
           </p>
@@ -88,7 +88,7 @@ const SsoLoginPage = () => {
               <p
                 role="alert"
                 aria-live="polite"
-                className="min-h-5 text-center text-xsmall14 font-medium text-red-600"
+                className="text-xsmall14 min-h-5 text-center font-medium text-red-600"
               >
                 {errorMessage && !isPending ? errorMessage : ''}
               </p>
@@ -104,13 +104,13 @@ const SsoLoginPage = () => {
             {redirectUri && (
               <div className="mt-7 flex flex-col items-center">
                 <div className="mb-5 flex w-full items-center gap-3">
-                  <div className="h-px flex-1 bg-neutral-90" />
+                  <div className="bg-neutral-90 h-px flex-1" />
                   <span className="text-xxsmall12 text-neutral-45">또는</span>
-                  <div className="h-px flex-1 bg-neutral-90" />
+                  <div className="bg-neutral-90 h-px flex-1" />
                 </div>
                 <div className="flex gap-4">
                   <a
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FEE500] shadow-02 transition-transform hover:scale-105 hover:shadow-03"
+                    className="shadow-02 hover:shadow-03 flex h-11 w-11 items-center justify-center rounded-full bg-[#FEE500] transition-transform hover:scale-105"
                     href={buildSocialLoginHref('kakao', redirectUri)}
                     rel="noopener noreferrer"
                   >
@@ -121,7 +121,7 @@ const SsoLoginPage = () => {
                     />
                   </a>
                   <a
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2db400] shadow-02 transition-transform hover:scale-105 hover:shadow-03"
+                    className="shadow-02 hover:shadow-03 flex h-11 w-11 items-center justify-center rounded-full bg-[#2db400] transition-transform hover:scale-105"
                     href={buildSocialLoginHref('naver', redirectUri)}
                     rel="noopener noreferrer"
                   >

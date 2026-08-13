@@ -65,8 +65,7 @@ const useSsoLogin = () => {
         errorCode = error.code;
       } else if (error instanceof AxiosError) {
         status = error.response?.status;
-        serverMessage = (error.response?.data as { message?: string })
-          ?.message;
+        serverMessage = (error.response?.data as { message?: string })?.message;
         errorCode = error.code;
       }
 
@@ -91,8 +90,7 @@ const useSsoLogin = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (buttonDisabled || fetchSsoLogin.isPending || isRedirectUriError)
-      return;
+    if (buttonDisabled || fetchSsoLogin.isPending || isRedirectUriError) return;
     fetchSsoLogin.mutate();
   };
 
