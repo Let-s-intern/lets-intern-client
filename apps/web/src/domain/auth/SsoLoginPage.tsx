@@ -73,6 +73,7 @@ const SsoLoginPage = () => {
                 label="이메일"
                 value={email}
                 error={hasCredentialError}
+                alwaysShrinkLabel
                 onChange={(e) => handleEmailChange(e.target.value)}
               />
               <Input
@@ -80,6 +81,7 @@ const SsoLoginPage = () => {
                 label="비밀번호"
                 value={password}
                 error={hasCredentialError}
+                alwaysShrinkLabel
                 onChange={(e) => handlePasswordChange(e.target.value)}
               />
               {/* 박스를 항상 렌더해 레이아웃 시프트 방지. 빈 상태에서도 한 줄 높이를 차지한다. */}
