@@ -3,6 +3,7 @@ import type { RequestHandler } from 'msw';
 import { accessLogHandlers } from './accessLog';
 import { adminFeedbackHandlers } from './adminFeedback';
 import { adminParticipantHandlers, adminRefundHandlers } from './adminRefund';
+import { ssoHandlers } from './sso';
 
 /**
  * MSW 핸들러 집합.
@@ -17,4 +18,5 @@ export const handlers: RequestHandler[] = [
   ...adminRefundHandlers,
   ...adminParticipantHandlers,
   ...accessLogHandlers,
+  ...ssoHandlers,
 ];
