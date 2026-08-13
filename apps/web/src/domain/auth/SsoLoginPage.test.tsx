@@ -76,7 +76,11 @@ describe('SsoLoginPage', () => {
     mockSearchParams = new URLSearchParams();
     renderSsoLoginPage();
 
-    expect(screen.getByText('잘못된 접근입니다')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        '이동할 서비스 정보가 없습니다. 로그인 버튼을 눌렀던 곳에서 다시 시도해주세요.',
+      ),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText('이메일')).not.toBeInTheDocument();
   });
 
@@ -154,5 +158,43 @@ describe('SsoLoginPage', () => {
     await user.click(screen.getByRole('button', { name: '로그인' }));
 
     expect(postMock).not.toHaveBeenCalled();
+  });
+
+  it('service_name 쿼리가 있으면 "{서비스명} 로그인"을 제목으로 보여준다', () => {
+    mockSearchParams = new URLSearchParams({
+      redirect_uri: VOD_CALLBACK,
+      service_name: 'VOD',
+    });
+    renderSsoLoginPage();
+
+    expect(
+      screen.getByRole('heading', { name: 'VOD 로그인' }),
+    ).toBeInTheDocument();
+  });
+
+  it('service_name 쿼리가 없으면 "로그인"만 제목으로 보여준다 — 렛츠커리어라는 문구는 어디에도 없다', () => {
+    renderSsoLoginPage();
+
+    expect(
+      screen.getByRole('heading', { name: '로그인' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/렛츠커리어/)).not.toBeInTheDocument();
+  });
+
+  it('카카오·네이버 소셜 로그인 링크를 렌더하고 redirect_uri를 그대로 실어 보낸다', () => {
+    process.env.NEXT_PUBLIC_API_BASE_PATH = 'http://localhost:8080';
+    renderSsoLoginPage();
+
+    const kakaoLink = screen.getByRole('link', { name: '카카오 로그인' });
+    const naverLink = screen.getByRole('link', { name: '네이버 로그인' });
+
+    expect(kakaoLink).toHaveAttribute(
+      'href',
+      `http://localhost:8080/oauth2/authorize/kakao?redirect_uri=${encodeURIComponent(VOD_CALLBACK)}`,
+    );
+    expect(naverLink).toHaveAttribute(
+      'href',
+      `http://localhost:8080/oauth2/authorize/naver?redirect_uri=${encodeURIComponent(VOD_CALLBACK)}`,
+    );
   });
 });

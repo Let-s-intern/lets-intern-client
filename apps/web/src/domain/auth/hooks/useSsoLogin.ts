@@ -22,6 +22,8 @@ const useSsoLogin = () => {
   // 화이트리스트 검증은 서버(server Push 2)에서만 한다 — 여기서 형식만 봐도 결국
   // 서버가 다시 검증하므로, 프론트가 흉내 내면 두 곳을 유지하게 되어 어긋날 위험만 커진다.
   const redirectUri = searchParams.get('redirect_uri');
+  // 화면에 "{서비스명} 로그인"으로만 보이게 하기 위한 표시용 값 — 인증 로직과는 무관하다.
+  const serviceName = searchParams.get('service_name');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -111,6 +113,8 @@ const useSsoLogin = () => {
     hasCredentialError,
     isRedirectUriError,
     isMissingRedirectUri: !redirectUri,
+    redirectUri,
+    serviceName,
     buttonDisabled,
     isPending: fetchSsoLogin.isPending,
     handleEmailChange,
