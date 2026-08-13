@@ -58,7 +58,7 @@ const CurriculumCalendar = ({
         한눈에 보는 {'['} {challenge.title ?? ''} {']'} 일정
       </h2>
 
-      <div className="flex w-full flex-col items-center gap-4 md:h-[524px] md:w-fit md:flex-row md:items-center md:justify-center md:gap-3 md:overflow-x-hidden">
+      <div className="flex w-full flex-col items-center gap-4 md:min-h-[524px] md:w-fit md:flex-row md:items-center md:justify-center md:gap-3 md:overflow-x-hidden">
         {curriculumImage && (
           <div className="relative aspect-[320/239] w-full md:h-[522px]">
             <Image
@@ -70,7 +70,7 @@ const CurriculumCalendar = ({
             />
           </div>
         )}
-        <div className="text-neutral-0 relative flex w-full min-w-0 flex-col gap-3 md:h-full md:justify-between">
+        <div className="text-neutral-0 relative flex w-full min-w-0 flex-col gap-3 md:justify-between md:self-stretch">
           <CalendarList>
             {calendarItems.map((item) => (
               <CalendarItem key={item.number} {...item} />
