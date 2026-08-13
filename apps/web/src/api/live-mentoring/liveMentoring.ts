@@ -5,6 +5,7 @@ import {
   type LiveMentoringCategory,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
+  liveMentoringSlotListSchema,
 } from './liveMentoringSchema';
 
 /** 리스트 페이지 크기 — S1 4×3 그리드 = 12 (PRD §5). */
@@ -12,9 +13,12 @@ export const LIVE_MENTOR_LIST_SIZE = 12;
 
 /**
  * 리스트 정렬 옵션 — 백엔드 `sortType` 파라미터 값.
+ *
+ * 서버 `LiveMentoringSortType` enum 에는 `LATEST` 하나만 있다. 슬롯 오픈(LC-3206)으로
+ * 개설에서 모집 기간이 사라지면서 `FEEDBACK_START_DATE` 도 함께 없어졌다 — 보내면 400 이다.
  * 평점순·후기순은 응답에 평점/후기 필드 자체가 없어 아직 지원되지 않는다.
  */
-export type LiveMentorSort = 'LATEST' | 'FEEDBACK_START_DATE';
+export type LiveMentorSort = 'LATEST';
 
 export interface UseLiveMentorListQueryParams {
   /** 1-based 페이지 번호. 기본 1 (서버가 `one-indexed-parameters: true`). */
@@ -32,6 +36,8 @@ export const LIVE_MENTOR_DETAIL_QUERY_KEY = [
   'liveMentoring',
   'detail',
 ] as const;
+/** 멘토 예약 가능 슬롯 query key prefix. */
+export const LIVE_MENTOR_SLOTS_QUERY_KEY = ['liveMentoring', 'slots'] as const;
 
 /**
  * GET /live-mentoring — 공개 라이브 멘토링 개설 목록(서버 페이징) 조회.
@@ -76,6 +82,28 @@ export const useLiveMentorDetailQuery = (
     queryFn: async () => {
       const res = await axios.get(`/live-mentoring/mentors/${mentorId}`);
       return liveMentorDetailSchema.parse(res.data.data);
+    },
+    enabled: !!mentorId,
+  });
+};
+
+/**
+ * GET /live-mentoring/mentors/{mentorId}/slots — 공개 예약 가능 슬롯 조회.
+ *
+ * 서버가 이미 걸러서 내려준다 — 활성 개설이 있고, `status === 'OPEN'` 이고, 시작이
+ * 현재보다 미래인 슬롯만. 활성 개설이 없으면 빈 배열이다. 프론트는 개설 상태와
+ * 슬롯 상태를 조합하지 않고 받은 목록만 쓴다.
+ *
+ * `mentorId`가 falsy면 query를 실행하지 않는다.
+ */
+export const useLiveMentorSlotsQuery = (
+  mentorId: number | string | null | undefined,
+) => {
+  return useQuery({
+    queryKey: [...LIVE_MENTOR_SLOTS_QUERY_KEY, { mentorId }],
+    queryFn: async () => {
+      const res = await axios.get(`/live-mentoring/mentors/${mentorId}/slots`);
+      return liveMentoringSlotListSchema.parse(res.data.data);
     },
     enabled: !!mentorId,
   });

@@ -35,20 +35,13 @@ export type LiveMentoringCloseReason = z.infer<
   typeof liveMentoringCloseReasonSchema
 >;
 
-/**
- * 현재 개설. 상태가 `OPEN` 인 개설만 담긴다.
- *
- * 기간이 지났어도 상태가 `OPEN` 이면 그대로 들어온다 — 만료 자동 종료 배치가
- * 아직 서버에 배선되어 있지 않기 때문이다. 목록에서 만료 여부를 따로 계산해 표시한다.
- */
+/** 현재 개설. 상태가 `OPEN` 인 개설만 담긴다. */
 export const adminCurrentOpeningSchema = z.object({
   openingId: z.number(),
   status: liveMentoringOpeningStatusSchema,
   durationPrices: z.array(
     z.object({ duration: z.number(), price: z.number() }),
   ),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
   openedAt: z.string(),
   closedAt: z.string().nullable(),
   closeReason: liveMentoringCloseReasonSchema.nullable(),

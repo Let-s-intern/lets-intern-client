@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 
 import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchema';
-import { durationPricesLabel, formatPeriod } from '../constants';
+import { durationPricesLabel } from '../constants';
 
 /** 확인 모달이 어떤 액션을 대기 중인지. 닫혀 있으면 null. */
 export type PendingAction = {
@@ -47,13 +47,12 @@ const ConfirmActionDialog = ({
         종료하면 공개 리스트에서 즉시 내려가고 되돌릴 수 없습니다. 상품 상태는
         승인으로 유지됩니다.
       </p>
+      <p className="mt-2">
+        종료하면 등록한 일정이 모두 삭제됩니다. 다시 열 때 일정을 새로 등록해야
+        합니다.
+      </p>
       {action.row.currentOpening && (
         <p className="text-neutral-40 mt-2 text-xs">
-          {formatPeriod(
-            action.row.currentOpening.feedbackStartDate,
-            action.row.currentOpening.feedbackEndDate,
-          )}
-          {' · '}
           {durationPricesLabel(action.row.currentOpening.durationPrices)}
         </p>
       )}

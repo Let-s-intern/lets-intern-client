@@ -21,13 +21,6 @@ vi.mock('@/hooks/useAdminSnackbar', () => ({
 
 import AdminLiveMentoringTable from './AdminLiveMentoringTable';
 
-/** 만료 판정이 실행 시점에 좌우되지 않게 오늘 기준 상대 날짜를 만든다. */
-const dateFromToday = (offsetDays: number): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-};
-
 const draftRow: AdminLiveMentoring = {
   liveMentoringId: 10,
   mentorId: 21,
@@ -54,8 +47,6 @@ const approvedRow: AdminLiveMentoring = {
       { duration: 30, price: 35000 },
       { duration: 60, price: 60000 },
     ],
-    feedbackStartDate: dateFromToday(-1),
-    feedbackEndDate: dateFromToday(20),
     openedAt: '2026-08-04T14:30:00',
     closedAt: null,
     closeReason: null,
@@ -138,7 +129,27 @@ describe('AdminLiveMentoringTable — 조회', () => {
     ).toBeInTheDocument();
   });
 
-  it('현재 개설의 기간·가격을 함께 보여준다', () => {
+  /** 기간이 빠지고 가격만 남은 칸이라 헤더도 "가격" 으로 부른다. */
+  it('개설 칸의 헤더를 가격으로 표기한다', () => {
+    renderTable([approvedRow]);
+
+    const headers = within(screen.getByRole('table'))
+      .getAllByRole('columnheader')
+      .map((header) => header.textContent);
+
+    expect(headers).toEqual([
+      '멘토',
+      '상품명',
+      '상태',
+      '타입',
+      '상세',
+      '가격',
+      '최종 수정',
+      '관리',
+    ]);
+  });
+
+  it('현재 개설의 진행시간별 가격을 보여준다', () => {
     renderTable([approvedRow]);
 
     expect(
@@ -146,27 +157,29 @@ describe('AdminLiveMentoringTable — 조회', () => {
     ).toBeInTheDocument();
   });
 
-  // 만료 자동 종료 배치가 서버에 없어 기간이 지나도 OPEN 으로 남는다.
-  it('기간이 지났는데 OPEN 인 개설을 구분해 표시한다', () => {
-    renderTable([
-      {
-        ...approvedRow,
-        currentOpening: {
-          ...approvedRow.currentOpening!,
-          feedbackStartDate: dateFromToday(-30),
-          feedbackEndDate: dateFromToday(-1),
-        },
-      },
-    ]);
+  /**
+   * 슬롯 오픈 전환으로 개설에서 모집 기간이 사라졌다. 기간 표기와,
+   * 기간이 지나도 OPEN 으로 남는 상황을 알리던 만료 경고를 함께 걷어냈다.
+   */
+  it('기간과 만료 경고를 노출하지 않는다', () => {
+    renderTable([approvedRow]);
 
-    expect(screen.getByText('기간 만료(종료 처리 안 됨)')).toBeInTheDocument();
+    const table = screen.getByRole('table');
+    expect(within(table).queryByText(/\d{4}-\d{2}-\d{2} ~ /)).toBeNull();
+    expect(within(table).queryByText(/기간 만료/)).toBeNull();
+    expect(within(table).queryByText(/종료 처리 안 됨/)).toBeNull();
   });
 
-  it('목록이 비면 빈 상태 문구를 노출한다', () => {
+  it('목록이 비면 빈 상태 문구를 한 행으로 펼쳐 노출한다', () => {
     renderTable([]);
+
+    const emptyCell = screen.getByText('해당 조건의 상품이 없습니다.');
+    expect(emptyCell).toBeInTheDocument();
+    // 컬럼 수를 줄이지 않았으므로 빈 상태도 8칸을 그대로 덮는다.
+    expect(emptyCell).toHaveAttribute('colspan', '8');
     expect(
-      screen.getByText('해당 조건의 상품이 없습니다.'),
-    ).toBeInTheDocument();
+      within(screen.getByRole('table')).getAllByRole('columnheader'),
+    ).toHaveLength(8);
   });
 });
 

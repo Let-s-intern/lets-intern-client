@@ -27,8 +27,6 @@ function makeOpening(id: number) {
     categories: ['PERSONAL_STATEMENT'],
     durations: [30],
     minimumPrice: 35000,
-    feedbackStartDate: '2026-07-10',
-    feedbackEndDate: '2026-07-23',
   };
 }
 
@@ -139,7 +137,24 @@ describe('LiveMentoringListPage', () => {
     );
   });
 
-  it('정렬을 바꾸면 해당 sortType 으로 조회한다', async () => {
+  // 서버 `LiveMentoringSortType` 에 `LATEST` 하나만 남았다. 다른 값을 보내면 400 이므로
+  // 셀렉트에 그 값이 남아 있지 않은 것까지 확인한다.
+  it('정렬 셀렉트에 최신순만 노출하고, 사라진 정렬 옵션은 남기지 않는다', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+      ).toBeInTheDocument(),
+    );
+
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveValue('LATEST');
+    expect(options[0]).toHaveTextContent('최신순');
+    expect(screen.queryByText('진행일정 빠른순')).not.toBeInTheDocument();
+  });
+
+  it('정렬을 바꿔도 sortType 은 LATEST 외 값을 보내지 않는다', async () => {
     renderPage();
     await waitFor(() =>
       expect(
@@ -148,7 +163,7 @@ describe('LiveMentoringListPage', () => {
     );
 
     fireEvent.change(screen.getByLabelText('정렬'), {
-      target: { value: 'FEEDBACK_START_DATE' },
+      target: { value: 'LATEST' },
     });
 
     await waitFor(() =>
@@ -157,11 +172,18 @@ describe('LiveMentoringListPage', () => {
           page: 1,
           size: 12,
           categories: undefined,
-          sortType: 'FEEDBACK_START_DATE',
+          sortType: 'LATEST',
         },
         paramsSerializer: PARAMS_SERIALIZER,
       }),
     );
+    expect(
+      axiosGet.mock.calls.every(
+        ([, config]) =>
+          config.params.sortType === undefined ||
+          config.params.sortType === 'LATEST',
+      ),
+    ).toBe(true);
   });
 
   it('페이지를 넘기면 1-based page 를 그대로 전달한다', async () => {

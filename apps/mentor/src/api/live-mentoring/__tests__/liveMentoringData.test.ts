@@ -104,8 +104,6 @@ describe('1대1 라이브 멘토링 공유 목 데이터', () => {
       for (const { duration, price } of opening.durationPrices) {
         expect(price).toBe(PRICE_BY_DURATION[duration]);
       }
-      expect(opening.feedbackStartDate).toBeTruthy();
-      expect(opening.feedbackEndDate).toBeTruthy();
       // 종료된 개설은 종료일시·사유가 함께 있어야 한다.
       if (opening.status === 'CLOSED') {
         expect(opening.closedAt).toBeTruthy();

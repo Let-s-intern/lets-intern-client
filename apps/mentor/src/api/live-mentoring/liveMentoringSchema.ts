@@ -193,7 +193,7 @@ export type LiveMentoringSettingsCareer = z.infer<
  * `nickname/profileImage/introduction/careers`는 프로필 도메인에서 참조만 해오는 읽기 전용 필드다 —
  * PUT 요청 바디에는 포함되지 않는다(`liveMentoringSettingsUpdateSchema` 참고).
  *
- * 상품을 한 번도 만들지 않은 멘토는 `liveMentoringId`·`title`·`status`·날짜가 null 이고
+ * 상품을 한 번도 만들지 않은 멘토는 `liveMentoringId`·`title`·`status` 가 null 이고
  * 배열은 빈 배열이다. 프로필 필드는 그래도 채워져 온다.
  */
 export const liveMentoringSettingsSchema = z.object({
@@ -212,18 +212,15 @@ export const liveMentoringSettingsSchema = z.object({
   status: liveMentoringStatusSchema.nullable(),
   /** 오픈한 타입(다중). */
   categories: z.array(liveMentoringCategorySchema),
-  /** 검토 제출 때 저장한 진행시간(다중). 제출 전이면 빈 배열. */
+  /** 개설할 때 저장한 진행시간(다중). 한 번도 개설하지 않았으면 빈 배열. */
   durations: z.array(liveMentoringDurationSchema),
-  /** 검토 제출 때 저장한 피드백 진행 일정. 제출 전이면 null. */
-  feedbackStartDate: z.string().nullable(),
-  feedbackEndDate: z.string().nullable(),
 });
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
 /**
  * PUT /mentor/live-mentoring/settings 요청 바디 — 백엔드가 받는 건 이 2개뿐이다.
  *
- * 진행시간·기간은 이 요청이 아니라 검토 제출(`liveMentoringSubmitSchema`)로 보낸다.
+ * 진행시간은 이 요청이 아니라 개설(`liveMentoringOpeningCreateSchema`)로 보낸다.
  * 상품이 없으면 이 요청이 상품을 `DRAFT` 로 생성한다.
  */
 export const liveMentoringSettingsUpdateSchema = z.object({
@@ -235,28 +232,19 @@ export type LiveMentoringSettingsUpdate = z.infer<
 >;
 
 /**
- * POST /mentor/live-mentoring/submit 요청 바디.
- * 가격은 서버 고정 정책(30분 35,000원 / 60분 60,000원)이라 보내지 않는다.
- */
-export const liveMentoringSubmitSchema = z.object({
-  durations: z.array(liveMentoringDurationSchema),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
-});
-export type LiveMentoringSubmit = z.infer<typeof liveMentoringSubmitSchema>;
-
-/**
- * POST /mentor/live-mentoring/openings 요청 바디 — 승인된 상품의 재개설.
+ * POST /mentor/live-mentoring/openings 요청 바디 — 최초 개설과 재개설 공통.
  *
- * 승인 이후에는 `PUT /settings` 가 잠기기 때문에, 재개설은 제목·타입까지 **한 요청에**
- * 담아 보낸다(서버 `updateSettingsForOpening`). 관리자 재승인 없이 바로 열린다.
+ * 검토 제출(`POST /submit`)이 사라지면서 개설 경로가 이 하나로 합쳐졌다.
+ * 승인 이후에는 `PUT /settings` 가 잠기기 때문에 제목·타입까지 **한 요청에**
+ * 담아 보낸다(서버 `updateSettingsForOpening`). 관리자 승인 없이 바로 열린다.
+ *
+ * 날짜는 담지 않는다 — 예약 가능 일정은 슬롯(`PUT /slots`)으로 따로 등록한다.
+ * 가격은 서버 고정 정책(30분 35,000원 / 60분 60,000원)이라 보내지 않는다.
  */
 export const liveMentoringOpeningCreateSchema = z.object({
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
 });
 export type LiveMentoringOpeningCreate = z.infer<
   typeof liveMentoringOpeningCreateSchema
@@ -272,8 +260,6 @@ export const openingHistoryItemSchema = z.object({
   openingId: z.number(),
   status: liveMentoringOpeningStatusSchema,
   durationPrices: z.array(liveMentoringDurationPriceSchema),
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
   openedAt: z.string(),
   /** 종료 전이면 null. */
   closedAt: z.string().nullable(),
@@ -288,4 +274,53 @@ export const openingHistoryResponseSchema = z.object({
 });
 export type OpeningHistoryResponse = z.infer<
   typeof openingHistoryResponseSchema
+>;
+
+/**
+ * 슬롯 상태 — 백엔드 `FeedbackSlotStatus`.
+ *
+ * 1대1 멘토링 슬롯은 독립 테이블이 아니라 챌린지 라이브 피드백과 같은 `feedback_slot`
+ * 행을 가리킨다(`api/feedback/feedbackSchema.ts` 의 동명 스키마와 같은 값). 그래서
+ * 한 멘토는 같은 시작 시각에 슬롯을 두 개 가질 수 없다 — 챌린지로 이미 연 시각을
+ * 1대1 로 저장하면 409 `LIVE_MENTORING_SLOT_CONFLICT` 가 난다.
+ */
+export const feedbackSlotStatusSchema = z.enum(['OPEN', 'RESERVED']);
+export type FeedbackSlotStatus = z.infer<typeof feedbackSlotStatusSchema>;
+
+/**
+ * 예약 가능 슬롯 1건 — 백엔드 `LiveMentoringScheduleSlotResponseDto`.
+ * `startDate`/`endDate` 는 `LocalDateTime`(예: `"2026-09-01T10:00:00"`)이고 길이는 30분 고정이다.
+ */
+export const liveMentoringSlotSchema = z.object({
+  slotId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: feedbackSlotStatusSchema,
+});
+export type LiveMentoringSlot = z.infer<typeof liveMentoringSlotSchema>;
+
+/**
+ * 슬롯 목록 응답 — `GET`/`PUT /mentor/live-mentoring/slots` 공통.
+ * 시작 시각 오름차순으로 온다.
+ */
+export const liveMentoringSlotListSchema = z.object({
+  liveMentoringSlotList: z.array(liveMentoringSlotSchema),
+});
+export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;
+
+/**
+ * PUT /mentor/live-mentoring/slots 요청 바디 — 래핑 객체가 아니라 **배열 그 자체**다.
+ *
+ * 전체 치환이라 요청에 없는 기존 슬롯은 삭제된다. 삭제 대상에 `RESERVED` 가 하나라도
+ * 있으면 409 `LIVE_MENTORING_SLOT_LOCKED` 로 저장 전체가 실패하므로, 사용자가 건드리지
+ * 않았더라도 예약된 슬롯은 payload 에 항상 포함해야 한다.
+ */
+export const liveMentoringSlotSaveRequestSchema = z.array(
+  z.object({
+    startDate: z.string(),
+    endDate: z.string(),
+  }),
+);
+export type LiveMentoringSlotSaveRequest = z.infer<
+  typeof liveMentoringSlotSaveRequestSchema
 >;

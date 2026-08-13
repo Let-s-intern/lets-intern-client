@@ -27,22 +27,36 @@ function makeOpening(
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
 
 describe('MentorCard', () => {
-  it('멘토링 제목·진행시간·가격·진행기간·타입 태그를 노출한다', () => {
+  it('멘토링 제목·진행시간·가격·타입 태그를 노출한다', () => {
     render(<MentorCard opening={makeOpening()} />);
     expect(
       screen.getByText('비전공자에서 PM인턴 - 신입 공채까지 직무 전환 전략은?'),
     ).toBeInTheDocument();
     expect(screen.getByText('60분')).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
-    expect(screen.getByText('26.07.14 ~ 26.07.28')).toBeInTheDocument();
     expect(screen.getByText('자기소개서')).toBeInTheDocument();
+  });
+
+  // 목록 응답에 슬롯 정보가 없어 카드에서는 기간을 포기했다(상세에서만 표시).
+  it('진행기간을 표시하지 않고 타입 태그는 그대로 노출한다', () => {
+    render(
+      <MentorCard
+        opening={makeOpening({
+          categories: ['PERSONAL_STATEMENT', 'RESUME'],
+        })}
+      />,
+    );
+    expect(screen.queryByText('진행기간')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/\d{2}\.\d{2}\.\d{2} ~ /),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('자기소개서')).toBeInTheDocument();
+    expect(screen.getByText('이력서')).toBeInTheDocument();
   });
 
   it('진행시간이 여럿이면 "/"로 잇고 가격에 최저가 물결을 붙인다', () => {
