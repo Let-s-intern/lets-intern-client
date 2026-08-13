@@ -77,9 +77,6 @@ export const liveMentoringOpeningSchema = z.object({
   durations: z.array(liveMentoringDurationSchema),
   /** 여러 진행시간을 열었을 때의 최저가. */
   minimumPrice: z.number(),
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
-  feedbackStartDate: z.string(),
-  feedbackEndDate: z.string(),
 });
 export type LiveMentoringOpening = z.infer<typeof liveMentoringOpeningSchema>;
 
@@ -242,9 +239,6 @@ export const liveMentorDetailSchema = z.object({
   /** 후기가 한 건도 없으면 서버가 null 을 준다. */
   rating: z.number().nullable(),
   reviewCount: z.number(),
-  /** 개설이 없으면 null. 공개 목록에는 안 뜨지만 상세 URL 로는 열린다. */
-  feedbackStartDate: z.string().nullable(),
-  feedbackEndDate: z.string().nullable(),
   profile: liveMentorProfileSchema,
   template: liveMentoringTemplateSchema,
   reviews: z.array(liveMentoringReviewSchema),
@@ -258,3 +252,33 @@ export const liveMentorDetailSchema = z.object({
   ),
 });
 export type LiveMentorDetail = z.infer<typeof liveMentorDetailSchema>;
+
+/**
+ * 슬롯 상태 — 백엔드 `FeedbackSlotStatus`.
+ * mentor 앱(`apps/mentor/src/api/live-mentoring/liveMentoringSchema.ts`)과 **동일 형태**다.
+ */
+export const feedbackSlotStatusSchema = z.enum(['OPEN', 'RESERVED']);
+export type FeedbackSlotStatus = z.infer<typeof feedbackSlotStatusSchema>;
+
+/**
+ * 예약 가능 슬롯 1건 — 백엔드 `LiveMentoringScheduleSlotResponseDto`.
+ * `startDate`/`endDate` 는 `LocalDateTime`(예: `"2026-09-01T10:00:00"`)이고 길이는 30분 고정이다.
+ */
+export const liveMentoringSlotSchema = z.object({
+  slotId: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: feedbackSlotStatusSchema,
+});
+export type LiveMentoringSlot = z.infer<typeof liveMentoringSlotSchema>;
+
+/**
+ * 슬롯 목록 응답 — `GET /live-mentoring/mentors/{mentorId}/slots`.
+ *
+ * 서버가 활성 개설이 없으면 빈 배열을, 있으면 미래의 `OPEN` 슬롯만 시작 시각
+ * 오름차순으로 내려준다. 프론트는 개설 상태와 슬롯 상태를 조합하지 않는다.
+ */
+export const liveMentoringSlotListSchema = z.object({
+  liveMentoringSlotList: z.array(liveMentoringSlotSchema),
+});
+export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;

@@ -6,7 +6,6 @@ import {
   cardPriceLabel,
   careerBadgeLabel,
   durationsLabel,
-  formatOpeningPeriod,
   imagePlaceholderTitle,
 } from '../../constants';
 
@@ -26,16 +25,8 @@ interface OpenSettingsPreviewProps {
  *  2. `grid-rows-subgrid` 대신 `flex` — subgrid 는 목록 그리드 안에서만 의미가 있다.
  */
 const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
-  const {
-    title,
-    nickname,
-    profileImage,
-    categories,
-    durations,
-    feedbackStartDate,
-    feedbackEndDate,
-    careers,
-  } = settings;
+  const { title, nickname, profileImage, categories, durations, careers } =
+    settings;
 
   // 공개 카드는 **대표 경력만** 노출하고, 미지정이면 배지 자체를 렌더하지 않는다.
   // 여기서 첫 경력으로 폴백하면 실제 노출과 달라져 미리보기가 거짓말을 하게 된다.
@@ -97,16 +88,11 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
           {cardTitle ?? `${displayNickname}의 1:1 멘토링`}
         </h3>
 
+        {/*
+          공개 카드의 진행기간 줄은 사라졌다 — 목록 응답에 일정 정보가 없어
+          카드에서는 기간을 표시하지 않는다(웹 `MentorCard` 와 같은 규칙).
+        */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-            <span className="text-xxsmall12 text-neutral-0 font-normal">
-              진행기간
-            </span>
-            <span className="text-0.75-medium text-primary-dark">
-              {formatOpeningPeriod(feedbackStartDate, feedbackEndDate)}
-            </span>
-          </div>
-
           {categories.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-1.5">
               {categories.map((category) => (

@@ -6,7 +6,6 @@ import {
   cardPriceLabel,
   careerBadgeLabel,
   durationsLabel,
-  formatOpeningPeriod,
 } from '../constants';
 import { imagePlaceholderTitle } from '../utils/profileDisplay';
 
@@ -18,8 +17,11 @@ interface MentorCardProps {
  * 공개 리스트 멘토 카드 (PRD §5 S1).
  *
  * 상단은 썸네일 블록(경력 배지 + 진행시간/가격 바), 하단은 카드 밖 정보 영역
- * (멘토링 제목 + 진행기간 + 타입 태그)이다.
+ * (멘토링 제목 + 타입 태그)이다.
  * 썸네일 텍스트는 **프로필 이미지가 없을 때의 대체 표시**라, 이미지가 있으면 렌더하지 않는다.
+ *
+ * 진행기간은 카드에 넣지 않는다. 목록 응답에 슬롯 정보가 없어 카드마다 슬롯 API 를
+ * 불러야 하는데, 12개 그리드에 총 13번 요청이 된다. 기간은 상세에서만 보여준다.
  *
  * 백엔드 `LiveMentoringOpeningResponseDto` 를 그대로 렌더한다. 닉네임·대표 경력·
  * 타이틀이 모두 nullable 이라 제목은 닉네임 기반 문구로, 배지는 미렌더로 폴백한다.
@@ -83,18 +85,6 @@ const MentorCard = ({ opening }: MentorCardProps) => {
       </h2>
 
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-          <span className="text-xxsmall12 text-neutral-0 font-normal">
-            진행기간
-          </span>
-          <span className="text-0.75-medium text-primary-dark">
-            {formatOpeningPeriod(
-              opening.feedbackStartDate,
-              opening.feedbackEndDate,
-            )}
-          </span>
-        </div>
-
         {opening.categories.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-1.5">
             {opening.categories.map((category) => (

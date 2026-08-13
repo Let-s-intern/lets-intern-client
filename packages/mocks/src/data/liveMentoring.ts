@@ -61,13 +61,6 @@ export function getLowestPrice(durations: LiveMentoringDuration[]): number {
   return Math.min(...durations.map(getPriceByDuration));
 }
 
-/** 고정 시작일에 days 를 더한 YYYY-MM-DD 문자열 (목 피드백 기간 종료일 파생용). */
-function addDays(isoDate: string, days: number): string {
-  const d = new Date(isoDate);
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
 // ─────────────────────────────────────────────────────────────
 // 타입 정의 (PRD §4.2 ~ §4.7)
 // ─────────────────────────────────────────────────────────────
@@ -90,9 +83,6 @@ export interface LiveMentorCard {
   price: number;
   rating: number;
   reviewCount: number;
-  /** 피드백 진행 일정(오픈 기간) 시작·종료일. */
-  feedbackStartDate: string;
-  feedbackEndDate: string;
 }
 
 /** 멘토 이력 1건 (노출 선택 가능) */
@@ -213,8 +203,6 @@ export interface LiveMentorDetail {
   price: number;
   rating: number;
   reviewCount: number;
-  feedbackStartDate: string;
-  feedbackEndDate: string;
   profile: LiveMentorProfile;
   template: LiveMentoringTemplate;
   reviews: LiveMentoringReview[];
@@ -256,8 +244,8 @@ export interface LiveMentoringSettingsCareer {
  */
 /**
  * 상품 상태 — 백엔드 `LiveMentoringStatus`.
- * 자가승인 전환으로 `PENDING_REVIEW`/`REJECTED`는 사라졌다 — `submit()`이 검토 단계 없이
- * `DRAFT → APPROVED`로 곧장 전이시킨다.
+ * 자가승인 전환으로 `PENDING_REVIEW`/`REJECTED`는 사라졌다 — 개설(`POST /openings`)이
+ * 검토 단계 없이 `DRAFT → APPROVED`로 곧장 전이시킨다.
  */
 export type LiveMentoringStatus = 'DRAFT' | 'APPROVED' | 'INACTIVE';
 
@@ -282,11 +270,8 @@ export interface LiveMentoringSettings {
   /** 상품 상태. 잠금 판정의 근거다 — 백엔드에 `isOpen` 같은 단일 불리언은 없다. */
   status: LiveMentoringStatus | null;
   categories: LiveMentoringCategory[];
-  /** 검토 제출 때 저장한 진행시간. 제출 전이면 빈 배열. */
+  /** 개설할 때 저장한 진행시간. 한 번도 개설하지 않았으면 빈 배열. */
   durations: LiveMentoringDuration[];
-  /** 검토 제출 때 저장한 피드백 진행 일정. 제출 전이면 null. */
-  feedbackStartDate: string | null;
-  feedbackEndDate: string | null;
 }
 
 /** 오픈 현황 행 (PRD §4.7, read-only). 오픈은 하나만 가능. */
@@ -298,11 +283,23 @@ export interface OpeningHistoryItem {
   openingId: number;
   status: LiveMentoringOpeningStatus;
   durationPrices: { duration: LiveMentoringDuration; price: number }[];
-  feedbackStartDate: string;
-  feedbackEndDate: string;
   openedAt: string;
   closedAt: string | null;
   closeReason: LiveMentoringCloseReason | null;
+}
+
+/** 슬롯 상태 — 백엔드 `FeedbackSlotStatus`. */
+export type LiveMentoringSlotStatus = 'OPEN' | 'RESERVED';
+
+/**
+ * 예약 가능 슬롯 1건 — 백엔드 `LiveMentoringScheduleSlotResponseDto`.
+ * `startDate`/`endDate` 는 `LocalDateTime`(예: `"2026-09-01T10:00:00"`)이고 길이는 30분 고정이다.
+ */
+export interface LiveMentoringSlot {
+  slotId: number;
+  startDate: string;
+  endDate: string;
+  status: LiveMentoringSlotStatus;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -328,7 +325,6 @@ interface MentorSeed {
   mosaicEnabled: boolean;
   mosaicBlur: number;
   hasImage: boolean;
-  nextAvailableDate: string | null;
   introduction: string;
   careers: LiveMentoringCareer[];
 }
@@ -350,15 +346,6 @@ function categoriesFor(seed: MentorSeed): LiveMentoringCategory[] {
 /** 시드의 오픈 진행시간(다중) — 미지정 시 기본 진행시간 단일. */
 function durationsFor(seed: MentorSeed): LiveMentoringDuration[] {
   return seed.durations ?? [seed.durationMin];
-}
-
-/** 시드의 피드백 진행 일정(오픈 기간) — 시작은 nextAvailableDate, 종료는 +13일. */
-function periodFor(seed: MentorSeed): {
-  feedbackStartDate: string;
-  feedbackEndDate: string;
-} {
-  const feedbackStartDate = seed.nextAvailableDate ?? '2026-07-10';
-  return { feedbackStartDate, feedbackEndDate: addDays(feedbackStartDate, 13) };
 }
 
 /** 카테고리별 대표 챌린지 제목(공개 상세 하단 "참여 중인 챌린지"용 목). */
@@ -398,7 +385,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-14',
     introduction:
       '대기업 서비스 기획자로 일하며 수백 건의 자소서를 리뷰했습니다. 소재 선정부터 문장 압축까지 함께합니다.',
     careers: [
@@ -429,7 +415,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: true,
     mosaicBlur: 6,
     hasImage: true,
-    nextAvailableDate: '2026-07-11',
     introduction:
       '현직 백엔드 개발자입니다. 기술 경험을 채용 관점에서 재구성하도록 돕습니다.',
     careers: [
@@ -460,7 +445,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-18',
     introduction:
       '핀테크 프로덕트 디자이너로 포트폴리오의 스토리라인을 설계하는 것을 돕습니다.',
     careers: [
@@ -485,7 +469,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-12',
     introduction:
       '현직 채용 담당자입니다. 신원 노출이 어려워 익명으로 진행하지만, 평가자 관점을 그대로 전달합니다.',
     careers: [
@@ -510,7 +493,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: true,
     mosaicBlur: 10,
     hasImage: true,
-    nextAvailableDate: null,
     introduction:
       '작은 팀에서 다역할을 경험한 PM입니다. 스타트업 지원자의 이력을 강점화합니다.',
     careers: [
@@ -541,7 +523,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: false,
-    nextAvailableDate: '2026-07-13',
     introduction:
       '이커머스 UX 리드로 포트폴리오의 논리와 밀도를 함께 점검합니다.',
     careers: [
@@ -566,7 +547,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-20',
     introduction:
       '커리어 코치로 지원 전략 수립과 자소서 컨설팅을 함께 진행합니다.',
     careers: [
@@ -591,7 +571,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: true,
     mosaicBlur: 4,
     hasImage: true,
-    nextAvailableDate: '2026-07-10',
     introduction:
       '프론트엔드 개발자로 기술 이력서의 성과 표현을 채용 관점에서 봅니다.',
     careers: [
@@ -616,7 +595,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: false,
-    nextAvailableDate: null,
     introduction:
       '외국계 마케팅 매니저입니다. 익명으로 진행하며 마케팅 포트폴리오를 봐드립니다.',
     careers: [
@@ -641,7 +619,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-16',
     introduction:
       '데이터 분석가로 분석 경험을 채용 관점의 성과 서술로 바꾸도록 돕습니다.',
     careers: [
@@ -666,7 +643,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: true,
     mosaicBlur: 8,
     hasImage: true,
-    nextAvailableDate: '2026-07-15',
     introduction:
       '공기업 인사 경험을 바탕으로 NCS·자소서 항목 대응을 도와드립니다.',
     careers: [
@@ -691,7 +667,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: false,
-    nextAvailableDate: null,
     introduction:
       '주니어 디자이너의 첫 포트폴리오가 잘 읽히도록 구성을 함께 정리합니다.',
     careers: [
@@ -716,7 +691,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: false,
     mosaicBlur: 0,
     hasImage: true,
-    nextAvailableDate: '2026-07-19',
     introduction:
       '대기업 HRD 경험으로 대기업 채용 기준에 맞춘 이력서 정리를 돕습니다.',
     careers: [
@@ -736,7 +710,6 @@ const MENTOR_SEEDS: MentorSeed[] = [
     mosaicEnabled: true,
     mosaicBlur: 6,
     hasImage: true,
-    nextAvailableDate: '2026-07-17',
     introduction:
       '커머스 서비스 기획자로 자소서 문항 의도에 맞춘 경험 배치를 함께 설계합니다.',
     careers: [
@@ -767,7 +740,6 @@ export const LIVE_MENTOR_CARDS: LiveMentorCard[] = MENTOR_SEEDS.map((seed) => {
     price: getLowestPrice(durations),
     rating: seed.rating,
     reviewCount: seed.reviewCount,
-    ...periodFor(seed),
   };
 });
 
@@ -953,7 +925,6 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
         price: getLowestPrice(durationsFor(seed)),
         rating: seed.rating,
         reviewCount: seed.reviewCount,
-        ...periodFor(seed),
         profile: {
           visible: seed.profileVisible,
           mosaicEnabled: seed.mosaicEnabled,
@@ -1017,13 +988,11 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   introduction: mySeed.introduction,
   careers: MY_SETTINGS_CAREERS,
   title: '자소서 실전 첨삭 멘토링',
-  // 목 기본값: 초안(편집 가능). 저장 → 검토 제출 → 잠금 흐름을 확인할 수 있다.
+  // 목 기본값: 초안(편집 가능). 저장 → 개설 → 잠금 흐름을 확인할 수 있다.
   status: 'DRAFT',
   categories: categoriesFor(mySeed),
-  // 검토 제출 전이라 진행시간·기간은 아직 서버에 없다.
+  // 개설 전이라 진행시간은 아직 서버에 없다.
   durations: [],
-  feedbackStartDate: null,
-  feedbackEndDate: null,
 };
 
 /** GET /mentor/live-mentoring/template — "나"의 선택 타입 기본 템플릿 + 편집분. */
@@ -1046,8 +1015,6 @@ export const OPENING_HISTORY: OpeningHistoryItem[] = [
     openingId: 102,
     status: 'CLOSED',
     durationPrices: durationPricesFor([60]),
-    feedbackStartDate: '2026-06-10',
-    feedbackEndDate: '2026-06-23',
     openedAt: '2026-06-09T10:00:00',
     closedAt: '2026-06-24T00:10:00',
     closeReason: 'PERIOD_EXPIRED',
@@ -1056,10 +1023,75 @@ export const OPENING_HISTORY: OpeningHistoryItem[] = [
     openingId: 101,
     status: 'CLOSED',
     durationPrices: durationPricesFor([30, 60]),
-    feedbackStartDate: '2026-05-12',
-    feedbackEndDate: '2026-05-25',
     openedAt: '2026-05-11T09:30:00',
     closedAt: '2026-05-20T14:00:00',
     closeReason: 'MENTOR_CANCELED',
   },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// 예약 가능 슬롯 (LC-3206)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 오늘 기준 상대 시각을 `LocalDateTime` 문자열로 만든다.
+ *
+ * 슬롯 조회는 "미래의 `OPEN` 만" 이라는 시간 조건이 계약에 들어 있어, 고정 날짜를 박아 두면
+ * 그 날짜가 지나는 순간 목이 조용히 빈 배열을 내려주게 된다. 오늘 기준 상대값으로 만든다.
+ */
+function slotDateTime(
+  offsetDays: number,
+  hour: number,
+  minute: number,
+): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+  date.setHours(hour, minute, 0, 0);
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return (
+    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
+    `T${pad(date.getHours())}:${pad(date.getMinutes())}:00`
+  );
+}
+
+/** 시작 시각에서 30분 뒤. 서버가 슬롯 길이를 30분으로 강제한다. */
+function slotEnd(offsetDays: number, hour: number, minute: number): string {
+  return minute === 30
+    ? slotDateTime(offsetDays, hour + 1, 0)
+    : slotDateTime(offsetDays, hour, 30);
+}
+
+/** 멘토별 슬롯 시드 정의 — `[일수 오프셋, 시, 분, 상태]`. */
+const SLOT_SEED: [number, number, number, LiveMentoringSlotStatus][] = [
+  // 과거 슬롯. 공개 조회가 "미래만" 필터링하는지 확인하는 케이스다.
+  [-2, 10, 0, 'OPEN'],
+  [7, 10, 0, 'OPEN'],
+  // 예약된 슬롯. 저장 payload 에서 빠지면 409 LIVE_MENTORING_SLOT_LOCKED 가 난다.
+  [7, 10, 30, 'RESERVED'],
+  [7, 14, 0, 'OPEN'],
+  [8, 11, 0, 'OPEN'],
+  [8, 11, 30, 'RESERVED'],
+];
+
+/**
+ * 멘토별 예약 가능 슬롯 — mentorId 로 조회.
+ * `OPEN` 과 `RESERVED` 를 섞어 두어야 잠금(409) 케이스를 목으로 재현할 수 있다.
+ */
+export const LIVE_MENTORING_SLOTS_BY_MENTOR: Record<
+  number,
+  LiveMentoringSlot[]
+> = Object.fromEntries(
+  MENTOR_SEEDS.map((seed) => [
+    seed.mentorId,
+    SLOT_SEED.map(([offsetDays, hour, minute, status], index) => ({
+      slotId: seed.mentorId * 1000 + index + 1,
+      startDate: slotDateTime(offsetDays, hour, minute),
+      endDate: slotEnd(offsetDays, hour, minute),
+      status,
+    })),
+  ]),
+);
+
+/** GET /mentor/live-mentoring/slots — "나"(mentorId 1)의 슬롯 기본값. */
+export const LIVE_MENTORING_SLOTS: LiveMentoringSlot[] =
+  LIVE_MENTORING_SLOTS_BY_MENTOR[MY_MENTOR_ID];

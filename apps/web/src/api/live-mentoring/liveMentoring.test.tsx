@@ -6,6 +6,7 @@ import axios from '@/utils/axios';
 import {
   useLiveMentorDetailQuery,
   useLiveMentorListQuery,
+  useLiveMentorSlotsQuery,
 } from './liveMentoring';
 
 // axios 모듈 자체를 모킹 (default export)
@@ -29,8 +30,6 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
-    feedbackStartDate: '2026-07-14',
-    feedbackEndDate: '2026-07-28',
     ...overrides,
   };
 }
@@ -247,5 +246,88 @@ describe('useLiveMentorDetailQuery', () => {
 
     await new Promise((r) => setTimeout(r, 10));
     expect(axiosGet).not.toHaveBeenCalled();
+  });
+});
+
+describe('useLiveMentorSlotsQuery', () => {
+  it('GET /live-mentoring/mentors/{id}/slots 를 호출하고 슬롯 목록을 파싱한다', async () => {
+    axiosGet.mockResolvedValue({
+      data: {
+        data: {
+          liveMentoringSlotList: [
+            {
+              slotId: 1,
+              startDate: '2026-09-01T10:00:00',
+              endDate: '2026-09-01T10:30:00',
+              status: 'OPEN',
+            },
+            {
+              slotId: 2,
+              startDate: '2026-09-03T14:00:00',
+              endDate: '2026-09-03T14:30:00',
+              status: 'OPEN',
+            },
+          ],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useLiveMentorSlotsQuery(3), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/mentors/3/slots');
+    expect(result.current.data?.liveMentoringSlotList).toHaveLength(2);
+    expect(result.current.data?.liveMentoringSlotList[0].startDate).toBe(
+      '2026-09-01T10:00:00',
+    );
+  });
+
+  // 활성 개설이 없는 멘토는 서버가 빈 배열을 준다 — 에러가 아니다.
+  it('슬롯이 없으면 빈 배열을 성공으로 받는다', async () => {
+    axiosGet.mockResolvedValue({
+      data: { data: { liveMentoringSlotList: [] } },
+    });
+
+    const { result } = renderHook(() => useLiveMentorSlotsQuery(3), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.liveMentoringSlotList).toEqual([]);
+  });
+
+  it('mentorId 가 null 이면 axios 를 호출하지 않는다', async () => {
+    renderHook(() => useLiveMentorSlotsQuery(null), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+
+  it('응답 스키마가 깨지면 isError 가 된다', async () => {
+    axiosGet.mockResolvedValue({
+      data: {
+        data: {
+          liveMentoringSlotList: [
+            {
+              slotId: 1,
+              startDate: '2026-09-01T10:00:00',
+              endDate: '2026-09-01T10:30:00',
+              status: 'CANCELED',
+            },
+          ],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useLiveMentorSlotsQuery(3), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
   });
 });

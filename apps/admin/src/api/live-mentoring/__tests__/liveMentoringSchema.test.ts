@@ -51,4 +51,25 @@ describe('adminLiveMentoringSchema', () => {
       ),
     ).not.toThrow();
   });
+
+  // LC-3206 — currentOpening 에서 모집 기간이 사라졌다. 남겨 두면 목록이 통째로 죽는다.
+  it('currentOpening 에 모집 기간 필드가 없어도 파싱된다', () => {
+    const parsed = adminLiveMentoringSchema.parse(
+      makeRow({
+        currentOpening: {
+          openingId: 220,
+          status: 'OPEN',
+          durationPrices: [{ duration: 30, price: 35000 }],
+          openedAt: '2026-08-03T11:00:00',
+          closedAt: null,
+          closeReason: null,
+          closedByUserId: null,
+          createDate: '2026-08-03T11:00:00',
+          lastModifiedDate: '2026-08-03T11:00:00',
+        },
+      }),
+    );
+    expect(parsed.currentOpening?.openingId).toBe(220);
+    expect(parsed.currentOpening).not.toHaveProperty('feedbackStartDate');
+  });
 });

@@ -16,8 +16,6 @@ import {
   CLOSE_REASON_LABELS,
   durationPricesLabel,
   formatDateTime,
-  formatPeriod,
-  isExpired,
   publicDetailUrl,
   STATUS_CLASSES,
   STATUS_FILTERS,
@@ -116,7 +114,7 @@ const AdminLiveMentoringTable = () => {
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>타입</th>
               <th className={headerCellClass}>상세</th>
-              <th className={headerCellClass}>현재 개설</th>
+              <th className={headerCellClass}>가격</th>
               <th className={headerCellClass}>최종 수정</th>
               <th className={headerCellClass}>관리</th>
             </tr>
@@ -152,7 +150,6 @@ const AdminLiveMentoringTable = () => {
             ) : (
               rows.map((row) => {
                 const opening = row.currentOpening;
-                const openingExpired = isExpired(opening?.feedbackEndDate);
                 return (
                   <tr
                     key={row.liveMentoringId}
@@ -204,21 +201,9 @@ const AdminLiveMentoringTable = () => {
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
                       {opening ? (
                         <div className="flex flex-col gap-0.5">
-                          <span>
-                            {formatPeriod(
-                              opening.feedbackStartDate,
-                              opening.feedbackEndDate,
-                            )}
-                          </span>
                           <span className="text-neutral-40 text-xs">
                             {durationPricesLabel(opening.durationPrices)}
                           </span>
-                          {/* 만료 자동 종료 배치가 서버에 없어 기간이 지나도 OPEN 으로 남는다. */}
-                          {openingExpired && (
-                            <span className="text-xs font-medium text-red-600">
-                              기간 만료(종료 처리 안 됨)
-                            </span>
-                          )}
                           {opening.closeReason && (
                             <span className="text-neutral-40 text-xs">
                               {CLOSE_REASON_LABELS[opening.closeReason]}

@@ -6,21 +6,26 @@ import axios from '@/utils/axios';
 
 import {
   LIVE_MENTORING_SETTINGS_QUERY_KEY,
+  LIVE_MENTORING_SLOTS_QUERY_KEY,
   LIVE_MENTORING_TEMPLATE_QUERY_KEY,
   LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
   useCloseLiveMentoringOpeningMutation,
+  useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
+  useLiveMentoringSlotsQuery,
   useLiveMentoringTemplateQuery,
-  useSubmitLiveMentoringMutation,
+  useSaveLiveMentoringSlotsMutation,
   useUpdateLiveMentoringSettingsMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '../liveMentoring';
+import * as liveMentoringApi from '../liveMentoring';
 import {
   liveMentoringSettingsSchema,
   liveMentoringStatusSchema,
   openingHistoryItemSchema,
 } from '../liveMentoringSchema';
+import * as liveMentoringSchemas from '../liveMentoringSchema';
 
 // axios 모듈 자체를 모킹 (default export)
 vi.mock('@/utils/axios', () => ({
@@ -281,39 +286,141 @@ describe('useLiveMentoringOpenStatusQuery', () => {
   });
 });
 
-describe('useSubmitLiveMentoringMutation', () => {
-  it('POST submit 에 진행시간·기간을 보내고 설정·오픈현황 캐시를 함께 invalidate 한다', async () => {
-    // 회귀 케이스: 자가승인 전환으로 제출이 곧바로 개설까지 만드는데, 오픈현황 캐시를
-    // 안 지우면 승인 상태는 반영돼도 "지금 열려 있는지"가 낡은 값으로 남아
-    // 화면이 오픈 중을 못 보여준다.
-    axiosMock.post.mockResolvedValue({ data: { data: null } });
+describe('useLiveMentoringSlotsQuery', () => {
+  const slotResponse = {
+    liveMentoringSlotList: [
+      {
+        slotId: 901,
+        startDate: '2026-09-01T10:00:00',
+        endDate: '2026-09-01T10:30:00',
+        status: 'OPEN',
+      },
+      {
+        slotId: 902,
+        startDate: '2026-09-01T10:30:00',
+        endDate: '2026-09-01T11:00:00',
+        status: 'RESERVED',
+      },
+    ],
+  };
+
+  it('래퍼를 벗겨 슬롯 배열만 반환한다', async () => {
+    axiosMock.get.mockResolvedValue({ data: { data: slotResponse } });
+
+    const { result } = renderHook(() => useLiveMentoringSlotsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data?.[1].status).toBe('RESERVED');
+  });
+
+  it('배열 쿼리를 대괄호 없이 직렬화한다', async () => {
+    // 회귀 케이스: axios 기본 직렬화(`statusList[]=OPEN`)를 Spring 이 바인딩하지
+    // 못해 필터가 통째로 무시된다. 목록 API 와 같은 `indexes: null` 이 필요하다.
+    axiosMock.get.mockResolvedValue({ data: { data: slotResponse } });
+
+    const { result } = renderHook(
+      () =>
+        useLiveMentoringSlotsQuery({
+          startDate: '2026-09-01T00:00:00',
+          endDate: '2026-09-30T23:59:59',
+          statusList: ['OPEN', 'RESERVED'],
+        }),
+      { wrapper: createWrapper(newClient()) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.get).toHaveBeenCalledWith('/mentor/live-mentoring/slots', {
+      params: {
+        startDate: '2026-09-01T00:00:00',
+        endDate: '2026-09-30T23:59:59',
+        statusList: ['OPEN', 'RESERVED'],
+      },
+      paramsSerializer: { indexes: null },
+    });
+  });
+
+  it('enabled: false 면 요청하지 않는다', () => {
+    renderHook(() => useLiveMentoringSlotsQuery({ enabled: false }), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    expect(axiosMock.get).not.toHaveBeenCalled();
+  });
+
+  it('status 가 enum 밖이면 isError 가 된다', async () => {
+    axiosMock.get.mockResolvedValue({
+      data: {
+        data: {
+          liveMentoringSlotList: [
+            {
+              slotId: 901,
+              startDate: '2026-09-01T10:00:00',
+              endDate: '2026-09-01T10:30:00',
+              status: 'CANCELED',
+            },
+          ],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useLiveMentoringSlotsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+describe('useSaveLiveMentoringSlotsMutation', () => {
+  it('PUT 에 배열 그대로 보내고, 응답을 파싱해 슬롯 캐시를 invalidate 한다', async () => {
+    const saved = {
+      liveMentoringSlotList: [
+        {
+          slotId: 901,
+          startDate: '2026-09-01T10:00:00',
+          endDate: '2026-09-01T10:30:00',
+          status: 'OPEN',
+        },
+      ],
+    };
+    axiosMock.put.mockResolvedValue({ data: { data: saved } });
 
     const client = newClient();
     const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
 
-    const { result } = renderHook(() => useSubmitLiveMentoringMutation(), {
+    const { result } = renderHook(() => useSaveLiveMentoringSlotsMutation(), {
       wrapper: createWrapper(client),
     });
 
-    const body = {
-      durations: [30, 60] as (30 | 60)[],
-      feedbackStartDate: '2026-08-01',
-      feedbackEndDate: '2026-08-31',
-    };
+    const body = [
+      { startDate: '2026-09-01T10:00:00', endDate: '2026-09-01T10:30:00' },
+    ];
+    let returned: Awaited<ReturnType<typeof result.current.mutateAsync>> = [];
     await act(async () => {
-      await result.current.mutateAsync(body);
+      returned = await result.current.mutateAsync(body);
     });
 
-    expect(axiosMock.post).toHaveBeenCalledWith(
-      '/mentor/live-mentoring/submit',
+    // 래핑 객체가 아니라 배열 그 자체다.
+    expect(axiosMock.put).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/slots',
       body,
     );
+    expect(returned[0].slotId).toBe(901);
     expect(invalidateSpy).toHaveBeenCalledWith({
-      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
     });
-    expect(invalidateSpy).toHaveBeenCalledWith({
-      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
-    });
+  });
+});
+
+describe('검토 제출(POST /submit) 제거', () => {
+  it('submit 훅과 요청 타입을 더 이상 export 하지 않는다', () => {
+    // 서버 컨트롤러에서 엔드포인트가 사라졌다. 남겨 두면 호출할 수 있는 것처럼 보이고,
+    // 개설 경로가 둘로 갈라져 "어느 쪽이 실제로 여는지"가 흐려진다.
+    expect('useSubmitLiveMentoringMutation' in liveMentoringApi).toBe(false);
+    expect('liveMentoringSubmitSchema' in liveMentoringSchemas).toBe(false);
   });
 });
 
@@ -341,6 +448,70 @@ describe('useCloseLiveMentoringOpeningMutation', () => {
     });
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+  });
+
+  it('슬롯 캐시도 무효화한다 — 서버가 종료와 함께 슬롯을 전부 지운다', async () => {
+    // 회귀 케이스: 이걸 빼면 종료 후에도 화면에 이미 삭제된 슬롯이 그대로 남는다.
+    axiosMock.patch.mockResolvedValue({ data: { data: null } });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCloseLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync(100);
+    });
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
+    });
+  });
+});
+
+describe('useCreateLiveMentoringOpeningMutation', () => {
+  it('개설 후 오픈현황·설정·슬롯 캐시를 함께 invalidate 한다', async () => {
+    // 개설 유무가 고객용 슬롯 노출 조건이라 슬롯 캐시도 낡는다.
+    axiosMock.post.mockResolvedValue({
+      data: { data: { liveMentoringId: 1, openings: [] } },
+    });
+
+    const client = newClient();
+    const invalidateSpy = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringOpeningMutation(),
+      { wrapper: createWrapper(client) },
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        title: '자소서 실전 첨삭 멘토링',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30],
+      });
+    });
+
+    expect(axiosMock.post).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/openings',
+      {
+        title: '자소서 실전 첨삭 멘토링',
+        categories: ['PERSONAL_STATEMENT'],
+        durations: [30],
+      },
+    );
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_SLOTS_QUERY_KEY,
     });
   });
 });
