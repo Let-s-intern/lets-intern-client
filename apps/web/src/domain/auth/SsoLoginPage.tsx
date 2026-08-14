@@ -37,8 +37,8 @@ const SsoLoginPage = () => {
   // redirect_uri 자체가 없으면 서버에 물어볼 것도 없다 — 어디로도 보낼 수 없는 요청이다.
   if (isMissingRedirectUri) {
     return (
-      <div className="bg-neutral-95 flex min-h-screen items-center justify-center px-4">
-        <div className="border-neutral-90 shadow-04 w-full max-w-[360px] rounded-xl border bg-white p-8 text-center">
+      <div className="flex min-h-screen items-center justify-center bg-white px-6">
+        <div className="w-full max-w-[360px] text-center">
           <p className="text-xsmall14 text-neutral-40">
             이동할 서비스 정보가 없습니다. 로그인 버튼을 눌렀던 곳에서 다시
             시도해주세요.
@@ -49,13 +49,25 @@ const SsoLoginPage = () => {
   }
 
   return (
-    // 렛츠커리어 사이트라는 티가 나면 안 된다 — 로고·네비 없이 모달 크기의 카드 하나만
-    // 화면 가운데에 고정한다. 배경은 중립색이라 뒤에 다른 사이트가 있어도 위화감이 적다.
-    <div className="bg-neutral-95 flex min-h-screen items-center justify-center px-4">
-      <div className="border-neutral-90 shadow-04 w-full max-w-[360px] rounded-xl border bg-white p-8">
-        <h1 className="text-small18 text-neutral-0 mb-7 text-center font-semibold">
-          {title}
-        </h1>
+    // 이 화면은 팝업 창 안에서 단독으로 뜬다(구글 OAuth 동의 창과 같은 형태). 창 자체가
+    // 이미 경계 역할을 하므로 카드 테두리·그림자·회색 배경을 두지 않는다 — 창 안에 또 카드가
+    // 떠 있으면 액자 속 액자가 된다. 로고·네비가 없는 것은 렛츠커리어 사이트라는 티를
+    // 내지 않기 위함이고, 이건 그대로 유지한다.
+    <div className="flex min-h-screen items-center justify-center bg-white px-6">
+      <div className="w-full max-w-[360px]">
+        {/*
+          팝업 창(500x650)에서 단독으로 읽히는 제목이다. 18px 는 그 크기의 창에서 화면
+          주인공으로 서지 못해 24px 로 올린다. 부제는 이 창이 무엇을 하는 곳인지 한 줄로만
+          말한다 — 창을 연 서비스 이름은 제목이 이미 들고 있다.
+        */}
+        <div className="mb-8 text-center">
+          <h1 className="text-medium24 text-neutral-0 font-semibold tracking-tight">
+            {title}
+          </h1>
+          <p className="text-xsmall14 text-neutral-40 mt-2">
+            렛츠커리어 계정으로 계속합니다
+          </p>
+        </div>
 
         {isRedirectUriError ? (
           // 화이트리스트에 없는 서비스다 — 다시 시도해도 결과가 같으므로 폼을 보여주지 않는다.
@@ -67,7 +79,7 @@ const SsoLoginPage = () => {
           </p>
         ) : (
           <>
-            <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <Input
                 type="email"
                 label="이메일"
@@ -110,7 +122,7 @@ const SsoLoginPage = () => {
                 </div>
                 <div className="flex gap-4">
                   <a
-                    className="shadow-02 hover:shadow-03 flex h-11 w-11 items-center justify-center rounded-full bg-[#FEE500] transition-transform hover:scale-105"
+                    className="shadow-02 hover:shadow-03 flex h-12 w-12 items-center justify-center rounded-full bg-[#FEE500] transition-transform hover:scale-105"
                     href={buildSocialLoginHref('kakao', redirectUri)}
                     rel="noopener noreferrer"
                   >
@@ -121,7 +133,7 @@ const SsoLoginPage = () => {
                     />
                   </a>
                   <a
-                    className="shadow-02 hover:shadow-03 flex h-11 w-11 items-center justify-center rounded-full bg-[#2db400] transition-transform hover:scale-105"
+                    className="shadow-02 hover:shadow-03 flex h-12 w-12 items-center justify-center rounded-full bg-[#2db400] transition-transform hover:scale-105"
                     href={buildSocialLoginHref('naver', redirectUri)}
                     rel="noopener noreferrer"
                   >
