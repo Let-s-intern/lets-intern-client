@@ -7,25 +7,26 @@ import dayjs from '@/lib/dayjs';
  * - 시간축은 30분 슬롯 단위.
  */
 
-/** 그리드 시작 시각(시). */
-export const GRID_START_HOUR = 9;
 /**
- * 그리드 끝 시각(시, 미포함).
+ * 시간 범위는 `@letscareer/utils` 가 정한다. 여기서 다시 정의하지 않는다.
  *
- * 멘티 화면이 고를 수 있는 마지막 슬롯이 22:00~22:30 이므로 23 이어야 한다
- * (web `useTimeSlotState.ts` 의 `generateSlotTimes(9, 23)`).
- * 22 로 두면 22:00 시작 슬롯의 slotIndex 가 SLOTS_PER_DAY 와 같아져
- * `WeeklyGrid` 의 범위 필터에 걸려 **아무 표시 없이 사라진다.**
- * 멘티는 예약할 수 있는데 어드민에서만 안 보이는 상태가 된다
- * (2026-08-14 운영 문의: 슬롯 4건 중 22:00 건이 누락).
+ * 예전에는 이 파일이 상한을 따로 들고 있었고 그 값이 22 였다. 멘토가 연
+ * 22:00~22:30 슬롯의 slotIndex 가 SLOTS_PER_DAY 와 같아져 `WeeklyGrid` 의
+ * 범위 필터에 걸렸고, 아무 표시 없이 사라졌다(2026-08-14 운영 문의).
+ * 같은 값을 세 화면이 각자 적어두던 것이 원인이라 한 곳으로 모았다.
  */
-export const GRID_END_HOUR = 23;
-/** 슬롯 길이(분). */
-export const SLOT_MINUTES = 30;
+import {
+  SLOT_END_HOUR,
+  SLOT_MINUTES,
+  SLOT_START_HOUR,
+  SLOTS_PER_DAY,
+} from '@letscareer/utils';
 
-/** 하루 슬롯 개수. */
-export const SLOTS_PER_DAY =
-  ((GRID_END_HOUR - GRID_START_HOUR) * 60) / SLOT_MINUTES;
+/** 그리드 시작 시각(시). */
+export const GRID_START_HOUR = SLOT_START_HOUR;
+/** 그리드 끝 시각(시, 미포함). */
+export const GRID_END_HOUR = SLOT_END_HOUR;
+export { SLOT_MINUTES, SLOTS_PER_DAY };
 
 export interface WeekRange {
   /** 월요일 00:00 (LocalDateTime ISO) */
