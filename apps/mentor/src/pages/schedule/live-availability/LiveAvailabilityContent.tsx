@@ -1,3 +1,4 @@
+import { SLOT_START_TIMES } from '@letscareer/utils';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Fragment, useEffect, useMemo, useState } from 'react';
@@ -60,26 +61,16 @@ const PERIOD_COLORS = [
 ];
 
 const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
-const START_HOUR = 9;
-const END_HOUR = 22;
-const SLOT_MINUTE_STEP = 30;
 
-function createTimeSlots(): string[] {
-  const slots: string[] = [];
-
-  for (let hour = START_HOUR; hour <= END_HOUR; hour += 1) {
-    for (let minute = 0; minute < 60; minute += SLOT_MINUTE_STEP) {
-      if (hour === END_HOUR && minute > 0) continue;
-      const hh = String(hour).padStart(2, '0');
-      const mm = String(minute).padStart(2, '0');
-      slots.push(`${hh}:${mm}`);
-    }
-  }
-
-  return slots;
-}
-
-const TIME_SLOTS = createTimeSlots();
+/**
+ * 슬롯 시각 목록은 `@letscareer/utils` 가 정한다. 여기서 다시 만들지 않는다.
+ *
+ * 예전에는 이 파일이 09:00~22:00 만 만들었다(22:30 을 명시적으로 건너뛰었다).
+ * 멘티 화면은 22:30 까지 열려 있어 범위가 어긋나 있었고, 어드민은 또 다른 상한을
+ * 들고 있었다. 정책은 하나인데 세 곳에 따로 적혀 있던 것이 사고의 원인이었다
+ * (2026-08-14 운영 문의).
+ */
+const TIME_SLOTS = SLOT_START_TIMES;
 
 /** 안내 배너 앞에 붙는 정보 아이콘 */
 const InfoIcon = () => (

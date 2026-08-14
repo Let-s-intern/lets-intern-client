@@ -1,3 +1,4 @@
+import { SLOT_START_TIMES } from '@letscareer/utils';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { format } from 'date-fns';
@@ -17,17 +18,21 @@ describe('LiveAvailabilityContent', () => {
     expect(screen.getByText('09:00')).toBeInTheDocument();
   });
 
-  it('슬롯이 22:00까지 존재한다 (마지막 슬롯)', () => {
+  it('슬롯이 22:30까지 존재한다 (마지막 슬롯)', () => {
+    // 예전에는 22:00 이 마지막이었다. 멘티는 22:30 까지 고를 수 있었고 어드민은
+    // 21:30 에서 끊겨, 같은 정책이 세 화면에 다른 숫자로 적혀 있었다.
+    // 이제 셋 다 @letscareer/utils 의 SLOT_START_TIMES 를 쓴다.
     render(<LiveAvailabilityContent {...baseProps} />);
-    expect(screen.getByText('22:00')).toBeInTheDocument();
+    expect(screen.getByText('22:30')).toBeInTheDocument();
   });
 
-  it('슬롯 개수가 27개다 (09:00~22:00, 30분 간격)', () => {
+  it('슬롯 개수가 공유 정책과 같다 (09:00~22:30, 30분 간격)', () => {
     const { container } = render(<LiveAvailabilityContent {...baseProps} />);
     // 시간 레이블 셀 — grid 첫 번째 열의 시간 표시
     const timeCells = container.querySelectorAll('[data-time-label]');
-    // 27 슬롯: 09:00, 09:30, ..., 21:30, 22:00
-    expect(timeCells.length).toBe(27);
+    // 숫자를 다시 적지 않는다. 정책이 바뀌면 이 테스트도 따라간다.
+    expect(timeCells.length).toBe(SLOT_START_TIMES.length);
+    expect(SLOT_START_TIMES.at(-1)).toBe('22:30');
   });
 
   it('시간표 영역이 부모 높이를 가득 채우는 flex-1 + overflow-y-auto 스크롤 컨테이너로 감싸진다', () => {

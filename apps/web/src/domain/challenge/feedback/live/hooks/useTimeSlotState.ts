@@ -1,19 +1,18 @@
+import { SLOT_START_TIMES } from '@letscareer/utils';
 import { useCallback, useMemo, useState } from 'react';
 
 import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
 import type { SelectedSlot, SlotStatus } from '../types';
 import { toDateString } from '../utils';
 
-function generateSlotTimes(startHour: number, endHour: number): string[] {
-  const times: string[] = [];
-  for (let h = startHour; h < endHour; h++) {
-    times.push(`${String(h).padStart(2, '0')}:00`);
-    times.push(`${String(h).padStart(2, '0')}:30`);
-  }
-  return times;
-}
-
-const ALL_SLOT_TIMES = generateSlotTimes(9, 23);
+/**
+ * 슬롯 시각 목록은 `@letscareer/utils` 가 정한다. 여기서 다시 만들지 않는다.
+ *
+ * 값 자체는 예전과 같다(09:00 ~ 22:30). 다만 같은 정책이 멘토·어드민 화면에도
+ * 각각 다른 숫자로 적혀 있었고, 어드민이 22:00 에서 끊겨 멘토가 연 슬롯이
+ * 사라진 적이 있다(2026-08-14 운영 문의). 세 화면이 한 값을 보게 한다.
+ */
+const ALL_SLOT_TIMES = SLOT_START_TIMES;
 
 function getInitialDate(slotRangeStart: string, slotRangeEnd: string): Date {
   const today = new Date();
