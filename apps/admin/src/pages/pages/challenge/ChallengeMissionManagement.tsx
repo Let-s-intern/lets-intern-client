@@ -1,3 +1,4 @@
+import AlertModal from '@/common/alert/AlertModal';
 import Button from '@/domain/admin/challenge/ui/button/Button';
 import Heading from '@/domain/admin/challenge/ui/heading/Heading';
 import LineTableBody from '@/domain/admin/challenge/ui/lineTable/LineTableBody';
@@ -64,15 +65,18 @@ const findEmptyRequiredLabels = (item: Row): string[] =>
     return typeof value !== 'string' || value.trim() === '';
   }).map(({ label }) => label);
 
-/** 실패를 화면에 알린다. 콘솔에만 남기면 아무도 모른다. */
-const notifyFailure = (action: string, error: unknown) => {
+/**
+ * 실패 사유 문구.
+ *
+ * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
+ * `code`/`message` 를 **최상위 속성**으로 올린다(`error.response` 는 남지 않는다).
+ */
+const describeError = (error: unknown): string => {
   const apiError = error as { code?: string; message?: string } | null;
-  const detail = apiError?.message
-    ? `${apiError.message}${apiError.code ? ` (${apiError.code})` : ''}`
-    : '알 수 없는 오류입니다.';
-  // eslint-disable-next-line no-console
-  console.error(error);
-  alert(`${action}에 실패했습니다.\n\n${detail}`);
+  if (!apiError?.message) return '알 수 없는 오류입니다.';
+  return apiError.code
+    ? `${apiError.message} (${apiError.code})`
+    : apiError.message;
 };
 
 /** 미션 (템플릿) 관리 */
@@ -91,6 +95,15 @@ const ChallengeMissionManagement = () => {
       return missionTemplateAdmin.parse(res.data.data);
     },
   });
+
+  /**
+   * 실패 안내. 어드민 공용 `AlertModal` 을 쓴다.
+   * 예전에는 실패가 `console.error` 로만 갔다 — 운영은 아무것도 보지 못했다.
+   */
+  const [alertState, setAlertState] = useState<{
+    title: string;
+    body: string;
+  } | null>(null);
 
   const [insertingMissionTemplate, setInsertingMissionTemplate] =
     useState<Row | null>(null);
@@ -119,7 +132,11 @@ const ChallengeMissionManagement = () => {
         throw new Error(res.data.message);
       }
     },
-    onError: (error) => notifyFailure('미션 등록', error),
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      setAlertState({ title: '미션 등록 실패', body: describeError(error) });
+    },
   });
 
   const updateMutation = useMutation({
@@ -132,7 +149,11 @@ const ChallengeMissionManagement = () => {
         throw new Error(res.data?.message ?? `저장 실패 (HTTP ${res.status})`);
       }
     },
-    onError: (error) => notifyFailure('미션 수정', error),
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      setAlertState({ title: '미션 수정 실패', body: describeError(error) });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -142,7 +163,11 @@ const ChallengeMissionManagement = () => {
         throw new Error(res.data?.message ?? `삭제 실패 (HTTP ${res.status})`);
       }
     },
-    onError: (error) => notifyFailure('미션 삭제', error),
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      setAlertState({ title: '미션 삭제 실패', body: describeError(error) });
+    },
   });
 
   return (
@@ -216,7 +241,10 @@ const ChallengeMissionManagement = () => {
                 // 무엇이 비었는지 이름으로 알려준다. 예전에는 그냥 400 이 나고 조용히 끝났다.
                 const emptyLabels = findEmptyRequiredLabels(item);
                 if (emptyLabels.length > 0) {
-                  alert(`다음 항목을 입력해주세요.\n\n${emptyLabels.join(', ')}`);
+                  setAlertState({
+                    title: '입력하지 않은 항목이 있습니다',
+                    body: emptyLabels.join(', '),
+                  });
                   throw new Error('필수 항목 누락');
                 }
 
@@ -258,6 +286,16 @@ const ChallengeMissionManagement = () => {
           className="py-4"
         />
       </div>
+
+      {alertState && (
+        <AlertModal
+          title={alertState.title}
+          showCancel={false}
+          onConfirm={() => setAlertState(null)}
+        >
+          {alertState.body}
+        </AlertModal>
+      )}
     </div>
   );
 };
