@@ -52,6 +52,11 @@ const CurationItem = ({
             label="큐레이션 분류"
             id="curationType"
             name="curationType"
+            // 분류가 8개라 화면 아래쪽 줄에서 메뉴가 창 밖으로 넘쳐 마지막 항목을
+            // 고를 수 없었다. 높이를 제한해 메뉴 안에서 스크롤되게 한다.
+            MenuProps={{
+              PaperProps: { sx: { maxHeight: 280 } },
+            }}
             value={item.programType}
             onChange={(e) => {
               const value = e.target.value as CurationType;

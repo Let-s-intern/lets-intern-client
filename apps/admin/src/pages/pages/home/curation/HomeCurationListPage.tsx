@@ -124,6 +124,11 @@ const HomeCurationListPage = () => {
             </Button>
           </div>
         </Header>
+        <p className="mb-4 text-sm text-neutral-500">
+          배너 하단은 노출 기간이 겹쳐도 한 번에 하나만 보입니다. 여러 개를
+          노출로 두면 가장 나중에 등록한 것만 나오고 나머지는 화면에 나타나지
+          않습니다. 후기 하단과 블로그 하단은 최대 4개까지 함께 보입니다.
+        </p>
         <main>
           {isLoading ? (
             <LoadingContainer />
