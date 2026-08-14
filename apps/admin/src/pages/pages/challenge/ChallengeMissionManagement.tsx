@@ -203,77 +203,77 @@ const ChallengeMissionManagement = () => {
       <div className="overflow-x-auto">
         <div className="min-w-[1800px]">
           <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
-        <LineTableBody>
-          {missionTemplateListRows?.map((row) => (
-            <LineTableBodyRow<Row>
-              attrNames={[
-                'createDate',
-                'id',
-                'missionTag',
-                'title',
-                'description',
-                'guide',
-                'templateLink',
-                'vodLink',
-              ]}
-              placeholders={colNames}
-              canEdits={[false, false, true, true, true, true, true, true]}
-              contents={[
-                { type: TABLE_CONTENT.DATE },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-                { type: TABLE_CONTENT.INPUT },
-              ]}
-              key={row.id}
-              initialValues={row}
-              onCancel={() => {
-                setInsertingMissionTemplate(null);
-              }}
-              onDelete={async (item) => {
-                await deleteMutation.mutateAsync(item.id);
-                refetch();
-              }}
-              onSave={async (item) => {
-                // 무엇이 비었는지 이름으로 알려준다. 예전에는 그냥 400 이 나고 조용히 끝났다.
-                const emptyLabels = findEmptyRequiredLabels(item);
-                if (emptyLabels.length > 0) {
-                  setAlertState({
-                    title: '입력하지 않은 항목이 있습니다',
-                    body: emptyLabels.join(', '),
-                  });
-                  throw new Error('필수 항목 누락');
-                }
-
-                if (item.rowStatus === TABLE_STATUS.INSERT) {
-                  await createMutation.mutateAsync({
-                    description: item.description,
-                    guide: item.guide,
-                    missionTag: item.missionTag,
-                    templateLink: item.templateLink ?? '',
-                    title: item.title,
-                    vodLink: item.vodLink,
-                  });
-                  refetch();
+          <LineTableBody>
+            {missionTemplateListRows?.map((row) => (
+              <LineTableBodyRow<Row>
+                attrNames={[
+                  'createDate',
+                  'id',
+                  'missionTag',
+                  'title',
+                  'description',
+                  'guide',
+                  'templateLink',
+                  'vodLink',
+                ]}
+                placeholders={colNames}
+                canEdits={[false, false, true, true, true, true, true, true]}
+                contents={[
+                  { type: TABLE_CONTENT.DATE },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                ]}
+                key={row.id}
+                initialValues={row}
+                onCancel={() => {
                   setInsertingMissionTemplate(null);
-                } else if (item.rowStatus === TABLE_STATUS.SAVE) {
-                  await updateMutation.mutateAsync({
-                    id: item.id,
-                    description: item.description,
-                    guide: item.guide,
-                    missionTag: item.missionTag,
-                    templateLink: item.templateLink ?? '',
-                    title: item.title,
-                    vodLink: item.vodLink,
-                  });
+                }}
+                onDelete={async (item) => {
+                  await deleteMutation.mutateAsync(item.id);
                   refetch();
-                }
-              }}
-              cellWidthList={cellWidthList}
-            />
+                }}
+                onSave={async (item) => {
+                  // 무엇이 비었는지 이름으로 알려준다. 예전에는 그냥 400 이 나고 조용히 끝났다.
+                  const emptyLabels = findEmptyRequiredLabels(item);
+                  if (emptyLabels.length > 0) {
+                    setAlertState({
+                      title: '입력하지 않은 항목이 있습니다',
+                      body: emptyLabels.join(', '),
+                    });
+                    throw new Error('필수 항목 누락');
+                  }
+
+                  if (item.rowStatus === TABLE_STATUS.INSERT) {
+                    await createMutation.mutateAsync({
+                      description: item.description,
+                      guide: item.guide,
+                      missionTag: item.missionTag,
+                      templateLink: item.templateLink ?? '',
+                      title: item.title,
+                      vodLink: item.vodLink,
+                    });
+                    refetch();
+                    setInsertingMissionTemplate(null);
+                  } else if (item.rowStatus === TABLE_STATUS.SAVE) {
+                    await updateMutation.mutateAsync({
+                      id: item.id,
+                      description: item.description,
+                      guide: item.guide,
+                      missionTag: item.missionTag,
+                      templateLink: item.templateLink ?? '',
+                      title: item.title,
+                      vodLink: item.vodLink,
+                    });
+                    refetch();
+                  }
+                }}
+                cellWidthList={cellWidthList}
+              />
             ))}
           </LineTableBody>
         </div>
