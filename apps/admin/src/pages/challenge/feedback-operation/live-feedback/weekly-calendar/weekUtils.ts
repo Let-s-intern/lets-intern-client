@@ -9,8 +9,17 @@ import dayjs from '@/lib/dayjs';
 
 /** 그리드 시작 시각(시). */
 export const GRID_START_HOUR = 9;
-/** 그리드 끝 시각(시, 미포함). */
-export const GRID_END_HOUR = 22;
+/**
+ * 그리드 끝 시각(시, 미포함).
+ *
+ * 멘티 화면이 고를 수 있는 마지막 슬롯이 22:00~22:30 이므로 23 이어야 한다
+ * (web `useTimeSlotState.ts` 의 `generateSlotTimes(9, 23)`).
+ * 22 로 두면 22:00 시작 슬롯의 slotIndex 가 SLOTS_PER_DAY 와 같아져
+ * `WeeklyGrid` 의 범위 필터에 걸려 **아무 표시 없이 사라진다.**
+ * 멘티는 예약할 수 있는데 어드민에서만 안 보이는 상태가 된다
+ * (2026-08-14 운영 문의: 슬롯 4건 중 22:00 건이 누락).
+ */
+export const GRID_END_HOUR = 23;
 /** 슬롯 길이(분). */
 export const SLOT_MINUTES = 30;
 
