@@ -54,20 +54,27 @@ const ResultDropdown = ({
       )}
       onClick={(e) => e.preventDefault()}
     >
-      {attendance && (
-        <div
-          className="cursor-pointer rounded-sm border border-gray-400 py-1 pl-2 pr-1 text-xs"
-          onClick={() => setIsMenuShown(!isMenuShown)}
-        >
-          <div className="flex items-center gap-1">
-            <span>
-              {attendance.result && attendanceResultToText[attendance.result]}
-            </span>
-            <i>
-              <IoMdArrowDropdown />
-            </i>
+      {attendance?.isCanceled ? (
+        // 취소(환불)한 신청은 확인여부를 바꿀 수 없다. 드롭다운 대신 상태만 보여준다.
+        <span className="rounded-sm border border-red-300 bg-white px-2 py-1 text-xs text-red-600">
+          취소/환불
+        </span>
+      ) : (
+        attendance && (
+          <div
+            className="cursor-pointer rounded-sm border border-gray-400 py-1 pl-2 pr-1 text-xs"
+            onClick={() => setIsMenuShown(!isMenuShown)}
+          >
+            <div className="flex items-center gap-1">
+              <span>
+                {attendance.result && attendanceResultToText[attendance.result]}
+              </span>
+              <i>
+                <IoMdArrowDropdown />
+              </i>
+            </div>
           </div>
-        </div>
+        )
       )}
       {isMenuShown && attendance && (
         <ul className="absolute bottom-0 z-50 w-full translate-y-[100%] rounded-lg border border-[#E5E5E5] bg-white">
