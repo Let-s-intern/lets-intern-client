@@ -19,7 +19,11 @@ const WEEK_START = '2026-08-17'; // 월요일
 const WEDNESDAY = '2026-08-19';
 
 const positionOf = (time: string, endTime: string) =>
-  getSlotPosition(`${WEDNESDAY}T${time}`, `${WEDNESDAY}T${endTime}`, WEEK_START);
+  getSlotPosition(
+    `${WEDNESDAY}T${time}`,
+    `${WEDNESDAY}T${endTime}`,
+    WEEK_START,
+  );
 
 describe('주간 그리드 시간 범위', () => {
   it('멘티가 고를 수 있는 마지막 슬롯까지 덮는다', () => {
@@ -70,7 +74,9 @@ describe('getSlotPosition', () => {
       ['22:00:00', '22:30:00'],
     ] as const;
 
-    const indexes = slots.map(([start, end]) => positionOf(start, end).slotIndex);
+    const indexes = slots.map(
+      ([start, end]) => positionOf(start, end).slotIndex,
+    );
 
     expect(indexes).toEqual([23, 24, 25, 26]);
     // WeeklyGrid 가 쓰는 범위 조건과 같은 판정
