@@ -55,10 +55,10 @@ const ResultDropdown = ({
       onClick={(e) => e.preventDefault()}
     >
       {attendance?.isCanceled ? (
-        // 취소(환불)한 신청은 확인여부를 바꿀 수 없다. 드롭다운 대신 상태만 보여준다.
-        <span className="rounded-sm border border-red-300 bg-white px-2 py-1 text-xs text-red-600">
-          취소/환불
-        </span>
+        // 취소(환불)한 신청은 확인여부를 바꿀 수 없다.
+        // 테두리를 두면 버튼처럼 보여 눌러도 되는 줄 알게 되므로 글자만 둔다.
+        // 나머지 칸은 흐리게 두되 이 글자만 빨갛게 남겨 왜 잠겼는지 바로 보이게 한다.
+        <span className="text-xs font-medium text-red-500">취소/환불</span>
       ) : (
         attendance && (
           <div

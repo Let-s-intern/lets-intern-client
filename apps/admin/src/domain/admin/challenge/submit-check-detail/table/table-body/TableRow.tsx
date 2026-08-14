@@ -68,7 +68,8 @@ const TableRow = ({
   return (
     <div
       className={clsx('flex w-full', {
-        'bg-red-50': isCanceled,
+        // 취소자는 배경과 흐린 글자로 구분한다. 처리 대상이 아니라는 신호다.
+        'bg-red-50 text-neutral-400': isCanceled,
         'bg-yellow-100':
           !isCanceled && attendanceItem.attendance.result === 'WAITING',
         'bg-[#F1F1F1]':
