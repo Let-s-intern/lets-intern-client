@@ -20,6 +20,10 @@ import { useRouter } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 import ChallengePriceInfoContent from './ChallengePriceInfoContent';
+// [임시] LC-3213 — 버전이 데이터로 들어오면 이 import 와 아래 rightSlot 전달을 지운다.
+import ChallengeVersionTag, {
+  extractChallengeVersionLabel,
+} from './ChallengeVersionTag';
 import RadioButton from './RadioButton';
 
 const {
@@ -186,17 +190,35 @@ const ChallengeBasicInfo = ({
                   .sort((a, b) =>
                     dayjs(a.startDate).isAfter(b.startDate) ? 1 : -1,
                   )
-                  .map((activeChallenge, index) => (
-                    <RadioButton
-                      key={index}
-                      color={styles.basicInfoStyle.color}
-                      checked={activeChallenge.id === Number(challengeId)}
-                      label={formatFullDate(dayjs(activeChallenge.startDate))}
-                      onClick={() =>
-                        handleClickActiveChallenge(activeChallenge)
-                      }
-                    />
-                  ))}
+                  .map((activeChallenge, index) => {
+                    // [임시] LC-3213 — 같은 날 두 버전이 열리면 날짜만으로는 구분이
+                    // 안 돼 제목 앞 대괄호를 태그로 보여준다. 비교 대상이 하나뿐이면
+                    // 붙이지 않는다. 자세한 배경은 ChallengeVersionTag.tsx 참고.
+                    const versionLabel =
+                      activeChallengeList.length > 1
+                        ? extractChallengeVersionLabel(activeChallenge.title)
+                        : null;
+
+                    return (
+                      <RadioButton
+                        key={index}
+                        color={styles.basicInfoStyle.color}
+                        checked={activeChallenge.id === Number(challengeId)}
+                        label={formatFullDate(dayjs(activeChallenge.startDate))}
+                        onClick={() =>
+                          handleClickActiveChallenge(activeChallenge)
+                        }
+                        rightSlot={
+                          versionLabel ? (
+                            <ChallengeVersionTag
+                              label={versionLabel}
+                              color={styles.basicInfoStyle.color}
+                            />
+                          ) : undefined
+                        }
+                      />
+                    );
+                  })}
             </div>
           </div>
         )}
