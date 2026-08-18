@@ -88,10 +88,14 @@ const DetailSettingsPage = () => {
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
   const canStartEdit = status === 'APPROVED' && !currentOpening;
-  /** 수정 불가 안내 — 왜 못 고치는지가 상황마다 달라 문구를 나눈다. */
+  /**
+   * 수정 불가 안내 — 왜 못 고치는지가 상황마다 달라 문구를 나눈다.
+   * 오픈 중이 아닌 잠금(승인·비활성 상태)에서 "수정을 시작하라"고 하면 그 버튼이
+   * 없는 경우에 거짓말이 되므로, 이유를 아는 경우에만 이유를 말한다.
+   */
   const lockedMessage = currentOpening
     ? '오픈 중에는 상세 페이지를 수정할 수 없어요.'
-    : '지금은 상세 페이지를 수정할 수 없어요. 위 안내에서 수정을 시작해 주세요.';
+    : '지금은 상세 페이지를 수정할 수 없어요.';
 
   /**
    * 완료 표시가 붙는 탭. 탭을 옮길 때마다가 아니라 **템플릿이 바뀔 때만** 다시 센다 —

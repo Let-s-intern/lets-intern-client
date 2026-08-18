@@ -11,6 +11,42 @@ interface DetailSaveBarProps {
   onRevert: () => void;
 }
 
+/**
+ * 상태 아이콘 3종 (시안 기준). 뜻은 옆 문구가 전하므로 그림은 낭독에서 숨긴다.
+ * 저장됨=체크, 미저장 변경=경고, 수정 불가=자물쇠.
+ */
+const iconProps = {
+  'aria-hidden': true,
+  viewBox: '0 0 20 20',
+  className: 'h-4 w-4 shrink-0',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.8,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const;
+
+const CheckIcon = () => (
+  <svg {...iconProps}>
+    <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+  </svg>
+);
+
+const AlertIcon = () => (
+  <svg {...iconProps}>
+    <circle cx="10" cy="10" r="7.5" />
+    <path d="M10 6v4.5" />
+    <path d="M10 13.6h.01" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg {...iconProps}>
+    <rect x="4.5" y="8.5" width="11" height="7" rx="1.5" />
+    <path d="M7.5 8.5V6.8a2.5 2.5 0 0 1 5 0v1.7" />
+  </svg>
+);
+
 const barClass =
   'shadow-05 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3';
 // 사이드바(296px)와 우측 미리보기 컬럼(380px + gap-6)을 뺀 콘텐츠 영역 기준 폭.
@@ -44,8 +80,9 @@ const DetailSaveBar = ({
         <div className={barClass}>
           <p
             role="status"
-            className="min-w-0 text-sm font-medium text-gray-600"
+            className="flex min-w-0 items-center gap-2 text-sm font-medium text-gray-600"
           >
+            <LockIcon />
             {lockedMessage}
           </p>
           {publicDetailHref === null ? null : (
@@ -68,11 +105,14 @@ const DetailSaveBar = ({
       <div className={barClass}>
         <p
           role="status"
-          className={`min-w-0 truncate text-sm font-medium ${
+          className={`flex min-w-0 items-center gap-2 text-sm font-medium ${
             isDirty ? 'text-system-error' : 'text-gray-500'
           }`}
         >
-          {isDirty ? '저장하지 않은 변경사항이 있어요.' : '저장된 상태예요.'}
+          {isDirty ? <AlertIcon /> : <CheckIcon />}
+          <span className="truncate">
+            {isDirty ? '저장하지 않은 변경사항이 있어요.' : '저장된 상태예요.'}
+          </span>
         </p>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -80,7 +120,7 @@ const DetailSaveBar = ({
             type="button"
             onClick={onRevert}
             disabled={!isDirty || isSaving}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
           >
             변경사항 되돌리기
           </button>
