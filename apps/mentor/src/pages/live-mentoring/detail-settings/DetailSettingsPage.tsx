@@ -24,6 +24,7 @@ import {
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
 import { DETAIL_TABS, type DetailTabId, isDetailTabComplete } from './tabs';
+import DetailSaveBar from './ui/DetailSaveBar';
 import DetailTabs from './ui/DetailTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
@@ -424,47 +425,25 @@ const DetailSettingsPage = () => {
         </div>
       )}
 
-      <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        {isLocked ? (
-          canStartEdit ? (
-            <button
-              type="button"
-              onClick={handleStartEdit}
-              disabled={isStartingEdit}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isStartingEdit ? '처리 중...' : '수정'}
-            </button>
-          ) : null
-        ) : (
-          <>
-            {isDirty && (
-              <button
-                type="button"
-                onClick={handleCancel}
-                disabled={isPending}
-                className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-600 shadow-lg transition-colors disabled:opacity-50"
-              >
-                수정 취소
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isPending || !isDirty}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-10 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isPending ? '저장 중...' : '저장하기'}
-            </button>
-            <Link
-              to="/live-mentoring/open-settings"
-              className="border-primary text-primary hover:bg-primary rounded-lg border bg-white px-6 py-2.5 text-sm font-medium shadow-lg transition-colors hover:text-white"
-            >
-              오픈하러 가기
-            </Link>
-          </>
-        )}
-      </div>
+      {canEdit ? (
+        <DetailSaveBar
+          isDirty={isDirty}
+          isSaving={isPending}
+          onSave={handleSave}
+          onRevert={handleCancel}
+        />
+      ) : canStartEdit ? (
+        <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
+          <button
+            type="button"
+            onClick={handleStartEdit}
+            disabled={isStartingEdit}
+            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isStartingEdit ? '처리 중...' : '수정'}
+          </button>
+        </div>
+      ) : null}
 
       <MentorAlertModal {...alertProps} />
 

@@ -118,6 +118,15 @@ afterEach(() => {
   openings = [];
 });
 
+/** 히어로 탭에서 소개 문구를 하나 추가해 미저장 변경 상태를 만든다. */
+const addHeroBullet = () => {
+  const heroSection = screen
+    .getByRole('heading', { name: '히어로 (최상단)' })
+    .closest('section');
+  if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+  fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+};
+
 /** 탭 이름(라벨 일부)으로 탭을 연다. 탭의 접근성 이름은 "라벨 필수|선택" 형태다. */
 const openTab = (name: string) =>
   fireEvent.click(screen.getByRole('tab', { name: new RegExp(name) }));
@@ -255,57 +264,45 @@ describe('DetailSettingsPage — 편집 영역', () => {
     ).toBeInTheDocument();
   });
 
-  it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장하기는 비활성이다', () => {
+  it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장 바가 저장됨 상태다', () => {
     renderPage();
 
     expect(
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
-    expect(screen.getByRole('link', { name: '오픈하러 가기' })).toHaveAttribute(
-      'href',
-      '/live-mentoring/open-settings',
-    );
+    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: '수정 취소' }),
-    ).not.toBeInTheDocument();
+      screen.getByRole('button', { name: '변경사항 저장' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '변경사항 되돌리기' }),
+    ).toBeDisabled();
   });
 
-  it('값을 바꾸면 저장하기가 활성화되고, 저장하면 다시 비활성화된다', () => {
+  it('값을 바꾸면 미저장 상태가 되고, 저장하면 다시 저장됨으로 돌아간다', () => {
     renderPage();
+    addHeroBullet();
 
-    const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
-      .closest('section');
-    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
-    );
+    expect(screen.getByText('저장하지 않은 변경사항이 있어요.')).toBeVisible();
+    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeEnabled();
 
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: '수정 취소' })).toBeVisible();
-
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
   });
 
-  it('수정 취소하면 변경사항을 되돌리고 버튼이 사라진다', () => {
+  it('변경사항 되돌리기를 누르면 저장됨 상태로 복원된다', () => {
     renderPage();
+    addHeroBullet();
 
-    const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
-      .closest('section');
-    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 되돌리기' }));
 
-    fireEvent.click(screen.getByRole('button', { name: '수정 취소' }));
-
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
+    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: '수정 취소' }),
-    ).not.toBeInTheDocument();
+      screen.getByRole('button', { name: '변경사항 저장' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: '변경사항 되돌리기' }),
+    ).toBeDisabled();
   });
 
   it('히어로 불릿에 빈 칸을 추가하고 안 채운 채 저장하면, 빈 칸을 걸러내고 보낸다', () => {
@@ -323,7 +320,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
       within(heroSection).getByRole('button', { name: '+ 추가' }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const [payload] = saveMock.mock.calls[0];
@@ -343,7 +340,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
     fireEvent.click(
       within(heroSection).getByRole('button', { name: '+ 추가' }),
     );
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload).not.toHaveProperty('intro');
@@ -449,8 +446,9 @@ describe('DetailSettingsPage — 상태 잠금', () => {
 
   it('초안이면 배너 없이 편집할 수 있다', () => {
     renderPage();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeVisible();
+    // 저장 바의 상태 문구도 role="status" 라 배너 유무는 문구로 판정한다.
+    expect(screen.queryByText('오픈 중')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeVisible();
   });
 });
 
