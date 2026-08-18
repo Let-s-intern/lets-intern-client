@@ -11,6 +11,9 @@ import { DETAIL_TABS, type DetailTabId } from '../tabs';
 import DetailSectionHeader from './DetailSectionHeader';
 import KeyPointField from './KeyPointField';
 import MentorProfileCard from './MentorProfileCard';
+import { useMentorHashTagListQuery } from '@/api/mentor-hash-tag/mentorHashTag';
+
+import MentoringTypeCardField from './MentoringTypeCardField';
 import WritingGuide from './WritingGuide';
 import ImageField from './ImageField';
 import ListField from './ListField';
@@ -88,6 +91,11 @@ const TemplateEditForm = ({
   onChange,
 }: TemplateEditFormProps) => {
   const { hero, intro, mentoringTypes, strategy, video, results } = template;
+  /*
+   * 태그 목록은 여기서 한 번만 조회해 카드에 내려준다. 카드가 최대 5개라
+   * 카드별 조회는 같은 요청을 다섯 번 만든다.
+   */
+  const { data: hashTags } = useMentorHashTagListQuery();
 
   // 미리보기 자동 스크롤 — 포커스가 어느 섹션으로 들어왔는지는 캡처 단계에서 한 번에 잡는다.
   const handleFocusCapture = (e: FocusEvent<HTMLDivElement>) => {
@@ -147,104 +155,115 @@ const TemplateEditForm = ({
           <DetailSectionHeader
             {...sectionMeta('mentoringTypes')}
             heading="멘토링 유형에 대해 알려주세요"
-            description="상세 페이지에 표시할 멘토링 유형 섹션의 제목과 문구를 작성해 주세요."
+            description={
+              '상세 페이지 최상단에 표시할 멘토링 유형에 대한 섹션 제목을 작성해 주세요.\n멘토링으로 멘티에게 어떤 도움을 줄 수 있는지 간략하게 적으면 좋아요.'
+            }
           />
-          <p className="mb-4 text-xs text-gray-500">
-            멘티가 고민에 맞는 유형을 고를 수 있도록 안내합니다.
-          </p>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             <div>
-              <label className={labelClass} htmlFor="typesTitle">
-                섹션 제목
-              </label>
-              <input
-                id="typesTitle"
-                className={inputClass}
-                value={mentoringTypes.title}
-                onChange={(e) =>
-                  onChange({
-                    mentoringTypes: {
-                      ...mentoringTypes,
-                      title: e.target.value,
-                    },
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="typesSubtitle">
-                섹션 설명
-              </label>
-              <input
-                id="typesSubtitle"
-                className={inputClass}
-                value={mentoringTypes.subtitle}
-                onChange={(e) =>
-                  onChange({
-                    mentoringTypes: {
-                      ...mentoringTypes,
-                      subtitle: e.target.value,
-                    },
-                  })
-                }
-              />
-            </div>
+              <p className="text-xsmall14 text-neutral-10 font-semibold">
+                상단 유형 소개 문구
+              </p>
 
-            <ListField<TemplateMentoringType>
-              label="유형 카드"
-              items={mentoringTypes.items}
-              makeEmpty={() => ({
-                typeName: '',
-                title: '',
-                description: '',
-                tags: [],
-              })}
-              renderItem={(item, update) => (
-                <div className="flex flex-col gap-2">
-                  <input
-                    className={inputClass}
-                    value={item.typeName}
-                    placeholder="유형명 (예: 자기소개서 피드백)"
-                    onChange={(e) =>
-                      update({ ...item, typeName: e.target.value })
-                    }
-                  />
+              <div className="mt-3 flex flex-col gap-3">
+                <div>
+                  <label className={labelClass} htmlFor="typesTitle">
+                    멘토링 유형 소개 제목{' '}
+                    <span className="text-system-error">*</span>
+                  </label>
+                  <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                    <input
+                      id="typesTitle"
+                      value={mentoringTypes.title}
+                      maxLength={20}
+                      placeholder="레이블"
+                      className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                      onChange={(e) =>
+                        onChange({
+                          mentoringTypes: {
+                            ...mentoringTypes,
+                            title: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                    <span className="shrink-0 text-xs text-neutral-50">
+                      {mentoringTypes.title.length}/20
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClass} htmlFor="typesSubtitle">
+                    멘토링 유형 소개 문구
+                  </label>
                   <textarea
-                    rows={2}
-                    className={inputClass}
-                    value={item.title}
-                    placeholder="카드 제목 (줄바꿈 가능)"
-                    onChange={(e) => update({ ...item, title: e.target.value })}
-                  />
-                  <textarea
-                    rows={2}
-                    className={inputClass}
-                    value={item.description}
-                    placeholder="설명"
+                    id="typesSubtitle"
+                    rows={4}
+                    value={mentoringTypes.subtitle}
+                    placeholder="레이블"
+                    className="border-neutral-80 focus:border-primary text-xsmall14 text-neutral-10 placeholder:text-neutral-60 w-full resize-none rounded-md border bg-white px-3 py-2.5 outline-none transition-colors"
                     onChange={(e) =>
-                      update({ ...item, description: e.target.value })
-                    }
-                  />
-                  <input
-                    className={inputClass}
-                    value={item.tags.join(', ')}
-                    placeholder="태그 (쉼표로 구분)"
-                    onChange={(e) =>
-                      update({
-                        ...item,
-                        tags: e.target.value
-                          .split(',')
-                          .map((tag) => tag.trim())
-                          .filter(Boolean),
+                      onChange({
+                        mentoringTypes: {
+                          ...mentoringTypes,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                   />
                 </div>
-              )}
+              </div>
+
+              <div className="mt-3">
+                <WritingGuide
+                  advice="멘티가 받을 수 있는 도움을 간략하고 명확하게 표현하면 좋아요."
+                  examples={[]}
+                  labeledExamples={[
+                    {
+                      label: '멘토링 유형 소개 제목',
+                      value:
+                        '쥬디 멘토에게는 자소서, 포트폴리오 도움을 받을 수 있어요',
+                    },
+                    {
+                      label: '멘토링 유형 소개 문구',
+                      value:
+                        '현재 고민에 맞는 멘토링 유형을 살펴보고 도움을 요청해보세요',
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+
+            <MentoringTypeCardField
+              items={mentoringTypes.items}
+              hashTags={hashTags ?? []}
               onChange={(items) =>
                 onChange({ mentoringTypes: { ...mentoringTypes, items } })
               }
+            />
+
+            <WritingGuide
+              advice="유형별로 어떤 고민에 적합하고, 멘토링으로 어떤 도움을 받을 수 있는지 구체적으로 작성해 주세요"
+              examples={[]}
+              labeledExamples={[
+                { label: '유형 선택', value: '포트폴리오 피드백' },
+                {
+                  label: '유형 제목',
+                  value:
+                    '포트폴리오에서 핵심 역량이 잘 드러나는지 점검받고 싶다면',
+                },
+                {
+                  label: '부가 설명',
+                  value:
+                    '프로젝트의 핵심 역량과 문제 해결 과정이 잘 드러나도록 포트폴리오 구성을 점검할 수 있어요.',
+                },
+                {
+                  label: '관련 태그',
+                  value: '#구성 점검  #역량 강조  #프로젝트 정리',
+                },
+              ]}
             />
           </div>
         </section>

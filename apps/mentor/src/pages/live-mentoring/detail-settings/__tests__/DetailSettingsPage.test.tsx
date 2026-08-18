@@ -39,6 +39,19 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 }));
 
 // 이미지 업로드는 파일 API 를 타므로 편집 폼 테스트에서는 라벨만 남긴다.
+/*
+ * 유형 카드의 관련 태그는 서버가 관리하는 목록에서 고른다.
+ * 태그 자체는 이 화면의 관심사가 아니라 두 개만 둔다.
+ */
+vi.mock('@/api/mentor-hash-tag/mentorHashTag', () => ({
+  useMentorHashTagListQuery: () => ({
+    data: [
+      { id: 1, type: 'STRENGTH', title: '구성 점검' },
+      { id: 2, type: 'STRENGTH', title: '역량 강조' },
+    ],
+  }),
+}));
+
 vi.mock('../ui/ImageField', () => ({
   default: ({ label }: { label: string }) => <div>{label}</div>,
 }));
