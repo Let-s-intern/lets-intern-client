@@ -11,25 +11,54 @@ interface DetailTabsProps {
  * **입력 잠금(`fieldset disabled`) 바깥에 둔다.** 오픈 중이라 편집할 수 없을 때도
  * 탭 이동은 계속 동작해야 한다 — 잠금이 이동까지 삼키면 멘토는 자기 페이지를
  * 읽지도 못한다.
+ *
+ * 번호 배지는 순서를 보여주는 장식이라 `aria-hidden` 이고, 필수 여부는 화면 낭독에도
+ * 필요해 탭 이름(`aria-label`)에 넣는다.
  */
 const DetailTabs = ({ activeTab, onChange }: DetailTabsProps) => (
-  <div role="tablist" aria-label="상세 페이지 섹션" className="flex gap-2">
-    {DETAIL_TABS.map((tab) => {
+  <div
+    role="tablist"
+    aria-label="상세 페이지 섹션"
+    className="flex flex-wrap gap-2"
+  >
+    {DETAIL_TABS.map((tab, index) => {
       const isActive = tab.id === activeTab;
+      const requiredLabel = tab.required ? '필수' : '선택';
       return (
         <button
           key={tab.id}
           type="button"
           role="tab"
           aria-selected={isActive}
+          aria-label={`${tab.label} ${requiredLabel}`}
           onClick={() => onChange(tab.id)}
-          className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+          className={`flex shrink-0 items-center gap-1.5 rounded-full py-2 pl-2 pr-3 text-sm font-medium transition-colors ${
             isActive
               ? 'bg-primary text-white'
               : 'border border-gray-200 bg-white text-gray-600'
           }`}
         >
+          <span
+            aria-hidden="true"
+            className={`flex h-5 w-5 items-center justify-center rounded-full text-xs ${
+              isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            {index + 1}
+          </span>
           {tab.label}
+          <span
+            aria-hidden="true"
+            className={`rounded px-1.5 py-0.5 text-[11px] ${
+              isActive
+                ? 'bg-white/20 text-white'
+                : tab.required
+                  ? 'bg-primary-10 text-primary'
+                  : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            {requiredLabel}
+          </span>
         </button>
       );
     })}

@@ -118,9 +118,9 @@ afterEach(() => {
   openings = [];
 });
 
-/** 탭 이름으로 탭을 연다. */
+/** 탭 이름(라벨 일부)으로 탭을 연다. 탭의 접근성 이름은 "라벨 필수|선택" 형태다. */
 const openTab = (name: string) =>
-  fireEvent.click(screen.getByRole('tab', { name }));
+  fireEvent.click(screen.getByRole('tab', { name: new RegExp(name) }));
 
 describe('DetailSettingsPage — 탭', () => {
   it('6개 탭을 렌더하고, 처음에는 핵심 소개 탭만 보인다', () => {
@@ -137,6 +137,20 @@ describe('DetailSettingsPage — 탭', () => {
     expect(
       screen.queryByRole('heading', { name: '결과 사례' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('탭마다 섹션 번호와 필수·선택 칩을 보여준다', () => {
+    renderPage();
+
+    // PRD §5 탭 구성표 — 1~3 필수, 4~6 선택
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      '1핵심 소개필수',
+      '2멘토 정보필수',
+      '3멘토링 유형필수',
+      '4취업 성공 전략선택',
+      '5소개 영상선택',
+      '6결과 사례선택',
+    ]);
   });
 
   it('탭을 클릭하면 그 탭의 섹션만 보인다', () => {
