@@ -1,47 +1,43 @@
-import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 
-import { useFeedbackMentorSlotsQuery } from '@/api/feedback/feedback';
 import {
-  useLiveMentoringSlotsQuery,
-  useSaveLiveMentoringSlotsMutation,
-} from '@/api/live-mentoring/liveMentoring';
+  useCreateFeedbackMentorSlotsMutation,
+  useDeleteFeedbackMentorSlotsMutation,
+  useFeedbackMentorSlotsQuery,
+} from '@/api/feedback/feedback';
 import BaseModal from '@/common/modal/BaseModal';
+import { diffGridAgainstBeSlots } from '@/pages/feedback-live-availability/utils/slotConverter';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
 
-import {
-  toBlockedSlots,
-  toGridSlots,
-  toReservedSlots,
-  toSlotSaveRequest,
-} from '../utils/slotMapping';
+import { toGridSlots, toReservedSlots } from '../utils/slotMapping';
 
 interface LiveMentoringSlotModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-/** 서버가 받는 `LocalDateTime` 문자열 형식. */
-const LOCAL_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss";
-
 /**
- * 저장 실패 사유별 안내. 서버 `LiveMentoringErrorCode` 를 그대로 키로 쓴다.
+ * 저장 실패 사유별 안내. 서버 `FeedbackErrorCode` 를 그대로 키로 쓴다.
  * 공용 axios 인터셉터가 `code` 를 에러 객체 최상위에 올려준다.
+ *
+ * 1대1 전용 슬롯 API 가 사라지면서 `LIVE_MENTORING_SLOT_*` 코드는 더 이상 오지 않는다.
  */
 const SAVE_ERROR_MESSAGES: Record<string, string> = {
-  LIVE_MENTORING_SLOT_LOCKED:
-    '예약된 일정은 삭제할 수 없습니다. 최신 일정을 다시 불러왔어요.',
-  LIVE_MENTORING_SLOT_CONFLICT:
+  CONFLICT_FEEDBACK_SLOT:
     '이미 등록된 시간입니다. 최신 일정을 다시 불러왔으니 확인 후 다시 시도해주세요.',
-  LIVE_MENTORING_INVALID_SLOT_TIME:
-    '지금 이후의 30분 단위 시간만 열 수 있습니다. 이미 지난 시간이 선택돼 있지 않은지 확인해주세요.',
-  LIVE_MENTORING_NOT_FOUND:
-    '먼저 오픈 설정을 저장해 상품을 만든 뒤에 일정을 등록할 수 있습니다.',
+  RESERVED_FEEDBACK_SLOT:
+    '예약된 일정은 변경할 수 없습니다. 최신 일정을 다시 불러왔어요.',
+  FEEDBACK_SLOT_NOT_FOUND:
+    '이미 삭제된 일정입니다. 최신 일정을 다시 불러왔어요.',
 };
 
 /**
  * 1대1 라이브 멘토링 슬롯 편집 모달.
+ *
+ * 슬롯은 챌린지 라이브 피드백과 같은 `feedback_slot` 한 벌을 공유한다. 용도 구분이
+ * 없어졌으므로 이 화면과 `/feedback/live-availability` 는 같은 API 로 같은 목록을 본다.
+ * 저장도 챌린지 쪽과 같은 증분 방식이다 — 추가분만 `POST`, 해제분만 `DELETE`.
  *
  * 그리드는 챌린지 라이브 피드백과 같은 `LiveAvailabilityContent` 를 쓴다. 다만 챌린지
  * 전용 prop(`livePeriods`·`slotOpenWindow`·`challengeTitles`·`appliedBookings`·
@@ -59,61 +55,43 @@ const LiveMentoringSlotModal = ({
   const [saveError, setSaveError] = useState<string | null>(null);
 
   /*
-   * 지난 슬롯은 조회에서 제외한다. 서버는 저장 요청의 **모든** 항목에 "시작이 미래"를
-   * 요구하므로(`validatePeriod`), 지난 슬롯을 그리드에 선택 상태로 올리면 사용자가
-   * 손대지 않은 그 슬롯 때문에 저장 전체가 400 으로 실패한다. 지난 `OPEN` 슬롯은
-   * 서버 공개 조회에서도 이미 제외되는 값이라 payload 에서 빠져 정리된다.
-   *
-   * 모달을 열 때 한 번만 계산한다 — 렌더마다 새 값을 만들면 query key 가 매번 바뀐다.
+   * 조회 범위를 자르지 않는다. 저장이 전체 치환이던 시절에는 "조회하지 못한 슬롯이
+   * 저장으로 삭제된다"는 문제가 있어 `notBefore` 스냅샷으로 지난 슬롯을 걸렀지만,
+   * 증분 저장에는 치환 범위라는 개념 자체가 없다. 범위를 고정하면 query key 도
+   * 안정돼 모달을 열 때마다 새로 받아오지 않는다.
    */
-  const notBefore = useMemo(
-    () => format(new Date(), LOCAL_DATE_TIME),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isOpen],
-  );
-
-  const slotsQuery = useLiveMentoringSlotsQuery({
-    startDate: notBefore,
-    enabled: isOpen,
-  });
-  /*
-   * 챌린지 라이브 피드백 슬롯도 함께 읽는다. 두 슬롯은 같은 `feedback_slot` 행을 쓰고
-   * `UNIQUE(mentor_user_id, start_date)` 가 걸려 있어 같은 시각을 양쪽에 열 수 없는데,
-   * 조회 쿼리는 서로를 감춘다. 그리드가 이걸 보여주지 않으면 멘토는 이미 챌린지로 연
-   * 시간을 또 고르고 저장 순간에 원인 모를 409 를 만난다.
-   */
-  const challengeSlotsQuery = useFeedbackMentorSlotsQuery({
-    startDate: notBefore,
+  const slotsQuery = useFeedbackMentorSlotsQuery({
     statusList: ['OPEN', 'RESERVED'],
     enabled: isOpen,
   });
-  const saveSlots = useSaveLiveMentoringSlotsMutation();
+  const createSlots = useCreateFeedbackMentorSlotsMutation();
+  const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
 
-  const serverSlots = slotsQuery.data;
-  const challengeSlots = challengeSlotsQuery.data?.feedbackSlotList;
-
-  const initialSlots = useMemo(
-    () => toGridSlots(serverSlots ?? []),
-    [serverSlots],
-  );
-  const reservedSlots = useMemo(
-    () => toReservedSlots(serverSlots ?? []),
-    [serverSlots],
-  );
-  const blockedSlots = useMemo(
-    () => toBlockedSlots(challengeSlots ?? []),
-    [challengeSlots],
+  // `?? []` 를 렌더 본문에 두면 매 렌더 새 배열이 나와 아래 useMemo 가 전부 무효화된다.
+  const beSlots = useMemo(
+    () => slotsQuery.data?.feedbackSlotList ?? [],
+    [slotsQuery.data],
   );
 
-  const isLoading = slotsQuery.isPending || challengeSlotsQuery.isPending;
-  const isError = slotsQuery.isError || challengeSlotsQuery.isError;
+  const initialSlots = useMemo(() => toGridSlots(beSlots), [beSlots]);
+  const reservedSlots = useMemo(() => toReservedSlots(beSlots), [beSlots]);
+
+  const isLoading = slotsQuery.isPending;
+  const isError = slotsQuery.isError;
+  const isSaving = createSlots.isPending || deleteSlots.isPending;
 
   const handleSave = async (selected: MentorOpenSlot[]) => {
     setSaveError(null);
+    const { creates, deletes } = diffGridAgainstBeSlots({ selected, beSlots });
+    if (creates.length === 0 && deletes.length === 0) return;
+
     try {
-      await saveSlots.mutateAsync(
-        toSlotSaveRequest({ selected, serverSlots: serverSlots ?? [] }),
-      );
+      /*
+       * 추가를 먼저 보낸다. 같은 시각을 지웠다 다시 여는 편집은 생기지 않지만,
+       * 순서를 고정해 두면 실패 지점이 한 군데로 좁혀진다.
+       */
+      if (creates.length > 0) await createSlots.mutateAsync(creates);
+      if (deletes.length > 0) await deleteSlots.mutateAsync(deletes);
     } catch (error) {
       const apiError = error as { code?: string; message?: string } | null;
       const code = apiError?.code;
@@ -123,16 +101,11 @@ const LiveMentoringSlotModal = ({
           '일정을 저장하지 못했습니다.',
       );
       /*
-       * 잠금·충돌은 화면이 들고 있는 슬롯이 낡아서 난다(다른 탭에서 바꿨거나 방금 예약이
-       * 들어왔거나). 최신 상태를 다시 읽어 두면 같은 선택으로 다시 눌러도 성공한다.
-       * `resetKey` 를 건드리지 않으므로 사용자가 고른 셀은 그대로 남는다.
+       * 충돌·미존재는 화면이 들고 있는 슬롯이 낡아서 난다(다른 탭에서 바꿨거나 방금
+       * 예약이 들어왔거나). 최신 상태를 다시 읽어 두면 같은 선택으로 다시 눌러도
+       * 성공한다. `resetKey` 를 건드리지 않으므로 사용자가 고른 셀은 그대로 남는다.
        */
-      if (
-        code === 'LIVE_MENTORING_SLOT_LOCKED' ||
-        code === 'LIVE_MENTORING_SLOT_CONFLICT'
-      ) {
-        slotsQuery.refetch();
-      }
+      slotsQuery.refetch();
       // 다시 throw 해야 그리드가 모달을 닫지 않고 위 안내를 보여준다.
       throw error;
     }
@@ -187,10 +160,7 @@ const LiveMentoringSlotModal = ({
           </p>
           <button
             type="button"
-            onClick={() => {
-              slotsQuery.refetch();
-              challengeSlotsQuery.refetch();
-            }}
+            onClick={() => slotsQuery.refetch()}
             className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
           >
             다시 시도
@@ -206,9 +176,14 @@ const LiveMentoringSlotModal = ({
               {saveError}
             </div>
           )}
+          {isSaving && (
+            <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+              저장 중입니다...
+            </div>
+          )}
           <p className="text-xxsmall12 text-neutral-40 border-neutral-85 border-b px-6 py-3">
-            라이브 피드백으로 이미 열어 둔 시간은 선택할 수 없어요. 같은 시각에
-            두 일정을 함께 열 수 없습니다.
+            여기서 연 시간은 라이브 피드백 일정과 같은 목록이에요. 어느 화면에서
+            열어도 결과가 같습니다.
           </p>
           {/*
             그리드는 루트가 `h-full` 이라 부모 높이를 그대로 요구한다. 모달은
@@ -222,7 +197,6 @@ const LiveMentoringSlotModal = ({
               showHeader={false}
               initialSlots={initialSlots}
               reservedSlots={reservedSlots}
-              blockedSlots={blockedSlots}
               onSave={handleSave}
               onClose={handleClose}
               resetKey={isOpen}
