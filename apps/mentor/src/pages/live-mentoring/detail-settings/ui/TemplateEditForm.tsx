@@ -1,3 +1,4 @@
+import CharCounter from './CharCounter';
 import type { FocusEvent } from 'react';
 
 import type {
@@ -189,9 +190,7 @@ const TemplateEditForm = ({
                         })
                       }
                     />
-                    <span className="shrink-0 text-xs text-neutral-50">
-                      {mentoringTypes.title.length}/20
-                    </span>
+                    <CharCounter value={mentoringTypes.title} max={20} />
                   </div>
                 </div>
 
@@ -377,9 +376,7 @@ const TemplateEditForm = ({
                     onChange({ video: { ...video, title: e.target.value } })
                   }
                 />
-                <span className="shrink-0 text-xs text-neutral-50">
-                  {video.title.length}/20
-                </span>
+                <CharCounter value={video.title} max={20} />
               </div>
             </div>
 
@@ -487,9 +484,7 @@ const TemplateEditForm = ({
                     onChange({ results: { ...results, title: e.target.value } })
                   }
                 />
-                <span className="shrink-0 text-xs text-neutral-50">
-                  {results.title.length}/20
-                </span>
+                <CharCounter value={results.title} max={20} />
               </div>
             </div>
 

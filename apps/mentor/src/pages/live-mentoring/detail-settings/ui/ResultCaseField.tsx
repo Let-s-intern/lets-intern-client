@@ -1,3 +1,4 @@
+import CharCounter from './CharCounter';
 import type { TemplateResultCase } from '@/api/live-mentoring/liveMentoringSchema';
 
 import ImageField from './ImageField';
@@ -127,9 +128,10 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                     aria-label={`${index + 1}번 사례 멘토링 전 설명`}
                     className={captionInput}
                   />
-                  <span className="shrink-0 text-xs text-neutral-50">
-                    {item.beforeCaption.length}/{RESULT_CASE_CAPTION_MAX}
-                  </span>
+                  <CharCounter
+                    value={item.beforeCaption}
+                    max={RESULT_CASE_CAPTION_MAX}
+                  />
                 </div>
               </div>
 
@@ -157,9 +159,10 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                     aria-label={`${index + 1}번 사례 멘토링 후 설명`}
                     className={captionInput}
                   />
-                  <span className="shrink-0 text-xs text-neutral-50">
-                    {item.afterCaption.length}/{RESULT_CASE_CAPTION_MAX}
-                  </span>
+                  <CharCounter
+                    value={item.afterCaption}
+                    max={RESULT_CASE_CAPTION_MAX}
+                  />
                 </div>
               </div>
             </div>

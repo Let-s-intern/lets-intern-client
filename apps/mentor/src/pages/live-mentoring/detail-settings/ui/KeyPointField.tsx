@@ -1,3 +1,4 @@
+import CharCounter from './CharCounter';
 interface KeyPointFieldProps {
   bullets: string[];
   onChange: (bullets: string[]) => void;
@@ -91,9 +92,7 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
                 aria-label={`소개 문구 ${index + 1}`}
                 className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
               />
-              <span className="shrink-0 text-xs text-neutral-50">
-                {bullet.length}/{KEY_POINT_MAX_LENGTH}
-              </span>
+              <CharCounter value={bullet} max={KEY_POINT_MAX_LENGTH} />
             </div>
 
             <button

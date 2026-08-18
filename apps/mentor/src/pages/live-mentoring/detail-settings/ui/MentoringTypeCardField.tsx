@@ -1,3 +1,4 @@
+import CharCounter from './CharCounter';
 import type { TemplateMentoringType } from '@/api/live-mentoring/liveMentoringSchema';
 import type { MentorHashTagItem } from '@/api/mentor-hash-tag/mentorHashTagSchema';
 
@@ -167,9 +168,7 @@ const MentoringTypeCardField = ({
                     aria-label={`${index + 1}번 카드 유형 제목`}
                     className={inputText}
                   />
-                  <span className="shrink-0 text-xs text-neutral-50">
-                    {item.title.length}/{TYPE_TEXT_MAX}
-                  </span>
+                  <CharCounter value={item.title} max={TYPE_TEXT_MAX} />
                 </div>
               </div>
 
@@ -186,9 +185,7 @@ const MentoringTypeCardField = ({
                     aria-label={`${index + 1}번 카드 부가 설명`}
                     className={inputText}
                   />
-                  <span className="shrink-0 text-xs text-neutral-50">
-                    {item.description.length}/{TYPE_TEXT_MAX}
-                  </span>
+                  <CharCounter value={item.description} max={TYPE_TEXT_MAX} />
                 </div>
               </div>
 
