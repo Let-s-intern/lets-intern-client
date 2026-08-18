@@ -29,6 +29,18 @@ describe('공유 목 데이터 형상 — 프론트 zod 스키마 정합', () =>
     ).not.toThrow();
   });
 
+  it('LIVE_MENTORING_TEMPLATE 이 서버 응답 폭(영상·결과 사례 제목/설명, 멘토 정보)을 담는다', () => {
+    // 목이 서버보다 좁으면 새 탭이 목으로는 빈 화면이 되어 화면 확인이 불가능해진다.
+    const parsed = liveMentoringTemplateSchema.parse(LIVE_MENTORING_TEMPLATE);
+
+    expect(parsed.video.title).not.toBe('');
+    expect(parsed.video.subtitle).not.toBe('');
+    expect(parsed.results.title).not.toBe('');
+    expect(parsed.results.subtitle).not.toBe('');
+    expect(LIVE_MENTORING_TEMPLATE.intro.nickname).toBeTruthy();
+    expect(LIVE_MENTORING_TEMPLATE.intro).toHaveProperty('description');
+  });
+
   it('OPENING_HISTORY 의 각 항목이 openingHistoryItemSchema 를 통과한다', () => {
     expect(OPENING_HISTORY.length).toBeGreaterThan(0);
     for (const opening of OPENING_HISTORY) {
