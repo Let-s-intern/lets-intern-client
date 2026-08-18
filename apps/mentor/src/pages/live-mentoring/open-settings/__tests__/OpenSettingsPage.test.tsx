@@ -477,14 +477,13 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
   });
 
-  it('종료됨 배너가 일정을 다시 등록해야 한다고 알린다', () => {
+  it('종료됨 배너가 일정이 그대로 남아 있다고 알린다', () => {
     renderPage({ status: 'APPROVED' }, [closedOpening]);
 
-    expect(
-      within(screen.getByRole('status')).getByText(
-        /등록해 둔 일정이 모두 삭제됐으니, 일정을 다시 등록한 뒤/,
-      ),
-    ).toBeInTheDocument();
+    const banner = within(screen.getByRole('status'));
+    expect(banner.getByText(/등록해 둔 일정은 그대로/)).toBeInTheDocument();
+    expect(banner.queryByText(/모두 삭제/)).not.toBeInTheDocument();
+    expect(banner.queryByText(/다시 등록한 뒤/)).not.toBeInTheDocument();
   });
 
   // PRD §8-9 — 승인 이후에는 서버가 `PUT /settings` 를 409 로 잠근다.
