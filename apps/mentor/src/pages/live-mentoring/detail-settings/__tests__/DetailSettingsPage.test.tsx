@@ -52,10 +52,12 @@ const makeTemplate = (
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 300,
+      nickname: '쥬디',
       profileImage: null,
       affiliation: '렛츠커리어 | CEO',
       careerLines: ['(현) 렛츠커리어 대표 멘토'],
       oneLiner: '안녕하세요',
+      description: '렛츠커리어 | CEO',
     },
     mentoringTypes: {
       title: '이런 도움을 받을 수 있어요',
@@ -222,6 +224,31 @@ describe('DetailSettingsPage — 편집 영역', () => {
     const [payload] = saveMock.mock.calls[0];
     expect(payload.hero.bullets).toEqual([
       '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+    ]);
+  });
+
+  it('저장 payload 에는 서버 요청 DTO에 없는 intro 를 담지 않는다', () => {
+    // 멘토 정보는 프로필 도메인 소유라 이 요청으로 저장되지 않는다.
+    renderPage();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.click(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload).not.toHaveProperty('intro');
+    expect(Object.keys(payload).sort()).toEqual([
+      'hero',
+      'mentoringTypes',
+      'results',
+      'reviews',
+      'strategy',
+      'video',
     ]);
   });
 });

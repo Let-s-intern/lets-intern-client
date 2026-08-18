@@ -8,7 +8,10 @@ import {
   useStartEditLiveMentoringMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
+import {
+  type LiveMentoringTemplate,
+  toTemplateUpdatePayload,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { useUserQuery } from '@/api/user/user';
@@ -241,7 +244,8 @@ const DetailSettingsPage = () => {
     payload = { ...payload, hero: { bullets: cleanedBullets } };
     setTemplate(payload);
 
-    save(payload, {
+    // 서버 요청 DTO에 없는 값(intro·categories)은 여기서 떨어진다.
+    save(toTemplateUpdatePayload(payload), {
       onSuccess: () => {
         // 이후 refetch 로도 갱신되지만, 그 전까지 dirty 판정이 틀리지 않도록
         // 방금 저장한 값을 곧바로 새 기준선으로 삼는다.

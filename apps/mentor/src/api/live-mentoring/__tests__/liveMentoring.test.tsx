@@ -68,10 +68,12 @@ function makeTemplate(overrides: Record<string, unknown> = {}) {
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 120,
+      nickname: '카카오멘토',
       profileImage: null,
       affiliation: '카카오 | 백엔드',
       careerLines: ['카카오 | 백엔드 (3년)'],
       oneLiner: '소개',
+      description: '카카오 | 백엔드',
     },
     mentoringTypes: {
       title: '이런 도움을 받을 수 있어요',

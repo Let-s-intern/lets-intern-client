@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { liveMentoringTemplateSchema } from '../liveMentoringSchema';
+import {
+  liveMentoringTemplateSchema,
+  toTemplateUpdatePayload,
+} from '../liveMentoringSchema';
 
 /**
  * 상세 페이지 조회 응답(`GetLiveMentoringDetailPageResponseDto`) 계약 고정.
@@ -129,5 +132,44 @@ describe('상세 페이지 조회 응답 — 결과 사례 섹션', () => {
     expect(parsed).not.toHaveProperty('process');
     expect(parsed).not.toHaveProperty('reviewItems');
     expect(parsed).not.toHaveProperty('currentOpening');
+  });
+});
+
+describe('상세 페이지 저장 payload — 서버 요청 DTO 폭', () => {
+  it('멘토 정보(intro)는 읽기 전용이라 저장 payload 에 없다', () => {
+    const template = liveMentoringTemplateSchema.parse(DETAIL_PAGE_RESPONSE);
+
+    const payload = toTemplateUpdatePayload(template);
+
+    expect(payload).not.toHaveProperty('intro');
+    // 카테고리도 요청 DTO에 없다 — 서버가 상품(mentoring)에서 읽는다.
+    expect(payload).not.toHaveProperty('categories');
+  });
+
+  it('저장 payload 는 요청 DTO와 같은 6개 키뿐이다', () => {
+    const template = liveMentoringTemplateSchema.parse(DETAIL_PAGE_RESPONSE);
+
+    expect(Object.keys(toTemplateUpdatePayload(template)).sort()).toEqual([
+      'hero',
+      'mentoringTypes',
+      'results',
+      'reviews',
+      'strategy',
+      'video',
+    ]);
+  });
+
+  it('멘토링 유형에는 노출 토글(visible)이 없다 — 서버 요청 DTO에 없는 필드다', () => {
+    const template = liveMentoringTemplateSchema.parse({
+      ...DETAIL_PAGE_RESPONSE,
+      mentoringTypes: {
+        ...DETAIL_PAGE_RESPONSE.mentoringTypes,
+        visible: true,
+      },
+    });
+
+    expect(toTemplateUpdatePayload(template).mentoringTypes).not.toHaveProperty(
+      'visible',
+    );
   });
 });

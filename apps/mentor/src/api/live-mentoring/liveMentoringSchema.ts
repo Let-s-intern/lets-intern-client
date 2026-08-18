@@ -72,18 +72,30 @@ const sectionWithVisible = <T extends z.ZodRawShape>(extra: T) =>
     ...extra,
   });
 
-/** 시안 1 · 멘토 소개 — 프로필 값을 초기값으로 받아 멘토가 덮어쓴다. */
+/**
+ * 시안 1 · 멘토 정보 — **읽기 전용**이다.
+ *
+ * 저장 요청 DTO(`UpdateLiveMentoringDetailPageRequestDto`)에 `intro` 가 없다.
+ * 값의 주인은 프로필 도메인(닉네임·사진·경력·한마디)과 서버 집계(합격 인원)라,
+ * 이 화면에서 고칠 수 없고 저장 payload(`liveMentoringTemplateUpdateSchema`)에도
+ * 넣지 않는다.
+ */
 export const templateIntroSchema = z.object({
   /** 헤드라인의 "확실한 전략으로 {n}명을 합격시킨" 구절. null 이면 구절을 뺀다. */
   passedCount: z.number().nullable(),
+  /** 프로필 닉네임. 서버는 미입력을 빈 문자열로 채워 내려준다. */
+  nickname: z.string(),
   profileImage: z.string().nullable(),
-  /** "렛츠커리어 | CEO" 형태. */
+  /** "렛츠커리어 | CEO" 형태. 서버가 대표 경력에서 만들어 내려준다. */
   affiliation: z.string(),
   /** "(현) …", "(전) …", "- …" 자유 입력 줄 목록. */
   careerLines: z.array(z.string()),
   /** "멘토님의 한마디" 박스 본문. */
   oneLiner: z.string(),
+  /** 프로필의 소속·직책 한 줄. 미입력이면 null. */
+  description: z.string().nullable(),
 });
+export type TemplateIntro = z.infer<typeof templateIntroSchema>;
 
 /** 시안 2 · 멘토링 유형 카드. */
 export const templateMentoringTypeSchema = z.object({
@@ -155,6 +167,38 @@ export const liveMentoringTemplateSchema = z.object({
    */
 });
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
+
+/**
+ * PUT /mentor/live-mentoring/template 요청 바디 — 서버 요청 DTO
+ * (`UpdateLiveMentoringDetailPageRequestDto`)와 **같은 6개 키**다.
+ *
+ * 조회 응답에만 있는 값(`intro`·`categories`·`mentoring` 등)은 여기에 넣지 않는다.
+ * 서버가 모르는 키를 무시(`@JsonIgnoreProperties`)하기 때문에 지금까지는 통과했지만,
+ * 그 탓에 "편집했는데 저장되지 않는 필드"가 화면에 남아 있었다.
+ */
+export const liveMentoringTemplateUpdateSchema = z.object({
+  hero: liveMentoringTemplateSchema.shape.hero,
+  mentoringTypes: liveMentoringTemplateSchema.shape.mentoringTypes,
+  strategy: liveMentoringTemplateSchema.shape.strategy,
+  video: liveMentoringTemplateSchema.shape.video,
+  results: liveMentoringTemplateSchema.shape.results,
+  reviews: liveMentoringTemplateSchema.shape.reviews,
+});
+export type LiveMentoringTemplateUpdate = z.infer<
+  typeof liveMentoringTemplateUpdateSchema
+>;
+
+/** 조회한 템플릿에서 저장 요청 바디만 뽑아낸다. 읽기 전용 값은 여기서 떨어진다. */
+export const toTemplateUpdatePayload = (
+  template: LiveMentoringTemplate,
+): LiveMentoringTemplateUpdate => ({
+  hero: template.hero,
+  mentoringTypes: template.mentoringTypes,
+  strategy: template.strategy,
+  video: template.video,
+  results: template.results,
+  reviews: template.reviews,
+});
 export type TemplateMentoringType = z.infer<typeof templateMentoringTypeSchema>;
 export type TemplateStrategyPoint = z.infer<typeof templateStrategyPointSchema>;
 export type TemplateResultCase = z.infer<typeof templateResultCaseSchema>;
