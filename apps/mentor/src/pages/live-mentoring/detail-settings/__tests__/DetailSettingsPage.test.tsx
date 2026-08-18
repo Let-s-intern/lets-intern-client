@@ -134,7 +134,9 @@ const addHeroBullet = () => {
     .getByRole('heading', { name: '핵심 소개' })
     .closest('section');
   if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-  fireEvent.click(within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }));
+  fireEvent.click(
+    within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
+  );
 };
 
 /** 탭 이름(라벨 일부)으로 탭을 연다. 탭의 접근성 이름은 "라벨 필수|선택" 형태다. */
@@ -311,16 +313,42 @@ describe('DetailSettingsPage — 탭', () => {
     expect(screen.getByDisplayValue('바꾼 소개 문구')).toBeInTheDocument();
   });
 
-  it('멘토 정보 탭은 편집 폼 없이 프로필로 가는 안내만 보여준다', () => {
+  it('멘토 정보 탭은 프로필 값을 읽기 전용으로 보여준다', () => {
     renderPage();
 
     openTab('멘토 정보');
 
-    expect(screen.getByRole('heading', { name: '멘토 정보' })).toBeVisible();
-    expect(screen.getByRole('link', { name: '프로필 페이지' })).toHaveAttribute(
-      'href',
-      '/profile',
-    );
+    // 미리보기에도 같은 값이 나오므로 편집 카드 안으로 범위를 좁힌다.
+    const section = screen
+      .getByRole('heading', { name: '멘토 정보' })
+      .closest('section') as HTMLElement;
+
+    expect(
+      within(section).getByText('상세 페이지에 표시될 프로필을 확인해 주세요'),
+    ).toBeVisible();
+    // 서버 intro 응답이 그대로 표시된다
+    expect(within(section).getByText('쥬디')).toBeVisible();
+    expect(within(section).getByText('렛츠커리어 | CEO')).toBeVisible();
+    expect(
+      within(section).getByText('(현) 렛츠커리어 대표 멘토'),
+    ).toBeVisible();
+    expect(within(section).getByText('멘토님의 한마디')).toBeVisible();
+    expect(within(section).getByText('안녕하세요')).toBeVisible();
+  });
+
+  it('멘토 정보 탭에는 편집 가능한 입력이 없고 프로필 수정하기로만 나간다', () => {
+    renderPage();
+
+    openTab('멘토 정보');
+
+    const section = screen
+      .getByRole('heading', { name: '멘토 정보' })
+      .closest('section') as HTMLElement;
+    expect(within(section).queryByRole('textbox')).not.toBeInTheDocument();
+    expect(within(section).queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(
+      within(section).getByRole('link', { name: '프로필 수정하기' }),
+    ).toHaveAttribute('href', '/profile');
     expect(screen.queryByLabelText('합격시킨 인원 수')).not.toBeInTheDocument();
   });
 });
@@ -453,9 +481,9 @@ describe('DetailSettingsPage — 이탈 경고', () => {
       within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
 
-    // 앱 내부 링크는 멘토 정보 탭의 "프로필 페이지" 를 쓴다.
+    // 앱 내부 링크는 멘토 정보 탭의 "프로필 수정하기" 를 쓴다.
     openTab('멘토 정보');
-    fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
+    fireEvent.click(screen.getByRole('link', { name: '프로필 수정하기' }));
 
     expect(
       screen.getByText('변경사항이 저장되지 않았습니다'),
@@ -466,7 +494,7 @@ describe('DetailSettingsPage — 이탈 경고', () => {
     renderPage();
 
     openTab('멘토 정보');
-    fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
+    fireEvent.click(screen.getByRole('link', { name: '프로필 수정하기' }));
 
     expect(
       screen.queryByText('변경사항이 저장되지 않았습니다'),

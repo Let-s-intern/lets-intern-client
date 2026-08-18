@@ -10,6 +10,7 @@ import { toYoutubeEmbedUrl } from '../../constants';
 import { DETAIL_TABS, type DetailTabId } from '../tabs';
 import DetailSectionHeader from './DetailSectionHeader';
 import KeyPointField from './KeyPointField';
+import MentorProfileCard from './MentorProfileCard';
 import WritingGuide from './WritingGuide';
 import ImageField from './ImageField';
 import ListField from './ListField';
@@ -88,7 +89,7 @@ const TemplateEditForm = ({
   onChange,
   onSectionFocus,
 }: TemplateEditFormProps) => {
-  const { hero, mentoringTypes, strategy, video, results } = template;
+  const { hero, intro, mentoringTypes, strategy, video, results } = template;
 
   // 미리보기 자동 스크롤 — 포커스가 어느 섹션으로 들어왔는지는 캡처 단계에서 한 번에 잡는다.
   const handleFocusCapture = (e: FocusEvent<HTMLDivElement>) => {
@@ -127,10 +128,10 @@ const TemplateEditForm = ({
       ) : null}
 
       {/*
-        시안 1 · 멘토 소개는 여기서 편집하지 않는다.
+        시안 2 · 멘토 정보는 여기서 편집하지 않는다.
         프로필 이미지·소속·경력·한마디는 프로필 도메인이 소유하고,
         합격시킨 인원 수는 서버가 집계한다. 두 곳에서 고칠 수 있으면 어느 쪽이
-        진짜인지 알 수 없어진다.
+        진짜인지 알 수 없어진다. 저장 요청 DTO에도 `intro` 가 없다.
       */}
       {activeTab === 'intro' ? (
         <section className={cardClass} data-section="intro">
@@ -139,13 +140,7 @@ const TemplateEditForm = ({
             heading="상세 페이지에 표시될 프로필을 확인해 주세요"
             description="프로필에 등록된 사진과 대표 경력을 사용해요. 수정이 필요하면 프로필에서 변경해 주세요."
           />
-          <p className="text-xs text-gray-500">
-            프로필 이미지·소속·경력·한마디는{' '}
-            <a href="/profile" className="text-primary underline">
-              프로필 페이지
-            </a>
-            에서 수정합니다. 합격시킨 인원 수는 서버에서 자동 집계됩니다.
-          </p>
+          <MentorProfileCard intro={intro} />
         </section>
       ) : null}
 
