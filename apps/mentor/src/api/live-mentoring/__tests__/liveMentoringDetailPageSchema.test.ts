@@ -110,3 +110,24 @@ describe('상세 페이지 조회 응답 — 소개 영상 섹션', () => {
     expect(parsed.video.visible).toBe(false);
   });
 });
+
+describe('상세 페이지 조회 응답 — 결과 사례 섹션', () => {
+  it('서버가 내려주는 results.title·results.subtitle 이 파싱된다', () => {
+    const parsed = liveMentoringTemplateSchema.parse(DETAIL_PAGE_RESPONSE);
+
+    expect(parsed.results.title).toBe(
+      '혼자 해결하기 어려웠던 부분을 함께 완성해요',
+    );
+    expect(parsed.results.subtitle).toBe('결과 사례');
+    expect(parsed.results.cases).toHaveLength(1);
+  });
+
+  it('편집과 무관한 응답 필드(mentoring·faq·process·reviewItems)는 버린다', () => {
+    const parsed = liveMentoringTemplateSchema.parse(DETAIL_PAGE_RESPONSE);
+
+    expect(parsed).not.toHaveProperty('faq');
+    expect(parsed).not.toHaveProperty('process');
+    expect(parsed).not.toHaveProperty('reviewItems');
+    expect(parsed).not.toHaveProperty('currentOpening');
+  });
+});
