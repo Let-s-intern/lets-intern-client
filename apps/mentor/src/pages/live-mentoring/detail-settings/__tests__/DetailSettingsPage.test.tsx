@@ -134,7 +134,7 @@ const addHeroBullet = () => {
     .getByRole('heading', { name: '핵심 소개' })
     .closest('section');
   if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-  fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
+  fireEvent.click(within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }));
 };
 
 /** 탭 이름(라벨 일부)으로 탭을 연다. 탭의 접근성 이름은 "라벨 필수|선택" 형태다. */
@@ -390,7 +390,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
+      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
 
     fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
@@ -411,7 +411,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
+      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
     fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
@@ -450,7 +450,7 @@ describe('DetailSettingsPage — 이탈 경고', () => {
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
+      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
 
     // 앱 내부 링크는 멘토 정보 탭의 "프로필 페이지" 를 쓴다.
@@ -555,7 +555,7 @@ describe('DetailSettingsPage — 잠금 범위', () => {
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     expect(within(heroSection).getAllByRole('textbox')[0]).toBeDisabled();
     expect(
-      within(heroSection).getByRole('button', { name: '+ 추가' }),
+      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     ).toBeDisabled();
   });
 

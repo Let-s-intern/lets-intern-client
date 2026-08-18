@@ -9,6 +9,8 @@ import type {
 import { toYoutubeEmbedUrl } from '../../constants';
 import { DETAIL_TABS, type DetailTabId } from '../tabs';
 import DetailSectionHeader from './DetailSectionHeader';
+import KeyPointField from './KeyPointField';
+import WritingGuide from './WritingGuide';
 import ImageField from './ImageField';
 import ListField from './ListField';
 
@@ -106,25 +108,21 @@ const TemplateEditForm = ({
             heading="이 멘토링을 간단히 소개해 주세요"
             description="멘토링에서 다루는 내용과 멘티가 받을 수 있는 도움을 짧게 작성해 주세요."
           />
-          <p className="mb-4 text-xs text-gray-500">
-            상품명·가격·진행 기간은 오픈 설정 값을 그대로 씁니다. 여기서는 제목
-            아래 소개 불릿만 편집합니다.
-          </p>
-
-          <ListField<string>
-            label="소개 불릿"
-            items={hero.bullets}
-            makeEmpty={() => ''}
-            renderItem={(bullet, update) => (
-              <input
-                className={inputClass}
-                value={bullet}
-                placeholder="이력서, 자기소개서, 포트폴리오 피드백 및 첨삭"
-                onChange={(e) => update(e.target.value)}
-              />
-            )}
+          <KeyPointField
+            bullets={hero.bullets}
             onChange={(bullets) => onChange({ hero: { bullets } })}
           />
+
+          <div className="mt-4">
+            <WritingGuide
+              advice="멘토링 내용(주제, 특징, 강점, 추천 대상 등)이나 받을 수 있는 도움을 한 문장씩 작성해 보세요"
+              examples={[
+                '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+                '다양한 커리어 고민에 대한 자유로운 QNA',
+                '사이드 프로젝트 기획, 진행, 성과 만드는 방법',
+              ]}
+            />
+          </div>
         </section>
       ) : null}
 
