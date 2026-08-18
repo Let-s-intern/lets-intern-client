@@ -23,6 +23,8 @@ import {
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
+import { type DetailTabId } from './tabs';
+import DetailTabs from './ui/DetailTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
@@ -51,6 +53,13 @@ const DetailSettingsPage = () => {
    * 오직 `!isLocked` 로만 정해진다(별도의 읽기/쓰기 모드 토글은 없다).
    */
   const [isEditing, setIsEditing] = useState(false);
+
+  /**
+   * 열려 있는 탭. URL 이 아니라 로컬 상태로 둔다 — 상세 페이지 설정은 한 화면에서
+   * 끝나는 편집이고, 탭마다 주소를 만들면 저장하지 않은 변경을 들고 뒤로가기를
+   * 하는 경로가 새로 생긴다(이탈 경고와 충돌).
+   */
+  const [activeTab, setActiveTab] = useState<DetailTabId>('hero');
 
   // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
   const [navGuard, setNavGuard] = useState<{
@@ -325,16 +334,24 @@ const DetailSettingsPage = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
         {/* 읽기 모드에서는 입력만 잠근다 — 내용은 그대로 읽을 수 있어야 한다. */}
-        <fieldset
-          disabled={!canEdit}
-          className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
-        >
-          <TemplateEditForm
-            template={template}
-            onChange={patch}
-            onSectionFocus={handleSectionFocus}
-          />
-        </fieldset>
+        {/*
+          탭 네비게이션은 잠금(fieldset) **바깥**이다. 오픈 중이라 편집이 막혀도
+          탭 이동은 계속 동작해야 한다.
+        */}
+        <div className="flex min-w-0 flex-col gap-4">
+          <DetailTabs activeTab={activeTab} onChange={setActiveTab} />
+          <fieldset
+            disabled={!canEdit}
+            className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
+          >
+            <TemplateEditForm
+              template={template}
+              activeTab={activeTab}
+              onChange={patch}
+              onSectionFocus={handleSectionFocus}
+            />
+          </fieldset>
+        </div>
         {/*
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
           상세 페이지 전체를 축소해 담으므로 화면보다 길어질 수 있어,

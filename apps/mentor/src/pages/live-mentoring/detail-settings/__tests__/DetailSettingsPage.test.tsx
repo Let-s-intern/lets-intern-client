@@ -118,31 +118,81 @@ afterEach(() => {
   openings = [];
 });
 
-describe('DetailSettingsPage — 편집 영역', () => {
-  it('시안 1~5 섹션을 모두 편집 폼으로 렌더한다', () => {
+/** 탭 이름으로 탭을 연다. */
+const openTab = (name: string) =>
+  fireEvent.click(screen.getByRole('tab', { name }));
+
+describe('DetailSettingsPage — 탭', () => {
+  it('6개 탭을 렌더하고, 처음에는 핵심 소개 탭만 보인다', () => {
     renderPage();
 
-    // 멘토 소개는 프로필·서버 소유라 편집 폼이 아니라 안내만 있다
+    expect(screen.getAllByRole('tab')).toHaveLength(6);
+    expect(
+      screen.getByRole('heading', { name: '히어로 (최상단)' }),
+    ).toBeVisible();
+    // 다른 탭의 섹션은 렌더되지 않는다
+    expect(
+      screen.queryByRole('heading', { name: '멘토링 유형' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: '결과 사례' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('탭을 클릭하면 그 탭의 섹션만 보인다', () => {
+    renderPage();
+
+    openTab('멘토링 유형');
+    expect(screen.getByRole('heading', { name: '멘토링 유형' })).toBeVisible();
+    expect(
+      screen.queryByRole('heading', { name: '히어로 (최상단)' }),
+    ).not.toBeInTheDocument();
+
+    openTab('소개 영상');
+    expect(
+      screen.getByRole('heading', { name: '이렇게 도와드려요 (영상)' }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('heading', { name: '멘토링 유형' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('탭을 옮겼다 돌아와도 입력한 값은 남는다', () => {
+    renderPage();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.change(within(heroSection).getAllByRole('textbox')[0], {
+      target: { value: '바꾼 소개 문구' },
+    });
+
+    openTab('결과 사례');
+    openTab('핵심 소개');
+
+    expect(screen.getByDisplayValue('바꾼 소개 문구')).toBeInTheDocument();
+  });
+
+  it('멘토 정보 탭은 편집 폼 없이 프로필로 가는 안내만 보여준다', () => {
+    renderPage();
+
+    openTab('멘토 정보');
+
     expect(screen.getByRole('heading', { name: '멘토 소개' })).toBeVisible();
     expect(screen.getByRole('link', { name: '프로필 페이지' })).toHaveAttribute(
       'href',
       '/profile',
     );
     expect(screen.queryByLabelText('합격시킨 인원 수')).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '멘토링 유형' })).toBeVisible();
-    expect(
-      screen.getByRole('heading', { name: '취업 성공 전략' }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('heading', { name: '이렇게 도와드려요 (영상)' }),
-    ).toBeVisible();
-    expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
   });
+});
 
+describe('DetailSettingsPage — 편집 영역', () => {
   it('노출 토글을 끄면 미리보기에서 해당 섹션이 제외된다고 알린다', () => {
     renderPage();
 
-    // 첫 번째 노출 토글 = 취업 성공 전략
+    openTab('취업 성공 전략');
     fireEvent.click(screen.getAllByRole('checkbox')[0]);
 
     expect(
@@ -259,6 +309,7 @@ describe('DetailSettingsPage — 미리보기 자동 스크롤', () => {
     Element.prototype.scrollIntoView = scrollIntoViewMock;
     renderPage();
 
+    openTab('멘토링 유형');
     fireEvent.focus(screen.getByLabelText('섹션 제목'));
 
     expect(scrollIntoViewMock).toHaveBeenCalled();
@@ -277,6 +328,8 @@ describe('DetailSettingsPage — 이탈 경고', () => {
       within(heroSection).getByRole('button', { name: '+ 추가' }),
     );
 
+    // 앱 내부 링크는 멘토 정보 탭의 "프로필 페이지" 를 쓴다.
+    openTab('멘토 정보');
     fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
 
     expect(
@@ -287,6 +340,7 @@ describe('DetailSettingsPage — 이탈 경고', () => {
   it('변경사항이 없으면 링크 이동 시 경고 없이 바로 이동한다', () => {
     renderPage();
 
+    openTab('멘토 정보');
     fireEvent.click(screen.getByRole('link', { name: '프로필 페이지' }));
 
     expect(
