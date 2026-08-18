@@ -7,6 +7,7 @@ import {
 } from '@/api/feedback/feedback';
 import BaseModal from '@/common/modal/BaseModal';
 import { diffGridAgainstBeSlots } from '@/pages/feedback-live-availability/utils/slotConverter';
+import { useChallengePeriods } from '@/pages/schedule/hooks/useChallengePeriods';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
 
@@ -66,6 +67,7 @@ const LiveMentoringSlotModal = ({
   });
   const createSlots = useCreateFeedbackMentorSlotsMutation();
   const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+  const challengePeriods = useChallengePeriods({ enabled: isOpen });
 
   // `?? []` 를 렌더 본문에 두면 매 렌더 새 배열이 나와 아래 useMemo 가 전부 무효화된다.
   const beSlots = useMemo(
@@ -200,6 +202,7 @@ const LiveMentoringSlotModal = ({
               onSave={handleSave}
               onClose={handleClose}
               resetKey={isOpen}
+              challengePeriods={challengePeriods}
             />
           </div>
         </>

@@ -9,6 +9,7 @@ import {
 import LiveAvailabilityContent, {
   type LiveFeedbackPeriodInfo,
 } from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useChallengePeriods } from '@/pages/schedule/hooks/useChallengePeriods';
 import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
@@ -46,6 +47,7 @@ const FeedbackAvailabilityModal = ({
   });
   const createSlots = useCreateFeedbackMentorSlotsMutation();
   const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+  const challengePeriods = useChallengePeriods({ enabled: isOpen });
 
   const beSlots = slotsQuery.data?.feedbackSlotList ?? [];
   const beCells = useMemo(() => toBeSlotCells(beSlots), [beSlots]);
@@ -182,6 +184,7 @@ const FeedbackAvailabilityModal = ({
               onOpenReservation={() => setReservationOpen(true)}
               livePeriods={livePeriods}
               slotOpenWindow={slotOpenWindow}
+              challengePeriods={challengePeriods}
             />
           </>
         )}

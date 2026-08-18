@@ -32,6 +32,13 @@ vi.mock('@/api/feedback/feedback', () => ({
   }),
 }));
 
+// 챌린지 기간 음영은 `__tests__/challengePeriod.test.ts` 와 그리드 테스트에서 따로
+// 검증한다. 여기서는 조회가 QueryClient 를 요구하지 않도록 비워 둔다.
+let challengeList: { myChallengeMentorVoList: unknown[] } | undefined;
+vi.mock('@/api/user/user', () => ({
+  useMentorChallengeListQuery: () => ({ data: challengeList }),
+}));
+
 // 모달 포털은 document.body 로 렌더된다 — 테스트 환경에서 그대로 동작한다.
 import LiveMentoringSlotModal from '../LiveMentoringSlotModal';
 
@@ -89,6 +96,7 @@ beforeEach(() => {
   deleteSlotsMock.mockReset();
   deleteSlotsMock.mockResolvedValue(undefined);
   refetchSlotsMock.mockReset();
+  challengeList = { myChallengeMentorVoList: [] };
 });
 
 afterEach(() => {
