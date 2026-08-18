@@ -258,7 +258,28 @@ const DetailSettingsPage = () => {
     const cleanedBullets = payload.hero.bullets
       .map((bullet) => bullet.trim())
       .filter(Boolean);
-    payload = { ...payload, hero: { bullets: cleanedBullets } };
+
+    /*
+     * 유형 소개 카드도 같다. `typeName`·`title`·`description` 이 모두 `@NotBlank` 라
+     * "소개 카드 추가 +"로 만들어 놓고 안 채운 카드가 하나라도 있으면 400 이다.
+     *
+     * 기본 문구로 채우지 않는다 — 멘토가 쓰지 않은 유형이 상세 페이지에 실리면
+     * 멘티가 없는 도움을 기대하게 된다. 빈 카드는 지울 의사로 보고 걸러낸다.
+     */
+    const cleanedTypeItems = payload.mentoringTypes.items
+      .map((item) => ({
+        ...item,
+        typeName: item.typeName.trim(),
+        title: item.title.trim(),
+        description: item.description.trim(),
+      }))
+      .filter((item) => item.typeName && item.title && item.description);
+
+    payload = {
+      ...payload,
+      hero: { bullets: cleanedBullets },
+      mentoringTypes: { ...payload.mentoringTypes, items: cleanedTypeItems },
+    };
     setTemplate(payload);
 
     // 서버 요청 DTO에 없는 값(intro·categories)은 여기서 떨어진다.

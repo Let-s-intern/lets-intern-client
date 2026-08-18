@@ -443,6 +443,34 @@ describe('DetailSettingsPage — 편집 영역', () => {
     ]);
   });
 
+  it('빈 유형 카드를 추가하고 안 채운 채 저장하면, 그 카드를 걸러내고 보낸다', () => {
+    /*
+     * 회귀 케이스: TypeCardRequest 의 typeName·title·description 이 모두 @NotBlank 라
+     * 빈 카드가 하나라도 있으면 "[mentoringTypes.items[3].title] 공백일 수 없습니다
+     * (BAD_REQUEST)" 로 저장 전체가 실패했다. 실제 화면에서 재현된 문제다.
+     */
+    renderPage();
+
+    openTab('멘토링 유형');
+    const before = screen.getAllByLabelText(/번 카드 유형 제목$/).length;
+    fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
+    expect(screen.getAllByLabelText(/번 카드 유형 제목$/)).toHaveLength(
+      before + 1,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.mentoringTypes.items).toHaveLength(before);
+    expect(
+      payload.mentoringTypes.items.every(
+        (item: { typeName: string; title: string; description: string }) =>
+          item.typeName && item.title && item.description,
+      ),
+    ).toBe(true);
+  });
+
   it('저장 payload 에는 서버 요청 DTO에 없는 intro 를 담지 않는다', () => {
     // 멘토 정보는 프로필 도메인 소유라 이 요청으로 저장되지 않는다.
     renderPage();
