@@ -890,6 +890,24 @@ const settingsResponse = () => ({
   durations: liveMentoringState.durations,
 });
 
+/**
+ * 상세 페이지 조회/저장 응답. 편집 대상 템플릿에 읽기 전용 상품 정보를 얹는다.
+ *
+ * `editable` 은 서버 `LiveMentoring.isEditable()` 과 같은 조건이라 설정 화면의
+ * 판정(`isSettingsEditable`)을 그대로 쓴다 — 목에서 두 화면의 잠금이 갈리면
+ * 어느 쪽이 맞는지 확인할 수 없다.
+ */
+const detailPageResponse = () => ({
+  ...detailPageState,
+  mentoring: {
+    liveMentoringId: liveMentoringState.liveMentoringId,
+    title: liveMentoringState.title,
+    status: liveMentoringState.status,
+    editable: isSettingsEditable(),
+    categories: liveMentoringState.categories,
+  },
+});
+
 const openingHistoryResponse = () => ({
   liveMentoringId: liveMentoringState.liveMentoringId,
   openings: liveMentoringState.openings,
@@ -2092,7 +2110,7 @@ export const handlers = [
    * 저장분(detailPageState)을 돌려주므로 저장 → 재조회 흐름을 확인할 수 있다.
    */
   http.get('*/mentor/live-mentoring/template', () => {
-    return HttpResponse.json({ status: 200, data: detailPageState });
+    return HttpResponse.json({ status: 200, data: detailPageResponse() });
   }),
 
   /**
@@ -2137,7 +2155,7 @@ export const handlers = [
       ...detailPageState,
       ...(body as Partial<LiveMentoringTemplate>),
     };
-    return HttpResponse.json({ status: 200, data: detailPageState });
+    return HttpResponse.json({ status: 200, data: detailPageResponse() });
   }),
 
   /**

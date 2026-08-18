@@ -65,6 +65,13 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
     categories: ['RESUME'],
+    mentoring: {
+      liveMentoringId: 1,
+      title: '자소서 실전 첨삭 멘토링',
+      status: 'DRAFT',
+      editable: true,
+      categories: ['RESUME'],
+    },
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 120,
@@ -250,6 +257,8 @@ describe('useLiveMentoringTemplateQuery', () => {
     );
     expect(result.current.data?.intro.passedCount).toBe(120);
     expect(result.current.data?.mentoringTypes.items).toHaveLength(1);
+    // 잠금 판정의 근거. 서버가 준 값을 그대로 쓴다.
+    expect(result.current.data?.mentoring.editable).toBe(true);
   });
 });
 

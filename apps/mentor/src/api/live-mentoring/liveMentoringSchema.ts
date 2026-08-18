@@ -169,6 +169,35 @@ export const liveMentoringTemplateSchema = z.object({
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
 
 /**
+ * 조회 응답의 상품 정보 — **읽기 전용**이다(서버 `MentoringResponse`).
+ *
+ * `editable` 이 잠금의 근거다. 서버는 `status == DRAFT && !hasActiveOpening()` 일 때만
+ * 저장을 허용하고 그렇지 않으면 `validateEditable` 로 막는다. 프론트가 같은 조건을
+ * 상태·개설 이력에서 다시 계산하면 두 판정이 어긋나는 날이 온다 — 서버가 준 값을 쓴다.
+ */
+export const templateMentoringSchema = z.object({
+  liveMentoringId: z.number().nullable(),
+  title: z.string().nullable(),
+  status: liveMentoringStatusSchema.nullable(),
+  editable: z.boolean(),
+  categories: z.array(liveMentoringCategorySchema),
+});
+export type TemplateMentoring = z.infer<typeof templateMentoringSchema>;
+
+/**
+ * GET/PUT /mentor/live-mentoring/template 응답 — 편집 대상 템플릿 + 읽기 전용 상품 정보.
+ * 저장 요청은 이보다 좁다(`liveMentoringTemplateUpdateSchema`).
+ */
+export const liveMentoringDetailPageSchema = liveMentoringTemplateSchema.extend(
+  {
+    mentoring: templateMentoringSchema,
+  },
+);
+export type LiveMentoringDetailPage = z.infer<
+  typeof liveMentoringDetailPageSchema
+>;
+
+/**
  * PUT /mentor/live-mentoring/template 요청 바디 — 서버 요청 DTO
  * (`UpdateLiveMentoringDetailPageRequestDto`)와 **같은 6개 키**다.
  *

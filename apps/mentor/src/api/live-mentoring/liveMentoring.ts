@@ -5,8 +5,8 @@ import {
   type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplateUpdate,
+  liveMentoringDetailPageSchema,
   liveMentoringSettingsSchema,
-  liveMentoringTemplateSchema,
   openingHistoryResponseSchema,
 } from './liveMentoringSchema';
 
@@ -156,7 +156,7 @@ export const useLiveMentoringTemplateQuery = () => {
     queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
     queryFn: async () => {
       const res = await axios.get(TEMPLATE_PATH);
-      return liveMentoringTemplateSchema.parse(res.data.data);
+      return liveMentoringDetailPageSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
     // ⚠️ 임시 — 백엔드에 아직 없는 엔드포인트라 재시도해도 성공하지 않는다.
@@ -178,7 +178,7 @@ export const useUpdateLiveMentoringTemplateMutation = () => {
   return useMutation({
     mutationFn: async (template: LiveMentoringTemplateUpdate) => {
       const res = await axios.put(TEMPLATE_PATH, template);
-      return liveMentoringTemplateSchema.parse(res.data.data);
+      return liveMentoringDetailPageSchema.parse(res.data.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

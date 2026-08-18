@@ -204,6 +204,8 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     const { data } = await res.json();
     expect(data.intro.careerLines.length).toBeGreaterThan(0);
     expect(data.mentoringTypes.items.length).toBeGreaterThan(0);
+    // 초안 + 활성 개설 없음이 목 기본값이라 편집할 수 있다.
+    expect(data.mentoring.editable).toBe(true);
   });
 
   it('PUT /mentor/live-mentoring/template → 저장 후 상세 페이지 전체를 돌려준다', async () => {
