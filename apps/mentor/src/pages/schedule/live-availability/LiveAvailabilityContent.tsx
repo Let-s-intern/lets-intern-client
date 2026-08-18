@@ -15,6 +15,10 @@ import {
   type ScheduleWindow,
   isWithinWindow,
 } from '../data/feedbackScheduleRules';
+import {
+  type ChallengePeriod,
+  toChallengePeriodCellKeys,
+} from './utils/challengePeriod';
 
 // TODO: 실제 운영진 문의 링크로 교체 (예: 슬랙 채널, 카카오톡 고객센터, 내부 요청 폼 등)
 const OPS_CONTACT_URL =
@@ -80,6 +84,13 @@ function createTimeSlots(): string[] {
 }
 
 const TIME_SLOTS = createTimeSlots();
+
+/**
+ * 챌린지 기간 셀 안내. 슬롯을 막지 않으므로 "선택할 수 없다"고 쓰지 않는다 —
+ * 열 수는 있고, 다만 1대1 신청이 들어오지 않는다는 사실만 알린다.
+ */
+const CHALLENGE_PERIOD_NOTICE =
+  '이 기간은 챌린지 참여자 우선이라 1대1 신청은 받지 않아요.';
 
 /** 안내 배너 앞에 붙는 정보 아이콘 */
 const InfoIcon = () => (
@@ -218,6 +229,14 @@ export interface LiveAvailabilityContentProps {
    * 미지정/`null`(BE 미션 일자 미반영)이면 게이팅하지 않는다(현행 유지 — forward-compatible).
    */
   slotOpenWindow?: ScheduleWindow | null;
+  /**
+   * 멘토가 배정된 챌린지의 진행 기간 — 겹치는 셀에 음영과 안내를 붙인다.
+   *
+   * 이 기간의 슬롯은 서버가 1대1 예약 가능 목록에서 제외한다. 슬롯을 **막지는
+   * 않는다** — 챌린지 피드백에 쓰이는 슬롯이라 막으면 챌린지 수용력이 줄어든다.
+   * 열되 무슨 일이 벌어지는지 보여준다.
+   */
+  challengePeriods?: ChallengePeriod[];
 }
 
 /**
@@ -241,6 +260,7 @@ const LiveAvailabilityContent = ({
   onOpenReservation,
   livePeriods = [],
   slotOpenWindow,
+  challengePeriods = [],
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
 
@@ -376,6 +396,15 @@ const LiveAvailabilityContent = ({
     }
     return set;
   }, [reservedSlots]);
+
+  /**
+   * 챌린지 기간에 걸리는 셀 key 집합 — 음영·안내 표시용.
+   * 보이는 주만 펼치므로 챌린지가 몇 개든 `days × times` 를 넘지 않는다.
+   */
+  const challengePeriodKeys = useMemo(
+    () => toChallengePeriodCellKeys(challengePeriods, dayStrs, TIME_SLOTS),
+    [challengePeriods, dayStrs],
+  );
 
   const selectedCount = selectedKeys.size;
 
@@ -632,8 +661,23 @@ const LiveAvailabilityContent = ({
               <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
+            {challengePeriodKeys.size > 0 && (
+              <span className="flex items-center gap-1.5">
+                <span className="bg-neutral-95 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+                챌린지 기간
+              </span>
+            )}
           </div>
         </div>
+
+        {challengePeriodKeys.size > 0 && (
+          <p
+            role="note"
+            className="text-xxsmall12 text-neutral-40 bg-neutral-95 mb-3 break-keep rounded-md px-3 py-2"
+          >
+            {CHALLENGE_PERIOD_NOTICE} 이 시간에도 일정은 그대로 열 수 있어요.
+          </p>
+        )}
 
         <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
@@ -883,16 +927,27 @@ const LiveAvailabilityContent = ({
                   // 선택됨 + 기존 저장 슬롯 → "예약 가능"
                   // 미선택 → 빈 셀 (예약 불가능 상태 없음)
                   const isChanged = isSelected && changedKeys.has(key);
+                  /*
+                   * 챌린지 기간 — 서버가 이 시간대 슬롯을 1대1 예약 가능 목록에서
+                   * 뺀다. 클릭은 그대로 되고 표시만 달라진다.
+                   */
+                  const inChallengePeriod = challengePeriodKeys.has(key);
                   const cellClass = isChanged
                     ? 'bg-primary-15 text-primary font-semibold'
                     : isSelected
                       ? 'bg-primary-10 text-primary font-semibold'
-                      : 'bg-white text-neutral-40 hover:bg-neutral-95';
+                      : inChallengePeriod
+                        ? 'bg-neutral-95 text-neutral-40 hover:bg-neutral-90'
+                        : 'bg-white text-neutral-40 hover:bg-neutral-95';
 
                   return (
                     <button
                       key={`${time}-${dayIndex}`}
                       type="button"
+                      data-challenge-period={inChallengePeriod || undefined}
+                      title={
+                        inChallengePeriod ? CHALLENGE_PERIOD_NOTICE : undefined
+                      }
                       onMouseDown={(event) => {
                         event.preventDefault();
                         handleCellMouseDown(cellDate, time);
