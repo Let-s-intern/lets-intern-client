@@ -1,38 +1,42 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LiveMentoringSlot } from '@/api/live-mentoring/liveMentoringSchema';
+import type { FeedbackSlot } from '@/api/feedback/feedbackSchema';
 
-const saveSlotsMock = vi.fn();
+const createSlotsMock = vi.fn();
+const deleteSlotsMock = vi.fn();
 const refetchSlotsMock = vi.fn();
 
-let mentoringSlots: LiveMentoringSlot[] | undefined;
-let challengeSlots:
-  | { feedbackSlotList: Array<Record<string, unknown>> }
-  | undefined;
+let feedbackSlots: FeedbackSlot[] | undefined;
 let slotsPending = false;
 let slotsError = false;
 
-vi.mock('@/api/live-mentoring/liveMentoring', () => ({
-  useLiveMentoringSlotsQuery: () => ({
-    data: mentoringSlots,
+/*
+ * 1대1 전용 슬롯 API 는 사라졌다. 이 화면은 챌린지 라이브 피드백과 같은
+ * `/feedback/mentor/slot` 한 벌만 쓴다.
+ */
+vi.mock('@/api/feedback/feedback', () => ({
+  useFeedbackMentorSlotsQuery: () => ({
+    data: feedbackSlots ? { feedbackSlotList: feedbackSlots } : undefined,
     isPending: slotsPending,
     isError: slotsError,
     refetch: refetchSlotsMock,
   }),
-  useSaveLiveMentoringSlotsMutation: () => ({
-    mutateAsync: saveSlotsMock,
+  useCreateFeedbackMentorSlotsMutation: () => ({
+    mutateAsync: createSlotsMock,
+    isPending: false,
+  }),
+  useDeleteFeedbackMentorSlotsMutation: () => ({
+    mutateAsync: deleteSlotsMock,
     isPending: false,
   }),
 }));
 
-vi.mock('@/api/feedback/feedback', () => ({
-  useFeedbackMentorSlotsQuery: () => ({
-    data: challengeSlots,
-    isPending: false,
-    isError: false,
-    refetch: vi.fn(),
-  }),
+// 챌린지 기간 음영은 `__tests__/challengePeriod.test.ts` 와 그리드 테스트에서 따로
+// 검증한다. 여기서는 조회가 QueryClient 를 요구하지 않도록 비워 둔다.
+let challengeList: { myChallengeMentorVoList: unknown[] } | undefined;
+vi.mock('@/api/user/user', () => ({
+  useMentorChallengeListQuery: () => ({ data: challengeList }),
 }));
 
 // 모달 포털은 document.body 로 렌더된다 — 테스트 환경에서 그대로 동작한다.
@@ -66,33 +70,33 @@ const renderModal = (isOpen = true) =>
 beforeEach(() => {
   slotsPending = false;
   slotsError = false;
-  mentoringSlots = [
+  feedbackSlots = [
     {
-      slotId: 1,
+      feedbackSlotId: 1,
       startDate: `${OPEN_DATE}T10:00:00`,
       endDate: `${OPEN_DATE}T10:30:00`,
       status: 'OPEN',
     },
     {
-      slotId: 2,
+      feedbackSlotId: 2,
       startDate: `${RESERVED_DATE}T11:00:00`,
       endDate: `${RESERVED_DATE}T11:30:00`,
       status: 'RESERVED',
     },
+    // 예전에 "챌린지 전용" 으로 감춰지던 슬롯. 이제 같은 목록의 일부다.
+    {
+      feedbackSlotId: 9,
+      startDate: `${CHALLENGE_DATE}T12:00:00`,
+      endDate: `${CHALLENGE_DATE}T12:30:00`,
+      status: 'OPEN',
+    },
   ];
-  challengeSlots = {
-    feedbackSlotList: [
-      {
-        feedbackSlotId: 9,
-        startDate: `${CHALLENGE_DATE}T12:00:00`,
-        endDate: `${CHALLENGE_DATE}T12:30:00`,
-        status: 'OPEN',
-      },
-    ],
-  };
-  saveSlotsMock.mockReset();
-  saveSlotsMock.mockResolvedValue([]);
+  createSlotsMock.mockReset();
+  createSlotsMock.mockResolvedValue(undefined);
+  deleteSlotsMock.mockReset();
+  deleteSlotsMock.mockResolvedValue(undefined);
   refetchSlotsMock.mockReset();
+  challengeList = { myChallengeMentorVoList: [] };
 });
 
 afterEach(() => {
@@ -134,7 +138,8 @@ describe('LiveMentoringSlotModal — 슬롯 상태 표시', () => {
   it('OPEN 슬롯은 선택된 상태로 올라온다', () => {
     renderModal();
     expect(screen.getAllByText('예약 가능').length).toBeGreaterThan(0);
-    expect(screen.getByText(/선택된 가능 시간: 1개/)).toBeInTheDocument();
+    // 챌린지 쪽에서 열었던 슬롯도 같은 목록이라 함께 선택 상태다.
+    expect(screen.getByText(/선택된 가능 시간: 2개/)).toBeInTheDocument();
   });
 
   it('RESERVED 슬롯은 예약 완료로 잠긴다', () => {
@@ -146,113 +151,134 @@ describe('LiveMentoringSlotModal — 슬롯 상태 표시', () => {
     expect(reservedCells).toHaveLength(1);
   });
 
-  it('챌린지 라이브 피드백 슬롯은 선택 불가로 보이고 사유를 알려준다', () => {
+  it('챌린지 슬롯을 점유로 그리지 않고 선택 가능한 일반 슬롯으로 그린다', () => {
+    /*
+     * 회귀 케이스 — 통합 전에는 챌린지 슬롯을 blockedSlots 로 넘겨 "선택할 수 없는
+     * 시간" 으로 그렸다. 슬롯이 한 벌로 합쳐진 뒤에는 남의 슬롯이 아니라 내가 이미
+     * 열어 둔 시간이므로, 잠그면 해제조차 못 한다.
+     */
     renderModal();
-    const blocked = screen.getByTitle(
-      /라이브 피드백\(으\)로 이미 열어 둔 시간이라 선택할 수 없습니다/,
-    );
-    expect(blocked).toBeInTheDocument();
+    expect(
+      screen.queryByTitle(/이미 열어 둔 시간이라 선택할 수 없습니다/),
+    ).not.toBeInTheDocument();
 
-    // 클릭해도 선택으로 넘어가지 않는다 (스왑을 지원하지 않는다).
-    fireEvent.click(blocked);
+    // 해제할 수 있어야 한다.
+    const cells = screen.getAllByRole('button', { name: '예약 가능' });
+    fireEvent.mouseDown(cells[cells.length - 1]);
     expect(screen.getByText(/선택된 가능 시간: 1개/)).toBeInTheDocument();
   });
 });
 
-describe('LiveMentoringSlotModal — 저장 payload', () => {
-  it('예약 슬롯을 항상 포함하고 챌린지 슬롯은 제외한다', async () => {
-    renderModal();
-
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
-
-    await waitFor(() => expect(saveSlotsMock).toHaveBeenCalledTimes(1));
-    expect(saveSlotsMock.mock.calls[0][0]).toEqual([
-      {
-        startDate: `${OPEN_DATE}T10:00:00`,
-        endDate: `${OPEN_DATE}T10:30:00`,
-      },
-      {
-        startDate: `${RESERVED_DATE}T11:00:00`,
-        endDate: `${RESERVED_DATE}T11:30:00`,
-      },
-    ]);
-  });
-
-  it('예약 슬롯은 선택을 모두 지워도 payload 에 남는다', async () => {
-    // 회귀 케이스: 빠지면 서버가 삭제 대상으로 보고 409 로 저장 전체가 실패한다.
-    renderModal();
-
-    // 선택돼 있던 OPEN 셀을 해제한다(같은 문구가 레전드에도 있어 셀만 고른다).
-    fireEvent.mouseDown(screen.getByRole('button', { name: '예약 가능' }));
-    expect(screen.getByText(/선택된 가능 시간: 0개/)).toBeInTheDocument();
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /변경사항 1개 저장하기/ }),
-    );
-
-    await waitFor(() => expect(saveSlotsMock).toHaveBeenCalledTimes(1));
-    expect(saveSlotsMock.mock.calls[0][0]).toEqual([
-      {
-        startDate: `${RESERVED_DATE}T11:00:00`,
-        endDate: `${RESERVED_DATE}T11:30:00`,
-      },
-    ]);
-  });
-});
-
-describe('LiveMentoringSlotModal — 저장 실패 처리', () => {
-  const failWith = (code: string, message = '서버 메시지') => {
-    saveSlotsMock.mockRejectedValue({ code, message });
-  };
-
-  it('잠금(409)이면 예약 삭제 불가를 알리고 모달을 닫지 않는다', async () => {
-    failWith('LIVE_MENTORING_SLOT_LOCKED');
+describe('LiveMentoringSlotModal — 증분 저장', () => {
+  it('변경이 없으면 아무 요청도 보내지 않고 그대로 닫힌다', async () => {
     const onClose = vi.fn();
     render(<LiveMentoringSlotModal isOpen onClose={onClose} />);
 
     fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
 
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(createSlotsMock).not.toHaveBeenCalled();
+    expect(deleteSlotsMock).not.toHaveBeenCalled();
+  });
+
+  it('해제한 슬롯만 DELETE 로 나가고 예약 슬롯은 건드리지 않는다', async () => {
+    renderModal();
+
+    // 선택돼 있던 OPEN 셀 하나를 해제한다.
+    fireEvent.mouseDown(
+      screen.getAllByRole('button', { name: '예약 가능' })[0],
+    );
+    expect(screen.getByText(/선택된 가능 시간: 1개/)).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /변경사항 1개 저장하기/ }),
+    );
+
+    await waitFor(() => expect(deleteSlotsMock).toHaveBeenCalledTimes(1));
+    expect(deleteSlotsMock.mock.calls[0][0]).toEqual([1]);
+    // 예약 슬롯(2)은 삭제 대상이 아니다.
+    expect(deleteSlotsMock.mock.calls[0][0]).not.toContain(2);
+    expect(createSlotsMock).not.toHaveBeenCalled();
+  });
+
+  it('과거 RESERVED 슬롯이 있어도 추가·삭제가 성공한다', async () => {
+    /*
+     * 회귀 케이스 — 전체 치환 시절에는 조회 범위 밖의 과거 예약 슬롯 하나가
+     * payload 에서 빠지면서 저장 전체가 409 로 영구히 막혔다. 증분 저장에는
+     * 치환 범위라는 개념이 없어 같은 상황이 생기지 않는다.
+     */
+    feedbackSlots = [
+      {
+        feedbackSlotId: 220,
+        startDate: '2020-01-01T14:00:00',
+        endDate: '2020-01-01T14:30:00',
+        status: 'RESERVED',
+      },
+      ...(feedbackSlots ?? []),
+    ];
+    renderModal();
+
+    fireEvent.mouseDown(
+      screen.getAllByRole('button', { name: '예약 가능' })[0],
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: /변경사항 1개 저장하기/ }),
+    );
+
+    await waitFor(() => expect(deleteSlotsMock).toHaveBeenCalledTimes(1));
+    // 과거 예약 슬롯은 요청 어디에도 등장하지 않는다.
+    expect(deleteSlotsMock.mock.calls[0][0]).not.toContain(220);
+  });
+});
+
+describe('LiveMentoringSlotModal — 저장 실패 처리', () => {
+  const failWith = (code: string, message = '서버 메시지') => {
+    deleteSlotsMock.mockRejectedValue({ code, message });
+  };
+
+  const removeOneSlotAndSave = () => {
+    fireEvent.mouseDown(
+      screen.getAllByRole('button', { name: '예약 가능' })[0],
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: /변경사항 1개 저장하기/ }),
+    );
+  };
+
+  it('충돌(409)이면 이미 등록된 시간임을 알리고 모달을 닫지 않는다', async () => {
+    failWith('CONFLICT_FEEDBACK_SLOT');
+    const onClose = vi.fn();
+    render(<LiveMentoringSlotModal isOpen onClose={onClose} />);
+
+    removeOneSlotAndSave();
+
     expect(
-      await screen.findByText(/예약된 일정은 삭제할 수 없습니다/),
+      await screen.findByText(/이미 등록된 시간입니다/),
     ).toBeInTheDocument();
     expect(onClose).not.toHaveBeenCalled();
     // 화면이 들고 있는 슬롯이 낡아서 나는 에러다 — 최신 상태를 다시 읽는다.
     expect(refetchSlotsMock).toHaveBeenCalled();
   });
 
-  it('충돌(409)이면 이미 등록된 시간임을 알린다', async () => {
-    failWith('LIVE_MENTORING_SLOT_CONFLICT');
+  it('예약된 슬롯(400)이면 변경 불가를 알린다', async () => {
+    failWith('RESERVED_FEEDBACK_SLOT');
     renderModal();
 
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    removeOneSlotAndSave();
 
     expect(
-      await screen.findByText(/이미 등록된 시간입니다/),
+      await screen.findByText(/예약된 일정은 변경할 수 없습니다/),
     ).toBeInTheDocument();
-    expect(refetchSlotsMock).toHaveBeenCalled();
   });
 
-  it('시간 규칙 위반(400)이면 30분 단위·미래 조건을 안내한다', async () => {
-    failWith('LIVE_MENTORING_INVALID_SLOT_TIME');
+  it('이미 삭제된 슬롯(404)이면 최신 일정을 다시 불러왔다고 알린다', async () => {
+    failWith('FEEDBACK_SLOT_NOT_FOUND');
     renderModal();
 
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    removeOneSlotAndSave();
 
     expect(
-      await screen.findByText(/지금 이후의 30분 단위 시간만 열 수 있습니다/),
-    ).toBeInTheDocument();
-    // 낡은 상태 때문이 아니므로 재조회하지 않는다.
-    expect(refetchSlotsMock).not.toHaveBeenCalled();
-  });
-
-  it('상품 없음(404)이면 먼저 오픈 설정을 저장하라고 안내한다', async () => {
-    failWith('LIVE_MENTORING_NOT_FOUND');
-    renderModal();
-
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
-
-    expect(
-      await screen.findByText(/먼저 오픈 설정을 저장해 상품을 만든 뒤/),
+      await screen.findByText(/이미 삭제된 일정입니다/),
     ).toBeInTheDocument();
   });
 
@@ -260,7 +286,7 @@ describe('LiveMentoringSlotModal — 저장 실패 처리', () => {
     failWith('SOMETHING_ELSE', '알 수 없는 오류');
     renderModal();
 
-    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+    removeOneSlotAndSave();
 
     expect(await screen.findByText('알 수 없는 오류')).toBeInTheDocument();
   });
@@ -276,7 +302,7 @@ describe('LiveMentoringSlotModal — 로딩·에러·열림 상태', () => {
     // 응답이 늦게 도착할 때 빈 그리드를 먼저 그리면, 이미 열어 둔 일정이
     // 사라진 것처럼 보이고 그대로 저장되면 실제로 지워진다.
     slotsPending = true;
-    mentoringSlots = undefined;
+    feedbackSlots = undefined;
     renderModal();
 
     expect(screen.getByText('일정을 불러오는 중...')).toBeInTheDocument();
@@ -287,7 +313,7 @@ describe('LiveMentoringSlotModal — 로딩·에러·열림 상태', () => {
 
   it('조회에 실패하면 다시 시도할 수 있다', () => {
     slotsError = true;
-    mentoringSlots = undefined;
+    feedbackSlots = undefined;
     renderModal();
 
     fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));

@@ -8,6 +8,7 @@ import {
 } from '@/api/feedback/feedback';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useChallengePeriods } from '@/pages/schedule/hooks/useChallengePeriods';
 import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
@@ -36,6 +37,7 @@ const FeedbackLiveAvailabilityPage = () => {
   });
   const createSlots = useCreateFeedbackMentorSlotsMutation();
   const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+  const challengePeriods = useChallengePeriods();
 
   const beSlots = slotsQuery.data?.feedbackSlotList ?? [];
 
@@ -184,6 +186,7 @@ const FeedbackLiveAvailabilityPage = () => {
               showHeader={false}
               livePeriods={livePeriods}
               slotOpenWindow={slotOpenWindow}
+              challengePeriods={challengePeriods}
             />
           </>
         )}

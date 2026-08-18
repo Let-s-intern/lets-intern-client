@@ -57,8 +57,12 @@ vi.mock('@/api/career/career', () => ({
 // 슬롯 편집 모달은 이 단위 테스트 대상이 아니므로 스텁 처리
 // (실 컴포넌트는 슬롯·피드백 query 훅을 호출해 QueryClient 가 필요하다).
 // 모달 자체는 `ui/__tests__/LiveMentoringSlotModal.test.tsx` 에서 따로 검증한다.
+const slotModalOpenSpy = vi.fn();
 vi.mock('../ui/LiveMentoringSlotModal', () => ({
-  default: () => null,
+  default: ({ isOpen }: { isOpen: boolean }) => {
+    if (isOpen) slotModalOpenSpy();
+    return null;
+  },
 }));
 
 import OpenSettingsPage from '../OpenSettingsPage';
@@ -148,6 +152,7 @@ afterEach(() => {
   closeOpeningMock.mockReset();
   startEditMock.mockReset();
   setRepresentativeCareerMock.mockReset();
+  slotModalOpenSpy.mockReset();
   settingsData = undefined;
   openingsData = [];
 });
@@ -441,18 +446,18 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(closeOpeningMock.mock.calls[0][0]).toBe(openOpening.openingId);
   });
 
-  it('종료 확인에서 일정이 모두 삭제된다고 경고한다', () => {
-    // 서버가 종료와 함께 슬롯을 전부 지운다. 미리 알리지 않으면 멘토는
-    // 다시 열었을 때 일정이 비어 있는 이유를 알 수 없다.
+  it('종료 확인에 일정 삭제 경고가 없고 일정이 남는다고 알린다', () => {
+    // 슬롯이 챌린지 라이브 피드백과 공유되면서 종료는 더 이상 슬롯을 지우지
+    // 않는다. 삭제 경고를 남겨 두면 멘토가 슬롯을 잃을까 봐 오픈을 못 닫는다.
     renderPage({ status: 'APPROVED' }, [openOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '오픈 닫기' }));
 
+    expect(screen.queryByText(/일정이 모두 삭제/)).not.toBeInTheDocument();
     expect(
-      screen.getByText(
-        /종료하면 등록한 일정이 모두 삭제됩니다\. 다시 열 때 일정을 새로 등록해야 합니다\./,
-      ),
-    ).toBeInTheDocument();
+      screen.queryByText(/일정을 새로 등록해야 합니다/),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/등록한 일정은 그대로 남아요/)).toBeInTheDocument();
   });
 
   // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
@@ -472,14 +477,13 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
   });
 
-  it('종료됨 배너가 일정을 다시 등록해야 한다고 알린다', () => {
+  it('종료됨 배너가 일정이 그대로 남아 있다고 알린다', () => {
     renderPage({ status: 'APPROVED' }, [closedOpening]);
 
-    expect(
-      within(screen.getByRole('status')).getByText(
-        /등록해 둔 일정이 모두 삭제됐으니, 일정을 다시 등록한 뒤/,
-      ),
-    ).toBeInTheDocument();
+    const banner = within(screen.getByRole('status'));
+    expect(banner.getByText(/등록해 둔 일정은 그대로/)).toBeInTheDocument();
+    expect(banner.queryByText(/모두 삭제/)).not.toBeInTheDocument();
+    expect(banner.queryByText(/다시 등록한 뒤/)).not.toBeInTheDocument();
   });
 
   // PRD §8-9 — 승인 이후에는 서버가 `PUT /settings` 를 409 로 잠근다.
@@ -611,6 +615,33 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
         /방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요/,
       ),
     ).toBeInTheDocument();
+  });
+
+  /*
+   * 회귀 케이스 — 슬롯 편집 트리거가 잠금 fieldset 안에 있으면, 조상 fieldset 이
+   * 자손 폼 컨트롤을 통째로 비활성화하면서 이 버튼까지 같이 죽는다. 그러면 멘토가
+   * 슬롯을 하나 더 열 길이 "오픈 닫기"(등록한 일정을 전부 버린다) 밖에 없어진다.
+   */
+  it('오픈 중에도 일정 등록하기는 눌린다', () => {
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    const scheduleButton = screen.getByRole('button', {
+      name: '일정 등록하기',
+    });
+    expect(scheduleButton).toBeEnabled();
+
+    fireEvent.click(scheduleButton);
+    expect(slotModalOpenSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('오픈 중에도 타이틀·타입·진행시간은 그대로 잠긴다', () => {
+    // 슬롯 버튼만 푸는 것이지 설정 전체가 풀리는 게 아니다.
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+    expect(screen.getByRole('button', { name: '30분' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '자기소개서' })).toBeDisabled();
+    expect(screen.getByRole('radio', { name: /네이버/ })).toBeDisabled();
   });
 
   it('오픈 중이면 재개설 버튼 없이 잠근다', () => {

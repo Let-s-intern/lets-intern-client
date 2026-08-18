@@ -4,8 +4,6 @@ import * as liveMentoringSchema from '../liveMentoringSchema';
 import {
   liveMentoringOpeningCreateSchema,
   liveMentoringSettingsSchema,
-  liveMentoringSlotListSchema,
-  liveMentoringSlotSaveRequestSchema,
   openingHistoryItemSchema,
 } from '../liveMentoringSchema';
 
@@ -82,56 +80,15 @@ describe('멘토 라이브 멘토링 스키마 — 모집 기간 제거', () => 
   });
 });
 
-describe('멘토 라이브 멘토링 슬롯 스키마', () => {
-  it('서버 응답 예시를 그대로 파싱한다', () => {
-    const parsed = liveMentoringSlotListSchema.parse({
-      liveMentoringSlotList: [
-        {
-          slotId: 101,
-          startDate: '2026-09-01T10:00:00',
-          endDate: '2026-09-01T10:30:00',
-          status: 'OPEN',
-        },
-        {
-          slotId: 102,
-          startDate: '2026-09-01T11:00:00',
-          endDate: '2026-09-01T11:30:00',
-          status: 'RESERVED',
-        },
-      ],
-    });
-    expect(parsed.liveMentoringSlotList).toHaveLength(2);
-    expect(parsed.liveMentoringSlotList[1].status).toBe('RESERVED');
-  });
-
-  it('알 수 없는 status 는 거부한다', () => {
-    expect(() =>
-      liveMentoringSlotListSchema.parse({
-        liveMentoringSlotList: [
-          {
-            slotId: 103,
-            startDate: '2026-09-01T10:00:00',
-            endDate: '2026-09-01T10:30:00',
-            status: 'CLOSED',
-          },
-        ],
-      }),
-    ).toThrow();
-  });
-
-  it('저장 요청 바디는 래핑 객체가 아니라 배열 그 자체다', () => {
-    const parsed = liveMentoringSlotSaveRequestSchema.parse([
-      { startDate: '2026-09-01T10:00:00', endDate: '2026-09-01T10:30:00' },
-    ]);
-    expect(Array.isArray(parsed)).toBe(true);
-    expect(parsed[0].startDate).toBe('2026-09-01T10:00:00');
-
-    expect(() =>
-      liveMentoringSlotSaveRequestSchema.parse({
-        slots: [
-          { startDate: '2026-09-01T10:00:00', endDate: '2026-09-01T10:30:00' },
-        ],
-      }),
-    ).toThrow();
+describe('1대1 전용 슬롯 스키마 제거', () => {
+  it('슬롯 스키마를 더 이상 export 하지 않는다', () => {
+    // 슬롯은 `api/feedback/feedbackSchema.ts` 의 `feedbackSlotSchema` 한 벌뿐이다.
+    expect(liveMentoringSchema).not.toHaveProperty('liveMentoringSlotSchema');
+    expect(liveMentoringSchema).not.toHaveProperty(
+      'liveMentoringSlotListSchema',
+    );
+    expect(liveMentoringSchema).not.toHaveProperty(
+      'liveMentoringSlotSaveRequestSchema',
+    );
   });
 });
