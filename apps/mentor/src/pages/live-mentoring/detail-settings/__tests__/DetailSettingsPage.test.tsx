@@ -158,18 +158,42 @@ describe('DetailSettingsPage — 탭', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('탭마다 섹션 번호와 필수·선택 칩을 보여준다', () => {
+  /*
+   * 시안 기준 탭에는 라벨만 둔다. 번호 배지와 필수·선택 칩은 섹션 카드 헤더로 옮겼다
+   * (`DetailSectionHeader`) — 탭 줄에 다 넣으면 6개가 두 줄로 넘친다.
+   */
+  it('탭에는 라벨만 두고 번호·칩을 붙이지 않는다', () => {
     renderPage();
 
-    // PRD §5 탭 구성표 — 1~3 필수, 4~6 선택
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
-      '1핵심 소개필수',
-      '2멘토 정보필수',
-      '3멘토링 유형필수',
-      '4취업 성공 전략선택',
-      '5소개 영상선택',
-      '6결과 사례선택',
+      '핵심 소개',
+      '멘토 정보',
+      '멘토링 유형',
+      '취업 성공 전략',
+      '소개 영상',
+      '결과 사례',
     ]);
+  });
+
+  /**
+   * 필수 여부는 탭에서 눈으로 사라졌으므로(칩이 카드 헤더로 갔다) 화면 낭독에는
+   * 남아 있어야 한다. 완료 여부도 체크 아이콘이 `aria-hidden` 이라 이름이 대신 전한다.
+   */
+  it('필수 여부와 완료 여부를 탭 이름으로 전한다', () => {
+    renderPage();
+
+    expect(
+      screen.getAllByRole('tab').map((tab) => tab.getAttribute('aria-label')),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('핵심 소개 필수'),
+        expect.stringContaining('멘토 정보 필수'),
+        expect.stringContaining('멘토링 유형 필수'),
+        expect.stringContaining('취업 성공 전략 선택'),
+        expect.stringContaining('소개 영상 선택'),
+        expect.stringContaining('결과 사례 선택'),
+      ]),
+    );
   });
 
   it('탭을 클릭하면 그 탭의 섹션만 보인다', () => {

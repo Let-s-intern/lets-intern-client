@@ -26,8 +26,11 @@ const CheckIcon = () => (
  * 탭 이동은 계속 동작해야 한다 — 잠금이 이동까지 삼키면 멘토는 자기 페이지를
  * 읽지도 못한다.
  *
- * 번호 배지는 순서를 보여주는 장식이라 `aria-hidden` 이고, 필수 여부와 완료 여부는
- * 화면 낭독에도 필요해 탭 이름(`aria-label`)에 넣는다.
+ * 시안 기준 탭에는 **라벨과 완료 체크만** 둔다. 섹션 번호 배지와 필수·선택 칩은
+ * 탭이 아니라 각 섹션 카드 헤더(`DetailSectionHeader`)에 붙는다 — 탭 줄에 다 넣으면
+ * 6개가 두 줄로 넘치고, 지금 무엇을 편집 중인지가 오히려 안 보인다.
+ *
+ * 필수 여부는 화면 낭독에 필요하므로 탭 이름(`aria-label`)에는 남긴다.
  */
 const DetailTabs = ({
   activeTab,
@@ -37,9 +40,9 @@ const DetailTabs = ({
   <div
     role="tablist"
     aria-label="상세 페이지 섹션"
-    className="flex flex-wrap gap-2"
+    className="flex items-stretch gap-1 overflow-x-auto border-b border-gray-200"
   >
-    {DETAIL_TABS.map((tab, index) => {
+    {DETAIL_TABS.map((tab) => {
       const isActive = tab.id === activeTab;
       const requiredLabel = tab.required ? '필수' : '선택';
       const isComplete = completedTabs.has(tab.id);
@@ -51,33 +54,13 @@ const DetailTabs = ({
           aria-selected={isActive}
           aria-label={`${tab.label} ${requiredLabel}${isComplete ? ' 완료' : ''}`}
           onClick={() => onChange(tab.id)}
-          className={`flex shrink-0 items-center gap-1.5 rounded-full py-2 pl-2 pr-3 text-sm font-medium transition-colors ${
+          className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-sm transition-colors ${
             isActive
-              ? 'bg-primary text-white'
-              : 'border border-gray-200 bg-white text-gray-600'
+              ? 'border-primary text-primary font-semibold'
+              : 'border-transparent font-medium text-gray-500 hover:text-gray-700'
           }`}
         >
-          <span
-            aria-hidden="true"
-            className={`flex h-5 w-5 items-center justify-center rounded-full text-xs ${
-              isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
-            }`}
-          >
-            {index + 1}
-          </span>
           {tab.label}
-          <span
-            aria-hidden="true"
-            className={`rounded px-1.5 py-0.5 text-[11px] ${
-              isActive
-                ? 'bg-white/20 text-white'
-                : tab.required
-                  ? 'bg-primary-10 text-primary'
-                  : 'bg-gray-100 text-gray-500'
-            }`}
-          >
-            {requiredLabel}
-          </span>
           {isComplete ? <CheckIcon /> : null}
         </button>
       );

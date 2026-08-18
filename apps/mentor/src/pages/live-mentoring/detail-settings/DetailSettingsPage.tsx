@@ -195,12 +195,10 @@ const DetailSettingsPage = () => {
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-        상세 페이지 설정
+        내 멘토링 상세 페이지 관리
       </h1>
       <p className="text-xsmall14 text-neutral-40">
-        {canEdit
-          ? '좌측에서 고친 내용이 우측 미리보기에 즉시 반영됩니다.'
-          : '공개 상세 페이지에 실리는 내용입니다.'}
+        멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.
       </p>
       {/* 미리보기는 축소판이라 실제 화면과 다를 수 있다 — 진짜 페이지로 갈 길을 준다. */}
       {user?.userId != null && (
