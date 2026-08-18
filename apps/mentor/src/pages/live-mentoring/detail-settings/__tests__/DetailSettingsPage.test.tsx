@@ -131,7 +131,7 @@ afterEach(() => {
 /** 히어로 탭에서 소개 문구를 하나 추가해 미저장 변경 상태를 만든다. */
 const addHeroBullet = () => {
   const heroSection = screen
-    .getByRole('heading', { name: '히어로 (최상단)' })
+    .getByRole('heading', { name: '핵심 소개' })
     .closest('section');
   if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
   fireEvent.click(within(heroSection).getByRole('button', { name: '+ 추가' }));
@@ -146,9 +146,7 @@ describe('DetailSettingsPage — 탭', () => {
     renderPage();
 
     expect(screen.getAllByRole('tab')).toHaveLength(6);
-    expect(
-      screen.getByRole('heading', { name: '히어로 (최상단)' }),
-    ).toBeVisible();
+    expect(screen.getByRole('heading', { name: '핵심 소개' })).toBeVisible();
     // 다른 탭의 섹션은 렌더되지 않는다
     expect(
       screen.queryByRole('heading', { name: '멘토링 유형' }),
@@ -162,6 +160,20 @@ describe('DetailSettingsPage — 탭', () => {
    * 시안 기준 탭에는 라벨만 둔다. 번호 배지와 필수·선택 칩은 섹션 카드 헤더로 옮겼다
    * (`DetailSectionHeader`) — 탭 줄에 다 넣으면 6개가 두 줄로 넘친다.
    */
+  /** 시안 헤더 문구. 기존 "상세 페이지 설정" 에서 바뀌었다. */
+  it('시안 문구로 페이지 제목과 부제를 보여준다', () => {
+    renderPage();
+
+    expect(
+      screen.getByRole('heading', { name: '내 멘토링 상세 페이지 관리' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        '멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('탭에는 라벨만 두고 번호·칩을 붙이지 않는다', () => {
     renderPage();
 
@@ -196,19 +208,46 @@ describe('DetailSettingsPage — 탭', () => {
     );
   });
 
+  /** 섹션 카드 헤더(`DetailSectionHeader`) 영역. 번호 배지가 리스트 순번과 겹치지 않게 좁힌다. */
+  const cardHeaderOf = (name: string) => {
+    const header = screen
+      .getByRole('heading', { name })
+      .closest('header') as HTMLElement | null;
+    if (!header) throw new Error(`${name} 카드 헤더를 찾을 수 없습니다`);
+    return header;
+  };
+
+  it('섹션 카드 헤더에 번호 배지·필수 칩과 시안의 큰 제목이 있다', () => {
+    renderPage();
+
+    const hero = cardHeaderOf('핵심 소개');
+    expect(within(hero).getByText('1')).toBeVisible();
+    expect(within(hero).getByText('필수')).toBeVisible();
+    expect(screen.getByText('이 멘토링을 간단히 소개해 주세요')).toBeVisible();
+  });
+
+  it('선택 섹션 카드 헤더에는 선택 칩과 노출 토글이 함께 있다', () => {
+    renderPage();
+    openTab('소개 영상');
+
+    const video = cardHeaderOf('소개 영상');
+    expect(within(video).getByText('5')).toBeVisible();
+    expect(within(video).getByText('선택')).toBeVisible();
+    expect(within(video).getByRole('checkbox')).toBeInTheDocument();
+    expect(screen.getByText('멘토링 소개 영상을 등록해 주세요')).toBeVisible();
+  });
+
   it('탭을 클릭하면 그 탭의 섹션만 보인다', () => {
     renderPage();
 
     openTab('멘토링 유형');
     expect(screen.getByRole('heading', { name: '멘토링 유형' })).toBeVisible();
     expect(
-      screen.queryByRole('heading', { name: '히어로 (최상단)' }),
+      screen.queryByRole('heading', { name: '핵심 소개' }),
     ).not.toBeInTheDocument();
 
     openTab('소개 영상');
-    expect(
-      screen.getByRole('heading', { name: '이렇게 도와드려요 (영상)' }),
-    ).toBeVisible();
+    expect(screen.getByRole('heading', { name: '소개 영상' })).toBeVisible();
     expect(
       screen.queryByRole('heading', { name: '멘토링 유형' }),
     ).not.toBeInTheDocument();
@@ -222,7 +261,7 @@ describe('DetailSettingsPage — 탭', () => {
     ).toBeInTheDocument();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.change(within(heroSection).getAllByRole('textbox')[0], {
@@ -259,7 +298,7 @@ describe('DetailSettingsPage — 탭', () => {
     renderPage();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.change(within(heroSection).getAllByRole('textbox')[0], {
@@ -277,7 +316,7 @@ describe('DetailSettingsPage — 탭', () => {
 
     openTab('멘토 정보');
 
-    expect(screen.getByRole('heading', { name: '멘토 소개' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: '멘토 정보' })).toBeVisible();
     expect(screen.getByRole('link', { name: '프로필 페이지' })).toHaveAttribute(
       'href',
       '/profile',
@@ -347,7 +386,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
     // "+ 추가" 버튼은 유형 카드·Point·Before/After 리스트에도 있어 히어로 섹션
     // 안으로 범위를 좁혀야 한다.
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
@@ -368,7 +407,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
     renderPage();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
@@ -407,7 +446,7 @@ describe('DetailSettingsPage — 이탈 경고', () => {
     renderPage();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     fireEvent.click(
@@ -511,7 +550,7 @@ describe('DetailSettingsPage — 잠금 범위', () => {
     renderLocked();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     expect(within(heroSection).getAllByRole('textbox')[0]).toBeDisabled();
@@ -545,7 +584,7 @@ describe('DetailSettingsPage — 잠금 범위', () => {
     renderPage();
 
     const heroSection = screen
-      .getByRole('heading', { name: '히어로 (최상단)' })
+      .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
     expect(within(heroSection).getAllByRole('textbox')[0]).toBeEnabled();

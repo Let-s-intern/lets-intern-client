@@ -7,7 +7,8 @@ import type {
   TemplateStrategyPoint,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import { toYoutubeEmbedUrl } from '../../constants';
-import type { DetailTabId } from '../tabs';
+import { DETAIL_TABS, type DetailTabId } from '../tabs';
+import DetailSectionHeader from './DetailSectionHeader';
 import ImageField from './ImageField';
 import ListField from './ListField';
 
@@ -21,10 +22,22 @@ interface TemplateEditFormProps {
 }
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
-const titleClass = 'text-base font-semibold text-gray-900';
 const labelClass = 'mb-1 block text-xs font-medium text-gray-600';
 const inputClass =
   'focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors';
+
+/**
+ * 카드 헤더의 번호·이름·필수 여부는 탭 정의에서 가져온다.
+ * 두 곳에 따로 적으면 탭 순서를 바꿨을 때 카드 번호만 옛 순서로 남는다.
+ */
+const sectionMeta = (id: DetailTabId) => {
+  const index = DETAIL_TABS.findIndex((tab) => tab.id === id);
+  return {
+    step: index + 1,
+    name: DETAIL_TABS[index].label,
+    required: DETAIL_TABS[index].required,
+  };
+};
 
 /**
  * 노출 토글.
@@ -88,8 +101,12 @@ const TemplateEditForm = ({
       {/* 시안 0 · 히어로 */}
       {activeTab === 'hero' ? (
         <section className={cardClass} data-section="hero">
-          <h2 className={titleClass}>히어로 (최상단)</h2>
-          <p className="mb-4 mt-1 text-xs text-gray-500">
+          <DetailSectionHeader
+            {...sectionMeta('hero')}
+            heading="이 멘토링을 간단히 소개해 주세요"
+            description="멘토링에서 다루는 내용과 멘티가 받을 수 있는 도움을 짧게 작성해 주세요."
+          />
+          <p className="mb-4 text-xs text-gray-500">
             상품명·가격·진행 기간은 오픈 설정 값을 그대로 씁니다. 여기서는 제목
             아래 소개 불릿만 편집합니다.
           </p>
@@ -118,9 +135,13 @@ const TemplateEditForm = ({
         진짜인지 알 수 없어진다.
       */}
       {activeTab === 'intro' ? (
-        <section className={cardClass}>
-          <h2 className={titleClass}>멘토 소개</h2>
-          <p className="mt-1 text-xs text-gray-500">
+        <section className={cardClass} data-section="intro">
+          <DetailSectionHeader
+            {...sectionMeta('intro')}
+            heading="상세 페이지에 표시될 프로필을 확인해 주세요"
+            description="프로필에 등록된 사진과 대표 경력을 사용해요. 수정이 필요하면 프로필에서 변경해 주세요."
+          />
+          <p className="text-xs text-gray-500">
             프로필 이미지·소속·경력·한마디는{' '}
             <a href="/profile" className="text-primary underline">
               프로필 페이지
@@ -133,8 +154,12 @@ const TemplateEditForm = ({
       {/* 시안 2 · 멘토링 유형 */}
       {activeTab === 'mentoringTypes' ? (
         <section className={cardClass} data-section="mentoringTypes">
-          <h2 className={titleClass}>멘토링 유형</h2>
-          <p className="mb-4 mt-1 text-xs text-gray-500">
+          <DetailSectionHeader
+            {...sectionMeta('mentoringTypes')}
+            heading="멘토링 유형에 대해 알려주세요"
+            description="상세 페이지에 표시할 멘토링 유형 섹션의 제목과 문구를 작성해 주세요."
+          />
+          <p className="mb-4 text-xs text-gray-500">
             멘티가 고민에 맞는 유형을 고를 수 있도록 안내합니다.
           </p>
 
@@ -238,15 +263,19 @@ const TemplateEditForm = ({
       {/* 시안 3 · 취업 성공 전략 */}
       {activeTab === 'strategy' ? (
         <section className={cardClass} data-section="strategy">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className={titleClass}>취업 성공 전략</h2>
-            <VisibleToggle
-              checked={strategy.visible}
-              onChange={(visible) =>
-                onChange({ strategy: { ...strategy, visible } })
-              }
-            />
-          </div>
+          <DetailSectionHeader
+            {...sectionMeta('strategy')}
+            heading="취업 성공 전략을 소개해 주세요"
+            description="멘토링에서 알려줄 전략을 Point 로 나눠 보여줄 수 있어요."
+            action={
+              <VisibleToggle
+                checked={strategy.visible}
+                onChange={(visible) =>
+                  onChange({ strategy: { ...strategy, visible } })
+                }
+              />
+            }
+          />
 
           <div className="flex flex-col gap-4">
             <input
@@ -309,13 +338,19 @@ const TemplateEditForm = ({
       {/* 시안 4 · 이렇게 도와드려요 (영상) */}
       {activeTab === 'video' ? (
         <section className={cardClass} data-section="video">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className={titleClass}>이렇게 도와드려요 (영상)</h2>
-            <VisibleToggle
-              checked={video.visible}
-              onChange={(visible) => onChange({ video: { ...video, visible } })}
-            />
-          </div>
+          <DetailSectionHeader
+            {...sectionMeta('video')}
+            heading="멘토링 소개 영상을 등록해 주세요"
+            description="멘토링 방식이나 제공하는 도움을 소개하는 영상을 등록할 수 있어요."
+            action={
+              <VisibleToggle
+                checked={video.visible}
+                onChange={(visible) =>
+                  onChange({ video: { ...video, visible } })
+                }
+              />
+            }
+          />
 
           <div className="flex flex-col gap-4">
             <input
@@ -386,15 +421,19 @@ const TemplateEditForm = ({
       {/* 시안 5 · 결과 사례 */}
       {activeTab === 'results' ? (
         <section className={cardClass} data-section="results">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className={titleClass}>결과 사례</h2>
-            <VisibleToggle
-              checked={results.visible}
-              onChange={(visible) =>
-                onChange({ results: { ...results, visible } })
-              }
-            />
-          </div>
+          <DetailSectionHeader
+            {...sectionMeta('results')}
+            heading="멘토링 후 무엇이 달라졌나요?"
+            description="멘티가 기대할 수 있는 변화를 구체적인 전후 사례의 이미지와 설명으로 보여주세요."
+            action={
+              <VisibleToggle
+                checked={results.visible}
+                onChange={(visible) =>
+                  onChange({ results: { ...results, visible } })
+                }
+              />
+            }
+          />
 
           <div className="flex flex-col gap-4">
             <input
