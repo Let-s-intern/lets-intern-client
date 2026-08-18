@@ -49,9 +49,13 @@ const LockIcon = () => (
 
 const barClass =
   'shadow-05 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3';
-// 사이드바(296px)와 우측 미리보기 컬럼(380px + gap-6)을 뺀 콘텐츠 영역 기준 폭.
+/*
+ * 사이드바(296px)를 뺀 콘텐츠 영역 안에서, 편집 카드 폭에 맞춘다.
+ * 미리보기 컬럼이 고정 px 가 아니라 비율(1.93fr : 1fr)이 되면서 고정 pr 로는 어긋난다.
+ * 편집 카드가 차지하는 비율이 1.93/2.93 ≈ 65.9% 이므로 남는 34.1% 를 오른쪽에 비운다.
+ */
 const wrapClass =
-  'fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:pr-[436px]';
+  'fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:right-[34.1%] lg:pr-3';
 
 /**
  * 하단 고정 저장 바 (PRD §7).

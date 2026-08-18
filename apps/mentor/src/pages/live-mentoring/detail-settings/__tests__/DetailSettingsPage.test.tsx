@@ -456,16 +456,22 @@ describe('DetailSettingsPage — 편집 영역', () => {
   });
 });
 
-describe('DetailSettingsPage — 미리보기 자동 스크롤', () => {
-  it('편집 폼에서 섹션에 포커스하면 미리보기가 해당 섹션으로 스크롤한다', () => {
-    const scrollIntoViewMock = vi.fn();
-    Element.prototype.scrollIntoView = scrollIntoViewMock;
+/*
+ * 미리보기는 전체를 그리고 스크롤하는 방식이 아니라, 지금 편집 중인 섹션 하나만 그린다.
+ * "이 섹션이 멘티에게 어떻게 보이는지" 를 보여주는 것이 목적이라 다른 섹션은 방해가 된다.
+ */
+describe('DetailSettingsPage — 미리보기는 활성 탭 섹션만 그린다', () => {
+  it('탭을 옮기면 그 섹션만 남고 다른 섹션은 사라진다', () => {
     renderPage();
 
-    openTab('멘토링 유형');
-    fireEvent.focus(screen.getByLabelText('섹션 제목'));
+    // 핵심 소개 탭 — 히어로가 보이고 멘토 소개 섹션 문구는 없다
+    expect(screen.queryByText('멘토님의 한마디')).not.toBeInTheDocument();
 
-    expect(scrollIntoViewMock).toHaveBeenCalled();
+    openTab('멘토 정보');
+    expect(screen.getByText('멘토님의 한마디')).toBeInTheDocument();
+
+    openTab('멘토링 유형');
+    expect(screen.queryByText('멘토님의 한마디')).not.toBeInTheDocument();
   });
 });
 
@@ -596,13 +602,12 @@ describe('DetailSettingsPage — 잠금 범위', () => {
     expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
   });
 
-  it('수정 불가여도 미리보기와 공개 페이지 링크는 살아 있다', () => {
+  it('수정 불가여도 미리보기와 상세 페이지 보기는 살아 있다', () => {
     renderLocked();
 
-    expect(screen.getByText('💬 멘토님의 한마디')).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: '실제 공개 페이지로 확인하기' }),
-    ).toBeVisible();
+    // 미리보기는 활성 탭 섹션만 그리므로 멘토 정보 탭으로 옮겨 확인한다.
+    openTab('멘토 정보');
+    expect(screen.getByText('멘토님의 한마디')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: '멘토링 상세 페이지 보기' }),
     ).toBeVisible();
@@ -620,13 +625,18 @@ describe('DetailSettingsPage — 잠금 범위', () => {
 });
 
 describe('DetailSettingsPage — 미리보기', () => {
+  /** 미리보기는 활성 탭 섹션만 그리므로 문구도 그 탭에서 확인한다. */
   it('공개 상세와 같은 헤드라인·섹션 문구를 보여준다', () => {
     renderPage();
 
+    openTab('멘토 정보');
     expect(
       screen.getByText('확실한 전략으로 300명을 합격시킨 쥬디 멘토가 함께해요'),
     ).toBeInTheDocument();
-    expect(screen.getByText('💬 멘토님의 한마디')).toBeInTheDocument();
+    expect(screen.getByText('멘토님의 한마디')).toBeInTheDocument();
+
+    // `✓ 경험 연결` 은 결과 사례의 afterCaption 이다. 멘토링 유형이 아니다.
+    openTab('결과 사례');
     expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
   });
 

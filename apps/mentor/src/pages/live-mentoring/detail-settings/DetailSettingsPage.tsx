@@ -189,13 +189,6 @@ const DetailSettingsPage = () => {
     setNavGuard({ isOpen: false, pendingHref: null, pendingAction: null });
   };
 
-  /** 편집 폼에서 포커스가 옮겨간 섹션으로 미리보기를 따라 스크롤한다. */
-  const handleSectionFocus = (section: string) => {
-    document
-      .getElementById(`preview-section-${section}`)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  };
-
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
@@ -204,17 +197,6 @@ const DetailSettingsPage = () => {
       <p className="text-xsmall14 text-neutral-40">
         멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.
       </p>
-      {/* 미리보기는 축소판이라 실제 화면과 다를 수 있다 — 진짜 페이지로 갈 길을 준다. */}
-      {user?.userId != null && (
-        <a
-          href={publicDetailUrl(user.userId)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary text-xsmall14 w-fit font-medium underline"
-        >
-          실제 공개 페이지로 확인하기
-        </a>
-      )}
     </header>
   );
 
@@ -369,18 +351,26 @@ const DetailSettingsPage = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
+      {/*
+        탭 줄은 grid **바깥**이다. 시안에서 탭은 편집 카드와 미리보기를 가로지르는
+        전체 폭을 쓴다 — 편집 카드 폭에 가두면 6개가 좁은 칸에서 밀린다.
+
+        잠금(fieldset) 바깥이기도 하다. 오픈 중이라 편집이 막혀도 탭 이동은
+        계속 동작해야 한다.
+      */}
+      <DetailTabs
+        activeTab={activeTab}
+        completedTabs={completedTabs}
+        onChange={setActiveTab}
+      />
+
+      {/*
+        시안 비율은 편집 카드 : 미리보기 ≈ 1.93 : 1 이다. 고정 폭을 주면 넓은 화면에서
+        미리보기만 상대적으로 좁아져 모바일 뷰가 제 크기로 안 보인다.
+      */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
         {/* 읽기 모드에서는 입력만 잠근다 — 내용은 그대로 읽을 수 있어야 한다. */}
-        {/*
-          탭 네비게이션은 잠금(fieldset) **바깥**이다. 오픈 중이라 편집이 막혀도
-          탭 이동은 계속 동작해야 한다.
-        */}
         <div className="flex min-w-0 flex-col gap-4">
-          <DetailTabs
-            activeTab={activeTab}
-            completedTabs={completedTabs}
-            onChange={setActiveTab}
-          />
           <fieldset
             disabled={!canEdit}
             className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
@@ -389,7 +379,6 @@ const DetailSettingsPage = () => {
               template={template}
               activeTab={activeTab}
               onChange={patch}
-              onSectionFocus={handleSectionFocus}
             />
           </fieldset>
         </div>
@@ -401,6 +390,7 @@ const DetailSettingsPage = () => {
         <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
           <TemplatePreview
             template={template}
+            activeTab={activeTab}
             nickname={settings?.nickname ?? '멘토'}
           />
         </div>

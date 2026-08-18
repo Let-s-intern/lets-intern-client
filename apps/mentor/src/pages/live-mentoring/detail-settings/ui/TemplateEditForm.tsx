@@ -21,7 +21,6 @@ interface TemplateEditFormProps {
   activeTab: DetailTabId;
   onChange: (partial: Partial<LiveMentoringTemplate>) => void;
   /** 입력 포커스가 옮겨간 섹션을 알린다 — 미리보기가 해당 섹션으로 따라 스크롤한다. */
-  onSectionFocus?: (section: string) => void;
 }
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
@@ -87,7 +86,6 @@ const TemplateEditForm = ({
   template,
   activeTab,
   onChange,
-  onSectionFocus,
 }: TemplateEditFormProps) => {
   const { hero, intro, mentoringTypes, strategy, video, results } = template;
 
@@ -96,7 +94,6 @@ const TemplateEditForm = ({
     const section = (e.target as HTMLElement)
       .closest<HTMLElement>('[data-section]')
       ?.getAttribute('data-section');
-    if (section) onSectionFocus?.(section);
   };
 
   return (
