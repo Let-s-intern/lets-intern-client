@@ -2,7 +2,13 @@ import WarningModal from '@/common/alert/WarningModal';
 import TableLayout from '@/domain/admin/ui/table/TableLayout';
 import dayjs from '@/lib/dayjs';
 
+import { buildPopupSnippet } from './buildSsoSnippet';
+import useCopyToClipboard from './useCopyToClipboard';
 import useSsoRedirectWhitelists from './useSsoRedirectWhitelists';
+
+// 스니펫이 가리킬 렛츠커리어 로그인 페이지 주소. 미설정 시 운영 주소로 떨어진다
+// (MagnetTable 등 다른 화면과 같은 관행).
+const SSO_ORIGIN = import.meta.env.VITE_WEB_URL || 'https://letscareer.co.kr';
 
 /**
  * SSO 리다이렉트 화이트리스트 목록 (LC-3208, PRD 6.3).
@@ -27,6 +33,13 @@ const SsoRedirectWhitelists = () => {
     cancelDelete,
     confirmDelete,
   } = useSsoRedirectWhitelists();
+  const { copy, copiedKey, failedKey } = useCopyToClipboard();
+
+  const copyLabel = (key: string, base: string) => {
+    if (copiedKey === key) return '복사됨';
+    if (failedKey === key) return '복사 실패';
+    return base;
+  };
 
   return (
     <>
@@ -63,6 +76,7 @@ const SsoRedirectWhitelists = () => {
                 <th className="px-3 py-2">허용 URL</th>
                 <th className="px-3 py-2">활성화</th>
                 <th className="px-3 py-2">생성일</th>
+                <th className="px-3 py-2">연동</th>
                 <th className="px-3 py-2">관리</th>
               </tr>
             </thead>
@@ -96,6 +110,42 @@ const SsoRedirectWhitelists = () => {
                   </td>
                   <td className="px-3 py-2">
                     {formatCreateDate(item.createDate)}
+                  </td>
+                  {/*
+                    등록된 값을 그대로 복사해 가게 한다. 서버는 이 URL 을 완전일치로 비교하므로
+                    손으로 옮겨 적다 슬래시 하나만 틀려도 그 서비스의 로그인이 통째로 막힌다.
+                    운영자는 URL 만, 붙이는 개발자는 코드가 필요해 둘을 나눠 둔다.
+                  */}
+                  <td className="whitespace-nowrap px-3 py-2">
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        aria-label={`${item.serviceName} 허용 URL 복사`}
+                        onClick={() =>
+                          copy(`url-${item.id}`, item.allowedRedirectUri)
+                        }
+                        className="rounded-xxs border border-neutral-300 px-2 py-1 text-xs text-neutral-600"
+                      >
+                        {copyLabel(`url-${item.id}`, 'URL 복사')}
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`${item.serviceName} 연동 코드 복사`}
+                        onClick={() =>
+                          copy(
+                            `code-${item.id}`,
+                            buildPopupSnippet({
+                              allowedRedirectUri: item.allowedRedirectUri,
+                              serviceName: item.serviceName,
+                              ssoOrigin: SSO_ORIGIN,
+                            }),
+                          )
+                        }
+                        className="rounded-xxs border border-neutral-300 px-2 py-1 text-xs text-neutral-600"
+                      >
+                        {copyLabel(`code-${item.id}`, '연동 코드 복사')}
+                      </button>
+                    </div>
                   </td>
                   <td className="px-3 py-2">
                     <button
