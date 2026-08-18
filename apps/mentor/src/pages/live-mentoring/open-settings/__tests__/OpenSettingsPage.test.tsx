@@ -635,6 +635,16 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(slotModalOpenSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('오픈 중에도 타이틀·타입·진행시간은 그대로 잠긴다', () => {
+    // 슬롯 버튼만 푸는 것이지 설정 전체가 풀리는 게 아니다.
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
+    expect(screen.getByRole('button', { name: '30분' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '자기소개서' })).toBeDisabled();
+    expect(screen.getByRole('radio', { name: /네이버/ })).toBeDisabled();
+  });
+
   it('오픈 중이면 재개설 버튼 없이 잠근다', () => {
     renderPage({ status: 'APPROVED' }, [openOpening]);
 
