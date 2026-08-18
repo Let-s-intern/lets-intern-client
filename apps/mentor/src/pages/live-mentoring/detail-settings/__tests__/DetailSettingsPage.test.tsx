@@ -4,14 +4,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringCategory,
+  LiveMentoringDetailPage,
   LiveMentoringSettings,
-  LiveMentoringTemplate,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
 const startEditMock = vi.fn();
 let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
-let templateData: LiveMentoringTemplate | undefined;
+let templateData: LiveMentoringDetailPage | undefined;
+/** 서버 `mentoring.editable` — 잠금 판정의 근거. */
+let editable = true;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
 
 // 공개 페이지 미리보기 링크가 mentorId 를 필요로 한다.
@@ -46,9 +48,16 @@ import DetailSettingsPage from '../DetailSettingsPage';
 /** 멘토 편집 대상 전체가 채워진 템플릿을 만든다. */
 const makeTemplate = (
   category: LiveMentoringCategory,
-): LiveMentoringTemplate => {
+): LiveMentoringDetailPage => {
   return {
     category,
+    mentoring: {
+      liveMentoringId: 1,
+      title: '자소서 실전 첨삭 멘토링',
+      status,
+      editable,
+      categories: [category],
+    },
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 300,
@@ -114,6 +123,7 @@ afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
   status = 'DRAFT';
+  editable = true;
   startEditMock.mockReset();
   openings = [];
 });
@@ -402,21 +412,24 @@ describe('DetailSettingsPage — 이탈 경고', () => {
 });
 
 describe('DetailSettingsPage — 상태 잠금', () => {
-  // 상품 상태(APPROVED)가 아니라 "지금 열려 있는지"로 말해야 오해가 없다.
-  it('오픈 중이면 오픈 중으로 알리고 오픈 설정으로 갈 링크를 준다', () => {
-    // 오픈 현황 화면이 폐지되면서, 종료는 오픈 설정 화면 상단에서 한다.
+  it('오픈 중이면 저장 바가 수정 불가 상태로 바뀌고 상세 페이지 보기를 준다', () => {
     status = 'APPROVED';
+    editable = false;
     openings = [{ status: 'OPEN' }];
     renderPage();
 
-    const banner = screen.getByRole('status');
-    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
     expect(
-      within(banner).getByRole('link', { name: '오픈 설정으로' }),
-    ).toHaveAttribute('href', '/live-mentoring/open-settings');
-    // 노출 중에는 수정도, 상세 수정 시작도 불가하다.
+      screen.getByText('오픈 중에는 상세 페이지를 수정할 수 없어요.'),
+    ).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: '수정하기' }),
+      screen.getByRole('link', { name: '멘토링 상세 페이지 보기' }),
+    ).toHaveAttribute(
+      'href',
+      expect.stringContaining('/live-mentoring/500') as unknown as string,
+    );
+    // 저장 경로는 사라진다.
+    expect(
+      screen.queryByRole('button', { name: '변경사항 저장' }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '수정' }),
@@ -425,17 +438,22 @@ describe('DetailSettingsPage — 상태 잠금', () => {
 
   it('오픈이 닫혀 있으면 이 화면에서 바로 상세 수정을 시작할 수 있다', () => {
     status = 'APPROVED';
+    editable = false;
     openings = [{ status: 'CLOSED' }];
     renderPage();
 
-    const banner = screen.getByRole('status');
-    expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
+    expect(screen.getByText('오픈 종료됨')).toBeInTheDocument();
     // 글로만 다른 화면으로 보내지 않고 여기서 누를 수 있어야 한다.
     expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
+    // 오픈 중이 아니므로 잠금 안내 문구도 달라야 한다.
+    expect(
+      screen.queryByText('오픈 중에는 상세 페이지를 수정할 수 없어요.'),
+    ).not.toBeInTheDocument();
   });
 
   it('잠긴 상태에서는 없는 수정하기 버튼을 안내하지 않는다', () => {
     status = 'APPROVED';
+    editable = false;
     openings = [{ status: 'CLOSED' }];
     renderPage();
 
@@ -446,8 +464,8 @@ describe('DetailSettingsPage — 상태 잠금', () => {
 
   it('초안이면 배너 없이 편집할 수 있다', () => {
     renderPage();
-    // 저장 바의 상태 문구도 role="status" 라 배너 유무는 문구로 판정한다.
-    expect(screen.queryByText('오픈 중')).not.toBeInTheDocument();
+
+    expect(screen.queryByText('오픈 종료됨')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeVisible();
   });
 });

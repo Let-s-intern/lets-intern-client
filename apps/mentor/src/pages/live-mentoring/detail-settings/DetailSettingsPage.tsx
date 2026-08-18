@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   useLiveMentoringOpenStatusQuery,
@@ -9,6 +9,7 @@ import {
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import {
+  type LiveMentoringDetailPage,
   type LiveMentoringTemplate,
   toTemplateUpdatePayload,
 } from '@/api/live-mentoring/liveMentoringSchema';
@@ -43,10 +44,12 @@ const DetailSettingsPage = () => {
     useStartEditLiveMentoringMutation();
   const { alertProps, showAlert } = useMentorAlert();
 
-  const [template, setTemplate] = useState<LiveMentoringTemplate | null>(null);
+  const [template, setTemplate] = useState<LiveMentoringDetailPage | null>(
+    null,
+  );
   // 변경사항(dirty) 판정을 위한 로드 원본 — 저장 버튼 활성화·이탈 경고에 쓴다.
   const [originalTemplate, setOriginalTemplate] =
-    useState<LiveMentoringTemplate | null>(null);
+    useState<LiveMentoringDetailPage | null>(null);
   /**
    * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐
    * 낡은 `APPROVED` 로 남는다. 그 사이에도 곧바로 편집으로 들어가야 하므로
@@ -71,20 +74,24 @@ const DetailSettingsPage = () => {
   const isNavigatingRef = useRef(false);
 
   /**
-   * 승인 상태에서는 상세 페이지를 바로 수정할 수 없다.
-   * 이미 노출 중인 판매 페이지가 멘티가 보는 도중에 바뀌면 안 되기 때문이고,
-   * 서버도 상품 상태가 `DRAFT` 일 때만 편집을 허용한다. (자가승인 전환으로
-   * `submit()` 이 검토 단계 없이 곧바로 `APPROVED` 로 전이하므로 그 사이 상태는 없다.)
+   * 편집 가능 여부는 **서버가 내려준 `mentoring.editable` 하나로** 정한다
+   * (`status == DRAFT && !hasActiveOpening()`). 프론트가 상태·개설 이력에서 같은
+   * 조건을 다시 계산하면 서버와 어긋나는 날이 오고, 그때 멘토는 폼을 다 채우고
+   * 저장을 눌러야 거절당한다.
    *
    * 다만 "수정할 수 없다"로 끝내면 멘토가 막힌다. 오픈이 닫혀 있으면 이 화면에서
-   * 바로 검토를 다시 걸어(`start-edit`) 편집으로 넘어갈 수 있게 한다.
+   * 바로 초안으로 되돌려(`start-edit`) 편집으로 넘어갈 수 있게 한다.
    */
   const status = settings?.status ?? null;
-  const isLocked = status === 'APPROVED';
-  const canEdit = !isLocked || isEditing;
+  const editable = template?.mentoring.editable ?? false;
+  const canEdit = editable || isEditing;
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
   const canStartEdit = status === 'APPROVED' && !currentOpening;
+  /** 수정 불가 안내 — 왜 못 고치는지가 상황마다 달라 문구를 나눈다. */
+  const lockedMessage = currentOpening
+    ? '오픈 중에는 상세 페이지를 수정할 수 없어요.'
+    : '지금은 상세 페이지를 수정할 수 없어요. 위 안내에서 수정을 시작해 주세요.';
 
   /**
    * 완료 표시가 붙는 탭. 탭을 옮길 때마다가 아니라 **템플릿이 바뀔 때만** 다시 센다 —
@@ -332,7 +339,7 @@ const DetailSettingsPage = () => {
         오픈 중일 때는 하단 플로팅 영역으로 옮긴다(아래) — "오픈 설정으로 이동"이
         이 화면에서 할 수 있는 주요 행동이라, 다른 화면 액션과 같은 자리에 둔다.
       */}
-      {status === 'APPROVED' && !currentOpening && (
+      {canStartEdit && (
         <div
           role="status"
           className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -342,10 +349,21 @@ const DetailSettingsPage = () => {
               오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              수정을 시작하면 오픈이 잠시 멈춰요. 아래 "수정"을 누르면 바로
+              수정을 시작하면 오픈이 잠시 멈춰요. 옆의 "수정"을 누르면 바로
               시작할 수 있습니다.
             </p>
           </div>
+          {/* 하단 저장 바가 자리를 쓰므로 편집 시작 버튼은 이 안내 옆에 둔다. */}
+          {canEdit ? null : (
+            <button
+              type="button"
+              onClick={handleStartEdit}
+              disabled={isStartingEdit}
+              className="bg-primary hover:bg-primary-hover shrink-0 rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isStartingEdit ? '처리 중...' : '수정'}
+            </button>
+          )}
         </div>
       )}
 
@@ -387,63 +405,23 @@ const DetailSettingsPage = () => {
       </div>
 
       {/*
-        하단 고정 액션.
-        잠긴 상태라도 할 수 있는 일이 있으면 버튼을 준다 — 오픈이 닫혀 있으면
-        여기서 바로 상세 수정을 시작할 수 있다. 버튼 없이 글로만 "오픈 설정으로 가라"고
-        하면 멘토가 화면을 옮겨 다니며 길을 찾아야 한다.
+        하단 고정 저장 바 (PRD §7).
 
-        오픈 중(잠김 + canStartEdit 불가)일 때는 상태 설명 + "오픈 설정으로 이동"을
-        여기(하단 플로팅)에 둔다 — 다른 화면 액션들과 같은 자리라 더 직관적이다.
+        수정 불가(`editable === false`)일 때도 같은 자리에 남는다 — 왜 저장할 수
+        없는지와 공개 페이지로 가는 길을 여기서 알린다. 입력 잠금은 위 fieldset 이
+        하고, 이 바는 탭 이동·미리보기를 건드리지 않는다.
       */}
-      {isLocked && !canStartEdit && (
-        // 사이드바(296px)와 우측 미리보기 컬럼(380px + gap-6)을 뺀 콘텐츠 영역
-        // 기준으로 폭을 맞춘다 — 그냥 right-0 이면 미리보기 위로 넘어가 버린다.
-        <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:pr-[436px]">
-          <div
-            role="status"
-            className="shadow-05 flex items-center justify-between gap-3 rounded-xl bg-gray-900/80 px-4 py-3"
-          >
-            <div className="flex min-w-0 items-center gap-2">
-              <span
-                className="h-2 w-2 shrink-0 rounded-full bg-white"
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white">오픈 중</p>
-                <p className="truncate text-xs text-gray-300">
-                  멘티에게 노출 중이라 수정할 수 없어요.
-                </p>
-              </div>
-            </div>
-            <Link
-              to="/live-mentoring/open-settings"
-              className="bg-primary hover:bg-primary-hover shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors"
-            >
-              오픈 설정으로
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {canEdit ? (
-        <DetailSaveBar
-          isDirty={isDirty}
-          isSaving={isPending}
-          onSave={handleSave}
-          onRevert={handleCancel}
-        />
-      ) : canStartEdit ? (
-        <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2">
-          <button
-            type="button"
-            onClick={handleStartEdit}
-            disabled={isStartingEdit}
-            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isStartingEdit ? '처리 중...' : '수정'}
-          </button>
-        </div>
-      ) : null}
+      <DetailSaveBar
+        editable={canEdit}
+        lockedMessage={lockedMessage}
+        publicDetailHref={
+          user?.userId == null ? null : publicDetailUrl(user.userId)
+        }
+        isDirty={isDirty}
+        isSaving={isPending}
+        onSave={handleSave}
+        onRevert={handleCancel}
+      />
 
       <MentorAlertModal {...alertProps} />
 
