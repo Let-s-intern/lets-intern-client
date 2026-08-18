@@ -275,10 +275,25 @@ const DetailSettingsPage = () => {
       }))
       .filter((item) => item.typeName && item.title && item.description);
 
+    /*
+     * 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 `@NotBlank` 라
+     * "변화 사례 추가 +"로 만들어 놓고 안 채운 카드가 있으면 400 이다.
+     * 설명이 둘 다 빈 카드는 지울 의사로 본다 — 이미지만 올리고 설명을 비우는 경우는
+     * 서버가 받지 않으므로 여기서 남겨 봐야 저장이 실패한다.
+     */
+    const cleanedResultCases = payload.results.cases
+      .map((item) => ({
+        ...item,
+        beforeCaption: item.beforeCaption.trim(),
+        afterCaption: item.afterCaption.trim(),
+      }))
+      .filter((item) => item.beforeCaption && item.afterCaption);
+
     payload = {
       ...payload,
       hero: { bullets: cleanedBullets },
       mentoringTypes: { ...payload.mentoringTypes, items: cleanedTypeItems },
+      results: { ...payload.results, cases: cleanedResultCases },
     };
     setTemplate(payload);
 

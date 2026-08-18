@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { uploadFile } from '@/api/file';
 
 interface ImageFieldProps {
-  label: string;
+  /** 없으면 라벨을 그리지 않는다 — 부모가 이미 라벨을 두는 경우가 있다. */
+  label?: string;
   value: string | null;
   onChange: (url: string | null) => void;
 }
@@ -35,9 +36,11 @@ const ImageField = ({ label, value, onChange }: ImageFieldProps) => {
 
   return (
     <div>
-      <span className="mb-1 block text-xs font-medium text-gray-600">
-        {label}
-      </span>
+      {label ? (
+        <span className="mb-1 block text-xs font-medium text-gray-600">
+          {label}
+        </span>
+      ) : null}
 
       {value && (
         <img
@@ -56,7 +59,7 @@ const ImageField = ({ label, value, onChange }: ImageFieldProps) => {
               : '이미지 업로드'}
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             className="hidden"
             disabled={isUploading}
             onChange={(e) => handleSelect(e.target.files?.[0])}

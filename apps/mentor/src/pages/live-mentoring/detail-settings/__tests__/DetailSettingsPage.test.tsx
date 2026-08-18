@@ -300,7 +300,7 @@ describe('DetailSettingsPage — 탭', () => {
     ).toBeInTheDocument();
 
     openTab('소개 영상');
-    fireEvent.change(screen.getByLabelText('유튜브 영상 주소'), {
+    fireEvent.change(screen.getByLabelText('YouTube 영상 링크'), {
       target: { value: '' },
     });
 

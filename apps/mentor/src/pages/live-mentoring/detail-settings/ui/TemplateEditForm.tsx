@@ -14,6 +14,7 @@ import MentorProfileCard from './MentorProfileCard';
 import { useMentorHashTagListQuery } from '@/api/mentor-hash-tag/mentorHashTag';
 
 import MentoringTypeCardField from './MentoringTypeCardField';
+import ResultCaseField from './ResultCaseField';
 import WritingGuide from './WritingGuide';
 import ImageField from './ImageField';
 import ListField from './ListField';
@@ -360,33 +361,52 @@ const TemplateEditForm = ({
               />
             }
           />
-
           <div className="flex flex-col gap-4">
-            <input
-              className={inputClass}
-              value={video.title}
-              placeholder="섹션 제목"
-              onChange={(e) =>
-                onChange({ video: { ...video, title: e.target.value } })
-              }
-            />
-            <input
-              className={inputClass}
-              value={video.subtitle}
-              placeholder="섹션 설명"
-              onChange={(e) =>
-                onChange({ video: { ...video, subtitle: e.target.value } })
-              }
-            />
+            <div>
+              <label className={labelClass} htmlFor="videoTitle">
+                영상 제목
+              </label>
+              <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                <input
+                  id="videoTitle"
+                  value={video.title}
+                  maxLength={20}
+                  placeholder="예: 멘토는 이렇게 도와드려요"
+                  className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                  onChange={(e) =>
+                    onChange({ video: { ...video, title: e.target.value } })
+                  }
+                />
+                <span className="shrink-0 text-xs text-neutral-50">
+                  {video.title.length}/20
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className={labelClass} htmlFor="videoSubtitle">
+                영상 설명
+              </label>
+              <input
+                id="videoSubtitle"
+                className={inputClass}
+                value={video.subtitle}
+                placeholder="영상에서 확인할 수 있는 내용을 간단히 소개해 주세요"
+                onChange={(e) =>
+                  onChange({ video: { ...video, subtitle: e.target.value } })
+                }
+              />
+            </div>
+
             <div>
               <label className={labelClass} htmlFor="videoUrl">
-                유튜브 영상 주소
+                YouTube 영상 링크
               </label>
               <input
                 id="videoUrl"
                 className={inputClass}
                 value={video.videoUrl ?? ''}
-                placeholder="https://youtu.be/... 또는 https://www.youtube.com/watch?v=..."
+                placeholder="https://www.youtube.."
                 onChange={(e) =>
                   onChange({
                     video: { ...video, videoUrl: e.target.value || null },
@@ -409,20 +429,27 @@ const TemplateEditForm = ({
                   youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
                 </p>
               ) : (
-                <p className="mt-1 text-xs text-gray-400">
-                  유튜브 주소를 그대로 붙여넣으면 됩니다. 임베드 주소로 자동
-                  변환돼요.
+                <p className="mt-1 text-xs text-neutral-50">
+                  * 공개 또는 일부 공개로 설정된 YouTube 영상 링크를 입력해
+                  주세요.
                 </p>
               )}
             </div>
-            <input
-              className={inputClass}
-              value={video.caption}
-              placeholder="영상 하단 문구"
-              onChange={(e) =>
-                onChange({ video: { ...video, caption: e.target.value } })
-              }
-            />
+
+            <div>
+              <label className={labelClass} htmlFor="videoCaption">
+                영상 아래 안내 문구
+              </label>
+              <input
+                id="videoCaption"
+                className={inputClass}
+                value={video.caption}
+                placeholder="영상과 함께 안내할 내용이 있다면 입력해 주세요"
+                onChange={(e) =>
+                  onChange({ video: { ...video, caption: e.target.value } })
+                }
+              />
+            </div>
           </div>
         </section>
       ) : null}
@@ -444,61 +471,30 @@ const TemplateEditForm = ({
             }
           />
 
-          <div className="flex flex-col gap-4">
-            <input
-              className={inputClass}
-              value={results.title}
-              placeholder="섹션 제목"
-              onChange={(e) =>
-                onChange({ results: { ...results, title: e.target.value } })
-              }
-            />
+          <div className="flex flex-col gap-5">
+            <div>
+              <label className={labelClass} htmlFor="resultsTitle">
+                결과 사례 제목
+              </label>
+              <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                <input
+                  id="resultsTitle"
+                  value={results.title}
+                  maxLength={20}
+                  placeholder="예: 멘토링 후 이렇게 달라졌어요"
+                  className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                  onChange={(e) =>
+                    onChange({ results: { ...results, title: e.target.value } })
+                  }
+                />
+                <span className="shrink-0 text-xs text-neutral-50">
+                  {results.title.length}/20
+                </span>
+              </div>
+            </div>
 
-            <ListField<TemplateResultCase>
-              label="Before / After"
-              items={results.cases}
-              makeEmpty={() => ({
-                beforeImage: null,
-                afterImage: null,
-                beforeCaption: '',
-                afterCaption: '',
-              })}
-              renderItem={(item, update) => (
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div className="flex flex-col gap-2">
-                    <ImageField
-                      label="Before 이미지"
-                      value={item.beforeImage}
-                      onChange={(beforeImage) =>
-                        update({ ...item, beforeImage })
-                      }
-                    />
-                    <input
-                      className={inputClass}
-                      value={item.beforeCaption}
-                      placeholder="Before 설명"
-                      onChange={(e) =>
-                        update({ ...item, beforeCaption: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <ImageField
-                      label="After 이미지"
-                      value={item.afterImage}
-                      onChange={(afterImage) => update({ ...item, afterImage })}
-                    />
-                    <input
-                      className={inputClass}
-                      value={item.afterCaption}
-                      placeholder="After 설명"
-                      onChange={(e) =>
-                        update({ ...item, afterCaption: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-              )}
+            <ResultCaseField
+              cases={results.cases}
               onChange={(cases) => onChange({ results: { ...results, cases } })}
             />
           </div>
