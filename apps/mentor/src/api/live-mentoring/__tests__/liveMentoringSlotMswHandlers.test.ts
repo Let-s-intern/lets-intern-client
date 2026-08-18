@@ -3,10 +3,11 @@ import { server } from '@letscareer/mocks/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 /**
- * LC-3206 슬롯 계약을 목 핸들러 수준에서 검증한다.
+ * 1대1 슬롯 계약을 목 핸들러 수준에서 검증한다.
  *
- * 저장은 전체 치환이고, 삭제 대상에 `RESERVED` 가 하나라도 있으면 저장 전체가 실패한다.
- * 이 규칙을 목이 재현하지 않으면 "테스트는 통과하는데 실서버에서만 409" 가 된다.
+ * 멘토용 슬롯 조회·저장(`GET`/`PUT /mentor/live-mentoring/slots`)은 사라졌다. 슬롯은
+ * 챌린지 라이브 피드백과 같은 `/feedback/mentor/slot` 한 벌로 합쳐졌고, 여기 남은 것은
+ * 고객에게 예약 가능 시간을 주는 공개 조회뿐이다.
  */
 const BASE = 'https://example.test';
 
@@ -23,157 +24,6 @@ type Slot = {
   endDate: string;
   status: 'OPEN' | 'RESERVED';
 };
-
-/** 오늘 기준 상대 시각을 `LocalDateTime` 문자열로 만든다. */
-const dateTimeFromToday = (
-  offsetDays: number,
-  hour: number,
-  minute: number,
-): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  date.setHours(hour, minute, 0, 0);
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return (
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
-    `T${pad(date.getHours())}:${pad(date.getMinutes())}:00`
-  );
-};
-
-const getMySlots = async (query = ''): Promise<Slot[]> => {
-  const res = await fetch(`${BASE}/mentor/live-mentoring/slots${query}`);
-  const { data } = await res.json();
-  return data.liveMentoringSlotList;
-};
-
-const putMySlots = (slots: { startDate: string; endDate: string }[]) =>
-  fetch(`${BASE}/mentor/live-mentoring/slots`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(slots),
-  });
-
-/** 현재 슬롯 전체를 저장 payload 형태로 바꾼다. */
-const asPayload = (slots: Slot[]) =>
-  slots.map(({ startDate, endDate }) => ({ startDate, endDate }));
-
-/** 저장 payload 에 담을 수 있는 슬롯(미래) 만 추린다. */
-const futureOnly = (slots: Slot[]) => {
-  const now = new Date().toISOString().slice(0, 19);
-  return slots.filter((slot) => slot.startDate > now);
-};
-
-describe('GET /mentor/live-mentoring/slots', () => {
-  it('시작 시각 오름차순으로 내려준다', async () => {
-    const slots = await getMySlots();
-    expect(slots.length).toBeGreaterThan(0);
-    const sorted = [...slots].sort((a, b) =>
-      a.startDate.localeCompare(b.startDate),
-    );
-    expect(slots).toEqual(sorted);
-  });
-
-  it('statusList 로 상태를 거른다', async () => {
-    const reserved = await getMySlots('?statusList=RESERVED');
-    expect(reserved.length).toBeGreaterThan(0);
-    expect(reserved.every((slot) => slot.status === 'RESERVED')).toBe(true);
-  });
-
-  it('startDate·endDate 로 기간을 거른다', async () => {
-    const from = dateTimeFromToday(8, 0, 0);
-    const filtered = await getMySlots(`?startDate=${from}`);
-    expect(filtered.length).toBeGreaterThan(0);
-    expect(filtered.every((slot) => slot.startDate >= from)).toBe(true);
-
-    const to = dateTimeFromToday(0, 0, 0);
-    const past = await getMySlots(`?endDate=${to}`);
-    expect(past.every((slot) => slot.startDate <= to)).toBe(true);
-  });
-});
-
-describe('PUT /mentor/live-mentoring/slots — 전체 치환', () => {
-  it('예약된 슬롯을 payload 에 포함하면 저장되고 slotId·상태가 유지된다', async () => {
-    const before = futureOnly(await getMySlots());
-    const added = {
-      startDate: dateTimeFromToday(9, 15, 0),
-      endDate: dateTimeFromToday(9, 15, 30),
-    };
-
-    const res = await putMySlots([...asPayload(before), added]);
-    expect(res.status).toBe(200);
-
-    const after = await getMySlots();
-    expect(after).toHaveLength(before.length + 1);
-
-    const reservedBefore = before.filter((slot) => slot.status === 'RESERVED');
-    for (const slot of reservedBefore) {
-      const kept = after.find((each) => each.startDate === slot.startDate);
-      expect(kept?.slotId).toBe(slot.slotId);
-      expect(kept?.status).toBe('RESERVED');
-    }
-    expect(
-      after.find((slot) => slot.startDate === added.startDate)?.status,
-    ).toBe('OPEN');
-  });
-
-  it('예약된 슬롯이 payload 에서 빠지면 409 LIVE_MENTORING_SLOT_LOCKED 로 전체 실패', async () => {
-    const before = await getMySlots();
-    const withoutReserved = futureOnly(before).filter(
-      (slot) => slot.status !== 'RESERVED',
-    );
-    expect(withoutReserved.length).toBeLessThan(futureOnly(before).length);
-
-    const res = await putMySlots(asPayload(withoutReserved));
-    expect(res.status).toBe(409);
-    expect((await res.json()).code).toBe('LIVE_MENTORING_SLOT_LOCKED');
-
-    // 전체 실패다 — 요청에 남아 있던 OPEN 슬롯도 지워지지 않아야 한다.
-    const after = await getMySlots();
-    expect(after).toEqual(before);
-  });
-
-  it('같은 시작 시각이 겹치면 409 LIVE_MENTORING_SLOT_CONFLICT', async () => {
-    const duplicated = {
-      startDate: dateTimeFromToday(9, 16, 0),
-      endDate: dateTimeFromToday(9, 16, 30),
-    };
-    const before = futureOnly(await getMySlots());
-
-    const res = await putMySlots([
-      ...asPayload(before),
-      duplicated,
-      duplicated,
-    ]);
-    expect(res.status).toBe(409);
-    expect((await res.json()).code).toBe('LIVE_MENTORING_SLOT_CONFLICT');
-  });
-
-  it('30분 단위·길이·미래 조건을 어기면 400 LIVE_MENTORING_INVALID_SLOT_TIME', async () => {
-    const cases = [
-      // 분이 00·30 이 아니다
-      {
-        startDate: dateTimeFromToday(9, 10, 15),
-        endDate: dateTimeFromToday(9, 10, 45),
-      },
-      // 길이가 30분이 아니다
-      {
-        startDate: dateTimeFromToday(9, 10, 0),
-        endDate: dateTimeFromToday(9, 11, 0),
-      },
-      // 과거 시각이다
-      {
-        startDate: dateTimeFromToday(-1, 10, 0),
-        endDate: dateTimeFromToday(-1, 10, 30),
-      },
-    ];
-
-    for (const invalid of cases) {
-      const res = await putMySlots([invalid]);
-      expect(res.status).toBe(400);
-      expect((await res.json()).code).toBe('LIVE_MENTORING_INVALID_SLOT_TIME');
-    }
-  });
-});
 
 describe('GET /live-mentoring/mentors/:mentorId/slots — 공개 조회', () => {
   const openOnce = () =>
@@ -208,18 +58,39 @@ describe('GET /live-mentoring/mentors/:mentorId/slots — 공개 조회', () => 
     expect(await publicSlots(1)).toEqual([]);
   });
 
-  it('개설을 종료하면 슬롯이 전부 삭제된다', async () => {
+  it('개설을 종료해도 슬롯은 남고, 다시 열면 그대로 돌아온다', async () => {
+    /*
+     * 회귀 케이스 — 종료가 슬롯을 지우던 시절의 동작이 남아 있으면, 1대1 오픈을
+     * 닫는 행위가 그 멘토의 챌린지 가용시간까지 지운다.
+     */
     const opened = await openOnce().then((r) => r.json());
     const openingId = opened.data.openings.find(
       (o: { status: string }) => o.status === 'OPEN',
     ).openingId;
-    expect((await publicSlots(1)).length).toBeGreaterThan(0);
+    const before = await publicSlots(1);
+    expect(before.length).toBeGreaterThan(0);
 
     await fetch(`${BASE}/mentor/live-mentoring/openings/${openingId}/close`, {
       method: 'PATCH',
     });
 
+    // 활성 개설이 없으므로 고객에게는 보이지 않는다. 삭제된 것이 아니다.
     expect(await publicSlots(1)).toEqual([]);
-    expect(await getMySlots()).toEqual([]);
+
+    await openOnce();
+    expect(await publicSlots(1)).toEqual(before);
+  });
+});
+
+describe('멘토용 1대1 슬롯 엔드포인트 제거', () => {
+  it('GET·PUT /mentor/live-mentoring/slots 를 목이 더 이상 처리하지 않는다', async () => {
+    /*
+     * 목이 사라진 엔드포인트를 계속 응답하면 "테스트는 통과하는데 실서버는 404" 가
+     * 된다. `onUnhandledRequest: 'bypass'` 라 처리기가 없으면 실제 네트워크로 나가
+     * 실패한다 — 그 실패가 곧 핸들러가 없다는 증거다.
+     */
+    await expect(
+      fetch(`${BASE}/mentor/live-mentoring/slots`),
+    ).rejects.toBeDefined();
   });
 });

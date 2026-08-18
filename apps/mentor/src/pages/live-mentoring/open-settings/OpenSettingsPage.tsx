@@ -266,13 +266,16 @@ const OpenSettingsPage = () => {
   /**
    * 현재 오픈을 종료한다 — 별도 "오픈 현황" 화면 없이 이 화면 상단 배너에서 바로 한다.
    * 서버는 예약 존재 여부를 검사하지 않고 종료하므로 화면 문구도 그대로 적는다.
+   *
+   * 종료는 더 이상 슬롯을 지우지 않는다. 슬롯이 챌린지 라이브 피드백과 공유되면서
+   * 1대1 오픈을 닫는 행위가 그 멘토의 챌린지 가용시간까지 지우면 안 되기 때문이다.
    */
   const handleCloseCurrentOpening = () => {
     if (!currentOpening) return;
     showConfirm({
       title: '이 오픈을 종료할까요?',
       description:
-        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.\n종료하면 등록한 일정이 모두 삭제됩니다. 다시 열 때 일정을 새로 등록해야 합니다.',
+        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.\n등록한 일정은 그대로 남아요. 다시 열면 지금 일정을 그대로 씁니다.',
       confirmText: '종료하기',
       // 확인 모달은 onConfirm 후에도 닫히지 않는다(공용 훅 동작) — 연타로 두 번 나가지 않게 막는다.
       onConfirm: () =>
@@ -401,24 +404,25 @@ const OpenSettingsPage = () => {
               오픈 종료됨
             </span>
             <p className="text-xs text-gray-600">
-              지금은 공개 리스트에 노출되지 않아요. 종료할 때 등록해 둔 일정이
-              모두 삭제됐으니, 일정을 다시 등록한 뒤 "다시 오픈하기"를
-              눌러주세요.
+              지금은 공개 리스트에 노출되지 않아요. 등록해 둔 일정은 그대로 남아
+              있으니, "다시 오픈하기"를 누르면 그 일정으로 바로 열려요.
             </p>
           </div>
         </div>
       )}
 
       <div className="relative">
-        {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
-            키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
-        <fieldset
-          disabled={!canEditFields}
-          className="m-0 min-w-0 border-0 p-0"
-        >
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-            {/* 좌: 설정 패널 */}
-            <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+          {/* 좌: 설정 패널 */}
+          <div className="flex flex-col gap-6">
+            {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에
+                비활성화하고 키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만
+                막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
+                이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
+            <fieldset
+              disabled={!canEditFields}
+              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
+            >
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">
@@ -530,23 +534,32 @@ const OpenSettingsPage = () => {
                   </ul>
                 )}
               </section>
+            </fieldset>
 
-              <section className={cardClass}>
-                <h2 className={sectionTitleClass}>멘토링 일정</h2>
-                <p className="mb-3 text-xs text-gray-500">
-                  멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
-                  라이브 피드백과 같은 일정 그리드를 쓰며, 이미 라이브
-                  피드백으로 열어 둔 시간은 선택할 수 없습니다.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setSlotModalOpen(true)}
-                  className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
-                >
-                  일정 등록하기
-                </button>
-              </section>
+            {/* 멘토링 일정 — 잠금 fieldset 밖에 둔다. 슬롯 편집은 타이틀·타입 같은 설정
+                필드가 아니라 별도 편집 화면을 여는 내비게이션이라, 오픈 중에도 열려야
+                한다. 안에 두면 조상 fieldset 이 이 버튼까지 비활성화해서, 슬롯을 하나
+                더 열려면 등록한 일정을 전부 버리는 "오픈 닫기" 밖에 길이 없어진다. */}
+            <section className={cardClass}>
+              <h2 className={sectionTitleClass}>멘토링 일정</h2>
+              <p className="mb-3 text-xs text-gray-500">
+                멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
+                라이브 피드백과 같은 일정 그리드를 쓰며, 이미 라이브 피드백으로
+                열어 둔 시간은 선택할 수 없습니다.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSlotModalOpen(true)}
+                className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+              >
+                일정 등록하기
+              </button>
+            </section>
 
+            <fieldset
+              disabled={!canEditFields}
+              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
+            >
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
                 <div className="flex flex-col gap-3">
@@ -607,14 +620,14 @@ const OpenSettingsPage = () => {
                   </p>
                 )}
               </section>
-            </div>
-
-            {/* 우: 미리보기 */}
-            <div className="lg:sticky lg:top-6 lg:self-start">
-              <OpenSettingsPreview settings={form} />
-            </div>
+            </fieldset>
           </div>
-        </fieldset>
+
+          {/* 우: 미리보기 */}
+          <div className="lg:sticky lg:top-6 lg:self-start">
+            <OpenSettingsPreview settings={form} />
+          </div>
+        </div>
       </div>
 
       {/*
