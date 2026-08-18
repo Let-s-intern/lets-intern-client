@@ -14,6 +14,7 @@ import {
   type LiveMentoringCategory,
   type LiveMentoringDuration,
   type LiveMentoringSlot,
+  type LiveMentoringTemplate,
 } from './data/liveMentoring';
 
 /**
@@ -822,6 +823,23 @@ const liveMentoringState = {
 let nextOpeningId = 200;
 
 /**
+ * 상세 페이지 목 상태. PUT 이 저장한 편집분을 GET 이 그대로 돌려준다.
+ * 고정 응답이면 "저장했는데 새로고침하면 원래대로"가 되어 흐름을 확인할 수 없다.
+ */
+let detailPageState: LiveMentoringTemplate = { ...LIVE_MENTORING_TEMPLATE };
+
+/** 서버 요청 DTO(`UpdateLiveMentoringDetailPageRequestDto`)가 받는 키 전부. */
+const DETAIL_PAGE_REQUEST_KEYS = [
+  'hero',
+  'mentoringTypes',
+  'strategy',
+  'video',
+  'results',
+  'reviews',
+] as const;
+type DetailPageRequestKey = (typeof DETAIL_PAGE_REQUEST_KEYS)[number];
+
+/**
  * 목 상태를 초기값으로 되돌린다.
  *
  * 핸들러가 모듈 스코프 상태를 들고 있어 `server.resetHandlers()` 만으로는 지워지지 않는다.
@@ -841,6 +859,7 @@ export const resetLiveMentoringMockState = () => {
   liveMentoringState.slots = LIVE_MENTORING_SLOTS.map((slot) => ({ ...slot }));
   adminFixtureRows = makeAdminFixtureRows();
   nextOpeningId = 200;
+  detailPageState = { ...LIVE_MENTORING_TEMPLATE };
 };
 
 const liveMentoringNow = () => new Date().toISOString().slice(0, 19);
@@ -869,6 +888,24 @@ const settingsResponse = () => ({
   status: liveMentoringState.status,
   categories: liveMentoringState.categories,
   durations: liveMentoringState.durations,
+});
+
+/**
+ * 상세 페이지 조회/저장 응답. 편집 대상 템플릿에 읽기 전용 상품 정보를 얹는다.
+ *
+ * `editable` 은 서버 `LiveMentoring.isEditable()` 과 같은 조건이라 설정 화면의
+ * 판정(`isSettingsEditable`)을 그대로 쓴다 — 목에서 두 화면의 잠금이 갈리면
+ * 어느 쪽이 맞는지 확인할 수 없다.
+ */
+const detailPageResponse = () => ({
+  ...detailPageState,
+  mentoring: {
+    liveMentoringId: liveMentoringState.liveMentoringId,
+    title: liveMentoringState.title,
+    status: liveMentoringState.status,
+    editable: isSettingsEditable(),
+    categories: liveMentoringState.categories,
+  },
 });
 
 const openingHistoryResponse = () => ({
@@ -2070,17 +2107,55 @@ export const handlers = [
 
   /**
    * (멘토) GET /mentor/live-mentoring/template — 상세 페이지 템플릿 조회.
+   * 저장분(detailPageState)을 돌려주므로 저장 → 재조회 흐름을 확인할 수 있다.
    */
   http.get('*/mentor/live-mentoring/template', () => {
-    return HttpResponse.json({ status: 200, data: LIVE_MENTORING_TEMPLATE });
+    return HttpResponse.json({ status: 200, data: detailPageResponse() });
   }),
 
   /**
-   * (멘토) PUT /mentor/live-mentoring/template — 저장. 받은 body를 echo.
+   * (멘토) PUT /mentor/live-mentoring/template — 저장.
+   *
+   * 요청 바디를 서버 요청 DTO(`UpdateLiveMentoringDetailPageRequestDto`) 모양으로
+   * 검증한다. 실제 서버는 모르는 키를 무시하지만(`@JsonIgnoreProperties`), 그 관대함
+   * 때문에 "편집했는데 저장되지 않는 필드"(`intro`)가 오래 남아 있었다. 목은 일부러
+   * 더 엄격하게 막아 프론트가 보내면 안 되는 키를 여기서 드러낸다.
+   *
+   * 응답은 서버와 같게 저장 후의 상세 페이지 전체다(요청 바디 echo 가 아니다).
    */
   http.put('*/mentor/live-mentoring/template', async ({ request }) => {
-    const body = await request.json().catch(() => ({}));
-    return HttpResponse.json({ status: 200, data: body });
+    const body = await request.json().catch(() => null);
+    if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+
+    const keys = Object.keys(body);
+    const unknownKeys = keys.filter(
+      (key) => !DETAIL_PAGE_REQUEST_KEYS.includes(key as DetailPageRequestKey),
+    );
+    const missingKeys = DETAIL_PAGE_REQUEST_KEYS.filter(
+      (key) => !keys.includes(key),
+    );
+    if (unknownKeys.length > 0) {
+      return liveMentoringError(
+        400,
+        'BAD_REQUEST',
+        `요청 DTO에 없는 필드입니다: ${unknownKeys.join(', ')}`,
+      );
+    }
+    if (missingKeys.length > 0) {
+      return liveMentoringError(
+        400,
+        'BAD_REQUEST',
+        `필수 필드가 없습니다: ${missingKeys.join(', ')}`,
+      );
+    }
+
+    detailPageState = {
+      ...detailPageState,
+      ...(body as Partial<LiveMentoringTemplate>),
+    };
+    return HttpResponse.json({ status: 200, data: detailPageResponse() });
   }),
 
   /**

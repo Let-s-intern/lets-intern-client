@@ -4,9 +4,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
-  type LiveMentoringTemplate,
+  type LiveMentoringTemplateUpdate,
+  liveMentoringDetailPageSchema,
   liveMentoringSettingsSchema,
-  liveMentoringTemplateSchema,
   openingHistoryResponseSchema,
 } from './liveMentoringSchema';
 
@@ -156,7 +156,7 @@ export const useLiveMentoringTemplateQuery = () => {
     queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
     queryFn: async () => {
       const res = await axios.get(TEMPLATE_PATH);
-      return liveMentoringTemplateSchema.parse(res.data.data);
+      return liveMentoringDetailPageSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
     // ⚠️ 임시 — 백엔드에 아직 없는 엔드포인트라 재시도해도 성공하지 않는다.
@@ -168,14 +168,17 @@ export const useLiveMentoringTemplateQuery = () => {
 
 /**
  * PUT /mentor/live-mentoring/template — 상세 페이지 템플릿 저장.
- * 성공 시 템플릿 캐시를 invalidate. (MSW는 body를 echo)
+ *
+ * 요청 바디는 서버 요청 DTO와 같은 6개 키뿐이다(`liveMentoringTemplateUpdateSchema`).
+ * 조회 응답에만 있는 값(`intro` 등)은 `toTemplateUpdatePayload` 가 걸러낸다.
+ * 응답은 저장 후의 상세 페이지 전체라 조회와 같은 스키마로 파싱한다.
  */
 export const useUpdateLiveMentoringTemplateMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (template: LiveMentoringTemplate) => {
+    mutationFn: async (template: LiveMentoringTemplateUpdate) => {
       const res = await axios.put(TEMPLATE_PATH, template);
-      return liveMentoringTemplateSchema.parse(res.data.data);
+      return liveMentoringDetailPageSchema.parse(res.data.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

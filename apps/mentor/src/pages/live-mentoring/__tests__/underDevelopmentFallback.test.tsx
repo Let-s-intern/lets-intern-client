@@ -38,6 +38,6 @@ describe('백엔드 미구현 화면의 개발 중 안내', () => {
     );
     expect(screen.getByText('담당자 임성빈')).toBeInTheDocument();
     // 페이지 제목은 유지해 어느 화면인지 알 수 있게 한다
-    expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
+    expect(screen.getByText('내 멘토링 상세 페이지 관리')).toBeInTheDocument();
   });
 });
