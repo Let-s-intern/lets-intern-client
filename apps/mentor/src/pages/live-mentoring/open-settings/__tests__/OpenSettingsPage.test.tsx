@@ -434,7 +434,11 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     renderPage({ status: 'APPROVED' }, [openOpening]);
 
     const banner = screen.getByRole('status');
-    expect(within(banner).getByText('오픈 중')).toBeInTheDocument();
+    expect(
+      within(banner).getByText(
+        '공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.',
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
 
     fireEvent.click(within(banner).getByRole('button', { name: '오픈 닫기' }));
@@ -467,7 +471,11 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
 
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
-    expect(within(banner).queryByText('오픈 중')).not.toBeInTheDocument();
+    expect(
+      within(banner).queryByText(
+        '공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.',
+      ),
+    ).not.toBeInTheDocument();
     // 종료 상태에서는 재개설·수정 버튼이 보이지만, 값을 바꾸려면 "수정"을
     // 먼저 눌러야 한다 — 상세 페이지 설정과 같은 규칙이다.
     expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeDisabled();
