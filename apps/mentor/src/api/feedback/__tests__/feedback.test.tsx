@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import realAxios from 'axios';
+
 import axios from '@/utils/axios';
 
 import {
@@ -127,9 +129,40 @@ describe('useFeedbackMentorSlotsQuery', () => {
         endDate: '2026-05-26T23:59:59',
         statusList: ['OPEN', 'RESERVED'],
       },
+      paramsSerializer: { indexes: null },
     });
     expect(result.current.data?.feedbackSlotList).toHaveLength(1);
     expect(result.current.data?.feedbackSlotList[0].status).toBe('OPEN');
+  });
+
+  it('배열 파라미터를 대괄호 없이 직렬화한다', async () => {
+    /*
+     * 회귀 케이스 — axios 기본 직렬화는 `statusList[]=OPEN` 을 만든다. 서버는
+     * `@RequestParam List<FeedbackSlotStatus> statusList`(FeedbackV1MentorController)
+     * 로 정확한 이름만 바인딩하므로 null 이 들어가고 상태 필터가 조용히 무시된다.
+     * 설정값이 아니라 실제로 나가는 쿼리스트링을 고정한다.
+     */
+    axiosMock.get.mockResolvedValue({
+      data: { data: { feedbackSlotList: [] } },
+    });
+
+    const { result } = renderHook(
+      () => useFeedbackMentorSlotsQuery({ statusList: ['OPEN', 'RESERVED'] }),
+      { wrapper: createWrapper(newClient()) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const [url, config] = axiosMock.get.mock.calls[0];
+    const uri = realAxios.getUri({
+      url,
+      params: config?.params,
+      paramsSerializer: config?.paramsSerializer,
+    });
+
+    expect(uri).toContain('statusList=OPEN&statusList=RESERVED');
+    expect(uri).not.toContain('statusList[]');
+    expect(uri).not.toContain('statusList%5B%5D');
   });
 
   it('enabled=false 면 axios 를 호출하지 않는다', async () => {
