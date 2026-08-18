@@ -443,6 +443,55 @@ describe('DetailSettingsPage — 편집 영역', () => {
     ]);
   });
 
+  it('빈 결과 사례를 추가하고 안 채운 채 저장하면, 그 사례를 걸러내고 보낸다', () => {
+    /*
+     * 회귀 케이스: ResultCaseRequest 의 beforeCaption·afterCaption 이 @NotBlank 라
+     * 빈 사례가 하나라도 있으면 저장 전체가 400 이다. 유형 카드와 같은 함정이다.
+     */
+    renderPage();
+
+    openTab('결과 사례');
+    const before = screen.getAllByLabelText(/멘토링 전 설명$/).length;
+    fireEvent.click(screen.getByRole('button', { name: '변화 사례 추가 +' }));
+    expect(screen.getAllByLabelText(/멘토링 전 설명$/)).toHaveLength(
+      before + 1,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.cases).toHaveLength(before);
+    expect(
+      payload.results.cases.every(
+        (item: { beforeCaption: string; afterCaption: string }) =>
+          item.beforeCaption && item.afterCaption,
+      ),
+    ).toBe(true);
+  });
+
+  it('영상 네 필드가 서버 필드에 맞게 담긴다', () => {
+    renderPage();
+
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('영상 제목'), {
+      target: { value: '멘토는 이렇게' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 설명'), {
+      target: { value: '영상 설명입니다' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 아래 안내 문구'), {
+      target: { value: '안내 문구입니다' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.video.title).toBe('멘토는 이렇게');
+    expect(payload.video.subtitle).toBe('영상 설명입니다');
+    expect(payload.video.caption).toBe('안내 문구입니다');
+  });
+
   it('빈 유형 카드를 추가하고 안 채운 채 저장하면, 그 카드를 걸러내고 보낸다', () => {
     /*
      * 회귀 케이스: TypeCardRequest 의 typeName·title·description 이 모두 @NotBlank 라
