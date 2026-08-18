@@ -57,8 +57,12 @@ vi.mock('@/api/career/career', () => ({
 // 슬롯 편집 모달은 이 단위 테스트 대상이 아니므로 스텁 처리
 // (실 컴포넌트는 슬롯·피드백 query 훅을 호출해 QueryClient 가 필요하다).
 // 모달 자체는 `ui/__tests__/LiveMentoringSlotModal.test.tsx` 에서 따로 검증한다.
+const slotModalOpenSpy = vi.fn();
 vi.mock('../ui/LiveMentoringSlotModal', () => ({
-  default: () => null,
+  default: ({ isOpen }: { isOpen: boolean }) => {
+    if (isOpen) slotModalOpenSpy();
+    return null;
+  },
 }));
 
 import OpenSettingsPage from '../OpenSettingsPage';
@@ -148,6 +152,7 @@ afterEach(() => {
   closeOpeningMock.mockReset();
   startEditMock.mockReset();
   setRepresentativeCareerMock.mockReset();
+  slotModalOpenSpy.mockReset();
   settingsData = undefined;
   openingsData = [];
 });
@@ -611,6 +616,23 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
         /방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요/,
       ),
     ).toBeInTheDocument();
+  });
+
+  /*
+   * 회귀 케이스 — 슬롯 편집 트리거가 잠금 fieldset 안에 있으면, 조상 fieldset 이
+   * 자손 폼 컨트롤을 통째로 비활성화하면서 이 버튼까지 같이 죽는다. 그러면 멘토가
+   * 슬롯을 하나 더 열 길이 "오픈 닫기"(등록한 일정을 전부 버린다) 밖에 없어진다.
+   */
+  it('오픈 중에도 일정 등록하기는 눌린다', () => {
+    renderPage({ status: 'APPROVED' }, [openOpening]);
+
+    const scheduleButton = screen.getByRole('button', {
+      name: '일정 등록하기',
+    });
+    expect(scheduleButton).toBeEnabled();
+
+    fireEvent.click(scheduleButton);
+    expect(slotModalOpenSpy).toHaveBeenCalledTimes(1);
   });
 
   it('오픈 중이면 재개설 버튼 없이 잠근다', () => {

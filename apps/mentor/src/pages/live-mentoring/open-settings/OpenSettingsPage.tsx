@@ -410,15 +410,17 @@ const OpenSettingsPage = () => {
       )}
 
       <div className="relative">
-        {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에 비활성화하고
-            키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만 막는다). */}
-        <fieldset
-          disabled={!canEditFields}
-          className="m-0 min-w-0 border-0 p-0"
-        >
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-            {/* 좌: 설정 패널 */}
-            <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+          {/* 좌: 설정 패널 */}
+          <div className="flex flex-col gap-6">
+            {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에
+                비활성화하고 키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만
+                막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
+                이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
+            <fieldset
+              disabled={!canEditFields}
+              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
+            >
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">
@@ -530,23 +532,32 @@ const OpenSettingsPage = () => {
                   </ul>
                 )}
               </section>
+            </fieldset>
 
-              <section className={cardClass}>
-                <h2 className={sectionTitleClass}>멘토링 일정</h2>
-                <p className="mb-3 text-xs text-gray-500">
-                  멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
-                  라이브 피드백과 같은 일정 그리드를 쓰며, 이미 라이브
-                  피드백으로 열어 둔 시간은 선택할 수 없습니다.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setSlotModalOpen(true)}
-                  className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
-                >
-                  일정 등록하기
-                </button>
-              </section>
+            {/* 멘토링 일정 — 잠금 fieldset 밖에 둔다. 슬롯 편집은 타이틀·타입 같은 설정
+                필드가 아니라 별도 편집 화면을 여는 내비게이션이라, 오픈 중에도 열려야
+                한다. 안에 두면 조상 fieldset 이 이 버튼까지 비활성화해서, 슬롯을 하나
+                더 열려면 등록한 일정을 전부 버리는 "오픈 닫기" 밖에 길이 없어진다. */}
+            <section className={cardClass}>
+              <h2 className={sectionTitleClass}>멘토링 일정</h2>
+              <p className="mb-3 text-xs text-gray-500">
+                멘티가 예약할 수 있는 30분 단위 시간을 직접 골라 등록해요.
+                라이브 피드백과 같은 일정 그리드를 쓰며, 이미 라이브 피드백으로
+                열어 둔 시간은 선택할 수 없습니다.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSlotModalOpen(true)}
+                className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+              >
+                일정 등록하기
+              </button>
+            </section>
 
+            <fieldset
+              disabled={!canEditFields}
+              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
+            >
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
                 <div className="flex flex-col gap-3">
@@ -607,14 +618,14 @@ const OpenSettingsPage = () => {
                   </p>
                 )}
               </section>
-            </div>
-
-            {/* 우: 미리보기 */}
-            <div className="lg:sticky lg:top-6 lg:self-start">
-              <OpenSettingsPreview settings={form} />
-            </div>
+            </fieldset>
           </div>
-        </fieldset>
+
+          {/* 우: 미리보기 */}
+          <div className="lg:sticky lg:top-6 lg:self-start">
+            <OpenSettingsPreview settings={form} />
+          </div>
+        </div>
       </div>
 
       {/*
