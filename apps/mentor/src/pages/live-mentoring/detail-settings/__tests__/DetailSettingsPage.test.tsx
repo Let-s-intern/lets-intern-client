@@ -470,6 +470,64 @@ describe('DetailSettingsPage — 상태 잠금', () => {
   });
 });
 
+describe('DetailSettingsPage — 잠금 범위', () => {
+  /*
+   * 2026-08-18 슬롯 통합에서 `fieldset disabled` 가 편집 진입점까지 삼켜
+   * "오픈 중이면 일정 등록 버튼이 죽는" 버그가 됐다. 잠기는 것은 입력뿐이고
+   * 탭 이동·미리보기·보기 링크는 계속 동작해야 한다.
+   */
+  const renderLocked = () => {
+    status = 'APPROVED';
+    editable = false;
+    openings = [{ status: 'OPEN' }];
+    renderPage();
+  };
+
+  it('수정 불가면 입력 필드가 비활성이다', () => {
+    renderLocked();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    expect(within(heroSection).getAllByRole('textbox')[0]).toBeDisabled();
+    expect(
+      within(heroSection).getByRole('button', { name: '+ 추가' }),
+    ).toBeDisabled();
+  });
+
+  it('수정 불가여도 탭 이동은 동작한다', () => {
+    renderLocked();
+
+    expect(screen.getByRole('tab', { name: /결과 사례/ })).toBeEnabled();
+    openTab('결과 사례');
+
+    expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
+  });
+
+  it('수정 불가여도 미리보기와 공개 페이지 링크는 살아 있다', () => {
+    renderLocked();
+
+    expect(screen.getByText('💬 멘토님의 한마디')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '실제 공개 페이지로 확인하기' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('link', { name: '멘토링 상세 페이지 보기' }),
+    ).toBeVisible();
+  });
+
+  it('편집할 수 있으면 입력이 활성이다', () => {
+    renderPage();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    expect(within(heroSection).getAllByRole('textbox')[0]).toBeEnabled();
+  });
+});
+
 describe('DetailSettingsPage — 미리보기', () => {
   it('공개 상세와 같은 헤드라인·섹션 문구를 보여준다', () => {
     renderPage();
