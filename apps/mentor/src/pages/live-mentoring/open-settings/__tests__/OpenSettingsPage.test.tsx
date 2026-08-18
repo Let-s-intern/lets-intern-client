@@ -446,18 +446,18 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
     expect(closeOpeningMock.mock.calls[0][0]).toBe(openOpening.openingId);
   });
 
-  it('종료 확인에서 일정이 모두 삭제된다고 경고한다', () => {
-    // 서버가 종료와 함께 슬롯을 전부 지운다. 미리 알리지 않으면 멘토는
-    // 다시 열었을 때 일정이 비어 있는 이유를 알 수 없다.
+  it('종료 확인에 일정 삭제 경고가 없고 일정이 남는다고 알린다', () => {
+    // 슬롯이 챌린지 라이브 피드백과 공유되면서 종료는 더 이상 슬롯을 지우지
+    // 않는다. 삭제 경고를 남겨 두면 멘토가 슬롯을 잃을까 봐 오픈을 못 닫는다.
     renderPage({ status: 'APPROVED' }, [openOpening]);
 
     fireEvent.click(screen.getByRole('button', { name: '오픈 닫기' }));
 
+    expect(screen.queryByText(/일정이 모두 삭제/)).not.toBeInTheDocument();
     expect(
-      screen.getByText(
-        /종료하면 등록한 일정이 모두 삭제됩니다\. 다시 열 때 일정을 새로 등록해야 합니다\./,
-      ),
-    ).toBeInTheDocument();
+      screen.queryByText(/일정을 새로 등록해야 합니다/),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/등록한 일정은 그대로 남아요/)).toBeInTheDocument();
   });
 
   // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
