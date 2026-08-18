@@ -28,6 +28,14 @@ const OPENING_BODY = {
   durations: [60],
 };
 
+/** 조회 응답에서 저장 요청 바디(서버 요청 DTO와 같은 6개 키)만 뽑는다. */
+const detailPagePayload = async () => {
+  const res = await fetch(`${BASE}/mentor/live-mentoring/template`);
+  const { data } = await res.json();
+  const { hero, mentoringTypes, strategy, video, results, reviews } = data;
+  return { hero, mentoringTypes, strategy, video, results, reviews };
+};
+
 describe('1대1 라이브 멘토링 MSW 핸들러', () => {
   it('GET /live-mentoring → 개설 목록 응답(openingList/pageInfo)', async () => {
     const res = await fetch(`${BASE}/live-mentoring?page=1&size=9`);
@@ -198,15 +206,48 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data.mentoringTypes.items.length).toBeGreaterThan(0);
   });
 
-  it('PUT /mentor/live-mentoring/template → 받은 body를 echo', async () => {
-    const body = { categories: ['RESUME'], mentoringPoints: '수정본' };
+  it('PUT /mentor/live-mentoring/template → 저장 후 상세 페이지 전체를 돌려준다', async () => {
+    const payload = await detailPagePayload();
     const res = await fetch(`${BASE}/mentor/live-mentoring/template`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        ...payload,
+        video: { ...payload.video, title: '바꿈 제목' },
+      }),
     });
+
     const { data } = await res.json();
-    expect(data).toEqual(body);
+    expect(data.video.title).toBe('바꿈 제목');
+    // 서버와 같게 응답은 전체다 — 읽기 전용 값도 함께 온다.
+    expect(data.intro.careerLines.length).toBeGreaterThan(0);
+  });
+
+  it('PUT /mentor/live-mentoring/template → 요청 DTO에 없는 intro 가 섞이면 400', async () => {
+    const payload = await detailPagePayload();
+    const res = await fetch(`${BASE}/mentor/live-mentoring/template`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, intro: { oneLiner: '안녕' } }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.message).toContain('intro');
+  });
+
+  it('PUT /mentor/live-mentoring/template → 필수 필드가 빠지면 400', async () => {
+    const { hero, ...rest } = await detailPagePayload();
+    expect(hero).toBeDefined();
+    const res = await fetch(`${BASE}/mentor/live-mentoring/template`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rest),
+    });
+
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.message).toContain('hero');
   });
 
   it('GET /mentor/live-mentoring/open-status → 개설 이력', async () => {
