@@ -171,6 +171,47 @@ describe('DetailSettingsPage — 탭', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('필수 항목이 채워지면 완료 표시가 붙고, 비우면 사라진다', () => {
+    renderPage();
+
+    expect(
+      screen.getByRole('tab', { name: '핵심 소개 필수 완료' }),
+    ).toBeInTheDocument();
+
+    const heroSection = screen
+      .getByRole('heading', { name: '히어로 (최상단)' })
+      .closest('section');
+    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
+    fireEvent.change(within(heroSection).getAllByRole('textbox')[0], {
+      target: { value: '   ' },
+    });
+
+    expect(
+      screen.queryByRole('tab', { name: '핵심 소개 필수 완료' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('tab', { name: '핵심 소개 필수' }),
+    ).toBeInTheDocument();
+  });
+
+  it('선택 탭은 내용이 있을 때만 완료 표시가 붙는다', () => {
+    renderPage();
+
+    // 목 템플릿에는 영상 링크가 있고, 결과 사례 설명도 채워져 있다.
+    expect(
+      screen.getByRole('tab', { name: '소개 영상 선택 완료' }),
+    ).toBeInTheDocument();
+
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('유튜브 영상 주소'), {
+      target: { value: '' },
+    });
+
+    expect(
+      screen.queryByRole('tab', { name: '소개 영상 선택 완료' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('탭을 옮겼다 돌아와도 입력한 값은 남는다', () => {
     renderPage();
 

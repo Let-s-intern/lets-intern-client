@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import {
@@ -23,7 +23,7 @@ import {
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
-import { type DetailTabId } from './tabs';
+import { DETAIL_TABS, type DetailTabId, isDetailTabComplete } from './tabs';
 import DetailTabs from './ui/DetailTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
@@ -84,6 +84,22 @@ const DetailSettingsPage = () => {
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
   const canStartEdit = status === 'APPROVED' && !currentOpening;
+
+  /**
+   * 완료 표시가 붙는 탭. 탭을 옮길 때마다가 아니라 **템플릿이 바뀔 때만** 다시 센다 —
+   * 판정이 여섯 섹션을 모두 훑기 때문에 매 렌더 돌릴 이유가 없다.
+   */
+  const completedTabs = useMemo(
+    () =>
+      new Set(
+        template
+          ? DETAIL_TABS.filter((tab) =>
+              isDetailTabComplete(tab.id, template),
+            ).map((tab) => tab.id)
+          : [],
+      ),
+    [template],
+  );
 
   // 오픈 설정 타입에 따라 서버가 내려준 기본 템플릿을 로드한다.
   useEffect(() => {
@@ -339,7 +355,11 @@ const DetailSettingsPage = () => {
           탭 이동은 계속 동작해야 한다.
         */}
         <div className="flex min-w-0 flex-col gap-4">
-          <DetailTabs activeTab={activeTab} onChange={setActiveTab} />
+          <DetailTabs
+            activeTab={activeTab}
+            completedTabs={completedTabs}
+            onChange={setActiveTab}
+          />
           <fieldset
             disabled={!canEdit}
             className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
