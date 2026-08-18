@@ -65,13 +65,22 @@ function makeSettings(overrides: Record<string, unknown> = {}) {
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
     categories: ['RESUME'],
+    mentoring: {
+      liveMentoringId: 1,
+      title: '자소서 실전 첨삭 멘토링',
+      status: 'DRAFT',
+      editable: true,
+      categories: ['RESUME'],
+    },
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
     intro: {
       passedCount: 120,
+      nickname: '카카오멘토',
       profileImage: null,
       affiliation: '카카오 | 백엔드',
       careerLines: ['카카오 | 백엔드 (3년)'],
       oneLiner: '소개',
+      description: '카카오 | 백엔드',
     },
     mentoringTypes: {
       title: '이런 도움을 받을 수 있어요',
@@ -248,6 +257,8 @@ describe('useLiveMentoringTemplateQuery', () => {
     );
     expect(result.current.data?.intro.passedCount).toBe(120);
     expect(result.current.data?.mentoringTypes.items).toHaveLength(1);
+    // 잠금 판정의 근거. 서버가 준 값을 그대로 쓴다.
+    expect(result.current.data?.mentoring.editable).toBe(true);
   });
 });
 

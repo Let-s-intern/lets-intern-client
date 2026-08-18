@@ -119,13 +119,20 @@ export interface LiveMentoringTemplate {
   // --- 멘토 편집 영역 (시안 0~5) ---
   /** 시안 0 · 히어로 불릿 */
   hero: { bullets: string[] };
-  /** 시안 1 · 멘토 소개 */
+  /**
+   * 시안 1 · 멘토 소개 — 서버 `IntroResponse` 를 그대로 담는 **읽기 전용** 값이다.
+   * 저장 요청(`UpdateLiveMentoringDetailPageRequestDto`)에는 `intro` 가 없다.
+   */
   intro: {
     passedCount: number | null;
+    /** 프로필 닉네임. 서버는 빈 문자열로 채워 내려주고 null 을 주지 않는다. */
+    nickname: string;
     profileImage: string | null;
     affiliation: string;
     careerLines: string[];
     oneLiner: string;
+    /** 프로필의 소속·직책 한 줄. 미입력이면 null. */
+    description: string | null;
   };
   /** 시안 2 · 멘토링 유형 */
   mentoringTypes: {
@@ -841,12 +848,15 @@ function templateFor(seed: MentorSeed): LiveMentoringTemplate {
     intro: {
       // 짝수 mentorId 는 합격자 수 미입력 상태를 만들어 헤드라인 폴백을 확인할 수 있게 한다.
       passedCount: seed.mentorId % 2 === 1 ? 30 + seed.mentorId * 7 : null,
+      nickname: seed.nickname,
       profileImage: imageFor(seed),
       affiliation: seed.careers[0]
         ? `${seed.careers[0].company} | ${seed.careers[0].position}`
         : '',
       careerLines: careerLinesFor(seed),
       oneLiner: seed.introduction,
+      // 짝수 mentorId 는 소속·직책 미입력 상태를 만들어 폴백을 확인할 수 있게 한다.
+      description: seed.mentorId % 2 === 1 ? seed.headline : null,
     },
 
     mentoringTypes: {
