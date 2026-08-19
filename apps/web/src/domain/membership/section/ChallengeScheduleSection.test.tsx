@@ -35,7 +35,9 @@ describe('ChallengeScheduleSection', () => {
     expect(container.querySelector('.chsched-notice-lead')?.textContent).toBe(
       `${CHALLENGE_SCHEDULE.noticeLead} 11월 30일${CHALLENGE_SCHEDULE.noticeHighlightSuffix}`,
     );
-    expect(screen.getByText(CHALLENGE_SCHEDULE.periodLabel)).toBeInTheDocument();
+    expect(
+      screen.getByText(CHALLENGE_SCHEDULE.periodLabel),
+    ).toBeInTheDocument();
     expect(screen.getByText('~ 11/30')).toBeInTheDocument();
   });
 
