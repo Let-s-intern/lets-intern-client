@@ -105,7 +105,16 @@ export default function PlansSection() {
                     {formatKRW(animatedSale)}
                     <span className="allpass-unit">원 / {months}개월</span>
                   </span>
-                  <span className="allpass-badge num">{discountRate}% OFF</span>
+                  {/*
+                    할인율은 정가·특가에서 계산한다. 계산이 성립하지 않는 값
+                    (정가 0, 특가 > 정가)이면 배지 자체를 렌더하지 않는다 —
+                    "0% OFF" 나 음수 할인율이 남는 쪽이 더 나쁘다.
+                  */}
+                  {discountRate > 0 && (
+                    <span className="allpass-badge num">
+                      {discountRate}% 할인
+                    </span>
+                  )}
                 </div>
                 <span className="allpass-vat">
                   부가세 포함 · 선착순 100명 한정
