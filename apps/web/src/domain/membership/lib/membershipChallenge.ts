@@ -41,15 +41,19 @@ export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
 );
 
 /**
- * 2026 하반기 멤버십 모집 종료 여부 (마감 2026-07-26).
+ * 멤버십 모집 종료 여부.
  *
- * 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다 — 링크를 아는 사람이 종료된 상품을
- * 결제하는 걸 방지하기 위해서다. 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar,
+ * `true` 면 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다 — 링크를 아는 사람이 종료된
+ * 상품을 결제하는 걸 방지하기 위해서다. 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar,
  * HeroSection, FinalCtaSection) 모두 이 상수를 통해 잠긴다.
  *
- * 다음 시즌에 다시 열 때는 이 값을 `false` 로 되돌리면 카운트다운·결제 CTA 가 복구된다.
+ * 2026 하반기 시즌(마감 2026-07-26) 종료로 `true` 였고, 신규 시즌 모집을 재개하며
+ * `false` 로 되돌렸다. 시즌이 끝나면 다시 `true` 로 바꾸면 CTA 3곳이 한 번에 잠긴다.
+ *
+ * `boolean` 을 명시해 리터럴 타입(`true`/`false`)으로 좁혀지지 않게 한다. 좁혀지면
+ * 반대편 분기가 죽은 코드로 판정돼, 값만 되돌리는 운영이 타입 에러로 막힌다.
  */
-export const IS_RECRUITMENT_CLOSED = true;
+export const IS_RECRUITMENT_CLOSED: boolean = false;
 
 /**
  * 멤버십 출시 알림을 받는 라이브러리 자석 ID.
