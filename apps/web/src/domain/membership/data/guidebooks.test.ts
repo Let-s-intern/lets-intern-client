@@ -34,7 +34,10 @@ describe('혜택 카드 문구', () => {
     expect(GUIDEBOOK_CARD.title).toBe('가이드북');
     expect(GUIDEBOOK_CARD.desc.length).toBeGreaterThan(0);
     expect(GUIDEBOOK_CARD.badges).toEqual(['11/30까지 열람 가능']);
-    expect(GUIDEBOOK_CARD.url).toContain('/program/guidebook/');
+    // 카드가 6종을 소개하므로 개별 상세가 아니라 목록으로 보낸다.
+    // 앱 내부 상대경로여야 dev·로컬에서 프로덕션 도메인으로 새지 않는다.
+    expect(GUIDEBOOK_CARD.url).toBe('/program?type=GUIDEBOOK');
+    expect(GUIDEBOOK_CARD.url.startsWith('/')).toBe(true);
     expect(GUIDEBOOK_CARD.imgAlt.length).toBeGreaterThan(0);
   });
 
