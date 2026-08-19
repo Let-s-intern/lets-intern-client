@@ -19,7 +19,7 @@
   grid-template-columns: 1.08fr 0.92fr;
   gap: 48px;
   align-items: center;
-  padding: 74px 0 84px;
+  padding: 74px 0 52px;
 }
 .membership-root .hero-chips {
   display: flex;
@@ -162,4 +162,60 @@
   color: var(--g500);
   text-align: center;
   font-weight: 500;
+}
+
+/* hero stats strip (시안 0.png 하단 4지표) */
+.membership-root .hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding-bottom: 84px;
+}
+.membership-root .hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  text-align: center;
+}
+.membership-root .hero-stat + .hero-stat {
+  border-left: 1px solid var(--g300);
+}
+.membership-root .hero-stat .t {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.03em;
+}
+.membership-root .hero-stat .d {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--g500);
+  word-break: keep-all;
+}
+
+@media (max-width: 920px) {
+  .membership-root .hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 26px;
+    padding-bottom: 64px;
+  }
+  .membership-root .hero-stat:nth-child(2n + 1) {
+    border-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .membership-root .hero-stats {
+    row-gap: 20px;
+    padding-bottom: 52px;
+  }
+  .membership-root .hero-stat {
+    padding: 4px 8px;
+  }
+  .membership-root .hero-stat .t {
+    font-size: 16px;
+  }
+  .membership-root .hero-stat .d {
+    font-size: 12.5px;
+  }
 }

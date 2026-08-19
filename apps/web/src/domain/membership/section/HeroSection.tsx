@@ -3,7 +3,7 @@ import Countdown from '../ui/Countdown';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
-import { HERO } from '../data/hero';
+import { HERO, HERO_STATS } from '../data/hero';
 
 export default function HeroSection() {
   const { beginning, deadline, startDate, endDate } =
@@ -17,20 +17,17 @@ export default function HeroSection() {
             <span className="eyebrow">{HERO.badge}</span>
           </div>
           <h1 className="he he2">
-            {HERO.titleLines.map((line, i) => {
-              const last = i === HERO.titleLines.length - 1;
-              return (
-                <span key={i}>
-                  {last ? <span className="hl">{line}</span> : line}
-                  {!last && <br />}
-                </span>
-              );
-            })}
+            {HERO.titleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < HERO.titleLines.length - 1 && <br />}
+              </span>
+            ))}
           </h1>
           <p className="lead he he3">
             {HERO.lead.map((line, i) => (
               <span key={i}>
-                {i === 1 ? <b>{line}</b> : line}
+                {line}
                 {i < HERO.lead.length - 1 && <br />}
               </span>
             ))}
@@ -75,6 +72,15 @@ export default function HeroSection() {
           </div>
           <p className="fine">{HERO.offerFine}</p>
         </aside>
+      </div>
+
+      <div className="wrap hero-stats he he5">
+        {HERO_STATS.map((stat) => (
+          <div className="hero-stat" key={stat.title}>
+            <strong className="t">{stat.title}</strong>
+            <span className="d">{stat.desc}</span>
+          </div>
+        ))}
       </div>
     </section>
   );
