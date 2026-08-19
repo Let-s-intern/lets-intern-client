@@ -58,7 +58,7 @@ function SolutionSatelliteNode({ label, hint, icon }: SolutionSatellite) {
 
 export default function SolutionSection() {
   return (
-    <section className="solution">
+    <section className="solution" id="solution">
       <div className="wrap">
         <div className="sec-head rv in">
           <span className="eyebrow">{SOLUTION.badge}</span>

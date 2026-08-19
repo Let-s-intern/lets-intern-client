@@ -22,7 +22,7 @@ export default function ChallengeScheduleSection() {
   const deadlineShort = dayjs(endDate).format('M/D');
 
   return (
-    <section className="chsched">
+    <section className="chsched" id="challenge-schedule">
       <div className="wrap">
         <div className="sec-head rv">
           <h2>{CHALLENGE_SCHEDULE.title}</h2>

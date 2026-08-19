@@ -60,26 +60,25 @@ export default function MembershipLanding() {
           <MembershipNav />
           {/* 공채 로드맵(시안 1.png 하단) — 이 한 줄과 위 import 를 지우면 섹션이 빠진다 */}
           <RoadmapSection />
-          {/* LC-3219 시안에서 빠진 섹션 3개 — 얼리버드 배너 · VOD 훅 · 추천 대상.
-              시안 0~8 어디에도 없고 앵커 네비 5개(course-plan·seminar·benefits·partners·plans)
-              도 이들을 가리키지 않는다. 되살리려면 위 import 3줄과 CSS import 3줄을 함께 푼다.
-              파일은 지우지 않았다 — section/EarlyBirdBanner.tsx · VodHookSection.tsx ·
-              RecommendSection.tsx 와 data/earlyBird.ts · vodHook.ts · recommend.ts */}
-          <CompareSection />
-          {/* 챌린지 일정 간트(시안 5.png) — 이 한 줄과 위 import 두 개를 지우면 섹션이 빠진다 */}
-          <ChallengeScheduleSection />
+          {/* 아래 순서는 시안 파일 번호를 그대로 따른다. 바꾸려면 시안부터 확인할 것.
+              2.png 패스 구성 → 3.png 가격 플랜 → 4.png 비교 → 5.png 챌린지 일정
+              → 6-0/6-1 혜택 헤더+플레이북 → 7-x 혜택 상세 → 8-0 후기 */}
           <SolutionSection />
-          <CoursePlanSection />
-          {/* 세미나 · 제휴 혜택도 시안에서 빠졌다. 앵커 네비 항목(ui/MembershipNav.tsx 의
-              NAV_ITEMS)에서도 함께 뺐으니 되살릴 때 둘을 같이 되돌려야 한다.
-              파일은 지우지 않았다 — section/SeminarSection.tsx · PartnerBenefitsSection.tsx 와
-              data/seminar.ts · partners.ts */}
-          <BenefitsSection />
           <PlansSection />
+          <CompareSection />
+          <ChallengeScheduleSection />
+          {/* CoursePlanSection 이 시안 6-0 헤더까지 렌더한다. BenefitsSection 과 붙어 있어야
+              헤더-본문 순서가 맞으므로 둘 사이에 다른 섹션을 넣지 마라. */}
+          <CoursePlanSection />
+          <BenefitsSection />
           <ReviewsSection />
-          {/* 최종 CTA(선착순 마감 임박 + 카운트다운 + 멤버십 신청하기)도 시안에서 빠졌다.
-              결제 진입은 하단 고정 ApplyBar 가 계속 담당한다.
-              파일은 지우지 않았다 — section/FinalCtaSection.tsx 와 data/finalCta.ts */}
+          {/* LC-3219 시안에서 빠진 섹션 6개 — 얼리버드 배너 · VOD 훅 · 추천 대상 ·
+              세미나 · 제휴 혜택 · 최종 CTA. 시안 0~8 어디에도 없다.
+              세미나·제휴 혜택은 앵커 네비 항목(ui/MembershipNav.tsx 의 NAV_ITEMS)에서도 함께
+              뺐으니 되살릴 때 둘을 같이 되돌려야 한다.
+              되살리려면 위 컴포넌트 import 와 CSS import 를 함께 푼다. 파일은 지우지 않았다 —
+              section/{EarlyBirdBanner,VodHookSection,RecommendSection,SeminarSection,
+              PartnerBenefitsSection,FinalCtaSection}.tsx 와 대응 data/*.ts */}
           <FaqSection />
           <ApplyBar />
         </main>
