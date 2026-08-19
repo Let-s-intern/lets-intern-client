@@ -83,14 +83,17 @@ const mockServer = (
   activeByType: Record<string, number | null>,
   detailById: Record<number, [number, number]>,
 ) => {
-  get.mockImplementation((url: string, config?: any) => {
-    if (url === '/challenge/active') {
-      return Promise.resolve(activeList(activeByType[config?.params?.type]));
-    }
-    const id = Number(url.replace('/challenge/', ''));
-    const [price, discount] = detailById[id] ?? [0, 0];
-    return Promise.resolve(challengeDetail(price, discount));
-  });
+  get.mockImplementation(
+    (url: string, config?: { params?: { type?: string } }) => {
+      if (url === '/challenge/active') {
+        const type = config?.params?.type ?? '';
+        return Promise.resolve(activeList(activeByType[type]));
+      }
+      const id = Number(url.replace('/challenge/', ''));
+      const [price, discount] = detailById[id] ?? [0, 0];
+      return Promise.resolve(challengeDetail(price, discount));
+    },
+  );
 };
 
 const wrapper = ({ children }: PropsWithChildren) => {
