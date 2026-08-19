@@ -1,6 +1,6 @@
 /* ===================== BENEFITS ===================== */
 .membership-root .benefits {
-  padding: 30px 0 84px;
+  padding: 30px 0 140px;
 }
 .membership-root .bgrid {
   display: grid;
@@ -92,4 +92,170 @@
 }
 .membership-root .ic-gray {
   background: #ececec;
+}
+
+/* ===================== BENEFITS — 챌린지 세로 리스트 (시안 6-0 / 7-1~7-4) ===================== */
+.membership-root .benefits .bn-hl {
+  color: var(--lc-blue);
+}
+.membership-root .benefits .sec-head h2 {
+  line-height: 1.3;
+}
+
+/* 블록 (가이드북 · 챌린지 7종 · 직무별 3종 · 스터디) */
+.membership-root .bn-block + .bn-block {
+  margin-top: 84px;
+}
+.membership-root .bn-block-head {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 28px;
+}
+.membership-root .bn-block-head h3 {
+  font-size: 30px;
+  font-weight: 800;
+}
+.membership-root .bn-block-head p {
+  margin-top: 14px;
+  font-size: 17px;
+  color: var(--g600);
+  font-weight: 500;
+}
+
+/* 카드 공통 */
+.membership-root .cb-card {
+  background: #fff;
+  border: 1px solid #eef;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.membership-root .cb-thumb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.membership-root .cb-title {
+  font-size: 20px;
+  font-weight: 800;
+}
+.membership-root .cb-desc {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--g600);
+  font-weight: 500;
+  line-height: 1.65;
+}
+.membership-root .cb-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+  list-style: none;
+}
+.membership-root .cb-badge {
+  border: 1px solid #e6e8f0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  background: #fff;
+  white-space: nowrap;
+}
+.membership-root .cb-link {
+  color: var(--lc-blue);
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.membership-root .cb-link:hover {
+  text-decoration: underline;
+}
+
+/* core — 썸네일 좌 / 본문 중앙 / 링크 우 (시안 7-2) */
+.membership-root .cb-list {
+  display: grid;
+  gap: 20px;
+}
+.membership-root .cb-card--core {
+  display: grid;
+  grid-template-columns: var(--cb-thumb-w, 286px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px;
+  padding: 24px;
+}
+
+/* job — 썸네일 위 / 본문 아래, 3열 (시안 7-3) */
+.membership-root .cb-jobgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.membership-root .cb-card--job {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.membership-root .cb-card--job .cb-body {
+  margin-top: 18px;
+}
+.membership-root .cb-card--job .cb-link {
+  margin-top: 22px;
+  text-align: center;
+}
+
+/* 가이드북 카드는 표지 6권 일러스트라 가로로 넓다 (시안 7-1) */
+.membership-root .cb-card--wide {
+  --cb-thumb-w: minmax(0, 0.9fr);
+}
+.membership-root .cb-card--wide .cb-thumb {
+  aspect-ratio: 5 / 2;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+/* 반응형 — 좌우 배치를 위아래로 접고 직무 3열을 줄인다 */
+@media (max-width: 900px) {
+  .membership-root .cb-jobgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 768px) {
+  .membership-root .bn-block + .bn-block {
+    margin-top: 56px;
+  }
+  .membership-root .bn-block-head h3 {
+    font-size: 22px;
+  }
+  .membership-root .bn-block-head p {
+    font-size: 15px;
+  }
+  .membership-root .cb-card--core,
+  .membership-root .cb-card--wide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 18px;
+  }
+  .membership-root .cb-card--core .cb-link {
+    justify-self: start;
+  }
+  .membership-root .cb-card--wide .cb-thumb {
+    aspect-ratio: 5 / 2;
+  }
+  .membership-root .cb-jobgrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .membership-root .cb-title {
+    font-size: 18px;
+  }
+  .membership-root .cb-desc {
+    font-size: 14px;
+  }
+  .membership-root .cb-badge {
+    padding: 7px 13px;
+    font-size: 12px;
+  }
 }

@@ -1,67 +1,192 @@
 /* ===================== ROADMAP ===================== */
+/* 시안 1.png — 5노드 지그재그 타임라인.
+   5열 그리드(합 980px, 열 196px)를 깔고, 카드와 트랙 선이 좌우로 22px 씩
+   넘쳐 각각 240px / 1024px 이 된다. 그래서 양 끝 카드의 바깥선과 트랙 끝이 맞는다.
+   각 노드는 display:contents 라서 카드와 번호 원이 부모 그리드에 직접 놓이고,
+   열은 컴포넌트가 넘기는 --rmap-col 로 정한다. */
 .membership-root .roadmap {
-  padding: 84px 0;
+  padding: 140px 0;
   background: var(--bg-cool);
 }
-.membership-root .timeline {
+.membership-root .roadmap .timeline {
   position: relative;
-  margin-top: 30px;
+  margin-top: 12px;
 }
-.membership-root .timeline .track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 34px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--rainbow);
-}
-.membership-root .tnodes {
+.membership-root .rmap-nodes {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: auto 36px auto;
+  row-gap: 38px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.membership-root .rmap-node {
+  display: contents;
+}
+.membership-root .rmap-node > * {
+  grid-column: var(--rmap-col);
+}
+
+/* 가로 트랙 선 — 진입 시 scaleX 드로우는 animations.css 가 담당한다 */
+.membership-root .roadmap .track {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  align-self: center;
+  height: 4px;
+  margin-inline: -22px;
+  border-radius: 999px;
+  background: var(--lc-blue);
+}
+
+/* 트랙 위 번호 원. 마지막 노드만 번호 대신 체크 아이콘이 들어온다.
+   트랙은 드로우 애니메이션의 transform 때문에 위 레이어로 올라가므로,
+   원도 position/z-index 를 줘서 트랙보다 앞에 그린다. */
+.membership-root .rmap-step {
   position: relative;
-}
-.membership-root .tnode {
-  text-align: center;
-}
-.membership-root .tnode .dot {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: #fff;
-  border: 5px solid var(--lc-blue);
-  margin: 0 auto 18px;
-  display: flex;
+  z-index: 1;
+  grid-row: 2;
+  align-self: center;
+  justify-self: center;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--lc-blue);
+  color: var(--white);
   font-family: var(--num);
-  font-weight: 800;
-  font-size: 22px;
-  color: var(--lc-blue);
-  position: relative;
-  z-index: 2;
-}
-.membership-root .tnode:nth-child(2) .dot {
-  border-color: var(--lc-coral);
-  color: var(--lc-coral);
-}
-.membership-root .tnode:nth-child(3) .dot {
-  border-color: var(--lc-sky);
-  color: #0892c7;
-}
-.membership-root .tnode .mon {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--g500);
-}
-.membership-root .tnode h3 {
-  font-size: 21px;
-  font-weight: 800;
-  margin: 4px 0 8px;
-}
-.membership-root .tnode p {
   font-size: 15px;
-  color: var(--g600);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.membership-root .rmap-node[data-side='above'] .rmap-card {
+  grid-row: 1;
+  align-self: end;
+}
+.membership-root .rmap-node[data-side='below'] .rmap-card {
+  grid-row: 3;
+  align-self: start;
+}
+.membership-root .rmap-card {
+  margin-inline: -22px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 6px 18px -6px rgba(40, 60, 120, 0.2);
+}
+.membership-root .rmap-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.membership-root .rmap-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: #e8edff;
+  color: var(--lc-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.membership-root .rmap-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #eff3ff;
+  color: var(--lc-blue);
+}
+.membership-root .rmap-card h3 {
+  margin: 12px 0 5px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.membership-root .rmap-card p {
+  font-size: 13px;
   font-weight: 500;
+  line-height: 1.4;
+  color: var(--g600);
+}
+
+/* 하단 마무리 문구 */
+.membership-root .rmap-outro {
+  margin-top: 64px;
+  text-align: center;
+}
+.membership-root .rmap-outro-lead {
+  font-size: 28px;
+  font-weight: 800;
+}
+.membership-root .rmap-outro-lead .hl {
+  color: var(--lc-blue);
+}
+.membership-root .rmap-outro-sub {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--g600);
+}
+
+/* 지그재그를 유지할 만큼 열이 넓지 않은 폭부터 세로 1열로 접는다.
+   (responsive.css 가 920px 이하에서 .timeline .track 을 숨기는 것과 경계를 맞춘다) */
+@media (max-width: 920px) {
+  .membership-root .rmap-nodes {
+    display: flex;
+    flex-direction: column;
+    max-width: 520px;
+  }
+  .membership-root .rmap-node {
+    position: relative;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    column-gap: 16px;
+    padding-bottom: 20px;
+  }
+  /* 원과 원을 잇는 세로 연결선 — 노드 높이에 맞춰 top/bottom 으로 늘어난다 */
+  .membership-root .rmap-node:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 42px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--tint-blue);
+  }
+  /* 데스크톱 지그재그용 열·행 고정을 모두 푼다(노드가 자기 그리드를 갖는다).
+     선택자 특정도를 데스크톱 규칙과 맞춰야 덮인다 */
+  .membership-root .rmap-node > * {
+    grid-column: auto;
+  }
+  .membership-root .rmap-node[data-side='above'] .rmap-card,
+  .membership-root .rmap-node[data-side='below'] .rmap-card {
+    grid-row: auto;
+    align-self: auto;
+    margin-inline: 0;
+  }
+  .membership-root .rmap-step {
+    grid-row: auto;
+    align-self: start;
+    justify-self: start;
+  }
+  .membership-root .rmap-outro {
+    margin-top: 40px;
+  }
+  .membership-root .rmap-outro-lead {
+    font-size: 22px;
+  }
+  .membership-root .rmap-outro-sub {
+    margin-top: 8px;
+    font-size: 14px;
+  }
 }

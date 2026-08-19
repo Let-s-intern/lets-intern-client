@@ -191,13 +191,17 @@
 .membership-root .sec-head .eyebrow {
   margin-bottom: 18px;
 }
+/* 앱 디자인 시스템 스케일에 맞춘다 — packages/config/tailwind/preset.js 의
+   최대치가 xxlarge36(36px)이고 챌린지 상세는 14·16px 이 주력이다.
+   멤버십만 42·19px 을 쓰면 다른 페이지에서 넘어왔을 때 글자가 튄다. */
 .membership-root .sec-head h2 {
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 800;
+  line-height: 1.35;
 }
 .membership-root .sec-head p {
   margin-top: 16px;
-  font-size: 19px;
+  font-size: 18px;
   color: var(--g600);
   font-weight: 500;
 }

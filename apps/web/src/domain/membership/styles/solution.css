@@ -3,7 +3,23 @@
    데스크탑: 3×3 방사형 그리드(중앙 허브 + 주변 6위성), 위성 → 허브 수렴 화살표.
    모바일: 세로 스택 + 중앙 허브 강조. 모든 셀렉터는 .membership-root 스코프. */
 .membership-root .solution {
-  padding: 74px 0;
+  padding: 140px 0;
+}
+
+/* 헤드라인 강조 어절 — 시안 2.png 의 파란 "하나로" */
+.membership-root .solution .sec-head h2 .hl {
+  color: var(--lc-blue);
+}
+
+/* 다이어그램 하단 서브카피 */
+.membership-root .hub-note {
+  margin: 44px auto 0;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.6;
+  word-break: keep-all;
 }
 
 /* ---------- 방사형 그리드 (데스크탑) ----------
@@ -104,16 +120,14 @@
   grid-column: 1;
   grid-row: 2;
 }
+/* 위성이 5종이라 우측 열은 2개다. 1·3행에 두어 허브를 기준으로 대칭이 되게 한다
+   (2행에 몰면 우측이 위로 쏠린다). */
 .membership-root .hub-sat:nth-of-type(4) {
   grid-column: 3;
-  grid-row: 2;
+  grid-row: 3;
 }
 .membership-root .hub-sat:nth-of-type(5) {
   grid-column: 1;
-  grid-row: 3;
-}
-.membership-root .hub-sat:nth-of-type(6) {
-  grid-column: 3;
   grid-row: 3;
 }
 
@@ -176,27 +190,23 @@
 }
 /* 우측 열(2·4·6): 카드 왼쪽 ← 허브를 향한다 (기본 180° 뒤집기) */
 .membership-root .hub-sat:nth-of-type(2)::after,
-.membership-root .hub-sat:nth-of-type(4)::after,
-.membership-root .hub-sat:nth-of-type(6)::after {
+.membership-root .hub-sat:nth-of-type(4)::after {
   left: -44px;
 }
 .membership-root .hub-sat:nth-of-type(2)::after {
   top: 64%;
   --ang: 147deg;
 }
+/* 4번은 3행(우측 하단)이므로 6번이 쓰던 각도를 물려받는다 */
 .membership-root .hub-sat:nth-of-type(4)::after {
-  top: 50%;
-  --ang: 180deg;
-}
-.membership-root .hub-sat:nth-of-type(6)::after {
   top: 36%;
   --ang: 213deg;
 }
 
 /* ---------- 모바일: 세로 스택 + 허브 강조 ---------- */
 @media (max-width: 720px) {
-  /* 모바일: 6위성을 위(2×3 그리드)에 모두 두고 → ↓ 화살표 → 아래 허브(풀폭) 순으로
-     배치해 "6개가 하나로 합쳐진다"를 시각화한다. */
+  /* 모바일: 5위성을 위(2열 그리드)에 모두 두고 → ↓ 화살표 → 아래 허브(풀폭) 순으로
+     배치해 "여러 개가 하나로 합쳐진다"를 시각화한다. */
   .membership-root .hub {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -209,8 +219,7 @@
   .membership-root .hub-sat:nth-of-type(2),
   .membership-root .hub-sat:nth-of-type(3),
   .membership-root .hub-sat:nth-of-type(4),
-  .membership-root .hub-sat:nth-of-type(5),
-  .membership-root .hub-sat:nth-of-type(6) {
+  .membership-root .hub-sat:nth-of-type(5) {
     grid-column: auto;
     grid-row: auto;
   }
@@ -264,6 +273,10 @@
   }
 }
 @media (max-width: 600px) {
+  .membership-root .hub-note {
+    margin-top: 30px;
+    font-size: 15px;
+  }
   /* 통일 모바일 타입스케일 — 허브/위성 추가 축소 */
   .membership-root .hub {
     gap: 8px;

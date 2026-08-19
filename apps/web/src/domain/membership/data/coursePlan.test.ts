@@ -1,5 +1,9 @@
 import {
   CATEGORIES,
+  COURSE_PLAN_BODY,
+  COURSE_PLAN_HEADER,
+  COURSE_TAG_LABEL,
+  type CourseTag,
   MATRIX_CELL_MAP,
   MATRIX_CELLS,
   matrixCellKey,
@@ -10,6 +14,7 @@ import {
 } from './coursePlan';
 
 const VALID_OWNERS: Owner[] = ['self', 'free', 'challenge', 'challenge-deep'];
+const VALID_TAGS: CourseTag[] = ['free', 'template', 'checklist', 'challenge'];
 
 describe('coursePlan 데이터 무결성', () => {
   describe('매트릭스 차원', () => {
@@ -52,6 +57,44 @@ describe('coursePlan 데이터 무결성', () => {
         expect(cell.title.length).toBeGreaterThan(0);
         expect(cell.desc.length).toBeGreaterThan(0);
       }
+    });
+
+    it('모든 셀이 배지(tag) 4종 중 하나를 갖고 라벨이 비어 있지 않다', () => {
+      for (const cell of MATRIX_CELLS) {
+        expect(VALID_TAGS).toContain(cell.tag);
+        expect(COURSE_TAG_LABEL[cell.tag].length).toBeGreaterThan(0);
+      }
+    });
+
+    it('배지 라벨은 시안 문구 4종이다', () => {
+      expect(COURSE_TAG_LABEL).toEqual({
+        free: '무료 자료 제공',
+        template: '템플릿 제공',
+        checklist: '체크리스트 제공',
+        challenge: '챌린지',
+      });
+    });
+  });
+
+  describe('헤더 카피', () => {
+    it('섹션 헤더는 배지·2줄 제목·설명을 갖는다', () => {
+      expect(COURSE_PLAN_HEADER.badge.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_HEADER.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_HEADER.subLines.length).toBeGreaterThan(0);
+    });
+
+    it('섹션 헤더의 강조 어절이 제목 안에 실제로 존재한다', () => {
+      const title = COURSE_PLAN_HEADER.titleLines.join(' ');
+      for (const word of COURSE_PLAN_HEADER.titleHighlights) {
+        expect(title).toContain(word);
+      }
+    });
+
+    it('본문 도입부와 매트릭스 캡션 문구가 비어 있지 않다', () => {
+      expect(COURSE_PLAN_BODY.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_BODY.sub.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixTitle.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixSub.length).toBeGreaterThan(0);
     });
   });
 

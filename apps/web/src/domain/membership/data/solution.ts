@@ -1,5 +1,5 @@
 // 멤버십 구성(Solution) 섹션 — 허브 앤 스포크 다이어그램 데이터.
-// 위성 6종이 중앙 허브(멤버십)로 수렴해 "여러 개를 하나로 통합"을 표현한다.
+// 위성 5종이 중앙 허브(올인원 패스)로 수렴해 "여러 개를 하나로 통합"을 표현한다.
 
 /** 위성 아이콘 식별자 (lucide-react 매핑 키) */
 export type SolutionSatelliteIcon =
@@ -7,7 +7,7 @@ export type SolutionSatelliteIcon =
   | 'bookOpen'
   | 'users'
   | 'monitorPlay'
-  | 'handshake'
+  | 'mentoring'
   | 'route';
 
 export interface SolutionSatellite {
@@ -20,25 +20,41 @@ export interface SolutionSatellite {
 }
 
 export const SOLUTION = {
-  badge: '멤버십 구성',
+  badge: '공채 준비 올인원 패스 구성',
   titleLines: [
-    '따로 준비하면 비싸고 복잡한 공채 준비,',
+    '따로 준비하면 비싸고 복잡한 공채 준비를',
     '렛츠커리어가 하나로 묶었어요',
   ],
-  /** 중앙 허브 카피 */
-  hubTitle: '렛츠커리어 하반기 멤버십',
-  hubSub: '7 · 8 · 9월 3개월 올인원',
-  /** 허브로 수렴하는 위성 6종 */
+  /** titleLines 안에서 파란색으로 강조할 어절 */
+  titleHighlight: '하나로',
+  /** 중앙 허브 카피 (시안 2.png 은 2줄) */
+  hubTitleLines: ['렛츠커리어', '공채 준비 올인원 패스'],
+  hubSub: '9 · 10 · 11월 3개월 올인원',
+  /** 다이어그램 하단 서브카피 */
+  subLines: [
+    '자소서·인적성·면접까지',
+    '하반기 공채에 필요한 준비를 모두 준비했어요!',
+  ],
+  /**
+   * 허브로 수렴하는 위성 5종.
+   * 배치는 solution.css 의 nth-of-type 좌표에 묶여 있다 —
+   * 홀수(1·3·5)가 좌측 열, 짝수(2·4)가 우측 열이므로 순서를 바꾸지 마라.
+   *
+   * "렛츠커리어 커뮤니티"는 뺐다 — 챌린지 참여자도 들어올 수 있어 멤버십 전용 혜택이 아니다.
+   */
   satellites: [
-    { label: '챌린지', hint: '경험정리·이력서·자소서·면접', icon: 'flag' },
-    { label: '가이드북', hint: '이력서, 자소서 등 6종', icon: 'bookOpen' },
-    { label: '렛츠런 스터디', hint: '함께 완주하는 동료', icon: 'users' },
-    { label: 'VOD', hint: '현직자 세미나 20종 모음집', icon: 'monitorPlay' },
     {
-      label: '외부 제휴 서비스',
-      hint: '산타토익, 뷰인터, 슈피인턴',
-      icon: 'handshake',
+      label: '챌린지',
+      hint: '경험정리, 이력서, 자소서, 면접, 인적성 등',
+      icon: 'flag',
     },
+    { label: '가이드북', hint: '이력서, 자소서 등 6종', icon: 'bookOpen' },
+    {
+      label: '1:1 멘토링 할인권',
+      hint: '현직자와의 개별 Q&A, 커피챗',
+      icon: 'mentoring',
+    },
+    { label: 'VOD', hint: '현직자 세미나 20종 모음집', icon: 'monitorPlay' },
     {
       label: '13주 플레이북',
       hint: '하반기 공채 주차별 합격 플랜',

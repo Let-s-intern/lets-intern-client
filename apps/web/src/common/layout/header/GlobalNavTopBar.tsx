@@ -11,6 +11,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
+// [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 GlobalNavItem 과 함께 제거한다
+// [LC-3219-MEMBERSHIP] 멤버십 진입 메뉴를 잠시 숨기면서 함께 주석 처리했다.
+// 메뉴를 되살릴 때 이 import 도 같이 푼다.
+// import MembershipNavLabel from './MembershipNavLabel';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
@@ -78,7 +82,19 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         >
           홈
         </GlobalNavItem>
-        {/* 2026 하반기 멤버십 모집 종료로 메뉴 제거 (랜딩 /membership 은 유지) */}
+        {/* [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴(데스크톱 상단바) — 검수 전까지 잠시 숨김.
+            공개할 때 아래 블록의 주석을 풀고, 시즌 종료 시에는 이 블록을 제거한다.
+            랜딩(/membership) 자체는 살아 있어 링크를 아는 사람은 들어갈 수 있다. */}
+        {/* <GlobalNavItem
+          className={twMerge(
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            pathname.startsWith('/membership') && 'border-neutral-0',
+          )}
+          href="/membership"
+          isNew
+        >
+          <MembershipNavLabel />
+        </GlobalNavItem> */}
         {/* 메뉴 정리: 멤버십 출시 메뉴 추가로 상단바가 혼잡해 잠시 숨김 (모바일 드로어에는 유지) */}
         {/* <GlobalNavItem
           className={twMerge(

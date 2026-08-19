@@ -1,0 +1,97 @@
+/* =====================================================================
+   챌린지 일정 — 헤더는 텍스트, 간트 패널과 안내 박스는 이미지.
+
+   두 이미지 모두 모서리가 투명한 라운드 패널이다. 뒤 배경색을 CSS 가 깔아
+   (1) 이미지 로드 전에도 자리와 색이 잡히고 (2) 배경색만 따로 바꿀 수 있다.
+   ===================================================================== */
+
+/* ---------- 조절 지점 ----------
+   --gantt-width      두 이미지의 표시 폭. 이 값만 바꾸면 되고 가운데 정렬은 유지된다
+   --gantt-panel-bg   간트 패널 뒤 배경색
+   --gantt-notice-bg  안내 박스 뒤 배경색
+   이미지 파일:
+     apps/web/public/images/membership/gantt-panel.webp
+     apps/web/public/images/membership/gantt-notice.webp
+   파일을 다른 크기로 갈아끼워도 height:auto 가 비율을 따라간다. */
+.membership-root .chsched {
+  --gantt-width: 1180px;
+  --gantt-panel-bg: #f8fafc;
+  --gantt-notice-bg: #eff3ff;
+  --gantt-radius: 20px;
+
+  padding: 140px 0;
+  background: #fff;
+}
+
+.membership-root .chsched > .wrap {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ---------- 간트 패널 ----------
+   래퍼는 스크롤하지 않는다. 스크롤은 .gantt-scroll 안에서만 일어나고,
+   페이드 힌트(.gantt-fade)는 래퍼에 붙어 제자리에 남는다. */
+.membership-root .gantt-wrap {
+  position: relative;
+  max-width: var(--gantt-width);
+  margin: 0 auto;
+}
+
+.membership-root .gantt-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 간트 끝까지 밀었을 때 페이지가 따라 스크롤되지 않게 체이닝을 막는다 */
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--gantt-radius);
+  /* 이미지의 투명한 라운드 모서리 뒤를 이 색이 채운다. 반지름을 맞춰야 각지지 않는다. */
+  background: var(--gantt-panel-bg);
+}
+
+/* 데스크톱: --gantt-width 로 표시한다.
+   좁은 폭: min-width 가 이겨 원본 비율을 유지한 채 .gantt-scroll 안에서만 가로 스크롤된다. */
+.membership-root .gantt-img {
+  display: block;
+  width: 100%;
+  min-width: 900px;
+  height: auto;
+}
+
+/* 스크롤 가능함을 알리는 우측 페이드 */
+.membership-root .gantt-fade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 56px;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 0 var(--gantt-radius) var(--gantt-radius) 0;
+  background: linear-gradient(
+    to right,
+    rgb(248 250 252 / 0%),
+    var(--gantt-panel-bg)
+  );
+}
+
+/* ---------- 하단 안내 박스 ---------- */
+.membership-root .gantt-notice {
+  display: block;
+  width: 100%;
+  max-width: var(--gantt-width);
+  height: auto;
+  margin: 28px auto 0;
+  border-radius: var(--gantt-radius);
+  background: var(--gantt-notice-bg);
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 760px) {
+  .membership-root .chsched {
+    padding: 96px 0;
+  }
+  .membership-root .gantt-wrap,
+  .membership-root .gantt-notice {
+    max-width: calc(100% - 40px);
+  }
+}
