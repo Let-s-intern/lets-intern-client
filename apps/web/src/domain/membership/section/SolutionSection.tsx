@@ -23,7 +23,13 @@ const SATELLITE_ICONS: Record<SolutionSatelliteIcon, LucideIcon> = {
 };
 
 /** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
-function HeadlineLine({ line, highlight }: { line: string; highlight: string }) {
+function HeadlineLine({
+  line,
+  highlight,
+}: {
+  line: string;
+  highlight: string;
+}) {
   const at = line.indexOf(highlight);
   if (at < 0) return <>{line}</>;
   return (
@@ -59,10 +65,7 @@ export default function SolutionSection() {
           <h2>
             {SOLUTION.titleLines.map((line, i) => (
               <span key={i}>
-                <HeadlineLine
-                  line={line}
-                  highlight={SOLUTION.titleHighlight}
-                />
+                <HeadlineLine line={line} highlight={SOLUTION.titleHighlight} />
                 {i < SOLUTION.titleLines.length - 1 && <br />}
               </span>
             ))}

@@ -545,13 +545,14 @@ export const FLOW_CHIPS: string[] = [
 export const COURSE_PLAN_HEADER = {
   badge: '공채 준비 올인원 패스 혜택',
   /** 제목 — 의도된 줄바꿈 단위 */
-  titleLines: ['하반기 공채 준비에 필요한', '올인원 패스 하나로 누리는 모든 혜택'],
+  titleLines: [
+    '하반기 공채 준비에 필요한',
+    '올인원 패스 하나로 누리는 모든 혜택',
+  ],
   /** titleLines 안에서 파란색으로 강조할 어절 */
   titleHighlights: ['올인원 패스', '모든 혜택'],
   /** 설명 — 의도된 줄바꿈 단위 */
-  subLines: [
-    '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
-  ],
+  subLines: ['개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.'],
 } as const;
 
 /** 플레이북 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */

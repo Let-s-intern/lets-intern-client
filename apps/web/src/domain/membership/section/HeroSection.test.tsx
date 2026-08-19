@@ -13,7 +13,6 @@ jest.mock('../lib/useMembershipChallengeData', () => ({
   }),
 }));
 
-// eslint-disable-next-line import/first
 import HeroSection from './HeroSection';
 
 describe('HeroSection', () => {
