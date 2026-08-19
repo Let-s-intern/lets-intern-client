@@ -37,9 +37,11 @@ export default function MentorDetailContentSection() {
     () => showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
   );
 
+  const initialContent = user?.description || emptyEditorState;
+
   const handleChange = (jsonString: string) => {
     setContent(jsonString);
-    setIsDirty(true);
+    setIsDirty(jsonString !== initialContent);
   };
 
   const handleSave = () => {
