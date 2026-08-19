@@ -13,7 +13,9 @@ describe('HeroSection', () => {
 
   it('CTA 두 개를 렌더한다', () => {
     render(<HeroSection />);
-    expect(screen.getByRole('button', { name: HERO.ctaSecondary })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: HERO.ctaSecondary }),
+    ).toBeInTheDocument();
     expect(screen.getAllByRole('button')).toHaveLength(2);
   });
 
@@ -51,6 +53,8 @@ describe('HeroSection', () => {
 
   it('시안에 없는 이모지를 화면에 남기지 않는다', () => {
     const { container } = render(<HeroSection />);
-    expect(container.textContent).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u);
+    expect(container.textContent).not.toMatch(
+      /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u,
+    );
   });
 });
