@@ -289,6 +289,7 @@ export type PatchUserBody = {
   isPoolUp?: boolean;
   nickname?: string | null;
   introduction?: string | null;
+  description?: string | null;
   profileImgUrl?: string | null;
   sns?: string | null;
 };
