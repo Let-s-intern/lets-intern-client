@@ -68,6 +68,7 @@ export const mentorDetailSchema = z.object({
   mentorInfo: z.object({
     mentorId: z.number(),
     nickname: z.string().nullable(),
+    introduction: z.string().nullable().optional(),
     description: z.string().nullable(),
     profileImgUrl: z.string().nullable(),
     corpImgUrl: z.string().nullable(),
