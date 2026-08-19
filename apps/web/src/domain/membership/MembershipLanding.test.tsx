@@ -34,18 +34,6 @@ jest.mock('./section/RoadmapSection', () => ({
   __esModule: true,
   default: () => <div data-testid="RoadmapSection" />,
 }));
-jest.mock('./section/EarlyBirdBanner', () => ({
-  __esModule: true,
-  default: () => <div data-testid="EarlyBirdBanner" />,
-}));
-jest.mock('./section/VodHookSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="VodHookSection" />,
-}));
-jest.mock('./section/RecommendSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="RecommendSection" />,
-}));
 jest.mock('./section/CompareSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CompareSection" />,
@@ -91,15 +79,17 @@ jest.mock('./section/FaqSection', () => ({
   default: () => <div data-testid="FaqSection" />,
 }));
 
-/** `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다. */
+/**
+ * `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다.
+ *
+ * 얼리버드 배너·VOD 훅·추천 대상은 시안에 없어 뺐다. 이 배열이 그 사실을 고정한다 —
+ * 누가 되살리면 순서 비교가 실패한다.
+ */
 const EXPECTED_ORDER = [
   'MembershipAnimations',
   'HeroSection',
   'MembershipNav',
   'RoadmapSection',
-  'EarlyBirdBanner',
-  'VodHookSection',
-  'RecommendSection',
   'CompareSection',
   'ChallengeScheduleSection',
   'SolutionSection',

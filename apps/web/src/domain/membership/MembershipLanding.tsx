@@ -9,9 +9,10 @@
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
-import './styles/early-bird.css';
-import './styles/vod-hook.css';
-import './styles/recommend.css';
+// 얼리버드 배너·VOD 훅·추천 대상 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
+// import './styles/early-bird.css';
+// import './styles/vod-hook.css';
+// import './styles/recommend.css';
 import './styles/compare.css';
 import './styles/challenge-schedule.css';
 import './styles/solution.css';
@@ -34,9 +35,6 @@ import './styles/apply.css';
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
-import EarlyBirdBanner from './section/EarlyBirdBanner';
-import VodHookSection from './section/VodHookSection';
-import RecommendSection from './section/RecommendSection';
 import CompareSection from './section/CompareSection';
 import ChallengeScheduleSection from './section/ChallengeScheduleSection';
 import SolutionSection from './section/SolutionSection';
@@ -62,9 +60,11 @@ export default function MembershipLanding() {
           <MembershipNav />
           {/* 공채 로드맵(시안 1.png 하단) — 이 한 줄과 위 import 를 지우면 섹션이 빠진다 */}
           <RoadmapSection />
-          <EarlyBirdBanner />
-          <VodHookSection />
-          <RecommendSection />
+          {/* LC-3219 시안에서 빠진 섹션 3개 — 얼리버드 배너 · VOD 훅 · 추천 대상.
+              시안 0~8 어디에도 없고 앵커 네비 5개(course-plan·seminar·benefits·partners·plans)
+              도 이들을 가리키지 않는다. 되살리려면 위 import 3줄과 CSS import 3줄을 함께 푼다.
+              파일은 지우지 않았다 — section/EarlyBirdBanner.tsx · VodHookSection.tsx ·
+              RecommendSection.tsx 와 data/earlyBird.ts · vodHook.ts · recommend.ts */}
           <CompareSection />
           {/* 챌린지 일정 간트(시안 5.png) — 이 한 줄과 위 import 두 개를 지우면 섹션이 빠진다 */}
           <ChallengeScheduleSection />
