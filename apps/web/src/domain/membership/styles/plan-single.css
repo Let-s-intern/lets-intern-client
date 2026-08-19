@@ -1,7 +1,7 @@
 /* ===================== PLANS — 단일 올패스 ===================== */
 /* 시안 3.png — 흰 카드 안 2열. 좌: ALL-IN-ONE PASS 혜택 목록, 우: 상품명과 가격. */
 .membership-root .plans {
-  padding: 84px 0;
+  padding: 112px 0;
 }
 
 .membership-root .allpass {
@@ -127,7 +127,7 @@
 }
 .membership-root .allpass-now {
   font-family: var(--num);
-  font-size: 54px;
+  font-size: 52px;
   font-weight: 800;
   letter-spacing: -0.04em;
   color: var(--lc-blue);
@@ -229,10 +229,11 @@
 .membership-root .vod-badge {
   align-self: flex-start;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.5;
   color: var(--lc-blue);
   background: var(--tint-blue);
-  padding: 4px 11px;
+  padding: 3px 10px;
   border-radius: 8px;
 }
 .membership-root .vod-title {
@@ -272,14 +273,14 @@
 }
 .membership-root .vod-now {
   font-family: var(--num);
-  font-size: 32px;
+  font-size: 29px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--lc-blue);
   line-height: 1.15;
 }
 .membership-root .vod-unit {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--lc-ink);
   margin-left: 5px;

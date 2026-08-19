@@ -22,10 +22,7 @@ import {
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import VodOptionCard from '../ui/VodOptionCard';
 
-const BENEFIT_ICONS: Record<
-  PlanBenefitIcon,
-  typeof Flag
-> = {
+const BENEFIT_ICONS: Record<PlanBenefitIcon, typeof Flag> = {
   flag: Flag,
   bookOpen: BookOpen,
   workflow: Workflow,
@@ -84,7 +81,7 @@ function useCountUpOnView(target: number, durationMs = 1200) {
   return { ref, value };
 }
 
-// 단일 올패스 플랜 표시 섹션. 시안 3.png — 흰 카드 안 2열(좌: 포함 혜택 5줄, 우: 가격).
+// 단일 올패스 플랜 표시 섹션. 시안 3.png — 흰 카드 안 2열(좌: 포함 혜택 목록, 우: 가격).
 // 이용 기한·정가·특가·할인율은 모두 useMembershipChallengeData() 가 내려준 값에서 만든다.
 // 결제는 하단 고정 ApplyBar(openPlanSheet → MembershipPaymentSheet)에 위임한다.
 export default function PlansSection() {
@@ -147,7 +144,9 @@ export default function PlansSection() {
                   "0% 할인" 이나 음수 할인율이 남는 쪽이 더 나쁘다.
                 */}
                 {discountRate > 0 && (
-                  <span className="allpass-badge num">{discountRate}% 할인</span>
+                  <span className="allpass-badge num">
+                    {discountRate}% 할인
+                  </span>
                 )}
               </p>
               <p className="allpass-now-line">
