@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import {
   CORE_CHALLENGE_BLOCK_HEAD,
   GUIDEBOOK_BLOCK_HEAD,
@@ -8,6 +11,7 @@ import {
 import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
 import { GUIDEBOOK_CARD, type BenefitHighlightCard } from '../data/guidebooks';
 import ChallengeBenefitCard from '../ui/ChallengeBenefitCard';
+import { useChallengeThumbnails } from '../lib/useChallengeThumbnails';
 
 const CORE_ITEMS = CHALLENGE_ITEMS.filter((item) => item.group === 'core');
 const JOB_ITEMS = CHALLENGE_ITEMS.filter((item) => item.group === 'job');
@@ -96,8 +100,35 @@ function HighlightCard({
 }
 
 export default function BenefitsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+
+  // 썸네일은 타입당 1회씩 조회한다(현재 10회). 섹션이 보이기 전에는 부르지 않는다.
+  // 관측자가 없는 환경에서는 아끼기를 포기하고 바로 조회한다 — 카드가 정적 이미지로
+  // 남는 것보다 어드민 썸네일이 뜨는 편이 낫다.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry], obs) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: '300px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const thumbnails = useChallengeThumbnails({ enabled: inView });
+
   return (
-    <section className="benefits" id="benefits">
+    <section className="benefits" id="benefits" ref={sectionRef}>
       <div className="wrap">
         {/* 시안 6-0 헤더("공채 준비 올인원 패스 혜택")는 바로 위 CoursePlanSection 이 렌더한다.
             시안 순서가 6-0(헤더) → 6-1(플레이북) → 7-x(혜택 상세)라 헤더가 앞 섹션에 붙는다.
@@ -114,7 +145,11 @@ export default function BenefitsSection() {
           <BlockHead head={CORE_CHALLENGE_BLOCK_HEAD} />
           <div className="cb-list rv">
             {CORE_ITEMS.map((item) => (
-              <ChallengeBenefitCard item={item} key={item.url} />
+              <ChallengeBenefitCard
+                item={item}
+                remoteThumbnail={thumbnails[item.challengeType]}
+                key={item.url}
+              />
             ))}
           </div>
         </div>
@@ -123,7 +158,11 @@ export default function BenefitsSection() {
           <BlockHead head={JOB_CHALLENGE_BLOCK_HEAD} />
           <div className="cb-jobgrid rv">
             {JOB_ITEMS.map((item) => (
-              <ChallengeBenefitCard item={item} key={item.url} />
+              <ChallengeBenefitCard
+                item={item}
+                remoteThumbnail={thumbnails[item.challengeType]}
+                key={item.url}
+              />
             ))}
           </div>
         </div>

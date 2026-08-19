@@ -3,6 +3,12 @@ import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
 import { GUIDEBOOK_CARD, STUDY_CARD } from '../data/guidebooks';
 import BenefitsSection from './BenefitsSection';
 
+// 썸네일 조회는 lib/useChallengeThumbnails 가 맡고, 여기서는 섹션의 렌더만 본다.
+// 실제 훅은 @/utils/axios 를 끌어오는데 그 경로에 jest 가 파싱하지 못하는 모듈이 있다.
+jest.mock('../lib/useChallengeThumbnails', () => ({
+  useChallengeThumbnails: () => ({}),
+}));
+
 describe('BenefitsSection', () => {
   // 시안 6-0 헤더는 앞 섹션(CoursePlanSection)이 렌더한다. 여기서 다시 그리면 중복이다.
   it('시안 6-0 헤더 문구를 다시 그리지 않는다', () => {

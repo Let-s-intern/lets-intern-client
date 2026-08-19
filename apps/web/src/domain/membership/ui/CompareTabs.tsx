@@ -26,38 +26,40 @@ export default function CompareTabs({ combos, activeId, onChange }: Props) {
   };
 
   return (
-    <div className="cmp-tabs rv" role="tablist" aria-label="개별 구매 조합">
-      {combos.map((combo, index) => {
-        const isActive = combo.id === activeId;
-        return (
-          <button
-            key={combo.id}
-            type="button"
-            role="tab"
-            id={`cmp-tab-${combo.id}`}
-            aria-selected={isActive}
-            aria-controls="cmp-panel"
-            tabIndex={isActive ? 0 : -1}
-            ref={(el) => {
-              refs.current[index] = el;
-            }}
-            className="cmp-tab"
-            onClick={() => onChange(combo.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                move(index, 1);
-              } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                move(index, -1);
-              }
-            }}
-          >
-            <ShoppingCart size={18} strokeWidth={2} aria-hidden />
-            <span>{combo.label}</span>
-          </button>
-        );
-      })}
+    <div className="cmp-tabs-wrap rv">
+      <div className="cmp-tabs" role="tablist" aria-label="개별 구매 조합">
+        {combos.map((combo, index) => {
+          const isActive = combo.id === activeId;
+          return (
+            <button
+              key={combo.id}
+              type="button"
+              role="tab"
+              id={`cmp-tab-${combo.id}`}
+              aria-selected={isActive}
+              aria-controls="cmp-panel"
+              tabIndex={isActive ? 0 : -1}
+              ref={(el) => {
+                refs.current[index] = el;
+              }}
+              className="cmp-tab"
+              onClick={() => onChange(combo.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowRight') {
+                  e.preventDefault();
+                  move(index, 1);
+                } else if (e.key === 'ArrowLeft') {
+                  e.preventDefault();
+                  move(index, -1);
+                }
+              }}
+            >
+              <ShoppingCart size={18} strokeWidth={2} aria-hidden />
+              <span>{combo.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

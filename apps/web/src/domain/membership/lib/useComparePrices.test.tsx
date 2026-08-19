@@ -31,8 +31,15 @@ const combo: CompareCombo = {
     {
       challengeType: 'PERSONAL_STATEMENT_LARGE_CORP',
       name: '대기업 자기소개서 챌린지',
+      regularPrice: 150000,
+      price: 128500,
     },
-    { challengeType: 'ETC', name: '인적성 챌린지' },
+    {
+      challengeType: 'ETC',
+      name: '인적성 챌린지',
+      regularPrice: 109000,
+      price: 79000,
+    },
   ],
 };
 
