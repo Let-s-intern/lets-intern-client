@@ -1,0 +1,175 @@
+/* =====================================================================
+   챌린지 일정 간트 — 헤더(텍스트) + 통이미지 + 안내 박스(텍스트)
+   모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
+   섹션을 통째로 빼려면 이 파일 import 와 <ChallengeScheduleSection /> 한 줄만 지우면 된다.
+   색은 시안 5.png 실측값 — 안내 박스 배경 #eff3ff, 테두리·강조는 페이지 토큰과 일치.
+   ===================================================================== */
+
+.membership-root .chsched {
+  padding: 80px 0;
+}
+
+/* ---------- 간트 통이미지 ----------
+   래퍼는 스크롤하지 않는다. 스크롤은 .gantt-scroll 안에서만 일어나고,
+   페이드 힌트(.gantt-fade)는 래퍼에 붙어 제자리에 남는다. */
+.membership-root .gantt-wrap {
+  position: relative;
+}
+
+.membership-root .gantt-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 간트 끝까지 밀었을 때 페이지가 따라 스크롤되지 않게 체이닝을 막는다 */
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+}
+
+/* 데스크톱: 컨테이너 폭에 맞게 축소돼 스크롤이 생기지 않는다.
+   좁은 폭: min-width 가 이겨 원본 비율을 유지한 채 컨테이너 안에서만 가로 스크롤된다.
+   1100px 은 .wrap 의 데스크톱 내부 폭(1180 - 좌우 28)인 1124px 안에 들어가는 최대값이면서,
+   바 라벨(1440px 기준 14px)이 약 10.7px 로 읽히는 배율이다. */
+.membership-root .gantt-img {
+  display: block;
+  width: 100%;
+  min-width: 1100px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 스크롤 가능함을 알리는 우측 페이드 */
+.membership-root .gantt-fade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 56px;
+  border-radius: 0 20px 20px 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(248, 250, 252, 0),
+    rgba(248, 250, 252, 0.94)
+  );
+}
+/* 스크롤이 없는 폭(=이미지가 다 보이는 폭)에서는 힌트를 숨긴다 */
+@media (min-width: 1160px) {
+  .membership-root .gantt-fade {
+    display: none;
+  }
+}
+
+/* ---------- 안내 박스 ---------- */
+.membership-root .chsched-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 36px;
+  padding: 28px 32px;
+  border: 1px solid var(--tint-blue);
+  border-radius: 20px;
+  background: #eff3ff;
+}
+
+.membership-root .chsched-notice-lead {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+.membership-root .chsched-notice-lead strong {
+  font-weight: 800;
+  color: var(--lc-blue);
+}
+.membership-root .chsched-notice-desc {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--g700);
+}
+
+/* 우측 이용 기간 카드 — 시안 실측(카드 151x66, 아이콘 36, 라벨 13, 값 18) */
+.membership-root .chsched-period {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border: 1px solid var(--tint-blue);
+  border-radius: 14px;
+  background: var(--white);
+}
+.membership-root .chsched-period-ic {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff3ff;
+  color: var(--lc-blue);
+}
+.membership-root .chsched-period-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g600);
+}
+.membership-root .chsched-period-value {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 760px) {
+  .membership-root .chsched {
+    padding: 56px 0;
+  }
+  .membership-root .gantt-scroll,
+  .membership-root .gantt-fade {
+    border-radius: 14px;
+  }
+  .membership-root .gantt-fade {
+    width: 40px;
+    border-radius: 0 14px 14px 0;
+  }
+  .membership-root .chsched-notice {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 14px;
+  }
+  .membership-root .chsched-notice-lead {
+    font-size: 17px;
+  }
+  .membership-root .chsched-notice-desc {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .membership-root .chsched-period {
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .membership-root .chsched-period-ic {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .membership-root .chsched-period-ic svg {
+    width: 18px;
+    height: 18px;
+  }
+  .membership-root .chsched-period-label {
+    font-size: 12px;
+  }
+  .membership-root .chsched-period-value {
+    font-size: 16px;
+  }
+}
