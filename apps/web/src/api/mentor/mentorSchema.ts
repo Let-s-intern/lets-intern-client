@@ -60,8 +60,9 @@ export type MentorCareerItem = z.infer<typeof mentorCareerItemSchema>;
 
 /**
  * GET /api/v1/mentor/{mentorId} 응답.
- * proceedingProgramList/postProgramList/reviewList는 실제 데이터가
- * 채워진 예시가 없어 필드 형태를 확정할 수 없으므로 아직 스키마에 포함하지 않는다.
+ * proceedingProgramList/postProgramList/reviewList는 항목 필드 구조가
+ * 아직 확정되지 않아 unknown[]로만 받는다 — 개수/빈 상태 확인 용도로만 쓰고,
+ * 항목별 렌더링은 실제 필드가 확정되면 추가한다.
  */
 export const mentorDetailSchema = z.object({
   mentorInfo: z.object({
@@ -74,6 +75,9 @@ export const mentorDetailSchema = z.object({
     job: z.string().nullable(),
   }),
   careerList: z.array(mentorCareerItemSchema),
+  proceedingProgramList: z.array(z.unknown()),
+  postProgramList: z.array(z.unknown()),
+  reviewList: z.array(z.unknown()),
 });
 
 export type MentorDetailData = z.infer<typeof mentorDetailSchema>;
