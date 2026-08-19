@@ -9,7 +9,7 @@
    이미지 파일을 다른 크기로 바꿔 넣어도 마찬가지다 — height:auto 가 비율을 따라간다.
    파일: apps/web/public/images/membership/mentoring-coupon.webp */
 .membership-root .mcoupon {
-  --coupon-width: 760px;
+  --coupon-width: 650px;
   padding: 120px 0;
   background: #fff;
 }

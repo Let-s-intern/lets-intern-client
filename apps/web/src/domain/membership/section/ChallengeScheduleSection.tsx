@@ -1,45 +1,57 @@
-import { GANTT_ALT } from '../data/challengeSchedule';
+import {
+  CHALLENGE_SCHEDULE,
+  GANTT_ALT,
+  GANTT_SIZE,
+  GANTT_SRC,
+  NOTICE_ALT,
+  NOTICE_SIZE,
+  NOTICE_SRC,
+} from '../data/challengeSchedule';
 
 /**
- * 챌린지 일정 — 시안 5.png 를 섹션 통째로 넣는다.
+ * 챌린지 일정 — 헤더는 텍스트, 간트 패널과 안내 박스는 이미지.
  *
- * 헤더·간트·안내 박스를 텍스트와 이미지로 나눠 그리다가, 시안과 나란히 비교하기 위해
- * 시안 전체를 한 장으로 넣는 방식으로 바꿨다. 이미지 안에 텍스트가 들어가므로
- * `alt` 에 내용을 문장으로 담아 검색·스크린리더 손실을 메운다.
+ * 두 이미지 모두 모서리가 투명한 라운드 패널이라 뒤 배경색은 CSS 가 깐다.
+ * 그래야 이미지가 로드되기 전에도 자리와 색이 잡히고, 배경색만 따로 바꿀 수 있다.
  *
- * 이 방식은 이용 기한("11월 30일")이 이미지에 박힌다는 뜻이다 —
- * 연동 챌린지의 `endDate` 가 바뀌어도 따라오지 않는다. 일정이 확정된 뒤에만 쓸 수 있다.
- *
- * 좁은 폭에서는 `.gantt-scroll` 안에서만 가로로 스크롤된다(페이지는 스크롤되지 않는다).
+ * 크기는 `styles/challenge-schedule.css` 의 --gantt-width 하나로 조절한다.
  * `domain/membership` 은 `next/image` 를 쓰지 않으므로 width/height 를 직접 넣어 CLS 를 막는다.
  */
-// 시안 5.png 에서 좌우 여백(각 240px)을 잘라낸 판이다.
-// 원본 그대로 1440px 폭에 넣으면 이미지 안 헤딩이 약 28px 로 그려져 옆 섹션 h2(36px)보다
-// 작아 보인다. 여백을 걷어내면 같은 폭에서 콘텐츠가 1.2배로 커져 34px 가 되어 눈에 맞는다.
-const GANTT_FULL = {
-  src: '/images/membership/gantt-full.webp',
-  width: 2400,
-  height: 1641,
-};
-
 export default function ChallengeScheduleSection() {
   return (
     <section className="chsched" id="challenge-schedule">
       <div className="wrap">
+        <div className="sec-head rv">
+          <h2>{CHALLENGE_SCHEDULE.title}</h2>
+          <p>{CHALLENGE_SCHEDULE.subtitle}</p>
+        </div>
+
+        {/* 스크롤 힌트(우측 페이드)는 스크롤과 함께 움직이면 안 되므로
+            스크롤 컨테이너 밖의 형제로 두고 래퍼에 절대 배치한다. */}
         <div className="gantt-wrap rv">
           <div className="gantt-scroll">
             <img
-              src={GANTT_FULL.src}
+              className="gantt-img"
+              src={GANTT_SRC}
               alt={GANTT_ALT}
-              width={GANTT_FULL.width}
-              height={GANTT_FULL.height}
+              width={GANTT_SIZE.width}
+              height={GANTT_SIZE.height}
               loading="lazy"
               decoding="async"
-              className="gantt-img"
             />
           </div>
           <span className="gantt-fade" aria-hidden />
         </div>
+
+        <img
+          className="gantt-notice rv"
+          src={NOTICE_SRC}
+          alt={NOTICE_ALT}
+          width={NOTICE_SIZE.width}
+          height={NOTICE_SIZE.height}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </section>
   );

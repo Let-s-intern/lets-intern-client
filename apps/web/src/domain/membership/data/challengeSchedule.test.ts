@@ -3,6 +3,8 @@ import {
   GANTT_ALT,
   GANTT_SIZE,
   GANTT_SRC,
+  NOTICE_SIZE,
+  NOTICE_SRC,
 } from './challengeSchedule';
 
 describe('challengeSchedule 데이터 무결성', () => {
@@ -30,10 +32,20 @@ describe('challengeSchedule 데이터 무결성', () => {
     expect(GANTT_ALT).toContain('10월 5일');
   });
 
-  it('통이미지는 2880px 폭의 WebP 이고 높이가 함께 기록돼 있다', () => {
-    expect(GANTT_SIZE.width).toBe(2880);
+  it('간트 패널과 안내 박스가 WebP 이고 크기가 함께 기록돼 있다', () => {
+    // 크기를 기록해 두는 이유는 CLS 다 — next/image 를 쓰지 않아 자동 예약이 없다.
+    expect(GANTT_SRC).toBe('/images/membership/gantt-panel.webp');
+    expect(GANTT_SIZE.width).toBeGreaterThan(0);
     expect(GANTT_SIZE.height).toBeGreaterThan(0);
-    expect(GANTT_SRC).toBe('/images/membership/gantt.webp');
+
+    expect(NOTICE_SRC).toBe('/images/membership/gantt-notice.webp');
+    expect(NOTICE_SIZE.width).toBeGreaterThan(0);
+    expect(NOTICE_SIZE.height).toBeGreaterThan(0);
+
+    // PNG·JPG 반입 금지
+    for (const src of [GANTT_SRC, NOTICE_SRC]) {
+      expect(src.endsWith('.webp')).toBe(true);
+    }
   });
 
   it('이용 기간 날짜는 상수로 두지 않는다(endDate 에서 포맷)', () => {

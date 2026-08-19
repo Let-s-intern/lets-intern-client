@@ -7,14 +7,25 @@
 // 이미지 안 텍스트는 검색에도 스크린리더에도 잡히지 않으므로 GANTT_ALT 가 그 대체물이다.
 // 이미지를 다시 내보내면 GANTT_ALT 와 GANTT_SIZE 를 함께 고쳐야 한다.
 
-/** 간트 통이미지 경로 */
-export const GANTT_SRC = '/images/membership/gantt.webp';
+/**
+ * 간트 패널 이미지. 모서리가 투명한 라운드 패널이라 뒤 배경은 CSS 가 깐다
+ * (`styles/challenge-schedule.css` 의 --gantt-panel-bg).
+ */
+export const GANTT_SRC = '/images/membership/gantt-panel.webp';
+export const GANTT_SIZE = { width: 2000, height: 825 } as const;
+
+/** 하단 안내 박스 이미지. 마찬가지로 모서리가 투명하다 */
+export const NOTICE_SRC = '/images/membership/gantt-notice.webp';
+export const NOTICE_SIZE = { width: 2000, height: 193 } as const;
 
 /**
- * 통이미지 실측 크기. `next/image` 를 쓰지 않는 도메인이라 `<img>` 에 직접 넣어
- * CLS 를 막는다. 시안 5.png(2880x1914) 에서 y 412~1450 을 잘라낸 결과.
+ * 안내 박스 대체 텍스트. 이미지 안 문구를 그대로 옮긴다.
+ * 이용 기한이 이미지에 박혀 있어 `endDate` 를 따라가지 않는다 — 일정 확정 후에만 쓴다.
  */
-export const GANTT_SIZE = { width: 2880, height: 1038 } as const;
+export const NOTICE_ALT =
+  '원하는 챌린지들을 나의 상황에 맞게 골라, 11월 30일까지 자유롭게 신청가능! ' +
+  '올인원패스 하나로 총 9종의 챌린지에 모두 한번씩 참여할 수 있어요. ' +
+  '원하는 챌린지에 참여하여 하반기 공채 준비를 끊김 없이 이어가 보세요. 이용 가능 기간 11월 30일까지.';
 
 /**
  * 간트 이미지의 대체 텍스트. 4행(경험 정리 / 서류 완성 / 실전 공채 서류 완성 / 인적성 면접)
