@@ -21,7 +21,7 @@ import IndividualPurchaseCard from '../ui/IndividualPurchaseCard';
  */
 export default function CompareSection() {
   const [activeId, setActiveId] = useState(COMPARE_COMBOS[0].id);
-  const [invertedIds, setInvertedIds] = useState<string[]>([]);
+  const [unusableIds, setUnusableIds] = useState<string[]>([]);
   const [inView, setInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -46,32 +46,34 @@ export default function CompareSection() {
     return () => io.disconnect();
   }, []);
 
+  // 쓸 수 없다고 판정된 조합은 탭에서 뺀다 — 역전(개별이 더 쌈)이거나
+  // 항목 중 모집 중인 기수가 없어 합계를 신뢰할 수 없는 경우다.
   const visibleCombos = COMPARE_COMBOS.filter(
-    (combo) => !invertedIds.includes(combo.id),
+    (combo) => !unusableIds.includes(combo.id),
   );
   const activeCombo =
     COMPARE_COMBOS.find((combo) => combo.id === activeId) ?? COMPARE_COMBOS[0];
 
-  const { items, total, isLoading, isInverted } = useComparePrices(
-    activeCombo,
-    { enabled: inView },
-  );
+  const { items, total, isLoading, isUsable } = useComparePrices(activeCombo, {
+    enabled: inView,
+  });
 
   useEffect(() => {
-    if (!isInverted) return;
-    setInvertedIds((prev) =>
+    // 로딩이 끝났는데 쓸 수 없으면 이 조합을 뺀다.
+    if (isLoading || isUsable) return;
+    setUnusableIds((prev) =>
       prev.includes(activeCombo.id) ? prev : [...prev, activeCombo.id],
     );
-  }, [isInverted, activeCombo.id]);
+  }, [isLoading, isUsable, activeCombo.id]);
 
   // 활성 탭이 숨겨졌으면 남은 탭으로 옮긴다.
   useEffect(() => {
-    if (!invertedIds.includes(activeId)) return;
+    if (!unusableIds.includes(activeId)) return;
     const next = COMPARE_COMBOS.find(
-      (combo) => !invertedIds.includes(combo.id),
+      (combo) => !unusableIds.includes(combo.id),
     );
     if (next) setActiveId(next.id);
-  }, [invertedIds, activeId]);
+  }, [unusableIds, activeId]);
 
   if (visibleCombos.length === 0) return null;
 

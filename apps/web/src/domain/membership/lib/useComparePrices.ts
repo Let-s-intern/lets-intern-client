@@ -28,6 +28,14 @@ export interface ComparePricesResult {
   isLoading: boolean;
   /** 개별 합계가 올인원 특가 이하 — 비교가 성립하지 않는다 */
   isInverted: boolean;
+  /**
+   * 이 조합을 화면에 쓸 수 있는가.
+   *
+   * 항목 중 하나라도 모집 중인 기수가 없으면 합계가 실제보다 작게 잡힌다.
+   * 그 상태로 "개별 구매 시 N원" 을 그리면 화면이 사실과 다른 금액을 말하게 되므로,
+   * 전부 구했고 역전도 아닐 때만 true 다.
+   */
+  isUsable: boolean;
 }
 
 /**
@@ -132,9 +140,15 @@ export function useComparePrices(
   );
 
   const total = items.reduce((acc, item) => acc + (item.price ?? 0), 0);
+  const hasAllPrices =
+    items.length > 0 && items.every((item) => item.price !== null);
 
   // 로딩 중에는 합계가 0 이라 무조건 역전으로 잡힌다. 다 받은 뒤에만 판정한다.
   const isInverted = !isLoading && total > 0 && total <= salePrice;
+
+  // 가격을 하나도 못 구하면 total 이 0 이라 isInverted 로도 안 걸린다.
+  // 그 경우 "0개 개별 구매 시 0원" 이 그대로 그려지므로 별도로 막는다.
+  const isUsable = !isLoading && hasAllPrices && total > salePrice;
 
   useEffect(() => {
     if (!isInverted) return;
@@ -145,5 +159,5 @@ export function useComparePrices(
     });
   }, [isInverted, combo.id, total, salePrice]);
 
-  return { items, total, isLoading, isInverted };
+  return { items, total, isLoading, isInverted, isUsable };
 }

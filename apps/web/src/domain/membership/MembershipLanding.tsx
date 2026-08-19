@@ -23,6 +23,7 @@ import './styles/benefits.css';
 import './styles/benefit-modal.css';
 import './styles/proof.css';
 import './styles/plan-single.css';
+import './styles/mentoring-coupon.css';
 import './styles/reviews.css';
 import './styles/roadmap.css';
 // 최종 CTA — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
@@ -44,6 +45,7 @@ import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import BenefitsSection from './section/BenefitsSection';
 import PlansSection from './section/PlansSection';
+import MentoringCouponSection from './section/MentoringCouponSection';
 import ReviewsSection from './section/ReviewsSection';
 import RoadmapSection from './section/RoadmapSection';
 import FaqSection from './section/FaqSection';
@@ -71,6 +73,8 @@ export default function MembershipLanding() {
               헤더-본문 순서가 맞으므로 둘 사이에 다른 섹션을 넣지 마라. */}
           <CoursePlanSection />
           <BenefitsSection />
+          {/* 1:1 멘토링·커피챗 할인 쿠폰 — 후기 바로 위 */}
+          <MentoringCouponSection />
           <ReviewsSection />
           {/* LC-3219 시안에서 빠진 섹션 6개 — 얼리버드 배너 · VOD 훅 · 추천 대상 ·
               세미나 · 제휴 혜택 · 최종 CTA. 시안 0~8 어디에도 없다.

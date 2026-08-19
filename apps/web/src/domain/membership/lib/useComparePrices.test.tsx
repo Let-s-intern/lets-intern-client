@@ -214,4 +214,34 @@ describe('useComparePrices', () => {
       get.mock.calls.filter(([url]) => url.startsWith('/challenge/')).length,
     ).toBe(4);
   });
+
+  it('항목 중 가격을 못 구한 게 있으면 쓸 수 없다고 본다', async () => {
+    // 한쪽만 모집 중이면 합계가 실제보다 작게 잡힌다. 그 상태로 "개별 구매 시 N원" 을
+    // 그리면 화면이 사실과 다른 금액을 말하게 되므로 탭을 아예 내린다.
+    membershipData.mockReturnValue({ salePrice: 10000 });
+    mockServer(
+      { PERSONAL_STATEMENT_LARGE_CORP: 1, ETC: null },
+      { 1: [89000, 30000] },
+    );
+
+    const { result } = renderHook(() => useComparePrices(combo), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.total).toBe(59000);
+    expect(result.current.isInverted).toBe(false); // 59,000 > 10,000 이라 역전은 아니다
+    expect(result.current.isUsable).toBe(false); // 그래도 합계를 믿을 수 없다
+  });
+
+  it('가격을 하나도 못 구하면 0원을 그리지 않고 탭을 내린다', async () => {
+    // total 이 0 이면 isInverted 로도 안 걸린다 — "0개 개별 구매 시 0원" 이 그대로 남는다.
+    membershipData.mockReturnValue({ salePrice: 169900 });
+    mockServer({ PERSONAL_STATEMENT_LARGE_CORP: null, ETC: null }, {});
+
+    const { result } = renderHook(() => useComparePrices(combo), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.total).toBe(0);
+    expect(result.current.isInverted).toBe(false);
+    expect(result.current.isUsable).toBe(false);
+  });
 });

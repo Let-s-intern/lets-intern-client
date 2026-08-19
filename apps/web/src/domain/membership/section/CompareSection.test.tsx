@@ -24,6 +24,7 @@ const priceResultFor = (comboId: string) => {
     total: 200000,
     isLoading: false,
     isInverted: false,
+    isUsable: true,
   };
 };
 
@@ -73,11 +74,11 @@ describe('CompareSection', () => {
     );
   });
 
-  it('역전된 탭은 탭 목록에서 사라지고 남은 탭으로 옮겨간다', () => {
-    // 첫 탭만 역전 — 결정 7
+  it('쓸 수 없는 탭은 목록에서 사라지고 남은 탭으로 옮겨간다', () => {
+    // 첫 탭만 사용 불가 — 역전이거나 모집 중인 기수가 없는 경우
     comparePrices.mockImplementation((combo) => ({
       ...priceResultFor(combo.id),
-      isInverted: combo.id === COMPARE_COMBOS[0].id,
+      isUsable: combo.id !== COMPARE_COMBOS[0].id,
     }));
 
     render(<CompareSection />);
@@ -93,10 +94,10 @@ describe('CompareSection', () => {
     ).toHaveTextContent(COMPARE_COMBOS[1].label);
   });
 
-  it('모든 탭이 역전이면 섹션 자체를 렌더하지 않는다', () => {
+  it('모든 탭을 쓸 수 없으면 섹션 자체를 렌더하지 않는다', () => {
     comparePrices.mockImplementation((combo) => ({
       ...priceResultFor(combo.id),
-      isInverted: true,
+      isUsable: false,
     }));
 
     const { container } = render(<CompareSection />);
