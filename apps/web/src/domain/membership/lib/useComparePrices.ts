@@ -10,6 +10,9 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import type { CompareCombo } from '../data/compare';
 import { useMembershipChallengeData } from './useMembershipChallengeData';
 
+/** 가격 조회 캐시 유지 시간 — 이 시간 안에는 탭을 오가도 재요청하지 않는다 */
+const PRICE_STALE_TIME = 5 * 60 * 1000;
+
 /** 좌측 카드 한 줄 */
 export interface ComparePriceItem {
   challengeType: ChallengeType;
@@ -43,6 +46,10 @@ export interface ComparePricesResult {
  * 없어서 생기는 것이라 백엔드 변경이 필요하다. 프론트에서는 `enabled` 로 활성 탭만
  * 조회하고 TanStack Query 캐시로 재요청을 막는 데까지만 한다.
  *
+ * 가격은 어드민이 어쩌다 한 번 바꾸는 값이라 `staleTime` 을 둔다. 기본값(0)이면 캐시가
+ * 화면에는 바로 뜨지만 탭을 되돌아올 때마다 백그라운드 재조회가 나가서, 탭을 오갈수록
+ * 호출이 계속 쌓인다(실측: 1번 탭 복귀에 2회 추가). 신선도를 조금 포기하고 호출을 없앤다.
+ *
  * 미결 방침 두 가지가 여기 모여 있다. 지시가 바뀌면 이 파일만 고친다.
  *   결정 7 — 역전(개별 합계 ≤ 올인원가) 시 `isInverted` 를 올리고 콘솔 경고를 남긴다.
  *            탭을 숨기는 판단은 호출부(CompareSection)가 한다.
@@ -64,6 +71,7 @@ export function useComparePrices(
         return activeChallengeResponse.parse(res.data.data);
       },
       enabled,
+      staleTime: PRICE_STALE_TIME,
     })),
   });
 
@@ -90,6 +98,7 @@ export function useComparePrices(
           return getChallengeIdSchema.parse(res.data.data);
         },
         enabled: enabled && challengeId !== null,
+        staleTime: PRICE_STALE_TIME,
       };
     }),
   });
