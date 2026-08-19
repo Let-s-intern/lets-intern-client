@@ -6,6 +6,22 @@
   padding: 74px 0;
 }
 
+/* 헤드라인 강조 어절 — 시안 2.png 의 파란 "하나로" */
+.membership-root .solution .sec-head h2 .hl {
+  color: var(--lc-blue);
+}
+
+/* 다이어그램 하단 서브카피 */
+.membership-root .hub-note {
+  margin: 44px auto 0;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--g600);
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
 /* ---------- 방사형 그리드 (데스크탑) ----------
    3열 × 3행. 가운데 칸에 허브, 나머지 6칸에 위성(중앙 좌우는 위성이 차지).
    배치: 좌상 / 우상 / 좌중 / 우중 / 좌하 / 우하 → 허브를 둘러싼다. */
@@ -264,6 +280,10 @@
   }
 }
 @media (max-width: 600px) {
+  .membership-root .hub-note {
+    margin-top: 30px;
+    font-size: 15px;
+  }
   /* 통일 모바일 타입스케일 — 허브/위성 추가 축소 */
   .membership-root .hub {
     gap: 8px;

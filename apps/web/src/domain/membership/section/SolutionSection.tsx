@@ -1,7 +1,7 @@
 import {
   BookOpen,
   Flag,
-  Handshake,
+  MessagesSquare,
   MonitorPlay,
   Route,
   Users,
@@ -18,9 +18,22 @@ const SATELLITE_ICONS: Record<SolutionSatelliteIcon, LucideIcon> = {
   bookOpen: BookOpen,
   users: Users,
   monitorPlay: MonitorPlay,
-  handshake: Handshake,
+  mentoring: MessagesSquare,
   route: Route,
 };
+
+/** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
+function HeadlineLine({ line, highlight }: { line: string; highlight: string }) {
+  const at = line.indexOf(highlight);
+  if (at < 0) return <>{line}</>;
+  return (
+    <>
+      {line.slice(0, at)}
+      <span className="hl">{highlight}</span>
+      {line.slice(at + highlight.length)}
+    </>
+  );
+}
 
 function SolutionSatelliteNode({ label, hint, icon }: SolutionSatellite) {
   const Icon = SATELLITE_ICONS[icon];
@@ -46,23 +59,42 @@ export default function SolutionSection() {
           <h2>
             {SOLUTION.titleLines.map((line, i) => (
               <span key={i}>
-                {line}
+                <HeadlineLine
+                  line={line}
+                  highlight={SOLUTION.titleHighlight}
+                />
                 {i < SOLUTION.titleLines.length - 1 && <br />}
               </span>
             ))}
           </h2>
         </div>
 
-        {/* 허브 앤 스포크 — 위성 6종이 중앙 멤버십으로 수렴 */}
+        {/* 허브 앤 스포크 — 위성 6종이 중앙 올인원 패스로 수렴 */}
         <div className="hub rv">
           {SOLUTION.satellites.map((sat) => (
             <SolutionSatelliteNode key={sat.label} {...sat} />
           ))}
           <div className="hub-core">
-            <div className="hub-core-title">{SOLUTION.hubTitle}</div>
+            <div className="hub-core-title">
+              {SOLUTION.hubTitleLines.map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < SOLUTION.hubTitleLines.length - 1 && <br />}
+                </span>
+              ))}
+            </div>
             <div className="hub-core-sub">{SOLUTION.hubSub}</div>
           </div>
         </div>
+
+        <p className="hub-note rv">
+          {SOLUTION.subLines.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < SOLUTION.subLines.length - 1 && <br />}
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );
