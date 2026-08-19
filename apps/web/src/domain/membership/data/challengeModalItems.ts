@@ -129,9 +129,15 @@ export const CHALLENGE_ITEMS: ChallengeModalItem[] = [
 /**
  * 카드 썸네일의 소스를 결정하는 단일 지점.
  *
- * 지금은 `public/images/membership/` 정적 파일을 쓴다. 썸네일을 API(`/challenge/home?type=`)
- * 로 전환하기로 결정되면(결정 9) 이 함수만 교체하면 된다.
+ * 어드민에 등록된 썸네일이 있으면 그것을 쓰고, 없으면 `public/images/membership/` 정적
+ * 파일로 되돌린다. 어드민 썸네일은 `lib/useChallengeThumbnails.ts` 가 타입별로 가져온다.
+ *
+ * 폴백을 두는 이유는 두 가지다 — 어드민이 썸네일을 안 넣은 챌린지가 있을 수 있고,
+ * 조회가 끝나기 전에도 카드가 비어 보이면 안 된다.
  */
-export function getChallengeThumbnailSrc(item: ChallengeModalItem): string {
-  return `/images/membership/${item.src}`;
+export function getChallengeThumbnailSrc(
+  item: ChallengeModalItem,
+  remote?: string,
+): string {
+  return remote || `/images/membership/${item.src}`;
 }

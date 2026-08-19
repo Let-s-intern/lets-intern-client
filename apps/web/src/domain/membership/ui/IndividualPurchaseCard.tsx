@@ -6,7 +6,8 @@ import type { ComparePriceItem } from '../lib/useComparePrices';
 interface Props {
   items: ComparePriceItem[];
   total: number;
-  isLoading: boolean;
+  /** 어드민 연동판에서만 쓴다. 하드코딩 값이면 로딩 상태가 없다 */
+  isLoading?: boolean;
 }
 
 /**
@@ -18,7 +19,7 @@ interface Props {
 export default function IndividualPurchaseCard({
   items,
   total,
-  isLoading,
+  isLoading = false,
 }: Props) {
   // 합계 문구의 "n개" 는 실제로 값을 가져온 항목 수다. 모집 중인 기수가 없어 빠진
   // 항목까지 세면 합계와 개수가 어긋난다.

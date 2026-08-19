@@ -9,6 +9,8 @@ const THUMB_HEIGHT = 435;
 
 interface ChallengeBenefitCardProps {
   item: ChallengeModalItem;
+  /** 어드민에 등록된 썸네일. 없으면 정적 파일로 되돌린다 */
+  remoteThumbnail?: string;
 }
 
 /**
@@ -22,6 +24,7 @@ interface ChallengeBenefitCardProps {
  */
 export default function ChallengeBenefitCard({
   item,
+  remoteThumbnail,
 }: ChallengeBenefitCardProps) {
   const isJob = item.group === 'job';
 
@@ -29,7 +32,7 @@ export default function ChallengeBenefitCard({
     <article className={`cb-card cb-card--${item.group}`}>
       <img
         className="cb-thumb"
-        src={getChallengeThumbnailSrc(item)}
+        src={getChallengeThumbnailSrc(item, remoteThumbnail)}
         alt={`${item.label} 썸네일`}
         width={THUMB_WIDTH}
         height={THUMB_HEIGHT}

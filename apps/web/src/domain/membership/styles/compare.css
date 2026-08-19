@@ -26,17 +26,24 @@
 /* ---------- 탭 (알약 3개) ----------
    흰 트랙 안에서 활성 탭만 옅은 파란 알약이 된다(시안). */
 .membership-root .cmp-tabs {
-  display: flex;
+  display: inline-flex;
   gap: 4px;
-  max-width: 940px;
   margin: 0 auto 34px;
   padding: 6px;
   border-radius: 999px;
   background: var(--white);
   box-shadow: 0 8px 24px -16px rgba(40, 60, 120, 0.35);
 }
+/* 트랙을 가운데 두기 위한 래퍼 — inline-flex 는 스스로 가운데로 가지 않는다 */
+.membership-root .cmp-tabs-wrap {
+  display: flex;
+  justify-content: center;
+}
+/* 탭 폭은 글자 길이에 맞춘다.
+   flex:1 로 3등분하면 "대기업 자소서 + 인적성" 처럼 짧은 라벨의 좌우가 과하게 벌어져
+   가장 긴 탭에 맞춰 늘어난 것처럼 보인다. */
 .membership-root .cmp-tab {
-  flex: 1;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -123,13 +130,24 @@
   box-shadow: 0 22px 50px -26px rgba(74, 118, 255, 0.7);
 }
 
-/* ---------- 항목 리스트 ---------- */
+/* ---------- 항목 리스트 ----------
+   카드 높이는 330px 로 고정이라 리스트가 쓸 수 있는 세로 공간도 고정이다.
+   행 높이를 그대로 두면 항목이 2개인 탭에서 아래에 99px 짜리 빈 공간이 남아
+   3개인 탭과 나란히 봤을 때 카드가 비어 보인다.
+
+   그래서 행이 남는 공간을 나눠 갖게 하되 상한을 둔다 — 상한이 없으면 2개짜리 탭의
+   행이 100px 가까이 부풀어 리스트가 아니라 배너처럼 보인다. */
 .membership-root .cmp-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  justify-content: center;
   list-style: none;
+}
+.membership-root .cmp-card-individual .cmp-row {
+  flex: 1 1 auto;
+  max-height: 72px;
 }
 .membership-root .cmp-row {
   display: flex;
@@ -331,6 +349,11 @@
     min-height: 0;
     padding: 16px;
     border-radius: 18px;
+  }
+  /* 모바일은 카드 높이가 내용에 맞춰 늘어난다 — 행을 늘릴 이유가 없다 */
+  .membership-root .cmp-card-individual .cmp-row {
+    flex: none;
+    max-height: none;
   }
   .membership-root .cmp-row-name {
     font-size: 14px;
