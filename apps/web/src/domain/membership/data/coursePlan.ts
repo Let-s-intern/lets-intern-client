@@ -34,7 +34,7 @@ export type Owner = 'self' | 'free' | 'challenge' | 'challenge-deep';
 export type CourseTag = 'free' | 'template' | 'checklist' | 'challenge';
 
 export const COURSE_TAG_LABEL: Record<CourseTag, string> = {
-  free: '무료 자료',
+  free: '무료 자료 제공',
   template: '템플릿 제공',
   checklist: '체크리스트 제공',
   challenge: '챌린지',
@@ -541,15 +541,27 @@ export const FLOW_CHIPS: string[] = [
   '합격',
 ];
 
+/** 섹션 헤더 — 시안 6-0.png */
 export const COURSE_PLAN_HEADER = {
-  badge: '하반기 공채 13주 합격 플랜',
+  badge: '공채 준비 올인원 패스 혜택',
   /** 제목 — 의도된 줄바꿈 단위 */
-  titleLines: ['7월부터 9월까지,', '하반기 공채 준비 플레이북을 확인해보세요'],
+  titleLines: ['하반기 공채 준비에 필요한', '올인원 패스 하나로 누리는 모든 혜택'],
+  /** titleLines 안에서 파란색으로 강조할 어절 */
+  titleHighlights: ['올인원 패스', '모든 혜택'],
   /** 설명 — 의도된 줄바꿈 단위 */
   subLines: [
-    '공채 준비 단계부터 실전까지 무엇을 직접 하고, 어디서 렛츠커리어가 함께하는지 한눈에 정리했어요.',
-    '렛츠커리어 하반기 멤버십 구매자 분들에게는 하반기 공채 준비 플레이북을 드립니다.',
+    '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
   ],
+} as const;
+
+/** 플레이북 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
+export const COURSE_PLAN_BODY = {
+  titleLines: ['9~11월, 13주간의 올인원 패스로', '효율적으로 준비할 수 있어요'],
+  sub: '렛츠커리어 올인원 패스를 이용하면, 하반기 공채 준비 플레이북의 전체 과정을 따라가며 13주 동안 차근차근 취업 준비를 완성할 수 있어요.',
+  /** 매트릭스 바로 위 문구 */
+  matrixTitle: '이대로만 따라오면 13주 합격 플레이북 제공',
+  matrixSub:
+    '공채 준비 단계부터 실전까지 무엇을 직접 하고, 어디서 렛츠커리어가 함께하는지 한눈에 정리한 플레이북이에요.',
 } as const;
 
 export const COURSE_PLAN_VIEWS = {
