@@ -13,6 +13,7 @@ import './styles/early-bird.css';
 import './styles/vod-hook.css';
 import './styles/recommend.css';
 import './styles/compare.css';
+import './styles/challenge-schedule.css';
 import './styles/solution.css';
 import './styles/course-plan.css';
 import './styles/seminar.css';
@@ -37,6 +38,7 @@ import EarlyBirdBanner from './section/EarlyBirdBanner';
 import VodHookSection from './section/VodHookSection';
 import RecommendSection from './section/RecommendSection';
 import CompareSection from './section/CompareSection';
+import ChallengeScheduleSection from './section/ChallengeScheduleSection';
 import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import SeminarSection from './section/SeminarSection';
@@ -63,6 +65,8 @@ export default function MembershipLanding() {
           <VodHookSection />
           <RecommendSection />
           <CompareSection />
+          {/* 챌린지 일정 간트(시안 5.png) — 이 한 줄과 위 import 두 개를 지우면 섹션이 빠진다 */}
+          <ChallengeScheduleSection />
           <SolutionSection />
           <CoursePlanSection />
           <SeminarSection />
