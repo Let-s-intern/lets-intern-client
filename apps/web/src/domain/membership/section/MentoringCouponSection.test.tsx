@@ -9,9 +9,10 @@ import {
 
 describe('MentoringCouponSection', () => {
   it('헤더와 각주는 텍스트로 그린다', () => {
-    // 이미지에 넣으면 h2 가 사라져 검색에서 통째로 빠진다.
+    // 이미지에 넣으면 제목이 사라져 검색에서 통째로 빠진다.
+    // 혜택 묶음의 형제 블록이라 h2 가 아니라 h3 다 — 이 묶음의 h2 는 CoursePlanSection 이 그린다.
     render(<MentoringCouponSection />);
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+    expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
       MENTORING_COUPON.titleTop,
     );
     expect(screen.getByText(MENTORING_COUPON.titleMain)).toBeInTheDocument();

@@ -8,14 +8,33 @@
    이미지 파일: apps/web/public/images/membership/mentoring-coupon.webp
    파일을 다른 크기로 갈아끼워도 height:auto 가 비율을 따라간다. */
 .membership-root .mcoupon {
-  --coupon-width: 660px;
+  --coupon-width: 500px;
 
   padding: 140px 0;
   background: #fff;
 }
 
-.membership-root .mcoupon .sec-head {
-  margin-bottom: 40px;
+/* 제목 크기는 혜택 섹션의 블록 헤드(.bn-block-head)와 같은 30px / 17px 이다.
+   같은 묶음의 형제 블록이라 크기가 다르면 계층이 어긋나 보인다.
+   benefits.css 를 참조하지 않고 여기에 다시 적은 이유는 섹션을 각자 떼어낼 수 있게
+   하기 위해서다 — 한쪽을 빼도 다른 쪽 스타일이 깨지지 않는다.
+   .bn-block-head 를 바꾸면 여기도 같이 바꿔야 한다. */
+.membership-root .mcoupon-head {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 40px;
+}
+.membership-root .mcoupon-head h3 {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+.membership-root .mcoupon-head p {
+  margin-top: 14px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--g600);
 }
 
 /* 두 번째 줄 강조 — 시안의 파란 헤드라인 */
@@ -42,6 +61,12 @@
 @media (max-width: 760px) {
   .membership-root .mcoupon {
     padding: 96px 0;
+  }
+  .membership-root .mcoupon-head h3 {
+    font-size: 24px;
+  }
+  .membership-root .mcoupon-head p {
+    font-size: 15px;
   }
   .membership-root .mcoupon-note {
     margin-top: 28px;
