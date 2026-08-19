@@ -39,6 +39,19 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
 }));
 
 // 이미지 업로드는 파일 API 를 타므로 편집 폼 테스트에서는 라벨만 남긴다.
+/*
+ * 유형 카드의 관련 태그는 서버가 관리하는 목록에서 고른다.
+ * 태그 자체는 이 화면의 관심사가 아니라 두 개만 둔다.
+ */
+vi.mock('@/api/mentor-hash-tag/mentorHashTag', () => ({
+  useMentorHashTagListQuery: () => ({
+    data: [
+      { id: 1, type: 'STRENGTH', title: '구성 점검' },
+      { id: 2, type: 'STRENGTH', title: '역량 강조' },
+    ],
+  }),
+}));
+
 vi.mock('../ui/ImageField', () => ({
   default: ({ label }: { label: string }) => <div>{label}</div>,
 }));
@@ -287,7 +300,7 @@ describe('DetailSettingsPage — 탭', () => {
     ).toBeInTheDocument();
 
     openTab('소개 영상');
-    fireEvent.change(screen.getByLabelText('유튜브 영상 주소'), {
+    fireEvent.change(screen.getByLabelText('YouTube 영상 링크'), {
       target: { value: '' },
     });
 
@@ -428,6 +441,83 @@ describe('DetailSettingsPage — 편집 영역', () => {
     expect(payload.hero.bullets).toEqual([
       '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
     ]);
+  });
+
+  it('빈 결과 사례를 추가하고 안 채운 채 저장하면, 그 사례를 걸러내고 보낸다', () => {
+    /*
+     * 회귀 케이스: ResultCaseRequest 의 beforeCaption·afterCaption 이 @NotBlank 라
+     * 빈 사례가 하나라도 있으면 저장 전체가 400 이다. 유형 카드와 같은 함정이다.
+     */
+    renderPage();
+
+    openTab('결과 사례');
+    const before = screen.getAllByLabelText(/멘토링 전 설명$/).length;
+    fireEvent.click(screen.getByRole('button', { name: '변화 사례 추가 +' }));
+    expect(screen.getAllByLabelText(/멘토링 전 설명$/)).toHaveLength(
+      before + 1,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.cases).toHaveLength(before);
+    expect(
+      payload.results.cases.every(
+        (item: { beforeCaption: string; afterCaption: string }) =>
+          item.beforeCaption && item.afterCaption,
+      ),
+    ).toBe(true);
+  });
+
+  it('영상 네 필드가 서버 필드에 맞게 담긴다', () => {
+    renderPage();
+
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('영상 제목'), {
+      target: { value: '멘토는 이렇게' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 설명'), {
+      target: { value: '영상 설명입니다' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 아래 안내 문구'), {
+      target: { value: '안내 문구입니다' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.video.title).toBe('멘토는 이렇게');
+    expect(payload.video.subtitle).toBe('영상 설명입니다');
+    expect(payload.video.caption).toBe('안내 문구입니다');
+  });
+
+  it('빈 유형 카드를 추가하고 안 채운 채 저장하면, 그 카드를 걸러내고 보낸다', () => {
+    /*
+     * 회귀 케이스: TypeCardRequest 의 typeName·title·description 이 모두 @NotBlank 라
+     * 빈 카드가 하나라도 있으면 "[mentoringTypes.items[3].title] 공백일 수 없습니다
+     * (BAD_REQUEST)" 로 저장 전체가 실패했다. 실제 화면에서 재현된 문제다.
+     */
+    renderPage();
+
+    openTab('멘토링 유형');
+    const before = screen.getAllByLabelText(/번 카드 유형 제목$/).length;
+    fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
+    expect(screen.getAllByLabelText(/번 카드 유형 제목$/)).toHaveLength(
+      before + 1,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.mentoringTypes.items).toHaveLength(before);
+    expect(
+      payload.mentoringTypes.items.every(
+        (item: { typeName: string; title: string; description: string }) =>
+          item.typeName && item.title && item.description,
+      ),
+    ).toBe(true);
   });
 
   it('저장 payload 에는 서버 요청 DTO에 없는 intro 를 담지 않는다', () => {

@@ -160,3 +160,20 @@ export const formatCareerPeriod = (
   const fmt = (yearMonth: string) => yearMonth.replace('-', '.');
   return `${fmt(startDate)} ~ ${endDate ? fmt(endDate) : '재직중'}`;
 };
+
+/**
+ * 하단 고정 플로팅 바의 바깥 래퍼.
+ *
+ * 사이드바(296px)를 뺀 콘텐츠 영역의 **가운데**에 둔다. 화면 전체 기준으로 중앙정렬하면
+ * 사이드바 때문에 왼쪽으로 치우쳐 보이고, 편집 카드 폭에 맞추면 컬럼 비율이 바뀔 때마다
+ * 따라 고쳐야 한다.
+ *
+ * 오픈 설정과 상세 페이지 설정이 같은 규칙을 쓴다 — 두 화면을 오가는 멘토에게 바가
+ * 같은 자리에 있어야 한다.
+ */
+export const FLOATING_BAR_WRAP =
+  'fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 md:px-8 lg:left-[296px]';
+
+/** 플로팅 바 본체. 내용 폭에 맞춰 줄어들되 콘텐츠 영역을 넘지 않는다. */
+export const FLOATING_BAR_BODY =
+  'shadow-05 flex w-full max-w-3xl items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3';

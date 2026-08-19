@@ -25,6 +25,8 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import {
   CATEGORY_LABELS,
+  FLOATING_BAR_BODY,
+  FLOATING_BAR_WRAP,
   START_EDIT_SUCCESS_SETTINGS,
   formatCareerPeriod,
   publicDetailUrl,
@@ -635,30 +637,16 @@ const OpenSettingsPage = () => {
         "지금 취할 수 있는 주요 행동"이 항상 같은 위치에 있게 한다.
       */}
       {currentOpening && (
-        // 사이드바(296px)와 우측 미리보기 컬럼(360px + gap-6)을 뺀 콘텐츠 영역
-        // 기준으로 폭을 맞춘다 — 그냥 right-0 이면 미리보기 위로 넘어가 버린다.
-        <div className="fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:pr-[416px]">
-          <div
-            role="status"
-            className="shadow-05 flex items-center justify-between gap-3 rounded-xl bg-gray-900/80 px-4 py-3"
-          >
-            <div className="flex min-w-0 items-center gap-2">
-              <span
-                className="h-2 w-2 shrink-0 rounded-full bg-white"
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white">오픈 중</p>
-                <p className="truncate text-xs text-gray-300">
-                  공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.
-                </p>
-              </div>
-            </div>
+        <div className={FLOATING_BAR_WRAP}>
+          <div role="status" className={FLOATING_BAR_BODY}>
+            <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
+              공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.
+            </p>
             <button
               type="button"
               onClick={handleCloseCurrentOpening}
               disabled={isClosingOpening}
-              className="bg-system-error shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-system-error text-xsmall14 shrink-0 whitespace-nowrap rounded-lg px-5 py-2.5 font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isClosingOpening ? '처리 중...' : '오픈 닫기'}
             </button>
@@ -672,53 +660,55 @@ const OpenSettingsPage = () => {
         LOCKED), 제목·타입은 오픈 요청이 함께 보내므로 따로 저장할 이유도 없다.
       */}
       {canAct && (
-        <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
-          {actingAsDraft && hasNoProduct && (
-            <p className="rounded-md bg-gray-900/80 px-3 py-1 text-xs text-white">
-              먼저 저장해 상품을 만들어야 오픈할 수 있어요.
+        <div className={FLOATING_BAR_WRAP}>
+          <div className={FLOATING_BAR_BODY}>
+            <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
+              {actingAsDraft && hasNoProduct
+                ? '먼저 저장해 상품을 만들어야 오픈할 수 있어요.'
+                : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'}
             </p>
-          )}
-          <div className="flex gap-2">
-            {/*
-             * 초안일 때만 저장을 붙인다. 승인된 상품을 고치려면 "수정"(start-edit)으로
-             * 초안으로 되돌린 뒤여야 한다 — 상세 페이지 설정과 같은 규칙이다.
-             */}
-            {actingAsDraft ? (
-              /* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */
+            <div className="flex shrink-0 gap-2">
+              {/*
+               * 초안일 때만 저장을 붙인다. 승인된 상품을 고치려면 "수정"(start-edit)으로
+               * 초안으로 되돌린 뒤여야 한다 — 상세 페이지 설정과 같은 규칙이다.
+               */}
+              {actingAsDraft ? (
+                /* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isPending || !canSave}
+                  className={
+                    canSave
+                      ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                      : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                  }
+                >
+                  {isSaving ? '저장 중...' : '저장'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  disabled={isPending}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isStartingEdit ? '처리 중...' : '수정'}
+                </button>
+              )}
               <button
                 type="button"
-                onClick={handleSave}
-                disabled={isPending || !canSave}
-                className={
-                  canSave
-                    ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                    : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                }
+                onClick={() => setIsOpenConfirmVisible(true)}
+                disabled={isPending || !canOpen}
+                className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isSaving ? '저장 중...' : '저장'}
+                {isOpening
+                  ? '오픈하는 중...'
+                  : showReopenShortcut
+                    ? '다시 오픈하기'
+                    : '오픈하기'}
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                disabled={isPending}
-                className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isStartingEdit ? '처리 중...' : '수정'}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsOpenConfirmVisible(true)}
-              disabled={isPending || !canOpen}
-              className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isOpening
-                ? '오픈하는 중...'
-                : showReopenShortcut
-                  ? '다시 오픈하기'
-                  : '오픈하기'}
-            </button>
+            </div>
           </div>
         </div>
       )}

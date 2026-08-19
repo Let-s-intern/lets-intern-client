@@ -1,3 +1,5 @@
+import { FLOATING_BAR_BODY, FLOATING_BAR_WRAP } from '../../constants';
+
 interface DetailSaveBarProps {
   /** 서버 `mentoring.editable`. false 면 저장 대신 안내와 보기 링크만 남는다. */
   editable: boolean;
@@ -47,15 +49,15 @@ const LockIcon = () => (
   </svg>
 );
 
-const barClass =
-  'shadow-05 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3';
+const barClass = FLOATING_BAR_BODY;
 /*
- * 사이드바(296px)를 뺀 콘텐츠 영역 안에서, 편집 카드 폭에 맞춘다.
- * 미리보기 컬럼이 고정 px 가 아니라 비율(1.93fr : 1fr)이 되면서 고정 pr 로는 어긋난다.
- * 편집 카드가 차지하는 비율이 1.93/2.93 ≈ 65.9% 이므로 남는 34.1% 를 오른쪽에 비운다.
+ * 사이드바(296px)를 뺀 콘텐츠 영역의 **가운데**에 둔다.
+ *
+ * 편집 카드 폭에 맞추면 미리보기 컬럼 비율이 바뀔 때마다 여기도 따라 고쳐야 하고,
+ * 화면 전체 기준 중앙정렬은 사이드바 때문에 왼쪽으로 치우쳐 보인다.
+ * 오픈 설정의 하단 바도 같은 규칙을 쓴다(`live-mentoring/constants.ts`).
  */
-const wrapClass =
-  'fixed bottom-6 left-0 right-0 z-50 px-4 md:px-8 lg:left-[296px] lg:right-[34.1%] lg:pr-3';
+const wrapClass = FLOATING_BAR_WRAP;
 
 /**
  * 하단 고정 저장 바 (PRD §7).
