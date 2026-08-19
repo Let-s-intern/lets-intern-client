@@ -19,6 +19,9 @@ export default function AptitudeLatest() {
   useLatestChallengeRedirect(ETC);
 
   return (
-    <LoadingContainer className="min-h-screen" text="인적성 챌린지로 이동 중..." />
+    <LoadingContainer
+      className="min-h-screen"
+      text="인적성 챌린지로 이동 중..."
+    />
   );
 }

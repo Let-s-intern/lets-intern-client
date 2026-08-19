@@ -26,7 +26,9 @@ describe('ChallengeBenefitCard', () => {
     expect(screen.getByText(coreItem.label)).toBeInTheDocument();
     expect(screen.getByText(coreItem.desc)).toBeInTheDocument();
     expect(screen.getByText('베이직 무료 참여')).toBeInTheDocument();
-    expect(screen.getByText('플랜 업그레이드 시 차액 결제')).toBeInTheDocument();
+    expect(
+      screen.getByText('플랜 업그레이드 시 차액 결제'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('link')).toHaveTextContent('챌린지 자세히 보기');
   });
 
@@ -41,7 +43,10 @@ describe('ChallengeBenefitCard', () => {
   it('썸네일에 alt 와 width/height, 지연 로딩 속성이 있다', () => {
     render(<ChallengeBenefitCard item={coreItem} />);
     const img = screen.getByAltText(`${coreItem.label} 썸네일`);
-    expect(img).toHaveAttribute('src', '/images/membership/challenge-experience.jpg');
+    expect(img).toHaveAttribute(
+      'src',
+      '/images/membership/challenge-experience.jpg',
+    );
     expect(img).toHaveAttribute('width');
     expect(img).toHaveAttribute('height');
     expect(img).toHaveAttribute('loading', 'lazy');

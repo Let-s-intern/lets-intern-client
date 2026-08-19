@@ -50,7 +50,11 @@ export const CORE_CHALLENGE_BLOCK_HEAD: BenefitBlockHead = {
 export const JOB_CHALLENGE_BLOCK_HEAD: BenefitBlockHead = {
   lines: [
     [{ text: '현직자와 함께하는 ' }, { text: '직무별 챌린지', hl: true }],
-    [{ text: '3종 1회씩 ' }, { text: '무료 참여', hl: true }, { text: ' 혜택' }],
+    [
+      { text: '3종 1회씩 ' },
+      { text: '무료 참여', hl: true },
+      { text: ' 혜택' },
+    ],
   ],
 };
 

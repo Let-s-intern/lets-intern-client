@@ -11,7 +11,9 @@ describe('BenefitsSection', () => {
     expect(screen.getByText('올인원 패스')).toBeInTheDocument();
     expect(screen.getByText('모든 혜택')).toBeInTheDocument();
     expect(
-      screen.getByText('개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.'),
+      screen.getByText(
+        '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -26,17 +28,16 @@ describe('BenefitsSection', () => {
       screen.getByText('취업 준비 핵심 단계 가이드북 6종 무료 제공'),
     ).toBeInTheDocument();
     expect(screen.getByText('혼자서 하기 힘들다면?')).toBeInTheDocument();
-    expect(
-      screen.getByText('챌린지 7종 1회씩 무료 참여'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('챌린지 7종 1회씩 무료 참여')).toBeInTheDocument();
     expect(screen.getByText('직무별 챌린지')).toBeInTheDocument();
     expect(screen.getByText('렛츠런 스터디 참여')).toBeInTheDocument();
   });
 
   it('챌린지 카드 10개를 core 7개 · job 3개로 렌더한다', () => {
     const { container } = render(<BenefitsSection />);
-    expect(container.querySelectorAll('.cb-card--core:not(.cb-card--wide)'))
-      .toHaveLength(7 + 1); // core 7종 + 스터디 카드
+    expect(
+      container.querySelectorAll('.cb-card--core:not(.cb-card--wide)'),
+    ).toHaveLength(7 + 1); // core 7종 + 스터디 카드
     expect(container.querySelectorAll('.cb-card--job')).toHaveLength(3);
     for (const item of CHALLENGE_ITEMS) {
       expect(screen.getByText(item.label)).toBeInTheDocument();

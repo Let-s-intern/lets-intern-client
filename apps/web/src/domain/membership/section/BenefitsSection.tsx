@@ -62,7 +62,11 @@ function HighlightCard({
   wide?: boolean;
 }) {
   return (
-    <article className={`cb-card cb-card--core${wide ? ' cb-card--wide' : ''}`}>
+    <article
+      className={['cb-card', 'cb-card--core', wide ? 'cb-card--wide' : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
       <img
         className="cb-thumb"
         src={`/images/membership/${card.src}`}
