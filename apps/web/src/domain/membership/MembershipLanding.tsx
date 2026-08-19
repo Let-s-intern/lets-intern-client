@@ -17,7 +17,8 @@ import './styles/compare.css';
 import './styles/challenge-schedule.css';
 import './styles/solution.css';
 import './styles/course-plan.css';
-import './styles/seminar.css';
+// 세미나 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
+// import './styles/seminar.css';
 import './styles/benefits.css';
 import './styles/benefit-modal.css';
 import './styles/proof.css';
@@ -29,7 +30,8 @@ import './styles/faq.css';
 import './styles/footer.css';
 import './styles/animations.css';
 import './styles/responsive.css';
-import './styles/partners.css';
+// 제휴 혜택 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
+// import './styles/partners.css';
 import './styles/apply.css';
 
 import MembershipAnimations from './ui/MembershipAnimations';
@@ -39,9 +41,7 @@ import CompareSection from './section/CompareSection';
 import ChallengeScheduleSection from './section/ChallengeScheduleSection';
 import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
-import SeminarSection from './section/SeminarSection';
 import BenefitsSection from './section/BenefitsSection';
-import PartnerBenefitsSection from './section/PartnerBenefitsSection';
 import PlansSection from './section/PlansSection';
 import ReviewsSection from './section/ReviewsSection';
 import RoadmapSection from './section/RoadmapSection';
@@ -70,9 +70,11 @@ export default function MembershipLanding() {
           <ChallengeScheduleSection />
           <SolutionSection />
           <CoursePlanSection />
-          <SeminarSection />
+          {/* 세미나 · 제휴 혜택도 시안에서 빠졌다. 앵커 네비 항목(ui/MembershipNav.tsx 의
+              NAV_ITEMS)에서도 함께 뺐으니 되살릴 때 둘을 같이 되돌려야 한다.
+              파일은 지우지 않았다 — section/SeminarSection.tsx · PartnerBenefitsSection.tsx 와
+              data/seminar.ts · partners.ts */}
           <BenefitsSection />
-          <PartnerBenefitsSection />
           <PlansSection />
           <ReviewsSection />
           <FinalCtaSection />

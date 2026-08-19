@@ -50,17 +50,9 @@ jest.mock('./section/CoursePlanSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CoursePlanSection" />,
 }));
-jest.mock('./section/SeminarSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="SeminarSection" />,
-}));
 jest.mock('./section/BenefitsSection', () => ({
   __esModule: true,
   default: () => <div data-testid="BenefitsSection" />,
-}));
-jest.mock('./section/PartnerBenefitsSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="PartnerBenefitsSection" />,
 }));
 jest.mock('./section/PlansSection', () => ({
   __esModule: true,
@@ -82,8 +74,8 @@ jest.mock('./section/FaqSection', () => ({
 /**
  * `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다.
  *
- * 얼리버드 배너·VOD 훅·추천 대상은 시안에 없어 뺐다. 이 배열이 그 사실을 고정한다 —
- * 누가 되살리면 순서 비교가 실패한다.
+ * 얼리버드 배너·VOD 훅·추천 대상·세미나·제휴 혜택은 시안에 없어 뺐다.
+ * 이 배열이 그 사실을 고정한다 — 누가 되살리면 순서 비교가 실패한다.
  */
 const EXPECTED_ORDER = [
   'MembershipAnimations',
@@ -94,9 +86,7 @@ const EXPECTED_ORDER = [
   'ChallengeScheduleSection',
   'SolutionSection',
   'CoursePlanSection',
-  'SeminarSection',
   'BenefitsSection',
-  'PartnerBenefitsSection',
   'PlansSection',
   'ReviewsSection',
   'FinalCtaSection',

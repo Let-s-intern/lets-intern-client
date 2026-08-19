@@ -11,11 +11,12 @@ interface NavItem {
 // 글로벌 NavBar 아래에 붙는 멤버십 섹션 앵커 네비.
 // 디자인·동작은 챌린지 상페 ProgramDetailNavigation 을 따르되,
 // .membership-root 의 전역 리셋(* { padding:0 })에 눌리지 않도록 스코프드 CSS(.mnav)로 스타일링한다.
+// LC-3219: 세미나·제휴 혜택 섹션이 시안에서 빠지면서 두 항목도 함께 뺐다.
+// 앵커는 실제로 존재하는 섹션만 가리켜야 한다 — 없는 id 를 가리키면 클릭이 무반응이 되고
+// 스크롤 스파이의 IntersectionObserver 도 대상을 못 찾는다.
 const NAV_ITEMS: NavItem[] = [
   { title: '학습 플랜', to: 'course-plan' },
-  { title: '세미나', to: 'seminar' },
   { title: '혜택', to: 'benefits' },
-  { title: '제휴 혜택', to: 'partners' },
   { title: '멤버십 플랜', to: 'plans' },
 ];
 
