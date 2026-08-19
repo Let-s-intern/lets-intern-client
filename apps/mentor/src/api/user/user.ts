@@ -232,6 +232,7 @@ const userSchema = z.object({
   isPoolUp: z.boolean().nullable(),
   nickname: z.string().nullable().optional(),
   introduction: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   profileImgUrl: z.string().nullable().optional(),
   sns: z.string().nullable().optional(),
 });
