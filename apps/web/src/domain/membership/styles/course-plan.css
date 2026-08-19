@@ -4,9 +4,22 @@
    기존 --lc-* / --g* / --tint-* / --num 토큰 재사용.
    ===================================================================== */
 
+/* 시안 6-0 은 흰 배경, 6-1(플레이북 본문)은 연한 파랑이다. 한 섹션 안에서 배경이 갈리므로
+   밴드 두 개로 나누고 섹션 자체에는 배경·패딩을 두지 않는다. */
 .membership-root .courseplan {
-  padding: 74px 0;
+  padding: 0;
+  background: #fff;
+}
+.membership-root .cp-head-band {
+  background: #fff;
+  padding: 74px 0 44px;
+}
+.membership-root .cp-body-band {
   background: var(--bg-cool);
+  padding: 56px 0 74px;
+}
+.membership-root .cp-head-band .sec-head {
+  margin-bottom: 0;
 }
 /* 헤드라인 강조 어절 — 시안 6-0.png 의 파란 "올인원 패스"·"모든 혜택" */
 .membership-root .courseplan .sec-head h2 .hl {
