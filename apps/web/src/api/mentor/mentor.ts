@@ -1,6 +1,10 @@
 import axios from '@/utils/axios';
 
-import { mentorHashTagListSchema, mentorListSchema } from './mentorSchema';
+import {
+  mentorDetailSchema,
+  mentorHashTagListSchema,
+  mentorListSchema,
+} from './mentorSchema';
 
 export const MENTOR_HASH_TAG_QUERY_KEY = ['mentorHashTag', 'list'] as const;
 
@@ -42,3 +46,15 @@ export const mentorListQueryOptions = (
     },
   };
 };
+
+export const MENTOR_DETAIL_QUERY_KEY = ['mentor', 'detail'] as const;
+
+/** GET /mentor/{mentorId} — 멘토 상세 조회 */
+export const mentorDetailQueryOptions = (mentorId: number | string) => ({
+  queryKey: [...MENTOR_DETAIL_QUERY_KEY, mentorId],
+  queryFn: async () => {
+    const res = await axios.get(`/mentor/${mentorId}`);
+    return mentorDetailSchema.parse(res.data.data);
+  },
+  enabled: !!mentorId,
+});
