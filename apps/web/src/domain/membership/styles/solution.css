@@ -3,7 +3,7 @@
    데스크탑: 3×3 방사형 그리드(중앙 허브 + 주변 6위성), 위성 → 허브 수렴 화살표.
    모바일: 세로 스택 + 중앙 허브 강조. 모든 셀렉터는 .membership-root 스코프. */
 .membership-root .solution {
-  padding: 112px 0;
+  padding: 140px 0;
 }
 
 /* 헤드라인 강조 어절 — 시안 2.png 의 파란 "하나로" */

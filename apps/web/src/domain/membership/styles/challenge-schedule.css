@@ -8,8 +8,16 @@
 /* 시안 5.png 의 간트 섹션 바탕은 흰색이다. 하단 안내 박스만 연한 파랑(#eff3ff)으로 뜬다.
    .membership-root 기본 배경이 연한 파랑이라 명시하지 않으면 안내 박스와 구분이 안 된다. */
 .membership-root .chsched {
-  padding: 112px 0;
+  padding: 140px 0;
   background: #fff;
+}
+/* 이 섹션은 시안 5.png 를 통째로 한 장 넣는다. 시안이 1440 CSS px 폭 기준으로 그려졌으므로
+   .wrap(1180px)에 넣으면 78% 로 축소돼 이미지 안 글자가 다른 섹션보다 작아진다.
+   폭 제한을 풀어 시안 원래 크기로 그린다. */
+.membership-root .chsched > .wrap {
+  max-width: 1440px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* ---------- 간트 통이미지 ----------
