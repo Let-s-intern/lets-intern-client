@@ -14,6 +14,9 @@ export default function VodOptionCard() {
 
   return (
     <div className="vod-option rv">
+      {/* 시안 3.png 좌측 체크박스 — 실제 선택은 결제 시트에서 하므로 표시 전용 */}
+      <span className="vod-check" aria-hidden />
+
       <span className="vod-ic" aria-hidden>
         <MonitorPlay size={28} strokeWidth={2} />
       </span>
@@ -28,7 +31,12 @@ export default function VodOptionCard() {
 
       <div className="vod-aside">
         <div className="vod-price">
-          <span className="vod-was num">{formatKRW(vodRegularPrice)}원</span>
+          <span className="vod-was">
+            <span className="vod-was-label">정가</span>
+            <span className="vod-was-num num">
+              {formatKRW(vodRegularPrice)}원
+            </span>
+          </span>
           <span className="vod-now num">
             {formatKRW(vodSalePrice)}
             <span className="vod-unit">원</span>

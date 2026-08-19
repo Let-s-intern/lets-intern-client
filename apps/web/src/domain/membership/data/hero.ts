@@ -12,6 +12,7 @@ export const HERO = {
   ],
   ctaPrimary: '얼리버드로 신청하기',
   ctaSecondary: '혜택 먼저 보기',
+  // 아래 3개는 시안에서 빠진 카운트다운 카드용. 현재 미사용 — 히어로는 렌더하지 않는다.
   offerTag: '🔥 선착순 100명 한정 모집',
   offerTitle: '마감까지 남은 시간',
   offerFine: '마감 후 다음 기회는 2027 상반기 예정이에요.',
