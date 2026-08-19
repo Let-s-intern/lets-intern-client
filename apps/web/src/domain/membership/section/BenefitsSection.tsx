@@ -81,11 +81,13 @@ function HighlightCard({
           ))}
         </ul>
       </div>
+      {/* 앱 내부 경로(/로 시작)는 같은 탭에서 이동한다. 외부 도메인만 새 탭으로 연다. */}
       <a
         className="cb-link"
         href={card.url}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(card.url.startsWith('/')
+          ? {}
+          : { target: '_blank', rel: 'noopener noreferrer' })}
       >
         자세히 보기 <span aria-hidden="true">→</span>
       </a>

@@ -88,4 +88,17 @@ describe('BenefitsSection', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(container.querySelector('.modal-head')).toBeNull();
   });
+
+  it('가이드북 링크는 앱 내부 가이드북 목록으로 보낸다', () => {
+    // 카드가 "6종"을 소개하므로 한 권 상세로 보내면 나머지를 못 찾는다.
+    // 절대 URL 이면 dev·로컬에서 프로덕션 도메인으로 나가버린다.
+    render(<BenefitsSection />);
+    const link = screen
+      .getAllByRole('link', { name: /자세히 보기/ })
+      .find((l) => l.getAttribute('href') === GUIDEBOOK_CARD.url);
+    expect(link).toBeDefined();
+    expect(GUIDEBOOK_CARD.url).toBe('/program?type=GUIDEBOOK');
+    // 내부 경로는 같은 탭에서 연다
+    expect(link).not.toHaveAttribute('target');
+  });
 });

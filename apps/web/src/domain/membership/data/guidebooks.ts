@@ -56,13 +56,18 @@ export interface BenefitHighlightCard {
 }
 
 // 시안 7-1. 카드 하나로 가이드북 전종을 소개한다(표지 6권 일러스트).
-// 링크는 가이드북 상세 한 곳으로 보내며, 첫 단계인 경험정리 가이드북을 쓴다.
+//
+// 링크는 개별 가이드북 상세가 아니라 가이드북 목록으로 보낸다 — 카드가 "6종"을 소개하므로
+// 한 권만 열어주면 나머지를 못 찾는다. 앱 내부 상대경로라 dev·로컬에서도 그대로 동작한다
+// (GUIDEBOOK_ITEMS 의 절대 URL 은 프로덕션 도메인으로 나가버린다).
+export const GUIDEBOOK_LIST_URL = '/program?type=GUIDEBOOK';
+
 export const GUIDEBOOK_CARD: BenefitHighlightCard = {
   title: '가이드북',
   desc: '경험정리부터 자기소개서, 면접까지 취업에 필요한 준비를 내 속도에 맞춰 진행할 수 있어요.',
   badges: ['11/30까지 열람 가능'],
   src: 'guidebook-set.webp',
-  url: GUIDEBOOK_ITEMS[0].url,
+  url: GUIDEBOOK_LIST_URL,
   imgAlt: '취업 준비 핵심 단계 가이드북 6종 표지',
 };
 
