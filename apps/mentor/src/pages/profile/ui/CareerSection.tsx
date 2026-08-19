@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 import {
   useGetUserCareerQuery,
-  usePostUserCareerMutation,
   usePatchUserCareerMutation,
+  usePostUserCareerMutation,
   useSetRepresentativeCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
@@ -73,7 +73,9 @@ export default function CareerSection() {
   if (isLoading) {
     return (
       <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-        <h2 className="text-base font-semibold text-gray-900">경력사항</h2>
+        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+          경력사항
+        </h2>
         <div className="py-4 text-sm text-gray-400">로딩 중...</div>
       </section>
     );
