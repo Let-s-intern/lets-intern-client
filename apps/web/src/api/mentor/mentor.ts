@@ -56,5 +56,4 @@ export const mentorDetailQueryOptions = (mentorId: number | string) => ({
     const res = await axios.get(`/mentor/${mentorId}`);
     return mentorDetailSchema.parse(res.data.data);
   },
-  enabled: !!mentorId,
 });
