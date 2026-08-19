@@ -14,8 +14,16 @@
 /* 이 섹션은 시안 5.png 를 통째로 한 장 넣는다. 시안이 1440 CSS px 폭 기준으로 그려졌으므로
    .wrap(1180px)에 넣으면 78% 로 축소돼 이미지 안 글자가 다른 섹션보다 작아진다.
    폭 제한을 풀어 시안 원래 크기로 그린다. */
+/* ---------- 크기 조절 지점 ----------
+   간트 이미지의 표시 폭은 아래 --gantt-width 하나로 결정된다.
+   이 값만 바꾸면 되고 위치(가운데 정렬)는 그대로 유지된다.
+   이미지 파일을 다른 크기로 바꿔 넣어도 마찬가지다 — height:auto 가 비율을 따라간다.
+   파일: apps/web/public/images/membership/gantt-full.webp */
+.membership-root .chsched {
+  --gantt-width: 1180px;
+}
 .membership-root .chsched > .wrap {
-  max-width: 1440px;
+  max-width: none;
   padding-left: 0;
   padding-right: 0;
 }
@@ -25,6 +33,8 @@
    페이드 힌트(.gantt-fade)는 래퍼에 붙어 제자리에 남는다. */
 .membership-root .gantt-wrap {
   position: relative;
+  max-width: var(--gantt-width);
+  margin: 0 auto;
 }
 
 .membership-root .gantt-scroll {
@@ -36,16 +46,16 @@
   border-radius: 20px;
 }
 
-/* 데스크톱: 컨테이너 폭에 맞게 축소돼 스크롤이 생기지 않는다.
-   좁은 폭: min-width 가 이겨 원본 비율을 유지한 채 컨테이너 안에서만 가로 스크롤된다.
-   1100px 은 .wrap 의 데스크톱 내부 폭(1180 - 좌우 28)인 1124px 안에 들어가는 최대값이면서,
-   바 라벨(1440px 기준 14px)이 약 10.7px 로 읽히는 배율이다. */
+/* 데스크톱: --gantt-width 로 표시하고 가운데 정렬한다.
+   좁은 폭: min-width 가 이겨 원본 비율을 유지한 채 .gantt-scroll 안에서만 가로 스크롤된다.
+   min-width 는 바 라벨이 읽히는 하한이므로 --gantt-width 를 더 줄여도 여기까지만 줄어든다. */
 .membership-root .gantt-img {
   display: block;
   width: 100%;
-  min-width: 1100px;
-  max-width: 100%;
+  min-width: 900px;
+  max-width: var(--gantt-width);
   height: auto;
+  margin: 0 auto;
 }
 
 /* 스크롤 가능함을 알리는 우측 페이드 */

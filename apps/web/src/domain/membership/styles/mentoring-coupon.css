@@ -3,7 +3,13 @@
    배경은 흰색이고, 이미지가 자기 여백을 들고 있으므로 섹션 여백은 다른 곳보다 적게 준다.
    ===================================================================== */
 
+/* ---------- 크기 조절 지점 ----------
+   쿠폰 이미지의 표시 폭은 아래 --coupon-width 하나로 결정된다.
+   이 값만 바꾸면 되고 위치(가운데 정렬)는 그대로 유지된다.
+   이미지 파일을 다른 크기로 바꿔 넣어도 마찬가지다 — height:auto 가 비율을 따라간다.
+   파일: apps/web/public/images/membership/mentoring-coupon.webp */
 .membership-root .mcoupon {
+  --coupon-width: 760px;
   padding: 120px 0;
   background: #fff;
 }
@@ -11,7 +17,7 @@
 .membership-root .mcoupon-img {
   display: block;
   width: 100%;
-  max-width: 1092px;
+  max-width: var(--coupon-width);
   height: auto;
   margin: 0 auto;
 }
