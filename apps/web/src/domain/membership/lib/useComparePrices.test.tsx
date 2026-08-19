@@ -117,27 +117,27 @@ describe('useComparePrices', () => {
   it('두 챌린지의 현재 할인가를 합산한다 (정가 - 할인금액)', async () => {
     mockServer(
       { PERSONAL_STATEMENT_LARGE_CORP: 10, ETC: 20 },
-      { 10: [150000, 21500], 20: [99000, 20000] },
+      { 10: [160000, 16800], 20: [88000, 26200] },
     );
 
     const { result } = renderHook(() => useComparePrices(combo), { wrapper });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.items.map((i) => i.price)).toEqual([128500, 79000]);
-    expect(result.current.total).toBe(207500);
+    expect(result.current.items.map((i) => i.price)).toEqual([143200, 61800]);
+    expect(result.current.total).toBe(205000);
   });
 
   it('모집 중인 기수가 없으면 그 항목은 price 가 null 이고 합계에서 빠진다', async () => {
     mockServer(
       { PERSONAL_STATEMENT_LARGE_CORP: 10, ETC: null },
-      { 10: [150000, 21500] },
+      { 10: [160000, 16800] },
     );
 
     const { result } = renderHook(() => useComparePrices(combo), { wrapper });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.items[1].price).toBeNull();
-    expect(result.current.total).toBe(128500);
+    expect(result.current.total).toBe(143200);
     // 목록이 빈 타입은 상세를 부르지 않는다
     expect(get).not.toHaveBeenCalledWith('/challenge/0', undefined);
   });
@@ -162,7 +162,7 @@ describe('useComparePrices', () => {
   it('합계가 올인원 특가보다 크면 isInverted 가 false 다', async () => {
     mockServer(
       { PERSONAL_STATEMENT_LARGE_CORP: 10, ETC: 20 },
-      { 10: [150000, 21500], 20: [99000, 20000] },
+      { 10: [160000, 16800], 20: [88000, 26200] },
     );
 
     const { result } = renderHook(() => useComparePrices(combo), { wrapper });
@@ -200,7 +200,7 @@ describe('useComparePrices', () => {
   it('타입마다 /challenge/active 를 한 번씩만 부른다', async () => {
     mockServer(
       { PERSONAL_STATEMENT_LARGE_CORP: 10, ETC: 20 },
-      { 10: [150000, 21500], 20: [99000, 20000] },
+      { 10: [160000, 16800], 20: [88000, 26200] },
     );
 
     const { result } = renderHook(() => useComparePrices(combo), { wrapper });
