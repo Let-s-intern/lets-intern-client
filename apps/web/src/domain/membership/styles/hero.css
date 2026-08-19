@@ -10,7 +10,7 @@
 .membership-root .hero .hero-in {
   display: block;
   text-align: center;
-  padding: 112px 28px 0;
+  padding: 72px 28px 0;
 }
 .membership-root .hero-chips {
   display: flex;
@@ -31,9 +31,9 @@
   letter-spacing: -0.01em;
 }
 .membership-root .hero h1 {
-  font-size: 54px;
+  font-size: 44px;
   font-weight: 800;
-  line-height: 1.18;
+  line-height: 1.22;
   letter-spacing: -0.04em;
   color: #fff;
 }
@@ -165,8 +165,8 @@
   max-width: 1276px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding-top: 34px;
-  padding-bottom: 88px;
+  padding-top: 30px;
+  padding-bottom: 56px;
 }
 .membership-root .hero-stat {
   position: relative;
@@ -211,8 +211,8 @@
   .membership-root .hero-stats {
     grid-template-columns: repeat(2, 1fr);
     row-gap: 26px;
-    padding-top: 30px;
-    padding-bottom: 64px;
+    padding-top: 26px;
+    padding-bottom: 44px;
   }
   .membership-root .hero-stat:nth-child(2n + 1)::before {
     display: none;

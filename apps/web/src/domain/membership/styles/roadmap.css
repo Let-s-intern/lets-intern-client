@@ -5,7 +5,7 @@
    각 노드는 display:contents 라서 카드와 번호 원이 부모 그리드에 직접 놓이고,
    열은 컴포넌트가 넘기는 --rmap-col 로 정한다. */
 .membership-root .roadmap {
-  padding: 84px 0;
+  padding: 112px 0;
   background: var(--bg-cool);
 }
 .membership-root .roadmap .timeline {
