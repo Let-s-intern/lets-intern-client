@@ -119,4 +119,40 @@ describe('CompareSection', () => {
     expect(screen.getAllByLabelText(/불러오는 중/).length).toBeGreaterThan(0);
     expect(screen.queryByText('0원')).not.toBeInTheDocument();
   });
+
+  it('뷰포트 진입 전에는 조합을 숨기지 않는다', () => {
+    // 꺼둔 쿼리는 isLoading 이 false 다. inView 를 보지 않으면 조회가 시작되기도 전에
+    // 세 조합이 전부 "쓸 수 없음" 으로 찍혀 섹션이 사라지고, 그러면 관측 대상도 함께
+    // 사라져 영영 조회가 시작되지 않는다.
+    //
+    // jsdom 에는 IntersectionObserver 가 없어 컴포넌트가 즉시 조회로 폴백하므로,
+    // 진입을 알리지 않는 관측자를 심어 "아직 안 보이는" 상태를 만든다.
+    const original = (globalThis as { IntersectionObserver?: unknown })
+      .IntersectionObserver;
+    class NeverIntersects {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+      takeRecords() {
+        return [];
+      }
+    }
+    (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
+      NeverIntersects;
+
+    try {
+      comparePrices.mockImplementation((combo) => ({
+        ...priceResultFor(combo.id),
+        isLoading: false,
+        isUsable: false,
+      }));
+
+      render(<CompareSection />);
+
+      expect(screen.getAllByRole('tab')).toHaveLength(3);
+    } finally {
+      (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
+        original;
+    }
+  });
 });

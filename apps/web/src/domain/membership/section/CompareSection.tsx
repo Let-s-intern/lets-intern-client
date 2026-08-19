@@ -59,12 +59,17 @@ export default function CompareSection() {
   });
 
   useEffect(() => {
-    // 로딩이 끝났는데 쓸 수 없으면 이 조합을 뺀다.
-    if (isLoading || isUsable) return;
+    // 조회를 실제로 돌린 뒤에만 판정한다.
+    //
+    // 뷰포트 진입 전에는 쿼리가 꺼져 있고, 꺼둔 쿼리는 isLoading 이 false 다.
+    // inView 를 빼면 아직 아무것도 안 불러온 상태에서 "쓸 수 없음" 으로 찍혀
+    // 세 조합이 차례로 숨겨지고 섹션이 사라진다. 그러면 관측 대상도 없어져
+    // 영영 조회가 시작되지 않는다.
+    if (!inView || isLoading || isUsable) return;
     setUnusableIds((prev) =>
       prev.includes(activeCombo.id) ? prev : [...prev, activeCombo.id],
     );
-  }, [isLoading, isUsable, activeCombo.id]);
+  }, [inView, isLoading, isUsable, activeCombo.id]);
 
   // 활성 탭이 숨겨졌으면 남은 탭으로 옮긴다.
   useEffect(() => {
