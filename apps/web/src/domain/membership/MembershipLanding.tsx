@@ -46,8 +46,7 @@ import BenefitsSection from './section/BenefitsSection';
 import PartnerBenefitsSection from './section/PartnerBenefitsSection';
 import PlansSection from './section/PlansSection';
 import ReviewsSection from './section/ReviewsSection';
-// 3개월 합격 로드맵 — 일단 숨김(삭제 예정). 복구하려면 아래 import·렌더 주석을 함께 해제.
-// import RoadmapSection from './section/RoadmapSection';
+import RoadmapSection from './section/RoadmapSection';
 import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
@@ -61,6 +60,8 @@ export default function MembershipLanding() {
           <MembershipAnimations />
           <HeroSection />
           <MembershipNav />
+          {/* 공채 로드맵(시안 1.png 하단) — 이 한 줄과 위 import 를 지우면 섹션이 빠진다 */}
+          <RoadmapSection />
           <EarlyBirdBanner />
           <VodHookSection />
           <RecommendSection />
@@ -74,7 +75,6 @@ export default function MembershipLanding() {
           <PartnerBenefitsSection />
           <PlansSection />
           <ReviewsSection />
-          {/* <RoadmapSection /> 일단 숨김(삭제 예정) */}
           <FinalCtaSection />
           <FaqSection />
           <ApplyBar />
