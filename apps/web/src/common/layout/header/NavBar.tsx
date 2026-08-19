@@ -23,6 +23,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
+// [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 SideNavItem 과 함께 제거한다
+import MembershipNavLabel from './MembershipNavLabel';
 import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
@@ -279,7 +281,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        {/* 2026 하반기 멤버십 모집 종료로 메뉴 제거 (랜딩 /membership 은 유지) */}
+        {/* [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 SideNavItem 을 제거한다 */}
+        <SideNavItem href="/membership" isNew>
+          <MembershipNavLabel />
+        </SideNavItem>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
         <SideNavItem href="/community">
           커뮤니티

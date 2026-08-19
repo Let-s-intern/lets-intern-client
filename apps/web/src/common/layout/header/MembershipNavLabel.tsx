@@ -18,7 +18,10 @@ function Sparkle({ className, delay }: { className: string; delay: string }) {
 }
 
 /**
- * "2026 하반기 멤버십 출시" 네비 메뉴 라벨.
+ * [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 이 파일은 지우지 않고
+ * 남긴다(다음 시즌 재사용). 내릴 때는 GlobalNavTopBar·NavBar 의 메뉴 블록만 제거한다.
+ *
+ * 문구는 시안 0.png 의 GNB 와 동일한 "2026 하반기 멤버십 출시".
  * 좌상단에 크기가 다른 반짝이 3개(✦ twinkle) + 글자 샤인 스윕을 입혀 신규/출시 메뉴를 강조한다.
  * 데스크톱 상단바(GlobalNavTopBar)와 모바일 드로어(SideNavItem) 두 곳에서 공용.
  */
