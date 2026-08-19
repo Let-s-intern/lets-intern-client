@@ -10,7 +10,7 @@ import { useMentorAlert } from '@/hooks/useMentorAlert';
 
 export default function MentorDetailContentSection() {
   const { data: user, isLoading } = useUserQuery();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [content, setContent] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -18,7 +18,21 @@ export default function MentorDetailContentSection() {
   const { mutate: patchUser, isPending } = usePatchUser(
     () => {
       setIsDirty(false);
-      showAlert({ title: '상세페이지가 저장되었습니다.', variant: 'success' });
+      showConfirm({
+        title: '상세페이지가 저장되었습니다.',
+        variant: 'success',
+        confirmText: '바로가기',
+        cancelText: '닫기',
+        onConfirm: () => {
+          if (user) {
+            window.open(
+              `${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`,
+              '_blank',
+            );
+          }
+          alertProps.onClose();
+        },
+      });
     },
     () => showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
   );
@@ -36,9 +50,21 @@ export default function MentorDetailContentSection() {
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
-          상세페이지 제작
-        </h2>
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+            상세페이지 제작
+          </h2>
+          {user && (
+            <a
+              href={`${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary text-xsmall14 hover:text-primary-dark underline underline-offset-2"
+            >
+              바로가기
+            </a>
+          )}
+        </div>
         <SolidButton
           size="xs"
           onClick={handleSave}
