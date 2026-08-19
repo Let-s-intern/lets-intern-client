@@ -4,17 +4,20 @@ import { GUIDEBOOK_CARD, STUDY_CARD } from '../data/guidebooks';
 import BenefitsSection from './BenefitsSection';
 
 describe('BenefitsSection', () => {
-  it('섹션 배지와 헤드라인을 렌더한다', () => {
+  // 시안 6-0 헤더는 앞 섹션(CoursePlanSection)이 렌더한다. 여기서 다시 그리면 중복이다.
+  it('시안 6-0 헤더 문구를 다시 그리지 않는다', () => {
     render(<BenefitsSection />);
-    expect(screen.getByText('공채 준비 올인원 패스 혜택')).toBeInTheDocument();
-    expect(screen.getByText('하반기 공채 준비에 필요한')).toBeInTheDocument();
-    expect(screen.getByText('올인원 패스')).toBeInTheDocument();
-    expect(screen.getByText('모든 혜택')).toBeInTheDocument();
     expect(
-      screen.getByText(
+      screen.queryByText('공채 준비 올인원 패스 혜택'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('하반기 공채 준비에 필요한'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
         '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
       ),
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   it('앵커 네비가 쓰는 id="benefits" 를 유지한다', () => {

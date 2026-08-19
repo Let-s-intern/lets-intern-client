@@ -1,5 +1,4 @@
 import {
-  BENEFITS_HEADER,
   CORE_CHALLENGE_BLOCK_HEAD,
   GUIDEBOOK_BLOCK_HEAD,
   JOB_CHALLENGE_BLOCK_HEAD,
@@ -103,15 +102,9 @@ export default function BenefitsSection() {
   return (
     <section className="benefits" id="benefits">
       <div className="wrap">
-        <div className="sec-head rv">
-          <span className="eyebrow">{BENEFITS_HEADER.badge}</span>
-          <h2>
-            {BENEFITS_HEADER.titleTop}
-            <br />
-            <Segments segments={BENEFITS_HEADER.titleMain} />
-          </h2>
-          <p>{BENEFITS_HEADER.sub}</p>
-        </div>
+        {/* 시안 6-0 헤더("공채 준비 올인원 패스 혜택")는 바로 위 CoursePlanSection 이 렌더한다.
+            시안 순서가 6-0(헤더) → 6-1(플레이북) → 7-x(혜택 상세)라 헤더가 앞 섹션에 붙는다.
+            여기서 다시 그리면 같은 문구가 화면에 두 번 나온다. */}
 
         <div className="bn-block">
           <BlockHead head={GUIDEBOOK_BLOCK_HEAD} />

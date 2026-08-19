@@ -25,7 +25,8 @@ import './styles/proof.css';
 import './styles/plan-single.css';
 import './styles/reviews.css';
 import './styles/roadmap.css';
-import './styles/final-cta.css';
+// 최종 CTA — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
+// import './styles/final-cta.css';
 import './styles/faq.css';
 import './styles/footer.css';
 import './styles/animations.css';
@@ -45,7 +46,6 @@ import BenefitsSection from './section/BenefitsSection';
 import PlansSection from './section/PlansSection';
 import ReviewsSection from './section/ReviewsSection';
 import RoadmapSection from './section/RoadmapSection';
-import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
@@ -77,7 +77,9 @@ export default function MembershipLanding() {
           <BenefitsSection />
           <PlansSection />
           <ReviewsSection />
-          <FinalCtaSection />
+          {/* 최종 CTA(선착순 마감 임박 + 카운트다운 + 멤버십 신청하기)도 시안에서 빠졌다.
+              결제 진입은 하단 고정 ApplyBar 가 계속 담당한다.
+              파일은 지우지 않았다 — section/FinalCtaSection.tsx 와 data/finalCta.ts */}
           <FaqSection />
           <ApplyBar />
         </main>

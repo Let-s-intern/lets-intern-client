@@ -62,10 +62,6 @@ jest.mock('./section/ReviewsSection', () => ({
   __esModule: true,
   default: () => <div data-testid="ReviewsSection" />,
 }));
-jest.mock('./section/FinalCtaSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="FinalCtaSection" />,
-}));
 jest.mock('./section/FaqSection', () => ({
   __esModule: true,
   default: () => <div data-testid="FaqSection" />,
@@ -74,7 +70,7 @@ jest.mock('./section/FaqSection', () => ({
 /**
  * `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다.
  *
- * 얼리버드 배너·VOD 훅·추천 대상·세미나·제휴 혜택은 시안에 없어 뺐다.
+ * 얼리버드 배너·VOD 훅·추천 대상·세미나·제휴 혜택·최종 CTA 는 시안에 없어 뺐다.
  * 이 배열이 그 사실을 고정한다 — 누가 되살리면 순서 비교가 실패한다.
  */
 const EXPECTED_ORDER = [
@@ -89,7 +85,6 @@ const EXPECTED_ORDER = [
   'BenefitsSection',
   'PlansSection',
   'ReviewsSection',
-  'FinalCtaSection',
   'FaqSection',
   'ApplyBar',
 ];

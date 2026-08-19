@@ -1,7 +1,7 @@
 // 혜택 섹션의 노출 문구. 시안 6-0(헤더) / 7-1~7-4(블록 소제목)에서 옮겼다.
 //
-// 제휴 3종(산타토익·뷰인터·슈퍼인턴)은 전용 "멤버 전용 제휴 서비스 혜택" 섹션
-// (partners.ts / PartnerBenefitsSection)으로 분리.
+// 제휴 3종(산타토익·뷰인터·슈퍼인턴)의 "멤버 전용 제휴 서비스 혜택" 섹션은
+// LC-3219 시안에서 빠져 랜딩에 마운트되지 않는다(partners.ts / PartnerBenefitsSection 은 남아 있다).
 
 /** 헤드라인 한 조각. hl 이면 포인트 컬러로 강조한다 */
 export interface HeadSegment {
@@ -15,17 +15,9 @@ export interface BenefitBlockHead {
   sub?: string;
 }
 
-/** 섹션 헤더 (시안 6-0) */
-export const BENEFITS_HEADER = {
-  badge: '공채 준비 올인원 패스 혜택',
-  titleTop: '하반기 공채 준비에 필요한',
-  titleMain: [
-    { text: '올인원 패스', hl: true },
-    { text: ' 하나로 누리는 ' },
-    { text: '모든 혜택', hl: true },
-  ] satisfies HeadSegment[],
-  sub: '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
-};
+// 시안 6-0 헤더는 여기 두지 않는다. CoursePlanSection 이 `COURSE_PLAN_HEADER` 로 렌더한다.
+// 시안 순서가 6-0(헤더) → 6-1(플레이북) → 7-x(혜택 상세)이고 플레이북 섹션이 앞에 오기 때문이다.
+// 양쪽에 두면 같은 문구가 화면에 두 번 나온다.
 
 /** 블록 1 — 가이드북 (시안 7-1) */
 export const GUIDEBOOK_BLOCK_HEAD: BenefitBlockHead = {
