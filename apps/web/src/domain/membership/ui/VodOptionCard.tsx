@@ -1,12 +1,17 @@
+'use client';
+
 import { MonitorPlay } from 'lucide-react';
 import { formatKRW } from '../data/membership';
+import { getDiscountRate } from '../data/plans';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 
 // 취준위키 VOD 모음집 단독 구매 카드. 단일 올패스 카드 하단에 배치.
 // 구매는 하단 고정 ApplyBar 의 결제 시트에서 +VOD 옵션으로 선택·결제된다.
-const VOD_ORIGINAL_PRICE = 300000;
-const VOD_SALE_PRICE = 29900;
-
+// 가격은 연동 챌린지의 VOD 옵션에서 온다(못 찾으면 data/plans.ts 폴백).
 export default function VodOptionCard() {
+  const { vodRegularPrice, vodSalePrice } = useMembershipChallengeData();
+  const discountRate = getDiscountRate(vodRegularPrice, vodSalePrice);
+
   return (
     <div className="vod-option rv">
       <span className="vod-ic" aria-hidden>
@@ -23,11 +28,15 @@ export default function VodOptionCard() {
 
       <div className="vod-aside">
         <div className="vod-price">
-          <span className="vod-was num">{formatKRW(VOD_ORIGINAL_PRICE)}원</span>
+          <span className="vod-was num">{formatKRW(vodRegularPrice)}원</span>
           <span className="vod-now num">
-            {formatKRW(VOD_SALE_PRICE)}
+            {formatKRW(vodSalePrice)}
             <span className="vod-unit">원</span>
           </span>
+          {/* 할인율은 정가·판매가에서 계산한다. 성립하지 않으면 배지를 렌더하지 않는다. */}
+          {discountRate > 0 && (
+            <span className="vod-rate num">{discountRate}% 할인</span>
+          )}
         </div>
       </div>
     </div>

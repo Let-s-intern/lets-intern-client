@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { ChallengeIdPrimitive } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import {
   MEMBERSHIP_BEGINNING,
@@ -7,7 +8,7 @@ import {
   MEMBERSHIP_START_DATE,
 } from '../data/membership';
 import { FAQ_ITEMS } from '../data/faq';
-import { PLAN_PRICE } from '../data/plans';
+import { PLAN_PRICE, VOD_OPTION_PRICE } from '../data/plans';
 import {
   IS_MEMBERSHIP_LAUNCHED,
   MEMBERSHIP_CHALLENGE_ID,
@@ -37,8 +38,33 @@ export interface MembershipChallengeData {
   regularPrice: number;
   /** 오픈 특가(판매가) */
   salePrice: number;
+  /** VOD 옵션 정가(취소선) */
+  vodRegularPrice: number;
+  /** VOD 옵션 판매가 */
+  vodSalePrice: number;
   faqItems: MembershipFaqItem[];
 }
+
+/**
+ * 챌린지 옵션 목록에서 VOD 옵션을 찾는다.
+ *
+ * 서버의 `challenge_option` 에는 VOD 를 가리키는 구조적 필드가 없다. `type` enum 은
+ * WRITTEN_FEEDBACK / LIVE_FEEDBACK 둘뿐이고 `code` 는 어드민이 손으로 적는 자유 문자열이라,
+ * 지금 계약으로 판별할 수 있는 방법은 코드/이름에 "VOD" 가 들어 있는지 보는 것뿐이다.
+ *
+ * 어드민이 이름을 다르게 지으면 조용히 못 찾는다. 그래서 못 찾았을 때 카드를 숨기지 않고
+ * 폴백값을 쓴다 — 화면이 비는 것보다 시안 값이 남는 편이 덜 나쁘고, 실제 결제 금액은
+ * 결제 시트가 챌린지에서 다시 계산하므로 어긋나지 않는다.
+ */
+const findVodOption = (priceInfo: ChallengeIdPrimitive['priceInfo']) => {
+  for (const plan of priceInfo) {
+    const option = plan.challengeOptionList.find((o) =>
+      `${o.code ?? ''} ${o.title ?? ''}`.toUpperCase().includes('VOD'),
+    );
+    if (option) return option;
+  }
+  return undefined;
+};
 
 // 유효하지 않은 날짜 문자열은 Invalid Date(=== null/undefined 아님)를 만들어 ?? 폴백을
 // 무력화하므로, getTime()이 NaN이면 null 로 떨어뜨려 정적 폴백이 동작하게 한다.
@@ -79,6 +105,20 @@ export function useMembershipChallengeData(): MembershipChallengeData {
       }
     }
 
+    // VOD 옵션 — 옵션 목록에서 찾아 정가/판매가를 낸다. 못 찾으면 폴백.
+    let vodRegularPrice: number = VOD_OPTION_PRICE.original;
+    let vodSalePrice: number = VOD_OPTION_PRICE.sale;
+    const vodOption = data?.priceInfo?.length
+      ? findVodOption(data.priceInfo)
+      : undefined;
+    if (vodOption && (vodOption.price ?? 0) > 0) {
+      vodRegularPrice = vodOption.price ?? 0;
+      vodSalePrice = Math.max(
+        0,
+        vodRegularPrice - (vodOption.discountPrice ?? 0),
+      );
+    }
+
     // FAQ — 어드민이 챌린지에 연결한 faqInfo. 질문/답변이 모두 있는 항목만 노출.
     const challengeFaq = data?.faqInfo
       ?.filter((f) => f.question && f.answer)
@@ -97,6 +137,8 @@ export function useMembershipChallengeData(): MembershipChallengeData {
       endDate,
       regularPrice,
       salePrice,
+      vodRegularPrice,
+      vodSalePrice,
       faqItems,
     };
   }, [data]);

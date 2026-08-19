@@ -338,6 +338,17 @@
   color: var(--lc-blue);
   line-height: 1;
 }
+/* 할인율 배지 — 정가·판매가에서 계산한 값이 들어온다(시안 3.png "90% 할인"). */
+.membership-root .vod-rate {
+  margin-top: 6px;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--lc-blue);
+  background: var(--tint-blue);
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
 .membership-root .vod-unit {
   font-size: 15px;
   font-weight: 700;
