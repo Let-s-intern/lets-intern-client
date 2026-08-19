@@ -154,7 +154,7 @@ run(
   [
     'turbo',
     'run',
-    'dev',
+    'dev:local',
     '--filter=@letscareer/web',
     '--filter=@letscareer/admin',
     '--filter=@letscareer/mentor',
