@@ -14,8 +14,8 @@ describe('ChallengeScheduleSection', () => {
     render(<ChallengeScheduleSection />);
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('src', '/images/membership/gantt-full.webp');
-    expect(img).toHaveAttribute('width', '2880');
-    expect(img).toHaveAttribute('height', '1914');
+    expect(img).toHaveAttribute('width', '2400');
+    expect(img).toHaveAttribute('height', '1641');
   });
 
   it('CLS 방지를 위해 width·height 를 직접 지정한다', () => {

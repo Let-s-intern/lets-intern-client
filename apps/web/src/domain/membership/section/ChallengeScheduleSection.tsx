@@ -13,10 +13,13 @@ import { GANTT_ALT } from '../data/challengeSchedule';
  * 좁은 폭에서는 `.gantt-scroll` 안에서만 가로로 스크롤된다(페이지는 스크롤되지 않는다).
  * `domain/membership` 은 `next/image` 를 쓰지 않으므로 width/height 를 직접 넣어 CLS 를 막는다.
  */
+// 시안 5.png 에서 좌우 여백(각 240px)을 잘라낸 판이다.
+// 원본 그대로 1440px 폭에 넣으면 이미지 안 헤딩이 약 28px 로 그려져 옆 섹션 h2(36px)보다
+// 작아 보인다. 여백을 걷어내면 같은 폭에서 콘텐츠가 1.2배로 커져 34px 가 되어 눈에 맞는다.
 const GANTT_FULL = {
   src: '/images/membership/gantt-full.webp',
-  width: 2880,
-  height: 1914,
+  width: 2400,
+  height: 1641,
 };
 
 export default function ChallengeScheduleSection() {
