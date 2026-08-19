@@ -2,16 +2,11 @@ import {
   CORE_CHALLENGE_BLOCK_HEAD,
   GUIDEBOOK_BLOCK_HEAD,
   JOB_CHALLENGE_BLOCK_HEAD,
-  STUDY_BLOCK_HEAD,
   type BenefitBlockHead,
   type HeadSegment,
 } from '../data/benefits';
 import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
-import {
-  GUIDEBOOK_CARD,
-  STUDY_CARD,
-  type BenefitHighlightCard,
-} from '../data/guidebooks';
+import { GUIDEBOOK_CARD, type BenefitHighlightCard } from '../data/guidebooks';
 import ChallengeBenefitCard from '../ui/ChallengeBenefitCard';
 
 const CORE_ITEMS = CHALLENGE_ITEMS.filter((item) => item.group === 'core');
@@ -128,13 +123,6 @@ export default function BenefitsSection() {
             {JOB_ITEMS.map((item) => (
               <ChallengeBenefitCard item={item} key={item.url} />
             ))}
-          </div>
-        </div>
-
-        <div className="bn-block">
-          <BlockHead head={STUDY_BLOCK_HEAD} />
-          <div className="rv">
-            <HighlightCard card={STUDY_CARD} />
           </div>
         </div>
       </div>

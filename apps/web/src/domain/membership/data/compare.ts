@@ -65,7 +65,6 @@ export const ALL_IN_ONE_ITEMS: AllInOneItem[] = [
   { text: '챌린지 10종', emphasized: true },
   { text: '가이드북 6종', emphasized: false },
   { text: '이대로만 따라오면 합격 13주 플레이북', emphasized: false },
-  { text: '렛츠런 스터디 참여', emphasized: false },
   { text: '1:1 멘토링 50% 할인 혜택 등', emphasized: false },
 ];
 

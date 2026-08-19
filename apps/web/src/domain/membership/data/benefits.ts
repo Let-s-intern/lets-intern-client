@@ -50,15 +50,8 @@ export const JOB_CHALLENGE_BLOCK_HEAD: BenefitBlockHead = {
   ],
 };
 
-/** 블록 4 — 렛츠런 스터디 (시안 7-4) */
-export const STUDY_BLOCK_HEAD: BenefitBlockHead = {
-  lines: [
-    [
-      { text: '취업 준비가 혼자 힘들지 않도록 ' },
-      { text: '렛츠런 스터디 참여', hl: true },
-    ],
-  ],
-};
+// 시안 7-4 의 렛츠런 스터디 블록은 렌더하지 않는다 — 프로그램이 계속되지 않는다.
+// 카드 데이터(data/guidebooks.ts 의 STUDY_CARD)와 상세 URL 은 남아 있다.
 
 // 아래 BENEFIT_CARDS 는 개편 전 카드 그리드(4장 + BenefitModal) 데이터다.
 // 모달 폐기 결정 전까지 남겨 둔다.

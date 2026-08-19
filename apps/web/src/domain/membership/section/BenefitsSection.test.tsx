@@ -25,7 +25,7 @@ describe('BenefitsSection', () => {
     expect(container.querySelector('section#benefits')).not.toBeNull();
   });
 
-  it('블록 소제목 4개를 위에서 아래로 보여준다', () => {
+  it('블록 소제목 3개를 위에서 아래로 보여준다', () => {
     render(<BenefitsSection />);
     expect(
       screen.getByText('취업 준비 핵심 단계 가이드북 6종 무료 제공'),
@@ -33,14 +33,16 @@ describe('BenefitsSection', () => {
     expect(screen.getByText('혼자서 하기 힘들다면?')).toBeInTheDocument();
     expect(screen.getByText('챌린지 7종 1회씩 무료 참여')).toBeInTheDocument();
     expect(screen.getByText('직무별 챌린지')).toBeInTheDocument();
-    expect(screen.getByText('렛츠런 스터디 참여')).toBeInTheDocument();
+    // 렛츠런 스터디 블록은 프로그램 종료로 렌더하지 않는다
+    expect(screen.queryByText('렛츠런 스터디 참여')).not.toBeInTheDocument();
   });
 
   it('챌린지 카드 10개를 core 7개 · job 3개로 렌더한다', () => {
     const { container } = render(<BenefitsSection />);
+    // core 7종만. 스터디 카드는 렌더하지 않는다
     expect(
       container.querySelectorAll('.cb-card--core:not(.cb-card--wide)'),
-    ).toHaveLength(7 + 1); // core 7종 + 스터디 카드
+    ).toHaveLength(7);
     expect(container.querySelectorAll('.cb-card--job')).toHaveLength(3);
     for (const item of CHALLENGE_ITEMS) {
       expect(screen.getByText(item.label)).toBeInTheDocument();
@@ -56,20 +58,17 @@ describe('BenefitsSection', () => {
     }
   });
 
-  it('가이드북 카드와 스터디 카드를 렌더한다', () => {
+  it('가이드북 카드만 렌더하고 스터디 카드는 렌더하지 않는다', () => {
     const { container } = render(<BenefitsSection />);
     expect(screen.getByText(GUIDEBOOK_CARD.title)).toBeInTheDocument();
     expect(screen.getByText(GUIDEBOOK_CARD.desc)).toBeInTheDocument();
-    expect(screen.getByText(STUDY_CARD.title)).toBeInTheDocument();
+    expect(screen.queryByText(STUDY_CARD.title)).not.toBeInTheDocument();
 
     // 배지는 소제목의 강조 문구와 글자가 겹치므로 카드 안에서만 찾는다
     const badges = Array.from(container.querySelectorAll('.cb-badge')).map(
       (el) => el.textContent,
     );
     expect(badges).toContain('11/30까지 열람 가능');
-    expect(badges).toContain('무료 참여');
-    expect(badges).toContain('페이백 불가');
-
     const detailLinks = screen.getAllByRole('link', { name: /자세히 보기/ });
     const guidebookLink = detailLinks.find(
       (l) => l.getAttribute('href') === GUIDEBOOK_CARD.url,
@@ -78,7 +77,7 @@ describe('BenefitsSection', () => {
       (l) => l.getAttribute('href') === STUDY_CARD.url,
     );
     expect(guidebookLink).toBeDefined();
-    expect(studyLink).toBeDefined();
+    expect(studyLink).toBeUndefined();
   });
 
   it('카드를 클릭해도 모달이 열리지 않는다', () => {

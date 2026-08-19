@@ -48,8 +48,8 @@ describe('COMPARE_COMBOS — 개별 구매 조합 탭', () => {
 });
 
 describe('ALL_IN_ONE_ITEMS — 우측 올인원 카드 항목', () => {
-  it('5줄이다', () => {
-    expect(ALL_IN_ONE_ITEMS).toHaveLength(5);
+  it('4줄이다 (렛츠런 스터디는 프로그램 종료로 뺐다)', () => {
+    expect(ALL_IN_ONE_ITEMS).toHaveLength(4);
   });
 
   it('흰 박스로 강조되는 줄은 첫 줄 하나뿐이다 (시안)', () => {

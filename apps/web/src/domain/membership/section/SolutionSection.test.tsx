@@ -14,9 +14,9 @@ describe('SolutionSection', () => {
     );
   });
 
-  it('좌우 위성 카드 6장의 제목과 설명을 모두 렌더한다', () => {
+  it('좌우 위성 카드 5장의 제목과 설명을 모두 렌더한다', () => {
     const { container } = render(<SolutionSection />);
-    expect(container.querySelectorAll('.hub .hub-sat')).toHaveLength(6);
+    expect(container.querySelectorAll('.hub .hub-sat')).toHaveLength(5);
     for (const sat of SOLUTION.satellites) {
       expect(screen.getByText(sat.label)).toBeInTheDocument();
       expect(screen.getByText(sat.hint)).toBeInTheDocument();

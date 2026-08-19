@@ -55,12 +55,14 @@ export interface PlanBenefit {
   title: string;
 }
 
-/** 포함 혜택 5종 (시안 3.png 좌측 ALL-IN-ONE PASS 목록) */
+/**
+ * 포함 혜택 (시안 3.png 좌측 ALL-IN-ONE PASS 목록).
+ * "렛츠커리어 커뮤니티"는 뺐다 — 챌린지 참여자도 들어올 수 있어 멤버십 전용 혜택이 아니다.
+ */
 export const PLAN_BENEFITS: PlanBenefit[] = [
   { icon: 'flag', title: '렛츠커리어 챌린지 10종 베이직 플랜 참여' },
   { icon: 'bookOpen', title: '렛츠커리어 가이드북 6종 제공' },
   { icon: 'workflow', title: '이대로만 따라하면 합격 13주 플레이북' },
-  { icon: 'users', title: '렛츠커리어 커뮤니티' },
   { icon: 'userRoundCheck', title: '1:1 LIVE 멘토링 2회 50%할인권' },
 ];
 

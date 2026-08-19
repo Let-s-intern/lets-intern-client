@@ -11,8 +11,8 @@ describe('단일 플랜 표시 데이터', () => {
     expect(formatKRW(PLAN_PRICE.original)).toBe('938,300');
   });
 
-  it('혜택은 5종이다 (시안 3.png 좌측)', () => {
-    expect(PLAN_BENEFITS).toHaveLength(5);
+  it('혜택은 4종이다 (커뮤니티는 멤버십 전용이 아니라 뺐다)', () => {
+    expect(PLAN_BENEFITS).toHaveLength(4);
   });
 });
 
