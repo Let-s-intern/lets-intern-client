@@ -228,6 +228,9 @@ const ChallengeDuplicateModal = ({
                 <strong>주차도 함께</strong> 입력해야 합니다.
                 <br />* <strong>{SUPPORTED_TYPE_LABELS}</strong> 챌린지만
                 가능합니다.
+                <br />* 제목 앞 <strong>[ ] 안의 문구</strong>가 우측 상단
+                배너로 들어갑니다. 없으면 배너 없이 생성됩니다. (ex. [인턴·실무
+                경험자 Ver.])
               </p>
             </div>
             <FormControlLabel
