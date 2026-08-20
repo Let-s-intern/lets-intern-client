@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
+    "dev": "node --env-file=.env.dev node_modules/next/dist/bin/next dev --turbopack --port 3000",
     "dev:prod": "node --env-file=.env.prod node_modules/next/dist/bin/next dev --turbopack --port 3000",
     "build": "next build --turbopack",
     "build:prod": "node --env-file=.env.prod node_modules/next/dist/bin/next build --turbopack",
@@ -21,7 +21,8 @@
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:nocapture": "E2E_CAPTURE=off playwright test",
-    "e2e:fastdebug": "E2E_CAPTURE=failure-only playwright test"
+    "e2e:fastdebug": "E2E_CAPTURE=failure-only playwright test",
+    "dev:local": "node --env-file=.env.localhost node_modules/next/dist/bin/next dev --turbopack --port 3000"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

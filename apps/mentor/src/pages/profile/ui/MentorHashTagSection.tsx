@@ -100,7 +100,7 @@ export default function MentorHashTagSection() {
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-small18 text-neutral-0 font-medium">
+        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
           해시태그(노출 필터링)
         </h2>
         <SolidButton
