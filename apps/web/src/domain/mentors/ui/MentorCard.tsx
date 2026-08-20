@@ -16,11 +16,15 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       className="flex w-full flex-col items-center px-1 py-2 text-center md:p-4"
     >
       <div className="relative aspect-square w-full max-w-[140px] md:max-w-[200px]">
-        <div className="bg-neutral-70 relative h-full w-full overflow-hidden rounded-full">
+        <div className="bg-neutral-90 relative h-full w-full overflow-hidden rounded-full">
           <img
             src={mentor.profileImgUrl ?? '/icons/user-fill.svg'}
             alt={nickname}
-            className="h-full w-full object-cover"
+            className={
+              mentor.profileImgUrl
+                ? 'h-full w-full object-cover'
+                : 'h-full w-full object-contain p-8 md:p-12'
+            }
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 px-2 py-3">
@@ -56,7 +60,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
 
       <div
         className={twMerge(
-          'text-xxsmall10 md:text-xxsmall12 text-neutral-0 mx-1.5 mt-2 min-h-5 w-full truncate rounded-[6px] py-1 md:min-h-8 md:px-3 md:py-2',
+          'text-xxsmall10 md:text-xxsmall12 text-neutral-0 mt-2 min-h-5 w-full truncate rounded-[3px] px-1.5 py-1 md:min-h-8 md:rounded-[6px] md:px-3 md:py-2',
           mentor.hashTagList.length > 0 ? 'bg-neutral-90' : 'bg-static-100',
         )}
       >

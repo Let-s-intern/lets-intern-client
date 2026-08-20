@@ -58,11 +58,22 @@ export const mentorCareerItemSchema = z.object({
 
 export type MentorCareerItem = z.infer<typeof mentorCareerItemSchema>;
 
+export const mentorProgramListItemSchema = z.object({
+  programType: z.string(),
+  programId: z.number(),
+  title: z.string(),
+  thumbnail: z.string().nullable(),
+  startDate: z.string(),
+  endDate: z.string(),
+  beginning: z.string(),
+  deadline: z.string(),
+});
+
+export type MentorProgramListItem = z.infer<typeof mentorProgramListItemSchema>;
+
 /**
  * GET /api/v1/mentor/{mentorId} 응답.
- * proceedingProgramList/postProgramList/reviewList는 항목 필드 구조가
- * 아직 확정되지 않아 unknown[]로만 받는다 — 개수/빈 상태 확인 용도로만 쓰고,
- * 항목별 렌더링은 실제 필드가 확정되면 추가한다.
+ * reviewList unknown[]로 받음 (개수/빈 상태 확인 용도, 항목별 렌더링은 실제 필드 확정 시 추가 예정)
  */
 export const mentorDetailSchema = z.object({
   mentorInfo: z.object({
@@ -76,8 +87,8 @@ export const mentorDetailSchema = z.object({
     job: z.string().nullable(),
   }),
   careerList: z.array(mentorCareerItemSchema),
-  proceedingProgramList: z.array(z.unknown()),
-  postProgramList: z.array(z.unknown()),
+  proceedingProgramList: z.array(mentorProgramListItemSchema),
+  postProgramList: z.array(mentorProgramListItemSchema),
   reviewList: z.array(z.unknown()),
 });
 
