@@ -60,7 +60,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
 
       <div
         className={twMerge(
-          'text-xxsmall10 md:text-xxsmall12 text-neutral-0 mx-1.5 mt-2 min-h-5 w-full truncate rounded-[6px] py-1 md:min-h-8 md:px-3 md:py-2',
+          'text-xxsmall10 md:text-xxsmall12 text-neutral-0 mt-2 min-h-5 w-full truncate rounded-[3px] px-1.5 py-1 md:min-h-8 md:rounded-[6px] md:px-3 md:py-2',
           mentor.hashTagList.length > 0 ? 'bg-neutral-90' : 'bg-static-100',
         )}
       >

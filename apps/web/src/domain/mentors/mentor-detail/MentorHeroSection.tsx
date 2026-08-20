@@ -20,16 +20,22 @@ const CareerRow = ({
   career: MentorCareerItem;
   iconSrc: string;
 }) => (
-  <div className="flex items-center gap-2">
-    <div className="bg-static-100 flex rounded-full p-1.5">
-      <img src={iconSrc} alt="" className="rounded-xxs h-5 w-5 object-cover" />
+  <div className="flex items-center gap-1 md:gap-2">
+    <div className="bg-static-100 flex shrink-0 rounded-full p-1.5">
+      <img
+        src={iconSrc}
+        alt=""
+        className="rounded-xxs h-[18px] w-[18px] object-cover md:h-5 md:w-5"
+      />
     </div>
-    <span>{getCareerLabel(career)}</span>
-    {career.endDate === null && (
-      <div className="rounded-xxs text-xxsmall12 bg-primary-10 text-primary flex w-fit px-2 py-1 text-center font-normal">
-        재직 중
-      </div>
-    )}
+    <p className="text-xsmall14 md:text-xsmall16">
+      <span className="mr-1.5">{getCareerLabel(career)}</span>
+      {career.endDate === null && (
+        <span className="rounded-xxs text-xxsmall12 bg-primary-10 text-primary inline-block whitespace-nowrap px-2 py-1 align-middle font-normal">
+          재직 중
+        </span>
+      )}
+    </p>
   </div>
 );
 
@@ -45,8 +51,8 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
 
   return (
     <section className="flex w-full flex-col gap-10">
-      <div className="flex flex-col items-center gap-[60px] md:flex-row md:items-stretch">
-        <div className="bg-neutral-90 aspect-square max-h-[341px] w-full max-w-[341px] shrink-0 overflow-hidden rounded-full">
+      <div className="flex flex-col items-center gap-5 md:flex-row md:items-stretch md:gap-[60px]">
+        <div className="bg-neutral-90 aspect-square max-h-[300px] w-full max-w-[300px] shrink-0 overflow-hidden rounded-full md:max-h-[341px] md:max-w-[341px]">
           <img
             src={mentorInfo.profileImgUrl ?? '/icons/user-fill.svg'}
             alt={mentorInfo.nickname ?? '멘토 프로필'}
@@ -58,19 +64,19 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
           />
         </div>
 
-        <div className="flex flex-1 flex-col gap-4">
-          <div className="flex flex-col items-center gap-4 md:flex-row md:items-start md:justify-between">
-            <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <div className="flex w-full flex-1 flex-col gap-4">
+          <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between md:gap-4">
+            <div className="order-2 flex w-full flex-col items-start gap-1 text-center md:order-none md:text-left">
               <h1 className="text-xlarge28 text-neutral-0 font-bold">
                 {mentorInfo.nickname ?? '멘토 닉네임'}
               </h1>
-              <p className="text-small18 text-neutral-0 whitespace-nowrap">
+              <p className="text-small18 text-neutral-0 whitespace-nowrap font-semibold">
                 {mentorInfo.company ?? '대표 회사'} |{' '}
                 {mentorInfo.job ?? '대표 직무'}
               </p>
             </div>
 
-            <div className="flex shrink-0 items-center gap-6">
+            <div className="order-1 flex shrink-0 items-center gap-6 md:order-none">
               <OutlinedButton size="md">알림 받기</OutlinedButton>
               <SolidButton size="md">1:1 LIVE 멘토링</SolidButton>
             </div>
@@ -97,9 +103,15 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
       {/* 멘티 수/평점은 API에 필드가 없어 하드코딩 — 후기 수는 reviewList.length로 이미 연결됨 */}
       <div className="grid grid-cols-3 gap-3 md:gap-10">
         <div className="border-neutral-80 rounded-xxs flex flex-col items-center gap-1 border px-3 py-2">
-          <span className="text-xsmall14 text-neutral-30">함께한 멘티</span>
-          <span className="text-small20 text-neutral-20 flex items-center gap-1 font-medium">
-            <img src="/icons/user-fill.svg" alt="" className="m-1 h-4 w-4" />
+          <span className="text-xxsmall12 md:text-xsmall14 text-neutral-30">
+            함께한 멘티
+          </span>
+          <span className="text-xsmall16 md:text-small20 text-neutral-20 flex items-center gap-1 font-medium">
+            <img
+              src="/icons/user-fill.svg"
+              alt=""
+              className="m-1 h-3.5 w-3.5 md:h-4 md:w-4"
+            />
             0명
           </span>
         </div>
@@ -112,15 +124,23 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
           }
           className="border-neutral-80 rounded-xxs hover:bg-neutral-95 flex flex-col items-center gap-1 border px-3 py-2 transition-colors"
         >
-          <span className="text-xsmall14 text-neutral-30">후기</span>
-          <span className="text-small20 text-neutral-20 flex items-center gap-1 font-medium">
+          <span className="text-xxsmall12 md:text-xsmall14 text-neutral-30">
+            후기
+          </span>
+          <span className="text-xsmall16 md:text-small20 text-neutral-20 flex items-center gap-1 font-medium">
             {reviewList.length}
           </span>
         </button>
         <div className="border-neutral-80 rounded-xxs flex flex-col items-center gap-1 border px-3 py-2">
-          <span className="text-xsmall14 text-neutral-30">평점</span>
-          <span className="text-small20 text-neutral-20 flex items-center gap-1 font-medium">
-            <img src="/icons/star-fill.svg" alt="" className="h-6 w-6" />
+          <span className="text-xxsmall12 md:text-xsmall14 text-neutral-30">
+            평점
+          </span>
+          <span className="text-xsmall16 md:text-small20 text-neutral-20 flex items-center gap-1 font-medium">
+            <img
+              src="/icons/star-yellow.svg"
+              alt=""
+              className="h-5 w-5 md:h-6 md:w-6"
+            />
             0.0
           </span>
         </div>
