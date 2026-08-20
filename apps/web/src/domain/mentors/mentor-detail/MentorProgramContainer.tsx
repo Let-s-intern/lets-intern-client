@@ -1,7 +1,6 @@
 'use client';
 
 import { useMediaQuery } from '@mui/material';
-import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -13,7 +12,8 @@ import MentorProgramItem, {
 } from '../ui/MentorProgramItem';
 
 interface MentorProgramContainerProps {
-  title: ReactNode;
+  title: string;
+  count: number;
   programs: MentorProgramItemProps[];
   showGrid?: boolean;
   gaItem: string;
@@ -24,21 +24,14 @@ interface MentorProgramContainerProps {
 const MentorProgramContainer = (props: MentorProgramContainerProps) => {
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
-  if (props.programs.length < 1) return null;
-
   return (
     <div className="flex w-full flex-col gap-y-6">
-      {typeof props.title === 'string' ? (
-        <h2 className="text-small20 md:text-medium24 text-neutral-0 font-bold">
-          {props.title.split('\\n').map((line, index) => (
-            <Fragment key={index}>
-              {line} <br className="md:hidden" />
-            </Fragment>
-          ))}
-        </h2>
-      ) : (
-        props.title
-      )}
+      <div className="text-medium22 text-neutral-0 flex w-full items-center justify-between font-bold">
+        <span>{props.title}</span>
+        <span className="text-neutral-40 text-xsmall16 font-medium">
+          {props.count}개
+        </span>
+      </div>
 
       {props.programs.length < 1 ? (
         <EmptyContainer
