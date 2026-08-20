@@ -30,6 +30,12 @@ export const extractWeek = (title: string): string | null => {
   return match ? match[1] : null;
 };
 
+export const extractVersion = (title: string): string | null => {
+  const match = title.match(/\[(.+?)\]/);
+  const version = match?.[1].trim();
+  return version ? version : null;
+};
+
 export const WEEK_TITLE_TEMPLATES: Partial<
   Record<ChallengeType, (week: string) => string>
 > = {
@@ -65,6 +71,19 @@ const TITLE_SHADOW_COLORS: Partial<Record<ChallengeType, string>> = {
   PORTFOLIO: '#E79C00',
 };
 
+const VER_BANNER_HEIGHT = 164;
+const VER_BANNER_RADIUS = 50;
+const VER_BANNER_PADDING_X = 48;
+const VER_FONT_SIZE = 64;
+const VER_BANNER_MAX_WIDTH = CANVAS_WIDTH * 0.7;
+
+// 문구가 길면 배너가 일러스트를 덮으므로 최대 폭에 맞춰 폰트를 줄인다
+export function fitVerFontSize(textWidth: number): number {
+  const maxTextWidth = VER_BANNER_MAX_WIDTH - VER_BANNER_PADDING_X * 2;
+  if (textWidth <= maxTextWidth) return VER_FONT_SIZE;
+  return Math.floor((VER_FONT_SIZE * maxTextWidth) / textWidth);
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -86,6 +105,7 @@ export async function drawBadgeOnCanvas(
   const imagePath = THUMBNAIL_IMAGES[challengeType];
   const badgeColor = BADGE_COLORS[challengeType];
   const generation = extractGeneration(title);
+  const version = extractVersion(title);
 
   if (!imagePath || !badgeColor || !generation) return null;
 
@@ -101,6 +121,9 @@ export async function drawBadgeOnCanvas(
     ...(titleText
       ? [loadFont(`bold ${TITLE_FONT_SIZE}px "Pretendard Variable"`, titleText)]
       : []),
+    ...(version
+      ? [loadFont(`bold ${VER_FONT_SIZE}px "Pretendard Variable"`, version)]
+      : []),
   ]);
 
   const canvas = document.createElement('canvas');
@@ -109,6 +132,40 @@ export async function drawBadgeOnCanvas(
   const ctx = canvas.getContext('2d')!;
 
   ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  if (version) {
+    ctx.font = `bold ${VER_FONT_SIZE}px "Pretendard Variable"`;
+    const verFontSize = fitVerFontSize(ctx.measureText(version).width);
+    if (verFontSize !== VER_FONT_SIZE) {
+      ctx.font = `bold ${verFontSize}px "Pretendard Variable"`;
+    }
+
+    const bannerWidth =
+      ctx.measureText(version).width + VER_BANNER_PADDING_X * 2;
+    const bannerX = CANVAS_WIDTH - bannerWidth;
+
+    ctx.fillStyle = badgeColor;
+    ctx.beginPath();
+    // 위·오른쪽은 캔버스에 붙고 좌하단만 둥글다
+    ctx.roundRect(bannerX, 0, bannerWidth, VER_BANNER_HEIGHT, [
+      0,
+      0,
+      0,
+      VER_BANNER_RADIUS,
+    ]);
+    ctx.fill();
+
+    // textBaseline 'middle' 은 em 박스 기준이라 한글이 위로 뜬다.
+    // 실제 글리프 박스 높이로 배너 정중앙에 맞춘다
+    const metrics = ctx.measureText(version);
+    const textY =
+      VER_BANNER_HEIGHT / 2 +
+      (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(version, bannerX + VER_BANNER_PADDING_X, textY);
+  }
 
   if (titleText) {
     ctx.font = `bold ${TITLE_FONT_SIZE}px "Pretendard Variable"`;
