@@ -7,16 +7,26 @@ import dayjs from '@/lib/dayjs';
  * - 시간축은 30분 슬롯 단위.
  */
 
-/** 그리드 시작 시각(시). */
-export const GRID_START_HOUR = 9;
-/** 그리드 끝 시각(시, 미포함). */
-export const GRID_END_HOUR = 22;
-/** 슬롯 길이(분). */
-export const SLOT_MINUTES = 30;
+/**
+ * 시간 범위는 `@letscareer/utils` 가 정한다. 여기서 다시 정의하지 않는다.
+ *
+ * 예전에는 이 파일이 상한을 따로 들고 있었고 그 값이 22 였다. 멘토가 연
+ * 22:00~22:30 슬롯의 slotIndex 가 SLOTS_PER_DAY 와 같아져 `WeeklyGrid` 의
+ * 범위 필터에 걸렸고, 아무 표시 없이 사라졌다(2026-08-14 운영 문의).
+ * 같은 값을 세 화면이 각자 적어두던 것이 원인이라 한 곳으로 모았다.
+ */
+import {
+  SLOT_END_HOUR,
+  SLOT_MINUTES,
+  SLOT_START_HOUR,
+  SLOTS_PER_DAY,
+} from '@letscareer/utils';
 
-/** 하루 슬롯 개수. */
-export const SLOTS_PER_DAY =
-  ((GRID_END_HOUR - GRID_START_HOUR) * 60) / SLOT_MINUTES;
+/** 그리드 시작 시각(시). */
+export const GRID_START_HOUR = SLOT_START_HOUR;
+/** 그리드 끝 시각(시, 미포함). */
+export const GRID_END_HOUR = SLOT_END_HOUR;
+export { SLOT_MINUTES, SLOTS_PER_DAY };
 
 export interface WeekRange {
   /** 월요일 00:00 (LocalDateTime ISO) */

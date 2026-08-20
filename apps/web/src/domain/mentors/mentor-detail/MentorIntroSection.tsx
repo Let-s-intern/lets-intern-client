@@ -14,7 +14,11 @@ const parseLexicalRoot = (
   if (!json) return null;
   try {
     const parsed = JSON.parse(json);
-    if (parsed?.root && typeof parsed.root === 'object' && 'type' in parsed.root) {
+    if (
+      parsed?.root &&
+      typeof parsed.root === 'object' &&
+      'type' in parsed.root
+    ) {
       return parsed.root;
     }
     return null;
