@@ -46,20 +46,27 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
   return (
     <section className="flex w-full flex-col gap-10">
       <div className="flex flex-col items-center gap-[60px] md:flex-row md:items-stretch">
-        <img
-          src={mentorInfo.profileImgUrl ?? '/icons/user-fill.svg'}
-          alt={mentorInfo.nickname ?? '멘토'}
-          className="bg-neutral-70 aspect-square max-h-[341px] w-full max-w-[341px] shrink-0 rounded-full object-cover"
-        />
+        <div className="bg-neutral-90 aspect-square max-h-[341px] w-full max-w-[341px] shrink-0 overflow-hidden rounded-full">
+          <img
+            src={mentorInfo.profileImgUrl ?? '/icons/user-fill.svg'}
+            alt={mentorInfo.nickname ?? '멘토 프로필'}
+            className={
+              mentorInfo.profileImgUrl
+                ? 'h-full w-full object-cover'
+                : 'h-full w-full object-contain p-20'
+            }
+          />
+        </div>
 
         <div className="flex flex-1 flex-col gap-4">
           <div className="flex flex-col items-center gap-4 md:flex-row md:items-start md:justify-between">
             <div className="flex flex-col items-center text-center md:items-start md:text-left">
               <h1 className="text-xlarge28 text-neutral-0 font-bold">
-                {mentorInfo.nickname ?? '멘토'}
+                {mentorInfo.nickname ?? '멘토 닉네임'}
               </h1>
               <p className="text-small18 text-neutral-0 whitespace-nowrap">
-                {mentorInfo.company ?? '-'} | {mentorInfo.job ?? '-'}
+                {mentorInfo.company ?? '대표 회사'} |{' '}
+                {mentorInfo.job ?? '대표 직무'}
               </p>
             </div>
 

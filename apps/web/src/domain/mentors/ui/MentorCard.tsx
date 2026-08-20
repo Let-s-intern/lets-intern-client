@@ -16,11 +16,15 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       className="flex w-full flex-col items-center px-1 py-2 text-center md:p-4"
     >
       <div className="relative aspect-square w-full max-w-[140px] md:max-w-[200px]">
-        <div className="bg-neutral-70 relative h-full w-full overflow-hidden rounded-full">
+        <div className="bg-neutral-90 relative h-full w-full overflow-hidden rounded-full">
           <img
             src={mentor.profileImgUrl ?? '/icons/user-fill.svg'}
             alt={nickname}
-            className="h-full w-full object-cover"
+            className={
+              mentor.profileImgUrl
+                ? 'h-full w-full object-cover'
+                : 'h-full w-full object-contain p-8 md:p-12'
+            }
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 px-2 py-3">
