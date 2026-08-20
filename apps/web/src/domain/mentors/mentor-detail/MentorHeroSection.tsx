@@ -1,5 +1,5 @@
-import OutlinedButton from '@/common/button/OutlinedButton';
-import SolidButton from '@/common/button/SolidButton';
+// import OutlinedButton from '@/common/button/OutlinedButton';
+// import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
 
 import type {
@@ -94,10 +94,11 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
               </p>
             </div>
 
-            <div className="order-1 flex shrink-0 items-center gap-6 md:order-none">
+            {/* 이번 배포에서 숨김 처리 — 추후 재노출 예정 */}
+            {/* <div className="order-1 flex shrink-0 items-center gap-6 md:order-none">
               <OutlinedButton size="md">알림 받기</OutlinedButton>
               <SolidButton size="md">1:1 LIVE 멘토링</SolidButton>
-            </div>
+            </div> */}
           </div>
 
           {sortedCareers.length > 0 && (
