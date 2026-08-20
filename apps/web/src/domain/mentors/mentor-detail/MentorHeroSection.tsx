@@ -1,5 +1,6 @@
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
+import dayjs from '@/lib/dayjs';
 
 import type {
   MentorCareerItem,
@@ -10,8 +11,25 @@ interface MentorHeroSectionProps {
   mentor: MentorDetailData;
 }
 
-const getCareerLabel = (career: MentorCareerItem) =>
-  `${career.company ?? '-'} | ${career.position || career.job || '-'}`;
+const getCareerPeriod = (career: MentorCareerItem): string => {
+  if (!career.startDate) return '';
+
+  const start = dayjs(career.startDate);
+  const end = career.endDate ? dayjs(career.endDate) : dayjs();
+  const totalMonths = Math.max(0, end.diff(start, 'month'));
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  if (years === 0 && months === 0) return '근무';
+  if (years === 0) return `${months}개월`;
+  if (months === 0) return `${years}년`;
+  return `${years}년 ${months}개월`;
+};
+
+const getCareerLabel = (career: MentorCareerItem) => {
+  const period = getCareerPeriod(career);
+  return `${career.company ?? '-'} | ${career.position || career.job || '-'}${period ? ` ${period}` : ''}`;
+};
 
 const CareerRow = ({
   career,
