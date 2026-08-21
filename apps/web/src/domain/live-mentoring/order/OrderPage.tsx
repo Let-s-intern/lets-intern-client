@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useOrderDraftStore } from './hooks/useOrderDraft';
+import ProgramCardSection from './section/ProgramCardSection';
 
 interface OrderPageProps {
   /**
@@ -60,6 +61,8 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
           결제하기
         </h1>
       </div>
+
+      <ProgramCardSection draft={draft} />
 
       {/*
         TODO(7-7): 시안 `2-0` 의 "마감까지 3일 23시간 58분 58초" 배너 자리.
