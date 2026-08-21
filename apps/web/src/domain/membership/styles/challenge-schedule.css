@@ -74,15 +74,74 @@
   );
 }
 
-/* ---------- 하단 안내 박스 ---------- */
-.membership-root .gantt-notice {
-  display: block;
-  width: 100%;
+/* ---------- 하단 안내 박스 ----------
+   통이미지였다가 텍스트로 되돌렸다. 2000x193 짜리 가로로 긴 패널이라 375px 에서
+   335x32 로 줄어 글자가 읽히지 않았다. */
+.membership-root .chsched-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   max-width: var(--gantt-width);
-  height: auto;
   margin: 28px auto 0;
+  padding: 28px 32px;
+  border: 1px solid var(--tint-blue);
   border-radius: var(--gantt-radius);
   background: var(--gantt-notice-bg);
+}
+
+.membership-root .chsched-notice-lead {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.membership-root .chsched-notice-lead strong {
+  font-weight: 800;
+  color: var(--lc-blue);
+}
+.membership-root .chsched-notice-desc {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--g700);
+  word-break: keep-all;
+}
+
+/* 우측 이용 기간 카드 — 시안 실측(카드 151x66, 아이콘 36, 라벨 13, 값 18) */
+.membership-root .chsched-period {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border: 1px solid var(--tint-blue);
+  border-radius: 14px;
+  background: var(--white);
+}
+.membership-root .chsched-period-ic {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gantt-notice-bg);
+  color: var(--lc-blue);
+}
+.membership-root .chsched-period-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g600);
+}
+.membership-root .chsched-period-value {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 /* ---------- 반응형 ---------- */
@@ -91,7 +150,57 @@
     padding: 96px 0;
   }
   .membership-root .gantt-wrap,
-  .membership-root .gantt-notice {
+  .membership-root .chsched-notice {
     max-width: calc(100% - 40px);
+  }
+  /* .chsched > .wrap 이 좌우 패딩을 0 으로 지워서(간트를 화면 끝까지 쓰려고)
+     헤더 텍스트가 화면 끝에 붙는다. 헤더에만 다시 넣는다 — 간트와 같은 20px. */
+  .membership-root .chsched .sec-head {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .membership-root .gantt-scroll,
+  .membership-root .gantt-fade {
+    border-radius: 14px;
+  }
+  .membership-root .gantt-fade {
+    width: 40px;
+    border-radius: 0 14px 14px 0;
+  }
+  /* 좁아지면 안내 문구 위, 이용 기간 카드 아래로 세로 스택 */
+  .membership-root .chsched-notice {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 14px;
+  }
+  .membership-root .chsched-notice-lead {
+    font-size: 17px;
+  }
+  .membership-root .chsched-notice-desc {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .membership-root .chsched-period {
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .membership-root .chsched-period-ic {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .membership-root .chsched-period-ic svg {
+    width: 18px;
+    height: 18px;
+  }
+  .membership-root .chsched-period-label {
+    font-size: 12px;
+  }
+  .membership-root .chsched-period-value {
+    font-size: 16px;
   }
 }
