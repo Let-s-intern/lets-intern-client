@@ -72,6 +72,7 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
         subtitle: '고민에 맞는 유형을 골라보세요.',
         items: [
           {
+            id: 11,
             typeName: '이력서 피드백',
             title: '이력서를 정리하고 싶다면',
             description: '경험과 역량이 잘 보이도록 점검해요.',

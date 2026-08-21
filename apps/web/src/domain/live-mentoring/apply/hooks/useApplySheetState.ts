@@ -66,11 +66,22 @@ export function useApplySheetState() {
 
   const close = useCallback(() => setIsOpen(false), []);
 
+  /*
+    필수 입력이 전부 찼는지. 슬롯 개수까지 보는 이유는 60분 플랜에서 한 칸만 잡힌
+    상태로 신청이 나가면 서버 validateSlotsAreConsecutive 에서 400 이 나기 때문이다.
+  */
+  const canSubmit =
+    draft.duration !== null &&
+    draft.slots.length === (draft.duration === 60 ? 2 : 1) &&
+    draft.mentoringTypeIds.length > 0 &&
+    draft.agreedToScheduleChange;
+
   return {
     isOpen,
     open,
     close,
     draft,
+    canSubmit,
     selectDuration,
     clearDuration,
     selectSlots,

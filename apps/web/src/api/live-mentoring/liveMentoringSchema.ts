@@ -154,6 +154,14 @@ export const liveMentoringTemplateSchema = z.object({
     subtitle: z.string(),
     items: z.array(
       z.object({
+        /**
+         * `LiveMentoringTypeCard` 의 id.
+         *
+         * 신청 생성 DTO 가 `mentoringTypeIds`(`List<Long>`, `@NotEmpty`)를 요구하고
+         * 서버가 이 id 로 카드를 대조한다. 상세 응답에 없던 것을 서버 Push 0 이
+         * 추가했다 — 없으면 프론트가 신청 자체를 만들 수 없다.
+         */
+        id: z.number(),
         typeName: z.string(),
         title: z.string(),
         description: z.string(),

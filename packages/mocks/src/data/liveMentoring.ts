@@ -139,6 +139,8 @@ export interface LiveMentoringTemplate {
     title: string;
     subtitle: string;
     items: {
+      /** `LiveMentoringTypeCard` 의 id. 신청 생성 DTO 의 `mentoringTypeIds` 가 이 값을 쓴다. */
+      id: number;
       typeName: string;
       title: string;
       description: string;
@@ -784,6 +786,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
   LiveMentoringTemplate['mentoringTypes']['items'][number]
 > = {
   PERSONAL_STATEMENT: {
+    id: 1,
     typeName: '자기소개서 피드백',
     title: '지원 직무에 맞게\n자기소개서를 다듬고 싶다면',
     description:
@@ -791,6 +794,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
     tags: ['문항 분석', '경험 정리', '표현 개선'],
   },
   RESUME: {
+    id: 2,
     typeName: '이력서 피드백',
     title: '내 경험이 강점으로 보이도록\n이력서를 정리하고 싶다면',
     description:
@@ -798,6 +802,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
     tags: ['경험 정리', '역량 강조', '실무자 피드백'],
   },
   PORTFOLIO: {
+    id: 3,
     typeName: '포트폴리오 피드백',
     title: '포트폴리오에서 핵심 역량이\n잘 드러나는지 점검받고 싶다면',
     description:

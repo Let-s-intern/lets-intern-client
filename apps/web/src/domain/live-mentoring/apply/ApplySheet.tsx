@@ -7,6 +7,8 @@ import type {
   LiveMentoringSlot,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import type { ApplySheetState } from './hooks/useApplySheetState';
+import AgreementSection from './section/AgreementSection';
+import MentoringTypeSection from './section/MentoringTypeSection';
 import PlanSelectSection from './section/PlanSelectSection';
 import ScheduleSelectSection from './section/ScheduleSelectSection';
 import type { ApplyDraft } from './types';
@@ -31,7 +33,7 @@ interface ApplySheetProps {
  * 잠그지 않으면 끝에 닿는 순간 뒤 페이지가 따라 움직여 어디를 보고 있는지 잃는다.
  */
 const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
-  const { isOpen, close, draft } = sheet;
+  const { isOpen, close, draft, canSubmit } = sheet;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -89,6 +91,17 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             selectedSlots={draft.slots}
             onSelectSlots={sheet.selectSlots}
           />
+
+          <AgreementSection
+            checked={draft.agreedToScheduleChange}
+            onChange={sheet.setAgreed}
+          />
+
+          <MentoringTypeSection
+            items={detail.template.mentoringTypes.items}
+            selectedIds={draft.mentoringTypeIds}
+            onToggle={sheet.toggleMentoringType}
+          />
         </div>
 
         <div className="flex shrink-0 gap-3 px-5 pb-5 pt-4 md:px-8 md:pb-8">
@@ -102,6 +115,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
           <button
             type="button"
             onClick={() => onSubmit(draft)}
+            disabled={!canSubmit}
             className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 flex-[1.4] rounded-sm py-3 font-medium text-white"
           >
             신청하기

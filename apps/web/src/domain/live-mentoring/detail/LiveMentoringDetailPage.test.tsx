@@ -67,6 +67,7 @@ function detail(overrides: Record<string, unknown> = {}) {
             subtitle: '고민에 맞는 유형을 골라보세요.',
             items: [
               {
+                id: 7,
                 typeName: '포트폴리오 피드백',
                 title: '핵심 역량을 점검받고 싶다면',
                 description: '프로젝트 구성을 점검할 수 있어요.',

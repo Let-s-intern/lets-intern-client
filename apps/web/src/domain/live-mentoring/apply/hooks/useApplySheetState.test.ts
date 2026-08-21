@@ -112,6 +112,55 @@ describe('useApplySheetState', () => {
     expect(result.current.draft.mentoringTypeIds).toEqual([2]);
   });
 
+  describe('canSubmit — 필수 입력이 다 찼을 때만 참', () => {
+    const fill = (result: {
+      current: ReturnType<typeof useApplySheetState>;
+    }) => {
+      act(() => result.current.selectDuration(30));
+      act(() => result.current.selectSlots([SLOT_10_00]));
+      act(() => result.current.toggleMentoringType(1));
+      act(() => result.current.setAgreed(true));
+    };
+
+    it('플랜·슬롯·유형·동의가 모두 차면 참이다', () => {
+      const { result } = renderHook(() => useApplySheetState());
+      fill(result);
+      expect(result.current.canSubmit).toBe(true);
+    });
+
+    it('동의를 풀면 거짓으로 돌아간다', () => {
+      const { result } = renderHook(() => useApplySheetState());
+      fill(result);
+      act(() => result.current.setAgreed(false));
+      expect(result.current.canSubmit).toBe(false);
+    });
+
+    it('유형을 하나도 안 고르면 거짓이다', () => {
+      const { result } = renderHook(() => useApplySheetState());
+      fill(result);
+      act(() => result.current.toggleMentoringType(1));
+      expect(result.current.draft.mentoringTypeIds).toEqual([]);
+      expect(result.current.canSubmit).toBe(false);
+    });
+
+    /*
+      60분 플랜에서 한 칸만 잡힌 채 신청이 나가면 서버
+      validateSlotsAreConsecutive 에서 400 이 난다.
+    */
+    it('60분 플랜인데 슬롯이 한 칸뿐이면 거짓이다', () => {
+      const { result } = renderHook(() => useApplySheetState());
+      act(() => result.current.selectDuration(60));
+      act(() => result.current.selectSlots([SLOT_10_00]));
+      act(() => result.current.toggleMentoringType(1));
+      act(() => result.current.setAgreed(true));
+
+      expect(result.current.canSubmit).toBe(false);
+
+      act(() => result.current.selectSlots([SLOT_10_00, SLOT_10_30]));
+      expect(result.current.canSubmit).toBe(true);
+    });
+  });
+
   it('동의 체크는 플랜·슬롯 선택에 영향을 주지 않는다', () => {
     const { result } = renderHook(() => useApplySheetState());
 
