@@ -202,6 +202,8 @@ export interface LiveMentorChallenge {
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export interface LiveMentorDetail {
   mentorId: number;
+  /** 이 상품이 현재 열려 있는 개설 id. 신청 생성 경로에 들어간다. */
+  openingId: number;
   /** 상품명 — 히어로 제목. */
   title: string;
   categories: LiveMentoringCategory[];
@@ -930,6 +932,8 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
       seed.mentorId,
       {
         mentorId: seed.mentorId,
+        // 목에서는 멘토 1명당 개설 1건으로 본다 — 실제 값은 서버가 준다.
+        openingId: seed.mentorId,
         title: mentoringTitleFor(seed),
         categories: categoriesFor(seed),
         durations: durationsFor(seed),

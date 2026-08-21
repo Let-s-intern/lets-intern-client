@@ -228,6 +228,14 @@ export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export const liveMentorDetailSchema = z.object({
   mentorId: z.number(),
+  /**
+   * 이 상품이 현재 열려 있는 개설의 id.
+   *
+   * 신청 생성 경로가 `POST /live-mentoring/openings/{openingId}/applications` 라
+   * 결제 페이지가 이 값을 들고 가야 한다. 서버는 예전부터 내려주고 있었는데
+   * 스키마에 없어 zod 가 버리고 있었다.
+   */
+  openingId: z.number(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),

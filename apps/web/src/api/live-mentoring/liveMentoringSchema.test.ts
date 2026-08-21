@@ -39,6 +39,8 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
   return {
     title: '자소서장인 멘토의 1:1 멘토링',
     mentorId: 1,
+    // 신청 생성 경로(`/openings/{openingId}/applications`)에 들어가는 값.
+    openingId: 500,
     categories: ['RESUME'],
     durations: [30],
     durationPrices: [{ duration: 60, price: 60000 }],

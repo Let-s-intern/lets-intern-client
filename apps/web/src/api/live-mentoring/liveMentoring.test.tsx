@@ -188,6 +188,7 @@ describe('useLiveMentorDetailQuery', () => {
       data: {
         data: {
           mentorId: 3,
+          openingId: 6,
           title: '포폴메이커 멘토의 1:1 멘토링',
           categories: ['PORTFOLIO'],
           durations: [60],
