@@ -9,6 +9,8 @@ const questionItemSchema = z.object({
   answerStatus: z.enum(['WAITING', 'COMPLETED']),
   answer: z.string().nullable(),
   isVisible: z.boolean(),
+  // 서버 배포 전이면 필드가 없다. 없으면 안 읽음으로 본다
+  isAnswerRead: z.boolean().optional().default(false),
   createDate: z.string(),
 });
 
@@ -57,6 +59,19 @@ export const useEditQuestionMutation = (challengeId: number) => {
       content: string;
     }) =>
       axios.patch(`/challenge/${challengeId}/questions/${questionId}`, body),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [QUESTION_QUERY_KEY, challengeId],
+      }),
+  });
+};
+
+/** 공개된 답변을 확인했다고 서버에 표시한다 */
+export const useMarkQuestionReadMutation = (challengeId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (questionId: number) =>
+      axios.patch(`/challenge/${challengeId}/questions/${questionId}/read`),
     onSuccess: () =>
       queryClient.invalidateQueries({
         queryKey: [QUESTION_QUERY_KEY, challengeId],
