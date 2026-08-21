@@ -11,6 +11,7 @@ import {
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringQuestionSchema,
+  liveMentoringRefundPreviewSchema,
   liveMentoringSlotListSchema,
   myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
@@ -243,6 +244,71 @@ export const useUpdateLiveMentoringQuestionMutation = (
       });
       queryClient.invalidateQueries({
         queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/** 예정 환불금액 query key prefix. */
+export const LIVE_MENTORING_REFUND_PREVIEW_QUERY_KEY = [
+  'liveMentoring',
+  'refundPreview',
+] as const;
+
+/**
+ * GET /live-mentoring/applications/{applicationId}/refund-preview — 예정 환불금액.
+ *
+ * 수수료율·수수료·환불액을 서버가 계산해 준다. 화면은 계산하지 않고 그리기만 한다.
+ */
+export const useLiveMentoringRefundPreviewQuery = (
+  applicationId: number | null,
+) => {
+  return useQuery({
+    queryKey: [...LIVE_MENTORING_REFUND_PREVIEW_QUERY_KEY, { applicationId }],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/live-mentoring/applications/${applicationId}/refund-preview`,
+      );
+      return liveMentoringRefundPreviewSchema.parse(res.data.data);
+    },
+    enabled: applicationId !== null,
+    /*
+      수수료는 시간이 지나면 구간이 바뀐다. 캐시된 값을 그대로 보여주면 화면의
+      환불액과 실제 취소 금액이 어긋나므로 화면에 들어올 때마다 다시 받는다.
+    */
+    staleTime: 0,
+  });
+};
+
+/**
+ * POST /live-mentoring/applications/{applicationId}/cancel — 결제 취소.
+ *
+ * 서버가 Toss 부분 취소를 부르고 슬롯을 되돌린다. 그래서 성공하면
+ * **슬롯 목록과 신청현황을 함께 무효화한다** — 남겨 두면 방금 풀린 시간이 여전히
+ * 예약 불가로 보이고, 마이페이지에는 취소된 신청이 남는다.
+ *
+ * 되돌릴 수 없는 요청이라 재시도를 켜지 않는다. 실패가 정말 실패인지 알 수 없는
+ * 상태에서 자동으로 한 번 더 부르면 이중 취소가 될 수 있다.
+ */
+export const useCancelLiveMentoringApplicationMutation = (
+  applicationId: number,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    retry: false,
+    mutationFn: async () => {
+      const res = await axios.post(
+        `/live-mentoring/applications/${applicationId}/cancel`,
+      );
+      return liveMentoringRefundPreviewSchema.parse(res.data.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: LIVE_MENTOR_SLOTS_QUERY_KEY });
+      queryClient.invalidateQueries({
+        queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_REFUND_PREVIEW_QUERY_KEY,
       });
     },
   });

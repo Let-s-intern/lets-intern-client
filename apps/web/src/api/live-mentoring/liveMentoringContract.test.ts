@@ -12,6 +12,7 @@ import {
   confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentoringQuestionSchema,
+  liveMentoringRefundPreviewSchema,
   myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
 
@@ -283,5 +284,86 @@ describe('실제 서버 응답 대조 — 멘토링 질문', () => {
     });
     expect(parsed.deferred).toBe(true);
     expect(parsed.content).toBeNull();
+  });
+});
+
+/*
+  8.1.Q1 — Push 6 의 `refund-preview` 가 실제로 내려준 응답이다 (2026-08-21,
+  `applicationId=10`, 결제금액 60,000원). 슬롯 시각을 옮겨가며 세 구간을 다 받아 왔다.
+
+  **수수료는 서버가 계산한다.** 화면은 이 숫자를 그대로 그린다 — 같은 계산이 두 곳에
+  있으면 반드시 어긋나고, 돈이 걸린 화면에서 그 차이는 곧 사고다.
+*/
+const REFUND_OVER_48H = {
+  applicationId: 10,
+  paymentId: null,
+  orderId: 'GHiV6ewvHOw4',
+  originalPrice: 60000,
+  productDiscount: 0,
+  couponDiscount: 0,
+  paidAmount: 60000,
+  cancelFeePercent: 0,
+  cancelFee: 0,
+  refundAmount: 60000,
+  reservationStartAt: '2026-09-13T10:00:00',
+  cancelable: true,
+};
+
+describe('실제 서버 응답 대조 — 예정 환불금액', () => {
+  it('48시간 초과 구간 응답이 스키마를 통과한다', () => {
+    const parsed = liveMentoringRefundPreviewSchema.parse(REFUND_OVER_48H);
+    expect(parsed.cancelFeePercent).toBe(0);
+    expect(parsed.refundAmount).toBe(60000);
+    expect(parsed.cancelable).toBe(true);
+  });
+
+  /* 슬롯을 36시간 뒤로 옮겨 실제로 받은 응답이다. 시안 `4-0` 의 50% 화면이 이것이다. */
+  it('24~48시간 구간은 50% 를 떼고 절반을 돌려준다', () => {
+    const parsed = liveMentoringRefundPreviewSchema.parse({
+      ...REFUND_OVER_48H,
+      cancelFeePercent: 50,
+      cancelFee: 30000,
+      refundAmount: 30000,
+    });
+    expect(parsed.cancelFee).toBe(30000);
+    expect(parsed.refundAmount).toBe(30000);
+    expect(parsed.cancelable).toBe(true);
+  });
+
+  /*
+    슬롯을 12시간 뒤로 옮겨 실제로 받은 응답이다. 돌려줄 돈이 없어 `cancelable` 이
+    false 로 온다 — 화면은 이 값으로 취소 버튼을 잠근다.
+  */
+  it('24시간 이내는 환불액이 0 이고 취소 자체가 막힌다', () => {
+    const parsed = liveMentoringRefundPreviewSchema.parse({
+      ...REFUND_OVER_48H,
+      cancelFeePercent: 100,
+      cancelFee: 60000,
+      refundAmount: 0,
+      cancelable: false,
+    });
+    expect(parsed.refundAmount).toBe(0);
+    expect(parsed.cancelable).toBe(false);
+  });
+
+  /* Toss 결제가 아직 붙지 않은 신청은 paymentId 가 null 로 온다. */
+  it('paymentId 가 null 이어도 파싱된다', () => {
+    expect(
+      liveMentoringRefundPreviewSchema.parse(REFUND_OVER_48H).paymentId,
+    ).toBeNull();
+  });
+
+  /*
+    결제 대기(PAYMENT_PENDING) 신청에 물으면 409 다. 실측한 응답이고, 화면은 이
+    코드를 받으면 취소할 수 없는 건으로 안내한다.
+  */
+  it('결제되지 않은 신청은 전용 에러코드로 거절된다', () => {
+    const error = {
+      status: 409,
+      code: 'LIVE_MENTORING_INVALID_STATE',
+      message: '요청한 라이브 멘토링 상태 전이를 수행할 수 없습니다.',
+    };
+    expect(() => liveMentoringRefundPreviewSchema.parse(error)).toThrow();
+    expect(error.code).toBe('LIVE_MENTORING_INVALID_STATE');
   });
 });

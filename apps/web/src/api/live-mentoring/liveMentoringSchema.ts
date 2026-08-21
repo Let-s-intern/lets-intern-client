@@ -522,3 +522,39 @@ export const updateLiveMentoringQuestionRequestSchema = z.object({
 export type UpdateLiveMentoringQuestionRequest = z.infer<
   typeof updateLiveMentoringQuestionRequestSchema
 >;
+
+// ── 환불 미리보기·취소 (GET refund-preview / POST cancel) ───────────────────
+
+/**
+ * 예정 환불금액 — 백엔드 `GetLiveMentoringRefundPreviewResponseDto`.
+ * 취소 응답도 같은 형태다(서버 `cancel` 이 이 DTO 를 그대로 돌려준다).
+ *
+ * **금액과 수수료율은 전부 서버가 계산한다.** 화면은 그대로 그린다 — 같은 계산이
+ * 두 곳에 있으면 반드시 어긋나고, 돈이 걸린 화면에서 그 차이는 곧 사고다.
+ * 서버 DTO 주석도 같은 말을 한다.
+ *
+ * `cancelable` 은 환불받을 금액이 남아 있는 구간인지를 서버가 판단한 값이다.
+ * 화면이 48시간·24시간 경계를 다시 계산하면 시계 차이로 어긋난다.
+ *
+ * 금액은 **결제 시점 스냅샷**이라 상품 가격이 바뀌어도 실제로 낸 금액을 기준으로 한다.
+ */
+export const liveMentoringRefundPreviewSchema = z.object({
+  applicationId: z.number(),
+  /** Toss 결제가 아직 붙지 않았으면 null. */
+  paymentId: z.number().nullable(),
+  orderId: z.string(),
+  originalPrice: z.number(),
+  productDiscount: z.number(),
+  couponDiscount: z.number(),
+  /** 실제로 결제된 금액. 환불 계산의 기준이다. */
+  paidAmount: z.number(),
+  /** 서버 정책이 정한 취소 수수료율(%). 화면은 이 숫자를 그대로 쓴다. */
+  cancelFeePercent: z.number(),
+  cancelFee: z.number(),
+  refundAmount: z.number(),
+  reservationStartAt: z.string(),
+  cancelable: z.boolean(),
+});
+export type LiveMentoringRefundPreview = z.infer<
+  typeof liveMentoringRefundPreviewSchema
+>;

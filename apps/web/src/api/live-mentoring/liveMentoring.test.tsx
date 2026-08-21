@@ -6,7 +6,10 @@ import axios from '@/utils/axios';
 import {
   LIVE_MENTOR_SLOTS_QUERY_KEY,
   LIVE_MENTORING_QUESTION_QUERY_KEY,
+  LIVE_MENTORING_REFUND_PREVIEW_QUERY_KEY,
   MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+  useCancelLiveMentoringApplicationMutation,
+  useLiveMentoringRefundPreviewQuery,
   useLiveMentoringQuestionQuery,
   useMyLiveMentoringApplicationsQuery,
   useUpdateLiveMentoringQuestionMutation,
@@ -715,5 +718,124 @@ describe('useUpdateLiveMentoringQuestionMutation', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(invalidate).not.toHaveBeenCalled();
+  });
+});
+
+const REFUND_PREVIEW = {
+  applicationId: 10,
+  paymentId: null,
+  orderId: 'GHiV6ewvHOw4',
+  originalPrice: 60000,
+  productDiscount: 0,
+  couponDiscount: 0,
+  paidAmount: 60000,
+  cancelFeePercent: 50,
+  cancelFee: 30000,
+  refundAmount: 30000,
+  reservationStartAt: '2026-09-13T10:00:00',
+  cancelable: true,
+};
+
+describe('useLiveMentoringRefundPreviewQuery', () => {
+  it('신청 id 경로로 조회하고 서버가 계산한 금액을 그대로 받는다', async () => {
+    axiosGet.mockResolvedValue({ data: { data: REFUND_PREVIEW } });
+
+    const { result } = renderHook(
+      () => useLiveMentoringRefundPreviewQuery(10),
+      { wrapper: createWrapper(newClient()) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosGet).toHaveBeenCalledWith(
+      '/live-mentoring/applications/10/refund-preview',
+    );
+    expect(result.current.data?.cancelFeePercent).toBe(50);
+    expect(result.current.data?.refundAmount).toBe(30000);
+  });
+
+  it('신청 id 가 null 이면 조회하지 않는다', () => {
+    renderHook(() => useLiveMentoringRefundPreviewQuery(null), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+});
+
+describe('useCancelLiveMentoringApplicationMutation', () => {
+  it('취소를 요청하고 응답을 파싱한다', async () => {
+    axiosPost.mockResolvedValue({ data: { data: REFUND_PREVIEW } });
+
+    const { result } = renderHook(
+      () => useCancelLiveMentoringApplicationMutation(10),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate();
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosPost).toHaveBeenCalledWith(
+      '/live-mentoring/applications/10/cancel',
+    );
+    expect(result.current.data?.refundAmount).toBe(30000);
+  });
+
+  /*
+    서버가 Toss 부분 취소를 부르고 슬롯을 되돌린다. 무효화하지 않으면 방금 풀린
+    시간이 여전히 예약 불가로 보이고, 마이페이지에는 취소된 신청이 남는다.
+  */
+  it('취소 성공 시 슬롯·신청현황·환불 미리보기를 함께 무효화한다', async () => {
+    axiosPost.mockResolvedValue({ data: { data: REFUND_PREVIEW } });
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCancelLiveMentoringApplicationMutation(10),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate();
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTOR_SLOTS_QUERY_KEY,
+    });
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+    });
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_REFUND_PREVIEW_QUERY_KEY,
+    });
+  });
+
+  it('취소가 실패하면 아무것도 무효화하지 않는다', async () => {
+    axiosPost.mockRejectedValue(new Error('409'));
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useCancelLiveMentoringApplicationMutation(10),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate();
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  /*
+    되돌릴 수 없는 요청이다. 실패가 정말 실패인지 알 수 없는 상태에서 자동으로
+    한 번 더 부르면 이중 취소가 될 수 있다.
+  */
+  it('실패해도 자동으로 다시 부르지 않는다', async () => {
+    axiosPost.mockRejectedValue(new Error('409'));
+
+    const { result } = renderHook(
+      () => useCancelLiveMentoringApplicationMutation(10),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate();
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(axiosPost).toHaveBeenCalledTimes(1);
   });
 });
