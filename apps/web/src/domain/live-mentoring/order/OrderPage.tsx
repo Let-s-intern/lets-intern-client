@@ -7,6 +7,8 @@ import { useUserQuery } from '@/api/user/user';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
 import ApplicantFormSection from './section/ApplicantFormSection';
 import ProgramCardSection from './section/ProgramCardSection';
+import QuestionSection from './section/QuestionSection';
+import { EMPTY_QUESTION, type QuestionInput } from './types';
 
 interface OrderPageProps {
   /**
@@ -39,6 +41,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   const [sameAsAccountEmail, setSameAsAccountEmail] = useState(true);
   const [typedContactEmail, setTypedContactEmail] = useState('');
   const contactEmail = sameAsAccountEmail ? accountEmail : typedContactEmail;
+  const [question, setQuestion] = useState<QuestionInput>(EMPTY_QUESTION);
 
   /*
     선택값 없이 이 주소에 닿는 경로는 둘이다 — 새로고침, 그리고 주소창 직접 입력.
@@ -90,6 +93,8 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
           if (!same) setTypedContactEmail(contactEmail);
         }}
       />
+
+      <QuestionSection value={question} onChange={setQuestion} />
 
       {/*
         TODO(7-7): 시안 `2-0` 의 "마감까지 3일 23시간 58분 58초" 배너 자리.
