@@ -46,8 +46,14 @@ describe('challengeSchedule 데이터 무결성', () => {
   });
 
   it('헤더와 안내 박스 문구가 모두 채워져 있다', () => {
-    expect(CHALLENGE_SCHEDULE.title.length).toBeGreaterThan(0);
-    expect(CHALLENGE_SCHEDULE.subtitle.length).toBeGreaterThan(0);
+    // 제목·설명은 의미 단위로 잘려 있다. 폭에 따라 base.css 의 .brk 가 붙인다.
+    for (const lines of [
+      CHALLENGE_SCHEDULE.titleLines,
+      CHALLENGE_SCHEDULE.subtitleLines,
+    ]) {
+      expect(lines.length).toBeGreaterThan(1);
+      for (const line of lines) expect(line.trim()).not.toBe('');
+    }
     expect(CHALLENGE_SCHEDULE.noticeLead.length).toBeGreaterThan(0);
     expect(CHALLENGE_SCHEDULE.noticeHighlightSuffix).toMatch(/신청가능/);
     expect(CHALLENGE_SCHEDULE.noticeDescription.length).toBeGreaterThan(0);

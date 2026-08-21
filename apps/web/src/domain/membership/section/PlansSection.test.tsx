@@ -29,11 +29,12 @@ describe('PlansSection', () => {
   });
 
   it('시안 헤더 카피를 렌더한다', () => {
-    render(<PlansSection />);
+    const { container } = render(<PlansSection />);
     expect(screen.getByText('가격 플랜')).toBeInTheDocument();
-    expect(
-      screen.getByText('공채 준비에 필요한 것만 모아, 부담은 줄였어요'),
-    ).toBeInTheDocument();
+    // 제목은 의미 단위 두 줄로 나뉘어 있다(base.css 의 .brk 가 폭에 따라 붙인다).
+    expect(container.querySelector('.sec-head h2')?.textContent).toBe(
+      '공채 준비에 필요한 것만 모아,부담은 줄였어요',
+    );
     expect(screen.getByText(PLAN_NAME)).toBeInTheDocument();
   });
 

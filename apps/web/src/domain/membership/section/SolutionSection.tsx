@@ -62,11 +62,17 @@ export default function SolutionSection() {
       <div className="wrap">
         <div className="sec-head rv in">
           <span className="eyebrow">{SOLUTION.badge}</span>
+          {/* 마지막 줄(두 번째 문장)은 어느 폭에서도 새 줄이다 — .brk-line.
+              앞의 두 줄은 601px 이상에서 붙어 시안 2.png 의 2줄이 된다 — .brk. */}
           <h2>
             {SOLUTION.titleLines.map((line, i) => (
-              <span key={i}>
+              <span
+                className={
+                  i === SOLUTION.titleLines.length - 1 ? 'brk-line' : 'brk'
+                }
+                key={line}
+              >
                 <HeadlineLine line={line} highlight={SOLUTION.titleHighlight} />
-                {i < SOLUTION.titleLines.length - 1 && <br />}
               </span>
             ))}
           </h2>

@@ -34,9 +34,15 @@ export const GANTT_ALT =
  * `useMembershipChallengeData()` 로 읽어 섹션에서 포맷한다.
  */
 export const CHALLENGE_SCHEDULE = {
-  title: '챌린지 일정을 참고해서 늦지 않게 신청하세요!',
-  subtitle:
-    '서류부터 인적성·면접까지, 필요한 프로그램을 시기에 맞춰 준비하세요.',
+  /**
+   * 의미가 끊기는 자리에서 자른다. 601px 이상에서는 각각 한 줄로 붙는다(base.css 의 .brk).
+   * title 은 h2 라 SEO·스크린리더가 읽는 값이므로 문장을 통으로 보관한다.
+   */
+  titleLines: ['챌린지 일정을 참고해서', '늦지 않게 신청하세요!'],
+  subtitleLines: [
+    '서류부터 인적성·면접까지,',
+    '필요한 프로그램을 시기에 맞춰 준비하세요.',
+  ],
   /** 안내 박스 1줄 — 강조(파랑) 앞부분 */
   noticeLead: '원하는 챌린지들을 나의 상황에 맞게 골라,',
   /** 안내 박스 1줄 — 강조(파랑) 부분의 날짜 뒤에 붙는 꼬리 */

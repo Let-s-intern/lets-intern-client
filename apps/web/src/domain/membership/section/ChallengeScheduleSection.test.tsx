@@ -22,11 +22,13 @@ describe('ChallengeScheduleSection', () => {
 
   it('헤더는 텍스트로 그린다', () => {
     // 이미지에 넣으면 h2 가 사라져 검색에서 통째로 빠진다.
-    render(<ChallengeScheduleSection />);
-    expect(
-      screen.getByRole('heading', { name: CHALLENGE_SCHEDULE.title }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(CHALLENGE_SCHEDULE.subtitle)).toBeInTheDocument();
+    const { container } = render(<ChallengeScheduleSection />);
+    expect(container.querySelector('.sec-head h2')?.textContent).toBe(
+      CHALLENGE_SCHEDULE.titleLines.join(''),
+    );
+    expect(container.querySelector('.sec-head p')?.textContent).toBe(
+      CHALLENGE_SCHEDULE.subtitleLines.join(''),
+    );
   });
 
   it('이미지는 간트 패널 한 장뿐이다', () => {

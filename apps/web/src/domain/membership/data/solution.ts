@@ -21,8 +21,14 @@ export interface SolutionSatellite {
 
 export const SOLUTION = {
   badge: '공채 준비 올인원 패스 구성',
+  /**
+   * 제목 — 의미가 끊기는 자리에서 자른다.
+   * 601px 이상에서는 1·2줄이 붙어 시안 2.png 의 2줄이 된다. 모바일은 3줄이다.
+   * (붙였다 떼는 것은 base.css 의 .brk / .brk-line)
+   */
   titleLines: [
-    '따로 준비하면 비싸고 복잡한 공채 준비를',
+    '따로 준비하면 비싸고 복잡한',
+    '공채 준비를',
     '렛츠커리어가 하나로 묶었어요',
   ],
   /** titleLines 안에서 파란색으로 강조할 어절 */
