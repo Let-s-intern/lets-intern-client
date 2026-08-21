@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { extractVersion, fitVerFontSize } from './generateThumbnail';
+import {
+  extractVersion,
+  fitVerFontSize,
+  resolveThumbnailImage,
+} from './generateThumbnail';
 
 describe('extractVersion', () => {
   it('제목 앞 대괄호 안의 문구를 그대로 반환한다', () => {
@@ -63,5 +67,40 @@ describe('fitVerFontSize', () => {
       const fontSize = fitVerFontSize(textWidth);
       expect((textWidth * fontSize) / 64).toBeLessThanOrEqual(706.2);
     }
+  });
+});
+
+describe('resolveThumbnailImage', () => {
+  it('Ver 가 있으면 그래픽이 작은 전용 이미지를 쓴다', () => {
+    expect(
+      resolveThumbnailImage('EXPERIENCE_SUMMARY', '인턴·실무 경험자 Ver.'),
+    ).toBe('/images/challenge-thumbnail-experience-summary-ver.png');
+    expect(resolveThumbnailImage('PORTFOLIO', '1~3년차 주니어 Ver.')).toBe(
+      '/images/challenge-thumbnail-portfolio-ver.png',
+    );
+  });
+
+  it('Ver 가 없으면 기존 이미지를 쓴다', () => {
+    expect(resolveThumbnailImage('EXPERIENCE_SUMMARY', null)).toBe(
+      '/images/challenge-thumbnail-experience-summary.png',
+    );
+  });
+
+  it('Ver 전용 이미지가 없는 타입은 Ver 가 있어도 기존 이미지를 쓴다', () => {
+    expect(
+      resolveThumbnailImage('PERSONAL_STATEMENT_LARGE_CORP', '대기업 Ver.'),
+    ).toBe('/images/challenge-thumbnail-personal-statement-large-corp.png');
+  });
+
+  it('이력서는 Ver 가 있을 때만 생성 대상이다', () => {
+    expect(resolveThumbnailImage('CAREER_START', '대학생, 무경력자 Ver')).toBe(
+      '/images/challenge-thumbnail-career-start-ver.png',
+    );
+    expect(resolveThumbnailImage('CAREER_START', null)).toBeNull();
+  });
+
+  it('지원하지 않는 타입은 null 이다', () => {
+    expect(resolveThumbnailImage('MARKETING', 'Live 세미나 전용')).toBeNull();
+    expect(resolveThumbnailImage('MARKETING', null)).toBeNull();
   });
 });

@@ -18,10 +18,11 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import {
   extractGeneration,
+  extractVersion,
   extractWeek,
   fetchChallengeType,
   generateAndUploadThumbnail,
-  THUMBNAIL_IMAGES,
+  resolveThumbnailImage,
   THUMBNAIL_TYPE_LABELS,
   WEEK_TITLE_TEMPLATES,
 } from './utils/generateThumbnail';
@@ -61,8 +62,10 @@ const ChallengeDuplicateModal = ({
     null,
   );
 
+  // 이력서처럼 Ver 전용 이미지만 있는 타입이 있어 제목까지 봐야 지원 여부가 정해진다
   const isSupportedType =
-    challengeType !== null && challengeType in THUMBNAIL_IMAGES;
+    challengeType !== null &&
+    resolveThumbnailImage(challengeType, extractVersion(title)) !== null;
   const needsWeek =
     challengeType !== null && challengeType in WEEK_TITLE_TEMPLATES;
   const isThumbnailEnabled =
@@ -231,6 +234,8 @@ const ChallengeDuplicateModal = ({
                 <br />* 제목 앞 <strong>[ ] 안의 문구</strong>가 우측 상단
                 배너로 들어갑니다. 없으면 배너 없이 생성됩니다. (ex. [인턴·실무
                 경험자 Ver.])
+                <br />* 이력서 챌린지는 <strong>[ ] 문구가 있어야</strong>
+                가능합니다.
               </p>
             </div>
             <FormControlLabel
