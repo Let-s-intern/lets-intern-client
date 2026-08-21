@@ -1,0 +1,158 @@
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
+
+import type { LiveMentoringSlot } from '@/api/live-mentoring/liveMentoringSchema';
+import type { SelectedApplySlot } from '../types';
+import { useSlotSelection } from './useSlotSelection';
+
+const DATE = '2026-09-14';
+
+const slot = (
+  slotId: number,
+  time: string,
+  endTime: string,
+  status: LiveMentoringSlot['status'] = 'OPEN',
+): LiveMentoringSlot => ({
+  slotId,
+  startDate: `${DATE}T${time}:00`,
+  endDate: `${DATE}T${endTime}:00`,
+  status,
+});
+
+/** 09:30~11:00 이 30분씩 세 칸 연속, 그리고 뒤가 끊긴 14:00 한 칸. */
+const SLOTS = [
+  slot(144, '09:30', '10:00'),
+  slot(145, '10:00', '10:30'),
+  slot(146, '10:30', '11:00'),
+  slot(160, '14:00', '14:30'),
+];
+
+function setup(
+  duration: 30 | 60 | null,
+  slots: LiveMentoringSlot[] = SLOTS,
+  selectedSlots: SelectedApplySlot[] = [],
+) {
+  const onSelectSlots = jest.fn();
+  const { result } = renderHook(() =>
+    useSlotSelection({
+      slots,
+      date: DATE,
+      duration,
+      selectedSlots,
+      onSelectSlots,
+    }),
+  );
+  const statusOf = (time: string) =>
+    result.current.options.find((option) => option.time === time)?.status;
+  return { result, onSelectSlots, statusOf };
+}
+
+describe('useSlotSelection — 30분 플랜', () => {
+  it('슬롯 1개만 잡는다', () => {
+    const { result, onSelectSlots } = setup(30);
+
+    result.current.onSelect('10:00');
+
+    expect(onSelectSlots).toHaveBeenCalledWith([
+      {
+        slotId: 145,
+        date: DATE,
+        time: '10:00',
+        startDate: `${DATE}T10:00:00`,
+        endDate: `${DATE}T10:30:00`,
+      },
+    ]);
+  });
+
+  it('뒤가 끊긴 칸도 고를 수 있다', () => {
+    const { statusOf } = setup(30);
+    expect(statusOf('14:00')).toBe('available');
+  });
+
+  it('플랜을 아직 안 골랐으면 30분과 같게 다룬다', () => {
+    const { statusOf } = setup(null);
+    expect(statusOf('14:00')).toBe('available');
+    expect(statusOf('10:30')).toBe('available');
+  });
+});
+
+describe('useSlotSelection — 60분 플랜', () => {
+  /* (가) 시안 1-2 — 11:00 을 누르면 11:00 과 11:30 이 함께 잡힌다 */
+  it('누른 칸과 바로 다음 30분 칸을 함께 잡는다', () => {
+    const { result, onSelectSlots } = setup(60);
+
+    result.current.onSelect('09:30');
+
+    expect(onSelectSlots).toHaveBeenCalledWith([
+      expect.objectContaining({ slotId: 144, time: '09:30' }),
+      expect.objectContaining({ slotId: 145, time: '10:00' }),
+    ]);
+  });
+
+  /* (나) 그날 마지막 칸은 다음 칸이 없어 선택 자체가 막힌다 */
+  it('연속된 다음 칸이 없는 칸은 선택 불가로 표시한다', () => {
+    const { statusOf, result, onSelectSlots } = setup(60);
+
+    // 10:30 은 다음(11:00) 슬롯이 아예 없다. 14:00 도 마찬가지다.
+    expect(statusOf('10:30')).toBe('unavailable');
+    expect(statusOf('14:00')).toBe('unavailable');
+
+    result.current.onSelect('10:30');
+    expect(onSelectSlots).not.toHaveBeenCalled();
+  });
+
+  /* (다) 중간이 RESERVED 로 막히면 그 앞 칸도 60분으로는 못 쓴다 */
+  it('다음 칸이 RESERVED 면 앞 칸도 선택 불가다', () => {
+    const { statusOf } = setup(60, [
+      slot(144, '09:30', '10:00'),
+      slot(145, '10:00', '10:30', 'RESERVED'),
+      slot(146, '10:30', '11:00'),
+    ]);
+
+    expect(statusOf('09:30')).toBe('unavailable');
+    // RESERVED 칸 자체도 당연히 못 고른다
+    expect(statusOf('10:00')).toBe('unavailable');
+  });
+
+  /*
+    연속 판정은 endDate(직전) === startDate(다음) 이다. 서버가
+    validateSlotsAreConsecutive 로 같은 기준을 다시 본다 — 시각을 30분 더하는
+    식으로 흉내 내면 여기서 갈라진다.
+  */
+  it('시각이 이어져 보여도 endDate 가 맞지 않으면 잇지 않는다', () => {
+    const { statusOf } = setup(60, [
+      // 10:00 에 끝나는 것처럼 보이지만 endDate 가 09:50 이다
+      { ...slot(144, '09:30', '10:00'), endDate: `${DATE}T09:50:00` },
+      slot(145, '10:00', '10:30'),
+    ]);
+
+    expect(statusOf('09:30')).toBe('unavailable');
+  });
+
+  it('이미 잡힌 칸을 다시 누르면 두 칸이 함께 풀린다', () => {
+    const selected: SelectedApplySlot[] = [
+      {
+        slotId: 144,
+        date: DATE,
+        time: '09:30',
+        startDate: `${DATE}T09:30:00`,
+        endDate: `${DATE}T10:00:00`,
+      },
+      {
+        slotId: 145,
+        date: DATE,
+        time: '10:00',
+        startDate: `${DATE}T10:00:00`,
+        endDate: `${DATE}T10:30:00`,
+      },
+    ];
+    const { result, onSelectSlots } = setup(60, SLOTS, selected);
+
+    expect(result.current.selectedTimes).toEqual(['09:30', '10:00']);
+
+    result.current.onSelect('10:00');
+    expect(onSelectSlots).toHaveBeenCalledWith([]);
+  });
+});

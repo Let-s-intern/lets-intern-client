@@ -82,6 +82,7 @@ describe('ScheduleSelectSection', () => {
     render(
       <ScheduleSelectSection
         slots={SLOTS}
+        duration={30}
         selectedSlots={[]}
         onSelectSlots={jest.fn()}
       />,
@@ -97,6 +98,7 @@ describe('ScheduleSelectSection', () => {
     render(
       <ScheduleSelectSection
         slots={SLOTS}
+        duration={30}
         selectedSlots={[]}
         onSelectSlots={jest.fn()}
       />,
@@ -114,6 +116,7 @@ describe('ScheduleSelectSection', () => {
     render(
       <ScheduleSelectSection
         slots={SLOTS}
+        duration={30}
         selectedSlots={[]}
         onSelectSlots={jest.fn()}
       />,
@@ -132,6 +135,7 @@ describe('ScheduleSelectSection', () => {
     render(
       <ScheduleSelectSection
         slots={SLOTS}
+        duration={30}
         selectedSlots={[]}
         onSelectSlots={onSelectSlots}
       />,
@@ -154,6 +158,7 @@ describe('ScheduleSelectSection', () => {
     render(
       <ScheduleSelectSection
         slots={[]}
+        duration={30}
         selectedSlots={[]}
         onSelectSlots={jest.fn()}
       />,

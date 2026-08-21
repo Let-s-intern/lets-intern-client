@@ -85,6 +85,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
 
           <ScheduleSelectSection
             slots={slots}
+            duration={draft.duration}
             selectedSlots={draft.slots}
             onSelectSlots={sheet.selectSlots}
           />

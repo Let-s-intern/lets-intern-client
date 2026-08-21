@@ -2,30 +2,20 @@
 
 import { useMemo, useState } from 'react';
 
-import type { LiveMentoringSlot } from '@/api/live-mentoring/liveMentoringSchema';
-import type { ApplySlotOption, SelectedApplySlot } from '../types';
-import { toDateKey, toSlotLabel, toTimeKey } from '../utils';
+import type {
+  LiveMentoringDuration,
+  LiveMentoringSlot,
+} from '@/api/live-mentoring/liveMentoringSchema';
+import { useSlotSelection } from '../hooks/useSlotSelection';
+import type { SelectedApplySlot } from '../types';
 import MonthCalendar from '../ui/MonthCalendar';
 import TimeSlotButtons from '../ui/TimeSlotButtons';
-
-/**
- * 시간 그리드는 09:00~23:00 을 30분으로 끊은 고정 격자다 (시안 `1-0`).
- * 슬롯이 없는 시각도 자리를 지켜야 격자가 흔들리지 않는다.
- * 원본 `challenge/feedback/live/hooks/useTimeSlotState.ts` 와 같은 범위다.
- */
-const GRID_TIMES: string[] = Array.from({ length: 28 }, (_, i) => {
-  const minutes = 9 * 60 + i * 30;
-  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
-});
-
-const addThirtyMinutes = (time: string): string => {
-  const [h, m] = time.split(':').map(Number);
-  const total = h * 60 + m + 30;
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-};
+import { toDateKey } from '../utils';
 
 interface ScheduleSelectSectionProps {
   slots: LiveMentoringSlot[];
+  /** 고른 플랜. 60분이면 시간 칸이 연속 2개씩 잡힌다. */
+  duration: LiveMentoringDuration | null;
   selectedSlots: SelectedApplySlot[];
   onSelectSlots: (slots: SelectedApplySlot[]) => void;
 }
@@ -37,10 +27,11 @@ interface ScheduleSelectSectionProps {
  * 라이브 멘토링 슬롯 API 는 범위 없이 목록만 준다. **슬롯 배열에서 최소·최대
  * `startDate` 를 직접 뽑아 범위를 만든다.**
  *
- * 이 단계의 선택은 단일 선택이다. 60분 플랜의 연속 2슬롯은 `1.5` 다.
+ * 칸을 고르는 규칙 자체는 `useSlotSelection` 이 갖는다. 여기는 달력 이동과 배치만 한다.
  */
 const ScheduleSelectSection = ({
   slots,
+  duration,
   selectedSlots,
   onSelectSlots,
 }: ScheduleSelectSectionProps) => {
@@ -80,63 +71,13 @@ const ScheduleSelectSection = ({
     return result;
   }, [slots]);
 
-  const slotsByTime = useMemo(() => {
-    const result = new Map<string, LiveMentoringSlot>();
-    for (const slot of slots) {
-      if (toDateKey(slot.startDate) === focusedDate) {
-        result.set(toTimeKey(slot.startDate), slot);
-      }
-    }
-    return result;
-  }, [slots, focusedDate]);
-
-  const options = useMemo<ApplySlotOption[]>(
-    () =>
-      GRID_TIMES.map((time) => {
-        const slot = slotsByTime.get(time);
-        return {
-          time,
-          label: slot
-            ? toSlotLabel(slot.startDate, slot.endDate)
-            : `${time} ~ ${addThirtyMinutes(time)}`,
-          status:
-            slot && slot.status === 'OPEN'
-              ? ('available' as const)
-              : ('unavailable' as const),
-        };
-      }),
-    [slotsByTime],
-  );
-
-  const selectedTimes = selectedSlots
-    .filter((slot) => slot.date === focusedDate)
-    .map((slot) => slot.time);
-
-  const handleSelect = (time: string) => {
-    const slot = slotsByTime.get(time);
-    if (!slot) return;
-    // 같은 칸을 다시 누르면 선택을 푼다
-    if (selectedTimes.includes(time)) {
-      onSelectSlots([]);
-      return;
-    }
-    onSelectSlots([
-      {
-        slotId: slot.slotId,
-        date: focusedDate,
-        time,
-        startDate: slot.startDate,
-        endDate: slot.endDate,
-      },
-    ]);
-  };
-
-  const navigateMonth = (direction: 1 | -1) => {
-    const next = new Date(year, month + direction, 1);
-    setFocusedDate(
-      `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-01`,
-    );
-  };
+  const { options, selectedTimes, onSelect } = useSlotSelection({
+    slots,
+    date: focusedDate,
+    duration,
+    selectedSlots,
+    onSelectSlots,
+  });
 
   if (dateRange === null) {
     return (
@@ -151,6 +92,14 @@ const ScheduleSelectSection = ({
     );
   }
 
+  const focusedMonth = focusedDate.slice(0, 7);
+  const navigateMonth = (direction: 1 | -1) => {
+    const next = new Date(year, month + direction, 1);
+    setFocusedDate(
+      `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-01`,
+    );
+  };
+
   return (
     <section className="flex flex-col gap-3">
       <h3 className="text-xsmall16 text-neutral-0 font-semibold">
@@ -163,8 +112,8 @@ const ScheduleSelectSection = ({
           month={month}
           selectedDate={focusedDate}
           monthAvailability={monthAvailability}
-          canGoPrev={`${year}-${String(month + 1).padStart(2, '0')}` > dateRange.start.slice(0, 7)}
-          canGoNext={`${year}-${String(month + 1).padStart(2, '0')}` < dateRange.end.slice(0, 7)}
+          canGoPrev={focusedMonth > dateRange.start.slice(0, 7)}
+          canGoNext={focusedMonth < dateRange.end.slice(0, 7)}
           onPrev={() => navigateMonth(-1)}
           onNext={() => navigateMonth(1)}
           onDateSelect={setFocusedDate}
@@ -172,7 +121,7 @@ const ScheduleSelectSection = ({
         <TimeSlotButtons
           options={options}
           selectedTimes={selectedTimes}
-          onSelect={handleSelect}
+          onSelect={onSelect}
         />
       </div>
     </section>
