@@ -1,16 +1,18 @@
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
+
+import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import type { ApplySheetState } from './hooks/useApplySheetState';
+import PlanSelectSection from './section/PlanSelectSection';
+import type { ApplyDraft } from './types';
 
 interface ApplySheetProps {
-  isOpen: boolean;
-  /** 닫기 — 바깥 클릭·Esc·`이전 단계로` 가 모두 이걸 부른다. */
-  onClose: () => void;
+  detail: LiveMentorDetail;
+  /** 상세 페이지가 들고 있는 시트 상태. 히어로 플랜 카드도 같은 상태를 만진다. */
+  sheet: ApplySheetState;
   /** `신청하기`. 이 Push 는 콜백만 부르고, 실제 신청 생성은 Push 3 이다. */
-  onSubmit: () => void;
-  /** 필수 입력이 다 차기 전에는 `신청하기` 를 잠근다. */
-  canSubmit?: boolean;
-  children?: ReactNode;
+  onSubmit: (draft: ApplyDraft) => void;
 }
 
 /**
@@ -22,13 +24,9 @@ interface ApplySheetProps {
  * 열려 있는 동안 배경 스크롤을 잠근다. 시트 본문이 길어 자체 스크롤을 갖는데,
  * 잠그지 않으면 끝에 닿는 순간 뒤 페이지가 따라 움직여 어디를 보고 있는지 잃는다.
  */
-const ApplySheet = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  canSubmit = true,
-  children,
-}: ApplySheetProps) => {
+const ApplySheet = ({ detail, sheet, onSubmit }: ApplySheetProps) => {
+  const { isOpen, close, draft } = sheet;
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -36,7 +34,7 @@ const ApplySheet = ({
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') close();
     };
     window.addEventListener('keydown', handleKeyDown);
 
@@ -44,14 +42,14 @@ const ApplySheet = ({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, close]);
 
   if (!isOpen) return null;
 
   return (
     <div
       className="bg-neutral-0/50 fixed inset-0 z-[100] flex items-end justify-center md:items-center md:p-5"
-      onClick={onClose}
+      onClick={close}
     >
       <div
         role="dialog"
@@ -70,21 +68,25 @@ const ApplySheet = ({
         </div>
 
         <div className="flex flex-col gap-8 overflow-y-auto px-5 py-4 md:px-8">
-          {children}
+          <PlanSelectSection
+            productTitle={detail.title}
+            durationPrices={detail.durationPrices}
+            selectedDuration={draft.duration}
+            onSelect={sheet.selectDuration}
+          />
         </div>
 
         <div className="flex shrink-0 gap-3 px-5 pb-5 pt-4 md:px-8 md:pb-8">
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             className="border-primary text-primary text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
           >
             이전 단계로
           </button>
           <button
             type="button"
-            onClick={onSubmit}
-            disabled={!canSubmit}
+            onClick={() => onSubmit(draft)}
             className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 flex-[1.4] rounded-sm py-3 font-medium text-white"
           >
             신청하기

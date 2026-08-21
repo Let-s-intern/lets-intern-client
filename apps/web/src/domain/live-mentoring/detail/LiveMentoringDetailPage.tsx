@@ -346,10 +346,11 @@ const LiveMentoringDetailPage = ({
         onApplyClick={() => applySheet.open()}
       />
 
+      {/* TODO(Push 3): onSubmit 에서 신청 생성 후 결제 페이지로 보낸다 */}
       <ApplySheet
-        isOpen={applySheet.isOpen}
-        onClose={applySheet.close}
-        onSubmit={applySheet.close}
+        detail={data}
+        sheet={applySheet}
+        onSubmit={() => applySheet.close()}
       />
     </div>
   );
