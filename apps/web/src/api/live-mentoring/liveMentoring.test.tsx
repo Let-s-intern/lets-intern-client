@@ -4,6 +4,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import axios from '@/utils/axios';
 
 import {
+  LIVE_MENTOR_SLOTS_QUERY_KEY,
+  useConfirmLiveMentoringPaymentMutation,
   useCreateLiveMentoringApplicationMutation,
   useLiveMentorDetailQuery,
   useLiveMentorListQuery,
@@ -451,5 +453,108 @@ describe('useCreateLiveMentoringApplicationMutation', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBe(serverError);
+  });
+});
+
+const CONFIRM_BODY = {
+  paymentKey: 'tviva20260821',
+  orderId: 'ON5-6V4M6A57',
+  // 요청의 amount 는 문자열이다. 응답에서는 숫자로 돌아온다.
+  amount: '35000',
+};
+
+function confirmResponse() {
+  return {
+    data: {
+      data: {
+        applicationId: 14,
+        paymentId: 501,
+        orderId: 'ON5-6V4M6A57',
+        amount: 35000,
+        applicationStatus: 'CONFIRMED',
+      },
+    },
+  };
+}
+
+describe('useConfirmLiveMentoringPaymentMutation', () => {
+  it('신청 id 경로로 POST 하고 응답을 파싱한다', async () => {
+    axiosPost.mockResolvedValue(confirmResponse());
+
+    const { result } = renderHook(
+      () => useConfirmLiveMentoringPaymentMutation(14),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(CONFIRM_BODY);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosPost).toHaveBeenCalledWith(
+      '/live-mentoring/applications/14/payment/confirm',
+      CONFIRM_BODY,
+    );
+    expect(result.current.data?.applicationStatus).toBe('CONFIRMED');
+    expect(result.current.data?.amount).toBe(35000);
+  });
+
+  /*
+    승인이 끝나면 선점이 확정 예약으로 바뀐다. 슬롯 목록을 무효화하지 않으면
+    방금 잡은 시간이 여전히 예약 가능한 것처럼 보이고, 다시 누르면 서버에서
+    중복 예약으로 떨어진다.
+  */
+  it('승인 성공 시 슬롯 목록 쿼리를 무효화한다', async () => {
+    axiosPost.mockResolvedValue(confirmResponse());
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useConfirmLiveMentoringPaymentMutation(14),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate(CONFIRM_BODY);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTOR_SLOTS_QUERY_KEY,
+    });
+  });
+
+  it('승인이 실패하면 슬롯 목록을 무효화하지 않는다', async () => {
+    axiosPost.mockRejectedValue(new Error('승인 실패'));
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useConfirmLiveMentoringPaymentMutation(14),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate(CONFIRM_BODY);
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+
+    expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  it('응답의 amount 가 문자열로 오면 실패로 떨어진다', async () => {
+    axiosPost.mockResolvedValue({
+      data: {
+        data: {
+          applicationId: 14,
+          paymentId: 501,
+          orderId: 'ON5-6V4M6A57',
+          amount: '35000',
+          applicationStatus: 'CONFIRMED',
+        },
+      },
+    });
+
+    const { result } = renderHook(
+      () => useConfirmLiveMentoringPaymentMutation(14),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(CONFIRM_BODY);
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
   });
 });

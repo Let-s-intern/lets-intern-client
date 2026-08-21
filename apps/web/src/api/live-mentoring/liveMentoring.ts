@@ -1,9 +1,11 @@
 import axios from '@/utils/axios';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  type ConfirmLiveMentoringPaymentRequest,
   type CreateLiveMentoringApplicationRequest,
   type LiveMentoringCategory,
+  confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
@@ -133,6 +135,34 @@ export const useCreateLiveMentoringApplicationMutation = (
         body,
       );
       return createLiveMentoringApplicationResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+/**
+ * POST /live-mentoring/applications/{applicationId}/payment/confirm — 결제 승인.
+ *
+ * 승인이 끝나면 선점이 확정 예약으로 바뀌므로 **슬롯 목록을 반드시 무효화한다.**
+ * 남겨 두면 방금 잡은 시간이 여전히 예약 가능한 것처럼 보이고, 다시 누르면
+ * 서버에서 중복 예약으로 떨어진다.
+ *
+ * 요청의 `amount` 는 문자열이다. 응답에서는 숫자로 돌아온다 —
+ * `confirmLiveMentoringPaymentRequestSchema` 주석 참고.
+ */
+export const useConfirmLiveMentoringPaymentMutation = (
+  applicationId: number | string,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: ConfirmLiveMentoringPaymentRequest) => {
+      const res = await axios.post(
+        `/live-mentoring/applications/${applicationId}/payment/confirm`,
+        body,
+      );
+      return confirmLiveMentoringPaymentResponseSchema.parse(res.data.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: LIVE_MENTOR_SLOTS_QUERY_KEY });
     },
   });
 };
