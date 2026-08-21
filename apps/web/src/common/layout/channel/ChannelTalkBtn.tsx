@@ -11,6 +11,7 @@ type ChannelTalkBtnProps = React.ComponentProps<'button'>;
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
 const libraryDetailPathRegex = /^\/library\/\d+/; // 라이브러리 상세페이지
+const challengeDashboardPathRegex = /^\/challenge\/\d+\/\d+/; // 챌린지 대시보드 (전용 문의 버튼을 쓴다)
 const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
@@ -48,7 +49,9 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   const isFeedbackMentoringPage = pathname.startsWith(
     '/challenge/feedback-mentoring',
   );
-  const hiddenByPathname = isB2BPage || isFeedbackMentoringPage;
+  const isChallengeDashboard = challengeDashboardPathRegex.test(pathname);
+  const hiddenByPathname =
+    isB2BPage || isFeedbackMentoringPage || isChallengeDashboard;
 
   return (
     <button
