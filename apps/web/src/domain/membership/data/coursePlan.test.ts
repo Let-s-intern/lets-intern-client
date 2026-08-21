@@ -99,9 +99,9 @@ describe('coursePlan 데이터 무결성', () => {
   });
 
   describe('13주 타임라인', () => {
-    it('월 그룹은 3종(JUL/AUG/SEP)이며 액센트색을 갖는다', () => {
+    it('월 그룹은 3종(SEP/OCT/NOV)이며 액센트색을 갖는다', () => {
       expect(MONTH_GROUPS).toHaveLength(3);
-      expect(MONTH_GROUPS.map((m) => m.month)).toEqual(['JUL', 'AUG', 'SEP']);
+      expect(MONTH_GROUPS.map((m) => m.month)).toEqual(['SEP', 'OCT', 'NOV']);
       for (const m of MONTH_GROUPS) {
         expect(m.accent).toMatch(/^#[0-9a-f]{6}$/i);
       }
