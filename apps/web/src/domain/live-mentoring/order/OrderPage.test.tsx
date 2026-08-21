@@ -19,6 +19,15 @@ jest.mock('next/navigation', () => ({
   끌어와 jest 가 파싱하지 못한다. 이 테스트가 보는 것은 진입 가드라 사용자 조회는
   목으로 막는다 — 폼 동작 자체는 `ApplicantFormSection.test.tsx` 가 본다.
 */
+/* 신청 생성 훅도 axios 를 거친다. 이 테스트는 진입 가드만 본다. */
+jest.mock('@/api/live-mentoring/liveMentoring', () => ({
+  __esModule: true,
+  useCreateLiveMentoringApplicationMutation: () => ({
+    mutate: jest.fn(),
+    isPending: false,
+  }),
+}));
+
 /* 질문 블록의 파일 업로드도 같은 이유(axios → import.meta)로 막는다. */
 jest.mock('@/api/file', () => ({
   __esModule: true,
@@ -41,6 +50,7 @@ const DRAFT: LiveMentoringOrderDraft = {
   productName: '어드민 1대1 라이브 멘토링',
   thumbnail: null,
   duration: 60,
+  durationPriceId: 5,
   price: 60000,
   slots: [
     {

@@ -5,7 +5,11 @@ import { useEffect, useState } from 'react';
 
 import { useUserQuery } from '@/api/user/user';
 import { useLiveMentoringCoupon } from './hooks/useLiveMentoringCoupon';
-import { useOrderDraftStore } from './hooks/useOrderDraft';
+import {
+  useOrderDraftStore,
+  type LiveMentoringOrderDraft,
+} from './hooks/useOrderDraft';
+import { useOrderSubmit } from './hooks/useOrderSubmit';
 import ApplicantFormSection from './section/ApplicantFormSection';
 import CouponSection from './section/CouponSection';
 import PriceSection from './section/PriceSection';
@@ -112,11 +116,107 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
 
       <PriceSection price={draft.price} appliedCouponCode={coupon.appliedCode} />
 
+      <SubmitBlock
+        draft={draft}
+        contactEmail={contactEmail}
+        question={question}
+        couponCode={coupon.appliedCode}
+        customerName={user?.name ?? ''}
+        customerMobilePhone={user?.phoneNum ?? ''}
+      />
+
       {/*
         TODO(7-7): 시안 `2-0` 의 "마감까지 3일 23시간 58분 58초" 배너 자리.
         근거 데이터가 없어 그리지 않는다 — 개설에 모집 마감일 개념이 없고,
         10분 선점 만료는 자릿수가 맞지 않는다. 근거가 확정되면 여기에 넣는다.
       */}
+    </div>
+  );
+};
+
+interface SubmitBlockProps {
+  draft: LiveMentoringOrderDraft;
+  contactEmail: string;
+  question: QuestionInput;
+  couponCode: string | null;
+  customerName: string;
+  customerMobilePhone: string;
+}
+
+/**
+ * `결제하기` 버튼과 그 실패 안내.
+ *
+ * `useOrderSubmit` 은 `draft` 가 있어야 개설 id 를 안다. 선택값이 없을 때
+ * `OrderPage` 는 일찍 반환하는데 훅을 조건부로 부를 수는 없으므로 이 블록만 분리했다.
+ */
+const SubmitBlock = ({
+  draft,
+  contactEmail,
+  question,
+  couponCode,
+  customerName,
+  customerMobilePhone,
+}: SubmitBlockProps) => {
+  const {
+    submit,
+    canSubmit,
+    isContractReady,
+    isEmailValid,
+    isPending,
+    errorMessage,
+    isSlotConflict,
+    goBackToSchedule,
+  } = useOrderSubmit({
+    draft,
+    contactEmail,
+    question,
+    couponCode,
+    customerName,
+    customerMobilePhone,
+  });
+
+  return (
+    <div className="flex flex-col gap-3">
+      {!isEmailValid && (
+        <p className="text-xxsmall12 text-system-error">
+          정보 수신용 이메일 형식을 확인해 주세요.
+        </p>
+      )}
+
+      {/*
+        서버가 공개 상세에 durationPriceId 를 아직 안 내려준다. 누르면 400 이 나므로
+        미리 막고 왜 막혔는지 알린다. 서버가 추가하면 이 안내는 저절로 사라진다.
+      */}
+      {!isContractReady && (
+        <p className="text-xxsmall12 text-system-error">
+          결제에 필요한 플랜 정보를 불러오지 못했습니다. 잠시 후 다시 시도해
+          주세요.
+        </p>
+      )}
+
+      {errorMessage && (
+        <div className="bg-system-error/5 flex flex-col gap-2 rounded-sm px-4 py-3">
+          <p className="text-xsmall14 text-system-error">{errorMessage}</p>
+          {isSlotConflict && (
+            <button
+              type="button"
+              onClick={goBackToSchedule}
+              className="text-xsmall14 text-primary self-start underline"
+            >
+              일정 다시 고르기
+            </button>
+          )}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={submit}
+        disabled={!canSubmit || isPending}
+        className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 w-full rounded-sm py-4 font-medium text-white"
+      >
+        {isPending ? '신청하는 중…' : '결제하기'}
+      </button>
     </div>
   );
 };

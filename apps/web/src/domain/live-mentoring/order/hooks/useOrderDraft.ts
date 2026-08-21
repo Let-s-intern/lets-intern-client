@@ -20,6 +20,12 @@ export interface LiveMentoringOrderDraft {
   productName: string;
   thumbnail: string | null;
   duration: LiveMentoringDuration;
+  /**
+   * 신청 생성 DTO 의 `durationPriceId`.
+   * 서버가 공개 상세에서 아직 안 내려줘서 null 로 올 수 있다 — 그러면 결제하기를
+   * 막고 안내한다. 자세한 사정은 `liveMentoringSchema.ts` 의 같은 필드 주석 참고.
+   */
+  durationPriceId: number | null;
   /** 선택 플랜의 판매가. 결제 금액의 원금이다. */
   price: number;
   /** 30분은 1칸, 60분은 연속 2칸. */
@@ -28,9 +34,26 @@ export interface LiveMentoringOrderDraft {
   reservationChangeAgreed: boolean;
 }
 
+/** 신청 생성이 끝난 뒤 결제 위젯·결과 화면이 읽는 값. */
+export interface CreatedLiveMentoringApplication {
+  applicationId: number;
+  /** Toss 에 넘기는 주문번호. */
+  orderId: string;
+  /** 서버가 쿠폰까지 계산한 실제 청구액. 결제창에 뜨는 금액이다. */
+  finalAmount: number;
+  orderName: string;
+  customerName: string;
+  customerEmail: string;
+  customerMobilePhone: string;
+  /** 10분 선점 만료 시각. */
+  expiresAt: string;
+}
+
 interface OrderDraftState {
   draft: LiveMentoringOrderDraft | null;
+  application: CreatedLiveMentoringApplication | null;
   setDraft: (draft: LiveMentoringOrderDraft) => void;
+  setApplication: (application: CreatedLiveMentoringApplication) => void;
   clearDraft: () => void;
 }
 
@@ -44,6 +67,9 @@ interface OrderDraftState {
  */
 export const useOrderDraftStore = create<OrderDraftState>((set) => ({
   draft: null,
-  setDraft: (draft) => set({ draft }),
-  clearDraft: () => set({ draft: null }),
+  application: null,
+  // 새 선택으로 들어오면 직전에 만든 신청은 남길 이유가 없다
+  setDraft: (draft) => set({ draft, application: null }),
+  setApplication: (application) => set({ application }),
+  clearDraft: () => set({ draft: null, application: null }),
 }));

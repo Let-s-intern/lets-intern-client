@@ -379,6 +379,7 @@ const LiveMentoringDetailPage = ({
             productName: data.title,
             thumbnail: data.profile.profileImage,
             duration: draft.duration,
+            durationPriceId: plan.durationPriceId ?? null,
             price: plan.price,
             slots: draft.slots,
             mentoringTypeIds: draft.mentoringTypeIds,

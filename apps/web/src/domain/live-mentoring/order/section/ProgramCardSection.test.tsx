@@ -20,6 +20,7 @@ function makeDraft(
     productName: '어드민 1대1 라이브 멘토링',
     thumbnail: null,
     duration: 60,
+    durationPriceId: 5,
     price: 60000,
     slots: [slot(158, '12:00', '12:30'), slot(159, '12:30', '13:00')],
     mentoringTypeIds: [1],
