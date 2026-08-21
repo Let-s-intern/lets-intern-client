@@ -248,15 +248,17 @@ describe('useOrderSubmit — 실패 처리', () => {
   */
   it('슬롯 경합이면 일정을 다시 고르도록 안내한다', async () => {
     mutate.mockImplementation((_body, options) =>
-      options.onError({
-        response: {
-          data: {
-            // 실호출로 확인한 코드다(409). 짐작한 이름을 쓰면 분기가 안 탄다.
-            code: 'LIVE_MENTORING_SLOT_UNAVAILABLE',
-            message: '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
-          },
-        },
-      }),
+      /*
+        axios 인터셉터가 ApiError 로 바꿔서 던진다. `response` 가 없고 code·
+        serverMessage 가 최상위에 있다 — 목도 실제 형태를 따라야 분기를 검증한다.
+      */
+      options.onError(
+        Object.assign(new Error('선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.'), {
+          code: 'LIVE_MENTORING_SLOT_UNAVAILABLE',
+          status: 409,
+          serverMessage: '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
+        }),
+      ),
     );
     const { result } = setup();
 
@@ -274,9 +276,13 @@ describe('useOrderSubmit — 실패 처리', () => {
 
   it('그 밖의 실패는 서버 문구만 보여주고 일정 재선택을 권하지 않는다', async () => {
     mutate.mockImplementation((_body, options) =>
-      options.onError({
-        response: { data: { code: 'UNKNOWN', message: '서버 내부 오류입니다.' } },
-      }),
+      options.onError(
+        Object.assign(new Error('서버 내부 오류입니다.'), {
+          code: 'UNKNOWN',
+          status: 500,
+          serverMessage: '서버 내부 오류입니다.',
+        }),
+      ),
     );
     const { result } = setup();
 
@@ -289,7 +295,12 @@ describe('useOrderSubmit — 실패 처리', () => {
   });
 
   it('응답에 문구가 없어도 빈 화면을 남기지 않는다', async () => {
-    mutate.mockImplementation((_body, options) => options.onError(new Error('네트워크')));
+    // 인터셉터를 타지 못한 네트워크 오류. 서버 문구가 없다.
+    mutate.mockImplementation((_body, options) =>
+      options.onError(Object.assign(new Error('서버 오류가 발생했습니다.'), {
+        code: 'API_ERROR',
+      })),
+    );
     const { result } = setup();
 
     act(() => result.current.submit());

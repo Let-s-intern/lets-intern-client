@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useConfirmLiveMentoringPaymentMutation } from '@/api/live-mentoring/liveMentoring';
 import { formatPrice } from '../constants';
+import { readServerError } from '../utils/serverError';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
 import { formatReservationRange } from './utils';
 
@@ -60,12 +61,8 @@ const OrderResultPage = () => {
     confirmPayment.mutate(
       { paymentKey, orderId, amount },
       {
-        onError: (error) => {
-          const message = (
-            error as { response?: { data?: { message?: string } } }
-          )?.response?.data?.message;
-          setErrorMessage(message ?? DEFAULT_ERROR);
-        },
+        onError: (error) =>
+          setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
       },
     );
     // 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다

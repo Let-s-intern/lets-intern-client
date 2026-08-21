@@ -11,6 +11,7 @@ import {
 } from './useOrderDraft';
 import type { QuestionInput } from '../types';
 import { validateQuestionInput } from '../utils';
+import { readServerError } from '../../utils/serverError';
 
 /**
  * 일정을 다시 고르면 풀리는 실패들. 서버 `LiveMentoringErrorCode` 에서 실측한 값이다.
@@ -25,17 +26,6 @@ const SLOT_CONFLICT_CODES = new Set([
   'LIVE_MENTORING_SLOT_UNAVAILABLE',
   'LIVE_MENTORING_INVALID_SLOT_COMBINATION',
 ]);
-
-/** axios 에러에서 서버가 준 에러코드와 문구를 꺼낸다. */
-function readServerError(error: unknown): { code: string; message: string } {
-  const data = (
-    error as { response?: { data?: { code?: string; message?: string } } }
-  )?.response?.data;
-  return {
-    code: data?.code ?? 'UNKNOWN',
-    message: data?.message ?? '신청을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.',
-  };
-}
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -129,7 +119,10 @@ export function useOrderSubmit({
         router.push('/live-mentoring/order/payment');
       },
       onError: (error) => {
-        const { code, message } = readServerError(error);
+        const { code, message } = readServerError(
+          error,
+          '신청을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        );
         setIsSlotConflict(SLOT_CONFLICT_CODES.has(code));
         setErrorMessage(message);
       },

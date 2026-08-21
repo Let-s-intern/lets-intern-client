@@ -228,9 +228,14 @@ describe('QuestionModal — 저장', () => {
 
   it('저장에 실패하면 서버 문구를 보여주고 닫지 않는다', async () => {
     mutate.mockImplementation((_body, options) =>
-      options.onError({
-        response: { data: { message: '수정 가능 기한이 지났습니다.' } },
-      }),
+      /* 인터셉터가 만든 ApiError 형태. `response` 가 없다. */
+      options.onError(
+        Object.assign(new Error('수정 가능 기한이 지났습니다.'), {
+          code: 'LIVE_MENTORING_QUESTION_EDIT_DEADLINE_PASSED',
+          status: 409,
+          serverMessage: '수정 가능 기한이 지났습니다.',
+        }),
+      ),
     );
     const onClose = renderModal(makeQuestion());
 

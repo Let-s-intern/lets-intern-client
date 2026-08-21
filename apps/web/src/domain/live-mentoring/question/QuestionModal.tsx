@@ -14,6 +14,7 @@ import {
   type QuestionInput,
 } from '../order/types';
 import { validateQuestionInput } from '../order/utils';
+import { readServerError } from '../utils/serverError';
 
 const ACCEPTED_FILE_TYPES = '.pdf,.doc,.docx';
 
@@ -131,12 +132,13 @@ const QuestionModal = ({
       },
       {
         onSuccess: onClose,
-        onError: (error) => {
-          const message = (
-            error as { response?: { data?: { message?: string } } }
-          )?.response?.data?.message;
-          setSaveError(message ?? '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
-        },
+        onError: (error) =>
+          setSaveError(
+            readServerError(
+              error,
+              '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+            ).message,
+          ),
       },
     );
   };
