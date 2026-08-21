@@ -92,10 +92,11 @@ const ChallengeInquiryPage = () => {
       },
       {
         field: 'createDate',
-        headerName: '문의 등록일',
-        width: 150,
+        headerName: '문의 등록일시',
+        width: 170,
+        // 서버는 2026-08-21T16:11:30.865465 로 내려준다. 날짜와 시:분까지 보여준다
         valueGetter: (value: string | null | undefined) =>
-          value?.slice(0, 10) ?? '-',
+          value ? `${value.slice(0, 10)} ${value.slice(11, 16)}` : '-',
       },
       {
         field: 'answer',

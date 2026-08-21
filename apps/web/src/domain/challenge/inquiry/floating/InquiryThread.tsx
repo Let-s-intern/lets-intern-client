@@ -20,18 +20,26 @@ const AnswerBody = ({ answer }: { answer: string }) => {
 
 interface InquiryThreadProps {
   item: QuestionItem;
+  onRequestCancel: () => void;
   onBack: () => void;
   onClose: () => void;
 }
 
-const InquiryThread = ({ item, onBack, onClose }: InquiryThreadProps) => {
+const InquiryThread = ({
+  item,
+  onRequestCancel,
+  onBack,
+  onClose,
+}: InquiryThreadProps) => {
   // 답변이 달렸어도 비공개면 사용자에게는 대기로 보인다
   const showAnswer =
     item.answerStatus === 'COMPLETED' && item.isVisible && item.answer;
+  // 서버는 답변 전인 문의만 삭제를 허용한다
+  const canCancel = item.answerStatus === 'WAITING';
 
   return (
     <div className="bg-neutral-95 flex flex-1 flex-col overflow-hidden">
-      <header className="border-neutral-85 bg-static-100 flex shrink-0 items-center gap-2 border-b px-4 py-4">
+      <header className="bg-static-100 border-neutral-85 flex shrink-0 items-center gap-2 border-b px-4 py-4">
         <button
           type="button"
           aria-label="뒤로"
@@ -57,6 +65,23 @@ const InquiryThread = ({ item, onBack, onClose }: InquiryThreadProps) => {
           </div>
         </div>
 
+        {/* 본문에 붙여넣은 이미지 */}
+        {item.imageUrls.length > 0 && (
+          <ul className="flex flex-wrap justify-end gap-2">
+            {item.imageUrls.map((url) => (
+              <li key={url}>
+                <a href={url} target="_blank" rel="noreferrer">
+                  <img
+                    src={url}
+                    alt="첨부 이미지"
+                    className="rounded-xxs border-neutral-85 h-24 w-24 border object-cover"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+
         {/* 렛츠커리어 답변 */}
         {showAnswer ? (
           <div className="flex items-start gap-2">
@@ -75,6 +100,18 @@ const InquiryThread = ({ item, onBack, onClose }: InquiryThreadProps) => {
           </p>
         )}
       </div>
+
+      {canCancel && (
+        <div className="shrink-0 px-4 pb-5">
+          <button
+            type="button"
+            onClick={onRequestCancel}
+            className="text-xxsmall12 text-neutral-45 hover:text-neutral-30 mx-auto block underline underline-offset-2"
+          >
+            문의 취소하기
+          </button>
+        </div>
+      )}
     </div>
   );
 };

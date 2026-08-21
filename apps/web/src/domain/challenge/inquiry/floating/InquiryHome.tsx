@@ -11,6 +11,7 @@ interface InquiryHomeProps {
   onClose: () => void;
   onStart: () => void;
   onOpenThread: (id: number) => void;
+  onRequestCancel: (item: QuestionItem) => void;
 }
 
 /** 답변은 Lexical JSON 이거나 일반 텍스트다. 미리보기는 글자만 뽑아 쓴다 */
@@ -51,6 +52,7 @@ const InquiryHome = ({
   onClose,
   onStart,
   onOpenThread,
+  onRequestCancel,
 }: InquiryHomeProps) => {
   const highlight = isLoading ? undefined : pickHighlight(questions);
   const answered = highlight ? isAnswered(highlight) : false;
@@ -112,52 +114,66 @@ const InquiryHome = ({
                   ? '최근 문의'
                   : '답변을 기다리는 문의'}
             </p>
-            <button
-              type="button"
-              onClick={() => onOpenThread(highlight.id)}
-              className="bg-static-100 flex w-full items-start gap-3 rounded-lg p-4 text-left"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p
-                    className={
-                      unread
-                        ? 'text-xsmall16 text-neutral-0 truncate font-bold'
-                        : 'text-xsmall16 text-neutral-0 truncate font-medium'
-                    }
-                  >
-                    {highlight.title}
-                  </p>
-                  {unread && (
-                    <span
-                      aria-label="읽지 않은 답변"
-                      className="bg-system-error h-2 w-2 shrink-0 rounded-full"
-                    />
+            <div className="bg-static-100 rounded-lg p-4">
+              <button
+                type="button"
+                onClick={() => onOpenThread(highlight.id)}
+                className="flex w-full items-start gap-3 text-left"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={
+                        unread
+                          ? 'text-xsmall16 text-neutral-0 truncate font-bold'
+                          : 'text-xsmall16 text-neutral-0 truncate font-medium'
+                      }
+                    >
+                      {highlight.title}
+                    </p>
+                    {unread && (
+                      <span
+                        aria-label="읽지 않은 답변"
+                        className="bg-system-error h-2 w-2 shrink-0 rounded-full"
+                      />
+                    )}
+                  </div>
+
+                  {answered && highlight.answer ? (
+                    <p className="text-xsmall14 text-neutral-30 mt-2 line-clamp-2 leading-relaxed">
+                      {toPlainText(highlight.answer)}
+                    </p>
+                  ) : (
+                    <p className="text-xsmall14 text-neutral-40 mt-2 truncate">
+                      {highlight.content}
+                    </p>
                   )}
                 </div>
+                <ChevronRight className="text-neutral-45 mt-1 h-4 w-4 shrink-0" />
+              </button>
 
-                {answered && highlight.answer ? (
-                  <p className="text-xsmall14 text-neutral-30 mt-2 line-clamp-2 leading-relaxed">
-                    {toPlainText(highlight.answer)}
-                  </p>
-                ) : (
-                  <p className="text-xsmall14 text-neutral-40 mt-2 truncate">
-                    {highlight.content}
-                  </p>
-                )}
-
+              <div className="mt-3 flex items-center">
                 <span
                   className={
                     answered
-                      ? 'bg-primary-5 text-primary text-xxsmall12 mt-3 inline-block rounded px-2 py-0.5 font-medium'
-                      : 'bg-neutral-90 text-neutral-40 text-xxsmall12 mt-3 inline-block rounded px-2 py-0.5 font-medium'
+                      ? 'bg-primary-5 text-primary text-xxsmall12 rounded px-2 py-0.5 font-medium'
+                      : 'bg-neutral-90 text-neutral-40 text-xxsmall12 rounded px-2 py-0.5 font-medium'
                   }
                 >
                   {answered ? '답변 완료' : '답변 대기'}
                 </span>
+                {/* 서버는 답변 전인 문의만 취소를 허용한다 */}
+                {!answered && (
+                  <button
+                    type="button"
+                    onClick={() => onRequestCancel(highlight)}
+                    className="text-xxsmall12 text-neutral-45 hover:text-neutral-30 ml-auto underline underline-offset-2"
+                  >
+                    문의 취소하기
+                  </button>
+                )}
               </div>
-              <ChevronRight className="text-neutral-45 mt-1 h-4 w-4 shrink-0" />
-            </button>
+            </div>
           </section>
         )}
       </div>

@@ -3,12 +3,14 @@
 import {
   QuestionItem,
   useCreateQuestionMutation,
+  useDeleteQuestionMutation,
   useMyQuestionsQuery,
 } from '@/domain/challenge/api/challengeQuestion';
 import { twMerge } from '@/lib/twMerge';
 import { Home, MessageCircle } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import CancelInquiryDialog from './CancelInquiryDialog';
 import InquiryComposer from './InquiryComposer';
 import InquiryHome from './InquiryHome';
 import InquiryList from './InquiryList';
@@ -30,11 +32,14 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
   const challengeId = Number(params.programId);
 
   const [tab, setTab] = useState<Tab>('home');
+  const [cancelTarget, setCancelTarget] = useState<QuestionItem | null>(null);
   const [view, setView] = useState<View>({ name: 'tab' });
 
   const { data: questions = [], isLoading } = useMyQuestionsQuery(challengeId);
   const { mutate: createQuestion, isPending } =
     useCreateQuestionMutation(challengeId);
+  const { mutate: deleteQuestion, isPending: isDeleting } =
+    useDeleteQuestionMutation(challengeId);
 
   const openThread = (id: number) => {
     const item = questions.find((q: QuestionItem) => q.id === id);
@@ -56,7 +61,7 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
 
   return (
     <div className="fixed inset-0 z-40 md:inset-auto md:bottom-[90px] md:right-[26px]">
-      <div className="shadow-05 bg-neutral-95 flex h-full w-full flex-col overflow-hidden md:h-[616px] md:w-[430px] md:rounded-[30px]">
+      <div className="shadow-05 bg-neutral-95 relative flex h-full w-full flex-col overflow-hidden md:h-[616px] md:w-[430px] md:rounded-[30px]">
         {view.name === 'compose' ? (
           <InquiryComposer
             isPending={isPending}
@@ -72,7 +77,12 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
             }
           />
         ) : view.name === 'thread' && thread ? (
-          <InquiryThread item={thread} onBack={backToTab} onClose={onClose} />
+          <InquiryThread
+            item={thread}
+            onRequestCancel={() => setCancelTarget(thread)}
+            onBack={backToTab}
+            onClose={onClose}
+          />
         ) : tab === 'home' ? (
           <InquiryHome
             questions={questions}
@@ -80,6 +90,7 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
             onClose={onClose}
             onStart={openComposer}
             onOpenThread={openThread}
+            onRequestCancel={setCancelTarget}
           />
         ) : (
           <InquiryList
@@ -106,6 +117,22 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
               icon={<MessageCircle className="h-6 w-6" />}
             />
           </nav>
+        )}
+
+        {cancelTarget && (
+          <CancelInquiryDialog
+            item={cancelTarget}
+            isPending={isDeleting}
+            onCancel={() => setCancelTarget(null)}
+            onConfirm={() =>
+              deleteQuestion(cancelTarget.id, {
+                onSuccess: () => {
+                  setCancelTarget(null);
+                  backToTab();
+                },
+              })
+            }
+          />
         )}
       </div>
     </div>
