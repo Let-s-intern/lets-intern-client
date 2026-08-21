@@ -65,6 +65,24 @@ const ChallengeInquiryPage = () => {
         valueGetter: (value) =>
           value === 'WAITING' ? '답변 대기' : '답변 완료',
       },
+      {
+        field: 'isAnswerRead',
+        headerName: '유저읽음',
+        width: 80,
+        headerAlign: 'center',
+        align: 'center',
+        // 공개된 답변이 있을 때만 읽음/안읽음이 의미가 있다
+        renderCell: ({ row }) => {
+          const hasVisibleAnswer = Boolean(row.answer) && row.isVisible;
+          if (!hasVisibleAnswer)
+            return <span className="text-neutral-400">-</span>;
+          return row.isAnswerRead ? (
+            <span className="text-primary text-xs font-bold">O</span>
+          ) : (
+            <span className="text-xs font-bold text-red-500">X</span>
+          );
+        },
+      },
       { field: 'title', headerName: '문의 제목', flex: 1 },
       {
         field: 'challengeTitle',
