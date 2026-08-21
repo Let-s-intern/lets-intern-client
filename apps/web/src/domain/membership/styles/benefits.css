@@ -202,9 +202,11 @@
 .membership-root .cb-card--job .cb-body {
   margin-top: 18px;
 }
+/* 링크는 카드 폭을 다 쓰는 블록이다(터치 영역). 글자만 오른쪽으로 붙인다.
+   데스크탑·모바일 공통 — 아래 반응형 블록에 job 용 덮어쓰기는 없다. */
 .membership-root .cb-card--job .cb-link {
   margin-top: 22px;
-  text-align: center;
+  text-align: right;
 }
 
 /* 가이드북 카드는 표지 6권 일러스트라 가로로 넓다 (시안 7-1) */
