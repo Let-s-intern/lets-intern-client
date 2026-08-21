@@ -1,4 +1,6 @@
 import {
+  confirmLiveMentoringPaymentRequestSchema,
+  confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationRequestSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
@@ -477,5 +479,87 @@ describe('createLiveMentoringApplicationResponseSchema', () => {
         reservation: { ...response.reservation, applicationStatus: 'PENDING' },
       }),
     ).toThrow();
+  });
+});
+
+/*
+  요청의 amount 는 문자열, 응답의 amount 는 숫자다. 서버 DTO 가 그렇게 생겼다
+  (`@NotBlank String amount` vs `Integer amount`). 한쪽으로 맞춰 두면 승인 요청이
+  400 으로 떨어지고, 그때는 이미 Toss 결제창이 닫힌 뒤다.
+*/
+describe('결제 승인 스키마 — amount 타입 비대칭', () => {
+  it('요청의 amount 는 문자열만 받는다', () => {
+    const parsed = confirmLiveMentoringPaymentRequestSchema.parse({
+      paymentKey: 'tviva20260821',
+      orderId: 'lm_20260821_0001',
+      amount: '35000',
+    });
+    expect(parsed.amount).toBe('35000');
+
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'tviva20260821',
+        orderId: 'lm_20260821_0001',
+        amount: 35000,
+      }),
+    ).toThrow();
+  });
+
+  it('응답의 amount 는 숫자만 받는다', () => {
+    const parsed = confirmLiveMentoringPaymentResponseSchema.parse({
+      applicationId: 11,
+      paymentId: 501,
+      orderId: 'lm_20260821_0001',
+      amount: 35000,
+      applicationStatus: 'CONFIRMED',
+    });
+    expect(parsed.amount).toBe(35000);
+
+    expect(() =>
+      confirmLiveMentoringPaymentResponseSchema.parse({
+        applicationId: 11,
+        paymentId: 501,
+        orderId: 'lm_20260821_0001',
+        amount: '35000',
+        applicationStatus: 'CONFIRMED',
+      }),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotBlank`. 빈 문자열은 400 이다. */
+  it('orderId·amount 가 빈 문자열이면 실패한다', () => {
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'k',
+        orderId: '',
+        amount: '35000',
+      }),
+    ).toThrow();
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'k',
+        orderId: 'lm_1',
+        amount: '',
+      }),
+    ).toThrow();
+  });
+
+  it('신청 상태 enum 4종을 모두 받는다', () => {
+    for (const status of [
+      'PAYMENT_PENDING',
+      'EXPIRED',
+      'CANCELED',
+      'CONFIRMED',
+    ]) {
+      expect(
+        confirmLiveMentoringPaymentResponseSchema.parse({
+          applicationId: 11,
+          paymentId: 501,
+          orderId: 'lm_1',
+          amount: 35000,
+          applicationStatus: status,
+        }).applicationStatus,
+      ).toBe(status);
+    }
   });
 });

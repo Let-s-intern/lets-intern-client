@@ -397,3 +397,38 @@ export const createLiveMentoringApplicationResponseSchema = z.object({
 export type CreateLiveMentoringApplicationResponse = z.infer<
   typeof createLiveMentoringApplicationResponseSchema
 >;
+
+// ── 결제 승인 (POST /live-mentoring/applications/{applicationId}/payment/confirm) ──
+
+/**
+ * 결제 승인 요청 — 백엔드 `ConfirmLiveMentoringPaymentRequestDto`.
+ *
+ * `amount` 가 **문자열**이다(`@NotBlank String amount`). 응답에서는 숫자로 돌아온다.
+ * 이 비대칭은 실수가 아니라 계약이므로 스키마에도 그대로 둔다 — 한쪽을 숫자로
+ * 맞춰 두면 승인 요청이 400 으로 떨어지고, 그때는 이미 Toss 결제창이 닫힌 뒤다.
+ *
+ * `paymentKey` 만 제약이 없다. Toss 가 주는 값을 그대로 넘긴다.
+ */
+export const confirmLiveMentoringPaymentRequestSchema = z.object({
+  paymentKey: z.string(),
+  orderId: z.string().min(1),
+  amount: z.string().min(1),
+});
+export type ConfirmLiveMentoringPaymentRequest = z.infer<
+  typeof confirmLiveMentoringPaymentRequestSchema
+>;
+
+/**
+ * 결제 승인 응답 — 백엔드 `ConfirmLiveMentoringPaymentResponseDto`.
+ * 요청과 달리 `amount` 는 `Integer` 다.
+ */
+export const confirmLiveMentoringPaymentResponseSchema = z.object({
+  applicationId: z.number(),
+  paymentId: z.number(),
+  orderId: z.string(),
+  amount: z.number(),
+  applicationStatus: liveMentoringApplicationStatusSchema,
+});
+export type ConfirmLiveMentoringPaymentResponse = z.infer<
+  typeof confirmLiveMentoringPaymentResponseSchema
+>;
