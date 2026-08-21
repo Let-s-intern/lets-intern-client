@@ -71,6 +71,53 @@ describe('QuestionModal — 시안 3-1 (미작성)', () => {
     expect(screen.getByRole('button', { name: '닫기' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '저장하기' })).toBeInTheDocument();
   });
+
+  /*
+    이 모달에는 `나중에 작성하기` 토글이 없다. 조회값의 deferred=true 를 그대로
+    들고 있으면 빈 내용으로도 저장이 열려, 눌러도 아무것도 바뀌지 않는 버튼이 된다.
+    시안 3-1 에서도 그 상태의 저장 버튼은 회색이다.
+  */
+  it('내용을 쓰기 전에는 저장이 잠겨 있다', () => {
+    renderModal(makeQuestion({ deferred: true, content: null }));
+
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
+  });
+
+  /*
+    공용 검증 문구가 `나중에 작성하기` 를 가리키는데 이 모달에는 그 토글이 없다.
+    없는 것을 누르라는 말이 되므로 문구 없이 버튼만 잠근다 — 시안 3-1 과 같다.
+  */
+  it('빈 내용 안내로 없는 토글을 가리키지 않는다', () => {
+    renderModal(makeQuestion({ deferred: true, content: null }));
+
+    expect(screen.queryByText(/나중에 작성하기/)).not.toBeInTheDocument();
+  });
+
+  /* 다른 검증 오류는 그대로 알린다 — 무엇을 고쳐야 하는지 알 수 있다. */
+  it('첨부 관련 오류는 문구로 알린다', () => {
+    renderModal(
+      makeQuestion({ attachmentType: 'URL', attachmentUrl: 'http://x.test' }),
+    );
+
+    expect(screen.getByText(/https/)).toBeInTheDocument();
+  });
+
+  it('내용을 쓰면 저장이 열리고 deferred 를 풀어 보낸다', async () => {
+    renderModal(makeQuestion({ deferred: true, content: null }));
+
+    fireEvent.change(screen.getByLabelText('멘토링 질문'), {
+      target: { value: '처음 쓰는 질문' },
+    });
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0][0]).toMatchObject({
+      deferred: false,
+      content: '처음 쓰는 질문',
+    });
+  });
 });
 
 describe('QuestionModal — 시안 3-2 (작성됨)', () => {

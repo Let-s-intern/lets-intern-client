@@ -50,11 +50,18 @@ const QuestionModal = ({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [draft, setDraft] = useState<QuestionInput | null>(null);
 
-  // 조회가 끝나면 그 값을 초기값으로 심는다. 이후 입력은 화면이 들고 있는다.
+  /*
+    조회가 끝나면 그 값을 초기값으로 심는다. 이후 입력은 화면이 들고 있는다.
+
+    `deferred` 는 false 로 시작한다. 이 모달에는 `나중에 작성하기` 토글이 없어서
+    (시안 `3-1`·`3-2`) 여기서 저장한다는 것은 곧 질문을 쓴다는 뜻이다. 조회값의
+    true 를 그대로 들고 있으면 빈 내용으로도 저장이 열려, 눌러도 아무것도 바뀌지
+    않는 버튼이 된다 — 시안에서도 그 상태의 저장 버튼은 회색이다.
+  */
   useEffect(() => {
     if (!question || draft) return;
     setDraft({
-      deferred: question.deferred,
+      deferred: false,
       content: question.content ?? '',
       attachmentType: question.attachmentType,
       fileId: question.fileId,
@@ -101,6 +108,13 @@ const QuestionModal = ({
   const canEdit = !readOnly && (question?.editable ?? false);
   const hasWrittenQuestion = Boolean(question && !question.deferred);
   const questionError = draft ? validateQuestionInput(draft) : null;
+  /*
+    본문이 비었다는 안내는 띄우지 않는다. 공용 문구가 `나중에 작성하기` 를 가리키는데
+    이 모달에는 그 토글이 없어(결제 페이지에만 있다) 없는 것을 누르라는 말이 된다.
+    시안 `3-1` 도 그 상태에서는 문구 없이 저장 버튼만 회색이다.
+  */
+  const shownQuestionError =
+    draft && draft.content.trim().length === 0 ? null : questionError;
   const canSave = canEdit && questionError === null && !updateQuestion.isPending;
 
   const handleSave = () => {
@@ -108,8 +122,8 @@ const QuestionModal = ({
     setSaveError(null);
     updateQuestion.mutate(
       {
-        deferred: draft.deferred,
-        content: draft.deferred ? null : draft.content,
+        deferred: false,
+        content: draft.content,
         attachmentType: draft.attachmentType,
         fileId: draft.attachmentType === 'FILE' ? draft.fileId : null,
         url: draft.attachmentType === 'URL' ? draft.url : null,
@@ -176,9 +190,7 @@ const QuestionModal = ({
                 value={draft.content}
                 maxLength={QUESTION_CONTENT_MAX}
                 readOnly={!canEdit}
-                onChange={(event) =>
-                  patch({ content: event.target.value, deferred: false })
-                }
+                onChange={(event) => patch({ content: event.target.value })}
                 placeholder="멘토링에서 꼭 물어보고 싶은 점을 작성해 주세요."
                 rows={6}
                 className="bg-neutral-95 text-xsmall14 text-neutral-0 resize-none rounded-sm px-4 py-3"
@@ -284,8 +296,10 @@ const QuestionModal = ({
                 예약 시간 48시간 전이 지나 질문을 수정할 수 없습니다.
               </p>
             )}
-            {canEdit && questionError && (
-              <p className="text-xxsmall12 text-system-error">{questionError}</p>
+            {canEdit && shownQuestionError && (
+              <p className="text-xxsmall12 text-system-error">
+                {shownQuestionError}
+              </p>
             )}
             {saveError && (
               <p className="text-xxsmall12 text-system-error">{saveError}</p>
