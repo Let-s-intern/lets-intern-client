@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import axios from '@/utils/axios';
 import LiveMentoringDetailPage from './LiveMentoringDetailPage';
@@ -243,7 +243,7 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('멘티 후기')).not.toBeInTheDocument();
   });
 
-  it('히어로에 상품명·평점·멘티 수와 플랜을 보여주고, 플랜 선택은 잠겨 있다', async () => {
+  it('히어로에 상품명·평점·멘티 수와 고를 수 있는 플랜을 보여준다', async () => {
     mockApis(detail());
     renderDetail();
 
@@ -254,10 +254,31 @@ describe('LiveMentoringDetailPage', () => {
       ).toBeGreaterThan(0),
     );
     expect(screen.getByText('후기 12건')).toBeInTheDocument();
-    // 결제 연동 전이라 플랜 체크박스는 비활성
     expect(
-      screen.getByRole('checkbox', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
-    ).toBeDisabled();
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    ).toBeEnabled();
+  });
+
+  /*
+    히어로와 시트는 같은 상태를 본다. 히어로에서 고른 플랜을 시트가 다시 묻지 않는다.
+  */
+  it('히어로에서 고른 플랜이 시트에 그대로 반영된다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    );
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+    const sheet = within(screen.getByRole('dialog'));
+    expect(
+      sheet.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    ).toBeChecked();
   });
 
   it('히어로 불릿을 노출한다', async () => {

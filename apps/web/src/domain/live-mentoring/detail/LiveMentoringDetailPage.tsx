@@ -75,7 +75,12 @@ const LiveMentoringDetailPage = ({
 
   return (
     <div className="flex flex-col">
-      <DetailHero detail={data} period={periodLabel} />
+      <DetailHero
+        detail={data}
+        period={periodLabel}
+        selectedDuration={applySheet.draft.duration}
+        onSelectPlan={applySheet.selectDuration}
+      />
 
       <DetailNavigation isReady={!isLoading} />
 
