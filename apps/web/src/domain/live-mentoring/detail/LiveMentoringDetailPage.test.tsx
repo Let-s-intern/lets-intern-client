@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import axios from '@/utils/axios';
 import LiveMentoringDetailPage from './LiveMentoringDetailPage';
@@ -324,6 +324,43 @@ describe('LiveMentoringDetailPage', () => {
     expect(
       screen.queryByText('현재 예약 가능한 일정이 없습니다'),
     ).not.toBeInTheDocument();
+  });
+
+  /*
+    예전에는 신청 버튼이 "결제 기능은 준비 중입니다" 알럿만 띄웠다.
+    알럿이 남아 있으면 브라우저가 멈춰 시트가 열려도 아무것도 못 한다.
+  */
+  it('신청 CTA 를 누르면 알럿 없이 신청 시트가 열린다', async () => {
+    mockApis(detail());
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+    expect(screen.getByRole('dialog', { name: '1대1 멘토링 신청' })).toBeInTheDocument();
+    expect(alertSpy).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('시트가 열려 있는 동안 배경 스크롤을 잠그고, 닫으면 되돌린다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+    expect(document.body.style.overflow).toBe('hidden');
+
+    fireEvent.click(screen.getByRole('button', { name: '이전 단계로' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.body.style.overflow).not.toBe('hidden');
   });
 
   // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.

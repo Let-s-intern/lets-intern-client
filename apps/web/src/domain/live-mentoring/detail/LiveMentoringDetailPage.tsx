@@ -4,6 +4,8 @@ import {
   useLiveMentorDetailQuery,
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
+import ApplySheet from '../apply/ApplySheet';
+import { useApplySheetState } from '../apply/hooks/useApplySheetState';
 import { formatDetailPeriod, slotPeriod } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
@@ -33,7 +35,8 @@ interface LiveMentoringDetailPageProps {
  * - 6·7·9·10 : 운영 확정 마케팅 콘텐츠 → 시안 이미지 그대로 (`DetailFixedSections`)
  * - 8 : 후기 (노출 여부·대상만 멘토가 고름)
  *
- * 결제/예약은 범위 밖 — 히어로의 플랜은 표시만 하고 선택되지 않는다.
+ * 하단 CTA 를 누르면 신청 시트가 열린다. 시트 상태를 페이지가 들고 있는 이유는
+ * 히어로의 플랜 카드도 같은 시트를 열기 때문이다.
  */
 const LiveMentoringDetailPage = ({
   mentorId,
@@ -42,6 +45,7 @@ const LiveMentoringDetailPage = ({
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);
+  const applySheet = useApplySheetState();
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
@@ -339,6 +343,13 @@ const LiveMentoringDetailPage = ({
         title={data.title}
         beginning={period?.beginning ?? null}
         deadline={period?.deadline ?? null}
+        onApplyClick={() => applySheet.open()}
+      />
+
+      <ApplySheet
+        isOpen={applySheet.isOpen}
+        onClose={applySheet.close}
+        onSubmit={applySheet.close}
       />
     </div>
   );
