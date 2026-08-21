@@ -4,7 +4,8 @@ import type {
   LiveMentorDetail,
   LiveMentoringDuration,
 } from '@/api/live-mentoring/liveMentoringSchema';
-import { durationLabel, formatPrice } from '../../constants';
+import { formatPrice } from '../../constants';
+import { planLabel } from '../constants';
 
 interface PlanSelectSectionProps {
   /** 플랜 묶음 이름으로 쓸 상품명. */
@@ -13,10 +14,6 @@ interface PlanSelectSectionProps {
   selectedDuration: LiveMentoringDuration | null;
   onSelect: (duration: LiveMentoringDuration) => void;
 }
-
-/** 시안의 "베이직/프리미엄 패키지" 는 계약에 없다. 히어로 플랜 카드와 같은 표기를 쓴다. */
-const planLabel = (duration: LiveMentoringDuration) =>
-  `[LIVE] 1:1 멘토링 (${durationLabel(duration)})`;
 
 /**
  * 1:1 멘토링 플랜 선택 (시안 `1-0` 첫 섹션).

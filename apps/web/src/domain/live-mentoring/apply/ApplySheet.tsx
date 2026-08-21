@@ -10,6 +10,7 @@ import type { ApplySheetState } from './hooks/useApplySheetState';
 import AgreementSection from './section/AgreementSection';
 import MentoringTypeSection from './section/MentoringTypeSection';
 import PlanSelectSection from './section/PlanSelectSection';
+import PriceSummarySection from './section/PriceSummarySection';
 import ScheduleSelectSection from './section/ScheduleSelectSection';
 import type { ApplyDraft } from './types';
 
@@ -34,6 +35,10 @@ interface ApplySheetProps {
  */
 const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
   const { isOpen, close, draft, canSubmit } = sheet;
+  const selectedPlan =
+    detail.durationPrices.find(
+      (option) => option.duration === draft.duration,
+    ) ?? null;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -101,6 +106,11 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             items={detail.template.mentoringTypes.items}
             selectedIds={draft.mentoringTypeIds}
             onToggle={sheet.toggleMentoringType}
+          />
+
+          <PriceSummarySection
+            selected={selectedPlan}
+            onRemove={sheet.clearDuration}
           />
         </div>
 
