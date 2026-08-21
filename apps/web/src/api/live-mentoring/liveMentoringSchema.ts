@@ -246,17 +246,11 @@ export const liveMentorDetailSchema = z.object({
       /**
        * 신청 생성 DTO 가 요구하는 `durationPriceId`(`@NotNull Long`).
        *
-       * **서버가 아직 내려주지 않는다.** 공개 상세의 `DurationPriceResponse` 는
-       * `duration` 과 `price` 두 개뿐이다
-       * (`GetLiveMentoringPublicDetailResponseDto.java:30`). 이 값이 없으면
-       * 프론트가 신청을 만들 수 없다 — `mentoringTypes[].id` 가 없어 Push 0 으로
-       * 추가했던 것과 같은 결함이다.
-       *
-       * 필수로 잡으면 지금 상세 페이지 전체가 파싱 단계에서 죽으므로 선택으로 둔다.
-       * 서버가 추가하면 값이 그대로 흘러들어와 결제가 동작하고, 그때 `z.number()`
-       * 로 조여야 한다.
+       * 공개 상세에 없어서 프론트가 신청을 만들 수 없었다 — `mentoringTypes[].id`
+       * 가 빠져 Push 0 으로 추가했던 것과 같은 결함이었고, 서버가 `ebb03a66` 으로
+       * 고쳤다. 이 값이 비면 결제가 통째로 막히므로 필수로 잡아 파싱 단계에서 잡는다.
        */
-      durationPriceId: z.number().nullish(),
+      durationPriceId: z.number(),
       duration: liveMentoringDurationSchema,
       price: z.number(),
     }),

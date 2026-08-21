@@ -10,11 +10,19 @@ import {
   type LiveMentoringOrderDraft,
 } from './useOrderDraft';
 import type { QuestionInput } from '../types';
+import { validateQuestionInput } from '../utils';
 
-/** 서버가 슬롯 경합으로 거절할 때 주는 에러코드들. 일정을 다시 고르게 안내한다. */
+/**
+ * 일정을 다시 고르면 풀리는 실패들. 서버 `LiveMentoringErrorCode` 에서 실측한 값이다.
+ *
+ * - `SLOT_UNAVAILABLE` — 폼을 쓰는 사이 다른 사람이 가져갔다(409). 안 A 의 대가다
+ * - `INVALID_SLOT_COMBINATION` — 플랜과 슬롯 수·연속성이 어긋난다
+ *
+ * 코드 이름을 짐작하면 안 된다. 처음에 `SLOT_ALREADY_RESERVED` 로 써 뒀다가
+ * 실호출에서 `SLOT_UNAVAILABLE` 이 오는 것을 보고 고쳤다.
+ */
 const SLOT_CONFLICT_CODES = new Set([
-  'LIVE_MENTORING_SLOT_ALREADY_RESERVED',
-  'LIVE_MENTORING_SLOT_NOT_AVAILABLE',
+  'LIVE_MENTORING_SLOT_UNAVAILABLE',
   'LIVE_MENTORING_INVALID_SLOT_COMBINATION',
 ]);
 
@@ -74,7 +82,12 @@ export function useOrderSubmit({
   */
   const isContractReady = draft.durationPriceId !== null;
   const isEmailValid = EMAIL_PATTERN.test(contactEmail);
-  const canSubmit = isContractReady && isEmailValid;
+  /*
+    서버 `validateQuestion` 과 같은 규칙을 미리 본다. 거기서 걸리면 400 의 문구가
+    "질문 및 첨부 정보가 올바르지 않습니다" 하나뿐이라 무엇을 고쳐야 할지 알 수 없다.
+  */
+  const questionError = validateQuestionInput(question);
+  const canSubmit = isContractReady && isEmailValid && questionError === null;
 
   const submit = () => {
     if (!canSubmit || createApplication.isPending) return;
@@ -91,7 +104,7 @@ export function useOrderSubmit({
       // `나중에 작성하기` 면 빈 질문을 보낸다. 화면에서 값을 비웠으므로 그대로 옮긴다.
       question: {
         deferred: question.deferred,
-        content: question.content || null,
+        content: question.deferred ? null : question.content,
         attachmentType: question.attachmentType,
         fileId: question.attachmentType === 'FILE' ? question.fileId : null,
         url: question.attachmentType === 'URL' ? question.url : null,
@@ -128,6 +141,7 @@ export function useOrderSubmit({
     canSubmit,
     isContractReady,
     isEmailValid,
+    questionError,
     isPending: createApplication.isPending,
     errorMessage,
     isSlotConflict,

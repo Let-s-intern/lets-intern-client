@@ -209,7 +209,12 @@ export interface LiveMentorDetail {
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
   /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
-  durationPrices: { duration: LiveMentoringDuration; price: number }[];
+  durationPrices: {
+    /** 신청 생성 DTO 의 `durationPriceId`. 목에서는 진행시간으로 갈음한다. */
+    durationPriceId: number;
+    duration: LiveMentoringDuration;
+    price: number;
+  }[];
   /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
   price: number;
   rating: number;
@@ -938,6 +943,8 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
         categories: categoriesFor(seed),
         durations: durationsFor(seed),
         durationPrices: durationsFor(seed).map((duration) => ({
+          // 목에서는 진행시간 값을 그대로 id 로 쓴다 — 실제 값은 서버가 준다.
+          durationPriceId: duration,
           duration,
           price: getPriceByDuration(duration),
         })),
@@ -1021,6 +1028,7 @@ export const LIVE_MENTORING_TEMPLATE: LiveMentoringTemplate =
 /** 진행시간 목록을 서버 응답 형태(`durationPrices`)로 변환한다. 가격은 고정 정책값. */
 const durationPricesFor = (durations: LiveMentoringDuration[]) =>
   durations.map((duration) => ({
+    durationPriceId: duration,
     duration,
     price: getPriceByDuration(duration),
   }));

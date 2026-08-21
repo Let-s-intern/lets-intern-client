@@ -8,6 +8,12 @@ import { useOrderDraftStore, type LiveMentoringOrderDraft } from './useOrderDraf
 import { useOrderSubmit } from './useOrderSubmit';
 import { EMPTY_QUESTION, type QuestionInput } from '../types';
 
+/*
+  서버가 `deferred: false` 인데 본문이 비면 LIVE_MENTORING_INVALID_QUESTION 을 준다.
+  기본값(`EMPTY_QUESTION`)이 바로 그 상태라, 제출이 되는 케이스는 나중에 작성하기로 둔다.
+*/
+const DEFERRED_QUESTION: QuestionInput = { ...EMPTY_QUESTION, deferred: true };
+
 const push = jest.fn();
 jest.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 
@@ -84,7 +90,7 @@ function setup(
     useOrderSubmit({
       draft: { ...DRAFT, ...overrides.draft },
       contactEmail: overrides.contactEmail ?? 'local-admin@letscareer.test',
-      question: overrides.question ?? EMPTY_QUESTION,
+      question: overrides.question ?? DEFERRED_QUESTION,
       couponCode: overrides.couponCode ?? null,
       customerName: '로컬어드민',
       customerMobilePhone: '010-0000-0000',
@@ -115,10 +121,38 @@ describe('useOrderSubmit — 제출 가능 조건', () => {
   });
 
   /*
-    서버가 공개 상세에 durationPriceId 를 아직 안 내려준다
-    (`GetLiveMentoringPublicDetailResponseDto.java:30`). 없으면 신청 생성이
-    @NotNull 위반으로 400 이라, 눌러 보고 실패하게 두지 않고 미리 막는다.
-    서버가 필드를 추가하면 이 테스트가 그대로 통과한 채 화면만 풀린다.
+    서버 `validateQuestion` 이 `deferred: false` + 빈 본문을 거절한다. 여기서 못
+    막으면 결제하기를 누른 뒤 LIVE_MENTORING_INVALID_QUESTION 400 만 돌아온다.
+  */
+  it('작성하기로 두고 질문이 비면 제출을 막는다', () => {
+    const { result } = setup({ question: EMPTY_QUESTION });
+
+    expect(result.current.questionError).toMatch(/작성하거나/);
+    expect(result.current.canSubmit).toBe(false);
+
+    act(() => result.current.submit());
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('첨부를 골랐는데 전달 동의가 없으면 제출을 막는다', () => {
+    const { result } = setup({
+      question: {
+        deferred: false,
+        content: '질문',
+        attachmentType: 'FILE',
+        fileId: 9001,
+        url: '',
+        mentorShareAgreed: false,
+      },
+    });
+
+    expect(result.current.questionError).toMatch(/동의/);
+    expect(result.current.canSubmit).toBe(false);
+  });
+
+  /*
+    durationPriceId 는 서버가 `ebb03a66` 으로 공개 상세에 추가했다. 이 값을 아직
+    안 주는 서버에 붙었을 때 눌러 보고 400 을 받게 두지 않는다.
   */
   it('durationPriceId 를 못 받았으면 제출을 막는다', () => {
     const { result } = setup({ draft: { durationPriceId: null } });
@@ -217,8 +251,9 @@ describe('useOrderSubmit — 실패 처리', () => {
       options.onError({
         response: {
           data: {
-            code: 'LIVE_MENTORING_SLOT_ALREADY_RESERVED',
-            message: '이미 예약된 슬롯입니다.',
+            // 실호출로 확인한 코드다(409). 짐작한 이름을 쓰면 분기가 안 탄다.
+            code: 'LIVE_MENTORING_SLOT_UNAVAILABLE',
+            message: '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
           },
         },
       }),
@@ -228,7 +263,9 @@ describe('useOrderSubmit — 실패 처리', () => {
     act(() => result.current.submit());
 
     await waitFor(() => expect(result.current.isSlotConflict).toBe(true));
-    expect(result.current.errorMessage).toBe('이미 예약된 슬롯입니다.');
+    expect(result.current.errorMessage).toBe(
+      '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
+    );
     expect(push).not.toHaveBeenCalled();
 
     act(() => result.current.goBackToSchedule());

@@ -22,8 +22,9 @@ export interface LiveMentoringOrderDraft {
   duration: LiveMentoringDuration;
   /**
    * 신청 생성 DTO 의 `durationPriceId`.
-   * 서버가 공개 상세에서 아직 안 내려줘서 null 로 올 수 있다 — 그러면 결제하기를
-   * 막고 안내한다. 자세한 사정은 `liveMentoringSchema.ts` 의 같은 필드 주석 참고.
+   *
+   * 상세 스키마에서 필수라 정상 경로에서는 항상 채워진다. null 을 남겨 둔 것은
+   * 아직 이 값을 안 주는 서버(구버전)에 붙었을 때 결제하기를 막기 위해서다.
    */
   durationPriceId: number | null;
   /** 선택 플랜의 판매가. 결제 금액의 원금이다. */

@@ -43,7 +43,7 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
     openingId: 500,
     categories: ['RESUME'],
     durations: [30],
-    durationPrices: [{ duration: 60, price: 60000 }],
+    durationPrices: [{ durationPriceId: 5, duration: 60, price: 60000 }],
     price: 35000,
     rating: 4.7,
     reviewCount: 12,

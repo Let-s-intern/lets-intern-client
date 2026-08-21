@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 
 import { useLiveMentoringCoupon } from '../hooks/useLiveMentoringCoupon';
+import { validateQuestionInput } from '../utils';
 import CouponSection from './CouponSection';
 import PriceSection from './PriceSection';
 
@@ -115,5 +116,86 @@ describe('CouponSection', () => {
 
     expect(code).toBeNull();
     expect(screen.getByLabelText('쿠폰 번호')).toHaveValue('');
+  });
+});
+
+/*
+  서버 `LiveMentoringApplicationValidator.validateQuestion` 과 같은 규칙이다.
+  여기서 못 걸러내면 결제하기를 누른 뒤 LIVE_MENTORING_INVALID_QUESTION 400 만
+  돌아오는데, 그 문구로는 무엇을 고쳐야 하는지 알 수 없다.
+*/
+describe('validateQuestionInput — 서버 질문 검증 미러', () => {
+  const base = {
+    deferred: false,
+    content: '이력서 피드백 부탁드립니다',
+    attachmentType: 'NONE' as const,
+    fileId: null,
+    url: '',
+    mentorShareAgreed: false,
+  };
+
+  it('나중에 작성하기면 아무것도 보지 않는다', () => {
+    expect(
+      validateQuestionInput({ ...base, deferred: true, content: '' }),
+    ).toBeNull();
+  });
+
+  it('작성하기로 두고 본문이 비면 막는다', () => {
+    expect(validateQuestionInput({ ...base, content: '   ' })).toMatch(
+      /작성하거나/,
+    );
+  });
+
+  it('첨부 없음이면 본문만 있으면 통과한다', () => {
+    expect(validateQuestionInput(base)).toBeNull();
+  });
+
+  it('파일을 고르고 올리지 않으면 막는다', () => {
+    expect(
+      validateQuestionInput({ ...base, attachmentType: 'FILE' }),
+    ).toMatch(/파일을 업로드/);
+  });
+
+  /* 서버가 절대 https URI 에 호스트까지 있는지 본다. */
+  it('http 나 형식이 아닌 URL 은 막는다', () => {
+    expect(
+      validateQuestionInput({
+        ...base,
+        attachmentType: 'URL',
+        url: 'http://example.test',
+        mentorShareAgreed: true,
+      }),
+    ).toMatch(/https/);
+    expect(
+      validateQuestionInput({
+        ...base,
+        attachmentType: 'URL',
+        url: 'example.test',
+        mentorShareAgreed: true,
+      }),
+    ).toMatch(/https/);
+  });
+
+  it('https URL 과 전달 동의가 있으면 통과한다', () => {
+    expect(
+      validateQuestionInput({
+        ...base,
+        attachmentType: 'URL',
+        url: 'https://example.test/resume',
+        mentorShareAgreed: true,
+      }),
+    ).toBeNull();
+  });
+
+  /* 서버 `validateAttachmentCanBeSharedWithMentor`. */
+  it('첨부가 있는데 전달 동의가 없으면 막는다', () => {
+    expect(
+      validateQuestionInput({
+        ...base,
+        attachmentType: 'FILE',
+        fileId: 9001,
+        mentorShareAgreed: false,
+      }),
+    ).toMatch(/동의/);
   });
 });

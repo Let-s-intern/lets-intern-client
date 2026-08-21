@@ -162,6 +162,7 @@ const SubmitBlock = ({
     canSubmit,
     isContractReady,
     isEmailValid,
+    questionError,
     isPending,
     errorMessage,
     isSlotConflict,
@@ -183,9 +184,13 @@ const SubmitBlock = ({
         </p>
       )}
 
+      {questionError && (
+        <p className="text-xxsmall12 text-system-error">{questionError}</p>
+      )}
+
       {/*
-        서버가 공개 상세에 durationPriceId 를 아직 안 내려준다. 누르면 400 이 나므로
-        미리 막고 왜 막혔는지 알린다. 서버가 추가하면 이 안내는 저절로 사라진다.
+        durationPriceId 를 못 받는 서버(구버전)에 붙었을 때만 뜬다. 누르면 400 이
+        나므로 미리 막고 왜 막혔는지 알린다.
       */}
       {!isContractReady && (
         <p className="text-xxsmall12 text-system-error">

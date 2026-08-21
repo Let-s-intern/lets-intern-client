@@ -43,7 +43,7 @@ function detail(overrides: Record<string, unknown> = {}) {
         title: '포폴메이커 멘토의 1:1 멘토링',
         categories: ['PORTFOLIO'],
         durations: [60],
-        durationPrices: [{ duration: 60, price: 60000 }],
+        durationPrices: [{ durationPriceId: 5, duration: 60, price: 60000 }],
         price: 60000,
         rating: 4.8,
         reviewCount: 12,

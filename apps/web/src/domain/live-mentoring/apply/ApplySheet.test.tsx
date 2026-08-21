@@ -30,8 +30,8 @@ const SLOTS = [
 const DETAIL = {
   title: '어드민 1대1 라이브 멘토링',
   durationPrices: [
-    { duration: 30, price: 35000 },
-    { duration: 60, price: 60000 },
+    { durationPriceId: 4, duration: 30, price: 35000 },
+    { durationPriceId: 5, duration: 60, price: 60000 },
   ],
   template: {
     mentoringTypes: {

@@ -3,8 +3,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import PlanSelectSection from './PlanSelectSection';
 
 const DURATION_PRICES = [
-  { duration: 30, price: 35000 },
-  { duration: 60, price: 60000 },
+  { durationPriceId: 4, duration: 30, price: 35000 },
+  { durationPriceId: 5, duration: 60, price: 60000 },
 ] as const;
 
 function renderSection(
