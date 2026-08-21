@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useUserQuery } from '@/api/user/user';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
+import ApplicantFormSection from './section/ApplicantFormSection';
 import ProgramCardSection from './section/ProgramCardSection';
 
 interface OrderPageProps {
@@ -26,6 +28,17 @@ interface OrderPageProps {
 const OrderPage = ({ mentorId }: OrderPageProps) => {
   const router = useRouter();
   const draft = useOrderDraftStore((state) => state.draft);
+  const { data: user } = useUserQuery();
+
+  const accountEmail = user?.email ?? '';
+  /*
+    시안은 `가입한 이메일과 동일` 이 체크된 상태로 열린다. 체크돼 있는 동안에는
+    입력을 잠그고 가입 이메일을 그대로 따라간다 — 사용자 조회가 늦게 끝나도
+    빈 칸이 남지 않게 상태를 따로 들지 않고 파생시킨다.
+  */
+  const [sameAsAccountEmail, setSameAsAccountEmail] = useState(true);
+  const [typedContactEmail, setTypedContactEmail] = useState('');
+  const contactEmail = sameAsAccountEmail ? accountEmail : typedContactEmail;
 
   /*
     선택값 없이 이 주소에 닿는 경로는 둘이다 — 새로고침, 그리고 주소창 직접 입력.
@@ -63,6 +76,20 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
       </div>
 
       <ProgramCardSection draft={draft} />
+
+      <ApplicantFormSection
+        name={user?.name ?? ''}
+        phoneNumber={user?.phoneNum ?? ''}
+        accountEmail={accountEmail}
+        contactEmail={contactEmail}
+        onContactEmailChange={setTypedContactEmail}
+        sameAsAccountEmail={sameAsAccountEmail}
+        onSameAsAccountEmailChange={(same) => {
+          setSameAsAccountEmail(same);
+          // 체크를 풀면 방금까지 보이던 값에서 이어 고치게 한다
+          if (!same) setTypedContactEmail(contactEmail);
+        }}
+      />
 
       {/*
         TODO(7-7): 시안 `2-0` 의 "마감까지 3일 23시간 58분 58초" 배너 자리.

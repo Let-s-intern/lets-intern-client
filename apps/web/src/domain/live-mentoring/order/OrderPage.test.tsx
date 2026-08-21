@@ -14,6 +14,21 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ replace, back, push }),
 }));
 
+/*
+  `useUserQuery` 는 axios 를 거쳐 `packages/api/src/env.ts` 의 `import.meta` 를
+  끌어와 jest 가 파싱하지 못한다. 이 테스트가 보는 것은 진입 가드라 사용자 조회는
+  목으로 막는다 — 폼 동작 자체는 `ApplicantFormSection.test.tsx` 가 본다.
+*/
+jest.mock('@/api/user/user', () => ({
+  useUserQuery: () => ({
+    data: {
+      name: '김렛츠',
+      phoneNum: '010-2020-2020',
+      email: 'local-admin@letscareer.test',
+    },
+  }),
+}));
+
 const DRAFT: LiveMentoringOrderDraft = {
   mentorId: 1,
   openingId: 6,
