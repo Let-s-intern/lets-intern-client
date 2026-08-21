@@ -290,3 +290,110 @@ export const liveMentoringSlotListSchema = z.object({
   liveMentoringSlotList: z.array(liveMentoringSlotSchema),
 });
 export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;
+
+// ── 신청 생성 (POST /live-mentoring/openings/{openingId}/applications) ──────
+
+/**
+ * 질문 첨부 종류 — 백엔드 `LiveMentoringAttachmentType`.
+ * 상수 이름이 곧 직렬화 값이다. 오타는 컴파일러를 통과해 런타임까지 살아남는다.
+ */
+export const liveMentoringAttachmentTypeSchema = z.enum(['NONE', 'FILE', 'URL']);
+export type LiveMentoringAttachmentType = z.infer<
+  typeof liveMentoringAttachmentTypeSchema
+>;
+
+/**
+ * 신청 상태 — 백엔드 `LiveMentoringApplicationStatus`.
+ *
+ * 저장값은 괄호 안 숫자(`PAYMENT_PENDING(1)` … `CONFIRMED(4)`)지만 JSON 으로는
+ * 상수 이름이 나간다. DB 를 직접 볼 때 declaration 순서로 착각하지 않도록 적어 둔다.
+ */
+export const liveMentoringApplicationStatusSchema = z.enum([
+  'PAYMENT_PENDING',
+  'EXPIRED',
+  'CANCELED',
+  'CONFIRMED',
+]);
+export type LiveMentoringApplicationStatus = z.infer<
+  typeof liveMentoringApplicationStatusSchema
+>;
+
+/**
+ * 신청 생성 요청 — 백엔드 `CreateLiveMentoringApplicationRequestDto`.
+ *
+ * 제약은 서버 Bean Validation 을 그대로 옮겼다. 서버가 400 을 주기 전에 여기서
+ * 걸러야 사용자가 결제 직전에 튕기지 않는다.
+ *
+ * | 필드 | 서버 제약 |
+ * |---|---|
+ * | `durationPriceId` | `@NotNull` |
+ * | `slotIds` | `@NotEmpty` `@Size(max = 2)` — 60분 플랜이 연속 2칸이라 상한이 2다 |
+ * | `mentoringTypeIds` | `@NotEmpty` |
+ * | `reservationChangeAgreed` | `@NotNull` |
+ * | `contactEmail` | `@NotBlank` `@Email` `@Size(max = 255)` |
+ * | `question.deferred` | `@NotNull` |
+ * | `question.content` | `@Size(max = 5000)` — 필수가 아니다 |
+ * | `question.attachmentType` | `@NotNull` |
+ * | `question.url` | `@Size(max = 2048)` |
+ * | `question.mentorShareAgreed` | `@NotNull` |
+ * | `couponCode` | `@Size(max = 100)` — 선택 |
+ *
+ * **이름·휴대폰 필드는 없다.** 시안 `2-0` 이 요구하는 것과 어긋난다 (PRD 7-6 —
+ * 표시 전용으로 두고 `contactEmail` 만 보낸다).
+ */
+export const createLiveMentoringApplicationRequestSchema = z.object({
+  durationPriceId: z.number(),
+  slotIds: z.array(z.number()).min(1).max(2),
+  mentoringTypeIds: z.array(z.number()).min(1),
+  reservationChangeAgreed: z.boolean(),
+  contactEmail: z.string().email().max(255),
+  question: z.object({
+    deferred: z.boolean(),
+    /* 나중에 작성하기(`deferred: true`)면 비어 있다. 서버도 필수로 보지 않는다. */
+    content: z.string().max(5000).nullish(),
+    attachmentType: liveMentoringAttachmentTypeSchema,
+    fileId: z.number().nullish(),
+    url: z.string().max(2048).nullish(),
+    mentorShareAgreed: z.boolean(),
+  }),
+  couponCode: z.string().max(100).nullish(),
+});
+export type CreateLiveMentoringApplicationRequest = z.infer<
+  typeof createLiveMentoringApplicationRequestSchema
+>;
+
+/**
+ * 신청 생성 응답 — 백엔드 `CreateLiveMentoringApplicationResponseDto`.
+ *
+ * `reservation.expiresAt` 이 10분 선점 만료 시각이고, `payment.orderId` 를 Toss 에 넘긴다.
+ * 시각은 전부 타임존 없는 `LocalDateTime` 문자열이다.
+ */
+export const createLiveMentoringApplicationResponseSchema = z.object({
+  applicationId: z.number(),
+  product: z.object({
+    durationPriceId: z.number(),
+    name: z.string(),
+    durationMinutes: z.number(),
+  }),
+  reservation: z.object({
+    slotIds: z.array(z.number()),
+    startAt: z.string(),
+    endAt: z.string(),
+    applicationStatus: liveMentoringApplicationStatusSchema,
+    expiresAt: z.string(),
+  }),
+  mentoringTypes: z.array(
+    z.object({ mentoringTypeId: z.number(), name: z.string() }),
+  ),
+  payment: z.object({
+    originalPrice: z.number(),
+    productDiscount: z.number(),
+    couponDiscount: z.number(),
+    finalAmount: z.number(),
+    orderId: z.string(),
+    currency: z.string(),
+  }),
+});
+export type CreateLiveMentoringApplicationResponse = z.infer<
+  typeof createLiveMentoringApplicationResponseSchema
+>;

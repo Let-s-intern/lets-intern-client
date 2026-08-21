@@ -1,4 +1,6 @@
 import {
+  createLiveMentoringApplicationRequestSchema,
+  createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringOpeningSchema,
@@ -300,6 +302,179 @@ describe('liveMentoringSlotListSchema', () => {
             status: 'CLOSED',
           },
         ],
+      }),
+    ).toThrow();
+  });
+});
+
+/** 서버 `CreateLiveMentoringApplicationRequestDto` 를 통과하는 최소 페이로드. */
+function makeCreateRequest(overrides: Record<string, unknown> = {}) {
+  return {
+    durationPriceId: 1,
+    slotIds: [142],
+    mentoringTypeIds: [1],
+    reservationChangeAgreed: true,
+    contactEmail: 'local-admin@letscareer.test',
+    question: {
+      deferred: true,
+      attachmentType: 'NONE',
+      mentorShareAgreed: false,
+    },
+    ...overrides,
+  };
+}
+
+describe('createLiveMentoringApplicationRequestSchema', () => {
+  it('필수 필드만 담은 페이로드를 통과시킨다', () => {
+    const parsed = createLiveMentoringApplicationRequestSchema.parse(
+      makeCreateRequest(),
+    );
+    expect(parsed.slotIds).toEqual([142]);
+    expect(parsed.question.attachmentType).toBe('NONE');
+  });
+
+  it('60분 플랜의 연속 2슬롯을 통과시킨다', () => {
+    const parsed = createLiveMentoringApplicationRequestSchema.parse(
+      makeCreateRequest({ slotIds: [142, 143] }),
+    );
+    expect(parsed.slotIds).toHaveLength(2);
+  });
+
+  /* 서버 `@Size(max = 2)`. 3개를 보내면 400 이다 — 나가기 전에 막는다. */
+  it('슬롯이 3개면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ slotIds: [142, 143, 144] }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotEmpty`. */
+  it('슬롯이나 멘토링 유형이 비면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ slotIds: [] }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ mentoringTypeIds: [] }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotBlank @Email @Size(max = 255)`. */
+  it('이메일 형식이 아니거나 255자를 넘으면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ contactEmail: 'not-an-email' }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ contactEmail: '' }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          contactEmail: `${'a'.repeat(250)}@letscareer.test`,
+        }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@Size(max = 5000)` / `@Size(max = 2048)` / `@Size(max = 100)`. */
+  it('질문 본문 5000자·URL 2048자·쿠폰 100자를 넘으면 실패한다', () => {
+    const question = {
+      deferred: false,
+      attachmentType: 'URL',
+      mentorShareAgreed: true,
+    };
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: { ...question, content: 'a'.repeat(5001) },
+        }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: { ...question, url: `https://x.test/${'a'.repeat(2048)}` },
+        }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ couponCode: 'a'.repeat(101) }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 enum `LiveMentoringAttachmentType` — NONE / FILE / URL 뿐이다. */
+  it('첨부 종류가 서버 enum 밖이면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: {
+            deferred: false,
+            attachmentType: 'IMAGE',
+            mentorShareAgreed: false,
+          },
+        }),
+      ),
+    ).toThrow();
+  });
+
+  it('동의 필드가 빠지면 실패한다', () => {
+    const { reservationChangeAgreed: _omitted, ...withoutAgreement } =
+      makeCreateRequest();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(withoutAgreement),
+    ).toThrow();
+  });
+});
+
+describe('createLiveMentoringApplicationResponseSchema', () => {
+  const response = {
+    applicationId: 11,
+    product: {
+      durationPriceId: 1,
+      name: '어드민 1대1 라이브 멘토링',
+      durationMinutes: 30,
+    },
+    reservation: {
+      slotIds: [142],
+      startAt: '2026-09-14T09:30:00',
+      endAt: '2026-09-14T10:00:00',
+      applicationStatus: 'PAYMENT_PENDING',
+      expiresAt: '2026-08-21T12:10:00',
+    },
+    mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+    payment: {
+      originalPrice: 35000,
+      productDiscount: 0,
+      couponDiscount: 0,
+      finalAmount: 35000,
+      orderId: 'lm_20260821_0001',
+      currency: 'KRW',
+    },
+  };
+
+  it('신청 생성 응답을 파싱한다', () => {
+    const parsed = createLiveMentoringApplicationResponseSchema.parse(response);
+    expect(parsed.applicationId).toBe(11);
+    // Toss 에 넘길 주문번호와 10분 선점 만료 시각이 이 응답의 핵심이다
+    expect(parsed.payment.orderId).toBe('lm_20260821_0001');
+    expect(parsed.reservation.expiresAt).toBe('2026-08-21T12:10:00');
+  });
+
+  it('알 수 없는 신청 상태는 파싱 실패', () => {
+    expect(() =>
+      createLiveMentoringApplicationResponseSchema.parse({
+        ...response,
+        reservation: { ...response.reservation, applicationStatus: 'PENDING' },
       }),
     ).toThrow();
   });
