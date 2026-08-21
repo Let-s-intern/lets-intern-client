@@ -4,6 +4,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import axios from '@/utils/axios';
 
 import {
+  useCreateLiveMentoringApplicationMutation,
   useLiveMentorDetailQuery,
   useLiveMentorListQuery,
   useLiveMentorSlotsQuery,
@@ -12,10 +13,11 @@ import {
 // axios 모듈 자체를 모킹 (default export)
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
-  default: { get: jest.fn() },
+  default: { get: jest.fn(), post: jest.fn() },
 }));
 
 const axiosGet = axios.get as jest.Mock;
+const axiosPost = axios.post as jest.Mock;
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
@@ -69,6 +71,7 @@ function newClient() {
 
 beforeEach(() => {
   axiosGet.mockReset();
+  axiosPost.mockReset();
 });
 
 describe('useLiveMentorListQuery', () => {
@@ -329,5 +332,124 @@ describe('useLiveMentorSlotsQuery', () => {
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+/** 서버 `CreateLiveMentoringApplicationRequestDto` 를 통과하는 최소 페이로드. */
+const CREATE_BODY = {
+  durationPriceId: 1,
+  slotIds: [142],
+  mentoringTypeIds: [1],
+  reservationChangeAgreed: true,
+  contactEmail: 'local-admin@letscareer.test',
+  question: {
+    deferred: true,
+    attachmentType: 'NONE' as const,
+    mentorShareAgreed: false,
+  },
+};
+
+function createResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    data: {
+      data: {
+        applicationId: 11,
+        product: {
+          durationPriceId: 1,
+          name: '어드민 1대1 라이브 멘토링',
+          durationMinutes: 30,
+        },
+        reservation: {
+          slotIds: [142],
+          startAt: '2026-09-14T09:30:00',
+          endAt: '2026-09-14T10:00:00',
+          applicationStatus: 'PAYMENT_PENDING',
+          expiresAt: '2026-08-21T12:10:00',
+        },
+        mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+        payment: {
+          originalPrice: 35000,
+          productDiscount: 0,
+          couponDiscount: 0,
+          finalAmount: 35000,
+          orderId: 'lm_20260821_0001',
+          currency: 'KRW',
+        },
+        ...overrides,
+      },
+    },
+  };
+}
+
+describe('useCreateLiveMentoringApplicationMutation', () => {
+  it('개설 id 경로로 POST 하고 응답을 파싱한다', async () => {
+    axiosPost.mockResolvedValue(createResponse());
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringApplicationMutation(6),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(CREATE_BODY);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosPost).toHaveBeenCalledWith(
+      '/live-mentoring/openings/6/applications',
+      CREATE_BODY,
+    );
+    // Toss 에 넘길 주문번호와 10분 선점 만료 시각이 이 응답의 핵심이다
+    expect(result.current.data?.payment.orderId).toBe('lm_20260821_0001');
+    expect(result.current.data?.reservation.expiresAt).toBe(
+      '2026-08-21T12:10:00',
+    );
+    expect(result.current.data?.reservation.applicationStatus).toBe(
+      'PAYMENT_PENDING',
+    );
+  });
+
+  it('응답 형태가 계약과 다르면 실패로 떨어진다', async () => {
+    // orderId 가 빠진 응답 — Toss 로 넘어갈 값이 없는데 성공으로 보이면 안 된다
+    axiosPost.mockResolvedValue(
+      createResponse({
+        payment: {
+          originalPrice: 35000,
+          productDiscount: 0,
+          couponDiscount: 0,
+          finalAmount: 35000,
+          currency: 'KRW',
+        },
+      }),
+    );
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringApplicationMutation(6),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(CREATE_BODY);
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  /*
+    서버 LiveMentoringErrorCode 를 사용자 문구로 바꾸는 일은 화면의 몫이다.
+    훅은 에러를 가공하지 않고 그대로 흘려보낸다.
+  */
+  it('서버 에러를 가공하지 않고 그대로 던진다', async () => {
+    const serverError = Object.assign(new Error('Request failed'), {
+      response: {
+        status: 409,
+        data: { message: '이미 예약된 슬롯입니다.', code: 'SLOT_ALREADY_TAKEN' },
+      },
+    });
+    axiosPost.mockRejectedValue(serverError);
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringApplicationMutation(6),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(CREATE_BODY);
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error).toBe(serverError);
   });
 });

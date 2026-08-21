@@ -1,8 +1,10 @@
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import {
+  type CreateLiveMentoringApplicationRequest,
   type LiveMentoringCategory,
+  createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringSlotListSchema,
@@ -106,5 +108,31 @@ export const useLiveMentorSlotsQuery = (
       return liveMentoringSlotListSchema.parse(res.data.data);
     },
     enabled: !!mentorId,
+  });
+};
+
+/**
+ * POST /live-mentoring/openings/{openingId}/applications — 결제 대기 신청 생성.
+ *
+ * 성공하면 슬롯이 **10분간 선점**된다(`reservation.expiresAt`). 그 안에 결제 승인이
+ * 끝나지 않으면 서버가 슬롯을 되돌린다. 응답의 `payment.orderId` 를 Toss 에 넘긴다.
+ *
+ * 실패는 그대로 던진다. 서버 `LiveMentoringErrorCode` 를 사용자 문구로 바꾸는 일은
+ * 화면의 몫이다 — 여기서 만들면 같은 코드에 화면마다 다른 문구가 붙는다.
+ *
+ * 여기서는 쿼리를 무효화하지 않는다. 선점은 아직 예약이 아니고, 슬롯 목록은
+ * 결제가 승인될 때 바뀐다(`useConfirmLiveMentoringPaymentMutation`).
+ */
+export const useCreateLiveMentoringApplicationMutation = (
+  openingId: number | string,
+) => {
+  return useMutation({
+    mutationFn: async (body: CreateLiveMentoringApplicationRequest) => {
+      const res = await axios.post(
+        `/live-mentoring/openings/${openingId}/applications`,
+        body,
+      );
+      return createLiveMentoringApplicationResponseSchema.parse(res.data.data);
+    },
   });
 };
