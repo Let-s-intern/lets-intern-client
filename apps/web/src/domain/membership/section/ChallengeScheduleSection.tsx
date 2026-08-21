@@ -31,8 +31,20 @@ export default function ChallengeScheduleSection() {
     <section className="chsched" id="challenge-schedule">
       <div className="wrap">
         <div className="sec-head rv">
-          <h2>{CHALLENGE_SCHEDULE.title}</h2>
-          <p>{CHALLENGE_SCHEDULE.subtitle}</p>
+          <h2>
+            {CHALLENGE_SCHEDULE.titleLines.map((line) => (
+              <span className="brk" key={line}>
+                {line}
+              </span>
+            ))}
+          </h2>
+          <p>
+            {CHALLENGE_SCHEDULE.subtitleLines.map((line) => (
+              <span className="brk" key={line}>
+                {line}
+              </span>
+            ))}
+          </p>
         </div>
 
         {/* 스크롤 힌트(우측 페이드)는 스크롤과 함께 움직이면 안 되므로
