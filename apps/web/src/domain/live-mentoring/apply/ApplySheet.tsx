@@ -2,13 +2,19 @@
 
 import { useEffect } from 'react';
 
-import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentorDetail,
+  LiveMentoringSlot,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import type { ApplySheetState } from './hooks/useApplySheetState';
 import PlanSelectSection from './section/PlanSelectSection';
+import ScheduleSelectSection from './section/ScheduleSelectSection';
 import type { ApplyDraft } from './types';
 
 interface ApplySheetProps {
   detail: LiveMentorDetail;
+  /** 예약 가능 슬롯. 서버가 미래의 OPEN 슬롯만 걸러 내려준다. */
+  slots: LiveMentoringSlot[];
   /** 상세 페이지가 들고 있는 시트 상태. 히어로 플랜 카드도 같은 상태를 만진다. */
   sheet: ApplySheetState;
   /** `신청하기`. 이 Push 는 콜백만 부르고, 실제 신청 생성은 Push 3 이다. */
@@ -24,7 +30,7 @@ interface ApplySheetProps {
  * 열려 있는 동안 배경 스크롤을 잠근다. 시트 본문이 길어 자체 스크롤을 갖는데,
  * 잠그지 않으면 끝에 닿는 순간 뒤 페이지가 따라 움직여 어디를 보고 있는지 잃는다.
  */
-const ApplySheet = ({ detail, sheet, onSubmit }: ApplySheetProps) => {
+const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
   const { isOpen, close, draft } = sheet;
 
   useEffect(() => {
@@ -57,7 +63,9 @@ const ApplySheet = ({ detail, sheet, onSubmit }: ApplySheetProps) => {
         aria-label="1대1 멘토링 신청"
         // 바깥 클릭으로만 닫히게 한다 — 시트 안쪽 클릭이 배경까지 올라가면 안 된다
         onClick={(event) => event.stopPropagation()}
-        className="bg-static-100 flex max-h-[90dvh] w-full flex-col rounded-t-xl md:max-w-[720px] md:rounded-xl"
+        // 데스크탑 폭은 캘린더(280px)와 시간 그리드 4열이 나란히 들어가는 최소치다.
+        // 더 좁히면 그리드가 3열로 접혀 시안 `1-0` 과 배치가 달라진다.
+        className="bg-static-100 flex max-h-[90dvh] w-full flex-col rounded-t-xl md:max-w-[900px] md:rounded-xl"
       >
         {/* 시안의 상단 손잡이 — 모바일에서 끌어 내릴 수 있음을 알리는 표식 */}
         <div className="flex shrink-0 justify-center pb-2 pt-3 md:pt-4">
@@ -73,6 +81,12 @@ const ApplySheet = ({ detail, sheet, onSubmit }: ApplySheetProps) => {
             durationPrices={detail.durationPrices}
             selectedDuration={draft.duration}
             onSelect={sheet.selectDuration}
+          />
+
+          <ScheduleSelectSection
+            slots={slots}
+            selectedSlots={draft.slots}
+            onSelectSlots={sheet.selectSlots}
           />
         </div>
 

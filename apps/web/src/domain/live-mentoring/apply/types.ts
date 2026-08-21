@@ -38,3 +38,15 @@ export interface ApplyDraft {
   /** 예약 시간 변경 고지 동의. 미체크면 신청할 수 없다. */
   agreedToScheduleChange: boolean;
 }
+
+/** 시간 버튼 한 칸의 선택 가능 여부. 서버 슬롯 상태를 화면 상태로 옮긴 것이다. */
+export type ApplySlotStatus = 'available' | 'unavailable';
+
+/** 시간 그리드 한 칸. 슬롯이 없는 시각도 자리는 차지한다(비활성). */
+export interface ApplySlotOption {
+  /** 'HH:mm' — 시작 시각. 그리드 안에서 유일하다. */
+  time: string;
+  /** 버튼 문구 (예: '10:00 ~ 10:30'). */
+  label: string;
+  status: ApplySlotStatus;
+}
