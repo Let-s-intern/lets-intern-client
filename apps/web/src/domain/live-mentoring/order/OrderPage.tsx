@@ -4,8 +4,11 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useUserQuery } from '@/api/user/user';
+import { useLiveMentoringCoupon } from './hooks/useLiveMentoringCoupon';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
 import ApplicantFormSection from './section/ApplicantFormSection';
+import CouponSection from './section/CouponSection';
+import PriceSection from './section/PriceSection';
 import ProgramCardSection from './section/ProgramCardSection';
 import QuestionSection from './section/QuestionSection';
 import { EMPTY_QUESTION, type QuestionInput } from './types';
@@ -42,6 +45,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   const [typedContactEmail, setTypedContactEmail] = useState('');
   const contactEmail = sameAsAccountEmail ? accountEmail : typedContactEmail;
   const [question, setQuestion] = useState<QuestionInput>(EMPTY_QUESTION);
+  const coupon = useLiveMentoringCoupon();
 
   /*
     선택값 없이 이 주소에 닿는 경로는 둘이다 — 새로고침, 그리고 주소창 직접 입력.
@@ -95,6 +99,18 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
       />
 
       <QuestionSection value={question} onChange={setQuestion} />
+
+      <hr className="border-neutral-85" />
+
+      <CouponSection
+        inputValue={coupon.inputValue}
+        onInputChange={coupon.setInputValue}
+        appliedCode={coupon.appliedCode}
+        onRegister={coupon.register}
+        onClear={coupon.clear}
+      />
+
+      <PriceSection price={draft.price} appliedCouponCode={coupon.appliedCode} />
 
       {/*
         TODO(7-7): 시안 `2-0` 의 "마감까지 3일 23시간 58분 58초" 배너 자리.
