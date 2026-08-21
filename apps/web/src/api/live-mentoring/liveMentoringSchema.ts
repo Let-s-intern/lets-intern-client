@@ -448,3 +448,77 @@ export const confirmLiveMentoringPaymentResponseSchema = z.object({
 export type ConfirmLiveMentoringPaymentResponse = z.infer<
   typeof confirmLiveMentoringPaymentResponseSchema
 >;
+
+// ── 마이페이지 신청현황 (GET /live-mentoring/applications/my) ────────────────
+
+/**
+ * 신청현황 카드 1건 — 백엔드 `MyLiveMentoringApplicationResponse`.
+ *
+ * `entryLink` 는 발급 구조가 정해지지 않아 **항상 null 이다**(PRD 4-8). 화면은 이 값이
+ * 비면 `멘토링 입장` 을 비활성으로 그린다 — 버튼을 감추지는 않는다.
+ *
+ * 결제가 붙지 않은 신청은 서버가 목록에서 걸러 주므로 프론트가 상태로 다시 거르지 않는다.
+ */
+export const myLiveMentoringApplicationSchema = z.object({
+  applicationId: z.number(),
+  /** 결제가 아직 없으면 null. */
+  paymentId: z.number().nullable(),
+  mentorName: z.string().nullable(),
+  thumbnail: z.string().nullable(),
+  productName: z.string().nullable(),
+  durationMinutes: z.number(),
+  /** `LocalDateTime`. 참여 예정·중·종료 판정의 기준이다. */
+  reservationStartAt: z.string(),
+  reservationEndAt: z.string(),
+  status: liveMentoringApplicationStatusSchema,
+  /** 질문을 썼는지. 카드 버튼이 `작성` 인지 `수정` 인지 가른다. */
+  questionWritten: z.boolean(),
+  entryLink: z.string().nullable(),
+});
+export type MyLiveMentoringApplication = z.infer<
+  typeof myLiveMentoringApplicationSchema
+>;
+
+export const myLiveMentoringApplicationListSchema = z.object({
+  applicationList: z.array(myLiveMentoringApplicationSchema),
+});
+
+// ── 멘토링 질문 (GET·PATCH /live-mentoring/applications/{id}/question) ──────
+
+/**
+ * 질문 조회 응답 — 백엔드 `GetLiveMentoringQuestionResponseDto`.
+ *
+ * **`editable` 은 서버가 계산한 값이다.** 예약 시작 48시간 기준인데, 화면이 같은
+ * 계산을 다시 하면 클라이언트와 서버의 시계 차이로 결과가 어긋나 저장 시점에 거부된다.
+ * 서버 DTO 주석도 같은 말을 한다.
+ *
+ * 첨부 URL 의 필드 이름이 요청(`url`)과 응답(`attachmentUrl`)에서 다르다.
+ */
+export const liveMentoringQuestionSchema = z.object({
+  applicationId: z.number(),
+  deferred: z.boolean(),
+  content: z.string().nullable(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  fileId: z.number().nullable(),
+  attachmentUrl: z.string().nullable(),
+  mentorShareAgreed: z.boolean(),
+  reservationStartAt: z.string(),
+  editable: z.boolean(),
+});
+export type LiveMentoringQuestion = z.infer<typeof liveMentoringQuestionSchema>;
+
+/**
+ * 질문 수정 요청 — 백엔드 `UpdateLiveMentoringQuestionRequestDto`.
+ * 필드와 제약이 신청 생성의 `question` 과 같다. 서버도 같은 검증기를 돌린다.
+ */
+export const updateLiveMentoringQuestionRequestSchema = z.object({
+  deferred: z.boolean(),
+  content: z.string().max(5000).nullish(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  fileId: z.number().nullish(),
+  url: z.string().max(2048).nullish(),
+  mentorShareAgreed: z.boolean(),
+});
+export type UpdateLiveMentoringQuestionRequest = z.infer<
+  typeof updateLiveMentoringQuestionRequestSchema
+>;

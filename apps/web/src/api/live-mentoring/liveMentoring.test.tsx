@@ -5,6 +5,11 @@ import axios from '@/utils/axios';
 
 import {
   LIVE_MENTOR_SLOTS_QUERY_KEY,
+  LIVE_MENTORING_QUESTION_QUERY_KEY,
+  MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+  useLiveMentoringQuestionQuery,
+  useMyLiveMentoringApplicationsQuery,
+  useUpdateLiveMentoringQuestionMutation,
   useConfirmLiveMentoringPaymentMutation,
   useCreateLiveMentoringApplicationMutation,
   useLiveMentorDetailQuery,
@@ -15,11 +20,12 @@ import {
 // axios 모듈 자체를 모킹 (default export)
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
-  default: { get: jest.fn(), post: jest.fn() },
+  default: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
 }));
 
 const axiosGet = axios.get as jest.Mock;
 const axiosPost = axios.post as jest.Mock;
+const axiosPatch = axios.patch as jest.Mock;
 
 function makeOpening(overrides: Record<string, unknown> = {}) {
   return {
@@ -74,6 +80,7 @@ function newClient() {
 beforeEach(() => {
   axiosGet.mockReset();
   axiosPost.mockReset();
+  axiosPatch.mockReset();
 });
 
 describe('useLiveMentorListQuery', () => {
@@ -557,5 +564,156 @@ describe('useConfirmLiveMentoringPaymentMutation', () => {
     result.current.mutate(CONFIRM_BODY);
 
     await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+const MY_APPLICATION = {
+  applicationId: 10,
+  paymentId: null,
+  mentorName: '어드어드민닉네임',
+  thumbnail: 'https://example.test/t.png',
+  productName: '어드민 1대1 라이브 멘토링',
+  durationMinutes: 60,
+  reservationStartAt: '2026-09-13T10:00:00',
+  reservationEndAt: '2026-09-13T11:00:00',
+  status: 'CONFIRMED',
+  questionWritten: true,
+  entryLink: null,
+};
+
+const QUESTION = {
+  applicationId: 10,
+  deferred: false,
+  content: '이력서 봐주세요',
+  attachmentType: 'NONE',
+  fileId: null,
+  attachmentUrl: null,
+  mentorShareAgreed: true,
+  reservationStartAt: '2026-09-13T10:00:00',
+  editable: true,
+};
+
+describe('useMyLiveMentoringApplicationsQuery', () => {
+  it('신청 목록을 조회해 파싱한다', async () => {
+    axiosGet.mockResolvedValue({
+      data: { data: { applicationList: [MY_APPLICATION] } },
+    });
+
+    const { result } = renderHook(() => useMyLiveMentoringApplicationsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring/applications/my');
+    expect(result.current.data?.applicationList[0].applicationId).toBe(10);
+  });
+
+  it('응답 스키마가 깨지면 isError 가 된다', async () => {
+    axiosGet.mockResolvedValue({
+      data: {
+        data: { applicationList: [{ ...MY_APPLICATION, status: 'PAID' }] },
+      },
+    });
+
+    const { result } = renderHook(() => useMyLiveMentoringApplicationsQuery(), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+describe('useLiveMentoringQuestionQuery', () => {
+  it('신청 id 경로로 조회하고 editable 을 그대로 받는다', async () => {
+    axiosGet.mockResolvedValue({ data: { data: QUESTION } });
+
+    const { result } = renderHook(() => useLiveMentoringQuestionQuery(10), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosGet).toHaveBeenCalledWith(
+      '/live-mentoring/applications/10/question',
+    );
+    // 48시간 판정은 서버가 한다. 화면이 다시 계산하면 시계가 어긋난다.
+    expect(result.current.data?.editable).toBe(true);
+  });
+
+  it('신청 id 가 null 이면 조회하지 않는다', () => {
+    renderHook(() => useLiveMentoringQuestionQuery(null), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+});
+
+describe('useUpdateLiveMentoringQuestionMutation', () => {
+  const body = {
+    deferred: false,
+    content: '고친 질문',
+    attachmentType: 'NONE' as const,
+    fileId: null,
+    url: null,
+    mentorShareAgreed: true,
+  };
+
+  it('PATCH 로 보내고 응답을 파싱한다', async () => {
+    axiosPatch.mockResolvedValue({
+      data: { data: { ...QUESTION, content: '고친 질문' } },
+    });
+
+    const { result } = renderHook(
+      () => useUpdateLiveMentoringQuestionMutation(10),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate(body);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosPatch).toHaveBeenCalledWith(
+      '/live-mentoring/applications/10/question',
+      body,
+    );
+    expect(result.current.data?.content).toBe('고친 질문');
+  });
+
+  /*
+    목록의 questionWritten 이 카드 버튼을 `작성` / `수정` 으로 가른다. 목록을
+    남겨 두면 방금 쓴 질문인데도 카드에는 여전히 `멘토링 질문 작성` 이 남는다.
+  */
+  it('수정 성공 시 질문과 신청 목록을 함께 무효화한다', async () => {
+    axiosPatch.mockResolvedValue({ data: { data: QUESTION } });
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateLiveMentoringQuestionMutation(10),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate(body);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_QUESTION_QUERY_KEY,
+    });
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+    });
+  });
+
+  it('수정이 실패하면 아무것도 무효화하지 않는다', async () => {
+    axiosPatch.mockRejectedValue(new Error('409'));
+    const client = newClient();
+    const invalidate = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateLiveMentoringQuestionMutation(10),
+      { wrapper: createWrapper(client) },
+    );
+    result.current.mutate(body);
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(invalidate).not.toHaveBeenCalled();
   });
 });

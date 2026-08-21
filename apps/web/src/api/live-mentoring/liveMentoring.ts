@@ -4,12 +4,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type ConfirmLiveMentoringPaymentRequest,
   type CreateLiveMentoringApplicationRequest,
+  type UpdateLiveMentoringQuestionRequest,
   type LiveMentoringCategory,
   confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
+  liveMentoringQuestionSchema,
   liveMentoringSlotListSchema,
+  myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
 
 /** 리스트 페이지 크기 — S1 4×3 그리드 = 12 (PRD §5). */
@@ -163,6 +166,84 @@ export const useConfirmLiveMentoringPaymentMutation = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LIVE_MENTOR_SLOTS_QUERY_KEY });
+    },
+  });
+};
+
+/** 마이페이지 신청현황 멘토링 탭 query key. */
+export const MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY = [
+  'liveMentoring',
+  'myApplications',
+] as const;
+/** 멘토링 질문 query key prefix. */
+export const LIVE_MENTORING_QUESTION_QUERY_KEY = [
+  'liveMentoring',
+  'question',
+] as const;
+
+/**
+ * GET /live-mentoring/applications/my — 내 라이브 멘토링 신청 목록.
+ *
+ * 서버가 결제까지 끝난 신청만 내려준다. 프론트는 상태로 다시 거르지 않고
+ * 예약 시각으로 참여 예정·중·종료만 나눈다.
+ */
+export const useMyLiveMentoringApplicationsQuery = () => {
+  return useQuery({
+    queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+    queryFn: async () => {
+      const res = await axios.get('/live-mentoring/applications/my');
+      return myLiveMentoringApplicationListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/**
+ * GET /live-mentoring/applications/{applicationId}/question — 질문 조회.
+ *
+ * 응답의 `editable` 을 그대로 쓴다. 화면에서 48시간을 다시 계산하면 서버와 시계가
+ * 어긋나 저장 시점에 거부된다.
+ */
+export const useLiveMentoringQuestionQuery = (
+  applicationId: number | null,
+) => {
+  return useQuery({
+    queryKey: [...LIVE_MENTORING_QUESTION_QUERY_KEY, { applicationId }],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/live-mentoring/applications/${applicationId}/question`,
+      );
+      return liveMentoringQuestionSchema.parse(res.data.data);
+    },
+    enabled: applicationId !== null,
+  });
+};
+
+/**
+ * PATCH /live-mentoring/applications/{applicationId}/question — 질문 수정.
+ *
+ * 성공하면 질문 자체와 **신청 목록을 함께 무효화한다.** 목록의 `questionWritten` 이
+ * 카드 버튼을 `작성` / `수정` 으로 가르기 때문에, 목록을 남겨 두면 방금 쓴 질문인데도
+ * 카드에는 여전히 `멘토링 질문 작성` 이 남는다.
+ */
+export const useUpdateLiveMentoringQuestionMutation = (
+  applicationId: number,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: UpdateLiveMentoringQuestionRequest) => {
+      const res = await axios.patch(
+        `/live-mentoring/applications/${applicationId}/question`,
+        body,
+      );
+      return liveMentoringQuestionSchema.parse(res.data.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_QUESTION_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
+      });
     },
   });
 };

@@ -11,6 +11,8 @@
 import {
   confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationResponseSchema,
+  liveMentoringQuestionSchema,
+  myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
 
 /** 30분 플랜 · 슬롯 1칸 · 질문 나중에 작성 (`applicationId=14`). */
@@ -164,5 +166,122 @@ describe('실제 서버 응답 대조 — 실패 경로', () => {
   it('결제 승인 실패는 전용 코드 없이 UNKNOWN 으로 온다', () => {
     expect(CONFIRM_FAILURE.code).toBe('UNKNOWN');
     expect(CONFIRM_FAILURE.code).not.toMatch(/^LIVE_MENTORING_/);
+  });
+});
+
+/*
+  7.1.Q1 — Push 4·5 가 실제로 내려준 응답이다 (2026-08-21, `applicationId=10`).
+  손으로 쓰지 않고 `GET /applications/my` 와 `/applications/10/question` 의
+  `data` 를 그대로 옮겼다.
+*/
+const MY_APPLICATIONS = {
+  applicationList: [
+    {
+      applicationId: 10,
+      paymentId: null,
+      mentorName: '어드어드민닉네임',
+      thumbnail:
+        'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
+      productName: '어드민 1대1 라이브 멘토링',
+      durationMinutes: 60,
+      reservationStartAt: '2026-09-13T10:00:00',
+      reservationEndAt: '2026-09-13T11:00:00',
+      status: 'CONFIRMED',
+      questionWritten: true,
+      entryLink: null,
+    },
+  ],
+};
+
+const QUESTION = {
+  applicationId: 10,
+  deferred: false,
+  content: '이력서에서 직무 적합성이 잘 드러나는지 봐주세요.',
+  attachmentType: 'NONE',
+  fileId: null,
+  attachmentUrl: null,
+  mentorShareAgreed: true,
+  reservationStartAt: '2026-09-13T10:00:00',
+  editable: true,
+};
+
+describe('실제 서버 응답 대조 — 마이페이지 신청현황', () => {
+  it('신청 목록 응답이 스키마를 통과한다', () => {
+    const parsed = myLiveMentoringApplicationListSchema.parse(MY_APPLICATIONS);
+    const application = parsed.applicationList[0];
+    expect(application.applicationId).toBe(10);
+    expect(application.status).toBe('CONFIRMED');
+    // 60분 신청은 두 슬롯이 한 구간으로 합쳐져 온다
+    expect(application.reservationStartAt).toBe('2026-09-13T10:00:00');
+    expect(application.reservationEndAt).toBe('2026-09-13T11:00:00');
+  });
+
+  /*
+    PRD 4-8 — 입장 링크 발급 구조가 정해지지 않아 서버가 항상 null 을 준다.
+    화면은 이 값이 비면 `멘토링 입장` 을 비활성으로 그린다. 값이 들어오기 시작하면
+    이 단언이 먼저 깨져서 알 수 있다.
+  */
+  it('entryLink 는 아직 항상 null 이다', () => {
+    const parsed = myLiveMentoringApplicationListSchema.parse(MY_APPLICATIONS);
+    expect(parsed.applicationList[0].entryLink).toBeNull();
+  });
+
+  /* 결제가 아직 없는 신청은 paymentId 가 null 로 온다. */
+  it('paymentId 가 null 이어도 파싱된다', () => {
+    const parsed = myLiveMentoringApplicationListSchema.parse(MY_APPLICATIONS);
+    expect(parsed.applicationList[0].paymentId).toBeNull();
+  });
+
+  it('신청이 하나도 없으면 빈 배열이다', () => {
+    expect(
+      myLiveMentoringApplicationListSchema.parse({ applicationList: [] })
+        .applicationList,
+    ).toEqual([]);
+  });
+});
+
+describe('실제 서버 응답 대조 — 멘토링 질문', () => {
+  it('질문 조회 응답이 스키마를 통과한다', () => {
+    const parsed = liveMentoringQuestionSchema.parse(QUESTION);
+    expect(parsed.content).toBe(
+      '이력서에서 직무 적합성이 잘 드러나는지 봐주세요.',
+    );
+    expect(parsed.attachmentType).toBe('NONE');
+  });
+
+  /*
+    editable 은 서버가 예약 시작 48시간 기준으로 계산해 준다. 화면이 같은 계산을
+    다시 하면 시계 차이로 어긋나 저장 시점에 거부된다 — 그래서 응답 필드로 받는다.
+  */
+  it('editable 을 서버가 계산해 내려준다', () => {
+    expect(liveMentoringQuestionSchema.parse(QUESTION).editable).toBe(true);
+    expect(
+      liveMentoringQuestionSchema.parse({ ...QUESTION, editable: false })
+        .editable,
+    ).toBe(false);
+  });
+
+  /*
+    첨부 URL 의 필드 이름이 요청(`url`)과 응답(`attachmentUrl`)에서 다르다.
+    한쪽 이름으로 통일해 두면 조회한 값이 화면에 안 뜬다.
+  */
+  it('응답의 첨부 URL 필드 이름은 attachmentUrl 이다', () => {
+    const parsed = liveMentoringQuestionSchema.parse({
+      ...QUESTION,
+      attachmentType: 'URL',
+      attachmentUrl: 'https://example.test/resume',
+    });
+    expect(parsed.attachmentUrl).toBe('https://example.test/resume');
+    expect('url' in parsed).toBe(false);
+  });
+
+  it('나중에 작성하기로 둔 신청은 내용이 비어 온다', () => {
+    const parsed = liveMentoringQuestionSchema.parse({
+      ...QUESTION,
+      deferred: true,
+      content: null,
+    });
+    expect(parsed.deferred).toBe(true);
+    expect(parsed.content).toBeNull();
   });
 });
