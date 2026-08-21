@@ -18,7 +18,29 @@ describe('CompareSection', () => {
     render(<CompareSection />);
     expect(screen.getByText(COMPARE_COPY.titleLead)).toBeInTheDocument();
     expect(screen.getByText(COMPARE_COPY.titleHi)).toBeInTheDocument();
-    expect(screen.getByText(COMPARE_COPY.subtitle)).toBeInTheDocument();
+    for (const line of COMPARE_COPY.subtitleLines) {
+      expect(screen.getByText(line)).toBeInTheDocument();
+    }
+  });
+
+  it('개별 합계와 올인원 특가의 차액을 절약 금액으로 그린다', () => {
+    // 모바일 시안(9-2-mobile.png)의 말풍선. PC 에서는 compare.css 가 숨긴다.
+    render(<CompareSection />);
+    const saving = getComboTotal(COMPARE_COMBOS[0]) - 169900;
+    expect(
+      screen.getByText(`${saving.toLocaleString()}원`),
+    ).toBeInTheDocument();
+  });
+
+  it('차액이 없으면 절약 말풍선을 그리지 않는다', () => {
+    membershipData.mockReturnValue({ salePrice: 100000 });
+    const { container } = render(<CompareSection />);
+    // 이 값이면 세 조합 모두 살아남고 차액도 양수라 말풍선이 있다 — 반대 경우만 확인한다
+    expect(container.querySelector('.cmp-save')).not.toBeNull();
+
+    membershipData.mockReturnValue({ salePrice: 999999 });
+    const empty = render(<CompareSection />);
+    expect(empty.container.querySelector('.cmp-save')).toBeNull();
   });
 
   it('탭 3개를 렌더하고 첫 탭이 활성이다', () => {

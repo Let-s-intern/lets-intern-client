@@ -25,7 +25,13 @@ export default function MentoringCouponSection() {
           <h3>
             {MENTORING_COUPON.titleTop}
             <br />
-            <span className="mcoupon-hl">{MENTORING_COUPON.titleMain}</span>
+            <span className="mcoupon-hl">
+              {MENTORING_COUPON.titleMainLines.map((line) => (
+                <span className="brk" key={line}>
+                  {line}
+                </span>
+              ))}
+            </span>
           </h3>
           <p>{MENTORING_COUPON.subtitle}</p>
         </div>

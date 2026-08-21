@@ -190,3 +190,19 @@
     font-size: 14px;
   }
 }
+
+/* 시안 9-1-mobile.png — 모바일에서는 헤더와 마무리 문구가 좌측 정렬이다.
+   .sec-head 의 전역 가운데 정렬(base.css)은 두고 로드맵 안에서만 되돌린다. */
+@media (max-width: 600px) {
+  .membership-root .roadmap .sec-head,
+  .membership-root .roadmap .rmap-outro {
+    text-align: left;
+    margin-left: 0;
+  }
+  .membership-root .roadmap .sec-head {
+    margin-bottom: 24px;
+  }
+  .membership-root .rmap-nodes {
+    margin-left: 0;
+  }
+}

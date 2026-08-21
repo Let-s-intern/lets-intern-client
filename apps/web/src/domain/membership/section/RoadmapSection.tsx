@@ -59,14 +59,19 @@ export default function RoadmapSection() {
         <div className="sec-head rv">
           <span className="eyebrow">{ROADMAP.badge}</span>
           <h2>
-            {ROADMAP.titleLines.map((line, i) => (
-              <span key={line}>
+            {ROADMAP.titleLines.map((line) => (
+              <span className="brk" key={line}>
                 {line}
-                {i < ROADMAP.titleLines.length - 1 && <br />}
               </span>
             ))}
           </h2>
-          <p>{ROADMAP.sub}</p>
+          <p>
+            {ROADMAP.subLines.map((line) => (
+              <span className="brk" key={line}>
+                {line}
+              </span>
+            ))}
+          </p>
         </div>
         <div className="timeline">
           <div className="rmap-nodes">
@@ -85,7 +90,13 @@ export default function RoadmapSection() {
             {ROADMAP.outro.lead}
             <span className="hl">{ROADMAP.outro.highlight}</span>
           </p>
-          <p className="rmap-outro-sub">{ROADMAP.outro.sub}</p>
+          <p className="rmap-outro-sub">
+            {ROADMAP.outro.subLines.map((line) => (
+              <span className="brk" key={line}>
+                {line}
+              </span>
+            ))}
+          </p>
         </div>
       </div>
     </section>

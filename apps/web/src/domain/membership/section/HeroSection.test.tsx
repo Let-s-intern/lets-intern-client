@@ -3,7 +3,7 @@ import { HERO, HERO_STATS } from '../data/hero';
 import HeroSection from './HeroSection';
 
 describe('HeroSection', () => {
-  it('배지와 헤드라인 2줄을 렌더한다', () => {
+  it('배지와 헤드라인 3줄을 렌더한다', () => {
     render(<HeroSection />);
     expect(screen.getByText(HERO.badge)).toBeInTheDocument();
     for (const line of HERO.titleLines) {
