@@ -15,7 +15,9 @@ describe('MentoringCouponSection', () => {
     expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
       MENTORING_COUPON.titleTop,
     );
-    expect(screen.getByText(MENTORING_COUPON.titleMain)).toBeInTheDocument();
+    for (const line of MENTORING_COUPON.titleMainLines) {
+      expect(screen.getByText(line)).toBeInTheDocument();
+    }
     expect(screen.getByText(MENTORING_COUPON.subtitle)).toBeInTheDocument();
     expect(screen.getByText(MENTORING_COUPON.footnote)).toBeInTheDocument();
   });

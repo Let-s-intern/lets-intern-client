@@ -234,9 +234,15 @@
     text-align: center;
     line-height: 1.3;
   }
+  /* 시안 9-0-mobile.png — 제목이 3줄이고 1줄차가 작다 */
   .membership-root .hero h1 {
     font-size: 26px;
     line-height: 1.28;
+    word-break: keep-all;
+  }
+  .membership-root .hero h1 .brk-line {
+    font-size: 0.82em;
+    margin-bottom: 12px;
   }
   .membership-root .hero .lead {
     font-size: 14.5px;
@@ -251,13 +257,24 @@
     padding: 0 24px;
     font-size: 15.5px;
   }
-  .membership-root .hero-stats {
-    row-gap: 20px;
-    padding-top: 26px;
-    padding-bottom: 52px;
+  /* 시안 9-0-mobile.png — 세로 구분선 대신 반투명 카드 2×2.
+     .hero 를 앞에 붙여야 한다 — responsive.css 가 뒤에서 .wrap 에 padding 단축을 걸어
+     위·아래 패딩을 0 으로 지워버린다(.hero-stats 는 .wrap 을 겸한다). */
+  .membership-root .hero .hero-stats {
+    gap: 12px;
+    padding-top: 48px;
+    padding-bottom: 56px;
   }
   .membership-root .hero-stat {
-    padding: 4px 8px;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .membership-root .hero-stat + .hero-stat::before {
+    display: none;
   }
   .membership-root .hero-stat .t {
     font-size: 17px;

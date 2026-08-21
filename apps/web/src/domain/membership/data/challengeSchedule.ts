@@ -14,19 +14,6 @@
 export const GANTT_SRC = '/images/membership/gantt-panel.webp';
 export const GANTT_SIZE = { width: 2000, height: 825 } as const;
 
-/** 하단 안내 박스 이미지. 마찬가지로 모서리가 투명하다 */
-export const NOTICE_SRC = '/images/membership/gantt-notice.webp';
-export const NOTICE_SIZE = { width: 2000, height: 193 } as const;
-
-/**
- * 안내 박스 대체 텍스트. 이미지 안 문구를 그대로 옮긴다.
- * 이용 기한이 이미지에 박혀 있어 `endDate` 를 따라가지 않는다 — 일정 확정 후에만 쓴다.
- */
-export const NOTICE_ALT =
-  '원하는 챌린지들을 나의 상황에 맞게 골라, 11월 30일까지 자유롭게 신청가능! ' +
-  '올인원패스 하나로 총 9종의 챌린지에 모두 한번씩 참여할 수 있어요. ' +
-  '원하는 챌린지에 참여하여 하반기 공채 준비를 끊김 없이 이어가 보세요. 이용 가능 기간 11월 30일까지.';
-
 /**
  * 간트 이미지의 대체 텍스트. 4행(경험 정리 / 서류 완성 / 실전 공채 서류 완성 / 인적성 면접)
  * 각각의 챌린지명과 주차를 문장으로 담는다. "간트 차트" 같은 이름표로 줄이지 말 것.
@@ -47,9 +34,15 @@ export const GANTT_ALT =
  * `useMembershipChallengeData()` 로 읽어 섹션에서 포맷한다.
  */
 export const CHALLENGE_SCHEDULE = {
-  title: '챌린지 일정을 참고해서 늦지 않게 신청하세요!',
-  subtitle:
-    '서류부터 인적성·면접까지, 필요한 프로그램을 시기에 맞춰 준비하세요.',
+  /**
+   * 의미가 끊기는 자리에서 자른다. 601px 이상에서는 각각 한 줄로 붙는다(base.css 의 .brk).
+   * title 은 h2 라 SEO·스크린리더가 읽는 값이므로 문장을 통으로 보관한다.
+   */
+  titleLines: ['챌린지 일정을 참고해서', '늦지 않게 신청하세요!'],
+  subtitleLines: [
+    '서류부터 인적성·면접까지,',
+    '필요한 프로그램을 시기에 맞춰 준비하세요.',
+  ],
   /** 안내 박스 1줄 — 강조(파랑) 앞부분 */
   noticeLead: '원하는 챌린지들을 나의 상황에 맞게 골라,',
   /** 안내 박스 1줄 — 강조(파랑) 부분의 날짜 뒤에 붙는 꼬리 */

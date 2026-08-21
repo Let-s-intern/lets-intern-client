@@ -114,7 +114,11 @@ export const ALL_IN_ONE_ITEMS: AllInOneItem[] = [
 export const COMPARE_COPY = {
   titleLead: '필요한 프로그램 2개만 골라도',
   titleHi: '올인원 패스가 더 저렴해요',
-  subtitle: '개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.',
+  /** 의미가 끊기는 자리에서 자른다. 601px 이상에서는 한 줄로 붙는다(base.css 의 .brk) */
+  subtitleLines: [
+    '개별 구매보다 더 저렴한 가격으로',
+    '혜택은 더 풍성하게 준비했어요.',
+  ],
   individualLabel: '개별 구매',
   allInOneLabel: '올인원 패스로 구매',
   /** 좌측 각 줄의 금액 앞 라벨 */

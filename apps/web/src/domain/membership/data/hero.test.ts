@@ -1,8 +1,8 @@
 import { HERO, HERO_STATS } from './hero';
 
 describe('HERO 카피', () => {
-  it('헤드라인은 2줄이고 각 줄이 비어 있지 않다', () => {
-    expect(HERO.titleLines).toHaveLength(2);
+  it('헤드라인은 3줄이고 각 줄이 비어 있지 않다', () => {
+    expect(HERO.titleLines).toHaveLength(3);
     for (const line of HERO.titleLines) {
       expect(line.trim().length).toBeGreaterThan(0);
     }

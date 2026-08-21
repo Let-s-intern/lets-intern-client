@@ -3,8 +3,6 @@ import {
   GANTT_ALT,
   GANTT_SIZE,
   GANTT_SRC,
-  NOTICE_SIZE,
-  NOTICE_SRC,
 } from './challengeSchedule';
 
 describe('challengeSchedule 데이터 무결성', () => {
@@ -32,20 +30,13 @@ describe('challengeSchedule 데이터 무결성', () => {
     expect(GANTT_ALT).toContain('10월 5일');
   });
 
-  it('간트 패널과 안내 박스가 WebP 이고 크기가 함께 기록돼 있다', () => {
+  it('간트 패널이 WebP 이고 크기가 함께 기록돼 있다', () => {
     // 크기를 기록해 두는 이유는 CLS 다 — next/image 를 쓰지 않아 자동 예약이 없다.
     expect(GANTT_SRC).toBe('/images/membership/gantt-panel.webp');
     expect(GANTT_SIZE.width).toBeGreaterThan(0);
     expect(GANTT_SIZE.height).toBeGreaterThan(0);
-
-    expect(NOTICE_SRC).toBe('/images/membership/gantt-notice.webp');
-    expect(NOTICE_SIZE.width).toBeGreaterThan(0);
-    expect(NOTICE_SIZE.height).toBeGreaterThan(0);
-
     // PNG·JPG 반입 금지
-    for (const src of [GANTT_SRC, NOTICE_SRC]) {
-      expect(src.endsWith('.webp')).toBe(true);
-    }
+    expect(GANTT_SRC.endsWith('.webp')).toBe(true);
   });
 
   it('이용 기간 날짜는 상수로 두지 않는다(endDate 에서 포맷)', () => {
@@ -55,8 +46,14 @@ describe('challengeSchedule 데이터 무결성', () => {
   });
 
   it('헤더와 안내 박스 문구가 모두 채워져 있다', () => {
-    expect(CHALLENGE_SCHEDULE.title.length).toBeGreaterThan(0);
-    expect(CHALLENGE_SCHEDULE.subtitle.length).toBeGreaterThan(0);
+    // 제목·설명은 의미 단위로 잘려 있다. 폭에 따라 base.css 의 .brk 가 붙인다.
+    for (const lines of [
+      CHALLENGE_SCHEDULE.titleLines,
+      CHALLENGE_SCHEDULE.subtitleLines,
+    ]) {
+      expect(lines.length).toBeGreaterThan(1);
+      for (const line of lines) expect(line.trim()).not.toBe('');
+    }
     expect(CHALLENGE_SCHEDULE.noticeLead.length).toBeGreaterThan(0);
     expect(CHALLENGE_SCHEDULE.noticeHighlightSuffix).toMatch(/신청가능/);
     expect(CHALLENGE_SCHEDULE.noticeDescription.length).toBeGreaterThan(0);

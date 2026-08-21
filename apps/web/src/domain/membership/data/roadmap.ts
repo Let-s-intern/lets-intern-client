@@ -24,8 +24,12 @@ export interface RoadmapNode {
 
 export const ROADMAP = {
   badge: '2026 하반기 공채 로드맵',
-  titleLines: ['공채 일정에 맞춰, 지금 필요한 준비를 이어가세요'],
-  sub: '서류 접수부터 최종 면접까지, 전형별로 필요한 준비를 놓치지 마세요',
+  /** 의미가 끊기는 자리에서 자른다. 601px 이상에서는 한 줄로 붙는다(base.css 의 .brk) */
+  titleLines: ['공채 일정에 맞춰,', '지금 필요한 준비를 이어가세요'],
+  subLines: [
+    '서류 접수부터 최종 면접까지,',
+    '전형별로 필요한 준비를 놓치지 마세요',
+  ],
   nodes: [
     {
       step: 1,
@@ -72,6 +76,9 @@ export const ROADMAP = {
   outro: {
     lead: '전형은 이어지니까, ',
     highlight: '준비도 끊기지 않게',
-    sub: '올인원 패스로 하반기 공채 전형을 단계별로 탄탄하게 대비해 보세요.',
+    subLines: [
+      '올인원 패스로 하반기 공채 전형을',
+      '단계별로 탄탄하게 대비해 보세요.',
+    ],
   },
 } as const;

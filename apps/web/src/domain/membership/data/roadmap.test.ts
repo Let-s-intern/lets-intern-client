@@ -35,6 +35,18 @@ describe('roadmap 데이터 무결성', () => {
   it('하단 마무리 문구는 강조 앞뒤가 분리돼 있다', () => {
     expect(ROADMAP.outro.lead).toContain('전형은 이어지니까');
     expect(ROADMAP.outro.highlight).toBe('준비도 끊기지 않게');
-    expect(ROADMAP.outro.sub.trim()).not.toBe('');
+    expect(ROADMAP.outro.subLines.join(' ').trim()).not.toBe('');
+  });
+
+  it('제목·설명은 의미 단위로 잘려 있고 각 줄이 비어 있지 않다', () => {
+    // 폭에 맡기면 마지막 어절만 떨어져 나온다. base.css 의 .brk 가 폭에 따라 붙인다.
+    for (const lines of [
+      ROADMAP.titleLines,
+      ROADMAP.subLines,
+      ROADMAP.outro.subLines,
+    ]) {
+      expect(lines.length).toBeGreaterThan(1);
+      for (const line of lines) expect(line.trim()).not.toBe('');
+    }
   });
 });

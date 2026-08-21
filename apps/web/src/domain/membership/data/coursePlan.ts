@@ -79,7 +79,7 @@ export interface WeekItem {
   /** 묶음 카드의 끝 주차(없으면 단일 주차) */
   weekEnd?: number;
   /** 소속 월 */
-  month: 'JUL' | 'AUG' | 'SEP';
+  month: 'SEP' | 'OCT' | 'NOV';
   /** 주차 핵심 과업명 */
   title: string;
   /** 보조 설명 */
@@ -89,7 +89,7 @@ export interface WeekItem {
 }
 
 export interface MonthGroup {
-  month: 'JUL' | 'AUG' | 'SEP';
+  month: 'SEP' | 'OCT' | 'NOV';
   /** 월 성격 타이틀 */
   title: string;
   /** 월 서브 카피 */
@@ -122,8 +122,8 @@ export const CATEGORIES: Category[] = [
 
 /** 큰 구간 메타. STEP01–02 준비 / STEP03–05 실전. */
 export const PHASES: { id: Phase; label: string; range: string }[] = [
-  { id: 'prep', label: '준비 단계', range: 'JUL–AUG' },
-  { id: 'live', label: '실전 단계', range: 'AUG–SEP' },
+  { id: 'prep', label: '준비 단계', range: 'SEP–OCT' },
+  { id: 'live', label: '실전 단계', range: 'OCT–NOV' },
 ];
 
 // 매트릭스 셀 — 6 카테고리 × STEP01~05. 서류 작성 STEP03 은 2셀(이력서 + 대기업 자소서).
@@ -409,7 +409,7 @@ export function matrixCellKey(step: StepId, category: CategoryId): string {
 
 export const MONTH_GROUPS: MonthGroup[] = [
   {
-    month: 'JUL',
+    month: 'SEP',
     title: '기반 다지기',
     sub: '리서치로 방향 잡고, 시간 걸리는 서류 먼저',
     badge: 'RESEARCH',
@@ -418,7 +418,7 @@ export const MONTH_GROUPS: MonthGroup[] = [
     badgeFg: '#1c8597',
   },
   {
-    month: 'AUG',
+    month: 'OCT',
     title: '콘텐츠 쌓기',
     sub: '경험정리 → 이력서·자소서 챌린지로',
     badge: 'BUILD',
@@ -427,7 +427,7 @@ export const MONTH_GROUPS: MonthGroup[] = [
     badgeFg: '#c46f10',
   },
   {
-    month: 'SEP',
+    month: 'NOV',
     title: '실전 대비',
     sub: '지원 → 인적성·게임 → 면접까지',
     badge: 'GAME TIME',
@@ -439,82 +439,82 @@ export const MONTH_GROUPS: MonthGroup[] = [
 
 // 월별 13주 타임라인 — 시안 원문 그대로. 12·13 주는 하나의 묶음 카드.
 export const WEEKS: WeekItem[] = [
-  // JUL
+  // SEP
   {
     week: 1,
-    month: 'JUL',
+    month: 'SEP',
     title: '산업 분석',
     desc: '관심 산업 2~3개 시장 규모·성장성·최신 이슈·밸류체인 정리',
     isChallenge: false,
   },
   {
     week: 2,
-    month: 'JUL',
+    month: 'SEP',
     title: '기업 분석',
     desc: '목표 기업 사업영역·인재상·직무(JD) 분석 → 1·2지망 구분',
     isChallenge: false,
   },
   {
     week: 3,
-    month: 'JUL',
+    month: 'SEP',
     title: '영어 자격증 점검',
     desc: '유효기간 확인, 부족하면 바로 접수 (점수 2~3주 소요)',
     isChallenge: false,
   },
   {
     week: 4,
-    month: 'JUL',
+    month: 'SEP',
     title: '성적표·졸업증명서',
     desc: '영문본 포함 미리 발급 — 서류는 항상 미리!',
     isChallenge: false,
   },
-  // AUG
+  // OCT
   {
     week: 5,
-    month: 'AUG',
+    month: 'OCT',
     title: '경험정리 챌린지 ①',
     desc: '경험 전수조사 → STAR 구조로 정리 시작',
     isChallenge: true,
   },
   {
     week: 6,
-    month: 'AUG',
+    month: 'OCT',
     title: '경험정리 챌린지 ② + 인적성 진단',
     desc: '역량 매칭 완료 / 인적성 모의 1회로 약점 파악',
     isChallenge: true,
   },
   {
     week: 7,
-    month: 'AUG',
+    month: 'OCT',
     title: '이력서 챌린지',
     desc: '직무 맞춤 이력서·경력기술서 완성',
     isChallenge: true,
   },
   {
     week: 8,
-    month: 'AUG',
+    month: 'OCT',
     title: '대기업 특화 자소서 챌린지',
     desc: '공통·기업별 문항 합격 구조로 작성·첨삭',
     isChallenge: true,
   },
-  // SEP
+  // NOV
   {
     week: 9,
-    month: 'SEP',
+    month: 'NOV',
     title: '서류 접수 + 잡다 게임 ①',
     desc: '자소서 최종 완성·지원 시작 / 역량검사 게임 유형 익히기',
     isChallenge: false,
   },
   {
     week: 10,
-    month: 'SEP',
+    month: 'NOV',
     title: '인적성 대비 챌린지 + 게임 ②',
     desc: '실전 모의고사 반복 / 게임 연습 마무리',
     isChallenge: true,
   },
   {
     week: 11,
-    month: 'SEP',
+    month: 'NOV',
     title: '인적성 마무리 + 면접 챌린지 ①',
     desc: '인적성 최종 점검 / 1분 자기소개·직무 PR 스크립트',
     isChallenge: true,
@@ -522,7 +522,7 @@ export const WEEKS: WeekItem[] = [
   {
     week: 12,
     weekEnd: 13,
-    month: 'SEP',
+    month: 'NOV',
     title: '면접 준비 챌린지 ②',
     desc: '예상 질문 정리 → 모의면접 반복·녹화 피드백',
     isChallenge: true,
