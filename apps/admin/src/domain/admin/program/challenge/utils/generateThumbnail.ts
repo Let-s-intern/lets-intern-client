@@ -11,12 +11,32 @@ export const THUMBNAIL_IMAGES: Partial<Record<ChallengeType, string>> = {
   PORTFOLIO: '/images/challenge-thumbnail-portfolio.png',
 };
 
+// Ver 배너가 붙으면 배경 그래픽이 작은 전용 이미지를 쓴다.
+// 기존 이미지는 그래픽이 커서 배너와 겹친다.
+export const THUMBNAIL_IMAGES_WITH_VER: Partial<Record<ChallengeType, string>> =
+  {
+    EXPERIENCE_SUMMARY:
+      '/images/challenge-thumbnail-experience-summary-ver.png',
+    PORTFOLIO: '/images/challenge-thumbnail-portfolio-ver.png',
+    // 이력서는 Ver 전용 이미지만 있다. Ver 없는 이력서 챌린지는 자동 생성 대상이 아니다.
+    CAREER_START: '/images/challenge-thumbnail-career-start-ver.png',
+  };
+
+export const resolveThumbnailImage = (
+  challengeType: ChallengeType,
+  version: string | null,
+): string | null =>
+  (version ? THUMBNAIL_IMAGES_WITH_VER[challengeType] : undefined) ??
+  THUMBNAIL_IMAGES[challengeType] ??
+  null;
+
 export const THUMBNAIL_TYPE_LABELS: Partial<Record<ChallengeType, string>> = {
   PERSONAL_STATEMENT: '자기소개서',
   PERSONAL_STATEMENT_LARGE_CORP: '대기업',
   EXPERIENCE_SUMMARY: '경험정리',
   DOCUMENT_PREPARATION: '서류준비',
   PORTFOLIO: '포트폴리오',
+  CAREER_START: '이력서',
 };
 
 export const extractGeneration = (title: string): string | null => {
@@ -49,6 +69,7 @@ export const BADGE_COLORS: Partial<Record<ChallengeType, string>> = {
   EXPERIENCE_SUMMARY: '#57B3FF',
   DOCUMENT_PREPARATION: '#DB77FF',
   PORTFOLIO: '#4F79FE',
+  CAREER_START: '#F308FB',
 };
 
 const CANVAS_WIDTH = 1146;
@@ -69,6 +90,13 @@ const TITLE_SHADOW_BLUR = 20;
 const TITLE_SHADOW_COLORS: Partial<Record<ChallengeType, string>> = {
   PERSONAL_STATEMENT: '#20A4D9',
   PORTFOLIO: '#E79C00',
+};
+
+// 배너 색은 기수 배지 색과 별개다.
+// 이력서만 배경이 파랑이라 배너를 빨강으로 쓴다.
+const VER_BANNER_DEFAULT_COLOR = '#2563EB';
+const VER_BANNER_COLORS: Partial<Record<ChallengeType, string>> = {
+  CAREER_START: '#FF0004',
 };
 
 const VER_BANNER_HEIGHT = 164;
@@ -102,10 +130,10 @@ export async function drawBadgeOnCanvas(
   challengeType: ChallengeType,
   title: string,
 ): Promise<Blob | null> {
-  const imagePath = THUMBNAIL_IMAGES[challengeType];
   const badgeColor = BADGE_COLORS[challengeType];
   const generation = extractGeneration(title);
   const version = extractVersion(title);
+  const imagePath = resolveThumbnailImage(challengeType, version);
 
   if (!imagePath || !badgeColor || !generation) return null;
 
@@ -144,7 +172,8 @@ export async function drawBadgeOnCanvas(
       ctx.measureText(version).width + VER_BANNER_PADDING_X * 2;
     const bannerX = CANVAS_WIDTH - bannerWidth;
 
-    ctx.fillStyle = badgeColor;
+    ctx.fillStyle =
+      VER_BANNER_COLORS[challengeType] ?? VER_BANNER_DEFAULT_COLOR;
     ctx.beginPath();
     // 위·오른쪽은 캔버스에 붙고 좌하단만 둥글다
     ctx.roundRect(bannerX, 0, bannerWidth, VER_BANNER_HEIGHT, [
