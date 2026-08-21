@@ -3,6 +3,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { COMPARE_COMBOS, COMPARE_COPY, getComboTotal } from '../data/compare';
+import { formatKRW } from '../data/membership';
 import AllInOneCard from '../ui/AllInOneCard';
 import CompareTabs from '../ui/CompareTabs';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
@@ -39,6 +40,8 @@ export default function CompareSection() {
 
   const items = activeCombo?.items ?? [];
   const total = activeCombo ? getComboTotal(activeCombo) : 0;
+  // 개별 합계 − 올인원 특가. visibleCombos 가 이미 0 이하를 걸러내지만 값으로도 막는다.
+  const saving = total - salePrice;
 
   if (visibleCombos.length === 0 || !activeCombo) return null;
 
@@ -50,7 +53,13 @@ export default function CompareSection() {
             <span className="cmp-t-lead">{COMPARE_COPY.titleLead}</span>
             <span className="cmp-t-hi">{COMPARE_COPY.titleHi}</span>
           </h2>
-          <p>{COMPARE_COPY.subtitle}</p>
+          <p>
+            {COMPARE_COPY.subtitleLines.map((line) => (
+              <span className="brk" key={line}>
+                {line}
+              </span>
+            ))}
+          </p>
         </div>
 
         <CompareTabs
@@ -72,8 +81,15 @@ export default function CompareSection() {
             <IndividualPurchaseCard items={items} total={total} />
           </div>
 
-          <div className="cmp-arrow" aria-hidden>
-            <ChevronRight size={56} strokeWidth={2.6} />
+          {/* 절약 금액 말풍선은 모바일 시안(9-2-mobile.png)에만 있다 —
+              PC 는 compare.css 가 숨긴다. 화살표만 aria-hidden 이고 금액은 읽힌다. */}
+          <div className="cmp-arrow">
+            <ChevronRight size={56} strokeWidth={2.6} aria-hidden />
+            {saving > 0 && (
+              <span className="cmp-save">
+                <strong className="num">{formatKRW(saving)}원</strong> 절약
+              </span>
+            )}
           </div>
 
           <div className="cmp-col">

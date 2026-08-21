@@ -111,6 +111,10 @@
   align-self: center;
   color: var(--lc-blue);
 }
+/* 절약 금액 말풍선 — 모바일 시안(9-2-mobile.png)에만 있다. 아래 560px 블록에서 켠다 */
+.membership-root .cmp-save {
+  display: none;
+}
 
 /* ---------- 카드 공통 ---------- */
 .membership-root .cmp-card {
@@ -321,29 +325,87 @@
   .membership-root .compare {
     padding: 56px 0;
   }
-  /* 탭은 알약을 세로로 쌓는다. 가로 스크롤을 만들지 않는다 */
+  /* 시안 9-2-mobile.png — 헤더가 좌측 정렬이다.
+     .sec-head 의 전역 가운데 정렬(base.css)은 두고 비교 섹션 안에서만 되돌린다 */
+  .membership-root .compare .sec-head {
+    text-align: left;
+    margin-left: 0;
+    margin-bottom: 28px;
+  }
+  .membership-root .compare .sec-head h2 {
+    align-items: flex-start;
+  }
+  /* 시안 9-2-mobile.png — 흰 트랙 안 3등분. 아이콘 위, 라벨은 어절 단위 2줄.
+     가로 스크롤은 만들지 않는다 */
   .membership-root .cmp-tabs {
-    flex-direction: column;
+    width: 100%;
     gap: 2px;
-    border-radius: 20px;
+    border-radius: 22px;
     margin-bottom: 24px;
   }
   .membership-root .cmp-tab {
-    flex: none;
-    border-radius: 14px;
-    font-size: 14px;
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 6px;
+    border-radius: 18px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: keep-all;
   }
-  /* 좌우 2열 -> 위아래. 화살표는 아래 방향으로 돌린다 */
+  .membership-root .cmp-tab svg {
+    width: 18px;
+    height: 18px;
+  }
+  /* 좌우 2열 -> 위아래. 화살표는 아래 방향으로 돌린다.
+     회전은 svg 에만 준다 — .cmp-arrow 를 돌리면 옆의 절약 말풍선까지 눕는다 */
   .membership-root .cmp-panel {
     grid-template-columns: 1fr;
     gap: 12px;
   }
   .membership-root .cmp-arrow {
-    transform: rotate(90deg);
+    position: relative;
   }
   .membership-root .cmp-arrow svg {
     width: 30px;
     height: 30px;
+    transform: rotate(90deg);
+  }
+  /* 절약 금액 말풍선 — 화살표 오른쪽에 붙는 흰 박스 + 좌측 꼬리.
+     absolute 로 띄워야 화살표가 열 가운데에 그대로 남는다(시안 9-2-mobile.png) */
+  .membership-root .cmp-save {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + 26px);
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: var(--white);
+    box-shadow: 0 8px 20px -14px rgba(40, 60, 120, 0.5);
+    color: var(--g600);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .membership-root .cmp-save strong {
+    color: var(--lc-blue);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .membership-root .cmp-save::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    margin-top: -6px;
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent var(--white) transparent transparent;
   }
   .membership-root .cmp-card {
     min-height: 0;

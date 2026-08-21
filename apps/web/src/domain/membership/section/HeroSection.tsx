@@ -11,19 +11,19 @@ export default function HeroSection() {
         <div className="hero-chips he he1">
           <span className="hero-badge">{HERO.badge}</span>
         </div>
+        {/* 줄바꿈은 <br> 이 아니라 base.css 의 .brk 유틸이 정한다.
+            1줄차는 어느 폭에서도 자기 줄(.brk-line), 2·3줄은 601px 이상에서 붙어 한 줄이 된다. */}
         <h1 className="he he2">
           {HERO.titleLines.map((line, i) => (
-            <span key={i}>
+            <span className={i === 0 ? 'brk-line' : 'brk'} key={i}>
               {line}
-              {i < HERO.titleLines.length - 1 && <br />}
             </span>
           ))}
         </h1>
         <p className="lead he he3">
-          {HERO.lead.map((line, i) => (
-            <span key={i}>
+          {HERO.lead.map((line) => (
+            <span className="brk-line" key={line}>
               {line}
-              {i < HERO.lead.length - 1 && <br />}
             </span>
           ))}
         </p>

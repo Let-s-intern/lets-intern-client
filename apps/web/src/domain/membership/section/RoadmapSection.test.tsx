@@ -6,14 +6,14 @@ describe('RoadmapSection', () => {
   it('섹션 배지·헤드라인·서브카피를 렌더한다', () => {
     render(<RoadmapSection />);
     expect(screen.getByText('2026 하반기 공채 로드맵')).toBeInTheDocument();
-    expect(
-      screen.getByText('공채 일정에 맞춰, 지금 필요한 준비를 이어가세요'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        '서류 접수부터 최종 면접까지, 전형별로 필요한 준비를 놓치지 마세요',
-      ),
-    ).toBeInTheDocument();
+    // 제목·설명은 의미 단위로 잘려 있고, 붙였다 떼는 것은 base.css 의 .brk 가 한다.
+    const { container } = render(<RoadmapSection />);
+    expect(container.querySelector('.sec-head h2')?.textContent).toBe(
+      ROADMAP.titleLines.join(''),
+    );
+    expect(container.querySelector('.sec-head p')?.textContent).toBe(
+      ROADMAP.subLines.join(''),
+    );
   });
 
   it('5개 노드의 날짜 칩·제목·본문을 모두 렌더한다', () => {
@@ -59,10 +59,8 @@ describe('RoadmapSection', () => {
     expect(container.querySelector('.rmap-outro-lead .hl')?.textContent).toBe(
       '준비도 끊기지 않게',
     );
-    expect(
-      screen.getByText(
-        '올인원 패스로 하반기 공채 전형을 단계별로 탄탄하게 대비해 보세요.',
-      ),
-    ).toBeInTheDocument();
+    expect(container.querySelector('.rmap-outro-sub')?.textContent).toBe(
+      ROADMAP.outro.subLines.join(''),
+    );
   });
 });
