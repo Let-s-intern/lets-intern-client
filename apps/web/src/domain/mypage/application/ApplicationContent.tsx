@@ -12,6 +12,7 @@ import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import LaunchAlertSection from '@/domain/mypage/application/section/LaunchAlertSection';
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
+import MentoringSection from '@/domain/mypage/application/section/MentoringSection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -23,6 +24,14 @@ const ApplicationContent = () => {
   );
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
+  /*
+    라이브 멘토링은 전용 탭에서 별도 API(`/live-mentoring/applications/my`)로 그린다.
+
+    task 는 여기에 `programType !== 'LIVE_MENTORING'` 을 방어용으로 더하라고 했지만
+    넣지 않았다. `ProgramTypeEnum` 에 그 값이 없어서 서버가 보내면 필터에 닿기 전에
+    `mypageApplicationsSchema.parse` 가 먼저 던진다 — 카드가 두 번 뜨는 것보다
+    시끄럽게 실패하는 편이 낫고, 비교문 자체가 타입 오류다.
+  */
   const programApplications =
     applications?.filter(
       (application) =>
@@ -84,6 +93,8 @@ const ApplicationContent = () => {
             )}
           </>
         )}
+
+        {category === 'MENTORING' && <MentoringSection />}
 
         {category === 'LIBRARY' && <LibrarySection />}
 

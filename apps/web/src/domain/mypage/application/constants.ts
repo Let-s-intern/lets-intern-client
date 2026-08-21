@@ -1,5 +1,6 @@
 export type ApplicationCategory =
   | 'PROGRAM'
+  | 'MENTORING'
   | 'LIBRARY'
   | 'GUIDEBOOK'
   | 'VOD'
@@ -11,6 +12,8 @@ export const APPLICATION_CATEGORY_OPTIONS: {
   label: string;
 }[] = [
   { value: 'PROGRAM', label: '프로그램' },
+  // 시안 3-0 의 탭 순서는 프로그램 / 멘토링 / 무료 자료집 / 가이드북이다.
+  { value: 'MENTORING', label: '멘토링' },
   { value: 'LIBRARY', label: '무료 자료집' },
   { value: 'GUIDEBOOK', label: '가이드북' },
   { value: 'VOD', label: 'VOD 클래스' },
