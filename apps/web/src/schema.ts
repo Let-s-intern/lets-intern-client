@@ -193,6 +193,7 @@ export type VodPriceType = z.infer<typeof vodPriceTypeSchema>;
 export const ProgramTypeEnum = z.enum([
   'CHALLENGE',
   'LIVE',
+  'LIVE_MENTORING',
   'VOD',
   'REPORT',
   'GUIDEBOOK',
@@ -203,6 +204,7 @@ export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 export const programTypeList = [
   'CHALLENGE',
   'LIVE',
+  'LIVE_MENTORING',
   'VOD',
   'REPORT',
   'GUIDEBOOK',

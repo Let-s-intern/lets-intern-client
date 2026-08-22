@@ -16,6 +16,7 @@ import {
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
+  LIVE_MENTORING: 'LIVE 멘토링',
   VOD: 'VOD 클래스',
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',

@@ -73,6 +73,7 @@ const toProgramCardConfig = (
 
   const isChallenge = programType === 'CHALLENGE';
   const isLive = programType === 'LIVE';
+  const isLiveMentoring = programType === 'LIVE_MENTORING';
   const isReport = programType === 'REPORT';
 
   const statusLabel =
@@ -113,7 +114,9 @@ const toProgramCardConfig = (
 
   const isChallengeDashboardVisible =
     pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
-  const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
+  const isDashboardVisible = isChallenge
+    ? isChallengeDashboardVisible
+    : isLive || isLiveMentoring;
 
   const isMembership =
     isChallenge && isMembershipChallengeProgram(programId ?? 0);
@@ -127,10 +130,16 @@ const toProgramCardConfig = (
             external: true,
           }
         : {
-            label: isChallenge ? '대시보드 입장' : '클래스 입장',
+            label: isChallenge
+              ? '대시보드 입장'
+              : isLiveMentoring
+                ? '멘토링 입장'
+                : '클래스 입장',
             href: isChallenge
               ? `/challenge/${id}/${programId}`
-              : `/program/live/${programId}`,
+              : isLiveMentoring
+                ? `/live-mentoring/${programId}`
+                : `/program/live/${programId}`,
           }
       : undefined;
 
