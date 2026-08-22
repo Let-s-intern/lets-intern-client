@@ -291,14 +291,15 @@ export const liveMentoringSettingsSchema = z.object({
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
 /**
- * PUT /mentor/live-mentoring/settings 요청 바디 — 백엔드가 받는 건 이 2개뿐이다.
+ * PUT /mentor/live-mentoring/settings 요청 바디.
  *
- * 진행시간은 이 요청이 아니라 개설(`liveMentoringOpeningCreateSchema`)로 보낸다.
+ * 진행시간은 설정 저장과 개설(`liveMentoringOpeningCreateSchema`) 양쪽에서 보낸다.
  * 상품이 없으면 이 요청이 상품을 `DRAFT` 로 생성한다.
  */
 export const liveMentoringSettingsUpdateSchema = z.object({
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
+  durations: z.array(liveMentoringDurationSchema),
 });
 export type LiveMentoringSettingsUpdate = z.infer<
   typeof liveMentoringSettingsUpdateSchema

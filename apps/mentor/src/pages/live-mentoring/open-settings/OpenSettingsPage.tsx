@@ -199,20 +199,20 @@ const OpenSettingsPage = () => {
   const hasValidOpeningInput =
     !noTitleEntered && !noCategorySelected && !noDurationSelected;
 
-  // 저장(PUT)이 실제로 서버에 반영하는 건 제목·타입뿐이다.
+  // 저장(PUT)은 제목·타입·진행시간을 서버에 반영한다.
   const isTitleOrCategoryDirty =
     (form.title ?? '') !== (original.title ?? '') ||
     JSON.stringify(form.categories) !== JSON.stringify(original.categories);
   /*
    * "저장" 버튼 활성화는 화면에서 뭔가 하나라도 바뀌었으면 켠다 — 진행시간만 고쳤을 때
-   * 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 클릭하면 PUT은 여전히 제목·타입만
-   * 보내지만, 성공 시 handleSave 가 현재 폼 값 전체를 새 기준선으로 삼으므로(merged)
-   * 진행시간의 미저장 상태도 함께 정리된다.
+   * 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 성공 시 handleSave 가 현재 폼 값
+   * 전체를 새 기준선으로 삼으므로(merged) 진행시간의 미저장 상태도 함께 정리된다.
    */
   const isDirty =
     isTitleOrCategoryDirty ||
     JSON.stringify(form.durations) !== JSON.stringify(original.durations);
-  const canSave = !noTitleEntered && !noCategorySelected && isDirty;
+  const canSave =
+    !noTitleEntered && !noCategorySelected && !noDurationSelected && isDirty;
   /*
    * 개설은 제목·타입·진행시간을 한 요청에 담으므로 미리 저장할 필요가 없다 —
    * 상품이 아직 없을 때만 저장이 선행돼야 한다.
@@ -300,11 +300,15 @@ const OpenSettingsPage = () => {
   const handleSave = () => {
     if (!canSave) return;
     save(
-      { title: form.title ?? '', categories: form.categories },
+      {
+        title: form.title ?? '',
+        categories: form.categories,
+        durations: form.durations,
+      },
       {
         onSuccess: (saved) => {
-          // 응답이 서버의 최신 전체 상태다. 다만 아직 개설하지 않은 진행시간은 서버에
-          // 없으므로(빈 배열) 사용자가 골라 둔 값을 덮어쓰지 않는다.
+          // 진행시간도 저장 요청에 포함되지만, 저장 시점의 폼 값을 기준선에 명시적으로
+          // 반영해 현재 화면과 저장 직후 응답을 일치시킨다.
           const merged: LiveMentoringSettings = {
             ...saved,
             durations: form.durations,

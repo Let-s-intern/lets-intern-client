@@ -1946,13 +1946,14 @@ export const handlers = [
   /**
    * (멘토) PUT /mentor/live-mentoring/settings — 상품 설정 저장.
    *
-   * 백엔드가 받는 건 title/categories 두 개뿐이다. 진행시간·기간은 검토 제출에서 받는다.
+   * 백엔드는 title/categories/durations를 받는다. 진행시간도 이 요청으로 저장한다.
    * 상품이 없으면 이 요청이 `DRAFT` 로 상품을 만든다.
    */
   http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as {
       title?: string;
       categories?: LiveMentoringCategory[];
+      durations?: number[];
     };
 
     if (!isSettingsEditable()) {
@@ -1965,9 +1966,20 @@ export const handlers = [
     if (!body.title?.trim() || !body.categories?.length) {
       return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
     }
+    if (!body.durations?.length) {
+      return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
+    }
+    if (body.durations.some((duration) => duration !== 30 && duration !== 60)) {
+      return liveMentoringError(
+        400,
+        'INVALID_LIVE_MENTORING_DURATION',
+        '지원하지 않는 라이브 멘토링 진행 시간입니다.',
+      );
+    }
 
     liveMentoringState.title = body.title;
     liveMentoringState.categories = body.categories;
+    liveMentoringState.durations = body.durations as LiveMentoringDuration[];
     if (liveMentoringState.liveMentoringId === null) {
       liveMentoringState.liveMentoringId = 1;
       liveMentoringState.status = 'DRAFT';

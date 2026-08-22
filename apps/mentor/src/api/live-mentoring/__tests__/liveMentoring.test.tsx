@@ -410,12 +410,13 @@ describe('useCreateLiveMentoringOpeningMutation', () => {
   });
 });
 
-// ── mutation 훅 (PUT — 제목·타입만 보내고, 응답은 전체 설정) ────
+// ── mutation 훅 (PUT — 제목·타입·진행시간을 보내고, 응답은 전체 설정) ────
 describe('useUpdateLiveMentoringSettingsMutation', () => {
-  it('PUT settings 에 제목·타입만 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
+  it('PUT settings 에 제목·타입·진행시간을 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
     const update = {
       title: '자소서 실전 첨삭 멘토링',
       categories: ['PERSONAL_STATEMENT'] as ('PERSONAL_STATEMENT' | 'RESUME')[],
+      durations: [30],
     };
     const responseSettings = makeSettings();
     axiosMock.put.mockResolvedValue({ data: { data: responseSettings } });
