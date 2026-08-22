@@ -116,7 +116,11 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
   });
 
   it('PUT /mentor/live-mentoring/settings → 제목·타입·진행시간을 반영하고 전체 설정을 돌려준다', async () => {
-    const body = { title: '수정된 타이틀', categories: ['RESUME'], durations: [30] };
+    const body = {
+      title: '수정된 타이틀',
+      categories: ['RESUME'],
+      durations: [30],
+    };
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
