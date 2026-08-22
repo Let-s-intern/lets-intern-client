@@ -74,6 +74,7 @@ export const convertCareerApiToUiFormat = (
     field: career.field ?? '',
     position: career.position ?? '',
     department: career.department ?? '',
+    isRepresentative: career.isRepresentative ?? false,
   };
 };
 
@@ -100,5 +101,6 @@ export const convertCareerUiToApiFormat = (
     field: career.field || null,
     position: career.position || null,
     department: career.department || null,
+    isRepresentative: career.isRepresentative ?? false,
   };
 };

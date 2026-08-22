@@ -34,6 +34,7 @@ export const userCareerSchema = z.object({
   position: z.string().nullable().optional(),
   department: z.string().nullable().optional(),
   isAddedByAdmin: z.boolean().nullable().optional(),
+  isRepresentative: z.boolean().nullable().optional(),
 });
 
 export const userCareerListSchema = z.object({

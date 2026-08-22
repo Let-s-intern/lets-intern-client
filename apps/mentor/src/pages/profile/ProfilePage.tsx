@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
-import mentorConfig from '@/constants/config';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
 import CareerSection from './ui/CareerSection';
 import Introduction from './ui/Introduction';
+import MentorDetailContentSection from './ui/MentorDetailContentSection';
+import MentorHashTagSection from './ui/MentorHashTagSection';
 
 const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
@@ -174,6 +176,8 @@ export default function ProfilePage() {
         />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
+        <MentorHashTagSection />
+        <MentorDetailContentSection />
       </div>
 
       {/* Floating save / discard buttons */}

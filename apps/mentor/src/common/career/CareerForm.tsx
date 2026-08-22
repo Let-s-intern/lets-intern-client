@@ -48,6 +48,9 @@ const CareerForm = ({
   const [showCancelWarning, setShowCancelWarning] = useState(false);
 
   const form = watch();
+  const isEditMode = initialCareer.id != null;
+  const isRepresentativeDisabled = initialCareer.isRepresentative === true;
+  const isRepresentativeChecked = !!form.isRepresentative;
 
   const onSubmit = (validatedData: CareerFormType) => {
     handleSubmit(convertCareerUiToApiFormat(validatedData));
@@ -277,6 +280,38 @@ const CareerForm = ({
           <ErrorMsg msg={errors.startDate?.message} />
           <ErrorMsg msg={errors.endDate?.message} />
         </fieldset>
+
+        {isEditMode && (
+          <fieldset className="flex flex-col gap-1.5">
+            <div
+              className={`flex w-fit items-center gap-2 ${isRepresentativeDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+              onClick={() => {
+                if (isRepresentativeDisabled) return;
+                setValue('isRepresentative', !isRepresentativeChecked, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+              }}
+            >
+              {isRepresentativeChecked ? (
+                <img
+                  src="/icons/checkbox-fill.svg"
+                  alt="체크됨"
+                  className="w-5 flex-shrink-0"
+                />
+              ) : (
+                <img
+                  src="/icons/checkbox-unchecked-box2.svg"
+                  alt="체크되지 않음"
+                  className="w-5"
+                />
+              )}
+              <span className="text-neutral-20 font-medium">
+                대표 경력으로 설정하기
+              </span>
+            </div>
+          </fieldset>
+        )}
 
         <div className="mt-11 flex w-full gap-2">
           <OutlinedButton

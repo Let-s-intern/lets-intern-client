@@ -41,9 +41,21 @@ export const adminUserMentorList = z.object({
       nickname: z.string().nullable().optional(),
       email: z.string().nullable().optional(),
       phoneNum: z.string().nullable().optional(),
+      hashTagList: z
+        .array(
+          z.object({
+            id: z.number(),
+            type: z.string(),
+            title: z.string(),
+          }),
+        )
+        .optional()
+        .default([]),
     }),
   ),
 });
+
+export type AdminUserMentorList = z.infer<typeof adminUserMentorList>;
 
 export interface PostAdminChallengeMentorReq {
   challengeId: number;
@@ -76,3 +88,22 @@ export const patchAttendanceMentorReqSchema = z
 export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema
 >;
+
+export const mentorHashTagItemSchema = z.object({
+  id: z.number(),
+  type: z.string(),
+  title: z.string(),
+});
+
+export type MentorHashTagItem = z.infer<typeof mentorHashTagItemSchema>;
+
+/** GET /api/v1/admin/mentor-hash-tag 응답 */
+export const mentorHashTagListSchema = z.object({
+  mentorHashTagList: z.array(mentorHashTagItemSchema),
+});
+
+/** POST, PATCH /api/v1/admin/mentor-hash-tag 요청 바디 */
+export interface MentorHashTagReq {
+  type: string;
+  title: string;
+}
