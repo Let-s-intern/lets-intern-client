@@ -115,8 +115,8 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     expect(data).not.toHaveProperty('isOpen');
   });
 
-  it('PUT /mentor/live-mentoring/settings → 제목·타입만 반영하고 전체 설정을 돌려준다', async () => {
-    const body = { title: '수정된 타이틀', categories: ['RESUME'] };
+  it('PUT /mentor/live-mentoring/settings → 제목·타입·진행시간을 반영하고 전체 설정을 돌려준다', async () => {
+    const body = { title: '수정된 타이틀', categories: ['RESUME'], durations: [30] };
     const res = await fetch(`${BASE}/mentor/live-mentoring/settings`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -124,8 +124,7 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     });
     const { data } = await res.json();
     expect(data).toMatchObject(body);
-    // 진행시간은 이 요청으로 저장되지 않는다(개설의 몫).
-    expect(data.durations).toEqual([]);
+    expect(data.durations).toEqual(body.durations);
     // 프로필 참조 필드(nickname 등)는 요청에 없어도 응답엔 딸려온다.
     expect(data).toHaveProperty('nickname');
     expect(data).toHaveProperty('careers');

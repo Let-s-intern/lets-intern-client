@@ -48,7 +48,7 @@ export const useLiveMentoringSettingsQuery = () => {
 
 /**
  * PUT /mentor/live-mentoring/settings — 상품 설정 저장.
- * 백엔드가 받는 건 title/categories 둘뿐이다 — 진행시간은 개설(`POST /openings`)이 받고,
+ * 백엔드는 title/categories/durations를 받는다 — 진행시간도 이 요청으로 저장하고,
  * nickname/profileImage/introduction/careers는 프로필 도메인 참조용이라 요청에 포함하지 않는다.
  * 응답은 전체 설정(프로필 참조 필드 포함)이라 저장 성공 시 곧바로 최신 상태로 갱신할 수 있다.
  * 상품이 없는 멘토는 이 요청이 상품을 `DRAFT` 로 만든다 — 개설은 상품이 있어야 하므로

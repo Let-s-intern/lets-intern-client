@@ -246,8 +246,8 @@ describe('OpenSettingsPage — 피드백 진행 일정이 화면에서 사라졌
   });
 });
 
-describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
-  it('저장은 title/categories 두 필드만 담아 mutate 를 호출한다', () => {
+describe('OpenSettingsPage — 저장 payload(제목·타입·진행시간)', () => {
+  it('저장은 title/categories/durations 세 필드를 담아 mutate 를 호출한다', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
@@ -260,6 +260,7 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
     expect(payload).toEqual({
       title: '이력서 클리닉',
       categories: baseSettings.categories,
+      durations: baseSettings.durations,
     });
   });
 
@@ -271,6 +272,7 @@ describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
+    expect(payload.durations).toEqual(baseSettings.durations);
   });
 
   it('진행시간만 바꿔도 저장이 활성화된다', () => {
