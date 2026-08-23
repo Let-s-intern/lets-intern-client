@@ -23,8 +23,17 @@ const ActiveProgramSection = () => {
 
   const filteredData = useMemo(() => {
     return data?.programList
+      /*
+        타입 술어로 좁힌다. 아래에서 `programType` 을 `CurationType` 을 받는 헬퍼
+        (`getProgramUrl` 등)에 넘기는데, 일반 `filter` 로는 좁혀지지 않아 챌린지·라이브가
+        아닌 값까지 타입상 통과해 버린다.
+      */
       .filter(
-        (p) =>
+        (
+          p,
+        ): p is typeof p & {
+          programInfo: { programType: 'CHALLENGE' | 'LIVE' };
+        } =>
           p.programInfo.programType === 'CHALLENGE' ||
           p.programInfo.programType === 'LIVE',
       )

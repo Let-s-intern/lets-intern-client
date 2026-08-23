@@ -26,17 +26,17 @@ const ApplicationContent = () => {
 
   /*
     라이브 멘토링은 전용 탭에서 별도 API(`/live-mentoring/applications/my`)로 그린다.
+    여기서 빼지 않으면 같은 신청이 프로그램 탭과 멘토링 탭에 두 번 뜬다.
 
-    task 는 여기에 `programType !== 'LIVE_MENTORING'` 을 방어용으로 더하라고 했지만
-    넣지 않았다. `ProgramTypeEnum` 에 그 값이 없어서 서버가 보내면 필터에 닿기 전에
-    `mypageApplicationsSchema.parse` 가 먼저 던진다 — 카드가 두 번 뜨는 것보다
-    시끄럽게 실패하는 편이 낫고, 비교문 자체가 타입 오류다.
+    `GET /api/v2/user/applications` 는 라이브 멘토링을 실제로 내려준다. 신청현황 쿼리의
+    `programType.ne(LIVE_MENTORING)` 제외는 그 엔드포인트가 아니라 다른 조회에 걸려 있다.
   */
   const programApplications =
     applications?.filter(
       (application) =>
         application.programType !== 'GUIDEBOOK' &&
-        application.programType !== 'VOD',
+        application.programType !== 'VOD' &&
+        application.programType !== 'LIVE_MENTORING',
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
