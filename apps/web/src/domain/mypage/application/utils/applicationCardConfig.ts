@@ -1,9 +1,6 @@
 import type { ApplicationDownloadType } from '@/api/application';
 import { MypageApplication } from '@/api/application';
-import {
-  isMembershipChallengeProgram,
-  MEMBERSHIP_GUIDE_URL,
-} from '@/domain/membership/lib/membershipChallenge';
+import { membershipGuideUrl } from '@/domain/membership/lib/membershipChallenge';
 import { getReportThumbnail } from '@/domain/mypage/credit/ui/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import {
@@ -115,15 +112,16 @@ const toProgramCardConfig = (
     pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
   const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
 
-  const isMembership =
-    isChallenge && isMembershipChallengeProgram(programId ?? 0);
+  // [LC-3219-MEMBERSHIP] 멤버십 기수는 대시보드가 아니라 기수별 노션 가이드로 보낸다.
+  // programId 는 프로그램 타입마다 별도 채번이라 챌린지일 때만 조회한다.
+  const guideUrl = isChallenge ? membershipGuideUrl(programId ?? 0) : undefined;
 
   const actionButton =
     isDashboardVisible && programType && programId != null && id != null
-      ? isMembership
+      ? guideUrl
         ? {
             label: '가이드 확인',
-            href: MEMBERSHIP_GUIDE_URL,
+            href: guideUrl,
             external: true,
           }
         : {

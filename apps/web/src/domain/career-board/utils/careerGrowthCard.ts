@@ -1,9 +1,6 @@
 import type { ApplicationDownloadType } from '@/api/application';
 import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
-import {
-  isMembershipChallengeProgram,
-  MEMBERSHIP_GUIDE_URL,
-} from '@/domain/membership/lib/membershipChallenge';
+import { membershipGuideUrl } from '@/domain/membership/lib/membershipChallenge';
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
 import { normalizeChatPassword } from '@/domain/mypage/application/utils/chatLinkProvider';
 import dayjs from '@/lib/dayjs';
@@ -55,6 +52,9 @@ export const toProgramCardConfig = (
   const isChallenge = item.programTypeKey === PROGRAM_TYPE.CHALLENGE;
   const period = `${item.startDate} ~ ${item.endDate}`;
   const isDashboardDisabled = item.programStatusType === 'PREV';
+  // [LC-3219-MEMBERSHIP] 멤버십 기수는 대시보드가 아니라 기수별 노션 가이드로 보낸다.
+  // programId 는 프로그램 타입마다 별도 채번이라 챌린지일 때만 조회한다.
+  const guideUrl = isChallenge ? membershipGuideUrl(item.programId) : undefined;
 
   return {
     id: item.id,
@@ -77,11 +77,11 @@ export const toProgramCardConfig = (
           }
         : undefined,
     actionButton: isChallenge
-      ? isMembershipChallengeProgram(item.programId)
+      ? guideUrl
         ? {
             label: '가이드 확인',
             disabled: isDashboardDisabled,
-            href: MEMBERSHIP_GUIDE_URL,
+            href: guideUrl,
             external: true,
           }
         : {

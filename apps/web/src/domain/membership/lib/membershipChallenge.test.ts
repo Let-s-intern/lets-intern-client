@@ -6,6 +6,7 @@ import {
   IS_RECRUITMENT_CLOSED,
   isValidMembershipChallengeId,
   MEMBERSHIP_LAUNCH_ALERT_PATH,
+  membershipGuideUrl,
 } from './membershipChallenge';
 
 describe('isValidMembershipChallengeId', () => {
@@ -67,5 +68,26 @@ describe('모집 재개 상태의 CTA (LC-3219)', () => {
     expect(MEMBERSHIP_LAUNCH_ALERT_PATH).toMatch(
       /^\/library\/\d+\/apply\?type=launch-alert$/,
     );
+  });
+});
+
+describe('기수별 노션 가이드 (LC-3219)', () => {
+  it('진행 중인 기수는 결제 대상(env)이 아니어도 가이드 주소를 준다', () => {
+    // 2026-08-20 모집 재개로 운영 env 를 384 로 올리자, 멤버십 판정이 env 와의 비교였던
+    // 탓에 309 가 멤버십이 아닌 것으로 처리됐다. 8월 기수 카드의 버튼이 '가이드 확인'
+    // 대신 '대시보드 입장' 으로 바뀌어, 쓰지도 않는 챌린지 대시보드로 가고 가이드에
+    // 닿을 길이 없어졌다. 결제 대상이 무엇이든 두 기수 모두 주소가 나와야 한다.
+    expect(membershipGuideUrl(309)).toMatch(
+      /^https:\/\/letsintern\.notion\.site\//,
+    );
+    expect(membershipGuideUrl(384)).toMatch(
+      /^https:\/\/letsintern\.notion\.site\//,
+    );
+  });
+
+  it('멤버십 기수가 아니면 undefined → 카드가 대시보드 입장으로 남는다', () => {
+    // programId 를 못 읽었을 때 넘어오는 0 도 여기로 떨어져야 한다.
+    expect(membershipGuideUrl(0)).toBeUndefined();
+    expect(membershipGuideUrl(1)).toBeUndefined();
   });
 });
