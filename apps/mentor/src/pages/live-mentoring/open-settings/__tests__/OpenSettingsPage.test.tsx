@@ -246,6 +246,49 @@ describe('OpenSettingsPage — 피드백 진행 일정이 화면에서 사라졌
   });
 });
 
+describe('OpenSettingsPage — 상태 충돌 안내 문구', () => {
+  // 회귀 케이스: LOCKED 와 INVALID_STATE 를 한데 묶어 "다른 곳에서 상태가
+  // 바뀌었습니다"로 안내하던 시절, 멘토가 다른 창을 의심하며 새로고침만 반복했다.
+  // LOCKED 는 개설이 열려 있다는 뜻이고 할 일은 "오픈 종료"다.
+  const failSaveWith = (code: string) =>
+    saveMock.mockImplementation((_body, options) =>
+      options?.onError?.({ code, message: '서버 메시지' }),
+    );
+
+  it('LOCKED 면 오픈을 종료하라고 안내한다', () => {
+    failSaveWith('LIVE_MENTORING_LOCKED');
+    renderPage();
+
+    // 저장 버튼은 변경이 있어야 활성된다.
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '이력서 클리닉' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(
+      screen.getByText('오픈 중에는 설정을 수정할 수 없습니다.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('다른 곳에서 상태가 바뀌었습니다.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('INVALID_STATE 면 상태가 바뀌었다고 안내한다', () => {
+    failSaveWith('LIVE_MENTORING_INVALID_STATE');
+    renderPage();
+
+    // 저장 버튼은 변경이 있어야 활성된다.
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '이력서 클리닉' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(
+      screen.getByText('다른 곳에서 상태가 바뀌었습니다.'),
+    ).toBeInTheDocument();
+  });
+});
+
 describe('OpenSettingsPage — 저장 payload(제목·타입만)', () => {
   it('저장은 title/categories 두 필드만 담아 mutate 를 호출한다', () => {
     renderPage();
