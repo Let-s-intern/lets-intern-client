@@ -17,6 +17,8 @@ jest.mock('next/navigation', () => ({
 }));
 
 const mutate = jest.fn();
+/* 화면은 `mutateAsync` 의 프로미스로 결과를 받는다. 목도 프로미스를 돌려줘야 한다. */
+let mutateResult: Promise<unknown> = new Promise(() => {});
 let mutationState: Record<string, unknown> = {};
 
 jest.mock('@/api/live-mentoring/liveMentoring', () => ({
@@ -49,7 +51,15 @@ beforeEach(() => {
   searchParams = new URLSearchParams(SUCCESS_PARAMS);
   useOrderDraftStore.getState().clearDraft();
   mutationState = { isPending: false, isSuccess: false, data: undefined };
-  useConfirmMock.mockImplementation(() => ({ mutate, ...mutationState }));
+  mutateResult = new Promise(() => {});
+  useConfirmMock.mockImplementation(() => ({
+    mutate,
+    mutateAsync: (...args: unknown[]) => {
+      mutate(...args);
+      return mutateResult;
+    },
+    ...mutationState,
+  }));
 });
 
 describe('OrderResultPage — 승인 호출', () => {
@@ -63,6 +73,26 @@ describe('OrderResultPage — 승인 호출', () => {
       paymentKey: 'tviva20260821',
       orderId: 'gKEMQwWav2Lh',
       amount: '60000',
+    });
+  });
+
+  /*
+    100% 쿠폰이면 PG 를 거치지 않아 `paymentKey` 가 없다. 서버는 `finalAmount == 0` 일 때
+    빈 키를 받아 Toss 호출 없이 승인한다. 여기서 막으면 0원 주문이 영영 확정되지 않는다.
+  */
+  it('0원이면 paymentKey 없이 승인을 요청한다', async () => {
+    searchParams = new URLSearchParams({
+      orderId: 'gKEMQwWav2Lh',
+      amount: '0',
+    });
+    useOrderDraftStore.getState().setApplication(APPLICATION);
+    render(<OrderResultPage />);
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0][0]).toEqual({
+      paymentKey: '',
+      orderId: 'gKEMQwWav2Lh',
+      amount: '0',
     });
   });
 
@@ -116,22 +146,24 @@ describe('OrderResultPage — 결과 화면', () => {
     expect(screen.queryByText('결제가 완료되었습니다!')).toBeNull();
   });
 
-  it('승인이 끝나면 서버가 확정한 금액으로 완료 화면을 보여준다', () => {
+  /*
+    화면은 뮤테이션 내부 상태가 아니라 `onSuccess` 로 받은 값으로 그린다.
+    승인이 200 을 줬는데도 "확인하는 중"에 갇히던 회귀를 여기서 막는다.
+  */
+  it('승인이 끝나면 서버가 확정한 금액으로 완료 화면을 보여준다', async () => {
     useOrderDraftStore.getState().setApplication(APPLICATION);
-    mutationState = {
-      isPending: false,
-      isSuccess: true,
-      data: {
-        applicationId: 15,
-        paymentId: 501,
-        orderId: 'gKEMQwWav2Lh',
-        amount: 60000,
-        applicationStatus: 'CONFIRMED',
-      },
-    };
+    mutateResult = Promise.resolve({
+      applicationId: 15,
+      paymentId: 501,
+      orderId: 'gKEMQwWav2Lh',
+      amount: 60000,
+      applicationStatus: 'CONFIRMED',
+    });
     render(<OrderResultPage />);
 
-    expect(screen.getByText('결제가 완료되었습니다!')).toBeInTheDocument();
+    expect(
+      await screen.findByText('결제가 완료되었습니다!'),
+    ).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
     expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
   });

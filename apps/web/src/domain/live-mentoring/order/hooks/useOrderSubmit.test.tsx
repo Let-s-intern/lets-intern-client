@@ -240,6 +240,29 @@ describe('useOrderSubmit — 신청 생성', () => {
       expiresAt: '2026-08-21T16:23:16.283507',
     });
   });
+
+  /*
+    100% 쿠폰이면 결제할 것이 없다. 서버도 `finalAmount > 0` 일 때만 Toss 를 부르므로
+    위젯을 띄우면 0원 결제 요청이 되어 실패한다.
+  */
+  it('0원이면 결제 위젯을 건너뛰고 승인으로 바로 보낸다', async () => {
+    mutate.mockImplementation((_body, options) =>
+      options.onSuccess({
+        ...CREATED,
+        payment: { ...CREATED.payment, finalAmount: 0 },
+      }),
+    );
+    const { result } = setup();
+
+    act(() => result.current.submit());
+
+    await waitFor(() =>
+      expect(push).toHaveBeenCalledWith(
+        '/live-mentoring/order/result?orderId=gKEMQwWav2Lh&amount=0',
+      ),
+    );
+    expect(push).not.toHaveBeenCalledWith('/live-mentoring/order/payment');
+  });
 });
 
 describe('useOrderSubmit — 실패 처리', () => {

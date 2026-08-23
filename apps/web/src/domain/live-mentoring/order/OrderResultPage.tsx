@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { useConfirmLiveMentoringPaymentMutation } from '@/api/live-mentoring/liveMentoring';
+import type { ConfirmLiveMentoringPaymentResponse } from '@/api/live-mentoring/liveMentoringSchema';
 import { formatPrice } from '../constants';
 import { readServerError } from '../utils/serverError';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
@@ -33,6 +34,16 @@ const OrderResultPage = () => {
   );
   const hasRequested = useRef(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  /*
+    승인 결과를 뮤테이션 내부 상태(`isSuccess`/`data`)가 아니라 여기에 담는다.
+
+    승인 성공 시 슬롯 목록을 무효화하는데, 그 리페치가 상위 경계를 다시 매달면
+    이 컴포넌트가 재마운트되면서 뮤테이션 상태가 idle 로 돌아간다. 그러면 서버는
+    이미 200 을 준 뒤인데 화면만 "확인하는 중"에 영원히 갇힌다. 로컬 상태로 들고 있으면
+    재마운트돼도 `hasRequested` 와 함께 초기화돼 승인을 다시 태우고 화면이 복구된다.
+  */
+  const [confirmed, setConfirmed] =
+    useState<ConfirmLiveMentoringPaymentResponse | null>(null);
 
   useEffect(() => {
     if (hasRequested.current) return;
@@ -51,20 +62,33 @@ const OrderResultPage = () => {
       );
       return;
     }
-    if (!paymentKey || !orderId || !amount) {
+    /*
+      0원이면 PG 를 거치지 않으므로 `paymentKey` 가 없다. 서버도 `finalAmount > 0` 일 때만
+      Toss 승인을 부르고 `paymentKey` 를 요구한다(`LiveMentoringApplicationServiceImpl`).
+      100% 쿠폰이 그 경로를 만든다.
+    */
+    const isFree = amount === '0';
+    if (!orderId || !amount || (!isFree && !paymentKey)) {
       setErrorMessage(DEFAULT_ERROR);
       return;
     }
 
     hasRequested.current = true;
-    // 요청의 amount 는 문자열이다. 응답에서는 숫자로 돌아온다 — 서버 DTO 가 그렇다.
-    confirmPayment.mutate(
-      { paymentKey, orderId, amount },
-      {
-        onError: (error) =>
-          setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
-      },
-    );
+    /*
+      `mutate` 의 호출부 콜백 대신 `mutateAsync` 의 프로미스로 결과를 받는다.
+      TanStack Query 는 호출부에 넘긴 `onSuccess`/`onError` 를 **컴포넌트가 언마운트되면
+      실행하지 않는다.** 승인 성공 시 슬롯 목록을 무효화하는데 그 리페치가 이 화면을
+      다시 매달면 콜백이 통째로 유실되고, 서버는 200 을 준 뒤인데 화면만
+      "확인하는 중"에 갇힌다. 프로미스는 마운트 상태와 무관하게 결정된다.
+
+      요청의 amount 는 문자열이다. 응답에서는 숫자로 돌아온다 — 서버 DTO 가 그렇다.
+    */
+    confirmPayment
+      .mutateAsync({ paymentKey: paymentKey ?? '', orderId, amount })
+      .then((data) => setConfirmed(data))
+      .catch((error) =>
+        setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
+      );
     // 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [application, searchParams]);
@@ -88,7 +112,7 @@ const OrderResultPage = () => {
     );
   }
 
-  if (confirmPayment.isPending || !confirmPayment.isSuccess) {
+  if (!confirmed) {
     return (
       <p className="text-neutral-40 py-20 text-center">결제를 확인하는 중…</p>
     );
@@ -116,7 +140,7 @@ const OrderResultPage = () => {
         <div className="flex items-center justify-between">
           <dt className="text-neutral-40">결제 금액</dt>
           <dd className="text-neutral-0 font-bold">
-            {formatPrice(confirmPayment.data.amount)}
+            {formatPrice(confirmed.amount)}
           </dd>
         </div>
       </dl>

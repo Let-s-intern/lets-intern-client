@@ -116,6 +116,19 @@ export function useOrderSubmit({
           customerMobilePhone: customerMobilePhone.replace(/[^0-9]/g, ''),
           expiresAt: created.reservation.expiresAt,
         });
+        /*
+          쿠폰으로 0원이 되면 결제할 것이 없다. 서버도 `finalAmount > 0` 일 때만 Toss 를
+          부르므로 위젯을 띄우면 0원 결제 요청이 되어 실패한다. 위젯을 건너뛰고
+          승인 단계로 바로 보낸다 — `paymentKey` 없이도 서버가 승인한다.
+        */
+        if (created.payment.finalAmount === 0) {
+          const params = new URLSearchParams({
+            orderId: created.payment.orderId,
+            amount: '0',
+          });
+          router.push(`/live-mentoring/order/result?${params.toString()}`);
+          return;
+        }
         router.push('/live-mentoring/order/payment');
       },
       onError: (error) => {
