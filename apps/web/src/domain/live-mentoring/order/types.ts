@@ -1,6 +1,14 @@
 import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMentoringSchema';
 
 /**
+ * 전액 할인 쿠폰은 서버가 `discount: -1` 로 내려준다 (`calculatePrice` 규칙).
+ *
+ * 쿠폰 훅이 아니라 여기 두는 이유 — 훅은 HTTP 모듈을 끌고 오는데, 금액 표시
+ * 컴포넌트가 상수 하나 때문에 그 의존을 함께 짊어질 이유가 없다.
+ */
+export const FULL_DISCOUNT = -1;
+
+/**
  * 결제 페이지에서 받는 멘토 질문 입력값.
  *
  * 그대로 신청 생성 요청의 `question` 이 된다 — 글자수 상한도 서버

@@ -112,9 +112,15 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
         appliedCode={coupon.appliedCode}
         onRegister={coupon.register}
         onClear={coupon.clear}
+        errorMessage={coupon.errorMessage}
+        isValidating={coupon.isValidating}
       />
 
-      <PriceSection price={draft.price} appliedCouponCode={coupon.appliedCode} />
+      <PriceSection
+        price={draft.price}
+        appliedCouponCode={coupon.appliedCode}
+        couponDiscount={coupon.discount}
+      />
 
       <SubmitBlock
         draft={draft}

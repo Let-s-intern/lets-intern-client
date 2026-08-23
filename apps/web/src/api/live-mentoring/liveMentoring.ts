@@ -313,3 +313,20 @@ export const useCancelLiveMentoringApplicationMutation = (
     },
   });
 };
+
+/**
+ * GET /coupon — 쿠폰 코드를 검증하고 할인값을 받아 온다.
+ *
+ * 신청 생성과 **같은** 검증(`couponService.applyCoupon`)을 태우므로, 여기서 통과한
+ * 쿠폰은 결제에서도 통과한다. 등록 시점에 판정해야 사용자가 사유를 바로 알고
+ * 할인 금액도 화면에 뜬다.
+ *
+ * `discount` 가 `-1` 이면 전액 할인이다(서버 `calculatePrice` 규칙).
+ * 실제 청구액은 신청 생성 응답의 `payment.finalAmount` 가 정한다.
+ */
+export const applyLiveMentoringCoupon = async (code: string) => {
+  const res = await axios.get('/coupon', {
+    params: { code, programType: 'LIVE_MENTORING' },
+  });
+  return res.data.data as { couponId: number; discount: number };
+};

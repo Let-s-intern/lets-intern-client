@@ -1,6 +1,7 @@
 'use client';
 
 import { formatPrice } from '../../constants';
+import { FULL_DISCOUNT } from '../types';
 
 interface PriceSectionProps {
   /** 선택 플랜의 판매가. */
@@ -10,23 +11,40 @@ interface PriceSectionProps {
    * 0 이면 행을 감춘다 — PRD 4-5 로 값이 생기면 자동으로 나타난다.
    */
   productDiscount?: number;
-  /** 등록한 쿠폰 코드. 할인 금액은 서버가 정하므로 여기서는 계산하지 않는다. */
+  /** 등록한 쿠폰 코드. */
   appliedCouponCode: string | null;
+  /** 쿠폰 검증 응답의 할인값. `-1` 은 전액 할인이다. */
+  couponDiscount?: number | null;
 }
+
+/** 쿠폰 할인 표시액. 전액 할인은 남은 금액 전부, 정액은 남은 금액까지만 빠진다. */
+export const resolveCouponDiscount = (
+  priceAfterProductDiscount: number,
+  couponDiscount: number | null | undefined,
+): number => {
+  if (couponDiscount === null || couponDiscount === undefined) return 0;
+  if (couponDiscount === FULL_DISCOUNT) return priceAfterProductDiscount;
+  return Math.min(priceAfterProductDiscount, couponDiscount);
+};
 
 /**
  * 금액 내역 (시안 `2-0` 하단).
  *
- * **쿠폰 할인액을 숫자로 적지 않는다.** 할인 계산은 서버가 신청 생성 시점에 하고,
- * 사전 조회 API 가 없어 이 화면에서는 얼마가 빠질지 알 수 없다. 시안처럼
- * `-10,000원` 을 적으려면 그 숫자를 지어내야 한다. 실제 청구액은 신청 생성 응답의
- * `payment.finalAmount` 이고, 그 값이 Toss 결제창에 뜬다.
+ * 쿠폰 할인액은 등록 시점에 서버(`GET /coupon`)가 알려준 값으로 계산해 보여준다.
+ * 계산식은 서버 `calculatePrice` 와 같다 — 전액 할인(`-1`)은 원금까지, 정액은
+ * 원금을 넘지 않는 선까지. 실제 청구액은 신청 생성 응답의 `payment.finalAmount` 이고
+ * 그 값이 결제창에 뜬다. 여기 숫자와 어긋나면 서버 값이 맞다.
  */
 const PriceSection = ({
   price,
   productDiscount = 0,
   appliedCouponCode,
+  couponDiscount,
 }: PriceSectionProps) => {
+  const afterProduct = price - productDiscount;
+  const couponAmount = resolveCouponDiscount(afterProduct, couponDiscount);
+  const total = Math.max(afterProduct - couponAmount, 0);
+
   return (
     <section className="flex flex-col gap-3">
       <dl className="text-xsmall14 flex flex-col gap-3">
@@ -45,9 +63,7 @@ const PriceSection = ({
         {appliedCouponCode !== null && (
           <div className="flex items-center justify-between">
             <dt className="text-primary font-medium">쿠폰할인</dt>
-            <dd className="text-neutral-45 text-xxsmall12">
-              결제 단계에서 적용
-            </dd>
+            <dd className="text-neutral-0">-{formatPrice(couponAmount)}</dd>
           </div>
         )}
       </dl>
@@ -55,7 +71,7 @@ const PriceSection = ({
       <div className="border-neutral-85 flex items-center justify-between border-t pt-4">
         <span className="text-xsmall16 text-neutral-0 font-bold">결제금액</span>
         <span className="text-small18 text-neutral-0 font-bold">
-          {formatPrice(price - productDiscount)}
+          {formatPrice(total)}
         </span>
       </div>
     </section>

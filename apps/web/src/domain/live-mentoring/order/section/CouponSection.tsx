@@ -6,14 +6,19 @@ interface CouponSectionProps {
   appliedCode: string | null;
   onRegister: () => void;
   onClear: () => void;
+  /** 서버가 거절한 사유. 등록 시점에 바로 보여준다. */
+  errorMessage?: string | null;
+  /** 검증 요청 중에는 버튼을 잠근다. */
+  isValidating?: boolean;
 }
 
 /**
  * 쿠폰 등록 (시안 `2-0` 의 "결제 정보").
  *
- * 등록해도 이 화면에서는 검증되지 않는다. 서버가 신청 생성 시점에 확인하므로
- * 잘못된 코드는 `결제하기` 를 누를 때 걸러진다 — 그 사실을 문구로 알린다.
- * 조용히 넘겼다가 결제 직전에 튕기면 사용자는 무엇이 잘못됐는지 알 수 없다.
+ * 등록을 누르면 서버(`GET /coupon`)가 신청 생성과 같은 검증을 태워 즉시 판정한다.
+ * 쓸 수 없는 쿠폰이면 그 자리에서 사유를 보여주고, 통과하면 할인 금액이
+ * `PriceSection` 에 바로 반영된다. 결제 직전에 처음 튕기면 사용자는 무엇이
+ * 잘못됐는지 알 수 없다.
  */
 const CouponSection = ({
   inputValue,
@@ -21,6 +26,8 @@ const CouponSection = ({
   appliedCode,
   onRegister,
   onClear,
+  errorMessage = null,
+  isValidating = false,
 }: CouponSectionProps) => {
   return (
     <section className="flex flex-col gap-3">
@@ -41,16 +48,17 @@ const CouponSection = ({
             <button
               type="button"
               onClick={onRegister}
-              disabled={inputValue.trim().length === 0}
+              disabled={inputValue.trim().length === 0 || isValidating}
               className="bg-primary text-xsmall14 disabled:bg-neutral-80 disabled:text-neutral-40 shrink-0 rounded-sm px-5 py-3 font-medium text-white"
             >
-              쿠폰 등록
+              {isValidating ? '확인 중...' : '쿠폰 등록'}
             </button>
           </div>
-          <p className="text-xxsmall12 text-neutral-45">
-            * 쿠폰은 결제하기를 누를 때 확인됩니다. 사용할 수 없는 쿠폰이면 그때
-            알려드려요.
-          </p>
+          {errorMessage !== null && (
+            <p role="alert" className="text-xxsmall12 text-system-error">
+              {errorMessage}
+            </p>
+          )}
         </>
       ) : (
         <div className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3">
