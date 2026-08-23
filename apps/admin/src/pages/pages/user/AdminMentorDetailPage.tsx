@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
-  usePatchUserAdminMutation,
-  useUserDetailAdminQuery,
-  UseUserDetailAdminQueryKey,
-} from '@/api/user/user';
-import {
+  useDeleteAdminCareerMutation,
   useGetAdminUserCareerQuery,
   usePostAdminCareerMutation,
-  useDeleteAdminCareerMutation,
 } from '@/api/career/career';
 import { uploadFile } from '@/api/file';
+import {
+  AdminUserDetailQueryKey,
+  useAdminUserDetailQuery,
+  usePatchUserAdminMutation,
+} from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
@@ -24,6 +24,7 @@ interface BasicFormData {
   email: string;
   sns: string;
   profileImgUrl: string;
+  corpImgUrl: string;
   introduction: string;
 }
 
@@ -34,6 +35,7 @@ const INITIAL_FORM: BasicFormData = {
   email: '',
   sns: '',
   profileImgUrl: '',
+  corpImgUrl: '',
   introduction: '',
 };
 
@@ -56,6 +58,7 @@ interface LocalCareer {
   position: string;
   department: string;
   isAddedByAdmin: boolean;
+  isRepresentative: boolean;
 }
 
 export default function AdminMentorDetailPage() {
@@ -65,10 +68,7 @@ export default function AdminMentorDetailPage() {
   const { snackbar } = useAdminSnackbar();
   const mentorId = Number(params.mentorId || 0);
 
-  const { data: userDetail, isLoading } = useUserDetailAdminQuery({
-    userId: mentorId,
-    enabled: !!mentorId,
-  });
+  const { data: userDetail, isLoading } = useAdminUserDetailQuery(mentorId);
 
   const { data: careerData } = useGetAdminUserCareerQuery(mentorId, {
     page: 0,
@@ -80,7 +80,7 @@ export default function AdminMentorDetailPage() {
     successCallback: () => {
       snackbar('프로필이 저장되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: [UseUserDetailAdminQueryKey, mentorId],
+        queryKey: [AdminUserDetailQueryKey, mentorId],
       });
     },
     errorCallback: () => snackbar('저장에 실패했습니다.'),
@@ -101,6 +101,7 @@ export default function AdminMentorDetailPage() {
       email: userInfo.email ?? '',
       sns: userInfo.sns ?? '',
       profileImgUrl: userInfo.profileImgUrl ?? '',
+      corpImgUrl: userInfo.corpImgUrl ?? '',
       introduction: userInfo.introduction ?? '',
     });
   }, [userDetail]);
@@ -119,6 +120,7 @@ export default function AdminMentorDetailPage() {
           position: c.position ?? '',
           department: c.department ?? '',
           isAddedByAdmin: c.isAddedByAdmin ?? false,
+          isRepresentative: c.isRepresentative ?? false,
         }))
         .sort((a, b) => b.startDate.localeCompare(a.startDate)),
     [careerData],
@@ -132,6 +134,7 @@ export default function AdminMentorDetailPage() {
       nickname: form.nickname || null,
       sns: form.sns || null,
       profileImgUrl: form.profileImgUrl || null,
+      corpImgUrl: form.corpImgUrl || null,
       introduction: form.introduction || null,
     });
   };
@@ -187,6 +190,24 @@ export default function AdminMentorDetailPage() {
     }
   };
 
+  const handleCorpImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const isFileTooLarge = file.size > 5 * 1024 * 1024;
+    if (isFileTooLarge) {
+      snackbar('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+    try {
+      const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
+      setForm((prev) => ({ ...prev, corpImgUrl: fileUrl }));
+    } catch {
+      snackbar('이미지 업로드에 실패했습니다.');
+    }
+  };
+
   if (isLoading) {
     return (
       <section className="p-5">
@@ -225,27 +246,61 @@ export default function AdminMentorDetailPage() {
         <div className="border-neutral-80 rounded-lg border p-6">
           <h2 className="text-medium18 mb-4 font-semibold">기본 정보</h2>
 
-          <div className="mb-6 flex items-center gap-4">
-            <div className="border-neutral-80 bg-neutral-95 relative flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border">
-              {form.profileImgUrl ? (
-                <img
-                  src={form.profileImgUrl}
-                  alt="프로필"
-                  className="h-full w-full object-cover"
+          <div className="mb-10 flex items-center gap-5">
+            <div className="flex w-[200px] flex-col">
+              <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+                프로필 이미지
+              </label>
+              <label className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+                {form.profileImgUrl ? (
+                  <img
+                    src={form.profileImgUrl}
+                    alt="멘토 프로필"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xsmall14 text-neutral-40">프로필</span>
+                )}
+                <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  이미지
+                  <br />
+                  업로드
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
                 />
-              ) : (
-                <span className="text-xsmall14 text-neutral-40">이미지</span>
-              )}
+              </label>
             </div>
-            <label className="border-neutral-80 text-xsmall14 hover:bg-neutral-95 cursor-pointer rounded border px-3 py-1.5">
-              이미지 업로드
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
+            <div className="item-center flex h-[184px] w-[200px] flex-col">
+              <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+                로고 이미지
+              </label>
+              <label className="border-neutral-80 bg-neutral-95 group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+                {form.corpImgUrl ? (
+                  <img
+                    src={form.corpImgUrl}
+                    alt="로고"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xsmall14 text-neutral-40">로고</span>
+                )}
+                <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  이미지
+                  <br />
+                  업로드
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCorpImageUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
 
           <div className="flex flex-col gap-4">
@@ -293,84 +348,119 @@ export default function AdminMentorDetailPage() {
         </div>
 
         {/* 경력 사항 */}
-        <div className="border-neutral-80 rounded-lg border p-6">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-medium18 font-semibold">경력사항</h2>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleAddCareer}
-              disabled={postCareer.isPending}
-            >
-              경력 추가 +
-            </Button>
-          </div>
-          <p className="text-xxsmall12 text-neutral-40 mb-4">
-            멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
-          </p>
-
-          {careers.length === 0 ? (
-            <div className="text-xsmall14 text-neutral-40 py-8 text-center">
-              등록된 경력이 없습니다.
+        <div className="flex flex-col gap-8">
+          <div className="border-neutral-80 rounded-lg border p-6">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-medium18 font-semibold">경력사항</h2>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={handleAddCareer}
+                disabled={postCareer.isPending}
+              >
+                경력 추가 +
+              </Button>
             </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {careers.map((career, index) => {
-                const isDeletable = career.isAddedByAdmin && career.id;
-                const hasDetails =
-                  career.field || career.position || career.department;
-                return (
-                  <div
-                    key={career.id ?? index}
-                    className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xsmall14 text-neutral-0">
-                        {career.job || '-'}
-                      </span>
-                      {isDeletable ? (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteCareer(career)}
-                          className="text-xxsmall12 text-red-500 hover:text-red-700"
-                        >
-                          삭제
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className="text-xsmall14 text-neutral-0 font-medium">
-                      {career.company || '-'}
-                    </div>
-                    <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
-                      <span>{career.employmentType || '-'}</span>
-                      <span className="text-neutral-40">
-                        {career.startDate || '-'}
-                        {career.endDate ? ` - ${career.endDate}` : ' - 재직중'}
-                      </span>
-                    </div>
-                    {hasDetails ? (
-                      <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                        {career.field ? (
-                          <span>업무분야: {career.field}</span>
-                        ) : null}
-                        {career.position ? (
-                          <span>직책: {career.position}</span>
-                        ) : null}
-                        {career.department ? (
-                          <span>부서: {career.department}</span>
+            <p className="text-xxsmall12 text-neutral-40 mb-4">
+              멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
+            </p>
+
+            {careers.length === 0 ? (
+              <div className="text-xsmall14 text-neutral-40 py-8 text-center">
+                등록된 경력이 없습니다.
+              </div>
+            ) : (
+              <div className="flex max-h-[28rem] flex-col gap-3 overflow-y-auto">
+                {careers.map((career, index) => {
+                  const isDeletable = career.isAddedByAdmin && career.id;
+                  const hasDetails =
+                    career.field || career.position || career.department;
+                  return (
+                    <div
+                      key={career.id ?? index}
+                      className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xsmall14 text-neutral-0">
+                          {career.job || '-'}
+                        </span>
+                        {isDeletable ? (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCareer(career)}
+                            className="text-xxsmall12 text-red-500 hover:text-red-700"
+                          >
+                            삭제
+                          </button>
                         ) : null}
                       </div>
-                    ) : null}
-                    {!career.isAddedByAdmin ? (
-                      <span className="text-xxsmall12 mt-1 text-neutral-50">
-                        멘토 등록
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      <div className="text-xsmall14 text-neutral-0 font-medium">
+                        {career.company || '-'}
+                      </div>
+                      <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                        <span>{career.employmentType || '-'}</span>
+                        <span className="text-neutral-40">
+                          {career.startDate || '-'}
+                          {career.endDate
+                            ? ` - ${career.endDate}`
+                            : ' - 재직중'}
+                        </span>
+                      </div>
+                      {hasDetails ? (
+                        <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                          {career.field ? (
+                            <span>업무분야: {career.field}</span>
+                          ) : null}
+                          {career.position ? (
+                            <span>직책: {career.position}</span>
+                          ) : null}
+                          {career.department ? (
+                            <span>부서: {career.department}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {!career.isAddedByAdmin || career.isRepresentative ? (
+                        <div className="mt-1 flex items-center gap-1.5">
+                          {!career.isAddedByAdmin ? (
+                            <span className="text-xxsmall12 text-neutral-50">
+                              멘토 등록
+                            </span>
+                          ) : null}
+                          {career.isRepresentative ? (
+                            <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
+                              대표 경력
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* 키워드 */}
+          <div className="border-neutral-80 min-h-40 rounded-lg border p-6">
+            <h2 className="text-medium18 mb-4 font-semibold">키워드</h2>
+            {userDetail.mentorHashTagInfos &&
+            userDetail.mentorHashTagInfos.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {userDetail.mentorHashTagInfos.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="text-xxsmall12 border-neutral-80 bg-neutral-95 text-neutral-20 rounded-full border px-2.5 py-1.5"
+                  >
+                    #{tag.title}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xsmall14 text-neutral-40 py-4 text-center">
+                등록된 해시태그가 없습니다.
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

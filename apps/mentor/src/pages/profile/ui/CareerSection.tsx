@@ -4,8 +4,9 @@ import { useState } from 'react';
 
 import {
   useGetUserCareerQuery,
-  usePostUserCareerMutation,
   usePatchUserCareerMutation,
+  usePostUserCareerMutation,
+  useSetRepresentativeCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
 import CareerHeader from '@/common/career/CareerHeader';
@@ -20,6 +21,7 @@ export default function CareerSection() {
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
+  const setRepresentativeCareerMutation = useSetRepresentativeCareerMutation();
   const { data, isLoading } = useGetUserCareerQuery({
     page: 0,
     size: PAGE_SIZE,
@@ -33,8 +35,9 @@ export default function CareerSection() {
   };
 
   const handleSubmitForm = async (career: UserCareerType) => {
+    const { isRepresentative, ...careerFields } = career;
     const formData = new FormData();
-    const requestDto = new Blob([JSON.stringify(career)], {
+    const requestDto = new Blob([JSON.stringify(careerFields)], {
       type: 'application/json',
     });
     formData.append('requestDto', requestDto);
@@ -46,6 +49,10 @@ export default function CareerSection() {
         careerId: editingId,
         careerData: formData,
       });
+
+      if (isRepresentative) {
+        await setRepresentativeCareerMutation.mutateAsync(editingId);
+      }
     }
 
     handleCloseForm();
@@ -66,7 +73,9 @@ export default function CareerSection() {
   if (isLoading) {
     return (
       <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-        <h2 className="text-base font-semibold text-gray-900">경력사항</h2>
+        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+          경력사항
+        </h2>
         <div className="py-4 text-sm text-gray-400">로딩 중...</div>
       </section>
     );

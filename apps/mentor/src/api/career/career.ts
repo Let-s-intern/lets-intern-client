@@ -86,6 +86,26 @@ export const usePatchUserCareerMutation = () => {
   });
 };
 
+/**
+ * PATCH /user-career/my/{careerId}/representative — 대표 경력 지정.
+ *
+ * 요청 바디는 없다. 기존 대표 경력은 서버가 자동으로 해제하므로
+ * 해제 요청을 따로 보낼 필요가 없다(해제 전용 API도 없다).
+ * 대표 경력은 1대1 라이브 멘토링 공개 목록의 멘토 카드에 노출된다.
+ */
+export const useSetRepresentativeCareerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (careerId: number) => {
+      await axios.patch(`/user-career/my/${careerId}/representative`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
+    },
+  });
+};
+
 export const AdminUserCareerQueryKey = 'adminUserCareerQueryKey';
 
 export const useGetAdminUserCareerQuery = (
