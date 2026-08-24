@@ -1,5 +1,6 @@
 import type {
   AdminCurrentOpening,
+  LiveMentoringApplicationStatus,
   LiveMentoringCategory,
   LiveMentoringCloseReason,
   LiveMentoringStatus,
@@ -21,6 +22,17 @@ export const STATUS_CLASSES: Record<LiveMentoringStatus, string> = {
   DRAFT: 'bg-neutral-95 text-neutral-40',
   APPROVED: 'bg-primary-10 text-primary',
   INACTIVE: 'bg-neutral-95 text-neutral-40',
+};
+
+/** 신청 상태. 서버 `LiveMentoringApplicationStatus` 의 desc 를 그대로 쓴다. */
+export const APPLICATION_STATUS_LABELS: Record<
+  LiveMentoringApplicationStatus,
+  string
+> = {
+  PAYMENT_PENDING: '결제 대기',
+  EXPIRED: '선점 만료',
+  CANCELED: '신청 취소',
+  CONFIRMED: '결제 완료',
 };
 
 export const CLOSE_REASON_LABELS: Record<LiveMentoringCloseReason, string> = {

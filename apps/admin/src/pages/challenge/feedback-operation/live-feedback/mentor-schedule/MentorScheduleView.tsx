@@ -15,6 +15,10 @@ import ReservationListView from '../reservation/ui/ReservationListView';
 import ReservationRescheduleModal from '../reservation/ui/ReservationRescheduleModal';
 import ViewToggle, { type ReservationView } from '../reservation/ui/ViewToggle';
 import {
+  toChallengeRow,
+  type ReservationRow,
+} from '../reservation/utils/reservationRow';
+import {
   sortReservations,
   type SortKey,
   type SortState,
@@ -101,9 +105,14 @@ export default function MentorScheduleView() {
   );
 
   // 선택 멘토의 예약(전체 기간). 리스트뷰·캘린더 예약 블록에 쓴다.
-  const mentorReservations = useMemo(
+  const mentorFeedbacks = useMemo(
     () => (reservations ?? []).filter((r) => r.mentorId === selectedMentorId),
     [reservations, selectedMentorId],
+  );
+
+  const mentorReservations = useMemo<ReservationRow[]>(
+    () => mentorFeedbacks.map(toChallengeRow),
+    [mentorFeedbacks],
   );
 
   const sortedMentorReservations = useMemo(
@@ -139,10 +148,15 @@ export default function MentorScheduleView() {
     const reservedBlocks = buildReservationBlocks(
       mentorReservations,
       weekStart,
-      setSelectedFeedbackId,
+      openDetail,
     );
     return [...openBlocks, ...reservedBlocks];
   }, [selectedMentor, openSlots, mentorReservations, weekStart]);
+
+  const openDetail = (row: ReservationRow) => {
+    if (row.kind === 'CHALLENGE')
+      setSelectedFeedbackId(row.feedback.feedbackId);
+  };
 
   const toggleSort = (key: SortKey) =>
     setSort((prev) =>
@@ -247,7 +261,7 @@ export default function MentorScheduleView() {
               reservations={sortedMentorReservations}
               sort={sort}
               onToggleSort={toggleSort}
-              onView={setSelectedFeedbackId}
+              onView={openDetail}
               onReschedule={setRescheduleTarget}
               isLoading={reservationsLoading}
               emptyMessage="이 멘토의 예약 내역이 없습니다."
@@ -265,7 +279,7 @@ export default function MentorScheduleView() {
         feedbackId={selectedFeedbackId}
         onClose={() => setSelectedFeedbackId(null)}
         onReschedule={() => {
-          const target = mentorReservations.find(
+          const target = mentorFeedbacks.find(
             (r) => r.feedbackId === selectedFeedbackId,
           );
           if (target) {

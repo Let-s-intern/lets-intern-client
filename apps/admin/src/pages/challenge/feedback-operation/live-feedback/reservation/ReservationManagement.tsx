@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
@@ -22,8 +23,16 @@ const ReservationRescheduleModal = lazy(
 import {
   INITIAL_FILTER,
   buildListParams,
+  buildLiveMentoringListParams,
+  includesChallenge,
+  includesLiveMentoring,
   type ReservationFilterState,
 } from './utils/buildListParams';
+import {
+  toChallengeRow,
+  toLiveMentoringRow,
+  type ReservationRow,
+} from './utils/reservationRow';
 import {
   filterByMenteeName,
   sortReservations,
@@ -32,6 +41,14 @@ import {
 } from './utils/sortReservations';
 
 const DROPDOWN_PAGE_SIZE = 1000;
+
+/**
+ * 1대1 예약 조회 크기.
+ *
+ * 챌린지 예약 목록은 페이지가 없어 전체를 한 번에 받는다. 두 유형을 한 표에 섞는 이상
+ * 한쪽만 20건에서 잘리면 정렬 결과가 사실과 달라지므로 1대1도 한 번에 받는다.
+ */
+const RESERVATION_PAGE_SIZE = 1000;
 
 /** 프로그램명(챌린지) 드롭다운 소스. OngoingChallenges 와 동일하게 /program/admin?type=CHALLENGE 사용. */
 const challengeDropdownSchema = z.object({
@@ -76,9 +93,32 @@ export default function ReservationManagement() {
   const { data: challengeData } = useChallengeDropdownQuery();
   const { data: mentorData } = useAdminUserMentorListQuery();
 
+  const withChallenge = includesChallenge(filter.type);
+  const withLiveMentoring = includesLiveMentoring(filter.type);
+
   const listParams = useMemo(() => buildListParams(filter), [filter]);
-  const { data: reservations, isLoading } =
-    useAdminFeedbackListQuery(listParams);
+  const { data: feedbacks, isLoading: isFeedbackLoading } =
+    useAdminFeedbackListQuery(listParams, withChallenge);
+
+  const liveMentoringParams = useMemo(
+    () => buildLiveMentoringListParams(filter),
+    [filter],
+  );
+  const { data: liveMentoringData, isLoading: isLiveMentoringLoading } =
+    useAdminLiveMentoringReservationsQuery(
+      { ...liveMentoringParams, size: RESERVATION_PAGE_SIZE },
+      withLiveMentoring,
+    );
+
+  const isLoading = isFeedbackLoading || isLiveMentoringLoading;
+
+  const reservations = useMemo<ReservationRow[]>(
+    () => [
+      ...(feedbacks ?? []).map(toChallengeRow),
+      ...(liveMentoringData?.reservationList ?? []).map(toLiveMentoringRow),
+    ],
+    [feedbacks, liveMentoringData],
+  );
 
   const challengeOptions = useMemo(
     () =>
@@ -99,9 +139,20 @@ export default function ReservationManagement() {
   );
 
   const visibleReservations = useMemo(() => {
-    const byName = filterByMenteeName(reservations ?? [], filter.menteeName);
+    const byName = filterByMenteeName(reservations, filter.menteeName);
     return sortReservations(byName, sort);
   }, [reservations, filter.menteeName, sort]);
+
+  /**
+   * 상세 열기.
+   *
+   * 1대1 예약 상세는 아직 이 모달에 연결되지 않았다(6.4). 목록의 1대1 행도 상세 버튼을
+   * 내걸지 않으므로 여기로 들어오지 않는다.
+   */
+  const openDetail = (row: ReservationRow) => {
+    if (row.kind === 'CHALLENGE')
+      setSelectedFeedbackId(row.feedback.feedbackId);
+  };
 
   const toggleSort = (key: SortKey) => {
     setSort((prev) =>
@@ -129,7 +180,7 @@ export default function ReservationManagement() {
           reservations={visibleReservations}
           sort={sort}
           onToggleSort={toggleSort}
-          onView={setSelectedFeedbackId}
+          onView={openDetail}
           onReschedule={setRescheduleTarget}
           isLoading={isLoading}
         />
@@ -137,7 +188,7 @@ export default function ReservationManagement() {
         <Suspense fallback={null}>
           <ReservationCalendarView
             reservations={visibleReservations}
-            onView={setSelectedFeedbackId}
+            onView={openDetail}
           />
         </Suspense>
       )}
@@ -147,7 +198,7 @@ export default function ReservationManagement() {
           feedbackId={selectedFeedbackId}
           onClose={() => setSelectedFeedbackId(null)}
           onReschedule={() => {
-            const target = (reservations ?? []).find(
+            const target = feedbacks?.find(
               (r) => r.feedbackId === selectedFeedbackId,
             );
             if (target) {
