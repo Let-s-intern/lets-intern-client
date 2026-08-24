@@ -4,6 +4,7 @@
  * 멘토 일정 화이트리스트 필터:
  *  - 행동/기간 3종: written-feedback / live-feedback-period / live-feedback-mentor-open
  *  - 부가 표시: live-feedback (period 의 세부 표현)
+ *  - 단독 표시: live-mentoring (1대1 라이브 멘토링 예약. 상위 기간 바가 없다)
  *  - 제외: 그 외 모든 barType
  */
 
@@ -48,12 +49,13 @@ describe('상수 정의', () => {
     ]);
   });
 
-  it('MENTOR_VISIBLE_BAR_TYPES 는 행동 3종 + live-feedback (4종)', () => {
+  it('MENTOR_VISIBLE_BAR_TYPES 는 행동 3종 + live-feedback + live-mentoring (5종)', () => {
     expect(MENTOR_VISIBLE_BAR_TYPES).toEqual([
       'written-feedback',
       'live-feedback-period',
       'live-feedback-mentor-open',
       'live-feedback',
+      'live-mentoring',
     ]);
   });
 });
@@ -68,6 +70,10 @@ describe('isMentorActionPeriodBar', () => {
 
   it('live-feedback (개별 세션)은 false (기간 아님)', () => {
     expect(isMentorActionPeriodBar(makeBar('live-feedback'))).toBe(false);
+  });
+
+  it('live-mentoring (1대1 예약)은 false (기간 아님)', () => {
+    expect(isMentorActionPeriodBar(makeBar('live-mentoring'))).toBe(false);
   });
 
   it.each([

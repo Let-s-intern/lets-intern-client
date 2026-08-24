@@ -14,6 +14,10 @@ import type { PeriodBarData } from '../types';
  * - `live-feedback`              — 라이브 피드백 기간 안의 개별 세션 카드
  *                                  (UI상 하단 "시간별 일정" 영역. period 바와 한 묶음으로 동작)
  *
+ * 단독 표시:
+ * - `live-mentoring`             — 결제 완료된 1대1 라이브 멘토링 예약 1건.
+ *                                  챌린지에 속하지 않아 묶어 줄 "기간" 바가 없다.
+ *
  * 제외 (멘토 행동 외):
  * - `written-mission-submit` (유저 제출)
  * - `written-review` (운영진 검수)
@@ -31,10 +35,12 @@ export const MENTOR_ACTION_PERIOD_BAR_TYPES = [
 /**
  * 캘린더에 노출 허용되는 모든 barType.
  * `live-feedback` 세션 카드는 `live-feedback-period`의 세부 표현이므로 함께 표시한다.
+ * `live-mentoring` 은 상위 기간 바 없이 예약 카드 하나로 표시한다.
  */
 export const MENTOR_VISIBLE_BAR_TYPES = [
   ...MENTOR_ACTION_PERIOD_BAR_TYPES,
   'live-feedback',
+  'live-mentoring',
 ] as const;
 
 export type MentorActionPeriodBarType =
