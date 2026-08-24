@@ -240,3 +240,37 @@ describe('AdminLiveMentoringTable — 액션', () => {
     ).not.toBeInTheDocument();
   });
 });
+
+describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
+  it('onSelectMentor 를 주면 행마다 참여자 보기를 내걸고 멘토 id 를 넘긴다', () => {
+    const onSelectMentor = vi.fn();
+    listQuery.mockReturnValue({
+      data: {
+        liveMentoringList: [draftRow],
+        pageInfo: {
+          pageNum: 0,
+          pageSize: 20,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      },
+      isLoading: false,
+      isError: false,
+    });
+    render(<AdminLiveMentoringTable onSelectMentor={onSelectMentor} />);
+
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '참여자 보기',
+      }),
+    );
+    expect(onSelectMentor).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+
+  it('onSelectMentor 가 없으면 버튼을 내걸지 않는다', () => {
+    renderTable([draftRow]);
+    expect(
+      screen.queryByRole('button', { name: '참여자 보기' }),
+    ).not.toBeInTheDocument();
+  });
+});

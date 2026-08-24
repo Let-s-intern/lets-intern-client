@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { AdminLiveMentoringParticipant } from '@/api/live-mentoring/liveMentoringSchema';
@@ -130,5 +130,54 @@ describe('AdminLiveMentoringParticipantTable', () => {
     expect(
       screen.getByText('참여자 목록을 불러오지 못했습니다.'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('멘토별 보기', () => {
+  it('mentorId 를 주면 그 멘토만 조회한다', () => {
+    mockList([participant]);
+    render(<AdminLiveMentoringParticipantTable mentorId={21} />);
+    expect(participantsQuery).toHaveBeenCalledWith({
+      mentorId: 21,
+      page: 1,
+      size: 20,
+    });
+  });
+
+  it('멘토별 보기 중임을 알리고 전체로 돌아갈 수 있다', () => {
+    mockList([participant]);
+    const onClearMentor = vi.fn();
+    render(
+      <AdminLiveMentoringParticipantTable
+        mentorId={21}
+        onClearMentor={onClearMentor}
+      />,
+    );
+
+    const filter = screen.getByRole('group', { name: '멘토 필터' });
+    expect(filter).toHaveTextContent('렛츠멘토 의 참여자만 보고 있습니다.');
+
+    fireEvent.click(screen.getByRole('button', { name: '전체 보기' }));
+    expect(onClearMentor).toHaveBeenCalled();
+  });
+
+  // 결과가 비면 목록에서 이름을 알 수 없다. 그래도 어느 멘토인지는 남아야 한다.
+  it('결과가 비어도 멘토 번호로 누구를 보고 있는지 알린다', () => {
+    mockList([]);
+    render(<AdminLiveMentoringParticipantTable mentorId={21} />);
+    expect(screen.getByRole('group', { name: '멘토 필터' })).toHaveTextContent(
+      '멘토 #21 의 참여자만 보고 있습니다.',
+    );
+    expect(
+      screen.getByText('이 멘토의 참여자가 없습니다.'),
+    ).toBeInTheDocument();
+  });
+
+  it('전체 보기에서는 멘토 필터 안내를 내걸지 않는다', () => {
+    mockList([participant]);
+    render(<AdminLiveMentoringParticipantTable />);
+    expect(
+      screen.queryByRole('group', { name: '멘토 필터' }),
+    ).not.toBeInTheDocument();
   });
 });

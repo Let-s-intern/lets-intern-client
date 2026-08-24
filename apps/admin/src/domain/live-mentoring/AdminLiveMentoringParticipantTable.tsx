@@ -49,8 +49,10 @@ const refundLabel = (row: AdminLiveMentoringParticipant): string => {
 };
 
 interface AdminLiveMentoringParticipantTableProps {
-  /** 빈 목록일 때 보여 줄 문구. 멘토별 보기와 전체 보기가 다른 말을 쓴다. */
-  emptyMessage?: string;
+  /** 주면 그 멘토의 참여자만 조회한다. 생략하면 전체. */
+  mentorId?: number;
+  /** 멘토별 보기를 풀고 전체로 돌아간다. 주지 않으면 해제 버튼을 내걸지 않는다. */
+  onClearMentor?: () => void;
 }
 
 /**
@@ -59,19 +61,51 @@ interface AdminLiveMentoringParticipantTableProps {
  * 조작은 환불뿐이다. 예약 취소·노쇼 처리는 이 화면의 범위가 아니다.
  */
 const AdminLiveMentoringParticipantTable = ({
-  emptyMessage = '결제한 참여자가 없습니다.',
+  mentorId,
+  onClearMentor,
 }: AdminLiveMentoringParticipantTableProps = {}) => {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, isError } = useAdminLiveMentoringParticipantsQuery({
+    mentorId,
     page,
     size: PAGE_SIZE,
   });
 
   const rows = data?.participantList ?? [];
 
+  // 멘토 이름은 목록이 들고 있다. 결과가 비면 알 길이 없어 번호로 적는다.
+  const mentorLabel =
+    rows[0]?.mentorNickname ?? rows[0]?.mentorName ?? `멘토 #${mentorId}`;
+
+  const emptyMessage =
+    mentorId != null
+      ? '이 멘토의 참여자가 없습니다.'
+      : '결제한 참여자가 없습니다.';
+
   return (
     <div className="flex flex-col gap-4">
+      {mentorId != null && (
+        <div
+          role="group"
+          aria-label="멘토 필터"
+          className="border-neutral-80 bg-neutral-95 text-xsmall14 flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3"
+        >
+          <span className="text-neutral-10">
+            {mentorLabel} 의 참여자만 보고 있습니다.
+          </span>
+          {onClearMentor && (
+            <button
+              type="button"
+              onClick={onClearMentor}
+              className="border-neutral-80 text-neutral-40 rounded-md border bg-white px-3 py-1"
+            >
+              전체 보기
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="border-neutral-80 overflow-x-auto rounded-lg border">
         <table className="w-full min-w-[1080px] border-collapse">
           <thead className="border-neutral-80 bg-neutral-95 border-b">

@@ -29,9 +29,30 @@ export default function AdminLiveMentoringPage() {
   const tabParam = searchParams.get('tab');
   const activeTab: Tab = isTab(tabParam) ? tabParam : 'products';
 
+  // 멘토별 보기도 URL 에 둔다. 새로고침하면 전체로 돌아가 어느 멘토를 보던 중인지 잃는다.
+  const mentorIdParam = Number(searchParams.get('mentorId'));
+  const mentorId =
+    Number.isInteger(mentorIdParam) && mentorIdParam > 0
+      ? mentorIdParam
+      : undefined;
+
   const setActiveTab = (tab: Tab) => {
     const next = new URLSearchParams(searchParams);
     next.set('tab', tab);
+    setSearchParams(next, { replace: true });
+  };
+
+  /** 상품 표에서 고른 멘토의 참여자만 보러 간다. */
+  const showMentorParticipants = (nextMentorId: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', 'participants');
+    next.set('mentorId', String(nextMentorId));
+    setSearchParams(next, { replace: true });
+  };
+
+  const clearMentorFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('mentorId');
     setSearchParams(next, { replace: true });
   };
 
@@ -61,9 +82,14 @@ export default function AdminLiveMentoringPage() {
       </nav>
 
       {activeTab === 'products' ? (
-        <AdminLiveMentoringTable />
+        <AdminLiveMentoringTable onSelectMentor={showMentorParticipants} />
       ) : (
-        <AdminLiveMentoringParticipantTable />
+        // 멘토가 바뀌면 다시 마운트해 페이지 번호를 1로 되돌린다.
+        <AdminLiveMentoringParticipantTable
+          key={mentorId ?? 'all'}
+          mentorId={mentorId}
+          onClearMentor={clearMentorFilter}
+        />
       )}
     </section>
   );
