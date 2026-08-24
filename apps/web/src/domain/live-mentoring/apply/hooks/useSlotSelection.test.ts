@@ -44,9 +44,9 @@ function setup(
       onSelectSlots,
     }),
   );
-  const statusOf = (time: string) =>
-    result.current.options.find((option) => option.time === time)?.status;
-  return { result, onSelectSlots, statusOf };
+  const times = () => result.current.options.map((option) => option.time);
+  const hasTime = (time: string) => times().includes(time);
+  return { result, onSelectSlots, times, hasTime };
 }
 
 describe('useSlotSelection — 30분 플랜', () => {
@@ -67,14 +67,42 @@ describe('useSlotSelection — 30분 플랜', () => {
   });
 
   it('뒤가 끊긴 칸도 고를 수 있다', () => {
-    const { statusOf } = setup(30);
-    expect(statusOf('14:00')).toBe('available');
+    const { hasTime } = setup(30);
+    expect(hasTime('14:00')).toBe(true);
   });
 
   it('플랜을 아직 안 골랐으면 30분과 같게 다룬다', () => {
-    const { statusOf } = setup(null);
-    expect(statusOf('14:00')).toBe('available');
-    expect(statusOf('10:30')).toBe('available');
+    const { hasTime } = setup(null);
+    expect(hasTime('14:00')).toBe(true);
+    expect(hasTime('10:30')).toBe(true);
+  });
+
+  /* 09:00~23:00 을 30분으로 끊던 28칸 고정 격자는 없앴다 */
+  it('열린 슬롯 수만큼만 버튼을 만든다', () => {
+    const { times } = setup(30);
+    expect(times()).toEqual(['09:30', '10:00', '10:30', '14:00']);
+  });
+
+  /* 라이브 멘토링 슬롯 상태는 OPEN | RESERVED 둘뿐이다(liveMentoringSchema) */
+  it('RESERVED 슬롯은 목록에 넣지 않는다', () => {
+    const { times } = setup(30, [
+      slot(144, '09:30', '10:00'),
+      slot(145, '10:00', '10:30', 'RESERVED'),
+      slot(146, '10:30', '11:00'),
+    ]);
+
+    expect(times()).toEqual(['09:30', '10:30']);
+  });
+
+  /* 슬롯 배열이 오름차순이라는 보장이 계약에 없다 */
+  it('슬롯이 뒤섞여 와도 시간순으로 세운다', () => {
+    const { times } = setup(30, [
+      slot(146, '10:30', '11:00'),
+      slot(144, '09:30', '10:00'),
+      slot(145, '10:00', '10:30'),
+    ]);
+
+    expect(times()).toEqual(['09:30', '10:00', '10:30']);
   });
 });
 
@@ -92,28 +120,26 @@ describe('useSlotSelection — 60분 플랜', () => {
   });
 
   /* (나) 그날 마지막 칸은 다음 칸이 없어 선택 자체가 막힌다 */
-  it('연속된 다음 칸이 없는 칸은 선택 불가로 표시한다', () => {
-    const { statusOf, result, onSelectSlots } = setup(60);
+  it('연속된 다음 칸이 없는 칸은 목록에서 뺀다', () => {
+    const { times, result, onSelectSlots } = setup(60);
 
     // 10:30 은 다음(11:00) 슬롯이 아예 없다. 14:00 도 마찬가지다.
-    expect(statusOf('10:30')).toBe('unavailable');
-    expect(statusOf('14:00')).toBe('unavailable');
+    expect(times()).toEqual(['09:30', '10:00']);
 
     result.current.onSelect('10:30');
     expect(onSelectSlots).not.toHaveBeenCalled();
   });
 
   /* (다) 중간이 RESERVED 로 막히면 그 앞 칸도 60분으로는 못 쓴다 */
-  it('다음 칸이 RESERVED 면 앞 칸도 선택 불가다', () => {
-    const { statusOf } = setup(60, [
+  it('다음 칸이 RESERVED 면 앞 칸도 목록에서 빠진다', () => {
+    const { times } = setup(60, [
       slot(144, '09:30', '10:00'),
       slot(145, '10:00', '10:30', 'RESERVED'),
       slot(146, '10:30', '11:00'),
     ]);
 
-    expect(statusOf('09:30')).toBe('unavailable');
-    // RESERVED 칸 자체도 당연히 못 고른다
-    expect(statusOf('10:00')).toBe('unavailable');
+    // RESERVED 칸 자체도 안 나오고, 그 앞 09:30 도 60분이 성립하지 않는다
+    expect(times()).toEqual([]);
   });
 
   /*
@@ -122,13 +148,13 @@ describe('useSlotSelection — 60분 플랜', () => {
     식으로 흉내 내면 여기서 갈라진다.
   */
   it('시각이 이어져 보여도 endDate 가 맞지 않으면 잇지 않는다', () => {
-    const { statusOf } = setup(60, [
+    const { hasTime } = setup(60, [
       // 10:00 에 끝나는 것처럼 보이지만 endDate 가 09:50 이다
       { ...slot(144, '09:30', '10:00'), endDate: `${DATE}T09:50:00` },
       slot(145, '10:00', '10:30'),
     ]);
 
-    expect(statusOf('09:30')).toBe('unavailable');
+    expect(hasTime('09:30')).toBe(false);
   });
 
   it('이미 잡힌 칸을 다시 누르면 두 칸이 함께 풀린다', () => {

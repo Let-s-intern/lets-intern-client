@@ -106,10 +106,8 @@ describe('ScheduleSelectSection', () => {
 
     expect(screen.getByRole('button', { name: '10:00 ~ 10:30' })).toBeEnabled();
     expect(screen.getByRole('button', { name: '10:30 ~ 11:00' })).toBeEnabled();
-    // 9월 13일에는 09:30 슬롯이 없다 — 격자 자리는 지키되 비활성이다
-    expect(
-      screen.getByRole('button', { name: '09:30 ~ 10:00' }),
-    ).toBeDisabled();
+    // 9월 13일에는 09:30 슬롯이 없다 — 자리도 잡지 않는다
+    expect(screen.queryByRole('button', { name: '09:30 ~ 10:00' })).toBeNull();
   });
 
   it('날짜를 바꾸면 그날의 시간 그리드로 갈아끼운다', () => {
@@ -125,9 +123,7 @@ describe('ScheduleSelectSection', () => {
     fireEvent.click(screen.getByRole('button', { name: '14' }));
 
     expect(screen.getByRole('button', { name: '09:30 ~ 10:00' })).toBeEnabled();
-    expect(
-      screen.getByRole('button', { name: '10:00 ~ 10:30' }),
-    ).toBeDisabled();
+    expect(screen.queryByRole('button', { name: '10:00 ~ 10:30' })).toBeNull();
   });
 
   it('시간을 누르면 그 슬롯 하나를 올려 보낸다', () => {
@@ -152,6 +148,36 @@ describe('ScheduleSelectSection', () => {
         endDate: '2026-09-13T10:30:00',
       },
     ]);
+  });
+
+  /*
+    달을 넘기면 그 달 1일로 이동한다. 고정 격자를 없앤 뒤로는 그날 슬롯이 없으면
+    시간 버튼이 한 칸도 남지 않으므로, 빈 자리에 이유를 적어 준다.
+  */
+  it('그날 예약 가능한 시간이 없으면 안내 문구를 보여준다', () => {
+    render(
+      <ScheduleSelectSection
+        slots={[
+          ...SLOTS,
+          {
+            slotId: 200,
+            startDate: '2026-10-20T10:00:00',
+            endDate: '2026-10-20T10:30:00',
+            status: 'OPEN' as const,
+          },
+        ]}
+        duration={30}
+        selectedSlots={[]}
+        onSelectSlots={jest.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '다음 달' }));
+
+    expect(screen.getByText('2026년 10월')).toBeInTheDocument();
+    expect(
+      screen.getByText('이 날은 예약 가능한 시간이 없습니다.'),
+    ).toBeInTheDocument();
   });
 
   it('슬롯이 하나도 없으면 캘린더 대신 안내 문구를 보여준다', () => {

@@ -9,22 +9,6 @@ import type {
 import type { ApplySlotOption, SelectedApplySlot } from '../types';
 import { toDateKey, toSlotLabel, toTimeKey } from '../utils';
 
-/**
- * 시간 그리드는 09:00~23:00 을 30분으로 끊은 고정 격자다 (시안 `1-0`).
- * 슬롯이 없는 시각도 자리를 지켜야 격자가 흔들리지 않는다.
- * 원본 `challenge/feedback/live/hooks/useTimeSlotState.ts` 와 같은 범위다.
- */
-const GRID_TIMES: string[] = Array.from({ length: 28 }, (_, i) => {
-  const minutes = 9 * 60 + i * 30;
-  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
-});
-
-const addThirtyMinutes = (time: string): string => {
-  const [h, m] = time.split(':').map(Number);
-  const total = h * 60 + m + 30;
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-};
-
 const toSelected = (slot: LiveMentoringSlot): SelectedApplySlot => ({
   slotId: slot.slotId,
   date: toDateKey(slot.startDate),
@@ -50,8 +34,9 @@ interface UseSlotSelectionParams {
  * - 30분 플랜: 슬롯 1칸
  * - 60분 플랜: 누른 칸과 **바로 다음 30분 칸**을 함께 잡는다 (시안 `1-2`)
  *
- * 다음 칸이 없거나 `OPEN` 이 아니면 그 칸은 아예 **선택 불가**로 그린다. 눌러 놓고
- * 나중에 막는 것이 아니라 처음부터 막는다 — 그날 마지막 칸이 대표적이다.
+ * **버튼은 고를 수 있는 자리만 만든다.** 멘토가 열지 않은 시각은 자리도 잡지 않는다 —
+ * 09:00~23:00 고정 격자를 그리던 때는 대부분이 회색이라 눌리는 칸을 눈으로 찾아야 했다.
+ * 60분으로 이을 다음 칸이 없는 자리(그날 마지막 칸이 대표적이다)도 같은 이유로 뺀다.
  *
  * 연속 판정은 **`endDate`(직전) === `startDate`(다음)** 으로 한다. 서버가
  * `validateSlotsAreConsecutive` 로 같은 기준을 다시 검증하므로, 여기서 시각을
@@ -73,39 +58,36 @@ export function useSlotSelection({
     return result;
   }, [slots]);
 
-  const daySlotByTime = useMemo(() => {
-    const result = new Map<string, LiveMentoringSlot>();
-    for (const slot of slots) {
-      if (toDateKey(slot.startDate) === date) {
-        result.set(toTimeKey(slot.startDate), slot);
-      }
-    }
-    return result;
-  }, [slots, date]);
-
-  const nextOpenSlot = (slot: LiveMentoringSlot) => {
-    const next = slotByStart.get(slot.endDate);
-    return next && next.status === 'OPEN' ? next : null;
-  };
+  /*
+    슬롯 배열이 오름차순이라는 보장은 계약에 없다. 격자가 순서를 잡아 주던 것이
+    없어졌으므로 여기서 직접 정렬한다. 자리수가 고정된 ISO 라 사전순이 곧 시간순이다.
+  */
+  const dayOpenSlots = useMemo(
+    () =>
+      slots
+        .filter(
+          (slot) =>
+            slot.status === 'OPEN' && toDateKey(slot.startDate) === date,
+        )
+        .sort((a, b) => (a.startDate < b.startDate ? -1 : 1)),
+    [slots, date],
+  );
 
   const options = useMemo<ApplySlotOption[]>(
     () =>
-      GRID_TIMES.map((time) => {
-        const slot = daySlotByTime.get(time);
-        const isOpen = slot?.status === 'OPEN';
-        const hasNext =
-          !needsTwoSlots ||
-          (slot != null && slotByStart.get(slot.endDate)?.status === 'OPEN');
+      dayOpenSlots.flatMap((slot) => {
+        if (needsTwoSlots && slotByStart.get(slot.endDate)?.status !== 'OPEN') {
+          return [];
+        }
 
-        return {
-          time,
-          label: slot
-            ? toSlotLabel(slot.startDate, slot.endDate)
-            : `${time} ~ ${addThirtyMinutes(time)}`,
-          status: isOpen && hasNext ? 'available' : 'unavailable',
-        };
+        return [
+          {
+            time: toTimeKey(slot.startDate),
+            label: toSlotLabel(slot.startDate, slot.endDate),
+          },
+        ];
       }),
-    [daySlotByTime, slotByStart, needsTwoSlots],
+    [dayOpenSlots, slotByStart, needsTwoSlots],
   );
 
   const selectedTimes = useMemo(
@@ -117,8 +99,10 @@ export function useSlotSelection({
   );
 
   const onSelect = (time: string) => {
-    const slot = daySlotByTime.get(time);
-    if (!slot || slot.status !== 'OPEN') return;
+    const slot = dayOpenSlots.find(
+      (candidate) => toTimeKey(candidate.startDate) === time,
+    );
+    if (!slot) return;
 
     // 이미 잡힌 칸을 다시 누르면 선택을 통째로 푼다. 60분이면 두 칸이 함께 풀린다.
     if (selectedTimes.includes(time)) {
@@ -131,8 +115,8 @@ export function useSlotSelection({
       return;
     }
 
-    const next = nextOpenSlot(slot);
-    if (!next) return;
+    const next = slotByStart.get(slot.endDate);
+    if (next?.status !== 'OPEN') return;
     onSelectSlots([toSelected(slot), toSelected(next)]);
   };
 

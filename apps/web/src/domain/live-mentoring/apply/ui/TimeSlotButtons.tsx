@@ -2,13 +2,10 @@
 
 import type { ApplySlotOption } from '../types';
 
-const STATE_CLASSES: Record<'selected' | 'unavailable' | 'available', string> =
-  {
-    selected: 'border-primary bg-primary-10 text-primary font-semibold',
-    unavailable:
-      'border-neutral-90 bg-neutral-90 text-neutral-60 cursor-default',
-    available: 'border-neutral-80 text-neutral-20 hover:bg-neutral-90',
-  };
+const STATE_CLASSES: Record<'selected' | 'available', string> = {
+  selected: 'border-primary bg-primary-10 text-primary font-semibold',
+  available: 'border-neutral-80 text-neutral-20 hover:bg-neutral-90',
+};
 
 interface TimeSlotButtonsProps {
   options: ApplySlotOption[];
@@ -18,32 +15,37 @@ interface TimeSlotButtonsProps {
 }
 
 /**
- * 30분 단위 시간 버튼 — `domain/challenge/feedback/live/ui/TimeSlotButtons.tsx` 의
- * 복제본이다. 원본은 읽기만 하고 수정하지 않는다.
+ * 시간 버튼 — `domain/challenge/feedback/live/ui/TimeSlotButtons.tsx` 의 복제본이다.
+ * 원본은 읽기만 하고 수정하지 않는다.
  *
- * 원본과 다른 점 하나: 선택을 `SelectedSlot` 하나가 아니라 **시각 배열**로 받는다.
- * 60분 플랜이 연속 2칸을 동시에 강조해야 하기 때문이다(시안 `1-2`).
+ * 원본과 다른 점 둘. 선택을 `SelectedSlot` 하나가 아니라 **시각 배열**로 받는다 —
+ * 60분 플랜이 연속 2칸을 동시에 강조해야 하기 때문이다(시안 `1-2`). 그리고 비활성
+ * 칸이 없다 — 예약 가능한 자리만 넘어오므로 모든 버튼이 눌린다.
  */
 const TimeSlotButtons = ({
   options,
   selectedTimes,
   onSelect,
 }: TimeSlotButtonsProps) => {
+  if (options.length === 0) {
+    return (
+      <p className="border-neutral-80 text-xsmall14 text-neutral-40 w-full rounded-sm border px-4 py-8 text-center">
+        이 날은 예약 가능한 시간이 없습니다.
+      </p>
+    );
+  }
+
   return (
     <div className="grid w-full grid-cols-3 gap-x-3 gap-y-3 md:grid-cols-4">
-      {options.map(({ time, label, status }) => {
-        const isSelected = selectedTimes.includes(time);
-        const slotState = isSelected
+      {options.map(({ time, label }) => {
+        const slotState = selectedTimes.includes(time)
           ? 'selected'
-          : status === 'unavailable'
-            ? 'unavailable'
-            : 'available';
+          : 'available';
 
         return (
           <button
             key={time}
             type="button"
-            disabled={status === 'unavailable'}
             onClick={() => onSelect(time)}
             className={`text-xxsmall12 flex flex-1 items-center justify-center rounded-sm border py-2 transition-colors ${STATE_CLASSES[slotState]}`}
           >
