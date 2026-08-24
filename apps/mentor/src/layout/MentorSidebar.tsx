@@ -28,24 +28,13 @@ type NavItem = NavLeaf | NavGroup;
 
 const navItems: NavItem[] = [
   { type: 'leaf', name: '공지사항', url: '/notice' },
-  {
-    type: 'group',
-    name: '피드백',
-    matchPrefix: '/feedback',
-    children: [
-      { type: 'leaf', name: '피드백 캘린더', url: '/' },
-      { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
-      {
-        type: 'leaf',
-        name: 'LIVE 슬롯 오픈',
-        url: '/feedback/live-availability',
-      },
-      // [임시 숨김] 예약 현황 (dusvlf111, 2026-07-17)
-      // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
-      // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
-      // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
-    ],
-  },
+  { type: 'leaf', name: '캘린더', url: '/' },
+  { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
+  { type: 'leaf', name: 'LIVE 슬롯 오픈', url: '/feedback/live-availability' },
+  // [임시 숨김] 예약 현황 (dusvlf111, 2026-07-17)
+  // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
+  // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
+  // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
   {
     type: 'group',
     name: '1대1 라이브 멘토링',

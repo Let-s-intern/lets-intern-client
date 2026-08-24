@@ -48,8 +48,9 @@ describe('MentorSidebar', () => {
     renderSidebar('/');
 
     expect(screen.getByText('공지사항')).toBeInTheDocument();
-    expect(screen.getByText('피드백')).toBeInTheDocument();
-    expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
+    // '피드백' 상위 그룹은 해체됐다 — 하위 3개가 최상위로 올라왔다.
+    expect(screen.queryByText('피드백')).not.toBeInTheDocument();
+    expect(screen.getByText('캘린더')).toBeInTheDocument();
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
     // '예약 현황'·'참여중인 챌린지'는 임시 숨김 처리됨(dusvlf111, 2026-07-17) —
@@ -87,10 +88,10 @@ describe('MentorSidebar', () => {
     expect(labels[0]).toContain('공지사항');
   });
 
-  it('피드백 캘린더(/) 진입 시 캘린더가 활성 표시된다', () => {
+  it('캘린더(/) 진입 시 캘린더가 활성 표시된다', () => {
     renderSidebar('/');
 
-    const calendarLink = screen.getByRole('link', { name: '피드백 캘린더' });
+    const calendarLink = screen.getByRole('link', { name: '캘린더' });
     expect(calendarLink).toHaveClass('text-primary');
     expect(calendarLink).toHaveClass('font-semibold');
   });
@@ -102,22 +103,29 @@ describe('MentorSidebar', () => {
     expect(historyLink).toHaveClass('text-primary');
     expect(historyLink).toHaveClass('font-semibold');
 
-    // 같은 그룹의 다른 자식은 비활성
-    const calendarLink = screen.getByRole('link', { name: '피드백 캘린더' });
+    // 다른 항목은 비활성 — '/' 는 정확히 일치할 때만 활성이다.
+    const calendarLink = screen.getByRole('link', { name: '캘린더' });
     expect(calendarLink).not.toHaveClass('text-primary');
   });
 
-  it('피드백 그룹 토글 버튼이 없고 하위 메뉴는 항상 펼쳐져 노출된다', () => {
-    // 피드백 그룹 밖 라우트에서도 하위 메뉴가 항상 보인다
+  it('캘린더·피드백 내역·LIVE 슬롯 오픈이 최상위 항목이다', () => {
     renderSidebar('/profile');
 
-    expect(
-      screen.queryByRole('button', { name: /피드백/ }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText('피드백 캘린더')).toBeInTheDocument();
-    expect(screen.getByText('피드백 내역')).toBeInTheDocument();
-    expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
+    // 최상위 항목은 그룹 하위 항목(pl-6)이 아니다.
+    for (const name of ['캘린더', '피드백 내역', 'LIVE 슬롯 오픈']) {
+      expect(screen.getByRole('link', { name })).not.toHaveClass('pl-6');
+    }
     // '예약 현황'은 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
     expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
+  });
+
+  it('1대1 라이브 멘토링 그룹과 하위 두 항목은 그대로다', () => {
+    renderSidebar('/profile');
+
+    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '오픈 설정' })).toHaveClass('pl-6');
+    expect(screen.getByRole('link', { name: '상세 페이지 설정' })).toHaveClass(
+      'pl-6',
+    );
   });
 });

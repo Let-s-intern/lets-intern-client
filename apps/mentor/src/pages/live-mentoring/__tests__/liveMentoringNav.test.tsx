@@ -81,12 +81,13 @@ describe('1대1 라이브 멘토링 사이드바 그룹', () => {
     expect(link).toHaveClass('font-semibold');
   });
 
-  it('기존 피드백 그룹은 그대로 유지된다', () => {
+  it('기존 피드백 항목은 그룹 해체 후에도 그대로 남는다', () => {
     renderSidebar('/');
 
-    expect(screen.getByText('피드백')).toBeInTheDocument();
-    // '예약 현황'은 main 병합분에서 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
+    // '피드백' 상위 그룹은 없어지고 하위 항목이 최상위로 올라왔다.
+    expect(screen.queryByText('피드백')).not.toBeInTheDocument();
     expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
+    // '예약 현황'은 main 병합분에서 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
     expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
   });
 });
