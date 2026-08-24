@@ -13,14 +13,14 @@ interface AgreementSectionProps {
  */
 const AgreementSection = ({ checked, onChange }: AgreementSectionProps) => {
   return (
-    <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center gap-2">
+    <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center justify-between gap-2">
+      신청 완료 후에는 예약 시간 변경이 어려울 수 있음을 확인했습니다.
       <input
         type="checkbox"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
-        className="accent-primary h-4 w-4"
+        className="accent-primary h-4 w-4 shrink-0"
       />
-      신청 완료 후에는 예약 시간 변경이 어려울 수 있음을 확인했습니다.
     </label>
   );
 };
