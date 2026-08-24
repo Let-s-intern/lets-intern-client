@@ -80,9 +80,7 @@ export default function ReservationManagement() {
     key: 'dateTime',
     direction: 'desc',
   });
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
-    null,
-  );
+  const [selectedRow, setSelectedRow] = useState<ReservationRow | null>(null);
   // 예약 변경 모달 대상. 슬롯 조회·일시 표시에 행 전체(mentorId 포함)가 필요하다.
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
@@ -143,17 +141,6 @@ export default function ReservationManagement() {
     return sortReservations(byName, sort);
   }, [reservations, filter.menteeName, sort]);
 
-  /**
-   * 상세 열기.
-   *
-   * 1대1 예약 상세는 아직 이 모달에 연결되지 않았다(6.4). 목록의 1대1 행도 상세 버튼을
-   * 내걸지 않으므로 여기로 들어오지 않는다.
-   */
-  const openDetail = (row: ReservationRow) => {
-    if (row.kind === 'CHALLENGE')
-      setSelectedFeedbackId(row.feedback.feedbackId);
-  };
-
   const toggleSort = (key: SortKey) => {
     setSort((prev) =>
       prev.key === key
@@ -180,7 +167,7 @@ export default function ReservationManagement() {
           reservations={visibleReservations}
           sort={sort}
           onToggleSort={toggleSort}
-          onView={openDetail}
+          onView={setSelectedRow}
           onReschedule={setRescheduleTarget}
           isLoading={isLoading}
         />
@@ -188,23 +175,20 @@ export default function ReservationManagement() {
         <Suspense fallback={null}>
           <ReservationCalendarView
             reservations={visibleReservations}
-            onView={openDetail}
+            onView={setSelectedRow}
           />
         </Suspense>
       )}
 
       <Suspense fallback={null}>
         <ReservationDetailModal
-          feedbackId={selectedFeedbackId}
-          onClose={() => setSelectedFeedbackId(null)}
+          row={selectedRow}
+          onClose={() => setSelectedRow(null)}
           onReschedule={() => {
-            const target = feedbacks?.find(
-              (r) => r.feedbackId === selectedFeedbackId,
-            );
-            if (target) {
-              setSelectedFeedbackId(null);
-              setRescheduleTarget(target);
-            }
+            if (selectedRow?.kind !== 'CHALLENGE') return;
+            const target = selectedRow.feedback;
+            setSelectedRow(null);
+            setRescheduleTarget(target);
           }}
         />
       </Suspense>

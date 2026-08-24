@@ -49,9 +49,7 @@ export default function MentorScheduleView() {
     key: 'dateTime',
     direction: 'desc',
   });
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
-    null,
-  );
+  const [selectedRow, setSelectedRow] = useState<ReservationRow | null>(null);
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
 
@@ -148,15 +146,10 @@ export default function MentorScheduleView() {
     const reservedBlocks = buildReservationBlocks(
       mentorReservations,
       weekStart,
-      openDetail,
+      setSelectedRow,
     );
     return [...openBlocks, ...reservedBlocks];
   }, [selectedMentor, openSlots, mentorReservations, weekStart]);
-
-  const openDetail = (row: ReservationRow) => {
-    if (row.kind === 'CHALLENGE')
-      setSelectedFeedbackId(row.feedback.feedbackId);
-  };
 
   const toggleSort = (key: SortKey) =>
     setSort((prev) =>
@@ -261,7 +254,7 @@ export default function MentorScheduleView() {
               reservations={sortedMentorReservations}
               sort={sort}
               onToggleSort={toggleSort}
-              onView={openDetail}
+              onView={setSelectedRow}
               onReschedule={setRescheduleTarget}
               isLoading={reservationsLoading}
               emptyMessage="이 멘토의 예약 내역이 없습니다."
@@ -276,16 +269,13 @@ export default function MentorScheduleView() {
 
       {/* 예약 상세 → 예약 변경 전환 (예약탭과 동일 흐름) */}
       <ReservationDetailModal
-        feedbackId={selectedFeedbackId}
-        onClose={() => setSelectedFeedbackId(null)}
+        row={selectedRow}
+        onClose={() => setSelectedRow(null)}
         onReschedule={() => {
-          const target = mentorFeedbacks.find(
-            (r) => r.feedbackId === selectedFeedbackId,
-          );
-          if (target) {
-            setSelectedFeedbackId(null);
-            setRescheduleTarget(target);
-          }
+          if (selectedRow?.kind !== 'CHALLENGE') return;
+          const target = selectedRow.feedback;
+          setSelectedRow(null);
+          setRescheduleTarget(target);
         }}
       />
       {rescheduleTarget && (

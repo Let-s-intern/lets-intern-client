@@ -163,6 +163,21 @@ describe('ReservationListView', () => {
         />,
       );
 
+    it('1대1 행도 상세를 열 수 있다', () => {
+      const onView = vi.fn();
+      const liveMentoringRow = makeLiveMentoringRow();
+      render(
+        <ReservationListView
+          {...baseProps}
+          onView={onView}
+          reservations={[liveMentoringRow]}
+          isLoading={false}
+        />,
+      );
+      fireEvent.click(screen.getByText('보기'));
+      expect(onView).toHaveBeenCalledWith(liveMentoringRow);
+    });
+
     it('두 유형을 한 표에 싣고 유형 컬럼으로 구분한다', () => {
       renderMixed();
       expect(screen.getByText('챌린지 라이브 피드백')).toBeInTheDocument();
@@ -182,7 +197,8 @@ describe('ReservationListView', () => {
       renderMixed();
       const liveMentoringCell = screen.getByText('1대1 라이브 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
-      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(6);
+      // 멘토·멘티 출석, 멘토·멘티 뱃지, 예약 변경 다섯 칸.
+      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(5);
     });
 
     it('예약 슬롯이 없는 신청도 행으로 보여 준다', () => {

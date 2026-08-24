@@ -182,8 +182,10 @@ function ChallengeRow({
  */
 function LiveMentoringRow({
   row,
+  onView,
 }: {
   row: Extract<ReservationRow, { kind: 'LIVE_MENTORING' }>;
+  onView: () => void;
 }) {
   const { reservation } = row;
   const hasSlot =
@@ -238,7 +240,13 @@ function LiveMentoringRow({
         {formatApplyDateTime(rowCreateDate(row))}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        <button
+          type="button"
+          onClick={onView}
+          className="text-blue-600 hover:underline"
+        >
+          보기
+        </button>
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
         <NotApplicableCell />
@@ -326,7 +334,11 @@ export default function ReservationListView({
                 onReschedule={() => onReschedule(row.feedback)}
               />
             ) : (
-              <LiveMentoringRow key={rowKey(row)} row={row} />
+              <LiveMentoringRow
+                key={rowKey(row)}
+                row={row}
+                onView={() => onView(row)}
+              />
             ),
           )}
         </tbody>
