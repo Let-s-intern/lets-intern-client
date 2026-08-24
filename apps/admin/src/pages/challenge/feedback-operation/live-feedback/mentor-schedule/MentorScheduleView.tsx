@@ -5,10 +5,11 @@ import {
   useMentorFeedbackSlotsQuery,
 } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { getMentorColor } from '../constants/colors';
+import { getMentorColor, LIVE_MENTORING_COLOR } from '../constants/colors';
 import { buildReservationBlocks } from '../reservation/ui/ReservationCalendarView';
 import ReservationDetailModal from '../reservation/ui/ReservationDetailModal';
 import ReservationListView from '../reservation/ui/ReservationListView';
@@ -16,6 +17,7 @@ import ReservationRescheduleModal from '../reservation/ui/ReservationRescheduleM
 import ViewToggle, { type ReservationView } from '../reservation/ui/ViewToggle';
 import {
   toChallengeRow,
+  toLiveMentoringRow,
   type ReservationRow,
 } from '../reservation/utils/reservationRow';
 import {
@@ -31,6 +33,14 @@ import {
   shiftWeek,
 } from '../weekly-calendar/weekUtils';
 import { buildSlotBlocks } from './buildSlotBlocks';
+
+/**
+ * 1대1 예약 조회 크기.
+ *
+ * 멘토별로 나눠 부르지 않고 한 번에 받아 화면에서 가른다. 태그의 "예정 N" 은 멘토
+ * 전원의 건수라 어차피 전체가 필요하다.
+ */
+const LIVE_MENTORING_PAGE_SIZE = 1000;
 
 /**
  * 멘토 스케줄 — 멘토를 태그로 나열하고, 선택한 1명의 스케줄을 캘린더/리스트로 본다.
@@ -64,17 +74,29 @@ export default function MentorScheduleView() {
   const { data: reservations, isLoading: reservationsLoading } =
     useAdminFeedbackListQuery();
 
-  // 앞으로 할(예정) 예약 건수 = 시작이 현재 이후인 예약.
+  // 1대1 예약도 같은 그리드에 그린다. 멘토 필터 없이 전체를 받아 화면에서 가른다.
+  const { data: liveMentoringData, isLoading: liveMentoringLoading } =
+    useAdminLiveMentoringReservationsQuery({ size: LIVE_MENTORING_PAGE_SIZE });
+
+  const liveMentoringReservations = useMemo(
+    () => liveMentoringData?.reservationList ?? [],
+    [liveMentoringData],
+  );
+
+  // 앞으로 할(예정) 예약 건수 = 시작이 현재 이후인 예약. 두 유형을 함께 센다.
   const upcomingCountByMentor = useMemo(() => {
     const nowMs = Date.now();
     const map = new Map<number, number>();
-    (reservations ?? []).forEach((r) => {
-      if (new Date(r.startDate).getTime() >= nowMs) {
-        map.set(r.mentorId, (map.get(r.mentorId) ?? 0) + 1);
-      }
-    });
+    const countUp = (mentorId: number, startDate: string | null) => {
+      if (!startDate || new Date(startDate).getTime() < nowMs) return;
+      map.set(mentorId, (map.get(mentorId) ?? 0) + 1);
+    };
+    (reservations ?? []).forEach((r) => countUp(r.mentorId, r.startDate));
+    liveMentoringReservations.forEach((r) =>
+      countUp(r.mentorId, r.reservationStartAt),
+    );
     return map;
-  }, [reservations]);
+  }, [reservations, liveMentoringReservations]);
 
   // 멘토별 오픈 슬롯 건수(현재 이후). BE 집계 API 1콜로 태그에 표시.
   const nowIso = useMemo(() => dayjs().format('YYYY-MM-DDTHH:mm:ss'), []);
@@ -109,8 +131,13 @@ export default function MentorScheduleView() {
   );
 
   const mentorReservations = useMemo<ReservationRow[]>(
-    () => mentorFeedbacks.map(toChallengeRow),
-    [mentorFeedbacks],
+    () => [
+      ...mentorFeedbacks.map(toChallengeRow),
+      ...liveMentoringReservations
+        .filter((r) => r.mentorId === selectedMentorId)
+        .map(toLiveMentoringRow),
+    ],
+    [mentorFeedbacks, liveMentoringReservations, selectedMentorId],
   );
 
   const sortedMentorReservations = useMemo(
@@ -239,7 +266,17 @@ export default function MentorScheduleView() {
                         mentorColor?.border,
                       )}
                     />
-                    예약
+                    챌린지 예약
+                  </span>
+                  <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
+                    <span
+                      className={twMerge(
+                        'h-3 w-3 rounded-sm border',
+                        LIVE_MENTORING_COLOR.bg,
+                        LIVE_MENTORING_COLOR.border,
+                      )}
+                    />
+                    1대1 예약
                   </span>
                   <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
                     <span className="border-neutral-80 bg-neutral-95 h-3 w-3 rounded-sm border" />
@@ -256,7 +293,7 @@ export default function MentorScheduleView() {
               onToggleSort={toggleSort}
               onView={setSelectedRow}
               onReschedule={setRescheduleTarget}
-              isLoading={reservationsLoading}
+              isLoading={reservationsLoading || liveMentoringLoading}
               emptyMessage="이 멘토의 예약 내역이 없습니다."
             />
           )}
