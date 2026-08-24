@@ -31,6 +31,7 @@ import {
 import {
   toChallengeRow,
   toLiveMentoringRow,
+  type ReservationKind,
   type ReservationRow,
 } from './utils/reservationRow';
 import {
@@ -73,8 +74,20 @@ const useChallengeDropdownQuery = () =>
     },
   });
 
-export default function ReservationManagement() {
-  const [filter, setFilter] = useState<ReservationFilterState>(INITIAL_FILTER);
+interface ReservationManagementProps {
+  /**
+   * 유형 고정. 1대1 전용 하위탭이 같은 화면을 유형만 바꿔 쓴다.
+   * 주면 유형 select 를 감추고 그 유형만 조회한다.
+   */
+  fixedType?: ReservationKind;
+}
+
+export default function ReservationManagement({
+  fixedType,
+}: ReservationManagementProps = {}) {
+  const [filter, setFilter] = useState<ReservationFilterState>(() =>
+    fixedType ? { ...INITIAL_FILTER, type: fixedType } : INITIAL_FILTER,
+  );
   const [view, setView] = useState<ReservationView>('list');
   const [sort, setSort] = useState<SortState>({
     key: 'dateTime',
@@ -156,6 +169,7 @@ export default function ReservationManagement() {
         onChange={setFilter}
         challengeOptions={challengeOptions}
         mentorOptions={mentorOptions}
+        hideTypeFilter={fixedType != null}
       />
 
       <div className="flex justify-start">
