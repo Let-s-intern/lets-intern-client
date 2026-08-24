@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
+import { useLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
@@ -62,11 +63,16 @@ const FeedbackManagementPage = () => {
   );
   const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
 
+  // 1대1 라이브 멘토링 예약 — 서버가 결제 완료 확정 건만, 본인 건만 내린다.
+  const { data: liveMentoringReservations } =
+    useLiveMentoringReservationsQuery();
+
   const allRows = useMergedFeedbackRows(
     challengeList,
     allLiveRounds,
     writtenAttendance,
     missionRangeMap,
+    liveMentoringReservations,
   );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();
