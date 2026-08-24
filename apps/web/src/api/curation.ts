@@ -15,6 +15,7 @@ export const CurationLocationTypeValues = curationLocationSchema._def.values;
 export const curationTypeSchema = z.enum([
   'CHALLENGE',
   'LIVE',
+  'LIVE_MENTORING',
   'VOD',
   'REPORT',
   'GUIDEBOOK',

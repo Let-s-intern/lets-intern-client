@@ -238,7 +238,7 @@ const CardThumbnail = ({
   </HybridLink>
 );
 
-const getDetailHref = (config: MypageApplicationCardConfig): string => {
+export const getDetailHref = (config: MypageApplicationCardConfig): string => {
   const { programTypeKey, programId } = config;
 
   if (!programId) return '#';
@@ -249,6 +249,10 @@ const getDetailHref = (config: MypageApplicationCardConfig): string => {
 
   if (programTypeKey === 'LIVE') {
     return `/program/live/${programId}`;
+  }
+
+  if (programTypeKey === 'LIVE_MENTORING') {
+    return `/live-mentoring/${programId}`;
   }
 
   if (programTypeKey === 'GUIDEBOOK') {
