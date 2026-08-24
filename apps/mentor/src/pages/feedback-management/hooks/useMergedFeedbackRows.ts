@@ -327,6 +327,7 @@ export function useMergedFeedbackRows(
             // 서면 상세 — 멘티 행이어도 미션 모달로 진입(제출자 있을 때).
             // 지각 제출도 열어 준다. 멘토가 "왜 진행 불가인지" 화면에서 확인해야 한다.
             canOpenDetail: summary.submissionState !== 'notSubmitted',
+            detailDisabledReason: null,
             source: {
               type: 'written',
               challengeId: challenge.challengeId,
@@ -374,6 +375,7 @@ export function useMergedFeedbackRows(
           menteeNameLabel: bar.liveFeedback.menteeName,
           // 라이브 상세는 RESERVED 이상(=예약 완료)이면 열림. mock은 전부 예약된 상태.
           canOpenDetail: true,
+          detailDisabledReason: null,
           source: { type: 'live', bar, round },
         });
       }

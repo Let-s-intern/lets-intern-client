@@ -99,6 +99,9 @@ const FeedbackManagementPage = () => {
       return;
     }
 
+    // 1대1은 열 수 있는 모달이 없다 — canOpenDetail 이 false 라 여기까지 오지 않는다.
+    if (row.source.type !== 'live') return;
+
     // live → 라이브 모달
     setSelectedRound(row.source.round);
     setModalBar(row.source.bar);
