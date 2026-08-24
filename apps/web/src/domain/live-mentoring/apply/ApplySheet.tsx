@@ -87,6 +87,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             productTitle={detail.title}
             durationPrices={detail.durationPrices}
             selectedDuration={draft.duration}
+            isLocked={draft.slots.length > 0}
             onSelect={sheet.selectDuration}
           />
 

@@ -12,6 +12,8 @@ interface PlanSelectSectionProps {
   productTitle: string;
   durationPrices: LiveMentorDetail['durationPrices'];
   selectedDuration: LiveMentoringDuration | null;
+  /** 시간을 이미 골랐는지. 골랐으면 플랜을 바꿀 수 없다. */
+  isLocked: boolean;
   onSelect: (duration: LiveMentoringDuration) => void;
 }
 
@@ -25,11 +27,16 @@ interface PlanSelectSectionProps {
  * (PRD 7-1·4-5 결정 후 되살릴 것)
  *
  * 시안의 접기 화살표도 넣지 않았다. 항목이 둘뿐이라 접을 것이 없다.
+ *
+ * 시간을 고른 뒤에는 라디오가 잠긴다. 플랜을 바꾸면 잡아 둔 슬롯을 버려야 하는데
+ * (`useApplySheetState` 가 그렇게 한다), 사용자가 고른 시간이 소리 없이 사라진다.
+ * 잠근 이유는 화면에 적는다 — 이유 없이 잠긴 컨트롤은 고장으로 읽힌다.
  */
 const PlanSelectSection = ({
   productTitle,
   durationPrices,
   selectedDuration,
+  isLocked,
   onSelect,
 }: PlanSelectSectionProps) => {
   return (
@@ -46,7 +53,7 @@ const PlanSelectSection = ({
         {durationPrices.map((option) => (
           <label
             key={option.duration}
-            className="flex cursor-pointer items-center justify-between gap-3 px-4 py-4"
+            className={`flex items-center justify-between gap-3 px-4 py-4 ${isLocked ? 'cursor-default' : 'cursor-pointer'}`}
           >
             <span className="text-xsmall14 text-neutral-0 flex items-center gap-2.5">
               <input
@@ -54,6 +61,7 @@ const PlanSelectSection = ({
                 name="live-mentoring-plan"
                 value={option.duration}
                 checked={selectedDuration === option.duration}
+                disabled={isLocked}
                 onChange={() => onSelect(option.duration)}
                 className="accent-primary h-4 w-4"
               />
@@ -65,6 +73,13 @@ const PlanSelectSection = ({
           </label>
         ))}
       </div>
+
+      {isLocked && (
+        <p className="text-xxsmall12 text-neutral-40">
+          예약 시간을 선택한 뒤에는 플랜을 바꿀 수 없습니다. 바꾸려면 선택한
+          시간을 먼저 해제해 주세요.
+        </p>
+      )}
     </section>
   );
 };

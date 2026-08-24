@@ -122,6 +122,24 @@ describe('ApplySheet 제출 조건', () => {
   });
 });
 
+describe('ApplySheet 플랜 잠금', () => {
+  const sixtyRadio = () =>
+    screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ });
+
+  it('시간을 고르면 플랜이 잠기고 선택을 풀면 다시 열린다', () => {
+    openSheet();
+    fireEvent.click(sixtyRadio());
+    expect(sixtyRadio()).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: '09:30 ~ 10:30' }));
+    expect(sixtyRadio()).toBeDisabled();
+
+    // 같은 버튼을 다시 누르면 선택이 풀린다
+    fireEvent.click(screen.getByRole('button', { name: '09:30 ~ 10:30' }));
+    expect(sixtyRadio()).toBeEnabled();
+  });
+});
+
 describe('ApplySheet 총 결제 금액', () => {
   it('플랜을 고르기 전에는 안내 문구와 0원을 보여준다', () => {
     openSheet();
