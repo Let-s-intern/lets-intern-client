@@ -85,6 +85,12 @@ describe('기수별 노션 가이드 (LC-3219)', () => {
     );
   });
 
+  it('기수마다 다른 문서를 가리킨다', () => {
+    // 384 주소를 받기 전에는 두 기수가 1기 문서를 함께 쓰는 임시 상태였다.
+    // 한쪽을 고치며 다른 쪽에 덮어쓰면 그 기수 참여자가 남의 가이드를 보게 된다.
+    expect(membershipGuideUrl(384)).not.toBe(membershipGuideUrl(309));
+  });
+
   it('멤버십 기수가 아니면 undefined → 카드가 대시보드 입장으로 남는다', () => {
     // programId 를 못 읽었을 때 넘어오는 0 도 여기로 떨어져야 한다.
     expect(membershipGuideUrl(0)).toBeUndefined();

@@ -44,9 +44,8 @@ const MEMBERSHIP_GUIDE_URL_BY_CHALLENGE_ID: Record<number, string> = {
   // [LC-3219-MEMBERSHIP] 309 — 2026 하반기 1기(8월 구매분, 9월까지 진행). 종료되면 지운다.
   309: 'https://letsintern.notion.site/2026-38f5e77cbee180d7a77deab36a8ed88b',
   // [LC-3219-MEMBERSHIP] 384 — 2026-08-20 모집 재개분. 상세페이지가 연결하는 현행 기수.
-  // TODO 384 전용 가이드 주소를 확인해 교체한다. 지금 값은 운영에 이미 나가 있는 1기 주소라
-  //      384 참여자가 보는 화면은 이 변경 전후로 동일하다(이번 수정은 309 복구가 목적).
-  384: 'https://letsintern.notion.site/2026-38f5e77cbee180d7a77deab36a8ed88b',
+  // 이 기수 전용 가이드다(2026 하반기, 이용 ~11/30). 1기(309)와 다른 문서이므로 함께 바꾸지 않는다.
+  384: 'https://letsintern.notion.site/2026-2-11-30-3c65e77cbee18080b5d4dd0bbfbb8742',
 };
 
 /**
