@@ -43,6 +43,18 @@ export const MENTOR_VISIBLE_BAR_TYPES = [
   'live-mentoring',
 ] as const;
 
+/**
+ * 태그 네비게이션("다음 일정")이 한 건으로 세는 barType.
+ *
+ * 기간 3종에 `live-mentoring` 을 더한다 — 1대1에는 여러 예약을 묶어 줄 기간 바가 없어
+ * 예약 자체가 이동 단위다. (`live-feedback` 세션은 `live-feedback-period` 가 대신 세므로
+ * 여기에 넣지 않는다. 넣으면 한 기간에서 세션 수만큼 순환한다.)
+ */
+export const MENTOR_NAVIGABLE_BAR_TYPES = [
+  ...MENTOR_ACTION_PERIOD_BAR_TYPES,
+  'live-mentoring',
+] as const;
+
 export type MentorActionPeriodBarType =
   (typeof MENTOR_ACTION_PERIOD_BAR_TYPES)[number];
 export type MentorVisibleBarType = (typeof MENTOR_VISIBLE_BAR_TYPES)[number];
@@ -57,6 +69,14 @@ export function isMentorVisibleBar(bar: PeriodBarData): boolean {
 export function isMentorActionPeriodBar(bar: PeriodBarData): boolean {
   if (!bar.barType) return false;
   return (MENTOR_ACTION_PERIOD_BAR_TYPES as readonly string[]).includes(
+    bar.barType,
+  );
+}
+
+/** 단일 바가 태그 네비게이션 이동 단위인지 판별 */
+export function isMentorNavigableBar(bar: PeriodBarData): boolean {
+  if (!bar.barType) return false;
+  return (MENTOR_NAVIGABLE_BAR_TYPES as readonly string[]).includes(
     bar.barType,
   );
 }

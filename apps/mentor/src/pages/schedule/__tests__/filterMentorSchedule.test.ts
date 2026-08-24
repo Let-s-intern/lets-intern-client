@@ -12,9 +12,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   MENTOR_ACTION_PERIOD_BAR_TYPES,
+  MENTOR_NAVIGABLE_BAR_TYPES,
   MENTOR_VISIBLE_BAR_TYPES,
   filterMentorSchedule,
   isMentorActionPeriodBar,
+  isMentorNavigableBar,
   isMentorVisibleBar,
 } from '../utils/filterMentorSchedule';
 import type { PeriodBarData } from '../types';
@@ -86,6 +88,16 @@ describe('isMentorActionPeriodBar', () => {
 
   it('barType undefined 이면 false', () => {
     expect(isMentorActionPeriodBar(makeBar(undefined))).toBe(false);
+  });
+});
+
+describe('isMentorNavigableBar', () => {
+  it.each(MENTOR_NAVIGABLE_BAR_TYPES)('이동 단위 타입(%s)은 true', (type) => {
+    expect(isMentorNavigableBar(makeBar(type))).toBe(true);
+  });
+
+  it('live-feedback (개별 세션)은 false — period 바가 대신 센다', () => {
+    expect(isMentorNavigableBar(makeBar('live-feedback'))).toBe(false);
   });
 });
 

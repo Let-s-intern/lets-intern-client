@@ -7,16 +7,22 @@
  *  - 서면 피드백    : 회색 톤 말풍선 아이콘 + 옅은 회색 배경
  *  - LIVE 피드백    : 빨간색 LIVE 인디케이터 + 옅은 레드 배경
  *  - LIVE 피드백 일정 오픈 : 파란색 캘린더 아이콘 + 옅은 블루 배경
+ *  - 1대1 라이브 멘토링   : primary 점 + primary 배경
  *
  * `barType` → `FeedbackTagType` 매핑:
  *  - written-mission-submit / written-review / written-feedback → 'written'
  *  - live-feedback / live-feedback-period                       → 'live'
  *  - live-feedback-mentor-open / live-feedback-mentee-open      → 'live-open'
+ *  - live-mentoring                                             → 'live-mentoring'
  */
 
 import type { PeriodBarData } from '../types';
 
-export type FeedbackTagType = 'written' | 'live' | 'live-open';
+export type FeedbackTagType =
+  | 'written'
+  | 'live'
+  | 'live-open'
+  | 'live-mentoring';
 
 export interface FeedbackTagDescriptor {
   type: FeedbackTagType;
@@ -51,6 +57,13 @@ export const FEEDBACK_TAGS: readonly FeedbackTagDescriptor[] = [
     inactiveClass: 'bg-white border border-neutral-80 text-blue-500',
     activeClass: 'bg-blue-500 text-white border border-blue-500',
   },
+  {
+    // 챌린지 피드백이 아니라 상품 예약이지만, 캘린더에서 골라 보는 단위는 같다.
+    type: 'live-mentoring',
+    label: '1대1 라이브 멘토링',
+    inactiveClass: 'bg-white border border-neutral-80 text-primary',
+    activeClass: 'bg-primary text-white border border-primary',
+  },
 ] as const;
 
 /** PeriodBarData의 barType을 피드백 태그 종류로 매핑한다. */
@@ -68,6 +81,8 @@ export function barTypeToFeedbackTag(
     case 'live-feedback-mentor-open':
     case 'live-feedback-mentee-open':
       return 'live-open';
+    case 'live-mentoring':
+      return 'live-mentoring';
     default:
       return null;
   }
