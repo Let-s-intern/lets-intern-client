@@ -67,7 +67,7 @@ describe('questionButtonLabel — 상태 4가지 조합', () => {
     expect(questionButtonLabel('upcoming', true)).toBe('멘토링 질문 수정');
   });
 
-  /* 시작한 뒤에는 읽기만 한다. 서버도 예약 48시간 전에 수정을 닫는다. */
+  /* 시작한 뒤에는 읽기만 한다. 서버도 예약 24시간 전에 수정을 닫는다. */
   it('참여 중·종료면 작성 여부와 무관하게 확인이다', () => {
     expect(questionButtonLabel('ongoing', true)).toBe('멘토링 질문 확인');
     expect(questionButtonLabel('ongoing', false)).toBe('멘토링 질문 확인');

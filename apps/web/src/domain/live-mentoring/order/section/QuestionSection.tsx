@@ -96,7 +96,7 @@ const QuestionSection = ({ value, onChange }: QuestionSectionProps) => {
             </span>
             <p className="text-xxsmall12 text-neutral-45">
               * 멘토에게 미리 전달할 질문을 작성해 주세요. 함께 보면 좋을 파일이
-              있다면 링크로 첨부할 수 있으며, 멘토링 예약 시간 48시간 전까지
+              있다면 링크로 첨부할 수 있으며, 멘토링 예약 시간 24시간 전까지
               수정할 수 있어요.
             </p>
             <textarea

@@ -147,18 +147,18 @@ describe('QuestionModal — 시안 3-2 (작성됨)', () => {
 });
 
 describe('QuestionModal — 안내 문구', () => {
-  it('48시간 안내가 있다', () => {
+  it('24시간 안내가 있다', () => {
     renderModal(makeQuestion());
 
     expect(
-      screen.getByText(/멘토링 예약 시간 48시간 전까지 수정할 수 있어요/),
+      screen.getByText(/멘토링 예약 시간 24시간 전까지 수정할 수 있어요/),
     ).toBeInTheDocument();
   });
 });
 
 describe('QuestionModal — editable 은 서버 값을 그대로 쓴다', () => {
   /*
-    예약 시작 48시간 기준을 화면에서 다시 계산하면 클라이언트와 서버의 시계 차이로
+    예약 시작 24시간 기준을 화면에서 다시 계산하면 클라이언트와 서버의 시계 차이로
     어긋나, 저장 버튼은 열려 있는데 저장은 거부되는 상태가 생긴다.
   */
   it('editable 이 false 면 저장이 잠기고 사유를 알린다', () => {
@@ -166,7 +166,7 @@ describe('QuestionModal — editable 은 서버 값을 그대로 쓴다', () => 
 
     expect(saveButton()).toBeDisabled();
     expect(
-      screen.getByText('예약 시간 48시간 전이 지나 질문을 수정할 수 없습니다.'),
+      screen.getByText('예약 시간 24시간 전이 지나 질문을 수정할 수 없습니다.'),
     ).toBeInTheDocument();
   });
 

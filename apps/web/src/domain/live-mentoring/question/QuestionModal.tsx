@@ -31,7 +31,7 @@ interface QuestionModalProps {
  * 세 모드를 한 컴포넌트로 둔다. 시안 두 장의 차이는 **버튼 라벨과 초기값뿐**이고,
  * 확인 모드는 거기에 입력이 잠기는 것만 더해진다.
  *
- * **수정 가능 여부는 서버 응답의 `editable` 을 그대로 쓴다.** 예약 시작 48시간 기준을
+ * **수정 가능 여부는 서버 응답의 `editable` 을 그대로 쓴다.** 예약 시작 24시간 기준을
  * 화면에서 다시 계산하면 클라이언트와 서버의 시계 차이로 어긋나, 저장 버튼은 열려
  * 있는데 저장은 거부되는 상태가 생긴다.
  */
@@ -184,7 +184,7 @@ const QuestionModal = ({
               </span>
               <p className="text-xxsmall12 text-neutral-45">
                 * 멘토에게 미리 전달할 질문을 작성해 주세요. 함께 보면 좋을 파일이
-                있다면 첨부해주세요. 멘토링 예약 시간 48시간 전까지 수정할 수
+                있다면 첨부해주세요. 멘토링 예약 시간 24시간 전까지 수정할 수
                 있어요.
               </p>
               <textarea
@@ -295,7 +295,7 @@ const QuestionModal = ({
             */}
             {!canEdit && (
               <p className="text-xxsmall12 text-neutral-45">
-                예약 시간 48시간 전이 지나 질문을 수정할 수 없습니다.
+                예약 시간 24시간 전이 지나 질문을 수정할 수 없습니다.
               </p>
             )}
             {canEdit && shownQuestionError && (

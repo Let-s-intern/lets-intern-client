@@ -35,7 +35,7 @@ export const formatReservationPeriod = (
  * 질문 버튼 라벨.
  *
  * 참여 예정일 때만 쓰거나 고칠 수 있다. 시작한 뒤에는 읽기만 한다 — 서버도 예약
- * 시작 48시간 전에 수정을 닫으므로 그 뒤로는 `확인` 이 맞는 말이다.
+ * 시작 24시간 전에 수정을 닫으므로 그 뒤로는 `확인` 이 맞는 말이다.
  */
 export const questionButtonLabel = (
   phase: MentoringCardPhase,
