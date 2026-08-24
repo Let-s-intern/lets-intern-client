@@ -45,8 +45,9 @@ function setup(
     }),
   );
   const times = () => result.current.options.map((option) => option.time);
+  const labels = () => result.current.options.map((option) => option.label);
   const hasTime = (time: string) => times().includes(time);
-  return { result, onSelectSlots, times, hasTime };
+  return { result, onSelectSlots, times, labels, hasTime };
 }
 
 describe('useSlotSelection — 30분 플랜', () => {
@@ -83,6 +84,16 @@ describe('useSlotSelection — 30분 플랜', () => {
     expect(times()).toEqual(['09:30', '10:00', '10:30', '14:00']);
   });
 
+  it('30분 단위 라벨을 그대로 쓴다', () => {
+    const { labels } = setup(30);
+    expect(labels()).toEqual([
+      '09:30 ~ 10:00',
+      '10:00 ~ 10:30',
+      '10:30 ~ 11:00',
+      '14:00 ~ 14:30',
+    ]);
+  });
+
   /* 라이브 멘토링 슬롯 상태는 OPEN | RESERVED 둘뿐이다(liveMentoringSchema) */
   it('RESERVED 슬롯은 목록에 넣지 않는다', () => {
     const { times } = setup(30, [
@@ -107,6 +118,34 @@ describe('useSlotSelection — 30분 플랜', () => {
 });
 
 describe('useSlotSelection — 60분 플랜', () => {
+  /* 화면은 한 칸이지만 서버로 가는 것은 슬롯 2건 그대로다 */
+  it('연속 두 칸을 라벨 하나로 합친다', () => {
+    const { labels } = setup(60);
+    expect(labels()).toEqual(['09:30 ~ 10:30', '10:00 ~ 11:00']);
+  });
+
+  it('선택된 버튼은 앞 칸 하나뿐이다', () => {
+    const selected: SelectedApplySlot[] = [
+      {
+        slotId: 144,
+        date: DATE,
+        time: '09:30',
+        startDate: `${DATE}T09:30:00`,
+        endDate: `${DATE}T10:00:00`,
+      },
+      {
+        slotId: 145,
+        date: DATE,
+        time: '10:00',
+        startDate: `${DATE}T10:00:00`,
+        endDate: `${DATE}T10:30:00`,
+      },
+    ];
+    const { result } = setup(60, SLOTS, selected);
+
+    expect(result.current.selectedTime).toBe('09:30');
+  });
+
   /* (가) 시안 1-2 — 11:00 을 누르면 11:00 과 11:30 이 함께 잡힌다 */
   it('누른 칸과 바로 다음 30분 칸을 함께 잡는다', () => {
     const { result, onSelectSlots } = setup(60);
@@ -176,9 +215,38 @@ describe('useSlotSelection — 60분 플랜', () => {
     ];
     const { result, onSelectSlots } = setup(60, SLOTS, selected);
 
-    expect(result.current.selectedTimes).toEqual(['09:30', '10:00']);
+    result.current.onSelect('09:30');
+    expect(onSelectSlots).toHaveBeenCalledWith([]);
+  });
+
+  /*
+    합치기 전에는 10:00 이 선택 시각 목록에 들어 있어 다시 누르면 선택이 풀렸다.
+    이제 10:00 은 10:00~11:00 이라는 다른 버튼이므로 그쪽으로 옮겨 가야 한다.
+  */
+  it('뒤 칸을 시작으로 하는 버튼을 누르면 그 자리로 옮긴다', () => {
+    const selected: SelectedApplySlot[] = [
+      {
+        slotId: 144,
+        date: DATE,
+        time: '09:30',
+        startDate: `${DATE}T09:30:00`,
+        endDate: `${DATE}T10:00:00`,
+      },
+      {
+        slotId: 145,
+        date: DATE,
+        time: '10:00',
+        startDate: `${DATE}T10:00:00`,
+        endDate: `${DATE}T10:30:00`,
+      },
+    ];
+    const { result, onSelectSlots } = setup(60, SLOTS, selected);
 
     result.current.onSelect('10:00');
-    expect(onSelectSlots).toHaveBeenCalledWith([]);
+
+    expect(onSelectSlots).toHaveBeenCalledWith([
+      expect.objectContaining({ slotId: 145, time: '10:00' }),
+      expect.objectContaining({ slotId: 146, time: '10:30' }),
+    ]);
   });
 });

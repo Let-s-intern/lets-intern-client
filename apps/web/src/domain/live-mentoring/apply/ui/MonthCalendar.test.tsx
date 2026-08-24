@@ -150,6 +150,30 @@ describe('ScheduleSelectSection', () => {
     ]);
   });
 
+  /* 시안 1-2 — 60분은 30분 버튼 두 개가 아니라 병합된 한 칸으로 보인다 */
+  it('60분 플랜은 연속 두 칸을 버튼 하나로 보여주고 슬롯 2건을 올려 보낸다', () => {
+    const onSelectSlots = jest.fn();
+    render(
+      <ScheduleSelectSection
+        slots={SLOTS}
+        duration={60}
+        selectedSlots={[]}
+        onSelectSlots={onSelectSlots}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: '10:00 ~ 11:00' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: '10:00 ~ 10:30' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '10:30 ~ 11:00' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: '10:00 ~ 11:00' }));
+
+    expect(onSelectSlots).toHaveBeenCalledWith([
+      expect.objectContaining({ slotId: 142, time: '10:00' }),
+      expect.objectContaining({ slotId: 143, time: '10:30' }),
+    ]);
+  });
+
   /*
     달을 넘기면 그 달 1일로 이동한다. 고정 격자를 없앤 뒤로는 그날 슬롯이 없으면
     시간 버튼이 한 칸도 남지 않으므로, 빈 자리에 이유를 적어 준다.

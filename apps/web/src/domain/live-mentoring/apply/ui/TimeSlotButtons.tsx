@@ -9,8 +9,8 @@ const STATE_CLASSES: Record<'selected' | 'available', string> = {
 
 interface TimeSlotButtonsProps {
   options: ApplySlotOption[];
-  /** 선택된 시작 시각들. 60분 플랜은 연속 2개가 함께 들어온다. */
-  selectedTimes: string[];
+  /** 선택된 버튼의 시작 시각. 60분 플랜도 버튼은 하나다. */
+  selectedTime: string | null;
   onSelect: (time: string) => void;
 }
 
@@ -18,13 +18,13 @@ interface TimeSlotButtonsProps {
  * 시간 버튼 — `domain/challenge/feedback/live/ui/TimeSlotButtons.tsx` 의 복제본이다.
  * 원본은 읽기만 하고 수정하지 않는다.
  *
- * 원본과 다른 점 둘. 선택을 `SelectedSlot` 하나가 아니라 **시각 배열**로 받는다 —
- * 60분 플랜이 연속 2칸을 동시에 강조해야 하기 때문이다(시안 `1-2`). 그리고 비활성
+ * 원본과 다른 점 둘. 선택을 `SelectedSlot` 이 아니라 **시각 문자열**로 받는다 —
+ * 60분 플랜은 슬롯 2건을 `13:00 ~ 14:00` 버튼 하나로 합쳐 그린다. 그리고 비활성
  * 칸이 없다 — 예약 가능한 자리만 넘어오므로 모든 버튼이 눌린다.
  */
 const TimeSlotButtons = ({
   options,
-  selectedTimes,
+  selectedTime,
   onSelect,
 }: TimeSlotButtonsProps) => {
   if (options.length === 0) {
@@ -38,9 +38,7 @@ const TimeSlotButtons = ({
   return (
     <div className="grid w-full grid-cols-3 gap-x-3 gap-y-3 md:grid-cols-4">
       {options.map(({ time, label }) => {
-        const slotState = selectedTimes.includes(time)
-          ? 'selected'
-          : 'available';
+        const slotState = selectedTime === time ? 'selected' : 'available';
 
         return (
           <button

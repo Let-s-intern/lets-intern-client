@@ -38,6 +38,11 @@ interface UseSlotSelectionParams {
  * 09:00~23:00 고정 격자를 그리던 때는 대부분이 회색이라 눌리는 칸을 눈으로 찾아야 했다.
  * 60분으로 이을 다음 칸이 없는 자리(그날 마지막 칸이 대표적이다)도 같은 이유로 뺀다.
  *
+ * 60분 플랜은 연속 두 칸을 `13:00 ~ 14:00` 버튼 **하나**로 합친다. 30분 버튼 두 개가
+ * 함께 강조되면 60분을 산 사람이 30분짜리를 두 번 고른 것처럼 읽힌다. 화면만 합치는
+ * 것이고 `onSelectSlots` 로 올려 보내는 것은 **여전히 슬롯 2건**이다 — 서버가 받는
+ * 형태를 바꾸지 않는다.
+ *
  * 연속 판정은 **`endDate`(직전) === `startDate`(다음)** 으로 한다. 서버가
  * `validateSlotsAreConsecutive` 로 같은 기준을 다시 검증하므로, 여기서 시각을
  * 30분 더하는 식으로 흉내 내면 규칙이 갈라지는 순간 신청이 400 으로 떨어진다.
@@ -76,27 +81,30 @@ export function useSlotSelection({
   const options = useMemo<ApplySlotOption[]>(
     () =>
       dayOpenSlots.flatMap((slot) => {
-        if (needsTwoSlots && slotByStart.get(slot.endDate)?.status !== 'OPEN') {
-          return [];
+        const time = toTimeKey(slot.startDate);
+        if (!needsTwoSlots) {
+          return [{ time, label: toSlotLabel(slot.startDate, slot.endDate) }];
         }
 
-        return [
-          {
-            time: toTimeKey(slot.startDate),
-            label: toSlotLabel(slot.startDate, slot.endDate),
-          },
-        ];
+        const next = slotByStart.get(slot.endDate);
+        if (next?.status !== 'OPEN') return [];
+        // 라벨만 두 칸을 덮는다. 시작 시각은 앞 칸이라 그날 안에서 여전히 유일하다
+        return [{ time, label: toSlotLabel(slot.startDate, next.endDate) }];
       }),
     [dayOpenSlots, slotByStart, needsTwoSlots],
   );
 
-  const selectedTimes = useMemo(
-    () =>
-      selectedSlots
-        .filter((slot) => slot.date === date)
-        .map((slot) => slot.time),
-    [selectedSlots, date],
-  );
+  /*
+    강조할 버튼 하나를 고른다. 60분은 슬롯이 2건 잡혀도 버튼은 앞 칸 하나뿐이라,
+    잡힌 시각을 그대로 넘기면 뒤 칸을 시작으로 삼는 다른 버튼까지 함께 강조된다.
+  */
+  const selectedTime = useMemo(() => {
+    const daySelected = selectedSlots.filter((slot) => slot.date === date);
+    if (daySelected.length === 0) return null;
+    return daySelected.reduce((earliest, slot) =>
+      slot.time < earliest.time ? slot : earliest,
+    ).time;
+  }, [selectedSlots, date]);
 
   const onSelect = (time: string) => {
     const slot = dayOpenSlots.find(
@@ -105,7 +113,7 @@ export function useSlotSelection({
     if (!slot) return;
 
     // 이미 잡힌 칸을 다시 누르면 선택을 통째로 푼다. 60분이면 두 칸이 함께 풀린다.
-    if (selectedTimes.includes(time)) {
+    if (selectedTime === time) {
       onSelectSlots([]);
       return;
     }
@@ -120,5 +128,5 @@ export function useSlotSelection({
     onSelectSlots([toSelected(slot), toSelected(next)]);
   };
 
-  return { options, selectedTimes, onSelect };
+  return { options, selectedTime, onSelect };
 }

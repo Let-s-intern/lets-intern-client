@@ -76,7 +76,7 @@ const ScheduleSelectSection = ({
     return result;
   }, [slots]);
 
-  const { options, selectedTimes, onSelect } = useSlotSelection({
+  const { options, selectedTime, onSelect } = useSlotSelection({
     slots,
     date: focusedDate,
     duration,
@@ -125,7 +125,7 @@ const ScheduleSelectSection = ({
         />
         <TimeSlotButtons
           options={options}
-          selectedTimes={selectedTimes}
+          selectedTime={selectedTime}
           onSelect={onSelect}
         />
       </div>
