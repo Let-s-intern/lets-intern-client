@@ -172,8 +172,7 @@ describe('DetailSettingsPage — 탭', () => {
   });
 
   /*
-   * 시안 기준 탭에는 라벨만 둔다. 번호 배지와 필수·선택 칩은 섹션 카드 헤더로 옮겼다
-   * (`DetailSectionHeader`) — 탭 줄에 다 넣으면 6개가 두 줄로 넘친다.
+   * 필수·선택 칩은 탭 줄에 있다. 번호 배지만 섹션 카드 헤더(`DetailSectionHeader`)에 남는다.
    */
   /** 시안 헤더 문구. 기존 "상세 페이지 설정" 에서 바뀌었다. */
   it('시안 문구로 페이지 제목과 부제를 보여준다', () => {
@@ -189,24 +188,25 @@ describe('DetailSettingsPage — 탭', () => {
     ).toBeInTheDocument();
   });
 
-  it('탭에는 라벨만 두고 번호·칩을 붙이지 않는다', () => {
+  it('탭 6개에 라벨과 필수·선택 칩이 함께 보인다', () => {
     renderPage();
 
+    // 번호 배지는 탭에 붙지 않는다 — 카드 헤더에만 있다.
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
-      '핵심 소개',
-      '멘토 정보',
-      '멘토링 유형',
-      '취업 성공 전략',
-      '소개 영상',
-      '결과 사례',
+      '핵심 소개필수',
+      '멘토 정보필수',
+      '멘토링 유형필수',
+      '취업 성공 전략선택',
+      '소개 영상선택',
+      '결과 사례선택',
     ]);
   });
 
   /**
-   * 필수 여부는 탭에서 눈으로 사라졌으므로(칩이 카드 헤더로 갔다) 화면 낭독에는
-   * 남아 있어야 한다. 완료 여부도 체크 아이콘이 `aria-hidden` 이라 이름이 대신 전한다.
+   * 완료 여부는 체크 아이콘이 `aria-hidden` 이라 탭 이름이 대신 전한다.
+   * 필수 여부는 칩이 글자로 보이므로 칩을 `aria-hidden` 으로 두고 이름에만 한 번 남긴다.
    */
-  it('필수 여부와 완료 여부를 탭 이름으로 전한다', () => {
+  it('필수 여부와 완료 여부를 탭 이름으로 전하되 중복해 읽히지 않는다', () => {
     renderPage();
 
     expect(
@@ -221,6 +221,11 @@ describe('DetailSettingsPage — 탭', () => {
         expect.stringContaining('결과 사례 선택'),
       ]),
     );
+    // 칩이 `aria-hidden` 이라 접근성 이름에 '필수'/'선택'이 두 번 들어가지 않는다.
+    for (const tab of screen.getAllByRole('tab')) {
+      const label = tab.getAttribute('aria-label') ?? '';
+      expect(label.match(/필수|선택/g)).toHaveLength(1);
+    }
   });
 
   /** 섹션 카드 헤더(`DetailSectionHeader`) 영역. 번호 배지가 리스트 순번과 겹치지 않게 좁힌다. */
