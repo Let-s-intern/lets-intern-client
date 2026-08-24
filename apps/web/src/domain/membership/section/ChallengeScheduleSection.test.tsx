@@ -58,6 +58,21 @@ describe('ChallengeScheduleSection', () => {
     expect(screen.getByText('~ 11/30')).toBeInTheDocument();
   });
 
+  it('간트 바로 아래에 일정 조율 각주를 텍스트로 그린다', () => {
+    // 간트에 박힌 날짜는 확정이 아니다. 지난 시즌 렛츠런 운영 일정 변경으로 CS 가 들어왔고
+    // 9월 면접 챌린지 일정 조율이 예정돼 있어, 조율 가능성을 화면에서 먼저 밝힌다.
+    const { container } = render(<ChallengeScheduleSection />);
+    const disclaimer = container.querySelector('.chsched-disclaimer');
+    expect(disclaimer?.textContent).toBe(CHALLENGE_SCHEDULE.scheduleDisclaimer);
+    // 간트와 안내 박스 사이에 있어야 각주로 읽힌다.
+    expect(
+      disclaimer?.previousElementSibling?.classList.contains('gantt-wrap'),
+    ).toBe(true);
+    expect(
+      disclaimer?.nextElementSibling?.classList.contains('chsched-notice'),
+    ).toBe(true);
+  });
+
   it('CLS 방지를 위해 이미지에 width·height 를 직접 지정한다', () => {
     // domain/membership 은 next/image 를 쓰지 않아 크기 예약이 자동으로 되지 않는다.
     render(<ChallengeScheduleSection />);

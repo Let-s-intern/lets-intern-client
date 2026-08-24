@@ -18,8 +18,14 @@ const LEGACY_RASTER_SOURCES = new Set([
 const PUBLIC_DIR = path.join(__dirname, '../../../../public');
 
 describe('IMAGE_REVIEWS 캡처 후기', () => {
-  it('시안 8-0.png 과 같은 8종이다', () => {
-    expect(IMAGE_REVIEWS).toHaveLength(8);
+  it('6종이다 — 시안 8-0.png 의 8종에서 렛츠런 스터디 2건을 뺐다', () => {
+    // 렛츠런 스터디는 계속되지 않는 프로그램이라 후기에서 내린다.
+    // (혜택 섹션도 같은 이유로 시안 7-4 블록을 렌더하지 않는다 — data/benefits.ts 주석)
+    expect(IMAGE_REVIEWS).toHaveLength(6);
+  });
+
+  it('렛츠런 스터디 후기가 남아 있지 않다', () => {
+    expect(IMAGE_REVIEWS.some((r) => r.source === '렛츠런 스터디')).toBe(false);
   });
 
   it('모든 항목에 비어 있지 않은 alt 가 있다', () => {

@@ -58,6 +58,10 @@ jest.mock('./section/PlansSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PlansSection" />,
 }));
+jest.mock('./section/CommunityChatSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="CommunityChatSection" />,
+}));
 jest.mock('./section/MentoringCouponSection', () => ({
   __esModule: true,
   default: () => <div data-testid="MentoringCouponSection" />,
@@ -88,6 +92,7 @@ const EXPECTED_ORDER = [
   'ChallengeScheduleSection',
   'CoursePlanSection',
   'BenefitsSection',
+  'CommunityChatSection',
   'MentoringCouponSection',
   'ReviewsSection',
   'FaqSection',

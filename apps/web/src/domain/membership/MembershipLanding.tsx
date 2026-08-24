@@ -23,6 +23,7 @@ import './styles/benefits.css';
 import './styles/benefit-modal.css';
 import './styles/proof.css';
 import './styles/plan-single.css';
+import './styles/community-chat.css';
 import './styles/mentoring-coupon.css';
 import './styles/reviews.css';
 import './styles/roadmap.css';
@@ -45,6 +46,7 @@ import SolutionSection from './section/SolutionSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import BenefitsSection from './section/BenefitsSection';
 import PlansSection from './section/PlansSection';
+import CommunityChatSection from './section/CommunityChatSection';
 import MentoringCouponSection from './section/MentoringCouponSection';
 import ReviewsSection from './section/ReviewsSection';
 import RoadmapSection from './section/RoadmapSection';
@@ -73,6 +75,8 @@ export default function MembershipLanding() {
               헤더-본문 순서가 맞으므로 둘 사이에 다른 섹션을 넣지 마라. */}
           <CoursePlanSection />
           <BenefitsSection />
+          {/* 커뮤니티 톡방 혜택 — 쿠폰 바로 위 */}
+          <CommunityChatSection />
           {/* 1:1 멘토링·커피챗 할인 쿠폰 — 후기 바로 위 */}
           <MentoringCouponSection />
           <ReviewsSection />

@@ -2,6 +2,10 @@ import { useState } from 'react';
 import {
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
+  PLAYBOOK_CAPTION_LINES,
+  PLAYBOOK_SHOT_ALT,
+  PLAYBOOK_SHOT_SIZE,
+  PLAYBOOK_SHOT_SRC,
   type CoursePlanViewId,
 } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
@@ -99,6 +103,26 @@ export default function CoursePlanSection() {
             <p className="cp-playbook">
               구매자에게는 이 플랜의 풀버전{' '}
               <strong>하반기 공채 준비 플레이북</strong>을 제공합니다.
+            </p>
+
+            {/* 구매자가 실제로 받는 화면. `.cp-view` 밖이라 `.rv` 리빌이 안전하다 —
+                토글로 리마운트되는 자리에 두면 IntersectionObserver 가 놓친다. */}
+            <img
+              className="cp-playbook-shot rv"
+              src={PLAYBOOK_SHOT_SRC}
+              alt={PLAYBOOK_SHOT_ALT}
+              width={PLAYBOOK_SHOT_SIZE.width}
+              height={PLAYBOOK_SHOT_SIZE.height}
+              loading="lazy"
+              decoding="async"
+            />
+
+            <p className="cp-playbook-caption rv">
+              {PLAYBOOK_CAPTION_LINES.map((line, i) => (
+                <span className="brk" key={i}>
+                  {line}
+                </span>
+              ))}
             </p>
           </div>
         </div>
