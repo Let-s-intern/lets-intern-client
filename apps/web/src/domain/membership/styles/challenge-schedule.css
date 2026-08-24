@@ -77,6 +77,18 @@
 /* ---------- 하단 안내 박스 ----------
    통이미지였다가 텍스트로 되돌렸다. 2000x193 짜리 가로로 긴 패널이라 375px 에서
    335x32 로 줄어 글자가 읽히지 않았다. */
+/* 간트 각주 — 일정이 확정이 아님을 밝힌다. 간트와 같은 폭에 맞춰 오른쪽으로 정렬해
+   아래 안내 박스(파란 테두리)와 위계가 겹치지 않게 한다. */
+.membership-root .chsched-disclaimer {
+  max-width: var(--gantt-width);
+  margin: 12px auto 0;
+  text-align: right;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--g500);
+  font-weight: 500;
+}
+
 .membership-root .chsched-notice {
   display: flex;
   align-items: center;
@@ -150,8 +162,14 @@
     padding: 96px 0;
   }
   .membership-root .gantt-wrap,
+  .membership-root .chsched-disclaimer,
   .membership-root .chsched-notice {
     max-width: calc(100% - 40px);
+  }
+  /* 좁아지면 두 줄로 접히는데, 오른쪽 정렬로 접힌 문장은 읽기 불편하다 */
+  .membership-root .chsched-disclaimer {
+    text-align: left;
+    font-size: 12.5px;
   }
   /* .chsched > .wrap 이 좌우 패딩을 0 으로 지워서(간트를 화면 끝까지 쓰려고)
      헤더 텍스트가 화면 끝에 붙는다. 헤더에만 다시 넣는다 — 간트와 같은 20px. */

@@ -573,6 +573,38 @@
   font-weight: 800;
 }
 
+/* 플레이북 앱 화면 컷 — 시안에서 매트릭스(1080px) 대비 27.65% 라 300px 로 잡는다.
+   원본이 600px 이므로 @2x 로 떨어진다. width/height 속성으로 비율이 예약돼 있어
+   여기서는 표시 폭만 정하면 된다. */
+.membership-root .cp-playbook-shot {
+  display: block;
+  width: 300px;
+  max-width: 100%;
+  height: auto;
+  margin: 40px auto 0;
+}
+
+/* 화면 아래 마무리 문구. 풋노트(.cp-playbook)보다 크게 둬서 섹션을 닫는 말이 되게 한다 */
+.membership-root .cp-playbook-caption {
+  max-width: 900px;
+  margin: 24px auto 0;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--g600);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .membership-root .cp-playbook-shot {
+    margin-top: 32px;
+  }
+  .membership-root .cp-playbook-caption {
+    margin-top: 20px;
+    font-size: 15px;
+  }
+}
+
 /* 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
 .membership-root .cp-lead {
   max-width: 900px;

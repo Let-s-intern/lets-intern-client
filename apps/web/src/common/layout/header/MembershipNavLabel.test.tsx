@@ -3,9 +3,9 @@ import MembershipNavLabel from './MembershipNavLabel';
 import SideNavItem from './SideNavItem';
 
 describe('MembershipNavLabel (LC-3219 멤버십 랜딩 진입 메뉴)', () => {
-  it('시안 0.png 의 GNB 문구를 그대로 렌더한다', () => {
+  it('GNB 문구를 그대로 렌더한다', () => {
     render(<MembershipNavLabel />);
-    expect(screen.getByText('2026 하반기 멤버십')).toBeInTheDocument();
+    expect(screen.getByText('2026년 하반기 공채 멤버십')).toBeInTheDocument();
   });
 
   it('네비 항목에 담기면 /membership 으로 링크된다', () => {
@@ -17,7 +17,9 @@ describe('MembershipNavLabel (LC-3219 멤버십 랜딩 진입 메뉴)', () => {
       </SideNavItem>,
     );
 
-    const link = screen.getByRole('link', { name: '2026 하반기 멤버십' });
+    const link = screen.getByRole('link', {
+      name: '2026년 하반기 공채 멤버십',
+    });
     expect(link).toHaveAttribute('href', '/membership');
   });
 });

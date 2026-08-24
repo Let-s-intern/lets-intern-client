@@ -64,6 +64,11 @@ export default function ChallengeScheduleSection() {
           <span className="gantt-fade" aria-hidden />
         </div>
 
+        {/* 간트에 박힌 날짜가 확정이 아님을 이미지 바로 아래에서 밝힌다 */}
+        <p className="chsched-disclaimer rv">
+          {CHALLENGE_SCHEDULE.scheduleDisclaimer}
+        </p>
+
         <div className="chsched-notice rv">
           <div className="chsched-notice-text">
             <p className="chsched-notice-lead">

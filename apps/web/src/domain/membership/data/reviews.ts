@@ -45,28 +45,12 @@ export const IMAGE_REVIEWS: ImageReview[] = [
       '가장 유용했던 점은 기업 분석 하는 방법을 알게 된 것과 100개 이상의 질문을 접할 수 있었던 거예요. 자신감 있게 실전에 임할 수 있게 됐어요',
   },
   {
-    src: '/images/membership/review-letsrun.png',
-    alt: '렛츠런 스터디 후기',
-    source: '렛츠런 스터디',
-    badge: '동기부여',
-    quote:
-      '이번 스터디를 하면서 확실히 동기부여도 받고 격려도 받을 수 있어서 참 뿌듯한 것 같아요. 다들 열심히 사는 모습을 보며 매일 배워요',
-  },
-  {
     src: '/images/membership/review-renewal.jpg',
     alt: '리뉴얼된 챌린지 후기',
     source: '챌린지 미션 후기',
     badge: '콘텐츠 만족',
     quote:
       '리뉴얼된 챌린지 콘텐츠가 정말 양질이라 계속 들여다보며 많은 도움 받았어요. 같은 경험도 관점에 따라 완전히 달라지는 걸 체험했어요',
-  },
-  {
-    src: '/images/membership/review-community.png',
-    alt: '렛츠런 스터디 커뮤니티 대화',
-    source: '렛츠런 스터디',
-    badge: '취준 루틴',
-    quote:
-      '플젝하면서도 취준 놓고 싶지 않아 렛츠런 신청했어요. 같이 달리는 분들 덕에 하루하루 덜 스트레스 받으며 작업하고 취준도 이어가요',
   },
   {
     src: '/images/membership/review-mission.png',

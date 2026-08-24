@@ -9,6 +9,10 @@ import {
   matrixCellKey,
   MONTH_GROUPS,
   Owner,
+  PLAYBOOK_CAPTION_LINES,
+  PLAYBOOK_SHOT_ALT,
+  PLAYBOOK_SHOT_SIZE,
+  PLAYBOOK_SHOT_SRC,
   STEPS,
   WEEKS,
 } from './coursePlan';
@@ -130,6 +134,31 @@ describe('coursePlan 데이터 무결성', () => {
     it('모든 주차에 title 이 비어있지 않다', () => {
       for (const item of WEEKS) {
         expect(item.title.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('플레이북 화면 컷', () => {
+    it('반입 이미지는 WebP 다', () => {
+      // PRD 7-3: PNG·JPG 반입 금지.
+      expect(PLAYBOOK_SHOT_SRC.endsWith('.webp')).toBe(true);
+    });
+
+    it('표시 폭 300px 의 @2x 크기다', () => {
+      // 시안에서 매트릭스(1080px) 대비 27.65% 로 잰 값이다.
+      // 이 비율이 깨지면 시안과 화면이 어긋난다.
+      expect(PLAYBOOK_SHOT_SIZE.width).toBe(600);
+      expect(PLAYBOOK_SHOT_SIZE.height).toBe(1070);
+    });
+
+    it('alt 는 이름표가 아니라 화면 내용을 옮긴 문장이다', () => {
+      expect(PLAYBOOK_SHOT_ALT.length).toBeGreaterThan(30);
+    });
+
+    it('마무리 문구가 의도된 줄바꿈 단위로 나뉘어 있다', () => {
+      expect(PLAYBOOK_CAPTION_LINES).toHaveLength(2);
+      for (const line of PLAYBOOK_CAPTION_LINES) {
+        expect(line.length).toBeGreaterThan(0);
       }
     });
   });
