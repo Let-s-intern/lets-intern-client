@@ -170,3 +170,76 @@ describe('ScheduleSelectSection', () => {
     expect(screen.queryByRole('button', { name: '이전 달' })).toBeNull();
   });
 });
+
+/*
+  슬롯 조회는 시트가 열린 뒤에 도착한다. 첫 렌더는 빈 배열이므로, 그때 잡힌 날짜가
+  그대로 굳으면 슬롯이 와도 빈 달이 남는다. 시계를 슬롯보다 앞선 날로 고정해
+  '오늘로 열렸는지'와 '첫 예약 가능일로 열렸는지'가 구분되게 한다.
+*/
+describe('ScheduleSelectSection 늦게 도착하는 슬롯', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-08-25T09:00:00'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('빈 배열로 열린 뒤 슬롯이 오면 첫 예약 가능일로 옮긴다', () => {
+    const { rerender } = render(
+      <ScheduleSelectSection
+        slots={[]}
+        duration={30}
+        selectedSlots={[]}
+        onSelectSlots={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('현재 예약 가능한 일정이 없습니다.'),
+    ).toBeInTheDocument();
+
+    rerender(
+      <ScheduleSelectSection
+        slots={SLOTS}
+        duration={30}
+        selectedSlots={[]}
+        onSelectSlots={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('2026년 9월')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '10:00 ~ 10:30' })).toBeEnabled();
+  });
+
+  it('사용자가 고른 날짜는 더 이른 슬롯이 와도 덮어쓰지 않는다', () => {
+    const { rerender } = render(
+      <ScheduleSelectSection
+        slots={SLOTS}
+        duration={30}
+        selectedSlots={[]}
+        onSelectSlots={jest.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '14' }));
+
+    const earlier = {
+      slotId: 130,
+      startDate: '2026-08-31T13:00:00',
+      endDate: '2026-08-31T13:30:00',
+      status: 'OPEN' as const,
+    };
+    rerender(
+      <ScheduleSelectSection
+        slots={[earlier, ...SLOTS]}
+        duration={30}
+        selectedSlots={[]}
+        onSelectSlots={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('2026년 9월')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '09:30 ~ 10:00' })).toBeEnabled();
+  });
+});

@@ -53,10 +53,15 @@ const ScheduleSelectSection = ({
   /*
     첫 화면은 예약 가능한 가장 이른 날로 연다. 오늘로 열면 로컬처럼 슬롯이 한 달 뒤에만
     있을 때 빈 달이 뜨고, 사용자가 화살표를 몇 번 눌러야 하는지 알 수 없다.
+
+    슬롯 조회는 첫 렌더보다 늦게 도착한다. 초기값으로만 잡으면 빈 배열 기준인 '오늘'로
+    굳어 슬롯이 와도 빈 달에 머문다. 그래서 상태로 들고 있는 것은 **사용자가 고른 날**
+    뿐이고, 고르기 전까지는 매 렌더 `dateRange.start` 를 따라간다. 한 번이라도 고르면
+    그 뒤에 슬롯이 더 와도 덮어쓰지 않는다.
   */
-  const [focusedDate, setFocusedDate] = useState(
-    () => dateRange?.start ?? toDateKey(new Date().toISOString()),
-  );
+  const [pickedDate, setPickedDate] = useState<string | null>(null);
+  const focusedDate =
+    pickedDate ?? dateRange?.start ?? toDateKey(new Date().toISOString());
 
   const [year, month] = useMemo(() => {
     const [y, m] = focusedDate.split('-').map(Number);
@@ -95,7 +100,7 @@ const ScheduleSelectSection = ({
   const focusedMonth = focusedDate.slice(0, 7);
   const navigateMonth = (direction: 1 | -1) => {
     const next = new Date(year, month + direction, 1);
-    setFocusedDate(
+    setPickedDate(
       `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-01`,
     );
   };
@@ -116,7 +121,7 @@ const ScheduleSelectSection = ({
           canGoNext={focusedMonth < dateRange.end.slice(0, 7)}
           onPrev={() => navigateMonth(-1)}
           onNext={() => navigateMonth(1)}
-          onDateSelect={setFocusedDate}
+          onDateSelect={setPickedDate}
         />
         <TimeSlotButtons
           options={options}
