@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query';
+import { format } from 'date-fns';
 import { useMemo } from 'react';
 
 import axios from '@/utils/axios';
@@ -243,6 +244,21 @@ function resolveLiveParticipation(
 }
 
 /**
+ * 1대1 예약 시각 ISO → 화면 표기.
+ *
+ * 캘린더(`deriveLiveMentoringBars`)와 **같은 방식**으로 파싱해야 한다. 문자열을 잘라
+ * 쓰면(`slice(11, 16)`) 서버가 오프셋을 붙여 보낼 때 두 화면이 서로 다른 시각을
+ * 보여 준다 — 같은 예약이 캘린더와 표에서 다르게 보이는 문제가 실제로 있었다.
+ */
+function toRowDate(iso: string): string {
+  return format(new Date(iso), 'yyyy-MM-dd');
+}
+
+function toRowTime(iso: string): string {
+  return format(new Date(iso), 'HH:mm');
+}
+
+/**
  * 1대1 예약 → 피드백 상태 라벨·tone.
  *
  * 예약 응답에는 출석도 완료 여부도 없다(`MentorLiveMentoringReservationResponse`).
@@ -438,9 +454,9 @@ export function useMergedFeedbackRows(
     // 챌린지에 속하지 않아 스키마가 그대로 맞지 않는다. 맞지 않는 컬럼은 고정 문구로
     // 채우고(빈 칸 금지), 출석처럼 근거가 없는 컬럼만 null 로 둔다.
     for (const reservation of liveMentoringReservations ?? []) {
-      const sessionDate = reservation.reservationStartAt.slice(0, 10);
-      const startTime = reservation.reservationStartAt.slice(11, 16);
-      const endTime = reservation.reservationEndAt.slice(11, 16);
+      const sessionDate = toRowDate(reservation.reservationStartAt);
+      const startTime = toRowTime(reservation.reservationStartAt);
+      const endTime = toRowTime(reservation.reservationEndAt);
       const status = resolveLiveMentoringRowStatus(reservation, now);
 
       rows.push({

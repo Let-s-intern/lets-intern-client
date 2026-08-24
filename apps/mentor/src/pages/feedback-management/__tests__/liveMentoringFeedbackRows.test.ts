@@ -9,6 +9,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { LiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
+import { deriveLiveMentoringBars } from '@/pages/schedule/hooks/useLiveMentoringData';
 import type { PeriodBarData } from '@/pages/schedule/types';
 
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
@@ -242,5 +243,21 @@ describe('1대1 행 — 서면·라이브와 섞였을 때', () => {
 
     expect(result.current.some((r) => r.type === 'live-mentoring')).toBe(false);
     expect(result.current).toHaveLength(1);
+  });
+});
+
+describe('1대1 행 — 캘린더와 같은 시각을 보여 준다', () => {
+  it('오프셋이 붙은 ISO 도 캘린더 카드와 날짜·시각이 일치한다', () => {
+    const reservation = makeReservation({
+      reservationStartAt: '2026-05-04T01:00:00Z',
+      reservationEndAt: '2026-05-04T02:00:00Z',
+    });
+
+    const [row] = renderRows([reservation]);
+    const [bar] = deriveLiveMentoringBars([reservation]);
+
+    expect(row.startDate).toBe(bar.startDate);
+    expect(row.startTime).toBe(bar.liveMentoring?.startTime);
+    expect(row.endTime).toBe(bar.liveMentoring?.endTime);
   });
 });
