@@ -1,79 +1,99 @@
-import { describe, expect, expectTypeOf, it } from 'vitest';
-
-import type { LiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
-
-import type { FeedbackRow } from '../types';
-
 /**
  * `FeedbackRow` 에 1대1 라이브 멘토링이 더해진 계약을 고정한다.
  *
- * 표의 컬럼 값은 이 타입의 필드가 전부라, 여기서 계약이 흔들리면 화면에 빈 칸이 생긴다.
- * 타입 수준 단언(컴파일)과 값 수준 단언(런타임)을 함께 둔다.
+ * 이 앱의 `tsconfig.json` 은 `src/**\/__tests__/**` 를 `tsc` 대상에서 제외한다.
+ * 그래서 테스트 파일 안의 타입 단언(`expectTypeOf` 등)은 아무것도 검증하지 못한다 —
+ * 대신 훅이 **실제로 만든 행**의 키 집합과 값으로 계약을 확인한다. `FeedbackRow` 에
+ * 필드가 늘었는데 1대1 분기가 채우지 않으면 키 비교에서 걸린다.
  */
+import { renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+import type { LiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
+
+import { useMergedFeedbackRows } from '../hooks/useMergedFeedbackRows';
+
+vi.mock('@/pages/schedule/constants/mockNow', () => ({
+  currentNow: () => new Date('2026-05-04T09:45:00'),
+  MOCK_NOW: '2026-05-04T09:45:00',
+}));
+
+/** 표가 읽는 `FeedbackRow` 의 전체 키. 하나라도 빠지면 컬럼이 비어 렌더된다. */
+const FEEDBACK_ROW_KEYS = [
+  'canOpenDetail',
+  'challengeTitle',
+  'detailDisabledReason',
+  'endTime',
+  'id',
+  'menteeNameLabel',
+  'menteeParticipation',
+  'mentorParticipation',
+  'reservationLabel',
+  'scheduleLabel',
+  'startDate',
+  'startTime',
+  'statusLabel',
+  'statusTone',
+  'submissionLabel',
+  'thLabel',
+  'type',
+];
+
 const RESERVATION: LiveMentoringReservation = {
   applicationId: 91001,
   menteeId: 51001,
   menteeName: '김일대',
   productName: '자소서 실전 첨삭 멘토링',
   durationMinutes: 60,
-  reservationStartAt: '2026-08-26T14:00:00',
-  reservationEndAt: '2026-08-26T15:00:00',
+  reservationStartAt: '2026-05-04T14:00:00',
+  reservationEndAt: '2026-05-04T15:00:00',
   status: 'CONFIRMED',
   questionWritten: true,
   attachmentSubmitted: false,
-  createDate: '2026-08-20T09:00:00',
+  createDate: '2026-05-01T09:00:00',
 };
 
-const ROW: FeedbackRow = {
-  id: `live-mentoring-${RESERVATION.applicationId}`,
-  type: 'live-mentoring',
-  startDate: '2026-08-26',
-  startTime: '14:00',
-  endTime: '15:00',
-  statusLabel: '진행 예정',
-  statusTone: 'liveWaiting',
-  reservationLabel: '예약 완료',
-  submissionLabel: '일부 제출',
-  menteeParticipation: null,
-  mentorParticipation: null,
-  challengeTitle: '1대1 라이브 멘토링',
-  thLabel: '해당 없음',
-  scheduleLabel: '2026.08.26 14:00 ~ 15:00',
-  menteeNameLabel: '김일대',
-  canOpenDetail: false,
-  detailDisabledReason: '멘티 질문·전달 파일을 여는 화면이 아직 없습니다.',
-  source: { type: 'live-mentoring', reservation: RESERVATION },
-};
+const renderRow = () =>
+  renderHook(() =>
+    useMergedFeedbackRows([], [], undefined, undefined, [RESERVATION]),
+  ).result.current[0];
 
 describe('FeedbackRow — 1대1 라이브 멘토링', () => {
-  it("type 에 'live-mentoring' 이 있다", () => {
-    expectTypeOf<FeedbackRow['type']>().toEqualTypeOf<
-      'written' | 'live' | 'live-mentoring'
-    >();
+  it('행이 FeedbackRow 의 모든 키를 채운다 (source 제외 없이)', () => {
+    const row = renderRow();
+
+    expect(Object.keys(row).sort()).toEqual(
+      [...FEEDBACK_ROW_KEYS, 'source'].sort(),
+    );
   });
 
-  it("submissionLabel 에 '일부 제출' 이 있다 (질문·파일 중 하나만 낸 경우)", () => {
-    expectTypeOf<FeedbackRow['submissionLabel']>().toEqualTypeOf<
-      '제출' | '일부 제출' | '지각 제출' | '미제출' | null
-    >();
+  it("type 이 'live-mentoring' 이다", () => {
+    expect(renderRow().type).toBe('live-mentoring');
   });
 
-  it('source 가 live-mentoring 이면 원본 예약으로 좁혀진다', () => {
-    if (ROW.source.type !== 'live-mentoring') throw new Error('예상 밖 source');
-    expectTypeOf(
-      ROW.source.reservation,
-    ).toEqualTypeOf<LiveMentoringReservation>();
-    expect(ROW.source.reservation.applicationId).toBe(91001);
+  it('source 가 원본 예약을 그대로 들고 있다 (질문 화면이 생기면 넘길 값)', () => {
+    const { source } = renderRow();
+
+    expect(source.type).toBe('live-mentoring');
+    if (source.type !== 'live-mentoring') throw new Error('예상 밖 source');
+    expect(source.reservation).toEqual(RESERVATION);
+  });
+
+  it("submissionLabel 이 '일부 제출' 을 낼 수 있다 (질문·파일 중 하나만)", () => {
+    expect(renderRow().submissionLabel).toBe('일부 제출');
   });
 
   it('스키마가 맞지 않는 컬럼도 빈 값으로 두지 않는다', () => {
-    expect(ROW.challengeTitle).toBe('1대1 라이브 멘토링');
-    expect(ROW.thLabel).toBe('해당 없음');
-    expect(ROW.submissionLabel).not.toBeNull();
+    const row = renderRow();
+
+    expect(row.challengeTitle).toBe('1대1 라이브 멘토링');
+    expect(row.thLabel).toBe('해당 없음');
   });
 
   it('상세는 잠기고, 왜 잠겼는지가 함께 실린다', () => {
-    expect(ROW.canOpenDetail).toBe(false);
-    expect(ROW.detailDisabledReason).toBeTruthy();
+    const row = renderRow();
+
+    expect(row.canOpenDetail).toBe(false);
+    expect(row.detailDisabledReason).toBeTruthy();
   });
 });
