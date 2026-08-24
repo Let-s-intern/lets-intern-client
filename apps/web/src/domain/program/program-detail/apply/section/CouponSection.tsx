@@ -13,14 +13,30 @@ export interface CouponSectionProps {
   ) => void;
   maxAmount?: number;
   programType: string;
+  /**
+   * [LC-3219-MEMBERSHIP] 전액할인 쿠폰 허용 여부. 담당자 임성빈.
+   * 하반기 멤버십에서만 false 로 넘어온다. 시즌 종료 시 이 prop 과 전달부를 지운다.
+   */
+  allowFullDiscount?: boolean;
 }
 
 const CouponSection = ({
   setCoupon,
   programType,
   maxAmount = Infinity,
+  allowFullDiscount = true,
 }: CouponSectionProps) => {
-  const { data: coupons = [] } = useMyCoupons(programType);
+  const { data: myCoupons = [] } = useMyCoupons(programType);
+
+  // [LC-3219-MEMBERSHIP] 시작 — 하반기 멤버십 전액할인 쿠폰 숨김. 담당자 임성빈.
+  // 멤버십이 어드민 챌린지로 만들어져 있어, 예전에 챌린지용으로 뿌린 전액할인 쿠폰
+  // (discount === -1)이 그대로 먹어 169,000원이 0원이 된다. 목록에서 빼 고를 수 없게 한다.
+  // 시즌 종료 시 이 블록과 allowFullDiscount prop, 그리고 payment-input/page.tsx 의
+  // 전달부·isMembership 블록을 함께 지운다.
+  const coupons = allowFullDiscount
+    ? myCoupons
+    : myCoupons.filter((coupon) => coupon.discount !== -1);
+  // [LC-3219-MEMBERSHIP] 끝
   const [selectedCoupon, setSelectedCoupon] = useState<CouponItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
