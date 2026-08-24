@@ -1,8 +1,19 @@
 import { useState } from 'react';
+import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useAdminLiveMentoringParticipantsQuery } from '@/api/live-mentoring/liveMentoring';
+import { useAdminRefundMutation } from '@/api/adminRefund';
+import {
+  ADMIN_LIVE_MENTORING_PARTICIPANT_QUERY_KEY,
+  useAdminLiveMentoringParticipantsQuery,
+} from '@/api/live-mentoring/liveMentoring';
 import type { AdminLiveMentoringParticipant } from '@/api/live-mentoring/liveMentoringSchema';
+import RefundModal, {
+  type RefundMode,
+  type RefundTarget,
+} from '@/domain/admin/program/program-user/ui/RefundModal';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   APPLICATION_STATUS_LABELS,
   formatDateTime,
@@ -15,7 +26,7 @@ const headerCellClass =
   'whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-neutral-40';
 const bodyCellClass = 'px-4 py-3 text-sm text-neutral-10 align-top';
 
-const COLUMN_COUNT = 8;
+const COLUMN_COUNT = 9;
 
 /** 예약 일시. 60분 플랜은 연속한 두 슬롯을 한 구간으로 합쳐 내려온다. */
 const reservationLabel = (row: AdminLiveMentoringParticipant): string => {
@@ -48,6 +59,39 @@ const refundLabel = (row: AdminLiveMentoringParticipant): string => {
   return `환불 ${formatPrice(row.refundAmount)}`;
 };
 
+/**
+ * 환불할 수 있는 건인가.
+ *
+ * 결제가 끝난 건만 환불한다. 결제 대기·선점 만료·신청 취소는 받은 돈이 없거나 이미
+ * 되돌린 건이라 실행하면 서버가 거절한다.
+ */
+const canRefund = (row: AdminLiveMentoringParticipant): boolean =>
+  row.status === 'CONFIRMED' && !row.refunded;
+
+/** 환불 버튼을 내걸지 않는 이유. 빈 칸으로 두면 왜 못 누르는지 알 수 없다. */
+const refundBlockedReason = (row: AdminLiveMentoringParticipant): string =>
+  row.refunded ? '환불 완료' : '결제 완료 건만 환불';
+
+/**
+ * 환불 모달이 쓰는 대상 정보로 옮긴다.
+ *
+ * 주문번호는 참여자 응답에 없어 비운다(모달이 `없음` 으로 적는다). 결제 플랜 자리에는
+ * 챌린지 플랜 대신 진행 시간을 넣는다 — 1대1에서 금액을 가르는 값이 그것이다.
+ */
+const toRefundTarget = (row: AdminLiveMentoringParticipant): RefundTarget => ({
+  applicationId: row.applicationId,
+  name: row.menteeName ?? `멘티 #${row.menteeId}`,
+  email: row.menteeEmail ?? '이메일 없음',
+  phoneNum: row.menteePhoneNum ?? '연락처 없음',
+  programTitle: row.productName ?? '1대1 라이브 멘토링',
+  orderId: '',
+  pricePlanType:
+    row.durationMinutes != null ? `${row.durationMinutes}분` : null,
+  couponName: row.couponName,
+  couponDiscount: row.couponDiscount,
+  finalPrice: row.paidAmount ?? 0,
+});
+
 interface AdminLiveMentoringParticipantTableProps {
   /** 주면 그 멘토의 참여자만 조회한다. 생략하면 전체. */
   mentorId?: number;
@@ -65,6 +109,27 @@ const AdminLiveMentoringParticipantTable = ({
   onClearMentor,
 }: AdminLiveMentoringParticipantTableProps = {}) => {
   const [page, setPage] = useState(1);
+  // 대상과 모드를 함께 담는다. 따로 두면 모달이 닫힐 때 초기화 시점이 갈려 직전 모드로 깜빡인다.
+  const [refundRequest, setRefundRequest] = useState<{
+    target: RefundTarget;
+    mode: RefundMode;
+  } | null>(null);
+
+  const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
+  const refundMutation = useAdminRefundMutation({
+    onSuccess: (refundedAmount) => {
+      setRefundRequest(null);
+      // 환불 훅은 이 도메인의 키를 모른다. 갱신하지 않으면 환불 상태가 그대로 보인다.
+      queryClient.invalidateQueries({
+        queryKey: ADMIN_LIVE_MENTORING_PARTICIPANT_QUERY_KEY,
+      });
+      snackbar(`${refundedAmount.toLocaleString()}원이 환불되었습니다.`);
+    },
+    // 서버 메시지를 그대로 보여준다. 뭉개면 운영이 다음 행동을 정할 수 없다.
+    onError: (message) => snackbar(message),
+  });
 
   const { data, isLoading, isError } = useAdminLiveMentoringParticipantsQuery({
     mentorId,
@@ -118,6 +183,7 @@ const AdminLiveMentoringParticipantTable = ({
               <th className={headerCellClass}>쿠폰</th>
               <th className={headerCellClass}>결제 상태</th>
               <th className={headerCellClass}>환불 상태</th>
+              <th className={headerCellClass}>관리</th>
             </tr>
           </thead>
           <tbody>
@@ -203,6 +269,47 @@ const AdminLiveMentoringParticipantTable = ({
                   <td className={`${bodyCellClass} whitespace-nowrap`}>
                     {refundLabel(row)}
                   </td>
+                  <td className={bodyCellClass}>
+                    {canRefund(row) ? (
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          color="error"
+                          disabled={refundMutation.isPending}
+                          onClick={() =>
+                            setRefundRequest({
+                              target: toRefundTarget(row),
+                              mode: 'full',
+                            })
+                          }
+                        >
+                          전체 환불
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          // 0원 결제는 전체 환불 경로로만 취소된다.
+                          disabled={
+                            refundMutation.isPending ||
+                            (row.paidAmount ?? 0) === 0
+                          }
+                          onClick={() =>
+                            setRefundRequest({
+                              target: toRefundTarget(row),
+                              mode: 'partial',
+                            })
+                          }
+                        >
+                          부분 환불
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-neutral-40">
+                        {refundBlockedReason(row)}
+                      </span>
+                    )}
+                  </td>
                 </tr>
               ))
             )}
@@ -215,6 +322,22 @@ const AdminLiveMentoringParticipantTable = ({
           pageInfo={{ totalPages: data.pageInfo.totalPages }}
           page={page}
           onChange={(_, next) => setPage(next)}
+        />
+      )}
+
+      {/* 되돌릴 수 없는 조작이라 확인 문장을 그대로 입력해야 실행된다. */}
+      {refundRequest && (
+        <RefundModal
+          target={refundRequest.target}
+          mode={refundRequest.mode}
+          isSubmitting={refundMutation.isPending}
+          onSubmit={(body) =>
+            refundMutation.mutate({
+              applicationId: refundRequest.target.applicationId,
+              body,
+            })
+          }
+          onClose={() => setRefundRequest(null)}
         />
       )}
     </div>
