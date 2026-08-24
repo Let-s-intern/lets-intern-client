@@ -51,7 +51,9 @@ const FeedbackTableRow = ({ row, onClickDetail }: FeedbackTableRowProps) => {
       <td className={`${COLUMN_WIDTHS[6]} px-3 py-3 text-neutral-800`}>
         {row.challengeTitle}
       </td>
-      <td className={`${COLUMN_WIDTHS[7]} px-3 py-3 text-neutral-600`}>
+      <td
+        className={`${COLUMN_WIDTHS[7]} whitespace-nowrap px-3 py-3 text-neutral-600`}
+      >
         {row.thLabel}
       </td>
       <td
@@ -202,7 +204,7 @@ const DetailCell = ({
         disabled
         title={row.detailDisabledReason}
         aria-label={`상세 준비 중 — ${row.detailDisabledReason}`}
-        className="cursor-not-allowed text-xs font-medium text-gray-400"
+        className="cursor-not-allowed whitespace-nowrap text-xs font-medium text-gray-400"
       >
         준비 중
       </button>
