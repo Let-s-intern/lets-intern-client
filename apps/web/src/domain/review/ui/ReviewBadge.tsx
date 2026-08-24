@@ -13,7 +13,7 @@ export const getBadgeTypeFromProgramType = (
     case 'LIVE':
       return 'LIVE_REVIEW';
     case 'LIVE_MENTORING':
-      return 'LIVE_REVIEW';
+      return null;
     case 'VOD':
       return 'VOD_REVIEW';
     case 'REPORT':
