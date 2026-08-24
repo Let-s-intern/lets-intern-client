@@ -79,6 +79,58 @@ const reservationEnd = new Date(
   now.getTime() + 12 * 60 * 60 * 1000,
 ).toISOString();
 
+/** `now` 기준 상대 시각 ISO. 캘린더 QA 가 항상 이번 주를 보게 하려고 고정 날짜를 쓰지 않는다. */
+const fromNow = (ms: number) => new Date(now.getTime() + ms).toISOString();
+
+/**
+ * (멘토) 1대1 라이브 멘토링 예약 목록 mock — 전부 결제 완료 확정(CONFIRMED) 건이다.
+ *
+ * 1번은 라이브 피드백 QA 예약(`reservationStart`)과 같은 시간대에 놓아, 캘린더에서
+ * 라이브 피드백 카드와 1대1 카드가 겹칠 때 둘 다 보이는지 눈으로 확인할 수 있게 했다.
+ * 제출 여부(질문·전달 파일)는 세 조합(둘 다·질문만·둘 다 없음)을 모두 만든다.
+ */
+const MENTOR_LIVE_MENTORING_RESERVATIONS = [
+  {
+    applicationId: 91001,
+    menteeId: 51001,
+    menteeName: '김일대',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 60,
+    reservationStartAt: reservationStart,
+    reservationEndAt: fromNow(0),
+    status: 'CONFIRMED' as const,
+    questionWritten: true,
+    attachmentSubmitted: true,
+    createDate: deriveCreateDate(reservationStart, 3),
+  },
+  {
+    applicationId: 91002,
+    menteeId: 51002,
+    menteeName: '박멘티',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 30,
+    reservationStartAt: fromNow(DAY_MS + 2 * 60 * 60 * 1000),
+    reservationEndAt: fromNow(DAY_MS + 2.5 * 60 * 60 * 1000),
+    status: 'CONFIRMED' as const,
+    questionWritten: true,
+    attachmentSubmitted: false,
+    createDate: deriveCreateDate(reservationStart, 6),
+  },
+  {
+    applicationId: 91003,
+    menteeId: 51003,
+    menteeName: '최준비',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 60,
+    reservationStartAt: fromNow(3 * DAY_MS + 5 * 60 * 60 * 1000),
+    reservationEndAt: fromNow(3 * DAY_MS + 6 * 60 * 60 * 1000),
+    status: 'CONFIRMED' as const,
+    questionWritten: false,
+    attachmentSubmitted: false,
+    createDate: deriveCreateDate(reservationStart, 9),
+  },
+];
+
 /** 서면 경험정리 QA(챌린지 9901) — 미션 종료 = 2일 전 → 제출기간이 오늘을 포함. */
 const missionEnd = new Date(now.getTime() - 2 * DAY_MS);
 const missionStart = new Date(missionEnd.getTime() - 6 * DAY_MS);
@@ -2175,5 +2227,26 @@ export const handlers = [
    */
   http.get('*/mentor/live-mentoring/open-status', () => {
     return HttpResponse.json({ status: 200, data: openingHistoryResponse() });
+  }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/reservations — 본인 1대1 예약 목록.
+   *
+   * 서버가 결제 완료 확정 건(CONFIRMED)만, 본인 건만 내리므로 mock 도 확정 건만 담는다.
+   * `startDate`/`endDate` 가 오면 예약 시작 시각 기준으로 좁힌다(서버와 같은 기준).
+   */
+  http.get('*/mentor/live-mentoring/reservations', ({ request }) => {
+    const url = new URL(request.url);
+    const from = url.searchParams.get('startDate');
+    const to = url.searchParams.get('endDate');
+
+    const reservationList = MENTOR_LIVE_MENTORING_RESERVATIONS.filter((r) => {
+      const startMs = new Date(r.reservationStartAt).getTime();
+      if (from && startMs < new Date(from).getTime()) return false;
+      if (to && startMs > new Date(to).getTime()) return false;
+      return true;
+    });
+
+    return HttpResponse.json({ status: 200, data: { reservationList } });
   }),
 ];

@@ -6,6 +6,7 @@ import {
   type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplateUpdate,
   liveMentoringDetailPageSchema,
+  liveMentoringReservationListSchema,
   liveMentoringSettingsSchema,
   openingHistoryResponseSchema,
 } from './liveMentoringSchema';
@@ -15,6 +16,7 @@ const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
 const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
+const RESERVATIONS_PATH = '/mentor/live-mentoring/reservations';
 
 /** 오픈 설정(메타) query key. */
 export const LIVE_MENTORING_SETTINGS_QUERY_KEY = [
@@ -31,6 +33,50 @@ export const LIVE_MENTORING_OPEN_STATUS_QUERY_KEY = [
   'liveMentoring',
   'openStatus',
 ] as const;
+/** 예약 목록 query key 접두. 날짜 범위가 붙어 범위별로 캐시가 갈린다. */
+export const LIVE_MENTORING_RESERVATIONS_QUERY_KEY = [
+  'liveMentoring',
+  'reservations',
+] as const;
+
+/** `GET /mentor/live-mentoring/reservations` 날짜 범위. 둘 다 생략하면 전체 기간. */
+export interface LiveMentoringReservationRange {
+  /** ISO date-time. 이 시각 이후에 시작하는 예약만. */
+  startDate?: string;
+  /** ISO date-time. 이 시각 이전에 시작하는 예약만. */
+  endDate?: string;
+}
+
+/**
+ * GET /mentor/live-mentoring/reservations — 본인 1대1 라이브 멘토링 예약 목록.
+ *
+ * 서버가 `status.eq(CONFIRMED)` 와 본인 멘토 조건을 걸어 **결제 완료 확정 건만, 본인 건만**
+ * 내린다. 취소·환불 건을 프론트에서 다시 거르지 않는다.
+ *
+ * 페이지네이션이 없다 — 응답은 `reservationList` 하나뿐이다. 캘린더가 주 단위로
+ * 움직이므로 범위를 좁히고 싶으면 `startDate`/`endDate` 를 넘긴다.
+ */
+export const useLiveMentoringReservationsQuery = (
+  { startDate, endDate }: LiveMentoringReservationRange = {},
+  { enabled = true }: { enabled?: boolean } = {},
+) => {
+  return useQuery({
+    queryKey: [
+      ...LIVE_MENTORING_RESERVATIONS_QUERY_KEY,
+      startDate ?? null,
+      endDate ?? null,
+    ],
+    queryFn: async () => {
+      const res = await axios.get(RESERVATIONS_PATH, {
+        params: { startDate, endDate },
+      });
+      return liveMentoringReservationListSchema.parse(res.data.data)
+        .reservationList;
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+  });
+};
 
 /**
  * GET /mentor/live-mentoring/settings — 오픈 설정(메타) 조회.
