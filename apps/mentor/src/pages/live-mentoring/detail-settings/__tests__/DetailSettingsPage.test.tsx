@@ -237,22 +237,23 @@ describe('DetailSettingsPage — 탭', () => {
     return header;
   };
 
-  it('섹션 카드 헤더에 번호 배지·필수 칩과 시안의 큰 제목이 있다', () => {
+  it('섹션 카드 헤더에 번호 배지와 시안의 큰 제목이 있고 칩은 없다', () => {
     renderPage();
 
     const hero = cardHeaderOf('핵심 소개');
     expect(within(hero).getByText('1')).toBeVisible();
-    expect(within(hero).getByText('필수')).toBeVisible();
+    // 필수 칩은 탭 줄로 옮겼다.
+    expect(within(hero).queryByText('필수')).not.toBeInTheDocument();
     expect(screen.getByText('이 멘토링을 간단히 소개해 주세요')).toBeVisible();
   });
 
-  it('선택 섹션 카드 헤더에는 선택 칩과 노출 토글이 함께 있다', () => {
+  it('선택 섹션 카드 헤더에는 노출 토글이 있고 선택 칩은 없다', () => {
     renderPage();
     openTab('소개 영상');
 
     const video = cardHeaderOf('소개 영상');
     expect(within(video).getByText('5')).toBeVisible();
-    expect(within(video).getByText('선택')).toBeVisible();
+    expect(within(video).queryByText('선택')).not.toBeInTheDocument();
     expect(within(video).getByRole('checkbox')).toBeInTheDocument();
     expect(screen.getByText('멘토링 소개 영상을 등록해 주세요')).toBeVisible();
   });
