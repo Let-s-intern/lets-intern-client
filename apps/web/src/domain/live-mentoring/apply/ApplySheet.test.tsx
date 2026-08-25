@@ -27,8 +27,13 @@ const SLOTS = [
   slot(146, '10:30', '11:00'),
 ];
 
+/*
+  멘토는 오픈 설정에서 `자기소개서` 만 골랐는데(`categories`), 상세 페이지에는
+  `이력서` 카드도 남아 있다. 신청 화면에는 고른 것만 나와야 한다.
+*/
 const DETAIL = {
   title: '어드민 1대1 라이브 멘토링',
+  categories: ['PERSONAL_STATEMENT'],
   durationPrices: [
     { durationPriceId: 4, duration: 30, price: 35000 },
     { durationPriceId: 5, duration: 60, price: 60000 },
@@ -40,6 +45,13 @@ const DETAIL = {
           id: 1,
           typeName: '자기소개서',
           title: '제목',
+          description: '설명',
+          tags: [],
+        },
+        {
+          id: 2,
+          typeName: '이력서',
+          title: '고르지 않은 유형',
           description: '설명',
           tags: [],
         },
@@ -163,6 +175,16 @@ describe('ApplySheet 총 결제 금액', () => {
     플랜은 항상 하나가 골라져 있어야 해서 삭제 버튼을 없앴다.
     대신 다른 플랜으로 바꾸면 슬롯 선택이 함께 풀리는지를 본다.
   */
+  it('멘토가 오픈 설정에서 고른 유형만 보여준다', () => {
+    openSheet();
+
+    expect(
+      screen.getByRole('radio', { name: '자기소개서' }),
+    ).toBeInTheDocument();
+    // 상세 페이지에 카드가 남아 있어도 고르지 않은 유형은 뜨지 않는다
+    expect(screen.queryByRole('radio', { name: '이력서' })).toBeNull();
+  });
+
   it('플랜을 바꾸면 슬롯 선택이 함께 풀린다', () => {
     openSheet();
     fireEvent.click(
