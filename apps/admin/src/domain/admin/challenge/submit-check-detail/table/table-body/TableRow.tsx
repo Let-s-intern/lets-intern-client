@@ -62,14 +62,24 @@ const TableRow = ({
     });
   };
 
+  // 취소(환불)한 신청은 줄 색으로 구분하고 수정을 막는다.
+  const isCanceled = attendanceItem.attendance.isCanceled ?? false;
+
   return (
     <div
       className={clsx('flex w-full', {
-        'bg-yellow-100': attendanceItem.attendance.result === 'WAITING',
+        // 취소자는 배경과 흐린 글자로 구분한다. 처리 대상이 아니라는 신호다.
+        'bg-red-50 text-neutral-400': isCanceled,
+        'bg-yellow-100':
+          !isCanceled && attendanceItem.attendance.result === 'WAITING',
         'bg-[#F1F1F1]':
-          attendanceItem.attendance.result !== 'WAITING' && bgColor === 'DARK',
+          !isCanceled &&
+          attendanceItem.attendance.result !== 'WAITING' &&
+          bgColor === 'DARK',
         'bg-[#F7F7F7]':
-          attendanceItem.attendance.result !== 'WAITING' && bgColor === 'LIGHT',
+          !isCanceled &&
+          attendanceItem.attendance.result !== 'WAITING' &&
+          bgColor === 'LIGHT',
       })}
     >
       <ChoiceCheckbox
@@ -77,6 +87,7 @@ const TableRow = ({
         cellWidthListIndex={0}
         isChecked={isChecked}
         setIsCheckedList={setIsCheckedList}
+        disabled={isCanceled}
       />
       {/* 제출일자 */}
       <div

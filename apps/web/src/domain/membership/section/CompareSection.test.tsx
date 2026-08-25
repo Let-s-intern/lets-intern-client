@@ -1,48 +1,108 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import CompareSection from './CompareSection';
+import { COMPARE_COMBOS, COMPARE_COPY, getComboTotal } from '../data/compare';
+
+// 올인원 특가만 연동값이다. 개별 구매 금액은 data/compare.ts 하드코딩이라 목이 필요 없다.
+const membershipData = jest.fn();
+jest.mock('../lib/useMembershipChallengeData', () => ({
+  useMembershipChallengeData: () => membershipData(),
+}));
 
 describe('CompareSection', () => {
-  it('섹션 뱃지와 비교 타이틀(탈락자/합격자) + 가운데 VS 메달을 렌더한다', () => {
-    render(<CompareSection />);
-    expect(screen.getByText('왜 지금 시작해야 할까')).toBeInTheDocument();
-    // "공채 n번째 탈락자"는 타이틀·loser 카드 헤딩 두 곳에 등장
-    expect(
-      screen.getAllByText('공채 n번째 탈락자').length,
-    ).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('공채 단기간 합격자')).toBeInTheDocument();
-    // 텍스트 vs 는 제거, 카드 사이 VS 메달만 존재
-    expect(screen.queryByText('vs')).not.toBeInTheDocument();
-    expect(screen.getByText('VS')).toBeInTheDocument();
+  beforeEach(() => {
+    // 세 조합 모두 이 값보다 비싸다(207,500 / 207,000 / 185,000).
+    membershipData.mockReturnValue({ salePrice: 169900 });
   });
 
-  it('loser·winner 카드를 각각 1장씩 보여준다', () => {
+  it('헤드라인과 서브카피를 렌더한다', () => {
+    render(<CompareSection />);
+    expect(screen.getByText(COMPARE_COPY.titleLead)).toBeInTheDocument();
+    expect(screen.getByText(COMPARE_COPY.titleHi)).toBeInTheDocument();
+    for (const line of COMPARE_COPY.subtitleLines) {
+      expect(screen.getByText(line)).toBeInTheDocument();
+    }
+  });
+
+  it('개별 합계와 올인원 특가의 차액을 절약 금액으로 그린다', () => {
+    // 모바일 시안(9-2-mobile.png)의 말풍선. PC 에서는 compare.css 가 숨긴다.
+    render(<CompareSection />);
+    const saving = getComboTotal(COMPARE_COMBOS[0]) - 169900;
+    expect(
+      screen.getByText(`${saving.toLocaleString()}원`),
+    ).toBeInTheDocument();
+  });
+
+  it('차액이 없으면 절약 말풍선을 그리지 않는다', () => {
+    membershipData.mockReturnValue({ salePrice: 100000 });
     const { container } = render(<CompareSection />);
-    expect(
-      container.querySelector('.cmp-card[data-kind="loser"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelector('.cmp-card[data-kind="winner"]'),
-    ).not.toBeNull();
+    // 이 값이면 세 조합 모두 살아남고 차액도 양수라 말풍선이 있다 — 반대 경우만 확인한다
+    expect(container.querySelector('.cmp-save')).not.toBeNull();
+
+    membershipData.mockReturnValue({ salePrice: 999999 });
+    const empty = render(<CompareSection />);
+    expect(empty.container.querySelector('.cmp-save')).toBeNull();
   });
 
-  it('winner 카드 헤더와 합격자 항목을 렌더한다', () => {
+  it('탭 3개를 렌더하고 첫 탭이 활성이다', () => {
     render(<CompareSection />);
-    expect(screen.getByText('7월부터 준비한 합격자')).toBeInTheDocument();
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs).toHaveLength(3);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('활성 조합의 항목과 합계를 좌측 카드에 그린다', () => {
+    render(<CompareSection />);
+    const combo = COMPARE_COMBOS[0];
+    for (const item of combo.items) {
+      expect(screen.getByText(item.name)).toBeInTheDocument();
+    }
+    // 합계는 항목 가격의 단순 합이다
+    expect(getComboTotal(combo)).toBe(
+      combo.items.reduce((s, i) => s + i.price, 0),
+    );
     expect(
-      screen.getByText('7월부터 플랜에 맞춰 철저하게 대비'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('합격자 예시 참고해 미리 지원서 완성'),
+      screen.getByText(
+        new RegExp(getComboTotal(combo).toLocaleString('ko-KR')),
+      ),
     ).toBeInTheDocument();
   });
 
-  it('loser 카드의 탈락자 항목을 렌더한다', () => {
+  it('탭을 바꾸면 좌측 카드 항목이 그 조합으로 바뀐다', () => {
     render(<CompareSection />);
-    expect(
-      screen.getByText('미루고 미루다 공고 뜨면 급하게 지원서 작성'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('탈락 경험은 있지만 뭐가 부족한지 몰라 또 똑같이 준비'),
-    ).toBeInTheDocument();
+    const target = COMPARE_COMBOS[2];
+    // 라벨에 "+" 가 들어 있어 정규식으로 쓰면 수량자로 해석된다. 문자열 포함으로 찾는다.
+    fireEvent.click(
+      screen.getByRole('tab', { name: (name) => name.includes(target.label) }),
+    );
+    for (const item of target.items) {
+      expect(screen.getByText(item.name)).toBeInTheDocument();
+    }
+  });
+
+  it('개별 합계가 올인원 특가 이하인 탭은 숨긴다', () => {
+    // 특가를 아주 높게 잡으면 세 조합 모두 "개별이 더 싸다"가 되어 비교가 성립하지 않는다.
+    membershipData.mockReturnValue({ salePrice: 999999 });
+    const { container } = render(<CompareSection />);
+    expect(container.querySelector('.compare')).toBeNull();
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  });
+
+  it('일부만 성립하면 남은 탭만 보여주고 그중 첫 탭이 활성이 된다', () => {
+    // 185,000(조합 3)만 걸러지는 값
+    membershipData.mockReturnValue({ salePrice: 200000 });
+    render(<CompareSection />);
+    const labels = screen.getAllByRole('tab').map((t) => t.textContent);
+    expect(labels).toHaveLength(2);
+    expect(labels.join()).not.toContain(COMPARE_COMBOS[2].label);
+  });
+
+  it('가격은 어드민이 아니라 data/compare.ts 에서 온다', () => {
+    // 연동을 되돌린 결정(조합 중 하나라도 미모집이면 탭이 사라지던 문제)을 고정한다.
+    for (const combo of COMPARE_COMBOS) {
+      for (const item of combo.items) {
+        expect(item.price).toBeGreaterThan(0);
+        expect(item.regularPrice).toBeGreaterThanOrEqual(item.price);
+      }
+    }
   });
 });

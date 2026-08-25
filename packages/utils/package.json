@@ -6,6 +6,10 @@
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
   "peerDependencies": {
     "clsx": ">=2",
     "colorthief": ">=2",
@@ -22,6 +26,7 @@
   },
   "devDependencies": {
     "@letscareer/tsconfig": "workspace:*",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
   }
 }

@@ -133,3 +133,45 @@ describe('LIVE_MENTORING 신청 카드', () => {
     });
   });
 });
+
+describe('toMypageApplicationCardConfig - 멤버십 기수 (LC-3219)', () => {
+  const actionButtonOf = (application: MypageApplication) =>
+    toMypageApplicationCardConfig(application).actionButton;
+
+  it('결제 대상이 아닌 기수(309)도 노션 가이드로 보낸다', () => {
+    // 운영 env 를 384 로 올리자 309 가 멤버십으로 인정되지 않아, 이 버튼이 '가이드 확인'
+    // 대신 '대시보드 입장' 으로 바뀌었다. 멤버십은 챌린지 대시보드를 쓰지 않으므로
+    // 8월 기수 참여자가 가이드에 닿을 길이 사라졌다. 그 회귀를 여기서 막는다.
+    expect(actionButtonOf({ ...baseChallenge, programId: 309 })).toEqual({
+      label: '가이드 확인',
+      href: expect.stringContaining('notion.site'),
+      external: true,
+    });
+  });
+
+  it('현행 기수(384)도 노션 가이드로 보낸다', () => {
+    expect(actionButtonOf({ ...baseChallenge, programId: 384 })).toEqual({
+      label: '가이드 확인',
+      href: expect.stringContaining('notion.site'),
+      external: true,
+    });
+  });
+
+  it('멤버십이 아닌 챌린지는 대시보드 입장을 유지한다', () => {
+    expect(actionButtonOf(baseChallenge)).toEqual({
+      label: '대시보드 입장',
+      href: `/challenge/${baseChallenge.id}/${baseChallenge.programId}`,
+    });
+  });
+
+  it('LIVE 프로그램은 programId 가 기수 번호와 같아도 가이드로 보내지 않는다', () => {
+    // programId 는 프로그램 타입마다 별도 채번이라 LIVE 309 가 존재할 수 있다.
+    expect(
+      actionButtonOf({
+        ...baseChallenge,
+        programType: 'LIVE',
+        programId: 309,
+      }),
+    ).toEqual({ label: '클래스 입장', href: '/program/live/309' });
+  });
+});

@@ -2,9 +2,11 @@ import {
   buildLoginRedirectPath,
   ctaLabel,
   IS_CTA_DISABLED,
+  IS_MEMBERSHIP_LAUNCHED,
   IS_RECRUITMENT_CLOSED,
   isValidMembershipChallengeId,
   MEMBERSHIP_LAUNCH_ALERT_PATH,
+  membershipGuideUrl,
 } from './membershipChallenge';
 
 describe('isValidMembershipChallengeId', () => {
@@ -38,25 +40,60 @@ describe('buildLoginRedirectPath (로그인 게이트)', () => {
   });
 });
 
-describe('모집 종료 상태의 CTA (LC-3203)', () => {
-  it('모집이 끝나면 "모집 종료" 가 아니라 출시 알림을 권한다', () => {
-    // 끝났다는 사실만 알리면 다음 시즌을 기다릴 의사가 있는 사람이 아무것도 남기지 못하고
-    // 나간다. 랜딩을 살려 두는 이유가 그 사람들을 받기 위해서다.
-    expect(IS_RECRUITMENT_CLOSED).toBe(true);
-    expect(ctaLabel('지금 바로 신청')).toBe('출시 알림 신청');
+describe('모집 재개 상태의 CTA (LC-3219)', () => {
+  it('모집이 열려 있으면 CTA 가 출시 알림 신청이 아니다', () => {
+    // 모집을 재개했는데 라벨이 "출시 알림 신청" 으로 남아 있으면, 결제 가능한 상품을
+    // 앞에 두고 사람을 알림 폼으로 보내게 된다. 상수 되돌림을 빠뜨렸을 때 나는 증상이라
+    // 라벨 자체가 아니라 "알림 문구가 아님" 을 검증한다.
+    expect(IS_RECRUITMENT_CLOSED).toBe(false);
+    expect(ctaLabel('지금 바로 신청')).not.toBe('출시 알림 신청');
   });
 
-  it('모집 종료 중에도 CTA 를 잠그지 않는다', () => {
-    // 버튼이 결제가 아니라 알림 신청으로 동작한다. 잠그면 누를 수가 없다.
-    expect(IS_CTA_DISABLED).toBe(false);
+  it('출시된 상태면 전달한 라벨을 그대로 쓴다', () => {
+    // jest.config.js 가 .env.local 을 읽어 챌린지 ID 가 주입되므로 출시 상태다.
+    // env 가 비면 '출시 전' 이 되는데, 그때는 결제할 곳이 없어 잠그는 것이 맞다.
+    expect(ctaLabel('지금 바로 신청')).toBe(
+      IS_MEMBERSHIP_LAUNCHED ? '지금 바로 신청' : '출시 전',
+    );
+  });
+
+  it('출시된 상태에서는 CTA 를 잠그지 않는다', () => {
+    expect(IS_CTA_DISABLED).toBe(!IS_MEMBERSHIP_LAUNCHED);
   });
 
   it('알림 신청 경로가 type=launch-alert 를 달고 있다', () => {
-    // 이 쿼리가 없으면 /apply 페이지가 일반 자료 신청으로 처리해, 출시 알림이 아니라
-    // 다른 폼이 뜬다. 경로만 맞고 조용히 다른 화면이 열리는 종류의 어긋남이다.
+    // 다음 시즌 종료 시 다시 쓰는 경로다. 이 쿼리가 없으면 /apply 페이지가 일반 자료
+    // 신청으로 처리해, 경로만 맞고 조용히 다른 폼이 열린다.
     expect(MEMBERSHIP_LAUNCH_ALERT_PATH).toContain('type=launch-alert');
     expect(MEMBERSHIP_LAUNCH_ALERT_PATH).toMatch(
       /^\/library\/\d+\/apply\?type=launch-alert$/,
     );
+  });
+});
+
+describe('기수별 노션 가이드 (LC-3219)', () => {
+  it('진행 중인 기수는 결제 대상(env)이 아니어도 가이드 주소를 준다', () => {
+    // 2026-08-20 모집 재개로 운영 env 를 384 로 올리자, 멤버십 판정이 env 와의 비교였던
+    // 탓에 309 가 멤버십이 아닌 것으로 처리됐다. 8월 기수 카드의 버튼이 '가이드 확인'
+    // 대신 '대시보드 입장' 으로 바뀌어, 쓰지도 않는 챌린지 대시보드로 가고 가이드에
+    // 닿을 길이 없어졌다. 결제 대상이 무엇이든 두 기수 모두 주소가 나와야 한다.
+    expect(membershipGuideUrl(309)).toMatch(
+      /^https:\/\/letsintern\.notion\.site\//,
+    );
+    expect(membershipGuideUrl(384)).toMatch(
+      /^https:\/\/letsintern\.notion\.site\//,
+    );
+  });
+
+  it('기수마다 다른 문서를 가리킨다', () => {
+    // 384 주소를 받기 전에는 두 기수가 1기 문서를 함께 쓰는 임시 상태였다.
+    // 한쪽을 고치며 다른 쪽에 덮어쓰면 그 기수 참여자가 남의 가이드를 보게 된다.
+    expect(membershipGuideUrl(384)).not.toBe(membershipGuideUrl(309));
+  });
+
+  it('멤버십 기수가 아니면 undefined → 카드가 대시보드 입장으로 남는다', () => {
+    // programId 를 못 읽었을 때 넘어오는 0 도 여기로 떨어져야 한다.
+    expect(membershipGuideUrl(0)).toBeUndefined();
+    expect(membershipGuideUrl(1)).toBeUndefined();
   });
 });

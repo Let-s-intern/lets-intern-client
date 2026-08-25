@@ -18,7 +18,10 @@ const AllChoiceCheckbox = ({
 }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const allCheckedList = attendanceList.map(({ attendance }) => attendance.id);
+  // 취소(환불)한 신청은 확인여부를 바꿀 수 없으므로 전체선택에서도 뺀다.
+  const allCheckedList = attendanceList
+    .filter(({ attendance }) => !attendance.isCanceled)
+    .map(({ attendance }) => attendance.id);
 
   function isArrayEqual<T>(arr1: T[], arr2: T[]) {
     arr1 = arr1.sort();

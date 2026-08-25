@@ -18,6 +18,11 @@ interface InputProps {
   className?: string;
   error?: boolean;
   fullWidth?: boolean;
+  // 라벨을 항상 위로 띄워둔다. 브라우저 자동완성은 React의 onChange 없이
+  // DOM 값만 채워서, MUI가 "값이 비어있다"고 판단해 라벨을 안 띄우는 경우가
+  // 있다 — 그 결과 라벨 글자와 자동완성된 값이 겹쳐 보인다(SsoLoginPage에서
+  // 실제로 발견됨). 라벨을 상시 고정하면 이 겹침이 애초에 생기지 않는다.
+  alwaysShrinkLabel?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -37,6 +42,7 @@ const Input = ({
   className,
   error,
   fullWidth = true,
+  alwaysShrinkLabel = false,
   onChange,
   onKeyDown,
 }: InputProps) => {
@@ -48,8 +54,19 @@ const Input = ({
     inputProps = { ...inputProps, maxLength };
   }
 
+  // 크롬이 자동완성한 인풋은 배경을 파란빛으로 강제로 칠한다(box-shadow
+  // 트릭으로만 덮어쓸 수 있다) — 흰 배경으로 되돌려서 나머지 인풋과 색이
+  // 어긋나지 않게 한다.
+  const autofillStyle = {
+    '& input:-webkit-autofill': {
+      WebkitBoxShadow: '0 0 0 1000px white inset',
+      WebkitTextFillColor: 'inherit',
+    },
+  };
+
   const textFieldStyle = !error
     ? {
+        ...autofillStyle,
         backgroundColor: 'white',
         '& .Mui-disabled': {
           backgroundColor: '#f9f9f9',
@@ -74,7 +91,7 @@ const Input = ({
           color: '#1976D2',
         },
       }
-    : {};
+    : autofillStyle;
 
   const textField = (
     <TextField
@@ -94,6 +111,9 @@ const Input = ({
       fullWidth={fullWidth}
       className={className}
       inputProps={inputProps}
+      slotProps={
+        alwaysShrinkLabel ? { inputLabel: { shrink: true } } : undefined
+      }
       sx={textFieldStyle}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}

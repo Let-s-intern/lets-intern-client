@@ -44,7 +44,11 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
   contents: TableContent[];
   cellWidthList: string[];
   onDelete?: (item: T) => void;
-  onSave?: (item: T) => void;
+  /**
+   * 저장 처리. 실패하면 예외를 던져야 한다.
+   * 던지면 편집 모드가 유지되어 입력값이 남고, 사용자가 고쳐서 다시 누를 수 있다.
+   */
+  onSave?: (item: T) => void | Promise<void>;
   onCancel?: (item: T) => void;
   onClick?: (item: T) => void;
   children?: React.ReactNode;
@@ -212,15 +216,25 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
         }
       })}
 
+      {/*
+        "관리" 열은 폭을 명시한다. flex-1 만 두면 남은 공간이 없을 때 0 에 가깝게 줄어들고,
+        그러면 버튼이 앞 칸 위로 깔려 클릭이 앞 칸으로 들어간다(2026-08-14 미션 관리 건).
+      */}
       {editable ? (
-        <LineTableBodyCell className="flex-1">
+        <LineTableBodyCell className="w-[120px] flex-none">
           {isEditMode ? (
-            <div className="flex min-w-[100px] gap-2">
+            <div className="flex gap-2">
               <button
                 type="button"
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-blue-700"
-                onClick={() => {
-                  onSave?.(values);
+                onClick={async () => {
+                  try {
+                    await onSave?.(values);
+                  } catch {
+                    // 저장이 실패하면 편집 모드를 유지한다. 입력값을 잃지 않게 한다.
+                    // 실패 사유는 onSave 쪽에서 사용자에게 알린다.
+                    return;
+                  }
                   setIsEditMode(false);
                 }}
               >

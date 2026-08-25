@@ -65,3 +65,20 @@ describe('AdminSidebar 히스토리 그룹', () => {
     ).toHaveAttribute('href', '/usage-history');
   });
 });
+
+/**
+ * 화면을 만들어도 메뉴에 없으면 운영은 존재를 모른다 (LC-3208, PRD 6.3).
+ */
+describe('AdminSidebar SSO 그룹', () => {
+  it('리다이렉트 화이트리스트 메뉴가 목록 경로로 이어진다', () => {
+    renderSidebar();
+
+    const group = screen
+      .getByRole('heading', { name: 'SSO 관리' })
+      .closest('div')!.parentElement!;
+
+    expect(
+      within(group).getByRole('link', { name: '리다이렉트 화이트리스트' }),
+    ).toHaveAttribute('href', '/sso/redirect-whitelist');
+  });
+});

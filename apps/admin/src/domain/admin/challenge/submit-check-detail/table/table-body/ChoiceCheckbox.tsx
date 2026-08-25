@@ -6,6 +6,8 @@ interface Props {
   cellWidthListIndex: number;
   isChecked: boolean;
   setIsCheckedList: (isCheckedList: any) => void;
+  /** 취소(환불)한 신청은 일괄변경 대상에서 제외한다. */
+  disabled?: boolean;
 }
 
 const ChoiceCheckbox = ({
@@ -13,10 +15,12 @@ const ChoiceCheckbox = ({
   cellWidthListIndex,
   isChecked,
   setIsCheckedList,
+  disabled = false,
 }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const handleCheckboxClicked = () => {
+    if (disabled) return;
     if (isChecked) {
       setIsCheckedList((prev: any) => {
         const newCheckedList = prev.filter(
@@ -40,7 +44,12 @@ const ChoiceCheckbox = ({
         cellWidthList[cellWidthListIndex],
       )}
     >
-      <div className="cursor-pointer" onClick={handleCheckboxClicked}>
+      <div
+        className={clsx(
+          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        )}
+        onClick={handleCheckboxClicked}
+      >
         {isChecked ? (
           <i>
             <img

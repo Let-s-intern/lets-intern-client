@@ -22,6 +22,9 @@ const challengeQuestionItemSchema = z.object({
   wishJob: z.string().nullable().optional(),
   wishCompany: z.string().nullable().optional(),
   challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+  // 서버 배포 전이면 필드가 없다
+  isAnswerRead: z.boolean().optional().default(false),
+  imageUrls: z.array(z.string()).optional().default([]),
   createDate: z.string(),
 });
 

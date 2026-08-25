@@ -1027,6 +1027,8 @@ export const attendances = z
           feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
           challengeMentorId: z.number().nullable().optional(),
           mentorName: z.string().nullable().optional(),
+          /** 신청이 취소(환불)됐는지. 취소자는 목록에 남되 수정할 수 없다. */
+          isCanceled: z.boolean().nullable().optional(),
         }),
         optionCodes: z.array(z.string()),
       }),

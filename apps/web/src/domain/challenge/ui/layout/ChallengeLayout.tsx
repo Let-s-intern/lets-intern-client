@@ -10,6 +10,7 @@ import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ChallengeInquiryLauncher from '../../inquiry/floating/ChallengeInquiryLauncher';
 import RecommendedProgramSection from '../../my-challenge/recommended-program/RecommendedProgramSection';
 import NavBar from './NavBar';
 
@@ -110,6 +111,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       {!pathname.endsWith('/inquiry') && <RecommendedProgramSection />}
+      <ChallengeInquiryLauncher />
     </div>
   );
 };

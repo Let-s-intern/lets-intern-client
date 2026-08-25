@@ -5,7 +5,7 @@
     padding: 54px 0 64px;
   }
   .membership-root .hero h1 {
-    font-size: 42px;
+    font-size: 36px;
   }
   .membership-root .bgrid,
   .membership-root .stats,
@@ -17,7 +17,7 @@
   }
   .membership-root .sec-head h2,
   .membership-root .final h2 {
-    font-size: 32px;
+    font-size: 28px;
   }
   .membership-root .tnodes {
     grid-template-columns: 1fr;

@@ -1,263 +1,426 @@
 /* =====================================================================
-   비교 — "공채 n번째 탈락자 vs 공채 단기간 합격자"
+   비교 — 개별 구매 대비 올인원 패스 (시안 4.png)
    모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
-   에디토리얼 대비: 탈락자=플랫·톤다운 회색, 합격자=화이트+은은한 틴트·글로우.
-   강조 그라데이션은 페이지 표준인 블루→인디고로 통일(세미나 confirmed 카드와 동일 언어).
+   좌: 흰 카드(개별 구매 합계) / 가운데: 화살표 / 우: 브랜드 블루 카드(올인원).
    ===================================================================== */
 
 .membership-root .compare {
-  padding: 80px 0;
+  padding: 140px 0;
+  background: var(--bg-cool);
 }
 
-/* ---------- 타이틀 (탈락자 / 합격자) ----------
-   카드 그리드(1fr 54px 1fr·max 940px·gap 18px)와 동일 레이아웃으로 깔아
-   좌측 타이틀=좌카드 위 중앙, 우측 타이틀=우카드 위 중앙에 정렬한다.
-   가운데(메달 위치)는 빈 칼럼으로 비우고, 텍스트 vs 는 두지 않는다(카드 사이 VS 메달만 사용).
-   (기존 sec-head 760px 폭 탓에 가운데로 몰리던 문제 해결) */
-.membership-root .compare .sec-head {
-  max-width: 940px;
-}
+/* ---------- 헤드라인 ---------- */
 .membership-root .compare .sec-head h2 {
-  display: grid;
-  grid-template-columns: 1fr 54px 1fr;
-  align-items: baseline;
-  gap: 0 18px;
-  max-width: 940px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-.membership-root .cmp-t-lose {
-  grid-column: 1;
-  text-align: center;
-  color: var(--g500);
+.membership-root .cmp-t-lead {
+  color: var(--lc-ink);
 }
-.membership-root .cmp-t-win {
-  grid-column: 3;
-  text-align: center;
-}
-.membership-root .cmp-t-win {
-  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.membership-root .cmp-t-hi {
+  color: var(--lc-blue);
+  font-size: 1.36em;
 }
 
-/* ---------- 카드 그리드 (가운데 VS 메달) ---------- */
-.membership-root .cmp-grid {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+/* ---------- 탭 (알약 3개) ----------
+   흰 트랙 안에서 활성 탭만 옅은 파란 알약이 된다(시안). */
+.membership-root .cmp-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin: 0 auto 34px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: 0 8px 24px -16px rgba(40, 60, 120, 0.35);
+}
+/* 트랙을 가운데 두기 위한 래퍼 — inline-flex 는 스스로 가운데로 가지 않는다 */
+.membership-root .cmp-tabs-wrap {
+  display: flex;
+  justify-content: center;
+}
+/* 탭 폭은 글자 길이에 맞춘다.
+   flex:1 로 3등분하면 "대기업 자소서 + 인적성" 처럼 짧은 라벨의 좌우가 과하게 벌어져
+   가장 긴 탭에 맞춰 늘어난 것처럼 보인다. */
+.membership-root .cmp-tab {
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
-  gap: 0 18px;
-  max-width: 940px;
-  margin: 0 auto;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  color: var(--g500);
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.membership-root .cmp-tab:hover {
+  color: var(--g700);
+}
+.membership-root .cmp-tab[aria-selected='true'] {
+  background: #eaf0ff;
+  color: var(--lc-blue);
+}
+.membership-root .cmp-tab:focus-visible {
+  outline: 2px solid var(--lc-blue);
+  outline-offset: -2px;
 }
 
-/* VS 메달 — 브랜드 블루→인디고 */
-.membership-root .cmp-vs {
-  flex: none;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
+/* ---------- 좌우 패널 ---------- */
+.membership-root .cmp-panel {
+  display: grid;
+  grid-template-columns: 1fr 72px 1fr;
+  align-items: start;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.membership-root .cmp-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* 카드 위 라벨 칩 */
+.membership-root .cmp-col-label {
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: #e8ebf5;
+  color: var(--g700);
+  font-size: 15px;
+  font-weight: 700;
+}
+.membership-root .cmp-col-label-hi {
+  background: #dfe7ff;
+  color: var(--lc-blue);
+}
+
+/* 가운데 화살표 */
+.membership-root .cmp-arrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--num);
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: #fff;
-  background: linear-gradient(135deg, var(--lc-blue), var(--lc-indigo));
-  box-shadow: 0 10px 24px -8px rgba(74, 118, 255, 0.55);
-  z-index: 2;
+  align-self: center;
+  color: var(--lc-blue);
+}
+/* 절약 금액 말풍선 — 모바일 시안(9-2-mobile.png)에만 있다. 아래 560px 블록에서 켠다 */
+.membership-root .cmp-save {
+  display: none;
 }
 
 /* ---------- 카드 공통 ---------- */
 .membership-root .cmp-card {
-  align-self: stretch;
-  border-radius: 20px;
-  padding: 26px 26px 22px;
-  background: #fff;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 330px;
+  padding: 22px;
+  border-radius: 22px;
+}
+.membership-root .cmp-card-individual {
+  background: var(--white);
+  box-shadow: 0 18px 40px -28px rgba(40, 60, 120, 0.45);
+}
+.membership-root .cmp-card-allinone {
+  background: linear-gradient(160deg, var(--lc-indigo), var(--lc-blue));
+  box-shadow: 0 22px 50px -26px rgba(74, 118, 255, 0.7);
 }
 
-.membership-root .cmp-head {
+/* ---------- 항목 리스트 ----------
+   카드 높이는 330px 로 고정이라 리스트가 쓸 수 있는 세로 공간도 고정이다.
+   행 높이를 그대로 두면 항목이 2개인 탭에서 아래에 99px 짜리 빈 공간이 남아
+   3개인 탭과 나란히 봤을 때 카드가 비어 보인다.
+
+   그래서 행이 남는 공간을 나눠 갖게 하되 상한을 둔다 — 상한이 없으면 2개짜리 탭의
+   행이 100px 가까이 부풀어 리스트가 아니라 배너처럼 보인다. */
+.membership-root .cmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  list-style: none;
+}
+.membership-root .cmp-card-individual .cmp-row {
+  flex: 1 1 auto;
+  max-height: 72px;
+}
+.membership-root .cmp-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 16px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #eef0f6;
+  padding: 13px 16px;
+  border-radius: 12px;
 }
-.membership-root .cmp-head h3 {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  word-break: keep-all;
+.membership-root .cmp-card-individual .cmp-row {
+  background: #f5f6fa;
 }
-.membership-root .cmp-tag {
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* 올인원 카드는 강조된 첫 줄만 흰 박스, 나머지는 배경 없이 파란 면 위에 올린다 */
+.membership-root .cmp-card-allinone .cmp-row[data-emphasized='true'] {
+  background: var(--white);
+  margin-bottom: 4px;
+}
+.membership-root .cmp-card-allinone .cmp-row[data-emphasized='false'] {
+  padding: 5px 16px;
 }
 
-/* loser — 플랫·톤다운 회색(가라앉힘) */
-.membership-root .cmp-card[data-kind='loser'] {
-  background: var(--bg-cool);
-  border: 1px solid #e6e8f0;
-}
-.membership-root .cmp-card[data-kind='loser'] .cmp-head {
-  border-bottom-color: #e2e4ec;
-}
-.membership-root .cmp-card[data-kind='loser'] .cmp-head h3 {
-  color: var(--g500);
-}
-.membership-root .cmp-card[data-kind='loser'] .cmp-tag {
-  background: #e9ebf2;
-  color: var(--g500);
-}
-
-/* winner — 화이트+은은한 틴트+상단 액센트+글로우(세미나 confirmed 톤) */
-.membership-root .cmp-card[data-kind='winner'] {
-  position: relative;
-  overflow: hidden;
-  border: 1.5px solid #c6d2ff;
-  background: linear-gradient(180deg, #eef2ff, #ffffff 46%);
-  box-shadow: 0 22px 50px -26px rgba(74, 118, 255, 0.5);
-}
-.membership-root .cmp-card[data-kind='winner']::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--lc-blue), var(--lc-indigo));
-}
-.membership-root .cmp-card[data-kind='winner'] .cmp-head h3 {
-  color: var(--lc-blue);
-}
-.membership-root .cmp-card[data-kind='winner'] .cmp-tag {
-  background: var(--tint-blue);
-  color: var(--lc-blue);
-}
-
-/* ---------- 바디 (체크/엑스 항목) ---------- */
-.membership-root .cmp-body {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-}
-.membership-root .cmp-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 11px;
-  padding: 13px 0;
-}
-.membership-root .cmp-item:not(:last-child) {
-  border-bottom: 1px solid rgba(40, 60, 120, 0.06);
-}
-.membership-root .cmp-ic {
+.membership-root .cmp-row-ic {
   flex: none;
   width: 22px;
   height: 22px;
-  border-radius: 7px;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1px;
+  background: var(--lc-blue);
+  color: var(--white);
 }
-.membership-root .cmp-card[data-kind='loser'] .cmp-ic {
-  color: var(--g300);
+.membership-root
+  .cmp-card-allinone
+  .cmp-row[data-emphasized='false']
+  .cmp-row-ic {
+  background: rgba(255, 255, 255, 0.24);
 }
-.membership-root .cmp-card[data-kind='winner'] .cmp-ic {
-  background: var(--tint-blue);
-  color: var(--lc-blue);
-}
-.membership-root .cmp-item p {
+
+.membership-root .cmp-row-name {
+  flex: 1;
   font-size: 15px;
-  line-height: 1.5;
-  word-break: keep-all;
-}
-.membership-root .cmp-card[data-kind='loser'] .cmp-item p {
-  color: var(--g500);
-  font-weight: 500;
-}
-.membership-root .cmp-card[data-kind='winner'] .cmp-item p {
+  font-weight: 700;
   color: var(--lc-ink);
+}
+.membership-root
+  .cmp-card-allinone
+  .cmp-row[data-emphasized='false']
+  .cmp-row-name {
+  color: var(--white);
   font-weight: 600;
 }
 
-/* ---------- 반응형 ---------- */
-/* 모바일에서도 두 카드를 좌우(side-by-side)로 유지하고 전체를 축소한다(세로 스택 X) */
-@media (max-width: 760px) {
+/* 우측 금액 — 캡션은 작고 회색, 숫자만 진하게 */
+.membership-root .cmp-row-price {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g500);
+  white-space: nowrap;
+}
+.membership-root .cmp-row-price strong {
+  margin-left: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--lc-ink);
+}
+.membership-root .cmp-row-empty {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g500);
+  white-space: nowrap;
+}
+
+/* ---------- 로딩 스켈레톤 (결정 8 — 폴백 숫자를 내지 않는다) ---------- */
+.membership-root .cmp-skeleton {
+  flex: none;
+  display: inline-block;
+  width: 96px;
+  height: 15px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #eceef4 25%, #f6f7fa 50%, #eceef4 75%);
+  background-size: 240px 100%;
+  animation: cmp-shimmer 1.2s linear infinite;
+}
+.membership-root .cmp-skeleton-lg {
+  width: 132px;
+  height: 26px;
+  border-radius: 7px;
+}
+@keyframes cmp-shimmer {
+  from {
+    background-position: -120px 0;
+  }
+  to {
+    background-position: 120px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .cmp-skeleton {
+    animation: none;
+  }
+}
+
+/* ---------- 하단 합계 ---------- */
+.membership-root .cmp-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #e8eaf2;
+}
+.membership-root .cmp-card-allinone .cmp-total {
+  border-top-color: rgba(255, 255, 255, 0.3);
+}
+.membership-root .cmp-total-cap {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g500);
+}
+.membership-root .cmp-card-allinone .cmp-total-cap {
+  color: rgba(255, 255, 255, 0.86);
+}
+.membership-root .cmp-total-price {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--lc-ink);
+}
+.membership-root .cmp-card-allinone .cmp-total-price {
+  color: var(--white);
+}
+
+/* ---------- 반응형 ----------
+   768px: 탭 라벨을 줄이고 카드는 좌우 유지.
+   560px 아래: 카드를 위아래로 쌓고 화살표를 아래 방향으로 돌린다. */
+@media (max-width: 900px) {
+  .membership-root .cmp-tab {
+    padding: 12px 8px;
+    font-size: 13px;
+    gap: 6px;
+  }
+  .membership-root .cmp-tab svg {
+    width: 15px;
+    height: 15px;
+  }
+  .membership-root .cmp-panel {
+    grid-template-columns: 1fr 44px 1fr;
+  }
+  .membership-root .cmp-arrow svg {
+    width: 36px;
+    height: 36px;
+  }
+  .membership-root .cmp-row {
+    padding: 11px 12px;
+  }
+  .membership-root .cmp-row-name {
+    font-size: 13px;
+  }
+  .membership-root .cmp-row-price strong {
+    font-size: 13px;
+  }
+  .membership-root .cmp-total-price {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 560px) {
   .membership-root .compare {
     padding: 56px 0;
   }
-  .membership-root .cmp-grid {
-    gap: 0 8px;
+  /* 시안 9-2-mobile.png — 헤더가 좌측 정렬이다.
+     .sec-head 의 전역 가운데 정렬(base.css)은 두고 비교 섹션 안에서만 되돌린다 */
+  .membership-root .compare .sec-head {
+    text-align: left;
+    margin-left: 0;
+    margin-bottom: 28px;
   }
-  .membership-root .cmp-vs {
-    width: 36px;
-    height: 36px;
-    font-size: 12px;
-    box-shadow: 0 8px 18px -8px rgba(74, 118, 255, 0.55);
+  .membership-root .compare .sec-head h2 {
+    align-items: flex-start;
   }
-  .membership-root .cmp-card {
-    padding: 14px 12px 12px;
-    border-radius: 14px;
+  /* 시안 9-2-mobile.png — 흰 트랙 안 3등분. 아이콘 위, 라벨은 어절 단위 2줄.
+     가로 스크롤은 만들지 않는다 */
+  .membership-root .cmp-tabs {
+    width: 100%;
+    gap: 2px;
+    border-radius: 22px;
+    margin-bottom: 24px;
   }
-  .membership-root .cmp-head {
-    gap: 7px;
-    padding-bottom: 10px;
-    margin-bottom: 2px;
+  .membership-root .cmp-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 6px;
+    border-radius: 18px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: keep-all;
   }
-  .membership-root .cmp-head h3 {
-    font-size: 13px;
-  }
-  .membership-root .cmp-tag {
-    width: 24px;
-    height: 24px;
-    border-radius: 7px;
-  }
-  .membership-root .cmp-tag svg {
-    width: 13px;
-    height: 13px;
-  }
-  .membership-root .cmp-item {
-    gap: 7px;
-    padding: 9px 0;
-  }
-  .membership-root .cmp-ic {
+  .membership-root .cmp-tab svg {
     width: 18px;
     height: 18px;
-    border-radius: 6px;
   }
-  .membership-root .cmp-ic svg {
-    width: 12px;
-    height: 12px;
+  /* 좌우 2열 -> 위아래. 화살표는 아래 방향으로 돌린다.
+     회전은 svg 에만 준다 — .cmp-arrow 를 돌리면 옆의 절약 말풍선까지 눕는다 */
+  .membership-root .cmp-panel {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
-  .membership-root .cmp-item p {
-    font-size: 11.5px;
-    line-height: 1.45;
+  .membership-root .cmp-arrow {
+    position: relative;
   }
-  /* 타이틀도 카드와 동일하게 좌우 배치(축소) — 중앙 칼럼은 메달(36px)에 맞춤 */
-  .membership-root .compare .sec-head h2 {
-    grid-template-columns: 1fr 36px 1fr;
-    gap: 0 8px;
+  .membership-root .cmp-arrow svg {
+    width: 30px;
+    height: 30px;
+    transform: rotate(90deg);
+  }
+  /* 절약 금액 말풍선 — 화살표 오른쪽에 붙는 흰 박스 + 좌측 꼬리.
+     absolute 로 띄워야 화살표가 열 가운데에 그대로 남는다(시안 9-2-mobile.png) */
+  .membership-root .cmp-save {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + 26px);
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: var(--white);
+    box-shadow: 0 8px 20px -14px rgba(40, 60, 120, 0.5);
+    color: var(--g600);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .membership-root .cmp-save strong {
+    color: var(--lc-blue);
     font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
-}
-@media (max-width: 400px) {
+  .membership-root .cmp-save::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    margin-top: -6px;
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent var(--white) transparent transparent;
+  }
   .membership-root .cmp-card {
-    padding: 12px 9px 10px;
+    min-height: 0;
+    padding: 16px;
+    border-radius: 18px;
   }
-  .membership-root .cmp-head h3 {
-    font-size: 12px;
+  /* 모바일은 카드 높이가 내용에 맞춰 늘어난다 — 행을 늘릴 이유가 없다 */
+  .membership-root .cmp-card-individual .cmp-row {
+    flex: none;
+    max-height: none;
   }
-  .membership-root .cmp-item p {
-    font-size: 11px;
-  }
-  .membership-root .compare .sec-head h2 {
+  .membership-root .cmp-row-name {
     font-size: 14px;
+  }
+  .membership-root .cmp-total-price {
+    font-size: 24px;
   }
 }
