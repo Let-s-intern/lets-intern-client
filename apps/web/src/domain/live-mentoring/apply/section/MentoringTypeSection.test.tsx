@@ -80,7 +80,11 @@ describe('MentoringTypeSection', () => {
     );
 
     expect(
-      screen.getByText('멘토가 등록한 멘토링 유형이 없습니다.'),
+      screen.getByText('멘토가 멘토링 유형을 아직 등록하지 않았습니다.'),
+    ).toBeInTheDocument();
+    // 버튼이 왜 잠기는지까지 알려야 한다. 사실만 적으면 막다른 길이 된다.
+    expect(
+      screen.getByText(/지금은 신청을 완료할 수 없습니다/),
     ).toBeInTheDocument();
   });
 });

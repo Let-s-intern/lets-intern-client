@@ -37,9 +37,21 @@ const MentoringTypeSection = ({
 
       <div className="border-neutral-80 divide-neutral-85 flex flex-col divide-y rounded-sm border">
         {items.length === 0 ? (
-          <p className="text-xsmall14 text-neutral-40 px-4 py-6 text-center">
-            멘토가 등록한 멘토링 유형이 없습니다.
-          </p>
+          /*
+            유형이 하나도 없으면 `신청하기` 가 영원히 잠긴다 —
+            `canSubmit` 이 `mentoringTypeIds.length > 0` 을 요구하기 때문이다.
+            "없습니다" 만 적으면 멘티는 버튼이 왜 안 눌리는지 알 수 없다.
+            고를 것이 없다는 사실과 그래서 신청이 안 된다는 결과를 함께 적는다.
+          */
+          <div className="flex flex-col gap-1 px-4 py-6 text-center">
+            <p className="text-xsmall14 text-neutral-30 font-medium">
+              멘토가 멘토링 유형을 아직 등록하지 않았습니다.
+            </p>
+            <p className="text-xxsmall12 text-neutral-45">
+              유형을 하나 이상 골라야 신청할 수 있어, 지금은 신청을 완료할 수
+              없습니다.
+            </p>
+          </div>
         ) : (
           items.map((item) => (
             <label
