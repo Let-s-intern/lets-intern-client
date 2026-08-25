@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import DetailSettingsLockIcon from '@/pages/live-mentoring/ui/DetailSettingsLockIcon';
+import LiveMentoringOpenBadge from '@/pages/live-mentoring/ui/LiveMentoringOpenBadge';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
 interface NavLeaf {
   type: 'leaf';
   name: string;
   url: string;
+  /** true 면 항목 이름 옆에 "오픈 중이라 수정 잠김" 아이콘을 붙인다. */
+  showDetailSettingsLock?: boolean;
 }
 
 interface NavGroup {
@@ -14,28 +18,37 @@ interface NavGroup {
   /** 그룹 활성 판정용 prefix */
   matchPrefix: string;
   children: NavLeaf[];
+  /** true 면 대주제 클릭으로 하위 항목을 열고 닫는 드롭다운으로 동작한다. */
+  collapsible?: boolean;
+  /** true 면 그룹 이름 옆에 1대1 라이브 멘토링 오픈 상태 배지를 붙인다. */
+  showLiveMentoringStatus?: boolean;
 }
 
 type NavItem = NavLeaf | NavGroup;
 
 const navItems: NavItem[] = [
   { type: 'leaf', name: '공지사항', url: '/notice' },
+  { type: 'leaf', name: '캘린더', url: '/' },
+  { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
+  { type: 'leaf', name: 'LIVE 슬롯 오픈', url: '/feedback/live-availability' },
+  // [임시 숨김] 예약 현황 (dusvlf111, 2026-07-17)
+  // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
+  // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
+  // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
   {
     type: 'group',
-    name: '피드백',
-    matchPrefix: '/feedback',
+    name: '1대1 라이브 멘토링',
+    matchPrefix: '/live-mentoring',
+    // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 드롭다운으로 접어둘 필요가 없다.
+    showLiveMentoringStatus: true,
     children: [
-      { type: 'leaf', name: '피드백 캘린더', url: '/' },
-      { type: 'leaf', name: '피드백 내역', url: '/feedback-management' },
+      { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },
       {
         type: 'leaf',
-        name: 'LIVE 슬롯 오픈',
-        url: '/feedback/live-availability',
+        name: '상세 페이지 설정',
+        url: '/live-mentoring/detail-settings',
+        showDetailSettingsLock: true,
       },
-      // [임시 숨김] 예약 현황 (dusvlf111, 2026-07-17)
-      // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
-      // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
-      // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
     ],
   },
   // [임시 숨김] 참여중인 챌린지 (dusvlf111, 2026-07-17)
@@ -62,6 +75,20 @@ function isGroupActive(pathname: string, group: NavGroup): boolean {
 export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
   const pathname = useLocation().pathname;
   const [isPwa, setIsPwa] = useState(false);
+
+  // collapsible 그룹의 열림 상태 — 활성 그룹은 기본 열림.
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      navItems
+        .filter(
+          (i): i is NavGroup => i.type === 'group' && Boolean(i.collapsible),
+        )
+        .map((g) => [g.name, isGroupActive(pathname, g)]),
+    ),
+  );
+
+  const toggleGroup = (name: string) =>
+    setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
 
   useEffect(() => {
     setIsPwa(window.matchMedia('(display-mode: standalone)').matches);
@@ -134,37 +161,77 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                 }
 
                 const groupActive = isGroupActive(pathname, item);
+                const isCollapsible = Boolean(item.collapsible);
+                const expanded = isCollapsible ? openGroups[item.name] : true;
+                const parentClass = `text-xsmall16 rounded px-3 py-2.5 tracking-[-0.6px] ${
+                  groupActive
+                    ? 'text-primary font-semibold'
+                    : 'text-neutral-40 font-medium'
+                }`;
+                // 이름 옆 상태 배지 — 오픈 중이 아니면 배지 컴포넌트가 스스로 null 을 낸다.
+                const groupLabel = (
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate">{item.name}</span>
+                    {item.showLiveMentoringStatus && <LiveMentoringOpenBadge />}
+                  </span>
+                );
                 return (
                   <li key={item.name}>
-                    <p
-                      className={`text-xsmall16 rounded px-3 py-2.5 tracking-[-0.6px] ${
-                        groupActive
-                          ? 'text-primary font-semibold'
-                          : 'text-neutral-40 font-medium'
-                      }`}
-                    >
-                      {item.name}
-                    </p>
-                    <ul className="mt-0.5 flex flex-col">
-                      {item.children.map((child) => {
-                        const childActive = isLeafActive(pathname, child.url);
-                        return (
-                          <li key={child.url}>
-                            <Link
-                              to={child.url}
-                              onClick={onClose}
-                              className={`text-xsmall14 block rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
-                                childActive
-                                  ? 'bg-primary-5 text-primary font-semibold'
-                                  : 'text-neutral-40 font-medium'
-                              }`}
-                            >
-                              {child.name}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    {isCollapsible ? (
+                      <button
+                        type="button"
+                        aria-expanded={expanded}
+                        onClick={() => toggleGroup(item.name)}
+                        className={`${parentClass} flex w-full items-center justify-between gap-2`}
+                      >
+                        {groupLabel}
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          className={`transition-transform ${expanded ? 'rotate-180' : ''}`}
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M6 8l4 4 4-4"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    ) : (
+                      <p className={parentClass}>{groupLabel}</p>
+                    )}
+                    {expanded && (
+                      <ul className="mt-0.5 flex flex-col">
+                        {item.children.map((child) => {
+                          const childActive = isLeafActive(pathname, child.url);
+                          return (
+                            <li key={child.url}>
+                              <Link
+                                to={child.url}
+                                onClick={onClose}
+                                className={`text-xsmall14 flex items-center gap-1.5 rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
+                                  childActive
+                                    ? 'bg-primary-5 text-primary font-semibold'
+                                    : 'text-neutral-40 font-medium'
+                                }`}
+                              >
+                                <span className="truncate">{child.name}</span>
+                                {child.showDetailSettingsLock && (
+                                  <DetailSettingsLockIcon
+                                    active={childActive}
+                                  />
+                                )}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </li>
                 );
               })}

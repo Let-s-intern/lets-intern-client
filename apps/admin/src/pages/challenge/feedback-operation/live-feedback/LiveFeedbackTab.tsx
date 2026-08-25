@@ -8,15 +8,16 @@ const MentorScheduleView = lazy(
   () => import('./mentor-schedule/MentorScheduleView'),
 );
 
-type SubTab = 'reservation' | 'schedule';
+type SubTab = 'reservation' | 'live-mentoring' | 'schedule';
 
 const subTabs: { id: SubTab; label: string }[] = [
   { id: 'reservation', label: '예약 관리' },
+  { id: 'live-mentoring', label: '1대1 라이브 멘토링' },
   { id: 'schedule', label: '멘토 스케줄' },
 ];
 
 function isSubTab(value: string | null): value is SubTab {
-  return value === 'reservation' || value === 'schedule';
+  return subTabs.some((tab) => tab.id === value);
 }
 
 export default function LiveFeedbackTab() {
@@ -56,9 +57,12 @@ export default function LiveFeedbackTab() {
         ))}
       </nav>
 
-      {subTab === 'reservation' ? (
-        <ReservationManagement />
-      ) : (
+      {subTab === 'reservation' && <ReservationManagement />}
+      {/* 같은 화면을 유형만 1대1로 고정해 쓴다. 두 벌을 만들지 않는다. */}
+      {subTab === 'live-mentoring' && (
+        <ReservationManagement fixedType="LIVE_MENTORING" />
+      )}
+      {subTab === 'schedule' && (
         <Suspense fallback={null}>
           <MentorScheduleView />
         </Suspense>

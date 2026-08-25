@@ -1,4 +1,11 @@
+jest.mock('@letscareer/api', () => ({
+  createDefaultAxios: jest.fn(() => ({})),
+  createV2Axios: jest.fn(() => ({})),
+  fetchJson: jest.fn(),
+}));
+
 import { MypageApplication } from '@/api/application';
+import { mypageApplicationsSchema } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { toMypageApplicationCardConfig } from './applicationCardConfig';
 
@@ -98,6 +105,32 @@ describe('toMypageApplicationCardConfig - 오픈채팅방', () => {
     expect(config.openChat).toBeUndefined();
     // 기존 대시보드 입장 버튼은 그대로 살아 있어야 한다.
     expect(config.actionButton?.label).toBe('대시보드 입장');
+  });
+});
+
+describe('LIVE_MENTORING 신청 카드', () => {
+  const liveMentoringApplication: MypageApplication = {
+    ...baseChallenge,
+    programId: 1,
+    programType: 'LIVE_MENTORING',
+  };
+
+  it('신청 목록 스키마가 LIVE_MENTORING을 허용한다', () => {
+    const parsed = mypageApplicationsSchema.parse({
+      applicationList: [{ programType: 'LIVE_MENTORING' }],
+    });
+
+    expect(parsed.applicationList[0].programType).toBe('LIVE_MENTORING');
+  });
+
+  it('멘토링 라벨과 입장 경로를 생성한다', () => {
+    const config = toMypageApplicationCardConfig(liveMentoringApplication);
+
+    expect(config.categoryLabel).toBe('LIVE 멘토링');
+    expect(config.actionButton).toEqual({
+      label: '멘토링 입장',
+      href: '/live-mentoring/1',
+    });
   });
 });
 

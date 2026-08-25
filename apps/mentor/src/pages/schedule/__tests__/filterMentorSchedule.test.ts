@@ -4,6 +4,7 @@
  * 멘토 일정 화이트리스트 필터:
  *  - 행동/기간 3종: written-feedback / live-feedback-period / live-feedback-mentor-open
  *  - 부가 표시: live-feedback (period 의 세부 표현)
+ *  - 단독 표시: live-mentoring (1대1 라이브 멘토링 예약. 상위 기간 바가 없다)
  *  - 제외: 그 외 모든 barType
  */
 
@@ -11,9 +12,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   MENTOR_ACTION_PERIOD_BAR_TYPES,
+  MENTOR_NAVIGABLE_BAR_TYPES,
   MENTOR_VISIBLE_BAR_TYPES,
   filterMentorSchedule,
   isMentorActionPeriodBar,
+  isMentorNavigableBar,
   isMentorVisibleBar,
 } from '../utils/filterMentorSchedule';
 import type { PeriodBarData } from '../types';
@@ -48,12 +51,13 @@ describe('상수 정의', () => {
     ]);
   });
 
-  it('MENTOR_VISIBLE_BAR_TYPES 는 행동 3종 + live-feedback (4종)', () => {
+  it('MENTOR_VISIBLE_BAR_TYPES 는 행동 3종 + live-feedback + live-mentoring (5종)', () => {
     expect(MENTOR_VISIBLE_BAR_TYPES).toEqual([
       'written-feedback',
       'live-feedback-period',
       'live-feedback-mentor-open',
       'live-feedback',
+      'live-mentoring',
     ]);
   });
 });
@@ -70,6 +74,10 @@ describe('isMentorActionPeriodBar', () => {
     expect(isMentorActionPeriodBar(makeBar('live-feedback'))).toBe(false);
   });
 
+  it('live-mentoring (1대1 예약)은 false (기간 아님)', () => {
+    expect(isMentorActionPeriodBar(makeBar('live-mentoring'))).toBe(false);
+  });
+
   it.each([
     'written-mission-submit',
     'written-review',
@@ -80,6 +88,16 @@ describe('isMentorActionPeriodBar', () => {
 
   it('barType undefined 이면 false', () => {
     expect(isMentorActionPeriodBar(makeBar(undefined))).toBe(false);
+  });
+});
+
+describe('isMentorNavigableBar', () => {
+  it.each(MENTOR_NAVIGABLE_BAR_TYPES)('이동 단위 타입(%s)은 true', (type) => {
+    expect(isMentorNavigableBar(makeBar(type))).toBe(true);
+  });
+
+  it('live-feedback (개별 세션)은 false — period 바가 대신 센다', () => {
+    expect(isMentorNavigableBar(makeBar('live-feedback'))).toBe(false);
   });
 });
 

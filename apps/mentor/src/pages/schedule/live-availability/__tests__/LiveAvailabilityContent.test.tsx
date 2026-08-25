@@ -1,5 +1,5 @@
 import { SLOT_START_TIMES } from '@letscareer/utils';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -114,6 +114,75 @@ describe('LiveAvailabilityContent', () => {
     );
     expect(
       screen.queryByRole('button', { name: '예약 현황 보기' }),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe('LiveAvailabilityContent — 챌린지 기간 음영', () => {
+  // focusDate 로 보이는 주(6/29~7/5)를 고정한다.
+  const challengePeriods = [
+    {
+      challengeId: 1,
+      title: '자소서 챌린지',
+      startDate: '2026-06-30T00:00:00',
+      endDate: '2026-07-01T23:59:59',
+    },
+  ];
+
+  const renderGrid = (periods = challengePeriods) =>
+    render(
+      <LiveAvailabilityContent
+        {...baseProps}
+        focusDate="2026-07-01"
+        challengePeriods={periods}
+      />,
+    );
+
+  it('기간에 걸린 셀에만 음영 표시가 붙는다', () => {
+    const { container } = renderGrid();
+    const shaded = container.querySelectorAll('[data-challenge-period="true"]');
+
+    // 시간 행 전체 × 기간에 걸친 2일.
+    // 행 개수를 숫자로 박지 않는다 — 슬롯 정의가 @letscareer/utils 로 옮겨진 뒤
+    // 27 에서 28 로 바뀌었고, 그때 이 단언만 남아 조용히 깨졌다.
+    expect(shaded.length).toBe(SLOT_START_TIMES.length * 2);
+  });
+
+  it('음영 셀에 1대1 신청을 받지 않는다는 안내가 붙는다', () => {
+    const { container } = renderGrid();
+    const shaded = container.querySelector('[data-challenge-period="true"]');
+
+    expect(shaded).toHaveAttribute(
+      'title',
+      '이 기간은 챌린지 참여자 우선이라 1대1 신청은 받지 않아요.',
+    );
+    expect(
+      screen.getByText(/챌린지 참여자 우선이라 1대1 신청은 받지 않아요/),
+    ).toBeInTheDocument();
+  });
+
+  it('음영 셀도 클릭하면 선택이 토글된다', async () => {
+    // 막지 않는다 — 챌린지 기간의 슬롯이야말로 챌린지 피드백에 쓰이는 슬롯이다.
+    const { container } = renderGrid();
+    const shaded = container.querySelector(
+      '[data-challenge-period="true"]',
+    ) as HTMLElement;
+
+    fireEvent.mouseDown(shaded);
+    expect(screen.getByText(/선택된 가능 시간: 1개/)).toBeInTheDocument();
+
+    fireEvent.mouseDown(shaded);
+    expect(screen.getByText(/선택된 가능 시간: 0개/)).toBeInTheDocument();
+  });
+
+  it('기간이 없으면 음영도 안내도 없다', () => {
+    const { container } = renderGrid([]);
+
+    expect(
+      container.querySelectorAll('[data-challenge-period="true"]').length,
+    ).toBe(0);
+    expect(
+      screen.queryByText(/챌린지 참여자 우선이라/),
     ).not.toBeInTheDocument();
   });
 });

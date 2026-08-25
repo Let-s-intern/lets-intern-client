@@ -7,7 +7,7 @@ import type { FeedbackTagType } from '../constants/feedbackTag';
 describe('FeedbackTagFilter (PRD-0503 #4)', () => {
   const noop = () => {};
 
-  it('전체 + 3개 피드백 태그 버튼을 렌더한다', () => {
+  it('전체 + 4개 피드백 태그 버튼을 렌더한다', () => {
     render(
       <FeedbackTagFilter
         selectedTags={new Set<FeedbackTagType>()}
@@ -26,6 +26,23 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
     expect(
       screen.getByRole('button', { name: /LIVE 피드백 일정 오픈/ }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('1대1 태그 클릭 시 onToggle("live-mentoring") 이 호출된다', () => {
+    const onToggle = vi.fn();
+    render(
+      <FeedbackTagFilter
+        selectedTags={new Set<FeedbackTagType>()}
+        onToggle={onToggle}
+        onClearAll={noop}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
+    expect(onToggle).toHaveBeenCalledWith('live-mentoring');
   });
 
   it('빈 selectedTags 상태에서 "전체" 버튼이 활성 색상을 가진다', () => {

@@ -70,6 +70,7 @@ const toProgramCardConfig = (
 
   const isChallenge = programType === 'CHALLENGE';
   const isLive = programType === 'LIVE';
+  const isLiveMentoring = programType === 'LIVE_MENTORING';
   const isReport = programType === 'REPORT';
 
   const statusLabel =
@@ -110,7 +111,9 @@ const toProgramCardConfig = (
 
   const isChallengeDashboardVisible =
     pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
-  const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
+  const isDashboardVisible = isChallenge
+    ? isChallengeDashboardVisible
+    : isLive || isLiveMentoring;
 
   // [LC-3219-MEMBERSHIP] 멤버십 기수는 대시보드가 아니라 기수별 노션 가이드로 보낸다.
   // programId 는 프로그램 타입마다 별도 채번이라 챌린지일 때만 조회한다.
@@ -125,10 +128,16 @@ const toProgramCardConfig = (
             external: true,
           }
         : {
-            label: isChallenge ? '대시보드 입장' : '클래스 입장',
+            label: isChallenge
+              ? '대시보드 입장'
+              : isLiveMentoring
+                ? '멘토링 입장'
+                : '클래스 입장',
             href: isChallenge
               ? `/challenge/${id}/${programId}`
-              : `/program/live/${programId}`,
+              : isLiveMentoring
+                ? `/live-mentoring/${programId}`
+                : `/program/live/${programId}`,
           }
       : undefined;
 
