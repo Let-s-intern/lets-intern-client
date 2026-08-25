@@ -433,7 +433,7 @@ describe('LiveMentoringDetailPage', () => {
     );
     // 60분 플랜은 연속 두 칸이 버튼 하나로 합쳐져 있다
     fireEvent.click(sheet.getByRole('button', { name: '10:00 ~ 11:00' }));
-    fireEvent.click(sheet.getByRole('checkbox', { name: '포트폴리오 피드백' }));
+    fireEvent.click(sheet.getByRole('radio', { name: '포트폴리오 피드백' }));
     fireEvent.click(sheet.getByRole('checkbox', { name: /예약 시간 변경/ }));
     fireEvent.click(sheet.getByRole('button', { name: '신청하기' }));
 

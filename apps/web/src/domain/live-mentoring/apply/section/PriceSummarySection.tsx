@@ -8,7 +8,6 @@ interface PriceSummarySectionProps {
   /** 고른 플랜. 아직 안 골랐으면 null. */
   selected: { duration: LiveMentoringDuration; price: number } | null;
   /** 삭제 버튼 — 플랜 선택과 슬롯 선택이 함께 풀린다. */
-  onRemove: () => void;
 }
 
 /**
@@ -17,10 +16,7 @@ interface PriceSummarySectionProps {
  * 플랜은 하나만 고를 수 있으므로 행도 하나다. 합계는 그 행의 금액과 같지만 줄을
  * 따로 둔다 — 시안이 그렇고, 쿠폰이 붙는 자리가 여기다(Push 3).
  */
-const PriceSummarySection = ({
-  selected,
-  onRemove,
-}: PriceSummarySectionProps) => {
+const PriceSummarySection = ({ selected }: PriceSummarySectionProps) => {
   return (
     <section className="flex flex-col gap-3">
       <h3 className="text-xsmall16 text-neutral-0 font-semibold">
@@ -40,14 +36,6 @@ const PriceSummarySection = ({
             <span className="text-xsmall16 text-neutral-0 font-bold">
               {formatPrice(selected.price)}
             </span>
-            <button
-              type="button"
-              onClick={onRemove}
-              aria-label="선택한 플랜 삭제"
-              className="text-neutral-45 hover:text-neutral-30 text-xsmall16 leading-none"
-            >
-              ×
-            </button>
           </div>
         </div>
       )}

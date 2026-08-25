@@ -109,10 +109,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             onChange={sheet.setAgreed}
           />
 
-          <PriceSummarySection
-            selected={selectedPlan}
-            onRemove={sheet.clearDuration}
-          />
+          <PriceSummarySection selected={selectedPlan} />
         </div>
 
         <div className="flex shrink-0 gap-3 px-5 pb-5 pt-4 md:px-8 md:pb-8">

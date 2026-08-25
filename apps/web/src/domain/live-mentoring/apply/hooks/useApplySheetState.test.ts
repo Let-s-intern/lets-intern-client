@@ -90,14 +90,19 @@ describe('useApplySheetState', () => {
     expect(result.current.draft.slots).toEqual([SLOT_10_00]);
   });
 
-  it('플랜 선택을 해제하면 슬롯도 함께 풀린다', () => {
+  /*
+    플랜은 항상 하나가 골라져 있어야 하므로 해제 경로를 없앴다.
+    대신 다른 플랜으로 바꿀 때 슬롯이 함께 풀리는지를 본다 — 30분에서 고른 1칸은
+    60분에서 미완성 선택이라 그대로 두면 서버에서 400 이 난다.
+  */
+  it('플랜을 바꾸면 슬롯이 함께 풀린다', () => {
     const { result } = renderHook(() => useApplySheetState());
 
     act(() => result.current.selectDuration(60));
     act(() => result.current.selectSlots([SLOT_10_00, SLOT_10_30]));
-    act(() => result.current.clearDuration());
+    act(() => result.current.selectDuration(30));
 
-    expect(result.current.draft.duration).toBeNull();
+    expect(result.current.draft.duration).toBe(30);
     expect(result.current.draft.slots).toEqual([]);
   });
 

@@ -5,6 +5,7 @@ import {
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import ApplySheet from '../apply/ApplySheet';
 import { useApplySheetState } from '../apply/hooks/useApplySheetState';
@@ -51,6 +52,21 @@ const LiveMentoringDetailPage = ({
   const applySheet = useApplySheetState();
   const router = useRouter();
   const setOrderDraft = useOrderDraftStore((state) => state.setDraft);
+
+  /*
+    플랜은 **항상 하나가 골라져 있어야 한다.** 상세 히어로와 신청 시트가 같은
+    `draft.duration` 을 보므로, 데이터가 도착하는 시점에 첫 플랜을 잡아 둔다.
+    아무것도 안 골라진 상태를 없애면 `총 결제 금액` 이 비는 화면도 사라진다.
+  *
+    훅이라 조기 반환보다 위에 있어야 한다. 아래로 내리면 로딩 렌더와 성공 렌더의
+    훅 개수가 달라져 'Rendered more hooks than during the previous render' 가 난다.
+  */
+  const firstDuration = data?.durationPrices[0]?.duration ?? null;
+  const hasDuration = applySheet.draft.duration !== null;
+  const { selectDuration } = applySheet;
+  useEffect(() => {
+    if (firstDuration !== null && !hasDuration) selectDuration(firstDuration);
+  }, [firstDuration, hasDuration, selectDuration]);
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;

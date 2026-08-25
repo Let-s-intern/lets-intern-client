@@ -159,22 +159,25 @@ describe('ApplySheet 총 결제 금액', () => {
     expect(screen.getAllByText('60,000원').length).toBeGreaterThanOrEqual(3);
   });
 
-  it('삭제 버튼을 누르면 플랜과 슬롯 선택이 함께 풀린다', () => {
+  /*
+    플랜은 항상 하나가 골라져 있어야 해서 삭제 버튼을 없앴다.
+    대신 다른 플랜으로 바꾸면 슬롯 선택이 함께 풀리는지를 본다.
+  */
+  it('플랜을 바꾸면 슬롯 선택이 함께 풀린다', () => {
     openSheet();
     fireEvent.click(
       screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
     );
     fireEvent.click(screen.getByRole('button', { name: '09:30 ~ 10:30' }));
 
-    fireEvent.click(screen.getByRole('button', { name: '선택한 플랜 삭제' }));
+    fireEvent.click(
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(30분\)/ }),
+    );
 
     expect(
-      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
-    ).not.toBeChecked();
-    expect(
-      screen.getByText('플랜을 선택하면 결제 금액이 표시됩니다.'),
-    ).toBeInTheDocument();
-    // 슬롯 선택도 함께 풀려 신청하기는 여전히 잠겨 있다
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(30분\)/ }),
+    ).toBeChecked();
+    // 슬롯 선택이 함께 풀려 신청하기는 잠겨 있다
     expect(submitButton()).toBeDisabled();
   });
 });

@@ -33,11 +33,6 @@ export function useApplySheetState() {
     );
   }, []);
 
-  /** 플랜 선택을 해제한다. 시안의 총 결제 금액 행 삭제 버튼이 이걸 부른다. */
-  const clearDuration = useCallback(() => {
-    setDraft((prev) => ({ ...prev, duration: null, slots: [] }));
-  }, []);
-
   const selectSlots = useCallback((slots: SelectedApplySlot[]) => {
     setDraft((prev) => ({ ...prev, slots }));
   }, []);
@@ -84,7 +79,6 @@ export function useApplySheetState() {
     draft,
     canSubmit,
     selectDuration,
-    clearDuration,
     selectSlots,
     selectMentoringType,
     setAgreed,
