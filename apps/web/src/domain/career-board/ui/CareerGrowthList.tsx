@@ -30,7 +30,7 @@ interface CareerGrowthItemCardProps {
 
 const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const router = useRouter();
-  const { actionButton } = config;
+  const { actionButton, secondaryButton } = config;
   const showActionButton = !!actionButton;
   const hasConfirm = !!actionButton?.confirm;
   const isDownloadButton = actionButton?.isDownload === true;
@@ -138,16 +138,32 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
               </div>
             )}
           </div>
-          {showActionButton && (
-            <ActionButton
-              label={actionButton.label}
-              disabled={actionButton.disabled}
-              onClick={handleActionClick}
-              variant="desktop"
-            />
-          )}
+          <div className="flex shrink-0 gap-2">
+            {secondaryButton && (
+              <ActionButton
+                label={secondaryButton.label}
+                onClick={secondaryButton.onClick}
+                variant="desktop"
+              />
+            )}
+            {showActionButton && (
+              <ActionButton
+                label={actionButton.label}
+                disabled={actionButton.disabled}
+                onClick={handleActionClick}
+                variant="desktop"
+              />
+            )}
+          </div>
         </div>
       </div>
+      {secondaryButton && (
+        <ActionButton
+          label={secondaryButton.label}
+          onClick={secondaryButton.onClick}
+          variant="mobile"
+        />
+      )}
       {showActionButton && (
         <ActionButton
           label={actionButton.label}

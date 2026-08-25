@@ -1,6 +1,13 @@
 'use client';
 
 import { mypageApplicationsQueryOptions } from '@/api/application';
+import { useMyLiveMentoringApplicationsQuery } from '@/api/live-mentoring/liveMentoring';
+import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
+import {
+  isQuestionButtonVisible,
+  questionButtonLabel,
+} from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
+import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
 import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
 import { LIBRARY_VISIBLE_MAGNET_TYPES } from '@/api/magnet/magnetSchema';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
@@ -102,6 +109,15 @@ const CareerGrowthContent = () => {
   );
   const { setHasCareerData } = useCareerDataStatus();
   const [category, setCategory] = useState<CareerGrowthCategory>('PROGRAM');
+  /*
+    1대1 라이브 멘토링은 공통 목록에도 오지만 질문 작성 여부와 입장 링크가 없다.
+    전용 API 를 함께 조회해 카드에 `멘토링 질문` 과 `멘토링 입장` 버튼을 붙인다.
+    React Query 가 같은 키를 합치므로 마이페이지와 요청이 겹치지 않는다.
+  */
+  const { data: mentoringData } = useMyLiveMentoringApplicationsQuery();
+  const [openApplicationId, setOpenApplicationId] = useState<number | null>(
+    null,
+  );
 
   const isLibraryTab = category === 'LIBRARY';
 
@@ -127,10 +143,48 @@ const CareerGrowthContent = () => {
     );
   }, [category, items]);
 
-  const programCardConfigs = useMemo(
-    () => toCareerGrowthCardConfigs(visibleItems, category),
-    [visibleItems, category],
-  );
+  const mentoringById = useMemo(() => {
+    const map = new Map<number, MyLiveMentoringApplication>();
+    for (const application of mentoringData?.applicationList ?? []) {
+      map.set(application.applicationId, application);
+    }
+    return map;
+  }, [mentoringData]);
+
+  const programCardConfigs = useMemo(() => {
+    const configs = toCareerGrowthCardConfigs(visibleItems, category);
+    const now = new Date();
+
+    return configs.map((config) => {
+      const mentoring = mentoringById.get(config.id);
+      if (!mentoring) return config;
+
+      const questionVisible = isQuestionButtonVisible(
+        mentoring.reservationStartAt,
+        now,
+      );
+
+      return {
+        ...config,
+        // 마감(예약 24시간 전) 뒤에는 질문 버튼을 감춘다. 마이페이지와 같은 규칙이다.
+        secondaryButton: questionVisible
+          ? {
+              label: questionButtonLabel(mentoring.questionWritten),
+              onClick: () => setOpenApplicationId(mentoring.applicationId),
+            }
+          : undefined,
+        actionButton: {
+          label: '멘토링 입장',
+          disabled: mentoring.entryLink === null,
+          href: mentoring.entryLink ?? undefined,
+          external: true,
+        },
+      };
+    });
+  }, [visibleItems, category, mentoringById]);
+
+  const openMentoring =
+    openApplicationId === null ? null : mentoringById.get(openApplicationId);
 
   const hasData = items.length > 0;
 
@@ -141,44 +195,53 @@ const CareerGrowthContent = () => {
   }, [hasData, setHasCareerData]);
 
   return (
-    <CareerCard
-      title={TITLE}
-      labelOnClick={() => router.push(HREF)}
-      body={
-        <div className="flex flex-col gap-6 pt-1">
-          <CategoryChips
-            options={CAREER_GROWTH_CATEGORY_OPTIONS}
-            selected={category}
-            onChange={setCategory}
-          />
-          {isLibraryTab ? (
-            <AsyncBoundary
-              pendingFallback={
-                <LoadingContainer text="자료집을 불러오는 중입니다." />
-              }
-              rejectedFallback={({ resetErrorBoundary }) => (
-                <SectionErrorFallback onRetry={resetErrorBoundary} />
-              )}
-            >
-              <LibraryGrowthList />
-            </AsyncBoundary>
-          ) : programCardConfigs.length > 0 ? (
-            <CareerGrowthList items={programCardConfigs} />
-          ) : (
-            <div className="pb-6">
-              <CareerCard.Empty
-                description={EMPTY_CONFIG_BY_CATEGORY[category].description}
-                buttonText={EMPTY_CONFIG_BY_CATEGORY[category].buttonText}
-                buttonHref={EMPTY_CONFIG_BY_CATEGORY[category].href}
-                onClick={() =>
-                  router.push(EMPTY_CONFIG_BY_CATEGORY[category].href)
+    <>
+      <CareerCard
+        title={TITLE}
+        labelOnClick={() => router.push(HREF)}
+        body={
+          <div className="flex flex-col gap-6 pt-1">
+            <CategoryChips
+              options={CAREER_GROWTH_CATEGORY_OPTIONS}
+              selected={category}
+              onChange={setCategory}
+            />
+            {isLibraryTab ? (
+              <AsyncBoundary
+                pendingFallback={
+                  <LoadingContainer text="자료집을 불러오는 중입니다." />
                 }
-              />
-            </div>
-          )}
-        </div>
-      }
-    />
+                rejectedFallback={({ resetErrorBoundary }) => (
+                  <SectionErrorFallback onRetry={resetErrorBoundary} />
+                )}
+              >
+                <LibraryGrowthList />
+              </AsyncBoundary>
+            ) : programCardConfigs.length > 0 ? (
+              <CareerGrowthList items={programCardConfigs} />
+            ) : (
+              <div className="pb-6">
+                <CareerCard.Empty
+                  description={EMPTY_CONFIG_BY_CATEGORY[category].description}
+                  buttonText={EMPTY_CONFIG_BY_CATEGORY[category].buttonText}
+                  buttonHref={EMPTY_CONFIG_BY_CATEGORY[category].href}
+                  onClick={() =>
+                    router.push(EMPTY_CONFIG_BY_CATEGORY[category].href)
+                  }
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
+      {openMentoring && (
+        <QuestionModal
+          applicationId={openMentoring.applicationId}
+          readOnly={false}
+          onClose={() => setOpenApplicationId(null)}
+        />
+      )}
+    </>
   );
 };
 

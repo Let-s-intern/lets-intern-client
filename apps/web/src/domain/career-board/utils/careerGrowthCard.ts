@@ -46,6 +46,14 @@ export interface CareerGrowthCardConfig {
     };
     isDownload?: boolean;
   };
+  /**
+   * 주 버튼 왼쪽에 함께 놓는 버튼. 지금은 1대1 라이브 멘토링의 질문 버튼만 쓴다.
+   * 다운로드·확인 모달은 주 버튼 전용이라 여기서는 다루지 않는다.
+   */
+  secondaryButton?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 /** 프로그램 탭용 카드 */
