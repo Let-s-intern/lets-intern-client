@@ -1,6 +1,7 @@
 'use client';
 
 import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
+import MembershipPromoBanner from '@/domain/home/banner/MembershipPromoBanner'; // [PROMO-BANNER]
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
@@ -80,6 +81,8 @@ const TopBanner = () => {
         </div>
       </section>
       <div className="h-20 w-full md:h-14" />
+      {/* [PROMO-BANNER] 하반기 멤버십 프로모션 배너 — 종료 시 이 줄 + 상단 import 제거 (grep "[PROMO-BANNER]") */}
+      <MembershipPromoBanner />
     </>
   );
 };
