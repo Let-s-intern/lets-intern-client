@@ -126,8 +126,6 @@ const ApplicationContent = () => {
           </>
         )}
 
-        {category === 'MENTORING' && <MentoringSection />}
-
         {category === 'LIBRARY' && <LibrarySection />}
 
         {category === 'GUIDEBOOK' && (

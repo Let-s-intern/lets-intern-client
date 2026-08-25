@@ -31,15 +31,9 @@ const HREF = '/mypage/application';
   멘토링은 `mypageApplicationsQueryOptions` 가 아니라 라이브 멘토링 전용 API 에서
   오므로, 여기에 탭만 생기면 언제나 비어 있는 탭이 된다.
 */
-type CareerGrowthCategory = Exclude<
-  ApplicationCategory,
-  'LAUNCH_ALERT' | 'MENTORING'
->;
+type CareerGrowthCategory = Exclude<ApplicationCategory, 'LAUNCH_ALERT'>;
 
-const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = [
-  'LAUNCH_ALERT',
-  'MENTORING',
-];
+const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = ['LAUNCH_ALERT'];
 
 const CAREER_GROWTH_CATEGORY_OPTIONS = APPLICATION_CATEGORY_OPTIONS.filter(
   (option): option is { value: CareerGrowthCategory; label: string } =>

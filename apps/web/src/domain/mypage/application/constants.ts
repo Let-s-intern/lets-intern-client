@@ -1,6 +1,5 @@
 export type ApplicationCategory =
   | 'PROGRAM'
-  | 'MENTORING'
   | 'LIBRARY'
   | 'GUIDEBOOK'
   | 'VOD'
@@ -12,8 +11,10 @@ export const APPLICATION_CATEGORY_OPTIONS: {
   label: string;
 }[] = [
   { value: 'PROGRAM', label: '프로그램' },
-  // 시안 3-0 의 탭 순서는 프로그램 / 멘토링 / 무료 자료집 / 가이드북이다.
-  { value: 'MENTORING', label: '멘토링' },
+  /*
+    멘토링 탭은 없앴다. 1대1 라이브 멘토링을 프로그램 탭에서 함께 보여주므로
+    같은 신청이 두 탭에 뜬다.
+  */
   { value: 'LIBRARY', label: '무료 자료집' },
   { value: 'GUIDEBOOK', label: '가이드북' },
   { value: 'VOD', label: 'VOD 클래스' },

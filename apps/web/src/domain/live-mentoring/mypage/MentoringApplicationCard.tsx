@@ -7,12 +7,14 @@ import type { LiveMentoringDuration } from '@/api/live-mentoring/liveMentoringSc
 /** 예약 시각과 현재 시각으로 가른 카드 상태. */
 export type MentoringCardPhase = 'upcoming' | 'ongoing' | 'ended';
 
-const PHASE_BADGE: Record<MentoringCardPhase, { label: string; className: string }> =
-  {
-    upcoming: { label: '참여예정', className: 'bg-primary-10 text-primary' },
-    ongoing: { label: '참여중', className: 'bg-primary text-white' },
-    ended: { label: '참여완료', className: 'bg-neutral-90 text-neutral-40' },
-  };
+const PHASE_BADGE: Record<
+  MentoringCardPhase,
+  { label: string; className: string }
+> = {
+  upcoming: { label: '참여예정', className: 'bg-primary-10 text-primary' },
+  ongoing: { label: '참여중', className: 'bg-primary text-white' },
+  ended: { label: '참여완료', className: 'bg-neutral-90 text-neutral-40' },
+};
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
@@ -27,23 +29,46 @@ export const formatReservationPeriod = (
   endAt: string,
 ): string => {
   const [year, month, day] = startAt.slice(0, 10).split('-');
-  const weekday = WEEKDAYS[new Date(`${startAt.slice(0, 10)}T00:00:00`).getDay()];
+  const weekday =
+    WEEKDAYS[new Date(`${startAt.slice(0, 10)}T00:00:00`).getDay()];
   return `${year.slice(2)}.${month}.${day} (${weekday}) ${startAt.slice(11, 16)} ~ ${endAt.slice(11, 16)}`;
 };
 
+/** 서버가 질문 수정을 닫는 기준. `LiveMentoringApplicationValidator` 와 같은 값이다. */
+const QUESTION_EDIT_DEADLINE_HOURS = 24;
+
 /**
- * 질문 버튼 라벨.
+ * 질문 버튼을 보여줄지.
  *
- * 참여 예정일 때만 쓰거나 고칠 수 있다. 시작한 뒤에는 읽기만 한다 — 서버도 예약
- * 시작 24시간 전에 수정을 닫으므로 그 뒤로는 `확인` 이 맞는 말이다.
+ * 서버는 예약 시작 24시간 전에 수정을 닫는다. 그 뒤로는 버튼을 **감춘다** —
+ * 눌러도 못 고치는 버튼을 남겨두면 무엇을 하라는 것인지 알 수 없다.
+ *
+ * 목록 응답에는 서버가 계산한 `editable` 이 없어 여기서 시각을 비교한다.
+ * 같은 파일의 `resolvePhase` 도 예약 시각을 이렇게 다룬다. 보이기 판단에만 쓰고,
+ * 실제 저장 가능 여부는 모달이 서버 `editable` 로 다시 판정한다.
  */
-export const questionButtonLabel = (
-  phase: MentoringCardPhase,
-  questionWritten: boolean,
-): string => {
-  if (phase !== 'upcoming') return '멘토링 질문 확인';
-  return questionWritten ? '멘토링 질문 수정' : '멘토링 질문 작성';
+export const isQuestionButtonVisible = (
+  reservationStartAt: string,
+  now: Date,
+): boolean => {
+  const deadline = new Date(reservationStartAt);
+  if (Number.isNaN(deadline.getTime())) return false;
+  deadline.setHours(deadline.getHours() - QUESTION_EDIT_DEADLINE_HOURS);
+
+  const nowLocal = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+  );
+  return nowLocal < deadline;
 };
+
+/** 질문 버튼 라벨. 마감 전에만 보이므로 쓰기 문구만 남는다. */
+export const questionButtonLabel = (questionWritten: boolean): string =>
+  questionWritten ? '멘토링 질문 수정' : '멘토링 질문 작성';
 
 interface MentoringApplicationCardProps {
   application: MyLiveMentoringApplication;
@@ -98,13 +123,18 @@ const MentoringApplicationCard = ({
           </span>
 
           <div className="flex gap-2 md:ml-auto">
-            <button
-              type="button"
-              onClick={() => onQuestionClick(application.applicationId)}
-              className="border-primary text-primary text-xxsmall12 rounded-sm border px-3 py-2 font-medium"
-            >
-              {questionButtonLabel(phase, application.questionWritten)}
-            </button>
+            {isQuestionButtonVisible(
+              application.reservationStartAt,
+              new Date(),
+            ) && (
+              <button
+                type="button"
+                onClick={() => onQuestionClick(application.applicationId)}
+                className="border-primary text-primary text-xxsmall12 rounded-sm border px-3 py-2 font-medium"
+              >
+                {questionButtonLabel(application.questionWritten)}
+              </button>
+            )}
             {/*
               entryLink 가 null 인 동안은 비활성이다(PRD 4-8). 감추지 않는 이유는
               위 컴포넌트 주석 참고.
@@ -131,7 +161,9 @@ const MentoringApplicationCard = ({
         <p className="text-xxsmall12 text-neutral-40 mt-auto">
           구매플랜{' '}
           <span className="text-neutral-20 font-medium">
-            {durationLabel(application.durationMinutes as LiveMentoringDuration)}
+            {durationLabel(
+              application.durationMinutes as LiveMentoringDuration,
+            )}
           </span>
         </p>
       </div>

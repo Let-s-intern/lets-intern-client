@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
 import MentoringApplicationCard, {
   formatReservationPeriod,
+  isQuestionButtonVisible,
   questionButtonLabel,
   type MentoringCardPhase,
 } from './MentoringApplicationCard';
@@ -58,21 +59,40 @@ describe('formatReservationPeriod', () => {
   });
 });
 
-describe('questionButtonLabel — 상태 4가지 조합', () => {
-  it('참여 예정 + 질문 미작성이면 작성이다', () => {
-    expect(questionButtonLabel('upcoming', false)).toBe('멘토링 질문 작성');
+describe('questionButtonLabel', () => {
+  it('질문 미작성이면 작성, 작성됐으면 수정이다', () => {
+    expect(questionButtonLabel(false)).toBe('멘토링 질문 작성');
+    expect(questionButtonLabel(true)).toBe('멘토링 질문 수정');
+  });
+});
+
+/*
+  서버가 예약 시작 24시간 전에 질문 수정을 닫는다. 그 뒤로는 버튼을 감춘다 —
+  눌러도 못 고치는 버튼은 무엇을 하라는 것인지 알 수 없다.
+*/
+describe('isQuestionButtonVisible — 마감 24시간 경계', () => {
+  const START = '2026-09-15T09:00:00';
+
+  it('마감 1분 전이면 보인다', () => {
+    expect(
+      isQuestionButtonVisible(START, new Date(2026, 8, 14, 8, 59, 0)),
+    ).toBe(true);
   });
 
-  it('참여 예정 + 질문 작성됨이면 수정이다', () => {
-    expect(questionButtonLabel('upcoming', true)).toBe('멘토링 질문 수정');
+  it('정확히 24시간 전이면 감춘다', () => {
+    expect(isQuestionButtonVisible(START, new Date(2026, 8, 14, 9, 0, 0))).toBe(
+      false,
+    );
   });
 
-  /* 시작한 뒤에는 읽기만 한다. 서버도 예약 24시간 전에 수정을 닫는다. */
-  it('참여 중·종료면 작성 여부와 무관하게 확인이다', () => {
-    expect(questionButtonLabel('ongoing', true)).toBe('멘토링 질문 확인');
-    expect(questionButtonLabel('ongoing', false)).toBe('멘토링 질문 확인');
-    expect(questionButtonLabel('ended', true)).toBe('멘토링 질문 확인');
-    expect(questionButtonLabel('ended', false)).toBe('멘토링 질문 확인');
+  it('예약 시작 뒤에도 감춘다', () => {
+    expect(
+      isQuestionButtonVisible(START, new Date(2026, 8, 15, 9, 30, 0)),
+    ).toBe(false);
+  });
+
+  it('예약 시각을 읽을 수 없으면 감춘다', () => {
+    expect(isQuestionButtonVisible('말도 안 되는 값', new Date())).toBe(false);
   });
 });
 
@@ -81,7 +101,9 @@ describe('MentoringApplicationCard', () => {
     renderCard('upcoming');
 
     expect(screen.getByText('참여예정')).toBeInTheDocument();
-    expect(screen.getByText(/26\.09\.13 \(일\) 10:00 ~ 11:00/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/26\.09\.13 \(일\) 10:00 ~ 11:00/),
+    ).toBeInTheDocument();
     expect(screen.getByText('60분')).toBeInTheDocument();
     expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
   });

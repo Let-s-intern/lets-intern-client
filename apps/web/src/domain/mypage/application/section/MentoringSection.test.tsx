@@ -159,7 +159,9 @@ describe('MentoringSection 구간 분류', () => {
     fireEvent.click(screen.getByRole('button', { name: '멘토링 질문 수정' }));
 
     expect(
-      screen.getByRole('dialog', { name: '멘토에게 궁금한 점을 작성해 주세요.' }),
+      screen.getByRole('dialog', {
+        name: '멘토에게 궁금한 점을 작성해 주세요.',
+      }),
     ).toBeInTheDocument();
   });
 });
@@ -169,14 +171,14 @@ describe('MentoringSection 구간 분류', () => {
   기존 탭을 지우면 그쪽이 회귀한다.
 */
 describe('신청현황 탭 구성', () => {
-  it('시안 순서대로 프로그램 다음이 멘토링이다', () => {
+  it('멘토링 탭은 없다 — 프로그램 탭에서 함께 보여준다', () => {
     const values = APPLICATION_CATEGORY_OPTIONS.map((option) => option.value);
-    expect(values.slice(0, 4)).toEqual([
+    expect(values.slice(0, 3)).toEqual([
       'PROGRAM',
-      'MENTORING',
       'LIBRARY',
       'GUIDEBOOK',
     ] satisfies ApplicationCategory[]);
+    expect(values).not.toContain('MENTORING');
   });
 
   it('기존 탭을 지우지 않는다', () => {
