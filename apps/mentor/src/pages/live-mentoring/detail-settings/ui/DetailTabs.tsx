@@ -26,7 +26,8 @@ const CheckIcon = () => (
  * 탭 이동은 계속 동작해야 한다 — 잠금이 이동까지 삼키면 멘토는 자기 페이지를
  * 읽지도 못한다.
  *
- * 탭에는 **라벨과 필수·선택 칩, 완료 체크**를 둔다. 무엇을 반드시 채워야 하는지는
+ * 탭에는 **라벨과 필수·선택 표시, 완료 체크**를 둔다.
+ * 표시는 웹 신청 시트의 제목과 같은 `(필수)` 형태다 — 배지가 아니라 괄호 텍스트다. 무엇을 반드시 채워야 하는지는
  * 탭을 열기 전에 보여야 하는 정보라 섹션 카드 헤더에서 여기로 옮겼다. 칩이 붙어도
  * 탭 줄은 두 줄로 넘치지 않는다 — `overflow-x-auto` 라 폭이 모자라면 가로로 스크롤된다.
  *
@@ -66,13 +67,13 @@ const DetailTabs = ({
           {tab.label}
           <span
             aria-hidden="true"
-            className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
+            className={
               tab.required
-                ? 'bg-primary-10 text-primary'
-                : 'bg-gray-100 text-gray-500'
-            }`}
+                ? 'text-primary text-sm font-medium'
+                : 'text-sm font-medium text-gray-400'
+            }
           >
-            {requiredLabel}
+            ({requiredLabel})
           </span>
           {isComplete ? <CheckIcon /> : null}
         </button>

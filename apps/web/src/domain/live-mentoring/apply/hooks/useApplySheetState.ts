@@ -42,13 +42,14 @@ export function useApplySheetState() {
     setDraft((prev) => ({ ...prev, slots }));
   }, []);
 
-  const toggleMentoringType = useCallback((typeId: number) => {
-    setDraft((prev) => ({
-      ...prev,
-      mentoringTypeIds: prev.mentoringTypeIds.includes(typeId)
-        ? prev.mentoringTypeIds.filter((id) => id !== typeId)
-        : [...prev.mentoringTypeIds, typeId],
-    }));
+  /**
+   * 멘토링 유형은 **하나만** 고른다.
+   *
+   * 서버 `mentoringTypeIds` 는 배열 계약이라 그대로 두고 길이 1로 보낸다 —
+   * 화면 규칙에 맞춰 요청 형태를 바꾸면 계약이 갈라진다.
+   */
+  const selectMentoringType = useCallback((typeId: number) => {
+    setDraft((prev) => ({ ...prev, mentoringTypeIds: [typeId] }));
   }, []);
 
   const setAgreed = useCallback((agreed: boolean) => {
@@ -73,7 +74,7 @@ export function useApplySheetState() {
   const canSubmit =
     draft.duration !== null &&
     draft.slots.length === (draft.duration === 60 ? 2 : 1) &&
-    draft.mentoringTypeIds.length > 0 &&
+    draft.mentoringTypeIds.length === 1 &&
     draft.agreedToScheduleChange;
 
   return {
@@ -85,7 +86,7 @@ export function useApplySheetState() {
     selectDuration,
     clearDuration,
     selectSlots,
-    toggleMentoringType,
+    selectMentoringType,
     setAgreed,
   };
 }

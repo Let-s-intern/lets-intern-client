@@ -29,14 +29,14 @@ describe('MentoringTypeSection', () => {
     render(
       <MentoringTypeSection
         items={ITEMS}
-        selectedIds={[]}
-        onToggle={jest.fn()}
+        selectedId={null}
+        onSelect={jest.fn()}
       />,
     );
 
     // 아코디언을 없앴다. 여는 동작 없이 바로 보여야 한다 —
     // 필수 항목인데 접혀 있으면 유형이 있는지조차 알 수 없다.
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
     expect(
       screen.queryByRole('button', { name: /멘토링 유형 선택/ }),
     ).toBeNull();
@@ -46,37 +46,39 @@ describe('MentoringTypeSection', () => {
     render(
       <MentoringTypeSection
         items={ITEMS}
-        selectedIds={[]}
-        onToggle={jest.fn()}
+        selectedId={null}
+        onSelect={jest.fn()}
       />,
     );
 
-    expect(screen.getByRole('checkbox', { name: '자기소개서' })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: '이력서' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('radio', { name: '자기소개서' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '이력서' })).toBeInTheDocument();
     // 시안에만 있고 서버에는 없는 유형은 그리지 않는다
     expect(screen.queryByText('커피챗')).not.toBeInTheDocument();
   });
 
   it('여러 개를 동시에 고를 수 있다', () => {
-    const onToggle = jest.fn();
+    const onSelect = jest.fn();
     render(
-      <MentoringTypeSection
-        items={ITEMS}
-        selectedIds={[1]}
-        onToggle={onToggle}
-      />,
+      <MentoringTypeSection items={ITEMS} selectedId={1} onSelect={onSelect} />,
     );
 
-    expect(screen.getByRole('checkbox', { name: '자기소개서' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: '이력서' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: '자기소개서' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: '이력서' })).not.toBeChecked();
 
-    fireEvent.click(screen.getByRole('checkbox', { name: '이력서' }));
-    expect(onToggle).toHaveBeenCalledWith(2);
+    fireEvent.click(screen.getByRole('radio', { name: '이력서' }));
+    expect(onSelect).toHaveBeenCalledWith(2);
   });
 
   it('멘토가 등록한 유형이 없으면 안내 문구를 보여준다', () => {
     render(
-      <MentoringTypeSection items={[]} selectedIds={[]} onToggle={jest.fn()} />,
+      <MentoringTypeSection
+        items={[]}
+        selectedId={null}
+        onSelect={jest.fn()}
+      />,
     );
 
     expect(

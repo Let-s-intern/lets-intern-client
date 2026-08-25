@@ -7,8 +7,9 @@ type MentoringTypeItem =
 
 interface MentoringTypeSectionProps {
   items: MentoringTypeItem[];
-  selectedIds: number[];
-  onToggle: (typeId: number) => void;
+  /** 고른 유형. 하나만 고를 수 있어 배열이 아니다. */
+  selectedId: number | null;
+  onSelect: (typeId: number) => void;
 }
 
 /**
@@ -19,15 +20,16 @@ interface MentoringTypeSectionProps {
  * 신청 생성 DTO 가 `mentoringTypeIds`(Long)를 요구하는데, 상수로 만든 유형에는
  * 서버가 대조할 수 있는 id 가 없다. 멘토가 상세 페이지에서 쓴 카드가 곧 유형이다.
  *
- * 다중 선택이고, 최소 1개는 골라야 신청할 수 있다.
+ * **하나만** 고를 수 있고, 하나는 반드시 골라야 신청할 수 있다.
+ * 라디오를 쓴다 — 체크박스는 여러 개를 고를 수 있다고 읽힌다.
  *
  * **접지 않고 펼쳐 둔다.** 아코디언이었을 때는 신청 시트를 열어도 "멘토링 유형 선택"
  * 막대만 보여서, 필수 항목인데 유형이 있는지조차 알 수 없었다.
  */
 const MentoringTypeSection = ({
   items,
-  selectedIds,
-  onToggle,
+  selectedId,
+  onSelect,
 }: MentoringTypeSectionProps) => {
   return (
     <section className="flex flex-col gap-3">
@@ -59,9 +61,10 @@ const MentoringTypeSection = ({
               className="text-xsmall14 text-neutral-0 flex cursor-pointer items-center gap-2.5 px-4 py-3.5"
             >
               <input
-                type="checkbox"
-                checked={selectedIds.includes(item.id)}
-                onChange={() => onToggle(item.id)}
+                type="radio"
+                name="live-mentoring-type"
+                checked={selectedId === item.id}
+                onChange={() => onSelect(item.id)}
                 className="accent-primary h-4 w-4"
               />
               {item.typeName}

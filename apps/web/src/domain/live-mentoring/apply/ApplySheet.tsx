@@ -91,6 +91,12 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             onSelect={sheet.selectDuration}
           />
 
+          <MentoringTypeSection
+            items={detail.template.mentoringTypes.items}
+            selectedId={draft.mentoringTypeIds[0] ?? null}
+            onSelect={sheet.selectMentoringType}
+          />
+
           <ScheduleSelectSection
             slots={slots}
             duration={draft.duration}
@@ -101,12 +107,6 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
           <AgreementSection
             checked={draft.agreedToScheduleChange}
             onChange={sheet.setAgreed}
-          />
-
-          <MentoringTypeSection
-            items={detail.template.mentoringTypes.items}
-            selectedIds={draft.mentoringTypeIds}
-            onToggle={sheet.toggleMentoringType}
           />
 
           <PriceSummarySection

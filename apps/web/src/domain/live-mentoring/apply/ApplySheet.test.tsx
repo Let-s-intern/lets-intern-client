@@ -82,7 +82,7 @@ function fillEverything() {
   );
   // 60분 플랜은 연속 두 칸이 버튼 하나로 합쳐져 있다
   fireEvent.click(screen.getByRole('button', { name: '09:30 ~ 10:30' }));
-  fireEvent.click(screen.getByRole('checkbox', { name: '자기소개서' }));
+  fireEvent.click(screen.getByRole('radio', { name: '자기소개서' }));
   fireEvent.click(screen.getByRole('checkbox', { name: /예약 시간 변경/ }));
 }
 
