@@ -13,6 +13,7 @@ import GuidebookSection from '@/domain/mypage/application/section/GuidebookSecti
 import LaunchAlertSection from '@/domain/mypage/application/section/LaunchAlertSection';
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import MentoringSection from '@/domain/mypage/application/section/MentoringSection';
+import { useMyLiveMentoringApplicationsQuery } from '@/api/live-mentoring/liveMentoring';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -23,13 +24,22 @@ const ApplicationContent = () => {
     mypageApplicationsQueryOptions,
   );
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
+  /*
+    1대1 라이브 멘토링은 전용 API 로 온다. 프로그램 탭의 빈 상태를 판단하려면 여기서도
+    건수를 알아야 한다 — React Query 가 같은 키를 합치므로 요청이 늘지는 않는다.
+  */
+  const { data: mentoringData } = useMyLiveMentoringApplicationsQuery();
+  const mentoringCount = mentoringData?.applicationList?.length ?? 0;
 
   /*
-    라이브 멘토링은 전용 탭에서 별도 API(`/live-mentoring/applications/my`)로 그린다.
-    여기서 빼지 않으면 같은 신청이 프로그램 탭과 멘토링 탭에 두 번 뜬다.
+    라이브 멘토링은 이 목록에서 빼고 `MentoringSection` 으로 그린다.
 
-    `GET /api/v2/user/applications` 는 라이브 멘토링을 실제로 내려준다. 신청현황 쿼리의
-    `programType.ne(LIVE_MENTORING)` 제외는 그 엔드포인트가 아니라 다른 조회에 걸려 있다.
+    `GET /api/v2/user/applications` 도 라이브 멘토링을 내려주지만, 그 응답에는 질문
+    작성 여부가 없어 `멘토링 질문 작성/수정/확인` 라벨을 만들 수 없다. 전용 API
+    (`/live-mentoring/applications/my`)를 쓰는 `MentoringSection` 은 그 정보를 갖고
+    있어 `질문` 과 `멘토링 입장` 두 버튼을 제대로 그린다.
+
+    여기서 빼지 않으면 같은 신청이 프로그램 탭 안에서 두 번 뜬다.
   */
   const programApplications =
     applications?.filter(
@@ -57,10 +67,16 @@ const ApplicationContent = () => {
     applications?.filter((application) => application.programType === 'VOD') ??
     [];
 
+  const hasProgramApplications =
+    programWaitingList.length > 0 ||
+    programInProgressList.length > 0 ||
+    programCompletedList.length > 0;
+
   const isProgramEmpty =
     programWaitingList.length === 0 &&
     programInProgressList.length === 0 &&
-    programCompletedList.length === 0;
+    programCompletedList.length === 0 &&
+    mentoringCount === 0;
 
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
@@ -82,13 +98,29 @@ const ApplicationContent = () => {
               />
             ) : (
               <>
-                <ApplySection
-                  applicationList={programWaitingList}
-                  hasInProgress={programInProgressList.length > 0}
-                  hasCompleted={programCompletedList.length > 0}
-                />
-                <ParticipateSection applicationList={programInProgressList} />
-                <CompleteSection applicationList={programCompletedList} />
+                {/*
+                  프로그램 신청이 하나도 없으면 세 구간을 통째로 감춘다.
+                  감추지 않으면 "참여 예정인 프로그램이 없어요" 세 줄이 뜬 아래에
+                  멘토링 카드가 붙어, 없다고 해놓고 보여주는 화면이 된다.
+                */}
+                {hasProgramApplications && (
+                  <>
+                    <ApplySection
+                      applicationList={programWaitingList}
+                      hasInProgress={programInProgressList.length > 0}
+                      hasCompleted={programCompletedList.length > 0}
+                    />
+                    <ParticipateSection
+                      applicationList={programInProgressList}
+                    />
+                    <CompleteSection applicationList={programCompletedList} />
+                  </>
+                )}
+                {/*
+                  1대1 라이브 멘토링도 커리어 성장 프로그램에 함께 보여준다.
+                  `멘토링 질문 작성` 과 `멘토링 입장` 버튼이 붙은 전용 카드를 그대로 쓴다.
+                */}
+                <MentoringSection showEmptyState={false} />
               </>
             )}
           </>

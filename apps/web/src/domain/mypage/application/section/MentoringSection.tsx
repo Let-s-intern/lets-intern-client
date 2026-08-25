@@ -43,7 +43,17 @@ const PHASE_ORDER: MentoringCardPhase[] = ['upcoming', 'ongoing', 'ended'];
  * 감춘다 — 시안에 세 제목이 다 있지만, 실제로는 대부분 "참여 예정" 하나만 차므로
  * 빈 제목 두 개가 남으면 뭔가 사라진 것처럼 보인다.
  */
-const MentoringSection = () => {
+interface MentoringSectionProps {
+  /**
+   * 비었을 때 안내를 띄울지. 멘토링 탭에서는 띄우고, 프로그램 탭에 얹을 때는 끈다 —
+   * 프로그램 탭에는 이미 자체 빈 상태가 있어 두 개가 겹친다.
+   */
+  showEmptyState?: boolean;
+}
+
+const MentoringSection = ({
+  showEmptyState = true,
+}: MentoringSectionProps = {}) => {
   const { data, isLoading } = useMyLiveMentoringApplicationsQuery();
   const [openApplicationId, setOpenApplicationId] = useState<number | null>(
     null,
@@ -56,6 +66,7 @@ const MentoringSection = () => {
   }
 
   if (applications.length === 0) {
+    if (!showEmptyState) return null;
     return (
       <EmptySection
         text="아직 신청한 1:1 멘토링이 없어요"
