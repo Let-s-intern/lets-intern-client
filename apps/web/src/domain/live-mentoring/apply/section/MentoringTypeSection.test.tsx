@@ -25,7 +25,7 @@ const ITEMS = [
 ];
 
 describe('MentoringTypeSection', () => {
-  it('처음에는 접혀 있고 헤더를 누르면 펴진다', () => {
+  it('접히지 않고 처음부터 펼쳐져 있다', () => {
     render(
       <MentoringTypeSection
         items={ITEMS}
@@ -34,17 +34,12 @@ describe('MentoringTypeSection', () => {
       />,
     );
 
-    const header = screen.getByRole('button', { name: /멘토링 유형 선택/ });
-    expect(header).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByRole('checkbox')).toBeNull();
-
-    fireEvent.click(header);
-
-    expect(header).toHaveAttribute('aria-expanded', 'true');
+    // 아코디언을 없앴다. 여는 동작 없이 바로 보여야 한다 —
+    // 필수 항목인데 접혀 있으면 유형이 있는지조차 알 수 없다.
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-
-    fireEvent.click(header);
-    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: /멘토링 유형 선택/ }),
+    ).toBeNull();
   });
 
   it('서버가 준 유형 이름을 그대로 쓴다', () => {
@@ -55,7 +50,6 @@ describe('MentoringTypeSection', () => {
         onToggle={jest.fn()}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: /멘토링 유형 선택/ }));
 
     expect(screen.getByRole('checkbox', { name: '자기소개서' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: '이력서' })).toBeInTheDocument();
@@ -72,7 +66,6 @@ describe('MentoringTypeSection', () => {
         onToggle={onToggle}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: /멘토링 유형 선택/ }));
 
     expect(screen.getByRole('checkbox', { name: '자기소개서' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: '이력서' })).not.toBeChecked();
@@ -85,7 +78,6 @@ describe('MentoringTypeSection', () => {
     render(
       <MentoringTypeSection items={[]} selectedIds={[]} onToggle={jest.fn()} />,
     );
-    fireEvent.click(screen.getByRole('button', { name: /멘토링 유형 선택/ }));
 
     expect(
       screen.getByText('멘토가 등록한 멘토링 유형이 없습니다.'),
