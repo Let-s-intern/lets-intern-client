@@ -4,7 +4,10 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { useCreateLiveMentoringApplicationMutation } from '@/api/live-mentoring/liveMentoring';
-import { useOrderDraftStore, type LiveMentoringOrderDraft } from './useOrderDraft';
+import {
+  useOrderDraftStore,
+  type LiveMentoringOrderDraft,
+} from './useOrderDraft';
 import { useOrderSubmit } from './useOrderSubmit';
 import { EMPTY_QUESTION, type QuestionInput } from '../types';
 
@@ -276,11 +279,14 @@ describe('useOrderSubmit — 실패 처리', () => {
         serverMessage 가 최상위에 있다 — 목도 실제 형태를 따라야 분기를 검증한다.
       */
       options.onError(
-        Object.assign(new Error('선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.'), {
-          code: 'LIVE_MENTORING_SLOT_UNAVAILABLE',
-          status: 409,
-          serverMessage: '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
-        }),
+        Object.assign(
+          new Error('선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.'),
+          {
+            code: 'LIVE_MENTORING_SLOT_UNAVAILABLE',
+            status: 409,
+            serverMessage: '선택한 라이브 멘토링 슬롯을 예약할 수 없습니다.',
+          },
+        ),
       ),
     );
     const { result } = setup();
@@ -320,9 +326,11 @@ describe('useOrderSubmit — 실패 처리', () => {
   it('응답에 문구가 없어도 빈 화면을 남기지 않는다', async () => {
     // 인터셉터를 타지 못한 네트워크 오류. 서버 문구가 없다.
     mutate.mockImplementation((_body, options) =>
-      options.onError(Object.assign(new Error('서버 오류가 발생했습니다.'), {
-        code: 'API_ERROR',
-      })),
+      options.onError(
+        Object.assign(new Error('서버 오류가 발생했습니다.'), {
+          code: 'API_ERROR',
+        }),
+      ),
     );
     const { result } = setup();
 

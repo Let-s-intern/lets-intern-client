@@ -79,7 +79,9 @@ describe('OrderProgramInfo — 1대1 라이브 멘토링', () => {
     );
 
     expect(screen.getByText('예약 일시')).toBeInTheDocument();
-    expect(screen.getByText(/2026\.09\.13 .* 10:00 ~ 11:00/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/2026\.09\.13 .* 10:00 ~ 11:00/),
+    ).toBeInTheDocument();
     // 기간 표기로 새지 않는다
     expect(screen.queryByText('진행 일정')).not.toBeInTheDocument();
   });

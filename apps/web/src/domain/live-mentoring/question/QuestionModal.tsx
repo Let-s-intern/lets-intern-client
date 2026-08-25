@@ -116,7 +116,8 @@ const QuestionModal = ({
   */
   const shownQuestionError =
     draft && draft.content.trim().length === 0 ? null : questionError;
-  const canSave = canEdit && questionError === null && !updateQuestion.isPending;
+  const canSave =
+    canEdit && questionError === null && !updateQuestion.isPending;
 
   const handleSave = () => {
     if (!draft || !canSave) return;
@@ -183,9 +184,9 @@ const QuestionModal = ({
                 멘토링 질문
               </span>
               <p className="text-xxsmall12 text-neutral-45">
-                * 멘토에게 미리 전달할 질문을 작성해 주세요. 함께 보면 좋을 파일이
-                있다면 첨부해주세요. 멘토링 예약 시간 24시간 전까지 수정할 수
-                있어요.
+                * 멘토에게 미리 전달할 질문을 작성해 주세요. 함께 보면 좋을
+                파일이 있다면 첨부해주세요. 멘토링 예약 시간 24시간 전까지
+                수정할 수 있어요.
               </p>
               <textarea
                 aria-label="멘토링 질문"
@@ -225,7 +226,9 @@ const QuestionModal = ({
                   type="file"
                   accept={ACCEPTED_FILE_TYPES}
                   className="hidden"
-                  onChange={(event) => handleFileSelect(event.target.files?.[0])}
+                  onChange={(event) =>
+                    handleFileSelect(event.target.files?.[0])
+                  }
                 />
                 <button
                   type="button"

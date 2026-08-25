@@ -58,7 +58,9 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   */
   useEffect(() => {
     if (draft) return;
-    router.replace(mentorId ? `/live-mentoring/${mentorId}` : '/live-mentoring');
+    router.replace(
+      mentorId ? `/live-mentoring/${mentorId}` : '/live-mentoring',
+    );
   }, [draft, mentorId, router]);
 
   if (!draft) {

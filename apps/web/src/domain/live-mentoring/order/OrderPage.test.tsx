@@ -97,14 +97,18 @@ describe('OrderPage 진입 가드', () => {
   it('멘토 id 도 없으면 목록으로 되돌려보낸다', async () => {
     render(<OrderPage mentorId={null} />);
 
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/live-mentoring'));
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith('/live-mentoring'),
+    );
   });
 
   it('선택값이 있으면 되돌려보내지 않고 결제 화면을 그린다', async () => {
     useOrderDraftStore.getState().setDraft(DRAFT);
     render(<OrderPage mentorId="1" />);
 
-    expect(await screen.findByRole('heading', { name: '결제하기' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: '결제하기' }),
+    ).toBeInTheDocument();
     expect(replace).not.toHaveBeenCalled();
   });
 

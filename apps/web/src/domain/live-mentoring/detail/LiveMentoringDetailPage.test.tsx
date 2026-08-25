@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 
 import axios from '@/utils/axios';
 import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
@@ -377,7 +383,9 @@ describe('LiveMentoringDetailPage', () => {
 
     fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
 
-    expect(screen.getByRole('dialog', { name: '1대1 멘토링 신청' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: '1대1 멘토링 신청' }),
+    ).toBeInTheDocument();
     expect(alertSpy).not.toHaveBeenCalled();
     alertSpy.mockRestore();
   });

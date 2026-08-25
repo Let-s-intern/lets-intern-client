@@ -59,8 +59,8 @@ const ApplicantFormSection = ({
           렛츠커리어 정보 수신용 이메일
         </span>
         <p className="text-xxsmall12 text-neutral-45">
-          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는 이메일
-          주소를 입력해주세요!
+          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는
+          이메일 주소를 입력해주세요!
         </p>
 
         <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center gap-2 py-1">

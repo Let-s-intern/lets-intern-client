@@ -330,9 +330,8 @@ function makeCreateRequest(overrides: Record<string, unknown> = {}) {
 
 describe('createLiveMentoringApplicationRequestSchema', () => {
   it('필수 필드만 담은 페이로드를 통과시킨다', () => {
-    const parsed = createLiveMentoringApplicationRequestSchema.parse(
-      makeCreateRequest(),
-    );
+    const parsed =
+      createLiveMentoringApplicationRequestSchema.parse(makeCreateRequest());
     expect(parsed.slotIds).toEqual([142]);
     expect(parsed.question.attachmentType).toBe('NONE');
   });

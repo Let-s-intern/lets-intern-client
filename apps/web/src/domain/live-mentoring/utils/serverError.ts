@@ -40,6 +40,7 @@ export function readServerError(
   return {
     code,
     // 인터셉터가 서버 문구를 못 찾으면 자체 문구를 넣는다. 그건 사용자에게 쓸모없다.
-    message: message === '서버 오류가 발생했습니다.' ? fallbackMessage : message,
+    message:
+      message === '서버 오류가 발생했습니다.' ? fallbackMessage : message,
   };
 }

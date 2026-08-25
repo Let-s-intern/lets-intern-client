@@ -313,7 +313,11 @@ export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;
  * 질문 첨부 종류 — 백엔드 `LiveMentoringAttachmentType`.
  * 상수 이름이 곧 직렬화 값이다. 오타는 컴파일러를 통과해 런타임까지 살아남는다.
  */
-export const liveMentoringAttachmentTypeSchema = z.enum(['NONE', 'FILE', 'URL']);
+export const liveMentoringAttachmentTypeSchema = z.enum([
+  'NONE',
+  'FILE',
+  'URL',
+]);
 export type LiveMentoringAttachmentType = z.infer<
   typeof liveMentoringAttachmentTypeSchema
 >;

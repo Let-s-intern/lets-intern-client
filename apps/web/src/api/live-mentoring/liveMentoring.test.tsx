@@ -451,7 +451,10 @@ describe('useCreateLiveMentoringApplicationMutation', () => {
     const serverError = Object.assign(new Error('Request failed'), {
       response: {
         status: 409,
-        data: { message: '이미 예약된 슬롯입니다.', code: 'SLOT_ALREADY_TAKEN' },
+        data: {
+          message: '이미 예약된 슬롯입니다.',
+          code: 'SLOT_ALREADY_TAKEN',
+        },
       },
     });
     axiosPost.mockRejectedValue(serverError);

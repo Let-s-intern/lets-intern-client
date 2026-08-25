@@ -7,7 +7,9 @@ const Page = async ({
   params: Promise<{ applicationId: string }>;
 }) => {
   const { applicationId } = await params;
-  return <LiveMentoringCreditDeletePage applicationId={Number(applicationId)} />;
+  return (
+    <LiveMentoringCreditDeletePage applicationId={Number(applicationId)} />
+  );
 };
 
 export default Page;

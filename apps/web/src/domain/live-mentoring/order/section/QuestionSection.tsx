@@ -123,9 +123,7 @@ const QuestionSection = ({ value, onChange }: QuestionSectionProps) => {
                 type="radio"
                 name="live-mentoring-attachment"
                 checked={value.attachmentType === 'FILE'}
-                onChange={() =>
-                  patch({ attachmentType: 'FILE', url: '' })
-                }
+                onChange={() => patch({ attachmentType: 'FILE', url: '' })}
                 className="accent-primary h-4 w-4"
               />
               파일 첨부{' '}

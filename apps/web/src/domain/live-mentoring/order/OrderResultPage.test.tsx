@@ -180,7 +180,9 @@ describe('OrderFailPage', () => {
     expect(
       screen.getByText('사용자가 결제를 취소하였습니다.'),
     ).toBeInTheDocument();
-    expect(screen.getByText('오류 코드: PAY_PROCESS_CANCELED')).toBeInTheDocument();
+    expect(
+      screen.getByText('오류 코드: PAY_PROCESS_CANCELED'),
+    ).toBeInTheDocument();
   });
 
   /*

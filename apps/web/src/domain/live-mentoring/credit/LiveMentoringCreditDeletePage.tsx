@@ -31,7 +31,9 @@ const Row = ({
   accent?: boolean;
 }) => (
   <div className="flex w-full items-center justify-between gap-4 text-sm">
-    <span className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}>
+    <span
+      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}
+    >
       {label}
     </span>
     <span
@@ -73,7 +75,9 @@ const LiveMentoringCreditDeletePage = ({
 
   // 서버가 취소 불가로 판단한 건은 버튼을 열지 않는다.
   const canCancel =
-    isConfirmed && (refundPreview?.cancelable ?? false) && !cancelApplication.isPending;
+    isConfirmed &&
+    (refundPreview?.cancelable ?? false) &&
+    !cancelApplication.isPending;
 
   const handleCancel = () => {
     if (!canCancel) return;

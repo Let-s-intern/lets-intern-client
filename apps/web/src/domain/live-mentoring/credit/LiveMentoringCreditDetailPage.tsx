@@ -18,10 +18,14 @@ const Row = ({
   strong?: boolean;
 }) => (
   <div className="flex w-full items-center justify-between gap-4 text-sm">
-    <span className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}>
+    <span
+      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}
+    >
       {label}
     </span>
-    <span className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-0'}>
+    <span
+      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-0'}
+    >
       {value}
     </span>
   </div>
@@ -117,7 +121,10 @@ const LiveMentoringCreditDetailPage = ({
             <div className="flex w-full flex-col gap-y-3">
               <Row label="이름" value={user?.name ?? '-'} />
               <Row label="휴대폰 번호" value={user?.phoneNum ?? '-'} />
-              <Row label="이메일" value={user?.contactEmail ?? user?.email ?? '-'} />
+              <Row
+                label="이메일"
+                value={user?.contactEmail ?? user?.email ?? '-'}
+              />
             </div>
           </div>
 

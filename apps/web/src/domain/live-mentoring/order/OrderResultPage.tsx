@@ -148,7 +148,9 @@ const OrderResultPage = () => {
       <div className="flex w-full max-w-[480px] gap-3">
         <button
           type="button"
-          onClick={() => router.push(`/live-mentoring/${draft?.mentorId ?? ''}`)}
+          onClick={() =>
+            router.push(`/live-mentoring/${draft?.mentorId ?? ''}`)
+          }
           className="border-primary text-primary text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
         >
           멘토 페이지로

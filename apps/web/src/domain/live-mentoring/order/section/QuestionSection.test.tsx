@@ -127,9 +127,15 @@ describe('QuestionSection — 파일 업로드', () => {
 
     fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
     const file = new File(['x'], 'resume.pdf', { type: 'application/pdf' });
-    fireEvent.change(screen.getByLabelText('멘토링 질문 작성').closest('section')!.querySelector('input[type=file]')!, {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      screen
+        .getByLabelText('멘토링 질문 작성')
+        .closest('section')!
+        .querySelector('input[type=file]')!,
+      {
+        target: { files: [file] },
+      },
+    );
 
     await waitFor(() => expect(latest.fileId).toBe(9001));
     expect(uploadMock).toHaveBeenCalledWith({
@@ -145,12 +151,20 @@ describe('QuestionSection — 파일 업로드', () => {
     render(<Harness />);
 
     fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
-    fireEvent.change(screen.getByLabelText('멘토링 질문 작성').closest('section')!.querySelector('input[type=file]')!, {
-      target: { files: [new File(['x'], 'resume.pdf')] },
-    });
+    fireEvent.change(
+      screen
+        .getByLabelText('멘토링 질문 작성')
+        .closest('section')!
+        .querySelector('input[type=file]')!,
+      {
+        target: { files: [new File(['x'], 'resume.pdf')] },
+      },
+    );
 
     expect(
-      await screen.findByText('파일 업로드에 실패했습니다. 다시 시도해 주세요.'),
+      await screen.findByText(
+        '파일 업로드에 실패했습니다. 다시 시도해 주세요.',
+      ),
     ).toBeInTheDocument();
     expect(latest.fileId).toBeNull();
   });

@@ -12,7 +12,9 @@ const Page = async ({
   params: Promise<{ applicationId: string }>;
 }) => {
   const { applicationId } = await params;
-  return <LiveMentoringCreditDetailPage applicationId={Number(applicationId)} />;
+  return (
+    <LiveMentoringCreditDetailPage applicationId={Number(applicationId)} />
+  );
 };
 
 export default Page;

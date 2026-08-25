@@ -9,7 +9,8 @@ const COUPON_ERROR_MESSAGES: Record<string, string> = {
   COUPON_NOT_FOUND: '존재하지 않는 쿠폰 번호입니다.',
   COUPON_NOT_AVAILABLE_DATE: '사용 가능 기간이 아닌 쿠폰입니다.',
   COUPON_NOT_AVAILABLE_TIME: '사용 횟수가 초과된 쿠폰입니다.',
-  COUPON_NOT_AVAILABLE_PROGRAM_TYPE: '1대1 라이브 멘토링에 사용할 수 없는 쿠폰입니다.',
+  COUPON_NOT_AVAILABLE_PROGRAM_TYPE:
+    '1대1 라이브 멘토링에 사용할 수 없는 쿠폰입니다.',
   COUPON_NOT_AVAILABLE_ISSUE_TARGET: '쿠폰 사용 대상이 아닙니다.',
 };
 
@@ -46,9 +47,7 @@ export function useLiveMentoringCoupon() {
         error,
         '쿠폰을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
       );
-      setErrorMessage(
-        (code && COUPON_ERROR_MESSAGES[code]) || message,
-      );
+      setErrorMessage((code && COUPON_ERROR_MESSAGES[code]) || message);
       setAppliedCode(null);
       setDiscount(null);
     } finally {

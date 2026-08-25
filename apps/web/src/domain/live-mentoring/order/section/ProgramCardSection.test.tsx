@@ -38,7 +38,9 @@ describe('ProgramCardSection', () => {
   it('60분 플랜의 연속 2슬롯을 한 구간으로 합쳐 보여준다', () => {
     render(<ProgramCardSection draft={makeDraft()} />);
 
-    expect(screen.getByText('2026.09.19 (토) 12:00 ~ 13:00')).toBeInTheDocument();
+    expect(
+      screen.getByText('2026.09.19 (토) 12:00 ~ 13:00'),
+    ).toBeInTheDocument();
     expect(screen.getByText('60분')).toBeInTheDocument();
   });
 
@@ -53,7 +55,9 @@ describe('ProgramCardSection', () => {
       />,
     );
 
-    expect(screen.getByText('2026.09.19 (토) 10:30 ~ 11:00')).toBeInTheDocument();
+    expect(
+      screen.getByText('2026.09.19 (토) 10:30 ~ 11:00'),
+    ).toBeInTheDocument();
     expect(screen.getByText('30분')).toBeInTheDocument();
   });
 
@@ -67,7 +71,9 @@ describe('ProgramCardSection', () => {
       />,
     );
 
-    expect(screen.getByText('2026.09.19 (토) 12:00 ~ 13:00')).toBeInTheDocument();
+    expect(
+      screen.getByText('2026.09.19 (토) 12:00 ~ 13:00'),
+    ).toBeInTheDocument();
   });
 
   it('상품명과 1:1 LIVE 멘토링 라벨을 함께 보여준다', () => {

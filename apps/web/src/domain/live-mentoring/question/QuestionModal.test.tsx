@@ -69,7 +69,9 @@ describe('QuestionModal — 시안 3-1 (미작성)', () => {
 
     expect(screen.getByLabelText('멘토링 질문')).toHaveValue('');
     expect(screen.getByRole('button', { name: '닫기' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '저장하기' }),
+    ).toBeInTheDocument();
   });
 
   /*
@@ -127,8 +129,12 @@ describe('QuestionModal — 시안 3-2 (작성됨)', () => {
     expect(screen.getByLabelText('멘토링 질문')).toHaveValue(
       '이력서에서 직무 적합성이 잘 드러나는지 봐주세요.',
     );
-    expect(screen.getByRole('button', { name: '수정 취소' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '수정하기' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '수정 취소' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '수정하기' }),
+    ).toBeInTheDocument();
   });
 
   it('첨부 URL 이 있으면 초기값으로 채운다', () => {

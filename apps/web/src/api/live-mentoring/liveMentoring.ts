@@ -204,9 +204,7 @@ export const useMyLiveMentoringApplicationsQuery = () => {
  * 응답의 `editable` 을 그대로 쓴다. 화면에서 48시간을 다시 계산하면 서버와 시계가
  * 어긋나 저장 시점에 거부된다.
  */
-export const useLiveMentoringQuestionQuery = (
-  applicationId: number | null,
-) => {
+export const useLiveMentoringQuestionQuery = (applicationId: number | null) => {
   return useQuery({
     queryKey: [...LIVE_MENTORING_QUESTION_QUERY_KEY, { applicationId }],
     queryFn: async () => {

@@ -10,11 +10,14 @@ import { readServerError } from './serverError';
 */
 describe('readServerError', () => {
   it('인터셉터가 만든 ApiError 에서 코드와 문구를 읽는다', () => {
-    const apiError = Object.assign(new Error('이미 취소된 라이브 멘토링 신청입니다.'), {
-      code: 'LIVE_MENTORING_ALREADY_CANCELED',
-      status: 409,
-      serverMessage: '이미 취소된 라이브 멘토링 신청입니다.',
-    });
+    const apiError = Object.assign(
+      new Error('이미 취소된 라이브 멘토링 신청입니다.'),
+      {
+        code: 'LIVE_MENTORING_ALREADY_CANCELED',
+        status: 409,
+        serverMessage: '이미 취소된 라이브 멘토링 신청입니다.',
+      },
+    );
 
     expect(readServerError(apiError)).toEqual({
       code: 'LIVE_MENTORING_ALREADY_CANCELED',
