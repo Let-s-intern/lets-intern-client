@@ -206,7 +206,9 @@ const ChallengeBasic = React.memo(
           label="제목"
           type="text"
           name="title"
-          placeholder="제목을 입력해주세요"
+          // [임시] LC-3213 — 챌린지에 버전 필드가 없어 제목 맨 앞 대괄호를 버전으로
+          // 읽는다. 버전이 데이터로 들어오면 이 안내 문구를 되돌린다.
+          placeholder="제목을 입력해주세요 (맨 앞 [ ]는 버전 태그로 표시)"
           defaultValue={defaultValue?.title}
           size="small"
           onChange={onChange}

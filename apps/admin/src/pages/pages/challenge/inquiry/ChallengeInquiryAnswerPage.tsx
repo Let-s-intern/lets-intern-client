@@ -74,6 +74,27 @@ const ChallengeInquiryAnswerPage = () => {
         <div className="whitespace-pre-wrap rounded border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800">
           {question.content}
         </div>
+
+        {question.imageUrls?.length > 0 && (
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {question.imageUrls.map((url) => (
+              <li key={url}>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="원본 보기"
+                >
+                  <img
+                    src={url}
+                    alt="첨부 이미지"
+                    className="h-28 w-28 rounded border border-gray-200 object-cover"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="mb-8">

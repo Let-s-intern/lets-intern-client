@@ -39,52 +39,57 @@ const MentorProgramContainer = (props: MentorProgramContainerProps) => {
           text={props.emptyText || '등록된 콘텐츠가 없습니다.'}
         />
       ) : (
-        <Swiper
-          key={props.title + '-slide'}
-          className="w-full"
-          modules={[Grid]}
-          slidesPerView={2.4}
-          grid={
-            !isMobile && props.showGrid
-              ? { rows: 2, fill: 'row' }
-              : { rows: 1, fill: 'row' }
-          }
-          spaceBetween={12}
-          slidesOffsetBefore={20}
-          slidesOffsetAfter={20}
-          breakpoints={{
-            768: {
-              spaceBetween: 16,
-              slidesPerView: 3,
-              slidesOffsetBefore: 20,
-              slidesOffsetAfter: 20,
-            },
-            820: {
-              spaceBetween: 16,
-              slidesPerView: 4,
-              slidesOffsetBefore: 20,
-              slidesOffsetAfter: 20,
-            },
-            1040: {
-              spaceBetween: 16,
-              slidesPerView: 5,
-              slidesOffsetBefore: 20,
-              slidesOffsetAfter: 20,
-            },
-            1280: {
-              spaceBetween: 16,
-              slidesPerView: 5,
-              slidesOffsetBefore: 0,
-              slidesOffsetAfter: 0,
-            },
-          }}
-        >
-          {props.programs.map((program, index) => (
-            <SwiperSlide key={index}>
-              <MentorProgramItem {...program} className={props.gaItem} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="-mx-5 md:mx-0">
+          <Swiper
+            key={props.title + '-slide'}
+            className="w-full"
+            modules={[Grid]}
+            slidesPerView={2.4}
+            grid={
+              !isMobile && props.showGrid
+                ? { rows: 2, fill: 'row' }
+                : { rows: 1, fill: 'row' }
+            }
+            spaceBetween={12}
+            slidesOffsetBefore={20}
+            slidesOffsetAfter={20}
+            breakpoints={{
+              768: {
+                spaceBetween: 16,
+                slidesPerView: 3,
+                slidesOffsetBefore: 20,
+                slidesOffsetAfter: 20,
+              },
+              820: {
+                spaceBetween: 16,
+                slidesPerView: 4,
+                slidesOffsetBefore: 20,
+                slidesOffsetAfter: 20,
+              },
+              1040: {
+                spaceBetween: 16,
+                slidesPerView: 5,
+                slidesOffsetBefore: 20,
+                slidesOffsetAfter: 20,
+              },
+              1280: {
+                spaceBetween: 16,
+                slidesPerView: 5,
+                slidesOffsetBefore: 0,
+                slidesOffsetAfter: 0,
+              },
+            }}
+          >
+            {props.programs.map((program, index) => (
+              <SwiperSlide
+                key={index}
+                className="!w-[41%] shrink-0 min-[768px]:!w-[32%] min-[820px]:!w-[24%] min-[1040px]:!w-[19%]"
+              >
+                <MentorProgramItem {...program} className={props.gaItem} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       )}
     </div>
   );

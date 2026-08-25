@@ -1,15 +1,24 @@
 import {
   CATEGORIES,
+  COURSE_PLAN_BODY,
+  COURSE_PLAN_HEADER,
+  COURSE_TAG_LABEL,
+  type CourseTag,
   MATRIX_CELL_MAP,
   MATRIX_CELLS,
   matrixCellKey,
   MONTH_GROUPS,
   Owner,
+  PLAYBOOK_CAPTION_LINES,
+  PLAYBOOK_SHOT_ALT,
+  PLAYBOOK_SHOT_SIZE,
+  PLAYBOOK_SHOT_SRC,
   STEPS,
   WEEKS,
 } from './coursePlan';
 
 const VALID_OWNERS: Owner[] = ['self', 'free', 'challenge', 'challenge-deep'];
+const VALID_TAGS: CourseTag[] = ['free', 'template', 'checklist', 'challenge'];
 
 describe('coursePlan 데이터 무결성', () => {
   describe('매트릭스 차원', () => {
@@ -53,12 +62,50 @@ describe('coursePlan 데이터 무결성', () => {
         expect(cell.desc.length).toBeGreaterThan(0);
       }
     });
+
+    it('모든 셀이 배지(tag) 4종 중 하나를 갖고 라벨이 비어 있지 않다', () => {
+      for (const cell of MATRIX_CELLS) {
+        expect(VALID_TAGS).toContain(cell.tag);
+        expect(COURSE_TAG_LABEL[cell.tag].length).toBeGreaterThan(0);
+      }
+    });
+
+    it('배지 라벨은 시안 문구 4종이다', () => {
+      expect(COURSE_TAG_LABEL).toEqual({
+        free: '무료 자료 제공',
+        template: '템플릿 제공',
+        checklist: '체크리스트 제공',
+        challenge: '챌린지',
+      });
+    });
+  });
+
+  describe('헤더 카피', () => {
+    it('섹션 헤더는 배지·2줄 제목·설명을 갖는다', () => {
+      expect(COURSE_PLAN_HEADER.badge.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_HEADER.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_HEADER.subLines.length).toBeGreaterThan(0);
+    });
+
+    it('섹션 헤더의 강조 어절이 제목 안에 실제로 존재한다', () => {
+      const title = COURSE_PLAN_HEADER.titleLines.join(' ');
+      for (const word of COURSE_PLAN_HEADER.titleHighlights) {
+        expect(title).toContain(word);
+      }
+    });
+
+    it('본문 도입부와 매트릭스 캡션 문구가 비어 있지 않다', () => {
+      expect(COURSE_PLAN_BODY.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_BODY.sub.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixTitle.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixSub.length).toBeGreaterThan(0);
+    });
   });
 
   describe('13주 타임라인', () => {
-    it('월 그룹은 3종(JUL/AUG/SEP)이며 액센트색을 갖는다', () => {
+    it('월 그룹은 3종(SEP/OCT/NOV)이며 액센트색을 갖는다', () => {
       expect(MONTH_GROUPS).toHaveLength(3);
-      expect(MONTH_GROUPS.map((m) => m.month)).toEqual(['JUL', 'AUG', 'SEP']);
+      expect(MONTH_GROUPS.map((m) => m.month)).toEqual(['SEP', 'OCT', 'NOV']);
       for (const m of MONTH_GROUPS) {
         expect(m.accent).toMatch(/^#[0-9a-f]{6}$/i);
       }
@@ -87,6 +134,31 @@ describe('coursePlan 데이터 무결성', () => {
     it('모든 주차에 title 이 비어있지 않다', () => {
       for (const item of WEEKS) {
         expect(item.title.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('플레이북 화면 컷', () => {
+    it('반입 이미지는 WebP 다', () => {
+      // PRD 7-3: PNG·JPG 반입 금지.
+      expect(PLAYBOOK_SHOT_SRC.endsWith('.webp')).toBe(true);
+    });
+
+    it('표시 폭 300px 의 @2x 크기다', () => {
+      // 시안에서 매트릭스(1080px) 대비 27.65% 로 잰 값이다.
+      // 이 비율이 깨지면 시안과 화면이 어긋난다.
+      expect(PLAYBOOK_SHOT_SIZE.width).toBe(600);
+      expect(PLAYBOOK_SHOT_SIZE.height).toBe(1070);
+    });
+
+    it('alt 는 이름표가 아니라 화면 내용을 옮긴 문장이다', () => {
+      expect(PLAYBOOK_SHOT_ALT.length).toBeGreaterThan(30);
+    });
+
+    it('마무리 문구가 의도된 줄바꿈 단위로 나뉘어 있다', () => {
+      expect(PLAYBOOK_CAPTION_LINES).toHaveLength(2);
+      for (const line of PLAYBOOK_CAPTION_LINES) {
+        expect(line.length).toBeGreaterThan(0);
       }
     });
   });

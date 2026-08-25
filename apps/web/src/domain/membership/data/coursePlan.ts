@@ -34,7 +34,7 @@ export type Owner = 'self' | 'free' | 'challenge' | 'challenge-deep';
 export type CourseTag = 'free' | 'template' | 'checklist' | 'challenge';
 
 export const COURSE_TAG_LABEL: Record<CourseTag, string> = {
-  free: '무료 자료',
+  free: '무료 자료 제공',
   template: '템플릿 제공',
   checklist: '체크리스트 제공',
   challenge: '챌린지',
@@ -79,7 +79,7 @@ export interface WeekItem {
   /** 묶음 카드의 끝 주차(없으면 단일 주차) */
   weekEnd?: number;
   /** 소속 월 */
-  month: 'JUL' | 'AUG' | 'SEP';
+  month: 'SEP' | 'OCT' | 'NOV';
   /** 주차 핵심 과업명 */
   title: string;
   /** 보조 설명 */
@@ -89,7 +89,7 @@ export interface WeekItem {
 }
 
 export interface MonthGroup {
-  month: 'JUL' | 'AUG' | 'SEP';
+  month: 'SEP' | 'OCT' | 'NOV';
   /** 월 성격 타이틀 */
   title: string;
   /** 월 서브 카피 */
@@ -122,8 +122,8 @@ export const CATEGORIES: Category[] = [
 
 /** 큰 구간 메타. STEP01–02 준비 / STEP03–05 실전. */
 export const PHASES: { id: Phase; label: string; range: string }[] = [
-  { id: 'prep', label: '준비 단계', range: 'JUL–AUG' },
-  { id: 'live', label: '실전 단계', range: 'AUG–SEP' },
+  { id: 'prep', label: '준비 단계', range: 'SEP–OCT' },
+  { id: 'live', label: '실전 단계', range: 'OCT–NOV' },
 ];
 
 // 매트릭스 셀 — 6 카테고리 × STEP01~05. 서류 작성 STEP03 은 2셀(이력서 + 대기업 자소서).
@@ -409,7 +409,7 @@ export function matrixCellKey(step: StepId, category: CategoryId): string {
 
 export const MONTH_GROUPS: MonthGroup[] = [
   {
-    month: 'JUL',
+    month: 'SEP',
     title: '기반 다지기',
     sub: '리서치로 방향 잡고, 시간 걸리는 서류 먼저',
     badge: 'RESEARCH',
@@ -418,7 +418,7 @@ export const MONTH_GROUPS: MonthGroup[] = [
     badgeFg: '#1c8597',
   },
   {
-    month: 'AUG',
+    month: 'OCT',
     title: '콘텐츠 쌓기',
     sub: '경험정리 → 이력서·자소서 챌린지로',
     badge: 'BUILD',
@@ -427,7 +427,7 @@ export const MONTH_GROUPS: MonthGroup[] = [
     badgeFg: '#c46f10',
   },
   {
-    month: 'SEP',
+    month: 'NOV',
     title: '실전 대비',
     sub: '지원 → 인적성·게임 → 면접까지',
     badge: 'GAME TIME',
@@ -439,82 +439,82 @@ export const MONTH_GROUPS: MonthGroup[] = [
 
 // 월별 13주 타임라인 — 시안 원문 그대로. 12·13 주는 하나의 묶음 카드.
 export const WEEKS: WeekItem[] = [
-  // JUL
+  // SEP
   {
     week: 1,
-    month: 'JUL',
+    month: 'SEP',
     title: '산업 분석',
     desc: '관심 산업 2~3개 시장 규모·성장성·최신 이슈·밸류체인 정리',
     isChallenge: false,
   },
   {
     week: 2,
-    month: 'JUL',
+    month: 'SEP',
     title: '기업 분석',
     desc: '목표 기업 사업영역·인재상·직무(JD) 분석 → 1·2지망 구분',
     isChallenge: false,
   },
   {
     week: 3,
-    month: 'JUL',
+    month: 'SEP',
     title: '영어 자격증 점검',
     desc: '유효기간 확인, 부족하면 바로 접수 (점수 2~3주 소요)',
     isChallenge: false,
   },
   {
     week: 4,
-    month: 'JUL',
+    month: 'SEP',
     title: '성적표·졸업증명서',
     desc: '영문본 포함 미리 발급 — 서류는 항상 미리!',
     isChallenge: false,
   },
-  // AUG
+  // OCT
   {
     week: 5,
-    month: 'AUG',
+    month: 'OCT',
     title: '경험정리 챌린지 ①',
     desc: '경험 전수조사 → STAR 구조로 정리 시작',
     isChallenge: true,
   },
   {
     week: 6,
-    month: 'AUG',
+    month: 'OCT',
     title: '경험정리 챌린지 ② + 인적성 진단',
     desc: '역량 매칭 완료 / 인적성 모의 1회로 약점 파악',
     isChallenge: true,
   },
   {
     week: 7,
-    month: 'AUG',
+    month: 'OCT',
     title: '이력서 챌린지',
     desc: '직무 맞춤 이력서·경력기술서 완성',
     isChallenge: true,
   },
   {
     week: 8,
-    month: 'AUG',
+    month: 'OCT',
     title: '대기업 특화 자소서 챌린지',
     desc: '공통·기업별 문항 합격 구조로 작성·첨삭',
     isChallenge: true,
   },
-  // SEP
+  // NOV
   {
     week: 9,
-    month: 'SEP',
+    month: 'NOV',
     title: '서류 접수 + 잡다 게임 ①',
     desc: '자소서 최종 완성·지원 시작 / 역량검사 게임 유형 익히기',
     isChallenge: false,
   },
   {
     week: 10,
-    month: 'SEP',
+    month: 'NOV',
     title: '인적성 대비 챌린지 + 게임 ②',
     desc: '실전 모의고사 반복 / 게임 연습 마무리',
     isChallenge: true,
   },
   {
     week: 11,
-    month: 'SEP',
+    month: 'NOV',
     title: '인적성 마무리 + 면접 챌린지 ①',
     desc: '인적성 최종 점검 / 1분 자기소개·직무 PR 스크립트',
     isChallenge: true,
@@ -522,7 +522,7 @@ export const WEEKS: WeekItem[] = [
   {
     week: 12,
     weekEnd: 13,
-    month: 'SEP',
+    month: 'NOV',
     title: '면접 준비 챌린지 ②',
     desc: '예상 질문 정리 → 모의면접 반복·녹화 피드백',
     isChallenge: true,
@@ -541,16 +541,58 @@ export const FLOW_CHIPS: string[] = [
   '합격',
 ];
 
+/** 섹션 헤더 — 시안 6-0.png */
 export const COURSE_PLAN_HEADER = {
-  badge: '하반기 공채 13주 합격 플랜',
+  badge: '공채 준비 올인원 패스 혜택',
   /** 제목 — 의도된 줄바꿈 단위 */
-  titleLines: ['7월부터 9월까지,', '하반기 공채 준비 플레이북을 확인해보세요'],
-  /** 설명 — 의도된 줄바꿈 단위 */
-  subLines: [
-    '공채 준비 단계부터 실전까지 무엇을 직접 하고, 어디서 렛츠커리어가 함께하는지 한눈에 정리했어요.',
-    '렛츠커리어 하반기 멤버십 구매자 분들에게는 하반기 공채 준비 플레이북을 드립니다.',
+  titleLines: [
+    '하반기 공채 준비에 필요한',
+    '올인원 패스 하나로 누리는 모든 혜택',
   ],
+  /** titleLines 안에서 파란색으로 강조할 어절 */
+  titleHighlights: ['올인원 패스', '모든 혜택'],
+  /** 설명 — 의도된 줄바꿈 단위 */
+  subLines: ['개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.'],
 } as const;
+
+/** 플레이북 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
+export const COURSE_PLAN_BODY = {
+  titleLines: ['9~11월, 13주간의 올인원 패스로', '효율적으로 준비할 수 있어요'],
+  sub: '렛츠커리어 올인원 패스를 이용하면, 하반기 공채 준비 플레이북의 전체 과정을 따라가며 13주 동안 차근차근 취업 준비를 완성할 수 있어요.',
+  /** 매트릭스 바로 위 문구 */
+  matrixTitle: '이대로만 따라오면 13주 합격 플레이북 제공',
+  matrixSub:
+    '공채 준비 단계부터 실전까지 무엇을 직접 하고, 어디서 렛츠커리어가 함께하는지 한눈에 정리한 플레이북이에요.',
+} as const;
+
+// 매트릭스 아래 — 구매자가 실제로 받는 플레이북 화면. 앱을 위에서 아래로 훑는 20초 루프다.
+//
+// 원본은 37MB GIF 였다. GIF 로 두면 랜딩 무게를 감당할 수 없어(이 레포의 기존 GIF 자산은
+// 최대 83MB 다) 애니메이션 WebP 로 바꿨다 — 2.29MB, 94% 감소.
+//
+// 인코딩 값: 600px 폭, 13.3fps(원본 20fps 에서 3프레임 중 2장), 프레임 지연 75ms,
+// 품질 65. 재생 길이는 원본과 같은 20.25초다. 품질을 더 내리면 용량이 눈에 띄게 줄지만
+// PRD 7-3 이 글자 있는 이미지에 60 이하를 금지한다 — 이 화면은 글자가 본체다.
+// 파일을 다시 받으면 같은 값으로 다시 인코딩한다.
+
+/** 플레이북 앱 화면 (애니메이션 WebP) */
+export const PLAYBOOK_SHOT_SRC = '/images/membership/playbook-app.webp';
+
+/**
+ * 실측 크기. 표시 폭 300px 의 @2x 다 — 시안에서 매트릭스(1080px) 대비 27.65% 로 잰 값이다.
+ * next/image 를 쓰지 않으므로 <img> 에 직접 넣어 CLS 를 막는다.
+ */
+export const PLAYBOOK_SHOT_SIZE = { width: 600, height: 1070 } as const;
+
+/** 화면 안 문구를 문장으로 옮긴 것. 이름표 수준으로 줄이지 말 것 */
+export const PLAYBOOK_SHOT_ALT =
+  '플레이북 화면을 위에서 아래로 훑는 영상. 플레이북·공채자료·리더보드·채용 관리 네 개 탭이 있고, 나의 13주 진행률이 32개 항목 중 몇 개를 마쳤는지 보여준다. 내 취업 방향 정하기에서 희망 산업과 직무, 희망 회사 3곳, 나의 포부를 입력하고, 채용 관리에서 지원 기업과 서류 단계·마감 기한을 등록한다. 13주 합격 플랜은 STEP 01 방향 설정부터 STEP 05 면접·최종까지 주차별 할 일을 체크리스트로 펼쳐 보여준다.';
+
+/** 화면 아래 마무리 문구 — 의도된 줄바꿈 단위 */
+export const PLAYBOOK_CAPTION_LINES = [
+  '무엇을 준비할지 고민하는 시간은 줄이고,',
+  '합격에 필요한 준비에만 집중하세요.',
+] as const;
 
 export const COURSE_PLAN_VIEWS = {
   matrix: { id: 'matrix', label: '전체 플랜' },

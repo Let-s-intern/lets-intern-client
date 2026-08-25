@@ -159,6 +159,14 @@ const AdminBlogReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminBlogReviewListPage'),
 );
 
+// SSO 리다이렉트 화이트리스트 (LC-3208)
+const SsoRedirectWhitelists = lazy(
+  () => import('./domain/admin/pages/sso/SsoRedirectWhitelists'),
+);
+const SsoRedirectWhitelistCreate = lazy(
+  () => import('./domain/admin/pages/sso/SsoRedirectWhitelistCreate'),
+);
+
 // 커리어 DB (유저 목록)
 const AdminUsersPage = lazy(
   () => import('./domain/admin/pages/user/AdminUsersPage'),
@@ -420,6 +428,16 @@ export const router = createBrowserRouter([
       {
         path: '/live-mentoring',
         element: withSuspense(<AdminLiveMentoringPage />),
+      },
+
+      // SSO
+      {
+        path: '/sso/redirect-whitelist',
+        element: withSuspense(<SsoRedirectWhitelists />),
+      },
+      {
+        path: '/sso/redirect-whitelist/new',
+        element: withSuspense(<SsoRedirectWhitelistCreate />),
       },
 
       // 쿠폰

@@ -20,16 +20,40 @@ export function isMembershipChallengeConfigured(): boolean {
   return isValidMembershipChallengeId(MEMBERSHIP_CHALLENGE_ID);
 }
 
-/** 하반기 멤버십 안내 가이드(노션). 마이페이지 "가이드 확인" 버튼이 새 탭으로 연다. */
-export const MEMBERSHIP_GUIDE_URL =
-  'https://letsintern.notion.site/2026-38f5e77cbee180d7a77deab36a8ed88b';
+/**
+ * [LC-3219-MEMBERSHIP] 기수별 안내 가이드(노션) — 하드코딩. 멤버십 정식 개발 시 통째로 지운다.
+ *
+ * 결제는 최신 기수 하나(env `MEMBERSHIP_CHALLENGE_ID`)로만 받지만, 지난 기수 참여자도
+ * 자기 프로그램이 끝날 때까지 가이드를 열 수 있어야 한다. 그래서 "결제 대상 기수"와
+ * "멤버십으로 인정되는 기수"를 분리한다 — 이 맵이 후자이고, env 는 전자다.
+ *
+ * 이 분리가 없어서 사고가 났다. 2026-08-20 모집 재개로 운영 env 를 384 로 올리자
+ * 멤버십 판정이 env 와의 비교였던 탓에 309 가 false 가 되어, 8월 기수 참여자 카드의
+ * 버튼이 '가이드 확인' 대신 '대시보드 입장' 으로 바뀌었다. 멤버십은 챌린지 대시보드를
+ * 쓰지 않으므로 가이드에 닿을 길이 사라졌다.
+ *
+ * 기수를 추가할 때는 env 와 이 맵을 <b>함께</b> 고친다. 맵에 빠뜨리면 신규 구매자가
+ * 가이드를 못 본다. 로컬·테스트 env 의 챌린지 ID 는 운영 기수와 다른 값이라 이 짝맞춤을
+ * 단위 테스트로 잡을 수 없다 — env 를 올리는 배포에서 사람이 확인해야 한다.
+ * 기수가 끝나면 해당 줄을 지운다.
+ *
+ * 서버에 이미 챌린지별 가이드가 있다(`ChallengeGuide`, GET /challenge/{id}/guides).
+ * 정식 개발 때 그쪽으로 옮기면 이 맵과 아래 함수는 통째로 사라진다.
+ */
+const MEMBERSHIP_GUIDE_URL_BY_CHALLENGE_ID: Record<number, string> = {
+  // [LC-3219-MEMBERSHIP] 309 — 2026 하반기 1기(8월 구매분, 9월까지 진행). 종료되면 지운다.
+  309: 'https://letsintern.notion.site/2026-38f5e77cbee180d7a77deab36a8ed88b',
+  // [LC-3219-MEMBERSHIP] 384 — 2026-08-20 모집 재개분. 상세페이지가 연결하는 현행 기수.
+  // 이 기수 전용 가이드다(2026 하반기, 이용 ~11/30). 1기(309)와 다른 문서이므로 함께 바꾸지 않는다.
+  384: 'https://letsintern.notion.site/2026-2-11-30-3c65e77cbee18080b5d4dd0bbfbb8742',
+};
 
-/** 주어진 programId 가 멤버십 위임 챌린지인지. env 미설정이면 항상 false. */
-export function isMembershipChallengeProgram(programId: number): boolean {
-  return (
-    isValidMembershipChallengeId(MEMBERSHIP_CHALLENGE_ID) &&
-    programId === MEMBERSHIP_CHALLENGE_ID
-  );
+/**
+ * [LC-3219-MEMBERSHIP] 해당 기수의 노션 가이드 주소. 멤버십 기수가 아니면 undefined.
+ * 정식 개발 시 서버 가이드 조회로 대체하고 이 함수는 지운다.
+ */
+export function membershipGuideUrl(programId: number): string | undefined {
+  return MEMBERSHIP_GUIDE_URL_BY_CHALLENGE_ID[programId];
 }
 
 /**
@@ -41,15 +65,19 @@ export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
 );
 
 /**
- * 2026 하반기 멤버십 모집 종료 여부 (마감 2026-07-26).
+ * 멤버십 모집 종료 여부.
  *
- * 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다 — 링크를 아는 사람이 종료된 상품을
- * 결제하는 걸 방지하기 위해서다. 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar,
+ * `true` 면 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다 — 링크를 아는 사람이 종료된
+ * 상품을 결제하는 걸 방지하기 위해서다. 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar,
  * HeroSection, FinalCtaSection) 모두 이 상수를 통해 잠긴다.
  *
- * 다음 시즌에 다시 열 때는 이 값을 `false` 로 되돌리면 카운트다운·결제 CTA 가 복구된다.
+ * 2026 하반기 시즌(마감 2026-07-26) 종료로 `true` 였고, 신규 시즌 모집을 재개하며
+ * `false` 로 되돌렸다. 시즌이 끝나면 다시 `true` 로 바꾸면 CTA 3곳이 한 번에 잠긴다.
+ *
+ * `boolean` 을 명시해 리터럴 타입(`true`/`false`)으로 좁혀지지 않게 한다. 좁혀지면
+ * 반대편 분기가 죽은 코드로 판정돼, 값만 되돌리는 운영이 타입 에러로 막힌다.
  */
-export const IS_RECRUITMENT_CLOSED = true;
+export const IS_RECRUITMENT_CLOSED: boolean = false;
 
 /**
  * 멤버십 출시 알림을 받는 라이브러리 자석 ID.

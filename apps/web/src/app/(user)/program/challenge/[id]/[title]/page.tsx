@@ -1,4 +1,5 @@
 import { fetchChallengeData } from '@/api/challenge/challenge';
+import ScrollToTop from '@/common/ScrollToTop';
 import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
 import ChallengeHrView from '@/domain/program/challenge/ChallengeHrView';
 import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
@@ -90,6 +91,7 @@ const Page = async ({
 
   return (
     <>
+      <ScrollToTop />
       {parseInt(id) > MARKETING_ID_THRESHOLD &&
       challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />

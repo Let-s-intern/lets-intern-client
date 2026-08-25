@@ -6,6 +6,7 @@ export { default as debounce } from './debounce';
 export { default as getDominantColor } from './dominantColor';
 export * from './getSelectedNode';
 export { default as invariant } from './invariant';
+export * from './liveFeedbackSlotSchedule';
 export * from './programConst';
 export * from './random';
 export * from './setFloatingElemPosition';

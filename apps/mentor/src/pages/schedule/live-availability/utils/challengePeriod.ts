@@ -65,8 +65,12 @@ export const toChallengePeriodCellKeys = (
   periods: ChallengePeriod[],
   /** 보이는 주의 날짜 `"YYYY-MM-DD"` 목록 */
   days: string[],
-  /** 그리드의 시간 행 `"HH:mm"` 목록 */
-  times: string[],
+  /**
+   * 그리드의 시간 행 `"HH:mm"` 목록.
+   *
+   * 공용 상수 `SLOT_START_TIMES` 가 `readonly` 라 그대로 받는다. 이 함수는 읽기만 한다.
+   */
+  times: readonly string[],
 ): Set<string> => {
   const keys = new Set<string>();
   if (periods.length === 0) return keys;

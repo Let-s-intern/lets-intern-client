@@ -11,12 +11,32 @@ export const THUMBNAIL_IMAGES: Partial<Record<ChallengeType, string>> = {
   PORTFOLIO: '/images/challenge-thumbnail-portfolio.png',
 };
 
+// Ver 배너가 붙으면 배경 그래픽이 작은 전용 이미지를 쓴다.
+// 기존 이미지는 그래픽이 커서 배너와 겹친다.
+export const THUMBNAIL_IMAGES_WITH_VER: Partial<Record<ChallengeType, string>> =
+  {
+    EXPERIENCE_SUMMARY:
+      '/images/challenge-thumbnail-experience-summary-ver.png',
+    PORTFOLIO: '/images/challenge-thumbnail-portfolio-ver.png',
+    // 이력서는 Ver 전용 이미지만 있다. Ver 없는 이력서 챌린지는 자동 생성 대상이 아니다.
+    CAREER_START: '/images/challenge-thumbnail-career-start-ver.png',
+  };
+
+export const resolveThumbnailImage = (
+  challengeType: ChallengeType,
+  version: string | null,
+): string | null =>
+  (version ? THUMBNAIL_IMAGES_WITH_VER[challengeType] : undefined) ??
+  THUMBNAIL_IMAGES[challengeType] ??
+  null;
+
 export const THUMBNAIL_TYPE_LABELS: Partial<Record<ChallengeType, string>> = {
   PERSONAL_STATEMENT: '자기소개서',
   PERSONAL_STATEMENT_LARGE_CORP: '대기업',
   EXPERIENCE_SUMMARY: '경험정리',
   DOCUMENT_PREPARATION: '서류준비',
   PORTFOLIO: '포트폴리오',
+  CAREER_START: '이력서',
 };
 
 export const extractGeneration = (title: string): string | null => {
@@ -28,6 +48,12 @@ export const extractGeneration = (title: string): string | null => {
 export const extractWeek = (title: string): string | null => {
   const match = title.match(/(\d+)주/);
   return match ? match[1] : null;
+};
+
+export const extractVersion = (title: string): string | null => {
+  const match = title.match(/\[(.+?)\]/);
+  const version = match?.[1].trim();
+  return version ? version : null;
 };
 
 export const WEEK_TITLE_TEMPLATES: Partial<
@@ -43,6 +69,7 @@ export const BADGE_COLORS: Partial<Record<ChallengeType, string>> = {
   EXPERIENCE_SUMMARY: '#57B3FF',
   DOCUMENT_PREPARATION: '#DB77FF',
   PORTFOLIO: '#4F79FE',
+  CAREER_START: '#F308FB',
 };
 
 const CANVAS_WIDTH = 1146;
@@ -65,6 +92,26 @@ const TITLE_SHADOW_COLORS: Partial<Record<ChallengeType, string>> = {
   PORTFOLIO: '#E79C00',
 };
 
+// 배너 색은 기수 배지 색과 별개다.
+// 이력서만 배경이 파랑이라 배너를 빨강으로 쓴다.
+const VER_BANNER_DEFAULT_COLOR = '#2563EB';
+const VER_BANNER_COLORS: Partial<Record<ChallengeType, string>> = {
+  CAREER_START: '#FF0004',
+};
+
+const VER_BANNER_HEIGHT = 164;
+const VER_BANNER_RADIUS = 50;
+const VER_BANNER_PADDING_X = 48;
+const VER_FONT_SIZE = 64;
+const VER_BANNER_MAX_WIDTH = CANVAS_WIDTH * 0.7;
+
+// 문구가 길면 배너가 일러스트를 덮으므로 최대 폭에 맞춰 폰트를 줄인다
+export function fitVerFontSize(textWidth: number): number {
+  const maxTextWidth = VER_BANNER_MAX_WIDTH - VER_BANNER_PADDING_X * 2;
+  if (textWidth <= maxTextWidth) return VER_FONT_SIZE;
+  return Math.floor((VER_FONT_SIZE * maxTextWidth) / textWidth);
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -83,9 +130,10 @@ export async function drawBadgeOnCanvas(
   challengeType: ChallengeType,
   title: string,
 ): Promise<Blob | null> {
-  const imagePath = THUMBNAIL_IMAGES[challengeType];
   const badgeColor = BADGE_COLORS[challengeType];
   const generation = extractGeneration(title);
+  const version = extractVersion(title);
+  const imagePath = resolveThumbnailImage(challengeType, version);
 
   if (!imagePath || !badgeColor || !generation) return null;
 
@@ -101,6 +149,9 @@ export async function drawBadgeOnCanvas(
     ...(titleText
       ? [loadFont(`bold ${TITLE_FONT_SIZE}px "Pretendard Variable"`, titleText)]
       : []),
+    ...(version
+      ? [loadFont(`bold ${VER_FONT_SIZE}px "Pretendard Variable"`, version)]
+      : []),
   ]);
 
   const canvas = document.createElement('canvas');
@@ -109,6 +160,41 @@ export async function drawBadgeOnCanvas(
   const ctx = canvas.getContext('2d')!;
 
   ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  if (version) {
+    ctx.font = `bold ${VER_FONT_SIZE}px "Pretendard Variable"`;
+    const verFontSize = fitVerFontSize(ctx.measureText(version).width);
+    if (verFontSize !== VER_FONT_SIZE) {
+      ctx.font = `bold ${verFontSize}px "Pretendard Variable"`;
+    }
+
+    const bannerWidth =
+      ctx.measureText(version).width + VER_BANNER_PADDING_X * 2;
+    const bannerX = CANVAS_WIDTH - bannerWidth;
+
+    ctx.fillStyle =
+      VER_BANNER_COLORS[challengeType] ?? VER_BANNER_DEFAULT_COLOR;
+    ctx.beginPath();
+    // 위·오른쪽은 캔버스에 붙고 좌하단만 둥글다
+    ctx.roundRect(bannerX, 0, bannerWidth, VER_BANNER_HEIGHT, [
+      0,
+      0,
+      0,
+      VER_BANNER_RADIUS,
+    ]);
+    ctx.fill();
+
+    // textBaseline 'middle' 은 em 박스 기준이라 한글이 위로 뜬다.
+    // 실제 글리프 박스 높이로 배너 정중앙에 맞춘다
+    const metrics = ctx.measureText(version);
+    const textY =
+      VER_BANNER_HEIGHT / 2 +
+      (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(version, bannerX + VER_BANNER_PADDING_X, textY);
+  }
 
   if (titleText) {
     ctx.font = `bold ${TITLE_FONT_SIZE}px "Pretendard Variable"`;

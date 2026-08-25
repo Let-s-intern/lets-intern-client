@@ -1,0 +1,144 @@
+/* 커뮤니티 톡방 혜택 — 쿠폰 섹션 바로 위.
+   시안에서 톡방과 쿠폰이 모두 흰 배경이고, 다음 후기 섹션이 --bg-cool 로 받는다. */
+.membership-root .cchat {
+  padding: 140px 0 0;
+  background: #fff;
+}
+
+/* 헤더. 혜택 묶음의 형제 블록이라 sec-head(h2)가 아니라 자체 클래스를 쓴다 —
+   MentoringCouponSection 의 .mcoupon-head 와 같은 계층이다. */
+.membership-root .cchat-head {
+  max-width: 760px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+.membership-root .cchat-head h3 {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.membership-root .cchat-head p {
+  margin-top: 16px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--g600);
+  font-weight: 500;
+}
+
+/* .hl 은 base.css 에 없다. 섹션마다 각자 선언하는 정책이라 여기에 직접 적는다 —
+   참조로 묶으면 섹션만 떼어낼 수 없다(mentoring-coupon.css 의 같은 주석 참조). */
+.membership-root .cchat-head h3 .hl {
+  color: var(--lc-blue);
+}
+
+/* 데스크톱 — 3단 메이슨리. 캡처가 세로로 제각각이라 균등 그리드가 아니라 컬럼으로 흘린다.
+   폭을 wrap(1124px) 이 아니라 940px 로 좁힌다. 컬럼이 약 298px 이 되어 후기 섹션의
+   이미지 폭(332px)과 비슷해진다 — 캡처 원본이 400px 이라 컬럼을 다 쓰면 거의 1:1 로
+   렌더돼 말풍선 글자만 유독 커 보인다. */
+.membership-root .cchat-grid {
+  max-width: 940px;
+  margin: 0 auto;
+  column-count: 3;
+  column-gap: 22px;
+}
+
+/* 이미지 자체가 분홍 카드다. 테두리·그림자를 덧대면 이중 카드가 되므로 넣지 않는다. */
+.membership-root .cchat-card {
+  break-inside: avoid;
+  margin-bottom: 22px;
+}
+.membership-root .cchat-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+/* 모바일 마퀴 — 양끝을 마스크로 흐려 잘린 카드가 튀지 않게 한다. */
+.membership-root .cchat-marquee {
+  display: none;
+}
+.membership-root .cchat-row {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+/* 카드를 세로 가운데에 걸어 한 줄이 띠처럼 읽히게 한다.
+   위로 맞추면 캡처마다 높이가 달라 아랫단이 들쭉날쭉해진다.
+   속도는 후기 섹션 마퀴(약 34px/초)에 맞췄다 — 80s 는 13.7px/초라 멈춘 것처럼 보였다. */
+.membership-root .cchat-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  animation: cchat-scroll 32s linear infinite;
+  will-change: transform;
+}
+/* 폭을 고정해 한 줄이 일정하게 흐르게 한다.
+   높이는 캡처 비율을 따르되 280px 에서 자른다 — 가장 긴 캡처가 짧은 것의 2.4배라
+   그대로 두면 띠가 렌즈처럼 벌어진다. 잘린 자리는 말풍선 배경이 이어져 어색하지 않다. */
+.membership-root .cchat-mcard {
+  flex: 0 0 250px;
+  width: 250px;
+  max-height: 280px;
+  margin-bottom: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 14px 28px -18px rgba(40, 60, 120, 0.5);
+}
+/* 카드가 이미 잘라내므로 이미지 자체의 라운드는 뺀다(모서리가 두 번 깎여 보인다) */
+.membership-root .cchat-mcard .cchat-shot {
+  border-radius: 0;
+}
+
+@keyframes cchat-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .cchat-track {
+    animation: none;
+  }
+}
+
+/* 2열로 줄어드는 구간. 폭을 같이 좁히지 않으면 컬럼이 460px 까지 벌어져
+   데스크톱(298px)보다 캡처가 커진다 — 좁은 화면에서 더 크게 보이는 역전이 생긴다. */
+@media (max-width: 1100px) {
+  .membership-root .cchat-grid {
+    max-width: 620px;
+    column-count: 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .membership-root .cchat {
+    padding-top: 96px;
+  }
+  .membership-root .cchat-head h3 {
+    font-size: 24px;
+  }
+  .membership-root .cchat-head p {
+    font-size: 15px;
+  }
+}
+
+/* 마퀴로 갈아타는 폭. 컴포넌트가 matchMedia 로 같은 600px 을 보고 렌더를 바꾼다. */
+@media (max-width: 600px) {
+  .membership-root .cchat-grid {
+    display: none;
+  }
+  .membership-root .cchat-marquee {
+    display: block;
+  }
+}

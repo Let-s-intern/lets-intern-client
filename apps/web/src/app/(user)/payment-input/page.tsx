@@ -6,6 +6,8 @@ import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+// [LC-3219-MEMBERSHIP] 하반기 멤버십 전액할인 쿠폰 차단에만 쓴다 — 시즌 종료 시 이 import 를
+// 지운다(아래 isMembership 블록과 짝). 담당자 임성빈
 import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
@@ -112,13 +114,19 @@ const PaymentInputContent = () => {
   })();
   const isCouponDisabledType =
     COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
-  // 하반기 멤버십(위임 챌린지)은 별도 플랜가로 판매되어 쿠폰 입력을 막는다.
-  // TODO: 멤버십 프로모션 종료 후 이 분기(isMembership)와 위 import를 삭제할 것.
+  const showCouponSection = !isCouponDisabledType || hasB2BParam;
+
+  // [LC-3219-MEMBERSHIP] 시작 — 하반기 멤버십은 쿠폰을 받되 전액할인만 막는다.
+  // 멤버십이 어드민 챌린지로 만들어져 있어, 예전에 챌린지용으로 뿌린 전액할인 쿠폰
+  // (discount === -1)이 그대로 적용돼 169,000원이 0원이 된다. 서버는 쿠폰을 챌린지
+  // ID·타입으로 제한하지 않으므로 화면에서 막는다.
+  // 시즌 종료 시 이 블록과 위 MEMBERSHIP_CHALLENGE_ID import, 아래 allowFullDiscount
+  // 전달부, 그리고 CouponSection 의 allowFullDiscount prop·필터를 함께 지운다.
+  // grep -rn "LC-3219-MEMBERSHIP" apps/web/src 로 전부 찾힌다. 담당자 임성빈
   const isMembership =
     programApplicationData.programType === 'challenge' &&
     programApplicationData.programId === MEMBERSHIP_CHALLENGE_ID;
-  const showCouponSection =
-    (!isCouponDisabledType || hasB2BParam) && !isMembership;
+  // [LC-3219-MEMBERSHIP] 끝
 
   const setUserInfo = useCallback((info: UserInfo) => {
     const { contactEmail, email, name, phoneNumber, question } = info;
@@ -371,6 +379,8 @@ const PaymentInputContent = () => {
                 setCoupon={setCoupon}
                 programType={programApplicationData.programType ?? 'live'}
                 maxAmount={maxCouponAmount}
+                // [LC-3219-MEMBERSHIP] 시즌 종료 시 이 줄을 지운다. 담당자 임성빈
+                allowFullDiscount={!isMembership}
               />
             )}
 

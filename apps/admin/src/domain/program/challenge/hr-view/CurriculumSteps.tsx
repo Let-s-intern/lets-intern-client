@@ -65,8 +65,7 @@ export const Contents = () => {
 
   const missionItems: ReactNode[] = [
     <span key="mission">
-      카카오 / 코드잇 / LG전자 등의 사전 과제를 <br /> 엿보고, 직업 수행하고
-      피드백 받기
+      카카오 / 코드잇 / LG전자 등의 사전 과제를 <br /> 보고, 직접 고민해 보기
     </span>,
   ];
 
