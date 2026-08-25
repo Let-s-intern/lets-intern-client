@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   adminLiveMentoringListSchema,
+  adminLiveMentoringParticipantListSchema,
+  adminLiveMentoringReservationListSchema,
   type LiveMentoringStatus,
 } from './liveMentoringSchema';
 
@@ -70,3 +72,103 @@ export const useCloseLiveMentoringOpeningMutation = () =>
   useAdminLiveMentoringMutation((openingId: number) =>
     axios.patch(`${ADMIN_PATH}/openings/${openingId}/close`),
   );
+
+export const ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY = [
+  'adminLiveMentoring',
+  'reservations',
+] as const;
+
+export interface UseAdminLiveMentoringReservationsParams {
+  mentorId?: number;
+  /** 예약 시작 시각 범위 (LocalDateTime, 예: `2026-08-01T00:00:00`) */
+  reservationStartDate?: string;
+  reservationEndDate?: string;
+  /** 신청 시각 범위 (LocalDateTime) */
+  createStartDate?: string;
+  createEndDate?: string;
+  page?: number;
+  size?: number;
+}
+
+/** 빈 값(undefined·빈 문자열)을 뺀 쿼리 파라미터. 빈 문자열을 보내면 서버 파싱이 깨진다. */
+export function serializeReservationParams(
+  params: UseAdminLiveMentoringReservationsParams,
+): Record<string, number | string> {
+  const result: Record<string, number | string> = {};
+  if (params.mentorId != null) result.mentorId = params.mentorId;
+  if (params.reservationStartDate) {
+    result.reservationStartDate = params.reservationStartDate;
+  }
+  if (params.reservationEndDate) {
+    result.reservationEndDate = params.reservationEndDate;
+  }
+  if (params.createStartDate) result.createStartDate = params.createStartDate;
+  if (params.createEndDate) result.createEndDate = params.createEndDate;
+  return result;
+}
+
+/**
+ * GET /admin/live-mentoring/applications — 1대1 예약 목록.
+ *
+ * 멘티명은 서버에도 조건이 있지만 보내지 않는다. 챌린지 라이브 피드백 쪽이 이름 부분 일치
+ * 클라이언트 필터라, 한 표에 섞어 보여주는 이상 두 유형의 검색 결과가 같은 규칙이어야 한다.
+ *
+ * `enabled` 를 false 로 주면 조회하지 않는다(유형 필터가 챌린지 전용일 때).
+ */
+export const useAdminLiveMentoringReservationsQuery = (
+  {
+    page = 1,
+    size = 20,
+    ...filters
+  }: UseAdminLiveMentoringReservationsParams = {},
+  enabled = true,
+) => {
+  const queryParams = serializeReservationParams(filters);
+  return useQuery({
+    queryKey: [
+      ...ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY,
+      { ...queryParams, page, size },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`${ADMIN_PATH}/applications`, {
+        params: { ...queryParams, page, size },
+      });
+      return adminLiveMentoringReservationListSchema.parse(res.data.data);
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const ADMIN_LIVE_MENTORING_PARTICIPANT_QUERY_KEY = [
+  'adminLiveMentoring',
+  'participants',
+] as const;
+
+export interface UseAdminLiveMentoringParticipantsParams {
+  /** 생략하면 멘토 구분 없이 전체 결제자를 본다. */
+  mentorId?: number;
+  page?: number;
+  size?: number;
+}
+
+/** GET /admin/live-mentoring/participants — 결제자 목록. mentorId 를 주면 그 멘토 건만. */
+export const useAdminLiveMentoringParticipantsQuery = ({
+  mentorId,
+  page = 1,
+  size = 20,
+}: UseAdminLiveMentoringParticipantsParams = {}) => {
+  return useQuery({
+    queryKey: [
+      ...ADMIN_LIVE_MENTORING_PARTICIPANT_QUERY_KEY,
+      { mentorId, page, size },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`${ADMIN_PATH}/participants`, {
+        params: mentorId != null ? { mentorId, page, size } : { page, size },
+      });
+      return adminLiveMentoringParticipantListSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};

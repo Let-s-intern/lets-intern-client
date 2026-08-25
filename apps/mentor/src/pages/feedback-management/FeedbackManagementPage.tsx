@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
+import { useLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
@@ -62,11 +63,16 @@ const FeedbackManagementPage = () => {
   );
   const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
 
+  // 1대1 라이브 멘토링 예약 — 서버가 결제 완료 확정 건만, 본인 건만 내린다.
+  const { data: liveMentoringReservations } =
+    useLiveMentoringReservationsQuery();
+
   const allRows = useMergedFeedbackRows(
     challengeList,
     allLiveRounds,
     writtenAttendance,
     missionRangeMap,
+    liveMentoringReservations,
   );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();
@@ -98,6 +104,9 @@ const FeedbackManagementPage = () => {
       });
       return;
     }
+
+    // 1대1은 열 수 있는 모달이 없다 — canOpenDetail 이 false 라 여기까지 오지 않는다.
+    if (row.source.type !== 'live') return;
 
     // live → 라이브 모달
     setSelectedRound(row.source.round);

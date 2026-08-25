@@ -11,6 +11,8 @@ import { twMerge } from '@/lib/twMerge';
 import { sanitizeUrl } from '@/utils/url';
 import { useEffect, useState } from 'react';
 import { formatReservationDateTime } from '../../utils/format';
+import type { ReservationRow } from '../utils/reservationRow';
+import LiveMentoringDetailBody from './LiveMentoringDetailBody';
 
 /**
  * 웹 입장 페이지(`/live-feedback/[role]/[feedbackId]`) base URL.
@@ -26,10 +28,18 @@ function getWebBaseUrl(): string {
 }
 
 interface ReservationDetailModalProps {
-  /** 선택된 예약 id. null 이면 모달을 렌더하지 않는다(닫힘). */
-  feedbackId: number | null;
+  /**
+   * 선택된 예약. null 이면 모달을 렌더하지 않는다(닫힘).
+   *
+   * 챌린지는 목록 VO 에 상세 필드가 없어 id 로 다시 조회하고, 1대1은 목록 응답이
+   * 상세에 필요한 값을 모두 담고 있어 그대로 그린다.
+   */
+  row: ReservationRow | null;
   onClose: () => void;
-  /** 지정 시 헤더에 "예약 변경" 버튼을 노출하고, 클릭하면 예약 변경 모달로 전환한다. */
+  /**
+   * 지정 시 헤더에 "예약 변경" 버튼을 노출하고, 클릭하면 예약 변경 모달로 전환한다.
+   * 1대1에는 일정 변경 API 가 없어 이 버튼을 내걸지 않는다.
+   */
   onReschedule?: () => void;
 }
 
@@ -341,17 +351,20 @@ function EditPanel({ detail }: { detail: FeedbackDetailAdminVo }) {
 }
 
 export default function ReservationDetailModal({
-  feedbackId,
+  row,
   onClose,
   onReschedule,
 }: ReservationDetailModalProps) {
+  const feedbackId = row?.kind === 'CHALLENGE' ? row.feedback.feedbackId : null;
   const {
     data: detail,
     isLoading,
     isError,
   } = useAdminFeedbackDetailQuery(feedbackId ?? undefined);
 
-  if (feedbackId == null) return null;
+  if (row == null) return null;
+
+  const showReschedule = onReschedule != null && row.kind === 'CHALLENGE';
 
   return (
     <div
@@ -376,7 +389,7 @@ export default function ReservationDetailModal({
             예약 상세
           </h3>
           <div className="flex items-center gap-2">
-            {onReschedule && (
+            {showReschedule && (
               <button
                 type="button"
                 onClick={onReschedule}
@@ -397,7 +410,9 @@ export default function ReservationDetailModal({
         </div>
 
         <div className="overflow-y-auto px-6 py-5">
-          {isError ? (
+          {row.kind === 'LIVE_MENTORING' ? (
+            <LiveMentoringDetailBody reservation={row.reservation} />
+          ) : isError ? (
             <div className="text-xsmall14 py-12 text-center text-red-500">
               예약 정보를 불러오지 못했습니다. 다시 시도해 주세요.
             </div>

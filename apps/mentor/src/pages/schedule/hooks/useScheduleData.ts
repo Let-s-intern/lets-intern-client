@@ -8,7 +8,7 @@ import {
 import type { PeriodBarData } from '../types';
 import {
   filterMentorSchedule,
-  isMentorActionPeriodBar,
+  isMentorNavigableBar,
 } from '../utils/filterMentorSchedule';
 
 interface UseScheduleDataOptions {
@@ -92,11 +92,13 @@ export function useScheduleData({
    * 개별 라이브 세션(`live-feedback`)은 `live-feedback-period` 한 라운드 안의 세부
    * 표현이므로 네비게이션 단위로는 세지 않는다 — 그래야 "라이브 피드백" 태그에서
    * 일정 N개당 N번만 순환한다.
+   *
+   * 1대1 예약(`live-mentoring`)은 예외다. 묶어 줄 기간 바가 없어 예약 자체가 단위다.
    */
   const sortedActionBarsByStart = useMemo(
     () =>
       [...mentorVisibleBars]
-        .filter(isMentorActionPeriodBar)
+        .filter(isMentorNavigableBar)
         .sort(
           (a, b) =>
             new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
@@ -176,6 +178,8 @@ function barTypeToFeedbackTagSafe(
     case 'live-feedback-mentor-open':
     case 'live-feedback-mentee-open':
       return 'live-open';
+    case 'live-mentoring':
+      return 'live-mentoring';
     default:
       return null;
   }

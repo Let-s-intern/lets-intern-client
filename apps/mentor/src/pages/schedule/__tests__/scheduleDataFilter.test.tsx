@@ -167,3 +167,71 @@ describe('useScheduleData × 멘토 화이트리스트 + 피드백 태그 필터
     expect(result.current.filteredBars).toHaveLength(3);
   });
 });
+
+describe('useScheduleData × 1대1 라이브 멘토링 (Push 7-A)', () => {
+  const liveMentoringBar = (missionId: number, startDate: string) =>
+    makeBar('live-mentoring', -4_000_000, missionId, {
+      challengeTitle: '1대1 라이브 멘토링',
+      startDate,
+      endDate: startDate,
+      feedbackStartDate: startDate,
+      feedbackDeadline: startDate,
+      liveMentoring: {
+        applicationId: missionId,
+        menteeName: '김일대',
+        productName: '자소서 실전 첨삭 멘토링',
+        startTime: '14:00',
+        endTime: '15:00',
+        durationMinutes: 60,
+        questionWritten: true,
+        attachmentSubmitted: true,
+      },
+    });
+
+  it('1대1 태그를 고르면 1대1 예약만 남는다 (LIVE 피드백과 섞이지 않는다)', () => {
+    const extraBars: PeriodBarData[] = [
+      makeBar('live-feedback-period', 2, 22),
+      liveMentoringBar(-4_000_001, '2026-05-04'),
+    ];
+
+    const { result } = renderHook(() => useScheduleData({ extraBars }), {
+      wrapper,
+    });
+
+    expect(result.current.filteredBars).toHaveLength(2);
+
+    act(() => {
+      result.current.toggleFeedbackTag('live-mentoring');
+    });
+
+    expect(result.current.filteredBars.map((b) => b.barType)).toEqual([
+      'live-mentoring',
+    ]);
+
+    act(() => {
+      result.current.toggleFeedbackTag('live');
+    });
+
+    expect(result.current.filteredBars).toHaveLength(2);
+  });
+
+  it('1대1 태그의 "다음 일정"은 예약 한 건씩 순환한다 (묶어 줄 기간 바가 없다)', () => {
+    const extraBars: PeriodBarData[] = [
+      liveMentoringBar(-4_000_001, '2026-05-04'),
+      liveMentoringBar(-4_000_002, '2026-05-06'),
+    ];
+
+    const { result } = renderHook(() => useScheduleData({ extraBars }), {
+      wrapper,
+    });
+
+    const nearest = result.current.findNearestDateForTag('live-mentoring');
+    expect(nearest).not.toBeNull();
+
+    const next = result.current.findNextDateForTag(
+      'live-mentoring',
+      new Date('2026-05-04'),
+    );
+    expect(next?.toISOString().slice(0, 10)).toBe('2026-05-06');
+  });
+});

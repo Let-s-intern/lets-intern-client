@@ -19,6 +19,10 @@ const navData = [
         url: '/programs',
       },
       {
+        name: '1대1 라이브 멘토링',
+        url: '/live-mentoring',
+      },
+      {
         name: '후기 관리',
         url: '/review/challenge',
       },
@@ -83,10 +87,6 @@ const navData = [
       {
         name: '멘토 관리',
         url: '/mentors',
-      },
-      {
-        name: '1대1 라이브 멘토링',
-        url: '/live-mentoring',
       },
       {
         name: '리드 관리',

@@ -1,4 +1,8 @@
 import {
+  confirmLiveMentoringPaymentRequestSchema,
+  confirmLiveMentoringPaymentResponseSchema,
+  createLiveMentoringApplicationRequestSchema,
+  createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
   liveMentoringOpeningListSchema,
   liveMentoringOpeningSchema,
@@ -35,9 +39,11 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
   return {
     title: '자소서장인 멘토의 1:1 멘토링',
     mentorId: 1,
+    // 신청 생성 경로(`/openings/{openingId}/applications`)에 들어가는 값.
+    openingId: 500,
     categories: ['RESUME'],
     durations: [30],
-    durationPrices: [{ duration: 60, price: 60000 }],
+    durationPrices: [{ durationPriceId: 5, duration: 60, price: 60000 }],
     price: 35000,
     rating: 4.7,
     reviewCount: 12,
@@ -72,6 +78,7 @@ function makeDetail(overrides: Record<string, unknown> = {}) {
         subtitle: '고민에 맞는 유형을 골라보세요.',
         items: [
           {
+            id: 11,
             typeName: '이력서 피드백',
             title: '이력서를 정리하고 싶다면',
             description: '경험과 역량이 잘 보이도록 점검해요.',
@@ -301,5 +308,259 @@ describe('liveMentoringSlotListSchema', () => {
         ],
       }),
     ).toThrow();
+  });
+});
+
+/** 서버 `CreateLiveMentoringApplicationRequestDto` 를 통과하는 최소 페이로드. */
+function makeCreateRequest(overrides: Record<string, unknown> = {}) {
+  return {
+    durationPriceId: 1,
+    slotIds: [142],
+    mentoringTypeIds: [1],
+    reservationChangeAgreed: true,
+    contactEmail: 'local-admin@letscareer.test',
+    question: {
+      deferred: true,
+      attachmentType: 'NONE',
+      mentorShareAgreed: false,
+    },
+    ...overrides,
+  };
+}
+
+describe('createLiveMentoringApplicationRequestSchema', () => {
+  it('필수 필드만 담은 페이로드를 통과시킨다', () => {
+    const parsed =
+      createLiveMentoringApplicationRequestSchema.parse(makeCreateRequest());
+    expect(parsed.slotIds).toEqual([142]);
+    expect(parsed.question.attachmentType).toBe('NONE');
+  });
+
+  it('60분 플랜의 연속 2슬롯을 통과시킨다', () => {
+    const parsed = createLiveMentoringApplicationRequestSchema.parse(
+      makeCreateRequest({ slotIds: [142, 143] }),
+    );
+    expect(parsed.slotIds).toHaveLength(2);
+  });
+
+  /* 서버 `@Size(max = 2)`. 3개를 보내면 400 이다 — 나가기 전에 막는다. */
+  it('슬롯이 3개면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ slotIds: [142, 143, 144] }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotEmpty`. */
+  it('슬롯이나 멘토링 유형이 비면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ slotIds: [] }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ mentoringTypeIds: [] }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotBlank @Email @Size(max = 255)`. */
+  it('이메일 형식이 아니거나 255자를 넘으면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ contactEmail: 'not-an-email' }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ contactEmail: '' }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          contactEmail: `${'a'.repeat(250)}@letscareer.test`,
+        }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 `@Size(max = 5000)` / `@Size(max = 2048)` / `@Size(max = 100)`. */
+  it('질문 본문 5000자·URL 2048자·쿠폰 100자를 넘으면 실패한다', () => {
+    const question = {
+      deferred: false,
+      attachmentType: 'URL',
+      mentorShareAgreed: true,
+    };
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: { ...question, content: 'a'.repeat(5001) },
+        }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: { ...question, url: `https://x.test/${'a'.repeat(2048)}` },
+        }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ couponCode: 'a'.repeat(101) }),
+      ),
+    ).toThrow();
+  });
+
+  /* 서버 enum `LiveMentoringAttachmentType` — NONE / FILE / URL 뿐이다. */
+  it('첨부 종류가 서버 enum 밖이면 실패한다', () => {
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({
+          question: {
+            deferred: false,
+            attachmentType: 'IMAGE',
+            mentorShareAgreed: false,
+          },
+        }),
+      ),
+    ).toThrow();
+  });
+
+  it('동의 필드가 빠지면 실패한다', () => {
+    const { reservationChangeAgreed: _omitted, ...withoutAgreement } =
+      makeCreateRequest();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(withoutAgreement),
+    ).toThrow();
+  });
+});
+
+describe('createLiveMentoringApplicationResponseSchema', () => {
+  const response = {
+    applicationId: 11,
+    product: {
+      durationPriceId: 1,
+      name: '어드민 1대1 라이브 멘토링',
+      durationMinutes: 30,
+    },
+    reservation: {
+      slotIds: [142],
+      startAt: '2026-09-14T09:30:00',
+      endAt: '2026-09-14T10:00:00',
+      applicationStatus: 'PAYMENT_PENDING',
+      expiresAt: '2026-08-21T12:10:00',
+    },
+    mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+    payment: {
+      originalPrice: 35000,
+      productDiscount: 0,
+      couponDiscount: 0,
+      finalAmount: 35000,
+      orderId: 'lm_20260821_0001',
+      currency: 'KRW',
+    },
+  };
+
+  it('신청 생성 응답을 파싱한다', () => {
+    const parsed = createLiveMentoringApplicationResponseSchema.parse(response);
+    expect(parsed.applicationId).toBe(11);
+    // Toss 에 넘길 주문번호와 10분 선점 만료 시각이 이 응답의 핵심이다
+    expect(parsed.payment.orderId).toBe('lm_20260821_0001');
+    expect(parsed.reservation.expiresAt).toBe('2026-08-21T12:10:00');
+  });
+
+  it('알 수 없는 신청 상태는 파싱 실패', () => {
+    expect(() =>
+      createLiveMentoringApplicationResponseSchema.parse({
+        ...response,
+        reservation: { ...response.reservation, applicationStatus: 'PENDING' },
+      }),
+    ).toThrow();
+  });
+});
+
+/*
+  요청의 amount 는 문자열, 응답의 amount 는 숫자다. 서버 DTO 가 그렇게 생겼다
+  (`@NotBlank String amount` vs `Integer amount`). 한쪽으로 맞춰 두면 승인 요청이
+  400 으로 떨어지고, 그때는 이미 Toss 결제창이 닫힌 뒤다.
+*/
+describe('결제 승인 스키마 — amount 타입 비대칭', () => {
+  it('요청의 amount 는 문자열만 받는다', () => {
+    const parsed = confirmLiveMentoringPaymentRequestSchema.parse({
+      paymentKey: 'tviva20260821',
+      orderId: 'lm_20260821_0001',
+      amount: '35000',
+    });
+    expect(parsed.amount).toBe('35000');
+
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'tviva20260821',
+        orderId: 'lm_20260821_0001',
+        amount: 35000,
+      }),
+    ).toThrow();
+  });
+
+  it('응답의 amount 는 숫자만 받는다', () => {
+    const parsed = confirmLiveMentoringPaymentResponseSchema.parse({
+      applicationId: 11,
+      paymentId: 501,
+      orderId: 'lm_20260821_0001',
+      amount: 35000,
+      applicationStatus: 'CONFIRMED',
+    });
+    expect(parsed.amount).toBe(35000);
+
+    expect(() =>
+      confirmLiveMentoringPaymentResponseSchema.parse({
+        applicationId: 11,
+        paymentId: 501,
+        orderId: 'lm_20260821_0001',
+        amount: '35000',
+        applicationStatus: 'CONFIRMED',
+      }),
+    ).toThrow();
+  });
+
+  /* 서버 `@NotBlank`. 빈 문자열은 400 이다. */
+  it('orderId·amount 가 빈 문자열이면 실패한다', () => {
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'k',
+        orderId: '',
+        amount: '35000',
+      }),
+    ).toThrow();
+    expect(() =>
+      confirmLiveMentoringPaymentRequestSchema.parse({
+        paymentKey: 'k',
+        orderId: 'lm_1',
+        amount: '',
+      }),
+    ).toThrow();
+  });
+
+  it('신청 상태 enum 4종을 모두 받는다', () => {
+    for (const status of [
+      'PAYMENT_PENDING',
+      'EXPIRED',
+      'CANCELED',
+      'CONFIRMED',
+    ]) {
+      expect(
+        confirmLiveMentoringPaymentResponseSchema.parse({
+          applicationId: 11,
+          paymentId: 501,
+          orderId: 'lm_1',
+          amount: 35000,
+          applicationStatus: status,
+        }).applicationStatus,
+      ).toBe(status);
+    }
   });
 });

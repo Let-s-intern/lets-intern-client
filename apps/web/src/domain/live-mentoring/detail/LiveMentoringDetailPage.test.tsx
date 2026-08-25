@@ -1,12 +1,25 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 
 import axios from '@/utils/axios';
+import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
 import LiveMentoringDetailPage from './LiveMentoringDetailPage';
 
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
   default: { get: jest.fn() },
+}));
+
+// 시트의 `신청하기` 가 결제 페이지로 라우팅한다
+const routerPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: routerPush, replace: jest.fn(), back: jest.fn() }),
 }));
 
 const axiosGet = axios.get as jest.Mock;
@@ -31,10 +44,12 @@ function detail(overrides: Record<string, unknown> = {}) {
     data: {
       data: {
         mentorId: 3,
+        // 신청 생성 경로에 들어가는 개설 id. 스키마 필수라 픽스처에도 있어야 한다.
+        openingId: 6,
         title: '포폴메이커 멘토의 1:1 멘토링',
         categories: ['PORTFOLIO'],
         durations: [60],
-        durationPrices: [{ duration: 60, price: 60000 }],
+        durationPrices: [{ durationPriceId: 5, duration: 60, price: 60000 }],
         price: 60000,
         rating: 4.8,
         reviewCount: 12,
@@ -67,6 +82,7 @@ function detail(overrides: Record<string, unknown> = {}) {
             subtitle: '고민에 맞는 유형을 골라보세요.',
             items: [
               {
+                id: 7,
                 typeName: '포트폴리오 피드백',
                 title: '핵심 역량을 점검받고 싶다면',
                 description: '프로젝트 구성을 점검할 수 있어요.',
@@ -172,7 +188,11 @@ function renderDetail() {
   );
 }
 
-beforeEach(() => axiosGet.mockReset());
+beforeEach(() => {
+  axiosGet.mockReset();
+  routerPush.mockClear();
+  useOrderDraftStore.getState().clearDraft();
+});
 
 describe('LiveMentoringDetailPage', () => {
   it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 이미지 섹션을 렌더한다', async () => {
@@ -242,7 +262,7 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('멘티 후기')).not.toBeInTheDocument();
   });
 
-  it('히어로에 상품명·평점·멘티 수와 플랜을 보여주고, 플랜 선택은 잠겨 있다', async () => {
+  it('히어로에 상품명·평점·멘티 수와 고를 수 있는 플랜을 보여준다', async () => {
     mockApis(detail());
     renderDetail();
 
@@ -253,10 +273,31 @@ describe('LiveMentoringDetailPage', () => {
       ).toBeGreaterThan(0),
     );
     expect(screen.getByText('후기 12건')).toBeInTheDocument();
-    // 결제 연동 전이라 플랜 체크박스는 비활성
     expect(
-      screen.getByRole('checkbox', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
-    ).toBeDisabled();
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    ).toBeEnabled();
+  });
+
+  /*
+    히어로와 시트는 같은 상태를 본다. 히어로에서 고른 플랜을 시트가 다시 묻지 않는다.
+  */
+  it('히어로에서 고른 플랜이 시트에 그대로 반영된다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    );
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+    const sheet = within(screen.getByRole('dialog'));
+    expect(
+      sheet.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    ).toBeChecked();
   });
 
   it('히어로 불릿을 노출한다', async () => {
@@ -324,6 +365,99 @@ describe('LiveMentoringDetailPage', () => {
     expect(
       screen.queryByText('현재 예약 가능한 일정이 없습니다'),
     ).not.toBeInTheDocument();
+  });
+
+  /*
+    예전에는 신청 버튼이 결제 준비 중 알럿만 띄웠다.
+    알럿이 남아 있으면 브라우저가 멈춰 시트가 열려도 아무것도 못 한다.
+  */
+  it('신청 CTA 를 누르면 알럿 없이 신청 시트가 열린다', async () => {
+    mockApis(detail());
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+    expect(
+      screen.getByRole('dialog', { name: '1대1 멘토링 신청' }),
+    ).toBeInTheDocument();
+    expect(alertSpy).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('시트가 열려 있는 동안 배경 스크롤을 잠그고, 닫으면 되돌린다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+    expect(document.body.style.overflow).toBe('hidden');
+
+    fireEvent.click(screen.getByRole('button', { name: '이전 단계로' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.body.style.overflow).not.toBe('hidden');
+  });
+
+  /*
+    신청 생성은 결제 페이지의 `결제하기` 시점이다(PRD 7-4 안 A). 시트의 `신청하기` 는
+    선택값을 넘기고 이동만 한다 — 여기서 만들면 질문·쿠폰이 정해지기도 전에
+    슬롯이 10분 선점된다.
+  */
+  it('시트에서 신청하기를 누르면 선택값을 넘기고 결제 페이지로 이동한다', async () => {
+    // 기본 시드 슬롯은 9/1 과 9/30 이라 이어지지 않는다. 60분 플랜을 고르려면
+    // 연속 2칸이 필요하므로 이 테스트만 붙어 있는 슬롯을 쓴다.
+    mockApis(detail(), [
+      {
+        slotId: 1,
+        startDate: '2030-09-01T10:00:00',
+        endDate: '2030-09-01T10:30:00',
+        status: 'OPEN',
+      },
+      {
+        slotId: 2,
+        startDate: '2030-09-01T10:30:00',
+        endDate: '2030-09-01T11:00:00',
+        status: 'OPEN',
+      },
+    ]);
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+    );
+    fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+    const sheet = within(screen.getByRole('dialog'));
+    fireEvent.click(
+      sheet.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
+    );
+    // 60분 플랜은 연속 두 칸이 버튼 하나로 합쳐져 있다
+    fireEvent.click(sheet.getByRole('button', { name: '10:00 ~ 11:00' }));
+    fireEvent.click(sheet.getByRole('radio', { name: '포트폴리오 피드백' }));
+    fireEvent.click(sheet.getByRole('checkbox', { name: /예약 시간 변경/ }));
+    fireEvent.click(sheet.getByRole('button', { name: '신청하기' }));
+
+    expect(routerPush).toHaveBeenCalledWith('/live-mentoring/order?mentorId=3');
+
+    const draft = useOrderDraftStore.getState().draft;
+    expect(draft).toMatchObject({
+      mentorId: 3,
+      openingId: 6,
+      duration: 60,
+      price: 60000,
+      mentoringTypeIds: [7],
+      reservationChangeAgreed: true,
+    });
+    // 60분 플랜이라 연속 2칸이 함께 넘어간다
+    expect(draft?.slots.map((slot) => slot.slotId)).toEqual([1, 2]);
   });
 
   // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.

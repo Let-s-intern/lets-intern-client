@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  adminLiveMentoringParticipantListSchema,
+  adminLiveMentoringReservationListSchema,
+  adminLiveMentoringReservationSchema,
   adminLiveMentoringSchema,
+  liveMentoringApplicationStatusSchema,
   liveMentoringStatusSchema,
 } from '../liveMentoringSchema';
 
@@ -71,5 +75,130 @@ describe('adminLiveMentoringSchema', () => {
     );
     expect(parsed.currentOpening?.openingId).toBe(220);
     expect(parsed.currentOpening).not.toHaveProperty('feedbackStartDate');
+  });
+});
+
+// ── liveMentoringApplicationStatusSchema ─────────────────────────
+describe('liveMentoringApplicationStatusSchema', () => {
+  it('백엔드 LiveMentoringApplicationStatus 4종만 파싱한다', () => {
+    ['PAYMENT_PENDING', 'EXPIRED', 'CANCELED', 'CONFIRMED'].forEach((value) => {
+      expect(() =>
+        liveMentoringApplicationStatusSchema.parse(value),
+      ).not.toThrow();
+    });
+    expect(() => liveMentoringApplicationStatusSchema.parse('PAID')).toThrow();
+  });
+});
+
+// ── adminLiveMentoringReservationSchema ──────────────────────────
+describe('adminLiveMentoringReservationSchema', () => {
+  function makeReservation(overrides: Record<string, unknown> = {}) {
+    return {
+      applicationId: 501,
+      liveMentoringId: 10,
+      productName: '이력서 1대1 첨삭',
+      mentorId: 21,
+      mentorName: '김멘토',
+      mentorNickname: '렛츠멘토',
+      mentorEmail: 'mentor@letscareer.co.kr',
+      menteeId: 77,
+      menteeName: '홍길동',
+      menteeEmail: 'hong@example.com',
+      menteePhoneNum: '01012340001',
+      contactEmail: 'contact@example.com',
+      durationMinutes: 30,
+      reservationStartAt: '2026-08-20T17:00:00',
+      reservationEndAt: '2026-08-20T17:30:00',
+      status: 'CONFIRMED',
+      createDate: '2026-08-15T10:00:00',
+      questionDeferred: false,
+      questionContent: '이력서 어느 부분을 먼저 볼까요?',
+      ...overrides,
+    };
+  }
+
+  it('예약 한 건을 파싱한다', () => {
+    const parsed = adminLiveMentoringReservationSchema.parse(makeReservation());
+    expect(parsed.applicationId).toBe(501);
+    expect(parsed.status).toBe('CONFIRMED');
+  });
+
+  // 슬롯을 아직 잡지 못했거나 반납한 신청은 예약 일시가 없다. 목록이 통째로 죽으면 안 된다.
+  it('점유한 슬롯이 없으면 예약 시작·종료가 null 이어도 파싱된다', () => {
+    const parsed = adminLiveMentoringReservationSchema.parse(
+      makeReservation({ reservationStartAt: null, reservationEndAt: null }),
+    );
+    expect(parsed.reservationStartAt).toBeNull();
+  });
+
+  it('사전 질문을 미룬 신청은 질문 내용이 null 이어도 파싱된다', () => {
+    const parsed = adminLiveMentoringReservationSchema.parse(
+      makeReservation({ questionDeferred: true, questionContent: null }),
+    );
+    expect(parsed.questionDeferred).toBe(true);
+    expect(parsed.questionContent).toBeNull();
+  });
+
+  it('목록 응답은 reservationList 와 pageInfo 를 갖는다', () => {
+    const parsed = adminLiveMentoringReservationListSchema.parse({
+      reservationList: [makeReservation()],
+      pageInfo: {
+        pageNum: 0,
+        pageSize: 20,
+        totalElements: 1,
+        totalPages: 1,
+      },
+    });
+    expect(parsed.reservationList).toHaveLength(1);
+    expect(parsed.pageInfo.totalElements).toBe(1);
+  });
+});
+
+// ── adminLiveMentoringParticipantListSchema ──────────────────────
+describe('adminLiveMentoringParticipantListSchema', () => {
+  function makeParticipant(overrides: Record<string, unknown> = {}) {
+    return {
+      applicationId: 501,
+      paymentId: 900,
+      liveMentoringId: 10,
+      productName: '이력서 1대1 첨삭',
+      mentorId: 21,
+      mentorName: '김멘토',
+      mentorNickname: '렛츠멘토',
+      menteeId: 77,
+      menteeName: '홍길동',
+      menteeEmail: 'hong@example.com',
+      menteePhoneNum: '01012340001',
+      durationMinutes: 60,
+      reservationStartAt: '2026-08-20T17:00:00',
+      reservationEndAt: '2026-08-20T18:00:00',
+      originalPrice: 60000,
+      productDiscount: 5000,
+      couponDiscount: 10000,
+      paidAmount: 45000,
+      couponId: 3,
+      couponName: '여름 쿠폰',
+      status: 'CONFIRMED',
+      refunded: false,
+      refundAmount: 0,
+      createDate: '2026-08-15T10:00:00',
+      ...overrides,
+    };
+  }
+
+  it('결제자 한 명을 파싱한다', () => {
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant()],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].paidAmount).toBe(45000);
+  });
+
+  it('쿠폰을 쓰지 않은 결제는 쿠폰 필드가 null 이어도 파싱된다', () => {
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant({ couponId: null, couponName: null })],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].couponName).toBeNull();
   });
 });

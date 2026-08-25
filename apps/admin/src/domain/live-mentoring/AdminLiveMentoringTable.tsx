@@ -36,13 +36,23 @@ const errorMessage = (error: unknown): string => {
     : apiError.message;
 };
 
+interface AdminLiveMentoringTableProps {
+  /**
+   * 이 멘토의 참여자만 보러 가기. 주면 행마다 버튼을 내건다.
+   * 참여자 탭으로 넘기는 것은 페이지가 한다(URL 로 유지해야 새로고침에도 남는다).
+   */
+  onSelectMentor?: (mentorId: number) => void;
+}
+
 /**
  * 관리자 라이브 멘토링 상품 목록.
  *
  * 승인은 멘토가 검토 제출 시 자가승인으로 처리되고, 서버가 같은 트랜잭션에서
  * 개설까지 만든다. 관리자는 별도로 승인·반려하지 않고 조회와 강제 종료만 한다.
  */
-const AdminLiveMentoringTable = () => {
+const AdminLiveMentoringTable = ({
+  onSelectMentor,
+}: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
   const [status, setStatus] = useState<LiveMentoringStatus | undefined>(
     undefined,
@@ -219,6 +229,15 @@ const AdminLiveMentoringTable = () => {
                     </td>
                     <td className={bodyCellClass}>
                       <div className="flex flex-wrap gap-2">
+                        {onSelectMentor && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => onSelectMentor(row.mentorId)}
+                          >
+                            참여자 보기
+                          </Button>
+                        )}
                         {opening?.status === 'OPEN' && (
                           <Button
                             variant="outlined"

@@ -34,7 +34,7 @@ const inputClass =
   'focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors';
 
 /**
- * 카드 헤더의 번호·이름·필수 여부는 탭 정의에서 가져온다.
+ * 카드 헤더의 번호·이름은 탭 정의에서 가져온다.
  * 두 곳에 따로 적으면 탭 순서를 바꿨을 때 카드 번호만 옛 순서로 남는다.
  */
 const sectionMeta = (id: DetailTabId) => {
@@ -42,7 +42,6 @@ const sectionMeta = (id: DetailTabId) => {
   return {
     step: index + 1,
     name: DETAIL_TABS[index].label,
-    required: DETAIL_TABS[index].required,
   };
 };
 

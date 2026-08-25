@@ -349,3 +349,59 @@ export const openingHistoryResponseSchema = z.object({
 export type OpeningHistoryResponse = z.infer<
   typeof openingHistoryResponseSchema
 >;
+
+/**
+ * 예약 상태 — 백엔드 `LiveMentoringApplicationStatus`.
+ *
+ * 멘토 예약 목록(`GET /mentor/live-mentoring/reservations`)은 서버 쿼리가
+ * `status.eq(CONFIRMED)` 로 걸러 결제 완료 확정 건만 내린다. 나머지 값은 계약상 존재할
+ * 뿐 이 응답에는 오지 않으므로 **프론트에서 다시 거르지 않는다** — 두 곳에서 거르면
+ * 규칙이 갈라진다.
+ */
+export const liveMentoringReservationStatusSchema = z.enum([
+  'PAYMENT_PENDING',
+  'EXPIRED',
+  'CANCELED',
+  'CONFIRMED',
+]);
+export type LiveMentoringReservationStatus = z.infer<
+  typeof liveMentoringReservationStatusSchema
+>;
+
+/**
+ * 멘토가 보는 1대1 라이브 멘토링 예약 1건 — 백엔드
+ * `MentorLiveMentoringReservationResponse`.
+ *
+ * 멘티가 신청 시 낸 질문·전달 파일은 본문이 아니라 **제출 여부만** 내려온다
+ * (`questionWritten`·`attachmentSubmitted`). 멘토가 그 내용을 여는 화면은 아직 없다.
+ */
+export const liveMentoringReservationSchema = z.object({
+  applicationId: z.number(),
+  menteeId: z.number(),
+  menteeName: z.string(),
+  /** 멘토 상품명. 멘토당 상품이 하나라 모든 행에서 같은 값이다. */
+  productName: z.string(),
+  /** 진행시간(분). 30 또는 60. */
+  durationMinutes: z.number(),
+  /** ISO date-time */
+  reservationStartAt: z.string(),
+  /** ISO date-time */
+  reservationEndAt: z.string(),
+  status: liveMentoringReservationStatusSchema,
+  /** 멘토에게 미리 전달할 질문을 작성했는지. */
+  questionWritten: z.boolean(),
+  /** 자소서·이력서 등 전달 파일을 올렸는지. */
+  attachmentSubmitted: z.boolean(),
+  createDate: z.string(),
+});
+export type LiveMentoringReservation = z.infer<
+  typeof liveMentoringReservationSchema
+>;
+
+/** GET /mentor/live-mentoring/reservations 응답. 페이지네이션이 없다. */
+export const liveMentoringReservationListSchema = z.object({
+  reservationList: z.array(liveMentoringReservationSchema),
+});
+export type LiveMentoringReservationList = z.infer<
+  typeof liveMentoringReservationListSchema
+>;

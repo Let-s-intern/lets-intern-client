@@ -58,12 +58,30 @@ const errorDescription = (error: unknown): string | undefined => {
     : apiError.message;
 };
 
-/** 다른 창에서 상태가 바뀐 경우 — 화면 값이 이미 낡았으므로 다시 읽어오게 안내한다. */
-const isStateConflict = (error: unknown) => {
+/**
+ * 서버가 상태를 이유로 거절한 경우의 안내 문구.
+ *
+ * 두 코드를 한데 묶어 "다른 곳에서 상태가 바뀌었습니다"로 보여주면 안 된다.
+ * `LOCKED` 는 **개설이 열려 있어 설정을 못 고치는 것**이라 다른 곳에서 바뀐 게 아니고,
+ * 멘토가 할 일도 "다시 시도"가 아니라 "오픈 종료"다. 실제로 이 문구 때문에
+ * 다른 창을 의심하며 새로고침만 반복한 사례가 있었다.
+ */
+const stateConflictAlert = (error: unknown) => {
   const code = (error as { code?: string } | null)?.code;
-  return (
-    code === 'LIVE_MENTORING_INVALID_STATE' || code === 'LIVE_MENTORING_LOCKED'
-  );
+  if (code === 'LIVE_MENTORING_LOCKED') {
+    return {
+      title: '오픈 중에는 설정을 수정할 수 없습니다.',
+      description:
+        '상단에서 현재 오픈을 종료한 뒤 수정해주세요. 최신 상태를 다시 불러왔어요.',
+    };
+  }
+  if (code === 'LIVE_MENTORING_INVALID_STATE') {
+    return {
+      title: '다른 곳에서 상태가 바뀌었습니다.',
+      description: '최신 상태를 다시 불러왔어요. 확인 후 다시 시도해주세요.',
+    };
+  }
+  return null;
 };
 
 const OpenSettingsPage = () => {
@@ -249,13 +267,10 @@ const OpenSettingsPage = () => {
   };
 
   const handleMutationError = (title: string) => (error: unknown) => {
-    if (isStateConflict(error)) {
+    const conflict = stateConflictAlert(error);
+    if (conflict) {
       refetch();
-      showAlert({
-        title: '다른 곳에서 상태가 바뀌었습니다.',
-        description: '최신 상태를 다시 불러왔어요. 확인 후 다시 시도해주세요.',
-        variant: 'error',
-      });
+      showAlert({ ...conflict, variant: 'error' });
       return;
     }
     showAlert({

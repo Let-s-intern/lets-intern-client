@@ -154,6 +154,14 @@ export const liveMentoringTemplateSchema = z.object({
     subtitle: z.string(),
     items: z.array(
       z.object({
+        /**
+         * `LiveMentoringTypeCard` 의 id.
+         *
+         * 신청 생성 DTO 가 `mentoringTypeIds`(`List<Long>`, `@NotEmpty`)를 요구하고
+         * 서버가 이 id 로 카드를 대조한다. 상세 응답에 없던 것을 서버 Push 0 이
+         * 추가했다 — 없으면 프론트가 신청 자체를 만들 수 없다.
+         */
+        id: z.number(),
         typeName: z.string(),
         title: z.string(),
         description: z.string(),
@@ -220,6 +228,14 @@ export type LiveMentorProfile = z.infer<typeof liveMentorProfileSchema>;
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export const liveMentorDetailSchema = z.object({
   mentorId: z.number(),
+  /**
+   * 이 상품이 현재 열려 있는 개설의 id.
+   *
+   * 신청 생성 경로가 `POST /live-mentoring/openings/{openingId}/applications` 라
+   * 결제 페이지가 이 값을 들고 가야 한다. 서버는 예전부터 내려주고 있었는데
+   * 스키마에 없어 zod 가 버리고 있었다.
+   */
+  openingId: z.number(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
@@ -227,6 +243,14 @@ export const liveMentorDetailSchema = z.object({
   /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
   durationPrices: z.array(
     z.object({
+      /**
+       * 신청 생성 DTO 가 요구하는 `durationPriceId`(`@NotNull Long`).
+       *
+       * 공개 상세에 없어서 프론트가 신청을 만들 수 없었다 — `mentoringTypes[].id`
+       * 가 빠져 Push 0 으로 추가했던 것과 같은 결함이었고, 서버가 `ebb03a66` 으로
+       * 고쳤다. 이 값이 비면 결제가 통째로 막히므로 필수로 잡아 파싱 단계에서 잡는다.
+       */
+      durationPriceId: z.number(),
       duration: liveMentoringDurationSchema,
       price: z.number(),
     }),
@@ -282,3 +306,259 @@ export const liveMentoringSlotListSchema = z.object({
   liveMentoringSlotList: z.array(liveMentoringSlotSchema),
 });
 export type LiveMentoringSlotList = z.infer<typeof liveMentoringSlotListSchema>;
+
+// ── 신청 생성 (POST /live-mentoring/openings/{openingId}/applications) ──────
+
+/**
+ * 질문 첨부 종류 — 백엔드 `LiveMentoringAttachmentType`.
+ * 상수 이름이 곧 직렬화 값이다. 오타는 컴파일러를 통과해 런타임까지 살아남는다.
+ */
+export const liveMentoringAttachmentTypeSchema = z.enum([
+  'NONE',
+  'FILE',
+  'URL',
+]);
+export type LiveMentoringAttachmentType = z.infer<
+  typeof liveMentoringAttachmentTypeSchema
+>;
+
+/**
+ * 신청 상태 — 백엔드 `LiveMentoringApplicationStatus`.
+ *
+ * 저장값은 괄호 안 숫자(`PAYMENT_PENDING(1)` … `CONFIRMED(4)`)지만 JSON 으로는
+ * 상수 이름이 나간다. DB 를 직접 볼 때 declaration 순서로 착각하지 않도록 적어 둔다.
+ */
+export const liveMentoringApplicationStatusSchema = z.enum([
+  'PAYMENT_PENDING',
+  'EXPIRED',
+  'CANCELED',
+  'CONFIRMED',
+]);
+export type LiveMentoringApplicationStatus = z.infer<
+  typeof liveMentoringApplicationStatusSchema
+>;
+
+/**
+ * 신청 생성 요청 — 백엔드 `CreateLiveMentoringApplicationRequestDto`.
+ *
+ * 제약은 서버 Bean Validation 을 그대로 옮겼다. 서버가 400 을 주기 전에 여기서
+ * 걸러야 사용자가 결제 직전에 튕기지 않는다.
+ *
+ * | 필드 | 서버 제약 |
+ * |---|---|
+ * | `durationPriceId` | `@NotNull` |
+ * | `slotIds` | `@NotEmpty` `@Size(max = 2)` — 60분 플랜이 연속 2칸이라 상한이 2다 |
+ * | `mentoringTypeIds` | `@NotEmpty` |
+ * | `reservationChangeAgreed` | `@NotNull` |
+ * | `contactEmail` | `@NotBlank` `@Email` `@Size(max = 255)` |
+ * | `question.deferred` | `@NotNull` |
+ * | `question.content` | `@Size(max = 5000)` — 필수가 아니다 |
+ * | `question.attachmentType` | `@NotNull` |
+ * | `question.url` | `@Size(max = 2048)` |
+ * | `question.mentorShareAgreed` | `@NotNull` |
+ * | `couponCode` | `@Size(max = 100)` — 선택 |
+ *
+ * **이름·휴대폰 필드는 없다.** 시안 `2-0` 이 요구하는 것과 어긋난다 (PRD 7-6 —
+ * 표시 전용으로 두고 `contactEmail` 만 보낸다).
+ */
+export const createLiveMentoringApplicationRequestSchema = z.object({
+  durationPriceId: z.number(),
+  slotIds: z.array(z.number()).min(1).max(2),
+  mentoringTypeIds: z.array(z.number()).min(1),
+  reservationChangeAgreed: z.boolean(),
+  contactEmail: z.string().email().max(255),
+  question: z.object({
+    deferred: z.boolean(),
+    /* 나중에 작성하기(`deferred: true`)면 비어 있다. 서버도 필수로 보지 않는다. */
+    content: z.string().max(5000).nullish(),
+    attachmentType: liveMentoringAttachmentTypeSchema,
+    fileId: z.number().nullish(),
+    url: z.string().max(2048).nullish(),
+    mentorShareAgreed: z.boolean(),
+  }),
+  couponCode: z.string().max(100).nullish(),
+});
+export type CreateLiveMentoringApplicationRequest = z.infer<
+  typeof createLiveMentoringApplicationRequestSchema
+>;
+
+/**
+ * 신청 생성 응답 — 백엔드 `CreateLiveMentoringApplicationResponseDto`.
+ *
+ * `reservation.expiresAt` 이 10분 선점 만료 시각이고, `payment.orderId` 를 Toss 에 넘긴다.
+ * 시각은 전부 타임존 없는 `LocalDateTime` 문자열이다.
+ */
+export const createLiveMentoringApplicationResponseSchema = z.object({
+  applicationId: z.number(),
+  product: z.object({
+    durationPriceId: z.number(),
+    name: z.string(),
+    durationMinutes: z.number(),
+  }),
+  reservation: z.object({
+    slotIds: z.array(z.number()),
+    startAt: z.string(),
+    endAt: z.string(),
+    applicationStatus: liveMentoringApplicationStatusSchema,
+    expiresAt: z.string(),
+  }),
+  mentoringTypes: z.array(
+    z.object({ mentoringTypeId: z.number(), name: z.string() }),
+  ),
+  payment: z.object({
+    originalPrice: z.number(),
+    productDiscount: z.number(),
+    couponDiscount: z.number(),
+    finalAmount: z.number(),
+    orderId: z.string(),
+    currency: z.string(),
+  }),
+});
+export type CreateLiveMentoringApplicationResponse = z.infer<
+  typeof createLiveMentoringApplicationResponseSchema
+>;
+
+// ── 결제 승인 (POST /live-mentoring/applications/{applicationId}/payment/confirm) ──
+
+/**
+ * 결제 승인 요청 — 백엔드 `ConfirmLiveMentoringPaymentRequestDto`.
+ *
+ * `amount` 가 **문자열**이다(`@NotBlank String amount`). 응답에서는 숫자로 돌아온다.
+ * 이 비대칭은 실수가 아니라 계약이므로 스키마에도 그대로 둔다 — 한쪽을 숫자로
+ * 맞춰 두면 승인 요청이 400 으로 떨어지고, 그때는 이미 Toss 결제창이 닫힌 뒤다.
+ *
+ * `paymentKey` 만 제약이 없다. Toss 가 주는 값을 그대로 넘긴다.
+ */
+export const confirmLiveMentoringPaymentRequestSchema = z.object({
+  paymentKey: z.string(),
+  orderId: z.string().min(1),
+  amount: z.string().min(1),
+});
+export type ConfirmLiveMentoringPaymentRequest = z.infer<
+  typeof confirmLiveMentoringPaymentRequestSchema
+>;
+
+/**
+ * 결제 승인 응답 — 백엔드 `ConfirmLiveMentoringPaymentResponseDto`.
+ * 요청과 달리 `amount` 는 `Integer` 다.
+ */
+export const confirmLiveMentoringPaymentResponseSchema = z.object({
+  applicationId: z.number(),
+  paymentId: z.number(),
+  orderId: z.string(),
+  amount: z.number(),
+  applicationStatus: liveMentoringApplicationStatusSchema,
+});
+export type ConfirmLiveMentoringPaymentResponse = z.infer<
+  typeof confirmLiveMentoringPaymentResponseSchema
+>;
+
+// ── 마이페이지 신청현황 (GET /live-mentoring/applications/my) ────────────────
+
+/**
+ * 신청현황 카드 1건 — 백엔드 `MyLiveMentoringApplicationResponse`.
+ *
+ * `entryLink` 는 발급 구조가 정해지지 않아 **항상 null 이다**(PRD 4-8). 화면은 이 값이
+ * 비면 `멘토링 입장` 을 비활성으로 그린다 — 버튼을 감추지는 않는다.
+ *
+ * 결제가 붙지 않은 신청은 서버가 목록에서 걸러 주므로 프론트가 상태로 다시 거르지 않는다.
+ */
+export const myLiveMentoringApplicationSchema = z.object({
+  applicationId: z.number(),
+  /** 결제가 아직 없으면 null. */
+  paymentId: z.number().nullable(),
+  mentorName: z.string().nullable(),
+  thumbnail: z.string().nullable(),
+  productName: z.string().nullable(),
+  durationMinutes: z.number(),
+  /** `LocalDateTime`. 참여 예정·중·종료 판정의 기준이다. */
+  reservationStartAt: z.string(),
+  reservationEndAt: z.string(),
+  status: liveMentoringApplicationStatusSchema,
+  /** 질문을 썼는지. 카드 버튼이 `작성` 인지 `수정` 인지 가른다. */
+  questionWritten: z.boolean(),
+  entryLink: z.string().nullable(),
+});
+export type MyLiveMentoringApplication = z.infer<
+  typeof myLiveMentoringApplicationSchema
+>;
+
+export const myLiveMentoringApplicationListSchema = z.object({
+  applicationList: z.array(myLiveMentoringApplicationSchema),
+});
+
+// ── 멘토링 질문 (GET·PATCH /live-mentoring/applications/{id}/question) ──────
+
+/**
+ * 질문 조회 응답 — 백엔드 `GetLiveMentoringQuestionResponseDto`.
+ *
+ * **`editable` 은 서버가 계산한 값이다.** 예약 시작 48시간 기준인데, 화면이 같은
+ * 계산을 다시 하면 클라이언트와 서버의 시계 차이로 결과가 어긋나 저장 시점에 거부된다.
+ * 서버 DTO 주석도 같은 말을 한다.
+ *
+ * 첨부 URL 의 필드 이름이 요청(`url`)과 응답(`attachmentUrl`)에서 다르다.
+ */
+export const liveMentoringQuestionSchema = z.object({
+  applicationId: z.number(),
+  deferred: z.boolean(),
+  content: z.string().nullable(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  fileId: z.number().nullable(),
+  attachmentUrl: z.string().nullable(),
+  mentorShareAgreed: z.boolean(),
+  reservationStartAt: z.string(),
+  editable: z.boolean(),
+});
+export type LiveMentoringQuestion = z.infer<typeof liveMentoringQuestionSchema>;
+
+/**
+ * 질문 수정 요청 — 백엔드 `UpdateLiveMentoringQuestionRequestDto`.
+ * 필드와 제약이 신청 생성의 `question` 과 같다. 서버도 같은 검증기를 돌린다.
+ */
+export const updateLiveMentoringQuestionRequestSchema = z.object({
+  deferred: z.boolean(),
+  content: z.string().max(5000).nullish(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  fileId: z.number().nullish(),
+  url: z.string().max(2048).nullish(),
+  mentorShareAgreed: z.boolean(),
+});
+export type UpdateLiveMentoringQuestionRequest = z.infer<
+  typeof updateLiveMentoringQuestionRequestSchema
+>;
+
+// ── 환불 미리보기·취소 (GET refund-preview / POST cancel) ───────────────────
+
+/**
+ * 예정 환불금액 — 백엔드 `GetLiveMentoringRefundPreviewResponseDto`.
+ * 취소 응답도 같은 형태다(서버 `cancel` 이 이 DTO 를 그대로 돌려준다).
+ *
+ * **금액과 수수료율은 전부 서버가 계산한다.** 화면은 그대로 그린다 — 같은 계산이
+ * 두 곳에 있으면 반드시 어긋나고, 돈이 걸린 화면에서 그 차이는 곧 사고다.
+ * 서버 DTO 주석도 같은 말을 한다.
+ *
+ * `cancelable` 은 환불받을 금액이 남아 있는 구간인지를 서버가 판단한 값이다.
+ * 화면이 48시간·24시간 경계를 다시 계산하면 시계 차이로 어긋난다.
+ *
+ * 금액은 **결제 시점 스냅샷**이라 상품 가격이 바뀌어도 실제로 낸 금액을 기준으로 한다.
+ */
+export const liveMentoringRefundPreviewSchema = z.object({
+  applicationId: z.number(),
+  /** Toss 결제가 아직 붙지 않았으면 null. */
+  paymentId: z.number().nullable(),
+  orderId: z.string(),
+  originalPrice: z.number(),
+  productDiscount: z.number(),
+  couponDiscount: z.number(),
+  /** 실제로 결제된 금액. 환불 계산의 기준이다. */
+  paidAmount: z.number(),
+  /** 서버 정책이 정한 취소 수수료율(%). 화면은 이 숫자를 그대로 쓴다. */
+  cancelFeePercent: z.number(),
+  cancelFee: z.number(),
+  refundAmount: z.number(),
+  reservationStartAt: z.string(),
+  cancelable: z.boolean(),
+});
+export type LiveMentoringRefundPreview = z.infer<
+  typeof liveMentoringRefundPreviewSchema
+>;

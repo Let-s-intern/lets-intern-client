@@ -20,6 +20,8 @@ interface DetailCTAButtonsProps {
    * 예약 가능한 슬롯이 하나도 없으면 null.
    */
   deadline: string | null;
+  /** 신청 CTA 클릭 — 상세 페이지가 신청 시트를 연다. */
+  onApplyClick: () => void;
 }
 
 /** 슬롯이 하나도 없을 때의 비활성 버튼. 공용 CTA 의 비활성 버튼과 같은 규격이다. */
@@ -44,18 +46,15 @@ const NoSlotButton = () => (
  * 의도와 전혀 다른 화면이 나온다. 그래서 분기를 여기서 처리하고 공용 컴포넌트는
  * 레이아웃 껍데기(`MobileCTA`/`DesktopCTA`)만 빌려 쓴다.
  *
- * ⚠️ 결제·예약 플로우는 아직 없다. 신청을 누르면 준비 중임을 알린다.
- * TODO(결제 연동): `onApplyClick` 에서 플랜 선택 시트를 열도록 교체할 것.
+ * 신청을 누르면 상세 페이지가 들고 있는 신청 시트를 연다. 시트 상태를 여기서 갖지
+ * 않는 이유는 히어로의 플랜 카드도 같은 시트를 열기 때문이다 — 주인은 페이지다.
  */
 const DetailCTAButtons = ({
   title,
   beginning,
   deadline,
+  onApplyClick,
 }: DetailCTAButtonsProps) => {
-  const handleApplyClick = () => {
-    window.alert('결제 기능은 준비 중입니다. 곧 신청하실 수 있어요!');
-  };
-
   if (beginning === null || deadline === null) {
     return (
       <>
@@ -98,12 +97,12 @@ const DetailCTAButtons = ({
     <>
       <MobileApplyCTA
         program={program}
-        onApplyClick={handleApplyClick}
+        onApplyClick={onApplyClick}
         isAlreadyApplied={false}
       />
       <DesktopApplyCTA
         program={program}
-        onApplyClick={handleApplyClick}
+        onApplyClick={onApplyClick}
         isAlreadyApplied={false}
       />
     </>

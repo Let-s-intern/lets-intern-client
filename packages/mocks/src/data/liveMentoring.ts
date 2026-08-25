@@ -139,6 +139,8 @@ export interface LiveMentoringTemplate {
     title: string;
     subtitle: string;
     items: {
+      /** `LiveMentoringTypeCard` 의 id. 신청 생성 DTO 의 `mentoringTypeIds` 가 이 값을 쓴다. */
+      id: number;
       typeName: string;
       title: string;
       description: string;
@@ -200,12 +202,19 @@ export interface LiveMentorChallenge {
 /** 멘토 상세 (상세 페이지 렌더용, +reviews) (PRD §4.3) */
 export interface LiveMentorDetail {
   mentorId: number;
+  /** 이 상품이 현재 열려 있는 개설 id. 신청 생성 경로에 들어간다. */
+  openingId: number;
   /** 상품명 — 히어로 제목. */
   title: string;
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
   /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */
-  durationPrices: { duration: LiveMentoringDuration; price: number }[];
+  durationPrices: {
+    /** 신청 생성 DTO 의 `durationPriceId`. 목에서는 진행시간으로 갈음한다. */
+    durationPriceId: number;
+    duration: LiveMentoringDuration;
+    price: number;
+  }[];
   /** 여러 진행시간을 열었을 때의 최저가(대표 표시용). */
   price: number;
   rating: number;
@@ -784,6 +793,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
   LiveMentoringTemplate['mentoringTypes']['items'][number]
 > = {
   PERSONAL_STATEMENT: {
+    id: 1,
     typeName: '자기소개서 피드백',
     title: '지원 직무에 맞게\n자기소개서를 다듬고 싶다면',
     description:
@@ -791,6 +801,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
     tags: ['문항 분석', '경험 정리', '표현 개선'],
   },
   RESUME: {
+    id: 2,
     typeName: '이력서 피드백',
     title: '내 경험이 강점으로 보이도록\n이력서를 정리하고 싶다면',
     description:
@@ -798,6 +809,7 @@ const MENTORING_TYPE_DEFAULTS: Record<
     tags: ['경험 정리', '역량 강조', '실무자 피드백'],
   },
   PORTFOLIO: {
+    id: 3,
     typeName: '포트폴리오 피드백',
     title: '포트폴리오에서 핵심 역량이\n잘 드러나는지 점검받고 싶다면',
     description:
@@ -925,10 +937,14 @@ export const LIVE_MENTOR_DETAILS: Record<number, LiveMentorDetail> =
       seed.mentorId,
       {
         mentorId: seed.mentorId,
+        // 목에서는 멘토 1명당 개설 1건으로 본다 — 실제 값은 서버가 준다.
+        openingId: seed.mentorId,
         title: mentoringTitleFor(seed),
         categories: categoriesFor(seed),
         durations: durationsFor(seed),
         durationPrices: durationsFor(seed).map((duration) => ({
+          // 목에서는 진행시간 값을 그대로 id 로 쓴다 — 실제 값은 서버가 준다.
+          durationPriceId: duration,
           duration,
           price: getPriceByDuration(duration),
         })),
@@ -1012,6 +1028,7 @@ export const LIVE_MENTORING_TEMPLATE: LiveMentoringTemplate =
 /** 진행시간 목록을 서버 응답 형태(`durationPrices`)로 변환한다. 가격은 고정 정책값. */
 const durationPricesFor = (durations: LiveMentoringDuration[]) =>
   durations.map((duration) => ({
+    durationPriceId: duration,
     duration,
     price: getPriceByDuration(duration),
   }));

@@ -26,11 +26,15 @@ const CheckIcon = () => (
  * 탭 이동은 계속 동작해야 한다 — 잠금이 이동까지 삼키면 멘토는 자기 페이지를
  * 읽지도 못한다.
  *
- * 시안 기준 탭에는 **라벨과 완료 체크만** 둔다. 섹션 번호 배지와 필수·선택 칩은
- * 탭이 아니라 각 섹션 카드 헤더(`DetailSectionHeader`)에 붙는다 — 탭 줄에 다 넣으면
- * 6개가 두 줄로 넘치고, 지금 무엇을 편집 중인지가 오히려 안 보인다.
+ * 탭에는 **라벨과 필수·선택 표시, 완료 체크**를 둔다.
+ * 표시는 웹 신청 시트의 제목과 같은 `(필수)` 형태다 — 배지가 아니라 괄호 텍스트다. 무엇을 반드시 채워야 하는지는
+ * 탭을 열기 전에 보여야 하는 정보라 섹션 카드 헤더에서 여기로 옮겼다. 칩이 붙어도
+ * 탭 줄은 두 줄로 넘치지 않는다 — `overflow-x-auto` 라 폭이 모자라면 가로로 스크롤된다.
  *
- * 필수 여부는 화면 낭독에 필요하므로 탭 이름(`aria-label`)에는 남긴다.
+ * 섹션 번호 배지는 그대로 카드 헤더에 남는다.
+ *
+ * 필수 여부는 탭 이름(`aria-label`)에도 있으므로 칩은 `aria-hidden` 이다 — 그러지 않으면
+ * 같은 말을 두 번 읽는다.
  */
 const DetailTabs = ({
   activeTab,
@@ -61,6 +65,16 @@ const DetailTabs = ({
           }`}
         >
           {tab.label}
+          <span
+            aria-hidden="true"
+            className={
+              tab.required
+                ? 'text-primary text-sm font-medium'
+                : 'text-sm font-medium text-gray-400'
+            }
+          >
+            ({requiredLabel})
+          </span>
           {isComplete ? <CheckIcon /> : null}
         </button>
       );

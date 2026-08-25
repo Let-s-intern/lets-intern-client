@@ -19,6 +19,23 @@ export const newProgramTypeToText: Record<string, string> = {
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
 };
+/**
+ * 쿠폰의 적용 가능 프로그램 목록.
+ *
+ * `newProgramTypeToText` 를 그대로 쓰지 않는다. 그 맵은 프로그램 생성 화면의
+ * 종류 셀렉트와 공유되는데, 1대1 라이브 멘토링은 어드민에서 만드는 프로그램이 아니라
+ * 멘토가 직접 개설하는 상품이다. 같이 쓰면 만들 수 없는 프로그램이 목록에 뜬다.
+ *
+ * 서버 `CouponProgramType` 과 값이 1:1로 맞아야 한다(`ALL` 은 화면에서 따로 그린다).
+ */
+export const couponProgramTypeToText: Record<string, string> = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+  REPORT: '서류 진단',
+  GUIDEBOOK: '가이드북',
+  LIVE_MENTORING: '1대1 라이브 멘토링',
+};
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',
   CHARGE: '이용료',

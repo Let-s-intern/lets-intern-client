@@ -20,6 +20,9 @@ export const getBadgeTypeFromProgramType = (
       return 'REPORT_REVIEW';
     case 'GUIDEBOOK':
       return null;
+    // 1대1 라이브 멘토링 후기는 아직 `ReviewType` 에 없다. 배지를 달지 않는다.
+    case 'LIVE_MENTORING':
+      return null;
   }
 };
 

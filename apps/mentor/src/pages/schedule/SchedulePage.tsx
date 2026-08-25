@@ -15,6 +15,7 @@ import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import type { FeedbackTagType } from './constants/feedbackTag';
 import { currentNow } from './constants/mockNow';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
+import { useLiveMentoringData } from './hooks/useLiveMentoringData';
 import { useScheduleData } from './hooks/useScheduleData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from './types';
@@ -23,8 +24,13 @@ const SchedulePage = () => {
   // 라이브 바는 실 API 파생. 서면 바는 ChallengeDataFetcher(실 API) 단일 경로로
   // 일원화되어 별도 extraBars 주입이 필요 없다 (중복 오버레이 제거).
   const { bars: liveFeedbackBars } = useLiveFeedbackData();
+  // 1대1 라이브 멘토링 예약도 같은 방식으로 합류시킨다(결제 완료 확정 건만 서버가 내린다).
+  const { bars: liveMentoringBars } = useLiveMentoringData();
 
-  const extraBars = liveFeedbackBars;
+  const extraBars = useMemo(
+    () => [...liveFeedbackBars, ...liveMentoringBars],
+    [liveFeedbackBars, liveMentoringBars],
+  );
 
   const {
     challenges,

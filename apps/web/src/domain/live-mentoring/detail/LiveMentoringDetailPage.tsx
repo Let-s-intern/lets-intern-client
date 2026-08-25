@@ -4,6 +4,12 @@ import {
   useLiveMentorDetailQuery,
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import ApplySheet from '../apply/ApplySheet';
+import { useApplySheetState } from '../apply/hooks/useApplySheetState';
+import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
 import { formatDetailPeriod, slotPeriod } from '../constants';
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
@@ -33,7 +39,8 @@ interface LiveMentoringDetailPageProps {
  * - 6·7·9·10 : 운영 확정 마케팅 콘텐츠 → 시안 이미지 그대로 (`DetailFixedSections`)
  * - 8 : 후기 (노출 여부·대상만 멘토가 고름)
  *
- * 결제/예약은 범위 밖 — 히어로의 플랜은 표시만 하고 선택되지 않는다.
+ * 하단 CTA 를 누르면 신청 시트가 열린다. 시트 상태를 페이지가 들고 있는 이유는
+ * 히어로의 플랜 카드도 같은 시트를 열기 때문이다.
  */
 const LiveMentoringDetailPage = ({
   mentorId,
@@ -42,6 +49,24 @@ const LiveMentoringDetailPage = ({
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);
+  const applySheet = useApplySheetState();
+  const router = useRouter();
+  const setOrderDraft = useOrderDraftStore((state) => state.setDraft);
+
+  /*
+    플랜은 **항상 하나가 골라져 있어야 한다.** 상세 히어로와 신청 시트가 같은
+    `draft.duration` 을 보므로, 데이터가 도착하는 시점에 첫 플랜을 잡아 둔다.
+    아무것도 안 골라진 상태를 없애면 `총 결제 금액` 이 비는 화면도 사라진다.
+  *
+    훅이라 조기 반환보다 위에 있어야 한다. 아래로 내리면 로딩 렌더와 성공 렌더의
+    훅 개수가 달라져 'Rendered more hooks than during the previous render' 가 난다.
+  */
+  const firstDuration = data?.durationPrices[0]?.duration ?? null;
+  const hasDuration = applySheet.draft.duration !== null;
+  const { selectDuration } = applySheet;
+  useEffect(() => {
+    if (firstDuration !== null && !hasDuration) selectDuration(firstDuration);
+  }, [firstDuration, hasDuration, selectDuration]);
 
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
@@ -71,7 +96,12 @@ const LiveMentoringDetailPage = ({
 
   return (
     <div className="flex flex-col">
-      <DetailHero detail={data} period={periodLabel} />
+      <DetailHero
+        detail={data}
+        period={periodLabel}
+        selectedDuration={applySheet.draft.duration}
+        onSelectPlan={applySheet.selectDuration}
+      />
 
       <DetailNavigation isReady={!isLoading} />
 
@@ -339,6 +369,41 @@ const LiveMentoringDetailPage = ({
         title={data.title}
         beginning={period?.beginning ?? null}
         deadline={period?.deadline ?? null}
+        onApplyClick={() => applySheet.open()}
+      />
+
+      {/*
+        `신청하기` 는 선택값을 넘기고 결제 페이지로 보내기만 한다. 신청 생성은
+        결제 페이지의 `결제하기` 시점이다(PRD 7-4 안 A) — 여기서 만들면 질문·쿠폰이
+        정해지기도 전에 슬롯이 10분 선점된다.
+      */}
+      <ApplySheet
+        detail={data}
+        slots={slots?.liveMentoringSlotList ?? []}
+        sheet={applySheet}
+        onSubmit={(draft) => {
+          // 시트는 필수 입력이 다 차야 `신청하기` 를 열어 주므로 여기서 다시 묻지 않는다
+          if (draft.duration === null) return;
+          const plan = data.durationPrices.find(
+            (option) => option.duration === draft.duration,
+          );
+          if (!plan) return;
+
+          setOrderDraft({
+            mentorId: data.mentorId,
+            openingId: data.openingId,
+            productName: data.title,
+            thumbnail: data.profile.profileImage,
+            duration: draft.duration,
+            durationPriceId: plan.durationPriceId ?? null,
+            price: plan.price,
+            slots: draft.slots,
+            mentoringTypeIds: draft.mentoringTypeIds,
+            reservationChangeAgreed: draft.agreedToScheduleChange,
+          });
+          applySheet.close();
+          router.push(`/live-mentoring/order?mentorId=${data.mentorId}`);
+        }}
       />
     </div>
   );

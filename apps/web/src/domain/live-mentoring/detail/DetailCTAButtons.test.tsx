@@ -22,6 +22,7 @@ describe('DetailCTAButtons', () => {
         title="포폴메이커 멘토의 1:1 멘토링"
         beginning={null}
         deadline={null}
+        onApplyClick={() => {}}
       />,
     );
 
@@ -48,6 +49,7 @@ describe('DetailCTAButtons', () => {
         title="포폴메이커 멘토의 1:1 멘토링"
         beginning={BEGINNING}
         deadline={DEADLINE}
+        onApplyClick={() => {}}
       />,
     );
 
@@ -69,6 +71,7 @@ describe('DetailCTAButtons', () => {
         title="상품"
         beginning={BEGINNING}
         deadline={DEADLINE}
+        onApplyClick={() => {}}
       />,
     );
 
@@ -82,6 +85,7 @@ describe('DetailCTAButtons', () => {
         title="상품"
         beginning={BEGINNING}
         deadline={DEADLINE}
+        onApplyClick={() => {}}
       />,
     );
 
@@ -100,6 +104,7 @@ describe('DetailCTAButtons', () => {
         title="상품"
         beginning={BEGINNING}
         deadline={DEADLINE}
+        onApplyClick={() => {}}
       />,
     );
 
@@ -107,22 +112,27 @@ describe('DetailCTAButtons', () => {
     expect(screen.queryByText('지금 바로 신청')).not.toBeInTheDocument();
   });
 
-  it('신청을 누르면 결제 준비 중 알럿을 띄운다', () => {
+  /*
+    예전에는 여기서 결제 준비 중 알럿을 띄웠다. 알럿은 브라우저를
+    멈춰 세우고 뒤이은 동작을 전부 막으므로, 남아 있지 않은 것까지 함께 단언한다.
+  */
+  it('신청을 누르면 알럿 없이 onApplyClick 을 부른다', () => {
     jest.setSystemTime(new Date('2030-08-12T09:00:00'));
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const onApplyClick = jest.fn();
     render(
       <DetailCTAButtons
         title="상품"
         beginning={BEGINNING}
         deadline={DEADLINE}
+        onApplyClick={onApplyClick}
       />,
     );
 
     screen.getAllByText('지금 바로 신청')[0].click();
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      '결제 기능은 준비 중입니다. 곧 신청하실 수 있어요!',
-    );
+    expect(onApplyClick).toHaveBeenCalledTimes(1);
+    expect(alertSpy).not.toHaveBeenCalled();
     alertSpy.mockRestore();
   });
 });
