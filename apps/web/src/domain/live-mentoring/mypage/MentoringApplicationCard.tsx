@@ -1,5 +1,19 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
+/*
+  Jitsi SDK 는 ESM 전용이라 정적으로 끌어오면 마이페이지 초기 번들에 들어가고
+  jest 가 변환하지 못해 이 파일을 쓰는 스위트가 통째로 죽는다. 실제로 회의실을 열 때만
+  받아온다.
+*/
+const JitsiEmbedModal = dynamic(
+  () => import('@/common/modal/JitsiEmbedModal'),
+  { ssr: false },
+);
+
+import { useState } from 'react';
+
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
 import { durationLabel } from '../constants';
 import type { LiveMentoringDuration } from '@/api/live-mentoring/liveMentoringSchema';
@@ -89,85 +103,100 @@ const MentoringApplicationCard = ({
   onQuestionClick,
 }: MentoringApplicationCardProps) => {
   const badge = PHASE_BADGE[phase];
+  const [isEntryOpen, setIsEntryOpen] = useState(false);
 
   return (
-    <div className="border-neutral-85 flex flex-col gap-4 rounded-md border p-4 md:flex-row md:gap-5">
-      {application.thumbnail ? (
-        <img
-          src={application.thumbnail}
-          alt=""
-          aria-hidden="true"
-          className="h-[120px] w-full shrink-0 rounded-sm object-cover md:h-[100px] md:w-[160px]"
-        />
-      ) : (
-        <div
-          aria-hidden="true"
-          className="bg-neutral-90 h-[120px] w-full shrink-0 rounded-sm md:h-[100px] md:w-[160px]"
-        />
-      )}
+    <>
+      <div className="border-neutral-85 flex flex-col gap-4 rounded-md border p-4 md:flex-row md:gap-5">
+        {application.thumbnail ? (
+          <img
+            src={application.thumbnail}
+            alt=""
+            aria-hidden="true"
+            className="h-[120px] w-full shrink-0 rounded-sm object-cover md:h-[100px] md:w-[160px]"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="bg-neutral-90 h-[120px] w-full shrink-0 rounded-sm md:h-[100px] md:w-[160px]"
+          />
+        )}
 
-      <div className="flex flex-1 flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span
-            className={`text-xxsmall12 rounded-sm px-2 py-1 font-semibold ${badge.className}`}
-          >
-            {badge.label}
-          </span>
-          <span className="text-xxsmall12 text-neutral-40">1:1 멘토링</span>
-          <span className="text-xxsmall12 text-neutral-40">
-            진행기간{' '}
-            {formatReservationPeriod(
-              application.reservationStartAt,
-              application.reservationEndAt,
-            )}
-          </span>
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span
+              className={`text-xxsmall12 rounded-sm px-2 py-1 font-semibold ${badge.className}`}
+            >
+              {badge.label}
+            </span>
+            <span className="text-xxsmall12 text-neutral-40">1:1 멘토링</span>
+            <span className="text-xxsmall12 text-neutral-40">
+              진행기간{' '}
+              {formatReservationPeriod(
+                application.reservationStartAt,
+                application.reservationEndAt,
+              )}
+            </span>
 
-          <div className="flex gap-2 md:ml-auto">
-            {isQuestionButtonVisible(
-              application.reservationStartAt,
-              new Date(),
-            ) && (
-              <button
-                type="button"
-                onClick={() => onQuestionClick(application.applicationId)}
-                className="border-primary text-primary text-xxsmall12 rounded-sm border px-3 py-2 font-medium"
-              >
-                {questionButtonLabel(application.questionWritten)}
-              </button>
-            )}
-            {/*
+            <div className="flex gap-2 md:ml-auto">
+              {isQuestionButtonVisible(
+                application.reservationStartAt,
+                new Date(),
+              ) && (
+                <button
+                  type="button"
+                  onClick={() => onQuestionClick(application.applicationId)}
+                  className="border-primary text-primary text-xxsmall12 rounded-sm border px-3 py-2 font-medium"
+                >
+                  {questionButtonLabel(application.questionWritten)}
+                </button>
+              )}
+              {/*
               entryLink 가 null 인 동안은 비활성이다(PRD 4-8). 감추지 않는 이유는
               위 컴포넌트 주석 참고.
             */}
-            <button
-              type="button"
-              disabled={application.entryLink === null}
-              onClick={() => {
-                if (application.entryLink) {
-                  window.open(application.entryLink, '_blank', 'noopener');
-                }
-              }}
-              className="border-neutral-80 text-neutral-20 text-xxsmall12 disabled:border-neutral-85 disabled:text-neutral-60 rounded-sm border px-3 py-2 font-medium disabled:cursor-default"
-            >
-              멘토링 입장
-            </button>
+              <button
+                type="button"
+                disabled={application.entryLink === null}
+                onClick={() => setIsEntryOpen(true)}
+                className="border-neutral-80 text-neutral-20 text-xxsmall12 disabled:border-neutral-85 disabled:text-neutral-60 rounded-sm border px-3 py-2 font-medium disabled:cursor-default"
+              >
+                멘토링 입장
+              </button>
+            </div>
           </div>
+
+          <p className="text-xsmall16 text-neutral-0 font-bold">
+            {application.productName ?? '1:1 LIVE 멘토링'}
+          </p>
+
+          <p className="text-xxsmall12 text-neutral-40 mt-auto">
+            구매플랜{' '}
+            <span className="text-neutral-20 font-medium">
+              {durationLabel(
+                application.durationMinutes as LiveMentoringDuration,
+              )}
+            </span>
+          </p>
         </div>
-
-        <p className="text-xsmall16 text-neutral-0 font-bold">
-          {application.productName ?? '1:1 LIVE 멘토링'}
-        </p>
-
-        <p className="text-xxsmall12 text-neutral-40 mt-auto">
-          구매플랜{' '}
-          <span className="text-neutral-20 font-medium">
-            {durationLabel(
-              application.durationMinutes as LiveMentoringDuration,
-            )}
-          </span>
-        </p>
       </div>
-    </div>
+
+      {/*
+      라이브 피드백과 같은 Jitsi 모달로 들어간다. 새 탭을 열지 않는다 —
+      회의실을 벗어나면 예약 정보와 사전 질문을 다시 찾아야 한다.
+
+      `meetingUrl` 은 서버가 합성한 값(`entryLink`)을 그대로 쓴다. 방 이름을 화면에서
+      지어내면 멘토 앱과 규칙이 갈라져 서로 다른 방에 들어간다.
+    */}
+      <JitsiEmbedModal
+        isOpen={isEntryOpen}
+        onClose={() => setIsEntryOpen(false)}
+        meetingUrl={application.entryLink}
+        spaceName={application.productName ?? '1:1 LIVE 멘토링'}
+        startDate={application.reservationStartAt}
+        endDate={application.reservationEndAt}
+      />
+    </>
   );
 };
 

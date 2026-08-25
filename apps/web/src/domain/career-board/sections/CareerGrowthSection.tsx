@@ -1,5 +1,17 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
+/*
+  Jitsi SDK 는 ESM 전용이라 정적으로 끌어오면 마이페이지 초기 번들에 들어가고
+  jest 가 변환하지 못해 이 파일을 쓰는 스위트가 통째로 죽는다. 실제로 회의실을 열 때만
+  받아온다.
+*/
+const JitsiEmbedModal = dynamic(
+  () => import('@/common/modal/JitsiEmbedModal'),
+  { ssr: false },
+);
+
 import { mypageApplicationsQueryOptions } from '@/api/application';
 import { useMyLiveMentoringApplicationsQuery } from '@/api/live-mentoring/liveMentoring';
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
@@ -7,6 +19,7 @@ import {
   isQuestionButtonVisible,
   questionButtonLabel,
 } from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
+
 import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
 import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
 import { LIBRARY_VISIBLE_MAGNET_TYPES } from '@/api/magnet/magnetSchema';
@@ -118,6 +131,9 @@ const CareerGrowthContent = () => {
   const [openApplicationId, setOpenApplicationId] = useState<number | null>(
     null,
   );
+  const [entryApplicationId, setEntryApplicationId] = useState<number | null>(
+    null,
+  );
 
   const isLibraryTab = category === 'LIBRARY';
 
@@ -173,11 +189,13 @@ const CareerGrowthContent = () => {
               onClick: () => setOpenApplicationId(mentoring.applicationId),
             }
           : undefined,
+        /*
+          새 탭이 아니라 Jitsi 모달로 들어간다. 마이페이지 카드와 같은 동선이다.
+        */
         actionButton: {
           label: '멘토링 입장',
           disabled: mentoring.entryLink === null,
-          href: mentoring.entryLink ?? undefined,
-          external: true,
+          onClick: () => setEntryApplicationId(mentoring.applicationId),
         },
       };
     });
@@ -185,6 +203,8 @@ const CareerGrowthContent = () => {
 
   const openMentoring =
     openApplicationId === null ? null : mentoringById.get(openApplicationId);
+  const entryMentoring =
+    entryApplicationId === null ? null : mentoringById.get(entryApplicationId);
 
   const hasData = items.length > 0;
 
@@ -234,6 +254,16 @@ const CareerGrowthContent = () => {
           </div>
         }
       />
+      {entryMentoring && (
+        <JitsiEmbedModal
+          isOpen
+          onClose={() => setEntryApplicationId(null)}
+          meetingUrl={entryMentoring.entryLink}
+          spaceName={entryMentoring.productName ?? '1:1 LIVE 멘토링'}
+          startDate={entryMentoring.reservationStartAt}
+          endDate={entryMentoring.reservationEndAt}
+        />
+      )}
       {openMentoring && (
         <QuestionModal
           applicationId={openMentoring.applicationId}
