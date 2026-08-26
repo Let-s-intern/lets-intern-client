@@ -148,7 +148,7 @@ describe('LiveFeedbackEntryPage', () => {
     };
 
     const reviewTitle = () =>
-      screen.queryByText('오늘 멘토링, 뭘 가져가시나요?');
+      screen.queryByText('오늘 멘토링, 무엇을 얻으셨나요?');
 
     it('멘티가 참가 후 종료하면 정리 모달이 열린다', async () => {
       const user = await enterSession('MENTEE');

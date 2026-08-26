@@ -166,7 +166,7 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
     };
 
     const reviewTitle = () =>
-      screen.queryByText('오늘 멘토링, 뭘 가져가시나요?');
+      screen.queryByText('오늘 멘토링, 무엇을 얻으셨나요?');
 
     it('회의에 참가한 뒤 종료하면 정리 모달이 열린다', async () => {
       const user = await enterAndRender();

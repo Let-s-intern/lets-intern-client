@@ -53,10 +53,13 @@ interface LiveFeedbackReviewModalProps {
 }
 
 /**
- * 라이브 멘토링 종료 직후 뜨는 정리 모달.
+ * 라이브 멘토링 종료 직후 뜨는 후기 작성 모달.
  *
- * 멘토를 평가해 달라는 요청이 아니라, 멘티가 방금 얻은 것을 스스로 붙잡게 하는 화면이다.
- * 문구가 이 컴포넌트의 핵심이므로 라벨을 임의로 되돌리지 말 것.
+ * 문구 설계 — "멘토님께 후기를 남겨주세요"라고 물으면 멘티에게는 쓸 이유가 없다.
+ * 그래서 "멘토링을 통해 무엇을 알게 되었는지"를 묻는다. 멘티는 자기 정리를 위해 쓰고,
+ * 그 답은 그대로 멘토 프로필에 실릴 만한 후기가 된다.
+ * placeholder 가 답의 형태를 좌우하므로 "무엇을 몰랐는지 → 무엇을 알게 됐는지 →
+ * 무엇을 바꿀 것인지" 흐름의 예시를 유지할 것. 라벨을 임의로 되돌리지 말 것.
  *
  * 저장 계약은 대시보드 인라인 섹션과 동일한 `PATCH /feedback/{id}` `{score, review}` 다.
  */
@@ -89,12 +92,11 @@ const LiveFeedbackReviewModal = ({
       <div className="flex flex-col gap-6 p-6">
         <header className="flex flex-col gap-2">
           <h2 className="text-small18 text-neutral-0 font-bold">
-            오늘 멘토링, 뭘 가져가시나요?
+            오늘 멘토링, 무엇을 얻으셨나요?
           </h2>
           <p className="text-xsmall14 text-neutral-40">
-            {mentorName ? `${mentorName} 멘토님께 ` : '멘토님께 '}남기는 후기가
-            아니에요. 오늘 알게 된 것과 다음에 고칠 것을 스스로 정리하는
-            칸이에요.
+            {mentorName ? `${mentorName} 멘토님과의 ` : '오늘 '}대화에서 새로
+            알게 된 것을 지금 정리해두면, 다음 준비가 훨씬 빨라져요.
           </p>
         </header>
 
@@ -107,7 +109,7 @@ const LiveFeedbackReviewModal = ({
 
         <section className="flex flex-col gap-2">
           <h3 className="text-xsmall14 text-neutral-0 font-semibold">
-            오늘 알게 된 것과 다음에 고칠 것을 적어주세요
+            멘토링을 통해 새롭게 알게 된 점을 작성해주세요
           </h3>
           <div className="flex flex-col gap-1">
             <textarea
@@ -115,7 +117,7 @@ const LiveFeedbackReviewModal = ({
               onChange={(e) =>
                 setContent(e.target.value.slice(0, REVIEW_MAX_LENGTH))
               }
-              placeholder="예) 내 이력서에서 성과가 숫자로 안 보인다는 걸 알았다. 다음 수정 때 프로젝트마다 지표를 한 줄씩 붙이자."
+              placeholder="예) 혼자 볼 때는 이력서가 왜 안 통하는지 몰랐는데, 성과가 숫자로 안 보인다는 점을 짚어주셨어요. 프로젝트마다 지표를 한 줄씩 붙이는 방법까지 알려주셔서 바로 고칠 수 있었어요."
               className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
             />
             <p className="text-xxsmall12 text-right">
@@ -130,11 +132,6 @@ const LiveFeedbackReviewModal = ({
           )}
         </section>
 
-        <p className="text-xxsmall12 text-neutral-45">
-          작성한 내용은 멘토님께 전달되고, 일부는 멘토 프로필에 후기로 소개될 수
-          있어요.
-        </p>
-
         <div className="flex flex-col gap-2">
           <button
             type="button"
@@ -142,7 +139,7 @@ const LiveFeedbackReviewModal = ({
             disabled={!canSubmit || isPending}
             className="bg-primary text-xsmall14 w-full rounded-sm py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            정리 완료
+            작성 완료
           </button>
           <button
             type="button"

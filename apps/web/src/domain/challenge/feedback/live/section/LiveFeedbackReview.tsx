@@ -62,7 +62,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
     return (
       <div className="flex flex-col gap-4">
         <h3 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
-          오늘 정리한 내용
+          내가 작성한 후기
         </h3>
         <div className="flex flex-col gap-2">
           <StarDisplay score={existingScore} />
@@ -78,12 +78,12 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
     return (
       <div className="flex flex-col gap-4">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
-          오늘 멘토링, 뭘 가져가시나요?
+          오늘 멘토링, 무엇을 얻으셨나요?
         </h2>
         <div className="flex flex-col gap-2">
           <p className="text-xxsmall12 text-neutral-40">
-            멘토님께 남기는 후기가 아니에요. 오늘 알게 된 것과 다음에 고칠 것을
-            스스로 정리하는 칸이에요.
+            대화에서 새로 알게 된 것을 지금 정리해두면, 다음 준비가 훨씬
+            빨라져요.
           </p>
           <StarRating value={stars} onChange={setStars} />
           {!canSubmit && (
@@ -91,11 +91,14 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
               별점과 내용을 채우면 저장할 수 있어요.
             </p>
           )}
+          <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+            멘토링을 통해 새롭게 알게 된 점을 작성해주세요
+          </h3>
           <div className="flex flex-col gap-1">
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
-              placeholder="예) 내 이력서에서 성과가 숫자로 안 보인다는 걸 알았다. 다음 수정 때 프로젝트마다 지표를 한 줄씩 붙이자."
+              placeholder="예) 혼자 볼 때는 이력서가 왜 안 통하는지 몰랐는데, 성과가 숫자로 안 보인다는 점을 짚어주셨어요. 프로젝트마다 지표를 한 줄씩 붙이는 방법까지 알려주셔서 바로 고칠 수 있었어요."
               className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
             />
             <p className="text-xxsmall12 text-right">
@@ -109,7 +112,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
             disabled={!canSubmit || isPending}
             className="bg-primary text-xsmall14 w-full rounded-sm py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            정리 완료
+            작성 완료
           </button>
         </div>
       </div>
@@ -122,7 +125,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
       onClick={() => setIsReviewing(true)}
       className="bg-primary text-xsmall16 flex-1 whitespace-nowrap rounded-sm py-4 font-semibold text-white"
     >
-      오늘 멘토링 정리하기
+      멘토링 후기 작성하기
     </button>
   );
 };
