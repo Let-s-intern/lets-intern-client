@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef, useState } from 'react';
+
 import { useAuthStore } from '@letscareer/store';
 
 import {
@@ -12,6 +14,7 @@ import { useLiveEntry } from './hooks/useLiveEntry';
 import AddToCalendarButton from './ui/AddToCalendarButton';
 import EnterLiveButton from './ui/EnterLiveButton';
 import LiveFeedbackModal from './ui/LiveFeedbackModal';
+import LiveFeedbackReviewModal from './ui/LiveFeedbackReviewModal';
 import LoginGate from './ui/LoginGate';
 import ScheduleSummaryCard from './ui/ScheduleSummaryCard';
 
@@ -52,6 +55,25 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
 
   // 멘티 출석은 멘토가 모달에서 기록(닫힘/종료 시 일괄 전송).
   const patchStatus = usePatchMentorFeedbackStatus(feedbackId);
+
+  // 종료 직후 정리 모달 — 멘티만, 실제로 참가했던 세션만.
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const hasJoinedRef = useRef(false);
+
+  /**
+   * Jitsi 닫기 — hangup 과 우상단 닫기 버튼이 모두 여기로 온다.
+   * 멘토에게는 정리 모달을 띄우지 않는다(작성 권한이 멘티 본인에게만 있다).
+   */
+  const handleCloseJitsi = () => {
+    closeJitsi();
+
+    const alreadyReviewed =
+      feedbackInfo?.score != null && feedbackInfo?.review != null;
+    if (role === 'MENTEE' && hasJoinedRef.current && !alreadyReviewed) {
+      setIsReviewOpen(true);
+    }
+    hasJoinedRef.current = false;
+  };
 
   // 스토어 초기화 전에는 깜빡임을 막기 위해 아무것도 렌더하지 않는다.
   if (!isInitialized) return null;
@@ -120,7 +142,10 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
 
       <LiveFeedbackModal
         isOpen={isOpen}
-        onClose={closeJitsi}
+        onClose={handleCloseJitsi}
+        onJoined={() => {
+          hasJoinedRef.current = true;
+        }}
         meetingUrl={feedbackInfo?.meetingUrl ?? null}
         spaceName={`live-feedback-${feedbackId}`}
         role={role}
@@ -142,6 +167,15 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
             '회의실 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
           )
         }
+      />
+
+      {/* 정리 모달은 Jitsi 모달의 형제로 둔다 — BaseModal 은 isOpen=false 에서 언마운트되므로
+          안에 중첩하면 부모가 닫히는 순간 함께 사라진다. */}
+      <LiveFeedbackReviewModal
+        isOpen={isReviewOpen}
+        onClose={() => setIsReviewOpen(false)}
+        feedbackId={feedbackId}
+        mentorName={feedbackInfo?.mentorName ?? undefined}
       />
     </main>
   );

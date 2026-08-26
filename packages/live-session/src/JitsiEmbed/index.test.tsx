@@ -148,6 +148,23 @@ describe('JitsiEmbed', () => {
     expect(events).toContain('errorOccurred');
   });
 
+  it('videoConferenceJoined 시 onJoined를 호출한다', async () => {
+    // 닫기 버튼과 hangup 이 같은 onClose 로 수렴하므로, "정말 세션을 했는지"는
+    // 이 신호로만 구분된다. 종료 후 정리 모달의 노출 조건이 여기에 걸려 있다.
+    const onJoined = vi.fn();
+    await renderReady({ onJoined });
+
+    const onApiReady = capturedProps.current?.onApiReady as (api: {
+      addListener: (event: string, cb: (p: unknown) => void) => void;
+    }) => void;
+    const listeners = new Map<string, (p: unknown) => void>();
+    onApiReady({ addListener: (event, cb) => listeners.set(event, cb) });
+
+    expect(onJoined).not.toHaveBeenCalled();
+    listeners.get('videoConferenceJoined')?.(undefined);
+    expect(onJoined).toHaveBeenCalledTimes(1);
+  });
+
   describe('failover', () => {
     it('프로브 실패 시 다음 후보 base로 재등록(registerBaseUrl)한다', async () => {
       probeMock.mockResolvedValue(false);
