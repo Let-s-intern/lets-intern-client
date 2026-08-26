@@ -3,7 +3,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
 import MentoringApplicationCard, {
   formatReservationPeriod,
-  isQuestionButtonVisible,
   questionButtonLabel,
   type MentoringCardPhase,
 } from './MentoringApplicationCard';
@@ -22,6 +21,7 @@ function makeApplication(
     reservationEndAt: '2026-09-13T11:00:00',
     status: 'CONFIRMED',
     questionWritten: true,
+    questionEditable: true,
     entryLink: null,
     ...overrides,
   };
@@ -67,32 +67,32 @@ describe('questionButtonLabel', () => {
 });
 
 /*
-  서버가 예약 시작 24시간 전에 질문 수정을 닫는다. 그 뒤로는 버튼을 감춘다 —
-  눌러도 못 고치는 버튼은 무엇을 하라는 것인지 알 수 없다.
+  마감 판정은 서버가 한다. 화면은 `questionEditable` 을 그대로 따른다 — 마감 기준이
+  하나가 아니라(보통 예약 시작 24시간 전, 48시간 안 신청은 결제 승인 +3시간)
+  화면이 같은 계산을 재현할 수 없다. 경계 자체는 서버
+  `LiveMentoringBookingPolicyTest` 가 잠근다.
 */
-describe('isQuestionButtonVisible — 마감 24시간 경계', () => {
-  const START = '2026-09-15T09:00:00';
-
-  it('마감 1분 전이면 보인다', () => {
-    expect(
-      isQuestionButtonVisible(START, new Date(2026, 8, 14, 8, 59, 0)),
-    ).toBe(true);
-  });
-
-  it('정확히 24시간 전이면 감춘다', () => {
-    expect(isQuestionButtonVisible(START, new Date(2026, 8, 14, 9, 0, 0))).toBe(
-      false,
+describe('질문 버튼 노출 — 서버 판정을 따른다', () => {
+  const renderCard = (questionEditable: boolean) =>
+    render(
+      <MentoringApplicationCard
+        application={makeApplication({ questionEditable })}
+        phase="upcoming"
+        onQuestionClick={jest.fn()}
+      />,
     );
-  });
 
-  it('예약 시작 뒤에도 감춘다', () => {
+  it('서버가 수정 가능이라고 하면 버튼이 보인다', () => {
+    renderCard(true);
     expect(
-      isQuestionButtonVisible(START, new Date(2026, 8, 15, 9, 30, 0)),
-    ).toBe(false);
+      screen.getByRole('button', { name: /멘토링 질문/ }),
+    ).toBeInTheDocument();
   });
 
-  it('예약 시각을 읽을 수 없으면 감춘다', () => {
-    expect(isQuestionButtonVisible('말도 안 되는 값', new Date())).toBe(false);
+  it('서버가 마감이라고 하면 버튼을 감춘다', () => {
+    // 눌러도 못 고치는 버튼은 무엇을 하라는 것인지 알 수 없다.
+    renderCard(false);
+    expect(screen.queryByRole('button', { name: /멘토링 질문/ })).toBeNull();
   });
 });
 

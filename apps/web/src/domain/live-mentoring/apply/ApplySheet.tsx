@@ -6,7 +6,6 @@ import type {
   LiveMentorDetail,
   LiveMentoringSlot,
 } from '@/api/live-mentoring/liveMentoringSchema';
-import { CATEGORY_LABELS } from '../constants';
 import type { ApplySheetState } from './hooks/useApplySheetState';
 import AgreementSection from './section/AgreementSection';
 import MentoringTypeSection from './section/MentoringTypeSection';
@@ -42,34 +41,16 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
     ) ?? null;
 
   /*
-    멘티에게는 **멘토가 오픈 설정에서 고른 유형만** 보여준다.
+    멘티의 선택지는 **멘토가 오픈 설정에서 고른 타입**(`detail.categories`)이다.
 
-    두 데이터가 따로 있다. 오픈 설정의 유형은 `categories`(enum)이고,
-    상세 페이지의 유형 카드는 `mentoringTypes.items`(id 를 가진 레코드)다.
-    카드를 그대로 쓰면 멘토가 고르지 않은 유형까지 신청 화면에 뜬다 — 프로필에는
-    태그로 두 개만 보이는데 신청 화면에는 세 개가 뜨는 식이다.
+    예전에는 상세 페이지의 유형 카드(`mentoringTypes.items`)를 썼다. 카드는 필수가
+    아니라 멘토가 채우지 않아도 오픈이 됐고, 그러면 신청 시트에 고를 것이 하나도
+    없어 신청을 끝낼 수 없는 상품이 판매 중 상태로 열렸다. 오픈 타입은 오픈 시
+    최소 1개가 강제되므로 빈 선택지가 나올 수 없다.
 
-    카드 쪽을 거르는 이유는 신청 생성 DTO 가 `mentoringTypeIds`(Long)를 받기 때문이다.
-    카테고리는 enum 이라 서버가 대조할 id 가 없다. 그래서 **고른 카테고리에 해당하는
-    카드만** 남긴다. 이름이 곧 연결고리이고, `CATEGORY_LABELS` 의 값이
-    멘토 상세 설정의 유형 드롭다운(`TYPE_OPTIONS`)과 같은 어휘다.
+    카드는 제목·설명·태그가 붙은 상세 페이지 소개용으로 남는다.
   */
-  const allTypeItems = detail.template.mentoringTypes.items;
-  const selectedLabels = detail.categories.map(
-    (category) => CATEGORY_LABELS[category],
-  );
-  const matchedTypeItems = allTypeItems.filter((item) =>
-    selectedLabels.some((label) => item.typeName.includes(label)),
-  );
-  /*
-    완전 일치가 아니라 **포함**으로 본다. 서버 `typeName` 은 자유 문자열(100자)이라
-    `포트폴리오 피드백` 처럼 라벨에 말이 붙은 값이 이미 저장돼 있다.
-
-    하나도 안 걸리면 거르지 않는다. 유형이 0개가 되면 `canSubmit` 이 잠겨 신청이
-    아예 불가능해진다 — 고르지 않은 유형이 몇 개 더 보이는 것보다 나쁜 결과다.
-  */
-  const mentoringTypeItems =
-    matchedTypeItems.length > 0 ? matchedTypeItems : allTypeItems;
+  const mentoringCategories = detail.categories;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -123,8 +104,8 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
           />
 
           <MentoringTypeSection
-            items={mentoringTypeItems}
-            selectedId={draft.mentoringTypeIds[0] ?? null}
+            categories={mentoringCategories}
+            selected={draft.mentoringCategory}
             onSelect={sheet.selectMentoringType}
           />
 

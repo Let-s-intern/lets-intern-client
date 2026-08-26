@@ -14,10 +14,16 @@ const uploadMock = uploadFileForId as jest.Mock;
 
 let latest: QuestionInput = EMPTY_QUESTION;
 
-function Harness() {
+function Harness({ deferralAllowed = true }: { deferralAllowed?: boolean }) {
   const [value, setValue] = useState<QuestionInput>(EMPTY_QUESTION);
   latest = value;
-  return <QuestionSection value={value} onChange={setValue} />;
+  return (
+    <QuestionSection
+      value={value}
+      onChange={setValue}
+      deferralAllowed={deferralAllowed}
+    />
+  );
 }
 
 beforeEach(() => {
@@ -194,5 +200,40 @@ describe('QuestionSection — 글자수 상한', () => {
     });
 
     expect(screen.getByText('5/5000')).toBeInTheDocument();
+  });
+});
+
+/*
+  예약이 48시간 안이면 질문을 나중에 낼 시간이 없다. 서버가 같은 규칙으로 거부하므로
+  눌러 보고 400 을 받게 두지 않는다.
+*/
+describe('나중에 작성하기 — 예약이 48시간 안이면 고를 수 없다', () => {
+  const deferCheckbox = () =>
+    screen.getByRole('checkbox', { name: '나중에 작성하기' });
+
+  it('고를 수 없을 때도 선택지를 남기고 이유를 알린다', () => {
+    // 없애면 다른 날짜에서는 있던 선택지가 사라져 왜 못 쓰는지 알 수 없다.
+    render(<Harness deferralAllowed={false} />);
+
+    expect(deferCheckbox()).toBeDisabled();
+    expect(
+      screen.getByText(/멘토링 시작까지 48시간이 남지 않아/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/결제 후 3시간/)).toBeInTheDocument();
+  });
+
+  it('고를 수 있으면 잠기지 않고 이유도 적지 않는다', () => {
+    render(<Harness />);
+
+    expect(deferCheckbox()).toBeEnabled();
+    expect(screen.queryByText(/48시간이 남지 않아/)).toBeNull();
+  });
+
+  it('잠긴 상태에서는 눌러도 나중에 작성하기로 바뀌지 않는다', () => {
+    render(<Harness deferralAllowed={false} />);
+
+    fireEvent.click(deferCheckbox());
+
+    expect(latest.deferred).toBe(false);
   });
 });

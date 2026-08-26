@@ -30,7 +30,7 @@ describe('useApplySheetState', () => {
     expect(result.current.draft).toEqual({
       duration: null,
       slots: [],
-      mentoringTypeIds: [],
+      mentoringCategory: null,
       agreedToScheduleChange: false,
     });
   });
@@ -109,12 +109,12 @@ describe('useApplySheetState', () => {
   it('멘토링 유형은 하나만 고를 수 있고 다시 고르면 바뀐다', () => {
     const { result } = renderHook(() => useApplySheetState());
 
-    act(() => result.current.selectMentoringType(1));
-    expect(result.current.draft.mentoringTypeIds).toEqual([1]);
+    act(() => result.current.selectMentoringType('PERSONAL_STATEMENT'));
+    expect(result.current.draft.mentoringCategory).toBe('PERSONAL_STATEMENT');
 
     // 다른 유형을 고르면 앞의 것이 빠진다. 쌓이지 않는다.
-    act(() => result.current.selectMentoringType(2));
-    expect(result.current.draft.mentoringTypeIds).toEqual([2]);
+    act(() => result.current.selectMentoringType('RESUME'));
+    expect(result.current.draft.mentoringCategory).toBe('RESUME');
   });
 
   describe('canSubmit — 필수 입력이 다 찼을 때만 참', () => {
@@ -123,7 +123,7 @@ describe('useApplySheetState', () => {
     }) => {
       act(() => result.current.selectDuration(30));
       act(() => result.current.selectSlots([SLOT_10_00]));
-      act(() => result.current.selectMentoringType(1));
+      act(() => result.current.selectMentoringType('PERSONAL_STATEMENT'));
       act(() => result.current.setAgreed(true));
     };
 
@@ -148,7 +148,7 @@ describe('useApplySheetState', () => {
       act(() => result.current.selectSlots([SLOT_10_00]));
       act(() => result.current.setAgreed(true));
 
-      expect(result.current.draft.mentoringTypeIds).toEqual([]);
+      expect(result.current.draft.mentoringCategory).toBeNull();
       expect(result.current.canSubmit).toBe(false);
     });
 
@@ -160,7 +160,7 @@ describe('useApplySheetState', () => {
       const { result } = renderHook(() => useApplySheetState());
       act(() => result.current.selectDuration(60));
       act(() => result.current.selectSlots([SLOT_10_00]));
-      act(() => result.current.selectMentoringType(1));
+      act(() => result.current.selectMentoringType('PERSONAL_STATEMENT'));
       act(() => result.current.setAgreed(true));
 
       expect(result.current.canSubmit).toBe(false);

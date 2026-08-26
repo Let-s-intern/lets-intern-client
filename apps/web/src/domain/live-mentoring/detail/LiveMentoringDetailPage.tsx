@@ -384,6 +384,7 @@ const LiveMentoringDetailPage = ({
         onSubmit={(draft) => {
           // 시트는 필수 입력이 다 차야 `신청하기` 를 열어 주므로 여기서 다시 묻지 않는다
           if (draft.duration === null) return;
+          if (draft.mentoringCategory === null) return;
           const plan = data.durationPrices.find(
             (option) => option.duration === draft.duration,
           );
@@ -398,7 +399,7 @@ const LiveMentoringDetailPage = ({
             durationPriceId: plan.durationPriceId ?? null,
             price: plan.price,
             slots: draft.slots,
-            mentoringTypeIds: draft.mentoringTypeIds,
+            mentoringCategory: draft.mentoringCategory,
             reservationChangeAgreed: draft.agreedToScheduleChange,
           });
           applySheet.close();

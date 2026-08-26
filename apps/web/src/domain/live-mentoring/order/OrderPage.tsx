@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useUserQuery } from '@/api/user/user';
+import { isDeferredQuestionAllowed } from '../constants';
 import { useLiveMentoringCoupon } from './hooks/useLiveMentoringCoupon';
 import {
   useOrderDraftStore,
@@ -15,6 +16,7 @@ import CouponSection from './section/CouponSection';
 import PriceSection from './section/PriceSection';
 import ProgramCardSection from './section/ProgramCardSection';
 import QuestionSection from './section/QuestionSection';
+import ScheduleChangeModal from './section/ScheduleChangeModal';
 import { EMPTY_QUESTION, type QuestionInput } from './types';
 
 interface OrderPageProps {
@@ -50,6 +52,16 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   const contactEmail = sameAsAccountEmail ? accountEmail : typedContactEmail;
   const [question, setQuestion] = useState<QuestionInput>(EMPTY_QUESTION);
   const coupon = useLiveMentoringCoupon();
+
+  /*
+    예약이 48시간 안이면 질문을 나중에 낼 수 없다. 판정은 고른 슬롯의 시작 시각으로
+    한다 — 60분 플랜은 연속 두 칸이지만 시작은 첫 칸이다.
+    최종 판단은 서버가 한다(`LiveMentoringBookingPolicy`).
+  */
+  const deferralAllowed = isDeferredQuestionAllowed(
+    draft?.slots[0]?.startDate,
+    new Date(),
+  );
 
   /*
     선택값 없이 이 주소에 닿는 경로는 둘이다 — 새로고침, 그리고 주소창 직접 입력.
@@ -104,7 +116,11 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
         }}
       />
 
-      <QuestionSection value={question} onChange={setQuestion} />
+      <QuestionSection
+        value={question}
+        onChange={setQuestion}
+        deferralAllowed={deferralAllowed}
+      />
 
       <hr className="border-neutral-85" />
 
@@ -174,7 +190,7 @@ const SubmitBlock = ({
     isPending,
     errorMessage,
     isSlotConflict,
-    goBackToSchedule,
+    clearError,
   } = useOrderSubmit({
     draft,
     contactEmail,
@@ -183,6 +199,8 @@ const SubmitBlock = ({
     customerName,
     customerMobilePhone,
   });
+  const setDraft = useOrderDraftStore((state) => state.setDraft);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-3">
@@ -213,7 +231,7 @@ const SubmitBlock = ({
           {isSlotConflict && (
             <button
               type="button"
-              onClick={goBackToSchedule}
+              onClick={() => setIsScheduleModalOpen(true)}
               className="text-xsmall14 text-primary self-start underline"
             >
               일정 다시 고르기
@@ -230,6 +248,24 @@ const SubmitBlock = ({
       >
         {isPending ? '신청하는 중…' : '결제하기'}
       </button>
+
+      {/*
+        일정만 갈아끼우고 결제는 사용자가 다시 누른다. 바뀐 시간을 확인할 틈 없이
+        결제가 진행되면 놀란다.
+      */}
+      {isScheduleModalOpen && draft.duration !== null && (
+        <ScheduleChangeModal
+          mentorId={draft.mentorId}
+          duration={draft.duration}
+          selectedSlots={draft.slots}
+          onClose={() => setIsScheduleModalOpen(false)}
+          onConfirm={(slots) => {
+            setDraft({ ...draft, slots });
+            setIsScheduleModalOpen(false);
+            clearError();
+          }}
+        />
+      )}
     </div>
   );
 };

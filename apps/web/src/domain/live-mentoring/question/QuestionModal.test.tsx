@@ -35,6 +35,7 @@ function makeQuestion(
     mentorShareAgreed: true,
     reservationStartAt: '2026-09-13T10:00:00',
     editable: true,
+    editDeadline: '2026-09-12T10:00:00',
     ...overrides,
   };
 }
@@ -164,15 +165,32 @@ describe('QuestionModal — 안내 문구', () => {
 
 describe('QuestionModal — editable 은 서버 값을 그대로 쓴다', () => {
   /*
-    예약 시작 24시간 기준을 화면에서 다시 계산하면 클라이언트와 서버의 시계 차이로
-    어긋나, 저장 버튼은 열려 있는데 저장은 거부되는 상태가 생긴다.
+    마감을 화면에서 다시 계산하면 클라이언트와 서버의 시계 차이로 어긋나,
+    저장 버튼은 열려 있는데 저장은 거부되는 상태가 생긴다.
   */
-  it('editable 이 false 면 저장이 잠기고 사유를 알린다', () => {
-    renderModal(makeQuestion({ editable: false }));
+  it('editable 이 false 면 저장이 잠기고 서버가 준 마감 시각을 알린다', () => {
+    renderModal(
+      makeQuestion({ editable: false, editDeadline: '2026-09-12T10:00:00' }),
+    );
 
     expect(saveButton()).toBeDisabled();
+    /*
+      기준을 화면이 단정하지 않는다 — 보통은 예약 시작 24시간 전이지만 예약이
+      48시간 안일 때 신청했다면 결제 승인 +3시간이라, "24시간 전"이라고 적으면
+      절반은 거짓말이 된다.
+    */
     expect(
-      screen.getByText('예약 시간 24시간 전이 지나 질문을 수정할 수 없습니다.'),
+      screen.getByText(
+        '수정 가능 시간(9월 12일 10:00)이 지나 질문을 수정할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('마감 시각을 받지 못하면 시각 없이 알린다', () => {
+    renderModal(makeQuestion({ editable: false, editDeadline: null }));
+
+    expect(
+      screen.getByText('수정 가능 시간이 지나 질문을 수정할 수 없습니다.'),
     ).toBeInTheDocument();
   });
 

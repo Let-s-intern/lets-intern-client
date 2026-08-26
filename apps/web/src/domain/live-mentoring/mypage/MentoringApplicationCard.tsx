@@ -48,38 +48,6 @@ export const formatReservationPeriod = (
   return `${year.slice(2)}.${month}.${day} (${weekday}) ${startAt.slice(11, 16)} ~ ${endAt.slice(11, 16)}`;
 };
 
-/** 서버가 질문 수정을 닫는 기준. `LiveMentoringApplicationValidator` 와 같은 값이다. */
-const QUESTION_EDIT_DEADLINE_HOURS = 24;
-
-/**
- * 질문 버튼을 보여줄지.
- *
- * 서버는 예약 시작 24시간 전에 수정을 닫는다. 그 뒤로는 버튼을 **감춘다** —
- * 눌러도 못 고치는 버튼을 남겨두면 무엇을 하라는 것인지 알 수 없다.
- *
- * 목록 응답에는 서버가 계산한 `editable` 이 없어 여기서 시각을 비교한다.
- * 같은 파일의 `resolvePhase` 도 예약 시각을 이렇게 다룬다. 보이기 판단에만 쓰고,
- * 실제 저장 가능 여부는 모달이 서버 `editable` 로 다시 판정한다.
- */
-export const isQuestionButtonVisible = (
-  reservationStartAt: string,
-  now: Date,
-): boolean => {
-  const deadline = new Date(reservationStartAt);
-  if (Number.isNaN(deadline.getTime())) return false;
-  deadline.setHours(deadline.getHours() - QUESTION_EDIT_DEADLINE_HOURS);
-
-  const nowLocal = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    now.getHours(),
-    now.getMinutes(),
-    now.getSeconds(),
-  );
-  return nowLocal < deadline;
-};
-
 /** 질문 버튼 라벨. 마감 전에만 보이므로 쓰기 문구만 남는다. */
 export const questionButtonLabel = (questionWritten: boolean): string =>
   questionWritten ? '멘토링 질문 수정' : '멘토링 질문 작성';
@@ -139,10 +107,12 @@ const MentoringApplicationCard = ({
             </span>
 
             <div className="flex gap-2 md:ml-auto">
-              {isQuestionButtonVisible(
-                application.reservationStartAt,
-                new Date(),
-              ) && (
+              {/*
+                수정 가능 여부는 서버가 판단해 내려준다. 마감 기준이 하나가 아니라
+                (보통 예약 시작 24시간 전, 48시간 안 신청은 결제 승인 +3시간)
+                화면이 같은 계산을 재현할 수 없다.
+              */}
+              {application.questionEditable && (
                 <button
                   type="button"
                   onClick={() => onQuestionClick(application.applicationId)}

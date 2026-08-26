@@ -1,4 +1,7 @@
-import type { LiveMentoringDuration } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringCategory,
+  LiveMentoringDuration,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
 /**
  * 신청 시트에서 고른 슬롯 1칸.
@@ -33,8 +36,13 @@ export interface ApplyDraft {
   duration: LiveMentoringDuration | null;
   /** 30분 플랜은 1개, 60분 플랜은 연속 2개. 플랜이 바뀌면 비워진다. */
   slots: SelectedApplySlot[];
-  /** 신청 생성 DTO 의 `mentoringTypeIds`. 다중 선택이다. */
-  mentoringTypeIds: number[];
+  /**
+   * 신청 생성 DTO 의 `mentoringCategory`.
+   *
+   * 멘토가 오픈 설정에서 고른 타입 중 하나다. 상세 페이지의 유형 카드가 아니다 —
+   * 카드는 필수가 아니라 비어 있을 수 있고, 그러면 고를 것이 없는 상품이 된다.
+   */
+  mentoringCategory: LiveMentoringCategory | null;
   /** 예약 시간 변경 고지 동의. 미체크면 신청할 수 없다. */
   agreedToScheduleChange: boolean;
 }
