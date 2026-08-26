@@ -352,7 +352,7 @@ describe('useLiveMentorSlotsQuery', () => {
 const CREATE_BODY = {
   durationPriceId: 1,
   slotIds: [142],
-  mentoringTypeIds: [1],
+  mentoringCategory: 'PERSONAL_STATEMENT' as const,
   reservationChangeAgreed: true,
   contactEmail: 'local-admin@letscareer.test',
   question: {

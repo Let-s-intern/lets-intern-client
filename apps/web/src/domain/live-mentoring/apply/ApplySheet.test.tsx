@@ -117,7 +117,7 @@ describe('ApplySheet 제출 조건', () => {
         expect.objectContaining({ slotId: 144, time: '09:30' }),
         expect.objectContaining({ slotId: 145, time: '10:00' }),
       ],
-      mentoringTypeIds: [1],
+      mentoringCategory: 'PERSONAL_STATEMENT',
       agreedToScheduleChange: true,
     });
   });

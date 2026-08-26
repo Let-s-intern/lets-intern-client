@@ -52,7 +52,7 @@ const DRAFT: LiveMentoringOrderDraft = {
       endDate: '2026-09-19T13:00:00',
     },
   ],
-  mentoringTypeIds: [1],
+  mentoringCategory: 'PERSONAL_STATEMENT',
   reservationChangeAgreed: true,
 };
 
@@ -187,7 +187,7 @@ describe('useOrderSubmit — 신청 생성', () => {
     expect(mutate.mock.calls[0][0]).toEqual({
       durationPriceId: 5,
       slotIds: [158, 159],
-      mentoringTypeIds: [1],
+      mentoringCategory: 'PERSONAL_STATEMENT',
       reservationChangeAgreed: true,
       contactEmail: 'local-admin@letscareer.test',
       question: {

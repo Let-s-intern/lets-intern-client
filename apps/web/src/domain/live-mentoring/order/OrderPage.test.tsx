@@ -68,7 +68,7 @@ const DRAFT: LiveMentoringOrderDraft = {
       endDate: '2026-09-19T13:00:00',
     },
   ],
-  mentoringTypeIds: [1],
+  mentoringCategory: 'PERSONAL_STATEMENT',
   reservationChangeAgreed: true,
 };
 
