@@ -2,7 +2,10 @@
 
 import { create } from 'zustand';
 
-import type { LiveMentoringDuration } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringCategory,
+  LiveMentoringDuration,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import type { SelectedApplySlot } from '../../apply/types';
 
 /**
@@ -31,7 +34,8 @@ export interface LiveMentoringOrderDraft {
   price: number;
   /** 30분은 1칸, 60분은 연속 2칸. */
   slots: SelectedApplySlot[];
-  mentoringTypeIds: number[];
+  /** 멘토가 오픈 설정에서 고른 타입 중 멘티가 고른 하나. */
+  mentoringCategory: LiveMentoringCategory;
   reservationChangeAgreed: boolean;
 }
 

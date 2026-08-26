@@ -157,9 +157,10 @@ export const liveMentoringTemplateSchema = z.object({
         /**
          * `LiveMentoringTypeCard` 의 id.
          *
-         * 신청 생성 DTO 가 `mentoringTypeIds`(`List<Long>`, `@NotEmpty`)를 요구하고
-         * 서버가 이 id 로 카드를 대조한다. 상세 응답에 없던 것을 서버 Push 0 이
-         * 추가했다 — 없으면 프론트가 신청 자체를 만들 수 없다.
+         * 신청 시트는 이 카드를 쓰지 않는다. 멘티가 고르는 유형은
+         * `detailPage.categories`(멘토가 오픈 설정에서 고른 타입)다. 카드는 제목·
+         * 설명·태그가 붙은 상세 페이지 소개용이고, 멘토가 채우지 않아도 오픈이 되어
+         * 카드를 선택지로 쓰면 고를 것이 없는 상품이 팔린다.
          */
         id: z.number(),
         typeName: z.string(),
@@ -348,7 +349,7 @@ export type LiveMentoringApplicationStatus = z.infer<
  * |---|---|
  * | `durationPriceId` | `@NotNull` |
  * | `slotIds` | `@NotEmpty` `@Size(max = 2)` — 60분 플랜이 연속 2칸이라 상한이 2다 |
- * | `mentoringTypeIds` | `@NotEmpty` |
+ * | `mentoringCategory` | `@NotNull` — 멘토가 오픈 설정에서 고른 타입 중 하나 |
  * | `reservationChangeAgreed` | `@NotNull` |
  * | `contactEmail` | `@NotBlank` `@Email` `@Size(max = 255)` |
  * | `question.deferred` | `@NotNull` |
@@ -364,7 +365,7 @@ export type LiveMentoringApplicationStatus = z.infer<
 export const createLiveMentoringApplicationRequestSchema = z.object({
   durationPriceId: z.number(),
   slotIds: z.array(z.number()).min(1).max(2),
-  mentoringTypeIds: z.array(z.number()).min(1),
+  mentoringCategory: liveMentoringCategorySchema,
   reservationChangeAgreed: z.boolean(),
   contactEmail: z.string().email().max(255),
   question: z.object({

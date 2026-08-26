@@ -23,7 +23,7 @@ function makeDraft(
     durationPriceId: 5,
     price: 60000,
     slots: [slot(158, '12:00', '12:30'), slot(159, '12:30', '13:00')],
-    mentoringTypeIds: [1],
+    mentoringCategory: 'PERSONAL_STATEMENT',
     reservationChangeAgreed: true,
     ...overrides,
   };

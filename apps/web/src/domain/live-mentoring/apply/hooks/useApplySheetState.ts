@@ -2,13 +2,16 @@
 
 import { useCallback, useState } from 'react';
 
-import type { LiveMentoringDuration } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringCategory,
+  LiveMentoringDuration,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import type { ApplyDraft, SelectedApplySlot } from '../types';
 
 const EMPTY_DRAFT: ApplyDraft = {
   duration: null,
   slots: [],
-  mentoringTypeIds: [],
+  mentoringCategory: null,
   agreedToScheduleChange: false,
 };
 
@@ -37,14 +40,9 @@ export function useApplySheetState() {
     setDraft((prev) => ({ ...prev, slots }));
   }, []);
 
-  /**
-   * 멘토링 유형은 **하나만** 고른다.
-   *
-   * 서버 `mentoringTypeIds` 는 배열 계약이라 그대로 두고 길이 1로 보낸다 —
-   * 화면 규칙에 맞춰 요청 형태를 바꾸면 계약이 갈라진다.
-   */
-  const selectMentoringType = useCallback((typeId: number) => {
-    setDraft((prev) => ({ ...prev, mentoringTypeIds: [typeId] }));
+  /** 멘토링 유형은 **하나만** 고른다. 서버도 단수 `mentoringCategory` 를 받는다. */
+  const selectMentoringType = useCallback((category: LiveMentoringCategory) => {
+    setDraft((prev) => ({ ...prev, mentoringCategory: category }));
   }, []);
 
   const setAgreed = useCallback((agreed: boolean) => {
@@ -69,7 +67,7 @@ export function useApplySheetState() {
   const canSubmit =
     draft.duration !== null &&
     draft.slots.length === (draft.duration === 60 ? 2 : 1) &&
-    draft.mentoringTypeIds.length === 1 &&
+    draft.mentoringCategory !== null &&
     draft.agreedToScheduleChange;
 
   return {

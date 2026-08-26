@@ -88,7 +88,7 @@ export function useOrderSubmit({
     const body: CreateLiveMentoringApplicationRequest = {
       durationPriceId: draft.durationPriceId as number,
       slotIds: draft.slots.map((slot) => slot.slotId),
-      mentoringTypeIds: draft.mentoringTypeIds,
+      mentoringCategory: draft.mentoringCategory,
       reservationChangeAgreed: draft.reservationChangeAgreed,
       contactEmail,
       // `나중에 작성하기` 면 빈 질문을 보낸다. 화면에서 값을 비웠으므로 그대로 옮긴다.

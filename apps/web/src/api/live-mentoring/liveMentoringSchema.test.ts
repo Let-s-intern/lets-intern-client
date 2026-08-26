@@ -316,7 +316,7 @@ function makeCreateRequest(overrides: Record<string, unknown> = {}) {
   return {
     durationPriceId: 1,
     slotIds: [142],
-    mentoringTypeIds: [1],
+    mentoringCategory: 'PERSONAL_STATEMENT',
     reservationChangeAgreed: true,
     contactEmail: 'local-admin@letscareer.test',
     question: {
@@ -352,16 +352,22 @@ describe('createLiveMentoringApplicationRequestSchema', () => {
     ).toThrow();
   });
 
-  /* 서버 `@NotEmpty`. */
-  it('슬롯이나 멘토링 유형이 비면 실패한다', () => {
+  /* 서버 `slotIds @NotEmpty`, `mentoringCategory @NotNull`. */
+  it('슬롯이 비거나 멘토링 유형이 없으면 실패한다', () => {
     expect(() =>
       createLiveMentoringApplicationRequestSchema.parse(
         makeCreateRequest({ slotIds: [] }),
       ),
     ).toThrow();
+    // 카테고리는 enum 이라 값이 없거나 목록 밖이면 서버가 400 을 준다.
     expect(() =>
       createLiveMentoringApplicationRequestSchema.parse(
-        makeCreateRequest({ mentoringTypeIds: [] }),
+        makeCreateRequest({ mentoringCategory: undefined }),
+      ),
+    ).toThrow();
+    expect(() =>
+      createLiveMentoringApplicationRequestSchema.parse(
+        makeCreateRequest({ mentoringCategory: 'COFFEE_CHAT' }),
       ),
     ).toThrow();
   });

@@ -4,32 +4,18 @@ import AgreementSection from './AgreementSection';
 import MentoringTypeSection from './MentoringTypeSection';
 
 /*
-  목록은 서버 detailPage.mentoringTypes.items 를 그대로 쓴다 (PRD 7-3).
-  시안 5종을 하드코딩하면 신청 생성 DTO 의 mentoringTypeIds 를 만들 수 없다.
+  선택지는 멘토가 오픈 설정에서 고른 타입(detail.categories)이다.
+  상세 페이지의 유형 카드가 아니다 — 카드는 필수가 아니라 비어 있을 수 있고,
+  그러면 고를 것이 없어 신청을 끝낼 수 없는 상품이 판매 중 상태로 열렸다.
 */
-const ITEMS = [
-  {
-    id: 1,
-    typeName: '자기소개서',
-    title: '지원 동기를 점검받고 싶다면',
-    description: '설명',
-    tags: ['직무 적합성'],
-  },
-  {
-    id: 2,
-    typeName: '이력서',
-    title: '경력 정리를 하고 싶다면',
-    description: '설명',
-    tags: [],
-  },
-];
+const CATEGORIES = ['PERSONAL_STATEMENT', 'RESUME'] as const;
 
 describe('MentoringTypeSection', () => {
   it('접히지 않고 처음부터 펼쳐져 있다', () => {
     render(
       <MentoringTypeSection
-        items={ITEMS}
-        selectedId={null}
+        categories={[...CATEGORIES]}
+        selected={null}
         onSelect={jest.fn()}
       />,
     );
@@ -42,11 +28,11 @@ describe('MentoringTypeSection', () => {
     ).toBeNull();
   });
 
-  it('서버가 준 유형 이름을 그대로 쓴다', () => {
+  it('멘토가 고른 타입만 그리고 나머지는 그리지 않는다', () => {
     render(
       <MentoringTypeSection
-        items={ITEMS}
-        selectedId={null}
+        categories={[...CATEGORIES]}
+        selected={null}
         onSelect={jest.fn()}
       />,
     );
@@ -55,39 +41,25 @@ describe('MentoringTypeSection', () => {
       screen.getByRole('radio', { name: '자기소개서' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: '이력서' })).toBeInTheDocument();
-    // 시안에만 있고 서버에는 없는 유형은 그리지 않는다
-    expect(screen.queryByText('커피챗')).not.toBeInTheDocument();
+    // 멘토가 고르지 않은 타입은 신청 화면에 뜨면 안 된다.
+    expect(screen.queryByText('포트폴리오')).not.toBeInTheDocument();
   });
 
-  it('여러 개를 동시에 고를 수 있다', () => {
+  it('하나만 고를 수 있고 다시 고르면 그 값을 올려 보낸다', () => {
     const onSelect = jest.fn();
     render(
-      <MentoringTypeSection items={ITEMS} selectedId={1} onSelect={onSelect} />,
+      <MentoringTypeSection
+        categories={[...CATEGORIES]}
+        selected="PERSONAL_STATEMENT"
+        onSelect={onSelect}
+      />,
     );
 
     expect(screen.getByRole('radio', { name: '자기소개서' })).toBeChecked();
     expect(screen.getByRole('radio', { name: '이력서' })).not.toBeChecked();
 
     fireEvent.click(screen.getByRole('radio', { name: '이력서' }));
-    expect(onSelect).toHaveBeenCalledWith(2);
-  });
-
-  it('멘토가 등록한 유형이 없으면 안내 문구를 보여준다', () => {
-    render(
-      <MentoringTypeSection
-        items={[]}
-        selectedId={null}
-        onSelect={jest.fn()}
-      />,
-    );
-
-    expect(
-      screen.getByText('멘토가 멘토링 유형을 아직 등록하지 않았습니다.'),
-    ).toBeInTheDocument();
-    // 버튼이 왜 잠기는지까지 알려야 한다. 사실만 적으면 막다른 길이 된다.
-    expect(
-      screen.getByText(/지금은 신청을 완료할 수 없습니다/),
-    ).toBeInTheDocument();
+    expect(onSelect).toHaveBeenCalledWith('RESUME');
   });
 });
 
