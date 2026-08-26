@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Tab,
   Tabs,
 } from '@mui/material';
@@ -42,6 +43,23 @@ function MentorManagementTable() {
   const [viewingMentor, setViewingMentor] = useState<Mentor | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const closeViewDialog = () => setIsViewDialogOpen(false);
+  const [visibleLoadingId, setVisibleLoadingId] = useState<number | null>(
+    null,
+  );
+
+  const handleVisibleChange = async (mentorId: number, checked: boolean) => {
+    setVisibleLoadingId(mentorId);
+    try {
+      await patchUser.mutateAsync({ id: mentorId, isVisible: checked });
+      queryClient.invalidateQueries({
+        queryKey: [UseAdminUserMentorListQueryKey],
+      });
+    } catch (err) {
+      snackbar(`문제가 발생했습니다: ${err}`);
+    } finally {
+      setVisibleLoadingId(null);
+    }
+  };
 
   const handleDelete = async (
     e: React.MouseEvent,
@@ -96,6 +114,9 @@ function MentorManagementTable() {
                   키워드
                 </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
+                  노출여부
+                </th>
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
                   멘토 삭제
                 </th>
               </tr>
@@ -139,6 +160,16 @@ function MentorManagementTable() {
                         조회
                       </button>
                     )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Switch
+                      checked={mentor.isVisible ?? false}
+                      disabled={visibleLoadingId === mentor.id}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) =>
+                        handleVisibleChange(mentor.id, e.target.checked)
+                      }
+                    />
                   </td>
                   <td className="px-6 py-4 text-center">
                     <Button

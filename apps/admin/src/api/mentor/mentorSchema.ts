@@ -41,6 +41,7 @@ export const adminUserMentorList = z.object({
       nickname: z.string().nullable().optional(),
       email: z.string().nullable().optional(),
       phoneNum: z.string().nullable().optional(),
+      isVisible: z.boolean().nullable().optional(),
       hashTagList: z
         .array(
           z.object({
