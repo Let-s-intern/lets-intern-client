@@ -403,9 +403,14 @@ export const createLiveMentoringApplicationResponseSchema = z.object({
     applicationStatus: liveMentoringApplicationStatusSchema,
     expiresAt: z.string(),
   }),
-  mentoringTypes: z.array(
-    z.object({ mentoringTypeId: z.number(), name: z.string() }),
-  ),
+  /*
+    멘티가 고른 멘토링 유형. 신청 요청의 `mentoringCategory` 를 그대로 돌려준다.
+
+    예전에는 유형 카드 목록(`mentoringTypes`)이었다. 서버가 카테고리 단수로 바꿨는데
+    이 응답 스키마만 그대로 남아, 결제 직전 파싱이 깨져 신청이 아예 되지 않았다.
+    요청 스키마와 응답 스키마는 같은 커밋에서 함께 움직여야 한다.
+  */
+  mentoringCategory: liveMentoringCategorySchema,
   payment: z.object({
     originalPrice: z.number(),
     productDiscount: z.number(),
