@@ -299,8 +299,14 @@ describe('useOrderSubmit — 실패 처리', () => {
     );
     expect(push).not.toHaveBeenCalled();
 
-    act(() => result.current.goBackToSchedule());
-    expect(push).toHaveBeenCalledWith('/live-mentoring/1');
+    /*
+      일정을 다시 고르면 에러만 지운다. 예전에는 상세 페이지로 돌려보냈는데,
+      바뀐 것은 일정 하나뿐인데 이메일·질문·쿠폰까지 다시 쓰게 됐다.
+    */
+    act(() => result.current.clearError());
+    expect(result.current.isSlotConflict).toBe(false);
+    expect(result.current.errorMessage).toBeNull();
+    expect(push).not.toHaveBeenCalled();
   });
 
   it('그 밖의 실패는 서버 문구만 보여주고 일정 재선택을 권하지 않는다', async () => {

@@ -14,6 +14,13 @@ import {
   type QuestionInput,
 } from '../order/types';
 import { validateQuestionInput } from '../order/utils';
+
+/** 서버가 준 마감 시각(`LocalDateTime`)을 안내 문구용으로 짧게 적는다. */
+const formatEditDeadline = (deadline: string): string => {
+  const [date, time] = deadline.split('T');
+  const [, month, day] = date.split('-');
+  return `${Number(month)}월 ${Number(day)}일 ${time.slice(0, 5)}`;
+};
 import { readServerError } from '../utils/serverError';
 
 const ACCEPTED_FILE_TYPES = '.pdf,.doc,.docx';
@@ -297,8 +304,15 @@ const QuestionModal = ({
               버튼이 고장 난 것으로 읽힌다.
             */}
             {!canEdit && (
+              /*
+                마감 기준이 하나가 아니다 — 보통은 예약 시작 24시간 전이지만,
+                예약이 48시간 안일 때 신청했다면 결제 승인 +3시간이 그 자리를 대신한다.
+                화면이 기준을 단정하면 절반은 거짓말이 되므로 서버가 준 시각을 그대로 적는다.
+              */
               <p className="text-xxsmall12 text-neutral-45">
-                예약 시간 24시간 전이 지나 질문을 수정할 수 없습니다.
+                {question?.editDeadline
+                  ? `수정 가능 시간(${formatEditDeadline(question.editDeadline)})이 지나 질문을 수정할 수 없습니다.`
+                  : '수정 가능 시간이 지나 질문을 수정할 수 없습니다.'}
               </p>
             )}
             {canEdit && shownQuestionError && (

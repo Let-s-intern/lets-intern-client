@@ -15,10 +15,7 @@ const JitsiEmbedModal = dynamic(
 import { mypageApplicationsQueryOptions } from '@/api/application';
 import { useMyLiveMentoringApplicationsQuery } from '@/api/live-mentoring/liveMentoring';
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
-import {
-  isQuestionButtonVisible,
-  questionButtonLabel,
-} from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
+import { questionButtonLabel } from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
 
 import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
 import { mypageMagnetListQueryOptions } from '@/api/magnet/magnet';
@@ -169,16 +166,13 @@ const CareerGrowthContent = () => {
 
   const programCardConfigs = useMemo(() => {
     const configs = toCareerGrowthCardConfigs(visibleItems, category);
-    const now = new Date();
 
     return configs.map((config) => {
       const mentoring = mentoringById.get(config.id);
       if (!mentoring) return config;
 
-      const questionVisible = isQuestionButtonVisible(
-        mentoring.reservationStartAt,
-        now,
-      );
+      // 마이페이지와 같은 값을 쓴다 — 서버가 판단한 결과다.
+      const questionVisible = mentoring.questionEditable;
 
       return {
         ...config,
