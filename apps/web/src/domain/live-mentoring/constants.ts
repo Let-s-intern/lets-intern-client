@@ -140,3 +140,33 @@ export const careerBadgeLabel = (career: RepresentativeCareer | null): string =>
   [career?.company, career?.job ?? career?.position]
     .filter((part): part is string => Boolean(part))
     .join(' · ');
+
+/**
+ * 질문을 나중에 낼 수 있는 최소 여유 시간(시간 단위).
+ *
+ * 예약이 이 시간 안이면 나중에 낼 수 없다 — 수정 마감(결제 승인 +3시간)까지 남는
+ * 시간이 몇 시간뿐이라, 선택지를 열어 두면 사용자가 기한을 놓친다.
+ *
+ * **서버가 최종 판단한다** (`LiveMentoringBookingPolicy`). 여기서 미리 보는 이유는
+ * 눌러 보고 400 을 받게 두지 않기 위해서다 — `useOrderSubmit` 이 서버
+ * `validateQuestion` 을 선반영하는 것과 같은 이유다.
+ */
+export const DEFERRED_QUESTION_MIN_LEAD_HOURS = 48;
+
+/**
+ * 지금 이 예약에 대해 질문을 나중에 내겠다고 할 수 있는지.
+ *
+ * 경계값은 사용자에게 유리한 쪽에 넣는다 — 정확히 48시간 뒤면 나중에 낼 수 있다.
+ * 서버 정책과 같은 규칙이다.
+ */
+export const isDeferredQuestionAllowed = (
+  reservationStartAt: string | null | undefined,
+  now: Date,
+): boolean => {
+  if (!reservationStartAt) return false;
+  const start = new Date(reservationStartAt);
+  if (Number.isNaN(start.getTime())) return false;
+  const earliest = new Date(now);
+  earliest.setHours(earliest.getHours() + DEFERRED_QUESTION_MIN_LEAD_HOURS);
+  return start.getTime() >= earliest.getTime();
+};

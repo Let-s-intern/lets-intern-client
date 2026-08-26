@@ -478,6 +478,14 @@ export const myLiveMentoringApplicationSchema = z.object({
   status: liveMentoringApplicationStatusSchema,
   /** 질문을 썼는지. 카드 버튼이 `작성` 인지 `수정` 인지 가른다. */
   questionWritten: z.boolean(),
+  /**
+   * 지금 질문을 고칠 수 있는지. **서버가 판단한다.**
+   *
+   * 예전에는 목록에 이 값이 없어 화면이 "예약 시작 24시간 전" 규칙을 복제해 버튼을
+   * 보일지 정했다. 마감 기준이 둘로 갈라지면서(48시간 안 신청은 결제 승인 +3시간)
+   * 그 복제가 틀린 답을 내게 됐다.
+   */
+  questionEditable: z.boolean(),
   entryLink: z.string().nullable(),
 });
 export type MyLiveMentoringApplication = z.infer<
@@ -493,9 +501,10 @@ export const myLiveMentoringApplicationListSchema = z.object({
 /**
  * 질문 조회 응답 — 백엔드 `GetLiveMentoringQuestionResponseDto`.
  *
- * **`editable` 은 서버가 계산한 값이다.** 예약 시작 48시간 기준인데, 화면이 같은
- * 계산을 다시 하면 클라이언트와 서버의 시계 차이로 결과가 어긋나 저장 시점에 거부된다.
- * 서버 DTO 주석도 같은 말을 한다.
+ * **`editable` 과 `editDeadline` 은 서버가 계산한 값이다.** 마감 기준이 하나가 아니다 —
+ * 보통은 예약 시작 24시간 전이지만, 예약이 48시간 안일 때 신청했다면 결제 승인 +3시간이
+ * 그 자리를 대신한다. 화면이 같은 계산을 재현할 수 없으므로 서버 값을 그대로 쓴다.
+ * 규칙은 서버 `LiveMentoringBookingPolicy` 에 있다.
  *
  * 첨부 URL 의 필드 이름이 요청(`url`)과 응답(`attachmentUrl`)에서 다르다.
  */
@@ -509,6 +518,8 @@ export const liveMentoringQuestionSchema = z.object({
   mentorShareAgreed: z.boolean(),
   reservationStartAt: z.string(),
   editable: z.boolean(),
+  /** `LocalDateTime`. 언제까지 고칠 수 있는지 그대로 안내한다. */
+  editDeadline: z.string().nullable(),
 });
 export type LiveMentoringQuestion = z.infer<typeof liveMentoringQuestionSchema>;
 

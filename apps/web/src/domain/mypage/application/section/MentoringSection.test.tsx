@@ -39,6 +39,7 @@ function makeApplication(
     reservationEndAt: '2026-09-13T11:00:00',
     status: 'CONFIRMED',
     questionWritten: true,
+    questionEditable: true,
     entryLink: null,
     ...overrides,
   };

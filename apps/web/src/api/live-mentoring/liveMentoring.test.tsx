@@ -584,6 +584,7 @@ const MY_APPLICATION = {
   reservationEndAt: '2026-09-13T11:00:00',
   status: 'CONFIRMED',
   questionWritten: true,
+  questionEditable: true,
   entryLink: null,
 };
 
@@ -597,6 +598,7 @@ const QUESTION = {
   mentorShareAgreed: true,
   reservationStartAt: '2026-09-13T10:00:00',
   editable: true,
+  editDeadline: '2026-09-12T10:00:00',
 };
 
 describe('useMyLiveMentoringApplicationsQuery', () => {

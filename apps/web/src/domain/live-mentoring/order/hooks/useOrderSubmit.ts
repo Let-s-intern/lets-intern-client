@@ -151,7 +151,13 @@ export function useOrderSubmit({
     isPending: createApplication.isPending,
     errorMessage,
     isSlotConflict,
-    /** 일정을 다시 고르러 상세로 돌아간다. */
-    goBackToSchedule: () => router.push(`/live-mentoring/${draft.mentorId}`),
+    /*
+      일정을 다시 고른 뒤 에러 박스를 지운다. 예전에는 여기서 상세 페이지로
+      돌려보냈는데, 바뀐 것은 일정 하나뿐인데 이메일·질문·쿠폰까지 다시 쓰게 됐다.
+    */
+    clearError: () => {
+      setErrorMessage(null);
+      setIsSlotConflict(false);
+    },
   };
 }

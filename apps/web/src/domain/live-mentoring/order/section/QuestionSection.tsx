@@ -15,6 +15,11 @@ const ACCEPTED_FILE_TYPES = '.pdf,.doc,.docx';
 interface QuestionSectionProps {
   value: QuestionInput;
   onChange: (next: QuestionInput) => void;
+  /**
+   * 질문을 나중에 낼 수 있는지. 예약이 48시간 안이면 낼 시간이 없어 막힌다.
+   * 서버가 같은 규칙으로 거부하므로 여기서 미리 잠가 400 을 만나지 않게 한다.
+   */
+  deferralAllowed: boolean;
 }
 
 /**
@@ -28,7 +33,11 @@ interface QuestionSectionProps {
  * 첨부는 파일과 URL 중 하나다. `attachmentType` 이 그 배타성을 그대로 나타내므로
  * 별도 플래그를 두지 않는다.
  */
-const QuestionSection = ({ value, onChange }: QuestionSectionProps) => {
+const QuestionSection = ({
+  value,
+  onChange,
+  deferralAllowed,
+}: QuestionSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -38,6 +47,8 @@ const QuestionSection = ({ value, onChange }: QuestionSectionProps) => {
     onChange({ ...value, ...partial });
 
   const handleDeferredChange = (deferred: boolean) => {
+    // disabled 만으로 막지 않는다. 그 속성이 빠지는 날 조용히 뚫린다.
+    if (deferred && !deferralAllowed) return;
     if (!deferred) {
       patch({ deferred: false });
       return;
@@ -78,15 +89,34 @@ const QuestionSection = ({ value, onChange }: QuestionSectionProps) => {
         멘토에게 궁금한 점을 작성해 주세요
       </h2>
 
-      <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center gap-2">
-        <input
-          type="checkbox"
-          checked={value.deferred}
-          onChange={(event) => handleDeferredChange(event.target.checked)}
-          className="accent-primary h-4 w-4"
-        />
-        나중에 작성하기
-      </label>
+      {/*
+        고를 수 없을 때도 체크박스를 남긴다. 없애면 다른 날짜에서는 있던 선택지가
+        사라져, 왜 못 쓰는지 알 수 없다. 이유를 함께 적는다.
+      */}
+      <div className="flex flex-col gap-1">
+        <label
+          className={`text-xsmall14 flex items-center gap-2 ${
+            deferralAllowed
+              ? 'text-neutral-30 cursor-pointer'
+              : 'text-neutral-60 cursor-not-allowed'
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={value.deferred}
+            disabled={!deferralAllowed}
+            onChange={(event) => handleDeferredChange(event.target.checked)}
+            className="accent-primary h-4 w-4"
+          />
+          나중에 작성하기
+        </label>
+        {!deferralAllowed && (
+          <p className="text-xxsmall12 text-neutral-45 pl-6">
+            멘토링 시작까지 48시간이 남지 않아 지금 작성해야 해요. 결제 후 3시간
+            동안 수정할 수 있어요.
+          </p>
+        )}
+      </div>
 
       {!value.deferred && (
         <div className="flex flex-col gap-5 pt-2">
