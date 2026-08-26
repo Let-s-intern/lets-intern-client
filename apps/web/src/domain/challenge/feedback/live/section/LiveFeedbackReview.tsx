@@ -6,43 +6,10 @@ import {
   useFeedbackDetailQuery,
   usePatchFeedbackReview,
 } from '@/api/feedback/feedback';
-
-const MAX_LENGTH = 300;
-
-function StarRating({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  const [hovered, setHovered] = useState(0);
-  const active = hovered || value;
-
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          onClick={() => onChange(star)}
-          onMouseEnter={() => setHovered(star)}
-          onMouseLeave={() => setHovered(0)}
-        >
-          <img
-            src={
-              active >= star
-                ? '/icons/star-yellow.svg'
-                : '/icons/star-unfill.svg'
-            }
-            alt={`별 ${star}개`}
-            className="size-7"
-          />
-        </button>
-      ))}
-    </div>
-  );
-}
+import {
+  REVIEW_MAX_LENGTH as MAX_LENGTH,
+  StarRating,
+} from '@/domain/live-feedback/ui/LiveFeedbackReviewModal';
 
 function StarDisplay({ score }: { score: number }) {
   return (
@@ -95,7 +62,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
     return (
       <div className="flex flex-col gap-4">
         <h3 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
-          LIVE 피드백 회고하기
+          내가 작성한 후기
         </h3>
         <div className="flex flex-col gap-2">
           <StarDisplay score={existingScore} />
@@ -111,20 +78,27 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
     return (
       <div className="flex flex-col gap-4">
         <h2 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
-          LIVE 피드백 회고하기
+          오늘 멘토링, 무엇을 얻으셨나요?
         </h2>
         <div className="flex flex-col gap-2">
+          <p className="text-xxsmall12 text-neutral-40">
+            대화에서 새로 알게 된 것을 지금 정리해두면, 다음 준비가 훨씬
+            빨라져요.
+          </p>
           <StarRating value={stars} onChange={setStars} />
           {!canSubmit && (
             <p className="text-xxsmall12 text-system-error">
-              별점과 회고 내용을 입력하면 저장할 수 있어요.
+              별점과 내용을 채우면 저장할 수 있어요.
             </p>
           )}
+          <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+            멘토링을 통해 새롭게 알게 된 점을 작성해주세요
+          </h3>
           <div className="flex flex-col gap-1">
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
-              placeholder="오늘 받은 피드백 중 기억에 남는 점, 미션에서 보완하고 싶은 부분, 다음에 적용해볼 내용을 자유롭게 적어보세요."
+              placeholder="예) 혼자 볼 때는 이력서가 왜 안 통하는지 몰랐는데, 성과가 숫자로 안 보인다는 점을 짚어주셨어요. 프로젝트마다 지표를 한 줄씩 붙이는 방법까지 알려주셔서 바로 고칠 수 있었어요."
               className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
             />
             <p className="text-xxsmall12 text-right">
@@ -151,7 +125,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
       onClick={() => setIsReviewing(true)}
       className="bg-primary text-xsmall16 flex-1 whitespace-nowrap rounded-sm py-4 font-semibold text-white"
     >
-      LIVE 피드백 회고하기
+      멘토링 후기 작성하기
     </button>
   );
 };

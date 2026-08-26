@@ -38,6 +38,8 @@ interface JitsiEmbedModalProps {
   registerBaseUrl?: (base: string) => Promise<void>;
   /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
   onExhausted?: () => void;
+  /** 회의에 실제로 참가했을 때 호출 — 종료 후 후기 모달을 띄울지 판단하는 근거. */
+  onJoined?: () => void;
 }
 
 const JitsiEmbedModal = ({
@@ -52,6 +54,7 @@ const JitsiEmbedModal = ({
   baseCandidates,
   registerBaseUrl,
   onExhausted,
+  onJoined,
 }: JitsiEmbedModalProps) => {
   return (
     <BaseModal
@@ -74,6 +77,7 @@ const JitsiEmbedModal = ({
               baseCandidates={baseCandidates}
               registerBaseUrl={registerBaseUrl}
               onExhausted={onExhausted}
+              onJoined={onJoined}
               topLeftSlot={
                 startDate && endDate ? (
                   <LiveSessionTimer endDate={endDate} />

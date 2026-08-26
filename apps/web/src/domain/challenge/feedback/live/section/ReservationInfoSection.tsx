@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import { usePatchFeedbackMeetingUrl } from '@/api/feedback/feedback';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
+import LiveFeedbackReviewModal from '@/domain/live-feedback/ui/LiveFeedbackReviewModal';
 
 import type { FeedbackInfo, LiveFeedbackStatus, Mentor } from '../types';
 import MentorCard from '../ui/MentorCard';
@@ -29,6 +30,9 @@ const ReservationInfoSection = ({
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   // 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  // 종료 직후 정리 모달. 실제로 회의에 참가했던 세션에서만 연다.
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const hasJoinedRef = useRef(false);
   const reservationTime = formatReservationTime(feedbackInfo?.startDate);
   const meetingUrl = feedbackInfo?.meetingUrl;
   const entranceActive = isEntranceActive(
@@ -38,6 +42,23 @@ const ReservationInfoSection = ({
 
   // feedbackId 가 없을 때도 hook 규칙상 항상 호출(0 → 핸들러에서 가드).
   const patchMeetingUrl = usePatchFeedbackMeetingUrl(feedbackId ?? 0);
+
+  /**
+   * Jitsi 모달 닫기 — hangup 과 우상단 닫기 버튼이 모두 여기로 온다.
+   *
+   * 실제로 회의에 참가했던 세션에서만 정리 모달을 잇는다. 회의실에 못 들어가고
+   * 나간 경우와 이미 정리를 마친 세션은 제외한다.
+   */
+  const handleCloseJitsi = () => {
+    setIsJitsiOpen(false);
+
+    const alreadyReviewed =
+      feedbackInfo?.score != null && feedbackInfo?.review != null;
+    if (hasJoinedRef.current && !alreadyReviewed) {
+      setIsReviewOpen(true);
+    }
+    hasJoinedRef.current = false;
+  };
 
   /**
    * "LIVE 피드백 입장하기" — 멘토·멘티 공통 로직(`ensureLiveMeetingUrl`).
@@ -160,7 +181,10 @@ const ReservationInfoSection = ({
       {feedbackId != null && (
         <JitsiEmbedModal
           isOpen={isJitsiOpen}
-          onClose={() => setIsJitsiOpen(false)}
+          onClose={handleCloseJitsi}
+          onJoined={() => {
+            hasJoinedRef.current = true;
+          }}
           meetingUrl={meetingUrl ?? null}
           spaceName={mentor.nickname}
           // 좌상단 타이머(현재 시각·남은 시간)용 세션 시간.
@@ -183,6 +207,17 @@ const ReservationInfoSection = ({
               '회의실 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
             )
           }
+        />
+      )}
+
+      {/* 정리 모달은 Jitsi 모달의 형제로 둔다 — BaseModal 은 isOpen=false 에서 언마운트되므로
+          안에 중첩하면 부모가 닫히는 순간 함께 사라진다. */}
+      {feedbackId != null && (
+        <LiveFeedbackReviewModal
+          isOpen={isReviewOpen}
+          onClose={() => setIsReviewOpen(false)}
+          feedbackId={feedbackId}
+          mentorName={mentor.nickname}
         />
       )}
     </div>
