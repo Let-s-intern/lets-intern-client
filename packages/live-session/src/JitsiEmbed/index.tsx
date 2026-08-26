@@ -31,6 +31,11 @@ interface JitsiEmbedProps {
   registerBaseUrl?: (base: string) => Promise<void>;
   /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
   onExhausted?: () => void;
+  /**
+   * 회의에 실제로 참가했을 때 1회 호출 (`videoConferenceJoined`).
+   * 닫기 버튼·hangup 이 같은 `onClose` 로 수렴하므로, "정말 세션을 했는지"는 이 신호로만 구분된다.
+   */
+  onJoined?: () => void;
 }
 
 /**
@@ -174,6 +179,7 @@ export function JitsiEmbed({
   baseCandidates,
   registerBaseUrl,
   onExhausted,
+  onJoined,
 }: JitsiEmbedProps) {
   const { domain, roomName } = parseRoomUrl(roomUrl);
   const { status, reportRuntimeError } = useJitsiConnection({
@@ -243,6 +249,7 @@ export function JitsiEmbed({
             let joined = false;
             api.addListener('videoConferenceJoined', () => {
               joined = true;
+              onJoined?.();
             });
             api.addListener('connectionFailed', () => {
               if (!joined) reportRuntimeError();

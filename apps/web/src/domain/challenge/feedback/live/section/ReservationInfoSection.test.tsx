@@ -11,8 +11,24 @@ import ReservationInfoSection from './ReservationInfoSection';
 // 대체한다. 방 URL 은 BE meetingUrl 을 그대로 받는다(스텁의 data-room-url 로 검증).
 jest.mock('@letscareer/live-session/JitsiEmbed', () => ({
   __esModule: true,
-  JitsiEmbed: ({ roomUrl }: { roomUrl: string }) => (
-    <div data-testid="jitsi-embed" data-room-url={roomUrl} />
+  // onJoined/onClose 를 버튼으로 노출해 "참가 → 종료" 흐름을 테스트에서 구동한다.
+  JitsiEmbed: ({
+    roomUrl,
+    onClose,
+    onJoined,
+  }: {
+    roomUrl: string;
+    onClose: () => void;
+    onJoined?: () => void;
+  }) => (
+    <div data-testid="jitsi-embed" data-room-url={roomUrl}>
+      <button type="button" onClick={() => onJoined?.()}>
+        회의참가
+      </button>
+      <button type="button" onClick={onClose}>
+        회의종료
+      </button>
+    </div>
   ),
   LiveSessionTimer: () => <div data-testid="live-session-timer" />,
   LiveFeedbackMaterials: () => <div data-testid="live-feedback-materials" />,
@@ -24,6 +40,8 @@ jest.mock('@/api/feedback/feedback', () => ({
   usePatchFeedbackMeetingUrl: () => ({
     mutateAsync: jest.fn().mockResolvedValue(undefined),
   }),
+  // 종료 후 정리 모달(LiveFeedbackReviewModal)이 함께 렌더되므로 저장 훅도 필요하다.
+  usePatchFeedbackReview: () => ({ mutate: jest.fn(), isPending: false }),
 }));
 
 const FEEDBACK_ID = 4242;
@@ -124,5 +142,64 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
 
     global.fetch = originalFetch;
     alertSpy.mockRestore();
+  });
+
+  /**
+   * 종료 직후 정리 모달 — hangup 과 닫기 버튼이 같은 onClose 로 수렴하므로,
+   * "실제로 참가했는가"만이 노출을 가르는 조건이다.
+   */
+  describe('종료 후 정리 모달', () => {
+    const enterAndRender = async (info: FeedbackInfo = feedbackInfo) => {
+      const user = userEvent.setup();
+      render(
+        <ReservationInfoSection
+          mentor={mentor}
+          feedbackInfo={info}
+          status="reserved"
+          feedbackId={FEEDBACK_ID}
+        />,
+      );
+      await user.click(
+        screen.getByRole('button', { name: 'LIVE 피드백 입장하기' }),
+      );
+      return user;
+    };
+
+    const reviewTitle = () =>
+      screen.queryByText('오늘 멘토링, 뭘 가져가시나요?');
+
+    it('회의에 참가한 뒤 종료하면 정리 모달이 열린다', async () => {
+      const user = await enterAndRender();
+
+      await user.click(screen.getByRole('button', { name: '회의참가' }));
+      expect(reviewTitle()).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: '회의종료' }));
+
+      expect(reviewTitle()).toBeVisible();
+      expect(screen.queryByTestId('jitsi-embed')).not.toBeInTheDocument();
+    });
+
+    it('참가하지 못한 채 닫으면 정리 모달이 열리지 않는다', async () => {
+      const user = await enterAndRender();
+
+      // 회의 참가 없이 곧바로 닫기 — 회의실 오류로 못 들어간 경우.
+      await user.click(screen.getByRole('button', { name: '회의종료' }));
+
+      expect(reviewTitle()).not.toBeInTheDocument();
+    });
+
+    it('이미 정리를 마친 세션은 다시 열지 않는다', async () => {
+      const user = await enterAndRender({
+        ...feedbackInfo,
+        score: 5,
+        review: '이미 작성한 내용',
+      });
+
+      await user.click(screen.getByRole('button', { name: '회의참가' }));
+      await user.click(screen.getByRole('button', { name: '회의종료' }));
+
+      expect(reviewTitle()).not.toBeInTheDocument();
+    });
   });
 });
