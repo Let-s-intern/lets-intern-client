@@ -7,6 +7,15 @@
 
   서버 DTO 가 바뀌면 여기서 먼저 깨진다. 그때는 스키마를 서버에 맞추고 이 픽스처도
   새로 받은 응답으로 갈아 끼운다.
+
+  **다만 이 대조는 한쪽만 낡았을 때만 깨진다.** 2026-08-26 에 신청 생성 응답이
+  `mentoringTypes`(배열)에서 `mentoringCategory`(단수)로 바뀌었는데, 스키마와 픽스처가
+  함께 그대로 남아 서로 맞는 바람에 여기서도 통과했다. 실제 결제 화면에서만
+  "expected array, received undefined" 로 터졌다. 그래서 아래에 **옛 모양을 거부하는지**
+  확인하는 테스트를 함께 둔다 — 픽스처가 다시 낡아도 그쪽이 걸린다.
+
+  신청 생성 픽스처의 `mentoringCategory` 는 서버에서 새로 받은 값이 아니라 그때
+  손으로 고친 값이다. 다음에 로컬 서버를 띄울 일이 있으면 응답을 다시 받아 갈아 끼운다.
 */
 import {
   confirmLiveMentoringPaymentResponseSchema,
@@ -31,7 +40,7 @@ const CREATE_30MIN = {
     applicationStatus: 'PAYMENT_PENDING',
     expiresAt: '2026-08-21T16:22:56.029739',
   },
-  mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+  mentoringCategory: 'PERSONAL_STATEMENT',
   payment: {
     originalPrice: 35000,
     productDiscount: 0,
@@ -57,7 +66,7 @@ const CREATE_60MIN = {
     applicationStatus: 'PAYMENT_PENDING',
     expiresAt: '2026-08-21T16:23:16.283507',
   },
-  mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+  mentoringCategory: 'PERSONAL_STATEMENT',
   payment: {
     originalPrice: 60000,
     productDiscount: 0,
@@ -84,6 +93,28 @@ describe('실제 서버 응답 대조 — 신청 생성', () => {
     // 두 칸이 합쳐져 한 시간 구간 하나로 내려온다
     expect(parsed.reservation.startAt).toBe('2026-09-19T12:00:00');
     expect(parsed.reservation.endAt).toBe('2026-09-19T13:00:00');
+  });
+
+  it('멘티가 고른 유형을 카테고리 한 개로 돌려준다', () => {
+    const parsed =
+      createLiveMentoringApplicationResponseSchema.parse(CREATE_30MIN);
+    expect(parsed.mentoringCategory).toBe('PERSONAL_STATEMENT');
+  });
+
+  it('유형 카드 배열을 쓰던 옛 응답은 거부한다', () => {
+    /*
+      스키마와 픽스처가 함께 낡으면 위의 대조는 통과한다. 옛 모양을 명시적으로
+      거부해 두면 그때도 여기서 걸린다.
+    */
+    const legacy = {
+      ...CREATE_30MIN,
+      mentoringCategory: undefined,
+      mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+    };
+
+    expect(() =>
+      createLiveMentoringApplicationResponseSchema.parse(legacy),
+    ).toThrow();
   });
 
   /*

@@ -379,7 +379,7 @@ function createResponse(overrides: Record<string, unknown> = {}) {
           applicationStatus: 'PAYMENT_PENDING',
           expiresAt: '2026-08-21T12:10:00',
         },
-        mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+        mentoringCategory: 'PERSONAL_STATEMENT',
         payment: {
           originalPrice: 35000,
           productDiscount: 0,

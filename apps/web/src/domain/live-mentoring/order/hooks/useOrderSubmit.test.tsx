@@ -70,7 +70,7 @@ const CREATED = {
     applicationStatus: 'PAYMENT_PENDING' as const,
     expiresAt: '2026-08-21T16:23:16.283507',
   },
-  mentoringTypes: [{ mentoringTypeId: 1, name: '자기소개서' }],
+  mentoringCategory: 'PERSONAL_STATEMENT',
   payment: {
     originalPrice: 60000,
     productDiscount: 0,
