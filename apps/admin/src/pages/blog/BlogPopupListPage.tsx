@@ -7,6 +7,7 @@ import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { usePageableWithSearchParams } from '@/hooks/usePageableWithSearchParams';
+import { formatPriority } from './popup/blogPopupForm';
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
 import {
@@ -26,6 +27,21 @@ type Row = {
 /** 클릭률은 서버가 이미 백분율로 내려준다. 화면에서 다시 나누지 않는다. */
 export const formatClickRate = (clickRate?: number | null) =>
   `${(clickRate ?? 0).toFixed(1)}%`;
+
+/**
+ * 우선순위가 없는 팝업은 정렬 방향과 상관없이 항상 뒤로 간다. 숫자를 지정한 팝업보다
+ * 뒤로 밀린다는 규칙을 목록도 그대로 보여줘야 한다.
+ */
+export const comparePriority = (
+  a: number | null | undefined,
+  b: number | null | undefined,
+  sortDirection: 'asc' | 'desc',
+) => {
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
+  return sortDirection === 'desc' ? b - a : a - b;
+};
 
 export const formatTarget = (
   row: Pick<Row, 'targetType' | 'targetBlogCount'>,
@@ -61,6 +77,15 @@ export default function BlogPopupListPage() {
   const columns: GridColDef<Row>[] = [
     { field: 'title', headerName: '제목', width: 200 },
     { field: 'target', headerName: '노출 대상', width: 100, sortable: false },
+    {
+      field: 'priority',
+      headerName: '우선순위',
+      width: 100,
+      type: 'number',
+      valueFormatter: (value: number | null) => formatPriority(value),
+      getSortComparator: (sortDirection) => (a, b) =>
+        comparePriority(a, b, sortDirection === 'desc' ? 'desc' : 'asc'),
+    },
     { field: 'link', headerName: '링크', width: 200, sortable: false },
     { field: 'startDate', headerName: '시작일', width: 200, sortable: false },
     { field: 'endDate', headerName: '종료일', width: 200, sortable: false },

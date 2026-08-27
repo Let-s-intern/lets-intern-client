@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogPopupListPage, {
+  comparePriority,
   formatClickRate,
   formatTarget,
 } from './BlogPopupListPage';
@@ -24,6 +25,7 @@ const blogPopupList = [
     impressionCount: 1000,
     clickCount: 12,
     clickRate: 1.2,
+    priority: 5,
   },
   {
     blogPopupId: 2,
@@ -37,6 +39,7 @@ const blogPopupList = [
     impressionCount: 0,
     clickCount: 0,
     clickRate: 0,
+    priority: null,
   },
   {
     blogPopupId: 3,
@@ -50,6 +53,7 @@ const blogPopupList = [
     impressionCount: 500,
     clickCount: 40,
     clickRate: 8,
+    priority: 1,
   },
 ];
 
@@ -122,6 +126,7 @@ describe('BlogPopupListPage', () => {
       '제목',
       '노출 대상',
       '링크',
+      '우선순위',
       '노출 여부',
       '노출 수',
       '클릭 수',
@@ -207,5 +212,62 @@ describe('BlogPopupListPage', () => {
     expect(mutate).toHaveBeenCalledWith(1);
 
     confirm.mockRestore();
+  });
+});
+
+describe('comparePriority', () => {
+  it('숫자가 작을수록 앞이다', () => {
+    expect(comparePriority(1, 5, 'asc')).toBeLessThan(0);
+    expect(comparePriority(5, 1, 'desc')).toBeLessThan(0);
+  });
+
+  it('없음은 방향과 상관없이 항상 뒤다', () => {
+    expect(comparePriority(null, 5, 'asc')).toBeGreaterThan(0);
+    expect(comparePriority(null, 5, 'desc')).toBeGreaterThan(0);
+    expect(comparePriority(5, null, 'asc')).toBeLessThan(0);
+    expect(comparePriority(5, null, 'desc')).toBeLessThan(0);
+  });
+
+  it('둘 다 없음이면 순서를 바꾸지 않는다', () => {
+    expect(comparePriority(null, undefined, 'asc')).toBe(0);
+  });
+});
+
+/** 우선순위 칸의 표시값. 페이지 번호에도 같은 숫자가 있어 칸을 집어서 본다. */
+const priorityCells = () =>
+  Array.from(
+    document.querySelectorAll('[role="gridcell"][data-field="priority"]'),
+  ).map((cell) => cell.textContent);
+
+describe('BlogPopupListPage 우선순위', () => {
+  it('숫자는 그대로, 없는 팝업은 빈 칸이 아니라 없음으로 적는다', () => {
+    renderPage();
+
+    expect(priorityCells()).toEqual(['5', '없음', '1']);
+  });
+
+  it('우선순위로 정렬해도 없음은 뒤에 남는다', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole('columnheader', { name: '우선순위' }));
+
+    await waitFor(() =>
+      expect(titleOrder()).toEqual([
+        '높은 클릭률 팝업',
+        '낮은 클릭률 팝업',
+        '노출 없는 팝업',
+      ]),
+    );
+
+    await user.click(screen.getByRole('columnheader', { name: '우선순위' }));
+
+    await waitFor(() =>
+      expect(titleOrder()).toEqual([
+        '낮은 클릭률 팝업',
+        '높은 클릭률 팝업',
+        '노출 없는 팝업',
+      ]),
+    );
   });
 });
