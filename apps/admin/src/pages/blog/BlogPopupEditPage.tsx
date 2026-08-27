@@ -10,6 +10,7 @@ import { Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import BlogPopupFormFields from './popup/BlogPopupFormFields';
+import { toBlogPopupSaveErrorMessage } from './popup/blogPopupError';
 import {
   BlogPopupFormValue,
   DEFAULT_TRIGGER_RATIO,
@@ -24,6 +25,7 @@ const toFormValue = (popup: AdminBlogPopup): BlogPopupFormValue => ({
   targetType: popup.targetType,
   blogIds: popup.blogIds,
   triggerRatio: popup.triggerRatio ?? DEFAULT_TRIGGER_RATIO,
+  priority: popup.priority ?? null,
   isVisible: popup.isVisible ?? false,
   startDate: popup.startDate ?? '',
   endDate: popup.endDate ?? '',
@@ -77,18 +79,24 @@ function BlogPopupEditForm({
       return;
     }
 
-    await patch.mutateAsync({
-      blogPopupId,
-      title: form.title,
-      imageUrl: form.imageUrl,
-      link: form.link,
-      targetType: form.targetType,
-      ...(targetTouched ? { blogIds: toBlogIdsPayload(form) } : {}),
-      triggerRatio: form.triggerRatio,
-      isVisible: form.isVisible,
-      startDate: form.startDate,
-      endDate: form.endDate,
-    });
+    try {
+      await patch.mutateAsync({
+        blogPopupId,
+        title: form.title,
+        imageUrl: form.imageUrl,
+        link: form.link,
+        targetType: form.targetType,
+        ...(targetTouched ? { blogIds: toBlogIdsPayload(form) } : {}),
+        triggerRatio: form.triggerRatio,
+        priority: form.priority,
+        isVisible: form.isVisible,
+        startDate: form.startDate,
+        endDate: form.endDate,
+      });
+    } catch (error) {
+      snackbar(toBlogPopupSaveErrorMessage(error, '수정에 실패했습니다'));
+      return;
+    }
 
     snackbar('수정되었습니다');
     navigate('/blog/popup');
@@ -98,7 +106,11 @@ function BlogPopupEditForm({
     <div className="p-5">
       <Heading className="mb-5">블로그 팝업 수정</Heading>
       <div className="w-1/2 min-w-[37.5rem]">
-        <BlogPopupFormFields value={form} onChange={handleChange} />
+        <BlogPopupFormFields
+          value={form}
+          onChange={handleChange}
+          blogPopupId={blogPopupId}
+        />
         <div className="flex w-full justify-end gap-5">
           <Button variant="contained" onClick={handleSubmit}>
             저장

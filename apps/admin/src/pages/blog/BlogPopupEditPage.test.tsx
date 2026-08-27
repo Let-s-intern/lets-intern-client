@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 import BlogPopupEditPage from './BlogPopupEditPage';
 
 const mutateAsync = vi.fn();
@@ -23,11 +24,34 @@ const blogPopupInfo = {
   endDate: '2026-09-30T11:59:00',
   impressionCount: 1200,
   clickCount: 37,
+  priority: 3,
 };
+
+/** 우선순위 드롭다운이 읽는 목록. 5번이 자기 자신이다. */
+const blogPopupList = [
+  {
+    blogPopupId: 1,
+    title: '기존 팝업',
+    targetType: 'ALL' as const,
+    priority: 2,
+  },
+  {
+    blogPopupId: 5,
+    title: '1대1 라이브 멘토링 홍보',
+    targetType: 'SELECTED' as const,
+    priority: 3,
+  },
+];
 
 vi.mock('@/api/blog/blogPopup', () => ({
   useGetAdminBlogPopup: () => ({ data: { blogPopupInfo } }),
   usePatchAdminBlogPopup: () => ({ mutateAsync }),
+  useGetAdminBlogPopupList: () => ({
+    data: {
+      blogPopupList,
+      pageInfo: { pageNum: 0, pageSize: 500, totalElements: 2, totalPages: 1 },
+    },
+  }),
 }));
 
 const blogInfos = [
@@ -54,7 +78,9 @@ const renderPage = () =>
   render(
     <MemoryRouter>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-        <BlogPopupEditPage />
+        <AdminSnackbarProvider>
+          <BlogPopupEditPage />
+        </AdminSnackbarProvider>
       </LocalizationProvider>
     </MemoryRouter>,
   );
@@ -152,5 +178,86 @@ describe('BlogPopupEditPage', () => {
     await save(user);
 
     await waitFor(() => expect(navigate).toHaveBeenCalledWith('/blog/popup'));
+  });
+});
+
+const openPriority = async (user: ReturnType<typeof userEvent.setup>) =>
+  user.click(screen.getByRole('combobox', { name: '노출 우선순위' }));
+
+describe('BlogPopupEditPage 노출 우선순위', () => {
+  it('저장된 우선순위로 채운다', () => {
+    renderPage();
+
+    expect(
+      screen.getByRole('combobox', { name: '노출 우선순위' }),
+    ).toHaveTextContent('3');
+  });
+
+  it('자기가 쓰는 숫자는 비활성화하지 않는다', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await openPriority(user);
+
+    // 막으면 자기 값을 다시 고를 수 없다.
+    expect(screen.getByRole('option', { name: '3' })).not.toHaveAttribute(
+      'aria-disabled',
+    );
+  });
+
+  it('다른 팝업이 쓰는 숫자는 비활성화한다', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await openPriority(user);
+
+    expect(
+      screen.getByRole('option', { name: '2 (사용 중: 기존 팝업)' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('없음으로 되돌리면 null 을 보낸다', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await openPriority(user);
+    await user.click(screen.getByRole('option', { name: '없음' }));
+    await save(user);
+
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    expect(body()).toMatchObject({ priority: null });
+  });
+
+  it('건드리지 않으면 원래 우선순위를 그대로 보낸다', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await save(user);
+
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    expect(body()).toMatchObject({ priority: 3 });
+  });
+
+  it('서버가 거절하면 서버 문구를 보여주고 목록으로 가지 않는다', async () => {
+    const user = userEvent.setup();
+    mutateAsync.mockRejectedValueOnce(
+      Object.assign(new Error('rejected'), {
+        isAxiosError: true,
+        response: {
+          status: 409,
+          data: { message: '이미 사용 중인 우선순위입니다.' },
+        },
+      }),
+    );
+    renderPage();
+
+    await save(user);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('이미 사용 중인 우선순위입니다.'),
+      ).toBeInTheDocument(),
+    );
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

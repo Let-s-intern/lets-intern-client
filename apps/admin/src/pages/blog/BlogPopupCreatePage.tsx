@@ -5,6 +5,7 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import BlogPopupFormFields from './popup/BlogPopupFormFields';
+import { toBlogPopupSaveErrorMessage } from './popup/blogPopupError';
 import {
   BlogPopupFormValue,
   EMPTY_BLOG_POPUP_FORM,
@@ -30,17 +31,24 @@ const BlogPopupCreatePage = () => {
       return;
     }
 
-    await post.mutateAsync({
-      title: form.title,
-      imageUrl: form.imageUrl,
-      link: form.link,
-      targetType: form.targetType,
-      blogIds: toBlogIdsPayload(form),
-      triggerRatio: form.triggerRatio,
-      isVisible: form.isVisible,
-      startDate: form.startDate,
-      endDate: form.endDate,
-    });
+    try {
+      await post.mutateAsync({
+        title: form.title,
+        imageUrl: form.imageUrl,
+        link: form.link,
+        targetType: form.targetType,
+        blogIds: toBlogIdsPayload(form),
+        triggerRatio: form.triggerRatio,
+        priority: form.priority,
+        isVisible: form.isVisible,
+        startDate: form.startDate,
+        endDate: form.endDate,
+      });
+    } catch (error) {
+      // 우선순위 중복은 서버도 막는다. 거절 사유를 그대로 보여준다.
+      snackbar(toBlogPopupSaveErrorMessage(error, '등록에 실패했습니다'));
+      return;
+    }
 
     snackbar('등록되었습니다');
     navigate('/blog/popup');

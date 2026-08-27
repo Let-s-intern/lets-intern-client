@@ -7,17 +7,21 @@ import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import BlogPopupPreview, { BlogPopupImageNotice } from './BlogPopupPreview';
 import { BlogPopupFormValue } from './blogPopupForm';
+import BlogPopupPrioritySelect from './BlogPopupPrioritySelect';
 import BlogTargetSelector from './BlogTargetSelector';
 
 interface BlogPopupFormFieldsProps {
   value: BlogPopupFormValue;
   onChange: (patch: Partial<BlogPopupFormValue>) => void;
+  /** 수정 화면에서만 넘긴다. 자기가 쓰는 우선순위를 다시 고를 수 있게 한다. */
+  blogPopupId?: number;
 }
 
 /** 등록과 수정이 같은 필드를 쓴다. 한쪽만 고쳐 두 화면이 어긋나는 것을 막는다. */
 export default function BlogPopupFormFields({
   value,
   onChange,
+  blogPopupId,
 }: BlogPopupFormFieldsProps) {
   /**
    * DateTimePicker 는 구획을 하나 채울 때마다 아직 완성되지 않은 값으로도 onChange 를 부른다.
@@ -87,6 +91,14 @@ export default function BlogPopupFormFields({
           blogIds={value.blogIds}
           onTargetTypeChange={(targetType) => onChange({ targetType })}
           onBlogIdsChange={(blogIds) => onChange({ blogIds })}
+        />
+      </div>
+
+      <div className="my-5">
+        <BlogPopupPrioritySelect
+          value={value.priority}
+          onChange={(priority) => onChange({ priority })}
+          excludeBlogPopupId={blogPopupId}
         />
       </div>
 
