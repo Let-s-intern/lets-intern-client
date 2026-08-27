@@ -7,6 +7,8 @@ export interface BlogPopupFormValue {
   targetType: BlogPopupTargetType;
   blogIds: number[];
   triggerRatio: number;
+  /** 1 ~ 99. null 이면 "없음" 이다. */
+  priority: number | null;
   isVisible: boolean;
   startDate: string;
   endDate: string;
@@ -15,6 +17,21 @@ export interface BlogPopupFormValue {
 /** 서버 `BlogPopup.DEFAULT_TRIGGER_RATIO` 와 같은 값이다. */
 export const DEFAULT_TRIGGER_RATIO = 1.0;
 
+export const MIN_PRIORITY = 1;
+export const MAX_PRIORITY = 99;
+
+/** 드롭다운의 "없음". 목록에서도 같은 말을 쓴다. */
+export const PRIORITY_NONE_LABEL = '없음';
+
+/** 1 ~ 99. 매 렌더 다시 만들지 않도록 모듈에서 한 번만 만든다. */
+export const PRIORITY_OPTIONS: readonly number[] = Array.from(
+  { length: MAX_PRIORITY - MIN_PRIORITY + 1 },
+  (_, index) => MIN_PRIORITY + index,
+);
+
+export const formatPriority = (priority?: number | null) =>
+  priority == null ? PRIORITY_NONE_LABEL : String(priority);
+
 export const EMPTY_BLOG_POPUP_FORM: BlogPopupFormValue = {
   title: '',
   imageUrl: '',
@@ -22,6 +39,7 @@ export const EMPTY_BLOG_POPUP_FORM: BlogPopupFormValue = {
   targetType: 'ALL',
   blogIds: [],
   triggerRatio: DEFAULT_TRIGGER_RATIO,
+  priority: null,
   isVisible: false,
   startDate: '',
   endDate: '',

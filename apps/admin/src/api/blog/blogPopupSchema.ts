@@ -12,6 +12,7 @@ const adminBlogPopupListItemSchema = z.object({
   link: z.string().optional().nullable(),
   targetType: blogPopupTargetTypeSchema,
   targetBlogCount: z.number().optional().nullable(),
+  priority: z.number().optional().nullable(),
   isVisible: z.boolean().optional().nullable(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
@@ -25,6 +26,11 @@ export type AdminBlogPopupListItem = z.infer<
   typeof adminBlogPopupListItemSchema
 >;
 
+/**
+ * `priority` 는 서버가 같은 시각에 추가하는 중이라 아직 응답에 없을 수 있다. 없어도
+ * 파싱이 깨지지 않도록 optional·nullable 로 둔다. null 은 "없음" 이고 기본값이다.
+ * 값이 작을수록 먼저 노출된다.
+ */
 export const adminBlogPopupListSchema = z.object({
   blogPopupList: z.array(adminBlogPopupListItemSchema),
   pageInfo,
@@ -38,6 +44,7 @@ const blogPopupSchema = z.object({
   targetType: blogPopupTargetTypeSchema,
   blogIds: z.array(z.number()),
   triggerRatio: z.number().optional().nullable(),
+  priority: z.number().optional().nullable(),
   isVisible: z.boolean().optional().nullable(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
@@ -58,6 +65,8 @@ export interface PostAdminBlogPopupReqBody {
   targetType: BlogPopupTargetType;
   blogIds?: number[];
   triggerRatio?: number;
+  /** 1 ~ 99. null 이면 "없음" 이다. */
+  priority?: number | null;
   isVisible?: boolean;
   startDate?: string;
   endDate?: string;
@@ -75,6 +84,7 @@ export interface PatchAdminBlogPopupReqBody {
   targetType?: BlogPopupTargetType;
   blogIds?: number[];
   triggerRatio?: number;
+  priority?: number | null;
   isVisible?: boolean;
   startDate?: string;
   endDate?: string;
