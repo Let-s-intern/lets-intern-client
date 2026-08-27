@@ -41,14 +41,25 @@ function createEmptyRecommend(): Pick<
 // 구버전: content에 렉시컬 저장
 // 신버전: content에 렉시컬과 추천 콘텐츠 저장
 // 구버전을 신버전 구조로 만드는 과정
-function parseInitialContent(blogData: BlogSchema): BlogContent {
+export function parseInitialContent(blogData: BlogSchema): BlogContent {
   const rawContent = blogData.blogDetailInfo.content;
   const emptyRecommend = createEmptyRecommend();
 
   if (!rawContent || rawContent === '') return emptyRecommend;
 
-  const json = JSON.parse(rawContent);
-  if (json.blogRecommend) return json;
+  // JSON이 아닌 content(과거 HTML 본문 등)도 있다. 파싱 실패로 훅이 던지면
+  // errorElement가 없는 라우트라 수정 화면 전체가 죽어 글을 되살릴 방법이 없어진다.
+  // 파싱되지 않으면 아래 구버전 경로와 같게 원문을 렉시컬로 넘긴다.
+  let json: unknown;
+  try {
+    json = JSON.parse(rawContent);
+  } catch {
+    return { ...emptyRecommend, lexical: rawContent };
+  }
+
+  if (json && typeof json === 'object' && 'blogRecommend' in json) {
+    return json as BlogContent;
+  }
 
   return { ...emptyRecommend, lexical: rawContent };
 }
