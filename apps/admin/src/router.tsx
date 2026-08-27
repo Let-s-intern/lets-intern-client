@@ -127,6 +127,11 @@ const BlogBannerCreatePage = lazy(
 const BlogBannerEditPage = lazy(
   () => import('./pages/blog/BlogBannerEditPage'),
 );
+const BlogPopupListPage = lazy(() => import('./pages/blog/BlogPopupListPage'));
+const BlogPopupCreatePage = lazy(
+  () => import('./pages/blog/BlogPopupCreatePage'),
+);
+const BlogPopupEditPage = lazy(() => import('./pages/blog/BlogPopupEditPage'));
 
 const MagnetListPage = lazy(() => import('./pages/magnet/MagnetListPage'));
 const MagnetPostRoute = lazy(
@@ -457,6 +462,15 @@ export const router = createBrowserRouter([
       {
         path: '/blog/banner/edit/:id',
         element: withSuspense(<BlogBannerEditPage />),
+      },
+      { path: '/blog/popup', element: withSuspense(<BlogPopupListPage />) },
+      {
+        path: '/blog/popup/create',
+        element: withSuspense(<BlogPopupCreatePage />),
+      },
+      {
+        path: '/blog/popup/edit/:id',
+        element: withSuspense(<BlogPopupEditPage />),
       },
 
       // 마그넷

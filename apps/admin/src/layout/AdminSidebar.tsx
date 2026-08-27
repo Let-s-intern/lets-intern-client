@@ -141,6 +141,10 @@ const navData = [
         name: '블로그 광고 배너',
         url: '/blog/banner',
       },
+      {
+        name: '블로그 팝업 관리',
+        url: '/blog/popup',
+      },
     ],
   },
   {
