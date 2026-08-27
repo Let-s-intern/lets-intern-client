@@ -76,21 +76,30 @@ export function parseBlogId(pathname: string | null): string | null {
   return match ? match[1] : null;
 }
 
-/** 모든 실험 이벤트에 공통으로 붙는 식별 properties. */
+/** 모든 팝업 이벤트에 공통으로 붙는 식별 properties. */
 interface ExperimentContext {
-  variant: string | null;
   blogId: string | null;
+  /** 어드민이 등록한 팝업 id. 어느 크리에이티브가 눌렸는지 구분한다. */
+  popupId?: number | null;
+  /**
+   * @deprecated A/B 실험 잔여값. 현행 `BlogNewsletterPopup` 만 넘긴다.
+   * 실험 코드 제거(4.6) 때 함께 없어진다.
+   */
+  variant?: string | null;
 }
 
 /**
  * 실험 이벤트 capture 헬퍼.
  *
- * - 공통 properties(`variant`, `blog_id`)를 한곳에서 주입해 핸들러 중복 제거.
+ * - 공통 properties(`blog_id`, `popup_id`)를 한곳에서 주입해 핸들러 중복 제거.
  * - SDK 미초기화(env 미설정) 시 `posthog.__loaded`가 falsy → no-op(앱이 깨지지 않음).
  *
  * @param event 이벤트명 (`BLOG_POPUP_EVENTS`)
  * @param context 공통 식별값
  * @param extra 이벤트별 추가 properties (예: shown의 `trigger_ratio`, dismissed의 `reason`)
+ *
+ * `popup_id`·`variant`는 넘긴 쪽에만 붙는다. 두 팝업이 한동안 공존하는 동안 서로의
+ * properties가 섞이지 않게 하기 위한 것으로, 실험 코드 제거(4.6) 후에는 `popup_id`만 남는다.
  */
 export function captureExperimentEvent(
   event: (typeof BLOG_POPUP_EVENTS)[keyof typeof BLOG_POPUP_EVENTS],
@@ -100,8 +109,9 @@ export function captureExperimentEvent(
   if (!posthog.__loaded) return;
 
   posthog.capture(event, {
-    variant: context.variant,
     blog_id: context.blogId,
+    ...(context.popupId === undefined ? {} : { popup_id: context.popupId }),
+    ...(context.variant === undefined ? {} : { variant: context.variant }),
     ...extra,
   });
 }
