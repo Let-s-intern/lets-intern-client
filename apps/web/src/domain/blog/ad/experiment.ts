@@ -1,23 +1,11 @@
-// 블로그 팝업 스크롤 트리거 A/B 실험 상수·파서·capture 헬퍼.
-// PostHog 콘솔의 Experiment 설정과 1:1로 맞아야 하는 "계약". 매직스트링을 한곳에 모은다.
+// 블로그 팝업 이벤트명·capture 헬퍼.
+// PostHog 대시보드에서 집계되는 이름과 1:1로 맞아야 하는 "계약". 매직스트링을 한곳에 모은다.
+// 트리거 임계값은 어드민의 `triggerRatio` 필드에서 온다(피처 플래그 페이로드가 아니다).
 // (Vercel: 직접 import — 배럴 파일 금지)
 
 import posthog from 'posthog-js';
 
-/**
- * PostHog Feature Flag 키 (콘솔 Experiment 키와 글자까지 100% 동일해야 함).
- * ⚠️ 끝의 `-`는 오타가 아니라 PostHog에 생성된 실제 키(`blog-popup-scroll-trigger-`)와
- * 맞추기 위한 것이다. 임의로 지우면 `getFeatureFlag`가 undefined를 반환해 실험이 죽는다.
- */
-export const BLOG_POPUP_FLAG_KEY = 'blog-popup-scroll-trigger-';
-
-/**
- * 플래그/페이로드가 없거나 깨졌을 때의 트리거 임계값(본문 읽기 진행률).
- * 현행(Push 1 이전) 동작과 동일한 60%. 플래그 OFF = 현행 복귀(킬 스위치).
- */
-export const FALLBACK_TRIGGER_RATIO = 0.6;
-
-/** 실험 이벤트명 (PostHog Live Events / 대시보드에서 집계되는 이름). */
+/** 팝업 이벤트명 (PostHog Live Events / 대시보드에서 집계되는 이름). */
 export const BLOG_POPUP_EVENTS = {
   shown: 'blog_popup_shown',
   ctaClicked: 'blog_popup_cta_clicked',
@@ -32,36 +20,6 @@ export const DISMISS_REASON = {
 
 export type DismissReason =
   (typeof DISMISS_REASON)[keyof typeof DISMISS_REASON];
-
-/**
- * 플래그 페이로드에서 트리거 임계값(ratio)을 안전하게 파싱한다.
- *
- * - 정상: `{ ratio: number }` 형태이고 ratio가 (0, 1] 범위면 그대로 사용.
- * - 누락/타입오류/범위이탈/SDK 미로딩(undefined): `FALLBACK_TRIGGER_RATIO`(0.6).
- *
- * 순수 함수 — 입력만으로 출력이 결정된다(단위 테스트 대상).
- */
-export function parseTriggerRatio(payload: unknown): number {
-  if (
-    typeof payload !== 'object' ||
-    payload === null ||
-    !('ratio' in payload)
-  ) {
-    return FALLBACK_TRIGGER_RATIO;
-  }
-
-  const ratio = (payload as { ratio: unknown }).ratio;
-
-  if (typeof ratio !== 'number' || !Number.isFinite(ratio)) {
-    return FALLBACK_TRIGGER_RATIO;
-  }
-
-  if (ratio <= 0 || ratio > 1) {
-    return FALLBACK_TRIGGER_RATIO;
-  }
-
-  return ratio;
-}
 
 /**
  * 블로그 상세 경로(`/blog/{id}/{title}`)에서 `blog_id`(첫 세그먼트)를 추출한다.
@@ -80,26 +38,20 @@ export function parseBlogId(pathname: string | null): string | null {
 interface ExperimentContext {
   blogId: string | null;
   /** 어드민이 등록한 팝업 id. 어느 크리에이티브가 눌렸는지 구분한다. */
-  popupId?: number | null;
-  /**
-   * @deprecated A/B 실험 잔여값. 현행 `BlogNewsletterPopup` 만 넘긴다.
-   * 실험 코드 제거(4.6) 때 함께 없어진다.
-   */
-  variant?: string | null;
+  popupId: number | null;
 }
 
 /**
- * 실험 이벤트 capture 헬퍼.
+ * 팝업 이벤트 capture 헬퍼.
  *
  * - 공통 properties(`blog_id`, `popup_id`)를 한곳에서 주입해 핸들러 중복 제거.
  * - SDK 미초기화(env 미설정) 시 `posthog.__loaded`가 falsy → no-op(앱이 깨지지 않음).
  *
+ * 클릭률의 원본은 서버 카운터다. 이 이벤트는 세그먼트 분석용으로 병행한다.
+ *
  * @param event 이벤트명 (`BLOG_POPUP_EVENTS`)
  * @param context 공통 식별값
  * @param extra 이벤트별 추가 properties (예: shown의 `trigger_ratio`, dismissed의 `reason`)
- *
- * `popup_id`·`variant`는 넘긴 쪽에만 붙는다. 두 팝업이 한동안 공존하는 동안 서로의
- * properties가 섞이지 않게 하기 위한 것으로, 실험 코드 제거(4.6) 후에는 `popup_id`만 남는다.
  */
 export function captureExperimentEvent(
   event: (typeof BLOG_POPUP_EVENTS)[keyof typeof BLOG_POPUP_EVENTS],
@@ -110,8 +62,7 @@ export function captureExperimentEvent(
 
   posthog.capture(event, {
     blog_id: context.blogId,
-    ...(context.popupId === undefined ? {} : { popup_id: context.popupId }),
-    ...(context.variant === undefined ? {} : { variant: context.variant }),
+    popup_id: context.popupId,
     ...extra,
   });
 }

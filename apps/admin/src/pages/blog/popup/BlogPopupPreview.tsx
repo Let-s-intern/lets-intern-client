@@ -1,5 +1,5 @@
 /**
- * 웹 실제 팝업(`apps/web/src/domain/blog/ad/BlogNewsletterPopup.tsx`)과 같은 모습으로 그린다.
+ * 웹 실제 팝업(`apps/web/src/domain/blog/ad/BlogPopup.tsx`)과 같은 모습으로 그린다.
  * 폭 400px, 모서리 16px, 하단 두 버튼까지 같은 값을 쓴다. 다르게 보이면 미리보기가 아니다.
  * 여기 버튼은 모양만이고 아무 동작도 하지 않는다.
  */

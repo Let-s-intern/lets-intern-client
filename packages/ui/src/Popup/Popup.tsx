@@ -1,8 +1,9 @@
 'use client';
 
 /**
- * 사용처 (@letscareer/ui 소비처, 2026-07-22 기준):
- *   - apps/web/src/domain/blog/ad/BlogNewsletterPopup.tsx
+ * 사용처 (@letscareer/ui 소비처, 2026-08-27 기준):
+ *   - 없음. 유일한 소비처였던 apps/web 블로그 스크롤 팝업이 도메인 안에서 직접 구현하는
+ *     apps/web/src/domain/blog/ad/BlogPopup.tsx 로 교체되면서 사라졌다.
  */
 
 /**
