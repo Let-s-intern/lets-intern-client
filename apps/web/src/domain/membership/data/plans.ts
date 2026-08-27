@@ -38,7 +38,7 @@ export const VOD_OPTION_PRICE = {
  * 그 필드가 할인 종료일이라는 정의가 어디에도 없어, 연동하면 엉뚱한 날짜를 안내 문구로
  * 띄우게 된다. 그래서 정적 문구로 둔다. 시즌이 바뀌면 이 줄을 고친다.
  */
-export const PLAN_PRICE_NOTICE = '8/25 이후 정상가로 전환됩니다';
+export const PLAN_PRICE_NOTICE = '8/27 이후 정상가로 전환됩니다';
 
 /** 혜택 아이콘 식별자 — lucide 컴포넌트로 매핑해 렌더한다 */
 export type PlanBenefitIcon =
