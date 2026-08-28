@@ -6,6 +6,7 @@ import {
   type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplateUpdate,
   liveMentoringDetailPageSchema,
+  liveMentoringReservationDetailSchema,
   liveMentoringReservationListSchema,
   liveMentoringSettingsSchema,
   openingHistoryResponseSchema,
@@ -74,6 +75,33 @@ export const useLiveMentoringReservationsQuery = (
         .reservationList;
     },
     enabled,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * GET /mentor/live-mentoring/reservations/{applicationId} — 예약 1건의 질문·첨부 상세.
+ *
+ * 목록은 제출 여부만 내리므로 본문은 이 쿼리로 따로 받는다(PRD 4.1). 서버가 본인 멘토의
+ * 확정 건인지 검증하고, 첨부 전달에 동의하지 않은 건은 `attachmentUrl` 을 null 로 비워
+ * 내린다 — 프론트가 다시 거르지 않는다.
+ *
+ * `applicationId` 가 null 이면 호출하지 않는다. 모달이 닫혀 있는 상태를 그대로 표현한다.
+ */
+export const useLiveMentoringReservationDetailQuery = (
+  applicationId: number | null,
+) => {
+  return useQuery({
+    queryKey: [
+      ...LIVE_MENTORING_RESERVATIONS_QUERY_KEY,
+      'detail',
+      applicationId,
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`${RESERVATIONS_PATH}/${applicationId}`);
+      return liveMentoringReservationDetailSchema.parse(res.data.data);
+    },
+    enabled: applicationId !== null,
     refetchOnWindowFocus: false,
   });
 };
