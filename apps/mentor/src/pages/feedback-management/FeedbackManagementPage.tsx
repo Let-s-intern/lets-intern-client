@@ -5,6 +5,7 @@ import { useMediaQuery } from '@mui/material';
 import { useLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
+import LiveMentoringSubmissionModal from '@/pages/live-mentoring/reservation-detail/LiveMentoringSubmissionModal';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '@/pages/schedule/types';
 import FeedbackTabs from './ui/FeedbackTabs';
@@ -89,6 +90,11 @@ const FeedbackManagementPage = () => {
   );
   const [modalBar, setModalBar] = useState<PeriodBarData | null>(null);
 
+  // 1대1 제출물 모달 상태. null 이면 모달이 스스로 닫힌 상태다.
+  const [liveMentoringApplicationId, setLiveMentoringApplicationId] = useState<
+    number | null
+  >(null);
+
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   const handleClickDetail = (row: FeedbackRow) => {
@@ -105,13 +111,24 @@ const FeedbackManagementPage = () => {
       return;
     }
 
-    // 1대1은 열 수 있는 모달이 없다 — canOpenDetail 이 false 라 여기까지 오지 않는다.
-    if (row.source.type !== 'live') return;
+    if (row.source.type === 'live-mentoring') {
+      // 두 모달이 겹치지 않도록 라이브 쪽을 먼저 비운다.
+      setSelectedRound(null);
+      setModalBar(null);
+      setLiveMentoringApplicationId(row.source.reservation.applicationId);
+      return;
+    }
 
     // live → 라이브 모달
+    setLiveMentoringApplicationId(null);
     setSelectedRound(row.source.round);
     setModalBar(row.source.bar);
   };
+
+  const closeLiveMentoringModal = useCallback(
+    () => setLiveMentoringApplicationId(null),
+    [],
+  );
 
   const closeLiveModal = () => {
     setSelectedRound(null);
@@ -177,6 +194,12 @@ const FeedbackManagementPage = () => {
         liveFeedbackBars={selectedRound?.sessionBars ?? allSessionBars}
         onSelectBar={setModalBar}
         roundTh={selectedRound?.th}
+      />
+
+      {/* 1대1 멘티 제출물 모달 — applicationId 가 null 이면 스스로 닫혀 있고 조회도 하지 않는다. */}
+      <LiveMentoringSubmissionModal
+        applicationId={liveMentoringApplicationId}
+        onClose={closeLiveMentoringModal}
       />
     </div>
   );
