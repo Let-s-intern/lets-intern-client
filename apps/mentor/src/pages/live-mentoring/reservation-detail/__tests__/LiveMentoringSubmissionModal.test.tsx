@@ -384,3 +384,56 @@ describe('LiveMentoringSubmissionModal — 제출 요약 (캘린더 카드 어�
     expect(screen.getByText('질문·파일 제출')).toBeInTheDocument();
   });
 });
+
+describe('LiveMentoringSubmissionModal — 좁은 폭', () => {
+  const LONG_QUESTION = `${'가'.repeat(400)}\n${'https://example.com/very-long-path-'.repeat(
+    10,
+  )}`;
+
+  it('본문은 모달 안에서만 세로로 스크롤하고 가로로는 밀리지 않는다', () => {
+    mockDetail({ questionContent: LONG_QUESTION });
+    renderModal(91001);
+
+    const scroller = screen.getByTestId('submission-modal-scroll');
+    expect(scroller).toHaveClass('max-h-[85vh]');
+    expect(scroller).toHaveClass('overflow-y-auto');
+    expect(scroller).toHaveClass('overflow-x-hidden');
+  });
+
+  it('긴 주소가 섞인 본문도 줄바꿈으로 접는다', () => {
+    mockDetail({ questionContent: LONG_QUESTION });
+    renderModal(91001);
+
+    const body = screen.getByText(/가{10}/);
+    expect(body).toHaveClass('break-words');
+    expect(body).toHaveClass('whitespace-pre-wrap');
+  });
+
+  it('모달 자체가 화면 폭을 넘지 않는다', () => {
+    renderModal(91001);
+
+    const panel = screen.getByRole('dialog').querySelector('.max-w-3xl');
+    expect(panel).not.toBeNull();
+    expect(panel).toHaveClass('w-full');
+    expect(panel).toHaveClass('mx-4');
+  });
+
+  // `fit="native"` 는 컨테이너 실제 폭으로 렌더한다 — 좁은 폭에서 노션이 반응형
+  // 레이아웃을 그리고, 넓게 렌더한 뒤 축소하는 `scale` 처럼 본문을 밀어내지 않는다.
+  it('임베드는 컨테이너 폭에 맞춰 렌더한다', () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl:
+        'https://letscareer.notion.site/mentee-9a0f1b2c3d4e5f60718293a4b5c6d7e8',
+      mentorShareAgreed: true,
+    });
+    renderModal(91001);
+
+    const embedBox = screen.getByTestId('attachment-embed');
+    expect(embedBox).toHaveClass('w-full');
+
+    const iframe = embedBox.querySelector('iframe');
+    expect(iframe).not.toBeNull();
+    expect(iframe).toHaveStyle({ width: '100%' });
+  });
+});

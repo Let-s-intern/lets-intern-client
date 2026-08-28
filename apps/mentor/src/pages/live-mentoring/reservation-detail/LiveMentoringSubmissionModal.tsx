@@ -202,7 +202,11 @@ const AttachmentSection = ({
           )}
         </div>
         {showEmbed && isEmbedOpen && (
-          <div className="mt-3 h-[360px] w-full" data-testid="attachment-embed">
+          // 좁은 폭에서는 낮게 잡는다. 폭은 항상 컨테이너에 맞추고 넘치지 않는다.
+          <div
+            className="mt-3 h-[280px] w-full md:h-[420px]"
+            data-testid="attachment-embed"
+          >
             <MenteeLinkPanel
               link={attachmentUrl}
               menteeName={menteeName}
@@ -263,7 +267,14 @@ const SubmissionModalBody = ({
 
   return (
     <BaseModal isOpen onClose={onClose} className="mx-4 w-full max-w-3xl">
-      <div className="flex max-h-[85vh] flex-col overflow-y-auto">
+      {/*
+        긴 질문 본문은 이 안에서만 세로로 스크롤한다. 가로는 잘라 낸다 — 본문이 넘쳐
+        페이지가 옆으로 밀리면 모달 밖 화면까지 함께 흔들린다.
+      */}
+      <div
+        className="flex max-h-[85vh] flex-col overflow-y-auto overflow-x-hidden"
+        data-testid="submission-modal-scroll"
+      >
         <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
           <div className="min-w-0">
             <h2 className="text-base font-bold text-neutral-900">
