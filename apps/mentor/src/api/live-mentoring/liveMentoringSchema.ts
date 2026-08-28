@@ -445,7 +445,15 @@ export const liveMentoringReservationDetailSchema = z.object({
   reservationStartAt: z.string(),
   /** ISO date-time */
   reservationEndAt: z.string(),
-  mentoringCategory: liveMentoringCategorySchema,
+  /**
+   * 멘토링 카테고리. **nullable 이다.**
+   *
+   * 서버 `mentoring_category` 컬럼이 나중에 추가되면서 기존 행이 유효 코드(1~3) 밖인 0 으로
+   * 채워졌다. 로컬 기준 26건 중 23건이 0 이고, 그 건들은 서버가 null 로 내린다.
+   * 백필 전까지 열어 둔다 — non-nullable 이면 그 건에서 파싱이 통째로 깨져 모달이 아예
+   * 안 뜬다. 실 API 로 유효값이 오는 건이 있다는 이유로 되돌리지 않는다.
+   */
+  mentoringCategory: liveMentoringCategorySchema.nullable(),
   /** 멘티가 신청 시 "나중에 작성하기" 를 골랐는지. */
   questionDeferred: z.boolean(),
   /** 질문 본문. 미작성이면 null. 최대 5000자. */
