@@ -9,9 +9,10 @@
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
-// 얼리버드 배너·VOD 훅·추천 대상 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
+// VOD 훅 — LC-3219 때 함께 빠졌다가 되살렸다(cascade 위치는 원래 자리 그대로 둔다).
+import './styles/vod-hook.css';
+// 얼리버드 배너·추천 대상 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
 // import './styles/early-bird.css';
-// import './styles/vod-hook.css';
 // import './styles/recommend.css';
 import './styles/compare.css';
 import './styles/challenge-schedule.css';
@@ -40,6 +41,7 @@ import './styles/apply.css';
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
+import VodHookSection from './section/VodHookSection';
 import CompareSection from './section/CompareSection';
 import ChallengeScheduleSection from './section/ChallengeScheduleSection';
 import SolutionSection from './section/SolutionSection';
@@ -62,6 +64,9 @@ export default function MembershipLanding() {
           <MembershipAnimations />
           <HeroSection />
           <MembershipNav />
+          {/* VOD 무료 제공 훅 — 0236e0651 의 원래 자리(네비 직후)로 되살렸다.
+              멤버십 신청의 즉시 혜택이라 스크롤 상단에서 보여야 한다. */}
+          <VodHookSection />
           {/* 공채 로드맵(시안 1.png 하단) — 이 한 줄과 위 import 를 지우면 섹션이 빠진다 */}
           <RoadmapSection />
           {/* 아래 순서는 시안 파일 번호를 그대로 따른다. 바꾸려면 시안부터 확인할 것.
@@ -80,12 +85,12 @@ export default function MembershipLanding() {
           {/* 1:1 멘토링·커피챗 할인 쿠폰 — 후기 바로 위 */}
           <MentoringCouponSection />
           <ReviewsSection />
-          {/* LC-3219 시안에서 빠진 섹션 6개 — 얼리버드 배너 · VOD 훅 · 추천 대상 ·
-              세미나 · 제휴 혜택 · 최종 CTA. 시안 0~8 어디에도 없다.
+          {/* LC-3219 시안에서 빠진 섹션 5개 — 얼리버드 배너 · 추천 대상 · 세미나 ·
+              제휴 혜택 · 최종 CTA. 시안 0~8 어디에도 없다. (VOD 훅은 위에서 되살렸다.)
               세미나·제휴 혜택은 앵커 네비 항목(ui/MembershipNav.tsx 의 NAV_ITEMS)에서도 함께
               뺐으니 되살릴 때 둘을 같이 되돌려야 한다.
               되살리려면 위 컴포넌트 import 와 CSS import 를 함께 푼다. 파일은 지우지 않았다 —
-              section/{EarlyBirdBanner,VodHookSection,RecommendSection,SeminarSection,
+              section/{EarlyBirdBanner,RecommendSection,SeminarSection,
               PartnerBenefitsSection,FinalCtaSection}.tsx 와 대응 data/*.ts */}
           <FaqSection />
           <ApplyBar />
