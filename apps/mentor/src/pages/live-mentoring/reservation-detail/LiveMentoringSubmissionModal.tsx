@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useLiveMentoringReservationDetailQuery } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import BaseModal from '@/common/modal/BaseModal';
+import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
+import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
 import { CATEGORY_LABELS, durationLabel } from '../constants';
 
@@ -47,6 +49,29 @@ function formatUpdatedAt(value: string): string {
   );
 }
 
+/** 질문을 실제로 냈는지. 나중에 작성하기를 골랐거나 본문이 비면 낸 것이 아니다. */
+const hasQuestion = (detail: LiveMentoringReservationDetail): boolean =>
+  !detail.questionDeferred && Boolean(detail.questionContent?.trim());
+
+/**
+ * 멘티가 낸 것을 한 줄로 요약한다.
+ *
+ * 캘린더 카드(`LiveMentoringCard`)의 어휘를 그대로 쓴다 — 멘토가 카드에서 본 문구와
+ * 모달에서 보는 문구가 달라지면 같은 예약을 두 개로 읽는다(PRD 4.6).
+ * 피드백 내역 표의 `제출 / 일부 제출 / 미제출` 은 이번에 바꾸지 않는다.
+ *
+ * 첨부는 멘토 전달 동의와 무관하게 "냈다" 로 센다. 동의하지 않았을 뿐 제출은 했다.
+ */
+function submissionSummary(detail: LiveMentoringReservationDetail): string {
+  const questionSubmitted = hasQuestion(detail);
+  const attachmentSubmitted = detail.attachmentType !== 'NONE';
+
+  if (questionSubmitted && attachmentSubmitted) return '질문·파일 제출';
+  if (questionSubmitted) return '질문만 제출';
+  if (attachmentSubmitted) return '파일만 제출';
+  return '미제출';
+}
+
 /** 닫기(X) 아이콘. */
 const CloseIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -73,8 +98,6 @@ const QuestionSection = ({
 }: {
   detail: LiveMentoringReservationDetail;
 }) => {
-  const hasQuestion =
-    !detail.questionDeferred && Boolean(detail.questionContent?.trim());
   const updatedAtLabel = detail.questionUpdatedAt
     ? formatUpdatedAt(detail.questionUpdatedAt)
     : '';
@@ -88,7 +111,7 @@ const QuestionSection = ({
         )}
       </div>
       <div className="mt-2 rounded-lg bg-gray-50 px-4 py-3">
-        {hasQuestion ? (
+        {hasQuestion(detail) ? (
           <p className="whitespace-pre-wrap break-words text-sm leading-6 text-neutral-700">
             {detail.questionContent}
           </p>
@@ -98,6 +121,105 @@ const QuestionSection = ({
           </p>
         )}
       </div>
+    </section>
+  );
+};
+
+/** 첨부 영역의 안내 문구 한 줄. 어느 분기에서도 빈 영역을 남기지 않는다. */
+const AttachmentNotice = ({ children }: { children: string }) => (
+  <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm leading-6 text-neutral-500">
+    {children}
+  </p>
+);
+
+/**
+ * 멘티가 낸 첨부. `attachmentType` 과 `mentorShareAgreed` 조합으로 네 갈래다(PRD 4.7).
+ *
+ * - `NONE`: 첨부 자료 없음
+ * - 동의 안 함: 냈다는 사실만 알린다. 여기서 아무 표시도 하지 않으면 멘토가 "안 냈다" 로
+ *   오해한다. 링크는 서버가 이미 null 로 비워 내리므로 화면에서 가릴 것도 없다
+ * - `FILE`: 냈다는 사실만. **링크도 파일명도 만들지 않는다** — 업로드 키가 원본 파일명이라
+ *   이름을 보여주는 것이 곧 공개 주소를 알려주는 것이다(PRD 4.2)
+ * - `URL` + 동의: 새 탭 링크. 노션 주소일 때만 임베드를 시도한다
+ *
+ * 임베드를 노션으로 한정하는 이유는 `MenteeLinkPanel` 이 노션의 `X-Frame-Options` 차단을
+ * 타임아웃으로 감지해 새 탭 안내로 전환하는 로직을 갖고 있기 때문이다. iframe 이 무거워
+ * 조건을 만족할 때만 마운트한다.
+ */
+const AttachmentSection = ({
+  detail,
+}: {
+  detail: LiveMentoringReservationDetail;
+}) => {
+  const [isEmbedOpen, setIsEmbedOpen] = useState(true);
+
+  const { attachmentType, attachmentUrl, mentorShareAgreed, menteeName } =
+    detail;
+  const showEmbed = isNotionUrl(attachmentUrl);
+
+  const renderBody = () => {
+    if (attachmentType === 'NONE') {
+      return <AttachmentNotice>첨부 자료 없음</AttachmentNotice>;
+    }
+
+    if (!mentorShareAgreed) {
+      return (
+        <AttachmentNotice>
+          첨부를 냈으나 멘토 전달에 동의하지 않았습니다
+        </AttachmentNotice>
+      );
+    }
+
+    if (attachmentType === 'FILE') {
+      return <AttachmentNotice>파일 첨부됨 — 준비 중</AttachmentNotice>;
+    }
+
+    if (!attachmentUrl) {
+      return (
+        <AttachmentNotice>첨부 주소를 확인할 수 없습니다</AttachmentNotice>
+      );
+    }
+
+    return (
+      <>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={attachmentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-gray-50"
+          >
+            새 탭에서 열기
+          </a>
+          {showEmbed && (
+            <button
+              type="button"
+              onClick={() => setIsEmbedOpen((open) => !open)}
+              className="inline-flex items-center rounded px-2 py-1.5 text-xs font-medium text-neutral-500 hover:bg-gray-50"
+            >
+              {isEmbedOpen ? '미리보기 접기' : '미리보기 펼치기'}
+            </button>
+          )}
+        </div>
+        {showEmbed && isEmbedOpen && (
+          <div className="mt-3 h-[360px] w-full" data-testid="attachment-embed">
+            <MenteeLinkPanel
+              link={attachmentUrl}
+              menteeName={menteeName}
+              onClose={() => setIsEmbedOpen(false)}
+              hideHeader
+              fit="native"
+            />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <section>
+      <h3 className="text-sm font-bold text-neutral-900">첨부 자료</h3>
+      <div className="mt-2">{renderBody()}</div>
     </section>
   );
 };
@@ -157,6 +279,11 @@ const SubmissionModalBody = ({
                 )}
               </p>
             )}
+            {data && (
+              <p className="text-primary bg-primary-10 mt-2 inline-block rounded px-2 py-0.5 text-xs font-medium">
+                {submissionSummary(data)}
+              </p>
+            )}
           </div>
           <button
             type="button"
@@ -179,7 +306,12 @@ const SubmissionModalBody = ({
               제출물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
             </p>
           )}
-          {data && <QuestionSection detail={data} />}
+          {data && (
+            <>
+              <QuestionSection detail={data} />
+              <AttachmentSection detail={data} />
+            </>
+          )}
         </div>
       </div>
     </BaseModal>

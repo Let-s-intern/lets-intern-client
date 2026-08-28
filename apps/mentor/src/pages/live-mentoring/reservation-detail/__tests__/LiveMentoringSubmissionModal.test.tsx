@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
@@ -206,5 +207,180 @@ describe('LiveMentoringSubmissionModal — 질문 본문', () => {
     renderModal(91001);
 
     expect(screen.queryByText(/최종 수정/)).not.toBeInTheDocument();
+  });
+});
+
+describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
+  it('NONE 이면 첨부 자료 없음만 알린다', () => {
+    mockDetail({ attachmentType: 'NONE', attachmentUrl: null });
+    renderModal(91002);
+
+    expect(screen.getByText('첨부 자료 없음')).toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+  });
+
+  it('URL + 동의 + 노션 주소면 링크와 임베드를 함께 보여 준다', () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl:
+        'https://letscareer.notion.site/mentee-9a0f1b2c3d4e5f60718293a4b5c6d7e8',
+      mentorShareAgreed: true,
+    });
+    renderModal(91001);
+
+    expect(
+      screen.getByRole('link', { name: '새 탭에서 열기' }),
+    ).toHaveAttribute(
+      'href',
+      'https://letscareer.notion.site/mentee-9a0f1b2c3d4e5f60718293a4b5c6d7e8',
+    );
+    expect(screen.getByTestId('attachment-embed')).toBeInTheDocument();
+  });
+
+  it('URL + 동의 + 노션이 아니면 임베드 없이 링크만 보여 준다', () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl: 'https://drive.google.com/file/d/mentee-portfolio-91004',
+      mentorShareAgreed: true,
+    });
+    renderModal(91004);
+
+    expect(
+      screen.getByRole('link', { name: '새 탭에서 열기' }),
+    ).toHaveAttribute(
+      'href',
+      'https://drive.google.com/file/d/mentee-portfolio-91004',
+    );
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+  });
+
+  // 파일명 자체가 곧 S3 키라 이름도 주소도 만들지 않는다(PRD 4.2).
+  it('FILE + 동의면 준비 중 문구만 남기고 링크·파일명을 만들지 않는다', () => {
+    mockDetail({
+      attachmentType: 'FILE',
+      attachmentUrl: null,
+      mentorShareAgreed: true,
+    });
+    renderModal(91005);
+
+    expect(screen.getByText('파일 첨부됨 — 준비 중')).toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+  });
+
+  // 아무 표시도 하지 않으면 멘토가 "안 냈다" 로 오해한다.
+  it('동의하지 않은 URL 첨부는 링크 없이 사유를 구분해 안내한다', () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl: null,
+      mentorShareAgreed: false,
+    });
+    renderModal(91006);
+
+    expect(
+      screen.getByText('첨부를 냈으나 멘토 전달에 동의하지 않았습니다'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('첨부 자료 없음')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+  });
+
+  it('동의하지 않은 FILE 첨부도 같은 안내를 쓴다', () => {
+    mockDetail({
+      attachmentType: 'FILE',
+      attachmentUrl: null,
+      mentorShareAgreed: false,
+    });
+    renderModal(91006);
+
+    expect(
+      screen.getByText('첨부를 냈으나 멘토 전달에 동의하지 않았습니다'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('파일 첨부됨 — 준비 중')).not.toBeInTheDocument();
+  });
+
+  it('미리보기를 접으면 임베드를 마운트하지 않는다', async () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl:
+        'https://letscareer.notion.site/mentee-9a0f1b2c3d4e5f60718293a4b5c6d7e8',
+      mentorShareAgreed: true,
+    });
+    renderModal(91001);
+
+    await userEvent.click(
+      screen.getByRole('button', { name: '미리보기 접기' }),
+    );
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: '미리보기 펼치기' }),
+    );
+    expect(screen.getByTestId('attachment-embed')).toBeInTheDocument();
+  });
+});
+
+describe('LiveMentoringSubmissionModal — 제출 요약 (캘린더 카드 어휘)', () => {
+  it('질문과 첨부를 모두 냈으면 질문·파일 제출', () => {
+    mockDetail({
+      questionDeferred: false,
+      questionContent: '질문 있습니다.',
+      attachmentType: 'URL',
+    });
+    renderModal(91001);
+
+    expect(screen.getByText('질문·파일 제출')).toBeInTheDocument();
+  });
+
+  it('질문만 냈으면 질문만 제출', () => {
+    mockDetail({
+      questionDeferred: false,
+      questionContent: '질문 있습니다.',
+      attachmentType: 'NONE',
+      attachmentUrl: null,
+    });
+    renderModal(91002);
+
+    expect(screen.getByText('질문만 제출')).toBeInTheDocument();
+  });
+
+  it('첨부만 냈으면 파일만 제출', () => {
+    mockDetail({
+      questionDeferred: false,
+      questionContent: null,
+      attachmentType: 'FILE',
+      attachmentUrl: null,
+      mentorShareAgreed: true,
+    });
+    renderModal(91005);
+
+    expect(screen.getByText('파일만 제출')).toBeInTheDocument();
+  });
+
+  it('둘 다 없으면 미제출', () => {
+    mockDetail({
+      questionDeferred: true,
+      questionContent: null,
+      attachmentType: 'NONE',
+      attachmentUrl: null,
+    });
+    renderModal(91003);
+
+    expect(screen.getByText('미제출')).toBeInTheDocument();
+  });
+
+  // 동의하지 않았을 뿐 제출은 했다. 요약에서 "안 냈다" 로 세면 안 된다.
+  it('동의하지 않은 첨부도 제출로 센다', () => {
+    mockDetail({
+      questionDeferred: false,
+      questionContent: '질문 있습니다.',
+      attachmentType: 'URL',
+      attachmentUrl: null,
+      mentorShareAgreed: false,
+    });
+    renderModal(91006);
+
+    expect(screen.getByText('질문·파일 제출')).toBeInTheDocument();
   });
 });
