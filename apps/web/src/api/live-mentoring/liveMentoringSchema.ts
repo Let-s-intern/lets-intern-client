@@ -579,3 +579,49 @@ export const liveMentoringRefundPreviewSchema = z.object({
 export type LiveMentoringRefundPreview = z.infer<
   typeof liveMentoringRefundPreviewSchema
 >;
+
+/**
+ * 1대1 세션 입장 화면 응답 — 서버 `GetLiveMentoringEntryResponseDto`.
+ *
+ * 멘토와 멘티가 같은 경로(`/live-mentoring/[role]/[applicationId]`)로 받는다.
+ * `myRole` 은 **서버가 판정한 값이다.** 경로의 role 세그먼트는 알림톡 링크가 준
+ * 값이라 사용자가 URL 을 바꿔 자신을 멘토로 위장할 수 있다 — 화면 분기(자동 출석,
+ * 상대 출석 체크 바 노출)는 반드시 이 필드를 기준으로 한다.
+ */
+export const liveMentoringEntryRoleSchema = z.enum(['MENTOR', 'MENTEE']);
+export type LiveMentoringEntryRole = z.infer<
+  typeof liveMentoringEntryRoleSchema
+>;
+
+/** 출석 상태 — 서버 `FeedbackAttendanceStatus` 와 같은 값이다. */
+export const liveMentoringSessionAttendanceSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+export type LiveMentoringSessionAttendance = z.infer<
+  typeof liveMentoringSessionAttendanceSchema
+>;
+
+export const liveMentoringEntrySchema = z.object({
+  applicationId: z.number(),
+  myRole: liveMentoringEntryRoleSchema,
+  productName: z.string(),
+  durationMinutes: z.number(),
+  reservationStartAt: z.string(),
+  reservationEndAt: z.string(),
+  mentorName: z.string(),
+  menteeName: z.string(),
+  questionDeferred: z.boolean(),
+  questionContent: z.string().nullable(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  /**
+   * 멘토가 볼 때만 공유 동의 여부를 따진다. 멘티는 자기가 낸 자료라 항상 본다
+   * (서버 `GetLiveMentoringEntryResponseDto.from` 규칙).
+   */
+  attachmentUrl: z.string().nullable(),
+  mentorStatus: liveMentoringSessionAttendanceSchema,
+  menteeStatus: liveMentoringSessionAttendanceSchema,
+  meetingUrl: z.string().nullable(),
+});
+export type LiveMentoringEntry = z.infer<typeof liveMentoringEntrySchema>;

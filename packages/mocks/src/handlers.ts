@@ -2433,6 +2433,84 @@ export const handlers = [
   ),
 
   /**
+   * (양쪽 공통) GET /live-mentoring/applications/:applicationId/entry
+   *
+   * 멘토·멘티가 같은 경로로 받는 입장 정보다. 목 사용자는 항상 멘토 시점(MOCK_USER,
+   * id=1)으로 로그인하므로 `myRole` 을 고정으로 `'MENTOR'` 로 낸다 — 실 서버는
+   * 요청자와 신청의 멘토·멘티 id 를 대조해 판정하지만, 목에는 그 판정에 쓸 두
+   * 번째 사용자 컨텍스트가 없다.
+   */
+  http.get(
+    '*/live-mentoring/applications/:applicationId/entry',
+    ({ params }) => {
+      const applicationId = Number(params.applicationId);
+      const reservation = MENTOR_LIVE_MENTORING_RESERVATIONS.find(
+        (r) => r.applicationId === applicationId,
+      );
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!reservation || !detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({
+        status: 200,
+        data: {
+          applicationId,
+          myRole: 'MENTOR',
+          productName: reservation.productName,
+          durationMinutes: reservation.durationMinutes,
+          reservationStartAt: reservation.reservationStartAt,
+          reservationEndAt: reservation.reservationEndAt,
+          mentorName: '김멘토',
+          menteeName: reservation.menteeName,
+          questionDeferred: detail.questionDeferred,
+          questionContent: detail.questionContent,
+          attachmentType: detail.attachmentType,
+          attachmentUrl: detail.mentorShareAgreed ? detail.attachmentUrl : null,
+          mentorStatus: detail.mentorStatus,
+          menteeStatus: detail.menteeStatus,
+          meetingUrl: detail.meetingUrl,
+        },
+      });
+    },
+  ),
+
+  /**
+   * (양쪽 공통) PATCH /live-mentoring/applications/:applicationId/entry/meeting-url
+   *
+   * 먼저 입장한 쪽이 만든 방을 그대로 유지한다 — `/mentor/.../meeting-url` 목과
+   * 같은 덮어쓰기 방지 규칙이다.
+   */
+  http.patch(
+    '*/live-mentoring/applications/:applicationId/entry/meeting-url',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const { meetingUrlBase } = (await request.json()) as {
+        meetingUrlBase: string;
+      };
+      if (!detail.meetingUrl) {
+        detail.meetingUrl = `${meetingUrlBase}mock-entry-room-${applicationId}`;
+      }
+      return HttpResponse.json({ status: 200, data: detail.meetingUrl });
+    },
+  ),
+
+  /**
    * (멘토) PATCH .../reservations/{applicationId}/attendance — 출석 부분 갱신.
    *
    * 보내지 않은 쪽은 그대로 둔다. 목 데이터를 직접 고쳐 두어야 다시 조회했을 때
