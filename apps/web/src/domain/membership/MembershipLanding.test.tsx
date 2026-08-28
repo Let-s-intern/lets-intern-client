@@ -30,6 +30,10 @@ jest.mock('./section/HeroSection', () => ({
   __esModule: true,
   default: () => <div data-testid="HeroSection" />,
 }));
+jest.mock('./section/VodHookSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="VodHookSection" />,
+}));
 jest.mock('./section/RoadmapSection', () => ({
   __esModule: true,
   default: () => <div data-testid="RoadmapSection" />,
@@ -78,13 +82,16 @@ jest.mock('./section/FaqSection', () => ({
 /**
  * `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다.
  *
- * 얼리버드 배너·VOD 훅·추천 대상·세미나·제휴 혜택·최종 CTA 는 시안에 없어 뺐다.
+ * 얼리버드 배너·추천 대상·세미나·제휴 혜택·최종 CTA 는 시안에 없어 뺐다.
  * 이 배열이 그 사실을 고정한다 — 누가 되살리면 순서 비교가 실패한다.
+ *
+ * VOD 훅은 LC-3219 때 함께 빠졌다가 되살렸다. 위치는 추가 당시(0236e0651)와 같은 네비 직후다.
  */
 const EXPECTED_ORDER = [
   'MembershipAnimations',
   'HeroSection',
   'MembershipNav',
+  'VodHookSection',
   'RoadmapSection',
   'SolutionSection',
   'PlansSection',
@@ -106,6 +113,12 @@ describe('MembershipLanding', () => {
     expect(screen.getByTestId('RoadmapSection')).toBeInTheDocument();
     // 간트는 이번에 신규로 추가했다.
     expect(screen.getByTestId('ChallengeScheduleSection')).toBeInTheDocument();
+  });
+
+  it('VOD 훅 섹션이 마운트돼 있다', () => {
+    // LC-3219 때 주석 처리로 내려갔던 섹션이다. 다시 주석 처리되면 여기서 걸린다.
+    render(<MembershipLanding />);
+    expect(screen.getByTestId('VodHookSection')).toBeInTheDocument();
   });
 
   it('섹션을 시안 순서대로 합친다', () => {
