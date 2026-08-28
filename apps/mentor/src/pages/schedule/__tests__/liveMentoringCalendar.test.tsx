@@ -3,12 +3,13 @@
  *
  *  - 서버가 내린 확정 건이 캘린더 하단 "시간별 일정"에 그려진다
  *  - 같은 시간대에 라이브 피드백과 겹쳐도 둘 다 보인다
- *  - 1대1 카드는 클릭되지 않는다 (열 수 있는 상세 화면이 없다)
+ *  - 1대1 카드는 버튼으로 감싸져 멘티 제출물 모달 진입점이 된다
  *  - 다른 주의 건은 그 주의 열에만 들어간다
  *
  * useTimelineScroll(rAF/IntersectionObserver/scrollTo 의존)은 mock 으로 고정한다.
  */
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import type { LiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
@@ -174,20 +175,40 @@ describe('WeeklyCalendar — 1대1 라이브 멘토링 예약', () => {
     expect(screen.getByText('김일대 멘티')).toBeInTheDocument();
   });
 
-  it('1대1 카드는 클릭되지 않는다 (버튼이 아니다)', () => {
+  it('1대1 카드는 버튼으로 감싸져 클릭할 수 있다', async () => {
+    const bars = deriveLiveMentoringBars([makeReservation()]);
+    const onLiveMentoringClick = vi.fn();
     const onLiveFeedbackTimeBlockClick = vi.fn();
     render(
       <WeeklyCalendar
-        bars={deriveLiveMentoringBars([makeReservation()])}
-        allBars={deriveLiveMentoringBars([makeReservation()])}
+        bars={bars}
+        allBars={bars}
         onBarClick={vi.fn()}
         onLiveFeedbackTimeBlockClick={onLiveFeedbackTimeBlockClick}
+        onLiveMentoringClick={onLiveMentoringClick}
       />,
     );
 
-    const card = screen.getByText('김일대 멘티').closest('div');
-    expect(card?.closest('button')).toBeNull();
+    const button = screen.getByText('김일대 멘티').closest('button');
+    expect(button).not.toBeNull();
+
+    await userEvent.click(button as HTMLElement);
+
+    // 클릭한 카드의 바가 그대로 넘어가야 applicationId 를 꺼낼 수 있다.
+    expect(onLiveMentoringClick).toHaveBeenCalledTimes(1);
+    expect(onLiveMentoringClick).toHaveBeenCalledWith(bars[0]);
+    // 라이브 피드백 블록의 콜백까지 함께 불리면 두 모달이 겹친다.
     expect(onLiveFeedbackTimeBlockClick).not.toHaveBeenCalled();
+  });
+
+  it('onLiveMentoringClick 을 넘기지 않아도 눌러서 깨지지 않는다', async () => {
+    renderCalendar(deriveLiveMentoringBars([makeReservation()]));
+
+    const button = screen.getByText('김일대 멘티').closest('button');
+    expect(button).not.toBeNull();
+
+    await userEvent.click(button as HTMLElement);
+    expect(screen.getByText('김일대 멘티')).toBeInTheDocument();
   });
 
   it('예약은 자기 날짜 열에만 들어간다 (주 이동 시 그 주의 건만 보인다)', () => {

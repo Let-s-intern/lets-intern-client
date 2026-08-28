@@ -20,7 +20,7 @@ import type { LiveFeedbackRound } from './hooks/useLiveFeedbackList';
  * | 미션 회차 (`thLabel`) | `해당 없음`. 빈 칸으로 두면 "안 냈음"으로 읽힌다 |
  * | 멘티 제출 (`submissionLabel`) | 신청 시 낸 질문·전달 파일을 제출물로 본다 |
  * | 멘티·멘토 참여 | 예약 응답에 출석이 없다. `null`(표에서 `·`) |
- * | 상세 (`canOpenDetail`) | 항상 `false`. 이유는 `detailDisabledReason` 에 적는다 |
+ * | 상세 (`canOpenDetail`) | 항상 `true`. 멘티 제출물 모달을 연다 |
  */
 export interface FeedbackRow {
   /**
@@ -108,8 +108,8 @@ export interface FeedbackRow {
       }
     | {
         /**
-         * 1대1은 열 수 있는 모달이 없다. 그래도 원본을 실어 두는 이유는,
-         * 멘티 질문·전달 파일 화면이 생기면 이 행에서 곧바로 넘길 값이기 때문이다.
+         * 원본 예약을 그대로 싣는다. 상세를 열 때 여기서
+         * `reservation.applicationId` 를 꺼내 제출물 모달에 넘긴다.
          */
         type: 'live-mentoring';
         reservation: LiveMentoringReservation;
