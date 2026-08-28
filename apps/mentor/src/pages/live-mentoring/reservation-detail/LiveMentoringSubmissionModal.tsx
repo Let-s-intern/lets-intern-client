@@ -125,6 +125,30 @@ const QuestionSection = ({
   );
 };
 
+/**
+ * 새 탭으로 열어 줘도 되는 주소인지. `http`/`https` 만 통과시킨다.
+ *
+ * 첨부 주소는 멘티가 직접 적어 낸 값인데 **서버는 길이(2048)만 본다** — 스킴 검증이
+ * 어디에도 없다(`UpdateLiveMentoringQuestionRequestDto.url` 은 `@Size` 뿐이고 엔티티도
+ * 그대로 넣는다). 멘티 화면의 https 검사(`validateQuestionInput`)는 화면에만 있어 API 를
+ * 직접 부르면 지나간다.
+ *
+ * 걸러 내지 않으면 `javascript:` 주소를 href 에 그대로 싣게 되고, 멘토가 누르는 순간
+ * 멘토 앱 origin 에서 실행된다. `target="_blank"` 는 막지 못한다 — 브라우저는
+ * `javascript:` 에서 target 을 무시한다. 멘토 세션은 담당 멘티 전원의 제출물을 볼 수
+ * 있어 피해 범위가 넓다.
+ *
+ * 임베드 쪽은 `isNotionUrl` 이 호스트까지 보므로 이 스킴들이 애초에 통과하지 못한다.
+ */
+function isOpenableUrl(url: string): boolean {
+  try {
+    const { protocol } = new URL(url);
+    return protocol === 'https:' || protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
 /** 첨부 영역의 안내 문구 한 줄. 어느 분기에서도 빈 영역을 남기지 않는다. */
 const AttachmentNotice = ({ children }: { children: string }) => (
   <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm leading-6 text-neutral-500">
@@ -174,7 +198,9 @@ const AttachmentSection = ({
       return <AttachmentNotice>파일 첨부됨 — 준비 중</AttachmentNotice>;
     }
 
-    if (!attachmentUrl) {
+    // 주소가 비었거나 http(s) 가 아니면 링크를 만들지 않는다. 링크로 만드는 순간
+    // 스킴이 그대로 실행되므로, 여는 대신 못 연다고 알린다.
+    if (!attachmentUrl || !isOpenableUrl(attachmentUrl)) {
       return (
         <AttachmentNotice>첨부 주소를 확인할 수 없습니다</AttachmentNotice>
       );

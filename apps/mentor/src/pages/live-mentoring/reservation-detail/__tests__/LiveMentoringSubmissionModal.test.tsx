@@ -300,6 +300,42 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
     expect(screen.queryByText('파일 첨부됨 — 준비 중')).not.toBeInTheDocument();
   });
 
+  // 첨부 주소는 멘티가 적어 낸 값이고 서버가 스킴을 보지 않는다. 링크로 만들면
+  // 멘토가 누르는 순간 멘토 앱 origin 에서 실행된다 — target="_blank" 는 막지 못한다.
+  it.each([
+    ['javascript:alert(document.cookie)'],
+    ['JaVaScRiPt:alert(1)'],
+    ['data:text/html,<script>alert(1)</script>'],
+    ['vbscript:msgbox(1)'],
+    ['첨부 주소가 아닌 문자열'],
+  ])('열 수 없는 스킴(%s)은 링크로 만들지 않는다', (url) => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl: url,
+      mentorShareAgreed: true,
+    });
+    renderModal(91004);
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+    expect(
+      screen.getByText('첨부 주소를 확인할 수 없습니다'),
+    ).toBeInTheDocument();
+  });
+
+  it('http 주소는 그대로 연다', () => {
+    mockDetail({
+      attachmentType: 'URL',
+      attachmentUrl: 'http://example.test/resume',
+      mentorShareAgreed: true,
+    });
+    renderModal(91004);
+
+    expect(
+      screen.getByRole('link', { name: '새 탭에서 열기' }),
+    ).toHaveAttribute('href', 'http://example.test/resume');
+  });
+
   it('미리보기를 접으면 임베드를 마운트하지 않는다', async () => {
     mockDetail({
       attachmentType: 'URL',
