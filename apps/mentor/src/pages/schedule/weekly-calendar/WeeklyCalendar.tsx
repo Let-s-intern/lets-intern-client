@@ -29,6 +29,8 @@ interface WeeklyCalendarProps {
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
   onMentorOpenPeriodBarClick?: (bar: PeriodBarData) => void;
+  /** 1대1 예약 카드 클릭 — 멘티 제출물 모달 진입점 */
+  onLiveMentoringClick?: (bar: PeriodBarData) => void;
 }
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
@@ -41,6 +43,7 @@ const WeeklyCalendar = ({
   onMentorOpenPeriodBarClick,
   onLiveFeedbackTimeBlockClick,
   onLiveFeedbackPeriodClick,
+  onLiveMentoringClick,
 }: WeeklyCalendarProps) => {
   // 상단 period bar(서면 기간 + 라이브 일정 오픈) vs 하단 시간 블록(시각이 있는 개별 일정) 분리.
   // 라이브 피드백 "기간" 바(live-feedback-period)는 상단에 노출하지 않는다 — 라이브는 하단 개별 일정만 표시.
@@ -369,14 +372,19 @@ const WeeklyCalendar = ({
                               : ''
                         }`}
                       >
-                        {/* 시간 블록 — 시간순으로 위에서부터 공백 없이 적재.
-                            1대1 예약은 열 수 있는 상세가 없어 버튼으로 감싸지 않는다. */}
+                        {/* 시간 블록 — 시간순으로 위에서부터 공백 없이 적재. */}
                         {dayTimeBlockBars.map((bar) =>
                           bar.barType === 'live-mentoring' ? (
-                            <LiveMentoringCard
+                            <button
                               key={`live-mentoring-${bar.missionId}`}
-                              bar={bar}
-                            />
+                              type="button"
+                              onClick={() => onLiveMentoringClick?.(bar)}
+                              className={`w-full text-left ${
+                                onLiveMentoringClick ? 'cursor-pointer' : ''
+                              }`}
+                            >
+                              <LiveMentoringCard bar={bar} />
+                            </button>
                           ) : (
                             <button
                               key={`live-feedback-${bar.missionId}`}
