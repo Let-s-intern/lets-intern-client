@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { useLiveMentoringReservationDetailQuery } from '@/api/live-mentoring/liveMentoring';
+import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import BaseModal from '@/common/modal/BaseModal';
 
 import { CATEGORY_LABELS, durationLabel } from '../constants';
@@ -33,6 +34,19 @@ function formatReservationPeriod(startAt: string, endAt: string): string {
   return `${date} (${WEEKDAY_LABELS[start.getDay()]}) ${range}`;
 }
 
+/** 질문 최종 수정 시각 표기 (예: `2026.08.29 18:20`). */
+function formatUpdatedAt(value: string): string {
+  const updatedAt = new Date(value);
+  if (Number.isNaN(updatedAt.getTime())) return '';
+
+  return (
+    `${updatedAt.getFullYear()}.${pad2(updatedAt.getMonth() + 1)}.` +
+    `${pad2(updatedAt.getDate())} ${pad2(updatedAt.getHours())}:${pad2(
+      updatedAt.getMinutes(),
+    )}`
+  );
+}
+
 /** 닫기(X) 아이콘. */
 const CloseIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -44,6 +58,49 @@ const CloseIcon = () => (
     />
   </svg>
 );
+
+/**
+ * 멘티가 미리 적어 낸 질문 본문.
+ *
+ * 서버는 "나중에 작성하기" 를 고르는 순간 본문을 지운다(`updateQuestion`). 그래도 화면은
+ * `questionDeferred` 와 빈 본문을 둘 다 본다 — 어느 쪽이든 빈 영역 대신 안내를 남긴다.
+ *
+ * `questionUpdatedAt` 은 백엔드가 이번에 내리지 않는다(PRD 4.5, 9-2). 값이 없으면 그 줄을
+ * 그리지 않는다. 질문 수정 마감도 여기서 다시 계산하지 않는다 — 서버가 계산하는 값이다.
+ */
+const QuestionSection = ({
+  detail,
+}: {
+  detail: LiveMentoringReservationDetail;
+}) => {
+  const hasQuestion =
+    !detail.questionDeferred && Boolean(detail.questionContent?.trim());
+  const updatedAtLabel = detail.questionUpdatedAt
+    ? formatUpdatedAt(detail.questionUpdatedAt)
+    : '';
+
+  return (
+    <section>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h3 className="text-sm font-bold text-neutral-900">멘티 질문</h3>
+        {updatedAtLabel && (
+          <p className="text-xs text-neutral-400">최종 수정 {updatedAtLabel}</p>
+        )}
+      </div>
+      <div className="mt-2 rounded-lg bg-gray-50 px-4 py-3">
+        {hasQuestion ? (
+          <p className="whitespace-pre-wrap break-words text-sm leading-6 text-neutral-700">
+            {detail.questionContent}
+          </p>
+        ) : (
+          <p className="text-sm leading-6 text-neutral-500">
+            아직 질문을 작성하지 않았습니다.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+};
 
 /**
  * 모달 본문. `applicationId` 가 확정된 뒤에만 마운트된다.
@@ -122,6 +179,7 @@ const SubmissionModalBody = ({
               제출물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
             </p>
           )}
+          {data && <QuestionSection detail={data} />}
         </div>
       </div>
     </BaseModal>

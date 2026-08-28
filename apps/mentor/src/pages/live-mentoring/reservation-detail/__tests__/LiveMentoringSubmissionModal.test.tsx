@@ -157,3 +157,54 @@ describe('LiveMentoringSubmissionModal — 껍데기와 데이터 연결', () =>
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('LiveMentoringSubmissionModal — 질문 본문', () => {
+  it('질문 본문을 그대로 보여 준다', () => {
+    mockDetail({ questionContent: '지원 동기 문단을 봐주세요.' });
+    renderModal(91001);
+
+    expect(screen.getByText('지원 동기 문단을 봐주세요.')).toBeInTheDocument();
+  });
+
+  it('줄바꿈을 보존한다', () => {
+    mockDetail({ questionContent: '첫째 줄\n둘째 줄' });
+    renderModal(91001);
+
+    const body = screen.getByText(/첫째 줄/);
+    expect(body).toHaveClass('whitespace-pre-wrap');
+    expect(body.textContent).toBe('첫째 줄\n둘째 줄');
+  });
+
+  it('나중에 작성하기를 고른 건은 빈 영역 대신 안내를 남긴다', () => {
+    mockDetail({ questionDeferred: true, questionContent: null });
+    renderModal(91003);
+
+    expect(
+      screen.getByText('아직 질문을 작성하지 않았습니다.'),
+    ).toBeInTheDocument();
+  });
+
+  it('본문이 공백뿐이어도 안내를 남긴다', () => {
+    mockDetail({ questionDeferred: false, questionContent: '   ' });
+    renderModal(91002);
+
+    expect(
+      screen.getByText('아직 질문을 작성하지 않았습니다.'),
+    ).toBeInTheDocument();
+  });
+
+  it('questionUpdatedAt 이 있으면 최종 수정 시각을 함께 보여 준다', () => {
+    mockDetail({ questionUpdatedAt: '2026-08-29T18:20:00' });
+    renderModal(91001);
+
+    expect(screen.getByText('최종 수정 2026.08.29 18:20')).toBeInTheDocument();
+  });
+
+  // 백엔드가 이번에 내리지 않기로 한 값이다(PRD 9-2). 없는 시각을 지어내지 않는다.
+  it('questionUpdatedAt 이 없으면 그 줄을 아예 그리지 않는다', () => {
+    mockDetail({ questionUpdatedAt: undefined });
+    renderModal(91001);
+
+    expect(screen.queryByText(/최종 수정/)).not.toBeInTheDocument();
+  });
+});
