@@ -2,12 +2,13 @@ import { formatKRW } from './membership';
 import { getDiscountRate, PLAN_BENEFITS, PLAN_PRICE } from './plans';
 
 describe('단일 플랜 표시 데이터', () => {
-  it('폴백 정가 대비 얼리버드 특가 할인율은 82% (시안 3.png 일치)', () => {
-    expect(getDiscountRate(PLAN_PRICE.original, PLAN_PRICE.sale)).toBe(82);
+  it('폴백 정가 대비 판매가 할인율은 80%', () => {
+    // 얼리버드(169,900원 / 82%)는 2026-08-27 로 끝났다. 값을 되돌리면 여기서 걸린다.
+    expect(getDiscountRate(PLAN_PRICE.original, PLAN_PRICE.sale)).toBe(80);
   });
 
   it('formatKRW 로 가격에 천단위 콤마가 붙는다', () => {
-    expect(formatKRW(PLAN_PRICE.sale)).toBe('169,900');
+    expect(formatKRW(PLAN_PRICE.sale)).toBe('184,900');
     expect(formatKRW(PLAN_PRICE.original)).toBe('938,300');
   });
 
@@ -17,10 +18,10 @@ describe('단일 플랜 표시 데이터', () => {
 });
 
 describe('getDiscountRate — 배지를 그릴 수 있는 값인지', () => {
-  it('정가 938,300 / 특가 169,900 이면 82 (시안 배지 값)', () => {
+  it('정가 938,300 / 판매가 184,900 이면 80 (현재 배지 값)', () => {
     // 배지 숫자를 코드에 박지 않고 이 계산으로 만든다. 어드민에서 가격을 바꾸면
     // 배지도 따라 바뀌어야 하기 때문이다.
-    expect(getDiscountRate(938300, 169900)).toBe(82);
+    expect(getDiscountRate(938300, 184900)).toBe(80);
   });
 
   it('정가가 0 이면 0 → 호출부가 배지를 렌더하지 않는다', () => {
