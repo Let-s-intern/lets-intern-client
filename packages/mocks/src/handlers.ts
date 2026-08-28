@@ -191,6 +191,9 @@ interface MentorLiveMentoringSubmission {
  * 목록의 같은 건에서 예약 정보를 가져와 제출물을 얹는다. 두 응답이 같은 값을 말하게 하려는
  * 것이다 — 상세를 따로 적어 두면 목록에서 연 모달이 다른 시각을 보여준다.
  */
+/** 출석 상태 — 서버 `FeedbackAttendanceStatus` 와 같은 값이다. */
+type LiveMentoringAttendance = 'PENDING' | 'PRESENT' | 'ABSENT';
+
 const mentorLiveMentoringDetail = (
   applicationId: number,
   submission: MentorLiveMentoringSubmission,
@@ -208,6 +211,14 @@ const mentorLiveMentoringDetail = (
     durationMinutes: reservation.durationMinutes,
     reservationStartAt: reservation.reservationStartAt,
     reservationEndAt: reservation.reservationEndAt,
+    /*
+      세션 진행 상태. 목은 "아직 아무도 입장하지 않은" 상태에서 시작한다 — 멘토가
+      입장을 누르면 아래 meeting-url 핸들러가 방을 만들고 출석이 PRESENT 로 바뀐다.
+      화면이 그 전이를 밟아 볼 수 있어야 입장 흐름을 목으로 확인할 수 있다.
+     */
+    mentorStatus: 'PENDING' as LiveMentoringAttendance,
+    menteeStatus: 'PENDING' as LiveMentoringAttendance,
+    meetingUrl: null as string | null,
     ...submission,
   };
 };
@@ -2418,6 +2429,66 @@ export const handlers = [
       }
 
       return HttpResponse.json({ status: 200, data: detail });
+    },
+  ),
+
+  /**
+   * (멘토) PATCH .../reservations/{applicationId}/attendance — 출석 부분 갱신.
+   *
+   * 보내지 않은 쪽은 그대로 둔다. 목 데이터를 직접 고쳐 두어야 다시 조회했을 때
+   * 화면이 바뀐 값을 본다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/reservations/:applicationId/attendance',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const body = (await request.json()) as {
+        mentorStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
+        menteeStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
+      };
+      if (body.mentorStatus) detail.mentorStatus = body.mentorStatus;
+      if (body.menteeStatus) detail.menteeStatus = body.menteeStatus;
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (멘토) PATCH .../reservations/{applicationId}/meeting-url — 회의실 생성.
+   *
+   * 서버와 같이 **이미 방이 있으면 덮어쓰지 않고** 기존 주소를 돌려준다. 멘토와 멘티가
+   * 거의 동시에 눌렀을 때 나중 요청이 방을 바꾸면 먼저 들어간 사람만 빈 방에 남는다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/reservations/:applicationId/meeting-url',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const { meetingUrlBase } = (await request.json()) as {
+        meetingUrlBase: string;
+      };
+      if (!detail.meetingUrl) {
+        detail.meetingUrl = `${meetingUrlBase}mock-room-${applicationId}`;
+      }
+      return HttpResponse.json({ status: 200, data: detail.meetingUrl });
     },
   ),
 

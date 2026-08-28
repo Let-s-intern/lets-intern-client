@@ -6,9 +6,29 @@ import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMe
 
 const detailQueryMock = vi.fn();
 
+const createMeetingRoomMock = vi.fn();
+const updateAttendanceMock = vi.fn();
+
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringReservationDetailQuery: (applicationId: number | null) =>
     detailQueryMock(applicationId),
+  useCreateLiveMentoringMeetingRoomMutation: () => ({
+    mutateAsync: createMeetingRoomMock,
+  }),
+  useUpdateLiveMentoringAttendanceMutation: () => ({
+    mutate: updateAttendanceMock,
+  }),
+}));
+
+// Jitsi 회의 화면은 이 모달의 관심사가 아니다. 열렸는지만 본다.
+vi.mock('@/pages/schedule/modal/JitsiEmbedModal', () => ({
+  default: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div data-testid="jitsi-modal" /> : null,
+}));
+
+const ensureLiveMeetingUrlMock = vi.fn();
+vi.mock('@letscareer/live-session/JitsiEmbed/jitsiHealthCheck', () => ({
+  ensureLiveMeetingUrl: (args: unknown) => ensureLiveMeetingUrlMock(args),
 }));
 
 // 모달 포털은 document.body 로 렌더된다 — 테스트 환경에서 그대로 동작한다.
@@ -54,6 +74,10 @@ const renderModal = (applicationId: number | null, onClose = vi.fn()) => {
 
 beforeEach(() => {
   detailQueryMock.mockReset();
+  createMeetingRoomMock.mockReset();
+  updateAttendanceMock.mockReset();
+  ensureLiveMeetingUrlMock.mockReset();
+  ensureLiveMeetingUrlMock.mockResolvedValue({ ok: true });
   mockDetail({});
 });
 
@@ -494,5 +518,115 @@ describe('LiveMentoringSubmissionModal — 좁은 폭', () => {
     const iframe = embedBox.querySelector('iframe');
     expect(iframe).not.toBeNull();
     expect(iframe).toHaveStyle({ width: '100%' });
+  });
+});
+
+describe('LiveMentoringSubmissionModal — 라이브 입장 (Push 3)', () => {
+  /** 예약 시각을 지금 기준 오프셋으로 만든다. */
+  const reservationAt = (
+    startOffsetMs: number,
+    durationMs = 30 * 60 * 1000,
+  ) => {
+    const start = new Date(Date.now() + startOffsetMs);
+    const end = new Date(start.getTime() + durationMs);
+    return {
+      reservationStartAt: start.toISOString(),
+      reservationEndAt: end.toISOString(),
+    };
+  };
+
+  it('시작 20분 전이 되기 전에는 입장 버튼이 비활성이다', () => {
+    // 1시간 뒤 시작 — 아직 이르다.
+    mockDetail(reservationAt(60 * 60 * 1000));
+    renderModal(91001);
+
+    expect(screen.getByLabelText('라이브 입장하기')).toBeDisabled();
+  });
+
+  it('시작 20분 전부터 입장할 수 있다', () => {
+    mockDetail(reservationAt(10 * 60 * 1000));
+    renderModal(91001);
+
+    expect(screen.getByLabelText('라이브 입장하기')).toBeEnabled();
+  });
+
+  it('종료된 세션은 다시 입장할 수 없다', () => {
+    // 2시간 전에 끝났다.
+    mockDetail(reservationAt(-3 * 60 * 60 * 1000));
+    renderModal(91001);
+
+    expect(screen.getByLabelText('라이브 입장하기')).toBeDisabled();
+  });
+
+  // 카운트다운 label 은 이미 "N시간 M분 후 시작" 을 담는다. 화면에서 문구를 덧붙여
+  // "…후 시작 뒤 시작" 이 되는 것을 실제로 한 번 겪었다.
+  it('시작 전 안내 문구가 겹치지 않는다', () => {
+    mockDetail(reservationAt(60 * 60 * 1000));
+    renderModal(91001);
+
+    expect(screen.queryByText(/뒤 시작/)).not.toBeInTheDocument();
+    expect(screen.getByText(/후 시작/)).toBeInTheDocument();
+  });
+
+  it('입장하면 회의 화면이 열리고 멘토 출석이 기록된다', async () => {
+    mockDetail({ ...reservationAt(5 * 60 * 1000), mentorStatus: 'PENDING' });
+    renderModal(91001);
+
+    await userEvent.click(screen.getByLabelText('라이브 입장하기'));
+
+    expect(await screen.findByTestId('jitsi-modal')).toBeInTheDocument();
+    expect(updateAttendanceMock).toHaveBeenCalledWith(
+      { applicationId: 91001, mentorStatus: 'PRESENT' },
+      expect.anything(),
+    );
+  });
+
+  it('이미 출석으로 기록된 건은 다시 기록하지 않는다', async () => {
+    mockDetail({ ...reservationAt(5 * 60 * 1000), mentorStatus: 'PRESENT' });
+    renderModal(91001);
+
+    await userEvent.click(screen.getByLabelText('라이브 입장하기'));
+
+    expect(await screen.findByTestId('jitsi-modal')).toBeInTheDocument();
+    expect(updateAttendanceMock).not.toHaveBeenCalled();
+  });
+
+  // 출석은 부수적 기록이다. 실패해도 입장을 막으면 안 된다.
+  it('출석 기록이 실패해도 입장은 계속된다', async () => {
+    updateAttendanceMock.mockImplementation((_vars, opts) => {
+      opts?.onError?.(new Error('network'));
+    });
+    mockDetail({ ...reservationAt(5 * 60 * 1000), mentorStatus: 'PENDING' });
+    renderModal(91001);
+
+    await userEvent.click(screen.getByLabelText('라이브 입장하기'));
+
+    expect(await screen.findByTestId('jitsi-modal')).toBeInTheDocument();
+  });
+
+  it('살아 있는 회의 서버가 없으면 이유를 화면에 남긴다', async () => {
+    // 토스트 인프라가 없어 alert 로 띄우면 왜 못 들어갔는지 다시 볼 수 없다.
+    ensureLiveMeetingUrlMock.mockResolvedValue({ ok: false });
+    mockDetail(reservationAt(5 * 60 * 1000));
+    renderModal(91001);
+
+    await userEvent.click(screen.getByLabelText('라이브 입장하기'));
+
+    expect(
+      await screen.findByText(/회의실에 연결할 수 없습니다/),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('jitsi-modal')).not.toBeInTheDocument();
+  });
+
+  // 회의실이 아직 없어도 입장할 수 있어야 한다. 둘 다 상대를 기다리면 아무도 못 들어간다.
+  it('회의실이 없어도 입장 시 base 를 보내 방을 만든다', async () => {
+    mockDetail({ ...reservationAt(5 * 60 * 1000), meetingUrl: null });
+    renderModal(91001);
+
+    await userEvent.click(screen.getByLabelText('라이브 입장하기'));
+
+    const args = ensureLiveMeetingUrlMock.mock.calls[0][0];
+    expect(args.meetingUrl).toBeNull();
+    expect(typeof args.registerBaseUrl).toBe('function');
   });
 });

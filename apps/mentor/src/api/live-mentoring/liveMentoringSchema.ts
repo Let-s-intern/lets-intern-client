@@ -434,6 +434,17 @@ export type LiveMentoringAttachmentType = z.infer<
  * 만료도 없는 공개 주소다. 이름을 내리는 것이 주소를 알려주는 것과 같다(PRD 4.2).
  * `attachmentType` 이 `FILE` 이면 화면은 "냈다" 는 사실만 표시한다.
  */
+/** 출석 상태 — 라이브 피드백(`FeedbackAttendanceStatus`)과 같은 값이다. */
+export const liveMentoringAttendanceStatusSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+
+export type LiveMentoringAttendanceStatus = z.infer<
+  typeof liveMentoringAttendanceStatusSchema
+>;
+
 export const liveMentoringReservationDetailSchema = z.object({
   applicationId: z.number(),
   menteeName: z.string(),
@@ -476,6 +487,22 @@ export const liveMentoringReservationDetailSchema = z.object({
    * 나중에 붙을 때 계약을 다시 고치지 않도록 nullish 로 열어 둔다 — 없어도 파싱이 통과한다.
    */
   questionUpdatedAt: z.string().nullish(),
+  /**
+   * 멘토·멘티 출석. 라이브 피드백과 같은 값을 쓴다(`PENDING`/`PRESENT`/`ABSENT`).
+   *
+   * 서버 컬럼을 나중에 추가했으므로 배포 순서가 어긋나 이 필드가 없는 응답이 올 수
+   * 있다. 없으면 화면은 "아직 기록 없음" 으로 다루면 되고 파싱까지 깨질 이유가 없어
+   * nullish 로 연다. `mentoringCategory` 에서 이미 겪은 실수다.
+   */
+  mentorStatus: liveMentoringAttendanceStatusSchema.nullish(),
+  menteeStatus: liveMentoringAttendanceStatusSchema.nullish(),
+  /**
+   * 회의실 주소. 아직 아무도 입장하지 않았으면 null 이다.
+   *
+   * null 이어도 입장 버튼은 눌린다 — 누르는 순간 서버가 방을 만든다. 둘 다 상대가
+   * 먼저 들어오기를 기다리는 데드락을 막기 위한 설계다.
+   */
+  meetingUrl: z.string().nullish(),
 });
 export type LiveMentoringReservationDetail = z.infer<
   typeof liveMentoringReservationDetailSchema
