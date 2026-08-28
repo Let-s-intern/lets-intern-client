@@ -13,7 +13,7 @@ function Sparkle({ className }: { className?: string }) {
   );
 }
 
-// 멤버십 신청 시 현직자 공채 준비 VOD 무료 제공 훅 섹션 (다크, 디자인 시스템 정렬).
+// 패스 신청 시 현직자 공채 준비 VOD 무료 제공 훅 섹션 (다크, 디자인 시스템 정렬).
 export default function VodHookSection() {
   return (
     <>
@@ -62,9 +62,13 @@ export default function VodHookSection() {
                   </ul>
                   <div className="vod-cardfoot">
                     <div className="vodhook-price">
-                      <span className="vodhook-price-old">
-                        {card.priceOriginal}
-                      </span>
+                      {/* 정가는 VOD 상품이 있는 카드에만 있다. 아직 라이브만 열린 세미나에
+                          없는 정가를 지어내 취소선으로 긋지 않는다. */}
+                      {card.priceOriginal && (
+                        <span className="vodhook-price-old">
+                          {card.priceOriginal}
+                        </span>
+                      )}
                       <span className="vodhook-price-free">
                         {card.priceFree}
                       </span>

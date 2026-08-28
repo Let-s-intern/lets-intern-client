@@ -1,7 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import VodHookSection from './VodHookSection';
 import { VOD_HOOK } from '../data/vodHook';
-import { VOD_DETAIL_URL, VOD_JASOSEO_URL } from '../data/links';
+import {
+  LIVE_HR_CHECKLIST_URL,
+  LIVE_TREND_TOTAL_URL,
+  VOD_DETAIL_URL,
+  VOD_JASOSEO_URL,
+} from '../data/links';
 
 /**
  * 이 섹션은 데이터(`data/vodHook.ts`)를 그대로 그리는 표현 컴포넌트다.
@@ -11,9 +16,11 @@ import { VOD_DETAIL_URL, VOD_JASOSEO_URL } from '../data/links';
  * 하드코딩 URL 이다. 오타는 타입체크로 잡히지 않고 눌러봐야 404 로만 드러난다.
  */
 describe('VodHookSection', () => {
-  it('카드를 데이터 개수만큼 그린다', () => {
+  it('카드 4개를 그린다', () => {
+    // 2026-08-28 요청이 VOD 4개다. 하나라도 빠지면 여기서 걸린다.
     render(<VodHookSection />);
-    expect(screen.getAllByRole('article')).toHaveLength(VOD_HOOK.cards.length);
+    expect(VOD_HOOK.cards).toHaveLength(4);
+    expect(screen.getAllByRole('article')).toHaveLength(4);
   });
 
   it('CTA 링크는 links.ts 상수를 쓴다', () => {
@@ -22,7 +29,12 @@ describe('VodHookSection', () => {
     const hrefs = screen
       .getAllByRole('link')
       .map((el) => el.getAttribute('href'));
-    expect(hrefs).toEqual([VOD_JASOSEO_URL, VOD_DETAIL_URL]);
+    expect(hrefs).toEqual([
+      VOD_JASOSEO_URL,
+      VOD_DETAIL_URL,
+      LIVE_HR_CHECKLIST_URL,
+      LIVE_TREND_TOTAL_URL,
+    ]);
   });
 
   it('CTA 는 새 탭으로 열고 rel 로 참조를 끊는다', () => {
@@ -44,14 +56,15 @@ describe('VodHookSection', () => {
     });
   });
 
-  it('가격은 정가 취소선과 무료를 함께 보여준다', () => {
+  it('"무료" 는 모든 카드에, 정가 취소선은 정가가 있는 카드에만 그린다', () => {
     // 취소선만 있고 "무료" 가 없으면 유료로 읽힌다. 훅 섹션의 핵심 카피다.
+    // 반대로 아직 VOD 가 없어 정가가 없는 세미나 카드에 취소선을 그으면 허위 표시가 된다.
     const { container } = render(<VodHookSection />);
-    expect(container.querySelectorAll('.vodhook-price-old')).toHaveLength(
-      VOD_HOOK.cards.length,
-    );
     expect(container.querySelectorAll('.vodhook-price-free')).toHaveLength(
       VOD_HOOK.cards.length,
+    );
+    expect(container.querySelectorAll('.vodhook-price-old')).toHaveLength(
+      VOD_HOOK.cards.filter((c) => c.priceOriginal).length,
     );
   });
 
