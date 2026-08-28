@@ -7,8 +7,9 @@
  */
 
 export function setDomHiddenUntilFound(dom: HTMLElement): void {
-  // TODO(ts-suppress): 검토 필요 — @ts-expect-error
-  // @ts-expect-error Property 'hidden' does not exist on type 'HTMLElement'
+  // tsc(lib.dom 구버전)는 'hidden' boolean 전용 타입이라 에러, tsgo(신버전 lib)는
+  // 'until-found' 리터럴을 인식해 에러 없음 — 두 체커 모두에서 조용히 넘어가도록 ts-ignore 사용
+  // @ts-ignore Property 'hidden' does not exist on type 'HTMLElement'
   dom.hidden = 'until-found';
 }
 
