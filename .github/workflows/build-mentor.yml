@@ -72,7 +72,7 @@ jobs:
         run: pnpm --filter @letscareer/mentor lint
 
       # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
-      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      # tsgo 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
       # 변경 파일 기준이라 PR 에서만 의미가 있다(main push 는 base SHA 없음).
       # → push 에선 스킵하고 캐시 시딩 빌드만 수행. typecheck 로직은 변경하지 않음.
       - name: Typecheck (변경 파일 한정)

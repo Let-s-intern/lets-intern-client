@@ -73,7 +73,7 @@ jobs:
 
       # PR 머지 베이스 대비 변경된 .ts/.tsx 만 typecheck 결과로 채점.
       # 베이스라인 138 에러는 무시되고, 변경 파일에서 발생한 에러만 fail.
-      # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
+      # tsgo 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
       # 변경 파일 기준이라 PR 에서만 의미가 있다(main push 는 base SHA 없음).
       # → push 에선 스킵하고 캐시 시딩 빌드만 수행. typecheck 로직은 변경하지 않음.
       - name: Typecheck (변경 파일 한정)
@@ -100,7 +100,7 @@ jobs:
           pnpm --filter @letscareer/admin typecheck > /tmp/typecheck.log 2>&1
           set -e
 
-          # tsc 출력의 파일경로는 'src/...' 형태 (apps/admin 작업디렉토리 기준)이므로
+          # tsgo 출력의 파일경로는 'src/...' 형태 (apps/admin 작업디렉토리 기준)이므로
           # CHANGED 의 'apps/admin/' 접두사 제거 후 패턴 매칭.
           PATTERNS=$(echo "$CHANGED" | sed 's|^apps/admin/||' | paste -sd '|')
           RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
