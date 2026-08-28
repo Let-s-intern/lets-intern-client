@@ -62,13 +62,9 @@ export default function VodHookSection() {
                   </ul>
                   <div className="vod-cardfoot">
                     <div className="vodhook-price">
-                      {/* 정가는 VOD 상품이 있는 카드에만 있다. 아직 라이브만 열린 세미나에
-                          없는 정가를 지어내 취소선으로 긋지 않는다. */}
-                      {card.priceOriginal && (
-                        <span className="vodhook-price-old">
-                          {card.priceOriginal}
-                        </span>
-                      )}
+                      <span className="vodhook-price-old">
+                        {card.priceOriginal}
+                      </span>
                       <span className="vodhook-price-free">
                         {card.priceFree}
                       </span>

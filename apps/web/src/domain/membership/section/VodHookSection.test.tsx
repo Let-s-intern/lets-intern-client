@@ -45,27 +45,41 @@ describe('VodHookSection', () => {
     });
   });
 
-  it('무료 제공 배지는 "패스" 로 부른다', () => {
-    // 2026-08-28 요청으로 "멤버십 신청 시" 에서 바꿨다. 되돌아가면 여기서 걸린다.
+  it('배지는 "패스 신청 시 녹화본 무료 제공" 이다', () => {
+    // 2026-08-28 요청으로 "멤버십 신청 시 무료 제공" 에서 두 번 바꿨다. 되돌아가면 여기서 걸린다.
     render(<VodHookSection />);
-    const badges = screen.getAllByText(/신청 시 무료 제공/);
+    const badges = screen.getAllByText(/무료 제공/);
     expect(badges).toHaveLength(VOD_HOOK.cards.length);
     badges.forEach((el) => {
-      expect(el).toHaveTextContent('패스 신청 시 무료 제공');
+      expect(el).toHaveTextContent('패스 신청 시 녹화본 무료 제공');
       expect(el).not.toHaveTextContent('멤버십');
     });
   });
 
-  it('"무료" 는 모든 카드에, 정가 취소선은 정가가 있는 카드에만 그린다', () => {
+  it('제목에 "[렛츠 VOD]"·"[렛츠 세미나]" 접두사를 달지 않는다', () => {
+    // 상품 종류는 제목이 아니라 배지("녹화본")가 알린다(2026-08-28 요청).
+    render(<VodHookSection />);
+    VOD_HOOK.cards.forEach((c) => {
+      expect(c.title).not.toMatch(/^\[렛츠/);
+    });
+  });
+
+  it('CTA 문구는 네 장 모두 "자세히 보기" 다', () => {
+    render(<VodHookSection />);
+    const labels = screen.getAllByRole('link').map((el) => el.textContent);
+    expect(labels).toEqual(Array(VOD_HOOK.cards.length).fill('자세히 보기 →'));
+  });
+
+  it('가격은 네 장 모두 "정가 29,000원 / 무료" 로 통일한다', () => {
     // 취소선만 있고 "무료" 가 없으면 유료로 읽힌다. 훅 섹션의 핵심 카피다.
-    // 반대로 아직 VOD 가 없어 정가가 없는 세미나 카드에 취소선을 그으면 허위 표시가 된다.
+    // 카드마다 표기가 갈리면 4열에서 바로 눈에 띈다(2026-08-28 요청으로 통일).
     const { container } = render(<VodHookSection />);
-    expect(container.querySelectorAll('.vodhook-price-free')).toHaveLength(
-      VOD_HOOK.cards.length,
-    );
-    expect(container.querySelectorAll('.vodhook-price-old')).toHaveLength(
-      VOD_HOOK.cards.filter((c) => c.priceOriginal).length,
-    );
+    const olds = [...container.querySelectorAll('.vodhook-price-old')];
+    const frees = [...container.querySelectorAll('.vodhook-price-free')];
+    expect(olds).toHaveLength(VOD_HOOK.cards.length);
+    expect(frees).toHaveLength(VOD_HOOK.cards.length);
+    olds.forEach((el) => expect(el).toHaveTextContent('정가 29,000원'));
+    frees.forEach((el) => expect(el).toHaveTextContent('무료'));
   });
 
   it('섹션 직후 프로모 띠를 그린다', () => {
