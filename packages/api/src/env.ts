@@ -19,17 +19,26 @@
  * - Next(Turbopack/SWC): import.meta 는 ESM 컨텍스트에서 정의되지만 .env 는 undefined → ?? fallback
  * - jest(next/jest SWC): import.meta syntax 자체는 valid, .env 는 undefined → fallback
  *
- * packages/api 는 vite/client 타입을 직접 import 하지 않으므로 import.meta.env 의
- * 임의 키 접근을 타입 보강한다.
+ * packages/api 는 vite/client 타입을 직접 import 하지 않으므로 이 파일이 실제로
+ * 접근하는 키만 타입 보강한다(위 주석대로 어차피 리터럴 키만 쓰므로 인덱스
+ * 시그니처는 불필요). 인덱스 시그니처(`[key: string]: ...`)로 보강하면
+ * web(Next.js)이 물고 오는 webpack/module.d.ts 의 `[key: string]: string |
+ * boolean | undefined` 와 값 타입이 달라 병합 시 충돌(ts2374, tsgo에서만 검출)
+ * 이 난다. 개별 프로퍼티는 인덱스 시그니처와 달리 가리키는 값이 호환되기만 하면
+ * 다른 선언과 충돌하지 않으므로 vite/client·webpack 양쪽 컨텍스트 모두 안전하다.
  *
- * ⚠️ `ImportMeta.env` 자체를 보강하면 admin/mentor 의 vite/client(또는 vite-env.d.ts)
- * 가 선언한 `readonly env: ImportMetaEnv` 와 modifier(optional)·타입(Record≠ImportMetaEnv)
- * 이 충돌해 ts(2687)/ts(2717) 가 난다. 그래서 `ImportMeta.env` 는 건드리지 않고
- * 기존 `ImportMetaEnv` 에 인덱스 시그니처만 머지한다(추가만 하므로 기존 키와 호환).
+ * `ImportMeta.env`는 vite/client(node_modules/vite/types/importMeta.d.ts)의
+ * `readonly env: ImportMetaEnv` 선언과 modifier·타입을 동일하게 맞춰 재선언한다.
  */
 declare global {
   interface ImportMetaEnv {
-    readonly [key: string]: string | undefined;
+    readonly VITE_SERVER_API?: string;
+    readonly VITE_SERVER_API_V2?: string;
+    readonly VITE_SERVER_API_V3?: string;
+    readonly VITE_API_BASE_PATH?: string;
+  }
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
   }
 }
 
