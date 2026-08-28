@@ -98,6 +98,14 @@ describe('liveMentoringReservationDetailSchema', () => {
     ).toThrow();
   });
 
+  it('mentoringCategory 가 null 이어도 통과한다 — 백필 전 기존 행', () => {
+    const parsed = liveMentoringReservationDetailSchema.parse({
+      ...DETAIL,
+      mentoringCategory: null,
+    });
+    expect(parsed.mentoringCategory).toBeNull();
+  });
+
   it('알 수 없는 멘토링 카테고리는 거부한다', () => {
     expect(() =>
       liveMentoringReservationDetailSchema.parse({

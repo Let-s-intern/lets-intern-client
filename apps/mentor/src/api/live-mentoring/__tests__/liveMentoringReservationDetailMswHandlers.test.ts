@@ -82,6 +82,11 @@ describe('멘토 1대1 예약 상세 MSW 핸들러', () => {
     expect(detail.attachmentUrl).toBeNull();
   });
 
+  it('mentoringCategory 가 null 인 건이 있다 — 백필 전 기존 행', async () => {
+    const detail = await parseDetail(91003);
+    expect(detail.mentoringCategory).toBeNull();
+  });
+
   it('questionUpdatedAt 을 내리지 않는다 — 백엔드 계약과 같다', async () => {
     const { body } = await fetchDetail(91001);
     expect(body.data).not.toHaveProperty('questionUpdatedAt');

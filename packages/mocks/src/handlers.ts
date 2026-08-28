@@ -178,7 +178,8 @@ const MENTOR_LIVE_MENTORING_RESERVATIONS = [
 
 /** 상세 mock 중 예약 정보를 뺀 나머지 — 멘티가 낸 질문·첨부. */
 interface MentorLiveMentoringSubmission {
-  mentoringCategory: 'PERSONAL_STATEMENT' | 'RESUME' | 'PORTFOLIO';
+  /** 백필 전 기존 행은 서버가 null 을 내린다. 아래 91003 이 그 경우다. */
+  mentoringCategory: 'PERSONAL_STATEMENT' | 'RESUME' | 'PORTFOLIO' | null;
   questionDeferred: boolean;
   questionContent: string | null;
   attachmentType: 'NONE' | 'FILE' | 'URL';
@@ -223,6 +224,9 @@ const mentorLiveMentoringDetail = (
  *
  * `questionUpdatedAt` 도 넣지 않는다. 백엔드가 이번에 내리지 않기로 했고(PRD 4.5),
  * 스키마는 없어도 통과하도록 열려 있다.
+ *
+ * 91003 은 `mentoringCategory` 가 null 이다. 실 데이터 대부분이 그 상태라 화면이 이 값을
+ * 조건부로 그려야 한다.
  */
 const MENTOR_LIVE_MENTORING_RESERVATION_DETAILS = [
   // 1. 질문 있음 + URL 첨부(노션) + 동의함 → 링크 버튼과 임베드가 모두 뜬다.
@@ -246,8 +250,10 @@ const MENTOR_LIVE_MENTORING_RESERVATION_DETAILS = [
     mentorShareAgreed: false,
   }),
   // 5. 나중에 작성하기 + 첨부 없음 → 빈 화면이 아니라 안내 문구가 떠야 한다.
+  //    카테고리도 null 이다 — 서버 `mentoring_category` 가 0 인 기존 행(로컬 26건 중 23건)이
+  //    이 형태로 내려온다. 화면이 카테고리 라벨을 조건부로 그리는지 여기서 확인한다.
   mentorLiveMentoringDetail(91003, {
-    mentoringCategory: 'PORTFOLIO',
+    mentoringCategory: null,
     questionDeferred: true,
     questionContent: null,
     attachmentType: 'NONE',
