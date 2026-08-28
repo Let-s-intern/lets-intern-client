@@ -15,7 +15,6 @@ import type { PeriodBarData } from '@/pages/schedule/types';
 import type { LiveFeedbackRound } from '../hooks/useLiveFeedbackList';
 import {
   LIVE_MENTORING_CHALLENGE_LABEL,
-  LIVE_MENTORING_DETAIL_DISABLED_REASON,
   LIVE_MENTORING_TH_LABEL,
   useMergedFeedbackRows,
 } from '../hooks/useMergedFeedbackRows';
@@ -143,13 +142,11 @@ describe('1대1 행 — 컬럼 매핑', () => {
     expect(row.menteeNameLabel).toBe('박멘티');
   });
 
-  it('상세는 잠기고 이유가 함께 실린다', () => {
+  it('상세를 열 수 있고 잠긴 이유가 남아 있지 않다', () => {
     const [row] = renderRows([makeReservation()]);
 
-    expect(row.canOpenDetail).toBe(false);
-    expect(row.detailDisabledReason).toBe(
-      LIVE_MENTORING_DETAIL_DISABLED_REASON,
-    );
+    expect(row.canOpenDetail).toBe(true);
+    expect(row.detailDisabledReason).toBeNull();
   });
 
   it('원본 예약을 source 에 그대로 싣는다', () => {

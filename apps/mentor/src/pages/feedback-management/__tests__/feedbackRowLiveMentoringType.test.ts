@@ -90,10 +90,10 @@ describe('FeedbackRow — 1대1 라이브 멘토링', () => {
     expect(row.thLabel).toBe('해당 없음');
   });
 
-  it('상세는 잠기고, 왜 잠겼는지가 함께 실린다', () => {
+  it('상세를 열 수 있고, 잠긴 이유가 남아 있지 않다', () => {
     const row = renderRow();
 
-    expect(row.canOpenDetail).toBe(false);
-    expect(row.detailDisabledReason).toBeTruthy();
+    expect(row.canOpenDetail).toBe(true);
+    expect(row.detailDisabledReason).toBeNull();
   });
 });
