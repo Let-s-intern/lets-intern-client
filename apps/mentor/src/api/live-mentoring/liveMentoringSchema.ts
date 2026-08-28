@@ -405,3 +405,70 @@ export const liveMentoringReservationListSchema = z.object({
 export type LiveMentoringReservationList = z.infer<
   typeof liveMentoringReservationListSchema
 >;
+
+/**
+ * 질문 첨부 종류 — 백엔드 `LiveMentoringAttachmentType`.
+ * 상수 이름이 곧 직렬화 값이다. 공개 앱
+ * (`apps/web/src/api/live-mentoring/liveMentoringSchema.ts`)과 같은 형태를 유지한다.
+ */
+export const liveMentoringAttachmentTypeSchema = z.enum([
+  'NONE',
+  'FILE',
+  'URL',
+]);
+export type LiveMentoringAttachmentType = z.infer<
+  typeof liveMentoringAttachmentTypeSchema
+>;
+
+/**
+ * 멘토가 보는 예약 1건의 상세 — 백엔드
+ * `GetMentorLiveMentoringReservationDetailResponseDto`
+ * (`GET /mentor/live-mentoring/reservations/{applicationId}`).
+ *
+ * 목록(`liveMentoringReservationSchema`)이 제출 여부만 내리는 것과 달리, 이 응답은
+ * 멘티가 낸 질문 본문과 첨부를 담는다. 목록은 캘린더가 주 단위로 계속 호출하므로
+ * 본문을 싣지 않는다 — 계약을 나누는 이유는 PRD 4.1 에 있다.
+ *
+ * **파일 첨부의 이름·주소 필드(`attachmentFileName`·`attachmentFileUrl`)를 두지 않는다.**
+ * 업로드 키가 `FileType + 원본 파일명` 이라 파일명 자체가 곧 S3 키고, 그 주소는 서명도
+ * 만료도 없는 공개 주소다. 이름을 내리는 것이 주소를 알려주는 것과 같다(PRD 4.2).
+ * `attachmentType` 이 `FILE` 이면 화면은 "냈다" 는 사실만 표시한다.
+ */
+export const liveMentoringReservationDetailSchema = z.object({
+  applicationId: z.number(),
+  menteeName: z.string(),
+  /** 상품명 스냅샷. 상품명이 바뀌어도 신청 시점 이름을 그대로 쓴다. */
+  productName: z.string(),
+  /** 진행시간(분). 30 또는 60. */
+  durationMinutes: z.number(),
+  /** ISO date-time */
+  reservationStartAt: z.string(),
+  /** ISO date-time */
+  reservationEndAt: z.string(),
+  mentoringCategory: liveMentoringCategorySchema,
+  /** 멘티가 신청 시 "나중에 작성하기" 를 골랐는지. */
+  questionDeferred: z.boolean(),
+  /** 질문 본문. 미작성이면 null. 최대 5000자. */
+  questionContent: z.string().nullable(),
+  attachmentType: liveMentoringAttachmentTypeSchema,
+  /**
+   * `attachmentType` 이 `URL` 이고 멘토 전달에 동의했을 때만 값이 온다.
+   *
+   * **동의하지 않은 건은 서버가 null 로 비운 채 내린다** — 화면에서 가리는 것이 아니다.
+   * 값을 내려놓고 감추면 응답 본문에 남아 개발자 도구로 보인다(PRD 4.4).
+   * `attachmentType` 은 그대로 오므로 화면은 "냈지만 동의하지 않았다" 를 구분해 안내한다.
+   */
+  attachmentUrl: z.string().nullable(),
+  /** 첨부를 멘토에게 전달하는 데 동의했는지. 질문 본문은 이 동의와 무관하다. */
+  mentorShareAgreed: z.boolean(),
+  /**
+   * 질문 최종 수정 시각. **이번 백엔드 작업에서는 내리지 않기로 했다**(PRD 4.5, 9-2).
+   * `Application` 의 `lastModifiedDate` 는 결제 승인·취소로도 움직여 "질문이 바뀌었다" 는
+   * 거짓 신호를 준다. 질문 전용 컬럼 추가는 스키마 변경이라 범위를 넘는다.
+   * 나중에 붙을 때 계약을 다시 고치지 않도록 nullish 로 열어 둔다 — 없어도 파싱이 통과한다.
+   */
+  questionUpdatedAt: z.string().nullish(),
+});
+export type LiveMentoringReservationDetail = z.infer<
+  typeof liveMentoringReservationDetailSchema
+>;
