@@ -108,7 +108,7 @@
   font-weight: 700;
   color: var(--lc-ink);
 }
-/* 할인율 배지 — 정가·판매가에서 계산한 값이 들어온다(184,900원 기준 "80% 할인") */
+/* 할인율 배지 — 정가·판매가에서 계산한 값이 들어온다(184,000원 기준 "80% 할인") */
 .membership-root .allpass-badge {
   font-size: 12px;
   font-weight: 700;

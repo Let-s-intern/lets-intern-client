@@ -16,7 +16,7 @@ export const PLAN_PRICE = {
   /** 정가 (취소선) — 개별 구매 합계 */
   original: 938300,
   /** 판매가. 얼리버드(169,900원)는 2026-08-27 로 종료됐다 */
-  sale: 184900,
+  sale: 184000,
 } as const;
 
 export const PLAN_NAME = '하반기 공채 준비 올인원 패스';
