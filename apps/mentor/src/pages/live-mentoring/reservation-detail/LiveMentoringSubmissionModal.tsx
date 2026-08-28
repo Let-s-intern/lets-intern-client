@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useLiveMentoringReservationDetailQuery } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import BaseModal from '@/common/modal/BaseModal';
+import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
 import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
 import { isNotionUrl } from '@/pages/feedback/utils/notion';
 
@@ -103,16 +105,16 @@ const QuestionSection = ({
     : '';
 
   return (
-    <section>
+    <section className={feedbackModalDesign.cardSurface}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h3 className="text-sm font-bold text-neutral-900">멘티 질문</h3>
+        <span className={feedbackModalDesign.fieldLabel}>멘티 질문</span>
         {updatedAtLabel && (
           <p className="text-xs text-neutral-400">최종 수정 {updatedAtLabel}</p>
         )}
       </div>
-      <div className="mt-2 rounded-lg bg-gray-50 px-4 py-3">
+      <div className="mt-2">
         {hasQuestion(detail) ? (
-          <p className="whitespace-pre-wrap break-words text-sm leading-6 text-neutral-700">
+          <p className={twMerge(feedbackModalDesign.qnaBody, 'break-words')}>
             {detail.questionContent}
           </p>
         ) : (
@@ -151,9 +153,7 @@ function isOpenableUrl(url: string): boolean {
 
 /** 첨부 영역의 안내 문구 한 줄. 어느 분기에서도 빈 영역을 남기지 않는다. */
 const AttachmentNotice = ({ children }: { children: string }) => (
-  <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm leading-6 text-neutral-500">
-    {children}
-  </p>
+  <p className="text-sm leading-6 text-neutral-500">{children}</p>
 );
 
 /**
@@ -213,7 +213,7 @@ const AttachmentSection = ({
             href={attachmentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-gray-50"
+            className={feedbackModalDesign.panelEntryButton}
           >
             새 탭에서 열기
           </a>
@@ -221,7 +221,7 @@ const AttachmentSection = ({
             <button
               type="button"
               onClick={() => setIsEmbedOpen((open) => !open)}
-              className="inline-flex items-center rounded px-2 py-1.5 text-xs font-medium text-neutral-500 hover:bg-gray-50"
+              className="inline-flex items-center rounded px-2 py-1.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50"
             >
               {isEmbedOpen ? '미리보기 접기' : '미리보기 펼치기'}
             </button>
@@ -247,9 +247,68 @@ const AttachmentSection = ({
   };
 
   return (
-    <section>
-      <h3 className="text-sm font-bold text-neutral-900">첨부 자료</h3>
+    <section className={feedbackModalDesign.cardSurface}>
+      <span className={feedbackModalDesign.fieldLabel}>첨부 자료</span>
       <div className="mt-2">{renderBody()}</div>
+    </section>
+  );
+};
+
+/**
+ * 예약 요약 카드 — 멘티명, 상품·카테고리·시간, 제출 상태, 예약 일시.
+ *
+ * 라이브 피드백 예약 모달의 멘티 정보 카드와 같은 어휘를 쓴다(큰 이름 + 작은 프로그램명,
+ * 라벨 위 값 아래의 2열, 상태 점). 멘토가 두 종류의 세션을 오갈 때 같은 자리에서 같은
+ * 정보를 찾을 수 있어야 한다.
+ */
+const ReservationSummaryCard = ({
+  detail,
+  metaLine,
+}: {
+  detail: LiveMentoringReservationDetail;
+  metaLine: string;
+}) => {
+  const summary = submissionSummary(detail);
+
+  return (
+    <section className={twMerge(feedbackModalDesign.cardSurface, 'shrink-0')}>
+      <div className="flex flex-wrap items-baseline gap-2">
+        <h2 className="text-lg font-semibold text-neutral-900 md:text-2xl">
+          {detail.menteeName}
+        </h2>
+        {metaLine && (
+          <span className="text-xs font-medium text-neutral-500">
+            {metaLine}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <span className={feedbackModalDesign.fieldLabel}>제출 상태</span>
+          <div className="flex items-center gap-1.5 text-sm">
+            <span
+              className={twMerge(
+                feedbackModalDesign.dotBase,
+                summary === '미제출'
+                  ? feedbackModalDesign.dotNone
+                  : feedbackModalDesign.dotOk,
+              )}
+            />
+            <span className="font-medium text-neutral-700">{summary}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className={feedbackModalDesign.fieldLabel}>예약 일시</span>
+          <span className="text-sm font-medium text-neutral-700">
+            {formatReservationPeriod(
+              detail.reservationStartAt,
+              detail.reservationEndAt,
+            )}
+          </span>
+        </div>
+      </div>
     </section>
   );
 };
@@ -292,47 +351,45 @@ const SubmissionModalBody = ({
     : '';
 
   return (
-    <BaseModal isOpen onClose={onClose} className="mx-4 w-full max-w-3xl">
-      {/*
-        긴 질문 본문은 이 안에서만 세로로 스크롤한다. 가로는 잘라 낸다 — 본문이 넘쳐
-        페이지가 옆으로 밀리면 모달 밖 화면까지 함께 흔들린다.
-      */}
-      <div
-        className="flex max-h-[85vh] flex-col overflow-y-auto overflow-x-hidden"
-        data-testid="submission-modal-scroll"
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
-          <div className="min-w-0">
-            <h2 className="text-base font-bold text-neutral-900">
-              {data ? `${data.menteeName} 님의 제출물` : '멘티 제출물'}
-            </h2>
-            {data && (
-              <p className="mt-1 break-words text-sm leading-6 text-neutral-500">
-                {metaLine}
-                <br />
-                {formatReservationPeriod(
-                  data.reservationStartAt,
-                  data.reservationEndAt,
-                )}
-              </p>
-            )}
-            {data && (
-              <p className="text-primary bg-primary-10 mt-2 inline-block rounded px-2 py-0.5 text-xs font-medium">
-                {submissionSummary(data)}
-              </p>
-            )}
-          </div>
+    <BaseModal
+      isOpen
+      onClose={onClose}
+      className={twMerge(
+        feedbackModalDesign.modalContainer,
+        // 1대1 은 질문·첨부만 담아 기준 모달(1040px)만큼 넓을 필요가 없다.
+        // 라운드·여백·타이포는 토큰 그대로 두어 같은 제품으로 읽히게 한다.
+        'w-[760px] md:h-[660px]',
+      )}
+    >
+      <div className="flex h-full flex-col">
+        {/*
+          헤더 — FeedbackHeader 와 같은 여백·타이포를 쓴다. 다만 그 컴포넌트를 그대로
+          쓰지는 않는다. 멘티 여러 명을 오가는 모달용이라 총원·진행 상태 카운터를
+          요구하는데, 1대1 은 예약 한 건이라 채울 값이 없다(PRD 4.4).
+        */}
+        <div className="flex shrink-0 items-center gap-3 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
+          <span className="shrink-0 text-xs font-medium text-neutral-700">
+            1대1 라이브 멘토링
+          </span>
+          <div className="flex-1" />
           <button
             type="button"
             onClick={onClose}
             aria-label="제출물 모달 닫기"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+            className="shrink-0 p-1 text-neutral-500 hover:text-neutral-700"
           >
             <CloseIcon />
           </button>
         </div>
 
-        <div className="flex flex-col gap-5 px-5 py-5">
+        {/*
+          긴 질문 본문은 이 안에서만 세로로 스크롤한다. 가로는 잘라 낸다 — 본문이 넘쳐
+          페이지가 옆으로 밀리면 모달 밖 화면까지 함께 흔들린다.
+        */}
+        <div
+          className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overflow-x-hidden px-4 pb-4 md:px-6 md:pb-6"
+          data-testid="submission-modal-scroll"
+        >
           {isLoading && (
             <p className="py-8 text-center text-sm text-neutral-500">
               제출물을 불러오는 중입니다...
@@ -345,6 +402,7 @@ const SubmissionModalBody = ({
           )}
           {data && (
             <>
+              <ReservationSummaryCard detail={data} metaLine={metaLine} />
               <QuestionSection detail={data} />
               <AttachmentSection detail={data} />
             </>

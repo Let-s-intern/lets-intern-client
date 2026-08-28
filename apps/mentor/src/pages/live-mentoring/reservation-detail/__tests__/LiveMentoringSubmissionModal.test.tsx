@@ -66,7 +66,24 @@ describe('LiveMentoringSubmissionModal — 껍데기와 데이터 연결', () =>
     renderModal(91001);
 
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
-    expect(screen.getByText('김일대 님의 제출물')).toBeInTheDocument();
+    // 라이브 피드백 예약 모달과 같은 어휘 — 헤더는 세션 종류, 카드는 멘티 이름.
+    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: '김일대', level: 2 }),
+    ).toBeInTheDocument();
+  });
+
+  // 라이브 피드백 예약 모달과 같은 디자인 토큰을 쓴다. 여기서 어긋나면 멘토가
+  // 두 종류의 세션을 오갈 때 다른 제품처럼 보인다.
+  it('요약·질문·첨부를 같은 카드 표면으로 그린다', () => {
+    renderModal(91001);
+
+    const dialog = screen.getByRole('dialog');
+    // feedbackModalDesign.cardSurface
+    const cards = dialog.querySelectorAll(
+      '.border-neutral-80.rounded-\\[4px\\]',
+    );
+    expect(cards.length).toBeGreaterThanOrEqual(3);
   });
 
   it('applicationId 가 null 이면 아무것도 렌더하지 않는다', () => {
@@ -89,14 +106,17 @@ describe('LiveMentoringSubmissionModal — 껍데기와 데이터 연결', () =>
     expect(detailQueryMock).not.toHaveBeenCalled();
   });
 
-  it('헤더에 상품명·카테고리·일시·진행시간을 함께 보여 준다', () => {
+  it('요약 카드에 상품명·카테고리·진행시간과 예약 일시를 보여 준다', () => {
     renderModal(91001);
 
+    // 상품·카테고리·진행시간은 이름 옆 한 줄로, 예약 일시는 라벨 붙은 칸으로 나뉜다
+    // (라이브 피드백 예약 모달과 같은 배치).
     const meta = screen.getByText(/자소서 실전 첨삭 멘토링/);
     expect(meta).toHaveTextContent('자기소개서');
-    expect(meta).toHaveTextContent('2026.08.30');
-    expect(meta).toHaveTextContent('10:00 ~ 11:00');
     expect(meta).toHaveTextContent('60분');
+
+    expect(screen.getByText('예약 일시')).toBeInTheDocument();
+    expect(screen.getByText(/2026\.08\.30.*10:00 ~ 11:00/)).toBeInTheDocument();
   });
 
   it('카테고리가 null 이면 그 자리를 그리지 않는다 — 나머지는 그대로다', () => {
@@ -430,8 +450,9 @@ describe('LiveMentoringSubmissionModal — 좁은 폭', () => {
     mockDetail({ questionContent: LONG_QUESTION });
     renderModal(91001);
 
+    // 모달 높이는 컨테이너 토큰이 고정하고(h-[85vh]), 본문은 그 안에서만 늘어난다.
     const scroller = screen.getByTestId('submission-modal-scroll');
-    expect(scroller).toHaveClass('max-h-[85vh]');
+    expect(scroller).toHaveClass('min-h-0');
     expect(scroller).toHaveClass('overflow-y-auto');
     expect(scroller).toHaveClass('overflow-x-hidden');
   });
@@ -448,10 +469,12 @@ describe('LiveMentoringSubmissionModal — 좁은 폭', () => {
   it('모달 자체가 화면 폭을 넘지 않는다', () => {
     renderModal(91001);
 
-    const panel = screen.getByRole('dialog').querySelector('.max-w-3xl');
+    // 고정 폭(w-[760px])을 쓰지만 화면이 좁으면 max-w-full 이 먼저 이긴다.
+    // 이 클래스가 빠지면 좁은 화면에서 모달이 뷰포트를 넘어 가로 스크롤이 생긴다.
+    const panel = screen.getByRole('dialog').querySelector('.max-w-full');
     expect(panel).not.toBeNull();
-    expect(panel).toHaveClass('w-full');
-    expect(panel).toHaveClass('mx-4');
+    expect(panel).toHaveClass('w-[760px]');
+    expect(panel).toHaveClass('overflow-hidden');
   });
 
   // `fit="native"` 는 컨테이너 실제 폭으로 렌더한다 — 좁은 폭에서 노션이 반응형
