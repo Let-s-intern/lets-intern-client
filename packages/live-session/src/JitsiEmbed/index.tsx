@@ -80,7 +80,19 @@ const CONFIG_OVERWRITE = {
   },
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
-  prejoinPageEnabled: false,
+  /*
+   * 프리조인("Join meeting") 화면 비활성 — 입장 버튼을 누르면 바로 회의에 들어간다.
+   *
+   * 예전 키 `prejoinPageEnabled` 는 현재 Jitsi 가 읽지 않는다. 두 배포 서버
+   * (jitsi-meet.letscareer.co.kr, fallback) 모두 config.js 가 `prejoinConfig` 만
+   * 정의하고 기본값이 `enabled: true` 라, 옛 키로는 프리조인이 그대로 떴다.
+   *
+   * 이게 후기 유도를 조용히 죽이고 있었다. 후기 모달은 `videoConferenceJoined`
+   * 이벤트로만 열리는데(아래 onApiReady 참고), 프리조인 화면에 머무는 동안에는
+   * 그 이벤트가 발화하지 않는다. 사용자는 "회의에 들어갔다 나왔는데 후기 창이
+   * 안 뜬다"고 느낀다.
+   */
+  prejoinConfig: { enabled: false },
   /*
    * P2P 비활성 — 항상 JVB(미디어 서버)를 거치게 한다.
    *

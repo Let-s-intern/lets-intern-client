@@ -34,7 +34,7 @@ function toSlotStatus(
 ): SlotStatus {
   if (new Date(startDate) <= new Date()) return 'expired';
   if (apiStatus === 'OPEN') return 'available';
-  if (apiStatus === 'BOOKED') return 'booked';
+  if (apiStatus === 'RESERVED') return 'booked';
   return 'unavailable';
 }
 
