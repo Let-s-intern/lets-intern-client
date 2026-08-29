@@ -1,7 +1,10 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { z } from 'zod';
+
 import {
+  type LiveMentoringAttendanceStatus,
   type LiveMentoringOpeningCreate,
   type LiveMentoringSettingsUpdate,
   type LiveMentoringTemplateUpdate,
@@ -103,6 +106,87 @@ export const useLiveMentoringReservationDetailQuery = (
     },
     enabled: applicationId !== null,
     refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * PATCH /mentor/live-mentoring/reservations/{applicationId}/attendance — 출석 부분 갱신.
+ *
+ * 두 필드 모두 선택이다. 멘토가 라이브에 입장할 때는 `mentorStatus` 만 보내고, 넘기지
+ * 않은 쪽은 서버가 건드리지 않는다. 라이브 피드백의 출석 갱신과 같은 계약이다.
+ */
+export const useUpdateLiveMentoringAttendanceMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      mentorStatus,
+      menteeStatus,
+    }: {
+      applicationId: number;
+      mentorStatus?: LiveMentoringAttendanceStatus;
+      menteeStatus?: LiveMentoringAttendanceStatus;
+    }) => {
+      // 정의된 필드만 실어 보낸다. undefined 를 그대로 담으면 서버가 "비우라" 로 읽을
+      // 여지가 생긴다.
+      const body: Record<string, string> = {};
+      if (mentorStatus) body.mentorStatus = mentorStatus;
+      if (menteeStatus) body.menteeStatus = menteeStatus;
+      await axios.patch(
+        `${RESERVATIONS_PATH}/${applicationId}/attendance`,
+        body,
+      );
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...LIVE_MENTORING_RESERVATIONS_QUERY_KEY,
+          'detail',
+          variables.applicationId,
+        ],
+      });
+      // 목록도 제출·출석 표시를 함께 쓰므로 같이 갱신한다.
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_RESERVATIONS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+/**
+ * PATCH /mentor/live-mentoring/reservations/{applicationId}/meeting-url — 회의실 생성.
+ *
+ * **base 주소만 보낸다.** 서버가 방 이름을 만들어 뒤에 붙인다. 방 이름을 클라이언트가
+ * 정하면 남의 예약과 같은 방을 지목해 세션에 끼어들 수 있다. 이미 회의실이 있으면
+ * 서버가 덮어쓰지 않고 기존 주소를 그대로 돌려준다.
+ */
+export const useCreateLiveMentoringMeetingRoomMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      meetingUrlBase,
+    }: {
+      applicationId: number;
+      meetingUrlBase: string;
+    }) => {
+      const res = await axios.patch(
+        `${RESERVATIONS_PATH}/${applicationId}/meeting-url`,
+        { meetingUrlBase },
+      );
+      return z.string().parse(res.data.data);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...LIVE_MENTORING_RESERVATIONS_QUERY_KEY,
+          'detail',
+          variables.applicationId,
+        ],
+      });
+    },
   });
 };
 

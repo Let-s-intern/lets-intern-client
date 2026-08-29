@@ -5,6 +5,7 @@ import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
@@ -19,6 +20,9 @@ const ReservationDetailModal = lazy(
 );
 const ReservationRescheduleModal = lazy(
   () => import('./ui/ReservationRescheduleModal'),
+);
+const LiveMentoringReservationRescheduleModal = lazy(
+  () => import('./ui/LiveMentoringReservationRescheduleModal'),
 );
 import {
   INITIAL_FILTER,
@@ -97,6 +101,8 @@ export default function ReservationManagement({
   // 예약 변경 모달 대상. 슬롯 조회·일시 표시에 행 전체(mentorId 포함)가 필요하다.
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
+  const [liveMentoringRescheduleTarget, setLiveMentoringRescheduleTarget] =
+    useState<AdminLiveMentoringReservation | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   // 멘토는 전용 API(/admin/user/mentor, 서버 isMentor 필터)를 쓴다.
@@ -183,6 +189,7 @@ export default function ReservationManagement({
           onToggleSort={toggleSort}
           onView={setSelectedRow}
           onReschedule={setRescheduleTarget}
+          onLiveMentoringReschedule={setLiveMentoringRescheduleTarget}
           isLoading={isLoading}
         />
       ) : (
@@ -199,10 +206,16 @@ export default function ReservationManagement({
           row={selectedRow}
           onClose={() => setSelectedRow(null)}
           onReschedule={() => {
-            if (selectedRow?.kind !== 'CHALLENGE') return;
-            const target = selectedRow.feedback;
+            if (selectedRow == null) return;
+            if (selectedRow.kind === 'CHALLENGE') {
+              const target = selectedRow.feedback;
+              setSelectedRow(null);
+              setRescheduleTarget(target);
+              return;
+            }
+            const target = selectedRow.reservation;
             setSelectedRow(null);
-            setRescheduleTarget(target);
+            setLiveMentoringRescheduleTarget(target);
           }}
         />
       </Suspense>
@@ -212,6 +225,15 @@ export default function ReservationManagement({
           <ReservationRescheduleModal
             feedback={rescheduleTarget}
             onClose={() => setRescheduleTarget(null)}
+          />
+        </Suspense>
+      )}
+
+      {liveMentoringRescheduleTarget && (
+        <Suspense fallback={null}>
+          <LiveMentoringReservationRescheduleModal
+            reservation={liveMentoringRescheduleTarget}
+            onClose={() => setLiveMentoringRescheduleTarget(null)}
           />
         </Suspense>
       )}

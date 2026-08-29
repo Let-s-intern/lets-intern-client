@@ -102,6 +102,19 @@ export type LiveMentoringApplicationStatus = z.infer<
  * 60분 플랜은 연속한 슬롯 두 개를 한 구간으로 합쳐 내려오고, 점유한 슬롯이 없으면 null 이다.
  * `contactEmail` 은 신청서에 적은 연락용 이메일이라 계정 이메일(`menteeEmail`)과 다를 수 있다.
  */
+/**
+ * 출석 상태 — 서버 `FeedbackAttendanceStatus` 와 같은 값이다. 라이브 피드백
+ * (`FeedbackAdminVo.mentorStatus`)과 같은 세 값을 쓴다.
+ */
+export const liveMentoringAttendanceStatusSchema = z.enum([
+  'PENDING',
+  'PRESENT',
+  'ABSENT',
+]);
+export type LiveMentoringAttendanceStatus = z.infer<
+  typeof liveMentoringAttendanceStatusSchema
+>;
+
 export const adminLiveMentoringReservationSchema = z.object({
   applicationId: z.number(),
   liveMentoringId: z.number(),
@@ -123,6 +136,8 @@ export const adminLiveMentoringReservationSchema = z.object({
   /** 사전 질문을 나중에 보내겠다고 미룬 신청. true 면 `questionContent` 는 비어 있다. */
   questionDeferred: z.boolean().nullable(),
   questionContent: z.string().nullable(),
+  mentorStatus: liveMentoringAttendanceStatusSchema,
+  menteeStatus: liveMentoringAttendanceStatusSchema,
 });
 export type AdminLiveMentoringReservation = z.infer<
   typeof adminLiveMentoringReservationSchema

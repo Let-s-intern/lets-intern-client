@@ -1,12 +1,29 @@
+import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 import { useEffect, useState } from 'react';
 
-import { useLiveMentoringReservationDetailQuery } from '@/api/live-mentoring/liveMentoring';
+import {
+  useCreateLiveMentoringMeetingRoomMutation,
+  useLiveMentoringReservationDetailQuery,
+  useUpdateLiveMentoringAttendanceMutation,
+} from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import BaseModal from '@/common/modal/BaseModal';
+import { twMerge } from '@/lib/twMerge';
+import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdown';
 import MenteeLinkPanel from '@/pages/feedback/ui/MenteeLinkPanel';
 import { isNotionUrl } from '@/pages/feedback/utils/notion';
+import JitsiEmbedModal from '@/pages/schedule/modal/JitsiEmbedModal';
 
 import { CATEGORY_LABELS, durationLabel } from '../constants';
+
+/**
+ * 라이브 입장 활성 리드타임 — 시작 20분 전부터.
+ *
+ * 라이브 피드백 모달과 같은 값이다. 두 화면이 다른 규칙을 쓰면 멘토가 한쪽에서만
+ * 버튼이 살아나는 이유를 알 수 없다.
+ */
+const LIVE_ENTER_LEAD_MS = 20 * 60 * 1000;
 
 interface LiveMentoringSubmissionModalProps {
   /** 열려는 예약의 신청 id. `null` 이면 모달이 닫힌 상태이며 조회도 하지 않는다. */
@@ -103,16 +120,16 @@ const QuestionSection = ({
     : '';
 
   return (
-    <section>
+    <section className={feedbackModalDesign.cardSurface}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h3 className="text-sm font-bold text-neutral-900">멘티 질문</h3>
+        <span className={feedbackModalDesign.fieldLabel}>멘티 질문</span>
         {updatedAtLabel && (
           <p className="text-xs text-neutral-400">최종 수정 {updatedAtLabel}</p>
         )}
       </div>
-      <div className="mt-2 rounded-lg bg-gray-50 px-4 py-3">
+      <div className="mt-2">
         {hasQuestion(detail) ? (
-          <p className="whitespace-pre-wrap break-words text-sm leading-6 text-neutral-700">
+          <p className={twMerge(feedbackModalDesign.qnaBody, 'break-words')}>
             {detail.questionContent}
           </p>
         ) : (
@@ -151,9 +168,7 @@ function isOpenableUrl(url: string): boolean {
 
 /** 첨부 영역의 안내 문구 한 줄. 어느 분기에서도 빈 영역을 남기지 않는다. */
 const AttachmentNotice = ({ children }: { children: string }) => (
-  <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm leading-6 text-neutral-500">
-    {children}
-  </p>
+  <p className="text-sm leading-6 text-neutral-500">{children}</p>
 );
 
 /**
@@ -213,7 +228,7 @@ const AttachmentSection = ({
             href={attachmentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-gray-50"
+            className={feedbackModalDesign.panelEntryButton}
           >
             새 탭에서 열기
           </a>
@@ -221,7 +236,7 @@ const AttachmentSection = ({
             <button
               type="button"
               onClick={() => setIsEmbedOpen((open) => !open)}
-              className="inline-flex items-center rounded px-2 py-1.5 text-xs font-medium text-neutral-500 hover:bg-gray-50"
+              className="inline-flex items-center rounded px-2 py-1.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50"
             >
               {isEmbedOpen ? '미리보기 접기' : '미리보기 펼치기'}
             </button>
@@ -247,9 +262,68 @@ const AttachmentSection = ({
   };
 
   return (
-    <section>
-      <h3 className="text-sm font-bold text-neutral-900">첨부 자료</h3>
+    <section className={feedbackModalDesign.cardSurface}>
+      <span className={feedbackModalDesign.fieldLabel}>첨부 자료</span>
       <div className="mt-2">{renderBody()}</div>
+    </section>
+  );
+};
+
+/**
+ * 예약 요약 카드 — 멘티명, 상품·카테고리·시간, 제출 상태, 예약 일시.
+ *
+ * 라이브 피드백 예약 모달의 멘티 정보 카드와 같은 어휘를 쓴다(큰 이름 + 작은 프로그램명,
+ * 라벨 위 값 아래의 2열, 상태 점). 멘토가 두 종류의 세션을 오갈 때 같은 자리에서 같은
+ * 정보를 찾을 수 있어야 한다.
+ */
+const ReservationSummaryCard = ({
+  detail,
+  metaLine,
+}: {
+  detail: LiveMentoringReservationDetail;
+  metaLine: string;
+}) => {
+  const summary = submissionSummary(detail);
+
+  return (
+    <section className={twMerge(feedbackModalDesign.cardSurface, 'shrink-0')}>
+      <div className="flex flex-wrap items-baseline gap-2">
+        <h2 className="text-lg font-semibold text-neutral-900 md:text-2xl">
+          {detail.menteeName}
+        </h2>
+        {metaLine && (
+          <span className="text-xs font-medium text-neutral-500">
+            {metaLine}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <span className={feedbackModalDesign.fieldLabel}>제출 상태</span>
+          <div className="flex items-center gap-1.5 text-sm">
+            <span
+              className={twMerge(
+                feedbackModalDesign.dotBase,
+                summary === '미제출'
+                  ? feedbackModalDesign.dotNone
+                  : feedbackModalDesign.dotOk,
+              )}
+            />
+            <span className="font-medium text-neutral-700">{summary}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className={feedbackModalDesign.fieldLabel}>예약 일시</span>
+          <span className="text-sm font-medium text-neutral-700">
+            {formatReservationPeriod(
+              detail.reservationStartAt,
+              detail.reservationEndAt,
+            )}
+          </span>
+        </div>
+      </div>
     </section>
   );
 };
@@ -270,14 +344,91 @@ const SubmissionModalBody = ({
 }) => {
   const { data, isLoading, isError } =
     useLiveMentoringReservationDetailQuery(applicationId);
+  const { mutateAsync: createMeetingRoom } =
+    useCreateLiveMentoringMeetingRoomMutation();
+  const { mutate: updateAttendance } =
+    useUpdateLiveMentoringAttendanceMutation();
+
+  const [isJitsiOpen, setIsJitsiOpen] = useState(false);
+  const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  // 입장 실패를 모달 안에 남긴다. 멘토 앱에는 토스트 인프라가 없어 alert 로 띄우면
+  // 화면 밖으로 사라지고, 왜 못 들어갔는지 다시 볼 방법이 없다.
+  const [enterError, setEnterError] = useState<string | null>(null);
+
+  const countdown = useFeedbackCountdown(
+    data?.reservationStartAt ?? null,
+    data?.reservationEndAt ?? null,
+  );
+
+  // 입장 게이트 — 시작 20분 전부터 종료 전까지만 활성. 라이브 피드백과 같은 리드타임을
+  // 쓴다. 두 화면이 다른 규칙이면 멘토가 "왜 저기선 되고 여기선 안 되지" 를 겪는다.
+  const canEnterLive =
+    !isPreparingRoom &&
+    (countdown.status === 'during' ||
+      (countdown.status === 'before' &&
+        countdown.remainingMs <= LIVE_ENTER_LEAD_MS));
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      // Jitsi 가 떠 있으면 Esc 는 그쪽이 먼저 받는다. 뒤에 있는 모달까지 함께 닫으면
+      // 회의만 나가려던 멘토가 제출물 화면을 통째로 잃는다.
+      if (event.key === 'Escape' && !isJitsiOpen) onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onClose, isJitsiOpen]);
+
+  /**
+   * "라이브 입장하기" — 라이브 피드백과 같은 공통 로직(`ensureLiveMeetingUrl`)을 쓴다.
+   *
+   * 회의실이 아직 없어도 입장할 수 있다. 누르는 순간 헬스체크로 살아 있는 도메인을
+   * 고르고 그 base 를 서버에 보내 방을 만든다. 이미 있으면(상대가 먼저 들어와 만들었으면)
+   * 서버가 기존 주소를 그대로 돌려준다. 둘 다 상대를 기다리는 데드락이 생기지 않는다.
+   */
+  const handleEnterLive = async () => {
+    if (isPreparingRoom) return;
+
+    setIsPreparingRoom(true);
+    try {
+      const result = await ensureLiveMeetingUrl({
+        meetingUrl: data?.meetingUrl ?? null,
+        baseCandidates: [
+          import.meta.env.VITE_JITSI_BASE_URL,
+          import.meta.env.VITE_JITSI_FALLBACK_URL,
+        ],
+        // 서버가 base + 방 이름을 합성한다. 프론트는 base 만 보낸다.
+        registerBaseUrl: async (base) => {
+          await createMeetingRoom({ applicationId, meetingUrlBase: base });
+        },
+      });
+      if (!result.ok) {
+        setEnterError(
+          '회의실에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.',
+        );
+        return;
+      }
+      setEnterError(null);
+      // 멘토 입장은 곧 출석이다. 이미 PRESENT 면 다시 보내지 않는다.
+      // 실패해도 입장은 막지 않는다 — 출석은 부수적 기록이다.
+      if (data?.mentorStatus !== 'PRESENT') {
+        updateAttendance(
+          { applicationId, mentorStatus: 'PRESENT' },
+          {
+            onError: (err) =>
+              console.warn('멘토 출석 자동 기록 실패(입장은 계속 진행):', err),
+          },
+        );
+      }
+      setIsJitsiOpen(true);
+    } catch (error) {
+      console.error('라이브 입장 준비 중 오류:', error);
+      setEnterError(
+        '회의실 연결을 준비하지 못했습니다. 잠시 후 다시 시도해주세요.',
+      );
+    } finally {
+      setIsPreparingRoom(false);
+    }
+  };
 
   // 카테고리는 null 로 올 수 있다 — 기존 행이 유효 코드 밖인 0 이라 서버가 null 을 내린다.
   // 그 자리를 빈 칸으로 남기지 않고 항목 자체를 뺀다.
@@ -291,67 +442,145 @@ const SubmissionModalBody = ({
         .join(' · ')
     : '';
 
+  // 회의 중 옆에 띄울 제출물 — 링크로 열 수 있는 건만 넘긴다. 동의하지 않은 건은
+  // 서버가 주소를 비워 내리므로 여기서 가릴 것도 없다.
+  const sharedSubmissionUrl =
+    data?.attachmentType === 'URL' &&
+    data.mentorShareAgreed &&
+    data.attachmentUrl &&
+    isOpenableUrl(data.attachmentUrl)
+      ? data.attachmentUrl
+      : undefined;
+
   return (
-    <BaseModal isOpen onClose={onClose} className="mx-4 w-full max-w-3xl">
-      {/*
-        긴 질문 본문은 이 안에서만 세로로 스크롤한다. 가로는 잘라 낸다 — 본문이 넘쳐
-        페이지가 옆으로 밀리면 모달 밖 화면까지 함께 흔들린다.
-      */}
-      <div
-        className="flex max-h-[85vh] flex-col overflow-y-auto overflow-x-hidden"
-        data-testid="submission-modal-scroll"
+    <>
+      <BaseModal
+        isOpen
+        onClose={onClose}
+        className={twMerge(
+          feedbackModalDesign.modalContainer,
+          // 1대1 은 질문·첨부만 담아 기준 모달(1040px)만큼 넓을 필요가 없다.
+          // 라운드·여백·타이포는 토큰 그대로 두어 같은 제품으로 읽히게 한다.
+          'w-[760px] md:h-[660px]',
+        )}
       >
-        <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
-          <div className="min-w-0">
-            <h2 className="text-base font-bold text-neutral-900">
-              {data ? `${data.menteeName} 님의 제출물` : '멘티 제출물'}
-            </h2>
-            {data && (
-              <p className="mt-1 break-words text-sm leading-6 text-neutral-500">
-                {metaLine}
-                <br />
-                {formatReservationPeriod(
-                  data.reservationStartAt,
-                  data.reservationEndAt,
-                )}
+        <div className="flex h-full flex-col">
+          {/*
+          헤더 — FeedbackHeader 와 같은 여백·타이포를 쓴다. 다만 그 컴포넌트를 그대로
+          쓰지는 않는다. 멘티 여러 명을 오가는 모달용이라 총원·진행 상태 카운터를
+          요구하는데, 1대1 은 예약 한 건이라 채울 값이 없다(PRD 4.4).
+        */}
+          <div className="flex shrink-0 items-center gap-3 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
+            <span className="shrink-0 text-xs font-medium text-neutral-700">
+              1대1 라이브 멘토링
+            </span>
+            <div className="flex-1" />
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="제출물 모달 닫기"
+              className="shrink-0 p-1 text-neutral-500 hover:text-neutral-700"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+
+          {/*
+          긴 질문 본문은 이 안에서만 세로로 스크롤한다. 가로는 잘라 낸다 — 본문이 넘쳐
+          페이지가 옆으로 밀리면 모달 밖 화면까지 함께 흔들린다.
+        */}
+          <div
+            className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overflow-x-hidden px-4 pb-4 md:px-6 md:pb-6"
+            data-testid="submission-modal-scroll"
+          >
+            {isLoading && (
+              <p className="py-8 text-center text-sm text-neutral-500">
+                제출물을 불러오는 중입니다...
+              </p>
+            )}
+            {isError && (
+              <p className="py-8 text-center text-sm text-neutral-500">
+                제출물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
               </p>
             )}
             {data && (
-              <p className="text-primary bg-primary-10 mt-2 inline-block rounded px-2 py-0.5 text-xs font-medium">
-                {submissionSummary(data)}
-              </p>
+              <>
+                <ReservationSummaryCard detail={data} metaLine={metaLine} />
+                <QuestionSection detail={data} />
+                <AttachmentSection detail={data} />
+              </>
             )}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="제출물 모달 닫기"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
-          >
-            <CloseIcon />
-          </button>
-        </div>
 
-        <div className="flex flex-col gap-5 px-5 py-5">
-          {isLoading && (
-            <p className="py-8 text-center text-sm text-neutral-500">
-              제출물을 불러오는 중입니다...
-            </p>
-          )}
-          {isError && (
-            <p className="py-8 text-center text-sm text-neutral-500">
-              제출물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
-            </p>
-          )}
           {data && (
-            <>
-              <QuestionSection detail={data} />
-              <AttachmentSection detail={data} />
-            </>
+            <div
+              className={twMerge(
+                feedbackModalDesign.dividerTop,
+                'flex shrink-0 flex-wrap items-center justify-end gap-3 px-4 py-3 md:px-6',
+              )}
+            >
+              {enterError && (
+                <p className="mr-auto text-xs text-red-500">{enterError}</p>
+              )}
+              {!enterError &&
+                countdown.status === 'before' &&
+                countdown.label && (
+                  // label 이 이미 "N시간 M분 후 시작" 까지 담고 있다. 여기에 문구를
+                  // 더 붙이면 "…후 시작 뒤 시작" 이 된다.
+                  <p className="mr-auto text-xs text-neutral-500">
+                    {countdown.label}
+                  </p>
+                )}
+              <button
+                type="button"
+                onClick={handleEnterLive}
+                disabled={!canEnterLive}
+                aria-label="라이브 입장하기"
+                className={
+                  canEnterLive
+                    ? feedbackModalDesign.footerPrimary
+                    : feedbackModalDesign.footerPrimaryDisabled
+                }
+              >
+                {isPreparingRoom ? '회의실 준비 중…' : '라이브 입장하기'}
+              </button>
+            </div>
           )}
         </div>
-      </div>
-    </BaseModal>
+      </BaseModal>
+
+      {/*
+        라이브 피드백과 같은 회의 화면을 그대로 쓴다. 멘티 출석 체크·제출물 패널·사전
+        질문이 모두 이 컴포넌트에 있어 1대1 이라고 다시 만들 이유가 없다.
+      */}
+      {data && (
+        <JitsiEmbedModal
+          isOpen={isJitsiOpen}
+          onClose={() => setIsJitsiOpen(false)}
+          meetingUrl={data.meetingUrl ?? null}
+          menteeName={data.menteeName}
+          spaceName={data.productName}
+          startDate={data.reservationStartAt}
+          endDate={data.reservationEndAt}
+          isMentor
+          menteeStatus={data.menteeStatus ?? undefined}
+          onSaveAttendance={(status) =>
+            updateAttendance({ applicationId, menteeStatus: status })
+          }
+          preQuestion={
+            hasQuestion(data) ? (data.questionContent ?? undefined) : undefined
+          }
+          submissionUrl={sharedSubmissionUrl}
+          baseCandidates={[
+            import.meta.env.VITE_JITSI_BASE_URL,
+            import.meta.env.VITE_JITSI_FALLBACK_URL,
+          ]}
+          registerBaseUrl={async (base) => {
+            await createMeetingRoom({ applicationId, meetingUrlBase: base });
+          }}
+        />
+      )}
+    </>
   );
 };
 

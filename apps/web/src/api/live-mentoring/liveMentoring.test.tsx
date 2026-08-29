@@ -18,6 +18,9 @@ import {
   useLiveMentorDetailQuery,
   useLiveMentorListQuery,
   useLiveMentorSlotsQuery,
+  useLiveMentoringEntryQuery,
+  useCreateLiveMentoringEntryMeetingRoomMutation,
+  useUpdateLiveMentoringEntryAttendanceMutation,
 } from './liveMentoring';
 
 // axios 모듈 자체를 모킹 (default export)
@@ -842,5 +845,102 @@ describe('useCancelLiveMentoringApplicationMutation', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(axiosPost).toHaveBeenCalledTimes(1);
+  });
+});
+
+function entryResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    data: {
+      data: {
+        applicationId: 31,
+        myRole: 'MENTOR',
+        productName: '이력서 라이브 멘토링',
+        durationMinutes: 30,
+        reservationStartAt: '2026-09-13T10:00:00',
+        reservationEndAt: '2026-09-13T10:30:00',
+        mentorName: '김멘토',
+        menteeName: '박멘티',
+        questionDeferred: false,
+        questionContent: '질문입니다.',
+        attachmentType: 'NONE',
+        attachmentUrl: null,
+        mentorStatus: 'PENDING',
+        menteeStatus: 'PENDING',
+        meetingUrl: null,
+        ...overrides,
+      },
+    },
+  };
+}
+
+describe('useLiveMentoringEntryQuery', () => {
+  it('GET .../applications/{id}/entry 를 호출하고 응답을 파싱한다', async () => {
+    axiosGet.mockResolvedValueOnce(entryResponse());
+
+    const { result } = renderHook(() => useLiveMentoringEntryQuery(31), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosGet).toHaveBeenCalledWith(
+      '/live-mentoring/applications/31/entry',
+    );
+    expect(result.current.data?.myRole).toBe('MENTOR');
+  });
+
+  it('applicationId 가 null 이면 axios 를 호출하지 않는다', () => {
+    renderHook(() => useLiveMentoringEntryQuery(null), {
+      wrapper: createWrapper(newClient()),
+    });
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+
+  it('응답 스키마가 깨지면 isError 가 된다', async () => {
+    axiosGet.mockResolvedValueOnce({ data: { data: { applicationId: 31 } } });
+
+    const { result } = renderHook(() => useLiveMentoringEntryQuery(31), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+});
+
+describe('useCreateLiveMentoringEntryMeetingRoomMutation', () => {
+  it('base 만 담아 PATCH 하고 최종 주소 문자열을 돌려준다', async () => {
+    axiosPatch.mockResolvedValueOnce({
+      data: { data: 'https://meet.jit.si/room-abc' },
+    });
+
+    const { result } = renderHook(
+      () => useCreateLiveMentoringEntryMeetingRoomMutation(31),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate('https://meet.jit.si/');
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosPatch).toHaveBeenCalledWith(
+      '/live-mentoring/applications/31/entry/meeting-url',
+      { meetingUrlBase: 'https://meet.jit.si/' },
+    );
+    expect(result.current.data).toBe('https://meet.jit.si/room-abc');
+  });
+});
+
+describe('useUpdateLiveMentoringEntryAttendanceMutation', () => {
+  it('멘토용 출석 엔드포인트로 PATCH 한다', async () => {
+    axiosPatch.mockResolvedValueOnce({ data: { data: null } });
+
+    const { result } = renderHook(
+      () => useUpdateLiveMentoringEntryAttendanceMutation(31),
+      { wrapper: createWrapper(newClient()) },
+    );
+    result.current.mutate({ menteeStatus: 'PRESENT' });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosPatch).toHaveBeenCalledWith(
+      '/mentor/live-mentoring/reservations/31/attendance',
+      { menteeStatus: 'PRESENT' },
+    );
   });
 });

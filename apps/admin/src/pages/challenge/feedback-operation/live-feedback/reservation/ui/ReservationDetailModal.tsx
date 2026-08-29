@@ -38,7 +38,8 @@ interface ReservationDetailModalProps {
   onClose: () => void;
   /**
    * 지정 시 헤더에 "예약 변경" 버튼을 노출하고, 클릭하면 예약 변경 모달로 전환한다.
-   * 1대1에는 일정 변경 API 가 없어 이 버튼을 내걸지 않는다.
+   * 1대1은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만 노출한다 —
+   * 그 밖의 상태는 옮길 일정 자체가 없다.
    */
   onReschedule?: () => void;
 }
@@ -364,7 +365,11 @@ export default function ReservationDetailModal({
 
   if (row == null) return null;
 
-  const showReschedule = onReschedule != null && row.kind === 'CHALLENGE';
+  const showReschedule =
+    onReschedule != null &&
+    (row.kind === 'CHALLENGE' ||
+      (row.reservation.status === 'CONFIRMED' &&
+        row.reservation.reservationStartAt != null));
 
   return (
     <div

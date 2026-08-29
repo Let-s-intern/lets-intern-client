@@ -1,4 +1,5 @@
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import { APPLICATION_STATUS_LABELS } from '@/domain/live-mentoring/constants';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -6,6 +7,7 @@ import {
   formatReservationDateTime,
 } from '../../utils/format';
 import {
+  attendanceLabel,
   resolveAdminVoLiveSpec,
   resolveRowTone,
   type LiveBadge,
@@ -37,8 +39,9 @@ const ROW_TONE_CLASS: Record<RowTone, string> = {
 /**
  * 1대1에 존재하지 않는 값을 채우는 문구.
  *
- * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 출석·뱃지·예약 변경은
- * 챌린지 라이브 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다.
+ * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 뱃지는 챌린지 라이브
+ * 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다. 예약 변경은 결제
+ * 완료건이 아니거나 슬롯이 없으면(아직 확정되지 않은 신청) 같은 이유로 쓴다.
  */
 const NOT_APPLICABLE = '해당 없음';
 
@@ -47,8 +50,12 @@ interface ReservationListViewProps {
   sort: SortState;
   onToggleSort: (key: SortKey) => void;
   onView: (row: ReservationRow) => void;
-  /** 예약 변경 모달 열기. 챌린지 라이브 피드백에만 있다. */
+  /** 예약 변경 모달 열기 — 챌린지 라이브 피드백. */
   onReschedule: (feedback: FeedbackAdminVo) => void;
+  /** 예약 변경 모달 열기 — 1대1 라이브 멘토링. */
+  onLiveMentoringReschedule: (
+    reservation: AdminLiveMentoringReservation,
+  ) => void;
   isLoading: boolean;
   /** 빈 목록일 때 표시할 문구. 섹션(예약 목록/예약 변경 내역)별로 다르게 줄 수 있다. */
   emptyMessage?: string;
@@ -177,20 +184,25 @@ function ChallengeRow({
 /**
  * 1대1 라이브 멘토링 한 행.
  *
- * 출석·뱃지는 서버가 기록하지 않고, 예약 변경도 1대1에는 API 가 없다.
- * 그 자리를 비워 두지 않고 `해당 없음` 으로 채운다.
+ * 출석은 챌린지 라이브 피드백과 같은 값·같은 단어(`attendanceLabel`)로 보여준다.
+ * 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이라 그 자리는 `해당 없음`
+ * 으로 남긴다. 예약 변경은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만
+ * 연다 — 그 밖의 상태는 옮길 일정 자체가 없다.
  */
 function LiveMentoringRow({
   row,
   onView,
+  onReschedule,
 }: {
   row: Extract<ReservationRow, { kind: 'LIVE_MENTORING' }>;
   onView: () => void;
+  onReschedule: () => void;
 }) {
   const { reservation } = row;
   const hasSlot =
     reservation.reservationStartAt != null &&
     reservation.reservationEndAt != null;
+  const canReschedule = hasSlot && reservation.status === 'CONFIRMED';
 
   return (
     <tr className="border-neutral-80 border-b last:border-b-0">
@@ -225,12 +237,14 @@ function LiveMentoringRow({
         {rowMenteeName(row)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        {attendanceLabel(reservation.mentorStatus)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        {attendanceLabel(reservation.menteeStatus)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
+        {/* 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이다. 1대1은
+            출석 값만 있고 그 요약을 만들 근거(진행 단계)가 없다. */}
         <NotApplicableCell />
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
@@ -249,7 +263,17 @@ function LiveMentoringRow({
         </button>
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        {canReschedule ? (
+          <button
+            type="button"
+            onClick={onReschedule}
+            className="text-blue-600 hover:underline"
+          >
+            예약 변경
+          </button>
+        ) : (
+          <NotApplicableCell />
+        )}
       </td>
     </tr>
   );
@@ -261,6 +285,7 @@ export default function ReservationListView({
   onToggleSort,
   onView,
   onReschedule,
+  onLiveMentoringReschedule,
   isLoading,
   emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
@@ -338,6 +363,7 @@ export default function ReservationListView({
                 key={rowKey(row)}
                 row={row}
                 onView={() => onView(row)}
+                onReschedule={() => onLiveMentoringReschedule(row.reservation)}
               />
             ),
           )}
