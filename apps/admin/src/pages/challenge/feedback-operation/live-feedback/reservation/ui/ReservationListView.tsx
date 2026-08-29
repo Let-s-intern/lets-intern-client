@@ -7,6 +7,7 @@ import {
   formatReservationDateTime,
 } from '../../utils/format';
 import {
+  attendanceLabel,
   resolveAdminVoLiveSpec,
   resolveRowTone,
   type LiveBadge,
@@ -38,10 +39,9 @@ const ROW_TONE_CLASS: Record<RowTone, string> = {
 /**
  * 1대1에 존재하지 않는 값을 채우는 문구.
  *
- * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 출석·뱃지는
- * 챌린지 라이브 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다.
- * 예약 변경은 이제 1대1에도 있지만, 결제 완료건이 아니거나 슬롯이 없으면
- * (아직 확정되지 않은 신청) 같은 이유로 이 문구를 쓴다.
+ * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 뱃지는 챌린지 라이브
+ * 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다. 예약 변경은 결제
+ * 완료건이 아니거나 슬롯이 없으면(아직 확정되지 않은 신청) 같은 이유로 쓴다.
  */
 const NOT_APPLICABLE = '해당 없음';
 
@@ -184,9 +184,10 @@ function ChallengeRow({
 /**
  * 1대1 라이브 멘토링 한 행.
  *
- * 출석·뱃지는 서버가 기록하지 않아 그 자리를 `해당 없음` 으로 채운다. 예약 변경은
- * 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만 연다 — 그 밖의 상태는
- * 옮길 일정 자체가 없다.
+ * 출석은 챌린지 라이브 피드백과 같은 값·같은 단어(`attendanceLabel`)로 보여준다.
+ * 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이라 그 자리는 `해당 없음`
+ * 으로 남긴다. 예약 변경은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만
+ * 연다 — 그 밖의 상태는 옮길 일정 자체가 없다.
  */
 function LiveMentoringRow({
   row,
@@ -236,12 +237,14 @@ function LiveMentoringRow({
         {rowMenteeName(row)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        {attendanceLabel(reservation.mentorStatus)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        {attendanceLabel(reservation.menteeStatus)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
+        {/* 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이다. 1대1은
+            출석 값만 있고 그 요약을 만들 근거(진행 단계)가 없다. */}
         <NotApplicableCell />
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>

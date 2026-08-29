@@ -48,6 +48,8 @@ const makeLiveMentoringRow = (
     createDate: '2026-05-21T09:00:00',
     questionDeferred: false,
     questionContent: null,
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
     ...overrides,
   });
 
@@ -198,9 +200,9 @@ describe('ReservationListView', () => {
       renderMixed();
       const liveMentoringCell = screen.getByText('1대1 라이브 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
-      // 멘토·멘티 출석, 멘토·멘티 뱃지 네 칸 — 예약 변경은 결제 완료건이라
-      // 다섯 번째 칸이 아니라 버튼으로 뜬다(아래 별도 테스트).
-      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(4);
+      // 출석 두 칸은 이제 실제 값을 보여준다. 남는 건 멘토·멘티 뱃지 두 칸뿐이다
+      // — 예약 변경은 결제 완료건이라 다섯 번째 칸이 아니라 버튼으로 뜬다(아래 별도 테스트).
+      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(2);
       expect(
         within(liveMentoringTr).getByRole('button', { name: '예약 변경' }),
       ).toBeInTheDocument();
@@ -216,7 +218,9 @@ describe('ReservationListView', () => {
       );
       const liveMentoringCell = screen.getByText('1대1 라이브 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
-      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(5);
+      // 출석 두 칸(값은 '-'로 표시되어 '해당 없음' 텍스트가 아니다) + 뱃지 두 칸 +
+      // 예약 변경 칸, 총 세 칸이 '해당 없음'이다.
+      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(3);
       expect(
         within(liveMentoringTr).queryByRole('button', { name: '예약 변경' }),
       ).not.toBeInTheDocument();

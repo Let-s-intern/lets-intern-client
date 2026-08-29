@@ -5,6 +5,7 @@ import {
   adminLiveMentoringListSchema,
   adminLiveMentoringParticipantListSchema,
   adminLiveMentoringReservationListSchema,
+  type LiveMentoringAttendanceStatus,
   type LiveMentoringStatus,
 } from './liveMentoringSchema';
 
@@ -147,6 +148,41 @@ export const useAdminLiveMentoringReservationsQuery = (
  * 피드백의 "슬롯 하나를 다른 하나로" 방식과 다르다(§4.3). 서버가 개수·연속성·
  * 오픈 상태를 다시 검증하므로 화면은 그 결과(400/409)를 그대로 사용자에게 보여준다.
  */
+/**
+ * PATCH /admin/live-mentoring/applications/{applicationId}/attendance — 출석 수정.
+ *
+ * 서버는 멘토 입장 시 mentorStatus 를 자동으로 기록하지만, 어드민 화면에서
+ * 조회·수정할 방법이 없었다. 멘토용 출석 갱신과 같은 부분 갱신 계약을 쓴다 — 두
+ * 필드 모두 선택이고, 넘기지 않은 쪽은 서버가 건드리지 않는다.
+ */
+export const useUpdateLiveMentoringReservationAttendanceMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      mentorStatus,
+      menteeStatus,
+    }: {
+      applicationId: number;
+      mentorStatus?: LiveMentoringAttendanceStatus;
+      menteeStatus?: LiveMentoringAttendanceStatus;
+    }) => {
+      const body: Record<string, string> = {};
+      if (mentorStatus) body.mentorStatus = mentorStatus;
+      if (menteeStatus) body.menteeStatus = menteeStatus;
+      await axios.patch(
+        `${ADMIN_PATH}/applications/${applicationId}/attendance`,
+        body,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY,
+      });
+    },
+  });
+};
+
 export const useUpdateLiveMentoringReservationSlotsMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

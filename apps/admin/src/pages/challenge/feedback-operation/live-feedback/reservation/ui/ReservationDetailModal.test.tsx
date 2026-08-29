@@ -63,14 +63,24 @@ const makeLiveMentoringRow = (
     createDate: '2026-05-21T09:00:00',
     questionDeferred: false,
     questionContent: '포트폴리오를 함께 봐 주실 수 있나요?',
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
     ...overrides,
   });
 
 const useAdminFeedbackDetailQuery = vi.fn();
+const updateAttendanceMutate = vi.fn();
 
 vi.mock('@/api/feedback/feedback', () => ({
   useAdminFeedbackDetailQuery: (id?: number) => useAdminFeedbackDetailQuery(id),
   useUpdateAdminFeedbackMutation: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/api/live-mentoring/liveMentoring', () => ({
+  useUpdateLiveMentoringReservationAttendanceMutation: () => ({
+    mutate: updateAttendanceMutate,
+    isPending: false,
+  }),
 }));
 
 import ReservationDetailModal from './ReservationDetailModal';
@@ -166,11 +176,42 @@ describe('ReservationDetailModal', () => {
         />,
       );
       const limitations = screen.getByLabelText('제한 사항');
-      expect(limitations).toHaveTextContent('멘토·멘티 출석 체크');
       expect(limitations).toHaveTextContent('후기 점수·내용 수정');
       expect(limitations).toHaveTextContent('멘토·멘티 입장 링크 복사');
-      // 예약 일정 변경은 더 이상 제한 사항이 아니다 — 아래 별도 테스트가 다룬다.
+      // 예약 일정 변경과 출석 체크는 더 이상 제한 사항이 아니다.
       expect(limitations).not.toHaveTextContent('예약 일정 변경');
+      expect(limitations).not.toHaveTextContent('멘토·멘티 출석 체크');
+    });
+
+    it('출석 값을 select 로 보여주고 저장하면 뮤테이션을 부른다', () => {
+      updateAttendanceMutate.mockClear();
+      useAdminFeedbackDetailQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+      });
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({
+            applicationId: 501,
+            mentorStatus: 'PRESENT',
+            menteeStatus: 'PENDING',
+          })}
+          onClose={vi.fn()}
+        />,
+      );
+
+      const [mentorSelect, menteeSelect] = screen.getAllByRole('combobox');
+      expect(mentorSelect).toHaveValue('PRESENT');
+      expect(menteeSelect).toHaveValue('PENDING');
+
+      fireEvent.change(menteeSelect, { target: { value: 'ABSENT' } });
+      fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+      expect(updateAttendanceMutate).toHaveBeenCalledWith({
+        applicationId: 501,
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'ABSENT',
+      });
     });
 
     it('결제 완료건은 예약 변경 버튼을 내건다', () => {
