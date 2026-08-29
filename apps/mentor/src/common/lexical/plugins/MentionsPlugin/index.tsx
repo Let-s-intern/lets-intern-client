@@ -620,10 +620,10 @@ export default function NewMentionsPlugin(): JSX.Element | null {
   const options = useMemo(
     () =>
       results
-        .map(
-          (result) =>
-            new MentionTypeaheadOption(result, <i className="icon user" />),
-        )
+        .map((result) => {
+          const icon = <i className="icon user" />;
+          return new MentionTypeaheadOption(result, icon);
+        })
         .slice(0, SUGGESTION_LIST_LENGTH_LIMIT),
     [results],
   );
