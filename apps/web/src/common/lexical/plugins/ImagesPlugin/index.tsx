@@ -27,8 +27,8 @@ import {
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { uploadFile } from '@/api/file';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { createImageSet } from '@/lib/image';
 import landscapeImage from '../../images/landscape.jpg';
 import yellowFlowerImage from '../../images/yellow-flower.jpg';
@@ -44,7 +44,6 @@ import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
-InsertImageUriDialogBody;
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
   CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 

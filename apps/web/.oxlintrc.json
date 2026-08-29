@@ -10,7 +10,10 @@
     {
       // jest module-isolation 패턴(jest.resetModules() 직후 require())이 필요한
       // 테스트 파일에서는 동적 require를 허용 (eslint.config.mjs와 동일 오버라이드)
-      "files": ["**/*.test.{ts,tsx,js,jsx}", "**/__tests__/**/*.{ts,tsx,js,jsx}"],
+      "files": [
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/__tests__/**/*.{ts,tsx,js,jsx}"
+      ],
       "rules": {
         "typescript/no-require-imports": "off"
       }
