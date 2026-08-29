@@ -6,12 +6,14 @@ import {
 } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { getMentorColor, LIVE_MENTORING_COLOR } from '../constants/colors';
 import { buildReservationBlocks } from '../reservation/ui/ReservationCalendarView';
 import ReservationDetailModal from '../reservation/ui/ReservationDetailModal';
+import LiveMentoringReservationRescheduleModal from '../reservation/ui/LiveMentoringReservationRescheduleModal';
 import ReservationListView from '../reservation/ui/ReservationListView';
 import ReservationRescheduleModal from '../reservation/ui/ReservationRescheduleModal';
 import ViewToggle, { type ReservationView } from '../reservation/ui/ViewToggle';
@@ -62,6 +64,8 @@ export default function MentorScheduleView() {
   const [selectedRow, setSelectedRow] = useState<ReservationRow | null>(null);
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
+  const [liveMentoringRescheduleTarget, setLiveMentoringRescheduleTarget] =
+    useState<AdminLiveMentoringReservation | null>(null);
 
   const { data: mentorData } = useAdminUserMentorListQuery();
   const mentors = useMemo(
@@ -293,6 +297,7 @@ export default function MentorScheduleView() {
               onToggleSort={toggleSort}
               onView={setSelectedRow}
               onReschedule={setRescheduleTarget}
+              onLiveMentoringReschedule={setLiveMentoringRescheduleTarget}
               isLoading={reservationsLoading || liveMentoringLoading}
               emptyMessage="이 멘토의 예약 내역이 없습니다."
             />
@@ -309,16 +314,28 @@ export default function MentorScheduleView() {
         row={selectedRow}
         onClose={() => setSelectedRow(null)}
         onReschedule={() => {
-          if (selectedRow?.kind !== 'CHALLENGE') return;
-          const target = selectedRow.feedback;
+          if (selectedRow == null) return;
+          if (selectedRow.kind === 'CHALLENGE') {
+            const target = selectedRow.feedback;
+            setSelectedRow(null);
+            setRescheduleTarget(target);
+            return;
+          }
+          const target = selectedRow.reservation;
           setSelectedRow(null);
-          setRescheduleTarget(target);
+          setLiveMentoringRescheduleTarget(target);
         }}
       />
       {rescheduleTarget && (
         <ReservationRescheduleModal
           feedback={rescheduleTarget}
           onClose={() => setRescheduleTarget(null)}
+        />
+      )}
+      {liveMentoringRescheduleTarget && (
+        <LiveMentoringReservationRescheduleModal
+          reservation={liveMentoringRescheduleTarget}
+          onClose={() => setLiveMentoringRescheduleTarget(null)}
         />
       )}
     </div>

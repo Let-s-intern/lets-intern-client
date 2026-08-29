@@ -140,6 +140,35 @@ export const useAdminLiveMentoringReservationsQuery = (
   });
 };
 
+/**
+ * POST /admin/live-mentoring/applications/{applicationId}/slots — 예약 일정 변경.
+ *
+ * 슬롯 id 목록을 통째로 보낸다. 30분이면 1개, 60분이면 연속한 2개다 — 라이브
+ * 피드백의 "슬롯 하나를 다른 하나로" 방식과 다르다(§4.3). 서버가 개수·연속성·
+ * 오픈 상태를 다시 검증하므로 화면은 그 결과(400/409)를 그대로 사용자에게 보여준다.
+ */
+export const useUpdateLiveMentoringReservationSlotsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      slotIds,
+    }: {
+      applicationId: number;
+      slotIds: number[];
+    }) => {
+      await axios.post(`${ADMIN_PATH}/applications/${applicationId}/slots`, {
+        slotIds,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY,
+      });
+    },
+  });
+};
+
 export const ADMIN_LIVE_MENTORING_PARTICIPANT_QUERY_KEY = [
   'adminLiveMentoring',
   'participants',

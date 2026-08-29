@@ -169,13 +169,31 @@ describe('ReservationDetailModal', () => {
       expect(limitations).toHaveTextContent('멘토·멘티 출석 체크');
       expect(limitations).toHaveTextContent('후기 점수·내용 수정');
       expect(limitations).toHaveTextContent('멘토·멘티 입장 링크 복사');
-      expect(limitations).toHaveTextContent('예약 일정 변경');
+      // 예약 일정 변경은 더 이상 제한 사항이 아니다 — 아래 별도 테스트가 다룬다.
+      expect(limitations).not.toHaveTextContent('예약 일정 변경');
     });
 
-    it('예약 변경 버튼을 내걸지 않는다', () => {
+    it('결제 완료건은 예약 변경 버튼을 내건다', () => {
       render(
         <ReservationDetailModal
           row={makeLiveMentoringRow()}
+          onClose={vi.fn()}
+          onReschedule={vi.fn()}
+        />,
+      );
+      expect(
+        screen.getByRole('button', { name: '예약 변경' }),
+      ).toBeInTheDocument();
+    });
+
+    it('결제 대기·슬롯 없는 건은 예약 변경 버튼을 내걸지 않는다', () => {
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({
+            status: 'PAYMENT_PENDING',
+            reservationStartAt: null,
+            reservationEndAt: null,
+          })}
           onClose={vi.fn()}
           onReschedule={vi.fn()}
         />,
@@ -225,6 +243,19 @@ describe('ReservationDetailModal', () => {
     render(
       <ReservationDetailModal
         row={challengeRow}
+        onClose={vi.fn()}
+        onReschedule={onReschedule}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '예약 변경' }));
+    expect(onReschedule).toHaveBeenCalled();
+  });
+
+  it('1대1 예약도 예약 변경 버튼으로 전환할 수 있다', () => {
+    const onReschedule = vi.fn();
+    render(
+      <ReservationDetailModal
+        row={makeLiveMentoringRow()}
         onClose={vi.fn()}
         onReschedule={onReschedule}
       />,
