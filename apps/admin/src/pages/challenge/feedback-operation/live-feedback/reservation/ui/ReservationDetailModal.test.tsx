@@ -177,10 +177,38 @@ describe('ReservationDetailModal', () => {
       );
       const limitations = screen.getByLabelText('제한 사항');
       expect(limitations).toHaveTextContent('후기 점수·내용 수정');
-      expect(limitations).toHaveTextContent('멘토·멘티 입장 링크 복사');
-      // 예약 일정 변경과 출석 체크는 더 이상 제한 사항이 아니다.
+      // 예약 일정 변경, 출석 체크, 입장 링크 복사는 더 이상 제한 사항이 아니다.
       expect(limitations).not.toHaveTextContent('예약 일정 변경');
       expect(limitations).not.toHaveTextContent('멘토·멘티 출석 체크');
+      expect(limitations).not.toHaveTextContent('멘토·멘티 입장 링크 복사');
+    });
+
+    it('멘토·멘티 입장 링크를 각각 클립보드에 복사한다', async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText } });
+
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({ applicationId: 777 })}
+          onClose={vi.fn()}
+        />,
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: '멘토 입장 링크 복사' }),
+      );
+      await Promise.resolve();
+      expect(writeText).toHaveBeenLastCalledWith(
+        expect.stringMatching(/\/live-mentoring\/mentor\/777$/),
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: '멘티 입장 링크 복사' }),
+      );
+      await Promise.resolve();
+      expect(writeText).toHaveBeenLastCalledWith(
+        expect.stringMatching(/\/live-mentoring\/mentee\/777$/),
+      );
     });
 
     it('출석 값을 select 로 보여주고 저장하면 뮤테이션을 부른다', () => {

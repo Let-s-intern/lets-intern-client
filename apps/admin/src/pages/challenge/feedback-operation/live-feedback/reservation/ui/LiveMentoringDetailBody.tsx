@@ -6,6 +6,7 @@ import type {
   LiveMentoringAttendanceStatus,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import { APPLICATION_STATUS_LABELS } from '@/domain/live-mentoring/constants';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   formatApplyDateTime,
   formatReservationDateTime,
@@ -16,12 +17,25 @@ import {
  *
  * 챌린지 라이브 피드백과 같은 모달 안에서 같은 카드 배치를 쓴다. 예약 변경은
  * 헤더의 공용 "예약 변경" 버튼(`ReservationDetailModal`)이 이미 다룬다. 출석도
- * 이 안에서 바로 고친다. 그 밖에 챌린지에 있는 조작(후기 저장, 입장 링크 복사)은
- * 아직 1대1에 없다. 감추지 않고 아래 `제한 사항` 에 무엇이 왜 없는지 적는다.
+ * 입장 링크 복사도 이 안에서 바로 한다. 후기 점수·내용 수정만 아직 1대1에 없다.
+ * 감추지 않고 아래 `제한 사항` 에 무엇이 왜 없는지 적는다.
  *
  * 목록 응답(`AdminLiveMentoringReservationVo`)이 상세용 조회가 가진 값을 모두 담고 있어
  * 상세 API 를 따로 부르지 않는다.
  */
+
+/**
+ * 웹 입장 페이지(`/live-mentoring/[role]/[applicationId]`) base URL.
+ * 라이브 피드백 `ReservationDetailModal` 의 `getWebBaseUrl` 과 같은 로직이다 —
+ * 컴포넌트를 공유하지 않는다는 원칙(`core.md`)에 따라 파일마다 그대로 둔다.
+ */
+function getWebBaseUrl(): string {
+  const configured = import.meta.env.VITE_WEB_URL;
+  if (configured) return configured.replace(/\/$/, '');
+  return window.location.origin
+    .replace('//test-admin.', '//test.')
+    .replace('//admin.', '//www.');
+}
 
 function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
@@ -46,12 +60,54 @@ const LIMITATIONS: { label: string; reason: string }[] = [
     label: '후기 점수·내용 수정',
     reason: '1대1 후기를 어드민이 고치는 API 가 없습니다.',
   },
-  {
-    label: '멘토·멘티 입장 링크 복사',
-    reason:
-      '역할별 입장 페이지는 있지만, 이 화면에서 그 링크를 바로 복사하는 기능은 아직 없습니다.',
-  },
 ];
+
+/**
+ * 알림톡 입장 링크 복사 — 멘토/멘티 각각의 딥링크를 클립보드에 복사한다.
+ * 링크 형식: `{web}/live-mentoring/{role}/{applicationId}` (역할별 경로).
+ * 라이브 피드백 `EntryLinkPanel` 과 같은 배치·문구를 쓴다.
+ */
+function EntryLinkPanel({ applicationId }: { applicationId: number }) {
+  const { snackbar } = useAdminSnackbar();
+
+  const copyLink = async (role: 'mentor' | 'mentee') => {
+    const url = `${getWebBaseUrl()}/live-mentoring/${role}/${applicationId}`;
+    const roleLabel = role === 'mentor' ? '멘토' : '멘티';
+    try {
+      await navigator.clipboard.writeText(url);
+      snackbar(`${roleLabel} 입장 링크를 복사했습니다.`);
+    } catch {
+      snackbar('링크 복사에 실패했습니다. 다시 시도해 주세요.');
+    }
+  };
+
+  return (
+    <section
+      aria-label="입장 링크"
+      className="border-neutral-80 rounded-xl border p-4"
+    >
+      <p className="text-xxsmall12 text-neutral-40 font-medium">
+        입장 링크 복사
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => copyLink('mentor')}
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+        >
+          멘토 입장 링크 복사
+        </button>
+        <button
+          type="button"
+          onClick={() => copyLink('mentee')}
+          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+        >
+          멘티 입장 링크 복사
+        </button>
+      </div>
+    </section>
+  );
+}
 
 /** 출석 상태 선택 옵션. 라이브 피드백 어드민 수정 패널과 같은 값·같은 순서다. */
 const ATTENDANCE_OPTIONS: ReadonlyArray<{
@@ -250,6 +306,8 @@ export default function LiveMentoringDetailBody({
           </li>
         </ul>
       </section>
+
+      <EntryLinkPanel applicationId={reservation.applicationId} />
 
       <AttendanceEditPanel reservation={reservation} />
 
