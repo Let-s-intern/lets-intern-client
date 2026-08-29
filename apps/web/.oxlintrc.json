@@ -1,0 +1,19 @@
+{
+  "extends": ["../../packages/config/oxlint/next.json"],
+  "rules": {
+    // apps/web은 console.* 사용 금지가 원칙(§8.3)이라 severity를 error로 올린다.
+    // 다만 base의 allow:[error,warn] 옵션은 flat-config 병합 특성상 실제로는
+    // 유지되고 있어(eslint --print-config로 확인됨) 이 실제 동작을 그대로 이식한다.
+    "eslint/no-console": ["error", { "allow": ["error", "warn"] }]
+  },
+  "overrides": [
+    {
+      // jest module-isolation 패턴(jest.resetModules() 직후 require())이 필요한
+      // 테스트 파일에서는 동적 require를 허용 (eslint.config.mjs와 동일 오버라이드)
+      "files": ["**/*.test.{ts,tsx,js,jsx}", "**/__tests__/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "typescript/no-require-imports": "off"
+      }
+    }
+  ]
+}

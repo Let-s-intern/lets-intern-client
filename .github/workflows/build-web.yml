@@ -77,7 +77,7 @@ jobs:
       - name: Prettier check
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
-      - name: ESLint
+      - name: Lint (oxlint)
         run: pnpm --filter @letscareer/web lint
         env:
           NEXT_PUBLIC_SERVER_API: https://api.example.com/v1

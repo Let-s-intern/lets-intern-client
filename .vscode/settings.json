@@ -13,6 +13,10 @@
   ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.useFlatConfig": true,
+  "files.associations": {
+    "**/.oxlintrc.json": "jsonc",
+    "**/packages/config/oxlint/*.json": "jsonc"
+  },
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
