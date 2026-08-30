@@ -2,7 +2,10 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { mentorDetailQueryOptions } from '@/api/mentor/mentor';
+import {
+  mentorDetailQueryOptions,
+  mentorStatsQueryOptions,
+} from '@/api/mentor/mentor';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 
@@ -17,9 +20,10 @@ interface MentorDetailProps {
 
 const MentorDetailContent = ({ mentorId }: MentorDetailProps) => {
   const { data: mentor } = useSuspenseQuery(mentorDetailQueryOptions(mentorId));
+  const { data: stats } = useSuspenseQuery(mentorStatsQueryOptions(mentorId));
   return (
     <>
-      <MentorHeroSection mentor={mentor} />
+      <MentorHeroSection mentor={mentor} stats={stats} />
       <MentorIntroSection mentor={mentor} />
       <MentorProgramSection
         proceedingProgramList={mentor.proceedingProgramList}

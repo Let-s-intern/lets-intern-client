@@ -93,3 +93,15 @@ export const mentorDetailSchema = z.object({
 });
 
 export type MentorDetailData = z.infer<typeof mentorDetailSchema>;
+
+/**
+ * GET /api/v1/mentor/{mentorId}/stats 응답.
+ * 피드백 받은 멘티 수 / 공개된 리뷰 수 / 리뷰 평균 점수
+ */
+export const mentorStatsSchema = z.object({
+  feedbackMenteeCount: z.number(),
+  reviewCount: z.number(),
+  averageScore: z.number(),
+});
+
+export type MentorStats = z.infer<typeof mentorStatsSchema>;
