@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   BookOpen,
   CalendarDays,
-  Clock,
   Flag,
   UserRoundCheck,
   Users,
@@ -16,7 +15,6 @@ import {
   getDiscountRate,
   PLAN_BENEFITS,
   PLAN_NAME,
-  PLAN_PRICE_NOTICE,
   type PlanBenefitIcon,
 } from '../data/plans';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
@@ -82,7 +80,7 @@ function useCountUpOnView(target: number, durationMs = 1200) {
 }
 
 // 단일 올패스 플랜 표시 섹션. 시안 3.png — 흰 카드 안 2열(좌: 포함 혜택 목록, 우: 가격).
-// 이용 기한·정가·특가·할인율은 모두 useMembershipChallengeData() 가 내려준 값에서 만든다.
+// 이용 기한·정가·판매가·할인율은 모두 useMembershipChallengeData() 가 내려준 값에서 만든다.
 // 결제는 하단 고정 ApplyBar(openPlanSheet → MembershipPaymentSheet)에 위임한다.
 export default function PlansSection() {
   const { endDate, regularPrice, salePrice } = useMembershipChallengeData();
@@ -141,10 +139,10 @@ export default function PlansSection() {
                 </span>
               </p>
               <p className="allpass-sale-row">
-                <span className="allpass-sale-label">얼리버드 특가</span>
+                <span className="allpass-sale-label">판매가</span>
                 {/*
-                  할인율은 정가·특가에서 계산한다. 계산이 성립하지 않는 값
-                  (정가 0, 특가 > 정가)이면 배지 자체를 렌더하지 않는다 —
+                  할인율은 정가·판매가에서 계산한다. 계산이 성립하지 않는 값
+                  (정가 0, 판매가 > 정가)이면 배지 자체를 렌더하지 않는다 —
                   "0% 할인" 이나 음수 할인율이 남는 쪽이 더 나쁘다.
                 */}
                 {discountRate > 0 && (
@@ -160,11 +158,6 @@ export default function PlansSection() {
                 <span className="allpass-unit">원</span>
               </p>
             </div>
-
-            <p className="allpass-notice">
-              <Clock size={17} strokeWidth={2} aria-hidden />
-              <span>{PLAN_PRICE_NOTICE}</span>
-            </p>
           </div>
         </div>
 

@@ -95,7 +95,12 @@ export const feedbackDetailSchema = z.object({
 export type FeedbackDetail = z.infer<typeof feedbackDetailSchema>;
 export type FeedbackInfo = FeedbackDetail['feedbackInfo'];
 
-export const feedbackSlotStatusSchema = z.enum(['OPEN', 'CLOSED', 'BOOKED']);
+/**
+ * BE FeedbackSlotStatus enum 1:1 매핑 (어드민·멘토 앱과 동일).
+ * 서버는 OPEN·RESERVED 두 값만 내려준다. CLOSED·BOOKED 는 서버에 없는 값이라
+ * RESERVED 가 섞여 오는 순간 parse 가 던졌다.
+ */
+export const feedbackSlotStatusSchema = z.enum(['OPEN', 'RESERVED']);
 
 export const feedbackSlotSchema = z.object({
   feedbackSlotId: z.number(),

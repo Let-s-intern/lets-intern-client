@@ -108,7 +108,7 @@
   font-weight: 700;
   color: var(--lc-ink);
 }
-/* 할인율 배지 — 정가·특가에서 계산한 값이 들어온다(시안 "82% 할인") */
+/* 할인율 배지 — 정가·판매가에서 계산한 값이 들어온다(184,000원 기준 "80% 할인") */
 .membership-root .allpass-badge {
   font-size: 12px;
   font-weight: 700;
@@ -138,24 +138,6 @@
   font-weight: 700;
   color: var(--lc-ink);
 }
-/* 얼리버드 종료 안내 — 시안의 옅은 라벤더 바 */
-.membership-root .allpass-notice {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 10px;
-  padding: 6px 11px;
-  border-radius: 8px;
-  background: #f5f6ff;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--lc-ink);
-}
-.membership-root .allpass-notice svg {
-  flex: 0 0 auto;
-  color: var(--lc-blue);
-}
-
 /* ===================== 옵션 더하기 구분(+) ===================== */
 /* 올패스 카드와 VOD 카드 사이의 "+" — 옵션을 더할 수 있음을 한눈에 보여준다. */
 .membership-root .plan-plus {
