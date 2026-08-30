@@ -1,8 +1,49 @@
+import { FaStar } from 'react-icons/fa';
+
+import type { MentorReviewItem } from '@/api/mentor/mentorSchema';
 import EmptyContainer from '@/common/container/EmptyContainer';
+import dayjs from '@/lib/dayjs';
 
 interface MentorReviewSectionProps {
-  reviewList: unknown[];
+  reviewList: MentorReviewItem[];
 }
+
+const ReviewStars = ({ score }: { score: number }) => {
+  const filled = Math.min(5, Math.max(0, Math.round(score)));
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }, (_, index) => (
+        <span
+          key={index}
+          className={index < filled ? 'text-primary' : 'text-neutral-70'}
+        >
+          <FaStar />
+        </span>
+      ))}
+    </div>
+  );
+};
+
+const ReviewCard = ({ review }: { review: MentorReviewItem }) => (
+  <li className="border-neutral-80 flex flex-col gap-2 rounded-md border px-6 py-5">
+    <div className="flex items-center justify-between gap-2">
+      <ReviewStars score={review.score} />
+      <span className="text-xxsmall12 md:text-xsmall14 text-neutral-45">
+        {dayjs(review.createDate).format('YYYY.MM.DD')}
+      </span>
+    </div>
+    {review.programTitle && (
+      <span className="text-xsmall14 md:text-xsmall16 text-neutral-30 font-medium">
+        {review.programTitle}
+      </span>
+    )}
+    {review.review && (
+      <p className="text-xsmall14 md:text-xsmall16 text-neutral-10 whitespace-pre-line">
+        {review.review}
+      </p>
+    )}
+  </li>
+);
 
 const MentorReviewSection = ({ reviewList }: MentorReviewSectionProps) => {
   return (
@@ -17,8 +58,15 @@ const MentorReviewSection = ({ reviewList }: MentorReviewSectionProps) => {
         </span>
       </div>
 
-      {/* TODO: reviewList 항목 필드 구조가 확정되면 실제 후기 목록/평점 렌더링 추가 */}
-      <EmptyContainer text="등록된 후기가 없습니다." />
+      {reviewList.length > 0 ? (
+        <ul className="flex flex-col gap-4">
+          {reviewList.map((review, index) => (
+            <ReviewCard key={index} review={review} />
+          ))}
+        </ul>
+      ) : (
+        <EmptyContainer text="등록된 후기가 없습니다." />
+      )}
     </section>
   );
 };
