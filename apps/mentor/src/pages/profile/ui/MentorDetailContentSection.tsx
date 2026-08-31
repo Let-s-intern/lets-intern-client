@@ -54,7 +54,7 @@ export default function MentorDetailContentSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
-            상세페이지 제작
+            프로필 상세페이지 제작
           </h2>
           {user && (
             <a
