@@ -183,7 +183,11 @@ export default function BasicInfoSection({
                     aria-label="SNS 삭제"
                     className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
                   >
-                    <img src="/icons/x.svg" alt="" className="h-[18px] w-[18px]" />
+                    <img
+                      src="/icons/x.svg"
+                      alt=""
+                      className="h-[18px] w-[18px]"
+                    />
                   </button>
                 </div>
               ))}
