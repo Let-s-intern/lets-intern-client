@@ -183,3 +183,39 @@ export interface MentorFeedbackSlotParams {
   endDate?: string;
   statusList?: FeedbackSlotStatus[];
 }
+
+/**
+ * 후기 관리 - 챌린지 라이브 멘토링 후기 목록 항목
+ * (GET /admin/feedback/review).
+ *
+ * 라이브 멘토링 후기는 Review 계층이 아니라 feedback 테이블의 score·review 에 있다.
+ * 그래서 다른 후기 탭들과 응답 형태가 다르고 별도 스키마를 쓴다.
+ */
+export const feedbackReviewAdminVoSchema = z.object({
+  feedbackId: z.number(),
+  /** 예약 생성 시각 */
+  createDate: z.string(),
+  /** 멘토링 진행 일시 */
+  feedbackDate: z.string(),
+  programTitle: z.string().default(''),
+  missionTh: z.number().nullable(),
+  mentorName: z.string(),
+  menteeName: z.string(),
+  score: z.number(),
+  review: z.string(),
+  reviewIsVisible: z.boolean().nullable(),
+});
+export type FeedbackReviewAdminVo = z.infer<typeof feedbackReviewAdminVoSchema>;
+
+export const getFeedbackReviewsResponseSchema = z.object({
+  reviewList: z.array(feedbackReviewAdminVoSchema),
+  pageInfo: z.object({
+    pageNum: z.number(),
+    pageSize: z.number(),
+    totalElements: z.number(),
+    totalPages: z.number(),
+  }),
+});
+export type GetFeedbackReviewsResponse = z.infer<
+  typeof getFeedbackReviewsResponseSchema
+>;

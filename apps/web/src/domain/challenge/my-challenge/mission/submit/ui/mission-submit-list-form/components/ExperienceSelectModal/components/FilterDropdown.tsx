@@ -77,8 +77,7 @@ export const FilterDropdown = ({
         ref={buttonRef}
         onClick={toggleDropdown}
         className={twMerge(
-          `flex ${width} rounded-xs border-neutral-80 items-center gap-1.5 border bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
-          isHideLabel ? 'justify-end' : 'justify-between',
+          `flex ${width} rounded-xs border-neutral-80 items-center justify-between gap-1.5 border bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
           className,
         )}
       >

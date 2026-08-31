@@ -4,6 +4,7 @@ import {
   mentorDetailSchema,
   mentorHashTagListSchema,
   mentorListSchema,
+  mentorStatsSchema,
 } from './mentorSchema';
 
 export const MENTOR_HASH_TAG_QUERY_KEY = ['mentorHashTag', 'list'] as const;
@@ -55,5 +56,16 @@ export const mentorDetailQueryOptions = (mentorId: number | string) => ({
   queryFn: async () => {
     const res = await axios.get(`/mentor/${mentorId}`);
     return mentorDetailSchema.parse(res.data.data);
+  },
+});
+
+export const MENTOR_STATS_QUERY_KEY = ['mentor', 'stats'] as const;
+
+/** GET /mentor/{mentorId}/stats — 멘토 피드백/리뷰 통계 조회 */
+export const mentorStatsQueryOptions = (mentorId: number | string) => ({
+  queryKey: [...MENTOR_STATS_QUERY_KEY, mentorId],
+  queryFn: async () => {
+    const res = await axios.get(`/mentor/${mentorId}/stats`);
+    return mentorStatsSchema.parse(res.data.data);
   },
 });

@@ -249,3 +249,71 @@
     text-wrap: balance;
   }
 }
+
+/* =====================================================================
+   [실험 2026-08-28] 카드 4개를 데스크톱에서 한 줄에 —— 되돌리려면 이 블록만 지운다.
+
+   컨테이너 실폭은 1124px(--maxw 1180 - .wrap 좌우 패딩 28x2)이라 4열에 16px 갭이면
+   카드 하나가 269px 다. 위의 기본 규칙(2열·큰 타이포)은 그대로 두고 여기서만 덮는다.
+   1080px 이하는 손대지 않아 태블릿 2열·모바일 1열 동작이 그대로다.
+   ===================================================================== */
+@media (min-width: 1081px) {
+  .membership-root .vod-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    max-width: none;
+  }
+  .membership-root .vod-card {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+  .membership-root .vod-thumb-img {
+    border-radius: 10px;
+  }
+
+  .membership-root .vodhook-badge {
+    font-size: 11px;
+    gap: 4px;
+    padding: 4px 9px;
+    margin-bottom: 10px;
+  }
+  .membership-root .vod-card-title {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .membership-root .vod-meta {
+    gap: 4px 10px;
+    margin-bottom: 9px;
+  }
+  .membership-root .vod-meta li {
+    font-size: 12px;
+  }
+  .membership-root .vod-bullets {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .membership-root .vod-bullets li {
+    padding-left: 19px;
+    font-size: 13px;
+  }
+
+  /* 269px 폭에는 가격과 CTA 가 한 줄에 안 들어간다. 세로로 쌓고 CTA 를 풀폭으로. */
+  .membership-root .vod-cardfoot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 12px;
+  }
+  .membership-root .vodhook-price-old {
+    font-size: 13px;
+  }
+  .membership-root .vodhook-price-free {
+    font-size: 17px;
+  }
+  .membership-root .vod-cta {
+    font-size: 13px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+}

@@ -28,7 +28,7 @@ const MentorProgramContainer = (props: MentorProgramContainerProps) => {
     <div className="flex w-full flex-col gap-y-6">
       <div className="text-medium22 text-neutral-0 flex w-full items-center justify-between font-bold">
         <span>{props.title}</span>
-        <span className="text-neutral-40 text-xsmall16 font-medium">
+        <span className="text-neutral-45 text-xsmall16 font-normal">
           {props.count}개
         </span>
       </div>

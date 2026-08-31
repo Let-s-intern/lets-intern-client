@@ -130,6 +130,11 @@ const BlogBannerCreatePage = lazy(
 const BlogBannerEditPage = lazy(
   () => import('./pages/blog/BlogBannerEditPage'),
 );
+const BlogPopupListPage = lazy(() => import('./pages/blog/BlogPopupListPage'));
+const BlogPopupCreatePage = lazy(
+  () => import('./pages/blog/BlogPopupCreatePage'),
+);
+const BlogPopupEditPage = lazy(() => import('./pages/blog/BlogPopupEditPage'));
 
 const MagnetListPage = lazy(() => import('./pages/magnet/MagnetListPage'));
 const MagnetPostRoute = lazy(
@@ -148,6 +153,9 @@ const AdminChallengeReviewListPage = lazy(
 );
 const AdminLiveReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminLiveReviewListPage'),
+);
+const AdminLiveMentoringReviewListPage = lazy(
+  () => import('./domain/admin/pages/review/AdminLiveMentoringReviewListPage'),
 );
 const AdminMissionReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminMissionReviewListPage'),
@@ -386,6 +394,10 @@ export const router = createBrowserRouter([
         element: withSuspense(<AdminLiveReviewListPage />),
       },
       {
+        path: '/review/live-mentoring',
+        element: withSuspense(<AdminLiveMentoringReviewListPage />),
+      },
+      {
         path: '/review/mission',
         element: withSuspense(<AdminMissionReviewListPage />),
       },
@@ -464,6 +476,15 @@ export const router = createBrowserRouter([
       {
         path: '/blog/banner/edit/:id',
         element: withSuspense(<BlogBannerEditPage />),
+      },
+      { path: '/blog/popup', element: withSuspense(<BlogPopupListPage />) },
+      {
+        path: '/blog/popup/create',
+        element: withSuspense(<BlogPopupCreatePage />),
+      },
+      {
+        path: '/blog/popup/edit/:id',
+        element: withSuspense(<BlogPopupEditPage />),
       },
 
       // 마그넷
