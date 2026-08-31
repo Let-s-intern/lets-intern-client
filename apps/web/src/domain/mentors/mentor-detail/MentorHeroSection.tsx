@@ -8,6 +8,8 @@ import type {
   MentorStats,
 } from '@/api/mentor/mentorSchema';
 
+import { getSnsIcon, parseSnsList } from './sns';
+
 interface MentorHeroSectionProps {
   mentor: MentorDetailData;
   stats: MentorStats;
@@ -63,6 +65,8 @@ const MentorHeroSection = ({ mentor, stats }: MentorHeroSectionProps) => {
   const { mentorInfo, careerList } = mentor;
   const { feedbackMenteeCount, reviewCount, averageScore } = stats;
 
+  const snsList = parseSnsList(mentorInfo.sns);
+
   const sortedCareers = [...careerList].sort((a, b) => {
     if (a.isRepresentative !== b.isRepresentative) {
       return a.isRepresentative ? -1 : 1;
@@ -95,6 +99,30 @@ const MentorHeroSection = ({ mentor, stats }: MentorHeroSectionProps) => {
                 {mentorInfo.company ?? '대표 회사'} |{' '}
                 {mentorInfo.job ?? '대표 직무'}
               </p>
+
+              {snsList.length > 0 && (
+                <div className="flex items-center gap-4 py-1">
+                  <span className="text-xsmall16 text-neutral-50">SNS</span>
+                  <span className="bg-neutral-80 h-4 w-px" />
+                  <div className="flex items-center gap-4">
+                    {snsList.map((url, index) => (
+                      <a
+                        key={index}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border-neutral-80 hover:bg-neutral-95 rounded-xxs flex items-center justify-center border px-[3px] py-[2px] transition-colors"
+                      >
+                        <img
+                          src={getSnsIcon(url)}
+                          alt=""
+                          className="h-4 w-4 object-contain"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 이번 배포에서 숨김 처리 — 추후 재노출 예정 */}

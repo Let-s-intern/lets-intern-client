@@ -91,6 +91,7 @@ export const mentorDetailSchema = z.object({
     corpImgUrl: z.string().nullable(),
     company: z.string().nullable(),
     job: z.string().nullable(),
+    sns: z.string().nullable().optional(),
   }),
   careerList: z.array(mentorCareerItemSchema),
   proceedingProgramList: z.array(mentorProgramListItemSchema),
