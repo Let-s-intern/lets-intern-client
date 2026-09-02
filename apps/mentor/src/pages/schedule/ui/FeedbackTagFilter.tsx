@@ -26,7 +26,7 @@ interface FeedbackTagFilterProps {
  * 일정 카드 / 캘린더 필터 — 피드백 종류 기반 (PRD-0503 #4).
  *
  * 디자인 참조: `.claude/tasks/피드백 테그.png`
- *  [전체] [💬 서면 피드백] [▶ LIVE 피드백] [📅 LIVE 피드백 일정 오픈]
+ *  [전체] [서면 피드백] [LIVE 피드백] [LIVE 피드백 일정 오픈] [1대1 라이브 멘토링]
  *
  * 챌린지명 기반 색상 태그를 폐기하고 피드백 종류로 분류한다.
  */
@@ -106,6 +106,11 @@ const FeedbackTagIcon = ({ type }: { type: FeedbackTagType }) => {
   if (type === 'live')
     return (
       <LiveFeedbackIcon size={14} color="currentColor" className="shrink-0" />
+    );
+  // 1대1은 전용 아이콘이 없다. 캘린더 카드와 같은 점 표시로 맞춘다.
+  if (type === 'live-mentoring')
+    return (
+      <span className="h-2 w-2 shrink-0 rounded-full bg-current" aria-hidden />
     );
   return (
     <LiveFeedbackOpenIcon size={14} color="currentColor" className="shrink-0" />

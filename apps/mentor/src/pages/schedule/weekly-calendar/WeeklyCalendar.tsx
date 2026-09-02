@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { LiveFeedbackTimeBlock } from '../calendar-bar/ui/LiveFeedbackCard';
 import LiveFeedbackOpenBar from '../calendar-bar/ui/LiveFeedbackOpenBar';
 import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
+import LiveMentoringCard from '../calendar-bar/ui/LiveMentoringCard';
 import WrittenFeedbackBar from '../calendar-bar/ui/WrittenFeedbackBar';
 import type { PeriodBarData } from '../types';
 import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
@@ -28,6 +29,8 @@ interface WeeklyCalendarProps {
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
   onMentorOpenPeriodBarClick?: (bar: PeriodBarData) => void;
+  /** 1대1 예약 카드 클릭 — 멘티 제출물 모달 진입점 */
+  onLiveMentoringClick?: (bar: PeriodBarData) => void;
 }
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
@@ -40,19 +43,27 @@ const WeeklyCalendar = ({
   onMentorOpenPeriodBarClick,
   onLiveFeedbackTimeBlockClick,
   onLiveFeedbackPeriodClick,
+  onLiveMentoringClick,
 }: WeeklyCalendarProps) => {
-  // 상단 period bar(서면 기간 + 라이브 일정 오픈) vs 하단 시간 블록(라이브 개별 세션) 분리.
+  // 상단 period bar(서면 기간 + 라이브 일정 오픈) vs 하단 시간 블록(시각이 있는 개별 일정) 분리.
   // 라이브 피드백 "기간" 바(live-feedback-period)는 상단에 노출하지 않는다 — 라이브는 하단 개별 일정만 표시.
   const writtenBars = useMemo(
     () =>
       bars.filter(
         (b) =>
-          b.barType !== 'live-feedback' && b.barType !== 'live-feedback-period',
+          b.barType !== 'live-feedback' &&
+          b.barType !== 'live-feedback-period' &&
+          b.barType !== 'live-mentoring',
       ),
     [bars],
   );
-  const liveBars = useMemo(
-    () => bars.filter((b) => b.barType === 'live-feedback'),
+  // 하단 "시간별 일정"에 쌓이는 바 — 라이브 피드백 세션과 1대1 예약이 같은 열을 공유한다.
+  // 같은 시간대에 겹쳐도 서로를 가리지 않고 시각순으로 나란히 쌓인다.
+  const timeBlockBars = useMemo(
+    () =>
+      bars.filter(
+        (b) => b.barType === 'live-feedback' || b.barType === 'live-mentoring',
+      ),
     [bars],
   );
 
@@ -195,24 +206,22 @@ const WeeklyCalendar = ({
     return layouts;
   }, [writtenBars, timelineStart, totalDays]);
 
-  // 날짜별 라이브 피드백 그룹 (YYYY-MM-DD → bar[]) — 각 날짜 안에서 시작시각 오름차순.
+  // 날짜별 시간 블록 그룹 (YYYY-MM-DD → bar[]) — 각 날짜 안에서 시작시각 오름차순.
   // 시간 그리드 절대배치 대신 위에서부터 시간순으로 차곡차곡 쌓기 위해 정렬해 둔다.
-  const liveBarsPerDay = useMemo(() => {
+  const timeBlockBarsPerDay = useMemo(() => {
+    const startTimeOf = (bar: PeriodBarData) =>
+      bar.liveMentoring?.startTime ?? bar.liveFeedback?.startTime ?? '';
     const map = new Map<string, PeriodBarData[]>();
-    for (const bar of liveBars) {
+    for (const bar of timeBlockBars) {
       const key = bar.startDate.slice(0, 10);
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(bar);
     }
     for (const dayBars of map.values()) {
-      dayBars.sort((a, b) =>
-        (a.liveFeedback?.startTime ?? '').localeCompare(
-          b.liveFeedback?.startTime ?? '',
-        ),
-      );
+      dayBars.sort((a, b) => startTimeOf(a).localeCompare(startTimeOf(b)));
     }
     return map;
-  }, [liveBars]);
+  }, [timeBlockBars]);
 
   const bodyMinHeight = useMemo(() => {
     // minHeight는 바닥값만 정하고 그리드는 내용에 맞게 늘어난다(잘림 없음).
@@ -229,7 +238,7 @@ const WeeklyCalendar = ({
   // minmax(0, 1fr) — 자식 콘텐츠가 1fr 컬럼을 강제 확장하지 못하게 막아
   // 헤더/디바이더/바 그리드의 컬럼 폭이 항상 동일하게 유지된다.
   const gridCols = `repeat(${totalDays}, minmax(0, 1fr))`;
-  const isEmpty = barLayouts.length === 0 && liveBars.length === 0;
+  const isEmpty = barLayouts.length === 0 && timeBlockBars.length === 0;
 
   return (
     <div className="border-neutral-80 relative rounded-2xl border bg-white">
@@ -325,7 +334,7 @@ const WeeklyCalendar = ({
           </div>
 
           {/* ── 하단: 시간별 일정 (라이브 피드백) ───────────────────────── */}
-          {liveBars.length > 0 && (
+          {timeBlockBars.length > 0 && (
             <>
               {/* 구분선 + 섹션 레이블 */}
               <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 border-t px-3 py-0.5">
@@ -344,7 +353,8 @@ const WeeklyCalendar = ({
                 >
                   {days.map((day, i) => {
                     const dateKey = format(day, 'yyyy-MM-dd');
-                    const dayLiveBars = liveBarsPerDay.get(dateKey) ?? [];
+                    const dayTimeBlockBars =
+                      timeBlockBarsPerDay.get(dateKey) ?? [];
                     const isMonthStart =
                       i > 0 && getMonth(day) !== getMonth(days[i - 1]);
                     const isToday = isSameDay(day, today);
@@ -362,21 +372,36 @@ const WeeklyCalendar = ({
                               : ''
                         }`}
                       >
-                        {/* 라이브 피드백 세션 블록 — 시간순으로 위에서부터 공백 없이 적재 */}
-                        {dayLiveBars.map((bar) => (
-                          <button
-                            key={bar.missionId}
-                            type="button"
-                            onClick={() => onLiveFeedbackTimeBlockClick?.(bar)}
-                            className={`w-full text-left ${
-                              onLiveFeedbackTimeBlockClick
-                                ? 'cursor-pointer'
-                                : ''
-                            }`}
-                          >
-                            <LiveFeedbackTimeBlock bar={bar} />
-                          </button>
-                        ))}
+                        {/* 시간 블록 — 시간순으로 위에서부터 공백 없이 적재. */}
+                        {dayTimeBlockBars.map((bar) =>
+                          bar.barType === 'live-mentoring' ? (
+                            <button
+                              key={`live-mentoring-${bar.missionId}`}
+                              type="button"
+                              onClick={() => onLiveMentoringClick?.(bar)}
+                              className={`w-full text-left ${
+                                onLiveMentoringClick ? 'cursor-pointer' : ''
+                              }`}
+                            >
+                              <LiveMentoringCard bar={bar} />
+                            </button>
+                          ) : (
+                            <button
+                              key={`live-feedback-${bar.missionId}`}
+                              type="button"
+                              onClick={() =>
+                                onLiveFeedbackTimeBlockClick?.(bar)
+                              }
+                              className={`w-full text-left ${
+                                onLiveFeedbackTimeBlockClick
+                                  ? 'cursor-pointer'
+                                  : ''
+                              }`}
+                            >
+                              <LiveFeedbackTimeBlock bar={bar} />
+                            </button>
+                          ),
+                        )}
                       </div>
                     );
                   })}

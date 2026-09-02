@@ -6,7 +6,10 @@ import {
   useDeleteFeedbackMentorSlotsMutation,
   useFeedbackMentorSlotsQuery,
 } from '@/api/feedback/feedback';
-import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import LiveAvailabilityContent, {
+  type LiveFeedbackPeriodInfo,
+} from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useChallengePeriods } from '@/pages/schedule/hooks/useChallengePeriods';
 import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import ReservationListModal from '@/pages/feedback-live-reservation/ui/ReservationListModal';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
@@ -18,6 +21,8 @@ interface FeedbackAvailabilityModalProps {
   onClose: () => void;
   /** 모달 오픈 시 그리드 포커스 주차의 기준 날짜 (예: 라이브 피드백 기간 startDate) */
   focusDate?: string;
+  /** 상단에 표시할 피드백 진행 일정(오픈 기간). 지정 시 배너로 노출한다. */
+  openPeriod?: { startDate: string; endDate: string };
 }
 
 /**
@@ -30,6 +35,7 @@ const FeedbackAvailabilityModal = ({
   isOpen,
   onClose,
   focusDate,
+  openPeriod,
 }: FeedbackAvailabilityModalProps) => {
   const [resetCounter, setResetCounter] = useState(0);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -41,6 +47,7 @@ const FeedbackAvailabilityModal = ({
   });
   const createSlots = useCreateFeedbackMentorSlotsMutation();
   const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+  const challengePeriods = useChallengePeriods({ enabled: isOpen });
 
   const beSlots = slotsQuery.data?.feedbackSlotList ?? [];
   const beCells = useMemo(() => toBeSlotCells(beSlots), [beSlots]);
@@ -65,20 +72,27 @@ const FeedbackAvailabilityModal = ({
   // 모달이 닫혀 있을 때는 쿼리를 실행하지 않는다 (슬롯 쿼리 enabled 가드와 동일).
   // slotOpenWindow: 모든 미션 오픈 윈도를 합성한 단일 게이팅 윈도(미션 일자 없으면 null).
   const { bars, slotOpenWindow } = useLiveFeedbackData({ enabled: isOpen });
-  const livePeriods = useMemo(
-    () =>
-      bars
-        .filter((b) => b.barType === 'live-feedback-period')
-        .map((b) => ({
-          challengeTitle: b.challengeTitle,
-          th: b.th,
-          startDate: b.startDate,
-          endDate: b.endDate,
-          reservedCount: b.submittedCount,
-          capacity: b.submittedCount + b.notSubmittedCount,
-        })),
-    [bars],
-  );
+  const livePeriods = useMemo<LiveFeedbackPeriodInfo[]>(() => {
+    const periods: LiveFeedbackPeriodInfo[] = bars
+      .filter((b) => b.barType === 'live-feedback-period')
+      .map((b) => ({
+        challengeTitle: b.challengeTitle,
+        th: b.th,
+        startDate: b.startDate,
+        endDate: b.endDate,
+        reservedCount: b.submittedCount,
+        capacity: b.submittedCount + b.notSubmittedCount,
+      }));
+    // 1대1 라이브 멘토링 오픈 기간도 챌린지 기간 바와 동일하게 날짜 밑에 표시.
+    if (openPeriod) {
+      periods.push({
+        challengeTitle: '1대1 라이브 멘토링',
+        startDate: openPeriod.startDate,
+        endDate: openPeriod.endDate,
+      });
+    }
+    return periods;
+  }, [bars, openPeriod]);
 
   const isSaving = createSlots.isPending || deleteSlots.isPending;
 
@@ -170,6 +184,7 @@ const FeedbackAvailabilityModal = ({
               onOpenReservation={() => setReservationOpen(true)}
               livePeriods={livePeriods}
               slotOpenWindow={slotOpenWindow}
+              challengePeriods={challengePeriods}
             />
           </>
         )}

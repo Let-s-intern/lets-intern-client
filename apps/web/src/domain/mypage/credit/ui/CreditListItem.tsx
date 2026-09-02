@@ -31,10 +31,17 @@ export default function CreditListItem({
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
+      /*
+        1대1 라이브 멘토링은 `applicationId` 체계이고 취소 수수료 규칙이 다르다.
+        리포트가 이미 전용 경로로 갈라져 있는 것과 같은 방식으로 분리한다 —
+        기존 화면에 분기를 넣으면 프로그램·리포트 결제가 함께 흔들린다.
+      */
       href={
         programInfo.programType === 'REPORT'
           ? `/mypage/credit/report/${programInfo.paymentId}?applicationId=${programInfo.applicationId}`
-          : `/mypage/credit/${programInfo.paymentId}`
+          : programInfo.programType === 'LIVE_MENTORING'
+            ? `/mypage/credit/live-mentoring/${programInfo.applicationId}`
+            : `/mypage/credit/${programInfo.paymentId}`
       }
       data-program-text={programInfo.title}
     >

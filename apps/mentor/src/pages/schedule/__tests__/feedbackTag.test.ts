@@ -28,9 +28,9 @@ function makeBar(barType: PeriodBarData['barType']): PeriodBarData {
 }
 
 describe('FEEDBACK_TAGS (PRD-0503 #4)', () => {
-  it('서면/LIVE/LIVE 일정 오픈 3가지 태그를 노출한다', () => {
+  it('서면/LIVE/LIVE 일정 오픈/1대1 4가지 태그를 노출한다', () => {
     const types = FEEDBACK_TAGS.map((t) => t.type);
-    expect(types).toEqual(['written', 'live', 'live-open']);
+    expect(types).toEqual(['written', 'live', 'live-open', 'live-mentoring']);
   });
 
   it('각 태그가 라벨과 활성/비활성 클래스를 모두 가진다', () => {
@@ -47,6 +47,7 @@ describe('FEEDBACK_TAGS (PRD-0503 #4)', () => {
       '서면 피드백',
       'LIVE 피드백',
       'LIVE 피드백 일정 오픈',
+      '1대1 라이브 멘토링',
     ]);
   });
 });
@@ -74,6 +75,10 @@ describe('barTypeToFeedbackTag', () => {
     expect(barTypeToFeedbackTag(barType)).toBe(expected);
   });
 
+  it('live-mentoring → live-mentoring (LIVE 피드백과 섞이지 않는다)', () => {
+    expect(barTypeToFeedbackTag('live-mentoring')).toBe('live-mentoring');
+  });
+
   it('barType이 undefined면 null 반환', () => {
     expect(barTypeToFeedbackTag(undefined)).toBeNull();
   });
@@ -87,6 +92,7 @@ describe('filterBarsByFeedbackTags', () => {
     makeBar('live-feedback-period'),
     makeBar('live-feedback-mentor-open'),
     makeBar('live-feedback-mentee-open'),
+    makeBar('live-mentoring'),
   ];
 
   it('빈 집합이면 전체 바를 반환한다 (= 전체)', () => {
@@ -102,12 +108,17 @@ describe('filterBarsByFeedbackTags', () => {
     ]);
   });
 
-  it('live 태그만 선택하면 라이브 세션/기간만 반환', () => {
+  it('live 태그만 선택하면 라이브 세션/기간만 반환 (1대1 제외)', () => {
     const result = filterBarsByFeedbackTags(bars, new Set(['live']));
     expect(result.map((b) => b.barType)).toEqual([
       'live-feedback',
       'live-feedback-period',
     ]);
+  });
+
+  it('live-mentoring 태그만 선택하면 1대1 예약 바만 반환', () => {
+    const result = filterBarsByFeedbackTags(bars, new Set(['live-mentoring']));
+    expect(result.map((b) => b.barType)).toEqual(['live-mentoring']);
   });
 
   it('live-open 태그만 선택하면 멘토/멘티 일정 오픈 바만 반환', () => {

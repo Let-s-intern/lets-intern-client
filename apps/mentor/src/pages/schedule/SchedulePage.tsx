@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
 import FeedbackAvailabilityModal from '@/pages/feedback-live-availability/FeedbackAvailabilityModal';
+import LiveMentoringSubmissionModal from '@/pages/live-mentoring/reservation-detail/LiveMentoringSubmissionModal';
 
 import FeedbackModal from '../feedback/FeedbackModal';
 import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
@@ -15,6 +16,7 @@ import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import type { FeedbackTagType } from './constants/feedbackTag';
 import { currentNow } from './constants/mockNow';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
+import { useLiveMentoringData } from './hooks/useLiveMentoringData';
 import { useScheduleData } from './hooks/useScheduleData';
 import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from './types';
@@ -23,8 +25,13 @@ const SchedulePage = () => {
   // 라이브 바는 실 API 파생. 서면 바는 ChallengeDataFetcher(실 API) 단일 경로로
   // 일원화되어 별도 extraBars 주입이 필요 없다 (중복 오버레이 제거).
   const { bars: liveFeedbackBars } = useLiveFeedbackData();
+  // 1대1 라이브 멘토링 예약도 같은 방식으로 합류시킨다(결제 완료 확정 건만 서버가 내린다).
+  const { bars: liveMentoringBars } = useLiveMentoringData();
 
-  const extraBars = liveFeedbackBars;
+  const extraBars = useMemo(
+    () => [...liveFeedbackBars, ...liveMentoringBars],
+    [liveFeedbackBars, liveMentoringBars],
+  );
 
   const {
     challenges,
@@ -102,6 +109,27 @@ const SchedulePage = () => {
   const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
     useState<PeriodBarData | null>(null);
 
+  // 1대1 제출물 모달 상태. null 이면 모달이 스스로 닫힌 상태다.
+  const [liveMentoringApplicationId, setLiveMentoringApplicationId] = useState<
+    number | null
+  >(null);
+
+  // 두 모달이 겹치지 않도록 한쪽을 열 때 다른 쪽을 비운다.
+  const handleLiveMentoringClick = useCallback((bar: PeriodBarData) => {
+    setSelectedLiveFeedbackBar(null);
+    setLiveMentoringApplicationId(bar.liveMentoring?.applicationId ?? null);
+  }, []);
+
+  const handleLiveFeedbackTimeBlockClick = useCallback((bar: PeriodBarData) => {
+    setLiveMentoringApplicationId(null);
+    setSelectedLiveFeedbackBar(bar);
+  }, []);
+
+  const closeLiveMentoringModal = useCallback(
+    () => setLiveMentoringApplicationId(null),
+    [],
+  );
+
   // 선택된 라이브 세션의 라운드 회차(period 바의 th) — 모달 헤더 표시용.
   // 한 챌린지에 회차가 여럿이므로 challengeId 일치 + 세션 날짜가 포함되는 period 바로 매칭한다.
   const selectedRoundTh = useMemo(() => {
@@ -164,9 +192,8 @@ const SchedulePage = () => {
                 setMentorOpenChallengeBar(bar);
                 setIsMentorOpenModalOpen(true);
               }}
-              onLiveFeedbackTimeBlockClick={(bar) =>
-                setSelectedLiveFeedbackBar(bar)
-              }
+              onLiveFeedbackTimeBlockClick={handleLiveFeedbackTimeBlockClick}
+              onLiveMentoringClick={handleLiveMentoringClick}
               onLiveFeedbackPeriodClick={(periodBar) => {
                 // 해당 기간의 첫 세션 바를 선택 → 모달이 세션 기반으로 열림
                 const firstSession = allBarsUnfiltered.find(
@@ -230,6 +257,12 @@ const SchedulePage = () => {
         liveFeedbackBars={modalLiveFeedbackBars}
         onSelectBar={setSelectedLiveFeedbackBar}
         roundTh={selectedRoundTh}
+      />
+
+      {/* 1대1 멘티 제출물 모달 — applicationId 가 null 이면 스스로 닫혀 있고 조회도 하지 않는다. */}
+      <LiveMentoringSubmissionModal
+        applicationId={liveMentoringApplicationId}
+        onClose={closeLiveMentoringModal}
       />
     </div>
   );

@@ -20,7 +20,12 @@ const FeedbackLiveAvailabilityPage = lazy(
 const FeedbackLiveReservationPage = lazy(
   () => import('@/pages/feedback-live-reservation/FeedbackLiveReservationPage'),
 );
-
+const LiveMentoringOpenSettingsPage = lazy(
+  () => import('@/pages/live-mentoring/open-settings/OpenSettingsPage'),
+);
+const LiveMentoringDetailSettingsPage = lazy(
+  () => import('@/pages/live-mentoring/detail-settings/DetailSettingsPage'),
+);
 const RouteFallback = () => (
   <div className="text-xsmall14 text-neutral-40 px-4 py-10">
     페이지를 불러오는 중...
@@ -55,6 +60,14 @@ export const router = createRouter([
       {
         path: '/feedback/live-reservation',
         element: withSuspense(<FeedbackLiveReservationPage />),
+      },
+      {
+        path: '/live-mentoring/open-settings',
+        element: withSuspense(<LiveMentoringOpenSettingsPage />),
+      },
+      {
+        path: '/live-mentoring/detail-settings',
+        element: withSuspense(<LiveMentoringDetailSettingsPage />),
       },
       { path: '/notice', element: <NoticeListPage /> },
       { path: '/notice/:noticeId', element: <NoticeDetailPage /> },

@@ -1,15 +1,27 @@
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
+import { APPLICATION_STATUS_LABELS } from '@/domain/live-mentoring/constants';
 import { twMerge } from '@/lib/twMerge';
 import {
   formatApplyDateTime,
   formatReservationDateTime,
 } from '../../utils/format';
 import {
+  attendanceLabel,
   resolveAdminVoLiveSpec,
   resolveRowTone,
   type LiveBadge,
   type RowTone,
 } from '../../utils/liveFeedbackSpec';
+import {
+  RESERVATION_KIND_LABEL,
+  rowCreateDate,
+  rowKey,
+  rowMenteeName,
+  rowMentorName,
+  rowProgramTitle,
+  type ReservationRow,
+} from '../utils/reservationRow';
 import type { SortKey, SortState } from '../utils/sortReservations';
 
 /**
@@ -24,13 +36,26 @@ const ROW_TONE_CLASS: Record<RowTone, string> = {
   none: '',
 };
 
+/**
+ * 1대1에 존재하지 않는 값을 채우는 문구.
+ *
+ * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 뱃지는 챌린지 라이브
+ * 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다. 예약 변경은 결제
+ * 완료건이 아니거나 슬롯이 없으면(아직 확정되지 않은 신청) 같은 이유로 쓴다.
+ */
+const NOT_APPLICABLE = '해당 없음';
+
 interface ReservationListViewProps {
-  reservations: FeedbackAdminVo[];
+  reservations: ReservationRow[];
   sort: SortState;
   onToggleSort: (key: SortKey) => void;
-  onView: (feedbackId: number) => void;
-  /** 예약 변경 모달 열기 */
+  onView: (row: ReservationRow) => void;
+  /** 예약 변경 모달 열기 — 챌린지 라이브 피드백. */
   onReschedule: (feedback: FeedbackAdminVo) => void;
+  /** 예약 변경 모달 열기 — 1대1 라이브 멘토링. */
+  onLiveMentoringReschedule: (
+    reservation: AdminLiveMentoringReservation,
+  ) => void;
   isLoading: boolean;
   /** 빈 목록일 때 표시할 문구. 섹션(예약 목록/예약 변경 내역)별로 다르게 줄 수 있다. */
   emptyMessage?: string;
@@ -76,12 +101,191 @@ function StatusBadge({ badge }: { badge: LiveBadge | null }) {
   return <span>{badge.label}</span>;
 }
 
+/** 1대1에 없는 값. 빈 칸과 구별되도록 흐린 글자로 명시한다. */
+function NotApplicableCell() {
+  return <span className="text-neutral-40">{NOT_APPLICABLE}</span>;
+}
+
+/** 챌린지 라이브 피드백 한 행. 출석·뱃지·예약 변경이 모두 있다. */
+function ChallengeRow({
+  feedback,
+  now,
+  onView,
+  onReschedule,
+}: {
+  feedback: FeedbackAdminVo;
+  now: Date;
+  onView: () => void;
+  onReschedule: () => void;
+}) {
+  const spec = resolveAdminVoLiveSpec(feedback, now);
+  // 멘토·멘티 진행 상태 조합으로 행 배경색을 구분한다.
+  const rowToneClassName = ROW_TONE_CLASS[resolveRowTone(spec)];
+
+  return (
+    <tr
+      className={twMerge(
+        'border-neutral-80 border-b last:border-b-0',
+        rowToneClassName,
+      )}
+    >
+      <td className={tdClassName}>
+        {formatReservationDateTime(feedback.startDate, feedback.endDate)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {RESERVATION_KIND_LABEL.CHALLENGE}
+      </td>
+      <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
+        {feedback.programTitle || '-'}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {feedback.mentorName}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {feedback.menteeName}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {spec.mentorAttendance}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {spec.menteeAttendance}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <StatusBadge badge={spec.mentorBadge} />
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <StatusBadge badge={spec.menteeBadge} />
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {formatApplyDateTime(feedback.createDate)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <button
+          type="button"
+          onClick={onView}
+          className="text-blue-600 hover:underline"
+        >
+          보기
+        </button>
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <button
+          type="button"
+          onClick={onReschedule}
+          className="text-blue-600 hover:underline"
+        >
+          예약 변경
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+/**
+ * 1대1 라이브 멘토링 한 행.
+ *
+ * 출석은 챌린지 라이브 피드백과 같은 값·같은 단어(`attendanceLabel`)로 보여준다.
+ * 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이라 그 자리는 `해당 없음`
+ * 으로 남긴다. 예약 변경은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만
+ * 연다 — 그 밖의 상태는 옮길 일정 자체가 없다.
+ */
+function LiveMentoringRow({
+  row,
+  onView,
+  onReschedule,
+}: {
+  row: Extract<ReservationRow, { kind: 'LIVE_MENTORING' }>;
+  onView: () => void;
+  onReschedule: () => void;
+}) {
+  const { reservation } = row;
+  const hasSlot =
+    reservation.reservationStartAt != null &&
+    reservation.reservationEndAt != null;
+  const canReschedule = hasSlot && reservation.status === 'CONFIRMED';
+
+  return (
+    <tr className="border-neutral-80 border-b last:border-b-0">
+      <td className={tdClassName}>
+        {hasSlot ? (
+          formatReservationDateTime(
+            reservation.reservationStartAt as string,
+            reservation.reservationEndAt as string,
+          )
+        ) : (
+          // 결제 대기 중이거나 선점이 만료돼 슬롯을 반납한 신청이다.
+          <span className="text-neutral-40">예약 슬롯 없음</span>
+        )}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <div className="flex flex-col gap-0.5">
+          <span>{RESERVATION_KIND_LABEL.LIVE_MENTORING}</span>
+          <span className="text-xxsmall12 text-neutral-40">
+            {APPLICATION_STATUS_LABELS[reservation.status]}
+            {reservation.durationMinutes != null &&
+              ` · ${reservation.durationMinutes}분`}
+          </span>
+        </div>
+      </td>
+      <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
+        {rowProgramTitle(row)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {rowMentorName(row)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {rowMenteeName(row)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {attendanceLabel(reservation.mentorStatus)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {attendanceLabel(reservation.menteeStatus)}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {/* 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이다. 1대1은
+            출석 값만 있고 그 요약을 만들 근거(진행 단계)가 없다. */}
+        <NotApplicableCell />
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <NotApplicableCell />
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {formatApplyDateTime(rowCreateDate(row))}
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        <button
+          type="button"
+          onClick={onView}
+          className="text-blue-600 hover:underline"
+        >
+          보기
+        </button>
+      </td>
+      <td className={twMerge(tdClassName, 'text-center')}>
+        {canReschedule ? (
+          <button
+            type="button"
+            onClick={onReschedule}
+            className="text-blue-600 hover:underline"
+          >
+            예약 변경
+          </button>
+        ) : (
+          <NotApplicableCell />
+        )}
+      </td>
+    </tr>
+  );
+}
+
 export default function ReservationListView({
   reservations,
   sort,
   onToggleSort,
   onView,
   onReschedule,
+  onLiveMentoringReschedule,
   isLoading,
   emptyMessage = '예약 내역이 없습니다.',
 }: ReservationListViewProps) {
@@ -117,6 +321,7 @@ export default function ReservationListView({
                 onClick={() => onToggleSort('dateTime')}
               />
             </th>
+            <th className={twMerge(thClassName, 'text-center')}>유형</th>
             <th className={twMerge(thClassName, 'text-left')}>프로그램</th>
             <th className={twMerge(thClassName, 'text-center')}>멘토</th>
             <th className={twMerge(thClassName, 'text-center')}>
@@ -144,66 +349,24 @@ export default function ReservationListView({
           </tr>
         </thead>
         <tbody>
-          {reservations.map((item) => {
-            const spec = resolveAdminVoLiveSpec(item, now);
-            // 멘토·멘티 진행 상태 조합으로 행 배경색을 구분한다.
-            const rowToneClassName = ROW_TONE_CLASS[resolveRowTone(spec)];
-            return (
-              <tr
-                key={item.feedbackId}
-                className={twMerge(
-                  'border-neutral-80 border-b last:border-b-0',
-                  rowToneClassName,
-                )}
-              >
-                <td className={tdClassName}>
-                  {formatReservationDateTime(item.startDate, item.endDate)}
-                </td>
-                <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
-                  {item.programTitle || '-'}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  {item.mentorName}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  {item.menteeName}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  {spec.mentorAttendance}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  {spec.menteeAttendance}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  <StatusBadge badge={spec.mentorBadge} />
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  <StatusBadge badge={spec.menteeBadge} />
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  {formatApplyDateTime(item.createDate)}
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  <button
-                    type="button"
-                    onClick={() => onView(item.feedbackId)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    보기
-                  </button>
-                </td>
-                <td className={twMerge(tdClassName, 'text-center')}>
-                  <button
-                    type="button"
-                    onClick={() => onReschedule(item)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    예약 변경
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {reservations.map((row) =>
+            row.kind === 'CHALLENGE' ? (
+              <ChallengeRow
+                key={rowKey(row)}
+                feedback={row.feedback}
+                now={now}
+                onView={() => onView(row)}
+                onReschedule={() => onReschedule(row.feedback)}
+              />
+            ) : (
+              <LiveMentoringRow
+                key={rowKey(row)}
+                row={row}
+                onView={() => onView(row)}
+                onReschedule={() => onLiveMentoringReschedule(row.reservation)}
+              />
+            ),
+          )}
         </tbody>
       </table>
     </div>

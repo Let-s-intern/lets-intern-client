@@ -86,9 +86,15 @@ export function serializeMentorSlotParams(
   return result;
 }
 
-/** GET /admin/feedback — 전체 예약 목록(필터) */
+/**
+ * GET /admin/feedback — 전체 예약 목록(필터).
+ *
+ * `enabled` 를 false 로 주면 조회하지 않는다. 예약 관리의 유형 필터가 1대1 전용일 때,
+ * 쓰지 않을 챌린지 목록을 부르지 않기 위한 것이다.
+ */
 export const useAdminFeedbackListQuery = (
   params: AdminFeedbackListParams = {},
+  enabled = true,
 ): UseQueryResult<FeedbackAdminVo[]> => {
   const queryParams = serializeFeedbackListParams(params);
 
@@ -98,6 +104,7 @@ export const useAdminFeedbackListQuery = (
       const res = await axios.get('/admin/feedback', { params: queryParams });
       return getAdminFeedbacksResponseSchema.parse(res.data.data).feedbackList;
     },
+    enabled,
   });
 };
 

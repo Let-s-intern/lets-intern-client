@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query';
+import { format } from 'date-fns';
 import { useMemo } from 'react';
 
 import axios from '@/utils/axios';
@@ -7,6 +8,7 @@ import type {
   FeedbackStatus,
   MentorFeedbackManagement,
 } from '@/api/challenge/challengeSchema';
+import type { LiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import type { AttendanceStatus } from '@/schema';
 import { currentNow } from '@/pages/schedule/constants/mockNow';
 import type { PeriodBarData } from '@/pages/schedule/types';
@@ -48,6 +50,11 @@ export type WrittenAttendanceMap = ReadonlyMap<
 >;
 
 const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로 미는 sentinel
+
+/** 1대1 행의 `챌린지` 컬럼 값. 챌린지가 없다고 빈 칸으로 두지 않는다. */
+export const LIVE_MENTORING_CHALLENGE_LABEL = '1대1 라이브 멘토링';
+/** 1대1 행의 `미션 회차` 컬럼 값. 빈 칸은 "없음"이 아니라 "안 냈음"으로 읽힌다. */
+export const LIVE_MENTORING_TH_LABEL = '해당 없음';
 
 /** "YYYY-MM-DD" 포맷의 날짜를 "YYYY.MM.DD"로. */
 function formatDot(iso: string): string {
@@ -233,6 +240,58 @@ function resolveLiveParticipation(
   return { menteeParticipation: null, mentorParticipation: null };
 }
 
+/**
+ * 1대1 예약 시각 ISO → 화면 표기.
+ *
+ * 캘린더(`deriveLiveMentoringBars`)와 **같은 방식**으로 파싱해야 한다. 문자열을 잘라
+ * 쓰면(`slice(11, 16)`) 서버가 오프셋을 붙여 보낼 때 두 화면이 서로 다른 시각을
+ * 보여 준다 — 같은 예약이 캘린더와 표에서 다르게 보이는 문제가 실제로 있었다.
+ */
+function toRowDate(iso: string): string {
+  return format(new Date(iso), 'yyyy-MM-dd');
+}
+
+function toRowTime(iso: string): string {
+  return format(new Date(iso), 'HH:mm');
+}
+
+/**
+ * 1대1 예약 → 피드백 상태 라벨·tone.
+ *
+ * 예약 응답에는 출석도 완료 여부도 없다(`MentorLiveMentoringReservationResponse`).
+ * 라이브 피드백처럼 "진행 완료 / 미진행" 을 가를 근거가 없어 **시각만으로** 판정하고,
+ * 종료된 건은 진행 여부를 단정하지 않는 `종료` 로 둔다.
+ */
+function resolveLiveMentoringRowStatus(
+  reservation: LiveMentoringReservation,
+  now: Date,
+): { statusLabel: string; statusTone: FeedbackRow['statusTone'] } {
+  const startMs = new Date(reservation.reservationStartAt).getTime();
+  const endMs = new Date(reservation.reservationEndAt).getTime();
+  const nowMs = now.getTime();
+
+  if (Number.isNaN(startMs) || Number.isNaN(endMs) || nowMs < startMs) {
+    return { statusLabel: '진행 예정', statusTone: 'liveWaiting' };
+  }
+  if (nowMs < endMs) {
+    return { statusLabel: '진행 중', statusTone: 'inProgress' };
+  }
+  return { statusLabel: '종료', statusTone: 'liveCompleted' };
+}
+
+/**
+ * 1대1 멘티 제출 라벨 — 신청 시 낸 질문과 전달 파일을 제출물로 본다.
+ * 둘 중 하나만 냈으면 '일부 제출' 이다. 어느 쪽이든 빈 칸으로 두지 않는다.
+ */
+function deriveLiveMentoringSubmissionLabel(
+  reservation: LiveMentoringReservation,
+): '제출' | '일부 제출' | '미제출' {
+  const { questionWritten, attachmentSubmitted } = reservation;
+  if (questionWritten && attachmentSubmitted) return '제출';
+  if (questionWritten || attachmentSubmitted) return '일부 제출';
+  return '미제출';
+}
+
 /** missionId → 서면 피드백 기간 {start, end} */
 export type MissionRangeMap = ReadonlyMap<
   number,
@@ -262,6 +321,8 @@ export function buildMissionRangeMap(
  * 빈 컬럼 규칙:
  * - 서면: 멘티예약/멘티참여/멘토참여 = null
  * - 라이브: 멘티제출 = attendanceStatus 기반(상세 미병합 시 null)
+ * - 1대1: 멘티참여/멘토참여 = null(예약 응답에 출석이 없다).
+ *   챌린지·미션 회차는 고정 문구로 채운다 — 빈 칸으로 두지 않는다.
  *
  * 라이브 행 데이터 소스는 Push 2부터 BE 멘토 목록(`useFeedbackMentorListQuery`) 기반
  * `useLiveFeedbackList`의 결과(`LiveFeedbackRound.sessionBars`)를 사용한다.
@@ -285,6 +346,11 @@ export function useMergedFeedbackRows(
    * `useWrittenMissionRangeMap(challengeIds)`로 채워 주입한다. 미주입 시 일정은 '-'.
    */
   missionRangeMap?: MissionRangeMap,
+  /**
+   * 1대1 라이브 멘토링 예약 목록(`GET /mentor/live-mentoring/reservations`).
+   * 서버가 결제 완료 확정 건만, 본인 건만 내리므로 여기서 다시 거르지 않는다.
+   */
+  liveMentoringReservations?: LiveMentoringReservation[],
 ): FeedbackRow[] {
   return useMemo(() => {
     const now = currentNow();
@@ -327,6 +393,7 @@ export function useMergedFeedbackRows(
             // 서면 상세 — 멘티 행이어도 미션 모달로 진입(제출자 있을 때).
             // 지각 제출도 열어 준다. 멘토가 "왜 진행 불가인지" 화면에서 확인해야 한다.
             canOpenDetail: summary.submissionState !== 'notSubmitted',
+            detailDisabledReason: null,
             source: {
               type: 'written',
               challengeId: challenge.challengeId,
@@ -374,9 +441,44 @@ export function useMergedFeedbackRows(
           menteeNameLabel: bar.liveFeedback.menteeName,
           // 라이브 상세는 RESERVED 이상(=예약 완료)이면 열림. mock은 전부 예약된 상태.
           canOpenDetail: true,
+          detailDisabledReason: null,
           source: { type: 'live', bar, round },
         });
       }
+    }
+
+    // ── 1대1 라이브 멘토링 행 ─────────────────────────
+    // 챌린지에 속하지 않아 스키마가 그대로 맞지 않는다. 맞지 않는 컬럼은 고정 문구로
+    // 채우고(빈 칸 금지), 출석처럼 근거가 없는 컬럼만 null 로 둔다.
+    for (const reservation of liveMentoringReservations ?? []) {
+      const sessionDate = toRowDate(reservation.reservationStartAt);
+      const startTime = toRowTime(reservation.reservationStartAt);
+      const endTime = toRowTime(reservation.reservationEndAt);
+      const status = resolveLiveMentoringRowStatus(reservation, now);
+
+      rows.push({
+        id: `live-mentoring-${reservation.applicationId}`,
+        type: 'live-mentoring',
+        startDate: sessionDate,
+        startTime,
+        endTime,
+        statusLabel: status.statusLabel,
+        statusTone: status.statusTone,
+        // 서버가 CONFIRMED(결제 완료 확정) 건만 내린다.
+        reservationLabel: '예약 완료',
+        submissionLabel: deriveLiveMentoringSubmissionLabel(reservation),
+        // 예약 응답에 출석이 없다. 없는 값을 지어내지 않는다.
+        menteeParticipation: null,
+        mentorParticipation: null,
+        challengeTitle: LIVE_MENTORING_CHALLENGE_LABEL,
+        thLabel: LIVE_MENTORING_TH_LABEL,
+        scheduleLabel: formatLiveSchedule(sessionDate, startTime, endTime),
+        menteeNameLabel: reservation.menteeName,
+        // 상세에서 멘티 질문·전달 파일을 연다.
+        canOpenDetail: true,
+        detailDisabledReason: null,
+        source: { type: 'live-mentoring', reservation },
+      });
     }
 
     // ── 경험정리(EXPERIENCE_1/2) 페어 후처리 ─────────────────────────────────
@@ -412,7 +514,13 @@ export function useMergedFeedbackRows(
     });
 
     return filteredRows;
-  }, [writtenChallenges, liveRounds, missionRangeMap, writtenAttendanceMap]);
+  }, [
+    writtenChallenges,
+    liveRounds,
+    missionRangeMap,
+    writtenAttendanceMap,
+    liveMentoringReservations,
+  ]);
 }
 
 /**

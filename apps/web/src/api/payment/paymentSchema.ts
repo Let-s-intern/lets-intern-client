@@ -1,10 +1,27 @@
 import { ProgramTypeEnum, reportTypeSchema } from '@/schema';
 import { z } from 'zod';
 
+/**
+ * 결제 응답이 싣는 프로그램 종류.
+ *
+ * 서버 `ProgramType` 에는 `LIVE_MENTORING(6)` 이 있고 결제 상세가 그대로 내려준다
+ * (`PaymentServiceImpl:115`). 그런데 공용 `ProgramTypeEnum` 에는 없어서 1대1 멘토링
+ * 결제는 파싱 단계에서 죽는다.
+ *
+ * 공용 enum 을 넓히지 않고 **결제 응답에서만** 받는다. 넓히면 홈 모집중 목록과
+ * 후기 배지처럼 이 값을 다룰 규칙이 없는 화면까지 타입이 번지고, 그쪽은 서버가
+ * 애초에 라이브 멘토링을 주지 않는다.
+ */
+const paymentProgramTypeSchema = z.union([
+  ProgramTypeEnum,
+  z.literal('LIVE_MENTORING'),
+]);
+export type PaymentProgramType = z.infer<typeof paymentProgramTypeSchema>;
+
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
   applicationId: z.number().nullable().optional(),
-  programType: ProgramTypeEnum.nullable().optional(),
+  programType: paymentProgramTypeSchema.nullable().optional(),
   reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
@@ -194,7 +211,10 @@ export const paymentDetailType = z.object({
     id: z.number().nullable().optional(),
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
-    programType: ProgramTypeEnum.exclude(['REPORT']).nullable().optional(),
+    programType: z
+      .union([ProgramTypeEnum.exclude(['REPORT']), z.literal('LIVE_MENTORING')])
+      .nullable()
+      .optional(),
     progressType: z.string().nullable().optional(),
     isCanceled: z.boolean().nullable().optional(),
     startDate: z.string().nullable().optional(),
