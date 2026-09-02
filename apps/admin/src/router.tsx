@@ -157,6 +157,12 @@ const AdminLiveReviewListPage = lazy(
 const AdminLiveMentoringReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminLiveMentoringReviewListPage'),
 );
+const AdminOneOnOneMentoringReviewListPage = lazy(
+  () =>
+    import(
+      './domain/admin/pages/review/AdminOneOnOneMentoringReviewListPage'
+    ),
+);
 const AdminMissionReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminMissionReviewListPage'),
 );
@@ -396,6 +402,10 @@ export const router = createBrowserRouter([
       {
         path: '/review/live-mentoring',
         element: withSuspense(<AdminLiveMentoringReviewListPage />),
+      },
+      {
+        path: '/review/live-mentoring-1on1',
+        element: withSuspense(<AdminOneOnOneMentoringReviewListPage />),
       },
       {
         path: '/review/mission',
