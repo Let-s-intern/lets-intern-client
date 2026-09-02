@@ -30,6 +30,7 @@ export const reviewTypeSchema = z.enum([
   'VOD_REVIEW',
   'REPORT_REVIEW',
   'MISSION_REVIEW',
+  'LIVE_MENTORING_REVIEW',
 ]);
 
 export const questionTypeSchema = z.enum([
@@ -415,6 +416,7 @@ export const adminProgramReviewSchema = z.object({
     title: z.string().nullable().optional(),
     name: z.string().nullable().optional(),
     review: z.string().nullable().optional(),
+    content: z.string().nullable().optional(), // 1:1 라이브 멘토링 후기 내용(LIVE_MENTORING_REVIEW)
     score: z.number().nullable().optional(),
     npsScore: z.number().nullable().optional(),
     isVisible: z.boolean().nullable().optional(),

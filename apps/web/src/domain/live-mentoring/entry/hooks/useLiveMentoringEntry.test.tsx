@@ -42,6 +42,7 @@ const baseEntry = {
   mentorStatus: 'PENDING',
   menteeStatus: 'PENDING',
   meetingUrl: null,
+  reviewId: null,
 } as LiveMentoringEntry;
 
 describe('useLiveMentoringEntry', () => {

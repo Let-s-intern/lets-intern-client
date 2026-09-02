@@ -623,5 +623,10 @@ export const liveMentoringEntrySchema = z.object({
   mentorStatus: liveMentoringSessionAttendanceSchema,
   menteeStatus: liveMentoringSessionAttendanceSchema,
   meetingUrl: z.string().nullable(),
+  /**
+   * 이미 작성한 후기의 id — 없으면 null. `Application.review` 조인 결과다.
+   * 종료 시 후기 모달을 다시 띄울지(§3.3.2 "미작성" 조건) 이 값으로 판정한다.
+   */
+  reviewId: z.number().nullable(),
 });
 export type LiveMentoringEntry = z.infer<typeof liveMentoringEntrySchema>;

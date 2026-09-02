@@ -40,6 +40,8 @@ interface LiveMentoringSessionModalProps {
   registerBaseUrl?: (base: string) => Promise<void>;
   /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
   onExhausted?: () => void;
+  /** 회의에 실제로 참가했을 때 호출 — 종료 후 후기 모달을 띄울지 판단하는 근거. */
+  onJoined?: () => void;
 }
 
 /** 출석 체크 바 — 참석/불참 토글. 한번 더 누르면 해제(저장은 지연). */
@@ -140,6 +142,7 @@ const LiveMentoringSessionModal = ({
   baseCandidates,
   registerBaseUrl,
   onExhausted,
+  onJoined,
 }: LiveMentoringSessionModalProps) => {
   const [pendingAttendance, setPendingAttendance] =
     useState<AttendanceStatus | null>(
@@ -195,6 +198,7 @@ const LiveMentoringSessionModal = ({
               baseCandidates={baseCandidates}
               registerBaseUrl={registerBaseUrl}
               onExhausted={onExhausted}
+              onJoined={onJoined}
               topLeftSlot={
                 startDate && endDate ? (
                   <LiveSessionTimer endDate={endDate} />
