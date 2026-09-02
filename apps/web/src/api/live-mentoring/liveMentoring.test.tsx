@@ -867,6 +867,7 @@ function entryResponse(overrides: Record<string, unknown> = {}) {
         mentorStatus: 'PENDING',
         menteeStatus: 'PENDING',
         meetingUrl: null,
+        reviewId: null,
         ...overrides,
       },
     },
