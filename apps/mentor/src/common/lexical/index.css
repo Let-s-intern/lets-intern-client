@@ -924,7 +924,9 @@ i.page-break,
 }
 
 .editor-shell .editor-image img {
-  max-width: 100%;
+  /* 노드에 인라인으로 박히는 max-width(기본 950px)를 무시하고 컨테이너 너비에 맞춤 */
+  max-width: 100% !important;
+  height: auto !important;
   cursor: default;
 }
 
@@ -1419,20 +1421,19 @@ button.action-button:disabled {
 .toolbar {
   @apply border;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 2px;
   margin-bottom: 1px;
   background: #fff;
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   vertical-align: middle;
-  height: 36px;
   position: sticky;
   top: 0;
   z-index: 2;
-  overflow-x: auto;
   max-width: 100%;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
 
 .toolbar::-webkit-scrollbar {
