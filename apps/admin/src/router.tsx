@@ -159,9 +159,7 @@ const AdminLiveMentoringReviewListPage = lazy(
 );
 const AdminOneOnOneMentoringReviewListPage = lazy(
   () =>
-    import(
-      './domain/admin/pages/review/AdminOneOnOneMentoringReviewListPage'
-    ),
+    import('./domain/admin/pages/review/AdminOneOnOneMentoringReviewListPage'),
 );
 const AdminMissionReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminMissionReviewListPage'),

@@ -42,9 +42,10 @@ describe('AdminReviewHeader', () => {
   it('/review/live-mentoring 에서는 기존 탭만 활성화된다', () => {
     renderAt('/review/live-mentoring');
 
-    expect(
-      screen.getByRole('link', { name: '라이브 멘토링' }),
-    ).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: '라이브 멘토링' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
     expect(
       screen.getByRole('link', { name: '1:1 라이브 멘토링' }),
     ).not.toHaveAttribute('aria-current');

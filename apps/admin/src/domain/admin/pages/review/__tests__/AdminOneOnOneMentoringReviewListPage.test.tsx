@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -53,19 +59,25 @@ describe('AdminOneOnOneMentoringReviewListPage', () => {
       data: {
         data: {
           reviewList: [mockReview],
-          pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+          pageInfo: {
+            pageNum: 0,
+            pageSize: 20,
+            totalElements: 1,
+            totalPages: 1,
+          },
         },
       },
     });
 
     renderPage();
 
-    expect(
-      await screen.findByText('많은 도움이 됐어요.'),
-    ).toBeInTheDocument();
-    expect(getMock).toHaveBeenCalledWith('/admin/review/LIVE_MENTORING_REVIEW', {
-      params: { page: 0, size: 20 },
-    });
+    expect(await screen.findByText('많은 도움이 됐어요.')).toBeInTheDocument();
+    expect(getMock).toHaveBeenCalledWith(
+      '/admin/review/LIVE_MENTORING_REVIEW',
+      {
+        params: { page: 0, size: 20 },
+      },
+    );
 
     const grid = screen.getByRole('grid');
     expect(
@@ -82,7 +94,12 @@ describe('AdminOneOnOneMentoringReviewListPage', () => {
       data: {
         data: {
           reviewList: [mockReview],
-          pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+          pageInfo: {
+            pageNum: 0,
+            pageSize: 20,
+            totalElements: 1,
+            totalPages: 1,
+          },
         },
       },
     });

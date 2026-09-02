@@ -208,9 +208,7 @@ export interface CreateLiveMentoringReviewParams {
  * 성공하면 입장 화면 조회(`reviewId`)를 무효화한다 — 남겨 두면 재입장 시 이미 쓴
  * 후기를 여전히 "미작성"으로 보고 모달을 다시 띄운다.
  */
-export const useCreateLiveMentoringReviewMutation = (
-  applicationId: number,
-) => {
+export const useCreateLiveMentoringReviewMutation = (applicationId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -53,9 +53,7 @@ describe('LiveMentoringReviewModal', () => {
   it('productName 이 있으면 제목에 붙인다', () => {
     renderModal({ productName: '자소서 멘토링', mentorName: '김멘토' });
 
-    expect(
-      screen.getByText('자소서 멘토링 멘토링, 어떠셨나요?'),
-    ).toBeVisible();
+    expect(screen.getByText('자소서 멘토링 멘토링, 어떠셨나요?')).toBeVisible();
     expect(screen.getByText(/김멘토 멘토님과 나눈/)).toBeInTheDocument();
     expect(
       screen.getByText('멘토링을 통해 새롭게 알게 된 점을 작성해주세요'),

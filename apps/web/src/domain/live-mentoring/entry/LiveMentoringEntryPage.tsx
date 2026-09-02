@@ -69,7 +69,11 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
     closeJitsi();
 
     const alreadyReviewed = entry?.reviewId != null;
-    if (entry?.myRole === 'MENTEE' && hasJoinedRef.current && !alreadyReviewed) {
+    if (
+      entry?.myRole === 'MENTEE' &&
+      hasJoinedRef.current &&
+      !alreadyReviewed
+    ) {
       setIsReviewOpen(true);
     }
     hasJoinedRef.current = false;

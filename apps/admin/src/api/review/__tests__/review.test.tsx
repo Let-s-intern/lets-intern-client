@@ -41,7 +41,12 @@ describe('useGetAdminProgramReview', () => {
       data: {
         data: {
           reviewList: [],
-          pageInfo: { pageNum: 0, pageSize: 20, totalElements: 0, totalPages: 0 },
+          pageInfo: {
+            pageNum: 0,
+            pageSize: 20,
+            totalElements: 0,
+            totalPages: 0,
+          },
         },
       },
     });
@@ -57,8 +62,11 @@ describe('useGetAdminProgramReview', () => {
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(getMock).toHaveBeenCalledWith('/admin/review/LIVE_MENTORING_REVIEW', {
-      params: { page: 0, size: 20 },
-    });
+    expect(getMock).toHaveBeenCalledWith(
+      '/admin/review/LIVE_MENTORING_REVIEW',
+      {
+        params: { page: 0, size: 20 },
+      },
+    );
   });
 });
