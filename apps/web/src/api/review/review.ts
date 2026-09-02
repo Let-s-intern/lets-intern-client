@@ -13,6 +13,7 @@ import { z } from 'zod';
 
 import { mypageApplicationsSchema } from '@/api/application';
 import { getChallengeReviewStatusQueryKey } from '@/api/challenge/challenge';
+import { LIVE_MENTORING_ENTRY_QUERY_KEY } from '@/api/live-mentoring/liveMentoring';
 import {
   blogBonusSchema,
   PostBlogBonusRequest,
@@ -189,6 +190,41 @@ export const usePostReviewMutation = ({
     },
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export interface CreateLiveMentoringReviewParams {
+  score: number;
+  content: string;
+}
+
+/**
+ * @description : 1대1 라이브 멘토링 후기 생성 — `POST /api/v2/review?applicationId={id}`.
+ *
+ * 범용 `usePostReviewMutation`(`npsScore`/`reviewItemList` 필수)과 바디 형태가 달라
+ * 별도 훅으로 둔다 — 1:1 멘토링은 라이브 피드백과 맞춰 별점+내용만 보낸다(PRD §3.3.3).
+ *
+ * 성공하면 입장 화면 조회(`reviewId`)를 무효화한다 — 남겨 두면 재입장 시 이미 쓴
+ * 후기를 여전히 "미작성"으로 보고 모달을 다시 띄운다.
+ */
+export const useCreateLiveMentoringReviewMutation = (
+  applicationId: number,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ score, content }: CreateLiveMentoringReviewParams) => {
+      await axiosV2.post(`/review?applicationId=${applicationId}`, {
+        type: 'LIVE_MENTORING_REVIEW',
+        score,
+        content,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...LIVE_MENTORING_ENTRY_QUERY_KEY, applicationId],
+      });
     },
   });
 };
