@@ -84,7 +84,7 @@ const LiveMentoringReviewModal = ({
               onChange={(e) =>
                 setContent(e.target.value.slice(0, REVIEW_MAX_LENGTH))
               }
-              placeholder="예) 이력서에서 어떤 항목을 강조해야 할지 몰랐는데, 지원 직무와 연결되는 경험을 앞에 배치하라고 짚어주셨어요. 덕분에 다음 지원서부터 바로 적용할 수 있었어요."
+              placeholder="예) 혼자서는 무엇부터 정리해야 할지 막막했는데, 제 상황에 맞는 다음 단계를 구체적으로 짚어주셨어요. 덕분에 바로 시작할 수 있었어요."
               className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
             />
             <p className="text-xxsmall12 text-right">
