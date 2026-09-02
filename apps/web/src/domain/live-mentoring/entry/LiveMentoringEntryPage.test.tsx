@@ -71,6 +71,7 @@ const entry = {
   mentorStatus: 'PENDING',
   menteeStatus: 'PENDING',
   meetingUrl: null,
+  reviewId: null,
 };
 
 describe('LiveMentoringEntryPage', () => {
