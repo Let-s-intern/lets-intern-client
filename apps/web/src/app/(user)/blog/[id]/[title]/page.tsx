@@ -11,7 +11,7 @@ import ProgramRecommendCard from '@/domain/blog/ui/ProgramRecommendCard';
 import BlogArticle from '@/domain/blog/ui/BlogArticle';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import BlogNewsletterSidePanel from '@/domain/blog/ad/BlogNewsletterSidePanel';
-import { BlogNewsletterPopup } from '@/domain/blog/ad/BlogNewsletterPopup';
+import { BlogPopup } from '@/domain/blog/ad/BlogPopup';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -320,8 +320,8 @@ const BlogDetailPage = async ({
         />
       )} */}
 
-      {/* 스크롤 뉴스레터 팝업 (본문 60% 스크롤 시 노출, 자기완결 client island) */}
-      <BlogNewsletterPopup />
+      {/* 어드민이 등록한 팝업 (임계값까지 스크롤 시 노출, 자기완결 client island) */}
+      <BlogPopup blogId={Number(id)} />
     </main>
   );
 };

@@ -9,6 +9,7 @@ import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
 import dayjs from '@/lib/dayjs';
+import { ApiError } from '@letscareer/api/errors';
 import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useParams } from 'next/navigation';
@@ -56,17 +57,37 @@ const MissionSubmitZeroSection = ({
 
   const isMissionReady = !!programId && !!missionId;
 
-  const handleSubmit = async () => {
-    if (!isMissionReady) return;
-
+  /**
+   * 출석 생성은 이미 있으면 CONFLICT_ATTENDANCE(409)로 거부된다 — 정상 동작이다.
+   * 직전 시도에서 출석은 이미 성공했는데 그 뒤 목표 저장만 실패해 버튼이
+   * "제출완료"로 안 바뀐 채 남아 있으면, 사용자가 다시 눌러 이 경로를 탄다.
+   * 그걸 실패로 보고하면 재시도할 때마다 똑같은 오류가 무한 반복된다
+   * (이미 존재하는 출석을 또 만들려 하니 매번 같은 이유로 거부되어서다) —
+   * 이미 제출된 상태로 보고 다음 단계(목표 저장)로 넘어간다.
+   */
+  const submitAttendanceIdempotently = async () => {
+    if (!missionId) return;
     try {
-      // 1. 출석 체크 먼저 (어드민 확인용 핵심 데이터)
       await submitAttendance.mutateAsync({
         missionId,
         link: 'https://example.com',
         review: textareaValue,
         testDate,
       });
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'CONFLICT_ATTENDANCE') {
+        return;
+      }
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!isMissionReady) return;
+
+    try {
+      // 1. 출석 체크 먼저 (어드민 확인용 핵심 데이터)
+      await submitAttendanceIdempotently();
 
       // 2. 출석 성공 후 목표 저장
       await submitChallengeGoal.mutateAsync({

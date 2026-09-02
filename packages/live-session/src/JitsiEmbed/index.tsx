@@ -31,6 +31,11 @@ interface JitsiEmbedProps {
   registerBaseUrl?: (base: string) => Promise<void>;
   /** 모든 후보 소진(입장 가능한 서버 없음) 시 호출. */
   onExhausted?: () => void;
+  /**
+   * 회의에 실제로 참가했을 때 1회 호출 (`videoConferenceJoined`).
+   * 닫기 버튼·hangup 이 같은 `onClose` 로 수렴하므로, "정말 세션을 했는지"는 이 신호로만 구분된다.
+   */
+  onJoined?: () => void;
 }
 
 /**
@@ -75,7 +80,19 @@ const CONFIG_OVERWRITE = {
   },
   disableSimulcast: true,
   desktopSharingFrameRate: { min: 5, max: 15 },
-  prejoinPageEnabled: false,
+  /*
+   * 프리조인("Join meeting") 화면 비활성 — 입장 버튼을 누르면 바로 회의에 들어간다.
+   *
+   * 예전 키 `prejoinPageEnabled` 는 현재 Jitsi 가 읽지 않는다. 두 배포 서버
+   * (jitsi-meet.letscareer.co.kr, fallback) 모두 config.js 가 `prejoinConfig` 만
+   * 정의하고 기본값이 `enabled: true` 라, 옛 키로는 프리조인이 그대로 떴다.
+   *
+   * 이게 후기 유도를 조용히 죽이고 있었다. 후기 모달은 `videoConferenceJoined`
+   * 이벤트로만 열리는데(아래 onApiReady 참고), 프리조인 화면에 머무는 동안에는
+   * 그 이벤트가 발화하지 않는다. 사용자는 "회의에 들어갔다 나왔는데 후기 창이
+   * 안 뜬다"고 느낀다.
+   */
+  prejoinConfig: { enabled: false },
   /*
    * P2P 비활성 — 항상 JVB(미디어 서버)를 거치게 한다.
    *
@@ -174,6 +191,7 @@ export function JitsiEmbed({
   baseCandidates,
   registerBaseUrl,
   onExhausted,
+  onJoined,
 }: JitsiEmbedProps) {
   const { domain, roomName } = parseRoomUrl(roomUrl);
   const { status, reportRuntimeError } = useJitsiConnection({
@@ -243,6 +261,7 @@ export function JitsiEmbed({
             let joined = false;
             api.addListener('videoConferenceJoined', () => {
               joined = true;
+              onJoined?.();
             });
             api.addListener('connectionFailed', () => {
               if (!joined) reportRuntimeError();

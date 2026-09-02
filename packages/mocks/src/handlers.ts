@@ -61,6 +61,17 @@ const MOCK_MEETING_ROOM = 'letscareer-mock-room-9z9z9z';
  */
 const meetingUrlStore = new Map<number, string>();
 
+/**
+ * `PATCH /feedback/{id}` 로 저장된 정리(별점·본문)를 feedbackId 별로 보관.
+ *
+ * 종료 직후 정리 모달의 "제출 → 다시 열리지 않음" 흐름을 수동 QA 에서 재현하기 위한 것이다.
+ * 이게 없으면 GET 이 늘 `score: null, review: null` 을 돌려줘 모달이 매번 다시 뜬다.
+ */
+const feedbackReviewStore = new Map<
+  number,
+  { score: number | null; review: string | null }
+>();
+
 const MOCK_MENTOR = {
   nickname: '테스트 멘토',
   introduction: '안녕하세요. Jitsi 통합 QA용 mock 멘토입니다.',
@@ -1991,6 +2002,23 @@ export const handlers = [
   ),
 
   /**
+   * (멘티) PATCH /feedback/:feedbackId — 라이브 멘토링 정리(별점 + 본문) 저장.
+   * 저장값을 feedbackReviewStore 에 담아 이후 상세 GET 이 이어받게 한다.
+   */
+  http.patch('*/feedback/:feedbackId', async ({ params, request }) => {
+    const feedbackId = Number(params.feedbackId);
+    const body = (await request.json().catch(() => null)) as {
+      score?: number;
+      review?: string;
+    } | null;
+    feedbackReviewStore.set(feedbackId, {
+      score: body?.score ?? null,
+      review: body?.review ?? null,
+    });
+    return HttpResponse.json({ status: 200, data: null });
+  }),
+
+  /**
    * (양쪽 공통, 멘티 상세) GET /feedback/:feedbackId
    * BE feedbackDetailSchema 일치(mentorStatus/menteeStatus/score/review nullable 포함).
    * 입장창을 넉넉히 열어(1시간 전 시작 ~ 12시간 후 종료) 즉시 입장 활성.
@@ -2012,8 +2040,8 @@ export const handlers = [
           status: base.status,
           mentorStatus: base.mentorStatus,
           menteeStatus: base.menteeStatus,
-          score: null,
-          review: null,
+          score: feedbackReviewStore.get(feedbackId)?.score ?? null,
+          review: feedbackReviewStore.get(feedbackId)?.review ?? null,
           // 입장 페이지/모달(웹) 표시용 — 일정 요약·상대방·노션 제출물.
           programTitle: base.programTitle,
           missionTh: 2,

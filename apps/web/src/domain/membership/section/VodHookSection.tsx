@@ -13,7 +13,7 @@ function Sparkle({ className }: { className?: string }) {
   );
 }
 
-// 멤버십 신청 시 현직자 공채 준비 VOD 무료 제공 훅 섹션 (다크, 디자인 시스템 정렬).
+// 패스 신청 시 현직자 공채 준비 VOD 무료 제공 훅 섹션 (다크, 디자인 시스템 정렬).
 export default function VodHookSection() {
   return (
     <>

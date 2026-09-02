@@ -1,5 +1,6 @@
 import axios from '@/utils/axios';
 import {
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -17,6 +18,7 @@ import {
   getAdminFeedbackDetailResponseSchema,
   getAdminFeedbackHistoryResponseSchema,
   getAdminFeedbacksResponseSchema,
+  getFeedbackReviewsResponseSchema,
   getMentorFeedbackSlotsResponseSchema,
   getMentorSlotCountsResponseSchema,
 } from './feedbackSchema';
@@ -32,6 +34,7 @@ const ADMIN_FEEDBACK_QUERY_KEY = 'adminFeedbackList';
 const ADMIN_FEEDBACK_DETAIL_QUERY_KEY = 'adminFeedbackDetail';
 const ADMIN_FEEDBACK_HISTORY_QUERY_KEY = 'adminFeedbackHistory';
 const MENTOR_FEEDBACK_SLOTS_QUERY_KEY = 'mentorFeedbackSlots';
+export const ADMIN_FEEDBACK_REVIEW_QUERY_KEY = 'adminFeedbackReviewList';
 
 /** 빈 배열/undefined/빈 문자열 파라미터를 제거해 직렬화한다. */
 export function serializeFeedbackListParams(
@@ -202,6 +205,11 @@ export const useUpdateAdminFeedbackMutation = () => {
         queryKey: [ADMIN_FEEDBACK_DETAIL_QUERY_KEY, variables.feedbackId],
       });
       queryClient.invalidateQueries({ queryKey: [ADMIN_FEEDBACK_QUERY_KEY] });
+      // 후기 관리 > 라이브 멘토링 탭도 같은 PATCH 로 노출여부를 바꾼다.
+      // 이 키를 빼면 저장은 됐는데 목록이 옛 값을 계속 보여준다.
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_FEEDBACK_REVIEW_QUERY_KEY],
+      });
     },
   });
 };
@@ -232,5 +240,30 @@ export const useRescheduleAdminFeedbackMutation = () => {
         queryKey: [MENTOR_FEEDBACK_SLOTS_QUERY_KEY],
       });
     },
+  });
+};
+
+/**
+ * GET /admin/feedback/review — 후기 관리 > 라이브 멘토링 탭 목록.
+ *
+ * 노출 여부 변경은 별도 훅이 아니라 기존 useUpdateAdminFeedbackMutation 을 쓴다
+ * (PATCH /admin/feedback/{id}). 후기 저장 위치가 feedback 한 곳뿐이라 경로도 하나다.
+ */
+export const useAdminFeedbackReviewsQuery = ({
+  page = 0,
+  size = 20,
+}: {
+  page?: number;
+  size?: number;
+}) => {
+  return useQuery({
+    queryKey: [ADMIN_FEEDBACK_REVIEW_QUERY_KEY, page, size],
+    queryFn: async () => {
+      const res = await axios.get('/admin/feedback/review', {
+        params: { page, size },
+      });
+      return getFeedbackReviewsResponseSchema.parse(res.data.data);
+    },
+    placeholderData: keepPreviousData,
   });
 };
