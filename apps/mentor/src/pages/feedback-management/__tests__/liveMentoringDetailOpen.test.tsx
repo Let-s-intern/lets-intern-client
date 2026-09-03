@@ -1,9 +1,9 @@
 /**
- * 피드백 현황 표 — 1대1 행의 `상세` 잠금 검증 (Push 7-B).
+ * 피드백 현황 표 — 1대1 행의 `상세` 열기 검증.
  *
- * 멘토가 멘티 질문·전달 파일을 볼 화면이 아직 없어 1대1 행의 상세를 잠근다.
- * `disabled` 만 걸면 고장으로 읽히므로 왜 못 누르는지가 함께 보여야 하고,
- * 챌린지 행의 `보기` 는 그대로 동작해야 한다.
+ * 멘티 제출물 모달이 생기기 전에는 이 행의 상세가 잠겨 있었다. 이제는 챌린지 행과
+ * 똑같이 `보기` 로 열리고, 잠긴 표시("준비 중")가 남아 있지 않아야 한다.
+ * 서면 미제출처럼 이유 없이 잠긴 행의 하이픈 표시는 그대로여야 한다.
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,8 +11,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { FeedbackRow } from '../types';
 import FeedbackTable from '../ui/FeedbackTable';
-
-const REASON = '멘티 질문·전달 파일을 여는 화면이 아직 없습니다';
 
 const liveMentoringRow: FeedbackRow = {
   id: 'live-mentoring-91001',
@@ -30,8 +28,8 @@ const liveMentoringRow: FeedbackRow = {
   thLabel: '해당 없음',
   scheduleLabel: '2026.05.04 14:00 ~ 15:00',
   menteeNameLabel: '김일대',
-  canOpenDetail: false,
-  detailDisabledReason: REASON,
+  canOpenDetail: true,
+  detailDisabledReason: null,
   source: { type: 'live-mentoring', reservation: {} as never },
 };
 
@@ -64,30 +62,27 @@ const writtenRow: FeedbackRow = {
 };
 
 describe('1대1 행의 상세', () => {
-  it('비활성이다', () => {
+  it('보기 버튼으로 열 수 있다', () => {
     render(<FeedbackTable rows={[liveMentoringRow]} onClickDetail={vi.fn()} />);
 
-    const button = screen.getByRole('button', { name: /준비 중/ });
-    expect(button).toBeDisabled();
+    expect(screen.getByRole('button', { name: '보기' })).toBeEnabled();
   });
 
-  it('왜 못 누르는지 알 수 있다', () => {
+  it('잠긴 표시가 남아 있지 않다', () => {
     render(<FeedbackTable rows={[liveMentoringRow]} onClickDetail={vi.fn()} />);
 
-    expect(screen.getByText('준비 중')).toBeInTheDocument();
-    const button = screen.getByRole('button', { name: /준비 중/ });
-    expect(button.getAttribute('title')).toBe(REASON);
-    expect(button.getAttribute('aria-label')).toContain(REASON);
+    expect(screen.queryByText('준비 중')).toBeNull();
   });
 
-  it('눌러도 onClickDetail 이 호출되지 않는다', async () => {
+  it('누르면 그 행이 onClickDetail 로 전달된다', async () => {
     const onClickDetail = vi.fn();
     render(
       <FeedbackTable rows={[liveMentoringRow]} onClickDetail={onClickDetail} />,
     );
 
-    await userEvent.click(screen.getByRole('button', { name: /준비 중/ }));
-    expect(onClickDetail).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: '보기' }));
+    expect(onClickDetail).toHaveBeenCalledTimes(1);
+    expect(onClickDetail).toHaveBeenCalledWith(liveMentoringRow);
   });
 });
 
@@ -101,7 +96,10 @@ describe('챌린지 행의 상세', () => {
       />,
     );
 
-    await userEvent.click(screen.getByRole('button', { name: '보기' }));
+    const buttons = screen.getAllByRole('button', { name: '보기' });
+    expect(buttons).toHaveLength(2);
+
+    await userEvent.click(buttons[1]);
     expect(onClickDetail).toHaveBeenCalledTimes(1);
     expect(onClickDetail).toHaveBeenCalledWith(writtenRow);
   });

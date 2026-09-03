@@ -146,13 +146,13 @@ describe('LiveMentoringCreditDeletePage — 금액은 서버 값을 그대로 �
     expect(screen.getByText('42,000원')).toBeInTheDocument();
   });
 
-  it('수수료 정책 안내 문구가 시안 원문과 같다', () => {
+  it('수수료 정책 안내 문구가 PRD 7-2 확정 정책(24시간 경계 + 결제 후 1시간 유예)을 설명한다', () => {
     mockRefund(makePreview());
     render(<LiveMentoringCreditDeletePage applicationId={10} />);
 
     expect(
       screen.getByText(
-        '예약일시 24~48시간 전 취소 시, 멘토의 멘토링 사전 준비 시간이 반영되어 결제 금액의 50%가 취소 수수료로 부과됩니다.',
+        '예약 시작 24시간 전 이후 취소 시, 멘토의 사전 준비 시간이 반영되어 결제 금액의 50%가 취소 수수료로 부과됩니다. 결제 후 1시간 이내에는 이 기준과 무관하게 전액 환불됩니다.',
       ),
     ).toBeInTheDocument();
   });

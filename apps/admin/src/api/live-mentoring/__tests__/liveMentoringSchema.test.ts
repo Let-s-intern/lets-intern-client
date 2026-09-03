@@ -113,6 +113,8 @@ describe('adminLiveMentoringReservationSchema', () => {
       createDate: '2026-08-15T10:00:00',
       questionDeferred: false,
       questionContent: '이력서 어느 부분을 먼저 볼까요?',
+      mentorStatus: 'PENDING',
+      menteeStatus: 'PENDING',
       ...overrides,
     };
   }

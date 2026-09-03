@@ -55,9 +55,6 @@ const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로
 export const LIVE_MENTORING_CHALLENGE_LABEL = '1대1 라이브 멘토링';
 /** 1대1 행의 `미션 회차` 컬럼 값. 빈 칸은 "없음"이 아니라 "안 냈음"으로 읽힌다. */
 export const LIVE_MENTORING_TH_LABEL = '해당 없음';
-/** 1대1 행의 `상세` 가 잠긴 이유. 잠긴 버튼 옆에 그대로 보여 준다. */
-export const LIVE_MENTORING_DETAIL_DISABLED_REASON =
-  '멘티 질문·전달 파일을 여는 화면이 아직 없습니다';
 
 /** "YYYY-MM-DD" 포맷의 날짜를 "YYYY.MM.DD"로. */
 function formatDot(iso: string): string {
@@ -477,9 +474,9 @@ export function useMergedFeedbackRows(
         thLabel: LIVE_MENTORING_TH_LABEL,
         scheduleLabel: formatLiveSchedule(sessionDate, startTime, endTime),
         menteeNameLabel: reservation.menteeName,
-        // 멘토가 멘티 질문·전달 파일을 볼 화면이 아직 없다.
-        canOpenDetail: false,
-        detailDisabledReason: LIVE_MENTORING_DETAIL_DISABLED_REASON,
+        // 상세에서 멘티 질문·전달 파일을 연다.
+        canOpenDetail: true,
+        detailDisabledReason: null,
         source: { type: 'live-mentoring', reservation },
       });
     }

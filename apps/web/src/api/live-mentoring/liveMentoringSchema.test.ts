@@ -4,6 +4,7 @@ import {
   createLiveMentoringApplicationRequestSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
+  liveMentoringEntrySchema,
   liveMentoringOpeningListSchema,
   liveMentoringOpeningSchema,
   liveMentoringSlotListSchema,
@@ -568,5 +569,48 @@ describe('결제 승인 스키마 — amount 타입 비대칭', () => {
         }).applicationStatus,
       ).toBe(status);
     }
+  });
+});
+
+/** 서버 `GetLiveMentoringEntryResponseDto` 를 통과하는 최소 페이로드. */
+function makeEntry(overrides: Record<string, unknown> = {}) {
+  return {
+    applicationId: 1,
+    myRole: 'MENTEE',
+    productName: '자소서 라이브 멘토링',
+    durationMinutes: 30,
+    reservationStartAt: '2026-09-01T10:00:00',
+    reservationEndAt: '2026-09-01T10:30:00',
+    mentorName: '김멘토',
+    menteeName: '박멘티',
+    questionDeferred: false,
+    questionContent: null,
+    attachmentType: 'NONE',
+    attachmentUrl: null,
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
+    meetingUrl: null,
+    reviewId: null,
+    ...overrides,
+  };
+}
+
+// 종료 시 후기 모달을 다시 띄울지(§3.3.2) 는 이 필드로 판정한다 — 파싱 단계에서
+// 두 케이스(있음/없음)가 모두 통과해야 한다.
+describe('liveMentoringEntrySchema — reviewId', () => {
+  it('후기를 아직 안 썼으면 reviewId 가 null 이다', () => {
+    const parsed = liveMentoringEntrySchema.parse(makeEntry());
+    expect(parsed.reviewId).toBeNull();
+  });
+
+  it('후기를 이미 썼으면 reviewId 를 그대로 파싱한다', () => {
+    const parsed = liveMentoringEntrySchema.parse(makeEntry({ reviewId: 77 }));
+    expect(parsed.reviewId).toBe(77);
+  });
+
+  it('reviewId 가 없으면(구버전 응답) 파싱 실패한다', () => {
+    const entry = makeEntry() as Record<string, unknown>;
+    delete entry.reviewId;
+    expect(() => liveMentoringEntrySchema.parse(entry)).toThrow();
   });
 });

@@ -99,6 +99,11 @@ const fromNow = (ms: number) => new Date(now.getTime() + ms).toISOString();
  * 1번은 라이브 피드백 QA 예약(`reservationStart`)과 같은 시간대에 놓아, 캘린더에서
  * 라이브 피드백 카드와 1대1 카드가 겹칠 때 둘 다 보이는지 눈으로 확인할 수 있게 했다.
  * 제출 여부(질문·전달 파일)는 세 조합(둘 다·질문만·둘 다 없음)을 모두 만든다.
+ *
+ * 4~6번은 상세(질문·첨부 본문) QA 전용이다. 로컬 DB 에는 `FILE` 첨부도 동의 미체크 건도
+ * 하나도 없어 목이 유일한 검증 수단이라, 첨부 종류와 동의 조합을 여기서 만든다.
+ * 상세 응답은 아래 `MENTOR_LIVE_MENTORING_RESERVATION_DETAILS` 가 이 목록에서
+ * 예약 정보를 그대로 가져다 쓴다 — 두 응답의 멘티 이름·시각이 어긋나지 않는다.
  */
 const MENTOR_LIVE_MENTORING_RESERVATIONS = [
   {
@@ -140,6 +145,173 @@ const MENTOR_LIVE_MENTORING_RESERVATIONS = [
     attachmentSubmitted: false,
     createDate: deriveCreateDate(reservationStart, 9),
   },
+  {
+    applicationId: 91004,
+    menteeId: 51004,
+    menteeName: '정링크',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 30,
+    reservationStartAt: fromNow(4 * DAY_MS + 3 * 60 * 60 * 1000),
+    reservationEndAt: fromNow(4 * DAY_MS + 3.5 * 60 * 60 * 1000),
+    status: 'CONFIRMED' as const,
+    questionWritten: true,
+    attachmentSubmitted: true,
+    createDate: deriveCreateDate(reservationStart, 11),
+  },
+  {
+    applicationId: 91005,
+    menteeId: 51005,
+    menteeName: '한파일',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 60,
+    reservationStartAt: fromNow(5 * DAY_MS + 2 * 60 * 60 * 1000),
+    reservationEndAt: fromNow(5 * DAY_MS + 3 * 60 * 60 * 1000),
+    status: 'CONFIRMED' as const,
+    questionWritten: true,
+    attachmentSubmitted: true,
+    createDate: deriveCreateDate(reservationStart, 12),
+  },
+  {
+    applicationId: 91006,
+    menteeId: 51006,
+    menteeName: '오비동의',
+    productName: '자소서 실전 첨삭 멘토링',
+    durationMinutes: 30,
+    reservationStartAt: fromNow(6 * DAY_MS + 7 * 60 * 60 * 1000),
+    reservationEndAt: fromNow(6 * DAY_MS + 7.5 * 60 * 60 * 1000),
+    status: 'CONFIRMED' as const,
+    questionWritten: true,
+    /** 첨부를 내긴 냈다. 멘토 전달에 동의하지 않았을 뿐이라 목록 표기는 "제출" 이다. */
+    attachmentSubmitted: true,
+    createDate: deriveCreateDate(reservationStart, 15),
+  },
+];
+
+/** 상세 mock 중 예약 정보를 뺀 나머지 — 멘티가 낸 질문·첨부. */
+interface MentorLiveMentoringSubmission {
+  /** 백필 전 기존 행은 서버가 null 을 내린다. 아래 91003 이 그 경우다. */
+  mentoringCategory: 'PERSONAL_STATEMENT' | 'RESUME' | 'PORTFOLIO' | null;
+  questionDeferred: boolean;
+  questionContent: string | null;
+  attachmentType: 'NONE' | 'FILE' | 'URL';
+  attachmentUrl: string | null;
+  mentorShareAgreed: boolean;
+}
+
+/**
+ * 목록의 같은 건에서 예약 정보를 가져와 제출물을 얹는다. 두 응답이 같은 값을 말하게 하려는
+ * 것이다 — 상세를 따로 적어 두면 목록에서 연 모달이 다른 시각을 보여준다.
+ */
+/** 출석 상태 — 서버 `FeedbackAttendanceStatus` 와 같은 값이다. */
+type LiveMentoringAttendance = 'PENDING' | 'PRESENT' | 'ABSENT';
+
+const mentorLiveMentoringDetail = (
+  applicationId: number,
+  submission: MentorLiveMentoringSubmission,
+) => {
+  const reservation = MENTOR_LIVE_MENTORING_RESERVATIONS.find(
+    (r) => r.applicationId === applicationId,
+  );
+  if (!reservation) {
+    throw new Error(`예약 목록에 없는 applicationId: ${applicationId}`);
+  }
+  return {
+    applicationId,
+    menteeName: reservation.menteeName,
+    productName: reservation.productName,
+    durationMinutes: reservation.durationMinutes,
+    reservationStartAt: reservation.reservationStartAt,
+    reservationEndAt: reservation.reservationEndAt,
+    /*
+      세션 진행 상태. 목은 "아직 아무도 입장하지 않은" 상태에서 시작한다 — 멘토가
+      입장을 누르면 아래 meeting-url 핸들러가 방을 만들고 출석이 PRESENT 로 바뀐다.
+      화면이 그 전이를 밟아 볼 수 있어야 입장 흐름을 목으로 확인할 수 있다.
+     */
+    mentorStatus: 'PENDING' as LiveMentoringAttendance,
+    menteeStatus: 'PENDING' as LiveMentoringAttendance,
+    meetingUrl: null as string | null,
+    ...submission,
+  };
+};
+
+/**
+ * (멘토) 예약 상세 mock — `GET /mentor/live-mentoring/reservations/{applicationId}`.
+ *
+ * PRD 4.7 의 렌더 규칙을 화면 없이도 다 밟을 수 있도록 다섯 경우를 모두 담는다.
+ * 노션 주소(91001)와 노션이 아닌 주소(91004)를 나눈 이유는, 임베드를 노션일 때만
+ * 시도하기 때문이다.
+ *
+ * 파일 첨부(91005)에는 파일명도 주소도 없다 — 서버가 내리지 않기로 한 값이라(PRD 4.2)
+ * 목이 먼저 내리면 화면이 없는 필드에 기대게 된다.
+ *
+ * `questionUpdatedAt` 도 넣지 않는다. 백엔드가 이번에 내리지 않기로 했고(PRD 4.5),
+ * 스키마는 없어도 통과하도록 열려 있다.
+ *
+ * 91003 은 `mentoringCategory` 가 null 이다. 실 데이터 대부분이 그 상태라 화면이 이 값을
+ * 조건부로 그려야 한다.
+ */
+const MENTOR_LIVE_MENTORING_RESERVATION_DETAILS = [
+  // 1. 질문 있음 + URL 첨부(노션) + 동의함 → 링크 버튼과 임베드가 모두 뜬다.
+  mentorLiveMentoringDetail(91001, {
+    mentoringCategory: 'PERSONAL_STATEMENT',
+    questionDeferred: false,
+    questionContent:
+      '지원 동기 문단이 다른 지원자와 비슷해 보일까 걱정입니다. 경험을 더 앞으로 빼는 게 나을지 봐주세요.',
+    attachmentType: 'URL',
+    attachmentUrl: 'https://www.notion.so/letscareer-mentee-self-intro-91001',
+    mentorShareAgreed: true,
+  }),
+  // 질문만 낸 건. 첨부가 없어 "첨부 자료 없음" 안내만 뜬다.
+  mentorLiveMentoringDetail(91002, {
+    mentoringCategory: 'RESUME',
+    questionDeferred: false,
+    questionContent:
+      '경력 기술서에 인턴 경험을 어느 정도 비중으로 적어야 할지 모르겠습니다.',
+    attachmentType: 'NONE',
+    attachmentUrl: null,
+    mentorShareAgreed: false,
+  }),
+  // 5. 나중에 작성하기 + 첨부 없음 → 빈 화면이 아니라 안내 문구가 떠야 한다.
+  //    카테고리도 null 이다 — 서버 `mentoring_category` 가 0 인 기존 행(로컬 26건 중 23건)이
+  //    이 형태로 내려온다. 화면이 카테고리 라벨을 조건부로 그리는지 여기서 확인한다.
+  mentorLiveMentoringDetail(91003, {
+    mentoringCategory: null,
+    questionDeferred: true,
+    questionContent: null,
+    attachmentType: 'NONE',
+    attachmentUrl: null,
+    mentorShareAgreed: false,
+  }),
+  // 2. 질문 있음 + URL 첨부(노션 아님) + 동의함 → 임베드 없이 링크 버튼만.
+  mentorLiveMentoringDetail(91004, {
+    mentoringCategory: 'PORTFOLIO',
+    questionDeferred: false,
+    questionContent:
+      '포트폴리오 첫 페이지에서 무엇을 먼저 보여주는 게 좋을지 궁금합니다.',
+    attachmentType: 'URL',
+    attachmentUrl: 'https://drive.google.com/file/d/mentee-portfolio-91004',
+    mentorShareAgreed: true,
+  }),
+  // 3. 질문 있음 + FILE 첨부 + 동의함 → "파일 첨부됨 — 준비 중". 파일명·링크 모두 없다.
+  mentorLiveMentoringDetail(91005, {
+    mentoringCategory: 'RESUME',
+    questionDeferred: false,
+    questionContent:
+      '이력서를 두 장으로 줄이고 싶은데 어떤 항목을 빼야 할지 봐주시면 좋겠습니다.',
+    attachmentType: 'FILE',
+    attachmentUrl: null,
+    mentorShareAgreed: true,
+  }),
+  // 4. 질문 있음 + URL 첨부 + 동의 안 함 → 서버가 주소를 null 로 비워 내린다(PRD 4.4).
+  mentorLiveMentoringDetail(91006, {
+    mentoringCategory: 'PERSONAL_STATEMENT',
+    questionDeferred: false,
+    questionContent:
+      '자기소개서 3번 문항 분량이 너무 깁니다. 어디를 덜어내면 좋을까요.',
+    attachmentType: 'URL',
+    attachmentUrl: null,
+    mentorShareAgreed: false,
+  }),
 ];
 
 /** 서면 경험정리 QA(챌린지 9901) — 미션 종료 = 2일 전 → 제출기간이 오늘을 포함. */
@@ -2256,6 +2428,175 @@ export const handlers = [
   http.get('*/mentor/live-mentoring/open-status', () => {
     return HttpResponse.json({ status: 200, data: openingHistoryResponse() });
   }),
+
+  /**
+   * (멘토) GET /mentor/live-mentoring/reservations/{applicationId} — 예약 1건의
+   * 질문·첨부 상세.
+   *
+   * **목록 핸들러보다 먼저 등록해야 한다** — 아래 목록 패턴(와일드카드 +
+   * `/mentor/live-mentoring/reservations`)이 이 경로까지 삼켜서, 순서가 뒤바뀌면
+   * 상세 요청이 목록 응답을 받는다. 같은 함정이 관리자 상품 목록에도 있다(위 주석 참고).
+   *
+   * 동의 미체크 건은 목 데이터 단계에서 이미 `attachmentUrl` 이 null 이다. 핸들러가
+   * 다시 지우지 않는다 — 서버가 비워 내리는 계약(PRD 4.4)을 목 데이터가 그대로 담는다.
+   */
+  http.get(
+    '*/mentor/live-mentoring/reservations/:applicationId',
+    ({ params }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+
+      return HttpResponse.json({ status: 200, data: detail });
+    },
+  ),
+
+  /**
+   * (양쪽 공통) GET /live-mentoring/applications/:applicationId/entry
+   *
+   * 멘토·멘티가 같은 경로로 받는 입장 정보다. 목 사용자는 항상 멘토 시점(MOCK_USER,
+   * id=1)으로 로그인하므로 `myRole` 을 고정으로 `'MENTOR'` 로 낸다 — 실 서버는
+   * 요청자와 신청의 멘토·멘티 id 를 대조해 판정하지만, 목에는 그 판정에 쓸 두
+   * 번째 사용자 컨텍스트가 없다.
+   */
+  http.get(
+    '*/live-mentoring/applications/:applicationId/entry',
+    ({ params }) => {
+      const applicationId = Number(params.applicationId);
+      const reservation = MENTOR_LIVE_MENTORING_RESERVATIONS.find(
+        (r) => r.applicationId === applicationId,
+      );
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!reservation || !detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      return HttpResponse.json({
+        status: 200,
+        data: {
+          applicationId,
+          myRole: 'MENTOR',
+          productName: reservation.productName,
+          durationMinutes: reservation.durationMinutes,
+          reservationStartAt: reservation.reservationStartAt,
+          reservationEndAt: reservation.reservationEndAt,
+          mentorName: '김멘토',
+          menteeName: reservation.menteeName,
+          questionDeferred: detail.questionDeferred,
+          questionContent: detail.questionContent,
+          attachmentType: detail.attachmentType,
+          attachmentUrl: detail.mentorShareAgreed ? detail.attachmentUrl : null,
+          mentorStatus: detail.mentorStatus,
+          menteeStatus: detail.menteeStatus,
+          meetingUrl: detail.meetingUrl,
+        },
+      });
+    },
+  ),
+
+  /**
+   * (양쪽 공통) PATCH /live-mentoring/applications/:applicationId/entry/meeting-url
+   *
+   * 먼저 입장한 쪽이 만든 방을 그대로 유지한다 — `/mentor/.../meeting-url` 목과
+   * 같은 덮어쓰기 방지 규칙이다.
+   */
+  http.patch(
+    '*/live-mentoring/applications/:applicationId/entry/meeting-url',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const { meetingUrlBase } = (await request.json()) as {
+        meetingUrlBase: string;
+      };
+      if (!detail.meetingUrl) {
+        detail.meetingUrl = `${meetingUrlBase}mock-entry-room-${applicationId}`;
+      }
+      return HttpResponse.json({ status: 200, data: detail.meetingUrl });
+    },
+  ),
+
+  /**
+   * (멘토) PATCH .../reservations/{applicationId}/attendance — 출석 부분 갱신.
+   *
+   * 보내지 않은 쪽은 그대로 둔다. 목 데이터를 직접 고쳐 두어야 다시 조회했을 때
+   * 화면이 바뀐 값을 본다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/reservations/:applicationId/attendance',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const body = (await request.json()) as {
+        mentorStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
+        menteeStatus?: 'PENDING' | 'PRESENT' | 'ABSENT';
+      };
+      if (body.mentorStatus) detail.mentorStatus = body.mentorStatus;
+      if (body.menteeStatus) detail.menteeStatus = body.menteeStatus;
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
+  /**
+   * (멘토) PATCH .../reservations/{applicationId}/meeting-url — 회의실 생성.
+   *
+   * 서버와 같이 **이미 방이 있으면 덮어쓰지 않고** 기존 주소를 돌려준다. 멘토와 멘티가
+   * 거의 동시에 눌렀을 때 나중 요청이 방을 바꾸면 먼저 들어간 사람만 빈 방에 남는다.
+   */
+  http.patch(
+    '*/mentor/live-mentoring/reservations/:applicationId/meeting-url',
+    async ({ params, request }) => {
+      const applicationId = Number(params.applicationId);
+      const detail = MENTOR_LIVE_MENTORING_RESERVATION_DETAILS.find(
+        (d) => d.applicationId === applicationId,
+      );
+      if (!detail) {
+        return liveMentoringError(
+          404,
+          'LIVE_MENTORING_NOT_FOUND',
+          '라이브 멘토링을 찾을 수 없습니다.',
+        );
+      }
+      const { meetingUrlBase } = (await request.json()) as {
+        meetingUrlBase: string;
+      };
+      if (!detail.meetingUrl) {
+        detail.meetingUrl = `${meetingUrlBase}mock-room-${applicationId}`;
+      }
+      return HttpResponse.json({ status: 200, data: detail.meetingUrl });
+    },
+  ),
 
   /**
    * (멘토) GET /mentor/live-mentoring/reservations — 본인 1대1 예약 목록.

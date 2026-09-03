@@ -9,10 +9,12 @@ import {
   confirmLiveMentoringPaymentResponseSchema,
   createLiveMentoringApplicationResponseSchema,
   liveMentorDetailSchema,
+  liveMentoringEntrySchema,
   liveMentoringOpeningListSchema,
   liveMentoringQuestionSchema,
   liveMentoringRefundPreviewSchema,
   liveMentoringSlotListSchema,
+  type LiveMentoringSessionAttendance,
   myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
 
@@ -327,4 +329,84 @@ export const applyLiveMentoringCoupon = async (code: string) => {
     params: { code, programType: 'LIVE_MENTORING' },
   });
   return res.data.data as { couponId: number; discount: number };
+};
+
+export const LIVE_MENTORING_ENTRY_QUERY_KEY = [
+  'liveMentoring',
+  'entry',
+] as const;
+
+/**
+ * GET /live-mentoring/applications/{applicationId}/entry — 1대1 세션 입장 정보.
+ *
+ * 멘토·멘티가 같은 경로로 들어오는 화면(`/live-mentoring/[role]/[applicationId]`)이
+ * 쓴다. 참여자가 아니거나 결제 완료 건이 아니면 서버가 404 로 막는다.
+ */
+export const useLiveMentoringEntryQuery = (applicationId: number | null) => {
+  return useQuery({
+    queryKey: [...LIVE_MENTORING_ENTRY_QUERY_KEY, applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/live-mentoring/applications/${applicationId}/entry`,
+      );
+      return liveMentoringEntrySchema.parse(res.data.data);
+    },
+    enabled: applicationId !== null,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * PATCH /live-mentoring/applications/{applicationId}/entry/meeting-url — 회의실 생성.
+ *
+ * **base 주소만 보낸다.** 서버가 방 이름을 만들어 뒤에 붙인다. 멘토·멘티 누가 먼저
+ * 눌러도 같은 경로다 — 이미 방이 있으면 서버가 기존 주소를 그대로 돌려준다.
+ */
+export const useCreateLiveMentoringEntryMeetingRoomMutation = (
+  applicationId: number,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (meetingUrlBase: string) => {
+      const res = await axios.patch(
+        `/live-mentoring/applications/${applicationId}/entry/meeting-url`,
+        { meetingUrlBase },
+      );
+      return res.data.data as string;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...LIVE_MENTORING_ENTRY_QUERY_KEY, applicationId],
+      });
+    },
+  });
+};
+
+/**
+ * PATCH /mentor/live-mentoring/reservations/{applicationId}/attendance — 출석 갱신.
+ *
+ * **멘토만 호출한다.** 자신의 입장 시 자동 기록과, 통화 중 상대(멘티) 출석 체크
+ * 둘 다 이 엔드포인트를 쓴다 — 라이브 피드백에서 멘티 출석을 멘토가 대신 기록하는
+ * 것과 같은 구조다.
+ */
+export const useUpdateLiveMentoringEntryAttendanceMutation = (
+  applicationId: number,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: {
+      mentorStatus?: LiveMentoringSessionAttendance;
+      menteeStatus?: LiveMentoringSessionAttendance;
+    }) => {
+      await axios.patch(
+        `/mentor/live-mentoring/reservations/${applicationId}/attendance`,
+        body,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...LIVE_MENTORING_ENTRY_QUERY_KEY, applicationId],
+      });
+    },
+  });
 };

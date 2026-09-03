@@ -63,14 +63,24 @@ const makeLiveMentoringRow = (
     createDate: '2026-05-21T09:00:00',
     questionDeferred: false,
     questionContent: '포트폴리오를 함께 봐 주실 수 있나요?',
+    mentorStatus: 'PENDING',
+    menteeStatus: 'PENDING',
     ...overrides,
   });
 
 const useAdminFeedbackDetailQuery = vi.fn();
+const updateAttendanceMutate = vi.fn();
 
 vi.mock('@/api/feedback/feedback', () => ({
   useAdminFeedbackDetailQuery: (id?: number) => useAdminFeedbackDetailQuery(id),
   useUpdateAdminFeedbackMutation: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/api/live-mentoring/liveMentoring', () => ({
+  useUpdateLiveMentoringReservationAttendanceMutation: () => ({
+    mutate: updateAttendanceMutate,
+    isPending: false,
+  }),
 }));
 
 import ReservationDetailModal from './ReservationDetailModal';
@@ -166,16 +176,93 @@ describe('ReservationDetailModal', () => {
         />,
       );
       const limitations = screen.getByLabelText('제한 사항');
-      expect(limitations).toHaveTextContent('멘토·멘티 출석 체크');
       expect(limitations).toHaveTextContent('후기 점수·내용 수정');
-      expect(limitations).toHaveTextContent('멘토·멘티 입장 링크 복사');
-      expect(limitations).toHaveTextContent('예약 일정 변경');
+      // 예약 일정 변경, 출석 체크, 입장 링크 복사는 더 이상 제한 사항이 아니다.
+      expect(limitations).not.toHaveTextContent('예약 일정 변경');
+      expect(limitations).not.toHaveTextContent('멘토·멘티 출석 체크');
+      expect(limitations).not.toHaveTextContent('멘토·멘티 입장 링크 복사');
     });
 
-    it('예약 변경 버튼을 내걸지 않는다', () => {
+    it('멘토·멘티 입장 링크를 각각 클립보드에 복사한다', async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText } });
+
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({ applicationId: 777 })}
+          onClose={vi.fn()}
+        />,
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: '멘토 입장 링크 복사' }),
+      );
+      await Promise.resolve();
+      expect(writeText).toHaveBeenLastCalledWith(
+        expect.stringMatching(/\/live-mentoring\/mentor\/777$/),
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: '멘티 입장 링크 복사' }),
+      );
+      await Promise.resolve();
+      expect(writeText).toHaveBeenLastCalledWith(
+        expect.stringMatching(/\/live-mentoring\/mentee\/777$/),
+      );
+    });
+
+    it('출석 값을 select 로 보여주고 저장하면 뮤테이션을 부른다', () => {
+      updateAttendanceMutate.mockClear();
+      useAdminFeedbackDetailQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+      });
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({
+            applicationId: 501,
+            mentorStatus: 'PRESENT',
+            menteeStatus: 'PENDING',
+          })}
+          onClose={vi.fn()}
+        />,
+      );
+
+      const [mentorSelect, menteeSelect] = screen.getAllByRole('combobox');
+      expect(mentorSelect).toHaveValue('PRESENT');
+      expect(menteeSelect).toHaveValue('PENDING');
+
+      fireEvent.change(menteeSelect, { target: { value: 'ABSENT' } });
+      fireEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+      expect(updateAttendanceMutate).toHaveBeenCalledWith({
+        applicationId: 501,
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'ABSENT',
+      });
+    });
+
+    it('결제 완료건은 예약 변경 버튼을 내건다', () => {
       render(
         <ReservationDetailModal
           row={makeLiveMentoringRow()}
+          onClose={vi.fn()}
+          onReschedule={vi.fn()}
+        />,
+      );
+      expect(
+        screen.getByRole('button', { name: '예약 변경' }),
+      ).toBeInTheDocument();
+    });
+
+    it('결제 대기·슬롯 없는 건은 예약 변경 버튼을 내걸지 않는다', () => {
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({
+            status: 'PAYMENT_PENDING',
+            reservationStartAt: null,
+            reservationEndAt: null,
+          })}
           onClose={vi.fn()}
           onReschedule={vi.fn()}
         />,
@@ -225,6 +312,19 @@ describe('ReservationDetailModal', () => {
     render(
       <ReservationDetailModal
         row={challengeRow}
+        onClose={vi.fn()}
+        onReschedule={onReschedule}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '예약 변경' }));
+    expect(onReschedule).toHaveBeenCalled();
+  });
+
+  it('1대1 예약도 예약 변경 버튼으로 전환할 수 있다', () => {
+    const onReschedule = vi.fn();
+    render(
+      <ReservationDetailModal
+        row={makeLiveMentoringRow()}
         onClose={vi.fn()}
         onReschedule={onReschedule}
       />,
