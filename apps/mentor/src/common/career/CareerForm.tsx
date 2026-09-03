@@ -46,6 +46,9 @@ const CareerForm = ({
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [periodMode, setPeriodMode] = useState<'start' | 'end' | null>(null);
   const [showCancelWarning, setShowCancelWarning] = useState(false);
+  const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(
+    initialCareer.id != null && !initialCareer.endDate,
+  );
 
   const form = watch();
   const isEditMode = initialCareer.id != null;
@@ -85,6 +88,17 @@ const CareerForm = ({
       shouldValidate: true,
       shouldDirty: true,
     });
+  };
+
+  const handleToggleCurrentlyWorking = () => {
+    const next = !isCurrentlyWorking;
+    setIsCurrentlyWorking(next);
+    if (next) {
+      setValue('endDate', '', {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
   };
 
   const handleCancelClick = () => {
@@ -232,13 +246,30 @@ const CareerForm = ({
 
         {/* 근무 기간 */}
         <fieldset className="flex flex-col gap-1.5">
-          <div className="flex flex-col items-baseline gap-1 md:flex-row md:gap-2">
+          <div className="flex items-center justify-between">
             <span id="career-period" className="text-neutral-20 font-medium">
               근무 기간
             </span>
-            <p className="text-neutral-45 text-sm">
-              현재 근무 중인 경우에는 종료일을 비워주세요.
-            </p>
+
+            <div
+              className="flex w-fit cursor-pointer items-center gap-2"
+              onClick={handleToggleCurrentlyWorking}
+            >
+              {isCurrentlyWorking ? (
+                <img
+                  src="/icons/checkbox-fill.svg"
+                  alt="체크됨"
+                  className="w-5 flex-shrink-0"
+                />
+              ) : (
+                <img
+                  src="/icons/checkbox-unchecked-box2.svg"
+                  alt="체크되지 않음"
+                  className="w-5"
+                />
+              )}
+              <span className="text-neutral-20 font-medium">재직 중</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -259,6 +290,7 @@ const CareerForm = ({
             <button
               id="career-period"
               type="button"
+              disabled={isCurrentlyWorking}
               onClick={() => {
                 if (!form.startDate) {
                   setPeriodMode('start');
@@ -266,7 +298,11 @@ const CareerForm = ({
                   setPeriodMode('end');
                 }
               }}
-              className="rounded-xxs border-neutral-80 flex w-full items-center justify-between border px-3 py-2 text-neutral-50"
+              className={`rounded-xxs border-neutral-80 flex w-full items-center justify-between border px-3 py-2 text-neutral-50 ${
+                isCurrentlyWorking
+                  ? 'bg-neutral-95 cursor-not-allowed opacity-60'
+                  : ''
+              }`}
             >
               {form.endDate ? (
                 <span className="text-neutral-0">{form.endDate}</span>

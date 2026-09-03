@@ -2,14 +2,17 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { mentorDetailQueryOptions } from '@/api/mentor/mentor';
+import {
+  mentorDetailQueryOptions,
+  mentorStatsQueryOptions,
+} from '@/api/mentor/mentor';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 
 import MentorHeroSection from './MentorHeroSection';
 import MentorIntroSection from './MentorIntroSection';
 import MentorProgramSection from './MentorProgramSection';
-// import MentorReviewSection from './MentorReviewSection';
+import MentorReviewSection from './MentorReviewSection';
 
 interface MentorDetailProps {
   mentorId: string;
@@ -17,16 +20,20 @@ interface MentorDetailProps {
 
 const MentorDetailContent = ({ mentorId }: MentorDetailProps) => {
   const { data: mentor } = useSuspenseQuery(mentorDetailQueryOptions(mentorId));
+  const { data: stats } = useSuspenseQuery(mentorStatsQueryOptions(mentorId));
+
   return (
     <>
-      <MentorHeroSection mentor={mentor} />
+      <MentorHeroSection mentor={mentor} stats={stats} />
       <MentorIntroSection mentor={mentor} />
       <MentorProgramSection
         proceedingProgramList={mentor.proceedingProgramList}
         postProgramList={mentor.postProgramList}
       />
-      {/* 이번 배포에서 숨김 처리 — 추후 재노출 예정 */}
-      {/* <MentorReviewSection reviewList={mentor.reviewList} /> */}
+      <MentorReviewSection
+        reviewList={mentor.reviewList}
+        averageScore={stats.averageScore}
+      />
     </>
   );
 };

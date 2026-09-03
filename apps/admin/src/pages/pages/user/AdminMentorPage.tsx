@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Tab,
   Tabs,
 } from '@mui/material';
@@ -23,6 +24,8 @@ import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { Link, useNavigate } from 'react-router-dom';
 
+// VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
+const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 const PAGE_SIZE = 1000;
 
 type Mentor = AdminUserMentorList['mentorList'][number];
@@ -42,6 +45,21 @@ function MentorManagementTable() {
   const [viewingMentor, setViewingMentor] = useState<Mentor | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const closeViewDialog = () => setIsViewDialogOpen(false);
+  const [visibleLoadingId, setVisibleLoadingId] = useState<number | null>(null);
+
+  const handleVisibleChange = async (mentorId: number, checked: boolean) => {
+    setVisibleLoadingId(mentorId);
+    try {
+      await patchUser.mutateAsync({ id: mentorId, isVisible: checked });
+      queryClient.invalidateQueries({
+        queryKey: [UseAdminUserMentorListQueryKey],
+      });
+    } catch (err) {
+      snackbar(`문제가 발생했습니다: ${err}`);
+    } finally {
+      setVisibleLoadingId(null);
+    }
+  };
 
   const handleDelete = async (
     e: React.MouseEvent,
@@ -95,6 +113,12 @@ function MentorManagementTable() {
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
                   키워드
                 </th>
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                  상세페이지
+                </th>
+                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
+                  노출여부
+                </th>
                 <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
                   멘토 삭제
                 </th>
@@ -139,6 +163,27 @@ function MentorManagementTable() {
                         조회
                       </button>
                     )}
+                  </td>
+                  <td className="text-xsmall14 px-6 py-4">
+                    <a
+                      href={`${WEB_URL}/mentors/${mentor.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline transition hover:text-blue-300"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      바로가기
+                    </a>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Switch
+                      checked={mentor.isVisible ?? false}
+                      disabled={visibleLoadingId === mentor.id}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) =>
+                        handleVisibleChange(mentor.id, e.target.checked)
+                      }
+                    />
                   </td>
                   <td className="px-6 py-4 text-center">
                     <Button

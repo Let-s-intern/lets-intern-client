@@ -5,10 +5,14 @@ import dayjs from '@/lib/dayjs';
 import type {
   MentorCareerItem,
   MentorDetailData,
+  MentorStats,
 } from '@/api/mentor/mentorSchema';
+
+import { getSnsIcon, parseSnsList } from './sns';
 
 interface MentorHeroSectionProps {
   mentor: MentorDetailData;
+  stats: MentorStats;
 }
 
 const getCareerPeriod = (career: MentorCareerItem): string => {
@@ -57,8 +61,11 @@ const CareerRow = ({
   </div>
 );
 
-const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
-  const { mentorInfo, careerList, reviewList } = mentor;
+const MentorHeroSection = ({ mentor, stats }: MentorHeroSectionProps) => {
+  const { mentorInfo, careerList } = mentor;
+  const { feedbackMenteeCount, reviewCount, averageScore } = stats;
+
+  const snsList = parseSnsList(mentorInfo.sns);
 
   const sortedCareers = [...careerList].sort((a, b) => {
     if (a.isRepresentative !== b.isRepresentative) {
@@ -92,6 +99,30 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
                 {mentorInfo.company ?? '대표 회사'} |{' '}
                 {mentorInfo.job ?? '대표 직무'}
               </p>
+
+              {snsList.length > 0 && (
+                <div className="flex items-center gap-4 py-1">
+                  <span className="text-xsmall16 text-neutral-50">SNS</span>
+                  <span className="bg-neutral-80 h-4 w-px" />
+                  <div className="flex items-center gap-4">
+                    {snsList.map((url, index) => (
+                      <a
+                        key={index}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border-neutral-80 hover:bg-neutral-95 rounded-xxs flex items-center justify-center border px-[3px] py-[2px] transition-colors"
+                      >
+                        <img
+                          src={getSnsIcon(url)}
+                          alt=""
+                          className="h-4 w-4 object-contain"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 이번 배포에서 숨김 처리 — 추후 재노출 예정 */}
@@ -119,7 +150,6 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
         </div>
       </div>
 
-      {/* 멘티 수/평점은 API에 필드가 없어 하드코딩 — 후기 수는 reviewList.length로 이미 연결됨 */}
       <div className="grid grid-cols-3 gap-3 md:gap-10">
         <div className="border-neutral-80 rounded-xxs flex flex-col items-center gap-1 border px-3 py-2">
           <span className="text-xxsmall12 md:text-xsmall14 text-neutral-30">
@@ -131,7 +161,7 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
               alt=""
               className="m-1 h-3.5 w-3.5 md:h-4 md:w-4"
             />
-            0명
+            {feedbackMenteeCount}명
           </span>
         </div>
         <button
@@ -147,7 +177,7 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
             후기
           </span>
           <span className="text-xsmall16 md:text-small20 text-neutral-20 flex items-center gap-1 font-medium">
-            {reviewList.length}
+            {reviewCount}
           </span>
         </button>
         <div className="border-neutral-80 rounded-xxs flex flex-col items-center gap-1 border px-3 py-2">
@@ -160,7 +190,7 @@ const MentorHeroSection = ({ mentor }: MentorHeroSectionProps) => {
               alt=""
               className="h-5 w-5 md:h-6 md:w-6"
             />
-            0.0
+            {averageScore.toFixed(1)}
           </span>
         </div>
       </div>

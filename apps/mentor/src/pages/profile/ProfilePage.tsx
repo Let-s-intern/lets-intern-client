@@ -5,7 +5,10 @@ import { usePatchUser, useUserQuery } from '@/api/user/user';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
+import { parseSnsList, serializeSnsList } from '@/utils/sns';
+import BasicInfoSection, {
+  type BasicInfoFormData,
+} from './ui/BasicInfoSection';
 import CareerSection from './ui/CareerSection';
 import Introduction from './ui/Introduction';
 import MentorDetailContentSection from './ui/MentorDetailContentSection';
@@ -15,7 +18,7 @@ const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
   nickname: '',
   phoneNum: '',
-  sns: '',
+  sns: [],
   email: '',
   profileImgUrl: '',
 };
@@ -64,7 +67,7 @@ export default function ProfilePage() {
       nickname: user.nickname ?? '',
       email: user.email ?? '',
       phoneNum: user.phoneNum ?? '',
-      sns: user.sns ?? '',
+      sns: parseSnsList(user.sns),
       profileImgUrl: user.profileImgUrl ?? '',
     };
     setFormData(data);
@@ -80,7 +83,7 @@ export default function ProfilePage() {
       formData.name !== savedFormData.name ||
       formData.nickname !== savedFormData.nickname ||
       formData.phoneNum !== savedFormData.phoneNum ||
-      formData.sns !== savedFormData.sns ||
+      serializeSnsList(formData.sns) !== serializeSnsList(savedFormData.sns) ||
       formData.email !== savedFormData.email ||
       formData.profileImgUrl !== savedFormData.profileImgUrl;
     const isIntroChanged = introduction !== savedIntroduction;
@@ -156,7 +159,7 @@ export default function ProfilePage() {
       name: formData.name || undefined,
       nickname: formData.nickname || null,
       phoneNum: formData.phoneNum || undefined,
-      sns: formData.sns || null,
+      sns: serializeSnsList(formData.sns),
       email: formData.email || undefined,
       introduction: introduction || null,
       profileImgUrl: formData.profileImgUrl || null,
@@ -169,7 +172,7 @@ export default function ProfilePage() {
       <hr className="mb-6 border-gray-200" />
 
       <div className="flex flex-col gap-6 pb-20">
-        <BasicInfo
+        <BasicInfoSection
           formData={formData}
           onChange={setFormData}
           showAlert={showAlert}

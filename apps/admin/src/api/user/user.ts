@@ -153,6 +153,7 @@ export type PatchUserType = {
   isMentor?: boolean;
   careerType?: string | null;
   isPoolUp?: boolean;
+  isVisible?: boolean;
   memo?: string | null;
   nickname?: string | null;
   introduction?: string | null;
