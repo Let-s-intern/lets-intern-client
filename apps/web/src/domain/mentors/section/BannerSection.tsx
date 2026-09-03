@@ -7,9 +7,9 @@ const BannerSection = () => {
             렛츠커리어 멘토
           </h1>
           <p className="text-xsmall16 text-neutral-90">
-            렛츠커리와 함께하는 멘토들에게 취업 노하우와
+            현직자 멘토의 생생한 경험을 통해
             <br />
-            ####를 @@@@ 하세요
+            취업 고민의 답과 실무 노하우를 찾아보세요.
           </p>
         </div>
 

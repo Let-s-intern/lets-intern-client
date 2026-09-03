@@ -71,10 +71,16 @@ export const mentorProgramListItemSchema = z.object({
 
 export type MentorProgramListItem = z.infer<typeof mentorProgramListItemSchema>;
 
-/**
- * GET /api/v1/mentor/{mentorId} 응답.
- * reviewList unknown[]로 받음 (개수/빈 상태 확인 용도, 항목별 렌더링은 실제 필드 확정 시 추가 예정)
- */
+export const mentorReviewItemSchema = z.object({
+  score: z.number(),
+  programTitle: z.string().nullable(),
+  review: z.string().nullable(),
+  createDate: z.string(),
+});
+
+export type MentorReviewItem = z.infer<typeof mentorReviewItemSchema>;
+
+/** GET /api/v1/mentor/{mentorId} 응답. */
 export const mentorDetailSchema = z.object({
   mentorInfo: z.object({
     mentorId: z.number(),
@@ -85,11 +91,24 @@ export const mentorDetailSchema = z.object({
     corpImgUrl: z.string().nullable(),
     company: z.string().nullable(),
     job: z.string().nullable(),
+    sns: z.string().nullable().optional(),
   }),
   careerList: z.array(mentorCareerItemSchema),
   proceedingProgramList: z.array(mentorProgramListItemSchema),
   postProgramList: z.array(mentorProgramListItemSchema),
-  reviewList: z.array(z.unknown()),
+  reviewList: z.array(mentorReviewItemSchema),
 });
 
 export type MentorDetailData = z.infer<typeof mentorDetailSchema>;
+
+/**
+ * GET /api/v1/mentor/{mentorId}/stats 응답.
+ * 피드백 받은 멘티 수 / 공개된 리뷰 수 / 리뷰 평균 점수
+ */
+export const mentorStatsSchema = z.object({
+  feedbackMenteeCount: z.number(),
+  reviewCount: z.number(),
+  averageScore: z.number(),
+});
+
+export type MentorStats = z.infer<typeof mentorStatsSchema>;

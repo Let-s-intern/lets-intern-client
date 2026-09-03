@@ -52,16 +52,16 @@ export default function MentorDetailContentSection() {
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
-            상세페이지 제작
+        <div className="flex w-full items-center justify-between md:w-auto md:justify-normal md:gap-2.5">
+          <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
+            프로필 상세페이지 제작
           </h2>
           {user && (
             <a
               href={`${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary text-xsmall14 hover:text-primary-dark underline underline-offset-2"
+              className="text-primary text-xsmall14 hover:text-primary-dark tracking-tight underline underline-offset-2"
             >
               바로가기
             </a>
@@ -71,20 +71,31 @@ export default function MentorDetailContentSection() {
           size="xs"
           onClick={handleSave}
           disabled={!isDirty || isPending}
+          className="hidden md:inline-flex"
         >
           상세페이지 저장
         </SolidButton>
       </div>
 
       <div className="mt-4">
-        {isLoading || !user ? (
-          <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
-        ) : (
-          <EditorApp
-            initialEditorStateJsonString={user.description || emptyEditorState}
-            onChange={handleChange}
-          />
-        )}
+        <div className="flex flex-col items-center justify-center py-20 md:hidden">
+          <p className="text-xsmall14 text-neutral-40 whitespace-pre-line text-center">
+            상세페이지 제작은{'\n'}데스크탑을 이용해주세요.
+          </p>
+        </div>
+
+        <div className="hidden md:block">
+          {isLoading || !user ? (
+            <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
+          ) : (
+            <EditorApp
+              initialEditorStateJsonString={
+                user.description || emptyEditorState
+              }
+              onChange={handleChange}
+            />
+          )}
+        </div>
       </div>
 
       <MentorAlertModal {...alertProps} />

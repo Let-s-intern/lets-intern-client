@@ -15,6 +15,7 @@ import {
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { parseSnsList, serializeSnsList } from '@/utils/sns';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface BasicFormData {
@@ -22,7 +23,7 @@ interface BasicFormData {
   nickname: string;
   phoneNum: string;
   email: string;
-  sns: string;
+  sns: string[];
   profileImgUrl: string;
   corpImgUrl: string;
   introduction: string;
@@ -33,7 +34,7 @@ const INITIAL_FORM: BasicFormData = {
   nickname: '',
   phoneNum: '',
   email: '',
-  sns: '',
+  sns: [],
   profileImgUrl: '',
   corpImgUrl: '',
   introduction: '',
@@ -44,7 +45,6 @@ const BASIC_FORM_FIELDS = [
   { label: '닉네임', key: 'nickname' as const },
   { label: '이메일', key: 'email' as const },
   { label: '전화번호', key: 'phoneNum' as const },
-  { label: 'SNS', key: 'sns' as const },
 ] as const;
 
 interface LocalCareer {
@@ -99,7 +99,7 @@ export default function AdminMentorDetailPage() {
       nickname: userInfo.nickname ?? '',
       phoneNum: userInfo.phoneNum ?? '',
       email: userInfo.email ?? '',
-      sns: userInfo.sns ?? '',
+      sns: parseSnsList(userInfo.sns),
       profileImgUrl: userInfo.profileImgUrl ?? '',
       corpImgUrl: userInfo.corpImgUrl ?? '',
       introduction: userInfo.introduction ?? '',
@@ -132,11 +132,29 @@ export default function AdminMentorDetailPage() {
       email: form.email || undefined,
       phoneNum: form.phoneNum || undefined,
       nickname: form.nickname || null,
-      sns: form.sns || null,
+      sns: serializeSnsList(form.sns),
       profileImgUrl: form.profileImgUrl || null,
       corpImgUrl: form.corpImgUrl || null,
       introduction: form.introduction || null,
     });
+  };
+
+  const handleSnsChange = (index: number, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      sns: prev.sns.map((v, i) => (i === index ? value : v)),
+    }));
+  };
+
+  const handleSnsAdd = () => {
+    setForm((prev) => ({ ...prev, sns: [...prev.sns, ''] }));
+  };
+
+  const handleSnsRemove = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      sns: prev.sns.filter((_, i) => i !== index),
+    }));
   };
 
   const handleAddCareer = () => {
@@ -319,6 +337,45 @@ export default function AdminMentorDetailPage() {
                 />
               </div>
             ))}
+
+            {/* SNS (여러 개 입력 가능) */}
+            <div className="flex items-start gap-3">
+              <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 pt-2 font-medium">
+                SNS
+              </label>
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                {form.sns.map((url, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={url}
+                      onChange={(e) => handleSnsChange(index, e.target.value)}
+                      placeholder="https://..."
+                      className="border-neutral-80 text-xsmall14 focus:border-neutral-40 min-w-0 flex-1 rounded border px-3 py-2 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSnsRemove(index)}
+                      aria-label="SNS 삭제"
+                      className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
+                    >
+                      <img
+                        src="/icons/x.svg"
+                        alt=""
+                        className="h-[18px] w-[18px]"
+                      />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={handleSnsAdd}
+                  className="text-primary text-xsmall14 border-neutral-80 hover:bg-neutral-95 w-full rounded border border-dashed px-3 py-2 font-medium"
+                >
+                  + 추가
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="mt-4">
