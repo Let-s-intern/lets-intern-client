@@ -6,6 +6,8 @@ import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMento
 import { isOpenableUrl } from '../utils/url';
 
 interface Props {
+  /** 본인 제출물을 보는 멘티면 참. 제목과 안내 문구가 갈린다. */
+  isOwnSubmission?: boolean;
   menteeName?: string;
   questionContent?: string | null;
   attachmentType?: LiveMentoringAttachmentType;
@@ -27,6 +29,7 @@ interface Props {
  * 두 곳이 어긋난다.
  */
 const MenteeSubmissionModal = ({
+  isOwnSubmission = false,
   menteeName,
   questionContent,
   attachmentType = 'NONE',
@@ -72,7 +75,11 @@ const MenteeSubmissionModal = ({
             id="live-mentoring-submission-title"
             className="text-small18 md:text-small20 text-neutral-0 font-bold"
           >
-            {menteeName ? `${menteeName} 님의 제출물` : '멘티 제출물'}
+            {isOwnSubmission
+              ? '내 제출물'
+              : menteeName
+                ? `${menteeName} 님의 제출물`
+                : '멘티 제출물'}
           </h2>
           <button
             type="button"
@@ -131,6 +138,15 @@ const MenteeSubmissionModal = ({
             </p>
           )}
         </div>
+
+        {/*
+          멘티에게만 적는다. 멘토는 애초에 수정 주체가 아니라 잠겼다는 말이 어색하다.
+        */}
+        {isOwnSubmission && (
+          <p className="text-xxsmall12 text-neutral-45">
+            수정 가능 시간이 지나 내용을 바꿀 수 없습니다.
+          </p>
+        )}
 
         <button
           type="button"

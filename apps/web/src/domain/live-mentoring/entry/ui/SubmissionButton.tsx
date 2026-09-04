@@ -13,8 +13,9 @@ interface Props {
 /**
  * 라벨을 정한다. 버튼을 아예 두지 않을 때는 null 을 준다.
  *
- * 멘티는 마감이 지나면 버튼이 사라진다. 감춰도 이유를 모르지는 않는다 —
- * 요약 카드의 "제출물 수정" 행이 `수정 기간 종료` 로 남아 사유를 알려준다.
+ * 마감이 지나도 버튼은 남는다. 멘티가 자기가 무엇을 냈는지 다시 볼 방법이
+ * 이 화면에서 사라지기 때문이다 — 고칠 수 없다는 것과 볼 수 없다는 것은 다르다.
+ * 잠겼다는 사실은 라벨이 `확인` 으로 바뀌는 것과 요약 카드의 `수정 기간 종료` 가 알려준다.
  */
 function resolveLabel(
   myRole: LiveMentoringEntryRole | null | undefined,
@@ -27,7 +28,7 @@ function resolveLabel(
   */
   if (myRole === 'MENTOR') return '멘티 제출물 보기';
 
-  if (!editable) return null;
+  if (!editable) return '제출물 확인하기';
 
   return hasSubmission ? '제출물 수정하기' : '제출물 제출하기';
 }

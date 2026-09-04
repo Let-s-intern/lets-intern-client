@@ -166,18 +166,37 @@ describe('LiveMentoringEntryPage', () => {
     ).toBeInTheDocument();
   });
 
-  // 마감이 지나면 버튼을 감춘다. 사유는 요약 카드의 "수정 기간 종료" 행이 알려준다.
-  it('제출 마감이 지난 멘티에게는 제출물 버튼을 렌더하지 않는다', () => {
+  /*
+    마감이 지나도 버튼은 남는다 — 고칠 수 없다는 것과 볼 수 없다는 것은 다르다.
+    다만 작성 모달이 아니라 열람 뷰로 보낸다. 잠긴 작성 모달을 띄우면 빈 입력칸만
+    남아 무엇을 냈는지 알 수 없다.
+  */
+  it('제출 마감이 지난 멘티에게는 확인 버튼으로 바꿔 남긴다', async () => {
     authState = { isInitialized: true, isLoggedIn: true };
     queryState = {
-      data: { ...entry, questionEditable: false },
+      data: {
+        ...entry,
+        questionEditable: false,
+        questionContent: '포트폴리오 피드백 부탁드립니다.',
+      },
       isLoading: false,
     };
+    questionQuery.mockClear();
+    const user = userEvent.setup();
     render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
-    expect(
-      screen.queryByRole('button', { name: /제출물/ }),
-    ).not.toBeInTheDocument();
+
     expect(screen.getByText('수정 기간 종료')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '제출물 확인하기' }));
+
+    expect(screen.getByText('내 제출물')).toBeInTheDocument();
+    expect(
+      screen.getByText('포트폴리오 피드백 부탁드립니다.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('수정 가능 시간이 지나 내용을 바꿀 수 없습니다.'),
+    ).toBeInTheDocument();
+    // 열람은 입장 응답만으로 그린다. 질문 조회를 다시 타지 않는다.
+    expect(questionQuery).not.toHaveBeenCalled();
   });
 
   // 멘토는 수정 주체가 아니므로 마감과 무관하게 열람할 수 있어야 한다.
