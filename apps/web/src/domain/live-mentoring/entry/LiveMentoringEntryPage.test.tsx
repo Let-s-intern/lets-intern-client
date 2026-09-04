@@ -17,8 +17,16 @@ let queryState: { data: unknown; isLoading: boolean } = {
   data: null,
   isLoading: false,
 };
+// 멘토가 열람할 때 이 훅을 타면 안 된다 — 질문 조회 API 는 신청자 본인만 통과시킨다.
+const questionQuery = jest.fn(() => ({ data: undefined, isLoading: false }));
+
 jest.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringEntryQuery: () => queryState,
+  useLiveMentoringQuestionQuery: () => questionQuery(),
+  useUpdateLiveMentoringQuestionMutation: () => ({
+    mutate: jest.fn(),
+    isPending: false,
+  }),
   useUpdateLiveMentoringEntryAttendanceMutation: () => ({
     mutate: jest.fn(),
     mutateAsync: jest.fn(),
@@ -184,6 +192,61 @@ describe('LiveMentoringEntryPage', () => {
       screen.getByRole('button', { name: '멘티 제출물 보기' }),
     ).toBeInTheDocument();
     expect(screen.getByText('멘티 제출 기간')).toBeInTheDocument();
+  });
+
+  describe('멘토 열람 모달', () => {
+    const openAsMentor = async (
+      overrides: Record<string, unknown> = {},
+    ): Promise<ReturnType<typeof userEvent.setup>> => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = {
+        data: { ...entry, myRole: 'MENTOR', ...overrides },
+        isLoading: false,
+      };
+      const user = userEvent.setup();
+      render(<LiveMentoringEntryPage applicationId={1} role="MENTOR" />);
+      await user.click(
+        screen.getByRole('button', { name: '멘티 제출물 보기' }),
+      );
+      return user;
+    };
+
+    /*
+      멘티용 모달을 읽기 전용으로 돌려쓰면 질문 조회에서 401 이 난다. 화면에는
+      "불러오는 중…" 만 남아 원인이 드러나지 않으므로, 훅을 타지 않는 것까지 고정한다.
+    */
+    it('질문 조회 API 를 부르지 않고 입장 응답만으로 그린다', async () => {
+      questionQuery.mockClear();
+      await openAsMentor({ questionContent: '포트폴리오 피드백 부탁드립니다.' });
+
+      expect(questionQuery).not.toHaveBeenCalled();
+      expect(screen.getByText('박멘티 님의 제출물')).toBeInTheDocument();
+      expect(
+        screen.getByText('포트폴리오 피드백 부탁드립니다.'),
+      ).toBeInTheDocument();
+    });
+
+    it('제출물이 없으면 없다고 적는다', async () => {
+      await openAsMentor({ questionContent: null, attachmentType: 'NONE' });
+
+      expect(screen.getByText('작성된 질문이 없습니다.')).toBeInTheDocument();
+      expect(screen.getByText('첨부한 파일이 없습니다.')).toBeInTheDocument();
+    });
+
+    /*
+      첨부가 있는데 url 이 없는 것은 멘티가 공유에 동의하지 않아 서버가 가린 경우다.
+      "없음"으로 적으면 내지 않은 것으로 읽혀 멘토가 멘티에게 잘못 문의하게 된다.
+    */
+    it('공유 미동의로 url 이 가려지면 사유를 구분해 적는다', async () => {
+      await openAsMentor({ attachmentType: 'FILE', attachmentUrl: null });
+
+      expect(
+        screen.getByText('멘티가 자료 공유에 동의하지 않아 열람할 수 없습니다.'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText('첨부한 파일이 없습니다.'),
+      ).not.toBeInTheDocument();
+    });
   });
 
   // URL 의 role 세그먼트는 알림톡 링크가 준 값이라 사용자가 바꿀 수 있다.

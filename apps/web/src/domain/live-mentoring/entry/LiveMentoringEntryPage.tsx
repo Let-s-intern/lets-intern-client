@@ -17,6 +17,7 @@ import LiveMentoringReviewModal from './ui/LiveMentoringReviewModal';
 import LiveMentoringSessionModal from './ui/LiveMentoringSessionModal';
 import LoginGate from './ui/LoginGate';
 import MentoringSummaryCard from './ui/MentoringSummaryCard';
+import MenteeSubmissionModal from './ui/MenteeSubmissionModal';
 import SubmissionButton from './ui/SubmissionButton';
 import QuestionModal from '../question/QuestionModal';
 import { isOpenableUrl } from './utils/url';
@@ -204,13 +205,26 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
 
       {/* 정리 모달은 Jitsi 모달의 형제로 둔다 — BaseModal 은 isOpen=false 에서 언마운트되므로
           안에 중첩하면 부모가 닫히는 순간 함께 사라진다. */}
-      {isSubmissionOpen && (
-        <QuestionModal
-          applicationId={applicationId}
-          readOnly={myRole === 'MENTOR'}
-          onClose={() => setIsSubmissionOpen(false)}
-        />
-      )}
+      {/*
+        멘토와 멘티가 다른 모달을 쓴다. 질문 조회 API 는 신청자 본인만 통과시켜
+        멘토가 열면 401 이고, 문구도 전부 멘티 시점이라 재사용할 수 없다.
+        멘토는 입장 응답이 이미 들고 있는 값으로 읽기만 한다.
+      */}
+      {isSubmissionOpen &&
+        (myRole === 'MENTOR' ? (
+          <MenteeSubmissionModal
+            menteeName={entry?.menteeName}
+            questionContent={entry?.questionContent}
+            attachmentType={entry?.attachmentType}
+            attachmentUrl={entry?.attachmentUrl}
+            onClose={() => setIsSubmissionOpen(false)}
+          />
+        ) : (
+          <QuestionModal
+            applicationId={applicationId}
+            onClose={() => setIsSubmissionOpen(false)}
+          />
+        ))}
 
       <LiveMentoringReviewModal
         isOpen={isReviewOpen}
