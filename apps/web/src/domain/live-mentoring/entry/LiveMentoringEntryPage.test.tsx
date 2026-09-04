@@ -30,6 +30,13 @@ jest.mock('@/api/live-mentoring/liveMentoring', () => ({
 
 // 후기 작성 저장 훅 — 정리 모달(LiveMentoringReviewModal)이 항상 함께 렌더되므로 필요하다.
 const createReviewMutate = jest.fn();
+// 제출물 모달이 파일 업로드를 끌어오고, 그 경로가 import.meta 를 쓰는 패키지를 탄다.
+// Jest 가 파싱하지 못하므로 QuestionModal.test 와 같은 방식으로 막는다.
+jest.mock('@/api/file', () => ({
+  __esModule: true,
+  uploadFileForId: jest.fn(),
+}));
+
 jest.mock('@/api/review/review', () => ({
   useCreateLiveMentoringReviewMutation: () => ({
     mutate: createReviewMutate,
@@ -54,8 +61,12 @@ interface SessionModalProps {
   onJoined?: () => void;
   submissionUrl?: string;
 }
-// 열려 있을 때만 참가/종료 버튼을 노출한다 — 닫힌 상태의 버튼 개수를 세는 기존
-// 테스트(getByRole('button'))를 깨지 않기 위한 조건이다.
+// 열려 있을 때만 참가/종료 버튼을 노출한다 — 닫힌 상태에서 버튼을 이름으로 집는
+// 테스트가 세션 모달 버튼까지 잡지 않게 하려는 조건이다.
+/** 입장 버튼만 집는다. 화면에 제출물 버튼이 함께 있어 role 만으로는 모호하다. */
+const enterButton = () =>
+  screen.getByRole('button', { name: /라이브 입장하기|종료된 세션|입장까지/ });
+
 const sessionModalMock = jest.fn((props: SessionModalProps) =>
   props.isOpen ? (
     <div data-testid="live-mentoring-session-modal">
@@ -92,6 +103,8 @@ const entry = {
   menteeStatus: 'PENDING',
   meetingUrl: null,
   reviewId: null,
+  questionEditable: true,
+  questionEditDeadline: '2026-06-12T10:00:00+09:00',
 };
 
 describe('LiveMentoringEntryPage', () => {
@@ -114,8 +127,63 @@ describe('LiveMentoringEntryPage', () => {
     queryState = { data: entry, isLoading: false };
     render(<LiveMentoringEntryPage applicationId={1} role="MENTOR" />);
     expect(screen.getByText('곧 멘토링이 시작돼요')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    // 입장 버튼과 제출물 버튼이 함께 있다. 이름으로 집어 서로 섞이지 않게 한다.
+    expect(enterButton()).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /제출물|제출 기간/ }),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('login-gate')).not.toBeInTheDocument();
+  });
+
+  // 알림톡은 세션 며칠 전에도 이 화면으로 보낸다. 그때 눌러야 하는 것은 제출물
+  // 버튼이므로 "입장까지 119시간" 같은 문구로 화면을 채우지 않는다.
+  it('세션이 한참 남았으면 입장 버튼을 렌더하지 않는다', () => {
+    authState = { isInitialized: true, isLoggedIn: true };
+    queryState = {
+      data: {
+        ...entry,
+        reservationStartAt: new Date(Date.now() + 5 * 86_400_000).toISOString(),
+        reservationEndAt: new Date(
+          Date.now() + 5 * 86_400_000 + 1_800_000,
+        ).toISOString(),
+      },
+      isLoading: false,
+    };
+    render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+    expect(
+      screen.queryByRole('button', { name: /입장까지|라이브 입장하기/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '제출물 제출하기' }),
+    ).toBeInTheDocument();
+  });
+
+  // 마감이 지나면 버튼을 감춘다. 사유는 요약 카드의 "수정 기간 종료" 행이 알려준다.
+  it('제출 마감이 지난 멘티에게는 제출물 버튼을 렌더하지 않는다', () => {
+    authState = { isInitialized: true, isLoggedIn: true };
+    queryState = {
+      data: { ...entry, questionEditable: false },
+      isLoading: false,
+    };
+    render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+    expect(
+      screen.queryByRole('button', { name: /제출물/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('수정 기간 종료')).toBeInTheDocument();
+  });
+
+  // 멘토는 수정 주체가 아니므로 마감과 무관하게 열람할 수 있어야 한다.
+  it('마감이 지나도 멘토에게는 열람 버튼과 멘티 기준 라벨을 보여준다', () => {
+    authState = { isInitialized: true, isLoggedIn: true };
+    queryState = {
+      data: { ...entry, myRole: 'MENTOR', questionEditable: false },
+      isLoading: false,
+    };
+    render(<LiveMentoringEntryPage applicationId={1} role="MENTOR" />);
+    expect(
+      screen.getByRole('button', { name: '멘티 제출물 보기' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('멘티 제출 기간')).toBeInTheDocument();
   });
 
   // URL 의 role 세그먼트는 알림톡 링크가 준 값이라 사용자가 바꿀 수 있다.
@@ -215,7 +283,7 @@ describe('LiveMentoringEntryPage', () => {
 
       const user = userEvent.setup();
       render(<LiveMentoringEntryPage applicationId={1} role={myRole} />);
-      await user.click(screen.getByRole('button'));
+      await user.click(enterButton());
       return user;
     };
 
@@ -269,7 +337,7 @@ describe('LiveMentoringEntryPage', () => {
       expect(reviewTitle()).not.toBeInTheDocument();
 
       // 세션·정리 모달이 모두 닫힌 시점 — 남은 유일한 버튼은 재입장 버튼이다.
-      await user.click(screen.getByRole('button'));
+      await user.click(enterButton());
       await user.click(screen.getByRole('button', { name: '회의참가' }));
       await user.click(screen.getByRole('button', { name: '회의종료' }));
 

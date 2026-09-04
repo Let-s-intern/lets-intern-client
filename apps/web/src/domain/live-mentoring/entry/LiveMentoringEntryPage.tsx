@@ -17,6 +17,8 @@ import LiveMentoringReviewModal from './ui/LiveMentoringReviewModal';
 import LiveMentoringSessionModal from './ui/LiveMentoringSessionModal';
 import LoginGate from './ui/LoginGate';
 import MentoringSummaryCard from './ui/MentoringSummaryCard';
+import SubmissionButton from './ui/SubmissionButton';
+import QuestionModal from '../question/QuestionModal';
 import { isOpenableUrl } from './utils/url';
 
 interface Props {
@@ -58,6 +60,8 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
 
   // 종료 직후 정리 모달 — 멘티만, 실제로 참가했던 세션만.
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  // 제출물(사전 질문·첨부) 모달. 멘토가 열면 읽기 전용이다.
+  const [isSubmissionOpen, setIsSubmissionOpen] = useState(false);
   const hasJoinedRef = useRef(false);
 
   /**
@@ -121,6 +125,16 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
       ? entry.questionContent
       : undefined;
 
+  /*
+    제출물이 있는지는 실제 내용으로 가른다. `questionDeferred` 는 "나중에 작성하기"로
+    신청했다는 표시일 뿐이라, 그 뒤에 실제로 냈는지와 다르다.
+  */
+  const hasSubmission = Boolean(
+    entry &&
+    ((entry.questionContent && entry.questionContent.trim().length > 0) ||
+      entry.attachmentType !== 'NONE'),
+  );
+
   return (
     <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
       <div className="flex w-full max-w-[420px] flex-col gap-5">
@@ -133,6 +147,17 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
           endDate={entry?.reservationEndAt}
           role={role}
           isLoading={isLoading}
+          questionEditDeadline={entry?.questionEditDeadline}
+          questionEditable={entry?.questionEditable}
+          isMentorView={myRole === 'MENTOR'}
+        />
+
+        <SubmissionButton
+          myRole={myRole}
+          hasSubmission={hasSubmission}
+          editable={entry?.questionEditable ?? false}
+          isLoading={isLoading}
+          onOpen={() => setIsSubmissionOpen(true)}
         />
 
         <EnterLiveButton
@@ -179,6 +204,14 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
 
       {/* 정리 모달은 Jitsi 모달의 형제로 둔다 — BaseModal 은 isOpen=false 에서 언마운트되므로
           안에 중첩하면 부모가 닫히는 순간 함께 사라진다. */}
+      {isSubmissionOpen && (
+        <QuestionModal
+          applicationId={applicationId}
+          readOnly={myRole === 'MENTOR'}
+          onClose={() => setIsSubmissionOpen(false)}
+        />
+      )}
+
       <LiveMentoringReviewModal
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}

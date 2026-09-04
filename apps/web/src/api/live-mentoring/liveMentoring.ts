@@ -245,6 +245,13 @@ export const useUpdateLiveMentoringQuestionMutation = (
       queryClient.invalidateQueries({
         queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
       });
+      /*
+        입장 화면도 제출물 상태를 들고 있다(버튼 라벨·마감 행). 여기서 비우지 않으면
+        모달에서 저장한 뒤 뒤에 남은 화면이 이전 상태 그대로다.
+      */
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_ENTRY_QUERY_KEY,
+      });
     },
   });
 };
