@@ -217,7 +217,9 @@ describe('LiveMentoringEntryPage', () => {
     */
     it('질문 조회 API 를 부르지 않고 입장 응답만으로 그린다', async () => {
       questionQuery.mockClear();
-      await openAsMentor({ questionContent: '포트폴리오 피드백 부탁드립니다.' });
+      await openAsMentor({
+        questionContent: '포트폴리오 피드백 부탁드립니다.',
+      });
 
       expect(questionQuery).not.toHaveBeenCalled();
       expect(screen.getByText('박멘티 님의 제출물')).toBeInTheDocument();
@@ -234,6 +236,38 @@ describe('LiveMentoringEntryPage', () => {
     });
 
     /*
+      첨부 주소는 멘티가 적어 낸 값이고 서버는 길이만 본다. 스킴을 거르지 않으면
+      `javascript:` 가 클릭 시 이 페이지 origin 에서 실행된다.
+    */
+    it('javascript: 스킴 첨부는 링크로 내보내지 않는다', async () => {
+      await openAsMentor({
+        attachmentType: 'URL',
+        attachmentUrl: 'javascript:alert(1)',
+      });
+
+      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(
+        screen.getByText(
+          '첨부 주소를 열 수 없습니다. 멘티에게 다시 요청해 주세요.',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('http(s) 첨부는 새 탭 링크로 내보낸다', async () => {
+      await openAsMentor({
+        attachmentType: 'URL',
+        attachmentUrl: 'https://letscareer.notion.site/mentee',
+      });
+
+      const link = screen.getByRole('link', { name: '첨부 링크 열기' });
+      expect(link).toHaveAttribute(
+        'href',
+        'https://letscareer.notion.site/mentee',
+      );
+      expect(link).toHaveAttribute('rel', 'noreferrer');
+    });
+
+    /*
       첨부가 있는데 url 이 없는 것은 멘티가 공유에 동의하지 않아 서버가 가린 경우다.
       "없음"으로 적으면 내지 않은 것으로 읽혀 멘토가 멘티에게 잘못 문의하게 된다.
     */
@@ -241,7 +275,9 @@ describe('LiveMentoringEntryPage', () => {
       await openAsMentor({ attachmentType: 'FILE', attachmentUrl: null });
 
       expect(
-        screen.getByText('멘티가 자료 공유에 동의하지 않아 열람할 수 없습니다.'),
+        screen.getByText(
+          '멘티가 자료 공유에 동의하지 않아 열람할 수 없습니다.',
+        ),
       ).toBeInTheDocument();
       expect(
         screen.queryByText('첨부한 파일이 없습니다.'),

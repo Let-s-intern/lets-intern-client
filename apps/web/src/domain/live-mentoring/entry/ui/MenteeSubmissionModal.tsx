@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMentoringSchema';
+import { isOpenableUrl } from '../utils/url';
 
 interface Props {
   menteeName?: string;
@@ -47,6 +48,12 @@ const MenteeSubmissionModal = ({
 
   const question = questionContent?.trim() ?? '';
   const hasAttachment = attachmentType !== 'NONE';
+  /*
+    첨부 주소는 멘티가 직접 적어 낸 값이고 서버는 길이만 본다. 스킴을 거르지 않고
+    href 에 실으면 `javascript:` 가 클릭 시 이 페이지 origin 에서 실행된다.
+  */
+  const openableUrl =
+    attachmentUrl && isOpenableUrl(attachmentUrl) ? attachmentUrl : null;
 
   return (
     <div
@@ -105,15 +112,19 @@ const MenteeSubmissionModal = ({
             <p className="text-xsmall14 text-neutral-45">
               첨부한 파일이 없습니다.
             </p>
-          ) : attachmentUrl ? (
+          ) : openableUrl ? (
             <a
-              href={attachmentUrl}
+              href={openableUrl}
               target="_blank"
               rel="noreferrer"
               className="text-xsmall14 text-primary font-medium underline"
             >
               {attachmentType === 'URL' ? '첨부 링크 열기' : '첨부 파일 열기'}
             </a>
+          ) : attachmentUrl ? (
+            <p className="text-xsmall14 text-neutral-45">
+              첨부 주소를 열 수 없습니다. 멘티에게 다시 요청해 주세요.
+            </p>
           ) : (
             <p className="text-xsmall14 text-neutral-45">
               멘티가 자료 공유에 동의하지 않아 열람할 수 없습니다.
