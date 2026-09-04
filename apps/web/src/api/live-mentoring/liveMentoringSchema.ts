@@ -628,5 +628,15 @@ export const liveMentoringEntrySchema = z.object({
    * 종료 시 후기 모달을 다시 띄울지(§3.3.2 "미작성" 조건) 이 값으로 판정한다.
    */
   reviewId: z.number().nullable(),
+  /**
+   * 지금 제출물(사전 질문·첨부)을 내거나 고칠 수 있는지. **서버가 판단한다.**
+   *
+   * 마감 기준이 하나가 아니다 — 보통은 예약 시작 24시간 전이지만, 예약이 48시간
+   * 안일 때 신청했다면 결제 승인 +3시간이 그 자리를 대신한다. 어느 쪽인지 가르려면
+   * 결제 승인 시각이 필요한데 그 값은 이 응답에 없다. 화면이 계산하면 틀린다.
+   */
+  questionEditable: z.boolean(),
+  /** 위 마감 시각. 예약 시각이 없는 신청이면 null. */
+  questionEditDeadline: z.string().nullable(),
 });
 export type LiveMentoringEntry = z.infer<typeof liveMentoringEntrySchema>;

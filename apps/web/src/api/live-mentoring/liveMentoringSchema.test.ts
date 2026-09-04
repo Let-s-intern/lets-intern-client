@@ -591,6 +591,8 @@ function makeEntry(overrides: Record<string, unknown> = {}) {
     menteeStatus: 'PENDING',
     meetingUrl: null,
     reviewId: null,
+    questionEditable: true,
+    questionEditDeadline: '2026-08-31T10:00:00',
     ...overrides,
   };
 }

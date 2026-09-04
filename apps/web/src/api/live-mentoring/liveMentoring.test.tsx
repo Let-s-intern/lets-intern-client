@@ -868,6 +868,8 @@ function entryResponse(overrides: Record<string, unknown> = {}) {
         menteeStatus: 'PENDING',
         meetingUrl: null,
         reviewId: null,
+        questionEditable: true,
+        questionEditDeadline: '2026-09-12T10:00:00',
         ...overrides,
       },
     },

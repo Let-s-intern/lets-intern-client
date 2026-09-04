@@ -17,6 +17,9 @@ import LiveMentoringReviewModal from './ui/LiveMentoringReviewModal';
 import LiveMentoringSessionModal from './ui/LiveMentoringSessionModal';
 import LoginGate from './ui/LoginGate';
 import MentoringSummaryCard from './ui/MentoringSummaryCard';
+import MenteeSubmissionModal from './ui/MenteeSubmissionModal';
+import SubmissionButton from './ui/SubmissionButton';
+import QuestionModal from '../question/QuestionModal';
 import { isOpenableUrl } from './utils/url';
 
 interface Props {
@@ -58,6 +61,8 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
 
   // 종료 직후 정리 모달 — 멘티만, 실제로 참가했던 세션만.
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  // 제출물(사전 질문·첨부) 모달. 멘토가 열면 읽기 전용이다.
+  const [isSubmissionOpen, setIsSubmissionOpen] = useState(false);
   const hasJoinedRef = useRef(false);
 
   /**
@@ -121,6 +126,16 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
       ? entry.questionContent
       : undefined;
 
+  /*
+    제출물이 있는지는 실제 내용으로 가른다. `questionDeferred` 는 "나중에 작성하기"로
+    신청했다는 표시일 뿐이라, 그 뒤에 실제로 냈는지와 다르다.
+  */
+  const hasSubmission = Boolean(
+    entry &&
+    ((entry.questionContent && entry.questionContent.trim().length > 0) ||
+      entry.attachmentType !== 'NONE'),
+  );
+
   return (
     <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
       <div className="flex w-full max-w-[420px] flex-col gap-5">
@@ -133,6 +148,17 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
           endDate={entry?.reservationEndAt}
           role={role}
           isLoading={isLoading}
+          questionEditDeadline={entry?.questionEditDeadline}
+          questionEditable={entry?.questionEditable}
+          isMentorView={myRole === 'MENTOR'}
+        />
+
+        <SubmissionButton
+          myRole={myRole}
+          hasSubmission={hasSubmission}
+          editable={entry?.questionEditable ?? false}
+          isLoading={isLoading}
+          onOpen={() => setIsSubmissionOpen(true)}
         />
 
         <EnterLiveButton
@@ -179,6 +205,32 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
 
       {/* 정리 모달은 Jitsi 모달의 형제로 둔다 — BaseModal 은 isOpen=false 에서 언마운트되므로
           안에 중첩하면 부모가 닫히는 순간 함께 사라진다. */}
+      {/*
+        고칠 수 있을 때만 작성 모달을 연다. 그 밖에는 열람 뷰다.
+
+        멘토는 마감과 무관하게 열람이고, 질문 조회 API 가 신청자 본인만 통과시켜
+        작성 모달을 재사용하면 401 이 난다. 마감이 지난 멘티도 열람으로 보낸다 —
+        작성 모달을 잠긴 채 띄우면 빈 입력칸만 남아 무엇을 냈는지 알 수 없다.
+
+        열람 뷰는 입장 응답이 이미 들고 있는 값으로 그린다. 추가 호출이 없다.
+      */}
+      {isSubmissionOpen &&
+        (myRole === 'MENTEE' && entry?.questionEditable ? (
+          <QuestionModal
+            applicationId={applicationId}
+            onClose={() => setIsSubmissionOpen(false)}
+          />
+        ) : (
+          <MenteeSubmissionModal
+            isOwnSubmission={myRole === 'MENTEE'}
+            menteeName={entry?.menteeName}
+            questionContent={entry?.questionContent}
+            attachmentType={entry?.attachmentType}
+            attachmentUrl={entry?.attachmentUrl}
+            onClose={() => setIsSubmissionOpen(false)}
+          />
+        ))}
+
       <LiveMentoringReviewModal
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}
