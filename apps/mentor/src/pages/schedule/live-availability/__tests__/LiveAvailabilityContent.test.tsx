@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import LiveAvailabilityContent from '../LiveAvailabilityContent';
 
@@ -42,6 +42,79 @@ describe('LiveAvailabilityContent', () => {
     );
     expect(scrollEl).not.toBeNull();
     expect(scrollEl?.className).toMatch(/min-h-0/);
+  });
+
+  /*
+    그리드는 주 단위로 앞뒤를 오갈 수 있어 지난 날짜·오늘 지난 시간이 그대로 보인다.
+    막지 않으면 멘토가 과거 슬롯을 열 수 있고 서버도 거르지 않아 그대로 저장된다(LC-3246).
+  */
+  describe('지난 시간대', () => {
+    // 수요일 14:00 로 고정한다 — 같은 주 안에 과거와 미래가 모두 있어야 한다.
+    const NOW = new Date('2026-09-09T14:00:00');
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(NOW);
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const pastCells = () => screen.getAllByTitle('이미 지난 시간입니다');
+
+    /*
+      회색은 범례의 "예약 불가능" 과 같은 값을 쓴다. 지난 시간도 같은 계열의 불가
+      상태라 새 범례 항목을 만들지 않고, 사유는 셀 글자가 말한다 — 다른 불가 셀
+      (예약 완료·다른 챌린지)도 모두 사유를 글자로 적고 있다.
+    */
+    it('지난 칸은 예약 불가능 회색에 사유를 적어 그린다', () => {
+      render(<LiveAvailabilityContent {...baseProps} />);
+      expect(pastCells().length).toBeGreaterThan(0);
+      expect(pastCells()[0]).toHaveTextContent('지난 시간');
+      expect(pastCells()[0].className).toContain('bg-neutral-90');
+    });
+
+    it('범례에는 항목을 더하지 않는다', () => {
+      render(<LiveAvailabilityContent {...baseProps} />);
+      // 셀에는 title 이 붙는다. title 없는 "지난 시간" 이 있으면 범례에 샌 것이다.
+      const outsideCells = screen
+        .getAllByText('지난 시간')
+        .filter((el) => !el.hasAttribute('title'));
+      expect(outsideCells).toHaveLength(0);
+    });
+
+    it('지난 칸은 눌러도 선택되지 않는다', () => {
+      render(<LiveAvailabilityContent {...baseProps} />);
+
+      const before = screen.queryAllByText('예약 가능').length;
+      const pastCell = pastCells()[0];
+      fireEvent.mouseDown(pastCell);
+
+      expect(screen.queryAllByText('예약 가능').length).toBe(before);
+      // 비활성 칸은 button 이 아니라 div 다 — 폼 제출·포커스 대상이 되지 않는다.
+      expect(pastCell.tagName).toBe('DIV');
+      expect(pastCell).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    /*
+      전부 막으면 예전에 잘못 연 슬롯을 화면에서 지울 방법이 사라진다.
+      이 티켓이 고치려는 것이 바로 그 슬롯이 쌓이는 문제다.
+    */
+    it('이미 열어 둔 지난 슬롯은 남겨서 지울 수 있게 한다', () => {
+      render(
+        <LiveAvailabilityContent
+          {...baseProps}
+          initialSlots={[{ date: '2026-09-09', time: '09:00' }]}
+        />,
+      );
+
+      const opened = screen.getAllByTitle(
+        '이미 지난 시간입니다. 눌러서 지울 수 있어요.',
+      );
+      expect(opened.length).toBe(1);
+      expect(opened[0].tagName).toBe('BUTTON');
+    });
   });
 
   it('"다른 챌린지로 이동" 버튼이 없다', () => {
@@ -119,6 +192,20 @@ describe('LiveAvailabilityContent', () => {
 });
 
 describe('LiveAvailabilityContent — 챌린지 기간 음영', () => {
+  /*
+    보이는 주(6/29~7/5)보다 앞선 시각으로 고정한다. 지난 칸은 비활성으로 그려져
+    data-challenge-period 도 클릭도 없다(LC-3246). 고정하지 않으면 이 테스트는
+    실행한 날짜에 따라 통과 여부가 갈린다.
+  */
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-01T09:00:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   // focusDate 로 보이는 주(6/29~7/5)를 고정한다.
   const challengePeriods = [
     {
