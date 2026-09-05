@@ -672,7 +672,7 @@ const LiveAvailabilityContent = ({
             </button>
           </div>
 
-          {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 / 지난 시간 (우측 한 줄) */}
+          {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
           <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
@@ -692,12 +692,6 @@ const LiveAvailabilityContent = ({
               <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
-            {pastKeys.size > 0 && (
-              <span className="flex items-center gap-1.5">
-                <span className="bg-neutral-90 border-neutral-80 h-3 w-3 rounded-[3px] border" />
-                지난 시간
-              </span>
-            )}
             {challengePeriodKeys.size > 0 && (
               <span className="flex items-center gap-1.5">
                 <span className="bg-neutral-95 border-neutral-80 h-3 w-3 rounded-[3px] border" />
@@ -972,9 +966,14 @@ const LiveAvailabilityContent = ({
                         title="이미 지난 시간입니다"
                         aria-disabled="true"
                         /*
-                          글자를 남기는 이유 — 이 팔레트의 회색 단계(85·90·95)는 육안
-                          구분이 거의 안 된다. 챌린지 기간이 95, 예약 불가능이 90 을
-                          이미 쓰고 있어 색만으로는 셋이 같아 보인다.
+                          회색은 범례의 "예약 불가능" 과 같은 값이다. 지난 시간도 같은
+                          계열의 불가 상태라 새 상태를 만들지 않고, 범례에도 항목을
+                          더하지 않는다 — 사유는 이 글자가 말한다.
+
+                          글자를 빼고 회색만 두는 안도 봤다. 지난 구간이 통째로 회색이라
+                          경계가 곧 현재 시각이 되어 깔끔했지만, 왜 안 눌리는지를 형태로만
+                          유추하게 만든다. 다른 불가 셀(예약 완료·다른 챌린지)이 모두
+                          사유를 글자로 적고 있어 여기만 비우면 규칙이 어긋난다.
                         */
                         className="border-neutral-90 text-xxsmall10 bg-neutral-90 text-neutral-45 flex items-center justify-center border-b border-r px-2 py-2 text-center last:border-r-0"
                       >

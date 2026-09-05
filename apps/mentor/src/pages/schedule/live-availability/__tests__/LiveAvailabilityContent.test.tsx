@@ -61,13 +61,27 @@ describe('LiveAvailabilityContent', () => {
       vi.useRealTimers();
     });
 
-    // 범례에도 같은 문구가 있으므로 셀은 title 로 집는다.
     const pastCells = () => screen.getAllByTitle('이미 지난 시간입니다');
 
-    it('지난 칸은 비활성으로 그린다', () => {
+    /*
+      회색은 범례의 "예약 불가능" 과 같은 값을 쓴다. 지난 시간도 같은 계열의 불가
+      상태라 새 범례 항목을 만들지 않고, 사유는 셀 글자가 말한다 — 다른 불가 셀
+      (예약 완료·다른 챌린지)도 모두 사유를 글자로 적고 있다.
+    */
+    it('지난 칸은 예약 불가능 회색에 사유를 적어 그린다', () => {
       render(<LiveAvailabilityContent {...baseProps} />);
       expect(pastCells().length).toBeGreaterThan(0);
       expect(pastCells()[0]).toHaveTextContent('지난 시간');
+      expect(pastCells()[0].className).toContain('bg-neutral-90');
+    });
+
+    it('범례에는 항목을 더하지 않는다', () => {
+      render(<LiveAvailabilityContent {...baseProps} />);
+      // 셀에는 title 이 붙는다. title 없는 "지난 시간" 이 있으면 범례에 샌 것이다.
+      const outsideCells = screen
+        .getAllByText('지난 시간')
+        .filter((el) => !el.hasAttribute('title'));
+      expect(outsideCells).toHaveLength(0);
     });
 
     it('지난 칸은 눌러도 선택되지 않는다', () => {
@@ -81,16 +95,6 @@ describe('LiveAvailabilityContent', () => {
       // 비활성 칸은 button 이 아니라 div 다 — 폼 제출·포커스 대상이 되지 않는다.
       expect(pastCell.tagName).toBe('DIV');
       expect(pastCell).toHaveAttribute('aria-disabled', 'true');
-    });
-
-    // 회색 단계(85·90·95)가 육안 구분이 안 돼 색만으로는 사유가 전달되지 않는다.
-    it('범례에 지난 시간 항목이 있다', () => {
-      render(<LiveAvailabilityContent {...baseProps} />);
-      // 셀에는 title 이 붙는다. 그게 없는 "지난 시간" 이 범례 항목이다.
-      const legendItems = screen
-        .getAllByText('지난 시간')
-        .filter((el) => !el.hasAttribute('title'));
-      expect(legendItems.length).toBe(1);
     });
 
     /*
