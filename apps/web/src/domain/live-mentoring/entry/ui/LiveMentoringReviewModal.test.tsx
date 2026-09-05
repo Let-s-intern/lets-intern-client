@@ -39,7 +39,7 @@ describe('LiveMentoringReviewModal', () => {
   });
 
   beforeEach(() => {
-    mutate.mockClear();
+    mutate.mockReset();
   });
 
   it('닫힌 상태에서는 아무것도 렌더하지 않는다', () => {
@@ -78,6 +78,100 @@ describe('LiveMentoringReviewModal', () => {
     // 별점만 채운 상태 — 여전히 잠겨 있다.
     fireEvent.click(screen.getByAltText('별 4개'));
     expect(submit).toBeDisabled();
+  });
+
+  /*
+    예전에는 onSuccess 만 넘겨서 저장이 실패해도 화면에 아무 표시가 없었다. 모달은
+    그대로 남고 버튼만 다시 눌리는 상태로 돌아와, 사용자는 저장된 줄 알고 "나중에
+    쓸게요" 로 넘어갔다. 후기는 사라졌다(LC-3244).
+  */
+  describe('저장 실패', () => {
+    const fill = () => {
+      fireEvent.click(screen.getByAltText('별 4개'));
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: '도움이 되었습니다.' },
+      });
+    };
+
+    // 네트워크가 끊기면(ERR_CONNECTION_REFUSED) 서버 문구 자체가 없다.
+    const failWith = (error: unknown) =>
+      mutate.mockImplementation((_payload, options) =>
+        options?.onError?.(error),
+      );
+
+    // 인터셉터가 만드는 ApiError 모양 — 코드와 서버 문구가 최상위에 있다.
+    it('서버가 사유를 주면 그대로 적는다', () => {
+      failWith({
+        code: 'REVIEW_ALREADY_EXISTS',
+        serverMessage: '이미 작성한 후기입니다.',
+      });
+      renderModal();
+      fill();
+
+      fireEvent.click(screen.getByRole('button', { name: '작성 완료' }));
+
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        '이미 작성한 후기입니다.',
+      );
+    });
+
+    /*
+      여기서 알려야 하는 것은 원인이 아니라 아직 저장되지 않았다는 사실이다.
+      서버 문구가 없을 때 기본 문구가 그 말을 하지 않으면 이 버그가 그대로 남는다.
+    */
+    it('서버 문구가 없으면 저장되지 않았다고 적는다', () => {
+      failWith(new Error('Network Error'));
+      renderModal();
+      fill();
+
+      fireEvent.click(screen.getByRole('button', { name: '작성 완료' }));
+
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        '저장하지 못했습니다',
+      );
+    });
+
+    it('실패해도 모달은 닫히지 않고 다시 시도할 수 있다', () => {
+      failWith(new Error('Network Error'));
+      const onClose = jest.fn();
+      render(
+        <LiveMentoringReviewModal
+          isOpen
+          onClose={onClose}
+          applicationId={APPLICATION_ID}
+        />,
+      );
+      fill();
+
+      const submit = screen.getByRole('button', { name: '작성 완료' });
+      fireEvent.click(submit);
+
+      expect(onClose).not.toHaveBeenCalled();
+      expect(submit).toBeEnabled();
+    });
+
+    it('다시 눌러 성공하면 이전 오류 문구가 사라진다', () => {
+      failWith(new Error('Network Error'));
+      const onClose = jest.fn();
+      render(
+        <LiveMentoringReviewModal
+          isOpen
+          onClose={onClose}
+          applicationId={APPLICATION_ID}
+        />,
+      );
+      fill();
+
+      const submit = screen.getByRole('button', { name: '작성 완료' });
+      fireEvent.click(submit);
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+
+      mutate.mockImplementation((_payload, options) => options?.onSuccess?.());
+      fireEvent.click(submit);
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('별점과 내용을 채우면 POST 페이로드로 저장한다', () => {
