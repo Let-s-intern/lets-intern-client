@@ -94,6 +94,18 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
     setIsOpen(false);
   };
 
+  /*
+    무료 세미나·자료집은 데스크톱에서 드롭다운 하나로 묶는다. 자리를 하나 줄여
+    1대1 라이브 멘토링·멘토 소개를 최상위에 올리기 위해서다.
+
+    모바일(Swiper)·사이드 메뉴는 묶지 않는다. 드롭다운이 hover 로 열리는데
+    터치에는 hover 가 없어서, 묶으면 눌러도 아무 일이 없는 메뉴가 된다.
+  */
+  const freeContentNavList = [
+    { children: '무료 세미나', href: '/seminar' },
+    { children: '무료 자료집', href: '/library/list' },
+  ];
+
   const programCategoryLists = useProgramCategoryNav();
   // href가 있는 프로그램만 필터링
   const programCategoryWithHref = programCategoryLists.filter(
@@ -152,6 +164,24 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   active={activeLink === 'PROGRAM'}
                 >
                   프로그램
+                </GlobalNavItem>
+              </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  isNew
+                  href="/program?catalog=mentoring"
+                >
+                  1대1 라이브 멘토링
+                </GlobalNavItem>
+              </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  href="/mentors"
+                  active={activeLink === 'MENTORS'}
+                >
+                  멘토 소개
                 </GlobalNavItem>
               </SwiperSlide>
               <SwiperSlide className="!w-auto">
@@ -218,10 +248,16 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <GlobalNavItem
                 className="text-xsmall16"
                 isNew
-                href="/seminar"
-                active={activeLink === 'SEMINAR'}
+                href="/program?catalog=mentoring"
               >
-                무료 세미나
+                1대1 라이브 멘토링
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                href="/mentors"
+                active={activeLink === 'MENTORS'}
+              >
+                멘토 소개
               </GlobalNavItem>
               {/*
                 [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (데스크톱 GNB)
@@ -240,11 +276,17 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <GlobalNavItem
                 className="text-xsmall16"
                 isNew
-                href="/library/list"
-                active={activeLink === 'LIBRARY'}
-                rel="noopener noreferrer"
+                /*
+                  부모는 열기 전용이다. 세미나와 자료집 중 어느 쪽을 기본으로 삼아도
+                  나머지 하나를 덮으므로 이동시키지 않는다. href 를 비우면 앵커가
+                  '#' 로 떨어져 히스토리가 쌓이므로 기본 동작을 막는다.
+                */
+                onClick={(event) => event.preventDefault()}
+                active={activeLink === 'SEMINAR' || activeLink === 'LIBRARY'}
+                subNavList={freeContentNavList}
+                showDropdownIcon={true}
               >
-                무료 자료집
+                무료 세미나/자료집
               </GlobalNavItem>
               <GlobalNavItem className="text-xsmall16" href="/program?type=VOD">
                 취준위키 VOD
@@ -297,6 +339,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
+        <SideNavItem href="/program?catalog=mentoring">
+          1대1 라이브 멘토링
+        </SideNavItem>
+        <SideNavItem href="/mentors">멘토 소개</SideNavItem>
         <SideNavItem href="/seminar" isNew>
           무료 세미나
         </SideNavItem>

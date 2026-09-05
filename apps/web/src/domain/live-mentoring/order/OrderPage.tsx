@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useUserQuery } from '@/api/user/user';
+import { useAuthStore } from '@letscareer/store';
 import { isDeferredQuestionAllowed } from '../constants';
 import { useLiveMentoringCoupon } from './hooks/useLiveMentoringCoupon';
 import {
@@ -40,6 +41,8 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   const router = useRouter();
   const draft = useOrderDraftStore((state) => state.draft);
   const { data: user } = useUserQuery();
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const accountEmail = user?.email ?? '';
   /*
@@ -68,14 +71,26 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
     어느 쪽이든 결제할 대상이 없으므로 되돌려보낸다. 빈 화면에 "결제하기" 만
     떠 있으면 눌렀을 때 무슨 일이 날지 알 수 없다.
   */
+  /*
+    상세의 신청 버튼이 이미 비회원을 막지만 그것만으로는 새는 곳이 남는다 —
+    로그아웃해도 선택값(draft)은 남아 있어서, 그 상태로 이 주소에 닿으면 결제
+    화면까지 들어온다. 스토어 초기화를 기다린 뒤 판정한다(깜빡임 방지).
+  */
   useEffect(() => {
+    if (!isInitialized || isLoggedIn) return;
+    const redirectTo = `${window.location.pathname}${window.location.search}`;
+    router.replace(`/login?redirect=${encodeURIComponent(redirectTo)}`);
+  }, [isInitialized, isLoggedIn, router]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
     if (draft) return;
     router.replace(
       mentorId ? `/live-mentoring/${mentorId}` : '/live-mentoring',
     );
-  }, [draft, mentorId, router]);
+  }, [draft, isLoggedIn, mentorId, router]);
 
-  if (!draft) {
+  if (!isInitialized || !isLoggedIn || !draft) {
     return <p className="text-neutral-40 py-20 text-center">이동 중…</p>;
   }
 

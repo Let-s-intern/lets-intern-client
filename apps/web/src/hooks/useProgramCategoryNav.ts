@@ -60,6 +60,14 @@ export default function useProgramCategoryNav() {
       href: `/program`,
     },
     {
+      /*
+        `/live-mentoring` 은 이 주소로 리다이렉트만 한다. 한 번 튕기지 않도록
+        목적지를 바로 가리킨다.
+      */
+      children: '1대1 라이브 멘토링',
+      href: `/program?catalog=mentoring`,
+    },
+    {
       children: '경험정리 챌린지',
       href: getProgramHref(activeExperienceSummary, experienceSummary),
     },
