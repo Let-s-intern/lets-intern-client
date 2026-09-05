@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-import { LIVE_ENTER_LEAD_MS } from '../constants/live';
+import {
+  LIVE_ENTER_LEAD_MS,
+  LIVE_ENTER_VISIBLE_BEFORE_MS,
+} from '../constants/live';
 
 interface Props {
   startDate?: string;
@@ -12,7 +15,7 @@ interface Props {
   onEnter: () => void;
 }
 
-type Phase = 'before' | 'open' | 'ended' | 'unknown';
+type Phase = 'far' | 'before' | 'open' | 'ended' | 'unknown';
 
 interface ButtonState {
   phase: Phase;
@@ -41,6 +44,7 @@ function formatCountdown(ms: number): string {
 
 /**
  * 현재 시각 기준 버튼 상태 계산 (순수함수 — 테스트 용이).
+ * - 시작 1시간 전 이전 → 'far'. 버튼을 렌더하지 않는다
  * - 시작 20분 전 이전 → 비활성 "입장까지 N시간 N분"
  * - 20분 전 ~ 종료 → 활성 "라이브 입장하기 · 시작까지 N분" (시작 후엔 "진행 중")
  * - 종료 후 → 비활성 "종료된 세션"
@@ -59,6 +63,9 @@ export function computeButtonState(
 
   if (now >= end) {
     return { phase: 'ended', label: '종료된 세션', active: false };
+  }
+  if (now < start - LIVE_ENTER_VISIBLE_BEFORE_MS) {
+    return { phase: 'far', label: '', active: false };
   }
   if (now < openAt) {
     return {
@@ -98,6 +105,13 @@ const EnterLiveButton = ({
   }, []);
 
   const state = computeButtonState(now, startDate, endDate);
+
+  /*
+    아직 한참 남았으면 버튼 자체를 두지 않는다. 알림톡이 세션 며칠 전에도 이 화면으로
+    보내는데, 그때 눌러야 하는 것은 제출물 버튼이다.
+  */
+  if (state.phase === 'far') return null;
+
   const isDisabled = disabled || isPreparing || !state.active;
 
   return (

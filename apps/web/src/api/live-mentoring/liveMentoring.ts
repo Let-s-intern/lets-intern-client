@@ -1,5 +1,6 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import {
   type ConfirmLiveMentoringPaymentRequest,
@@ -245,6 +246,13 @@ export const useUpdateLiveMentoringQuestionMutation = (
       queryClient.invalidateQueries({
         queryKey: MY_LIVE_MENTORING_APPLICATIONS_QUERY_KEY,
       });
+      /*
+        입장 화면도 제출물 상태를 들고 있다(버튼 라벨·마감 행). 여기서 비우지 않으면
+        모달에서 저장한 뒤 뒤에 남은 화면이 이전 상태 그대로다.
+      */
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_ENTRY_QUERY_KEY,
+      });
     },
   });
 };
@@ -353,6 +361,23 @@ export const useLiveMentoringEntryQuery = (applicationId: number | null) => {
     },
     enabled: applicationId !== null,
     refetchOnWindowFocus: false,
+    /*
+      다시 물어도 답이 같은 실패는 즉시 포기한다. 그동안 화면은 "일정 확인 중" 에
+      머물고, 알림톡으로 들어온 사람에게는 로딩이 끝나지 않는 것으로 보인다.
+
+      - 4xx: 없는 신청·남의 신청. 서버가 둘 다 404 로 답한다
+      - Axios 가 아닌 에러: 위 `parse` 가 던진 스키마 오류다. 응답을 다시 받아도
+        같은 모양이 온다
+
+      네트워크 오류(응답 없음)와 5xx 만 재시도한다.
+     */
+    retry: (failureCount, error) => {
+      const axiosError = error as AxiosError;
+      if (!axiosError?.isAxiosError) return false;
+      const status = axiosError.response?.status;
+      if (status !== undefined && status >= 400 && status < 500) return false;
+      return failureCount < 3;
+    },
   });
 };
 

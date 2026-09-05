@@ -13,12 +13,32 @@ interface Props {
   endDate?: string;
   role: LiveMentoringRoleParam;
   isLoading?: boolean;
+  /** 제출물(사전 질문·첨부) 수정 마감. 서버가 계산한 값이며 없으면 행을 숨긴다. */
+  questionEditDeadline?: string | null;
+  /** 지금 고칠 수 있는지. 서버 판정이다. 지났으면 문구를 바꾼다. */
+  questionEditable?: boolean;
+  /** 멘토가 보는 화면이면 제출물 행 라벨을 멘티 기준으로 바꾼다. */
+  isMentorView?: boolean;
 }
 
 function formatDay(startDate?: string): string {
   if (!startDate) return '-';
   return new Date(startDate).toLocaleDateString('ko-KR', {
     year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  });
+}
+
+/**
+ * 마감용 짧은 날짜 — "9월 8일 (화)".
+ *
+ * 일시 행은 연도까지 적지만, 마감은 뒤에 남은 시간이 붙어 한 줄이 길어진다.
+ * 마감은 며칠 안이라 연도가 없어도 헷갈리지 않는다.
+ */
+function formatShortDay(date: string): string {
+  return new Date(date).toLocaleDateString('ko-KR', {
     month: 'long',
     day: 'numeric',
     weekday: 'short',
@@ -38,13 +58,51 @@ function formatTimeRange(startDate?: string, endDate?: string): string {
   return `${startTime} ~ ${endTime}`;
 }
 
-/** 값이 없으면(빈 문자열/undefined) 행 자체를 렌더하지 않는다 — 값이 온 항목만 표시. */
-function Row({ label, value }: { label: string; value?: string | null }) {
+/**
+ * 마감까지 남은 시간을 "2일 5시간" 처럼 굵은 단위 둘로 줄인다.
+ *
+ * 입장 버튼(`EnterLiveButton`)이 분 단위까지 세는 것과 달리 여기는 며칠 단위가 흔하다.
+ * 분까지 적으면 길어서 한 줄에 안 들어간다.
+ */
+function formatRemaining(deadline: string, now: number): string | null {
+  const diffMs = new Date(deadline).getTime() - now;
+  if (Number.isNaN(diffMs) || diffMs <= 0) return null;
+
+  const totalMinutes = Math.floor(diffMs / 60_000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return hours > 0 ? `${days}일 ${hours}시간` : `${days}일`;
+  if (hours > 0)
+    return minutes > 0 ? `${hours}시간 ${minutes}분` : `${hours}시간`;
+  return `${minutes}분`;
+}
+
+/**
+ * 값이 없으면(빈 문자열/undefined) 행 자체를 렌더하지 않는다 — 값이 온 항목만 표시.
+ *
+ * `wrap` 은 값이 한 줄에 안 들어가는 행에 쓴다. 기본은 `whitespace-nowrap` 인데,
+ * 제출 기간처럼 "날짜 + 남은 시간"이 함께 붙는 값은 390px 화면에서 70px 넘친다.
+ */
+function Row({
+  label,
+  value,
+  wrap = false,
+}: {
+  label: string;
+  value?: string | null;
+  wrap?: boolean;
+}) {
   if (!value) return null;
   return (
     <div className="flex items-start justify-between gap-3 py-3">
       <span className="text-xsmall14 text-neutral-45 shrink-0">{label}</span>
-      <span className="text-xsmall14 text-neutral-0 whitespace-nowrap text-right font-medium">
+      <span
+        className={`text-xsmall14 text-neutral-0 text-right font-medium ${
+          wrap ? 'break-keep' : 'whitespace-nowrap'
+        }`}
+      >
         {value}
       </span>
     </div>
@@ -76,7 +134,24 @@ const MentoringSummaryCard = ({
   endDate,
   role,
   isLoading,
+  questionEditDeadline,
+  questionEditable,
+  isMentorView = false,
 }: Props) => {
+  /*
+    남은 시간은 렌더 시점 기준으로만 계산한다. 마감이 며칠 단위라 초 단위로 다시
+    그릴 이유가 없고, 입장 버튼이 이미 타이머를 돌리고 있어 화면은 그때 함께 갱신된다.
+  */
+  const remaining = questionEditDeadline
+    ? formatRemaining(questionEditDeadline, Date.now())
+    : null;
+
+  const submissionDeadlineText = !questionEditDeadline
+    ? undefined
+    : !questionEditable || !remaining
+      ? '수정 기간 종료'
+      : `${formatShortDay(questionEditDeadline)} ${formatTimeRange(questionEditDeadline)}까지 · ${remaining} 남음`;
+
   return (
     <section className="border-neutral-80 rounded-xxl overflow-hidden border bg-white shadow-sm">
       {/* 헤더 — 브랜드 그라데이션 + 로고 */}
@@ -117,6 +192,15 @@ const MentoringSummaryCard = ({
                   ? `${formatDay(startDate)} ${formatTimeRange(startDate, endDate)}`
                   : undefined
               }
+            />
+            <Row
+              /*
+                멘토는 수정 주체가 아니다. "제출물 수정"이라고만 적으면 자기가 고치는
+                것으로 읽히므로 누구의 기간인지 라벨에 드러낸다.
+              */
+              label={isMentorView ? '멘티 제출 기간' : '제출물 수정'}
+              value={submissionDeadlineText}
+              wrap
             />
           </div>
         )}

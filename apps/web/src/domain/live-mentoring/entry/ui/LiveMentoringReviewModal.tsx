@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useCreateLiveMentoringReviewMutation } from '@/api/review/review';
 import BaseModal from '@/common/modal/BaseModal';
 
+import { readServerError } from '../../utils/serverError';
+
 import StarRating from './StarRating';
 
 export const REVIEW_MAX_LENGTH = 300;
@@ -28,6 +30,26 @@ interface LiveMentoringReviewModalProps {
  * 걷어내고 상품명을 넣는다(PRD §3.3.4). 저장 계약도 다르다 —
  * `POST /api/v2/review?applicationId={id}` `{ type: 'LIVE_MENTORING_REVIEW', score, content }`.
  */
+const SAVE_FAILED = '후기를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+
+/**
+ * 사용자에게 보일 실패 문구를 고른다.
+ *
+ * `readServerError` 는 서버 문구가 없으면 `error.message` 를 그대로 돌려준다. 그런데
+ * 연결이 끊기면 axios 가 `Error('Network Error')` 를 던지므로, 그대로 쓰면 화면에
+ * 영문 원문이 뜬다. 이 티켓의 재현 경로(`ERR_CONNECTION_REFUSED`)가 바로 그 경우다.
+ *
+ * 서버가 준 코드가 있을 때만 서버 문구를 믿는다. 인터셉터가 만든 `ApiError` 에는 코드가
+ * 있고, 날것의 `Error` 에는 없어 `UNKNOWN` 으로 읽힌다.
+ *
+ * `readServerError` 자체를 고치지 않은 이유는 그 함수를 질문 모달과 취소 화면이 함께
+ * 쓰기 때문이다. 같은 새는 곳이 그쪽에도 있지만 이 티켓의 범위가 아니다.
+ */
+function toUserMessage(error: unknown): string {
+  const { code, message } = readServerError(error, SAVE_FAILED);
+  return code === 'UNKNOWN' ? SAVE_FAILED : message;
+}
+
 const LiveMentoringReviewModal = ({
   isOpen,
   onClose,
@@ -37,15 +59,31 @@ const LiveMentoringReviewModal = ({
 }: LiveMentoringReviewModalProps) => {
   const [stars, setStars] = useState(0);
   const [content, setContent] = useState('');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const { mutate: createReview, isPending } =
     useCreateLiveMentoringReviewMutation(applicationId);
 
   const canSubmit = stars > 0 && content.trim().length > 0;
 
+  /*
+    실패를 화면에 적는다. 예전에는 onSuccess 만 넘겨서, 저장이 실패해도 모달이 그대로
+    남고 버튼만 다시 눌리는 상태로 돌아왔다. 화면 어디에도 표시가 없으니 사용자는
+    저장된 줄 알고 "나중에 쓸게요" 나 창 닫기로 넘어갔고, 후기는 사라졌다.
+
+    문구가 "저장하지 못했다" 로 시작해야 한다 — 여기서 알려야 하는 것은 원인이 아니라
+    아직 저장되지 않았다는 사실이다.
+  */
   const handleSubmit = () => {
     if (!canSubmit || isPending) return;
-    createReview({ score: stars, content }, { onSuccess: onClose });
+    setSaveError(null);
+    createReview(
+      { score: stars, content },
+      {
+        onSuccess: onClose,
+        onError: (error) => setSaveError(toUserMessage(error)),
+      },
+    );
   };
 
   return (
@@ -100,6 +138,11 @@ const LiveMentoringReviewModal = ({
         </section>
 
         <div className="flex flex-col gap-2">
+          {saveError && (
+            <p role="alert" className="text-xxsmall12 text-system-error">
+              {saveError}
+            </p>
+          )}
           <button
             type="button"
             onClick={handleSubmit}
