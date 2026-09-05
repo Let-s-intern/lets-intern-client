@@ -7,6 +7,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { useAuthStore } from '@letscareer/store';
+
 import ApplySheet from '../apply/ApplySheet';
 import { useApplySheetState } from '../apply/hooks/useApplySheetState';
 import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
@@ -51,6 +53,26 @@ const LiveMentoringDetailPage = ({
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);
   const applySheet = useApplySheetState();
   const router = useRouter();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
+  /**
+   * 신청 시트를 열기 전에 로그인을 요구한다.
+   *
+   * 상세는 비회원도 본다 — 상품을 봐야 가입할 이유가 생기고, 검색 유입도 여기로
+   * 들어온다. 막는 자리는 신청 시점이다. 챌린지가 같은 방식이다
+   * (`domain/program/challenge/ChallengeCTAButtons.tsx` 의 `handleOpen`).
+   *
+   * 시트를 열어 두고 제출 때 막지 않는 이유는, 슬롯·플랜을 다 고른 뒤에 로그인으로
+   * 튕기면 그 선택이 사라지기 때문이다.
+   */
+  const handleApplyClick = () => {
+    if (!isLoggedIn) {
+      const redirectTo = `${window.location.pathname}${window.location.search}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
+      return;
+    }
+    applySheet.open();
+  };
   const setOrderDraft = useOrderDraftStore((state) => state.setDraft);
 
   /*
@@ -369,7 +391,7 @@ const LiveMentoringDetailPage = ({
         title={data.title}
         beginning={period?.beginning ?? null}
         deadline={period?.deadline ?? null}
-        onApplyClick={() => applySheet.open()}
+        onApplyClick={handleApplyClick}
       />
 
       {/*

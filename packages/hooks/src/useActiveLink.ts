@@ -23,6 +23,7 @@ type ActiveLinks =
   | 'BLOG'
   | 'REPORT'
   | 'REVIEW'
+  | 'MENTORS'
   | '';
 
 export default function useActiveLink(pathname: string) {
@@ -46,6 +47,8 @@ export default function useActiveLink(pathname: string) {
       setActiveLink('REPORT');
     } else if (pathname.startsWith('/review')) {
       setActiveLink('REVIEW');
+    } else if (pathname.startsWith('/mentors')) {
+      setActiveLink('MENTORS');
     } else if (location.pathname === '/') {
       setActiveLink('HOME');
     }
