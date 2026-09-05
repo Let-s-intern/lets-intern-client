@@ -164,6 +164,22 @@ function toInitialSet(slots: MentorOpenSlot[]): Set<string> {
   return new Set(slots.map((slot) => toKey(slot.date, slot.time)));
 }
 
+/**
+ * 이미 지난 시간대인가.
+ *
+ * 그리드는 주 단위로 앞뒤를 오갈 수 있어 지난 날짜·오늘 지난 시간이 그대로 보인다.
+ * 막지 않으면 멘토가 과거 슬롯을 열 수 있고, 서버도 거르지 않아 그대로 저장된다.
+ *
+ * 멘티가 그 슬롯을 예약할 수는 없다 — 노출용 조회에 24시간 리드타임 필터가 있다.
+ * 그래서 남는 피해는 의미 없는 슬롯이 쌓이는 것과, 멘토가 잘못 열었다는 사실을
+ * 끝까지 모른다는 것이다.
+ */
+function isPastCell(date: string, time: string, now: Date): boolean {
+  const cellStart = new Date(`${date}T${time}`);
+  if (Number.isNaN(cellStart.getTime())) return false;
+  return cellStart.getTime() < now.getTime();
+}
+
 export interface LiveAvailabilityContentProps {
   initialSlots: MentorOpenSlot[];
   /**
@@ -397,6 +413,23 @@ const LiveAvailabilityContent = ({
     [challengePeriods, dayStrs],
   );
 
+  /**
+   * 이미 지난 셀 key 집합 — 새로 고르지 못하게 막고 비활성으로 그린다.
+   *
+   * 렌더 시점의 시각으로만 계산한다. 슬롯은 30분 단위라 초 단위로 다시 그릴 이유가
+   * 없고, 주를 넘기거나 셀을 누르면 어차피 다시 계산된다.
+   */
+  const pastKeys = useMemo(() => {
+    const now = currentNow();
+    const set = new Set<string>();
+    for (const date of dayStrs) {
+      for (const time of TIME_SLOTS) {
+        if (isPastCell(date, time, now)) set.add(toKey(date, time));
+      }
+    }
+    return set;
+  }, [dayStrs]);
+
   const selectedCount = selectedKeys.size;
 
   /** 마지막 저장 시점 대비 변경된(추가/삭제된) 셀 개수 — "변경사항 N개"·되돌리기 노출용 */
@@ -419,6 +452,11 @@ const LiveAvailabilityContent = ({
     // 다른 챌린지 점유 또는 현재 챌린지에서 이미 신청 완료된 슬롯은 토글 불가
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
+    /*
+      지난 시간은 새로 열지 못한다. 다만 이미 열려 있던 것은 해제할 수 있게 둔다 —
+      전부 막으면 예전에 잘못 연 슬롯을 화면에서 지울 방법이 사라진다.
+    */
+    if (pastKeys.has(key) && !selectedKeys.has(key)) return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -445,6 +483,8 @@ const LiveAvailabilityContent = ({
     const key = toKey(date, time);
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
+    // 드래그로 훑어도 지난 칸은 건너뛴다. 해제 방향은 위와 같은 이유로 허용한다.
+    if (pastKeys.has(key) && dragMode === 'select') return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -632,7 +672,7 @@ const LiveAvailabilityContent = ({
             </button>
           </div>
 
-          {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
+          {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 / 지난 시간 (우측 한 줄) */}
           <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
@@ -652,6 +692,12 @@ const LiveAvailabilityContent = ({
               <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
+            {pastKeys.size > 0 && (
+              <span className="flex items-center gap-1.5">
+                <span className="bg-neutral-90 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+                지난 시간
+              </span>
+            )}
             {challengePeriodKeys.size > 0 && (
               <span className="flex items-center gap-1.5">
                 <span className="bg-neutral-95 border-neutral-80 h-3 w-3 rounded-[3px] border" />
@@ -914,6 +960,29 @@ const LiveAvailabilityContent = ({
                     );
                   }
 
+                  /*
+                    지난 시간 + 아직 안 연 칸 → 비활성. 왜 안 눌리는지 셀에서 바로
+                    보여야 한다. 이미 열려 있는 지난 칸은 여기로 오지 않는다 —
+                    아래 일반 셀로 그려서 해제해 지울 수 있게 남긴다.
+                  */
+                  if (pastKeys.has(key) && !isSelected) {
+                    return (
+                      <div
+                        key={`${time}-${dayIndex}`}
+                        title="이미 지난 시간입니다"
+                        aria-disabled="true"
+                        /*
+                          글자를 남기는 이유 — 이 팔레트의 회색 단계(85·90·95)는 육안
+                          구분이 거의 안 된다. 챌린지 기간이 95, 예약 불가능이 90 을
+                          이미 쓰고 있어 색만으로는 셋이 같아 보인다.
+                        */
+                        className="border-neutral-90 text-xxsmall10 bg-neutral-90 text-neutral-45 flex items-center justify-center border-b border-r px-2 py-2 text-center last:border-r-0"
+                      >
+                        지난 시간
+                      </div>
+                    );
+                  }
+
                   // 선택됨 + 초기 상태 대비 변경(추가)된 셀 → "변경사항"(연보라 테두리)
                   // 선택됨 + 기존 저장 슬롯 → "예약 가능"
                   // 미선택 → 빈 셀 (예약 불가능 상태 없음)
@@ -937,7 +1006,11 @@ const LiveAvailabilityContent = ({
                       type="button"
                       data-challenge-period={inChallengePeriod || undefined}
                       title={
-                        inChallengePeriod ? CHALLENGE_PERIOD_NOTICE : undefined
+                        pastKeys.has(key)
+                          ? '이미 지난 시간입니다. 눌러서 지울 수 있어요.'
+                          : inChallengePeriod
+                            ? CHALLENGE_PERIOD_NOTICE
+                            : undefined
                       }
                       onMouseDown={(event) => {
                         event.preventDefault();
