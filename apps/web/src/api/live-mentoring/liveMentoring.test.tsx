@@ -907,6 +907,43 @@ describe('useLiveMentoringEntryQuery', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
   });
+
+  /*
+    없는 신청·남의 신청은 서버가 404 로 답한다. 재시도하는 동안 화면은 "일정 확인 중"
+    에 머물러, 알림톡으로 들어온 사람에게는 로딩이 끝나지 않는 것으로 보인다(LC-3245).
+  */
+  it('404 면 재시도하지 않는다', async () => {
+    const notFound = Object.assign(new Error('not found'), {
+      isAxiosError: true,
+      response: { status: 404 },
+    });
+    axiosGet.mockRejectedValue(notFound);
+
+    const { result } = renderHook(() => useLiveMentoringEntryQuery(31), {
+      // 기본 재시도가 살아 있는 클라이언트로 확인한다 — 훅이 직접 끄는지를 본다.
+      wrapper: createWrapper(new QueryClient()),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(axiosGet).toHaveBeenCalledTimes(1);
+  });
+
+  it('5xx 는 재시도한다', async () => {
+    const serverError = Object.assign(new Error('boom'), {
+      isAxiosError: true,
+      response: { status: 500 },
+    });
+    axiosGet.mockRejectedValue(serverError);
+
+    renderHook(() => useLiveMentoringEntryQuery(31), {
+      // 지연만 없앤다. retry 판정은 훅이 하는 것을 그대로 본다.
+      wrapper: createWrapper(
+        new QueryClient({ defaultOptions: { queries: { retryDelay: 0 } } }),
+      ),
+    });
+
+    await waitFor(() => expect(axiosGet.mock.calls.length).toBeGreaterThan(1));
+  });
 });
 
 describe('useCreateLiveMentoringEntryMeetingRoomMutation', () => {

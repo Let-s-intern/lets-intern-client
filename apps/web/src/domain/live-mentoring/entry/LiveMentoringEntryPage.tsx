@@ -15,6 +15,7 @@ import AddToCalendarButton from './ui/AddToCalendarButton';
 import EnterLiveButton from './ui/EnterLiveButton';
 import LiveMentoringReviewModal from './ui/LiveMentoringReviewModal';
 import LiveMentoringSessionModal from './ui/LiveMentoringSessionModal';
+import EntryUnavailableNotice from './ui/EntryUnavailableNotice';
 import LoginGate from './ui/LoginGate';
 import MentoringSummaryCard from './ui/MentoringSummaryCard';
 import MenteeSubmissionModal from './ui/MenteeSubmissionModal';
@@ -42,9 +43,11 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
   const isInitialized = useAuthStore((s) => s.isInitialized);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
-  const { data: entry, isLoading } = useLiveMentoringEntryQuery(
-    isLoggedIn ? applicationId : null,
-  );
+  const {
+    data: entry,
+    isLoading,
+    isError,
+  } = useLiveMentoringEntryQuery(isLoggedIn ? applicationId : null);
 
   const {
     isOpen,
@@ -92,6 +95,23 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
       <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
         <div className="w-full max-w-[400px]">
           <LoginGate applicationId={applicationId} role={role} />
+        </div>
+      </main>
+    );
+  }
+
+  /*
+    조회가 끝났는데 값이 없으면 더 그릴 것이 없다. 없는 신청과 남의 신청이 여기로
+    함께 온다 — 서버가 둘 다 404 로 답하기 때문이고, 화면도 사유를 나누지 않는다.
+
+    isError 만 보지 않는 이유는 스키마 파싱 실패도 같은 자리로 오기 때문이다. 어느
+    쪽이든 화면이 그릴 수 있는 것은 없고, "일정 확인 중" 으로 멈춰 있는 것보다 낫다.
+  */
+  if (!isLoading && (isError || !entry)) {
+    return (
+      <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
+        <div className="w-full max-w-[400px]">
+          <EntryUnavailableNotice />
         </div>
       </main>
     );
