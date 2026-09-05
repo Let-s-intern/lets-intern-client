@@ -453,10 +453,10 @@ const LiveAvailabilityContent = ({
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
     /*
-      지난 시간은 새로 열지 못한다. 다만 이미 열려 있던 것은 해제할 수 있게 둔다 —
-      전부 막으면 예전에 잘못 연 슬롯을 화면에서 지울 방법이 사라진다.
+      지난 시간은 손대지 않는다. 이미 열려 있던 것도 마찬가지다 — 지금보다 과거에
+      예약이 잡힐 일이 없으니 고칠 이유가 없다.
     */
-    if (pastKeys.has(key) && !selectedKeys.has(key)) return;
+    if (pastKeys.has(key)) return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -483,8 +483,8 @@ const LiveAvailabilityContent = ({
     const key = toKey(date, time);
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
-    // 드래그로 훑어도 지난 칸은 건너뛴다. 해제 방향은 위와 같은 이유로 허용한다.
-    if (pastKeys.has(key) && dragMode === 'select') return;
+    // 드래그로 훑어도 지난 칸은 건너뛴다. 방향과 무관하다.
+    if (pastKeys.has(key)) return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -689,12 +689,12 @@ const LiveAvailabilityContent = ({
               예약 완료
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
+              <span className="bg-primary-30 border-primary h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
             {challengePeriodKeys.size > 0 && (
               <span className="flex items-center gap-1.5">
-                <span className="bg-neutral-95 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+                <span className="bg-requirement/10 border-requirement h-3 w-3 rounded-[3px] border" />
                 챌린지 기간
               </span>
             )}
@@ -955,30 +955,23 @@ const LiveAvailabilityContent = ({
                   }
 
                   /*
-                    지난 시간 + 아직 안 연 칸 → 비활성. 왜 안 눌리는지 셀에서 바로
-                    보여야 한다. 이미 열려 있는 지난 칸은 여기로 오지 않는다 —
-                    아래 일반 셀로 그려서 해제해 지울 수 있게 남긴다.
+                    지난 칸은 이미 열려 있어도 회색 하나로 통일한다.
+
+                    예전에는 열려 있던 지난 슬롯만 파란 "예약 가능" 으로 남겨 해제할 수
+                    있게 뒀는데, 지난 시간에 예약을 받는 것처럼 읽혔다. 지금보다 과거에
+                    예약이 잡힐 일이 없으니 고칠 이유도 없다.
+
+                    글자도 넣지 않는다. 지난 구간이 통째로 회색이라 그 경계가 곧 현재
+                    시각이고, 회색은 범례의 "예약 불가능" 과 같은 값이다.
                   */
-                  if (pastKeys.has(key) && !isSelected) {
+                  if (pastKeys.has(key)) {
                     return (
                       <div
                         key={`${time}-${dayIndex}`}
                         title="이미 지난 시간입니다"
                         aria-disabled="true"
-                        /*
-                          회색은 범례의 "예약 불가능" 과 같은 값이다. 지난 시간도 같은
-                          계열의 불가 상태라 새 상태를 만들지 않고, 범례에도 항목을
-                          더하지 않는다 — 사유는 이 글자가 말한다.
-
-                          글자를 빼고 회색만 두는 안도 봤다. 지난 구간이 통째로 회색이라
-                          경계가 곧 현재 시각이 되어 깔끔했지만, 왜 안 눌리는지를 형태로만
-                          유추하게 만든다. 다른 불가 셀(예약 완료·다른 챌린지)이 모두
-                          사유를 글자로 적고 있어 여기만 비우면 규칙이 어긋난다.
-                        */
-                        className="border-neutral-90 text-xxsmall10 bg-neutral-90 text-neutral-45 flex items-center justify-center border-b border-r px-2 py-2 text-center last:border-r-0"
-                      >
-                        지난 시간
-                      </div>
+                        className="border-neutral-90 bg-neutral-90 border-b border-r px-2 py-2 last:border-r-0"
+                      />
                     );
                   }
 
@@ -991,12 +984,23 @@ const LiveAvailabilityContent = ({
                    * 뺀다. 클릭은 그대로 되고 표시만 달라진다.
                    */
                   const inChallengePeriod = challengePeriodKeys.has(key);
+                  /*
+                    변경사항과 예약 가능은 primary-15 / primary-10 이었다. 두 값이
+                    #E3E5FB · #EDEEFE 라 나란히 놓아도 구분이 안 됐다. 변경사항을
+                    primary-30 으로 올리고 테두리를 primary 로 세워 대비를 만든다.
+
+                    챌린지 기간은 회색이 아니라 빨강 계열이다. 이 시간대는 서버가 1대1
+                    예약 가능 목록에서 빼기 때문에 "열어도 예약이 안 붙는" 자리다.
+                    회색으로 두면 다른 비활성 셀과 섞여 그 사실이 눈에 안 띈다.
+                    배경은 requirement 를 옅게 깔고 글자만 진하게 쓴다 — 셀 전체를
+                    진한 빨강으로 칠하면 한 주에 며칠씩 걸릴 때 화면이 경고판이 된다.
+                  */
                   const cellClass = isChanged
-                    ? 'bg-primary-15 text-primary font-semibold'
+                    ? 'bg-primary-30 text-primary border-primary font-semibold'
                     : isSelected
                       ? 'bg-primary-10 text-primary font-semibold'
                       : inChallengePeriod
-                        ? 'bg-neutral-95 text-neutral-40 hover:bg-neutral-90'
+                        ? 'bg-requirement/10 text-requirement hover:bg-requirement/20'
                         : 'bg-white text-neutral-40 hover:bg-neutral-95';
 
                   return (
@@ -1005,11 +1009,7 @@ const LiveAvailabilityContent = ({
                       type="button"
                       data-challenge-period={inChallengePeriod || undefined}
                       title={
-                        pastKeys.has(key)
-                          ? '이미 지난 시간입니다. 눌러서 지울 수 있어요.'
-                          : inChallengePeriod
-                            ? CHALLENGE_PERIOD_NOTICE
-                            : undefined
+                        inChallengePeriod ? CHALLENGE_PERIOD_NOTICE : undefined
                       }
                       onMouseDown={(event) => {
                         event.preventDefault();

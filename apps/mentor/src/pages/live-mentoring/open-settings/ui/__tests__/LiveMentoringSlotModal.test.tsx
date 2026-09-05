@@ -42,6 +42,25 @@ vi.mock('@/api/user/user', () => ({
 // 모달 포털은 document.body 로 렌더된다 — 테스트 환경에서 그대로 동작한다.
 import LiveMentoringSlotModal from '../LiveMentoringSlotModal';
 
+/*
+  그리드가 쓰는 "지금" 을 이번 주 월요일 00:00 으로 고정한다.
+
+  그리드는 같은 값으로 보이는 주를 정하므로 월~일 전체가 미래가 된다. 고정하지
+  않으면 오늘보다 앞선 요일이 "지난 시간" 비활성 회색으로 그려져(LC-3259) 클릭이
+  막히고, 주 후반에 테스트를 돌릴수록 더 많이 깨진다.
+ */
+vi.mock('@/pages/schedule/constants/mockNow', () => ({
+  MOCK_NOW: null,
+  currentNow: () => {
+    const now = new Date();
+    const diff = (now.getDay() + 6) % 7;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  },
+}));
+
 /**
  * 그리드는 이번 주 월요일부터 그린다. 고정 날짜를 쓰면 시간이 지나며 화면 밖으로
  * 밀려나므로 "지금 보이는 주"의 날짜를 만든다.
