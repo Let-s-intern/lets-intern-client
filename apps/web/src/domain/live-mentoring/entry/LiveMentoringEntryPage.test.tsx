@@ -13,7 +13,7 @@ jest.mock('@letscareer/store', () => ({
   useAuthStore: (selector: (s: AuthState) => unknown) => selector(authState),
 }));
 
-let queryState: { data: unknown; isLoading: boolean } = {
+let queryState: { data: unknown; isLoading: boolean; isError?: boolean } = {
   data: null,
   isLoading: false,
 };
@@ -164,6 +164,56 @@ describe('LiveMentoringEntryPage', () => {
     expect(
       screen.getByRole('button', { name: '제출물 제출하기' }),
     ).toBeInTheDocument();
+  });
+
+  /*
+    조회가 실패하면 "일정 확인 중" 에서 멈춰 있었다(LC-3245). 알림톡 링크로 들어온
+    사람에게는 로딩이 끝나지 않는 것으로만 보인다.
+  */
+  describe('입장 조회 실패', () => {
+    const notice = () => screen.queryByText('입장할 수 없는 링크예요');
+
+    it('에러면 안내 화면을 그린다', () => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = { data: undefined, isLoading: false, isError: true };
+      render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+
+      expect(notice()).toBeInTheDocument();
+      // 로딩 문구도, 눌러도 아무것도 없는 버튼도 남지 않아야 한다.
+      expect(screen.queryByText('일정 확인 중')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /제출물/ }),
+      ).not.toBeInTheDocument();
+    });
+
+    /*
+      스키마 파싱이 깨지면 isError 없이 data 만 비어서 온다. 그때도 그릴 것이 없다.
+    */
+    it('에러 플래그 없이 값만 비어도 안내 화면을 그린다', () => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = { data: undefined, isLoading: false };
+      render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+
+      expect(notice()).toBeInTheDocument();
+    });
+
+    it('아직 불러오는 중이면 안내 화면을 그리지 않는다', () => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = { data: undefined, isLoading: true };
+      render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+
+      expect(notice()).not.toBeInTheDocument();
+    });
+
+    // 사유를 나눠 적으면 서버가 404 로 감춘 존재 여부를 화면이 도로 흘린다.
+    it('없는 신청과 남의 신청을 구분해 적지 않는다', () => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = { data: undefined, isLoading: false, isError: true };
+      render(<LiveMentoringEntryPage applicationId={1} role="MENTEE" />);
+
+      expect(screen.queryByText(/권한이 없/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/존재하지 않/)).not.toBeInTheDocument();
+    });
   });
 
   /*
