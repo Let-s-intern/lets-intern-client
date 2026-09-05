@@ -11,6 +11,15 @@ import axios from '@/utils/axios';
 import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
 import LiveMentoringDetailPage from './LiveMentoringDetailPage';
 
+interface AuthState {
+  isInitialized: boolean;
+  isLoggedIn: boolean;
+}
+let authState: AuthState = { isInitialized: true, isLoggedIn: true };
+jest.mock('@letscareer/store', () => ({
+  useAuthStore: (selector: (s: AuthState) => unknown) => selector(authState),
+}));
+
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
   default: { get: jest.fn() },
@@ -371,6 +380,45 @@ describe('LiveMentoringDetailPage', () => {
     예전에는 신청 버튼이 결제 준비 중 알럿만 띄웠다.
     알럿이 남아 있으면 브라우저가 멈춰 시트가 열려도 아무것도 못 한다.
   */
+  /*
+    상세는 비회원도 본다 — 상품을 봐야 가입할 이유가 생기고 검색 유입도 여기로
+    들어온다. 막는 자리는 신청 시점이다. 챌린지(ChallengeCTAButtons)와 같다.
+
+    시트를 열어 두고 제출 때 막지 않는 이유는, 슬롯·플랜을 다 고른 뒤에 튕기면
+    그 선택이 사라지기 때문이다.
+  */
+  describe('비회원', () => {
+    afterEach(() => {
+      authState = { isInitialized: true, isLoggedIn: true };
+    });
+
+    it('신청 CTA 를 누르면 시트를 열지 않고 로그인으로 보낸다', async () => {
+      authState = { isInitialized: true, isLoggedIn: false };
+      mockApis(detail());
+      renderDetail();
+
+      await waitFor(() =>
+        expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+      );
+      fireEvent.click(screen.getAllByText('지금 바로 신청')[0]);
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(routerPush).toHaveBeenCalledTimes(1);
+      expect(routerPush.mock.calls[0][0]).toContain('/login?redirect=');
+    });
+
+    it('상세 내용 자체는 그대로 보여준다', async () => {
+      authState = { isInitialized: true, isLoggedIn: false };
+      mockApis(detail());
+      renderDetail();
+
+      // 로그인 화면으로 갈아치우지 않는다 — 상품이 보여야 가입 동기가 생긴다.
+      await waitFor(() =>
+        expect(screen.getAllByText('지금 바로 신청')).toHaveLength(2),
+      );
+    });
+  });
+
   it('신청 CTA 를 누르면 알럿 없이 신청 시트가 열린다', async () => {
     mockApis(detail());
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});

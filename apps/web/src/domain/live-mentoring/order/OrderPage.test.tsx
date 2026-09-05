@@ -10,6 +10,15 @@ const replace = jest.fn();
 const back = jest.fn();
 const push = jest.fn();
 
+interface AuthState {
+  isInitialized: boolean;
+  isLoggedIn: boolean;
+}
+let authState: AuthState = { isInitialized: true, isLoggedIn: true };
+jest.mock('@letscareer/store', () => ({
+  useAuthStore: (selector: (s: AuthState) => unknown) => selector(authState),
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ replace, back, push }),
 }));
@@ -85,6 +94,37 @@ describe('OrderPage 진입 가드', () => {
     없어(PRD 7-5) 복구할 방법이 없다. 빈 화면에 결제 버튼만 남기면 눌렀을 때
     무슨 일이 날지 알 수 없으므로 되돌려보낸다.
   */
+  /*
+    상세의 신청 버튼이 이미 비회원을 막지만 그것만으로는 새는 곳이 남는다 —
+    로그아웃해도 선택값은 남아 있어서, 그 상태로 이 주소에 닿으면 결제 화면까지
+    들어온다.
+  */
+  describe('비회원', () => {
+    afterEach(() => {
+      authState = { isInitialized: true, isLoggedIn: true };
+    });
+
+    it('선택값이 남아 있어도 로그인으로 보낸다', async () => {
+      authState = { isInitialized: true, isLoggedIn: false };
+      useOrderDraftStore.getState().setDraft(DRAFT);
+      render(<OrderPage mentorId="1" />);
+
+      await waitFor(() => expect(replace).toHaveBeenCalledTimes(1));
+      expect(replace.mock.calls[0][0]).toContain('/login?redirect=');
+      // 결제 화면을 잠깐이라도 그리지 않는다.
+      expect(screen.queryByRole('button', { name: /결제/ })).toBeNull();
+    });
+
+    it('스토어 초기화 전에는 아직 보내지 않는다', () => {
+      authState = { isInitialized: false, isLoggedIn: false };
+      useOrderDraftStore.getState().setDraft(DRAFT);
+      render(<OrderPage mentorId="1" />);
+
+      // 초기화 전 판정하면 로그인 사용자도 한 번 튕긴다.
+      expect(replace).not.toHaveBeenCalled();
+    });
+  });
+
   it('선택값이 없으면 그 멘토의 상세로 되돌려보낸다', async () => {
     render(<OrderPage mentorId="1" />);
 
