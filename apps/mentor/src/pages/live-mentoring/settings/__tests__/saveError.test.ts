@@ -34,7 +34,7 @@ describe('describeSaveError', () => {
       describeSaveError({
         message: '[results.cases[0].afterCaption] 공백일 수 없습니다',
       }),
-    ).toBe('결과 사례의 1번 멘토링 후 설명을 채워 주세요.');
+    ).toBe('결과 사례의 1번 멘토링 후 변화를 채워 주세요.');
   });
 
   it('오류 코드는 붙이지 않는다', () => {

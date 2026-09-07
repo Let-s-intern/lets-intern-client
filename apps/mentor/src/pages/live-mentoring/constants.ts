@@ -149,10 +149,21 @@ export const formatCareerPeriod = (
  *
  * 오픈 설정과 상세 페이지 설정이 같은 규칙을 쓴다 — 두 화면을 오가는 멘토에게 바가
  * 같은 자리에 있어야 한다.
+ *
+ * `z-40` 은 모달(`BaseModal`·`MentorAlertModal` 은 z-50 이상)보다 한 단 아래다.
+ * 예전에는 모달이 뜰 때마다 호출부가 바를 감췄는데, 모달이 늘 때마다 그 플래그를 위로
+ * 끌어올려야 했다. 쌓임 순서로 정리하면 호출부가 알 필요가 없다.
  */
 export const FLOATING_BAR_WRAP =
-  'fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 md:px-8 lg:left-[296px] lg:right-[436px]';
+  'fixed bottom-6 left-0 right-0 z-40 flex justify-center px-4 md:px-8 lg:left-[296px] lg:right-[436px]';
 
-/** 플로팅 바 본체. 내용 폭에 맞춰 줄어들되 콘텐츠 영역을 넘지 않는다. */
+/**
+ * 플로팅 바 본체. 내용 폭에 맞춰 줄어들되 콘텐츠 영역을 넘지 않는다.
+ *
+ * 세로로 쌓는다 — 저장 상태 문구가 버튼 **위**에 온다. 한 줄에 나란히 두면 문구 길이가
+ * 곧 버튼 폭이 되어, 「저장된 상태예요.」 와 「저장 대기 · 「멘토링 유형」의 2번 …」
+ * 사이를 오갈 때마다 버튼이 커졌다 작아졌다 한다. 버튼은 늘 같은 자리에 같은 크기로
+ * 있어야 누르러 갈 때 겨냥이 흔들리지 않는다.
+ */
 export const FLOATING_BAR_BODY =
-  'shadow-05 flex w-full max-w-3xl items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3';
+  'shadow-05 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3';

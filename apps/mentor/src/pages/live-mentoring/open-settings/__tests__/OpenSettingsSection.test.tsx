@@ -1,15 +1,16 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type {
-  LiveMentoringOpeningCreate,
   LiveMentoringSettings,
   LiveMentoringSettingsUpdate,
   OpeningHistoryItem,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
-const saveMock = vi.fn();
+const saveMock = vi.fn().mockResolvedValue(undefined);
+/** 하단 바는 페이지가 그린다 — 이 본문은 저장 상태를 위로 올려 보내기만 한다(LC-3282). */
+const autosaveStatusSpy = vi.fn();
 const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
@@ -28,7 +29,7 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useLiveMentoringOpenStatusQuery: () => ({ data: openingsData }),
   useUpdateLiveMentoringSettingsMutation: () => ({
-    mutate: saveMock,
+    mutateAsync: saveMock,
     isPending: false,
   }),
   useCreateLiveMentoringOpeningMutation: () => ({
@@ -116,18 +117,6 @@ const closedOpening: OpeningHistoryItem = {
   closeReason: 'MENTOR_CANCELED',
 };
 
-/**
- * 오픈 전 확인 모달을 통과한다.
- * 체크 없이는 진행 버튼이 열리지 않는다 — 확인 절차 자체가 요구사항이다.
- */
-const passPreOpenCheck = (confirmLabel = '오픈하기') => {
-  const dialog = screen.getByRole('dialog', {
-    name: '오픈 전 상세 페이지 확인',
-  });
-  fireEvent.click(within(dialog).getByRole('checkbox'));
-  fireEvent.click(within(dialog).getByRole('button', { name: confirmLabel }));
-};
-
 const renderPage = (
   overrides: Partial<LiveMentoringSettings> = {},
   openings: OpeningHistoryItem[] = [],
@@ -136,13 +125,14 @@ const renderPage = (
   openingsData = openings;
   return render(
     <MemoryRouter>
-      <OpenSettingsSection />
+      <OpenSettingsSection onAutosaveStatusChange={autosaveStatusSpy} />
     </MemoryRouter>,
   );
 };
 
 afterEach(() => {
-  saveMock.mockReset();
+  saveMock.mockReset().mockResolvedValue(undefined);
+  autosaveStatusSpy.mockReset();
   openMock.mockReset();
   closeOpeningMock.mockReset();
   setRepresentativeCareerMock.mockReset();
@@ -244,53 +234,69 @@ describe('OpenSettingsSection — 상태 충돌 안내 문구', () => {
   // 회귀 케이스: LOCKED 와 INVALID_STATE 를 한데 묶어 "다른 곳에서 상태가
   // 바뀌었습니다"로 안내하던 시절, 멘토가 다른 창을 의심하며 새로고침만 반복했다.
   // LOCKED 는 개설이 열려 있다는 뜻이고 할 일은 "오픈 종료"다.
-  const failSaveWith = (code: string) =>
-    saveMock.mockImplementation((_body, options) =>
-      options?.onError?.({ code, message: '서버 메시지' }),
-    );
+  const 저장이_실패한다 = (code: string) =>
+    saveMock.mockRejectedValueOnce({ code, message: '서버 메시지' });
 
-  it('LOCKED 면 오픈을 종료하라고 안내한다', () => {
-    failSaveWith('LIVE_MENTORING_LOCKED');
-    renderPage();
-
-    // 저장 버튼은 변경이 있어야 활성된다.
+  /** 제목을 고쳐 실시간 저장을 한 번 내보낸다. */
+  const 저장을_내보낸다 = async () => {
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
       target: { value: '이력서 클리닉' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+  };
 
-    expect(
-      screen.getByText('오픈 중에는 설정을 수정할 수 없습니다.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('다른 곳에서 상태가 바뀌었습니다.'),
-    ).not.toBeInTheDocument();
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('LOCKED 면 오픈을 종료하라고 안내한다', async () => {
+    저장이_실패한다('LIVE_MENTORING_LOCKED');
+    renderPage();
+
+    await 저장을_내보낸다();
+
+    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
+      kind: 'failed',
+      reason: '오픈 중에는 설정을 수정할 수 없습니다.',
+    });
   });
 
-  it('INVALID_STATE 면 상태가 바뀌었다고 안내한다', () => {
-    failSaveWith('LIVE_MENTORING_INVALID_STATE');
+  it('INVALID_STATE 면 상태가 바뀌었다고 안내한다', async () => {
+    저장이_실패한다('LIVE_MENTORING_INVALID_STATE');
     renderPage();
 
-    // 저장 버튼은 변경이 있어야 활성된다.
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '이력서 클리닉' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await 저장을_내보낸다();
 
-    expect(
-      screen.getByText('다른 곳에서 상태가 바뀌었습니다.'),
-    ).toBeInTheDocument();
+    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
+      kind: 'failed',
+      reason: '다른 곳에서 상태가 바뀌었습니다.',
+    });
   });
 });
 
-describe('OpenSettingsSection — 저장 payload(제목·타입·진행시간)', () => {
-  it('저장은 title/categories/durations 세 필드를 담아 mutate 를 호출한다', () => {
+/*
+ * LC-3282 — 저장 버튼이 사라지고 입력이 멎으면 나간다.
+ *
+ * 하단 바는 스텝을 아는 페이지가 하나만 그리므로, 이 본문은 저장 상태를 위로 올린다.
+ */
+describe('OpenSettingsSection — 실시간 저장(제목·타입·진행시간)', () => {
+  const 입력이_멎기를_기다린다 = async () => {
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+  };
+
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('title/categories/durations 세 필드를 담아 보낸다', async () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
       target: { value: '이력서 클리닉' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await 입력이_멎기를_기다린다();
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
@@ -301,105 +307,71 @@ describe('OpenSettingsSection — 저장 payload(제목·타입·진행시간)',
     });
   });
 
-  it('타입을 여러 개 선택하면 payload categories 에 담긴다', () => {
+  it('타입을 여러 개 선택하면 payload categories 에 담긴다', async () => {
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
     fireEvent.click(screen.getByRole('button', { name: '이력서' }));
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await 입력이_멎기를_기다린다();
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
     expect(payload.durations).toEqual(baseSettings.durations);
   });
 
-  it('진행시간만 바꿔도 저장이 활성화된다', () => {
-    // 회귀 케이스: PUT이 실제로 반영하는 건 제목·타입뿐이지만, 저장 버튼의
-    // 활성화 여부는 화면에서 뭐든 하나라도 바뀌면 켜져야 한다 — 아니면
-    // "저장이 안 된다"는 잘못된 인상을 준다.
+  it('진행시간만 바꿔도 저장이 나간다', async () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
+    await 입력이_멎기를_기다린다();
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeEnabled();
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.durations).toEqual([30, 60]);
   });
 
-  it('저장 버튼은 변경사항이 있을 때만 파란색(primary)으로 바뀐다', () => {
+  /*
+    서버가 거절할 값이면 보내지 않는다. 실패 알림을 띄우는 대신 무엇을 채우면 되는지만
+    하단 바에 남긴다 — 타이핑 도중이라 빈 칸이 있는 게 정상인 순간이 계속 있다.
+  */
+  it('타이틀이 비면 보내지 않고 무엇을 채우면 되는지 알린다', async () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
+      target: { value: '' },
+    });
+    await 입력이_멎기를_기다린다();
+
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
+      kind: 'blocked',
+      reason: '타이틀을 채우면 저장돼요',
+    });
+  });
+
+  it('진행시간을 모두 지우면 보내지 않는다', async () => {
     renderPage({ durations: [30] });
 
-    const saveButton = screen.getByRole('button', { name: '저장' });
-    expect(saveButton.className).not.toContain('bg-primary');
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+    await 입력이_멎기를_기다린다();
 
-    fireEvent.click(screen.getByRole('button', { name: '60분' }));
-
-    expect(saveButton.className).toContain('bg-primary');
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
+      kind: 'blocked',
+      reason: '진행시간을 하나 이상 고르면 저장돼요',
+    });
   });
 });
 
-describe('OpenSettingsSection — 개설은 상태와 무관하게 한 경로다', () => {
-  it('초안에서 제목·타입·진행시간을 한 요청에 담아 개설한다', () => {
-    renderPage({ status: 'DRAFT', durations: [30, 60] });
-
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    passPreOpenCheck();
-
-    expect(openMock).toHaveBeenCalledTimes(1);
-    const payload = openMock.mock.calls[0][0] as LiveMentoringOpeningCreate;
-    // 날짜는 담지 않는다 — 예약 가능 일정은 슬롯으로 따로 등록한다.
-    expect(payload).toEqual({
-      title: baseSettings.title,
-      categories: baseSettings.categories,
-      durations: [30, 60],
-    });
-  });
-
-  it('승인 후 재개설도 같은 요청을 쓴다', () => {
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck();
-
-    expect(openMock).toHaveBeenCalledTimes(1);
-    expect(openMock.mock.calls[0][0]).toEqual({
-      title: baseSettings.title,
-      categories: baseSettings.categories,
-      durations: baseSettings.durations,
-    });
-  });
-
-  it('제목·타입을 바꿔도 저장 없이 바로 오픈할 수 있다', () => {
-    // 개설 요청이 제목·타입까지 함께 보내므로 저장을 선행할 이유가 없다.
+describe('OpenSettingsSection — 상태별 배너와 잠금', () => {
+  it('초안(DRAFT)이면 배너가 없다', () => {
     renderPage({ status: 'DRAFT' });
 
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '이력서 클리닉' },
-    });
-
-    const openButton = screen.getByRole('button', { name: '오픈하기' });
-    expect(openButton).toBeEnabled();
-
-    fireEvent.click(openButton);
-    passPreOpenCheck();
-
-    expect(openMock.mock.calls[0][0]).toMatchObject({
-      title: '이력서 클리닉',
-    });
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    // 백엔드는 PENDING_REVIEW/REJECTED 상태를 더 이상 보내지 않는다 — 해당 배너도 없다.
+    expect(screen.queryByText('검토 대기')).not.toBeInTheDocument();
+    expect(screen.queryByText('반려됨')).not.toBeInTheDocument();
   });
 
-  it('개설에 성공해도 설정은 계속 고칠 수 있다', () => {
-    // 승인 잠금이 사라졌다(LC-3262). 예전에는 성공 직후 화면을 곧바로 잠갔다.
-    openMock.mockImplementation((_body, options) =>
-      options?.onSuccess?.({ liveMentoringId: 1, openings: [] }),
-    );
-    renderPage({ status: 'APPROVED' });
-
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    passPreOpenCheck();
-
-    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
-    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
-  });
-
-  it('진행시간이 0개면 경고와 함께 오픈이 비활성화된다', () => {
+  it('진행시간이 0개면 경고를 보인다', () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
@@ -407,99 +379,19 @@ describe('OpenSettingsSection — 개설은 상태와 무관하게 한 경로다
     expect(
       screen.getByText('진행시간을 최소 1개 이상 선택해야 오픈할 수 있어요.'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-  });
-
-  it('타이틀이 비면 저장도 오픈도 비활성화된다', () => {
-    renderPage();
-
-    fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
-      target: { value: '' },
-    });
-
-    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-  });
-
-  // 슬롯이 하나도 없어도 서버는 개설을 허용한다(PRD §8-10).
-  it('등록한 일정이 없어도 오픈을 막지 않는다', () => {
-    renderPage({ status: 'DRAFT' });
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
-  });
-
-  it('상품이 아직 없으면 먼저 저장하라고 알리고 오픈을 막는다', () => {
-    // `POST /openings` 는 기존 상품을 찾아 갱신·개설한다 — 상품이 없으면 404 다.
-    renderPage({ liveMentoringId: null, status: null });
-
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
-    expect(
-      screen.getByText('먼저 저장해 상품을 만들어야 오픈할 수 있어요.'),
-    ).toBeInTheDocument();
-  });
-});
-
-describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
-  it('초안(DRAFT)이면 배너 없이 저장·오픈 버튼을 보인다', () => {
-    renderPage({ status: 'DRAFT' });
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: '오픈하기' }),
-    ).toBeInTheDocument();
-    // 백엔드는 PENDING_REVIEW/REJECTED 상태를 더 이상 보내지 않는다 — 해당 배너도 없다.
-    expect(screen.queryByText('검토 대기')).not.toBeInTheDocument();
-    expect(screen.queryByText('반려됨')).not.toBeInTheDocument();
-  });
-
-  it('활성 개설이 있으면 오픈 중으로 알리고, 그 자리에서 바로 닫을 수 있다', () => {
-    // 오픈 현황 화면이 폐지되면서, 종료도 이 바에서 바로 한다.
-    renderPage({ status: 'APPROVED' }, [openOpening]);
-
-    expect(
-      screen.getByText(
-        '공개 리스트에 노출 중이에요. 설정을 바꾸면 바로 반영돼요.',
-      ),
-    ).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: '오픈 닫기' }));
-    // 되돌릴 수 없는 동작이라 확인 절차를 한 번 거친다.
-    expect(screen.getByText('이 오픈을 종료할까요?')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: '종료하기' }));
-    expect(closeOpeningMock).toHaveBeenCalledTimes(1);
-    expect(closeOpeningMock.mock.calls[0][0]).toBe(openOpening.openingId);
-  });
-
-  it('종료 확인에 일정 삭제 경고가 없고 일정이 남는다고 알린다', () => {
-    // 슬롯이 챌린지 라이브 피드백과 공유되면서 종료는 더 이상 슬롯을 지우지
-    // 않는다. 삭제 경고를 남겨 두면 멘토가 슬롯을 잃을까 봐 오픈을 못 닫는다.
-    renderPage({ status: 'APPROVED' }, [openOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '오픈 닫기' }));
-
-    expect(screen.queryByText(/일정이 모두 삭제/)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(/일정을 새로 등록해야 합니다/),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText(/등록한 일정은 그대로 남아요/)).toBeInTheDocument();
   });
 
   // 승인 상태에서도 멘토가 알아야 할 건 "지금 열려 있는지"다.
   // 내부 용어(승인됨)를 그대로 쓰면 닫힌 상태가 열린 것처럼 읽힌다.
-  it('활성 개설이 없으면 오픈 종료됨으로 표시하고 재개설 버튼을 준다', () => {
+  it('활성 개설이 없으면 오픈 종료됨으로 표시하고 공개 토글을 가리킨다', () => {
     renderPage({ status: 'APPROVED' }, [closedOpening]);
 
     const banner = screen.getByRole('status');
     expect(within(banner).getByText('오픈 종료됨')).toBeInTheDocument();
     expect(
-      within(banner).queryByText(
-        '공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.',
-      ),
-    ).not.toBeInTheDocument();
-    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
-    expect(
-      screen.getByRole('button', { name: '다시 오픈하기' }),
+      within(banner).getByText(/오른쪽 위의 공개 토글을 켜면/),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText('1대1 멘토링 타이틀')).toBeEnabled();
   });
 
   it('종료됨 배너가 일정이 그대로 남아 있다고 알린다', () => {
@@ -511,89 +403,10 @@ describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
     expect(banner.queryByText(/다시 등록한 뒤/)).not.toBeInTheDocument();
   });
 
-  it('오픈이 닫힌 뒤에도 저장 버튼은 그대로 있다', () => {
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
+  it('오픈 중에는 배너를 띄우지 않는다', () => {
+    renderPage({ status: 'APPROVED' }, [openOpening]);
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
-  });
-
-  // 오픈은 되돌리기 번거로운 행동이라 "됐습니다" 한 줄로 끝내지 않는다.
-  /*
-    오픈했다는 사실만 알린다(LC-3280).
-
-    예전에는 "이상하면 바로 종료하세요" 안내 모달을 띄웠다. 방금 확인 모달에서 동의하고
-    누른 직후에 취소를 권하는 화면이 뜨니 무언가 잘못된 줄 알고 멈추게 된다.
-  */
-  it('개설에 성공하면 안내 모달 없이 알림만 띄운다', () => {
-    openMock.mockImplementation((_body, options) =>
-      options?.onSuccess?.({
-        liveMentoringId: 1,
-        openings: [{ ...openOpening, openingId: 777 }],
-      }),
-    );
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck();
-
-    expect(screen.getByText('오픈했어요.')).toBeInTheDocument();
-    expect(screen.queryByRole('dialog', { name: '오픈 완료 안내' })).toBeNull();
-    expect(screen.queryByRole('button', { name: '바로 종료하기' })).toBeNull();
-    // 종료는 하단 바의 「오픈 닫기」로 한다 — 여기서 자동으로 부르지 않는다.
-    expect(closeOpeningMock).not.toHaveBeenCalled();
-  });
-
-  // 오픈은 되돌리는 비용이 크고 잘못 나간 상세는 멘티에게 그대로 보인다.
-  it('확인 체크 전에는 진행 버튼이 열리지 않는다', () => {
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-
-    const dialog = screen.getByRole('dialog', {
-      name: '오픈 전 상세 페이지 확인',
-    });
-    expect(
-      within(dialog).getByRole('button', { name: '오픈하기' }),
-    ).toBeDisabled();
-    // 확인할 주소를 바로 열 수 있어야 확인이 형식적이지 않다.
-    expect(
-      within(dialog).getByRole('link', { name: '상세 페이지 열어보기' }),
-    ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
-
-    fireEvent.click(within(dialog).getByRole('checkbox'));
-    expect(
-      within(dialog).getByRole('button', { name: '오픈하기' }),
-    ).toBeEnabled();
-    expect(openMock).not.toHaveBeenCalled();
-  });
-
-  it('취소하면 아무것도 실행하지 않는다', () => {
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    fireEvent.click(
-      within(
-        screen.getByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
-      ).getByRole('button', { name: '취소' }),
-    );
-
-    expect(openMock).not.toHaveBeenCalled();
-    expect(
-      screen.queryByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('아직 저장되지 않은 값이 있으면 확인 모달에서 짚어준다', () => {
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '60분' }));
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-
-    expect(
-      screen.getByText(
-        /방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요/,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.queryByText('오픈 종료됨')).not.toBeInTheDocument();
   });
 
   /*
@@ -620,18 +433,6 @@ describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
     expect(screen.getByRole('button', { name: '30분' })).toBeEnabled();
     expect(screen.getByRole('button', { name: '자기소개서' })).toBeEnabled();
     expect(screen.getByRole('radio', { name: /네이버/ })).toBeEnabled();
-  });
-
-  it('오픈 중이면 오픈 버튼 자리에 오픈 닫기가 온다', () => {
-    renderPage({ status: 'APPROVED' }, [openOpening]);
-
-    expect(
-      screen.queryByRole('button', { name: '다시 오픈하기' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '오픈하기' }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '오픈 닫기' })).toBeEnabled();
   });
 });
 

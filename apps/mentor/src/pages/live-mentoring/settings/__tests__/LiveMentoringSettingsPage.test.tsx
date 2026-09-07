@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -6,7 +7,7 @@ import {
   within,
 } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringCategory,
@@ -26,7 +27,7 @@ const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
 const refetchSettingsMock = vi.fn();
 const startEditMock = vi.fn();
-let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
+let openings: { openingId: number; status: 'OPEN' | 'CLOSED' }[] = [];
 let templateData: LiveMentoringDetailPage | undefined;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
 /*
@@ -192,6 +193,8 @@ afterEach(() => {
   templateData = undefined;
   status = 'DRAFT';
   startEditMock.mockReset();
+  openMock.mockReset();
+  closeOpeningMock.mockReset();
   openings = [];
   settingsExtra = {};
 });
@@ -442,13 +445,13 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     openTab('취업 성공 전략');
     const toggle = screen.getAllByRole('checkbox')[0];
     expect(toggle).toBeChecked();
-    expect(screen.getByPlaceholderText('섹션 제목')).toBeEnabled();
+    expect(screen.getByLabelText(/^섹션 제목/)).toBeEnabled();
 
     fireEvent.click(toggle);
 
     expect(toggle).not.toBeChecked();
     // 흐리게만 두면 만질 수 있다. fieldset 으로 잠가 탭 순서에서도 빠진다.
-    expect(screen.getByPlaceholderText('섹션 제목')).toBeDisabled();
+    expect(screen.getByLabelText(/^섹션 제목/)).toBeDisabled();
     // 다시 켤 수 있어야 하므로 스위치 자신은 잠기지 않는다.
     expect(toggle).toBeEnabled();
   });
@@ -460,144 +463,6 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('저장된 상태예요.')).toBeVisible();
-    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
-  });
-
-  it('값을 바꾸면 미저장 상태가 되고, 저장하면 다시 저장됨으로 돌아간다', () => {
-    renderPage();
-    addHeroBullet();
-
-    expect(screen.getByText('저장하지 않은 변경사항이 있어요.')).toBeVisible();
-    expect(screen.getByRole('button', { name: '저장' })).toBeEnabled();
-
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-    expect(saveMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('히어로 불릿에 빈 칸을 추가하고 안 채운 채 저장하면, 빈 칸을 걸러내고 보낸다', () => {
-    // 회귀 케이스: 서버가 hero.bullets 각 항목에 공백을 막아(@NotBlank) 그대로
-    // 보내면 "[hero.bullets[1]] 공백일 수 없습니다 (BAD_REQUEST)" 로 저장 전체가 실패했다.
-    renderPage();
-
-    // "+ 추가" 버튼은 유형 카드·Point·Before/After 리스트에도 있어 히어로 섹션
-    // 안으로 범위를 좁혀야 한다.
-    const heroSection = screen
-      .getByRole('heading', { name: '핵심 소개' })
-      .closest('section');
-    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(
-      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    expect(saveMock).toHaveBeenCalledTimes(1);
-    const [payload] = saveMock.mock.calls[0];
-    expect(payload.hero.bullets).toEqual([
-      '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
-    ]);
-  });
-
-  it('빈 결과 사례를 추가하고 안 채운 채 저장하면, 그 사례를 걸러내고 보낸다', () => {
-    /*
-     * 회귀 케이스: ResultCaseRequest 의 beforeCaption·afterCaption 이 @NotBlank 라
-     * 빈 사례가 하나라도 있으면 저장 전체가 400 이다. 유형 카드와 같은 함정이다.
-     */
-    renderPage();
-
-    openTab('결과 사례');
-    const before = screen.getAllByLabelText(/멘토링 전 설명$/).length;
-    fireEvent.click(screen.getByRole('button', { name: '변화 사례 추가 +' }));
-    expect(screen.getAllByLabelText(/멘토링 전 설명$/)).toHaveLength(
-      before + 1,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    expect(saveMock).toHaveBeenCalledTimes(1);
-    const [payload] = saveMock.mock.calls[0];
-    expect(payload.results.cases).toHaveLength(before);
-    expect(
-      payload.results.cases.every(
-        (item: { beforeCaption: string; afterCaption: string }) =>
-          item.beforeCaption && item.afterCaption,
-      ),
-    ).toBe(true);
-  });
-
-  it('영상 네 필드가 서버 필드에 맞게 담긴다', () => {
-    renderPage();
-
-    openTab('소개 영상');
-    fireEvent.change(screen.getByLabelText('영상 제목'), {
-      target: { value: '멘토는 이렇게' },
-    });
-    fireEvent.change(screen.getByLabelText('영상 설명'), {
-      target: { value: '영상 설명입니다' },
-    });
-    fireEvent.change(screen.getByLabelText('영상 아래 안내 문구'), {
-      target: { value: '안내 문구입니다' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    const [payload] = saveMock.mock.calls[0];
-    expect(payload.video.title).toBe('멘토는 이렇게');
-    expect(payload.video.subtitle).toBe('영상 설명입니다');
-    expect(payload.video.caption).toBe('안내 문구입니다');
-  });
-
-  it('빈 유형 카드를 추가하고 안 채운 채 저장하면, 그 카드를 걸러내고 보낸다', () => {
-    /*
-     * 회귀 케이스: TypeCardRequest 의 typeName·title·description 이 모두 @NotBlank 라
-     * 빈 카드가 하나라도 있으면 "[mentoringTypes.items[3].title] 공백일 수 없습니다
-     * (BAD_REQUEST)" 로 저장 전체가 실패했다. 실제 화면에서 재현된 문제다.
-     */
-    renderPage();
-
-    openTab('멘토링 유형');
-    const before = screen.getAllByLabelText(/번 카드 유형 제목$/).length;
-    fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
-    expect(screen.getAllByLabelText(/번 카드 유형 제목$/)).toHaveLength(
-      before + 1,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    expect(saveMock).toHaveBeenCalledTimes(1);
-    const [payload] = saveMock.mock.calls[0];
-    expect(payload.mentoringTypes.items).toHaveLength(before);
-    expect(
-      payload.mentoringTypes.items.every(
-        (item: { typeName: string; title: string; description: string }) =>
-          item.typeName && item.title && item.description,
-      ),
-    ).toBe(true);
-  });
-
-  it('저장 payload 에는 서버 요청 DTO에 없는 intro 를 담지 않는다', () => {
-    // 멘토 정보는 프로필 도메인 소유라 이 요청으로 저장되지 않는다.
-    renderPage();
-
-    const heroSection = screen
-      .getByRole('heading', { name: '핵심 소개' })
-      .closest('section');
-    if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    fireEvent.click(
-      within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
-    );
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
-
-    const [payload] = saveMock.mock.calls[0];
-    expect(payload).not.toHaveProperty('intro');
-    expect(Object.keys(payload).sort()).toEqual([
-      'hero',
-      'mentoringTypes',
-      'results',
-      'reviews',
-      'strategy',
-      'video',
-    ]);
   });
 });
 
@@ -660,7 +525,7 @@ describe('LiveMentoringSettingsPage — 이탈 경고', () => {
 describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', () => {
   const renderWhileOpen = () => {
     status = 'APPROVED';
-    openings = [{ status: 'OPEN' }];
+    openings = [{ openingId: 100, status: 'OPEN' }];
     renderPage();
   };
 
@@ -677,10 +542,10 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
     ).toBeEnabled();
   });
 
-  it('오픈 중에도 저장 바에 저장 버튼이 있다', () => {
+  it('오픈 중에도 편집이 열려 있고 저장 바가 상태를 알린다', () => {
     renderWhileOpen();
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeVisible();
+    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
     // "수정" 으로 잠금을 푸는 단계는 사라졌다.
     expect(
       screen.queryByRole('button', { name: '수정' }),
@@ -791,6 +656,31 @@ describe('LiveMentoringSettingsPage — 미리보기', () => {
     expect(message.activeItem).toBe(0);
   });
 
+  /*
+    회귀 케이스 — 결과 사례는 전·후가 **각자 번호를 갖는다.**
+
+    사례 하나에 번호를 하나만 주면 미리보기는 카드 전체를 화면 가운데 맞추는데, 이미지
+    두 장이 들어간 카드는 미리보기 화면보다 커서 그 가운데가 보인다. 맨 아래인
+    「멘토링 후 변화」는 몇 번을 고쳐도 화면 밖에 남아, 고쳐도 안 따라오는 것처럼 보였다.
+  */
+  it('결과 사례는 멘토링 전과 후에 서로 다른 번호를 보낸다', () => {
+    renderPage();
+    const post = vi.fn();
+    Object.defineProperty(previewFrame(), 'contentWindow', {
+      value: { postMessage: post },
+      configurable: true,
+    });
+    signalFrameReady();
+
+    openTab('결과 사례');
+
+    fireEvent.focusIn(screen.getByLabelText('1번 사례 멘토링 전 상황'));
+    expect(post.mock.calls[post.mock.calls.length - 1][0].activeItem).toBe(0);
+
+    fireEvent.focusIn(screen.getByLabelText('1번 사례 멘토링 후 변화'));
+    expect(post.mock.calls[post.mock.calls.length - 1][0].activeItem).toBe(1);
+  });
+
   it('탭을 옮기면 그 탭을 함께 보낸다', () => {
     renderPage();
     const post = vi.fn();
@@ -808,25 +698,58 @@ describe('LiveMentoringSettingsPage — 미리보기', () => {
 });
 
 /*
- * LC-3273 — 하단 바는 모든 스텝에서 같다.
+ * LC-3282 · LC-3283 — 하단 바는 스텝 이동, 공개는 머리의 토글.
  *
- * 오픈 설정과 상세 페이지 설정이 한 화면이 된 뒤로(LC-3264) 하단 바만 두 벌로 남아
- * 있었다. 상세 스텝에서도 저장과 오픈 두 개만 보여야 한다.
+ * 저장 버튼이 사라지고 입력이 멎으면 알아서 나간다. 오픈은 스텝과 무관한 화면 전체의
+ * 상태라 머리로 옮겼다. 하단 바에는 스텝 이동과 "저장이 지금 어디까지 갔는지"만 남는다.
  */
-describe('LiveMentoringSettingsPage — 하단 바', () => {
-  const 갖춰진_설정: Partial<LiveMentoringSettings> = {
-    title: '자기소개서 첨삭',
-    categories: ['PERSONAL_STATEMENT'],
-    durations: [30],
-    liveMentoringId: 7,
-  } as Partial<LiveMentoringSettings>;
+/*
+ * 작성 예시는 섹션 아래 **하나**다. 입력 그룹마다 접이식 상자를 두면 같은 화면에 같은
+ * 모양이 여러 개 쌓여, 어느 것이 무엇의 예시인지 오히려 헷갈린다.
+ */
+describe('LiveMentoringSettingsPage — 작성 예시', () => {
+  it('멘토링 유형 스텝의 안내는 하나이고, 두 입력 그룹을 나눠 보여준다', () => {
+    renderPage();
+    openTab('멘토링 유형');
 
-  it('상세 스텝에도 저장과 오픈 버튼이 있다', () => {
+    expect(
+      screen.getAllByRole('button', { name: /작성 예시 보기/ }),
+    ).toHaveLength(1);
+
+    const guide = screen
+      .getByRole('button', { name: /작성 예시 보기/ })
+      .closest('div');
+    if (!guide) throw new Error('작성 예시를 찾을 수 없습니다');
+    expect(within(guide).getByText('유형 안내 문구')).toBeVisible();
+    expect(within(guide).getByText('멘토링 소개 카드')).toBeVisible();
+  });
+
+  /* 예시의 라벨이 입력 칸 이름과 다르면 어느 칸을 말하는지 다시 짚어봐야 한다. */
+  it('예시 라벨이 입력 칸 이름과 같다', () => {
+    renderPage();
+    openTab('멘토링 유형');
+
+    for (const name of ['멘토링 유형 섹션 제목', '멘토링 유형 설명']) {
+      // 입력 칸 라벨 1개 + 예시 줄 1개
+      expect(
+        screen.getAllByText(new RegExp(`^${name}`)).length,
+      ).toBeGreaterThan(1);
+    }
+  });
+});
+
+describe('LiveMentoringSettingsPage — 하단 바', () => {
+  it('저장 버튼 대신 스텝 이동 버튼이 있다', () => {
     renderPage();
 
-    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: '오픈하기' }),
+      screen.queryByRole('button', { name: '저장' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '이전으로' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '다음으로' }),
     ).toBeInTheDocument();
   });
 
@@ -841,53 +764,279 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('제목·타입·진행시간이 덜 찼으면 오픈 버튼이 비활성이다', () => {
+  it('다음으로가 스텝 줄의 다음 탭을 연다', () => {
     renderPage();
 
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '다음으로' }));
+
+    expect(screen.getByRole('tab', { name: /멘토 정보/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
-  it('설정이 갖춰지면 오픈 버튼이 활성이다', () => {
+  it('이전으로가 스텝 줄의 앞 탭을 연다', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '이전으로' }));
+
+    expect(screen.getByRole('tab', { name: /오픈 설정/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  /* 첫 스텝에서는 갈 곳이 없다. 숨기지 않고 잠근다 — 자리가 바뀌면 어디를 눌러야 할지 흔들린다. */
+  it('첫 스텝에서는 이전으로가 잠긴다', () => {
+    renderAtOpenStep();
+
+    expect(screen.getByRole('button', { name: '이전으로' })).toBeDisabled();
+  });
+
+  /*
+    마지막 스텝에는 갈 다음 스텝이 없다. 잠긴 「다음으로」 대신 마지막에 할 일을 둔다.
+  */
+  it('마지막 스텝에서는 다음으로 자리에 공개하기가 온다', () => {
+    renderPage();
+    openTab('결과 사례');
+
+    expect(
+      screen.queryByRole('button', { name: '다음으로' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '공개하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('이미 공개 중이면 마지막 스텝 버튼이 공개 중으로 잠긴다', () => {
+    status = 'APPROVED';
+    openings = [{ openingId: 100, status: 'OPEN' }];
+    settingsExtra = {
+      title: '자기소개서 첨삭',
+      categories: ['PERSONAL_STATEMENT'],
+      durations: [30],
+      liveMentoringId: 7,
+    } as Partial<LiveMentoringSettings>;
+    renderPage();
+    openTab('결과 사례');
+
+    expect(
+      screen.getByRole('button', { name: '공개 중이에요' }),
+    ).toBeDisabled();
+  });
+});
+
+/*
+ * LC-3282 — 실시간 저장.
+ *
+ * 서버 요청 DTO 가 `@NotBlank` 투성이라 반쯤 채운 카드가 있으면 저장 전체가 400 이다.
+ * 타이핑 도중에 계속 나가는 저장이므로, 보내기 전에 막고 하단 바에 이유만 남긴다.
+ */
+describe('LiveMentoringSettingsPage — 실시간 저장', () => {
+  const 입력이_멎기를_기다린다 = async () => {
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+  };
+
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('입력이 멎으면 저장한다', async () => {
+    renderPage();
+    addHeroBullet();
+
+    expect(screen.getByText('입력을 멈추면 자동으로 저장돼요.')).toBeVisible();
+    await 입력이_멎기를_기다린다();
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
+  });
+
+  /*
+    「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
+    저장이 지워 버린다. 채우거나 지울 때까지 보내지 않는다.
+  */
+  it('빈 유형 카드가 있으면 보내지 않고 무엇을 채우면 되는지 적는다', async () => {
+    renderPage();
+    openTab('멘토링 유형');
+    fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
+
+    await 입력이_멎기를_기다린다();
+
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(
+        '저장 대기 · 「멘토링 유형」의 2번 유형 이름을 채우면 저장돼요',
+      ),
+    ).toBeVisible();
+  });
+
+  /*
+    빈 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 `@NotBlank` 라 걸러내지 않으면
+    400 이지만, 걸러내면 방금 만든 사례가 사라진다.
+  */
+  it('빈 결과 사례가 있으면 보내지 않는다', async () => {
+    renderPage();
+    openTab('결과 사례');
+    fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
+
+    await 입력이_멎기를_기다린다();
+
+    expect(saveMock).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(
+        '저장 대기 · 「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
+      ),
+    ).toBeVisible();
+  });
+
+  /*
+    히어로의 빈 줄은 막지 않고 걸러서 보낸다. 카드와 달리 지울 의사와 채울 의사를
+    구분할 방법이 없고, 줄 하나는 지워져도 다시 만들기 쉽다.
+  */
+  it('히어로의 빈 줄은 걸러내고 보낸다', async () => {
+    renderPage();
+    addHeroBullet();
+
+    await 입력이_멎기를_기다린다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.hero.bullets).toEqual([
+      '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+    ]);
+  });
+
+  it('영상 네 필드가 서버 필드에 맞게 담긴다', async () => {
+    renderPage();
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('영상 제목'), {
+      target: { value: '멘토는 이렇게' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 설명'), {
+      target: { value: '영상 설명입니다' },
+    });
+    fireEvent.change(screen.getByLabelText('영상 아래 안내 문구'), {
+      target: { value: '안내 문구입니다' },
+    });
+
+    await 입력이_멎기를_기다린다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.video.title).toBe('멘토는 이렇게');
+    expect(payload.video.subtitle).toBe('영상 설명입니다');
+    expect(payload.video.caption).toBe('안내 문구입니다');
+  });
+
+  it('저장 payload 에는 서버 요청 DTO에 없는 intro 를 담지 않는다', async () => {
+    // 멘토 정보는 프로필 도메인 소유라 이 요청으로 저장되지 않는다.
+    renderPage();
+    addHeroBullet();
+
+    await 입력이_멎기를_기다린다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload).not.toHaveProperty('intro');
+    expect(Object.keys(payload).sort()).toEqual([
+      'hero',
+      'mentoringTypes',
+      'results',
+      'reviews',
+      'strategy',
+      'video',
+    ]);
+  });
+
+  /* 서버 문구를 그대로 띄우면 `[mentoringTypes.title] 공백일 수 없습니다` 가 된다. */
+  it('저장이 실패하면 화면에 적힌 칸 이름으로 알린다', async () => {
+    saveMock.mockRejectedValueOnce({
+      code: 'BAD_REQUEST',
+      message: '[hero.bullets[0]] 공백일 수 없습니다',
+    });
+    renderPage();
+    addHeroBullet();
+
+    await 입력이_멎기를_기다린다();
+
+    expect(
+      screen.getByText('저장 실패 · 핵심 소개의 1번 소개 문구를 채워 주세요.'),
+    ).toBeVisible();
+  });
+});
+
+/*
+ * LC-3283 — 머리의 공개/비공개 토글과 상세 페이지 바로가기.
+ *
+ * 오픈은 스텝과 무관한 화면 전체의 상태다. 하단 바에 두면 스텝을 옮길 때마다 같은
+ * 버튼을 다시 찾게 되고, 스텝 이동 버튼과 자리를 다툰다.
+ */
+describe('LiveMentoringSettingsPage — 공개 토글', () => {
+  const 갖춰진_설정: Partial<LiveMentoringSettings> = {
+    title: '자기소개서 첨삭',
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [30],
+    liveMentoringId: 7,
+  } as Partial<LiveMentoringSettings>;
+
+  const 공개토글 = () =>
+    screen.getByRole('switch', { name: '상세 페이지 공개' });
+
+  it('상세 페이지 바로가기와 공개 토글이 머리에 있다', () => {
+    renderPage();
+
+    expect(
+      screen.getByRole('button', { name: '상세 페이지 바로가기' }),
+    ).toBeInTheDocument();
+    expect(공개토글()).toBeInTheDocument();
+  });
+
+  it('제목·타입·진행시간이 덜 찼으면 토글이 잠기고 이유를 적는다', () => {
+    renderPage();
+
+    expect(공개토글()).toBeDisabled();
+    expect(
+      screen.getByText('오픈 설정에서 타이틀을 정하면 공개할 수 있어요.'),
+    ).toBeVisible();
+  });
+
+  it('설정이 갖춰지면 토글을 켤 수 있다', () => {
     settingsExtra = 갖춰진_설정;
     renderPage();
 
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
+    expect(공개토글()).toBeEnabled();
+    expect(공개토글()).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('상품이 아직 없으면 오픈할 수 없다', () => {
+  it('상품이 아직 없으면 공개할 수 없다', () => {
     // `POST /openings` 는 기존 상품을 찾아 개설한다 — 저장을 한 번 거쳐야 한다.
     settingsExtra = { ...갖춰진_설정, liveMentoringId: null };
     renderPage();
 
-    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
+    expect(공개토글()).toBeDisabled();
   });
 
-  it('오픈 중이면 오픈 닫기로 바뀐다', () => {
+  it('오픈 중이면 공개로 켜져 있다', () => {
     status = 'APPROVED';
-    openings = [{ status: 'OPEN' }];
+    openings = [{ openingId: 100, status: 'OPEN' }];
     settingsExtra = 갖춰진_설정;
     renderPage();
 
+    expect(공개토글()).toHaveAttribute('aria-checked', 'true');
     expect(
-      screen.getByRole('button', { name: '오픈 닫기' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '오픈하기' }),
-    ).not.toBeInTheDocument();
+      screen.getByText('멘토링을 판매 중이에요. 멘티가 신청할 수 있어요.'),
+    ).toBeVisible();
   });
 
   /*
-    오픈은 "지금 이 상세를 공개한다" 는 행동이다. 쓰던 내용을 두고 열면 멘티가 옛
-    페이지를 보게 되므로, 미저장 변경이 있으면 먼저 저장하고 연다.
+    공개는 "지금 이 상세를 내보낸다" 는 행동이다. 실시간 저장이 아직 못 보낸 내용이
+    남아 있으면 멘티가 옛 페이지를 보게 되므로, 먼저 보내고 연다.
   */
-  it('미저장 변경이 있으면 오픈 전에 먼저 저장한다', async () => {
+  it('아직 보내지 못한 변경이 있으면 공개 전에 먼저 저장한다', async () => {
     settingsExtra = 갖춰진_설정;
     renderPage();
     addHeroBullet();
-    expect(screen.getByText('저장하지 않은 변경사항이 있어요.')).toBeVisible();
 
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
-    // 오픈 전 확인 모달에서 동의하고 진행한다.
+    fireEvent.click(공개토글());
     const dialog = screen.getByRole('dialog', {
       name: '오픈 전 상세 페이지 확인',
     });
@@ -897,11 +1046,11 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
     await waitFor(() => expect(saveMock).toHaveBeenCalledTimes(1));
   });
 
-  it('바뀐 게 없으면 오픈할 때 저장하지 않는다', async () => {
+  it('바뀐 게 없으면 공개할 때 저장하지 않는다', async () => {
     settingsExtra = 갖춰진_설정;
     renderPage();
 
-    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    fireEvent.click(공개토글());
     const dialog = screen.getByRole('dialog', {
       name: '오픈 전 상세 페이지 확인',
     });
@@ -911,15 +1060,134 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
     await waitFor(() => expect(openMock).toHaveBeenCalled());
     expect(saveMock).not.toHaveBeenCalled();
   });
+});
 
-  it('열었다 닫은 적이 있으면 다시 오픈하기로 바뀐다', () => {
-    status = 'APPROVED';
-    openings = [{ status: 'CLOSED' }];
+/*
+ * LC-3283 — 공개/비공개를 실제로 실행하는 경로.
+ *
+ * 예전에는 오픈 설정 본문이 이 버튼을 들고 있어 그쪽 테스트에 있었다. 토글이 머리로
+ * 옮겨오면서 훅도 이 화면이 하나만 부르므로, 요청과 확인 절차도 여기서 지킨다.
+ */
+describe('LiveMentoringSettingsPage — 공개/비공개 실행', () => {
+  const 갖춰진_설정: Partial<LiveMentoringSettings> = {
+    title: '자기소개서 첨삭',
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [30, 60],
+    liveMentoringId: 7,
+  } as Partial<LiveMentoringSettings>;
+
+  const 공개토글 = () =>
+    screen.getByRole('switch', { name: '상세 페이지 공개' });
+
+  const 확인모달 = () =>
+    screen.getByRole('dialog', { name: '오픈 전 상세 페이지 확인' });
+
+  it('제목·타입·진행시간을 한 요청에 담아 개설한다', async () => {
     settingsExtra = 갖춰진_설정;
     renderPage();
 
+    fireEvent.click(공개토글());
+    fireEvent.click(within(확인모달()).getByRole('checkbox'));
+    fireEvent.click(
+      within(확인모달()).getByRole('button', { name: '오픈하기' }),
+    );
+
+    await waitFor(() => expect(openMock).toHaveBeenCalledTimes(1));
+    // 날짜는 담지 않는다 — 예약 가능 일정은 슬롯으로 따로 등록한다.
+    expect(openMock.mock.calls[0][0]).toEqual({
+      title: '자기소개서 첨삭',
+      categories: ['PERSONAL_STATEMENT'],
+      durations: [30, 60],
+    });
+  });
+
+  // 오픈은 되돌리는 비용이 크고, 잘못 나간 상세는 멘티에게 그대로 보인다.
+  it('확인 체크 전에는 진행 버튼이 열리지 않는다', () => {
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(공개토글());
+
     expect(
-      screen.getByRole('button', { name: '다시 오픈하기' }),
-    ).toBeInTheDocument();
+      within(확인모달()).getByRole('button', { name: '오픈하기' }),
+    ).toBeDisabled();
+    // 확인할 주소를 바로 열 수 있어야 확인이 형식적이지 않다.
+    expect(
+      within(확인모달()).getByRole('link', { name: '상세 페이지 열어보기' }),
+    ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
+
+    fireEvent.click(within(확인모달()).getByRole('checkbox'));
+    expect(
+      within(확인모달()).getByRole('button', { name: '오픈하기' }),
+    ).toBeEnabled();
+    expect(openMock).not.toHaveBeenCalled();
+  });
+
+  it('취소하면 아무것도 실행하지 않는다', () => {
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(공개토글());
+    fireEvent.click(within(확인모달()).getByRole('button', { name: '취소' }));
+
+    expect(openMock).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole('dialog', { name: '오픈 전 상세 페이지 확인' }),
+    ).not.toBeInTheDocument();
+  });
+
+  /*
+    오픈했다는 사실만 알린다(LC-3280). 예전에는 "이상하면 바로 종료하세요" 안내 모달을
+    띄웠는데, 방금 동의하고 누른 직후에 취소를 권하니 잘못된 줄 알고 멈추게 된다.
+  */
+  it('개설에 성공하면 안내 모달 없이 알림만 띄운다', async () => {
+    openMock.mockImplementation((_body, options) =>
+      options?.onSuccess?.({ liveMentoringId: 7, openings: [] }),
+    );
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(공개토글());
+    fireEvent.click(within(확인모달()).getByRole('checkbox'));
+    fireEvent.click(
+      within(확인모달()).getByRole('button', { name: '오픈하기' }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByText('오픈했어요.')).toBeInTheDocument(),
+    );
+    expect(screen.queryByRole('dialog', { name: '오픈 완료 안내' })).toBeNull();
+    expect(closeOpeningMock).not.toHaveBeenCalled();
+  });
+
+  it('공개 중에 토글을 끄면 확인을 거쳐 오픈을 종료한다', () => {
+    status = 'APPROVED';
+    openings = [{ openingId: 100, status: 'OPEN' }];
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(공개토글());
+    // 되돌릴 수 없는 동작이라 확인 절차를 한 번 거친다.
+    expect(screen.getByText('이 오픈을 종료할까요?')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '종료하기' }));
+    expect(closeOpeningMock).toHaveBeenCalledTimes(1);
+    expect(closeOpeningMock.mock.calls[0][0]).toBe(100);
+  });
+
+  /*
+    슬롯이 챌린지 라이브 피드백과 공유되면서 종료는 더 이상 슬롯을 지우지 않는다.
+    삭제 경고를 남겨 두면 멘토가 슬롯을 잃을까 봐 오픈을 못 닫는다.
+  */
+  it('종료 확인에 일정 삭제 경고가 없고 일정이 남는다고 알린다', () => {
+    status = 'APPROVED';
+    openings = [{ openingId: 100, status: 'OPEN' }];
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(공개토글());
+
+    expect(screen.queryByText(/일정이 모두 삭제/)).not.toBeInTheDocument();
+    expect(screen.getByText(/등록한 일정은 그대로 남아요/)).toBeInTheDocument();
   });
 });

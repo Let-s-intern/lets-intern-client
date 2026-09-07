@@ -7,6 +7,23 @@ import type {
 import type { LiveMentorSort } from '@/api/live-mentoring/liveMentoring';
 
 /**
+ * 사용자 화면의 네비게이션에 1:1 LIVE 멘토링을 노출할지(LC-3281).
+ *
+ * 「1:1 LIVE 멘토링」과 「멘토 소개」(`/mentors`) 두 메뉴를 함께 가린다. 둘은 같은
+ * 출시에 딸린 한 벌이라 — 멘토 목록만 남으면 거기서 상세로 들어가는데, 정작 신청
+ * 흐름의 입구는 없는 화면이 된다.
+ *
+ * 출시 전까지 감춘다. 지우지 않고 플래그로 두는 이유는 곧 다시 켤 것이기 때문이다 —
+ * 지웠다 되살리면 그 사이 네비가 바뀌었을 때 어디에 무엇을 넣어야 했는지 알 수 없다.
+ *
+ * 감추는 것은 **메뉴뿐**이다. `/live-mentoring`·`/mentors` 와 상세 주소는 그대로
+ * 열린다 — 멘토가 자기 페이지를 확인하고 알림톡 링크로 들어오는 경로가 살아 있어야 한다.
+ *
+ * 출시할 때 이 값을 `true` 로 바꾸면 된다.
+ */
+export const SHOW_LIVE_MENTORING_NAV = false;
+
+/**
  * 카테고리 한글 라벨 매핑.
  * 공유 스키마에는 enum 값만 존재하므로 라벨은 UI 레이어(web 도메인)에서 정의한다.
  * (mentor 앱 `pages/live-mentoring/constants.ts` 와 동일 규칙 — 앱별 중복 허용)

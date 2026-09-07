@@ -29,6 +29,7 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 
 export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[115px]';
 export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[115px]';
@@ -166,24 +167,29 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   프로그램
                 </GlobalNavItem>
               </SwiperSlide>
-              <SwiperSlide className="!w-auto">
-                <GlobalNavItem
-                  className="text-xsmall14"
-                  isNew
-                  href="/program?catalog=mentoring"
-                >
-                  1:1 LIVE 멘토링
-                </GlobalNavItem>
-              </SwiperSlide>
-              <SwiperSlide className="!w-auto">
-                <GlobalNavItem
-                  className="text-xsmall14"
-                  href="/mentors"
-                  active={activeLink === 'MENTORS'}
-                >
-                  멘토 소개
-                </GlobalNavItem>
-              </SwiperSlide>
+              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
+              {SHOW_LIVE_MENTORING_NAV && (
+                <>
+                  <SwiperSlide className="!w-auto">
+                    <GlobalNavItem
+                      className="text-xsmall14"
+                      isNew
+                      href="/program?catalog=mentoring"
+                    >
+                      1:1 LIVE 멘토링
+                    </GlobalNavItem>
+                  </SwiperSlide>
+                  <SwiperSlide className="!w-auto">
+                    <GlobalNavItem
+                      className="text-xsmall14"
+                      href="/mentors"
+                      active={activeLink === 'MENTORS'}
+                    >
+                      멘토 소개
+                    </GlobalNavItem>
+                  </SwiperSlide>
+                </>
+              )}
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
@@ -245,20 +251,25 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 프로그램
                 <span>&nbsp;카테고리</span>
               </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall16"
-                isNew
-                href="/program?catalog=mentoring"
-              >
-                1:1 LIVE 멘토링
-              </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall16"
-                href="/mentors"
-                active={activeLink === 'MENTORS'}
-              >
-                멘토 소개
-              </GlobalNavItem>
+              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
+              {SHOW_LIVE_MENTORING_NAV && (
+                <>
+                  <GlobalNavItem
+                    className="text-xsmall16"
+                    isNew
+                    href="/program?catalog=mentoring"
+                  >
+                    1:1 LIVE 멘토링
+                  </GlobalNavItem>
+                  <GlobalNavItem
+                    className="text-xsmall16"
+                    href="/mentors"
+                    active={activeLink === 'MENTORS'}
+                  >
+                    멘토 소개
+                  </GlobalNavItem>
+                </>
+              )}
               {/*
                 [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (데스크톱 GNB)
                 - 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
@@ -339,10 +350,15 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
-        <SideNavItem href="/program?catalog=mentoring">
-          1:1 LIVE 멘토링
-        </SideNavItem>
-        <SideNavItem href="/mentors">멘토 소개</SideNavItem>
+        {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
+        {SHOW_LIVE_MENTORING_NAV && (
+          <>
+            <SideNavItem href="/program?catalog=mentoring">
+              1:1 LIVE 멘토링
+            </SideNavItem>
+            <SideNavItem href="/mentors">멘토 소개</SideNavItem>
+          </>
+        )}
         <SideNavItem href="/seminar" isNew>
           무료 세미나
         </SideNavItem>

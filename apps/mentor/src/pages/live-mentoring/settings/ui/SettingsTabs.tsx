@@ -10,16 +10,19 @@ interface SettingsTabsProps {
 /**
  * 완료 체크 아이콘. 뜻은 탭 이름(`aria-label`)이 전하므로 그림은 숨긴다.
  *
- * 색을 탭 글자에서 물려받지 않고 초록(secondary)으로 고정한다(LC-3279). 예전에는
+ * 색을 탭 글자에서 물려받지 않고 파랑(primary)으로 고정한다(LC-3279). 예전에는
  * `currentColor` 라 열려 있는 탭에서는 파랑, 나머지는 회색이었다 — 회색 체크는
  * 미완료 탭의 회색 글자와 같은 색이라, 훑어봐서는 무엇을 다 채웠는지 알 수 없었다.
  * 완료는 선택 여부와 무관한 상태이므로 색도 탭 상태를 따라가면 안 된다.
+ *
+ * 초록(secondary)이 아니라 파랑이다. 이 화면의 강조색이 파랑 하나뿐이라, 완료 표시만
+ * 다른 계열이면 "성공" 이 아니라 "다른 종류의 알림" 으로 읽힌다.
  */
 const CheckIcon = () => (
   <svg
     aria-hidden="true"
     viewBox="0 0 20 20"
-    className="text-secondary h-4 w-4"
+    className="text-primary h-4 w-4"
     fill="currentColor"
   >
     <path d="M8.2 14.4 4.4 10.6l1.4-1.4 2.4 2.4 5.6-5.6 1.4 1.4z" />

@@ -15,7 +15,10 @@ interface MentoringTypeCardFieldProps {
 
 /** 시안 안내는 "2~5개 작성을 권장해요". 상한만 막고 하한은 권장으로 둔다. */
 export const TYPE_CARD_MAX = 5;
-/** 카드 1 에만 `*` 이 있다 — 최소 1개는 있어야 섹션이 성립한다. */
+/**
+ * 카드 1 에만 `*` 이 있다 — 최소 1개는 있어야 섹션이 성립한다.
+ * 목록이 비어 있어도 카드 한 장은 늘 그려지고, 마지막 한 장은 지울 수 없다.
+ */
 export const TYPE_CARD_MIN = 1;
 export const TYPE_TEXT_MAX = 60;
 export const TYPE_TAG_MAX = 3;
@@ -50,6 +53,13 @@ const TrashIcon = () => (
   </svg>
 );
 
+const makeEmptyCard = (): TemplateMentoringType => ({
+  typeName: '',
+  title: '',
+  description: '',
+  tags: [],
+});
+
 const rowLabel = 'text-xsmall14 text-neutral-30 w-20 shrink-0 font-medium';
 const inputBox =
   'border-neutral-80 focus-within:border-primary flex flex-1 items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors';
@@ -64,24 +74,33 @@ const MentoringTypeCardField = ({
   hashTags,
   onChange,
 }: MentoringTypeCardFieldProps) => {
+  /*
+   * 카드는 **한 장이 항상 보인다.**
+   *
+   * 서버가 빈 목록을 내려주면 예전에는 「소개 카드 추가 +」 만 남아, 필수 항목인데 쓸
+   * 자리가 화면에 없었다. 상태를 미리 채우지는 않는다 — 화면을 열자마자 변경사항이
+   * 생겨 실시간 저장이 아무도 손대지 않은 값을 보내게 된다. 보여줄 때만 한 장을 세운다.
+   */
+  const rows = items.length > 0 ? items : [makeEmptyCard()];
+
   const patchAt = (index: number, patch: Partial<TemplateMentoringType>) =>
     onChange(
-      items.map((item, i) => (i === index ? { ...item, ...patch } : item)),
+      rows.map((item, i) => (i === index ? { ...item, ...patch } : item)),
     );
 
   const removeAt = (index: number) =>
-    onChange(items.filter((_, i) => i !== index));
+    onChange(rows.filter((_, i) => i !== index));
 
   const move = (index: number, delta: number) => {
     const target = index + delta;
-    if (target < 0 || target >= items.length) return;
-    const next = [...items];
+    if (target < 0 || target >= rows.length) return;
+    const next = [...rows];
     [next[index], next[target]] = [next[target], next[index]];
     onChange(next);
   };
 
   const toggleTag = (index: number, tag: string) => {
-    const current = items[index].tags;
+    const current = rows[index].tags;
     if (current.includes(tag)) {
       patchAt(index, { tags: current.filter((t) => t !== tag) });
       return;
@@ -92,9 +111,7 @@ const MentoringTypeCardField = ({
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">
-        유형 소개 카드
-      </p>
+      <p className="text-xsmall14 text-neutral-10 font-semibold">멘토링 유형</p>
       <p className="text-neutral-40 mt-1 text-xs">
         멘토링 유형별 상세 설명 카드예요. 입력한 순서대로 표시돼요.
         <br />
@@ -102,7 +119,7 @@ const MentoringTypeCardField = ({
       </p>
 
       <ul className="mt-3 flex flex-col gap-3">
-        {items.map((item, index) => (
+        {rows.map((item, index) => (
           <li
             key={index}
             /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
@@ -125,11 +142,13 @@ const MentoringTypeCardField = ({
                   <span className="text-system-error ml-0.5">*</span>
                 ) : null}
               </span>
+              {/* 마지막 한 장은 지울 수 없다 — 필수 항목이라 빈 목록이 될 수 없다. */}
               <button
                 type="button"
                 onClick={() => removeAt(index)}
+                disabled={rows.length <= TYPE_CARD_MIN}
                 aria-label={`${index + 1}번 소개 카드 삭제`}
-                className="hover:text-system-error ml-auto text-neutral-50 transition-colors"
+                className="hover:text-system-error ml-auto text-neutral-50 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <TrashIcon />
               </button>
@@ -147,7 +166,7 @@ const MentoringTypeCardField = ({
                     aria-label={`${index + 1}번 카드 유형 선택`}
                     className={`${inputText} bg-transparent`}
                   >
-                    <option value="">멘토링 유형을 선택해주세요</option>
+                    <option value="">멘토링 유형을 선택해 주세요</option>
                     {TYPE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -166,7 +185,7 @@ const MentoringTypeCardField = ({
                     onChange={(event) =>
                       patchAt(index, { title: event.target.value })
                     }
-                    placeholder="멘토링 유형 제목을 작성해주세요"
+                    placeholder="멘티의 고민에 맞는 유형 제목을 작성해 주세요"
                     aria-label={`${index + 1}번 카드 유형 제목`}
                     className={inputText}
                     rows={2}
@@ -185,7 +204,7 @@ const MentoringTypeCardField = ({
                     onChange={(event) =>
                       patchAt(index, { description: event.target.value })
                     }
-                    placeholder="유형에 대한 부가 설명을 작성해주세요"
+                    placeholder="멘토링 내용을 작성해 주세요"
                     aria-label={`${index + 1}번 카드 부가 설명`}
                     className={inputText}
                   />
@@ -220,7 +239,7 @@ const MentoringTypeCardField = ({
                     })}
                   </div>
                   <p className="mt-1.5 text-xs text-neutral-50">
-                    관련 태그를 최대 {TYPE_TAG_MAX}개 선택해주세요
+                    관련 태그를 최대 {TYPE_TAG_MAX}개 선택해 주세요
                   </p>
                 </div>
               </div>
@@ -231,13 +250,8 @@ const MentoringTypeCardField = ({
 
       <button
         type="button"
-        onClick={() =>
-          onChange([
-            ...items,
-            { typeName: '', title: '', description: '', tags: [] },
-          ])
-        }
-        disabled={items.length >= TYPE_CARD_MAX}
+        onClick={() => onChange([...rows, makeEmptyCard()])}
+        disabled={rows.length >= TYPE_CARD_MAX}
         className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
       >
         소개 카드 추가 +

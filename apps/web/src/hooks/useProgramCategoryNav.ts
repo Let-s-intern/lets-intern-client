@@ -2,6 +2,7 @@ import { useGetActiveChallenge } from '@/api/challenge/challenge';
 import { SubNavItemProps } from '@/common/layout/header/SubNavItem';
 import { ActiveChallengeResponse, challengeTypeSchema } from '@/schema';
 import { useNavB2CChallenges } from './useFirstB2CChallenge';
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -55,17 +56,17 @@ export default function useProgramCategoryNav() {
   };
 
   const programCategoryLists: SubNavItemProps[] = [
+    /*
+      1:1 LIVE 멘토링은 출시 전까지 메뉴에서 뺀다(LC-3281).
+      `/live-mentoring` 은 이 주소로 리다이렉트만 하므로, 되살릴 때는 목적지인
+      `/program?catalog=mentoring` 을 바로 가리켜 한 번 튕기지 않게 한다.
+    */
+    ...(SHOW_LIVE_MENTORING_NAV
+      ? [{ children: '1:1 LIVE 멘토링', href: `/program?catalog=mentoring` }]
+      : []),
     {
       children: '전체 프로그램',
       href: `/program`,
-    },
-    {
-      /*
-        `/live-mentoring` 은 이 주소로 리다이렉트만 한다. 한 번 튕기지 않도록
-        목적지를 바로 가리킨다.
-      */
-      children: '1:1 LIVE 멘토링',
-      href: `/program?catalog=mentoring`,
     },
     {
       children: '경험정리 챌린지',

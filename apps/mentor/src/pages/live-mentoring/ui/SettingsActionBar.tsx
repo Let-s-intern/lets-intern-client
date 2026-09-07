@@ -1,77 +1,98 @@
 import { FLOATING_BAR_BODY, FLOATING_BAR_WRAP } from '../constants';
-import type { LiveMentoringOpenAction } from '../open-settings/useLiveMentoringOpenAction';
+import {
+  autosaveMessage,
+  isAutosaveAttention,
+  type AutosaveStatus,
+} from '../useAutosave';
 
 interface SettingsActionBarProps {
-  /** 왼쪽 안내 문구. 스텝마다 저장 대상이 달라 문구도 호출부가 정한다. */
-  status: string;
-  /** 미저장 변경이 있으면 안내를 경고색으로 그리고 저장 버튼을 켠다. */
-  isDirty: boolean;
-  canSave: boolean;
-  isSaving: boolean;
-  onSave: () => void;
-  openAction: LiveMentoringOpenAction;
+  /** 지금 스텝의 실시간 저장 상태. 저장 대상이 스텝마다 달라 호출부가 넘긴다. */
+  status: AutosaveStatus;
+  onPrev: () => void;
+  onNext: () => void;
+  /** 앞으로 갈 스텝이 있는지. 없으면 버튼을 잠근다. */
+  hasPrev: boolean;
+  /** 뒤로 갈 스텝이 있는지. 없으면(마지막 스텝) 그 자리에 공개 버튼이 온다. */
+  hasNext: boolean;
+  /** 마지막 스텝에서 「다음으로」 자리에 오는 공개 버튼. */
+  publish: { label: string; disabled: boolean; onClick: () => void };
 }
+
+/**
+ * 스텝 이동 버튼의 크기.
+ *
+ * 이 바에서 누를 것은 이 둘뿐이라 시안처럼 크게 잡는다 — 화면 아래 끝에 떠 있는 버튼은
+ * 작을수록 겨냥하기 어렵다.
+ *
+ * 폭은 `flex-1` 로 바를 반씩 나눠 갖는다. 둘이 같은 규칙이라 늘 같은 폭이고,
+ * 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지 않는다.
+ */
+const stepButton =
+  'flex-1 rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
  * 설정 화면 하단 고정 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
  *
- * 오픈 설정과 상세 페이지 설정이 한 화면이 되면서(LC-3264) 하단 바만 두 벌로 남아 있었다.
- * 오픈 설정에서는 `저장`·`오픈하기`, 상세 스텝에서는 `상세 페이지 보기`·`변경사항 되돌리기`·
- * `변경사항 저장` 이라, 같은 화면인데 스텝을 옮길 때마다 아래 버튼이 통째로 바뀌었다.
+ * 예전에는 `저장` 과 오픈 버튼이 여기 있었다. 저장은 입력이 멎으면 알아서 나가고
+ * (LC-3282), 오픈은 스텝과 무관한 화면 전체의 상태라 머리의 공개/비공개 토글로
+ * 옮겼다(LC-3283). 남은 일은 스텝 이동이라, 바가 그것만 한다.
  *
- * 지금은 어느 스텝에서도 `저장` 과 오픈 버튼 두 개다. 저장 대상은 스텝이 정하고
- * (오픈 설정은 제목·타입·진행시간, 상세 스텝은 상세 페이지 템플릿), 오픈 버튼은
- * `useLiveMentoringOpenAction` 이 스텝과 무관하게 같은 것을 준다.
+ * 버튼 위에는 저장이 지금 어디까지 갔는지 한 줄로 남긴다 — 누를 버튼이 사라졌으니
+ * "저장이 되긴 한 건가"를 화면이 대신 말해 줘야 한다.
  */
 const SettingsActionBar = ({
   status,
-  isDirty,
-  canSave,
-  isSaving,
-  onSave,
-  openAction,
+  onPrev,
+  onNext,
+  hasPrev,
+  hasNext,
+  publish,
 }: SettingsActionBarProps) => (
   <div className={FLOATING_BAR_WRAP}>
     <div className={FLOATING_BAR_BODY}>
       {/*
         `role="status"` 를 주지 않는다. 오픈 종료 배너가 이미 그 역할이라, 한 화면에
-        live region 이 둘이 되면 무엇을 읽어야 할지 갈린다. 저장 여부는 저장 버튼의
-        활성 상태로도 드러난다.
+        live region 이 둘이 되면 무엇을 읽어야 할지 갈린다.
       */}
       <p
-        className={`flex min-w-0 items-center gap-2 text-sm font-medium ${
-          isDirty ? 'text-system-error' : 'text-gray-500'
+        className={`truncate text-sm font-medium ${
+          isAutosaveAttention(status) ? 'text-system-error' : 'text-gray-500'
         }`}
       >
-        <span className="truncate">{status}</span>
+        {autosaveMessage(status)}
       </p>
 
-      <div className="flex shrink-0 items-center gap-2">
-        {/* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={onSave}
-          disabled={!canSave || isSaving}
-          className={
-            canSave
-              ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-              : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-          }
+          onClick={onPrev}
+          disabled={!hasPrev}
+          className={`${stepButton} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50`}
         >
-          {isSaving ? '저장 중...' : '저장'}
+          이전으로
         </button>
-        <button
-          type="button"
-          onClick={openAction.onClick}
-          disabled={openAction.disabled}
-          className={`rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-            openAction.tone === 'danger'
-              ? 'bg-system-error hover:opacity-90'
-              : 'bg-primary hover:bg-primary-hover'
-          }`}
-        >
-          {openAction.label}
-        </button>
+        {/*
+          마지막 스텝에서는 갈 곳이 없다. 잠긴 「다음으로」 를 두는 대신 마지막에 할 일을
+          그 자리에 놓는다 — 스텝을 끝까지 따라온 멘토가 다음에 하려는 건 공개다.
+        */}
+        {hasNext ? (
+          <button
+            type="button"
+            onClick={onNext}
+            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
+          >
+            다음으로
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={publish.onClick}
+            disabled={publish.disabled}
+            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
+          >
+            {publish.label}
+          </button>
+        )}
       </div>
     </div>
   </div>

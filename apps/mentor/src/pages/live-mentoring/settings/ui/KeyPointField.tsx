@@ -6,6 +6,8 @@ interface KeyPointFieldProps {
 
 /** 시안 기준 소개 문구는 최대 3개다. */
 export const KEY_POINT_MAX = 3;
+/** 필수 항목이라 한 줄은 늘 남는다. 시안의 `소개 문구 *` 가 그 뜻이다. */
+export const KEY_POINT_MIN = 1;
 /** 한 줄 60자. 서버는 500자까지 받지만 상세 페이지 레이아웃이 감당하는 길이가 기준이다. */
 /**
  * 소개 문구 상한. 서버 DTO 의 `@Size(max = 500)` 을 그대로 쓴다.
@@ -48,29 +50,42 @@ const TrashIcon = () => (
  * 않으면서 같은 일을 할 수 있고, 키보드로도 쓸 수 있다. 시안의 핸들 자리에 그대로 둔다.
  */
 const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
+  /*
+   * 소개 문구는 **한 줄이 항상 보인다.**
+   *
+   * 서버가 빈 배열을 내려주면 예전에는 입력 칸 없이 「소개 문구 추가 +」 만 남아,
+   * 필수 항목인데 쓸 자리가 화면에 없었다. 마지막 한 줄도 지울 수 없게 한다.
+   *
+   * 상태를 미리 채우지는 않는다 — 화면을 열자마자 변경사항이 생겨 실시간 저장이
+   * 아무도 손대지 않은 값을 보내게 된다. 보여줄 때만 한 줄을 세운다.
+   */
+  const rows = bullets.length > 0 ? bullets : [''];
+
   const replaceAt = (index: number, next: string) =>
-    onChange(bullets.map((bullet, i) => (i === index ? next : bullet)));
+    onChange(rows.map((bullet, i) => (i === index ? next : bullet)));
 
   const removeAt = (index: number) =>
-    onChange(bullets.filter((_, i) => i !== index));
+    onChange(rows.filter((_, i) => i !== index));
 
   const move = (index: number, delta: number) => {
     const target = index + delta;
-    if (target < 0 || target >= bullets.length) return;
-    const next = [...bullets];
+    if (target < 0 || target >= rows.length) return;
+    const next = [...rows];
     [next[index], next[target]] = [next[target], next[index]];
     onChange(next);
   };
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">소개 문구</p>
+      <p className="text-xsmall14 text-neutral-10 font-semibold">
+        소개 문구 <span className="text-system-error">*</span>
+      </p>
       <p className="text-neutral-40 mt-1 text-xs">
         최대 {KEY_POINT_MAX}개까지 등록할 수 있으며, 작성한 순서대로 표시돼요.
       </p>
 
       <ul className="mt-3 flex flex-col gap-2">
-        {bullets.map((bullet, index) => (
+        {rows.map((bullet, index) => (
           <li
             key={index}
             /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
@@ -107,11 +122,13 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
               <CharCounter value={bullet} max={KEY_POINT_MAX_LENGTH} />
             </div>
 
+            {/* 마지막 한 줄은 지울 수 없다 — 필수 항목이라 빈 목록이 될 수 없다. */}
             <button
               type="button"
               onClick={() => removeAt(index)}
+              disabled={rows.length <= KEY_POINT_MIN}
               aria-label={`${index + 1}번 소개 문구 삭제`}
-              className="hover:text-system-error shrink-0 text-neutral-50 transition-colors"
+              className="hover:text-system-error shrink-0 text-neutral-50 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
             >
               <TrashIcon />
             </button>
@@ -122,8 +139,8 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
       {/* 시안 기준 추가 버튼은 목록 아래 전체 폭이다. 라벨 옆이 아니다. */}
       <button
         type="button"
-        onClick={() => onChange([...bullets, ''])}
-        disabled={bullets.length >= KEY_POINT_MAX}
+        onClick={() => onChange([...rows, ''])}
+        disabled={rows.length >= KEY_POINT_MAX}
         className="border-primary text-primary text-xsmall14 mt-2 w-full rounded-md border py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
       >
         소개 문구 추가 +

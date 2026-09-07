@@ -402,7 +402,6 @@ const LiveMentoringDetailPage = ({
             {results.cases.map((item, i) => (
               <li
                 key={i}
-                data-preview-item={i}
                 className="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2"
               >
                 {/*
@@ -410,8 +409,12 @@ const LiveMentoringDetailPage = ({
 
                   같은 높이로 늘리면 짧은 쪽 카드 안이 배경색으로 비고, 그 여백이 설명과
                   카드 사이를 벌린다. 아래를 맞추면 두 설명이 나란하면서도 카드와 붙는다.
+
+                  `order` 로 좁은 화면의 순서를 바꾼다. 한 줄짜리 그리드에서는 DOM 순서
+                  그대로 [전 카드][후 카드][전 설명][후 설명] 이 되어, 전 설명이 화면
+                  맨 아래에서 후 설명과 붙어 버린다. 좁을 때는 전·후를 각각 묶는다.
                 */}
-                <div className="self-end overflow-hidden rounded-md">
+                <div className="order-1 self-end overflow-hidden rounded-md">
                   <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
                     Before
                   </p>
@@ -426,7 +429,7 @@ const LiveMentoringDetailPage = ({
                   </div>
                 </div>
 
-                <div className="self-end overflow-hidden rounded-md">
+                <div className="order-3 mt-5 self-end overflow-hidden rounded-md md:order-2 md:mt-0">
                   <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
                     After
                   </p>
@@ -441,10 +444,25 @@ const LiveMentoringDetailPage = ({
                   </div>
                 </div>
 
-                <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
+                {/*
+                  멘토 설정의 미리보기가 편집 중인 자리로 따라올 때 쓴다(LC-3268).
+
+                  번호는 **사례가 아니라 전·후 절반**에 붙는다. 사례 하나에 번호를 하나만
+                  주면 미리보기는 카드 전체를 화면 가운데 맞추는데, 이미지 두 장이 들어간
+                  카드는 미리보기 화면보다 커서 그 가운데가 보인다 — 맨 아래인 「멘토링 후
+                  변화」는 몇 번을 고쳐도 화면 밖에 남았다. 멘토 폼도 같은 번호를 보낸다
+                  (`ResultCaseField`).
+                */}
+                <p
+                  data-preview-item={i * 2}
+                  className="text-xsmall14 order-2 whitespace-pre-line text-center text-white/70 md:order-3"
+                >
                   {item.beforeCaption}
                 </p>
-                <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
+                <p
+                  data-preview-item={i * 2 + 1}
+                  className="text-xsmall14 order-4 whitespace-pre-line text-center font-medium text-white"
+                >
                   ✓ {item.afterCaption}
                 </p>
               </li>

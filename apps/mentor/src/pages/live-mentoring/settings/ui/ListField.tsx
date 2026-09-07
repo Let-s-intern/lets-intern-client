@@ -2,6 +2,10 @@ import type { ReactNode } from 'react';
 
 interface ListFieldProps<T> {
   label: string;
+  /** 라벨 아래 안내 한두 줄. 줄바꿈은 그대로 그린다. */
+  hint?: string;
+  /** 추가 버튼 문구. 항목마다 부르는 이름이 달라 호출부가 정한다. */
+  addLabel?: string;
   items: T[];
   /** 추가 버튼을 눌렀을 때 넣을 빈 항목. */
   makeEmpty: () => T;
@@ -20,6 +24,8 @@ interface ListFieldProps<T> {
  */
 function ListField<T>({
   label,
+  hint,
+  addLabel,
   items,
   makeEmpty,
   renderItem,
@@ -42,23 +48,24 @@ function ListField<T>({
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-600">{label}</span>
-        <button
-          type="button"
-          onClick={() => onChange([...items, makeEmpty()])}
-          className="border-primary text-primary rounded-md border px-3 py-1 text-xs font-medium"
-        >
-          + 추가
-        </button>
-      </div>
+      {/*
+        추가 버튼은 라벨 옆이 아니라 **목록 아래 전체 폭**이다. 같은 화면의 소개 문구·
+        유형 카드·결과 사례가 모두 그 모양이라, 여기만 다르면 같은 조작을 매번 다른
+        자리에서 찾게 된다.
+      */}
+      <p className="text-xsmall14 text-neutral-10 font-semibold">{label}</p>
+      {hint ? (
+        <p className="text-neutral-40 mt-1 whitespace-pre-line text-xs">
+          {hint}
+        </p>
+      ) : null}
 
       {items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-gray-300 px-3 py-6 text-center text-xs text-gray-400">
+        <p className="mt-3 rounded-lg border border-dashed border-gray-300 px-3 py-6 text-center text-xs text-gray-400">
           {placeholder ?? '아직 추가된 항목이 없습니다.'}
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="mt-3 flex flex-col gap-3">
           {items.map((item, index) => (
             <li
               key={index}
@@ -104,6 +111,14 @@ function ListField<T>({
           ))}
         </ul>
       )}
+
+      <button
+        type="button"
+        onClick={() => onChange([...items, makeEmpty()])}
+        className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors"
+      >
+        {addLabel ?? `${label} 추가 +`}
+      </button>
     </div>
   );
 }
