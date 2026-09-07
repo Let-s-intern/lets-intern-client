@@ -193,16 +193,21 @@ const LiveMentoringDetailPage = ({
             : `${nickname} 멘토가 함께해요`
         }
       >
-        <div className="mx-auto grid w-full max-w-[900px] grid-cols-1 gap-6 md:grid-cols-[280px_1fr] md:items-stretch md:gap-10">
+        <div className="mx-auto grid w-full max-w-[900px] grid-cols-1 gap-6 md:grid-cols-[280px_1fr] md:items-center md:gap-10">
           {intro.profileImage && (
             <img
               src={intro.profileImage}
               alt={nickname}
-              className="max-h-[460px] w-full rounded-md object-contain"
+              className="w-full rounded-md"
             />
           )}
 
-          <div className="flex h-full flex-col gap-2 text-left">
+          {/*
+            사진 높이에 맞춰 늘리지 않는다. 예전에는 글 칸을 사진만큼 늘리고 한마디 상자를
+            `mt-auto` 로 바닥에 붙였는데, 경력이 한두 줄이면 가운데가 통째로 비었다.
+            글은 제 높이만 차지하고 사진과 서로 가운데를 맞춘다.
+          */}
+          <div className="flex flex-col gap-2 text-left">
             <p className="text-small20 md:text-medium24 font-bold">
               {nickname}
             </p>
@@ -221,7 +226,7 @@ const LiveMentoringDetailPage = ({
               </ul>
             )}
             {intro.oneLiner && (
-              <div className="bg-primary-5 mt-auto flex flex-col gap-2 rounded-md p-5">
+              <div className="bg-primary-5 mt-4 flex flex-col gap-2 rounded-md p-5">
                 <p className="text-primary text-xsmall14 flex items-center gap-1.5 font-semibold">
                   <span aria-hidden="true">💬</span> 멘토님의 한마디
                 </p>
@@ -298,13 +303,11 @@ const LiveMentoringDetailPage = ({
               >
                 {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
                 {point.image ? (
-                  <img
-                    src={point.image}
-                    alt=""
-                    className="max-h-[240px] w-full rounded-sm object-contain"
-                  />
+                  <img src={point.image} alt="" className="w-full rounded-sm" />
                 ) : (
-                  <div className="bg-neutral-90 aspect-[4/3] max-h-[220px] w-full rounded-sm" />
+                  // 이미지를 아직 안 올린 자리. 여기만 비율을 정해 둔다 —
+                  // 채울 그림이 없으면 높이를 정할 근거도 없다.
+                  <div className="bg-neutral-90 aspect-[4/3] w-full rounded-sm" />
                 )}
                 <div className="flex flex-col gap-2">
                   <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
@@ -375,7 +378,7 @@ const LiveMentoringDetailPage = ({
                         <img
                           src={item.beforeImage}
                           alt=""
-                          className="h-[220px] w-full rounded-sm bg-white object-contain"
+                          className="w-full rounded-sm bg-white"
                         />
                       )}
                     </div>
@@ -395,7 +398,7 @@ const LiveMentoringDetailPage = ({
                         <img
                           src={item.afterImage}
                           alt=""
-                          className="h-[220px] w-full rounded-sm bg-white object-contain"
+                          className="w-full rounded-sm bg-white"
                         />
                       )}
                     </div>
