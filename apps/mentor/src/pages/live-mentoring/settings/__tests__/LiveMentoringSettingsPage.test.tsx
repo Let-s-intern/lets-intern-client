@@ -54,7 +54,13 @@ vi.mock('../ui/ImageField', () => ({
   default: ({ label }: { label: string }) => <div>{label}</div>,
 }));
 
-import DetailSettingsPage from '../DetailSettingsPage';
+// 오픈 설정 스텝은 자기 테스트(OpenSettingsSection.test.tsx)가 따로 있다. 여기서는
+// 상세 스텝을 보므로 첫 스텝은 스텁으로 세워 둔다.
+vi.mock('../../open-settings/OpenSettingsSection', () => ({
+  default: () => <div data-testid="open-settings-section" />,
+}));
+
+import LiveMentoringSettingsPage from '../LiveMentoringSettingsPage';
 
 /** 멘토 편집 대상 전체가 채워진 템플릿을 만든다. */
 const makeTemplate = (
@@ -120,13 +126,29 @@ const makeTemplate = (
   };
 };
 
-const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
+/** 스텝 이름(라벨 일부)으로 스텝을 연다. 접근성 이름은 "라벨 필수|선택" 형태다. */
+const openTab = (name: string) =>
+  fireEvent.click(screen.getByRole('tab', { name: new RegExp(name) }));
+
+const renderAtOpenStep = (
+  category: LiveMentoringCategory = 'PERSONAL_STATEMENT',
+) => {
   templateData = makeTemplate(category);
   return render(
     <MemoryRouter>
-      <DetailSettingsPage />
+      <LiveMentoringSettingsPage />
     </MemoryRouter>,
   );
+};
+
+/**
+ * 첫 스텝은 오픈 설정이다(LC-3264). 이 파일의 테스트는 상세 스텝을 보므로
+ * 렌더 직후 핵심 소개로 옮긴다. 스텝 줄 자체는 `renderAtOpenStep` 으로 본다.
+ */
+const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
+  const result = renderAtOpenStep(category);
+  openTab('핵심 소개');
+  return result;
 };
 
 afterEach(() => {
@@ -148,15 +170,20 @@ const addHeroBullet = () => {
   );
 };
 
-/** 탭 이름(라벨 일부)으로 탭을 연다. 탭의 접근성 이름은 "라벨 필수|선택" 형태다. */
-const openTab = (name: string) =>
-  fireEvent.click(screen.getByRole('tab', { name: new RegExp(name) }));
+describe('LiveMentoringSettingsPage — 탭', () => {
+  it('7개 스텝을 렌더하고, 처음에는 오픈 설정이 열린다', () => {
+    renderAtOpenStep();
 
-describe('DetailSettingsPage — 탭', () => {
-  it('6개 탭을 렌더하고, 처음에는 핵심 소개 탭만 보인다', () => {
-    renderPage();
+    expect(screen.getAllByRole('tab')).toHaveLength(7);
+    expect(screen.getByTestId('open-settings-section')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: '핵심 소개' }),
+    ).not.toBeInTheDocument();
 
-    expect(screen.getAllByRole('tab')).toHaveLength(6);
+    openTab('핵심 소개');
+    expect(
+      screen.queryByTestId('open-settings-section'),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '핵심 소개' })).toBeVisible();
     // 다른 탭의 섹션은 렌더되지 않는다
     expect(
@@ -170,26 +197,24 @@ describe('DetailSettingsPage — 탭', () => {
   /*
    * 필수·선택 칩은 탭 줄에 있다. 번호 배지만 섹션 카드 헤더(`DetailSectionHeader`)에 남는다.
    */
-  /** 시안 헤더 문구. 기존 "상세 페이지 설정" 에서 바뀌었다. */
-  it('시안 문구로 페이지 제목과 부제를 보여준다', () => {
-    renderPage();
+  it('두 화면을 합친 제목과 부제를 보여준다', () => {
+    renderAtOpenStep();
 
     expect(
-      screen.getByRole('heading', { name: '내 멘토링 상세 페이지 관리' }),
+      screen.getByRole('heading', { name: '1대1 라이브 멘토링 설정' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        '멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.',
-      ),
+      screen.getByText(/오픈 설정에서 타이틀·타입·진행시간과 일정을 정하고/),
     ).toBeInTheDocument();
   });
 
-  it('탭 6개에 라벨과 (필수)·(선택) 표시가 함께 보인다', () => {
-    renderPage();
+  it('스텝 7개에 라벨과 (필수)·(선택) 표시가 함께 보인다', () => {
+    renderAtOpenStep();
 
     // 번호 배지는 탭에 붙지 않는다 — 카드 헤더에만 있다.
     // 표시는 배지가 아니라 웹 신청 시트와 같은 괄호 텍스트다.
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      '오픈 설정(필수)',
       '핵심 소개(필수)',
       '멘토 정보(필수)',
       '멘토링 유형(필수)',
@@ -369,7 +394,7 @@ describe('DetailSettingsPage — 탭', () => {
   });
 });
 
-describe('DetailSettingsPage — 편집 영역', () => {
+describe('LiveMentoringSettingsPage — 편집 영역', () => {
   it('노출 토글을 끄면 미리보기에서 해당 섹션이 제외된다고 알린다', () => {
     renderPage();
 
@@ -553,7 +578,7 @@ describe('DetailSettingsPage — 편집 영역', () => {
  * 미리보기는 전체를 그리고 스크롤하는 방식이 아니라, 지금 편집 중인 섹션 하나만 그린다.
  * "이 섹션이 멘티에게 어떻게 보이는지" 를 보여주는 것이 목적이라 다른 섹션은 방해가 된다.
  */
-describe('DetailSettingsPage — 미리보기는 활성 탭 섹션만 그린다', () => {
+describe('LiveMentoringSettingsPage — 미리보기는 활성 탭 섹션만 그린다', () => {
   it('탭을 옮기면 그 섹션만 남고 다른 섹션은 사라진다', () => {
     renderPage();
 
@@ -568,7 +593,7 @@ describe('DetailSettingsPage — 미리보기는 활성 탭 섹션만 그린다'
   });
 });
 
-describe('DetailSettingsPage — 이탈 경고', () => {
+describe('LiveMentoringSettingsPage — 이탈 경고', () => {
   it('저장하지 않은 변경이 있으면 앱 내 링크로 이동할 때 경고 모달을 띄운다', () => {
     renderPage();
 
@@ -605,7 +630,7 @@ describe('DetailSettingsPage — 이탈 경고', () => {
   승인 잠금이 사라졌다(LC-3262). 오픈 중이어도 상세 페이지는 그대로 고칠 수 있어야
   한다 — 예전에 잠금을 못박던 자리에 그 반대를 둔다.
 */
-describe('DetailSettingsPage — 오픈 중에도 편집할 수 있다', () => {
+describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', () => {
   const renderWhileOpen = () => {
     status = 'APPROVED';
     openings = [{ status: 'OPEN' }];
@@ -666,7 +691,7 @@ describe('DetailSettingsPage — 오픈 중에도 편집할 수 있다', () => {
   });
 });
 
-describe('DetailSettingsPage — 미리보기', () => {
+describe('LiveMentoringSettingsPage — 미리보기', () => {
   /** 미리보기는 활성 탭 섹션만 그리므로 문구도 그 탭에서 확인한다. */
   it('공개 상세와 같은 헤드라인·섹션 문구를 보여준다', () => {
     renderPage();

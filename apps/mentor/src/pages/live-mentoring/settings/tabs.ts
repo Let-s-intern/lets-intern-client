@@ -3,6 +3,9 @@ import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSc
 /**
  * 상세 페이지 설정의 탭 정의.
  *
+ * 오픈 설정이 첫 스텝으로 앞에 붙는다(LC-3264). 그쪽은 템플릿 섹션이 아니라
+ * 별도 화면이라 여기 목록에는 넣지 않고 `SETTINGS_TABS` 에서 합친다.
+ *
  * 탭 id 는 템플릿의 섹션 키와 같다 — 편집 폼의 `data-section`(미리보기 자동 스크롤)과
  * 같은 어휘를 써야 탭과 미리보기가 서로 다른 이름으로 갈라지지 않는다.
  */
@@ -34,6 +37,27 @@ export const DETAIL_TABS: readonly DetailTab[] = [
   { id: 'strategy', label: '취업 성공 전략', required: false },
   { id: 'video', label: '소개 영상', required: false },
   { id: 'results', label: '결과 사례', required: false },
+];
+
+/** 오픈 설정 스텝. 템플릿 섹션이 아니라 상품 설정이라 id 도 섹션 키가 아니다. */
+export const OPEN_TAB_ID = 'open';
+
+export type SettingsTabId = typeof OPEN_TAB_ID | DetailTabId;
+
+export interface SettingsTab {
+  id: SettingsTabId;
+  label: string;
+  required: boolean;
+}
+
+/**
+ * 화면에 실제로 그려지는 스텝 목록. 오픈 설정이 가장 앞이다 — 상품(제목·타입·
+ * 진행시간)이 있어야 상세 페이지도 의미가 있고, 마지막에 누르는 "오픈하기"가
+ * 이 스텝에 있다.
+ */
+export const SETTINGS_TABS: readonly SettingsTab[] = [
+  { id: OPEN_TAB_ID, label: '오픈 설정', required: true },
+  ...DETAIL_TABS,
 ];
 
 const hasText = (value: string | null | undefined) => Boolean(value?.trim());

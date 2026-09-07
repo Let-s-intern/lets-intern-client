@@ -119,13 +119,14 @@ describe('MentorSidebar', () => {
     expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
   });
 
-  it('1대1 라이브 멘토링 그룹과 하위 두 항목은 그대로다', () => {
+  // 오픈 설정과 상세 페이지 설정이 한 화면의 스텝으로 합쳐졌다(LC-3264).
+  it('1대1 라이브 멘토링은 하위 항목 없는 최상위 링크다', () => {
     renderSidebar('/profile');
 
-    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '오픈 설정' })).toHaveClass('pl-6');
-    expect(screen.getByRole('link', { name: '상세 페이지 설정' })).toHaveClass(
-      'pl-6',
-    );
+    expect(
+      screen.getByRole('link', { name: '1대1 라이브 멘토링' }),
+    ).toHaveAttribute('href', '/live-mentoring/settings');
+    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
+    expect(screen.queryByText('상세 페이지 설정')).not.toBeInTheDocument();
   });
 });

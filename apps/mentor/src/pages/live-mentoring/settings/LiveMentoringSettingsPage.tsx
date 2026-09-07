@@ -21,13 +21,27 @@ import {
 // ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
 //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
 import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
-import { DETAIL_TABS, type DetailTabId, isDetailTabComplete } from './tabs';
+import OpenSettingsSection from '../open-settings/OpenSettingsSection';
+import {
+  DETAIL_TABS,
+  OPEN_TAB_ID,
+  type DetailTabId,
+  type SettingsTabId,
+  isDetailTabComplete,
+} from './tabs';
 import DetailSaveBar from './ui/DetailSaveBar';
-import DetailTabs from './ui/DetailTabs';
+import SettingsTabs from './ui/SettingsTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
-const DetailSettingsPage = () => {
+/**
+ * 1대1 라이브 멘토링 설정 — 오픈 설정과 상세 페이지 설정을 한 화면에 합쳤다(LC-3264).
+ *
+ * 첫 스텝이 오픈 설정이고 나머지가 상세 페이지 섹션이다. 두 화면은 저장 대상도
+ * 저장 버튼도 다르므로 본문과 하단 바를 통째로 갈아끼운다 — 스텝마다 자기 하단
+ * 바를 그리고, 동시에 두 개가 뜨지 않는다.
+ */
+const LiveMentoringSettingsPage = () => {
   const navigate = useNavigate();
   const { data, isError } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
@@ -49,7 +63,7 @@ const DetailSettingsPage = () => {
    * 끝나는 편집이고, 탭마다 주소를 만들면 저장하지 않은 변경을 들고 뒤로가기를
    * 하는 경로가 새로 생긴다(이탈 경고와 충돌).
    */
-  const [activeTab, setActiveTab] = useState<DetailTabId>('hero');
+  const [activeTab, setActiveTab] = useState<SettingsTabId>(OPEN_TAB_ID);
 
   // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
   const [navGuard, setNavGuard] = useState<{
@@ -153,32 +167,14 @@ const DetailSettingsPage = () => {
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-        내 멘토링 상세 페이지 관리
+        1대1 라이브 멘토링 설정
       </h1>
       <p className="text-xsmall14 text-neutral-40">
-        멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.
+        오픈 설정에서 타이틀·타입·진행시간과 일정을 정하고, 이어지는 스텝에서
+        멘티에게 보여줄 상세 페이지를 작성하세요.
       </p>
     </header>
   );
-
-  // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 미완성이라 목 없이는 조회가 실패한다.
-  //    백엔드 연동 후 이 분기를 통째로 제거할 것(제거하면 아래 로딩 분기만 남는다).
-  if (isError) {
-    return (
-      <div className="flex flex-col gap-6 pb-24">
-        {header}
-        <UnderDevelopmentNotice feature="상세 페이지 설정" />
-      </div>
-    );
-  }
-
-  if (!template) {
-    return (
-      <div className="text-xsmall14 text-neutral-40 px-1 py-10">
-        템플릿을 불러오는 중...
-      </div>
-    );
-  }
 
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
@@ -191,6 +187,7 @@ const DetailSettingsPage = () => {
    * 드러나지 않아 원인을 찾을 수 없다. 보내기 전에 정규화하고, 못 고치면 여기서 막는다.
    */
   const handleSave = () => {
+    if (!template) return;
     let payload = template;
 
     if (template.video.videoUrl) {
@@ -292,18 +289,28 @@ const DetailSettingsPage = () => {
       {header}
 
       {/*
-        탭 줄은 grid **바깥**이다. 시안에서 탭은 편집 카드와 미리보기를 가로지르는
-        전체 폭을 쓴다 — 편집 카드 폭에 가두면 6개가 좁은 칸에서 밀린다.
-
-        잠금(fieldset) 바깥이기도 하다. 오픈 중이라 편집이 막혀도 탭 이동은
-        계속 동작해야 한다.
+        스텝 줄은 grid **바깥**이다. 시안에서 탭은 편집 카드와 미리보기를 가로지르는
+        전체 폭을 쓴다 — 편집 카드 폭에 가두면 좁은 칸에서 밀린다.
       */}
-      <DetailTabs
+      <SettingsTabs
         activeTab={activeTab}
         completedTabs={completedTabs}
         onChange={setActiveTab}
       />
 
+      {activeTab === OPEN_TAB_ID ? (
+        <OpenSettingsSection />
+      ) : isError ? (
+        // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 실패할 때의 안내.
+        //    상세 스텝 본문만 대체한다. 오픈 설정 스텝은 이 실패와 무관하게 열려야
+        //    하므로 예전처럼 페이지 전체를 조기 반환하지 않는다.
+        <UnderDevelopmentNotice feature="상세 페이지 설정" />
+      ) : !template ? (
+        <div className="text-xsmall14 text-neutral-40 px-1 py-10">
+          템플릿을 불러오는 중...
+        </div>
+      ) : (
+        <>
       {/*
         시안 비율은 편집 카드 : 미리보기 ≈ 1.93 : 1 이다. 고정 폭을 주면 넓은 화면에서
         미리보기만 상대적으로 좁아져 모바일 뷰가 제 크기로 안 보인다.
@@ -346,6 +353,8 @@ const DetailSettingsPage = () => {
         onSave={handleSave}
         onRevert={handleCancel}
       />
+        </>
+      )}
 
       <MentorAlertModal {...alertProps} />
 
@@ -364,4 +373,4 @@ const DetailSettingsPage = () => {
   );
 };
 
-export default DetailSettingsPage;
+export default LiveMentoringSettingsPage;

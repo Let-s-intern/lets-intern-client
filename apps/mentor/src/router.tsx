@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import MentorShell from '@/layout/MentorShell';
 import OAuthCallbackPage from '@/pages/login/OAuthCallbackPage';
@@ -20,11 +20,8 @@ const FeedbackLiveAvailabilityPage = lazy(
 const FeedbackLiveReservationPage = lazy(
   () => import('@/pages/feedback-live-reservation/FeedbackLiveReservationPage'),
 );
-const LiveMentoringOpenSettingsPage = lazy(
-  () => import('@/pages/live-mentoring/open-settings/OpenSettingsPage'),
-);
-const LiveMentoringDetailSettingsPage = lazy(
-  () => import('@/pages/live-mentoring/detail-settings/DetailSettingsPage'),
+const LiveMentoringSettingsPage = lazy(
+  () => import('@/pages/live-mentoring/settings/LiveMentoringSettingsPage'),
 );
 const RouteFallback = () => (
   <div className="text-xsmall14 text-neutral-40 px-4 py-10">
@@ -62,12 +59,17 @@ export const router = createRouter([
         element: withSuspense(<FeedbackLiveReservationPage />),
       },
       {
+        path: '/live-mentoring/settings',
+        element: withSuspense(<LiveMentoringSettingsPage />),
+      },
+      // 두 화면이 하나로 합쳐지기 전 주소(LC-3264). 북마크를 끊지 않는다.
+      {
         path: '/live-mentoring/open-settings',
-        element: withSuspense(<LiveMentoringOpenSettingsPage />),
+        element: <Navigate to="/live-mentoring/settings" replace />,
       },
       {
         path: '/live-mentoring/detail-settings',
-        element: withSuspense(<LiveMentoringDetailSettingsPage />),
+        element: <Navigate to="/live-mentoring/settings" replace />,
       },
       { path: '/notice', element: <NoticeListPage /> },
       { path: '/notice/:noticeId', element: <NoticeDetailPage /> },
