@@ -94,7 +94,7 @@ const DetailHero = ({
               key={i}
               /* 멘토 설정의 미리보기가 편집 중인 줄로 따라올 때 쓴다(LC-3268). */
               data-preview-item={i}
-              className="text-xsmall14 md:text-xsmall16 text-white/85"
+              className="text-xsmall14 md:text-xsmall16 whitespace-pre-line text-white/85"
             >
               - {bullet}
             </li>
