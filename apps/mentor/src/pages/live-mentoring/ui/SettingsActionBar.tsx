@@ -22,11 +22,14 @@ interface SettingsActionBarProps {
  * 스텝 이동 버튼의 크기.
  *
  * 이 바에서 누를 것은 이 둘뿐이라 시안처럼 크게 잡는다 — 화면 아래 끝에 떠 있는 버튼은
- * 작을수록 겨냥하기 어렵고, 옆의 저장 상태 문구에 묻힌다. `min-w` 로 폭을 고정해 두면
- * 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지 않는다.
+ * 작을수록 겨냥하기 어렵고, 옆의 저장 상태 문구에 묻힌다.
+ *
+ * 폭은 `flex-1` 로 남는 자리를 나눠 갖되 `max-w` 로 상한을 둔다. 둘이 같은 규칙이라
+ * 늘 같은 폭이고, 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지
+ * 않는다. 상한이 없으면 넓은 화면에서 버튼만 끝없이 늘어난다.
  */
 const stepButton =
-  'min-w-[9.5rem] rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  'flex-1 max-w-[17rem] rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
  * 설정 화면 하단 고정 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
@@ -60,7 +63,11 @@ const SettingsActionBar = ({
         <span className="truncate">{autosaveMessage(status)}</span>
       </p>
 
-      <div className="flex shrink-0 items-center gap-3">
+      {/*
+        버튼 묶음이 남는 자리를 가져간다. 저장 상태 문구는 `min-w-0` 이라 좁아지면
+        말줄임으로 접히고, 버튼은 그만큼 넓어진다 — 이 바의 주인공은 버튼이다.
+      */}
+      <div className="flex flex-1 items-center justify-end gap-3">
         <button
           type="button"
           onClick={onPrev}
