@@ -19,7 +19,7 @@ import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
-import DetailImageSection from './DetailImageSection';
+import DetailBenefitSection from './DetailBenefitSection';
 import DetailMentoringIntroSection from './DetailMentoringIntroSection';
 import DetailPainSection from './DetailPainSection';
 import DetailPlanSection from './DetailPlanSection';
@@ -131,7 +131,7 @@ const LiveMentoringDetailPage = ({
       <DetailNavigation isReady={!isLoading} />
 
       {/* 시안 0-1 · 특별 혜택 */}
-      <DetailImageSection section="benefit" priority />
+      <DetailBenefitSection />
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
       <DetailPainSection careers={data.profile.careers} />
       {/* 시안 0-3 · 멘토링 소개 */}

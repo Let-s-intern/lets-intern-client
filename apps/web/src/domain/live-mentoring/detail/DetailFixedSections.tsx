@@ -4,10 +4,9 @@ import FaqDropdown from '@/common/dropdown/FaqDropdown';
 import DetailSection from './DetailSection';
 
 /**
- * 멘토가 편집하지 않는 고정 섹션 중 **마크업으로 구현하는 것** (시안 7·10).
+ * 멘토가 편집하지 않는 고정 섹션 (시안 7·10).
  *
- * 이미지로 박은 섹션(`DetailImageSection`)과 달리, 여기 둘은
- * 멘토별 값이 들어가거나(진행 기간) 인터랙션이 필요해서(FAQ 아코디언) 마크업이어야 한다.
+ * 멘토별 값이 들어가거나(진행 기간) 인터랙션이 필요하다(FAQ 아코디언).
  * 문구 자체는 운영이 확정한 값이라 하드코딩한다.
  */
 

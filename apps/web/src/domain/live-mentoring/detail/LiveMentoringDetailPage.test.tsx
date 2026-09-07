@@ -204,7 +204,7 @@ beforeEach(() => {
 });
 
 describe('LiveMentoringDetailPage', () => {
-  it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 이미지 섹션을 렌더한다', async () => {
+  it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 섹션을 렌더한다', async () => {
     mockApis(detail());
     renderDetail();
 
@@ -218,9 +218,13 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.getByText('핵심 키워드 5가지')).toBeInTheDocument();
     expect(screen.getByText('서류 완성도 UP!')).toBeInTheDocument();
     expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
-    // 특별 혜택은 아직 시안 이미지로 나간다
-    expect(screen.getByAltText(/특별 혜택/)).toBeInTheDocument();
-    // 막막함·멘토링 소개·플랜은 마크업으로 옮겼다 (SEO)
+    // 통이미지였던 고정 섹션 4개를 모두 마크업으로 옮겼다 (SEO)
+    expect(
+      screen.getByText('합격 포폴 일부를 제공해드립니다'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('OO뱅크 서비스 기획자 자기소개서'),
+    ).toBeInTheDocument();
     expect(screen.getByText(/혼자 하기 막막하셨나요\?/)).toBeInTheDocument();
     expect(
       screen.getByText(/1:1 LIVE 멘토링으로 빠르게 정리해요/),
