@@ -1,4 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 
 import OrderPage from './OrderPage';
 import {
@@ -163,5 +169,70 @@ describe('OrderPage 진입 가드', () => {
 
     expect(screen.queryByText(/마감까지/)).not.toBeInTheDocument();
     expect(screen.queryByText(/남았어요/)).not.toBeInTheDocument();
+  });
+});
+
+/*
+  LC-3272 회귀 테스트.
+
+  「나중에 작성하기」를 켜 둔 채 이 화면에서 일정을 48시간 안으로 바꾸면, 체크박스는
+  잠기지만 선택은 켜진 채로 남아 질문 작성 폼이 열리지 않았다. 지금 써야 한다는 안내만
+  뜨고 정작 쓸 칸이 없는 상태다.
+*/
+describe('OrderPage — 일정을 48시간 안으로 바꿨을 때', () => {
+  /** 지금부터 `hours` 뒤에 시작하는 슬롯 하나짜리 선택값. */
+  const draftStartingIn = (hours: number): LiveMentoringOrderDraft => {
+    const start = new Date(Date.now() + hours * 60 * 60 * 1000);
+    const iso = start.toISOString().slice(0, 19);
+    return {
+      ...DRAFT,
+      slots: [
+        {
+          slotId: 900,
+          date: iso.slice(0, 10),
+          time: iso.slice(11, 16),
+          startDate: iso,
+          endDate: iso,
+        },
+      ],
+    };
+  };
+
+  const laterCheckbox = () =>
+    screen.getByRole('checkbox', { name: '나중에 작성하기' });
+
+  it('나중에 작성하기 선택이 풀리고 질문 작성 폼이 열린다', async () => {
+    // 열흘 뒤 — 나중에 낼 수 있다.
+    useOrderDraftStore.getState().setDraft(draftStartingIn(240));
+    render(<OrderPage mentorId="1" />);
+
+    await screen.findByRole('heading', { name: '결제하기' });
+    fireEvent.click(laterCheckbox());
+    expect(laterCheckbox()).toBeChecked();
+    expect(screen.queryByLabelText('멘토링 질문 작성')).toBeNull();
+
+    // 결제 페이지에서 일정을 3시간 뒤로 바꾼다.
+    act(() => {
+      useOrderDraftStore.getState().setDraft(draftStartingIn(3));
+    });
+
+    expect(screen.getByText(/48시간이 남지 않아/)).toBeInTheDocument();
+    expect(laterCheckbox()).not.toBeChecked();
+    expect(screen.getByLabelText('멘토링 질문 작성')).toBeInTheDocument();
+  });
+
+  it('48시간 밖으로 되돌리면 다시 나중에 낼 수 있다', async () => {
+    useOrderDraftStore.getState().setDraft(draftStartingIn(3));
+    render(<OrderPage mentorId="1" />);
+
+    await screen.findByRole('heading', { name: '결제하기' });
+    expect(laterCheckbox()).toBeDisabled();
+
+    act(() => {
+      useOrderDraftStore.getState().setDraft(draftStartingIn(240));
+    });
+
+    expect(laterCheckbox()).toBeEnabled();
+    expect(screen.queryByText(/48시간이 남지 않아/)).toBeNull();
   });
 });
