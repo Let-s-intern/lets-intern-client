@@ -678,6 +678,41 @@ describe('LiveMentoringSettingsPage — 미리보기', () => {
  * 저장 버튼이 사라지고 입력이 멎으면 알아서 나간다. 오픈은 스텝과 무관한 화면 전체의
  * 상태라 머리로 옮겼다. 하단 바에는 스텝 이동과 "저장이 지금 어디까지 갔는지"만 남는다.
  */
+/*
+ * 작성 예시는 섹션 아래 **하나**다. 입력 그룹마다 접이식 상자를 두면 같은 화면에 같은
+ * 모양이 여러 개 쌓여, 어느 것이 무엇의 예시인지 오히려 헷갈린다.
+ */
+describe('LiveMentoringSettingsPage — 작성 예시', () => {
+  it('멘토링 유형 스텝의 안내는 하나이고, 두 입력 그룹을 나눠 보여준다', () => {
+    renderPage();
+    openTab('멘토링 유형');
+
+    expect(
+      screen.getAllByRole('button', { name: /작성 예시 보기/ }),
+    ).toHaveLength(1);
+
+    const guide = screen
+      .getByRole('button', { name: /작성 예시 보기/ })
+      .closest('div');
+    if (!guide) throw new Error('작성 예시를 찾을 수 없습니다');
+    expect(within(guide).getByText('유형 안내 문구')).toBeVisible();
+    expect(within(guide).getByText('멘토링 소개 카드')).toBeVisible();
+  });
+
+  /* 예시의 라벨이 입력 칸 이름과 다르면 어느 칸을 말하는지 다시 짚어봐야 한다. */
+  it('예시 라벨이 입력 칸 이름과 같다', () => {
+    renderPage();
+    openTab('멘토링 유형');
+
+    for (const name of ['멘토링 유형 섹션 제목', '멘토링 유형 설명']) {
+      // 입력 칸 라벨 1개 + 예시 줄 1개
+      expect(
+        screen.getAllByText(new RegExp(`^${name}`)).length,
+      ).toBeGreaterThan(1);
+    }
+  });
+});
+
 describe('LiveMentoringSettingsPage — 하단 바', () => {
   it('저장 버튼 대신 스텝 이동 버튼이 있다', () => {
     renderPage();
