@@ -140,7 +140,7 @@ const DetailPlanSection = ({ durationPrices }: DetailPlanSectionProps) => {
 
   return (
     <section className="w-full scroll-mt-16 bg-[#e5ecff] py-12 md:py-16">
-      <div className="mw-1180 flex flex-col items-center px-5">
+      <div className="mw-1180 flex flex-col items-center break-keep px-5">
         <p className="text-xsmall14 md:text-small18 text-primary font-semibold">
           필요한 깊이에 맞게 플랜을 선택하세요
         </p>

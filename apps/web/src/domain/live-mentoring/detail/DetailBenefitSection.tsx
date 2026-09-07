@@ -45,12 +45,16 @@ interface DetailBenefitSectionProps {
  * 컨테이너 2000px 안에 카드 448px·간격 40px, 카드 문구는 가운데 정렬.
  *
  * 카드 문구 크기만 시안과 다르다. 시안은 1440px 기준 8~9px 인데(문서 지면을 축소한
- * 결과다) 읽기 어려워 10·12px 로 올렸다. 대신 제목이 두 줄이 될 수 있어 헤더 높이를
- * 고정해 카드 4장의 이미지 시작선을 맞춘다.
+ * 결과다) 읽기 어려워 10·12px 로 올렸다.
+ *
+ * 그래서 좁은 화면에서는 제목이 카드마다 다른 줄 수로 접힌다. 헤더 높이를 고정하면
+ * 가장 긴 제목(3줄)에 맞춰야 해 짧은 카드에 빈 공간이 크게 남는다. 대신 그리드가
+ * 늘려 준 카드 높이 안에서 지면 이미지를 `mt-auto` 로 바닥에 붙여 4장의 지면 시작선을
+ * 맞춘다. 줄 수가 몇이든 어긋나지 않는다.
  */
 const DetailBenefitSection = ({ id }: DetailBenefitSectionProps) => (
   <section id={id} className="w-full scroll-mt-16 bg-white py-12 md:py-16">
-    <div className="mw-1180 flex flex-col items-center px-5">
+    <div className="mw-1180 flex flex-col items-center break-keep px-5">
       <span className="text-xsmall14 md:text-small18 text-neutral-30 font-semibold">
         특별 혜택
       </span>
@@ -67,9 +71,8 @@ const DetailBenefitSection = ({ id }: DetailBenefitSectionProps) => (
 
       <ul className="bg-neutral-80 mt-8 grid w-full max-w-[1000px] grid-cols-2 gap-5 rounded-lg p-5 md:mt-12 md:grid-cols-4">
         {BENEFIT_DOCS.map((doc) => (
-          <li key={doc.src} className="flex flex-col bg-white pt-4">
-            {/* 제목이 두 줄이 되어도 카드 4장의 이미지 시작선이 어긋나지 않게 높이를 고정한다 */}
-            <div className="flex min-h-[3.25rem] flex-col items-center px-3 text-center">
+          <li key={doc.src} className="flex h-full flex-col bg-white pt-4">
+            <div className="flex flex-col items-center px-3 text-center">
               <p className="text-xxsmall10 text-neutral-30">{doc.label}</p>
               <h3 className="text-xxsmall12 mt-1 font-bold leading-tight">
                 {doc.title}
@@ -82,7 +85,7 @@ const DetailBenefitSection = ({ id }: DetailBenefitSectionProps) => (
               aria-hidden="true"
               width={448}
               height={512}
-              className="h-auto w-full"
+              className="mt-auto h-auto w-full"
               loading="lazy"
             />
           </li>
