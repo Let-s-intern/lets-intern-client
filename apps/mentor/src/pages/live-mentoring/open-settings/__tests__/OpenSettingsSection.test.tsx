@@ -518,7 +518,13 @@ describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
   });
 
   // 오픈은 되돌리기 번거로운 행동이라 "됐습니다" 한 줄로 끝내지 않는다.
-  it('개설에 성공하면 공개 주소와 즉시 내리기를 안내한다', () => {
+  /*
+    오픈했다는 사실만 알린다(LC-3280).
+
+    예전에는 "이상하면 바로 종료하세요" 안내 모달을 띄웠다. 방금 확인 모달에서 동의하고
+    누른 직후에 취소를 권하는 화면이 뜨니 무언가 잘못된 줄 알고 멈추게 된다.
+  */
+  it('개설에 성공하면 안내 모달 없이 알림만 띄운다', () => {
     openMock.mockImplementation((_body, options) =>
       options?.onSuccess?.({
         liveMentoringId: 1,
@@ -530,32 +536,11 @@ describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
     fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
     passPreOpenCheck();
 
-    const dialog = screen.getByRole('dialog', { name: '오픈 완료 안내' });
-    // 지연 노출은 서버 기능이라 프론트가 흉내내지 않는다 — 지금 공개됐다고 적는다.
-    expect(
-      within(dialog).getByText('지금부터 모집이 시작됩니다'),
-    ).toBeInTheDocument();
-    expect(within(dialog).getByText(/live-mentoring\/500/)).toBeInTheDocument();
-    expect(
-      within(dialog).getByRole('link', { name: '상세 페이지 확인하기' }),
-    ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
-  });
-
-  it('안내에서 바로 종료하면 방금 만든 오픈을 종료한다', () => {
-    openMock.mockImplementation((_body, options) =>
-      options?.onSuccess?.({
-        liveMentoringId: 1,
-        openings: [{ ...openOpening, openingId: 777 }],
-      }),
-    );
-    renderPage({ status: 'APPROVED' }, [closedOpening]);
-
-    fireEvent.click(screen.getByRole('button', { name: '다시 오픈하기' }));
-    passPreOpenCheck();
-    fireEvent.click(screen.getByRole('button', { name: '바로 종료하기' }));
-
-    expect(closeOpeningMock).toHaveBeenCalledTimes(1);
-    expect(closeOpeningMock.mock.calls[0][0]).toBe(777);
+    expect(screen.getByText('오픈했어요.')).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: '오픈 완료 안내' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '바로 종료하기' })).toBeNull();
+    // 종료는 하단 바의 「오픈 닫기」로 한다 — 여기서 자동으로 부르지 않는다.
+    expect(closeOpeningMock).not.toHaveBeenCalled();
   });
 
   // 오픈은 되돌리는 비용이 크고 잘못 나간 상세는 멘티에게 그대로 보인다.
