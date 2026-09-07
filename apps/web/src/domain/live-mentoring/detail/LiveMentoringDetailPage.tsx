@@ -219,7 +219,7 @@ const LiveMentoringDetailPage = ({
             왼쪽에 글이 몰려 가운데가 비어 보인다. 쓴 만큼만 넓어지고, 사진과 한 덩어리로
             가운데에 놓인다.
           */}
-          <div className="flex w-full min-w-0 max-w-[583px] flex-col gap-2 text-left">
+          <div className="flex min-w-0 max-w-[583px] flex-col gap-2 text-left">
             <p className="text-small20 md:text-medium24 font-bold">
               {nickname}
             </p>
@@ -237,8 +237,12 @@ const LiveMentoringDetailPage = ({
                 ))}
               </ul>
             )}
+            {/*
+              한마디 상자 — primary-5(#F5F6FF)는 흰 배경과 거의 같아 상자가 보이지
+              않았다. 한 단계 진한 primary-10 에 옅은 테두리를 더해 경계를 만든다.
+            */}
             {intro.oneLiner && (
-              <div className="bg-primary-5 mt-4 flex flex-col gap-2 rounded-md p-5">
+              <div className="bg-primary-10 border-primary-20 mt-4 flex flex-col gap-2 rounded-md border p-5">
                 <p className="text-primary text-xsmall14 flex items-center gap-1.5 font-semibold">
                   <span aria-hidden="true">💬</span> 멘토님의 한마디
                 </p>
@@ -374,51 +378,59 @@ const LiveMentoringDetailPage = ({
         >
           {/* 카드 폭을 안 잡으면 mw-1180 절반(약 570px)까지 이미지가 커져 한눈에 안 들어온다 */}
           <ul className="mx-auto flex w-full max-w-[840px] flex-col gap-8">
+            {/*
+              전·후 카드와 설명을 각각 같은 줄에 놓는다.
+
+              예전에는 [카드+설명]을 한 덩이로 세로로 쌓았다. 올린 이미지 비율이 서로
+              다르면 카드 높이가 달라지고, 그만큼 설명 줄도 어긋나 무엇과 무엇을 견주는
+              건지 읽기 어려웠다. 카드 줄과 설명 줄을 나눠 각 줄에서 나란히 맞춘다.
+            */}
             {results.cases.map((item, i) => (
               <li
                 key={i}
                 data-preview-item={i}
-                className="grid grid-cols-1 gap-5 md:grid-cols-2"
+                className="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2"
               >
-                <div className="flex flex-col gap-3">
-                  <div className="overflow-hidden rounded-md">
-                    <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
-                      Before
-                    </p>
-                    <div className="bg-neutral-85 p-4">
-                      {item.beforeImage && (
-                        <img
-                          src={item.beforeImage}
-                          alt=""
-                          className="w-full rounded-sm bg-white"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
-                    {item.beforeCaption}
+                <div className="flex flex-col overflow-hidden rounded-md">
+                  <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
+                    Before
                   </p>
+                  {/*
+                    두 카드의 높이를 맞추되 이미지는 비율 그대로 둔다. 높이가 정해지면
+                    폭이 따라오므로 잘리지도, 위아래로 여백이 생기지도 않는다.
+                  */}
+                  <div className="bg-neutral-85 flex flex-1 items-center justify-center p-4">
+                    {item.beforeImage && (
+                      <img
+                        src={item.beforeImage}
+                        alt=""
+                        className="max-h-full w-auto max-w-full rounded-sm bg-white"
+                      />
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <div className="overflow-hidden rounded-md">
-                    <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
-                      After
-                    </p>
-                    <div className="bg-primary-20 p-4">
-                      {item.afterImage && (
-                        <img
-                          src={item.afterImage}
-                          alt=""
-                          className="w-full rounded-sm bg-white"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
-                    ✓ {item.afterCaption}
+                <div className="flex flex-col overflow-hidden rounded-md">
+                  <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
+                    After
                   </p>
+                  <div className="bg-primary-20 flex flex-1 items-center justify-center p-4">
+                    {item.afterImage && (
+                      <img
+                        src={item.afterImage}
+                        alt=""
+                        className="max-h-full w-auto max-w-full rounded-sm bg-white"
+                      />
+                    )}
+                  </div>
                 </div>
+
+                <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
+                  {item.beforeCaption}
+                </p>
+                <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
+                  ✓ {item.afterCaption}
+                </p>
               </li>
             ))}
           </ul>

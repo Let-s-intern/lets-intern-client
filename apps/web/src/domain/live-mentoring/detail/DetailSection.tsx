@@ -38,18 +38,25 @@ const DetailSection = ({
         섹션 사이가 좁아 어디서 끊기는지 잘 드러나지 않았다. 배경색이 같은 섹션이
         이어지면 한 덩어리로 읽힌다 — 여백이 구분의 유일한 단서라 넉넉히 준다.
       */
-      'w-full scroll-mt-16 py-16 md:py-24',
-      /*
-        흰 배경끼리 이어지면 여백만으로는 어디서 끊기는지 드러나지 않는다.
-        아주 옅은 선 하나를 얹어 경계를 표시한다. neutral-90(#F3F3F3)은 흰 배경에서
-        거의 보이지 않아 한 단계 진한 neutral-85(#EFEFEF)를 쓴다 — 어두운 섹션은
-        배경이 이미 다르므로 선을 넣지 않는다.
-      */
-      dark
-        ? 'bg-neutral-0 text-static-100'
-        : 'border-neutral-85 border-t bg-white',
+      'relative w-full scroll-mt-16 py-16 md:py-24',
+      dark ? 'bg-neutral-0 text-static-100' : 'bg-white',
     )}
   >
+    {/*
+      흰 배경끼리 이어지면 여백만으로는 어디서 끊기는지 드러나지 않는다.
+      선 하나를 얹되 화면 끝까지 긋지 않는다 — 본문 폭 안에서만 그리고 양끝을
+      투명하게 흘려, 자로 그은 칸막이가 아니라 은은한 경계로 보이게 한다.
+      어두운 섹션은 배경이 이미 다르므로 선을 넣지 않는다.
+    */}
+    {dark ? null : (
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 flex justify-center px-5"
+      >
+        <div className="via-neutral-80 h-px w-full max-w-[1000px] bg-gradient-to-r from-transparent to-transparent" />
+      </div>
+    )}
+
     <div className="mw-1180 flex flex-col gap-6 px-5 md:gap-8">
       <header className="flex flex-col items-center gap-2 text-center">
         {/* 챌린지 상페의 SuperTitle 과 같은 스케일 */}
