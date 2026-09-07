@@ -110,7 +110,7 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     // LC-3206 — 모집 기간은 응답에서 사라졌다.
     expect(data).not.toHaveProperty('feedbackStartDate');
     expect(data).not.toHaveProperty('feedbackEndDate');
-    expect(data.status).toBe('DRAFT');
+    expect(data.status).toBe('APPROVED');
     // 백엔드에 없는 필드를 목이 만들어내면 실서버에서만 깨지는 코드가 통과한다.
     expect(data).not.toHaveProperty('isOpen');
   });
@@ -207,8 +207,6 @@ describe('1대1 라이브 멘토링 MSW 핸들러', () => {
     const { data } = await res.json();
     expect(data.intro.careerLines.length).toBeGreaterThan(0);
     expect(data.mentoringTypes.items.length).toBeGreaterThan(0);
-    // 초안 + 활성 개설 없음이 목 기본값이라 편집할 수 있다.
-    expect(data.mentoring.editable).toBe(true);
   });
 
   it('PUT /mentor/live-mentoring/template → 저장 후 상세 페이지 전체를 돌려준다', async () => {

@@ -1107,12 +1107,6 @@ const activeOpening = () =>
   liveMentoringState.openings.find((opening) => opening.status === 'OPEN') ??
   null;
 
-/** 서버 `LiveMentoring.isEditable()` — 상태와 활성 개설 유무를 함께 본다. */
-const isSettingsEditable = () =>
-  (liveMentoringState.status === null ||
-    liveMentoringState.status === 'DRAFT') &&
-  activeOpening() === null;
-
 const settingsResponse = () => ({
   liveMentoringId: liveMentoringState.liveMentoringId,
   nickname: LIVE_MENTORING_SETTINGS.nickname,
@@ -1125,20 +1119,13 @@ const settingsResponse = () => ({
   durations: liveMentoringState.durations,
 });
 
-/**
- * 상세 페이지 조회/저장 응답. 편집 대상 템플릿에 읽기 전용 상품 정보를 얹는다.
- *
- * `editable` 은 서버 `LiveMentoring.isEditable()` 과 같은 조건이라 설정 화면의
- * 판정(`isSettingsEditable`)을 그대로 쓴다 — 목에서 두 화면의 잠금이 갈리면
- * 어느 쪽이 맞는지 확인할 수 없다.
- */
+/** 상세 페이지 조회/저장 응답. 편집 대상 템플릿에 읽기 전용 상품 정보를 얹는다. */
 const detailPageResponse = () => ({
   ...detailPageState,
   mentoring: {
     liveMentoringId: liveMentoringState.liveMentoringId,
     title: liveMentoringState.title,
     status: liveMentoringState.status,
-    editable: isSettingsEditable(),
     categories: liveMentoringState.categories,
   },
 });
@@ -1218,10 +1205,11 @@ type AdminFixtureRow = ReturnType<typeof adminLiveMentoringVo>;
 
 /**
  * "나" 이외의 멘토 행. 상태 필터·정렬 확인용 고정 행이다.
- * 관리자 화면에는 조회·강제 종료만 있고 승인·반려 자체가 없으므로(백엔드에 대응 API가
- * 없음), 상태를 실제 API 로 전이시키지 않는다 — 대신 세 상태(DRAFT/APPROVED/INACTIVE)를
- * 미리 다양하게 박아 필터·정렬을 검증한다. 개설이 있는 행(20번)은 강제 종료 핸들러가
- * `fixture.currentOpening` 을 그대로 찾아 종료 처리한다.
+ * 관리자 화면에는 조회·강제 종료만 있고 승인·반려 자체가 없으므로 상태를 실제 API 로
+ * 전이시키지 않는다 — 대신 세 상태(DRAFT/APPROVED/INACTIVE)를 미리 박아 필터·정렬을
+ * 검증한다. `DRAFT` 는 승인 절차가 있던 시절의 기존 행이다(LC-3262). 새로 만들어지지는
+ * 않지만 DB 에 남아 있어 관리자 목록·필터는 계속 처리해야 한다. 개설이 있는 행(20번)은
+ * 강제 종료 핸들러가 `fixture.currentOpening` 을 그대로 찾아 종료 처리한다.
  */
 const makeAdminFixtureRows = (): AdminFixtureRow[] => [
   {
@@ -1262,6 +1250,21 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     approvedByUserId: 1,
     createDate: '2026-07-28T15:00:00',
     lastModifiedDate: '2026-07-30T09:00:00',
+    currentOpening: null,
+  },
+  {
+    liveMentoringId: 22,
+    mentorId: 4,
+    mentorNickname: '한멘토',
+    mentorProfileImage: null,
+    title: '승인 절차 시절에 만들어진 상품',
+    status: 'DRAFT',
+    categories: ['RESUME'],
+    hasDetailPage: false,
+    approvedAt: null,
+    approvedByUserId: null,
+    createDate: '2026-07-20T10:00:00',
+    lastModifiedDate: '2026-07-20T10:00:00',
     currentOpening: null,
   },
 ];
@@ -2199,7 +2202,7 @@ export const handlers = [
    * (멘토) PUT /mentor/live-mentoring/settings — 상품 설정 저장.
    *
    * 백엔드는 title/categories/durations를 받는다. 진행시간도 이 요청으로 저장한다.
-   * 상품이 없으면 이 요청이 `DRAFT` 로 상품을 만든다.
+   * 상품이 없으면 이 요청이 상품을 만든다.
    */
   http.put('*/mentor/live-mentoring/settings', async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as {
@@ -2208,13 +2211,6 @@ export const handlers = [
       durations?: number[];
     };
 
-    if (!isSettingsEditable()) {
-      return liveMentoringError(
-        409,
-        'LIVE_MENTORING_LOCKED',
-        '현재 상태에서는 라이브 멘토링 설정을 수정할 수 없습니다.',
-      );
-    }
     if (!body.title?.trim() || !body.categories?.length) {
       return liveMentoringError(400, 'BAD_REQUEST', '잘못된 요청입니다.');
     }
@@ -2234,7 +2230,7 @@ export const handlers = [
     liveMentoringState.durations = body.durations as LiveMentoringDuration[];
     if (liveMentoringState.liveMentoringId === null) {
       liveMentoringState.liveMentoringId = 1;
-      liveMentoringState.status = 'DRAFT';
+      liveMentoringState.status = 'APPROVED';
     }
     return HttpResponse.json({ status: 200, data: settingsResponse() });
   }),
@@ -2280,7 +2276,7 @@ export const handlers = [
       return liveMentoringError(
         409,
         'LIVE_MENTORING_LOCKED',
-        '현재 상태에서는 라이브 멘토링 설정을 수정할 수 없습니다.',
+        '이미 오픈 중이라 새로 개설할 수 없습니다.',
       );
     }
 
@@ -2288,12 +2284,6 @@ export const handlers = [
     liveMentoringState.title = body.title;
     liveMentoringState.categories = body.categories;
     liveMentoringState.durations = durations;
-    // 최초 개설이면 `DRAFT → APPROVED` 로 전이한다. 재개설이면 이미 APPROVED 다.
-    if (liveMentoringState.status === 'DRAFT') {
-      liveMentoringState.status = 'APPROVED';
-      liveMentoringState.approvedAt = liveMentoringNow();
-      liveMentoringState.approvedByUserId = 1;
-    }
     liveMentoringState.openings.unshift({
       openingId: nextOpeningId++,
       status: 'OPEN',

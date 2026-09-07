@@ -19,7 +19,6 @@ const SETTINGS_PATH = '/mentor/live-mentoring/settings';
 const TEMPLATE_PATH = '/mentor/live-mentoring/template';
 const OPEN_STATUS_PATH = '/mentor/live-mentoring/open-status';
 const OPENINGS_PATH = '/mentor/live-mentoring/openings';
-const START_EDIT_PATH = '/mentor/live-mentoring/start-edit';
 const RESERVATIONS_PATH = '/mentor/live-mentoring/reservations';
 
 /** 오픈 설정(메타) query key. */
@@ -231,10 +230,8 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
 /**
  * POST /mentor/live-mentoring/openings — 최초 개설과 재개설 공통.
  *
- * 검토 제출(`POST /submit`)이 사라지면서 개설 경로가 이 하나로 합쳐졌다. `DRAFT`
- * 상품이면 서버가 `APPROVED` 로 전이시키며 첫 개설을 만들고, `APPROVED` 상품이면
- * 새 개설을 만든다. 승인 이후에는 `PUT /settings` 가 잠기므로 제목·타입·진행시간을
- * 한 요청에 담아 보낸다. 활성 개설이 있으면 서버가 409 `LIVE_MENTORING_LOCKED` 로 막는다.
+ * 제목·타입·진행시간을 한 요청에 담아 보낸다. 첫 개설이면 서버가 기본 상세 페이지도
+ * 함께 만든다. 이미 열려 있으면 서버가 409 `LIVE_MENTORING_LOCKED` 로 막는다.
  *
  * 예약 가능 일정은 개설에 담기지 않는다 — 슬롯(`PUT /slots`)으로 따로 등록한다.
  * 다만 개설 유무가 고객용 슬롯 노출 조건이라 슬롯 캐시도 함께 무효화한다.
@@ -254,26 +251,6 @@ export const useCreateLiveMentoringOpeningMutation = () => {
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_OPEN_STATUS_QUERY_KEY,
       });
-      queryClient.invalidateQueries({
-        queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
-      });
-    },
-  });
-};
-
-/**
- * POST /mentor/live-mentoring/start-edit — 승인된 상품을 다시 초안으로.
- *
- * 상세 페이지까지 고쳐 재검토를 받고 싶을 때 쓴다. 활성 개설이 있으면 서버가 막는다.
- * 성공하면 상품이 `DRAFT` 가 되어 설정·상세 편집이 다시 열리고, 재제출이 필요해진다.
- */
-export const useStartEditLiveMentoringMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      await axios.post(START_EDIT_PATH);
-    },
-    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
       });
