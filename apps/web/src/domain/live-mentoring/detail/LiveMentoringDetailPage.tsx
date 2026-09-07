@@ -197,7 +197,7 @@ const LiveMentoringDetailPage = ({
           사진과 글을 화면 가운데로 모은다. 폭을 넓게 두면 둘이 양쪽 끝으로 벌어져
           가운데가 비어 보인다 — 제목은 가운데인데 본문만 넓게 퍼진 모양이 된다.
         */}
-        <div className="mx-auto flex w-full max-w-[940px] flex-col items-center gap-6 md:flex-row md:items-center md:gap-6">
+        <div className="mx-auto flex w-full max-w-[940px] flex-col items-center gap-6 md:flex-row md:items-center md:justify-center md:gap-6">
           {intro.profileImage && (
             <img
               src={intro.profileImage}
@@ -212,10 +212,14 @@ const LiveMentoringDetailPage = ({
             글은 제 높이만 차지하고 사진과 서로 가운데를 맞춘다.
           */}
           {/*
-            폭은 시안에서 잰 값이다 — 사진 340px : 글 583px, 합쳐 940px.
-            2880px 시안이 1440 화면의 2배 기준이라 절반으로 환산했다.
+            폭 상한은 시안에서 잰 값이다 — 사진 340px : 글 583px, 합쳐 940px.
+            (2880px 시안이 1440 화면의 2배 기준이라 절반으로 환산했다.)
+
+            다만 남은 폭을 다 차지하게 두지는 않는다. 경력이 두어 줄뿐인 멘토는 넓은 칸의
+            왼쪽에 글이 몰려 가운데가 비어 보인다. 쓴 만큼만 넓어지고, 사진과 한 덩어리로
+            가운데에 놓인다.
           */}
-          <div className="flex min-w-0 flex-1 flex-col gap-2 text-left">
+          <div className="flex w-full min-w-0 max-w-[583px] flex-col gap-2 text-left">
             <p className="text-small20 md:text-medium24 font-bold">
               {nickname}
             </p>

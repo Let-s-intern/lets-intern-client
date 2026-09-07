@@ -41,12 +41,13 @@ const DetailSection = ({
       'w-full scroll-mt-16 py-16 md:py-24',
       /*
         흰 배경끼리 이어지면 여백만으로는 어디서 끊기는지 드러나지 않는다.
-        아주 옅은 선 하나를 얹어 경계를 표시한다 — 어두운 섹션은 배경이 이미
-        다르므로 선을 넣지 않는다.
+        아주 옅은 선 하나를 얹어 경계를 표시한다. neutral-90(#F3F3F3)은 흰 배경에서
+        거의 보이지 않아 한 단계 진한 neutral-85(#EFEFEF)를 쓴다 — 어두운 섹션은
+        배경이 이미 다르므로 선을 넣지 않는다.
       */
       dark
         ? 'bg-neutral-0 text-static-100'
-        : 'border-neutral-90 border-t bg-white',
+        : 'border-neutral-85 border-t bg-white',
     )}
   >
     <div className="mw-1180 flex flex-col gap-6 px-5 md:gap-8">
