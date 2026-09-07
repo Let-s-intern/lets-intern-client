@@ -257,4 +257,42 @@ describe('1대1 행 — 캘린더와 같은 시각을 보여 준다', () => {
     expect(row.startTime).toBe(bar.liveMentoring?.startTime);
     expect(row.endTime).toBe(bar.liveMentoring?.endTime);
   });
+
+  /*
+    확정 슬롯이 없는 신청은 서버가 예약 시각을 null 로 내린다. 스키마가 non-null 을
+    기대하는 동안에는 그 한 건 때문에 배열 파싱이 통째로 깨져 목록이 전부 비었다
+    (LC-3257). 파싱을 열고 나면 이 값들이 화면까지 흘러오므로 여기서 막는다.
+  */
+  describe('예약 시각이 없는 신청', () => {
+    const noSchedule = () =>
+      makeReservation({ reservationStartAt: null, reservationEndAt: null });
+
+    it('목록에서 빼지 않는다 — 결제는 됐고 일정만 안 잡힌 상태다', () => {
+      const rows = renderRows([noSchedule()]);
+      expect(rows).toHaveLength(1);
+    });
+
+    it('일정 자리에 사유를 적는다', () => {
+      const [row] = renderRows([noSchedule()]);
+      expect(row.scheduleLabel).toBe('일정 미정');
+      expect(row.statusLabel).toBe('일정 미정');
+    });
+
+    // 시각이 없으면 진행 여부를 시각으로 가를 수 없다. 단정하지 않는다.
+    it('진행 중·종료로 단정하지 않는다', () => {
+      const [row] = renderRows([noSchedule()]);
+      expect(row.statusLabel).not.toBe('진행 중');
+      expect(row.statusLabel).not.toBe('종료');
+    });
+
+    // 캘린더는 날짜에 바를 놓는 화면이라 놓을 자리가 없다.
+    it('캘린더 바는 만들지 않는다', () => {
+      expect(deriveLiveMentoringBars([noSchedule()])).toHaveLength(0);
+    });
+
+    it('일정이 있는 건과 섞여도 있는 건만 캘린더에 놓는다', () => {
+      const bars = deriveLiveMentoringBars([noSchedule(), makeReservation()]);
+      expect(bars).toHaveLength(1);
+    });
+  });
 });

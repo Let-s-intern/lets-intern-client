@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import DetailSettingsLockIcon from '@/pages/live-mentoring/ui/DetailSettingsLockIcon';
 import LiveMentoringOpenBadge from '@/pages/live-mentoring/ui/LiveMentoringOpenBadge';
 import NotificationBell from '@/pages/notification/ui/NotificationBell';
 
@@ -8,8 +7,8 @@ interface NavLeaf {
   type: 'leaf';
   name: string;
   url: string;
-  /** true 면 항목 이름 옆에 "오픈 중이라 수정 잠김" 아이콘을 붙인다. */
-  showDetailSettingsLock?: boolean;
+  /** true 면 항목 이름 옆에 1대1 라이브 멘토링 오픈 상태 배지를 붙인다. */
+  showLiveMentoringStatus?: boolean;
 }
 
 interface NavGroup {
@@ -35,21 +34,13 @@ const navItems: NavItem[] = [
   // 멘티가 신청한 라이브 피드백 예약 내역 페이지(/feedback/live-reservation).
   // 사이드바 진입점만 가림 — 라우트/페이지는 유지, 추후 복원 시 주석 해제.
   // { type: 'leaf', name: '예약 현황', url: '/feedback/live-reservation' },
+  // 오픈 설정과 상세 페이지 설정이 한 화면의 스텝으로 합쳐지면서(LC-3264)
+  // 하위 항목이 사라졌다. 오픈 중 배지는 그대로 이 항목 옆에 붙는다.
   {
-    type: 'group',
+    type: 'leaf',
     name: '1대1 라이브 멘토링',
-    matchPrefix: '/live-mentoring',
-    // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 드롭다운으로 접어둘 필요가 없다.
+    url: '/live-mentoring/settings',
     showLiveMentoringStatus: true,
-    children: [
-      { type: 'leaf', name: '오픈 설정', url: '/live-mentoring/open-settings' },
-      {
-        type: 'leaf',
-        name: '상세 페이지 설정',
-        url: '/live-mentoring/detail-settings',
-        showDetailSettingsLock: true,
-      },
-    ],
   },
   // [임시 숨김] 참여중인 챌린지 (dusvlf111, 2026-07-17)
   // 멘토가 참여 중인 챌린지 목록 페이지(/challenges).
@@ -154,7 +145,13 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                             : 'text-neutral-40 font-medium'
                         }`}
                       >
-                        {item.name}
+                        {/* 오픈 중이 아니면 배지 컴포넌트가 스스로 null 을 낸다. */}
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <span className="truncate">{item.name}</span>
+                          {item.showLiveMentoringStatus && (
+                            <LiveMentoringOpenBadge />
+                          )}
+                        </span>
                       </Link>
                     </li>
                   );
@@ -221,11 +218,6 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                                 }`}
                               >
                                 <span className="truncate">{child.name}</span>
-                                {child.showDetailSettingsLock && (
-                                  <DetailSettingsLockIcon
-                                    active={childActive}
-                                  />
-                                )}
                               </Link>
                             </li>
                           );

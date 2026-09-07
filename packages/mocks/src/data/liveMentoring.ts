@@ -1014,8 +1014,7 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   introduction: mySeed.introduction,
   careers: MY_SETTINGS_CAREERS,
   title: '자소서 실전 첨삭 멘토링',
-  // 목 기본값: 초안(편집 가능). 저장 → 개설 → 잠금 흐름을 확인할 수 있다.
-  status: 'DRAFT',
+  status: 'APPROVED',
   categories: categoriesFor(mySeed),
   // 개설 전이라 진행시간은 아직 서버에 없다.
   durations: [],

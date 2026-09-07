@@ -65,36 +65,51 @@ function toTime(iso: string): string {
 export function deriveLiveMentoringBars(
   reservations: LiveMentoringReservation[],
 ): PeriodBarData[] {
-  return reservations.map((reservation) => {
-    const date = toDate(reservation.reservationStartAt);
-    return {
-      barType: 'live-mentoring' as const,
-      challengeId: LIVE_MENTORING_CHALLENGE_ID,
-      // applicationId 는 양수라 서면 missionId 와 겹칠 수 있어 음수 대역으로 민다.
-      missionId: -(4_000_000 + reservation.applicationId),
-      challengeTitle: LIVE_MENTORING_TITLE,
-      // 1대1에 회차 개념이 없다. 타입을 만족시키는 자리값이고 화면에 쓰지 않는다.
-      th: 1,
-      startDate: date,
-      endDate: toDate(reservation.reservationEndAt),
-      feedbackStartDate: date,
-      feedbackDeadline: date,
-      // 제출·피드백 집계가 없는 단위라 전부 0이다. 주간 요약도 이 바를 세지 않는다.
-      submittedCount: 0,
-      notSubmittedCount: 0,
-      waitingCount: 0,
-      inProgressCount: 0,
-      completedCount: 0,
-      liveMentoring: {
-        applicationId: reservation.applicationId,
-        menteeName: reservation.menteeName,
-        productName: reservation.productName,
-        startTime: toTime(reservation.reservationStartAt),
-        endTime: toTime(reservation.reservationEndAt),
-        durationMinutes: reservation.durationMinutes,
-        questionWritten: reservation.questionWritten,
-        attachmentSubmitted: reservation.attachmentSubmitted,
-      },
-    };
-  });
+  /*
+    확정 슬롯이 없는 예약은 시각이 null 이다. 캘린더는 날짜에 바를 놓는 화면이라
+    놓을 자리가 없다 — 여기서만 뺀다. 피드백 내역 목록에는 "일정 미정" 으로 남는다.
+  */
+  return reservations
+    .filter(
+      (
+        reservation,
+      ): reservation is LiveMentoringReservation & {
+        reservationStartAt: string;
+        reservationEndAt: string;
+      } =>
+        reservation.reservationStartAt !== null &&
+        reservation.reservationEndAt !== null,
+    )
+    .map((reservation) => {
+      const date = toDate(reservation.reservationStartAt);
+      return {
+        barType: 'live-mentoring' as const,
+        challengeId: LIVE_MENTORING_CHALLENGE_ID,
+        // applicationId 는 양수라 서면 missionId 와 겹칠 수 있어 음수 대역으로 민다.
+        missionId: -(4_000_000 + reservation.applicationId),
+        challengeTitle: LIVE_MENTORING_TITLE,
+        // 1대1에 회차 개념이 없다. 타입을 만족시키는 자리값이고 화면에 쓰지 않는다.
+        th: 1,
+        startDate: date,
+        endDate: toDate(reservation.reservationEndAt),
+        feedbackStartDate: date,
+        feedbackDeadline: date,
+        // 제출·피드백 집계가 없는 단위라 전부 0이다. 주간 요약도 이 바를 세지 않는다.
+        submittedCount: 0,
+        notSubmittedCount: 0,
+        waitingCount: 0,
+        inProgressCount: 0,
+        completedCount: 0,
+        liveMentoring: {
+          applicationId: reservation.applicationId,
+          menteeName: reservation.menteeName,
+          productName: reservation.productName,
+          startTime: toTime(reservation.reservationStartAt),
+          endTime: toTime(reservation.reservationEndAt),
+          durationMinutes: reservation.durationMinutes,
+          questionWritten: reservation.questionWritten,
+          attachmentSubmitted: reservation.attachmentSubmitted,
+        },
+      };
+    });
 }

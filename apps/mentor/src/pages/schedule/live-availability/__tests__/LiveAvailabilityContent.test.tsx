@@ -64,24 +64,20 @@ describe('LiveAvailabilityContent', () => {
     const pastCells = () => screen.getAllByTitle('이미 지난 시간입니다');
 
     /*
-      회색은 범례의 "예약 불가능" 과 같은 값을 쓴다. 지난 시간도 같은 계열의 불가
-      상태라 새 범례 항목을 만들지 않고, 사유는 셀 글자가 말한다 — 다른 불가 셀
-      (예약 완료·다른 챌린지)도 모두 사유를 글자로 적고 있다.
+      지난 칸은 이미 열려 있어도 회색 하나로 통일한다. 예전에는 열려 있던 것만 파란
+      "예약 가능" 으로 남겨 해제할 수 있게 뒀는데, 지난 시간에 예약을 받는 것처럼
+      읽혔다. 지금보다 과거에 예약이 잡힐 일이 없으니 고칠 이유도 없다(LC-3259).
     */
-    it('지난 칸은 예약 불가능 회색에 사유를 적어 그린다', () => {
+    it('지난 칸은 글자 없이 예약 불가능 회색으로 그린다', () => {
       render(<LiveAvailabilityContent {...baseProps} />);
       expect(pastCells().length).toBeGreaterThan(0);
-      expect(pastCells()[0]).toHaveTextContent('지난 시간');
+      expect(pastCells()[0]).toHaveTextContent('');
       expect(pastCells()[0].className).toContain('bg-neutral-90');
     });
 
-    it('범례에는 항목을 더하지 않는다', () => {
+    it('화면 어디에도 "지난 시간" 이라는 글자를 쓰지 않는다', () => {
       render(<LiveAvailabilityContent {...baseProps} />);
-      // 셀에는 title 이 붙는다. title 없는 "지난 시간" 이 있으면 범례에 샌 것이다.
-      const outsideCells = screen
-        .getAllByText('지난 시간')
-        .filter((el) => !el.hasAttribute('title'));
-      expect(outsideCells).toHaveLength(0);
+      expect(screen.queryAllByText('지난 시간')).toHaveLength(0);
     });
 
     it('지난 칸은 눌러도 선택되지 않는다', () => {
@@ -98,10 +94,10 @@ describe('LiveAvailabilityContent', () => {
     });
 
     /*
-      전부 막으면 예전에 잘못 연 슬롯을 화면에서 지울 방법이 사라진다.
-      이 티켓이 고치려는 것이 바로 그 슬롯이 쌓이는 문제다.
+      이미 열려 있던 지난 슬롯도 예외가 아니다. 파란 셀로 남겨 두면 "지난 시간인데
+      예약을 받는다" 로 읽힌다.
     */
-    it('이미 열어 둔 지난 슬롯은 남겨서 지울 수 있게 한다', () => {
+    it('이미 열어 둔 지난 슬롯도 회색으로 통일하고 손대지 못하게 한다', () => {
       render(
         <LiveAvailabilityContent
           {...baseProps}
@@ -109,11 +105,12 @@ describe('LiveAvailabilityContent', () => {
         />,
       );
 
-      const opened = screen.getAllByTitle(
-        '이미 지난 시간입니다. 눌러서 지울 수 있어요.',
-      );
-      expect(opened.length).toBe(1);
-      expect(opened[0].tagName).toBe('BUTTON');
+      // 범례에도 "예약 가능" 이 있으므로 셀만 센다 — 셀은 grid 안에 있다.
+      const openLabelsInGrid = screen
+        .queryAllByText('예약 가능')
+        .filter((el) => el.closest('button') !== null);
+      expect(openLabelsInGrid).toHaveLength(0);
+      expect(pastCells().every((cell) => cell.tagName === 'DIV')).toBe(true);
     });
   });
 

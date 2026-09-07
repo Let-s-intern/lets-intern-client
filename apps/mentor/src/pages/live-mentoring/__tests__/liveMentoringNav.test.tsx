@@ -7,11 +7,8 @@ vi.mock('@/pages/notification/ui/NotificationBell', () => ({
   default: () => <div data-testid="notification-bell" />,
 }));
 
-// 오픈 상태 배지·잠금 아이콘도 react-query 를 쓰므로 같은 이유로 모킹한다(사이드바는 provider 없이 렌더).
+// 오픈 상태 배지도 react-query 를 쓰므로 같은 이유로 모킹한다(사이드바는 provider 없이 렌더).
 vi.mock('@/pages/live-mentoring/ui/LiveMentoringOpenBadge', () => ({
-  default: () => null,
-}));
-vi.mock('@/pages/live-mentoring/ui/DetailSettingsLockIcon', () => ({
   default: () => null,
 }));
 
@@ -43,40 +40,28 @@ const renderSidebar = (path: string) =>
     </MemoryRouter>,
   );
 
-describe('1대1 라이브 멘토링 사이드바 그룹', () => {
-  // 하위 항목이 2개뿐이라(오픈 현황·정산 현황 폐지) 더 이상 접이식이 아니다 —
-  // 항상 펼쳐진 채로 보인다.
-  it('접힘 없이 하위 항목 2개가 항상 노출된다', () => {
+describe('1대1 라이브 멘토링 사이드바 항목', () => {
+  /*
+    오픈 설정과 상세 페이지 설정이 한 화면의 스텝으로 합쳐지면서(LC-3264) 하위
+    항목이 사라지고 최상위 링크 하나가 됐다.
+  */
+  it('하위 항목 없이 최상위 링크 하나로 보인다', () => {
     renderSidebar('/');
 
-    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
-    expect(screen.getByText('오픈 설정')).toBeInTheDocument();
-    expect(screen.getByText('상세 페이지 설정')).toBeInTheDocument();
-    // 그룹 라벨은 더 이상 토글 버튼이 아니다.
+    expect(
+      screen.getByRole('link', { name: '1대1 라이브 멘토링' }),
+    ).toHaveAttribute('href', '/live-mentoring/settings');
+    expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
+    expect(screen.queryByText('상세 페이지 설정')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /1대1 라이브 멘토링/ }),
     ).not.toBeInTheDocument();
-    // 오픈 현황·정산 현황은 폐지됐다 — 오픈/닫기는 오픈 설정 상단에서 바로 한다.
-    expect(screen.queryByText('정산 현황')).not.toBeInTheDocument();
-    expect(screen.queryByText('오픈 현황')).not.toBeInTheDocument();
   });
 
-  it('하위 항목의 url 매핑이 정확하다', () => {
-    renderSidebar('/');
+  it('설정 화면에 들어가면 활성 표시된다', () => {
+    renderSidebar('/live-mentoring/settings');
 
-    const cases: [string, string][] = [
-      ['오픈 설정', '/live-mentoring/open-settings'],
-      ['상세 페이지 설정', '/live-mentoring/detail-settings'],
-    ];
-    for (const [name, url] of cases) {
-      expect(screen.getByRole('link', { name })).toHaveAttribute('href', url);
-    }
-  });
-
-  it('하위 경로 진입 시 해당 항목이 활성 표시된다', () => {
-    renderSidebar('/live-mentoring/open-settings');
-
-    const link = screen.getByRole('link', { name: '오픈 설정' });
+    const link = screen.getByRole('link', { name: '1대1 라이브 멘토링' });
     expect(link).toHaveClass('text-primary');
     expect(link).toHaveClass('font-semibold');
   });

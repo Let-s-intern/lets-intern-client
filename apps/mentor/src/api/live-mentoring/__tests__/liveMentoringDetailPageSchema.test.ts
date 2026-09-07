@@ -21,7 +21,6 @@ const DETAIL_PAGE_RESPONSE = {
     liveMentoringId: 1,
     title: '자소서 실전 첨삭 멘토링',
     status: 'DRAFT',
-    editable: true,
     categories: ['PERSONAL_STATEMENT'],
   },
   currentOpening: null,
@@ -175,27 +174,7 @@ describe('상세 페이지 저장 payload — 서버 요청 DTO 폭', () => {
   });
 });
 
-describe('상세 페이지 조회 응답 — 잠금 판정', () => {
-  it('mentoring.editable 을 파싱한다 — 저장 가능 여부의 근거다', () => {
-    const parsed = liveMentoringDetailPageSchema.parse(DETAIL_PAGE_RESPONSE);
-
-    expect(parsed.mentoring.editable).toBe(true);
-    expect(parsed.mentoring.status).toBe('DRAFT');
-  });
-
-  it('오픈 중이면 서버가 editable=false 로 내려준다', () => {
-    const parsed = liveMentoringDetailPageSchema.parse({
-      ...DETAIL_PAGE_RESPONSE,
-      mentoring: {
-        ...DETAIL_PAGE_RESPONSE.mentoring,
-        status: 'APPROVED',
-        editable: false,
-      },
-    });
-
-    expect(parsed.mentoring.editable).toBe(false);
-  });
-
+describe('상세 페이지 조회 응답', () => {
   it('저장 payload 에는 mentoring 이 없다', () => {
     const parsed = liveMentoringDetailPageSchema.parse(DETAIL_PAGE_RESPONSE);
 

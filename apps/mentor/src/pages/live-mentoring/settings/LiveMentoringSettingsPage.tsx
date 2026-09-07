@@ -2,10 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
-  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useLiveMentoringTemplateQuery,
-  useStartEditLiveMentoringMutation,
   useUpdateLiveMentoringTemplateMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import {
@@ -16,32 +14,37 @@ import {
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { useUserQuery } from '@/api/user/user';
+import { publicDetailUrl, toYoutubeEmbedUrl } from '../constants';
+import OpenSettingsSection from '../open-settings/OpenSettingsSection';
 import {
-  START_EDIT_SUCCESS_DETAIL,
-  publicDetailUrl,
-  toYoutubeEmbedUrl,
-} from '../constants';
-// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
-//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
-import { DETAIL_TABS, type DetailTabId, isDetailTabComplete } from './tabs';
+  DETAIL_TABS,
+  OPEN_TAB_ID,
+  type DetailTabId,
+  type SettingsTabId,
+  isDetailTabComplete,
+} from './tabs';
+import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import DetailSaveBar from './ui/DetailSaveBar';
-import DetailTabs from './ui/DetailTabs';
+import SettingsTabs from './ui/SettingsTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
 
-const DetailSettingsPage = () => {
+/**
+ * 1대1 라이브 멘토링 설정 — 오픈 설정과 상세 페이지 설정을 한 화면에 합쳤다(LC-3264).
+ *
+ * 첫 스텝이 오픈 설정이고 나머지가 상세 페이지 섹션이다. 두 화면은 저장 대상도
+ * 저장 버튼도 다르므로 본문과 하단 바를 통째로 갈아끼운다 — 스텝마다 자기 하단
+ * 바를 그리고, 동시에 두 개가 뜨지 않는다.
+ */
+const LiveMentoringSettingsPage = () => {
   const navigate = useNavigate();
-  const { data, isError } = useLiveMentoringTemplateQuery();
+  const { data, isError, error } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
   // "지금 열려 있는지"는 상품 상태가 아니라 활성 개설의 존재로 판단한다.
-  const { data: openings } = useLiveMentoringOpenStatusQuery();
   // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
   const { data: user } = useUserQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
-  const { mutate: startEdit, isPending: isStartingEdit } =
-    useStartEditLiveMentoringMutation();
   const { alertProps, showAlert } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringDetailPage | null>(
@@ -51,19 +54,11 @@ const DetailSettingsPage = () => {
   const [originalTemplate, setOriginalTemplate] =
     useState<LiveMentoringDetailPage | null>(null);
   /**
-   * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐
-   * 낡은 `APPROVED` 로 남는다. 그 사이에도 곧바로 편집으로 들어가야 하므로
-   * `isLocked` 를 잠시 무시하는 용도로만 쓴다 — 그 밖의 경우 편집 가능 여부는
-   * 오직 `!isLocked` 로만 정해진다(별도의 읽기/쓰기 모드 토글은 없다).
-   */
-  const [isEditing, setIsEditing] = useState(false);
-
-  /**
    * 열려 있는 탭. URL 이 아니라 로컬 상태로 둔다 — 상세 페이지 설정은 한 화면에서
    * 끝나는 편집이고, 탭마다 주소를 만들면 저장하지 않은 변경을 들고 뒤로가기를
    * 하는 경로가 새로 생긴다(이탈 경고와 충돌).
    */
-  const [activeTab, setActiveTab] = useState<DetailTabId>('hero');
+  const [activeTab, setActiveTab] = useState<SettingsTabId>(OPEN_TAB_ID);
 
   // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
   const [navGuard, setNavGuard] = useState<{
@@ -72,30 +67,6 @@ const DetailSettingsPage = () => {
     pendingAction: 'push' | 'back' | null;
   }>({ isOpen: false, pendingHref: null, pendingAction: null });
   const isNavigatingRef = useRef(false);
-
-  /**
-   * 편집 가능 여부는 **서버가 내려준 `mentoring.editable` 하나로** 정한다
-   * (`status == DRAFT && !hasActiveOpening()`). 프론트가 상태·개설 이력에서 같은
-   * 조건을 다시 계산하면 서버와 어긋나는 날이 오고, 그때 멘토는 폼을 다 채우고
-   * 저장을 눌러야 거절당한다.
-   *
-   * 다만 "수정할 수 없다"로 끝내면 멘토가 막힌다. 오픈이 닫혀 있으면 이 화면에서
-   * 바로 초안으로 되돌려(`start-edit`) 편집으로 넘어갈 수 있게 한다.
-   */
-  const status = settings?.status ?? null;
-  const editable = template?.mentoring.editable ?? false;
-  const canEdit = editable || isEditing;
-  const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
-  /** 승인 상태에서 오픈이 닫혀 있으면 여기서 바로 상세 수정을 시작할 수 있다. */
-  const canStartEdit = status === 'APPROVED' && !currentOpening;
-  /**
-   * 수정 불가 안내 — 왜 못 고치는지가 상황마다 달라 문구를 나눈다.
-   * 오픈 중이 아닌 잠금(승인·비활성 상태)에서 "수정을 시작하라"고 하면 그 버튼이
-   * 없는 경우에 거짓말이 되므로, 이유를 아는 경우에만 이유를 말한다.
-   */
-  const lockedMessage = currentOpening
-    ? '오픈 중에는 상세 페이지를 수정할 수 없어요.'
-    : '지금은 상세 페이지를 수정할 수 없어요.';
 
   /**
    * 완료 표시가 붙는 탭. 탭을 옮길 때마다가 아니라 **템플릿이 바뀔 때만** 다시 센다 —
@@ -123,7 +94,6 @@ const DetailSettingsPage = () => {
 
   // 저장 버튼 활성화·이탈 경고 판정 기준. 구조가 깊어 얕은 비교로는 못 잡아 직렬화로 비교한다.
   const isDirty =
-    canEdit &&
     template !== null &&
     originalTemplate !== null &&
     JSON.stringify(template) !== JSON.stringify(originalTemplate);
@@ -192,32 +162,14 @@ const DetailSettingsPage = () => {
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-        내 멘토링 상세 페이지 관리
+        1대1 라이브 멘토링 설정
       </h1>
       <p className="text-xsmall14 text-neutral-40">
-        멘티에게 보여줄 멘토링 정보를 작성하고 공개 여부를 설정할 수 있어요.
+        오픈 설정에서 타이틀·타입·진행시간과 일정을 정하고, 이어지는 스텝에서
+        멘티에게 보여줄 상세 페이지를 작성하세요.
       </p>
     </header>
   );
-
-  // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 미완성이라 목 없이는 조회가 실패한다.
-  //    백엔드 연동 후 이 분기를 통째로 제거할 것(제거하면 아래 로딩 분기만 남는다).
-  if (isError) {
-    return (
-      <div className="flex flex-col gap-6 pb-24">
-        {header}
-        <UnderDevelopmentNotice feature="상세 페이지 설정" />
-      </div>
-    );
-  }
-
-  if (!template) {
-    return (
-      <div className="text-xsmall14 text-neutral-40 px-1 py-10">
-        템플릿을 불러오는 중...
-      </div>
-    );
-  }
 
   const patch = (partial: Partial<LiveMentoringTemplate>) =>
     setTemplate((prev) => (prev ? { ...prev, ...partial } : prev));
@@ -230,6 +182,7 @@ const DetailSettingsPage = () => {
    * 드러나지 않아 원인을 찾을 수 없다. 보내기 전에 정규화하고, 못 고치면 여기서 막는다.
    */
   const handleSave = () => {
+    if (!template) return;
     let payload = template;
 
     if (template.video.videoUrl) {
@@ -321,30 +274,6 @@ const DetailSettingsPage = () => {
     });
   };
 
-  /**
-   * 상세 수정 시작 — 서버가 상품을 편집 가능 상태로 되돌린다.
-   * 성공하면 곧바로 편집 모드로 넣는다. 이 버튼을 누른 의도가 "고치겠다"이므로
-   * 한 번 더 "수정하기"를 누르게 하지 않는다.
-   *
-   * 확인 모달 없이 바로 실행한다 — 저장 버튼이 실제로 뭔가 바꾸기 전엔 비활성이고,
-   * 나가려 하면 이탈 경고가 뜨므로(아래) "누르면 무슨 일이 벌어지는지" 미리 설명하는
-   * 별도 단계 없이도 실수로 뭔가 잃을 위험이 없다.
-   */
-  const handleStartEdit = () => {
-    if (isStartingEdit) return;
-    startEdit(undefined, {
-      onSuccess: () => {
-        setIsEditing(true);
-        showAlert({ ...START_EDIT_SUCCESS_DETAIL, variant: 'success' });
-      },
-      onError: () =>
-        showAlert({
-          title: '상세 수정 준비에 실패했습니다.',
-          variant: 'error',
-        }),
-    });
-  };
-
   /** 편집 취소 — 저장된 기준선으로 되돌린다(로컬 수정분 폐기). */
   const handleCancel = () => {
     if (originalTemplate) setTemplate(originalTemplate);
@@ -355,101 +284,74 @@ const DetailSettingsPage = () => {
       {header}
 
       {/*
-        상태 배너 — 오픈 종료됨(승인 + 활성 개설 없음)일 때만 상단에 둔다.
-        오픈 중일 때는 하단 플로팅 영역으로 옮긴다(아래) — "오픈 설정으로 이동"이
-        이 화면에서 할 수 있는 주요 행동이라, 다른 화면 액션과 같은 자리에 둔다.
+        스텝 줄은 grid **바깥**이다. 시안에서 탭은 편집 카드와 미리보기를 가로지르는
+        전체 폭을 쓴다 — 편집 카드 폭에 가두면 좁은 칸에서 밀린다.
       */}
-      {canStartEdit && (
-        <div
-          role="status"
-          className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-semibold text-gray-700">
-              오픈 종료됨
-            </span>
-            <p className="text-xs text-gray-600">
-              수정을 시작하면 오픈이 잠시 멈춰요. 옆의 "수정"을 누르면 바로
-              시작할 수 있습니다.
-            </p>
-          </div>
-          {/* 하단 저장 바가 자리를 쓰므로 편집 시작 버튼은 이 안내 옆에 둔다. */}
-          {canEdit ? null : (
-            <button
-              type="button"
-              onClick={handleStartEdit}
-              disabled={isStartingEdit}
-              className="bg-primary hover:bg-primary-hover shrink-0 rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isStartingEdit ? '처리 중...' : '수정'}
-            </button>
-          )}
-        </div>
-      )}
-
-      {/*
-        탭 줄은 grid **바깥**이다. 시안에서 탭은 편집 카드와 미리보기를 가로지르는
-        전체 폭을 쓴다 — 편집 카드 폭에 가두면 6개가 좁은 칸에서 밀린다.
-
-        잠금(fieldset) 바깥이기도 하다. 오픈 중이라 편집이 막혀도 탭 이동은
-        계속 동작해야 한다.
-      */}
-      <DetailTabs
+      <SettingsTabs
         activeTab={activeTab}
         completedTabs={completedTabs}
         onChange={setActiveTab}
       />
 
-      {/*
+      {activeTab === OPEN_TAB_ID ? (
+        <OpenSettingsSection />
+      ) : isError ? (
+        // 상세 스텝 본문만 대체한다. 오픈 설정 스텝은 이 실패와 무관하게 열려야
+        // 하므로 페이지 전체를 조기 반환하지 않는다.
+        <DetailLoadFailedNotice
+          error={error}
+          onGoToOpenStep={() => setActiveTab(OPEN_TAB_ID)}
+        />
+      ) : !template ? (
+        <div className="text-xsmall14 text-neutral-40 px-1 py-10">
+          템플릿을 불러오는 중...
+        </div>
+      ) : (
+        <>
+          {/*
         시안 비율은 편집 카드 : 미리보기 ≈ 1.93 : 1 이다. 고정 폭을 주면 넓은 화면에서
         미리보기만 상대적으로 좁아져 모바일 뷰가 제 크기로 안 보인다.
       */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
-        {/* 읽기 모드에서는 입력만 잠근다 — 내용은 그대로 읽을 수 있어야 한다. */}
-        <div className="flex min-w-0 flex-col gap-4">
-          <fieldset
-            disabled={!canEdit}
-            className="m-0 min-w-0 border-0 p-0 disabled:opacity-100"
-          >
-            <TemplateEditForm
-              template={template}
-              activeTab={activeTab}
-              onChange={patch}
-            />
-          </fieldset>
-        </div>
-        {/*
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
+            <div className="flex min-w-0 flex-col gap-4">
+              <fieldset className="m-0 min-w-0 border-0 p-0 disabled:opacity-100">
+                <TemplateEditForm
+                  template={template}
+                  activeTab={activeTab}
+                  onChange={patch}
+                />
+              </fieldset>
+            </div>
+            {/*
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
           상세 페이지 전체를 축소해 담으므로 화면보다 길어질 수 있어,
           자체 스크롤을 줘야 sticky 가 실제로 "따라오는" 것처럼 동작한다.
         */}
-        <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
-          <TemplatePreview
-            template={template}
-            activeTab={activeTab}
-            nickname={settings?.nickname ?? '멘토'}
-          />
-        </div>
-      </div>
+            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
+              <TemplatePreview
+                template={template}
+                activeTab={activeTab}
+                nickname={settings?.nickname ?? '멘토'}
+              />
+            </div>
+          </div>
 
-      {/*
+          {/*
         하단 고정 저장 바 (PRD §7).
 
-        수정 불가(`editable === false`)일 때도 같은 자리에 남는다 — 왜 저장할 수
-        없는지와 공개 페이지로 가는 길을 여기서 알린다. 입력 잠금은 위 fieldset 이
-        하고, 이 바는 탭 이동·미리보기를 건드리지 않는다.
+        저장·되돌리기와 공개 페이지로 가는 길을 여기 한 자리에 모은다.
       */}
-      <DetailSaveBar
-        editable={canEdit}
-        lockedMessage={lockedMessage}
-        publicDetailHref={
-          user?.userId == null ? null : publicDetailUrl(user.userId)
-        }
-        isDirty={isDirty}
-        isSaving={isPending}
-        onSave={handleSave}
-        onRevert={handleCancel}
-      />
+          <DetailSaveBar
+            publicDetailHref={
+              user?.userId == null ? null : publicDetailUrl(user.userId)
+            }
+            isDirty={isDirty}
+            isSaving={isPending}
+            onSave={handleSave}
+            onRevert={handleCancel}
+          />
+        </>
+      )}
 
       <MentorAlertModal {...alertProps} />
 
@@ -468,4 +370,4 @@ const DetailSettingsPage = () => {
   );
 };
 
-export default DetailSettingsPage;
+export default LiveMentoringSettingsPage;

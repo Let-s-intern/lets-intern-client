@@ -36,11 +36,20 @@ const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as cons
 const pad2 = (value: number): string => String(value).padStart(2, '0');
 
 /** 예약 일시 한 줄 표기 (예: `2026.08.30 (일) 10:00 ~ 11:00`). */
-function formatReservationPeriod(startAt: string, endAt: string): string {
-  const start = new Date(startAt);
-  if (Number.isNaN(start.getTime())) return '';
+/*
+  예약 시각은 nullable 이다 — 확정 슬롯이 없는 신청에서 서버가 null 을 내린다.
+  빈 문자열로 두면 라벨만 남고 값이 사라져 화면이 깨진 것처럼 보이므로 사유를 적는다.
+ */
+function formatReservationPeriod(
+  startAt: string | null,
+  endAt: string | null,
+): string {
+  if (startAt === null) return '일정 미정';
 
-  const end = new Date(endAt);
+  const start = new Date(startAt);
+  if (Number.isNaN(start.getTime())) return '일정 미정';
+
+  const end = endAt === null ? new Date(NaN) : new Date(endAt);
   const date = `${start.getFullYear()}.${pad2(start.getMonth() + 1)}.${pad2(
     start.getDate(),
   )}`;
@@ -560,8 +569,8 @@ const SubmissionModalBody = ({
           meetingUrl={data.meetingUrl ?? null}
           menteeName={data.menteeName}
           spaceName={data.productName}
-          startDate={data.reservationStartAt}
-          endDate={data.reservationEndAt}
+          startDate={data.reservationStartAt ?? undefined}
+          endDate={data.reservationEndAt ?? undefined}
           isMentor
           menteeStatus={data.menteeStatus ?? undefined}
           onSaveAttendance={(status) =>

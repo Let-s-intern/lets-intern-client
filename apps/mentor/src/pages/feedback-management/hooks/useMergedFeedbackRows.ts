@@ -266,6 +266,17 @@ function resolveLiveMentoringRowStatus(
   reservation: LiveMentoringReservation,
   now: Date,
 ): { statusLabel: string; statusTone: FeedbackRow['statusTone'] } {
+  /*
+    확정 슬롯이 없으면 예약 시각이 null 이다. 시각으로 가를 근거가 없으므로 진행
+    여부를 단정하지 않고 일정이 아직 없다는 사실만 적는다.
+  */
+  if (
+    reservation.reservationStartAt === null ||
+    reservation.reservationEndAt === null
+  ) {
+    return { statusLabel: '일정 미정', statusTone: 'liveWaiting' };
+  }
+
   const startMs = new Date(reservation.reservationStartAt).getTime();
   const endMs = new Date(reservation.reservationEndAt).getTime();
   const nowMs = now.getTime();
@@ -451,9 +462,19 @@ export function useMergedFeedbackRows(
     // 챌린지에 속하지 않아 스키마가 그대로 맞지 않는다. 맞지 않는 컬럼은 고정 문구로
     // 채우고(빈 칸 금지), 출석처럼 근거가 없는 컬럼만 null 로 둔다.
     for (const reservation of liveMentoringReservations ?? []) {
-      const sessionDate = toRowDate(reservation.reservationStartAt);
-      const startTime = toRowTime(reservation.reservationStartAt);
-      const endTime = toRowTime(reservation.reservationEndAt);
+      /*
+        예약 시각이 없는 신청도 목록에 남긴다. 빼 버리면 멘토는 그 신청이 있다는
+        사실조차 모른다 — 결제는 됐고 일정만 안 잡힌 상태다.
+      */
+      const sessionDate = reservation.reservationStartAt
+        ? toRowDate(reservation.reservationStartAt)
+        : '';
+      const startTime = reservation.reservationStartAt
+        ? toRowTime(reservation.reservationStartAt)
+        : '';
+      const endTime = reservation.reservationEndAt
+        ? toRowTime(reservation.reservationEndAt)
+        : '';
       const status = resolveLiveMentoringRowStatus(reservation, now);
 
       rows.push({
@@ -472,7 +493,9 @@ export function useMergedFeedbackRows(
         mentorParticipation: null,
         challengeTitle: LIVE_MENTORING_CHALLENGE_LABEL,
         thLabel: LIVE_MENTORING_TH_LABEL,
-        scheduleLabel: formatLiveSchedule(sessionDate, startTime, endTime),
+        scheduleLabel: sessionDate
+          ? formatLiveSchedule(sessionDate, startTime, endTime)
+          : '일정 미정',
         menteeNameLabel: reservation.menteeName,
         // 상세에서 멘티 질문·전달 파일을 연다.
         canOpenDetail: true,

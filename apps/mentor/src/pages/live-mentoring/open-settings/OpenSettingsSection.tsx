@@ -13,7 +13,6 @@ import {
   useCreateLiveMentoringOpeningMutation,
   useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
-  useStartEditLiveMentoringMutation,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type {
@@ -27,7 +26,6 @@ import {
   CATEGORY_LABELS,
   FLOATING_BAR_BODY,
   FLOATING_BAR_WRAP,
-  START_EDIT_SUCCESS_SETTINGS,
   formatCareerPeriod,
   publicDetailUrl,
   formatPrice,
@@ -84,7 +82,11 @@ const stateConflictAlert = (error: unknown) => {
   return null;
 };
 
-const OpenSettingsPage = () => {
+/**
+ * 오픈 설정 — 설정 화면의 첫 스텝 본문이다(LC-3264). 제목과 스텝 줄은
+ * `LiveMentoringSettingsPage` 가 그리므로 여기서는 본문만 그린다.
+ */
+const OpenSettingsSection = () => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
   const { data: openings } = useLiveMentoringOpenStatusQuery();
@@ -94,8 +96,6 @@ const OpenSettingsPage = () => {
     useUpdateLiveMentoringSettingsMutation();
   const { mutate: openMentoring, isPending: isOpening } =
     useCreateLiveMentoringOpeningMutation();
-  const { mutate: startEdit, isPending: isStartingEdit } =
-    useStartEditLiveMentoringMutation();
   const { mutate: closeOpening, isPending: isClosingOpening } =
     useCloseLiveMentoringOpeningMutation();
   const {
@@ -117,27 +117,13 @@ const OpenSettingsPage = () => {
    * 어느 쪽을 실행할지 들고 있을 이유도 없어졌다.
    */
   const [isOpenConfirmVisible, setIsOpenConfirmVisible] = useState(false);
-  /**
-   * "수정" 성공 직후, 설정 쿼리가 아직 리페치 전이라 `status` 가 잠깐 낡은
-   * `APPROVED` 로 남는다. 그 사이에도 곧바로 초안 모드(저장·제출)로 넘어가야
-   * 하므로 그 순간만 이 값으로 재개설 지름길을 건너뛴다.
-   */
-  const [isEditingOverride, setIsEditingOverride] = useState(false);
-  /**
-   * 제출·재개설 성공 직후, 상품은 이미 서버에서 잠겼는데(APPROVED+개설) 설정·개설
-   * 쿼리가 리페치되기 전까지는 화면이 그대로 "초안/재개설" 모드로 남는다. 그 사이에
-   * 멘토가 한 번 더 저장·재개설을 누르면 서버가 진짜 상태로 막아(409 LOCKED/
-   * INVALID_STATE) "다른 곳에서 상태가 바뀌었습니다" 에러가 뜬다 — 사실은 다른 곳이
-   * 아니라 방금 이 화면에서 바뀐 건데 화면이 못 따라간 것이다. 리페치를 기다리지
-   * 않고 성공 즉시 이 값으로 편집을 잠가 그 틈을 없앤다.
-   */
-  const [justLocked, setJustLocked] = useState(false);
+  const isModalOpen =
+    slotModalOpen || isOpenConfirmVisible || openedOpeningId !== null;
 
   useEffect(() => {
     if (!data) return;
     setForm(data);
     setOriginal(data);
-    setJustLocked(false);
   }, [data]);
 
   if (!form || !original) {
@@ -174,32 +160,8 @@ const OpenSettingsPage = () => {
   const status = form.status;
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
 
-  /*
-   * 편집 가능 조건은 두 갈래다.
-   *
-   * 1. 초안 — `PUT /settings` 로 제목·타입을 저장한다. 상품이 없으면 이 저장이
-   *    상품을 만든다(개설은 상품이 있어야 한다).
-   * 2. 승인됐고 활성 개설이 없음 — 종료 후 다시 여는 경우다. 이때 서버는
-   *    `PUT /settings` 를 잠그므로(409 LOCKED) 저장이 아니라 `POST /openings` 로
-   *    제목·타입·진행시간을 한 번에 보내 즉시 재개설한다(관리자 재승인 불필요).
-   *
-   * "승인 + 오픈 중"은 잠근다.
-   */
-  const isDraftLike = status === null || status === 'DRAFT';
-  const canReopen = status === 'APPROVED' && !currentOpening;
-  /**
-   * "수정"을 누르기 전까지는 재개설 가능(승인+오픈종료) 상태를 값만 훑어보는
-   * 화면으로 잠가 둔다. 필드가 바로 고쳐지는 지름길(재개설)과, "수정"을 눌러
-   * 검토를 다시 걸고(start-edit) 초안처럼 저장→제출하는 경로가 동시에 있으면
-   * "여기는 그냥 고쳐지고 저기는 눌러야 고쳐진다"는 혼란이 생긴다 — 상세 페이지
-   * 설정과 같은 규칙(잠김 → 수정 클릭 → 편집)으로 통일한다.
-   */
-  const showReopenShortcut = canReopen && !isEditingOverride;
-  // justLocked — 방금 제출·재개설에 성공해 서버는 이미 잠갔지만 쿼리가 아직
-  // 그 사실을 모르는 순간을 가린다. 자세한 이유는 justLocked 선언부 참고.
-  const canAct = (isDraftLike || canReopen) && !justLocked;
-  const canEditFields = (isDraftLike || isEditingOverride) && !justLocked;
-  const actingAsDraft = canAct && !showReopenShortcut;
+  /** 이전에 열었다가 닫힌 상품이면 버튼과 안내를 "다시 오픈"으로 바꾼다. */
+  const hasPreviousOpening = (openings?.length ?? 0) > 0;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
@@ -235,7 +197,7 @@ const OpenSettingsPage = () => {
    * 개설은 제목·타입·진행시간을 한 요청에 담으므로 미리 저장할 필요가 없다 —
    * 상품이 아직 없을 때만 저장이 선행돼야 한다.
    */
-  const canOpen = hasValidOpeningInput && !hasNoProduct;
+  const canOpen = hasValidOpeningInput && !hasNoProduct && !currentOpening;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -337,10 +299,7 @@ const OpenSettingsPage = () => {
     );
   };
 
-  /**
-   * 오픈. 최초 개설과 재개설이 같은 요청이다 — 초안이면 서버가 승인까지 전이시키고,
-   * 승인된 상품이면 관리자 재승인 없이 곧바로 새 개설을 만든다.
-   */
+  /** 오픈. 최초 개설과 재개설이 같은 요청이다. */
   const handleOpen = () => {
     setIsOpenConfirmVisible(false);
     openMentoring(
@@ -355,7 +314,6 @@ const OpenSettingsPage = () => {
          * "됐습니다" 한 줄로 끝내지 않고, 확인할 주소와 즉시 내리는 길을 함께 준다.
          */
         onSuccess: (history) => {
-          setJustLocked(true);
           const opened = history.openings.find(
             (opening) => opening.status === 'OPEN',
           );
@@ -373,39 +331,10 @@ const OpenSettingsPage = () => {
     );
   };
 
-  /**
-   * "수정" — 서버가 상품을 `DRAFT` 로 되돌린다(`start-edit`). 오픈이 이미 닫혀
-   * 있을 때만 보이므로 확인 모달 없이 바로 실행한다 — 이후 저장은 dirty 상태일
-   * 때만 활성화되고(설정·상세 페이지 공통), 이탈 시 경고가 뜬다.
-   * 성공 즉시 `isEditingOverride` 를 켜 재개설 지름길을 걷어내고 초안 모드로
-   * 넘긴다 — 설정 쿼리 리페치를 기다리면 그 사이 화면이 그대로라 눌러도
-   * 아무 반응이 없는 것처럼 보인다.
-   */
-  const handleStartEdit = () => {
-    if (isStartingEdit) return;
-    startEdit(undefined, {
-      onSuccess: () => {
-        setIsEditingOverride(true);
-        showAlert({ ...START_EDIT_SUCCESS_SETTINGS, variant: 'success' });
-      },
-      onError: handleMutationError('상세 수정 준비에 실패했습니다.'),
-    });
-  };
-
-  const isPending = isSaving || isOpening || isStartingEdit;
+  const isPending = isSaving || isOpening;
 
   return (
     <div className="flex flex-col gap-6 pb-24">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-          오픈 설정
-        </h1>
-        <p className="text-xsmall14 text-neutral-40">
-          타이틀·타입·진행시간을 설정하고, 멘티가 예약할 수 있는 일정을 등록한
-          뒤 오픈하세요. 오픈되면 바로 공개 리스트에 노출됩니다.
-        </p>
-      </header>
-
       {/*
         상태 배너 — 오픈 종료됨(승인 + 활성 개설 없음)일 때만 상단에 둔다.
         잠긴 상태에서도 멘토는 "내가 어떤 조건으로 냈는지" 확인해야 하므로 설정을 가리지 않고,
@@ -415,7 +344,7 @@ const OpenSettingsPage = () => {
         "저장"·"오픈하기"와 같은 종류의 주요 행동이라, 다른 화면 액션들과 같은
         자리(하단 플로팅)에 있는 편이 더 직관적이다.
       */}
-      {status === 'APPROVED' && !currentOpening && (
+      {hasPreviousOpening && !currentOpening && (
         <div
           role="status"
           className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -440,10 +369,7 @@ const OpenSettingsPage = () => {
                 비활성화하고 키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만
                 막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
                 이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
-            <fieldset
-              disabled={!canEditFields}
-              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
-            >
+            <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">
@@ -577,10 +503,7 @@ const OpenSettingsPage = () => {
               </button>
             </section>
 
-            <fieldset
-              disabled={!canEditFields}
-              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
-            >
+            <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
                 <div className="flex flex-col gap-3">
@@ -593,7 +516,13 @@ const OpenSettingsPage = () => {
                           type="button"
                           aria-pressed={active}
                           onClick={() => toggleDuration(duration)}
-                          className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                          /*
+                            잠겼을 때 잠긴 것처럼 보이게 한다. 이 버튼들은 오픈 중이면
+                            fieldset[disabled] 으로 눌리지 않는데, 모양이 활성일 때와
+                            똑같아서 하단 바의 "설정을 수정할 수 없어요" 와 화면이
+                            모순돼 보였다.
+                          */
+                          className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                         >
                           {duration}분
                         </button>
@@ -628,7 +557,7 @@ const OpenSettingsPage = () => {
                         type="button"
                         aria-pressed={active}
                         onClick={() => toggleCategory(category)}
-                        className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                        className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                       >
                         {CATEGORY_LABELS[category]}
                       </button>
@@ -652,81 +581,57 @@ const OpenSettingsPage = () => {
       </div>
 
       {/*
-        오픈 중 상태 — 하단 플로팅. 다른 화면 액션(저장·오픈하기 등)과 같은 자리에 둬서
-        "지금 취할 수 있는 주요 행동"이 항상 같은 위치에 있게 한다.
+        하단 플로팅 바. 승인 잠금이 사라진 뒤로(LC-3262) 오픈 중에도 저장이 열려
+        있어서, 예전에 따로 떠 있던 "오픈 중" 바를 여기 합쳤다 — 두 개를 같은
+        자리에 띄우면 겹친다. 오른쪽 버튼만 오픈 여부에 따라 갈린다.
       */}
-      {currentOpening && (
-        <div className={FLOATING_BAR_WRAP}>
-          <div role="status" className={FLOATING_BAR_BODY}>
-            <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
-              공개 리스트에 노출 중이에요. 설정을 수정할 수 없어요.
-            </p>
-            <button
-              type="button"
-              onClick={handleCloseCurrentOpening}
-              disabled={isClosingOpening}
-              className="bg-system-error text-xsmall14 shrink-0 whitespace-nowrap rounded-lg px-5 py-2.5 font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isClosingOpening ? '처리 중...' : '오픈 닫기'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/*
-        하단 버튼. 오픈은 상태와 무관하게 `POST /openings` 하나로 끝나므로 버튼도 하나다.
-        저장(`PUT /settings`)은 초안일 때만 남는다 — 승인 이후에는 서버가 잠그고(409
-        LOCKED), 제목·타입은 오픈 요청이 함께 보내므로 따로 저장할 이유도 없다.
-      */}
-      {canAct && (
+      {!isModalOpen && (
         <div className={FLOATING_BAR_WRAP}>
           <div className={FLOATING_BAR_BODY}>
             <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
-              {actingAsDraft && hasNoProduct
+              {hasNoProduct
                 ? '먼저 저장해 상품을 만들어야 오픈할 수 있어요.'
-                : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'}
+                : currentOpening
+                  ? '공개 리스트에 노출 중이에요. 설정을 바꾸면 바로 반영돼요.'
+                  : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'}
             </p>
             <div className="flex shrink-0 gap-2">
-              {/*
-               * 초안일 때만 저장을 붙인다. 승인된 상품을 고치려면 "수정"(start-edit)으로
-               * 초안으로 되돌린 뒤여야 한다 — 상세 페이지 설정과 같은 규칙이다.
-               */}
-              {actingAsDraft ? (
-                /* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */
+              {/* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */}
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isPending || !canSave}
+                className={
+                  canSave
+                    ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                    : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                }
+              >
+                {isSaving ? '저장 중...' : '저장'}
+              </button>
+              {currentOpening ? (
                 <button
                   type="button"
-                  onClick={handleSave}
-                  disabled={isPending || !canSave}
-                  className={
-                    canSave
-                      ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                      : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                  }
+                  onClick={handleCloseCurrentOpening}
+                  disabled={isClosingOpening}
+                  className="bg-system-error rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isSaving ? '저장 중...' : '저장'}
+                  {isClosingOpening ? '처리 중...' : '오픈 닫기'}
                 </button>
               ) : (
                 <button
                   type="button"
-                  onClick={handleStartEdit}
-                  disabled={isPending}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => setIsOpenConfirmVisible(true)}
+                  disabled={isPending || !canOpen}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isStartingEdit ? '처리 중...' : '수정'}
+                  {isOpening
+                    ? '오픈하는 중...'
+                    : hasPreviousOpening
+                      ? '다시 오픈하기'
+                      : '오픈하기'}
                 </button>
               )}
-              <button
-                type="button"
-                onClick={() => setIsOpenConfirmVisible(true)}
-                disabled={isPending || !canOpen}
-                className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isOpening
-                  ? '오픈하는 중...'
-                  : showReopenShortcut
-                    ? '다시 오픈하기'
-                    : '오픈하기'}
-              </button>
             </div>
           </div>
         </div>
@@ -787,4 +692,4 @@ const OpenSettingsPage = () => {
   );
 };
 
-export default OpenSettingsPage;
+export default OpenSettingsSection;

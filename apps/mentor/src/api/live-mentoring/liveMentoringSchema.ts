@@ -25,8 +25,8 @@ export type LiveMentoringDuration = z.infer<typeof liveMentoringDurationSchema>;
 /**
  * 상품 상태 — 백엔드 `LiveMentoringStatus`.
  *
- * 개설 상태(`liveMentoringOpeningStatusSchema`)와 **다른 축**이다. 상품은 승인 여부를,
- * 개설은 지금 열려 있는지를 나타낸다. 화면 문구에서 둘을 섞지 않는다.
+ * 승인 절차가 사라진 뒤로(LC-3262) 화면은 이 값으로 아무것도 가르지 않는다. 열려 있는지는
+ * 개설 상태(`liveMentoringOpeningStatusSchema`)가 정한다.
  */
 export const liveMentoringStatusSchema = z.enum([
   'DRAFT',
@@ -92,7 +92,13 @@ export const templateIntroSchema = z.object({
   careerLines: z.array(z.string()),
   /** "멘토님의 한마디" 박스 본문. */
   oneLiner: z.string(),
-  /** 프로필의 소속·직책 한 줄. 미입력이면 null. */
+  /**
+   * 프로필의 "상세페이지 제작" 본문. **한 줄 소개가 아니다.**
+   *
+   * 멘토 프로필의 Lexical 에디터가 저장한 JSON 문자열이 그대로 온다
+   * (`{"root":{"children":[...`). 화면에 쓰려면 파싱해야 한다 — 웹의
+   * `parseLexicalRoot` 참고. 미입력이면 null.
+   */
   description: z.string().nullable(),
 });
 export type TemplateIntro = z.infer<typeof templateIntroSchema>;
@@ -168,18 +174,11 @@ export const liveMentoringTemplateSchema = z.object({
 });
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
 
-/**
- * 조회 응답의 상품 정보 — **읽기 전용**이다(서버 `MentoringResponse`).
- *
- * `editable` 이 잠금의 근거다. 서버는 `status == DRAFT && !hasActiveOpening()` 일 때만
- * 저장을 허용하고 그렇지 않으면 `validateEditable` 로 막는다. 프론트가 같은 조건을
- * 상태·개설 이력에서 다시 계산하면 두 판정이 어긋나는 날이 온다 — 서버가 준 값을 쓴다.
- */
+/** 조회 응답의 상품 정보 — **읽기 전용**이다(서버 `MentoringResponse`). */
 export const templateMentoringSchema = z.object({
   liveMentoringId: z.number().nullable(),
   title: z.string().nullable(),
   status: liveMentoringStatusSchema.nullable(),
-  editable: z.boolean(),
   categories: z.array(liveMentoringCategorySchema),
 });
 export type TemplateMentoring = z.infer<typeof templateMentoringSchema>;
@@ -383,10 +382,15 @@ export const liveMentoringReservationSchema = z.object({
   productName: z.string(),
   /** 진행시간(분). 30 또는 60. */
   durationMinutes: z.number(),
-  /** ISO date-time */
-  reservationStartAt: z.string(),
-  /** ISO date-time */
-  reservationEndAt: z.string(),
+  /*
+    예약 시각은 **nullable 이다.** 확정 슬롯이 없는 신청에서 서버가 null 을 내린다.
+
+    non-nullable 로 두면 그 한 건 때문에 배열 전체의 파싱이 깨져 **목록이 통째로 빈다.**
+    실제로 예약 6건 중 1건이 null 이라 피드백 내역이 아무것도 안 보였다(LC-3257).
+    같은 이유로 이 파일의 mentoringCategory 도 이미 열려 있다.
+   */
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   status: liveMentoringReservationStatusSchema,
   /** 멘토에게 미리 전달할 질문을 작성했는지. */
   questionWritten: z.boolean(),
@@ -452,10 +456,15 @@ export const liveMentoringReservationDetailSchema = z.object({
   productName: z.string(),
   /** 진행시간(분). 30 또는 60. */
   durationMinutes: z.number(),
-  /** ISO date-time */
-  reservationStartAt: z.string(),
-  /** ISO date-time */
-  reservationEndAt: z.string(),
+  /*
+    예약 시각은 **nullable 이다.** 확정 슬롯이 없는 신청에서 서버가 null 을 내린다.
+
+    non-nullable 로 두면 그 한 건 때문에 배열 전체의 파싱이 깨져 **목록이 통째로 빈다.**
+    실제로 예약 6건 중 1건이 null 이라 피드백 내역이 아무것도 안 보였다(LC-3257).
+    같은 이유로 이 파일의 mentoringCategory 도 이미 열려 있다.
+   */
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   /**
    * 멘토링 카테고리. **nullable 이다.**
    *
