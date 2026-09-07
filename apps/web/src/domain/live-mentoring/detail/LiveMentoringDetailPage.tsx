@@ -391,35 +391,37 @@ const LiveMentoringDetailPage = ({
                 data-preview-item={i}
                 className="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2"
               >
-                <div className="flex flex-col overflow-hidden rounded-md">
+                {/*
+                  카드는 제 이미지 높이만큼만 차지하고 **아래를 맞춘다**.
+
+                  같은 높이로 늘리면 짧은 쪽 카드 안이 배경색으로 비고, 그 여백이 설명과
+                  카드 사이를 벌린다. 아래를 맞추면 두 설명이 나란하면서도 카드와 붙는다.
+                */}
+                <div className="self-end overflow-hidden rounded-md">
                   <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
                     Before
                   </p>
-                  {/*
-                    두 카드의 높이를 맞추되 이미지는 비율 그대로 둔다. 높이가 정해지면
-                    폭이 따라오므로 잘리지도, 위아래로 여백이 생기지도 않는다.
-                  */}
-                  <div className="bg-neutral-85 flex flex-1 items-center justify-center p-4">
+                  <div className="bg-neutral-85 p-4">
                     {item.beforeImage && (
                       <img
                         src={item.beforeImage}
                         alt=""
-                        className="max-h-full w-auto max-w-full rounded-sm bg-white"
+                        className="w-full rounded-sm bg-white"
                       />
                     )}
                   </div>
                 </div>
 
-                <div className="flex flex-col overflow-hidden rounded-md">
+                <div className="self-end overflow-hidden rounded-md">
                   <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
                     After
                   </p>
-                  <div className="bg-primary-20 flex flex-1 items-center justify-center p-4">
+                  <div className="bg-primary-20 p-4">
                     {item.afterImage && (
                       <img
                         src={item.afterImage}
                         alt=""
-                        className="max-h-full w-auto max-w-full rounded-sm bg-white"
+                        className="w-full rounded-sm bg-white"
                       />
                     )}
                   </div>
