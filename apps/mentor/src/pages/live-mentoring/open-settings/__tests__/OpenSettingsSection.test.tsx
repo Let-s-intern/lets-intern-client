@@ -60,7 +60,7 @@ vi.mock('../ui/LiveMentoringSlotModal', () => ({
   },
 }));
 
-import OpenSettingsPage from '../OpenSettingsPage';
+import OpenSettingsSection from '../OpenSettingsSection';
 
 const baseSettings: LiveMentoringSettings = {
   liveMentoringId: 1,
@@ -136,7 +136,7 @@ const renderPage = (
   openingsData = openings;
   return render(
     <MemoryRouter>
-      <OpenSettingsPage />
+      <OpenSettingsSection />
     </MemoryRouter>,
   );
 };
@@ -151,7 +151,7 @@ afterEach(() => {
   openingsData = [];
 });
 
-describe('OpenSettingsPage — 프로필은 읽기 전용', () => {
+describe('OpenSettingsSection — 프로필은 읽기 전용', () => {
   it('닉네임·소개·경력을 표시만 하고, 프로필 페이지로 이동하는 링크를 보여준다', () => {
     renderPage();
     // 프로필 섹션과 우측 미리보기 양쪽에 표시되므로 복수 매치를 허용한다.
@@ -163,7 +163,7 @@ describe('OpenSettingsPage — 프로필은 읽기 전용', () => {
   });
 });
 
-describe('OpenSettingsPage — 대표 경력 지정(전용 API 로 즉시 저장)', () => {
+describe('OpenSettingsSection — 대표 경력 지정(전용 API 로 즉시 저장)', () => {
   it('서버가 내려준 isRepresentative 경력이 선택된 상태로 보인다', () => {
     renderPage();
     expect(screen.getByRole('radio', { name: /네이버/ })).toBeChecked();
@@ -194,7 +194,7 @@ describe('OpenSettingsPage — 대표 경력 지정(전용 API 로 즉시 저장
   });
 });
 
-describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
+describe('OpenSettingsSection — 진행시간(다중) → 최저가', () => {
   it('초기 30분이면 35,000원을 표기한다', () => {
     renderPage({ durations: [30] });
     expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
@@ -216,7 +216,7 @@ describe('OpenSettingsPage — 진행시간(다중) → 최저가', () => {
   });
 });
 
-describe('OpenSettingsPage — 피드백 진행 일정이 화면에서 사라졌다', () => {
+describe('OpenSettingsSection — 피드백 진행 일정이 화면에서 사라졌다', () => {
   it('기간 입력이 없다', () => {
     // 계약에서 기간 필드가 사라졌다. 남겨 두면 입력해도 서버에 가지 않는다.
     renderPage();
@@ -240,7 +240,7 @@ describe('OpenSettingsPage — 피드백 진행 일정이 화면에서 사라졌
   });
 });
 
-describe('OpenSettingsPage — 상태 충돌 안내 문구', () => {
+describe('OpenSettingsSection — 상태 충돌 안내 문구', () => {
   // 회귀 케이스: LOCKED 와 INVALID_STATE 를 한데 묶어 "다른 곳에서 상태가
   // 바뀌었습니다"로 안내하던 시절, 멘토가 다른 창을 의심하며 새로고침만 반복했다.
   // LOCKED 는 개설이 열려 있다는 뜻이고 할 일은 "오픈 종료"다.
@@ -283,7 +283,7 @@ describe('OpenSettingsPage — 상태 충돌 안내 문구', () => {
   });
 });
 
-describe('OpenSettingsPage — 저장 payload(제목·타입·진행시간)', () => {
+describe('OpenSettingsSection — 저장 payload(제목·타입·진행시간)', () => {
   it('저장은 title/categories/durations 세 필드를 담아 mutate 를 호출한다', () => {
     renderPage();
 
@@ -335,7 +335,7 @@ describe('OpenSettingsPage — 저장 payload(제목·타입·진행시간)', ()
   });
 });
 
-describe('OpenSettingsPage — 개설은 상태와 무관하게 한 경로다', () => {
+describe('OpenSettingsSection — 개설은 상태와 무관하게 한 경로다', () => {
   it('초안에서 제목·타입·진행시간을 한 요청에 담아 개설한다', () => {
     renderPage({ status: 'DRAFT', durations: [30, 60] });
 
@@ -438,7 +438,7 @@ describe('OpenSettingsPage — 개설은 상태와 무관하게 한 경로다', 
   });
 });
 
-describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
+describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
   it('초안(DRAFT)이면 배너 없이 저장·오픈 버튼을 보인다', () => {
     renderPage({ status: 'DRAFT' });
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -651,7 +651,7 @@ describe('OpenSettingsPage — 상태별 잠금과 배너', () => {
   });
 });
 
-describe('OpenSettingsPage — 미리보기', () => {
+describe('OpenSettingsSection — 미리보기', () => {
   // 미리보기는 웹 공개 카드(MentorCard)를 복제한 것이라, 표기 규칙이 어긋나면
   // 멘토가 실제와 다른 화면을 보고 오픈하게 된다. 핵심 표기만 고정한다.
   it('공개 카드와 같은 표기 규칙을 따른다', () => {

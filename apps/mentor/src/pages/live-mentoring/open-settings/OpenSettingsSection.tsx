@@ -82,7 +82,11 @@ const stateConflictAlert = (error: unknown) => {
   return null;
 };
 
-const OpenSettingsPage = () => {
+/**
+ * 오픈 설정 — 설정 화면의 첫 스텝 본문이다(LC-3264). 제목과 스텝 줄은
+ * `LiveMentoringSettingsPage` 가 그리므로 여기서는 본문만 그린다.
+ */
+const OpenSettingsSection = () => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
   const { data: openings } = useLiveMentoringOpenStatusQuery();
@@ -331,16 +335,6 @@ const OpenSettingsPage = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-24">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-          오픈 설정
-        </h1>
-        <p className="text-xsmall14 text-neutral-40">
-          타이틀·타입·진행시간을 설정하고, 멘티가 예약할 수 있는 일정을 등록한
-          뒤 오픈하세요. 오픈되면 바로 공개 리스트에 노출됩니다.
-        </p>
-      </header>
-
       {/*
         상태 배너 — 오픈 종료됨(승인 + 활성 개설 없음)일 때만 상단에 둔다.
         잠긴 상태에서도 멘토는 "내가 어떤 조건으로 냈는지" 확인해야 하므로 설정을 가리지 않고,
@@ -702,4 +696,4 @@ const OpenSettingsPage = () => {
   );
 };
 
-export default OpenSettingsPage;
+export default OpenSettingsSection;

@@ -1,10 +1,10 @@
-import { DETAIL_TABS, type DetailTabId } from '../tabs';
+import { SETTINGS_TABS, type SettingsTabId } from '../tabs';
 
-interface DetailTabsProps {
-  activeTab: DetailTabId;
+interface SettingsTabsProps {
+  activeTab: SettingsTabId;
   /** 완료 표시를 붙일 탭. 판정은 `tabs.ts` 의 `isDetailTabComplete` 가 한다. */
-  completedTabs: ReadonlySet<DetailTabId>;
-  onChange: (tab: DetailTabId) => void;
+  completedTabs: ReadonlySet<SettingsTabId>;
+  onChange: (tab: SettingsTabId) => void;
 }
 
 /** 완료 체크 아이콘. 뜻은 탭 이름(`aria-label`)이 전하므로 그림은 숨긴다. */
@@ -20,11 +20,11 @@ const CheckIcon = () => (
 );
 
 /**
- * 상세 페이지 설정 탭 네비게이션.
+ * 1대1 라이브 멘토링 설정 스텝 네비게이션.
  *
- * **입력 잠금(`fieldset disabled`) 바깥에 둔다.** 오픈 중이라 편집할 수 없을 때도
- * 탭 이동은 계속 동작해야 한다 — 잠금이 이동까지 삼키면 멘토는 자기 페이지를
- * 읽지도 못한다.
+ * 첫 스텝이 오픈 설정이고 나머지가 상세 페이지 섹션이다(LC-3264). 스텝을 옮기면
+ * 본문이 통째로 바뀌므로, 저장하지 않은 값이 있는 스텝을 떠날 때의 경고는
+ * 페이지가 맡는다.
  *
  * 탭에는 **라벨과 필수·선택 표시, 완료 체크**를 둔다.
  * 표시는 웹 신청 시트의 제목과 같은 `(필수)` 형태다 — 배지가 아니라 괄호 텍스트다. 무엇을 반드시 채워야 하는지는
@@ -36,17 +36,17 @@ const CheckIcon = () => (
  * 필수 여부는 탭 이름(`aria-label`)에도 있으므로 칩은 `aria-hidden` 이다 — 그러지 않으면
  * 같은 말을 두 번 읽는다.
  */
-const DetailTabs = ({
+const SettingsTabs = ({
   activeTab,
   completedTabs,
   onChange,
-}: DetailTabsProps) => (
+}: SettingsTabsProps) => (
   <div
     role="tablist"
-    aria-label="상세 페이지 섹션"
+    aria-label="1대1 라이브 멘토링 설정 스텝"
     className="flex items-stretch gap-1 overflow-x-auto border-b border-gray-200"
   >
-    {DETAIL_TABS.map((tab) => {
+    {SETTINGS_TABS.map((tab) => {
       const isActive = tab.id === activeTab;
       const requiredLabel = tab.required ? '필수' : '선택';
       const isComplete = completedTabs.has(tab.id);
@@ -82,4 +82,4 @@ const DetailTabs = ({
   </div>
 );
 
-export default DetailTabs;
+export default SettingsTabs;
