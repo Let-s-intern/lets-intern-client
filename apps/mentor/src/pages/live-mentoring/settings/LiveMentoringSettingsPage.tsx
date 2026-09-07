@@ -14,13 +14,7 @@ import {
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { useUserQuery } from '@/api/user/user';
-import {
-  publicDetailUrl,
-  toYoutubeEmbedUrl,
-} from '../constants';
-// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
-//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-import UnderDevelopmentNotice from '../ui/UnderDevelopmentNotice';
+import { publicDetailUrl, toYoutubeEmbedUrl } from '../constants';
 import OpenSettingsSection from '../open-settings/OpenSettingsSection';
 import {
   DETAIL_TABS,
@@ -29,6 +23,7 @@ import {
   type SettingsTabId,
   isDetailTabComplete,
 } from './tabs';
+import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import DetailSaveBar from './ui/DetailSaveBar';
 import SettingsTabs from './ui/SettingsTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
@@ -43,7 +38,7 @@ import TemplatePreview from './ui/TemplatePreview';
  */
 const LiveMentoringSettingsPage = () => {
   const navigate = useNavigate();
-  const { data, isError } = useLiveMentoringTemplateQuery();
+  const { data, isError, error } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
   // "지금 열려 있는지"는 상품 상태가 아니라 활성 개설의 존재로 판단한다.
@@ -301,58 +296,60 @@ const LiveMentoringSettingsPage = () => {
       {activeTab === OPEN_TAB_ID ? (
         <OpenSettingsSection />
       ) : isError ? (
-        // ⚠️ 임시 — GET /mentor/live-mentoring/template 이 실패할 때의 안내.
-        //    상세 스텝 본문만 대체한다. 오픈 설정 스텝은 이 실패와 무관하게 열려야
-        //    하므로 예전처럼 페이지 전체를 조기 반환하지 않는다.
-        <UnderDevelopmentNotice feature="상세 페이지 설정" />
+        // 상세 스텝 본문만 대체한다. 오픈 설정 스텝은 이 실패와 무관하게 열려야
+        // 하므로 페이지 전체를 조기 반환하지 않는다.
+        <DetailLoadFailedNotice
+          error={error}
+          onGoToOpenStep={() => setActiveTab(OPEN_TAB_ID)}
+        />
       ) : !template ? (
         <div className="text-xsmall14 text-neutral-40 px-1 py-10">
           템플릿을 불러오는 중...
         </div>
       ) : (
         <>
-      {/*
+          {/*
         시안 비율은 편집 카드 : 미리보기 ≈ 1.93 : 1 이다. 고정 폭을 주면 넓은 화면에서
         미리보기만 상대적으로 좁아져 모바일 뷰가 제 크기로 안 보인다.
       */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
-        <div className="flex min-w-0 flex-col gap-4">
-          <fieldset className="m-0 min-w-0 border-0 p-0 disabled:opacity-100">
-            <TemplateEditForm
-              template={template}
-              activeTab={activeTab}
-              onChange={patch}
-            />
-          </fieldset>
-        </div>
-        {/*
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
+            <div className="flex min-w-0 flex-col gap-4">
+              <fieldset className="m-0 min-w-0 border-0 p-0 disabled:opacity-100">
+                <TemplateEditForm
+                  template={template}
+                  activeTab={activeTab}
+                  onChange={patch}
+                />
+              </fieldset>
+            </div>
+            {/*
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
           상세 페이지 전체를 축소해 담으므로 화면보다 길어질 수 있어,
           자체 스크롤을 줘야 sticky 가 실제로 "따라오는" 것처럼 동작한다.
         */}
-        <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
-          <TemplatePreview
-            template={template}
-            activeTab={activeTab}
-            nickname={settings?.nickname ?? '멘토'}
-          />
-        </div>
-      </div>
+            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
+              <TemplatePreview
+                template={template}
+                activeTab={activeTab}
+                nickname={settings?.nickname ?? '멘토'}
+              />
+            </div>
+          </div>
 
-      {/*
+          {/*
         하단 고정 저장 바 (PRD §7).
 
         저장·되돌리기와 공개 페이지로 가는 길을 여기 한 자리에 모은다.
       */}
-      <DetailSaveBar
-        publicDetailHref={
-          user?.userId == null ? null : publicDetailUrl(user.userId)
-        }
-        isDirty={isDirty}
-        isSaving={isPending}
-        onSave={handleSave}
-        onRevert={handleCancel}
-      />
+          <DetailSaveBar
+            publicDetailHref={
+              user?.userId == null ? null : publicDetailUrl(user.userId)
+            }
+            isDirty={isDirty}
+            isSaving={isPending}
+            onSave={handleSave}
+            onRevert={handleCancel}
+          />
         </>
       )}
 
