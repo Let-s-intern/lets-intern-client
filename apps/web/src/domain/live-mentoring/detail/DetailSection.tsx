@@ -34,8 +34,19 @@ const DetailSection = ({
   <section
     id={id}
     className={twMerge(
-      'w-full scroll-mt-16 py-12 md:py-16',
-      dark ? 'bg-neutral-0 text-static-100' : 'bg-white',
+      /*
+        섹션 사이가 좁아 어디서 끊기는지 잘 드러나지 않았다. 배경색이 같은 섹션이
+        이어지면 한 덩어리로 읽힌다 — 여백이 구분의 유일한 단서라 넉넉히 준다.
+      */
+      'w-full scroll-mt-16 py-16 md:py-24',
+      /*
+        흰 배경끼리 이어지면 여백만으로는 어디서 끊기는지 드러나지 않는다.
+        아주 옅은 선 하나를 얹어 경계를 표시한다 — 어두운 섹션은 배경이 이미
+        다르므로 선을 넣지 않는다.
+      */
+      dark
+        ? 'bg-neutral-0 text-static-100'
+        : 'border-neutral-90 border-t bg-white',
     )}
   >
     <div className="mw-1180 flex flex-col gap-6 px-5 md:gap-8">

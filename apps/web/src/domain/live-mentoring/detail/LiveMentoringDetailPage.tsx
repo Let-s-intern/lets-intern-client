@@ -193,12 +193,16 @@ const LiveMentoringDetailPage = ({
             : `${nickname} 멘토가 함께해요`
         }
       >
-        <div className="mx-auto grid w-full max-w-[900px] grid-cols-1 gap-6 md:grid-cols-[280px_1fr] md:items-center md:gap-10">
+        {/*
+          사진과 글을 화면 가운데로 모은다. 폭을 넓게 두면 둘이 양쪽 끝으로 벌어져
+          가운데가 비어 보인다 — 제목은 가운데인데 본문만 넓게 퍼진 모양이 된다.
+        */}
+        <div className="mx-auto flex w-full max-w-[940px] flex-col items-center gap-6 md:flex-row md:items-center md:gap-6">
           {intro.profileImage && (
             <img
               src={intro.profileImage}
               alt={nickname}
-              className="w-full rounded-md"
+              className="w-full max-w-[340px] shrink-0 rounded-xl"
             />
           )}
 
@@ -207,7 +211,11 @@ const LiveMentoringDetailPage = ({
             `mt-auto` 로 바닥에 붙였는데, 경력이 한두 줄이면 가운데가 통째로 비었다.
             글은 제 높이만 차지하고 사진과 서로 가운데를 맞춘다.
           */}
-          <div className="flex flex-col gap-2 text-left">
+          {/*
+            폭은 시안에서 잰 값이다 — 사진 340px : 글 583px, 합쳐 940px.
+            2880px 시안이 1440 화면의 2배 기준이라 절반으로 환산했다.
+          */}
+          <div className="flex min-w-0 flex-1 flex-col gap-2 text-left">
             <p className="text-small20 md:text-medium24 font-bold">
               {nickname}
             </p>
@@ -247,13 +255,13 @@ const LiveMentoringDetailPage = ({
           title={mentoringTypes.title}
           subtitle={mentoringTypes.subtitle}
         >
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <ul className="mx-auto grid w-full max-w-[1000px] grid-cols-1 gap-8 md:grid-cols-2">
             {mentoringTypes.items.map((item, i) => (
               <li
                 key={i}
                 /* 멘토 설정의 미리보기가 편집 중인 카드로 따라올 때 쓴다(LC-3268). */
                 data-preview-item={i}
-                className="bg-neutral-95 flex flex-col gap-3 rounded-md p-6"
+                className="bg-neutral-95 flex flex-col gap-3 rounded-lg p-7"
               >
                 <div className="flex items-center gap-2">
                   <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-semibold text-white">
