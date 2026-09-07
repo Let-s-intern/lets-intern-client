@@ -304,7 +304,6 @@ export default function ProfilePage() {
         />
         <MentorDetailContentSection
           resetKey={editorResetKey}
-          initialContent={savedDetailContent}
           onChange={setDetailContent}
         />
       </div>

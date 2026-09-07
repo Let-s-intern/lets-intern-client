@@ -12,8 +12,6 @@ interface MentorDetailContentSectionProps {
    * 옛 내용으로 남는 것을 막으려면 이 방법뿐이다.
    */
   resetKey: number;
-  /** 마운트 시 에디터에 넣을 내용. 저장된 값이다. */
-  initialContent: string;
   onChange: (jsonString: string) => void;
 }
 
@@ -25,7 +23,6 @@ interface MentorDetailContentSectionProps {
  */
 export default function MentorDetailContentSection({
   resetKey,
-  initialContent,
   onChange,
 }: MentorDetailContentSectionProps) {
   const { data: user, isLoading } = useUserQuery();
@@ -59,9 +56,20 @@ export default function MentorDetailContentSection({
           {isLoading || !user ? (
             <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
           ) : (
+            /*
+             * 마운트 값은 서버 응답에서 **직접** 읽는다.
+             *
+             * 페이지가 들고 있는 저장본을 넘겨받으면 한 렌더 늦는다 — user 가 도착한
+             * 렌더에서 에디터가 먼저 마운트되고, 그 뒤 effect 가 저장본을 채운다.
+             * EditorApp 은 initialEditorStateJsonString 만 읽는 비제어 컴포넌트라
+             * key 가 그대로면 늦게 온 값을 반영하지 않는다. 그래서 저장한 내용이
+             * 새로고침 후 빈 화면으로 보였다.
+             */
             <EditorApp
               key={resetKey}
-              initialEditorStateJsonString={initialContent || emptyEditorState}
+              initialEditorStateJsonString={
+                user.description || emptyEditorState
+              }
               onChange={onChange}
             />
           )}

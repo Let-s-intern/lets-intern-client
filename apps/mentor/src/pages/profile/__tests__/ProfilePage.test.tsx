@@ -23,7 +23,7 @@ const patchUserMock = vi.fn();
 const putHashTagsMock = vi.fn();
 
 /** 참조 고정. 이유는 아래 ALL_TAGS 주석과 같다. */
-const USER = {
+const BASE_USER = {
   userId: 500,
   name: '임성빈',
   nickname: '쥬디',
@@ -34,6 +34,9 @@ const USER = {
   introduction: '한마디',
   description: null,
 };
+
+/** 테스트마다 갈아끼운다. 참조는 렌더 사이에 고정돼야 한다(위 주석 참고). */
+let USER: typeof BASE_USER = BASE_USER;
 
 vi.mock('@/api/user/user', () => ({
   useUserQuery: () => ({ data: USER }),
@@ -67,10 +70,23 @@ vi.mock('../ui/CareerSection', () => ({
  * 저장 payload 에 `description` 이 실리는지만 보면 되므로 본문을 바꾸는 버튼 하나로 대신한다.
  */
 vi.mock('@/common/lexical/EditorApp', () => ({
-  default: ({ onChange }: { onChange: (json: string) => void }) => (
-    <button type="button" onClick={() => onChange('{"root":{"edited":true}}')}>
-      본문 수정
-    </button>
+  default: ({
+    initialEditorStateJsonString,
+    onChange,
+  }: {
+    initialEditorStateJsonString: string;
+    onChange: (json: string) => void;
+  }) => (
+    <div>
+      {/* 마운트 시 받은 초기값. 저장한 내용이 다시 보이는지 확인하는 창구다. */}
+      <span data-testid="editor-initial">{initialEditorStateJsonString}</span>
+      <button
+        type="button"
+        onClick={() => onChange('{"root":{"edited":true}}')}
+      >
+        본문 수정
+      </button>
+    </div>
   ),
   emptyEditorState: '{"root":{"children":[]}}',
 }));
@@ -89,6 +105,7 @@ const saveButton = () => screen.getByRole('button', { name: '저장' });
 beforeEach(() => {
   patchUserMock.mockReset().mockResolvedValue(undefined);
   putHashTagsMock.mockReset().mockResolvedValue(undefined);
+  USER = BASE_USER;
 });
 
 describe('ProfilePage 저장', () => {
@@ -181,6 +198,33 @@ describe('ProfilePage 저장', () => {
 
     await waitFor(() =>
       expect(screen.getByText('프로필이 저장되었습니다.')).toBeTruthy(),
+    );
+  });
+});
+
+/*
+  회귀 테스트 — 저장한 상세페이지 본문이 새로고침 후에도 보여야 한다.
+
+  LC-3266 에서 에디터 초기값을 페이지 상태(savedDetailContent)로 넘기게 바꿨는데,
+  그 상태는 effect 에서 채워진다. user 가 도착한 렌더에서 에디터가 먼저 마운트되고
+  그 뒤에 값이 들어오므로, 비제어 EditorApp 은 늦게 온 값을 반영하지 않았다.
+  결과적으로 저장한 내용이 새로고침 후 빈 화면으로 보였다.
+*/
+describe('ProfilePage 상세페이지 본문', () => {
+  it('저장된 본문을 그대로 에디터에 넣는다', () => {
+    const saved = '{"root":{"children":[{"text":"저장한 소개"}]}}';
+    USER = { ...BASE_USER, description: saved } as typeof BASE_USER;
+
+    renderPage();
+
+    expect(screen.getByTestId('editor-initial')).toHaveTextContent(saved);
+  });
+
+  it('본문이 없으면 빈 에디터로 연다', () => {
+    renderPage();
+
+    expect(screen.getByTestId('editor-initial')).toHaveTextContent(
+      '{"root":{"children":[]}}',
     );
   });
 });
