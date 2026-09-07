@@ -22,14 +22,13 @@ interface SettingsActionBarProps {
  * 스텝 이동 버튼의 크기.
  *
  * 이 바에서 누를 것은 이 둘뿐이라 시안처럼 크게 잡는다 — 화면 아래 끝에 떠 있는 버튼은
- * 작을수록 겨냥하기 어렵고, 옆의 저장 상태 문구에 묻힌다.
+ * 작을수록 겨냥하기 어렵다.
  *
- * 폭은 `flex-1` 로 남는 자리를 나눠 갖되 `max-w` 로 상한을 둔다. 둘이 같은 규칙이라
- * 늘 같은 폭이고, 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지
- * 않는다. 상한이 없으면 넓은 화면에서 버튼만 끝없이 늘어난다.
+ * 폭은 `flex-1` 로 바를 반씩 나눠 갖는다. 둘이 같은 규칙이라 늘 같은 폭이고,
+ * 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지 않는다.
  */
 const stepButton =
-  'flex-1 max-w-[17rem] rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  'flex-1 rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
  * 설정 화면 하단 고정 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
@@ -38,7 +37,7 @@ const stepButton =
  * (LC-3282), 오픈은 스텝과 무관한 화면 전체의 상태라 머리의 공개/비공개 토글로
  * 옮겼다(LC-3283). 남은 일은 스텝 이동이라, 바가 그것만 한다.
  *
- * 왼쪽에는 저장이 지금 어디까지 갔는지 한 줄로 남긴다 — 누를 버튼이 사라졌으니
+ * 버튼 위에는 저장이 지금 어디까지 갔는지 한 줄로 남긴다 — 누를 버튼이 사라졌으니
  * "저장이 되긴 한 건가"를 화면이 대신 말해 줘야 한다.
  */
 const SettingsActionBar = ({
@@ -56,18 +55,14 @@ const SettingsActionBar = ({
         live region 이 둘이 되면 무엇을 읽어야 할지 갈린다.
       */}
       <p
-        className={`flex min-w-0 items-center gap-2 text-sm font-medium ${
+        className={`truncate text-sm font-medium ${
           isAutosaveAttention(status) ? 'text-system-error' : 'text-gray-500'
         }`}
       >
-        <span className="truncate">{autosaveMessage(status)}</span>
+        {autosaveMessage(status)}
       </p>
 
-      {/*
-        버튼 묶음이 남는 자리를 가져간다. 저장 상태 문구는 `min-w-0` 이라 좁아지면
-        말줄임으로 접히고, 버튼은 그만큼 넓어진다 — 이 바의 주인공은 버튼이다.
-      */}
-      <div className="flex flex-1 items-center justify-end gap-3">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={onPrev}

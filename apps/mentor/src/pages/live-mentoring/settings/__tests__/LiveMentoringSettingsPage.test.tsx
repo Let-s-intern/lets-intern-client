@@ -656,6 +656,31 @@ describe('LiveMentoringSettingsPage — 미리보기', () => {
     expect(message.activeItem).toBe(0);
   });
 
+  /*
+    회귀 케이스 — 결과 사례는 전·후가 **각자 번호를 갖는다.**
+
+    사례 하나에 번호를 하나만 주면 미리보기는 카드 전체를 화면 가운데 맞추는데, 이미지
+    두 장이 들어간 카드는 미리보기 화면보다 커서 그 가운데가 보인다. 맨 아래인
+    「멘토링 후 변화」는 몇 번을 고쳐도 화면 밖에 남아, 고쳐도 안 따라오는 것처럼 보였다.
+  */
+  it('결과 사례는 멘토링 전과 후에 서로 다른 번호를 보낸다', () => {
+    renderPage();
+    const post = vi.fn();
+    Object.defineProperty(previewFrame(), 'contentWindow', {
+      value: { postMessage: post },
+      configurable: true,
+    });
+    signalFrameReady();
+
+    openTab('결과 사례');
+
+    fireEvent.focusIn(screen.getByLabelText('1번 사례 멘토링 전 상황'));
+    expect(post.mock.calls[post.mock.calls.length - 1][0].activeItem).toBe(0);
+
+    fireEvent.focusIn(screen.getByLabelText('1번 사례 멘토링 후 변화'));
+    expect(post.mock.calls[post.mock.calls.length - 1][0].activeItem).toBe(1);
+  });
+
   it('탭을 옮기면 그 탭을 함께 보낸다', () => {
     renderPage();
     const post = vi.fn();

@@ -402,7 +402,6 @@ const LiveMentoringDetailPage = ({
             {results.cases.map((item, i) => (
               <li
                 key={i}
-                data-preview-item={i}
                 className="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2"
               >
                 {/*
@@ -445,10 +444,25 @@ const LiveMentoringDetailPage = ({
                   </div>
                 </div>
 
-                <p className="text-xsmall14 order-2 whitespace-pre-line text-center text-white/70 md:order-3">
+                {/*
+                  멘토 설정의 미리보기가 편집 중인 자리로 따라올 때 쓴다(LC-3268).
+
+                  번호는 **사례가 아니라 전·후 절반**에 붙는다. 사례 하나에 번호를 하나만
+                  주면 미리보기는 카드 전체를 화면 가운데 맞추는데, 이미지 두 장이 들어간
+                  카드는 미리보기 화면보다 커서 그 가운데가 보인다 — 맨 아래인 「멘토링 후
+                  변화」는 몇 번을 고쳐도 화면 밖에 남았다. 멘토 폼도 같은 번호를 보낸다
+                  (`ResultCaseField`).
+                */}
+                <p
+                  data-preview-item={i * 2}
+                  className="text-xsmall14 order-2 whitespace-pre-line text-center text-white/70 md:order-3"
+                >
                   {item.beforeCaption}
                 </p>
-                <p className="text-xsmall14 order-4 whitespace-pre-line text-center font-medium text-white">
+                <p
+                  data-preview-item={i * 2 + 1}
+                  className="text-xsmall14 order-4 whitespace-pre-line text-center font-medium text-white"
+                >
                   ✓ {item.afterCaption}
                 </p>
               </li>

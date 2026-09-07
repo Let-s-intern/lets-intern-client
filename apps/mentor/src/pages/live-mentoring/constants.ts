@@ -160,8 +160,10 @@ export const FLOATING_BAR_WRAP =
 /**
  * 플로팅 바 본체. 내용 폭에 맞춰 줄어들되 콘텐츠 영역을 넘지 않는다.
  *
- * 스텝 이동 버튼을 좌우로 늘리면서(LC-3282) 상한도 함께 올렸다. 3xl 에서는 버튼 둘이
- * 자리를 다 먹어 옆의 저장 상태 문구가 곧바로 말줄임이 된다.
+ * 세로로 쌓는다 — 저장 상태 문구가 버튼 **위**에 온다. 한 줄에 나란히 두면 문구 길이가
+ * 곧 버튼 폭이 되어, 「저장된 상태예요.」 와 「저장 대기 · 「멘토링 유형」의 2번 …」
+ * 사이를 오갈 때마다 버튼이 커졌다 작아졌다 한다. 버튼은 늘 같은 자리에 같은 크기로
+ * 있어야 누르러 갈 때 겨냥이 흔들리지 않는다.
  */
 export const FLOATING_BAR_BODY =
-  'shadow-05 flex w-full max-w-4xl items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white px-4 py-3';
+  'shadow-05 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3';
