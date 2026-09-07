@@ -8,6 +8,7 @@ import {
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
 import {
+  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
@@ -24,11 +25,14 @@ import {
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
-import SettingsActionBar from '../ui/SettingsActionBar';
+import {
+  useAutosave,
+  type AutosaveResult,
+  type AutosaveStatus,
+} from '../useAutosave';
 import {
   errorDescription,
   stateConflictAlert,
-  useLiveMentoringOpenAction,
 } from './useLiveMentoringOpenAction';
 import LiveMentoringSlotModal from './ui/LiveMentoringSlotModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
@@ -36,19 +40,36 @@ import OpenSettingsPreview from './ui/OpenSettingsPreview';
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
 
+interface OpenSettingsSectionProps {
+  /**
+   * 이 스텝의 실시간 저장 상태를 위로 올린다.
+   *
+   * 하단 바는 스텝을 아는 페이지가 하나만 그리는데(LC-3282), 이 스텝의 저장 대상인
+   * 제목·타입·진행시간은 여기가 들고 있다. 상태만 올려 보내고 그리는 건 페이지가 한다.
+   */
+  onAutosaveStatusChange: (status: AutosaveStatus) => void;
+}
+
 /**
  * 오픈 설정 — 설정 화면의 첫 스텝 본문이다(LC-3264). 제목과 스텝 줄은
  * `LiveMentoringSettingsPage` 가 그리므로 여기서는 본문만 그린다.
  */
-const OpenSettingsSection = () => {
+const OpenSettingsSection = ({
+  onAutosaveStatusChange,
+}: OpenSettingsSectionProps) => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
-  const { mutate: save, isPending: isSaving } =
+  /*
+   * 오픈 상태는 배너 문구를 고르는 데만 쓴다. 오픈/종료 버튼은 화면 머리의 공개/비공개
+   * 토글이 갖고 있고(LC-3283), 그 액션 훅은 이 본문을 감싸는 페이지가 하나만 부른다.
+   */
+  const { data: openings } = useLiveMentoringOpenStatusQuery();
+  const { mutateAsync: saveSettings } =
     useUpdateLiveMentoringSettingsMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
   } = useSetRepresentativeCareerMutation();
-  const { alertProps, showAlert, showConfirm } = useMentorAlert();
+  const { alertProps, showAlert } = useMentorAlert();
 
   const [form, setForm] = useState<LiveMentoringSettings | null>(null);
   // 제목·타입의 변경사항(dirty) 판정을 위한 로드 원본.
@@ -56,37 +77,80 @@ const OpenSettingsSection = () => {
   const [slotModalOpen, setSlotModalOpen] = useState(false);
 
   /*
-   * 오픈 액션은 훅이 갖는다(LC-3273). 하단 바가 어느 스텝에 있든 같은 버튼을 그려야 해서,
-   * 이 본문 안에 두면 다른 스텝에서 쓸 수 없다.
-   *
-   * 훅은 조기 반환보다 **앞에서** 불러야 한다. 설정을 아직 못 받았으면 input 이 null 이고,
-   * 그때는 오픈 버튼이 비활성으로 그려진다.
+   * 서버 응답을 얹되 **편집 중인 세 값은 지킨다.** 실시간 저장이 성공하면 설정 쿼리가
+   * 무효화돼 곧바로 다시 내려오는데, 통째로 덮으면 저장이 나간 사이에 멘토가 친 글자가
+   * 서버 응답으로 지워진다. 나머지(상품 id·상태·경력)는 이 화면이 고치지 않으므로
+   * 서버가 맞다 — 저장이 만들어 준 `liveMentoringId` 도 그렇게 들어온다.
    */
-  const openAction = useLiveMentoringOpenAction({
-    input: form
-      ? {
-          title: form.title ?? '',
-          categories: form.categories,
-          durations: form.durations,
-          hasProduct: form.liveMentoringId !== null,
-        }
-      : null,
-    alert: { showAlert, showConfirm },
-    /*
-     * 제목·타입·진행시간은 오픈 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
-     * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면 "바꾼 게 안 보인다"로 읽힌다.
-     */
-    pendingNotice:
-      form && original && JSON.stringify(form) !== JSON.stringify(original)
-        ? '방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
-        : undefined,
+  useEffect(() => {
+    if (!data) return;
+    const keepEdits = (
+      prev: LiveMentoringSettings | null,
+    ): LiveMentoringSettings =>
+      prev
+        ? {
+            ...data,
+            title: prev.title,
+            categories: prev.categories,
+            durations: prev.durations,
+          }
+        : data;
+    setForm(keepEdits);
+    setOriginal(keepEdits);
+  }, [data]);
+
+  /*
+   * 실시간 저장. 훅은 조기 반환보다 **앞에서** 불러야 하므로 판정도 여기서 한다 —
+   * 설정을 아직 못 받았으면 dirty 가 아니라 아무것도 나가지 않는다.
+   */
+  const formJson = form === null ? '' : JSON.stringify(form);
+  const isDirty =
+    form !== null && original !== null && formJson !== JSON.stringify(original);
+
+  /* 지금 보내면 서버가 거절할 이유. 오픈 설정은 세 칸이 전부라 여기서 바로 본다. */
+  const blockedReason = !form
+    ? null
+    : !form.title?.trim()
+      ? '타이틀을 채우면 저장돼요'
+      : form.categories.length === 0
+        ? '타입을 하나 이상 고르면 저장돼요'
+        : form.durations.length === 0
+          ? '진행시간을 하나 이상 고르면 저장돼요'
+          : null;
+
+  /** 제목·타입·진행시간 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
+  const handleAutosave = async (): Promise<AutosaveResult> => {
+    if (!form) return { ok: false };
+    try {
+      await saveSettings({
+        title: form.title ?? '',
+        categories: form.categories,
+        durations: form.durations,
+      });
+      /*
+        응답을 폼에 되쓰지 않는다 — 타이핑 도중에 나가는 저장이라 커서가 튄다.
+        기준선만 방금 보낸 값으로 옮기고, 서버가 새로 만든 값(상품 id 등)은 위
+        `keepEdits` 가 재조회로 들여온다.
+       */
+      setOriginal(form);
+      return { ok: true };
+    } catch (error) {
+      const conflict = stateConflictAlert(error);
+      if (conflict) refetch();
+      return { ok: false, reason: conflict?.title ?? errorDescription(error) };
+    }
+  };
+
+  const autosaveStatus = useAutosave({
+    fingerprint: formJson,
+    isDirty,
+    blockedReason,
+    save: handleAutosave,
   });
 
   useEffect(() => {
-    if (!data) return;
-    setForm(data);
-    setOriginal(data);
-  }, [data]);
+    onAutosaveStatusChange(autosaveStatus);
+  }, [autosaveStatus, onAutosaveStatusChange]);
 
   if (!form || !original) {
     return (
@@ -120,31 +184,12 @@ const OpenSettingsSection = () => {
     });
 
   const status = form.status;
-  const { currentOpening, hasPreviousOpening } = openAction;
+  const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
+  const hasPreviousOpening = (openings?.length ?? 0) > 0;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
   const noDurationSelected = form.durations.length === 0;
-  /**
-   * 상품이 아직 없으면 개설이 404 로 막힌다 — `POST /openings` 는 기존 상품을 찾아
-   * 갱신·개설하는 API 다. 저장을 한 번 거쳐 상품을 만들어야 한다.
-   */
-  const hasNoProduct = form.liveMentoringId === null;
-
-  // 저장(PUT)은 제목·타입·진행시간을 서버에 반영한다.
-  const isTitleOrCategoryDirty =
-    (form.title ?? '') !== (original.title ?? '') ||
-    JSON.stringify(form.categories) !== JSON.stringify(original.categories);
-  /*
-   * "저장" 버튼 활성화는 화면에서 뭔가 하나라도 바뀌었으면 켠다 — 진행시간만 고쳤을 때
-   * 버튼이 안 켜지면 "저장이 안 되나?"로 읽힌다. 성공 시 handleSave 가 현재 폼 값
-   * 전체를 새 기준선으로 삼으므로(merged) 진행시간의 미저장 상태도 함께 정리된다.
-   */
-  const isDirty =
-    isTitleOrCategoryDirty ||
-    JSON.stringify(form.durations) !== JSON.stringify(original.durations);
-  const canSave =
-    !noTitleEntered && !noCategorySelected && !noDurationSelected && isDirty;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -175,46 +220,6 @@ const OpenSettingsSection = () => {
     });
   };
 
-  const handleMutationError = (title: string) => (error: unknown) => {
-    const conflict = stateConflictAlert(error);
-    if (conflict) {
-      refetch();
-      showAlert({ ...conflict, variant: 'error' });
-      return;
-    }
-    showAlert({
-      title,
-      description: errorDescription(error),
-      variant: 'error',
-    });
-  };
-
-  /** 제목·타입 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
-  const handleSave = () => {
-    if (!canSave) return;
-    save(
-      {
-        title: form.title ?? '',
-        categories: form.categories,
-        durations: form.durations,
-      },
-      {
-        onSuccess: (saved) => {
-          // 진행시간도 저장 요청에 포함되지만, 저장 시점의 폼 값을 기준선에 명시적으로
-          // 반영해 현재 화면과 저장 직후 응답을 일치시킨다.
-          const merged: LiveMentoringSettings = {
-            ...saved,
-            durations: form.durations,
-          };
-          setForm(merged);
-          setOriginal(merged);
-          showAlert({ title: '저장되었습니다.', variant: 'success' });
-        },
-        onError: handleMutationError('저장에 실패했습니다.'),
-      },
-    );
-  };
-
   return (
     <div className="flex flex-col gap-6 pb-24">
       {/*
@@ -237,7 +242,7 @@ const OpenSettingsSection = () => {
             </span>
             <p className="text-xs text-gray-600">
               지금은 공개 리스트에 노출되지 않아요. 등록해 둔 일정은 그대로 남아
-              있으니, "다시 오픈하기"를 누르면 그 일정으로 바로 열려요.
+              있으니, 화면 오른쪽 위의 공개 토글을 켜면 그 일정으로 바로 열려요.
             </p>
           </div>
         </div>
@@ -462,35 +467,10 @@ const OpenSettingsSection = () => {
         </div>
       </div>
 
-      {/*
-        하단 플로팅 바. 모든 스텝이 같은 바를 쓴다(LC-3273) — 오픈 설정과 상세 페이지
-        설정이 한 화면이 된 뒤로 아래 버튼만 스텝마다 달라질 이유가 없다.
-
-        모달이 떠 있는 동안에는 감춘다. 같은 자리에 겹쳐 보인다.
-      */}
-      {!slotModalOpen && !openAction.isModalOpen && (
-        <SettingsActionBar
-          status={
-            hasNoProduct
-              ? '먼저 저장해 상품을 만들어야 오픈할 수 있어요.'
-              : currentOpening
-                ? '공개 리스트에 노출 중이에요. 설정을 바꾸면 바로 반영돼요.'
-                : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'
-          }
-          isDirty={isDirty}
-          canSave={canSave}
-          isSaving={isSaving}
-          onSave={handleSave}
-          openAction={openAction}
-        />
-      )}
-
       <LiveMentoringSlotModal
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
       />
-      {openAction.modals}
-
       <MentorAlertModal {...alertProps} />
     </div>
   );

@@ -69,7 +69,7 @@ const parsePath = (path: string) => {
 };
 
 /** 앞 글자의 받침에 맞는 조사를 고른다. "제목을" / "문구를" 처럼 읽히게. */
-const withParticle = (
+export const withParticle = (
   word: string,
   withFinal: string,
   withoutFinal: string,
