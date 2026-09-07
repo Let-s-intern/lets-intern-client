@@ -58,7 +58,7 @@ const renderRow = () =>
     useMergedFeedbackRows([], [], undefined, undefined, [RESERVATION]),
   ).result.current[0];
 
-describe('FeedbackRow — 1대1 라이브 멘토링', () => {
+describe('FeedbackRow — 1:1 LIVE 멘토링', () => {
   it('행이 FeedbackRow 의 모든 키를 채운다 (source 제외 없이)', () => {
     const row = renderRow();
 
@@ -86,7 +86,7 @@ describe('FeedbackRow — 1대1 라이브 멘토링', () => {
   it('스키마가 맞지 않는 컬럼도 빈 값으로 두지 않는다', () => {
     const row = renderRow();
 
-    expect(row.challengeTitle).toBe('1대1 라이브 멘토링');
+    expect(row.challengeTitle).toBe('1:1 LIVE 멘토링');
     expect(row.thLabel).toBe('해당 없음');
   });
 

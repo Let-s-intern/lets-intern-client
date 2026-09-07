@@ -53,7 +53,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   const [sameAsAccountEmail, setSameAsAccountEmail] = useState(true);
   const [typedContactEmail, setTypedContactEmail] = useState('');
   const contactEmail = sameAsAccountEmail ? accountEmail : typedContactEmail;
-  const [question, setQuestion] = useState<QuestionInput>(EMPTY_QUESTION);
+  const [questionInput, setQuestion] = useState<QuestionInput>(EMPTY_QUESTION);
   const coupon = useLiveMentoringCoupon();
 
   /*
@@ -65,6 +65,18 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
     draft?.slots[0]?.startDate,
     new Date(),
   );
+
+  /*
+    나중에 내겠다고 골라 둔 뒤 이 화면에서 일정을 48시간 안으로 바꾸면, 체크박스는
+    잠기지만 `deferred` 는 켜진 채로 남았다 — 질문 작성 폼이 열리지 않아 지금 써야
+    한다는 안내만 뜨고 쓸 칸이 없었다(LC-3272).
+
+    상태를 되돌리는 대신 파생시킨다. 화면과 제출 payload 가 같은 값을 보므로,
+    "낼 수 없는데 내겠다고 표시된" 신청이 서버로 나갈 수 없다.
+  */
+  const question = deferralAllowed
+    ? questionInput
+    : { ...questionInput, deferred: false };
 
   /*
     선택값 없이 이 주소에 닿는 경로는 둘이다 — 새로고침, 그리고 주소창 직접 입력.

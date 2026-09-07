@@ -13,7 +13,6 @@ import type {
 import { useUserQuery } from '@/api/user/user';
 import type { useMentorAlert } from '@/hooks/useMentorAlert';
 import { publicDetailUrl } from '../constants';
-import OpenedNoticeModal from './ui/OpenedNoticeModal';
 import PreOpenCheckModal from './ui/PreOpenCheckModal';
 
 /**
@@ -107,12 +106,20 @@ export const useLiveMentoringOpenAction = ({
   input,
   alert,
   pendingNotice,
+  onBeforeOpen,
 }: {
   /** null 이면 아직 설정을 못 받은 것이다 — 버튼은 비활성으로 그린다. */
   input: OpenActionInput | null;
   alert: Pick<ReturnType<typeof useMentorAlert>, 'showAlert' | 'showConfirm'>;
   /** 오픈 전 확인 모달에 덧붙일 안내. 미저장 변경이 있을 때만 넘긴다. */
   pendingNotice?: string;
+  /**
+   * 오픈 직전에 할 일. `false` 를 돌려주면 오픈하지 않는다.
+   *
+   * 상세 페이지 스텝에서 미저장 내용을 먼저 저장하는 데 쓴다 — 오픈은 그 순간의 상세를
+   * 공개하는 행동이라, 쓰던 내용을 두고 열면 멘티가 옛 페이지를 본다.
+   */
+  onBeforeOpen?: () => Promise<boolean>;
 }): LiveMentoringOpenAction => {
   const { refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
@@ -131,9 +138,6 @@ export const useLiveMentoringOpenAction = ({
    * 어느 쪽을 실행할지 들고 있을 이유도 없어졌다.
    */
   const [isOpenConfirmVisible, setIsOpenConfirmVisible] = useState(false);
-  /** 오픈 직후 안내 모달이 종료 대상으로 삼을 개설. null 이면 모달을 닫는다. */
-  const [openedOpeningId, setOpenedOpeningId] = useState<number | null>(null);
-
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   const hasPreviousOpening = (openings?.length ?? 0) > 0;
 
@@ -183,8 +187,10 @@ export const useLiveMentoringOpenAction = ({
   };
 
   /** 오픈. 최초 개설과 재개설이 같은 요청이다. */
-  const handleOpen = () => {
+  const handleOpen = async () => {
     if (!input) return;
+    // 저장이 실패하면 열지 않는다. 옛 내용이 공개되는 것이 더 나쁘다.
+    if (onBeforeOpen && !(await onBeforeOpen())) return;
     setIsOpenConfirmVisible(false);
     openMentoring(
       {
@@ -194,22 +200,19 @@ export const useLiveMentoringOpenAction = ({
       },
       {
         /*
-         * 성공 알림 대신 안내 모달을 띄운다. 오픈은 되돌리기 번거로운 행동이라
-         * "됐습니다" 한 줄로 끝내지 않고, 확인할 주소와 즉시 내리는 길을 함께 준다.
+         * 오픈했다는 사실만 알린다(LC-3280).
+         *
+         * 예전에는 "이상하면 바로 종료하세요" 안내 모달을 띄웠다. 방금 확인 모달에서
+         * 동의하고 누른 직후에 취소를 권하는 화면이 뜨니, 무언가 잘못된 줄 알고 멈추게
+         * 된다. 종료는 하단 바의 「오픈 닫기」로 언제든 할 수 있다.
          */
-        onSuccess: (history) => {
-          const opened = history.openings.find(
-            (opening) => opening.status === 'OPEN',
-          );
-          if (opened) setOpenedOpeningId(opened.openingId);
-          else
-            alert.showAlert({
-              title: '오픈했어요.',
-              description:
-                '지금부터 공개 리스트에 노출됩니다. 등록해 둔 일정에서 멘티가 예약할 수 있어요.',
-              variant: 'success',
-            });
-        },
+        onSuccess: () =>
+          alert.showAlert({
+            title: '오픈했어요.',
+            description:
+              '지금부터 공개 리스트에 노출됩니다. 등록해 둔 일정에서 멘티가 예약할 수 있어요.',
+            variant: 'success',
+          }),
         onError: handleMutationError('오픈에 실패했습니다.'),
       },
     );
@@ -241,30 +244,6 @@ export const useLiveMentoringOpenAction = ({
           onConfirm={handleOpen}
         />
       )}
-
-      {user?.userId != null && (
-        <OpenedNoticeModal
-          isOpen={openedOpeningId !== null}
-          publicUrl={publicDetailUrl(user.userId)}
-          isClosing={isClosingOpening}
-          onDismiss={() => setOpenedOpeningId(null)}
-          onCloseOpening={() => {
-            if (openedOpeningId === null) return;
-            closeOpening(openedOpeningId, {
-              onSuccess: () => {
-                setOpenedOpeningId(null);
-                alert.showAlert({
-                  title: '오픈을 종료했습니다.',
-                  description:
-                    '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
-                  variant: 'success',
-                });
-              },
-              onError: handleMutationError('오픈을 종료하지 못했습니다.'),
-            });
-          }}
-        />
-      )}
     </>
   );
 
@@ -275,7 +254,7 @@ export const useLiveMentoringOpenAction = ({
       disabled: isClosingOpening,
       onClick: handleClose,
       modals,
-      isModalOpen: openedOpeningId !== null,
+      isModalOpen: false,
       currentOpening,
       hasPreviousOpening,
     };
@@ -291,7 +270,7 @@ export const useLiveMentoringOpenAction = ({
     disabled: isOpening || !canOpen,
     onClick: () => setIsOpenConfirmVisible(true),
     modals,
-    isModalOpen: isOpenConfirmVisible || openedOpeningId !== null,
+    isModalOpen: isOpenConfirmVisible,
     currentOpening: undefined,
     hasPreviousOpening,
   };

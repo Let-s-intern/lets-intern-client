@@ -9,7 +9,7 @@ const TABS: { key: FeedbackTabKey; label: string }[] = [
   { key: 'all', label: '전체 내역' },
   { key: 'written', label: '서면 피드백 내역' },
   { key: 'live', label: 'LIVE 피드백 내역' },
-  { key: 'live-mentoring', label: '1대1 라이브 멘토링' },
+  { key: 'live-mentoring', label: '1:1 LIVE 멘토링' },
 ];
 
 interface FeedbackTabsProps {

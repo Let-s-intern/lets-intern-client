@@ -34,7 +34,7 @@ export const couponProgramTypeToText: Record<string, string> = {
   VOD: 'VOD 클래스',
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
-  LIVE_MENTORING: '1대1 라이브 멘토링',
+  LIVE_MENTORING: '1:1 LIVE 멘토링',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',

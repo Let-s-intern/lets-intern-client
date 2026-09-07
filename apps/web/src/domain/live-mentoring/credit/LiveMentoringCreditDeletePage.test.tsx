@@ -48,7 +48,7 @@ const APPLICATION: MyLiveMentoringApplication = {
   paymentId: null,
   mentorName: '어드어드민닉네임',
   thumbnail: null,
-  productName: '어드민 1대1 라이브 멘토링',
+  productName: '어드민 1:1 LIVE 멘토링',
   durationMinutes: 60,
   reservationStartAt: '2026-09-13T10:00:00',
   reservationEndAt: '2026-09-13T11:00:00',

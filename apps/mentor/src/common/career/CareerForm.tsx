@@ -380,7 +380,12 @@ const CareerForm = ({
           isOpen={!!periodMode}
           mode={periodMode}
           onClose={() => setPeriodMode(null)}
-          onNext={() => setPeriodMode('end')}
+          /*
+           * 재직 중이면 종료일을 묻지 않는다. 종료일 입력칸은 이미 비활성인데
+           * 시작일을 고르고 나면 종료일 모달이 떠서, 끌 방법 없는 화면을 하나 더
+           * 지나야 했다(LC-3278). 재직 중일 때 "다음"은 그냥 닫는 것이다.
+           */
+          onNext={() => setPeriodMode(isCurrentlyWorking ? null : 'end')}
           onPrev={() => setPeriodMode('start')}
           onSelect={
             periodMode === 'start' ? handleStartDateSelect : handleEndDateSelect

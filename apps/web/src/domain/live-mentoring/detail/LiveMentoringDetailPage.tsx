@@ -4,6 +4,7 @@ import {
   useLiveMentorDetailQuery,
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
+import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -19,19 +20,44 @@ import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
-import DetailImageSection from './DetailImageSection';
+import DetailBenefitSection from './DetailBenefitSection';
+import DetailMentoringIntroSection from './DetailMentoringIntroSection';
+import DetailPainSection from './DetailPainSection';
+import DetailPlanSection from './DetailPlanSection';
 import DetailNavigation, {
   LM_DIFFERENT_ID,
   LM_FAQ_ID,
   LM_MENTOR_INFO_ID,
   LM_MENTORING_INTRO_ID,
+  LM_RESULTS_ID,
   LM_REVIEW_ID,
+  LM_TYPES_ID,
+  LM_VIDEO_ID,
 } from './DetailNavigation';
 import DetailSection from './DetailSection';
 
 interface LiveMentoringDetailPageProps {
   mentorId: string;
+  /**
+   * 멘토가 지금 편집 중인 상세 템플릿. 넘어오면 서버가 준 것 대신 이걸로 그린다.
+   *
+   * 멘토 앱의 설정 화면이 이 페이지를 iframe 으로 띄우고 편집 중인 값을 `postMessage`
+   * 로 보낸다(LC-3268). 예전에는 멘토 앱이 이 페이지의 마크업을 복제해 미리보기를
+   * 그렸는데, 공개 페이지가 바뀔 때마다 따라 고쳐야 했고 실제로 어긋나 있었다.
+   *
+   * 템플릿만 갈아끼운다 — 평점·후기 수·가격·진행 기간은 서버가 준 진짜 값을 쓴다.
+   * 그래야 미리보기가 "지금 고치는 부분만 다른" 실제 화면이 된다.
+   */
+  previewTemplate?: LiveMentoringDetailPageTemplate;
+  /**
+   * 미리보기 모드. 신청 시트와 CTA 를 열지 않는다 — 멘토가 자기 상품을 신청할 일도
+   * 없고, iframe 안에서 로그인으로 튕기면 미리보기가 통째로 사라진다.
+   */
+  isPreview?: boolean;
 }
+
+/** 이 페이지가 그리는 템플릿의 타입. `LiveMentorDetail['template']` 과 같다. */
+type LiveMentoringDetailPageTemplate = LiveMentorDetail['template'];
 
 /**
  * 공개 멘토 상세 페이지 (PRD §5 S2).
@@ -46,6 +72,8 @@ interface LiveMentoringDetailPageProps {
  */
 const LiveMentoringDetailPage = ({
   mentorId,
+  previewTemplate,
+  isPreview = false,
 }: LiveMentoringDetailPageProps) => {
   const { data, isLoading, isError } = useLiveMentorDetailQuery(mentorId);
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
@@ -66,6 +94,8 @@ const LiveMentoringDetailPage = ({
    * 튕기면 그 선택이 사라지기 때문이다.
    */
   const handleApplyClick = () => {
+    // 미리보기에서는 아무 일도 하지 않는다. 아래 CTA 도 같은 이유로 렌더하지 않는다.
+    if (isPreview) return;
     if (!isLoggedIn) {
       const redirectTo = `${window.location.pathname}${window.location.search}`;
       router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
@@ -100,7 +130,17 @@ const LiveMentoringDetailPage = ({
     return <UnderDevelopmentNotice />;
   }
 
-  const { profile, template } = data;
+  /*
+    편집 중인 값이 오면 그걸 그린다. 나머지(평점·가격·기간)는 서버 값 그대로다.
+
+    지역 변수 하나로 갈아끼우면 안 된다 — `DetailHero` 처럼 `detail` 을 통째로 받아
+    안에서 `detail.template` 을 읽는 자식이 있어서, 그쪽은 서버 값을 계속 본다.
+    실제로 히어로의 핵심 소개만 미리보기에 반영되지 않는 문제가 있었다.
+  */
+  const detail = previewTemplate
+    ? { ...data, template: previewTemplate }
+    : data;
+  const { profile, template } = detail;
   const { intro, mentoringTypes, strategy, video, results } = template;
   // 프로필을 덜 채운 멘토는 닉네임이 null 로 온다. 문구가 "null 멘토가 함께해요"가 되지 않게 폴백한다.
   const nickname = profile.nickname ?? '멘토';
@@ -111,28 +151,37 @@ const LiveMentoringDetailPage = ({
     period?.deadline.slice(0, 10) ?? null,
   );
   const shownReviews = template.reviews.visible
-    ? data.reviews.filter((r) =>
+    ? detail.reviews.filter((r) =>
         template.reviews.selectedReviewIds.includes(r.reviewId),
       )
     : [];
 
   return (
-    <div className="flex flex-col">
+    /*
+      한글은 기본 줄바꿈 규칙이 "아무 글자 사이"라 좁은 화면에서 단어가 쪼개진다
+      ("과 / 연", "50,000 / 원"). word-break 는 상속되므로 페이지 루트 한 곳에
+      keep-all 을 걸어 히어로·후기·FAQ 까지 전부 띄어쓰기에서만 접히게 한다.
+    */
+    <div className="flex flex-col break-keep">
       <DetailHero
-        detail={data}
+        detail={detail}
         period={periodLabel}
         selectedDuration={applySheet.draft.duration}
         onSelectPlan={applySheet.selectDuration}
       />
 
-      <DetailNavigation isReady={!isLoading} />
+      {/*
+        앵커 네비는 미리보기에서 그리지 않는다. 프레임 안에서는 이동을 막아 두어
+        눌러도 아무 일이 없고, 좁은 화면에서 자리만 차지해 정작 볼 본문이 밀린다.
+      */}
+      {isPreview ? null : <DetailNavigation isReady={!isLoading} />}
 
       {/* 시안 0-1 · 특별 혜택 */}
-      <DetailImageSection section="benefit" priority />
+      <DetailBenefitSection />
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
-      <DetailImageSection section="pain" />
+      <DetailPainSection careers={detail.profile.careers} />
       {/* 시안 0-3 · 멘토링 소개 */}
-      <DetailImageSection section="mentoringIntro" id={LM_MENTORING_INTRO_ID} />
+      <DetailMentoringIntroSection id={LM_MENTORING_INTRO_ID} />
 
       {/* 시안 1 · 멘토 소개 */}
       <DetailSection
@@ -188,6 +237,7 @@ const LiveMentoringDetailPage = ({
       {/* 시안 2 · 멘토링 유형 */}
       {mentoringTypes.items.length > 0 && (
         <DetailSection
+          id={LM_TYPES_ID}
           label="멘토링 유형"
           title={mentoringTypes.title}
           subtitle={mentoringTypes.subtitle}
@@ -196,6 +246,8 @@ const LiveMentoringDetailPage = ({
             {mentoringTypes.items.map((item, i) => (
               <li
                 key={i}
+                /* 멘토 설정의 미리보기가 편집 중인 카드로 따라올 때 쓴다(LC-3268). */
+                data-preview-item={i}
                 className="bg-neutral-95 flex flex-col gap-3 rounded-md p-6"
               >
                 <div className="flex items-center gap-2">
@@ -241,6 +293,7 @@ const LiveMentoringDetailPage = ({
             {strategy.points.map((point, i) => (
               <li
                 key={i}
+                data-preview-item={i}
                 className="bg-primary-5 grid grid-cols-1 items-center gap-5 rounded-md p-5 md:grid-cols-[minmax(0,380px)_1fr] md:gap-8"
               >
                 {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
@@ -257,10 +310,10 @@ const LiveMentoringDetailPage = ({
                   <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
                     Point {i + 1}
                   </span>
-                  <p className="text-xsmall16 md:text-small18 font-bold">
+                  <p className="text-xsmall16 md:text-small18 whitespace-pre-line font-bold">
                     {point.title}
                   </p>
-                  <p className="text-neutral-40 text-xsmall14 leading-relaxed">
+                  <p className="text-neutral-40 text-xsmall14 whitespace-pre-line leading-relaxed">
                     {point.description}
                   </p>
                 </div>
@@ -272,7 +325,12 @@ const LiveMentoringDetailPage = ({
 
       {/* 시안 4 · 이렇게 도와드려요(영상) — 다크 배경 */}
       {video.visible && video.videoUrl && (
-        <DetailSection dark title={video.title} subtitle={video.subtitle}>
+        <DetailSection
+          id={LM_VIDEO_ID}
+          dark
+          title={video.title}
+          subtitle={video.subtitle}
+        >
           {/* 폭을 안 잡으면 mw-1180 에서 16:9 높이가 660px 을 넘어 한 화면에 안 들어온다 */}
           <div className="mx-auto aspect-video w-full max-w-[820px] overflow-hidden rounded-md bg-black">
             <iframe
@@ -293,11 +351,20 @@ const LiveMentoringDetailPage = ({
 
       {/* 시안 5 · 결과 사례(Before/After) — 다크 배경 */}
       {results.visible && results.cases.length > 0 && (
-        <DetailSection dark label={results.subtitle} title={results.title}>
+        <DetailSection
+          id={LM_RESULTS_ID}
+          dark
+          label={results.subtitle}
+          title={results.title}
+        >
           {/* 카드 폭을 안 잡으면 mw-1180 절반(약 570px)까지 이미지가 커져 한눈에 안 들어온다 */}
           <ul className="mx-auto flex w-full max-w-[840px] flex-col gap-8">
             {results.cases.map((item, i) => (
-              <li key={i} className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <li
+                key={i}
+                data-preview-item={i}
+                className="grid grid-cols-1 gap-5 md:grid-cols-2"
+              >
                 <div className="flex flex-col gap-3">
                   <div className="overflow-hidden rounded-md">
                     <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
@@ -313,7 +380,7 @@ const LiveMentoringDetailPage = ({
                       )}
                     </div>
                   </div>
-                  <p className="text-xsmall14 text-center text-white/70">
+                  <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
                     {item.beforeCaption}
                   </p>
                 </div>
@@ -333,7 +400,7 @@ const LiveMentoringDetailPage = ({
                       )}
                     </div>
                   </div>
-                  <p className="text-xsmall14 text-center font-medium text-white">
+                  <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
                     ✓ {item.afterCaption}
                   </p>
                 </div>
@@ -344,7 +411,7 @@ const LiveMentoringDetailPage = ({
       )}
 
       {/* 시안 6 · 플랜 */}
-      <DetailImageSection section="plan" />
+      <DetailPlanSection durationPrices={detail.durationPrices} />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />
@@ -354,7 +421,7 @@ const LiveMentoringDetailPage = ({
         <DetailSection
           id={LM_REVIEW_ID}
           label="후기"
-          title={`${data.reviewCount}명이 만족한 렛츠커리어 수강생의 솔직한 멘토링 후기`}
+          title={`${detail.reviewCount}명이 만족한 렛츠커리어 수강생의 솔직한 멘토링 후기`}
           subtitle="이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!"
         >
           <ul className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -387,12 +454,14 @@ const LiveMentoringDetailPage = ({
         예약 가능한 슬롯이 없어도 바는 남긴다. 감추면 상품이 없는 것처럼 보인다 —
         비활성 상태로 두는 판단은 `DetailCTAButtons` 안에 있다.
       */}
-      <DetailCTAButtons
-        title={data.title}
-        beginning={period?.beginning ?? null}
-        deadline={period?.deadline ?? null}
-        onApplyClick={handleApplyClick}
-      />
+      {isPreview ? null : (
+        <DetailCTAButtons
+          title={detail.title}
+          beginning={period?.beginning ?? null}
+          deadline={period?.deadline ?? null}
+          onApplyClick={handleApplyClick}
+        />
+      )}
 
       {/*
         `신청하기` 는 선택값을 넘기고 결제 페이지로 보내기만 한다. 신청 생성은
@@ -400,7 +469,7 @@ const LiveMentoringDetailPage = ({
         정해지기도 전에 슬롯이 10분 선점된다.
       */}
       <ApplySheet
-        detail={data}
+        detail={detail}
         slots={slots?.liveMentoringSlotList ?? []}
         sheet={applySheet}
         onSubmit={(draft) => {

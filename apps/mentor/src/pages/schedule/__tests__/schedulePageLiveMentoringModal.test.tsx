@@ -102,7 +102,7 @@ const LIVE_MENTORING_BAR = {
   barType: 'live-mentoring',
   challengeId: -1,
   missionId: -4091004,
-  challengeTitle: '1대1 라이브 멘토링',
+  challengeTitle: '1:1 LIVE 멘토링',
   th: 1,
   startDate: '2026-05-04',
   endDate: '2026-05-04',

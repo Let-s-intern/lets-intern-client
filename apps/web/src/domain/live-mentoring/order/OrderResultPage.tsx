@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { useConfirmLiveMentoringPaymentMutation } from '@/api/live-mentoring/liveMentoring';
@@ -24,7 +24,6 @@ const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확
  * 승인하려다 실패하고, 사용자에게는 성공한 결제가 실패로 보인다.
  */
 const OrderResultPage = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const application = useOrderDraftStore((state) => state.application);
   const draft = useOrderDraftStore((state) => state.draft);
@@ -145,16 +144,11 @@ const OrderResultPage = () => {
         </div>
       </dl>
 
-      <div className="flex w-full max-w-[480px] gap-3">
-        <button
-          type="button"
-          onClick={() =>
-            router.push(`/live-mentoring/${draft?.mentorId ?? ''}`)
-          }
-          className="border-primary text-primary text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
-        >
-          멘토 페이지로
-        </button>
+      {/*
+        결제 직후에 갈 곳은 신청 내역 하나다(LC-3274). 방금 산 상품의 판매 페이지로
+        돌려보내면 또 사라는 말로 읽히고, 정작 확인해야 할 예약 내역에서 멀어진다.
+      */}
+      <div className="flex w-full max-w-[480px]">
         <Link
           href="/mypage/application"
           className="bg-primary text-xsmall16 flex-1 rounded-sm py-3 text-center font-medium text-white"

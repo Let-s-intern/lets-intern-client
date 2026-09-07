@@ -12,8 +12,6 @@ interface MentorDetailContentSectionProps {
    * 옛 내용으로 남는 것을 막으려면 이 방법뿐이다.
    */
   resetKey: number;
-  /** 마운트 시 에디터에 넣을 내용. 저장된 값이다. */
-  initialContent: string;
   onChange: (jsonString: string) => void;
 }
 
@@ -25,28 +23,20 @@ interface MentorDetailContentSectionProps {
  */
 export default function MentorDetailContentSection({
   resetKey,
-  initialContent,
   onChange,
 }: MentorDetailContentSectionProps) {
   const { data: user, isLoading } = useUserQuery();
 
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
-      <div className="flex w-full items-center justify-between md:w-auto md:justify-normal md:gap-2.5">
-        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
-          프로필 상세페이지 제작
-        </h2>
-        {user && (
-          <a
-            href={`${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary text-xsmall14 hover:text-primary-dark tracking-tight underline underline-offset-2"
-          >
-            바로가기
-          </a>
-        )}
-      </div>
+      {/*
+        바로가기는 여기 두지 않는다. 아직 저장하지 않은 글을 쓰는 중에 눌러 봐야 옛 페이지가
+        열려서, 방금 쓴 내용이 반영되지 않은 것을 보게 된다. 저장에 성공한 뒤에 안내와 함께
+        연다(LC-3277) — `ProfilePage` 의 저장 성공 처리에 있다.
+      */}
+      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
+        프로필 상세페이지 제작
+      </h2>
 
       <div className="mt-4">
         <div className="flex flex-col items-center justify-center py-20 md:hidden">
@@ -59,9 +49,20 @@ export default function MentorDetailContentSection({
           {isLoading || !user ? (
             <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
           ) : (
+            /*
+             * 마운트 값은 서버 응답에서 **직접** 읽는다.
+             *
+             * 페이지가 들고 있는 저장본을 넘겨받으면 한 렌더 늦는다 — user 가 도착한
+             * 렌더에서 에디터가 먼저 마운트되고, 그 뒤 effect 가 저장본을 채운다.
+             * EditorApp 은 initialEditorStateJsonString 만 읽는 비제어 컴포넌트라
+             * key 가 그대로면 늦게 온 값을 반영하지 않는다. 그래서 저장한 내용이
+             * 새로고침 후 빈 화면으로 보였다.
+             */
             <EditorApp
               key={resetKey}
-              initialEditorStateJsonString={initialContent || emptyEditorState}
+              initialEditorStateJsonString={
+                user.description || emptyEditorState
+              }
               onChange={onChange}
             />
           )}

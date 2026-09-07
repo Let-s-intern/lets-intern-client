@@ -43,19 +43,23 @@ describe('KeyPointField', () => {
     ).toBeDisabled();
   });
 
-  it('60자를 넘겨 입력할 수 없다', () => {
+  /*
+    상한은 서버 DTO(`HeroRequest` 의 `@Size(max = 500)`)를 그대로 쓴다.
+    예전 60자는 한 줄 입력에 맞춘 값이지 서버 제약이 아니었다(LC-3276).
+  */
+  it('서버 상한인 500자까지 입력할 수 있다', () => {
     renderField(['']);
 
     expect(screen.getByLabelText('소개 문구 1')).toHaveAttribute(
       'maxLength',
-      '60',
+      '500',
     );
   });
 
   it('입력한 글자수를 세어 보여준다', () => {
     renderField(['열두 글자입니다']);
 
-    expect(screen.getByText('8/60')).toBeInTheDocument();
+    expect(screen.getByText('8/500')).toBeInTheDocument();
   });
 
   it('삭제를 누르면 그 줄만 빠진다', () => {

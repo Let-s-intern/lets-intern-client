@@ -30,7 +30,7 @@ const CREATE_30MIN = {
   applicationId: 14,
   product: {
     durationPriceId: 4,
-    name: '어드민 1대1 라이브 멘토링',
+    name: '어드민 1:1 LIVE 멘토링',
     durationMinutes: 30,
   },
   reservation: {
@@ -56,7 +56,7 @@ const CREATE_60MIN = {
   applicationId: 15,
   product: {
     durationPriceId: 5,
-    name: '어드민 1대1 라이브 멘토링',
+    name: '어드민 1:1 LIVE 멘토링',
     durationMinutes: 60,
   },
   reservation: {
@@ -214,7 +214,7 @@ const MY_APPLICATIONS = {
       mentorName: '어드어드민닉네임',
       thumbnail:
         'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
-      productName: '어드민 1대1 라이브 멘토링',
+      productName: '어드민 1:1 LIVE 멘토링',
       durationMinutes: 60,
       reservationStartAt: '2026-09-13T10:00:00',
       reservationEndAt: '2026-09-13T11:00:00',

@@ -7,7 +7,13 @@ interface KeyPointFieldProps {
 /** 시안 기준 소개 문구는 최대 3개다. */
 export const KEY_POINT_MAX = 3;
 /** 한 줄 60자. 서버는 500자까지 받지만 상세 페이지 레이아웃이 감당하는 길이가 기준이다. */
-export const KEY_POINT_MAX_LENGTH = 60;
+/**
+ * 소개 문구 상한. 서버 DTO 의 `@Size(max = 500)` 을 그대로 쓴다.
+ *
+ * 예전에는 60자였다. 한 줄 입력에 맞춘 값이지 서버 제약이 아니었고, 멘토가 쓰려는
+ * 문장이 중간에 끊겼다. 칸도 여러 줄로 키워 쓴 내용이 한눈에 보이게 한다.
+ */
+export const KEY_POINT_MAX_LENGTH = 500;
 
 const DragHandleIcon = () => (
   <svg
@@ -65,7 +71,12 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
 
       <ul className="mt-3 flex flex-col gap-2">
         {bullets.map((bullet, index) => (
-          <li key={index} className="flex items-center gap-2">
+          <li
+            key={index}
+            /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
+            data-preview-index={index}
+            className="flex items-center gap-2"
+          >
             <span className="flex items-center gap-1.5 text-neutral-50">
               <span className="flex flex-col">
                 <button
@@ -83,14 +94,15 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
               </span>
             </span>
 
-            <div className="border-neutral-80 focus-within:border-primary flex flex-1 items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
-              <input
+            <div className="border-neutral-80 focus-within:border-primary flex flex-1 items-start gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+              <textarea
                 value={bullet}
+                rows={2}
                 maxLength={KEY_POINT_MAX_LENGTH}
                 onChange={(event) => replaceAt(index, event.target.value)}
                 placeholder="멘토링 소개 문구를 입력해주세요"
                 aria-label={`소개 문구 ${index + 1}`}
-                className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 resize-none outline-none"
               />
               <CharCounter value={bullet} max={KEY_POINT_MAX_LENGTH} />
             </div>

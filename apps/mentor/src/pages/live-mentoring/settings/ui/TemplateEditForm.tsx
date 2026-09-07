@@ -1,4 +1,13 @@
 import CharCounter from './CharCounter';
+
+/**
+ * 섹션 제목 상한. 서버 DTO 의 `@Size(max = 255)` 를 그대로 쓴다.
+ *
+ * 예전에는 20자였다. 시안 폭에 맞춘 값이지 서버 제약이 아니었고, 멘토가 쓰려는 문장이
+ * 잘려 나갔다(LC-3276). 프론트가 임의로 좁히지 않고 서버가 실제로 거부하는 지점까지
+ * 열어 둔다 — 카운터는 그 지점을 넘겼을 때만 경고한다.
+ */
+const SECTION_TITLE_MAX = 255;
 import type { FocusEvent } from 'react';
 
 import type {
@@ -62,18 +71,30 @@ const VisibleToggle = ({
   onChange: (next: boolean) => void;
 }) => (
   <label className="flex cursor-pointer items-center gap-2">
+    {/*
+      네이티브 체크박스를 감춰 두고 스위치를 그린다(LC-3267). 켜짐/꺼짐이 색과 손잡이
+      위치로 한눈에 드러나야 하는 값이라 체크박스보다 스위치가 맞다. 감춰도 실제 입력은
+      체크박스라 키보드 조작(Tab·Space)과 낭독은 그대로다 — `peer` 로 포커스 링을 잇는다.
+    */}
     <input
       type="checkbox"
       checked={checked}
       onChange={(e) => onChange(e.target.checked)}
-      className="accent-primary h-4 w-4"
+      className="peer sr-only"
     />
+    <span
+      aria-hidden="true"
+      className={`peer-focus-visible:ring-primary/40 relative h-5 w-9 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 ${
+        checked ? 'bg-primary' : 'bg-gray-300'
+      }`}
+    >
+      <span
+        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
+          checked ? 'left-[1.125rem]' : 'left-0.5'
+        }`}
+      />
+    </span>
     <span className="text-xs text-gray-600">상세 페이지에 노출</span>
-    {!checked && (
-      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500">
-        지금은 숨김
-      </span>
-    )}
   </label>
 );
 
@@ -174,10 +195,10 @@ const TemplateEditForm = ({
                     <span className="text-system-error">*</span>
                   </label>
                   <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
-                    <input
+                    <textarea
                       id="typesTitle"
                       value={mentoringTypes.title}
-                      maxLength={20}
+                      maxLength={SECTION_TITLE_MAX}
                       placeholder="레이블"
                       className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
                       onChange={(e) =>
@@ -188,8 +209,12 @@ const TemplateEditForm = ({
                           },
                         })
                       }
+                      rows={2}
                     />
-                    <CharCounter value={mentoringTypes.title} max={20} />
+                    <CharCounter
+                      value={mentoringTypes.title}
+                      max={SECTION_TITLE_MAX}
+                    />
                   </div>
                 </div>
 
@@ -275,6 +300,7 @@ const TemplateEditForm = ({
             {...sectionMeta('strategy')}
             heading="취업 성공 전략을 소개해 주세요"
             description="멘토링에서 알려줄 전략을 Point 로 나눠 보여줄 수 있어요."
+            muted={!strategy.visible}
             action={
               <VisibleToggle
                 checked={strategy.visible}
@@ -285,61 +311,76 @@ const TemplateEditForm = ({
             }
           />
 
-          <div className="flex flex-col gap-4">
-            <input
-              className={inputClass}
-              value={strategy.title}
-              placeholder="섹션 제목"
-              onChange={(e) =>
-                onChange({ strategy: { ...strategy, title: e.target.value } })
-              }
-            />
-            <input
-              className={inputClass}
-              value={strategy.subtitle}
-              placeholder="섹션 설명"
-              onChange={(e) =>
-                onChange({
-                  strategy: { ...strategy, subtitle: e.target.value },
-                })
-              }
-            />
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!strategy.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              strategy.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-4">
+              <textarea
+                className={inputClass}
+                value={strategy.title}
+                placeholder="섹션 제목"
+                onChange={(e) =>
+                  onChange({ strategy: { ...strategy, title: e.target.value } })
+                }
+                rows={2}
+              />
+              <textarea
+                className={inputClass}
+                value={strategy.subtitle}
+                placeholder="섹션 설명"
+                onChange={(e) =>
+                  onChange({
+                    strategy: { ...strategy, subtitle: e.target.value },
+                  })
+                }
+                rows={2}
+              />
 
-            <ListField<TemplateStrategyPoint>
-              label="Point"
-              items={strategy.points}
-              makeEmpty={() => ({ image: null, title: '', description: '' })}
-              renderItem={(point, update) => (
-                <div className="flex flex-col gap-2">
-                  <ImageField
-                    label="이미지"
-                    value={point.image}
-                    onChange={(image) => update({ ...point, image })}
-                  />
-                  <input
-                    className={inputClass}
-                    value={point.title}
-                    placeholder="Point 제목"
-                    onChange={(e) =>
-                      update({ ...point, title: e.target.value })
-                    }
-                  />
-                  <textarea
-                    rows={3}
-                    className={inputClass}
-                    value={point.description}
-                    placeholder="설명"
-                    onChange={(e) =>
-                      update({ ...point, description: e.target.value })
-                    }
-                  />
-                </div>
-              )}
-              onChange={(points) =>
-                onChange({ strategy: { ...strategy, points } })
-              }
-            />
-          </div>
+              <ListField<TemplateStrategyPoint>
+                label="Point"
+                items={strategy.points}
+                makeEmpty={() => ({ image: null, title: '', description: '' })}
+                renderItem={(point, update) => (
+                  <div className="flex flex-col gap-2">
+                    <ImageField
+                      label="이미지"
+                      value={point.image}
+                      onChange={(image) => update({ ...point, image })}
+                    />
+                    <textarea
+                      className={inputClass}
+                      value={point.title}
+                      placeholder="Point 제목"
+                      onChange={(e) =>
+                        update({ ...point, title: e.target.value })
+                      }
+                      rows={2}
+                    />
+                    <textarea
+                      rows={3}
+                      className={inputClass}
+                      value={point.description}
+                      placeholder="설명"
+                      onChange={(e) =>
+                        update({ ...point, description: e.target.value })
+                      }
+                    />
+                  </div>
+                )}
+                onChange={(points) =>
+                  onChange({ strategy: { ...strategy, points } })
+                }
+              />
+            </div>
+          </fieldset>
         </section>
       ) : null}
 
@@ -350,6 +391,7 @@ const TemplateEditForm = ({
             {...sectionMeta('video')}
             heading="멘토링 소개 영상을 등록해 주세요"
             description="멘토링 방식이나 제공하는 도움을 소개하는 영상을 등록할 수 있어요."
+            muted={!video.visible}
             action={
               <VisibleToggle
                 checked={video.visible}
@@ -359,94 +401,108 @@ const TemplateEditForm = ({
               />
             }
           />
-          <div className="flex flex-col gap-4">
-            <div>
-              <label className={labelClass} htmlFor="videoTitle">
-                영상 제목
-              </label>
-              <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!video.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              video.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className={labelClass} htmlFor="videoTitle">
+                  영상 제목
+                </label>
+                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                  <textarea
+                    id="videoTitle"
+                    value={video.title}
+                    maxLength={SECTION_TITLE_MAX}
+                    placeholder="예: 멘토는 이렇게 도와드려요"
+                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    onChange={(e) =>
+                      onChange({ video: { ...video, title: e.target.value } })
+                    }
+                    rows={2}
+                  />
+                  <CharCounter value={video.title} max={SECTION_TITLE_MAX} />
+                </div>
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoSubtitle">
+                  영상 설명
+                </label>
                 <input
-                  id="videoTitle"
-                  value={video.title}
-                  maxLength={20}
-                  placeholder="예: 멘토는 이렇게 도와드려요"
-                  className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                  id="videoSubtitle"
+                  className={inputClass}
+                  value={video.subtitle}
+                  placeholder="영상에서 확인할 수 있는 내용을 간단히 소개해 주세요"
                   onChange={(e) =>
-                    onChange({ video: { ...video, title: e.target.value } })
+                    onChange({ video: { ...video, subtitle: e.target.value } })
                   }
                 />
-                <CharCounter value={video.title} max={20} />
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoUrl">
+                  YouTube 영상 링크
+                </label>
+                <input
+                  id="videoUrl"
+                  className={inputClass}
+                  value={video.videoUrl ?? ''}
+                  placeholder="https://www.youtube.."
+                  onChange={(e) =>
+                    onChange({
+                      video: { ...video, videoUrl: e.target.value || null },
+                    })
+                  }
+                  /*
+                   * 붙여넣은 공유 링크를 포커스가 빠질 때 embed 주소로 바꿔 넣는다.
+                   * 값을 조용히 바꾸지 않고 입력창에 그대로 보여줘 무엇이 저장될지 드러낸다.
+                   */
+                  onBlur={(e) => {
+                    const normalized = toYoutubeEmbedUrl(e.target.value);
+                    if (normalized && normalized !== e.target.value) {
+                      onChange({ video: { ...video, videoUrl: normalized } });
+                    }
+                  }}
+                />
+                {video.videoUrl && !toYoutubeEmbedUrl(video.videoUrl) ? (
+                  <p role="alert" className="text-system-error mt-1 text-xs">
+                    YouTube 주소만 넣을 수 있어요. 공유 링크나
+                    youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-neutral-50">
+                    * 공개 또는 일부 공개로 설정된 YouTube 영상 링크를 입력해
+                    주세요.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoCaption">
+                  영상 아래 안내 문구
+                </label>
+                <textarea
+                  id="videoCaption"
+                  className={inputClass}
+                  value={video.caption}
+                  placeholder="영상과 함께 안내할 내용이 있다면 입력해 주세요"
+                  onChange={(e) =>
+                    onChange({ video: { ...video, caption: e.target.value } })
+                  }
+                  rows={2}
+                />
               </div>
             </div>
-
-            <div>
-              <label className={labelClass} htmlFor="videoSubtitle">
-                영상 설명
-              </label>
-              <input
-                id="videoSubtitle"
-                className={inputClass}
-                value={video.subtitle}
-                placeholder="영상에서 확인할 수 있는 내용을 간단히 소개해 주세요"
-                onChange={(e) =>
-                  onChange({ video: { ...video, subtitle: e.target.value } })
-                }
-              />
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor="videoUrl">
-                YouTube 영상 링크
-              </label>
-              <input
-                id="videoUrl"
-                className={inputClass}
-                value={video.videoUrl ?? ''}
-                placeholder="https://www.youtube.."
-                onChange={(e) =>
-                  onChange({
-                    video: { ...video, videoUrl: e.target.value || null },
-                  })
-                }
-                /*
-                 * 붙여넣은 공유 링크를 포커스가 빠질 때 embed 주소로 바꿔 넣는다.
-                 * 값을 조용히 바꾸지 않고 입력창에 그대로 보여줘 무엇이 저장될지 드러낸다.
-                 */
-                onBlur={(e) => {
-                  const normalized = toYoutubeEmbedUrl(e.target.value);
-                  if (normalized && normalized !== e.target.value) {
-                    onChange({ video: { ...video, videoUrl: normalized } });
-                  }
-                }}
-              />
-              {video.videoUrl && !toYoutubeEmbedUrl(video.videoUrl) ? (
-                <p role="alert" className="text-system-error mt-1 text-xs">
-                  YouTube 주소만 넣을 수 있어요. 공유 링크나
-                  youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
-                </p>
-              ) : (
-                <p className="mt-1 text-xs text-neutral-50">
-                  * 공개 또는 일부 공개로 설정된 YouTube 영상 링크를 입력해
-                  주세요.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor="videoCaption">
-                영상 아래 안내 문구
-              </label>
-              <input
-                id="videoCaption"
-                className={inputClass}
-                value={video.caption}
-                placeholder="영상과 함께 안내할 내용이 있다면 입력해 주세요"
-                onChange={(e) =>
-                  onChange({ video: { ...video, caption: e.target.value } })
-                }
-              />
-            </div>
-          </div>
+          </fieldset>
         </section>
       ) : null}
 
@@ -457,6 +513,7 @@ const TemplateEditForm = ({
             {...sectionMeta('results')}
             heading="멘토링 후 무엇이 달라졌나요?"
             description="멘티가 기대할 수 있는 변화를 구체적인 전후 사례의 이미지와 설명으로 보여주세요."
+            muted={!results.visible}
             action={
               <VisibleToggle
                 checked={results.visible}
@@ -467,31 +524,47 @@ const TemplateEditForm = ({
             }
           />
 
-          <div className="flex flex-col gap-5">
-            <div>
-              <label className={labelClass} htmlFor="resultsTitle">
-                결과 사례 제목
-              </label>
-              <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
-                <input
-                  id="resultsTitle"
-                  value={results.title}
-                  maxLength={20}
-                  placeholder="예: 멘토링 후 이렇게 달라졌어요"
-                  className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
-                  onChange={(e) =>
-                    onChange({ results: { ...results, title: e.target.value } })
-                  }
-                />
-                <CharCounter value={results.title} max={20} />
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!results.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              results.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-5">
+              <div>
+                <label className={labelClass} htmlFor="resultsTitle">
+                  결과 사례 제목
+                </label>
+                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                  <input
+                    id="resultsTitle"
+                    value={results.title}
+                    maxLength={SECTION_TITLE_MAX}
+                    placeholder="예: 멘토링 후 이렇게 달라졌어요"
+                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    onChange={(e) =>
+                      onChange({
+                        results: { ...results, title: e.target.value },
+                      })
+                    }
+                  />
+                  <CharCounter value={results.title} max={SECTION_TITLE_MAX} />
+                </div>
               </div>
-            </div>
 
-            <ResultCaseField
-              cases={results.cases}
-              onChange={(cases) => onChange({ results: { ...results, cases } })}
-            />
-          </div>
+              <ResultCaseField
+                cases={results.cases}
+                onChange={(cases) =>
+                  onChange({ results: { ...results, cases } })
+                }
+              />
+            </div>
+          </fieldset>
         </section>
       ) : null}
     </div>

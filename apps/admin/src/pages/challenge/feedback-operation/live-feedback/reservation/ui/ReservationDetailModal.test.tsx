@@ -136,7 +136,7 @@ describe('ReservationDetailModal', () => {
     expect(screen.getByText('불러오는 중...')).toBeInTheDocument();
   });
 
-  describe('1대1 라이브 멘토링', () => {
+  describe('1:1 LIVE 멘토링', () => {
     it('상세 조회 없이 목록이 가진 값으로 필드를 채운다', () => {
       useAdminFeedbackDetailQuery.mockClear();
       useAdminFeedbackDetailQuery.mockReturnValue({

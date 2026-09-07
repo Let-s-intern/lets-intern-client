@@ -86,7 +86,7 @@ const FeedbackAvailabilityModal = ({
     // 1대1 라이브 멘토링 오픈 기간도 챌린지 기간 바와 동일하게 날짜 밑에 표시.
     if (openPeriod) {
       periods.push({
-        challengeTitle: '1대1 라이브 멘토링',
+        challengeTitle: '1:1 LIVE 멘토링',
         startDate: openPeriod.startDate,
         endDate: openPeriod.endDate,
       });

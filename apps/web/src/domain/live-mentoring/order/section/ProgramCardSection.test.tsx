@@ -17,7 +17,7 @@ function makeDraft(
   return {
     mentorId: 1,
     openingId: 6,
-    productName: '어드민 1대1 라이브 멘토링',
+    productName: '어드민 1:1 LIVE 멘토링',
     thumbnail: null,
     duration: 60,
     durationPriceId: 5,
@@ -80,6 +80,6 @@ describe('ProgramCardSection', () => {
     render(<ProgramCardSection draft={makeDraft()} />);
 
     expect(screen.getByText('1:1 LIVE 멘토링')).toBeInTheDocument();
-    expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
   });
 });

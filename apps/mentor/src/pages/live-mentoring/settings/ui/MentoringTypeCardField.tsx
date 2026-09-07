@@ -105,6 +105,8 @@ const MentoringTypeCardField = ({
         {items.map((item, index) => (
           <li
             key={index}
+            /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
+            data-preview-index={index}
             className="border-neutral-80 rounded-lg border bg-white p-4"
           >
             <div className="mb-3 flex items-center gap-2">
@@ -158,7 +160,7 @@ const MentoringTypeCardField = ({
               <div className="flex items-center gap-2">
                 <span className={rowLabel}>유형 제목</span>
                 <div className={inputBox}>
-                  <input
+                  <textarea
                     value={item.title}
                     maxLength={TYPE_TEXT_MAX}
                     onChange={(event) =>
@@ -167,6 +169,7 @@ const MentoringTypeCardField = ({
                     placeholder="멘토링 유형 제목을 작성해주세요"
                     aria-label={`${index + 1}번 카드 유형 제목`}
                     className={inputText}
+                    rows={2}
                   />
                   <CharCounter value={item.title} max={TYPE_TEXT_MAX} />
                 </div>
@@ -175,8 +178,9 @@ const MentoringTypeCardField = ({
               <div className="flex items-center gap-2">
                 <span className={rowLabel}>부가 설명</span>
                 <div className={inputBox}>
-                  <input
+                  <textarea
                     value={item.description}
+                    rows={2}
                     maxLength={TYPE_TEXT_MAX}
                     onChange={(event) =>
                       patchAt(index, { description: event.target.value })

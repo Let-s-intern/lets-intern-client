@@ -1,302 +1,191 @@
-import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
+import { useEffect, useRef, useState } from 'react';
 
+import type { LiveMentoringTemplate } from '@/api/live-mentoring/liveMentoringSchema';
 import type { DetailTabId } from '../tabs';
+
+/** 웹 미리보기 라우트가 기다리는 메시지 이름. 양쪽이 같아야 한다. */
+const PREVIEW_MESSAGE = 'letscareer:live-mentoring-preview';
+const PREVIEW_READY_MESSAGE = `${PREVIEW_MESSAGE}:ready`;
+/** 미리보기가 "이 탭의 섹션이 지금 상세에 없다"고 알릴 때 쓰는 이름. */
+const PREVIEW_SECTION_MESSAGE = `${PREVIEW_MESSAGE}:section`;
+
+const WEB_ORIGIN = import.meta.env.VITE_WEB_URL ?? '';
+
+/*
+ * 미리보기 배율.
+ *
+ * 안쪽 화면을 이 비율만큼 줄여 한 번에 더 많이 보이게 한다. iframe 을 그만큼 크게 잡고
+ * 축소하므로, 안에서 그려지는 뷰포트는 실제보다 넓어진다 — 다만 460px 안팎이라
+ * 여전히 모바일 구간이다(md 는 768px 부터). 더 줄이면 데스크톱 레이아웃으로 넘어가
+ * 미리보기가 실제와 달라지므로 여기가 한계다.
+ */
+const PREVIEW_SCALE = 0.85;
 
 interface TemplatePreviewProps {
   template: LiveMentoringTemplate;
-  /** 지금 편집 중인 탭. 그 섹션만 그린다. */
+  /** 지금 편집 중인 탭. 미리보기가 그 섹션으로 스크롤한다. */
   activeTab: DetailTabId;
-  /** 헤드라인에 들어갈 멘토 닉네임 (오픈 설정에서 참조). */
-  nickname: string;
+  /** 공개 상세를 여는 키. 웹 라우트가 `/live-mentoring/[mentorId]` 다. */
+  mentorId: number | null;
 }
 
-const sectionLabel = 'text-center text-xs font-medium text-gray-500';
-const sectionTitle = 'text-center text-base font-bold text-gray-900';
-
-/** 노출 off 인 섹션 자리에 "빠집니다"를 알려주는 자리표시. */
-const HiddenNotice = ({ name }: { name: string }) => (
-  <div className="rounded-lg border border-dashed border-gray-300 py-6 text-center text-xs text-gray-400">
-    {name} 섹션은 노출 안 함 상태입니다 — 상세 페이지에서 제외됩니다.
-  </div>
-);
-
 /**
- * 상세 페이지 실시간 미리보기.
+ * 상세 페이지 실시간 미리보기 — **공개 페이지를 그대로 띄운다**(LC-3268).
  *
- * 멘티가 보는 공개 상세(`apps/web/.../detail/LiveMentoringDetailPage.tsx`)의
- * 섹션 구성·순서·문구 규칙을 그대로 따른다. 폭이 좁은 사이드 패널이라 레이아웃은
- * 1열로 눕히되, **무엇이 어떤 문구로 나가는지**는 실제와 같아야 한다.
- * 미리보기가 실제와 다르면 멘토가 잘못된 기대로 오픈하게 된다.
+ * 예전에는 공개 상세의 마크업을 이 파일에 복제해 그렸다. 웹이 바뀔 때마다 따라 고쳐야
+ * 했고 실제로 어긋난 채 방치됐다 — 제목이 하드코딩돼 있었고, 진행 기간과 플랜 카드는
+ * 아예 없었다. 미리보기가 실제와 다르면 없느니만 못하다.
+ *
+ * 지금은 웹의 미리보기 라우트를 iframe 으로 띄우고, 편집 중인 템플릿을 `postMessage`
+ * 로 보낸다. 평점·가격·진행 기간은 그쪽이 서버에서 직접 받으므로 진짜 값이 나오고,
+ * 멘토가 고치는 템플릿만 저장 전에도 즉시 반영된다.
+ *
+ * 저장은 하지 않는다 — 주기 저장을 걸면 쓰다 만 문장이 공개 페이지로 나가고, 반쯤
+ * 채운 카드는 서버 `@NotBlank` 에 걸려 저장이 실패한다.
  */
 const TemplatePreview = ({
   template,
   activeTab,
-  nickname,
+  mentorId,
 }: TemplatePreviewProps) => {
-  const { hero, intro, mentoringTypes, strategy, video, results } = template;
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  /*
+    iframe 이 받을 준비가 됐는지. 로드 완료 시점을 부모가 정확히 알 수 없어, 준비된
+    쪽이 보내는 ready 를 기다린다. 그 전에 보낸 메시지는 그냥 사라진다.
+   */
+  const [isFrameReady, setIsFrameReady] = useState(false);
+  /*
+    지금 편집 중인 항목 번호. 유형 카드나 결과 사례가 서너 개로 늘면 섹션까지만 따라가서는
+    몇 번째를 쓰고 있는지 알 수 없다. 포커스가 있는 입력의 조상에서 읽는다 —
+    반복 항목마다 `data-preview-index` 가 붙어 있다.
+   */
+  const [activeItem, setActiveItem] = useState<number | null>(null);
+  /*
+    지금 탭의 섹션이 상세에 그려지고 있는지. 노출을 껐거나 영상 URL 처럼 없으면 섹션째로
+    빠지는 값이 비어 있으면 false 다. 미리보기에 아무 변화가 없는 이유를 알려준다 —
+    판정은 공개 페이지가 하고(그쪽이 실제로 그리므로) 여기서는 결과만 받는다.
+   */
+  const [isSectionShown, setIsSectionShown] = useState(true);
+
+  useEffect(() => {
+    setActiveItem(null);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handleFocus = (event: FocusEvent) => {
+      const holder = (event.target as HTMLElement | null)?.closest?.(
+        '[data-preview-index]',
+      );
+      const raw = (holder as HTMLElement | null)?.dataset.previewIndex;
+      setActiveItem(raw === undefined ? null : Number(raw));
+    };
+    document.addEventListener('focusin', handleFocus);
+    return () => document.removeEventListener('focusin', handleFocus);
+  }, []);
+
+  useEffect(() => {
+    const handleReady = (event: MessageEvent) => {
+      if (WEB_ORIGIN && event.origin !== WEB_ORIGIN) return;
+      const type = (event.data as { type?: unknown } | null)?.type;
+      if (type === PREVIEW_SECTION_MESSAGE) {
+        setIsSectionShown(Boolean((event.data as { shown?: boolean }).shown));
+        return;
+      }
+      if (type !== PREVIEW_READY_MESSAGE) return;
+      setIsFrameReady(true);
+    };
+    window.addEventListener('message', handleReady);
+    return () => window.removeEventListener('message', handleReady);
+  }, []);
+
+  useEffect(() => {
+    if (!isFrameReady || !WEB_ORIGIN) return;
+    frameRef.current?.contentWindow?.postMessage(
+      { type: PREVIEW_MESSAGE, template, activeTab, activeItem },
+      WEB_ORIGIN,
+    );
+  }, [isFrameReady, template, activeTab, activeItem]);
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-      <h2 className="mb-4 text-base font-semibold text-gray-900">미리 보기</h2>
+    <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-2">
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-1">
+        <h2 className="text-base font-semibold text-gray-900">미리 보기</h2>
+        {/*
+          "저장하지 않아도 바로 반영돼요" 라고 쓰면 저장 없이 멘티에게 공개된다는 뜻으로
+          읽힌다. 실제로는 이 화면에만 보이고, 공개는 저장한 뒤부터다.
+        */}
+        <p className="text-xs text-gray-500">
+          지금 쓰는 내용이 여기 바로 보여요. 멘티에게는 저장한 뒤부터
+          반영됩니다.
+        </p>
+      </div>
+
+      {mentorId === null ? (
+        <div className="rounded-lg border border-dashed border-gray-300 py-10 text-center text-xs text-gray-400">
+          멘토 정보를 불러오는 중입니다.
+        </div>
+      ) : (
+        /*
+          휴대폰 프레임.
+
+          멘티는 이 페이지를 모바일로 본다 — 데스크톱 폭으로 띄우면 줄바꿈과 잘림이
+          실제와 달라진다. 비율은 375:812(iPhone 기준)로 고정한다.
+
+          크기는 **높이**가 정한다. 폭을 375px 로 고정하면 프레임이 화면보다 길어져
+          미리보기를 보려고 편집 화면을 스크롤해야 한다 — 옆에 두고 보라고 만든 것이
+          제 역할을 못 한다. 화면에 들어오는 높이를 잡고 폭을 비율대로 따라가게 한다.
+        */
+        /*
+          컬럼을 꽉 채우되 얇은 기기 테두리를 씌운다.
+
+          비율은 실제 휴대폰에 맞추지 않는다 — 맞추면 좌우로 남는 흰 여백이 커서 정작
+          볼 본문이 좁아진다. 다만 테두리도 없으면 이게 미리보기인지 편집 화면의 일부인지
+          구분되지 않으므로, 얇은 베젤과 스피커 자국만 남겨 기기임을 알린다.
+        */
+        <div className="flex min-h-0 flex-1 flex-col rounded-[1.4rem] border-[6px] border-gray-900 bg-gray-900">
+          {/* 스피커 자국. 장식이라 낭독에서 뺀다. */}
+          <div
+            aria-hidden="true"
+            className="mx-auto mb-1 mt-0.5 h-0.5 w-10 shrink-0 rounded-full bg-gray-600"
+          />
+          {/*
+            축소는 보이는 크기만 바꾼다. transform 은 레이아웃 크기를 그대로 두므로,
+            바깥 상자를 넘치는 만큼 잘라 낸다.
+          */}
+          <div className="min-h-0 flex-1 overflow-hidden rounded-[1rem] bg-white">
+            <iframe
+              ref={frameRef}
+              title="상세 페이지 미리 보기"
+              src={`${WEB_ORIGIN}/live-mentoring/preview/${mentorId}`}
+              className="border-0 bg-white"
+              style={{
+                width: `${100 / PREVIEW_SCALE}%`,
+                height: `${100 / PREVIEW_SCALE}%`,
+                transform: `scale(${PREVIEW_SCALE})`,
+                transformOrigin: 'top left',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/*
-        멘티는 이 페이지를 모바일로 본다. 편집 폼 옆에 데스크톱 폭으로 그리면
-        줄바꿈과 잘림이 실제와 달라져, 멘토가 잘못된 기대로 오픈하게 된다.
-        375px 는 iPhone 기준 폭이다.
+        안내는 프레임 **아래 고정 높이 자리**에 띄운다. 문구가 있고 없고에 따라 자리가
+        생겼다 사라지면 그때마다 프레임 크기가 달라져, 같은 화면인데 미리보기가 커졌다
+        작아졌다 한다. 자리는 늘 잡아 두고 글자만 나타난다.
       */}
-      <div className="mx-auto w-full max-w-[375px] overflow-hidden rounded-2xl border border-gray-200">
-        <div className="flex flex-col gap-8 bg-gray-50 p-4">
-          {activeTab === 'hero' ? (
-            <>
-              {/* 시안 0 · 히어로 */}
-              <div className="bg-neutral-0 -m-4 mb-0 flex flex-col gap-2 rounded-t-lg p-4 text-white">
-                <div className="flex items-center gap-1">
-                  <span className="bg-primary rounded px-1.5 py-0.5 text-[10px] font-bold">
-                    BEST
-                  </span>
-                  <span className="bg-primary-20 text-primary-dark rounded px-1.5 py-0.5 text-[10px] font-semibold">
-                    선착순 마감
-                  </span>
-                </div>
-                <p className="text-sm font-bold leading-snug">
-                  {nickname} 멘토의 1:1 멘토링
-                </p>
-                <ul className="flex flex-col gap-0.5">
-                  {hero.bullets.map((bullet, i) => (
-                    <li key={i} className="text-[11px] text-white/80">
-                      - {bullet}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-[10px] text-white/50">
-                  상품명·가격·진행 기간은 오픈 설정 값이 들어갑니다.
-                </p>
-              </div>
-            </>
-          ) : null}
-          {activeTab === 'intro' ? (
-            <>
-              {/* 시안 1 · 멘토 소개 */}
-              <div className="flex flex-col gap-3">
-                <p className={sectionLabel}>멘토 소개</p>
-                <p className={sectionTitle}>
-                  {intro.passedCount !== null
-                    ? `확실한 전략으로 ${intro.passedCount.toLocaleString('ko-KR')}명을 합격시킨 ${nickname} 멘토가 함께해요`
-                    : `${nickname} 멘토가 함께해요`}
-                </p>
-
-                {intro.profileImage && (
-                  <img
-                    src={intro.profileImage}
-                    alt=""
-                    className="aspect-[4/5] w-full rounded-lg object-cover"
-                  />
-                )}
-
-                <p className="text-sm font-bold text-gray-900">{nickname}</p>
-                {intro.affiliation && (
-                  <p className="text-xs font-semibold text-gray-700">
-                    {intro.affiliation}
-                  </p>
-                )}
-                {intro.careerLines.length > 0 && (
-                  <ul className="flex flex-col gap-1">
-                    {intro.careerLines.map((line, i) => (
-                      <li key={i} className="text-xs text-gray-600">
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {intro.oneLiner && (
-                  <div className="bg-primary-5 rounded-lg p-3">
-                    <p className="text-primary mb-1 text-xs font-semibold">
-                      💬 멘토님의 한마디
-                    </p>
-                    <p className="whitespace-pre-wrap text-xs text-gray-600">
-                      {intro.oneLiner}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : null}
-          {activeTab === 'mentoringTypes' ? (
-            <>
-              {/* 시안 2 · 멘토링 유형 */}
-              <div className="flex flex-col gap-3">
-                <p className={sectionLabel}>멘토링 유형</p>
-                <p className={sectionTitle}>{mentoringTypes.title}</p>
-                <p className="text-center text-xs text-gray-500">
-                  {mentoringTypes.subtitle}
-                </p>
-                <ul className="flex flex-col gap-2">
-                  {mentoringTypes.items.map((item, i) => (
-                    <li key={i} className="rounded-lg bg-white p-3">
-                      <div className="mb-2 flex items-center gap-1.5">
-                        <span className="bg-primary rounded px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                          멘토링 유형 {i + 1}
-                        </span>
-                        <span className="text-xs font-medium text-gray-700">
-                          {item.typeName}
-                        </span>
-                      </div>
-                      <p className="whitespace-pre-wrap text-sm font-bold text-gray-900">
-                        {item.title}
-                      </p>
-                      <p className="mt-1 whitespace-pre-wrap text-xs text-gray-500">
-                        {item.description}
-                      </p>
-                      {item.tags.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {item.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500"
-                            >
-                              # {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          ) : null}
-          {activeTab === 'strategy' ? (
-            <>
-              {/* 시안 3 · 취업 성공 전략 */}
-              {strategy.visible ? (
-                <div className="flex flex-col gap-3">
-                  <p className={sectionTitle}>{strategy.title}</p>
-                  <p className="text-center text-xs text-gray-500">
-                    {strategy.subtitle}
-                  </p>
-                  <ul className="flex flex-col gap-2">
-                    {strategy.points.map((point, i) => (
-                      <li key={i} className="bg-primary-5 rounded-lg p-3">
-                        {point.image && (
-                          <img
-                            src={point.image}
-                            alt=""
-                            className="mb-2 w-full rounded object-cover"
-                          />
-                        )}
-                        <span className="bg-primary rounded-full px-2 py-0.5 text-[10px] font-semibold text-white">
-                          Point {i + 1}
-                        </span>
-                        <p className="mt-1.5 text-sm font-bold text-gray-900">
-                          {point.title}
-                        </p>
-                        <p className="mt-1 text-xs text-gray-500">
-                          {point.description}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <HiddenNotice name="취업 성공 전략" />
-              )}
-            </>
-          ) : null}
-          {activeTab === 'video' ? (
-            <>
-              {/* 시안 4 · 이렇게 도와드려요 (영상) */}
-              {video.visible ? (
-                <div className="flex flex-col gap-3">
-                  <p className={sectionTitle}>{video.title}</p>
-                  <p className="text-center text-xs text-gray-500">
-                    {video.subtitle}
-                  </p>
-                  {video.videoUrl ? (
-                    <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
-                      <iframe
-                        src={video.videoUrl}
-                        title={video.title}
-                        className="h-full w-full"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <p className="rounded-lg border border-dashed border-gray-300 py-6 text-center text-xs text-gray-400">
-                      영상 URL 을 입력하면 여기에 재생기가 나옵니다.
-                    </p>
-                  )}
-                  {video.caption && (
-                    <p className="text-center text-xs text-gray-600">
-                      {video.caption}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <HiddenNotice name="이렇게 도와드려요" />
-              )}
-            </>
-          ) : null}
-          {activeTab === 'results' ? (
-            <>
-              {/* 시안 5 · 결과 사례 */}
-              {results.visible ? (
-                <div className="flex flex-col gap-3">
-                  <p className={sectionLabel}>{results.subtitle}</p>
-                  <p className={sectionTitle}>{results.title}</p>
-                  <ul className="flex flex-col gap-3">
-                    {results.cases.map((item, i) => (
-                      <li key={i} className="grid grid-cols-2 gap-2">
-                        <div className="flex flex-col gap-1">
-                          <span className="rounded-t bg-gray-200 py-1 text-center text-[10px] font-semibold text-gray-600">
-                            Before
-                          </span>
-                          {item.beforeImage && (
-                            <img
-                              src={item.beforeImage}
-                              alt=""
-                              className="rounded"
-                            />
-                          )}
-                          <p className="text-center text-[10px] text-gray-500">
-                            {item.beforeCaption}
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="bg-primary rounded-t py-1 text-center text-[10px] font-semibold text-white">
-                            After
-                          </span>
-                          {item.afterImage && (
-                            <img
-                              src={item.afterImage}
-                              alt=""
-                              className="rounded"
-                            />
-                          )}
-                          <p className="text-center text-[10px] font-medium text-gray-700">
-                            ✓ {item.afterCaption}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <HiddenNotice name="결과 사례" />
-              )}
-            </>
-          ) : null}
-
-          {/*
-            파생 섹션 안내는 특정 탭에 속하지 않는다. 어느 탭을 보고 있든
-            "여기 없는 것들은 자동으로 채워진다" 는 사실은 같아서 항상 둔다.
-          */}
-          <p className="border-t border-gray-200 pt-4 text-center text-[10px] text-gray-400">
-            플랜 · 진행 프로세스 · 후기 · 다른 멘토 · FAQ 섹션은
-            <br />
-            오픈 설정과 운영 값에서 자동으로 채워집니다.
-          </p>
-        </div>
-      </div>
+      <p
+        role="status"
+        className="text-system-error mt-1.5 h-4 shrink-0 break-keep text-center text-xs font-medium leading-4"
+      >
+        {/*
+          한 줄에 들어가는 길이로 줄인다. 두 줄이 되면 자리를 두 배로 잡아야 하고,
+          그만큼 미리보기가 짧아진다. `break-keep` 으로 단어 중간에서 끊기지 않게 한다.
+        */}
+        {isSectionShown
+          ? ''
+          : '노출이 꺼져 있거나 값이 비어 상세에 나오지 않아요.'}
+      </p>
     </section>
   );
 };

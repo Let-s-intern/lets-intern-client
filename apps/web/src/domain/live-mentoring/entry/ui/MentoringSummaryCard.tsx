@@ -163,7 +163,7 @@ const MentoringSummaryCard = ({
         />
         <div className="mt-5 flex flex-col gap-2">
           <p className="text-xsmall14 text-white/80">
-            예약하신 1대1 라이브 멘토링이에요
+            예약하신 1:1 LIVE 멘토링이에요
           </p>
           <h1 className="text-small20 font-bold">곧 멘토링이 시작돼요</h1>
         </div>

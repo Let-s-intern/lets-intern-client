@@ -15,7 +15,7 @@ describe('FeedbackTabs', () => {
       '전체 내역',
       '서면 피드백 내역',
       'LIVE 피드백 내역',
-      '1대1 라이브 멘토링',
+      '1:1 LIVE 멘토링',
     ]);
   });
 
@@ -28,7 +28,7 @@ describe('FeedbackTabs', () => {
     const onChange = vi.fn();
     render(<FeedbackTabs activeTab="all" onChange={onChange} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '1대1 라이브 멘토링' }));
+    fireEvent.click(screen.getByRole('button', { name: '1:1 LIVE 멘토링' }));
 
     expect(onChange).toHaveBeenCalledWith('live-mentoring');
   });

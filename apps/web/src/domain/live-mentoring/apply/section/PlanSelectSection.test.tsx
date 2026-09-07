@@ -15,7 +15,7 @@ function renderSection(
 ) {
   render(
     <PlanSelectSection
-      productTitle="어드민 1대1 라이브 멘토링"
+      productTitle="어드민 1:1 LIVE 멘토링"
       durationPrices={[...DURATION_PRICES]}
       selectedDuration={selectedDuration}
       isLocked={isLocked}
@@ -29,7 +29,7 @@ describe('PlanSelectSection', () => {
   it('열려 있는 진행시간만큼 플랜을 렌더한다', () => {
     renderSection(null);
 
-    expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
     expect(screen.getAllByRole('radio')).toHaveLength(2);
     expect(
       screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(30분\)/ }),

@@ -52,7 +52,7 @@ export type WrittenAttendanceMap = ReadonlyMap<
 const NULL_TIME = '99:99'; // 정렬 시 서면 행을 시간순 마지막으로 미는 sentinel
 
 /** 1대1 행의 `챌린지` 컬럼 값. 챌린지가 없다고 빈 칸으로 두지 않는다. */
-export const LIVE_MENTORING_CHALLENGE_LABEL = '1대1 라이브 멘토링';
+export const LIVE_MENTORING_CHALLENGE_LABEL = '1:1 LIVE 멘토링';
 /** 1대1 행의 `미션 회차` 컬럼 값. 빈 칸은 "없음"이 아니라 "안 냈음"으로 읽힌다. */
 export const LIVE_MENTORING_TH_LABEL = '해당 없음';
 

@@ -10,7 +10,7 @@ const COUPON_ERROR_MESSAGES: Record<string, string> = {
   COUPON_NOT_AVAILABLE_DATE: '사용 가능 기간이 아닌 쿠폰입니다.',
   COUPON_NOT_AVAILABLE_TIME: '사용 횟수가 초과된 쿠폰입니다.',
   COUPON_NOT_AVAILABLE_PROGRAM_TYPE:
-    '1대1 라이브 멘토링에 사용할 수 없는 쿠폰입니다.',
+    '1:1 LIVE 멘토링에 사용할 수 없는 쿠폰입니다.',
   COUPON_NOT_AVAILABLE_ISSUE_TARGET: '쿠폰 사용 대상이 아닙니다.',
 };
 

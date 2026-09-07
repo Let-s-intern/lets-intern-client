@@ -23,7 +23,7 @@ describe('ReservationFilters', () => {
     expect(options).toEqual([
       '전체',
       '챌린지 라이브 피드백',
-      '1대1 라이브 멘토링',
+      '1:1 LIVE 멘토링',
     ]);
   });
 
@@ -49,7 +49,7 @@ describe('ReservationFilters', () => {
     expect(screen.getByLabelText('프로그램명')).toBeDisabled();
     expect(
       screen.getByText(
-        '1대1 라이브 멘토링에는 챌린지가 없어 프로그램명으로 거를 수 없습니다.',
+        '1:1 LIVE 멘토링에는 챌린지가 없어 프로그램명으로 거를 수 없습니다.',
       ),
     ).toBeInTheDocument();
   });

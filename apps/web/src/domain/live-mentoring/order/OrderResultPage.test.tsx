@@ -32,7 +32,7 @@ const APPLICATION: CreatedLiveMentoringApplication = {
   applicationId: 15,
   orderId: 'gKEMQwWav2Lh',
   finalAmount: 60000,
-  orderName: '어드민 1대1 라이브 멘토링',
+  orderName: '어드민 1:1 LIVE 멘토링',
   customerName: '로컬어드민',
   customerEmail: 'local-admin@letscareer.test',
   customerMobilePhone: '01000000000',
@@ -165,7 +165,7 @@ describe('OrderResultPage — 결과 화면', () => {
       await screen.findByText('결제가 완료되었습니다!'),
     ).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
-    expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
   });
 });
 

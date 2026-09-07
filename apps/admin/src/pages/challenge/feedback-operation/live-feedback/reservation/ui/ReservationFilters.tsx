@@ -95,8 +95,7 @@ export default function ReservationFilters({
         </select>
         {challengeDisabled && (
           <span className="text-xxsmall12 text-neutral-40">
-            1대1 라이브 멘토링에는 챌린지가 없어 프로그램명으로 거를 수
-            없습니다.
+            1:1 LIVE 멘토링에는 챌린지가 없어 프로그램명으로 거를 수 없습니다.
           </span>
         )}
       </label>

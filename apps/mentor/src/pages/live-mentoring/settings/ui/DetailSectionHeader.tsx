@@ -9,8 +9,13 @@ interface DetailSectionHeaderProps {
   heading: string;
   /** 큰 제목 아래 설명. 없으면 렌더하지 않는다. */
   description?: string;
-  /** 헤더 우측. 선택 섹션의 `상세 페이지에 표시` 체크박스가 들어온다. */
+  /** 헤더 우측. 선택 섹션의 노출 스위치가 들어온다. */
   action?: ReactNode;
+  /**
+   * 노출을 끈 섹션인지. 제목·설명까지 흐리게 만들어 "지금은 쓰는 자리가 아니다"를
+   * 입력칸뿐 아니라 머리글에서도 알린다(LC-3267). 스위치는 눌러야 하므로 그대로 둔다.
+   */
+  muted?: boolean;
 }
 
 /**
@@ -27,21 +32,37 @@ const DetailSectionHeader = ({
   heading,
   description,
   action,
+  muted = false,
 }: DetailSectionHeaderProps) => (
   <header className="mb-5">
     <div className="mb-3 flex items-center gap-2">
       <span
         aria-hidden="true"
-        className="bg-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${
+          muted ? 'bg-gray-300' : 'bg-primary'
+        }`}
       >
         {step}
       </span>
-      <h2 className="text-sm font-semibold text-gray-800">{name}</h2>
+      <h2
+        className={`text-sm font-semibold ${muted ? 'text-gray-400' : 'text-gray-800'}`}
+      >
+        {name}
+      </h2>
+      {/* 스위치는 흐려지지 않는다 — 다시 켜는 유일한 길이다. */}
       {action ? <div className="ml-auto">{action}</div> : null}
     </div>
-    <p className="text-lg font-bold text-gray-900">{heading}</p>
+    <p
+      className={`text-lg font-bold ${muted ? 'text-gray-400' : 'text-gray-900'}`}
+    >
+      {heading}
+    </p>
     {description ? (
-      <p className="mt-1.5 text-xs text-gray-500">{description}</p>
+      <p
+        className={`mt-1.5 text-xs ${muted ? 'text-gray-400' : 'text-gray-500'}`}
+      >
+        {description}
+      </p>
     ) : null}
   </header>
 );

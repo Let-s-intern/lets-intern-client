@@ -52,7 +52,7 @@ export default function ProfilePage() {
   const { data: user } = useUserQuery();
   const { data: myTags, isLoading: isMyTagsLoading } =
     useMyMentorHashTagListQuery();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [formData, setFormData] =
     useState<BasicInfoFormData>(INITIAL_FORM_DATA);
@@ -261,9 +261,30 @@ export default function ProfilePage() {
     ].filter((label): label is string => label !== null);
 
     if (failed.length === 0) {
-      showAlert({
+      /*
+        저장이 끝난 뒤에 공개 페이지로 가는 길을 준다(LC-3277). 섹션 헤더에 상시로 두면
+        저장 전에 눌러 옛 페이지를 보게 된다 — 방금 쓴 글이 없는 화면을 보고 저장이
+        안 된 줄 안다.
+
+        링크가 아니라 window.open 이다. 이 화면은 저장하지 않은 변경이 있을 때 앱 안의
+        링크 클릭을 가로채 이탈 경고를 띄우는데(위 navigation guard), 방금 저장을 마친
+        참에 그 경고가 뜨면 앞뒤가 맞지 않는다.
+      */
+      showConfirm({
         title: mentorConfig.profile.saveSuccess,
+        description: '공개 프로필 페이지에서 바로 확인해 보세요.',
         variant: 'success',
+        confirmText: '바로가기',
+        cancelText: '닫기',
+        onConfirm: () => {
+          if (user) {
+            window.open(
+              `${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`,
+              '_blank',
+            );
+          }
+          alertProps.onClose();
+        },
       });
       return;
     }
@@ -282,6 +303,9 @@ export default function ProfilePage() {
     patchUser,
     putHashTags,
     showAlert,
+    showConfirm,
+    user,
+    alertProps,
   ]);
 
   return (
@@ -304,7 +328,6 @@ export default function ProfilePage() {
         />
         <MentorDetailContentSection
           resetKey={editorResetKey}
-          initialContent={savedDetailContent}
           onChange={setDetailContent}
         />
       </div>

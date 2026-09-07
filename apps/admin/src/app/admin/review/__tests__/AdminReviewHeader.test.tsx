@@ -24,7 +24,7 @@ describe('AdminReviewHeader', () => {
       '/review/live-mentoring',
     );
     expect(
-      screen.getByRole('link', { name: '1:1 라이브 멘토링' }),
+      screen.getByRole('link', { name: '1:1 LIVE 멘토링' }),
     ).toHaveAttribute('href', '/review/live-mentoring-1on1');
   });
 
@@ -32,7 +32,7 @@ describe('AdminReviewHeader', () => {
     renderAt('/review/live-mentoring-1on1');
 
     expect(
-      screen.getByRole('link', { name: '1:1 라이브 멘토링' }),
+      screen.getByRole('link', { name: '1:1 LIVE 멘토링' }),
     ).toHaveAttribute('aria-current', 'page');
     expect(
       screen.getByRole('link', { name: '라이브 멘토링' }),
@@ -47,7 +47,7 @@ describe('AdminReviewHeader', () => {
       'page',
     );
     expect(
-      screen.getByRole('link', { name: '1:1 라이브 멘토링' }),
+      screen.getByRole('link', { name: '1:1 LIVE 멘토링' }),
     ).not.toHaveAttribute('aria-current');
   });
 });

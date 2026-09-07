@@ -19,7 +19,7 @@ const listResponse = {
   blogPopupList: [
     {
       blogPopupId: 1,
-      title: '1대1 라이브 멘토링 홍보',
+      title: '1:1 LIVE 멘토링 홍보',
       link: 'https://letscareer.co.kr/live-mentoring?utm_source=blog',
       targetType: 'SELECTED',
       targetBlogCount: 3,
@@ -43,7 +43,7 @@ const listResponse = {
 const detailResponse = {
   blogPopupInfo: {
     blogPopupId: 1,
-    title: '1대1 라이브 멘토링 홍보',
+    title: '1:1 LIVE 멘토링 홍보',
     imageUrl: 'https://cdn.letscareer.co.kr/banner/blog/popup.png',
     link: 'https://letscareer.co.kr/live-mentoring?utm_source=blog',
     targetType: 'SELECTED',

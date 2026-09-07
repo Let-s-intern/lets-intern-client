@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
  * 공유 목 데이터(@letscareer/mocks)의 형상·개수·가격 매핑을 검증한다.
  * web/mentor 양 앱이 동일 계약을 바라보는 SSOT이므로 여기서 회귀를 막는다.
  */
-describe('1대1 라이브 멘토링 공유 목 데이터', () => {
+describe('1:1 LIVE 멘토링 공유 목 데이터', () => {
   it('멘토 카드는 12명 이상이라 size=9 기준 2페이지 이상이다', () => {
     expect(LIVE_MENTOR_CARDS.length).toBeGreaterThanOrEqual(12);
     expect(Math.ceil(LIVE_MENTOR_CARDS.length / 9)).toBeGreaterThanOrEqual(2);

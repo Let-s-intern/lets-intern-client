@@ -91,7 +91,7 @@ describe('LiveMentoringSubmissionModal — 껍데기와 데이터 연결', () =>
 
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
     // 라이브 피드백 예약 모달과 같은 어휘 — 헤더는 세션 종류, 카드는 멘티 이름.
-    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('1:1 LIVE 멘토링')).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: '김일대', level: 2 }),
     ).toBeInTheDocument();

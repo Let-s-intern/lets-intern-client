@@ -481,7 +481,7 @@ const SubmissionModalBody = ({
         */}
           <div className="flex shrink-0 items-center gap-3 bg-white px-4 pb-3 pt-4 md:px-6 md:pt-6">
             <span className="shrink-0 text-xs font-medium text-neutral-700">
-              1대1 라이브 멘토링
+              1:1 LIVE 멘토링
             </span>
             <div className="flex-1" />
             <button

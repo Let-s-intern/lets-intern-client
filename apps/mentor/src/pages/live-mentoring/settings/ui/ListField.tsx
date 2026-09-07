@@ -62,6 +62,8 @@ function ListField<T>({
           {items.map((item, index) => (
             <li
               key={index}
+              /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
+              data-preview-index={index}
               className="rounded-lg border border-gray-200 bg-gray-50 p-3"
             >
               <div className="mb-2 flex items-center justify-between">

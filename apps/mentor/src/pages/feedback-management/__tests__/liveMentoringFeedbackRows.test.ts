@@ -93,11 +93,11 @@ describe('1대1 행 — 컬럼 매핑', () => {
     expect(rows[0].id).toBe('live-mentoring-91001');
   });
 
-  it('챌린지는 1대1 라이브 멘토링, 미션 회차는 해당 없음', () => {
+  it('챌린지는 1:1 LIVE 멘토링, 미션 회차는 해당 없음', () => {
     const [row] = renderRows([makeReservation()]);
 
     expect(row.challengeTitle).toBe(LIVE_MENTORING_CHALLENGE_LABEL);
-    expect(row.challengeTitle).toBe('1대1 라이브 멘토링');
+    expect(row.challengeTitle).toBe('1:1 LIVE 멘토링');
     expect(row.thLabel).toBe(LIVE_MENTORING_TH_LABEL);
     expect(row.thLabel).toBe('해당 없음');
   });

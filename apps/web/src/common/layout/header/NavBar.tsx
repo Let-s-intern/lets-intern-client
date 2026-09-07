@@ -172,7 +172,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   isNew
                   href="/program?catalog=mentoring"
                 >
-                  1대1 라이브 멘토링
+                  1:1 LIVE 멘토링
                 </GlobalNavItem>
               </SwiperSlide>
               <SwiperSlide className="!w-auto">
@@ -250,7 +250,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 isNew
                 href="/program?catalog=mentoring"
               >
-                1대1 라이브 멘토링
+                1:1 LIVE 멘토링
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall16"
@@ -340,7 +340,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
         <SideNavItem href="/program?catalog=mentoring">
-          1대1 라이브 멘토링
+          1:1 LIVE 멘토링
         </SideNavItem>
         <SideNavItem href="/mentors">멘토 소개</SideNavItem>
         <SideNavItem href="/seminar" isNew>

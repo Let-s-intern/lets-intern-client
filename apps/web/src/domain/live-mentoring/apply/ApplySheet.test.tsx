@@ -32,7 +32,7 @@ const SLOTS = [
   `이력서` 카드도 남아 있다. 신청 화면에는 고른 것만 나와야 한다.
 */
 const DETAIL = {
-  title: '어드민 1대1 라이브 멘토링',
+  title: '어드민 1:1 LIVE 멘토링',
   categories: ['PERSONAL_STATEMENT'],
   durationPrices: [
     { durationPriceId: 4, duration: 30, price: 35000 },

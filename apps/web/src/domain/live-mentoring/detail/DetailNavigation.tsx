@@ -18,6 +18,17 @@ export const LM_DIFFERENT_ID = 'live-mentoring-different';
 export const LM_REVIEW_ID = 'live-mentoring-review';
 export const LM_FAQ_ID = 'live-mentoring-faq';
 
+/*
+ * 상단 네비에는 없지만 앵커는 필요한 섹션들.
+ *
+ * 멘토 설정 화면의 미리보기가 편집 중인 탭으로 스크롤할 때 쓴다(LC-3268).
+ * 네비 항목이 아니므로 `liveMentoringNavItems` 에는 넣지 않는다.
+ */
+export const LM_HERO_ID = 'live-mentoring-hero';
+export const LM_TYPES_ID = 'live-mentoring-types';
+export const LM_VIDEO_ID = 'live-mentoring-video';
+export const LM_RESULTS_ID = 'live-mentoring-results';
+
 export const liveMentoringNavItems = [
   { title: '멘토링 소개', to: LM_MENTORING_INTRO_ID },
   { title: '멘토 정보', to: LM_MENTOR_INFO_ID },

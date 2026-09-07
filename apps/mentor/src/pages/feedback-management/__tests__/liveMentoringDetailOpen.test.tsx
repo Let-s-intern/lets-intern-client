@@ -24,7 +24,7 @@ const liveMentoringRow: FeedbackRow = {
   submissionLabel: '일부 제출',
   menteeParticipation: null,
   mentorParticipation: null,
-  challengeTitle: '1대1 라이브 멘토링',
+  challengeTitle: '1:1 LIVE 멘토링',
   thLabel: '해당 없음',
   scheduleLabel: '2026.05.04 14:00 ~ 15:00',
   menteeNameLabel: '김일대',
@@ -121,7 +121,7 @@ describe('1대1 행의 컬럼', () => {
   it('챌린지·미션 회차 칸이 비어 있지 않다', () => {
     render(<FeedbackTable rows={[liveMentoringRow]} onClickDetail={vi.fn()} />);
 
-    expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('1:1 LIVE 멘토링')).toBeInTheDocument();
     expect(screen.getByText('해당 없음')).toBeInTheDocument();
     expect(screen.getByText('일부 제출')).toBeInTheDocument();
   });
@@ -130,7 +130,7 @@ describe('1대1 행의 컬럼', () => {
     render(<FeedbackTable rows={[liveMentoringRow]} onClickDetail={vi.fn()} />);
 
     expect(
-      screen.getByRole('img', { name: '1대1 라이브 멘토링' }),
+      screen.getByRole('img', { name: '1:1 LIVE 멘토링' }),
     ).toBeInTheDocument();
   });
 });

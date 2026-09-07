@@ -12,7 +12,7 @@ type SubTab = 'reservation' | 'live-mentoring' | 'schedule';
 
 const subTabs: { id: SubTab; label: string }[] = [
   { id: 'reservation', label: '예약 관리' },
-  { id: 'live-mentoring', label: '1대1 라이브 멘토링' },
+  { id: 'live-mentoring', label: '1:1 LIVE 멘토링' },
   { id: 'schedule', label: '멘토 스케줄' },
 ];
 
