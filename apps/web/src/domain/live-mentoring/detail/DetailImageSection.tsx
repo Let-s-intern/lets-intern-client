@@ -19,27 +19,6 @@ export const DETAIL_IMAGE_SECTIONS = {
     width: 2880,
     height: 1526,
   },
-  /** 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */
-  pain: {
-    src: '/images/live-mentoring/section-pain.png',
-    alt: '취업 준비, 혼자 하기 막막하셨나요? — 관련 경험과 스펙, 선호하는 서류, 경험 연결에 대한 고민',
-    width: 2880,
-    height: 1420,
-  },
-  /** 0-3 · 멘토링 소개 (추천 1~3) */
-  mentoringIntro: {
-    src: '/images/live-mentoring/section-mentoring-intro.png',
-    alt: '멘토링 소개 — 혼자 막힌 취업 준비, 1:1 LIVE 멘토링으로 빠르게 정리해요. 추천 대상 안내',
-    width: 2880,
-    height: 3136,
-  },
-  /** 6 · 플랜 */
-  plan: {
-    src: '/images/live-mentoring/section-plan.png',
-    alt: '내게 알맞은 구성을 선택할 수 있어요 — STANDARD 30분, PREMIUM 60분 플랜 안내',
-    width: 1440,
-    height: 1043,
-  },
   /** 9 · 다른 멘토 */
   otherMentors: {
     src: '/images/live-mentoring/section-other-mentors.png',

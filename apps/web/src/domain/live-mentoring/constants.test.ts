@@ -1,5 +1,5 @@
 import type { LiveMentoringSlot } from '@/api/live-mentoring/liveMentoringSchema';
-import { slotPeriod } from './constants';
+import { discountRate, slotPeriod } from './constants';
 
 function slot(
   slotId: number,
@@ -61,5 +61,21 @@ describe('slotPeriod', () => {
       beginning: '2026-09-01T10:00:00',
       deadline: '2026-09-01T14:30:00',
     });
+  });
+});
+
+describe('discountRate', () => {
+  it('정가 대비 할인율을 반올림해 돌려준다', () => {
+    // 시안 이미지에는 14% / 15% 가 구워져 있었지만 실제 값은 이렇게 나온다
+    expect(discountRate(35000, 50000)).toBe(30);
+    expect(discountRate(60000, 100000)).toBe(40);
+  });
+
+  it('정가와 판매가가 같으면 0 이다 — 할인 배지를 숨기는 신호다', () => {
+    expect(discountRate(50000, 50000)).toBe(0);
+  });
+
+  it('판매가가 정가보다 높아도 음수를 내지 않는다', () => {
+    expect(discountRate(70000, 50000)).toBe(0);
   });
 });

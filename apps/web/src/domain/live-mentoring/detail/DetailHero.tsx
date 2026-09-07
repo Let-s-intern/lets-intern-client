@@ -2,17 +2,11 @@ import type {
   LiveMentorDetail,
   LiveMentoringDuration,
 } from '@/api/live-mentoring/liveMentoringSchema';
-import { durationLabel, formatPrice } from '../constants';
-
-/**
- * 시안 0 · 할인율 표시에 쓰는 정가.
- * 판매가는 API(`durationPrices`)에서 오지만 정가는 아직 계약에 없어 운영 고정값을 쓴다.
- * TODO(BE): 진행시간별 정가(listPrice)가 응답에 추가되면 이 상수를 걷어낼 것.
- */
-const LIST_PRICE_BY_DURATION: Record<number, number> = {
-  30: 50000,
-  60: 100000,
-};
+import {
+  durationLabel,
+  formatPrice,
+  LIST_PRICE_BY_DURATION,
+} from '../constants';
 
 interface DetailHeroProps {
   detail: LiveMentorDetail;

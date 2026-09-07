@@ -20,6 +20,9 @@ import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
 import DetailImageSection from './DetailImageSection';
+import DetailMentoringIntroSection from './DetailMentoringIntroSection';
+import DetailPainSection from './DetailPainSection';
+import DetailPlanSection from './DetailPlanSection';
 import DetailNavigation, {
   LM_DIFFERENT_ID,
   LM_FAQ_ID,
@@ -130,9 +133,9 @@ const LiveMentoringDetailPage = ({
       {/* 시안 0-1 · 특별 혜택 */}
       <DetailImageSection section="benefit" priority />
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
-      <DetailImageSection section="pain" />
+      <DetailPainSection careers={data.profile.careers} />
       {/* 시안 0-3 · 멘토링 소개 */}
-      <DetailImageSection section="mentoringIntro" id={LM_MENTORING_INTRO_ID} />
+      <DetailMentoringIntroSection id={LM_MENTORING_INTRO_ID} />
 
       {/* 시안 1 · 멘토 소개 */}
       <DetailSection
@@ -344,7 +347,7 @@ const LiveMentoringDetailPage = ({
       )}
 
       {/* 시안 6 · 플랜 */}
-      <DetailImageSection section="plan" />
+      <DetailPlanSection durationPrices={data.durationPrices} />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />
