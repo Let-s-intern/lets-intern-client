@@ -244,7 +244,7 @@ const OpenSettingsSection = () => {
       )}
 
       <div className="relative">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_412px]">
           {/* 좌: 설정 패널 */}
           <div className="flex flex-col gap-6">
             {/* 잠긴 상태에서는 입력만 잠근다 — fieldset 이 자손 폼 컨트롤을 한 번에

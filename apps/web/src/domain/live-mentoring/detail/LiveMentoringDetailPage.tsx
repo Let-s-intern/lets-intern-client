@@ -170,7 +170,11 @@ const LiveMentoringDetailPage = ({
         onSelectPlan={applySheet.selectDuration}
       />
 
-      <DetailNavigation isReady={!isLoading} />
+      {/*
+        앵커 네비는 미리보기에서 그리지 않는다. 프레임 안에서는 이동을 막아 두어
+        눌러도 아무 일이 없고, 좁은 화면에서 자리만 차지해 정작 볼 본문이 밀린다.
+      */}
+      {isPreview ? null : <DetailNavigation isReady={!isLoading} />}
 
       {/* 시안 0-1 · 특별 혜택 */}
       <DetailBenefitSection />
