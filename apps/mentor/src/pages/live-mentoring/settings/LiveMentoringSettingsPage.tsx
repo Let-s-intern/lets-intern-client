@@ -178,7 +178,7 @@ const LiveMentoringSettingsPage = () => {
   const header = (
     <header className="flex flex-col gap-2">
       <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-        1대1 라이브 멘토링 설정
+        1:1 LIVE 멘토링 설정
       </h1>
       <p className="text-xsmall14 text-neutral-40">
         오픈 설정에서 타이틀·타입·진행시간과 일정을 정하고, 이어지는 스텝에서

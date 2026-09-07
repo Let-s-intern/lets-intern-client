@@ -10,7 +10,7 @@ import type { PeriodBarData } from '../types';
  * 캘린더에 쓰는 1대1 라이브 멘토링 이름표. 챌린지가 아니지만 `PeriodBarData` 를
  * 그대로 재사용하므로 `challengeTitle` 자리에 이 값을 넣는다.
  */
-export const LIVE_MENTORING_TITLE = '1대1 라이브 멘토링';
+export const LIVE_MENTORING_TITLE = '1:1 LIVE 멘토링';
 
 /**
  * 1대1 예약 바의 합성 challengeId.

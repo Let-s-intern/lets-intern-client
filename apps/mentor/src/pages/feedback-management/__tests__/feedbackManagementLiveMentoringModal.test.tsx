@@ -92,7 +92,7 @@ const liveMentoringRow = (
   submissionLabel: '일부 제출',
   menteeParticipation: null,
   mentorParticipation: null,
-  challengeTitle: '1대1 라이브 멘토링',
+  challengeTitle: '1:1 LIVE 멘토링',
   thLabel: '해당 없음',
   scheduleLabel: '2026.05.04 14:00 ~ 15:00',
   menteeNameLabel: name,

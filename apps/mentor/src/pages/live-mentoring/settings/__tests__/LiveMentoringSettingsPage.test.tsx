@@ -224,7 +224,7 @@ describe('LiveMentoringSettingsPage — 탭', () => {
     renderAtOpenStep();
 
     expect(
-      screen.getByRole('heading', { name: '1대1 라이브 멘토링 설정' }),
+      screen.getByRole('heading', { name: '1:1 LIVE 멘토링 설정' }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/오픈 설정에서 타이틀·타입·진행시간과 일정을 정하고/),

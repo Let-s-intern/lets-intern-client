@@ -43,7 +43,7 @@ const SettingsTabs = ({
 }: SettingsTabsProps) => (
   <div
     role="tablist"
-    aria-label="1대1 라이브 멘토링 설정 스텝"
+    aria-label="1:1 LIVE 멘토링 설정 스텝"
     className="flex items-stretch gap-1 overflow-x-auto border-b border-gray-200"
   >
     {SETTINGS_TABS.map((tab) => {

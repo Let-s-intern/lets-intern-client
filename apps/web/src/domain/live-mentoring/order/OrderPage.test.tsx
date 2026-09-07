@@ -62,7 +62,7 @@ jest.mock('@/api/user/user', () => ({
 const DRAFT: LiveMentoringOrderDraft = {
   mentorId: 1,
   openingId: 6,
-  productName: '어드민 1대1 라이브 멘토링',
+  productName: '어드민 1:1 LIVE 멘토링',
   thumbnail: null,
   duration: 60,
   durationPriceId: 5,

@@ -83,7 +83,7 @@ const RowKindIcon = ({ type }: { type: FeedbackRow['type'] }) => {
     // 1대1 전용 아이콘이 없다. 캘린더 카드·태그 필터와 같은 primary 점으로 맞춘다.
     return (
       <span
-        aria-label="1대1 라이브 멘토링"
+        aria-label="1:1 LIVE 멘토링"
         role="img"
         className="inline-flex h-6 w-6 items-center justify-center rounded border border-gray-200 bg-white"
       >

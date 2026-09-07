@@ -171,6 +171,6 @@ describe('멘토 스케줄 그리드 — 두 유형이 섞인 경우', () => {
     expect(challenge?.dayIndex).toBe(liveMentoring?.dayIndex);
     expect(challenge?.slotIndex).toBe(liveMentoring?.slotIndex);
     expect(challenge?.title).toContain('챌린지 라이브 피드백');
-    expect(liveMentoring?.title).toContain('1대1 라이브 멘토링');
+    expect(liveMentoring?.title).toContain('1:1 LIVE 멘토링');
   });
 });

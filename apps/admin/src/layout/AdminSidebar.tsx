@@ -19,7 +19,7 @@ const navData = [
         url: '/programs',
       },
       {
-        name: '1대1 라이브 멘토링',
+        name: '1:1 LIVE 멘토링',
         url: '/live-mentoring',
       },
       {

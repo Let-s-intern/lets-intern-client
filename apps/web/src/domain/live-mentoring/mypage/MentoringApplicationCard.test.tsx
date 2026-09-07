@@ -15,7 +15,7 @@ function makeApplication(
     paymentId: null,
     mentorName: '어드어드민닉네임',
     thumbnail: 'https://example.test/t.png',
-    productName: '어드민 1대1 라이브 멘토링',
+    productName: '어드민 1:1 LIVE 멘토링',
     durationMinutes: 60,
     reservationStartAt: '2026-09-13T10:00:00',
     reservationEndAt: '2026-09-13T11:00:00',
@@ -105,7 +105,7 @@ describe('MentoringApplicationCard', () => {
       screen.getByText(/26\.09\.13 \(일\) 10:00 ~ 11:00/),
     ).toBeInTheDocument();
     expect(screen.getByText('60분')).toBeInTheDocument();
-    expect(screen.getByText('어드민 1대1 라이브 멘토링')).toBeInTheDocument();
+    expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
   });
 
   it('구간마다 배지 문구가 바뀐다', () => {

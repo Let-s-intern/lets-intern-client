@@ -156,7 +156,7 @@ describe('ReservationListView', () => {
     expect(onReschedule).toHaveBeenCalledWith(feedback);
   });
 
-  describe('1대1 라이브 멘토링 행', () => {
+  describe('1:1 LIVE 멘토링 행', () => {
     const renderMixed = (liveMentoringRow = makeLiveMentoringRow()) =>
       render(
         <ReservationListView
@@ -184,7 +184,7 @@ describe('ReservationListView', () => {
     it('두 유형을 한 표에 싣고 유형 컬럼으로 구분한다', () => {
       renderMixed();
       expect(screen.getByText('챌린지 라이브 피드백')).toBeInTheDocument();
-      expect(screen.getByText('1대1 라이브 멘토링')).toBeInTheDocument();
+      expect(screen.getByText('1:1 LIVE 멘토링')).toBeInTheDocument();
       expect(screen.getByText('이력서 1대1 첨삭')).toBeInTheDocument();
       expect(screen.getByText('최멘티')).toBeInTheDocument();
     });
@@ -198,7 +198,7 @@ describe('ReservationListView', () => {
     // 빈 칸은 "없음"이 아니라 "조회가 빠졌다"로 읽힌다.
     it('챌린지에만 있는 칸은 비우지 않고 해당 없음으로 채운다', () => {
       renderMixed();
-      const liveMentoringCell = screen.getByText('1대1 라이브 멘토링');
+      const liveMentoringCell = screen.getByText('1:1 LIVE 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
       // 출석 두 칸은 이제 실제 값을 보여준다. 남는 건 멘토·멘티 뱃지 두 칸뿐이다
       // — 예약 변경은 결제 완료건이라 다섯 번째 칸이 아니라 버튼으로 뜬다(아래 별도 테스트).
@@ -216,7 +216,7 @@ describe('ReservationListView', () => {
           reservationEndAt: null,
         }),
       );
-      const liveMentoringCell = screen.getByText('1대1 라이브 멘토링');
+      const liveMentoringCell = screen.getByText('1:1 LIVE 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
       // 출석 두 칸(값은 '-'로 표시되어 '해당 없음' 텍스트가 아니다) + 뱃지 두 칸 +
       // 예약 변경 칸, 총 세 칸이 '해당 없음'이다.

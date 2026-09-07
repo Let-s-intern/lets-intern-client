@@ -60,7 +60,7 @@ export const FEEDBACK_TAGS: readonly FeedbackTagDescriptor[] = [
   {
     // 챌린지 피드백이 아니라 상품 예약이지만, 캘린더에서 골라 보는 단위는 같다.
     type: 'live-mentoring',
-    label: '1대1 라이브 멘토링',
+    label: '1:1 LIVE 멘토링',
     inactiveClass: 'bg-white border border-neutral-80 text-primary',
     activeClass: 'bg-primary text-white border border-primary',
   },

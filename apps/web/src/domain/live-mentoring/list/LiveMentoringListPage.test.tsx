@@ -23,7 +23,7 @@ function makeOpening(id: number) {
     mentorProfileImage: 'https://example.com/p.png',
     mentorIntroduction: '소개',
     representativeCareer: null,
-    title: `멘토${id} 멘토의 1대1 라이브 멘토링`,
+    title: `멘토${id} 멘토의 1:1 LIVE 멘토링`,
     categories: ['PERSONAL_STATEMENT'],
     durations: [30],
     minimumPrice: 35000,
@@ -69,7 +69,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
     expect(screen.getAllByRole('link')).toHaveLength(12);
@@ -94,7 +94,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
 
@@ -117,7 +117,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
 
@@ -143,7 +143,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
 
@@ -158,7 +158,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
 
@@ -190,7 +190,7 @@ describe('LiveMentoringListPage', () => {
     renderPage();
     await waitFor(() =>
       expect(
-        screen.getByText('멘토1 멘토의 1대1 라이브 멘토링'),
+        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
       ).toBeInTheDocument(),
     );
 

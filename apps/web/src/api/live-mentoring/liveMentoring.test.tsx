@@ -42,7 +42,7 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
     mentorProfileImage: null,
     mentorIntroduction: '두괄식 구조',
     representativeCareer: null,
-    title: '자소서장인 멘토의 1대1 라이브 멘토링',
+    title: '자소서장인 멘토의 1:1 LIVE 멘토링',
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
@@ -372,7 +372,7 @@ function createResponse(overrides: Record<string, unknown> = {}) {
         applicationId: 11,
         product: {
           durationPriceId: 1,
-          name: '어드민 1대1 라이브 멘토링',
+          name: '어드민 1:1 LIVE 멘토링',
           durationMinutes: 30,
         },
         reservation: {
@@ -581,7 +581,7 @@ const MY_APPLICATION = {
   paymentId: null,
   mentorName: '어드어드민닉네임',
   thumbnail: 'https://example.test/t.png',
-  productName: '어드민 1대1 라이브 멘토링',
+  productName: '어드민 1:1 LIVE 멘토링',
   durationMinutes: 60,
   reservationStartAt: '2026-09-13T10:00:00',
   reservationEndAt: '2026-09-13T11:00:00',

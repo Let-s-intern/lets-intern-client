@@ -14,7 +14,7 @@ export type ReservationTypeFilter = ReservationKind | 'ALL';
 
 export const RESERVATION_KIND_LABEL: Record<ReservationKind, string> = {
   CHALLENGE: '챌린지 라이브 피드백',
-  LIVE_MENTORING: '1대1 라이브 멘토링',
+  LIVE_MENTORING: '1:1 LIVE 멘토링',
 };
 
 export const RESERVATION_TYPE_OPTIONS: {

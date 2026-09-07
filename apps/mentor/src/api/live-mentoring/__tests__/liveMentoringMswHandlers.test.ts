@@ -36,7 +36,7 @@ const detailPagePayload = async () => {
   return { hero, mentoringTypes, strategy, video, results, reviews };
 };
 
-describe('1대1 라이브 멘토링 MSW 핸들러', () => {
+describe('1:1 LIVE 멘토링 MSW 핸들러', () => {
   it('GET /live-mentoring → 개설 목록 응답(openingList/pageInfo)', async () => {
     const res = await fetch(`${BASE}/live-mentoring?page=1&size=9`);
     const { data } = await res.json();

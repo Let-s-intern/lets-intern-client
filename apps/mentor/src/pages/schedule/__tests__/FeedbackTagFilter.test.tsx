@@ -27,7 +27,7 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
       screen.getByRole('button', { name: /LIVE 피드백 일정 오픈/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /1대1 라이브 멘토링/ }),
+      screen.getByRole('button', { name: /1:1 LIVE 멘토링/ }),
     ).toBeInTheDocument();
   });
 
@@ -41,7 +41,7 @@ describe('FeedbackTagFilter (PRD-0503 #4)', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /1대1 라이브 멘토링/ }));
+    fireEvent.click(screen.getByRole('button', { name: /1:1 LIVE 멘토링/ }));
     expect(onToggle).toHaveBeenCalledWith('live-mentoring');
   });
 

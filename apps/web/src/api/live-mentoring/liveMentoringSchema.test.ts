@@ -28,7 +28,7 @@ function makeOpening(overrides: Record<string, unknown> = {}) {
       startDate: '2020-01',
       endDate: null,
     },
-    title: '자소서장인 멘토의 1대1 라이브 멘토링',
+    title: '자소서장인 멘토의 1:1 LIVE 멘토링',
     categories: ['PERSONAL_STATEMENT'],
     durations: [60],
     minimumPrice: 60000,
@@ -451,7 +451,7 @@ describe('createLiveMentoringApplicationResponseSchema', () => {
     applicationId: 11,
     product: {
       durationPriceId: 1,
-      name: '어드민 1대1 라이브 멘토링',
+      name: '어드민 1:1 LIVE 멘토링',
       durationMinutes: 30,
     },
     reservation: {

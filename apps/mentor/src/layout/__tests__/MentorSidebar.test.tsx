@@ -120,11 +120,11 @@ describe('MentorSidebar', () => {
   });
 
   // 오픈 설정과 상세 페이지 설정이 한 화면의 스텝으로 합쳐졌다(LC-3264).
-  it('1대1 라이브 멘토링은 하위 항목 없는 최상위 링크다', () => {
+  it('1:1 LIVE 멘토링은 하위 항목 없는 최상위 링크다', () => {
     renderSidebar('/profile');
 
     expect(
-      screen.getByRole('link', { name: '1대1 라이브 멘토링' }),
+      screen.getByRole('link', { name: '1:1 LIVE 멘토링' }),
     ).toHaveAttribute('href', '/live-mentoring/settings');
     expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
     expect(screen.queryByText('상세 페이지 설정')).not.toBeInTheDocument();

@@ -40,7 +40,7 @@ const renderSidebar = (path: string) =>
     </MemoryRouter>,
   );
 
-describe('1대1 라이브 멘토링 사이드바 항목', () => {
+describe('1:1 LIVE 멘토링 사이드바 항목', () => {
   /*
     오픈 설정과 상세 페이지 설정이 한 화면의 스텝으로 합쳐지면서(LC-3264) 하위
     항목이 사라지고 최상위 링크 하나가 됐다.
@@ -49,19 +49,19 @@ describe('1대1 라이브 멘토링 사이드바 항목', () => {
     renderSidebar('/');
 
     expect(
-      screen.getByRole('link', { name: '1대1 라이브 멘토링' }),
+      screen.getByRole('link', { name: '1:1 LIVE 멘토링' }),
     ).toHaveAttribute('href', '/live-mentoring/settings');
     expect(screen.queryByText('오픈 설정')).not.toBeInTheDocument();
     expect(screen.queryByText('상세 페이지 설정')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /1대1 라이브 멘토링/ }),
+      screen.queryByRole('button', { name: /1:1 LIVE 멘토링/ }),
     ).not.toBeInTheDocument();
   });
 
   it('설정 화면에 들어가면 활성 표시된다', () => {
     renderSidebar('/live-mentoring/settings');
 
-    const link = screen.getByRole('link', { name: '1대1 라이브 멘토링' });
+    const link = screen.getByRole('link', { name: '1:1 LIVE 멘토링' });
     expect(link).toHaveClass('text-primary');
     expect(link).toHaveClass('font-semibold');
   });

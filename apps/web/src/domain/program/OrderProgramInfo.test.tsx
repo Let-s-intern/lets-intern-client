@@ -66,12 +66,12 @@ describe('OrderProgramInfo — 기존 상품 (회귀)', () => {
   1대1 라이브 멘토링은 기간이 아니라 예약 일시다. 시작·종료가 같은 날 30분·60분
   구간이라 "진행 일정 2026.09.13 - 2026.09.13" 으로 그리면 아무것도 알려주지 못한다.
 */
-describe('OrderProgramInfo — 1대1 라이브 멘토링', () => {
+describe('OrderProgramInfo — 1:1 LIVE 멘토링', () => {
   it('예약 일시를 시각 구간으로 보여준다', () => {
     render(
       <OrderProgramInfo
         programType="LIVE_MENTORING"
-        title="어드민 1대1 라이브 멘토링"
+        title="어드민 1:1 LIVE 멘토링"
         startDate="2026-09-13T10:00:00"
         endDate="2026-09-13T11:00:00"
         mentoringPlan="60분"
@@ -90,7 +90,7 @@ describe('OrderProgramInfo — 1대1 라이브 멘토링', () => {
     render(
       <OrderProgramInfo
         programType="LIVE_MENTORING"
-        title="어드민 1대1 라이브 멘토링"
+        title="어드민 1:1 LIVE 멘토링"
         startDate="2026-09-13T10:00:00"
         endDate="2026-09-13T10:30:00"
         mentoringPlan="30분"
@@ -105,7 +105,7 @@ describe('OrderProgramInfo — 1대1 라이브 멘토링', () => {
     render(
       <OrderProgramInfo
         programType="LIVE_MENTORING"
-        title="어드민 1대1 라이브 멘토링"
+        title="어드민 1:1 LIVE 멘토링"
         startDate="2026-09-13T10:00:00"
         endDate="2026-09-13T11:00:00"
       />,

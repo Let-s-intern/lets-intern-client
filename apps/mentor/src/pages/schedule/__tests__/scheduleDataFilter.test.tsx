@@ -168,10 +168,10 @@ describe('useScheduleData × 멘토 화이트리스트 + 피드백 태그 필터
   });
 });
 
-describe('useScheduleData × 1대1 라이브 멘토링 (Push 7-A)', () => {
+describe('useScheduleData × 1:1 LIVE 멘토링 (Push 7-A)', () => {
   const liveMentoringBar = (missionId: number, startDate: string) =>
     makeBar('live-mentoring', -4_000_000, missionId, {
-      challengeTitle: '1대1 라이브 멘토링',
+      challengeTitle: '1:1 LIVE 멘토링',
       startDate,
       endDate: startDate,
       feedbackStartDate: startDate,

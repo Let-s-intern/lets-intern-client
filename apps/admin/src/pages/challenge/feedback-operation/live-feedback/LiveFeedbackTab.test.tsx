@@ -25,11 +25,11 @@ const renderTab = (initialEntry = '/') =>
   );
 
 describe('LiveFeedbackTab', () => {
-  it('하위탭은 예약 관리 / 1대1 라이브 멘토링 / 멘토 스케줄 세 개다', () => {
+  it('하위탭은 예약 관리 / 1:1 LIVE 멘토링 / 멘토 스케줄 세 개다', () => {
     renderTab();
     expect(
       screen.getAllByRole('button').map((button) => button.textContent),
-    ).toEqual(['예약 관리', '1대1 라이브 멘토링', '멘토 스케줄']);
+    ).toEqual(['예약 관리', '1:1 LIVE 멘토링', '멘토 스케줄']);
   });
 
   it('기본 서브탭은 예약 관리이며 헤더를 표시한다', () => {
@@ -40,7 +40,7 @@ describe('LiveFeedbackTab', () => {
 
   it('1대1 서브탭은 같은 화면을 유형만 고정해 쓴다', () => {
     renderTab();
-    fireEvent.click(screen.getByText('1대1 라이브 멘토링'));
+    fireEvent.click(screen.getByText('1:1 LIVE 멘토링'));
     expect(screen.getByText('예약관리목 LIVE_MENTORING')).toBeInTheDocument();
   });
 

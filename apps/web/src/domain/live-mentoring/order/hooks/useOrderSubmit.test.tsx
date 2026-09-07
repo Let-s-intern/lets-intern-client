@@ -31,7 +31,7 @@ const useCreateMock = useCreateLiveMentoringApplicationMutation as jest.Mock;
 const DRAFT: LiveMentoringOrderDraft = {
   mentorId: 1,
   openingId: 6,
-  productName: '어드민 1대1 라이브 멘토링',
+  productName: '어드민 1:1 LIVE 멘토링',
   thumbnail: null,
   duration: 60,
   durationPriceId: 5,
@@ -60,7 +60,7 @@ const CREATED = {
   applicationId: 15,
   product: {
     durationPriceId: 5,
-    name: '어드민 1대1 라이브 멘토링',
+    name: '어드민 1:1 LIVE 멘토링',
     durationMinutes: 60,
   },
   reservation: {

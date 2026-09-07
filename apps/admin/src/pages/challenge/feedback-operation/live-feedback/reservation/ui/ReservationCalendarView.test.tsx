@@ -112,7 +112,7 @@ describe('buildReservationBlocks', () => {
     expect(liveMentoring.key).toBe('live-mentoring-501');
     expect(liveMentoring.className).toContain(LIVE_MENTORING_COLOR.bg);
     expect(liveMentoring.className).not.toBe(challenge.className);
-    expect(liveMentoring.title).toContain('1대1 라이브 멘토링');
+    expect(liveMentoring.title).toContain('1:1 LIVE 멘토링');
     expect(liveMentoring.title).toContain('결제 완료');
   });
 

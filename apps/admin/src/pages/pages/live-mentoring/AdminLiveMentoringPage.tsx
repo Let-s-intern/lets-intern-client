@@ -14,9 +14,9 @@ const tabs: { id: Tab; label: string }[] = [
 
 const TAB_DESCRIPTION: Record<Tab, string> = {
   products:
-    '멘토가 만든 1대1 라이브 멘토링 상품과 현재 개설을 조회합니다. 개설은 멘토가 직접 열고 닫으며, 필요하면 여기서 강제 종료할 수 있습니다.',
+    '멘토가 만든 1:1 LIVE 멘토링 상품과 현재 개설을 조회합니다. 개설은 멘토가 직접 열고 닫으며, 필요하면 여기서 강제 종료할 수 있습니다.',
   participants:
-    '1대1 라이브 멘토링을 결제한 참여자를 조회합니다. 여기서 하는 조작은 환불뿐입니다.',
+    '1:1 LIVE 멘토링을 결제한 참여자를 조회합니다. 여기서 하는 조작은 환불뿐입니다.',
 };
 
 function isTab(value: string | null): value is Tab {
@@ -58,7 +58,7 @@ export default function AdminLiveMentoringPage() {
 
   return (
     <section className="p-5">
-      <Heading className="mb-1">1대1 라이브 멘토링 관리</Heading>
+      <Heading className="mb-1">1:1 LIVE 멘토링 관리</Heading>
       <p className="text-xsmall14 text-neutral-40 mb-4">
         {TAB_DESCRIPTION[activeTab]}
       </p>

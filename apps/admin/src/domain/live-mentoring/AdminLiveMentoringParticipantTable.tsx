@@ -83,7 +83,7 @@ const toRefundTarget = (row: AdminLiveMentoringParticipant): RefundTarget => ({
   name: row.menteeName ?? `멘티 #${row.menteeId}`,
   email: row.menteeEmail ?? '이메일 없음',
   phoneNum: row.menteePhoneNum ?? '연락처 없음',
-  programTitle: row.productName ?? '1대1 라이브 멘토링',
+  programTitle: row.productName ?? '1:1 LIVE 멘토링',
   orderId: '',
   pricePlanType:
     row.durationMinutes != null ? `${row.durationMinutes}분` : null,

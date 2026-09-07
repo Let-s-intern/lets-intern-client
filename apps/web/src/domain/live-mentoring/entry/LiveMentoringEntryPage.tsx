@@ -127,7 +127,7 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
   const calendarTitle = [
     '[렛츠커리어]',
     counterpartName ? `${counterpartName} ${counterpartLabel}` : null,
-    '1대1 라이브 멘토링',
+    '1:1 LIVE 멘토링',
     entry?.productName ? `· ${entry.productName}` : null,
   ]
     .filter(Boolean)

@@ -138,7 +138,7 @@ describe('deriveLiveMentoringBars', () => {
   });
 });
 
-describe('WeeklyCalendar — 1대1 라이브 멘토링 예약', () => {
+describe('WeeklyCalendar — 1:1 LIVE 멘토링 예약', () => {
   it('확정 건이 캘린더에 그려진다', () => {
     renderCalendar(deriveLiveMentoringBars([makeReservation()]));
 

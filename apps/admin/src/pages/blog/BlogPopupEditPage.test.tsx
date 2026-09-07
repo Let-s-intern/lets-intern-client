@@ -13,7 +13,7 @@ const navigate = vi.fn();
 
 const blogPopupInfo = {
   blogPopupId: 5,
-  title: '1대1 라이브 멘토링 홍보',
+  title: '1:1 LIVE 멘토링 홍보',
   imageUrl: 'https://cdn.test/popup.png',
   link: 'https://letscareer.co.kr/live-mentoring',
   targetType: 'SELECTED' as const,
@@ -37,7 +37,7 @@ const blogPopupList = [
   },
   {
     blogPopupId: 5,
-    title: '1대1 라이브 멘토링 홍보',
+    title: '1:1 LIVE 멘토링 홍보',
     targetType: 'SELECTED' as const,
     priority: 3,
   },
@@ -100,7 +100,7 @@ describe('BlogPopupEditPage', () => {
     renderPage();
 
     expect(screen.getByRole('textbox', { name: '제목' })).toHaveValue(
-      '1대1 라이브 멘토링 홍보',
+      '1:1 LIVE 멘토링 홍보',
     );
     expect(screen.getByRole('textbox', { name: '링크' })).toHaveValue(
       'https://letscareer.co.kr/live-mentoring',

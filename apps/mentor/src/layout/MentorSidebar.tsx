@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
   // 하위 항목이 사라졌다. 오픈 중 배지는 그대로 이 항목 옆에 붙는다.
   {
     type: 'leaf',
-    name: '1대1 라이브 멘토링',
+    name: '1:1 LIVE 멘토링',
     url: '/live-mentoring/settings',
     showLiveMentoringStatus: true,
   },

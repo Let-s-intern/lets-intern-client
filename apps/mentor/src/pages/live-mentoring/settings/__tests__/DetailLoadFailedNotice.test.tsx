@@ -120,7 +120,7 @@ describe('상세 스텝을 불러오지 못했을 때', () => {
     );
     expect(screen.getAllByRole('tab')).toHaveLength(7);
     expect(
-      screen.getByRole('heading', { name: '1대1 라이브 멘토링 설정' }),
+      screen.getByRole('heading', { name: '1:1 LIVE 멘토링 설정' }),
     ).toBeInTheDocument();
   });
 });
