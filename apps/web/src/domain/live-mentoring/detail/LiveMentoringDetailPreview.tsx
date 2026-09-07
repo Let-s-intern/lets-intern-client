@@ -97,6 +97,18 @@ const scrollToEditing = (
     빠지는 값이 비어 있는 경우다. 공개 페이지가 그렇게 그리므로 미리보기도 같다 —
     다만 멘토는 "미리보기가 안 된다"로 읽으므로, 그 사실을 부모에게 알려 문구로 띄운다.
    */
+  /*
+    본문이 아직 없으면 판정하지 않는다.
+
+    상세 조회가 끝나기 전에는 어떤 섹션도 없다. 그 상태에서 "안 나온다"고 알리면,
+    멘토는 화면을 열자마자 노출을 켜라는 문구를 보게 된다 — 실제로는 켜져 있는데도.
+    아무 섹션도 없으면 아직 그리는 중이므로 직전 판정을 그대로 둔다.
+   */
+  const rendered = Object.values(TAB_TO_SECTION_ID).some((sectionId) =>
+    document.getElementById(sectionId),
+  );
+  if (!rendered) return { sectionShown: true };
+
   const section = document.getElementById(id);
   if (!section) return { sectionShown: false };
 
