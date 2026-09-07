@@ -97,8 +97,8 @@ const TemplatePreview = ({
   }, [isFrameReady, template, activeTab, activeItem]);
 
   return (
-    <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white px-3 py-4">
-      <div className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+    <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white px-3 py-3">
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <h2 className="text-base font-semibold text-gray-900">미리 보기</h2>
         <p className="text-xs text-gray-500">
           멘티에게 보이는 실제 화면입니다. 저장하지 않아도 바로 반영돼요.

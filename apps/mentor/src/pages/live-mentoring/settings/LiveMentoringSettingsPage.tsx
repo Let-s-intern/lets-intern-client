@@ -340,11 +340,16 @@ const LiveMentoringSettingsPage = () => {
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
 
           높이를 화면에 **꼭 맞춘다**. 넘치면 미리보기를 보려고 페이지를 스크롤해야 하고,
-          그러면 옆에 두고 보라고 만든 것이 제 역할을 못 한다. 빼는 값은 위 여백(1.5rem)과
-          하단 저장 바가 차지하는 높이(약 5.5rem)다 — 그 바는 fixed 라 여기 높이를
-          비워 두지 않으면 프레임 아래쪽을 덮는다.
+          그러면 옆에 두고 보라고 만든 것이 제 역할을 못 한다.
+
+          기준은 sticky 로 붙은 뒤가 아니라 **스크롤하기 전 자리**다. `top-6` 은 붙고 나서야
+          적용되고, 처음에는 제목·설명·스텝 줄 아래에서 시작한다. 붙은 뒤 기준으로 잡으면
+          첫 화면에서 그 머리 높이만큼 아래로 넘쳐 결국 스크롤해야 한다.
+
+          빼는 값은 머리 영역(약 11rem)과 하단 저장 바가 앉는 높이(약 6rem)다. 그 바는
+          fixed 라 자리를 차지하지 않으므로 여기서 비워 두지 않으면 프레임 아래를 덮는다.
         */}
-            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-7rem)] lg:self-start lg:overflow-hidden">
+            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-17rem)] lg:max-h-[720px] lg:self-start lg:overflow-hidden">
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}
