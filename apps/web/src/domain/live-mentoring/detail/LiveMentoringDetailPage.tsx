@@ -274,7 +274,7 @@ const LiveMentoringDetailPage = ({
                 key={i}
                 /* 멘토 설정의 미리보기가 편집 중인 카드로 따라올 때 쓴다(LC-3268). */
                 data-preview-item={i}
-                className="bg-neutral-95 flex w-full flex-col gap-3 rounded-lg p-7 md:w-[calc(50%-1rem)]"
+                className="bg-neutral-95 flex flex-col gap-3 rounded-lg p-7"
               >
                 <div className="flex items-center gap-2">
                   <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-semibold text-white">
