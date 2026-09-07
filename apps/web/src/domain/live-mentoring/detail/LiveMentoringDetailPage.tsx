@@ -263,13 +263,18 @@ const LiveMentoringDetailPage = ({
           title={mentoringTypes.title}
           subtitle={mentoringTypes.subtitle}
         >
-          <ul className="mx-auto grid w-full max-w-[1000px] grid-cols-1 gap-8 md:grid-cols-2">
+          {/*
+            그리드가 아니라 줄바꿈 flex 다. 그리드는 칸이 고정이라 카드가 홀수 개면
+            마지막 하나가 왼쪽 칸에 홀로 붙어 가운데를 벗어난다. 여기서는 남은 카드가
+            그 줄 가운데에 놓인다.
+          */}
+          <ul className="mx-auto flex w-full max-w-[1000px] flex-wrap justify-center gap-8">
             {mentoringTypes.items.map((item, i) => (
               <li
                 key={i}
                 /* 멘토 설정의 미리보기가 편집 중인 카드로 따라올 때 쓴다(LC-3268). */
                 data-preview-item={i}
-                className="bg-neutral-95 flex flex-col gap-3 rounded-lg p-7"
+                className="bg-neutral-95 flex w-full flex-col gap-3 rounded-lg p-7 md:w-[calc(50%-1rem)]"
               >
                 <div className="flex items-center gap-2">
                   <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-semibold text-white">
@@ -315,17 +320,26 @@ const LiveMentoringDetailPage = ({
               <li
                 key={i}
                 data-preview-item={i}
-                className="bg-primary-5 grid grid-cols-1 items-center gap-5 rounded-md p-5 md:grid-cols-[minmax(0,380px)_1fr] md:gap-8"
+                /*
+                  멘토 소개와 같은 방식이다 — 이미지와 글이 각자 제 폭만 차지하고,
+                  둘을 합친 덩어리가 가운데에 놓인다. 글에 남은 폭을 다 주면 짧게 쓴
+                  Point 는 왼쪽에 몰려 오른쪽이 비어 보인다.
+                */
+                className="bg-primary-5 flex flex-col items-center gap-5 rounded-md p-5 md:flex-row md:items-center md:justify-center md:gap-8"
               >
                 {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
                 {point.image ? (
-                  <img src={point.image} alt="" className="w-full rounded-sm" />
+                  <img
+                    src={point.image}
+                    alt=""
+                    className="w-full max-w-[380px] shrink-0 rounded-sm"
+                  />
                 ) : (
                   // 이미지를 아직 안 올린 자리. 여기만 비율을 정해 둔다 —
                   // 채울 그림이 없으면 높이를 정할 근거도 없다.
-                  <div className="bg-neutral-90 aspect-[4/3] w-full rounded-sm" />
+                  <div className="bg-neutral-90 aspect-[4/3] w-full max-w-[380px] shrink-0 rounded-sm" />
                 )}
-                <div className="flex flex-col gap-2">
+                <div className="flex min-w-0 max-w-[520px] flex-col gap-2">
                   <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
                     Point {i + 1}
                   </span>
