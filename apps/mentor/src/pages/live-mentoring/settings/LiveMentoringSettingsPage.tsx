@@ -464,10 +464,11 @@ const LiveMentoringSettingsPage = () => {
           적용되고, 처음에는 제목·설명·스텝 줄 아래에서 시작한다. 붙은 뒤 기준으로 잡으면
           첫 화면에서 그 머리 높이만큼 아래로 넘쳐 결국 스크롤해야 한다.
 
-          빼는 값은 머리 영역(약 11rem)과 하단 저장 바가 앉는 높이(약 6rem)다. 그 바는
-          fixed 라 자리를 차지하지 않으므로 여기서 비워 두지 않으면 프레임 아래를 덮는다.
+          빼는 값은 머리 영역(약 11rem)과 하단 바가 앉는 높이다. 그 바는 fixed 라 자리를
+          차지하지 않으므로 여기서 비워 두지 않으면 프레임 아래를 덮는다. 스텝 이동
+          버튼을 키우면서(LC-3282) 바가 그만큼 높아져 빼는 값도 함께 올렸다.
         */}
-            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-11.5rem)] lg:max-h-[880px] lg:self-start lg:overflow-hidden">
+            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-12.25rem)] lg:max-h-[880px] lg:self-start lg:overflow-hidden">
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}

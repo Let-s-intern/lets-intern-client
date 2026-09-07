@@ -19,6 +19,16 @@ interface SettingsActionBarProps {
 }
 
 /**
+ * 스텝 이동 버튼의 크기.
+ *
+ * 이 바에서 누를 것은 이 둘뿐이라 시안처럼 크게 잡는다 — 화면 아래 끝에 떠 있는 버튼은
+ * 작을수록 겨냥하기 어렵고, 옆의 저장 상태 문구에 묻힌다. `min-w` 로 폭을 고정해 두면
+ * 「다음으로」가 마지막 스텝에서 「공개하기」로 바뀌어도 자리가 흔들리지 않는다.
+ */
+const stepButton =
+  'min-w-[9.5rem] rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+
+/**
  * 설정 화면 하단 고정 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
  *
  * 예전에는 `저장` 과 오픈 버튼이 여기 있었다. 저장은 입력이 멎으면 알아서 나가고
@@ -50,12 +60,12 @@ const SettingsActionBar = ({
         <span className="truncate">{autosaveMessage(status)}</span>
       </p>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-3">
         <button
           type="button"
           onClick={onPrev}
           disabled={!hasPrev}
-          className="rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`${stepButton} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50`}
         >
           이전으로
         </button>
@@ -67,7 +77,7 @@ const SettingsActionBar = ({
           <button
             type="button"
             onClick={onNext}
-            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors"
+            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
           >
             다음으로
           </button>
@@ -76,7 +86,7 @@ const SettingsActionBar = ({
             type="button"
             onClick={publish.onClick}
             disabled={publish.disabled}
-            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
           >
             {publish.label}
           </button>
