@@ -42,11 +42,17 @@ const ExternalLinkIcon = () => (
  */
 const MentorProfileCard = ({ intro }: MentorProfileCardProps) => {
   /*
-   * 소속·직책 한 줄. 서버 `description` 은 멘토가 직접 쓴 자유 문구라 비어 있을 수 있고,
-   * `affiliation` 은 서버가 대표 경력에서 "회사 | 직책" 형태로 만들어 준다.
-   * 시안의 "렛츠커리어 | CEO" 자리라 비면 후자로 채운다.
+   * 소속·직책 한 줄 — `affiliation` 만 쓴다. 서버가 대표 경력에서 "회사 | 직책"
+   * 형태로 만들어 주는 값이고, 시안의 "렛츠커리어 | CEO" 자리다.
+   *
+   * 예전에는 `description` 을 먼저 봤다. 그 필드는 자유 문구가 아니라 프로필의
+   * "상세페이지 제작" 리치텍스트이고, Lexical 이 만든 JSON 문자열이 통째로 들어 있다.
+   * 그대로 찍으니 `{"root":{"children":[...` 가 화면에 노출됐다.
+   *
+   * 웹의 멘토 상세(`domain/mentors/mentor-detail/MentorIntroSection`)는 같은 값을
+   * parseLexicalRoot 로 파싱해 렌더한다 — 이 카드에는 한 줄만 들어가므로 쓰지 않는다.
    */
-  const affiliationLine = intro.description?.trim() || intro.affiliation.trim();
+  const affiliationLine = intro.affiliation.trim();
 
   return (
     <div className="flex flex-col gap-5">
