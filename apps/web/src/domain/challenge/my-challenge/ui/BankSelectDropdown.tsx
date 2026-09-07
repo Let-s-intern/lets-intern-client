@@ -1,8 +1,24 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
 
-// 은행명과 API 코드 매핑
-const banks = {
+/**
+ * 은행명과 API 코드 매핑.
+ *
+ * **값은 서버 `AccountType` enum 의 이름과 정확히 같아야 한다.**
+ * (`lets-career-server` / `domain/user/type/AccountType.java`)
+ *
+ * 서버가 이 값을 enum 으로 역직렬화하는데, 목록에 없는 값이 오면
+ * `HttpMessageNotReadableException` 이 나고 `GlobalExceptionHandler` 가 그것을
+ * 다루지 않아 500 "서버 내부 오류입니다." 로 나간다 — 400 이 아니다.
+ *
+ * 2026-09-07 에 케이뱅크(`KBANK`)·SC제일은행(`SC`)이 서버에 없는 채로 노출되어
+ * 그 둘을 고른 참여자의 블로그 보너스 제출이 100% 실패했다.
+ * 원인·재현: `.claude/tasks/prd-260907-LC-3285-블로그-보너스-제출-500.md`
+ *
+ * 서버에는 있으나 여기 없는 값(수협 `SH`, 새마을금고 `MG`)은 고를 수만 없을 뿐
+ * 오류를 내지 않는다. 추가는 별개 작업이다.
+ */
+export const banks = {
   KB국민은행: 'KB',
   하나은행: 'HANA',
   우리은행: 'WOORI',
@@ -11,8 +27,6 @@ const banks = {
   IBK기업은행: 'IBK',
   카카오뱅크: 'KAKAO',
   토스뱅크: 'TOSS',
-  케이뱅크: 'KBANK',
-  SC제일은행: 'SC',
 };
 
 type BankKey = keyof typeof banks;
