@@ -1,4 +1,13 @@
 import CharCounter from './CharCounter';
+
+/**
+ * 섹션 제목 상한. 서버 DTO 의 `@Size(max = 255)` 를 그대로 쓴다.
+ *
+ * 예전에는 20자였다. 시안 폭에 맞춘 값이지 서버 제약이 아니었고, 멘토가 쓰려는 문장이
+ * 잘려 나갔다(LC-3276). 프론트가 임의로 좁히지 않고 서버가 실제로 거부하는 지점까지
+ * 열어 둔다 — 카운터는 그 지점을 넘겼을 때만 경고한다.
+ */
+const SECTION_TITLE_MAX = 255;
 import type { FocusEvent } from 'react';
 
 import type {
@@ -177,7 +186,7 @@ const TemplateEditForm = ({
                     <input
                       id="typesTitle"
                       value={mentoringTypes.title}
-                      maxLength={20}
+                      maxLength={SECTION_TITLE_MAX}
                       placeholder="레이블"
                       className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
                       onChange={(e) =>
@@ -189,7 +198,10 @@ const TemplateEditForm = ({
                         })
                       }
                     />
-                    <CharCounter value={mentoringTypes.title} max={20} />
+                    <CharCounter
+                      value={mentoringTypes.title}
+                      max={SECTION_TITLE_MAX}
+                    />
                   </div>
                 </div>
 
@@ -368,14 +380,14 @@ const TemplateEditForm = ({
                 <input
                   id="videoTitle"
                   value={video.title}
-                  maxLength={20}
+                  maxLength={SECTION_TITLE_MAX}
                   placeholder="예: 멘토는 이렇게 도와드려요"
                   className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
                   onChange={(e) =>
                     onChange({ video: { ...video, title: e.target.value } })
                   }
                 />
-                <CharCounter value={video.title} max={20} />
+                <CharCounter value={video.title} max={SECTION_TITLE_MAX} />
               </div>
             </div>
 
@@ -476,14 +488,14 @@ const TemplateEditForm = ({
                 <input
                   id="resultsTitle"
                   value={results.title}
-                  maxLength={20}
+                  maxLength={SECTION_TITLE_MAX}
                   placeholder="예: 멘토링 후 이렇게 달라졌어요"
                   className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
                   onChange={(e) =>
                     onChange({ results: { ...results, title: e.target.value } })
                   }
                 />
-                <CharCounter value={results.title} max={20} />
+                <CharCounter value={results.title} max={SECTION_TITLE_MAX} />
               </div>
             </div>
 

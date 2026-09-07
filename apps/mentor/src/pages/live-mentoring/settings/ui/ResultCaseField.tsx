@@ -1,4 +1,3 @@
-import CharCounter from './CharCounter';
 import type { TemplateResultCase } from '@/api/live-mentoring/liveMentoringSchema';
 
 import ImageField from './ImageField';
@@ -8,8 +7,13 @@ interface ResultCaseFieldProps {
   onChange: (cases: TemplateResultCase[]) => void;
 }
 
-/** 시안 안내는 "사례는 2~3개 작성을 권장해요". 권장이며 강제하지 않는다. */
-export const RESULT_CASE_CAPTION_MAX = 20;
+/*
+ * 캡션에는 글자수 제한이 없다. 예전에는 20자였는데 시안 폭에 맞춘 값이지 서버 제약이
+ * 아니었고, 멘토가 쓰려는 문장이 잘렸다(LC-3276). 서버 DTO(`ResultCaseRequest`)의
+ * beforeCaption/afterCaption 은 `@NotBlank` 뿐이라 상한 자체가 없다.
+ *
+ * 시안 안내는 "사례는 2~3개 작성을 권장해요". 권장이며 강제하지 않는다.
+ */
 
 const DragHandleIcon = () => (
   <svg
@@ -120,17 +124,12 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                 <div className={captionBox}>
                   <input
                     value={item.beforeCaption}
-                    maxLength={RESULT_CASE_CAPTION_MAX}
                     onChange={(event) =>
                       patchAt(index, { beforeCaption: event.target.value })
                     }
                     placeholder="멘토링 전 상황을 간단히 설명해 주세요"
                     aria-label={`${index + 1}번 사례 멘토링 전 설명`}
                     className={captionInput}
-                  />
-                  <CharCounter
-                    value={item.beforeCaption}
-                    max={RESULT_CASE_CAPTION_MAX}
                   />
                 </div>
               </div>
@@ -151,17 +150,12 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                 <div className={captionBox}>
                   <input
                     value={item.afterCaption}
-                    maxLength={RESULT_CASE_CAPTION_MAX}
                     onChange={(event) =>
                       patchAt(index, { afterCaption: event.target.value })
                     }
                     placeholder="멘토링 후 달라진 점을 간단히 설명해 주세요"
                     aria-label={`${index + 1}번 사례 멘토링 후 설명`}
                     className={captionInput}
-                  />
-                  <CharCounter
-                    value={item.afterCaption}
-                    max={RESULT_CASE_CAPTION_MAX}
                   />
                 </div>
               </div>
