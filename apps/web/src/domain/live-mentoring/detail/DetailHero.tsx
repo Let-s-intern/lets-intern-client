@@ -49,13 +49,24 @@ const DetailHero = ({
 
   return (
     <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
-      {/* 멘토 사진 — 시안대로 흑백 처리해 텍스트 가독성을 지킨다 */}
+      {/*
+        멘토 사진 — 시안대로 흑백 처리해 텍스트 가독성을 지킨다.
+
+        아래 흰 카드(진행 기간·플랜)가 사진의 하반부를 덮으므로, 실제로 보이는 건
+        카드 위쪽 띠뿐이다. 그래서 높이를 78% 에서 92% 로 올려 얼굴이 그 띠 안에
+        들어오게 하고, 폭도 넓혀(xl 이상 380px) object-cover 의 좌우 잘림을 줄였다.
+
+        마스크는 네 변을 모두 흐린다 — 위·아래·오른쪽은 사진이 직사각형으로 잘려 보이지
+        않게, 왼쪽은 본문 텍스트 쪽으로 스며들게 한다. 두 그라데이션을 intersect 로 겹친다.
+        mask-composite 를 모르는 브라우저는 기본값 add 로 합쳐 지금까지와 비슷하게
+        보이므로 더 나빠지지 않는다.
+      */}
       {profile.profileImage && (
         <img
           src={profile.profileImage}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 right-[max(20px,calc((100%-1180px)/2))] hidden h-[78%] w-[300px] object-cover object-top opacity-80 grayscale [mask-image:linear-gradient(to_bottom,black_70%,transparent)] lg:block"
+          className="pointer-events-none absolute bottom-0 right-[max(20px,calc((100%-1180px)/2))] hidden h-[92%] w-[300px] object-cover object-top opacity-80 grayscale [mask-composite:intersect] [mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_66%,transparent_100%),linear-gradient(to_right,transparent_0%,black_30%,black_82%,transparent_100%)] lg:block xl:w-[380px]"
         />
       )}
 
