@@ -382,7 +382,7 @@ const LiveMentoringSettingsPage = () => {
           빼는 값은 머리 영역(약 11rem)과 하단 저장 바가 앉는 높이(약 6rem)다. 그 바는
           fixed 라 자리를 차지하지 않으므로 여기서 비워 두지 않으면 프레임 아래를 덮는다.
         */}
-            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-14rem)] lg:max-h-[820px] lg:self-start lg:overflow-hidden">
+            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-11.5rem)] lg:max-h-[880px] lg:self-start lg:overflow-hidden">
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}

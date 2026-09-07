@@ -154,11 +154,15 @@ const TemplatePreview = ({
       */}
       <p
         role="status"
-        className="text-system-error mt-2 h-8 shrink-0 text-center text-xs font-medium leading-4"
+        className="text-system-error mt-1.5 h-4 shrink-0 break-keep text-center text-xs font-medium leading-4"
       >
+        {/*
+          한 줄에 들어가는 길이로 줄인다. 두 줄이 되면 자리를 두 배로 잡아야 하고,
+          그만큼 미리보기가 짧아진다. `break-keep` 으로 단어 중간에서 끊기지 않게 한다.
+        */}
         {isSectionShown
           ? ''
-          : '이 섹션은 지금 상세 페이지에 나오지 않아요. 노출을 켜고 필요한 값을 채우면 나타납니다.'}
+          : '노출이 꺼져 있거나 값이 비어 상세에 나오지 않아요.'}
       </p>
     </section>
   );
