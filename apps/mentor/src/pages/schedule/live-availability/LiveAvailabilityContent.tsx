@@ -499,7 +499,18 @@ const LiveAvailabilityContent = ({
     });
   };
 
+  /*
+    이번 주보다 앞으로는 못 간다. 지난 주는 전부 비활성 회색이라 볼 것도 고칠 것도
+    없는데, 넘어갈 수 있으면 빈 화면만 계속 나와 길을 잃는다.
+  */
+  const currentWeekStart = useMemo(
+    () => startOfWeek(currentNow(), { weekStartsOn: 1 }),
+    [],
+  );
+  const canGoPrevWeek = weekStart > currentWeekStart;
+
   const handlePrevWeek = () => {
+    if (!canGoPrevWeek) return;
     setWeekStart((prev) => addDays(prev, -7));
   };
 
@@ -653,8 +664,9 @@ const LiveAvailabilityContent = ({
             <button
               type="button"
               onClick={handlePrevWeek}
+              disabled={!canGoPrevWeek}
               aria-label="이전 주"
-              className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+              className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-75 disabled:hover:text-neutral-75 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
             >
               ‹
             </button>
@@ -689,7 +701,7 @@ const LiveAvailabilityContent = ({
               예약 완료
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-primary-30 border-primary h-3 w-3 rounded-[3px] border" />
+              <span className="bg-primary-10 border-primary h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
             {challengePeriodKeys.size > 0 && (
@@ -970,7 +982,12 @@ const LiveAvailabilityContent = ({
                         key={`${time}-${dayIndex}`}
                         title="이미 지난 시간입니다"
                         aria-disabled="true"
-                        className="border-neutral-90 bg-neutral-90 border-b border-r px-2 py-2 last:border-r-0"
+                        /*
+                          구분선을 흰색으로 둔다. 배경과 같은 neutral-90 이면 선이
+                          배경에 묻혀 회색 덩어리 하나로 보이고, 어느 칸이 어느
+                          시간인지 짚을 수 없다.
+                        */
+                        className="bg-neutral-90 border-b border-r border-white px-2 py-2 last:border-r-0"
                       />
                     );
                   }
@@ -996,7 +1013,7 @@ const LiveAvailabilityContent = ({
                     진한 빨강으로 칠하면 한 주에 며칠씩 걸릴 때 화면이 경고판이 된다.
                   */
                   const cellClass = isChanged
-                    ? 'bg-primary-30 text-primary border-primary font-semibold'
+                    ? 'bg-primary-10 text-primary ring-1 ring-inset ring-primary font-semibold'
                     : isSelected
                       ? 'bg-primary-10 text-primary font-semibold'
                       : inChallengePeriod
