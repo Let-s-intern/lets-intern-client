@@ -11,6 +11,7 @@ import {
   type LiveMentoringTemplate,
   toTemplateUpdatePayload,
 } from '@/api/live-mentoring/liveMentoringSchema';
+import { useUserQuery } from '@/api/user/user';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { toYoutubeEmbedUrl } from '../constants';
@@ -41,6 +42,8 @@ const LiveMentoringSettingsPage = () => {
   const { data, isError, error } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
+  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`). 미리보기가 그 주소를 띄운다.
+  const { data: user } = useUserQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
@@ -342,7 +345,7 @@ const LiveMentoringSettingsPage = () => {
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}
-                nickname={settings?.nickname ?? '멘토'}
+                mentorId={user?.userId ?? null}
               />
             </div>
           </div>

@@ -7,6 +7,7 @@ import {
   formatPrice,
   LIST_PRICE_BY_DURATION,
 } from '../constants';
+import { LM_HERO_ID } from './DetailNavigation';
 
 interface DetailHeroProps {
   detail: LiveMentorDetail;
@@ -48,7 +49,10 @@ const DetailHero = ({
       : 0;
 
   return (
-    <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
+    <section
+      id={LM_HERO_ID}
+      className="bg-neutral-0 text-static-100 relative overflow-hidden"
+    >
       {/*
         멘토 사진 — 시안대로 흑백 처리해 텍스트 가독성을 지킨다.
 
@@ -88,6 +92,8 @@ const DetailHero = ({
           {detail.template.hero.bullets.map((bullet, i) => (
             <li
               key={i}
+              /* 멘토 설정의 미리보기가 편집 중인 줄로 따라올 때 쓴다(LC-3268). */
+              data-preview-item={i}
               className="text-xsmall14 md:text-xsmall16 text-white/85"
             >
               - {bullet}

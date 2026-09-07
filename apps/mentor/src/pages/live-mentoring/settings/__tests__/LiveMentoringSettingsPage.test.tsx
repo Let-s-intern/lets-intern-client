@@ -8,6 +8,13 @@ import type {
   LiveMentoringSettings,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
+/*
+ * 미리보기 iframe 이 띄우는 웹 오리진. 테스트 환경에는 VITE_WEB_URL 이 없으므로 고정한다 —
+ * 오리진 검사가 이 값 기준으로 도므로 프로덕션과 같은 조건이 된다.
+ */
+const WEB_ORIGIN = 'http://localhost:3000';
+vi.stubEnv('VITE_WEB_URL', WEB_ORIGIN);
+
 const saveMock = vi.fn();
 const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
@@ -418,15 +425,19 @@ describe('LiveMentoringSettingsPage — 탭', () => {
 });
 
 describe('LiveMentoringSettingsPage — 편집 영역', () => {
-  it('노출 토글을 끄면 미리보기에서 해당 섹션이 제외된다고 알린다', () => {
+  /*
+    노출 여부는 미리보기(iframe)에서 그 섹션이 사라지는 것으로 확인된다(LC-3268).
+    여기서는 토글이 값을 실제로 뒤집는지만 본다.
+  */
+  it('노출 토글을 끄면 꺼진 상태로 남는다', () => {
     renderPage();
 
     openTab('취업 성공 전략');
-    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    const toggle = screen.getAllByRole('checkbox')[0];
+    expect(toggle).toBeChecked();
 
-    expect(
-      screen.getByText(/취업 성공 전략 섹션은 노출 안 함 상태입니다/),
-    ).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).not.toBeChecked();
   });
 
   it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장 바가 저장됨 상태다', () => {
@@ -691,28 +702,95 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
   });
 });
 
+/*
+ * LC-3268 — 미리보기는 공개 페이지를 iframe 으로 띄운다.
+ *
+ * 예전에는 공개 상세의 마크업을 멘토 앱에 복제해 그렸다. 웹이 바뀔 때마다 따라 고쳐야
+ * 했고 실제로 어긋난 채 방치됐다. 지금은 편집 중인 템플릿만 postMessage 로 보낸다.
+ */
 describe('LiveMentoringSettingsPage — 미리보기', () => {
-  /** 미리보기는 활성 탭 섹션만 그리므로 문구도 그 탭에서 확인한다. */
-  it('공개 상세와 같은 헤드라인·섹션 문구를 보여준다', () => {
+  const previewFrame = () =>
+    screen.getByTitle('상세 페이지 미리 보기') as HTMLIFrameElement;
+
+  /** 웹 미리보기 라우트가 보내는 "받을 준비 됐다" 신호를 흉내낸다. */
+  const signalFrameReady = () =>
+    fireEvent(
+      window,
+      new MessageEvent('message', {
+        data: { type: 'letscareer:live-mentoring-preview:ready' },
+        origin: WEB_ORIGIN,
+      }),
+    );
+
+  it('공개 상세의 미리보기 주소를 띄운다', () => {
     renderPage();
 
-    openTab('멘토 정보');
-    expect(
-      screen.getByText('확실한 전략으로 300명을 합격시킨 쥬디 멘토가 함께해요'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('멘토님의 한마디')).toBeInTheDocument();
-
-    // `✓ 경험 연결` 은 결과 사례의 afterCaption 이다. 멘토링 유형이 아니다.
-    openTab('결과 사례');
-    expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
+    expect(previewFrame()).toHaveAttribute(
+      'src',
+      `${WEB_ORIGIN}/live-mentoring/preview/500`,
+    );
   });
 
-  it('파생 섹션은 편집 대상이 아님을 미리보기 하단에 안내한다', () => {
+  it('받을 준비가 되면 편집 중인 템플릿과 열린 탭을 보낸다', () => {
     renderPage();
+    const post = vi.fn();
+    Object.defineProperty(previewFrame(), 'contentWindow', {
+      value: { postMessage: post },
+      configurable: true,
+    });
 
+    signalFrameReady();
+
+    expect(post).toHaveBeenCalled();
+    const [message, origin] = post.mock.calls[post.mock.calls.length - 1];
+    expect(origin).toBe(WEB_ORIGIN);
+    expect(message.type).toBe('letscareer:live-mentoring-preview');
+    expect(message.activeTab).toBe('hero');
+    // 저장 전 값이 그대로 실린다 — 미리보기가 저장을 기다리지 않는 이유다.
+    expect(message.template.intro.nickname).toBe('쥬디');
+  });
+
+  /*
+    유형 카드가 서너 개로 늘면 섹션까지만 따라가서는 몇 번째를 쓰는지 알 수 없다.
+    포커스가 들어간 카드 번호를 함께 보내, 미리보기가 그 카드를 화면 가운데 둔다.
+  */
+  it('편집 중인 카드 번호를 함께 보낸다', () => {
+    renderPage();
+    const post = vi.fn();
+    Object.defineProperty(previewFrame(), 'contentWindow', {
+      value: { postMessage: post },
+      configurable: true,
+    });
+    signalFrameReady();
+
+    openTab('멘토링 유형');
+    // 탭을 막 열었을 때는 어느 카드도 고르지 않은 상태다.
     expect(
-      screen.getByText(/오픈 설정과 운영 값에서 자동으로 채워집니다/),
-    ).toBeInTheDocument();
+      post.mock.calls[post.mock.calls.length - 1][0].activeItem,
+    ).toBeNull();
+
+    const firstCard = document.querySelector('[data-preview-index="0"]');
+    const input = firstCard?.querySelector('input, textarea');
+    if (!input) throw new Error('첫 카드의 입력을 찾을 수 없습니다');
+    fireEvent.focusIn(input);
+
+    const [message] = post.mock.calls[post.mock.calls.length - 1];
+    expect(message.activeItem).toBe(0);
+  });
+
+  it('탭을 옮기면 그 탭을 함께 보낸다', () => {
+    renderPage();
+    const post = vi.fn();
+    Object.defineProperty(previewFrame(), 'contentWindow', {
+      value: { postMessage: post },
+      configurable: true,
+    });
+    signalFrameReady();
+
+    openTab('결과 사례');
+
+    const [message] = post.mock.calls[post.mock.calls.length - 1];
+    expect(message.activeTab).toBe('results');
   });
 });
 

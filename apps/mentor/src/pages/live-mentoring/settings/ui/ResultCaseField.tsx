@@ -82,6 +82,8 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
         {cases.map((item, index) => (
           <li
             key={index}
+            /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
+            data-preview-index={index}
             className="border-neutral-80 rounded-lg border bg-white p-4"
           >
             <div className="mb-4 flex items-center gap-2">
