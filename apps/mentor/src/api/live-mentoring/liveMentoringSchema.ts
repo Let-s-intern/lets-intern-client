@@ -92,7 +92,13 @@ export const templateIntroSchema = z.object({
   careerLines: z.array(z.string()),
   /** "멘토님의 한마디" 박스 본문. */
   oneLiner: z.string(),
-  /** 프로필의 소속·직책 한 줄. 미입력이면 null. */
+  /**
+   * 프로필의 "상세페이지 제작" 본문. **한 줄 소개가 아니다.**
+   *
+   * 멘토 프로필의 Lexical 에디터가 저장한 JSON 문자열이 그대로 온다
+   * (`{"root":{"children":[...`). 화면에 쓰려면 파싱해야 한다 — 웹의
+   * `parseLexicalRoot` 참고. 미입력이면 null.
+   */
   description: z.string().nullable(),
 });
 export type TemplateIntro = z.infer<typeof templateIntroSchema>;
