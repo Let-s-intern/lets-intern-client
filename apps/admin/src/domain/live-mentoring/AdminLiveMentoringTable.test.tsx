@@ -96,7 +96,9 @@ describe('AdminLiveMentoringTable — 조회', () => {
   it('필터를 바꾸면 해당 상태로 다시 조회한다', () => {
     renderTable([draftRow]);
 
-    fireEvent.click(within(filterBar()).getByRole('button', { name: '승인' }));
+    fireEvent.click(
+      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+    );
 
     expect(listQuery).toHaveBeenLastCalledWith({
       status: 'APPROVED',
@@ -108,7 +110,9 @@ describe('AdminLiveMentoringTable — 조회', () => {
   it('전체 필터는 status 파라미터를 보내지 않는다', () => {
     renderTable([draftRow]);
 
-    fireEvent.click(within(filterBar()).getByRole('button', { name: '승인' }));
+    fireEvent.click(
+      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+    );
     fireEvent.click(within(filterBar()).getByRole('button', { name: '전체' }));
 
     expect(listQuery).toHaveBeenLastCalledWith({
@@ -125,7 +129,7 @@ describe('AdminLiveMentoringTable — 조회', () => {
     expect(screen.getByText('이력서 피드백')).toBeInTheDocument();
     expect(screen.getByText('이력서 · 포트폴리오')).toBeInTheDocument();
     expect(
-      within(screen.getByRole('table')).getByText('초안'),
+      within(screen.getByRole('table')).getByText('초안(옛 데이터)'),
     ).toBeInTheDocument();
   });
 
