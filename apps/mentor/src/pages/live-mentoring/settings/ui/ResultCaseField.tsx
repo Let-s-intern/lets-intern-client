@@ -124,7 +124,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               <div>
                 <label className={fieldLabel}>멘토링 전 설명</label>
                 <div className={captionBox}>
-                  <input
+                  <textarea
                     value={item.beforeCaption}
                     onChange={(event) =>
                       patchAt(index, { beforeCaption: event.target.value })
@@ -132,6 +132,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                     placeholder="멘토링 전 상황을 간단히 설명해 주세요"
                     aria-label={`${index + 1}번 사례 멘토링 전 설명`}
                     className={captionInput}
+                    rows={2}
                   />
                 </div>
               </div>
@@ -150,7 +151,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               <div>
                 <label className={fieldLabel}>멘토링 후 설명</label>
                 <div className={captionBox}>
-                  <input
+                  <textarea
                     value={item.afterCaption}
                     onChange={(event) =>
                       patchAt(index, { afterCaption: event.target.value })
@@ -158,6 +159,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                     placeholder="멘토링 후 달라진 점을 간단히 설명해 주세요"
                     aria-label={`${index + 1}번 사례 멘토링 후 설명`}
                     className={captionInput}
+                    rows={2}
                   />
                 </div>
               </div>

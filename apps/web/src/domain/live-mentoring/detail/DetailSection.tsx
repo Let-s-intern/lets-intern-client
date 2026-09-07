@@ -67,7 +67,7 @@ const DetailSection = ({
         {subtitle && (
           <p
             className={twMerge(
-              'text-xsmall14 md:text-small18',
+              'text-xsmall14 md:text-small18 whitespace-pre-line',
               dark ? 'text-white/70' : 'text-neutral-40',
             )}
           >

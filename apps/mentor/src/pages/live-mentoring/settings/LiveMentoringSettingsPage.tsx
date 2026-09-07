@@ -44,7 +44,8 @@ const LiveMentoringSettingsPage = () => {
   const { data: settings } = useLiveMentoringSettingsQuery();
   // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`). 미리보기가 그 주소를 띄운다.
   const { data: user } = useUserQuery();
-  const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
+  const { mutateAsync: save, isPending } =
+    useUpdateLiveMentoringTemplateMutation();
   const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringDetailPage | null>(
@@ -67,6 +68,15 @@ const LiveMentoringSettingsPage = () => {
    * 마운트돼 있지 않아 편집 중인 값이라는 게 없다. 오픈 설정 스텝에서는 같은 훅을
    * 그쪽 폼으로 부른다. 두 스텝이 동시에 마운트되지 않으므로 훅도 화면에 하나만 산다.
    */
+  /*
+    오픈 액션 훅은 조기 반환보다 앞에서 불러야 해서, 아래에서 정의되는 값을 그대로 쓸 수
+    없다. ref 로 건넨다 — 실제로 읽는 시점은 멘토가 「오픈하기」를 누른 뒤라 항상 최신이다.
+   */
+  const isDirtyRef = useRef(false);
+  const saveTemplateRef = useRef<
+    (options?: { silent?: boolean }) => Promise<boolean>
+  >(() => Promise.resolve(true));
+
   const openAction = useLiveMentoringOpenAction({
     input: settings
       ? {
@@ -77,6 +87,15 @@ const LiveMentoringSettingsPage = () => {
         }
       : null,
     alert: { showAlert, showConfirm },
+    /*
+      오픈은 "지금 이 상세를 공개한다" 는 행동이다. 쓰던 내용을 두고 열면 멘티가
+      옛 페이지를 보게 되므로, 미저장 변경이 있으면 먼저 저장하고 연다.
+      저장이 실패하면 열지 않는다 — 옛 내용이 공개되는 편이 더 나쁘다.
+     */
+    onBeforeOpen: () =>
+      isDirtyRef.current
+        ? saveTemplateRef.current({ silent: true })
+        : Promise.resolve(true),
   });
 
   // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
@@ -200,8 +219,10 @@ const LiveMentoringSettingsPage = () => {
    * 그대로 두면 저장 **전체**가 400 으로 실패하는데, 화면에는 어느 필드 때문인지
    * 드러나지 않아 원인을 찾을 수 없다. 보내기 전에 정규화하고, 못 고치면 여기서 막는다.
    */
-  const handleSave = () => {
-    if (!template) return;
+  const saveTemplate = async ({
+    silent = false,
+  }: { silent?: boolean } = {}): Promise<boolean> => {
+    if (!template) return false;
     let payload = template;
 
     if (template.video.videoUrl) {
@@ -213,7 +234,7 @@ const LiveMentoringSettingsPage = () => {
             'YouTube 주소만 넣을 수 있어요. 영상 페이지의 공유 링크를 붙여넣으면 자동으로 변환됩니다.',
           variant: 'error',
         });
-        return;
+        return false;
       }
       payload = {
         ...template,
@@ -270,28 +291,40 @@ const LiveMentoringSettingsPage = () => {
     setTemplate(payload);
 
     // 서버 요청 DTO에 없는 값(intro·categories)은 여기서 떨어진다.
-    save(toTemplateUpdatePayload(payload), {
-      onSuccess: () => {
-        // 이후 refetch 로도 갱신되지만, 그 전까지 dirty 판정이 틀리지 않도록
-        // 방금 저장한 값을 곧바로 새 기준선으로 삼는다.
-        setOriginalTemplate(payload);
-        showAlert({ title: '저장되었습니다.', variant: 'success' });
-      },
+    try {
+      await save(toTemplateUpdatePayload(payload));
+      // 이후 refetch 로도 갱신되지만, 그 전까지 dirty 판정이 틀리지 않도록
+      // 방금 저장한 값을 곧바로 새 기준선으로 삼는다.
+      setOriginalTemplate(payload);
+      /*
+        오픈 직전의 자동 저장에서는 알리지 않는다. 곧바로 오픈 완료 알림이 뜨는데
+        그 앞에 "저장되었습니다" 를 한 번 더 띄우면 무엇을 확인하라는 건지 흐려진다.
+       */
+      if (!silent) showAlert({ title: '저장되었습니다.', variant: 'success' });
+      return true;
+    } catch (error) {
       // 서버가 왜 거부했는지 감추면 멘토도 개발자도 원인을 알 수 없다.
-      onError: (error) => {
-        const apiError = error as { code?: string; message?: string } | null;
-        showAlert({
-          title: '저장에 실패했습니다.',
-          description: apiError?.message
-            ? apiError.code
-              ? `${apiError.message} (${apiError.code})`
-              : apiError.message
-            : undefined,
-          variant: 'error',
-        });
-      },
-    });
+      const apiError = error as { code?: string; message?: string } | null;
+      showAlert({
+        title: '저장에 실패했습니다.',
+        description: apiError?.message
+          ? apiError.code
+            ? `${apiError.message} (${apiError.code})`
+            : apiError.message
+          : undefined,
+        variant: 'error',
+      });
+      return false;
+    }
   };
+
+  const handleSave = () => {
+    void saveTemplate();
+  };
+
+  // 위 훅에 건넨 ref 를 매 렌더 최신 값으로 맞춘다.
+  isDirtyRef.current = isDirty;
+  saveTemplateRef.current = saveTemplate;
 
   return (
     <div className="flex flex-col gap-6 pb-24">

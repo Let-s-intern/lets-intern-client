@@ -106,12 +106,20 @@ export const useLiveMentoringOpenAction = ({
   input,
   alert,
   pendingNotice,
+  onBeforeOpen,
 }: {
   /** null 이면 아직 설정을 못 받은 것이다 — 버튼은 비활성으로 그린다. */
   input: OpenActionInput | null;
   alert: Pick<ReturnType<typeof useMentorAlert>, 'showAlert' | 'showConfirm'>;
   /** 오픈 전 확인 모달에 덧붙일 안내. 미저장 변경이 있을 때만 넘긴다. */
   pendingNotice?: string;
+  /**
+   * 오픈 직전에 할 일. `false` 를 돌려주면 오픈하지 않는다.
+   *
+   * 상세 페이지 스텝에서 미저장 내용을 먼저 저장하는 데 쓴다 — 오픈은 그 순간의 상세를
+   * 공개하는 행동이라, 쓰던 내용을 두고 열면 멘티가 옛 페이지를 본다.
+   */
+  onBeforeOpen?: () => Promise<boolean>;
 }): LiveMentoringOpenAction => {
   const { refetch } = useLiveMentoringSettingsQuery();
   // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
@@ -179,8 +187,10 @@ export const useLiveMentoringOpenAction = ({
   };
 
   /** 오픈. 최초 개설과 재개설이 같은 요청이다. */
-  const handleOpen = () => {
+  const handleOpen = async () => {
     if (!input) return;
+    // 저장이 실패하면 열지 않는다. 옛 내용이 공개되는 것이 더 나쁘다.
+    if (onBeforeOpen && !(await onBeforeOpen())) return;
     setIsOpenConfirmVisible(false);
     openMentoring(
       {

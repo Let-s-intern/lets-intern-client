@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,7 +21,7 @@ import type {
 const WEB_ORIGIN = 'http://localhost:3000';
 vi.stubEnv('VITE_WEB_URL', WEB_ORIGIN);
 
-const saveMock = vi.fn();
+const saveMock = vi.fn().mockResolvedValue(undefined);
 const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
 const refetchSettingsMock = vi.fn();
@@ -45,8 +51,9 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
     } as unknown as LiveMentoringSettings,
     refetch: refetchSettingsMock,
   }),
+  // 페이지가 저장 완료를 기다린다(오픈 직전 자동 저장). mutate 가 아니라 mutateAsync 다.
   useUpdateLiveMentoringTemplateMutation: () => ({
-    mutate: saveMock,
+    mutateAsync: saveMock,
     isPending: false,
   }),
   useLiveMentoringOpenStatusQuery: () => ({ data: openings }),
@@ -181,7 +188,7 @@ const renderPage = (category: LiveMentoringCategory = 'PERSONAL_STATEMENT') => {
 };
 
 afterEach(() => {
-  saveMock.mockReset();
+  saveMock.mockReset().mockResolvedValue(undefined);
   templateData = undefined;
   status = 'DRAFT';
   startEditMock.mockReset();
@@ -429,15 +436,21 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     노출 여부는 미리보기(iframe)에서 그 섹션이 사라지는 것으로 확인된다(LC-3268).
     여기서는 토글이 값을 실제로 뒤집는지만 본다.
   */
-  it('노출 토글을 끄면 꺼진 상태로 남는다', () => {
+  it('노출 토글을 끄면 그 섹션 입력이 잠긴다', () => {
     renderPage();
 
     openTab('취업 성공 전략');
     const toggle = screen.getAllByRole('checkbox')[0];
     expect(toggle).toBeChecked();
+    expect(screen.getByPlaceholderText('섹션 제목')).toBeEnabled();
 
     fireEvent.click(toggle);
+
     expect(toggle).not.toBeChecked();
+    // 흐리게만 두면 만질 수 있다. fieldset 으로 잠가 탭 순서에서도 빠진다.
+    expect(screen.getByPlaceholderText('섹션 제목')).toBeDisabled();
+    // 다시 켤 수 있어야 하므로 스위치 자신은 잠기지 않는다.
+    expect(toggle).toBeEnabled();
   });
 
   it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장 바가 저장됨 상태다', () => {
@@ -861,6 +874,42 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
     expect(
       screen.queryByRole('button', { name: '오픈하기' }),
     ).not.toBeInTheDocument();
+  });
+
+  /*
+    오픈은 "지금 이 상세를 공개한다" 는 행동이다. 쓰던 내용을 두고 열면 멘티가 옛
+    페이지를 보게 되므로, 미저장 변경이 있으면 먼저 저장하고 연다.
+  */
+  it('미저장 변경이 있으면 오픈 전에 먼저 저장한다', async () => {
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+    addHeroBullet();
+    expect(screen.getByText('저장하지 않은 변경사항이 있어요.')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    // 오픈 전 확인 모달에서 동의하고 진행한다.
+    const dialog = screen.getByRole('dialog', {
+      name: '오픈 전 상세 페이지 확인',
+    });
+    fireEvent.click(within(dialog).getByRole('checkbox'));
+    fireEvent.click(within(dialog).getByRole('button', { name: '오픈하기' }));
+
+    await waitFor(() => expect(saveMock).toHaveBeenCalledTimes(1));
+  });
+
+  it('바뀐 게 없으면 오픈할 때 저장하지 않는다', async () => {
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '오픈하기' }));
+    const dialog = screen.getByRole('dialog', {
+      name: '오픈 전 상세 페이지 확인',
+    });
+    fireEvent.click(within(dialog).getByRole('checkbox'));
+    fireEvent.click(within(dialog).getByRole('button', { name: '오픈하기' }));
+
+    await waitFor(() => expect(openMock).toHaveBeenCalled());
+    expect(saveMock).not.toHaveBeenCalled();
   });
 
   it('열었다 닫은 적이 있으면 다시 오픈하기로 바뀐다', () => {

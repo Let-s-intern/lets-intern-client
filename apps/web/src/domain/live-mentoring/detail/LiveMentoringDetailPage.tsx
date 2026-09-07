@@ -310,10 +310,10 @@ const LiveMentoringDetailPage = ({
                   <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
                     Point {i + 1}
                   </span>
-                  <p className="text-xsmall16 md:text-small18 font-bold">
+                  <p className="text-xsmall16 md:text-small18 whitespace-pre-line font-bold">
                     {point.title}
                   </p>
-                  <p className="text-neutral-40 text-xsmall14 leading-relaxed">
+                  <p className="text-neutral-40 text-xsmall14 whitespace-pre-line leading-relaxed">
                     {point.description}
                   </p>
                 </div>
@@ -380,7 +380,7 @@ const LiveMentoringDetailPage = ({
                       )}
                     </div>
                   </div>
-                  <p className="text-xsmall14 text-center text-white/70">
+                  <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
                     {item.beforeCaption}
                   </p>
                 </div>
@@ -400,7 +400,7 @@ const LiveMentoringDetailPage = ({
                       )}
                     </div>
                   </div>
-                  <p className="text-xsmall14 text-center font-medium text-white">
+                  <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
                     ✓ {item.afterCaption}
                   </p>
                 </div>
