@@ -230,11 +230,22 @@ const LiveMentoringDetailPreview = ({
   }, []);
 
   return (
-    <LiveMentoringDetailPage
-      mentorId={mentorId}
-      previewTemplate={template}
-      isPreview
-    />
+    <>
+      {/*
+        스크롤 막대를 감춘다. 좁은 프레임 안에서는 폭을 눈에 띄게 먹고, 실제 휴대폰에는
+        늘 떠 있는 막대가 없다 — 있으면 미리보기가 실제와 다르게 보인다.
+        스크롤 자체는 그대로 된다.
+      */}
+      <style>{`
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; }
+      `}</style>
+      <LiveMentoringDetailPage
+        mentorId={mentorId}
+        previewTemplate={template}
+        isPreview
+      />
+    </>
   );
 };
 

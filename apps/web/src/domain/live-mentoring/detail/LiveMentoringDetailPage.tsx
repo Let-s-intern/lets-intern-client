@@ -198,7 +198,7 @@ const LiveMentoringDetailPage = ({
             <img
               src={intro.profileImage}
               alt={nickname}
-              className="aspect-[3/4] w-full rounded-md object-cover"
+              className="max-h-[460px] w-full rounded-md object-contain"
             />
           )}
 
@@ -301,7 +301,7 @@ const LiveMentoringDetailPage = ({
                   <img
                     src={point.image}
                     alt=""
-                    className="aspect-[4/3] max-h-[220px] w-full rounded-sm object-cover"
+                    className="max-h-[240px] w-full rounded-sm object-contain"
                   />
                 ) : (
                   <div className="bg-neutral-90 aspect-[4/3] max-h-[220px] w-full rounded-sm" />
@@ -375,7 +375,7 @@ const LiveMentoringDetailPage = ({
                         <img
                           src={item.beforeImage}
                           alt=""
-                          className="aspect-[4/3] max-h-[220px] w-full rounded-sm bg-white object-cover"
+                          className="h-[220px] w-full rounded-sm bg-white object-contain"
                         />
                       )}
                     </div>
@@ -395,7 +395,7 @@ const LiveMentoringDetailPage = ({
                         <img
                           src={item.afterImage}
                           alt=""
-                          className="aspect-[4/3] max-h-[220px] w-full rounded-sm bg-white object-cover"
+                          className="h-[220px] w-full rounded-sm bg-white object-contain"
                         />
                       )}
                     </div>

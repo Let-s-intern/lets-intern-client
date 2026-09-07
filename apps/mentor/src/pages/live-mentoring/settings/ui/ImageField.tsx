@@ -2,6 +2,16 @@ import { useState } from 'react';
 
 import { uploadFile } from '@/api/file';
 
+/**
+ * 올릴 수 있는 이미지 최대 용량.
+ *
+ * 서버는 100MB 까지 받지만(`application.yml`), 상세 페이지에 그만한 이미지가 실리면
+ * 멘티 쪽에서 화면이 뜨는 데만 한참 걸린다. 화면에 쓰이는 크기를 기준으로 여기서 막고,
+ * 막는 숫자는 버튼 옆에 미리 적어 둔다 — 올리고 나서 거부당하는 것보다 낫다.
+ */
+const MAX_IMAGE_MB = 10;
+const MAX_IMAGE_BYTES = MAX_IMAGE_MB * 1024 * 1024;
+
 interface ImageFieldProps {
   /** 없으면 라벨을 그리지 않는다 — 부모가 이미 라벨을 두는 경우가 있다. */
   label?: string;
@@ -22,8 +32,18 @@ const ImageField = ({ label, value, onChange }: ImageFieldProps) => {
 
   const handleSelect = async (file: File | undefined) => {
     if (!file) return;
-    setIsUploading(true);
     setError(null);
+
+    // 왜 안 올라갔는지, 얼마까지 되는지, 지금 파일이 얼마인지를 한 줄에 담는다.
+    if (file.size > MAX_IMAGE_BYTES) {
+      const sizeMb = (file.size / 1024 / 1024).toFixed(1);
+      setError(
+        `용량이 너무 커요. ${MAX_IMAGE_MB}MB까지 올릴 수 있는데 이 이미지는 ${sizeMb}MB예요.`,
+      );
+      return;
+    }
+
+    setIsUploading(true);
     try {
       const url = await uploadFile({ file, type: 'USER_PROFILE' });
       onChange(url);
@@ -43,10 +63,11 @@ const ImageField = ({ label, value, onChange }: ImageFieldProps) => {
       ) : null}
 
       {value && (
+        /* 잘라내지 않는다 — 멘토가 올린 그대로가 상세에 나가므로 여기서도 전체가 보여야 한다. */
         <img
           src={value}
           alt=""
-          className="mb-2 max-h-40 w-full rounded-lg object-cover"
+          className="mb-2 max-h-40 w-full rounded-lg object-contain"
         />
       )}
 
@@ -74,6 +95,9 @@ const ImageField = ({ label, value, onChange }: ImageFieldProps) => {
             제거
           </button>
         )}
+        <span className="text-xs text-gray-400">
+          JPG·PNG·WEBP · {MAX_IMAGE_MB}MB까지
+        </span>
       </div>
 
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
