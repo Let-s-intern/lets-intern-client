@@ -29,21 +29,14 @@ export default function MentorDetailContentSection({
 
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
-      <div className="flex w-full items-center justify-between md:w-auto md:justify-normal md:gap-2.5">
-        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
-          프로필 상세페이지 제작
-        </h2>
-        {user && (
-          <a
-            href={`${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary text-xsmall14 hover:text-primary-dark tracking-tight underline underline-offset-2"
-          >
-            바로가기
-          </a>
-        )}
-      </div>
+      {/*
+        바로가기는 여기 두지 않는다. 아직 저장하지 않은 글을 쓰는 중에 눌러 봐야 옛 페이지가
+        열려서, 방금 쓴 내용이 반영되지 않은 것을 보게 된다. 저장에 성공한 뒤에 안내와 함께
+        연다(LC-3277) — `ProfilePage` 의 저장 성공 처리에 있다.
+      */}
+      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
+        프로필 상세페이지 제작
+      </h2>
 
       <div className="mt-4">
         <div className="flex flex-col items-center justify-center py-20 md:hidden">
