@@ -294,10 +294,16 @@ export const useLiveMentoringTemplateQuery = () => {
       return liveMentoringDetailPageSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
-    // ⚠️ 임시 — 백엔드에 아직 없는 엔드포인트라 재시도해도 성공하지 않는다.
-    //    기본 3회 재시도(약 7초)를 끄고 개발 중 안내를 바로 띄우려는 것이다.
-    //    API 연동 후 이 줄을 지워 기본 재시도로 되돌릴 것.
-    retry: false,
+    /*
+      상품이 아직 없는 멘토에게는 404 가 정상 응답이다(LC-3265). 재시도해도 결과가
+      같은데 기본 3회를 돌면 그동안 "불러오는 중..." 만 7초쯤 떠 있게 된다.
+      4xx 는 곧바로 포기하고, 일시적 장애(5xx·네트워크)만 재시도한다.
+    */
+    retry: (failureCount, requestError) => {
+      const status = (requestError as { status?: number } | null)?.status;
+      if (status != null && status >= 400 && status < 500) return false;
+      return failureCount < 3;
+    },
   });
 };
 
