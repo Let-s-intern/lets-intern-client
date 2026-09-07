@@ -13,9 +13,10 @@ import {
 } from '@/api/live-mentoring/liveMentoringSchema';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import { useUserQuery } from '@/api/user/user';
-import { publicDetailUrl, toYoutubeEmbedUrl } from '../constants';
+import { toYoutubeEmbedUrl } from '../constants';
 import OpenSettingsSection from '../open-settings/OpenSettingsSection';
+import { useLiveMentoringOpenAction } from '../open-settings/useLiveMentoringOpenAction';
+import SettingsActionBar from '../ui/SettingsActionBar';
 import {
   DETAIL_TABS,
   OPEN_TAB_ID,
@@ -24,7 +25,6 @@ import {
   isDetailTabComplete,
 } from './tabs';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
-import DetailSaveBar from './ui/DetailSaveBar';
 import SettingsTabs from './ui/SettingsTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
 import TemplatePreview from './ui/TemplatePreview';
@@ -41,11 +41,8 @@ const LiveMentoringSettingsPage = () => {
   const { data, isError, error } = useLiveMentoringTemplateQuery();
   // 헤드라인·미리보기에 쓸 닉네임은 오픈 설정(프로필 참조 값)에서 가져온다.
   const { data: settings } = useLiveMentoringSettingsQuery();
-  // "지금 열려 있는지"는 상품 상태가 아니라 활성 개설의 존재로 판단한다.
-  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
-  const { data: user } = useUserQuery();
   const { mutate: save, isPending } = useUpdateLiveMentoringTemplateMutation();
-  const { alertProps, showAlert } = useMentorAlert();
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   const [template, setTemplate] = useState<LiveMentoringDetailPage | null>(
     null,
@@ -59,6 +56,25 @@ const LiveMentoringSettingsPage = () => {
    * 하는 경로가 새로 생긴다(이탈 경고와 충돌).
    */
   const [activeTab, setActiveTab] = useState<SettingsTabId>(OPEN_TAB_ID);
+
+  /*
+   * 상세 스텝의 하단 바에 들어갈 오픈 버튼(LC-3273).
+   *
+   * 오픈 요청에 담을 값은 **서버가 내려준 설정**이다 — 오픈 설정 본문은 이 스텝에서
+   * 마운트돼 있지 않아 편집 중인 값이라는 게 없다. 오픈 설정 스텝에서는 같은 훅을
+   * 그쪽 폼으로 부른다. 두 스텝이 동시에 마운트되지 않으므로 훅도 화면에 하나만 산다.
+   */
+  const openAction = useLiveMentoringOpenAction({
+    input: settings
+      ? {
+          title: settings.title ?? '',
+          categories: settings.categories,
+          durations: settings.durations,
+          hasProduct: settings.liveMentoringId !== null,
+        }
+      : null,
+    alert: { showAlert, showConfirm },
+  });
 
   // 이탈 경고(navigation guard) 상태 — 프로필 화면(ProfilePage.tsx)과 동일 패턴.
   const [navGuard, setNavGuard] = useState<{
@@ -274,11 +290,6 @@ const LiveMentoringSettingsPage = () => {
     });
   };
 
-  /** 편집 취소 — 저장된 기준선으로 되돌린다(로컬 수정분 폐기). */
-  const handleCancel = () => {
-    if (originalTemplate) setTemplate(originalTemplate);
-  };
-
   return (
     <div className="flex flex-col gap-6 pb-24">
       {header}
@@ -337,19 +348,25 @@ const LiveMentoringSettingsPage = () => {
           </div>
 
           {/*
-        하단 고정 저장 바 (PRD §7).
+        하단 고정 바 — 오픈 설정 스텝과 같은 것을 쓴다(LC-3273).
 
-        저장·되돌리기와 공개 페이지로 가는 길을 여기 한 자리에 모은다.
+        모달이 떠 있는 동안에는 감춘다. 같은 자리에 겹쳐 보인다.
       */}
-          <DetailSaveBar
-            publicDetailHref={
-              user?.userId == null ? null : publicDetailUrl(user.userId)
-            }
-            isDirty={isDirty}
-            isSaving={isPending}
-            onSave={handleSave}
-            onRevert={handleCancel}
-          />
+          {openAction.isModalOpen ? null : (
+            <SettingsActionBar
+              status={
+                isDirty
+                  ? '저장하지 않은 변경사항이 있어요.'
+                  : '저장된 상태예요.'
+              }
+              isDirty={isDirty}
+              canSave={isDirty}
+              isSaving={isPending}
+              onSave={handleSave}
+              openAction={openAction}
+            />
+          )}
+          {openAction.modals}
         </>
       )}
 
