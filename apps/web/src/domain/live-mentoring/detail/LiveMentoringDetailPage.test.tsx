@@ -204,7 +204,7 @@ beforeEach(() => {
 });
 
 describe('LiveMentoringDetailPage', () => {
-  it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 이미지 섹션을 렌더한다', async () => {
+  it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 섹션을 렌더한다', async () => {
     mockApis(detail());
     renderDetail();
 
@@ -218,9 +218,23 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.getByText('핵심 키워드 5가지')).toBeInTheDocument();
     expect(screen.getByText('서류 완성도 UP!')).toBeInTheDocument();
     expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
-    // 운영 확정 마케팅 섹션(플랜·진행 프로세스·다른 멘토·FAQ)은 시안 이미지로 나간다
-    expect(screen.getByAltText(/특별 혜택/)).toBeInTheDocument();
-    expect(screen.getByAltText(/플랜 안내/)).toBeInTheDocument();
+    // 통이미지였던 고정 섹션 4개를 모두 마크업으로 옮겼다 (SEO)
+    expect(
+      screen.getByText('합격 포폴 일부를 제공해드립니다'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('OO뱅크 서비스 기획자 자기소개서'),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/혼자 하기 막막하셨나요\?/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/1:1 LIVE 멘토링으로 빠르게 정리해요/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('내게 알맞은 구성을 선택할 수 있어요!'),
+    ).toBeInTheDocument();
+    // 목 멘토는 60분만 열었으므로 PREMIUM 한 줄만 나온다
+    expect(screen.getByText('PREMIUM')).toBeInTheDocument();
+    expect(screen.queryByText('STANDARD')).not.toBeInTheDocument();
     // 진행 프로세스·FAQ 는 마크업으로 구현한다
     expect(screen.getByText('멘토링은 이렇게 진행돼요!')).toBeInTheDocument();
     expect(screen.getByText('궁금한 점이 있으신가요?')).toBeInTheDocument();

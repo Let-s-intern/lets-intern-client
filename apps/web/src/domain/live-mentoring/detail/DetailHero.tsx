@@ -2,17 +2,11 @@ import type {
   LiveMentorDetail,
   LiveMentoringDuration,
 } from '@/api/live-mentoring/liveMentoringSchema';
-import { durationLabel, formatPrice } from '../constants';
-
-/**
- * 시안 0 · 할인율 표시에 쓰는 정가.
- * 판매가는 API(`durationPrices`)에서 오지만 정가는 아직 계약에 없어 운영 고정값을 쓴다.
- * TODO(BE): 진행시간별 정가(listPrice)가 응답에 추가되면 이 상수를 걷어낼 것.
- */
-const LIST_PRICE_BY_DURATION: Record<number, number> = {
-  30: 50000,
-  60: 100000,
-};
+import {
+  durationLabel,
+  formatPrice,
+  LIST_PRICE_BY_DURATION,
+} from '../constants';
 
 interface DetailHeroProps {
   detail: LiveMentorDetail;
@@ -55,13 +49,24 @@ const DetailHero = ({
 
   return (
     <section className="bg-neutral-0 text-static-100 relative overflow-hidden">
-      {/* 멘토 사진 — 시안대로 흑백 처리해 텍스트 가독성을 지킨다 */}
+      {/*
+        멘토 사진 — 시안대로 흑백 처리해 텍스트 가독성을 지킨다.
+
+        아래 흰 카드(진행 기간·플랜)가 사진의 하반부를 덮으므로, 실제로 보이는 건
+        카드 위쪽 띠뿐이다. 그래서 높이를 78% 에서 92% 로 올려 얼굴이 그 띠 안에
+        들어오게 하고, 폭도 넓혀(xl 이상 380px) object-cover 의 좌우 잘림을 줄였다.
+
+        마스크는 네 변을 모두 흐린다 — 위·아래·오른쪽은 사진이 직사각형으로 잘려 보이지
+        않게, 왼쪽은 본문 텍스트 쪽으로 스며들게 한다. 두 그라데이션을 intersect 로 겹친다.
+        mask-composite 를 모르는 브라우저는 기본값 add 로 합쳐 지금까지와 비슷하게
+        보이므로 더 나빠지지 않는다.
+      */}
       {profile.profileImage && (
         <img
           src={profile.profileImage}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 right-[max(20px,calc((100%-1180px)/2))] hidden h-[78%] w-[300px] object-cover object-top opacity-80 grayscale [mask-image:linear-gradient(to_bottom,black_70%,transparent)] lg:block"
+          className="pointer-events-none absolute bottom-0 right-[max(20px,calc((100%-1180px)/2))] hidden h-[92%] w-[300px] object-cover object-top opacity-80 grayscale [mask-composite:intersect] [mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_66%,transparent_100%),linear-gradient(to_right,transparent_0%,black_30%,black_82%,transparent_100%)] lg:block xl:w-[380px]"
         />
       )}
 
@@ -123,11 +128,11 @@ const DetailHero = ({
 
           <div className="flex flex-col gap-0.5">
             {discountRate > 0 && (
-              <span className="text-neutral-45 text-xsmall14 line-through">
+              <span className="text-neutral-45 text-xsmall14 whitespace-nowrap line-through">
                 {formatPrice(listPrice as number)}
               </span>
             )}
-            <span className="text-medium22 flex items-baseline gap-2 font-bold">
+            <span className="text-medium22 flex flex-wrap items-baseline gap-2 whitespace-nowrap font-bold">
               {discountRate > 0 && (
                 <span className="text-system-error">{discountRate}%</span>
               )}
@@ -142,9 +147,9 @@ const DetailHero = ({
               return (
                 <li
                   key={option.duration}
-                  className="text-xsmall14 flex items-center justify-between gap-3"
+                  className="text-xsmall14 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
                 >
-                  <label className="flex cursor-pointer items-center gap-2">
+                  <label className="flex min-w-0 cursor-pointer items-center gap-2">
                     {/*
                       name 을 시트의 라디오와 다르게 둔다. 같은 name 이면 둘이 하나의
                       네이티브 라디오 그룹으로 묶여 시트에서 고르는 순간 여기가 풀린다.
@@ -159,7 +164,7 @@ const DetailHero = ({
                     />
                     [LIVE] 1:1 멘토링 ({durationLabel(option.duration)})
                   </label>
-                  <span className="text-neutral-45 flex items-center gap-2">
+                  <span className="text-neutral-45 ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap">
                     <span className="line-through">
                       {formatPrice(optionList)}
                     </span>

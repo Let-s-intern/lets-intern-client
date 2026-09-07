@@ -170,3 +170,19 @@ export const isDeferredQuestionAllowed = (
   earliest.setHours(earliest.getHours() + DEFERRED_QUESTION_MIN_LEAD_HOURS);
   return start.getTime() >= earliest.getTime();
 };
+
+/**
+ * 할인율 표시에 쓰는 진행시간별 정가.
+ *
+ * 판매가는 API(`durationPrices`)에서 오지만 정가는 아직 계약에 없어 운영 고정값을 쓴다.
+ * 히어로(시안 0)와 플랜 섹션(시안 6)이 같은 값을 봐야 화면 안에서 할인율이 어긋나지 않는다.
+ * TODO(BE): 진행시간별 정가(listPrice)가 응답에 추가되면 이 상수를 걷어낼 것.
+ */
+export const LIST_PRICE_BY_DURATION: Record<LiveMentoringDuration, number> = {
+  30: 50000,
+  60: 100000,
+};
+
+/** 판매가와 정가로 할인율(%)을 낸다. 정가 이상이면 0 — 할인 배지를 숨기는 신호다. */
+export const discountRate = (price: number, listPrice: number): number =>
+  listPrice > price ? Math.round((1 - price / listPrice) * 100) : 0;

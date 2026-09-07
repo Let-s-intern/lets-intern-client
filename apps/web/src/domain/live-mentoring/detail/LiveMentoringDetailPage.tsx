@@ -19,7 +19,10 @@ import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
-import DetailImageSection from './DetailImageSection';
+import DetailBenefitSection from './DetailBenefitSection';
+import DetailMentoringIntroSection from './DetailMentoringIntroSection';
+import DetailPainSection from './DetailPainSection';
+import DetailPlanSection from './DetailPlanSection';
 import DetailNavigation, {
   LM_DIFFERENT_ID,
   LM_FAQ_ID,
@@ -117,7 +120,12 @@ const LiveMentoringDetailPage = ({
     : [];
 
   return (
-    <div className="flex flex-col">
+    /*
+      한글은 기본 줄바꿈 규칙이 "아무 글자 사이"라 좁은 화면에서 단어가 쪼개진다
+      ("과 / 연", "50,000 / 원"). word-break 는 상속되므로 페이지 루트 한 곳에
+      keep-all 을 걸어 히어로·후기·FAQ 까지 전부 띄어쓰기에서만 접히게 한다.
+    */
+    <div className="flex flex-col break-keep">
       <DetailHero
         detail={data}
         period={periodLabel}
@@ -128,11 +136,11 @@ const LiveMentoringDetailPage = ({
       <DetailNavigation isReady={!isLoading} />
 
       {/* 시안 0-1 · 특별 혜택 */}
-      <DetailImageSection section="benefit" priority />
+      <DetailBenefitSection />
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
-      <DetailImageSection section="pain" />
+      <DetailPainSection careers={data.profile.careers} />
       {/* 시안 0-3 · 멘토링 소개 */}
-      <DetailImageSection section="mentoringIntro" id={LM_MENTORING_INTRO_ID} />
+      <DetailMentoringIntroSection id={LM_MENTORING_INTRO_ID} />
 
       {/* 시안 1 · 멘토 소개 */}
       <DetailSection
@@ -344,7 +352,7 @@ const LiveMentoringDetailPage = ({
       )}
 
       {/* 시안 6 · 플랜 */}
-      <DetailImageSection section="plan" />
+      <DetailPlanSection durationPrices={data.durationPrices} />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />
