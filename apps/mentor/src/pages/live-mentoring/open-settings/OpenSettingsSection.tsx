@@ -7,11 +7,7 @@ import {
 } from '@letscareer/mocks';
 
 import { useSetRepresentativeCareerMutation } from '@/api/career/career';
-import { useUserQuery } from '@/api/user/user';
 import {
-  useCloseLiveMentoringOpeningMutation,
-  useCreateLiveMentoringOpeningMutation,
-  useLiveMentoringOpenStatusQuery,
   useLiveMentoringSettingsQuery,
   useUpdateLiveMentoringSettingsMutation,
 } from '@/api/live-mentoring/liveMentoring';
@@ -24,63 +20,21 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import {
   CATEGORY_LABELS,
-  FLOATING_BAR_BODY,
-  FLOATING_BAR_WRAP,
   formatCareerPeriod,
-  publicDetailUrl,
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
+import SettingsActionBar from '../ui/SettingsActionBar';
+import {
+  errorDescription,
+  stateConflictAlert,
+  useLiveMentoringOpenAction,
+} from './useLiveMentoringOpenAction';
 import LiveMentoringSlotModal from './ui/LiveMentoringSlotModal';
-import OpenedNoticeModal from './ui/OpenedNoticeModal';
-import PreOpenCheckModal from './ui/PreOpenCheckModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
-
-/**
- * 저장·제출 실패 사유를 사용자에게 그대로 보여준다.
- *
- * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
- * `code`/`message`/`status` 를 **최상위 속성**으로 올린다(`error.response` 는 남지 않는다).
- * 이걸 감추고 "실패했습니다"만 띄우면 멘토도 개발자도 원인을 알 수 없다 —
- * 수정 잠금(`LIVE_MENTORING_LOCKED`)인지, 상태 전이 불가(`LIVE_MENTORING_INVALID_STATE`)인지,
- * 미지원 진행시간(`INVALID_LIVE_MENTORING_DURATION`)인지가 갈린다.
- */
-const errorDescription = (error: unknown): string | undefined => {
-  const apiError = error as { code?: string; message?: string } | null;
-  if (!apiError?.message) return undefined;
-  return apiError.code
-    ? `${apiError.message} (${apiError.code})`
-    : apiError.message;
-};
-
-/**
- * 서버가 상태를 이유로 거절한 경우의 안내 문구.
- *
- * 두 코드를 한데 묶어 "다른 곳에서 상태가 바뀌었습니다"로 보여주면 안 된다.
- * `LOCKED` 는 **개설이 열려 있어 설정을 못 고치는 것**이라 다른 곳에서 바뀐 게 아니고,
- * 멘토가 할 일도 "다시 시도"가 아니라 "오픈 종료"다. 실제로 이 문구 때문에
- * 다른 창을 의심하며 새로고침만 반복한 사례가 있었다.
- */
-const stateConflictAlert = (error: unknown) => {
-  const code = (error as { code?: string } | null)?.code;
-  if (code === 'LIVE_MENTORING_LOCKED') {
-    return {
-      title: '오픈 중에는 설정을 수정할 수 없습니다.',
-      description:
-        '상단에서 현재 오픈을 종료한 뒤 수정해주세요. 최신 상태를 다시 불러왔어요.',
-    };
-  }
-  if (code === 'LIVE_MENTORING_INVALID_STATE') {
-    return {
-      title: '다른 곳에서 상태가 바뀌었습니다.',
-      description: '최신 상태를 다시 불러왔어요. 확인 후 다시 시도해주세요.',
-    };
-  }
-  return null;
-};
 
 /**
  * 오픈 설정 — 설정 화면의 첫 스텝 본문이다(LC-3264). 제목과 스텝 줄은
@@ -88,16 +42,8 @@ const stateConflictAlert = (error: unknown) => {
  */
 const OpenSettingsSection = () => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
-  // 승인 상태에서 "지금 열려 있는지"는 설정 응답이 알려주지 않는다 — 개설 이력으로 판단한다.
-  const { data: openings } = useLiveMentoringOpenStatusQuery();
-  // 공개 상세는 mentorId 로 열린다(웹 라우트 `/live-mentoring/[mentorId]`).
-  const { data: user } = useUserQuery();
   const { mutate: save, isPending: isSaving } =
     useUpdateLiveMentoringSettingsMutation();
-  const { mutate: openMentoring, isPending: isOpening } =
-    useCreateLiveMentoringOpeningMutation();
-  const { mutate: closeOpening, isPending: isClosingOpening } =
-    useCloseLiveMentoringOpeningMutation();
   const {
     mutate: setRepresentativeCareer,
     isPending: isSettingRepresentativeCareer,
@@ -108,17 +54,33 @@ const OpenSettingsSection = () => {
   // 제목·타입의 변경사항(dirty) 판정을 위한 로드 원본.
   const [original, setOriginal] = useState<LiveMentoringSettings | null>(null);
   const [slotModalOpen, setSlotModalOpen] = useState(false);
-  /** 오픈 직후 안내 모달이 종료 대상으로 삼을 개설. null 이면 모달을 닫는다. */
-  const [openedOpeningId, setOpenedOpeningId] = useState<number | null>(null);
-  /**
-   * 오픈 전 확인 모달 노출 여부.
+
+  /*
+   * 오픈 액션은 훅이 갖는다(LC-3273). 하단 바가 어느 스텝에 있든 같은 버튼을 그려야 해서,
+   * 이 본문 안에 두면 다른 스텝에서 쓸 수 없다.
    *
-   * 검토 제출이 사라지고 최초 개설·재개설이 `POST /openings` 하나로 합쳐지면서
-   * 어느 쪽을 실행할지 들고 있을 이유도 없어졌다.
+   * 훅은 조기 반환보다 **앞에서** 불러야 한다. 설정을 아직 못 받았으면 input 이 null 이고,
+   * 그때는 오픈 버튼이 비활성으로 그려진다.
    */
-  const [isOpenConfirmVisible, setIsOpenConfirmVisible] = useState(false);
-  const isModalOpen =
-    slotModalOpen || isOpenConfirmVisible || openedOpeningId !== null;
+  const openAction = useLiveMentoringOpenAction({
+    input: form
+      ? {
+          title: form.title ?? '',
+          categories: form.categories,
+          durations: form.durations,
+          hasProduct: form.liveMentoringId !== null,
+        }
+      : null,
+    alert: { showAlert, showConfirm },
+    /*
+     * 제목·타입·진행시간은 오픈 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
+     * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면 "바꾼 게 안 보인다"로 읽힌다.
+     */
+    pendingNotice:
+      form && original && JSON.stringify(form) !== JSON.stringify(original)
+        ? '방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
+        : undefined,
+  });
 
   useEffect(() => {
     if (!data) return;
@@ -158,10 +120,7 @@ const OpenSettingsSection = () => {
     });
 
   const status = form.status;
-  const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
-
-  /** 이전에 열었다가 닫힌 상품이면 버튼과 안내를 "다시 오픈"으로 바꾼다. */
-  const hasPreviousOpening = (openings?.length ?? 0) > 0;
+  const { currentOpening, hasPreviousOpening } = openAction;
 
   const noTitleEntered = !form.title || form.title.trim().length === 0;
   const noCategorySelected = form.categories.length === 0;
@@ -171,13 +130,6 @@ const OpenSettingsSection = () => {
    * 갱신·개설하는 API 다. 저장을 한 번 거쳐 상품을 만들어야 한다.
    */
   const hasNoProduct = form.liveMentoringId === null;
-
-  /*
-   * 오픈에 필요한 값. 예약 가능 일정은 여기 들어가지 않는다 — 슬롯이 하나도 없어도
-   * 서버가 개설을 허용하므로, 프론트가 임의로 막지 않는다.
-   */
-  const hasValidOpeningInput =
-    !noTitleEntered && !noCategorySelected && !noDurationSelected;
 
   // 저장(PUT)은 제목·타입·진행시간을 서버에 반영한다.
   const isTitleOrCategoryDirty =
@@ -193,11 +145,6 @@ const OpenSettingsSection = () => {
     JSON.stringify(form.durations) !== JSON.stringify(original.durations);
   const canSave =
     !noTitleEntered && !noCategorySelected && !noDurationSelected && isDirty;
-  /*
-   * 개설은 제목·타입·진행시간을 한 요청에 담으므로 미리 저장할 필요가 없다 —
-   * 상품이 아직 없을 때만 저장이 선행돼야 한다.
-   */
-  const canOpen = hasValidOpeningInput && !hasNoProduct && !currentOpening;
 
   // 대표 경력은 프로필(UserCareer) 도메인 소유라 오픈 설정의 저장 버튼과 무관하게
   // 선택 즉시 전용 API로 저장된다. 따라서 서버 값(`isRepresentative`)이 곧 선택 상태다.
@@ -242,37 +189,6 @@ const OpenSettingsSection = () => {
     });
   };
 
-  /**
-   * 현재 오픈을 종료한다 — 별도 "오픈 현황" 화면 없이 이 화면 상단 배너에서 바로 한다.
-   * 서버는 예약 존재 여부를 검사하지 않고 종료하므로 화면 문구도 그대로 적는다.
-   *
-   * 종료는 더 이상 슬롯을 지우지 않는다. 슬롯이 챌린지 라이브 피드백과 공유되면서
-   * 1대1 오픈을 닫는 행위가 그 멘토의 챌린지 가용시간까지 지우면 안 되기 때문이다.
-   */
-  const handleCloseCurrentOpening = () => {
-    if (!currentOpening) return;
-    showConfirm({
-      title: '이 오픈을 종료할까요?',
-      description:
-        '종료하면 공개 리스트에서 즉시 내려갑니다. 진행 중인 예약이 있어도 종료되며, 되돌릴 수 없어요.\n등록한 일정은 그대로 남아요. 다시 열면 지금 일정을 그대로 씁니다.',
-      confirmText: '종료하기',
-      // 확인 모달은 onConfirm 후에도 닫히지 않는다(공용 훅 동작) — 연타로 두 번 나가지 않게 막는다.
-      onConfirm: () =>
-        isClosingOpening
-          ? undefined
-          : closeOpening(currentOpening.openingId, {
-              onSuccess: () =>
-                showAlert({
-                  title: '오픈을 종료했습니다.',
-                  description:
-                    '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
-                  variant: 'success',
-                }),
-              onError: handleMutationError('오픈을 종료하지 못했습니다.'),
-            }),
-    });
-  };
-
   /** 제목·타입 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
   const handleSave = () => {
     if (!canSave) return;
@@ -298,40 +214,6 @@ const OpenSettingsSection = () => {
       },
     );
   };
-
-  /** 오픈. 최초 개설과 재개설이 같은 요청이다. */
-  const handleOpen = () => {
-    setIsOpenConfirmVisible(false);
-    openMentoring(
-      {
-        title: form.title ?? '',
-        categories: form.categories,
-        durations: form.durations,
-      },
-      {
-        /*
-         * 성공 알림 대신 안내 모달을 띄운다. 오픈은 되돌리기 번거로운 행동이라
-         * "됐습니다" 한 줄로 끝내지 않고, 확인할 주소와 즉시 내리는 길을 함께 준다.
-         */
-        onSuccess: (history) => {
-          const opened = history.openings.find(
-            (opening) => opening.status === 'OPEN',
-          );
-          if (opened) setOpenedOpeningId(opened.openingId);
-          else
-            showAlert({
-              title: '오픈했어요.',
-              description:
-                '지금부터 공개 리스트에 노출됩니다. 등록해 둔 일정에서 멘티가 예약할 수 있어요.',
-              variant: 'success',
-            });
-        },
-        onError: handleMutationError('오픈에 실패했습니다.'),
-      },
-    );
-  };
-
-  const isPending = isSaving || isOpening;
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -581,111 +463,33 @@ const OpenSettingsSection = () => {
       </div>
 
       {/*
-        하단 플로팅 바. 승인 잠금이 사라진 뒤로(LC-3262) 오픈 중에도 저장이 열려
-        있어서, 예전에 따로 떠 있던 "오픈 중" 바를 여기 합쳤다 — 두 개를 같은
-        자리에 띄우면 겹친다. 오른쪽 버튼만 오픈 여부에 따라 갈린다.
+        하단 플로팅 바. 모든 스텝이 같은 바를 쓴다(LC-3273) — 오픈 설정과 상세 페이지
+        설정이 한 화면이 된 뒤로 아래 버튼만 스텝마다 달라질 이유가 없다.
+
+        모달이 떠 있는 동안에는 감춘다. 같은 자리에 겹쳐 보인다.
       */}
-      {!isModalOpen && (
-        <div className={FLOATING_BAR_WRAP}>
-          <div className={FLOATING_BAR_BODY}>
-            <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
-              {hasNoProduct
-                ? '먼저 저장해 상품을 만들어야 오픈할 수 있어요.'
-                : currentOpening
-                  ? '공개 리스트에 노출 중이에요. 설정을 바꾸면 바로 반영돼요.'
-                  : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'}
-            </p>
-            <div className="flex shrink-0 gap-2">
-              {/* 저장할 변경사항이 있을 때만 파란색으로 바뀐다 — 눌러야 할 버튼이 색으로 드러난다. */}
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isPending || !canSave}
-                className={
-                  canSave
-                    ? 'bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                    : 'rounded-lg border border-gray-300 bg-white px-8 py-2.5 text-sm font-medium text-gray-700 shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                }
-              >
-                {isSaving ? '저장 중...' : '저장'}
-              </button>
-              {currentOpening ? (
-                <button
-                  type="button"
-                  onClick={handleCloseCurrentOpening}
-                  disabled={isClosingOpening}
-                  className="bg-system-error rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isClosingOpening ? '처리 중...' : '오픈 닫기'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsOpenConfirmVisible(true)}
-                  disabled={isPending || !canOpen}
-                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isOpening
-                    ? '오픈하는 중...'
-                    : hasPreviousOpening
-                      ? '다시 오픈하기'
-                      : '오픈하기'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+      {!slotModalOpen && !openAction.isModalOpen && (
+        <SettingsActionBar
+          status={
+            hasNoProduct
+              ? '먼저 저장해 상품을 만들어야 오픈할 수 있어요.'
+              : currentOpening
+                ? '공개 리스트에 노출 중이에요. 설정을 바꾸면 바로 반영돼요.'
+                : '설정을 저장한 뒤 오픈하면 공개 리스트에 노출돼요.'
+          }
+          isDirty={isDirty}
+          canSave={canSave}
+          isSaving={isSaving}
+          onSave={handleSave}
+          openAction={openAction}
+        />
       )}
 
       <LiveMentoringSlotModal
         isOpen={slotModalOpen}
         onClose={() => setSlotModalOpen(false)}
       />
-      {user?.userId != null && (
-        <PreOpenCheckModal
-          isOpen={isOpenConfirmVisible}
-          publicUrl={publicDetailUrl(user.userId)}
-          confirmLabel="오픈하기"
-          resultDescription="상세 페이지에 노출되는 내용에 대한 책임은 멘토 본인에게 있음에 동의합니다. 확인을 마치면 바로 공개 리스트에 노출되며, 이상이 있으면 언제든 오픈을 닫을 수 있어요."
-          /*
-           * 제목·타입·진행시간은 이 요청과 함께 저장되므로, 지금 열리는 페이지에는 아직
-           * 반영돼 있지 않다. 무엇을 보고 확인하라는 건지 짚어주지 않으면
-           * "바꾼 게 안 보인다"로 읽힌다.
-           */
-          pendingNotice={
-            isDirty
-              ? '방금 바꾼 제목·타입·진행시간은 오픈할 때 함께 저장돼요. 지금 열리는 페이지에서는 상세 페이지 내용을 확인해주세요.'
-              : undefined
-          }
-          isPending={isPending}
-          onCancel={() => setIsOpenConfirmVisible(false)}
-          onConfirm={handleOpen}
-        />
-      )}
-
-      {user?.userId != null && (
-        <OpenedNoticeModal
-          isOpen={openedOpeningId !== null}
-          publicUrl={publicDetailUrl(user.userId)}
-          isClosing={isClosingOpening}
-          onDismiss={() => setOpenedOpeningId(null)}
-          onCloseOpening={() => {
-            if (openedOpeningId === null) return;
-            closeOpening(openedOpeningId, {
-              onSuccess: () => {
-                setOpenedOpeningId(null);
-                showAlert({
-                  title: '오픈을 종료했습니다.',
-                  description:
-                    '공개 리스트에서 즉시 빠집니다. 고친 뒤 다시 오픈할 수 있어요.',
-                  variant: 'success',
-                });
-              },
-              onError: handleMutationError('오픈을 종료하지 못했습니다.'),
-            });
-          }}
-        />
-      )}
+      {openAction.modals}
 
       <MentorAlertModal {...alertProps} />
     </div>

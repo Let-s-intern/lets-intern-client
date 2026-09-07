@@ -9,10 +9,18 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn();
+const openMock = vi.fn();
+const closeOpeningMock = vi.fn();
+const refetchSettingsMock = vi.fn();
 const startEditMock = vi.fn();
 let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
 let templateData: LiveMentoringDetailPage | undefined;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
+/*
+ * 오픈 버튼 활성 조건(제목·타입·진행시간·상품 존재)을 테스트마다 갈아끼운다.
+ * 기본은 비어 있다 — 미리보기 헤드라인만 보던 기존 테스트가 쓰던 모양 그대로다.
+ */
+let settingsExtra: Partial<LiveMentoringSettings> = {};
 
 // 공개 페이지 미리보기 링크가 mentorId 를 필요로 한다.
 vi.mock('@/api/user/user', () => ({
@@ -23,13 +31,27 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringTemplateQuery: () => ({ data: templateData }),
   // 미리보기 헤드라인에 쓸 닉네임만 참조한다.
   useLiveMentoringSettingsQuery: () => ({
-    data: { nickname: '쥬디', status } as unknown as LiveMentoringSettings,
+    data: {
+      nickname: '쥬디',
+      status,
+      ...settingsExtra,
+    } as unknown as LiveMentoringSettings,
+    refetch: refetchSettingsMock,
   }),
   useUpdateLiveMentoringTemplateMutation: () => ({
     mutate: saveMock,
     isPending: false,
   }),
   useLiveMentoringOpenStatusQuery: () => ({ data: openings }),
+  // 하단 바의 오픈 버튼이 이 화면에도 생겼다(LC-3273).
+  useCreateLiveMentoringOpeningMutation: () => ({
+    mutate: openMock,
+    isPending: false,
+  }),
+  useCloseLiveMentoringOpeningMutation: () => ({
+    mutate: closeOpeningMock,
+    isPending: false,
+  }),
   useStartEditLiveMentoringMutation: () => ({
     mutate: startEditMock,
     isPending: false,
@@ -157,6 +179,7 @@ afterEach(() => {
   status = 'DRAFT';
   startEditMock.mockReset();
   openings = [];
+  settingsExtra = {};
 });
 
 /** 히어로 탭에서 소개 문구를 하나 추가해 미저장 변경 상태를 만든다. */
@@ -413,12 +436,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('저장된 상태예요.')).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: '변경사항 저장' }),
-    ).toBeDisabled();
-    expect(
-      screen.getByRole('button', { name: '변경사항 되돌리기' }),
-    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: '저장' })).toBeDisabled();
   });
 
   it('값을 바꾸면 미저장 상태가 되고, 저장하면 다시 저장됨으로 돌아간다', () => {
@@ -426,25 +444,10 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     addHeroBullet();
 
     expect(screen.getByText('저장하지 않은 변경사항이 있어요.')).toBeVisible();
-    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '저장' })).toBeEnabled();
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
     expect(saveMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('변경사항 되돌리기를 누르면 저장됨 상태로 복원된다', () => {
-    renderPage();
-    addHeroBullet();
-
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 되돌리기' }));
-
-    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: '변경사항 저장' }),
-    ).toBeDisabled();
-    expect(
-      screen.getByRole('button', { name: '변경사항 되돌리기' }),
-    ).toBeDisabled();
   });
 
   it('히어로 불릿에 빈 칸을 추가하고 안 채운 채 저장하면, 빈 칸을 걸러내고 보낸다', () => {
@@ -462,7 +465,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const [payload] = saveMock.mock.calls[0];
@@ -485,7 +488,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       before + 1,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const [payload] = saveMock.mock.calls[0];
@@ -512,7 +515,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       target: { value: '안내 문구입니다' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload.video.title).toBe('멘토는 이렇게');
@@ -535,7 +538,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
       before + 1,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const [payload] = saveMock.mock.calls[0];
@@ -559,7 +562,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     fireEvent.click(
       within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
     );
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload).not.toHaveProperty('intro');
@@ -653,7 +656,7 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
   it('오픈 중에도 저장 바에 저장 버튼이 있다', () => {
     renderWhileOpen();
 
-    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeVisible();
+    expect(screen.getByRole('button', { name: '저장' })).toBeVisible();
     // "수정" 으로 잠금을 푸는 단계는 사라졌다.
     expect(
       screen.queryByRole('button', { name: '수정' }),
@@ -669,15 +672,12 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
     expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
   });
 
-  it('오픈 중에도 미리보기와 상세 페이지 보기는 살아 있다', () => {
+  it('오픈 중에도 미리보기는 살아 있다', () => {
     renderWhileOpen();
 
     // 미리보기는 활성 탭 섹션만 그리므로 멘토 정보 탭으로 옮겨 확인한다.
     openTab('멘토 정보');
     expect(screen.getByText('멘토님의 한마디')).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: '멘토링 상세 페이지 보기' }),
-    ).toBeVisible();
   });
 
   it('편집할 수 있으면 입력이 활성이다', () => {
@@ -712,6 +712,87 @@ describe('LiveMentoringSettingsPage — 미리보기', () => {
 
     expect(
       screen.getByText(/오픈 설정과 운영 값에서 자동으로 채워집니다/),
+    ).toBeInTheDocument();
+  });
+});
+
+/*
+ * LC-3273 — 하단 바는 모든 스텝에서 같다.
+ *
+ * 오픈 설정과 상세 페이지 설정이 한 화면이 된 뒤로(LC-3264) 하단 바만 두 벌로 남아
+ * 있었다. 상세 스텝에서도 저장과 오픈 두 개만 보여야 한다.
+ */
+describe('LiveMentoringSettingsPage — 하단 바', () => {
+  const 갖춰진_설정: Partial<LiveMentoringSettings> = {
+    title: '자기소개서 첨삭',
+    categories: ['PERSONAL_STATEMENT'],
+    durations: [30],
+    liveMentoringId: 7,
+  } as Partial<LiveMentoringSettings>;
+
+  it('상세 스텝에도 저장과 오픈 버튼이 있다', () => {
+    renderPage();
+
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '오픈하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('되돌리기와 상세 페이지 보기는 하단 바에 없다', () => {
+    renderPage();
+
+    expect(
+      screen.queryByRole('button', { name: '변경사항 되돌리기' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '멘토링 상세 페이지 보기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('제목·타입·진행시간이 덜 찼으면 오픈 버튼이 비활성이다', () => {
+    renderPage();
+
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
+  });
+
+  it('설정이 갖춰지면 오픈 버튼이 활성이다', () => {
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeEnabled();
+  });
+
+  it('상품이 아직 없으면 오픈할 수 없다', () => {
+    // `POST /openings` 는 기존 상품을 찾아 개설한다 — 저장을 한 번 거쳐야 한다.
+    settingsExtra = { ...갖춰진_설정, liveMentoringId: null };
+    renderPage();
+
+    expect(screen.getByRole('button', { name: '오픈하기' })).toBeDisabled();
+  });
+
+  it('오픈 중이면 오픈 닫기로 바뀐다', () => {
+    status = 'APPROVED';
+    openings = [{ status: 'OPEN' }];
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    expect(
+      screen.getByRole('button', { name: '오픈 닫기' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '오픈하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('열었다 닫은 적이 있으면 다시 오픈하기로 바뀐다', () => {
+    status = 'APPROVED';
+    openings = [{ status: 'CLOSED' }];
+    settingsExtra = 갖춰진_설정;
+    renderPage();
+
+    expect(
+      screen.getByRole('button', { name: '다시 오픈하기' }),
     ).toBeInTheDocument();
   });
 });
