@@ -264,11 +264,11 @@ const LiveMentoringDetailPage = ({
           subtitle={mentoringTypes.subtitle}
         >
           {/*
-            그리드가 아니라 줄바꿈 flex 다. 그리드는 칸이 고정이라 카드가 홀수 개면
-            마지막 하나가 왼쪽 칸에 홀로 붙어 가운데를 벗어난다. 여기서는 남은 카드가
-            그 줄 가운데에 놓인다.
+            2열 그리드다. 카드가 홀수 개면 마지막 하나가 첫 칸에 남는다 — 줄 가운데로
+            옮겨 보면 위 카드들과 세로선이 어긋나 오히려 흐트러져 보인다. 칸을 지키는
+            편이 낫다.
           */}
-          <ul className="mx-auto flex w-full max-w-[1000px] flex-wrap justify-center gap-8">
+          <ul className="mx-auto grid w-full max-w-[1000px] grid-cols-1 gap-8 md:grid-cols-2">
             {mentoringTypes.items.map((item, i) => (
               <li
                 key={i}
