@@ -25,6 +25,7 @@ import {
   type SettingsTabId,
   isDetailTabComplete,
 } from './tabs';
+import { describeSaveError } from './saveError';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import SettingsTabs from './ui/SettingsTabs';
 import TemplateEditForm from './ui/TemplateEditForm';
@@ -303,15 +304,14 @@ const LiveMentoringSettingsPage = () => {
       if (!silent) showAlert({ title: '저장되었습니다.', variant: 'success' });
       return true;
     } catch (error) {
-      // 서버가 왜 거부했는지 감추면 멘토도 개발자도 원인을 알 수 없다.
-      const apiError = error as { code?: string; message?: string } | null;
+      /*
+        어느 칸이 문제인지 화면에 적힌 이름으로 알린다. 서버 문구를 그대로 띄우면
+        `[mentoringTypes.title] 공백일 수 없습니다 (BAD_REQUEST)` 가 되는데, 멘토는
+        어느 칸인지 알 수 없고 뒤의 코드는 고치는 데 아무 도움이 안 된다.
+       */
       showAlert({
         title: '저장에 실패했습니다.',
-        description: apiError?.message
-          ? apiError.code
-            ? `${apiError.message} (${apiError.code})`
-            : apiError.message
-          : undefined,
+        description: describeSaveError(error),
         variant: 'error',
       });
       return false;

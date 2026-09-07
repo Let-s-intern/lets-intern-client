@@ -55,16 +55,26 @@ const isNearCenter = (el: Element) => {
 };
 
 /**
- * 대상을 화면 **가운데**로 옮긴다.
+ * 대상을 화면에 들여놓는다.
  *
  * `scrollIntoView` 를 쓰지 않는다. 그 API 는 조상 스크롤 컨테이너를 전부 따라 움직여서,
  * iframe 안에서 부르면 멘토 앱의 설정 화면까지 같이 스크롤된다 — 미리보기를 건드렸을
  * 뿐인데 편집 폼이 제멋대로 움직이는 것처럼 보인다. `window.scrollTo` 는 이 창만 움직인다.
+ *
+ * `align` 이 `center` 면 대상을 화면 한가운데에, `start` 면 위쪽에 둔다. 섹션처럼 화면보다
+ * 큰 것을 가운데에 맞추면 그 **중간**이 보이므로, 제목·설명이 있는 머리가 화면 밖으로
+ * 밀린다 — 섹션 제목을 고치는 중에는 정작 그 제목이 안 보인다.
  */
-const centerInFrame = (el: Element) => {
+const scrollIntoFrame = (el: Element, align: 'center' | 'start') => {
   const { top, height } = el.getBoundingClientRect();
-  const target = top + window.scrollY - (window.innerHeight - height) / 2;
-  window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+  const offset =
+    align === 'center'
+      ? (window.innerHeight - height) / 2
+      : window.innerHeight * 0.12;
+  window.scrollTo({
+    top: Math.max(0, top + window.scrollY - offset),
+    behavior: 'smooth',
+  });
 };
 
 /**
@@ -113,13 +123,18 @@ const scrollToEditing = (
   if (!section) return { sectionShown: false };
 
   // 항목은 **그 섹션 안에서만** 찾는다. 문서 전체에서 찾으면 다른 섹션의 같은 번호가 걸린다.
-  const target =
-    (item !== null
+  const targetItem =
+    item !== null
       ? section.querySelector(`[data-preview-item="${item}"]`)
-      : null) ?? section;
+      : null;
+  const target = targetItem ?? section;
 
   if (!moved && isNearCenter(target)) return { sectionShown: true };
-  centerInFrame(target);
+  /*
+    항목을 고르고 있으면 그 항목을 가운데에, 아니면 섹션 위쪽을 보여준다. 섹션 제목·설명을
+    고치는 중이라면 봐야 할 것은 섹션 머리다.
+   */
+  scrollIntoFrame(target, targetItem ? 'center' : 'start');
   return { sectionShown: true };
 };
 
@@ -230,11 +245,22 @@ const LiveMentoringDetailPreview = ({
   }, []);
 
   return (
-    <LiveMentoringDetailPage
-      mentorId={mentorId}
-      previewTemplate={template}
-      isPreview
-    />
+    <>
+      {/*
+        스크롤 막대를 감춘다. 좁은 프레임 안에서는 폭을 눈에 띄게 먹고, 실제 휴대폰에는
+        늘 떠 있는 막대가 없다 — 있으면 미리보기가 실제와 다르게 보인다.
+        스크롤 자체는 그대로 된다.
+      */}
+      <style>{`
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; }
+      `}</style>
+      <LiveMentoringDetailPage
+        mentorId={mentorId}
+        previewTemplate={template}
+        isPreview
+      />
+    </>
   );
 };
 

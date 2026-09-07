@@ -24,13 +24,22 @@ describe('live-mentoring constants — 상태', () => {
     );
   });
 
-  it('STATUS_FILTERS 는 전체·초안·승인·비활성 4개로 구성된다', () => {
+  /*
+    승인 절차가 사라진 뒤로(LC-3262) 「초안」은 새로 생기지 않는 옛 값이라 필터에서 뺐다.
+    갈라 볼 의미가 있는 것은 쓰는 상품과 더 쓰지 않는 상품뿐이다.
+  */
+  it('STATUS_FILTERS 는 전체·오픈 중·비활성 3개로 구성된다', () => {
     expect(STATUS_FILTERS).toEqual([
       { label: '전체', value: undefined },
-      { label: '초안', value: 'DRAFT' },
-      { label: '승인', value: 'APPROVED' },
+      { label: '오픈 중', value: 'APPROVED' },
       { label: '비활성', value: 'INACTIVE' },
     ]);
+  });
+
+  /* 「승인」이라고 적으면 아직 승인 단계가 있는 것처럼 읽힌다. */
+  it('상태 표기에 승인이라는 말을 쓰지 않는다', () => {
+    expect(Object.values(STATUS_LABELS)).not.toContain('승인');
+    expect(STATUS_LABELS.APPROVED).toBe('오픈 중');
   });
 
   it('STATUS_FILTERS 의 기본 선택지는 전체(undefined)다', () => {
