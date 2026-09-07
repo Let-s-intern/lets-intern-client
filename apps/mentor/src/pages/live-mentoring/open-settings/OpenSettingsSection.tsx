@@ -369,9 +369,7 @@ const OpenSettingsSection = () => {
                 비활성화하고 키보드 포커스에서도 빼준다(pointer-events-none 은 마우스만
                 막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
                 이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
-            <fieldset
-              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
-            >
+            <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">
@@ -505,9 +503,7 @@ const OpenSettingsSection = () => {
               </button>
             </section>
 
-            <fieldset
-              className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0"
-            >
+            <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>진행시간 (다중 선택)</h2>
                 <div className="flex flex-col gap-3">

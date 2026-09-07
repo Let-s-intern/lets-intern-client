@@ -539,7 +539,6 @@ describe('OpenSettingsSection — 상태별 잠금과 배너', () => {
     expect(
       within(dialog).getByRole('link', { name: '상세 페이지 확인하기' }),
     ).toHaveAttribute('href', expect.stringContaining('/live-mentoring/500'));
-
   });
 
   it('안내에서 바로 종료하면 방금 만든 오픈을 종료한다', () => {
