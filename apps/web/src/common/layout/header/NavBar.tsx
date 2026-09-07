@@ -29,6 +29,7 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 
 export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[115px]';
 export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[115px]';
@@ -166,15 +167,17 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   프로그램
                 </GlobalNavItem>
               </SwiperSlide>
-              <SwiperSlide className="!w-auto">
-                <GlobalNavItem
-                  className="text-xsmall14"
-                  isNew
-                  href="/program?catalog=mentoring"
-                >
-                  1:1 LIVE 멘토링
-                </GlobalNavItem>
-              </SwiperSlide>
+              {SHOW_LIVE_MENTORING_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    isNew
+                    href="/program?catalog=mentoring"
+                  >
+                    1:1 LIVE 멘토링
+                  </GlobalNavItem>
+                </SwiperSlide>
+              )}
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
@@ -245,13 +248,15 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 프로그램
                 <span>&nbsp;카테고리</span>
               </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall16"
-                isNew
-                href="/program?catalog=mentoring"
-              >
-                1:1 LIVE 멘토링
-              </GlobalNavItem>
+              {SHOW_LIVE_MENTORING_NAV && (
+                <GlobalNavItem
+                  className="text-xsmall16"
+                  isNew
+                  href="/program?catalog=mentoring"
+                >
+                  1:1 LIVE 멘토링
+                </GlobalNavItem>
+              )}
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/mentors"
@@ -339,9 +344,11 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
-        <SideNavItem href="/program?catalog=mentoring">
-          1:1 LIVE 멘토링
-        </SideNavItem>
+        {SHOW_LIVE_MENTORING_NAV && (
+          <SideNavItem href="/program?catalog=mentoring">
+            1:1 LIVE 멘토링
+          </SideNavItem>
+        )}
         <SideNavItem href="/mentors">멘토 소개</SideNavItem>
         <SideNavItem href="/seminar" isNew>
           무료 세미나
