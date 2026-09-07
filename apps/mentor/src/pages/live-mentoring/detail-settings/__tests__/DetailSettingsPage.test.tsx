@@ -12,8 +12,6 @@ const saveMock = vi.fn();
 const startEditMock = vi.fn();
 let openings: { status: 'OPEN' | 'CLOSED' }[] = [];
 let templateData: LiveMentoringDetailPage | undefined;
-/** 서버 `mentoring.editable` — 잠금 판정의 근거. */
-let editable = true;
 let status: LiveMentoringSettings['status'] = 'DRAFT';
 
 // 공개 페이지 미리보기 링크가 mentorId 를 필요로 한다.
@@ -68,7 +66,6 @@ const makeTemplate = (
       liveMentoringId: 1,
       title: '자소서 실전 첨삭 멘토링',
       status,
-      editable,
       categories: [category],
     },
     hero: { bullets: ['이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'] },
@@ -136,7 +133,6 @@ afterEach(() => {
   saveMock.mockReset();
   templateData = undefined;
   status = 'DRAFT';
-  editable = true;
   startEditMock.mockReset();
   openings = [];
 });
@@ -605,93 +601,42 @@ describe('DetailSettingsPage — 이탈 경고', () => {
   });
 });
 
-describe('DetailSettingsPage — 상태 잠금', () => {
-  it('오픈 중이면 저장 바가 수정 불가 상태로 바뀌고 상세 페이지 보기를 준다', () => {
+/*
+  승인 잠금이 사라졌다(LC-3262). 오픈 중이어도 상세 페이지는 그대로 고칠 수 있어야
+  한다 — 예전에 잠금을 못박던 자리에 그 반대를 둔다.
+*/
+describe('DetailSettingsPage — 오픈 중에도 편집할 수 있다', () => {
+  const renderWhileOpen = () => {
     status = 'APPROVED';
-    editable = false;
-    openings = [{ status: 'OPEN' }];
-    renderPage();
-
-    expect(
-      screen.getByText('오픈 중에는 상세 페이지를 수정할 수 없어요.'),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('link', { name: '멘토링 상세 페이지 보기' }),
-    ).toHaveAttribute(
-      'href',
-      expect.stringContaining('/live-mentoring/500') as unknown as string,
-    );
-    // 저장 경로는 사라진다.
-    expect(
-      screen.queryByRole('button', { name: '변경사항 저장' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: '수정' }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('오픈이 닫혀 있으면 이 화면에서 바로 상세 수정을 시작할 수 있다', () => {
-    status = 'APPROVED';
-    editable = false;
-    openings = [{ status: 'CLOSED' }];
-    renderPage();
-
-    expect(screen.getByText('오픈 종료됨')).toBeInTheDocument();
-    // 글로만 다른 화면으로 보내지 않고 여기서 누를 수 있어야 한다.
-    expect(screen.getByRole('button', { name: '수정' })).toBeInTheDocument();
-    // 오픈 중이 아니므로 잠금 안내 문구도 달라야 한다.
-    expect(
-      screen.queryByText('오픈 중에는 상세 페이지를 수정할 수 없어요.'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('잠긴 상태에서는 없는 수정하기 버튼을 안내하지 않는다', () => {
-    status = 'APPROVED';
-    editable = false;
-    openings = [{ status: 'CLOSED' }];
-    renderPage();
-
-    expect(
-      screen.queryByText(/고치려면 수정하기를 눌러주세요/),
-    ).not.toBeInTheDocument();
-  });
-
-  it('초안이면 배너 없이 편집할 수 있다', () => {
-    renderPage();
-
-    expect(screen.queryByText('오픈 종료됨')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeVisible();
-  });
-});
-
-describe('DetailSettingsPage — 잠금 범위', () => {
-  /*
-   * 2026-08-18 슬롯 통합에서 `fieldset disabled` 가 편집 진입점까지 삼켜
-   * "오픈 중이면 일정 등록 버튼이 죽는" 버그가 됐다. 잠기는 것은 입력뿐이고
-   * 탭 이동·미리보기·보기 링크는 계속 동작해야 한다.
-   */
-  const renderLocked = () => {
-    status = 'APPROVED';
-    editable = false;
     openings = [{ status: 'OPEN' }];
     renderPage();
   };
 
-  it('수정 불가면 입력 필드가 비활성이다', () => {
-    renderLocked();
+  it('오픈 중에도 입력 필드가 활성이다', () => {
+    renderWhileOpen();
 
     const heroSection = screen
       .getByRole('heading', { name: '핵심 소개' })
       .closest('section');
     if (!heroSection) throw new Error('히어로 섹션을 찾을 수 없습니다');
-    expect(within(heroSection).getAllByRole('textbox')[0]).toBeDisabled();
+    expect(within(heroSection).getAllByRole('textbox')[0]).toBeEnabled();
     expect(
       within(heroSection).getByRole('button', { name: '소개 문구 추가 +' }),
-    ).toBeDisabled();
+    ).toBeEnabled();
   });
 
-  it('수정 불가여도 탭 이동은 동작한다', () => {
-    renderLocked();
+  it('오픈 중에도 저장 바에 저장 버튼이 있다', () => {
+    renderWhileOpen();
+
+    expect(screen.getByRole('button', { name: '변경사항 저장' })).toBeVisible();
+    // "수정" 으로 잠금을 푸는 단계는 사라졌다.
+    expect(
+      screen.queryByRole('button', { name: '수정' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('오픈 중에도 탭 이동은 동작한다', () => {
+    renderWhileOpen();
 
     expect(screen.getByRole('tab', { name: /결과 사례/ })).toBeEnabled();
     openTab('결과 사례');
@@ -699,8 +644,8 @@ describe('DetailSettingsPage — 잠금 범위', () => {
     expect(screen.getByRole('heading', { name: '결과 사례' })).toBeVisible();
   });
 
-  it('수정 불가여도 미리보기와 상세 페이지 보기는 살아 있다', () => {
-    renderLocked();
+  it('오픈 중에도 미리보기와 상세 페이지 보기는 살아 있다', () => {
+    renderWhileOpen();
 
     // 미리보기는 활성 탭 섹션만 그리므로 멘토 정보 탭으로 옮겨 확인한다.
     openTab('멘토 정보');

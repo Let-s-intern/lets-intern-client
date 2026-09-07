@@ -25,8 +25,8 @@ export type LiveMentoringDuration = z.infer<typeof liveMentoringDurationSchema>;
 /**
  * 상품 상태 — 백엔드 `LiveMentoringStatus`.
  *
- * 개설 상태(`liveMentoringOpeningStatusSchema`)와 **다른 축**이다. 상품은 승인 여부를,
- * 개설은 지금 열려 있는지를 나타낸다. 화면 문구에서 둘을 섞지 않는다.
+ * 승인 절차가 사라진 뒤로(LC-3262) 화면은 이 값으로 아무것도 가르지 않는다. 열려 있는지는
+ * 개설 상태(`liveMentoringOpeningStatusSchema`)가 정한다.
  */
 export const liveMentoringStatusSchema = z.enum([
   'DRAFT',
@@ -174,18 +174,11 @@ export const liveMentoringTemplateSchema = z.object({
 });
 export type LiveMentoringTemplate = z.infer<typeof liveMentoringTemplateSchema>;
 
-/**
- * 조회 응답의 상품 정보 — **읽기 전용**이다(서버 `MentoringResponse`).
- *
- * `editable` 이 잠금의 근거다. 서버는 `status == DRAFT && !hasActiveOpening()` 일 때만
- * 저장을 허용하고 그렇지 않으면 `validateEditable` 로 막는다. 프론트가 같은 조건을
- * 상태·개설 이력에서 다시 계산하면 두 판정이 어긋나는 날이 온다 — 서버가 준 값을 쓴다.
- */
+/** 조회 응답의 상품 정보 — **읽기 전용**이다(서버 `MentoringResponse`). */
 export const templateMentoringSchema = z.object({
   liveMentoringId: z.number().nullable(),
   title: z.string().nullable(),
   status: liveMentoringStatusSchema.nullable(),
-  editable: z.boolean(),
   categories: z.array(liveMentoringCategorySchema),
 });
 export type TemplateMentoring = z.infer<typeof templateMentoringSchema>;
