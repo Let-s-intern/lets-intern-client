@@ -79,7 +79,7 @@ const DetailMentoringIntroSection = ({
     id={id}
     className="to-primary-5 w-full scroll-mt-16 bg-gradient-to-b from-white py-14 md:py-20"
   >
-    <div className="mw-1180 flex flex-col items-center break-keep px-5">
+    <div className="mw-1180 flex flex-col items-center px-5">
       <span className="text-xsmall14 md:text-small20 text-neutral-30 font-semibold">
         멘토링 소개
       </span>

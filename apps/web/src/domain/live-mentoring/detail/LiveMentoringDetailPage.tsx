@@ -120,7 +120,12 @@ const LiveMentoringDetailPage = ({
     : [];
 
   return (
-    <div className="flex flex-col">
+    /*
+      한글은 기본 줄바꿈 규칙이 "아무 글자 사이"라 좁은 화면에서 단어가 쪼개진다
+      ("과 / 연", "50,000 / 원"). word-break 는 상속되므로 페이지 루트 한 곳에
+      keep-all 을 걸어 히어로·후기·FAQ 까지 전부 띄어쓰기에서만 접히게 한다.
+    */
+    <div className="flex flex-col break-keep">
       <DetailHero
         detail={data}
         period={periodLabel}

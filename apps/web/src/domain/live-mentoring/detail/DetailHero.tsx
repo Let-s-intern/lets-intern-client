@@ -128,11 +128,11 @@ const DetailHero = ({
 
           <div className="flex flex-col gap-0.5">
             {discountRate > 0 && (
-              <span className="text-neutral-45 text-xsmall14 line-through">
+              <span className="text-neutral-45 text-xsmall14 whitespace-nowrap line-through">
                 {formatPrice(listPrice as number)}
               </span>
             )}
-            <span className="text-medium22 flex items-baseline gap-2 font-bold">
+            <span className="text-medium22 flex flex-wrap items-baseline gap-2 whitespace-nowrap font-bold">
               {discountRate > 0 && (
                 <span className="text-system-error">{discountRate}%</span>
               )}
@@ -147,9 +147,9 @@ const DetailHero = ({
               return (
                 <li
                   key={option.duration}
-                  className="text-xsmall14 flex items-center justify-between gap-3"
+                  className="text-xsmall14 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
                 >
-                  <label className="flex cursor-pointer items-center gap-2">
+                  <label className="flex min-w-0 cursor-pointer items-center gap-2">
                     {/*
                       name 을 시트의 라디오와 다르게 둔다. 같은 name 이면 둘이 하나의
                       네이티브 라디오 그룹으로 묶여 시트에서 고르는 순간 여기가 풀린다.
@@ -164,7 +164,7 @@ const DetailHero = ({
                     />
                     [LIVE] 1:1 멘토링 ({durationLabel(option.duration)})
                   </label>
-                  <span className="text-neutral-45 flex items-center gap-2">
+                  <span className="text-neutral-45 ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap">
                     <span className="line-through">
                       {formatPrice(optionList)}
                     </span>

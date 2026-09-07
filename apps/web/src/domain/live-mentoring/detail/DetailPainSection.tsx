@@ -66,7 +66,7 @@ const DetailPainSection = ({ careers }: DetailPainSectionProps) => {
 
   return (
     <section className="w-full scroll-mt-16 bg-gradient-to-b from-[#fefeff] to-[#abc2ff]">
-      <div className="mw-1180 flex flex-col items-center break-keep px-5 pb-3 pt-12 md:pt-16">
+      <div className="mw-1180 flex flex-col items-center px-5 pb-3 pt-12 md:pt-16">
         <h2 className="text-small20 md:text-xlarge30 whitespace-pre-line text-center font-bold">
           {'취업 준비,\n혼자 하기 막막하셨나요?'}
         </h2>

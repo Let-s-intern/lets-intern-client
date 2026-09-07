@@ -54,7 +54,7 @@ interface DetailBenefitSectionProps {
  */
 const DetailBenefitSection = ({ id }: DetailBenefitSectionProps) => (
   <section id={id} className="w-full scroll-mt-16 bg-white py-12 md:py-16">
-    <div className="mw-1180 flex flex-col items-center break-keep px-5">
+    <div className="mw-1180 flex flex-col items-center px-5">
       <span className="text-xsmall14 md:text-small18 text-neutral-30 font-semibold">
         특별 혜택
       </span>
