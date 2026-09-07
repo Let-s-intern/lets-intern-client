@@ -97,7 +97,7 @@ const TemplatePreview = ({
   }, [isFrameReady, template, activeTab, activeItem]);
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white px-2 py-4 md:px-3">
+    <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white px-3 py-4">
       <div className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <h2 className="text-base font-semibold text-gray-900">미리 보기</h2>
         <p className="text-xs text-gray-500">
@@ -127,8 +127,8 @@ const TemplatePreview = ({
           미리보기를 보려고 편집 화면을 스크롤해야 한다 — 옆에 두고 보라고 만든 것이
           제 역할을 못 한다. 화면에 들어오는 높이를 잡고 폭을 비율대로 따라가게 한다.
         */
-        <div className="flex justify-center pb-6">
-          <div className="flex h-[calc(100vh-19rem)] max-h-[720px] min-h-[380px] max-w-full flex-col rounded-[2.2rem] border-[10px] border-gray-900 bg-gray-900 shadow-lg">
+        <div className="flex min-h-0 flex-1 justify-center">
+          <div className="flex h-full max-w-full flex-col rounded-[2.2rem] border-[10px] border-gray-900 bg-gray-900 shadow-lg">
             {/* 노치 자리. 장식이라 낭독에서 뺀다. */}
             <div
               aria-hidden="true"
@@ -138,7 +138,7 @@ const TemplatePreview = ({
               ref={frameRef}
               title="상세 페이지 미리 보기"
               src={`${WEB_ORIGIN}/live-mentoring/preview/${mentorId}`}
-              className="aspect-[375/812] h-full w-auto max-w-full rounded-[1.6rem] border-0 bg-white"
+              className="aspect-[375/812] h-full min-h-0 w-auto max-w-full rounded-[1.6rem] border-0 bg-white"
             />
           </div>
         </div>

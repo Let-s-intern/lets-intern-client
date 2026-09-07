@@ -326,7 +326,7 @@ const LiveMentoringSettingsPage = () => {
         시안 비율은 편집 카드 : 미리보기 ≈ 1.93 : 1 이다. 고정 폭을 주면 넓은 화면에서
         미리보기만 상대적으로 좁아져 모바일 뷰가 제 크기로 안 보인다.
       */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.93fr_1fr]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_412px]">
             <div className="flex min-w-0 flex-col gap-4">
               <fieldset className="m-0 min-w-0 border-0 p-0 disabled:opacity-100">
                 <TemplateEditForm
@@ -338,10 +338,13 @@ const LiveMentoringSettingsPage = () => {
             </div>
             {/*
           미리보기는 편집 폼 바로 옆에 붙어 스크롤을 따라온다.
-          상세 페이지 전체를 축소해 담으므로 화면보다 길어질 수 있어,
-          자체 스크롤을 줘야 sticky 가 실제로 "따라오는" 것처럼 동작한다.
+
+          높이를 화면에 **꼭 맞춘다**. 넘치면 미리보기를 보려고 페이지를 스크롤해야 하고,
+          그러면 옆에 두고 보라고 만든 것이 제 역할을 못 한다. 빼는 값은 위 여백(1.5rem)과
+          하단 저장 바가 차지하는 높이(약 5.5rem)다 — 그 바는 fixed 라 여기 높이를
+          비워 두지 않으면 프레임 아래쪽을 덮는다.
         */}
-            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto">
+            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-7rem)] lg:self-start lg:overflow-hidden">
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}

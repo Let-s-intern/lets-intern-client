@@ -71,18 +71,30 @@ const VisibleToggle = ({
   onChange: (next: boolean) => void;
 }) => (
   <label className="flex cursor-pointer items-center gap-2">
+    {/*
+      네이티브 체크박스를 감춰 두고 스위치를 그린다(LC-3267). 켜짐/꺼짐이 색과 손잡이
+      위치로 한눈에 드러나야 하는 값이라 체크박스보다 스위치가 맞다. 감춰도 실제 입력은
+      체크박스라 키보드 조작(Tab·Space)과 낭독은 그대로다 — `peer` 로 포커스 링을 잇는다.
+    */}
     <input
       type="checkbox"
       checked={checked}
       onChange={(e) => onChange(e.target.checked)}
-      className="accent-primary h-4 w-4"
+      className="peer sr-only"
     />
+    <span
+      aria-hidden="true"
+      className={`peer-focus-visible:ring-primary/40 relative h-5 w-9 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 ${
+        checked ? 'bg-primary' : 'bg-gray-300'
+      }`}
+    >
+      <span
+        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
+          checked ? 'left-[1.125rem]' : 'left-0.5'
+        }`}
+      />
+    </span>
     <span className="text-xs text-gray-600">상세 페이지에 노출</span>
-    {!checked && (
-      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500">
-        지금은 숨김
-      </span>
-    )}
   </label>
 );
 
