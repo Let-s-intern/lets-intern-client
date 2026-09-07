@@ -100,8 +100,13 @@ const TemplatePreview = ({
     <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-2">
       <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-1">
         <h2 className="text-base font-semibold text-gray-900">미리 보기</h2>
+        {/*
+          "저장하지 않아도 바로 반영돼요" 라고 쓰면 저장 없이 멘티에게 공개된다는 뜻으로
+          읽힌다. 실제로는 이 화면에만 보이고, 공개는 저장한 뒤부터다.
+        */}
         <p className="text-xs text-gray-500">
-          멘티에게 보이는 실제 화면입니다. 저장하지 않아도 바로 반영돼요.
+          지금 쓰는 내용이 여기 바로 보여요. 멘티에게는 저장한 뒤부터
+          반영됩니다.
         </p>
       </div>
 
