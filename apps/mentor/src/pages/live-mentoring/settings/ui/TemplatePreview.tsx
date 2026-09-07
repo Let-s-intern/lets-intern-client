@@ -11,6 +11,16 @@ const PREVIEW_SECTION_MESSAGE = `${PREVIEW_MESSAGE}:section`;
 
 const WEB_ORIGIN = import.meta.env.VITE_WEB_URL ?? '';
 
+/*
+ * 미리보기 배율.
+ *
+ * 안쪽 화면을 이 비율만큼 줄여 한 번에 더 많이 보이게 한다. iframe 을 그만큼 크게 잡고
+ * 축소하므로, 안에서 그려지는 뷰포트는 실제보다 넓어진다 — 다만 460px 안팎이라
+ * 여전히 모바일 구간이다(md 는 768px 부터). 더 줄이면 데스크톱 레이아웃으로 넘어가
+ * 미리보기가 실제와 달라지므로 여기가 한계다.
+ */
+const PREVIEW_SCALE = 0.85;
+
 interface TemplatePreviewProps {
   template: LiveMentoringTemplate;
   /** 지금 편집 중인 탭. 미리보기가 그 섹션으로 스크롤한다. */
@@ -138,12 +148,24 @@ const TemplatePreview = ({
             aria-hidden="true"
             className="mx-auto mb-1 mt-0.5 h-0.5 w-10 shrink-0 rounded-full bg-gray-600"
           />
-          <iframe
-            ref={frameRef}
-            title="상세 페이지 미리 보기"
-            src={`${WEB_ORIGIN}/live-mentoring/preview/${mentorId}`}
-            className="min-h-0 w-full flex-1 rounded-[1rem] border-0 bg-white"
-          />
+          {/*
+            축소는 보이는 크기만 바꾼다. transform 은 레이아웃 크기를 그대로 두므로,
+            바깥 상자를 넘치는 만큼 잘라 낸다.
+          */}
+          <div className="min-h-0 flex-1 overflow-hidden rounded-[1rem] bg-white">
+            <iframe
+              ref={frameRef}
+              title="상세 페이지 미리 보기"
+              src={`${WEB_ORIGIN}/live-mentoring/preview/${mentorId}`}
+              className="border-0 bg-white"
+              style={{
+                width: `${100 / PREVIEW_SCALE}%`,
+                height: `${100 / PREVIEW_SCALE}%`,
+                transform: `scale(${PREVIEW_SCALE})`,
+                transformOrigin: 'top left',
+              }}
+            />
+          </div>
         </div>
       )}
 
