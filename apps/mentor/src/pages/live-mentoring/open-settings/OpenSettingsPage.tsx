@@ -133,6 +133,16 @@ const OpenSettingsPage = () => {
    */
   const [justLocked, setJustLocked] = useState(false);
 
+  /*
+    모달이 열려 있으면 하단 플로팅 바를 감춘다.
+
+    바는 화면 전체에 fixed 로 떠 있고 모달 배경은 반투명이라, 감추지 않으면 모달
+    아래쪽에 흐릿하게 비쳐 보인다. 모달의 저장 버튼 바로 밑에 또 다른 버튼이 붙어
+    있는 것처럼 읽혀 어느 쪽을 눌러야 하는지 헷갈린다.
+  */
+  const isModalOpen =
+    slotModalOpen || isOpenConfirmVisible || openedOpeningId !== null;
+
   useEffect(() => {
     if (!data) return;
     setForm(data);
@@ -593,7 +603,13 @@ const OpenSettingsPage = () => {
                           type="button"
                           aria-pressed={active}
                           onClick={() => toggleDuration(duration)}
-                          className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                          /*
+                            잠겼을 때 잠긴 것처럼 보이게 한다. 이 버튼들은 오픈 중이면
+                            fieldset[disabled] 으로 눌리지 않는데, 모양이 활성일 때와
+                            똑같아서 하단 바의 "설정을 수정할 수 없어요" 와 화면이
+                            모순돼 보였다.
+                          */
+                          className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                         >
                           {duration}분
                         </button>
@@ -628,7 +644,7 @@ const OpenSettingsPage = () => {
                         type="button"
                         aria-pressed={active}
                         onClick={() => toggleCategory(category)}
-                        className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
+                        className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${active ? 'border-primary bg-primary-5 text-primary' : 'border-gray-200 text-gray-600'}`}
                       >
                         {CATEGORY_LABELS[category]}
                       </button>
@@ -655,7 +671,7 @@ const OpenSettingsPage = () => {
         오픈 중 상태 — 하단 플로팅. 다른 화면 액션(저장·오픈하기 등)과 같은 자리에 둬서
         "지금 취할 수 있는 주요 행동"이 항상 같은 위치에 있게 한다.
       */}
-      {currentOpening && (
+      {currentOpening && !isModalOpen && (
         <div className={FLOATING_BAR_WRAP}>
           <div role="status" className={FLOATING_BAR_BODY}>
             <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
@@ -678,7 +694,7 @@ const OpenSettingsPage = () => {
         저장(`PUT /settings`)은 초안일 때만 남는다 — 승인 이후에는 서버가 잠그고(409
         LOCKED), 제목·타입은 오픈 요청이 함께 보내므로 따로 저장할 이유도 없다.
       */}
-      {canAct && (
+      {canAct && !isModalOpen && (
         <div className={FLOATING_BAR_WRAP}>
           <div className={FLOATING_BAR_BODY}>
             <p className="text-xsmall14 min-w-0 font-medium text-gray-600">
