@@ -71,9 +71,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">
-        결과 사례 카드
-      </p>
+      <p className="text-xsmall14 text-neutral-10 font-semibold">전후 사례</p>
       <p className="text-neutral-40 mt-1 text-xs">
         사례는 2~3개 작성을 권장해요.
       </p>
@@ -122,7 +120,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               </div>
 
               <div>
-                <label className={fieldLabel}>멘토링 전 설명</label>
+                <label className={fieldLabel}>멘토링 전 상황</label>
                 <div className={captionBox}>
                   <textarea
                     value={item.beforeCaption}
@@ -130,7 +128,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                       patchAt(index, { beforeCaption: event.target.value })
                     }
                     placeholder="멘토링 전 상황을 간단히 설명해 주세요"
-                    aria-label={`${index + 1}번 사례 멘토링 전 설명`}
+                    aria-label={`${index + 1}번 사례 멘토링 전 상황`}
                     className={captionInput}
                     rows={2}
                   />
@@ -149,7 +147,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               </div>
 
               <div>
-                <label className={fieldLabel}>멘토링 후 설명</label>
+                <label className={fieldLabel}>멘토링 후 변화</label>
                 <div className={captionBox}>
                   <textarea
                     value={item.afterCaption}
@@ -157,7 +155,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                       patchAt(index, { afterCaption: event.target.value })
                     }
                     placeholder="멘토링 후 달라진 점을 간단히 설명해 주세요"
-                    aria-label={`${index + 1}번 사례 멘토링 후 설명`}
+                    aria-label={`${index + 1}번 사례 멘토링 후 변화`}
                     className={captionInput}
                     rows={2}
                   />
@@ -183,7 +181,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
         }
         className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors"
       >
-        변화 사례 추가 +
+        사례 추가 +
       </button>
     </div>
   );

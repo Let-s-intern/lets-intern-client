@@ -91,7 +91,7 @@ describe('describeAutosaveBlock', () => {
       afterCaption: '',
     });
     expect(describeAutosaveBlock(template)).toBe(
-      '「결과 사례」의 2번 멘토링 전 설명을 채우면 저장돼요',
+      '「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
     );
   });
 

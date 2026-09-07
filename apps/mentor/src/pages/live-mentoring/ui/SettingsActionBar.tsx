@@ -10,9 +10,12 @@ interface SettingsActionBarProps {
   status: AutosaveStatus;
   onPrev: () => void;
   onNext: () => void;
-  /** 앞뒤로 갈 스텝이 있는지. 없으면 버튼을 잠근다. */
+  /** 앞으로 갈 스텝이 있는지. 없으면 버튼을 잠근다. */
   hasPrev: boolean;
+  /** 뒤로 갈 스텝이 있는지. 없으면(마지막 스텝) 그 자리에 공개 버튼이 온다. */
   hasNext: boolean;
+  /** 마지막 스텝에서 「다음으로」 자리에 오는 공개 버튼. */
+  publish: { label: string; disabled: boolean; onClick: () => void };
 }
 
 /**
@@ -31,6 +34,7 @@ const SettingsActionBar = ({
   onNext,
   hasPrev,
   hasNext,
+  publish,
 }: SettingsActionBarProps) => (
   <div className={FLOATING_BAR_WRAP}>
     <div className={FLOATING_BAR_BODY}>
@@ -55,14 +59,28 @@ const SettingsActionBar = ({
         >
           이전으로
         </button>
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={!hasNext}
-          className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          다음으로
-        </button>
+        {/*
+          마지막 스텝에서는 갈 곳이 없다. 잠긴 「다음으로」 를 두는 대신 마지막에 할 일을
+          그 자리에 놓는다 — 스텝을 끝까지 따라온 멘토가 다음에 하려는 건 공개다.
+        */}
+        {hasNext ? (
+          <button
+            type="button"
+            onClick={onNext}
+            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors"
+          >
+            다음으로
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={publish.onClick}
+            disabled={publish.disabled}
+            className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {publish.label}
+          </button>
+        )}
       </div>
     </div>
   </div>

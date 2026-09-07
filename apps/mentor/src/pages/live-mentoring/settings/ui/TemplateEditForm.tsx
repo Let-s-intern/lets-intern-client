@@ -185,13 +185,13 @@ const TemplateEditForm = ({
           <div className="flex flex-col gap-5">
             <div>
               <p className="text-xsmall14 text-neutral-10 font-semibold">
-                상단 유형 소개 문구
+                유형 안내 문구
               </p>
 
               <div className="mt-3 flex flex-col gap-3">
                 <div>
                   <label className={labelClass} htmlFor="typesTitle">
-                    멘토링 유형 소개 제목{' '}
+                    멘토링 유형 섹션 제목{' '}
                     <span className="text-system-error">*</span>
                   </label>
                   <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
@@ -199,7 +199,7 @@ const TemplateEditForm = ({
                       id="typesTitle"
                       value={mentoringTypes.title}
                       maxLength={SECTION_TITLE_MAX}
-                      placeholder="레이블"
+                      placeholder="OO멘토에서 자소서, 포트폴리오 도움을 받아보세요"
                       className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
                       onChange={(e) =>
                         onChange({
@@ -220,13 +220,13 @@ const TemplateEditForm = ({
 
                 <div>
                   <label className={labelClass} htmlFor="typesSubtitle">
-                    멘토링 유형 소개 문구
+                    멘토링 유형 설명
                   </label>
                   <textarea
                     id="typesSubtitle"
                     rows={4}
                     value={mentoringTypes.subtitle}
-                    placeholder="레이블"
+                    placeholder="현재 고민에 맞는 멘토링 유형을 살펴보고, 멘토링을 통해 고민을 빠르게 해결하세요"
                     className="border-neutral-80 focus:border-primary text-xsmall14 text-neutral-10 placeholder:text-neutral-60 w-full resize-none rounded-md border bg-white px-3 py-2.5 outline-none transition-colors"
                     onChange={(e) =>
                       onChange({
@@ -246,12 +246,12 @@ const TemplateEditForm = ({
                   examples={[]}
                   labeledExamples={[
                     {
-                      label: '멘토링 유형 소개 제목',
+                      label: '멘토링 유형 섹션 제목',
                       value:
                         '쥬디 멘토에게는 자소서, 포트폴리오 도움을 받을 수 있어요',
                     },
                     {
-                      label: '멘토링 유형 소개 문구',
+                      label: '멘토링 유형 설명',
                       value:
                         '현재 고민에 맞는 멘토링 유형을 살펴보고 도움을 요청해보세요',
                     },
@@ -323,56 +323,85 @@ const TemplateEditForm = ({
             }`}
           >
             <div className="flex flex-col gap-4">
-              <textarea
-                className={inputClass}
-                value={strategy.title}
-                placeholder="섹션 제목"
-                onChange={(e) =>
-                  onChange({ strategy: { ...strategy, title: e.target.value } })
-                }
-                rows={2}
-              />
-              <textarea
-                className={inputClass}
-                value={strategy.subtitle}
-                placeholder="섹션 설명"
-                onChange={(e) =>
-                  onChange({
-                    strategy: { ...strategy, subtitle: e.target.value },
-                  })
-                }
-                rows={2}
-              />
+              {/*
+                라벨을 따로 세운다. 예전에는 플레이스홀더가 유일한 설명이라, 한 글자만
+                써도 무슨 칸인지 알 수 없었다.
+              */}
+              <div>
+                <label className={labelClass} htmlFor="strategyTitle">
+                  섹션 제목 <span className="text-system-error">*</span>
+                </label>
+                <textarea
+                  id="strategyTitle"
+                  className={inputClass}
+                  value={strategy.title}
+                  placeholder="예) OO멘토만의 합격 전략을 제공해요"
+                  onChange={(e) =>
+                    onChange({
+                      strategy: { ...strategy, title: e.target.value },
+                    })
+                  }
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="strategySubtitle">
+                  한 줄 소개
+                </label>
+                <textarea
+                  id="strategySubtitle"
+                  className={inputClass}
+                  value={strategy.subtitle}
+                  placeholder="예) 실제 업무 경험을 바탕으로 지원자만의 합격 전략부터 취업 노하우까지, 멘토링으로 다 알려드립니다."
+                  onChange={(e) =>
+                    onChange({
+                      strategy: { ...strategy, subtitle: e.target.value },
+                    })
+                  }
+                  rows={3}
+                />
+              </div>
 
               <ListField<TemplateStrategyPoint>
-                label="Point"
+                label="취업 전략"
+                addLabel="차별점 추가 +"
+                hint={
+                  '취업 전략 카드예요. 입력한 순서대로 표시돼요.\n2~3개 작성을 권장해요.'
+                }
                 items={strategy.points}
                 makeEmpty={() => ({ image: null, title: '', description: '' })}
                 renderItem={(point, update) => (
                   <div className="flex flex-col gap-2">
                     <ImageField
-                      label="이미지"
+                      label="대표 이미지"
                       value={point.image}
                       onChange={(image) => update({ ...point, image })}
                     />
-                    <textarea
-                      className={inputClass}
-                      value={point.title}
-                      placeholder="Point 제목"
-                      onChange={(e) =>
-                        update({ ...point, title: e.target.value })
-                      }
-                      rows={2}
-                    />
-                    <textarea
-                      rows={3}
-                      className={inputClass}
-                      value={point.description}
-                      placeholder="설명"
-                      onChange={(e) =>
-                        update({ ...point, description: e.target.value })
-                      }
-                    />
+                    <div>
+                      <span className={labelClass}>차별 전략</span>
+                      <textarea
+                        className={inputClass}
+                        value={point.title}
+                        placeholder="예) 2026년 취업 시장 핵심 키워드 5가지"
+                        onChange={(e) =>
+                          update({ ...point, title: e.target.value })
+                        }
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <span className={labelClass}>전략 설명</span>
+                      <textarea
+                        rows={4}
+                        className={inputClass}
+                        value={point.description}
+                        placeholder="예) 3,000개 이상의 이력서/포트폴리오/자소서를 피드백하여 쌓은 경험, 채용공고 분석을 통해 얻은 인사이트, 현직자 멘토의 최신 합격자들과의 만남을 통해 발견한 키워드를 알려드립니다."
+                        onChange={(e) =>
+                          update({ ...point, description: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
                 )}
                 onChange={(points) =>

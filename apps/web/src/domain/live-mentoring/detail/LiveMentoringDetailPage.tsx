@@ -410,8 +410,12 @@ const LiveMentoringDetailPage = ({
 
                   같은 높이로 늘리면 짧은 쪽 카드 안이 배경색으로 비고, 그 여백이 설명과
                   카드 사이를 벌린다. 아래를 맞추면 두 설명이 나란하면서도 카드와 붙는다.
+
+                  `order` 로 좁은 화면의 순서를 바꾼다. 한 줄짜리 그리드에서는 DOM 순서
+                  그대로 [전 카드][후 카드][전 설명][후 설명] 이 되어, 전 설명이 화면
+                  맨 아래에서 후 설명과 붙어 버린다. 좁을 때는 전·후를 각각 묶는다.
                 */}
-                <div className="self-end overflow-hidden rounded-md">
+                <div className="order-1 self-end overflow-hidden rounded-md">
                   <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
                     Before
                   </p>
@@ -426,7 +430,7 @@ const LiveMentoringDetailPage = ({
                   </div>
                 </div>
 
-                <div className="self-end overflow-hidden rounded-md">
+                <div className="order-3 mt-5 self-end overflow-hidden rounded-md md:order-2 md:mt-0">
                   <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
                     After
                   </p>
@@ -441,10 +445,10 @@ const LiveMentoringDetailPage = ({
                   </div>
                 </div>
 
-                <p className="text-xsmall14 whitespace-pre-line text-center text-white/70">
+                <p className="text-xsmall14 order-2 whitespace-pre-line text-center text-white/70 md:order-3">
                   {item.beforeCaption}
                 </p>
-                <p className="text-xsmall14 whitespace-pre-line text-center font-medium text-white">
+                <p className="text-xsmall14 order-4 whitespace-pre-line text-center font-medium text-white">
                   ✓ {item.afterCaption}
                 </p>
               </li>

@@ -490,6 +490,13 @@ const LiveMentoringSettingsPage = () => {
         onNext={() => goStep(1)}
         hasPrev={stepIndex > 0}
         hasNext={stepIndex >= 0 && stepIndex < SETTINGS_TABS.length - 1}
+        publish={{
+          label: openAction.currentOpening ? '공개 중이에요' : '공개하기',
+          // 이미 공개 중이면 여기서 할 일이 없다. 내리는 건 머리의 토글이다.
+          disabled:
+            openAction.currentOpening !== undefined || openAction.disabled,
+          onClick: openAction.onClick,
+        }}
       />
 
       {/* 오픈 전 확인 모달 — 토글이 머리에 있으므로 스텝과 무관하게 페이지가 그린다. */}

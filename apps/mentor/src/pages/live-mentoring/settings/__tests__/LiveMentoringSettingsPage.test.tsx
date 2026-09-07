@@ -445,13 +445,13 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     openTab('취업 성공 전략');
     const toggle = screen.getAllByRole('checkbox')[0];
     expect(toggle).toBeChecked();
-    expect(screen.getByPlaceholderText('섹션 제목')).toBeEnabled();
+    expect(screen.getByLabelText(/^섹션 제목/)).toBeEnabled();
 
     fireEvent.click(toggle);
 
     expect(toggle).not.toBeChecked();
     // 흐리게만 두면 만질 수 있다. fieldset 으로 잠가 탭 순서에서도 빠진다.
-    expect(screen.getByPlaceholderText('섹션 제목')).toBeDisabled();
+    expect(screen.getByLabelText(/^섹션 제목/)).toBeDisabled();
     // 다시 켤 수 있어야 하므로 스위치 자신은 잠기지 않는다.
     expect(toggle).toBeEnabled();
   });
@@ -726,13 +726,43 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
     );
   });
 
-  /* 양 끝에서는 갈 곳이 없다. 숨기지 않고 잠근다 — 자리가 바뀌면 어디를 눌러야 할지 흔들린다. */
-  it('첫 스텝에서는 이전으로가, 마지막 스텝에서는 다음으로가 잠긴다', () => {
+  /* 첫 스텝에서는 갈 곳이 없다. 숨기지 않고 잠근다 — 자리가 바뀌면 어디를 눌러야 할지 흔들린다. */
+  it('첫 스텝에서는 이전으로가 잠긴다', () => {
     renderAtOpenStep();
-    expect(screen.getByRole('button', { name: '이전으로' })).toBeDisabled();
 
+    expect(screen.getByRole('button', { name: '이전으로' })).toBeDisabled();
+  });
+
+  /*
+    마지막 스텝에는 갈 다음 스텝이 없다. 잠긴 「다음으로」 대신 마지막에 할 일을 둔다.
+  */
+  it('마지막 스텝에서는 다음으로 자리에 공개하기가 온다', () => {
+    renderPage();
     openTab('결과 사례');
-    expect(screen.getByRole('button', { name: '다음으로' })).toBeDisabled();
+
+    expect(
+      screen.queryByRole('button', { name: '다음으로' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '공개하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('이미 공개 중이면 마지막 스텝 버튼이 공개 중으로 잠긴다', () => {
+    status = 'APPROVED';
+    openings = [{ openingId: 100, status: 'OPEN' }];
+    settingsExtra = {
+      title: '자기소개서 첨삭',
+      categories: ['PERSONAL_STATEMENT'],
+      durations: [30],
+      liveMentoringId: 7,
+    } as Partial<LiveMentoringSettings>;
+    renderPage();
+    openTab('결과 사례');
+
+    expect(
+      screen.getByRole('button', { name: '공개 중이에요' }),
+    ).toBeDisabled();
   });
 });
 
@@ -789,14 +819,14 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
   it('빈 결과 사례가 있으면 보내지 않는다', async () => {
     renderPage();
     openTab('결과 사례');
-    fireEvent.click(screen.getByRole('button', { name: '변화 사례 추가 +' }));
+    fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
 
     await 입력이_멎기를_기다린다();
 
     expect(saveMock).not.toHaveBeenCalled();
     expect(
       screen.getByText(
-        '저장 대기 · 「결과 사례」의 2번 멘토링 전 설명을 채우면 저장돼요',
+        '저장 대기 · 「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
       ),
     ).toBeVisible();
   });

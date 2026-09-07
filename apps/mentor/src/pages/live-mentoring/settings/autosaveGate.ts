@@ -102,8 +102,8 @@ export const describeAutosaveBlock = (
 
   for (const [index, item] of results.cases.entries()) {
     const blank = firstBlankLabel([
-      ['멘토링 전 설명', item.beforeCaption],
-      ['멘토링 후 설명', item.afterCaption],
+      ['멘토링 전 상황', item.beforeCaption],
+      ['멘토링 후 변화', item.afterCaption],
     ]);
     if (blank) return fill('결과 사례', `${index + 1}번 ${blank}`);
   }
