@@ -6,6 +6,7 @@ import LetterSection from '@/domain/pass-certification/section/LetterSection';
 import PassCaseSection from '@/domain/pass-certification/section/PassCaseSection';
 import ProcessSection from '@/domain/pass-certification/section/ProcessSection';
 import RewardSection from '@/domain/pass-certification/section/RewardSection';
+import TeamVoiceSection from '@/domain/pass-certification/section/TeamVoiceSection';
 import { PASS_NAV_ITEMS } from '@/domain/pass-certification/section/sectionIds';
 
 export default function PassCertificationPage() {
@@ -17,6 +18,7 @@ export default function PassCertificationPage() {
       <PassCaseSection />
       <ProcessSection />
       <LetterSection />
+      <TeamVoiceSection />
       <FormSection />
       <FaqSection />
     </>
