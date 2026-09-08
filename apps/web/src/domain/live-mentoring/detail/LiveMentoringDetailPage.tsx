@@ -547,6 +547,8 @@ const LiveMentoringDetailPage = ({
           // 시트는 필수 입력이 다 차야 `신청하기` 를 열어 주므로 여기서 다시 묻지 않는다
           if (draft.duration === null) return;
           if (draft.mentoringCategory === null) return;
+          // 개설 전에는 신청을 만들 수 없다. 미리보기로 들어온 화면이 여기다.
+          if (data.openingId === null) return;
           const plan = data.durationPrices.find(
             (option) => option.duration === draft.duration,
           );

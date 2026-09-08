@@ -211,6 +211,11 @@ export const useLiveMentoringSettingsQuery = () => {
  * 상품이 없는 멘토는 이 요청이 상품을 `DRAFT` 로 만든다 — 개설은 상품이 있어야 하므로
  * (없으면 404 `LIVE_MENTORING_NOT_FOUND`) 첫 오픈 전에 한 번은 저장을 거쳐야 한다.
  * 승인 이후에는 서버가 잠그므로(409 `LIVE_MENTORING_LOCKED`) 재개설은 `POST /openings` 를 쓴다.
+ *
+ * 상품을 만드는 요청이므로 템플릿 캐시도 함께 비운다. 상품이 없을 때 템플릿 조회는
+ * 404 이고 그 실패가 캐시에 남는데(4xx 는 재시도하지 않는다), 저장으로 상품이 생겨도
+ * 무효화하지 않으면 상세 스텝이 "먼저 오픈 설정을 저장해주세요" 를 계속 그린다 —
+ * 방금 저장했는데도 그렇다. 새로고침해야 사라지던 이유다.
  */
 export const useUpdateLiveMentoringSettingsMutation = () => {
   const queryClient = useQueryClient();
@@ -222,6 +227,9 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
       });
     },
   });
