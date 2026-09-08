@@ -52,7 +52,7 @@ describe('MentorSidebar', () => {
     expect(screen.queryByText('피드백')).not.toBeInTheDocument();
     expect(screen.getByText('캘린더')).toBeInTheDocument();
     expect(screen.getByText('피드백 내역')).toBeInTheDocument();
-    expect(screen.getByText('LIVE 슬롯 오픈')).toBeInTheDocument();
+    expect(screen.getByText('LIVE 가능 시간 등록')).toBeInTheDocument();
     // '예약 현황'·'참여중인 챌린지'는 임시 숨김 처리됨(dusvlf111, 2026-07-17) —
     // 라우트는 유지, 진입점만 가려짐.
     expect(screen.queryByText('예약 현황')).not.toBeInTheDocument();
@@ -76,6 +76,8 @@ describe('MentorSidebar', () => {
     expect(
       screen.queryByText('라이브 피드백 일정 열기'),
     ).not.toBeInTheDocument();
+    // 'LIVE 슬롯 오픈' 은 'LIVE 가능 시간 등록' 으로 바뀐 옛 이름이다.
+    expect(screen.queryByText('LIVE 슬롯 오픈')).not.toBeInTheDocument();
     expect(screen.queryByText('정산')).not.toBeInTheDocument();
   });
 
@@ -108,11 +110,11 @@ describe('MentorSidebar', () => {
     expect(calendarLink).not.toHaveClass('text-primary');
   });
 
-  it('캘린더·피드백 내역·LIVE 슬롯 오픈이 최상위 항목이다', () => {
+  it('캘린더·피드백 내역·LIVE 가능 시간 등록이 최상위 항목이다', () => {
     renderSidebar('/profile');
 
     // 최상위 항목은 그룹 하위 항목(pl-6)이 아니다.
-    for (const name of ['캘린더', '피드백 내역', 'LIVE 슬롯 오픈']) {
+    for (const name of ['캘린더', '피드백 내역', 'LIVE 가능 시간 등록']) {
       expect(screen.getByRole('link', { name })).not.toHaveClass('pl-6');
     }
     // '예약 현황'은 임시 숨김 처리됨(dusvlf111, 2026-07-17) — 라우트는 유지, 진입점만 가려짐.
