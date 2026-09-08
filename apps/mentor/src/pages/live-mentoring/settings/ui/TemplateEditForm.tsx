@@ -343,6 +343,7 @@ const TemplateEditForm = ({
                 <textarea
                   id="strategyTitle"
                   className={inputClass}
+                  maxLength={SECTION_TITLE_MAX}
                   value={strategy.title}
                   placeholder="예) OO멘토만의 합격 전략을 제공해요"
                   onChange={(e) =>
@@ -399,6 +400,7 @@ const TemplateEditForm = ({
                       <span className={labelClass}>차별 전략</span>
                       <textarea
                         className={inputClass}
+                        maxLength={SECTION_TITLE_MAX}
                         value={point.title}
                         placeholder="예) 2026년 취업 시장 핵심 키워드 5가지"
                         onChange={(e) =>

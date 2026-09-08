@@ -25,9 +25,9 @@ interface JitsiEmbedModalProps {
   /** 모달 헤더 표시용 라벨 (선택). URL 에는 영향 없음. */
   spaceName?: string;
   /** 세션 시작 ISO — 좌상단 타이머 표시용(선택). */
-  startDate?: string;
+  startDate?: string | null;
   /** 세션 종료 ISO — 남은 시간 계산용(선택). */
-  endDate?: string;
+  endDate?: string | null;
   /** 멘티 본인 사전 질문 — 좌하단 "나의 사전 QA" 패널(선택). */
   preQuestion?: string;
   /** 멘티 본인 제출물 URL — 좌하단 "나의 제출물" 패널(선택). */

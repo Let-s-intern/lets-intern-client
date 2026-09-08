@@ -18,6 +18,8 @@ import { withParticle } from './saveError';
 
 /** 히어로 불릿의 서버 상한(`@Size(max = 500)`). */
 const BULLET_MAX = 500;
+/** 섹션 제목류의 서버 상한(`@Size(max = 255)`). */
+const TITLE_MAX = 255;
 
 const isBlank = (value: string | null | undefined) => !value?.trim();
 
@@ -28,6 +30,16 @@ const firstBlankLabel = (
 
 const fill = (where: string, what: string) =>
   `「${where}」의 ${withParticle(what, '을', '를')} 채우면 저장돼요`;
+
+/** 서버 `@Size` 를 넘긴 첫 칸. 넘긴 게 없으면 null. */
+const firstTooLong = (
+  fields: readonly (readonly [label: string, value: string | null])[],
+): string | null =>
+  fields.find(([, value]) => (value?.trim().length ?? 0) > TITLE_MAX)?.[0] ??
+  null;
+
+const shorten = (where: string, what: string) =>
+  `「${where}」의 ${withParticle(what, '을', '를')} ${TITLE_MAX}자 이내로 줄이면 저장돼요`;
 
 export const describeAutosaveBlock = (
   template: LiveMentoringTemplate,
@@ -77,12 +89,24 @@ export const describeAutosaveBlock = (
     ]);
     if (strategySection) return fill('취업 성공 전략', strategySection);
 
+    /*
+      길이도 본다. 서버 `StrategyRequest.title` 과 `StrategyPointRequest.title` 이
+      `@Size(max = 255)` 인데 이 두 칸에는 `maxLength` 가 없어 넘겨 쓸 수 있다.
+      보내 봐야 400 이므로 여기서 잡아 무엇을 줄이면 되는지 알린다.
+     */
+    const tooLong = firstTooLong([['섹션 제목', strategy.title]]);
+    if (tooLong) return shorten('취업 성공 전략', tooLong);
+
     for (const [index, point] of strategy.points.entries()) {
       const blank = firstBlankLabel([
         ['Point 제목', point.title],
         ['Point 설명', point.description],
       ]);
       if (blank) return fill('취업 성공 전략', `${index + 1}번 ${blank}`);
+
+      const longPoint = firstTooLong([['Point 제목', point.title]]);
+      if (longPoint)
+        return shorten('취업 성공 전략', `${index + 1}번 ${longPoint}`);
     }
   }
 

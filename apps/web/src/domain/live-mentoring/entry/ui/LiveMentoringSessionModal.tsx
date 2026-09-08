@@ -29,8 +29,8 @@ interface LiveMentoringSessionModalProps {
   menteeName: string;
   preQuestion?: string;
   submissionUrl?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
   menteeStatus?: AttendanceStatus;
   /** 출석 저장(모달 닫힘/종료 시 일괄). */
   onSaveAttendance?: (status: AttendanceStatus) => void;

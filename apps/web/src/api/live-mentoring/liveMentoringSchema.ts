@@ -478,8 +478,8 @@ export const myLiveMentoringApplicationSchema = z.object({
   productName: z.string().nullable(),
   durationMinutes: z.number(),
   /** `LocalDateTime`. 참여 예정·중·종료 판정의 기준이다. */
-  reservationStartAt: z.string(),
-  reservationEndAt: z.string(),
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   status: liveMentoringApplicationStatusSchema,
   /** 질문을 썼는지. 카드 버튼이 `작성` 인지 `수정` 인지 가른다. */
   questionWritten: z.boolean(),
@@ -521,7 +521,7 @@ export const liveMentoringQuestionSchema = z.object({
   fileId: z.number().nullable(),
   attachmentUrl: z.string().nullable(),
   mentorShareAgreed: z.boolean(),
-  reservationStartAt: z.string(),
+  reservationStartAt: z.string().nullable(),
   editable: z.boolean(),
   /** `LocalDateTime`. 언제까지 고칠 수 있는지 그대로 안내한다. */
   editDeadline: z.string().nullable(),
@@ -573,7 +573,7 @@ export const liveMentoringRefundPreviewSchema = z.object({
   cancelFeePercent: z.number(),
   cancelFee: z.number(),
   refundAmount: z.number(),
-  reservationStartAt: z.string(),
+  reservationStartAt: z.string().nullable(),
   cancelable: z.boolean(),
 });
 export type LiveMentoringRefundPreview = z.infer<
@@ -608,8 +608,8 @@ export const liveMentoringEntrySchema = z.object({
   myRole: liveMentoringEntryRoleSchema,
   productName: z.string(),
   durationMinutes: z.number(),
-  reservationStartAt: z.string(),
-  reservationEndAt: z.string(),
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   mentorName: z.string(),
   menteeName: z.string(),
   questionDeferred: z.boolean(),

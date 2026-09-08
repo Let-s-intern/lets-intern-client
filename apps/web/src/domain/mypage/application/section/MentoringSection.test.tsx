@@ -188,3 +188,46 @@ describe('신청현황 탭 구성', () => {
     expect(values).toContain('LAUNCH_ALERT');
   });
 });
+
+/*
+  회귀 케이스 — 예약 슬롯이 없는 신청 때문에 목록이 통째로 비던 문제.
+
+  결제 만료·취소로 슬롯이 풀린 뒤 멘토가 그 슬롯을 지우면 서버가 시작·종료를 null 로
+  준다. 웹 zod 가 그것을 막아 파싱이 실패했고, 화면은 `isError` 를 보지 않아 빈 배열로
+  떨어져 "아직 신청한 1:1 멘토링이 없어요" 를 띄웠다. 결제까지 마친 예약이 있는데도
+  없는 것처럼 보였다.
+*/
+describe('MentoringSection — 예약 일정이 없는 신청', () => {
+  it('시작·종료가 null 이어도 카드를 그리고, 참여 예정으로 둔다', () => {
+    const application = makeApplication({
+      reservationStartAt: null,
+      reservationEndAt: null,
+    });
+    mockApplications([application]);
+
+    render(<MentoringSection />);
+
+    expect(
+      screen.queryByText('아직 신청한 1:1 멘토링이 없어요'),
+    ).not.toBeInTheDocument();
+    expect(resolvePhase(application, new Date('2026-09-13T10:30:00'))).toBe(
+      'upcoming',
+    );
+  });
+
+  /* 조회 실패를 "신청 없음" 으로 보여주면 사용자가 예약이 사라졌다고 오해한다. */
+  it('조회에 실패하면 빈 상태 대신 실패를 알린다', () => {
+    useApplicationsMock.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    });
+
+    render(<MentoringSection />);
+
+    expect(
+      screen.queryByText('아직 신청한 1:1 멘토링이 없어요'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/불러오지 못했어요/)).toBeInTheDocument();
+  });
+});

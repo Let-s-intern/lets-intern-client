@@ -149,4 +149,33 @@ describe('describeAutosaveBlock', () => {
       '「취업 성공 전략」의 섹션 설명을 채우면 저장돼요',
     );
   });
+
+  /*
+    서버 `StrategyRequest.title` 과 `StrategyPointRequest.title` 은 `@Size(max = 255)` 다.
+    게이트가 길이를 안 보면 보내서 400 을 받는데, 자동 저장은 실패해도 값이 그대로면
+    다시 시도하지 않아 멘토가 더 치기 전까지 저장이 멈춘다.
+  */
+  it('취업 성공 전략의 섹션 제목이 255자를 넘으면 줄이라고 알린다', () => {
+    const template = base();
+    template.strategy.title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBe(
+      '「취업 성공 전략」의 섹션 제목을 255자 이내로 줄이면 저장돼요',
+    );
+  });
+
+  it('Point 제목이 255자를 넘어도 잡는다', () => {
+    const template = base();
+    template.strategy.points[0].title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBe(
+      '「취업 성공 전략」의 1번 Point 제목을 255자 이내로 줄이면 저장돼요',
+    );
+  });
+
+  /* 숨긴 섹션은 길이도 보지 않는다 — 보낼 때 기본 문구로 갈아끼우기 때문이다. */
+  it('숨긴 섹션은 길이도 검사하지 않는다', () => {
+    const template = base();
+    template.strategy.visible = false;
+    template.strategy.title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
 });
