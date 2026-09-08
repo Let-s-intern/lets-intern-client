@@ -25,7 +25,7 @@ import {
  */
 
 /**
- * 웹 입장 페이지(`/live-mentoring/[role]/[applicationId]`) base URL.
+ * 웹 입장 페이지(`/live-mentoring/session/[role]/[applicationId]`) base URL.
  * 라이브 피드백 `ReservationDetailModal` 의 `getWebBaseUrl` 과 같은 로직이다 —
  * 컴포넌트를 공유하지 않는다는 원칙(`core.md`)에 따라 파일마다 그대로 둔다.
  */
@@ -64,14 +64,18 @@ const LIMITATIONS: { label: string; reason: string }[] = [
 
 /**
  * 알림톡 입장 링크 복사 — 멘토/멘티 각각의 딥링크를 클립보드에 복사한다.
- * 링크 형식: `{web}/live-mentoring/{role}/{applicationId}` (역할별 경로).
+ * 링크 형식: `{web}/live-mentoring/session/{role}/{applicationId}` (역할별 경로).
  * 라이브 피드백 `EntryLinkPanel` 과 같은 배치·문구를 쓴다.
+ *
+ * `session/` 이 빠져 있었다. 입장 경로는 `/live-mentoring/[mentorId]`(멘토 상세)와
+ * 슬러그가 충돌해 LC-3242 에서 `session/` 아래로 옮겼는데 여기가 따라오지 않아,
+ * 복사한 링크가 멘토·멘티 양쪽 다 404 였다.
  */
 function EntryLinkPanel({ applicationId }: { applicationId: number }) {
   const { snackbar } = useAdminSnackbar();
 
   const copyLink = async (role: 'mentor' | 'mentee') => {
-    const url = `${getWebBaseUrl()}/live-mentoring/${role}/${applicationId}`;
+    const url = `${getWebBaseUrl()}/live-mentoring/session/${role}/${applicationId}`;
     const roleLabel = role === 'mentor' ? '멘토' : '멘티';
     try {
       await navigator.clipboard.writeText(url);

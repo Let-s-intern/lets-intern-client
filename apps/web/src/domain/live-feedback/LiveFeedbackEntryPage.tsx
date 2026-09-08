@@ -17,6 +17,7 @@ import LiveFeedbackModal from './ui/LiveFeedbackModal';
 import LiveFeedbackReviewModal from './ui/LiveFeedbackReviewModal';
 import LoginGate from './ui/LoginGate';
 import ScheduleSummaryCard from './ui/ScheduleSummaryCard';
+import SessionCanceledNotice from './ui/SessionCanceledNotice';
 
 interface Props {
   feedbackId: number;
@@ -83,6 +84,29 @@ export default function LiveFeedbackEntryPage({ feedbackId, role }: Props) {
       <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
         <div className="w-full max-w-[400px]">
           <LoginGate feedbackId={feedbackId} role={role} />
+        </div>
+      </main>
+    );
+  }
+
+  /*
+    취소·진행불가 세션은 여기서 끊는다. 서버가 상세를 그대로 내려주므로 상태를 보지
+    않으면 입장 버튼과 Jitsi 모달이 정상 예약과 똑같이 그려진다.
+
+    판정은 멘토 앱 `liveFeedbackStatus.ts` 의 규칙을 그대로 따른다 — 경험정리
+    미제출(LATE·ABSENT)이 최우선이고, 예약취소(status=CANCELED)도 같은 취급이다.
+    `status` 만 보면 안 된다. 서버 `Feedback.status` 는 RESERVED 로 만들어진 뒤
+    대입하는 곳이 없어 실제로는 값이 변하지 않는다.
+  */
+  if (
+    feedbackInfo?.status === 'CANCELED' ||
+    feedbackInfo?.attendanceStatus === 'LATE' ||
+    feedbackInfo?.attendanceStatus === 'ABSENT'
+  ) {
+    return (
+      <main className="flex min-h-[80vh] w-full items-center justify-center px-5 py-10">
+        <div className="w-full max-w-[400px]">
+          <SessionCanceledNotice />
         </div>
       </main>
     );

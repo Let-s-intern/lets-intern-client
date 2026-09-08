@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 /**
  * 입장 조회가 실패했을 때 대신 그리는 화면.
  *
@@ -29,13 +27,6 @@ const EntryUnavailableNotice = () => {
           계정으로 로그인했는지 확인해 주세요.
         </p>
       </div>
-
-      <Link
-        href="/mypage/application"
-        className="text-small16 bg-primary text-static-100 flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold"
-      >
-        신청 현황에서 확인하기
-      </Link>
     </section>
   );
 };
