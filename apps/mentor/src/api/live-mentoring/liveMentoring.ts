@@ -235,6 +235,10 @@ export const useUpdateLiveMentoringSettingsMutation = () => {
  *
  * 예약 가능 일정은 개설에 담기지 않는다 — 슬롯(`PUT /slots`)으로 따로 등록한다.
  * 다만 개설 유무가 고객용 슬롯 노출 조건이라 슬롯 캐시도 함께 무효화한다.
+ *
+ * 상세 템플릿 캐시도 함께 비운다. 첫 개설 전에는 템플릿 조회가 404 인데(LC-3265 에서
+ * 정한 정상 응답이다) 그 실패가 캐시에 남아 있고 4xx 는 재시도하지 않으므로, 개설로
+ * 템플릿이 생겨도 상세 스텝은 계속 실패 화면을 그린다. 새로고침해야 보이던 이유다.
  */
 export const useCreateLiveMentoringOpeningMutation = () => {
   const queryClient = useQueryClient();
@@ -253,6 +257,9 @@ export const useCreateLiveMentoringOpeningMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
       });
     },
   });

@@ -522,15 +522,14 @@ describe('LiveMentoringDetailPage', () => {
     expect(draft?.slots.map((slot) => slot.slotId)).toEqual([1, 2]);
   });
 
-  // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.
-  //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-  it('상세 조회에 실패하면 담당자와 함께 개발 중 안내를 노출한다', async () => {
+  it('상세 조회에 실패하면 오류 문구를 노출한다', async () => {
     axiosGet.mockRejectedValue(new Error('500'));
     renderDetail();
 
     await waitFor(() =>
-      expect(screen.getByText('개발 중인 페이지입니다.')).toBeInTheDocument(),
+      expect(
+        screen.getByText('멘토 정보를 불러오지 못했습니다.'),
+      ).toBeInTheDocument(),
     );
-    expect(screen.getByText('담당자 임성빈')).toBeInTheDocument();
   });
 });

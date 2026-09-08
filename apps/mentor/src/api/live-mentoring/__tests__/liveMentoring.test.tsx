@@ -369,7 +369,12 @@ describe('useCloseLiveMentoringOpeningMutation', () => {
 });
 
 describe('useCreateLiveMentoringOpeningMutation', () => {
-  it('개설 후 오픈현황·설정 캐시를 함께 invalidate 한다', async () => {
+  /*
+    템플릿 캐시까지 비워야 한다. 첫 개설 전에는 템플릿 조회가 404 이고 그 실패가
+    캐시에 남는데(4xx 는 재시도하지 않는다), 개설로 서버가 템플릿을 만들어도
+    무효화하지 않으면 상세 스텝이 계속 실패 화면을 그린다 — 새로고침해야 보였다.
+  */
+  it('개설 후 오픈현황·설정·템플릿 캐시를 함께 invalidate 한다', async () => {
     axiosMock.post.mockResolvedValue({
       data: { data: { liveMentoringId: 1, openings: [] } },
     });
@@ -403,6 +408,9 @@ describe('useCreateLiveMentoringOpeningMutation', () => {
     });
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
     });
   });
 });
