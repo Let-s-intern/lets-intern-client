@@ -1,5 +1,6 @@
 import SectionHeading from '@/domain/pass-certification/components/SectionHeading';
 
+import PassCaseStoriesClient from './PassCaseStoriesClient';
 import { PASS_SECTION_ID } from './sectionIds';
 
 const PASS_CASES = [
@@ -91,6 +92,8 @@ export default function PassCaseSection() {
             </li>
           ))}
         </ul>
+
+        <PassCaseStoriesClient />
       </div>
     </section>
   );
