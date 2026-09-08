@@ -235,8 +235,12 @@ export const liveMentorDetailSchema = z.object({
    * 신청 생성 경로가 `POST /live-mentoring/openings/{openingId}/applications` 라
    * 결제 페이지가 이 값을 들고 가야 한다. 서버는 예전부터 내려주고 있었는데
    * 스키마에 없어 zod 가 버리고 있었다.
+   *
+   * 한 번도 개설하지 않은 상품은 null 이다 — 아래 `price` 와 같은 이유로, 멘토가
+   * 공개 전에 미리보기로 들어올 수 있다. 필수로 두면 그 화면이 파싱 단계에서
+   * 통째로 실패해 "멘토 정보를 불러오지 못했습니다" 만 뜬다.
    */
-  openingId: z.number(),
+  openingId: z.number().nullable(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),

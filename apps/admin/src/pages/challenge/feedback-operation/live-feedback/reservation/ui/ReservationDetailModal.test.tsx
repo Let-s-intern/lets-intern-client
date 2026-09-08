@@ -199,7 +199,7 @@ describe('ReservationDetailModal', () => {
       );
       await Promise.resolve();
       expect(writeText).toHaveBeenLastCalledWith(
-        expect.stringMatching(/\/live-mentoring\/mentor\/777$/),
+        expect.stringMatching(/\/live-mentoring\/session\/mentor\/777$/),
       );
 
       fireEvent.click(
@@ -207,7 +207,7 @@ describe('ReservationDetailModal', () => {
       );
       await Promise.resolve();
       expect(writeText).toHaveBeenLastCalledWith(
-        expect.stringMatching(/\/live-mentoring\/mentee\/777$/),
+        expect.stringMatching(/\/live-mentoring\/session\/mentee\/777$/),
       );
     });
 

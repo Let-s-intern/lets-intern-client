@@ -80,7 +80,8 @@ export const describeAutosaveBlock = (
    * `<fieldset disabled>` 로 잠그기 때문에 멘토는 그 칸을 채울 수가 없고, 저장도
    * 공개도 안 되는 채로 빠져나올 방법이 없다.
    *
-   * 그래서 숨긴 섹션은 통과시키고, 보낼 때 `fillHiddenSections` 가 기본 문구로 메운다.
+   * 그래서 숨긴 섹션은 통과시킨다. 서버도 `visible` 이 꺼진 섹션은 검사하지 않는다
+   * (LC-3289).
    */
   if (strategy.visible) {
     const strategySection = firstBlankLabel([
