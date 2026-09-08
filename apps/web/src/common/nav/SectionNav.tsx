@@ -4,6 +4,8 @@ import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionSty
 import { twMerge } from '@/lib/twMerge';
 import { useEffect, useState } from 'react';
 
+import { scrollToSection } from './scrollToSection';
+
 export interface SectionNavItem {
   title: string;
   /** 스크롤 타겟 섹션의 id */
@@ -50,13 +52,6 @@ export default function SectionNav({
     return () => observer.disconnect();
   }, [items]);
 
-  const handleScroll = (id: string) => {
-    const target = document.getElementById(id);
-    if (!target) return;
-    const offset = target.getBoundingClientRect().top - scrollOffset;
-    window.scrollBy({ top: offset, behavior: 'smooth' });
-  };
-
   return (
     <nav
       className={twMerge(
@@ -72,12 +67,12 @@ export default function SectionNav({
             <button
               key={to}
               type="button"
-              onClick={() => handleScroll(to)}
+              onClick={() => scrollToSection(to, scrollOffset)}
               className={twMerge(
                 'xs:text-xsmall16 border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold transition-colors md:min-w-[100px]',
                 isActive
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-neutral-45',
+                  : 'text-neutral-45 border-transparent',
               )}
             >
               {title}
