@@ -39,6 +39,8 @@ export const getProgramUrl = ({
       return `/program/challenge/${programId}`;
     case 'LIVE':
       return `/program/live/${programId}`;
+    case 'LIVE_MENTORING':
+      return `/live-mentoring/${programId}`;
     case 'VOD':
       return `/program/vod/${programId}`;
     case 'REPORT':
@@ -67,7 +69,7 @@ export const getDuration = ({
 }) => {
   if (!startDate || !endDate) return undefined;
 
-  if (type === 'LIVE' || type === 'CHALLENGE') {
+  if (type === 'LIVE' || type === 'LIVE_MENTORING' || type === 'CHALLENGE') {
     return `${dayjs(startDate).format(YY_MM_DD)} ~ ${dayjs(endDate).format(YY_MM_DD)}`;
   }
   return undefined;

@@ -12,6 +12,11 @@ vi.mock('@/api/leadManagement', () => ({
     magnetId: number,
     options?: { enabled?: boolean },
   ) => useMagnetApplicationByMagnetIdQueryMock(magnetId, options),
+  // 삭제는 이 파일이 보는 대상이 아니지만, 목에 없으면 페이지가 렌더 중 죽는다.
+  useDeleteMagnetApplicationsMutation: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+  }),
 }));
 
 // downloadCsv 호출을 가로채 정렬·필터된 행이 전달되는지 검증한다.

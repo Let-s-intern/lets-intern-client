@@ -5,15 +5,23 @@ import {
   useMentorFeedbackSlotsQuery,
 } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { getMentorColor } from '../constants/colors';
+import { getMentorColor, LIVE_MENTORING_COLOR } from '../constants/colors';
 import { buildReservationBlocks } from '../reservation/ui/ReservationCalendarView';
 import ReservationDetailModal from '../reservation/ui/ReservationDetailModal';
+import LiveMentoringReservationRescheduleModal from '../reservation/ui/LiveMentoringReservationRescheduleModal';
 import ReservationListView from '../reservation/ui/ReservationListView';
 import ReservationRescheduleModal from '../reservation/ui/ReservationRescheduleModal';
 import ViewToggle, { type ReservationView } from '../reservation/ui/ViewToggle';
+import {
+  toChallengeRow,
+  toLiveMentoringRow,
+  type ReservationRow,
+} from '../reservation/utils/reservationRow';
 import {
   sortReservations,
   type SortKey,
@@ -27,6 +35,14 @@ import {
   shiftWeek,
 } from '../weekly-calendar/weekUtils';
 import { buildSlotBlocks } from './buildSlotBlocks';
+
+/**
+ * 1대1 예약 조회 크기.
+ *
+ * 멘토별로 나눠 부르지 않고 한 번에 받아 화면에서 가른다. 태그의 "예정 N" 은 멘토
+ * 전원의 건수라 어차피 전체가 필요하다.
+ */
+const LIVE_MENTORING_PAGE_SIZE = 1000;
 
 /**
  * 멘토 스케줄 — 멘토를 태그로 나열하고, 선택한 1명의 스케줄을 캘린더/리스트로 본다.
@@ -45,11 +61,11 @@ export default function MentorScheduleView() {
     key: 'dateTime',
     direction: 'desc',
   });
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
-    null,
-  );
+  const [selectedRow, setSelectedRow] = useState<ReservationRow | null>(null);
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
+  const [liveMentoringRescheduleTarget, setLiveMentoringRescheduleTarget] =
+    useState<AdminLiveMentoringReservation | null>(null);
 
   const { data: mentorData } = useAdminUserMentorListQuery();
   const mentors = useMemo(
@@ -62,17 +78,29 @@ export default function MentorScheduleView() {
   const { data: reservations, isLoading: reservationsLoading } =
     useAdminFeedbackListQuery();
 
-  // 앞으로 할(예정) 예약 건수 = 시작이 현재 이후인 예약.
+  // 1대1 예약도 같은 그리드에 그린다. 멘토 필터 없이 전체를 받아 화면에서 가른다.
+  const { data: liveMentoringData, isLoading: liveMentoringLoading } =
+    useAdminLiveMentoringReservationsQuery({ size: LIVE_MENTORING_PAGE_SIZE });
+
+  const liveMentoringReservations = useMemo(
+    () => liveMentoringData?.reservationList ?? [],
+    [liveMentoringData],
+  );
+
+  // 앞으로 할(예정) 예약 건수 = 시작이 현재 이후인 예약. 두 유형을 함께 센다.
   const upcomingCountByMentor = useMemo(() => {
     const nowMs = Date.now();
     const map = new Map<number, number>();
-    (reservations ?? []).forEach((r) => {
-      if (new Date(r.startDate).getTime() >= nowMs) {
-        map.set(r.mentorId, (map.get(r.mentorId) ?? 0) + 1);
-      }
-    });
+    const countUp = (mentorId: number, startDate: string | null) => {
+      if (!startDate || new Date(startDate).getTime() < nowMs) return;
+      map.set(mentorId, (map.get(mentorId) ?? 0) + 1);
+    };
+    (reservations ?? []).forEach((r) => countUp(r.mentorId, r.startDate));
+    liveMentoringReservations.forEach((r) =>
+      countUp(r.mentorId, r.reservationStartAt),
+    );
     return map;
-  }, [reservations]);
+  }, [reservations, liveMentoringReservations]);
 
   // 멘토별 오픈 슬롯 건수(현재 이후). BE 집계 API 1콜로 태그에 표시.
   const nowIso = useMemo(() => dayjs().format('YYYY-MM-DDTHH:mm:ss'), []);
@@ -101,9 +129,19 @@ export default function MentorScheduleView() {
   );
 
   // 선택 멘토의 예약(전체 기간). 리스트뷰·캘린더 예약 블록에 쓴다.
-  const mentorReservations = useMemo(
+  const mentorFeedbacks = useMemo(
     () => (reservations ?? []).filter((r) => r.mentorId === selectedMentorId),
     [reservations, selectedMentorId],
+  );
+
+  const mentorReservations = useMemo<ReservationRow[]>(
+    () => [
+      ...mentorFeedbacks.map(toChallengeRow),
+      ...liveMentoringReservations
+        .filter((r) => r.mentorId === selectedMentorId)
+        .map(toLiveMentoringRow),
+    ],
+    [mentorFeedbacks, liveMentoringReservations, selectedMentorId],
   );
 
   const sortedMentorReservations = useMemo(
@@ -139,7 +177,7 @@ export default function MentorScheduleView() {
     const reservedBlocks = buildReservationBlocks(
       mentorReservations,
       weekStart,
-      setSelectedFeedbackId,
+      setSelectedRow,
     );
     return [...openBlocks, ...reservedBlocks];
   }, [selectedMentor, openSlots, mentorReservations, weekStart]);
@@ -232,7 +270,17 @@ export default function MentorScheduleView() {
                         mentorColor?.border,
                       )}
                     />
-                    예약
+                    챌린지 예약
+                  </span>
+                  <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
+                    <span
+                      className={twMerge(
+                        'h-3 w-3 rounded-sm border',
+                        LIVE_MENTORING_COLOR.bg,
+                        LIVE_MENTORING_COLOR.border,
+                      )}
+                    />
+                    1대1 예약
                   </span>
                   <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
                     <span className="border-neutral-80 bg-neutral-95 h-3 w-3 rounded-sm border" />
@@ -247,9 +295,10 @@ export default function MentorScheduleView() {
               reservations={sortedMentorReservations}
               sort={sort}
               onToggleSort={toggleSort}
-              onView={setSelectedFeedbackId}
+              onView={setSelectedRow}
               onReschedule={setRescheduleTarget}
-              isLoading={reservationsLoading}
+              onLiveMentoringReschedule={setLiveMentoringRescheduleTarget}
+              isLoading={reservationsLoading || liveMentoringLoading}
               emptyMessage="이 멘토의 예약 내역이 없습니다."
             />
           )}
@@ -262,22 +311,31 @@ export default function MentorScheduleView() {
 
       {/* 예약 상세 → 예약 변경 전환 (예약탭과 동일 흐름) */}
       <ReservationDetailModal
-        feedbackId={selectedFeedbackId}
-        onClose={() => setSelectedFeedbackId(null)}
+        row={selectedRow}
+        onClose={() => setSelectedRow(null)}
         onReschedule={() => {
-          const target = mentorReservations.find(
-            (r) => r.feedbackId === selectedFeedbackId,
-          );
-          if (target) {
-            setSelectedFeedbackId(null);
+          if (selectedRow == null) return;
+          if (selectedRow.kind === 'CHALLENGE') {
+            const target = selectedRow.feedback;
+            setSelectedRow(null);
             setRescheduleTarget(target);
+            return;
           }
+          const target = selectedRow.reservation;
+          setSelectedRow(null);
+          setLiveMentoringRescheduleTarget(target);
         }}
       />
       {rescheduleTarget && (
         <ReservationRescheduleModal
           feedback={rescheduleTarget}
           onClose={() => setRescheduleTarget(null)}
+        />
+      )}
+      {liveMentoringRescheduleTarget && (
+        <LiveMentoringReservationRescheduleModal
+          reservation={liveMentoringRescheduleTarget}
+          onClose={() => setLiveMentoringRescheduleTarget(null)}
         />
       )}
     </div>

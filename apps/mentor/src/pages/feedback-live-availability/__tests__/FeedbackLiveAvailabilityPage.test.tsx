@@ -60,10 +60,10 @@ describe('FeedbackLiveAvailabilityPage', () => {
     });
     renderPage();
     expect(
-      screen.getByRole('heading', { name: '라이브 피드백 일정 열기' }),
+      screen.getByRole('heading', { name: 'LIVE 가능 시간 등록' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/라이브 피드백을 진행할 수 있는 시간대를 설정하세요./),
+      screen.getByText(/LIVE 피드백을 진행할 수 있는 시간을 등록해 주세요./),
     ).toBeInTheDocument();
   });
 

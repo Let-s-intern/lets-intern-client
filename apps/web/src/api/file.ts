@@ -18,6 +18,12 @@ export const fileType = z.enum([
   'BANNER_MAIN_BOTTOM',
   'COMMON_BANNER',
   'USER_PROFILE',
+  /*
+    서버 `FileType.java:27` — LIVE_MENTORING(18, "program/live-mentoring/").
+    서버에는 있고 클라에만 없었다. zod enum 이라 타입체크는 통과하고 업로드 직전
+    parse 에서 터진다 — 1대1 멘토링 질문의 파일 첨부가 이것 없이는 동작하지 않는다.
+  */
+  'LIVE_MENTORING',
 ]);
 
 export type FileType = z.infer<typeof fileType>;

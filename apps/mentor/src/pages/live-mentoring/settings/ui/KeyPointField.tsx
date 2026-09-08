@@ -1,0 +1,152 @@
+import CharCounter from './CharCounter';
+interface KeyPointFieldProps {
+  bullets: string[];
+  onChange: (bullets: string[]) => void;
+}
+
+/** 시안 기준 소개 문구는 최대 3개다. */
+export const KEY_POINT_MAX = 3;
+/** 필수 항목이라 한 줄은 늘 남는다. 시안의 `소개 문구 *` 가 그 뜻이다. */
+export const KEY_POINT_MIN = 1;
+/** 한 줄 60자. 서버는 500자까지 받지만 상세 페이지 레이아웃이 감당하는 길이가 기준이다. */
+/**
+ * 소개 문구 상한. 서버 DTO 의 `@Size(max = 500)` 을 그대로 쓴다.
+ *
+ * 예전에는 60자였다. 한 줄 입력에 맞춘 값이지 서버 제약이 아니었고, 멘토가 쓰려는
+ * 문장이 중간에 끊겼다. 칸도 여러 줄로 키워 쓴 내용이 한눈에 보이게 한다.
+ */
+export const KEY_POINT_MAX_LENGTH = 500;
+
+const DragHandleIcon = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 20 20"
+    className="h-4 w-4 shrink-0"
+    fill="currentColor"
+  >
+    <path d="M7 4h2v2H7V4Zm4 0h2v2h-2V4ZM7 9h2v2H7V9Zm4 0h2v2h-2V9Zm-4 5h2v2H7v-2Zm4 0h2v2h-2v-2Z" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 20 20"
+    className="h-4 w-4"
+    fill="currentColor"
+  >
+    <path d="M8 2h4l.5 1H16v2H4V3h3.5L8 2ZM5 6h10l-.8 11.1a1 1 0 0 1-1 .9H6.8a1 1 0 0 1-1-.9L5 6Z" />
+  </svg>
+);
+
+/**
+ * 탭 1 · 소개 문구 목록 (시안 `1-핵심소개.png`).
+ *
+ * 범용 `ListField` 를 쓰지 않는 이유는 레이아웃이 다르기 때문이다. 시안은 추가 버튼이
+ * **목록 아래 전체 폭**이고 행마다 글자수 카운터가 붙는다. `ListField` 는 추가 버튼이
+ * 라벨 우측에 있고 카운터 자리가 없다.
+ *
+ * 순서 변경은 드래그가 아니라 위·아래 버튼으로 둔다 — 드래그 라이브러리를 새로 들이지
+ * 않으면서 같은 일을 할 수 있고, 키보드로도 쓸 수 있다. 시안의 핸들 자리에 그대로 둔다.
+ */
+const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
+  /*
+   * 소개 문구는 **한 줄이 항상 보인다.**
+   *
+   * 서버가 빈 배열을 내려주면 예전에는 입력 칸 없이 「소개 문구 추가 +」 만 남아,
+   * 필수 항목인데 쓸 자리가 화면에 없었다. 마지막 한 줄도 지울 수 없게 한다.
+   *
+   * 상태를 미리 채우지는 않는다 — 화면을 열자마자 변경사항이 생겨 실시간 저장이
+   * 아무도 손대지 않은 값을 보내게 된다. 보여줄 때만 한 줄을 세운다.
+   */
+  const rows = bullets.length > 0 ? bullets : [''];
+
+  const replaceAt = (index: number, next: string) =>
+    onChange(rows.map((bullet, i) => (i === index ? next : bullet)));
+
+  const removeAt = (index: number) =>
+    onChange(rows.filter((_, i) => i !== index));
+
+  const move = (index: number, delta: number) => {
+    const target = index + delta;
+    if (target < 0 || target >= rows.length) return;
+    const next = [...rows];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
+  };
+
+  return (
+    <div>
+      <p className="text-xsmall14 text-neutral-10 font-semibold">
+        소개 문구 <span className="text-system-error">*</span>
+      </p>
+      <p className="text-neutral-40 mt-1 text-xs">
+        최대 {KEY_POINT_MAX}개까지 등록할 수 있으며, 작성한 순서대로 표시돼요.
+      </p>
+
+      <ul className="mt-3 flex flex-col gap-2">
+        {rows.map((bullet, index) => (
+          <li
+            key={index}
+            /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
+            data-preview-index={index}
+            className="flex items-center gap-2"
+          >
+            <span className="flex items-center gap-1.5 text-neutral-50">
+              <span className="flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => move(index, -1)}
+                  disabled={index === 0}
+                  aria-label={`${index + 1}번 소개 문구 위로`}
+                  className="text-neutral-50 disabled:opacity-30"
+                >
+                  <DragHandleIcon />
+                </button>
+              </span>
+              <span className="text-xsmall14 text-neutral-20 w-4 text-center font-medium">
+                {index + 1}
+              </span>
+            </span>
+
+            <div className="border-neutral-80 focus-within:border-primary flex flex-1 items-start gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+              <textarea
+                value={bullet}
+                rows={2}
+                maxLength={KEY_POINT_MAX_LENGTH}
+                onChange={(event) => replaceAt(index, event.target.value)}
+                placeholder="멘토링 소개 문구를 입력해주세요"
+                aria-label={`소개 문구 ${index + 1}`}
+                className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 resize-none outline-none"
+              />
+              <CharCounter value={bullet} max={KEY_POINT_MAX_LENGTH} />
+            </div>
+
+            {/* 마지막 한 줄은 지울 수 없다 — 필수 항목이라 빈 목록이 될 수 없다. */}
+            <button
+              type="button"
+              onClick={() => removeAt(index)}
+              disabled={rows.length <= KEY_POINT_MIN}
+              aria-label={`${index + 1}번 소개 문구 삭제`}
+              className="hover:text-system-error shrink-0 text-neutral-50 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <TrashIcon />
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* 시안 기준 추가 버튼은 목록 아래 전체 폭이다. 라벨 옆이 아니다. */}
+      <button
+        type="button"
+        onClick={() => onChange([...rows, ''])}
+        disabled={rows.length >= KEY_POINT_MAX}
+        className="border-primary text-primary text-xsmall14 mt-2 w-full rounded-md border py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
+      >
+        소개 문구 추가 +
+      </button>
+    </div>
+  );
+};
+
+export default KeyPointField;

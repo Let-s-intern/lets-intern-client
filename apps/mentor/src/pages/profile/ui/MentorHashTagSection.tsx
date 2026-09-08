@@ -1,18 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { CategoryTabs } from '@letscareer/ui';
 
-import {
-  useMentorHashTagListQuery,
-  useMyMentorHashTagListQuery,
-  usePutMyMentorHashTag,
-} from '@/api/mentor-hash-tag/mentorHashTag';
+import { useMentorHashTagListQuery } from '@/api/mentor-hash-tag/mentorHashTag';
 import type { MentorHashTagItem } from '@/api/mentor-hash-tag/mentorHashTagSchema';
-import SolidButton from '@/common/button/SolidButton';
-import MentorAlertModal from '@/common/modal/MentorAlertModal';
-import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { twMerge } from '@/lib/twMerge';
 
 const MENTOR_HASH_TAG_TYPE_LABELS: Record<string, string> = {
@@ -24,24 +17,30 @@ const getTypeLabel = (type: string) =>
 
 const ALL_OPTION = { value: 'all', label: '전체' };
 
-export default function MentorHashTagSection() {
+interface MentorHashTagSectionProps {
+  /** 선택된 태그 id. 값의 주인은 `ProfilePage` 다. */
+  selectedIds: ReadonlySet<number>;
+  onChange: (next: Set<number>) => void;
+  /** 내 태그(선택 상태)를 부모가 아직 받아오는 중인지. 미선택 상태가 잠깐 비치는 것을 막는다. */
+  isSelectionLoading: boolean;
+}
+
+/**
+ * 해시태그(노출 필터링) 선택.
+ *
+ * 저장 버튼이 없다 — 프로필 화면의 저장은 하단 플로팅 바 하나뿐이다(LC-3266).
+ * 예전에는 이 섹션이 자기 저장 버튼과 자기 mutation 을 갖고 있어서, 멘토가 "저장"을
+ * 눌러도 해시태그만 빠진 채 저장되는 일이 있었다.
+ */
+export default function MentorHashTagSection({
+  selectedIds,
+  onChange,
+  isSelectionLoading,
+}: MentorHashTagSectionProps) {
   const { data: allTags, isLoading: isAllLoading } =
     useMentorHashTagListQuery();
-  const { data: myTags, isLoading: isMyLoading } =
-    useMyMentorHashTagListQuery();
-  const putMutation = usePutMyMentorHashTag();
-  const { alertProps, showAlert } = useMentorAlert();
 
   const [typeFilter, setTypeFilter] = useState('all');
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
-
-  useEffect(() => {
-    if (!myTags) return;
-    const ids = new Set(myTags.map((tag) => tag.id));
-    setSelectedIds(ids);
-    setSavedIds(ids);
-  }, [myTags]);
 
   const typeOptions = useMemo(() => {
     const uniqueTypes = Array.from(
@@ -64,53 +63,22 @@ export default function MentorHashTagSection() {
   }, [allTags, typeFilter]);
 
   const toggleTag = (id: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    onChange(next);
   };
 
-  const isDirty = useMemo(() => {
-    if (selectedIds.size !== savedIds.size) return true;
-    for (const id of selectedIds) {
-      if (!savedIds.has(id)) return true;
-    }
-    return false;
-  }, [selectedIds, savedIds]);
-
-  const handleSave = async () => {
-    try {
-      await putMutation.mutateAsync({
-        mentorHashTagIdList: Array.from(selectedIds),
-      });
-      setSavedIds(new Set(selectedIds));
-      showAlert({ title: '해시태그가 저장되었습니다.', variant: 'success' });
-    } catch {
-      showAlert({ title: '저장에 실패했습니다.', variant: 'error' });
-    }
-  };
-
-  const isLoading = isAllLoading || isMyLoading;
+  const isLoading = isAllLoading || isSelectionLoading;
 
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
-          해시태그(노출 필터링)
-        </h2>
-        <SolidButton
-          size="xs"
-          onClick={handleSave}
-          disabled={!isDirty || putMutation.isPending}
-        >
-          해시태그 저장
-        </SolidButton>
-      </div>
+      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+        해시태그(노출 필터링)
+      </h2>
 
       {isLoading ? (
         <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
@@ -141,8 +109,6 @@ export default function MentorHashTagSection() {
           </div>
         </div>
       )}
-
-      <MentorAlertModal {...alertProps} />
     </section>
   );
 }

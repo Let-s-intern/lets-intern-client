@@ -1,3 +1,27 @@
+/**
+ * 1대1 라이브 멘토링 예약 세부 정보 (barType === 'live-mentoring' 일 때 존재).
+ *
+ * 챌린지 라이브 피드백(`LiveFeedbackInfo`)과 별개다 — 상품·결제 단위라 회차(th)도,
+ * 출석 상태도 없다. 서버가 결제 완료 확정 건만 내리므로 상태 필드 자체를 두지 않는다.
+ */
+export interface LiveMentoringInfo {
+  /** 신청 id. 예약 1건을 가리키는 서버 키다. */
+  applicationId: number;
+  menteeName: string;
+  /** 멘토 상품명. 멘토당 상품이 하나라 모든 예약에서 같은 값이다. */
+  productName: string;
+  /** "HH:mm" 24시간 형식 */
+  startTime: string;
+  /** "HH:mm" 24시간 형식 */
+  endTime: string;
+  /** 진행시간(분). 30 또는 60. */
+  durationMinutes: number;
+  /** 신청 시 멘토에게 전달할 질문을 작성했는지. */
+  questionWritten: boolean;
+  /** 신청 시 전달 파일을 올렸는지. */
+  attachmentSubmitted: boolean;
+}
+
 /** 라이브 피드백 세부 정보 (barType === 'live-feedback' 일 때 존재, 1:1 세션) */
 export interface LiveFeedbackInfo {
   id: number;
@@ -37,6 +61,7 @@ export interface PeriodBarData {
   /**
    * 서면: 'written-mission-submit'(유저 제출기간) | 'written-review'(운영진 검수기간) | 'written-feedback'(피드백 제출기간)
    * 라이브: 'live-feedback-mentor-open' | 'live-feedback-mentee-open' | 'live-feedback-period' | 'live-feedback'
+   * 1대1: 'live-mentoring'(결제 완료된 1대1 라이브 멘토링 예약 1건)
    */
   barType?:
     | 'written-mission-submit'
@@ -45,7 +70,8 @@ export interface PeriodBarData {
     | 'live-feedback-mentor-open'
     | 'live-feedback-mentee-open'
     | 'live-feedback-period'
-    | 'live-feedback';
+    | 'live-feedback'
+    | 'live-mentoring';
   challengeId: number;
   missionId: number;
   challengeTitle: string;
@@ -67,4 +93,10 @@ export interface PeriodBarData {
   completedCount: number;
   /** barType === 'live-feedback' 일 때만 사용 */
   liveFeedback?: LiveFeedbackInfo;
+  /**
+   * barType === 'live-mentoring' 일 때만 사용.
+   * 1대1은 챌린지가 아니라 회차·제출 집계(`submittedCount` 등)가 모두 0이고,
+   * 화면에 쓰는 값은 전부 여기에 있다.
+   */
+  liveMentoring?: LiveMentoringInfo;
 }

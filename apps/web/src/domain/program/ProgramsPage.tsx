@@ -200,53 +200,47 @@ const Programs = () => {
   }, [searchParams]);
 
   return (
-    <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
-      <h1 className="text-medium24 md:text-xlarge28 mb-8 font-bold md:mb-16">
-        프로그램
-      </h1>
+    <div className="flex gap-16">
+      <FilterSideBar
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        handleClick={handleClickCheckbox}
+        filterType={filterType}
+        filterClassification={filterClassification}
+        filterJob={filterJob}
+        onReset={resetAllFilters}
+      />
 
-      <div className="flex gap-16">
-        <FilterSideBar
-          setIsOpen={setIsOpen}
-          isOpen={isOpen}
-          handleClick={handleClickCheckbox}
-          filterType={filterType}
-          filterClassification={filterClassification}
-          filterJob={filterJob}
-          onReset={resetAllFilters}
-        />
-
-        <main className="flex min-w-0 flex-1 flex-col gap-5 md:gap-6">
-          <div className="flex w-full items-center">
-            <ProgramStatusTabs
-              selected={statusTab}
-              onChange={handleStatusTabChange}
-            />
-            {/* 모바일: 필터 아이콘 */}
-            <button
-              onClick={() => setIsOpen(true)}
-              className="border-neutral-85 relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b p-1 pb-2 pr-5 lg:hidden"
-            >
-              <img
-                className="w-5 md:w-6"
-                src="/icons/filter-round.svg"
-                alt="필터"
-              />
-            </button>
-          </div>
-          <ProgramGrid
-            pageable={pageable}
-            setPageable={setPageable}
-            onResetFilter={resetAllFilters}
+      <main className="flex min-w-0 flex-1 flex-col gap-5 md:gap-6">
+        <div className="flex w-full items-center">
+          <ProgramStatusTabs
+            selected={statusTab}
+            onChange={handleStatusTabChange}
           />
-          <ProgramRecommendCTA />
-          {/* 모바일: 쿠폰 배너 */}
-          <div className="lg:hidden">
-            <CouponBanner />
-          </div>
-          <ProgramBanner />
-        </main>
-      </div>
+          {/* 모바일: 필터 아이콘 */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="border-neutral-85 relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b p-1 pb-2 pr-5 lg:hidden"
+          >
+            <img
+              className="w-5 md:w-6"
+              src="/icons/filter-round.svg"
+              alt="필터"
+            />
+          </button>
+        </div>
+        <ProgramGrid
+          pageable={pageable}
+          setPageable={setPageable}
+          onResetFilter={resetAllFilters}
+        />
+        <ProgramRecommendCTA />
+        {/* 모바일: 쿠폰 배너 */}
+        <div className="lg:hidden">
+          <CouponBanner />
+        </div>
+        <ProgramBanner />
+      </main>
     </div>
   );
 };

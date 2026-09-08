@@ -8,13 +8,14 @@ import {
 } from '@/api/feedback/feedback';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import LiveAvailabilityContent from '@/pages/schedule/live-availability/LiveAvailabilityContent';
+import { useChallengePeriods } from '@/pages/schedule/hooks/useChallengePeriods';
 import { useLiveFeedbackData } from '@/pages/schedule/hooks/useLiveFeedbackData';
 import type { MentorOpenSlot } from '@/pages/schedule/challenge-content/mentorOpenScheduleMock';
 
 import { diffGridAgainstBeSlots, toBeSlotCells } from './utils/slotConverter';
 
 /**
- * 좌측 메뉴 "피드백 > 라이브 피드백 일정 열기" 페이지.
+ * 좌측 메뉴 "LIVE 가능 시간 등록" 페이지.
  * BE `/feedback/mentor/slot` CRUD 와 연결. 모든 챌린지를 합쳐 단일 그리드로 표시한다.
  *
  * - OPEN 슬롯: 그리드에 선택된 상태로 표시, 토글 해제 시 DELETE 대상
@@ -36,6 +37,7 @@ const FeedbackLiveAvailabilityPage = () => {
   });
   const createSlots = useCreateFeedbackMentorSlotsMutation();
   const deleteSlots = useDeleteFeedbackMentorSlotsMutation();
+  const challengePeriods = useChallengePeriods();
 
   const beSlots = slotsQuery.data?.feedbackSlotList ?? [];
 
@@ -126,10 +128,10 @@ const FeedbackLiveAvailabilityPage = () => {
       <div className="flex shrink-0 flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
-            라이브 피드백 일정 열기
+            LIVE 가능 시간 등록
           </h1>
           <p className="text-xsmall14 text-neutral-40">
-            라이브 피드백을 진행할 수 있는 시간대를 설정하세요.
+            LIVE 피드백을 진행할 수 있는 시간을 등록해 주세요.
           </p>
         </div>
         <OutlinedButton
@@ -184,6 +186,7 @@ const FeedbackLiveAvailabilityPage = () => {
               showHeader={false}
               livePeriods={livePeriods}
               slotOpenWindow={slotOpenWindow}
+              challengePeriods={challengePeriods}
             />
           </>
         )}

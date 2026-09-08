@@ -2,7 +2,12 @@
  * 멘토 피드백 모달(라이브 · 서면) 디자인 토큰 — **여기 한 곳에서만** 모양을 관리한다.
  *
  * 사용처: LiveFeedbackReservationModal, FeedbackModal, FeedbackHeader,
- *         FeedbackLayout, MenteeList, MenteeInfo, SidebarGuideLinks, InfoTooltip.
+ *         FeedbackLayout, MenteeList, MenteeInfo, SidebarGuideLinks, InfoTooltip,
+ *         LiveMentoringSubmissionModal(1대1).
+ *
+ * 1대1 모달은 라이브 피드백 예약 모달과 같은 모양으로 보여야 해서 이 토큰을 함께 쓴다.
+ * 다만 그쪽 컴포넌트(FeedbackHeader 등)를 그대로 가져다 쓰지는 않는다 — 멘티 여러 명을
+ * 오가는 모달용이라 1대1 에는 채울 수 없는 값을 요구한다.
  *
  * 규칙:
  * - 라운드 / 색 / 테두리 / 패딩 / 폰트 같은 "모양"은 전부 이 파일에서 고친다.

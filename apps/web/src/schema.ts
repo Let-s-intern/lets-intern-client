@@ -193,9 +193,16 @@ export type VodPriceType = z.infer<typeof vodPriceTypeSchema>;
 export const ProgramTypeEnum = z.enum([
   'CHALLENGE',
   'LIVE',
+  'LIVE_MENTORING',
   'VOD',
   'REPORT',
   'GUIDEBOOK',
+  /*
+    서버 `ProgramType` 에 있는 값이다. `GET /api/v2/user/applications` 가 실제로
+    내려주므로 빠져 있으면 신청현황 응답 전체가 zod parse 에서 터진다.
+    화면에서 어느 탭에 넣을지는 `mypage/application` 이 따로 가른다.
+  */
+  'LIVE_MENTORING',
 ]);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
@@ -203,6 +210,7 @@ export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 export const programTypeList = [
   'CHALLENGE',
   'LIVE',
+  'LIVE_MENTORING',
   'VOD',
   'REPORT',
   'GUIDEBOOK',

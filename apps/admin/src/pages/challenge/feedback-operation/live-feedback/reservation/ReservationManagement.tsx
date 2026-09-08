@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import { useAdminFeedbackListQuery } from '@/api/feedback/feedback';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
+import { useAdminLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
+import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import axios from '@/utils/axios';
 import ReservationFilters from './ui/ReservationFilters';
 import ReservationListView from './ui/ReservationListView';
@@ -19,11 +21,23 @@ const ReservationDetailModal = lazy(
 const ReservationRescheduleModal = lazy(
   () => import('./ui/ReservationRescheduleModal'),
 );
+const LiveMentoringReservationRescheduleModal = lazy(
+  () => import('./ui/LiveMentoringReservationRescheduleModal'),
+);
 import {
   INITIAL_FILTER,
   buildListParams,
+  buildLiveMentoringListParams,
+  includesChallenge,
+  includesLiveMentoring,
   type ReservationFilterState,
 } from './utils/buildListParams';
+import {
+  toChallengeRow,
+  toLiveMentoringRow,
+  type ReservationKind,
+  type ReservationRow,
+} from './utils/reservationRow';
 import {
   filterByMenteeName,
   sortReservations,
@@ -32,6 +46,14 @@ import {
 } from './utils/sortReservations';
 
 const DROPDOWN_PAGE_SIZE = 1000;
+
+/**
+ * 1대1 예약 조회 크기.
+ *
+ * 챌린지 예약 목록은 페이지가 없어 전체를 한 번에 받는다. 두 유형을 한 표에 섞는 이상
+ * 한쪽만 20건에서 잘리면 정렬 결과가 사실과 달라지므로 1대1도 한 번에 받는다.
+ */
+const RESERVATION_PAGE_SIZE = 1000;
 
 /** 프로그램명(챌린지) 드롭다운 소스. OngoingChallenges 와 동일하게 /program/admin?type=CHALLENGE 사용. */
 const challengeDropdownSchema = z.object({
@@ -56,19 +78,31 @@ const useChallengeDropdownQuery = () =>
     },
   });
 
-export default function ReservationManagement() {
-  const [filter, setFilter] = useState<ReservationFilterState>(INITIAL_FILTER);
+interface ReservationManagementProps {
+  /**
+   * 유형 고정. 1대1 전용 하위탭이 같은 화면을 유형만 바꿔 쓴다.
+   * 주면 유형 select 를 감추고 그 유형만 조회한다.
+   */
+  fixedType?: ReservationKind;
+}
+
+export default function ReservationManagement({
+  fixedType,
+}: ReservationManagementProps = {}) {
+  const [filter, setFilter] = useState<ReservationFilterState>(() =>
+    fixedType ? { ...INITIAL_FILTER, type: fixedType } : INITIAL_FILTER,
+  );
   const [view, setView] = useState<ReservationView>('list');
   const [sort, setSort] = useState<SortState>({
     key: 'dateTime',
     direction: 'desc',
   });
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<number | null>(
-    null,
-  );
+  const [selectedRow, setSelectedRow] = useState<ReservationRow | null>(null);
   // 예약 변경 모달 대상. 슬롯 조회·일시 표시에 행 전체(mentorId 포함)가 필요하다.
   const [rescheduleTarget, setRescheduleTarget] =
     useState<FeedbackAdminVo | null>(null);
+  const [liveMentoringRescheduleTarget, setLiveMentoringRescheduleTarget] =
+    useState<AdminLiveMentoringReservation | null>(null);
 
   // 필터 드롭다운 옵션 소스. 예약 목록과 독립적이라 병렬로 패칭된다.
   // 멘토는 전용 API(/admin/user/mentor, 서버 isMentor 필터)를 쓴다.
@@ -76,9 +110,32 @@ export default function ReservationManagement() {
   const { data: challengeData } = useChallengeDropdownQuery();
   const { data: mentorData } = useAdminUserMentorListQuery();
 
+  const withChallenge = includesChallenge(filter.type);
+  const withLiveMentoring = includesLiveMentoring(filter.type);
+
   const listParams = useMemo(() => buildListParams(filter), [filter]);
-  const { data: reservations, isLoading } =
-    useAdminFeedbackListQuery(listParams);
+  const { data: feedbacks, isLoading: isFeedbackLoading } =
+    useAdminFeedbackListQuery(listParams, withChallenge);
+
+  const liveMentoringParams = useMemo(
+    () => buildLiveMentoringListParams(filter),
+    [filter],
+  );
+  const { data: liveMentoringData, isLoading: isLiveMentoringLoading } =
+    useAdminLiveMentoringReservationsQuery(
+      { ...liveMentoringParams, size: RESERVATION_PAGE_SIZE },
+      withLiveMentoring,
+    );
+
+  const isLoading = isFeedbackLoading || isLiveMentoringLoading;
+
+  const reservations = useMemo<ReservationRow[]>(
+    () => [
+      ...(feedbacks ?? []).map(toChallengeRow),
+      ...(liveMentoringData?.reservationList ?? []).map(toLiveMentoringRow),
+    ],
+    [feedbacks, liveMentoringData],
+  );
 
   const challengeOptions = useMemo(
     () =>
@@ -99,7 +156,7 @@ export default function ReservationManagement() {
   );
 
   const visibleReservations = useMemo(() => {
-    const byName = filterByMenteeName(reservations ?? [], filter.menteeName);
+    const byName = filterByMenteeName(reservations, filter.menteeName);
     return sortReservations(byName, sort);
   }, [reservations, filter.menteeName, sort]);
 
@@ -118,6 +175,7 @@ export default function ReservationManagement() {
         onChange={setFilter}
         challengeOptions={challengeOptions}
         mentorOptions={mentorOptions}
+        hideTypeFilter={fixedType != null}
       />
 
       <div className="flex justify-start">
@@ -129,31 +187,35 @@ export default function ReservationManagement() {
           reservations={visibleReservations}
           sort={sort}
           onToggleSort={toggleSort}
-          onView={setSelectedFeedbackId}
+          onView={setSelectedRow}
           onReschedule={setRescheduleTarget}
+          onLiveMentoringReschedule={setLiveMentoringRescheduleTarget}
           isLoading={isLoading}
         />
       ) : (
         <Suspense fallback={null}>
           <ReservationCalendarView
             reservations={visibleReservations}
-            onView={setSelectedFeedbackId}
+            onView={setSelectedRow}
           />
         </Suspense>
       )}
 
       <Suspense fallback={null}>
         <ReservationDetailModal
-          feedbackId={selectedFeedbackId}
-          onClose={() => setSelectedFeedbackId(null)}
+          row={selectedRow}
+          onClose={() => setSelectedRow(null)}
           onReschedule={() => {
-            const target = (reservations ?? []).find(
-              (r) => r.feedbackId === selectedFeedbackId,
-            );
-            if (target) {
-              setSelectedFeedbackId(null);
+            if (selectedRow == null) return;
+            if (selectedRow.kind === 'CHALLENGE') {
+              const target = selectedRow.feedback;
+              setSelectedRow(null);
               setRescheduleTarget(target);
+              return;
             }
+            const target = selectedRow.reservation;
+            setSelectedRow(null);
+            setLiveMentoringRescheduleTarget(target);
           }}
         />
       </Suspense>
@@ -163,6 +225,15 @@ export default function ReservationManagement() {
           <ReservationRescheduleModal
             feedback={rescheduleTarget}
             onClose={() => setRescheduleTarget(null)}
+          />
+        </Suspense>
+      )}
+
+      {liveMentoringRescheduleTarget && (
+        <Suspense fallback={null}>
+          <LiveMentoringReservationRescheduleModal
+            reservation={liveMentoringRescheduleTarget}
+            onClose={() => setLiveMentoringRescheduleTarget(null)}
           />
         </Suspense>
       )}

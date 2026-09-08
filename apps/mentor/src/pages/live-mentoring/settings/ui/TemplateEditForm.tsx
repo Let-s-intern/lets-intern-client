@@ -1,0 +1,620 @@
+import CharCounter from './CharCounter';
+
+/**
+ * 섹션 제목 상한. 서버 DTO 의 `@Size(max = 255)` 를 그대로 쓴다.
+ *
+ * 예전에는 20자였다. 시안 폭에 맞춘 값이지 서버 제약이 아니었고, 멘토가 쓰려는 문장이
+ * 잘려 나갔다(LC-3276). 프론트가 임의로 좁히지 않고 서버가 실제로 거부하는 지점까지
+ * 열어 둔다 — 카운터는 그 지점을 넘겼을 때만 경고한다.
+ */
+const SECTION_TITLE_MAX = 255;
+import type { FocusEvent } from 'react';
+
+import type {
+  LiveMentoringTemplate,
+  TemplateMentoringType,
+  TemplateResultCase,
+  TemplateStrategyPoint,
+} from '@/api/live-mentoring/liveMentoringSchema';
+import { toYoutubeEmbedUrl } from '../../constants';
+import { DETAIL_TABS, type DetailTabId } from '../tabs';
+import DetailSectionHeader from './DetailSectionHeader';
+import KeyPointField from './KeyPointField';
+import MentorProfileCard from './MentorProfileCard';
+import { useMentorHashTagListQuery } from '@/api/mentor-hash-tag/mentorHashTag';
+
+import MentoringTypeCardField from './MentoringTypeCardField';
+import ResultCaseField from './ResultCaseField';
+import WritingGuide from './WritingGuide';
+import ImageField from './ImageField';
+import ListField from './ListField';
+
+interface TemplateEditFormProps {
+  template: LiveMentoringTemplate;
+  /** 지금 열려 있는 탭. 이 탭의 섹션만 렌더한다. */
+  activeTab: DetailTabId;
+  onChange: (partial: Partial<LiveMentoringTemplate>) => void;
+  /** 입력 포커스가 옮겨간 섹션을 알린다 — 미리보기가 해당 섹션으로 따라 스크롤한다. */
+}
+
+const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
+const labelClass = 'mb-1 block text-xs font-medium text-gray-600';
+const inputClass =
+  'focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors';
+
+/**
+ * 카드 헤더의 번호·이름은 탭 정의에서 가져온다.
+ * 두 곳에 따로 적으면 탭 순서를 바꿨을 때 카드 번호만 옛 순서로 남는다.
+ */
+const sectionMeta = (id: DetailTabId) => {
+  const index = DETAIL_TABS.findIndex((tab) => tab.id === id);
+  return {
+    step: index + 1,
+    name: DETAIL_TABS[index].label,
+  };
+};
+
+/**
+ * 노출 토글.
+ *
+ * 라벨은 상태에 따라 바꾸지 않는다. 예전에는 꺼진 상태에서 "노출 안 함 (섹션 전체 제외)"
+ * 으로 글자가 바뀌었는데, 체크박스 옆 문구는 "지금 상태"가 아니라 "체크하면 일어날 일"로도
+ * 읽힌다 — 노출시키려던 사람이 오히려 체크를 하지 않게 된다.
+ *
+ * 그래서 라벨은 "체크 = 노출"로 고정하고, 현재 상태는 배지로 따로 보여준다.
+ */
+const VisibleToggle = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+}) => (
+  <label className="flex cursor-pointer items-center gap-2">
+    {/*
+      네이티브 체크박스를 감춰 두고 스위치를 그린다(LC-3267). 켜짐/꺼짐이 색과 손잡이
+      위치로 한눈에 드러나야 하는 값이라 체크박스보다 스위치가 맞다. 감춰도 실제 입력은
+      체크박스라 키보드 조작(Tab·Space)과 낭독은 그대로다 — `peer` 로 포커스 링을 잇는다.
+    */}
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="peer sr-only"
+    />
+    <span
+      aria-hidden="true"
+      className={`peer-focus-visible:ring-primary/40 relative h-5 w-9 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 ${
+        checked ? 'bg-primary' : 'bg-gray-300'
+      }`}
+    >
+      <span
+        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
+          checked ? 'left-[1.125rem]' : 'left-0.5'
+        }`}
+      />
+    </span>
+    <span className="text-xs text-gray-600">상세 페이지에 노출</span>
+  </label>
+);
+
+/**
+ * 상세 페이지 설정 편집 폼 — 시안 1~5번 섹션만 편집한다.
+ *
+ * 6~10번(플랜·진행 프로세스·후기 목록·다른 멘토·FAQ)은 오픈 설정 값이나 운영 고정값에서
+ * 파생되므로 여기서 다루지 않는다. 후기는 노출 여부만 제어한다.
+ *
+ * 한 번에 한 탭의 섹션만 렌더한다. 폼 상태는 그대로 상위(페이지)가 들고 있어서
+ * 탭을 옮겨도 입력한 값은 남는다 — 렌더에서 빠질 뿐 상태에서 지워지지 않는다.
+ */
+const TemplateEditForm = ({
+  template,
+  activeTab,
+  onChange,
+}: TemplateEditFormProps) => {
+  const { hero, intro, mentoringTypes, strategy, video, results } = template;
+  /*
+   * 태그 목록은 여기서 한 번만 조회해 카드에 내려준다. 카드가 최대 5개라
+   * 카드별 조회는 같은 요청을 다섯 번 만든다.
+   */
+  const { data: hashTags } = useMentorHashTagListQuery();
+
+  // 미리보기 자동 스크롤 — 포커스가 어느 섹션으로 들어왔는지는 캡처 단계에서 한 번에 잡는다.
+  const handleFocusCapture = (e: FocusEvent<HTMLDivElement>) => {
+    const section = (e.target as HTMLElement)
+      .closest<HTMLElement>('[data-section]')
+      ?.getAttribute('data-section');
+  };
+
+  return (
+    <div className="flex flex-col gap-6" onFocusCapture={handleFocusCapture}>
+      {/* 시안 0 · 히어로 */}
+      {activeTab === 'hero' ? (
+        <section className={cardClass} data-section="hero">
+          <DetailSectionHeader
+            {...sectionMeta('hero')}
+            heading="이 멘토링을 간단히 소개해 주세요"
+            description="멘토링에서 다루는 내용과 멘티가 받을 수 있는 도움을 짧게 작성해 주세요."
+          />
+          <KeyPointField
+            bullets={hero.bullets}
+            onChange={(bullets) => onChange({ hero: { bullets } })}
+          />
+
+          <div className="mt-4">
+            <WritingGuide
+              advice="멘토링 내용(주제, 특징, 강점, 추천 대상 등)이나 받을 수 있는 도움을 한 문장씩 작성해 보세요"
+              examples={[
+                '이력서, 자기소개서, 포트폴리오 피드백 및 첨삭',
+                '다양한 커리어 고민에 대한 자유로운 QNA',
+                '사이드 프로젝트 기획, 진행, 성과 만드는 방법',
+              ]}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {/*
+        시안 2 · 멘토 정보는 여기서 편집하지 않는다.
+        프로필 이미지·소속·경력·한마디는 프로필 도메인이 소유하고,
+        합격시킨 인원 수는 서버가 집계한다. 두 곳에서 고칠 수 있으면 어느 쪽이
+        진짜인지 알 수 없어진다. 저장 요청 DTO에도 `intro` 가 없다.
+      */}
+      {activeTab === 'intro' ? (
+        <section className={cardClass} data-section="intro">
+          <DetailSectionHeader
+            {...sectionMeta('intro')}
+            heading="상세 페이지에 표시될 프로필을 확인해 주세요"
+            description="프로필에 등록된 사진과 대표 경력을 사용해요. 수정이 필요하면 프로필에서 변경해 주세요."
+          />
+          <MentorProfileCard intro={intro} />
+        </section>
+      ) : null}
+
+      {/* 시안 2 · 멘토링 유형 */}
+      {activeTab === 'mentoringTypes' ? (
+        <section className={cardClass} data-section="mentoringTypes">
+          <DetailSectionHeader
+            {...sectionMeta('mentoringTypes')}
+            heading="멘토링 유형에 대해 알려주세요"
+            description={
+              '상세 페이지 최상단에 표시할 멘토링 유형에 대한 섹션 제목을 작성해 주세요.\n멘토링으로 멘티에게 어떤 도움을 줄 수 있는지 간략하게 적으면 좋아요.'
+            }
+          />
+
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="text-xsmall14 text-neutral-10 font-semibold">
+                유형 안내 문구
+              </p>
+
+              <div className="mt-3 flex flex-col gap-3">
+                <div>
+                  <label className={labelClass} htmlFor="typesTitle">
+                    멘토링 유형 섹션 제목{' '}
+                    <span className="text-system-error">*</span>
+                  </label>
+                  <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                    <textarea
+                      id="typesTitle"
+                      value={mentoringTypes.title}
+                      maxLength={SECTION_TITLE_MAX}
+                      placeholder="OO멘토에서 자소서, 포트폴리오 도움을 받아보세요"
+                      className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                      onChange={(e) =>
+                        onChange({
+                          mentoringTypes: {
+                            ...mentoringTypes,
+                            title: e.target.value,
+                          },
+                        })
+                      }
+                      rows={2}
+                    />
+                    <CharCounter
+                      value={mentoringTypes.title}
+                      max={SECTION_TITLE_MAX}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClass} htmlFor="typesSubtitle">
+                    멘토링 유형 설명
+                  </label>
+                  <textarea
+                    id="typesSubtitle"
+                    rows={4}
+                    value={mentoringTypes.subtitle}
+                    placeholder="현재 고민에 맞는 멘토링 유형을 살펴보고, 멘토링을 통해 고민을 빠르게 해결하세요"
+                    className="border-neutral-80 focus:border-primary text-xsmall14 text-neutral-10 placeholder:text-neutral-60 w-full resize-none rounded-md border bg-white px-3 py-2.5 outline-none transition-colors"
+                    onChange={(e) =>
+                      onChange({
+                        mentoringTypes: {
+                          ...mentoringTypes,
+                          subtitle: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <MentoringTypeCardField
+              items={mentoringTypes.items}
+              hashTags={hashTags ?? []}
+              onChange={(items) =>
+                onChange({ mentoringTypes: { ...mentoringTypes, items } })
+              }
+            />
+
+            {/*
+              안내는 섹션 아래 하나다. 입력 그룹(유형 안내 문구·멘토링 유형)마다 접이식
+              상자를 두면 같은 화면에 같은 모양이 둘 쌓여 어느 것의 예시인지 흐려진다.
+
+              예시의 라벨은 **위 입력 칸에 적힌 이름 그대로**여야 한다. 다른 말로 적으면
+              어느 칸을 말하는지 다시 짚어봐야 한다.
+            */}
+            <WritingGuide
+              advice={
+                '멘티가 받을 수 있는 도움을 간략하고 명확하게 표현하면 좋아요.\n유형별로 어떤 고민에 적합하고, 멘토링으로 어떤 도움을 받을 수 있는지 구체적으로 작성해 주세요.'
+              }
+              groups={[
+                {
+                  heading: '유형 안내 문구',
+                  items: [
+                    {
+                      label: '멘토링 유형 섹션 제목',
+                      value:
+                        '쥬디 멘토에게는 자소서, 포트폴리오 도움을 받을 수 있어요',
+                    },
+                    {
+                      label: '멘토링 유형 설명',
+                      value:
+                        '현재 고민에 맞는 멘토링 유형을 살펴보고 도움을 요청해보세요',
+                    },
+                  ],
+                },
+                {
+                  heading: '멘토링 소개 카드',
+                  items: [
+                    { label: '유형 선택', value: '포트폴리오' },
+                    {
+                      label: '유형 제목',
+                      value:
+                        '포트폴리오에서 핵심 역량이 잘 드러나는지 점검받고 싶다면',
+                    },
+                    {
+                      label: '부가 설명',
+                      value:
+                        '프로젝트의 핵심 역량과 문제 해결 과정이 잘 드러나도록 포트폴리오 구성을 점검할 수 있어요.',
+                    },
+                    {
+                      label: '관련 태그',
+                      chips: ['구성 점검', '역량 강조', '프로젝트 정리'],
+                    },
+                  ],
+                },
+              ]}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {/* 시안 3 · 취업 성공 전략 */}
+      {activeTab === 'strategy' ? (
+        <section className={cardClass} data-section="strategy">
+          <DetailSectionHeader
+            {...sectionMeta('strategy')}
+            heading="취업 성공 전략을 소개해 주세요"
+            description="멘토링에서 알려줄 전략을 Point 로 나눠 보여줄 수 있어요."
+            muted={!strategy.visible}
+            action={
+              <VisibleToggle
+                checked={strategy.visible}
+                onChange={(visible) =>
+                  onChange({ strategy: { ...strategy, visible } })
+                }
+              />
+            }
+          />
+
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!strategy.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              strategy.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-4">
+              {/*
+                라벨을 따로 세운다. 예전에는 플레이스홀더가 유일한 설명이라, 한 글자만
+                써도 무슨 칸인지 알 수 없었다.
+              */}
+              <div>
+                <label className={labelClass} htmlFor="strategyTitle">
+                  섹션 제목 <span className="text-system-error">*</span>
+                </label>
+                <textarea
+                  id="strategyTitle"
+                  className={inputClass}
+                  maxLength={SECTION_TITLE_MAX}
+                  value={strategy.title}
+                  placeholder="예) OO멘토만의 합격 전략을 제공해요"
+                  onChange={(e) =>
+                    onChange({
+                      strategy: { ...strategy, title: e.target.value },
+                    })
+                  }
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="strategySubtitle">
+                  한 줄 소개
+                </label>
+                <textarea
+                  id="strategySubtitle"
+                  className={inputClass}
+                  value={strategy.subtitle}
+                  placeholder="예) 실제 업무 경험을 바탕으로 지원자만의 합격 전략부터 취업 노하우까지, 멘토링으로 다 알려드립니다."
+                  onChange={(e) =>
+                    onChange({
+                      strategy: { ...strategy, subtitle: e.target.value },
+                    })
+                  }
+                  rows={3}
+                />
+              </div>
+
+              <ListField<TemplateStrategyPoint>
+                label="취업 전략"
+                addLabel="차별점 추가 +"
+                hint={
+                  '취업 전략 카드예요. 입력한 순서대로 표시돼요.\n2~3개 작성을 권장해요.'
+                }
+                items={strategy.points}
+                makeEmpty={() => ({ image: null, title: '', description: '' })}
+                renderItem={(point, update, index) => (
+                  <div className="flex flex-col gap-2">
+                    {/*
+                      미리보기 번호를 이미지와 글에 나눠 붙인다(LC-3282). 하나로 묶으면
+                      세로로 긴 이미지 때문에 항목이 화면보다 커지고, 미리보기가 그
+                      중간을 맞춰 정작 입력 중인 글이 화면 밖에 남는다. 결과 사례와
+                      같은 규칙(`i * 2`, `i * 2 + 1`)을 쓴다.
+                    */}
+                    <div data-preview-index={index * 2}>
+                      <ImageField
+                        label="대표 이미지"
+                        value={point.image}
+                        onChange={(image) => update({ ...point, image })}
+                      />
+                    </div>
+                    <div data-preview-index={index * 2 + 1}>
+                      <span className={labelClass}>차별 전략</span>
+                      <textarea
+                        className={inputClass}
+                        maxLength={SECTION_TITLE_MAX}
+                        value={point.title}
+                        placeholder="예) 2026년 취업 시장 핵심 키워드 5가지"
+                        onChange={(e) =>
+                          update({ ...point, title: e.target.value })
+                        }
+                        rows={2}
+                      />
+                      <span className={`${labelClass} mt-2`}>전략 설명</span>
+                      <textarea
+                        rows={4}
+                        className={inputClass}
+                        value={point.description}
+                        placeholder="예) 3,000개 이상의 이력서/포트폴리오/자소서를 피드백하여 쌓은 경험, 채용공고 분석을 통해 얻은 인사이트, 현직자 멘토의 최신 합격자들과의 만남을 통해 발견한 키워드를 알려드립니다."
+                        onChange={(e) =>
+                          update({ ...point, description: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+                onChange={(points) =>
+                  onChange({ strategy: { ...strategy, points } })
+                }
+              />
+            </div>
+          </fieldset>
+        </section>
+      ) : null}
+
+      {/* 시안 4 · 이렇게 도와드려요 (영상) */}
+      {activeTab === 'video' ? (
+        <section className={cardClass} data-section="video">
+          <DetailSectionHeader
+            {...sectionMeta('video')}
+            heading="멘토링 소개 영상을 등록해 주세요"
+            description="멘토링 방식이나 제공하는 도움을 소개하는 영상을 등록할 수 있어요."
+            muted={!video.visible}
+            action={
+              <VisibleToggle
+                checked={video.visible}
+                onChange={(visible) =>
+                  onChange({ video: { ...video, visible } })
+                }
+              />
+            }
+          />
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!video.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              video.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className={labelClass} htmlFor="videoTitle">
+                  영상 제목
+                </label>
+                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                  <textarea
+                    id="videoTitle"
+                    value={video.title}
+                    maxLength={SECTION_TITLE_MAX}
+                    placeholder="예: 멘토는 이렇게 도와드려요"
+                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    onChange={(e) =>
+                      onChange({ video: { ...video, title: e.target.value } })
+                    }
+                    rows={2}
+                  />
+                  <CharCounter value={video.title} max={SECTION_TITLE_MAX} />
+                </div>
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoSubtitle">
+                  영상 설명
+                </label>
+                <input
+                  id="videoSubtitle"
+                  className={inputClass}
+                  value={video.subtitle}
+                  placeholder="영상에서 확인할 수 있는 내용을 간단히 소개해 주세요"
+                  onChange={(e) =>
+                    onChange({ video: { ...video, subtitle: e.target.value } })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoUrl">
+                  YouTube 영상 링크
+                </label>
+                <input
+                  id="videoUrl"
+                  className={inputClass}
+                  value={video.videoUrl ?? ''}
+                  placeholder="https://www.youtube.."
+                  onChange={(e) =>
+                    onChange({
+                      video: { ...video, videoUrl: e.target.value || null },
+                    })
+                  }
+                  /*
+                   * 붙여넣은 공유 링크를 포커스가 빠질 때 embed 주소로 바꿔 넣는다.
+                   * 값을 조용히 바꾸지 않고 입력창에 그대로 보여줘 무엇이 저장될지 드러낸다.
+                   */
+                  onBlur={(e) => {
+                    const normalized = toYoutubeEmbedUrl(e.target.value);
+                    if (normalized && normalized !== e.target.value) {
+                      onChange({ video: { ...video, videoUrl: normalized } });
+                    }
+                  }}
+                />
+                {video.videoUrl && !toYoutubeEmbedUrl(video.videoUrl) ? (
+                  <p role="alert" className="text-system-error mt-1 text-xs">
+                    YouTube 주소만 넣을 수 있어요. 공유 링크나
+                    youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-neutral-50">
+                    * 공개 또는 일부 공개로 설정된 YouTube 영상 링크를 입력해
+                    주세요.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="videoCaption">
+                  영상 아래 안내 문구
+                </label>
+                <textarea
+                  id="videoCaption"
+                  className={inputClass}
+                  value={video.caption}
+                  placeholder="영상과 함께 안내할 내용이 있다면 입력해 주세요"
+                  onChange={(e) =>
+                    onChange({ video: { ...video, caption: e.target.value } })
+                  }
+                  rows={2}
+                />
+              </div>
+            </div>
+          </fieldset>
+        </section>
+      ) : null}
+
+      {/* 시안 5 · 결과 사례 */}
+      {activeTab === 'results' ? (
+        <section className={cardClass} data-section="results">
+          <DetailSectionHeader
+            {...sectionMeta('results')}
+            heading="멘토링 후 무엇이 달라졌나요?"
+            description="멘티가 기대할 수 있는 변화를 구체적인 전후 사례의 이미지와 설명으로 보여주세요."
+            muted={!results.visible}
+            action={
+              <VisibleToggle
+                checked={results.visible}
+                onChange={(visible) =>
+                  onChange({ results: { ...results, visible } })
+                }
+              />
+            }
+          />
+
+          {/*
+            노출을 끄면 입력을 통째로 잠근다(LC-3267). `fieldset disabled` 는 안쪽 입력을
+            전부 비활성으로 만들고 탭 순서에서도 빼므로, 흐리게만 처리하고 만지게 두는 것보다
+            "지금은 쓰는 자리가 아니다" 가 분명해진다. 노출 스위치는 헤더에 있어 그대로 눌린다.
+          */}
+          <fieldset
+            disabled={!results.visible}
+            className={`m-0 min-w-0 border-0 p-0 ${
+              results.visible ? '' : 'pointer-events-none opacity-45'
+            }`}
+          >
+            <div className="flex flex-col gap-5">
+              <div>
+                <label className={labelClass} htmlFor="resultsTitle">
+                  결과 사례 제목
+                </label>
+                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                  <input
+                    id="resultsTitle"
+                    value={results.title}
+                    maxLength={SECTION_TITLE_MAX}
+                    placeholder="예: 멘토링 후 이렇게 달라졌어요"
+                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    onChange={(e) =>
+                      onChange({
+                        results: { ...results, title: e.target.value },
+                      })
+                    }
+                  />
+                  <CharCounter value={results.title} max={SECTION_TITLE_MAX} />
+                </div>
+              </div>
+
+              <ResultCaseField
+                cases={results.cases}
+                onChange={(cases) =>
+                  onChange({ results: { ...results, cases } })
+                }
+              />
+            </div>
+          </fieldset>
+        </section>
+      ) : null}
+    </div>
+  );
+};
+
+export default TemplateEditForm;

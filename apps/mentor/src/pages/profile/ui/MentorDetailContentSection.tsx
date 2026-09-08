@@ -1,81 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-
-import { usePatchUser, useUserQuery } from '@/api/user/user';
-import SolidButton from '@/common/button/SolidButton';
+import { useUserQuery } from '@/api/user/user';
 import EditorApp, { emptyEditorState } from '@/common/lexical/EditorApp';
-import MentorAlertModal from '@/common/modal/MentorAlertModal';
-import { useMentorAlert } from '@/hooks/useMentorAlert';
 
-export default function MentorDetailContentSection() {
+interface MentorDetailContentSectionProps {
+  /**
+   * 에디터를 다시 그릴 때 쓰는 키. 값이 바뀌면 초기 내용부터 다시 마운트된다.
+   *
+   * `EditorApp` 은 `initialEditorStateJsonString` 만 받는 비제어 컴포넌트라
+   * 바깥에서 값을 되돌려도 화면이 따라오지 않는다. "취소" 를 눌렀을 때 본문만
+   * 옛 내용으로 남는 것을 막으려면 이 방법뿐이다.
+   */
+  resetKey: number;
+  onChange: (jsonString: string) => void;
+}
+
+/**
+ * 프로필 상세페이지 제작(Lexical 에디터).
+ *
+ * 저장 버튼이 없다 — 프로필 화면의 저장은 하단 플로팅 바 하나뿐이다(LC-3266).
+ * 본문은 `PATCH /user` 의 `description` 이라 기본 정보와 같은 요청으로 나간다.
+ */
+export default function MentorDetailContentSection({
+  resetKey,
+  onChange,
+}: MentorDetailContentSectionProps) {
   const { data: user, isLoading } = useUserQuery();
-  const { alertProps, showAlert, showConfirm } = useMentorAlert();
-
-  const [content, setContent] = useState<string | null>(null);
-  const [isDirty, setIsDirty] = useState(false);
-
-  const { mutate: patchUser, isPending } = usePatchUser(
-    () => {
-      setIsDirty(false);
-      showConfirm({
-        title: '상세페이지가 저장되었습니다.',
-        variant: 'success',
-        confirmText: '바로가기',
-        cancelText: '닫기',
-        onConfirm: () => {
-          if (user) {
-            window.open(
-              `${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`,
-              '_blank',
-            );
-          }
-          alertProps.onClose();
-        },
-      });
-    },
-    () => showAlert({ title: '저장에 실패했습니다.', variant: 'error' }),
-  );
-
-  const initialContent = user?.description || emptyEditorState;
-
-  const handleChange = (jsonString: string) => {
-    setContent(jsonString);
-    setIsDirty(jsonString !== initialContent);
-  };
-
-  const handleSave = () => {
-    if (content === null) return;
-    patchUser({ description: content });
-  };
 
   return (
     <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex w-full items-center justify-between md:w-auto md:justify-normal md:gap-2.5">
-          <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
-            프로필 상세페이지 제작
-          </h2>
-          {user && (
-            <a
-              href={`${import.meta.env.VITE_WEB_URL ?? ''}/mentors/${user.userId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary text-xsmall14 hover:text-primary-dark tracking-tight underline underline-offset-2"
-            >
-              바로가기
-            </a>
-          )}
-        </div>
-        <SolidButton
-          size="xs"
-          onClick={handleSave}
-          disabled={!isDirty || isPending}
-          className="hidden md:inline-flex"
-        >
-          상세페이지 저장
-        </SolidButton>
-      </div>
+      {/*
+        바로가기는 여기 두지 않는다. 아직 저장하지 않은 글을 쓰는 중에 눌러 봐야 옛 페이지가
+        열려서, 방금 쓴 내용이 반영되지 않은 것을 보게 된다. 저장에 성공한 뒤에 안내와 함께
+        연다(LC-3277) — `ProfilePage` 의 저장 성공 처리에 있다.
+      */}
+      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
+        프로필 상세페이지 제작
+      </h2>
 
       <div className="mt-4">
         <div className="flex flex-col items-center justify-center py-20 md:hidden">
@@ -88,17 +49,25 @@ export default function MentorDetailContentSection() {
           {isLoading || !user ? (
             <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
           ) : (
+            /*
+             * 마운트 값은 서버 응답에서 **직접** 읽는다.
+             *
+             * 페이지가 들고 있는 저장본을 넘겨받으면 한 렌더 늦는다 — user 가 도착한
+             * 렌더에서 에디터가 먼저 마운트되고, 그 뒤 effect 가 저장본을 채운다.
+             * EditorApp 은 initialEditorStateJsonString 만 읽는 비제어 컴포넌트라
+             * key 가 그대로면 늦게 온 값을 반영하지 않는다. 그래서 저장한 내용이
+             * 새로고침 후 빈 화면으로 보였다.
+             */
             <EditorApp
+              key={resetKey}
               initialEditorStateJsonString={
                 user.description || emptyEditorState
               }
-              onChange={handleChange}
+              onChange={onChange}
             />
           )}
         </div>
       </div>
-
-      <MentorAlertModal {...alertProps} />
     </section>
   );
 }

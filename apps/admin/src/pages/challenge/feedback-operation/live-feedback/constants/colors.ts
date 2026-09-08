@@ -38,3 +38,15 @@ export function getMentorColor(mentorName: string): MentorColor {
   const index = hashString(mentorName) % MENTOR_COLOR_PALETTE.length;
   return MENTOR_COLOR_PALETTE[index];
 }
+
+/**
+ * 1대1 라이브 멘토링 블록 색.
+ *
+ * 멘토별 팔레트(연한 -50 배경)와도, 멘토 스케줄의 오픈 슬롯(회색)·예약 슬롯(인디고)과도
+ * 겹치지 않는 색을 쓴다. 같은 시간대에 챌린지 라이브 피드백과 나란히 놓여도 갈린다.
+ */
+export const LIVE_MENTORING_COLOR: MentorColor = {
+  bg: 'bg-orange-100',
+  border: 'border-orange-500',
+  text: 'text-orange-900',
+};

@@ -1,5 +1,10 @@
 import { Suspense } from 'react';
 
+import LiveMentoringListPage from '@/domain/live-mentoring/list/LiveMentoringListPage';
+import ProgramCatalogTabs, {
+  CATALOG_QUERY_KEY,
+  MENTORING_CATALOG,
+} from '@/domain/program/section/ProgramCatalogTabs';
 import ProgramsPage from '@/domain/program/ProgramsPage';
 import type { Metadata } from 'next';
 
@@ -27,10 +32,22 @@ export const metadata: Metadata = {
   },
 };
 
-const ProgramPage = () => (
-  <Suspense fallback={null}>
-    <ProgramsPage />
-  </Suspense>
-);
+const ProgramPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) => {
+  const isMentoring =
+    (await searchParams)[CATALOG_QUERY_KEY] === MENTORING_CATALOG;
+
+  return (
+    <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
+      <ProgramCatalogTabs active={isMentoring ? 'mentoring' : 'program'} />
+      <Suspense fallback={null}>
+        {isMentoring ? <LiveMentoringListPage /> : <ProgramsPage />}
+      </Suspense>
+    </div>
+  );
+};
 
 export default ProgramPage;

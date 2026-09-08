@@ -3,7 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 
 import type { FeedbackTabKey } from '../ui/FeedbackTabs';
 
-const VALID_TABS: FeedbackTabKey[] = ['all', 'written', 'live'];
+const VALID_TABS: FeedbackTabKey[] = [
+  'all',
+  'written',
+  'live',
+  'live-mentoring',
+];
 const QUERY_KEY = 'tab';
 
 function parseTab(raw: string | null): FeedbackTabKey {
@@ -13,7 +18,7 @@ function parseTab(raw: string | null): FeedbackTabKey {
 }
 
 /**
- * `?tab=all|written|live` URL query와 동기화되는 피드백 탭 상태.
+ * `?tab=all|written|live|live-mentoring` URL query와 동기화되는 피드백 탭 상태.
  *
  * - 잘못된 값(또는 누락)이면 'all'로 폴백한다.
  * - 탭 전환 시 `replace`로 history pollution 방지.

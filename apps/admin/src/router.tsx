@@ -108,6 +108,9 @@ const AdminMentorRegisterPage = lazy(
 const AdminMentorKeywordPage = lazy(
   () => import('./pages/pages/user/AdminMentorKeywordPage'),
 );
+const AdminLiveMentoringPage = lazy(
+  () => import('./pages/pages/live-mentoring/AdminLiveMentoringPage'),
+);
 
 const Coupons = lazy(() => import('./pages/pages/coupon/Coupons'));
 const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
@@ -153,6 +156,10 @@ const AdminLiveReviewListPage = lazy(
 );
 const AdminLiveMentoringReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminLiveMentoringReviewListPage'),
+);
+const AdminOneOnOneMentoringReviewListPage = lazy(
+  () =>
+    import('./domain/admin/pages/review/AdminOneOnOneMentoringReviewListPage'),
 );
 const AdminMissionReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminMissionReviewListPage'),
@@ -395,6 +402,10 @@ export const router = createBrowserRouter([
         element: withSuspense(<AdminLiveMentoringReviewListPage />),
       },
       {
+        path: '/review/live-mentoring-1on1',
+        element: withSuspense(<AdminOneOnOneMentoringReviewListPage />),
+      },
+      {
         path: '/review/mission',
         element: withSuspense(<AdminMissionReviewListPage />),
       },
@@ -433,6 +444,10 @@ export const router = createBrowserRouter([
       {
         path: '/mentors/:mentorId',
         element: withSuspense(<AdminMentorDetailPage />),
+      },
+      {
+        path: '/live-mentoring',
+        element: withSuspense(<AdminLiveMentoringPage />),
       },
 
       // SSO

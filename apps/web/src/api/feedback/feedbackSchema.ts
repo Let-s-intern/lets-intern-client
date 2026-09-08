@@ -1,7 +1,18 @@
 import { AttendanceResultEnum } from '@/schema';
 import { z } from 'zod';
 
-export const feedbackStatusSchema = z.enum(['RESERVED', 'COMPLETED']);
+/**
+ * BE `FeedbackStatus` 1:1 매핑. 멘토·어드민 앱의 같은 이름 스키마와 값이 같아야 한다.
+ *
+ * `CANCELED` 가 빠져 있었다. 서버는 취소된 세션에도 상세를 그대로 내려주므로,
+ * 값이 없으면 `feedbackDetailSchema.parse` 가 던져 입장 화면이 "일정 확인 중" 에서
+ * 멈춰 있었다. 라이브 세션에서는 예약 취소와 미제출이 모두 이 값으로 들어온다.
+ */
+export const feedbackStatusSchema = z.enum([
+  'RESERVED',
+  'COMPLETED',
+  'CANCELED',
+]);
 
 export const attendanceStatusSchema = z.enum([
   'PRESENT',
@@ -89,6 +100,14 @@ export const feedbackDetailSchema = z.object({
     mentorName: z.string().nullish(),
     preQuestion: z.string().nullish(),
     attendanceUrl: z.string().nullish(),
+    /**
+     * 멘티의 경험정리(미션) 제출 상태. 라이브 세션의 "취소·진행불가" 판정 근거다.
+     *
+     * `status` 로는 가릴 수 없다 — 서버 `Feedback.status` 는 RESERVED 로 만들어진 뒤
+     * 대입하는 곳이 없다. 멘토 앱 `liveFeedbackStatus.ts` 도 LATE·ABSENT 를 최우선으로
+     * '취소' 처리한다. 미션이 없거나 제출 행이 없으면 null 이다.
+     */
+    attendanceStatus: attendanceStatusSchema.nullish(),
   }),
 });
 

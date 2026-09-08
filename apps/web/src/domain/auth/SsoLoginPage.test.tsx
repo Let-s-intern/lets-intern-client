@@ -176,11 +176,17 @@ describe('SsoLoginPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('service_name 쿼리가 없으면 "로그인"만 제목으로 보여준다 — 렛츠커리어라는 문구는 어디에도 없다', () => {
+  it('service_name 쿼리가 없으면 "로그인"만 제목으로 보여준다', () => {
     renderSsoLoginPage();
 
-    expect(screen.getByRole('heading', { name: '로그인' })).toBeInTheDocument();
-    expect(screen.queryByText(/렛츠커리어/)).not.toBeInTheDocument();
+    /*
+      제목에 서비스 이름을 붙이지 않는다는 것이 이 테스트의 취지다.
+      화면 전체에서 '렛츠커리어'를 찾으면 부제("렛츠커리어 계정으로 계속합니다")까지
+      걸린다. 부제는 이 창이 무엇을 하는 곳인지 알리는 별도 문구라 있어야 맞다.
+    */
+    const heading = screen.getByRole('heading', { name: '로그인' });
+    expect(heading).toBeInTheDocument();
+    expect(heading.textContent).not.toMatch(/렛츠커리어/);
   });
 
   it('카카오·네이버 소셜 로그인 링크를 렌더하고 redirect_uri를 그대로 실어 보낸다', () => {

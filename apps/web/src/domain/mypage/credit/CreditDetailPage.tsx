@@ -107,7 +107,14 @@ const CreditDetailContent = () => {
           </section>
         )}
 
-        {/* 주문 정보 */}
+        {/*
+          주문 정보.
+
+          1대1 라이브 멘토링은 기간이 아니라 예약 일시로 그린다(분기는
+          `OrderProgramInfo` 안에 있다). 구매 플랜은 결제 상세 응답에 없어
+          넘기지 않는다 — 전용 상세(`/mypage/credit/live-mentoring/{id}`)가
+          신청 API 에서 받아 보여준다.
+        */}
         <OrderProgramInfo
           {...paymentDetail.programInfo}
           accessMethod={paymentDetail.accessMethod}

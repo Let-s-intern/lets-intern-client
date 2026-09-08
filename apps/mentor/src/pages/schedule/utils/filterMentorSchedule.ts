@@ -14,6 +14,10 @@ import type { PeriodBarData } from '../types';
  * - `live-feedback`              — 라이브 피드백 기간 안의 개별 세션 카드
  *                                  (UI상 하단 "시간별 일정" 영역. period 바와 한 묶음으로 동작)
  *
+ * 단독 표시:
+ * - `live-mentoring`             — 결제 완료된 1대1 라이브 멘토링 예약 1건.
+ *                                  챌린지에 속하지 않아 묶어 줄 "기간" 바가 없다.
+ *
  * 제외 (멘토 행동 외):
  * - `written-mission-submit` (유저 제출)
  * - `written-review` (운영진 검수)
@@ -31,10 +35,24 @@ export const MENTOR_ACTION_PERIOD_BAR_TYPES = [
 /**
  * 캘린더에 노출 허용되는 모든 barType.
  * `live-feedback` 세션 카드는 `live-feedback-period`의 세부 표현이므로 함께 표시한다.
+ * `live-mentoring` 은 상위 기간 바 없이 예약 카드 하나로 표시한다.
  */
 export const MENTOR_VISIBLE_BAR_TYPES = [
   ...MENTOR_ACTION_PERIOD_BAR_TYPES,
   'live-feedback',
+  'live-mentoring',
+] as const;
+
+/**
+ * 태그 네비게이션("다음 일정")이 한 건으로 세는 barType.
+ *
+ * 기간 3종에 `live-mentoring` 을 더한다 — 1대1에는 여러 예약을 묶어 줄 기간 바가 없어
+ * 예약 자체가 이동 단위다. (`live-feedback` 세션은 `live-feedback-period` 가 대신 세므로
+ * 여기에 넣지 않는다. 넣으면 한 기간에서 세션 수만큼 순환한다.)
+ */
+export const MENTOR_NAVIGABLE_BAR_TYPES = [
+  ...MENTOR_ACTION_PERIOD_BAR_TYPES,
+  'live-mentoring',
 ] as const;
 
 export type MentorActionPeriodBarType =
@@ -51,6 +69,14 @@ export function isMentorVisibleBar(bar: PeriodBarData): boolean {
 export function isMentorActionPeriodBar(bar: PeriodBarData): boolean {
   if (!bar.barType) return false;
   return (MENTOR_ACTION_PERIOD_BAR_TYPES as readonly string[]).includes(
+    bar.barType,
+  );
+}
+
+/** 단일 바가 태그 네비게이션 이동 단위인지 판별 */
+export function isMentorNavigableBar(bar: PeriodBarData): boolean {
+  if (!bar.barType) return false;
+  return (MENTOR_NAVIGABLE_BAR_TYPES as readonly string[]).includes(
     bar.barType,
   );
 }

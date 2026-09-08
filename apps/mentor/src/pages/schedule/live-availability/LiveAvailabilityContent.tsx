@@ -16,6 +16,10 @@ import {
   type ScheduleWindow,
   isWithinWindow,
 } from '../data/feedbackScheduleRules';
+import {
+  type ChallengePeriod,
+  toChallengePeriodCellKeys,
+} from './utils/challengePeriod';
 
 // TODO: 실제 운영진 문의 링크로 교체 (예: 슬랙 채널, 카카오톡 고객센터, 내부 요청 폼 등)
 const OPS_CONTACT_URL =
@@ -71,6 +75,13 @@ const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
  * (2026-08-14 운영 문의).
  */
 const TIME_SLOTS = SLOT_START_TIMES;
+
+/**
+ * 챌린지 기간 셀 안내. 슬롯을 막지 않으므로 "선택할 수 없다"고 쓰지 않는다 —
+ * 열 수는 있고, 다만 1대1 신청이 들어오지 않는다는 사실만 알린다.
+ */
+const CHALLENGE_PERIOD_NOTICE =
+  '이 기간은 챌린지 참여자 우선이라 1대1 신청은 받지 않아요.';
 
 /** 안내 배너 앞에 붙는 정보 아이콘 */
 const InfoIcon = () => (
@@ -153,6 +164,22 @@ function toInitialSet(slots: MentorOpenSlot[]): Set<string> {
   return new Set(slots.map((slot) => toKey(slot.date, slot.time)));
 }
 
+/**
+ * 이미 지난 시간대인가.
+ *
+ * 그리드는 주 단위로 앞뒤를 오갈 수 있어 지난 날짜·오늘 지난 시간이 그대로 보인다.
+ * 막지 않으면 멘토가 과거 슬롯을 열 수 있고, 서버도 거르지 않아 그대로 저장된다.
+ *
+ * 멘티가 그 슬롯을 예약할 수는 없다 — 노출용 조회에 24시간 리드타임 필터가 있다.
+ * 그래서 남는 피해는 의미 없는 슬롯이 쌓이는 것과, 멘토가 잘못 열었다는 사실을
+ * 끝까지 모른다는 것이다.
+ */
+function isPastCell(date: string, time: string, now: Date): boolean {
+  const cellStart = new Date(`${date}T${time}`);
+  if (Number.isNaN(cellStart.getTime())) return false;
+  return cellStart.getTime() < now.getTime();
+}
+
 export interface LiveAvailabilityContentProps {
   initialSlots: MentorOpenSlot[];
   /**
@@ -209,6 +236,14 @@ export interface LiveAvailabilityContentProps {
    * 미지정/`null`(BE 미션 일자 미반영)이면 게이팅하지 않는다(현행 유지 — forward-compatible).
    */
   slotOpenWindow?: ScheduleWindow | null;
+  /**
+   * 멘토가 배정된 챌린지의 진행 기간 — 겹치는 셀에 음영과 안내를 붙인다.
+   *
+   * 이 기간의 슬롯은 서버가 1대1 예약 가능 목록에서 제외한다. 슬롯을 **막지는
+   * 않는다** — 챌린지 피드백에 쓰이는 슬롯이라 막으면 챌린지 수용력이 줄어든다.
+   * 열되 무슨 일이 벌어지는지 보여준다.
+   */
+  challengePeriods?: ChallengePeriod[];
 }
 
 /**
@@ -232,6 +267,7 @@ const LiveAvailabilityContent = ({
   onOpenReservation,
   livePeriods = [],
   slotOpenWindow,
+  challengePeriods = [],
 }: LiveAvailabilityContentProps) => {
   const { alertProps, showConfirm } = useMentorAlert();
 
@@ -368,6 +404,32 @@ const LiveAvailabilityContent = ({
     return set;
   }, [reservedSlots]);
 
+  /**
+   * 챌린지 기간에 걸리는 셀 key 집합 — 음영·안내 표시용.
+   * 보이는 주만 펼치므로 챌린지가 몇 개든 `days × times` 를 넘지 않는다.
+   */
+  const challengePeriodKeys = useMemo(
+    () => toChallengePeriodCellKeys(challengePeriods, dayStrs, TIME_SLOTS),
+    [challengePeriods, dayStrs],
+  );
+
+  /**
+   * 이미 지난 셀 key 집합 — 새로 고르지 못하게 막고 비활성으로 그린다.
+   *
+   * 렌더 시점의 시각으로만 계산한다. 슬롯은 30분 단위라 초 단위로 다시 그릴 이유가
+   * 없고, 주를 넘기거나 셀을 누르면 어차피 다시 계산된다.
+   */
+  const pastKeys = useMemo(() => {
+    const now = currentNow();
+    const set = new Set<string>();
+    for (const date of dayStrs) {
+      for (const time of TIME_SLOTS) {
+        if (isPastCell(date, time, now)) set.add(toKey(date, time));
+      }
+    }
+    return set;
+  }, [dayStrs]);
+
   const selectedCount = selectedKeys.size;
 
   /** 마지막 저장 시점 대비 변경된(추가/삭제된) 셀 개수 — "변경사항 N개"·되돌리기 노출용 */
@@ -390,6 +452,11 @@ const LiveAvailabilityContent = ({
     // 다른 챌린지 점유 또는 현재 챌린지에서 이미 신청 완료된 슬롯은 토글 불가
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
+    /*
+      지난 시간은 손대지 않는다. 이미 열려 있던 것도 마찬가지다 — 지금보다 과거에
+      예약이 잡힐 일이 없으니 고칠 이유가 없다.
+    */
+    if (pastKeys.has(key)) return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -416,6 +483,8 @@ const LiveAvailabilityContent = ({
     const key = toKey(date, time);
     if (blockedMap.has(key) || appliedMap.has(key) || reservedSet.has(key))
       return;
+    // 드래그로 훑어도 지난 칸은 건너뛴다. 방향과 무관하다.
+    if (pastKeys.has(key)) return;
 
     setSelectedKeys((prev) => {
       const next = new Set(prev);
@@ -430,7 +499,18 @@ const LiveAvailabilityContent = ({
     });
   };
 
+  /*
+    이번 주보다 앞으로는 못 간다. 지난 주는 전부 비활성 회색이라 볼 것도 고칠 것도
+    없는데, 넘어갈 수 있으면 빈 화면만 계속 나와 길을 잃는다.
+  */
+  const currentWeekStart = useMemo(
+    () => startOfWeek(currentNow(), { weekStartsOn: 1 }),
+    [],
+  );
+  const canGoPrevWeek = weekStart > currentWeekStart;
+
   const handlePrevWeek = () => {
+    if (!canGoPrevWeek) return;
     setWeekStart((prev) => addDays(prev, -7));
   };
 
@@ -584,8 +664,9 @@ const LiveAvailabilityContent = ({
             <button
               type="button"
               onClick={handlePrevWeek}
+              disabled={!canGoPrevWeek}
               aria-label="이전 주"
-              className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+              className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-75 disabled:hover:text-neutral-75 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
             >
               ‹
             </button>
@@ -620,11 +701,26 @@ const LiveAvailabilityContent = ({
               예약 완료
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-primary-15 border-primary-40 h-3 w-3 rounded-[3px] border" />
+              <span className="bg-primary-10 border-primary h-3 w-3 rounded-[3px] border" />
               변경사항
             </span>
+            {challengePeriodKeys.size > 0 && (
+              <span className="flex items-center gap-1.5">
+                <span className="bg-requirement/10 border-requirement h-3 w-3 rounded-[3px] border" />
+                챌린지 기간
+              </span>
+            )}
           </div>
         </div>
+
+        {challengePeriodKeys.size > 0 && (
+          <p
+            role="note"
+            className="text-xxsmall12 text-neutral-40 bg-neutral-95 mb-3 break-keep rounded-md px-3 py-2"
+          >
+            {CHALLENGE_PERIOD_NOTICE} 이 시간에도 일정은 그대로 열 수 있어요.
+          </p>
+        )}
 
         <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
           <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
@@ -794,6 +890,9 @@ const LiveAvailabilityContent = ({
 
                   if (blocker) {
                     const isLocked = !!blocker.menteeName;
+                    const canSwap =
+                      !!onSwapFromOtherChallenge &&
+                      blocker.challengeId !== undefined;
                     const handleBlockerClick = () => {
                       if (isLocked) {
                         handleAppliedSlotClick({
@@ -805,11 +904,7 @@ const LiveAvailabilityContent = ({
                         });
                         return;
                       }
-                      if (
-                        !onSwapFromOtherChallenge ||
-                        blocker.challengeId === undefined
-                      )
-                        return;
+                      if (!canSwap) return;
                       showConfirm({
                         title: '이 일정을 지금 챌린지로 옮길까요?',
                         description: `현재 '${blocker.challengeTitle ?? '다른 챌린지'}'가 점유한 시간대입니다.`,
@@ -836,9 +931,16 @@ const LiveAvailabilityContent = ({
                         title={
                           isLocked
                             ? `${blocker.menteeName}님 신청 완료 — 클릭해 안내 확인`
-                            : blocker.challengeTitle
+                            : /*
+                               * 스왑 콜백을 넘기지 않으면 클릭해도 아무 일이 없다.
+                               * 1대1 라이브 멘토링처럼 이전이 계약에 없는 화면에서
+                               * "클릭 시 이동"이라고 적으면 눌러도 반응이 없는 것처럼 읽힌다.
+                               */
+                              canSwap
                               ? `${blocker.challengeTitle} 일정 · 클릭 시 현재 챌린지로 이동`
-                              : '다른 챌린지 일정'
+                              : blocker.challengeTitle
+                                ? `${blocker.challengeTitle}(으)로 이미 열어 둔 시간이라 선택할 수 없습니다`
+                                : '다른 일정이 점유한 시간입니다'
                         }
                         className={`border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 border-b border-r px-2 py-1.5 text-center font-medium transition-opacity last:border-r-0 hover:opacity-70 ${
                           isLocked ? 'opacity-80' : ''
@@ -854,9 +956,39 @@ const LiveAvailabilityContent = ({
                             </span>
                           </span>
                         ) : (
-                          '다른 일정'
+                          // 왜 못 고르는지가 셀에서 바로 보여야 한다 — 사유를 모르면
+                          // 멘토는 "왜 여기만 안 눌리지"로 읽는다.
+                          <span className="block truncate">
+                            {blocker.challengeTitle ?? '다른 일정'}
+                          </span>
                         )}
                       </button>
+                    );
+                  }
+
+                  /*
+                    지난 칸은 이미 열려 있어도 회색 하나로 통일한다.
+
+                    예전에는 열려 있던 지난 슬롯만 파란 "예약 가능" 으로 남겨 해제할 수
+                    있게 뒀는데, 지난 시간에 예약을 받는 것처럼 읽혔다. 지금보다 과거에
+                    예약이 잡힐 일이 없으니 고칠 이유도 없다.
+
+                    글자도 넣지 않는다. 지난 구간이 통째로 회색이라 그 경계가 곧 현재
+                    시각이고, 회색은 범례의 "예약 불가능" 과 같은 값이다.
+                  */
+                  if (pastKeys.has(key)) {
+                    return (
+                      <div
+                        key={`${time}-${dayIndex}`}
+                        title="이미 지난 시간입니다"
+                        aria-disabled="true"
+                        /*
+                          구분선을 흰색으로 둔다. 배경과 같은 neutral-90 이면 선이
+                          배경에 묻혀 회색 덩어리 하나로 보이고, 어느 칸이 어느
+                          시간인지 짚을 수 없다.
+                        */
+                        className="bg-neutral-90 border-b border-r border-white px-2 py-2 last:border-r-0"
+                      />
                     );
                   }
 
@@ -864,16 +996,38 @@ const LiveAvailabilityContent = ({
                   // 선택됨 + 기존 저장 슬롯 → "예약 가능"
                   // 미선택 → 빈 셀 (예약 불가능 상태 없음)
                   const isChanged = isSelected && changedKeys.has(key);
+                  /*
+                   * 챌린지 기간 — 서버가 이 시간대 슬롯을 1대1 예약 가능 목록에서
+                   * 뺀다. 클릭은 그대로 되고 표시만 달라진다.
+                   */
+                  const inChallengePeriod = challengePeriodKeys.has(key);
+                  /*
+                    변경사항과 예약 가능은 primary-15 / primary-10 이었다. 두 값이
+                    #E3E5FB · #EDEEFE 라 나란히 놓아도 구분이 안 됐다. 변경사항을
+                    primary-30 으로 올리고 테두리를 primary 로 세워 대비를 만든다.
+
+                    챌린지 기간은 회색이 아니라 빨강 계열이다. 이 시간대는 서버가 1대1
+                    예약 가능 목록에서 빼기 때문에 "열어도 예약이 안 붙는" 자리다.
+                    회색으로 두면 다른 비활성 셀과 섞여 그 사실이 눈에 안 띈다.
+                    배경은 requirement 를 옅게 깔고 글자만 진하게 쓴다 — 셀 전체를
+                    진한 빨강으로 칠하면 한 주에 며칠씩 걸릴 때 화면이 경고판이 된다.
+                  */
                   const cellClass = isChanged
-                    ? 'bg-primary-15 text-primary font-semibold'
+                    ? 'bg-primary-10 text-primary ring-1 ring-inset ring-primary font-semibold'
                     : isSelected
                       ? 'bg-primary-10 text-primary font-semibold'
-                      : 'bg-white text-neutral-40 hover:bg-neutral-95';
+                      : inChallengePeriod
+                        ? 'bg-requirement/10 text-requirement hover:bg-requirement/20'
+                        : 'bg-white text-neutral-40 hover:bg-neutral-95';
 
                   return (
                     <button
                       key={`${time}-${dayIndex}`}
                       type="button"
+                      data-challenge-period={inChallengePeriod || undefined}
+                      title={
+                        inChallengePeriod ? CHALLENGE_PERIOD_NOTICE : undefined
+                      }
                       onMouseDown={(event) => {
                         event.preventDefault();
                         handleCellMouseDown(cellDate, time);

@@ -4,15 +4,16 @@ import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
 /**
- * dev 프록시가 `/api` 요청을 보낼 곳.
+ * dev 프록시가 바라볼 API 서버.
  *
- * 기본값은 배포된 dev 서버다. 로컬 백엔드(`./gradlew bootRun`, 8080)와 붙여 개발하려면
- * `VITE_DEV_API_TARGET=http://localhost:8080` 을 주면 된다 — 루트의 `pnpm local` 이 그렇게 한다.
+ * `.env` 의 `VITE_API_BASE_PATH` 를 그대로 쓴다. 예전에는 이 값이 소스에 하드코딩돼 있어
+ * `.env` 를 로컬 서버로 바꿔도 요청은 계속 배포 서버로 나갔다 — 화면만 보고는 어느 서버에
+ * 붙었는지 알 수 없어 QA 결과를 통째로 오해하게 만든다.
  *
- * 기본값을 localhost 로 두지 않는 이유는, 백엔드를 띄우지 않은 사람이 `pnpm dev` 만으로
- * 화면을 볼 수 있어야 하기 때문이다.
+ * 로컬 백엔드(`./gradlew bootRun`, 8080)와 붙이려면 `.env` 의 `VITE_API_BASE_PATH` 를
+ * `http://localhost:8080` 으로 두면 된다 — 루트의 `pnpm local` 이 그렇게 한다.
  */
-const DEFAULT_DEV_API_TARGET = 'https://letsintern.kr';
+const FALLBACK_API_TARGET = 'https://letsintern.kr';
 
 const REQUIRED_ENV_KEYS = [
   'VITE_API_BASE_PATH',
@@ -33,7 +34,7 @@ export default defineConfig(({ mode }) => {
     );
   }
 
-  const apiTarget = env.VITE_DEV_API_TARGET || DEFAULT_DEV_API_TARGET;
+  const apiTarget = env.VITE_API_BASE_PATH || FALLBACK_API_TARGET;
   // 로컬 백엔드는 자기 자신을 허용 origin 으로 두므로 헤더를 위장할 필요가 없다.
   // 배포 서버로 보낼 때만 origin 검사를 통과하도록 바꿔 끼운다.
   const isLocalTarget = apiTarget.includes('localhost');

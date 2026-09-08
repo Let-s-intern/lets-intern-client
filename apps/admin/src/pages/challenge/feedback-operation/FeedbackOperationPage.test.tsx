@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('./MentorNoticeManagement', () => ({
@@ -13,9 +14,17 @@ vi.mock('./live-feedback/LiveFeedbackTab', () => ({
 
 import FeedbackOperationPage from './FeedbackOperationPage';
 
+// 탭 상태가 URL(?tab=)에 있어 라우터 없이는 useSearchParams 가 던진다.
+const renderPage = () =>
+  render(
+    <MemoryRouter>
+      <FeedbackOperationPage />
+    </MemoryRouter>,
+  );
+
 describe('FeedbackOperationPage', () => {
   it('탭은 공지사항/진행중 챌린지/LIVE 피드백 순으로 렌더된다', () => {
-    render(<FeedbackOperationPage />);
+    renderPage();
     const tabs = screen.getAllByRole('button');
     expect(tabs.map((t) => t.textContent)).toEqual([
       '공지사항',
@@ -25,12 +34,12 @@ describe('FeedbackOperationPage', () => {
   });
 
   it('기본 탭은 공지사항이다', () => {
-    render(<FeedbackOperationPage />);
+    renderPage();
     expect(screen.getByText('공지사항화면')).toBeInTheDocument();
   });
 
   it('LIVE 피드백 탭 클릭 시 lazy 컴포넌트를 렌더한다', async () => {
-    render(<FeedbackOperationPage />);
+    renderPage();
     fireEvent.click(screen.getByText('LIVE 피드백'));
     await waitFor(() =>
       expect(screen.getByText('라이브피드백화면')).toBeInTheDocument(),

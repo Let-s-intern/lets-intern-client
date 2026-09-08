@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode dev",
     "dev:prod": "vite --mode prod",
     "build": "vite build",
     "preview": "vite preview",
@@ -12,7 +12,8 @@
     "lint": "eslint src",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage --passWithNoTests"
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "dev:local": "vite --mode localhost"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -104,6 +105,7 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9",
     "jsdom": "^25.0.0",
+    "@letscareer/mocks": "workspace:*",
     "msw": "^2.14.6",
     "postcss": "^8.5.6",
     "sass": "^1.77.8",

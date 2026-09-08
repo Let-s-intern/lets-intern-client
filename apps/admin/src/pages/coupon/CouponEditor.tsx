@@ -18,7 +18,7 @@ import CouponTargetSection, {
   TargetCondition,
 } from '@/domain/admin/coupon/section/CouponTargetSection';
 import axios from '@/utils/axios';
-import { couponTypeToText, newProgramTypeToText } from '@/utils/convert';
+import { couponProgramTypeToText, couponTypeToText } from '@/utils/convert';
 
 interface CouponEditorProps {
   editorMode: 'create' | 'edit';
@@ -253,7 +253,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                 label="전체"
                 slotProps={{ typography: { sx: { whiteSpace: 'nowrap' } } }}
               />
-              {Object.keys(newProgramTypeToText).map((programType) => (
+              {Object.keys(couponProgramTypeToText).map((programType) => (
                 <FormControlLabel
                   key={programType}
                   value={programType}
@@ -263,7 +263,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                       onChange={(e) => handleProgramTypeChange(e, programType)}
                     />
                   }
-                  label={newProgramTypeToText[programType]}
+                  label={couponProgramTypeToText[programType]}
                   slotProps={{ typography: { sx: { whiteSpace: 'nowrap' } } }}
                 />
               ))}

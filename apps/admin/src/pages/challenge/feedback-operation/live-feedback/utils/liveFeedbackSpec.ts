@@ -62,7 +62,12 @@ export function resolveSessionPhase(
   return 'after';
 }
 
-function attendanceLabel(
+/**
+ * 출석 상태 라벨. 값 자체(`FeedbackAdminVo`)가 아니라 값의 타입만 받는다 —
+ * 1대1 라이브 멘토링도 같은 `FeedbackAttendanceStatus` 값을 쓰므로(§Push1) 같은
+ * 표에서 같은 단어를 쓰게 하려면 특정 VO 에 묶이지 않아야 한다.
+ */
+export function attendanceLabel(
   status: FeedbackAdminVo['mentorStatus'],
 ): AttendanceLabel {
   if (status === 'PRESENT') return '참여';

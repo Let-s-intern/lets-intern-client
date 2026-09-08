@@ -2,9 +2,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { addDays, format, nextMonday } from 'date-fns';
+
 import LiveAvailabilityContent from '../live-availability/LiveAvailabilityContent';
 
-const focusDate = '2026-05-11'; // 월요일
+/*
+  앞으로의 월요일을 쓴다. 고정 날짜를 박으면 그날이 지나는 순간 그 주가 전부
+  "지난 시간" 이 되어 비활성 회색으로 그려지고(LC-3259), 여기서 찾는 "예약 가능"
+  버튼이 사라진다. 가짜 타이머로 고정하는 방법도 있지만 userEvent 와 충돌한다.
+ */
+const focusDate = format(nextMonday(addDays(new Date(), 30)), 'yyyy-MM-dd');
 
 describe('LiveAvailabilityContent', () => {
   it('초기 슬롯 카운트가 푸터에 노출된다', () => {

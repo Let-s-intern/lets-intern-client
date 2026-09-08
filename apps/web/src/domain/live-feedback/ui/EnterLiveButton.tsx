@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { LIVE_ENTER_LEAD_MS } from '../constants/live';
 
 interface Props {
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
   disabled?: boolean;
   isPreparing?: boolean;
   onEnter: () => void;
@@ -47,8 +47,8 @@ function formatCountdown(ms: number): string {
  */
 export function computeButtonState(
   now: number,
-  startDate?: string,
-  endDate?: string,
+  startDate?: string | null,
+  endDate?: string | null,
 ): ButtonState {
   if (!startDate || !endDate) {
     return { phase: 'unknown', label: '일정 확인 중', active: false };

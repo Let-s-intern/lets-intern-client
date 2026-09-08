@@ -2,8 +2,10 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useMediaQuery } from '@mui/material';
 
+import { useLiveMentoringReservationsQuery } from '@/api/live-mentoring/liveMentoring';
 import FeedbackModal from '@/pages/feedback/FeedbackModal';
 import MobileFeedbackPage from '@/pages/feedback/ui/MobileFeedbackPage';
+import LiveMentoringSubmissionModal from '@/pages/live-mentoring/reservation-detail/LiveMentoringSubmissionModal';
 import LiveFeedbackReservationModal from '@/pages/schedule/modal/LiveFeedbackReservationModal';
 import type { PeriodBarData } from '@/pages/schedule/types';
 import FeedbackTabs from './ui/FeedbackTabs';
@@ -62,11 +64,16 @@ const FeedbackManagementPage = () => {
   );
   const missionRangeMap = useWrittenMissionRangeMap(challengeIds);
 
+  // 1대1 라이브 멘토링 예약 — 서버가 결제 완료 확정 건만, 본인 건만 내린다.
+  const { data: liveMentoringReservations } =
+    useLiveMentoringReservationsQuery();
+
   const allRows = useMergedFeedbackRows(
     challengeList,
     allLiveRounds,
     writtenAttendance,
     missionRangeMap,
+    liveMentoringReservations,
   );
 
   const [activeTab, setActiveTab] = useFeedbackTabQuery();
@@ -82,6 +89,11 @@ const FeedbackManagementPage = () => {
     null,
   );
   const [modalBar, setModalBar] = useState<PeriodBarData | null>(null);
+
+  // 1대1 제출물 모달 상태. null 이면 모달이 스스로 닫힌 상태다.
+  const [liveMentoringApplicationId, setLiveMentoringApplicationId] = useState<
+    number | null
+  >(null);
 
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -99,10 +111,24 @@ const FeedbackManagementPage = () => {
       return;
     }
 
+    if (row.source.type === 'live-mentoring') {
+      // 두 모달이 겹치지 않도록 라이브 쪽을 먼저 비운다.
+      setSelectedRound(null);
+      setModalBar(null);
+      setLiveMentoringApplicationId(row.source.reservation.applicationId);
+      return;
+    }
+
     // live → 라이브 모달
+    setLiveMentoringApplicationId(null);
     setSelectedRound(row.source.round);
     setModalBar(row.source.bar);
   };
+
+  const closeLiveMentoringModal = useCallback(
+    () => setLiveMentoringApplicationId(null),
+    [],
+  );
 
   const closeLiveModal = () => {
     setSelectedRound(null);
@@ -168,6 +194,12 @@ const FeedbackManagementPage = () => {
         liveFeedbackBars={selectedRound?.sessionBars ?? allSessionBars}
         onSelectBar={setModalBar}
         roundTh={selectedRound?.th}
+      />
+
+      {/* 1대1 멘티 제출물 모달 — applicationId 가 null 이면 스스로 닫혀 있고 조회도 하지 않는다. */}
+      <LiveMentoringSubmissionModal
+        applicationId={liveMentoringApplicationId}
+        onClose={closeLiveMentoringModal}
       />
     </div>
   );

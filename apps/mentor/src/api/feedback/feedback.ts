@@ -66,12 +66,12 @@ export const useFeedbackMentorSlotsQuery = (
     ],
     queryFn: async () => {
       const res = await axios.get(FEEDBACK_MENTOR_SLOT_PATH, {
-        params: {
-          startDate,
-          endDate,
-          // axios는 배열 파라미터를 `statusList=OPEN&statusList=RESERVED` 형태로 직렬화한다.
-          statusList,
-        },
+        params: { startDate, endDate, statusList },
+        // axios 기본 직렬화는 배열을 `statusList[]=OPEN` 으로 보내는데, 서버는
+        // `@RequestParam List<FeedbackSlotStatus> statusList` 로 정확한 이름만
+        // 바인딩한다. 그대로 두면 null 이 들어가 상태 필터가 조용히 무시된다.
+        // indexes:null 이 대괄호를 없애 `statusList=OPEN&statusList=RESERVED` 로 만든다.
+        paramsSerializer: { indexes: null },
       });
       return getMentorFeedbackSlotsResponseSchema.parse(res.data.data);
     },
