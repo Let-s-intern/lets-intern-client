@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   LiveMentoringSettings,
@@ -9,8 +9,23 @@ import type {
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 const saveMock = vi.fn().mockResolvedValue(undefined);
-/** 하단 바는 페이지가 그린다 — 이 본문은 저장 상태를 위로 올려 보내기만 한다(LC-3282). */
-const autosaveStatusSpy = vi.fn();
+/**
+ * 저장 버튼은 페이지가 한 자리에 그린다 — 이 본문은 「보낼 게 있는지」와 「보내면
+ * 거절당할 이유」만 위로 올린다(LC-3288).
+ */
+const saveStateSpy = vi.fn();
+/** 페이지가 저장 버튼을 눌렀을 때 부를 함수. 본문이 여기에 담아 둔다. */
+const saveRef: {
+  current: (() => Promise<{ ok: boolean; reason?: string }>) | null;
+} = { current: null };
+/** 저장 버튼을 누른 것과 같다. */
+const 저장_버튼을_누른다 = async () => {
+  let result: { ok: boolean; reason?: string } | undefined;
+  await act(async () => {
+    result = await saveRef.current?.();
+  });
+  return result;
+};
 const openMock = vi.fn();
 const closeOpeningMock = vi.fn();
 const setRepresentativeCareerMock = vi.fn();
@@ -125,14 +140,15 @@ const renderPage = (
   openingsData = openings;
   return render(
     <MemoryRouter>
-      <OpenSettingsSection onAutosaveStatusChange={autosaveStatusSpy} />
+      <OpenSettingsSection onSaveStateChange={saveStateSpy} saveRef={saveRef} />
     </MemoryRouter>,
   );
 };
 
 afterEach(() => {
   saveMock.mockReset().mockResolvedValue(undefined);
-  autosaveStatusSpy.mockReset();
+  saveStateSpy.mockReset();
+  saveRef.current = null;
   openMock.mockReset();
   closeOpeningMock.mockReset();
   setRepresentativeCareerMock.mockReset();
@@ -237,27 +253,20 @@ describe('OpenSettingsSection — 상태 충돌 안내 문구', () => {
   const 저장이_실패한다 = (code: string) =>
     saveMock.mockRejectedValueOnce({ code, message: '서버 메시지' });
 
-  /** 제목을 고쳐 실시간 저장을 한 번 내보낸다. */
+  /** 제목을 고쳐 저장을 한 번 내보낸다. */
   const 저장을_내보낸다 = async () => {
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
       target: { value: '이력서 클리닉' },
     });
-    await act(async () => {
-      vi.advanceTimersByTime(2000);
-    });
+    return 저장_버튼을_누른다();
   };
-
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
 
   it('LOCKED 면 오픈을 종료하라고 안내한다', async () => {
     저장이_실패한다('LIVE_MENTORING_LOCKED');
     renderPage();
 
-    await 저장을_내보낸다();
-
-    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
-      kind: 'failed',
+    expect(await 저장을_내보낸다()).toEqual({
+      ok: false,
       reason: '오픈 중에는 설정을 수정할 수 없습니다.',
     });
   });
@@ -266,37 +275,27 @@ describe('OpenSettingsSection — 상태 충돌 안내 문구', () => {
     저장이_실패한다('LIVE_MENTORING_INVALID_STATE');
     renderPage();
 
-    await 저장을_내보낸다();
-
-    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
-      kind: 'failed',
+    expect(await 저장을_내보낸다()).toEqual({
+      ok: false,
       reason: '다른 곳에서 상태가 바뀌었습니다.',
     });
   });
 });
 
 /*
- * LC-3282 — 저장 버튼이 사라지고 입력이 멎으면 나간다.
+ * LC-3288 — 실시간 저장을 걷어내고 멘토가 「저장하기」를 직접 누른다.
  *
- * 하단 바는 스텝을 아는 페이지가 하나만 그리므로, 이 본문은 저장 상태를 위로 올린다.
+ * 버튼은 스텝을 아는 페이지가 한 자리에 그리므로, 이 본문은 저장 함수를 `saveRef` 에
+ * 담아 두고 「보낼 게 있는지」와 「보내면 거절당할 이유」만 위로 올린다.
  */
-describe('OpenSettingsSection — 실시간 저장(제목·타입·진행시간)', () => {
-  const 입력이_멎기를_기다린다 = async () => {
-    await act(async () => {
-      vi.advanceTimersByTime(2000);
-    });
-  };
-
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
-
+describe('OpenSettingsSection — 저장(제목·타입·진행시간)', () => {
   it('title/categories/durations 세 필드를 담아 보낸다', async () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
       target: { value: '이력서 클리닉' },
     });
-    await 입력이_멎기를_기다린다();
+    await 저장_버튼을_누른다();
 
     expect(saveMock).toHaveBeenCalledTimes(1);
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
@@ -311,7 +310,7 @@ describe('OpenSettingsSection — 실시간 저장(제목·타입·진행시간)
     renderPage({ categories: ['PERSONAL_STATEMENT'] });
 
     fireEvent.click(screen.getByRole('button', { name: '이력서' }));
-    await 입력이_멎기를_기다린다();
+    await 저장_버튼을_누른다();
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
@@ -322,41 +321,48 @@ describe('OpenSettingsSection — 실시간 저장(제목·타입·진행시간)
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
-    await 입력이_멎기를_기다린다();
+    await 저장_버튼을_누른다();
 
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.durations).toEqual([30, 60]);
   });
 
   /*
-    서버가 거절할 값이면 보내지 않는다. 실패 알림을 띄우는 대신 무엇을 채우면 되는지만
-    하단 바에 남긴다 — 타이핑 도중이라 빈 칸이 있는 게 정상인 순간이 계속 있다.
+    서버가 거절할 값이면 버튼을 잠근다. 눌러서 400 을 받아 보고 알게 하면 무엇을 고쳐야
+    하는지 화면에 남지 않는다 — 잠그는 이유를 함께 올려 버튼 위에 적는다.
   */
-  it('타이틀이 비면 보내지 않고 무엇을 채우면 되는지 알린다', async () => {
+  it('타이틀이 비면 저장을 잠그고 무엇을 채우면 되는지 알린다', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
       target: { value: '' },
     });
-    await 입력이_멎기를_기다린다();
 
     expect(saveMock).not.toHaveBeenCalled();
-    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
-      kind: 'blocked',
-      reason: '타이틀을 채우면 저장돼요',
+    expect(saveStateSpy).toHaveBeenLastCalledWith({
+      isDirty: true,
+      blockedReason: '타이틀을 채우면 저장돼요',
     });
   });
 
-  it('진행시간을 모두 지우면 보내지 않는다', async () => {
+  it('진행시간을 모두 지우면 저장을 잠근다', () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
-    await 입력이_멎기를_기다린다();
 
     expect(saveMock).not.toHaveBeenCalled();
-    expect(autosaveStatusSpy).toHaveBeenLastCalledWith({
-      kind: 'blocked',
-      reason: '진행시간을 하나 이상 고르면 저장돼요',
+    expect(saveStateSpy).toHaveBeenLastCalledWith({
+      isDirty: true,
+      blockedReason: '진행시간을 하나 이상 고르면 저장돼요',
+    });
+  });
+
+  it('손댄 게 없으면 보낼 것도 없다고 알린다', () => {
+    renderPage();
+
+    expect(saveStateSpy).toHaveBeenLastCalledWith({
+      isDirty: false,
+      blockedReason: null,
     });
   });
 });

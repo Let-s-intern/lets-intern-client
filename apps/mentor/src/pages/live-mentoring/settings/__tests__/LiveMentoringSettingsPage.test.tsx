@@ -458,13 +458,17 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     expect(toggle).toBeEnabled();
   });
 
-  it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 저장 바가 저장됨 상태다', () => {
+  it('초안이면 수정하기 없이 바로 편집할 수 있고, 손댄 게 없으면 스텝 이동 바가 온다', () => {
     renderPage();
 
     expect(
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('변경사항이 없어요.')).toBeVisible();
+    // 보낼 게 없으면 저장 버튼은 뜨지 않는다 — 그 자리는 스텝 이동이 쓴다(LC-3288).
+    expect(
+      screen.queryByRole('button', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '다음으로' })).toBeVisible();
   });
 });
 
@@ -544,14 +548,20 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
     ).toBeEnabled();
   });
 
-  it('오픈 중에도 편집이 열려 있고 저장 바가 상태를 알린다', () => {
+  it('오픈 중에도 편집이 열려 있고, 손대면 저장 버튼이 뜬다', () => {
     renderWhileOpen();
 
-    expect(screen.getByText('변경사항이 없어요.')).toBeVisible();
     // "수정" 으로 잠금을 푸는 단계는 사라졌다.
     expect(
       screen.queryByRole('button', { name: '수정' }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+
+    addHeroBullet();
+
+    expect(screen.getByRole('button', { name: '저장하기' })).toBeVisible();
   });
 
   it('오픈 중에도 탭 이동은 동작한다', () => {
@@ -834,63 +844,73 @@ describe('LiveMentoringSettingsPage — 하단 바', () => {
  * 서버 요청 DTO 가 `@NotBlank` 투성이라 반쯤 채운 카드가 있으면 저장 전체가 400 이다.
  * 타이핑 도중에 계속 나가는 저장이므로, 보내기 전에 막고 하단 바에 이유만 남긴다.
  */
-describe('LiveMentoringSettingsPage — 실시간 저장', () => {
-  const 입력이_멎기를_기다린다 = async () => {
+/*
+ * LC-3288 — 실시간 저장을 걷어내고 멘토가 「저장하기」를 직접 누른다.
+ *
+ * 변경이 있으면 스텝 이동 바 자리에 저장 버튼이 대신 온다. 보내면 거절당할 값이면
+ * 버튼을 잠그고 그 이유를 버튼 위에 적는다.
+ */
+describe('LiveMentoringSettingsPage — 저장', () => {
+  const 저장버튼 = () => screen.getByRole('button', { name: '저장하기' });
+
+  const 저장하기를_누른다 = async () => {
     await act(async () => {
-      vi.advanceTimersByTime(2000);
+      fireEvent.click(저장버튼());
     });
   };
 
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
-
-  it('입력이 멎으면 저장한다', async () => {
+  it('변경이 있으면 스텝 이동 대신 저장 버튼이 온다', async () => {
     renderPage();
+    expect(
+      screen.queryByRole('button', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+
     addHeroBullet();
 
-    expect(screen.getByText('입력을 멈추면 자동으로 저장돼요.')).toBeVisible();
-    await 입력이_멎기를_기다린다();
+    expect(저장버튼()).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: '다음으로' }),
+    ).not.toBeInTheDocument();
+
+    await 저장하기를_누른다();
 
     expect(saveMock).toHaveBeenCalledTimes(1);
-    // 첫 진입("변경사항이 없어요.")과 구분되는 문구여야 한다.
-    expect(screen.getByText('저장했어요.')).toBeVisible();
+    // 보낼 게 없어졌으니 스텝 이동이 돌아온다.
+    expect(
+      screen.queryByRole('button', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '다음으로' })).toBeVisible();
   });
 
   /*
     「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
-    저장이 지워 버린다. 채우거나 지울 때까지 보내지 않는다.
+    저장이 지워 버린다. 채우거나 지울 때까지 버튼을 잠근다.
   */
-  it('빈 유형 카드가 있으면 보내지 않고 무엇을 채우면 되는지 적는다', async () => {
+  it('빈 유형 카드가 있으면 저장을 잠그고 무엇을 채우면 되는지 적는다', () => {
     renderPage();
     openTab('멘토링 유형');
     fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
 
-    await 입력이_멎기를_기다린다();
-
     expect(saveMock).not.toHaveBeenCalled();
+    expect(저장버튼()).toBeDisabled();
     expect(
-      screen.getByText(
-        '저장 대기 · 「멘토링 유형」의 2번 유형 이름을 채우면 저장돼요',
-      ),
+      screen.getByText('「멘토링 유형」의 2번 유형 이름을 채우면 저장돼요'),
     ).toBeVisible();
   });
 
   /*
-    빈 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 `@NotBlank` 라 걸러내지 않으면
-    400 이지만, 걸러내면 방금 만든 사례가 사라진다.
+    빈 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 비면 서버가 거절하는데,
+    걸러내면 방금 만든 사례가 사라진다.
   */
-  it('빈 결과 사례가 있으면 보내지 않는다', async () => {
+  it('빈 결과 사례가 있으면 저장을 잠근다', () => {
     renderPage();
     openTab('결과 사례');
     fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
 
-    await 입력이_멎기를_기다린다();
-
     expect(saveMock).not.toHaveBeenCalled();
+    expect(저장버튼()).toBeDisabled();
     expect(
-      screen.getByText(
-        '저장 대기 · 「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
-      ),
+      screen.getByText('「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요'),
     ).toBeVisible();
   });
 
@@ -902,7 +922,7 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
     renderPage();
     addHeroBullet();
 
-    await 입력이_멎기를_기다린다();
+    await 저장하기를_누른다();
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload.hero.bullets).toEqual([
@@ -923,7 +943,7 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
       target: { value: '안내 문구입니다' },
     });
 
-    await 입력이_멎기를_기다린다();
+    await 저장하기를_누른다();
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload.video.title).toBe('멘토는 이렇게');
@@ -936,7 +956,7 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
     renderPage();
     addHeroBullet();
 
-    await 입력이_멎기를_기다린다();
+    await 저장하기를_누른다();
 
     const [payload] = saveMock.mock.calls[0];
     expect(payload).not.toHaveProperty('intro');
@@ -953,11 +973,14 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
   /*
     회귀 케이스 — 노출을 끈 섹션의 빈 칸이 저장과 공개를 막던 문제(LC-3282).
 
-    서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면 400 인데, 화면은 숨긴 섹션의
-    입력을 `<fieldset disabled>` 로 잠근다. 게이트에서 막으면 멘토가 채울 방법이 없는
-    덫이 된다. 지금은 통과시키고 보낼 때 기본 문구로 메운다.
+    예전에는 서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면 400 이었고, 화면은
+    숨긴 섹션의 입력을 `<fieldset disabled>` 로 잠그므로 멘토가 채울 방법이 없는 덫이
+    됐다. 그래서 보낼 때 프론트가 기본 문구로 메웠다.
+
+    LC-3289 로 서버가 `visible` 을 보고 검사를 건너뛰게 되면서 그 메우기를 걷어냈다 —
+    멘토가 쓰지 않은 문구를 대신 채워 넣던 자리다. 이제는 **빈 채로** 나간다.
   */
-  it('노출을 끈 섹션이 비어 있어도 저장이 나가고, 기본 문구로 메워 보낸다', async () => {
+  it('노출을 끈 섹션은 비어 있어도 저장이 나가고, 지어낸 문구로 메우지 않는다', async () => {
     renderPage();
     openTab('취업 성공 전략');
 
@@ -968,13 +991,12 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
     // 노출 스위치를 끈다 — 헤더의 체크박스가 그 스위치다.
     fireEvent.click(screen.getAllByRole('checkbox')[0]);
 
-    await 입력이_멎기를_기다린다();
+    await 저장하기를_누른다();
 
     expect(saveMock).toHaveBeenCalled();
     const [payload] = saveMock.mock.calls[saveMock.mock.calls.length - 1];
     expect(payload.strategy.visible).toBe(false);
-    expect(payload.strategy.title.trim()).not.toBe('');
-    expect(payload.strategy.subtitle.trim()).not.toBe('');
+    expect(payload.strategy.title).toBe('');
   });
 
   /* 서버 문구를 그대로 띄우면 `[mentoringTypes.title] 공백일 수 없습니다` 가 된다. */
@@ -986,10 +1008,10 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
     renderPage();
     addHeroBullet();
 
-    await 입력이_멎기를_기다린다();
+    await 저장하기를_누른다();
 
     expect(
-      screen.getByText('저장 실패 · 핵심 소개의 1번 소개 문구를 채워 주세요.'),
+      screen.getByText('핵심 소개의 1번 소개 문구를 채워 주세요.'),
     ).toBeVisible();
   });
 });
@@ -1010,6 +1032,30 @@ describe('LiveMentoringSettingsPage — 공개 토글', () => {
 
   const 공개토글 = () =>
     screen.getByRole('switch', { name: '상세 페이지 공개' });
+
+  /*
+    머리의 바로가기·토글은 **한 번이라도 공개해 본 멘토에게만** 보인다(LC-3288).
+    첫 세팅에서는 마지막 스텝의 「공개하기」 하나로 끝내야 해서, 아직 열어 본 적 없는
+    상세 페이지로 가는 링크와 「비공개」 토글이 함께 떠 있으면 지금 할 일이 흐려진다.
+   */
+  beforeEach(() => {
+    openings = [{ openingId: 1, status: 'CLOSED' }];
+  });
+
+  it('한 번도 공개한 적 없으면 머리에 아무것도 두지 않는다', () => {
+    openings = [];
+    renderPage();
+
+    expect(
+      screen.queryByRole('switch', { name: '상세 페이지 공개' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '상세 페이지 바로가기' }),
+    ).not.toBeInTheDocument();
+    // 대신 마지막 스텝의 「공개하기」로 연다.
+    openTab('결과 사례');
+    expect(screen.getByRole('button', { name: '공개하기' })).toBeVisible();
+  });
 
   it('상세 페이지 바로가기와 공개 토글이 머리에 있다', () => {
     renderPage();
@@ -1099,6 +1145,11 @@ describe('LiveMentoringSettingsPage — 공개 토글', () => {
  * 옮겨오면서 훅도 이 화면이 하나만 부르므로, 요청과 확인 절차도 여기서 지킨다.
  */
 describe('LiveMentoringSettingsPage — 공개/비공개 실행', () => {
+  /* 머리의 토글로 실행하는 흐름이라 개설 이력이 있어야 한다(LC-3288). */
+  beforeEach(() => {
+    openings = [{ openingId: 1, status: 'CLOSED' }];
+  });
+
   const 갖춰진_설정: Partial<LiveMentoringSettings> = {
     title: '자기소개서 첨삭',
     categories: ['PERSONAL_STATEMENT'],

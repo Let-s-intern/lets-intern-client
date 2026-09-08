@@ -18,21 +18,18 @@ import { publicDetailUrl, toYoutubeEmbedUrl } from '../constants';
 import OpenSettingsSection from '../open-settings/OpenSettingsSection';
 import { useLiveMentoringOpenAction } from '../open-settings/useLiveMentoringOpenAction';
 import DetailPageHeaderActions from '../ui/DetailPageHeaderActions';
+import SaveFloatingButton from '../ui/SaveFloatingButton';
 import SettingsActionBar from '../ui/SettingsActionBar';
-import {
-  useAutosave,
-  type AutosaveResult,
-  type AutosaveStatus,
-} from '../useAutosave';
+import { type AutosaveResult } from '../useAutosave';
 import {
   SETTINGS_TABS,
   DETAIL_TABS,
   OPEN_TAB_ID,
   type SettingsTabId,
   isDetailTabComplete,
+  unlockedSettingsTabs,
 } from './tabs';
 import { describeAutosaveBlock } from './autosaveGate';
-import { fillHiddenSections } from './hiddenSectionDefaults';
 import { describeSaveError } from './saveError';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import SettingsTabs from './ui/SettingsTabs';
@@ -72,9 +69,27 @@ const LiveMentoringSettingsPage = () => {
    * 오픈 설정 스텝의 저장 상태. 하단 바는 스텝을 아는 이 화면이 하나만 그리는데,
    * 그 스텝의 저장 대상(제목·타입·진행시간)은 본문이 들고 있어 위로 올려 받는다.
    */
-  const [openStepStatus, setOpenStepStatus] = useState<AutosaveStatus>({
-    kind: 'clean',
-  });
+  /* 오픈 설정 스텝의 저장 상태. 본문이 올려 준다(`onSaveStateChange`). */
+  const [openStepState, setOpenStepState] = useState<{
+    isDirty: boolean;
+    blockedReason: string | null;
+  }>({ isDirty: false, blockedReason: null });
+  const openSaveRef = useRef<(() => Promise<AutosaveResult>) | null>(null);
+  const [isSavingOpen, setIsSavingOpen] = useState(false);
+  const [openSaveError, setOpenSaveError] = useState<string | null>(null);
+  const handleSaveOpen = async () => {
+    if (isSavingOpen || openStepState.blockedReason || !openSaveRef.current)
+      return;
+    setIsSavingOpen(true);
+    try {
+      const result = await openSaveRef.current();
+      setOpenSaveError(
+        result.ok ? null : (result.reason ?? '저장하지 못했어요.'),
+      );
+    } finally {
+      setIsSavingOpen(false);
+    }
+  };
 
   /*
    * 머리의 공개/비공개 토글이 쓰는 오픈 액션(LC-3283). 화면에 **하나만** 산다 —
@@ -207,8 +222,7 @@ const LiveMentoringSettingsPage = () => {
    * 들고 있어 이 화면에서는 저장 상태로만 알 수 있다 — 아직 보내지 못한 상태면
    * `pending`·`blocked`·`failed` 중 하나다.
    */
-  const hasUnsavedOpenStep =
-    openStepStatus.kind !== 'clean' && openStepStatus.kind !== 'saved';
+  const hasUnsavedOpenStep = openStepState.isDirty;
   const hasUnsaved = isDirty || hasUnsavedOpenStep;
 
   useEffect(() => {
@@ -304,11 +318,18 @@ const LiveMentoringSettingsPage = () => {
           멘티에게 보여줄 상세 페이지를 작성하세요.
         </p>
       </div>
-      <DetailPageHeaderActions
-        openAction={openAction}
-        publicUrl={user ? publicDetailUrl(user.userId) : null}
-        blockedReason={openBlockedReason}
-      />
+      {/*
+        한 번도 공개한 적 없으면 머리의 두 조작(상세 페이지 바로가기·공개 토글)을 감춘다.
+        아직 아무도 볼 수 없는 페이지로 가는 링크이고, 공개는 스텝을 끝까지 따라간 뒤
+        하단 바의 「공개하기」로 한다. 첫 세팅에서는 지금 할 일이 하나뿐이어야 한다.
+      */}
+      {openAction.hasPreviousOpening && (
+        <DetailPageHeaderActions
+          openAction={openAction}
+          publicUrl={user ? publicDetailUrl(user.userId) : null}
+          blockedReason={openBlockedReason}
+        />
+      )}
     </header>
   );
 
@@ -381,13 +402,6 @@ const LiveMentoringSettingsPage = () => {
     };
 
     /*
-      숨긴 섹션의 빈 필수 칸을 기본 문구로 메운다. 서버 `@NotBlank` 는 `visible` 을
-      보지 않아 비워 두면 400 인데, 화면은 숨긴 섹션의 입력을 잠가 멘토가 채울 수
-      없다. 게이트에서 숨긴 섹션을 빼고(`describeAutosaveBlock`) 여기서 메운다.
-     */
-    payload = fillHiddenSections(payload);
-
-    /*
       다듬은 값을 로컬 상태에 되쓰지 않는다. 실시간 저장은 타이핑 도중에 나가는데,
       그때 `"안녕 "` 이 `"안녕"` 으로 바뀌면 textarea 의 커서가 끝으로 튄다.
       다듬기는 **보낼 때의 변환**으로만 두고, 기준선은 방금 보낸 로컬 값으로 잡는다.
@@ -408,25 +422,64 @@ const LiveMentoringSettingsPage = () => {
     }
   };
 
-  /* 지금 보내면 서버가 거절할 이유. 있으면 보내지 않고 하단 바에 그 이유만 남긴다. */
+  /* 지금 보내면 서버가 거절할 이유. 있으면 보내지 않고 저장 버튼에 그 이유만 남긴다. */
   const blockedReason = template ? describeAutosaveBlock(template) : null;
 
-  const detailStatus = useAutosave({
-    fingerprint: templateJson,
-    isDirty,
-    blockedReason,
-    save: saveTemplate,
-  });
-
-  // 위 훅에 건넨 ref 를 매 렌더 최신 값으로 맞춘다.
+  // 이탈 가드가 ref 로 읽는다(리스너를 매번 다시 걸지 않으려고).
   isDirtyRef.current = isDirty;
   blockedReasonRef.current = blockedReason;
   saveTemplateRef.current = saveTemplate;
 
+  /*
+    상세 스텝의 저장은 멘토가 직접 누른다(LC-3288). 예전에는 입력이 멎으면 알아서
+    보냈는데(LC-3282), 필수 항목이 반쯤 찬 순간이 길어 저장이 계속 막히고 그 사실이
+    버튼 없이 문구로만 흘렀다. 오픈 설정 스텝은 그대로 실시간 저장을 쓴다 — 그쪽은
+    대표 경력처럼 고르면 바로 반영되는 항목이 섞여 있다.
+  */
+  const [isSavingDetail, setIsSavingDetail] = useState(false);
+  const [detailSaveError, setDetailSaveError] = useState<string | null>(null);
+  const handleSaveDetail = async () => {
+    if (isSavingDetail || blockedReason) return;
+    setIsSavingDetail(true);
+    try {
+      const result = await saveTemplate();
+      setDetailSaveError(
+        result.ok ? null : (result.reason ?? '저장하지 못했어요.'),
+      );
+    } finally {
+      setIsSavingDetail(false);
+    }
+  };
+
+  /*
+    첫 세팅에서만 스텝을 하나씩 연다. 「다음으로」로 도달한 지점을 기억해 두는 이유는
+    `tabs.ts` 에 적어 뒀다 — 완료 여부만으로는 읽기 전용인 「멘토 정보」에서 막힌다.
+  */
+  const [reachedIndex, setReachedIndex] = useState(0);
+  const hasOpened = openAction.hasPreviousOpening;
+  const unlockedTabIds = useMemo(
+    () =>
+      new Set(
+        unlockedSettingsTabs({ hasOpened, template, reachedIndex }).map(
+          (tab) => tab.id,
+        ),
+      ),
+    [hasOpened, template, reachedIndex],
+  );
+
+  /*
+    스텝 인덱스는 늘 전체 목록 기준이다. 잠긴 스텝도 자리는 그대로 있어야 —
+    「다음이 잠김」과 「다음이 없음」을 섞으면 마지막 스텝이 아닌데 공개 버튼이 뜬다.
+  */
   const stepIndex = SETTINGS_TABS.findIndex((tab) => tab.id === activeTab);
+  const nextTab = stepIndex >= 0 ? SETTINGS_TABS[stepIndex + 1] : undefined;
   const goStep = (delta: number) => {
     const next = SETTINGS_TABS[stepIndex + delta];
-    if (next) setActiveTab(next.id);
+    if (!next || !unlockedTabIds.has(next.id)) return;
+    setActiveTab(next.id);
+    if (delta > 0) {
+      setReachedIndex((prev) => Math.max(prev, stepIndex + delta));
+    }
   };
 
   return (
@@ -438,6 +491,7 @@ const LiveMentoringSettingsPage = () => {
         전체 폭을 쓴다 — 편집 카드 폭에 가두면 좁은 칸에서 밀린다.
       */}
       <SettingsTabs
+        unlockedTabs={unlockedTabIds}
         activeTab={activeTab}
         completedTabs={completedTabs}
         onChange={setActiveTab}
@@ -454,7 +508,10 @@ const LiveMentoringSettingsPage = () => {
         `hidden` 으로 감추면 타이머가 계속 살아 있어 1.5초 뒤 정상적으로 저장된다.
       */}
       <div hidden={activeTab !== OPEN_TAB_ID}>
-        <OpenSettingsSection onAutosaveStatusChange={setOpenStepStatus} />
+        <OpenSettingsSection
+          onSaveStateChange={setOpenStepState}
+          saveRef={openSaveRef}
+        />
       </div>
 
       {activeTab === OPEN_TAB_ID ? null : isError ? (
@@ -496,9 +553,10 @@ const LiveMentoringSettingsPage = () => {
 
           빼는 값은 머리 영역(약 11rem)과 하단 바가 앉는 높이다. 그 바는 fixed 라 자리를
           차지하지 않으므로 여기서 비워 두지 않으면 프레임 아래를 덮는다. 스텝 이동
-          버튼을 키우면서(LC-3282) 바가 그만큼 높아져 빼는 값도 함께 올렸다.
+          버튼을 키우면서(LC-3282) 바가 그만큼 높아져 빼는 값도 함께 올렸고, 바를 본문
+          가운데로 옮기면서(LC-3288) 미리보기 아래까지 지나가게 되어 한 번 더 올렸다.
         */}
-            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-12.25rem)] lg:max-h-[880px] lg:self-start lg:overflow-hidden">
+            <div className="lg:sticky lg:top-6 lg:h-[calc(100vh-15.5rem)] lg:max-h-[880px] lg:self-start lg:overflow-hidden">
               <TemplatePreview
                 template={template}
                 activeTab={activeTab}
@@ -515,20 +573,44 @@ const LiveMentoringSettingsPage = () => {
         저장 상태는 지금 스텝의 것을 보여준다. 오픈 설정 스텝의 상태는 본문이
         위로 올려 주고(`onAutosaveStatusChange`), 상세 스텝은 여기서 직접 만든다.
       */}
-      <SettingsActionBar
-        status={activeTab === OPEN_TAB_ID ? openStepStatus : detailStatus}
-        onPrev={() => goStep(-1)}
-        onNext={() => goStep(1)}
-        hasPrev={stepIndex > 0}
-        hasNext={stepIndex >= 0 && stepIndex < SETTINGS_TABS.length - 1}
-        publish={{
-          label: openAction.currentOpening ? '공개 중이에요' : '공개하기',
-          // 이미 공개 중이면 여기서 할 일이 없다. 내리는 건 머리의 토글이다.
-          disabled:
-            openAction.currentOpening !== undefined || openAction.disabled,
-          onClick: openAction.onClick,
-        }}
-      />
+      {/*
+        하단 플로팅 자리는 하나다. 저장하지 않은 변경이 있으면 저장 버튼이, 없으면 스텝
+        이동이 온다 — 지금 해야 할 일이 늘 하나라서 둘을 나란히 두지 않는다.
+
+        오픈 설정 스텝은 실시간 저장이라 늘 스텝 이동이다.
+      */}
+      {activeTab === OPEN_TAB_ID && openStepState.isDirty ? (
+        <SaveFloatingButton
+          blockedReason={openStepState.blockedReason}
+          isSaving={isSavingOpen}
+          errorMessage={openSaveError}
+          onSave={handleSaveOpen}
+        />
+      ) : activeTab !== OPEN_TAB_ID && isDirty ? (
+        <SaveFloatingButton
+          blockedReason={blockedReason}
+          isSaving={isSavingDetail}
+          errorMessage={detailSaveError}
+          onSave={handleSaveDetail}
+        />
+      ) : (
+        <SettingsActionBar
+          onPrev={() => goStep(-1)}
+          onNext={() => goStep(1)}
+          hasPrev={stepIndex > 0}
+          hasNext={nextTab !== undefined}
+          nextDisabled={
+            nextTab !== undefined && !unlockedTabIds.has(nextTab.id)
+          }
+          publish={{
+            label: openAction.currentOpening ? '공개 중이에요' : '공개하기',
+            // 이미 공개 중이면 여기서 할 일이 없다. 내리는 건 머리의 토글이다.
+            disabled:
+              openAction.currentOpening !== undefined || openAction.disabled,
+            onClick: openAction.onClick,
+          }}
+        />
+      )}
 
       {/* 오픈 전 확인 모달 — 토글이 머리에 있으므로 스텝과 무관하게 페이지가 그린다. */}
       {openAction.modals}
