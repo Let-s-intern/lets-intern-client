@@ -2,10 +2,16 @@
 
 import PassCertificationForm from '@/domain/pass-certification/components/PassCertificationForm';
 
+import { PASS_SECTION_ID } from './sectionIds';
+
 export default function FormSection() {
   return (
-    <div className="bg-neutral-90 flex flex-col items-center gap-4 px-5 py-10 md:py-[84px]">
-      <div className="flex w-full flex-col items-start gap-2 text-left md:items-center md:gap-4 md:text-center">
+    <section
+      id={PASS_SECTION_ID.form}
+      className="bg-neutral-90 flex scroll-mt-[56px] flex-col items-start md:items-center gap-4 px-5 py-10 md:scroll-mt-[60px] md:py-[84px]"
+    >
+      <h3 className="text-xsmall16 text-primary font-semibold">합격 인증 폼</h3>
+      <div className="mt-2 flex w-full flex-col items-start gap-2 text-left md:mt-7 md:items-center md:gap-4 md:text-center">
         <h1 className="text-medium24 md:text-large32 text-neutral-0 font-bold">
           합격 인증하기
         </h1>
@@ -15,6 +21,6 @@ export default function FormSection() {
         </p>
       </div>
       <PassCertificationForm />
-    </div>
+    </section>
   );
 }
