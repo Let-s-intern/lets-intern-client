@@ -6,6 +6,7 @@ const scrollEventPage = [
   '/program/live',
   '/b2b',
   '/membership',
+  '/pass-certification',
 ];
 
 export default function useScrollDirection(pathname?: string) {
