@@ -1,6 +1,9 @@
 'use client';
 
-import { getPresignedUrl, uploadToS3 } from '@/domain/challenge/api/presignedUrl';
+import {
+  getPresignedUrl,
+  uploadToS3,
+} from '@/domain/challenge/api/presignedUrl';
 import { useToast } from '@letscareer/ui';
 import { useState } from 'react';
 
@@ -43,8 +46,7 @@ export function usePassCertificationSubmit() {
         companyName: values.companyName,
         jobName: values.jobName,
         passType: values.passType,
-        passTypeEtc:
-          values.passType === 'ETC' ? values.passTypeEtc : undefined,
+        passTypeEtc: values.passType === 'ETC' ? values.passTypeEtc : undefined,
         certificationImageUrl,
         bankName: values.bankName,
         accountNumber: values.accountNumber,

@@ -9,7 +9,10 @@ import { MOBILE_STEP_LABELS, STEP_LABELS } from '../passCertificationForm';
 function Line({ filled }: { filled: boolean }) {
   return (
     <div
-      className={twMerge('h-0.5 flex-1', filled ? 'bg-primary' : 'bg-neutral-85')}
+      className={twMerge(
+        'h-0.5 flex-1',
+        filled ? 'bg-primary' : 'bg-neutral-85',
+      )}
     />
   );
 }
