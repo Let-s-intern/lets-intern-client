@@ -380,14 +380,22 @@ const TemplateEditForm = ({
                 }
                 items={strategy.points}
                 makeEmpty={() => ({ image: null, title: '', description: '' })}
-                renderItem={(point, update) => (
+                renderItem={(point, update, index) => (
                   <div className="flex flex-col gap-2">
-                    <ImageField
-                      label="대표 이미지"
-                      value={point.image}
-                      onChange={(image) => update({ ...point, image })}
-                    />
-                    <div>
+                    {/*
+                      미리보기 번호를 이미지와 글에 나눠 붙인다(LC-3282). 하나로 묶으면
+                      세로로 긴 이미지 때문에 항목이 화면보다 커지고, 미리보기가 그
+                      중간을 맞춰 정작 입력 중인 글이 화면 밖에 남는다. 결과 사례와
+                      같은 규칙(`i * 2`, `i * 2 + 1`)을 쓴다.
+                    */}
+                    <div data-preview-index={index * 2}>
+                      <ImageField
+                        label="대표 이미지"
+                        value={point.image}
+                        onChange={(image) => update({ ...point, image })}
+                      />
+                    </div>
+                    <div data-preview-index={index * 2 + 1}>
                       <span className={labelClass}>차별 전략</span>
                       <textarea
                         className={inputClass}
@@ -398,9 +406,7 @@ const TemplateEditForm = ({
                         }
                         rows={2}
                       />
-                    </div>
-                    <div>
-                      <span className={labelClass}>전략 설명</span>
+                      <span className={`${labelClass} mt-2`}>전략 설명</span>
                       <textarea
                         rows={4}
                         className={inputClass}

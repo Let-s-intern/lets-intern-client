@@ -319,7 +319,6 @@ const LiveMentoringDetailPage = ({
             {strategy.points.map((point, i) => (
               <li
                 key={i}
-                data-preview-item={i}
                 /*
                   멘토 소개와 같은 방식이다 — 이미지와 글이 각자 제 폭만 차지하고,
                   둘을 합친 덩어리가 가운데에 놓인다. 글에 남은 폭을 다 주면 짧게 쓴
@@ -328,18 +327,31 @@ const LiveMentoringDetailPage = ({
                 className="bg-primary-5 flex flex-col items-center gap-5 rounded-md p-5 md:flex-row md:items-center md:justify-center md:gap-8"
               >
                 {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
+                {/*
+                  미리보기가 따라올 번호는 이미지와 글에 나눠 붙인다(LC-3282).
+                  하나로 묶으면 세로로 긴 이미지 때문에 항목이 미리보기 화면보다 커지고,
+                  가운데를 맞추면 그 중간이 보여 정작 편집 중인 글이 화면 밖에 남는다.
+                  결과 사례와 같은 규칙이다. 멘토 폼도 같은 번호를 보낸다.
+                */}
                 {point.image ? (
                   <img
                     src={point.image}
                     alt=""
+                    data-preview-item={i * 2}
                     className="w-full max-w-[380px] shrink-0 rounded-sm"
                   />
                 ) : (
                   // 이미지를 아직 안 올린 자리. 여기만 비율을 정해 둔다 —
                   // 채울 그림이 없으면 높이를 정할 근거도 없다.
-                  <div className="bg-neutral-90 aspect-[4/3] w-full max-w-[380px] shrink-0 rounded-sm" />
+                  <div
+                    data-preview-item={i * 2}
+                    className="bg-neutral-90 aspect-[4/3] w-full max-w-[380px] shrink-0 rounded-sm"
+                  />
                 )}
-                <div className="flex min-w-0 max-w-[520px] flex-col gap-2">
+                <div
+                  data-preview-item={i * 2 + 1}
+                  className="flex min-w-0 max-w-[520px] flex-col gap-2"
+                >
                   <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
                     Point {i + 1}
                   </span>

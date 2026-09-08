@@ -61,30 +61,39 @@ export const describeAutosaveBlock = (
   }
 
   /*
-   * 아래 세 섹션은 `visible` 이 꺼져 있어도 검사한다 — 서버 `@NotBlank` 는 노출 여부를
-   * 보지 않는다. 숨긴 섹션의 빈 칸 때문에 저장이 막히는 건 화면에서 이유가 안 보이므로,
-   * 어느 섹션인지 문구에 반드시 넣는다.
+   * 아래 세 섹션은 **켜져 있을 때만** 검사한다.
+   *
+   * 서버 `@NotBlank` 는 `visible` 을 보지 않으므로 숨긴 섹션의 빈 칸도 400 을 만든다.
+   * 그렇다고 여기서 막으면 덫이 된다 — 화면이 숨긴 섹션의 입력을
+   * `<fieldset disabled>` 로 잠그기 때문에 멘토는 그 칸을 채울 수가 없고, 저장도
+   * 공개도 안 되는 채로 빠져나올 방법이 없다.
+   *
+   * 그래서 숨긴 섹션은 통과시키고, 보낼 때 `fillHiddenSections` 가 기본 문구로 메운다.
    */
-  const strategySection = firstBlankLabel([
-    ['섹션 제목', strategy.title],
-    ['섹션 설명', strategy.subtitle],
-  ]);
-  if (strategySection) return fill('취업 성공 전략', strategySection);
-
-  for (const [index, point] of strategy.points.entries()) {
-    const blank = firstBlankLabel([
-      ['Point 제목', point.title],
-      ['Point 설명', point.description],
+  if (strategy.visible) {
+    const strategySection = firstBlankLabel([
+      ['섹션 제목', strategy.title],
+      ['섹션 설명', strategy.subtitle],
     ]);
-    if (blank) return fill('취업 성공 전략', `${index + 1}번 ${blank}`);
+    if (strategySection) return fill('취업 성공 전략', strategySection);
+
+    for (const [index, point] of strategy.points.entries()) {
+      const blank = firstBlankLabel([
+        ['Point 제목', point.title],
+        ['Point 설명', point.description],
+      ]);
+      if (blank) return fill('취업 성공 전략', `${index + 1}번 ${blank}`);
+    }
   }
 
-  const videoSection = firstBlankLabel([
-    ['섹션 제목', video.title],
-    ['섹션 설명', video.subtitle],
-    ['영상 안내 문구', video.caption],
-  ]);
-  if (videoSection) return fill('소개 영상', videoSection);
+  if (video.visible) {
+    const videoSection = firstBlankLabel([
+      ['섹션 제목', video.title],
+      ['섹션 설명', video.subtitle],
+      ['영상 안내 문구', video.caption],
+    ]);
+    if (videoSection) return fill('소개 영상', videoSection);
+  }
 
   /*
    * 영상 주소는 비워 둘 수 있지만(`@Size` 만 있고 `@NotBlank` 는 없다), 서버가 받는 건
@@ -94,18 +103,20 @@ export const describeAutosaveBlock = (
   if (video.videoUrl?.trim() && !toYoutubeEmbedUrl(video.videoUrl))
     return '「소개 영상」의 영상 주소를 YouTube 주소로 고치면 저장돼요';
 
-  const resultsSection = firstBlankLabel([
-    ['섹션 제목', results.title],
-    ['섹션 설명', results.subtitle],
-  ]);
-  if (resultsSection) return fill('결과 사례', resultsSection);
-
-  for (const [index, item] of results.cases.entries()) {
-    const blank = firstBlankLabel([
-      ['멘토링 전 상황', item.beforeCaption],
-      ['멘토링 후 변화', item.afterCaption],
+  if (results.visible) {
+    const resultsSection = firstBlankLabel([
+      ['섹션 제목', results.title],
+      ['섹션 설명', results.subtitle],
     ]);
-    if (blank) return fill('결과 사례', `${index + 1}번 ${blank}`);
+    if (resultsSection) return fill('결과 사례', resultsSection);
+
+    for (const [index, item] of results.cases.entries()) {
+      const blank = firstBlankLabel([
+        ['멘토링 전 상황', item.beforeCaption],
+        ['멘토링 후 변화', item.afterCaption],
+      ]);
+      if (blank) return fill('결과 사례', `${index + 1}번 ${blank}`);
+    }
   }
 
   return null;

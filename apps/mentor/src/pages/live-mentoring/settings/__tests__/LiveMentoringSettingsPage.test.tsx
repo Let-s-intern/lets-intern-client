@@ -221,9 +221,11 @@ describe('LiveMentoringSettingsPage — 탭', () => {
     ).not.toBeInTheDocument();
 
     openTab('핵심 소개');
-    expect(
-      screen.queryByTestId('open-settings-section'),
-    ).not.toBeInTheDocument();
+    /*
+      오픈 설정은 감추기만 하고 언마운트하지 않는다(LC-3282). 언마운트하면 실시간
+      저장이 기다리던 타이머가 저장 없이 폐기돼 방금 친 값이 사라진다.
+    */
+    expect(screen.getByTestId('open-settings-section')).not.toBeVisible();
     expect(screen.getByRole('heading', { name: '핵심 소개' })).toBeVisible();
     // 다른 탭의 섹션은 렌더되지 않는다
     expect(
@@ -462,7 +464,7 @@ describe('LiveMentoringSettingsPage — 편집 영역', () => {
     expect(
       screen.queryByRole('button', { name: '수정하기' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
+    expect(screen.getByText('변경사항이 없어요.')).toBeVisible();
   });
 });
 
@@ -545,7 +547,7 @@ describe('LiveMentoringSettingsPage — 오픈 중에도 편집할 수 있다', 
   it('오픈 중에도 편집이 열려 있고 저장 바가 상태를 알린다', () => {
     renderWhileOpen();
 
-    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
+    expect(screen.getByText('변경사항이 없어요.')).toBeVisible();
     // "수정" 으로 잠금을 푸는 단계는 사라졌다.
     expect(
       screen.queryByRole('button', { name: '수정' }),
@@ -850,7 +852,8 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
     await 입력이_멎기를_기다린다();
 
     expect(saveMock).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('저장된 상태예요.')).toBeVisible();
+    // 첫 진입("변경사항이 없어요.")과 구분되는 문구여야 한다.
+    expect(screen.getByText('저장했어요.')).toBeVisible();
   });
 
   /*
@@ -945,6 +948,33 @@ describe('LiveMentoringSettingsPage — 실시간 저장', () => {
       'strategy',
       'video',
     ]);
+  });
+
+  /*
+    회귀 케이스 — 노출을 끈 섹션의 빈 칸이 저장과 공개를 막던 문제(LC-3282).
+
+    서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면 400 인데, 화면은 숨긴 섹션의
+    입력을 `<fieldset disabled>` 로 잠근다. 게이트에서 막으면 멘토가 채울 방법이 없는
+    덫이 된다. 지금은 통과시키고 보낼 때 기본 문구로 메운다.
+  */
+  it('노출을 끈 섹션이 비어 있어도 저장이 나가고, 기본 문구로 메워 보낸다', async () => {
+    renderPage();
+    openTab('취업 성공 전략');
+
+    // 사용자가 겪은 순서 그대로다 — 필수 칸을 지운 다음 노출을 끈다.
+    fireEvent.change(screen.getByLabelText(/^섹션 제목/), {
+      target: { value: '' },
+    });
+    // 노출 스위치를 끈다 — 헤더의 체크박스가 그 스위치다.
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    await 입력이_멎기를_기다린다();
+
+    expect(saveMock).toHaveBeenCalled();
+    const [payload] = saveMock.mock.calls[saveMock.mock.calls.length - 1];
+    expect(payload.strategy.visible).toBe(false);
+    expect(payload.strategy.title.trim()).not.toBe('');
+    expect(payload.strategy.subtitle.trim()).not.toBe('');
   });
 
   /* 서버 문구를 그대로 띄우면 `[mentoringTypes.title] 공백일 수 없습니다` 가 된다. */

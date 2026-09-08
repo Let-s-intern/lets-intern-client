@@ -32,6 +32,7 @@ import {
   isDetailTabComplete,
 } from './tabs';
 import { describeAutosaveBlock } from './autosaveGate';
+import { fillHiddenSections } from './hiddenSectionDefaults';
 import { describeSaveError } from './saveError';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import SettingsTabs from './ui/SettingsTabs';
@@ -72,7 +73,7 @@ const LiveMentoringSettingsPage = () => {
    * 그 스텝의 저장 대상(제목·타입·진행시간)은 본문이 들고 있어 위로 올려 받는다.
    */
   const [openStepStatus, setOpenStepStatus] = useState<AutosaveStatus>({
-    kind: 'saved',
+    kind: 'clean',
   });
 
   /*
@@ -198,10 +199,20 @@ const LiveMentoringSettingsPage = () => {
     originalTemplate !== null &&
     templateJson !== JSON.stringify(originalTemplate);
 
-  // 이탈 경고 — 저장하지 않은 변경이 있을 때만 걸어둔다. 프로필 화면과 동일 패턴
-  // (beforeunload + 뒤로가기(popstate) + 앱 내부 링크 클릭 가로채기).
+  /*
+   * 이탈 경고 — 저장하지 않은 변경이 있을 때만 걸어둔다. 프로필 화면과 동일 패턴
+   * (beforeunload + 뒤로가기(popstate) + 앱 내부 링크 클릭 가로채기).
+   *
+   * 상세 템플릿뿐 아니라 **오픈 설정 스텝의 미저장도 함께 본다.** 그쪽은 폼을 본문이
+   * 들고 있어 이 화면에서는 저장 상태로만 알 수 있다 — 아직 보내지 못한 상태면
+   * `pending`·`blocked`·`failed` 중 하나다.
+   */
+  const hasUnsavedOpenStep =
+    openStepStatus.kind !== 'clean' && openStepStatus.kind !== 'saved';
+  const hasUnsaved = isDirty || hasUnsavedOpenStep;
+
   useEffect(() => {
-    if (!isDirty) return;
+    if (!hasUnsaved) return;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -250,7 +261,7 @@ const LiveMentoringSettingsPage = () => {
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('click', handleClick, true);
     };
-  }, [isDirty]);
+  }, [hasUnsaved]);
 
   const handleNavConfirm = () => {
     isNavigatingRef.current = true;
@@ -370,6 +381,13 @@ const LiveMentoringSettingsPage = () => {
     };
 
     /*
+      숨긴 섹션의 빈 필수 칸을 기본 문구로 메운다. 서버 `@NotBlank` 는 `visible` 을
+      보지 않아 비워 두면 400 인데, 화면은 숨긴 섹션의 입력을 잠가 멘토가 채울 수
+      없다. 게이트에서 숨긴 섹션을 빼고(`describeAutosaveBlock`) 여기서 메운다.
+     */
+    payload = fillHiddenSections(payload);
+
+    /*
       다듬은 값을 로컬 상태에 되쓰지 않는다. 실시간 저장은 타이핑 도중에 나가는데,
       그때 `"안녕 "` 이 `"안녕"` 으로 바뀌면 textarea 의 커서가 끝으로 튄다.
       다듬기는 **보낼 때의 변환**으로만 두고, 기준선은 방금 보낸 로컬 값으로 잡는다.
@@ -425,9 +443,21 @@ const LiveMentoringSettingsPage = () => {
         onChange={setActiveTab}
       />
 
-      {activeTab === OPEN_TAB_ID ? (
+      {/*
+        오픈 설정 스텝은 **감추기만 하고 언마운트하지 않는다**(LC-3282).
+
+        조건부 렌더로 두면 스텝을 옮기는 순간 컴포넌트가 사라지고, 실시간 저장이
+        기다리던 디바운스 타이머가 저장 없이 폐기된다. 폼 상태도 로컬 state 라 함께
+        사라져 방금 친 제목이 조용히 없어진다 — 게다가 하단 바는 상세 스텝 상태로
+        갈아끼워져 저장된 것처럼 보인다.
+
+        `hidden` 으로 감추면 타이머가 계속 살아 있어 1.5초 뒤 정상적으로 저장된다.
+      */}
+      <div hidden={activeTab !== OPEN_TAB_ID}>
         <OpenSettingsSection onAutosaveStatusChange={setOpenStepStatus} />
-      ) : isError ? (
+      </div>
+
+      {activeTab === OPEN_TAB_ID ? null : isError ? (
         // 상세 스텝 본문만 대체한다. 오픈 설정 스텝은 이 실패와 무관하게 열려야
         // 하므로 페이지 전체를 조기 반환하지 않는다.
         <DetailLoadFailedNotice

@@ -14,6 +14,9 @@ export interface AutosaveResult {
  * 보내 봐야 400 이 온다. 이걸 `failed` 와 같은 말로 묶으면 멘토는 고장난 줄 알고 멈춘다.
  */
 export type AutosaveStatus =
+  /** 보낼 것이 없다. 이번 세션에서 한 번도 저장하지 않았다. */
+  | { kind: 'clean' }
+  /** 보낼 것이 없다. 방금 저장이 성공했다. */
   | { kind: 'saved' }
   | { kind: 'pending' }
   | { kind: 'saving' }
@@ -23,8 +26,14 @@ export type AutosaveStatus =
 /** 하단 바 왼쪽 한 줄. 무엇이 왜 멈춰 있는지까지 한 문장에 담는다. */
 export const autosaveMessage = (status: AutosaveStatus): string => {
   switch (status.kind) {
+    /*
+      "아직 저장한 적 없음" 과 "방금 저장함" 을 한 문구로 묶지 않는다. 화면을 열자마자
+      `저장된 상태예요.` 가 뜨면 손대지도 않았는데 방금 저장이 일어난 것처럼 읽힌다.
+     */
+    case 'clean':
+      return '변경사항이 없어요.';
     case 'saved':
-      return '저장된 상태예요.';
+      return '저장했어요.';
     case 'pending':
       return '입력을 멈추면 자동으로 저장돼요.';
     case 'saving':
@@ -72,6 +81,8 @@ export const useAutosave = ({
 }): AutosaveStatus => {
   const [isSaving, setIsSaving] = useState(false);
   const [failure, setFailure] = useState<{ reason?: string } | null>(null);
+  /** 이번 세션에서 저장이 한 번이라도 성공했는지. 첫 진입 문구를 가르는 값이다. */
+  const [hasSaved, setHasSaved] = useState(false);
 
   /* 매 렌더 새 함수가 와도 타이머를 다시 걸지 않는다 — 부를 때 최신이면 된다. */
   const saveRef = useRef(save);
@@ -89,6 +100,7 @@ export const useAutosave = ({
         try {
           const result = await saveRef.current();
           setFailure(result.ok ? null : { reason: result.reason });
+          if (result.ok) setHasSaved(true);
         } finally {
           setIsSaving(false);
         }
@@ -104,9 +116,9 @@ export const useAutosave = ({
    */
   return useMemo((): AutosaveStatus => {
     if (isSaving) return { kind: 'saving' };
-    if (!isDirty) return { kind: 'saved' };
+    if (!isDirty) return hasSaved ? { kind: 'saved' } : { kind: 'clean' };
     if (failure) return { kind: 'failed', reason: failure.reason };
     if (blockedReason) return { kind: 'blocked', reason: blockedReason };
     return { kind: 'pending' };
-  }, [isSaving, isDirty, failure, blockedReason]);
+  }, [isSaving, isDirty, failure, blockedReason, hasSaved]);
 };

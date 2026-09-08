@@ -95,10 +95,21 @@ describe('describeAutosaveBlock', () => {
     );
   });
 
-  /* 서버 `@NotBlank` 는 `visible` 을 보지 않는다 — 숨긴 섹션도 빈 칸이면 400 이다. */
-  it('숨긴 섹션의 빈 칸도 막고, 어느 섹션인지 밝힌다', () => {
+  /*
+    숨긴 섹션은 막지 않는다. 서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면
+    400 이지만, 화면이 숨긴 섹션의 입력을 잠그므로 여기서 막으면 멘토가 채울 방법이
+    없는 덫이 된다. 대신 보낼 때 `fillHiddenSections` 가 기본 문구로 메운다.
+  */
+  it('숨긴 섹션의 빈 칸은 막지 않는다', () => {
     const template = base();
     template.video.visible = false;
+    template.video.caption = '   ';
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  it('켜진 섹션의 빈 칸은 그대로 막는다', () => {
+    const template = base();
+    template.video.visible = true;
     template.video.caption = '   ';
     expect(describeAutosaveBlock(template)).toBe(
       '「소개 영상」의 영상 안내 문구를 채우면 저장돼요',
