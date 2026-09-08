@@ -26,14 +26,53 @@ const renderPage = () => {
   );
 };
 
-const openDetailStep = () =>
-  fireEvent.click(screen.getByRole('tab', { name: /핵심 소개/ }));
+/*
+  개설 이력 조회가 끝나야 상세 스텝이 열린다. 그 전에 누르면 잠긴 탭이라 클릭이 먹지
+  않고, 화면은 오픈 설정에 머문 채 안내를 찾지 못한다.
+ */
+const openDetailStep = async () => {
+  const tab = screen.getByRole('tab', { name: /핵심 소개/ });
+  await waitFor(() => expect(tab).not.toBeDisabled());
+  fireEvent.click(tab);
+};
 
 const notFound = () =>
   Object.assign(new Error('not found'), {
     code: 'LIVE_MENTORING_NOT_FOUND',
     status: 404,
   });
+
+/*
+  개설 이력이 한 건이라도 있어야 상세 스텝에 들어갈 수 있다(LC-3288). 첫 세팅에서는
+  스텝을 하나씩 여는데, 그때 상세 스텝은 애초에 잠겨 있어 이 안내가 나올 자리가 없다 —
+  이 안내는 이미 상품을 만들어 본 멘토의 조회 실패용이다.
+
+  그래서 개설 이력만 성공시키고 템플릿 조회는 실패시킨다.
+ */
+const 개설_이력이_있다 = (templateError: unknown) => {
+  axiosGet.mockImplementation((url: string) => {
+    if (url.includes('open-status')) {
+      return Promise.resolve({
+        data: {
+          data: {
+            liveMentoringId: 7,
+            openings: [
+              {
+                openingId: 1,
+                status: 'CLOSED',
+                durationPrices: [{ duration: 30, price: 35000 }],
+                openedAt: '2026-01-01T00:00:00',
+                closedAt: '2026-02-01T00:00:00',
+                closeReason: 'MENTOR_CANCELED',
+              },
+            ],
+          },
+        },
+      });
+    }
+    return Promise.reject(templateError);
+  });
+};
 
 beforeEach(() => {
   axiosGet.mockReset();
@@ -46,10 +85,10 @@ beforeEach(() => {
 */
 describe('상세 스텝을 불러오지 못했을 때', () => {
   it('개발 중이라는 안내를 더 이상 보여주지 않는다', async () => {
-    axiosGet.mockRejectedValue(notFound());
+    개설_이력이_있다(notFound());
 
     renderPage();
-    openDetailStep();
+    await openDetailStep();
 
     await waitFor(() =>
       expect(
@@ -64,10 +103,10 @@ describe('상세 스텝을 불러오지 못했을 때', () => {
   });
 
   it('상품이 없어서 실패하면 오픈 설정 스텝으로 보내준다', async () => {
-    axiosGet.mockRejectedValue(notFound());
+    개설_이력이_있다(notFound());
 
     renderPage();
-    openDetailStep();
+    await openDetailStep();
 
     await waitFor(() =>
       expect(
@@ -88,12 +127,12 @@ describe('상세 스텝을 불러오지 못했을 때', () => {
     4xx 로 이 분기를 확인한다 — 분기 기준은 상태가 아니라 코드다.
   */
   it('상품 없음이 아닌 실패에는 다시 시도하라고만 알린다', async () => {
-    axiosGet.mockRejectedValue(
+    개설_이력이_있다(
       Object.assign(new Error('boom'), { code: 'API_ERROR', status: 403 }),
     );
 
     renderPage();
-    openDetailStep();
+    await openDetailStep();
 
     await waitFor(() =>
       expect(
@@ -108,10 +147,10 @@ describe('상세 스텝을 불러오지 못했을 때', () => {
   // 실패는 상세 스텝 안에 갇혀야 한다. 예전에는 페이지를 통째로 조기 반환해서
   // 템플릿 조회가 404 면 오픈 설정까지 함께 사라졌다.
   it('오픈 설정 스텝과 스텝 줄은 그대로 남는다', async () => {
-    axiosGet.mockRejectedValue(notFound());
+    개설_이력이_있다(notFound());
 
     renderPage();
-    openDetailStep();
+    await openDetailStep();
 
     await waitFor(() =>
       expect(

@@ -37,6 +37,26 @@ const isSameIdSet = (a: ReadonlySet<number>, b: ReadonlySet<number>) => {
 };
 
 /**
+ * 저장 실패 사유를 사용자에게 그대로 전한다.
+ *
+ * 공용 axios 인터셉터(`@letscareer/api`)가 서버 에러를 `ApiError` 로 재포장하면서
+ * `code`/`message` 를 **최상위 속성**으로 올린다(`error.response` 는 남지 않는다).
+ *
+ * 이 값을 버리면 화면에 「프로필 저장에 실패했습니다」만 남는다. 실제로 서버는
+ * `INVALID_EMAIL` 처럼 어느 칸이 잘못됐는지 말해 주는데, 그게 닿지 않으면 멘토는
+ * 고칠 곳을 찾을 수 없고 저장을 다시 눌러 보기만 한다.
+ *
+ * 라이브 멘토링 쪽 `errorDescription` 과 같은 규칙이다. 도메인이 달라 가져다 쓰지 않고
+ * 여기에 따로 둔다(앱·도메인 간 중복 허용 규칙).
+ */
+const saveFailureReason = (error: unknown): string | undefined => {
+  const apiError = error as { code?: string; message?: string } | null;
+  if (!apiError?.message) return undefined;
+  return apiError.code
+    ? `${apiError.message} (${apiError.code})`
+    : apiError.message;
+};
+/**
  * 멘토 프로필.
  *
  * **저장은 하단 플로팅 바 하나뿐이다(LC-3266).** 예전에는 해시태그와 상세페이지 제작이
@@ -218,6 +238,11 @@ export default function ProfilePage() {
     /*
      * 바뀐 것만 보낸다. 두 요청은 서로를 기다리지 않는다 — 해시태그가 실패해도 프로필은
      * 저장돼야 하고, 그 반대도 마찬가지다.
+     *
+     * 실패는 **사유까지 들고 온다.** 예전에는 'fail' 이라는 라벨만 남기고 서버가 준
+     * 이유를 버려서, 화면에 「프로필 저장에 실패했습니다」만 떴다. 서버는
+     * `INVALID_EMAIL` 처럼 무엇이 잘못됐는지 정확히 말해 주는데 그게 멘토에게 닿지
+     * 않으면 고칠 칸을 찾을 수 없다.
      */
     const [userResult, hashTagResult] = await Promise.all([
       isUserChanged
@@ -231,34 +256,43 @@ export default function ProfilePage() {
             profileImgUrl: formData.profileImgUrl || null,
             description: detailContent || null,
           }).then(
-            () => 'ok' as const,
-            () => 'fail' as const,
+            () => ({ kind: 'ok' }) as const,
+            (error: unknown) =>
+              ({ kind: 'fail', reason: saveFailureReason(error) }) as const,
           )
-        : Promise.resolve('skip' as const),
+        : Promise.resolve({ kind: 'skip' } as const),
       isHashTagChanged
         ? putHashTags({ mentorHashTagIdList: Array.from(hashTagIds) }).then(
-            () => 'ok' as const,
-            () => 'fail' as const,
+            () => ({ kind: 'ok' }) as const,
+            (error: unknown) =>
+              ({ kind: 'fail', reason: saveFailureReason(error) }) as const,
           )
-        : Promise.resolve('skip' as const),
+        : Promise.resolve({ kind: 'skip' } as const),
     ]);
 
     setIsSaving(false);
 
     // 성공한 쪽만 기준값을 옮긴다. 실패한 쪽은 변경사항으로 남아 다시 저장할 수 있다.
-    if (userResult === 'ok') {
+    if (userResult.kind === 'ok') {
       setSavedFormData(formData);
       setSavedIntroduction(introduction);
       setSavedDetailContent(detailContent);
     }
-    if (hashTagResult === 'ok') {
+    if (hashTagResult.kind === 'ok') {
       setSavedHashTagIds(new Set(hashTagIds));
     }
 
     const failed = [
-      userResult === 'fail' ? '프로필' : null,
-      hashTagResult === 'fail' ? '해시태그' : null,
-    ].filter((label): label is string => label !== null);
+      userResult.kind === 'fail'
+        ? { label: '프로필', reason: userResult.reason }
+        : null,
+      hashTagResult.kind === 'fail'
+        ? { label: '해시태그', reason: hashTagResult.reason }
+        : null,
+    ].filter(
+      (item): item is { label: string; reason: string | undefined } =>
+        item !== null,
+    );
 
     if (failed.length === 0) {
       /*
@@ -290,7 +324,13 @@ export default function ProfilePage() {
     }
 
     showAlert({
-      title: `${failed.join(' · ')} 저장에 실패했습니다.`,
+      title: `${failed.map((item) => item.label).join(' · ')} 저장에 실패했습니다.`,
+      /* 서버가 말해 준 이유를 그대로 전한다. 없으면 제목만 남는다. */
+      description:
+        failed
+          .map((item) => item.reason)
+          .filter((reason): reason is string => Boolean(reason))
+          .join('\n') || undefined,
       variant: 'error',
     });
   }, [

@@ -14,9 +14,6 @@ import ApplySheet from '../apply/ApplySheet';
 import { useApplySheetState } from '../apply/hooks/useApplySheetState';
 import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
 import { formatDetailPeriod, slotPeriod } from '../constants';
-// ⚠️ 임시 — 백엔드 연동 후 이 import 와 아래 isError 분기를 함께 제거할 것.
-//    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-import UnderDevelopmentNotice from '../UnderDevelopmentNotice';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
@@ -123,11 +120,12 @@ const LiveMentoringDetailPage = ({
   if (isLoading) {
     return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
   }
-  // ⚠️ 임시 — `GET /live-mentoring/mentors/{mentorId}` 가 미완성이라 실서버에서 500 이 온다.
-  //    백엔드 연동 후 아래 한 줄을 지우고 원래 문구로 되돌릴 것:
-  //      <p className="text-neutral-40 py-20 text-center">멘토 정보를 불러오지 못했습니다.</p>
   if (isError || !data) {
-    return <UnderDevelopmentNotice />;
+    return (
+      <p className="text-neutral-40 py-20 text-center">
+        멘토 정보를 불러오지 못했습니다.
+      </p>
+    );
   }
 
   /*
@@ -549,6 +547,8 @@ const LiveMentoringDetailPage = ({
           // 시트는 필수 입력이 다 차야 `신청하기` 를 열어 주므로 여기서 다시 묻지 않는다
           if (draft.duration === null) return;
           if (draft.mentoringCategory === null) return;
+          // 개설 전에는 신청을 만들 수 없다. 미리보기로 들어온 화면이 여기다.
+          if (data.openingId === null) return;
           const plan = data.durationPrices.find(
             (option) => option.duration === draft.duration,
           );

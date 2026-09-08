@@ -55,11 +55,21 @@ const TemplatePreview = ({
    */
   const [isFrameReady, setIsFrameReady] = useState(false);
   /*
-    지금 편집 중인 항목 번호. 유형 카드나 결과 사례가 서너 개로 늘면 섹션까지만 따라가서는
-    몇 번째를 쓰고 있는지 알 수 없다. 포커스가 있는 입력의 조상에서 읽는다 —
+    지금 편집 중인 자리.
+
+    `item` 은 반복 항목 번호다. 유형 카드나 결과 사례가 서너 개로 늘면 섹션까지만
+    따라가서는 몇 번째를 쓰고 있는지 알 수 없다. 포커스가 있는 입력의 조상에서 읽는다 —
     반복 항목마다 `data-preview-index` 가 붙어 있다.
+
+    `at` 은 **포커스가 옮겨졌다는 사실 자체**다. 번호만 들고 있으면 반복 항목 밖
+    (섹션 제목·설명)으로 옮겨갈 때 `null -> null` 이라 상태가 그대로고, 리렌더가 없으니
+    미리보기에 메시지조차 나가지 않는다. 그래서 섹션 제목을 고치려고 위로 올라가면
+    미리보기는 방금 보던 카드에 머물러 있었다.
    */
-  const [activeItem, setActiveItem] = useState<number | null>(null);
+  const [focus, setFocus] = useState<{ item: number | null; at: number }>({
+    item: null,
+    at: 0,
+  });
   /*
     지금 탭의 섹션이 상세에 그려지고 있는지. 노출을 껐거나 영상 URL 처럼 없으면 섹션째로
     빠지는 값이 비어 있으면 false 다. 미리보기에 아무 변화가 없는 이유를 알려준다 —
@@ -68,16 +78,23 @@ const TemplatePreview = ({
   const [isSectionShown, setIsSectionShown] = useState(true);
 
   useEffect(() => {
-    setActiveItem(null);
+    setFocus({ item: null, at: Date.now() });
   }, [activeTab]);
 
   useEffect(() => {
     const handleFocus = (event: FocusEvent) => {
-      const holder = (event.target as HTMLElement | null)?.closest?.(
-        '[data-preview-index]',
-      );
-      const raw = (holder as HTMLElement | null)?.dataset.previewIndex;
-      setActiveItem(raw === undefined ? null : Number(raw));
+      const target = event.target as HTMLElement | null;
+      /*
+        편집 폼 안의 포커스만 센다. 탭 버튼이나 하단 바를 눌러도 포커스는 옮겨가는데,
+        그때까지 미리보기를 움직이면 편집과 무관한 이동이 된다.
+       */
+      if (!target?.closest?.('[data-section]')) return;
+      const holder = target.closest<HTMLElement>('[data-preview-index]');
+      const raw = holder?.dataset.previewIndex;
+      setFocus({
+        item: raw === undefined ? null : Number(raw),
+        at: Date.now(),
+      });
     };
     document.addEventListener('focusin', handleFocus);
     return () => document.removeEventListener('focusin', handleFocus);
@@ -101,10 +118,16 @@ const TemplatePreview = ({
   useEffect(() => {
     if (!isFrameReady || !WEB_ORIGIN) return;
     frameRef.current?.contentWindow?.postMessage(
-      { type: PREVIEW_MESSAGE, template, activeTab, activeItem },
+      {
+        type: PREVIEW_MESSAGE,
+        template,
+        activeTab,
+        activeItem: focus.item,
+        focusedAt: focus.at,
+      },
       WEB_ORIGIN,
     );
-  }, [isFrameReady, template, activeTab, activeItem]);
+  }, [isFrameReady, template, activeTab, focus]);
 
   return (
     <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-2">

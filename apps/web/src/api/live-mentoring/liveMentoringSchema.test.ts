@@ -244,6 +244,25 @@ describe('liveMentorDetailSchema', () => {
     expect(parsed.rating).toBeNull();
   });
 
+  /*
+    개설 전 미리보기가 이 형태로 들어온다. 상세 페이지는 설정 저장 때 만들어지지만
+    개설은 공개 때 생기므로 openingId·price 가 비고 durationPrices 가 빈 배열이다.
+    openingId 를 필수로 두었더니 그 화면이 파싱에서 통째로 실패해
+    "멘토 정보를 불러오지 못했습니다" 만 떴다.
+  */
+  it('개설 전이라 openingId·price 가 null 이어도 파싱한다', () => {
+    const parsed = liveMentorDetailSchema.parse(
+      makeDetail({
+        openingId: null,
+        price: null,
+        durations: [],
+        durationPrices: [],
+      }),
+    );
+    expect(parsed.openingId).toBeNull();
+    expect(parsed.durationPrices).toEqual([]);
+  });
+
   it('프로필 닉네임·소개가 null 이어도 파싱한다', () => {
     const detail = makeDetail() as Record<string, unknown>;
     const profile = detail.profile as Record<string, unknown>;

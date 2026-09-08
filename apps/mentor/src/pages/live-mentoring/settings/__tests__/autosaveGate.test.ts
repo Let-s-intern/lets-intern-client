@@ -98,7 +98,7 @@ describe('describeAutosaveBlock', () => {
   /*
     숨긴 섹션은 막지 않는다. 서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면
     400 이지만, 화면이 숨긴 섹션의 입력을 잠그므로 여기서 막으면 멘토가 채울 방법이
-    없는 덫이 된다. 대신 보낼 때 `fillHiddenSections` 가 기본 문구로 메운다.
+    없는 덫이 된다. 서버도 `visible` 이 꺼진 섹션은 검사하지 않는다 (LC-3289).
   */
   it('숨긴 섹션의 빈 칸은 막지 않는다', () => {
     const template = base();
