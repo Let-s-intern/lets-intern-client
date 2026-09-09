@@ -1,7 +1,30 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+
 import SectionHeading from '@/domain/pass-certification/components/SectionHeading';
 
 /** 편지 섹션 */
 export default function LetterSection() {
+  const envelopeRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = envelopeRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="bg-neutral-95">
       <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-10 px-5 py-16 md:gap-14 md:px-5 md:py-20">
@@ -10,8 +33,10 @@ export default function LetterSection() {
           title="합격까지 하신 여러분께"
         />
 
-        {/* 봉투+편지지 이미지 위에 텍스트 오버레이 (여백은 흰 편지지 기준) */}
-        <div className="relative mx-auto w-full min-w-[330px] max-w-[400px] md:max-w-[1000px]">
+        <div
+          ref={envelopeRef}
+          className="relative mx-auto w-full min-w-[330px] max-w-[400px] md:max-w-[1000px]"
+        >
           <img
             src="/images/pass-certification/letter-mobile.png"
             alt=""
@@ -25,8 +50,11 @@ export default function LetterSection() {
             className="hidden w-full md:block"
           />
 
-          {/* 데스크탑: 텍스트 영역 624px 고정(편지지 960px 중앙) · 모바일: 폭 82% */}
-          <div className="absolute left-1/2 top-[3%] flex w-[252px] max-w-[85%] -translate-x-1/2 flex-col gap-5 pt-9 text-left min-[400px]:w-[300px] min-[400px]:pt-12 md:top-[10.5%] md:w-[624px] md:max-w-[62.4%] md:gap-8 md:pt-0 min-[1000px]:gap-[46px]">
+          <div
+            className={`absolute left-1/2 top-[3%] flex w-[252px] max-w-[85%] -translate-x-1/2 flex-col gap-5 pt-9 text-left transition-[opacity,transform] duration-700 ease-out min-[400px]:w-[300px] min-[400px]:pt-12 md:top-[10.5%] md:w-[624px] md:max-w-[62.4%] md:gap-8 md:pt-0 min-[1000px]:gap-[46px] ${
+              inView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+            }`}
+          >
             <div className="flex flex-col gap-3">
               <img
                 src="/icons/heart-line.svg"
