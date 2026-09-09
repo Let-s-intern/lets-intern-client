@@ -70,16 +70,25 @@ const ProfileImageUploadModal = ({
 
   const reset = useCallback(() => {
     setFile(null);
-    setBitmap((prev) => {
-      prev?.close?.();
-      return null;
-    });
+    setBitmap(null);
     setFraming(CENTERED);
     setIsBlurred(false);
     setIsDragging(false);
     setError(null);
     dragOrigin.current = null;
   }, []);
+
+  /*
+   * 다 쓴 ImageBitmap 을 놓아준다. GC 를 기다리지 않고 직접 해제해야 하는 객체라
+   * 안 풀면 사진을 여러 번 고를수록 메모리가 쌓인다.
+   *
+   * 해제를 `setBitmap` 업데이터 안에서 하면 안 된다. 업데이터는 순수해야 하고 React 가
+   * 여러 번 호출할 수 있어서, 아직 그리는 중인 비트맵을 닫아 버리면 `drawImage` 가
+   * InvalidStateError 로 죽는다. 값이 바뀔 때 정리하는 이 자리가 제자리다.
+   */
+  useEffect(() => {
+    return () => bitmap?.close?.();
+  }, [bitmap]);
 
   // 모달을 닫으면 고르던 것을 버린다. 블러 토글도 저장되는 설정이 아니라 굽는 시점의
   // 옵션이므로 다음에 열 때는 꺼진 상태로 시작한다.
@@ -125,10 +134,7 @@ const ProfileImageUploadModal = ({
       const decoded = await decodeImage(selected);
       setFile(selected);
       setFraming(CENTERED);
-      setBitmap((prev) => {
-        prev?.close?.();
-        return decoded;
-      });
+      setBitmap(decoded);
     } catch {
       /*
        * 디코드에 실패하면(안드로이드·데스크톱 크롬의 HEIC 등) 원본으로 되돌리지 않는다.
@@ -231,9 +237,15 @@ const ProfileImageUploadModal = ({
           }`}
         >
           {!hasImage && (
-            <span className="text-xsmall14 px-6 text-center text-neutral-500">
-              드래그해서 이미지를 올리거나 클릭하여 이미지를 올려 주세요
-            </span>
+            <div className="px-6 text-center">
+              <span className="text-xsmall14 block text-neutral-500">
+                드래그해서 이미지를 올리거나 클릭하여 이미지를 올려 주세요
+              </span>
+              {/* 한도는 거절당한 뒤가 아니라 고르기 전에 보여야 한다. */}
+              <span className="mt-1 block text-xs text-neutral-400">
+                JPG, PNG 파일을 {MAX_FILE_SIZE_MB}MB까지 올릴 수 있어요.
+              </span>
+            </div>
           )}
 
           {/*
