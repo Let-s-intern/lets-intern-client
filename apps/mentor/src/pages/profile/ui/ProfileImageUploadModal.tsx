@@ -243,7 +243,7 @@ const ProfileImageUploadModal = ({
               </span>
               {/* 한도는 거절당한 뒤가 아니라 고르기 전에 보여야 한다. */}
               <span className="mt-1 block text-xs text-neutral-400">
-                JPG · PNG · {MAX_FILE_SIZE_MB}MB 이하
+                JPG, PNG 파일을 {MAX_FILE_SIZE_MB}MB까지 올릴 수 있어요.
               </span>
             </div>
           )}
