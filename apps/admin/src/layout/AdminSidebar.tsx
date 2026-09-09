@@ -88,6 +88,10 @@ const navData = [
         name: '리드 관리',
         url: '/leads/managements',
       },
+      {
+        name: '합격 인증 관리',
+        url: '/pass-certification',
+      },
     ],
   },
   {
