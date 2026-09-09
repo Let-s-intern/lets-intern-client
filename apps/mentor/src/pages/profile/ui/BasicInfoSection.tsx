@@ -102,7 +102,9 @@ export default function BasicInfoSection({
             10px 회색 글씨로 있어서, 사진을 한 장 올리고 나면 아예 사라졌다. 5MB 를 넘겨
             거절당하는 순간에야 한도를 알게 되는 자리였다.
           */}
-          <p className="text-xs text-neutral-500">JPG · PNG · 5MB 이하</p>
+          <p className="text-xs text-neutral-500">
+            JPG, PNG 파일을 5MB까지 올릴 수 있어요.
+          </p>
         </div>
 
         {/* Input Fields */}
