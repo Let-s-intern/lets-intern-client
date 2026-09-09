@@ -257,6 +257,9 @@ const ProgramBannerCreate = lazy(
 const ProgramBannerEdit = lazy(
   () => import('./pages/pages/banner/program-banner/ProgramBannerEdit'),
 );
+const AdminPassCertificationPage = lazy(
+  () => import('./pages/pages/pass-certification/AdminPassCertificationPage'),
+);
 
 const withSuspense = (node: React.ReactNode) => (
   <Suspense fallback={null}>{node}</Suspense>
@@ -271,6 +274,10 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: '/', element: withSuspense(<AdminHome />) },
+      {
+        path: '/pass-certification',
+        element: withSuspense(<AdminPassCertificationPage />),
+      },
       { path: '/stats', element: withSuspense(<Stats />) },
       { path: '/stats/:tab', element: withSuspense(<Stats />) },
       { path: '/programs', element: withSuspense(<Programs />) },
