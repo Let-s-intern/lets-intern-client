@@ -1,7 +1,7 @@
 'use client';
 
-import { uploadFile } from '@/api/file';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import ProfileImageUploadModal from './ProfileImageUploadModal';
 
 export interface BasicInfoFormData {
   name: string;
@@ -15,14 +15,7 @@ export interface BasicInfoFormData {
 interface BasicInfoSectionProps {
   formData: BasicInfoFormData;
   onChange: (data: BasicInfoFormData) => void;
-  showAlert: (opts: {
-    title: string;
-    variant?: 'info' | 'success' | 'error' | 'confirm';
-  }) => void;
 }
-
-const MAX_FILE_SIZE_MB = 5;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 const FIELDS: {
   key: keyof Omit<BasicInfoFormData, 'profileImgUrl' | 'sns'>;
@@ -37,10 +30,8 @@ const FIELDS: {
 export default function BasicInfoSection({
   formData,
   onChange,
-  showAlert,
 }: BasicInfoSectionProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleChange = (key: keyof BasicInfoFormData, value: string) => {
     onChange({ ...formData, [key]: value });
@@ -62,32 +53,6 @@ export default function BasicInfoSection({
       ...formData,
       sns: formData.sns.filter((_, i) => i !== index),
     });
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      showAlert({
-        title: `파일 크기는 ${MAX_FILE_SIZE_MB}MB 이하여야 합니다.`,
-        variant: 'error',
-      });
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
-      onChange({ ...formData, profileImgUrl: fileUrl });
-    } catch {
-      showAlert({
-        title: '이미지 업로드에 실패했습니다.',
-        variant: 'error',
-      });
-    } finally {
-      setIsUploading(false);
-    }
   };
 
   const handleImageDelete = () => {
@@ -114,11 +79,10 @@ export default function BasicInfoSection({
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-black/40 py-2">
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="rounded-lg bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white disabled:opacity-50"
+              onClick={() => setIsUploadModalOpen(true)}
+              className="rounded-lg bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white"
             >
-              {isUploading ? '업로드 중...' : '업로드'}
+              업로드
             </button>
             {formData.profileImgUrl && (
               <button
@@ -130,14 +94,6 @@ export default function BasicInfoSection({
               </button>
             )}
           </div>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
 
           {!formData.profileImgUrl && (
             <p className="absolute bottom-8 text-[10px] text-gray-400">
@@ -202,6 +158,12 @@ export default function BasicInfoSection({
           </div>
         </div>
       </div>
+
+      <ProfileImageUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onUploaded={(url) => onChange({ ...formData, profileImgUrl: url })}
+      />
     </section>
   );
 }

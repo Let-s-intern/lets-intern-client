@@ -354,11 +354,7 @@ export default function ProfilePage() {
       <hr className="mb-6 border-gray-200" />
 
       <div className="flex flex-col gap-6 pb-20">
-        <BasicInfoSection
-          formData={formData}
-          onChange={setFormData}
-          showAlert={showAlert}
-        />
+        <BasicInfoSection formData={formData} onChange={setFormData} />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
         <MentorHashTagSection
