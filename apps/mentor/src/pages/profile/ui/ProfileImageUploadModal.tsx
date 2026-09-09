@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { uploadFile } from '@/api/file';
 import BaseModal from '@/common/modal/BaseModal';
-import { blurImageFile } from '../blurImage';
+import {
+  CENTERED,
+  canvasToFile,
+  cropRect,
+  decodeImage,
+  outputMimeFor,
+  renderProfileImage,
+  type Framing,
+} from '../processProfileImage';
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -23,8 +31,14 @@ interface ProfileImageUploadModalProps {
  * 넣을 뿐이고, 서버 반영은 프로필 화면 하단의 플로팅 저장 바 하나가 담당한다(LC-3266 이
  * 저장 경로를 그 하나로 합쳐 놓았다). 그래서 모달 안에 그 사실을 한 줄로 적어 둔다.
  *
- * 블러 토글은 저장되는 설정이 아니라 **굽는 시점의 옵션**이다. 이미 올라간 이미지에는
- * 소급 적용되지 않으므로 모달을 열 때마다 꺼진 상태로 시작한다.
+ * 미리보기는 `<img>` 가 아니라 **캔버스**다. 업로드할 때 쓰는 그리기 함수로 그 캔버스를
+ * 그대로 그리고, 저장할 때 같은 캔버스를 File 로 굳힌다. 보이는 픽셀과 올라가는 픽셀이
+ * 같은 것이 이 화면의 핵심이다 — 흐린 화면을 보고 저장했는데 선명한 사진이 올라가거나,
+ * 얼굴을 맞춰 놨는데 다르게 잘리면 멘토는 알아챌 방법이 없다.
+ *
+ * 잘라내는 틀은 정사각형이다. 프로필 이미지를 쓰는 화면들의 비율이 제각각이고 전부
+ * `object-cover` 라, 어떤 비율로 저장해도 어딘가에서는 잘린다. 정사각형으로 저장해 두면
+ * 가운데에 맞춘 얼굴이 어느 컨테이너에서도 살아남는다.
  */
 const ProfileImageUploadModal = ({
   isOpen,
@@ -32,78 +46,65 @@ const ProfileImageUploadModal = ({
   onUploaded,
 }: ProfileImageUploadModalProps) => {
   const [file, setFile] = useState<File | null>(null);
+  const [bitmap, setBitmap] = useState<ImageBitmap | null>(null);
+  const [framing, setFraming] = useState<Framing>(CENTERED);
   const [isBlurred, setIsBlurred] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * 미리보기와 업로드는 **같은 File 하나**를 쓴다.
-   *
-   * 미리보기용으로 따로 굽고 업로드는 다시 구우면, 둘이 어긋났을 때 멘토는 흐린 화면을
-   * 보고 저장했는데 선명한 사진이 올라간 것을 알 방법이 없다. (파일, 토글) 이 바뀔 때 한 번
-   * 구워서 그 결과를 화면에도 쓰고 서버에도 보낸다.
-   */
-  const [processed, setProcessed] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  /** 드래그 시작 지점과 그때의 framing. 포인터 이동량을 원본 픽셀로 환산할 때 쓴다. */
+  const dragOrigin = useRef<{ x: number; y: number; framing: Framing } | null>(
+    null,
+  );
 
-  useEffect(() => {
-    if (!file) {
-      setProcessed(null);
-      setPreviewUrl(null);
-      return;
-    }
-
-    let cancelled = false;
-    let url: string | null = null;
-
-    const run = async () => {
-      setIsProcessing(true);
-      setError(null);
-      try {
-        const next = isBlurred ? await blurImageFile(file) : file;
-        if (cancelled) return;
-        url = URL.createObjectURL(next);
-        setProcessed(next);
-        setPreviewUrl(url);
-      } catch {
-        if (cancelled) return;
-        /*
-         * 블러에 실패하면 원본으로 되돌리지 않는다. 그러면 흐릴 줄 알았던 사진이 그대로
-         * 올라간다. 미리보기도 업로드 대상도 비워 두고 왜 안 되는지 말한다.
-         */
-        setProcessed(null);
-        setPreviewUrl(null);
-        setError(
-          '이미지를 처리하지 못했어요. 다른 형식(JPG, PNG)으로 다시 시도해주세요.',
-        );
-      } finally {
-        if (!cancelled) setIsProcessing(false);
+  /** 각 축에 움직일 여백이 있는지. 세로 사진이면 좌우로는 움직일 것이 없다. */
+  const slack = bitmap
+    ? {
+        x: bitmap.width - Math.min(bitmap.width, bitmap.height),
+        y: bitmap.height - Math.min(bitmap.width, bitmap.height),
       }
-    };
+    : { x: 0, y: 0 };
+  const canPan = slack.x > 0 || slack.y > 0;
 
-    run();
-
-    return () => {
-      cancelled = true;
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [file, isBlurred]);
-
-  const reset = () => {
+  const reset = useCallback(() => {
     setFile(null);
+    setBitmap((prev) => {
+      prev?.close?.();
+      return null;
+    });
+    setFraming(CENTERED);
     setIsBlurred(false);
     setIsDragging(false);
     setError(null);
-  };
+    dragOrigin.current = null;
+  }, []);
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
+  // 모달을 닫으면 고르던 것을 버린다. 블러 토글도 저장되는 설정이 아니라 굽는 시점의
+  // 옵션이므로 다음에 열 때는 꺼진 상태로 시작한다.
+  useEffect(() => {
+    if (!isOpen) reset();
+  }, [isOpen, reset]);
 
-  const handleSelect = (selected: File | undefined) => {
+  /** 화면에 그린다. 업로드할 때와 같은 함수를 쓴다. */
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !bitmap || !file) return;
+
+    try {
+      renderProfileImage(canvas, bitmap, {
+        framing,
+        blur: isBlurred,
+        mime: outputMimeFor(file),
+      });
+    } catch {
+      setError('이미지를 처리하지 못했어요. 다른 이미지로 시도해주세요.');
+      setBitmap(null);
+    }
+  }, [bitmap, file, framing, isBlurred]);
+
+  const handleSelect = async (selected: File | undefined) => {
     if (!selected) return;
 
     if (!selected.type.startsWith('image/')) {
@@ -120,15 +121,64 @@ const ProfileImageUploadModal = ({
     }
 
     setError(null);
-    setFile(selected);
+    try {
+      const decoded = await decodeImage(selected);
+      setFile(selected);
+      setFraming(CENTERED);
+      setBitmap((prev) => {
+        prev?.close?.();
+        return decoded;
+      });
+    } catch {
+      /*
+       * 디코드에 실패하면(안드로이드·데스크톱 크롬의 HEIC 등) 원본으로 되돌리지 않는다.
+       * 그러면 자르지도 흐리게 하지도 않은 사진이 그대로 올라간다.
+       */
+      setFile(null);
+      setBitmap(null);
+      setError(
+        '이미지를 읽지 못했어요. 다른 형식(JPG, PNG)으로 다시 시도해주세요.',
+      );
+    }
+  };
+
+  /**
+   * 드래그로 잘라낼 위치를 옮긴다.
+   *
+   * 캔버스는 원본의 짧은 변만큼을 화면 폭에 담아 보여준다. 그래서 화면에서 1px 움직이면
+   * 원본에서는 `짧은 변 / 화면 폭` 픽셀만큼 움직인 것이다. 그 값을 축의 여백으로 나눠
+   * 0~1 비율로 되돌린다.
+   */
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const origin = dragOrigin.current;
+    const canvas = canvasRef.current;
+    if (!origin || !canvas || !bitmap) return;
+
+    const { side } = cropRect(bitmap.width, bitmap.height, framing);
+    const perPixel = side / canvas.getBoundingClientRect().width;
+
+    // 사진을 오른쪽으로 끌면 왼쪽이 보여야 하므로 부호가 반대다.
+    const nextX = slack.x
+      ? origin.framing.x - ((e.clientX - origin.x) * perPixel) / slack.x
+      : origin.framing.x;
+    const nextY = slack.y
+      ? origin.framing.y - ((e.clientY - origin.y) * perPixel) / slack.y
+      : origin.framing.y;
+
+    setFraming({
+      x: Math.min(1, Math.max(0, nextX)),
+      y: Math.min(1, Math.max(0, nextY)),
+    });
   };
 
   const handleSave = async () => {
-    if (!processed) return;
+    const canvas = canvasRef.current;
+    if (!canvas || !file || !bitmap) return;
 
     setIsSaving(true);
     setError(null);
     try {
+      const processed = await canvasToFile(canvas, file);
       const url = await uploadFile({ file: processed, type: 'USER_PROFILE' });
       onUploaded(url);
       reset();
@@ -140,10 +190,12 @@ const ProfileImageUploadModal = ({
     }
   };
 
+  const hasImage = Boolean(bitmap && file);
+
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       className="max-w-[20rem] md:max-w-[28rem]"
     >
       <div className="px-6 py-5">
@@ -151,7 +203,7 @@ const ProfileImageUploadModal = ({
           <span className="text-xsmall16 font-semibold">프로필 이미지</span>
           <button
             type="button"
-            onClick={handleClose}
+            onClick={onClose}
             aria-label="닫기"
             className="p-1 opacity-60 transition-opacity hover:opacity-100"
           >
@@ -170,25 +222,47 @@ const ProfileImageUploadModal = ({
             setIsDragging(false);
             handleSelect(e.dataTransfer.files?.[0]);
           }}
-          className={`flex aspect-[4/3] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed transition-colors ${
+          className={`flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl border-2 border-dashed transition-colors ${
+            hasImage ? 'border-transparent' : 'cursor-pointer'
+          } ${
             isDragging
               ? 'border-primary bg-primary-5'
-              : 'border-neutral-80 bg-neutral-95 hover:bg-neutral-90'
+              : 'border-neutral-80 bg-neutral-95'
           }`}
         >
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="프로필 이미지 미리보기"
-              className="h-full w-full object-cover"
-            />
-          ) : (
+          {!hasImage && (
             <span className="text-xsmall14 px-6 text-center text-neutral-500">
-              {isProcessing
-                ? '이미지를 처리하고 있어요...'
-                : '드래그해서 이미지를 올리거나 클릭하여 이미지를 올려 주세요'}
+              드래그해서 이미지를 올리거나 클릭하여 이미지를 올려 주세요
             </span>
           )}
+
+          {/*
+            캔버스는 이미지가 있을 때만 보인다. 라벨 안에 두면 드래그가 파일 선택창을
+            열어 버리므로, 포인터 이벤트를 여기서 멈춘다.
+          */}
+          <canvas
+            ref={canvasRef}
+            aria-label="프로필 이미지 미리보기"
+            hidden={!hasImage}
+            onPointerDown={(e) => {
+              if (!canPan) return;
+              e.preventDefault();
+              e.currentTarget.setPointerCapture(e.pointerId);
+              dragOrigin.current = { x: e.clientX, y: e.clientY, framing };
+            }}
+            onPointerMove={handlePointerMove}
+            onPointerUp={() => {
+              dragOrigin.current = null;
+            }}
+            onPointerCancel={() => {
+              dragOrigin.current = null;
+            }}
+            onClick={(e) => e.preventDefault()}
+            className={`h-full w-full touch-none select-none ${
+              canPan ? 'cursor-grab active:cursor-grabbing' : ''
+            }`}
+          />
+
           <input
             type="file"
             accept="image/*"
@@ -200,6 +274,14 @@ const ProfileImageUploadModal = ({
             className="hidden"
           />
         </label>
+
+        {hasImage && (
+          <p className="mt-2 text-center text-xs text-neutral-500">
+            {canPan
+              ? '사진을 드래그해서 저장할 영역을 맞춰 주세요. 보이는 그대로 저장돼요.'
+              : '정사각형 사진이라 잘리는 부분이 없어요.'}
+          </p>
+        )}
 
         <div className="mt-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -215,9 +297,8 @@ const ProfileImageUploadModal = ({
             role="switch"
             aria-checked={isBlurred}
             aria-label="이미지 블러처리하기"
-            disabled={isProcessing}
             onClick={() => setIsBlurred((prev) => !prev)}
-            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
               isBlurred ? 'bg-primary' : 'bg-neutral-70'
             }`}
           >
@@ -234,7 +315,7 @@ const ProfileImageUploadModal = ({
         <button
           type="button"
           onClick={handleSave}
-          disabled={!processed || isProcessing || isSaving}
+          disabled={!hasImage || isSaving}
           className="bg-primary hover:bg-primary-hover text-xsmall14 mt-5 w-full rounded-lg py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSaving ? '저장 중...' : '저장하기'}
