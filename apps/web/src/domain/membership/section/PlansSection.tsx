@@ -18,7 +18,6 @@ import {
   type PlanBenefitIcon,
 } from '../data/plans';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
-import VodOptionCard from '../ui/VodOptionCard';
 
 const BENEFIT_ICONS: Record<PlanBenefitIcon, typeof Flag> = {
   flag: Flag,
@@ -121,24 +120,35 @@ export default function PlansSection() {
           </div>
 
           <div className="allpass-buy">
-            <h3 className="allpass-name">{PLAN_NAME}</h3>
+            {/* 섹션 헤더가 이미 상품명을 말한다. 시안 15 는 카드 우측에 영문 배지를 둔다. */}
+            <h3 className="allpass-name">MARKETING ALL-IN-ONE PASS</h3>
             {/* 이용 기한은 챌린지 endDate 를 포맷해서 쓴다 — 날짜를 코드에 박지 않는다 */}
             <p className="allpass-period">
               <CalendarDays size={17} strokeWidth={2} aria-hidden />
               <span className="num">
-                {dayjs(endDate).format('M월 D일')}까지 이용
+                구매 시점부터 {dayjs(endDate).format('M월 D일')}까지 이용
               </span>
             </p>
 
             <div className="allpass-price">
-              <p className="allpass-was">
-                <span className="allpass-was-label">정가</span>
-                <span className="allpass-was-num num">
-                  {formatKRW(regularPrice)}원
-                </span>
-              </p>
+              {/*
+                시안 15 의 가격 카드에는 취소선도 할인 배지도 없다. 어드민에서 할인을
+                걸면 그때 보여야 하므로, 값 자체를 지우지 않고 할인이 있을 때만 그린다.
+                정가와 판매가가 같은데 "정가 175,900원 / 판매가 175,900원" 이 나란히
+                있으면 읽는 사람이 무엇을 비교하라는 것인지 알 수 없다.
+              */}
+              {discountRate > 0 && (
+                <p className="allpass-was">
+                  <span className="allpass-was-label">정가</span>
+                  <span className="allpass-was-num num">
+                    {formatKRW(regularPrice)}원
+                  </span>
+                </p>
+              )}
               <p className="allpass-sale-row">
-                <span className="allpass-sale-label">판매가</span>
+                {discountRate > 0 && (
+                  <span className="allpass-sale-label">판매가</span>
+                )}
                 {/*
                   할인율은 정가·판매가에서 계산한다. 계산이 성립하지 않는 값
                   (정가 0, 판매가 > 정가)이면 배지 자체를 렌더하지 않는다 —
@@ -160,12 +170,11 @@ export default function PlansSection() {
           </div>
         </div>
 
-        <div className="plan-plus rv" aria-hidden>
-          <span className="plan-plus-icon">+</span>
-          <span className="plan-plus-label">옵션 추가</span>
-        </div>
-
-        <VodOptionCard />
+        {/*
+          VOD 옵션 카드는 시안 15 에 없어 렌더하지 않는다. 카드 안 문구가
+          "렛츠커리어 하반기 멤버십 구매자 전용" 이라 이 상품과도 맞지 않는다.
+          되살리려면 이 블록과 상단 VodOptionCard import 를 함께 푼다.
+        */}
       </div>
     </section>
   );

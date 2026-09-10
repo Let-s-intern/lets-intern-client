@@ -18,6 +18,9 @@ import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
 import './styles/course-plan.css';
+// 시안 15 가격 카드. 랜딩을 재조립할 때 빠뜨려 카드가 스타일 없이 세로로 쏟아졌다 —
+// 섹션을 켜고 끌 때 대응 CSS import 도 함께 확인할 것.
+import './styles/plan-single.css';
 import './styles/faq.css';
 import './styles/footer.css';
 import './styles/animations.css';

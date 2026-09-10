@@ -30,7 +30,8 @@ describe('PlansSection', () => {
 
   it('시안 15 헤더 카피를 렌더한다', () => {
     const { container } = render(<PlansSection />);
-    expect(screen.getByText('MARKETING ALL-IN-ONE PASS')).toBeInTheDocument();
+    // 섹션 헤더와 가격 카드 두 곳에 나온다(시안 15).
+    expect(screen.getAllByText('MARKETING ALL-IN-ONE PASS')).toHaveLength(2);
     expect(container.querySelector('.sec-head h2')?.textContent).toBe(
       PLAN_NAME,
     );
@@ -70,7 +71,9 @@ describe('PlansSection', () => {
     });
     render(<PlansSection />);
 
-    expect(screen.getByText('9월 30일까지 이용')).toBeInTheDocument();
+    expect(
+      screen.getByText('구매 시점부터 9월 30일까지 이용'),
+    ).toBeInTheDocument();
   });
 
   it('할인이 성립하지 않으면 할인율 배지를 그리지 않는다', () => {
