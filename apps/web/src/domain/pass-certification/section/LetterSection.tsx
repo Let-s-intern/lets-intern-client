@@ -26,7 +26,7 @@ export default function LetterSection() {
   }, []);
 
   return (
-    <section className="bg-neutral-95">
+    <section>
       <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-10 px-5 py-16 md:gap-14 md:px-5 md:py-20">
         <SectionHeading
           label="렛츠커리어 대표 멘토이자 CEO 쥬디의 편지"

@@ -43,7 +43,7 @@ export default function PassCaseSection() {
   return (
     <section
       id={PASS_SECTION_ID.passCase}
-      className="bg-neutral-95 scroll-mt-[56px] md:scroll-mt-[60px]"
+      className="scroll-mt-[56px] md:scroll-mt-[60px]"
     >
       <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-4 px-5 py-10 md:gap-9 md:px-0 md:py-20">
         <SectionHeading
