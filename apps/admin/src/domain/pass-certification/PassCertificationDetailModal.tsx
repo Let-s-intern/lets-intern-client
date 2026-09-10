@@ -10,6 +10,7 @@ import {
 } from '@letscareer/utils';
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -106,14 +107,19 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                 <Field label="이메일">{item.email}</Field>
                 <Field label="회원 여부 / 정보">
                   {item.matchedUserId != null ? (
-                    <>
-                      O{' '}
+                    <span className="flex items-center gap-1">
+                      <Chip
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        label="회원"
+                      />
                       <span>
                         / {item.matchedUserName} (#{item.matchedUserId})
                       </span>
-                    </>
+                    </span>
                   ) : (
-                    'X / -'
+                    <Chip size="small" variant="outlined" label="비회원" />
                   )}
                 </Field>
               </section>
