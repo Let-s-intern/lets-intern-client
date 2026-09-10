@@ -94,13 +94,12 @@ export default function PlansSection() {
     <section className="plans" id="plans">
       <div className="wrap">
         <div className="sec-head rv">
-          <span className="eyebrow">가격 플랜</span>
+          <span className="eyebrow">MARKETING ALL-IN-ONE PASS</span>
           {/* 의미가 끊기는 자리에서 자른다 — 601px 이상에서는 한 줄로 붙는다(base.css 의 .brk) */}
           <h2>
-            <span className="brk">공채 준비에 필요한 것만 모아,</span>
-            <span className="brk">부담은 줄였어요</span>
+            <span className="brk">{PLAN_NAME}</span>
           </h2>
-          <p>9월 서류부터 11월 면접까지 필요한 준비를 한 번에 이용하세요</p>
+          <p>인턴·신입 마케팅 취준생 전용</p>
         </div>
 
         <div className="allpass rv">

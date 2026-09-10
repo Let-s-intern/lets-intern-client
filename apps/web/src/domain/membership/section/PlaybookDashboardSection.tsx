@@ -10,7 +10,7 @@ import { PLAYBOOK_DASHBOARD as D } from '../data/playbookDashboard';
  */
 export default function PlaybookDashboardSection() {
   return (
-    <section className="bg-[#232433] py-16 md:py-24" id="course-plan">
+    <section className="bg-[#232433] py-16 md:py-24" id="playbook-dashboard">
       <div className="wrap">
         <div className="flex items-center justify-center gap-3">
           <span className="rounded-full bg-[#F1642B] px-3 py-1 text-xs font-bold text-white">

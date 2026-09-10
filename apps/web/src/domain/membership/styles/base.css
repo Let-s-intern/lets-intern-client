@@ -32,8 +32,19 @@
   --num: \"Inter\",var(--font);
   --maxw: 1180px;
 }
+/*
+ * 전역 리셋 — `:where()` 로 감싸 명시도를 0 으로 낮춘다. (LC-3294)
+ *
+ * 원래는 `.membership-root *` 였다. 그러면 명시도가 (0,1,0) 이라 Tailwind 유틸과 같고,
+ * 이 파일이 나중에 로드돼 **유틸을 이긴다.** 새 섹션의 `p-6`·`mx-auto` 가 전부 죽어
+ * 카드 안쪽 여백이 사라지고 콘텐츠가 왼쪽에 붙었다.
+ *
+ * `:where()` 안의 선택자는 명시도가 0 이므로, 레거시 섹션에는 그대로 리셋이 걸리고
+ * 여백을 직접 지정한 곳(Tailwind 유틸 포함)은 항상 이긴다. 리셋의 의도는 "기본값을
+ * 0 으로" 이지 "누구도 못 바꾸게" 가 아니었다.
+ */
 .membership-root,
-.membership-root * {
+:where(.membership-root *) {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
