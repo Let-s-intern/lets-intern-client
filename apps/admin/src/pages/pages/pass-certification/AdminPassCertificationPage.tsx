@@ -96,12 +96,7 @@ export default function AdminPassCertificationPage() {
       sortable: false,
       renderCell: (p) =>
         p.row.matchedUserId != null ? (
-          <Chip
-            size="small"
-            color="primary"
-            variant="outlined"
-            label="회원"
-          />
+          <Chip size="small" color="primary" variant="outlined" label="회원" />
         ) : (
           <Chip size="small" variant="outlined" label="비회원" />
         ),
