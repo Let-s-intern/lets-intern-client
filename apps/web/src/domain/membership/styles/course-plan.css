@@ -352,6 +352,24 @@
   color: #fff;
   background: var(--lc-blue);
 }
+/*
+ * LC-3294 로 늘어난 태그 3종. 시안 8 범례는 색을 역할로 묶는다 —
+ * 자료 계열(가이드북·템플릿·체크리스트·VOD)은 은은한 틴트,
+ * 렛츠커리어가 직접 함께하는 계열(챌린지·라이브 세미나·1:1 멘토링)은 채운 색이다.
+ * 색이 없으면 그 행만 기본색으로 떨어져 표 안에서 따로 논다.
+ */
+.membership-root .cpm-cell-tag[data-tag='vod'] {
+  color: #0577a3;
+  background: #d6f1fc;
+}
+.membership-root .cpm-cell-tag[data-tag='live'] {
+  color: #fff;
+  background: var(--lc-orange);
+}
+.membership-root .cpm-cell-tag[data-tag='mentoring'] {
+  color: #fff;
+  background: var(--lc-orange-deep);
+}
 /* 하단 안내 — 흐리게: 태그 없는 단계는 직접 준비 영역 */
 .membership-root .cpm-note {
   margin-top: 18px;

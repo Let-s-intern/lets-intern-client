@@ -4,14 +4,23 @@
 // 시안에 있는 2장만 넣는다 — 화면에 가짜 강의가 뜨는 쪽이 훨씬 나쁘다.
 // 세 번째 강의 정보를 받으면 여기에 추가한다.
 
+/**
+ * 세미나 1 상세 — [무료] 1~3년차, 지금 하는 마케터 업무가 '물경력'이 되지 않으려면.
+ *
+ * 두 번째 세미나는 아직 상세 주소를 받지 못해 VOD 목록으로 보낸다. 없는 주소를 지어내면
+ * 404 로 떨어진다 — 주소를 받으면 여기 상수를 하나 더 두고 바꾼다.
+ */
+const SEMINAR_MULGYEONGRYEOK_URL =
+  "https://www.letscareer.co.kr/program/live/107/-%5B%F0%9F%8E%81%EB%AC%B4%EB%A3%8C%5D-1~3%EB%85%84%EC%B0%A8%2C-%EC%A7%80%EA%B8%88-%ED%95%98%EB%8A%94-%EB%A7%88%EC%BC%80%ED%84%B0-%EC%97%85%EB%AC%B4%EA%B0%80-'%EB%AC%BC%EA%B2%BD%EB%A0%A5'%EC%9D%B4-%EB%90%98%EC%A7%80-%EC%95%8A%EC%9C%BC%EB%A0%A4%EB%A9%B4";
+
 export interface MarketerVodCard {
-  /** 카드 상단 배너 문구 */
-  bannerTitleLines: string[];
-  bannerSub: string;
-  /** 배너 배경 (tailwind 클래스) */
-  bannerClass: string;
-  /** 배너 우측 배지 */
-  bannerBadge: string;
+  /**
+   * 배너 이미지. 제목·배지·연사 소개가 이미 그림 안에 들어 있다.
+   * public/images/membership/ 하위 파일명.
+   */
+  banner: string;
+  /** 이미지 안 문구를 문장으로 옮긴 것. 이름표 수준으로 줄이지 말 것 */
+  bannerAlt: string;
   title: string;
   bullets: string[];
   /** 정가 (취소선) */
@@ -28,13 +37,9 @@ export const MARKETER_VOD = {
     '패스 참여자는 현직자 클래스 다시보기를 결제 없이 바로 들으실 수 있어요.',
   cards: [
     {
-      bannerTitleLines: [
-        '1~3년차, 지금 하는 마케터 업무가',
-        "'물경력'이 되지 않으려면",
-      ],
-      bannerSub: '뷰티 회사 CEO가 말하는 뽑고 싶은 지원자의 경험과 성과',
-      bannerClass: 'bg-[#29B6F6]',
-      bannerBadge: '무료 세미나',
+      banner: 'vod-seminar-1.png',
+      bannerAlt:
+        "렛츠커리어 라이브 클래스 무료 세미나. 1~3년차, 지금 하는 마케터 업무가 '물경력'이 되지 않으려면. 뷰티 회사 CEO가 말하는 뽑고 싶은 지원자의 경험과 성과.",
       title: "뷰티 브랜드 CEO가 직접 알려주는 '뽑히는 지원자의 관점'",
       bullets: [
         '채용 결정권자가 직접 알려주는 산업 분석법',
@@ -42,14 +47,12 @@ export const MARKETER_VOD = {
         '뽑고 싶은 지원자가 갖춰야 할 산업 이해도와 역량',
       ],
       regularPrice: 29000,
-      url: '/program/vod',
+      url: SEMINAR_MULGYEONGRYEOK_URL,
     },
     {
-      bannerTitleLines: ['영상 PD에서 대학내일 AE로,', '어떻게 가능했을까?'],
-      bannerSub:
-        '실제 취준에서 활용한 캐릭터 설정부터 경험 연결, 서류·면접 노하우까지',
-      bannerClass: 'bg-[#F5333F]',
-      bannerBadge: '무료 세미나',
+      banner: 'vod-seminar-2.png',
+      bannerAlt:
+        '렛츠커리어 라이브 클래스 무료 세미나. 영상 PD에서 대학내일 AE로, 어떻게 가능했을까? 실제 취준에서 활용한 캐릭터 설정부터 경험 연결, 서류·면접 노하우까지.',
       title: '대학내일 AE 현직자',
       bullets: [
         '영상 PD 경험을 활용한 AE 직무 전환 전략',

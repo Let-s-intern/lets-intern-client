@@ -48,17 +48,13 @@ export default function SolutionSection() {
                   ))}
                 </p>
 
-                {card.chips ? (
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {card.chips.map((chip) => (
-                      <span
-                        className="bg-neutral-95 text-xsmall14 text-neutral-30 rounded-full px-3 py-1.5"
-                        key={chip}
-                      >
-                        {chip}
-                      </span>
-                    ))}
-                  </div>
+                {card.art ? (
+                  <img
+                    alt=""
+                    className="mt-6 w-full"
+                    loading="lazy"
+                    src={`/images/membership/${card.art}`}
+                  />
                 ) : null}
 
                 {card.checks ? (

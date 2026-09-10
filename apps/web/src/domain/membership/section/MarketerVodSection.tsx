@@ -29,27 +29,13 @@ export default function MarketerVodSection() {
               className="flex flex-col rounded-2xl bg-white/5 p-4 md:p-6"
               key={card.title}
             >
-              {/* 배너 — 원본은 이미지지만 문구가 읽혀야 해서 마크업으로 그린다 */}
-              <div
-                className={`relative flex flex-col justify-end rounded-xl p-6 md:p-8 ${card.bannerClass}`}
-              >
-                <span className="text-xs font-bold tracking-wide text-white/80">
-                  LET&apos;S CAREER | LIVE CLASS
-                </span>
-                <span className="text-neutral-0 absolute right-6 top-6 rounded-lg bg-white px-3 py-1.5 text-xs font-bold">
-                  {card.bannerBadge}
-                </span>
-                <strong className="text-neutral-0 mt-16 block text-lg font-bold leading-snug md:text-xl">
-                  {card.bannerTitleLines.map((line) => (
-                    <span className="block" key={line}>
-                      {line}
-                    </span>
-                  ))}
-                </strong>
-                <span className="text-xsmall14 text-neutral-0/80 mt-3 block">
-                  {card.bannerSub}
-                </span>
-              </div>
+              {/* 배너 — 제목·배지·연사 소개가 그림 안에 들어 있다. alt 로 문구를 전한다. */}
+              <img
+                alt={card.bannerAlt}
+                className="w-full rounded-xl"
+                loading="lazy"
+                src={`/images/membership/${card.banner}`}
+              />
 
               <strong className="text-xsmall16 mt-6 block font-bold text-white">
                 {card.title}

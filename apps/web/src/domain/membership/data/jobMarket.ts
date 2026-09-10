@@ -8,6 +8,8 @@
 // 그 회사가 지금 뽑는다는 뜻이 되어 버린다.
 
 export interface JobPostingExample {
+  /** 기업 로고. public/images/membership/ 하위 파일명 */
+  logo: string;
   /** 업종 (기업명 대신) */
   industry: string;
   /** 직무명 */
@@ -28,36 +30,42 @@ export const JOB_MARKET = {
     '* 직무 이해를 돕기 위해 실제 채용 시장을 바탕으로 재구성한 예시입니다.',
   postings: [
     {
+      logo: 'job-logo-tech.png',
       industry: '전자 테크 기업',
       role: 'B2B 기술 마케팅 담당자',
       tasks: '마케팅 전략 · 시장 조사 · 세일즈 콘텐츠',
       level: '인턴',
     },
     {
+      logo: 'job-logo-beauty.png',
       industry: '뷰티 브랜드',
       role: '브랜드 마케팅 인턴',
       tasks: '브랜드 전략 · 캠페인 기획 · 트렌드 분석',
       level: '신입',
     },
     {
+      logo: 'job-logo-fnb.png',
       industry: '식품·F&B 기업',
       role: '퍼포먼스 마케터',
       tasks: '광고 운영 · 데이터 분석 · 성과 개선',
       level: '경력직',
     },
     {
+      logo: 'job-logo-platform.png',
       industry: '플랫폼 스타트업',
       role: '콘텐츠 마케팅 매니저',
       tasks: 'SNS 콘텐츠 · 카피라이팅 · 채널 운영',
       level: '인턴',
     },
     {
+      logo: 'job-logo-commerce.png',
       industry: '글로벌 커머스',
       role: '글로벌 인플루언서 마케팅',
       tasks: '크리에이터 협업 · 글로벌 캠페인 · SNS',
       level: '인턴',
     },
     {
+      logo: 'job-logo-lifestyle.png',
       industry: '라이프스타일 기업',
       role: '그로스 마케팅 인턴',
       tasks: '고객 여정 · 실험 설계 · 핵심 지표 관리',

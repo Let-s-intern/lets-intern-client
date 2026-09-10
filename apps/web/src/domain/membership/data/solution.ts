@@ -10,8 +10,12 @@ export interface SolutionCard {
   label: string;
   titleLines: string[];
   body: string[];
-  /** 카드 하단 태그/체크 목록. 없으면 그리지 않는다 */
-  chips?: string[];
+  /**
+   * 카드 하단 그래픽. public/images/membership/ 하위 파일명.
+   * 태그·막대 같은 장식이라 alt 는 비운다 — 위 본문이 같은 내용을 이미 말한다.
+   */
+  art?: string;
+  /** 카드 하단 체크 목록. 없으면 그리지 않는다 */
   checks?: string[];
 }
 
@@ -31,7 +35,7 @@ export const SOLUTION = {
         '인턴·대외활동·프로젝트 경험을 정리하고,',
         '지원 직무에 활용할 핵심 경험을 선별합니다.',
       ],
-      chips: ['대외활동', '인턴', '프로젝트'],
+      art: 'solution-experience.png',
     },
     {
       index: '02',
@@ -41,6 +45,7 @@ export const SOLUTION = {
         '이력서·자기소개서·포트폴리오를 작성하고,',
         '피드백을 반영해 실제 지원 수준으로 완성합니다.',
       ],
+      art: 'solution-documents.png',
     },
     {
       index: '03',

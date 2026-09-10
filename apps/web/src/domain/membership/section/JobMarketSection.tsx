@@ -29,8 +29,20 @@ export default function JobMarketSection() {
                   className="flex items-center gap-4 py-4"
                   key={`${post.industry}-${post.role}`}
                 >
-                  <span className="text-xsmall14 text-neutral-40 w-28 shrink-0 md:w-32">
-                    {post.industry}
+                  <span className="flex w-28 shrink-0 items-center gap-2 md:w-36">
+                    {/*
+                      로고는 장식이라 alt 를 비운다. 업종 이름이 바로 옆에 글자로 있어
+                      스크린리더가 같은 정보를 두 번 읽을 이유가 없다.
+                    */}
+                    <img
+                      alt=""
+                      className="h-5 w-10 shrink-0 object-contain"
+                      loading="lazy"
+                      src={`/images/membership/${post.logo}`}
+                    />
+                    <span className="text-xsmall14 text-neutral-40 min-w-0">
+                      {post.industry}
+                    </span>
                   </span>
                   <span className="min-w-0 flex-1">
                     <strong className="text-xsmall14 text-neutral-0 block font-semibold">
