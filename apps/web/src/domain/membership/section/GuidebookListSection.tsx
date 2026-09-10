@@ -1,4 +1,7 @@
-import { GUIDEBOOK_ITEMS } from '../data/guidebooks';
+'use client';
+
+import { GUIDEBOOK_ITEMS, guidebookUrl } from '../data/guidebooks';
+import { useGuidebookThumbnails } from '../lib/useGuidebookThumbnails';
 
 /**
  * 시안 11 — 가이드북 7종 카드 그리드 (PASS BENEFIT 03).
@@ -7,6 +10,13 @@ import { GUIDEBOOK_ITEMS } from '../data/guidebooks';
  * "7종" 이고 카드도 7장이라 배지 쪽이 오타로 보인다.
  */
 export default function GuidebookListSection() {
+  /*
+    표지는 어드민에 등록된 것을 쓴다. 정적 파일로 두면 운영에서 표지를 바꿔도 랜딩만
+    옛 그림으로 남는다 — 실제로 대기업 자소서 카드가 지난 기수 챌린지 표지를 달고 있었다.
+    조회 전이거나 어드민에 표지가 없으면 `src` 정적 파일로 되돌아간다.
+  */
+  const thumbnails = useGuidebookThumbnails();
+
   return (
     <section className="bg-white py-16 md:py-24" id="guidebooks">
       <div className="wrap">
@@ -31,7 +41,7 @@ export default function GuidebookListSection() {
           {GUIDEBOOK_ITEMS.map((item) => (
             <a
               className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
-              href={item.url}
+              href={guidebookUrl(item.id)}
               key={item.label}
               rel="noreferrer"
               target="_blank"
@@ -40,7 +50,7 @@ export default function GuidebookListSection() {
                 alt=""
                 className="w-full rounded-lg"
                 loading="lazy"
-                src={`/images/membership/${item.src}`}
+                src={thumbnails[item.id] || `/images/membership/${item.src}`}
               />
               <div className="flex flex-1 flex-col justify-between pt-4">
                 <strong className="text-xsmall16 text-neutral-0 font-bold">

@@ -46,7 +46,19 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
             {COURSE_TAG_LABEL[cell.tag]}
           </span>
           <p className="cpm-cell-title">{cell.title}</p>
-          <p className="cpm-cell-desc">{cell.desc}</p>
+          <p className="cpm-cell-desc">
+            {cell.desc}
+            {/*
+              일정은 nowrap 한 덩어리로 붙인다. 한 문자열로 두면 좁은 셀에서
+              "10.8 목" / "20:00" 으로 갈려 다른 날 일정처럼 읽힌다.
+            */}
+            {cell.when && (
+              <>
+                {' · '}
+                <span className="cpm-cell-when">{cell.when}</span>
+              </>
+            )}
+          </p>
         </article>
       ))}
     </div>

@@ -65,15 +65,14 @@
   max-width: 100%;
 }
 /* 한글 줄바꿈 — 어절(띄어쓰기) 단위로 끊고(keep-all), 한 단어가 줄을 넘칠 때만
-   강제 분할(overflow-wrap). 모바일 좁은 폭에서 단어 중간이 깨지는 문제를 막는다. */
-.membership-root h1,
-.membership-root h2,
-.membership-root h3,
-.membership-root h4,
-.membership-root p,
-.membership-root li,
-.membership-root .eyebrow,
-.membership-root .btn {
+   강제 분할(overflow-wrap). 모바일 좁은 폭에서 단어 중간이 깨지는 문제를 막는다.
+
+   루트에 한 번만 걸고 상속시킨다. 예전에는 h1~h4·p·li·.eyebrow·.btn 만 골라
+   지정했는데, `word-break` 의 기본값 normal 은 <b>한글을 글자 단위로 끊는다.</b>
+   그래서 목록에 없던 span·strong 안의 문장이 "합격 플 / 랜", "차이가 보 / 입니다"
+   처럼 단어 중간에서 갈렸다. 새 섹션이 Tailwind 로 span·div 를 쓰면서 드러났다.
+   선택자를 늘리는 대신 루트에서 상속시키면 앞으로 어떤 태그를 쓰든 따라온다. */
+.membership-root {
   word-break: keep-all;
   overflow-wrap: break-word;
 }

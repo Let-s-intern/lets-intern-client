@@ -1,4 +1,10 @@
-import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
+'use client';
+
+import {
+  CHALLENGE_ITEMS,
+  getChallengeThumbnailSrc,
+} from '../data/challengeModalItems';
+import { useChallengeThumbnails } from '../lib/useChallengeThumbnails';
 
 /**
  * 시안 10 — 챌린지 10종 카드 그리드 (PASS BENEFIT 02).
@@ -6,8 +12,13 @@ import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
  * 데이터는 기존 `CHALLENGE_ITEMS` 를 그대로 쓴다. 시안 10 의 10종이 이름·순서까지
  * 그것과 같아서 새로 만들 이유가 없다. 링크도 `/challenge/{slug}/latest` 라
  * 새 회차가 열려도 이 파일을 고칠 필요가 없다.
+ *
+ * 썸네일도 같은 이유로 어드민에서 가져온다. 링크만 최신 기수를 따라가고 이미지가
+ * 정적이면, 표지에 찍힌 기수 번호와 열리는 기수가 어긋난다.
  */
 export default function ChallengeListSection() {
+  const thumbnails = useChallengeThumbnails();
+
   return (
     <section className="bg-white py-16 md:py-24" id="challenges">
       <div className="wrap">
@@ -49,7 +60,10 @@ export default function ChallengeListSection() {
                 alt=""
                 className="w-full rounded-lg"
                 loading="lazy"
-                src={`/images/membership/${item.src}`}
+                src={getChallengeThumbnailSrc(
+                  item,
+                  thumbnails[item.challengeType],
+                )}
               />
               <div className="flex flex-1 flex-col justify-between pt-4">
                 <strong className="text-xsmall16 text-neutral-0 font-bold">

@@ -7,8 +7,9 @@
 /**
  * 세미나 1 상세 — [무료] 1~3년차, 지금 하는 마케터 업무가 '물경력'이 되지 않으려면.
  *
- * 두 번째 세미나는 아직 상세 주소를 받지 못해 VOD 목록으로 보낸다. 없는 주소를 지어내면
- * 404 로 떨어진다 — 주소를 받으면 여기 상수를 하나 더 두고 바꾼다.
+ * 두 번째 세미나는 아직 공개 전이라 주소가 없다. `url` 을 비워 두면 카드에서 "자세히
+ * 보기" 버튼이 사라진다 — 보낼 곳이 정해지기 전까지는 그게 맞다. 공개되면 여기 상수를
+ * 하나 더 두고 그 카드의 `url` 에 넣으면 버튼이 다시 나온다.
  */
 const SEMINAR_MULGYEONGRYEOK_URL =
   "https://www.letscareer.co.kr/program/live/107/-%5B%F0%9F%8E%81%EB%AC%B4%EB%A3%8C%5D-1~3%EB%85%84%EC%B0%A8%2C-%EC%A7%80%EA%B8%88-%ED%95%98%EB%8A%94-%EB%A7%88%EC%BC%80%ED%84%B0-%EC%97%85%EB%AC%B4%EA%B0%80-'%EB%AC%BC%EA%B2%BD%EB%A0%A5'%EC%9D%B4-%EB%90%98%EC%A7%80-%EC%95%8A%EC%9C%BC%EB%A0%A4%EB%A9%B4";
@@ -25,7 +26,12 @@ export interface MarketerVodCard {
   bullets: string[];
   /** 정가 (취소선) */
   regularPrice: number;
-  url: string;
+  /**
+   * 상세페이지 주소. <b>없으면 "자세히 보기" 버튼을 렌더하지 않는다.</b>
+   * 공개 전인 세미나를 목록 같은 엉뚱한 곳으로 보내는 것보다 버튼이 없는 편이 낫다 —
+   * 눌러서 원하던 게 없는 화면에 도착하면 그 자리에서 이탈한다.
+   */
+  url?: string;
 }
 
 export const MARKETER_VOD = {
@@ -60,7 +66,7 @@ export const MARKETER_VOD = {
         '변화하는 시대에 마케터가 갖춰야 할 핵심 역량',
       ],
       regularPrice: 29000,
-      url: '/program/vod',
+      // 아직 공개 전이라 주소가 없다 — 버튼이 렌더되지 않는다.
     },
   ] satisfies MarketerVodCard[],
 } as const;

@@ -1,3 +1,4 @@
+import dayjs from '../lib/dayjs';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
@@ -12,13 +13,16 @@ export default function HeroSection() {
    * 금액을 카피에 박아 두면 어드민에서 가격을 바꿨을 때 버튼만 옛 숫자로 남는다.
    * 가격 단일 출처(useMembershipChallengeData)에서 받아 조립한다.
    */
-  const { salePrice } = useMembershipChallengeData();
+  const { salePrice, endDate } = useMembershipChallengeData();
 
   return (
     <section className="hero">
       <div className="wrap hero-in">
         <div className="hero-chips he he1">
-          <span className="hero-badge">{HERO.badge}</span>
+          <span className="hero-badge">
+            {HERO.badgePrefix} {dayjs(endDate).format('M월 D일')}
+            {HERO.badgeSuffix}
+          </span>
         </div>
         {/* 줄바꿈은 <br> 이 아니라 base.css 의 .brk 유틸이 정한다.
             1줄차는 어느 폭에서도 자기 줄(.brk-line), 2·3줄은 601px 이상에서 붙어 한 줄이 된다. */}

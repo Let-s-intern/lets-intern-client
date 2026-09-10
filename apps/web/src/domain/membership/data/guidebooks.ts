@@ -9,9 +9,30 @@ export const STUDY_DETAIL_URL =
 
 export interface GuidebookItem {
   label: string;
-  /** public/images/membership/ 하위 파일명 */
+  /**
+   * 가이드북 ID. 링크와 썸네일 조회가 모두 이 값으로 연결된다.
+   * 주소를 따로 적지 않는 이유는 `guidebookUrl` 주석에 있다.
+   */
+  id: number;
+  /**
+   * 썸네일 폴백. public/images/membership/ 하위 파일명.
+   * 평소에는 어드민에 등록된 표지를 쓰고(`lib/useGuidebookThumbnails`), 조회 전이거나
+   * 조회가 실패했을 때만 이 파일이 나온다.
+   */
   src: string;
-  url: string;
+}
+
+/**
+ * 가이드북 상세 주소.
+ *
+ * 앱 내부 상대경로다. 절대 URL(`https://www.letscareer.co.kr/...`)로 적으면 dev·로컬에서
+ * 눌렀을 때도 프로덕션으로 나가버려서, 작업 중인 화면을 확인할 수 없다.
+ *
+ * 제목 슬러그는 붙이지 않는다. 서버가 ID 만으로 정식 제목 경로로 리다이렉트해 주는데,
+ * 슬러그를 적어 두면 운영에서 제목을 바꿀 때마다 낡는다.
+ */
+export function guidebookUrl(id: number): string {
+  return `/program/guidebook/${id}`;
 }
 
 // 시안 11 — 가이드북 7종.
@@ -21,44 +42,26 @@ export interface GuidebookItem {
 // 가이드북" 이 세 번 나오는 반면, 썸네일 7장은 서로 겹치지 않고 "7종" 과도 맞는다.
 // 그래서 **썸네일 기준**으로 제목을 맞췄다(LC-3294 결정).
 //
-// url: /program/guidebook/{id} → 정식 제목 경로로 리다이렉트됨.
-// 대기업 자소서·인적성은 전용 표지 이미지가 없어 같은 주제의 챌린지 표지를 쓴다.
+// 대기업 자소서(15)·인적성(14)은 처음에 가이드북 ID 를 못 찾아, 링크를 주제가 비슷한
+// 다른 가이드북(각각 5·9번)으로 채우고 표지도 같은 주제의 챌린지 것을 빌려 썼다.
+// 5·9 는 이미 다른 카드가 쓰던 주소라 눌러도 404 가 아니라 "그럴싸한 다른 문서" 가
+// 열렸고, 그래서 오래 눈에 띄지 않았다. 전용 가이드북이 있으므로 제 주소로 돌린다.
 export const GUIDEBOOK_ITEMS: GuidebookItem[] = [
-  {
-    label: '기필코 경험정리 가이드북',
-    src: 'guide-experience.png',
-    url: 'https://www.letscareer.co.kr/program/guidebook/7',
-  },
-  {
-    label: '이력서 완성 가이드북',
-    src: 'guide-resume.png',
-    url: 'https://www.letscareer.co.kr/program/guidebook/6',
-  },
-  {
-    label: '자기소개서 완성 가이드북',
-    src: 'guide-coverletter.png',
-    url: 'https://www.letscareer.co.kr/program/guidebook/5',
-  },
+  { label: '기필코 경험정리 가이드북', id: 7, src: 'guide-experience.png' },
+  { label: '이력서 완성 가이드북', id: 6, src: 'guide-resume.png' },
+  { label: '자기소개서 완성 가이드북', id: 5, src: 'guide-coverletter.png' },
   {
     label: '대기업 자소서 완성 가이드북',
-    src: 'challenge-major-coverletter.jpg',
-    url: 'https://www.letscareer.co.kr/program/guidebook/5',
+    id: 15,
+    src: 'guide-major-coverletter.jpg',
   },
-  {
-    label: '포트폴리오 완성 가이드북',
-    src: 'guide-portfolio.png',
-    url: 'https://www.letscareer.co.kr/program/guidebook/2',
-  },
+  { label: '포트폴리오 완성 가이드북', id: 2, src: 'guide-portfolio.png' },
   {
     label: '인적성 수리/추리 뽀개기 가이드북',
-    src: 'challenge-aptitude.webp',
-    url: 'https://www.letscareer.co.kr/program/guidebook/9',
+    id: 14,
+    src: 'guide-aptitude.jpg',
   },
-  {
-    label: '면접 준비 끝장 가이드북',
-    src: 'guide-interview.png',
-    url: 'https://www.letscareer.co.kr/program/guidebook/9',
-  },
+  { label: '면접 준비 끝장 가이드북', id: 9, src: 'guide-interview.png' },
 ];
 
 /** 혜택 섹션의 단일 카드 (가이드북 · 스터디) */
@@ -75,8 +78,7 @@ export interface BenefitHighlightCard {
 // 시안 7-1. 카드 하나로 가이드북 전종을 소개한다(표지 6권 일러스트).
 //
 // 링크는 개별 가이드북 상세가 아니라 가이드북 목록으로 보낸다 — 카드가 "6종"을 소개하므로
-// 한 권만 열어주면 나머지를 못 찾는다. 앱 내부 상대경로라 dev·로컬에서도 그대로 동작한다
-// (GUIDEBOOK_ITEMS 의 절대 URL 은 프로덕션 도메인으로 나가버린다).
+// 한 권만 열어주면 나머지를 못 찾는다. 앱 내부 상대경로라 dev·로컬에서도 그대로 동작한다.
 export const GUIDEBOOK_LIST_URL = '/program?type=GUIDEBOOK';
 
 export const GUIDEBOOK_CARD: BenefitHighlightCard = {

@@ -82,6 +82,14 @@ export interface MatrixCell {
   title: string;
   /** 보조 설명 */
   desc: string;
+  /**
+   * 일정(날짜·요일·시각). `desc` 에 이어 붙여 "연사 · 10.8 목 20:00" 으로 렌더된다.
+   *
+   * 한 문자열로 두면 좁은 셀에서 "10.8 목" / "20:00" 처럼 갈린다. 별도 필드로 두고
+   * `.cpm-cell-when` 이 nowrap 으로 묶는다 — 날짜와 시각이 떨어지면 다른 날 일정처럼
+   * 읽힌다. 셀 폭 142px 에 이 텍스트는 78px 이라 넘칠 여유가 충분하다.
+   */
+  when?: string;
   /** 수행 주체 (셀 색 결정) */
   owner: Owner;
   /** 분류 배지 (렛츠커리어 제공 형태) */
@@ -445,7 +453,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '마케터 세부 직무 톺아보기',
-    desc: '놀유니버스 CRM 마케터 · 9.20 일 11:00',
+    desc: '놀유니버스 CRM 마케터',
+    when: '9.20 일 11:00',
   },
   {
     step: 'step01',
@@ -453,7 +462,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: 'AE가 가져야 할 역량과 포폴 작성법',
-    desc: '대학내일 AE · 9.22 화 20:00',
+    desc: '대학내일 AE',
+    when: '9.22 화 20:00',
   },
   {
     step: 'step02',
@@ -461,7 +471,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '마케팅의 기본',
-    desc: '클래스101 콘텐츠 마케터 · 9.28 월 20:00',
+    desc: '클래스101 콘텐츠 마케터',
+    when: '9.28 월 20:00',
   },
   {
     step: 'step02',
@@ -469,7 +480,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '마케팅 커리어 방향 설정법',
-    desc: 'CJ 계열사 마케터 · 10.1 목 20:00',
+    desc: 'CJ 계열사 마케터',
+    when: '10.1 목 20:00',
   },
   {
     step: 'step02',
@@ -477,7 +489,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '사이드 프로젝트로 그로스 사이클 경험하기',
-    desc: '네이버 계열사 마케터 · 10.8 목 20:00',
+    desc: '네이버 계열사 마케터',
+    when: '10.8 목 20:00',
   },
   {
     step: 'step03',
@@ -485,7 +498,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: 'AI 주제로 6개월 만에 팔로워 6,000명 만든 방법',
-    desc: '팔로워 6,000명 계정 운영자 · 10.22 목 20:00',
+    desc: '팔로워 6,000명 계정 운영자',
+    when: '10.22 목 20:00',
   },
   {
     step: 'step04',
@@ -493,7 +507,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '혼자서도 할 수 있는 메타 광고로 경험 쌓기',
-    desc: '위그로스 CEO · 10.29 목 20:00',
+    desc: '위그로스 CEO',
+    when: '10.29 목 20:00',
   },
   {
     step: 'step05',
@@ -501,7 +516,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '마케팅 포트폴리오 A to Z 끝장',
-    desc: '렛츠커리어 쥬디 멘토 · 11.10 화 20:00',
+    desc: '렛츠커리어 쥬디 멘토',
+    when: '11.10 화 20:00',
   },
   {
     step: 'step05',
@@ -509,7 +525,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '포트폴리오 놓고 실제로 묻는 질문 — 실무 면접 시연',
-    desc: '현직 마케터 · 11.19 목 20:00',
+    desc: '현직 마케터',
+    when: '11.19 목 20:00',
   },
   {
     step: 'step05',
@@ -517,7 +534,8 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'live',
     title: '인턴·계약직·정규직 오퍼, 무엇을 보고 고르나',
-    desc: '현직 마케터 · 11.26 목 20:00',
+    desc: '현직 마케터',
+    when: '11.26 목 20:00',
   },
 ];
 
