@@ -337,19 +337,27 @@
   border-radius: 999px;
   white-space: nowrap;
 }
-.membership-root .cpm-cell-tag[data-tag='free'] {
+/*
+ * 태그 색은 셀 배지와 범례 칩이 **같은 규칙**을 쓴다. 예전에는 두 벌로 나뉘어 있어
+ * 태그를 늘렸을 때 셀에는 색이 붙고 범례에는 안 붙어 어긋났다. (LC-3294)
+ */
+.membership-root .cpm-cell-tag[data-tag='free'],
+.membership-root .cpm-note-chip[data-tag='free'] {
   color: #2f5bd0;
   background: var(--tint-blue);
 }
-.membership-root .cpm-cell-tag[data-tag='template'] {
+.membership-root .cpm-cell-tag[data-tag='template'],
+.membership-root .cpm-note-chip[data-tag='template'] {
   color: #15803d;
   background: #dcf3e4;
 }
-.membership-root .cpm-cell-tag[data-tag='checklist'] {
+.membership-root .cpm-cell-tag[data-tag='checklist'],
+.membership-root .cpm-note-chip[data-tag='checklist'] {
   color: #b45309;
   background: #fcefd6;
 }
-.membership-root .cpm-cell-tag[data-tag='challenge'] {
+.membership-root .cpm-cell-tag[data-tag='challenge'],
+.membership-root .cpm-note-chip[data-tag='challenge'] {
   color: #fff;
   background: var(--lc-blue);
 }
@@ -359,15 +367,19 @@
  * 렛츠커리어가 직접 함께하는 계열(챌린지·라이브 세미나·1:1 멘토링)은 채운 색이다.
  * 색이 없으면 그 행만 기본색으로 떨어져 표 안에서 따로 논다.
  */
-.membership-root .cpm-cell-tag[data-tag='vod'] {
+.membership-root .cpm-cell-tag[data-tag='vod'],
+.membership-root .cpm-note-chip[data-tag='vod'] {
   color: #0577a3;
   background: #d6f1fc;
 }
-.membership-root .cpm-cell-tag[data-tag='live'] {
-  color: #fff;
-  background: var(--lc-orange);
+.membership-root .cpm-cell-tag[data-tag='live'],
+.membership-root .cpm-note-chip[data-tag='live'] {
+  /* 시안 8 은 연한 크림 배경에 주황 글씨다. 채운 주황이 아니다. */
+  color: #d1601f;
+  background: #fdeee0;
 }
-.membership-root .cpm-cell-tag[data-tag='mentoring'] {
+.membership-root .cpm-cell-tag[data-tag='mentoring'],
+.membership-root .cpm-note-chip[data-tag='mentoring'] {
   color: #fff;
   background: var(--lc-orange-deep);
 }
@@ -389,22 +401,6 @@
   padding: 3px 9px;
   border-radius: 999px;
   margin: 0 2px;
-}
-.membership-root .cpm-note-chip[data-tag='free'] {
-  color: #2f5bd0;
-  background: var(--tint-blue);
-}
-.membership-root .cpm-note-chip[data-tag='template'] {
-  color: #15803d;
-  background: #dcf3e4;
-}
-.membership-root .cpm-note-chip[data-tag='checklist'] {
-  color: #b45309;
-  background: #fcefd6;
-}
-.membership-root .cpm-note-chip[data-tag='challenge'] {
-  color: #fff;
-  background: var(--lc-blue);
 }
 
 /* =====================================================================
@@ -846,4 +842,18 @@
 }
 .membership-root .cp-type[data-lead='true'] .cp-type-desc {
   color: rgba(255, 255, 255, 0.75);
+}
+
+/*
+ * 라이브 세미나 행 (시안 8 맨 아래).
+ * 셀 배경이 연한 크림이고 글씨는 검정, 일시만 주황이다.
+ * owner=challenge 의 기본 피치 톤보다 더 옅다 — 별도로 지정한다.
+ */
+.membership-root .cpm-cell[data-tag='live'] {
+  background: #fdf5ec;
+  border-color: #f6e2cd;
+}
+.membership-root .cpm-cell[data-tag='live'] .cpm-cell-desc {
+  color: #d1601f;
+  font-weight: 700;
 }

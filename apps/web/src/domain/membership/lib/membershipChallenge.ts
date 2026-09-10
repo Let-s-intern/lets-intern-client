@@ -46,6 +46,9 @@ const MEMBERSHIP_GUIDE_URL_BY_CHALLENGE_ID: Record<number, string> = {
   // [LC-3219-MEMBERSHIP] 384 — 2026-08-20 모집 재개분. 상세페이지가 연결하는 현행 기수.
   // 이 기수 전용 가이드다(2026 하반기, 이용 ~11/30). 1기(309)와 다른 문서이므로 함께 바꾸지 않는다.
   384: 'https://letsintern.notion.site/2026-2-11-30-3c65e77cbee18080b5d4dd0bbfbb8742',
+  // [LC-3294] 마케팅 취준 올인원 패스. 하반기 멤버십과 다른 상품이라 가이드도 별개다.
+  // 운영 기수 id 가 정해지면 이 줄의 키를 그 값으로 바꾼다(로컬 테스트 챌린지는 3).
+  3: 'https://letsintern.notion.site/3d75e77cbee18036810be9eb23a47671',
 };
 
 /**

@@ -38,6 +38,8 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
           key={cell.owner + cell.title}
           className="cpm-cell"
           data-owner={cell.owner}
+          // 셀 배경을 태그별로 달리 칠하려면 여기에도 태그가 있어야 한다
+          data-tag={cell.tag}
           data-provided={isProvided(cell.owner) ? 'true' : undefined}
         >
           <span className="cpm-cell-tag" data-tag={cell.tag}>
