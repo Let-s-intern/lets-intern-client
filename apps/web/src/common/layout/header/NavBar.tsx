@@ -42,7 +42,8 @@ export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/mypage') ||
   pathname === '/login' ||
   pathname === '/signup' ||
-  pathname.startsWith('/challenge');
+  pathname.startsWith('/challenge') ||
+  pathname.startsWith('/pass-certification');
 
 export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
@@ -322,6 +323,13 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               >
                 블로그
               </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                href="/pass-certification"
+                isNew
+              >
+                합격 인증
+              </GlobalNavItem>
             </div>
           </div>
 
@@ -379,6 +387,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         <SideNavItem href="/review">수강생 솔직 후기</SideNavItem>
         <SideNavItem href="/blog/list">블로그</SideNavItem>
+        <SideNavItem href="/pass-certification" isNew>
+          합격 인증
+        </SideNavItem>
         <hr className="bg-neutral-80 h-0.5" aria-hidden="true" />
         {isLoggedIn && isMentor && mentorUrl && (
           <SideNavItem href={buildCrossAppUrl(mentorUrl, '/mentor')}>

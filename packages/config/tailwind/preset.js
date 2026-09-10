@@ -203,6 +203,10 @@ const preset = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         'slide-in-right': {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
@@ -230,6 +234,7 @@ const preset = {
           'live-infinite-scroll-mobile 12s linear infinite',
         'bounce-x': 'bounce-x 0.7s infinite',
         'fade-in': 'fade-in 0.2s ease-out',
+        'fade-in-up': 'fade-in-up 0.4s ease-out',
         'slide-in-right': 'slide-in-right 0.2s ease-out',
         'infinite-scroll': 'infinite-scroll 40s linear infinite',
         wobble: 'wobble 0.4s ease-in-out',
