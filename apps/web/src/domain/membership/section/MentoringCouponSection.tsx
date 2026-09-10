@@ -26,7 +26,7 @@ export default function MentoringCouponSection() {
           {MENTORING_COUPON.sub}
         </p>
 
-        <div className="mt-10 grid overflow-hidden rounded-2xl bg-[#232433] md:mt-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div className="rounded-xxl mt-10 grid overflow-hidden bg-[#232433] md:mt-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
           {/* 좌측 — 할인율 */}
           <div className="p-8 md:border-r md:border-white/10 md:p-10">
             <span className="inline-block rounded-full bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
@@ -72,7 +72,7 @@ export default function MentoringCouponSection() {
             <div className="mt-6 grid gap-3 md:grid-cols-2">
               {MENTORING_COUPON.mentors.map((mentor) => (
                 <div
-                  className="flex items-center gap-3 rounded-xl bg-white/5 p-4"
+                  className="flex items-center gap-3 rounded-lg bg-white/5 p-4"
                   key={`${mentor.company}-${mentor.role}`}
                 >
                   <span

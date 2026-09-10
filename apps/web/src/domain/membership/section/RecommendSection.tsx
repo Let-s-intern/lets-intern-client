@@ -30,7 +30,7 @@ export default function RecommendSection() {
         <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-6">
           {RECOMMEND.cards.map((card) => (
             <div
-              className="rounded-2xl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
+              className="rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
               key={card.no}
             >
               <span className="bg-primary-10 text-primary flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold">

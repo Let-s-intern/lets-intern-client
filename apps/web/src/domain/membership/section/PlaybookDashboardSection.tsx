@@ -36,7 +36,7 @@ export default function PlaybookDashboardSection() {
         {/* ── 목업 ── 조작 불가. 위 주석 참고 */}
         <div
           aria-hidden="true"
-          className="bg-neutral-95 mt-10 select-none rounded-2xl p-4 md:mt-14 md:p-6"
+          className="bg-neutral-95 rounded-xxl mt-10 select-none p-4 md:mt-14 md:p-6"
         >
           <div className="grid gap-4 md:grid-cols-[minmax(0,240px)_minmax(0,1fr)]">
             {/* 좌측 사이드 */}
@@ -53,7 +53,7 @@ export default function PlaybookDashboardSection() {
                 </span>
               </div>
 
-              <div className="border-neutral-90 rounded-xl border bg-white p-4">
+              <div className="border-neutral-90 rounded-lg border bg-white p-4">
                 <strong className="text-xsmall14 text-neutral-0 block font-bold">
                   {D.startPanel.title}
                 </strong>
@@ -73,7 +73,7 @@ export default function PlaybookDashboardSection() {
                 </span>
               </div>
 
-              <div className="border-primary rounded-xl border-l-4 bg-white p-4">
+              <div className="border-primary rounded-lg border-l-4 bg-white p-4">
                 <span className="flex items-center gap-2">
                   <span className="bg-neutral-0 rounded px-2 py-0.5 text-[0.65rem] text-white">
                     {D.noticeCard.tag}
@@ -101,7 +101,7 @@ export default function PlaybookDashboardSection() {
 
             {/* 우측 본문 */}
             <div className="flex flex-col gap-4">
-              <div className="flex gap-1 rounded-xl bg-white p-1.5">
+              <div className="flex gap-1 rounded-lg bg-white p-1.5">
                 {D.tabs.map((tab) => (
                   <span
                     className={`text-xsmall14 flex-1 rounded-lg py-2.5 text-center font-medium ${
@@ -129,7 +129,7 @@ export default function PlaybookDashboardSection() {
                   <div className="mt-4 flex flex-col gap-3">
                     {D.leaderboard.entries.map((entry) => (
                       <div
-                        className="flex items-center gap-4 rounded-xl bg-white p-4"
+                        className="flex items-center gap-4 rounded-lg bg-white p-4"
                         key={entry.rank}
                       >
                         <span className="text-neutral-30 w-4 shrink-0 text-sm font-bold">
@@ -165,7 +165,7 @@ export default function PlaybookDashboardSection() {
                 </div>
 
                 {/* 추천 공고 */}
-                <div className="rounded-xl bg-white p-4">
+                <div className="rounded-lg bg-white p-4">
                   <strong className="text-xsmall14 text-neutral-0 block font-bold">
                     {D.postings.title}
                   </strong>
@@ -199,7 +199,7 @@ export default function PlaybookDashboardSection() {
         {/* 하단 설명 3칸 — 목업이 전하지 못하는 내용을 글로 전달한다 */}
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {D.highlights.map((item) => (
-            <div className="rounded-2xl bg-white/5 p-6" key={item.no}>
+            <div className="rounded-xxl bg-white/5 p-6" key={item.no}>
               <strong className="text-xsmall14 block font-bold text-[#F1642B]">
                 {item.no} · {item.title}
               </strong>

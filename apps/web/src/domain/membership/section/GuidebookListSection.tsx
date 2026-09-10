@@ -30,7 +30,7 @@ export default function GuidebookListSection() {
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-3">
           {GUIDEBOOK_ITEMS.map((item) => (
             <a
-              className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
+              className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
               href={item.url}
               key={item.label}
               rel="noreferrer"
@@ -38,11 +38,11 @@ export default function GuidebookListSection() {
             >
               <img
                 alt=""
-                className="aspect-[540/300] w-full object-cover"
+                className="w-full rounded-lg"
                 loading="lazy"
                 src={`/images/membership/${item.src}`}
               />
-              <div className="flex flex-1 flex-col justify-between p-5">
+              <div className="flex flex-1 flex-col justify-between pt-4">
                 <strong className="text-xsmall16 text-neutral-0 font-bold">
                   {item.label}
                 </strong>

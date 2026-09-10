@@ -29,7 +29,7 @@ export default function SpecialLiveSection() {
         </p>
 
         {/* 쥬디 클리닉 — 어두운 강조 카드 */}
-        <div className="mt-10 rounded-2xl bg-[#232433] p-6 md:mt-14 md:p-8">
+        <div className="rounded-xxl mt-10 bg-[#232433] p-6 md:mt-14 md:p-8">
           <span className="inline-block rounded-lg bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
             {clinic.tag}
           </span>
@@ -48,7 +48,7 @@ export default function SpecialLiveSection() {
         </div>
 
         {/* 특별 세미나 — 흰 카드 */}
-        <div className="border-neutral-90 mt-4 rounded-2xl border p-6 md:p-8">
+        <div className="border-neutral-90 rounded-xxl mt-4 border p-6 md:p-8">
           <strong className="text-xsmall16 text-neutral-0 block font-bold">
             {seminar.title}
           </strong>

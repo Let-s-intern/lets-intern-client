@@ -25,7 +25,7 @@ export default function SolutionSection() {
           <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-6">
             {SOLUTION.cards.map((card) => (
               <div
-                className="flex flex-col rounded-2xl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
+                className="rounded-xxl flex flex-col bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
                 key={card.index}
               >
                 <p className="text-xs font-bold tracking-wide text-[#F6A780]">
@@ -51,7 +51,7 @@ export default function SolutionSection() {
                 {card.art ? (
                   <img
                     alt=""
-                    className="mt-6 w-full"
+                    className="mt-6 w-full rounded-lg"
                     loading="lazy"
                     src={`/images/membership/${card.art}`}
                   />

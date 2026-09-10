@@ -37,17 +37,21 @@ export default function ChallengeListSection() {
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-3">
           {CHALLENGE_ITEMS.map((item) => (
             <a
-              className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
+              className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
               href={item.url}
               key={item.label}
             >
+              {/*
+                object-cover 를 쓰지 않는다. 썸네일에 글자가 들어 있어 비율이 다르면
+                제목이 잘린다. 원본 비율 그대로 두고 폭만 맞춘다.
+              */}
               <img
                 alt=""
-                className="aspect-[540/300] w-full object-cover"
+                className="w-full rounded-lg"
                 loading="lazy"
                 src={`/images/membership/${item.src}`}
               />
-              <div className="flex flex-1 flex-col justify-between p-5">
+              <div className="flex flex-1 flex-col justify-between pt-4">
                 <strong className="text-xsmall16 text-neutral-0 font-bold">
                   {item.label}
                 </strong>

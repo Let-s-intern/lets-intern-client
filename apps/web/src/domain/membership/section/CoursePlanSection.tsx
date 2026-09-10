@@ -3,10 +3,6 @@ import {
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
   COURSE_PLAN_TYPES,
-  PLAYBOOK_CAPTION_LINES,
-  PLAYBOOK_SHOT_ALT,
-  PLAYBOOK_SHOT_SIZE,
-  PLAYBOOK_SHOT_SRC,
   type CoursePlanViewId,
 } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
@@ -124,25 +120,11 @@ export default function CoursePlanSection() {
             {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지 */}
             <p className="cp-playbook">{COURSE_PLAN_BODY.matrixFootnote}</p>
 
-            {/* 구매자가 실제로 받는 화면. `.cp-view` 밖이라 `.rv` 리빌이 안전하다 —
-                토글로 리마운트되는 자리에 두면 IntersectionObserver 가 놓친다. */}
-            <img
-              className="cp-playbook-shot rv"
-              src={PLAYBOOK_SHOT_SRC}
-              alt={PLAYBOOK_SHOT_ALT}
-              width={PLAYBOOK_SHOT_SIZE.width}
-              height={PLAYBOOK_SHOT_SIZE.height}
-              loading="lazy"
-              decoding="async"
-            />
-
-            <p className="cp-playbook-caption rv">
-              {PLAYBOOK_CAPTION_LINES.map((line, i) => (
-                <span className="brk" key={i}>
-                  {line}
-                </span>
-              ))}
-            </p>
+            {/*
+              플레이북 앱 화면(애니메이션 WebP, 2.29MB)과 그 아래 마무리 문구를 뺐다.
+              시안 8 에 없고, 시안 9 의 대시보드 목업이 같은 화면을 이미 보여준다.
+              에셋과 데이터(PLAYBOOK_SHOT_*, PLAYBOOK_CAPTION_LINES)는 남겨 뒀다.
+            */}
           </div>
         </div>
       </div>

@@ -2,7 +2,8 @@
 /* 시안 0.png — 1열 중앙 정렬. 배경은 좌상단 #4a5de8 → 우하단 #1a1a6f 대각 그라데이션.
    각도 99deg 와 중간 정지점 #3d2fa0 은 시안 픽셀에서 뽑았다. */
 .membership-root .hero {
-  background: linear-gradient(99deg, #4a5de8 0%, #3d2fa0 50%, #1a1a6f 100%);
+  /* 변경안 지정색. 어두운 남색에서 보라로 흐른다. (LC-3294) */
+  background: linear-gradient(160deg, #1c2033 0%, #4138a3 100%);
   overflow: hidden;
 }
 /* padding 은 .hero .hero-in (0,3,0) 로 지정한다 — responsive.css 의 .hero-in 단축
@@ -164,7 +165,7 @@
 .membership-root .hero-stats {
   max-width: 1276px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   padding-top: 34px;
   padding-bottom: 80px;
 }

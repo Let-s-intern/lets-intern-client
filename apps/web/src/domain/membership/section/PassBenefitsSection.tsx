@@ -28,7 +28,7 @@ export default function PassBenefitsSection() {
         <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-6">
           {PASS_BENEFITS.cards.map((card) => (
             <div
-              className={`flex flex-col rounded-2xl p-6 md:p-7 ${
+              className={`rounded-xxl flex flex-col p-6 md:p-7 ${
                 card.accent ? 'bg-[#FDF3EC]' : 'bg-neutral-95'
               } ${card.wide ? 'md:col-span-3' : 'md:col-span-2'}`}
               key={card.title}

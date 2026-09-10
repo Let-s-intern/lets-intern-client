@@ -20,7 +20,7 @@ export default function PathMatchSection() {
         <ul className="mt-10 flex flex-col gap-3 md:mt-14">
           {PATH_MATCH.rows.map((row) => (
             <li
-              className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:flex-row md:items-center md:gap-8 md:p-7"
+              className="rounded-xxl flex flex-col gap-3 bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:flex-row md:items-center md:gap-8 md:p-7"
               key={row.program}
             >
               <strong className="text-xsmall16 text-neutral-0 flex-1 font-bold">

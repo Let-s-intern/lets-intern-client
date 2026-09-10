@@ -32,7 +32,7 @@ export default function CompareSection() {
           {COMPARE.sub}
         </p>
 
-        <div className="mt-10 overflow-hidden rounded-2xl md:mt-14">
+        <div className="rounded-xxl mt-10 overflow-hidden md:mt-14">
           {COMPARE.rows.map((row) => (
             <div
               className="border-neutral-90 flex items-center justify-between gap-4 border-b bg-white px-6 py-5 md:px-8"

@@ -26,13 +26,13 @@ export default function MarketerVodSection() {
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-2">
           {MARKETER_VOD.cards.map((card) => (
             <div
-              className="flex flex-col rounded-2xl bg-white/5 p-4 md:p-6"
+              className="rounded-xxl flex flex-col bg-white/5 p-4 md:p-6"
               key={card.title}
             >
               {/* 배너 — 제목·배지·연사 소개가 그림 안에 들어 있다. alt 로 문구를 전한다. */}
               <img
                 alt={card.bannerAlt}
-                className="w-full rounded-xl"
+                className="w-full rounded-lg"
                 loading="lazy"
                 src={`/images/membership/${card.banner}`}
               />

@@ -12,7 +12,7 @@ export default function JobMarketSection() {
       <div className="wrap">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* 좌측 — 공고 예시 카드 */}
-          <div className="rounded-2xl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-8">
+          <div className="rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-8">
             <div className="flex items-baseline justify-between gap-3">
               <strong className="text-xsmall16 text-neutral-0 font-bold">
                 {JOB_MARKET.listTitle}{' '}
