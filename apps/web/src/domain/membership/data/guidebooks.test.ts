@@ -1,48 +1,59 @@
 import {
   GUIDEBOOK_CARD,
   GUIDEBOOK_ITEMS,
+  guidebookUrl,
   STUDY_CARD,
   STUDY_DETAIL_URL,
 } from './guidebooks';
 
 describe('GUIDEBOOK_ITEMS', () => {
-  it('표지가 수급된 가이드북 항목을 담는다', () => {
+  it('표지와 가이드북 ID 를 모두 갖는다', () => {
     expect(GUIDEBOOK_ITEMS.length).toBeGreaterThan(0);
     for (const item of GUIDEBOOK_ITEMS) {
       expect(item.label.length).toBeGreaterThan(0);
       expect(item.src.length).toBeGreaterThan(0);
+      expect(Number.isInteger(item.id)).toBe(true);
+      expect(item.id).toBeGreaterThan(0);
     }
   });
 
-  it('두 카드가 같은 주소를 쓰지 않는다', () => {
+  it('두 카드가 같은 가이드북을 가리키지 않는다', () => {
     // 대기업 자소서 카드가 자기소개서 가이드북(5)을, 인적성 카드가 면접 가이드북(9)을
-    // 가리키고 있었다. 대응 자료가 없어 주제가 비슷한 주소로 임시로 채운 것이 남은
-    // 것인데, 404 가 아니라 "그럴싸한 다른 문서" 가 열려서 오래 눈에 띄지 않았다.
+    // 가리키고 있었다. 전용 가이드북 ID 를 못 찾아 주제가 비슷한 주소로 채운 것이
+    // 남은 것인데, 404 가 아니라 "그럴싸한 다른 문서" 가 열려서 오래 눈에 띄지 않았다.
     // 중복 자체를 막으면 같은 방식으로 다시 채우는 것을 여기서 잡는다.
-    const urls = GUIDEBOOK_ITEMS.map((item) => item.url);
-    expect(new Set(urls).size).toBe(urls.length);
+    const ids = GUIDEBOOK_ITEMS.map((item) => item.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('kind 가 이름·주소와 어긋나지 않는다', () => {
-    // kind 는 카드 하단 문구("가이드북/챌린지 자세히 보기")를 정한다. 이름은 챌린지인데
-    // kind 가 guidebook 이면 문구만 조용히 틀린다.
-    for (const item of GUIDEBOOK_ITEMS) {
-      expect(item.kind).toBe(
-        item.label.includes('챌린지') ? 'challenge' : 'guidebook',
-      );
-    }
+  it('대기업 자소서·인적성이 전용 가이드북을 가리킨다', () => {
+    // 이 두 장이 위 중복의 당사자였다. 값을 못으로 박아 되돌아가는 것을 막는다.
+    const find = (keyword: string) =>
+      GUIDEBOOK_ITEMS.find((item) => item.label.includes(keyword));
+    expect(find('대기업 자소서')?.id).toBe(15);
+    expect(find('인적성')?.id).toBe(14);
   });
 
-  it('가이드북은 가이드북 상세로, 챌린지는 기수가 박히지 않는 latest 경로로 간다', () => {
-    // 챌린지는 기수가 계속 새로 열린다. 특정 기수 ID 를 적어 두면 다음 기수에 낡고,
-    // 링크가 죽는 게 아니라 지난 기수를 계속 열어 주기 때문에 눈에 띄지 않는다.
+  it('표지 폴백이 챌린지 표지가 아니라 가이드북 표지다', () => {
+    // 전용 표지가 없던 동안 두 카드는 같은 주제의 챌린지 표지를 빌려 썼다. 그 그림에는
+    // 기수 번호가 찍혀 있어서, 13기로 가는 카드에 2기 표지가 붙는 일이 실제로 났다.
     for (const item of GUIDEBOOK_ITEMS) {
-      if (item.kind === 'challenge') {
-        expect(item.url).toMatch(/^\/challenge\/[a-z-]+\/latest$/);
-      } else {
-        expect(item.url).toContain('/program/guidebook/');
-      }
+      expect(item.src.startsWith('challenge-')).toBe(false);
     }
+  });
+});
+
+describe('guidebookUrl', () => {
+  it('앱 내부 상대경로를 만든다', () => {
+    // 절대 URL 이면 dev·로컬에서 눌러도 프로덕션으로 나가버려 작업 중 화면을 못 본다.
+    expect(guidebookUrl(15)).toBe('/program/guidebook/15');
+    expect(guidebookUrl(15).startsWith('/')).toBe(true);
+  });
+
+  it('제목 슬러그를 붙이지 않는다', () => {
+    // 서버가 ID 만으로 정식 제목 경로로 리다이렉트한다. 슬러그를 적어 두면 운영에서
+    // 제목을 바꿀 때마다 낡는데, 링크가 죽지 않고 리다이렉트돼서 티가 안 난다.
+    expect(guidebookUrl(14)).toBe('/program/guidebook/14');
   });
 });
 

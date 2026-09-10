@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
-import { GUIDEBOOK_ITEMS, STUDY_DETAIL_URL } from '../data/guidebooks';
+import {
+  guidebookUrl,
+  GUIDEBOOK_ITEMS,
+  STUDY_DETAIL_URL,
+} from '../data/guidebooks';
 
 interface BenefitModalProps {
   modalId: string | null;
@@ -49,10 +53,10 @@ function getModalContents(onClose: () => void): Record<string, ReactNode> {
           </div>
           <h4>멤버십에 포함된 가이드북</h4>
           <div className="m-books">
-            {GUIDEBOOK_ITEMS.map(({ label, src, url }) => (
+            {GUIDEBOOK_ITEMS.map(({ label, src, id }) => (
               <a
                 key={label}
-                href={url}
+                href={guidebookUrl(id)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="m-gallery-link"

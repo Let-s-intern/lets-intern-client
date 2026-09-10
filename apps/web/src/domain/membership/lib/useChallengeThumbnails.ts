@@ -5,23 +5,10 @@ import type { ChallengeType } from '@/schema';
 import { challengeListSchema } from '@/schema';
 import axios from '@/utils/axios';
 import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
-import { GUIDEBOOK_ITEMS } from '../data/guidebooks';
 
-/**
- * 썸네일이 필요한 챌린지 타입 목록(중복 제거).
- *
- * 챌린지 10종(시안 10)뿐 아니라 가이드북 7종(시안 11) 안에 섞여 있는 챌린지 2종
- * (대기업 자소서·인적성)도 포함한다. 두 목록의 타입이 지금은 겹치지만, 한쪽에만
- * 있는 타입이 생겨도 여기서 자동으로 따라오게 둔다 — CHALLENGE_ITEMS 만 보고 있으면
- * 가이드북 쪽 카드는 조회 대상에서 조용히 빠져 정적 이미지에 머문다.
- */
-const TYPES: ChallengeType[] = Array.from(
-  new Set<ChallengeType>([
-    ...CHALLENGE_ITEMS.map((item) => item.challengeType),
-    ...GUIDEBOOK_ITEMS.flatMap((item) =>
-      item.challengeType ? [item.challengeType] : [],
-    ),
-  ]),
+/** 혜택 섹션에 쓰는 챌린지 타입 목록(중복 제거) */
+const TYPES = Array.from(
+  new Set(CHALLENGE_ITEMS.map((item) => item.challengeType)),
 );
 
 /**
