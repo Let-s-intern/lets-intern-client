@@ -14,10 +14,34 @@ describe('GUIDEBOOK_ITEMS', () => {
     }
   });
 
-  it('모든 url 이 가이드북 상세 경로를 가리킨다', () => {
+  it('두 카드가 같은 주소를 쓰지 않는다', () => {
+    // 대기업 자소서 카드가 자기소개서 가이드북(5)을, 인적성 카드가 면접 가이드북(9)을
+    // 가리키고 있었다. 대응 자료가 없어 주제가 비슷한 주소로 임시로 채운 것이 남은
+    // 것인데, 404 가 아니라 "그럴싸한 다른 문서" 가 열려서 오래 눈에 띄지 않았다.
+    // 중복 자체를 막으면 같은 방식으로 다시 채우는 것을 여기서 잡는다.
+    const urls = GUIDEBOOK_ITEMS.map((item) => item.url);
+    expect(new Set(urls).size).toBe(urls.length);
+  });
+
+  it('kind 가 이름·주소와 어긋나지 않는다', () => {
+    // kind 는 카드 하단 문구("가이드북/챌린지 자세히 보기")를 정한다. 이름은 챌린지인데
+    // kind 가 guidebook 이면 문구만 조용히 틀린다.
     for (const item of GUIDEBOOK_ITEMS) {
-      expect(item.url).toContain('/program/guidebook/');
-      expect(() => new URL(item.url)).not.toThrow();
+      expect(item.kind).toBe(
+        item.label.includes('챌린지') ? 'challenge' : 'guidebook',
+      );
+    }
+  });
+
+  it('가이드북은 가이드북 상세로, 챌린지는 기수가 박히지 않는 latest 경로로 간다', () => {
+    // 챌린지는 기수가 계속 새로 열린다. 특정 기수 ID 를 적어 두면 다음 기수에 낡고,
+    // 링크가 죽는 게 아니라 지난 기수를 계속 열어 주기 때문에 눈에 띄지 않는다.
+    for (const item of GUIDEBOOK_ITEMS) {
+      if (item.kind === 'challenge') {
+        expect(item.url).toMatch(/^\/challenge\/[a-z-]+\/latest$/);
+      } else {
+        expect(item.url).toContain('/program/guidebook/');
+      }
     }
   });
 });

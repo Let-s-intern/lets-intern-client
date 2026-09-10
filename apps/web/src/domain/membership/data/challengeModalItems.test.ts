@@ -51,4 +51,19 @@ describe('CHALLENGE_ITEMS', () => {
       `/images/membership/${CHALLENGE_ITEMS[0].src}`,
     );
   });
+
+  it('어드민 썸네일이 있으면 그것을 쓴다', () => {
+    // 링크는 최신 기수(`/latest`)로 가는데 이미지가 정적이면, 표지에 찍힌 기수 번호와
+    // 실제로 열리는 기수가 어긋난다. 13기로 가는 카드에 2기 표지가 붙어 있었다.
+    const remote = 'https://letsintern-bucket.s3.amazonaws.com/a.png';
+    expect(getChallengeThumbnailSrc(CHALLENGE_ITEMS[0], remote)).toBe(remote);
+  });
+
+  it('빈 문자열은 썸네일 없음으로 보고 정적 파일로 되돌린다', () => {
+    // 어드민에서 썸네일을 지우면 빈 문자열이 올 수 있다. 그대로 쓰면 이미지가 깨진 채
+    // 렌더된다 — 카드가 비어 보이는 것보다 지난 기수 표지라도 나오는 편이 낫다.
+    expect(getChallengeThumbnailSrc(CHALLENGE_ITEMS[0], '')).toBe(
+      `/images/membership/${CHALLENGE_ITEMS[0].src}`,
+    );
+  });
 });

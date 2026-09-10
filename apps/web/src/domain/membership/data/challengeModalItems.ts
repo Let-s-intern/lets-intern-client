@@ -136,7 +136,10 @@ export const CHALLENGE_ITEMS: ChallengeModalItem[] = [
  * 조회가 끝나기 전에도 카드가 비어 보이면 안 된다.
  */
 export function getChallengeThumbnailSrc(
-  item: ChallengeModalItem,
+  // `ChallengeModalItem` 이 아니라 `{ src }` 만 받는다 — 가이드북 섹션의 챌린지 카드
+  // (`GuidebookItem`)도 같은 폴백 규칙을 써야 하는데, 그것 때문에 데이터 모양을
+  // 억지로 맞추면 서로 상관없는 두 목록이 한 타입에 묶인다.
+  item: { src: string },
   remote?: string,
 ): string {
   return remote || `/images/membership/${item.src}`;
