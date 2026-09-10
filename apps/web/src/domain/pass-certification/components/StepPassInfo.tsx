@@ -93,13 +93,21 @@ export default function StepPassInfo() {
       <FormField
         label="합격 인증 사진"
         required
-        helper="합격 이메일, 사원증 등 (개인정보는 가려주세요)"
+        helper="합격 이메일·사원증 등, 개인정보는 가려주세요."
         error={errors.certificationImage?.message}
       >
         <Controller
           control={control}
           name="certificationImage"
-          rules={{ required: '합격 인증 사진을 첨부해 주세요.' }}
+          rules={{
+            required: '합격 인증 사진을 첨부해 주세요.',
+            validate: (file) =>
+              !file ||
+              ['image/jpeg', 'image/png', 'application/pdf'].includes(
+                file.type,
+              ) ||
+              'JPG, PNG, PDF 파일만 첨부할 수 있어요.',
+          }}
           render={({ field }) => (
             <label
               className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-sm border border-dashed px-4 py-7 text-center transition-colors ${
@@ -110,7 +118,7 @@ export default function StepPassInfo() {
             >
               <input
                 type="file"
-                accept="image/*,application/pdf"
+                accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
                 className="hidden"
                 onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
               />
@@ -122,7 +130,10 @@ export default function StepPassInfo() {
                 <>
                   <FiUploadCloud className="text-primary hidden h-6 w-6 md:block" />
                   <span className="text-xsmall14 text-primary font-medium">
-                    파일을 끌어다 놓거나 클릭해서 업로드
+                    클릭해서 업로드
+                  </span>
+                  <span className="text-xxsmall12 text-neutral-40">
+                    JPG·PNG·PDF 형식만 지원합니다
                   </span>
                 </>
               )}

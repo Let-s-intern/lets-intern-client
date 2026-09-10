@@ -85,8 +85,12 @@ export default function StepBasicInfo() {
           error={!!errors.accountNumber}
           {...register('accountNumber', {
             required: '계좌번호를 입력해 주세요.',
+            minLength: {
+              value: 7,
+              message: '계좌번호는 7자리 이상 입력해 주세요.',
+            },
             onChange: (e) => {
-              const digits = e.target.value.replace(/[^0-9]/g, '');
+              const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 19);
               setValue('accountNumber', digits, { shouldValidate: true });
             },
           })}

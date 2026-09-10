@@ -10,13 +10,14 @@ import {
 } from '@letscareer/utils';
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
 } from '@mui/material';
-import { IoCloseOutline } from 'react-icons/io5';
+import { IoCloseOutline, IoDocumentTextOutline } from 'react-icons/io5';
 
 import PassStatusBadge from './PassStatusBadge';
 
@@ -106,14 +107,19 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                 <Field label="이메일">{item.email}</Field>
                 <Field label="회원 여부 / 정보">
                   {item.matchedUserId != null ? (
-                    <>
-                      O{' '}
+                    <span className="flex items-center gap-1">
+                      <Chip
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        label="회원"
+                      />
                       <span>
                         / {item.matchedUserName} (#{item.matchedUserId})
                       </span>
-                    </>
+                    </span>
                   ) : (
-                    'X / -'
+                    <Chip size="small" variant="outlined" label="비회원" />
                   )}
                 </Field>
               </section>
@@ -162,18 +168,37 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
 
               <section className="flex flex-col gap-2">
                 <span className="text-xsmall14 text-neutral-40">증빙 자료</span>
-                <a
-                  href={item.certificationImageUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border-neutral-90 bg-neutral-95 block overflow-hidden rounded-md border"
-                >
-                  <img
-                    src={item.certificationImageUrl}
-                    alt="합격 증빙"
-                    className="max-h-[260px] w-full object-contain"
-                  />
-                </a>
+                {item.certificationImageUrl.toLowerCase().endsWith('.pdf') ? (
+                  <a
+                    href={item.certificationImageUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="border-neutral-90 bg-neutral-95 hover:border-primary flex items-center gap-3 rounded-md border p-4 transition-colors"
+                  >
+                    <IoDocumentTextOutline className="text-primary h-8 w-8 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xsmall14 text-neutral-10 font-medium">
+                        PDF 증빙 자료
+                      </p>
+                    </div>
+                    <span className="border-neutral-70 text-xsmall14 shrink-0 rounded-sm border bg-white px-4 py-2 font-medium">
+                      열기
+                    </span>
+                  </a>
+                ) : (
+                  <a
+                    href={item.certificationImageUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="border-neutral-90 bg-neutral-95 block overflow-hidden rounded-md border"
+                  >
+                    <img
+                      src={item.certificationImageUrl}
+                      alt="합격 증빙"
+                      className="max-h-[260px] w-full object-contain"
+                    />
+                  </a>
+                )}
               </section>
 
               <hr className="border-neutral-90" />
