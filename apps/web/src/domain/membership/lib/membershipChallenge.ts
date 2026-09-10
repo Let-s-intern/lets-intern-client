@@ -47,7 +47,11 @@ const MEMBERSHIP_GUIDE_URL_BY_CHALLENGE_ID: Record<number, string> = {
   // 이 기수 전용 가이드다(2026 하반기, 이용 ~11/30). 1기(309)와 다른 문서이므로 함께 바꾸지 않는다.
   384: 'https://letsintern.notion.site/2026-2-11-30-3c65e77cbee18080b5d4dd0bbfbb8742',
   // [LC-3294] 마케팅 취준 올인원 패스. 하반기 멤버십과 다른 상품이라 가이드도 별개다.
-  // 운영 기수 id 가 정해지면 이 줄의 키를 그 값으로 바꾼다(로컬 테스트 챌린지는 3).
+  //
+  // 배포 전 할 일 — 어드민에 운영 챌린지를 만든 뒤 (1) `NEXT_PUBLIC_MEMBERSHIP_CHALLENGE_ID`
+  // 를 그 ID 로 바꾸고 (2) 아래 키를 같은 값으로 바꾼다. 지금 값 3 은 로컬 테스트 챌린지다.
+  // 둘 중 하나만 바꾸면 조용히 어긋난다 — env 만 바꾸면 신규 구매자가 마이페이지에서
+  // 가이드를 못 보고, 키만 바꾸면 랜딩이 계속 3 번 챌린지를 판다.
   3: 'https://letsintern.notion.site/3d75e77cbee18036810be9eb23a47671',
 };
 

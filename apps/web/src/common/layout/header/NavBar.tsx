@@ -334,8 +334,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        {/* [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 블록을 제거한다 */}
-        <SideNavItem href="/membership" isNew>
+        {/* [LC-3294] 마케팅 취준 올인원 패스 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 블록을 제거한다.
+            구버전 하반기 멤버십(`/membership`)은 주소로만 남기고 메뉴에는 걸지 않는다. */}
+        <SideNavItem href="/membership-marketing" isNew>
           <MembershipNavLabel />
         </SideNavItem>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
