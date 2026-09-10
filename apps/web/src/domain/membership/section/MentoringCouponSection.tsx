@@ -1,52 +1,103 @@
-import {
-  COUPON_ALT,
-  COUPON_SIZE,
-  COUPON_SRC,
-  MENTORING_COUPON,
-} from '../data/mentoringCoupon';
+import { MENTORING_COUPON } from '../data/mentoringCoupon';
 
-/**
- * 1:1 멘토링·커피챗 할인 쿠폰.
- *
- * 헤더와 각주는 텍스트, 쿠폰 카드만 이미지다.
- * 헤더를 이미지에 넣으면 제목이 사라져 검색에서 통째로 빠진다.
- *
- * 이 섹션은 혜택 묶음(가이드북 / 챌린지 7종 / 직무별 챌린지 3종)의 다음 블록이다.
- * 그래서 제목을 섹션 h2 가 아니라 그 블록들과 같은 h3 계층으로 둔다 —
- * 이 묶음의 h2 는 CoursePlanSection 이 렌더하는 시안 6-0 헤더다.
- *
- * 크기는 `styles/mentoring-coupon.css` 의 --coupon-width 하나로 조절한다.
- */
+/** 시안 14 — 1:1 멘토링 50% 할인 쿠폰 (PASS BENEFIT 06). */
 export default function MentoringCouponSection() {
   return (
-    <section className="mcoupon" id="mentoring-coupon">
+    <section className="bg-white py-16 md:py-24" id="mentoring-coupon">
       <div className="wrap">
-        <div className="mcoupon-head rv">
-          <h3>
-            {MENTORING_COUPON.titleTop}
-            <br />
-            <span className="mcoupon-hl">
-              {MENTORING_COUPON.titleMainLines.map((line) => (
-                <span className="brk" key={line}>
+        <div className="flex items-center justify-center gap-3">
+          <span className="rounded-full bg-[#F1642B] px-3 py-1 text-xs font-bold text-white">
+            {MENTORING_COUPON.badge}
+          </span>
+          <span className="text-sm font-bold tracking-wide text-[#F1642B]">
+            {MENTORING_COUPON.eyebrow}
+          </span>
+        </div>
+
+        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+          {MENTORING_COUPON.titleLines.map((line) => (
+            <span className="block" key={line}>
+              {line}
+            </span>
+          ))}
+        </h2>
+
+        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+          {MENTORING_COUPON.sub}
+        </p>
+
+        <div className="mt-10 grid overflow-hidden rounded-2xl bg-[#232433] md:mt-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          {/* 좌측 — 할인율 */}
+          <div className="p-8 md:border-r md:border-white/10 md:p-10">
+            <span className="inline-block rounded-full bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
+              {MENTORING_COUPON.passOnly}
+            </span>
+
+            <strong className="mt-8 block text-5xl font-bold text-white md:text-6xl">
+              {MENTORING_COUPON.rate}
+            </strong>
+
+            <strong className="text-small18 mt-4 block font-bold leading-snug text-white">
+              {MENTORING_COUPON.rateTitleLines.map((line) => (
+                <span className="block" key={line}>
                   {line}
                 </span>
               ))}
-            </span>
-          </h3>
-          <p>{MENTORING_COUPON.subtitle}</p>
+            </strong>
+
+            <p className="text-xsmall14 text-neutral-70 mt-6 leading-relaxed">
+              {MENTORING_COUPON.rateBody.map((line) => (
+                <span className="block" key={line}>
+                  {line}
+                </span>
+              ))}
+            </p>
+
+            <p className="text-neutral-60 mt-6 text-xs">
+              {MENTORING_COUPON.rateFine}
+            </p>
+          </div>
+
+          {/* 우측 — 현직자 예시 */}
+          <div className="p-8 md:p-10">
+            <div className="flex items-baseline justify-between gap-3">
+              <strong className="text-xsmall16 font-bold text-white">
+                {MENTORING_COUPON.mentorsTitle}
+              </strong>
+              <span className="text-neutral-60 text-xs">
+                {MENTORING_COUPON.mentorsNote}
+              </span>
+            </div>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              {MENTORING_COUPON.mentors.map((mentor) => (
+                <div
+                  className="flex items-center gap-3 rounded-xl bg-white/5 p-4"
+                  key={`${mentor.company}-${mentor.role}`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.65rem] font-bold text-white ${mentor.color}`}
+                  >
+                    {mentor.short}
+                  </span>
+                  <span className="min-w-0">
+                    <strong className="text-xsmall14 block font-bold text-white">
+                      {mentor.company}
+                    </strong>
+                    <span className="text-neutral-60 block text-xs">
+                      {mentor.role}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <img
-          className="mcoupon-img rv"
-          src={COUPON_SRC}
-          alt={COUPON_ALT}
-          width={COUPON_SIZE.width}
-          height={COUPON_SIZE.height}
-          loading="lazy"
-          decoding="async"
-        />
-
-        <p className="mcoupon-note rv">{MENTORING_COUPON.footnote}</p>
+        <p className="mt-6 text-center text-xs text-neutral-50">
+          {MENTORING_COUPON.footnote}
+        </p>
       </div>
     </section>
   );

@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import MembershipLanding from './MembershipLanding';
 
-// 이 테스트가 검증하는 것은 MembershipLanding 자신의 책임 — "어떤 섹션을 어떤 순서로 합치는가" 다.
-// 섹션 내부 동작은 각 섹션의 테스트가 맡는다. 그래서 섹션을 전부 가벼운 스텁으로 대체한다.
+// 이 테스트가 검증하는 것은 MembershipLanding 자신의 책임 — "어떤 섹션을 어떤 순서로
+// 합치는가" 다. 섹션 내부 동작은 각 섹션의 테스트가 맡는다.
 //
-// 이렇게 하면 (1) react-query·라우터 같은 데이터 계층을 끌어오지 않아 깨질 일이 없고
-// (2) 섹션 하나를 주석 처리했을 때 이 테스트가 바로 잡아낸다.
+// LC-3294 에서 이게 특히 중요해졌다. 시안 1~15 는 선택지가 아니라 위에서 아래로 이어지는
+// 한 장의 상세페이지이고, **순서 자체가 요구사항**이다. 섹션 하나를 빠뜨리거나 자리를
+// 바꾸면 여기서 잡힌다.
 //
 // jest.mock 팩토리는 호이스팅되므로 공용 스텁 헬퍼를 참조할 수 없다. 그래서 하나씩 적는다.
 
@@ -30,117 +31,132 @@ jest.mock('./section/HeroSection', () => ({
   __esModule: true,
   default: () => <div data-testid="HeroSection" />,
 }));
-jest.mock('./section/VodHookSection', () => ({
+jest.mock('./section/RecommendSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="VodHookSection" />,
+  default: () => <div data-testid="RecommendSection" />,
+}));
+jest.mock('./section/JobMarketSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="JobMarketSection" />,
 }));
 jest.mock('./section/RoadmapSection', () => ({
   __esModule: true,
   default: () => <div data-testid="RoadmapSection" />,
 }));
-jest.mock('./section/CompareSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="CompareSection" />,
-}));
-jest.mock('./section/ChallengeScheduleSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="ChallengeScheduleSection" />,
-}));
 jest.mock('./section/SolutionSection', () => ({
   __esModule: true,
   default: () => <div data-testid="SolutionSection" />,
+}));
+jest.mock('./section/PassBenefitsSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PassBenefitsSection" />,
+}));
+jest.mock('./section/PathMatchSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PathMatchSection" />,
 }));
 jest.mock('./section/CoursePlanSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CoursePlanSection" />,
 }));
-jest.mock('./section/BenefitsSection', () => ({
+jest.mock('./section/PlaybookDashboardSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="BenefitsSection" />,
+  default: () => <div data-testid="PlaybookDashboardSection" />,
 }));
-jest.mock('./section/PlansSection', () => ({
+jest.mock('./section/ChallengeListSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="PlansSection" />,
+  default: () => <div data-testid="ChallengeListSection" />,
 }));
-jest.mock('./section/CommunityChatSection', () => ({
+jest.mock('./section/GuidebookListSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="CommunityChatSection" />,
+  default: () => <div data-testid="GuidebookListSection" />,
+}));
+jest.mock('./section/MarketerVodSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="MarketerVodSection" />,
+}));
+jest.mock('./section/SpecialLiveSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="SpecialLiveSection" />,
 }));
 jest.mock('./section/MentoringCouponSection', () => ({
   __esModule: true,
   default: () => <div data-testid="MentoringCouponSection" />,
 }));
-jest.mock('./section/ReviewsSection', () => ({
+jest.mock('./section/CompareSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="ReviewsSection" />,
+  default: () => <div data-testid="CompareSection" />,
+}));
+jest.mock('./section/PlansSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PlansSection" />,
 }));
 jest.mock('./section/FaqSection', () => ({
   __esModule: true,
   default: () => <div data-testid="FaqSection" />,
 }));
 
-/**
- * `<main>` 안에 렌더되는 순서. LC-3219 시안 순서를 그대로 옮긴 것이다.
- *
- * 얼리버드 배너·추천 대상·세미나·제휴 혜택·최종 CTA 는 시안에 없어 뺐다.
- * 이 배열이 그 사실을 고정한다 — 누가 되살리면 순서 비교가 실패한다.
- *
- * VOD 훅은 LC-3219 때 함께 빠졌다가 되살렸다. 위치는 추가 당시(0236e0651)와 같은 네비 직후다.
- */
+/** 시안 1~15 순서. 좌측 숫자가 시안 번호다. */
 const EXPECTED_ORDER = [
-  'MembershipAnimations',
-  'HeroSection',
+  'HeroSection', //             시안 1
   'MembershipNav',
-  'VodHookSection',
-  'RoadmapSection',
-  'SolutionSection',
-  'PlansSection',
-  'CompareSection',
-  'ChallengeScheduleSection',
-  'CoursePlanSection',
-  'BenefitsSection',
-  'CommunityChatSection',
-  'MentoringCouponSection',
-  'ReviewsSection',
+  'RecommendSection', //        시안 2
+  'JobMarketSection', //        시안 3
+  'RoadmapSection', //          시안 4
+  'SolutionSection', //         시안 5
+  'PassBenefitsSection', //     시안 6
+  'PathMatchSection', //        시안 7
+  'CoursePlanSection', //       시안 8
+  'PlaybookDashboardSection', // 시안 9
+  'ChallengeListSection', //    시안 10
+  'GuidebookListSection', //    시안 11
+  'MarketerVodSection', //      시안 12
+  'SpecialLiveSection', //      시안 13
+  'MentoringCouponSection', //  시안 14
+  'CompareSection', //          시안 15
+  'PlansSection', //            시안 15 (플랜 카드)
   'FaqSection',
   'ApplyBar',
+  // 결제 시트는 섹션이 아니라 컨트롤러다. .membership-root 밖에 마운트되므로
+  // 순서 목록의 맨 끝에 잡힌다.
+  'MembershipPaymentSheet',
 ];
 
-describe('MembershipLanding', () => {
-  it('LC-3219 로 추가된 두 섹션이 마운트돼 있다', () => {
-    render(<MembershipLanding />);
-    // 로드맵은 이전 시즌에 주석 처리돼 있던 것을 되살렸다.
-    expect(screen.getByTestId('RoadmapSection')).toBeInTheDocument();
-    // 간트는 이번에 신규로 추가했다.
-    expect(screen.getByTestId('ChallengeScheduleSection')).toBeInTheDocument();
-  });
-
-  it('VOD 훅 섹션이 마운트돼 있다', () => {
-    // LC-3219 때 주석 처리로 내려갔던 섹션이다. 다시 주석 처리되면 여기서 걸린다.
-    render(<MembershipLanding />);
-    expect(screen.getByTestId('VodHookSection')).toBeInTheDocument();
-  });
-
-  it('섹션을 시안 순서대로 합친다', () => {
+describe('MembershipLanding (LC-3294)', () => {
+  it('섹션을 시안 1~15 순서대로 합친다', () => {
     const { container } = render(<MembershipLanding />);
-    const main = container.querySelector('main');
-    expect(main).not.toBeNull();
 
-    const rendered = Array.from(main!.querySelectorAll('[data-testid]')).map(
-      (el) => el.getAttribute('data-testid'),
-    );
+    const rendered = [...container.querySelectorAll('[data-testid]')]
+      .map((el) => el.getAttribute('testid') ?? el.getAttribute('data-testid'))
+      .filter(
+        (id): id is string => id !== null && id !== 'MembershipAnimations',
+      );
 
     expect(rendered).toEqual(EXPECTED_ORDER);
   });
 
-  it('결제 시트는 .membership-root 스코프 밖에 둔다', () => {
-    // 결제 시트는 앱 자체 Tailwind 컴포넌트를 쓰므로 멤버십 CSS 스코프 안에 들어가면 안 된다.
-    const { container } = render(<MembershipLanding />);
-    const root = container.querySelector('.membership-root');
-    expect(root).not.toBeNull();
-    expect(
-      root!.querySelector('[data-testid="MembershipPaymentSheet"]'),
-    ).toBeNull();
+  /*
+   * 시안에 없는 섹션은 렌더하지 않는다. 파일은 남아 있어서 import 한 줄이면 되살아나는데,
+   * 실수로 되살아나면 시안에 없는 화면이 상품 페이지에 섞인다.
+   */
+  it('시안에 없는 기존 섹션은 렌더하지 않는다', () => {
+    render(<MembershipLanding />);
+
+    for (const removed of [
+      'VodHookSection',
+      'ChallengeScheduleSection',
+      'CommunityChatSection',
+      'ReviewsSection',
+      'EarlyBirdBanner',
+      'PartnerBenefitsSection',
+      'FinalCtaSection',
+    ]) {
+      expect(screen.queryByTestId(removed)).not.toBeInTheDocument();
+    }
+  });
+
+  it('결제 시트를 마운트한다', () => {
+    render(<MembershipLanding />);
     expect(screen.getByTestId('MembershipPaymentSheet')).toBeInTheDocument();
   });
 });

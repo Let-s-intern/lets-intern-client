@@ -1,110 +1,95 @@
-import {
-  BookOpen,
-  Flag,
-  MessagesSquare,
-  MonitorPlay,
-  Route,
-  Users,
-  type LucideIcon,
-} from 'lucide-react';
-import {
-  SOLUTION,
-  type SolutionSatellite,
-  type SolutionSatelliteIcon,
-} from '../data/solution';
+import { SOLUTION } from '../data/solution';
 
-const SATELLITE_ICONS: Record<SolutionSatelliteIcon, LucideIcon> = {
-  flag: Flag,
-  bookOpen: BookOpen,
-  users: Users,
-  monitorPlay: MonitorPlay,
-  mentoring: MessagesSquare,
-  route: Route,
-};
-
-/** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
-function HeadlineLine({
-  line,
-  highlight,
-}: {
-  line: string;
-  highlight: string;
-}) {
-  const at = line.indexOf(highlight);
-  if (at < 0) return <>{line}</>;
-  return (
-    <>
-      {line.slice(0, at)}
-      <span className="hl">{highlight}</span>
-      {line.slice(at + highlight.length)}
-    </>
-  );
-}
-
-function SolutionSatelliteNode({ label, hint, icon }: SolutionSatellite) {
-  const Icon = SATELLITE_ICONS[icon];
-  return (
-    <div className="hub-sat">
-      <span className="hub-sat-ic" aria-hidden>
-        <Icon size={20} strokeWidth={2.2} />
-      </span>
-      <span className="hub-sat-text">
-        <span className="hub-sat-label">{label}</span>
-        <span className="hub-sat-hint">{hint}</span>
-      </span>
-    </div>
-  );
-}
-
+/** 시안 5 — 결과물 3카드 + 하단 강조 밴드 (YOUR JOB ROADMAP). */
 export default function SolutionSection() {
   return (
-    <section className="solution" id="solution">
-      <div className="wrap">
-        <div className="sec-head rv in">
-          <span className="eyebrow">{SOLUTION.badge}</span>
-          {/* 마지막 줄(두 번째 문장)은 어느 폭에서도 새 줄이다 — .brk-line.
-              앞의 두 줄은 601px 이상에서 붙어 시안 2.png 의 2줄이 된다 — .brk. */}
-          <h2>
-            {SOLUTION.titleLines.map((line, i) => (
-              <span
-                className={
-                  i === SOLUTION.titleLines.length - 1 ? 'brk-line' : 'brk'
-                }
-                key={line}
-              >
-                <HeadlineLine line={line} highlight={SOLUTION.titleHighlight} />
+    <>
+      <section className="bg-neutral-95 py-16 md:py-24">
+        <div className="wrap">
+          <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
+            {SOLUTION.eyebrow}
+          </p>
+
+          <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+            {SOLUTION.title}
+          </h2>
+
+          <div className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+            {SOLUTION.subLines.map((line) => (
+              <span className="block leading-relaxed" key={line}>
+                {line}
               </span>
             ))}
-          </h2>
-        </div>
+          </div>
 
-        {/* 허브 앤 스포크 — 위성 6종이 중앙 올인원 패스로 수렴 */}
-        <div className="hub rv">
-          {SOLUTION.satellites.map((sat) => (
-            <SolutionSatelliteNode key={sat.label} {...sat} />
-          ))}
-          <div className="hub-core">
-            <div className="hub-core-title">
-              {SOLUTION.hubTitleLines.map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i < SOLUTION.hubTitleLines.length - 1 && <br />}
-                </span>
-              ))}
-            </div>
-            <div className="hub-core-sub">{SOLUTION.hubSub}</div>
+          <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-6">
+            {SOLUTION.cards.map((card) => (
+              <div
+                className="flex flex-col rounded-2xl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
+                key={card.index}
+              >
+                <p className="text-xs font-bold tracking-wide text-[#F6A780]">
+                  {card.index} {card.label}
+                </p>
+
+                <strong className="text-small18 text-neutral-0 mt-5 block font-bold leading-snug">
+                  {card.titleLines.map((line) => (
+                    <span className="block" key={line}>
+                      {line}
+                    </span>
+                  ))}
+                </strong>
+
+                <p className="text-xsmall14 text-neutral-40 mt-5 leading-relaxed">
+                  {card.body.map((line) => (
+                    <span className="block" key={line}>
+                      {line}
+                    </span>
+                  ))}
+                </p>
+
+                {card.chips ? (
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {card.chips.map((chip) => (
+                      <span
+                        className="bg-neutral-95 text-xsmall14 text-neutral-30 rounded-full px-3 py-1.5"
+                        key={chip}
+                      >
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+
+                {card.checks ? (
+                  <ul className="mt-6 flex flex-col gap-3">
+                    {card.checks.map((check) => (
+                      <li className="flex items-center gap-2" key={check}>
+                        <span
+                          aria-hidden="true"
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#F1642B] text-[0.65rem] text-white"
+                        >
+                          ✓
+                        </span>
+                        <span className="text-xsmall14 text-neutral-0 font-medium">
+                          {check}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        <p className="hub-note rv">
-          {SOLUTION.subLines.map((line, i) => (
-            <span key={i}>
-              {line}
-              {i < SOLUTION.subLines.length - 1 && <br />}
-            </span>
-          ))}
+      <div className="bg-[#232433] px-5 py-10 text-center md:py-14">
+        <p className="text-xsmall14 text-neutral-70">{SOLUTION.bandLead}</p>
+        <p className="text-small18 mt-2 font-bold text-white md:text-2xl">
+          {SOLUTION.bandMain}
         </p>
       </div>
-    </section>
+    </>
   );
 }

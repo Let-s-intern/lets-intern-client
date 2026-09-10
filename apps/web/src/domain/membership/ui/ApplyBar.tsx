@@ -5,6 +5,7 @@ import BarCountdown from './BarCountdown';
 import { openPlanSheet } from '../lib/planSheet';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import useMembershipSheetStore from '../store/useMembershipSheetStore';
+import { PLAN_NAME } from '../data/plans';
 import {
   ctaLabel,
   IS_CTA_DISABLED,
@@ -22,7 +23,7 @@ export default function ApplyBar() {
   return (
     <div className="apply-bar">
       <div className="apply-bar-info">
-        <span className="apply-bar-title">렛츠커리어 하반기 멤버십</span>
+        <span className="apply-bar-title">{PLAN_NAME}</span>
         {/*
           모집이 끝났다는 사실만 적으면 옆의 "출시 알림 신청" 버튼과 어긋난다. 끝났다는 것과
           다음이 있다는 것을 함께 말해야 버튼을 누를 이유가 생긴다.

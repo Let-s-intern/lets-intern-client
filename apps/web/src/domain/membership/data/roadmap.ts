@@ -1,84 +1,48 @@
-// 하반기 공채 로드맵 섹션 데이터. (시안 1.png)
-// 트랙 선 위/아래로 카드가 번갈아 붙는 5노드 지그재그 타임라인.
+// 시안 4 — "먼저 써봐야, 다음에 채울 것이 보이니까" (START WITH A DRAFT).
+// 어두운 배경 위 STEP 01~05 세로 목록.
+//
+// 기존 하반기 멤버십은 같은 자리에 지그재그 타임라인을 그렸다. 시안이 단순한 세로
+// 목록으로 바뀌어 데이터도 그 형태로 맞춘다.
 
-/** 카드 우상단 아이콘 식별자 (lucide-react 매핑 키) */
-export type RoadmapIcon =
-  | 'fileText'
-  | 'clipboardCheck'
-  | 'messagesSquare'
-  | 'userRoundCheck'
-  | 'flag';
-
-export interface RoadmapNode {
-  /** 트랙 위 번호. null 이면 번호 대신 체크 아이콘을 그린다(마지막 노드) */
-  step: number | null;
-  /** 카드 좌상단 날짜 칩 문구 */
-  dateChip: string;
-  /** 카드 우상단 아이콘 키 */
-  icon: RoadmapIcon;
+export interface RoadmapStep {
+  /** STEP 01 ~ STEP 05 */
+  label: string;
   title: string;
   body: string;
-  /** 트랙 선 기준 카드 위치 */
-  side: 'above' | 'below';
 }
 
 export const ROADMAP = {
-  badge: '2026 하반기 공채 로드맵',
-  /** 의미가 끊기는 자리에서 자른다. 601px 이상에서는 한 줄로 붙는다(base.css 의 .brk) */
-  titleLines: ['공채 일정에 맞춰,', '지금 필요한 준비를 이어가세요'],
+  eyebrow: 'START WITH A DRAFT',
+  title: '먼저 써봐야, 다음에 채울 것이 보이니까',
   subLines: [
-    '서류 접수부터 최종 면접까지,',
-    '전형별로 필요한 준비를 놓치지 마세요',
+    '완벽하게 준비한 뒤 시작하는 것이 아니라, 지금 가진 경험으로 먼저 결과물을 만듭니다.',
+    '작성한 서류를 기준으로 부족한 부분을 진단하고, 합격에 필요한 준비를 순서대로 채워갑니다.',
   ],
-  nodes: [
+  steps: [
     {
-      step: 1,
-      dateChip: '8월~9월',
-      icon: 'fileText',
-      title: '서류 접수',
-      body: '나만의 스토리로 이력서와 자소서를 탄탄하게 완성해요',
-      side: 'above',
+      label: 'STEP 01',
+      title: '지원 서류 초안 만들기',
+      body: '마케팅 완성 챌린지에서 지금까지의 경험을 정리하고 이력서·자기소개서·포트폴리오 초안을 만듭니다.',
     },
     {
-      step: 2,
-      dateChip: '10월',
-      icon: 'clipboardCheck',
-      title: '역량·인적성 검사',
-      body: '기업별 검사 유형을 미리 익히고 실전 감각을 끌어올려요',
-      side: 'below',
+      label: 'STEP 02',
+      title: '현재 준비 수준 진단하기',
+      body: '작성한 서류와 경험을 제출하면, 지금 잘된 부분과 먼저 보완할 부분을 짚어드립니다.',
     },
     {
-      step: 3,
-      dateChip: '10월~',
-      icon: 'messagesSquare',
-      title: '면접 대비 경험정리',
-      body: '직무 경험과 예상 질문을 중심으로 디테일한 답변을 준비해요',
-      side: 'above',
+      label: 'STEP 03',
+      title: '목표 직무와 필요한 역량 찾기',
+      body: '6개 세부 직무 가이드를 통해 나에게 맞는 마케팅 직무를 찾고, 해당 직무에 필요한 경험과 역량을 확인합니다.',
     },
     {
-      step: 4,
-      dateChip: '10월 말~12월',
-      icon: 'userRoundCheck',
-      title: '1차/2차 면접',
-      body: '임원·인성 면접 기출에 맞춰 최종 합격 답변을 다듬어요',
-      side: 'below',
+      label: 'STEP 04',
+      title: '부족한 부분을 프로그램으로 채우기',
+      body: '진단 결과에 따라 필요한 챌린지, 세미나, 멘토링 등에 참여해 이력서·자기소개서·포트폴리오의 완성도를 높입니다.',
     },
     {
-      step: null,
-      dateChip: '12월~',
-      icon: 'flag',
-      title: '최종 합격',
-      body: '렛츠커리어와 함께 취뽀하고 설레는 마음으로 입사 준비하세요!',
-      side: 'above',
+      label: 'STEP 05',
+      title: '완성한 서류로 실제 지원하기',
+      body: '큐레이션된 인턴·신입 공고를 확인하고, 완성한 지원 서류로 나에게 맞는 포지션에 지원합니다.',
     },
-  ] as RoadmapNode[],
-  /** 하단 마무리 문구. highlight 만 파란색으로 강조한다 */
-  outro: {
-    lead: '전형은 이어지니까, ',
-    highlight: '준비도 끊기지 않게',
-    subLines: [
-      '올인원 패스로 하반기 공채 전형을',
-      '단계별로 탄탄하게 대비해 보세요.',
-    ],
-  },
+  ] satisfies RoadmapStep[],
 } as const;

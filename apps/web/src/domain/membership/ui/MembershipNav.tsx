@@ -17,12 +17,15 @@ interface NavItem {
 //
 // 세미나·제휴 혜택은 섹션이 시안에서 빠지면서 항목도 함께 뺐다. 없는 id 를 가리키면
 // 클릭이 무반응이 되고 observer 도 대상을 못 찾는다.
+// 앵커는 **랜딩에 실제로 있는 섹션 id** 만 넣는다. 없는 id 를 남기면 눌러도 아무 일이
+// 일어나지 않고, IntersectionObserver 가 관측 대상을 못 찾아 하이라이트도 멈춘다.
+// 섹션을 빼거나 더할 때 이 목록을 함께 고칠 것. (LC-3294)
 const NAV_ITEMS: NavItem[] = [
-  { title: '패스 구성', to: 'solution' },
-  { title: '멤버십 플랜', to: 'plans' },
-  { title: '챌린지 일정', to: 'challenge-schedule' },
-  { title: '혜택', to: 'course-plan' },
-  { title: '후기', to: 'reviews' },
+  { title: '혜택', to: 'benefits' },
+  { title: '플레이북', to: 'course-plan' },
+  { title: '챌린지', to: 'challenges' },
+  { title: '가이드북', to: 'guidebooks' },
+  { title: '가격', to: 'compare' },
 ];
 
 export default function MembershipNav() {

@@ -75,6 +75,14 @@
   margin: 0 auto;
   padding: 0 28px;
 }
+/* 좁은 컨테이너 — 읽는 글이 주인 섹션(시안 4 STEP 목록, 시안 7 매칭 목록)에 쓴다.
+   `.membership-root *` 가 margin:0 을 강제하므로 Tailwind 의 mx-auto 로는 가운데 정렬이
+   되지 않는다. 폭 변형은 여기서 클래스로 준다. */
+.membership-root .wrap-narrow {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
 .membership-root section {
   position: relative;
 }
