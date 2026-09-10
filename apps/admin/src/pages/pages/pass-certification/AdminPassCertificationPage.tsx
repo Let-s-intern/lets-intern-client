@@ -89,6 +89,23 @@ export default function AdminPassCertificationPage() {
     },
     { field: 'name', headerName: '이름', width: 120, sortable: false },
     { field: 'phoneNum', headerName: '연락처', width: 130, sortable: false },
+    {
+      field: 'matchedUserId',
+      headerName: '회원 여부',
+      width: 110,
+      sortable: false,
+      renderCell: (p) =>
+        p.row.matchedUserId != null ? (
+          <Chip
+            size="small"
+            color="primary"
+            variant="outlined"
+            label="회원"
+          />
+        ) : (
+          <Chip size="small" variant="outlined" label="비회원" />
+        ),
+    },
     { field: 'companyName', headerName: '회사', width: 130, sortable: false },
     { field: 'jobName', headerName: '직무', width: 130, sortable: false },
     {
