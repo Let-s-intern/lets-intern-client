@@ -1,4 +1,7 @@
+import { CSSProperties } from 'react';
+
 import SectionHeading from '@/domain/pass-certification/components/SectionHeading';
+
 import { PASS_SECTION_ID } from './sectionIds';
 
 const REWARDS = [
@@ -99,11 +102,17 @@ export default function RewardSection() {
         />
 
         <div className="grid w-full max-w-[1040px] grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
-          {REWARDS.map((r) => (
+          {REWARDS.map((r, i) => (
             <div
               key={r.no}
-              className={`flex h-full flex-col gap-3 rounded-xl p-5 md:p-[34px] ${r.theme.card}`}
+              className={`relative flex h-full flex-col gap-3 overflow-hidden rounded-xl p-5 md:p-[34px] ${r.theme.card}`}
             >
+              {/* 빛 반사(반짝) — 모바일 동시, 데스크탑만 카드 간 딜레이로 이어짐 */}
+              <span
+                aria-hidden
+                style={{ '--shine-delay': `${i * 0.35}s` } as CSSProperties}
+                className="reward-shine pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+              />
               <div className="flex items-center justify-between">
                 <span
                   className={`text-xsmall14 md:text-xxlarge36 font-bold ${r.theme.no}`}
