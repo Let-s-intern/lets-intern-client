@@ -22,7 +22,9 @@ const COMPLETE_STEP = STEP_FIELDS.length; // 3 (완료)
 
 export default function PassCertificationForm() {
   const methods = useForm<PassCertificationFormValues>({
-    mode: 'onChange',
+    // 첫 blur 전엔 검증 안 함(입력 중 에러 방지) → 이후 실시간 검증.
+    // 단계 이동은 goNext 의 trigger() 로 강제 검증하므로 버튼 동작엔 영향 없음.
+    mode: 'onTouched',
     defaultValues: passCertificationDefaultValues,
   });
   const [step, setStep] = useState(0);
