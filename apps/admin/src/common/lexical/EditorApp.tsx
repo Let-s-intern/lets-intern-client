@@ -32,6 +32,10 @@ import nodes from './nodes';
 import { TableContext } from './plugins/TablePlugin';
 import TypingPerfPlugin from './plugins/TypingPerfPlugin';
 import setupEnv from './setupEnv';
+import {
+  isTableIntegrityError,
+  repairSerializedTables,
+} from './tableIntegrity';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 
 export const emptyEditorState = JSON.stringify({
@@ -202,9 +206,22 @@ function App({
     if (!initialEditorStateJsonString) return emptyEditorState;
     try {
       const parsed = JSON.parse(initialEditorStateJsonString);
-      if (parsed?.root?.children?.length > 0) {
-        return initialEditorStateJsonString;
+      if (!(parsed?.root?.children?.length > 0)) return emptyEditorState;
+
+      /*
+       * 표에 행이 아닌 자식이 있으면 여는 순간 에디터가 죽는다(LC-3292).
+       * 편집 중 트랜스폼(TableIntegrityPlugin)만으로는 늦다 — 문제가 되는 표는
+       * 이미 저장된 글 안에 있어서, 초기 상태를 넣는 시점에 이미 안전해야 한다.
+       * 이유와 규칙은 `tableIntegrity.ts` 주석에 있다.
+       */
+      if (repairSerializedTables(parsed.root)) {
+        console.error(
+          '[lexical] 불러온 콘텐츠의 표에 행이 아닌 자식이 있어 표 밖으로 옮겼습니다.',
+        );
+        return JSON.stringify(parsed);
       }
+
+      return initialEditorStateJsonString;
     } catch {
       // JSON이 아닌 평문
     }
@@ -216,6 +233,19 @@ function App({
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {
+      /*
+       * 표 무결성 에러만 좁게 삼킨다(LC-3292).
+       *
+       * TableIntegrityPlugin 이 표를 고쳐도, 같은 업데이트 안에서 TablePlugin 트랜스폼이
+       * 먼저 도는 경우가 남는다. 그때 던지는 것을 그대로 밖으로 흘려보내면 앱이 죽고,
+       * 다음 타이핑에서 또 죽는다. 고칠 수 있는 상태이므로 기록만 남기고 진행한다.
+       *
+       * 전부 삼키면 다른 버그가 숨는다. 아는 것만 잡고 나머지는 지금처럼 던진다.
+       */
+      if (isTableIntegrityError(error)) {
+        console.error('[lexical] 표 구조 오류를 복구했습니다.', error);
+        return;
+      }
       throw error;
     },
     theme: PlaygroundEditorTheme,
