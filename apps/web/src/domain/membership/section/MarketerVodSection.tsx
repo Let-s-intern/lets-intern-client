@@ -61,12 +61,19 @@ export default function MarketerVodSection() {
                   </span>{' '}
                   <strong className="text-primary font-bold">무료</strong>
                 </span>
-                <a
-                  className="bg-primary text-xsmall14 rounded-lg px-5 py-2.5 font-medium text-white"
-                  href={card.url}
-                >
-                  자세히 보기 →
-                </a>
+                {/*
+                  아직 공개 전인 세미나는 주소가 없다. 버튼을 남겨 두려고 목록 같은
+                  엉뚱한 곳으로 보내면, 눌러서 원하던 게 없는 화면에 도착하고 그
+                  자리에서 이탈한다. 주소가 생기면 버튼도 같이 돌아온다.
+                */}
+                {card.url && (
+                  <a
+                    className="bg-primary text-xsmall14 rounded-lg px-5 py-2.5 font-medium text-white"
+                    href={card.url}
+                  >
+                    자세히 보기 →
+                  </a>
+                )}
               </div>
             </div>
           ))}
