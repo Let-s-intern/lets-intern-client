@@ -1,9 +1,14 @@
 import { HERO, HERO_STATS } from './hero';
 
 describe('HERO 카피 (시안 1)', () => {
-  /* 이용 종료일은 히어로 배지·가격 카드·어드민 세 곳이 같아야 한다. */
-  it('배지에 이용 종료일(11월 28일)이 들어 있다', () => {
-    expect(HERO.badge).toContain('11월 28일');
+  /*
+   * 이용 종료일은 어드민 챌린지의 endDate 하나가 정한다. 카피에 날짜를 박으면
+   * 운영에서 기간을 바꿨을 때 배지만 옛 날짜로 남는다 — 시안의 11월 28일이 어드민
+   * 11월 30일과 어긋나 있던 게 그 경우다. 날짜는 HeroSection 이 끼워 넣는다.
+   */
+  it('배지 카피에는 날짜가 들어 있지 않다', () => {
+    expect(HERO.badgePrefix).not.toMatch(/\d/);
+    expect(HERO.badgeSuffix).not.toMatch(/\d/);
   });
 
   it('제목은 3줄이다', () => {

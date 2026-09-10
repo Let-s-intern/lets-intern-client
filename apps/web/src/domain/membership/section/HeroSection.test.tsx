@@ -6,7 +6,12 @@ import { render, screen } from '@testing-library/react';
  * 못한다. 이 테스트의 관심사는 카피와 구조라 훅은 고정값으로 갈아끼운다.
  */
 jest.mock('../lib/useMembershipChallengeData', () => ({
-  useMembershipChallengeData: () => ({ salePrice: 175900 }),
+  useMembershipChallengeData: () => ({
+    salePrice: 175900,
+    // 배지가 이 날짜를 그대로 찍는다. 카피에 날짜를 박지 않는다는 것이 요점이라
+    // 값 자체는 시안·어드민과 무관한 아무 날짜여도 된다.
+    endDate: new Date('2026-11-30T23:59:59+09:00'),
+  }),
 }));
 
 import { HERO, HERO_STATS } from '../data/hero';
@@ -15,7 +20,15 @@ import HeroSection from './HeroSection';
 describe('HeroSection', () => {
   it('배지와 헤드라인 3줄을 렌더한다', () => {
     render(<HeroSection />);
-    expect(screen.getByText(HERO.badge)).toBeInTheDocument();
+    // 배지는 카피 + 어드민 종료일로 조립된다. 날짜가 카피에 박혀 있으면 운영에서
+    // 기간을 바꿨을 때 배지만 옛 날짜로 남는다(시안 11/28 vs 어드민 11/30).
+    expect(
+      screen.getByText(
+        (_, el) =>
+          el?.className === 'hero-badge' &&
+          (el?.textContent ?? '').includes('11월 30일'),
+      ),
+    ).toBeInTheDocument();
     for (const line of HERO.titleLines) {
       expect(screen.getByText(line)).toBeInTheDocument();
     }
