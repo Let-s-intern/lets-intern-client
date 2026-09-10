@@ -63,7 +63,8 @@
   background: #fff;
   border: 1.5px solid var(--g300);
   border-radius: 999px;
-  margin: 0 auto 30px;
+  /* 위 여백 — 바로 위 유형 카드(.cp-types)에 붙어 보여서 띄운다. (LC-3294) */
+  margin: 22px auto 30px;
 }
 .membership-root .cp-toggle-wrap {
   display: flex;
