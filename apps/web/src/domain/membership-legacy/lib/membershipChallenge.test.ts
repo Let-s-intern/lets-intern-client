@@ -6,7 +6,6 @@ import {
   IS_RECRUITMENT_CLOSED,
   isValidMembershipChallengeId,
   MEMBERSHIP_CHALLENGE_ID,
-  MEMBERSHIP_LAUNCH_ALERT_PATH,
 } from './membershipChallenge';
 
 describe('구버전 랜딩이 파는 기수 (LC-3294)', () => {
@@ -17,9 +16,9 @@ describe('구버전 랜딩이 파는 기수 (LC-3294)', () => {
     expect(MEMBERSHIP_CHALLENGE_ID).toBe(384);
   });
 
-  it('고정 기수가 결제 가능한 값이라 CTA 가 잠기지 않는다', () => {
+  it('기수 자체는 유효하지만 마감이라 CTA 는 잠긴다', () => {
     expect(IS_MEMBERSHIP_LAUNCHED).toBe(true);
-    expect(IS_CTA_DISABLED).toBe(false);
+    expect(IS_CTA_DISABLED).toBe(true);
   });
 });
 
@@ -54,25 +53,21 @@ describe('buildLoginRedirectPath (로그인 게이트)', () => {
   });
 });
 
-describe('모집 상태의 CTA (LC-3219)', () => {
-  it('모집이 열려 있으면 CTA 가 출시 알림 신청이 아니다', () => {
-    // 모집을 재개했는데 라벨이 "출시 알림 신청" 으로 남아 있으면, 결제 가능한 상품을
-    // 앞에 두고 사람을 알림 폼으로 보내게 된다. 상수 되돌림을 빠뜨렸을 때 나는 증상이라
-    // 라벨 자체가 아니라 "알림 문구가 아님" 을 검증한다.
-    expect(IS_RECRUITMENT_CLOSED).toBe(false);
-    expect(ctaLabel('지금 바로 신청')).not.toBe('출시 알림 신청');
+describe('마감된 기수의 CTA (LC-3294)', () => {
+  it('모집이 닫혀 있다', () => {
+    expect(IS_RECRUITMENT_CLOSED).toBe(true);
   });
 
-  it('출시된 상태면 전달한 라벨을 그대로 쓴다', () => {
-    expect(ctaLabel('지금 바로 신청')).toBe('지금 바로 신청');
+  it('어떤 라벨을 넘겨도 신청 마감으로 덮는다', () => {
+    // 호출부(Hero·FinalCta·ApplyBar)는 각자 자기 문구를 넘긴다. 여기서 덮지 않으면
+    // 버튼은 잠겨 있는데 글자는 "지금 바로 신청" 이라, 눌리지 않는 이유가 화면에 없다.
+    expect(ctaLabel('지금 바로 신청')).toBe('신청 마감');
+    expect(ctaLabel('멤버십 시작하기')).toBe('신청 마감');
   });
 
-  it('알림 신청 경로가 type=launch-alert 를 달고 있다', () => {
-    // 기수를 닫을 때 다시 쓰는 경로다. 이 쿼리가 없으면 /apply 페이지가 일반 자료
-    // 신청으로 처리해, 경로만 맞고 조용히 다른 폼이 열린다.
-    expect(MEMBERSHIP_LAUNCH_ALERT_PATH).toContain('type=launch-alert');
-    expect(MEMBERSHIP_LAUNCH_ALERT_PATH).toMatch(
-      /^\/library\/\d+\/apply\?type=launch-alert$/,
-    );
+  it('결제 CTA 를 잠근다', () => {
+    // 원본(domain/membership)은 마감 중에도 버튼을 살려 뒀다 — 출시 알림 신청으로
+    // 동작했기 때문이다. 이 랜딩은 보낼 곳이 없으므로 살려 두면 눌러도 아무 일이 없다.
+    expect(IS_CTA_DISABLED).toBe(true);
   });
 });

@@ -40,46 +40,40 @@ export const IS_MEMBERSHIP_LAUNCHED = isValidMembershipChallengeId(
 /**
  * 멤버십 모집 종료 여부.
  *
- * `true` 면 랜딩 페이지 자체는 남겨두되 결제 진입만 막는다. 결제 CTA 는 랜딩에 3곳
- * 있고(하단 고정 ApplyBar, HeroSection, FinalCtaSection) 모두 이 상수를 통해 잠긴다.
+ * [LC-3294] 하반기 공채 멤버십은 모집이 끝났다. 랜딩은 남기되 결제 진입만 막는다 —
+ * 이미 결제한 사람이 자기가 산 상품 설명을 다시 볼 수 있어야 하고, 광고·메일에 뿌려진
+ * `/membership` 링크가 404 로 떨어지면 안 되기 때문이다. 새로 파는 상품은 마케팅 취준
+ * 올인원 패스(`/membership-marketing`)다.
  *
- * 하반기 기수를 실제로 닫을 때 `true` 로 바꾸면 3곳이 한 번에 "출시 알림 신청" 이 된다.
+ * 결제 CTA 는 랜딩에 3곳 있고(하단 고정 ApplyBar, HeroSection, FinalCtaSection) 모두 이
+ * 상수를 통해 잠긴다. 결제 컨트롤러(MembershipPaymentSheet)도 같은 상수로 한 번 더 막는다.
  *
  * `boolean` 을 명시해 리터럴 타입(`true`/`false`)으로 좁혀지지 않게 한다. 좁혀지면
  * 반대편 분기가 죽은 코드로 판정돼, 값만 되돌리는 운영이 타입 에러로 막힌다.
  */
-export const IS_RECRUITMENT_CLOSED: boolean = false;
-
-/**
- * 멤버십 출시 알림을 받는 라이브러리 자석 ID.
- *
- * 숫자를 링크에 그대로 박지 않는다. 다음 시즌에 자석을 새로 만들면 이 값만 바꾸면 되고,
- * 코드를 읽는 사람이 `/library/52` 가 무엇인지 되짚지 않아도 된다.
- */
-export const MEMBERSHIP_LAUNCH_ALERT_MAGNET_ID = 52;
-
-/** 출시 알림 신청 경로. 이 페이지가 `type=launch-alert` 를 알림 신청으로 해석한다. */
-export const MEMBERSHIP_LAUNCH_ALERT_PATH = `/library/${MEMBERSHIP_LAUNCH_ALERT_MAGNET_ID}/apply?type=launch-alert`;
+export const IS_RECRUITMENT_CLOSED: boolean = true;
 
 /**
  * CTA 라벨.
  *
- * 모집이 끝나면 "모집 종료" 대신 <b>"출시 알림"</b> 을 보여준다. 종료를 알리는 것으로 끝내면
- * 광고로 들어온 사람이 아무것도 남기지 못하고 나간다.
+ * 마감된 기수라 어떤 라벨을 넘겨도 "신청 마감" 으로 덮는다. 원래 이 자리에는 다음 시즌
+ * 출시 알림 신청(`/library/52/apply?type=launch-alert`)으로 보내는 분기가 있었는데,
+ * 이 랜딩에서는 뺐다 — 하반기 기수는 다음 시즌이 없고, 기다리는 사람을 받을 자리는
+ * 마케팅 패스 랜딩이다. 알림 자석으로 보내면 오지 않을 상품을 기다리게 만든다.
  */
 export function ctaLabel(label: string): string {
-  if (IS_RECRUITMENT_CLOSED) return '출시 알림 신청';
+  if (IS_RECRUITMENT_CLOSED) return '신청 마감';
   return IS_MEMBERSHIP_LAUNCHED ? label : '출시 전';
 }
 
 /**
  * 결제 CTA 를 비활성화할지.
  *
- * 모집 종료 중에는 <b>비활성화하지 않는다</b> — 버튼이 결제가 아니라 출시 알림 신청으로
- * 동작하기 때문이다. 결제 진입을 막는 것은 `IS_RECRUITMENT_CLOSED` 분기가 맡는다.
+ * 마감이면 잠근다. 원본(`domain/membership`)은 마감 중에도 버튼을 살려 뒀는데, 그건
+ * 버튼이 결제가 아니라 출시 알림 신청으로 동작했기 때문이다. 여기는 보낼 곳이 없다.
  */
 export const IS_CTA_DISABLED =
-  !IS_RECRUITMENT_CLOSED && !IS_MEMBERSHIP_LAUNCHED;
+  IS_RECRUITMENT_CLOSED || !IS_MEMBERSHIP_LAUNCHED;
 
 /**
  * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).

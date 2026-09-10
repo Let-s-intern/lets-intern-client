@@ -9,7 +9,6 @@ import {
   IS_RECRUITMENT_CLOSED,
   isValidMembershipChallengeId,
   MEMBERSHIP_CHALLENGE_ID,
-  MEMBERSHIP_LAUNCH_ALERT_PATH,
 } from '../lib/membershipChallenge';
 import { onOpenPlanSheet } from '../lib/planSheet';
 import { useMembershipChallengeQuery } from '../lib/useMembershipChallengeQuery';
@@ -48,9 +47,19 @@ export default function MembershipPaymentSheet() {
 
   const handleOpen = useCallback(() => {
     /*
-      로그인 게이트를 분기보다 앞에 둔다. 결제든 출시 알림이든 로그인이 필요하고,
-      여기서 한 번만 처리하면 CTA 세 곳(Hero·FinalCta·ApplyBar)이 그것을 몰라도 된다.
+      [LC-3294] 마감 검사를 로그인 게이트보다 <b>앞에</b> 둔다. 결제가 불가능한 기수인데
+      로그인부터 시키면, 로그인하고 돌아와서야 아무 일도 일어나지 않는다는 걸 알게 된다.
 
+      CTA 3곳이 이미 disabled 라 여기까지 오지 않는 것이 정상이다. 그래도 한 번 더 막는다
+      — 열림 신호가 커스텀 이벤트라 어디서든 발생시킬 수 있고, 뚫리면 마감된 기수가
+      결제되는 것이라 조용히 지나간다.
+
+      분기를 이 컨트롤러에 두는 것이 핵심이다. CTA 쪽에 두면 세 곳에 같은 조건을 복사하게
+      되고, 한 곳을 빠뜨려도 화면은 멀쩡해 보인다.
+    */
+    if (IS_RECRUITMENT_CLOSED) return;
+
+    /*
       redirect 에 현재 경로를 실어 로그인 후 이 랜딩으로 돌아오게 한다. 광고로 들어와
       처음 보는 사람이 많은 자리라, 돌아올 곳을 잃으면 그대로 이탈한다.
     */
@@ -61,20 +70,6 @@ export default function MembershipPaymentSheet() {
           window.location.search,
         ),
       );
-      return;
-    }
-
-    /*
-      모집이 끝났으면 결제 대신 출시 알림 신청으로 보낸다.
-
-      CTA 를 잠가 "모집 종료" 만 띄우면, 다음 시즌을 기다릴 의사가 있는 사람이 아무것도
-      남기지 못하고 나간다. 랜딩을 살려 두는 이유가 그 사람들을 받기 위해서다.
-
-      분기를 이 컨트롤러에 두는 것이 핵심이다. CTA 쪽에 두면 세 곳에 같은 조건을 복사하게
-      되고, 한 곳을 빠뜨려도 화면은 멀쩡해 보인다.
-    */
-    if (IS_RECRUITMENT_CLOSED) {
-      router.push(MEMBERSHIP_LAUNCH_ALERT_PATH);
       return;
     }
 
