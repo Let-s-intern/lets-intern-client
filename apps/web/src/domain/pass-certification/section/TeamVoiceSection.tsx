@@ -1,23 +1,33 @@
-import { ReactNode } from 'react';
+'use client';
+
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import SectionHeading from '@/domain/pass-certification/components/SectionHeading';
 
 /**
  * 후기 말풍선.
- * 래퍼(drop-shadow) 아래 본체 + 꼬리(in-flow CSS 삼각형)를 두어
- * 본체+꼬리 단일 그림자 & 꼬리까지 레이아웃 높이에 포함.
+ * 뷰 진입 시 index 순서대로 시간차 등장(스태거).
  */
 function Bubble({
   label,
   tail = 'left',
+  inView,
+  index,
   children,
 }: {
   label: string;
   tail?: 'left' | 'right';
+  inView: boolean;
+  index: number;
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col md:drop-shadow-[0_0_6px_rgba(77,85,245,0.3)]">
+    <div
+      style={{ transitionDelay: `${index * 120}ms` }}
+      className={`flex flex-col transition-[opacity,transform] duration-700 ease-out md:drop-shadow-[0_0_6px_rgba(77,85,245,0.3)] ${
+        inView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+      }`}
+    >
       <div className="bg-primary-5 flex flex-col gap-3 rounded-xl p-5 md:gap-4 md:px-10 md:py-8">
         <p className="text-xsmall14 text-neutral-40 font-light">{label}</p>
         <p className="text-xsmall16 md:text-small18 text-neutral-10 leading-relaxed tracking-[-0.12%]">
@@ -36,6 +46,25 @@ function Bubble({
 
 /** 렛츠커리어 팀의 진심 (후기 말풍선) 섹션 */
 export default function TeamVoiceSection() {
+  const bubblesRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = bubblesRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section>
       <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-4 px-5 py-10 md:gap-10 md:px-0 md:py-20">
@@ -51,19 +80,29 @@ export default function TeamVoiceSection() {
           description="5분이면 저희 팀원들의 하루를 특별하게 만들어주실 수 있어요!"
         />
 
-        <div className="flex w-full flex-col gap-4 md:flex-row md:gap-10">
+        <div
+          ref={bubblesRef}
+          className="flex w-full flex-col gap-4 md:flex-row md:gap-10"
+        >
           {/* 좌측 컬럼 */}
           <div className="flex min-w-0 flex-1 flex-col gap-4 md:gap-10">
             <Bubble
               label="인스타 DM으로 합격 소식 받은 마케팅팀 클로버"
               tail="right"
+              inView={inView}
+              index={0}
             >
               &ldquo;합격자 인터뷰에서 렛츠커리어에게 고맙다고 하신 유저 분을
               봤을 때, 저 진짜{' '}
               <strong className="font-medium">뿌듯해서 날아가버리는</strong> 줄
               알았어요..ㅋㅋ&rdquo;
             </Bubble>
-            <Bubble label="프로그램 후기를 확인한 개발팀 레오" tail="right">
+            <Bubble
+              label="프로그램 후기를 확인한 개발팀 레오"
+              tail="right"
+              inView={inView}
+              index={2}
+            >
               &ldquo;미루던 자소서를 끝냈다는 한마디만으로도{' '}
               <strong className="font-medium">
                 다음 프로그램을 더 잘 만들 힘이 생겨요.
@@ -74,11 +113,19 @@ export default function TeamVoiceSection() {
 
           {/* 우측 컬럼 */}
           <div className="flex min-w-0 flex-1 flex-col gap-4 md:gap-10">
-            <Bubble label="렛츠컨 스터디 합격자에 감격한 운영팀 윈터">
+            <Bubble
+              label="렛츠컨 스터디 합격자에 감격한 운영팀 윈터"
+              inView={inView}
+              index={1}
+            >
               &ldquo;제가 만든 스터디에서 합격자가 나오다니.. 오늘도 힘내서
               달립니다!&rdquo;
             </Bubble>
-            <Bubble label="합격자 인터뷰하다가 울컥한 마케팅팀 마리">
+            <Bubble
+              label="합격자 인터뷰하다가 울컥한 마케팅팀 마리"
+              inView={inView}
+              index={3}
+            >
               &ldquo;어떻게 하면 렛츠커리어에 더 도움이 될지 고민해오셨다는 말에
               진짜 울컥했어요ㅠㅠ <br />
               여러분의{' '}

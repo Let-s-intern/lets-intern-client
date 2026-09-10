@@ -425,6 +425,36 @@ input[type='number'] {
   }
 }
 
+/* 카드 위를 사선으로 훑는 빛 반사(반짝) — 몇 초에 한 번씩 */
+/* 모바일(세로)은 딜레이 0 = 동시에, 데스크탑만 카드별 딜레이로 이어지듯 흐름 */
+.reward-shine {
+  animation: reward-shine 4.5s ease-in-out infinite;
+}
+
+@media (min-width: 768px) {
+  .reward-shine {
+    animation-delay: var(--shine-delay, 0s);
+  }
+}
+
+@keyframes reward-shine {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  18% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reward-shine {
+    animation: none;
+  }
+}
+
 .speech-bubble:after {
   content: '';
   position: absolute;
