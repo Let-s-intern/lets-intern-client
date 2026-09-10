@@ -767,3 +767,64 @@
     padding: 24px 22px;
   }
 }
+
+/* 주차·날짜 (시안 8 STEP 헤더 3번째 줄). 단계명보다 한 단계 약하게 둔다. */
+.membership-root .cpm-step-range {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--lc-ink-40, #8b8d97);
+  letter-spacing: -0.01em;
+}
+
+/* 유형 안내 2칸 (시안 8 상단). 고르는 컨트롤이 아니라 자기 상황을 확인하는 자리다. */
+.membership-root .cp-types {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+  max-width: 720px;
+  margin: 28px auto 0;
+}
+@media (min-width: 601px) {
+  .membership-root .cp-types {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.membership-root .cp-type {
+  border: 1px solid var(--lc-line, #e7e7ee);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fff;
+  text-align: left;
+}
+.membership-root .cp-type[data-lead='true'] {
+  background: var(--lc-primary, #4d55f5);
+  border-color: var(--lc-primary, #4d55f5);
+}
+.membership-root .cp-type-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lc-primary, #4d55f5);
+}
+.membership-root .cp-type[data-lead='true'] .cp-type-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+.membership-root .cp-type-title {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.membership-root .cp-type[data-lead='true'] .cp-type-title {
+  color: #fff;
+}
+.membership-root .cp-type-desc {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--lc-ink-40, #8b8d97);
+}
+.membership-root .cp-type[data-lead='true'] .cp-type-desc {
+  color: rgba(255, 255, 255, 0.75);
+}

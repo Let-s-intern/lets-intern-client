@@ -8,12 +8,13 @@ export type StepId = 'step01' | 'step02' | 'step03' | 'step04' | 'step05';
 
 /** 매트릭스 세로축 카테고리. 6종. */
 export type CategoryId =
-  | 'industry'
-  | 'qualification'
+  | 'job'
   | 'experience'
-  | 'document'
-  | 'aptitude'
-  | 'interview';
+  | 'resume'
+  | 'portfolio'
+  | 'data'
+  | 'interview'
+  | 'live';
 
 /**
  * 수행 주체 라벨.
@@ -31,13 +32,25 @@ export type Owner = 'self' | 'free' | 'challenge' | 'challenge-deep';
  * - checklist: 체크리스트 제공
  * - challenge: 멤버십에 포함되는 챌린지
  */
-export type CourseTag = 'free' | 'template' | 'checklist' | 'challenge';
+export type CourseTag =
+  | 'free'
+  | 'template'
+  | 'checklist'
+  | 'vod'
+  | 'challenge'
+  | 'live'
+  | 'mentoring';
 
+// 시안 8 범례 그대로. 앞 네 개(가이드북·템플릿·체크리스트·VOD)는 패스에 포함된 자료이고,
+// 뒤 세 개(챌린지·라이브 세미나·1:1 멘토링)는 렛츠커리어가 직접 함께하는 단계다.
 export const COURSE_TAG_LABEL: Record<CourseTag, string> = {
-  free: '무료 자료 제공',
-  template: '템플릿 제공',
-  checklist: '체크리스트 제공',
+  free: '가이드북',
+  template: '템플릿',
+  checklist: '체크리스트',
+  vod: 'VOD',
   challenge: '챌린지',
+  live: '라이브 세미나',
+  mentoring: '1:1 멘토링',
 };
 
 /** 준비 흐름의 큰 구간 — STEP01–02 준비 / STEP03–05 실전. */
@@ -51,6 +64,8 @@ export interface Step {
   label: string;
   /** 이 단계가 속한 큰 구간 */
   phase: Phase;
+  /** 주차·날짜 (시안 8 의 STEP 헤더 아래 줄) */
+  range: string;
 }
 
 export interface Category {
@@ -104,20 +119,51 @@ export interface MonthGroup {
 }
 
 export const STEPS: Step[] = [
-  { id: 'step01', no: '01', label: '방향 설정', phase: 'prep' },
-  { id: 'step02', no: '02', label: '기초 다지기', phase: 'prep' },
-  { id: 'step03', no: '03', label: '서류 완성', phase: 'live' },
-  { id: 'step04', no: '04', label: '시험·실전', phase: 'live' },
-  { id: 'step05', no: '05', label: '면접·최종', phase: 'live' },
+  {
+    id: 'step01',
+    no: '01',
+    label: '방향 설정',
+    phase: 'prep',
+    range: '1주차 · 9.21~9.27',
+  },
+  {
+    id: 'step02',
+    no: '02',
+    label: '서류 3종 완성',
+    phase: 'prep',
+    range: '2~3주차 · 9.28~10.11',
+  },
+  {
+    id: 'step03',
+    no: '03',
+    label: '타깃 좁히기',
+    phase: 'live',
+    range: '4~5주차 · 10.12~10.25',
+  },
+  {
+    id: 'step04',
+    no: '04',
+    label: '역량 보강',
+    phase: 'live',
+    range: '6~7주차 · 10.26~11.8',
+  },
+  {
+    id: 'step05',
+    no: '05',
+    label: '전형·지원',
+    phase: 'live',
+    range: '8~10주차 · 11.9~11.29',
+  },
 ];
 
 export const CATEGORIES: Category[] = [
-  { id: 'industry', label: '산업·기업 분석', hint: '방향을 잡는 리서치' },
-  { id: 'qualification', label: '기본 자격', hint: '영어·증명서' },
-  { id: 'experience', label: '경험 정리', hint: '모든 서류의 재료' },
-  { id: 'document', label: '서류 작성', hint: '이력서·자소서' },
-  { id: 'aptitude', label: '인적성', hint: '적성·역량검사' },
-  { id: 'interview', label: '면접 실전', hint: '말하기' },
+  { id: 'job', label: '직무·산업 이해', hint: '어떤 마케터가 될지' },
+  { id: 'experience', label: '경험 정리·보강', hint: '모든 서류의 재료' },
+  { id: 'resume', label: '이력서·자소서', hint: '서류의 뼈대' },
+  { id: 'portfolio', label: '포트폴리오', hint: '마케팅의 필수 관문' },
+  { id: 'data', label: '데이터·AI 역량', hint: '가장 비어 있는 영역' },
+  { id: 'interview', label: '면접·지원 실행', hint: '결과를 내는 구간' },
+  { id: 'live', label: '라이브 세미나', hint: '현직자에게 직접 듣기' },
 ];
 
 /** 큰 구간 메타. STEP01–02 준비 / STEP03–05 실전. */
@@ -128,121 +174,84 @@ export const PHASES: { id: Phase; label: string; range: string }[] = [
 
 // 매트릭스 셀 — 6 카테고리 × STEP01~05. 서류 작성 STEP03 은 2셀(이력서 + 대기업 자소서).
 // 입력 순서는 카테고리별 STEP01→05. document 만 step03 에 2개 셀을 갖는다.
+// 매트릭스 셀 — 시안 8 (카테고리 7 × STEP 5).
+// 셀이 없는 칸은 시안에도 비어 있다. 억지로 채우지 않는다 — 빈 칸이 "이 단계에는 이
+// 영역을 건드리지 않는다" 는 정보다.
 export const MATRIX_CELLS: MatrixCell[] = [
-  // 1. 산업·기업 분석
+  // 1. 직무·산업 이해
   {
     step: 'step01',
-    category: 'industry',
-    owner: 'self',
-    tag: 'template',
-    title: '산업 분석',
-    desc: '관심 산업 2~3개 시장·이슈·밸류체인',
-  },
-  {
-    step: 'step02',
-    category: 'industry',
-    owner: 'self',
-    tag: 'template',
-    title: '기업 분석',
-    desc: '사업·인재상·JD → 1·2지망 구분',
-  },
-  {
-    step: 'step03',
-    category: 'industry',
+    category: 'job',
     owner: 'free',
     tag: 'free',
-    title: '채용 캘린더',
-    desc: '공채 일정 가이드로 마감일 정리',
-  },
-  {
-    step: 'step04',
-    category: 'industry',
-    owner: 'self',
-    tag: 'checklist',
-    title: '기업 이슈 업데이트',
-    desc: '최신 뉴스·IR 체크',
-  },
-  {
-    step: 'step05',
-    category: 'industry',
-    owner: 'self',
-    tag: 'template',
-    title: '면접 기업 심화',
-    desc: '직무·인재상 기반 질문 예측',
-  },
-  // 2. 기본 자격 — 영어·증명서
-  {
-    step: 'step01',
-    category: 'qualification',
-    owner: 'self',
-    tag: 'checklist',
-    title: '영어 성적 점검',
-    desc: '유효기간 확인·즉시 접수',
+    title: '세부 직무 6종 훑기',
+    desc: '그로스·퍼포먼스·콘텐츠·바이럴·인플루언서·브랜드',
   },
   {
     step: 'step02',
-    category: 'qualification',
-    owner: 'self',
-    tag: 'checklist',
-    title: '성적표·졸업증명서',
-    desc: '영문본 포함 미리 발급',
+    category: 'job',
+    owner: 'free',
+    tag: 'vod',
+    title: '현직자 직무 세미나 VOD',
+    desc: '하는 일과 보는 숫자 비교하기',
   },
   {
     step: 'step03',
-    category: 'qualification',
-    owner: 'self',
-    tag: 'checklist',
-    title: '어학·자격 취합',
-    desc: '지원서 첨부 파일 정리',
+    category: 'job',
+    owner: 'free',
+    tag: 'free',
+    title: '관심 산업 2~3개 좁히기',
+    desc: '시장·주요 브랜드·최근 캠페인',
   },
   {
     step: 'step04',
-    category: 'qualification',
-    owner: 'self',
-    tag: 'checklist',
-    title: '우대 요건 확인',
-    desc: '기업별 가산점·자격 요건',
+    category: 'job',
+    owner: 'free',
+    tag: 'vod',
+    title: '인하우스 vs 대행사',
+    desc: '첫 커리어로 어디가 나은지 판단',
   },
   {
     step: 'step05',
-    category: 'qualification',
+    category: 'job',
     owner: 'self',
-    tag: 'checklist',
-    title: '제출 서류 최종본',
-    desc: '면접 지참 서류 스캔·정리',
+    tag: 'template',
+    title: '면접용 기업 심화',
+    desc: '최근 캠페인에 내 의견 붙이기',
   },
-  // 3. 경험 정리 — 모든 서류의 재료
+
+  // 2. 경험 정리·보강
   {
     step: 'step01',
     category: 'experience',
     owner: 'free',
-    tag: 'free',
-    title: '경험 브레인스토밍',
-    desc: '무료 경험정리 워크북으로 소재 모으기',
+    tag: 'checklist',
+    title: '경험 진단 체크리스트',
+    desc: '지금 경험이 어느 직무에 닿는지',
   },
   {
     step: 'step02',
     category: 'experience',
     owner: 'challenge',
     tag: 'challenge',
-    title: '경험정리 챌린지',
-    desc: '경험 전수조사 → STAR 구조로 정리',
+    title: '경험을 STAR로 정리',
+    desc: '챌린지 미션으로 소재 구조화',
   },
   {
     step: 'step03',
     category: 'experience',
     owner: 'self',
     tag: 'template',
-    title: '직무 역량 매칭',
-    desc: '경험 ↔ 직무 키워드 연결',
+    title: '경험 ↔ JD 키워드 매칭',
+    desc: '공고 언어로 바꿔 쓰기',
   },
   {
     step: 'step04',
     category: 'experience',
-    owner: 'self',
-    tag: 'template',
-    title: '핵심 역량 3가지',
-    desc: '자소서·면접 공통 메시지 추출',
+    owner: 'free',
+    tag: 'free',
+    title: '사이드 프로젝트 설계',
+    desc: '직무별로 뭘 해야 티가 나는지',
   },
   {
     step: 'step05',
@@ -250,12 +259,13 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'self',
     tag: 'template',
     title: '면접 소재화',
-    desc: 'STAR 경험을 답변으로 변환',
+    desc: 'STAR 경험을 90초 답변으로',
   },
-  // 4. 서류 작성 — 이력서·자소서 (STEP03 에 2셀)
+
+  // 3. 이력서·자소서
   {
     step: 'step01',
-    category: 'document',
+    category: 'resume',
     owner: 'free',
     tag: 'free',
     title: '합격 자소서 가이드북',
@@ -263,93 +273,129 @@ export const MATRIX_CELLS: MatrixCell[] = [
   },
   {
     step: 'step02',
-    category: 'document',
-    owner: 'free',
-    tag: 'free',
-    title: '이력서·경력기술서 템플릿',
-    desc: '양식 미리 준비',
-  },
-  {
-    step: 'step03',
-    category: 'document',
+    category: 'resume',
     owner: 'challenge',
     tag: 'challenge',
-    title: '이력서 챌린지',
-    desc: '직무 맞춤 이력서·경력기술서 1주 완성',
+    title: '마케팅 챌린지',
+    desc: '이력서·자소서 초안 완성',
   },
   {
     step: 'step03',
-    category: 'document',
-    owner: 'challenge-deep',
-    tag: 'challenge',
-    title: '대기업 특화 자기소개서 챌린지',
-    desc: '기업별 문항을 합격 구조로 첨삭',
+    category: 'resume',
+    owner: 'self',
+    tag: 'template',
+    title: 'JD별 서류 변형',
+    desc: '공고 3개 맞춤 3세트',
   },
   {
     step: 'step04',
-    category: 'document',
-    owner: 'self',
-    tag: 'checklist',
-    title: '기업별 커스터마이징',
-    desc: '지원서 맞춤 수정·제출',
+    category: 'resume',
+    owner: 'free',
+    tag: 'free',
+    title: '지원동기 40분 워크플로우',
+    desc: '막히는 문항 빠르게 뚫기',
   },
   {
     step: 'step05',
-    category: 'document',
+    category: 'resume',
     owner: 'self',
     tag: 'template',
-    title: '자소서 기반 질문 예측',
-    desc: '제출 자소서에서 면접 질문 뽑기',
+    title: '서류 기반 질문 예측',
+    desc: '내가 쓴 문장에서 나올 질문',
   },
-  // 5. 인적성 — 적성·역량검사
+
+  // 4. 포트폴리오
   {
     step: 'step01',
-    category: 'aptitude',
+    category: 'portfolio',
     owner: 'free',
     tag: 'free',
-    title: '인적성 유형 안내',
-    desc: '기업별 검사 종류 파악',
+    title: '포폴 기본 구조',
+    desc: '무엇을 담고 무엇을 뺄지',
   },
   {
     step: 'step02',
-    category: 'aptitude',
-    owner: 'self',
-    tag: 'checklist',
-    title: '기초 문제풀이',
-    desc: '언어·수리·추리 감 잡기',
+    category: 'portfolio',
+    owner: 'challenge',
+    tag: 'challenge',
+    title: '마케팅 챌린지',
+    desc: '포트폴리오 초안 1본 완성',
   },
   {
     step: 'step03',
-    category: 'aptitude',
+    category: 'portfolio',
     owner: 'self',
-    tag: 'checklist',
-    title: '잡다 게임 연습',
-    desc: '역량검사 게임 유형 익히기',
+    tag: 'template',
+    title: 'JD별 포폴 변형',
+    desc: '지원 직무에 맞춰 첫 장 바꾸기',
   },
   {
     step: 'step04',
-    category: 'aptitude',
-    owner: 'challenge',
-    tag: 'challenge',
-    title: '인적성 대비 챌린지',
-    desc: '약점 진단 → 실전 모의고사 반복',
+    category: 'portfolio',
+    owner: 'free',
+    tag: 'free',
+    title: 'SNS·사이드 프로젝트로 채우기',
+    desc: '콘텐츠 4~6개 발행하고 기록',
   },
   {
     step: 'step05',
-    category: 'aptitude',
-    owner: 'self',
+    category: 'portfolio',
+    owner: 'free',
     tag: 'checklist',
-    title: '시험 직전 점검',
-    desc: '오답 복습·컨디션 관리',
+    title: '제출본 최종 점검',
+    desc: '파일명·용량·링크 권한 확인',
   },
-  // 6. 면접 실전 — 말하기
+
+  // 5. 데이터·AI 역량
+  {
+    step: 'step01',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: '마케터의 툴 지도',
+    desc: 'GA4·메타·피그마·캡컷·노션',
+  },
+  {
+    step: 'step02',
+    category: 'data',
+    owner: 'free',
+    tag: 'vod',
+    title: 'CMO·CPO의 필수 역량 강의',
+    desc: '뽑는 사람이 보는 기준',
+  },
+  {
+    step: 'step03',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: '집행 경험 없이 퍼포먼스 지원하기',
+    desc: '경험이 없어도 쓸 수 있는 것',
+  },
+  {
+    step: 'step04',
+    category: 'data',
+    owner: 'free',
+    tag: 'vod',
+    title: '광고 지표 기준선',
+    desc: 'CTR·CVR·CPA·ROAS 어느 정도가 평타인가',
+  },
+  {
+    step: 'step05',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: 'AI 활용 경험 쓰는 법',
+    desc: '툴 나열은 감점이 되는 이유',
+  },
+
+  // 6. 면접·지원 실행
   {
     step: 'step01',
     category: 'interview',
     owner: 'free',
     tag: 'free',
     title: '면접 기본 가이드',
-    desc: '면접 유형·평가 포인트',
+    desc: '면접 유형과 평가 포인트',
   },
   {
     step: 'step02',
@@ -362,18 +408,18 @@ export const MATRIX_CELLS: MatrixCell[] = [
   {
     step: 'step03',
     category: 'interview',
-    owner: 'self',
-    tag: 'template',
-    title: '직무 PR 정리',
-    desc: '강점·경험 연결',
+    owner: 'free',
+    tag: 'free',
+    title: '채용공고 채널 지도',
+    desc: '원티드·링크드인·자사 ATS·오픈채팅',
   },
   {
     step: 'step04',
     category: 'interview',
-    owner: 'self',
-    tag: 'template',
-    title: '예상 질문 리스트업',
-    desc: '기업·직무별 정리',
+    owner: 'free',
+    tag: 'free',
+    title: '과제 전형·사전 인터뷰 대비',
+    desc: '숏폼 기획·콘텐츠 제작 모의 과제',
   },
   {
     step: 'step05',
@@ -381,14 +427,100 @@ export const MATRIX_CELLS: MatrixCell[] = [
     owner: 'challenge',
     tag: 'challenge',
     title: '면접 준비 챌린지',
-    desc: '모의면접·녹화 피드백, 1분 자기소개·직무 PR',
+    desc: '모의면접·녹화 피드백',
+  },
+  {
+    step: 'step05',
+    category: 'interview',
+    owner: 'challenge-deep',
+    tag: 'mentoring',
+    title: '현직 마케터 커피챗',
+    desc: '답변 점검과 지원 복기',
+  },
+
+  // 7. 라이브 세미나 — 현직자에게 직접 듣는 자리
+  {
+    step: 'step01',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '마케터 세부 직무 톺아보기',
+    desc: '놀유니버스 CRM 마케터 · 9.20 일 11:00',
+  },
+  {
+    step: 'step01',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: 'AE가 가져야 할 역량과 포폴 작성법',
+    desc: '대학내일 AE · 9.22 화 20:00',
+  },
+  {
+    step: 'step02',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '마케팅의 기본',
+    desc: '클래스101 콘텐츠 마케터 · 9.28 월 20:00',
+  },
+  {
+    step: 'step02',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '마케팅 커리어 방향 설정법',
+    desc: 'CJ 계열사 마케터 · 10.1 목 20:00',
+  },
+  {
+    step: 'step02',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '사이드 프로젝트로 그로스 사이클 경험하기',
+    desc: '네이버 계열사 마케터 · 10.8 목 20:00',
+  },
+  {
+    step: 'step03',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: 'AI 주제로 6개월 만에 팔로워 6,000명 만든 방법',
+    desc: '팔로워 6,000명 계정 운영자 · 10.22 목 20:00',
+  },
+  {
+    step: 'step04',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '혼자서도 할 수 있는 메타 광고로 경험 쌓기',
+    desc: '위그로스 CEO · 10.29 목 20:00',
+  },
+  {
+    step: 'step05',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '마케팅 포트폴리오 A to Z 끝장',
+    desc: '렛츠커리어 쥬디 멘토 · 11.10 화 20:00',
+  },
+  {
+    step: 'step05',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '포트폴리오 놓고 실제로 묻는 질문 — 실무 면접 시연',
+    desc: '현직 마케터 · 11.19 목 20:00',
+  },
+  {
+    step: 'step05',
+    category: 'live',
+    owner: 'challenge',
+    tag: 'live',
+    title: '인턴·계약직·정규직 오퍼, 무엇을 보고 고르나',
+    desc: '현직 마케터 · 11.26 목 20:00',
   },
 ];
 
-/**
- * (step, category) → 해당 셀 배열 조회 맵.
- * 대부분 1개지만 document/step03 은 2개라 배열로 보관한다(뷰에서 O(1) 룩업).
- */
 export const MATRIX_CELL_MAP = MATRIX_CELLS.reduce<Map<string, MatrixCell[]>>(
   (map, cell) => {
     const key = matrixCellKey(cell.step, cell.category);
@@ -543,27 +675,50 @@ export const FLOW_CHIPS: string[] = [
 
 /** 섹션 헤더 — 시안 6-0.png */
 export const COURSE_PLAN_HEADER = {
-  badge: '공채 준비 올인원 패스 혜택',
-  /** 제목 — 의도된 줄바꿈 단위 */
-  titleLines: [
-    '하반기 공채 준비에 필요한',
-    '올인원 패스 하나로 누리는 모든 혜택',
+  badge: 'PASS BENEFIT 01 · 10-WEEK MARKETING CAREER PLAYBOOK',
+  /** 제목 — 의도된 줄바꿈 단위 (시안 8) */
+  titleLines: ['마케팅 10주 합격 플레이북 대로만 따라오세요'],
+  /** titleLines 안에서 강조할 어절 */
+  titleHighlights: ['10주 합격 플레이북'],
+  subLines: [
+    '내 상황을 고르면 10주 계획이 바뀝니다. 무엇을 직접 만들고, 어디서 렛츠커리어가 함께하는지 정리했어요.',
   ],
-  /** titleLines 안에서 파란색으로 강조할 어절 */
-  titleHighlights: ['올인원 패스', '모든 혜택'],
-  /** 설명 — 의도된 줄바꿈 단위 */
-  subLines: ['개별 구매보다 더 저렴한 가격으로 혜택은 더 풍성하게 준비했어요.'],
 } as const;
 
 /** 플레이북 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
 export const COURSE_PLAN_BODY = {
-  titleLines: ['9~11월, 13주간의 올인원 패스로', '효율적으로 준비할 수 있어요'],
-  sub: '렛츠커리어 올인원 패스를 이용하면, 하반기 공채 준비 플레이북의 전체 과정을 따라가며 13주 동안 차근차근 취업 준비를 완성할 수 있어요.',
-  /** 매트릭스 바로 위 문구 */
-  matrixTitle: '이대로만 따라오면 13주 합격 플레이북 제공',
-  matrixSub:
-    '공채 준비 단계부터 실전까지 무엇을 직접 하고, 어디서 렛츠커리어가 함께하는지 한눈에 정리한 플레이북이에요.',
+  titleLines: ['마케팅 10주 합격 플레이북 대로만 따라오세요'],
+  sub: '내 상황을 고르면 10주 계획이 바뀝니다. 무엇을 직접 만들고, 어디서 렛츠커리어가 함께하는지 정리했어요.',
+  /** 매트릭스 바로 위 문구 (시안 8) */
+  matrixTitle:
+    '첫 3주는 마케팅 서류 완성 올인원 챌린지 10기(9/19~10/9)로 서류 3종을 만들고, 이후 7주는 부족한 경험을 채우며 실제로 지원합니다.',
+  matrixSub: '10주 동안 현직자 라이브 세미나 10회가 함께 열려요.',
+  /** 매트릭스 아래 마무리 (시안 8 하단) */
+  matrixFootnote:
+    '구매자에게는 주차별 미션과 체크리스트가 담긴 마케팅 10주 합격 플레이북 풀버전을 드려요.',
 } as const;
+
+/**
+ * 시안 8 상단의 유형 선택 (TYPE A/B).
+ *
+ * 시안은 고르면 10주 계획이 바뀐다고 말하지만, 유형별로 다른 매트릭스를 받은 적이 없다.
+ * 없는 데이터를 지어내면 고른 사람이 같은 표를 보고 속았다고 느낀다. 그래서 지금은
+ * **표시만 하고 표를 바꾸지 않는다.** 유형별 계획을 받으면 여기에 매트릭스를 나눠 붙인다.
+ */
+export const COURSE_PLAN_TYPES = [
+  {
+    id: 'a',
+    label: 'TYPE A',
+    title: '마케팅 취준, 이제 막 시작했어요',
+    desc: '직무 탐색과 경험 진단부터 필요한 분',
+  },
+  {
+    id: 'b',
+    label: 'TYPE B',
+    title: '마케팅 유관 경험 6개월~1년이에요',
+    desc: '가진 경험을 무기로 만들 분',
+  },
+] as const;
 
 // 매트릭스 아래 — 구매자가 실제로 받는 플레이북 화면. 앱을 위에서 아래로 훑는 20초 루프다.
 //
@@ -595,8 +750,8 @@ export const PLAYBOOK_CAPTION_LINES = [
 ] as const;
 
 export const COURSE_PLAN_VIEWS = {
-  matrix: { id: 'matrix', label: '전체 플랜' },
-  timeline: { id: 'timeline', label: '월별 플랜' },
+  matrix: { id: 'matrix', label: '플레이북으로 보기' },
+  timeline: { id: 'timeline', label: '주 단위로 보기' },
 } as const;
 
 export type CoursePlanViewId = keyof typeof COURSE_PLAN_VIEWS;

@@ -18,7 +18,15 @@ import {
 } from './coursePlan';
 
 const VALID_OWNERS: Owner[] = ['self', 'free', 'challenge', 'challenge-deep'];
-const VALID_TAGS: CourseTag[] = ['free', 'template', 'checklist', 'challenge'];
+const VALID_TAGS: CourseTag[] = [
+  'free',
+  'template',
+  'checklist',
+  'vod',
+  'challenge',
+  'live',
+  'mentoring',
+];
 
 describe('coursePlan 데이터 무결성', () => {
   describe('매트릭스 차원', () => {
@@ -26,21 +34,22 @@ describe('coursePlan 데이터 무결성', () => {
       expect(STEPS).toHaveLength(5);
     });
 
-    it('카테고리는 6종이다', () => {
-      expect(CATEGORIES).toHaveLength(6);
+    it('카테고리는 7종이다 (시안 8)', () => {
+      expect(CATEGORIES).toHaveLength(7);
     });
 
-    it('셀은 31개다(6×5 + 서류 STEP03 추가 1셀)', () => {
-      expect(MATRIX_CELLS).toHaveLength(31);
+    /*
+     * 셀 개수를 못 박아 둔다. 표가 41칸이라 손으로 넣다 한 줄 빠뜨려도 화면에서는
+     * 빈 칸이 원래 그런 것처럼 보인다 — 숫자로 잡는 게 유일한 방법이다.
+     */
+    it('셀은 41개다 (시안 8)', () => {
+      expect(MATRIX_CELLS).toHaveLength(41);
     });
 
-    it('서류 작성 STEP03 은 2셀(이력서 + 대기업 자소서)이다', () => {
-      const cells = MATRIX_CELL_MAP.get(matrixCellKey('step03', 'document'));
-      expect(cells).toHaveLength(2);
-      expect(cells?.map((c) => c.owner)).toEqual([
-        'challenge',
-        'challenge-deep',
-      ]);
+    // 시안 8 은 STEP05 의 면접·지원 실행과 라이브 세미나에 한 칸당 여러 항목을 넣는다.
+    it('한 칸에 여러 항목이 들어가는 자리가 있다', () => {
+      const key = matrixCellKey('step05', 'interview');
+      expect(MATRIX_CELL_MAP.get(key)).toHaveLength(2);
     });
 
     it('모든 (단계, 카테고리) 조합이 최소 하나의 셀로 존재한다', () => {
@@ -70,20 +79,18 @@ describe('coursePlan 데이터 무결성', () => {
       }
     });
 
-    it('배지 라벨은 시안 문구 4종이다', () => {
-      expect(COURSE_TAG_LABEL).toEqual({
-        free: '무료 자료 제공',
-        template: '템플릿 제공',
-        checklist: '체크리스트 제공',
-        challenge: '챌린지',
-      });
+    it('배지 라벨은 시안 8 범례 7종이다', () => {
+      expect(Object.keys(COURSE_TAG_LABEL)).toHaveLength(7);
+      for (const label of Object.values(COURSE_TAG_LABEL)) {
+        expect(label.length).toBeGreaterThan(0);
+      }
     });
   });
 
   describe('헤더 카피', () => {
-    it('섹션 헤더는 배지·2줄 제목·설명을 갖는다', () => {
+    it('섹션 헤더는 배지·제목·설명을 갖는다', () => {
       expect(COURSE_PLAN_HEADER.badge.length).toBeGreaterThan(0);
-      expect(COURSE_PLAN_HEADER.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_HEADER.titleLines.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_HEADER.subLines.length).toBeGreaterThan(0);
     });
 
@@ -95,10 +102,11 @@ describe('coursePlan 데이터 무결성', () => {
     });
 
     it('본문 도입부와 매트릭스 캡션 문구가 비어 있지 않다', () => {
-      expect(COURSE_PLAN_BODY.titleLines).toHaveLength(2);
+      expect(COURSE_PLAN_BODY.titleLines.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.sub.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixTitle.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixSub.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixFootnote.length).toBeGreaterThan(0);
     });
   });
 

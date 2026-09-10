@@ -56,6 +56,8 @@ function StepHeader() {
         >
           <span className="cpm-step-no">STEP {step.no}</span>
           <span className="cpm-step-label">{step.label}</span>
+          {/* 주차·날짜 — 시안 8. 단계명만으로는 언제 하는 일인지 알 수 없다. */}
+          <span className="cpm-step-range">{step.range}</span>
         </div>
       ))}
     </div>
