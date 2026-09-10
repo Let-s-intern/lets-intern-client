@@ -85,8 +85,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         <GlobalNavItem
           className={twMerge(
             'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
-            pathname.startsWith('/membership-marketing') &&
-              'border-neutral-0',
+            pathname.startsWith('/membership-marketing') && 'border-neutral-0',
           )}
           href="/membership-marketing"
           isNew

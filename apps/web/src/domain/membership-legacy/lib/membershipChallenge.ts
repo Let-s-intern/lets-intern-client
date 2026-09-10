@@ -72,8 +72,7 @@ export function ctaLabel(label: string): string {
  * 마감이면 잠근다. 원본(`domain/membership`)은 마감 중에도 버튼을 살려 뒀는데, 그건
  * 버튼이 결제가 아니라 출시 알림 신청으로 동작했기 때문이다. 여기는 보낼 곳이 없다.
  */
-export const IS_CTA_DISABLED =
-  IS_RECRUITMENT_CLOSED || !IS_MEMBERSHIP_LAUNCHED;
+export const IS_CTA_DISABLED = IS_RECRUITMENT_CLOSED || !IS_MEMBERSHIP_LAUNCHED;
 
 /**
  * 비로그인 시 로그인 후 되돌아올 redirect 경로를 만든다(ChallengeCTAButtons 동일 패턴).
