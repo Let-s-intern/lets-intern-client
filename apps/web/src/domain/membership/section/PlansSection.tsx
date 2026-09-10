@@ -55,24 +55,47 @@ function useCountUpOnView(target: number, durationMs = 1200) {
         const p = Math.min((ts - startTs) / durationMs, 1);
         const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
         setValue(Math.round(startValue + (target - startValue) * eased));
-        if (p < 1) raf = requestAnimationFrame(tick);
+        if (p < 1) {
+          raf = requestAnimationFrame(tick);
+        } else {
+          /*
+           * 끝났으면 목표값을 확정한다. 보간 결과가 반올림으로 1원쯤 어긋날 수 있고,
+           * 무엇보다 여기서 prevTargetRef 를 갱신해야 다음 effect 가 올바른 지점에서
+           * 이어 센다. cleanup 에만 맡기면 애니메이션이 도중에 끊긴 값이 그대로
+           * 시작점이 되어, 가격이 중간값에서 멈춘 채 남는다.
+           */
+          setValue(target);
+          prevTargetRef.current = target;
+        }
       };
       raf = requestAnimationFrame(tick);
     };
-    const io = new IntersectionObserver(
-      ([entry], obs) => {
-        if (entry.isIntersecting) {
-          animate();
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.6 },
-    );
-    io.observe(el);
+    /*
+     * 이미 화면 안에 있으면 관측을 기다리지 않고 바로 센다.
+     * 가격은 폴백 → API 로 한 번 더 바뀌는데, 그때 요소가 이미 보이는 상태면
+     * IntersectionObserver 가 콜백을 다시 주지 않아 애니메이션이 시작되지 않는다.
+     */
+    const rect = el.getBoundingClientRect();
+    const alreadyVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+    let io: IntersectionObserver | undefined;
+    if (alreadyVisible) {
+      animate();
+    } else {
+      io = new IntersectionObserver(
+        ([entry], obs) => {
+          if (entry.isIntersecting) {
+            animate();
+            obs.disconnect();
+          }
+        },
+        { threshold: 0.6 },
+      );
+      io.observe(el);
+    }
     return () => {
-      io.disconnect();
+      io?.disconnect();
       cancelAnimationFrame(raf);
-      prevTargetRef.current = target;
     };
   }, [target, durationMs]);
   return { ref, value };
