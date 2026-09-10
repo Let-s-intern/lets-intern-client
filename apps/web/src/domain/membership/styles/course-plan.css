@@ -317,6 +317,11 @@
   color: var(--g500);
   word-break: keep-all;
 }
+/* 일정(날짜·요일·시각)은 갈리지 않게 한 덩어리로 둔다. 날짜와 시각이 다른 줄로
+   떨어지면 다른 날 일정처럼 읽힌다. 셀 폭 142px 에 이 텍스트는 78px 이라 넘치지 않는다. */
+.cpm-cell-when {
+  white-space: nowrap;
+}
 .membership-root .cpm-cell[data-provided='true'] .cpm-cell-title {
   color: var(--lc-ink);
 }

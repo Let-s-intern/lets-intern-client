@@ -72,6 +72,24 @@ describe('coursePlan 데이터 무결성', () => {
       }
     });
 
+    it('일정은 desc 가 아니라 when 에 들어간다', () => {
+      // desc 에 "연사 · 10.8 목 20:00" 처럼 한 문자열로 두면, 좁은 셀에서
+      // "10.8 목" / "20:00" 으로 갈려 다른 날 일정처럼 읽힌다. when 은 화면에서
+      // nowrap 한 덩어리로 렌더된다(.cpm-cell-when).
+      const schedule = /\d+\.\d+\s[월화수목금토일]\s\d+:\d+/;
+      for (const cell of MATRIX_CELLS) {
+        expect(cell.desc).not.toMatch(schedule);
+      }
+    });
+
+    it('라이브 세미나 셀은 모두 일정(when)을 갖는다', () => {
+      const live = MATRIX_CELLS.filter((cell) => cell.tag === 'live');
+      expect(live.length).toBeGreaterThan(0);
+      for (const cell of live) {
+        expect(cell.when).toMatch(/^\d+\.\d+ [월화수목금토일] \d+:\d+$/);
+      }
+    });
+
     it('모든 셀이 배지(tag) 4종 중 하나를 갖고 라벨이 비어 있지 않다', () => {
       for (const cell of MATRIX_CELLS) {
         expect(VALID_TAGS).toContain(cell.tag);
