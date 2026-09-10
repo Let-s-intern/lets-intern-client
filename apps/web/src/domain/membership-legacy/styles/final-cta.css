@@ -1,0 +1,46 @@
+/* ===================== FINAL CTA ===================== */
+.membership-root .final {
+  padding: 90px 0;
+  background: linear-gradient(135deg, #1b1e2b, #23284a);
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+.membership-root .final .eyebrow {
+  background: rgba(255, 210, 0, 0.16);
+  color: var(--lc-yellow);
+}
+.membership-root .final h2 {
+  font-size: 44px;
+  font-weight: 800;
+  margin: 18px 0;
+  letter-spacing: -0.04em;
+}
+.membership-root .final p {
+  color: #b9bdd0;
+  font-size: 19px;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+.membership-root .final .cd {
+  max-width: 440px;
+  margin: 0 auto 30px;
+}
+.membership-root .final .cd .seg {
+  background: rgba(255, 255, 255, 0.08);
+}
+.membership-root .final .cd .seg .n {
+  color: #fff;
+}
+.membership-root .final .cd .seg .l {
+  color: #9aa0b5;
+}
+.membership-root .final .secret {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #9aa0b5;
+  font-weight: 500;
+}
+.membership-root .final .secret b {
+  color: var(--lc-yellow);
+}

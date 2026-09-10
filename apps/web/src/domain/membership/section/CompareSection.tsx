@@ -1,102 +1,60 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { COMPARE_COMBOS, COMPARE_COPY, getComboTotal } from '../data/compare';
 import { formatKRW } from '../data/membership';
-import AllInOneCard from '../ui/AllInOneCard';
-import CompareTabs from '../ui/CompareTabs';
+import { COMPARE } from '../data/compare';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
-import IndividualPurchaseCard from '../ui/IndividualPurchaseCard';
 
 /**
- * 개별 구매 대비 올인원 패스 가격 비교 (시안 4.png).
+ * 시안 15 — 가격 비교표 (PRICE COMPARISON).
  *
- * 좌측 금액은 `data/compare.ts` 에 하드코딩돼 있다. 어드민 연동판(lib/useComparePrices.ts)도
- * 만들었으나 되돌렸다 — 조합에 든 챌린지 중 하나라도 모집 중이 아니면 합계를 믿을 수 없어
- * 탭이 통째로 사라졌고, 타입당 1회씩 조회가 붙었다. 그 파일은 지우지 않고 남겨 두었다.
- *
- * 개별 합계가 올인원 특가 이하로 내려간 탭은 비교가 성립하지 않으므로 숨긴다.
- * 값이 정적이라 렌더 전에 판정할 수 있고, 전부 숨겨지면 섹션을 렌더하지 않는다.
+ * 패스 금액만 어드민 값을 쓴다. 비교 대상 조합은 정적이다 — 자세한 이유는
+ * `data/compare.ts` 주석에 있다.
  */
 export default function CompareSection() {
-  const [activeId, setActiveId] = useState(COMPARE_COMBOS[0].id);
-
-  // 개별 합계가 올인원 특가 이하면 "올인원이 더 싸다" 는 주장이 깨지므로 그 탭을 뺀다.
-  // 값이 전부 하드코딩이라 렌더 전에 판정할 수 있다 — 조회를 기다릴 것이 없다.
   const { salePrice } = useMembershipChallengeData();
-  const visibleCombos = COMPARE_COMBOS.filter(
-    (combo) => getComboTotal(combo) > salePrice,
-  );
-
-  const activeCombo =
-    visibleCombos.find((combo) => combo.id === activeId) ?? visibleCombos[0];
-
-  // 활성 탭이 숨겨졌으면 남은 첫 탭으로 옮긴다.
-  useEffect(() => {
-    if (!activeCombo || activeCombo.id === activeId) return;
-    setActiveId(activeCombo.id);
-  }, [activeCombo, activeId]);
-
-  const items = activeCombo?.items ?? [];
-  const total = activeCombo ? getComboTotal(activeCombo) : 0;
-  // 개별 합계 − 올인원 특가. visibleCombos 가 이미 0 이하를 걸러내지만 값으로도 막는다.
-  const saving = total - salePrice;
-
-  if (visibleCombos.length === 0 || !activeCombo) return null;
 
   return (
-    <section className="compare">
+    <section className="bg-neutral-95 py-16 md:py-24" id="compare">
       <div className="wrap">
-        <div className="sec-head rv">
-          <h2>
-            <span className="cmp-t-lead">{COMPARE_COPY.titleLead}</span>
-            <span className="cmp-t-hi">{COMPARE_COPY.titleHi}</span>
-          </h2>
-          <p>
-            {COMPARE_COPY.subtitleLines.map((line) => (
-              <span className="brk" key={line}>
-                {line}
-              </span>
-            ))}
-          </p>
-        </div>
+        <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
+          {COMPARE.eyebrow}
+        </p>
 
-        <CompareTabs
-          combos={visibleCombos}
-          activeId={activeId}
-          onChange={setActiveId}
-        />
-
-        <div
-          className="cmp-panel rv"
-          id="cmp-panel"
-          role="tabpanel"
-          aria-labelledby={`cmp-tab-${activeId}`}
-        >
-          <div className="cmp-col">
-            <span className="cmp-col-label">
-              {COMPARE_COPY.individualLabel}
+        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+          {COMPARE.titleLines.map((line) => (
+            <span className="block" key={line}>
+              {line}
             </span>
-            <IndividualPurchaseCard items={items} total={total} />
-          </div>
+          ))}
+        </h2>
 
-          {/* 절약 금액 말풍선은 모바일 시안(9-2-mobile.png)에만 있다 —
-              PC 는 compare.css 가 숨긴다. 화살표만 aria-hidden 이고 금액은 읽힌다. */}
-          <div className="cmp-arrow">
-            <ChevronRight size={56} strokeWidth={2.6} aria-hidden />
-            {saving > 0 && (
-              <span className="cmp-save">
-                <strong className="num">{formatKRW(saving)}원</strong> 절약
+        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+          {COMPARE.sub}
+        </p>
+
+        <div className="rounded-xxl mt-10 overflow-hidden md:mt-14">
+          {COMPARE.rows.map((row) => (
+            <div
+              className="border-neutral-90 flex items-center justify-between gap-4 border-b bg-white px-6 py-5 md:px-8"
+              key={row.label}
+            >
+              <span className="text-xsmall14 md:text-xsmall16 text-neutral-30">
+                {row.label}
               </span>
-            )}
-          </div>
+              <strong className="text-xsmall16 text-neutral-0 shrink-0 font-bold">
+                {formatKRW(row.price)}원
+              </strong>
+            </div>
+          ))}
 
-          <div className="cmp-col">
-            <span className="cmp-col-label cmp-col-label-hi">
-              {COMPARE_COPY.allInOneLabel}
+          {/* 패스 줄 — 이 표의 결론이라 색과 굵기로 분리한다 */}
+          <div className="flex items-center justify-between gap-4 bg-[#232433] px-6 py-6 md:px-8">
+            <span className="text-xsmall14 md:text-xsmall16 font-medium text-white">
+              {COMPARE.passLabel}
             </span>
-            <AllInOneCard />
+            <strong className="shrink-0 text-xl font-bold text-[#F6A780] md:text-2xl">
+              {formatKRW(salePrice)}원
+            </strong>
           </div>
         </div>
       </div>

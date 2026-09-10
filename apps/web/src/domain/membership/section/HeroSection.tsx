@@ -1,10 +1,19 @@
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
+import { formatKRW } from '../data/membership';
 import { HERO, HERO_STATS } from '../data/hero';
 
-// 시안 0.png — 1열 중앙 정렬. 배지 / 헤드라인 2줄 / 서브 2줄 / 버튼 2개 / 하단 4지표.
+// 시안 1 — 1열 중앙 정렬. 배지 / 헤드라인 3줄 / 서브 2줄 / 버튼 2개 / 하단 6지표.
 // 카운트다운 카드(offer)와 모집기간 메타(hero-meta)는 시안에 없어 렌더하지 않는다.
 export default function HeroSection() {
+  /*
+   * 시안 1 의 1차 CTA 는 "175,900으로 시작하기" 처럼 금액을 그대로 노출한다.
+   * 금액을 카피에 박아 두면 어드민에서 가격을 바꿨을 때 버튼만 옛 숫자로 남는다.
+   * 가격 단일 출처(useMembershipChallengeData)에서 받아 조립한다.
+   */
+  const { salePrice } = useMembershipChallengeData();
+
   return (
     <section className="hero">
       <div className="wrap hero-in">
@@ -33,7 +42,7 @@ export default function HeroSection() {
             onClick={() => openPlanSheet()}
             disabled={IS_CTA_DISABLED}
           >
-            {ctaLabel(HERO.ctaPrimary)}
+            {ctaLabel(`${formatKRW(salePrice)}${HERO.ctaPrimary}`)}
           </button>
           <button
             className="btn btn-hero-orange"

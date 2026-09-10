@@ -1,4 +1,14 @@
 import { render, screen } from '@testing-library/react';
+
+/*
+ * 히어로 1차 CTA 가 판매가를 붙여 "175,900으로 시작하기" 로 조립된다(LC-3294). 그래서
+ * 이 섹션이 가격 단일 출처를 구독하는데, 그 훅이 react-query 를 끌어와 jest 가 파싱하지
+ * 못한다. 이 테스트의 관심사는 카피와 구조라 훅은 고정값으로 갈아끼운다.
+ */
+jest.mock('../lib/useMembershipChallengeData', () => ({
+  useMembershipChallengeData: () => ({ salePrice: 175900 }),
+}));
+
 import { HERO, HERO_STATS } from '../data/hero';
 import HeroSection from './HeroSection';
 
@@ -19,7 +29,7 @@ describe('HeroSection', () => {
     expect(screen.getAllByRole('button')).toHaveLength(2);
   });
 
-  it('4지표 스트립의 제목과 설명을 모두 렌더한다', () => {
+  it('하단 지표 스트립의 제목과 설명을 모두 렌더한다', () => {
     render(<HeroSection />);
     for (const stat of HERO_STATS) {
       expect(screen.getByText(stat.title)).toBeInTheDocument();
@@ -27,7 +37,7 @@ describe('HeroSection', () => {
     }
   });
 
-  it('4지표는 hero-stats 스트립 안에 4칸으로 들어간다', () => {
+  it('하단 지표는 hero-stats 스트립 안에 들어간다', () => {
     const { container } = render(<HeroSection />);
     expect(container.querySelectorAll('.hero-stats .hero-stat')).toHaveLength(
       HERO_STATS.length,

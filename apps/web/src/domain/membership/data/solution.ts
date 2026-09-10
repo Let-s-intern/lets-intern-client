@@ -1,73 +1,64 @@
-// 멤버십 구성(Solution) 섹션 — 허브 앤 스포크 다이어그램 데이터.
-// 위성 6종이 중앙 허브(올인원 패스)로 수렴해 "여러 개를 하나로 통합"을 표현한다.
+// 시안 5 — "막연한 취준이 아니라, 실제 지원할 수 있는 상태로" (YOUR JOB ROADMAP).
+// 3카드 + 하단 강조 밴드.
+//
+// 기존 하반기 멤버십은 같은 자리에 허브 앤 스포크 다이어그램을 그렸다. 시안이 3카드로
+// 바뀌어 데이터도 그 형태로 맞춘다.
 
-/** 위성 아이콘 식별자 (lucide-react 매핑 키) */
-export type SolutionSatelliteIcon =
-  | 'flag'
-  | 'bookOpen'
-  | 'users'
-  | 'monitorPlay'
-  | 'mentoring'
-  | 'route';
-
-export interface SolutionSatellite {
-  /** 위성 라벨 (구성 요소명) */
+export interface SolutionCard {
+  /** 카드 상단 라벨 (01 EXPERIENCE 등) */
+  index: string;
   label: string;
-  /** 한 줄 보조 설명 */
-  hint: string;
-  /** 아이콘 키 */
-  icon: SolutionSatelliteIcon;
+  titleLines: string[];
+  body: string[];
+  /**
+   * 카드 하단 그래픽. public/images/membership/ 하위 파일명.
+   * 태그·막대 같은 장식이라 alt 는 비운다 — 위 본문이 같은 내용을 이미 말한다.
+   */
+  art?: string;
+  /** 카드 하단 체크 목록. 없으면 그리지 않는다 */
+  checks?: string[];
 }
 
 export const SOLUTION = {
-  badge: '공채 준비 올인원 패스 구성',
-  /**
-   * 제목 — 의미가 끊기는 자리에서 자른다.
-   * 601px 이상에서는 1·2줄이 붙어 시안 2.png 의 2줄이 된다. 모바일은 3줄이다.
-   * (붙였다 떼는 것은 base.css 의 .brk / .brk-line)
-   */
-  titleLines: [
-    '따로 준비하면 비싸고 복잡한',
-    '공채 준비를',
-    '렛츠커리어가 하나로 묶었어요',
-  ],
-  /** titleLines 안에서 파란색으로 강조할 어절 */
-  titleHighlight: '하나로',
-  /** 중앙 허브 카피 (시안 2.png 은 2줄) */
-  hubTitleLines: ['렛츠커리어', '공채 준비 올인원 패스'],
-  hubSub: '9 · 10 · 11월 3개월 올인원',
-  /** 다이어그램 하단 서브카피 */
+  eyebrow: 'YOUR JOB ROADMAP',
+  title: '막연한 취준이 아니라, 실제 지원할 수 있는 상태로',
   subLines: [
-    '자소서·인적성·면접·스터디까지',
-    '하반기 공채에 필요한 준비를 모두 준비했어요!',
+    '10주 동안 프로그램을 듣는 데서 끝나지 않습니다.',
+    '내 경험이 정리된 지원 서류와 직무별 지원 전략을 완성해 실제 공고에 지원할 수 있는 상태까지 나아갑니다.',
   ],
-  /**
-   * 허브로 수렴하는 위성 6종.
-   * 배치는 solution.css 의 nth-of-type 좌표에 묶여 있다 —
-   * 홀수(1·3·5)가 좌측 열, 짝수(2·4·6)가 우측 열이므로 순서를 바꾸지 마라.
-   */
-  satellites: [
+  cards: [
     {
-      label: '챌린지',
-      hint: '경험정리, 이력서, 자소서, 면접, 인적성 등',
-      icon: 'flag',
-    },
-    { label: '가이드북', hint: '이력서, 자소서 등 6종', icon: 'bookOpen' },
-    {
-      label: '렛츠커리어 커뮤니티',
-      hint: '함께 취뽀까지 완주하는 동료',
-      icon: 'users',
-    },
-    { label: 'VOD', hint: '현직자 세미나 20종 모음집', icon: 'monitorPlay' },
-    {
-      label: '1:1 멘토링 할인권',
-      hint: '현직자와의 개별 Q&A, 커피챗',
-      icon: 'mentoring',
+      index: '01',
+      label: 'EXPERIENCE',
+      titleLines: ['흩어져 있던 경험은', '직무에 맞는 강점으로'],
+      body: [
+        '인턴·대외활동·프로젝트 경험을 정리하고,',
+        '지원 직무에 활용할 핵심 경험을 선별합니다.',
+      ],
+      art: 'solution-experience.png',
     },
     {
-      label: '13주 플레이북',
-      hint: '하반기 공채 주차별 합격 플랜',
-      icon: 'route',
+      index: '02',
+      label: 'DOCUMENTS',
+      titleLines: ['미완성이던 서류는', '바로 제출할 결과물로'],
+      body: [
+        '이력서·자기소개서·포트폴리오를 작성하고,',
+        '피드백을 반영해 실제 지원 수준으로 완성합니다.',
+      ],
+      art: 'solution-documents.png',
     },
-  ] satisfies SolutionSatellite[],
+    {
+      index: '03',
+      label: 'STRATEGY',
+      titleLines: ['막연했던 준비는', '나만의 지원 전략으로'],
+      body: [
+        '어떤 공고에 지원하고 무엇을 보완할지,',
+        '스스로 판단할 수 있는 기준을 만듭니다.',
+      ],
+      checks: ['목표 직무 설정', '지원 공고 선별', '다음 준비 순서 확인'],
+    },
+  ] satisfies SolutionCard[],
+  /** 하단 어두운 강조 밴드 */
+  bandLead: '패스가 끝날 때 남는 건 수강 기록이 아니라',
+  bandMain: '실제 지원에 사용할 수 있는 결과물입니다.',
 } as const;

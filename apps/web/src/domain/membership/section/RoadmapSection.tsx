@@ -1,103 +1,53 @@
-// .timeline 진입 애니메이션(트랙 드로우)은 MembershipAnimations 의 전역
-// IntersectionObserver 가 처리하므로 여기서 별도 observer 를 두지 않는다.
-import {
-  Check,
-  ClipboardCheck,
-  FileText,
-  Flag,
-  MessagesSquare,
-  UserRoundCheck,
-  type LucideIcon,
-} from 'lucide-react';
-import type { CSSProperties } from 'react';
-import { ROADMAP, type RoadmapIcon, type RoadmapNode } from '../data/roadmap';
+import { ROADMAP } from '../data/roadmap';
 
-const NODE_ICONS: Record<RoadmapIcon, LucideIcon> = {
-  fileText: FileText,
-  clipboardCheck: ClipboardCheck,
-  messagesSquare: MessagesSquare,
-  userRoundCheck: UserRoundCheck,
-  flag: Flag,
-};
-
-/** 지그재그 한 칸. --rmap-col 로 자기 열을 지정하고 side 로 트랙 위/아래를 고른다. */
-function RoadmapTimelineNode({
-  node,
-  column,
-}: {
-  node: RoadmapNode;
-  column: number;
-}) {
-  const Icon = NODE_ICONS[node.icon];
-  return (
-    <div
-      className="rmap-node"
-      data-side={node.side}
-      style={{ '--rmap-col': column } as CSSProperties}
-    >
-      <span className="rmap-step">
-        {node.step ?? <Check size={18} strokeWidth={3} aria-hidden="true" />}
-      </span>
-      <div className="rmap-card">
-        <div className="rmap-card-head">
-          <span className="rmap-chip">{node.dateChip}</span>
-          <span className="rmap-icon">
-            <Icon size={20} strokeWidth={2} aria-hidden="true" />
-          </span>
-        </div>
-        <h3>{node.title}</h3>
-        <p>{node.body}</p>
-      </div>
-    </div>
-  );
-}
-
+/**
+ * 시안 4 — STEP 01~05 세로 목록 (START WITH A DRAFT).
+ *
+ * 어두운 배경 섹션이다. 기존 지그재그 타임라인(`styles/roadmap.css`)은 시안이 바뀌며
+ * 쓰지 않게 됐다 — CSS 파일은 남겨 두고 여기서는 Tailwind 로만 그린다.
+ */
 export default function RoadmapSection() {
   return (
-    <section className="roadmap">
-      <div className="wrap">
-        <div className="sec-head rv">
-          <span className="eyebrow">{ROADMAP.badge}</span>
-          <h2>
-            {ROADMAP.titleLines.map((line) => (
-              <span className="brk" key={line}>
-                {line}
-              </span>
-            ))}
-          </h2>
-          <p>
-            {ROADMAP.subLines.map((line) => (
-              <span className="brk" key={line}>
-                {line}
-              </span>
-            ))}
-          </p>
+    <section className="bg-[#232433] py-16 md:py-24">
+      <div className="wrap wrap-narrow">
+        <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
+          {ROADMAP.eyebrow}
+        </p>
+
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-white md:text-[2rem]">
+          {ROADMAP.title}
+        </h2>
+
+        <div className="text-xsmall14 md:text-xsmall16 text-neutral-70 mt-4 text-center">
+          {ROADMAP.subLines.map((line) => (
+            <span className="block leading-relaxed" key={line}>
+              {line}
+            </span>
+          ))}
         </div>
-        <div className="timeline">
-          <div className="rmap-nodes">
-            <div className="track" />
-            {ROADMAP.nodes.map((node, i) => (
-              <RoadmapTimelineNode
-                key={node.title}
-                node={node}
-                column={i + 1}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="rmap-outro rv">
-          <p className="rmap-outro-lead">
-            {ROADMAP.outro.lead}
-            <span className="hl">{ROADMAP.outro.highlight}</span>
-          </p>
-          <p className="rmap-outro-sub">
-            {ROADMAP.outro.subLines.map((line) => (
-              <span className="brk" key={line}>
-                {line}
+
+        <ol className="mt-10 md:mt-16">
+          {ROADMAP.steps.map((step, i) => (
+            <li
+              className={`flex flex-col gap-1 py-6 md:flex-row md:gap-8 md:py-7 ${
+                i > 0 ? 'border-t border-white/10' : ''
+              }`}
+              key={step.label}
+            >
+              <span className="text-xsmall14 w-24 shrink-0 font-bold text-[#F1642B]">
+                {step.label}
               </span>
-            ))}
-          </p>
-        </div>
+              <span className="min-w-0">
+                <strong className="text-xsmall16 block font-bold text-white">
+                  {step.title}
+                </strong>
+                <span className="text-xsmall14 text-neutral-70 mt-2 block leading-relaxed">
+                  {step.body}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

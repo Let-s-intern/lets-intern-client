@@ -2,10 +2,7 @@ import { useState } from 'react';
 import {
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
-  PLAYBOOK_CAPTION_LINES,
-  PLAYBOOK_SHOT_ALT,
-  PLAYBOOK_SHOT_SIZE,
-  PLAYBOOK_SHOT_SRC,
+  COURSE_PLAN_TYPES,
   type CoursePlanViewId,
 } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
@@ -84,6 +81,26 @@ export default function CoursePlanSection() {
               <p>{COURSE_PLAN_BODY.sub}</p>
             </div>
 
+            {/*
+              시안 8 상단의 유형 선택. 고르면 10주 계획이 바뀐다고 시안은 말하지만,
+              유형별로 다른 매트릭스를 받은 적이 없다. 없는 표를 지어내면 고른 사람이
+              같은 표를 보고 속았다고 느낀다. 지금은 자기 유형을 확인하는 안내로만 두고,
+              고를 수 있는 컨트롤로 만들지 않는다. 유형별 계획을 받으면 여기에 붙인다.
+            */}
+            <div className="cp-types">
+              {COURSE_PLAN_TYPES.map((type, i) => (
+                <div
+                  className="cp-type"
+                  data-lead={i === 0 ? 'true' : undefined}
+                  key={type.id}
+                >
+                  <span className="cp-type-label">{type.label}</span>
+                  <strong className="cp-type-title">{type.title}</strong>
+                  <span className="cp-type-desc">{type.desc}</span>
+                </div>
+              ))}
+            </div>
+
             <CoursePlanToggle active={view} onChange={setView} />
 
             <div className="cp-matrix-head">
@@ -100,30 +117,14 @@ export default function CoursePlanSection() {
               )}
             </div>
 
-            <p className="cp-playbook">
-              구매자에게는 이 플랜의 풀버전{' '}
-              <strong>하반기 공채 준비 플레이북</strong>을 제공합니다.
-            </p>
+            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지 */}
+            <p className="cp-playbook">{COURSE_PLAN_BODY.matrixFootnote}</p>
 
-            {/* 구매자가 실제로 받는 화면. `.cp-view` 밖이라 `.rv` 리빌이 안전하다 —
-                토글로 리마운트되는 자리에 두면 IntersectionObserver 가 놓친다. */}
-            <img
-              className="cp-playbook-shot rv"
-              src={PLAYBOOK_SHOT_SRC}
-              alt={PLAYBOOK_SHOT_ALT}
-              width={PLAYBOOK_SHOT_SIZE.width}
-              height={PLAYBOOK_SHOT_SIZE.height}
-              loading="lazy"
-              decoding="async"
-            />
-
-            <p className="cp-playbook-caption rv">
-              {PLAYBOOK_CAPTION_LINES.map((line, i) => (
-                <span className="brk" key={i}>
-                  {line}
-                </span>
-              ))}
-            </p>
+            {/*
+              플레이북 앱 화면(애니메이션 WebP, 2.29MB)과 그 아래 마무리 문구를 뺐다.
+              시안 8 에 없고, 시안 9 의 대시보드 목업이 같은 화면을 이미 보여준다.
+              에셋과 데이터(PLAYBOOK_SHOT_*, PLAYBOOK_CAPTION_LINES)는 남겨 뒀다.
+            */}
           </div>
         </div>
       </div>

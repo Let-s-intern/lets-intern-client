@@ -1,0 +1,118 @@
+/* ===================== NAV / STICKY ===================== */
+.membership-root .nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #eee;
+}
+.membership-root .nav-in {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.membership-root .nav .logo {
+  height: 30px;
+  width: auto;
+}
+.membership-root .nav-deadline {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--g600);
+}
+.membership-root .nav-deadline .mini-cd {
+  display: flex;
+  gap: 5px;
+}
+.membership-root .nav-deadline .seg {
+  background: var(--lc-ink);
+  color: #fff;
+  border-radius: 7px;
+  padding: 3px 7px;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 30px;
+  text-align: center;
+}
+.membership-root .nav .btn {
+  padding: 11px 22px;
+  font-size: 15px;
+  border-radius: 11px;
+}
+@media (max-width: 760px) {
+  .membership-root .nav-deadline {
+    display: none;
+  }
+}
+
+/* ===================== 보조 앵커 네비 (.mnav) =====================
+   챌린지 ProgramDetailNavigation 룩(흰 바·하단 보더·밑줄 active·균등 분배)을 복제.
+   .membership-root 전역 리셋(* { padding:0 })을 이기려고 스코프드 클래스로 padding 지정.
+   sticky + data-direction 으로 글로벌 NavBar 와 위치 협응(다운=top:0, 업=NavBar 높이). */
+.membership-root .mnav {
+  position: sticky;
+  top: 84px; /* mobile NavBar 높이 (업 상태) */
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 24px;
+  background: #fff;
+  border-bottom: 2px solid var(--g100);
+  transition: top 0.3s ease;
+}
+@media (min-width: 768px) {
+  .membership-root .mnav {
+    top: 115px; /* desktop NavBar 높이 (업 상태) */
+  }
+}
+/* 스크롤 다운 → 글로벌 NavBar 가 숨으므로 네비가 최상단으로 */
+.membership-root .mnav[data-direction='down'] {
+  top: 0;
+}
+.membership-root .mnav-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px;
+}
+.membership-root .mnav-link {
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2.4px solid transparent;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  color: #989ba2;
+  padding: 18px 6px;
+  white-space: nowrap;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+.membership-root .mnav-link[data-active='true'] {
+  color: var(--lc-blue);
+  border-bottom-color: var(--lc-blue);
+}
+@media (min-width: 768px) {
+  .membership-root .mnav-link {
+    min-width: 100px;
+    font-size: 16px;
+    padding: 22px 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .membership-root .mnav {
+    transition: none;
+  }
+}

@@ -14,11 +14,18 @@ export interface GuidebookItem {
   url: string;
 }
 
-// 가이드북 표지(제목이 이미지 안에 포함) — 인적성은 표지 이미지 미수급
-// url: /program/guidebook/{id} → 정식 제목 경로로 리다이렉트됨
+// 시안 11 — 가이드북 7종.
+//
+// 시안의 카드 제목 4개가 썸네일과 어긋나 있었다(썸네일은 "이력서 완성 가이드북" 인데
+// 제목은 "포트폴리오 2주 완성 챌린지" 등). 제목을 그대로 쓰면 "포트폴리오 완성
+// 가이드북" 이 세 번 나오는 반면, 썸네일 7장은 서로 겹치지 않고 "7종" 과도 맞는다.
+// 그래서 **썸네일 기준**으로 제목을 맞췄다(LC-3294 결정).
+//
+// url: /program/guidebook/{id} → 정식 제목 경로로 리다이렉트됨.
+// 대기업 자소서·인적성은 전용 표지 이미지가 없어 같은 주제의 챌린지 표지를 쓴다.
 export const GUIDEBOOK_ITEMS: GuidebookItem[] = [
   {
-    label: '경험정리 가이드북',
+    label: '기필코 경험정리 가이드북',
     src: 'guide-experience.png',
     url: 'https://www.letscareer.co.kr/program/guidebook/7',
   },
@@ -33,9 +40,19 @@ export const GUIDEBOOK_ITEMS: GuidebookItem[] = [
     url: 'https://www.letscareer.co.kr/program/guidebook/5',
   },
   {
+    label: '대기업 자소서 완성 가이드북',
+    src: 'challenge-major-coverletter.jpg',
+    url: 'https://www.letscareer.co.kr/program/guidebook/5',
+  },
+  {
     label: '포트폴리오 완성 가이드북',
     src: 'guide-portfolio.png',
     url: 'https://www.letscareer.co.kr/program/guidebook/2',
+  },
+  {
+    label: '인적성 수리/추리 뽀개기 가이드북',
+    src: 'challenge-aptitude.webp',
+    url: 'https://www.letscareer.co.kr/program/guidebook/9',
   },
   {
     label: '면접 준비 끝장 가이드북',

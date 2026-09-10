@@ -299,9 +299,16 @@ export const challengePriceInfoSchema = z.object({
 export type ChallengePriceInfo = z.infer<typeof challengePriceInfoSchema>;
 
 export const getChallengeIdPrimitiveSchema = z.object({
-  title: z.string().optional(),
-  shortDesc: z.string().optional(),
-  desc: z.string().optional(),
+  /*
+   * title·shortDesc·desc 는 서버가 null 을 내려준다 — 어드민에서 비워 두면 그렇다.
+   * nullable 이 빠져 있어 desc 가 null 인 챌린지에서 parse 가 throw 했고,
+   * react-query 가 그 예외를 삼켜 data 가 undefined 로 남았다. 결제 시트를 여는
+   * 컴포넌트가 `if (!challenge) return null` 로 사라져, 버튼을 눌러도 하단 바만
+   * 숨고 아무것도 안 열리는 상태가 됐다(LC-3294). 콘솔에도 아무것도 안 찍힌다.
+   */
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  desc: z.string().nullable().optional(),
   criticalNotice: z.string().nullable().optional(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional(),

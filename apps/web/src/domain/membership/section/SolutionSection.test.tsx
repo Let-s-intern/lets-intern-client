@@ -1,40 +1,21 @@
 import { render, screen } from '@testing-library/react';
+
 import { SOLUTION } from '../data/solution';
 import SolutionSection from './SolutionSection';
 
-describe('SolutionSection', () => {
-  it('배지와 헤드라인 2줄을 렌더하고 강조 어절을 파란색(.hl)으로 감싼다', () => {
-    const { container } = render(<SolutionSection />);
-    expect(screen.getByText(SOLUTION.badge)).toBeInTheDocument();
-    expect(container.querySelector('.sec-head h2')?.textContent).toBe(
-      SOLUTION.titleLines.join(''),
-    );
-    expect(container.querySelector('.sec-head h2 .hl')?.textContent).toBe(
-      SOLUTION.titleHighlight,
-    );
+describe('SolutionSection (시안 5)', () => {
+  it('결과물 카드 3장의 라벨이 보인다', () => {
+    render(<SolutionSection />);
+
+    expect(SOLUTION.cards).toHaveLength(3);
+    expect(screen.getByText('01 EXPERIENCE')).toBeInTheDocument();
+    expect(screen.getByText('02 DOCUMENTS')).toBeInTheDocument();
+    expect(screen.getByText('03 STRATEGY')).toBeInTheDocument();
   });
 
-  it('좌우 위성 카드 6장의 제목과 설명을 모두 렌더한다', () => {
-    const { container } = render(<SolutionSection />);
-    expect(container.querySelectorAll('.hub .hub-sat')).toHaveLength(6);
-    for (const sat of SOLUTION.satellites) {
-      expect(screen.getByText(sat.label)).toBeInTheDocument();
-      expect(screen.getByText(sat.hint)).toBeInTheDocument();
-    }
-  });
-
-  it('중앙 허브 박스 문구를 렌더한다', () => {
-    const { container } = render(<SolutionSection />);
-    expect(container.querySelector('.hub-core-title')?.textContent).toBe(
-      SOLUTION.hubTitleLines.join(''),
-    );
-    expect(screen.getByText(SOLUTION.hubSub)).toBeInTheDocument();
-  });
-
-  it('다이어그램 하단 서브카피 2줄을 렌더한다', () => {
-    const { container } = render(<SolutionSection />);
-    expect(container.querySelector('.hub-note')?.textContent).toBe(
-      SOLUTION.subLines.join(''),
-    );
+  /* 하단 밴드가 이 섹션의 결론이다. 빠지면 3카드가 무엇을 위한 것인지 사라진다. */
+  it('하단 강조 밴드를 그린다', () => {
+    render(<SolutionSection />);
+    expect(screen.getByText(SOLUTION.bandMain)).toBeInTheDocument();
   });
 });

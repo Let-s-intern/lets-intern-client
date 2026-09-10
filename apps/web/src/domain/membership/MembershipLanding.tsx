@@ -1,57 +1,50 @@
 'use client';
 
-// 하반기 멤버십 랜딩을 본 웹앱에 직접 마운트한다(기존 iframe 임베드 대체).
-// 별도 레포(letscareer-membership-landing)의 App.tsx + main.tsx 역할을 합친 진입점으로,
-// 섹션/ui/data/lib 은 원본을 그대로 복사했고 전역 CSS 만 .membership-root 하위로 스코핑했다.
-// 'use client' 를 여기서 한 번 선언하면 아래 import 되는 섹션·ui 가 모두 클라이언트 번들에 포함된다.
+// 마케팅 취준 올인원 패스 랜딩 (LC-3294).
+//
+// **섹션 순서는 시안 1~15 를 그대로 따른다.** 시안은 선택지가 아니라 위에서 아래로
+// 이어지는 한 장의 상세페이지다. 순서를 바꾸거나 중간에 다른 섹션을 끼우려면 시안부터
+// 확인할 것.
+//
+// 시안에 없는 기존 섹션(챌린지 일정·커뮤니티 톡방·후기·얼리버드·제휴 혜택·최종 CTA·
+// VOD 훅)은 렌더하지 않는다. 파일은 지우지 않았다 — 다음 시즌에 되살릴 수 있다.
+// 되살리려면 해당 import 와 CSS import 를 함께 푼다.
+//
+// FAQ 는 시안에 없지만 남긴다. 어드민 챌린지에 등록한 FAQ 를 그대로 보여주는 자리이고
+// (`lib/useMembershipChallengeData`), 운영이 상품 문의를 여기서 답한다.
 
-// 섹션별 스타일 — 원본 main.tsx 의 import 순서를 그대로 유지(cascade 보존).
+// 레거시 섹션별 스타일 — 아직 쓰는 섹션(히어로·플레이북·FAQ·하단 신청바)만 남긴다.
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
-// VOD 훅 — LC-3219 때 함께 빠졌다가 되살렸다(cascade 위치는 원래 자리 그대로 둔다).
-import './styles/vod-hook.css';
-// 얼리버드 배너·추천 대상 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
-// import './styles/early-bird.css';
-// import './styles/recommend.css';
-import './styles/compare.css';
-import './styles/challenge-schedule.css';
-import './styles/solution.css';
 import './styles/course-plan.css';
-// 세미나 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
-// import './styles/seminar.css';
-import './styles/benefits.css';
-import './styles/benefit-modal.css';
-import './styles/proof.css';
+// 시안 15 가격 카드. 랜딩을 재조립할 때 빠뜨려 카드가 스타일 없이 세로로 쏟아졌다 —
+// 섹션을 켜고 끌 때 대응 CSS import 도 함께 확인할 것.
 import './styles/plan-single.css';
-import './styles/community-chat.css';
-import './styles/mentoring-coupon.css';
-import './styles/reviews.css';
-import './styles/roadmap.css';
-// 최종 CTA — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
-// import './styles/final-cta.css';
 import './styles/faq.css';
 import './styles/footer.css';
 import './styles/animations.css';
 import './styles/responsive.css';
-// 제휴 혜택 — LC-3219 시안에서 빠진 섹션이다(아래 렌더 주석 참조).
-// import './styles/partners.css';
 import './styles/apply.css';
 
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
-import VodHookSection from './section/VodHookSection';
-import CompareSection from './section/CompareSection';
-import ChallengeScheduleSection from './section/ChallengeScheduleSection';
-import SolutionSection from './section/SolutionSection';
-import CoursePlanSection from './section/CoursePlanSection';
-import BenefitsSection from './section/BenefitsSection';
-import PlansSection from './section/PlansSection';
-import CommunityChatSection from './section/CommunityChatSection';
-import MentoringCouponSection from './section/MentoringCouponSection';
-import ReviewsSection from './section/ReviewsSection';
+import RecommendSection from './section/RecommendSection';
+import JobMarketSection from './section/JobMarketSection';
 import RoadmapSection from './section/RoadmapSection';
+import SolutionSection from './section/SolutionSection';
+import PassBenefitsSection from './section/PassBenefitsSection';
+import PathMatchSection from './section/PathMatchSection';
+import CoursePlanSection from './section/CoursePlanSection';
+import PlaybookDashboardSection from './section/PlaybookDashboardSection';
+import ChallengeListSection from './section/ChallengeListSection';
+import GuidebookListSection from './section/GuidebookListSection';
+import MarketerVodSection from './section/MarketerVodSection';
+import SpecialLiveSection from './section/SpecialLiveSection';
+import MentoringCouponSection from './section/MentoringCouponSection';
+import CompareSection from './section/CompareSection';
+import PlansSection from './section/PlansSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
@@ -62,36 +55,54 @@ export default function MembershipLanding() {
       <div className="membership-root">
         <main>
           <MembershipAnimations />
+
+          {/* 시안 1 — 히어로 */}
           <HeroSection />
           <MembershipNav />
-          {/* VOD 무료 제공 훅 — 0236e0651 의 원래 자리(네비 직후)로 되살렸다.
-              멤버십 신청의 즉시 혜택이라 스크롤 상단에서 보여야 한다. */}
-          <VodHookSection />
-          {/* 공채 로드맵(시안 1.png 하단) — 이 한 줄과 위 import 를 지우면 섹션이 빠진다 */}
+
+          {/* 시안 2 — 고민 3카드 (WHERE DO I START?) */}
+          <RecommendSection />
+
+          {/* 시안 3 — 채용공고 예시 + 카피 (WHY NOW) */}
+          <JobMarketSection />
+
+          {/* 시안 4 — STEP 01~05 (START WITH A DRAFT) */}
           <RoadmapSection />
-          {/* 아래 순서는 시안 파일 번호를 그대로 따른다. 바꾸려면 시안부터 확인할 것.
-              2.png 패스 구성 → 3.png 가격 플랜 → 4.png 비교 → 5.png 챌린지 일정
-              → 6-0/6-1 혜택 헤더+플레이북 → 7-x 혜택 상세 → 8-0 후기 */}
+
+          {/* 시안 5 — 결과물 3카드 + 하단 밴드 (YOUR JOB ROADMAP) */}
           <SolutionSection />
-          <PlansSection />
-          <CompareSection />
-          <ChallengeScheduleSection />
-          {/* CoursePlanSection 이 시안 6-0 헤더까지 렌더한다. BenefitsSection 과 붙어 있어야
-              헤더-본문 순서가 맞으므로 둘 사이에 다른 섹션을 넣지 마라. */}
+
+          {/* 시안 6 — 혜택 7카드 (PASS BENEFITS) */}
+          <PassBenefitsSection />
+
+          {/* 시안 7 — 상황별 프로그램 매칭 (FIND YOUR PATH) */}
+          <PathMatchSection />
+
+          {/* 시안 8 — 10주 합격 플레이북 매트릭스 */}
           <CoursePlanSection />
-          <BenefitsSection />
-          {/* 커뮤니티 톡방 혜택 — 쿠폰 바로 위 */}
-          <CommunityChatSection />
-          {/* 1:1 멘토링·커피챗 할인 쿠폰 — 후기 바로 위 */}
+
+          {/* 시안 9 — 플레이북 대시보드 목업 */}
+          <PlaybookDashboardSection />
+
+          {/* 시안 10 — 챌린지 10종 */}
+          <ChallengeListSection />
+
+          {/* 시안 11 — 가이드북 7종 */}
+          <GuidebookListSection />
+
+          {/* 시안 12 — 현직자 VOD */}
+          <MarketerVodSection />
+
+          {/* 시안 13 — 쥬디 LIVE 클리닉 + 특별 세미나 */}
+          <SpecialLiveSection />
+
+          {/* 시안 14 — 1:1 멘토링 50% 쿠폰 */}
           <MentoringCouponSection />
-          <ReviewsSection />
-          {/* LC-3219 시안에서 빠진 섹션 5개 — 얼리버드 배너 · 추천 대상 · 세미나 ·
-              제휴 혜택 · 최종 CTA. 시안 0~8 어디에도 없다. (VOD 훅은 위에서 되살렸다.)
-              세미나·제휴 혜택은 앵커 네비 항목(ui/MembershipNav.tsx 의 NAV_ITEMS)에서도 함께
-              뺐으니 되살릴 때 둘을 같이 되돌려야 한다.
-              되살리려면 위 컴포넌트 import 와 CSS import 를 함께 푼다. 파일은 지우지 않았다 —
-              section/{EarlyBirdBanner,RecommendSection,SeminarSection,
-              PartnerBenefitsSection,FinalCtaSection}.tsx 와 대응 data/*.ts */}
+
+          {/* 시안 15 — 가격 비교표 + 단일 플랜 카드 */}
+          <CompareSection />
+          <PlansSection />
+
           <FaqSection />
           <ApplyBar />
         </main>

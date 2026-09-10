@@ -44,7 +44,8 @@ async function ProgramRecommendCard({ program }: Props) {
           case CHALLENGE:
             const challenge = await fetchChallenge(entityId);
 
-            title = challenge.title;
+            // 어드민에서 비워 두면 null 로 온다. 바로 아래 thumbnail 과 같은 처리.
+            title = challenge.title ?? undefined;
             thumbnail = challenge.thumbnail ?? '';
             ctaLink = `/program/${programType.toLowerCase()}/${entityId}`;
             break;

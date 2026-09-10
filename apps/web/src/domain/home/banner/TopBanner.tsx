@@ -1,7 +1,9 @@
 'use client';
 
 import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
-import MembershipPromoBanner from '@/domain/home/banner/MembershipPromoBanner'; // [PROMO-BANNER]
+// [PROMO-BANNER] 하반기 멤버십 프로모션 배너 — LC-3294 로 노출을 껐다.
+// 컴포넌트는 남긴다(다음 시즌 재사용). 되살릴 때 이 import 와 아래 렌더를 함께 되돌린다.
+// import MembershipPromoBanner from '@/domain/home/banner/MembershipPromoBanner';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
@@ -81,8 +83,9 @@ const TopBanner = () => {
         </div>
       </section>
       <div className="h-20 w-full md:h-14" />
-      {/* [PROMO-BANNER] 하반기 멤버십 프로모션 배너 — 종료 시 이 줄 + 상단 import 제거 (grep "[PROMO-BANNER]") */}
-      <MembershipPromoBanner />
+      {/* [PROMO-BANNER] 하반기 멤버십 프로모션 배너 — LC-3294 로 껐다.
+          되살리려면 이 줄과 상단 import 주석을 함께 푼다 (grep "[PROMO-BANNER]") */}
+      {/* <MembershipPromoBanner /> */}
     </>
   );
 };
