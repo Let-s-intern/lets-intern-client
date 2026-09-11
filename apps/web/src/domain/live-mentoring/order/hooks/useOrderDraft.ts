@@ -1,6 +1,8 @@
 'use client';
 
+import type { HydrationStore } from '@letscareer/store';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import type {
   LiveMentoringCategory,
@@ -54,7 +56,7 @@ export interface CreatedLiveMentoringApplication {
   expiresAt: string;
 }
 
-interface OrderDraftState {
+interface OrderDraftState extends HydrationStore {
   draft: LiveMentoringOrderDraft | null;
   application: CreatedLiveMentoringApplication | null;
   setDraft: (draft: LiveMentoringOrderDraft) => void;
@@ -63,18 +65,34 @@ interface OrderDraftState {
 }
 
 /**
- * 결제 페이지가 읽는 선택값 저장소.
+ * 결제 페이지·결과 화면이 읽는 선택값 저장소.
  *
- * **일부러 메모리에만 둔다(`persist` 없음).** 새로고침하면 사라지고, 결제 페이지는
- * 상세로 되돌아간다. 서버에 신청 상세 조회 API 가 없어(PRD 7-5) 복구할 방법이
- * 없는데, sessionStorage 에 남겨 두면 슬롯이 이미 남에게 팔린 뒤에도 예전 선택으로
- * 결제를 시도하게 된다.
+ * **`application` 만 localStorage 에 남긴다.** 예전에는 메모리에만 두고 "새로고침하면
+ * 사라질 뿐" 이라고 봤는데, 그 전제가 틀렸다. Toss 결제창은 `successUrl` 로 새 문서를
+ * 열기 때문에 실결제 복귀는 매번 새로고침과 같다. 신청이 비어 승인 API 를 한 번도
+ * 부르지 못했다(LC-3300). 0원 쿠폰 경로만 클라이언트 라우팅이라 가려져 있었다.
+ *
+ * `draft`(슬롯 선택값·쿠폰)는 저장하지 않는다. 승인에 쓰이지 않고, 되살리면 이미
+ * 남에게 팔린 슬롯으로 결제를 다시 시도하게 된다 — 메모리에만 두려던 이유가 이것이다.
+ *
+ * sessionStorage 가 아닌 이유는 모바일 간편결제가 다른 탭으로 돌아오면 비어 있어서다.
  */
-export const useOrderDraftStore = create<OrderDraftState>((set) => ({
-  draft: null,
-  application: null,
-  // 새 선택으로 들어오면 직전에 만든 신청은 남길 이유가 없다
-  setDraft: (draft) => set({ draft, application: null }),
-  setApplication: (application) => set({ application }),
-  clearDraft: () => set({ draft: null, application: null }),
-}));
+export const useOrderDraftStore = create<OrderDraftState>()(
+  persist(
+    (set) => ({
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
+      draft: null,
+      application: null,
+      // 새 선택으로 들어오면 직전에 만든 신청은 남길 이유가 없다
+      setDraft: (draft) => set({ draft, application: null }),
+      setApplication: (application) => set({ application }),
+      clearDraft: () => set({ draft: null, application: null }),
+    }),
+    {
+      name: 'liveMentoringOrderApplication',
+      partialize: (state) => ({ application: state.application }),
+      onRehydrateStorage: (state) => () => state.setHasHydrated(true),
+    },
+  ),
+);
