@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 
 import { useConfirmLiveMentoringPaymentMutation } from '@/api/live-mentoring/liveMentoring';
 import OrderFailPage from './OrderFailPage';
@@ -45,11 +45,30 @@ const SUCCESS_PARAMS = new URLSearchParams({
   amount: '60000',
 });
 
+/* 선점 중인 시각. `APPLICATION.expiresAt`(KST)보다 5분 앞이다. */
+const WHILE_HELD = new Date('2026-08-21T16:18:16+09:00').getTime();
+
+/*
+  결제창에서 돌아온 새 문서를 흉내 낸다. 메모리는 비고 스토리지에만 신청이 남은
+  상태에서 복원을 돌린다. `setState` 로 메모리를 비우면 persist 가 스토리지까지
+  덮어써 버려서 스토리지에 직접 쓴다.
+*/
+const returnFromToss = async (
+  application: CreatedLiveMentoringApplication | null,
+) => {
+  localStorage.setItem(
+    'liveMentoringOrderApplication',
+    JSON.stringify({ state: { application }, version: 0 }),
+  );
+  await act(() => useOrderDraftStore.persist.rehydrate());
+};
+
 beforeEach(() => {
   push.mockClear();
   mutate.mockReset();
   searchParams = new URLSearchParams(SUCCESS_PARAMS);
   useOrderDraftStore.getState().clearDraft();
+  useOrderDraftStore.setState({ _hasHydrated: true });
   mutationState = { isPending: false, isSuccess: false, data: undefined };
   mutateResult = new Promise(() => {});
   useConfirmMock.mockImplementation(() => ({
@@ -60,6 +79,51 @@ beforeEach(() => {
     },
     ...mutationState,
   }));
+});
+
+describe('OrderResultPage — 결제창에서 돌아온 새 문서', () => {
+  let nowSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    nowSpy = jest.spyOn(Date, 'now').mockReturnValue(WHILE_HELD);
+    // 새 문서의 첫 렌더. 스토리지 복원이 아직 끝나지 않았다
+    useOrderDraftStore.setState({ _hasHydrated: false });
+  });
+
+  afterEach(() => {
+    nowSpy.mockRestore();
+  });
+
+  it('복원이 끝나기 전에는 오류로 단정하지 않고 승인도 부르지 않는다', () => {
+    render(<OrderResultPage />);
+
+    expect(screen.getByText('결제를 확인하는 중…')).toBeInTheDocument();
+    expect(screen.queryByText('결제를 확인하지 못했습니다')).toBeNull();
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('신청이 복원되면 Toss 가 준 값으로 승인을 요청한다', async () => {
+    render(<OrderResultPage />);
+    await returnFromToss(APPLICATION);
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0][0]).toEqual({
+      paymentKey: 'tviva20260821',
+      orderId: 'gKEMQwWav2Lh',
+      amount: '60000',
+    });
+    expect(screen.queryByText('결제를 확인하지 못했습니다')).toBeNull();
+  });
+
+  it('복원할 신청이 없으면 승인을 부르지 않고 안내한다', async () => {
+    render(<OrderResultPage />);
+    await returnFromToss(null);
+
+    expect(
+      await screen.findByText(/마이페이지에서 신청 내역을 확인/),
+    ).toBeInTheDocument();
+    expect(mutate).not.toHaveBeenCalled();
+  });
 });
 
 describe('OrderResultPage — 승인 호출', () => {
