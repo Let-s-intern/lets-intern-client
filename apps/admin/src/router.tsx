@@ -18,6 +18,9 @@ const AllInOnePassCreate = lazy(
 const AllInOnePassEdit = lazy(
   () => import('./pages/pages/all-in-one-pass/AllInOnePassEdit'),
 );
+const AllInOnePassUsers = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassUsers'),
+);
 const AllInOnePassNotices = lazy(
   () => import('./pages/pages/all-in-one-pass/AllInOnePassNotices'),
 );
@@ -318,6 +321,10 @@ export const router = createBrowserRouter([
       {
         path: '/all-in-one-pass/:passId/edit',
         element: withSuspense(<AllInOnePassEdit />),
+      },
+      {
+        path: '/all-in-one-pass/:passId/users',
+        element: withSuspense(<AllInOnePassUsers />),
       },
       {
         path: '/all-in-one-pass/notices',
