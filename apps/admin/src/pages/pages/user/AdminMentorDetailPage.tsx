@@ -14,8 +14,9 @@ import {
   usePatchUserAdminMutation,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { parseSnsList, serializeSnsList } from '@/utils/sns';
+import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface BasicFormData {
@@ -127,12 +128,22 @@ export default function AdminMentorDetailPage() {
   );
 
   const handleSave = () => {
+    // 도메인만 쓴 SNS 는 https:// 를 붙여 보내고, 주소 형식이 아니면 저장하지 않는다 (LC-3307)
+    const snsUrls = form.sns
+      .filter((value) => value.trim() !== '')
+      .map(toSnsUrl);
+    const validSnsUrls = snsUrls.filter((url): url is string => url !== null);
+    if (validSnsUrls.length !== snsUrls.length) {
+      snackbar('SNS 주소를 확인해 주세요.');
+      return;
+    }
+
     patchUser.mutate({
       name: form.name || undefined,
       email: form.email || undefined,
       phoneNum: form.phoneNum || undefined,
       nickname: form.nickname || null,
-      sns: serializeSnsList(form.sns),
+      sns: serializeSnsList(validSnsUrls),
       profileImgUrl: form.profileImgUrl || null,
       corpImgUrl: form.corpImgUrl || null,
       introduction: form.introduction || null,
@@ -192,21 +203,8 @@ export default function AdminMentorDetailPage() {
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const isFileTooLarge = file.size > 5 * 1024 * 1024;
-    if (isFileTooLarge) {
-      snackbar('파일 크기는 5MB 이하여야 합니다.');
-      return;
-    }
-    try {
-      const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
-      setForm((prev) => ({ ...prev, profileImgUrl: fileUrl }));
-    } catch {
-      snackbar('이미지 업로드에 실패했습니다.');
-    }
-  };
+  // 멘토 앱과 같은 블러·영역 선택 모달로 올린다. 업로드만 하고 반영은 아래 저장 버튼이 한다
+  const [isProfileUploadOpen, setIsProfileUploadOpen] = useState(false);
 
   const handleCorpImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -269,7 +267,12 @@ export default function AdminMentorDetailPage() {
               <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
                 프로필 이미지
               </label>
-              <label className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+              <button
+                type="button"
+                onClick={() => setIsProfileUploadOpen(true)}
+                aria-label="프로필 이미지 업로드"
+                className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border"
+              >
                 {form.profileImgUrl ? (
                   <img
                     src={form.profileImgUrl}
@@ -284,13 +287,14 @@ export default function AdminMentorDetailPage() {
                   <br />
                   업로드
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
+              </button>
+              <ProfileImageUploadModal
+                isOpen={isProfileUploadOpen}
+                onClose={() => setIsProfileUploadOpen(false)}
+                onUploaded={(url) =>
+                  setForm((prev) => ({ ...prev, profileImgUrl: url }))
+                }
+              />
             </div>
             <div className="item-center flex h-[184px] w-[200px] flex-col">
               <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
@@ -344,29 +348,46 @@ export default function AdminMentorDetailPage() {
                 SNS
               </label>
               <div className="flex min-w-0 flex-1 flex-col gap-2">
-                {form.sns.map((url, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={url}
-                      onChange={(e) => handleSnsChange(index, e.target.value)}
-                      placeholder="https://..."
-                      className="border-neutral-80 text-xsmall14 focus:border-neutral-40 min-w-0 flex-1 rounded border px-3 py-2 outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleSnsRemove(index)}
-                      aria-label="SNS 삭제"
-                      className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
-                    >
-                      <img
-                        src="/icons/x.svg"
-                        alt=""
-                        className="h-[18px] w-[18px]"
-                      />
-                    </button>
-                  </div>
-                ))}
+                {form.sns.map((url, index) => {
+                  // 빈 줄은 저장할 때 빠지므로 오류로 보지 않는다
+                  const isInvalid = url.trim() !== '' && toSnsUrl(url) === null;
+                  return (
+                    <div key={index}>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={url}
+                          onChange={(e) =>
+                            handleSnsChange(index, e.target.value)
+                          }
+                          placeholder="https://..."
+                          aria-invalid={isInvalid}
+                          className="border-neutral-80 text-xsmall14 focus:border-neutral-40 min-w-0 flex-1 rounded border px-3 py-2 outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleSnsRemove(index)}
+                          aria-label="SNS 삭제"
+                          className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
+                        >
+                          <img
+                            src="/icons/x.svg"
+                            alt=""
+                            className="h-[18px] w-[18px]"
+                          />
+                        </button>
+                      </div>
+                      {isInvalid ? (
+                        <p
+                          role="alert"
+                          className="text-system-error mt-1 text-xs"
+                        >
+                          주소 형식이 아니에요. 예) instagram.com/아이디
+                        </p>
+                      ) : null}
+                    </div>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={handleSnsAdd}
