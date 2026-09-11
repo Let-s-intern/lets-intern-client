@@ -37,6 +37,7 @@ const APPLICATION: CreatedLiveMentoringApplication = {
   customerEmail: 'local-admin@letscareer.test',
   customerMobilePhone: '01000000000',
   expiresAt: '2026-08-21T16:23:16.283507',
+  reservationLabel: '2026.09.19 (토) 12:00 ~ 13:00',
 };
 
 const SUCCESS_PARAMS = new URLSearchParams({
@@ -220,6 +221,10 @@ describe('OrderResultPage — 결과 화면', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
     expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
+    // 슬롯 선택값은 복원하지 않는다. 예약 일시는 신청에 담아 둔 글자로 그린다.
+    expect(
+      screen.getByText('2026.09.19 (토) 12:00 ~ 13:00'),
+    ).toBeInTheDocument();
   });
 });
 

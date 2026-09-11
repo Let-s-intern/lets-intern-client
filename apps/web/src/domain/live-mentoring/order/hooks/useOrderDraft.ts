@@ -54,6 +54,13 @@ export interface CreatedLiveMentoringApplication {
   customerMobilePhone: string;
   /** 10분 선점 만료 시각. */
   expiresAt: string;
+  /**
+   * 결과 화면 `예약 일시` 에 그대로 쓰는 표시 문자열.
+   *
+   * `draft` 는 저장하지 않아 결제 복귀 후에는 슬롯에서 다시 만들 수 없고, 승인 응답에도
+   * 예약 시각이 없다. 재결제에 쓰일 수 있는 슬롯 id 가 아니라 글자만 남긴다.
+   */
+  reservationLabel: string | null;
 }
 
 interface OrderDraftState extends HydrationStore {

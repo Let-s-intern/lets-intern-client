@@ -41,6 +41,7 @@ const APPLICATION: CreatedLiveMentoringApplication = {
   customerEmail: 'local-admin@letscareer.test',
   customerMobilePhone: '01000000000',
   expiresAt: '2026-08-21T16:23:16.283507',
+  reservationLabel: '2026.09.19 (토) 12:00 ~ 13:00',
 };
 
 /* 선점 중인 시각. `APPLICATION.expiresAt`(KST)보다 5분 앞이다. */

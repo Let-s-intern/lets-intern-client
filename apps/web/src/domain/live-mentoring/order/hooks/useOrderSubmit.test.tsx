@@ -242,6 +242,8 @@ describe('useOrderSubmit — 신청 생성', () => {
       customerMobilePhone: '01000000000',
       expiresAt: '2026-08-21T16:23:16.283507',
     });
+    // 결제 복귀 뒤에는 슬롯 선택값이 없다. 결과 화면이 읽을 글자를 지금 만들어 둔다.
+    expect(application?.reservationLabel).toBe('2026.09.19 (토) 12:00 ~ 13:00');
   });
 
   /*

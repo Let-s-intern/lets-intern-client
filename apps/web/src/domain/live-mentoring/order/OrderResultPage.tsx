@@ -9,7 +9,6 @@ import type { ConfirmLiveMentoringPaymentResponse } from '@/api/live-mentoring/l
 import { formatPrice } from '../constants';
 import { readServerError } from '../utils/serverError';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
-import { formatReservationRange } from './utils';
 
 /** 승인 실패 문구. 서버가 code 를 `UNKNOWN` 으로 주는 경로가 있어 문구를 그대로 쓴다. */
 const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확인해 주세요.';
@@ -27,7 +26,6 @@ const OrderResultPage = () => {
   const searchParams = useSearchParams();
   const hasHydrated = useOrderDraftStore((state) => state._hasHydrated);
   const application = useOrderDraftStore((state) => state.application);
-  const draft = useOrderDraftStore((state) => state.draft);
 
   const confirmPayment = useConfirmLiveMentoringPaymentMutation(
     application?.applicationId ?? 0,
@@ -94,7 +92,7 @@ const OrderResultPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated, application, searchParams]);
 
-  const reservation = draft ? formatReservationRange(draft.slots) : null;
+  const reservation = application?.reservationLabel ?? null;
 
   if (errorMessage) {
     return (
