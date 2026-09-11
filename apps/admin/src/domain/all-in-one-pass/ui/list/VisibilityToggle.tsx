@@ -37,7 +37,9 @@ export default function VisibilityToggle({ pass, hasOtherVisible }: Props) {
         `<${pass.title}> 노출여부가 "${checked ? '노출' : '비노출'}"로 변경되었습니다.`,
       );
     } catch (err) {
-      snackbar(err instanceof Error ? err.message : '노출 변경에 실패했습니다.');
+      snackbar(
+        err instanceof Error ? err.message : '노출 변경에 실패했습니다.',
+      );
     } finally {
       setLoading(false);
     }

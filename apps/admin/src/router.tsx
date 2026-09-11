@@ -29,9 +29,7 @@ const AllInOnePassRetrospectives = lazy(
 );
 const AllInOnePassRetrospectiveResponses = lazy(
   () =>
-    import(
-      './pages/pages/all-in-one-pass/AllInOnePassRetrospectiveResponses'
-    ),
+    import('./pages/pages/all-in-one-pass/AllInOnePassRetrospectiveResponses'),
 );
 const LiveCreate = lazy(() => import('./pages/pages/LiveCreate'));
 const LiveEdit = lazy(() => import('./pages/pages/LiveEdit'));

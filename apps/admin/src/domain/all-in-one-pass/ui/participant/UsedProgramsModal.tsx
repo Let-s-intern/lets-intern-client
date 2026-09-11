@@ -41,7 +41,7 @@ export default function UsedProgramsModal({ participant, onClose }: Props) {
             {participant.usedPrograms.map((program) => (
               <li
                 key={program.id}
-                className="flex items-center justify-between gap-3 rounded-sm border border-neutral-80 px-4 py-3"
+                className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <Chip
@@ -50,12 +50,12 @@ export default function UsedProgramsModal({ participant, onClose }: Props) {
                     color="primary"
                     variant="outlined"
                   />
-                  <span className="truncate text-xsmall14 text-neutral-0">
+                  <span className="text-xsmall14 text-neutral-0 truncate">
                     {program.title}
                   </span>
                 </div>
                 {program.usedAt && (
-                  <span className="shrink-0 text-xxsmall12 text-neutral-45">
+                  <span className="text-xxsmall12 text-neutral-45 shrink-0">
                     {dayjs(program.usedAt).format('YYYY.MM.DD')}
                   </span>
                 )}
@@ -63,7 +63,7 @@ export default function UsedProgramsModal({ participant, onClose }: Props) {
             ))}
           </ul>
         ) : (
-          <p className="py-6 text-center text-xsmall14 text-neutral-45">
+          <p className="text-xsmall14 text-neutral-45 py-6 text-center">
             이용한 프로그램이 없습니다.
           </p>
         )}
