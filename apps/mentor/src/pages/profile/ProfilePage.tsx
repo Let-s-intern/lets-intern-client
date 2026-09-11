@@ -10,7 +10,7 @@ import { emptyEditorState } from '@/common/lexical/EditorApp';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
-import { parseSnsList, serializeSnsList } from '@/utils/sns';
+import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
 import BasicInfoSection, {
   type BasicInfoFormData,
 } from './ui/BasicInfoSection';
@@ -233,6 +233,20 @@ export default function ProfilePage() {
   }, [savedFormData, savedIntroduction, savedHashTagIds, savedDetailContent]);
 
   const handleSave = useCallback(async () => {
+    // 도메인만 쓴 SNS 는 https:// 를 붙여 보내고, 주소 형식이 아니면 아무것도 저장하지 않는다 (LC-3307)
+    const snsUrls = formData.sns
+      .filter((value) => value.trim() !== '')
+      .map(toSnsUrl);
+    const validSnsUrls = snsUrls.filter((url): url is string => url !== null);
+    if (validSnsUrls.length !== snsUrls.length) {
+      showAlert({
+        title: 'SNS 주소를 확인해 주세요.',
+        description: '주소 형식이 아닌 SNS 가 있어 저장하지 않았어요.',
+        variant: 'error',
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     /*
@@ -250,7 +264,7 @@ export default function ProfilePage() {
             name: formData.name || undefined,
             nickname: formData.nickname || null,
             phoneNum: formData.phoneNum || undefined,
-            sns: serializeSnsList(formData.sns),
+            sns: serializeSnsList(validSnsUrls),
             email: formData.email || undefined,
             introduction: introduction || null,
             profileImgUrl: formData.profileImgUrl || null,

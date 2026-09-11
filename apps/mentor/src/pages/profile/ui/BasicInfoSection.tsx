@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+
+import { toSnsUrl } from '@/utils/sns';
 import ProfileImageUploadModal from './ProfileImageUploadModal';
 
 export interface BasicInfoFormData {
@@ -129,29 +131,44 @@ export default function BasicInfoSection({
               SNS
             </label>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              {formData.sns.map((url, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={url}
-                    onChange={(e) => handleSnsChange(index, e.target.value)}
-                    placeholder="https://..."
-                    className="focus:border-primary text-xsmall14 border-neutral-80 min-w-0 flex-1 rounded-md border px-3 py-2 outline-none transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleSnsRemove(index)}
-                    aria-label="SNS 삭제"
-                    className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
-                  >
-                    <img
-                      src="/icons/x.svg"
-                      alt=""
-                      className="h-[18px] w-[18px]"
-                    />
-                  </button>
-                </div>
-              ))}
+              {formData.sns.map((url, index) => {
+                // 빈 줄은 저장할 때 빠지므로 오류로 보지 않는다
+                const isInvalid = url.trim() !== '' && toSnsUrl(url) === null;
+                return (
+                  <div key={index}>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={(e) => handleSnsChange(index, e.target.value)}
+                        placeholder="https://..."
+                        aria-invalid={isInvalid}
+                        className="focus:border-primary text-xsmall14 border-neutral-80 min-w-0 flex-1 rounded-md border px-3 py-2 outline-none transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleSnsRemove(index)}
+                        aria-label="SNS 삭제"
+                        className="flex-shrink-0 p-1 opacity-60 transition-opacity hover:opacity-100"
+                      >
+                        <img
+                          src="/icons/x.svg"
+                          alt=""
+                          className="h-[18px] w-[18px]"
+                        />
+                      </button>
+                    </div>
+                    {isInvalid ? (
+                      <p
+                        role="alert"
+                        className="text-system-error mt-1 text-xs"
+                      >
+                        주소 형식이 아니에요. 예) instagram.com/아이디
+                      </p>
+                    ) : null}
+                  </div>
+                );
+              })}
               <button
                 type="button"
                 onClick={handleSnsAdd}
