@@ -1,6 +1,7 @@
-import type {
-  CreatedLiveMentoringApplication,
-  LiveMentoringOrderDraft,
+import {
+  isApplicationExpired,
+  type CreatedLiveMentoringApplication,
+  type LiveMentoringOrderDraft,
 } from './useOrderDraft';
 
 /*
@@ -26,6 +27,11 @@ const APPLICATION: CreatedLiveMentoringApplication = {
   expiresAt: '2026-08-21T16:23:16.283507',
 };
 
+/* `APPLICATION.expiresAt` 을 KST 로 읽은 절대 시각. */
+const EXPIRES_AT = new Date('2026-08-21T16:23:16.283+09:00').getTime();
+/* 선점 중인 시각. 픽스처의 만료 시각이 이미 지나 있어 시계를 고정한다. */
+const WHILE_HELD = EXPIRES_AT - 5 * 60 * 1000;
+
 const DRAFT: LiveMentoringOrderDraft = {
   mentorId: 1,
   openingId: 6,
@@ -49,6 +55,11 @@ const DRAFT: LiveMentoringOrderDraft = {
 
 beforeEach(() => {
   localStorage.clear();
+  jest.spyOn(Date, 'now').mockReturnValue(WHILE_HELD);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('useOrderDraftStore — 결제 복귀(새 문서)', () => {
@@ -79,5 +90,37 @@ describe('useOrderDraftStore — 결제 복귀(새 문서)', () => {
 
     expect(after.getState().application).toBeNull();
     expect(after.getState()._hasHydrated).toBe(true);
+  });
+
+  /* 지난 신청으로 승인하면 `LIVE_MENTORING_PAYMENT_EXPIRED` 다. */
+  it('선점이 끝난 신청은 복원하지 않는다', async () => {
+    const before = await openNewDocument();
+    before.getState().setApplication(APPLICATION);
+    jest.spyOn(Date, 'now').mockReturnValue(EXPIRES_AT);
+
+    const after = await openNewDocument();
+
+    expect(after.getState().application).toBeNull();
+    expect(after.getState()._hasHydrated).toBe(true);
+  });
+});
+
+/* 서버가 `!expiresAt.isAfter(now)` 로 본다. 만료 시각 그 순간이 경계다. */
+describe('isApplicationExpired', () => {
+  it('만료 시각 직전까지는 만료가 아니다', () => {
+    expect(isApplicationExpired(APPLICATION, EXPIRES_AT - 1)).toBe(false);
+  });
+
+  it('만료 시각 그 순간부터 만료다', () => {
+    expect(isApplicationExpired(APPLICATION, EXPIRES_AT)).toBe(true);
+  });
+
+  it('형식을 읽지 못하면 막지 않고 서버 판정에 맡긴다', () => {
+    expect(
+      isApplicationExpired(
+        { ...APPLICATION, expiresAt: 'invalid' },
+        EXPIRES_AT,
+      ),
+    ).toBe(false);
   });
 });

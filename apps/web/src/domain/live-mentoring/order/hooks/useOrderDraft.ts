@@ -65,6 +65,19 @@ interface OrderDraftState extends HydrationStore {
 }
 
 /**
+ * 서버 선점(10분)이 끝났는지. 만료 시각 그 순간부터 만료다 — 서버 판정이
+ * `!expiresAt.isAfter(now)` 다.
+ *
+ * `expiresAt` 은 오프셋 없는 KST 다(서버 `Clock` 이 Asia/Seoul). 그대로 파싱하면 기기
+ * 타임존으로 읽혀, KST 보다 동쪽 기기에서는 방금 만든 신청이 만료로 보인다.
+ * 파싱하지 못하면 만료로 보지 않는다 — 승인 여부는 서버가 가린다.
+ */
+export const isApplicationExpired = (
+  application: CreatedLiveMentoringApplication,
+  now: number = Date.now(),
+) => new Date(`${application.expiresAt}+09:00`).getTime() <= now;
+
+/**
  * 결제 페이지·결과 화면이 읽는 선택값 저장소.
  *
  * **`application` 만 localStorage 에 남긴다.** 예전에는 메모리에만 두고 "새로고침하면
@@ -92,6 +105,19 @@ export const useOrderDraftStore = create<OrderDraftState>()(
     {
       name: 'liveMentoringOrderApplication',
       partialize: (state) => ({ application: state.application }),
+      // 선점이 끝난 신청은 되살리지 않는다. 승인해 봐야 `LIVE_MENTORING_PAYMENT_EXPIRED` 다
+      merge: (persisted, current) => {
+        const application =
+          (persisted as Partial<OrderDraftState> | undefined)?.application ??
+          null;
+        return {
+          ...current,
+          application:
+            application && !isApplicationExpired(application)
+              ? application
+              : null,
+        };
+      },
       onRehydrateStorage: (state) => () => state.setHasHydrated(true),
     },
   ),
