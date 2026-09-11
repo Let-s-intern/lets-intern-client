@@ -9,7 +9,6 @@ import type { ConfirmLiveMentoringPaymentResponse } from '@/api/live-mentoring/l
 import { formatPrice } from '../constants';
 import { readServerError } from '../utils/serverError';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
-import { formatReservationRange } from './utils';
 
 /** 승인 실패 문구. 서버가 code 를 `UNKNOWN` 으로 주는 경로가 있어 문구를 그대로 쓴다. */
 const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확인해 주세요.';
@@ -25,8 +24,8 @@ const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확
  */
 const OrderResultPage = () => {
   const searchParams = useSearchParams();
+  const hasHydrated = useOrderDraftStore((state) => state._hasHydrated);
   const application = useOrderDraftStore((state) => state.application);
-  const draft = useOrderDraftStore((state) => state.draft);
 
   const confirmPayment = useConfirmLiveMentoringPaymentMutation(
     application?.applicationId ?? 0,
@@ -45,15 +44,16 @@ const OrderResultPage = () => {
     useState<ConfirmLiveMentoringPaymentResponse | null>(null);
 
   useEffect(() => {
-    if (hasRequested.current) return;
+    // 복원 전에는 신청이 비어 보인다. 여기서 판단하면 결제한 사람에게 오류를 띄운다
+    if (!hasHydrated || hasRequested.current) return;
 
     const paymentKey = searchParams.get('paymentKey');
     const orderId = searchParams.get('orderId');
     const amount = searchParams.get('amount');
 
     /*
-      신청 정보는 메모리에만 있다. 새로고침하면 사라지는데, 그때 승인을 다시 부를
-      길이 없다. 이미 승인이 끝난 뒤일 수도 있어 상세로 돌려보내지 않고 안내만 남긴다.
+      복원까지 끝났는데 신청이 없다 — 다른 기기·브라우저로 돌아왔거나 선점이 끝났다.
+      이미 승인이 끝난 뒤일 수도 있어 상세로 돌려보내지 않고 안내만 남긴다.
     */
     if (!application) {
       setErrorMessage(
@@ -88,11 +88,11 @@ const OrderResultPage = () => {
       .catch((error) =>
         setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
       );
-    // 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다
+    // 복원이 끝나고 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [application, searchParams]);
+  }, [hasHydrated, application, searchParams]);
 
-  const reservation = draft ? formatReservationRange(draft.slots) : null;
+  const reservation = application?.reservationLabel ?? null;
 
   if (errorMessage) {
     return (

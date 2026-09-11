@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 
 import { useConfirmLiveMentoringPaymentMutation } from '@/api/live-mentoring/liveMentoring';
 import OrderFailPage from './OrderFailPage';
@@ -37,6 +37,7 @@ const APPLICATION: CreatedLiveMentoringApplication = {
   customerEmail: 'local-admin@letscareer.test',
   customerMobilePhone: '01000000000',
   expiresAt: '2026-08-21T16:23:16.283507',
+  reservationLabel: '2026.09.19 (토) 12:00 ~ 13:00',
 };
 
 const SUCCESS_PARAMS = new URLSearchParams({
@@ -45,11 +46,37 @@ const SUCCESS_PARAMS = new URLSearchParams({
   amount: '60000',
 });
 
+/* 선점 중인 시각. `APPLICATION.expiresAt`(KST)보다 5분 앞이다. */
+const WHILE_HELD = new Date('2026-08-21T16:18:16+09:00').getTime();
+
+/*
+  결제창에서 돌아온 새 문서를 흉내 낸다. 메모리는 비고 스토리지에만 신청이 남은
+  상태에서 복원을 돌린다.
+
+  스토어를 `setApplication` 으로 직접 채우지 않는다. 리다이렉트 뒤에는 일어나지 않는
+  상태라, 그렇게 세우면 `persist` 가 빠져도 테스트가 통과한다(LC-3300 이 그렇게 가려졌다).
+  `setState` 로 메모리를 비우면 persist 가 스토리지까지 덮어써 버려서 스토리지에 직접 쓴다.
+*/
+const returnFromToss = async (
+  application: CreatedLiveMentoringApplication | null,
+) => {
+  localStorage.setItem(
+    'liveMentoringOrderApplication',
+    JSON.stringify({ state: { application }, version: 0 }),
+  );
+  await act(() => useOrderDraftStore.persist.rehydrate());
+};
+
+let nowSpy: jest.SpyInstance;
+
 beforeEach(() => {
   push.mockClear();
   mutate.mockReset();
   searchParams = new URLSearchParams(SUCCESS_PARAMS);
+  nowSpy = jest.spyOn(Date, 'now').mockReturnValue(WHILE_HELD);
   useOrderDraftStore.getState().clearDraft();
+  // 새 문서의 첫 렌더. 스토리지 복원이 아직 끝나지 않았다
+  useOrderDraftStore.setState({ _hasHydrated: false });
   mutationState = { isPending: false, isSuccess: false, data: undefined };
   mutateResult = new Promise(() => {});
   useConfirmMock.mockImplementation(() => ({
@@ -62,9 +89,50 @@ beforeEach(() => {
   }));
 });
 
+afterEach(() => {
+  nowSpy.mockRestore();
+});
+
+describe('OrderResultPage — 결제창에서 돌아온 새 문서', () => {
+  it('복원이 끝나기 전에는 오류로 단정하지 않고 승인도 부르지 않는다', () => {
+    render(<OrderResultPage />);
+
+    expect(screen.getByText('결제를 확인하는 중…')).toBeInTheDocument();
+    expect(screen.queryByText('결제를 확인하지 못했습니다')).toBeNull();
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('신청이 복원되면 Toss 가 준 값으로 승인을 요청한다', async () => {
+    render(<OrderResultPage />);
+    await returnFromToss(APPLICATION);
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0][0]).toEqual({
+      paymentKey: 'tviva20260821',
+      orderId: 'gKEMQwWav2Lh',
+      amount: '60000',
+    });
+    expect(screen.queryByText('결제를 확인하지 못했습니다')).toBeNull();
+  });
+
+  /*
+    다른 기기·브라우저로 돌아왔거나 선점이 끝났다. 이미 승인이 끝난 뒤일 수도 있어,
+    승인을 다시 부르지 않고 신청 내역으로 안내한다.
+  */
+  it('복원할 신청이 없으면 승인을 부르지 않고 안내한다', async () => {
+    render(<OrderResultPage />);
+    await returnFromToss(null);
+
+    expect(
+      await screen.findByText(/마이페이지에서 신청 내역을 확인/),
+    ).toBeInTheDocument();
+    expect(mutate).not.toHaveBeenCalled();
+  });
+});
+
 describe('OrderResultPage — 승인 호출', () => {
   it('Toss 가 준 값으로 승인을 요청한다', async () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+    await returnFromToss(APPLICATION);
     render(<OrderResultPage />);
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
@@ -85,7 +153,7 @@ describe('OrderResultPage — 승인 호출', () => {
       orderId: 'gKEMQwWav2Lh',
       amount: '0',
     });
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+    await returnFromToss(APPLICATION);
     render(<OrderResultPage />);
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
@@ -101,7 +169,7 @@ describe('OrderResultPage — 승인 호출', () => {
     실패로 보인다. 리렌더로 두 번 부르지 않는다.
   */
   it('리렌더돼도 승인을 두 번 부르지 않는다', async () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+    await returnFromToss(APPLICATION);
     const { rerender } = render(<OrderResultPage />);
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
@@ -111,21 +179,8 @@ describe('OrderResultPage — 승인 호출', () => {
     expect(mutate).toHaveBeenCalledTimes(1);
   });
 
-  /*
-    신청 정보는 메모리에만 있다. 새로고침하면 사라지는데 이미 승인이 끝난 뒤일 수도
-    있어, 승인을 다시 부르지 않고 신청 내역으로 안내한다.
-  */
-  it('새로고침으로 신청 정보가 사라지면 승인을 부르지 않고 안내한다', async () => {
-    render(<OrderResultPage />);
-
-    expect(
-      await screen.findByText(/마이페이지에서 신청 내역을 확인/),
-    ).toBeInTheDocument();
-    expect(mutate).not.toHaveBeenCalled();
-  });
-
   it('Toss 파라미터가 빠져 있으면 승인을 부르지 않는다', async () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+    await returnFromToss(APPLICATION);
     searchParams = new URLSearchParams({ orderId: 'gKEMQwWav2Lh' });
     render(<OrderResultPage />);
 
@@ -137,8 +192,8 @@ describe('OrderResultPage — 승인 호출', () => {
 });
 
 describe('OrderResultPage — 결과 화면', () => {
-  it('승인 전에는 완료로 보이지 않는다', () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+  it('승인 전에는 완료로 보이지 않는다', async () => {
+    await returnFromToss(APPLICATION);
     mutationState = { isPending: true, isSuccess: false, data: undefined };
     render(<OrderResultPage />);
 
@@ -151,7 +206,7 @@ describe('OrderResultPage — 결과 화면', () => {
     승인이 200 을 줬는데도 "확인하는 중"에 갇히던 회귀를 여기서 막는다.
   */
   it('승인이 끝나면 서버가 확정한 금액으로 완료 화면을 보여준다', async () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+    await returnFromToss(APPLICATION);
     mutateResult = Promise.resolve({
       applicationId: 15,
       paymentId: 501,
@@ -166,6 +221,10 @@ describe('OrderResultPage — 결과 화면', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('60,000원')).toBeInTheDocument();
     expect(screen.getByText('어드민 1:1 LIVE 멘토링')).toBeInTheDocument();
+    // 슬롯 선택값은 복원하지 않는다. 예약 일시는 신청에 담아 둔 글자로 그린다.
+    expect(
+      screen.getByText('2026.09.19 (토) 12:00 ~ 13:00'),
+    ).toBeInTheDocument();
   });
 });
 
@@ -189,8 +248,8 @@ describe('OrderFailPage', () => {
     신청은 이미 만들어졌고 슬롯은 10분간 선점돼 있다. 다시 신청을 만들면 같은
     슬롯을 두 번 잡으려다 실패하므로, 만들어 둔 신청의 결제창을 다시 연다.
   */
-  it('신청이 남아 있으면 새로 만들지 않고 결제창을 다시 연다', () => {
-    useOrderDraftStore.getState().setApplication(APPLICATION);
+  it('신청이 남아 있으면 새로 만들지 않고 결제창을 다시 연다', async () => {
+    await returnFromToss(APPLICATION);
     render(<OrderFailPage />);
 
     expect(screen.getByRole('link', { name: '다시 결제하기' })).toHaveAttribute(
