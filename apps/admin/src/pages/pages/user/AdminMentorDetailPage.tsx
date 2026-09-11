@@ -14,6 +14,7 @@ import {
   usePatchUserAdminMutation,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
 import { useQueryClient } from '@tanstack/react-query';
@@ -202,21 +203,8 @@ export default function AdminMentorDetailPage() {
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const isFileTooLarge = file.size > 5 * 1024 * 1024;
-    if (isFileTooLarge) {
-      snackbar('파일 크기는 5MB 이하여야 합니다.');
-      return;
-    }
-    try {
-      const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
-      setForm((prev) => ({ ...prev, profileImgUrl: fileUrl }));
-    } catch {
-      snackbar('이미지 업로드에 실패했습니다.');
-    }
-  };
+  // 멘토 앱과 같은 블러·영역 선택 모달로 올린다. 업로드만 하고 반영은 아래 저장 버튼이 한다
+  const [isProfileUploadOpen, setIsProfileUploadOpen] = useState(false);
 
   const handleCorpImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -279,7 +267,12 @@ export default function AdminMentorDetailPage() {
               <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
                 프로필 이미지
               </label>
-              <label className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+              <button
+                type="button"
+                onClick={() => setIsProfileUploadOpen(true)}
+                aria-label="프로필 이미지 업로드"
+                className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border"
+              >
                 {form.profileImgUrl ? (
                   <img
                     src={form.profileImgUrl}
@@ -294,13 +287,14 @@ export default function AdminMentorDetailPage() {
                   <br />
                   업로드
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
+              </button>
+              <ProfileImageUploadModal
+                isOpen={isProfileUploadOpen}
+                onClose={() => setIsProfileUploadOpen(false)}
+                onUploaded={(url) =>
+                  setForm((prev) => ({ ...prev, profileImgUrl: url }))
+                }
+              />
             </div>
             <div className="item-center flex h-[184px] w-[200px] flex-col">
               <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
