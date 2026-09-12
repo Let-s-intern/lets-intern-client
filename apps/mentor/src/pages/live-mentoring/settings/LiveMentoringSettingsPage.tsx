@@ -30,6 +30,7 @@ import {
   unlockedSettingsTabs,
 } from './tabs';
 import { describeAutosaveBlock } from './autosaveGate';
+import { dropUnsavableHiddenValues } from './hiddenSectionPayload';
 import { describeSaveError } from './saveError';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import SettingsTabs from './ui/SettingsTabs';
@@ -345,10 +346,11 @@ const LiveMentoringSettingsPage = () => {
    */
   const saveTemplate = async (): Promise<AutosaveResult> => {
     if (!template) return { ok: false };
-    let payload = template;
+    // 끈 선택 섹션의 빈 카드·잘못된 영상 주소는 서버가 거절하므로 먼저 뺀다(LC-3311).
+    let payload = dropUnsavableHiddenValues(template);
 
-    if (template.video.videoUrl) {
-      const embedUrl = toYoutubeEmbedUrl(template.video.videoUrl);
+    if (payload.video.videoUrl) {
+      const embedUrl = toYoutubeEmbedUrl(payload.video.videoUrl);
       // 여기까지 오면 게이트(`describeAutosaveBlock`)가 이미 걸렀어야 한다.
       if (!embedUrl)
         return {
@@ -357,8 +359,8 @@ const LiveMentoringSettingsPage = () => {
             'YouTube 주소만 넣을 수 있어요. 영상 페이지의 공유 링크를 붙여넣으면 자동으로 변환됩니다.',
         };
       payload = {
-        ...template,
-        video: { ...template.video, videoUrl: embedUrl },
+        ...payload,
+        video: { ...payload.video, videoUrl: embedUrl },
       };
     }
 

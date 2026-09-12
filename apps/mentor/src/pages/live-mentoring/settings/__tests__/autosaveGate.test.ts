@@ -124,6 +124,14 @@ describe('describeAutosaveBlock', () => {
     );
   });
 
+  /* LC-3311 — 끈 섹션의 주소는 보낼 때 비우므로 막지 않는다. 입력이 잠겨 고칠 수 없다. */
+  it('숨긴 섹션의 YouTube 가 아닌 주소는 막지 않는다', () => {
+    const template = base();
+    template.video.visible = false;
+    template.video.videoUrl = 'https://vimeo.com/123';
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
   it('영상 주소는 비워 둘 수 있다', () => {
     const template = base();
     template.video.videoUrl = '';

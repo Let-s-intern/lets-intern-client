@@ -124,8 +124,14 @@ export const describeAutosaveBlock = (
    * 영상 주소는 비워 둘 수 있지만(`@Size` 만 있고 `@NotBlank` 는 없다), 서버가 받는 건
    * `https://www.youtube.com/embed/{id}` 뿐이다. 붙여넣는 중인 주소가 아직 변환되지 않는
    * 것뿐일 수 있으므로 실패가 아니라 대기로 다룬다.
+   *
+   * 끈 섹션은 보지 않는다. 입력이 잠겨 고칠 수 없고, 보낼 때 주소를 비운다(LC-3311).
    */
-  if (video.videoUrl?.trim() && !toYoutubeEmbedUrl(video.videoUrl))
+  if (
+    video.visible &&
+    video.videoUrl?.trim() &&
+    !toYoutubeEmbedUrl(video.videoUrl)
+  )
     return '「소개 영상」의 영상 주소를 YouTube 주소로 고치면 저장돼요';
 
   if (results.visible) {

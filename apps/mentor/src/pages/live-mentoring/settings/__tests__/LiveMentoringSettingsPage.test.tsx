@@ -915,6 +915,66 @@ describe('LiveMentoringSettingsPage — 저장', () => {
   });
 
   /*
+    LC-3311 — 선택 섹션을 끈 채로 빈 카드가 남으면 서버가 `@NotBlank` 로 400 을 준다.
+    끈 섹션은 입력이 잠겨 멘토가 그 카드를 지울 수도 없어, 저장도 오픈도 막힌다.
+    끈 섹션에서 서버가 거절할 값은 보낼 때 뺀다.
+  */
+  it('끈 취업 성공 전략의 빈 Point 는 빼고 보낸다', async () => {
+    renderPage();
+    openTab('취업 성공 전략');
+    fireEvent.click(screen.getByRole('button', { name: '차별점 추가 +' }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.strategy.visible).toBe(false);
+    expect(payload.strategy.points).toEqual([
+      { image: null, title: '핵심 키워드', description: '설명' },
+    ]);
+  });
+
+  it('끈 결과 사례의 빈 사례는 빼고 보낸다', async () => {
+    renderPage();
+    openTab('결과 사례');
+    fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.visible).toBe(false);
+    expect(payload.results.cases).toEqual([
+      {
+        beforeImage: null,
+        afterImage: null,
+        beforeCaption: '추상적인 지원동기',
+        afterCaption: '경험 연결',
+      },
+    ]);
+  });
+
+  /*
+    서버는 영상 주소 형식을 노출 여부와 무관하게 검사한다. 끈 섹션에 YouTube 로 바꿀 수
+    없는 주소가 남으면 게이트가 저장을 잠그는데, 입력이 잠겨 고칠 수 없다. 비워서 보낸다.
+  */
+  it('끈 소개 영상의 YouTube 가 아닌 주소는 비워서 보낸다', async () => {
+    renderPage();
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('YouTube 영상 링크'), {
+      target: { value: 'https://vimeo.com/123' },
+    });
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    expect(저장버튼()).toBeEnabled();
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.video.visible).toBe(false);
+    expect(payload.video.videoUrl).toBeNull();
+  });
+
+  /*
     히어로의 빈 줄은 막지 않고 걸러서 보낸다. 카드와 달리 지울 의사와 채울 의사를
     구분할 방법이 없고, 줄 하나는 지워져도 다시 만들기 쉽다.
   */
