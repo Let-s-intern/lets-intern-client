@@ -236,7 +236,8 @@ export const toCareerGrowthCardConfigs = (
   items: CareerGrowthItem[],
   category: ApplicationCategory,
 ): CareerGrowthCardConfig[] => {
-  if (category === 'PROGRAM') {
+  // 멘토링 칩은 프로그램 칩에서 멘토링만 거른 목록이라 같은 카드를 쓴다.
+  if (category === 'PROGRAM' || category === 'MENTORING') {
     return items.map((p) => toProgramCardConfig(p));
   }
   if (category === 'GUIDEBOOK') {

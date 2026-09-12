@@ -6,6 +6,7 @@ import MentoringSection, { resolvePhase } from './MentoringSection';
 import {
   APPLICATION_CATEGORY_OPTIONS,
   type ApplicationCategory,
+  filterMentoringCategory,
 } from '../constants';
 
 jest.mock('@/api/live-mentoring/liveMentoring', () => ({
@@ -168,18 +169,26 @@ describe('MentoringSection 구간 분류', () => {
 });
 
 /*
-  ApplicationCategory 는 커리어 성장 위젯도 함께 쓴다. 탭 순서는 시안 3-0 이고,
-  기존 탭을 지우면 그쪽이 회귀한다.
+  ApplicationCategory 는 커리어 성장 위젯도 함께 쓴다. 멘토링 탭은 프로그램 바로
+  오른쪽이고(LC-3301), 기존 탭을 지우면 그쪽이 회귀한다.
 */
 describe('신청현황 탭 구성', () => {
-  it('멘토링 탭은 없다 — 프로그램 탭에서 함께 보여준다', () => {
+  it('멘토링 탭은 프로그램 바로 오른쪽이다', () => {
     const values = APPLICATION_CATEGORY_OPTIONS.map((option) => option.value);
     expect(values.slice(0, 3)).toEqual([
       'PROGRAM',
+      'MENTORING',
       'LIBRARY',
-      'GUIDEBOOK',
     ] satisfies ApplicationCategory[]);
-    expect(values).not.toContain('MENTORING');
+  });
+
+  it('멘토링을 열지 않으면 멘토링 탭만 빠진다', () => {
+    const hidden = filterMentoringCategory(APPLICATION_CATEGORY_OPTIONS, false);
+    expect(hidden.map((option) => option.value)).not.toContain('MENTORING');
+    expect(hidden).toHaveLength(APPLICATION_CATEGORY_OPTIONS.length - 1);
+
+    const shown = filterMentoringCategory(APPLICATION_CATEGORY_OPTIONS, true);
+    expect(shown).toEqual(APPLICATION_CATEGORY_OPTIONS);
   });
 
   it('기존 탭을 지우지 않는다', () => {
