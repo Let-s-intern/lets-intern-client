@@ -26,6 +26,8 @@ const baseChallenge: MypageApplication = {
   challengeOptionList: [],
   chatLink: 'https://open.kakao.com/o/abc123',
   chatPassword: '1234',
+  challengeVersionTitle: null,
+  canChangeVersion: false,
 };
 
 const openChatOf = (application: MypageApplication) =>
