@@ -28,6 +28,7 @@ const baseChallenge: MypageApplication = {
   chatPassword: '1234',
   challengeVersionTitle: null,
   canChangeVersion: false,
+  canUpgradePlan: false,
 };
 
 const openChatOf = (application: MypageApplication) =>
@@ -242,5 +243,50 @@ describe('toMypageApplicationCardConfig - 버전 (LC-3247)', () => {
         canChangeVersion: false,
       }),
     ).toBeUndefined();
+  });
+});
+
+describe('toMypageApplicationCardConfig - 플랜 업그레이드 (LC-3247)', () => {
+  const planUpgradeHrefOf = (application: MypageApplication) =>
+    toMypageApplicationCardConfig(application).planUpgradeHref;
+
+  it('업그레이드할 수 있으면 신청 id 로 업그레이드 화면 주소를 넘긴다', () => {
+    expect(planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: true })).toBe(
+      '/plan-upgrade/1',
+    );
+  });
+
+  it('업그레이드할 수 없으면 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: false }),
+    ).toBeUndefined();
+  });
+
+  it('LIGHT 플랜은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('챌린지가 아닌 신청은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        programType: 'LIVE',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('필드가 없는 응답은 업그레이드 불가로 읽는다', () => {
+    const parsed = mypageApplicationsSchema.parse({
+      applicationList: [{ id: 1, programType: 'CHALLENGE' }],
+    });
+
+    expect(parsed.applicationList[0].canUpgradePlan).toBe(false);
   });
 });

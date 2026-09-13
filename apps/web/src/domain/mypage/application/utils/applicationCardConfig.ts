@@ -34,6 +34,8 @@ export interface MypageApplicationCardConfig {
     title: string | null;
     changeable: boolean;
   };
+  /** 셀프 플랜 업그레이드 화면. 서버가 업그레이드할 수 있다고 준 챌린지만 둔다. LIGHT 는 두지 않는다 (설계안 D1) */
+  planUpgradeHref?: string;
   /** 오픈채팅방 입장 버튼. 카드 우측 하단(구매플랜 행)에 별도로 렌더된다. */
   openChat?: {
     link: string;
@@ -76,6 +78,7 @@ const toProgramCardConfig = (
     chatPassword,
     challengeVersionTitle,
     canChangeVersion,
+    canUpgradePlan,
   } = application;
 
   const isChallenge = programType === 'CHALLENGE';
@@ -121,6 +124,11 @@ const toProgramCardConfig = (
     pricePlanType !== 'LIGHT' &&
     (challengeVersionTitle || canChangeVersion)
       ? { title: challengeVersionTitle ?? null, changeable: canChangeVersion }
+      : undefined;
+
+  const planUpgradeHref =
+    isChallenge && pricePlanType !== 'LIGHT' && canUpgradePlan && id != null
+      ? `/plan-upgrade/${id}`
       : undefined;
 
   const thumbnail =
@@ -179,6 +187,7 @@ const toProgramCardConfig = (
     dateText,
     purchasePlanText,
     version,
+    planUpgradeHref,
     openChat,
     actionButton,
     isCompleted,

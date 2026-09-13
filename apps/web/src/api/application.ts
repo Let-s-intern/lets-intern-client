@@ -323,6 +323,12 @@ export const mypageApplicationsSchema = z
           .nullable()
           .optional()
           .transform((canChangeVersion) => canChangeVersion ?? false),
+        // 셀프 플랜 업그레이드 가능 여부 (LC-3247). 챌린지가 아니거나 서버 배포 전이면 값이 오지 않는다.
+        canUpgradePlan: z
+          .boolean()
+          .nullable()
+          .optional()
+          .transform((canUpgradePlan) => canUpgradePlan ?? false),
       }),
     ),
   })
