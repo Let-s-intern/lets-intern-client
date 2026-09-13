@@ -6,6 +6,13 @@ import ChallengeBasic from '@/domain/admin/program/challenge/ChallengeBasic';
 import ChallengeCurriculum from '@/domain/admin/program/challenge/ChallengeCurriculum';
 import ChallengePoint from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
+import ChallengeVersionSection, {
+  ChallengeVersionDraft,
+} from '@/domain/admin/program/challenge/ChallengeVersionSection';
+import {
+  getVersionTitleError,
+  toVersionInfoPayload,
+} from '@/domain/admin/program/challenge/utils/toVersionInfoPayload';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ChallengeBlogReviewSection from '@/domain/admin/program/ChallengeBlogReviewSection';
@@ -20,6 +27,7 @@ import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendE
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ApiError } from '@letscareer/api';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';
 import {
@@ -107,6 +115,7 @@ const ChallengeCreate: React.FC = () => {
     curationCard: { visible: true },
   });
   const [isFreeTemplate, setIsFreeTemplate] = useState(false);
+  const [versions, setVersions] = useState<ChallengeVersionDraft[]>([]);
 
   const [input, setInput] = useState(initialInput);
   const [loading, setLoading] = useState(false);
@@ -158,6 +167,12 @@ const ChallengeCreate: React.FC = () => {
   }, []);
 
   const onClickSave = useCallback(async () => {
+    const versionTitleError = getVersionTitleError(versions);
+    if (versionTitleError) {
+      snackbar(versionTitleError);
+      return;
+    }
+
     setLoading(true);
 
     const basicPriceInfo = {
@@ -229,10 +244,23 @@ const ChallengeCreate: React.FC = () => {
       ...input,
       desc: JSON.stringify(contentToSave),
       priceInfo: newPriceInfo,
+      // 버전이 없으면 지금 요청과 같도록 필드를 보내지 않는다
+      versionInfo:
+        versions.length > 0 ? toVersionInfoPayload(versions) : undefined,
     };
     console.log('req', req);
-    const res = await postChallenge(req);
-    console.log('res', res);
+    try {
+      const res = await postChallenge(req);
+      console.log('res', res);
+    } catch (error) {
+      setLoading(false);
+      snackbar(
+        error instanceof ApiError
+          ? error.message
+          : '챌린지 생성에 실패했습니다.',
+      );
+      return;
+    }
 
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
@@ -240,6 +268,7 @@ const ChallengeCreate: React.FC = () => {
   }, [
     input,
     content,
+    versions,
     postChallenge,
     snackbar,
     navigate,
@@ -293,7 +322,9 @@ const ChallengeCreate: React.FC = () => {
                 );
                 const parsedContent = JSON.parse(challenge?.desc ?? '{}');
                 setImportProcessing(true);
-                setInput(challengeToCreateInput(challenge));
+                const importedInput = challengeToCreateInput(challenge);
+                setInput(importedInput);
+                setVersions(importedInput.versionInfo ?? []);
                 setContent(parsedContent);
                 setIsFreeTemplate(Boolean(parsedContent.isFreeTemplate));
                 setTimeout(() => {
@@ -425,6 +456,9 @@ const ChallengeCreate: React.FC = () => {
         <ChallengeOptionSection
           options={challengeOptions?.challengeOptionList ?? []}
         />
+      </section>
+      <section className="pb-8 pt-4">
+        <ChallengeVersionSection versions={versions} onChange={setVersions} />
       </section>
       {isFreeTemplate ? (
         <>

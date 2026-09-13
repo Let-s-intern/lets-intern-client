@@ -17,6 +17,13 @@ import ChallengeBasic from '@/domain/admin/program/challenge/ChallengeBasic';
 import ChallengeCurriculumEditor from '@/domain/admin/program/challenge/ChallengeCurriculum';
 import ChallengePointEditor from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
+import ChallengeVersionSection, {
+  ChallengeVersionDraft,
+} from '@/domain/admin/program/challenge/ChallengeVersionSection';
+import {
+  getVersionTitleError,
+  toVersionInfoPayload,
+} from '@/domain/admin/program/challenge/utils/toVersionInfoPayload';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ChallengeBlogReviewSection from '@/domain/admin/program/ChallengeBlogReviewSection';
@@ -31,6 +38,7 @@ import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendE
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ApiError } from '@letscareer/api';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   ChallengePricePlanEnum,
@@ -133,6 +141,10 @@ const ChallengeEdit: React.FC = () => {
     faqCategory: [],
   });
   const [isFreeTemplate, setIsFreeTemplate] = useState(false);
+  // null 이면 버전을 편집하지 않은 상태. 상세의 versionList 를 보여주고 요청에는 싣지 않는다
+  const [versionDrafts, setVersionDrafts] = useState<
+    ChallengeVersionDraft[] | null
+  >(null);
 
   const defaultBasicPriceInfo = useMemo(() => {
     const basic: ChallengePriceReq = {
@@ -220,6 +232,14 @@ const ChallengeEdit: React.FC = () => {
       throw new Error('challengeId is required');
     }
 
+    if (versionDrafts) {
+      const versionTitleError = getVersionTitleError(versionDrafts);
+      if (versionTitleError) {
+        snackbar(versionTitleError);
+        return;
+      }
+    }
+
     setLoading(true);
 
     let basicPriceInfo = defaultBasicPriceInfo;
@@ -304,24 +324,38 @@ const ChallengeEdit: React.FC = () => {
       challengeId: Number(challengeIdString),
       desc: JSON.stringify(contentToSave),
       priceInfo: newPriceInfo,
+      versionInfo: versionDrafts
+        ? toVersionInfoPayload(versionDrafts)
+        : undefined,
     };
 
     console.log('req', req);
-    const [res] = await Promise.all([
-      patchChallenge(req),
-      postMentorMutation.mutateAsync({
-        mentorIdList: mentorRef.current,
-        challengeId: parseInt(challengeIdString),
-      }),
-      ...deleteDifferMentors(
-        challengeMentorData?.mentorList ?? [],
-        mentorRef.current,
-      ),
-    ]);
-    client.invalidateQueries({
+    try {
+      const [res] = await Promise.all([
+        patchChallenge(req),
+        postMentorMutation.mutateAsync({
+          mentorIdList: mentorRef.current,
+          challengeId: parseInt(challengeIdString),
+        }),
+        ...deleteDifferMentors(
+          challengeMentorData?.mentorList ?? [],
+          mentorRef.current,
+        ),
+      ]);
+      console.log('res', res);
+    } catch (error) {
+      setLoading(false);
+      // 사용 중인 버전 삭제(409) 같은 거절 사유는 서버 문구에만 있다
+      snackbar(
+        error instanceof ApiError ? error.message : '저장에 실패했습니다.',
+      );
+      return;
+    }
+    await client.invalidateQueries({
       queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
     });
-    console.log('res', res);
+    // 새로 추가한 버전의 id 는 다시 받은 상세에만 있다. 편집본을 버리고 상세를 보여준다
+    setVersionDrafts(null);
 
     setLoading(false);
     snackbar('저장되었습니다.');
@@ -343,6 +377,7 @@ const ChallengeEdit: React.FC = () => {
     pricePlan,
     defaultBasicPriceInfo,
     challengeMentorData,
+    versionDrafts,
   ]);
 
   useEffect(() => {
@@ -546,6 +581,19 @@ const ChallengeEdit: React.FC = () => {
       <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={challengeOptions?.challengeOptionList ?? []}
+        />
+      </section>
+
+      <section className="pb-8 pt-4">
+        <ChallengeVersionSection
+          versions={
+            versionDrafts ??
+            challenge.versionList.map(({ challengeVersionId, title }) => ({
+              challengeVersionId,
+              title,
+            }))
+          }
+          onChange={setVersionDrafts}
         />
       </section>
 
