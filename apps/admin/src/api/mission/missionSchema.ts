@@ -1,4 +1,4 @@
-import { MissionStatus } from '@/schema';
+import { MissionContentsReq, MissionStatus } from '@/schema';
 /** [어드민] 미션 수정 */
 export interface PatchMissionReq {
   missionId: number | string;
@@ -14,6 +14,9 @@ export interface PatchMissionReq {
   challengeOptionId?: number;
   essentialContentsIdList?: number[];
   additionalContentsIdList?: number[];
+  // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
+  essentialContents?: MissionContentsReq[];
+  additionalContents?: MissionContentsReq[];
 }
 export interface PostDocumentReq {
   attendanceId?: number;

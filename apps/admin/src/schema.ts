@@ -290,6 +290,14 @@ export const challengePriceInfoSchema = z.object({
 
 export type ChallengePriceInfo = z.infer<typeof challengePriceInfoSchema>;
 
+const challengeVersionSchema = z.object({
+  challengeVersionId: z.number(),
+  title: z.string(),
+  sortOrder: z.number(),
+});
+
+export type ChallengeVersion = z.infer<typeof challengeVersionSchema>;
+
 export const getChallengeIdPrimitiveSchema = z.object({
   title: z.string().optional(),
   shortDesc: z.string().optional(),
@@ -320,6 +328,11 @@ export const getChallengeIdPrimitiveSchema = z.object({
     .optional(),
   priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
+  // 버전 없는 챌린지와 서버 배포 전 응답은 필드가 없다. 빈 배열로 통일한다.
+  versionList: z
+    .array(challengeVersionSchema)
+    .nullish()
+    .transform((val) => val ?? []),
 });
 
 export type ChallengeIdPrimitive = z.infer<
@@ -344,6 +357,13 @@ export const getChallengeIdSchema = getChallengeIdPrimitiveSchema.transform(
 );
 
 export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
+
+/** 챌린지 생성·수정 요청의 버전 항목. 새로 추가하는 버전은 challengeVersionId 가 null */
+export type ChallengeVersionReq = {
+  challengeVersionId: number | null;
+  title: string;
+  sortOrder: number;
+};
 
 /** POST /api/v1/challenge 챌린지 생성 */
 export type CreateChallengeReq = {
@@ -378,6 +398,8 @@ export type CreateChallengeReq = {
   faqInfo: {
     faqId: number;
   }[];
+  // 생략하면 버전 없음
+  versionInfo?: ChallengeVersionReq[];
 };
 
 /** PATCH /api/v1/challenge/{challengeId} 챌린지 수정 */
@@ -413,6 +435,8 @@ export type UpdateChallengeReq = {
   faqInfo?: {
     faqId: number;
   }[];
+  // 생략·null 은 변경 없음, 목록은 전체 동기화 (빠진 버전은 삭제)
+  versionInfo?: ChallengeVersionReq[] | null;
 };
 
 export type ChallengePriceReq = {
@@ -952,6 +976,9 @@ export const missionAdmin = z
                 id: z.number(),
                 title: z.string(),
                 link: z.string(),
+                // 서버 배포 전 응답에는 없다. challengeVersionId null 은 공통 자료
+                missionContentsId: z.number().nullable().default(null),
+                challengeVersionId: z.number().nullable().default(null),
               })
               .or(z.null()),
           )
@@ -963,6 +990,9 @@ export const missionAdmin = z
                 id: z.number(),
                 title: z.string(),
                 link: z.string(),
+                // 서버 배포 전 응답에는 없다. challengeVersionId null 은 공통 자료
+                missionContentsId: z.number().nullable().default(null),
+                challengeVersionId: z.number().nullable().default(null),
               })
               .or(z.null()),
           )
@@ -1179,6 +1209,14 @@ const contentsType = z.union([z.literal('ESSENTIAL'), z.literal('ADDITIONAL')]);
 
 type ContentsType = z.infer<typeof contentsType>;
 
+/** 미션 생성·수정 요청의 자료 항목. challengeVersionId null 은 공통 자료 */
+const missionContentsReq = z.object({
+  contentsId: z.number(),
+  challengeVersionId: z.number().nullable(),
+});
+
+export type MissionContentsReq = z.infer<typeof missionContentsReq>;
+
 /// POST /api/v1/mission/{id}
 const postMissionIdReq = z.object({
   th: z.number(),
@@ -1191,6 +1229,9 @@ const postMissionIdReq = z.object({
   missionType: MissionTypeEnum,
   essentialContentsIdList: z.array(z.number()),
   additionalContentsIdList: z.array(z.number()),
+  // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
+  essentialContents: z.array(missionContentsReq).optional(),
+  additionalContents: z.array(missionContentsReq).optional(),
 });
 
 export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
@@ -1207,6 +1248,9 @@ const patchMissionIdReq = z.object({
   missionType: MissionTypeEnum.optional(),
   essentialContentsIdList: z.array(z.number()).optional(),
   additionalContentsIdList: z.array(z.number()).optional(),
+  // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
+  essentialContents: z.array(missionContentsReq).optional(),
+  additionalContents: z.array(missionContentsReq).optional(),
 });
 
 export type UpdateMissionReq = z.infer<typeof patchMissionIdReq>;
