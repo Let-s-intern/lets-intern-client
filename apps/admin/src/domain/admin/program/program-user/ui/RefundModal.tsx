@@ -194,7 +194,15 @@ const RefundModal = ({
 
         {isFull ? (
           <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
-            <p>실결제액 전액을 환불합니다.</p>
+            {/*
+              전액 환불은 플랜 변경 차액까지 합쳐 돌려준다 (설계안 D11).
+              실결제액만 적으면 운영이 돌려줄 총액을 덜 읽는다.
+            */}
+            <p>
+              {target.additionalPaidAmount
+                ? `실결제액 ${target.finalPrice.toLocaleString()}원과 추가 수납 ${target.additionalPaidAmount.toLocaleString()}원을 합쳐 ${(target.finalPrice + target.additionalPaidAmount).toLocaleString()}원을 환불합니다.`
+                : '실결제액 전액을 환불합니다.'}
+            </p>
             {target.finalPrice === 0 && (
               // 100% 할인 쿠폰과 어드민 테스트 참여가 이 경로로 취소된다.
               // 서버가 PG 를 호출하지 않아 "성공했는데 돈이 안 나감"이 정상 결과다.

@@ -376,6 +376,26 @@ describe('RefundModal 플랜 변경 추가 수납', () => {
     ).toBeTruthy();
   });
 
+  it('전액 환불은 추가 수납을 합친 금액을 안내한다', () => {
+    // 전액 환불은 차액까지 돌려준다 (D11). 실결제액만 적으면 총액을 덜 읽는다.
+    renderModal('full', { additionalPaidAmount: 50000 });
+
+    expect(
+      screen.getByText(
+        '실결제액 330,000원과 추가 수납 50,000원을 합쳐 380,000원을 환불합니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('실결제액 전액을 환불합니다.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('추가 수납이 없으면 전액 환불 안내는 그대로다', () => {
+    renderModal('full', { additionalPaidAmount: 0 });
+
+    expect(screen.getByText('실결제액 전액을 환불합니다.')).toBeInTheDocument();
+  });
+
   it('추가 수납이 0원이면 줄을 숨긴다', () => {
     renderModal('full', { additionalPaidAmount: 0 });
 
