@@ -1802,6 +1802,19 @@ export const challengeApplicationsSchema = z
           originalPrice: z.number().nullable().optional(),
           challengeMentorId: z.number().nullable().optional(),
           challengeMentorName: z.string().nullable().optional(),
+          // 버전 없는 신청과 서버 배포 전 응답은 필드가 없다
+          challengeVersionId: z
+            .number()
+            .nullish()
+            .transform((val) => val ?? null),
+          challengeVersionTitle: z
+            .string()
+            .nullish()
+            .transform((val) => val ?? null),
+          mentorReassignmentRequired: z
+            .boolean()
+            .nullish()
+            .transform((val) => val ?? false),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),

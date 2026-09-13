@@ -1,13 +1,19 @@
+import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import AdminVersionChangeDialog from '@/domain/admin/challenge/version/AdminVersionChangeDialog';
 import {
   ChallengeApplication,
   challengeApplicationsSchema,
   grade,
 } from '@/schema';
 import axios from '@/utils/axios';
+import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
+
+type Participant = ChallengeApplication['application'];
 
 const gradeToText: Record<z.infer<typeof grade>, string> = {
   FIRST: '1학년',
@@ -95,6 +101,10 @@ const columns: GridColDef<ChallengeApplication['application']>[] = [
   { field: 'wishCompany', headerName: '희망기업', width: 150 },
 ];
 
+// 라이트 플랜과 취소한 참여자는 운영진도 버전을 바꿀 수 없다 (설계안 D1)
+const canChangeVersion = (participant: Participant) =>
+  !participant.isCanceled && participant.challengePricePlanType !== 'LIGHT';
+
 const ChallengeOperationParticipants = () => {
   const params = useParams<{ programId: string }>();
   const challengeId = params.programId;
@@ -115,16 +125,67 @@ const ChallengeOperationParticipants = () => {
   const applications =
     data?.applicationList?.map((item) => item.application) ?? [];
 
+  const { currentChallenge } = useAdminCurrentChallenge();
+  const versions = currentChallenge?.versionList ?? [];
+  const hasVersion = versions.length > 0;
+  const [versionTarget, setVersionTarget] = useState<Participant | null>(null);
+
+  // 버전 없는 챌린지는 버전 컬럼을 숨긴다. 있으면 결제 상품 바로 뒤에 둔다
+  const visibleColumns = useMemo(() => {
+    if (!hasVersion) return columns;
+
+    const versionColumns: GridColDef<Participant>[] = [
+      {
+        field: 'challengeVersionTitle',
+        headerName: '버전',
+        width: 100,
+        valueFormatter: (value) => value ?? '-',
+      },
+      {
+        field: 'versionChange',
+        headerName: '버전 변경',
+        width: 100,
+        sortable: false,
+        renderCell: ({ row }) => (
+          <Button
+            size="small"
+            variant="outlined"
+            disabled={!canChangeVersion(row)}
+            onClick={() => setVersionTarget(row)}
+          >
+            버전 변경
+          </Button>
+        ),
+      },
+    ];
+    const insertAt =
+      columns.findIndex((column) => column.field === 'challengePricePlanType') +
+      1;
+    return [
+      ...columns.slice(0, insertAt),
+      ...versionColumns,
+      ...columns.slice(insertAt),
+    ];
+  }, [hasVersion]);
+
   return (
     <main className="pt-3">
       <DownloadButtonGroup participants={applications} />
       <DataGrid
         rows={applications}
-        columns={columns}
+        columns={visibleColumns}
         disableRowSelectionOnClick
         autoHeight
         hideFooter
       />
+      {versionTarget ? (
+        <AdminVersionChangeDialog
+          challengeId={challengeId}
+          application={versionTarget}
+          versions={versions}
+          onClose={() => setVersionTarget(null)}
+        />
+      ) : null}
     </main>
   );
 };
