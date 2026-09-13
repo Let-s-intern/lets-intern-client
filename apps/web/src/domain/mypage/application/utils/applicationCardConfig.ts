@@ -26,6 +26,11 @@ export interface MypageApplicationCardConfig {
   contentFileUrl?: string;
   downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
+  /** 챌린지 버전. 버전이 없는 챌린지와 LIGHT 는 두지 않는다 (설계안 D1). */
+  version?: {
+    title: string;
+    changeable: boolean;
+  };
   /** 오픈채팅방 입장 버튼. 카드 우측 하단(구매플랜 행)에 별도로 렌더된다. */
   openChat?: {
     link: string;
@@ -66,6 +71,8 @@ const toProgramCardConfig = (
     pricePlanType,
     chatLink,
     chatPassword,
+    challengeVersionTitle,
+    canChangeVersion,
   } = application;
 
   const isChallenge = programType === 'CHALLENGE';
@@ -102,6 +109,11 @@ const toProgramCardConfig = (
   const purchasePlanText =
     isChallenge && pricePlanType
       ? challengePricePlanToText[pricePlanType] || pricePlanType
+      : undefined;
+
+  const version =
+    isChallenge && challengeVersionTitle && pricePlanType !== 'LIGHT'
+      ? { title: challengeVersionTitle, changeable: canChangeVersion }
       : undefined;
 
   const thumbnail =
@@ -159,6 +171,7 @@ const toProgramCardConfig = (
     dateLabel,
     dateText,
     purchasePlanText,
+    version,
     openChat,
     actionButton,
     isCompleted,

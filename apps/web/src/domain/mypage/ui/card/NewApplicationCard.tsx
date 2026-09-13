@@ -16,21 +16,35 @@ import ActionButton from '../button/ActionButton';
 
 interface NewApplicationCardProps {
   application: MypageApplication;
+  /** 버전 `변경` 을 누르면 신청 id 로 부른다. 모달은 ApplicationContent 가 연다. */
+  onVersionChangeClick?: (applicationId: number) => void;
 }
 
-const NewApplicationCard = ({ application }: NewApplicationCardProps) => {
+const NewApplicationCard = ({
+  application,
+  onVersionChangeClick,
+}: NewApplicationCardProps) => {
   const config = toMypageApplicationCardConfig(application);
-  return <MypageApplicationCard config={config} />;
+  return (
+    <MypageApplicationCard
+      config={config}
+      onVersionChangeClick={
+        onVersionChangeClick && (() => onVersionChangeClick(config.id))
+      }
+    />
+  );
 };
 
 export default NewApplicationCard;
 
 interface MypageApplicationCardProps {
   config: MypageApplicationCardConfig;
+  onVersionChangeClick?: () => void;
 }
 
 export const MypageApplicationCard = ({
   config,
+  onVersionChangeClick,
 }: MypageApplicationCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
@@ -147,7 +161,7 @@ export const MypageApplicationCard = ({
             )}
           </div>
 
-          {(config.purchasePlanText || config.openChat) && (
+          {(config.purchasePlanText || config.version || config.openChat) && (
             <div className="mt-2 flex flex-wrap items-center gap-2 md:mt-0">
               {config.purchasePlanText && (
                 <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
@@ -157,9 +171,30 @@ export const MypageApplicationCard = ({
                   </p>
                 </span>
               )}
-              {config.purchasePlanText && config.openChat && (
-                <div className="bg-neutral-80 h-3 w-px" />
+              {config.version && (
+                <>
+                  {config.purchasePlanText && (
+                    <div className="bg-neutral-80 h-3 w-px" />
+                  )}
+                  <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
+                    버전
+                    <span className="text-xxsmall12 text-primary-dark">
+                      {config.version.title}
+                    </span>
+                  </span>
+                  {config.version.changeable && onVersionChangeClick && (
+                    <button
+                      type="button"
+                      className="text-xxsmall12 text-primary"
+                      onClick={onVersionChangeClick}
+                    >
+                      변경
+                    </button>
+                  )}
+                </>
               )}
+              {(config.purchasePlanText || config.version) &&
+                config.openChat && <div className="bg-neutral-80 h-3 w-px" />}
               {config.openChat && (
                 <OpenChatLink
                   link={config.openChat.link}
