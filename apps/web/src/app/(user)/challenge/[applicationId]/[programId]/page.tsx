@@ -11,6 +11,7 @@ import MissionNotOpenSection from '@/domain/challenge/dashboard/section/MissionN
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
+import VersionSection from '@/domain/challenge/dashboard/section/VersionSection';
 import useCouponRewardPopup from '@/domain/challenge/hooks/useCouponRewardPopup';
 import { findNextUpcomingSchedule } from '@/domain/challenge/utils/missionTimeState';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
@@ -170,6 +171,7 @@ function ChallengeDashboardContent() {
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
+      <VersionSection applicationId={params.applicationId} />
       <div className="flex flex-col gap-4 md:gap-5">
         <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
