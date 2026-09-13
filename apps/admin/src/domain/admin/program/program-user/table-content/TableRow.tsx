@@ -130,6 +130,14 @@ const TableRow = ({
         couponName: applicationInfo.couponName ?? null,
         couponDiscount: applicationInfo.couponDiscount ?? null,
         finalPrice: applicationInfo.finalPrice ?? 0,
+        additionalPaidAmount:
+          programType === CHALLENGE
+            ? challengeApp.application.additionalPaidAmount
+            : 0,
+        pendingManualRefundAmount:
+          programType === CHALLENGE
+            ? challengeApp.application.pendingManualRefundAmount
+            : 0,
       },
       mode,
     );

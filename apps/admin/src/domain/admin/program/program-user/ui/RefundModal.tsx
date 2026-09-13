@@ -15,6 +15,10 @@ export interface RefundTarget {
   couponName: string | null;
   couponDiscount: number | null;
   finalPrice: number;
+  /** 플랜 변경으로 더 받은 차액 합계. 챌린지 신청에만 있다 (설계안 D12) */
+  additionalPaidAmount?: number;
+  /** 그중 결제 키가 없어 토스로 취소되지 않고, 환불 완료 기록 전인 금액 */
+  pendingManualRefundAmount?: number;
 }
 
 /**
@@ -157,7 +161,26 @@ const RefundModal = ({
 
           <dt className="text-neutral-500">실결제액</dt>
           <dd className="font-bold">{target.finalPrice.toLocaleString()}원</dd>
+
+          {!!target.additionalPaidAmount && (
+            <>
+              <dt className="text-neutral-500">추가 수납</dt>
+              <dd>{target.additionalPaidAmount.toLocaleString()}원</dd>
+            </>
+          )}
         </dl>
+
+        {/*
+          운영이 따로 받은 차액은 결제 키가 없어 이 환불로 돌려주지 못한다 (설계안 D12).
+          직접 돌려준 뒤 기록하는 곳을 여기서 알려주지 않으면 환불이 끝난 줄 안다.
+        */}
+        {!!target.pendingManualRefundAmount && (
+          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+            토스로 취소되지 않는 추가 수납{' '}
+            {target.pendingManualRefundAmount.toLocaleString()}원이 있습니다.
+            환불 후 플랜 변경 이력에서 환불 완료를 기록하세요.
+          </div>
+        )}
 
         {/*
           이용 이력은 대상 정보와 금액 입력 **사이**에 둔다(PRD 7.1).

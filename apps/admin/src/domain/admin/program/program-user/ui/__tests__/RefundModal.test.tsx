@@ -359,6 +359,57 @@ describe('RefundModal 이용 이력', () => {
   });
 });
 
+describe('RefundModal 플랜 변경 추가 수납', () => {
+  const MANUAL_REFUND_NOTICE =
+    '토스로 취소되지 않는 추가 수납 50,000원이 있습니다. 환불 후 플랜 변경 이력에서 환불 완료를 기록하세요.';
+
+  it('추가 수납을 실결제액 아래 줄로 보여준다', () => {
+    renderModal('full', { additionalPaidAmount: 50000 });
+
+    const finalPrice = screen.getByText('330,000원');
+    const additional = screen.getByText('50,000원');
+
+    expect(screen.getByText('추가 수납')).toBeInTheDocument();
+    expect(
+      finalPrice.compareDocumentPosition(additional) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('추가 수납이 0원이면 줄을 숨긴다', () => {
+    renderModal('full', { additionalPaidAmount: 0 });
+
+    expect(screen.queryByText('추가 수납')).not.toBeInTheDocument();
+  });
+
+  it('별도 환불할 금액이 있으면 환불 완료 기록을 안내한다', () => {
+    // 결제 키 없는 차액은 이 환불로 나가지 않는다. 알려주지 않으면 환불이 끝난 줄 안다 (D12).
+    renderModal('full', {
+      additionalPaidAmount: 50000,
+      pendingManualRefundAmount: 50000,
+    });
+
+    expect(screen.getByText(MANUAL_REFUND_NOTICE)).toBeInTheDocument();
+  });
+
+  it('토스로 받은 차액만 있으면 안내하지 않는다', () => {
+    renderModal('full', {
+      additionalPaidAmount: 50000,
+      pendingManualRefundAmount: 0,
+    });
+
+    expect(screen.queryByText(/토스로 취소되지 않는/)).not.toBeInTheDocument();
+  });
+
+  it('금액이 없는 대상은 줄도 안내도 없다', () => {
+    // 1대1 멘토링 등 챌린지가 아닌 환불은 두 금액을 넘기지 않는다.
+    renderModal('full');
+
+    expect(screen.queryByText('추가 수납')).not.toBeInTheDocument();
+    expect(screen.queryByText(/토스로 취소되지 않는/)).not.toBeInTheDocument();
+  });
+});
+
 describe('RefundModal 실행 조건', () => {
   it('확인 문장이 다르면 실행할 수 없다', async () => {
     const user = userEvent.setup();
