@@ -1,3 +1,4 @@
+import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
 import { useMissionOperations } from '@/hooks/useMissionOperation';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { Button } from '@mui/material';
@@ -40,7 +41,8 @@ function ChallengeOperationRegisterMissionToolbar({
 }
 
 const ChallengeOperationRegisterMission = () => {
-  const columns = getMissionColumns();
+  const { currentChallenge } = useAdminCurrentChallenge();
+  const columns = getMissionColumns(currentChallenge?.versionList ?? []);
   const apiRef = useGridApiRef();
   const { rows, createNewMission } = useMissionOperations(apiRef);
 
