@@ -73,6 +73,23 @@ describe('대시보드 VersionSection', () => {
     expect(screen.queryByRole('button', { name: '변경' })).toBeNull();
   });
 
+  it('버전 없이 신청했으면 미선택과 선택 버튼을 보이고, 모달은 현재 뱃지 없이 연다', async () => {
+    renderSection({
+      currentVersion: null,
+      versionList: VERSION_LIST,
+      deadline: '2026-09-20T23:59:00',
+      changeable: true,
+      unavailableReason: null,
+    });
+
+    expect(await screen.findByText('미선택')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '변경' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+    expect(await screen.findByText('버전 변경')).toBeInTheDocument();
+    expect(screen.queryByText('현재')).toBeNull();
+  });
+
   it.each(['NO_VERSION', 'LIGHT'])('%s 이면 그리지 않는다', async (reason) => {
     const { client, container } = renderSection({
       currentVersion: CURRENT,

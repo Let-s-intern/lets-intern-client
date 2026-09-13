@@ -213,6 +213,27 @@ describe('toMypageApplicationCardConfig - 버전 (LC-3247)', () => {
     ).toBeUndefined();
   });
 
+  it('버전 없이 신청했지만 고를 수 있으면 버전명 없이 선택 가능을 넘긴다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        challengeVersionTitle: null,
+        canChangeVersion: true,
+      }),
+    ).toEqual({ title: null, changeable: true });
+  });
+
+  it('LIGHT 플랜은 고를 수 있다고 와도 노출하지 않는다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        challengeVersionTitle: null,
+        canChangeVersion: true,
+      }),
+    ).toBeUndefined();
+  });
+
   it('버전이 없는 챌린지는 노출하지 않는다', () => {
     expect(
       versionOf({

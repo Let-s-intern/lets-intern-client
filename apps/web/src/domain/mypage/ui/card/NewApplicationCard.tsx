@@ -178,9 +178,15 @@ export const MypageApplicationCard = ({
                   )}
                   <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
                     버전
-                    <span className="text-xxsmall12 text-primary-dark">
-                      {config.version.title}
-                    </span>
+                    {config.version.title ? (
+                      <span className="text-xxsmall12 text-primary-dark">
+                        {config.version.title}
+                      </span>
+                    ) : (
+                      <span className="text-xxsmall12 text-neutral-40">
+                        미선택
+                      </span>
+                    )}
                   </span>
                   {config.version.changeable && onVersionChangeClick && (
                     <button
@@ -188,7 +194,7 @@ export const MypageApplicationCard = ({
                       className="text-xxsmall12 text-primary"
                       onClick={onVersionChangeClick}
                     >
-                      변경
+                      {config.version.title ? '변경' : '선택'}
                     </button>
                   )}
                 </>

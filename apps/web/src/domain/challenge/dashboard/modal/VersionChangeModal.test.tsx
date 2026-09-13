@@ -138,4 +138,21 @@ describe('대시보드 VersionChangeModal', () => {
       challengeVersionId: 2,
     });
   });
+  it('현재 버전이 없으면 뱃지 없이 열고, 아무 버전이나 고르면 변경하기가 활성이다', async () => {
+    axiosGet.mockResolvedValue({
+      data: { data: { ...VERSION, currentVersion: null } },
+    });
+    renderModal();
+    const submit = screen.getByRole('button', { name: '변경하기' });
+
+    expect(
+      await screen.findByRole('radio', { name: /대학생/ }),
+    ).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /이직자/ })).not.toBeChecked();
+    expect(screen.queryByText('현재')).toBeNull();
+    expect(submit).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('radio', { name: /대학생/ }));
+    expect(submit).toBeEnabled();
+  });
 });
