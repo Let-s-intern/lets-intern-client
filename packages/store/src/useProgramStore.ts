@@ -22,6 +22,8 @@ interface ProgramApplicationFormStore extends HydrationStore {
     programOrderId: string | null;
     isFree: boolean | null;
     deposit: number;
+    // 신청 입력에서 고른 챌린지 버전. 버전을 묻지 않는 신청은 null (LC-3247)
+    challengeVersionId: number | null;
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -59,6 +61,7 @@ const useProgramStore = create(
         programOrderId: null,
         isFree: null,
         deposit: 0,
+        challengeVersionId: null,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -90,14 +93,18 @@ const useProgramStore = create(
             programOrderId: null,
             isFree: null,
             deposit: 0,
+            challengeVersionId: null,
           },
         });
       },
 
       // data내에 하나라도 null이 있으면 true 반환
+      // challengeVersionId 는 LIGHT·버전 없는 챌린지·챌린지 외 프로그램에서 null 이 정상이라 제외한다 (LC-3247)
       checkInvalidate: () => {
         const currentData = get().data;
-        return Object.values(currentData).some((value) => value === null);
+        return Object.entries(currentData).some(
+          ([key, value]) => key !== 'challengeVersionId' && value === null,
+        );
       },
     }),
     {

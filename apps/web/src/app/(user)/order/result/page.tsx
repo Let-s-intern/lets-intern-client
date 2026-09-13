@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  PostApplicationInterface,
-  PostApplicationResult,
-} from '@/api/application';
+import { PostApplicationResult } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
 import {
   getPaymentMethodLabel,
@@ -12,6 +9,7 @@ import {
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '@/domain/program/ProgramCard';
+import { buildPostApplicationBody } from '@/domain/program/program-detail/apply/utils/postApplicationBody';
 import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
@@ -67,26 +65,7 @@ const PaymentResultContent = () => {
       return;
     }
 
-    const body: PostApplicationInterface = {
-      paymentInfo: {
-        couponId: programApplicationData.couponId
-          ? Number(programApplicationData.couponId)
-          : null,
-        priceId: programApplicationData.priceId ?? -1,
-        paymentKey:
-          programApplicationData.isFree === true || !params.paymentKey
-            ? null
-            : params.paymentKey,
-        orderId: params.orderId,
-        amount:
-          programApplicationData.isFree === true || !params.amount
-            ? (programApplicationData.totalPrice?.toString() ?? '0')
-            : (params.amount?.toString() ?? '0'),
-      },
-      contactEmail: programApplicationData.contactEmail ?? '',
-      motivate: '',
-      question: programApplicationData.question ?? '',
-    };
+    const body = buildPostApplicationBody(programApplicationData, params);
 
     axios
       .post(

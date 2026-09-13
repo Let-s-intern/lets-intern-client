@@ -18,6 +18,8 @@ import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/M
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
+import VersionSelectSection from '@/domain/program/program-detail/apply/section/VersionSelectSection';
+import { isVersionSelectRequired } from '@/domain/program/program-detail/apply/utils/challengeVersion';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -101,6 +103,22 @@ const PaymentInputContent = () => {
         (challengeBasicPriceInfo?.refund ?? 0) -
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
+
+  // 챌린지 버전 (LC-3247). 선택한 가격이 LIGHT 면 버전을 묻지 않는다 (설계안 D1)
+  const versionList =
+    program && 'versionList' in program ? program.versionList : [];
+  const selectedPlanType =
+    program && 'priceInfo' in program && Array.isArray(program.priceInfo)
+      ? (program.priceInfo as ChallengePriceInfo[]).find(
+          (info) => info.priceId === programApplicationData.priceId,
+        )?.challengePricePlanType
+      : null;
+  const isVersionRequired = isVersionSelectRequired(
+    versionList,
+    selectedPlanType,
+  );
+  const challengeVersionId = programApplicationData.challengeVersionId ?? null;
+  const isVersionMissing = isVersionRequired && challengeVersionId === null;
 
   /**
    * 쿠폰 섹션 노출 여부
@@ -204,6 +222,11 @@ const PaymentInputContent = () => {
 
   // 약관 동의 가드·흔들림은 PaymentSubmitSection이 담당한다(동의 시에만 호출됨).
   const onPaymentClick = useCallback(async () => {
+    // 버전을 묻지 않는 신청(LIGHT 등)은 앞서 고른 값이 남아 있어도 비워서 보낸다
+    setProgramApplicationForm({
+      challengeVersionId: isVersionRequired ? challengeVersionId : null,
+    });
+
     try {
       await patchUserMutation.mutateAsync({
         contactEmail: programApplicationData.contactEmail,
@@ -233,7 +256,9 @@ const PaymentInputContent = () => {
       );
     }
   }, [
+    challengeVersionId,
     handleSafeNavigation,
+    isVersionRequired,
     patchUserMutation,
     programApplicationData.contactEmail,
     programApplicationData.programOrderId,
@@ -377,6 +402,16 @@ const PaymentInputContent = () => {
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
+      {isVersionRequired && (
+        <VersionSelectSection
+          versionList={versionList}
+          selectedVersionId={challengeVersionId}
+          onSelect={(id) =>
+            setProgramApplicationForm({ challengeVersionId: id })
+          }
+        />
+      )}
+
       {!programApplicationData.isFree && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="text-neutral-0 font-semibold">결제 정보</div>
@@ -450,7 +485,8 @@ const PaymentInputContent = () => {
       <PaymentSubmitSection
         onSubmit={onPaymentClick}
         buttonText={buttonText}
-        disabled={!isFormValid}
+        disabled={!isFormValid || isVersionMissing}
+        notice={isVersionMissing ? '버전을 선택해주세요' : undefined}
       />
     </div>
   );
