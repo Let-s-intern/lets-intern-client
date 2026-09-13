@@ -1,12 +1,19 @@
+import { usePlanChangeMutation } from '@/api/planChange';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import PlanChangeModal from '@/domain/admin/challenge/plan-change/PlanChangeModal';
+import {
+  buildPlanChangeSuccessMessage,
+  getPlanChangeDisabledReason,
+} from '@/domain/admin/challenge/plan-change/utils/planChangeConfirm';
 import AdminVersionChangeDialog from '@/domain/admin/challenge/version/AdminVersionChangeDialog';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   ChallengeApplication,
   challengeApplicationsSchema,
   grade,
 } from '@/schema';
 import axios from '@/utils/axios';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
@@ -130,9 +137,47 @@ const ChallengeOperationParticipants = () => {
   const hasVersion = versions.length > 0;
   const [versionTarget, setVersionTarget] = useState<Participant | null>(null);
 
-  // 버전 없는 챌린지는 버전 컬럼을 숨긴다. 있으면 결제 상품 바로 뒤에 둔다
+  const { snackbar } = useAdminSnackbar();
+  const [planChangeTarget, setPlanChangeTarget] = useState<Participant | null>(
+    null,
+  );
+  const { mutate: changePlan, isPending: isPlanChanging } =
+    usePlanChangeMutation({
+      challengeId: challengeId ?? '',
+      onSuccess: (result) => {
+        snackbar(buildPlanChangeSuccessMessage(result.toPlan));
+        setPlanChangeTarget(null);
+      },
+      // 서버 문구를 그대로 띄우고 모달은 열어 둔다
+      onError: snackbar,
+    });
+
+  // 결제 상품 바로 뒤에 플랜 변경을 둔다. 버전 없는 챌린지는 버전 컬럼을 숨기고, 있으면 그 뒤에 둔다
   const visibleColumns = useMemo(() => {
-    if (!hasVersion) return columns;
+    const planChangeColumn: GridColDef<Participant> = {
+      field: 'planChange',
+      headerName: '플랜 변경',
+      width: 100,
+      sortable: false,
+      renderCell: ({ row }) => {
+        const disabledReason = getPlanChangeDisabledReason(row);
+        return (
+          // 비활성 버튼은 마우스 이벤트를 받지 않아 span 이 툴팁을 받는다
+          <Tooltip title={disabledReason ?? ''}>
+            <span>
+              <Button
+                size="small"
+                variant="outlined"
+                disabled={disabledReason !== null}
+                onClick={() => setPlanChangeTarget(row)}
+              >
+                플랜 변경
+              </Button>
+            </span>
+          </Tooltip>
+        );
+      },
+    };
 
     const versionColumns: GridColDef<Participant>[] = [
       {
@@ -163,7 +208,8 @@ const ChallengeOperationParticipants = () => {
       1;
     return [
       ...columns.slice(0, insertAt),
-      ...versionColumns,
+      planChangeColumn,
+      ...(hasVersion ? versionColumns : []),
       ...columns.slice(insertAt),
     ];
   }, [hasVersion]);
@@ -184,6 +230,20 @@ const ChallengeOperationParticipants = () => {
           application={versionTarget}
           versions={versions}
           onClose={() => setVersionTarget(null)}
+        />
+      ) : null}
+      {planChangeTarget ? (
+        <PlanChangeModal
+          target={{
+            applicationId: planChangeTarget.id,
+            name: planChangeTarget.name ?? '-',
+            programTitle: currentChallenge?.title ?? '-',
+          }}
+          isSubmitting={isPlanChanging}
+          onSubmit={(body) =>
+            changePlan({ applicationId: planChangeTarget.id, body })
+          }
+          onClose={() => setPlanChangeTarget(null)}
         />
       ) : null}
     </main>

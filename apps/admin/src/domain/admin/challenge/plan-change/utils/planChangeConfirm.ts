@@ -57,3 +57,29 @@ export const buildPlanChangeConfirmSentence = ({
   additionalAmount,
 }: PlanChangeConfirmInput): string =>
   `${name}님을 ${formatPlan(fromPlan)}에서 ${withRo(formatPlan(toPlan))} 변경하고 추가 수납 ${additionalAmount.toLocaleString()}원을 기록합니다`;
+
+export interface PlanChangeParticipant {
+  isCanceled?: boolean | null;
+  challengePricePlanType?: ChallengePricePlan | null;
+}
+
+/**
+ * 참여자 표의 플랜 변경 버튼을 막는 사유. null 이면 변경할 수 있다.
+ * 서버도 같은 조건으로 거절하지만, 누르기 전에 이유를 보여준다 (설계안 D1)
+ */
+export const getPlanChangeDisabledReason = ({
+  isCanceled,
+  challengePricePlanType,
+}: PlanChangeParticipant): string | null => {
+  if (isCanceled) return '취소된 신청은 플랜을 변경할 수 없습니다';
+  if (challengePricePlanType === 'LIGHT') {
+    return '라이트 플랜은 변경할 수 없습니다';
+  }
+  if (challengePricePlanType === 'PREMIUM') {
+    return '이미 가장 높은 플랜입니다';
+  }
+  return null;
+};
+
+export const buildPlanChangeSuccessMessage = (toPlan: ChallengePricePlan) =>
+  `플랜을 ${withRo(formatPlan(toPlan))} 변경했습니다`;
