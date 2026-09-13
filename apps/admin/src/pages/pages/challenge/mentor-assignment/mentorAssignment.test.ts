@@ -1,5 +1,80 @@
 import { describe, expect, it } from 'vitest';
 
+import { challengeApplicationsSchema } from '@/schema';
+
+import type { MentorAssignmentRow } from './types';
+import { sortReassignmentRequiredFirst } from './utils';
+
+const row = (
+  id: number,
+  mentorReassignmentRequired: boolean,
+): MentorAssignmentRow => ({
+  id,
+  name: `참여자${id}`,
+  email: '-',
+  phoneNum: '-',
+  major: '-',
+  wishJob: '-',
+  wishCompany: '-',
+  pricePlanType: 'STANDARD',
+  matchedMentorId: 10,
+  mentorReassignmentRequired,
+});
+
+describe('재배정 필요 행 정렬', () => {
+  it('재배정 필요 행을 위로 올리고, 각 묶음 안의 순서는 유지한다', () => {
+    const rows = [row(1, false), row(2, true), row(3, false), row(4, true)];
+
+    expect(sortReassignmentRequiredFirst(rows).map((r) => r.id)).toEqual([
+      2, 4, 1, 3,
+    ]);
+    expect(rows.map((r) => r.id)).toEqual([1, 2, 3, 4]);
+  });
+
+  it('재배정 필요 행이 없으면 순서가 그대로다', () => {
+    const rows = [row(3, false), row(1, false), row(2, false)];
+
+    expect(sortReassignmentRequiredFirst(rows).map((r) => r.id)).toEqual([
+      3, 1, 2,
+    ]);
+  });
+});
+
+describe('참여자 응답의 버전 필드', () => {
+  it('필드가 없는 응답은 버전 null, 재배정 필요 false 로 읽는다', () => {
+    const { applicationList } = challengeApplicationsSchema.parse({
+      applicationList: [{ application: { id: 1 } }],
+    });
+
+    expect(applicationList[0].application).toMatchObject({
+      challengeVersionId: null,
+      challengeVersionTitle: null,
+      mentorReassignmentRequired: false,
+    });
+  });
+
+  it('필드가 있는 응답은 값을 그대로 읽는다', () => {
+    const { applicationList } = challengeApplicationsSchema.parse({
+      applicationList: [
+        {
+          application: {
+            id: 1,
+            challengeVersionId: 10,
+            challengeVersionTitle: '대학생',
+            mentorReassignmentRequired: true,
+          },
+        },
+      ],
+    });
+
+    expect(applicationList[0].application).toMatchObject({
+      challengeVersionId: 10,
+      challengeVersionTitle: '대학생',
+      mentorReassignmentRequired: true,
+    });
+  });
+});
+
 describe('MentorAssignmentRow 멘티 정보 매핑', () => {
   it('applications 데이터에서 멘티 정보를 추출하여 row에 매핑한다', () => {
     const applicationsList = [

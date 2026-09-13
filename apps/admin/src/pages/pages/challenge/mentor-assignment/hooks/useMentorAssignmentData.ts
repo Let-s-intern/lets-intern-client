@@ -80,6 +80,7 @@ const useMentorAssignmentData = (programId: string) => {
         wishJob: string;
         wishCompany: string;
         pricePlanType: string;
+        mentorReassignmentRequired: boolean;
       }
     > = {};
     applicationsData?.applicationList.forEach((a) => {
@@ -88,6 +89,7 @@ const useMentorAssignmentData = (programId: string) => {
         wishJob: a.application.wishJob ?? '-',
         wishCompany: a.application.wishCompany ?? '-',
         pricePlanType: a.application.challengePricePlanType ?? '-',
+        mentorReassignmentRequired: a.application.mentorReassignmentRequired,
       };
     });
     return map;
@@ -208,6 +210,8 @@ const useMentorAssignmentData = (programId: string) => {
             wishCompany: details?.wishCompany ?? '-',
             pricePlanType: details?.pricePlanType ?? '-',
             matchedMentorId: effectiveMentors[p.applicationId] ?? null,
+            mentorReassignmentRequired:
+              details?.mentorReassignmentRequired ?? false,
           };
         }),
     [participants, effectiveMentors, applicationDetailsMap, isLegacy],
