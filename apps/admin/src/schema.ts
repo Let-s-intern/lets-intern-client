@@ -1815,6 +1815,16 @@ export const challengeApplicationsSchema = z
             .boolean()
             .nullish()
             .transform((val) => val ?? false),
+          // 플랜 변경 차액 합계와, 그중 결제 키가 없어 환불 완료 기록 전인 금액 (설계안 D12).
+          // 플랜을 바꾸지 않은 신청과 서버 배포 전 응답은 필드가 없다
+          additionalPaidAmount: z
+            .number()
+            .nullish()
+            .transform((val) => val ?? 0),
+          pendingManualRefundAmount: z
+            .number()
+            .nullish()
+            .transform((val) => val ?? 0),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),
