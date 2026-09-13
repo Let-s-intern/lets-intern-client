@@ -98,6 +98,27 @@ describe('getPlanChangeDisabledReason', () => {
     ).toBe('취소된 신청은 플랜을 변경할 수 없습니다');
   });
 
+  it('플랜이 비어 있는 레거시 신청은 막는다', () => {
+    expect(
+      getPlanChangeDisabledReason({
+        isCanceled: false,
+        challengePricePlanType: null,
+      }),
+    ).toBe('플랜 정보가 없는 신청은 변경할 수 없습니다');
+    expect(getPlanChangeDisabledReason({ isCanceled: false })).toBe(
+      '플랜 정보가 없는 신청은 변경할 수 없습니다',
+    );
+  });
+
+  it('취소와 플랜 없음이 겹치면 취소 사유를 먼저 보여준다', () => {
+    expect(
+      getPlanChangeDisabledReason({
+        isCanceled: true,
+        challengePricePlanType: null,
+      }),
+    ).toBe('취소된 신청은 플랜을 변경할 수 없습니다');
+  });
+
   it('베이직·스탠다드 참여자는 막지 않는다', () => {
     expect(
       getPlanChangeDisabledReason({

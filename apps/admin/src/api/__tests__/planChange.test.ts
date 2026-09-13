@@ -149,6 +149,16 @@ describe('planChangeInfoSchema', () => {
 
     expect(parsed.options).toEqual([]);
   });
+
+  it('플랜이 없는 레거시 신청은 현재 플랜을 null 로 읽는다', () => {
+    const parsed = planChangeInfoSchema.parse({
+      currentPlan: null,
+      options: [],
+      logs: [],
+    });
+
+    expect(parsed.currentPlan).toBeNull();
+  });
 });
 
 describe('planChangeRequestSchema', () => {

@@ -58,6 +58,9 @@ export const buildPlanChangeConfirmSentence = ({
 }: PlanChangeConfirmInput): string =>
   `${name}님을 ${formatPlan(fromPlan)}에서 ${withRo(formatPlan(toPlan))} 변경하고 추가 수납 ${additionalAmount.toLocaleString()}원을 기록합니다`;
 
+/** 옵션 도입 전 레거시 챌린지의 신청은 플랜이 비어 있다. 올릴 기준이 없어 막는다 */
+export const PLAN_MISSING_REASON = '플랜 정보가 없는 신청은 변경할 수 없습니다';
+
 export interface PlanChangeParticipant {
   isCanceled?: boolean | null;
   challengePricePlanType?: ChallengePricePlan | null;
@@ -72,6 +75,7 @@ export const getPlanChangeDisabledReason = ({
   challengePricePlanType,
 }: PlanChangeParticipant): string | null => {
   if (isCanceled) return '취소된 신청은 플랜을 변경할 수 없습니다';
+  if (!challengePricePlanType) return PLAN_MISSING_REASON;
   if (challengePricePlanType === 'LIGHT') {
     return '라이트 플랜은 변경할 수 없습니다';
   }

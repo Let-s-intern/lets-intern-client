@@ -42,7 +42,8 @@ export const planChangeOptionSchema = z.object({
 export type PlanChangeOption = z.infer<typeof planChangeOptionSchema>;
 
 export const planChangeInfoSchema = z.object({
-  currentPlan: ChallengePricePlanEnum,
+  /** 옵션 도입 전 레거시 챌린지는 결제 플랜부터 없어 null 로 온다. 이런 신청은 바꿀 수 없다 */
+  currentPlan: ChallengePricePlanEnum.nullable(),
   options: z.array(planChangeOptionSchema),
   logs: z.array(planChangeLogSchema),
 });

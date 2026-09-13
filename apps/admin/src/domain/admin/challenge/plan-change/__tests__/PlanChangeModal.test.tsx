@@ -206,4 +206,29 @@ describe('PlanChangeModal', () => {
       reason: '9/12 계좌이체 입금 확인',
     });
   });
+
+  it('플랜이 없는 레거시 신청은 변경 불가 안내만 보이고 변경이 비활성이다', async () => {
+    planChangeQuery.mockReturnValue({
+      data: { currentPlan: null, options: [], logs: [] },
+      isLoading: false,
+      isError: false,
+    });
+    const { onSubmit, user } = renderModal();
+
+    expect(
+      screen.getByText('플랜 정보가 없는 신청은 변경할 수 없습니다'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('combobox', { name: '변경할 플랜' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('textbox', { name: '수납 금액' }),
+    ).not.toBeInTheDocument();
+
+    await fillManagerAndReason(user);
+    await user.click(submitButton());
+
+    expect(submitButton()).toBeDisabled();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });

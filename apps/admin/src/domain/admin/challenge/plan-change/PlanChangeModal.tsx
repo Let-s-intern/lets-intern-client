@@ -6,6 +6,7 @@ import {
   buildPlanChangeConfirmSentence,
   formatPlan,
   getUpgradeOptions,
+  PLAN_MISSING_REASON,
 } from './utils/planChangeConfirm';
 
 export interface PlanChangeTarget {
@@ -38,7 +39,10 @@ const PlanChangeModal = ({
   const [managerName, setManagerName] = useState('');
   const [reason, setReason] = useState('');
 
-  const options = data ? getUpgradeOptions(data.currentPlan, data.options) : [];
+  // 플랜이 없는 레거시 신청은 표에서 막히지만, 열리더라도 고를 선택지를 주지 않는다
+  const options = data?.currentPlan
+    ? getUpgradeOptions(data.currentPlan, data.options)
+    : [];
   const selected = options.find((option) => option.planType === toPlan);
   const amount = amountInput === '' ? null : Number(amountInput);
   const isAmountEdited =
@@ -84,7 +88,7 @@ const PlanChangeModal = ({
           <dd>{target.programTitle}</dd>
 
           <dt className="text-neutral-500">현재 플랜</dt>
-          <dd>{data ? formatPlan(data.currentPlan) : '-'}</dd>
+          <dd>{data?.currentPlan ? formatPlan(data.currentPlan) : '-'}</dd>
         </dl>
 
         {isLoading ? (
@@ -95,6 +99,8 @@ const PlanChangeModal = ({
           <p className="mb-3 text-sm text-red-600">
             플랜 정보를 불러오지 못했습니다.
           </p>
+        ) : data?.currentPlan === null ? (
+          <p className="mb-3 text-sm text-red-600">{PLAN_MISSING_REASON}</p>
         ) : (
           <>
             <div className="mb-3">
@@ -184,7 +190,7 @@ const PlanChangeModal = ({
           />
         </label>
 
-        {data && selected && amount !== null ? (
+        {data?.currentPlan && selected && amount !== null ? (
           <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
             {buildPlanChangeConfirmSentence({
               name: target.name,
