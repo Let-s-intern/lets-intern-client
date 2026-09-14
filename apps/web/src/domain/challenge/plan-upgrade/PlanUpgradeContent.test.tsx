@@ -257,11 +257,11 @@ describe('PlanUpgradeContent', () => {
       );
 
       expect(
-        screen.getByText('PREMIUM 플랜 금액').nextSibling,
+        screen.getByText('프리미엄 플랜 금액').nextSibling,
       ).toHaveTextContent('250,000원');
       expect(
-        screen.getByText('현재 BASIC 플랜 금액').nextSibling,
-      ).toHaveTextContent('-84,000원');
+        screen.getByText('현재 베이직 플랜 금액').nextSibling,
+      ).toHaveTextContent('- 84,000원');
 
       await user.click(screen.getByRole('radio', { name: /STANDARD/ }));
 

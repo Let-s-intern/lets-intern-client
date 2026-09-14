@@ -1,6 +1,7 @@
 import DownIcon from '@/assets/icons/down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import type { ChallengePricePlan } from '@/schema';
+import { challengePricePlanToText } from '@/utils/convert';
 import { useState } from 'react';
 
 interface PriceDetailAccordionProps {
@@ -21,7 +22,7 @@ const NOTICES = [
   '환불할 때는 처음 결제 금액과 추가 결제 금액을 합쳐 환불 규정에 따라 계산돼요.',
 ];
 
-/** 추가 결제 금액이 판매가 차액이라는 것을 펼쳐 보여준다. 접힌 상태로 시작한다 */
+/** 추가 결제 금액이 판매가 차액이라는 것을 `상위 플랜 금액 - 현재 플랜 금액 = 추가 결제 금액` 식으로 펼쳐 보여준다. 접힌 상태로 시작한다 */
 const PriceDetailAccordion = ({
   currentPlanType,
   currentSalePrice,
@@ -51,17 +52,17 @@ const PriceDetailAccordion = ({
       {isOpen && (
         <div className="flex flex-col pb-2">
           <div className={ROW_CLASS_NAME}>
-            <span>{targetPlanType} 플랜 금액</span>
+            <span>{challengePricePlanToText[targetPlanType]} 플랜 금액</span>
             <span>{targetSalePrice.toLocaleString()}원</span>
           </div>
           <div className={ROW_CLASS_NAME}>
-            <span>현재 {currentPlanType} 플랜 금액</span>
-            <span>-{currentSalePrice.toLocaleString()}원</span>
+            <span>현재 {challengePricePlanToText[currentPlanType]} 플랜 금액</span>
+            <span>- {currentSalePrice.toLocaleString()}원</span>
           </div>
           <hr className="bg-neutral-85" />
           <div className={twMerge(ROW_CLASS_NAME, 'font-semibold')}>
             <span>추가 결제 금액</span>
-            <span>{additionalAmount.toLocaleString()}원</span>
+            <span>= {additionalAmount.toLocaleString()}원</span>
           </div>
           <ul className="text-xsmall14 text-neutral-40 mt-2 flex flex-col gap-1 px-3">
             {NOTICES.map((notice) => (

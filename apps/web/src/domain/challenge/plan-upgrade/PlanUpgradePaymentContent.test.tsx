@@ -36,6 +36,11 @@ jest.mock('@/store/useAuthStore', () => ({
   default: jest.fn(),
 }));
 
+// 실제 모듈은 신청 API 를 거쳐 jest 가 변환하지 못하는 nanoid 까지 불러온다
+jest.mock('@/lib/order', () => ({
+  generateOrderId: () => 'letsAb123456',
+}));
+
 jest.mock('./api/planUpgrade', () => ({
   usePlanUpgradeQuery: jest.fn(),
 }));
@@ -168,7 +173,6 @@ describe('PlanUpgradePaymentContent', () => {
   });
 
   it('결제 요청에 주문 번호 형식과 성공·실패 주소를 싣는다', async () => {
-    jest.spyOn(Date, 'now').mockReturnValue(1760000000000);
     renderPage('plan=STANDARD');
 
     fireEvent.click(await findEnabledPayButton());
@@ -176,8 +180,8 @@ describe('PlanUpgradePaymentContent', () => {
     await waitFor(() => expect(widgets.requestPayment).toHaveBeenCalled());
     const [request] = widgets.requestPayment.mock.calls[0];
     expect(request).toMatchObject({
-      orderId: 'plan-upgrade-7-1760000000000',
-      orderName: '경험정리 챌린지 20기 STANDARD 플랜 업그레이드',
+      orderId: 'letsAb123456',
+      orderName: '경험정리 챌린지 20기 베이직 -> 스탠다드',
       successUrl: `${window.location.origin}/plan-upgrade/7/result?plan=STANDARD`,
       failUrl: `${window.location.origin}/plan-upgrade/7/fail?plan=STANDARD`,
       customerMobilePhone: '01012345678',
@@ -185,7 +189,7 @@ describe('PlanUpgradePaymentContent', () => {
     expect(request.orderId).toMatch(/^[A-Za-z0-9_-]{6,64}$/);
   });
 
-  it('주문명은 100자에서 자른다', async () => {
+  it('주문명은 100자에서 자르되 플랜 변경 부분은 남긴다', async () => {
     usePlanUpgradeQueryMock.mockReturnValue({
       data: { ...upgradable, challengeTitle: '가'.repeat(120) },
       isError: false,
@@ -195,7 +199,9 @@ describe('PlanUpgradePaymentContent', () => {
     fireEvent.click(await findEnabledPayButton());
 
     await waitFor(() => expect(widgets.requestPayment).toHaveBeenCalled());
-    expect(widgets.requestPayment.mock.calls[0][0].orderName).toHaveLength(100);
+    const { orderName } = widgets.requestPayment.mock.calls[0][0];
+    expect(orderName).toHaveLength(100);
+    expect(orderName.endsWith(' 베이직 -> 스탠다드')).toBe(true);
   });
 
   it('위젯을 불러오지 못하면 오류 문구를 보이고 버튼을 막는다', async () => {
