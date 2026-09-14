@@ -1,25 +1,26 @@
-import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
+import { AdminRefundRequest } from '@/api/adminRefund';
 import {
   passParticipantListQueryKey,
   useGetPassParticipantsQuery,
   useRefundPassParticipantMutation,
 } from '@/api/all-in-one-pass/useParticipants';
-import { AdminRefundRequest } from '@/api/adminRefund';
+import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
-import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
-import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import RefundModal, {
   RefundMode,
   RefundTarget,
 } from '@/domain/admin/program/program-user/ui/RefundModal';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import { PassParticipant } from '@/domain/all-in-one-pass/types';
+import DownloadActions from '@/domain/all-in-one-pass/ui/participant/DownloadActions';
+import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
+import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
-import { IoArrowBack } from 'react-icons/io5';
 import { useMemo, useState } from 'react';
+import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 
 /** 올인원패스 참여자 조회 (기존 참여자 레이아웃 + 환불 + 이용 프로그램 조회) */
@@ -78,6 +79,12 @@ export default function AllInOnePassUsers() {
         </Link>
         <Header>
           <Heading>{passTitle} 참여자</Heading>
+          {participants.length > 0 && (
+            <DownloadActions
+              participants={participants}
+              programTitle={passTitle}
+            />
+          )}
         </Header>
       </div>
 
