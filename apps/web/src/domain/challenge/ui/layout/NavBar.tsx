@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
-import PlanVersionBanner from './PlanVersionBanner';
 import { getPlanVersionNavItem, type NavItem } from './planVersionNavItem';
 
 const NavBar = () => {
@@ -173,17 +172,9 @@ const NavBar = () => {
             );
           })}
         </ul>
-        {/* 데스크탑: 사이드바 하단 쿠폰 배너, 그 아래 플랜 업그레이드·버전 변경 배너 */}
-        <div className="hidden md:mt-4 md:flex md:flex-col md:gap-3">
+        {/* 데스크탑: 사이드바 하단 쿠폰 배너 */}
+        <div className="hidden md:mt-4 md:block">
           <CouponBanner />
-          <PlanVersionBanner
-            planUpgradeHref={
-              canUpgradePlan ? `/plan-upgrade/${applicationId}` : undefined
-            }
-            onVersionChangeClick={
-              canChangeVersion ? openVersionModal : undefined
-            }
-          />
         </div>
       </nav>
       {isVersionModalOpen && (
