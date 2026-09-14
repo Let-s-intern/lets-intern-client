@@ -1,5 +1,6 @@
 'use client';
 
+import AlertModal from '@/common/alert/AlertModal';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import useAuthStore from '@/store/useAuthStore';
@@ -73,6 +74,7 @@ const PlanUpgradeForm = ({
     selectInitialPlan(options, planQuery),
   );
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const selectedOption = options.find(
     (option) => option.planType === selectedPlan,
@@ -110,6 +112,7 @@ const PlanUpgradeForm = ({
   }
 
   const goToPayment = () => {
+    setIsConfirmOpen(false);
     setIsNavigating(true);
     router.push(
       `/plan-upgrade/${applicationId}/payment?plan=${selectedOption.planType}`,
@@ -159,9 +162,24 @@ const PlanUpgradeForm = ({
       </div>
       <UpgradeBottomBar
         buttonText={formatUpgradeCta(selectedOption.additionalAmount)}
-        onClick={goToPayment}
+        onClick={() => setIsConfirmOpen(true)}
         disabled={isNavigating}
       />
+      {/* 업그레이드도 한 번만 할 수 있어 결제 전에 한 번 더 알린다 */}
+      {isConfirmOpen && (
+        <AlertModal
+          className="m-5 md:m-0"
+          title="플랜을 업그레이드할까요?"
+          confirmText="결제하러 가기"
+          cancelText="취소"
+          onConfirm={goToPayment}
+          onCancel={() => setIsConfirmOpen(false)}
+        >
+          <p className="text-xsmall14 text-neutral-20 whitespace-pre-line text-center">
+            {`플랜 업그레이드는 한 번만 할 수 있어요.\n${selectedOption.planType} 플랜으로 결제하면 다시 변경하기 어려워요.`}
+          </p>
+        </AlertModal>
+      )}
     </>
   );
 };

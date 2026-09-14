@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 
 import axios from '@/utils/axios';
 import { ApiError } from '@letscareer/api';
@@ -99,6 +105,7 @@ describe('대시보드 VersionChangeModal', () => {
     fireEvent.click(await screen.findByRole('radio', { name: /이직자/ }));
     const submit = screen.getByRole('button', { name: '변경하기' });
     fireEvent.click(submit);
+    fireEvent.click(screen.getByRole('button', { name: '변경' }));
 
     await waitFor(() => expect(submit).toBeDisabled());
   });
@@ -118,6 +125,7 @@ describe('대시보드 VersionChangeModal', () => {
 
     fireEvent.click(await screen.findByRole('radio', { name: /이직자/ }));
     fireEvent.click(screen.getByRole('button', { name: '변경하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경' }));
 
     expect(
       await screen.findByText('버전은 한 번만 변경할 수 있습니다.'),
@@ -132,12 +140,32 @@ describe('대시보드 VersionChangeModal', () => {
 
     fireEvent.click(await screen.findByRole('radio', { name: /이직자/ }));
     fireEvent.click(screen.getByRole('button', { name: '변경하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경' }));
 
     await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
     expect(axiosPatch).toHaveBeenCalledWith('/application/7/version', {
       challengeVersionId: 2,
     });
   });
+  it('변경하기를 누르면 다시 바꾸기 어렵다는 알럿을 띄우고, 취소하면 요청하지 않는다', async () => {
+    renderModal();
+
+    fireEvent.click(await screen.findByRole('radio', { name: /이직자/ }));
+    fireEvent.click(screen.getByRole('button', { name: '변경하기' }));
+
+    expect(screen.getByText('버전을 변경할까요?')).toBeInTheDocument();
+    expect(
+      screen.getByText(/이직자 버전으로 변경하면 다시 변경하기 어려워요/),
+    ).toBeInTheDocument();
+
+    // 모달에도 취소가 있어 알럿 안에서만 찾는다
+    const alert = screen.getByText('버전을 변경할까요?')
+      .parentElement as HTMLElement;
+    fireEvent.click(within(alert).getByRole('button', { name: '취소' }));
+    expect(screen.queryByText('버전을 변경할까요?')).toBeNull();
+    expect(axiosPatch).not.toHaveBeenCalled();
+  });
+
   it('현재 버전이 없으면 뱃지 없이 열고, 아무 버전이나 고르면 변경하기가 활성이다', async () => {
     axiosGet.mockResolvedValue({
       data: { data: { ...VERSION, currentVersion: null } },

@@ -286,13 +286,33 @@ describe('PlanUpgradeContent', () => {
       ).toBeInTheDocument();
     });
 
-    it('버튼을 누르면 고른 플랜으로 결제 단계에 가고 이동 중에는 비활성이다', async () => {
+    it('버튼을 누르면 다시 바꾸기 어렵다는 알럿을 띄우고, 취소하면 이동하지 않는다', async () => {
+      renderContent();
+
+      await userEvent.click(
+        screen.getByRole('button', { name: '84,000원에 업그레이드 하기' }),
+      );
+
+      expect(screen.getByText('플랜을 업그레이드할까요?')).toBeInTheDocument();
+      expect(
+        screen.getByText(/STANDARD 플랜으로 결제하면 다시 변경하기 어려워요/),
+      ).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: '취소' }));
+      expect(screen.queryByText('플랜을 업그레이드할까요?')).toBeNull();
+      expect(pushMock).not.toHaveBeenCalled();
+    });
+
+    it('알럿에서 결제하러 가기를 누르면 고른 플랜으로 결제 단계에 가고 이동 중에는 비활성이다', async () => {
       renderContent();
       const button = screen.getByRole('button', {
         name: '84,000원에 업그레이드 하기',
       });
 
       await userEvent.click(button);
+      await userEvent.click(
+        screen.getByRole('button', { name: '결제하러 가기' }),
+      );
 
       expect(pushMock).toHaveBeenCalledWith(
         '/plan-upgrade/7/payment?plan=STANDARD',
