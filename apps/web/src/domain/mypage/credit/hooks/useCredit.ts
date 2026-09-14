@@ -3,6 +3,7 @@ import { paymentDetailQueryOptions } from '@/api/payment/payment';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { sumPlanUpgradeAmount } from '../utils/planUpgradePayment';
 
 /** 프로그램 결제 내역 로직
  * @note 호출 컴포넌트는 반드시 AsyncBoundary로 감싸야 합니다.
@@ -61,6 +62,10 @@ export default function useCredit(paymentId: string) {
 
   // 페이백 내역이면 true
   const isRefunded = data.paymentInfo.isRefunded;
+
+  // 셀프 플랜 업그레이드로 더 낸 금액 (LC-3247). 원결제 금액과 토스 결제 정보에는 들어 있지 않다
+  const planUpgradePayments = data.planUpgradePaymentList ?? [];
+  const planUpgradeAmount = sumPlanUpgradeAmount(planUpgradePayments);
 
   // 총 결제금액
   const totalPayment = useMemo(() => {
@@ -214,6 +219,8 @@ export default function useCredit(paymentId: string) {
   }, [data, productAmount]);
 
   return {
+    planUpgradePayments,
+    planUpgradeAmount,
     data,
     productAmount,
     isRefunded,

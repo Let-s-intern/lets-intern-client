@@ -10,6 +10,7 @@ import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import dayjs from '@/lib/dayjs';
 import { useParams, useRouter } from 'next/navigation';
 import useCredit from './hooks/useCredit';
+import { planUpgradePaymentTitle } from './utils/planUpgradePayment';
 
 const convertDateFormat = (date: string) => dayjs(date).format('YYYY.MM.DD');
 
@@ -61,6 +62,8 @@ const CreditDetailContent = () => {
     couponDiscountAmount,
     totalPayment,
     discountAmount,
+    planUpgradePayments,
+    planUpgradeAmount,
   } = useCredit(paymentId);
 
   const {
@@ -191,9 +194,12 @@ const CreditDetailContent = () => {
               typeof paymentDetail.tossInfo.balanceAmount === 'number'
                 ? (isCanceled
                     ? totalRefund
-                    : paymentDetail.tossInfo.totalAmount
+                    : paymentDetail.tossInfo.totalAmount + planUpgradeAmount
                   ).toLocaleString()
-                : paymentDetail.paymentInfo.finalPrice?.toLocaleString()}
+                : (
+                    (paymentDetail.paymentInfo.finalPrice ?? 0) +
+                    (isCanceled ? 0 : planUpgradeAmount)
+                  ).toLocaleString()}
               원
             </div>
           </div>
@@ -228,6 +234,14 @@ const CreditDetailContent = () => {
                 content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
               />
             )}
+            {/* [LC-3247] 셀프 플랜 업그레이드로 더 결제한 차액 */}
+            {planUpgradePayments.map((payment, index) => (
+              <ReportCreditSubRow
+                key={`${payment.paidAt ?? ''}-${index}`}
+                title={planUpgradePaymentTitle(payment)}
+                content={`+${payment.additionalAmount.toLocaleString()}원`}
+              />
+            ))}
             {/* [환불된 내역] 환불 차감 금액 표시 */}
             {isCanceled && (
               <ReportCreditSubRow
