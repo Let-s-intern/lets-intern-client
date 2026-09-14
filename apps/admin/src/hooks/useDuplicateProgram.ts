@@ -75,15 +75,6 @@ export const challengeToCreateInput = (
     deadline: challenge.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     thumbnail: challenge.thumbnail ?? '',
     desktopThumbnail: challenge.thumbnail ?? '',
-    // 복제본은 새 챌린지라 버전을 새로 만든다 (D4). 버전 없는 챌린지는 필드를 보내지 않는다
-    versionInfo:
-      challenge.versionList.length > 0
-        ? challenge.versionList.map(({ title, sortOrder }) => ({
-            challengeVersionId: null,
-            title,
-            sortOrder,
-          }))
-        : undefined,
   };
 };
 

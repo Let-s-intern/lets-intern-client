@@ -9,7 +9,6 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
-import { isVersionSelectRequired } from '@/domain/program/program-detail/apply/utils/challengeVersion';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
@@ -85,13 +84,6 @@ function PricePlanBottomSheet({
         : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
-  // 버전은 플랜보다 먼저 고른다. 신청 입력 화면은 여기서 고른 값을 이어받는다 (LC-3247)
-  const [challengeVersionId, setChallengeVersionId] = useState<number | null>(
-    null,
-  );
-  const versionList = challenge.versionList ?? [];
-  const isVersionRequired = isVersionSelectRequired(versionList, pricePlan);
-  const isVersionMissing = isVersionRequired && challengeVersionId === null;
 
   const {
     basicRegularPrice,
@@ -153,7 +145,6 @@ function PricePlanBottomSheet({
   const { setProgramApplicationForm } = useProgramStore();
 
   const handleApply = useCallback(() => {
-    if (isVersionMissing) return;
     const payInfo = application ? getPayInfo(application, pricePlan) : null;
 
     if (!payInfo) {
@@ -205,8 +196,6 @@ function PricePlanBottomSheet({
       programOrderId: orderId,
       isFree,
       deposit: challenge.priceInfo[0].refund ?? 0,
-      // 이전 신청에서 남은 값이 따라가지 않게 버전이 필요 없으면 비운다
-      challengeVersionId: isVersionRequired ? challengeVersionId : null,
     });
 
     router.push(
@@ -215,9 +204,6 @@ function PricePlanBottomSheet({
   }, [
     application,
     pricePlan,
-    isVersionMissing,
-    isVersionRequired,
-    challengeVersionId,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
     setProgramApplicationForm,
@@ -235,48 +221,8 @@ function PricePlanBottomSheet({
         onClose={onClose}
         className="mx-auto max-w-[1000px]"
       >
-        {/* 챌린지 버전 — 플랜보다 먼저 고른다. LIGHT 는 버전을 쓰지 않는다 */}
-        {isVersionRequired && (
-          <>
-            <div className="mb-4 mt-3 flex items-center justify-between">
-              <span className="required-star text-xsmall14 font-semibold">
-                챌린지 버전 선택 (필수)
-              </span>
-            </div>
-            <OptionDropdown
-              label={`${challenge.title} 버전`}
-              wrapperClassName="w-full"
-            >
-              <RadioGroup
-                aria-label="챌린지 버전 선택"
-                value={
-                  challengeVersionId === null ? '' : String(challengeVersionId)
-                }
-                onChange={(_, v) => setChallengeVersionId(Number(v))}
-              >
-                {versionList.map((version, index) => (
-                  <OptionFormRadioControlLabel
-                    key={version.challengeVersionId}
-                    label={<b className="font-bold">{version.title}</b>}
-                    value={String(version.challengeVersionId)}
-                    wrapperClassName={
-                      index < versionList.length - 1
-                        ? 'py-3 pl-2 pr-3 border-b border-neutral-80'
-                        : 'py-3 pl-2 pr-3'
-                    }
-                  />
-                ))}
-              </RadioGroup>
-            </OptionDropdown>
-            {/* 선택 여부로 문구를 넣고 빼면 아래에 붙은 시트 높이가 바뀌어 화면이 튄다. 항상 같은 문구를 둔다 */}
-            <p className="text-xxsmall12 text-neutral-40 mt-2">
-              버전은 신청 후 한 번만 변경할 수 있어요.
-            </p>
-          </>
-        )}
-
         {/* 챌린지 플랜 */}
-        <div className="mb-4 mt-6 flex items-center justify-between">
+        <div className="mb-4 mt-3 flex items-center justify-between">
           <span className="required-star text-xsmall14 font-semibold">
             챌린지 플랜 선택 (필수)
           </span>
@@ -392,7 +338,6 @@ function PricePlanBottomSheet({
           <BaseButton
             className="next_button_click flex-1"
             onClick={handleApply}
-            disabled={isVersionMissing}
           >
             신청하기
           </BaseButton>

@@ -5,7 +5,6 @@ import {
   buildPlanChangeSuccessMessage,
   getPlanChangeDisabledReason,
 } from '@/domain/admin/challenge/plan-change/utils/planChangeConfirm';
-import AdminVersionChangeDialog from '@/domain/admin/challenge/version/AdminVersionChangeDialog';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   ChallengeApplication,
@@ -108,10 +107,6 @@ const columns: GridColDef<ChallengeApplication['application']>[] = [
   { field: 'wishCompany', headerName: '희망기업', width: 150 },
 ];
 
-// 라이트 플랜과 취소한 참여자는 운영진도 버전을 바꿀 수 없다 (설계안 D1)
-const canChangeVersion = (participant: Participant) =>
-  !participant.isCanceled && participant.challengePricePlanType !== 'LIGHT';
-
 const ChallengeOperationParticipants = () => {
   const params = useParams<{ programId: string }>();
   const challengeId = params.programId;
@@ -133,9 +128,6 @@ const ChallengeOperationParticipants = () => {
     data?.applicationList?.map((item) => item.application) ?? [];
 
   const { currentChallenge } = useAdminCurrentChallenge();
-  const versions = currentChallenge?.versionList ?? [];
-  const hasVersion = versions.length > 0;
-  const [versionTarget, setVersionTarget] = useState<Participant | null>(null);
 
   const { snackbar } = useAdminSnackbar();
   const [planChangeTarget, setPlanChangeTarget] = useState<Participant | null>(
@@ -152,7 +144,7 @@ const ChallengeOperationParticipants = () => {
       onError: snackbar,
     });
 
-  // 결제 상품 바로 뒤에 플랜 변경을 둔다. 버전 없는 챌린지는 버전 컬럼을 숨기고, 있으면 그 뒤에 둔다
+  // 결제 상품 바로 뒤에 플랜 변경을 둔다
   const visibleColumns = useMemo(() => {
     const planChangeColumn: GridColDef<Participant> = {
       field: 'planChange',
@@ -179,40 +171,15 @@ const ChallengeOperationParticipants = () => {
       },
     };
 
-    const versionColumns: GridColDef<Participant>[] = [
-      {
-        field: 'challengeVersionTitle',
-        headerName: '버전',
-        width: 100,
-        valueFormatter: (value) => value ?? '-',
-      },
-      {
-        field: 'versionChange',
-        headerName: '버전 변경',
-        width: 100,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <Button
-            size="small"
-            variant="outlined"
-            disabled={!canChangeVersion(row)}
-            onClick={() => setVersionTarget(row)}
-          >
-            버전 변경
-          </Button>
-        ),
-      },
-    ];
     const insertAt =
       columns.findIndex((column) => column.field === 'challengePricePlanType') +
       1;
     return [
       ...columns.slice(0, insertAt),
       planChangeColumn,
-      ...(hasVersion ? versionColumns : []),
       ...columns.slice(insertAt),
     ];
-  }, [hasVersion]);
+  }, []);
 
   return (
     <main className="pt-3">
@@ -224,14 +191,6 @@ const ChallengeOperationParticipants = () => {
         autoHeight
         hideFooter
       />
-      {versionTarget ? (
-        <AdminVersionChangeDialog
-          challengeId={challengeId}
-          application={versionTarget}
-          versions={versions}
-          onClose={() => setVersionTarget(null)}
-        />
-      ) : null}
       {planChangeTarget ? (
         <PlanChangeModal
           target={{

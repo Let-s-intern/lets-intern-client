@@ -26,14 +26,6 @@ export interface MypageApplicationCardConfig {
   contentFileUrl?: string;
   downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
-  /**
-   * 챌린지 버전. 버전이 없는 챌린지와 LIGHT 는 두지 않는다 (설계안 D1).
-   * title 이 null 이면 버전 없이 신청해 아직 고를 수 있는 신청이다.
-   */
-  version?: {
-    title: string | null;
-    changeable: boolean;
-  };
   /** 셀프 플랜 업그레이드 화면. 서버가 업그레이드할 수 있다고 준 챌린지만 둔다. LIGHT 는 두지 않는다 (설계안 D1) */
   planUpgradeHref?: string;
   /** 오픈채팅방 입장 버튼. 카드 우측 하단(구매플랜 행)에 별도로 렌더된다. */
@@ -76,8 +68,6 @@ const toProgramCardConfig = (
     pricePlanType,
     chatLink,
     chatPassword,
-    challengeVersionTitle,
-    canChangeVersion,
     canUpgradePlan,
   } = application;
 
@@ -115,15 +105,6 @@ const toProgramCardConfig = (
   const purchasePlanText =
     isChallenge && pricePlanType
       ? challengePricePlanToText[pricePlanType] || pricePlanType
-      : undefined;
-
-  // 버전명이 없어도 바꿀 수 있으면 버전 없이 신청한 경우라 `선택` 을 보인다.
-  // 바꿀 수 없는데 버전명도 없으면 버전 없는 챌린지·마감 지난 미선택이라 숨긴다.
-  const version =
-    isChallenge &&
-    pricePlanType !== 'LIGHT' &&
-    (challengeVersionTitle || canChangeVersion)
-      ? { title: challengeVersionTitle ?? null, changeable: canChangeVersion }
       : undefined;
 
   const planUpgradeHref =
@@ -186,7 +167,6 @@ const toProgramCardConfig = (
     dateLabel,
     dateText,
     purchasePlanText,
-    version,
     planUpgradeHref,
     openChat,
     actionButton,

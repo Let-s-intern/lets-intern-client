@@ -15,5 +15,4 @@ export interface MentorAssignmentRow {
   wishCompany: string;
   pricePlanType: string;
   matchedMentorId: number | null;
-  mentorReassignmentRequired: boolean;
 }

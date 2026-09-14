@@ -9,7 +9,6 @@ import {
   CreateMissionReq,
   getContentsAdminSimple,
   Mission,
-  MissionContentsReq,
   missionTemplateAdmin,
   MissionTemplateResItem,
   UpdateMissionReq,
@@ -24,20 +23,6 @@ import { useCallback, useMemo, useState } from 'react';
 // 페이지네이션된 /mission-template/admin 에서 전체 템플릿을 한 번에 받기 위한 큰 페이지 크기.
 const ALL_TEMPLATES_PAGE_SIZE = 1000;
 
-const toMissionContentsReq = (
-  list: Row['essentialContentsList'],
-): MissionContentsReq[] =>
-  (list ?? []).flatMap((contents) =>
-    contents
-      ? [
-          {
-            contentsId: contents.id,
-            challengeVersionId: contents.challengeVersionId,
-          },
-        ]
-      : [],
-  );
-
 export const useMissionOperations = (
   apiRef: React.RefObject<GridApiCommunity>,
 ) => {
@@ -45,7 +30,6 @@ export const useMissionOperations = (
   const { currentChallenge } = useAdminCurrentChallenge();
   const refetchMissions = useMissionsOfCurrentChallengeRefetch();
   const { snackbar: setSnackbar } = useAdminSnackbar();
-  const hasVersions = Boolean(currentChallenge?.versionList?.length);
 
   const [editingMission, setEditingMission] = useState<Mission | null>(null);
 
@@ -145,16 +129,6 @@ export const useMissionOperations = (
           )?.title
         : undefined;
 
-      // 버전 있는 챌린지만 자료를 버전과 함께 보낸다. 서버는 이 값이 있으면 id 목록 대신 쓴다
-      const versionContents = hasVersions
-        ? {
-            essentialContents: toMissionContentsReq(row.essentialContentsList),
-            additionalContents: toMissionContentsReq(
-              row.additionalContentsList,
-            ),
-          }
-        : {};
-
       switch (action) {
         case 'create':
           if (!row.missionTemplateId) {
@@ -176,7 +150,6 @@ export const useMissionOperations = (
               row.essentialContentsList
                 ?.map((c) => c?.id)
                 .filter((id): id is number => Boolean(id)) || [],
-            ...versionContents,
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
@@ -214,7 +187,6 @@ export const useMissionOperations = (
               row.essentialContentsList
                 ?.map((c) => c?.id)
                 .filter((id): id is number => Boolean(id)) || [],
-            ...versionContents,
             id: row.id,
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
@@ -258,7 +230,6 @@ export const useMissionOperations = (
       apiRef,
       createMissionMutation,
       deleteMission,
-      hasVersions,
       refetchMissions,
       setSnackbar,
       updateMission,

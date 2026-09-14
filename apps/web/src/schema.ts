@@ -335,18 +335,6 @@ export const getChallengeIdPrimitiveSchema = z.object({
     .optional(),
   priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
-  // 챌린지 버전 (LC-3247). 버전을 등록하지 않았거나 서버 배포 전이면 빈 목록이다.
-  versionList: z
-    .array(
-      z.object({
-        challengeVersionId: z.number(),
-        title: z.string(),
-        sortOrder: z.number(),
-      }),
-    )
-    .nullable()
-    .optional()
-    .transform((versionList) => versionList ?? []),
 });
 
 export type ChallengeIdPrimitive = z.infer<

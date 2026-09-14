@@ -8,7 +8,7 @@ import useMentorAssignmentData from './hooks/useMentorAssignmentData';
 import { MentorMatchContext } from './MentorMatchContext';
 import MentorList from './components/MentorList';
 import type { MentorAssignmentRow } from './types';
-import { getMentorColor, sortReassignmentRequiredFirst } from './utils';
+import { getMentorColor } from './utils';
 
 const PLAN_COLORS: Record<string, { bg: string; text: string }> = {
   LIGHT: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
@@ -34,21 +34,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       );
     },
   },
-  {
-    field: 'name',
-    headerName: '이름',
-    width: 100,
-    renderCell: (params) => (
-      <div className="flex flex-col items-start gap-1 py-1">
-        <span>{params.row.name}</span>
-        {params.row.mentorReassignmentRequired ? (
-          <span className="text-xxsmall12 bg-requirement/10 text-requirement inline-flex items-center rounded-full px-2 py-0.5 font-medium">
-            재배정 필요
-          </span>
-        ) : null}
-      </div>
-    ),
-  },
+  { field: 'name', headerName: '이름', width: 100 },
   {
     field: 'menteeInfo',
     headerName: '멘티 정보',
@@ -110,9 +96,6 @@ export default function MentorMenteeAssignment() {
     setBulkMentorId('');
   };
 
-  // 버전을 바꿔 멘토를 다시 배정해야 하는 참여자를 먼저 보여준다
-  const sortedRows = useMemo(() => sortReassignmentRequiredFirst(rows), [rows]);
-
   const unassignedRows = useMemo(
     () => rows.filter((r) => r.matchedMentorId === null),
     [rows],
@@ -159,7 +142,7 @@ export default function MentorMenteeAssignment() {
 
         <DataGrid
           autoHeight
-          rows={sortedRows}
+          rows={rows}
           columns={columns}
           checkboxSelection
           disableRowSelectionOnClick

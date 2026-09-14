@@ -21,7 +21,6 @@ import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
-import VersionChangeModal from '@/domain/mypage/application/version/VersionChangeModal';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -31,9 +30,6 @@ const ApplicationContent = () => {
   );
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
   const [openMentoringId, setOpenMentoringId] = useState<number | null>(null);
-  const [openVersionApplicationId, setOpenVersionApplicationId] = useState<
-    number | null
-  >(null);
   /*
     1대1 라이브 멘토링은 전용 API 로 온다. 프로그램 탭의 세 구간에 함께 담고, 멘토링 탭을
     열지도 이 건수로 정한다 — React Query 가 같은 키를 합치므로 요청이 늘지는 않는다.
@@ -131,7 +127,6 @@ const ApplicationContent = () => {
                   applicationList={programWaitingList}
                   mentoringList={mentoringWaitingList}
                   onMentoringQuestionClick={setOpenMentoringId}
-                  onVersionChangeClick={setOpenVersionApplicationId}
                   hasInProgress={
                     programInProgressList.length +
                       mentoringInProgressList.length >
@@ -147,13 +142,11 @@ const ApplicationContent = () => {
                   applicationList={programInProgressList}
                   mentoringList={mentoringInProgressList}
                   onMentoringQuestionClick={setOpenMentoringId}
-                  onVersionChangeClick={setOpenVersionApplicationId}
                 />
                 <CompleteSection
                   applicationList={programCompletedList}
                   mentoringList={mentoringCompletedList}
                   onMentoringQuestionClick={setOpenMentoringId}
-                  onVersionChangeClick={setOpenVersionApplicationId}
                 />
               </>
             )}
@@ -179,12 +172,6 @@ const ApplicationContent = () => {
           // 시작한 뒤에는 읽기만 한다. `MentoringSection` 과 같은 규칙이다.
           readOnly={resolvePhase(openMentoring, now) !== 'upcoming'}
           onClose={() => setOpenMentoringId(null)}
-        />
-      )}
-      {openVersionApplicationId !== null && (
-        <VersionChangeModal
-          applicationId={openVersionApplicationId}
-          onClose={() => setOpenVersionApplicationId(null)}
         />
       )}
     </main>

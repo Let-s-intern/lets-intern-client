@@ -769,32 +769,6 @@ export const useChallengeApplicationsQuery = ({
   });
 };
 
-/** PATCH [어드민] 참여자 버전 변경 /api/v1/admin/application/{applicationId}/version */
-export const usePatchAdminApplicationVersion = (challengeId?: string) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      applicationId,
-      challengeVersionId,
-    }: {
-      applicationId: number;
-      challengeVersionId: number;
-    }) => {
-      const res = await axios.patch(
-        `/admin/application/${applicationId}/version`,
-        { challengeVersionId },
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      // 참여자 표(ChallengeOperationParticipants)의 쿼리 키
-      queryClient.invalidateQueries({
-        queryKey: ['admin', 'challenge', challengeId, 'participants'],
-      });
-    },
-  });
-};
-
 /** GET 챌린지 나의 기록장 데일리 미션 /api/v1/challenge/{challengeId}/my/daily-mission */
 export const useChallengeMyDailyMission = (
   programId?: string | number,

@@ -26,8 +26,6 @@ export interface CareerGrowthItem {
   isDownloaded: boolean;
   chatLink: string;
   chatPassword: string;
-  /** 챌린지 버전 (LC-3247). 버전을 쓰지 않는 신청이면 비운다 */
-  version?: { title: string | null; changeable: boolean };
   /** 셀프 플랜 업그레이드 주소 (LC-3247). 서버가 가능하다고 할 때만 채운다 */
   planUpgradeHref?: string;
 }
@@ -61,18 +59,10 @@ const applicationToCareerGrowthItem = (
     : '';
 
   // 마이페이지 카드(applicationCardConfig)와 같은 규칙이다. 한쪽을 고치면 함께 본다
-  const isVersionPlanTarget =
+  const isPlanUpgradeTarget =
     programTypeKey === 'CHALLENGE' && application.pricePlanType !== 'LIGHT';
-  const version =
-    isVersionPlanTarget &&
-    (application.challengeVersionTitle || application.canChangeVersion)
-      ? {
-          title: application.challengeVersionTitle ?? null,
-          changeable: application.canChangeVersion,
-        }
-      : undefined;
   const planUpgradeHref =
-    isVersionPlanTarget && application.canUpgradePlan && application.id != null
+    isPlanUpgradeTarget && application.canUpgradePlan && application.id != null
       ? `/plan-upgrade/${application.id}`
       : undefined;
 
@@ -95,7 +85,6 @@ const applicationToCareerGrowthItem = (
     isDownloaded: application.isDownloaded ?? false,
     chatLink: application.chatLink ?? '',
     chatPassword: application.chatPassword ?? '',
-    version,
     planUpgradeHref,
   };
 };

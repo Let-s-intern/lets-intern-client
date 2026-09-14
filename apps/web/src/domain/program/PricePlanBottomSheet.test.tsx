@@ -57,9 +57,7 @@ const PRICE_BASE = {
   challengeOptionList: [],
 };
 
-function makeChallenge(
-  versionList: { challengeVersionId: number; title: string }[],
-) {
+function makeChallenge() {
   return {
     title: 'QA 포트폴리오 챌린지',
     challengeType: 'PORTFOLIO',
@@ -79,10 +77,6 @@ function makeChallenge(
         ],
       },
     ],
-    versionList: versionList.map((version, index) => ({
-      ...version,
-      sortOrder: index,
-    })),
   } as unknown as ChallengeIdPrimitive;
 }
 
@@ -97,56 +91,14 @@ function renderSheet(challenge: ChallengeIdPrimitive) {
   );
 }
 
-const VERSIONS = [
-  { challengeVersionId: 10, title: '대학생·무경력자 Ver.' },
-  { challengeVersionId: 11, title: '인턴·실무 경험자 Ver.' },
-];
-
 beforeEach(() => {
   pushMock.mockReset();
   setProgramApplicationForm.mockReset();
 });
 
-describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
-  it('버전이 있는 챌린지는 플랜 선택 위에 버전 선택을 먼저 보이고, 고르기 전에는 신청하기가 비활성이다', () => {
-    renderSheet(makeChallenge(VERSIONS));
-
-    const versionHeading = screen.getByText('챌린지 버전 선택 (필수)');
-    const planHeading = screen.getByText('챌린지 플랜 선택 (필수)');
-    expect(
-      versionHeading.compareDocumentPosition(planHeading) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(screen.getByRole('button', { name: '신청하기' })).toBeDisabled();
-  });
-
-  it('버전을 고르고 신청하면 고른 버전을 신청 정보에 담아 신청 입력으로 간다', () => {
-    renderSheet(makeChallenge(VERSIONS));
-
-    fireEvent.click(
-      screen.getByRole('radio', { name: '인턴·실무 경험자 Ver.' }),
-    );
-    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
-
-    expect(setProgramApplicationForm).toHaveBeenCalledWith(
-      expect.objectContaining({ priceId: 2, challengeVersionId: 11 }),
-    );
-    expect(pushMock).toHaveBeenCalledWith('/payment-input');
-  });
-
-  it('버전을 골라도 안내 문구가 그대로 있어 시트 높이가 바뀌지 않는다', () => {
-    renderSheet(makeChallenge(VERSIONS));
-    const note = '버전은 신청 후 한 번만 변경할 수 있어요.';
-
-    expect(screen.getByText(note)).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole('radio', { name: '대학생·무경력자 Ver.' }),
-    );
-    expect(screen.getByText(note)).toBeInTheDocument();
-  });
-
+describe('PricePlanBottomSheet — 무료 신청 판정', () => {
   it('이용료가 0원이어도 옵션 금액이 있는 플랜은 유료 신청으로 담는다', () => {
-    renderSheet(makeChallenge([]));
+    renderSheet(makeChallenge());
 
     // 기본 선택은 스탠다드(이용료 0원 + LIVE 옵션 1,000원)
     fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
@@ -157,7 +109,7 @@ describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
   });
 
   it('총 결제 금액이 0원인 플랜만 무료 신청으로 담는다', () => {
-    renderSheet(makeChallenge([]));
+    renderSheet(makeChallenge());
 
     fireEvent.click(screen.getByRole('radio', { name: '베이직 플랜' }));
     fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
@@ -167,14 +119,4 @@ describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
     );
   });
 
-  it('버전이 없는 챌린지는 버전 선택 없이 신청하고 버전을 비운다', () => {
-    renderSheet(makeChallenge([]));
-
-    expect(screen.queryByText('챌린지 버전 선택 (필수)')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
-
-    expect(setProgramApplicationForm).toHaveBeenCalledWith(
-      expect.objectContaining({ challengeVersionId: null }),
-    );
-  });
 });

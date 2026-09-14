@@ -1,15 +1,18 @@
 'use client';
 
-import { useApplicationVersionQuery } from '@/api/application';
 import CouponBanner from '@/common/banner/CouponBanner';
-import VersionChangeModal from '@/domain/challenge/dashboard/modal/VersionChangeModal';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import { usePlanUpgradeQuery } from '@/domain/challenge/plan-upgrade/api/planUpgrade';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { getPlanVersionNavItem, type NavItem } from './planVersionNavItem';
+
+type NavItem = {
+  id: string;
+  label: string;
+  href?: string;
+  subItems?: NavItem[];
+};
 
 const NavBar = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
@@ -17,25 +20,15 @@ const NavBar = () => {
   const base = `/challenge/${params.applicationId}/${params.programId}`;
   const applicationId = params.applicationId;
   const { withTestDate } = useChallengeNav();
-  const { data: version } = useApplicationVersionQuery(applicationId);
   const { data: planUpgrade } = usePlanUpgradeQuery(applicationId);
-  const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
 
   if (pathname.endsWith('user/info')) return null;
 
-  // 서버가 판단한 값만 본다. 플랜 없는 옛 신청은 업그레이드 조회가 400 이라 메뉴가 숨는다
+  // 서버가 판단한 값만 본다. 플랜 없는 옛 신청은 업그레이드 조회가 400 이라 메뉴가 숨는다 (LC-3247)
   const canUpgradePlan =
     !!planUpgrade &&
     !planUpgrade.unavailableReason &&
     planUpgrade.options.length > 0;
-  const canChangeVersion = version?.changeable ?? false;
-  const openVersionModal = () => setIsVersionModalOpen(true);
-  const planVersionNavItem = getPlanVersionNavItem({
-    applicationId,
-    canUpgradePlan,
-    canChangeVersion,
-    onVersionChangeClick: openVersionModal,
-  });
 
   const isDetailPage = /\/feedback\/live\/[^/]+$/.test(pathname);
 
@@ -58,7 +51,15 @@ const NavBar = () => {
         },
       ],
     },
-    ...(planVersionNavItem ? [planVersionNavItem] : []),
+    ...(canUpgradePlan
+      ? [
+          {
+            id: 'plan-upgrade',
+            label: '플랜 업그레이드',
+            href: `/plan-upgrade/${applicationId}`,
+          },
+        ]
+      : []),
     { id: 'guide', label: '공지사항 / 챌린지 가이드', href: `${base}/guides` },
     { id: 'inquiry', label: '1:1 문의', href: `${base}/inquiry` },
   ];
@@ -76,114 +77,77 @@ const NavBar = () => {
     );
 
   return (
-    <>
-      <nav
-        className={clsx(
-          'flex w-full flex-col md:w-[220px]',
-          isDetailPage && 'hidden md:flex',
-        )}
-      >
-        <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
-          {navItems.map((item) => {
-            const parentActive = isParentActive(item);
-            const selfActive = item.href ? isActive(item.href) : false;
+    <nav
+      className={clsx(
+        'flex w-full flex-col md:w-[220px]',
+        isDetailPage && 'hidden md:flex',
+      )}
+    >
+      <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
+        {navItems.map((item) => {
+          const parentActive = isParentActive(item);
+          const selfActive = item.href ? isActive(item.href) : false;
 
-            if (item.subItems) {
-              return (
-                <li
-                  key={item.id}
-                  className="group flex-shrink-0 md:flex-shrink"
-                >
-                  {/* 모바일: 첫 번째 subItem으로 직접 이동 */}
-                  <Link
-                    href={item.subItems[0].href ?? ''}
-                    className={clsx(linkClass(parentActive), 'md:hidden')}
-                  >
-                    {item.label}
-                  </Link>
-                  {/* 데스크톱: 호버로 서브아이템 노출 */}
-                  <span
-                    className={clsx(
-                      linkClass(parentActive),
-                      'hidden w-full justify-between md:flex',
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                  <ul
-                    className={clsx(
-                      'hidden md:flex md:max-h-0 md:flex-col md:overflow-hidden md:opacity-0 md:transition-all md:duration-200',
-                      'md:group-hover:max-h-40 md:group-hover:opacity-100',
-                      parentActive && 'md:max-h-40 md:opacity-100',
-                    )}
-                  >
-                    {item.subItems.map((child) => {
-                      const childClass = clsx(
-                        'text-xsmall14 md:rounded-xxs flex items-center whitespace-nowrap py-1 pl-6 transition-colors md:h-[36px] md:px-3',
-                        isActive(child.href ?? '')
-                          ? 'text-primary font-medium'
-                          : 'text-neutral-10 font-medium',
-                      );
-                      return (
-                        <li key={child.id}>
-                          {child.onClick ? (
-                            <button
-                              type="button"
-                              className={clsx(childClass, 'w-full text-left')}
-                              onClick={child.onClick}
-                            >
-                              {child.label}
-                            </button>
-                          ) : (
-                            <Link
-                              href={child.href ?? ''}
-                              className={childClass}
-                            >
-                              {child.label}
-                            </Link>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </li>
-              );
-            }
-
+          if (item.subItems) {
             return (
-              <li key={item.id} className="flex-shrink-0 md:flex-shrink">
-                {item.onClick ? (
-                  <button
-                    type="button"
-                    className={clsx(linkClass(false), 'w-full text-left')}
-                    onClick={item.onClick}
-                  >
-                    {item.label}
-                  </button>
-                ) : (
-                  <Link
-                    href={item.href ?? ''}
-                    className={linkClass(selfActive)}
-                  >
-                    {item.label}
-                  </Link>
-                )}
+              <li key={item.id} className="group flex-shrink-0 md:flex-shrink">
+                {/* 모바일: 첫 번째 subItem으로 직접 이동 */}
+                <Link
+                  href={item.subItems[0].href ?? ''}
+                  className={clsx(linkClass(parentActive), 'md:hidden')}
+                >
+                  {item.label}
+                </Link>
+                {/* 데스크톱: 호버로 서브아이템 노출 */}
+                <span
+                  className={clsx(
+                    linkClass(parentActive),
+                    'hidden w-full justify-between md:flex',
+                  )}
+                >
+                  {item.label}
+                </span>
+                <ul
+                  className={clsx(
+                    'hidden md:flex md:max-h-0 md:flex-col md:overflow-hidden md:opacity-0 md:transition-all md:duration-200',
+                    'md:group-hover:max-h-40 md:group-hover:opacity-100',
+                    parentActive && 'md:max-h-40 md:opacity-100',
+                  )}
+                >
+                  {item.subItems.map((child) => (
+                    <li key={child.id}>
+                      <Link
+                        href={child.href ?? ''}
+                        className={clsx(
+                          'text-xsmall14 md:rounded-xxs flex items-center whitespace-nowrap py-1 pl-6 transition-colors md:h-[36px] md:px-3',
+                          isActive(child.href ?? '')
+                            ? 'text-primary font-medium'
+                            : 'text-neutral-10 font-medium',
+                        )}
+                      >
+                        {child.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </li>
             );
-          })}
-        </ul>
-        {/* 데스크탑: 사이드바 하단 쿠폰 배너 */}
-        <div className="hidden md:mt-4 md:block">
-          <CouponBanner />
-        </div>
-      </nav>
-      {isVersionModalOpen && (
-        <VersionChangeModal
-          applicationId={applicationId}
-          onClose={() => setIsVersionModalOpen(false)}
-        />
-      )}
-    </>
+          }
+
+          return (
+            <li key={item.id} className="flex-shrink-0 md:flex-shrink">
+              <Link href={item.href ?? ''} className={linkClass(selfActive)}>
+                {item.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+      {/* 데스크탑: 사이드바 하단 쿠폰 배너 */}
+      <div className="hidden md:mt-4 md:block">
+        <CouponBanner />
+      </div>
+    </nav>
   );
 };
 

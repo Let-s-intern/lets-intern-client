@@ -26,8 +26,6 @@ const baseChallenge: MypageApplication = {
   challengeOptionList: [],
   chatLink: 'https://open.kakao.com/o/abc123',
   chatPassword: '1234',
-  challengeVersionTitle: null,
-  canChangeVersion: false,
   canUpgradePlan: false,
 };
 
@@ -176,73 +174,6 @@ describe('toMypageApplicationCardConfig - 멤버십 기수 (LC-3219)', () => {
         programId: 309,
       }),
     ).toEqual({ label: '클래스 입장', href: '/program/live/309' });
-  });
-});
-
-describe('toMypageApplicationCardConfig - 버전 (LC-3247)', () => {
-  const versionOf = (application: MypageApplication) =>
-    toMypageApplicationCardConfig(application).version;
-
-  it('버전을 바꿀 수 있으면 버전명과 변경 가능을 넘긴다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        challengeVersionTitle: '대학생',
-        canChangeVersion: true,
-      }),
-    ).toEqual({ title: '대학생', changeable: true });
-  });
-
-  it('바꿀 수 없으면 버전명만 넘긴다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        challengeVersionTitle: '대학생',
-        canChangeVersion: false,
-      }),
-    ).toEqual({ title: '대학생', changeable: false });
-  });
-
-  it('LIGHT 플랜은 버전을 노출하지 않는다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        pricePlanType: 'LIGHT',
-        challengeVersionTitle: '대학생',
-        canChangeVersion: true,
-      }),
-    ).toBeUndefined();
-  });
-
-  it('버전 없이 신청했지만 고를 수 있으면 버전명 없이 선택 가능을 넘긴다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        challengeVersionTitle: null,
-        canChangeVersion: true,
-      }),
-    ).toEqual({ title: null, changeable: true });
-  });
-
-  it('LIGHT 플랜은 고를 수 있다고 와도 노출하지 않는다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        pricePlanType: 'LIGHT',
-        challengeVersionTitle: null,
-        canChangeVersion: true,
-      }),
-    ).toBeUndefined();
-  });
-
-  it('버전이 없는 챌린지는 노출하지 않는다', () => {
-    expect(
-      versionOf({
-        ...baseChallenge,
-        challengeVersionTitle: null,
-        canChangeVersion: false,
-      }),
-    ).toBeUndefined();
   });
 });
 

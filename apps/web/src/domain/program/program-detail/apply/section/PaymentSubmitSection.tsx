@@ -10,8 +10,6 @@ interface PaymentSubmitSectionProps {
   buttonText: string;
   /** 폼 무효·위젯 미준비 등 외부 사유로 결제를 막을지 여부 */
   disabled?: boolean;
-  /** 결제 버튼 바로 위에 보일 안내 (예: 버전 미선택) */
-  notice?: string;
 }
 
 /**
@@ -25,7 +23,6 @@ const PaymentSubmitSection = ({
   onSubmit,
   buttonText,
   disabled = false,
-  notice,
 }: PaymentSubmitSectionProps) => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [attemptedPay, setAttemptedPay] = useState(false);
@@ -58,7 +55,6 @@ const PaymentSubmitSection = ({
           showWarning={attemptedPay}
         />
       </div>
-      {notice && <p className="text-xsmall14 text-primary mb-2">{notice}</p>}
       <button
         // 비활성 표현을 상태별로 구분한다:
         // - disabled(폼 무효·미준비): 회색(disabled:*)으로 완전 비활성.
