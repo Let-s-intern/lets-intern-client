@@ -9,6 +9,38 @@
 /** 모집상태 (구매 가능 기간으로 파생 · util/passStatus.ts) */
 export type PassRecruitmentStatus = 'BEFORE' | 'PROCEEDING' | 'CLOSED';
 
+/** 포함 권한(프로그램 이용권) 종류 */
+export type PassPermission =
+  | 'CHALLENGE_ALL_IN_ONE'
+  | 'GUIDEBOOK_ALL_IN_ONE'
+  | 'VOD_ALL_IN_ONE';
+
+/** 플랜(권한 구성) 한 개 */
+export interface PassPlan {
+  id: string; // 폼 로컬 식별자
+  name: string; // 플랜명
+  description: string; // 플랜 설명
+  permissions: PassPermission[]; // 포함 권한
+  regularPrice: number | null; // 정가
+  discountPrice: number | null; // 할인가
+}
+
+/**
+ * 생성/수정 폼 입력값. 섹션(1.1~1.6)을 단계적으로 확장한다.
+ * (현재: 1.1 기본 정보 + 1.2 플랜 정보)
+ */
+export interface PassFormInput {
+  // 1.1 기본 정보
+  title: string;
+  shortDescription: string;
+  purchaseStartDate: string | null; // ISO
+  purchaseEndDate: string | null; // ISO
+  passMonths: number | null; // 패스 기간(개월)
+  thumbnailUrl: string | null;
+  // 1.2 플랜 정보
+  plans: PassPlan[];
+}
+
 /** A-1 개설 목록 행 */
 export interface AllInOnePassListItem {
   id: number;
