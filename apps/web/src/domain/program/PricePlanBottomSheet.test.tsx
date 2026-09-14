@@ -134,6 +134,17 @@ describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
     expect(pushMock).toHaveBeenCalledWith('/payment-input');
   });
 
+  it('버전을 골라도 안내 문구가 그대로 있어 시트 높이가 바뀌지 않는다', () => {
+    renderSheet(makeChallenge(VERSIONS));
+    const note = '버전은 신청 후 한 번만 변경할 수 있어요.';
+
+    expect(screen.getByText(note)).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('radio', { name: '대학생·무경력자 Ver.' }),
+    );
+    expect(screen.getByText(note)).toBeInTheDocument();
+  });
+
   it('버전이 없는 챌린지는 버전 선택 없이 신청하고 버전을 비운다', () => {
     renderSheet(makeChallenge([]));
 

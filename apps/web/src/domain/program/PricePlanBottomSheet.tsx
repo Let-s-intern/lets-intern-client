@@ -267,11 +267,10 @@ function PricePlanBottomSheet({
                 ))}
               </RadioGroup>
             </OptionDropdown>
-            {isVersionMissing && (
-              <p className="text-xxsmall12 text-neutral-40 mt-2">
-                버전을 선택해야 신청할 수 있어요.
-              </p>
-            )}
+            {/* 선택 여부로 문구를 넣고 빼면 아래에 붙은 시트 높이가 바뀌어 화면이 튄다. 항상 같은 문구를 둔다 */}
+            <p className="text-xxsmall12 text-neutral-40 mt-2">
+              버전은 신청 후 한 번만 변경할 수 있어요.
+            </p>
           </>
         )}
 
