@@ -145,6 +145,28 @@ describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
     expect(screen.getByText(note)).toBeInTheDocument();
   });
 
+  it('이용료가 0원이어도 옵션 금액이 있는 플랜은 유료 신청으로 담는다', () => {
+    renderSheet(makeChallenge([]));
+
+    // 기본 선택은 스탠다드(이용료 0원 + LIVE 옵션 1,000원)
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({ priceId: 2, totalPrice: 1000, isFree: false }),
+    );
+  });
+
+  it('총 결제 금액이 0원인 플랜만 무료 신청으로 담는다', () => {
+    renderSheet(makeChallenge([]));
+
+    fireEvent.click(screen.getByRole('radio', { name: '베이직 플랜' }));
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({ priceId: 1, totalPrice: 0, isFree: true }),
+    );
+  });
+
   it('버전이 없는 챌린지는 버전 선택 없이 신청하고 버전을 비운다', () => {
     renderSheet(makeChallenge([]));
 
