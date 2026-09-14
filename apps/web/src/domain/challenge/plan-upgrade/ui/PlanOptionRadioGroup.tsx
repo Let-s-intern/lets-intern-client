@@ -14,7 +14,7 @@ interface PlanOptionRadioGroupProps {
  * 업그레이드할 플랜 선택지.
  *
  * 카드 전체가 label 이라 어디를 눌러도 고른다. 숨긴 native radio 를 써서 화살표 키 이동을
- * 브라우저에 맡긴다. 추천 뱃지는 바로 위 플랜인 첫 항목에만 붙인다 (D18).
+ * 브라우저에 맡긴다. 추천 뱃지는 가장 높은 플랜인 마지막 항목에만 붙인다 (D18).
  */
 const PlanOptionRadioGroup = ({
   options,
@@ -70,7 +70,7 @@ const PlanOptionRadioGroup = ({
                     <span className="text-small18 text-neutral-0 font-semibold">
                       {option.planType}
                     </span>
-                    {index === 0 && (
+                    {index === options.length - 1 && (
                       <span className="rounded-xxs text-xxsmall12 bg-primary-10 text-primary px-2 py-1">
                         추천
                       </span>

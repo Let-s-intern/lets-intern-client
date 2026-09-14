@@ -235,29 +235,18 @@ describe('PlanUpgradeContent', () => {
   });
 
   describe('플랜 선택', () => {
-    it('첫 선택은 바로 위 플랜이고 바꾸면 금액·혜택·버튼 문구가 따라 바뀐다', async () => {
+    it('첫 선택은 가장 높은 플랜이고 바꾸면 금액·혜택·버튼 문구가 따라 바뀐다', async () => {
       const user = userEvent.setup();
       renderContent();
 
-      expect(screen.getByRole('radio', { name: /STANDARD/ })).toBeChecked();
-      expect(screen.getByText('84,000원')).toBeInTheDocument();
-      expect(screen.getByText('피드백 2회')).toBeInTheDocument();
-      expect(
-        screen.getByText('10월 1일 23:59까지 업그레이드할 수 있어요'),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: '84,000원에 업그레이드 하기' }),
-      ).toBeInTheDocument();
-
-      await user.click(screen.getByRole('radio', { name: /PREMIUM/ }));
-
       expect(screen.getByRole('radio', { name: /PREMIUM/ })).toBeChecked();
       expect(screen.getByText('166,000원')).toBeInTheDocument();
-      expect(screen.queryByText('84,000원')).not.toBeInTheDocument();
       expect(screen.getByText('피드백 4회')).toBeInTheDocument();
-      expect(screen.queryByText('피드백 2회')).not.toBeInTheDocument();
       expect(
         screen.getByText('6회차 미션 자기소개서 완성 Live 멘토링'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('10월 1일 23:59까지 업그레이드할 수 있어요'),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: '166,000원에 업그레이드 하기' }),
@@ -273,16 +262,28 @@ describe('PlanUpgradeContent', () => {
       expect(
         screen.getByText('현재 BASIC 플랜 금액').nextSibling,
       ).toHaveTextContent('-84,000원');
+
+      await user.click(screen.getByRole('radio', { name: /STANDARD/ }));
+
+      expect(screen.getByRole('radio', { name: /STANDARD/ })).toBeChecked();
+      // 결제 금액 상세를 펼쳐 둔 상태라 같은 금액이 상세에도 보인다
+      expect(screen.getAllByText('84,000원').length).toBeGreaterThan(0);
+      expect(screen.queryByText('166,000원')).not.toBeInTheDocument();
+      expect(screen.getByText('피드백 2회')).toBeInTheDocument();
+      expect(screen.queryByText('피드백 4회')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: '84,000원에 업그레이드 하기' }),
+      ).toBeInTheDocument();
     });
 
     it('plan 쿼리가 유효하면 그 플랜을 선택해 연다', () => {
-      searchParams = new URLSearchParams('plan=PREMIUM');
+      searchParams = new URLSearchParams('plan=STANDARD');
 
       renderContent();
 
-      expect(screen.getByRole('radio', { name: /PREMIUM/ })).toBeChecked();
+      expect(screen.getByRole('radio', { name: /STANDARD/ })).toBeChecked();
       expect(
-        screen.getByRole('button', { name: '166,000원에 업그레이드 하기' }),
+        screen.getByRole('button', { name: '84,000원에 업그레이드 하기' }),
       ).toBeInTheDocument();
     });
 
@@ -290,12 +291,12 @@ describe('PlanUpgradeContent', () => {
       renderContent();
 
       await userEvent.click(
-        screen.getByRole('button', { name: '84,000원에 업그레이드 하기' }),
+        screen.getByRole('button', { name: '166,000원에 업그레이드 하기' }),
       );
 
       expect(screen.getByText('플랜을 업그레이드할까요?')).toBeInTheDocument();
       expect(
-        screen.getByText(/STANDARD 플랜으로 결제하면 다시 변경하기 어려워요/),
+        screen.getByText(/PREMIUM 플랜으로 결제하면 다시 변경하기 어려워요/),
       ).toBeInTheDocument();
 
       await userEvent.click(screen.getByRole('button', { name: '취소' }));
@@ -306,7 +307,7 @@ describe('PlanUpgradeContent', () => {
     it('알럿에서 결제하러 가기를 누르면 고른 플랜으로 결제 단계에 가고 이동 중에는 비활성이다', async () => {
       renderContent();
       const button = screen.getByRole('button', {
-        name: '84,000원에 업그레이드 하기',
+        name: '166,000원에 업그레이드 하기',
       });
 
       await userEvent.click(button);
@@ -315,7 +316,7 @@ describe('PlanUpgradeContent', () => {
       );
 
       expect(pushMock).toHaveBeenCalledWith(
-        '/plan-upgrade/7/payment?plan=STANDARD',
+        '/plan-upgrade/7/payment?plan=PREMIUM',
       );
       expect(button).toBeDisabled();
     });
