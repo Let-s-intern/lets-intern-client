@@ -1,8 +1,8 @@
 import { AdminRefundRequest } from '@/api/adminRefund';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { mockDelay } from './mock/passStore';
 import { participantStore } from './mock/participantStore';
+import { mockDelay } from './mock/passStore';
 
 /**
  * 올인원패스 참여자 조회/환불 훅.
@@ -10,17 +10,17 @@ import { participantStore } from './mock/participantStore';
  * 교체하고 ./mock 을 삭제한다. (환불은 기존 POST /admin/application/{id}/refund 재사용 예정)
  */
 
-export const passParticipantListQueryKey = 'allInOnePassParticipantList';
+export const participantListQueryKey = 'allInOnePassParticipantList';
 
 type MutationCallbacks = {
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 };
 
-export const useGetPassParticipantsQuery = (passId?: number) =>
+export const useGetParticipantsQuery = (passId?: number) =>
   useQuery({
     enabled: passId !== undefined,
-    queryKey: [passParticipantListQueryKey, passId],
+    queryKey: [participantListQueryKey, passId],
     queryFn: () =>
       mockDelay(
         [...participantStore.list].sort((a, b) =>
@@ -34,7 +34,7 @@ export const useGetPassParticipantsQuery = (passId?: number) =>
  * 원결제액을 originalPrice 로 보존하고 finalPrice 에 환불액을 남겨(전체=원결제액,
  * 부분=환불액) refundState 가 전체/부분을 판정할 수 있게 한다.
  */
-export const useRefundPassParticipantMutation = ({
+export const useRefundParticipantMutation = ({
   successCallback,
   errorCallback,
 }: MutationCallbacks = {}) =>

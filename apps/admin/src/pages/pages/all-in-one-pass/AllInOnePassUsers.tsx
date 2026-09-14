@@ -1,8 +1,8 @@
 import { AdminRefundRequest } from '@/api/adminRefund';
 import {
-  passParticipantListQueryKey,
-  useGetPassParticipantsQuery,
-  useRefundPassParticipantMutation,
+  participantListQueryKey,
+  useGetParticipantsQuery,
+  useRefundParticipantMutation,
 } from '@/api/all-in-one-pass/useParticipants';
 import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
 import EmptyContainer from '@/common/container/EmptyContainer';
@@ -36,7 +36,7 @@ export default function AllInOnePassUsers() {
     [passes, numericPassId],
   );
 
-  const { data, isLoading, error } = useGetPassParticipantsQuery(numericPassId);
+  const { data, isLoading, error } = useGetParticipantsQuery(numericPassId);
   const participants = useMemo(() => data ?? [], [data]);
 
   const [refundRequest, setRefundRequest] = useState<{
@@ -47,10 +47,10 @@ export default function AllInOnePassUsers() {
     null,
   );
 
-  const refundMutation = useRefundPassParticipantMutation({
+  const refundMutation = useRefundParticipantMutation({
     successCallback: () => {
       queryClient.invalidateQueries({
-        queryKey: [passParticipantListQueryKey],
+        queryKey: [participantListQueryKey],
       });
       snackbar('환불 처리되었습니다.');
       setRefundRequest(null);
