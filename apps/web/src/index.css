@@ -455,6 +455,37 @@ input[type='number'] {
   }
 }
 
+/* 1:1 LIVE 멘토링 상세 히어로의 멘토 프로필 입구 — 몇 초에 한 번 오른쪽으로 톡톡(DetailHero) */
+/* 대부분은 가만히 있고 주기의 끝에서만 화살표 방향으로 두 번 민다. 회전은 요란해 보여 뺐다 */
+/* 마우스를 올리면 끈다 — 멈추면 밀린 채 서기 때문 */
+.mentor-profile-nudge {
+  animation: mentor-profile-nudge 2.5s ease-in-out 1s infinite;
+}
+
+.mentor-profile-nudge:hover {
+  animation: none;
+}
+
+/* 2.5초 중 약 1.8초는 쉬고, 끝 0.7초에 두 번 민다. 한 번 밀고 돌아오는 데 약 0.18초 */
+@keyframes mentor-profile-nudge {
+  0%,
+  72%,
+  86%,
+  100% {
+    transform: translateX(0);
+  }
+  79%,
+  93% {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mentor-profile-nudge {
+    animation: none;
+  }
+}
+
 .speech-bubble:after {
   content: '';
   position: absolute;
