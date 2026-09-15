@@ -253,14 +253,14 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               </GlobalNavItem>
               {/*
                 1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다.
-                데스크톱은 드롭다운 하나로 묶는다. 부모를 누르면 멘토링 목록으로 가고, 올리면 두 메뉴가 열린다.
-                모바일(Swiper)은 hover 가 없어 묶지 않는다.
+                데스크톱은 렛츠커리어 멘토 드롭다운 하나로 묶는다. 부모를 누르면 멘토 목록으로 가고,
+                올리면 1:1 LIVE 멘토링과 렛츠커리어 멘토가 열린다. 모바일(Swiper)은 hover 가 없어 묶지 않는다.
               */}
               {SHOW_LIVE_MENTORING_HEADER_NAV && (
                 <GlobalNavItem
                   className="text-xsmall16"
                   isNew
-                  href="/program?catalog=mentoring"
+                  href="/mentors"
                   active={activeLink === 'MENTORS'}
                   subNavList={[
                     {
@@ -271,7 +271,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   ]}
                   showDropdownIcon={true}
                 >
-                  1:1 LIVE 멘토링
+                  렛츠커리어 멘토
                 </GlobalNavItem>
               )}
               {/*
