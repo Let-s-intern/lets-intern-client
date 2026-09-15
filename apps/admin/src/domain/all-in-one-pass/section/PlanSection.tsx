@@ -46,8 +46,8 @@ export default function PlanSection({ plans, onChange }: Props) {
   };
 
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-small18 text-neutral-0 font-semibold">
+    <section className="flex flex-col gap-3">
+      <h2 className="text-small20 text-neutral-0 font-semibold">
         플랜 정보 (권한 구성)
       </h2>
 
@@ -145,7 +145,7 @@ export default function PlanSection({ plans, onChange }: Props) {
               type="button"
               aria-label="플랜 삭제"
               onClick={() => onChange(plans.filter((p) => p.id !== plan.id))}
-              className="border-neutral-80 text-neutral-40 hover:bg-system-error/10 hover:text-system-error flex w-9 shrink-0 items-center justify-center rounded rounded-r-md border-l transition-colors"
+              className="border-neutral-80 text-neutral-40 flex w-9 shrink-0 items-center justify-center rounded rounded-r-md border-l transition-colors hover:bg-[#d32f2f]/5 hover:text-[#d32f2f]"
             >
               <FaTrashCan size={16} />
             </button>
