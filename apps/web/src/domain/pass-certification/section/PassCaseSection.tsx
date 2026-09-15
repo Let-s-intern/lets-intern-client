@@ -45,7 +45,7 @@ export default function PassCaseSection() {
       id={PASS_SECTION_ID.passCase}
       className="scroll-mt-[56px] md:scroll-mt-[60px]"
     >
-      <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-4 px-5 py-10 md:gap-9 md:px-0 md:py-20">
+      <div className="mx-auto flex max-w-[1120px] flex-col items-center gap-4 px-5 py-10 md:gap-9 md:px-0 md:py-20">
         <SectionHeading
           label="렛츠커리어 합격자"
           title={
@@ -64,13 +64,13 @@ export default function PassCaseSection() {
           }
         />
 
-        <ul className="grid w-full max-w-[1040px] grid-cols-1 gap-4 md:grid-cols-4">
+        <ul className="grid w-full max-w-[1120px] grid-cols-1 gap-4 md:grid-cols-4">
           {PASS_CASES.map((c) => (
             <li
               key={c.name}
               className="border-neutral-80 bg-static-100 flex items-center gap-4 rounded-lg border p-4 md:flex-col md:items-stretch md:gap-0 md:rounded-xl md:p-0"
             >
-              <div className="bg-primary-5 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-sm md:h-[88px] md:w-full md:rounded-none">
+              <div className="bg-primary-5 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-sm md:h-[92px] md:w-full md:rounded-none">
                 <img
                   src={`/images/pass-certification/${c.logo}-logo.png`}
                   alt={c.name}
@@ -78,7 +78,7 @@ export default function PassCaseSection() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col justify-center gap-1 md:justify-start md:gap-2 md:px-[22px] md:py-5">
+              <div className="flex flex-1 flex-col justify-center gap-1 md:justify-start md:gap-2 md:p-[22px]">
                 <span className="bg-primary-10 text-primary text-xxsmall12 self-start rounded-full px-2 py-1 font-semibold md:px-2.5">
                   {c.category}
                 </span>
