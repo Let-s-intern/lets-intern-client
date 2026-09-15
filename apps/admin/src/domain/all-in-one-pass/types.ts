@@ -46,7 +46,6 @@ export interface PassExternalLink {
 
 /**
  * 생성/수정 폼 입력값. 섹션(1.1~1.6)을 단계적으로 확장한다.
- * (현재: 1.1 기본 정보 + 1.2 플랜 + 1.3 캘린더 + 1.4 외부 링크)
  */
 export interface PassFormInput {
   // 1.1 기본 정보
@@ -62,6 +61,8 @@ export interface PassFormInput {
   calendarEvents: PassCalendarEvent[];
   // 1.4 외부 링크
   externalLinks: PassExternalLink[];
+  // 1.5 상세페이지 콘텐츠 (렉시컬 직렬화 JSON 문자열)
+  detailContent: string | null;
 }
 
 /** A-1 개설 목록 행 */
