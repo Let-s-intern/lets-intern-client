@@ -17,7 +17,7 @@ export default function PassCaseStories() {
   );
 
   return (
-    <div className="bg-primary-5 border-primary-40 flex w-full rounded-lg border p-5 md:p-8">
+    <div className="bg-primary-5 border-primary-40 flex w-full rounded-lg border p-5 md:p-[22px]">
       <BlogContainer
         gaItem="pass_blogreview"
         title={
