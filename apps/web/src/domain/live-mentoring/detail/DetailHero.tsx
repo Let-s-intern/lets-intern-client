@@ -153,12 +153,15 @@ const DetailHero = ({
               ))}
             </ul>
 
+            {/*
+              후기 줄은 잠시 숨긴다. 공개 상세 응답의 평점·후기가 아직 고정값(0)이라 모든 멘토에게
+              "후기 0건"이 보인다(1:1 오픈 준비 PRD W5). 서버가 실제 값을 채우면 아래를 되살린다.
+
+              되살릴 때 참고: 후기가 없으면 별점을 아예 빼고 "후기 0건"만 남긴다. 서버는 평점을
+              null 로 줄 때도, 0.0 으로 줄 때도 있어 둘 다 걸러낸다. ★★★★★ 옆의 (0.0) 은
+              "최악의 평점"으로 읽힌다.
+
             <div className="text-xsmall14 md:text-xsmall16 mt-auto flex flex-wrap items-center gap-x-5 gap-y-2">
-              {/*
-                후기가 없으면 별점을 아예 빼고 "후기 0건"만 남긴다.
-                서버는 평점을 null 로 줄 때도, 0.0 으로 줄 때도 있어 둘 다 걸러낸다 —
-                ★★★★★ 옆의 (0.0) 은 "최악의 평점"으로 읽힌다.
-              */}
               {detail.rating !== null && detail.reviewCount > 0 && (
                 <span className="flex items-center gap-1.5">
                   <span className="text-[#FFB800]" aria-hidden="true">
@@ -171,6 +174,7 @@ const DetailHero = ({
               )}
               <span>후기 {detail.reviewCount}건</span>
             </div>
+            */}
           </div>
 
           {/* 데스크톱은 오른쪽 위가 비어 있어 그 자리에 둔다. */}
