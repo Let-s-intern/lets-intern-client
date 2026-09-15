@@ -201,19 +201,19 @@ describe('OpenSettingsSection — 대표 경력 지정(전용 API 로 즉시 저
 });
 
 describe('OpenSettingsSection — 진행시간(다중) → 최저가', () => {
-  it('초기 30분이면 35,000원을 표기한다', () => {
+  it('초기 30분이면 39,000원을 표기한다', () => {
     renderPage({ durations: [30] });
-    expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('39,000원').length).toBeGreaterThan(0);
   });
 
   it('여러 진행시간이면 최저가, 하나만 남기면 그 가격으로 갱신된다', () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
-    expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('39,000원').length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
-    expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('69,000원').length).toBeGreaterThan(0);
   });
 
   it('가격 입력 UI(number/text 가격 필드)가 없다', () => {
