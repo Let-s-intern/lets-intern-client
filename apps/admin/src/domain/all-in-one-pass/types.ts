@@ -25,9 +25,28 @@ export interface PassPlan {
   discountPrice: number | null; // 할인가
 }
 
+/** 캘린더 일정 유형 */
+export type CalendarEventType = 'SEMINAR' | 'MILESTONE';
+
+/** 1.3 캘린더 관리 일정 한 개 (세미나/마일스톤 수기 입력) */
+export interface PassCalendarEvent {
+  id: string; // 폼 로컬 식별자
+  date: string | null; // 일정 날짜(ISO)
+  type: CalendarEventType;
+  title: string;
+  url: string | null; // URL(선택)
+}
+
+/** 1.4 외부 링크 한 개 */
+export interface PassExternalLink {
+  id: string; // 폼 로컬 식별자
+  name: string; // 링크명
+  url: string;
+}
+
 /**
  * 생성/수정 폼 입력값. 섹션(1.1~1.6)을 단계적으로 확장한다.
- * (현재: 1.1 기본 정보 + 1.2 플랜 정보)
+ * (현재: 1.1 기본 정보 + 1.2 플랜 + 1.3 캘린더 + 1.4 외부 링크)
  */
 export interface PassFormInput {
   // 1.1 기본 정보
@@ -39,6 +58,10 @@ export interface PassFormInput {
   thumbnailUrl: string | null;
   // 1.2 플랜 정보
   plans: PassPlan[];
+  // 1.3 캘린더 관리
+  calendarEvents: PassCalendarEvent[];
+  // 1.4 외부 링크
+  externalLinks: PassExternalLink[];
 }
 
 /** A-1 개설 목록 행 */
