@@ -251,24 +251,28 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 프로그램
                 <span>&nbsp;카테고리</span>
               </GlobalNavItem>
-              {/* 1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다. */}
+              {/*
+                1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다.
+                데스크톱은 렛츠커리어 멘토 드롭다운 하나로 묶는다. 부모를 누르면 멘토 목록으로 가고,
+                올리면 1:1 LIVE 멘토링과 렛츠커리어 멘토가 열린다. 모바일(Swiper)은 hover 가 없어 묶지 않는다.
+              */}
               {SHOW_LIVE_MENTORING_HEADER_NAV && (
-                <>
-                  <GlobalNavItem
-                    className="text-xsmall16"
-                    isNew
-                    href="/program?catalog=mentoring"
-                  >
-                    1:1 LIVE 멘토링
-                  </GlobalNavItem>
-                  <GlobalNavItem
-                    className="text-xsmall16"
-                    href="/mentors"
-                    active={activeLink === 'MENTORS'}
-                  >
-                    렛츠커리어 멘토
-                  </GlobalNavItem>
-                </>
+                <GlobalNavItem
+                  className="text-xsmall16"
+                  isNew
+                  href="/mentors"
+                  active={activeLink === 'MENTORS'}
+                  subNavList={[
+                    {
+                      children: '1:1 LIVE 멘토링',
+                      href: '/program?catalog=mentoring',
+                    },
+                    { children: '렛츠커리어 멘토', href: '/mentors' },
+                  ]}
+                  showDropdownIcon={true}
+                >
+                  렛츠커리어 멘토
+                </GlobalNavItem>
               )}
               {/*
                 [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (데스크톱 GNB)

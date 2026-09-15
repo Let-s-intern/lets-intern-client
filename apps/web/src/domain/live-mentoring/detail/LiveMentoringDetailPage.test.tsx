@@ -292,7 +292,8 @@ describe('LiveMentoringDetailPage', () => {
         screen.getAllByText('포폴메이커 멘토의 1:1 멘토링').length,
       ).toBeGreaterThan(0),
     );
-    expect(screen.getByText('후기 12건')).toBeInTheDocument();
+    // 후기 줄은 서버가 평점·후기를 실제 값으로 채울 때까지 숨긴다(1:1 오픈 준비 PRD W5).
+    expect(screen.queryByText('후기 12건')).not.toBeInTheDocument();
     expect(
       screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
     ).toBeEnabled();
