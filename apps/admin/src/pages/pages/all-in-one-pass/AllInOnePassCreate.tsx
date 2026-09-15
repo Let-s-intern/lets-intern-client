@@ -9,6 +9,7 @@ import PlanSection, {
   createEmptyPlan,
 } from '@/domain/all-in-one-pass/section/PlanSection';
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
+import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
 import { Button } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -45,6 +46,7 @@ export default function AllInOnePassCreate() {
     <main className="flex flex-col p-6">
       <Header>
         <Heading>올인원패스 생성</Heading>
+        <ImportExportBar mode="import" input={input} onImport={setInput} />
       </Header>
       <div className="flex flex-col gap-10">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
