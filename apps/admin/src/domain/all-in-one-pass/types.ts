@@ -63,6 +63,18 @@ export interface PassFormInput {
   externalLinks: PassExternalLink[];
   // 1.5 상세페이지 콘텐츠 (렉시컬 직렬화 JSON 문자열)
   detailContent: string | null;
+  // 1.6 혜택
+  benefits: PassBenefit[];
+}
+
+/** 1.6 혜택 한 개 */
+export interface PassBenefit {
+  id: string; // 폼 로컬 식별자
+  isVisible: boolean; // 행별 노출 토글
+  category: string; // 유형(직접입력/기존선택) → 유저 기타혜택 카드 뱃지
+  thumbnailUrl: string | null;
+  title: string;
+  description: string;
 }
 
 /** A-1 개설 목록 행 */
