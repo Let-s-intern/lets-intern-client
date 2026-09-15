@@ -29,7 +29,10 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
-import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
+import {
+  SHOW_LIVE_MENTORING_HEADER_NAV,
+  SHOW_LIVE_MENTORING_NAV,
+} from '@/domain/live-mentoring/constants';
 
 export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[115px]';
 export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[115px]';
@@ -168,28 +171,32 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   프로그램
                 </GlobalNavItem>
               </SwiperSlide>
-              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
-              {SHOW_LIVE_MENTORING_NAV && (
-                <>
-                  <SwiperSlide className="!w-auto">
-                    <GlobalNavItem
-                      className="text-xsmall14"
-                      isNew
-                      href="/program?catalog=mentoring"
-                    >
-                      1:1 LIVE 멘토링
-                    </GlobalNavItem>
-                  </SwiperSlide>
-                  <SwiperSlide className="!w-auto">
-                    <GlobalNavItem
-                      className="text-xsmall14"
-                      href="/mentors"
-                      active={activeLink === 'MENTORS'}
-                    >
-                      멘토 소개
-                    </GlobalNavItem>
-                  </SwiperSlide>
-                </>
+              {/*
+                1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다.
+                Fragment 로 묶지 않는다. Swiper 가 Fragment 안의 슬라이드를 다시 펼치면서 key 가
+                바깥 첫 슬라이드와 겹친다(`.0`).
+              */}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    isNew
+                    href="/program?catalog=mentoring"
+                  >
+                    1:1 LIVE 멘토링
+                  </GlobalNavItem>
+                </SwiperSlide>
+              )}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    href="/mentors"
+                    active={activeLink === 'MENTORS'}
+                  >
+                    렛츠커리어 멘토
+                  </GlobalNavItem>
+                </SwiperSlide>
               )}
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
@@ -229,14 +236,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   무료 자료집
                 </GlobalNavItem>
               </SwiperSlide>
-              <SwiperSlide className="!w-auto">
-                <GlobalNavItem
-                  className="text-xsmall14"
-                  href="/program?type=VOD"
-                >
-                  취준위키 VOD
-                </GlobalNavItem>
-              </SwiperSlide>
             </Swiper>
           )}
           {/* 데스크톱: 기존 flex 레이아웃 */}
@@ -252,8 +251,8 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 프로그램
                 <span>&nbsp;카테고리</span>
               </GlobalNavItem>
-              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
-              {SHOW_LIVE_MENTORING_NAV && (
+              {/* 1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다. */}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
                 <>
                   <GlobalNavItem
                     className="text-xsmall16"
@@ -267,7 +266,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                     href="/mentors"
                     active={activeLink === 'MENTORS'}
                   >
-                    멘토 소개
+                    렛츠커리어 멘토
                   </GlobalNavItem>
                 </>
               )}
@@ -299,9 +298,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 showDropdownIcon={true}
               >
                 무료 세미나/자료집
-              </GlobalNavItem>
-              <GlobalNavItem className="text-xsmall16" href="/program?type=VOD">
-                취준위키 VOD
               </GlobalNavItem>
             </div>
             <div
