@@ -1,6 +1,7 @@
 'use client';
 
 import { useMediaQuery } from '@mui/material';
+import type { ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -11,10 +12,15 @@ import MentorProgramItem, {
   MentorProgramItemProps,
 } from '../ui/MentorProgramItem';
 
+const SLIDE_CLASS_NAME =
+  '!w-[41%] shrink-0 min-[768px]:!w-[32%] min-[820px]:!w-[24%] min-[1040px]:!w-[19%]';
+
 interface MentorProgramContainerProps {
   title: string;
   count: number;
   programs: MentorProgramItemProps[];
+  /** programs 앞 첫 슬라이드에 그릴 카드. count 에는 호출하는 쪽이 포함한다. */
+  leadingItem?: ReactNode;
   showGrid?: boolean;
   gaItem: string;
   gaTitle: string;
@@ -33,7 +39,7 @@ const MentorProgramContainer = (props: MentorProgramContainerProps) => {
         </span>
       </div>
 
-      {props.programs.length < 1 ? (
+      {props.programs.length < 1 && !props.leadingItem ? (
         <EmptyContainer
           className="h-[201px] md:h-[266px]"
           text={props.emptyText || '등록된 콘텐츠가 없습니다.'}
@@ -80,11 +86,13 @@ const MentorProgramContainer = (props: MentorProgramContainerProps) => {
               },
             }}
           >
+            {props.leadingItem && (
+              <SwiperSlide className={SLIDE_CLASS_NAME}>
+                {props.leadingItem}
+              </SwiperSlide>
+            )}
             {props.programs.map((program, index) => (
-              <SwiperSlide
-                key={index}
-                className="!w-[41%] shrink-0 min-[768px]:!w-[32%] min-[820px]:!w-[24%] min-[1040px]:!w-[19%]"
-              >
+              <SwiperSlide key={index} className={SLIDE_CLASS_NAME}>
                 <MentorProgramItem {...program} className={props.gaItem} />
               </SwiperSlide>
             ))}

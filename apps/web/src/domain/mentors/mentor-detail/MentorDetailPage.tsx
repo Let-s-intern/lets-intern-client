@@ -2,6 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
+import { useMentorOpenLiveMentoringQuery } from '@/api/live-mentoring/liveMentoring';
 import {
   mentorDetailQueryOptions,
   mentorStatsQueryOptions,
@@ -21,12 +22,16 @@ interface MentorDetailProps {
 const MentorDetailContent = ({ mentorId }: MentorDetailProps) => {
   const { data: mentor } = useSuspenseQuery(mentorDetailQueryOptions(mentorId));
   const { data: stats } = useSuspenseQuery(mentorStatsQueryOptions(mentorId));
+  // suspense 로 묶지 않는다 — 실패해도 1:1 멘토링 카드만 빠지고 페이지는 그대로 뜬다.
+  const { data: liveMentoringOpening } =
+    useMentorOpenLiveMentoringQuery(mentorId);
 
   return (
     <>
       <MentorHeroSection mentor={mentor} stats={stats} />
       <MentorIntroSection mentor={mentor} />
       <MentorProgramSection
+        liveMentoringOpening={liveMentoringOpening}
         proceedingProgramList={mentor.proceedingProgramList}
         postProgramList={mentor.postProgramList}
       />
