@@ -80,6 +80,34 @@ export const useLiveMentorListQuery = (
   });
 };
 
+/** 서버 `max-page-size` 기본값 — OPEN 개설 전체를 한 페이지로 받는다. */
+const ALL_OPENINGS_SIZE = 2000;
+
+/**
+ * GET /live-mentoring — 이 멘토의 OPEN 개설을 찾는다. 없으면 null.
+ *
+ * 열림 여부를 알 수 있는 공개 API 는 이 목록뿐이다. 공개 상세(`/mentors/{mentorId}`)는
+ * 닫힌 최신 개설의 `openingId` 도 내려주고, 슬롯 API 는 열려 있어도 예약 가능한 슬롯이
+ * 없으면 빈 목록이다. 목록에는 멘토 필터가 없어 전체를 받아 거른다.
+ */
+export const useMentorOpenLiveMentoringQuery = (mentorId: number | string) => {
+  return useQuery({
+    queryKey: [...LIVE_MENTOR_LIST_QUERY_KEY, 'mentor', { mentorId }],
+    queryFn: async () => {
+      const res = await axios.get('/live-mentoring', {
+        params: { page: 1, size: ALL_OPENINGS_SIZE },
+      });
+      const { openingList } = liveMentoringOpeningListSchema.parse(
+        res.data.data,
+      );
+      return (
+        openingList.find((opening) => opening.mentorId === Number(mentorId)) ??
+        null
+      );
+    },
+  });
+};
+
 /**
  * GET /live-mentoring/mentors/{mentorId} — 공개 멘토 상세(+reviews) 조회.
  *
