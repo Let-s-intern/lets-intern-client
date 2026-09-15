@@ -36,10 +36,9 @@ const LoginGate = ({ applicationId, role }: Props) => {
   const roleSeg = role === 'MENTOR' ? 'mentor' : 'mentee';
   /*
     소셜 로그인 후 돌아올 주소. 이 화면의 실제 경로와 반드시 같아야 한다 —
-    LC-3242 에서 입장 경로가 session/ 아래로 옮겨졌는데 여기가 따라오지 않아
-    카카오·네이버로 로그인하면 404 로 떨어졌다.
+    경로가 어긋나면 카카오·네이버로 로그인한 뒤 404 로 떨어진다.
   */
-  const currentPath = `/live-mentoring/session/${roleSeg}/${applicationId}`;
+  const currentPath = `/live-mentoring/${roleSeg}/${applicationId}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
