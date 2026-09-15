@@ -96,7 +96,7 @@ const PlanCard = ({
         </li>
         <li className="flex items-center gap-2">
           <DocumentIcon />
-          <span>합격 포폴 자료집</span>
+          <span>서류 첨삭 및 질의 응답</span>
         </li>
       </ul>
       <div className="flex flex-col gap-0.5">

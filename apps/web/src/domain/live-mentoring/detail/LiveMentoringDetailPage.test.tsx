@@ -218,13 +218,10 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.getByText('핵심 키워드 5가지')).toBeInTheDocument();
     expect(screen.getByText('서류 완성도 UP!')).toBeInTheDocument();
     expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
-    // 통이미지였던 고정 섹션 4개를 모두 마크업으로 옮겼다 (SEO)
+    // 통이미지였던 고정 섹션을 마크업으로 옮겼다 (SEO). 특별 혜택 섹션은 숨겼다
     expect(
-      screen.getByText('합격 포폴 일부를 제공해드립니다'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('OO뱅크 서비스 기획자 자기소개서'),
-    ).toBeInTheDocument();
+      screen.queryByText('합격 포폴 일부를 제공해드립니다'),
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/혼자 하기 막막하셨나요\?/)).toBeInTheDocument();
     expect(
       screen.getByText(/1:1 LIVE 멘토링으로 빠르게 정리해요/),
@@ -332,6 +329,25 @@ describe('LiveMentoringDetailPage', () => {
         screen.getByText('- 이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'),
       ).toBeInTheDocument(),
     );
+  });
+
+  /*
+    멘토 프로필 입구는 데스크톱(오른쪽 위)과 모바일(구매 카드 위)에 하나씩 있다.
+    jsdom 은 미디어쿼리를 적용하지 않아 폭별 노출은 클래스로 확인한다.
+  */
+  it('멘토 프로필 링크를 데스크톱·모바일 자리에 하나씩 두고 둘 다 멘토 프로필로 보낸다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    const links = await screen.findAllByRole('link', {
+      name: /프로필 구경하러 가기/,
+    });
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute('href', '/mentors/3');
+    }
+    expect(links[0]).toHaveClass('hidden', 'md:block');
+    expect(links[1]).toHaveClass('md:hidden');
   });
 
   /*

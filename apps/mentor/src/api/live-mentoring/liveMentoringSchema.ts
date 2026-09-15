@@ -312,7 +312,7 @@ export type LiveMentoringSettingsUpdate = z.infer<
  * 담아 보낸다(서버 `updateSettingsForOpening`). 관리자 승인 없이 바로 열린다.
  *
  * 날짜는 담지 않는다 — 예약 가능 일정은 슬롯(`PUT /slots`)으로 따로 등록한다.
- * 가격은 서버 고정 정책(30분 35,000원 / 60분 60,000원)이라 보내지 않는다.
+ * 가격은 서버 고정 정책(30분 39,000원 / 60분 69,000원)이라 보내지 않는다.
  */
 export const liveMentoringOpeningCreateSchema = z.object({
   title: z.string(),

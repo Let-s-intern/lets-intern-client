@@ -39,11 +39,11 @@ export const DEFAULT_MOSAIC_BLUR = 10;
 
 /**
  * 진행시간 → 고정 가격. 멘토가 입력하지 않으며 카테고리·등급 등 다른 변수는 없다.
- * 30분 = 35,000원 / 60분 = 60,000원 (운영팀 소관, 이번엔 고정).
+ * 30분 = 39,000원 / 60분 = 69,000원 (운영팀 소관, 이번엔 고정).
  */
 export const PRICE_BY_DURATION: Record<LiveMentoringDuration, number> = {
-  30: 35000,
-  60: 60000,
+  30: 39000,
+  60: 69000,
 };
 
 /** 진행시간에 해당하는 고정 가격을 반환한다. */
@@ -53,7 +53,7 @@ export function getPriceByDuration(durationMin: LiveMentoringDuration): number {
 
 /**
  * 여러 진행시간이 선택된 경우 웹에는 **가장 낮은 금액**을 노출한다.
- * (30분 35,000 < 60분 60,000 이므로 사실상 최소 진행시간의 가격)
+ * (30분 39,000 < 60분 69,000 이므로 사실상 최소 진행시간의 가격)
  * 빈 배열이면 0.
  */
 export function getLowestPrice(durations: LiveMentoringDuration[]): number {
