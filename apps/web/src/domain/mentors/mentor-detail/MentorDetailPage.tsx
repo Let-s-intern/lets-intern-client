@@ -35,8 +35,13 @@ const MentorDetailContent = ({ mentorId }: MentorDetailProps) => {
         proceedingProgramList={mentor.proceedingProgramList}
         postProgramList={mentor.postProgramList}
       />
+      {/*
+        후기 수는 상단 히어로와 같은 출처(stats)를 쓴다. 목록(reviewList)은 공개되고
+        본문이 있는 후기만 담아 더 좁으므로, 길이로 세면 위아래 숫자가 어긋난다.
+      */}
       <MentorReviewSection
         reviewList={mentor.reviewList}
+        reviewCount={stats.reviewCount}
         averageScore={stats.averageScore}
       />
     </>
