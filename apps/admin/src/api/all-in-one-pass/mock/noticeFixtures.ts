@@ -1,9 +1,5 @@
 import { AllInOnePassNotice } from '@/domain/all-in-one-pass/types';
 
-/**
- * A-3 공지·가이드 mock 시드. 실제 API가 나오면 이 파일과 store/훅을 삭제한다.
- * linkedPassIds 는 passFixtures 의 id(1~3)를 참조한다.
- */
 export const noticeFixtures: AllInOnePassNotice[] = [
   {
     id: 1,
