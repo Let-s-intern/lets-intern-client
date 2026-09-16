@@ -19,7 +19,7 @@ const createInitialInput = (): PassFormInput => ({
   shortDescription: '',
   purchaseStartDate: null,
   purchaseEndDate: null,
-  passMonths: null,
+  passDays: null,
   thumbnailUrl: null,
   plans: [createEmptyPlan()],
   calendarEvents: [],
@@ -62,7 +62,7 @@ export default function AllInOnePassCreate() {
             onChange={(calendarEvents) => patch({ calendarEvents })}
             purchaseStartDate={input.purchaseStartDate}
             purchaseEndDate={input.purchaseEndDate}
-            passMonths={input.passMonths}
+            passDays={input.passDays}
           />
           <ExternalLinkSection
             links={input.externalLinks}

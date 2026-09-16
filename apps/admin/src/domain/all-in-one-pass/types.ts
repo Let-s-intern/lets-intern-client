@@ -53,7 +53,7 @@ export interface PassFormInput {
   shortDescription: string;
   purchaseStartDate: string | null; // ISO
   purchaseEndDate: string | null; // ISO
-  passMonths: number | null; // 패스 기간(개월)
+  passDays: number | null; // 패스 기간(일)
   thumbnailUrl: string | null;
   // 1.2 플랜 정보
   plans: PassPlan[];
@@ -83,7 +83,7 @@ export interface AllInOnePassListItem {
   title: string; // 올인원패스 제목
   purchaseStartDate: string | null; // 구매 가능 기간 시작
   purchaseEndDate: string | null; // 구매 가능 기간 종료
-  passMonths: number; // 패스 기간(개월)
+  passDays: number; // 패스 기간(일)
   isVisible: boolean; // 노출 여부(단일 노출)
   currentApplicantCount: number; // 신청 인원
   maxApplicantCount: number | null; // null = 무제한(∞)

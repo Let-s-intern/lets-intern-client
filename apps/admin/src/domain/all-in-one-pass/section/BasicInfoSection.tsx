@@ -66,10 +66,10 @@ export default function BasicInfoSection({ input, patch }: Props) {
           <TextField
             label="패스 기간"
             type="number"
-            value={input.passMonths ?? ''}
+            value={input.passDays ?? ''}
             onChange={(e) =>
               patch({
-                passMonths:
+                passDays:
                   e.target.value === '' ? null : Number(e.target.value),
               })
             }
