@@ -433,10 +433,14 @@ export type LiveMentoringAttachmentType = z.infer<
  * 멘티가 낸 질문 본문과 첨부를 담는다. 목록은 캘린더가 주 단위로 계속 호출하므로
  * 본문을 싣지 않는다 — 계약을 나누는 이유는 PRD 4.1 에 있다.
  *
- * **파일 첨부의 이름·주소 필드(`attachmentFileName`·`attachmentFileUrl`)를 두지 않는다.**
- * 업로드 키가 `FileType + 원본 파일명` 이라 파일명 자체가 곧 S3 키고, 그 주소는 서명도
- * 만료도 없는 공개 주소다. 이름을 내리는 것이 주소를 알려주는 것과 같다(PRD 4.2).
- * `attachmentType` 이 `FILE` 이면 화면은 "냈다" 는 사실만 표시한다.
+ * 파일 첨부도 `attachmentUrl` **한 자리로** 온다. 서버가 URL 첨부면 멘티가 적어 낸
+ * 주소를, 파일 첨부면 저장된 파일 주소를 채워 내린다. 그래서 화면은 두 경우를 나누지
+ * 않고 같은 링크를 그린다.
+ *
+ * 예전에는 파일 주소를 아예 내리지 않았다. 업로드 키가 `FileType + 원본 파일명` 이라
+ * 파일명이 곧 S3 키였고 그 주소는 서명도 만료도 없는 공개 주소여서, 이름을 내리는 것이
+ * 주소를 알려주는 것과 같았다(PRD 4.2). 업로드에 무작위 접두사를 붙이도록 고쳐
+ * (`uploadFileForId`) 그 전제가 사라졌다.
  */
 /** 출석 상태 — 라이브 피드백(`FeedbackAttendanceStatus`)과 같은 값이다. */
 export const liveMentoringAttendanceStatusSchema = z.enum([
@@ -480,7 +484,8 @@ export const liveMentoringReservationDetailSchema = z.object({
   questionContent: z.string().nullable(),
   attachmentType: liveMentoringAttachmentTypeSchema,
   /**
-   * `attachmentType` 이 `URL` 이고 멘토 전달에 동의했을 때만 값이 온다.
+   * 첨부를 여는 주소. 첨부가 있고 멘토 전달에 동의했을 때만 값이 온다 — URL 첨부면
+   * 멘티가 적어 낸 주소가, 파일 첨부면 저장된 파일 주소가 같은 자리로 온다.
    *
    * **동의하지 않은 건은 서버가 null 로 비운 채 내린다** — 화면에서 가리는 것이 아니다.
    * 값을 내려놓고 감추면 응답 본문에 남아 개발자 도구로 보인다(PRD 4.4).
