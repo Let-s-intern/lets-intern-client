@@ -2,12 +2,17 @@
 
 import AlertModal from '@/common/alert/AlertModal';
 import { isSlackChatLink } from '@/domain/challenge/utils/chatLink';
+import { twMerge } from '@/lib/twMerge';
 import { useState } from 'react';
 
 interface ChatEnterButtonProps {
   link: string;
   /** 참여코드. 없으면 새 탭으로 바로 보낸다. */
   password?: string;
+  /** 문구를 바꿔 쓰는 자리가 있다(제출 후 "미션 공유하기"). 기본은 채팅방 종류를 따른다. */
+  label?: string;
+  /** 안내 옆의 작은 버튼과 제출 버튼 아래의 큰 버튼이 같은 컴포넌트를 쓴다. */
+  className?: string;
 }
 
 /**
@@ -16,11 +21,17 @@ interface ChatEnterButtonProps {
  * 참여코드가 있으면 모달로 한 번 끊어 코드를 복사하게 한다 — 카카오톡·슬랙이 코드를
  * 요구하는 시점에는 이미 이 페이지를 벗어난 뒤라, 코드를 보러 돌아와야 한다.
  */
-const ChatEnterButton = ({ link, password }: ChatEnterButtonProps) => {
+const ChatEnterButton = ({
+  link,
+  password,
+  label,
+  className,
+}: ChatEnterButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const isSlack = isSlackChatLink(link);
-  const label = isSlack ? '슬랙 채널 입장하기' : '오픈채팅방 입장하기';
+  const buttonLabel =
+    label ?? (isSlack ? '슬랙 채널 입장하기' : '오픈채팅방 입장하기');
 
   const enter = () => window.open(link, '_blank', 'noopener,noreferrer');
 
@@ -46,7 +57,10 @@ const ChatEnterButton = ({ link, password }: ChatEnterButtonProps) => {
       <button
         type="button"
         onClick={handleClick}
-        className="rounded-xxs border-neutral-80 text-xxsmall12 text-neutral-0 mt-2 inline-flex items-center gap-1 border bg-white px-3 py-1.5 font-medium"
+        className={twMerge(
+          'rounded-xxs border-neutral-80 text-xxsmall12 text-neutral-0 mt-2 inline-flex items-center gap-1 border bg-white px-3 py-1.5 font-medium',
+          className,
+        )}
       >
         <img
           src={
@@ -56,7 +70,7 @@ const ChatEnterButton = ({ link, password }: ChatEnterButtonProps) => {
           aria-hidden="true"
           className="h-3.5 w-3.5"
         />
-        {label}
+        {buttonLabel}
       </button>
 
       {isModalOpen && password && (

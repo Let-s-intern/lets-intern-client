@@ -78,6 +78,7 @@ export function useMissionSubmitRegular({
   const [isEditing, setIsEditing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [selectedExperienceIds, setSelectedExperienceIds] = useState<number[]>(
     [],
   );
@@ -134,7 +135,9 @@ export function useMissionSubmitRegular({
 
     if (isFirstThirdMission || isSecondThirdMission) {
       setIsBonusMissionModalOpen(true);
+      return true;
     }
+    return false;
   };
 
   const handleSubmit = async () => {
@@ -162,9 +165,19 @@ export function useMissionSubmitRegular({
       setShowToast(true);
       onRefreshMissionData?.();
       onSubmitLastMission?.();
-      handleOpenBonusMissionModalAtSubmission(selectedMissionTh);
-      if (isLastRegularMissionSubmit && !attendanceInfo?.submitted) {
+      const bonusModalOpened =
+        handleOpenBonusMissionModalAtSubmission(selectedMissionTh);
+      const reviewModalOpened =
+        isLastRegularMissionSubmit && !attendanceInfo?.submitted;
+      if (reviewModalOpened) {
         setModalOpen(true);
+      }
+      /*
+        보너스·후기 모달이 뜨는 제출에서는 공유 모달을 겹쳐 띄우지 않는다. 닫아도
+        제출 버튼 아래 공유 버튼이 남으므로 공유 경로가 사라지지는 않는다.
+      */
+      if (!bonusModalOpened && !reviewModalOpened) {
+        setIsShareModalOpen(true);
       }
     } catch (error) {
       console.error('미션 제출 실패:', error);
@@ -244,6 +257,8 @@ export function useMissionSubmitRegular({
     modalOpen,
     isBonusMissionModalOpen,
     setIsBonusMissionModalOpen,
+    isShareModalOpen,
+    setIsShareModalOpen,
     setModalOpen,
     isSubmitPeriodEnded,
     isResubmitBlocked,

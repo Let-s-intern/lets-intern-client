@@ -28,15 +28,23 @@ export const MissionSubmitGuidance = () => {
               에서 진행해주세요.
             </span>
           </li>
-          <li className="flex items-start">
-            <span className="text-neutral-10 mr-2">-</span>
-            <span>
-              제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
+          <li className="flex items-start justify-between gap-3">
+            <span className="flex items-start">
+              <span className="text-neutral-10 mr-2">-</span>
+              <span>
+                제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
+              </span>
             </span>
+            {chatLink && (
+              <ChatEnterButton
+                link={chatLink}
+                password={chatPassword}
+                className="mt-0 shrink-0"
+              />
+            )}
           </li>
         </ul>
       </div>
-      {chatLink && <ChatEnterButton link={chatLink} password={chatPassword} />}
     </section>
   );
 };

@@ -10,6 +10,7 @@ import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/Miss
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
 import { useChallengeChatLink } from '@/domain/challenge/hooks/useChallengeChatLink';
 import ChatEnterButton from './ui/ChatEnterButton';
+import MissionShareModal from './ui/MissionShareModal';
 import dayjs from '@/lib/dayjs';
 import { ApiError } from '@letscareer/api/errors';
 import { useQueryClient } from '@tanstack/react-query';
@@ -54,6 +55,7 @@ const MissionSubmitZeroSection = ({
   const [isSubmitted, setIsSubmitted] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -109,6 +111,8 @@ const MissionSubmitZeroSection = ({
       setIsSubmitted(true);
       setShowErrorToast(false);
       setShowToast(true);
+      // 0회차에는 보너스·후기 모달이 없어 겹칠 것이 없다.
+      setIsShareModalOpen(true);
     } catch (error) {
       console.error('제출 실패:', error);
       setShowToast(false);
@@ -141,16 +145,22 @@ const MissionSubmitZeroSection = ({
             챌린지 참여 목표
           </span>
         </div>
-        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 rounded px-3 py-3">
-          미션 제출 후, 작성한 챌린지 목표를 {placeName}에 공유해주세요.
+        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 flex items-start justify-between gap-3 rounded px-3 py-3">
+          <span>
+            미션 제출 후, 작성한 챌린지 목표를 {placeName}에 공유해주세요.
+          </span>
+          {/*
+            링크를 안 넣은 챌린지도 있다. 그때는 버튼을 감추고 문구는 기존(카카오톡)
+            그대로 둔다 — 안내를 없애면 공유해야 한다는 사실 자체가 사라진다.
+          */}
+          {chatLink && (
+            <ChatEnterButton
+              link={chatLink}
+              password={chatPassword}
+              className="mt-0 shrink-0"
+            />
+          )}
         </div>
-        {/*
-          링크를 안 넣은 챌린지도 있다. 그때는 버튼을 감추고 문구는 기존(카카오톡)
-          그대로 둔다 — 안내를 없애면 공유해야 한다는 사실 자체가 사라진다.
-        */}
-        {chatLink && (
-          <ChatEnterButton link={chatLink} password={chatPassword} />
-        )}
       </div>
       <textarea
         className={clsx(
@@ -175,6 +185,15 @@ const MissionSubmitZeroSection = ({
           disabled={isSubmitted || !isMissionReady}
         />
       )}
+      {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}
+      {isSubmitted && chatLink && (
+        <ChatEnterButton
+          link={chatLink}
+          password={chatPassword}
+          label="미션 공유하기"
+          className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 mt-3 flex w-full justify-center p-4"
+        />
+      )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
       <MissionToast
@@ -182,6 +201,13 @@ const MissionSubmitZeroSection = ({
         onClose={() => setShowErrorToast(false)}
         message="제출에 실패했습니다. 다시 시도해주세요."
       />
+      {isShareModalOpen && chatLink && (
+        <MissionShareModal
+          link={chatLink}
+          password={chatPassword}
+          onClose={() => setIsShareModalOpen(false)}
+        />
+      )}
     </section>
   );
 };

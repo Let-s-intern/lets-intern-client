@@ -2,7 +2,10 @@ import DashboardCreateReviewModal from '@/domain/challenge/dashboard/modal/Dashb
 import { MissionPreQuestionInputSection } from '../ui/MissionPreQuestionInputSection';
 import { MissionReviewInputSection } from './MissionReviewInputSection';
 import BonusMissionModal from '@/domain/challenge/my-challenge/mission/submit/regular/BonusMissionModal';
+import { useChallengeChatLink } from '@/domain/challenge/hooks/useChallengeChatLink';
+import ChatEnterButton from '@/domain/challenge/my-challenge/mission/submit/ui/ChatEnterButton';
 import LinkInputSection from '@/domain/challenge/my-challenge/mission/submit/ui/LinkInputSection';
+import MissionShareModal from '@/domain/challenge/my-challenge/mission/submit/ui/MissionShareModal';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
 import MobileReviewModal from './MobileReviewModal';
@@ -32,6 +35,7 @@ const MissionSubmitRegularSection = ({
   onSubmitLastMission,
 }: MissionSubmitRegularSectionProps) => {
   const params = useParams<{ applicationId: string; programId: string }>();
+  const { chatLink, chatPassword } = useChallengeChatLink();
 
   const {
     currentSelectedMission,
@@ -53,6 +57,8 @@ const MissionSubmitRegularSection = ({
     modalOpen,
     isBonusMissionModalOpen,
     setIsBonusMissionModalOpen,
+    isShareModalOpen,
+    setIsShareModalOpen,
     setModalOpen,
     isSubmitPeriodEnded,
     isResubmitBlocked,
@@ -123,6 +129,15 @@ const MissionSubmitRegularSection = ({
             disabled={isResubmitBlocked}
           />
         )}
+        {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}
+        {isSubmitted && chatLink && (
+          <ChatEnterButton
+            link={chatLink}
+            password={chatPassword}
+            label="미션 공유하기"
+            className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 mt-3 flex w-full justify-center p-4"
+          />
+        )}
         <MissionToast
           message={toastMessage}
           isVisible={showToast}
@@ -143,6 +158,13 @@ const MissionSubmitRegularSection = ({
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
       />
+      {isShareModalOpen && chatLink && (
+        <MissionShareModal
+          link={chatLink}
+          password={chatPassword}
+          onClose={() => setIsShareModalOpen(false)}
+        />
+      )}
       {bonusMission && (
         <BonusMissionModal
           isOpen={isBonusMissionModalOpen}
