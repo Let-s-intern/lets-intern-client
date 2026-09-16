@@ -252,6 +252,21 @@ const QuestionModal = ({
                     {fileName}
                   </span>
                 )}
+                {/*
+                  이미 낸 파일을 여기서 열어 본다. 예전에는 업로드 직후의 이름만 남아
+                  무엇을 냈는지 다시 확인할 방법이 없었다. 주소는 서버가 준다 —
+                  파일 첨부의 주소는 신청이 아니라 File 에 있어 화면이 만들 수 없다.
+                */}
+                {draft.attachmentType === 'FILE' && question?.attachmentUrl && (
+                  <a
+                    href={question.attachmentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xxsmall12 text-primary underline"
+                  >
+                    제출한 파일 열기
+                  </a>
+                )}
                 {uploadError && (
                   <span className="text-xxsmall12 text-system-error">
                     {uploadError}

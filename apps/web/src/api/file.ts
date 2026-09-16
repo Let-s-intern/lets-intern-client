@@ -60,6 +60,14 @@ export async function uploadFile({
   return fileUrl;
 }
 
+/**
+ * 업로드하고 파일 **id** 를 받는다. 1대1 멘토링 질문 첨부가 이 경로를 쓴다.
+ *
+ * `uploadFile` 과 같이 **무작위 접두사를 붙여 보낸다.** 서버가 S3 키를
+ * `FileType 경로 + 보낸 파일명` 으로 만들기 때문에(`S3Utils.saveFile`), 원본 이름을
+ * 그대로 보내면 같은 이름을 올린 다른 사람의 파일을 덮어쓴다. 게다가 저장된 주소는
+ * 서명도 만료도 없는 공개 주소라, 이름을 아는 것이 곧 남의 파일을 여는 것이 된다.
+ */
 export async function uploadFileForId({
   file,
   type,
@@ -68,7 +76,7 @@ export async function uploadFileForId({
   type: FileType;
 }) {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('file', file, `${generateRandomString(10)}_${file.name}`);
 
   const res = await axios.post('/file', formData, {
     params: { type },

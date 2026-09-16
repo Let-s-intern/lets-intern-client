@@ -218,9 +218,11 @@ const AttachmentSection = ({
       );
     }
 
-    if (attachmentType === 'FILE') {
-      return <AttachmentNotice>파일 첨부됨 — 준비 중</AttachmentNotice>;
-    }
+    /*
+      FILE 도 URL 과 같은 자리로 내려온다 — 서버가 `attachmentType` 이 `FILE` 이면
+      `attachmentUrl` 에 저장된 파일 주소를 채워 보낸다(공유 동의한 건만). 그래서
+      따로 가르지 않고 아래 링크 경로를 그대로 탄다.
+     */
 
     // 주소가 비었거나 http(s) 가 아니면 링크를 만들지 않는다. 링크로 만드는 순간
     // 스킴이 그대로 실행되므로, 여는 대신 못 연다고 알린다.

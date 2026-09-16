@@ -299,8 +299,31 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
     expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
   });
 
-  // 파일명 자체가 곧 S3 키라 이름도 주소도 만들지 않는다(PRD 4.2).
-  it('FILE + 동의면 준비 중 문구만 남기고 링크·파일명을 만들지 않는다', () => {
+  /*
+    예전에는 파일 이름이 곧 S3 키라 이름도 주소도 만들지 않았다. 업로드에 무작위
+    접두사를 붙이도록 고쳐 그 전제가 사라졌고, 서버가 FILE 첨부의 주소를 URL 첨부와
+    같은 자리(attachmentUrl)에 실어 내린다. 화면은 두 경우를 가르지 않는다.
+   */
+  it('FILE + 동의면 파일 주소를 링크로 연다', () => {
+    mockDetail({
+      attachmentType: 'FILE',
+      attachmentUrl:
+        'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      mentorShareAgreed: true,
+    });
+    renderModal(91005);
+
+    expect(
+      screen.getByRole('link', { name: '새 탭에서 열기' }),
+    ).toHaveAttribute(
+      'href',
+      'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+    );
+    // 노션 주소가 아니므로 임베드는 띄우지 않는다.
+    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
+  });
+
+  it('FILE 인데 주소가 오지 않으면 링크 대신 안내를 남긴다', () => {
     mockDetail({
       attachmentType: 'FILE',
       attachmentUrl: null,
@@ -308,9 +331,10 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
     });
     renderModal(91005);
 
-    expect(screen.getByText('파일 첨부됨 — 준비 중')).toBeInTheDocument();
+    expect(
+      screen.getByText('첨부 주소를 확인할 수 없습니다'),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
   });
 
   // 아무 표시도 하지 않으면 멘토가 "안 냈다" 로 오해한다.
