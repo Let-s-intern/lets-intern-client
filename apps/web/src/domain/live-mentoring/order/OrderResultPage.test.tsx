@@ -275,3 +275,58 @@ describe('OrderFailPage', () => {
     ).toBeInTheDocument();
   });
 });
+
+/*
+  결제 알림 슬랙봇은 GTM 이 이 이벤트를 받아 보낸다. 빠지거나 두 번 나가도 화면에는
+  아무 흔적이 없어 여기서만 막을 수 있다.
+*/
+describe('OrderResultPage — 결제 알림 이벤트', () => {
+  beforeEach(() => {
+    window.dataLayer = [];
+  });
+
+  it('승인이 끝나면 챌린지와 같은 이벤트를 한 번 보낸다', async () => {
+    searchParams = new URLSearchParams({
+      paymentKey: 'tviva20260821',
+      orderId: 'gKEMQwWav2Lh',
+      amount: '60000',
+      paymentMethodKey: 'CARD',
+    });
+    await returnFromToss(APPLICATION);
+    mutateResult = Promise.resolve({
+      applicationId: 15,
+      paymentId: 501,
+      orderId: 'gKEMQwWav2Lh',
+      amount: 60000,
+      applicationStatus: 'CONFIRMED',
+    });
+    const { rerender } = render(<OrderResultPage />);
+
+    expect(
+      await screen.findByText('결제가 완료되었습니다!'),
+    ).toBeInTheDocument();
+    // 슬롯 무효화로 이 화면은 실제로 재마운트된다. 그때 두 번 실리면 안 된다
+    rerender(<OrderResultPage />);
+
+    expect(window.dataLayer).toEqual([
+      {
+        event: 'program_payment_success',
+        program_name: '어드민 1:1 LIVE 멘토링',
+        program_type: 'live_mentoring',
+        payment_method: 'CARD',
+        // 금액은 서버가 확정한 숫자다. 챌린지도 coerce 된 숫자를 보낸다
+        payment_amount: 60000,
+        order_id: 'gKEMQwWav2Lh',
+      },
+    ]);
+  });
+
+  /* 이 화면에 닿은 것만으로는 결제가 끝난 것이 아니다. 승인이 끝나야 보낸다. */
+  it('승인이 끝나기 전에는 보내지 않는다', async () => {
+    await returnFromToss(APPLICATION);
+    render(<OrderResultPage />);
+
+    expect(screen.getByText('결제를 확인하는 중…')).toBeInTheDocument();
+    expect(window.dataLayer).toEqual([]);
+  });
+});
