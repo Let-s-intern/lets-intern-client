@@ -1,4 +1,11 @@
+'use client';
+
+import { useChallengeChatLink } from '@/domain/challenge/hooks/useChallengeChatLink';
+import ChatEnterButton from '../../ChatEnterButton';
+
 export const MissionSubmitGuidance = () => {
+  const { chatLink, chatPassword, placeName } = useChallengeChatLink();
+
   return (
     <section>
       <h3 className="text-small18 text-neutral-0 mb-3 font-semibold">
@@ -24,11 +31,12 @@ export const MissionSubmitGuidance = () => {
           <li className="flex items-start">
             <span className="text-neutral-10 mr-2">-</span>
             <span>
-              제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.
+              제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
             </span>
           </li>
         </ul>
       </div>
+      {chatLink && <ChatEnterButton link={chatLink} password={chatPassword} />}
     </section>
   );
 };

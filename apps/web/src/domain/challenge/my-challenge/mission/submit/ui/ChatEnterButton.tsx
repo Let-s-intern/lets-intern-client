@@ -46,7 +46,7 @@ const ChatEnterButton = ({ link, password }: ChatEnterButtonProps) => {
       <button
         type="button"
         onClick={handleClick}
-        className="rounded-xxs border-neutral-80 text-xsmall14 text-neutral-0 mt-2 flex w-full items-center justify-center gap-1.5 border bg-white py-2.5 font-medium"
+        className="rounded-xxs border-neutral-80 text-xxsmall12 text-neutral-0 mt-2 inline-flex items-center gap-1 border bg-white px-3 py-1.5 font-medium"
       >
         <img
           src={
@@ -54,7 +54,7 @@ const ChatEnterButton = ({ link, password }: ChatEnterButtonProps) => {
           }
           alt=""
           aria-hidden="true"
-          className="h-4 w-4"
+          className="h-3.5 w-3.5"
         />
         {label}
       </button>
