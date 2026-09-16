@@ -69,8 +69,7 @@ export default function BasicInfoSection({ input, patch }: Props) {
             value={input.passDays ?? ''}
             onChange={(e) =>
               patch({
-                passDays:
-                  e.target.value === '' ? null : Number(e.target.value),
+                passDays: e.target.value === '' ? null : Number(e.target.value),
               })
             }
             size="small"

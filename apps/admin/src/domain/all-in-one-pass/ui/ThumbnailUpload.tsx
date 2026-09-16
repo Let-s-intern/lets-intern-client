@@ -24,7 +24,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
   return (
     <label
       className={twMerge(
-        'flex aspect-[4/3] w-40 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border border-neutral-80 bg-neutral-95',
+        'border-neutral-80 bg-neutral-95 flex aspect-[4/3] w-40 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
         className,
       )}
     >
@@ -35,7 +35,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
           className="max-h-full max-w-full object-contain"
         />
       ) : (
-        <div className="flex flex-col items-center gap-2 text-neutral-40">
+        <div className="text-neutral-40 flex flex-col items-center gap-2">
           <FiUpload className="text-2xl" />
           <span className="text-xxsmall12">썸네일 업로드</span>
         </div>
