@@ -142,6 +142,18 @@ const MentoringTypeCardField = ({
                   <span className="text-system-error ml-0.5">*</span>
                 ) : null}
               </span>
+              {/*
+                다 채워야 서버로 나간다(LC-3343). 저장을 막는 대신 이 카드만 빠진다는
+                것을 여기에 적는다 — 하단 바에 적으면 어느 카드인지 모른 채 저장 버튼만
+                잠겨 보였다.
+              */}
+              {(!item.typeName.trim() ||
+                !item.title.trim() ||
+                !item.description.trim()) && (
+                <span className="text-system-error text-xs">
+                  모두 채워야 저장돼요
+                </span>
+              )}
               {/* 마지막 한 장은 지울 수 없다 — 필수 항목이라 빈 목록이 될 수 없다. */}
               <button
                 type="button"

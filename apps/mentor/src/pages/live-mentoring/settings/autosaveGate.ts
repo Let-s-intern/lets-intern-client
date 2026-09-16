@@ -63,14 +63,14 @@ export const describeAutosaveBlock = (
   ]);
   if (typesSection) return fill('멘토링 유형', typesSection);
 
-  for (const [index, item] of mentoringTypes.items.entries()) {
-    const blank = firstBlankLabel([
-      ['유형 이름', item.typeName],
-      ['유형 제목', item.title],
-      ['부가 설명', item.description],
-    ]);
-    if (blank) return fill('멘토링 유형', `${index + 1}번 ${blank}`);
-  }
+  /*
+   * 반쯤 채운 반복 항목(유형 카드·Point·결과 사례)은 막지 않는다 (LC-3343).
+   *
+   * 「+ 추가」를 누른 순간 화면 전체 저장이 잠겨, 카드 하나가 다른 탭에서 쓴 글까지
+   * 볼모로 잡았다. 다 채운 항목만 보내고(`saveTemplate`), 아직 못 보내는 항목은 그
+   * 자리에 이유를 적는다. 섹션 제목·설명은 입력이 있어 멘토가 고칠 수 있으므로
+   * 그대로 막는다.
+   */
 
   /*
    * 아래 세 섹션은 **켜져 있을 때만** 검사한다.
@@ -98,13 +98,8 @@ export const describeAutosaveBlock = (
     const tooLong = firstTooLong([['섹션 제목', strategy.title]]);
     if (tooLong) return shorten('취업 성공 전략', tooLong);
 
+    /* 빈 Point 는 보낼 때 빠진다. 길이 초과는 다 채운 Point 도 400 이 되므로 여기서 잡는다. */
     for (const [index, point] of strategy.points.entries()) {
-      const blank = firstBlankLabel([
-        ['Point 제목', point.title],
-        ['Point 설명', point.description],
-      ]);
-      if (blank) return fill('취업 성공 전략', `${index + 1}번 ${blank}`);
-
       const longPoint = firstTooLong([['Point 제목', point.title]]);
       if (longPoint)
         return shorten('취업 성공 전략', `${index + 1}번 ${longPoint}`);

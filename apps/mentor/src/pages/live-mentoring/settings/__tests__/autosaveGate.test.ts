@@ -65,7 +65,11 @@ describe('describeAutosaveBlock', () => {
     expect(describeAutosaveBlock(base())).toBeNull();
   });
 
-  it('반쯤 채운 유형 카드는 몇 번째의 어느 칸인지 짚는다', () => {
+  /*
+   * 반쯤 채운 반복 항목은 보낼 때 빠진다(`saveTemplate`). 저장 자체를 막으면 카드
+   * 하나가 다른 탭에서 쓴 글까지 볼모로 잡는다 (LC-3343).
+   */
+  it('반쯤 채운 유형 카드는 저장을 막지 않는다', () => {
     const template = base();
     template.mentoringTypes.items.push({
       typeName: '이력서 피드백',
@@ -73,9 +77,13 @@ describe('describeAutosaveBlock', () => {
       description: '',
       tags: [],
     });
-    expect(describeAutosaveBlock(template)).toBe(
-      '「멘토링 유형」의 2번 유형 제목을 채우면 저장돼요',
-    );
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  it('갓 추가한 빈 Point 는 저장을 막지 않는다', () => {
+    const template = base();
+    template.strategy.points.push({ image: null, title: '', description: '' });
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 
   /*

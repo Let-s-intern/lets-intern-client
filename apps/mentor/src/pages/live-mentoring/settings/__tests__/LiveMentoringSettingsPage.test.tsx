@@ -883,19 +883,22 @@ describe('LiveMentoringSettingsPage — 저장', () => {
   });
 
   /*
-    「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
-    저장이 지워 버린다. 채우거나 지울 때까지 버튼을 잠근다.
+    「+ 추가」로 만든 빈 카드는 저장을 잠그지 않는다 (LC-3343). 잠그면 카드 하나가 다른
+    탭의 글까지 볼모로 잡으므로, 그 카드만 빼고 보낸다. 카드는 화면에 남고 왜 아직
+    나가지 않는지 스스로 적는다.
   */
-  it('빈 유형 카드가 있으면 저장을 잠그고 무엇을 채우면 되는지 적는다', () => {
+  it('빈 유형 카드가 있어도 저장할 수 있고 그 카드만 빼고 보낸다', async () => {
     renderPage();
     openTab('멘토링 유형');
     fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
 
-    expect(saveMock).not.toHaveBeenCalled();
-    expect(저장버튼()).toBeDisabled();
-    expect(
-      screen.getByText('「멘토링 유형」의 2번 유형 이름을 채우면 저장돼요'),
-    ).toBeVisible();
+    expect(저장버튼()).toBeEnabled();
+    expect(screen.getByText('모두 채워야 저장돼요')).toBeVisible();
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.mentoringTypes.items).toHaveLength(1);
   });
 
   /*
