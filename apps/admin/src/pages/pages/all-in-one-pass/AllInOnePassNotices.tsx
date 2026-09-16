@@ -8,6 +8,7 @@ import CategoryTabs from '@/common/ui/CategoryTabs';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { AllInOnePassNotice, NoticeType } from '@/domain/all-in-one-pass/types';
+import NoticeExposureModal from '@/domain/all-in-one-pass/ui/notice/NoticeExposureModal';
 import NoticeFormModal from '@/domain/all-in-one-pass/ui/notice/NoticeFormModal';
 import NoticeRowActions from '@/domain/all-in-one-pass/ui/notice/NoticeRowActions';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
@@ -39,6 +40,8 @@ type ModalTarget =
 export default function AllInOnePassNotices() {
   const [tab, setTab] = useState<TabValue>('ALL');
   const [target, setTarget] = useState<ModalTarget | null>(null);
+  const [exposureNotice, setExposureNotice] =
+    useState<AllInOnePassNotice | null>(null);
 
   const { data, isLoading, error } = useGetAllInOnePassNoticeListQuery(
     tab === 'ALL' ? undefined : tab,
@@ -86,14 +89,33 @@ export default function AllInOnePassNotices() {
       field: 'createdAt',
       headerName: '생성일',
       type: 'dateTime',
-      width: 160,
+      width: 180,
       valueGetter: (_, row) => dayjs(row.createdAt).toDate(),
       valueFormatter: (value) => dayjs(value).format('YYYY/MM/DD HH:mm'),
     },
     {
+      field: 'exposure',
+      headerName: '노출 영역 관리',
+      width: 180,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => (
+        <div className="flex h-full items-center">
+          <Button
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={() => setExposureNotice(row)}
+          >
+            노출 영역 관리
+          </Button>
+        </div>
+      ),
+    },
+    {
       field: 'actions',
       headerName: '관리',
-      width: 200,
+      width: 250,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => (
@@ -150,6 +172,11 @@ export default function AllInOnePassNotices() {
         initial={target?.mode === 'edit' ? target.notice : null}
         onSubmit={handleSubmit}
         onClose={() => setTarget(null)}
+      />
+
+      <NoticeExposureModal
+        notice={exposureNotice}
+        onClose={() => setExposureNotice(null)}
       />
     </main>
   );
