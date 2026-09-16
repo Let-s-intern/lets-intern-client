@@ -12,8 +12,9 @@ import {
 import { useEffect, useState } from 'react';
 
 interface Props {
-  notice: AllInOnePassNotice | null;
+  open: boolean;
   isEdit: boolean;
+  initial: AllInOnePassNotice | null;
   onSubmit: (values: NoticeFormValues) => void;
   onClose: () => void;
   isLoading?: boolean;
@@ -21,24 +22,25 @@ interface Props {
 
 /** A-3 공지·가이드 추가/수정 모달 */
 export default function NoticeFormModal({
-  notice,
+  open,
   isEdit,
+  initial,
   onSubmit,
   onClose,
   isLoading,
 }: Props) {
-  const open = notice !== null;
-
   const [type, setType] = useState<NoticeFormValues['type']>('NOTICE');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
+  // 열릴 때 초기화: 수정이면 대상 값, 생성이면 빈 폼
   useEffect(() => {
-    if (!notice) return;
-    setType(notice.type);
-    setTitle(notice.title);
-    setContent(notice.content);
-  }, [notice]);
+    if (!open) return;
+    setType(initial?.type ?? 'NOTICE');
+    setTitle(initial?.title ?? '');
+    setContent(initial?.content ?? '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const canSave = title.trim() !== '' && content.trim() !== '';
 
