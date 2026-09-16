@@ -50,7 +50,12 @@ const MissionShareModal = ({
         <p className="text-xsmall16 text-primary mt-4 text-center font-bold">
           미션을 공유해 주세요!
         </p>
-        <p className="text-xsmall14 text-neutral-40 mt-1.5 text-center">
+        {/*
+          placeName 이 "카카오톡 오픈채팅방"(9자)과 "슬랙 채널"(4자)로 길이가 달라
+          <br /> 로 고정하면 한쪽이 어긋난다. 줄을 고르게 나눠 마지막 줄에 두 글자만
+          남는 것을 막고(text-balance), 어절 중간에서 끊기지 않게 한다(break-keep).
+        */}
+        <p className="text-xsmall14 text-neutral-40 mt-1.5 text-balance break-keep text-center">
           제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
         </p>
 
