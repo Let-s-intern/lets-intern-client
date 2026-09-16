@@ -38,14 +38,19 @@ const MissionShareModal = ({
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 px-5">
       <div className="w-full max-w-[400px] rounded-md bg-white p-6">
-        <h3 className="text-small18 text-neutral-0 text-center font-semibold">
-          미션 제출에 성공했습니다
+        {/* 완료·축하는 이 앱에서 🎉 로 표시한다(MissionEndSection, 결제 완료 화면). */}
+        <h3 className="text-small18 text-neutral-0 text-center font-bold">
+          🎉 미션 제출에 성공했습니다
         </h3>
 
-        <p className="text-xsmall14 text-neutral-0 mt-3 text-center font-medium">
+        {/*
+          공유 요청이 이 모달의 목적이다. 설명문과 같은 크기면 세 줄이 뭉쳐 보여
+          한 단계 키우고 색으로 띄운다.
+        */}
+        <p className="text-xsmall16 text-primary mt-4 text-center font-bold">
           미션을 공유해 주세요!
         </p>
-        <p className="text-xsmall14 text-neutral-20 mt-1 text-center">
+        <p className="text-xsmall14 text-neutral-40 mt-1.5 text-center">
           제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
         </p>
 
