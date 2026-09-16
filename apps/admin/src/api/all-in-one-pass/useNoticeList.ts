@@ -1,14 +1,20 @@
-import { NoticeType } from '@/domain/all-in-one-pass/types';
-import { useQuery } from '@tanstack/react-query';
+import { AllInOnePassNotice, NoticeType } from '@/domain/all-in-one-pass/types';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { nextNoticeId, noticeStore } from './mock/noticeStore';
 import { mockDelay } from './mock/passStore';
-import { noticeStore } from './mock/noticeStore';
 
-/**
- * A-3 공지·가이드 목록 훅.
- *
- * 페이지는 이 파일만 import 한다. 현재는 mock 스토어(./mock/noticeStore)를
- * 읽으며, 백엔드 스펙이 나오면 queryFn 본문만 axios 호출로 교체하면 된다.
- */
+/* A-3 공지·가이드 목록/생성/수정/삭제 훅 */
+
+type MutationCallbacks = {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+};
+
+/** 공지·가이드 입력값(유형·제목·내용) */
+export type NoticeFormValues = Pick<
+  AllInOnePassNotice,
+  'type' | 'title' | 'content'
+>;
 
 export const allInOnePassNoticeListQueryKey = 'allInOnePassNoticeList';
 
@@ -22,4 +28,51 @@ export const useGetAllInOnePassNoticeListQuery = (type?: NoticeType) =>
           .filter((n) => (type ? n.type === type : true))
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
       ),
+  });
+
+export const useCreateAllInOnePassNoticeMutation = ({
+  successCallback,
+  errorCallback,
+}: MutationCallbacks = {}) =>
+  useMutation({
+    mutationFn: (values: NoticeFormValues) => {
+      const created: AllInOnePassNotice = {
+        ...values,
+        id: nextNoticeId(),
+        createdAt: new Date().toISOString(),
+        linkedPassIds: [], // 노출 영역은 별도 모달에서 설정
+      };
+      noticeStore.list.push(created);
+      return mockDelay(created);
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+
+export const useUpdateAllInOnePassNoticeMutation = ({
+  successCallback,
+  errorCallback,
+}: MutationCallbacks = {}) =>
+  useMutation({
+    mutationFn: ({ id, values }: { id: number; values: NoticeFormValues }) => {
+      const item = noticeStore.list.find((n) => n.id === id);
+      if (!item) return Promise.reject(new Error('존재하지 않는 공지입니다.'));
+      Object.assign(item, values);
+      return mockDelay(item);
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+
+export const useDeleteAllInOnePassNoticeMutation = ({
+  successCallback,
+  errorCallback,
+}: MutationCallbacks = {}) =>
+  useMutation({
+    mutationFn: (id: number) => {
+      noticeStore.list = noticeStore.list.filter((n) => n.id !== id);
+      return mockDelay(undefined);
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
   });
