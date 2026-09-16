@@ -79,10 +79,10 @@ describe('describeAutosaveBlock', () => {
   });
 
   /*
-   * 「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
-   * 저장이 지워 버린다. 채우거나 지울 때까지 기다린다.
+   * 반쯤 채운 사례는 보낼 때 빠진다(`saveTemplate`). 저장 자체를 막으면 카드 하나가
+   * 다른 탭에서 쓴 글까지 볼모로 잡는다 (LC-3343).
    */
-  it('갓 추가한 빈 카드도 저장을 미룬다', () => {
+  it('갓 추가한 빈 결과 사례는 저장을 막지 않는다', () => {
     const template = base();
     template.results.cases.push({
       beforeImage: null,
@@ -90,9 +90,14 @@ describe('describeAutosaveBlock', () => {
       beforeCaption: '',
       afterCaption: '',
     });
-    expect(describeAutosaveBlock(template)).toBe(
-      '「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
-    );
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  /* 결과 사례의 섹션 설명은 편집 폼에 입력이 없다. 요구하면 채울 방법이 없다 (LC-3343). */
+  it('결과 사례의 섹션 설명이 비어도 막지 않는다', () => {
+    const template = base();
+    template.results.subtitle = '';
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 
   /*

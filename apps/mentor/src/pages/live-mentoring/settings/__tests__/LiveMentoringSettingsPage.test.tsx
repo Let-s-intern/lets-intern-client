@@ -899,19 +899,28 @@ describe('LiveMentoringSettingsPage — 저장', () => {
   });
 
   /*
-    빈 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 비면 서버가 거절하는데,
-    걸러내면 방금 만든 사례가 사라진다.
+    빈 결과 사례는 다르다 (LC-3343). 저장을 잠그면 카드 하나가 다른 탭의 글까지 볼모로
+    잡으므로, 그 사례만 빼고 보낸다. 카드는 화면에 남고 왜 안 나가는지 스스로 적는다.
   */
-  it('빈 결과 사례가 있으면 저장을 잠근다', () => {
+  it('빈 결과 사례가 있어도 저장할 수 있고 그 사례만 빼고 보낸다', async () => {
     renderPage();
     openTab('결과 사례');
     fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
 
-    expect(saveMock).not.toHaveBeenCalled();
-    expect(저장버튼()).toBeDisabled();
-    expect(
-      screen.getByText('「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요'),
-    ).toBeVisible();
+    expect(저장버튼()).toBeEnabled();
+    expect(screen.getByText('전·후 문구를 채워야 저장돼요')).toBeVisible();
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.cases).toEqual([
+      {
+        beforeImage: null,
+        afterImage: null,
+        beforeCaption: '추상적인 지원동기',
+        afterCaption: '경험 연결',
+      },
+    ]);
   });
 
   /*

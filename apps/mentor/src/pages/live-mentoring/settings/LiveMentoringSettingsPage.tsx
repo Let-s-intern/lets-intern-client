@@ -376,12 +376,8 @@ const LiveMentoringSettingsPage = () => {
       .filter(Boolean);
 
     /*
-     * 유형 카드·결과 사례는 앞뒤 공백만 다듬는다.
-     *
-     * 예전에는 안 채운 카드를 걸러내서 보냈다(`@NotBlank` 라 그대로 보내면 400 이다).
-     * 실시간 저장에서는 그게 곧 "방금 「+ 추가」로 만든 카드를 저장이 지운다"가 되므로,
-     * 빈 카드가 있으면 아예 보내지 않는 쪽으로 바꿨다 — `describeAutosaveBlock` 이 막고
-     * 하단 바에 무엇을 채우면 되는지 적는다. 여기 오는 값은 이미 다 채워져 있다.
+     * 유형 카드는 앞뒤 공백만 다듬는다. 반쯤 채운 카드는 `describeAutosaveBlock` 이 막고
+     * 하단 바에 무엇을 채우면 되는지 적으므로, 여기 오는 값은 이미 다 채워져 있다.
      */
     const cleanedTypeItems = payload.mentoringTypes.items.map((item) => ({
       ...item,
@@ -390,11 +386,23 @@ const LiveMentoringSettingsPage = () => {
       description: item.description.trim(),
     }));
 
-    const cleanedResultCases = payload.results.cases.map((item) => ({
-      ...item,
-      beforeCaption: item.beforeCaption.trim(),
-      afterCaption: item.afterCaption.trim(),
-    }));
+    /*
+     * 결과 사례는 다르다 — 전·후 문구가 다 채워진 것만 보낸다 (LC-3343).
+     *
+     * 서버 `ResultCaseRequest` 가 두 문구에 `@NotBlank` 라 반쯤 채운 사례는 그대로 보내면
+     * 400 이다. 그렇다고 저장 전체를 막으면 「사례 추가 +」를 누른 순간 다른 탭에서 쓴
+     * 글까지 볼모가 된다.
+     *
+     * 거르는 건 **보낼 때뿐**이고 로컬 상태는 그대로 두므로, 방금 만든 카드는 화면에
+     * 남는다. 아직 저장되지 않는다는 사실은 카드가 직접 적는다(`ResultCaseField`).
+     */
+    const cleanedResultCases = payload.results.cases
+      .map((item) => ({
+        ...item,
+        beforeCaption: item.beforeCaption.trim(),
+        afterCaption: item.afterCaption.trim(),
+      }))
+      .filter((item) => item.beforeCaption && item.afterCaption);
 
     payload = {
       ...payload,
