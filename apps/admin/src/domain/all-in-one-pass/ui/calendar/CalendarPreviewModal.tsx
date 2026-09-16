@@ -23,24 +23,25 @@ interface Props {
   events: PassCalendarEvent[];
   purchaseStartDate?: string | null;
   purchaseEndDate?: string | null;
-  passMonths?: number | null;
+  passDays?: number | null;
 }
 
-/** 1.3 캘린더 미리보기: 실제 노출될 월 달력 (챌린지 막대 + 세미나/마일스톤) */
+/** 1.3 캘린더 미리보기: 실제 노출될 2주 달력 (챌린지 막대 + 세미나/마일스톤) */
 export default function CalendarPreviewModal({
   open,
   onClose,
   events,
   purchaseStartDate,
   purchaseEndDate,
-  passMonths,
+  passDays,
 }: Props) {
   const {
-    viewMonth,
+    windowStart,
+    windowEnd,
+    mainMonthKey,
     weeks,
     items,
     laneOf,
-    laneCount,
     canPrev,
     canNext,
     goPrev,
@@ -49,7 +50,7 @@ export default function CalendarPreviewModal({
     events,
     purchaseStartDate,
     purchaseEndDate,
-    passMonths,
+    passDays,
     open,
   });
   const today = dayjs();
@@ -59,21 +60,21 @@ export default function CalendarPreviewModal({
       open={open}
       onClose={onClose}
       scroll="paper"
-      maxWidth="md"
-      fullWidth
-      slotProps={{ paper: { sx: { height: 850, maxHeight: '90vh' } } }}
+      slotProps={{
+        paper: { sx: { width: 548, maxWidth: '95vw', maxHeight: '90vh' } },
+      }}
     >
       <DialogContent>
-        {/* 월 네비게이션 */}
-        <div className="mb-3 flex items-center gap-5">
+        {/* 기간 네비게이션 (2주 단위) */}
+        <div className="mb-6 flex items-center gap-4">
           <ArrowBoldLeft
             onClick={goPrev}
             aria-disabled={!canPrev}
             className={arrowClass(canPrev)}
           />
-          <div className="flex gap-3">
-            <span className="text-medium24 text-neutral-0 w-[95px] font-bold">
-              {viewMonth.format('YYYY.MM')}
+          <div className="flex items-center gap-2">
+            <span className="text-medium24 text-neutral-0 w-[224px] font-bold">
+              {windowStart.format('YYYY.MM.DD')} ~ {windowEnd.format('MM.DD')}
             </span>
             <img src="/icons/calendar.svg" />
           </div>
@@ -93,7 +94,7 @@ export default function CalendarPreviewModal({
         </div>
 
         {/* 요일 헤더 */}
-        <div className="border-neutral-70 grid grid-cols-7 gap-1 border-b pb-3">
+        <div className="border-neutral-80 grid grid-cols-7 gap-1 border-b pb-3">
           {WEEKDAYS.map((w) => (
             <div
               key={w}
@@ -109,11 +110,10 @@ export default function CalendarPreviewModal({
             key={wi}
             week={week}
             wi={wi}
-            viewMonth={viewMonth}
+            mainMonthKey={mainMonthKey}
             today={today}
             items={items}
             laneOf={laneOf}
-            laneCount={laneCount}
           />
         ))}
       </DialogContent>

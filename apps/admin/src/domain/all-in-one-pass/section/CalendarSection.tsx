@@ -29,7 +29,7 @@ interface Props {
   /** 미리보기 이동 범위 계산용 (구매 기간·패스 기간) */
   purchaseStartDate?: string | null;
   purchaseEndDate?: string | null;
-  passMonths?: number | null;
+  passDays?: number | null;
 }
 
 /** 1.3 캘린더 관리: 세미나·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
@@ -38,13 +38,13 @@ export default function CalendarSection({
   onChange,
   purchaseStartDate,
   purchaseEndDate,
-  passMonths,
+  passDays,
 }: Props) {
   const { snackbar } = useAdminSnackbar();
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const handleOpenPreview = () => {
-    if (!purchaseStartDate || !purchaseEndDate || !passMonths) {
+    if (!purchaseStartDate || !purchaseEndDate || !passDays) {
       snackbar(
         '기본 정보의 "구매 가능 기간"과 "패스 기간"을 먼저 입력해주세요.',
       );
@@ -81,7 +81,7 @@ export default function CalendarSection({
                 update(event.id, { date: v ? v.toISOString() : null })
               }
               slotProps={{ textField: { size: 'small' } }}
-              className="w-36 shrink-0"
+              className="w-40 shrink-0"
             />
             <TextField
               select
@@ -141,7 +141,7 @@ export default function CalendarSection({
         events={events}
         purchaseStartDate={purchaseStartDate}
         purchaseEndDate={purchaseEndDate}
-        passMonths={passMonths}
+        passDays={passDays}
       />
     </section>
   );

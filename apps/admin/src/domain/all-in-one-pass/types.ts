@@ -53,7 +53,7 @@ export interface PassFormInput {
   shortDescription: string;
   purchaseStartDate: string | null; // ISO
   purchaseEndDate: string | null; // ISO
-  passMonths: number | null; // 패스 기간(개월)
+  passDays: number | null; // 패스 기간(일)
   thumbnailUrl: string | null;
   // 1.2 플랜 정보
   plans: PassPlan[];
@@ -83,7 +83,7 @@ export interface AllInOnePassListItem {
   title: string; // 올인원패스 제목
   purchaseStartDate: string | null; // 구매 가능 기간 시작
   purchaseEndDate: string | null; // 구매 가능 기간 종료
-  passMonths: number; // 패스 기간(개월)
+  passDays: number; // 패스 기간(일)
   isVisible: boolean; // 노출 여부(단일 노출)
   currentApplicantCount: number; // 신청 인원
   maxApplicantCount: number | null; // null = 무제한(∞)
@@ -125,4 +125,17 @@ export interface PassParticipant {
   isAdminRefunded: boolean; // 어드민 환불 여부(환불여부 라벨 구분용)
   createDate: string; // 신청일자
   usedPrograms: UsedProgram[]; // 이용한 프로그램 목록 (조회 모달)
+}
+
+/** A-3 공지/가이드 콘텐츠 구분 */
+export type NoticeType = 'NOTICE' | 'GUIDE';
+
+/** A-3 공지·가이드 한 개 */
+export interface AllInOnePassNotice {
+  id: number;
+  type: NoticeType;
+  title: string;
+  content: string; // 본문(평문)
+  createdAt: string; // 생성일(ISO)
+  linkedPassIds: number[]; // 노출 영역: 이 콘텐츠를 노출할 패스 id 목록
 }

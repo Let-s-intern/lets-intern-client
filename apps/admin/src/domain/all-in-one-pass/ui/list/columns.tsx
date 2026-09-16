@@ -75,11 +75,11 @@ export const getListColumns = (
       value ? dayjs(value).format('M/D(dd) HH:mm까지') : '-',
   },
   {
-    field: 'passMonths',
+    field: 'passDays',
     headerName: '패스 기간',
     width: 100,
-    valueGetter: (_, row) => row.passMonths,
-    valueFormatter: (value) => `${value}개월`,
+    valueGetter: (_, row) => row.passDays,
+    valueFormatter: (value) => `${value}일`,
   },
   {
     field: 'management',
