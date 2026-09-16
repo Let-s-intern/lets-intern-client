@@ -19,10 +19,9 @@ export default function AllInOnePassEdit() {
   const { data, isLoading, error } =
     useGetAllInOnePassDetailQuery(numericPassId);
 
-  // 상세 로드 완료 시 폼 상태를 채운다. (렉시컬 프리필을 위해 로드 후 마운트)
   const [input, setInput] = useState<PassFormInput | null>(null);
   useEffect(() => {
-    if (data) setInput(data);
+    if (data) setInput((prev) => prev ?? data);
   }, [data]);
 
   const patch = (partial: Partial<PassFormInput>) =>

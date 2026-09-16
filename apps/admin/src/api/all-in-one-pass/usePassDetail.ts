@@ -17,6 +17,8 @@ export const useGetAllInOnePassDetailQuery = (id?: number) =>
   useQuery({
     queryKey: [allInOnePassDetailQueryKey, id],
     enabled: id != null,
+    // 수정 폼 프리필용. 포커스 refetch로 편집 중 값이 덮어써지지 않게 한다.
+    refetchOnWindowFocus: false,
     queryFn: () => {
       const detail = id != null ? passDetailFixtures[id] : undefined;
       if (!detail) {
