@@ -9,6 +9,13 @@ import dayjs from '@/lib/dayjs';
 
 interface MentorReviewSectionProps {
   reviewList: MentorReviewItem[];
+  /**
+   * 상단 히어로와 같은 출처(stats)의 후기 수.
+   *
+   * reviewList 는 공개되고 본문이 있는 후기만 담아 더 좁다. 길이로 세면 위아래 숫자가
+   * 어긋나므로 표시는 이 값을 쓴다.
+   */
+  reviewCount: number;
   averageScore: number;
 }
 
@@ -102,6 +109,7 @@ const ReviewCard = ({ review }: { review: MentorReviewItem }) => (
 
 const MentorReviewSection = ({
   reviewList,
+  reviewCount,
   averageScore,
 }: MentorReviewSectionProps) => {
   const [sortValue, setSortValue] = useState<SortValue>('HIGH_SCORE');
@@ -130,7 +138,7 @@ const MentorReviewSection = ({
       <div className="flex items-baseline justify-between">
         <h2 className="text-medium22 text-neutral-0 font-bold">후기</h2>
         <span className="text-xsmall16 text-neutral-45">
-          {reviewList.length}개의 후기
+          {reviewCount}개의 후기
         </span>
       </div>
       <div className="flex flex-col gap-2.5">
