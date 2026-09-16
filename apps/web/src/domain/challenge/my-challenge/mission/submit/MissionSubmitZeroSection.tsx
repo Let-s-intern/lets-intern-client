@@ -8,6 +8,11 @@ import { useSubmitMission } from '@/domain/challenge/api/attendance';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
+import {
+  isSlackChatLink,
+  normalizeChatPassword,
+} from '@/domain/challenge/utils/chatLink';
+import ChatEnterButton from './ui/ChatEnterButton';
 import dayjs from '@/lib/dayjs';
 import { ApiError } from '@letscareer/api/errors';
 import { useQueryClient } from '@tanstack/react-query';
@@ -36,6 +41,14 @@ const MissionSubmitZeroSection = ({
 
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
+
+  /*
+    chatLink 는 어드민이 자유 URL 로 넣는 값이라 카카오톡 오픈채팅 대신 슬랙 초대 링크가
+    들어올 수 있다. 문구와 버튼을 링크 종류에 맞춘다.
+  */
+  const chatLink = currentChallenge?.chatLink?.trim() || undefined;
+  const chatPlaceName =
+    chatLink && isSlackChatLink(chatLink) ? '슬랙 채널' : '카카오톡 오픈채팅방';
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -138,8 +151,18 @@ const MissionSubmitZeroSection = ({
           </span>
         </div>
         <div className="bg-neutral-95 text-xsmall14 text-neutral-10 rounded px-3 py-3">
-          미션 제출 후, 작성한 챌린지 목표를 카카오톡 오픈채팅방에 공유해주세요.
+          미션 제출 후, 작성한 챌린지 목표를 {chatPlaceName}에 공유해주세요.
         </div>
+        {/*
+          링크를 안 넣은 챌린지도 있다. 그때는 버튼을 감추고 문구는 기존(카카오톡)
+          그대로 둔다 — 안내를 없애면 공유해야 한다는 사실 자체가 사라진다.
+        */}
+        {chatLink && (
+          <ChatEnterButton
+            link={chatLink}
+            password={normalizeChatPassword(currentChallenge?.chatPassword)}
+          />
+        )}
       </div>
       <textarea
         className={clsx(
