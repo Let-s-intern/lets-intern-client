@@ -337,6 +337,25 @@ describe('LiveMentoringEntryPage', () => {
     });
 
     /*
+      파일은 새 탭이 아니라 저장이다. 서버가 Content-Disposition: attachment 를 실은
+      서명 주소를 내리므로, 새 탭으로 열면 문서가 그려지지 않아 빈 탭만 남는다.
+    */
+    it('파일 첨부는 새 탭이 아니라 저장 링크로 내보낸다', async () => {
+      await openAsMentor({
+        attachmentType: 'FILE',
+        attachmentUrl:
+          'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      });
+
+      const link = screen.getByRole('link', { name: '첨부 파일 저장' });
+      expect(link).toHaveAttribute(
+        'href',
+        'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      );
+      expect(link).not.toHaveAttribute('target');
+    });
+
+    /*
       첨부가 있는데 url 이 없는 것은 멘티가 공유에 동의하지 않아 서버가 가린 경우다.
       "없음"으로 적으면 내지 않은 것으로 읽혀 멘토가 멘티에게 잘못 문의하게 된다.
     */

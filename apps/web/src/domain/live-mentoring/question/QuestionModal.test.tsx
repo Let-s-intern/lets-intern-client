@@ -124,6 +124,31 @@ describe('QuestionModal — 시안 3-1 (미작성)', () => {
 });
 
 describe('QuestionModal — 시안 3-2 (작성됨)', () => {
+  /*
+    자기가 낸 파일을 다시 받아 볼 수 있어야 한다. 예전에는 업로드 직후의 이름만 남아
+    무엇을 냈는지 확인할 방법이 없었다.
+
+    새 탭이면 안 된다 — 서버가 Content-Disposition: attachment 를 실은 서명 주소를
+    내리므로 문서가 그려지지 않아 빈 탭만 남는다.
+  */
+  it('낸 파일을 새 탭이 아니라 저장 링크로 다시 받는다', () => {
+    renderModal(
+      makeQuestion({
+        attachmentType: 'FILE',
+        fileId: 7,
+        attachmentUrl:
+          'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      }),
+    );
+
+    const link = screen.getByRole('link', { name: '제출한 파일 저장' });
+    expect(link).toHaveAttribute(
+      'href',
+      'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+    );
+    expect(link).not.toHaveAttribute('target');
+  });
+
   it('쓴 내용이 채워져 있고 버튼이 수정 취소 / 수정하기다', () => {
     renderModal(makeQuestion());
 

@@ -302,9 +302,10 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
   /*
     예전에는 파일 이름이 곧 S3 키라 이름도 주소도 만들지 않았다. 업로드에 무작위
     접두사를 붙이도록 고쳐 그 전제가 사라졌고, 서버가 FILE 첨부의 주소를 URL 첨부와
-    같은 자리(attachmentUrl)에 실어 내린다. 화면은 두 경우를 가르지 않는다.
+    같은 자리(attachmentUrl)에 실어 내린다. 주소가 오는 자리는 같고, 링크의
+    생김새만 갈린다 — 파일은 저장, URL 은 새 탭이다.
    */
-  it('FILE + 동의면 파일 주소를 링크로 연다', () => {
+  it('FILE + 동의면 새 탭이 아니라 저장하기로 내려받는다', () => {
     mockDetail({
       attachmentType: 'FILE',
       attachmentUrl:
@@ -313,12 +314,16 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
     });
     renderModal(91005);
 
-    expect(
-      screen.getByRole('link', { name: '새 탭에서 열기' }),
-    ).toHaveAttribute(
+    const link = screen.getByRole('link', { name: '저장하기' });
+    expect(link).toHaveAttribute(
       'href',
       'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
     );
+    /*
+      새 탭이면 안 된다. 서버가 Content-Disposition: attachment 로 내리므로 응답이
+      문서를 그리지 않아, 열린 탭이 빈 채로 남는다.
+     */
+    expect(link).not.toHaveAttribute('target');
     // 노션 주소가 아니므로 임베드는 띄우지 않는다.
     expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
   });
