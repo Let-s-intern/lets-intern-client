@@ -59,7 +59,7 @@ const MissionSubmitRegularSection = ({
     setIsBonusMissionModalOpen,
     isShareModalOpen,
     setIsShareModalOpen,
-    setModalOpen,
+    closeReviewModal,
     isSubmitPeriodEnded,
     isResubmitBlocked,
     canSubmit,
@@ -150,14 +150,11 @@ const MissionSubmitRegularSection = ({
           className="hidden md:flex"
           programId={params.programId ?? ''}
           applicationId={params.applicationId ?? ''}
-          onClose={() => setModalOpen(false)}
+          onClose={closeReviewModal}
         />
       )}
 
-      <MobileReviewModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-      />
+      <MobileReviewModal isOpen={modalOpen} onClose={closeReviewModal} />
       {isShareModalOpen && chatLink && (
         <MissionShareModal
           link={chatLink}

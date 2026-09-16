@@ -79,6 +79,9 @@ export function useMissionSubmitRegular({
   const [modalOpen, setModalOpen] = useState(false);
   const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  /** 후기 모달을 닫은 뒤에 공유 모달을 이어서 띄우기 위한 대기 상태. */
+  const [isSharePendingAfterReview, setIsSharePendingAfterReview] =
+    useState(false);
   const [selectedExperienceIds, setSelectedExperienceIds] = useState<number[]>(
     [],
   );
@@ -171,10 +174,13 @@ export function useMissionSubmitRegular({
         isLastRegularMissionSubmit && !attendanceInfo?.submitted;
       if (reviewModalOpened) {
         setModalOpen(true);
+        // 겹쳐 띄우지 않고, 후기 모달을 닫는 시점에 이어서 띄운다.
+        setIsSharePendingAfterReview(true);
       }
       /*
-        보너스·후기 모달이 뜨는 제출에서는 공유 모달을 겹쳐 띄우지 않는다. 닫아도
-        제출 버튼 아래 공유 버튼이 남으므로 공유 경로가 사라지지는 않는다.
+        보너스 모달이 뜨는 제출에서는 공유 모달을 띄우지 않는다 — 그 모달은 닫으면서
+        보너스 미션으로 화면을 옮기므로, 옮겨간 자리에서 방금 제출한 미션의 공유 안내가
+        뜨면 맥락이 어긋난다. 제출 버튼 아래 공유 버튼은 그대로 남는다.
       */
       if (!bonusModalOpened && !reviewModalOpened) {
         setIsShareModalOpen(true);
@@ -183,6 +189,19 @@ export function useMissionSubmitRegular({
       console.error('미션 제출 실패:', error);
       alert(getSubmitErrorMessage(error));
     }
+  };
+
+  /**
+   * 후기 모달을 닫는다. 마지막 회차 제출로 열린 것이면 공유 모달을 이어서 띄운다.
+   *
+   * 후기 모달은 데스크톱(X → 나가기 확인)과 모바일("다음에 할게요")의 닫는 길이 다르고,
+   * 후기를 실제로 제출해도 닫힌다. 어느 길로 닫든 같은 자리를 지나가므로 여기 한 곳에 건다.
+   */
+  const closeReviewModal = () => {
+    setModalOpen(false);
+    if (!isSharePendingAfterReview) return;
+    setIsSharePendingAfterReview(false);
+    setIsShareModalOpen(true);
   };
 
   const handleCancelEdit = () => {
@@ -259,6 +278,7 @@ export function useMissionSubmitRegular({
     setIsBonusMissionModalOpen,
     isShareModalOpen,
     setIsShareModalOpen,
+    closeReviewModal,
     setModalOpen,
     isSubmitPeriodEnded,
     isResubmitBlocked,
