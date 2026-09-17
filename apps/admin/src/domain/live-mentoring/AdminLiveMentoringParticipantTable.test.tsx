@@ -106,6 +106,7 @@ const participant: AdminLiveMentoringParticipant = {
   refunded: false,
   refundAmount: 0,
   createDate: '2026-08-15T10:00:00',
+  paidAt: '2026-08-15T10:03:27',
 };
 
 const pageInfo = {
@@ -149,6 +150,50 @@ describe('AdminLiveMentoringParticipantTable', () => {
     expect(screen.getByText('환불 없음')).toBeInTheDocument();
   });
 
+  // LC-3336 — 신청 시각(createDate)과 별개로 결제가 언제 됐는지 보여준다.
+  it('결제 시각을 결제 상태 옆에 YYYY-MM-DD HH:mm 로 표시한다', () => {
+    mockList([participant]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    const headers = screen
+      .getAllByRole('columnheader')
+      .map((header) => header.textContent);
+    expect(headers).toEqual([
+      '신청자',
+      '멘토',
+      '예약 일시',
+      '플랜',
+      '결제 금액',
+      '쿠폰',
+      '결제 상태',
+      '결제 시각',
+      '환불 상태',
+      '관리',
+    ]);
+
+    const cells = screen.getAllByRole('cell');
+    expect(cells[headers.indexOf('결제 시각')]).toHaveTextContent(
+      /^2026-08-15 10:03$/,
+    );
+  });
+
+  it('결제 시각이 없으면 - 로 표시한다', () => {
+    mockList([
+      { ...participant, applicationId: 502, paidAt: null },
+      { ...participant, applicationId: 503, paidAt: undefined },
+    ]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    const paidAtIndex = screen
+      .getAllByRole('columnheader')
+      .findIndex((header) => header.textContent === '결제 시각');
+    const paidAtTexts = screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => row.querySelectorAll('td')[paidAtIndex].textContent);
+    expect(paidAtTexts).toEqual(['-', '-']);
+  });
+
   it('쿠폰을 쓰지 않았으면 빈 칸이 아니라 사용 안 함으로 채운다', () => {
     mockList([{ ...participant, couponId: null, couponName: null }]);
     render(<AdminLiveMentoringParticipantTable />);
@@ -179,7 +224,13 @@ describe('AdminLiveMentoringParticipantTable', () => {
   it('비어 있으면 안내 문구를 표시한다', () => {
     mockList([], { data: { participantList: [], pageInfo } });
     render(<AdminLiveMentoringParticipantTable />);
-    expect(screen.getByText('결제한 참여자가 없습니다.')).toBeInTheDocument();
+    const emptyCell = screen.getByText('결제한 참여자가 없습니다.');
+    expect(emptyCell).toBeInTheDocument();
+    // 컬럼을 늘리면 빈 상태 행도 함께 늘어야 표 너비가 어긋나지 않는다.
+    expect(emptyCell).toHaveAttribute(
+      'colspan',
+      String(screen.getAllByRole('columnheader').length),
+    );
   });
 
   it('로딩 중임을 알린다', () => {
