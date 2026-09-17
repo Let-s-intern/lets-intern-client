@@ -3,7 +3,6 @@ import type {
   LiveMentoringApplicationStatus,
   LiveMentoringCategory,
   LiveMentoringCloseReason,
-  LiveMentoringStatus,
 } from '@/api/live-mentoring/liveMentoringSchema';
 
 export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
@@ -45,19 +44,17 @@ export const CLOSE_REASON_LABELS: Record<LiveMentoringCloseReason, string> = {
 };
 
 /**
- * 상태 필터 선택지. `undefined` 는 파라미터를 아예 보내지 않는 전체 조회다.
- *
- * 「초안」은 빼 뒀다. 새로 생기지 않는 옛 값이라 골라 봐야 걸리는 게 없거나 아주 오래된
- * 몇 행뿐이고, 그것들도 전체 조회에 함께 나온다. 지금 갈라 볼 의미가 있는 것은
- * 쓰는 상품과 더 쓰지 않는 상품이다.
+ * 상태 필터 선택지. 배지(`OPENING_BADGE`)와 같은 기준 — 열린 개설이 있는지 — 으로 거른다.
+ * 값은 서버 `opened` 파라미터이고, `undefined` 는 파라미터를 아예 보내지 않는 전체 조회다.
+ * 라벨은 배지에서 가져와 두 표기가 따로 놀지 않게 한다.
  */
-export const STATUS_FILTERS: {
+export const OPENING_FILTERS: {
   label: string;
-  value: LiveMentoringStatus | undefined;
+  value: boolean | undefined;
 }[] = [
   { label: '전체', value: undefined },
-  { label: '오픈 중', value: 'APPROVED' },
-  { label: '비활성', value: 'INACTIVE' },
+  { label: OPENING_BADGE.open.label, value: true },
+  { label: OPENING_BADGE.notOpen.label, value: false },
 ];
 
 /**

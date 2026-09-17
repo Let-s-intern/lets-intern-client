@@ -87,36 +87,50 @@ describe('AdminLiveMentoringTable — 조회', () => {
     renderTable([draftRow]);
 
     expect(listQuery).toHaveBeenCalledWith({
-      status: undefined,
+      opened: undefined,
       page: 1,
       size: 20,
     });
   });
 
-  it('필터를 바꾸면 해당 상태로 다시 조회한다', () => {
+  it('오픈중 필터는 열린 개설이 있는 상품으로 다시 조회한다', () => {
     renderTable([draftRow]);
 
     fireEvent.click(
-      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+      within(filterBar()).getByRole('button', { name: '오픈중' }),
     );
 
     expect(listQuery).toHaveBeenLastCalledWith({
-      status: 'APPROVED',
+      opened: true,
       page: 1,
       size: 20,
     });
   });
 
-  it('전체 필터는 status 파라미터를 보내지 않는다', () => {
+  it('미오픈 필터는 열린 개설이 없는 상품으로 다시 조회한다', () => {
     renderTable([draftRow]);
 
     fireEvent.click(
-      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+      within(filterBar()).getByRole('button', { name: '미오픈' }),
+    );
+
+    expect(listQuery).toHaveBeenLastCalledWith({
+      opened: false,
+      page: 1,
+      size: 20,
+    });
+  });
+
+  it('전체 필터는 opened 파라미터를 보내지 않는다', () => {
+    renderTable([draftRow]);
+
+    fireEvent.click(
+      within(filterBar()).getByRole('button', { name: '오픈중' }),
     );
     fireEvent.click(within(filterBar()).getByRole('button', { name: '전체' }));
 
     expect(listQuery).toHaveBeenLastCalledWith({
-      status: undefined,
+      opened: undefined,
       page: 1,
       size: 20,
     });

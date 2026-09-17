@@ -5,7 +5,6 @@ import {
   useAdminLiveMentoringListQuery,
   useCloseLiveMentoringOpeningMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringStatus } from '@/api/live-mentoring/liveMentoringSchema';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import ConfirmActionDialog, {
@@ -18,7 +17,7 @@ import {
   formatDateTime,
   OPENING_BADGE,
   publicDetailUrl,
-  STATUS_FILTERS,
+  OPENING_FILTERS,
 } from './constants';
 
 const PAGE_SIZE = 20;
@@ -53,14 +52,12 @@ const AdminLiveMentoringTable = ({
   onSelectMentor,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
-  const [status, setStatus] = useState<LiveMentoringStatus | undefined>(
-    undefined,
-  );
+  const [opened, setOpened] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const { data, isLoading, isError } = useAdminLiveMentoringListQuery({
-    status,
+    opened,
     page,
     size: PAGE_SIZE,
   });
@@ -69,8 +66,8 @@ const AdminLiveMentoringTable = ({
     useCloseLiveMentoringOpeningMutation();
   const isMutating = isClosing;
 
-  const handleFilterChange = (next: LiveMentoringStatus | undefined) => {
-    setStatus(next);
+  const handleFilterChange = (next: boolean | undefined) => {
+    setOpened(next);
     setPage(1);
   };
 
@@ -94,8 +91,8 @@ const AdminLiveMentoringTable = ({
   return (
     <div className="flex flex-col gap-4">
       <div role="group" aria-label="상태 필터" className="flex flex-wrap gap-2">
-        {STATUS_FILTERS.map((filter) => {
-          const active = status === filter.value;
+        {OPENING_FILTERS.map((filter) => {
+          const active = opened === filter.value;
           return (
             <button
               key={filter.label}
