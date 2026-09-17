@@ -8,7 +8,6 @@ import {
   LIVE_SEMINAR_CELLS,
   MATRIX_CELL_MAPS,
   matrixCellKey,
-  MONTH_GROUPS,
   Owner,
   PLAYBOOK_CAPTION_LINES,
   PLAYBOOK_SHOT_ALT,
@@ -22,7 +21,6 @@ import {
   WEEK_PLANS,
   weekMonth,
   weekPhase,
-  WEEKS,
 } from './coursePlan';
 
 const VALID_OWNERS: Owner[] = ['self', 'free', 'challenge', 'challenge-deep'];
@@ -363,42 +361,6 @@ describe('coursePlan 데이터 무결성', () => {
           speaker: cell.desc,
         })),
       );
-    });
-  });
-
-  describe('13주 타임라인', () => {
-    it('월 그룹은 3종(SEP/OCT/NOV)이며 액센트색을 갖는다', () => {
-      expect(MONTH_GROUPS).toHaveLength(3);
-      expect(MONTH_GROUPS.map((m) => m.month)).toEqual(['SEP', 'OCT', 'NOV']);
-      for (const m of MONTH_GROUPS) {
-        expect(m.accent).toMatch(/^#[0-9a-f]{6}$/i);
-      }
-    });
-
-    it('카드는 12개이며 12주차가 13주까지 묶음으로 13주를 커버한다', () => {
-      expect(WEEKS).toHaveLength(12);
-      const last = WEEKS[WEEKS.length - 1];
-      expect(last.week).toBe(12);
-      expect(last.weekEnd).toBe(13);
-    });
-
-    it('주차가 1부터 빠짐없이 13까지 이어진다', () => {
-      const covered = new Set<number>();
-      for (const item of WEEKS) {
-        const end = item.weekEnd ?? item.week;
-        for (let w = item.week; w <= end; w += 1) {
-          covered.add(w);
-        }
-      }
-      expect([...covered].sort((a, b) => a - b)).toEqual([
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-      ]);
-    });
-
-    it('모든 주차에 title 이 비어있지 않다', () => {
-      for (const item of WEEKS) {
-        expect(item.title.length).toBeGreaterThan(0);
-      }
     });
   });
 

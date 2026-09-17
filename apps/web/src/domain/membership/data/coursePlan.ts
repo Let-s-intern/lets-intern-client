@@ -1,4 +1,4 @@
-// 하반기 공채 13주 합격 플랜 — 매트릭스(카테고리×STEP) + 월별 13주 타임라인의 단일 데이터 출처.
+// 마케팅 10주 합격 플레이북 — 매트릭스(카테고리×STEP) + 주 단위 10주 목록의 단일 데이터 출처.
 // 두 뷰(CoursePlanMatrix / CoursePlanTimeline)와 범례가 이 한 파일을 공유한다.
 //
 // 콘텐츠 원문은 시안(렛츠커리어 하반기 멤버십_수정본) 그대로다. 오타 없이 입력한다.
@@ -102,36 +102,6 @@ export interface MatrixCell {
   owner: Owner;
   /** 분류 배지 (렛츠커리어 제공 형태) */
   tag: CourseTag;
-}
-
-export interface WeekItem {
-  /** 1~13 연속. 12·13 은 묶음 카드라 week=12, weekEnd=13 으로 표기. */
-  week: number;
-  /** 묶음 카드의 끝 주차(없으면 단일 주차) */
-  weekEnd?: number;
-  /** 소속 월 */
-  month: 'SEP' | 'OCT' | 'NOV';
-  /** 주차 핵심 과업명 */
-  title: string;
-  /** 보조 설명 */
-  desc: string;
-  /** 챌린지 주차 여부 (월 액센트 배지 노출) */
-  isChallenge: boolean;
-}
-
-export interface MonthGroup {
-  month: 'SEP' | 'OCT' | 'NOV';
-  /** 월 성격 타이틀 */
-  title: string;
-  /** 월 서브 카피 */
-  sub: string;
-  /** 영문 배지 라벨 */
-  badge: string;
-  /** 액센트색 (월 래퍼 --m-accent) */
-  accent: string;
-  /** 배지 배경/글자색 */
-  badgeBg: string;
-  badgeFg: string;
 }
 
 export const STEPS: Step[] = [
@@ -1284,140 +1254,6 @@ export const WEEK_PLANS: Record<CoursePlanTypeId, WeekPlan[]> = {
   a: TYPE_A_WEEKS,
   b: TYPE_B_WEEKS,
 };
-
-export const MONTH_GROUPS: MonthGroup[] = [
-  {
-    month: 'SEP',
-    title: '기반 다지기',
-    sub: '리서치로 방향 잡고, 시간 걸리는 서류 먼저',
-    badge: 'RESEARCH',
-    accent: '#1f97b0',
-    badgeBg: '#e3f5f8',
-    badgeFg: '#1c8597',
-  },
-  {
-    month: 'OCT',
-    title: '콘텐츠 쌓기',
-    sub: '경험정리 → 이력서·자소서 챌린지로',
-    badge: 'BUILD',
-    accent: '#ef8a1c',
-    badgeBg: '#fdeedb',
-    badgeFg: '#c46f10',
-  },
-  {
-    month: 'NOV',
-    title: '실전 대비',
-    sub: '지원 → 인적성·게임 → 면접까지',
-    badge: 'GAME TIME',
-    accent: '#e0604a',
-    badgeBg: '#fde3de',
-    badgeFg: '#cf4631',
-  },
-];
-
-// 월별 13주 타임라인 — 시안 원문 그대로. 12·13 주는 하나의 묶음 카드.
-export const WEEKS: WeekItem[] = [
-  // SEP
-  {
-    week: 1,
-    month: 'SEP',
-    title: '산업 분석',
-    desc: '관심 산업 2~3개 시장 규모·성장성·최신 이슈·밸류체인 정리',
-    isChallenge: false,
-  },
-  {
-    week: 2,
-    month: 'SEP',
-    title: '기업 분석',
-    desc: '목표 기업 사업영역·인재상·직무(JD) 분석 → 1·2지망 구분',
-    isChallenge: false,
-  },
-  {
-    week: 3,
-    month: 'SEP',
-    title: '영어 자격증 점검',
-    desc: '유효기간 확인, 부족하면 바로 접수 (점수 2~3주 소요)',
-    isChallenge: false,
-  },
-  {
-    week: 4,
-    month: 'SEP',
-    title: '성적표·졸업증명서',
-    desc: '영문본 포함 미리 발급 — 서류는 항상 미리!',
-    isChallenge: false,
-  },
-  // OCT
-  {
-    week: 5,
-    month: 'OCT',
-    title: '경험정리 챌린지 ①',
-    desc: '경험 전수조사 → STAR 구조로 정리 시작',
-    isChallenge: true,
-  },
-  {
-    week: 6,
-    month: 'OCT',
-    title: '경험정리 챌린지 ② + 인적성 진단',
-    desc: '역량 매칭 완료 / 인적성 모의 1회로 약점 파악',
-    isChallenge: true,
-  },
-  {
-    week: 7,
-    month: 'OCT',
-    title: '이력서 챌린지',
-    desc: '직무 맞춤 이력서·경력기술서 완성',
-    isChallenge: true,
-  },
-  {
-    week: 8,
-    month: 'OCT',
-    title: '대기업 특화 자소서 챌린지',
-    desc: '공통·기업별 문항 합격 구조로 작성·첨삭',
-    isChallenge: true,
-  },
-  // NOV
-  {
-    week: 9,
-    month: 'NOV',
-    title: '서류 접수 + 잡다 게임 ①',
-    desc: '자소서 최종 완성·지원 시작 / 역량검사 게임 유형 익히기',
-    isChallenge: false,
-  },
-  {
-    week: 10,
-    month: 'NOV',
-    title: '인적성 대비 챌린지 + 게임 ②',
-    desc: '실전 모의고사 반복 / 게임 연습 마무리',
-    isChallenge: true,
-  },
-  {
-    week: 11,
-    month: 'NOV',
-    title: '인적성 마무리 + 면접 챌린지 ①',
-    desc: '인적성 최종 점검 / 1분 자기소개·직무 PR 스크립트',
-    isChallenge: true,
-  },
-  {
-    week: 12,
-    weekEnd: 13,
-    month: 'NOV',
-    title: '면접 준비 챌린지 ②',
-    desc: '예상 질문 정리 → 모의면접 반복·녹화 피드백',
-    isChallenge: true,
-  },
-];
-
-/** 월별 다크 푸터 "한 줄 동선" 칩 시퀀스 (화살표로 연결). */
-export const FLOW_LABEL = '한 줄 동선';
-export const FLOW_CHIPS: string[] = [
-  '산업·기업 분석',
-  '자격 점검',
-  '경험정리 챌린지',
-  '이력서·자소서 챌린지',
-  '인적성 챌린지',
-  '면접 챌린지',
-  '합격',
-];
 
 /** 섹션 헤더 — 시안 6-0.png */
 export const COURSE_PLAN_HEADER = {
