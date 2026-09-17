@@ -14,6 +14,7 @@ import {
   type RowTone,
 } from '../../utils/liveFeedbackSpec';
 import {
+  RESERVATION_KIND_LABEL,
   rowCreateDate,
   rowKey,
   rowMenteeName,
@@ -23,7 +24,6 @@ import {
   type ReservationRow,
 } from '../utils/reservationRow';
 import type { SortKey, SortState } from '../utils/sortReservations';
-import ReservationKindBadge from './ReservationKindBadge';
 
 /**
  * 행 배경 톤 → Tailwind 클래스 (기획 2026-06-09).
@@ -133,7 +133,7 @@ function ChallengeRow({
         {formatReservationDateTime(feedback.startDate, feedback.endDate)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <ReservationKindBadge kind="CHALLENGE" />
+        {RESERVATION_KIND_LABEL.CHALLENGE}
       </td>
       <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
         {feedback.programTitle || '-'}
@@ -208,9 +208,20 @@ function LiveMentoringRow({
   const canReschedule = hasSlot && reservation.status === 'CONFIRMED';
   const specInput = toLiveSpecInput(reservation);
   const spec = specInput ? resolveAdminVoLiveSpec(specInput, now) : null;
+  /*
+    챌린지 행과 같은 규칙으로 행 배경을 칠한다 — 진행 중·완료·미진행 조합을
+    한눈에 가르려는 표시라 두 종류가 달리 칠해지면 오히려 헷갈린다.
+    슬롯이 없어 진행 시점을 모르는 행(spec 이 null)은 칠하지 않는다.
+  */
+  const rowToneClassName = spec ? ROW_TONE_CLASS[resolveRowTone(spec)] : '';
 
   return (
-    <tr className="border-neutral-80 border-b last:border-b-0">
+    <tr
+      className={twMerge(
+        'border-neutral-80 border-b last:border-b-0',
+        rowToneClassName,
+      )}
+    >
       <td className={tdClassName}>
         {hasSlot ? (
           formatReservationDateTime(
@@ -223,8 +234,8 @@ function LiveMentoringRow({
         )}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <div className="flex flex-col items-center gap-0.5">
-          <ReservationKindBadge kind="LIVE_MENTORING" />
+        <div className="flex flex-col gap-0.5">
+          <span>{RESERVATION_KIND_LABEL.LIVE_MENTORING}</span>
           <span className="text-xxsmall12 text-neutral-40">
             {APPLICATION_STATUS_LABELS[reservation.status]}
             {reservation.durationMinutes != null &&

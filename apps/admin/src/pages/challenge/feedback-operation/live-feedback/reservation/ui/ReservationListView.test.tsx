@@ -190,16 +190,15 @@ describe('ReservationListView', () => {
       expect(screen.getByText('최멘티')).toBeInTheDocument();
     });
 
-    it('유형을 배지로 그리고, 두 유형의 배지 색이 다르다', () => {
+    /*
+      유형 칸에 색 배지를 넣었다가 되돌렸다. 두 유형은 글자로 구분하고, 진행 상태는
+      행 배경색이 보여준다 — 한 행에 색이 두 겹이면 무엇을 뜻하는지 흐려진다.
+    */
+    it('유형은 색 없는 글자로 그린다', () => {
       renderMixed();
-      const challengeBadge = screen.getByText(RESERVATION_KIND_LABEL.CHALLENGE);
-      const liveMentoringBadge = screen.getByText(
-        RESERVATION_KIND_LABEL.LIVE_MENTORING,
-      );
-
-      expect(challengeBadge).toHaveClass('bg-primary-10', 'text-primary');
-      expect(liveMentoringBadge).toHaveClass('bg-tertiary/10', 'text-tertiary');
-      expect(challengeBadge.className).not.toBe(liveMentoringBadge.className);
+      for (const label of Object.values(RESERVATION_KIND_LABEL)) {
+        expect(screen.getByText(label).className).not.toMatch(/\bbg-/);
+      }
     });
 
     it('멘토는 닉네임으로, 플랜과 결제 상태를 함께 표시한다', () => {
@@ -353,6 +352,100 @@ describe('ReservationListView', () => {
     it('챌린지 행의 뱃지는 바뀌지 않는다', () => {
       renderAt('2026-05-30T18:00:00');
       expect(badgeCells('챌린지 라이브 피드백')).toEqual(['미진행', '미참여']);
+    });
+
+    /*
+      1:1 행도 챌린지 행과 같은 규칙으로 행 배경을 칠한다(resolveRowTone).
+      진행 중=연보라 / 진행 예정=없음 / 둘 다 참여=초록 / 한쪽만=빨강 / 둘 다 미참여=회색.
+    */
+    const TONE_CLASSES = [
+      'bg-[#EEF0FF]',
+      'bg-green-50',
+      'bg-red-50',
+      'bg-neutral-90',
+    ];
+    const liveMentoringRowTone = () => {
+      const tr = screen
+        .getByText('1:1 LIVE 멘토링')
+        .closest('tr') as HTMLElement;
+      return TONE_CLASSES.filter((c) => tr.classList.contains(c));
+    };
+
+    it.each([
+      ['세션 전', '2026-05-30T18:00:00', 'PENDING', 'PENDING', []],
+      [
+        '세션 중',
+        '2026-05-30T19:10:00',
+        'PENDING',
+        'PENDING',
+        ['bg-[#EEF0FF]'],
+      ],
+      [
+        '세션 후 둘 다 참여',
+        '2026-05-30T20:00:00',
+        'PRESENT',
+        'PRESENT',
+        ['bg-green-50'],
+      ],
+      [
+        '세션 후 멘토만 참여',
+        '2026-05-30T20:00:00',
+        'PRESENT',
+        'ABSENT',
+        ['bg-red-50'],
+      ],
+      [
+        '세션 후 멘티만 참여',
+        '2026-05-30T20:00:00',
+        'ABSENT',
+        'PRESENT',
+        ['bg-red-50'],
+      ],
+      [
+        '세션 후 둘 다 미참여',
+        '2026-05-30T20:00:00',
+        'PENDING',
+        'PENDING',
+        ['bg-neutral-90'],
+      ],
+    ] as const)(
+      '%s 이면 행 배경이 %s 로 칠해진다',
+      (_, now, mentorStatus, menteeStatus, expected) => {
+        renderAt(now, { mentorStatus, menteeStatus });
+        expect(liveMentoringRowTone()).toEqual(expected);
+      },
+    );
+
+    it('취소된 신청은 칠하지 않는다', () => {
+      renderAt('2026-05-30T20:00:00', {
+        status: 'CANCELED',
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+      });
+      expect(liveMentoringRowTone()).toEqual([]);
+    });
+
+    it('슬롯 없는 신청은 출석이 있어도 칠하지 않는다', () => {
+      renderAt('2026-05-30T20:00:00', {
+        reservationStartAt: null,
+        reservationEndAt: null,
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+      });
+      expect(liveMentoringRowTone()).toEqual([]);
+    });
+
+    // 같은 출석 조합이면 두 종류의 행이 같은 색이어야 한다.
+    it('출석 조합이 같으면 챌린지 행과 같은 색이다', () => {
+      renderAt('2026-05-30T20:00:00');
+      const challengeTr = screen
+        .getByText('챌린지 라이브 피드백')
+        .closest('tr') as HTMLElement;
+      const challengeTone = TONE_CLASSES.filter((c) =>
+        challengeTr.classList.contains(c),
+      );
+      expect(challengeTone).toEqual(['bg-neutral-90']);
+      expect(liveMentoringRowTone()).toEqual(challengeTone);
     });
   });
 });
