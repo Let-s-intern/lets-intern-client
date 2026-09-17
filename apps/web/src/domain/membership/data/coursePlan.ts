@@ -90,6 +90,14 @@ export interface MatrixCell {
    * 읽힌다. 셀 폭 142px 에 이 텍스트는 78px 이라 넘칠 여유가 충분하다.
    */
   when?: string;
+  /**
+   * 일정 뒤에 붙는 짧은 표시. 매트릭스는 "9.20 일 11:00 · 시작 전" 으로 이어 그린다.
+   *
+   * `when` 에 합치지 않는 것은 주 단위 보기가 같은 공유 데이터를 쓰면서 「시작 전」을
+   * 따로 딱지로 달기 때문이다. 합치면 그쪽에서 두 번 찍힌다. 오늘 날짜로 계산하지
+   * 않는 고정 문구다 — 1주차(9.21)보다 앞선 일정이라는 뜻이다.
+   */
+  whenNote?: string;
   /** 수행 주체 (셀 색 결정) */
   owner: Owner;
   /** 분류 배지 (렛츠커리어 제공 형태) */
@@ -462,6 +470,7 @@ export const LIVE_SEMINAR_CELLS: MatrixCell[] = [
     title: '마케터 세부 직무 톺아보기',
     desc: '놀유니버스 CRM 마케터',
     when: '9.20 일 11:00',
+    whenNote: '시작 전',
   },
   {
     step: 'step01',
@@ -593,7 +602,8 @@ const TYPE_B_OWN_CELLS: MatrixCell[] = [
   {
     step: 'step05',
     category: 'job',
-    owner: 'challenge-deep',
+    // 시안 image.png 에서 흰 배경이다. TYPE B 의 연보라 강조는 STEP 02 챌린지 3장뿐이다.
+    owner: 'free',
     tag: 'mentoring',
     title: '현직 마케터 커피챗',
     desc: '내 커리어 판단을 검증받기',
@@ -796,7 +806,8 @@ const TYPE_B_OWN_CELLS: MatrixCell[] = [
   {
     step: 'step04',
     category: 'interview',
-    owner: 'challenge-deep',
+    // 시안에서 흰 배경 (위 커피챗과 같은 이유)
+    owner: 'free',
     tag: 'mentoring',
     title: '현직 마케터 과제 피드백',
     desc: '실무형 과제 전형 대비',
@@ -804,7 +815,8 @@ const TYPE_B_OWN_CELLS: MatrixCell[] = [
   {
     step: 'step05',
     category: 'interview',
-    owner: 'challenge',
+    // 태그는 챌린지지만 시안에서 흰 배경이다 (위 커피챗과 같은 이유)
+    owner: 'free',
     tag: 'challenge',
     title: '면접 준비 챌린지',
     desc: '1차 실무·2차 임원 답변 따로',

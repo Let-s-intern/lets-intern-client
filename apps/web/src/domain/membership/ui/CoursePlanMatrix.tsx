@@ -59,6 +59,12 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
                 <span className="cpm-cell-when">{cell.when}</span>
               </>
             )}
+            {cell.whenNote && (
+              <>
+                {' · '}
+                <span className="cpm-cell-when">{cell.whenNote}</span>
+              </>
+            )}
           </p>
         </article>
       ))}

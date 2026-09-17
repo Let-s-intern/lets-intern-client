@@ -208,6 +208,28 @@ describe('coursePlan 데이터 무결성', () => {
       }
     });
 
+    // 시안 image.png 의 연보라 배경은 STEP 02 챌린지 3장뿐이다. 태그가 챌린지·멘토링이어도
+    // 다른 단계 카드는 흰 배경이다(면접 준비 챌린지, 현직 마케터 커피챗·과제 피드백).
+    it('연보라로 강조되는 카드는 STEP 02 챌린지 3장뿐이다', () => {
+      const provided = own.filter(
+        (cell) => cell.owner === 'challenge' || cell.owner === 'challenge-deep',
+      );
+      expect(provided.map((cell) => [cell.step, cell.title])).toEqual([
+        ['step02', '경험 재정렬'],
+        ['step02', '마케팅 챌린지'],
+        ['step02', '마케팅 챌린지'],
+      ]);
+    });
+
+    it('9.20 세미나는 일시 뒤에 「시작 전」을 따로 단다', () => {
+      const first = LIVE_SEMINAR_CELLS.find(
+        (cell) => cell.when === '9.20 일 11:00',
+      );
+      expect(first?.whenNote).toBe('시작 전');
+      // when 에 합치면 주 단위 보기의 「시작 전」 딱지와 두 번 찍힌다
+      expect(first?.when).not.toContain('시작 전');
+    });
+
     it('라이브 세미나 줄은 TYPE A 와 같은 공유 데이터다', () => {
       const live = TYPE_B_MATRIX_CELLS.filter(
         (cell) => cell.category === 'live',
