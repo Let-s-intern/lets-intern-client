@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import {
@@ -208,14 +208,14 @@ describe('ReservationListView', () => {
       expect(screen.getByText('결제 완료 · 30분')).toBeInTheDocument();
     });
 
-    // 빈 칸은 "없음"이 아니라 "조회가 빠졌다"로 읽힌다.
-    it('챌린지에만 있는 칸은 비우지 않고 해당 없음으로 채운다', () => {
+    it('결제 완료건은 해당 없음 칸 없이 예약 변경 버튼이 뜬다', () => {
       renderMixed();
       const liveMentoringCell = screen.getByText('1:1 LIVE 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
-      // 출석 두 칸은 이제 실제 값을 보여준다. 남는 건 멘토·멘티 뱃지 두 칸뿐이다
-      // — 예약 변경은 결제 완료건이라 다섯 번째 칸이 아니라 버튼으로 뜬다(아래 별도 테스트).
-      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(2);
+      // 출석과 뱃지 네 칸은 모두 실제 값을 보여준다(LC-3336). 예약 변경은 버튼이다.
+      expect(within(liveMentoringTr).queryAllByText('해당 없음')).toHaveLength(
+        0,
+      );
       expect(
         within(liveMentoringTr).getByRole('button', { name: '예약 변경' }),
       ).toBeInTheDocument();
@@ -231,9 +231,9 @@ describe('ReservationListView', () => {
       );
       const liveMentoringCell = screen.getByText('1:1 LIVE 멘토링');
       const liveMentoringTr = liveMentoringCell.closest('tr') as HTMLElement;
-      // 출석 두 칸(값은 '-'로 표시되어 '해당 없음' 텍스트가 아니다) + 뱃지 두 칸 +
-      // 예약 변경 칸, 총 세 칸이 '해당 없음'이다.
-      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(3);
+      // 출석·뱃지 네 칸은 '-' 로 표시되어 '해당 없음' 텍스트가 아니다.
+      // 예약 변경 칸 하나만 '해당 없음'이다.
+      expect(within(liveMentoringTr).getAllByText('해당 없음')).toHaveLength(1);
       expect(
         within(liveMentoringTr).queryByRole('button', { name: '예약 변경' }),
       ).not.toBeInTheDocument();
@@ -268,6 +268,78 @@ describe('ReservationListView', () => {
       );
       expect(screen.getByText('예약 슬롯 없음')).toBeInTheDocument();
       expect(screen.getByText('결제 대기 · 30분')).toBeInTheDocument();
+    });
+  });
+
+  /*
+    LC-3336 — 1:1 행의 멘토·멘티 뱃지도 챌린지와 같은 진리표로 판정한다.
+    세션은 2026-05-30 19:00~19:30 이고, 목록은 렌더 시각을 기준으로 가른다.
+  */
+  describe('1:1 LIVE 멘토링 행 — 진리표 뱃지', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const renderAt = (
+      now: string,
+      overrides: Partial<AdminLiveMentoringReservation> = {},
+    ) => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date(now));
+      render(
+        <ReservationListView
+          {...baseProps}
+          reservations={[row, makeLiveMentoringRow(overrides)]}
+          isLoading={false}
+        />,
+      );
+    };
+
+    /** 멘토 뱃지·멘티 뱃지 칸의 글자. 헤더 순서상 8·9번째 칸이다. */
+    const badgeCells = (kindLabel: string) => {
+      const tr = screen.getByText(kindLabel).closest('tr') as HTMLElement;
+      const cells = within(tr).getAllByRole('cell');
+      return [cells[7].textContent, cells[8].textContent];
+    };
+    const liveMentoringBadges = () => badgeCells('1:1 LIVE 멘토링');
+
+    it('세션 전이면 둘 다 진행 예정이다', () => {
+      renderAt('2026-05-30T18:00:00');
+      expect(liveMentoringBadges()).toEqual(['진행 예정', '진행 예정']);
+    });
+
+    it('세션 중이면 둘 다 진행 중이다', () => {
+      renderAt('2026-05-30T19:10:00');
+      expect(liveMentoringBadges()).toEqual(['진행 중', '진행 중']);
+    });
+
+    it.each([
+      ['PRESENT', 'PRESENT', '진행 완료', '진행 완료'],
+      ['PRESENT', 'ABSENT', '진행 완료', '미참여'],
+      ['ABSENT', 'ABSENT', '미진행', '미참여'],
+      ['PENDING', 'PENDING', '미진행', '미참여'],
+      ['ABSENT', 'PRESENT', '미진행', '확인 필요'],
+    ] as const)(
+      '세션 후 멘토 %s · 멘티 %s 면 %s / %s 이다',
+      (mentorStatus, menteeStatus, mentorBadge, menteeBadge) => {
+        renderAt('2026-05-30T20:00:00', { mentorStatus, menteeStatus });
+        expect(liveMentoringBadges()).toEqual([mentorBadge, menteeBadge]);
+      },
+    );
+
+    it('취소된 신청은 표시하지 않는다', () => {
+      renderAt('2026-05-30T20:00:00', {
+        status: 'CANCELED',
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+      });
+      expect(liveMentoringBadges()).toEqual(['-', '-']);
+    });
+
+    // 챌린지 행(05-29 17:00~17:30, 출석 미체크)은 같은 표에서 전과 같게 그린다.
+    it('챌린지 행의 뱃지는 바뀌지 않는다', () => {
+      renderAt('2026-05-30T18:00:00');
+      expect(badgeCells('챌린지 라이브 피드백')).toEqual(['미진행', '미참여']);
     });
   });
 });
