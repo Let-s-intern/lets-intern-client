@@ -321,7 +321,11 @@ describe('coursePlan 데이터 무결성', () => {
     });
   });
 
-  describe.each(['a'] as const)('주 단위 계획 TYPE %s', (type) => {
+  it('두 유형의 1주차 제목이 서로 다르다', () => {
+    expect(WEEK_PLANS.a[0].title).not.toBe(WEEK_PLANS.b[0].title);
+  });
+
+  describe.each(['a', 'b'] as const)('주 단위 계획 TYPE %s', (type) => {
     const weeks = WEEK_PLANS[type];
 
     it('주차가 1~10 연속이다', () => {

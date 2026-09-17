@@ -1119,10 +1119,170 @@ const TYPE_A_WEEKS: WeekPlan[] = [
   },
 ];
 
+/** TYPE B 10주 — 시안 image copy 2.png */
+const TYPE_B_WEEKS: WeekPlan[] = [
+  {
+    week: 1,
+    range: '9.21 월 – 9.27 일',
+    title: '가진 실무 경험을 성과 언어로 다시 쓰기',
+    todos: [
+      '담당했던 프로젝트 3건을 목표·역할·결과로 분해하기',
+      '숫자가 대외비면 비율·구간으로 바꿔 표기하기',
+    ],
+    output: '프로젝트 3건 성과 정리표',
+    supports: [
+      seminarSupport(1),
+      { tag: 'challenge', title: '마케팅 서류 완성 올인원 챌린지 10기' },
+      { tag: 'template', title: '프로젝트 성과 수치화 시트' },
+      { tag: 'free', title: '대외비 수치 표기법' },
+    ],
+  },
+  {
+    week: 2,
+    range: '9.28 월 – 10.4 일',
+    title: '경력기술서형 이력서와 자기소개서',
+    todos: [
+      '나열식 업무 기록을 성과 중심으로 바꾸기',
+      '직무 전환·이직 사유를 한 문단으로 정리하기',
+    ],
+    output: '이력서 1본 + 자소서 2문항',
+    supports: [
+      seminarSupport(2),
+      seminarSupport(3),
+      { tag: 'challenge', title: '마케팅 챌린지 2주차 미션' },
+      { tag: 'template', title: '경력기술서 작성 양식' },
+      { tag: 'free', title: '이직·전환 사유 쓰는 법' },
+    ],
+  },
+  {
+    week: 3,
+    range: '10.5 월 – 10.11 일',
+    title: '실제 집행물 기반 포트폴리오 심화',
+    todos: [
+      '집행한 소재를 저작권·대외비 기준에 맞게 정리하기',
+      '채택 안 된 기획안까지 케이스로 살리기',
+    ],
+    output: '포트폴리오 1본 + 케이스 2건',
+    supports: [
+      seminarSupport(4),
+      { tag: 'challenge', title: '마케팅 챌린지 3주차 미션' },
+      { tag: 'free', title: '집행 소재·중단 프로젝트 활용법' },
+      { tag: 'template', title: '케이스 구성 시트' },
+    ],
+  },
+  {
+    week: 4,
+    range: '10.12 월 – 10.18 일',
+    title: '인하우스냐 대행사냐, 타깃 좁히기',
+    todos: [
+      '다음 커리어 방향을 인하우스·대행사로 먼저 정하기',
+      '산업을 유지할지 바꿀지 결정하고 20곳 리스트업',
+    ],
+    output: '지원 기업 20곳 리스트',
+    supports: [
+      { tag: 'vod', title: '인하우스 vs 대행사, 첫 커리어 선택' },
+      { tag: 'free', title: '산업별 진입 경로와 경험 재배치' },
+      { tag: 'mentoring', title: '현직 마케터 커피챗' },
+    ],
+  },
+  {
+    week: 5,
+    range: '10.19 월 – 10.25 일',
+    title: 'JD별 서류 변형과 전환 스토리 만들기',
+    todos: [
+      '공고 3개의 요구 역량에 맞춰 경험 순서 바꾸기',
+      '직무를 바꾼다면 연결 논리를 한 문장으로 고정하기',
+    ],
+    output: '서류 변형본 3세트',
+    supports: [
+      seminarSupport(5),
+      { tag: 'template', title: 'JD별 서류 변형 시트' },
+      { tag: 'free', title: '직무 전환 지원자의 스토리 설계' },
+    ],
+  },
+  {
+    week: 6,
+    range: '10.26 월 – 11.1 일',
+    title: '내 숫자를 방어하는 훈련',
+    todos: [
+      '내가 낸 성과의 측정 방식을 다시 확인하기',
+      // 시안 원본은 곧은 따옴표가 아니라 둥근 따옴표다 (매트릭스 같은 문구와 같다)
+      '‘이 숫자 어떻게 측정했어요?’ 꼬리질문에 답 만들기',
+    ],
+    output: '성과 방어 답변 + 케이스 리포트',
+    supports: [
+      seminarSupport(6),
+      { tag: 'vod', title: '광고 지표 해석 기준선' },
+      { tag: 'free', title: '가설-실험-검증 리포트 쓰는 법' },
+    ],
+  },
+  {
+    week: 7,
+    range: '11.2 월 – 11.8 일',
+    title: '비어 있는 역량 하나만 보강하기',
+    todos: [
+      '데이터(GA4·엑셀)와 AI 활용 중 약한 쪽 하나 고르기',
+      '실습 결과물 1건을 포폴에 추가하기',
+    ],
+    output: '실습 결과물 1건',
+    supports: [
+      { tag: 'free', title: '엑셀·GA4 마케팅 데이터 실습' },
+      { tag: 'free', title: '마케터의 AI 워크플로우' },
+    ],
+  },
+  {
+    week: 8,
+    range: '11.9 월 – 11.15 일',
+    title: '실무형 과제 전형 대비',
+    todos: [
+      '콜라보·캠페인 기획 과제로 실전 연습하기',
+      '기획안 피드백 받고 한 번 고쳐 쓰기',
+    ],
+    output: '모의 과제 1건',
+    supports: [
+      seminarSupport(7),
+      { tag: 'free', title: '과제 전형 유형별 예시' },
+      { tag: 'mentoring', title: '현직 마케터 과제 피드백' },
+    ],
+  },
+  {
+    week: 9,
+    range: '11.16 월 – 11.22 일',
+    title: '포폴 기반 면접과 임원 면접',
+    todos: [
+      '포폴 각 장에서 나올 질문 미리 뽑기',
+      '1차 실무와 2차 임원 답변을 따로 준비하기',
+    ],
+    output: '면접 답변 세트 + 녹화본',
+    supports: [
+      seminarSupport(8),
+      { tag: 'challenge', title: '면접 준비 챌린지' },
+      { tag: 'free', title: '포폴 기반 면접 질문집' },
+      { tag: 'mentoring', title: '현직 마케터 모의면접' },
+    ],
+  },
+  {
+    week: 10,
+    range: '11.23 월 – 11.29 일',
+    title: '지원 실행과 오퍼 판단',
+    todos: [
+      '리스트업한 곳 중 10곳 지원하기',
+      '오퍼가 오면 연봉·계약 형태 기준으로 비교하기',
+    ],
+    output: '지원 10곳 + 오퍼 비교표',
+    supports: [
+      seminarSupport(9),
+      { tag: 'template', title: '지원 현황 트래커' },
+      { tag: 'free', title: '희망연봉과 오퍼 협상 기준' },
+      { tag: 'free', title: '계약직·전환형 제안 판단법' },
+    ],
+  },
+];
+
 /** 유형별 10주 계획 */
 export const WEEK_PLANS: Record<CoursePlanTypeId, WeekPlan[]> = {
   a: TYPE_A_WEEKS,
-  b: [],
+  b: TYPE_B_WEEKS,
 };
 
 export const MONTH_GROUPS: MonthGroup[] = [
