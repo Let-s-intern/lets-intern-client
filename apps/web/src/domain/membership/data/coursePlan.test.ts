@@ -15,6 +15,7 @@ import {
   PLAYBOOK_SHOT_SRC,
   STEPS,
   TYPE_A_MATRIX_CELLS,
+  TYPE_B_MATRIX_CELLS,
   WEEKS,
 } from './coursePlan';
 
@@ -175,6 +176,43 @@ describe('coursePlan 데이터 무결성', () => {
       for (const label of Object.values(COURSE_TAG_LABEL)) {
         expect(label.length).toBeGreaterThan(0);
       }
+    });
+  });
+
+  describe('TYPE B 매트릭스', () => {
+    const own = TYPE_B_MATRIX_CELLS.filter((cell) => cell.category !== 'live');
+
+    // 시안 image.png — 6개 영역 × 5단계에 면접·지원 실행 STEP05 만 2장이다.
+    it('라이브 세미나를 뺀 카드는 31장이다', () => {
+      expect(own).toHaveLength(31);
+    });
+
+    it('6개 영역 × 5단계를 모두 채우고, 면접·지원 실행 STEP05 만 2장이다', () => {
+      for (const step of STEPS) {
+        for (const category of CATEGORIES) {
+          if (category.id === 'live') continue;
+          const count = own.filter(
+            (cell) => cell.step === step.id && cell.category === category.id,
+          ).length;
+          const expected =
+            step.id === 'step05' && category.id === 'interview' ? 2 : 1;
+          expect(count).toBe(expected);
+        }
+      }
+    });
+
+    it('모든 태그가 COURSE_TAG_LABEL 안에 있다', () => {
+      for (const cell of TYPE_B_MATRIX_CELLS) {
+        expect(Object.keys(COURSE_TAG_LABEL)).toContain(cell.tag);
+      }
+    });
+
+    it('라이브 세미나 줄은 TYPE A 와 같은 공유 데이터다', () => {
+      const live = TYPE_B_MATRIX_CELLS.filter(
+        (cell) => cell.category === 'live',
+      );
+      expect(live).toHaveLength(LIVE_SEMINAR_CELLS.length);
+      live.forEach((cell, i) => expect(cell).toBe(LIVE_SEMINAR_CELLS[i]));
     });
   });
 

@@ -551,6 +551,279 @@ export const TYPE_A_MATRIX_CELLS: MatrixCell[] = [
   ...LIVE_SEMINAR_CELLS,
 ];
 
+/**
+ * TYPE B 고유 카드 — 마케팅 유관 경험 6개월~1년인 사람 (시안 image.png).
+ * owner 는 TYPE A 와 같은 규칙으로 매긴다 — 가이드북·VOD 는 free, 템플릿은 self,
+ * 챌린지는 challenge, 1:1 멘토링은 challenge-deep.
+ */
+const TYPE_B_OWN_CELLS: MatrixCell[] = [
+  // 1. 직무·산업 이해
+  {
+    step: 'step01',
+    category: 'job',
+    owner: 'free',
+    tag: 'free',
+    title: '다음 커리어 방향 정하기',
+    desc: '인하우스냐 대행사냐, 산업 유지냐 전환이냐',
+  },
+  {
+    step: 'step02',
+    category: 'job',
+    owner: 'free',
+    tag: 'vod',
+    title: '현직자 직무·서류 세미나 VOD',
+    desc: '직무별로 보는 숫자가 다른 이유',
+  },
+  {
+    step: 'step03',
+    category: 'job',
+    owner: 'free',
+    tag: 'free',
+    title: '산업별 진입 경로',
+    desc: '산업을 바꿀 때 경험 다시 쓰는 법',
+  },
+  {
+    step: 'step04',
+    category: 'job',
+    owner: 'free',
+    tag: 'vod',
+    title: '그로스는 채널이 아니라 일하는 방식',
+    desc: '직무 경계 정리하기',
+  },
+  {
+    step: 'step05',
+    category: 'job',
+    owner: 'challenge-deep',
+    tag: 'mentoring',
+    title: '현직 마케터 커피챗',
+    desc: '내 커리어 판단을 검증받기',
+  },
+
+  // 2. 경험 정리·보강
+  {
+    step: 'step01',
+    category: 'experience',
+    owner: 'self',
+    tag: 'template',
+    title: '프로젝트 성과 수치화 시트',
+    desc: '목표·역할·결과로 분해하기',
+  },
+  {
+    step: 'step02',
+    category: 'experience',
+    owner: 'challenge',
+    tag: 'challenge',
+    title: '경험 재정렬',
+    desc: '챌린지 미션으로 실무 경험 구조화',
+  },
+  {
+    step: 'step03',
+    category: 'experience',
+    owner: 'free',
+    tag: 'free',
+    title: '직무 전환 스토리 설계',
+    desc: '연결 논리를 한 문장으로 고정',
+  },
+  {
+    step: 'step04',
+    category: 'experience',
+    owner: 'free',
+    tag: 'free',
+    title: '비어 있는 역량 1개만 보강',
+    desc: '데이터냐 AI냐 먼저 고르기',
+  },
+  {
+    step: 'step05',
+    category: 'experience',
+    owner: 'free',
+    tag: 'free',
+    title: '가설-실험-검증 리포트',
+    desc: '틀린 가설도 쓰는 법',
+  },
+
+  // 3. 이력서·자소서
+  {
+    step: 'step01',
+    category: 'resume',
+    owner: 'self',
+    tag: 'template',
+    title: '경력기술서 작성 양식',
+    desc: '나열식 기록을 성과 중심으로',
+  },
+  {
+    step: 'step02',
+    category: 'resume',
+    owner: 'challenge',
+    tag: 'challenge',
+    title: '마케팅 챌린지',
+    desc: '이력서·자소서 완성',
+  },
+  {
+    step: 'step03',
+    category: 'resume',
+    owner: 'self',
+    tag: 'template',
+    title: 'JD별 서류 변형',
+    desc: '요구 역량에 맞춰 경험 순서 바꾸기',
+  },
+  {
+    step: 'step04',
+    category: 'resume',
+    owner: 'free',
+    tag: 'free',
+    title: '이직·전환 사유 쓰는 법',
+    desc: '방어적이지 않게 설명하기',
+  },
+  {
+    step: 'step05',
+    category: 'resume',
+    owner: 'self',
+    tag: 'template',
+    title: '서류 기반 꼬리질문 예측',
+    desc: '내가 쓴 성과에서 파고들 지점',
+  },
+
+  // 4. 포트폴리오
+  {
+    step: 'step01',
+    category: 'portfolio',
+    owner: 'free',
+    tag: 'free',
+    title: '대외비 수치 표기법',
+    desc: '비율·구간으로 바꿔 쓰기',
+  },
+  {
+    step: 'step02',
+    category: 'portfolio',
+    owner: 'challenge',
+    tag: 'challenge',
+    title: '마케팅 챌린지',
+    desc: '집행물 기반 포트폴리오 완성',
+  },
+  {
+    step: 'step03',
+    category: 'portfolio',
+    owner: 'self',
+    tag: 'template',
+    title: '케이스 순서 재배치',
+    desc: '지원 직무에 맞춰 앞뒤 바꾸기',
+  },
+  {
+    step: 'step04',
+    category: 'portfolio',
+    owner: 'free',
+    tag: 'free',
+    title: '중단·미채택 기획안 살리기',
+    desc: '결과가 없어도 케이스가 되는 조건',
+  },
+  {
+    step: 'step05',
+    category: 'portfolio',
+    owner: 'free',
+    tag: 'free',
+    title: '포폴 기반 면접 질문집',
+    desc: '각 장에서 나올 질문 미리 뽑기',
+  },
+
+  // 5. 데이터·AI 역량
+  {
+    step: 'step01',
+    category: 'data',
+    owner: 'free',
+    tag: 'vod',
+    title: '광고 지표 해석 기준선',
+    desc: '내가 낸 숫자가 평타인지 확인',
+  },
+  {
+    step: 'step02',
+    category: 'data',
+    owner: 'free',
+    tag: 'vod',
+    title: 'CMO·CPO의 필수 역량 강의',
+    desc: '뽑는 사람이 보는 기준',
+  },
+  {
+    step: 'step03',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: '엑셀·GA4 데이터 실습',
+    desc: '분석과 시각화 한 번 돌려보기',
+  },
+  {
+    step: 'step04',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: '마케터의 AI 워크플로우',
+    desc: '무엇을 맡기고 무엇을 직접 하나',
+  },
+  {
+    step: 'step05',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: '성과 방어 꼬리질문 대비',
+    // 시안 원본은 곧은 따옴표가 아니라 둥근 따옴표다
+    desc: '‘이 숫자 어떻게 측정했어요?’',
+  },
+
+  // 6. 면접·지원 실행
+  {
+    step: 'step01',
+    category: 'interview',
+    owner: 'free',
+    tag: 'free',
+    title: '채용공고 채널 지도',
+    desc: '원티드·링크드인·자사 ATS·오픈채팅',
+  },
+  {
+    step: 'step02',
+    category: 'interview',
+    owner: 'self',
+    tag: 'template',
+    title: '1분 자기소개·직무 PR 초안',
+    desc: '경력을 한 문단으로 압축',
+  },
+  {
+    step: 'step03',
+    category: 'interview',
+    owner: 'self',
+    tag: 'template',
+    title: '지원 기업 20곳 리스트업',
+    desc: '인하우스·대행사 비율까지 정하기',
+  },
+  {
+    step: 'step04',
+    category: 'interview',
+    owner: 'challenge-deep',
+    tag: 'mentoring',
+    title: '현직 마케터 과제 피드백',
+    desc: '실무형 과제 전형 대비',
+  },
+  {
+    step: 'step05',
+    category: 'interview',
+    owner: 'challenge',
+    tag: 'challenge',
+    title: '면접 준비 챌린지',
+    desc: '1차 실무·2차 임원 답변 따로',
+  },
+  {
+    step: 'step05',
+    category: 'interview',
+    owner: 'free',
+    tag: 'free',
+    title: '오퍼 협상과 계약 형태 판단',
+    desc: '희망연봉·계약직 제안 기준',
+  },
+];
+
+export const TYPE_B_MATRIX_CELLS: MatrixCell[] = [
+  ...TYPE_B_OWN_CELLS,
+  ...LIVE_SEMINAR_CELLS,
+];
+
 export const MATRIX_CELL_MAP = TYPE_A_MATRIX_CELLS.reduce<
   Map<string, MatrixCell[]>
 >((map, cell) => {
