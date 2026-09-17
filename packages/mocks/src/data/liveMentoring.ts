@@ -12,11 +12,14 @@
 // 카테고리 / 진행시간 / 가격 (PRD §4.1)
 // ─────────────────────────────────────────────────────────────
 
-/** 멘토가 파는 서비스 종류 — 자소서 / 이력서 / 포트폴리오 */
+/** 멘토가 파는 서비스 종류 — 자소서 / 이력서 / 포트폴리오 / 커리어 커피챗 / 면접 / 경험 정리 */
 export type LiveMentoringCategory =
   | 'PERSONAL_STATEMENT'
   | 'RESUME'
-  | 'PORTFOLIO';
+  | 'PORTFOLIO'
+  | 'CAREER_COFFEE_CHAT'
+  | 'INTERVIEW'
+  | 'EXPERIENCE';
 
 /**
  * 진행시간(분). 가격을 결정하는 유일한 변수.
@@ -28,6 +31,9 @@ export const LIVE_MENTORING_CATEGORIES: readonly LiveMentoringCategory[] = [
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ] as const;
 
 export const LIVE_MENTORING_DURATIONS: readonly LiveMentoringDuration[] = [
@@ -369,6 +375,9 @@ const CHALLENGE_TITLE_BY_CATEGORY: Record<LiveMentoringCategory, string> = {
   PERSONAL_STATEMENT: '자기소개서 완성 챌린지',
   RESUME: '이력서 완성 챌린지',
   PORTFOLIO: '포트폴리오 완성 챌린지',
+  CAREER_COFFEE_CHAT: '커리어 커피챗 챌린지',
+  INTERVIEW: '면접 준비 챌린지',
+  EXPERIENCE: '경험 정리 챌린지',
 };
 
 /** 시드가 참여 중인 챌린지(다중 타입이면 각 타입별 대표 챌린지). */
@@ -815,6 +824,30 @@ const MENTORING_TYPE_DEFAULTS: Record<
     description:
       '프로젝트의 핵심 역할과 문제 해결 과정이 잘 드러나도록\n포트폴리오 구성을 점검할 수 있어요.',
     tags: ['구성 점검', '역량 강조', '프로젝트 정리'],
+  },
+  CAREER_COFFEE_CHAT: {
+    id: 4,
+    typeName: '커리어 커피챗',
+    title: '현직자에게 직무와 커리어 방향을\n편하게 묻고 싶다면',
+    description:
+      '업무 환경, 성장 경로, 이직 고민까지\n현직자와 가볍게 이야기 나눌 수 있어요.',
+    tags: ['직무 이해', '커리어 고민', '현직자 대화'],
+  },
+  INTERVIEW: {
+    id: 5,
+    typeName: '면접 준비, 모의 면접',
+    title: '실제 면접처럼 연습하고\n답변을 점검받고 싶다면',
+    description:
+      '예상 질문과 모의 면접으로 답변 구조와 전달력을\n실무자 관점에서 점검할 수 있어요.',
+    tags: ['예상 질문', '모의 면접', '답변 개선'],
+  },
+  EXPERIENCE: {
+    id: 6,
+    typeName: '경험 정리',
+    title: '흩어진 경험을 지원 서류에 쓸 수 있게\n정리하고 싶다면',
+    description:
+      '프로젝트·활동 경험에서 역할과 성과를 뽑아\n지원에 쓸 소재로 정리할 수 있어요.',
+    tags: ['경험 발굴', '성과 정리', '소재화'],
   },
 };
 

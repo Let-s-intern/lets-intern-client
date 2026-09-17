@@ -190,7 +190,7 @@ const MENTOR_LIVE_MENTORING_RESERVATIONS = [
 /** 상세 mock 중 예약 정보를 뺀 나머지 — 멘티가 낸 질문·첨부. */
 interface MentorLiveMentoringSubmission {
   /** 백필 전 기존 행은 서버가 null 을 내린다. 아래 91003 이 그 경우다. */
-  mentoringCategory: 'PERSONAL_STATEMENT' | 'RESUME' | 'PORTFOLIO' | null;
+  mentoringCategory: LiveMentoringCategory | null;
   questionDeferred: boolean;
   questionContent: string | null;
   attachmentType: 'NONE' | 'FILE' | 'URL';
