@@ -185,7 +185,12 @@ export const PHASES: { id: Phase; label: string; range: string }[] = [
 // 매트릭스 셀 — 시안 8 (카테고리 7 × STEP 5).
 // 셀이 없는 칸은 시안에도 비어 있다. 억지로 채우지 않는다 — 빈 칸이 "이 단계에는 이
 // 영역을 건드리지 않는다" 는 정보다.
-export const MATRIX_CELLS: MatrixCell[] = [
+//
+// 라이브 세미나 줄은 두 유형이 같다. 한 벌만 두고 유형별 매트릭스가 뒤에 붙여 쓴다 —
+// 유형마다 복사해 두면 일정이 바뀔 때 한쪽만 고쳐진다.
+
+/** TYPE A 고유 카드 — 마케팅 취준을 이제 막 시작한 사람 */
+const TYPE_A_OWN_CELLS: MatrixCell[] = [
   // 1. 직무·산업 이해
   {
     step: 'step01',
@@ -445,8 +450,10 @@ export const MATRIX_CELLS: MatrixCell[] = [
     title: '현직 마케터 커피챗',
     desc: '답변 점검과 지원 복기',
   },
+];
 
-  // 7. 라이브 세미나 — 현직자에게 직접 듣는 자리
+/** 라이브 세미나 — 현직자에게 직접 듣는 자리. 두 유형이 공유한다. */
+export const LIVE_SEMINAR_CELLS: MatrixCell[] = [
   {
     step: 'step01',
     category: 'live',
@@ -539,19 +546,23 @@ export const MATRIX_CELLS: MatrixCell[] = [
   },
 ];
 
-export const MATRIX_CELL_MAP = MATRIX_CELLS.reduce<Map<string, MatrixCell[]>>(
-  (map, cell) => {
-    const key = matrixCellKey(cell.step, cell.category);
-    const list = map.get(key);
-    if (list) {
-      list.push(cell);
-    } else {
-      map.set(key, [cell]);
-    }
-    return map;
-  },
-  new Map(),
-);
+export const TYPE_A_MATRIX_CELLS: MatrixCell[] = [
+  ...TYPE_A_OWN_CELLS,
+  ...LIVE_SEMINAR_CELLS,
+];
+
+export const MATRIX_CELL_MAP = TYPE_A_MATRIX_CELLS.reduce<
+  Map<string, MatrixCell[]>
+>((map, cell) => {
+  const key = matrixCellKey(cell.step, cell.category);
+  const list = map.get(key);
+  if (list) {
+    list.push(cell);
+  } else {
+    map.set(key, [cell]);
+  }
+  return map;
+}, new Map());
 
 export function matrixCellKey(step: StepId, category: CategoryId): string {
   return `${step}:${category}`;

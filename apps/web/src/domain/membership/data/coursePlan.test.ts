@@ -4,8 +4,8 @@ import {
   COURSE_PLAN_HEADER,
   COURSE_TAG_LABEL,
   type CourseTag,
+  LIVE_SEMINAR_CELLS,
   MATRIX_CELL_MAP,
-  MATRIX_CELLS,
   matrixCellKey,
   MONTH_GROUPS,
   Owner,
@@ -14,6 +14,7 @@ import {
   PLAYBOOK_SHOT_SIZE,
   PLAYBOOK_SHOT_SRC,
   STEPS,
+  TYPE_A_MATRIX_CELLS,
   WEEKS,
 } from './coursePlan';
 
@@ -26,6 +27,51 @@ const VALID_TAGS: CourseTag[] = [
   'challenge',
   'live',
   'mentoring',
+];
+
+// 유형 분리 전 MATRIX_CELLS(41칸)를 step|category|owner|tag|title|desc|when 으로 떠 둔 것.
+const BEFORE_SPLIT_FINGERPRINT = [
+  'step01|job|free|free|세부 직무 6종 훑기|그로스·퍼포먼스·콘텐츠·바이럴·인플루언서·브랜드|',
+  'step02|job|free|vod|현직자 직무 세미나 VOD|하는 일과 보는 숫자 비교하기|',
+  'step03|job|free|free|관심 산업 2~3개 좁히기|시장·주요 브랜드·최근 캠페인|',
+  'step04|job|free|vod|인하우스 vs 대행사|첫 커리어로 어디가 나은지 판단|',
+  'step05|job|self|template|면접용 기업 심화|최근 캠페인에 내 의견 붙이기|',
+  'step01|experience|free|checklist|경험 진단 체크리스트|지금 경험이 어느 직무에 닿는지|',
+  'step02|experience|challenge|challenge|경험을 STAR로 정리|챌린지 미션으로 소재 구조화|',
+  'step03|experience|self|template|경험 ↔ JD 키워드 매칭|공고 언어로 바꿔 쓰기|',
+  'step04|experience|free|free|사이드 프로젝트 설계|직무별로 뭘 해야 티가 나는지|',
+  'step05|experience|self|template|면접 소재화|STAR 경험을 90초 답변으로|',
+  'step01|resume|free|free|합격 자소서 가이드북|구조·문항 감 잡기|',
+  'step02|resume|challenge|challenge|마케팅 챌린지|이력서·자소서 초안 완성|',
+  'step03|resume|self|template|JD별 서류 변형|공고 3개 맞춤 3세트|',
+  'step04|resume|free|free|지원동기 40분 워크플로우|막히는 문항 빠르게 뚫기|',
+  'step05|resume|self|template|서류 기반 질문 예측|내가 쓴 문장에서 나올 질문|',
+  'step01|portfolio|free|free|포폴 기본 구조|무엇을 담고 무엇을 뺄지|',
+  'step02|portfolio|challenge|challenge|마케팅 챌린지|포트폴리오 초안 1본 완성|',
+  'step03|portfolio|self|template|JD별 포폴 변형|지원 직무에 맞춰 첫 장 바꾸기|',
+  'step04|portfolio|free|free|SNS·사이드 프로젝트로 채우기|콘텐츠 4~6개 발행하고 기록|',
+  'step05|portfolio|free|checklist|제출본 최종 점검|파일명·용량·링크 권한 확인|',
+  'step01|data|free|free|마케터의 툴 지도|GA4·메타·피그마·캡컷·노션|',
+  'step02|data|free|vod|CMO·CPO의 필수 역량 강의|뽑는 사람이 보는 기준|',
+  'step03|data|free|free|집행 경험 없이 퍼포먼스 지원하기|경험이 없어도 쓸 수 있는 것|',
+  'step04|data|free|vod|광고 지표 기준선|CTR·CVR·CPA·ROAS 어느 정도가 평타인가|',
+  'step05|data|free|free|AI 활용 경험 쓰는 법|툴 나열은 감점이 되는 이유|',
+  'step01|interview|free|free|면접 기본 가이드|면접 유형과 평가 포인트|',
+  'step02|interview|self|template|1분 자기소개 초안|기본 스크립트 작성|',
+  'step03|interview|free|free|채용공고 채널 지도|원티드·링크드인·자사 ATS·오픈채팅|',
+  'step04|interview|free|free|과제 전형·사전 인터뷰 대비|숏폼 기획·콘텐츠 제작 모의 과제|',
+  'step05|interview|challenge|challenge|면접 준비 챌린지|모의면접·녹화 피드백|',
+  'step05|interview|challenge-deep|mentoring|현직 마케터 커피챗|답변 점검과 지원 복기|',
+  'step01|live|challenge|live|마케터 세부 직무 톺아보기|놀유니버스 CRM 마케터|9.20 일 11:00',
+  'step01|live|challenge|live|AE가 가져야 할 역량과 포폴 작성법|대학내일 AE|9.22 화 20:00',
+  'step02|live|challenge|live|마케팅의 기본|클래스101 콘텐츠 마케터|9.28 월 20:00',
+  'step02|live|challenge|live|마케팅 커리어 방향 설정법|CJ 계열사 마케터|10.1 목 20:00',
+  'step02|live|challenge|live|사이드 프로젝트로 그로스 사이클 경험하기|네이버 계열사 마케터|10.8 목 20:00',
+  'step03|live|challenge|live|AI 주제로 6개월 만에 팔로워 6,000명 만든 방법|팔로워 6,000명 계정 운영자|10.22 목 20:00',
+  'step04|live|challenge|live|혼자서도 할 수 있는 메타 광고로 경험 쌓기|위그로스 CEO|10.29 목 20:00',
+  'step05|live|challenge|live|마케팅 포트폴리오 A to Z 끝장|렛츠커리어 쥬디 멘토|11.10 화 20:00',
+  'step05|live|challenge|live|포트폴리오 놓고 실제로 묻는 질문 — 실무 면접 시연|현직 마케터|11.19 목 20:00',
+  'step05|live|challenge|live|인턴·계약직·정규직 오퍼, 무엇을 보고 고르나|현직 마케터|11.26 목 20:00',
 ];
 
 describe('coursePlan 데이터 무결성', () => {
@@ -43,7 +89,34 @@ describe('coursePlan 데이터 무결성', () => {
      * 빈 칸이 원래 그런 것처럼 보인다 — 숫자로 잡는 게 유일한 방법이다.
      */
     it('셀은 41개다 (시안 8)', () => {
-      expect(MATRIX_CELLS).toHaveLength(41);
+      expect(TYPE_A_MATRIX_CELLS).toHaveLength(41);
+    });
+
+    /*
+     * 유형별로 나누기 전 한 벌이던 매트릭스(41칸)를 그대로 TYPE A 로 옮겼다(PRD Q1).
+     * 옮기면서 칸 하나라도 바뀌면 화면이 달라진다 — 모든 필드를 순서까지 고정한다.
+     */
+    it('TYPE A 매트릭스는 유형 분리 전 매트릭스와 순서·내용이 같다', () => {
+      const fingerprint = TYPE_A_MATRIX_CELLS.map((cell) =>
+        [
+          cell.step,
+          cell.category,
+          cell.owner,
+          cell.tag,
+          cell.title,
+          cell.desc,
+          cell.when ?? '',
+        ].join('|'),
+      );
+      expect(fingerprint).toEqual(BEFORE_SPLIT_FINGERPRINT);
+    });
+
+    it('TYPE A 의 라이브 세미나 줄은 공유 데이터 그 자체다', () => {
+      const live = TYPE_A_MATRIX_CELLS.filter(
+        (cell) => cell.category === 'live',
+      );
+      expect(live).toHaveLength(LIVE_SEMINAR_CELLS.length);
+      live.forEach((cell, i) => expect(cell).toBe(LIVE_SEMINAR_CELLS[i]));
     });
 
     // 시안 8 은 STEP05 의 면접·지원 실행과 라이브 세미나에 한 칸당 여러 항목을 넣는다.
@@ -65,7 +138,7 @@ describe('coursePlan 데이터 무결성', () => {
     });
 
     it('모든 셀의 owner·title·desc 가 유효하다', () => {
-      for (const cell of MATRIX_CELLS) {
+      for (const cell of TYPE_A_MATRIX_CELLS) {
         expect(VALID_OWNERS).toContain(cell.owner);
         expect(cell.title.length).toBeGreaterThan(0);
         expect(cell.desc.length).toBeGreaterThan(0);
@@ -77,13 +150,13 @@ describe('coursePlan 데이터 무결성', () => {
       // "10.8 목" / "20:00" 으로 갈려 다른 날 일정처럼 읽힌다. when 은 화면에서
       // nowrap 한 덩어리로 렌더된다(.cpm-cell-when).
       const schedule = /\d+\.\d+\s[월화수목금토일]\s\d+:\d+/;
-      for (const cell of MATRIX_CELLS) {
+      for (const cell of TYPE_A_MATRIX_CELLS) {
         expect(cell.desc).not.toMatch(schedule);
       }
     });
 
     it('라이브 세미나 셀은 모두 일정(when)을 갖는다', () => {
-      const live = MATRIX_CELLS.filter((cell) => cell.tag === 'live');
+      const live = TYPE_A_MATRIX_CELLS.filter((cell) => cell.tag === 'live');
       expect(live.length).toBeGreaterThan(0);
       for (const cell of live) {
         expect(cell.when).toMatch(/^\d+\.\d+ [월화수목금토일] \d+:\d+$/);
@@ -91,7 +164,7 @@ describe('coursePlan 데이터 무결성', () => {
     });
 
     it('모든 셀이 배지(tag) 4종 중 하나를 갖고 라벨이 비어 있지 않다', () => {
-      for (const cell of MATRIX_CELLS) {
+      for (const cell of TYPE_A_MATRIX_CELLS) {
         expect(VALID_TAGS).toContain(cell.tag);
         expect(COURSE_TAG_LABEL[cell.tag].length).toBeGreaterThan(0);
       }
