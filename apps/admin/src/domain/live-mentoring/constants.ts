@@ -16,31 +16,6 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
 };
 
 /*
- * 상태 표기.
- *
- * 승인 절차가 사라진 뒤로(LC-3262) 새 상품은 만들어지는 순간부터 APPROVED 다.
- * 그런데 화면에 「승인」이라고 적으면 아직 승인 단계가 있는 것처럼 읽혀, 운영자가
- * 어디서 승인하는지 찾게 된다. 운영에서 부르는 말인 「오픈 중」으로 적는다.
- *
- * 주의 — 이 값은 **상품 상태**지 개설(opening) 상태가 아니다. 개설이 하나도 열려 있지
- * 않은 상품도 APPROVED 다. 실제로 지금 열려 있는지는 표의 개설 칸이 따로 보여준다.
- *
- * DRAFT 는 승인 절차가 있던 시절의 기존 행만 갖고 있다(서버 `LiveMentoringStatus`).
- * 새로 생기지 않으므로 옛 데이터임이 드러나게 적는다.
- */
-export const STATUS_LABELS: Record<LiveMentoringStatus, string> = {
-  DRAFT: '초안(옛 데이터)',
-  APPROVED: '오픈 중',
-  INACTIVE: '비활성',
-};
-
-export const STATUS_CLASSES: Record<LiveMentoringStatus, string> = {
-  DRAFT: 'bg-neutral-95 text-neutral-40',
-  APPROVED: 'bg-primary-10 text-primary',
-  INACTIVE: 'bg-neutral-95 text-neutral-40',
-};
-
-/*
  * 상품 목록의 상태 배지 (LC-3336).
  *
  * 상품 상태(`row.status`)가 아니라 **지금 팔고 있는지**로 가른다. 승인 절차가 사라진
