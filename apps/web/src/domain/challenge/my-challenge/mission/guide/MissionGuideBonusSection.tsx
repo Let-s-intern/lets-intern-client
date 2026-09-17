@@ -1,5 +1,6 @@
 import { CurrentChallenge } from '@/context/CurrentChallengeProvider';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
+import { isSlackChatLink } from '@/domain/challenge/utils/chatLink';
 import { twMerge } from '@/lib/twMerge';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { getRewardAmount } from '@/utils/getRewardAmount';
@@ -43,6 +44,11 @@ const MissionGuideBonusSection = ({
   isLoading = false,
   currentChallenge,
 }: MissionGuideBonusSectionProps) => {
+  const chatPlaceName =
+    currentChallenge?.chatLink && isSlackChatLink(currentChallenge.chatLink)
+      ? '슬랙 채널'
+      : '카카오톡 오픈채팅방';
+
   // 챌린지 링크를 반환하는 함수
   const getChallengeLink = (): string => {
     if (!currentChallenge?.challengeType) {
@@ -220,7 +226,7 @@ const MissionGuideBonusSection = ({
           <section className="flex flex-col gap-3 font-medium">
             <Heading3>4️⃣ 문의</Heading3>
             <div className="text-xsmall14 md:text-xsmall16 flex flex-col">
-              문의는 챌린지 오픈 채팅방으로 부탁드립니다!
+              문의는 챌린지 {chatPlaceName}에서 부탁드립니다!
             </div>
           </section>
           <hr className="border-neutral-80" />
