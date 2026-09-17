@@ -336,6 +336,19 @@ describe('ReservationListView', () => {
       expect(liveMentoringBadges()).toEqual(['-', '-']);
     });
 
+    // 진행 시점을 가를 시각이 없다. 결제 완료로 와도 추측하지 않고 '-' 로 둔다.
+    it('예약 슬롯이 없는 행은 깨지지 않고 - 로 그린다', () => {
+      renderAt('2026-05-30T20:00:00', {
+        status: 'CONFIRMED',
+        reservationStartAt: null,
+        reservationEndAt: null,
+        mentorStatus: 'PRESENT',
+        menteeStatus: 'PRESENT',
+      });
+      expect(screen.getByText('예약 슬롯 없음')).toBeInTheDocument();
+      expect(liveMentoringBadges()).toEqual(['-', '-']);
+    });
+
     // 챌린지 행(05-29 17:00~17:30, 출석 미체크)은 같은 표에서 전과 같게 그린다.
     it('챌린지 행의 뱃지는 바뀌지 않는다', () => {
       renderAt('2026-05-30T18:00:00');
