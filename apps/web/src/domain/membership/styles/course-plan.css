@@ -816,9 +816,17 @@
   padding: 16px 18px;
   background: #fff;
   text-align: left;
+  /* 버튼이라 브라우저 기본 글꼴·글자색을 지운다 */
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
 }
-.membership-root .cp-type[data-lead='true'] {
-  background: var(--lc-primary, #4d55f5);
+/* 선택된 유형 — 시안 image.png 의 진한 보라 채움 */
+.membership-root .cp-type[aria-pressed='true'] {
+  background: #4138a3;
   border-color: var(--lc-primary, #4d55f5);
 }
 .membership-root .cp-type-label {
@@ -827,7 +835,7 @@
   font-weight: 700;
   color: var(--lc-primary, #4d55f5);
 }
-.membership-root .cp-type[data-lead='true'] .cp-type-label {
+.membership-root .cp-type[aria-pressed='true'] .cp-type-label {
   color: rgba(255, 255, 255, 0.85);
 }
 .membership-root .cp-type-title {
@@ -836,7 +844,7 @@
   font-size: 15px;
   font-weight: 700;
 }
-.membership-root .cp-type[data-lead='true'] .cp-type-title {
+.membership-root .cp-type[aria-pressed='true'] .cp-type-title {
   color: #fff;
 }
 .membership-root .cp-type-desc {
@@ -845,7 +853,7 @@
   font-size: 13px;
   color: var(--lc-ink-40, #8b8d97);
 }
-.membership-root .cp-type[data-lead='true'] .cp-type-desc {
+.membership-root .cp-type[aria-pressed='true'] .cp-type-desc {
   color: rgba(255, 255, 255, 0.75);
 }
 
