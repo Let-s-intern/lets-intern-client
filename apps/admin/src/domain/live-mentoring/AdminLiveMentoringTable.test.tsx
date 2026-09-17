@@ -128,9 +128,33 @@ describe('AdminLiveMentoringTable — 조회', () => {
     expect(screen.getByText('렛츠멘토')).toBeInTheDocument();
     expect(screen.getByText('이력서 피드백')).toBeInTheDocument();
     expect(screen.getByText('이력서 · 포트폴리오')).toBeInTheDocument();
+  });
+
+  /*
+    LC-3336 — 배지는 상품 상태가 아니라 열린 개설이 있는지로 가른다.
+    승인 절차가 없어진 뒤로 새 상품은 처음부터 APPROVED 라 상품 상태로는 구분이 안 된다.
+  */
+  it('열린 개설이 있으면 오픈중, 없으면 미오픈으로 표시한다', () => {
+    const notOpenedRow: AdminLiveMentoring = {
+      ...approvedRow,
+      liveMentoringId: 12,
+      mentorNickname: '미개설멘토',
+      currentOpening: null,
+    };
+    renderTable([approvedRow, notOpenedRow, draftRow]);
+
+    const badgeOf = (nickname: string) =>
+      within(
+        screen.getByText(nickname).closest('tr') as HTMLElement,
+      ).getAllByRole('cell')[2].textContent;
+
+    expect(badgeOf('오픈멘토')).toBe('오픈중');
+    // 상품 상태가 APPROVED 여도 개설이 없으면 팔고 있지 않다.
+    expect(badgeOf('미개설멘토')).toBe('미오픈');
+    expect(badgeOf('렛츠멘토')).toBe('미오픈');
     expect(
-      within(screen.getByRole('table')).getByText('초안(옛 데이터)'),
-    ).toBeInTheDocument();
+      within(screen.getByRole('table')).queryByText('오픈 중'),
+    ).not.toBeInTheDocument();
   });
 
   it('LC-3336 에 추가된 유형도 한글 라벨로 렌더한다', () => {

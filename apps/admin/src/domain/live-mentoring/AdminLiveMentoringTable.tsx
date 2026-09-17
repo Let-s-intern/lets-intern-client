@@ -16,10 +16,9 @@ import {
   CLOSE_REASON_LABELS,
   durationPricesLabel,
   formatDateTime,
+  OPENING_BADGE,
   publicDetailUrl,
-  STATUS_CLASSES,
   STATUS_FILTERS,
-  STATUS_LABELS,
 } from './constants';
 
 const PAGE_SIZE = 20;
@@ -160,6 +159,10 @@ const AdminLiveMentoringTable = ({
             ) : (
               rows.map((row) => {
                 const opening = row.currentOpening;
+                const badge =
+                  opening?.status === 'OPEN'
+                    ? OPENING_BADGE.open
+                    : OPENING_BADGE.notOpen;
                 return (
                   <tr
                     key={row.liveMentoringId}
@@ -195,9 +198,9 @@ const AdminLiveMentoringTable = ({
                     </td>
                     <td className={bodyCellClass}>
                       <span
-                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[row.status]}`}
+                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${badge.className}`}
                       >
-                        {STATUS_LABELS[row.status]}
+                        {badge.label}
                       </span>
                     </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>

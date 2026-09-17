@@ -40,6 +40,18 @@ export const STATUS_CLASSES: Record<LiveMentoringStatus, string> = {
   INACTIVE: 'bg-neutral-95 text-neutral-40',
 };
 
+/*
+ * 상품 목록의 상태 배지 (LC-3336).
+ *
+ * 상품 상태(`row.status`)가 아니라 **지금 팔고 있는지**로 가른다. 승인 절차가 사라진
+ * 뒤로 새 상품은 만들어지는 순간부터 APPROVED 라, 상품 상태를 보면 개설이 하나도
+ * 없어도 「오픈 중」으로 찍혔다. 서버는 OPEN 인 개설만 `currentOpening` 에 담는다.
+ */
+export const OPENING_BADGE = {
+  open: { label: '오픈중', className: 'bg-primary-10 text-primary' },
+  notOpen: { label: '미오픈', className: 'bg-neutral-95 text-neutral-40' },
+} as const;
+
 /** 신청 상태. 서버 `LiveMentoringApplicationStatus` 의 desc 를 그대로 쓴다. */
 export const APPLICATION_STATUS_LABELS: Record<
   LiveMentoringApplicationStatus,
