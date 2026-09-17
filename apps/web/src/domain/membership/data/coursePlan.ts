@@ -862,6 +862,87 @@ export function matrixCellKey(step: StepId, category: CategoryId): string {
   return `${step}:${category}`;
 }
 
+// ---------------------------------------------------------------------------
+// 주 단위로 보기 — 유형별 10주 계획 (시안 image copy.png · image copy 2.png)
+// ---------------------------------------------------------------------------
+
+/** 주차 카드 오른쪽 「렛츠커리어가 함께합니다」 항목 하나 */
+export interface WeekSupport {
+  tag: CourseTag;
+  title: string;
+  /** 라이브 세미나만 — 일시 */
+  when?: string;
+  /** 라이브 세미나만 — 연사 */
+  speaker?: string;
+}
+
+export interface WeekPlan {
+  /** 1~10 */
+  week: number;
+  /** '9.21 월 – 9.27 일' */
+  range: string;
+  title: string;
+  /** 시안은 늘 2줄 */
+  todos: [string, string];
+  /** 이번 주 산출물 */
+  output: string;
+  supports: WeekSupport[];
+}
+
+/**
+ * 10주 흐름의 큰 구간. 주차 카드 왼쪽 막대 색도 이 구간을 따른다.
+ * 구간과 월은 주차 번호로 정해지므로 주차 데이터에 넣지 않는다 — 넣으면 두 유형
+ * 20장에 같은 값이 반복되고 한쪽만 틀린다.
+ */
+export type WeekPhaseId = 'documents' | 'weapons' | 'apply';
+
+/** 10주 흐름 한눈에 보기 — 두 유형이 같다 */
+export const WEEK_FLOW: {
+  id: WeekPhaseId;
+  range: string;
+  title: string;
+  desc: string;
+}[] = [
+  {
+    id: 'documents',
+    range: '1~3주차 · 9.21–10.11',
+    title: '서류 3종 완성',
+    desc: '이력서·자소서·포트폴리오를 일단 다 써봅니다',
+  },
+  {
+    id: 'weapons',
+    range: '4~7주차 · 10.12–11.8',
+    title: '실전 무기 만들기',
+    desc: '타깃 기업을 좁히고, 부족한 경험과 지표 감각을 채웁니다',
+  },
+  {
+    id: 'apply',
+    range: '8~10주차 · 11.9–11.29',
+    title: '전형 대응과 지원',
+    desc: '과제·면접에 대응하고 실제로 지원해 복기합니다',
+  },
+];
+
+/** 주차가 속한 구간 — 1~3 서류, 4~7 실전 무기, 8~10 전형·지원. 월이 아니다 */
+export function weekPhase(week: number): WeekPhaseId {
+  if (week <= 3) return 'documents';
+  if (week <= 7) return 'weapons';
+  return 'apply';
+}
+
+/** 주차 위 월 구분선 — 9월 1~2주, 10월 3~6주, 11월 7~10주 */
+export function weekMonth(week: number): string {
+  if (week <= 2) return '9월';
+  if (week <= 6) return '10월';
+  return '11월';
+}
+
+/**
+ * 9월 구분선 아래, 1주차 위에 한 줄로 두는 세미나. 두 유형이 같다.
+ * 「시작 전」은 이 세미나의 whenNote 이고 오늘 날짜로 계산하지 않는다.
+ */
+export const PRESTART_SEMINAR: MatrixCell = LIVE_SEMINAR_CELLS[0];
+
 export const MONTH_GROUPS: MonthGroup[] = [
   {
     month: 'SEP',

@@ -14,9 +14,13 @@ import {
   PLAYBOOK_SHOT_ALT,
   PLAYBOOK_SHOT_SIZE,
   PLAYBOOK_SHOT_SRC,
+  PRESTART_SEMINAR,
   STEPS,
   TYPE_A_MATRIX_CELLS,
   TYPE_B_MATRIX_CELLS,
+  WEEK_FLOW,
+  weekMonth,
+  weekPhase,
   WEEKS,
 } from './coursePlan';
 
@@ -276,6 +280,43 @@ describe('coursePlan 데이터 무결성', () => {
       for (const type of COURSE_PLAN_TYPES) {
         expect(COURSE_PLAN_BODY.matrixTitle[type.id].length).toBeGreaterThan(0);
       }
+    });
+  });
+
+  describe('10주 흐름과 월 구분', () => {
+    it('흐름 막대는 3개다', () => {
+      expect(WEEK_FLOW.map((phase) => phase.id)).toEqual([
+        'documents',
+        'weapons',
+        'apply',
+      ]);
+    });
+
+    // 구간은 월이 아니라 주차로 정한다 — 11월 첫 주인 7주차가 초록(weapons)이다
+    it.each([
+      [1, 'documents'],
+      [3, 'documents'],
+      [4, 'weapons'],
+      [7, 'weapons'],
+      [8, 'apply'],
+      [10, 'apply'],
+    ])('%i주차의 구간은 %s 다', (week, phase) => {
+      expect(weekPhase(week)).toBe(phase);
+    });
+
+    it.each([
+      [2, '9월'],
+      [3, '10월'],
+      [6, '10월'],
+      [7, '11월'],
+    ])('%i주차의 월은 %s 이다', (week, month) => {
+      expect(weekMonth(week)).toBe(month);
+    });
+
+    it('시작 전 행은 공유 라이브 세미나의 9.20 세미나다', () => {
+      expect(PRESTART_SEMINAR).toBe(LIVE_SEMINAR_CELLS[0]);
+      expect(PRESTART_SEMINAR.when).toBe('9.20 일 11:00');
+      expect(PRESTART_SEMINAR.whenNote).toBe('시작 전');
     });
   });
 
