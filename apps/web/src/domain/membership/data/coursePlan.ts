@@ -824,18 +824,27 @@ export const TYPE_B_MATRIX_CELLS: MatrixCell[] = [
   ...LIVE_SEMINAR_CELLS,
 ];
 
-export const MATRIX_CELL_MAP = TYPE_A_MATRIX_CELLS.reduce<
+function toMatrixCellMap(cells: MatrixCell[]) {
+  return cells.reduce<Map<string, MatrixCell[]>>((map, cell) => {
+    const key = matrixCellKey(cell.step, cell.category);
+    const list = map.get(key);
+    if (list) {
+      list.push(cell);
+    } else {
+      map.set(key, [cell]);
+    }
+    return map;
+  }, new Map());
+}
+
+/** 유형별 매트릭스 칸 → 카드 목록 */
+export const MATRIX_CELL_MAPS: Record<
+  CoursePlanTypeId,
   Map<string, MatrixCell[]>
->((map, cell) => {
-  const key = matrixCellKey(cell.step, cell.category);
-  const list = map.get(key);
-  if (list) {
-    list.push(cell);
-  } else {
-    map.set(key, [cell]);
-  }
-  return map;
-}, new Map());
+> = {
+  a: toMatrixCellMap(TYPE_A_MATRIX_CELLS),
+  b: toMatrixCellMap(TYPE_B_MATRIX_CELLS),
+};
 
 export function matrixCellKey(step: StepId, category: CategoryId): string {
   return `${step}:${category}`;

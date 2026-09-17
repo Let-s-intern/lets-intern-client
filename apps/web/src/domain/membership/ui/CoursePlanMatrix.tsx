@@ -2,9 +2,10 @@ import { useRef, type CSSProperties } from 'react';
 import {
   CATEGORIES,
   COURSE_TAG_LABEL,
-  MATRIX_CELL_MAP,
+  MATRIX_CELL_MAPS,
   matrixCellKey,
   type Category,
+  type CoursePlanTypeId,
   type MatrixCell,
   type Owner,
   type CourseTag,
@@ -89,7 +90,13 @@ function StepHeader() {
 
 // 카테고리 한 줄(=행). 데스크탑은 [카테고리 라벨 | STEP01..05] 그리드,
 // 모바일은 카테고리 카드로 자연 분해되며 STEP 칸이 세로로 쌓인다.
-function CategoryRow({ category }: { category: Category }) {
+function CategoryRow({
+  category,
+  type,
+}: {
+  category: Category;
+  type: CoursePlanTypeId;
+}) {
   return (
     <div className="cpm-row">
       <div className="cpm-cat">
@@ -99,7 +106,8 @@ function CategoryRow({ category }: { category: Category }) {
       <div className="cpm-cells">
         {STEPS.map((step: Step) => {
           const cells =
-            MATRIX_CELL_MAP.get(matrixCellKey(step.id, category.id)) ?? [];
+            MATRIX_CELL_MAPS[type].get(matrixCellKey(step.id, category.id)) ??
+            [];
           return (
             <div
               className="cpm-step-cell"
@@ -118,7 +126,7 @@ function CategoryRow({ category }: { category: Category }) {
   );
 }
 
-export default function CoursePlanMatrix() {
+export default function CoursePlanMatrix({ type }: { type: CoursePlanTypeId }) {
   // 모바일에서 .cpm-body 는 가로 scroll-snap 트랙이 된다(CSS). 도트는
   // 공용 훅이 IntersectionObserver 로 활성 슬라이드를 추적한다.
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -136,7 +144,7 @@ export default function CoursePlanMatrix() {
       />
       <div className="cpm-body" ref={bodyRef}>
         {CATEGORIES.map((category) => (
-          <CategoryRow category={category} key={category.id} />
+          <CategoryRow category={category} type={type} key={category.id} />
         ))}
       </div>
       {/*

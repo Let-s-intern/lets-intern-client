@@ -6,7 +6,7 @@ import {
   COURSE_TAG_LABEL,
   type CourseTag,
   LIVE_SEMINAR_CELLS,
-  MATRIX_CELL_MAP,
+  MATRIX_CELL_MAPS,
   matrixCellKey,
   MONTH_GROUPS,
   Owner,
@@ -124,13 +124,13 @@ describe('coursePlan 데이터 무결성', () => {
     // 시안 8 은 STEP05 의 면접·지원 실행과 라이브 세미나에 한 칸당 여러 항목을 넣는다.
     it('한 칸에 여러 항목이 들어가는 자리가 있다', () => {
       const key = matrixCellKey('step05', 'interview');
-      expect(MATRIX_CELL_MAP.get(key)).toHaveLength(2);
+      expect(MATRIX_CELL_MAPS.a.get(key)).toHaveLength(2);
     });
 
     it('모든 (단계, 카테고리) 조합이 최소 하나의 셀로 존재한다', () => {
       for (const step of STEPS) {
         for (const category of CATEGORIES) {
-          const cells = MATRIX_CELL_MAP.get(
+          const cells = MATRIX_CELL_MAPS.a.get(
             matrixCellKey(step.id, category.id),
           );
           expect(cells).toBeDefined();
