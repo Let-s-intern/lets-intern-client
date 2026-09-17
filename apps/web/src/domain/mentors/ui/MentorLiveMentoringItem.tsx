@@ -12,6 +12,9 @@ const CATEGORY_LABELS: Record<
   PERSONAL_STATEMENT: '자기소개서',
   RESUME: '이력서',
   PORTFOLIO: '포트폴리오',
+  CAREER_COFFEE_CHAT: '커리어 커피챗',
+  INTERVIEW: '면접 준비, 모의 면접',
+  EXPERIENCE: '경험 정리',
 };
 
 const durationsLabel = (durations: LiveMentoringOpening['durations']) =>

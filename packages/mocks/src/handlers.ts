@@ -190,7 +190,7 @@ const MENTOR_LIVE_MENTORING_RESERVATIONS = [
 /** 상세 mock 중 예약 정보를 뺀 나머지 — 멘티가 낸 질문·첨부. */
 interface MentorLiveMentoringSubmission {
   /** 백필 전 기존 행은 서버가 null 을 내린다. 아래 91003 이 그 경우다. */
-  mentoringCategory: 'PERSONAL_STATEMENT' | 'RESUME' | 'PORTFOLIO' | null;
+  mentoringCategory: LiveMentoringCategory | null;
   questionDeferred: boolean;
   questionContent: string | null;
   attachmentType: 'NONE' | 'FILE' | 'URL';
@@ -2076,11 +2076,19 @@ export const handlers = [
   http.get('*/admin/live-mentoring', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
+    const opened = url.searchParams.get('opened');
     const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
     const size = Number(url.searchParams.get('size') ?? '20');
 
     const all = [adminLiveMentoringVo(), ...adminFixtureRows];
-    const filtered = status ? all.filter((row) => row.status === status) : all;
+    const filtered = all
+      .filter((row) => !status || row.status === status)
+      // 서버는 OPEN 인 개설만 열린 것으로 본다.
+      .filter(
+        (row) =>
+          opened === null ||
+          (row.currentOpening?.status === 'OPEN') === (opened === 'true'),
+      );
     const totalElements = filtered.length;
     const totalPages = Math.max(1, Math.ceil(totalElements / size));
     const start = (page - 1) * size;

@@ -41,6 +41,9 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
   PERSONAL_STATEMENT: '자기소개서',
   RESUME: '이력서',
   PORTFOLIO: '포트폴리오',
+  CAREER_COFFEE_CHAT: '커리어 커피챗',
+  INTERVIEW: '면접 준비, 모의 면접',
+  EXPERIENCE: '경험 정리',
 };
 
 /** 필터 사이드바에 노출할 카테고리 순서. */
@@ -48,6 +51,9 @@ export const CATEGORY_FILTER_ORDER: LiveMentoringCategory[] = [
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ];
 
 /**
