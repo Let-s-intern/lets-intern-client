@@ -9,6 +9,7 @@ import {
 import CoursePlanToggle from '../ui/CoursePlanToggle';
 import CoursePlanMatrix from '../ui/CoursePlanMatrix';
 import CoursePlanTimeline from '../ui/CoursePlanTimeline';
+import CoursePlanLegend from '../ui/CoursePlanLegend';
 
 /** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
 function HeadlineLine({
@@ -84,7 +85,7 @@ export default function CoursePlanSection() {
               <p>{COURSE_PLAN_BODY.sub}</p>
             </div>
 
-            {/* 시안 8 상단의 유형 선택. 고른 유형이 매트릭스와 그 위 문구를 바꾼다. */}
+            {/* 시안 8 상단의 유형 선택. 고른 유형이 매트릭스·주 단위와 그 위 문구를 바꾼다. */}
             <div className="cp-types" role="group" aria-label="내 상황 고르기">
               {COURSE_PLAN_TYPES.map((option) => (
                 <button
@@ -113,11 +114,12 @@ export default function CoursePlanSection() {
               {view === 'matrix' ? (
                 <CoursePlanMatrix type={type} />
               ) : (
-                <CoursePlanTimeline />
+                <CoursePlanTimeline type={type} />
               )}
             </div>
 
-            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지 */}
+            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지. 두 보기가 같다 */}
+            <CoursePlanLegend />
             <p className="cp-playbook">{COURSE_PLAN_BODY.matrixFootnote}</p>
 
             {/*

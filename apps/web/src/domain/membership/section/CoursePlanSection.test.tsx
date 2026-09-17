@@ -1,7 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { COURSE_PLAN_BODY, COURSE_PLAN_VIEWS } from '../data/coursePlan';
+import {
+  COURSE_PLAN_BODY,
+  COURSE_PLAN_VIEWS,
+  WEEK_PLANS,
+} from '../data/coursePlan';
 import CoursePlanSection from './CoursePlanSection';
 
 // jsdom 에는 IntersectionObserver 가 없다 — 매트릭스·주 단위 캐러셀 도트 훅용 폴리필.
@@ -64,6 +68,12 @@ describe('CoursePlanSection 유형 선택', () => {
 
     await user.click(typeButton('TYPE A'));
     expect(viewButton(timeline)).toHaveAttribute('aria-pressed', 'true');
+
+    // 주 단위 보기도 고른 유형을 따른다
+    expect(screen.getByText(WEEK_PLANS.a[0].title)).toBeInTheDocument();
+    await user.click(typeButton('TYPE B'));
+    expect(screen.getByText(WEEK_PLANS.b[0].title)).toBeInTheDocument();
+    await user.click(typeButton('TYPE A'));
 
     // 플레이북 보기로 돌아가면 마지막에 고른 TYPE A 매트릭스다
     await user.click(viewButton(COURSE_PLAN_VIEWS.matrix.label));
