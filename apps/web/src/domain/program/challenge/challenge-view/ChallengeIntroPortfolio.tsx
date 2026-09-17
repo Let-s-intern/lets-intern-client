@@ -89,19 +89,19 @@ function ChallengeIntroPortfolio({ weekText }: { weekText: string }) {
           포트폴리오, 혼자 만들면 자꾸 미루게 되니까
           <Break />
           <span className="text-[#4A76FF]">
-            함께 공유하며 성장하는 오픈채팅방
+            함께 공유하며 성장하는 슬랙 채널
           </span>
           에서 달려요!
         </Heading2>
         <Description className="mb-10 md:mb-20 md:text-center">
           사람들과 함께 매 미션이 끝날 때마다 느낀 점을 공유하고 질문하며
           <Break />
-          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 {weekText} 동안 힘내서
+          성장하는 슬랙 커뮤니티를 활용하기 때문에 {weekText} 동안 힘내서
           달릴 수 있어요
         </Description>
         <Image
           src="/images/community_desktop-1000-672.gif"
-          alt="오픈채팅방에서 미션을 공유하는 모습"
+          alt="슬랙 채널에서 미션을 공유하는 모습"
           unoptimized
           width={1000}
           height={672}
