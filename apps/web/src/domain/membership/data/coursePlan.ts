@@ -943,6 +943,188 @@ export function weekMonth(week: number): string {
  */
 export const PRESTART_SEMINAR: MatrixCell = LIVE_SEMINAR_CELLS[0];
 
+/**
+ * 라이브 세미나 항목은 매트릭스와 같은 공유 데이터(LIVE_SEMINAR_CELLS)에서 만든다.
+ * 일시·제목·연사를 여기 다시 적으면 일정이 바뀔 때 두 보기가 따로 논다.
+ * index 는 LIVE_SEMINAR_CELLS 순서다 (0 이 9.20 시작 전 세미나).
+ */
+function seminarSupport(index: number): WeekSupport {
+  const cell = LIVE_SEMINAR_CELLS[index];
+  return {
+    tag: cell.tag,
+    title: cell.title,
+    when: cell.when,
+    speaker: cell.desc,
+  };
+}
+
+/** TYPE A 10주 — 시안 image copy.png */
+const TYPE_A_WEEKS: WeekPlan[] = [
+  {
+    week: 1,
+    range: '9.21 월 – 9.27 일',
+    title: '내 경험 전수조사와 지망 직무 정하기',
+    todos: [
+      '세부 직무 6종 중 1·2지망 고르기',
+      '대외활동·알바·수업 프로젝트까지 전부 나열해 진단하기',
+    ],
+    output: '경험 전수조사표 + 지망 직무 2개',
+    supports: [
+      seminarSupport(1),
+      { tag: 'challenge', title: '마케팅 서류 완성 올인원 챌린지 10기' },
+      { tag: 'free', title: '세부 직무 6종 탐색 가이드' },
+      { tag: 'checklist', title: '경험 진단 체크리스트' },
+    ],
+  },
+  {
+    week: 2,
+    range: '9.28 월 – 10.4 일',
+    title: '이력서와 자기소개서 초안 쓰기',
+    todos: [
+      '경험을 STAR 구조로 바꿔 이력서 한 장 채우기',
+      '지원동기·직무 역량 문항 먼저 쓰기',
+    ],
+    output: '이력서 1본 + 자소서 2문항',
+    supports: [
+      seminarSupport(2),
+      seminarSupport(3),
+      { tag: 'challenge', title: '마케팅 챌린지 2주차 미션' },
+      { tag: 'template', title: '이력서·경력기술서 양식' },
+      { tag: 'free', title: '합격 자소서 가이드북' },
+    ],
+  },
+  {
+    week: 3,
+    range: '10.5 월 – 10.11 일',
+    title: '포트폴리오 초안 완성하기',
+    todos: [
+      '넣을 프로젝트 3건 고르고 한 장씩 구성하기',
+      '숫자가 없는 경험은 과정과 판단 근거로 채우기',
+    ],
+    output: '포트폴리오 1본',
+    supports: [
+      seminarSupport(4),
+      { tag: 'challenge', title: '마케팅 챌린지 3주차 미션' },
+      { tag: 'free', title: '직무별 포폴 예시 6종' },
+      { tag: 'template', title: '포폴 구성 체크 시트' },
+    ],
+  },
+  {
+    week: 4,
+    range: '10.12 월 – 10.18 일',
+    title: '산업·기업 리서치와 타깃 리스트업',
+    todos: [
+      '관심 산업 2~3개로 좁히고 브랜드 훑기',
+      '원티드·링크드인·자사 ATS까지 공고 채널 열어두기',
+    ],
+    output: '지원 기업 20곳 리스트',
+    supports: [
+      { tag: 'free', title: '채용공고 찾는 채널 지도' },
+      { tag: 'template', title: '기업 분석 시트' },
+      { tag: 'vod', title: '뷰티 브랜드 CEO가 보는 지원자 기준' },
+    ],
+  },
+  {
+    week: 5,
+    range: '10.19 월 – 10.25 일',
+    title: 'JD별로 서류 변형하는 훈련',
+    todos: [
+      '공고 3개 골라 JD 키워드 뽑기',
+      '같은 경험을 공고 언어로 바꿔 쓰기',
+    ],
+    output: '서류 변형본 3세트',
+    supports: [
+      seminarSupport(5),
+      { tag: 'template', title: 'JD 키워드 추출 시트' },
+      { tag: 'free', title: '지원동기 40분 워크플로우' },
+    ],
+  },
+  {
+    week: 6,
+    range: '10.26 월 – 11.1 일',
+    title: '집행 경험 없이 지표 읽는 법 배우기',
+    todos: [
+      'CTR·CVR·CPA·ROAS 기준선 익히기',
+      '실제 캠페인 1건을 골라 남의 사례로 분석해보기',
+    ],
+    output: '케이스 분석 리포트 1건',
+    supports: [
+      seminarSupport(6),
+      { tag: 'vod', title: '광고 지표 해석 기준선' },
+      { tag: 'free', title: 'GA4·메타 데모 계정 실습' },
+      { tag: 'free', title: '집행 경험 없이 퍼포먼스 지원하기' },
+    ],
+  },
+  {
+    week: 7,
+    range: '11.2 월 – 11.8 일',
+    title: '사이드 프로젝트와 개인 계정 굴리기',
+    todos: [
+      '직무에 맞는 사이드 프로젝트 1개 정해 시작하기',
+      '콘텐츠 4~6개 발행하고 반응 기록하기',
+    ],
+    output: '콘텐츠 4~6개 + 성과 기록',
+    supports: [
+      { tag: 'free', title: 'SNS 계정 키우기 가이드북' },
+      { tag: 'free', title: '사이드 프로젝트 설계 가이드북' },
+      { tag: 'template', title: '콘텐츠 성과 기록 시트' },
+    ],
+  },
+  {
+    week: 8,
+    range: '11.9 월 – 11.15 일',
+    title: '과제 전형과 사전 인터뷰 대비',
+    todos: [
+      '숏폼 기획·콘텐츠 제작 중 하나로 모의 과제 풀어보기',
+      '녹화형·AI 면접 한 번 찍어보기',
+    ],
+    output: '모의 과제 1건',
+    supports: [
+      seminarSupport(7),
+      { tag: 'free', title: '과제 전형 유형별 예시' },
+      { tag: 'free', title: '사전 인터뷰·녹화형 전형 대응' },
+    ],
+  },
+  {
+    week: 9,
+    range: '11.16 월 – 11.22 일',
+    title: '면접 실전 연습',
+    todos: [
+      '1분 자기소개와 직무 PR 스크립트 만들기',
+      '답변을 녹화해서 다시 보기',
+    ],
+    output: '면접 답변 세트 + 녹화본',
+    supports: [
+      seminarSupport(8),
+      { tag: 'challenge', title: '면접 준비 챌린지' },
+      { tag: 'template', title: '예상 질문 리스트업' },
+      { tag: 'mentoring', title: '현직 마케터 커피챗' },
+    ],
+  },
+  {
+    week: 10,
+    range: '11.23 월 – 11.29 일',
+    title: '실제로 지원하고 복기하기',
+    todos: [
+      '리스트업한 곳 중 10곳 지원하기',
+      '탈락한 곳은 이유를 적어 다음 서류에 반영하기',
+    ],
+    output: '지원 10곳 + 탈락 복기 노트',
+    supports: [
+      seminarSupport(9),
+      { tag: 'template', title: '지원 현황 트래커' },
+      { tag: 'free', title: '서류 결과 대기와 문의 메일' },
+      { tag: 'mentoring', title: '현직 마케터 커피챗' },
+    ],
+  },
+];
+
+/** 유형별 10주 계획 */
+export const WEEK_PLANS: Record<CoursePlanTypeId, WeekPlan[]> = {
+  a: TYPE_A_WEEKS,
+  b: [],
+};
+
 export const MONTH_GROUPS: MonthGroup[] = [
   {
     month: 'SEP',

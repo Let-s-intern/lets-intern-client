@@ -19,6 +19,7 @@ import {
   TYPE_A_MATRIX_CELLS,
   TYPE_B_MATRIX_CELLS,
   WEEK_FLOW,
+  WEEK_PLANS,
   weekMonth,
   weekPhase,
   WEEKS,
@@ -317,6 +318,47 @@ describe('coursePlan 데이터 무결성', () => {
       expect(PRESTART_SEMINAR).toBe(LIVE_SEMINAR_CELLS[0]);
       expect(PRESTART_SEMINAR.when).toBe('9.20 일 11:00');
       expect(PRESTART_SEMINAR.whenNote).toBe('시작 전');
+    });
+  });
+
+  describe.each(['a'] as const)('주 단위 계획 TYPE %s', (type) => {
+    const weeks = WEEK_PLANS[type];
+
+    it('주차가 1~10 연속이다', () => {
+      expect(weeks.map((plan) => plan.week)).toEqual([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      ]);
+    });
+
+    it('각 주의 할 일은 정확히 2줄이고 산출물이 비어 있지 않다', () => {
+      for (const plan of weeks) {
+        expect(plan.todos).toHaveLength(2);
+        plan.todos.forEach((todo) => expect(todo.length).toBeGreaterThan(0));
+        expect(plan.output.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('함께합니다 항목의 태그가 COURSE_TAG_LABEL 안에 있다', () => {
+      for (const plan of weeks) {
+        for (const support of plan.supports) {
+          expect(Object.keys(COURSE_TAG_LABEL)).toContain(support.tag);
+        }
+      }
+    });
+
+    // 일시·제목·연사를 따로 적으면 일정이 바뀔 때 매트릭스와 따로 논다
+    it('라이브 세미나 항목은 공유 데이터의 1~9번 세미나를 차례로 가리킨다', () => {
+      const live = weeks.flatMap((plan) =>
+        plan.supports.filter((support) => support.tag === 'live'),
+      );
+      expect(live).toEqual(
+        LIVE_SEMINAR_CELLS.slice(1).map((cell) => ({
+          tag: 'live',
+          title: cell.title,
+          when: cell.when,
+          speaker: cell.desc,
+        })),
+      );
     });
   });
 
