@@ -133,6 +133,19 @@ describe('AdminLiveMentoringTable — 조회', () => {
     ).toBeInTheDocument();
   });
 
+  it('LC-3336 에 추가된 유형도 한글 라벨로 렌더한다', () => {
+    renderTable([
+      {
+        ...draftRow,
+        categories: ['CAREER_COFFEE_CHAT', 'INTERVIEW', 'EXPERIENCE'],
+      },
+    ]);
+
+    expect(
+      screen.getByText('커리어 커피챗 · 면접 준비, 모의 면접 · 경험 정리'),
+    ).toBeInTheDocument();
+  });
+
   /** 기간이 빠지고 가격만 남은 칸이라 헤더도 "가격" 으로 부른다. */
   it('개설 칸의 헤더를 가격으로 표기한다', () => {
     renderTable([approvedRow]);
