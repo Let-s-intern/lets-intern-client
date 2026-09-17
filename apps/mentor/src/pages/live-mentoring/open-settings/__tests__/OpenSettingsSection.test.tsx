@@ -317,6 +317,39 @@ describe('OpenSettingsSection — 저장(제목·타입·진행시간)', () => {
     expect(payload.durations).toEqual(baseSettings.durations);
   });
 
+  // LC-3336 — 유형이 6개로 늘었고, 동시 선택 상한은 원래 없다.
+  it('타입 선택지 6개를 모두 고르면 6개 전부 payload 에 담긴다', async () => {
+    renderPage({ categories: ['PERSONAL_STATEMENT'] });
+
+    const typeSection = screen
+      .getByRole('heading', { name: '타입 (다중 선택)' })
+      .closest('section') as HTMLElement;
+    const options = within(typeSection).getAllByRole('button');
+    expect(options.map((option) => option.textContent)).toEqual([
+      '자기소개서',
+      '이력서',
+      '포트폴리오',
+      '커리어 커피챗',
+      '면접 준비, 모의 면접',
+      '경험 정리',
+    ]);
+
+    options
+      .filter((option) => option.getAttribute('aria-pressed') === 'false')
+      .forEach((option) => fireEvent.click(option));
+    await 저장_버튼을_누른다();
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.categories).toEqual([
+      'PERSONAL_STATEMENT',
+      'RESUME',
+      'PORTFOLIO',
+      'CAREER_COFFEE_CHAT',
+      'INTERVIEW',
+      'EXPERIENCE',
+    ]);
+  });
+
   it('진행시간만 바꿔도 저장이 나간다', async () => {
     renderPage({ durations: [30] });
 
