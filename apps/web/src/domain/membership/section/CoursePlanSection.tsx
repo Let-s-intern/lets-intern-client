@@ -104,7 +104,7 @@ export default function CoursePlanSection() {
             <CoursePlanToggle active={view} onChange={setView} />
 
             <div className="cp-matrix-head">
-              <h4>{COURSE_PLAN_BODY.matrixTitle}</h4>
+              <h4>{COURSE_PLAN_BODY.matrixTitle.a}</h4>
               <p>{COURSE_PLAN_BODY.matrixSub}</p>
             </div>
 

@@ -2,6 +2,7 @@ import {
   CATEGORIES,
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
+  COURSE_PLAN_TYPES,
   COURSE_TAG_LABEL,
   type CourseTag,
   LIVE_SEMINAR_CELLS,
@@ -233,9 +234,26 @@ describe('coursePlan 데이터 무결성', () => {
     it('본문 도입부와 매트릭스 캡션 문구가 비어 있지 않다', () => {
       expect(COURSE_PLAN_BODY.titleLines.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.sub.length).toBeGreaterThan(0);
-      expect(COURSE_PLAN_BODY.matrixTitle.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixTitle.a.length).toBeGreaterThan(0);
+      expect(COURSE_PLAN_BODY.matrixTitle.b.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixSub.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixFootnote.length).toBeGreaterThan(0);
+    });
+
+    it('매트릭스 위 문구는 유형마다 다르고, 뒤 문장은 두 유형이 같다', () => {
+      expect(COURSE_PLAN_BODY.matrixTitle.a).not.toBe(
+        COURSE_PLAN_BODY.matrixTitle.b,
+      );
+      // 뒤 문장은 유형별로 두지 않고 한 벌만 둔다
+      expect(COURSE_PLAN_BODY.matrixSub).toBe(
+        '10주 동안 현직자 라이브 세미나 10회가 함께 열려요.',
+      );
+    });
+
+    it('유형마다 매트릭스 위 문구가 있다', () => {
+      for (const type of COURSE_PLAN_TYPES) {
+        expect(COURSE_PLAN_BODY.matrixTitle[type.id].length).toBeGreaterThan(0);
+      }
     });
   });
 

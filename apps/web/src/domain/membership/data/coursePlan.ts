@@ -991,9 +991,12 @@ export const COURSE_PLAN_HEADER = {
 export const COURSE_PLAN_BODY = {
   titleLines: ['마케팅 10주 합격 플레이북 대로만 따라오세요'],
   sub: '내 상황을 고르면 10주 계획이 바뀝니다. 무엇을 직접 만들고, 어디서 렛츠커리어가 함께하는지 정리했어요.',
-  /** 매트릭스 바로 위 문구 (시안 8) */
-  matrixTitle:
-    '첫 3주는 마케팅 서류 완성 올인원 챌린지 10기(9/19~10/9)로 서류 3종을 만들고, 이후 7주는 부족한 경험을 채우며 실제로 지원합니다.',
+  /** 매트릭스 바로 위 문구 — 유형별 (TYPE A 시안 image copy.png, TYPE B 시안 image.png) */
+  matrixTitle: {
+    a: '첫 3주는 마케팅 서류 완성 올인원 챌린지 10기(9/19~10/9)로 서류 3종을 만들고, 이후 7주는 부족한 경험을 채우며 실제로 지원합니다.',
+    b: '첫 3주는 마케팅 서류 완성 올인원 챌린지 10기(9/19~10/9)로 실무 경험을 서류로 옮기고, 이후 7주는 성과를 방어하며 지원과 오퍼까지 갑니다.',
+  },
+  /** matrixTitle 뒤에 붙는 문장. 두 유형이 같다 */
   matrixSub: '10주 동안 현직자 라이브 세미나 10회가 함께 열려요.',
   /** 매트릭스 아래 마무리 (시안 8 하단) */
   matrixFootnote:
@@ -1003,9 +1006,10 @@ export const COURSE_PLAN_BODY = {
 /**
  * 시안 8 상단의 유형 선택 (TYPE A/B).
  *
- * 시안은 고르면 10주 계획이 바뀐다고 말하지만, 유형별로 다른 매트릭스를 받은 적이 없다.
- * 없는 데이터를 지어내면 고른 사람이 같은 표를 보고 속았다고 느낀다. 그래서 지금은
- * **표시만 하고 표를 바꾸지 않는다.** 유형별 계획을 받으면 여기에 매트릭스를 나눠 붙인다.
+ * 고른 유형에 따라 매트릭스 카드(TYPE_A/B_MATRIX_CELLS)와 매트릭스 위 문구
+ * (COURSE_PLAN_BODY.matrixTitle)가 바뀐다. 라이브 세미나 줄은 두 유형이 공유한다.
+ * TYPE A 매트릭스는 유형을 나누기 전의 매트릭스를 그대로 옮긴 것이다 — TYPE A 의
+ * 플레이북 시안은 따로 받지 않았다.
  */
 export const COURSE_PLAN_TYPES = [
   {
@@ -1021,6 +1025,8 @@ export const COURSE_PLAN_TYPES = [
     desc: '가진 경험을 무기로 만들 분',
   },
 ] as const;
+
+export type CoursePlanTypeId = (typeof COURSE_PLAN_TYPES)[number]['id'];
 
 // 매트릭스 아래 — 구매자가 실제로 받는 플레이북 화면. 앱을 위에서 아래로 훑는 20초 루프다.
 //
