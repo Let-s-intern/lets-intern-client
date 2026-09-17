@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
 import {
+  RESERVATION_KIND_LABEL,
   toChallengeRow,
   toLiveMentoringRow,
   type ReservationRow,
@@ -187,6 +188,18 @@ describe('ReservationListView', () => {
       expect(screen.getByText('1:1 LIVE 멘토링')).toBeInTheDocument();
       expect(screen.getByText('이력서 1대1 첨삭')).toBeInTheDocument();
       expect(screen.getByText('최멘티')).toBeInTheDocument();
+    });
+
+    it('유형을 배지로 그리고, 두 유형의 배지 색이 다르다', () => {
+      renderMixed();
+      const challengeBadge = screen.getByText(RESERVATION_KIND_LABEL.CHALLENGE);
+      const liveMentoringBadge = screen.getByText(
+        RESERVATION_KIND_LABEL.LIVE_MENTORING,
+      );
+
+      expect(challengeBadge).toHaveClass('bg-primary-10', 'text-primary');
+      expect(liveMentoringBadge).toHaveClass('bg-tertiary/10', 'text-tertiary');
+      expect(challengeBadge.className).not.toBe(liveMentoringBadge.className);
     });
 
     it('멘토는 닉네임으로, 플랜과 결제 상태를 함께 표시한다', () => {

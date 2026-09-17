@@ -14,7 +14,6 @@ import {
   type RowTone,
 } from '../../utils/liveFeedbackSpec';
 import {
-  RESERVATION_KIND_LABEL,
   rowCreateDate,
   rowKey,
   rowMenteeName,
@@ -23,6 +22,7 @@ import {
   type ReservationRow,
 } from '../utils/reservationRow';
 import type { SortKey, SortState } from '../utils/sortReservations';
+import ReservationKindBadge from './ReservationKindBadge';
 
 /**
  * 행 배경 톤 → Tailwind 클래스 (기획 2026-06-09).
@@ -133,7 +133,7 @@ function ChallengeRow({
         {formatReservationDateTime(feedback.startDate, feedback.endDate)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        {RESERVATION_KIND_LABEL.CHALLENGE}
+        <ReservationKindBadge kind="CHALLENGE" />
       </td>
       <td className={twMerge(tdClassName, 'max-w-[260px] truncate')}>
         {feedback.programTitle || '-'}
@@ -218,8 +218,8 @@ function LiveMentoringRow({
         )}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <div className="flex flex-col gap-0.5">
-          <span>{RESERVATION_KIND_LABEL.LIVE_MENTORING}</span>
+        <div className="flex flex-col items-center gap-0.5">
+          <ReservationKindBadge kind="LIVE_MENTORING" />
           <span className="text-xxsmall12 text-neutral-40">
             {APPLICATION_STATUS_LABELS[reservation.status]}
             {reservation.durationMinutes != null &&
