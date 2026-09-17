@@ -1,5 +1,11 @@
 import type { LiveMentoringSlot } from '@/api/live-mentoring/liveMentoringSchema';
-import { discountRate, slotPeriod } from './constants';
+import { liveMentoringCategorySchema } from '@/api/live-mentoring/liveMentoringSchema';
+import {
+  CATEGORY_FILTER_ORDER,
+  CATEGORY_LABELS,
+  discountRate,
+  slotPeriod,
+} from './constants';
 
 function slot(
   slotId: number,
@@ -77,5 +83,20 @@ describe('discountRate', () => {
 
   it('판매가가 정가보다 높아도 음수를 내지 않는다', () => {
     expect(discountRate(70000, 50000)).toBe(0);
+  });
+});
+
+describe('CATEGORY_LABELS / CATEGORY_FILTER_ORDER', () => {
+  it('새 유형 3개를 한글 라벨로 옮긴다', () => {
+    expect(CATEGORY_LABELS.CAREER_COFFEE_CHAT).toBe('커리어 커피챗');
+    expect(CATEGORY_LABELS.INTERVIEW).toBe('면접 준비, 모의 면접');
+    expect(CATEGORY_LABELS.EXPERIENCE).toBe('경험 정리');
+  });
+
+  it('필터 순서에 6개 유형이 빠짐없이 한 번씩 있다', () => {
+    expect(CATEGORY_FILTER_ORDER).toHaveLength(6);
+    expect([...CATEGORY_FILTER_ORDER].sort()).toEqual(
+      [...liveMentoringCategorySchema.options].sort(),
+    );
   });
 });

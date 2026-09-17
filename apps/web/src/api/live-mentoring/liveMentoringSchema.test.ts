@@ -175,6 +175,14 @@ describe('liveMentoringOpeningSchema', () => {
     ).not.toThrow();
   });
 
+  // LC-3336 — 서버 enum 코드 4~6 으로 추가된 유형
+  it('새 유형(커리어 커피챗·면접·경험 정리)을 파싱한다', () => {
+    const categories = ['CAREER_COFFEE_CHAT', 'INTERVIEW', 'EXPERIENCE'];
+    expect(
+      liveMentoringOpeningSchema.parse(makeOpening({ categories })).categories,
+    ).toEqual(categories);
+  });
+
   it('알 수 없는 카테고리는 파싱 실패', () => {
     expect(() =>
       liveMentoringOpeningSchema.parse(
