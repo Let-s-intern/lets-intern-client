@@ -96,8 +96,8 @@ function ChallengeIntroPortfolio({ weekText }: { weekText: string }) {
         <Description className="mb-10 md:mb-20 md:text-center">
           사람들과 함께 매 미션이 끝날 때마다 느낀 점을 공유하고 질문하며
           <Break />
-          성장하는 슬랙 커뮤니티를 활용하기 때문에 {weekText} 동안 힘내서
-          달릴 수 있어요
+          성장하는 슬랙 커뮤니티를 활용하기 때문에 {weekText} 동안 힘내서 달릴
+          수 있어요
         </Description>
         <Image
           src="/images/community_desktop-1000-672.gif"
