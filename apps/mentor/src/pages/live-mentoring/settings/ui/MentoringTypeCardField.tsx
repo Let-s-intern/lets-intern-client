@@ -29,7 +29,14 @@ export const TYPE_TAG_MAX = 3;
  * 오픈 설정의 타입 선택과 같은 어휘를 쓴다. 서버 `typeName` 은 자유 문자열(100자)이라
  * 라벨을 그대로 담는다.
  */
-const TYPE_OPTIONS = ['자기소개서', '이력서', '포트폴리오'] as const;
+const TYPE_OPTIONS = [
+  '자기소개서',
+  '이력서',
+  '포트폴리오',
+  '커리어 커피챗',
+  '면접 준비, 모의 면접',
+  '경험 정리',
+] as const;
 
 const DragHandleIcon = () => (
   <svg
