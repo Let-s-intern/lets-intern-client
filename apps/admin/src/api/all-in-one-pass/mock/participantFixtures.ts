@@ -1,0 +1,121 @@
+import { PassParticipant } from '@/domain/all-in-one-pass/types';
+
+/**
+ * 참여자 mock 시드. 환불여부 라벨(유저/어드민 · 전체/부분)과 관리 컬럼
+ * (환불/부분환불/환불완료)을 확인할 수 있도록 다양한 상태를 포함한다.
+ */
+export const participantFixtures: PassParticipant[] = [
+  {
+    id: 1,
+    orderId: 'AIOP-202608-0001',
+    productName: '올인원패스',
+    name: '김민수',
+    email: 'minsu.kim@example.com',
+    phoneNum: '010-1234-5678',
+    couponName: '얼리버드 20%',
+    couponDiscount: 20000,
+    programPrice: 149000,
+    programDiscount: 30000,
+    finalPrice: 99000,
+    originalPrice: null,
+    isCanceled: false,
+    isAdminRefunded: false,
+    createDate: '2026-08-05T13:20:00',
+    usedPrograms: [
+      {
+        id: 101,
+        type: 'CHALLENGE',
+        title: '대기업 자소서 챌린지',
+        usedAt: '2026-08-06T09:00:00',
+      },
+      {
+        id: 102,
+        type: 'GUIDEBOOK',
+        title: '직무 분석 가이드북',
+        usedAt: '2026-08-10T21:00:00',
+      },
+      {
+        id: 103,
+        type: 'MENTORING',
+        title: '1:1 포트폴리오 멘토링',
+        usedAt: '2026-08-20T19:00:00',
+      },
+    ],
+  },
+  {
+    id: 2,
+    orderId: 'AIOP-202608-0002',
+    productName: '올인원패스 + VOD 20종',
+    name: '이서연',
+    email: 'seoyeon.lee@example.com',
+    phoneNum: '010-2345-6789',
+    couponName: null,
+    couponDiscount: null,
+    programPrice: 139000,
+    programDiscount: 0,
+    finalPrice: 139000,
+    originalPrice: null,
+    isCanceled: false,
+    isAdminRefunded: false,
+    createDate: '2026-08-07T10:05:00',
+    usedPrograms: [
+      {
+        id: 201,
+        type: 'VOD',
+        title: '산업 분석 VOD 20종',
+        usedAt: '2026-08-09T20:30:00',
+      },
+      {
+        id: 202,
+        type: 'CHALLENGE',
+        title: '면접 대비 챌린지',
+        usedAt: '2026-08-12T09:00:00',
+      },
+    ],
+  },
+  {
+    // 유저 전체 환불 (본인이 취소, finalPrice === originalPrice)
+    id: 3,
+    orderId: 'AIOP-202608-0003',
+    productName: '올인원패스',
+    name: '박지훈',
+    email: 'jihoon.park@example.com',
+    phoneNum: '010-3456-7890',
+    couponName: '재구매 10%',
+    couponDiscount: 10000,
+    programPrice: 99000,
+    programDiscount: 0,
+    finalPrice: 89100,
+    originalPrice: 89100,
+    isCanceled: true,
+    isAdminRefunded: false,
+    createDate: '2026-08-09T16:40:00',
+    usedPrograms: [],
+  },
+  {
+    // 어드민 부분 환불 (finalPrice < originalPrice)
+    id: 4,
+    orderId: 'AIOP-202608-0004',
+    productName: '올인원패스 + VOD 20종',
+    name: '최유나',
+    email: 'yuna.choi@example.com',
+    phoneNum: '010-4567-8901',
+    couponName: null,
+    couponDiscount: null,
+    programPrice: 139000,
+    programDiscount: 0,
+    finalPrice: 70000,
+    originalPrice: 139000,
+    isCanceled: true,
+    isAdminRefunded: true,
+    createDate: '2026-08-11T09:15:00',
+    usedPrograms: [
+      {
+        id: 401,
+        type: 'CHALLENGE',
+        title: '대기업 자소서 챌린지',
+        usedAt: '2026-08-12T10:00:00',
+      },
+    ],
+  },
+];
