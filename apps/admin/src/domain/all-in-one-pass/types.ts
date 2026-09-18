@@ -65,6 +65,8 @@ export interface PassFormInput {
   detailContent: string | null;
   // 1.6 혜택
   benefits: PassBenefit[];
+  // 1.7 FAQ
+  faqs: PassFaq[];
 }
 
 /** 1.6 혜택 한 개 */
@@ -75,6 +77,14 @@ export interface PassBenefit {
   thumbnailUrl: string | null;
   title: string;
   description: string;
+}
+
+/** 1.7 FAQ 한 개 */
+export interface PassFaq {
+  id: string; // 폼 로컬 식별자
+  category: string; // 유형(직접입력/기존선택)
+  question: string;
+  answer: string;
 }
 
 /** A-1 개설 목록 행 */

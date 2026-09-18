@@ -80,6 +80,20 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
           '현직자와의 1:1 커피챗 기회를 50% 할인된 가격에 2회 제공합니다.',
       },
     ],
+    faqs: [
+      {
+        id: 'faq-1-refund',
+        category: '신청/환불',
+        question: '패스 구매 후 환불이 가능한가요?',
+        answer: '구매일로부터 7일 이내, 미이용 시 전액 환불이 가능합니다.',
+      },
+      {
+        id: 'faq-1-period',
+        category: '이용 방법',
+        question: '패스 기간은 언제부터 시작되나요?',
+        answer: '결제 완료 시점부터 패스 기간이 시작됩니다.',
+      },
+    ],
   },
   2: {
     ...base(2),
@@ -99,6 +113,7 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
     externalLinks: [],
     detailContent: null,
     benefits: [],
+    faqs: [],
   },
   3: {
     ...base(3),
@@ -118,5 +133,6 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
     externalLinks: [],
     detailContent: null,
     benefits: [],
+    faqs: [],
   },
 };
