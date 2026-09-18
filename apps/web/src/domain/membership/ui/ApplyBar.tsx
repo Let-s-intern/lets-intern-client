@@ -1,5 +1,6 @@
 'use client';
 
+import { capturePaymentCtaClicked } from '../analytics';
 import dayjs from '../lib/dayjs';
 import BarCountdown from './BarCountdown';
 import { openPlanSheet } from '../lib/planSheet';
@@ -39,7 +40,10 @@ export default function ApplyBar() {
         {!IS_RECRUITMENT_CLOSED && <BarCountdown deadline={deadline} />}
         <button
           className="apply-bar-btn"
-          onClick={() => openPlanSheet()}
+          onClick={() => {
+            capturePaymentCtaClicked({ location: 'apply_bar' });
+            openPlanSheet();
+          }}
           disabled={IS_CTA_DISABLED}
         >
           {ctaLabel('지금 바로 신청')}

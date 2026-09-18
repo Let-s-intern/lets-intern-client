@@ -1,3 +1,4 @@
+import { capturePaymentCtaClicked } from '../analytics';
 import dayjs from '../lib/dayjs';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
@@ -42,9 +43,13 @@ export default function HeroSection() {
           ))}
         </p>
         <div className="hero-cta he he4">
+          {/* 이벤트는 결제 흐름 앞에 덧붙이기만 한다 — `openPlanSheet()` 는 그대로다. */}
           <button
             className="btn btn-hero-light"
-            onClick={() => openPlanSheet()}
+            onClick={() => {
+              capturePaymentCtaClicked({ location: 'hero' });
+              openPlanSheet();
+            }}
             disabled={IS_CTA_DISABLED}
           >
             {ctaLabel(`${formatKRW(salePrice)}${HERO.ctaPrimary}`)}

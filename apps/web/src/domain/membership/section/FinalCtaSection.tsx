@@ -1,5 +1,6 @@
 'use client';
 
+import { capturePaymentCtaClicked } from '../analytics';
 import { formatKRW } from '../data/membership';
 import { FINAL_CTA } from '../data/finalCta';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
@@ -73,7 +74,10 @@ export default function FinalCtaSection() {
           <button
             className="text-primary rounded-full bg-white px-10 py-4 text-base font-bold disabled:opacity-50"
             disabled={IS_CTA_DISABLED}
-            onClick={() => openPlanSheet()}
+            onClick={() => {
+              capturePaymentCtaClicked({ location: 'final_cta' });
+              openPlanSheet();
+            }}
             type="button"
           >
             {ctaLabel(FINAL_CTA.ctaLabel)}

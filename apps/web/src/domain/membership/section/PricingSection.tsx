@@ -2,6 +2,7 @@
 
 import { Check } from 'lucide-react';
 
+import { capturePaymentCtaClicked } from '../analytics';
 import { formatKRW } from '../data/membership';
 import {
   getIndividualTotal,
@@ -142,7 +143,10 @@ export default function PricingSection() {
             <button
               className="bg-primary mt-8 w-full rounded-full py-4 text-base font-bold text-white disabled:opacity-50"
               disabled={IS_CTA_DISABLED}
-              onClick={() => openPlanSheet()}
+              onClick={() => {
+                capturePaymentCtaClicked({ location: 'pricing' });
+                openPlanSheet();
+              }}
               type="button"
             >
               {ctaLabel(PRICING.ctaLabel)}
