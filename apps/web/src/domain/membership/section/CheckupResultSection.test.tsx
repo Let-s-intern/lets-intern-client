@@ -95,6 +95,15 @@ describe('CheckupResultSection (시안 3)', () => {
     }
   });
 
+  /* 확장 애니메이션은 CSS 가 맡는다. 여기서는 그 클래스가 붙는지만 본다 */
+  it('막대에 확장 애니메이션 클래스가 붙는다', () => {
+    renderSection();
+
+    for (const bar of screen.getAllByTestId('checkup-area-bar')) {
+      expect(bar).toHaveClass('checkup-bar-fill');
+    }
+  });
+
   it('막대 길이와 점수 숫자가 축 점수(0~100)와 같다', () => {
     // 15 / 39 / 65 / 95 — 배점표에서 나온 축 점수다
     renderSection(resolveCheckupResult([0, 1, 1, 2, 3]));

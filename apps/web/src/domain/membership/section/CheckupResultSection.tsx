@@ -92,8 +92,10 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
       </div>
 
       <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-[#F1F3FA]">
+        {/* 채움 폭은 인라인 스타일이고, 0 에서 늘어나는 애니메이션은
+            `styles/animations.css` 의 `.checkup-bar-fill` 이 맡는다. */}
         <div
-          className={`h-full rounded-full ${
+          className={`checkup-bar-fill h-full rounded-full ${
             isWeakest ? 'bg-[#F0563F]' : 'bg-[#4B5BF0]'
           }`}
           data-status={score.status}
