@@ -39,13 +39,15 @@ describe('이벤트 이름과 속성', () => {
     );
   });
 
-  it('문항 답변은 문항 번호 · 영역 · 선택지 순번을 보낸다', () => {
+  it('문항 답변은 문항 번호 · 영역 · 선택지 순번 · 배점을 보낸다', () => {
     captureCheckupAnswered({ question: CHECKUP_QUESTIONS[2], optionIndex: 1 });
 
     expect(mockCapture).toHaveBeenCalledWith('membership_checkup_answered', {
       question_no: '03',
       area_id: 'experience',
       option_index: 1,
+      // Q3 ② 배점이다. 문항 데이터에서 읽는다
+      score: 38,
     });
   });
 
@@ -58,14 +60,14 @@ describe('이벤트 이름과 속성', () => {
     expect(properties).not.toContain(CHECKUP_QUESTIONS[0].question);
   });
 
-  it('진단 완료는 가장 약한 영역과 영역별 점수를 펼쳐 보낸다', () => {
+  it('진단 완료는 CASE 와 축 점수를 펼쳐 보낸다', () => {
     const result = resolveCheckupResult([0, 3, 3, 3, 3]);
     if (!result) throw new Error('결과가 나와야 한다');
 
     captureCheckupCompleted(result);
 
     expect(mockCapture).toHaveBeenCalledWith('membership_checkup_completed', {
-      weakest_area_id: 'direction',
+      case_id: 'A',
       score_direction: 15,
       score_experience: 95,
       score_document: 95,
@@ -73,12 +75,12 @@ describe('이벤트 이름과 속성', () => {
     });
   });
 
-  it('결과 CTA 클릭은 가장 약한 영역을 보낸다', () => {
-    captureCheckupResultCtaClicked({ weakestAreaId: 'document' });
+  it('결과 CTA 클릭은 CASE 를 보낸다', () => {
+    captureCheckupResultCtaClicked({ caseId: 'C' });
 
     expect(mockCapture).toHaveBeenCalledWith(
       'membership_checkup_result_cta_clicked',
-      { weakest_area_id: 'document' },
+      { case_id: 'C' },
     );
   });
 

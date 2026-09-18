@@ -122,7 +122,7 @@ describe('진단 이벤트 횟수', () => {
     answerAll([0, 3, 3, 3, 3]);
 
     expect(captureCheckupCompleted).toHaveBeenCalledWith(
-      expect.objectContaining({ weakestAreaId: 'direction' }),
+      expect.objectContaining({ caseId: 'A' }),
     );
   });
 
@@ -164,7 +164,7 @@ describe('진단 이벤트 횟수', () => {
 });
 
 describe('결과 CTA', () => {
-  it('준비 단계 확인하기를 누르면 가장 약한 영역을 보낸다', () => {
+  it('준비 단계 확인하기를 누르면 CASE 를 보낸다', () => {
     render(<MembershipLanding />);
 
     answerAll([3, 3, 3, 3, 0]);
@@ -172,7 +172,7 @@ describe('결과 CTA', () => {
 
     expect(captureCheckupResultCtaClicked).toHaveBeenCalledTimes(1);
     expect(captureCheckupResultCtaClicked).toHaveBeenCalledWith({
-      weakestAreaId: 'apply',
+      caseId: 'D1',
     });
   });
 

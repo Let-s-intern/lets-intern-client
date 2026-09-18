@@ -120,8 +120,6 @@ export default function CheckupResultSection({
   }
 
   const copy = CHECKUP_RESULT_COPY[result.caseId];
-  /* CTA 이벤트는 아직 영역 키다. 강조 축이 없는 CASE E 만 마지막 축으로 떨어뜨려 둔다 */
-  const areaId = result.weakestAreaId ?? 'apply';
 
   return (
     <section
@@ -191,7 +189,7 @@ export default function CheckupResultSection({
               className="mt-auto block rounded-lg bg-[#11142B] py-4 text-center"
               href={`#${stepsAnchorId}`}
               onClick={() =>
-                captureCheckupResultCtaClicked({ weakestAreaId: areaId })
+                captureCheckupResultCtaClicked({ caseId: result.caseId })
               }
             >
               <span className="text-xsmall16 font-bold text-white">

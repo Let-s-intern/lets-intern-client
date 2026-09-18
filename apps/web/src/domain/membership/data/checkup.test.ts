@@ -269,11 +269,8 @@ describe('resolveCheckupResult', () => {
     );
   });
 
-  it('CASE 와 그 CASE 를 정한 축을 함께 싣는다', () => {
-    const result = resolveCheckupResult([0, 3, 3, 3, 3]);
-
-    expect(result?.caseId).toBe('A');
-    expect(result?.weakestAreaId).toBe('direction');
+  it('CASE 를 함께 싣는다', () => {
+    expect(resolveCheckupResult([0, 3, 3, 3, 3])?.caseId).toBe('A');
   });
 
   it('CASE 를 정한 축 하나만 weakest 다', () => {
@@ -307,7 +304,6 @@ describe('resolveCheckupResult', () => {
     const result = resolveCheckupResult([3, 3, 2, 3, 3]);
 
     expect(result?.caseId).toBe('E');
-    expect(result?.weakestAreaId).toBeNull();
     expect(result?.scores.map((score) => score.status)).toEqual([
       'ready',
       'ready',

@@ -246,9 +246,12 @@ export interface CheckupAreaScore {
 export interface CheckupResult {
   /** 결과 문구와 준비 단계 배지가 이 값으로 정해진다 */
   caseId: CheckupCaseId;
-  /** CASE 를 결정한 축. 강조할 축이 없는 CASE E 는 null */
-  weakestAreaId: CheckupAreaId | null;
-  /** CHECKUP_AREAS 와 같은 순서 */
+  /**
+   * CHECKUP_AREAS 와 같은 순서.
+   *
+   * CASE 를 정한 축은 `status` 가 `weakest` 다 — 강조할 축을 따로 들고 있지 않는다.
+   * 두 곳에 있으면 한쪽만 바뀐 채로 화면과 어긋난다.
+   */
   scores: readonly CheckupAreaScore[];
 }
 
@@ -352,12 +355,7 @@ export function resolveCheckupResult(
     status: resolveAreaStatus(areaScores[index], index === caseAreaIndex),
   }));
 
-  return {
-    caseId,
-    weakestAreaId:
-      caseAreaIndex === null ? null : CHECKUP_AREAS[caseAreaIndex].id,
-    scores,
-  };
+  return { caseId, scores };
 }
 
 /** 결과 제목 한 줄을 이루는 조각. `accent` 인 조각만 포인트 컬러로 칠한다 */
