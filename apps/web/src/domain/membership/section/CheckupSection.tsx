@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   captureCheckupAnswered,
@@ -19,6 +19,14 @@ interface Props {
 }
 
 /**
+ * 선택한 뒤 다음 문항이 올라오기까지의 지연 (PRD 4.6).
+ *
+ * 곧장 넘기면 방금 고른 답이 선택 상태로 칠해지는 것을 보지 못한 채 화면이 바뀌어,
+ * 눌린 건지 모른 채 다음 문항을 보게 된다.
+ */
+export const NEXT_QUESTION_DELAY_MS = 240;
+
+/**
  * 시안 2 — 무료 진단 5문항 (FREE CHECK-UP).
  *
  * 답은 랜딩이 들고 있다. 결과 섹션과 준비 단계 섹션이 같은 답을 봐야 하기 때문이다.
@@ -32,6 +40,21 @@ interface Props {
  */
 export default function CheckupSection({ answers, onAnswersChange }: Props) {
   const [current, setCurrent] = useState(0);
+
+  /*
+   * 다음 문항으로 넘기는 타이머. 두 가지를 맡는다 —
+   * 지연 동안 같은 문항을 다시 눌러도 한 칸만 넘어가게 막고,
+   * 섹션이 사라질 때 정리한다. 정리하지 않으면 "다시 진단하기" 로 이 섹션이 다시
+   * 마운트된 뒤 이전 진단의 타이머가 남아 첫 문항을 두 번째 문항으로 밀어버린다.
+   */
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (advanceTimer.current !== null) clearTimeout(advanceTimer.current);
+    },
+    [],
+  );
 
   const isLast = current === CHECKUP_QUESTIONS.length - 1;
 
@@ -63,7 +86,14 @@ export default function CheckupSection({ answers, onAnswersChange }: Props) {
     }
 
     onAnswersChange(next);
-    if (!isLast) setCurrent(current + 1);
+
+    // 마지막 문항은 넘어갈 곳이 없고, 이미 넘어가는 중이면 한 칸만 넘어간다
+    if (isLast || advanceTimer.current !== null) return;
+
+    advanceTimer.current = setTimeout(() => {
+      advanceTimer.current = null;
+      setCurrent((prev) => prev + 1);
+    }, NEXT_QUESTION_DELAY_MS);
   };
 
   return (

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import {
   captureCheckupAnswered,
@@ -8,6 +8,7 @@ import {
 } from './analytics';
 import { CHECKUP_QUESTIONS, CHECKUP_RESULT } from './data/checkup';
 import MembershipLanding from './MembershipLanding';
+import { NEXT_QUESTION_DELAY_MS } from './section/CheckupSection';
 
 /*
  * 진단 이벤트가 "몇 번" 나가는지는 한 섹션만 떼어 보면 알 수 없다. 시작·완료의
@@ -83,13 +84,26 @@ function choose(questionIndex: number, optionIndex: number) {
   );
 }
 
+/** 고르고 다음 문항까지 넘어간다. 문항 전환은 240ms 지연이다 */
+function answer(questionIndex: number, optionIndex: number) {
+  choose(questionIndex, optionIndex);
+  act(() => {
+    jest.advanceTimersByTime(NEXT_QUESTION_DELAY_MS);
+  });
+}
+
 /** `answers` 순서대로 5문항을 답한다 */
 function answerAll(answers: number[]) {
-  answers.forEach((option, index) => choose(index, option));
+  answers.forEach((option, index) => answer(index, option));
 }
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.useFakeTimers();
+});
+
+afterEach(() => {
+  jest.useRealTimers();
 });
 
 describe('진단 이벤트 횟수', () => {
@@ -130,7 +144,7 @@ describe('진단 이벤트 횟수', () => {
   it('이전 문항으로 돌아가 다시 골라도 시작은 한 번뿐이다', () => {
     render(<MembershipLanding />);
 
-    choose(0, 1);
+    answer(0, 1);
     fireEvent.click(screen.getByText('← 이전 질문'));
     choose(0, 2);
 

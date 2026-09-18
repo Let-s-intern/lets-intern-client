@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import {
   checkupBodyText,
@@ -8,6 +8,7 @@ import {
 } from './data/checkup';
 import { PREP_STEPS } from './data/prepSteps';
 import MembershipLanding from './MembershipLanding';
+import { NEXT_QUESTION_DELAY_MS } from './section/CheckupSection';
 
 /*
  * 진단 → 결과 → 준비 단계 강조까지 한 흐름으로 확인한다.
@@ -79,10 +80,23 @@ function choose(questionIndex: number, optionIndex: number) {
   );
 }
 
-/** `answers` 순서대로 5문항을 답한다 */
+/** `answers` 순서대로 5문항을 답한다. 문항 전환은 240ms 지연이라 타이머를 함께 넘긴다 */
 function answerAll(answers: number[]) {
-  answers.forEach((option, index) => choose(index, option));
+  answers.forEach((option, index) => {
+    choose(index, option);
+    act(() => {
+      jest.advanceTimersByTime(NEXT_QUESTION_DELAY_MS);
+    });
+  });
 }
+
+beforeEach(() => {
+  jest.useFakeTimers();
+});
+
+afterEach(() => {
+  jest.useRealTimers();
+});
 
 function badgedStepId(): string | null {
   const badge = screen.getByText(PREP_STEPS.resultBadge);
