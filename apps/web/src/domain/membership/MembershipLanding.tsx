@@ -12,8 +12,9 @@
 //
 // 개편(마케팅 올인원 패스 랜딩 전면 개편)이 진행 중이다. 방문자의 막힌 지점을 먼저
 // 진단하고 그 결과로 준비 단계를 보여주는 순서로 바뀌고 있어, 새 섹션은 위에서부터
-// 하나씩 들어온다. RecommendSection(고민 3카드)은 REAL TALK 이 그 자리를 대신하면서
-// 렌더에서 빠졌다 — 같은 관행대로 파일은 남긴다.
+// 하나씩 들어온다. RecommendSection(고민 3카드)은 REAL TALK 이, RoadmapSection(STEP
+// 01~05 세로 목록)은 준비 단계 카드가 그 자리를 대신하면서 렌더에서 빠졌다 — 같은
+// 관행대로 파일은 남긴다.
 //
 // FAQ 는 시안에 없지만 남긴다. 어드민 챌린지에 등록한 FAQ 를 그대로 보여주는 자리이고
 // (`lib/useMembershipChallengeData`), 운영이 상품 문의를 여기서 답한다.
@@ -32,13 +33,20 @@ import './styles/animations.css';
 import './styles/responsive.css';
 import './styles/apply.css';
 
+import { useState } from 'react';
+
+import type { CheckupAnswers } from './data/checkup';
+import { EMPTY_CHECKUP_ANSWERS, resolveCheckupResult } from './data/checkup';
+import { PREP_STEPS } from './data/prepSteps';
+
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
 import RealTalkSection from './section/RealTalkSection';
 import CheckupSection from './section/CheckupSection';
+import CheckupResultSection from './section/CheckupResultSection';
 import JobMarketSection from './section/JobMarketSection';
-import RoadmapSection from './section/RoadmapSection';
+import PrepStepsSection from './section/PrepStepsSection';
 import SolutionSection from './section/SolutionSection';
 import PassBenefitsSection from './section/PassBenefitsSection';
 import PathMatchSection from './section/PathMatchSection';
@@ -56,6 +64,25 @@ import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
 
 export default function MembershipLanding() {
+  /*
+   * 진단 답은 여기서 든다. 진단 문항 · 결과 · 준비 단계 세 섹션이 같은 답을 봐야 해서
+   * 어느 한 섹션 안에 둘 수 없다. 전역 스토어는 쓰지 않는다 — 이 페이지 밖에서 쓸 일이
+   * 없고, 새로고침하면 사라지는 것이 맞는 상태다 (PRD 결정 Q2).
+   */
+  const [answers, setAnswers] = useState<CheckupAnswers>(EMPTY_CHECKUP_ANSWERS);
+  /*
+   * "다시 진단하기" 는 답을 비우는 것만으로는 부족하다. 지금 몇 번째 문항인지는
+   * CheckupSection 안의 상태라, key 를 바꿔 다시 마운트해 처음 문항으로 되돌린다.
+   */
+  const [attempt, setAttempt] = useState(0);
+
+  const result = resolveCheckupResult(answers);
+
+  const handleRestart = () => {
+    setAnswers(EMPTY_CHECKUP_ANSWERS);
+    setAttempt((prev) => prev + 1);
+  };
+
   return (
     <>
       <div className="membership-root">
@@ -70,13 +97,25 @@ export default function MembershipLanding() {
           <RealTalkSection />
 
           {/* 개편 시안 2 — 무료 진단 5문항 (FREE CHECK-UP) */}
-          <CheckupSection />
+          <CheckupSection
+            answers={answers}
+            key={attempt}
+            onAnswersChange={setAnswers}
+          />
+
+          {/* 개편 시안 3 — 진단 결과 (CAREER CHECK RESULT) */}
+          <CheckupResultSection
+            onRestart={handleRestart}
+            result={result}
+            stepsAnchorId={PREP_STEPS.anchorId}
+          />
 
           {/* 시안 3 — 채용공고 예시 + 카피 (WHY NOW) */}
           <JobMarketSection />
 
-          {/* 시안 4 — STEP 01~05 (START WITH A DRAFT) */}
-          <RoadmapSection />
+          {/* 개편 시안 4 — 준비 단계 카드 7장 (FROM PARTICIPANTS).
+              기존 RoadmapSection(STEP 01~05 세로 목록) 자리다. */}
+          <PrepStepsSection weakestAreaId={result?.weakestAreaId ?? null} />
 
           {/* 시안 5 — 결과물 3카드 + 하단 밴드 (YOUR JOB ROADMAP) */}
           <SolutionSection />

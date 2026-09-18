@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { RECOMMEND } from './data/recommend';
+import { ROADMAP } from './data/roadmap';
 import MembershipLanding from './MembershipLanding';
 
 // 이 테스트가 검증하는 것은 MembershipLanding 자신의 책임 — "어떤 섹션을 어떤 순서로
@@ -40,13 +41,17 @@ jest.mock('./section/CheckupSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CheckupSection" />,
 }));
+jest.mock('./section/CheckupResultSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="CheckupResultSection" />,
+}));
 jest.mock('./section/JobMarketSection', () => ({
   __esModule: true,
   default: () => <div data-testid="JobMarketSection" />,
 }));
-jest.mock('./section/RoadmapSection', () => ({
+jest.mock('./section/PrepStepsSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="RoadmapSection" />,
+  default: () => <div data-testid="PrepStepsSection" />,
 }));
 jest.mock('./section/SolutionSection', () => ({
   __esModule: true,
@@ -107,8 +112,9 @@ const EXPECTED_ORDER = [
   'MembershipNav',
   'RealTalkSection', //         개편 시안 1
   'CheckupSection', //          개편 시안 2
+  'CheckupResultSection', //    개편 시안 3
   'JobMarketSection', //        시안 3
-  'RoadmapSection', //          시안 4
+  'PrepStepsSection', //        개편 시안 4 (RoadmapSection 자리)
   'SolutionSection', //         시안 5
   'PassBenefitsSection', //     시안 6
   'PathMatchSection', //        시안 7
@@ -151,6 +157,8 @@ describe('MembershipLanding (LC-3294)', () => {
     for (const removed of [
       // 고민 3카드. 개편에서 REAL TALK 이 이 자리를 대신하며 빠졌다.
       'RecommendSection',
+      // STEP 01~05 세로 목록. 준비 단계 카드 7장이 이 자리를 대신한다.
+      'RoadmapSection',
       'VodHookSection',
       'ChallengeScheduleSection',
       'CommunityChatSection',
@@ -164,14 +172,17 @@ describe('MembershipLanding (LC-3294)', () => {
   });
 
   /*
-   * 위 목록은 data-testid 로만 확인한다. RecommendSection 은 더 이상 mock 대상이
-   * 아니라서 되살아나도 testid 가 붙지 않는다 — 실제 문구로 한 번 더 못박는다.
+   * 위 목록은 data-testid 로만 확인한다. RecommendSection·RoadmapSection 은 더 이상
+   * mock 대상이 아니라서 되살아나도 testid 가 붙지 않는다 — 실제 문구로 한 번 더 못박는다.
    */
-  it('고민 3카드의 문구가 화면에 남아 있지 않다', () => {
+  it('고민 3카드와 기존 STEP 목록의 문구가 화면에 남아 있지 않다', () => {
     render(<MembershipLanding />);
 
     for (const card of RECOMMEND.cards) {
       expect(screen.queryByText(card.title)).not.toBeInTheDocument();
+    }
+    for (const step of ROADMAP.steps) {
+      expect(screen.queryByText(step.title)).not.toBeInTheDocument();
     }
   });
 
