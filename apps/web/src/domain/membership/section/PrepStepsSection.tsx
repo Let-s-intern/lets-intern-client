@@ -1,13 +1,13 @@
 import { Fragment } from 'react';
 
-import type { CheckupAreaId } from '../data/checkup';
+import type { CheckupCaseId } from '../data/checkup';
 import type { PrepStep } from '../data/prepSteps';
 import { PREP_STEP_CARDS, PREP_STEPS } from '../data/prepSteps';
 import PrepStepCard from '../ui/PrepStepCard';
 
 interface Props {
-  /** 진단 전에는 null 이다. 이 영역을 든 카드 한 장만 강조한다 */
-  weakestAreaId: CheckupAreaId | null;
+  /** 진단 전에는 null 이다. 이 CASE 를 든 카드 한 장만 강조한다 */
+  caseId: CheckupCaseId | null;
 }
 
 const ARROW = (
@@ -27,10 +27,10 @@ const ARROW = (
 
 function StepRow({
   steps,
-  weakestAreaId,
+  caseId,
 }: {
   steps: readonly PrepStep[];
-  weakestAreaId: CheckupAreaId | null;
+  caseId: CheckupCaseId | null;
 }) {
   return (
     /*
@@ -45,7 +45,7 @@ function StepRow({
           <div className="min-w-0 md:flex-1">
             <PrepStepCard
               highlighted={
-                step.areaId !== undefined && step.areaId === weakestAreaId
+                caseId !== null && (step.caseIds?.includes(caseId) ?? false)
               }
               step={step}
             />
@@ -64,7 +64,7 @@ function StepRow({
  *
  * 지금 `RoadmapSection`(STEP 01~05 세로 목록) 자리를 대신한다.
  */
-export default function PrepStepsSection({ weakestAreaId }: Props) {
+export default function PrepStepsSection({ caseId }: Props) {
   return (
     <section className="bg-[#F7F8FC] py-16 md:py-24" id={PREP_STEPS.anchorId}>
       <div className="wrap rv">
@@ -85,16 +85,10 @@ export default function PrepStepsSection({ weakestAreaId }: Props) {
         </p>
 
         <div className="mt-12 flex flex-col gap-8 md:mt-16">
-          <StepRow
-            steps={PREP_STEP_CARDS.slice(0, 4)}
-            weakestAreaId={weakestAreaId}
-          />
+          <StepRow caseId={caseId} steps={PREP_STEP_CARDS.slice(0, 4)} />
           {/* 아래 줄은 세 장이다. 위 줄과 카드 폭을 맞추려고 폭을 줄여 가운데 둔다 */}
           <div className="md:mx-auto md:w-[75%]">
-            <StepRow
-              steps={PREP_STEP_CARDS.slice(4)}
-              weakestAreaId={weakestAreaId}
-            />
+            <StepRow caseId={caseId} steps={PREP_STEP_CARDS.slice(4)} />
           </div>
         </div>
       </div>

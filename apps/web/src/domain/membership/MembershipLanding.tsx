@@ -142,7 +142,7 @@ export default function MembershipLanding() {
 
           {/* 개편 시안 4 — 준비 단계 카드 7장 (FROM PARTICIPANTS).
               기존 RoadmapSection(STEP 01~05 세로 목록) 자리다. */}
-          <PrepStepsSection weakestAreaId={result?.weakestAreaId ?? null} />
+          <PrepStepsSection caseId={result?.caseId ?? null} />
 
           {/* 개편 시안 5 — 합격 사례 (REAL RESULTS) */}
           <PassResultsSection />

@@ -13,7 +13,7 @@
 import type { ChallengeType } from '@/schema';
 
 import { CHALLENGE_ITEMS } from './challengeModalItems';
-import type { CheckupAreaId } from './checkup';
+import type { CheckupCaseId } from './checkup';
 
 export type PrepStepKind = 'step' | 'checkpoint' | 'goal';
 
@@ -45,13 +45,13 @@ export interface PrepStep {
   /** 할 일 2줄 */
   todos: readonly [string, string];
   /**
-   * 진단 결과가 이 카드를 고르는 기준.
+   * 이 카드에 "여기부터 시작" 배지가 붙는 CASE (PRD 4.7).
    *
-   * **영역 하나에 카드 하나다.** 둘 이상이 같은 영역을 가리키면 "여기부터 시작" 배지가
-   * 두 장에 붙어 시작점이 사라진다. 그래서 STEP 04·CHECKPOINT·GOAL 에는 영역이 없다 —
-   * 시작점은 늘 처음 막힌 4영역 중 하나다.
+   * **CASE 하나는 카드 한 장에만 있어야 한다.** 둘 이상이 같은 CASE 를 가리키면 배지가
+   * 두 장에 붙어 시작점이 사라진다. 한 카드가 여러 CASE 를 받는 것은 괜찮다 — D1·D2 는
+   * 필요한 준비가 STEP 05 로 같다. 준비가 끝난 CASE E 는 어느 카드에도 없다.
    */
-  areaId?: CheckupAreaId;
+  caseIds?: readonly CheckupCaseId[];
   expand?: PrepStepExpand;
 }
 
@@ -83,7 +83,7 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
     label: 'STEP 01',
     title: '지원할 직무와 기준 정하기',
     todos: ['관심 직무의 채용공고·필요역량 분석', '마케팅 지원 서류 초안 작성'],
-    areaId: 'direction',
+    caseIds: ['A'],
     expand: {
       toggleLabel: '혼자하기 어렵다면?',
       programs: [challengeProgram('마케팅', 'MARKETING')],
@@ -99,7 +99,7 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
       '지금까지의 경험 빠짐없이 작성',
       '직무와 연결할 경험·인사이트 찾기',
     ],
-    areaId: 'experience',
+    caseIds: ['B'],
     expand: {
       toggleLabel: '혼자하기 어렵다면?',
       programs: [challengeProgram('경험정리', 'EXPERIENCE_SUMMARY')],
@@ -138,7 +138,7 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
       '이력서·자소서·포트폴리오 초안 완성',
       '채용공고에 맞게 핵심 경험 다듬기',
     ],
-    areaId: 'document',
+    caseIds: ['C'],
     expand: {
       toggleLabel: '혼자하기 어렵다면?',
       programs: [
@@ -179,7 +179,7 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
     label: 'STEP 05',
     title: '지원 및 면접 준비 하기',
     todos: ['경험 기반 예상 질문 제작하기', '질문에 따른 답변 세트 준비하기'],
-    areaId: 'apply',
+    caseIds: ['D1', 'D2'],
     expand: {
       toggleLabel: '혼자하기 어렵다면?',
       programs: [challengeProgram('면접', 'MEETING_PREPARATION')],
@@ -195,10 +195,10 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
   },
 ];
 
-/** 진단 결과가 가리키는 카드. 없으면 undefined */
-export function findPrepStepByArea(
-  areaId: CheckupAreaId | null,
+/** 진단 결과가 가리키는 카드. CASE E 와 진단 전에는 undefined */
+export function findPrepStepByCase(
+  caseId: CheckupCaseId | null,
 ): PrepStep | undefined {
-  if (!areaId) return undefined;
-  return PREP_STEP_CARDS.find((step) => step.areaId === areaId);
+  if (!caseId) return undefined;
+  return PREP_STEP_CARDS.find((step) => step.caseIds?.includes(caseId));
 }
