@@ -2,9 +2,11 @@ import {
   CHECKUP_AREAS,
   CHECKUP_QUESTIONS,
   CHECKUP_RESULT_COPY,
+  CHECKUP_STATUS_LABEL,
   EMPTY_CHECKUP_ANSWERS,
   findCheckupArea,
   resolveAreaScores,
+  resolveAreaStatus,
   resolveCaseAreaIndex,
   resolveCheckupCase,
   resolveCheckupResult,
@@ -229,6 +231,30 @@ describe('resolveCheckupCase', () => {
   });
 });
 
+describe('resolveAreaStatus', () => {
+  it('80 이상은 ready, 79 는 ongoing 이다', () => {
+    expect(resolveAreaStatus(80, false)).toBe('ready');
+    expect(resolveAreaStatus(79, false)).toBe('ongoing');
+  });
+
+  it('55 는 ongoing, 54 는 later 다', () => {
+    expect(resolveAreaStatus(55, false)).toBe('ongoing');
+    expect(resolveAreaStatus(54, false)).toBe('later');
+  });
+
+  /* CASE 를 정한 축은 점수와 무관하게 강조다 — 100 점이어도 그 축이 시작점이다. */
+  it('CASE 를 정한 축은 점수와 상관없이 weakest 다', () => {
+    expect(resolveAreaStatus(12, true)).toBe('weakest');
+    expect(resolveAreaStatus(95, true)).toBe('weakest');
+  });
+
+  it('상태 4종에 모두 캡션이 있다', () => {
+    for (const status of ['weakest', 'ready', 'ongoing', 'later'] as const) {
+      expect(CHECKUP_STATUS_LABEL[status].length).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('resolveCheckupResult', () => {
   it('답이 덜 찼으면 null 이다', () => {
     expect(resolveCheckupResult([0, 0, 0, 0, null])).toBeNull();
@@ -259,7 +285,7 @@ describe('resolveCheckupResult', () => {
     expect(weakest?.[0].area.id).toBe('direction');
   });
 
-  it('점수 55 이상이면 진행 중, 그 아래면 이후 보완이다', () => {
+  it('축마다 점수 구간에 맞는 상태를 단다', () => {
     // 15 / 39 / 65 / 95 — 시안 3.png 와 같은 순서의 조합이다
     const result = resolveCheckupResult([0, 1, 1, 2, 3]);
     const status = Object.fromEntries(
@@ -270,8 +296,23 @@ describe('resolveCheckupResult', () => {
       direction: 'weakest',
       experience: 'later',
       document: 'ongoing',
-      apply: 'ongoing',
+      apply: 'ready',
     });
+  });
+
+  /* CASE E 는 강조 축이 없다. 네 축 모두 "준비가 잘 되어 있어요" 다 (PRD 4.5). */
+  it('CASE E 는 weakest 축 없이 네 축 모두 ready 다', () => {
+    // 95 / 82 / 95 / 95
+    const result = resolveCheckupResult([3, 3, 2, 3, 3]);
+
+    expect(result?.caseId).toBe('E');
+    expect(result?.weakestAreaId).toBeNull();
+    expect(result?.scores.map((score) => score.status)).toEqual([
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+    ]);
   });
 
   it('축 점수를 축 순서대로 그대로 싣는다', () => {

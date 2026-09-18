@@ -186,17 +186,18 @@ export const EMPTY_CHECKUP_ANSWERS: CheckupAnswers = CHECKUP_QUESTIONS.map(
   () => null,
 );
 
-export type CheckupAreaStatus = 'weakest' | 'later' | 'ongoing';
+export type CheckupAreaStatus = 'weakest' | 'ready' | 'ongoing' | 'later';
 
-/** 시안 3.png 왼쪽 카드의 막대 아래 한 줄 */
+/** 막대 아래 한 줄 (PRD 4.5) */
 export const CHECKUP_STATUS_LABEL: Record<CheckupAreaStatus, string> = {
   weakest: '가장 먼저 보완이 필요해요',
-  later: '이후 보완이 필요해요',
+  ready: '준비가 잘 되어 있어요',
   ongoing: '진행 중이에요',
+  later: '이후 보완이 필요해요',
 };
 
 /** 점수가 이 값 이상이면 "진행 중이에요" 다 */
-const ONGOING_THRESHOLD = 55;
+const ONGOING_SCORE = 55;
 
 /**
  * 진단 결과 6종 (PRD 4.3).
@@ -318,6 +319,23 @@ export function resolveCheckupCase(
   return applyAnswer >= D2_MIN_OPTION_INDEX ? 'D2' : 'D1';
 }
 
+/**
+ * 축 하나의 상태. 점수 구간은 PRD 4.5 표다.
+ *
+ * **강조는 CASE 를 정한 축 하나뿐이다.** 점수가 낮은 축이 여럿이어도 나머지는 기본
+ * 색 + "이후 보완이 필요해요" 로 둔다 — 전부 칠하면 "무엇부터" 라는 신호가 사라진다.
+ * CASE E 는 정해진 축이 없고 네 축이 모두 80 이상이라 자연히 전부 `ready` 가 된다.
+ */
+export function resolveAreaStatus(
+  score: number,
+  isCaseArea: boolean,
+): CheckupAreaStatus {
+  if (isCaseArea) return 'weakest';
+  if (score >= CHECKUP_READY_SCORE) return 'ready';
+  if (score >= ONGOING_SCORE) return 'ongoing';
+  return 'later';
+}
+
 /** 막대 4개와 라벨까지 포함한 결과. 답이 덜 찼으면 null */
 export function resolveCheckupResult(
   answers: CheckupAnswers,
@@ -328,17 +346,11 @@ export function resolveCheckupResult(
 
   const caseAreaIndex = resolveCaseAreaIndex(areaScores);
 
-  const scores = CHECKUP_AREAS.map((area, index) => {
-    const score = areaScores[index];
-    const status: CheckupAreaStatus =
-      index === caseAreaIndex
-        ? 'weakest'
-        : score >= ONGOING_THRESHOLD
-          ? 'ongoing'
-          : 'later';
-
-    return { area, score, status };
-  });
+  const scores = CHECKUP_AREAS.map((area, index) => ({
+    area,
+    score: areaScores[index],
+    status: resolveAreaStatus(areaScores[index], index === caseAreaIndex),
+  }));
 
   return {
     caseId,
