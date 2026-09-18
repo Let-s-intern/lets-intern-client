@@ -72,6 +72,38 @@ describe('CHECKUP_QUESTIONS', () => {
     expect(new Set(all).size).toBe(all.length);
   });
 
+  /*
+   * 배점은 운영이 조정하는 값이라 표를 여기 한 번 더 적어 둔다. 중복이 아니라
+   * "숫자를 바꾸면 테스트도 함께 바꾼다" 는 확인 절차다.
+   *
+   * PRD 4.1 본문은 "②와 ③ 사이를 가장 넓게 둔다" 고 적었지만 표는 그렇지 않다 —
+   * Q1 은 ③→④(30)가 ②→③(25)보다 넓고, Q5 는 ②→③(26)이 가장 좁다. 실제 설계값은
+   * 표이므로 표를 따랐고, 간격 순위는 단언하지 않는다.
+   */
+  it('문항마다 배점이 PRD 4.1 표와 같다', () => {
+    expect(CHECKUP_QUESTIONS.map((question) => question.scores)).toEqual([
+      [15, 40, 65, 95],
+      [15, 40, 70, 95],
+      [12, 38, 68, 95],
+      [12, 40, 65, 95],
+      [15, 42, 68, 95],
+    ]);
+  });
+
+  it('배점이 선택지와 같은 수이고 오름차순이며 0~100 안이다', () => {
+    for (const question of CHECKUP_QUESTIONS) {
+      expect(question.scores).toHaveLength(question.options.length);
+
+      question.scores.forEach((score, index) => {
+        expect(score).toBeGreaterThanOrEqual(0);
+        expect(score).toBeLessThanOrEqual(100);
+        if (index > 0) {
+          expect(score).toBeGreaterThan(question.scores[index - 1]);
+        }
+      });
+    }
+  });
+
   it('안내 박스는 Q3 에만 있고 예시가 5줄이다', () => {
     const withHint = CHECKUP_QUESTIONS.filter((q) => q.hint);
     expect(withHint.map((q) => q.no)).toEqual(['03']);

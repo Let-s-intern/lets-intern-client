@@ -34,10 +34,18 @@ export interface CheckupQuestion {
   question: string;
   hint?: CheckupHint;
   /**
-   * **낮은 수준 → 높은 수준 순서다.** 이 순번이 그대로 영역 점수가 되므로,
-   * 순서를 바꾸면 진단 결과가 뒤집힌다.
+   * **낮은 수준 → 높은 수준 순서다.** 선택지 순서가 곧 배점 순서라,
+   * 순서를 바꾸면 `scores` 도 함께 바꿔야 한다.
    */
   options: readonly string[];
+  /**
+   * 선택지와 같은 순서의 배점(0~100).
+   *
+   * **배점은 여기가 유일한 출처다.** 축 점수·CASE 판정·막대 숫자가 모두 이 값을
+   * 읽는다. 운영이 조정하는 값이라 두 곳에 적으면 한쪽만 바뀐다 — 특정 CASE 로 더
+   * 보내고 싶으면 해당 구간을 내린다.
+   */
+  scores: readonly [number, number, number, number];
 }
 
 export const CHECKUP_AREAS = [
@@ -85,6 +93,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '지원하고 싶은 직무는 정했지만, 내 경험으로 인턴 · 신입 · 경력 중 어디까지 지원할 수 있는지 모르겠어요.',
       '목표 직무가 명확하고, 내 경험과 JD를 비교해 지원할 공고를 판단할 수 있어요.',
     ],
+    scores: [15, 40, 65, 95],
   },
   {
     no: '02',
@@ -97,6 +106,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '활용할 경험 2~3개는 고를 수 있지만 직무 역량과 연결하는 게 어려워요.',
       '지원하는 직무와 JD에 따라 활용할 경험을 골라낼 수 있어요.',
     ],
+    scores: [15, 40, 70, 95],
   },
   {
     no: '03',
@@ -119,6 +129,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '내가 어떤 판단을 했고 어떻게 실행했는지는 설명할 수 있어요.',
       '결과가 아쉬워도 문제 → 판단/가설 → 실행 → 결과 → 회고 · 인사이트 → 다음 액션까지 설명할 수 있어요.',
     ],
+    scores: [12, 38, 68, 95],
   },
   {
     no: '04',
@@ -131,6 +142,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '이력서 · 자소서 · 포트폴리오는 있지만 대부분의 기업에 비슷하게 제출해요.',
       'JD의 요구 역량에 따라 경험의 순서 · 성과 · 강조점을 바꿔 제출할 수 있어요.',
     ],
+    scores: [12, 40, 65, 95],
   },
   {
     no: '05',
@@ -142,6 +154,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '서류 합격 경험은 있지만 면접에서 내 경험을 설명하는 것이 어려워요.',
       '지원 결과를 기록하고 서류 · 면접 결과를 바탕으로 다음 지원을 계속 개선하고 있어요.',
     ],
+    scores: [15, 42, 68, 95],
   },
 ] as const;
 
