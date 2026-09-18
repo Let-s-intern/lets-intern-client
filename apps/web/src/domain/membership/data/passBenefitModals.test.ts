@@ -37,24 +37,23 @@ describe('PASS_BENEFITS_MODALS (개편 시안 6)', () => {
   });
 
   /*
-   * 기존 카드는 링크가 없어도 남는다. 대학내일 AE 카드가 그렇고, 지금 화면에도 나온다 —
-   * 걸러내면 있던 카드가 사라지는 회귀가 된다. 버튼만 빠진다.
+   * 네 강의 모두 상세 주소를 받았다. 주소가 빠진 카드가 다시 들어오면 버튼 없는 카드가
+   * 조용히 섞이므로 여기서 막는다.
    */
-  it('VOD 는 기존 카드를 모두 그린다', () => {
-    expect(PASS_BENEFIT_VOD_CARDS).toHaveLength(MARKETER_VOD.cards.length);
-    expect(PASS_BENEFIT_VOD_CARDS.map((card) => card.title)).toContain(
-      '대학내일 AE 현직자',
+  it('VOD 4종이 모두 상세 주소를 가진다', () => {
+    expect(PASS_BENEFIT_VOD_CARDS).toHaveLength(4);
+    expect(PASS_BENEFIT_VOD_CARDS.every((card) => Boolean(card.url))).toBe(
+      true,
     );
+    expect(MARKETER_VOD.title).toContain('4종');
   });
 
-  /*
-   * 링크를 못 받은 카드는 목록에서 빠지되 문구는 데이터에 남아 있어야 한다. 빠졌다고
-   * 지워 버리면 링크를 받았을 때 시안을 다시 읽어야 한다 (PRD 7절 C).
-   */
-  it('링크를 못 받은 쥬디 멘토 VOD 는 화면 목록에 없다', () => {
-    const titles = PASS_BENEFIT_VOD_CARDS.map((card) => card.title);
-    expect(titles).not.toContain(
-      '렛츠커리어 CEO 쥬디 멘토의 마케팅 경험 합격 기준',
-    );
+  it('카드 순서가 시안과 같다', () => {
+    expect(PASS_BENEFIT_VOD_CARDS.map((card) => card.banner)).toEqual([
+      'vod-seminar-1.png',
+      'vod-seminar-3.png',
+      'vod-seminar-2.png',
+      'vod-seminar-4.png',
+    ]);
   });
 });
