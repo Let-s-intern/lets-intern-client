@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { captureBenefitModalOpened } from '../analytics';
 import {
   PASS_BENEFITS_MODALS,
   PASS_INTRO,
@@ -24,6 +25,11 @@ export default function PassIntroSection() {
   const [openId, setOpenId] = useState<PassBenefitId | null>(null);
   const openEntry =
     PASS_BENEFITS_MODALS.find((entry) => entry.id === openId) ?? null;
+
+  const handleOpen = (id: PassBenefitId) => {
+    setOpenId(id);
+    captureBenefitModalOpened({ benefitId: id });
+  };
 
   return (
     <section className="bg-[#EEF0FB] py-16 md:py-24" id={PASS_INTRO.anchorId}>
@@ -82,7 +88,7 @@ export default function PassIntroSection() {
 
               <button
                 className="text-primary text-xsmall14 mt-6 self-end font-bold"
-                onClick={() => setOpenId(entry.id)}
+                onClick={() => handleOpen(entry.id)}
                 type="button"
               >
                 {PASS_INTRO.cardCtaLabel} →

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { capturePrepStepExpanded } from '../analytics';
 import { getChallengeThumbnailSrc } from '../data/challengeModalItems';
 import type { PrepStep, PrepStepProgram } from '../data/prepSteps';
 import { PREP_STEPS } from '../data/prepSteps';
@@ -84,6 +85,16 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
   const isCheckpoint = step.kind === 'checkpoint';
   const program = step.expand?.programs[tab] ?? step.expand?.programs[0];
 
+  /*
+   * 펼칠 때만 보낸다. 접는 것은 "이 단계를 더 보겠다" 는 뜻이 아니다.
+   * 갱신 함수 안에서 보내면 StrictMode 가 그 함수를 두 번 부를 때 이벤트도 두 번 나간다.
+   */
+  const handleToggle = () => {
+    const next = !expanded;
+    setExpanded(next);
+    if (next) capturePrepStepExpanded({ stepId: step.id });
+  };
+
   const border = isCheckpoint
     ? 'border-[#F1642B]'
     : highlighted
@@ -148,7 +159,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
               className={`text-xsmall14 border-neutral-85 flex w-full items-center justify-between gap-2 border-t pt-4 text-left ${
                 isCheckpoint ? 'text-neutral-0 font-bold' : 'text-neutral-30'
               }`}
-              onClick={() => setExpanded((prev) => !prev)}
+              onClick={handleToggle}
               type="button"
             >
               <span>{step.expand.toggleLabel}</span>

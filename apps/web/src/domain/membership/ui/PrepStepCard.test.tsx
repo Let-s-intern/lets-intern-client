@@ -1,5 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+// 이벤트 이름·속성은 `analytics.test.ts` 가 덮는다. 여기서는 "언제 부르는가" 만 본다.
+jest.mock('../analytics');
+
+import { capturePrepStepExpanded } from '../analytics';
 import type { PrepStep } from '../data/prepSteps';
 import { PREP_STEP_CARDS, PREP_STEPS } from '../data/prepSteps';
 import PrepStepCard from './PrepStepCard';
@@ -115,5 +119,60 @@ describe('PrepStepCard (시안 4-0 · 4-1)', () => {
 
     rerender(<PrepStepCard highlighted step={STEP_01} />);
     expect(screen.getByText(PREP_STEPS.resultBadge)).toBeInTheDocument();
+  });
+});
+
+describe('PrepStepCard 펼치기 이벤트', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  /* 접는 것은 "이 단계를 더 보겠다" 가 아니다. 접을 때 함께 세면 수치가 두 배가 된다. */
+  it('펼칠 때만 보내고 접을 때는 보내지 않는다', () => {
+    render(<PrepStepCard step={STEP_01} />);
+    const toggle = screen.getByText(STEP_01.expand!.toggleLabel);
+
+    fireEvent.click(toggle);
+    expect(capturePrepStepExpanded).toHaveBeenCalledTimes(1);
+    expect(capturePrepStepExpanded).toHaveBeenCalledWith({
+      stepId: STEP_01.id,
+    });
+
+    fireEvent.click(toggle);
+    expect(capturePrepStepExpanded).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(toggle);
+    expect(capturePrepStepExpanded).toHaveBeenCalledTimes(2);
+  });
+
+  it('카드마다 자기 STEP 을 보낸다', () => {
+    render(
+      <>
+        <PrepStepCard step={STEP_01} />
+        <PrepStepCard step={CHECKPOINT} />
+      </>,
+    );
+
+    fireEvent.click(screen.getByText(CHECKPOINT.expand!.toggleLabel));
+
+    expect(capturePrepStepExpanded).toHaveBeenCalledWith({
+      stepId: CHECKPOINT.id,
+    });
+  });
+
+  /* 탭은 펼침이 아니라 안쪽 전환이다. 여기서 또 보내면 한 번 펼친 것이 여러 번이 된다. */
+  it('펼친 뒤 탭을 바꿔도 더 보내지 않는다', () => {
+    render(<PrepStepCard step={STEP_03} />);
+    fireEvent.click(screen.getByText(STEP_03.expand!.toggleLabel));
+
+    fireEvent.click(screen.getByText(STEP_03.expand!.programs[2].tabLabel));
+
+    expect(capturePrepStepExpanded).toHaveBeenCalledTimes(1);
+  });
+
+  it('GOAL 은 펼침 토글이 없어 이벤트도 없다', () => {
+    render(<PrepStepCard step={GOAL} />);
+
+    expect(capturePrepStepExpanded).not.toHaveBeenCalled();
   });
 });

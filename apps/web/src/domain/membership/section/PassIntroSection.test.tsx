@@ -1,5 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+// 이벤트 이름·속성은 `analytics.test.ts` 가 덮는다. 여기서는 "언제 부르는가" 만 본다.
+jest.mock('../analytics');
+
+import { captureBenefitModalOpened } from '../analytics';
 import { CHALLENGE_ITEMS } from '../data/challengeModalItems';
 import { GUIDEBOOK_ITEMS } from '../data/guidebooks';
 import { PASS_BENEFITS_MODALS, PASS_INTRO } from '../data/passBenefitModals';
@@ -88,5 +92,38 @@ describe('PassIntroSection (개편 시안 6-0)', () => {
       'href',
       `#${PASS_INTRO.ctaAnchor}`,
     );
+  });
+});
+
+describe('혜택 모달 열기 이벤트', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('카드마다 자기 혜택 종류를 보낸다', () => {
+    render(<PassIntroSection />);
+
+    PASS_BENEFITS_MODALS.forEach((entry, index) => {
+      openCard(index);
+      fireEvent.click(screen.getByRole('button', { name: '닫기' }));
+
+      expect(captureBenefitModalOpened).toHaveBeenNthCalledWith(index + 1, {
+        benefitId: entry.id,
+      });
+    });
+
+    expect(captureBenefitModalOpened).toHaveBeenCalledTimes(
+      PASS_BENEFITS_MODALS.length,
+    );
+  });
+
+  /* 닫기는 열기가 아니다. 닫을 때도 세면 열린 횟수가 두 배가 된다. */
+  it('모달을 닫을 때는 보내지 않는다', () => {
+    render(<PassIntroSection />);
+
+    openCard(0);
+    fireEvent.click(screen.getByRole('button', { name: '닫기' }));
+
+    expect(captureBenefitModalOpened).toHaveBeenCalledTimes(1);
   });
 });
