@@ -122,11 +122,19 @@ export default function RealTalkSection() {
 
         <div className="mt-7 text-center">
           <a
-            className="text-primary inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold shadow-[0_2px_16px_rgba(0,0,0,0.08)]"
+            className="inline-flex rounded-full bg-white px-8 py-4 shadow-[0_2px_16px_rgba(0,0,0,0.08)]"
             href={`#${CHECKUP.anchorId}`}
           >
-            {REAL_TALK.ctaLabel}
-            <span aria-hidden="true">↓</span>
+            {/*
+             * 글자색은 `<a>` 가 아니라 안쪽 span 이 든다. `styles/base.css` 의
+             * `.membership-root a { color: inherit }` 은 명시도가 (0,1,1) 이라
+             * Tailwind 의 `.text-primary` (0,1,0) 를 순서와 무관하게 이긴다 —
+             * `<a>` 에 직접 걸면 색이 그냥 먹지 않는다.
+             */}
+            <span className="text-primary flex items-center gap-2 text-base font-bold">
+              {REAL_TALK.ctaLabel}
+              <span aria-hidden="true">↓</span>
+            </span>
           </a>
         </div>
       </div>
