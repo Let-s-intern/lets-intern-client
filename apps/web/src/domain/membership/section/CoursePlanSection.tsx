@@ -73,18 +73,6 @@ export default function CoursePlanSection() {
       <div className="cp-body-band">
         <div className="wrap">
           <div className="rv">
-            <div className="cp-lead">
-              <h3>
-                {COURSE_PLAN_BODY.titleLines.map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < COURSE_PLAN_BODY.titleLines.length - 1 && <br />}
-                  </span>
-                ))}
-              </h3>
-              <p>{COURSE_PLAN_BODY.sub}</p>
-            </div>
-
             {/* 시안 8 상단의 유형 선택. 고른 유형이 매트릭스·주 단위와 그 위 문구를 바꾼다. */}
             <div className="cp-types" role="group" aria-label="내 상황 고르기">
               {COURSE_PLAN_TYPES.map((option) => (
@@ -104,10 +92,11 @@ export default function CoursePlanSection() {
 
             <CoursePlanToggle active={view} onChange={setView} />
 
-            <div className="cp-matrix-head">
-              <h4>{COURSE_PLAN_BODY.matrixTitle[type]}</h4>
-              <p>{COURSE_PLAN_BODY.matrixSub}</p>
-            </div>
+            {/* 시안 9 는 유형 문구와 세미나 안내를 한 줄로 이어 붙인다 */}
+            <p className="cp-matrix-head">
+              <span>{COURSE_PLAN_BODY.matrixTitle[type]}</span>{' '}
+              <span>{COURSE_PLAN_BODY.matrixSub}</span>
+            </p>
 
             {/* key 로 뷰 전환마다 페이드 애니메이션을 재실행(.rv 리빌과 독립) */}
             <div className="cp-view" key={view}>
