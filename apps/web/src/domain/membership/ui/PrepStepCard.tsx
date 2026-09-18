@@ -110,7 +110,12 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
       ) : null}
 
       <div
-        className={`rounded-xxl flex h-full flex-col border p-6 ${border} ${
+        /*
+         * 행이 `items-start` 라(펼친 카드만 길어지게) 접힌 카드끼리는 제 높이를 쓴다.
+         * 제목 줄 수가 달라 높이가 들쭉날쭉해지므로 접힌 높이만 min-height 로 맞춘다.
+         * 펼치면 이 값을 넘어 카드가 자란다.
+         */
+        className={`rounded-xxl flex h-full flex-col border p-6 md:min-h-[16.75rem] ${border} ${
           isGoal
             ? 'border-transparent bg-gradient-to-br from-[#1B2038] to-[#3A3F75]'
             : 'bg-white'

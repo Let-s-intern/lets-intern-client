@@ -13,7 +13,8 @@ interface Props {
 const ARROW = (
   <svg
     aria-hidden="true"
-    className="hidden h-5 w-5 shrink-0 self-center text-neutral-50 md:block"
+    // 행이 items-start 라 화살표도 위에 붙는다. 접힌 카드의 세로 가운데쯤에 오도록 내린다.
+    className="hidden h-5 w-5 shrink-0 self-start text-neutral-50 md:mt-[6.5rem] md:block"
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -32,7 +33,12 @@ function StepRow({
   weakestAreaId: CheckupAreaId | null;
 }) {
   return (
-    <div className="flex flex-col gap-8 md:flex-row md:gap-3">
+    /*
+     * `items-start` 가 핵심이다. 기본값(stretch)이면 한 장을 펼쳤을 때 같은 줄 카드가
+     * 모두 그 높이로 늘어나, 내용은 없는데 카드만 길어진 빈 칸이 생긴다.
+     * 펼친 카드만 길어지고 나머지는 제 높이를 지킨다.
+     */
+    <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-3">
       {steps.map((step, index) => (
         <Fragment key={step.id}>
           {index > 0 ? ARROW : null}
