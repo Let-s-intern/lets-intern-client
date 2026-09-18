@@ -47,34 +47,67 @@ describe('CheckupResultSection (시안 3)', () => {
     expect(screen.getAllByTestId('checkup-area-bar')).toHaveLength(
       CHECKUP_AREAS.length,
     );
-    for (const area of CHECKUP_AREAS) {
-      expect(screen.getByText(area.label)).toBeInTheDocument();
-    }
+    // 축 이름은 번호와 라벨 두 조각이고 사이는 여백(mr-2)이라 글자로는 붙어 있다
+    expect(
+      screen
+        .getAllByTestId('checkup-area-name')
+        .map((name) => name.textContent),
+    ).toEqual(CHECKUP_AREAS.map((area) => `${area.no}${area.label}`));
   });
 
   /*
-   * 주황 막대가 둘이면 "가장 먼저 보완할 영역 하나" 라는 결과 자체가 무너진다.
+   * 강조 막대가 둘이면 "가장 먼저 보완할 영역 하나" 라는 결과 자체가 무너진다.
    */
-  it('주황 막대는 판정된 영역 하나뿐이다', () => {
+  it('강조는 판정된 축 하나에만, 네 자리에 함께 붙는다', () => {
     renderSection();
 
     const weakest = screen
       .getAllByTestId('checkup-area-bar')
       .filter((bar) => bar.getAttribute('data-status') === 'weakest');
-
     expect(weakest).toHaveLength(1);
-    expect(weakest[0]).toHaveClass('bg-[#F1642B]');
+
+    const names = screen.getAllByTestId('checkup-area-name');
+    const scores = screen.getAllByTestId('checkup-area-score');
+    const bars = screen.getAllByTestId('checkup-area-bar');
+    const captions = screen.getAllByTestId('checkup-area-caption');
+
+    // CASE A — 01 축이 강조다
+    expect(names[0]).toHaveClass('text-[#F0563F]');
+    expect(scores[0]).toHaveClass('text-[#F0563F]');
+    expect(bars[0]).toHaveClass('bg-[#F0563F]');
+    expect(captions[0]).toHaveClass('font-bold', 'text-[#F0563F]');
+
+    for (const index of [1, 2, 3]) {
+      expect(names[index]).toHaveClass('text-[#11142B]');
+      expect(scores[index]).toHaveClass('text-[#4B5BF0]');
+      expect(bars[index]).toHaveClass('bg-[#4B5BF0]');
+      expect(captions[index]).toHaveClass('text-[#808799]');
+    }
   });
 
-  it('막대 길이가 축 점수(0~100)와 같다', () => {
+  /* CASE E 는 강조 축이 없다 — 네 축 모두 기본 색이다 */
+  it('CASE E 에서는 강조 축이 없다', () => {
+    renderSection(resolveCheckupResult([3, 3, 3, 3, 3]));
+
+    for (const bar of screen.getAllByTestId('checkup-area-bar')) {
+      expect(bar).toHaveClass('bg-[#4B5BF0]');
+      expect(bar).toHaveAttribute('data-status', 'ready');
+    }
+  });
+
+  it('막대 길이와 점수 숫자가 축 점수(0~100)와 같다', () => {
     // 15 / 39 / 65 / 95 — 배점표에서 나온 축 점수다
     renderSection(resolveCheckupResult([0, 1, 1, 2, 3]));
 
     const widths = screen
       .getAllByTestId('checkup-area-bar')
       .map((bar) => bar.style.width);
+    const numbers = screen
+      .getAllByTestId('checkup-area-score')
+      .map((score) => score.textContent);
 
     expect(widths).toEqual(['15%', '39%', '65%', '95%']);
+    expect(numbers).toEqual(['15', '39', '65', '95']);
   });
 
   it('판정된 영역의 결과 문구를 보여준다', () => {

@@ -52,21 +52,49 @@ const RESTART_ICON = (
   </svg>
 );
 
-/** 영역 하나의 막대와 상태 한 줄 */
+/**
+ * 축 하나의 이름 · 점수 · 막대 · 상태 한 줄 (PRD 4.5).
+ *
+ * **강조는 네 자리에 동시에 붙는다.** 이름·점수·막대·캡션 중 한 곳만 칠하면 어느 축을
+ * 먼저 보라는 신호인지 흐려진다. 강조 축은 CASE 를 정한 하나뿐이고(`weakest`),
+ * 점수가 낮은 다른 축은 기본 색으로 둔다.
+ */
 function AreaBar({ score }: { score: CheckupAreaScore }) {
   const isWeakest = score.status === 'weakest';
 
   return (
     <li>
-      <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-bold">
-        <span className="num text-neutral-45 mr-2">{score.area.no}</span>
-        {score.area.label}
-      </p>
+      <div className="flex items-baseline justify-between gap-3">
+        <p
+          className={`text-xsmall14 md:text-xsmall16 font-bold ${
+            isWeakest ? 'text-[#F0563F]' : 'text-[#11142B]'
+          }`}
+          data-testid="checkup-area-name"
+        >
+          <span
+            className={`num mr-2 ${
+              isWeakest ? 'text-[#F0563F]' : 'text-neutral-45'
+            }`}
+          >
+            {score.area.no}
+          </span>
+          {score.area.label}
+        </p>
 
-      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[#EDEFF5]">
+        <span
+          className={`text-xsmall16 md:text-small18 font-bold ${
+            isWeakest ? 'text-[#F0563F]' : 'text-[#4B5BF0]'
+          }`}
+          data-testid="checkup-area-score"
+        >
+          {score.score}
+        </span>
+      </div>
+
+      <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-[#F1F3FA]">
         <div
           className={`h-full rounded-full ${
-            isWeakest ? 'bg-[#F1642B]' : 'bg-[#293662]'
+            isWeakest ? 'bg-[#F0563F]' : 'bg-[#4B5BF0]'
           }`}
           data-status={score.status}
           data-testid="checkup-area-bar"
@@ -76,8 +104,9 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
 
       <p
         className={`text-xsmall14 mt-2 flex items-center gap-1.5 ${
-          isWeakest ? 'font-bold text-[#F1642B]' : 'text-neutral-45'
+          isWeakest ? 'font-bold text-[#F0563F]' : 'font-normal text-[#808799]'
         }`}
+        data-testid="checkup-area-caption"
       >
         {isWeakest ? WARNING_ICON : null}
         {CHECKUP_STATUS_LABEL[score.status]}
