@@ -3,9 +3,11 @@ import { PASS_RESULTS } from '../data/passResults';
 /**
  * 개편 시안 5 — 합격 사례 (REAL RESULTS).
  *
- * 카드 줄은 가로 스크롤이다. 시안은 좌우로 천천히 흐르는 캐러셀이지만 자동 흐름은 넣지
- * 않았다 — keyframes 가 필요해 CSS 파일을 건드려야 하고, 카드에 링크가 없어 흐름이
- * 전하는 정보도 없다. 좌우 끝이 흐리게 잘리는 모습은 mask-image 로 같게 만든다.
+ * 카드 줄은 왼쪽으로 끊김 없이 흐른다. 같은 목록을 두 벌 이어 붙이고 한 벌 폭만큼
+ * 밀었다가 되돌아오므로 이음매가 보이지 않는다 (`styles/animations.css` 의 marquee).
+ * 좌우 끝이 흐리게 잘리는 모습은 mask-image 로 시안과 같게 만든다.
+ *
+ * 둘째 벌은 화면 낭독기에 같은 문장을 두 번 읽히지 않도록 `aria-hidden` 이다.
  */
 export default function PassResultsSection() {
   const title = PASS_RESULTS.titleLines[0];
@@ -41,7 +43,7 @@ export default function PassResultsSection() {
         시안처럼 "계속 이어지는 목록" 으로 보인다. wrap 안에 두면 여백에서 끊긴다.
       */}
       <div
-        className="mt-10 overflow-x-auto [scrollbar-width:none] md:mt-14 [&::-webkit-scrollbar]:hidden"
+        className="marquee mt-10 overflow-hidden md:mt-14"
         style={{
           maskImage:
             'linear-gradient(to right, transparent, #000 12%, #000 88%, transparent)',
@@ -49,11 +51,12 @@ export default function PassResultsSection() {
             'linear-gradient(to right, transparent, #000 12%, #000 88%, transparent)',
         }}
       >
-        <ul className="flex w-max gap-4 px-6 md:gap-6 md:px-10">
-          {PASS_RESULTS.cards.map((card) => (
+        <ul className="marquee-track flex w-max gap-4 pl-4 md:gap-6 md:pl-6">
+          {[...PASS_RESULTS.cards, ...PASS_RESULTS.cards].map((card, index) => (
             <li
+              aria-hidden={index >= PASS_RESULTS.cards.length}
               className="rounded-xxl w-[280px] shrink-0 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:w-[320px] md:p-7"
-              key={`${card.company}-${card.role}`}
+              key={`${card.company}-${card.role}-${index}`}
             >
               <strong className="text-small18 text-neutral-0 block font-bold">
                 {card.company}

@@ -44,11 +44,17 @@ import './styles/animations.css';
 import './styles/responsive.css';
 import './styles/apply.css';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { CheckupAnswers } from './data/checkup';
-import { EMPTY_CHECKUP_ANSWERS, resolveCheckupResult } from './data/checkup';
+import {
+  CHECKUP,
+  CHECKUP_RESULT,
+  EMPTY_CHECKUP_ANSWERS,
+  resolveCheckupResult,
+} from './data/checkup';
 import { PREP_STEPS } from './data/prepSteps';
+import { scrollToSection } from './lib/scrollToSection';
 
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
@@ -84,9 +90,27 @@ export default function MembershipLanding() {
 
   const result = resolveCheckupResult(answers);
 
+  /*
+   * 결과는 진단 카드 아래에 나타난다. 마지막 문항을 답한 사람은 카드만 보고 있어
+   * 결과가 생긴 줄 모른다. 결과가 처음 나온 순간에만 그 자리로 옮겨 준다 —
+   * 앞 문항을 고쳐 결과가 바뀔 때마다 화면이 튀면 답을 고칠 수 없다.
+   */
+  const hadResult = useRef(false);
+  useEffect(() => {
+    if (result === null) {
+      hadResult.current = false;
+      return;
+    }
+    if (hadResult.current) return;
+    hadResult.current = true;
+    scrollToSection(CHECKUP_RESULT.anchorId);
+  }, [result]);
+
   const handleRestart = () => {
     setAnswers(EMPTY_CHECKUP_ANSWERS);
     setAttempt((prev) => prev + 1);
+    // 처음 문항으로 되돌렸으니 그 문항이 있는 자리로 함께 옮긴다
+    scrollToSection(CHECKUP.anchorId);
   };
 
   return (

@@ -4,21 +4,31 @@ import { PASS_RESULTS } from '../data/passResults';
 import PassResultsSection from './PassResultsSection';
 
 describe('PassResultsSection (개편 시안 5)', () => {
-  it('카드를 데이터 개수만큼 그린다', () => {
+  /*
+   * 끊김 없이 흐르려면 같은 목록이 두 벌 있어야 한다. 둘째 벌은 눈에만 보이는 복사본이라
+   * `aria-hidden` 이다 — 화면 낭독기에 같은 사례를 두 번 읽히면 안 된다.
+   */
+  it('카드를 두 벌 그리고 둘째 벌만 aria-hidden 이다', () => {
     const { container } = render(<PassResultsSection />);
 
-    expect(container.querySelectorAll('li')).toHaveLength(
-      PASS_RESULTS.cards.length,
-    );
+    const items = container.querySelectorAll('li');
+    expect(items).toHaveLength(PASS_RESULTS.cards.length * 2);
+
+    const hidden = container.querySelectorAll('li[aria-hidden="true"]');
+    expect(hidden).toHaveLength(PASS_RESULTS.cards.length);
   });
 
   it('회사·직무·고용형태 배지가 카드마다 나온다', () => {
-    render(<PassResultsSection />);
+    const { container } = render(<PassResultsSection />);
 
-    for (const card of PASS_RESULTS.cards) {
-      expect(screen.getByText(card.company)).toBeInTheDocument();
-      expect(screen.getByText(card.role)).toBeInTheDocument();
-    }
+    // 첫 벌(낭독기에 읽히는 쪽)만 본다
+    const visible = container.querySelectorAll('li[aria-hidden="false"]');
+    expect(visible).toHaveLength(PASS_RESULTS.cards.length);
+
+    PASS_RESULTS.cards.forEach((card, index) => {
+      expect(visible[index]).toHaveTextContent(card.company);
+      expect(visible[index]).toHaveTextContent(card.role);
+    });
   });
 
   /*
@@ -34,11 +44,11 @@ describe('PassResultsSection (개편 시안 5)', () => {
     }
   });
 
-  it('수강생 문구가 카드 수만큼, 하단 한 줄이 한 번 나온다', () => {
+  it('수강생 문구가 카드마다, 하단 한 줄이 한 번 나온다', () => {
     render(<PassResultsSection />);
 
     expect(screen.getAllByText(PASS_RESULTS.studentNote)).toHaveLength(
-      PASS_RESULTS.cards.length,
+      PASS_RESULTS.cards.length * 2,
     );
     expect(screen.getByText(PASS_RESULTS.footnote)).toBeInTheDocument();
   });

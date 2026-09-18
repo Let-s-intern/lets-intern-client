@@ -364,6 +364,8 @@ export const CHECKUP_RESULT_COPY: Record<CheckupAreaId, CheckupAreaResultCopy> =
 
 /** 시안 3.png 의 고정 문구 */
 export const CHECKUP_RESULT = {
+  /** 마지막 문항을 답하면 이 자리로 스크롤한다 */
+  anchorId: 'checkup-result',
   /** 답하기 전에도 보이는 안내 */
   guideLines: [
     '위 5문항 무료진단에 답하면',

@@ -172,6 +172,11 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
             </button>
 
             {expanded && program ? (
+              /*
+               * 펼침은 카드 안에서 그대로 늘어난다. 덮어씌우는 방식도 만들어 봤지만
+               * 아래 줄을 가려 어디를 보는지 알기 어려웠다. 밀려 내려가는 편이 낫다.
+               * 행이 `items-start` 라 펼친 카드만 자라고 옆 카드는 제 높이를 지킨다.
+               */
               <div className="mt-4">
                 {step.expand.programs.length > 1 ? (
                   <div className="flex gap-2">
