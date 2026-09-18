@@ -131,6 +131,7 @@ export const PLAYBOOK_STRUCTURE = {
    * 7·8번 시안은 첫 탭이 「10주 취준 계획모음」이지만 6번 시안과 다르다.
    * 「10주 취준 계획」으로 통일한다 (PRD 5.1).
    */
+  tabsLabel: '플레이북 화면 전환',
   tabs: [
     { id: 'plan', icon: '📅', label: '10주 취준 계획' },
     { id: 'jobs', icon: '💼', label: '마케팅 채용공고 모음' },
