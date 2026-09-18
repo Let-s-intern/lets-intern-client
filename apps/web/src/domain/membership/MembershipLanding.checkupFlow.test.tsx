@@ -2,13 +2,22 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import {
   checkupBodyText,
+  CHECKUP,
   CHECKUP_QUESTIONS,
   CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
 } from './data/checkup';
 import { PREP_STEPS } from './data/prepSteps';
-import MembershipLanding from './MembershipLanding';
+import { scrollToSection } from './lib/scrollToSection';
+import MembershipLanding, { RESULT_SCROLL_DELAY_MS } from './MembershipLanding';
 import { NEXT_QUESTION_DELAY_MS } from './section/CheckupSection';
+
+/* 스크롤은 jsdom 에 없다. 몇 번 · 어디로 옮기는지만 본다 */
+jest.mock('./lib/scrollToSection', () => ({ scrollToSection: jest.fn() }));
+
+const scrollMock = scrollToSection as jest.MockedFunction<
+  typeof scrollToSection
+>;
 
 /*
  * 진단 → 결과 → 준비 단계 강조까지 한 흐름으로 확인한다.
@@ -80,17 +89,21 @@ function choose(questionIndex: number, optionIndex: number) {
   );
 }
 
-/** `answers` 순서대로 5문항을 답한다. 문항 전환은 240ms 지연이라 타이머를 함께 넘긴다 */
-function answerAll(answers: number[]) {
-  answers.forEach((option, index) => {
-    choose(index, option);
-    act(() => {
-      jest.advanceTimersByTime(NEXT_QUESTION_DELAY_MS);
-    });
+/** 고르고 다음 문항까지 넘어간다. 문항 전환은 240ms 지연이다 */
+function answer(questionIndex: number, optionIndex: number) {
+  choose(questionIndex, optionIndex);
+  act(() => {
+    jest.advanceTimersByTime(NEXT_QUESTION_DELAY_MS);
   });
 }
 
+/** `answers` 순서대로 5문항을 답한다 */
+function answerAll(answers: number[]) {
+  answers.forEach((option, index) => answer(index, option));
+}
+
 beforeEach(() => {
+  jest.clearAllMocks();
   jest.useFakeTimers();
 });
 
@@ -134,6 +147,48 @@ describe('MembershipLanding 진단 흐름', () => {
 
     expect(badgedStepId()).toBe('prep-step-step-05');
     expect(screen.getAllByText(PREP_STEPS.resultBadge)).toHaveLength(1);
+  });
+
+  /* 마지막 답을 누른 사람은 문항 카드만 보고 있어 결과가 생긴 줄 모른다 (PRD 4.6) */
+  it('완료하고 120ms 뒤에 결과 영역으로 한 번 옮긴다', () => {
+    render(<MembershipLanding />);
+
+    [0, 3, 3, 3].forEach((option, index) => answer(index, option));
+    choose(CHECKUP_QUESTIONS.length - 1, 3);
+
+    expect(scrollMock).not.toHaveBeenCalled();
+
+    act(() => {
+      jest.advanceTimersByTime(RESULT_SCROLL_DELAY_MS);
+    });
+
+    expect(scrollMock).toHaveBeenCalledTimes(1);
+    expect(scrollMock).toHaveBeenCalledWith(CHECKUP_RESULT.anchorId);
+  });
+
+  /* 답을 고칠 때마다 화면이 튀면 답을 고칠 수 없다 */
+  it('다 답한 뒤 답을 고쳐도 다시 옮기지 않는다', () => {
+    render(<MembershipLanding />);
+
+    answerAll([0, 3, 3, 3, 3]);
+    expect(scrollMock).toHaveBeenCalledTimes(1);
+
+    // 마지막 문항 카드가 그대로 남아 있어 그 자리에서 다시 고를 수 있다
+    choose(CHECKUP_QUESTIONS.length - 1, 0);
+    act(() => {
+      jest.advanceTimersByTime(RESULT_SCROLL_DELAY_MS);
+    });
+
+    expect(scrollMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('다시 진단하기는 진단 영역으로 옮긴다', () => {
+    render(<MembershipLanding />);
+
+    answerAll([0, 3, 3, 3, 3]);
+    fireEvent.click(screen.getByText(CHECKUP_RESULT.restart));
+
+    expect(scrollMock).toHaveBeenLastCalledWith(CHECKUP.anchorId);
   });
 
   it('다시 진단하기를 누르면 첫 문항으로 돌아가고 결과가 사라진다', () => {

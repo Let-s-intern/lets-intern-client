@@ -44,7 +44,7 @@ import './styles/animations.css';
 import './styles/responsive.css';
 import './styles/apply.css';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { CheckupAnswers } from './data/checkup';
 import {
@@ -75,6 +75,14 @@ import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
 
+/**
+ * 결과가 나오고 그 자리로 옮기기까지의 지연 (PRD 4.6).
+ *
+ * 마지막 답을 누른 순간 결과 카드가 막 그려지는 중이라, 곧장 옮기면 아직 자리를 잡지
+ * 못한 높이로 계산된다. 막대 애니메이션이 시작되는 것을 보고 따라가는 시간이기도 하다.
+ */
+export const RESULT_SCROLL_DELAY_MS = 120;
+
 export default function MembershipLanding() {
   /*
    * 진단 답은 여기서 든다. 진단 문항 · 결과 · 준비 단계 세 섹션이 같은 답을 봐야 해서
@@ -94,17 +102,21 @@ export default function MembershipLanding() {
    * 결과는 진단 카드 아래에 나타난다. 마지막 문항을 답한 사람은 카드만 보고 있어
    * 결과가 생긴 줄 모른다. 결과가 처음 나온 순간에만 그 자리로 옮겨 준다 —
    * 앞 문항을 고쳐 결과가 바뀔 때마다 화면이 튀면 답을 고칠 수 없다.
+   *
+   * **의존성은 `result` 가 아니라 "결과가 있는가" 다.** `result` 는 렌더마다 새로
+   * 계산된 객체라 그대로 걸면 답을 고칠 때마다 효과가 다시 돌고, 그때 정리 함수가
+   * 아직 기다리던 스크롤 타이머를 지워 버린다.
    */
-  const hadResult = useRef(false);
+  const hasResult = result !== null;
   useEffect(() => {
-    if (result === null) {
-      hadResult.current = false;
-      return;
-    }
-    if (hadResult.current) return;
-    hadResult.current = true;
-    scrollToSection(CHECKUP_RESULT.anchorId);
-  }, [result]);
+    if (!hasResult) return;
+
+    const timer = setTimeout(
+      () => scrollToSection(CHECKUP_RESULT.anchorId),
+      RESULT_SCROLL_DELAY_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [hasResult]);
 
   const handleRestart = () => {
     setAnswers(EMPTY_CHECKUP_ANSWERS);
