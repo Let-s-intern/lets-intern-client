@@ -1,7 +1,9 @@
 import {
+  PLAYBOOK_OUTPUT as O,
   PLAYBOOK_STRUCTURE as S,
   PLAYBOOK_WITH as W,
 } from '../data/playbookDashboard';
+import PlaybookWeekTimeline from '../ui/PlaybookWeekTimeline';
 
 /** 시안 10 의 주황 아이브로우. 세 덩어리가 같은 색을 쓴다 */
 const EYEBROW = 'text-center text-sm font-bold tracking-wide text-[#F36D32]';
@@ -222,12 +224,34 @@ function PlaybookStructureBlock() {
   );
 }
 
+/** 3. OUTPUT — 10주 뒤에 손에 남는 것 */
+function PlaybookOutputBlock() {
+  return (
+    <section className="bg-white pb-16 md:pb-24" id={O.anchorId}>
+      <div className="wrap">
+        <Eyebrow>{O.eyebrow}</Eyebrow>
+
+        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+          <span className="block">{O.titleLead}</span>
+          <span className="block">
+            <span className="text-primary">{O.titleStrong}</span>
+            {O.titleTail}
+          </span>
+        </h2>
+
+        <PlaybookWeekTimeline />
+      </div>
+    </section>
+  );
+}
+
 /** 개편 시안 10 — 플레이북 실행 흐름과 대시보드 (PRD 4.10). */
 export default function PlaybookDashboardSection() {
   return (
     <>
       <PlaybookWithBlock />
       <PlaybookStructureBlock />
+      <PlaybookOutputBlock />
     </>
   );
 }
