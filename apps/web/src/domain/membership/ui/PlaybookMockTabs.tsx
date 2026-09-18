@@ -130,12 +130,70 @@ function JobsPanel() {
   );
 }
 
-/** 탭 3 — 패스 참여자 리더보드 (시안 8) */
+/**
+ * 탭 3 — 패스 참여자 리더보드 (시안 8).
+ *
+ * 「나의 진행률」 줄만 파란 테두리 + 연파랑 배경으로 강조한다. 진행률 막대는
+ * 보여주기용이라 채움 폭이 곧 퍼센트다.
+ */
 function LeaderboardPanel() {
   return (
     <>
       <strong className={PANEL_TITLE}>{S.leaderboard.title}</strong>
       <span className={PANEL_DESC}>{S.leaderboard.desc}</span>
+
+      <ol className="mt-4 flex flex-col gap-2">
+        {S.leaderboard.rows.map((row) => (
+          <li
+            className={`flex items-center gap-3 rounded-xl px-3 py-3 md:gap-4 md:px-5 ${
+              row.isMe
+                ? 'border-primary border bg-[#F0F1FE]'
+                : 'border border-transparent bg-[#F7F8FC]'
+            }`}
+            data-testid="playbook-leader-row"
+            key={row.rank}
+          >
+            <span
+              className={`w-4 shrink-0 text-xs font-bold ${
+                row.isMe ? 'text-primary' : 'text-neutral-50'
+              }`}
+            >
+              {row.rank}
+            </span>
+
+            <div className="min-w-0 flex-1">
+              <strong
+                className={`text-xsmall14 block font-bold ${
+                  row.isMe ? 'text-primary' : 'text-neutral-0'
+                }`}
+              >
+                {row.name}
+              </strong>
+              <span
+                className={`mt-0.5 block text-xs ${
+                  row.isMe ? 'text-primary-80' : 'text-neutral-45'
+                }`}
+              >
+                {row.status}
+              </span>
+            </div>
+
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-14 shrink-0 overflow-hidden rounded-full bg-[#E7E9F2] md:w-40"
+            >
+              <span
+                className="bg-primary block h-full rounded-full"
+                data-testid="playbook-leader-bar"
+                style={{ width: `${row.percent}%` }}
+              />
+            </span>
+            <span className="text-primary w-9 shrink-0 text-right text-xs font-bold">
+              {row.percent}%
+            </span>
+          </li>
+        ))}
+      </ol>
     </>
   );
 }

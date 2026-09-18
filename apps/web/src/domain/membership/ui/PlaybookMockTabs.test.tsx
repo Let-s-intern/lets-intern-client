@@ -121,6 +121,57 @@ describe('PlaybookMockTabs (PRD 5.1)', () => {
     });
   });
 
+  describe('탭 3 — 패스 참여자 리더보드 (PRD 5.4)', () => {
+    function openLeaderboard() {
+      render(<PlaybookMockTabs />);
+      fireEvent.click(tabNamed(LEADERBOARD.label));
+    }
+
+    it('5줄을 순위 순서대로 그린다', () => {
+      openLeaderboard();
+
+      const rows = screen.getAllByTestId('playbook-leader-row');
+      expect(rows).toHaveLength(5);
+      rows.forEach((node, i) => {
+        const row = S.leaderboard.rows[i];
+        expect(node).toHaveTextContent(String(row.rank));
+        expect(node).toHaveTextContent(row.name);
+        expect(node).toHaveTextContent(row.status);
+        expect(node).toHaveTextContent(`${row.percent}%`);
+      });
+    });
+
+    /*
+     * 막대가 숫자와 다른 폭으로 그려지면 화면이 거짓말을 한다. 폭은 퍼센트 그 자체다.
+     */
+    it('막대 폭이 퍼센트와 같다', () => {
+      openLeaderboard();
+
+      const bars = screen.getAllByTestId('playbook-leader-bar');
+      expect(bars.map((bar) => bar.style.width)).toEqual(
+        S.leaderboard.rows.map((row) => `${row.percent}%`),
+      );
+    });
+
+    /*
+     * 강조가 둘이면 어느 줄이 나인지 알 수 없다. 「나의 진행률」 한 줄만 파란
+     * 테두리 + 연파랑 배경이다.
+     */
+    it('강조 줄이 하나이고 나의 진행률 줄이다', () => {
+      openLeaderboard();
+
+      const rows = screen.getAllByTestId('playbook-leader-row');
+      const highlighted = rows.filter((row) =>
+        row.className.includes('border-primary'),
+      );
+      expect(highlighted).toHaveLength(1);
+      expect(highlighted[0]).toHaveClass('bg-[#F0F1FE]');
+
+      const mine = S.leaderboard.rows.findIndex((row) => row.isMe);
+      expect(highlighted[0]).toBe(rows[mine]);
+    });
+  });
+
   /*
    * 목업 안의 체크박스는 보여주기용이다(PRD 5.1). 눌러도 아무 일이 없는 컨트롤은
    * 사용자를 속이므로 input 으로 그리지 않는다.
