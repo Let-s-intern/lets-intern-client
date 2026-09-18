@@ -28,7 +28,7 @@ export const downloadResponsesCsv = (
     return [
       r.submitterName,
       r.passName,
-      dayjs(r.submittedAt).format('YYYY-MM-DD'),
+      dayjs(r.submittedAt).format('YYYY-MM-DD HH:mm'),
       ...questions.map((q) => byId.get(q.questionId) ?? ''),
     ];
   });

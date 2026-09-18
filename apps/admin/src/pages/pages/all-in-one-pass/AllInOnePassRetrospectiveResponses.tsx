@@ -100,8 +100,8 @@ export default function AllInOnePassRetrospectiveResponses() {
     {
       field: 'submittedAt',
       headerName: '제출일',
-      width: 140,
-      valueFormatter: (value) => dayjs(value).format('YYYY.MM.DD'),
+      width: 160,
+      valueFormatter: (value) => dayjs(value).format('YYYY.MM.DD HH:mm'),
     },
     {
       field: 'answer',
@@ -213,7 +213,7 @@ export default function AllInOnePassRetrospectiveResponses() {
           <div className="text-xxsmall12 text-neutral-40 flex flex-col gap-1">
             <span>
               {detail?.submitterName} | {detail?.passName} |{' '}
-              {detail && dayjs(detail.submittedAt).format('YYYY.MM.DD')}
+              {detail && dayjs(detail.submittedAt).format('YYYY.MM.DD HH:mm')}
             </span>
           </div>
           <div className="flex flex-col gap-2.5">
