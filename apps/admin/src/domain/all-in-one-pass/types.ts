@@ -149,3 +149,23 @@ export interface AllInOnePassNotice {
   createdAt: string; // 생성일(ISO)
   linkedPassIds: number[]; // 노출 영역: 이 콘텐츠를 노출할 패스 id 목록
 }
+
+/** A-4 공통 질문 (전 패스 공통, 모든 회차에 포함) */
+export interface RetrospectiveCommonQuestion {
+  id: number;
+  order: number; // 표시 순서
+  question: string;
+}
+
+/**
+ * A-4 회고 회차 한 개.
+ *
+ * 노출 시점·작성 가능 기간은 저장하지 않는다. 회차 번호와 유저의 패스 시작일로
+ * 프론트에서 파생한다(회차 N = 패스 시작 +2N주에 2주간 작성 가능).
+ */
+export interface RetrospectiveRound {
+  id: number;
+  round: number; // 회차 번호
+  weeklyQuestion: string; // 주차별 질문(1개)
+  responseCount: number; // 응답 수
+}
