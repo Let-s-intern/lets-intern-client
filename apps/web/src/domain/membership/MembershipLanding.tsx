@@ -59,6 +59,7 @@ import LiveClinicSection from './section/LiveClinicSection';
 import SolutionSection from './section/SolutionSection';
 import PassBenefitsSection from './section/PassBenefitsSection';
 import PathMatchSection from './section/PathMatchSection';
+import PlaybookIntroSection from './section/PlaybookIntroSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import PlaybookDashboardSection from './section/PlaybookDashboardSection';
 import CompareSection from './section/CompareSection';
@@ -140,10 +141,13 @@ export default function MembershipLanding() {
           {/* 시안 7 — 상황별 프로그램 매칭 (FIND YOUR PATH) */}
           <PathMatchSection />
 
-          {/* 시안 8 — 10주 합격 플레이북 매트릭스 */}
+          {/* 개편 시안 8 — 10주 플레이북 인트로. 매트릭스 바로 위 자리다. */}
+          <PlaybookIntroSection />
+
+          {/* 개편 시안 9 — 10주 합격 플레이북 매트릭스 */}
           <CoursePlanSection />
 
-          {/* 시안 9 — 플레이북 대시보드 목업 */}
+          {/* 개편 시안 10 — 실행 흐름·대시보드 목업·주차별 산출물 세 덩어리 */}
           <PlaybookDashboardSection />
 
           {/* 시안 15 — 가격 비교표 + 단일 플랜 카드 */}

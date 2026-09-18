@@ -80,6 +80,10 @@ jest.mock('./section/PathMatchSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PathMatchSection" />,
 }));
+jest.mock('./section/PlaybookIntroSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PlaybookIntroSection" />,
+}));
 jest.mock('./section/CoursePlanSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CoursePlanSection" />,
@@ -116,8 +120,9 @@ const EXPECTED_ORDER = [
   'SolutionSection', //         시안 5
   'PassBenefitsSection', //     시안 6
   'PathMatchSection', //        시안 7
-  'CoursePlanSection', //       시안 8
-  'PlaybookDashboardSection', // 시안 9
+  'PlaybookIntroSection', //    개편 시안 8 (매트릭스 바로 위)
+  'CoursePlanSection', //       개편 시안 9
+  'PlaybookDashboardSection', // 개편 시안 10 (세 덩어리)
   'CompareSection', //          시안 15
   'PlansSection', //            시안 15 (플랜 카드)
   'FaqSection',
@@ -169,6 +174,26 @@ describe('MembershipLanding (LC-3294)', () => {
     ]) {
       expect(screen.queryByTestId(removed)).not.toBeInTheDocument();
     }
+  });
+
+  /*
+   * 플레이북 세 화면의 순서는 인트로 → 매트릭스 → 대시보드다. 인트로가 매트릭스가
+   * 무엇인지 먼저 말해 주고, 대시보드가 그 매트릭스를 어떻게 굴리는지 잇는다.
+   * 자리가 바뀌면 설명이 대상보다 뒤에 온다.
+   */
+  it('플레이북 인트로가 매트릭스 위에, 대시보드가 매트릭스 아래에 온다', () => {
+    const { container } = render(<MembershipLanding />);
+
+    const ids = [...container.querySelectorAll('[data-testid]')].map((el) =>
+      el.getAttribute('data-testid'),
+    );
+
+    expect(ids.indexOf('PlaybookIntroSection')).toBeLessThan(
+      ids.indexOf('CoursePlanSection'),
+    );
+    expect(ids.indexOf('CoursePlanSection')).toBeLessThan(
+      ids.indexOf('PlaybookDashboardSection'),
+    );
   });
 
   it('개편 시안 5·6·7 세 섹션이 준비 단계 뒤에 들어와 있다', () => {
