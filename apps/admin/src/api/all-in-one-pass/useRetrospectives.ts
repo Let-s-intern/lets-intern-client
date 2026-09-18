@@ -3,6 +3,7 @@ import {
   commonQuestionFixtures,
   retrospectiveRoundFixtures,
 } from './mock/retrospectiveFixtures';
+import { retrospectiveResponseFixtures } from './mock/retrospectiveResponseFixtures';
 import { mockDelay } from './mock/passStore';
 
 /**
@@ -14,6 +15,8 @@ import { mockDelay } from './mock/passStore';
 
 export const commonQuestionsQueryKey = 'allInOnePassCommonQuestions';
 export const retrospectiveRoundsQueryKey = 'allInOnePassRetrospectiveRounds';
+export const retrospectiveResponsesQueryKey =
+  'allInOnePassRetrospectiveResponses';
 
 /** 공통 질문 목록 (order 순) */
 export const useGetCommonQuestionsQuery = () =>
@@ -30,5 +33,16 @@ export const useGetRetrospectiveRoundsQuery = () =>
     queryFn: () =>
       mockDelay(
         [...retrospectiveRoundFixtures].sort((a, b) => a.round - b.round),
+      ),
+  });
+
+/** 특정 회차의 응답 목록 (A-5) */
+export const useGetRetrospectiveResponsesQuery = (roundId?: number) =>
+  useQuery({
+    queryKey: [retrospectiveResponsesQueryKey, roundId],
+    enabled: roundId != null,
+    queryFn: () =>
+      mockDelay(
+        roundId != null ? (retrospectiveResponseFixtures[roundId] ?? []) : [],
       ),
   });
