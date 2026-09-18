@@ -93,8 +93,37 @@ const MissionGuideZeroSection = ({
               자료를 확인하고 미션을 진행해 주세요.
             </p>
           </div>
-          {/* 필수 콘텐츠 + 추가 콘텐츠 섹션 */}
+          {/* 미션 템플릿 + 필수 콘텐츠 + 추가 콘텐츠 섹션 */}
           <div className="flex flex-col gap-2">
+            {/* 미션 템플릿 */}
+            {missionData?.missionInfo?.templateLink && (
+              <MissionFileLink
+                key={missionData?.missionInfo?.templateLink}
+                title="미션 템플릿"
+                fileName={'미션 템플릿'}
+                disabled={false}
+                onClick={() => {
+                  const templateLink =
+                    missionData?.missionInfo?.templateLink || '';
+                  // window.open 을 먼저, 동기적으로 호출한다.
+                  // 기록 요청을 await 한 뒤로 밀면 사용자 제스처 컨텍스트를 잃어
+                  // 브라우저가 팝업을 차단한다.
+                  window.open(templateLink, '_blank');
+                  // 열지 않은 자료를 이용한 것으로 남기면 안 되므로 링크가 있을 때만 기록한다.
+                  if (templateLink) {
+                    // 템플릿은 콘텐츠 엔티티가 아니라 미션의 단일 필드라
+                    // contentId 가 없다. 바디에서도 생략된다.
+                    logMissionContentAccess({
+                      challengeId,
+                      missionId,
+                      contentType: 'TEMPLATE',
+                      // 자료 이름이 무엇을 열었는지 말해 주는 유일한 수단이다.
+                      contentTitle: '미션 템플릿',
+                    });
+                  }
+                }}
+              />
+            )}
             {/* 필수 콘텐츠 */}
             <div className="flex flex-col gap-2">
               {missionData?.missionInfo?.essentialContentsList?.map(
