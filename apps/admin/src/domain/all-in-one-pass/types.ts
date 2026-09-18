@@ -169,3 +169,24 @@ export interface RetrospectiveRound {
   weeklyQuestion: string; // 주차별 질문(1개)
   responseCount: number; // 응답 수
 }
+
+/**
+ * A-5 응답의 개별 답변.
+ *
+ * questionLabel 은 제출 당시 질문 문구의 스냅샷이다. 질문이 이후 수정/삭제돼도
+ * 이 답변은 원래 질문 그대로 보이며, 목록 탭은 등장한 questionId 별로 묶는다.
+ */
+export interface RetrospectiveAnswer {
+  questionId: number;
+  questionLabel: string;
+  answer: string;
+}
+
+/** A-5 회고 응답 한 건 */
+export interface RetrospectiveResponse {
+  id: number;
+  submitterName: string; // 제출자 이름
+  passName: string; // 구매한 올인원패스 이름
+  submittedAt: string; // 제출일(ISO)
+  answers: RetrospectiveAnswer[];
+}
