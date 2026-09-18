@@ -71,6 +71,56 @@ describe('PlaybookMockTabs (PRD 5.1)', () => {
     expect(highlighted[0]).toHaveClass('bg-white', 'text-primary');
   });
 
+  describe('탭 2 — 마케팅 채용공고 모음 (PRD 5.3)', () => {
+    function openJobs() {
+      render(<PlaybookMockTabs />);
+      fireEvent.click(tabNamed(JOBS.label));
+    }
+
+    it('공고 4줄의 회사 · 제목 · 태그를 그린다', () => {
+      openJobs();
+
+      for (const row of S.jobs.rows) {
+        expect(screen.getByText(row.company)).toBeInTheDocument();
+        expect(screen.getByText(row.title)).toBeInTheDocument();
+        for (const tag of row.tags) {
+          expect(screen.getByText(tag)).toBeInTheDocument();
+        }
+      }
+    });
+
+    it('마감 배지 4종을 데이터 문구 그대로 그린다', () => {
+      openJobs();
+
+      expect(S.jobs.rows.map((row) => row.deadline)).toEqual([
+        'D-3',
+        'D-7',
+        'D-14',
+        '상시',
+      ]);
+      for (const row of S.jobs.rows) {
+        expect(screen.getByText(row.deadline)).toBeInTheDocument();
+      }
+    });
+
+    /*
+     * 상시 채용은 남은 날이 없으니 마감이 임박한 공고와 같은 붉은 배지로 그리면
+     * 신호가 거짓이 된다. 회색 테두리로 구분한다.
+     */
+    it('상시 채용만 회색 테두리이고 나머지는 연분홍 바탕이다', () => {
+      openJobs();
+
+      for (const row of S.jobs.rows) {
+        const badge = screen.getByText(row.deadline);
+        if (row.alwaysOpen) {
+          expect(badge).toHaveClass('border', 'border-neutral-80', 'bg-white');
+        } else {
+          expect(badge).toHaveClass('bg-[#FFF2F0]', 'text-[#F0563F]');
+        }
+      }
+    });
+  });
+
   /*
    * 목업 안의 체크박스는 보여주기용이다(PRD 5.1). 눌러도 아무 일이 없는 컨트롤은
    * 사용자를 속이므로 input 으로 그리지 않는다.

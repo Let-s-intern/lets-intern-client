@@ -78,12 +78,54 @@ function PlanPanel() {
   );
 }
 
-/** 탭 2 — 마케팅 채용공고 모음 (시안 7) */
+/**
+ * 탭 2 — 마케팅 채용공고 모음 (시안 7).
+ *
+ * 마감 배지는 연분홍 바탕에 붉은 글자, 상시 채용만 회색 테두리다.
+ */
 function JobsPanel() {
   return (
     <>
       <strong className={PANEL_TITLE}>{S.jobs.title}</strong>
       <span className={PANEL_DESC}>{S.jobs.desc}</span>
+
+      <ul className="border-neutral-85 mt-4 overflow-hidden rounded-xl border">
+        {S.jobs.rows.map((row) => (
+          <li
+            className="border-neutral-85 flex items-center gap-3 border-b px-3 py-4 last:border-b-0 md:px-5"
+            key={row.title}
+          >
+            <div className="min-w-0 flex-1">
+              <span className="text-neutral-45 block text-xs">
+                {row.company}
+              </span>
+              <strong className="text-xsmall14 text-neutral-0 mt-1 block font-bold">
+                {row.title}
+              </strong>
+              <ul className="mt-2 flex flex-wrap gap-1.5">
+                {row.tags.map((tag) => (
+                  <li
+                    className="border-neutral-85 text-neutral-45 rounded-full border bg-[#F7F8FC] px-2.5 py-1 text-[0.65rem]"
+                    key={tag}
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-1 text-[0.65rem] font-bold ${
+                row.alwaysOpen
+                  ? 'border-neutral-80 text-neutral-45 border bg-white'
+                  : 'bg-[#FFF2F0] text-[#F0563F]'
+              }`}
+            >
+              {row.deadline}
+            </span>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
