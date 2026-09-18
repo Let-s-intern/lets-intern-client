@@ -90,7 +90,7 @@ export function captureCheckupAnswered(params: {
 export function captureCheckupCompleted(result: CheckupResult): void {
   const scores: Record<string, number> = {};
   for (const score of result.scores) {
-    scores[`score_${score.area.id}`] = score.average;
+    scores[`score_${score.area.id}`] = score.score;
   }
 
   capture(MEMBERSHIP_EVENTS.checkupCompleted, {

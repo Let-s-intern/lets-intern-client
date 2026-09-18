@@ -70,7 +70,7 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
           }`}
           data-status={score.status}
           data-testid="checkup-area-bar"
-          style={{ width: `${score.ratio * 100}%` }}
+          style={{ width: `${score.score}%` }}
         />
       </div>
 

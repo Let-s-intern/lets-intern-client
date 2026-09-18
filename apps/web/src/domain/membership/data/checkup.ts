@@ -186,14 +186,6 @@ export const EMPTY_CHECKUP_ANSWERS: CheckupAnswers = CHECKUP_QUESTIONS.map(
   () => null,
 );
 
-/**
- * 한 문항에서 나올 수 있는 가장 높은 점수. 선택지 수에서 끌어온다 —
- * 상수로 박아 두면 선택지를 늘렸을 때 막대가 100% 를 넘는다.
- */
-const MAX_SCORE = Math.max(
-  ...CHECKUP_QUESTIONS.map((question) => question.options.length),
-);
-
 export type CheckupAreaStatus = 'weakest' | 'later' | 'ongoing';
 
 /** 시안 3.png 왼쪽 카드의 막대 아래 한 줄 */
@@ -203,18 +195,18 @@ export const CHECKUP_STATUS_LABEL: Record<CheckupAreaStatus, string> = {
   ongoing: '진행 중이에요',
 };
 
-/** 평균이 이 값 이상이면 "진행 중이에요" 다 (시안에서 03 영역만 이 라벨이다) */
-const ONGOING_THRESHOLD = 3;
+/** 점수가 이 값 이상이면 "진행 중이에요" 다 */
+const ONGOING_THRESHOLD = 55;
 
 export interface CheckupAreaScore {
   area: CheckupArea;
   /**
-   * 1 ~ MAX_SCORE. **합이 아니라 평균이다.**
-   * 02 영역만 문항이 둘이라, 합으로 비교하면 어떤 답을 해도 02 가 가장 낮게 나온다.
+   * 축 점수 0~100. 막대 옆 숫자로 그대로 노출된다.
+   *
+   * 문항이 하나인 축은 그 문항의 배점이고, 문항이 둘인 02 축만 평균이라
+   * 반올림이 생긴다 (PRD 4.2).
    */
-  average: number;
-  /** 막대 길이 (0~1). 평균을 만점으로 나눈 값이다 */
-  ratio: number;
+  score: number;
   status: CheckupAreaStatus;
 }
 
@@ -225,10 +217,13 @@ export interface CheckupResult {
   scores: readonly CheckupAreaScore[];
 }
 
-/** 영역별 평균 점수. 답이 하나라도 비어 있으면 null */
-function resolveAreaAverages(
-  answers: CheckupAnswers,
-): Map<CheckupAreaId, number> | null {
+/**
+ * 축 점수 4개. `CHECKUP_AREAS` 와 같은 순서(01 → 04)이고, 답이 하나라도 비어 있으면 null.
+ *
+ * 배점은 문항 데이터에서만 읽는다 (PRD 4.1). 축에 문항이 둘이면 평균을 반올림하므로
+ * 반올림이 생기는 축은 02 하나다 (PRD 4.2).
+ */
+export function resolveAreaScores(answers: CheckupAnswers): number[] | null {
   if (answers.length !== CHECKUP_QUESTIONS.length) return null;
 
   const sums = new Map<CheckupAreaId, { total: number; count: number }>();
@@ -238,41 +233,38 @@ function resolveAreaAverages(
     if (answer === null || answer === undefined) return null;
 
     const prev = sums.get(question.areaId) ?? { total: 0, count: 0 };
-    // 선택지 순번은 0부터 세지만 점수는 1부터다. 0 을 그대로 쓰면 막대가 사라진다.
     sums.set(question.areaId, {
-      total: prev.total + answer + 1,
+      total: prev.total + question.scores[answer],
       count: prev.count + 1,
     });
   }
 
-  const averages = new Map<CheckupAreaId, number>();
-  for (const [areaId, { total, count }] of sums) {
-    averages.set(areaId, total / count);
-  }
-  return averages;
+  return CHECKUP_AREAS.map((area) => {
+    const sum = sums.get(area.id);
+    if (!sum) throw new Error(`문항이 없는 진단 영역: ${area.id}`);
+    return Math.round(sum.total / sum.count);
+  });
 }
 
 /**
  * 가장 먼저 보완할 영역 하나. 답이 덜 찼으면 null.
  *
- * 평균이 가장 낮은 영역이고, 동점이면 `CHECKUP_AREAS` 에서 앞선 영역이다 —
+ * 점수가 가장 낮은 영역이고, 동점이면 `CHECKUP_AREAS` 에서 앞선 영역이다 —
  * 01 → 04 순서가 준비 단계의 순서이기도 해서, 앞 단계부터 보완하는 것이 맞다.
  */
 export function resolveWeakestArea(
   answers: CheckupAnswers,
 ): CheckupAreaId | null {
-  const averages = resolveAreaAverages(answers);
-  if (!averages) return null;
+  const areaScores = resolveAreaScores(answers);
+  if (!areaScores) return null;
 
   let weakest: CheckupAreaId | null = null;
   let lowest = Number.POSITIVE_INFINITY;
 
-  for (const area of CHECKUP_AREAS) {
-    const average = averages.get(area.id);
-    if (average === undefined) continue;
+  for (const [index, area] of CHECKUP_AREAS.entries()) {
     // `<` 이라 동점이면 먼저 만난 영역이 남는다 = 01 에 가까운 쪽
-    if (average < lowest) {
-      lowest = average;
+    if (areaScores[index] < lowest) {
+      lowest = areaScores[index];
       weakest = area.id;
     }
   }
@@ -284,20 +276,20 @@ export function resolveWeakestArea(
 export function resolveCheckupResult(
   answers: CheckupAnswers,
 ): CheckupResult | null {
-  const averages = resolveAreaAverages(answers);
+  const areaScores = resolveAreaScores(answers);
   const weakestAreaId = resolveWeakestArea(answers);
-  if (!averages || !weakestAreaId) return null;
+  if (!areaScores || !weakestAreaId) return null;
 
-  const scores = CHECKUP_AREAS.map((area) => {
-    const average = averages.get(area.id) ?? 0;
+  const scores = CHECKUP_AREAS.map((area, index) => {
+    const score = areaScores[index];
     const status: CheckupAreaStatus =
       area.id === weakestAreaId
         ? 'weakest'
-        : average >= ONGOING_THRESHOLD
+        : score >= ONGOING_THRESHOLD
           ? 'ongoing'
           : 'later';
 
-    return { area, average, ratio: average / MAX_SCORE, status };
+    return { area, score, status };
   });
 
   return { weakestAreaId, scores };

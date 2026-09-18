@@ -66,15 +66,15 @@ describe('CheckupResultSection (시안 3)', () => {
     expect(weakest[0]).toHaveClass('bg-[#F1642B]');
   });
 
-  it('막대 길이가 영역 평균에 비례한다', () => {
-    // 직무 1 / 경험 2 / 서류 3 / 지원 4 — 만점 4 에 대한 비율이다
+  it('막대 길이가 축 점수(0~100)와 같다', () => {
+    // 15 / 39 / 65 / 95 — 배점표에서 나온 축 점수다
     renderSection(resolveCheckupResult([0, 1, 1, 2, 3]));
 
     const widths = screen
       .getAllByTestId('checkup-area-bar')
       .map((bar) => bar.style.width);
 
-    expect(widths).toEqual(['25%', '50%', '75%', '100%']);
+    expect(widths).toEqual(['15%', '39%', '65%', '95%']);
   });
 
   it('판정된 영역의 결과 문구를 보여준다', () => {

@@ -66,10 +66,10 @@ describe('이벤트 이름과 속성', () => {
 
     expect(mockCapture).toHaveBeenCalledWith('membership_checkup_completed', {
       weakest_area_id: 'direction',
-      score_direction: 1,
-      score_experience: 4,
-      score_document: 4,
-      score_apply: 4,
+      score_direction: 15,
+      score_experience: 95,
+      score_document: 95,
+      score_apply: 95,
     });
   });
 

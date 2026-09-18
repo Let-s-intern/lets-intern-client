@@ -4,6 +4,7 @@ import {
   CHECKUP_RESULT_COPY,
   EMPTY_CHECKUP_ANSWERS,
   findCheckupArea,
+  resolveAreaScores,
   resolveCheckupResult,
   resolveWeakestArea,
 } from './checkup';
@@ -122,13 +123,51 @@ describe('findCheckupArea', () => {
  * 문항 순서는 [Q1 직무, Q2 경험, Q3 경험, Q4 서류, Q5 지원] 이다.
  * 숫자는 선택지 순번(0~3)이고 클수록 준비가 된 상태다.
  */
+describe('resolveAreaScores', () => {
+  it('답이 덜 찼으면 null 이다', () => {
+    expect(resolveAreaScores(EMPTY_CHECKUP_ANSWERS)).toBeNull();
+    expect(resolveAreaScores([0, 0, 0, 0, null])).toBeNull();
+  });
+
+  it('01 · 03 · 04 축은 문항 배점 그대로다', () => {
+    expect(resolveAreaScores([0, 3, 3, 3, 3])).toEqual([15, 95, 95, 95]);
+    expect(resolveAreaScores([3, 3, 3, 0, 0])).toEqual([95, 95, 12, 15]);
+    expect(resolveAreaScores([1, 3, 3, 2, 1])).toEqual([40, 95, 65, 42]);
+  });
+
+  /* 반올림이 생기는 축은 문항이 둘인 02 하나다 (PRD 4.2). */
+  it('02 축은 두 문항 평균을 반올림한다', () => {
+    // Q2 ② 40 · Q3 ③ 68 → 54
+    expect(resolveAreaScores([0, 1, 2, 0, 0])?.[1]).toBe(54);
+    // Q2 ① 15 · Q3 ① 12 → 13.5 는 14 로 올린다
+    expect(resolveAreaScores([0, 0, 0, 0, 0])?.[1]).toBe(14);
+  });
+
+  /* PRD 4.3 이 동점 보정의 근거로 든 숫자다. */
+  it('전부 ① 이면 15 / 14 / 12 / 15 다', () => {
+    expect(resolveAreaScores([0, 0, 0, 0, 0])).toEqual([15, 14, 12, 15]);
+  });
+
+  it('어떤 답 조합에서도 0~100 을 벗어나지 않는다', () => {
+    for (const level of [0, 1, 2, 3]) {
+      const areaScores = resolveAreaScores([level, level, level, level, level]);
+
+      expect(areaScores).toHaveLength(CHECKUP_AREAS.length);
+      for (const score of areaScores ?? []) {
+        expect(score).toBeGreaterThanOrEqual(0);
+        expect(score).toBeLessThanOrEqual(100);
+      }
+    }
+  });
+});
+
 describe('resolveWeakestArea', () => {
   it('답이 덜 찼으면 null 이다', () => {
     expect(resolveWeakestArea(EMPTY_CHECKUP_ANSWERS)).toBeNull();
     expect(resolveWeakestArea([0, 0, 0, 0, null])).toBeNull();
   });
 
-  it('평균이 가장 낮은 영역을 고른다', () => {
+  it('점수가 가장 낮은 영역을 고른다', () => {
     expect(resolveWeakestArea([0, 3, 3, 3, 3])).toBe('direction');
     expect(resolveWeakestArea([3, 0, 0, 3, 3])).toBe('experience');
     expect(resolveWeakestArea([3, 3, 3, 0, 3])).toBe('document');
@@ -136,30 +175,8 @@ describe('resolveWeakestArea', () => {
   });
 
   it('동점이면 01 에 가까운 영역이다', () => {
-    // 직무(01)와 서류(03)가 같은 점수다
-    expect(resolveWeakestArea([0, 3, 3, 0, 3])).toBe('direction');
-    // 서류(03)와 지원(04)이 같은 점수다
-    expect(resolveWeakestArea([3, 3, 3, 0, 0])).toBe('document');
-  });
-
-  /*
-   * 02 영역만 문항이 둘이다. 합으로 비교하면 문항 수가 그대로 점수 차가 되어,
-   * 같은 수준으로 답해도 02 가 다른 영역과 다르게 취급된다.
-   */
-  it('모든 문항을 같은 수준으로 답하면 02 영역이 불리하지 않다', () => {
-    for (const level of [0, 1, 2, 3]) {
-      const result = resolveCheckupResult([level, level, level, level, level]);
-      const averages = result?.scores.map((score) => score.average);
-      // 네 영역 평균이 모두 같다 = 문항 수가 점수에 섞여 들지 않았다
-      expect(averages).toEqual([level + 1, level + 1, level + 1, level + 1]);
-      // 전부 동점이므로 앞선 영역이 뽑힌다
-      expect(result?.weakestAreaId).toBe('direction');
-    }
-  });
-
-  it('합이 아니라 평균으로 비교한다', () => {
-    // 직무 2점 / 경험 1+2=3점. 합이면 직무가, 평균(경험 1.5)이면 경험이 뽑힌다
-    expect(resolveWeakestArea([1, 0, 1, 3, 3])).toBe('experience');
+    // 직무(01) 40 · 서류(03) 40 으로 같다
+    expect(resolveWeakestArea([1, 3, 3, 1, 3])).toBe('direction');
   });
 });
 
@@ -186,8 +203,8 @@ describe('resolveCheckupResult', () => {
     expect(weakest?.[0].area.id).toBe('direction');
   });
 
-  it('평균 3 이상이면 진행 중, 그 아래면 이후 보완이다', () => {
-    // 직무 1 / 경험 2 / 서류 3 / 지원 4 — 시안 3.png 와 같은 조합이다
+  it('점수 55 이상이면 진행 중, 그 아래면 이후 보완이다', () => {
+    // 15 / 39 / 65 / 95 — 시안 3.png 와 같은 순서의 조합이다
     const result = resolveCheckupResult([0, 1, 1, 2, 3]);
     const status = Object.fromEntries(
       (result?.scores ?? []).map((score) => [score.area.id, score.status]),
@@ -201,12 +218,13 @@ describe('resolveCheckupResult', () => {
     });
   });
 
-  it('막대 길이는 평균에 비례하고 100% 를 넘지 않는다', () => {
-    const lowest = resolveCheckupResult([0, 0, 0, 0, 0]);
-    const highest = resolveCheckupResult([3, 3, 3, 3, 3]);
+  it('축 점수를 축 순서대로 그대로 싣는다', () => {
+    const answers = [0, 1, 2, 3, 1];
+    const result = resolveCheckupResult(answers);
 
-    expect(lowest?.scores.every((score) => score.ratio === 0.25)).toBe(true);
-    expect(highest?.scores.every((score) => score.ratio === 1)).toBe(true);
+    expect(result?.scores.map((score) => score.score)).toEqual(
+      resolveAreaScores(answers),
+    );
   });
 });
 
