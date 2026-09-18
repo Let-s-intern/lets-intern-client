@@ -1,3 +1,4 @@
+import { captureCheckupResultCtaClicked } from '../analytics';
 import type { CheckupAreaScore, CheckupResult } from '../data/checkup';
 import {
   CHECKUP_RESULT,
@@ -181,6 +182,11 @@ export default function CheckupResultSection({
             <a
               className="mt-auto block rounded-lg bg-[#11142B] py-4 text-center"
               href={`#${stepsAnchorId}`}
+              onClick={() =>
+                captureCheckupResultCtaClicked({
+                  weakestAreaId: result.weakestAreaId,
+                })
+              }
             >
               <span className="text-xsmall16 font-bold text-white">
                 {CHECKUP_RESULT.cta}

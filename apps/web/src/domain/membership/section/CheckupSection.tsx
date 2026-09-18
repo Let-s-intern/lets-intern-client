@@ -1,7 +1,16 @@
 import { useState } from 'react';
 
+import {
+  captureCheckupAnswered,
+  captureCheckupCompleted,
+  captureCheckupStarted,
+} from '../analytics';
 import type { CheckupAnswers } from '../data/checkup';
-import { CHECKUP, CHECKUP_QUESTIONS } from '../data/checkup';
+import {
+  CHECKUP,
+  CHECKUP_QUESTIONS,
+  resolveCheckupResult,
+} from '../data/checkup';
 import CheckupQuestionCard from '../ui/CheckupQuestionCard';
 
 interface Props {
@@ -27,9 +36,33 @@ export default function CheckupSection({ answers, onAnswersChange }: Props) {
   const isLast = current === CHECKUP_QUESTIONS.length - 1;
 
   const handleSelect = (optionIndex: number) => {
-    onAnswersChange(
-      answers.map((answer, i) => (i === current ? optionIndex : answer)),
+    const next = answers.map((answer, i) =>
+      i === current ? optionIndex : answer,
     );
+
+    /*
+     * 시작·완료의 "한 번만" 은 답 배열에서 끌어낸다. 별도 플래그를 두면 "다시 진단하기"
+     * 때 함께 되돌리는 것을 잊게 된다 — 답은 그때 반드시 비워지므로 여기가 더 안전하다.
+     *
+     * 시작: 바꾸기 전 답이 전부 비어 있으면 이번이 첫 답이다. 이전 문항으로 돌아가
+     * 다시 골라도 그때는 이미 답이 남아 있어 두 번 나가지 않는다.
+     * 완료: 덜 찬 상태에서 다 찬 상태로 넘어가는 순간 한 번이다. 다 채운 뒤 앞 문항을
+     * 고쳐도 다시 나가지 않는다.
+     */
+    if (answers.every((answer) => answer === null)) captureCheckupStarted();
+
+    captureCheckupAnswered({
+      question: CHECKUP_QUESTIONS[current],
+      optionIndex,
+    });
+
+    const wasComplete = answers.every((answer) => answer !== null);
+    if (!wasComplete) {
+      const result = resolveCheckupResult(next);
+      if (result) captureCheckupCompleted(result);
+    }
+
+    onAnswersChange(next);
     if (!isLast) setCurrent(current + 1);
   };
 
