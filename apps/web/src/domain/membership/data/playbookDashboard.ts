@@ -75,6 +75,41 @@ export interface PlaybookChecklistRow {
   done: boolean;
 }
 
+/** 탭과 본문을 짝짓는 열쇠. 순서가 아니라 이 값으로 맞춘다 */
+export type PlaybookTabId = 'plan' | 'jobs' | 'leaderboard';
+
+export interface PlaybookTab {
+  id: PlaybookTabId;
+  icon: string;
+  label: string;
+}
+
+export interface PlaybookJobRow {
+  /** 회사명은 가린다. 실제 공고가 아니라 화면 안의 예시다 */
+  company: string;
+  title: string;
+  tags: readonly string[];
+  /** 마감 배지 문구 */
+  deadline: string;
+  /**
+   * 상시 채용이면 배지를 회색 테두리로 그린다.
+   * 컴포넌트가 '상시' 라는 문구를 알고 비교하지 않도록 값으로 둔다.
+   */
+  alwaysOpen: boolean;
+}
+
+export interface PlaybookLeaderRow {
+  rank: number;
+  /** 닉네임도 가린다 */
+  name: string;
+  /** 'WEEK 0n 진행 중 · 산출물 n개' */
+  status: string;
+  /** 0~100. 진행률 막대 폭이자 오른쪽에 적히는 숫자다 */
+  percent: number;
+  /** 「나의 진행률」 줄. 딱 한 줄만 true 이고 그 줄만 강조한다 */
+  isMe: boolean;
+}
+
 /**
  * 2. PLAYBOOK STRUCTURE — 브라우저 목업.
  *
@@ -90,12 +125,17 @@ export const PLAYBOOK_STRUCTURE = {
   ],
   sub: '마케팅 10주 합격 플레이북 하나로! 준비부터 지원까지 흩어지지 않도록, 매주 필요한 정보와 진행 상황을 한곳에서 관리하세요.',
   addressBar: 'letscareer.co.kr / 10주 마케팅 취준 플레이북 🔒',
-  /** 첫 번째 탭이 열려 있는 상태로 그린다 */
+  /**
+   * 첫 번째 탭이 열려 있는 상태로 시작한다.
+   *
+   * 7·8번 시안은 첫 탭이 「10주 취준 계획모음」이지만 6번 시안과 다르다.
+   * 「10주 취준 계획」으로 통일한다 (PRD 5.1).
+   */
   tabs: [
-    { icon: '📅', label: '10주 취준 계획' },
-    { icon: '💼', label: '마케팅 채용공고 모음' },
-    { icon: '🏆', label: '패스 참여자 리더보드' },
-  ],
+    { id: 'plan', icon: '📅', label: '10주 취준 계획' },
+    { id: 'jobs', icon: '💼', label: '마케팅 채용공고 모음' },
+    { id: 'leaderboard', icon: '🏆', label: '패스 참여자 리더보드' },
+  ] satisfies PlaybookTab[],
   /** 목업이 펼쳐 보이는 주차. WEEK_PLANS 의 4주차다 */
   weekNo: 4,
   weekTitle: WEEK_PLANS.a[3].title,
@@ -120,6 +160,91 @@ export const PLAYBOOK_STRUCTURE = {
       done: false,
     },
   ] satisfies PlaybookChecklistRow[],
+
+  /**
+   * 탭 2 — 마케팅 채용공고 모음 (시안 7).
+   * 실제 채용 API 를 붙이지 않는다. 화면 안의 예시다 (PRD 5.3).
+   */
+  jobs: {
+    title: '이번 주 마케팅 채용공고',
+    desc: '여러 채용 사이트를 돌아다니지 않아도, 지원할 마케팅 공고를 플레이북 안에서 확인합니다.',
+    rows: [
+      {
+        company: 'OO 커머스',
+        title: '그로스 마케터 (신입/인턴)',
+        tags: ['그로스', '데이터', '서울'],
+        deadline: 'D-3',
+        alwaysOpen: false,
+      },
+      {
+        company: '△△ 뷰티 브랜드',
+        title: '콘텐츠 마케터 (신입)',
+        tags: ['콘텐츠', 'SNS', '포트폴리오 필수'],
+        deadline: 'D-7',
+        alwaysOpen: false,
+      },
+      {
+        company: '□□ 에이전시',
+        title: '퍼포먼스 마케팅 AE (인턴)',
+        tags: ['퍼포먼스', '광고 운용'],
+        deadline: 'D-14',
+        alwaysOpen: false,
+      },
+      {
+        company: '◇◇ 플랫폼',
+        title: '브랜드 마케터 (체험형 인턴)',
+        tags: ['브랜드', '캠페인', '전환 가능'],
+        deadline: '상시',
+        alwaysOpen: true,
+      },
+    ] satisfies PlaybookJobRow[],
+  },
+
+  /**
+   * 탭 3 — 패스 참여자 리더보드 (시안 8).
+   * 실제 진행률을 조회하지 않는다. 화면 안의 예시다 (PRD 5.4).
+   */
+  leaderboard: {
+    title: '10주 플레이북 진행률 리더보드',
+    desc: '함께 패스에 참여하는 사람들의 진행 상황을 확인하며 10주 동안 페이스를 유지합니다.',
+    rows: [
+      {
+        rank: 1,
+        name: '마케터지망생**',
+        status: 'WEEK 06 진행 중 · 산출물 6개',
+        percent: 92,
+        isMe: false,
+      },
+      {
+        rank: 2,
+        name: '콘텐츠러비**',
+        status: 'WEEK 05 진행 중 · 산출물 5개',
+        percent: 81,
+        isMe: false,
+      },
+      {
+        rank: 3,
+        name: '나의 진행률',
+        status: 'WEEK 04 진행 중 · 산출물 3개',
+        percent: 64,
+        isMe: true,
+      },
+      {
+        rank: 4,
+        name: '그로스준비**',
+        status: 'WEEK 04 진행 중 · 산출물 3개',
+        percent: 58,
+        isMe: false,
+      },
+      {
+        rank: 5,
+        name: '퍼포먼스입문**',
+        status: 'WEEK 03 진행 중 · 산출물 2개',
+        percent: 41,
+        isMe: false,
+      },
+    ] satisfies PlaybookLeaderRow[],
+  },
 } as const;
 
 export interface PlaybookWeekOutput {
