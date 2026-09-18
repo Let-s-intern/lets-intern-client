@@ -36,12 +36,14 @@ describe('PASS_BENEFITS_MODALS (개편 시안 6)', () => {
     expect(PASS_BENEFITS_MODALS[1].modal.eyebrow).toBe('7 GUIDE BOOK');
   });
 
-  it('VOD 는 상품 링크가 있는 카드만 남긴다', () => {
-    expect(PASS_BENEFIT_VOD_CARDS.every((card) => Boolean(card.url))).toBe(
-      true,
-    );
-    expect(PASS_BENEFIT_VOD_CARDS).toHaveLength(
-      MARKETER_VOD.cards.filter((card) => Boolean(card.url)).length,
+  /*
+   * 기존 카드는 링크가 없어도 남는다. 대학내일 AE 카드가 그렇고, 지금 화면에도 나온다 —
+   * 걸러내면 있던 카드가 사라지는 회귀가 된다. 버튼만 빠진다.
+   */
+  it('VOD 는 기존 카드를 모두 그린다', () => {
+    expect(PASS_BENEFIT_VOD_CARDS).toHaveLength(MARKETER_VOD.cards.length);
+    expect(PASS_BENEFIT_VOD_CARDS.map((card) => card.title)).toContain(
+      '대학내일 AE 현직자',
     );
   });
 

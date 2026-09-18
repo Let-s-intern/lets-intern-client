@@ -68,11 +68,15 @@ const PENDING_VOD_CARDS: MarketerVodCard[] = [
   },
 ];
 
-/** 모달 본문에 그릴 VOD 카드. 상품 링크가 있는 것만 남는다 */
+/**
+ * 모달 본문에 그릴 VOD 카드. 기존 두 장은 링크가 없어도 그대로 그린다 —
+ * 대학내일 AE 카드는 지금 화면에도 나오고, 링크가 없으면 버튼만 빠진다.
+ * 자리만 잡아 둔 `PENDING_VOD_CARDS` 는 배너 이미지가 없어 링크가 채워질 때까지 뺀다.
+ */
 export const PASS_BENEFIT_VOD_CARDS: readonly MarketerVodCard[] = [
   ...MARKETER_VOD.cards,
-  ...PENDING_VOD_CARDS,
-].filter((card) => Boolean(card.url));
+  ...PENDING_VOD_CARDS.filter((card) => Boolean(card.url)),
+];
 
 /** 모달 본문이 쓰는 기존 목록. 여기서만 가리키고 내용은 원본 파일이 든다 */
 export const PASS_BENEFIT_SOURCES = {
