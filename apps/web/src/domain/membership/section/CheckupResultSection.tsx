@@ -119,12 +119,9 @@ export default function CheckupResultSection({
     );
   }
 
-  /*
-   * 결과 문구와 CTA 이벤트는 아직 영역 키를 쓴다. 강조 축이 없는 CASE E 는 마지막
-   * 축으로 떨어뜨려 둔다 — CASE 6종 문구가 들어오면 이 줄이 사라진다.
-   */
+  const copy = CHECKUP_RESULT_COPY[result.caseId];
+  /* CTA 이벤트는 아직 영역 키다. 강조 축이 없는 CASE E 만 마지막 축으로 떨어뜨려 둔다 */
   const areaId = result.weakestAreaId ?? 'apply';
-  const copy = CHECKUP_RESULT_COPY[areaId];
 
   return (
     <section

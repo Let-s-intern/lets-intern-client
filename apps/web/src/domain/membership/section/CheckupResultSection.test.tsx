@@ -80,12 +80,12 @@ describe('CheckupResultSection (시안 3)', () => {
   it('판정된 영역의 결과 문구를 보여준다', () => {
     renderSection();
 
-    for (const paragraph of CHECKUP_RESULT_COPY.direction.body) {
+    for (const paragraph of CHECKUP_RESULT_COPY.A.body) {
       expect(screen.getByText(paragraph)).toBeInTheDocument();
     }
     // 다른 영역 문구가 섞이지 않는다
     expect(
-      screen.queryByText(CHECKUP_RESULT_COPY.apply.body[0]),
+      screen.queryByText(CHECKUP_RESULT_COPY.D1.body[0]),
     ).not.toBeInTheDocument();
   });
 

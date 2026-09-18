@@ -104,9 +104,7 @@ describe('MembershipLanding 진단 흐름', () => {
     answerAll([0, 3, 3, 3, 3]);
 
     expect(screen.getByText(CHECKUP_RESULT.title)).toBeInTheDocument();
-    expect(
-      screen.getByText(CHECKUP_RESULT_COPY.direction.body[0]),
-    ).toBeInTheDocument();
+    expect(screen.getByText(CHECKUP_RESULT_COPY.A.body[0])).toBeInTheDocument();
     expect(badgedStepId()).toBe('prep-step-step-01');
   });
 

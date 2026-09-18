@@ -1,6 +1,7 @@
 import {
   CHECKUP_AREAS,
   CHECKUP_QUESTIONS,
+  CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
   CHECKUP_STATUS_LABEL,
   EMPTY_CHECKUP_ANSWERS,
@@ -325,22 +326,42 @@ describe('resolveCheckupResult', () => {
   });
 });
 
-describe('CHECKUP_RESULT_COPY', () => {
-  it('영역마다 제목 2~3줄과 본문 2문단이 있다', () => {
-    for (const area of CHECKUP_AREAS) {
-      const copy = CHECKUP_RESULT_COPY[area.id];
+const CASE_IDS = ['A', 'B', 'C', 'D1', 'D2', 'E'] as const;
 
-      expect(copy.titleLines.length).toBeGreaterThanOrEqual(2);
-      expect(copy.titleLines.length).toBeLessThanOrEqual(3);
+describe('CHECKUP_RESULT_COPY', () => {
+  it('CASE 6종이 모두 있다', () => {
+    expect(Object.keys(CHECKUP_RESULT_COPY)).toEqual([...CASE_IDS]);
+  });
+
+  it('CASE 마다 제목 2줄과 본문 2문단이 있다', () => {
+    for (const caseId of CASE_IDS) {
+      const copy = CHECKUP_RESULT_COPY[caseId];
+
+      expect(copy.titleLines).toHaveLength(2);
       expect(copy.body).toHaveLength(2);
       expect(copy.body.every((paragraph) => paragraph.length > 0)).toBe(true);
     }
   });
 
-  it('제목마다 강조 조각이 하나 이상이다', () => {
-    for (const area of CHECKUP_AREAS) {
-      const parts = CHECKUP_RESULT_COPY[area.id].titleLines.flat();
-      expect(parts.some((part) => part.accent)).toBe(true);
+  /* 강조가 둘이면 제목에서 눈이 갈 곳이 갈린다. 원문도 CASE 마다 한 어절이다. */
+  it('제목의 강조 어절은 CASE 마다 하나다', () => {
+    for (const caseId of CASE_IDS) {
+      const parts = CHECKUP_RESULT_COPY[caseId].titleLines.flat();
+      expect(parts.filter((part) => part.accent)).toHaveLength(1);
     }
+  });
+});
+
+describe('CHECKUP_RESULT 배지와 CTA', () => {
+  it('기본 배지와 CASE E 배지가 다르다', () => {
+    expect(CHECKUP_RESULT.badge).toBe('🔍 지금 당신에게 가장 먼저 필요한 준비');
+    expect(CHECKUP_RESULT.caseEBadge).toBe(
+      '✅ 지금 당신에게 남은 건 확인입니다',
+    );
+  });
+
+  it('CASE E 전용 CTA 라벨이 기본 CTA 와 다르다', () => {
+    expect(CHECKUP_RESULT.caseECta).toBe('현직자 1:1 멘토링 확인하기');
+    expect(CHECKUP_RESULT.caseECta).not.toBe(CHECKUP_RESULT.cta);
   });
 });
