@@ -161,3 +161,217 @@ export function findCheckupArea(id: CheckupAreaId): CheckupArea {
   if (!area) throw new Error(`알 수 없는 진단 영역: ${id}`);
   return area;
 }
+
+// ---------------------------------------------------------------------------
+// 진단 결과 — 시안 3.png
+// ---------------------------------------------------------------------------
+
+/** 아직 고르지 않은 문항은 null 이다. 길이는 항상 문항 수와 같다. */
+export type CheckupAnswers = readonly (number | null)[];
+
+export const EMPTY_CHECKUP_ANSWERS: CheckupAnswers = CHECKUP_QUESTIONS.map(
+  () => null,
+);
+
+/**
+ * 한 문항에서 나올 수 있는 가장 높은 점수. 선택지 수에서 끌어온다 —
+ * 상수로 박아 두면 선택지를 늘렸을 때 막대가 100% 를 넘는다.
+ */
+const MAX_SCORE = Math.max(
+  ...CHECKUP_QUESTIONS.map((question) => question.options.length),
+);
+
+export type CheckupAreaStatus = 'weakest' | 'later' | 'ongoing';
+
+/** 시안 3.png 왼쪽 카드의 막대 아래 한 줄 */
+export const CHECKUP_STATUS_LABEL: Record<CheckupAreaStatus, string> = {
+  weakest: '가장 먼저 보완이 필요해요',
+  later: '이후 보완이 필요해요',
+  ongoing: '진행 중이에요',
+};
+
+/** 평균이 이 값 이상이면 "진행 중이에요" 다 (시안에서 03 영역만 이 라벨이다) */
+const ONGOING_THRESHOLD = 3;
+
+export interface CheckupAreaScore {
+  area: CheckupArea;
+  /**
+   * 1 ~ MAX_SCORE. **합이 아니라 평균이다.**
+   * 02 영역만 문항이 둘이라, 합으로 비교하면 어떤 답을 해도 02 가 가장 낮게 나온다.
+   */
+  average: number;
+  /** 막대 길이 (0~1). 평균을 만점으로 나눈 값이다 */
+  ratio: number;
+  status: CheckupAreaStatus;
+}
+
+export interface CheckupResult {
+  /** 가장 먼저 보완할 영역. 준비 단계 카드의 배지가 이 값으로 붙는다 */
+  weakestAreaId: CheckupAreaId;
+  /** CHECKUP_AREAS 와 같은 순서 */
+  scores: readonly CheckupAreaScore[];
+}
+
+/** 영역별 평균 점수. 답이 하나라도 비어 있으면 null */
+function resolveAreaAverages(
+  answers: CheckupAnswers,
+): Map<CheckupAreaId, number> | null {
+  if (answers.length !== CHECKUP_QUESTIONS.length) return null;
+
+  const sums = new Map<CheckupAreaId, { total: number; count: number }>();
+
+  for (const [index, question] of CHECKUP_QUESTIONS.entries()) {
+    const answer = answers[index];
+    if (answer === null || answer === undefined) return null;
+
+    const prev = sums.get(question.areaId) ?? { total: 0, count: 0 };
+    // 선택지 순번은 0부터 세지만 점수는 1부터다. 0 을 그대로 쓰면 막대가 사라진다.
+    sums.set(question.areaId, {
+      total: prev.total + answer + 1,
+      count: prev.count + 1,
+    });
+  }
+
+  const averages = new Map<CheckupAreaId, number>();
+  for (const [areaId, { total, count }] of sums) {
+    averages.set(areaId, total / count);
+  }
+  return averages;
+}
+
+/**
+ * 가장 먼저 보완할 영역 하나. 답이 덜 찼으면 null.
+ *
+ * 평균이 가장 낮은 영역이고, 동점이면 `CHECKUP_AREAS` 에서 앞선 영역이다 —
+ * 01 → 04 순서가 준비 단계의 순서이기도 해서, 앞 단계부터 보완하는 것이 맞다.
+ */
+export function resolveWeakestArea(
+  answers: CheckupAnswers,
+): CheckupAreaId | null {
+  const averages = resolveAreaAverages(answers);
+  if (!averages) return null;
+
+  let weakest: CheckupAreaId | null = null;
+  let lowest = Number.POSITIVE_INFINITY;
+
+  for (const area of CHECKUP_AREAS) {
+    const average = averages.get(area.id);
+    if (average === undefined) continue;
+    // `<` 이라 동점이면 먼저 만난 영역이 남는다 = 01 에 가까운 쪽
+    if (average < lowest) {
+      lowest = average;
+      weakest = area.id;
+    }
+  }
+
+  return weakest;
+}
+
+/** 막대 4개와 라벨까지 포함한 결과. 답이 덜 찼으면 null */
+export function resolveCheckupResult(
+  answers: CheckupAnswers,
+): CheckupResult | null {
+  const averages = resolveAreaAverages(answers);
+  const weakestAreaId = resolveWeakestArea(answers);
+  if (!averages || !weakestAreaId) return null;
+
+  const scores = CHECKUP_AREAS.map((area) => {
+    const average = averages.get(area.id) ?? 0;
+    const status: CheckupAreaStatus =
+      area.id === weakestAreaId
+        ? 'weakest'
+        : average >= ONGOING_THRESHOLD
+          ? 'ongoing'
+          : 'later';
+
+    return { area, average, ratio: average / MAX_SCORE, status };
+  });
+
+  return { weakestAreaId, scores };
+}
+
+/** 결과 제목 한 줄을 이루는 조각. `accent` 인 조각만 포인트 컬러로 칠한다 */
+export interface CheckupResultTitlePart {
+  text: string;
+  accent?: boolean;
+}
+
+export interface CheckupAreaResultCopy {
+  /** 2~3줄. 줄바꿈 위치도 시안 그대로다 */
+  titleLines: readonly (readonly CheckupResultTitlePart[])[];
+  /** 본문 2문단 */
+  body: readonly [string, string];
+}
+
+/*
+ * 영역별 결과 문구.
+ *
+ * **`direction`(01) 한 벌만 시안 3.png 에서 옮긴 확정 문구다.** 나머지 셋은 같은 형식
+ * (제목 2~3줄 + 본문 2문단)으로 쓴 **운영 확인 전 초안**이다. 운영 문구를 받으면 해당
+ * 항목만 교체하면 되고, 형식이 같으므로 화면은 건드리지 않는다.
+ */
+export const CHECKUP_RESULT_COPY: Record<CheckupAreaId, CheckupAreaResultCopy> =
+  {
+    // 시안 3.png 확정 문구
+    direction: {
+      titleLines: [
+        [{ text: '지금은 포트폴리오보다' }],
+        [{ text: "'어디에 지원할지'", accent: true }, { text: '부터' }],
+        [{ text: '정해야 해요.' }],
+      ],
+      body: [
+        '마케팅 세부 직무를 이해하고 실제 채용공고를 살펴보며 내가 지원할 직무와 지원 범위를 먼저 좁혀보세요.',
+        '직무가 정해지지 않은 상태에서 만든 서류는 어떤 공고에도 딱 맞지 않습니다. 방향을 먼저 잡으면 지금 가진 경험 중 무엇을 꺼내 써야 할지도 함께 보입니다.',
+      ],
+    },
+    // 운영 확인 전 초안
+    experience: {
+      titleLines: [
+        [{ text: '지금은 새 경험보다' }],
+        [{ text: "'가진 경험의 해석'", accent: true }, { text: '부터' }],
+        [{ text: '시작해야 해요.' }],
+      ],
+      body: [
+        '지금까지 한 활동을 빠짐없이 적어 두고, 지원 직무와 연결되는 판단과 인사이트를 먼저 뽑아보세요.',
+        '성과가 크지 않았던 경험도 문제와 판단, 실행과 회고로 풀어내면 직무 역량이 됩니다. 쓸 경험이 없는 것이 아니라 아직 해석하지 않은 것입니다.',
+      ],
+    },
+    // 운영 확인 전 초안
+    document: {
+      titleLines: [
+        [{ text: '경험은 있으니,' }],
+        [{ text: "'채용공고에 맞춘 서류'", accent: true }, { text: '로' }],
+        [{ text: '옮겨야 해요.' }],
+      ],
+      body: [
+        '이력서 · 자소서 · 포트폴리오 초안을 먼저 끝까지 완성하고, 지원할 공고의 요구 역량에 맞춰 경험의 순서와 강조점을 바꿔보세요.',
+        '같은 서류를 모든 기업에 내면 어디에도 맞지 않습니다. 초안이 있어야 무엇을 덜어내고 무엇을 더할지 판단할 수 있습니다.',
+      ],
+    },
+    // 운영 확인 전 초안
+    apply: {
+      titleLines: [
+        [{ text: '서류는 준비됐으니,' }],
+        [{ text: "'지원과 전형 대응'", accent: true }, { text: '을' }],
+        [{ text: '다듬어야 해요.' }],
+      ],
+      body: [
+        '실제 지원을 이어가며 결과를 기록하고, 서류와 면접 중 어디에서 막히는지 확인해 다음 지원을 고쳐보세요.',
+        '지원은 한 번에 끝나는 일이 아니라 결과를 보고 고쳐 나가는 과정입니다. 경험 기반 예상 질문과 답변 세트를 준비해 두면 면접에서 흔들리지 않습니다.',
+      ],
+    },
+  };
+
+/** 시안 3.png 의 고정 문구 */
+export const CHECKUP_RESULT = {
+  /** 답하기 전에도 보이는 안내 */
+  guideLines: [
+    '위 5문항 무료진단에 답하면',
+    '진단 결과와 나에게 필요한 준비가 아래에 표시됩니다.',
+  ],
+  eyebrow: 'CAREER CHECK RESULT',
+  title: '마케팅 취준 진단 결과',
+  restart: '다시 진단하기',
+  badge: '★ 지금 당신에게 가장 먼저 필요한 준비',
+  cta: '준비 단계 확인하기',
+} as const;
