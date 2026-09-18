@@ -379,4 +379,11 @@ describe('CHECKUP_RESULT 배지와 CTA', () => {
     expect(CHECKUP_RESULT.caseECta).toBe('현직자 1:1 멘토링 확인하기');
     expect(CHECKUP_RESULT.caseECta).not.toBe(CHECKUP_RESULT.cta);
   });
+
+  /* 진단 전에는 이 문구가 결과 영역을 혼자 설명한다 (PRD 4.6) */
+  it('진단 전 안내가 PRD 4.6 문장이다', () => {
+    expect(CHECKUP_RESULT.guideLines.join(' ')).toBe(
+      '위 5문항에 답하면 4개 축 진단 결과와 나에게 필요한 준비가 아래에 표시됩니다',
+    );
+  });
 });

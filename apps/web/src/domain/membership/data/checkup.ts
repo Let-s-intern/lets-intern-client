@@ -550,10 +550,15 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
 export const CHECKUP_RESULT = {
   /** 마지막 문항을 답하면 이 자리로 스크롤한다 */
   anchorId: 'checkup-result',
-  /** 답하기 전에도 보이는 안내 */
+  /**
+   * 답하기 전에도 보이는 안내 (PRD 4.6 문구).
+   *
+   * 진단 전에는 CASE 카피 카드를 아예 그리지 않으므로, 이 문구가 "무엇이 어디에
+   * 나타나는지" 를 혼자 설명한다. 그래서 축 개수까지 적는다.
+   */
   guideLines: [
-    '위 5문항 무료진단에 답하면',
-    '진단 결과와 나에게 필요한 준비가 아래에 표시됩니다.',
+    '위 5문항에 답하면 4개 축 진단 결과와',
+    '나에게 필요한 준비가 아래에 표시됩니다',
   ],
   eyebrow: 'CAREER CHECK RESULT',
   title: '마케팅 취준 진단 결과',

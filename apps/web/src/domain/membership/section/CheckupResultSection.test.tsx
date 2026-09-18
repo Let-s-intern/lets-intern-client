@@ -46,6 +46,7 @@ function renderSection(result = WEAK_DIRECTION, onRestart = jest.fn()) {
 }
 
 describe('CheckupResultSection (시안 3)', () => {
+  /* 진단 전에는 CASE 카피 카드를 아예 그리지 않는다 (PRD 4.6) */
   it('답하기 전에는 안내 문구만 보인다', () => {
     renderSection(null);
 
@@ -54,6 +55,10 @@ describe('CheckupResultSection (시안 3)', () => {
     }
     expect(screen.queryByText(CHECKUP_RESULT.title)).not.toBeInTheDocument();
     expect(screen.queryAllByTestId('checkup-area-bar')).toHaveLength(0);
+    expect(screen.queryAllByTestId('checkup-title-line')).toHaveLength(0);
+    expect(screen.queryAllByTestId('checkup-body')).toHaveLength(0);
+    expect(screen.queryByText(CHECKUP_RESULT.badge)).not.toBeInTheDocument();
+    expect(screen.queryByText(CHECKUP_RESULT.cta)).not.toBeInTheDocument();
   });
 
   it('답한 뒤에는 카드 2장이 보인다', () => {
