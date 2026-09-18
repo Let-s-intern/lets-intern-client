@@ -34,8 +34,9 @@ const VALID_TAGS: CourseTag[] = [
   'mentoring',
 ];
 
-// 유형 분리 전 MATRIX_CELLS(41칸)를 step|category|owner|tag|title|desc|when 으로 떠 둔 것.
-const BEFORE_SPLIT_FINGERPRINT = [
+// TYPE A 매트릭스(42칸)를 step|category|owner|tag|title|desc|when 으로 떠 둔 것.
+// 유형 분리 전 매트릭스(41칸)에 시안 9 대조로 찾은 'GA4·메타 데모 계정 실습' 한 칸이 더해졌다.
+const TYPE_A_FINGERPRINT = [
   'step01|job|free|free|세부 직무 6종 훑기|그로스·퍼포먼스·콘텐츠·바이럴·인플루언서·브랜드|',
   'step02|job|free|vod|현직자 직무 세미나 VOD|하는 일과 보는 숫자 비교하기|',
   'step03|job|free|free|관심 산업 2~3개 좁히기|시장·주요 브랜드·최근 캠페인|',
@@ -60,6 +61,7 @@ const BEFORE_SPLIT_FINGERPRINT = [
   'step02|data|free|vod|CMO·CPO의 필수 역량 강의|뽑는 사람이 보는 기준|',
   'step03|data|free|free|집행 경험 없이 퍼포먼스 지원하기|경험이 없어도 쓸 수 있는 것|',
   'step04|data|free|vod|광고 지표 기준선|CTR·CVR·CPA·ROAS 어느 정도가 평타인가|',
+  'step04|data|free|free|GA4·메타 데모 계정 실습|계정 없이 화면 익히기|',
   'step05|data|free|free|AI 활용 경험 쓰는 법|툴 나열은 감점이 되는 이유|',
   'step01|interview|free|free|면접 기본 가이드|면접 유형과 평가 포인트|',
   'step02|interview|self|template|1분 자기소개 초안|기본 스크립트 작성|',
@@ -90,18 +92,18 @@ describe('coursePlan 데이터 무결성', () => {
     });
 
     /*
-     * 셀 개수를 못 박아 둔다. 표가 41칸이라 손으로 넣다 한 줄 빠뜨려도 화면에서는
+     * 셀 개수를 못 박아 둔다. 표가 42칸이라 손으로 넣다 한 줄 빠뜨려도 화면에서는
      * 빈 칸이 원래 그런 것처럼 보인다 — 숫자로 잡는 게 유일한 방법이다.
+     * 실제로 'GA4·메타 데모 계정 실습' 한 칸이 빠져 있었고 시안 9 대조로 찾았다.
      */
-    it('셀은 41개다 (시안 8)', () => {
-      expect(TYPE_A_MATRIX_CELLS).toHaveLength(41);
+    it('셀은 42개다 (시안 9)', () => {
+      expect(TYPE_A_MATRIX_CELLS).toHaveLength(42);
     });
 
     /*
-     * 유형별로 나누기 전 한 벌이던 매트릭스(41칸)를 그대로 TYPE A 로 옮겼다(PRD Q1).
-     * 옮기면서 칸 하나라도 바뀌면 화면이 달라진다 — 모든 필드를 순서까지 고정한다.
+     * 칸 하나라도 바뀌면 화면이 달라진다 — 모든 필드를 순서까지 고정한다.
      */
-    it('TYPE A 매트릭스는 유형 분리 전 매트릭스와 순서·내용이 같다', () => {
+    it('TYPE A 매트릭스는 시안 9 와 칸·순서가 같다', () => {
       const fingerprint = TYPE_A_MATRIX_CELLS.map((cell) =>
         [
           cell.step,
@@ -113,7 +115,7 @@ describe('coursePlan 데이터 무결성', () => {
           cell.when ?? '',
         ].join('|'),
       );
-      expect(fingerprint).toEqual(BEFORE_SPLIT_FINGERPRINT);
+      expect(fingerprint).toEqual(TYPE_A_FINGERPRINT);
     });
 
     it('TYPE A 의 라이브 세미나 줄은 공유 데이터 그 자체다', () => {
@@ -256,9 +258,7 @@ describe('coursePlan 데이터 무결성', () => {
       }
     });
 
-    it('본문 도입부와 매트릭스 캡션 문구가 비어 있지 않다', () => {
-      expect(COURSE_PLAN_BODY.titleLines.length).toBeGreaterThan(0);
-      expect(COURSE_PLAN_BODY.sub.length).toBeGreaterThan(0);
+    it('매트릭스 캡션 문구가 비어 있지 않다', () => {
       expect(COURSE_PLAN_BODY.matrixTitle.a.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixTitle.b.length).toBeGreaterThan(0);
       expect(COURSE_PLAN_BODY.matrixSub.length).toBeGreaterThan(0);

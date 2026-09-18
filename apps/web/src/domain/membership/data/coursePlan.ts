@@ -371,6 +371,14 @@ const TYPE_A_OWN_CELLS: MatrixCell[] = [
     desc: 'CTR·CVR·CPA·ROAS 어느 정도가 평타인가',
   },
   {
+    step: 'step04',
+    category: 'data',
+    owner: 'free',
+    tag: 'free',
+    title: 'GA4·메타 데모 계정 실습',
+    desc: '계정 없이 화면 익히기',
+  },
+  {
     step: 'step05',
     category: 'data',
     owner: 'free',
@@ -1255,22 +1263,28 @@ export const WEEK_PLANS: Record<CoursePlanTypeId, WeekPlan[]> = {
   b: TYPE_B_WEEKS,
 };
 
-/** 섹션 헤더 — 시안 6-0.png */
+/**
+ * 섹션 헤더 — 개편 시안 9.
+ *
+ * 제목은 이 섹션에 한 번만 나온다. 예전에는 헤더 밴드와 본문 도입부가 같은 문장을
+ * 두 번 그렸다 (`COURSE_PLAN_BODY.titleLines`). 시안 9 는 한 번이다.
+ */
 export const COURSE_PLAN_HEADER = {
-  badge: 'PASS BENEFIT 01 · 10-WEEK MARKETING CAREER PLAYBOOK',
-  /** 제목 — 의도된 줄바꿈 단위 (시안 8) */
-  titleLines: ['마케팅 10주 합격 플레이북 대로만 따라오세요'],
-  /** titleLines 안에서 강조할 어절 */
-  titleHighlights: ['10주 합격 플레이북'],
+  badge: '10-WEEK MARKETING JOB SEARCH PLAYBOOK',
+  /** 제목 — 의도된 줄바꿈 단위 (시안 9) */
+  titleLines: ['마케팅 10주 합격 플레이북대로만 따라오세요'],
+  /**
+   * titleLines 안에서 파랗게 칠할 어절. 시안 9 의 제목은 한 색이라 비어 있다 —
+   * 다른 섹션과 같은 구조를 유지해 강조가 생기면 여기만 채우면 되게 둔다.
+   */
+  titleHighlights: [] as readonly string[],
   subLines: [
     '내 상황을 고르면 10주 계획이 바뀝니다. 무엇을 직접 만들고, 어디서 렛츠커리어가 함께하는지 정리했어요.',
   ],
 } as const;
 
-/** 플레이북 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
+/** 매트릭스 캡션 — 시안 9 */
 export const COURSE_PLAN_BODY = {
-  titleLines: ['마케팅 10주 합격 플레이북 대로만 따라오세요'],
-  sub: '내 상황을 고르면 10주 계획이 바뀝니다. 무엇을 직접 만들고, 어디서 렛츠커리어가 함께하는지 정리했어요.',
   /** 매트릭스 바로 위 문구 — 유형별 (TYPE A 시안 image copy.png, TYPE B 시안 image.png) */
   matrixTitle: {
     a: '첫 3주는 마케팅 서류 완성 올인원 챌린지 10기(9/19~10/9)로 서류 3종을 만들고, 이후 7주는 부족한 경험을 채우며 실제로 지원합니다.',

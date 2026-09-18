@@ -1,215 +1,257 @@
-import { PLAYBOOK_DASHBOARD as D } from '../data/playbookDashboard';
+import {
+  PLAYBOOK_OUTPUT as O,
+  PLAYBOOK_STRUCTURE as S,
+  PLAYBOOK_WITH as W,
+} from '../data/playbookDashboard';
+import PlaybookWeekTimeline from '../ui/PlaybookWeekTimeline';
 
-/**
- * 시안 9 — 플레이북 대시보드 (PASS BENEFIT 01).
- *
- * **동작하는 도구가 아니라 목업이다.** 탭·입력창·버튼처럼 보이는 것에 동작을 붙이지
- * 않는다 — 눌러도 아무 일이 없는 컨트롤은 사용자를 속인다. 그래서 `button`·`input` 대신
- * `div`·`span` 으로 그리고, 전체를 `aria-hidden` 으로 감춰 스크린리더가 조작 가능한
- * 위젯으로 읽지 않게 한다. 내용은 바깥 제목·설명 3칸이 대신 전달한다.
- */
-export default function PlaybookDashboardSection() {
+/** 시안 10 의 주황 아이브로우. 세 덩어리가 같은 색을 쓴다 */
+const EYEBROW = 'text-center text-sm font-bold tracking-wide text-[#F36D32]';
+
+function Eyebrow({ children }: { children: string }) {
+  return <p className={EYEBROW}>{children}</p>;
+}
+
+function SectionTitle({ lines }: { lines: readonly string[] }) {
   return (
-    <section className="bg-[#232433] py-16 md:py-24" id="playbook-dashboard">
-      <div className="wrap">
-        <div className="flex items-center justify-center gap-3">
-          <span className="rounded-full bg-[#F1642B] px-3 py-1 text-xs font-bold text-white">
-            {D.badge}
-          </span>
-          <span className="text-sm font-bold tracking-wide text-[#F1642B]">
-            {D.eyebrow}
-          </span>
-        </div>
+    <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+      {lines.map((line) => (
+        <span className="block" key={line}>
+          {line}
+        </span>
+      ))}
+    </h2>
+  );
+}
 
-        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-white md:text-[2rem]">
-          {D.titleLines.map((line) => (
-            <span className="block" key={line}>
-              {line}
-            </span>
-          ))}
-        </h2>
+/** 1. WITH LET'S CAREER — 혜택 4카드 + STEP 01~05 → GOAL 세로 흐름 */
+function PlaybookWithBlock() {
+  return (
+    <section className="bg-white py-16 md:py-24" id={W.anchorId}>
+      <div className="wrap rv">
+        <Eyebrow>{W.eyebrow}</Eyebrow>
+        <SectionTitle lines={W.titleLines} />
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-70 mt-4 text-center">
-          {D.sub}
+        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+          <span className="block">{W.subLead}</span>
+          <span className="block">
+            {W.subTail}
+            <strong className="text-neutral-0 font-bold">{W.subStrong}</strong>
+          </span>
         </p>
 
-        {/* ── 목업 ── 조작 불가. 위 주석 참고 */}
-        <div
-          aria-hidden="true"
-          className="bg-neutral-95 rounded-xxl mt-10 select-none p-4 md:mt-14 md:p-6"
-        >
-          <div className="grid gap-4 md:grid-cols-[minmax(0,240px)_minmax(0,1fr)]">
-            {/* 좌측 사이드 */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <span className="bg-primary h-10 w-10 shrink-0 rounded-lg" />
-                <span>
-                  <strong className="text-xsmall14 text-neutral-0 block font-bold">
-                    {D.brand.name}
-                  </strong>
-                  <span className="text-neutral-40 block text-xs">
-                    {D.brand.product}
-                  </span>
-                </span>
-              </div>
-
-              <div className="border-neutral-90 rounded-lg border bg-white p-4">
-                <strong className="text-xsmall14 text-neutral-0 block font-bold">
-                  {D.startPanel.title}
-                </strong>
-                <span className="text-neutral-40 mt-1 block text-xs">
-                  {D.startPanel.desc}
-                </span>
-                {D.startPanel.fields.map((field) => (
-                  <span
-                    className="border-neutral-90 mt-3 block rounded-lg border px-3 py-2 text-xs text-neutral-50"
-                    key={field}
-                  >
-                    {field}
-                  </span>
-                ))}
-                <span className="bg-primary text-xsmall14 mt-4 block rounded-lg py-2.5 text-center font-medium text-white">
-                  {D.startPanel.cta}
-                </span>
-              </div>
-
-              <div className="border-primary rounded-lg border-l-4 bg-white p-4">
-                <span className="flex items-center gap-2">
-                  <span className="bg-neutral-0 rounded px-2 py-0.5 text-[0.65rem] text-white">
-                    {D.noticeCard.tag}
-                  </span>
-                  <span className="text-neutral-40 text-xs">
-                    {D.noticeCard.date}
-                  </span>
-                </span>
-                <strong className="text-xsmall14 text-neutral-0 mt-3 block font-bold">
-                  {D.noticeCard.title}
-                </strong>
-                <span className="text-neutral-40 mt-1 block text-xs">
-                  {D.noticeCard.desc}
-                </span>
-                {D.noticeCard.checks.map((check) => (
-                  <span
-                    className="text-neutral-30 mt-2 block text-xs"
-                    key={check}
-                  >
-                    ✅ {check}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* 우측 본문 */}
-            <div className="flex flex-col gap-4">
-              <div className="flex gap-1 rounded-lg bg-white p-1.5">
-                {D.tabs.map((tab) => (
-                  <span
-                    className={`text-xsmall14 flex-1 rounded-lg py-2.5 text-center font-medium ${
-                      tab === D.activeTab
-                        ? 'bg-neutral-0 text-white'
-                        : 'text-neutral-40'
-                    }`}
-                    key={tab}
-                  >
-                    {tab}
-                  </span>
-                ))}
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,260px)]">
-                {/* 리더보드 */}
-                <div>
-                  <strong className="text-small18 text-neutral-0 block font-bold">
-                    {D.leaderboard.title}
-                  </strong>
-                  <span className="text-neutral-40 mt-1 block text-xs">
-                    {D.leaderboard.desc}
-                  </span>
-
-                  <div className="mt-4 flex flex-col gap-3">
-                    {D.leaderboard.entries.map((entry) => (
-                      <div
-                        className="flex items-center gap-4 rounded-lg bg-white p-4"
-                        key={entry.rank}
-                      >
-                        <span className="text-neutral-30 w-4 shrink-0 text-sm font-bold">
-                          {entry.rank}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex items-baseline justify-between gap-3">
-                            <strong className="text-xsmall14 text-neutral-0 font-bold">
-                              {entry.nickname}
-                            </strong>
-                            <span className="text-neutral-30 text-xs font-medium">
-                              {entry.done}/{entry.total} ·{' '}
-                              {Math.round((entry.done / entry.total) * 100)}%
-                            </span>
-                          </span>
-                          {entry.goal ? (
-                            <span className="text-neutral-40 mt-0.5 block text-xs">
-                              “{entry.goal}”
-                            </span>
-                          ) : null}
-                          <span className="bg-neutral-90 mt-2 block h-1.5 rounded-full">
-                            <span
-                              className="bg-primary block h-full rounded-full"
-                              style={{
-                                width: `${(entry.done / entry.total) * 100}%`,
-                              }}
-                            />
-                          </span>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 추천 공고 */}
-                <div className="rounded-lg bg-white p-4">
-                  <strong className="text-xsmall14 text-neutral-0 block font-bold">
-                    {D.postings.title}
-                  </strong>
-                  <div className="mt-3 flex flex-col gap-3">
-                    {D.postings.items.map((item) => (
-                      <div
-                        className="border-neutral-90 rounded-lg border p-3"
-                        key={item.company}
-                      >
-                        <span className="bg-primary-10 text-primary inline-block rounded px-2 py-0.5 text-[0.65rem] font-bold">
-                          {item.tag}
-                        </span>
-                        <strong className="text-xsmall14 text-neutral-0 mt-2 block font-bold">
-                          {item.company}
-                        </strong>
-                        <span className="text-neutral-40 block text-xs">
-                          {item.roles}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <span className="text-neutral-40 mt-3 block text-right text-xs">
-                    {D.postings.footnote}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 하단 설명 3칸 — 목업이 전하지 못하는 내용을 글로 전달한다 */}
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {D.highlights.map((item) => (
-            <div className="rounded-xxl bg-white/5 p-6" key={item.no}>
-              <strong className="text-xsmall14 block font-bold text-[#F1642B]">
-                {item.no} · {item.title}
+        <ul className="mt-10 grid gap-4 md:mt-14 md:grid-cols-4 md:gap-5">
+          {W.benefits.map((benefit) => (
+            <li
+              className="rounded-xxl border-neutral-85 flex flex-col border bg-white p-6"
+              key={benefit.title}
+            >
+              <span
+                aria-hidden="true"
+                className="bg-primary-10 flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+              >
+                {benefit.icon}
+              </span>
+              <strong className="text-xsmall16 text-neutral-0 mt-5 block font-bold">
+                {benefit.title}
               </strong>
-              <span className="text-xsmall14 text-neutral-70 mt-3 block">
-                {item.desc}
+              <span className="text-xsmall14 text-neutral-40 mt-3 block leading-relaxed">
+                {benefit.desc}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/*
+          세로 흐름. 화살표는 칸 사이의 이음새라 목록 항목이 아니다 — aria-hidden 으로
+          빼고 순서는 ol 이 전한다. 마지막 GOAL 칸만 남색으로 채운다.
+        */}
+        <ol className="mx-auto mt-12 flex max-w-[560px] flex-col md:mt-16">
+          {W.flow.map((step, i) => {
+            const isGoal = i === W.flow.length - 1;
+            return (
+              <li key={step.no}>
+                <div
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-4 md:gap-4 md:px-6 ${
+                    isGoal
+                      ? 'bg-[#11142B]'
+                      : 'border-neutral-85 border bg-white'
+                  }`}
+                >
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-[0.7rem] font-bold ${
+                      isGoal
+                        ? 'text-neutral-0 bg-white'
+                        : 'bg-primary text-white'
+                    }`}
+                  >
+                    {step.no}
+                  </span>
+                  <span
+                    className={`text-xsmall14 font-bold ${
+                      isGoal ? 'text-white' : 'text-neutral-0'
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+                {!isGoal && (
+                  <span
+                    aria-hidden="true"
+                    className="block py-2 text-center text-sm text-neutral-50"
+                  >
+                    ↓
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/** 목업 체크박스 — 보여주기용이라 input 이 아니다. 완료 줄만 채워 그린다 */
+function MockCheckbox({ done }: { done: boolean }) {
+  if (!done) {
+    return (
+      <span className="border-neutral-75 block h-[18px] w-[18px] shrink-0 rounded-[5px] border bg-white" />
+    );
+  }
+  return (
+    <span className="bg-primary flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px]">
+      <svg
+        className="h-3 w-3"
+        fill="none"
+        stroke="#fff"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="3"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  );
+}
+
+/**
+ * 2. PLAYBOOK STRUCTURE — 브라우저 목업.
+ *
+ * **동작하는 도구가 아니라 목업이다.** 탭·주소 표시줄·체크박스에 동작을 붙이지 않는다 —
+ * 눌러도 아무 일이 없는 컨트롤은 사용자를 속인다. 그래서 `button`·`input` 대신
+ * `div`·`span` 으로 그린다. 브라우저 크롬(점·주소 표시줄·탭)은 그림일 뿐이라
+ * `aria-hidden` 으로 감추고, 주차와 체크리스트 본문은 읽히게 둔다.
+ */
+function PlaybookStructureBlock() {
+  return (
+    <section className="bg-white py-16 md:py-24" id={S.anchorId}>
+      <div className="wrap rv">
+        <Eyebrow>{S.eyebrow}</Eyebrow>
+        <SectionTitle lines={S.titleLines} />
+
+        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+          {S.sub}
+        </p>
+
+        <div className="border-neutral-85 rounded-xxl mt-10 select-none overflow-hidden border bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)] md:mt-14">
+          <div aria-hidden="true">
+            <div className="flex items-center gap-2 bg-[#F7F8FC] px-4 py-3">
+              <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
+              <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
+              <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
+              <span className="text-neutral-45 mx-auto max-w-[70%] truncate rounded-full bg-white px-4 py-1.5 text-xs">
+                {S.addressBar}
               </span>
             </div>
-          ))}
+
+            <div className="border-neutral-85 flex flex-wrap gap-1 border-b bg-[#F7F8FC] px-3 pt-2">
+              {S.tabs.map((tab, i) => (
+                <span
+                  className={`flex items-center gap-1.5 rounded-t-lg px-3 py-2.5 text-xs font-bold md:text-sm ${
+                    i === 0
+                      ? 'border-primary text-primary border border-b-white bg-white'
+                      : 'text-neutral-40'
+                  }`}
+                  key={tab.label}
+                >
+                  <span>{tab.icon}</span>
+                  {tab.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-4 md:p-6">
+            <strong className="text-xsmall14 md:text-xsmall16 text-neutral-0 block font-bold">
+              WEEK {String(S.weekNo).padStart(2, '0')} · {S.weekTitle}
+            </strong>
+            <span className="text-neutral-45 mt-1 block text-xs">
+              {S.weekDesc}
+            </span>
+
+            <ul className="mt-4 flex flex-col gap-2">
+              {S.checklist.map((row) => (
+                <li
+                  className={`flex items-center gap-3 rounded-xl px-3 py-3 md:px-4 ${
+                    row.done
+                      ? 'bg-[#F7F8FC]'
+                      : 'border-neutral-85 border bg-white'
+                  }`}
+                  key={row.label}
+                >
+                  <MockCheckbox done={row.done} />
+                  <span
+                    className={`text-xsmall14 min-w-0 flex-1 ${
+                      row.done
+                        ? 'text-neutral-50 line-through'
+                        : 'text-neutral-0'
+                    }`}
+                  >
+                    {row.label}
+                  </span>
+                  <span className="bg-primary-10 text-primary shrink-0 rounded-full px-2.5 py-1 text-[0.65rem] font-bold">
+                    {row.tag}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/** 3. OUTPUT — 10주 뒤에 손에 남는 것 */
+function PlaybookOutputBlock() {
+  return (
+    <section className="bg-white py-16 md:py-24" id={O.anchorId}>
+      <div className="wrap rv">
+        <Eyebrow>{O.eyebrow}</Eyebrow>
+
+        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+          <span className="block">{O.titleLead}</span>
+          <span className="block">
+            <span className="text-primary">{O.titleStrong}</span>
+            {O.titleTail}
+          </span>
+        </h2>
+
+        <PlaybookWeekTimeline />
+      </div>
+    </section>
+  );
+}
+
+/** 개편 시안 10 — 플레이북 실행 흐름과 대시보드 (PRD 4.10). */
+export default function PlaybookDashboardSection() {
+  return (
+    <>
+      <PlaybookWithBlock />
+      <PlaybookStructureBlock />
+      <PlaybookOutputBlock />
+    </>
   );
 }

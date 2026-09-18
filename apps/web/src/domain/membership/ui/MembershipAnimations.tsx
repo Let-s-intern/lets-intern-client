@@ -43,6 +43,12 @@ export default function MembershipAnimations() {
     const revealObserver = createObserver(0.12);
     const timelineObserver = createObserver(0.2);
 
+    /*
+     * 숨기는 것은 여기서 시작한다. CSS 가 처음부터 숨기면 관찰자가 발화하지 않는 환경에서
+     * 섹션이 빈 화면으로 남는다 — 자바스크립트가 살아 있다는 것을 확인한 뒤에 숨긴다.
+     */
+    root.querySelectorAll('.rv').forEach((el) => el.classList.add('rv-armed'));
+
     const observeAll = () => {
       root
         .querySelectorAll('.rv:not(.in)')
@@ -57,10 +63,19 @@ export default function MembershipAnimations() {
     observeAll();
 
     const safetyTimer = setTimeout(() => {
+      /*
+       * 관찰자가 한 번도 발화하지 않았다면 이 환경에서는 동작하지 않는 것이다.
+       * 스크롤 효과를 포기하고 전부 보여준다 — 효과보다 내용이 먼저다.
+       */
+      const neverFired = root.querySelector('.rv.in, .timeline.in') === null;
+
       root
         .querySelectorAll('.rv:not(.in), .timeline:not(.in)')
         .forEach((el) => {
-          if (el.getBoundingClientRect().top < window.innerHeight) {
+          if (
+            neverFired ||
+            el.getBoundingClientRect().top < window.innerHeight
+          ) {
             el.classList.add('in');
           }
         });

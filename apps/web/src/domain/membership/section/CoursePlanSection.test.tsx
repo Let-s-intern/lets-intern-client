@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import {
   COURSE_PLAN_BODY,
+  COURSE_PLAN_HEADER,
   COURSE_PLAN_VIEWS,
   WEEK_PLANS,
 } from '../data/coursePlan';
@@ -27,6 +28,40 @@ const typeButton = (label: 'TYPE A' | 'TYPE B') =>
   screen.getByRole('button', { name: new RegExp(label) });
 const viewButton = (label: string) =>
   screen.getByRole('button', { name: label });
+
+describe('CoursePlanSection 시안 9 대조', () => {
+  /*
+   * 풋노트는 두 보기 바깥(.cp-view 밖)에 있다. 안으로 들어가면 보기를 바꿀 때
+   * 사라진다 — 어느 보기에서도 같은 자리에 있어야 한다.
+   */
+  it('매트릭스 아래 한 줄 문구가 두 보기 모두에서 보인다', async () => {
+    const user = userEvent.setup();
+    render(<CoursePlanSection />);
+
+    expect(
+      screen.getByText(COURSE_PLAN_BODY.matrixFootnote),
+    ).toBeInTheDocument();
+
+    await user.click(viewButton(COURSE_PLAN_VIEWS.timeline.label));
+    expect(
+      screen.getByText(COURSE_PLAN_BODY.matrixFootnote),
+    ).toBeInTheDocument();
+  });
+
+  it('제목은 한 번만 나온다', () => {
+    render(<CoursePlanSection />);
+
+    for (const line of COURSE_PLAN_HEADER.titleLines) {
+      expect(screen.getAllByText(line)).toHaveLength(1);
+    }
+  });
+
+  it('시안 9 에서 찾은 GA4·메타 데모 계정 실습 칸을 그린다', () => {
+    render(<CoursePlanSection />);
+
+    expect(screen.getByText('GA4·메타 데모 계정 실습')).toBeInTheDocument();
+  });
+});
 
 describe('CoursePlanSection 유형 선택', () => {
   it('처음에는 TYPE A 가 선택돼 있고 TYPE A 매트릭스를 그린다', () => {
