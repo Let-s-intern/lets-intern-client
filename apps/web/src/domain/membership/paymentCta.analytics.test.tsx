@@ -25,6 +25,7 @@ import type { MembershipPaymentCtaLocation } from './analytics';
 import { FINAL_CTA } from './data/finalCta';
 import { HERO } from './data/hero';
 import { formatKRW } from './data/membership';
+import { APPLY_BAR, PLAN_PRICE } from './data/plans';
 import { PRICING } from './data/pricing';
 import { ctaLabel } from './lib/membershipChallenge';
 import { onOpenPlanSheet } from './lib/planSheet';
@@ -63,7 +64,8 @@ const CASES: readonly CtaCase[] = [
     name: '하단 고정 바',
     location: 'apply_bar',
     render: () => render(<ApplyBar />),
-    buttonName: ctaLabel('지금 바로 신청'),
+    // 버튼 글자에 가격이 들어간다. 조회 실패 시 폴백(PLAN_PRICE)이 쓰이는 자리다
+    buttonName: ctaLabel(`${formatKRW(PLAN_PRICE.sale)}${APPLY_BAR.ctaSuffix}`),
   },
 ];
 
