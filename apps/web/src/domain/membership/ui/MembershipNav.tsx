@@ -3,6 +3,12 @@
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { useEffect, useRef, useState } from 'react';
 
+import { CHECKUP } from '../data/checkup';
+import { PASS_INTRO } from '../data/passBenefitModals';
+import { PLAYBOOK_INTRO } from '../data/playbookIntro';
+import { PREP_STEPS } from '../data/prepSteps';
+import { PRICING } from '../data/pricing';
+
 interface NavItem {
   title: string;
   to: string;
@@ -15,20 +21,22 @@ interface NavItem {
 // 스크롤 스파이가 IntersectionObserver 로 현재 섹션을 하이라이트하므로, 나열 순서가 어긋나면
 // 스크롤할 때 활성 항목이 앞뒤로 튄다.
 //
-// 세미나·제휴 혜택은 섹션이 시안에서 빠지면서 항목도 함께 뺐다. 없는 id 를 가리키면
-// 클릭이 무반응이 되고 observer 도 대상을 못 찾는다.
 // 앵커는 **랜딩에 실제로 있는 섹션 id** 만 넣는다. 없는 id 를 남기면 눌러도 아무 일이
 // 일어나지 않고, IntersectionObserver 가 관측 대상을 못 찾아 하이라이트도 멈춘다.
 // 섹션을 빼거나 더할 때 이 목록을 함께 고칠 것. (LC-3294)
 //
-// 챌린지·가이드북 항목은 뺐다. 두 섹션이 패스 소개의 혜택 모달로 들어가면서 `challenges`
-// ·`guidebooks` id 가 페이지에서 사라졌다. 새 섹션에 맞춘 앵커 목록 재구성은 Push 5 다 —
-// 여기서는 죽은 앵커만 걷어낸다.
-const NAV_ITEMS: NavItem[] = [
-  { title: '패스 혜택', to: 'pass-intro' },
-  { title: '혜택', to: 'benefits' },
-  { title: '플레이북', to: 'course-plan' },
-  { title: '가격', to: 'compare' },
+// PRD 4.14 로 섹션이 확정되면서 목록을 다시 맞췄다. 「패스 혜택」(#pass-intro)과
+// 「혜택」(#benefits)이 나란히 있어 같은 말이 두 번 나오던 것도 여기서 없앴다 —
+// PassBenefitsSection 이 렌더에서 빠져 #benefits 자체가 사라졌다.
+//
+// id 를 문자열로 적지 않고 각 섹션의 데이터 상수에서 가져온다. 섹션이 id 를 바꾸면
+// 여기도 함께 바뀌어, 죽은 앵커가 조용히 생기는 경로를 하나 줄인다.
+export const NAV_ITEMS: NavItem[] = [
+  { title: '무료 진단', to: CHECKUP.anchorId },
+  { title: '준비 단계', to: PREP_STEPS.anchorId },
+  { title: '패스 혜택', to: PASS_INTRO.anchorId },
+  { title: '플레이북', to: PLAYBOOK_INTRO.anchorId },
+  { title: '가격', to: PRICING.anchorId },
 ];
 
 export default function MembershipNav() {
