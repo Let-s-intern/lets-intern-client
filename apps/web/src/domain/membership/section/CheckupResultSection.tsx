@@ -1,6 +1,9 @@
+import { Fragment } from 'react';
+
 import { captureCheckupResultCtaClicked } from '../analytics';
 import type { CheckupAreaScore, CheckupResult } from '../data/checkup';
 import {
+  checkupBodyText,
   CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
   CHECKUP_STATUS_LABEL,
@@ -152,6 +155,19 @@ export default function CheckupResultSection({
 
   const copy = CHECKUP_RESULT_COPY[result.caseId];
 
+  /*
+   * CASE E 는 보완할 축이 없다. 배지와 CTA 가 함께 바뀐다 (PRD 4.4) — "가장 먼저
+   * 필요한 준비" 를 내걸 축이 없는데 같은 배지를 두면 결과와 문구가 어긋난다.
+   * 내려가는 자리(`#prep-steps`)는 같고 라벨과 이벤트 속성만 다르다.
+   */
+  const isCaseE = result.caseId === 'E';
+  const handleCtaClick = () =>
+    captureCheckupResultCtaClicked(
+      isCaseE
+        ? { caseId: result.caseId, cta: 'mentoring' }
+        : { caseId: result.caseId },
+    );
+
   return (
     <section
       className="bg-[#F7F8FC] py-16 md:py-20"
@@ -185,12 +201,16 @@ export default function CheckupResultSection({
 
           <div className="rounded-xxl flex flex-col border border-[#293662] bg-white p-7 md:p-10">
             <p className="text-xsmall14 w-fit rounded-full bg-[#293662] px-5 py-2.5 font-bold text-white">
-              {CHECKUP_RESULT.badge}
+              {isCaseE ? CHECKUP_RESULT.caseEBadge : CHECKUP_RESULT.badge}
             </p>
 
             <h3 className="text-medium24 md:text-xlarge28 text-neutral-0 mt-6 font-bold">
               {copy.titleLines.map((line) => (
-                <span className="block" key={line.map((p) => p.text).join('')}>
+                <span
+                  className="block"
+                  data-testid="checkup-title-line"
+                  key={line.map((p) => p.text).join('')}
+                >
                   {line.map((part) => (
                     <span
                       className={part.accent ? 'text-primary' : undefined}
@@ -207,9 +227,18 @@ export default function CheckupResultSection({
               {copy.body.map((paragraph) => (
                 <p
                   className="text-xsmall14 md:text-xsmall16 text-neutral-40 leading-relaxed"
-                  key={paragraph}
+                  data-testid="checkup-body"
+                  key={checkupBodyText(paragraph)}
                 >
-                  {paragraph}
+                  {paragraph.map((part) =>
+                    part.bold ? (
+                      <strong className="font-bold" key={part.text}>
+                        {part.text}
+                      </strong>
+                    ) : (
+                      <Fragment key={part.text}>{part.text}</Fragment>
+                    ),
+                  )}
                 </p>
               ))}
             </div>
@@ -219,12 +248,10 @@ export default function CheckupResultSection({
             <a
               className="mt-auto block rounded-lg bg-[#11142B] py-4 text-center"
               href={`#${stepsAnchorId}`}
-              onClick={() =>
-                captureCheckupResultCtaClicked({ caseId: result.caseId })
-              }
+              onClick={handleCtaClick}
             >
               <span className="text-xsmall16 font-bold text-white">
-                {CHECKUP_RESULT.cta}
+                {isCaseE ? CHECKUP_RESULT.caseECta : CHECKUP_RESULT.cta}
               </span>
             </a>
           </div>

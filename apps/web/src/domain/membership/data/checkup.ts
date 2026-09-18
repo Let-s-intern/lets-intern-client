@@ -364,11 +364,25 @@ export interface CheckupResultTitlePart {
   accent?: boolean;
 }
 
+/** 결과 본문 한 문단을 이루는 조각. `bold` 인 조각만 굵게 찍는다 */
+export interface CheckupResultBodyPart {
+  text: string;
+  bold?: boolean;
+}
+
+/** 본문 한 문단. 조각을 순서대로 이으면 원문 한 문단이다 */
+export type CheckupResultBody = readonly CheckupResultBodyPart[];
+
+/** 조각을 이어 붙인 문단 원문 */
+export function checkupBodyText(paragraph: CheckupResultBody): string {
+  return paragraph.map((part) => part.text).join('');
+}
+
 export interface CheckupCaseCopy {
   /** 2줄 고정. 줄바꿈 위치도 문구 원문 그대로다 */
   titleLines: readonly (readonly CheckupResultTitlePart[])[];
   /** 본문 2문단 */
-  body: readonly [string, string];
+  body: readonly [CheckupResultBody, CheckupResultBody];
 }
 
 /*
@@ -377,9 +391,10 @@ export interface CheckupCaseCopy {
  * **키는 영역이 아니라 CASE 다.** 최저 축이 같아도 D1·D2 는 다른 문구가 나가야 해서
  * 영역 키로는 표현되지 않는다.
  *
- * 원문에는 본문 안에도 굵게 표시가 있지만 `body` 는 문단 문자열이라 담지 않는다
- * (PRD 4.4 가 지금 구조를 그대로 쓰라고 못박았다). 제목의 강조 어절만 `accent` 로
- * 남는다.
+ * 제목의 강조 어절은 `accent`(포인트 컬러), 본문의 강조는 `bold`(굵게)다. 원문
+ * (`무료진단 변경안.md` 06절)이 둘을 구분해 표시했고, 문단을 문자열 하나로 두면 본문
+ * 강조를 화면에 내릴 방법이 없어 조각 배열로 바꿨다. **조각을 순서대로 이으면 원문
+ * 그대로여야 한다** — 조각을 나누며 글자를 더하거나 빼지 않는다.
  */
 export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
   A: {
@@ -391,8 +406,18 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '마케팅 세부 직무를 이해하고 실제 채용공고를 살펴보며 내가 지원할 직무와 지원 범위를 먼저 좁혀보세요.',
-      '직무가 정해지지 않은 상태에서 만든 서류는 어떤 공고에도 딱 맞지 않습니다. 방향을 먼저 잡으면 지금 가진 경험 중 무엇을 꺼내 써야 할지도 함께 보입니다.',
+      [
+        { text: '마케팅 세부 직무를 이해하고 실제 채용공고를 살펴보며 ' },
+        {
+          text: '내가 지원할 직무와 지원 범위를 먼저 좁혀보세요.',
+          bold: true,
+        },
+      ],
+      [
+        {
+          text: '직무가 정해지지 않은 상태에서 만든 서류는 어떤 공고에도 딱 맞지 않습니다. 방향을 먼저 잡으면 지금 가진 경험 중 무엇을 꺼내 써야 할지도 함께 보입니다.',
+        },
+      ],
     ],
   },
   B: {
@@ -404,8 +429,16 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '성과가 크지 않았던 경험도 문제 → 판단 → 실행 → 결과 → 인사이트로 다시 정리하면 충분히 취업에 활용할 수 있습니다.',
-      '지금 필요한 건 새로운 대외활동이 아니라, 가진 경험을 서류에 쓸 수 있는 형태로 바꾸는 작업입니다.',
+      [
+        { text: '성과가 크지 않았던 경험도 ' },
+        { text: '문제 → 판단 → 실행 → 결과 → 인사이트', bold: true },
+        { text: '로 다시 정리하면 충분히 취업에 활용할 수 있습니다.' },
+      ],
+      [
+        {
+          text: '지금 필요한 건 새로운 대외활동이 아니라, 가진 경험을 서류에 쓸 수 있는 형태로 바꾸는 작업입니다.',
+        },
+      ],
     ],
   },
   C: {
@@ -417,8 +450,19 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '가지고 있는 경험을 이력서 · 자소서 · 포트폴리오로 완성하고 JD에 맞게 변형하는 연습이 필요합니다.',
-      '하나의 서류를 모든 기업에 그대로 제출하면, 어떤 공고에서도 "우리가 찾던 사람"으로 보이기 어렵습니다.',
+      [
+        { text: '가지고 있는 경험을 ' },
+        {
+          text: '이력서 · 자소서 · 포트폴리오로 완성하고 JD에 맞게 변형하는 연습',
+          bold: true,
+        },
+        { text: '이 필요합니다.' },
+      ],
+      [
+        {
+          text: '하나의 서류를 모든 기업에 그대로 제출하면, 어떤 공고에서도 "우리가 찾던 사람"으로 보이기 어렵습니다.',
+        },
+      ],
     ],
   },
   D1: {
@@ -430,8 +474,19 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '실제 지원 결과를 기록하고 반복되는 탈락 원인을 찾아 서류와 면접을 계속 개선해야 합니다.',
-      '서류 합격이 잘 되지 않는다면 지원 횟수를 늘리기보다, 내 경험의 강점이 제대로 드러나는지 · 지원 직무의 요구 역량과 연결되는지부터 다시 점검할 단계입니다.',
+      [
+        { text: '실제 지원 결과를 기록하고 ' },
+        {
+          text: '반복되는 탈락 원인을 찾아 서류와 면접을 계속 개선',
+          bold: true,
+        },
+        { text: '해야 합니다.' },
+      ],
+      [
+        {
+          text: '서류 합격이 잘 되지 않는다면 지원 횟수를 늘리기보다, 내 경험의 강점이 제대로 드러나는지 · 지원 직무의 요구 역량과 연결되는지부터 다시 점검할 단계입니다.',
+        },
+      ],
     ],
   },
   D2: {
@@ -443,8 +498,21 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '서류 합격까지 했다면 이미 지원 가능한 경험과 결과물을 어느 정도 갖추고 있다는 뜻입니다.',
-      '이제 중요한 것은 서류에 적어둔 경험을 면접에서 논리적으로 설명하고, 꼬리질문에도 흔들리지 않는 것입니다. 면접 준비 과정에서 경험을 다시 구조화하고 현직자의 시선으로 답변을 검증해보세요.',
+      [
+        {
+          text: '서류 합격까지 했다면 이미 지원 가능한 경험과 결과물을 어느 정도 갖추고 있다는 뜻입니다.',
+        },
+      ],
+      [
+        { text: '이제 중요한 것은 ' },
+        {
+          text: '서류에 적어둔 경험을 면접에서 논리적으로 설명하고, 꼬리질문에도 흔들리지 않는 것',
+          bold: true,
+        },
+        {
+          text: '입니다. 면접 준비 과정에서 경험을 다시 구조화하고 현직자의 시선으로 답변을 검증해보세요.',
+        },
+      ],
     ],
   },
   E: {
@@ -457,8 +525,23 @@ export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
       ],
     ],
     body: [
-      '네 영역 모두 스스로 해낼 수 있는 상태입니다. 이 단계에서 결과를 가르는 건 무언가를 더 만드는 일이 아니라, 내가 만든 것이 실제 채용 기준에 닿는지 확인하는 일입니다.',
-      '스스로 판단하기 어려운 부분이 남아 있다면 현직자 1:1 멘토링으로 서류 · 포트폴리오 · 면접 답변을 직접 검증받아보세요. 어디를 더 보완해야 할지, 지금 어디까지 지원할 수 있을지 현직자 관점에서 확인할 수 있습니다.',
+      [
+        {
+          text: '네 영역 모두 스스로 해낼 수 있는 상태입니다. 이 단계에서 결과를 가르는 건 무언가를 더 만드는 일이 아니라, ',
+        },
+        {
+          text: '내가 만든 것이 실제 채용 기준에 닿는지 확인하는 일',
+          bold: true,
+        },
+        { text: '입니다.' },
+      ],
+      [
+        { text: '스스로 판단하기 어려운 부분이 남아 있다면 ' },
+        { text: '현직자 1:1 멘토링', bold: true },
+        {
+          text: '으로 서류 · 포트폴리오 · 면접 답변을 직접 검증받아보세요. 어디를 더 보완해야 할지, 지금 어디까지 지원할 수 있을지 현직자 관점에서 확인할 수 있습니다.',
+        },
+      ],
     ],
   },
 };

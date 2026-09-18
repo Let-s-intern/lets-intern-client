@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import type { CheckupCaseId } from '../data/checkup';
 import {
+  checkupBodyText,
   CHECKUP_AREAS,
   CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
@@ -10,6 +12,27 @@ import CheckupResultSection from './CheckupResultSection';
 
 /** 직무(01)가 가장 약하게 나오는 답 */
 const WEAK_DIRECTION = resolveCheckupResult([0, 3, 3, 3, 3]);
+
+/** CASE 6종을 각각 만드는 답 조합. 브라우저 대조에도 이 조합을 쓴다 */
+const ANSWERS_BY_CASE: Record<CheckupCaseId, number[]> = {
+  A: [0, 3, 3, 3, 3],
+  B: [3, 0, 0, 3, 3],
+  C: [3, 3, 3, 0, 3],
+  D1: [3, 3, 3, 3, 0],
+  D2: [3, 3, 3, 3, 2],
+  E: [3, 3, 3, 3, 3],
+};
+
+const CASE_IDS = ['A', 'B', 'C', 'D1', 'D2', 'E'] as const;
+
+/**
+ * 제목과 본문은 조각 span 으로 쪼개져 나간다. `getByText` 의 기본 matcher 는 자기
+ * 자식 텍스트만 보므로 쪼개진 문장을 잡지 못한다 — 문단 단위 testid 의 textContent 를
+ * 원문과 맞춘다.
+ */
+function textsOf(testId: string): (string | null)[] {
+  return screen.getAllByTestId(testId).map((node) => node.textContent);
+}
 
 function renderSection(result = WEAK_DIRECTION, onRestart = jest.fn()) {
   render(
@@ -122,13 +145,13 @@ describe('CheckupResultSection (시안 3)', () => {
   it('판정된 영역의 결과 문구를 보여준다', () => {
     renderSection();
 
-    for (const paragraph of CHECKUP_RESULT_COPY.A.body) {
-      expect(screen.getByText(paragraph)).toBeInTheDocument();
-    }
+    const paragraphs = textsOf('checkup-body');
+
+    expect(paragraphs).toEqual(CHECKUP_RESULT_COPY.A.body.map(checkupBodyText));
     // 다른 영역 문구가 섞이지 않는다
-    expect(
-      screen.queryByText(CHECKUP_RESULT_COPY.D1.body[0]),
-    ).not.toBeInTheDocument();
+    expect(paragraphs).not.toContain(
+      checkupBodyText(CHECKUP_RESULT_COPY.D1.body[0]),
+    );
   });
 
   it('다시 진단하기를 누르면 초기화를 요청한다', () => {
@@ -147,4 +170,58 @@ describe('CheckupResultSection (시안 3)', () => {
       '#prep-steps',
     );
   });
+});
+
+describe('CheckupResultSection CASE 카드 (PRD 4.4)', () => {
+  it.each(CASE_IDS)('CASE %s 의 배지·제목·본문을 그린다', (caseId) => {
+    const result = resolveCheckupResult(ANSWERS_BY_CASE[caseId]);
+    expect(result?.caseId).toBe(caseId);
+    renderSection(result);
+
+    const copy = CHECKUP_RESULT_COPY[caseId];
+
+    expect(
+      screen.getByText(
+        caseId === 'E' ? CHECKUP_RESULT.caseEBadge : CHECKUP_RESULT.badge,
+      ),
+    ).toBeInTheDocument();
+
+    expect(textsOf('checkup-title-line')).toEqual(
+      copy.titleLines.map((line) => line.map((part) => part.text).join('')),
+    );
+    expect(textsOf('checkup-body')).toEqual(copy.body.map(checkupBodyText));
+  });
+
+  /* 본문 강조는 굵게다. 조각을 나눠 두고 화면에서 흘리면 나눈 의미가 없다 */
+  it('본문의 굵게 조각만 strong 으로 찍는다', () => {
+    const copy = CHECKUP_RESULT_COPY.E;
+    renderSection(resolveCheckupResult(ANSWERS_BY_CASE.E));
+
+    const bold = copy.body.flat().filter((part) => part.bold);
+    expect(bold.length).toBeGreaterThan(0);
+    for (const part of bold) {
+      expect(screen.getByText(part.text).tagName).toBe('STRONG');
+    }
+  });
+
+  it('CASE E 만 멘토링 CTA 를 쓰고 나머지는 기본 CTA 다', () => {
+    renderSection(resolveCheckupResult(ANSWERS_BY_CASE.E));
+
+    expect(
+      screen.getByText(CHECKUP_RESULT.caseECta).closest('a'),
+    ).toHaveAttribute('href', '#prep-steps');
+    expect(screen.queryByText(CHECKUP_RESULT.cta)).not.toBeInTheDocument();
+  });
+
+  it.each(['A', 'B', 'C', 'D1', 'D2'] as const)(
+    'CASE %s 에는 멘토링 CTA 가 없다',
+    (caseId) => {
+      renderSection(resolveCheckupResult(ANSWERS_BY_CASE[caseId]));
+
+      expect(screen.getByText(CHECKUP_RESULT.cta)).toBeInTheDocument();
+      expect(
+        screen.queryByText(CHECKUP_RESULT.caseECta),
+      ).not.toBeInTheDocument();
+    },
+  );
 });

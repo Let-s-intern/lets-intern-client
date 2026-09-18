@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import {
+  checkupBodyText,
   CHECKUP_QUESTIONS,
   CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
@@ -104,7 +105,10 @@ describe('MembershipLanding 진단 흐름', () => {
     answerAll([0, 3, 3, 3, 3]);
 
     expect(screen.getByText(CHECKUP_RESULT.title)).toBeInTheDocument();
-    expect(screen.getByText(CHECKUP_RESULT_COPY.A.body[0])).toBeInTheDocument();
+    // 본문은 강조 조각으로 쪼개져 나가므로 문단 전체 글로 맞춘다
+    expect(screen.getAllByTestId('checkup-body')[0]).toHaveTextContent(
+      checkupBodyText(CHECKUP_RESULT_COPY.A.body[0]),
+    );
     expect(badgedStepId()).toBe('prep-step-step-01');
   });
 

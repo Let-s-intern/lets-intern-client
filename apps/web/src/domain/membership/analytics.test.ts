@@ -84,6 +84,16 @@ describe('이벤트 이름과 속성', () => {
     );
   });
 
+  /* CASE E 자리의 버튼만 문구가 다르다. 대시보드에서 그 버튼만 세려면 속성이 있어야 한다 */
+  it('CASE E 멘토링 CTA 는 cta 속성을 함께 보낸다', () => {
+    captureCheckupResultCtaClicked({ caseId: 'E', cta: 'mentoring' });
+
+    expect(mockCapture).toHaveBeenCalledWith(
+      'membership_checkup_result_cta_clicked',
+      { case_id: 'E', cta: 'mentoring' },
+    );
+  });
+
   it('단계 카드 펼치기는 STEP 을 보낸다', () => {
     capturePrepStepExpanded({ stepId: 'step-02' });
 

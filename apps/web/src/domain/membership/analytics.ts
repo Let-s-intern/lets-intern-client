@@ -101,12 +101,20 @@ export function captureCheckupCompleted(result: CheckupResult): void {
   });
 }
 
-/** 결과 CTA 클릭 — "준비 단계 확인하기". */
+/**
+ * 결과 CTA 클릭 — "준비 단계 확인하기".
+ *
+ * CASE E 는 같은 자리의 버튼이 "현직자 1:1 멘토링 확인하기" 로 바뀐다. 내려가는
+ * 섹션이 같아 `case_id` 만으로도 갈리지만, 대시보드에서 문구별로 세려면 속성이
+ * 있어야 한다 — 그래서 그 버튼만 `cta: 'mentoring'` 을 싣는다 (PRD 4.8).
+ */
 export function captureCheckupResultCtaClicked(params: {
   caseId: CheckupCaseId;
+  cta?: 'mentoring';
 }): void {
   capture(MEMBERSHIP_EVENTS.checkupResultCtaClicked, {
     case_id: params.caseId,
+    ...(params.cta ? { cta: params.cta } : {}),
   });
 }
 

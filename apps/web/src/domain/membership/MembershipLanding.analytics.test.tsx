@@ -176,6 +176,19 @@ describe('결과 CTA', () => {
     });
   });
 
+  /* CASE E 는 같은 자리의 버튼이 멘토링 CTA 로 바뀐다 (PRD 4.8) */
+  it('CASE E 의 멘토링 CTA 는 cta 속성까지 보낸다', () => {
+    render(<MembershipLanding />);
+
+    answerAll([3, 3, 3, 3, 3]);
+    fireEvent.click(screen.getByText(CHECKUP_RESULT.caseECta));
+
+    expect(captureCheckupResultCtaClicked).toHaveBeenCalledWith({
+      caseId: 'E',
+      cta: 'mentoring',
+    });
+  });
+
   it('답하기 전에는 결과 CTA 자체가 없어 이벤트도 없다', () => {
     render(<MembershipLanding />);
 

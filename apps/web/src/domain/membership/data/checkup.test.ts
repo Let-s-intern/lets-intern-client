@@ -339,6 +339,25 @@ describe('CHECKUP_RESULT_COPY', () => {
     }
   });
 
+  /*
+   * 본문은 조각 배열이다. 조각을 나누며 글자가 새면 원문과 달라진 채로 화면에 나간다 —
+   * 이어 붙인 문단에 굵게 표시가 없고 빈 조각도 없는지 본다.
+   */
+  it('본문 조각에 굵게가 하나 이상 있고 빈 조각이 없다', () => {
+    for (const caseId of CASE_IDS) {
+      const parts = CHECKUP_RESULT_COPY[caseId].body.flat();
+
+      expect(parts.some((part) => part.bold)).toBe(true);
+      expect(parts.every((part) => part.text.length > 0)).toBe(true);
+      expect(
+        parts
+          .map((part) => part.text)
+          .join('')
+          .includes('**'),
+      ).toBe(false);
+    }
+  });
+
   /* 강조가 둘이면 제목에서 눈이 갈 곳이 갈린다. 원문도 CASE 마다 한 어절이다. */
   it('제목의 강조 어절은 CASE 마다 하나다', () => {
     for (const caseId of CASE_IDS) {
