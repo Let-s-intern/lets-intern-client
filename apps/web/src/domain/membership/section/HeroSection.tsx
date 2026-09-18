@@ -4,6 +4,7 @@ import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
 import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
 import { formatKRW } from '../data/membership';
 import { HERO, HERO_STATS } from '../data/hero';
+import { PASS_INTRO } from '../data/passBenefitModals';
 
 // 시안 1 — 1열 중앙 정렬. 배지 / 헤드라인 3줄 / 서브 2줄 / 버튼 2개 / 하단 6지표.
 // 카운트다운 카드(offer)와 모집기간 메타(hero-meta)는 시안에 없어 렌더하지 않는다.
@@ -48,11 +49,16 @@ export default function HeroSection() {
           >
             {ctaLabel(`${formatKRW(salePrice)}${HERO.ctaPrimary}`)}
           </button>
+          {/*
+            "혜택 먼저 보기" 는 패스 소개(#pass-intro)로 내려보낸다. 예전 대상이던
+            PassBenefitsSection(#benefits)은 개편으로 렌더에서 빠졌고, 혜택 4카드와
+            모달이 그 자리를 대신한다. 없는 id 를 가리키면 눌러도 아무 일이 없다.
+          */}
           <button
             className="btn btn-hero-orange"
             onClick={() =>
               document
-                .getElementById('benefits')
+                .getElementById(PASS_INTRO.anchorId)
                 ?.scrollIntoView({ behavior: 'smooth' })
             }
           >

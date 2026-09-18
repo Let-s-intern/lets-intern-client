@@ -10,17 +10,22 @@
 // VOD 훅)은 렌더하지 않는다. 파일은 지우지 않았다 — 다음 시즌에 되살릴 수 있다.
 // 되살리려면 해당 import 와 CSS import 를 함께 푼다.
 //
-// 개편(마케팅 올인원 패스 랜딩 전면 개편)이 진행 중이다. 방문자의 막힌 지점을 먼저
-// 진단하고 그 결과로 준비 단계를 보여주는 순서로 바뀌고 있어, 새 섹션은 위에서부터
-// 하나씩 들어온다. RecommendSection(고민 3카드)은 REAL TALK 이, RoadmapSection(STEP
+// 개편(마케팅 올인원 패스 랜딩 전면 개편)으로 순서를 PRD 4.14 대로 확정했다. 방문자의
+// 막힌 지점을 먼저 진단하고, 그 결과로 준비 단계를 보여준 뒤, 그 단계를 실행하는 수단으로
+// 패스를 제시한다. RecommendSection(고민 3카드)은 REAL TALK 이, RoadmapSection(STEP
 // 01~05 세로 목록)은 준비 단계 카드가 그 자리를 대신하면서 렌더에서 빠졌다 — 같은
 // 관행대로 파일은 남긴다.
 //
 // 챌린지 10종·가이드북 7종·현직자 VOD·멘토링 쿠폰 네 섹션도 같은 이유로 빠졌다. 내용이
 // 패스 소개(PassIntroSection)의 혜택 모달 4개로 들어갔고, **데이터 파일은 그대로 쓴다.**
 // 쥬디 클리닉(SpecialLiveSection)은 LiveClinicSection 이 대신한다.
+//
+// 시안에 자리가 없어진 JobMarketSection·SolutionSection·PassBenefitsSection·
+// PathMatchSection 도 렌더에서 뺐다. CompareSection·PlansSection 두 섹션은
+// PricingSection 한 장이 대신한다.
 // 섹션 id 가 사라지면 그 id 를 가리키던 앵커가 조용히 죽는다 — `data/prepSteps.ts`,
-// `data/passBenefits.ts`, `ui/MembershipNav.tsx` 를 함께 고쳤다.
+// `data/passBenefitModals.ts`, `section/HeroSection.tsx`, `ui/MembershipNav.tsx` 를
+// 함께 고쳤다.
 //
 // FAQ 는 시안에 없지만 남긴다. 어드민 챌린지에 등록한 FAQ 를 그대로 보여주는 자리이고
 // (`lib/useMembershipChallengeData`), 운영이 상품 문의를 여기서 답한다.
@@ -30,9 +35,9 @@ import './styles/base.css';
 import './styles/nav.css';
 import './styles/hero.css';
 import './styles/course-plan.css';
-// 시안 15 가격 카드. 랜딩을 재조립할 때 빠뜨려 카드가 스타일 없이 세로로 쏟아졌다 —
-// 섹션을 켜고 끌 때 대응 CSS import 도 함께 확인할 것.
-import './styles/plan-single.css';
+// `plan-single.css`(PlansSection 의 가격 카드)는 그 섹션이 PricingSection 으로 대체되며
+// 빠졌다. 섹션을 켜고 끌 때 대응 CSS import 도 함께 확인할 것 — 예전에 이 import 를
+// 빠뜨려 카드가 스타일 없이 세로로 쏟아진 적이 있다.
 import './styles/faq.css';
 import './styles/footer.css';
 import './styles/animations.css';
@@ -51,19 +56,15 @@ import HeroSection from './section/HeroSection';
 import RealTalkSection from './section/RealTalkSection';
 import CheckupSection from './section/CheckupSection';
 import CheckupResultSection from './section/CheckupResultSection';
-import JobMarketSection from './section/JobMarketSection';
 import PrepStepsSection from './section/PrepStepsSection';
 import PassResultsSection from './section/PassResultsSection';
 import PassIntroSection from './section/PassIntroSection';
 import LiveClinicSection from './section/LiveClinicSection';
-import SolutionSection from './section/SolutionSection';
-import PassBenefitsSection from './section/PassBenefitsSection';
-import PathMatchSection from './section/PathMatchSection';
 import PlaybookIntroSection from './section/PlaybookIntroSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import PlaybookDashboardSection from './section/PlaybookDashboardSection';
-import CompareSection from './section/CompareSection';
-import PlansSection from './section/PlansSection';
+import PricingSection from './section/PricingSection';
+import FinalCtaSection from './section/FinalCtaSection';
 import FaqSection from './section/FaqSection';
 import ApplyBar from './ui/ApplyBar';
 import MembershipPaymentSheet from './ui/MembershipPaymentSheet';
@@ -115,9 +116,6 @@ export default function MembershipLanding() {
             stepsAnchorId={PREP_STEPS.anchorId}
           />
 
-          {/* 시안 3 — 채용공고 예시 + 카피 (WHY NOW) */}
-          <JobMarketSection />
-
           {/* 개편 시안 4 — 준비 단계 카드 7장 (FROM PARTICIPANTS).
               기존 RoadmapSection(STEP 01~05 세로 목록) 자리다. */}
           <PrepStepsSection weakestAreaId={result?.weakestAreaId ?? null} />
@@ -132,15 +130,6 @@ export default function MembershipLanding() {
           {/* 개편 시안 7 — 쥬디 멘토 LIVE 클리닉. SpecialLiveSection 자리다. */}
           <LiveClinicSection />
 
-          {/* 시안 5 — 결과물 3카드 + 하단 밴드 (YOUR JOB ROADMAP) */}
-          <SolutionSection />
-
-          {/* 시안 6 — 혜택 7카드 (PASS BENEFITS) */}
-          <PassBenefitsSection />
-
-          {/* 시안 7 — 상황별 프로그램 매칭 (FIND YOUR PATH) */}
-          <PathMatchSection />
-
           {/* 개편 시안 8 — 10주 플레이북 인트로. 매트릭스 바로 위 자리다. */}
           <PlaybookIntroSection />
 
@@ -150,9 +139,11 @@ export default function MembershipLanding() {
           {/* 개편 시안 10 — 실행 흐름·대시보드 목업·주차별 산출물 세 덩어리 */}
           <PlaybookDashboardSection />
 
-          {/* 시안 15 — 가격 비교표 + 단일 플랜 카드 */}
-          <CompareSection />
-          <PlansSection />
+          {/* 개편 시안 11 — 가격 비교 두 카드. CompareSection + PlansSection 자리다. */}
+          <PricingSection />
+
+          {/* 개편 시안 12 — 마지막 CTA */}
+          <FinalCtaSection />
 
           <FaqSection />
           <ApplyBar />

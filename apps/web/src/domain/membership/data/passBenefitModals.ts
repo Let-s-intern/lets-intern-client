@@ -104,10 +104,13 @@ export const PASS_INTRO = {
   ctaLabel: '마케팅 올인원 패스 혜택보기',
   /*
    * 하단 버튼이 어디로 가는지 시안에 적혀 있지 않다. 패스에 무엇이 포함되는지 값과 함께
-   * 한 줄씩 늘어놓는 자리는 가격 비교 섹션(`#compare`)뿐이라 그쪽으로 보낸다.
+   * 한 줄씩 늘어놓는 자리는 가격 섹션(`#pricing`)뿐이라 그쪽으로 보낸다.
    * 이 섹션 자신이 "혜택" 섹션이므로 위로 되돌리는 앵커는 뜻이 없다.
+   *
+   * 예전에는 `#compare` 였다. 그 섹션이 PricingSection 으로 바뀌며 id 가 사라졌고,
+   * 없는 id 를 가리키면 눌러도 아무 일이 일어나지 않는다.
    */
-  ctaAnchor: 'compare',
+  ctaAnchor: 'pricing',
   anchorId: 'pass-intro',
 } as const;
 

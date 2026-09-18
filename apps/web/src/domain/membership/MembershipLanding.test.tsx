@@ -1,8 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import { COMPARE } from './data/compare';
+import { JOB_MARKET } from './data/jobMarket';
 import { MARKETER_VOD } from './data/marketerVod';
 import { MENTORING_COUPON } from './data/mentoringCoupon';
+import { PASS_BENEFITS } from './data/passBenefits';
+import { PATH_MATCH } from './data/pathMatch';
+import { PLAN_NAME } from './data/plans';
 import { RECOMMEND } from './data/recommend';
 import { ROADMAP } from './data/roadmap';
+import { SOLUTION } from './data/solution';
 import { SPECIAL_LIVE } from './data/specialLive';
 import MembershipLanding from './MembershipLanding';
 
@@ -48,10 +54,6 @@ jest.mock('./section/CheckupResultSection', () => ({
   __esModule: true,
   default: () => <div data-testid="CheckupResultSection" />,
 }));
-jest.mock('./section/JobMarketSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="JobMarketSection" />,
-}));
 jest.mock('./section/PrepStepsSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PrepStepsSection" />,
@@ -68,18 +70,6 @@ jest.mock('./section/LiveClinicSection', () => ({
   __esModule: true,
   default: () => <div data-testid="LiveClinicSection" />,
 }));
-jest.mock('./section/SolutionSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="SolutionSection" />,
-}));
-jest.mock('./section/PassBenefitsSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="PassBenefitsSection" />,
-}));
-jest.mock('./section/PathMatchSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="PathMatchSection" />,
-}));
 jest.mock('./section/PlaybookIntroSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PlaybookIntroSection" />,
@@ -92,39 +82,35 @@ jest.mock('./section/PlaybookDashboardSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PlaybookDashboardSection" />,
 }));
-jest.mock('./section/CompareSection', () => ({
+jest.mock('./section/PricingSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="CompareSection" />,
+  default: () => <div data-testid="PricingSection" />,
 }));
-jest.mock('./section/PlansSection', () => ({
+jest.mock('./section/FinalCtaSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="PlansSection" />,
+  default: () => <div data-testid="FinalCtaSection" />,
 }));
 jest.mock('./section/FaqSection', () => ({
   __esModule: true,
   default: () => <div data-testid="FaqSection" />,
 }));
 
-/** 시안 1~15 순서. 좌측 숫자가 시안 번호다. */
+/** PRD 4.14 가 확정한 순서. 우측 숫자가 개편 시안 번호다. */
 const EXPECTED_ORDER = [
-  'HeroSection', //             시안 1
+  'HeroSection', //             시안 1 (히어로 시안이 없어 그대로 둔다)
   'MembershipNav',
   'RealTalkSection', //         개편 시안 1
   'CheckupSection', //          개편 시안 2
   'CheckupResultSection', //    개편 시안 3
-  'JobMarketSection', //        시안 3
   'PrepStepsSection', //        개편 시안 4 (RoadmapSection 자리)
   'PassResultsSection', //      개편 시안 5
   'PassIntroSection', //        개편 시안 6 (혜택 4종이 모달로)
   'LiveClinicSection', //       개편 시안 7 (SpecialLiveSection 자리)
-  'SolutionSection', //         시안 5
-  'PassBenefitsSection', //     시안 6
-  'PathMatchSection', //        시안 7
   'PlaybookIntroSection', //    개편 시안 8 (매트릭스 바로 위)
   'CoursePlanSection', //       개편 시안 9
   'PlaybookDashboardSection', // 개편 시안 10 (세 덩어리)
-  'CompareSection', //          시안 15
-  'PlansSection', //            시안 15 (플랜 카드)
+  'PricingSection', //          개편 시안 11 (Compare + Plans 자리)
+  'FinalCtaSection', //         개편 시안 12
   'FaqSection',
   'ApplyBar',
   // 결제 시트는 섹션이 아니라 컨트롤러다. .membership-root 밖에 마운트되므로
@@ -133,7 +119,7 @@ const EXPECTED_ORDER = [
 ];
 
 describe('MembershipLanding (LC-3294)', () => {
-  it('섹션을 시안 1~15 순서대로 합친다', () => {
+  it('섹션을 PRD 4.14 순서대로 합친다', () => {
     const { container } = render(<MembershipLanding />);
 
     const rendered = [...container.querySelectorAll('[data-testid]')]
@@ -163,7 +149,14 @@ describe('MembershipLanding (LC-3294)', () => {
       'ReviewsSection',
       'EarlyBirdBanner',
       'PartnerBenefitsSection',
-      'FinalCtaSection',
+      // 아래 넷은 개편 시안에 자리가 없어 빠졌다 (PRD 4.14).
+      'JobMarketSection',
+      'SolutionSection',
+      'PassBenefitsSection',
+      'PathMatchSection',
+      // 가격 두 섹션은 PricingSection 한 장이 대신한다.
+      'CompareSection',
+      'PlansSection',
       // 아래 넷은 내용이 패스 소개의 혜택 모달로 들어가면서 섹션에서 빠졌다.
       'ChallengeListSection',
       'GuidebookListSection',
@@ -238,6 +231,25 @@ describe('MembershipLanding (LC-3294)', () => {
     }
     for (const step of ROADMAP.steps) {
       expect(screen.queryByText(step.title)).not.toBeInTheDocument();
+    }
+  });
+
+  /*
+   * PRD 4.14 로 빠진 여섯 섹션도 mock 대상이 아니라 되살아나도 testid 가 붙지 않는다.
+   * 각 섹션에만 있는 문구로 한 번 더 못박는다.
+   */
+  it('PRD 4.14 에서 빠진 섹션의 문구가 화면에 남아 있지 않다', () => {
+    render(<MembershipLanding />);
+
+    for (const copy of [
+      JOB_MARKET.listTitle, //  JobMarketSection
+      SOLUTION.title, //        SolutionSection
+      PASS_BENEFITS.title, //   PassBenefitsSection
+      PATH_MATCH.title, //      PathMatchSection
+      COMPARE.sub, //           CompareSection
+      PLAN_NAME, //             PlansSection 의 섹션 제목
+    ]) {
+      expect(screen.queryByText(copy)).not.toBeInTheDocument();
     }
   });
 
