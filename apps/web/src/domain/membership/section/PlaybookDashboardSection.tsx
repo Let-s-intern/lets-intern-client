@@ -146,7 +146,7 @@ function MockCheckbox({ done }: { done: boolean }) {
  */
 function PlaybookStructureBlock() {
   return (
-    <section className="bg-white pb-16 md:pb-24" id={S.anchorId}>
+    <section className="bg-white py-16 md:py-24" id={S.anchorId}>
       <div className="wrap">
         <Eyebrow>{S.eyebrow}</Eyebrow>
         <SectionTitle lines={S.titleLines} />
@@ -227,7 +227,7 @@ function PlaybookStructureBlock() {
 /** 3. OUTPUT — 10주 뒤에 손에 남는 것 */
 function PlaybookOutputBlock() {
   return (
-    <section className="bg-white pb-16 md:pb-24" id={O.anchorId}>
+    <section className="bg-white py-16 md:py-24" id={O.anchorId}>
       <div className="wrap">
         <Eyebrow>{O.eyebrow}</Eyebrow>
 
