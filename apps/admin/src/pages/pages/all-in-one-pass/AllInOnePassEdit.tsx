@@ -58,7 +58,7 @@ export default function AllInOnePassEdit() {
       ) : (
         <>
           <PassForm input={input} patch={patch} />
-          <div className="mt-6 flex justify-end gap-2">
+          <div className="border-neutral-80 sticky bottom-0 z-10 -mx-6 -mb-6 flex justify-end gap-2 border-t bg-neutral-100 px-6 py-4">
             <Button
               variant="outlined"
               onClick={() => navigate('/all-in-one-pass')}

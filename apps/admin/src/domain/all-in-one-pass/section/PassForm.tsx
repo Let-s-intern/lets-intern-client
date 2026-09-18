@@ -35,7 +35,7 @@ interface Props {
  */
 export default function PassForm({ input, patch }: Props) {
   return (
-    <div className="flex flex-col gap-10">
+    <div className="mb-10 flex flex-col gap-10">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <BasicInfoSection input={input} patch={patch} />
         <PlanSection
