@@ -3,11 +3,13 @@ import {
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
   COURSE_PLAN_TYPES,
+  type CoursePlanTypeId,
   type CoursePlanViewId,
 } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
 import CoursePlanMatrix from '../ui/CoursePlanMatrix';
 import CoursePlanTimeline from '../ui/CoursePlanTimeline';
+import CoursePlanLegend from '../ui/CoursePlanLegend';
 
 /** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
 function HeadlineLine({
@@ -34,6 +36,8 @@ function HeadlineLine({
 
 export default function CoursePlanSection() {
   const [view, setView] = useState<CoursePlanViewId>('matrix');
+  // 기본은 TYPE A. 유형을 바꿔도 보기(view)는 그대로 둔다
+  const [type, setType] = useState<CoursePlanTypeId>('a');
 
   return (
     <section className="courseplan" id="course-plan">
@@ -81,43 +85,41 @@ export default function CoursePlanSection() {
               <p>{COURSE_PLAN_BODY.sub}</p>
             </div>
 
-            {/*
-              시안 8 상단의 유형 선택. 고르면 10주 계획이 바뀐다고 시안은 말하지만,
-              유형별로 다른 매트릭스를 받은 적이 없다. 없는 표를 지어내면 고른 사람이
-              같은 표를 보고 속았다고 느낀다. 지금은 자기 유형을 확인하는 안내로만 두고,
-              고를 수 있는 컨트롤로 만들지 않는다. 유형별 계획을 받으면 여기에 붙인다.
-            */}
-            <div className="cp-types">
-              {COURSE_PLAN_TYPES.map((type, i) => (
-                <div
+            {/* 시안 8 상단의 유형 선택. 고른 유형이 매트릭스·주 단위와 그 위 문구를 바꾼다. */}
+            <div className="cp-types" role="group" aria-label="내 상황 고르기">
+              {COURSE_PLAN_TYPES.map((option) => (
+                <button
+                  type="button"
                   className="cp-type"
-                  data-lead={i === 0 ? 'true' : undefined}
-                  key={type.id}
+                  aria-pressed={type === option.id}
+                  onClick={() => setType(option.id)}
+                  key={option.id}
                 >
-                  <span className="cp-type-label">{type.label}</span>
-                  <strong className="cp-type-title">{type.title}</strong>
-                  <span className="cp-type-desc">{type.desc}</span>
-                </div>
+                  <span className="cp-type-label">{option.label}</span>
+                  <strong className="cp-type-title">{option.title}</strong>
+                  <span className="cp-type-desc">{option.desc}</span>
+                </button>
               ))}
             </div>
 
             <CoursePlanToggle active={view} onChange={setView} />
 
             <div className="cp-matrix-head">
-              <h4>{COURSE_PLAN_BODY.matrixTitle}</h4>
+              <h4>{COURSE_PLAN_BODY.matrixTitle[type]}</h4>
               <p>{COURSE_PLAN_BODY.matrixSub}</p>
             </div>
 
             {/* key 로 뷰 전환마다 페이드 애니메이션을 재실행(.rv 리빌과 독립) */}
             <div className="cp-view" key={view}>
               {view === 'matrix' ? (
-                <CoursePlanMatrix />
+                <CoursePlanMatrix type={type} />
               ) : (
-                <CoursePlanTimeline />
+                <CoursePlanTimeline type={type} />
               )}
             </div>
 
-            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지 */}
+            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지. 두 보기가 같다 */}
+            <CoursePlanLegend />
             <p className="cp-playbook">{COURSE_PLAN_BODY.matrixFootnote}</p>
 
             {/*
