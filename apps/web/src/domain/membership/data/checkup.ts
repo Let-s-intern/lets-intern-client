@@ -198,6 +198,38 @@ export const CHECKUP_STATUS_LABEL: Record<CheckupAreaStatus, string> = {
 /** 점수가 이 값 이상이면 "진행 중이에요" 다 */
 const ONGOING_THRESHOLD = 55;
 
+/**
+ * 진단 결과 6종 (PRD 4.3).
+ *
+ * D1·D2 는 최저 축이 같은 04 지만 Q5 답으로 갈린다 — 아직 지원을 못 하는 사람과
+ * 서류는 붙는데 면접에서 막히는 사람에게 같은 문구를 내보낼 수 없다.
+ */
+export type CheckupCaseId = 'A' | 'B' | 'C' | 'D1' | 'D2' | 'E';
+
+/** 네 축이 모두 이 점수 이상이면 보완할 축이 없다 = CASE E */
+export const CHECKUP_READY_SCORE = 80;
+
+/**
+ * 동점 보정 폭. 최저 축과 이 폭 안에 있는 축은 같은 수준으로 본다.
+ *
+ * 배점표는 문항마다 ① 값이 조금씩 달라서(12 ~ 15) 아무것도 못 한 사람도 축 사이에
+ * 3점 차가 생긴다. 그 차이로 시작점을 고르면 안 된다 (PRD 4.3).
+ */
+export const CHECKUP_TIE_MARGIN = 8;
+
+/** 축 번호 → CASE. 04 축(번호 3)만 Q5 답으로 D1·D2 로 갈린다 */
+const CASE_BY_AREA_INDEX = ['A', 'B', 'C'] as const;
+
+const APPLY_AREA_INDEX = CHECKUP_AREAS.findIndex((area) => area.id === 'apply');
+
+/** D1·D2 를 가르는 문항 (04 축의 문항 하나) */
+const APPLY_QUESTION_INDEX = CHECKUP_QUESTIONS.findIndex(
+  (question) => question.areaId === 'apply',
+);
+
+/** Q5 에서 이 순번(③) 이상을 고르면 D2 다 */
+const D2_MIN_OPTION_INDEX = 2;
+
 export interface CheckupAreaScore {
   area: CheckupArea;
   /**
@@ -211,8 +243,10 @@ export interface CheckupAreaScore {
 }
 
 export interface CheckupResult {
-  /** 가장 먼저 보완할 영역. 준비 단계 카드의 배지가 이 값으로 붙는다 */
-  weakestAreaId: CheckupAreaId;
+  /** 결과 문구와 준비 단계 배지가 이 값으로 정해진다 */
+  caseId: CheckupCaseId;
+  /** CASE 를 결정한 축. 강조할 축이 없는 CASE E 는 null */
+  weakestAreaId: CheckupAreaId | null;
   /** CHECKUP_AREAS 와 같은 순서 */
   scores: readonly CheckupAreaScore[];
 }
@@ -247,29 +281,41 @@ export function resolveAreaScores(answers: CheckupAnswers): number[] | null {
 }
 
 /**
- * 가장 먼저 보완할 영역 하나. 답이 덜 찼으면 null.
+ * CASE 를 결정하는 축의 번호(0~3). 네 축이 모두 준비된 CASE E 면 null.
  *
- * 점수가 가장 낮은 영역이고, 동점이면 `CHECKUP_AREAS` 에서 앞선 영역이다 —
- * 01 → 04 순서가 준비 단계의 순서이기도 해서, 앞 단계부터 보완하는 것이 맞다.
+ * **최저 축이 아니라 "최저 + `CHECKUP_TIE_MARGIN` 이내에 드는 첫 축" 이다.** 그냥
+ * 최저를 뽑으면 모든 문항에 ①을 고른 사람이 `15 / 14 / 12 / 15` 가 되어 서류 축(12)이
+ * 뽑히고, 아직 아무것도 정하지 못한 사람에게 "서류부터 쓰세요" 가 나간다 (PRD 4.3).
+ * 01 → 04 순서로 찾으므로 보정 범위 안에서는 앞 단계가 이긴다.
  */
-export function resolveWeakestArea(
+export function resolveCaseAreaIndex(
+  areaScores: readonly number[],
+): number | null {
+  const lowest = Math.min(...areaScores);
+  if (lowest >= CHECKUP_READY_SCORE) return null;
+
+  return areaScores.findIndex((score) => score <= lowest + CHECKUP_TIE_MARGIN);
+}
+
+/**
+ * 진단 CASE 하나. 답이 덜 찼으면 null.
+ *
+ * 최저 축이 04(지원 · 전형 대응)일 때만 둘로 갈린다 — 아직 지원을 못 하는 쪽(D1)과
+ * 서류는 붙는데 면접에서 막히는 쪽(D2)은 필요한 준비가 다르다 (PRD 4.3).
+ */
+export function resolveCheckupCase(
   answers: CheckupAnswers,
-): CheckupAreaId | null {
+): CheckupCaseId | null {
   const areaScores = resolveAreaScores(answers);
   if (!areaScores) return null;
 
-  let weakest: CheckupAreaId | null = null;
-  let lowest = Number.POSITIVE_INFINITY;
+  const caseAreaIndex = resolveCaseAreaIndex(areaScores);
+  if (caseAreaIndex === null) return 'E';
+  if (caseAreaIndex !== APPLY_AREA_INDEX)
+    return CASE_BY_AREA_INDEX[caseAreaIndex];
 
-  for (const [index, area] of CHECKUP_AREAS.entries()) {
-    // `<` 이라 동점이면 먼저 만난 영역이 남는다 = 01 에 가까운 쪽
-    if (areaScores[index] < lowest) {
-      lowest = areaScores[index];
-      weakest = area.id;
-    }
-  }
-
-  return weakest;
+  const applyAnswer = answers[APPLY_QUESTION_INDEX] ?? 0;
+  return applyAnswer >= D2_MIN_OPTION_INDEX ? 'D2' : 'D1';
 }
 
 /** 막대 4개와 라벨까지 포함한 결과. 답이 덜 찼으면 null */
@@ -277,13 +323,15 @@ export function resolveCheckupResult(
   answers: CheckupAnswers,
 ): CheckupResult | null {
   const areaScores = resolveAreaScores(answers);
-  const weakestAreaId = resolveWeakestArea(answers);
-  if (!areaScores || !weakestAreaId) return null;
+  const caseId = resolveCheckupCase(answers);
+  if (!areaScores || !caseId) return null;
+
+  const caseAreaIndex = resolveCaseAreaIndex(areaScores);
 
   const scores = CHECKUP_AREAS.map((area, index) => {
     const score = areaScores[index];
     const status: CheckupAreaStatus =
-      area.id === weakestAreaId
+      index === caseAreaIndex
         ? 'weakest'
         : score >= ONGOING_THRESHOLD
           ? 'ongoing'
@@ -292,7 +340,12 @@ export function resolveCheckupResult(
     return { area, score, status };
   });
 
-  return { weakestAreaId, scores };
+  return {
+    caseId,
+    weakestAreaId:
+      caseAreaIndex === null ? null : CHECKUP_AREAS[caseAreaIndex].id,
+    scores,
+  };
 }
 
 /** 결과 제목 한 줄을 이루는 조각. `accent` 인 조각만 포인트 컬러로 칠한다 */

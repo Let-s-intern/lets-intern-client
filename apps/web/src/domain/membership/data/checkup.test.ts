@@ -5,8 +5,9 @@ import {
   EMPTY_CHECKUP_ANSWERS,
   findCheckupArea,
   resolveAreaScores,
+  resolveCaseAreaIndex,
+  resolveCheckupCase,
   resolveCheckupResult,
-  resolveWeakestArea,
 } from './checkup';
 
 /*
@@ -161,22 +162,70 @@ describe('resolveAreaScores', () => {
   });
 });
 
-describe('resolveWeakestArea', () => {
+/*
+ * 축 점수를 직접 넣어 경계를 본다. 배점표로는 정확히 80·79 인 축을 만들 수 없어
+ * (문항 배점이 12~95 라 축 점수가 띄엄띄엄하다) 답 조합으로는 확인할 수 없는 경계다.
+ */
+describe('resolveCaseAreaIndex', () => {
+  it('네 축이 모두 80 이상이면 null(= CASE E) 이다', () => {
+    expect(resolveCaseAreaIndex([80, 80, 80, 80])).toBeNull();
+    expect(resolveCaseAreaIndex([95, 82, 88, 100])).toBeNull();
+  });
+
+  /* 79 하나로 E 가 깨진다. 단, 다른 축이 79 + 8 안이면 보정으로 앞선 축이 뽑힌다. */
+  it('한 축이라도 79 면 E 가 아니다', () => {
+    expect(resolveCaseAreaIndex([79, 95, 95, 95])).toBe(0);
+    expect(resolveCaseAreaIndex([95, 95, 95, 79])).toBe(3);
+    expect(resolveCaseAreaIndex([80, 80, 80, 79])).toBe(0);
+  });
+
+  it('최저 + 8 이내면 앞선 축이 이긴다', () => {
+    // 12 가 최저지만 15 는 12 + 8 안이라 01 축이다
+    expect(resolveCaseAreaIndex([15, 14, 12, 15])).toBe(0);
+    // 9 차이는 보정 밖이라 최저 축이 그대로 뽑힌다
+    expect(resolveCaseAreaIndex([21, 14, 12, 15])).toBe(1);
+  });
+});
+
+describe('resolveCheckupCase', () => {
   it('답이 덜 찼으면 null 이다', () => {
-    expect(resolveWeakestArea(EMPTY_CHECKUP_ANSWERS)).toBeNull();
-    expect(resolveWeakestArea([0, 0, 0, 0, null])).toBeNull();
+    expect(resolveCheckupCase(EMPTY_CHECKUP_ANSWERS)).toBeNull();
+    expect(resolveCheckupCase([0, 0, 0, 0, null])).toBeNull();
   });
 
-  it('점수가 가장 낮은 영역을 고른다', () => {
-    expect(resolveWeakestArea([0, 3, 3, 3, 3])).toBe('direction');
-    expect(resolveWeakestArea([3, 0, 0, 3, 3])).toBe('experience');
-    expect(resolveWeakestArea([3, 3, 3, 0, 3])).toBe('document');
-    expect(resolveWeakestArea([3, 3, 3, 3, 0])).toBe('apply');
+  /*
+   * 동점 보정이 없으면 15 / 14 / 12 / 15 라 서류 축(12)이 뽑혀, 아직 직무도 정하지
+   * 못한 사람에게 "서류부터 쓰세요" 가 나간다 (PRD 4.3).
+   */
+  it('전부 ① 이면 서류가 아니라 A 다', () => {
+    expect(resolveCheckupCase([0, 0, 0, 0, 0])).toBe('A');
   });
 
-  it('동점이면 01 에 가까운 영역이다', () => {
-    // 직무(01) 40 · 서류(03) 40 으로 같다
-    expect(resolveWeakestArea([1, 3, 3, 1, 3])).toBe('direction');
+  it('전부 ④ 면 E 다', () => {
+    expect(resolveCheckupCase([3, 3, 3, 3, 3])).toBe('E');
+  });
+
+  it('최저 축이 01 · 02 · 03 이면 A · B · C 다', () => {
+    expect(resolveCheckupCase([0, 3, 3, 3, 3])).toBe('A');
+    expect(resolveCheckupCase([3, 0, 0, 3, 3])).toBe('B');
+    expect(resolveCheckupCase([3, 3, 3, 0, 3])).toBe('C');
+  });
+
+  /* 최저 축이 04 일 때만 Q5 답이 D1·D2 를 가른다. ③ 부터 D2 다. */
+  it('최저 축이 04 면 Q5 ①② 는 D1, ③④ 는 D2 다', () => {
+    expect(resolveCheckupCase([3, 3, 3, 3, 0])).toBe('D1');
+    expect(resolveCheckupCase([3, 3, 3, 3, 1])).toBe('D1');
+    expect(resolveCheckupCase([3, 3, 3, 3, 2])).toBe('D2');
+  });
+
+  /* 04 축이 68(③)이어도 다른 축이 모두 95 면 최저 축은 04 다 */
+  it('한 축만 80 아래면 E 가 아니라 그 축의 CASE 다', () => {
+    // 95 / 95 / 95 / 68
+    expect(resolveCheckupCase([3, 3, 3, 3, 2])).toBe('D2');
+    // 95 / 69 / 95 / 95 — 02 축만 80 아래다
+    expect(resolveCheckupCase([3, 2, 2, 3, 3])).toBe('B');
+    // 95 / 82 / 95 / 95 — 네 축 모두 80 이상이면 E 로 돌아온다
+    expect(resolveCheckupCase([3, 3, 2, 3, 3])).toBe('E');
   });
 });
 
@@ -193,7 +242,14 @@ describe('resolveCheckupResult', () => {
     );
   });
 
-  it('가장 약한 영역 하나만 weakest 다', () => {
+  it('CASE 와 그 CASE 를 정한 축을 함께 싣는다', () => {
+    const result = resolveCheckupResult([0, 3, 3, 3, 3]);
+
+    expect(result?.caseId).toBe('A');
+    expect(result?.weakestAreaId).toBe('direction');
+  });
+
+  it('CASE 를 정한 축 하나만 weakest 다', () => {
     const result = resolveCheckupResult([0, 3, 3, 3, 3]);
     const weakest = result?.scores.filter(
       (score) => score.status === 'weakest',
