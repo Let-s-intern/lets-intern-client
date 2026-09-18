@@ -67,7 +67,14 @@ export const CHECKUP_AREAS = [
   },
 ] as const satisfies readonly CheckupArea[];
 
-export const CHECKUP_QUESTIONS = [
+/*
+ * 타입을 `readonly CheckupQuestion[]` 로 못박는다.
+ *
+ * `as const satisfies` 만 두면 각 원소가 자기 리터럴 타입으로 좁혀져, `hint` 가 없는
+ * 문항에서는 `question.hint` 라는 속성 자체가 사라진다. 배열을 순회하는 쪽은
+ * "어떤 문항에 hint 가 있는지" 를 모르는 것이 정상이므로 선택 속성으로 보여야 한다.
+ */
+export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
   {
     no: '01',
     areaId: 'direction',
@@ -136,7 +143,7 @@ export const CHECKUP_QUESTIONS = [
       '지원 결과를 기록하고 서류 · 면접 결과를 바탕으로 다음 지원을 계속 개선하고 있어요.',
     ],
   },
-] as const satisfies readonly CheckupQuestion[];
+] as const;
 
 export const CHECKUP = {
   eyebrow: 'FREE CHECK-UP',
