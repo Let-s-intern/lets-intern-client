@@ -33,50 +33,11 @@ export interface PassBenefitEntry {
 }
 
 /*
- * 시안 6-3 은 VOD 를 4장 그리는데 지금 데이터에는 2장뿐이다. 모자란 두 장은 상품 링크를
- * 받지 못했다 (PRD 7절 C). 자리만 만들어 두고 `url` 이 없으면 목록에서 빠진다 —
- * 링크가 없는 카드를 그려 두면 눌러도 아무 일이 없거나 엉뚱한 곳으로 가고, 그 자리에서
- * 이탈한다.
- *
- * 링크를 받으면 `url` 과 `banner` 두 줄을 채우면 카드가 켜진다. 배너 이미지 파일도
- * 함께 받아 `public/images/membership/` 에 넣어야 한다.
+ * VOD 4종은 모두 상세 주소를 받아 `MARKETER_VOD.cards` 에 들어가 있다.
+ * 예전에는 주소를 못 받은 두 장을 여기서 자리만 잡아 두고 걸렀는데, 이제 거를 것이 없다.
  */
-const PENDING_VOD_CARDS: MarketerVodCard[] = [
-  {
-    banner: '',
-    bannerAlt:
-      '렛츠커리어 라이브 클래스 무료 세미나. 마케팅 포트폴리오, 어떤 경험을 담아야 합격할까? 라라스윗 합격자가 알려주는 그로스 마케팅 실무와 포트폴리오 작성법.',
-    title: '라라스윗 그로스 마케터 2명이 공개하는 합격 포트폴리오·면접 전략',
-    bullets: [
-      '합격 포트폴리오 구성과 경험 정리법',
-      '강점을 살리는 면접 답변 전략',
-      '인턴에서 정규직으로 전환한 노하우',
-    ],
-    regularPrice: 29000,
-  },
-  {
-    banner: '',
-    bannerAlt:
-      '렛츠커리어 라이브 클래스 무료 세미나. 마케팅 경험, 도대체 얼마나 있어야 합격할까? 현직 인사담당자가 말하는 마케팅 합격 기준부터 경험 진단, 지금 당장 해야 할 준비까지.',
-    title: '렛츠커리어 CEO 쥬디 멘토의 마케팅 경험 합격 기준',
-    bullets: [
-      '마케팅 취업에서 평가자가 보는 진짜 합격 기준',
-      '내 경험이 합격 수준인지 직접 진단하는 법',
-      '진단 결과에 따라 지금 당장 해야 할 준비',
-    ],
-    regularPrice: 29000,
-  },
-];
-
-/**
- * 모달 본문에 그릴 VOD 카드. 기존 두 장은 링크가 없어도 그대로 그린다 —
- * 대학내일 AE 카드는 지금 화면에도 나오고, 링크가 없으면 버튼만 빠진다.
- * 자리만 잡아 둔 `PENDING_VOD_CARDS` 는 배너 이미지가 없어 링크가 채워질 때까지 뺀다.
- */
-export const PASS_BENEFIT_VOD_CARDS: readonly MarketerVodCard[] = [
-  ...MARKETER_VOD.cards,
-  ...PENDING_VOD_CARDS.filter((card) => Boolean(card.url)),
-];
+export const PASS_BENEFIT_VOD_CARDS: readonly MarketerVodCard[] =
+  MARKETER_VOD.cards;
 
 /** 모달 본문이 쓰는 기존 목록. 여기서만 가리키고 내용은 원본 파일이 든다 */
 export const PASS_BENEFIT_SOURCES = {
