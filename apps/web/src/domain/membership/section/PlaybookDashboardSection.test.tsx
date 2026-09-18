@@ -39,14 +39,19 @@ describe('PlaybookDashboardSection (개편 시안 10)', () => {
     });
 
     /*
-     * 목업의 체크박스는 보여주기용이다(PRD 4.10). input·button 으로 그리면 누를 수
-     * 있는 것처럼 보이고, 눌러도 아무 일이 없어 사용자를 속인다.
+     * 목업에서 누를 수 있는 것은 탭 세 개뿐이다(PRD 5.1). 체크박스를 input·button 으로
+     * 그리면 눌러도 아무 일이 없어 사용자를 속인다.
      */
-    it('체크박스를 누를 수 있는 컨트롤로 만들지 않는다', () => {
+    it('탭 말고는 누를 수 있는 컨트롤을 두지 않는다', () => {
       const { container } = render(<PlaybookDashboardSection />);
 
       expect(container.querySelectorAll('input')).toHaveLength(0);
-      expect(container.querySelectorAll('button')).toHaveLength(0);
+      expect(container.querySelectorAll('button')).toHaveLength(
+        PLAYBOOK_STRUCTURE.tabs.length,
+      );
+      expect(screen.getAllByRole('tab')).toHaveLength(
+        PLAYBOOK_STRUCTURE.tabs.length,
+      );
     });
   });
 });

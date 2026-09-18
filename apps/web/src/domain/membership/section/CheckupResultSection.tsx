@@ -1,6 +1,9 @@
+import { Fragment } from 'react';
+
 import { captureCheckupResultCtaClicked } from '../analytics';
 import type { CheckupAreaScore, CheckupResult } from '../data/checkup';
 import {
+  checkupBodyText,
   CHECKUP_RESULT,
   CHECKUP_RESULT_COPY,
   CHECKUP_STATUS_LABEL,
@@ -52,32 +55,63 @@ const RESTART_ICON = (
   </svg>
 );
 
-/** 영역 하나의 막대와 상태 한 줄 */
+/**
+ * 축 하나의 이름 · 점수 · 막대 · 상태 한 줄 (PRD 4.5).
+ *
+ * **강조는 네 자리에 동시에 붙는다.** 이름·점수·막대·캡션 중 한 곳만 칠하면 어느 축을
+ * 먼저 보라는 신호인지 흐려진다. 강조 축은 CASE 를 정한 하나뿐이고(`weakest`),
+ * 점수가 낮은 다른 축은 기본 색으로 둔다.
+ */
 function AreaBar({ score }: { score: CheckupAreaScore }) {
   const isWeakest = score.status === 'weakest';
 
   return (
     <li>
-      <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-bold">
-        <span className="num text-neutral-45 mr-2">{score.area.no}</span>
-        {score.area.label}
-      </p>
+      <div className="flex items-baseline justify-between gap-3">
+        <p
+          className={`text-xsmall14 md:text-xsmall16 font-bold ${
+            isWeakest ? 'text-[#F0563F]' : 'text-[#11142B]'
+          }`}
+          data-testid="checkup-area-name"
+        >
+          <span
+            className={`num mr-2 ${
+              isWeakest ? 'text-[#F0563F]' : 'text-neutral-45'
+            }`}
+          >
+            {score.area.no}
+          </span>
+          {score.area.label}
+        </p>
 
-      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[#EDEFF5]">
+        <span
+          className={`text-xsmall16 md:text-small18 font-bold ${
+            isWeakest ? 'text-[#F0563F]' : 'text-[#4B5BF0]'
+          }`}
+          data-testid="checkup-area-score"
+        >
+          {score.score}
+        </span>
+      </div>
+
+      <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-[#F1F3FA]">
+        {/* 채움 폭은 인라인 스타일이고, 0 에서 늘어나는 애니메이션은
+            `styles/animations.css` 의 `.checkup-bar-fill` 이 맡는다. */}
         <div
-          className={`h-full rounded-full ${
-            isWeakest ? 'bg-[#F1642B]' : 'bg-[#293662]'
+          className={`checkup-bar-fill h-full rounded-full ${
+            isWeakest ? 'bg-[#F0563F]' : 'bg-[#4B5BF0]'
           }`}
           data-status={score.status}
           data-testid="checkup-area-bar"
-          style={{ width: `${score.ratio * 100}%` }}
+          style={{ width: `${score.score}%` }}
         />
       </div>
 
       <p
         className={`text-xsmall14 mt-2 flex items-center gap-1.5 ${
-          isWeakest ? 'font-bold text-[#F1642B]' : 'text-neutral-45'
+          isWeakest ? 'font-bold text-[#F0563F]' : 'font-normal text-[#808799]'
         }`}
+        data-testid="checkup-area-caption"
       >
         {isWeakest ? WARNING_ICON : null}
         {CHECKUP_STATUS_LABEL[score.status]}
@@ -119,7 +153,20 @@ export default function CheckupResultSection({
     );
   }
 
-  const copy = CHECKUP_RESULT_COPY[result.weakestAreaId];
+  const copy = CHECKUP_RESULT_COPY[result.caseId];
+
+  /*
+   * CASE E 는 보완할 축이 없다. 배지와 CTA 가 함께 바뀐다 (PRD 4.4) — "가장 먼저
+   * 필요한 준비" 를 내걸 축이 없는데 같은 배지를 두면 결과와 문구가 어긋난다.
+   * 내려가는 자리(`#prep-steps`)는 같고 라벨과 이벤트 속성만 다르다.
+   */
+  const isCaseE = result.caseId === 'E';
+  const handleCtaClick = () =>
+    captureCheckupResultCtaClicked(
+      isCaseE
+        ? { caseId: result.caseId, cta: 'mentoring' }
+        : { caseId: result.caseId },
+    );
 
   return (
     <section
@@ -154,12 +201,16 @@ export default function CheckupResultSection({
 
           <div className="rounded-xxl flex flex-col border border-[#293662] bg-white p-7 md:p-10">
             <p className="text-xsmall14 w-fit rounded-full bg-[#293662] px-5 py-2.5 font-bold text-white">
-              {CHECKUP_RESULT.badge}
+              {isCaseE ? CHECKUP_RESULT.caseEBadge : CHECKUP_RESULT.badge}
             </p>
 
             <h3 className="text-medium24 md:text-xlarge28 text-neutral-0 mt-6 font-bold">
               {copy.titleLines.map((line) => (
-                <span className="block" key={line.map((p) => p.text).join('')}>
+                <span
+                  className="block"
+                  data-testid="checkup-title-line"
+                  key={line.map((p) => p.text).join('')}
+                >
                   {line.map((part) => (
                     <span
                       className={part.accent ? 'text-primary' : undefined}
@@ -176,9 +227,18 @@ export default function CheckupResultSection({
               {copy.body.map((paragraph) => (
                 <p
                   className="text-xsmall14 md:text-xsmall16 text-neutral-40 leading-relaxed"
-                  key={paragraph}
+                  data-testid="checkup-body"
+                  key={checkupBodyText(paragraph)}
                 >
-                  {paragraph}
+                  {paragraph.map((part) =>
+                    part.bold ? (
+                      <strong className="font-bold" key={part.text}>
+                        {part.text}
+                      </strong>
+                    ) : (
+                      <Fragment key={part.text}>{part.text}</Fragment>
+                    ),
+                  )}
                 </p>
               ))}
             </div>
@@ -188,14 +248,10 @@ export default function CheckupResultSection({
             <a
               className="mt-auto block rounded-lg bg-[#11142B] py-4 text-center"
               href={`#${stepsAnchorId}`}
-              onClick={() =>
-                captureCheckupResultCtaClicked({
-                  weakestAreaId: result.weakestAreaId,
-                })
-              }
+              onClick={handleCtaClick}
             >
               <span className="text-xsmall16 font-bold text-white">
-                {CHECKUP_RESULT.cta}
+                {isCaseE ? CHECKUP_RESULT.caseECta : CHECKUP_RESULT.cta}
               </span>
             </a>
           </div>

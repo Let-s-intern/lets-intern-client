@@ -9,7 +9,8 @@
  */
 
 const FALLBACK_NAV_HEIGHT = 56;
-const GAP = 12;
+/** 네비 아래로 더 띄우는 여백. PRD 4.6 의 offset −16px 이다 */
+const GAP = 16;
 
 export function scrollToSection(id: string) {
   if (typeof window === 'undefined') return;

@@ -34,10 +34,18 @@ export interface CheckupQuestion {
   question: string;
   hint?: CheckupHint;
   /**
-   * **낮은 수준 → 높은 수준 순서다.** 이 순번이 그대로 영역 점수가 되므로,
-   * 순서를 바꾸면 진단 결과가 뒤집힌다.
+   * **낮은 수준 → 높은 수준 순서다.** 선택지 순서가 곧 배점 순서라,
+   * 순서를 바꾸면 `scores` 도 함께 바꿔야 한다.
    */
   options: readonly string[];
+  /**
+   * 선택지와 같은 순서의 배점(0~100).
+   *
+   * **배점은 여기가 유일한 출처다.** 축 점수·CASE 판정·막대 숫자가 모두 이 값을
+   * 읽는다. 운영이 조정하는 값이라 두 곳에 적으면 한쪽만 바뀐다 — 특정 CASE 로 더
+   * 보내고 싶으면 해당 구간을 내린다.
+   */
+  scores: readonly [number, number, number, number];
 }
 
 export const CHECKUP_AREAS = [
@@ -85,6 +93,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '지원하고 싶은 직무는 정했지만, 내 경험으로 인턴 · 신입 · 경력 중 어디까지 지원할 수 있는지 모르겠어요.',
       '목표 직무가 명확하고, 내 경험과 JD를 비교해 지원할 공고를 판단할 수 있어요.',
     ],
+    scores: [15, 40, 65, 95],
   },
   {
     no: '02',
@@ -97,6 +106,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '활용할 경험 2~3개는 고를 수 있지만 직무 역량과 연결하는 게 어려워요.',
       '지원하는 직무와 JD에 따라 활용할 경험을 골라낼 수 있어요.',
     ],
+    scores: [15, 40, 70, 95],
   },
   {
     no: '03',
@@ -119,6 +129,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '내가 어떤 판단을 했고 어떻게 실행했는지는 설명할 수 있어요.',
       '결과가 아쉬워도 문제 → 판단/가설 → 실행 → 결과 → 회고 · 인사이트 → 다음 액션까지 설명할 수 있어요.',
     ],
+    scores: [12, 38, 68, 95],
   },
   {
     no: '04',
@@ -131,6 +142,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '이력서 · 자소서 · 포트폴리오는 있지만 대부분의 기업에 비슷하게 제출해요.',
       'JD의 요구 역량에 따라 경험의 순서 · 성과 · 강조점을 바꿔 제출할 수 있어요.',
     ],
+    scores: [12, 40, 65, 95],
   },
   {
     no: '05',
@@ -142,6 +154,7 @@ export const CHECKUP_QUESTIONS: readonly CheckupQuestion[] = [
       '서류 합격 경험은 있지만 면접에서 내 경험을 설명하는 것이 어려워요.',
       '지원 결과를 기록하고 서류 · 면접 결과를 바탕으로 다음 지원을 계속 개선하고 있어요.',
     ],
+    scores: [15, 42, 68, 95],
   },
 ] as const;
 
@@ -173,49 +186,82 @@ export const EMPTY_CHECKUP_ANSWERS: CheckupAnswers = CHECKUP_QUESTIONS.map(
   () => null,
 );
 
-/**
- * 한 문항에서 나올 수 있는 가장 높은 점수. 선택지 수에서 끌어온다 —
- * 상수로 박아 두면 선택지를 늘렸을 때 막대가 100% 를 넘는다.
- */
-const MAX_SCORE = Math.max(
-  ...CHECKUP_QUESTIONS.map((question) => question.options.length),
-);
+export type CheckupAreaStatus = 'weakest' | 'ready' | 'ongoing' | 'later';
 
-export type CheckupAreaStatus = 'weakest' | 'later' | 'ongoing';
-
-/** 시안 3.png 왼쪽 카드의 막대 아래 한 줄 */
+/** 막대 아래 한 줄 (PRD 4.5) */
 export const CHECKUP_STATUS_LABEL: Record<CheckupAreaStatus, string> = {
   weakest: '가장 먼저 보완이 필요해요',
-  later: '이후 보완이 필요해요',
+  ready: '준비가 잘 되어 있어요',
   ongoing: '진행 중이에요',
+  later: '이후 보완이 필요해요',
 };
 
-/** 평균이 이 값 이상이면 "진행 중이에요" 다 (시안에서 03 영역만 이 라벨이다) */
-const ONGOING_THRESHOLD = 3;
+/** 점수가 이 값 이상이면 "진행 중이에요" 다 */
+const ONGOING_SCORE = 55;
+
+/**
+ * 진단 결과 6종 (PRD 4.3).
+ *
+ * D1·D2 는 최저 축이 같은 04 지만 Q5 답으로 갈린다 — 아직 지원을 못 하는 사람과
+ * 서류는 붙는데 면접에서 막히는 사람에게 같은 문구를 내보낼 수 없다.
+ */
+export type CheckupCaseId = 'A' | 'B' | 'C' | 'D1' | 'D2' | 'E';
+
+/** 네 축이 모두 이 점수 이상이면 보완할 축이 없다 = CASE E */
+export const CHECKUP_READY_SCORE = 80;
+
+/**
+ * 동점 보정 폭. 최저 축과 이 폭 안에 있는 축은 같은 수준으로 본다.
+ *
+ * 배점표는 문항마다 ① 값이 조금씩 달라서(12 ~ 15) 아무것도 못 한 사람도 축 사이에
+ * 3점 차가 생긴다. 그 차이로 시작점을 고르면 안 된다 (PRD 4.3).
+ */
+export const CHECKUP_TIE_MARGIN = 8;
+
+/** 축 번호 → CASE. 04 축(번호 3)만 Q5 답으로 D1·D2 로 갈린다 */
+const CASE_BY_AREA_INDEX = ['A', 'B', 'C'] as const;
+
+const APPLY_AREA_INDEX = CHECKUP_AREAS.findIndex((area) => area.id === 'apply');
+
+/** D1·D2 를 가르는 문항 (04 축의 문항 하나) */
+const APPLY_QUESTION_INDEX = CHECKUP_QUESTIONS.findIndex(
+  (question) => question.areaId === 'apply',
+);
+
+/** Q5 에서 이 순번(③) 이상을 고르면 D2 다 */
+const D2_MIN_OPTION_INDEX = 2;
 
 export interface CheckupAreaScore {
   area: CheckupArea;
   /**
-   * 1 ~ MAX_SCORE. **합이 아니라 평균이다.**
-   * 02 영역만 문항이 둘이라, 합으로 비교하면 어떤 답을 해도 02 가 가장 낮게 나온다.
+   * 축 점수 0~100. 막대 옆 숫자로 그대로 노출된다.
+   *
+   * 문항이 하나인 축은 그 문항의 배점이고, 문항이 둘인 02 축만 평균이라
+   * 반올림이 생긴다 (PRD 4.2).
    */
-  average: number;
-  /** 막대 길이 (0~1). 평균을 만점으로 나눈 값이다 */
-  ratio: number;
+  score: number;
   status: CheckupAreaStatus;
 }
 
 export interface CheckupResult {
-  /** 가장 먼저 보완할 영역. 준비 단계 카드의 배지가 이 값으로 붙는다 */
-  weakestAreaId: CheckupAreaId;
-  /** CHECKUP_AREAS 와 같은 순서 */
+  /** 결과 문구와 준비 단계 배지가 이 값으로 정해진다 */
+  caseId: CheckupCaseId;
+  /**
+   * CHECKUP_AREAS 와 같은 순서.
+   *
+   * CASE 를 정한 축은 `status` 가 `weakest` 다 — 강조할 축을 따로 들고 있지 않는다.
+   * 두 곳에 있으면 한쪽만 바뀐 채로 화면과 어긋난다.
+   */
   scores: readonly CheckupAreaScore[];
 }
 
-/** 영역별 평균 점수. 답이 하나라도 비어 있으면 null */
-function resolveAreaAverages(
-  answers: CheckupAnswers,
-): Map<CheckupAreaId, number> | null {
+/**
+ * 축 점수 4개. `CHECKUP_AREAS` 와 같은 순서(01 → 04)이고, 답이 하나라도 비어 있으면 null.
+ *
+ * 배점은 문항 데이터에서만 읽는다 (PRD 4.1). 축에 문항이 둘이면 평균을 반올림하므로
+ * 반올림이 생기는 축은 02 하나다 (PRD 4.2).
+ */
+export function resolveAreaScores(answers: CheckupAnswers): number[] | null {
   if (answers.length !== CHECKUP_QUESTIONS.length) return null;
 
   const sums = new Map<CheckupAreaId, { total: number; count: number }>();
@@ -225,69 +271,91 @@ function resolveAreaAverages(
     if (answer === null || answer === undefined) return null;
 
     const prev = sums.get(question.areaId) ?? { total: 0, count: 0 };
-    // 선택지 순번은 0부터 세지만 점수는 1부터다. 0 을 그대로 쓰면 막대가 사라진다.
     sums.set(question.areaId, {
-      total: prev.total + answer + 1,
+      total: prev.total + question.scores[answer],
       count: prev.count + 1,
     });
   }
 
-  const averages = new Map<CheckupAreaId, number>();
-  for (const [areaId, { total, count }] of sums) {
-    averages.set(areaId, total / count);
-  }
-  return averages;
+  return CHECKUP_AREAS.map((area) => {
+    const sum = sums.get(area.id);
+    if (!sum) throw new Error(`문항이 없는 진단 영역: ${area.id}`);
+    return Math.round(sum.total / sum.count);
+  });
 }
 
 /**
- * 가장 먼저 보완할 영역 하나. 답이 덜 찼으면 null.
+ * CASE 를 결정하는 축의 번호(0~3). 네 축이 모두 준비된 CASE E 면 null.
  *
- * 평균이 가장 낮은 영역이고, 동점이면 `CHECKUP_AREAS` 에서 앞선 영역이다 —
- * 01 → 04 순서가 준비 단계의 순서이기도 해서, 앞 단계부터 보완하는 것이 맞다.
+ * **최저 축이 아니라 "최저 + `CHECKUP_TIE_MARGIN` 이내에 드는 첫 축" 이다.** 그냥
+ * 최저를 뽑으면 모든 문항에 ①을 고른 사람이 `15 / 14 / 12 / 15` 가 되어 서류 축(12)이
+ * 뽑히고, 아직 아무것도 정하지 못한 사람에게 "서류부터 쓰세요" 가 나간다 (PRD 4.3).
+ * 01 → 04 순서로 찾으므로 보정 범위 안에서는 앞 단계가 이긴다.
  */
-export function resolveWeakestArea(
+export function resolveCaseAreaIndex(
+  areaScores: readonly number[],
+): number | null {
+  const lowest = Math.min(...areaScores);
+  if (lowest >= CHECKUP_READY_SCORE) return null;
+
+  return areaScores.findIndex((score) => score <= lowest + CHECKUP_TIE_MARGIN);
+}
+
+/**
+ * 진단 CASE 하나. 답이 덜 찼으면 null.
+ *
+ * 최저 축이 04(지원 · 전형 대응)일 때만 둘로 갈린다 — 아직 지원을 못 하는 쪽(D1)과
+ * 서류는 붙는데 면접에서 막히는 쪽(D2)은 필요한 준비가 다르다 (PRD 4.3).
+ */
+export function resolveCheckupCase(
   answers: CheckupAnswers,
-): CheckupAreaId | null {
-  const averages = resolveAreaAverages(answers);
-  if (!averages) return null;
+): CheckupCaseId | null {
+  const areaScores = resolveAreaScores(answers);
+  if (!areaScores) return null;
 
-  let weakest: CheckupAreaId | null = null;
-  let lowest = Number.POSITIVE_INFINITY;
+  const caseAreaIndex = resolveCaseAreaIndex(areaScores);
+  if (caseAreaIndex === null) return 'E';
+  if (caseAreaIndex !== APPLY_AREA_INDEX)
+    return CASE_BY_AREA_INDEX[caseAreaIndex];
 
-  for (const area of CHECKUP_AREAS) {
-    const average = averages.get(area.id);
-    if (average === undefined) continue;
-    // `<` 이라 동점이면 먼저 만난 영역이 남는다 = 01 에 가까운 쪽
-    if (average < lowest) {
-      lowest = average;
-      weakest = area.id;
-    }
-  }
+  const applyAnswer = answers[APPLY_QUESTION_INDEX] ?? 0;
+  return applyAnswer >= D2_MIN_OPTION_INDEX ? 'D2' : 'D1';
+}
 
-  return weakest;
+/**
+ * 축 하나의 상태. 점수 구간은 PRD 4.5 표다.
+ *
+ * **강조는 CASE 를 정한 축 하나뿐이다.** 점수가 낮은 축이 여럿이어도 나머지는 기본
+ * 색 + "이후 보완이 필요해요" 로 둔다 — 전부 칠하면 "무엇부터" 라는 신호가 사라진다.
+ * CASE E 는 정해진 축이 없고 네 축이 모두 80 이상이라 자연히 전부 `ready` 가 된다.
+ */
+export function resolveAreaStatus(
+  score: number,
+  isCaseArea: boolean,
+): CheckupAreaStatus {
+  if (isCaseArea) return 'weakest';
+  if (score >= CHECKUP_READY_SCORE) return 'ready';
+  if (score >= ONGOING_SCORE) return 'ongoing';
+  return 'later';
 }
 
 /** 막대 4개와 라벨까지 포함한 결과. 답이 덜 찼으면 null */
 export function resolveCheckupResult(
   answers: CheckupAnswers,
 ): CheckupResult | null {
-  const averages = resolveAreaAverages(answers);
-  const weakestAreaId = resolveWeakestArea(answers);
-  if (!averages || !weakestAreaId) return null;
+  const areaScores = resolveAreaScores(answers);
+  const caseId = resolveCheckupCase(answers);
+  if (!areaScores || !caseId) return null;
 
-  const scores = CHECKUP_AREAS.map((area) => {
-    const average = averages.get(area.id) ?? 0;
-    const status: CheckupAreaStatus =
-      area.id === weakestAreaId
-        ? 'weakest'
-        : average >= ONGOING_THRESHOLD
-          ? 'ongoing'
-          : 'later';
+  const caseAreaIndex = resolveCaseAreaIndex(areaScores);
 
-    return { area, average, ratio: average / MAX_SCORE, status };
-  });
+  const scores = CHECKUP_AREAS.map((area, index) => ({
+    area,
+    score: areaScores[index],
+    status: resolveAreaStatus(areaScores[index], index === caseAreaIndex),
+  }));
 
-  return { weakestAreaId, scores };
+  return { caseId, scores };
 }
 
 /** 결과 제목 한 줄을 이루는 조각. `accent` 인 조각만 포인트 컬러로 칠한다 */
@@ -296,84 +364,208 @@ export interface CheckupResultTitlePart {
   accent?: boolean;
 }
 
-export interface CheckupAreaResultCopy {
-  /** 2~3줄. 줄바꿈 위치도 시안 그대로다 */
+/** 결과 본문 한 문단을 이루는 조각. `bold` 인 조각만 굵게 찍는다 */
+export interface CheckupResultBodyPart {
+  text: string;
+  bold?: boolean;
+}
+
+/** 본문 한 문단. 조각을 순서대로 이으면 원문 한 문단이다 */
+export type CheckupResultBody = readonly CheckupResultBodyPart[];
+
+/** 조각을 이어 붙인 문단 원문 */
+export function checkupBodyText(paragraph: CheckupResultBody): string {
+  return paragraph.map((part) => part.text).join('');
+}
+
+export interface CheckupCaseCopy {
+  /** 2줄 고정. 줄바꿈 위치도 문구 원문 그대로다 */
   titleLines: readonly (readonly CheckupResultTitlePart[])[];
   /** 본문 2문단 */
-  body: readonly [string, string];
+  body: readonly [CheckupResultBody, CheckupResultBody];
 }
 
 /*
- * 영역별 결과 문구.
+ * CASE 별 결과 문구 (PRD 4.4 전문).
  *
- * **`direction`(01) 한 벌만 시안 3.png 에서 옮긴 확정 문구다.** 나머지 셋은 같은 형식
- * (제목 2~3줄 + 본문 2문단)으로 쓴 **운영 확인 전 초안**이다. 운영 문구를 받으면 해당
- * 항목만 교체하면 되고, 형식이 같으므로 화면은 건드리지 않는다.
+ * **키는 영역이 아니라 CASE 다.** 최저 축이 같아도 D1·D2 는 다른 문구가 나가야 해서
+ * 영역 키로는 표현되지 않는다.
+ *
+ * 제목의 강조 어절은 `accent`(포인트 컬러), 본문의 강조는 `bold`(굵게)다. 원문
+ * (`무료진단 변경안.md` 06절)이 둘을 구분해 표시했고, 문단을 문자열 하나로 두면 본문
+ * 강조를 화면에 내릴 방법이 없어 조각 배열로 바꿨다. **조각을 순서대로 이으면 원문
+ * 그대로여야 한다** — 조각을 나누며 글자를 더하거나 빼지 않는다.
  */
-export const CHECKUP_RESULT_COPY: Record<CheckupAreaId, CheckupAreaResultCopy> =
-  {
-    // 시안 3.png 확정 문구
-    direction: {
-      titleLines: [
-        [{ text: '지금은 포트폴리오보다' }],
-        [{ text: "'어디에 지원할지'", accent: true }, { text: '부터' }],
-        [{ text: '정해야 해요.' }],
+export const CHECKUP_RESULT_COPY: Record<CheckupCaseId, CheckupCaseCopy> = {
+  A: {
+    titleLines: [
+      [{ text: '지금은 포트폴리오보다' }],
+      [
+        { text: '‘어디에 지원할지’', accent: true },
+        { text: '부터 정해야 해요.' },
       ],
-      body: [
-        '마케팅 세부 직무를 이해하고 실제 채용공고를 살펴보며 내가 지원할 직무와 지원 범위를 먼저 좁혀보세요.',
-        '직무가 정해지지 않은 상태에서 만든 서류는 어떤 공고에도 딱 맞지 않습니다. 방향을 먼저 잡으면 지금 가진 경험 중 무엇을 꺼내 써야 할지도 함께 보입니다.',
+    ],
+    body: [
+      [
+        { text: '마케팅 세부 직무를 이해하고 실제 채용공고를 살펴보며 ' },
+        {
+          text: '내가 지원할 직무와 지원 범위를 먼저 좁혀보세요.',
+          bold: true,
+        },
       ],
-    },
-    // 운영 확인 전 초안
-    experience: {
-      titleLines: [
-        [{ text: '지금은 새 경험보다' }],
-        [{ text: "'가진 경험의 해석'", accent: true }, { text: '부터' }],
-        [{ text: '시작해야 해요.' }],
+      [
+        {
+          text: '직무가 정해지지 않은 상태에서 만든 서류는 어떤 공고에도 딱 맞지 않습니다. 방향을 먼저 잡으면 지금 가진 경험 중 무엇을 꺼내 써야 할지도 함께 보입니다.',
+        },
       ],
-      body: [
-        '지금까지 한 활동을 빠짐없이 적어 두고, 지원 직무와 연결되는 판단과 인사이트를 먼저 뽑아보세요.',
-        '성과가 크지 않았던 경험도 문제와 판단, 실행과 회고로 풀어내면 직무 역량이 됩니다. 쓸 경험이 없는 것이 아니라 아직 해석하지 않은 것입니다.',
+    ],
+  },
+  B: {
+    titleLines: [
+      [{ text: '새로운 경험보다' }],
+      [
+        { text: '지금 가진 경험을 다시 꺼내볼 때', accent: true },
+        { text: '예요.' },
       ],
-    },
-    // 운영 확인 전 초안
-    document: {
-      titleLines: [
-        [{ text: '경험은 있으니,' }],
-        [{ text: "'채용공고에 맞춘 서류'", accent: true }, { text: '로' }],
-        [{ text: '옮겨야 해요.' }],
+    ],
+    body: [
+      [
+        { text: '성과가 크지 않았던 경험도 ' },
+        { text: '문제 → 판단 → 실행 → 결과 → 인사이트', bold: true },
+        { text: '로 다시 정리하면 충분히 취업에 활용할 수 있습니다.' },
       ],
-      body: [
-        '이력서 · 자소서 · 포트폴리오 초안을 먼저 끝까지 완성하고, 지원할 공고의 요구 역량에 맞춰 경험의 순서와 강조점을 바꿔보세요.',
-        '같은 서류를 모든 기업에 내면 어디에도 맞지 않습니다. 초안이 있어야 무엇을 덜어내고 무엇을 더할지 판단할 수 있습니다.',
+      [
+        {
+          text: '지금 필요한 건 새로운 대외활동이 아니라, 가진 경험을 서류에 쓸 수 있는 형태로 바꾸는 작업입니다.',
+        },
       ],
-    },
-    // 운영 확인 전 초안
-    apply: {
-      titleLines: [
-        [{ text: '서류는 준비됐으니,' }],
-        [{ text: "'지원과 전형 대응'", accent: true }, { text: '을' }],
-        [{ text: '다듬어야 해요.' }],
+    ],
+  },
+  C: {
+    titleLines: [
+      [{ text: '경험을 더 쌓기보다' }],
+      [
+        { text: '이제 지원 가능한 결과물로 만들 때', accent: true },
+        { text: '예요.' },
       ],
-      body: [
-        '실제 지원을 이어가며 결과를 기록하고, 서류와 면접 중 어디에서 막히는지 확인해 다음 지원을 고쳐보세요.',
-        '지원은 한 번에 끝나는 일이 아니라 결과를 보고 고쳐 나가는 과정입니다. 경험 기반 예상 질문과 답변 세트를 준비해 두면 면접에서 흔들리지 않습니다.',
+    ],
+    body: [
+      [
+        { text: '가지고 있는 경험을 ' },
+        {
+          text: '이력서 · 자소서 · 포트폴리오로 완성하고 JD에 맞게 변형하는 연습',
+          bold: true,
+        },
+        { text: '이 필요합니다.' },
       ],
-    },
-  };
+      [
+        {
+          text: '하나의 서류를 모든 기업에 그대로 제출하면, 어떤 공고에서도 "우리가 찾던 사람"으로 보이기 어렵습니다.',
+        },
+      ],
+    ],
+  },
+  D1: {
+    titleLines: [
+      [{ text: '이제는 만드는 취준보다' }],
+      [
+        { text: '지원하고 개선하는 취준', accent: true },
+        { text: '이 필요해요.' },
+      ],
+    ],
+    body: [
+      [
+        { text: '실제 지원 결과를 기록하고 ' },
+        {
+          text: '반복되는 탈락 원인을 찾아 서류와 면접을 계속 개선',
+          bold: true,
+        },
+        { text: '해야 합니다.' },
+      ],
+      [
+        {
+          text: '서류 합격이 잘 되지 않는다면 지원 횟수를 늘리기보다, 내 경험의 강점이 제대로 드러나는지 · 지원 직무의 요구 역량과 연결되는지부터 다시 점검할 단계입니다.',
+        },
+      ],
+    ],
+  },
+  D2: {
+    titleLines: [
+      [{ text: '이제는 만드는 취준보다' }],
+      [
+        { text: '경험을 말로 설득하는 연습', accent: true },
+        { text: '이 필요해요.' },
+      ],
+    ],
+    body: [
+      [
+        {
+          text: '서류 합격까지 했다면 이미 지원 가능한 경험과 결과물을 어느 정도 갖추고 있다는 뜻입니다.',
+        },
+      ],
+      [
+        { text: '이제 중요한 것은 ' },
+        {
+          text: '서류에 적어둔 경험을 면접에서 논리적으로 설명하고, 꼬리질문에도 흔들리지 않는 것',
+          bold: true,
+        },
+        {
+          text: '입니다. 면접 준비 과정에서 경험을 다시 구조화하고 현직자의 시선으로 답변을 검증해보세요.',
+        },
+      ],
+    ],
+  },
+  E: {
+    titleLines: [
+      [{ text: '준비는 충분해요.' }],
+      [
+        { text: '이제 ' },
+        { text: '내 결과물이 실제로 통하는지', accent: true },
+        { text: ' 확인할 때예요.' },
+      ],
+    ],
+    body: [
+      [
+        {
+          text: '네 영역 모두 스스로 해낼 수 있는 상태입니다. 이 단계에서 결과를 가르는 건 무언가를 더 만드는 일이 아니라, ',
+        },
+        {
+          text: '내가 만든 것이 실제 채용 기준에 닿는지 확인하는 일',
+          bold: true,
+        },
+        { text: '입니다.' },
+      ],
+      [
+        { text: '스스로 판단하기 어려운 부분이 남아 있다면 ' },
+        { text: '현직자 1:1 멘토링', bold: true },
+        {
+          text: '으로 서류 · 포트폴리오 · 면접 답변을 직접 검증받아보세요. 어디를 더 보완해야 할지, 지금 어디까지 지원할 수 있을지 현직자 관점에서 확인할 수 있습니다.',
+        },
+      ],
+    ],
+  },
+};
 
 /** 시안 3.png 의 고정 문구 */
 export const CHECKUP_RESULT = {
   /** 마지막 문항을 답하면 이 자리로 스크롤한다 */
   anchorId: 'checkup-result',
-  /** 답하기 전에도 보이는 안내 */
+  /**
+   * 답하기 전에도 보이는 안내 (PRD 4.6 문구).
+   *
+   * 진단 전에는 CASE 카피 카드를 아예 그리지 않으므로, 이 문구가 "무엇이 어디에
+   * 나타나는지" 를 혼자 설명한다. 그래서 축 개수까지 적는다.
+   */
   guideLines: [
-    '위 5문항 무료진단에 답하면',
-    '진단 결과와 나에게 필요한 준비가 아래에 표시됩니다.',
+    '위 5문항에 답하면 4개 축 진단 결과와',
+    '나에게 필요한 준비가 아래에 표시됩니다',
   ],
   eyebrow: 'CAREER CHECK RESULT',
   title: '마케팅 취준 진단 결과',
   restart: '다시 진단하기',
-  badge: '★ 지금 당신에게 가장 먼저 필요한 준비',
+  badge: '🔍 지금 당신에게 가장 먼저 필요한 준비',
   cta: '준비 단계 확인하기',
+  /** CASE E 는 보완할 축이 없어 배지와 CTA 가 따로다 (PRD 4.4) */
+  caseEBadge: '✅ 지금 당신에게 남은 건 확인입니다',
+  caseECta: '현직자 1:1 멘토링 확인하기',
 } as const;

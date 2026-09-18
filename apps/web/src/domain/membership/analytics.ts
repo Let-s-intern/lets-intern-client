@@ -7,7 +7,7 @@
 // 그대로 따랐다. 이벤트는 `{도메인}_{대상}_{과거형 동사}`, 속성은 snake_case 다.
 // 새 규칙을 만들지 않는다.
 //
-// **답변 내용은 보내지 않는다.** 선택지 순번과 영역 id 만 보낸다(PRD 결정 Q2).
+// **답변 내용은 보내지 않는다.** 선택지 순번·배점·영역 id 만 보낸다(PRD 결정 Q2).
 // 이름·이메일 같은 개인을 알아볼 수 있는 값은 어느 이벤트에도 넣지 않는다.
 //
 // (Vercel: 직접 import — 배럴 파일 금지)
@@ -15,7 +15,7 @@
 import posthog from 'posthog-js';
 
 import type {
-  CheckupAreaId,
+  CheckupCaseId,
   CheckupQuestion,
   CheckupResult,
 } from './data/checkup';
@@ -67,8 +67,9 @@ export function captureCheckupStarted(): void {
 /**
  * 문항 답변 — 문항마다.
  *
- * 고른 선택지의 **글이 아니라 순번**을 보낸다. 순번은 `data/checkup.ts` 의
- * 선택지 순서(낮은 수준 → 높은 수준)와 같은 값이라 그대로 점수로 읽힌다.
+ * 고른 선택지의 **글이 아니라 순번**을 보낸다. 배점은 문항 데이터에서 읽어 함께
+ * 담는다 — 배점표를 조정하면 대시보드의 과거 이벤트와 값이 달라지므로, 그때의 점수를
+ * 이벤트에 남겨야 비교가 된다.
  */
 export function captureCheckupAnswered(params: {
   question: CheckupQuestion;
@@ -78,33 +79,42 @@ export function captureCheckupAnswered(params: {
     question_no: params.question.no,
     area_id: params.question.areaId,
     option_index: params.optionIndex,
+    score: params.question.scores[params.optionIndex],
   });
 }
 
 /**
  * 진단 완료 — 결과가 나올 때.
  *
- * 영역별 점수는 `score_{영역 id}` 로 펼쳐 담는다. 중첩 객체로 보내면 PostHog 에서
- * 영역 하나를 기준으로 거르거나 평균 내기 어렵다.
+ * 축 점수(0~100)는 `score_{영역 id}` 로 펼쳐 담는다. 중첩 객체로 보내면 PostHog 에서
+ * 축 하나를 기준으로 거르거나 평균 내기 어렵다.
  */
 export function captureCheckupCompleted(result: CheckupResult): void {
   const scores: Record<string, number> = {};
   for (const score of result.scores) {
-    scores[`score_${score.area.id}`] = score.average;
+    scores[`score_${score.area.id}`] = score.score;
   }
 
   capture(MEMBERSHIP_EVENTS.checkupCompleted, {
-    weakest_area_id: result.weakestAreaId,
+    case_id: result.caseId,
     ...scores,
   });
 }
 
-/** 결과 CTA 클릭 — "준비 단계 확인하기". */
+/**
+ * 결과 CTA 클릭 — "준비 단계 확인하기".
+ *
+ * CASE E 는 같은 자리의 버튼이 "현직자 1:1 멘토링 확인하기" 로 바뀐다. 내려가는
+ * 섹션이 같아 `case_id` 만으로도 갈리지만, 대시보드에서 문구별로 세려면 속성이
+ * 있어야 한다 — 그래서 그 버튼만 `cta: 'mentoring'` 을 싣는다 (PRD 4.8).
+ */
 export function captureCheckupResultCtaClicked(params: {
-  weakestAreaId: CheckupAreaId;
+  caseId: CheckupCaseId;
+  cta?: 'mentoring';
 }): void {
   capture(MEMBERSHIP_EVENTS.checkupResultCtaClicked, {
-    weakest_area_id: params.weakestAreaId,
+    case_id: params.caseId,
+    ...(params.cta ? { cta: params.cta } : {}),
   });
 }
 

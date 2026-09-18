@@ -139,6 +139,20 @@
   }
 }
 
+/* 진단 결과 막대 — 결과가 나타날 때 0 에서 점수까지 늘어난다 (PRD 4.5).
+   최종 폭은 인라인 스타일이 들고 있고 여기서는 시작점만 0 으로 되돌린다. 그래서
+   prefers-reduced-motion 에서는 이 블록이 통째로 빠져 곧장 최종 폭으로 그려진다. */
+@media (prefers-reduced-motion: no-preference) {
+  .membership-root .checkup-bar-fill {
+    animation: checkupBarGrow 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes checkupBarGrow {
+    from {
+      width: 0;
+    }
+  }
+}
+
 /* 합격 사례 — 왼쪽으로 끊김 없이 흐른다.
    목록을 두 벌 이어 붙이고 한 벌 폭(50%)만큼 밀면 원위치라 이음매가 보이지 않는다.
    목록 수가 바뀌어도 폭은 % 라 그대로 맞는다. 마우스를 올리면 멈춘다. */

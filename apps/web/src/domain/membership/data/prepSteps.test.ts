@@ -1,6 +1,5 @@
 import { CHALLENGE_ITEMS } from './challengeModalItems';
-import { CHECKUP_AREAS } from './checkup';
-import { findPrepStepByArea, PREP_STEP_CARDS } from './prepSteps';
+import { findPrepStepByCase, PREP_STEP_CARDS } from './prepSteps';
 
 describe('PREP_STEP_CARDS', () => {
   it('카드 7장이 시안 순서대로다', () => {
@@ -35,25 +34,22 @@ describe('PREP_STEP_CARDS', () => {
   });
 
   /*
-   * 진단 결과는 영역 하나를 가리키고, 배지는 카드 한 장에만 붙어야 한다.
-   * 두 카드가 같은 영역을 들면 "여기부터 시작" 이 두 곳에 생긴다.
+   * 진단 결과는 CASE 하나를 가리키고, 배지는 카드 한 장에만 붙어야 한다.
+   * 두 카드가 같은 CASE 를 들면 "여기부터 시작" 이 두 곳에 생긴다.
    */
-  it('네 영역이 각각 카드 한 장씩에 대응한다', () => {
-    const mapped = PREP_STEP_CARDS.map((step) => step.areaId).filter(Boolean);
+  it('같은 CASE 를 든 카드가 둘 이상이지 않다', () => {
+    const mapped = PREP_STEP_CARDS.flatMap((step) => step.caseIds ?? []);
 
     expect(new Set(mapped).size).toBe(mapped.length);
-    for (const area of CHECKUP_AREAS) {
-      expect(findPrepStepByArea(area.id)).toBeDefined();
-    }
   });
 
-  it('GOAL 과 CHECKPOINT 에는 대응 영역이 없다', () => {
+  it('GOAL 과 CHECKPOINT 에는 대응 CASE 가 없다', () => {
     const byId = Object.fromEntries(
       PREP_STEP_CARDS.map((step) => [step.id, step]),
     );
 
-    expect(byId.goal.areaId).toBeUndefined();
-    expect(byId.checkpoint.areaId).toBeUndefined();
+    expect(byId.goal.caseIds).toBeUndefined();
+    expect(byId.checkpoint.caseIds).toBeUndefined();
   });
 
   it('GOAL 만 펼침이 없다', () => {
@@ -111,15 +107,21 @@ describe('PREP_STEP_CARDS', () => {
   });
 });
 
-describe('findPrepStepByArea', () => {
-  it('영역이 없으면 undefined 다', () => {
-    expect(findPrepStepByArea(null)).toBeUndefined();
+describe('findPrepStepByCase', () => {
+  it('진단 전에는 undefined 다', () => {
+    expect(findPrepStepByCase(null)).toBeUndefined();
   });
 
-  it('영역마다 대응 카드를 돌려준다', () => {
-    expect(findPrepStepByArea('direction')?.id).toBe('step-01');
-    expect(findPrepStepByArea('experience')?.id).toBe('step-02');
-    expect(findPrepStepByArea('document')?.id).toBe('step-03');
-    expect(findPrepStepByArea('apply')?.id).toBe('step-05');
+  /* PRD 4.7 표 그대로다. D1·D2 는 같은 카드, E 는 배지가 없다. */
+  it('CASE 마다 대응 카드를 돌려준다', () => {
+    expect(findPrepStepByCase('A')?.id).toBe('step-01');
+    expect(findPrepStepByCase('B')?.id).toBe('step-02');
+    expect(findPrepStepByCase('C')?.id).toBe('step-03');
+    expect(findPrepStepByCase('D1')?.id).toBe('step-05');
+    expect(findPrepStepByCase('D2')?.id).toBe('step-05');
+  });
+
+  it('CASE E 는 가리키는 카드가 없다', () => {
+    expect(findPrepStepByCase('E')).toBeUndefined();
   });
 });
