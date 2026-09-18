@@ -13,7 +13,7 @@ export const createEmptyBenefit = (): PassBenefit => ({
   category: '',
   thumbnailUrl: null,
   title: '',
-  description: '',
+  link: '',
 });
 
 const ALL = '';
@@ -23,7 +23,7 @@ interface Props {
   onChange: (benefits: PassBenefit[]) => void;
 }
 
-/** 1.6 혜택: 카테고리 탭 + 리스트(노출 토글·썸네일·제목·설명·수정/삭제) + 추가/수정 모달 */
+/** 1.6 혜택: 카테고리 탭 + 리스트(노출 토글·썸네일·제목·링크·수정/삭제) + 추가/수정 모달 */
 export default function BenefitSection({ benefits, onChange }: Props) {
   const [editing, setEditing] = useState<{
     benefit: PassBenefit;
@@ -109,10 +109,16 @@ export default function BenefitSection({ benefits, onChange }: Props) {
                     <span className="text-xsmall16 text-neutral-0 truncate font-medium">
                       {benefit.title || '(제목 없음)'}
                     </span>
-                    {benefit.description && (
-                      <span className="text-xsmall14 text-neutral-40 line-clamp-2">
-                        {benefit.description}
-                      </span>
+                    {benefit.link && (
+                      <a
+                        href={benefit.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xsmall14 text-primary line-clamp-2 break-all hover:underline"
+                      >
+                        {benefit.link}
+                      </a>
                     )}
                   </div>
                   <Switch

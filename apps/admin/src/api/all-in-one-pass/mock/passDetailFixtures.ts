@@ -76,8 +76,7 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
         category: '제휴 혜택',
         thumbnailUrl: null,
         title: '커피챗 50% 쿠폰 2매',
-        description:
-          '현직자와의 1:1 커피챗 기회를 50% 할인된 가격에 2회 제공합니다.',
+        link: 'https://www.letscareer.co.kr/coffeechat',
       },
     ],
     faqs: [

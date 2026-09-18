@@ -77,7 +77,7 @@ export interface PassBenefit {
   category: string; // 유형(직접입력/기존선택) → 유저 기타혜택 카드 뱃지
   thumbnailUrl: string | null;
   title: string;
-  description: string;
+  link: string;
 }
 
 /** 1.7 FAQ 한 개 */
