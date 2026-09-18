@@ -4,6 +4,7 @@ import BenefitSection from './BenefitSection';
 import CalendarSection from './CalendarSection';
 import DetailContentSection from './DetailContentSection';
 import ExternalLinkSection from './ExternalLinkSection';
+import FaqSection from './FaqSection';
 import PlanSection, { createEmptyPlan } from './PlanSection';
 
 /** 생성/수정 폼 초기값 (빈 폼) */
@@ -19,6 +20,7 @@ export const createInitialPassInput = (): PassFormInput => ({
   externalLinks: [],
   detailContent: null,
   benefits: [],
+  faqs: [],
 });
 
 interface Props {
@@ -33,7 +35,7 @@ interface Props {
  */
 export default function PassForm({ input, patch }: Props) {
   return (
-    <div className="flex flex-col gap-10">
+    <div className="mb-10 flex flex-col gap-10">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <BasicInfoSection input={input} patch={patch} />
         <PlanSection
@@ -62,6 +64,7 @@ export default function PassForm({ input, patch }: Props) {
         benefits={input.benefits}
         onChange={(benefits) => patch({ benefits })}
       />
+      <FaqSection faqs={input.faqs} onChange={(faqs) => patch({ faqs })} />
     </div>
   );
 }

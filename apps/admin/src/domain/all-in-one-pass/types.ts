@@ -65,6 +65,8 @@ export interface PassFormInput {
   detailContent: string | null;
   // 1.6 혜택
   benefits: PassBenefit[];
+  // 1.7 FAQ
+  faqs: PassFaq[];
 }
 
 /** 1.6 혜택 한 개 */
@@ -75,6 +77,14 @@ export interface PassBenefit {
   thumbnailUrl: string | null;
   title: string;
   description: string;
+}
+
+/** 1.7 FAQ 한 개 */
+export interface PassFaq {
+  id: string; // 폼 로컬 식별자
+  category: string; // 유형(직접입력/기존선택)
+  question: string;
+  answer: string;
 }
 
 /** A-1 개설 목록 행 */
@@ -138,4 +148,45 @@ export interface AllInOnePassNotice {
   content: string; // 본문(평문)
   createdAt: string; // 생성일(ISO)
   linkedPassIds: number[]; // 노출 영역: 이 콘텐츠를 노출할 패스 id 목록
+}
+
+/** A-4 공통 질문 (전 패스 공통, 모든 회차에 포함) */
+export interface RetrospectiveCommonQuestion {
+  id: number;
+  order: number; // 표시 순서
+  question: string;
+}
+
+/**
+ * A-4 회고 회차 한 개.
+ *
+ * 노출 시점·작성 가능 기간은 저장하지 않는다. 회차 번호와 유저의 패스 시작일로
+ * 프론트에서 파생한다(회차 N = 패스 시작 +2N주에 2주간 작성 가능).
+ */
+export interface RetrospectiveRound {
+  id: number;
+  round: number; // 회차 번호
+  weeklyQuestion: string; // 주차별 질문(1개)
+  responseCount: number; // 응답 수
+}
+
+/**
+ * A-5 응답의 개별 답변.
+ *
+ * questionLabel 은 제출 당시 질문 문구의 스냅샷이다. 질문이 이후 수정/삭제돼도
+ * 이 답변은 원래 질문 그대로 보이며, 목록 탭은 등장한 questionId 별로 묶는다.
+ */
+export interface RetrospectiveAnswer {
+  questionId: number;
+  questionLabel: string;
+  answer: string;
+}
+
+/** A-5 회고 응답 한 건 */
+export interface RetrospectiveResponse {
+  id: number;
+  submitterName: string; // 제출자 이름
+  passName: string; // 구매한 올인원패스 이름
+  submittedAt: string; // 제출일(ISO)
+  answers: RetrospectiveAnswer[];
 }
