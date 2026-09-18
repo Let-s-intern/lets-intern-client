@@ -149,4 +149,28 @@ describe('CheckupSection (시안 2)', () => {
       ),
     ).toBeInTheDocument();
   });
+
+  /*
+   * 넘어가는 타이머가 끝난 직후, 아직 새 문항이 그려지기 전에 또 누르면 핸들러가
+   * 옛 문항 번호를 들고 있어 타이머를 한 번 더 건다. 막지 않으면 마지막 문항을
+   * 넘어서 없는 문항을 그리다 진단 섹션이 통째로 사라진다 (화면에서 실제로 났다).
+   */
+  it('마지막 문항을 넘어서지 않는다', () => {
+    render(<Harness />);
+
+    for (let index = 0; index < CHECKUP_QUESTIONS.length - 1; index += 1) {
+      answer(index, 0);
+    }
+
+    const last = CHECKUP_QUESTIONS.length - 1;
+    choose(last, 0);
+    // 지연 동안 같은 자리를 계속 눌러도 넘어갈 곳이 없다
+    choose(last, 1);
+    waitForNextQuestion();
+    waitForNextQuestion();
+
+    expect(
+      screen.getByText(CHECKUP_QUESTIONS[last].question),
+    ).toBeInTheDocument();
+  });
 });

@@ -92,7 +92,13 @@ export default function CheckupSection({ answers, onAnswersChange }: Props) {
 
     advanceTimer.current = setTimeout(() => {
       advanceTimer.current = null;
-      setCurrent((prev) => prev + 1);
+      /*
+       * 마지막 문항을 넘어서지 않게 여기서 한 번 더 막는다.
+       * 위 `isLast` 는 이 핸들러가 만들어질 때의 값이라, 타이머가 다음 문항으로 넘긴
+       * 직후·다시 그리기 전에 또 클릭이 들어오면 옛 값(false)을 보고 타이머를 한 번 더
+       * 건다. 그러면 없는 문항을 그리다 진단 섹션이 통째로 사라진다.
+       */
+      setCurrent((prev) => Math.min(prev + 1, CHECKUP_QUESTIONS.length - 1));
     }, NEXT_QUESTION_DELAY_MS);
   };
 
