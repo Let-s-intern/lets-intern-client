@@ -62,7 +62,7 @@ export default function PlaybookIntroSection() {
                 {chip}
               </span>
               {i < P.chips.length - 1 ? (
-                <span aria-hidden="true" className="text-neutral-50 text-xs">
+                <span aria-hidden="true" className="text-xs text-neutral-50">
                   →
                 </span>
               ) : null}
