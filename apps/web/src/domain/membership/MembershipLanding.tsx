@@ -16,6 +16,12 @@
 // 01~05 세로 목록)은 준비 단계 카드가 그 자리를 대신하면서 렌더에서 빠졌다 — 같은
 // 관행대로 파일은 남긴다.
 //
+// 챌린지 10종·가이드북 7종·현직자 VOD·멘토링 쿠폰 네 섹션도 같은 이유로 빠졌다. 내용이
+// 패스 소개(PassIntroSection)의 혜택 모달 4개로 들어갔고, **데이터 파일은 그대로 쓴다.**
+// 쥬디 클리닉(SpecialLiveSection)은 LiveClinicSection 이 대신한다.
+// 섹션 id 가 사라지면 그 id 를 가리키던 앵커가 조용히 죽는다 — `data/prepSteps.ts`,
+// `data/passBenefits.ts`, `ui/MembershipNav.tsx` 를 함께 고쳤다.
+//
 // FAQ 는 시안에 없지만 남긴다. 어드민 챌린지에 등록한 FAQ 를 그대로 보여주는 자리이고
 // (`lib/useMembershipChallengeData`), 운영이 상품 문의를 여기서 답한다.
 
@@ -47,16 +53,14 @@ import CheckupSection from './section/CheckupSection';
 import CheckupResultSection from './section/CheckupResultSection';
 import JobMarketSection from './section/JobMarketSection';
 import PrepStepsSection from './section/PrepStepsSection';
+import PassResultsSection from './section/PassResultsSection';
+import PassIntroSection from './section/PassIntroSection';
+import LiveClinicSection from './section/LiveClinicSection';
 import SolutionSection from './section/SolutionSection';
 import PassBenefitsSection from './section/PassBenefitsSection';
 import PathMatchSection from './section/PathMatchSection';
 import CoursePlanSection from './section/CoursePlanSection';
 import PlaybookDashboardSection from './section/PlaybookDashboardSection';
-import ChallengeListSection from './section/ChallengeListSection';
-import GuidebookListSection from './section/GuidebookListSection';
-import MarketerVodSection from './section/MarketerVodSection';
-import SpecialLiveSection from './section/SpecialLiveSection';
-import MentoringCouponSection from './section/MentoringCouponSection';
 import CompareSection from './section/CompareSection';
 import PlansSection from './section/PlansSection';
 import FaqSection from './section/FaqSection';
@@ -117,6 +121,16 @@ export default function MembershipLanding() {
               기존 RoadmapSection(STEP 01~05 세로 목록) 자리다. */}
           <PrepStepsSection weakestAreaId={result?.weakestAreaId ?? null} />
 
+          {/* 개편 시안 5 — 합격 사례 (REAL RESULTS) */}
+          <PassResultsSection />
+
+          {/* 개편 시안 6 — 패스 소개와 혜택 4카드. 챌린지·가이드북·VOD·멘토링
+              네 섹션이 여기 모달로 들어왔다. */}
+          <PassIntroSection />
+
+          {/* 개편 시안 7 — 쥬디 멘토 LIVE 클리닉. SpecialLiveSection 자리다. */}
+          <LiveClinicSection />
+
           {/* 시안 5 — 결과물 3카드 + 하단 밴드 (YOUR JOB ROADMAP) */}
           <SolutionSection />
 
@@ -131,21 +145,6 @@ export default function MembershipLanding() {
 
           {/* 시안 9 — 플레이북 대시보드 목업 */}
           <PlaybookDashboardSection />
-
-          {/* 시안 10 — 챌린지 10종 */}
-          <ChallengeListSection />
-
-          {/* 시안 11 — 가이드북 7종 */}
-          <GuidebookListSection />
-
-          {/* 시안 12 — 현직자 VOD */}
-          <MarketerVodSection />
-
-          {/* 시안 13 — 쥬디 LIVE 클리닉 + 특별 세미나 */}
-          <SpecialLiveSection />
-
-          {/* 시안 14 — 1:1 멘토링 50% 쿠폰 */}
-          <MentoringCouponSection />
 
           {/* 시안 15 — 가격 비교표 + 단일 플랜 카드 */}
           <CompareSection />

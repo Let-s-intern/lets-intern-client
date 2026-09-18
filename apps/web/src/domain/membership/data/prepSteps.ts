@@ -123,7 +123,7 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
           tabLabel: 'LIVE 클리닉',
           title: '쥬디 멘토 경험정리 LIVE 클리닉',
           // 상세 링크가 아직 없다. 같은 랜딩의 LIVE 클리닉 섹션으로 내려보낸다.
-          url: '#special-live',
+          url: '#live-clinic',
         },
       ],
       ctaLabel: 'LIVE 클리닉 자세히 보기',
@@ -165,8 +165,9 @@ export const PREP_STEP_CARDS: readonly PrepStep[] = [
           tabLabel: '1:1 멘토링',
           title: '1:1 Live 멘토링 · 커피챗',
           src: 'mentoring-coupon.webp',
-          // 멘토링도 상세 링크가 없다. 같은 랜딩의 쿠폰 섹션으로 내려보낸다.
-          url: '#mentoring-coupon',
+          // 멘토링도 상세 링크가 없다. 쿠폰 섹션이 패스 소개의 혜택 04 모달로 들어갔으니
+          // 그 섹션으로 내려보낸다.
+          url: '#pass-intro',
         },
       ],
       ctaLabel: '현직자에게 점검받기',

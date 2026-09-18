@@ -91,7 +91,7 @@ describe('PREP_STEP_CARDS', () => {
    */
   it('챌린지 링크가 기존 데이터의 URL 과 같다', () => {
     const known = new Set(CHALLENGE_ITEMS.map((item) => item.url));
-    const inPage = new Set(['#special-live', '#mentoring-coupon']);
+    const inPage = new Set(['#live-clinic', '#pass-intro']);
 
     for (const step of PREP_STEP_CARDS) {
       for (const program of step.expand?.programs ?? []) {

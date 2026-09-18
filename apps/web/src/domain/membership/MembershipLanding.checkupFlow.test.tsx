@@ -42,6 +42,18 @@ jest.mock('./section/JobMarketSection', () => ({
   __esModule: true,
   default: () => null,
 }));
+jest.mock('./section/PassResultsSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+jest.mock('./section/PassIntroSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+jest.mock('./section/LiveClinicSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
 jest.mock('./section/SolutionSection', () => ({
   __esModule: true,
   default: () => null,
@@ -59,26 +71,6 @@ jest.mock('./section/CoursePlanSection', () => ({
   default: () => null,
 }));
 jest.mock('./section/PlaybookDashboardSection', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-jest.mock('./section/ChallengeListSection', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-jest.mock('./section/GuidebookListSection', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-jest.mock('./section/MarketerVodSection', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-jest.mock('./section/SpecialLiveSection', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-jest.mock('./section/MentoringCouponSection', () => ({
   __esModule: true,
   default: () => null,
 }));

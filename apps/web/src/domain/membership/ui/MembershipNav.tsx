@@ -20,11 +20,14 @@ interface NavItem {
 // 앵커는 **랜딩에 실제로 있는 섹션 id** 만 넣는다. 없는 id 를 남기면 눌러도 아무 일이
 // 일어나지 않고, IntersectionObserver 가 관측 대상을 못 찾아 하이라이트도 멈춘다.
 // 섹션을 빼거나 더할 때 이 목록을 함께 고칠 것. (LC-3294)
+//
+// 챌린지·가이드북 항목은 뺐다. 두 섹션이 패스 소개의 혜택 모달로 들어가면서 `challenges`
+// ·`guidebooks` id 가 페이지에서 사라졌다. 새 섹션에 맞춘 앵커 목록 재구성은 Push 5 다 —
+// 여기서는 죽은 앵커만 걷어낸다.
 const NAV_ITEMS: NavItem[] = [
+  { title: '패스 혜택', to: 'pass-intro' },
   { title: '혜택', to: 'benefits' },
   { title: '플레이북', to: 'course-plan' },
-  { title: '챌린지', to: 'challenges' },
-  { title: '가이드북', to: 'guidebooks' },
   { title: '가격', to: 'compare' },
 ];
 

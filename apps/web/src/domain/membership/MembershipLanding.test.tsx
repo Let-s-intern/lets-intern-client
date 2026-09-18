@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import { MARKETER_VOD } from './data/marketerVod';
+import { MENTORING_COUPON } from './data/mentoringCoupon';
 import { RECOMMEND } from './data/recommend';
 import { ROADMAP } from './data/roadmap';
+import { SPECIAL_LIVE } from './data/specialLive';
 import MembershipLanding from './MembershipLanding';
 
 // 이 테스트가 검증하는 것은 MembershipLanding 자신의 책임 — "어떤 섹션을 어떤 순서로
@@ -53,6 +56,18 @@ jest.mock('./section/PrepStepsSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PrepStepsSection" />,
 }));
+jest.mock('./section/PassResultsSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PassResultsSection" />,
+}));
+jest.mock('./section/PassIntroSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="PassIntroSection" />,
+}));
+jest.mock('./section/LiveClinicSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="LiveClinicSection" />,
+}));
 jest.mock('./section/SolutionSection', () => ({
   __esModule: true,
   default: () => <div data-testid="SolutionSection" />,
@@ -72,26 +87,6 @@ jest.mock('./section/CoursePlanSection', () => ({
 jest.mock('./section/PlaybookDashboardSection', () => ({
   __esModule: true,
   default: () => <div data-testid="PlaybookDashboardSection" />,
-}));
-jest.mock('./section/ChallengeListSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="ChallengeListSection" />,
-}));
-jest.mock('./section/GuidebookListSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="GuidebookListSection" />,
-}));
-jest.mock('./section/MarketerVodSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="MarketerVodSection" />,
-}));
-jest.mock('./section/SpecialLiveSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="SpecialLiveSection" />,
-}));
-jest.mock('./section/MentoringCouponSection', () => ({
-  __esModule: true,
-  default: () => <div data-testid="MentoringCouponSection" />,
 }));
 jest.mock('./section/CompareSection', () => ({
   __esModule: true,
@@ -115,16 +110,14 @@ const EXPECTED_ORDER = [
   'CheckupResultSection', //    개편 시안 3
   'JobMarketSection', //        시안 3
   'PrepStepsSection', //        개편 시안 4 (RoadmapSection 자리)
+  'PassResultsSection', //      개편 시안 5
+  'PassIntroSection', //        개편 시안 6 (혜택 4종이 모달로)
+  'LiveClinicSection', //       개편 시안 7 (SpecialLiveSection 자리)
   'SolutionSection', //         시안 5
   'PassBenefitsSection', //     시안 6
   'PathMatchSection', //        시안 7
   'CoursePlanSection', //       시안 8
   'PlaybookDashboardSection', // 시안 9
-  'ChallengeListSection', //    시안 10
-  'GuidebookListSection', //    시안 11
-  'MarketerVodSection', //      시안 12
-  'SpecialLiveSection', //      시안 13
-  'MentoringCouponSection', //  시안 14
   'CompareSection', //          시안 15
   'PlansSection', //            시안 15 (플랜 카드)
   'FaqSection',
@@ -166,8 +159,45 @@ describe('MembershipLanding (LC-3294)', () => {
       'EarlyBirdBanner',
       'PartnerBenefitsSection',
       'FinalCtaSection',
+      // 아래 넷은 내용이 패스 소개의 혜택 모달로 들어가면서 섹션에서 빠졌다.
+      'ChallengeListSection',
+      'GuidebookListSection',
+      'MarketerVodSection',
+      'MentoringCouponSection',
+      // 쥬디 클리닉은 LiveClinicSection 이 대신한다.
+      'SpecialLiveSection',
     ]) {
       expect(screen.queryByTestId(removed)).not.toBeInTheDocument();
+    }
+  });
+
+  it('개편 시안 5·6·7 세 섹션이 준비 단계 뒤에 들어와 있다', () => {
+    render(<MembershipLanding />);
+
+    for (const added of [
+      'PassResultsSection',
+      'PassIntroSection',
+      'LiveClinicSection',
+    ]) {
+      expect(screen.getByTestId(added)).toBeInTheDocument();
+    }
+  });
+
+  /*
+   * 빠진 네 섹션은 mock 대상이 아니라 되살아나도 testid 가 붙지 않는다. 섹션 제목으로
+   * 한 번 더 못박는다 — 모달 안에도 같은 문구가 있지만 모달은 눌러야 열린다.
+   */
+  it('모달로 들어간 네 섹션의 제목이 페이지에 남아 있지 않다', () => {
+    render(<MembershipLanding />);
+
+    for (const title of [
+      '취준 필수 챌린지 참여 10종 - 베이직',
+      '취준 필수 가이드북 7종',
+      MARKETER_VOD.title,
+      MENTORING_COUPON.mentorsTitle,
+      SPECIAL_LIVE.clinic.title,
+    ]) {
+      expect(screen.queryByText(title)).not.toBeInTheDocument();
     }
   });
 
