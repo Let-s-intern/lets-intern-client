@@ -40,7 +40,7 @@ function HighlightedLine({
 export default function RealTalkSection() {
   return (
     <section className="bg-[#F4F5F9] py-16 md:py-24" id="real-talk">
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
           {REAL_TALK.eyebrow}
         </p>

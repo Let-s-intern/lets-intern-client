@@ -33,7 +33,7 @@ export default function PassIntroSection() {
 
   return (
     <section className="bg-[#EEF0FB] py-16 md:py-24" id={PASS_INTRO.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <h2 className="text-neutral-0 text-center text-xl font-bold leading-snug md:text-[1.75rem]">
           {PASS_INTRO.leadLines.map((line) => (
             <span className="block" key={line}>

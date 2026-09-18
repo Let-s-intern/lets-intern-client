@@ -71,7 +71,7 @@ export default function CheckupSection({ answers, onAnswersChange }: Props) {
       className="bg-gradient-to-b from-[#0E0E12] to-[#1B2038] py-16 md:py-24"
       id={CHECKUP.anchorId}
     >
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
           {CHECKUP.eyebrow}
         </p>

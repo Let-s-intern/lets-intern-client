@@ -11,7 +11,7 @@ import { LIVE_CLINIC } from '../data/liveClinic';
 export default function LiveClinicSection() {
   return (
     <section className="bg-[#F4F5F9] py-16 md:py-24" id={LIVE_CLINIC.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <div className="text-center">
           <span className="text-neutral-0 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold shadow-[0_2px_12px_rgba(0,0,0,0.06)] md:text-sm">
             <span aria-hidden="true">🎙️</span>

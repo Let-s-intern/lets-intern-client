@@ -15,7 +15,7 @@ export default function PassResultsSection() {
 
   return (
     <section className="bg-[#F4F5F9] py-16 md:py-24" id={PASS_RESULTS.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
           {PASS_RESULTS.eyebrow}
         </p>
@@ -81,7 +81,7 @@ export default function PassResultsSection() {
         </ul>
       </div>
 
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-xsmall14 md:text-xsmall16 text-neutral-20 mt-10 text-center font-bold leading-relaxed md:mt-14">
           {PASS_RESULTS.footnote}
         </p>

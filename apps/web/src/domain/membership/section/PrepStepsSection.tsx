@@ -67,7 +67,7 @@ function StepRow({
 export default function PrepStepsSection({ weakestAreaId }: Props) {
   return (
     <section className="bg-[#F7F8FC] py-16 md:py-24" id={PREP_STEPS.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-center text-sm font-bold tracking-wide text-[#F1642B]">
           {PREP_STEPS.eyebrow}
         </p>

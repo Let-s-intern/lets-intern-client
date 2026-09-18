@@ -106,7 +106,7 @@ export default function CheckupResultSection({
         className="bg-[#F7F8FC] py-16 md:py-20"
         id={CHECKUP_RESULT.anchorId}
       >
-        <div className="wrap">
+        <div className="wrap rv">
           <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 text-center leading-relaxed">
             {CHECKUP_RESULT.guideLines.map((line) => (
               <span className="block" key={line}>
@@ -126,7 +126,7 @@ export default function CheckupResultSection({
       className="bg-[#F7F8FC] py-16 md:py-20"
       id={CHECKUP_RESULT.anchorId}
     >
-      <div className="wrap">
+      <div className="wrap rv">
         <div className="mx-auto grid max-w-[1000px] gap-6 md:grid-cols-2">
           <div className="rounded-xxl flex flex-col bg-white p-7 md:p-10">
             <p className="text-sm font-bold tracking-wide text-[#F1642B]">

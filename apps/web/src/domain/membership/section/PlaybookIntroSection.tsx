@@ -27,7 +27,7 @@ function EmphasisLine({ line }: { line: PlaybookIntroLine }) {
 export default function PlaybookIntroSection() {
   return (
     <section className="bg-[#F7F8FC] py-16 md:py-24" id={P.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <p className="text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#11142B] px-4 py-2 text-xs font-bold text-white md:text-sm">
             <span aria-hidden="true">{P.badgeIcon}</span>

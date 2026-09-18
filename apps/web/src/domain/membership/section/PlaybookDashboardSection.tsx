@@ -28,7 +28,7 @@ function SectionTitle({ lines }: { lines: readonly string[] }) {
 function PlaybookWithBlock() {
   return (
     <section className="bg-white py-16 md:py-24" id={W.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <Eyebrow>{W.eyebrow}</Eyebrow>
         <SectionTitle lines={W.titleLines} />
 
@@ -147,7 +147,7 @@ function MockCheckbox({ done }: { done: boolean }) {
 function PlaybookStructureBlock() {
   return (
     <section className="bg-white py-16 md:py-24" id={S.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <Eyebrow>{S.eyebrow}</Eyebrow>
         <SectionTitle lines={S.titleLines} />
 
@@ -228,7 +228,7 @@ function PlaybookStructureBlock() {
 function PlaybookOutputBlock() {
   return (
     <section className="bg-white py-16 md:py-24" id={O.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         <Eyebrow>{O.eyebrow}</Eyebrow>
 
         <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">

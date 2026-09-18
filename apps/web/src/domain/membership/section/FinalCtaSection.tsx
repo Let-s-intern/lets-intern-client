@@ -18,7 +18,7 @@ export default function FinalCtaSection() {
 
   return (
     <section className="bg-[#11142B] py-16 md:py-24" id={FINAL_CTA.anchorId}>
-      <div className="wrap">
+      <div className="wrap rv">
         {/*
           흐름 칩 6개. 화살표는 칩 사이의 이음새라 목록 항목이 아니다 — aria-hidden 으로
           빼고, 순서 자체는 ol 이 전한다.
