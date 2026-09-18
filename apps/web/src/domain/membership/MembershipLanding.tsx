@@ -10,6 +10,11 @@
 // VOD 훅)은 렌더하지 않는다. 파일은 지우지 않았다 — 다음 시즌에 되살릴 수 있다.
 // 되살리려면 해당 import 와 CSS import 를 함께 푼다.
 //
+// 개편(마케팅 올인원 패스 랜딩 전면 개편)이 진행 중이다. 방문자의 막힌 지점을 먼저
+// 진단하고 그 결과로 준비 단계를 보여주는 순서로 바뀌고 있어, 새 섹션은 위에서부터
+// 하나씩 들어온다. RecommendSection(고민 3카드)은 REAL TALK 이 그 자리를 대신하면서
+// 렌더에서 빠졌다 — 같은 관행대로 파일은 남긴다.
+//
 // FAQ 는 시안에 없지만 남긴다. 어드민 챌린지에 등록한 FAQ 를 그대로 보여주는 자리이고
 // (`lib/useMembershipChallengeData`), 운영이 상품 문의를 여기서 답한다.
 
@@ -30,7 +35,8 @@ import './styles/apply.css';
 import MembershipAnimations from './ui/MembershipAnimations';
 import MembershipNav from './ui/MembershipNav';
 import HeroSection from './section/HeroSection';
-import RecommendSection from './section/RecommendSection';
+import RealTalkSection from './section/RealTalkSection';
+import CheckupSection from './section/CheckupSection';
 import JobMarketSection from './section/JobMarketSection';
 import RoadmapSection from './section/RoadmapSection';
 import SolutionSection from './section/SolutionSection';
@@ -60,8 +66,11 @@ export default function MembershipLanding() {
           <HeroSection />
           <MembershipNav />
 
-          {/* 시안 2 — 고민 3카드 (WHERE DO I START?) */}
-          <RecommendSection />
+          {/* 개편 시안 1 — REAL TALK 질문 말풍선과 막히는 4지점 */}
+          <RealTalkSection />
+
+          {/* 개편 시안 2 — 무료 진단 5문항 (FREE CHECK-UP) */}
+          <CheckupSection />
 
           {/* 시안 3 — 채용공고 예시 + 카피 (WHY NOW) */}
           <JobMarketSection />

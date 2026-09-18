@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { RECOMMEND } from './data/recommend';
 import MembershipLanding from './MembershipLanding';
 
 // 이 테스트가 검증하는 것은 MembershipLanding 자신의 책임 — "어떤 섹션을 어떤 순서로
@@ -31,9 +32,13 @@ jest.mock('./section/HeroSection', () => ({
   __esModule: true,
   default: () => <div data-testid="HeroSection" />,
 }));
-jest.mock('./section/RecommendSection', () => ({
+jest.mock('./section/RealTalkSection', () => ({
   __esModule: true,
-  default: () => <div data-testid="RecommendSection" />,
+  default: () => <div data-testid="RealTalkSection" />,
+}));
+jest.mock('./section/CheckupSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="CheckupSection" />,
 }));
 jest.mock('./section/JobMarketSection', () => ({
   __esModule: true,
@@ -100,7 +105,8 @@ jest.mock('./section/FaqSection', () => ({
 const EXPECTED_ORDER = [
   'HeroSection', //             시안 1
   'MembershipNav',
-  'RecommendSection', //        시안 2
+  'RealTalkSection', //         개편 시안 1
+  'CheckupSection', //          개편 시안 2
   'JobMarketSection', //        시안 3
   'RoadmapSection', //          시안 4
   'SolutionSection', //         시안 5
@@ -143,6 +149,8 @@ describe('MembershipLanding (LC-3294)', () => {
     render(<MembershipLanding />);
 
     for (const removed of [
+      // 고민 3카드. 개편에서 REAL TALK 이 이 자리를 대신하며 빠졌다.
+      'RecommendSection',
       'VodHookSection',
       'ChallengeScheduleSection',
       'CommunityChatSection',
@@ -152,6 +160,18 @@ describe('MembershipLanding (LC-3294)', () => {
       'FinalCtaSection',
     ]) {
       expect(screen.queryByTestId(removed)).not.toBeInTheDocument();
+    }
+  });
+
+  /*
+   * 위 목록은 data-testid 로만 확인한다. RecommendSection 은 더 이상 mock 대상이
+   * 아니라서 되살아나도 testid 가 붙지 않는다 — 실제 문구로 한 번 더 못박는다.
+   */
+  it('고민 3카드의 문구가 화면에 남아 있지 않다', () => {
+    render(<MembershipLanding />);
+
+    for (const card of RECOMMEND.cards) {
+      expect(screen.queryByText(card.title)).not.toBeInTheDocument();
     }
   });
 
