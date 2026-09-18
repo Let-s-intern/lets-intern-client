@@ -5,7 +5,7 @@ import PassBenefitModal from './PassBenefitModal';
 const PROPS = {
   badge: 'PASS BENEFIT 01',
   eyebrow: '10 CHALLENGES',
-  title: '취준 필수 챌린지 참여 10종 - 베이직',
+  titleLines: ['내가 원하는 직무의 현직자에게', '직접 묻고 답을 찾으세요'],
   subLines: ['첫 줄', '둘째 줄'],
 };
 
@@ -32,7 +32,10 @@ describe('PassBenefitModal (개편 시안 6-1~6-4)', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText(PROPS.badge)).toBeInTheDocument();
     expect(screen.getByText(PROPS.eyebrow)).toBeInTheDocument();
-    expect(screen.getByText(PROPS.title)).toBeInTheDocument();
+    // 제목은 시안의 줄바꿈을 그대로 지킨다 — 6-4 는 두 줄이다
+    for (const line of PROPS.titleLines) {
+      expect(screen.getByText(line)).toBeInTheDocument();
+    }
     for (const line of PROPS.subLines) {
       expect(screen.getByText(line)).toBeInTheDocument();
     }

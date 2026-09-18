@@ -9,8 +9,9 @@ interface PassBenefitModalProps {
   badge: string;
   /** 배지 옆 영문 한 줄 (`10 CHALLENGES` 등) */
   eyebrow: string;
-  title: string;
-  /** 제목 아래 설명. 줄바꿈 위치가 시안에 정해져 있어 배열로 받는다 */
+  /** 제목. 줄바꿈 위치가 시안에 정해져 있어 배열로 받는다 (6-4 는 두 줄이다) */
+  titleLines: readonly string[];
+  /** 제목 아래 설명. 위와 같은 이유로 배열이다 */
   subLines: readonly string[];
   onClose: () => void;
   children: ReactNode;
@@ -35,7 +36,7 @@ export default function PassBenefitModal({
   open,
   badge,
   eyebrow,
-  title,
+  titleLines,
   subLines,
   onClose,
   children,
@@ -73,7 +74,7 @@ export default function PassBenefitModal({
         }}
       >
         <div
-          aria-label={title}
+          aria-label={titleLines.join(' ')}
           aria-modal="true"
           className="rounded-xxl relative flex max-h-full w-full max-w-[1000px] flex-col overflow-hidden bg-white"
           role="dialog"
@@ -99,7 +100,11 @@ export default function PassBenefitModal({
             </div>
 
             <h2 className="text-neutral-0 mt-4 text-center text-xl font-bold leading-snug md:text-[2rem]">
-              {title}
+              {titleLines.map((line) => (
+                <span className="block" key={line}>
+                  {line}
+                </span>
+              ))}
             </h2>
 
             <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center leading-relaxed">
