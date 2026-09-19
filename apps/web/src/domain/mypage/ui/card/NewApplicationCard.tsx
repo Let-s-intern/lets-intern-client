@@ -155,6 +155,14 @@ export const MypageApplicationCard = ({
                   <p className="text-xxsmall12 text-primary-dark">
                     {config.purchasePlanText}
                   </p>
+                  {config.planUpgradeHref && (
+                    <HybridLink
+                      href={config.planUpgradeHref}
+                      className="text-xxsmall12 text-primary font-medium hover:underline"
+                    >
+                      업그레이드
+                    </HybridLink>
+                  )}
                 </span>
               )}
               {config.purchasePlanText && config.openChat && (

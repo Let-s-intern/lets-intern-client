@@ -1,6 +1,7 @@
 'use client';
 
 import AlertModal from '@/common/alert/AlertModal';
+import HybridLink from '@/common/HybridLink';
 import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
@@ -124,6 +125,14 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                     <p className="text-xxsmall12 text-primary">
                       {config.purchasePlanText}
                     </p>
+                    {config.planUpgradeHref && (
+                      <HybridLink
+                        href={config.planUpgradeHref}
+                        className="text-xxsmall12 text-primary font-medium hover:underline"
+                      >
+                        업그레이드
+                      </HybridLink>
+                    )}
                   </span>
                 )}
                 {config.purchasePlanText && config.openChat && (

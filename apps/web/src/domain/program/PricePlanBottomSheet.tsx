@@ -173,7 +173,8 @@ function PricePlanBottomSheet({
     const isFree =
       payInfo.challengePriceType === 'FREE' ||
       payInfo.livePriceType === 'FREE' ||
-      payInfo.price === 0 ||
+      // 가격 행의 이용료(payInfo.price)는 옵션 금액을 모른다. 이용료 0원 + 유료 옵션 플랜이
+      // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
       totalPrice === 0;
 
     setProgramApplicationForm({
