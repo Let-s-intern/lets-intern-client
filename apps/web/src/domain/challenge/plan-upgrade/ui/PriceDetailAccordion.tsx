@@ -56,7 +56,9 @@ const PriceDetailAccordion = ({
             <span>{targetSalePrice.toLocaleString()}원</span>
           </div>
           <div className={ROW_CLASS_NAME}>
-            <span>현재 {challengePricePlanToText[currentPlanType]} 플랜 금액</span>
+            <span>
+              현재 {challengePricePlanToText[currentPlanType]} 플랜 금액
+            </span>
             <span>- {currentSalePrice.toLocaleString()}원</span>
           </div>
           <hr className="bg-neutral-85" />

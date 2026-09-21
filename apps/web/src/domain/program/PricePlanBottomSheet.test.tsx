@@ -118,5 +118,4 @@ describe('PricePlanBottomSheet — 무료 신청 판정', () => {
       expect.objectContaining({ priceId: 1, totalPrice: 0, isFree: true }),
     );
   });
-
 });
