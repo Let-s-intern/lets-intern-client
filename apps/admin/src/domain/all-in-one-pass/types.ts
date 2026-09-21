@@ -13,7 +13,8 @@ export type PassRecruitmentStatus = 'BEFORE' | 'PROCEEDING' | 'CLOSED';
 export type PassPermission =
   | 'CHALLENGE_ALL_IN_ONE'
   | 'GUIDEBOOK_ALL_IN_ONE'
-  | 'VOD_ALL_IN_ONE';
+  | 'VOD_ALL_IN_ONE'
+  | 'LIVE_CLASS_ALL_IN_ONE';
 
 /** 플랜(권한 구성) 한 개 */
 export interface PassPlan {
@@ -76,7 +77,7 @@ export interface PassBenefit {
   category: string; // 유형(직접입력/기존선택) → 유저 기타혜택 카드 뱃지
   thumbnailUrl: string | null;
   title: string;
-  description: string;
+  link: string;
 }
 
 /** 1.7 FAQ 한 개 */

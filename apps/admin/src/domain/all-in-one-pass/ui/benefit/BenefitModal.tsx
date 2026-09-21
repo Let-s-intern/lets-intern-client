@@ -36,7 +36,7 @@ export default function BenefitModal({
   const [directInput, setDirectInput] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [link, setLink] = useState('');
 
   const categoryOptions = Array.from(
     new Set(existingCategories.filter(Boolean)),
@@ -52,7 +52,7 @@ export default function BenefitModal({
     setDirectInput(isKnown ? '' : (benefit.category ?? ''));
     setThumbnailUrl(benefit.thumbnailUrl);
     setTitle(benefit.title);
-    setDescription(benefit.description);
+    setLink(benefit.link);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benefit]);
 
@@ -70,7 +70,7 @@ export default function BenefitModal({
       category: resolvedCategory,
       thumbnailUrl,
       title: title.trim(),
-      description,
+      link: link.trim(),
     });
   };
 
@@ -123,13 +123,12 @@ export default function BenefitModal({
           </div>
         </div>
         <TextField
-          label="설명"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          label="첨부 링크"
+          placeholder="https://"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
           size="small"
           fullWidth
-          multiline
-          minRows={2}
         />
       </DialogContent>
       <DialogActions>

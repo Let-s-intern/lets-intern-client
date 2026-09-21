@@ -15,6 +15,7 @@ const PERMISSION_OPTIONS: { value: PassPermission; label: string }[] = [
   { value: 'CHALLENGE_ALL_IN_ONE', label: '챌린지 올인원' },
   { value: 'GUIDEBOOK_ALL_IN_ONE', label: '가이드북 올인원' },
   { value: 'VOD_ALL_IN_ONE', label: 'VOD 올인원' },
+  { value: 'LIVE_CLASS_ALL_IN_ONE', label: 'LIVE 클래스 올인원' },
 ];
 
 export const createEmptyPlan = (): PassPlan => ({
