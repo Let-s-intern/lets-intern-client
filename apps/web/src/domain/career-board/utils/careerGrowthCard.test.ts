@@ -38,3 +38,21 @@ describe('toCareerGrowthCardConfigs — 멘토링 칩', () => {
     expect(toCareerGrowthCardConfigs(items, 'MENTORING')).toHaveLength(1);
   });
 });
+
+describe('toCareerGrowthCardConfigs — 플랜 업그레이드 (LC-3247)', () => {
+  it('챌린지 카드에 업그레이드 주소를 넘긴다', () => {
+    const [config] = toCareerGrowthCardConfigs(
+      [
+        makeItem({
+          programTypeKey: 'CHALLENGE',
+          programType: '챌린지',
+          purchasePlan: '베이직',
+          planUpgradeHref: '/plan-upgrade/27',
+        }),
+      ],
+      'PROGRAM',
+    );
+
+    expect(config.planUpgradeHref).toBe('/plan-upgrade/27');
+  });
+});

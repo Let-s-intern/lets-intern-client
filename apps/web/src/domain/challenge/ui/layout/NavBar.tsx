@@ -2,6 +2,7 @@
 
 import CouponBanner from '@/common/banner/CouponBanner';
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
+import { usePlanUpgradeQuery } from '@/domain/challenge/plan-upgrade/api/planUpgrade';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
@@ -19,8 +20,15 @@ const NavBar = () => {
   const base = `/challenge/${params.applicationId}/${params.programId}`;
   const applicationId = params.applicationId;
   const { withTestDate } = useChallengeNav();
+  const { data: planUpgrade } = usePlanUpgradeQuery(applicationId);
 
   if (pathname.endsWith('user/info')) return null;
+
+  // 서버가 판단한 값만 본다. 플랜 없는 옛 신청은 업그레이드 조회가 400 이라 메뉴가 숨는다 (LC-3247)
+  const canUpgradePlan =
+    !!planUpgrade &&
+    !planUpgrade.unavailableReason &&
+    planUpgrade.options.length > 0;
 
   const isDetailPage = /\/feedback\/live\/[^/]+$/.test(pathname);
 
@@ -43,6 +51,15 @@ const NavBar = () => {
         },
       ],
     },
+    ...(canUpgradePlan
+      ? [
+          {
+            id: 'plan-upgrade',
+            label: '플랜 업그레이드',
+            href: `/plan-upgrade/${applicationId}`,
+          },
+        ]
+      : []),
     { id: 'guide', label: '공지사항 / 챌린지 가이드', href: `${base}/guides` },
     { id: 'inquiry', label: '1:1 문의', href: `${base}/inquiry` },
   ];
