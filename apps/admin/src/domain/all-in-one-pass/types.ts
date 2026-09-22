@@ -70,6 +70,19 @@ export interface PassFormInput {
   faqs: PassFaq[];
 }
 
+/** 1:1 LIVE 멘토링 쿠폰 할인 방식 (전액 / 할인율% / 금액원) */
+export type BenefitCouponDiscountType = 'FULL' | 'PERCENT' | 'AMOUNT';
+
+/**
+ * 1:1 LIVE 멘토링(고정 카테고리) 전용 쿠폰 설정.
+ * 쿠폰명은 저장하지 않고 "올인원패스명 + 할인 라벨"로 자동 생성한다(백엔드).
+ */
+export interface BenefitCouponSetting {
+  discountType: BenefitCouponDiscountType;
+  value: number | null; // PERCENT: %, AMOUNT: 원. FULL: null
+  count: number; // 쿠폰 횟수
+}
+
 /** 1.6 혜택 한 개 */
 export interface PassBenefit {
   id: string; // 폼 로컬 식별자
@@ -78,6 +91,7 @@ export interface PassBenefit {
   thumbnailUrl: string | null;
   title: string;
   link: string;
+  coupon: BenefitCouponSetting | null; // 고정 카테고리(1:1 LIVE 멘토링) 선택 시만
 }
 
 /** 1.7 FAQ 한 개 */
