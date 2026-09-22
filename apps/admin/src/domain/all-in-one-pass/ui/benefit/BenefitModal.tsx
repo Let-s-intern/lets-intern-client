@@ -1,7 +1,9 @@
-import { PassBenefit } from '@/domain/all-in-one-pass/types';
+import {
+  BenefitCouponSetting,
+  PassBenefit,
+} from '@/domain/all-in-one-pass/types';
 import ThumbnailUpload from '@/domain/all-in-one-pass/ui/ThumbnailUpload';
 import { DIRECT_INPUT } from '@/domain/faq/modal/faqFormUtils';
-import { FIXED_BENEFIT_CATEGORIES } from './benefitCategories';
 import {
   Button,
   Dialog,
@@ -12,6 +14,13 @@ import {
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import {
+  FIXED_BENEFIT_CATEGORIES,
+  isBenefitCouponValid,
+  isFixedBenefitCategory,
+  mentoringCouponTitle,
+} from './benefitCategories';
+import MentoringCouponFields from './MentoringCouponFields';
 
 interface Props {
   /** 편집/추가 대상 혜택. null 이면 모달 닫힘 */
@@ -23,7 +32,11 @@ interface Props {
   onClose: () => void;
 }
 
-/** 1.6 혜택 추가/수정 모달 (유형: 등록된 것 선택 또는 직접입력) */
+/**
+ * 1.6 혜택 추가/수정 모달.
+ * 고정 카테고리(1:1 LIVE 멘토링) 선택 시엔 제목/링크 대신 쿠폰 설정을 받는다
+ * (쿠폰 입력 UI 는 MentoringCouponFields 로 분리).
+ */
 export default function BenefitModal({
   benefit,
   isEdit,
@@ -38,10 +51,14 @@ export default function BenefitModal({
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [link, setLink] = useState('');
+  const [coupon, setCoupon] = useState<BenefitCouponSetting | null>(null);
 
   // 고정 카테고리(1:1 LIVE 멘토링)를 앞에, 그다음 등록된 유형 (중복 제거)
   const categoryOptions = Array.from(
-    new Set([...FIXED_BENEFIT_CATEGORIES, ...existingCategories.filter(Boolean)]),
+    new Set([
+      ...FIXED_BENEFIT_CATEGORIES,
+      ...existingCategories.filter(Boolean),
+    ]),
   );
 
   // 모달 열릴 때 대상 혜택 값으로 초기화
@@ -55,15 +72,19 @@ export default function BenefitModal({
     setThumbnailUrl(benefit.thumbnailUrl);
     setTitle(benefit.title);
     setLink(benefit.link);
+    setCoupon(benefit.coupon ?? null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benefit]);
 
   const resolvedCategory =
     category === DIRECT_INPUT ? directInput.trim() : category;
+  const isMentoring = isFixedBenefitCategory(resolvedCategory);
   const isDuplicateDirect =
     category === DIRECT_INPUT && categoryOptions.includes(directInput.trim());
-  const canSave =
-    title.trim() !== '' && resolvedCategory !== '' && !isDuplicateDirect;
+
+  const canSave = isMentoring
+    ? resolvedCategory !== '' && !!coupon && isBenefitCouponValid(coupon)
+    : title.trim() !== '' && resolvedCategory !== '' && !isDuplicateDirect;
 
   const handleSave = () => {
     if (!benefit) return;
@@ -71,8 +92,9 @@ export default function BenefitModal({
       ...benefit,
       category: resolvedCategory,
       thumbnailUrl,
-      title: title.trim(),
-      link: link.trim(),
+      title: isMentoring && coupon ? mentoringCouponTitle(coupon) : title.trim(),
+      link: isMentoring ? '' : link.trim(),
+      coupon: isMentoring ? coupon : null,
     });
   };
 
@@ -80,7 +102,7 @@ export default function BenefitModal({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{isEdit ? '혜택 수정' : '혜택 추가'}</DialogTitle>
       <DialogContent dividers className="flex flex-col gap-4">
-        <div className="flex gap-4">
+        <div className="flex items-start gap-4">
           <ThumbnailUpload value={thumbnailUrl} onChange={setThumbnailUrl} />
           <div className="flex flex-1 flex-col gap-4">
             <TextField
@@ -115,23 +137,41 @@ export default function BenefitModal({
                 fullWidth
               />
             )}
-            <TextField
-              label="제목"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              size="small"
-              fullWidth
-            />
+
+            {isMentoring ? (
+              <MentoringCouponFields
+                key={benefit?.id}
+                initial={benefit?.coupon ?? null}
+                onChange={setCoupon}
+              />
+            ) : (
+              <TextField
+                label="제목"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                size="small"
+                fullWidth
+              />
+            )}
           </div>
         </div>
-        <TextField
-          label="첨부 링크"
-          placeholder="https://"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          size="small"
-          fullWidth
-        />
+
+        {isMentoring ? (
+          <p className="text-xxsmall12 text-neutral-40 pt-6 text-right">
+            쿠폰명은 <b>올인원패스명 + 쿠폰 정보</b>로 자동생성됩니다.{' '}
+            {/* <br /> */}
+            ex) 마케팅 올인원패스 1:1 LIVE 멘토링 50% 할인 쿠폰
+          </p>
+        ) : (
+          <TextField
+            label="첨부 링크"
+            placeholder="https://"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            size="small"
+            fullWidth
+          />
+        )}
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onClose}>

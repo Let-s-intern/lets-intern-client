@@ -18,6 +18,7 @@ export const createEmptyBenefit = (): PassBenefit => ({
   thumbnailUrl: null,
   title: '',
   link: '',
+  coupon: null,
 });
 
 const ALL = '';
@@ -93,7 +94,9 @@ export default function BenefitSection({ benefits, onChange }: Props) {
 
       {filtered.length === 0 ? (
         <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-          기타 혜택이 존재하지 않습니다.
+          {visibleTab === ALL
+            ? '기타 혜택이 존재하지 않습니다.'
+            : `${visibleTab} 혜택이 존재하지 않습니다.`}
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-3">
@@ -119,26 +122,37 @@ export default function BenefitSection({ benefits, onChange }: Props) {
                     <span className="text-xsmall16 text-neutral-0 truncate font-medium">
                       {benefit.title || '(제목 없음)'}
                     </span>
-                    {benefit.link && (
-                      <a
-                        href={benefit.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xsmall14 text-primary line-clamp-2 break-all hover:underline"
-                      >
-                        {benefit.link}
-                      </a>
+                    {benefit.coupon ? (
+                      <span className="text-xsmall14 text-neutral-40 block">
+                        사용 가능 횟수:{' '}
+                        {benefit.coupon.count < 0
+                          ? '무제한'
+                          : `${benefit.coupon.count}회`}
+                      </span>
+                    ) : (
+                      benefit.link && (
+                        <a
+                          href={benefit.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xsmall14 text-primary line-clamp-2 break-all hover:underline"
+                        >
+                          {benefit.link}
+                        </a>
+                      )
                     )}
                   </div>
-                  <Switch
-                    size="small"
-                    className="-mr-1.5 self-end"
-                    checked={benefit.isVisible}
-                    onChange={(e) =>
-                      update(benefit.id, { isVisible: e.target.checked })
-                    }
-                  />
+                  {!benefit.coupon && (
+                    <Switch
+                      size="small"
+                      className="-mr-1.5 self-end"
+                      checked={benefit.isVisible}
+                      onChange={(e) =>
+                        update(benefit.id, { isVisible: e.target.checked })
+                      }
+                    />
+                  )}
                 </div>
               </div>
 
