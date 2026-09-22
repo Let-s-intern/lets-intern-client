@@ -1,6 +1,7 @@
 import { PassBenefit } from '@/domain/all-in-one-pass/types';
 import ThumbnailUpload from '@/domain/all-in-one-pass/ui/ThumbnailUpload';
 import { DIRECT_INPUT } from '@/domain/faq/modal/faqFormUtils';
+import { FIXED_BENEFIT_CATEGORIES } from './benefitCategories';
 import {
   Button,
   Dialog,
@@ -38,8 +39,9 @@ export default function BenefitModal({
   const [title, setTitle] = useState('');
   const [link, setLink] = useState('');
 
+  // 고정 카테고리(1:1 LIVE 멘토링)를 앞에, 그다음 등록된 유형 (중복 제거)
   const categoryOptions = Array.from(
-    new Set(existingCategories.filter(Boolean)),
+    new Set([...FIXED_BENEFIT_CATEGORIES, ...existingCategories.filter(Boolean)]),
   );
 
   // 모달 열릴 때 대상 혜택 값으로 초기화

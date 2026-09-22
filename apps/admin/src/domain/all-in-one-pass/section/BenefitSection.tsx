@@ -1,4 +1,8 @@
 import { PassBenefit } from '@/domain/all-in-one-pass/types';
+import {
+  FIXED_BENEFIT_CATEGORIES,
+  isFixedBenefitCategory,
+} from '@/domain/all-in-one-pass/ui/benefit/benefitCategories';
 import BenefitModal from '@/domain/all-in-one-pass/ui/benefit/BenefitModal';
 import { CategoryTabs } from '@letscareer/ui';
 import { Button, Switch } from '@mui/material';
@@ -31,10 +35,16 @@ export default function BenefitSection({ benefits, onChange }: Props) {
   } | null>(null);
   const [tab, setTab] = useState<string>(ALL);
 
-  const categories = useMemo(
-    () => Array.from(new Set(benefits.map((b) => b.category).filter(Boolean))),
+  // 등록된 혜택에서 파생되는 유형(고정 카테고리는 제외해 중복 방지)
+  const dynamicCategories = useMemo(
+    () =>
+      Array.from(
+        new Set(benefits.map((b) => b.category).filter(Boolean)),
+      ).filter((c) => !isFixedBenefitCategory(c)),
     [benefits],
   );
+  // 고정 카테고리(1:1 LIVE 멘토링)는 등록 여부와 무관하게 항상 탭으로 노출
+  const categories = [...FIXED_BENEFIT_CATEGORIES, ...dynamicCategories];
   const tabOptions = [
     { value: ALL, label: '전체' },
     ...categories.map((c) => ({ value: c, label: c })),
