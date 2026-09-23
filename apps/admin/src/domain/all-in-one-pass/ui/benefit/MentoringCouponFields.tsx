@@ -37,6 +37,9 @@ export default function MentoringCouponFields({ initial, onChange }: Props) {
       discountType,
       value: discountType === 'FULL' ? null : Number(value) || 0,
       count: isUnlimited ? -1 : Number(count) || 0,
+      // 쿠폰 메타(id·code)는 편집 대상이 아니라 초기값 그대로 통과
+      couponId: initial?.couponId,
+      couponCode: initial?.couponCode,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountType, value, count, isUnlimited]);

@@ -86,7 +86,13 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
         thumbnailUrl: null,
         title: '1:1 LIVE 멘토링 50% 할인 쿠폰',
         link: '',
-        coupon: { discountType: 'PERCENT', value: 50, count: 2 },
+        coupon: {
+          discountType: 'PERCENT',
+          value: 50,
+          count: 2,
+          couponId: 101,
+          couponCode: 'AIOP-MENTOR-50',
+        },
       },
     ],
     faqs: [

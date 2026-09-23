@@ -80,7 +80,9 @@ export type BenefitCouponDiscountType = 'FULL' | 'PERCENT' | 'AMOUNT';
 export interface BenefitCouponSetting {
   discountType: BenefitCouponDiscountType;
   value: number | null; // PERCENT: %, AMOUNT: 원. FULL: null
-  count: number; // 쿠폰 횟수
+  count: number; // 쿠폰 횟수 (음수 = 무제한)
+  couponId?: number; // 생성된 쿠폰 id (개설 후·수정 화면). 카드 표시·딥링크용
+  couponCode?: string; // 생성된 쿠폰 코드
 }
 
 /** 1.6 혜택 한 개 */
