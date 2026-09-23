@@ -10,6 +10,7 @@ import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 import { FiImage } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 export const createEmptyBenefit = (): PassBenefit => ({
   id: crypto.randomUUID(),
@@ -35,6 +36,7 @@ export default function BenefitSection({ benefits, onChange }: Props) {
     isEdit: boolean;
   } | null>(null);
   const [tab, setTab] = useState<string>(ALL);
+  const navigate = useNavigate();
 
   // 등록된 혜택에서 파생되는 유형(고정 카테고리는 제외해 중복 방지)
   const dynamicCategories = useMemo(
@@ -118,29 +120,44 @@ export default function BenefitSection({ benefits, onChange }: Props) {
                   )}
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-between">
-                  <div>
+                  <div className="flex flex-col gap-1.5">
                     <span className="text-xsmall16 text-neutral-0 truncate font-medium">
                       {benefit.title || '(제목 없음)'}
                     </span>
-                    {benefit.coupon ? (
-                      <span className="text-xsmall14 text-neutral-40 block">
-                        사용 가능 횟수:{' '}
-                        {benefit.coupon.count < 0
-                          ? '무제한'
-                          : `${benefit.coupon.count}회`}
-                      </span>
-                    ) : (
-                      benefit.link && (
-                        <a
-                          href={benefit.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-xsmall14 text-primary line-clamp-2 break-all hover:underline"
-                        >
-                          {benefit.link}
-                        </a>
-                      )
+                    {(benefit.coupon || benefit.link) && (
+                      <ul className="text-xxsmall12 text-neutral-40 list-disc space-y-1 pl-4">
+                        {benefit.coupon ? (
+                          <>
+                            {benefit.coupon.couponId != null && (
+                              <>
+                                <li>쿠폰 ID : {benefit.coupon.couponId}</li>
+                                <li className="break-all">
+                                  쿠폰 코드 : {benefit.coupon.couponCode}
+                                </li>
+                                <li>
+                                  사용 가능 횟수 :{' '}
+                                  {benefit.coupon.count < 0
+                                    ? '무제한'
+                                    : `${benefit.coupon.count}회`}
+                                </li>
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <li className="break-all">
+                            연결 링크 :{' '}
+                            <a
+                              href={benefit.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-primary hover:underline"
+                            >
+                              {benefit.link}
+                            </a>
+                          </li>
+                        )}
+                      </ul>
                     )}
                   </div>
                   {!benefit.coupon && (
@@ -158,19 +175,35 @@ export default function BenefitSection({ benefits, onChange }: Props) {
 
               {/* 오른쪽 세로 스트립: 위 수정 · 아래 삭제 */}
               <div className="divide-neutral-80 border-neutral-80 flex w-11 shrink-0 flex-col divide-y border-l">
+                {/*
+                  생성된 멘토링 쿠폰(couponId 있음)은 클릭 시 쿠폰 편집 페이지로 딥링크
+                  (쿠폰 페이지가 주인 — 수정·삭제는 거기서, seed & forget).
+                  미생성 씨앗(개설 중)·일반 혜택은 기존 편집 모달을 연다.
+                  TODO(실제 쿠폰 API): 수정 화면에선 멘토링 카드 전체를 읽기전용으로.
+                */}
                 <button
                   type="button"
-                  aria-label="수정"
-                  onClick={() => setEditing({ benefit, isEdit: true })}
+                  aria-label={benefit.coupon ? '쿠폰 관리' : '수정'}
+                  onClick={() =>
+                    benefit.coupon?.couponId != null
+                      ? navigate(`/coupons/${benefit.coupon.couponId}/edit`)
+                      : setEditing({ benefit, isEdit: true })
+                  }
                   className="text-neutral-40 hover:bg-neutral-95 hover:text-neutral-0 flex flex-1 items-center justify-center transition-colors"
                 >
                   <Pencil size={16} />
                 </button>
+                {/*
+                  생성된 멘토링 쿠폰은 삭제도 쿠폰 목록 페이지에서(미사용만 삭제, seed & forget).
+                  미생성 씨앗·일반 혜택은 로컬에서 바로 제거.
+                */}
                 <button
                   type="button"
                   aria-label="삭제"
                   onClick={() =>
-                    onChange(benefits.filter((b) => b.id !== benefit.id))
+                    benefit.coupon?.couponId != null
+                      ? navigate('/coupons')
+                      : onChange(benefits.filter((b) => b.id !== benefit.id))
                   }
                   className="text-neutral-40 hover:bg-system-error/10 hover:text-system-error flex flex-1 items-center justify-center transition-colors"
                 >

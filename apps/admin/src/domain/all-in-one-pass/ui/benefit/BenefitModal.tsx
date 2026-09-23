@@ -92,7 +92,8 @@ export default function BenefitModal({
       ...benefit,
       category: resolvedCategory,
       thumbnailUrl,
-      title: isMentoring && coupon ? mentoringCouponTitle(coupon) : title.trim(),
+      title:
+        isMentoring && coupon ? mentoringCouponTitle(coupon) : title.trim(),
       link: isMentoring ? '' : link.trim(),
       coupon: isMentoring ? coupon : null,
     });
@@ -157,11 +158,14 @@ export default function BenefitModal({
         </div>
 
         {isMentoring ? (
-          <p className="text-xxsmall12 text-neutral-40 pt-6 text-right">
-            쿠폰명은 <b>올인원패스명 + 쿠폰 정보</b>로 자동생성됩니다.{' '}
-            {/* <br /> */}
-            ex) 마케팅 올인원패스 1:1 LIVE 멘토링 50% 할인 쿠폰
-          </p>
+          <ul className="text-xxsmall12 text-neutral-40 list-disc space-y-1 pl-4 pt-6">
+            <li>
+              쿠폰명은 <b>올인원패스명 + 쿠폰 정보</b>로 자동생성됩니다.
+            </li>
+            <li>
+              올인원패스 개설 후 <b>수정·삭제는 쿠폰 관리</b>에서 진행해주세요.
+            </li>
+          </ul>
         ) : (
           <TextField
             label="첨부 링크"
