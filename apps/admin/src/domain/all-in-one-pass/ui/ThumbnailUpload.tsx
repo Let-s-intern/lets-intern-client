@@ -24,7 +24,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
   return (
     <label
       className={twMerge(
-        'border-neutral-80 bg-neutral-95 flex aspect-[4/3] w-40 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
+        'border-neutral-80 bg-neutral-95 flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
         className,
       )}
     >

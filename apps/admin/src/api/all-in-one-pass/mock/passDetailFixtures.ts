@@ -77,6 +77,22 @@ export const passDetailFixtures: Record<number, PassFormInput> = {
         thumbnailUrl: null,
         title: '커피챗 50% 쿠폰 2매',
         link: 'https://www.letscareer.co.kr/coffeechat',
+        coupon: null,
+      },
+      {
+        id: 'benefit-2-mentoring',
+        isVisible: true,
+        category: '1:1 LIVE 멘토링 할인 쿠폰',
+        thumbnailUrl: null,
+        title: '1:1 LIVE 멘토링 50% 할인 쿠폰',
+        link: '',
+        coupon: {
+          discountType: 'PERCENT',
+          value: 50,
+          count: 2,
+          couponId: 101,
+          couponCode: 'AIOP-MENTOR-50',
+        },
       },
     ],
     faqs: [
