@@ -20,7 +20,7 @@ export interface PassPrivilege {
   id: number;
   programType: PassProgramType;
   privilegeType: PassPrivilegeType;
-  /** 개수/횟수 (예: 챌린지 10종, 멘토링 1회). 이용권 뱃지 표기에 사용 */
+  /** 개수/횟수 (예: 챌린지 10종, VOD 20회). 이용권 뱃지 표기에 사용 */
   programCount: number;
 }
 
@@ -47,6 +47,31 @@ export interface AllInOnePassApplication {
   startDate: string; // 이용 시작 (ISO)
   endDate: string; // 이용 종료 (ISO)
   plan: AllInOnePassPlan; // 내가 산 플랜 + 이용권
+}
+
+// ─── U-1 대시보드 ───
+
+/** 대시보드 캘린더 항목 유형 */
+export type PassCalendarEventType = 'CHALLENGE' | 'SEMINAR' | 'MILESTONE';
+
+/** 프로그램 참여 상태 (참여 전 / 참여 중 / 참여 완료) */
+export type PassParticipationStatus = 'BEFORE' | 'IN_PROGRESS' | 'DONE';
+
+/**
+ * U-1 대시보드 월 캘린더 항목. CHALLENGE 는 진행 기간을 막대(레인)로, SEMINAR/MILESTONE
+ * 은 단일일 칩으로. 우측 패널은 선택일에 걸친 항목을 카드로 나열.
+ * // TODO(BE): 대응 엔티티 없음(갭 B).
+ */
+export interface PassCalendarEvent {
+  id: number;
+  type: PassCalendarEventType;
+  programType: PassProgramType | null; // 카드 "프로그램 종류" 뱃지 (챌린지 등)
+  title: string;
+  description: string | null;
+  startDate: string; // ISO
+  endDate: string | null; // CHALLENGE 막대 종료; 단일일 칩은 null
+  status: PassParticipationStatus | null; // 프로그램 참여 상태; 세미나/마일스톤은 null
+  url: string | null;
 }
 
 /**
