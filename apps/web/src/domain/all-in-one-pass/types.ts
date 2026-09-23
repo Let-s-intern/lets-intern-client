@@ -47,6 +47,18 @@ export interface AllInOnePassApplication {
   startDate: string; // 이용 시작 (ISO)
   endDate: string; // 이용 종료 (ISO)
   plan: AllInOnePassPlan; // 내가 산 플랜 + 이용권
+  /**
+   * 이용권 카드에 함께 노출되는 멘토링 쿠폰들. 멘토링은 privilege 가 아니라 쿠폰이라
+   * 할인 방식(50%/전액/금액)에 따라 쿠폰명이 달라진다 → 쿠폰명 그대로 표기.
+   * // TODO(BE): 실제로는 GET /coupon/my?programType=LIVE_MENTORING 파생.
+   */
+  mentoringCoupons: PassMentoringCoupon[];
+}
+
+/** 이용권 카드에 노출되는 멘토링 쿠폰 (쿠폰명 + 사용 가능 횟수) */
+export interface PassMentoringCoupon {
+  name: string; // 예: "1:1 LIVE 멘토링 50% 할인 쿠폰"
+  count: number; // 사용 가능 횟수
 }
 
 // ─── U-1 대시보드 ───

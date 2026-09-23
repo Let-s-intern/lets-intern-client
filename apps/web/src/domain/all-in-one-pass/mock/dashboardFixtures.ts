@@ -1,7 +1,4 @@
-import type {
-  AllInOnePassApplication,
-  PassCalendarEvent,
-} from '../types';
+import type { AllInOnePassApplication, PassCalendarEvent } from '../types';
 
 /** 내가 구매한 올인원패스 1건 — 남은기간·이용권 카드용 */
 export const myPassFixture: AllInOnePassApplication = {
@@ -11,16 +8,32 @@ export const myPassFixture: AllInOnePassApplication = {
   endDate: '2026-11-28T23:59:59',
   plan: {
     id: 1,
-    title: '올인원 패스',
+    title: '마케팅 취준 올인원패스',
     description: null,
     price: 490000,
     discount: 100000,
     privileges: [
-      { id: 1, programType: 'CHALLENGE', privilegeType: 'ALL_IN_ONE', programCount: 10 },
-      { id: 2, programType: 'GUIDEBOOK', privilegeType: 'ALL_IN_ONE', programCount: 6 },
-      { id: 3, programType: 'VOD', privilegeType: 'ALL_IN_ONE', programCount: 20 },
+      {
+        id: 1,
+        programType: 'CHALLENGE',
+        privilegeType: 'ALL_IN_ONE',
+        programCount: 10,
+      },
+      {
+        id: 2,
+        programType: 'GUIDEBOOK',
+        privilegeType: 'ALL_IN_ONE',
+        programCount: 6,
+      },
+      {
+        id: 3,
+        programType: 'VOD',
+        privilegeType: 'ALL_IN_ONE',
+        programCount: 20,
+      },
     ],
   },
+  mentoringCoupons: [{ name: '1:1 LIVE 멘토링 50% 할인 쿠폰', count: 1 }],
 };
 
 /** 대시보드 일정 캘린더 — 챌린지 막대 + 세미나 칩 + 마일스톤 */
