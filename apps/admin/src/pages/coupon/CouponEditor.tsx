@@ -90,7 +90,13 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
         startDate: data.startDate,
         endDate: data.endDate,
       });
-      const conditions = data.targetConditionList ?? [];
+      // BE가 null 필드 생략 할 수 있어 플랜값을 null로 정규화
+      const conditions: TargetCondition[] = (
+        data.targetConditionList ?? []
+      ).map((c: TargetCondition) => ({
+        ...c,
+        challengePricePlanType: c.challengePricePlanType ?? null,
+      }));
       setIsAllMembers(conditions.length === 0);
       setTargetConditionList(conditions);
       return res.data;
