@@ -226,7 +226,8 @@ export function useCouponTargetState(
         if (challengeAll || $('CHALLENGE_TYPE', type)) return 'all';
         const pc = conds.filter(
           (c) =>
-            c.conditionType === 'CHALLENGE_PROGRAM' && c.targetProgramId === pid,
+            c.conditionType === 'CHALLENGE_PROGRAM' &&
+            c.targetProgramId === pid,
         );
         if (pc.length === 0) return 'none';
         return pc.some((c) => c.challengePricePlanType === null)
@@ -245,7 +246,10 @@ export function useCouponTargetState(
         setConds(
           $('CHALLENGE_PROGRAM', undefined, pid, null)
             ? conds.filter(dropPid)
-            : [...conds.filter(dropPid), mk('CHALLENGE_PROGRAM', undefined, pid)],
+            : [
+                ...conds.filter(dropPid),
+                mk('CHALLENGE_PROGRAM', undefined, pid),
+              ],
         );
       },
       // 특정 플랜 체크박스: 켜면 '전체(null)' 조건을 걷어내고 플랜 조건 추가, 다시 누르면 제거
