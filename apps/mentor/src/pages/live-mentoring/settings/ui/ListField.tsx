@@ -67,10 +67,14 @@ function ListField<T>({
       ) : (
         <ul className="mt-3 flex flex-col gap-3">
           {items.map((item, index) => (
+            /*
+              미리보기 추적 번호(`data-preview-index`)는 여기서 붙이지 않는다.
+              항목 하나가 화면보다 크면 미리보기가 그 **중간**을 보여줘 아래쪽 입력이
+              화면 밖에 남는다. 어느 단위로 쪼갤지는 항목의 생김새를 아는 `renderItem`
+              이 정한다 — 취업 전략은 이미지와 글을 나눠 붙인다(LC-3282).
+            */
             <li
               key={index}
-              /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
-              data-preview-index={index}
               className="rounded-lg border border-gray-200 bg-gray-50 p-3"
             >
               <div className="mb-2 flex items-center justify-between">

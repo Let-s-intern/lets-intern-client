@@ -202,6 +202,56 @@ describe('ProfilePage 저장', () => {
   });
 });
 
+describe('ProfilePage SNS', () => {
+  const snsInput = () => screen.getByPlaceholderText('https://...');
+
+  // LC-3306 — 전부 지우고 저장하면 서버가 기존 값을 지워야 한다. null 은 "바꾸지 않음"이다.
+  it('SNS 를 모두 지우고 저장하면 빈 문자열을 보낸다', async () => {
+    USER = {
+      ...BASE_USER,
+      sns: '["https://instagram.com/a"]',
+    } as unknown as typeof BASE_USER;
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: 'SNS 삭제' }));
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].sns).toBe('');
+  });
+
+  // LC-3307 — URL 이 아닌 값은 저장하지 않는다.
+  it('주소 형식이 아니면 알리고 저장하지 않는다', async () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '+ 추가' }));
+    fireEvent.change(snsInput(), { target: { value: 'instagram' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('주소 형식이 아니에요');
+
+    fireEvent.click(saveButton());
+
+    await waitFor(() =>
+      expect(screen.getByText('SNS 주소를 확인해 주세요.')).toBeTruthy(),
+    );
+    expect(patchUserMock).not.toHaveBeenCalled();
+    expect(putHashTagsMock).not.toHaveBeenCalled();
+  });
+
+  it('도메인만 쓰면 https:// 를 붙여 저장한다', async () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '+ 추가' }));
+    fireEvent.change(snsInput(), { target: { value: 'instagram.com/a' } });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].sns).toBe(
+      '["https://instagram.com/a"]',
+    );
+  });
+});
+
 /*
   회귀 테스트 — 저장한 상세페이지 본문이 새로고침 후에도 보여야 한다.
 

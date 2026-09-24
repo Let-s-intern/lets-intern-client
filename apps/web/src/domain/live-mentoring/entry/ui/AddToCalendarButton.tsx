@@ -7,8 +7,8 @@ import { createGoogleCalendarUrl } from '../utils/googleCalendar';
 interface Props {
   /** 캘린더 일정 제목 */
   title: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 /** 구글 캘린더 아이콘(달력 + 체크). */

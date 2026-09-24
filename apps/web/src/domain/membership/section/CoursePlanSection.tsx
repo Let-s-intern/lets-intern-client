@@ -2,15 +2,14 @@ import { useState } from 'react';
 import {
   COURSE_PLAN_BODY,
   COURSE_PLAN_HEADER,
-  PLAYBOOK_CAPTION_LINES,
-  PLAYBOOK_SHOT_ALT,
-  PLAYBOOK_SHOT_SIZE,
-  PLAYBOOK_SHOT_SRC,
+  COURSE_PLAN_TYPES,
+  type CoursePlanTypeId,
   type CoursePlanViewId,
 } from '../data/coursePlan';
 import CoursePlanToggle from '../ui/CoursePlanToggle';
 import CoursePlanMatrix from '../ui/CoursePlanMatrix';
 import CoursePlanTimeline from '../ui/CoursePlanTimeline';
+import CoursePlanLegend from '../ui/CoursePlanLegend';
 
 /** 헤드라인 한 줄에서 강조 어절만 파란색(.hl)으로 감싼다. */
 function HeadlineLine({
@@ -37,6 +36,8 @@ function HeadlineLine({
 
 export default function CoursePlanSection() {
   const [view, setView] = useState<CoursePlanViewId>('matrix');
+  // 기본은 TYPE A. 유형을 바꿔도 보기(view)는 그대로 둔다
+  const [type, setType] = useState<CoursePlanTypeId>('a');
 
   return (
     <section className="courseplan" id="course-plan">
@@ -72,58 +73,49 @@ export default function CoursePlanSection() {
       <div className="cp-body-band">
         <div className="wrap">
           <div className="rv">
-            <div className="cp-lead">
-              <h3>
-                {COURSE_PLAN_BODY.titleLines.map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < COURSE_PLAN_BODY.titleLines.length - 1 && <br />}
-                  </span>
-                ))}
-              </h3>
-              <p>{COURSE_PLAN_BODY.sub}</p>
+            {/* 시안 8 상단의 유형 선택. 고른 유형이 매트릭스·주 단위와 그 위 문구를 바꾼다. */}
+            <div className="cp-types" role="group" aria-label="내 상황 고르기">
+              {COURSE_PLAN_TYPES.map((option) => (
+                <button
+                  type="button"
+                  className="cp-type"
+                  aria-pressed={type === option.id}
+                  onClick={() => setType(option.id)}
+                  key={option.id}
+                >
+                  <span className="cp-type-label">{option.label}</span>
+                  <strong className="cp-type-title">{option.title}</strong>
+                  <span className="cp-type-desc">{option.desc}</span>
+                </button>
+              ))}
             </div>
 
             <CoursePlanToggle active={view} onChange={setView} />
 
-            <div className="cp-matrix-head">
-              <h4>{COURSE_PLAN_BODY.matrixTitle}</h4>
-              <p>{COURSE_PLAN_BODY.matrixSub}</p>
-            </div>
+            {/* 시안 9 는 유형 문구와 세미나 안내를 한 줄로 이어 붙인다 */}
+            <p className="cp-matrix-head">
+              <span>{COURSE_PLAN_BODY.matrixTitle[type]}</span>{' '}
+              <span>{COURSE_PLAN_BODY.matrixSub}</span>
+            </p>
 
             {/* key 로 뷰 전환마다 페이드 애니메이션을 재실행(.rv 리빌과 독립) */}
             <div className="cp-view" key={view}>
               {view === 'matrix' ? (
-                <CoursePlanMatrix />
+                <CoursePlanMatrix type={type} />
               ) : (
-                <CoursePlanTimeline />
+                <CoursePlanTimeline type={type} />
               )}
             </div>
 
-            <p className="cp-playbook">
-              구매자에게는 이 플랜의 풀버전{' '}
-              <strong>하반기 공채 준비 플레이북</strong>을 제공합니다.
-            </p>
+            {/* 시안 8 범례 — 어느 배지가 자료이고 어느 배지가 함께하는 단계인지. 두 보기가 같다 */}
+            <CoursePlanLegend />
+            <p className="cp-playbook">{COURSE_PLAN_BODY.matrixFootnote}</p>
 
-            {/* 구매자가 실제로 받는 화면. `.cp-view` 밖이라 `.rv` 리빌이 안전하다 —
-                토글로 리마운트되는 자리에 두면 IntersectionObserver 가 놓친다. */}
-            <img
-              className="cp-playbook-shot rv"
-              src={PLAYBOOK_SHOT_SRC}
-              alt={PLAYBOOK_SHOT_ALT}
-              width={PLAYBOOK_SHOT_SIZE.width}
-              height={PLAYBOOK_SHOT_SIZE.height}
-              loading="lazy"
-              decoding="async"
-            />
-
-            <p className="cp-playbook-caption rv">
-              {PLAYBOOK_CAPTION_LINES.map((line, i) => (
-                <span className="brk" key={i}>
-                  {line}
-                </span>
-              ))}
-            </p>
+            {/*
+              플레이북 앱 화면(애니메이션 WebP, 2.29MB)과 그 아래 마무리 문구를 뺐다.
+              시안 8 에 없고, 시안 9 의 대시보드 목업이 같은 화면을 이미 보여준다.
+              에셋과 데이터(PLAYBOOK_SHOT_*, PLAYBOOK_CAPTION_LINES)는 남겨 뒀다.
+            */}
           </div>
         </div>
       </div>

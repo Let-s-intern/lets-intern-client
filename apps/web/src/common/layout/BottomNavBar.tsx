@@ -54,6 +54,7 @@ function BottomNavBar({ pathname = '' }: Props) {
     pathname.startsWith('/program/') ||
     pathname === '/about' ||
     pathname.startsWith('/payment') ||
+    pathname.startsWith('/plan-upgrade') ||
     pathname.startsWith('/challenge') ||
     pathname.startsWith('/b2b');
 

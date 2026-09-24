@@ -15,6 +15,7 @@ const JitsiEmbedModal = dynamic(
 import { mypageApplicationsQueryOptions } from '@/api/application';
 import { useMyLiveMentoringApplicationsQuery } from '@/api/live-mentoring/liveMentoring';
 import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 import { questionButtonLabel } from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
 
 import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
@@ -25,6 +26,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import {
   APPLICATION_CATEGORY_OPTIONS,
   ApplicationCategory,
+  filterMentoringCategory,
 } from '@/domain/mypage/application/constants';
 import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -44,9 +46,8 @@ const TITLE = '커리어 성장';
 const HREF = '/mypage/application';
 
 /*
-  커리어 성장 위젯은 출시알림·멘토링 탭을 지원하지 않는다(신청현황 전용 탭).
-  멘토링은 `mypageApplicationsQueryOptions` 가 아니라 라이브 멘토링 전용 API 에서
-  오므로, 여기에 탭만 생기면 언제나 비어 있는 탭이 된다.
+  커리어 성장 위젯은 출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
+  1대1 라이브 멘토링은 프로그램 칩에도 함께 보이고, 멘토링 칩은 그중 멘토링만 거른다(LC-3301).
 */
 type CareerGrowthCategory = Exclude<ApplicationCategory, 'LAUNCH_ALERT'>;
 
@@ -65,6 +66,12 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
     description: '참여 중인 프로그램이 없어요.',
     href: '/program',
     buttonText: '프로그램 둘러보기',
+  },
+  MENTORING: {
+    description: '참여 중인 1:1 LIVE 멘토링이 없어요.',
+    // 출시 전에도 열려 있는 주소다. `/program?catalog=mentoring` 은 플래그가 꺼지면 막힌다.
+    href: '/live-mentoring',
+    buttonText: '1:1 LIVE 멘토링 둘러보기',
   },
   LIBRARY: {
     description: '보유 중인 무료 자료집이 없어요.',
@@ -125,6 +132,11 @@ const CareerGrowthContent = () => {
     React Query 가 같은 키를 합치므로 마이페이지와 요청이 겹치지 않는다.
   */
   const { data: mentoringData } = useMyLiveMentoringApplicationsQuery();
+  const categoryOptions = filterMentoringCategory(
+    CAREER_GROWTH_CATEGORY_OPTIONS,
+    SHOW_LIVE_MENTORING_NAV ||
+      (mentoringData?.applicationList?.length ?? 0) > 0,
+  );
   const [openApplicationId, setOpenApplicationId] = useState<number | null>(
     null,
   );
@@ -145,6 +157,11 @@ const CareerGrowthContent = () => {
     }
     if (category === 'VOD') {
       return items.filter((program) => program.programTypeKey === 'VOD');
+    }
+    if (category === 'MENTORING') {
+      return items.filter(
+        (program) => program.programTypeKey === 'LIVE_MENTORING',
+      );
     }
     if (category === 'LIBRARY') {
       return [];
@@ -216,7 +233,7 @@ const CareerGrowthContent = () => {
         body={
           <div className="flex flex-col gap-6 pt-1">
             <CategoryChips
-              options={CAREER_GROWTH_CATEGORY_OPTIONS}
+              options={categoryOptions}
               selected={category}
               onChange={setCategory}
             />

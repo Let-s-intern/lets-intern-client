@@ -104,6 +104,66 @@ describe('LiveFeedbackEntryPage', () => {
     expect(screen.queryByTestId('login-gate')).not.toBeInTheDocument();
   });
 
+  describe('취소·진행불가 세션', () => {
+    const renderWith = (overrides: Record<string, unknown>) => {
+      authState = { isInitialized: true, isLoggedIn: true };
+      queryState = {
+        data: {
+          feedbackInfo: {
+            feedbackId: 1,
+            // 지금 입장 가능한 시간대여도 상태가 우선한다.
+            startDate: new Date(Date.now() + 5 * 60_000).toISOString(),
+            endDate: new Date(Date.now() + 35 * 60_000).toISOString(),
+            meetingUrl: 'https://meet.jit.si/letscareer-room',
+            status: 'RESERVED',
+            mentorStatus: 'PENDING',
+            menteeStatus: 'PENDING',
+            score: null,
+            review: null,
+            ...overrides,
+          },
+        },
+        isLoading: false,
+      };
+      render(<LiveFeedbackEntryPage feedbackId={1} role="MENTEE" />);
+    };
+
+    const expectBlocked = () => {
+      expect(screen.getByText('진행할 수 없는 세션이에요')).toBeInTheDocument();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('live-feedback-modal'),
+      ).not.toBeInTheDocument();
+    };
+
+    /*
+      미제출이 실제 경로다. 서버 `Feedback.status` 는 대입하는 곳이 없어 CANCELED 로
+      바뀌지 않는다 — status 만 보는 구현은 아무것도 막지 못한다.
+    */
+    it('경험정리 미제출(ABSENT)이면 입장 버튼과 회의실 모달을 그리지 않는다', () => {
+      renderWith({ attendanceStatus: 'ABSENT' });
+      expectBlocked();
+    });
+
+    it('지각 제출(LATE)도 같이 막는다', () => {
+      renderWith({ attendanceStatus: 'LATE' });
+      expectBlocked();
+    });
+
+    it('예약취소(status=CANCELED)도 막는다', () => {
+      renderWith({ status: 'CANCELED' });
+      expectBlocked();
+    });
+
+    it('정상 제출(PRESENT)이면 막지 않는다', () => {
+      renderWith({ attendanceStatus: 'PRESENT' });
+      expect(
+        screen.queryByText('진행할 수 없는 세션이에요'),
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole('button')).toBeInTheDocument();
+    });
+  });
+
   /**
    * 알림톡 딥링크 경로의 정리 모달 — 작성 권한이 멘티 본인에게만 있으므로
    * 멘토 역할로 들어온 화면에서는 띄우지 않는다.

@@ -95,3 +95,52 @@ export const isDetailTabComplete = (
       );
   }
 };
+
+/** 필수 스텝 수(오픈 설정 포함). 점진 노출이 여기까지만 한 칸씩 연다. */
+const REQUIRED_STEP_COUNT = SETTINGS_TABS.filter((tab) => tab.required).length;
+
+/**
+ * 지금 들어갈 수 있는 스텝 목록.
+ *
+ * **탭은 늘 전부 보인다.** 여기 없는 스텝은 화면에서 사라지는 게 아니라 잠긴다 —
+ * 앞으로 뭘 더 써야 하는지는 보여야 하고, 사라졌다 나타나면 그 자리를 찾던 사람이 헤맨다.
+ *
+ * **한 번이라도 개설한 멘토에게는 전부 연다.** 순서를 안내받을 이유가 없다.
+ *
+ * 첫 세팅(개설 이력 0건)만 필수 스텝을 하나씩 연다. 여는 기준을 **완료 여부만**으로
+ * 두면 「멘토 정보」에서 막힌다 — 프로필 도메인이 채우는 읽기 전용 탭이라 이 화면에서
+ * 완료시킬 수단이 없고, 닉네임이 없는 멘토는 영영 다음으로 못 간다. 그래서 멘토가
+ * 「다음으로」로 도달한 지점(`reachedIndex`)을 함께 본다.
+ *
+ * 선택 스텝 셋은 필수가 모두 끝나면 한꺼번에 열린다. 하나씩 열면 건너뛰고 싶은 멘토가
+ * 막히는데, 선택 항목에 그런 제약을 걸 이유가 없다.
+ */
+export const unlockedSettingsTabs = ({
+  hasOpened,
+  template,
+  reachedIndex,
+}: {
+  /** 개설 이력이 한 건이라도 있는지. 있으면 점진 노출을 하지 않는다. */
+  hasOpened: boolean;
+  /** 상세 템플릿. 없으면 상품 자체가 없는 상태라 오픈 설정만 연다. */
+  template: LiveMentoringTemplate | null;
+  /** 「다음으로」로 도달한 가장 먼 스텝의 인덱스. */
+  reachedIndex: number;
+}): readonly SettingsTab[] => {
+  if (hasOpened) return SETTINGS_TABS;
+  if (!template) return SETTINGS_TABS.slice(0, 1);
+
+  /* 앞에서부터 끊기지 않고 완료된 필수 스텝 수. 오픈 설정은 상품이 있으면 완료다. */
+  let completed = 1;
+  for (const tab of SETTINGS_TABS.slice(1, REQUIRED_STEP_COUNT)) {
+    if (!isDetailTabComplete(tab.id as DetailTabId, template)) break;
+    completed += 1;
+  }
+
+  if (completed >= REQUIRED_STEP_COUNT) return SETTINGS_TABS;
+
+  return SETTINGS_TABS.slice(
+    0,
+    Math.min(Math.max(completed + 1, reachedIndex + 1), REQUIRED_STEP_COUNT),
+  );
+};

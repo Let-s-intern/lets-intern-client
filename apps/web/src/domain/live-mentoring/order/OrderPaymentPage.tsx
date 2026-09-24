@@ -30,6 +30,7 @@ const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || '';
  */
 const OrderPaymentPage = () => {
   const router = useRouter();
+  const hasHydrated = useOrderDraftStore((state) => state._hasHydrated);
   const application = useOrderDraftStore((state) => state.application);
   const draft = useOrderDraftStore((state) => state.draft);
   const { data: user } = useUserQuery();
@@ -41,13 +42,16 @@ const OrderPaymentPage = () => {
   );
   const tossInitialized = useRef(false);
 
-  // 신청 없이 닿는 경로는 새로고침뿐이다. 결제할 대상이 없으므로 되돌려보낸다.
+  /*
+    복원까지 끝났는데 신청이 없으면 결제할 대상이 없다 — 다른 기기로 열었거나 선점이
+    끝났다. 되돌려보낸다. 복원 전에 판단하면 새로고침한 결제 페이지 자체가 튕긴다.
+  */
   useEffect(() => {
-    if (application) return;
+    if (!hasHydrated || application) return;
     router.replace(
       draft ? `/live-mentoring/${draft.mentorId}` : '/live-mentoring',
     );
-  }, [application, draft, router]);
+  }, [hasHydrated, application, draft, router]);
 
   useEffect(() => {
     if (!application || !user || tossInitialized.current) return;
@@ -102,7 +106,7 @@ const OrderPaymentPage = () => {
     }
   };
 
-  if (!application) {
+  if (!hasHydrated || !application) {
     return <p className="text-neutral-40 py-20 text-center">이동 중…</p>;
   }
 

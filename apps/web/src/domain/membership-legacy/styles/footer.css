@@ -1,0 +1,105 @@
+/* ===================== FOOTER ===================== */
+.membership-root .foot {
+  background: #14161f;
+  color: #8b909e;
+  padding: 50px 0 60px;
+  font-size: 13px;
+}
+.membership-root .foot .logo {
+  height: 26px;
+  margin-bottom: 18px;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+.membership-root .foot .row {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: #c4c8d2;
+}
+.membership-root .foot .fine {
+  line-height: 1.8;
+}
+
+/* ===================== STICKY MOBILE/BOTTOM CTA ===================== */
+.membership-root .stickybar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #fff;
+  border-top: 1px solid #e7e9f0;
+  box-shadow: 0 -8px 24px -12px rgba(0, 0, 0, 0.15);
+  padding: 12px 0;
+  transform: translateY(120%);
+  transition: transform 0.3s ease;
+}
+.membership-root .stickybar.show {
+  transform: none;
+}
+.membership-root .stickybar .in {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.membership-root .stickybar .txt {
+  font-weight: 700;
+  font-size: 15px;
+}
+.membership-root .stickybar .txt b {
+  color: var(--lc-orange);
+}
+.membership-root .stickybar .btn {
+  margin-left: auto;
+}
+
+/* ===================== FOOTER (compact) ===================== */
+.membership-root .foot {
+  background: #14161f;
+  color: #8b909e;
+  padding: 28px 0 90px;
+  font-size: 13px;
+}
+.membership-root .foot .logo {
+  height: 24px;
+  margin-bottom: 14px;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+.membership-root .foot .row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #c4c8d2;
+}
+.membership-root .foot .row a {
+  color: #c4c8d2;
+}
+.membership-root .foot .row a:hover {
+  color: #fff;
+}
+.membership-root .foot .inquiry {
+  background: none;
+  border: 1px solid #3a3f4d;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.membership-root .foot .inquiry:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.membership-root .foot .fine {
+  line-height: 1.7;
+}

@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { liveMentoringStatusSchema } from '@/api/live-mentoring/liveMentoringSchema';
 import * as constants from './constants';
-import { STATUS_CLASSES, STATUS_FILTERS, STATUS_LABELS } from './constants';
+import { OPENING_BADGE, OPENING_FILTERS } from './constants';
 
 /**
  * 백엔드 `LiveMentoringStatus` 3종(DRAFT/APPROVED/INACTIVE)만 존재한다
@@ -10,40 +9,35 @@ import { STATUS_CLASSES, STATUS_FILTERS, STATUS_LABELS } from './constants';
  * 어긋나면 타입 에러가 나야 하지만, 런타임 값도 함께 검증한다.
  */
 describe('live-mentoring constants — 상태', () => {
-  const validStatuses = liveMentoringStatusSchema.options;
-
-  it('STATUS_LABELS 는 유효한 상태 3종에 대해서만 라벨을 갖는다', () => {
-    expect(Object.keys(STATUS_LABELS).sort()).toEqual(
-      [...validStatuses].sort(),
-    );
-  });
-
-  it('STATUS_CLASSES 는 유효한 상태 3종에 대해서만 클래스를 갖는다', () => {
-    expect(Object.keys(STATUS_CLASSES).sort()).toEqual(
-      [...validStatuses].sort(),
-    );
-  });
-
-  /*
-    승인 절차가 사라진 뒤로(LC-3262) 「초안」은 새로 생기지 않는 옛 값이라 필터에서 뺐다.
-    갈라 볼 의미가 있는 것은 쓰는 상품과 더 쓰지 않는 상품뿐이다.
-  */
-  it('STATUS_FILTERS 는 전체·오픈 중·비활성 3개로 구성된다', () => {
-    expect(STATUS_FILTERS).toEqual([
+  /* 필터도 배지처럼 상품 상태가 아니라 열린 개설이 있는지로 거른다(LC-3336). */
+  it('OPENING_FILTERS 는 전체·오픈중·미오픈 3개로 구성된다', () => {
+    expect(OPENING_FILTERS).toEqual([
       { label: '전체', value: undefined },
-      { label: '오픈 중', value: 'APPROVED' },
-      { label: '비활성', value: 'INACTIVE' },
+      { label: '오픈중', value: true },
+      { label: '미오픈', value: false },
     ]);
+  });
+
+  it('OPENING_FILTERS 의 라벨은 배지 라벨과 같다', () => {
+    expect(OPENING_FILTERS[1].label).toBe(OPENING_BADGE.open.label);
+    expect(OPENING_FILTERS[2].label).toBe(OPENING_BADGE.notOpen.label);
   });
 
   /* 「승인」이라고 적으면 아직 승인 단계가 있는 것처럼 읽힌다. */
   it('상태 표기에 승인이라는 말을 쓰지 않는다', () => {
-    expect(Object.values(STATUS_LABELS)).not.toContain('승인');
-    expect(STATUS_LABELS.APPROVED).toBe('오픈 중');
+    expect(
+      Object.values(OPENING_BADGE).map(({ label }) => label),
+    ).not.toContain('승인');
   });
 
-  it('STATUS_FILTERS 의 기본 선택지는 전체(undefined)다', () => {
-    expect(STATUS_FILTERS[0]).toEqual({ label: '전체', value: undefined });
+  /* 상품 상태 기준 표기는 개설이 없어도 「오픈 중」을 찍어 걷어냈다(LC-3336). */
+  it('상품 상태 기준 라벨·클래스를 더 이상 export 하지 않는다', () => {
+    expect(constants).not.toHaveProperty('STATUS_LABELS');
+    expect(constants).not.toHaveProperty('STATUS_CLASSES');
+  });
+
+  it('OPENING_FILTERS 의 기본 선택지는 전체(undefined)다', () => {
+    expect(OPENING_FILTERS[0]).toEqual({ label: '전체', value: undefined });
   });
 });
 

@@ -26,6 +26,7 @@ const baseChallenge: MypageApplication = {
   challengeOptionList: [],
   chatLink: 'https://open.kakao.com/o/abc123',
   chatPassword: '1234',
+  canUpgradePlan: false,
 };
 
 const openChatOf = (application: MypageApplication) =>
@@ -173,5 +174,50 @@ describe('toMypageApplicationCardConfig - 멤버십 기수 (LC-3219)', () => {
         programId: 309,
       }),
     ).toEqual({ label: '클래스 입장', href: '/program/live/309' });
+  });
+});
+
+describe('toMypageApplicationCardConfig - 플랜 업그레이드 (LC-3247)', () => {
+  const planUpgradeHrefOf = (application: MypageApplication) =>
+    toMypageApplicationCardConfig(application).planUpgradeHref;
+
+  it('업그레이드할 수 있으면 신청 id 로 업그레이드 화면 주소를 넘긴다', () => {
+    expect(planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: true })).toBe(
+      '/plan-upgrade/1',
+    );
+  });
+
+  it('업그레이드할 수 없으면 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: false }),
+    ).toBeUndefined();
+  });
+
+  it('LIGHT 플랜은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('챌린지가 아닌 신청은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        programType: 'LIVE',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('필드가 없는 응답은 업그레이드 불가로 읽는다', () => {
+    const parsed = mypageApplicationsSchema.parse({
+      applicationList: [{ id: 1, programType: 'CHALLENGE' }],
+    });
+
+    expect(parsed.applicationList[0].canUpgradePlan).toBe(false);
   });
 });

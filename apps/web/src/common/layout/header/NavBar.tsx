@@ -29,7 +29,10 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
-import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
+import {
+  SHOW_LIVE_MENTORING_HEADER_NAV,
+  SHOW_LIVE_MENTORING_NAV,
+} from '@/domain/live-mentoring/constants';
 
 export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[115px]';
 export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[115px]';
@@ -168,28 +171,32 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   프로그램
                 </GlobalNavItem>
               </SwiperSlide>
-              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
-              {SHOW_LIVE_MENTORING_NAV && (
-                <>
-                  <SwiperSlide className="!w-auto">
-                    <GlobalNavItem
-                      className="text-xsmall14"
-                      isNew
-                      href="/program?catalog=mentoring"
-                    >
-                      1:1 LIVE 멘토링
-                    </GlobalNavItem>
-                  </SwiperSlide>
-                  <SwiperSlide className="!w-auto">
-                    <GlobalNavItem
-                      className="text-xsmall14"
-                      href="/mentors"
-                      active={activeLink === 'MENTORS'}
-                    >
-                      멘토 소개
-                    </GlobalNavItem>
-                  </SwiperSlide>
-                </>
+              {/*
+                1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다.
+                Fragment 로 묶지 않는다. Swiper 가 Fragment 안의 슬라이드를 다시 펼치면서 key 가
+                바깥 첫 슬라이드와 겹친다(`.0`).
+              */}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    isNew
+                    href="/program?catalog=mentoring"
+                  >
+                    1:1 LIVE 멘토링
+                  </GlobalNavItem>
+                </SwiperSlide>
+              )}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
+                    className="text-xsmall14"
+                    href="/mentors"
+                    active={activeLink === 'MENTORS'}
+                  >
+                    렛츠커리어 멘토
+                  </GlobalNavItem>
+                </SwiperSlide>
               )}
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
@@ -229,14 +236,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   무료 자료집
                 </GlobalNavItem>
               </SwiperSlide>
-              <SwiperSlide className="!w-auto">
-                <GlobalNavItem
-                  className="text-xsmall14"
-                  href="/program?type=VOD"
-                >
-                  취준위키 VOD
-                </GlobalNavItem>
-              </SwiperSlide>
             </Swiper>
           )}
           {/* 데스크톱: 기존 flex 레이아웃 */}
@@ -252,24 +251,28 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 프로그램
                 <span>&nbsp;카테고리</span>
               </GlobalNavItem>
-              {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
-              {SHOW_LIVE_MENTORING_NAV && (
-                <>
-                  <GlobalNavItem
-                    className="text-xsmall16"
-                    isNew
-                    href="/program?catalog=mentoring"
-                  >
-                    1:1 LIVE 멘토링
-                  </GlobalNavItem>
-                  <GlobalNavItem
-                    className="text-xsmall16"
-                    href="/mentors"
-                    active={activeLink === 'MENTORS'}
-                  >
-                    멘토 소개
-                  </GlobalNavItem>
-                </>
+              {/*
+                1:1 LIVE 멘토링과 렛츠커리어 멘토는 한 벌로 켜고 끈다. 헤더는 헤더 플래그를 본다.
+                데스크톱은 렛츠커리어 멘토 드롭다운 하나로 묶는다. 부모를 누르면 멘토 목록으로 가고,
+                올리면 1:1 LIVE 멘토링과 렛츠커리어 멘토가 열린다. 모바일(Swiper)은 hover 가 없어 묶지 않는다.
+              */}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <GlobalNavItem
+                  className="text-xsmall16"
+                  isNew
+                  href="/mentors"
+                  active={activeLink === 'MENTORS'}
+                  subNavList={[
+                    {
+                      children: '1:1 LIVE 멘토링',
+                      href: '/program?catalog=mentoring',
+                    },
+                    { children: '렛츠커리어 멘토', href: '/mentors' },
+                  ]}
+                  showDropdownIcon={true}
+                >
+                  렛츠커리어 멘토
+                </GlobalNavItem>
               )}
               {/*
                 [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴 (데스크톱 GNB)
@@ -299,9 +302,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                 showDropdownIcon={true}
               >
                 무료 세미나/자료집
-              </GlobalNavItem>
-              <GlobalNavItem className="text-xsmall16" href="/program?type=VOD">
-                취준위키 VOD
               </GlobalNavItem>
             </div>
             <div
@@ -342,8 +342,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        {/* [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 블록을 제거한다 */}
-        <SideNavItem href="/membership" isNew>
+        {/* [LC-3294] 마케팅 취준 올인원 패스 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 블록을 제거한다.
+            구버전 하반기 멤버십(`/membership`)은 주소로만 남기고 메뉴에는 걸지 않는다. */}
+        <SideNavItem href="/membership-marketing" isNew>
           <MembershipNavLabel />
         </SideNavItem>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>

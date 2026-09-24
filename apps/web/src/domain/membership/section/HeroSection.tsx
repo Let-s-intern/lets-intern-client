@@ -1,15 +1,30 @@
+import { capturePaymentCtaClicked } from '../analytics';
+import dayjs from '../lib/dayjs';
 import { openPlanSheet } from '../lib/planSheet';
 import { ctaLabel, IS_CTA_DISABLED } from '../lib/membershipChallenge';
+import { useMembershipChallengeData } from '../lib/useMembershipChallengeData';
+import { formatKRW } from '../data/membership';
 import { HERO, HERO_STATS } from '../data/hero';
+import { PASS_INTRO } from '../data/passBenefitModals';
 
-// 시안 0.png — 1열 중앙 정렬. 배지 / 헤드라인 2줄 / 서브 2줄 / 버튼 2개 / 하단 4지표.
+// 시안 1 — 1열 중앙 정렬. 배지 / 헤드라인 3줄 / 서브 2줄 / 버튼 2개 / 하단 6지표.
 // 카운트다운 카드(offer)와 모집기간 메타(hero-meta)는 시안에 없어 렌더하지 않는다.
 export default function HeroSection() {
+  /*
+   * 시안 1 의 1차 CTA 는 "175,900으로 시작하기" 처럼 금액을 그대로 노출한다.
+   * 금액을 카피에 박아 두면 어드민에서 가격을 바꿨을 때 버튼만 옛 숫자로 남는다.
+   * 가격 단일 출처(useMembershipChallengeData)에서 받아 조립한다.
+   */
+  const { salePrice, endDate } = useMembershipChallengeData();
+
   return (
     <section className="hero">
       <div className="wrap hero-in">
         <div className="hero-chips he he1">
-          <span className="hero-badge">{HERO.badge}</span>
+          <span className="hero-badge">
+            {HERO.badgePrefix} {dayjs(endDate).format('M월 D일')}
+            {HERO.badgeSuffix}
+          </span>
         </div>
         {/* 줄바꿈은 <br> 이 아니라 base.css 의 .brk 유틸이 정한다.
             1줄차는 어느 폭에서도 자기 줄(.brk-line), 2·3줄은 601px 이상에서 붙어 한 줄이 된다. */}
@@ -28,18 +43,27 @@ export default function HeroSection() {
           ))}
         </p>
         <div className="hero-cta he he4">
+          {/* 이벤트는 결제 흐름 앞에 덧붙이기만 한다 — `openPlanSheet()` 는 그대로다. */}
           <button
             className="btn btn-hero-light"
-            onClick={() => openPlanSheet()}
+            onClick={() => {
+              capturePaymentCtaClicked({ location: 'hero' });
+              openPlanSheet();
+            }}
             disabled={IS_CTA_DISABLED}
           >
-            {ctaLabel(HERO.ctaPrimary)}
+            {ctaLabel(`${formatKRW(salePrice)}${HERO.ctaPrimary}`)}
           </button>
+          {/*
+            "혜택 먼저 보기" 는 패스 소개(#pass-intro)로 내려보낸다. 예전 대상이던
+            PassBenefitsSection(#benefits)은 개편으로 렌더에서 빠졌고, 혜택 4카드와
+            모달이 그 자리를 대신한다. 없는 id 를 가리키면 눌러도 아무 일이 없다.
+          */}
           <button
             className="btn btn-hero-orange"
             onClick={() =>
               document
-                .getElementById('benefits')
+                .getElementById(PASS_INTRO.anchorId)
                 ?.scrollIntoView({ behavior: 'smooth' })
             }
           >

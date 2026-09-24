@@ -11,7 +11,7 @@ import Link from 'next/link';
  * │   3. public/images/home-membership-banner.png 삭제                     │
  * └───────────────────────────────────────────────────────────────────────┘
  *
- * TopBanner(상단 띠 배너) 안에서 밴드 바로 아래에 렌더되며, 클릭 시 /membership 으로 이동한다.
+ * TopBanner(상단 띠 배너) 안에서 밴드 바로 아래에 렌더되며, 클릭 시 /membership-marketing 으로 이동한다.
  * 음수 마진(-mt)으로 고정 밴드 아래에 살짝 겹쳐 올려, 밴드가 이미지 상단(배경 영역)을 덮게 한다.
  * → 스페이서와 실제 밴드 높이 차이로 생기던 흰 틈을 브레이크포인트 무관하게 제거.
  * 와이드(4:1) 이미지라 모바일에서는 글자가 뭉개져 md 이상에서만 노출한다.
@@ -22,7 +22,7 @@ import Link from 'next/link';
 const MembershipPromoBanner = () => {
   return (
     <Link
-      href="/membership"
+      href="/membership-marketing"
       className="relative hidden w-full overflow-hidden md:-mt-2 md:block"
       aria-label="2026 하반기 멤버십 - 공채 준비 올인원 패스 안내"
     >

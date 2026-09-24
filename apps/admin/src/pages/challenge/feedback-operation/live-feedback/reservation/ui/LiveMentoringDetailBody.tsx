@@ -66,6 +66,8 @@ const LIMITATIONS: { label: string; reason: string }[] = [
  * 알림톡 입장 링크 복사 — 멘토/멘티 각각의 딥링크를 클립보드에 복사한다.
  * 링크 형식: `{web}/live-mentoring/{role}/{applicationId}` (역할별 경로).
  * 라이브 피드백 `EntryLinkPanel` 과 같은 배치·문구를 쓴다.
+ *
+ * 웹 입장 페이지 경로와 반드시 같아야 한다. 알림톡 템플릿의 버튼 링크도 이 모양이다.
  */
 function EntryLinkPanel({ applicationId }: { applicationId: number }) {
   const { snackbar } = useAdminSnackbar();

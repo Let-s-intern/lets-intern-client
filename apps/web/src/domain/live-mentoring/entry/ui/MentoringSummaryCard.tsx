@@ -9,8 +9,8 @@ interface Props {
   counterpartLabel: string;
   /** 상대방 이름 */
   counterpartName?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
   role: LiveMentoringRoleParam;
   isLoading?: boolean;
   /** 제출물(사전 질문·첨부) 수정 마감. 서버가 계산한 값이며 없으면 행을 숨긴다. */
@@ -21,7 +21,7 @@ interface Props {
   isMentorView?: boolean;
 }
 
-function formatDay(startDate?: string): string {
+function formatDay(startDate?: string | null): string {
   if (!startDate) return '-';
   return new Date(startDate).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -45,7 +45,10 @@ function formatShortDay(date: string): string {
   });
 }
 
-function formatTimeRange(startDate?: string, endDate?: string): string {
+function formatTimeRange(
+  startDate?: string | null,
+  endDate?: string | null,
+): string {
   if (!startDate) return '';
   const fmt: Intl.DateTimeFormatOptions = {
     hour: '2-digit',

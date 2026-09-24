@@ -1,47 +1,30 @@
 import { render, screen } from '@testing-library/react';
+
+import { MENTORING_COUPON } from '../data/mentoringCoupon';
 import MentoringCouponSection from './MentoringCouponSection';
-import {
-  COUPON_ALT,
-  COUPON_SIZE,
-  COUPON_SRC,
-  MENTORING_COUPON,
-} from '../data/mentoringCoupon';
 
-describe('MentoringCouponSection', () => {
-  it('헤더와 각주는 텍스트로 그린다', () => {
-    // 이미지에 넣으면 제목이 사라져 검색에서 통째로 빠진다.
-    // 혜택 묶음의 형제 블록이라 h2 가 아니라 h3 다 — 이 묶음의 h2 는 CoursePlanSection 이 그린다.
+describe('MentoringCouponSection (시안 14)', () => {
+  it('할인율과 쿠폰 안내를 그린다', () => {
     render(<MentoringCouponSection />);
-    expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
-      MENTORING_COUPON.titleTop,
-    );
-    for (const line of MENTORING_COUPON.titleMainLines) {
-      expect(screen.getByText(line)).toBeInTheDocument();
+
+    expect(screen.getByText('50%')).toBeInTheDocument();
+    expect(screen.getByText('PASS ONLY')).toBeInTheDocument();
+  });
+
+  it('현직자 예시를 모두 그린다', () => {
+    render(<MentoringCouponSection />);
+
+    for (const mentor of MENTORING_COUPON.mentors) {
+      expect(screen.getByText(mentor.company)).toBeInTheDocument();
     }
-    expect(screen.getByText(MENTORING_COUPON.subtitle)).toBeInTheDocument();
+  });
+
+  /*
+   * 각주가 빠지면 "이 회사 현직자와 멘토링할 수 있다" 는 약속으로 읽힌다.
+   * 목록은 예시일 뿐이라 각주가 함께 있어야 한다.
+   */
+  it('멘토가 바뀔 수 있다는 각주를 함께 노출한다', () => {
+    render(<MentoringCouponSection />);
     expect(screen.getByText(MENTORING_COUPON.footnote)).toBeInTheDocument();
-  });
-
-  it('쿠폰 카드만 이미지로 넣는다', () => {
-    render(<MentoringCouponSection />);
-    const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('src', COUPON_SRC);
-    expect(COUPON_SRC.endsWith('.webp')).toBe(true);
-    expect(img).toHaveAttribute('alt', COUPON_ALT);
-  });
-
-  it('CLS 방지를 위해 width·height 를 직접 지정한다', () => {
-    // domain/membership 은 next/image 를 쓰지 않아 크기 예약이 자동으로 되지 않는다.
-    render(<MentoringCouponSection />);
-    const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('width', String(COUPON_SIZE.width));
-    expect(img).toHaveAttribute('height', String(COUPON_SIZE.height));
-    expect(img).toHaveAttribute('loading', 'lazy');
-    expect(img).toHaveAttribute('decoding', 'async');
-  });
-
-  it('앵커·제거 용이성을 위해 section id 를 유지한다', () => {
-    const { container } = render(<MentoringCouponSection />);
-    expect(container.querySelector('section#mentoring-coupon')).not.toBeNull();
   });
 });

@@ -65,7 +65,11 @@ describe('describeAutosaveBlock', () => {
     expect(describeAutosaveBlock(base())).toBeNull();
   });
 
-  it('반쯤 채운 유형 카드는 몇 번째의 어느 칸인지 짚는다', () => {
+  /*
+   * 반쯤 채운 반복 항목은 보낼 때 빠진다(`saveTemplate`). 저장 자체를 막으면 카드
+   * 하나가 다른 탭에서 쓴 글까지 볼모로 잡는다 (LC-3343).
+   */
+  it('반쯤 채운 유형 카드는 저장을 막지 않는다', () => {
     const template = base();
     template.mentoringTypes.items.push({
       typeName: '이력서 피드백',
@@ -73,16 +77,20 @@ describe('describeAutosaveBlock', () => {
       description: '',
       tags: [],
     });
-    expect(describeAutosaveBlock(template)).toBe(
-      '「멘토링 유형」의 2번 유형 제목을 채우면 저장돼요',
-    );
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  it('갓 추가한 빈 Point 는 저장을 막지 않는다', () => {
+    const template = base();
+    template.strategy.points.push({ image: null, title: '', description: '' });
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 
   /*
-   * 「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
-   * 저장이 지워 버린다. 채우거나 지울 때까지 기다린다.
+   * 반쯤 채운 사례는 보낼 때 빠진다(`saveTemplate`). 저장 자체를 막으면 카드 하나가
+   * 다른 탭에서 쓴 글까지 볼모로 잡는다 (LC-3343).
    */
-  it('갓 추가한 빈 카드도 저장을 미룬다', () => {
+  it('갓 추가한 빈 결과 사례는 저장을 막지 않는다', () => {
     const template = base();
     template.results.cases.push({
       beforeImage: null,
@@ -90,15 +98,31 @@ describe('describeAutosaveBlock', () => {
       beforeCaption: '',
       afterCaption: '',
     });
-    expect(describeAutosaveBlock(template)).toBe(
-      '「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요',
-    );
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 
-  /* 서버 `@NotBlank` 는 `visible` 을 보지 않는다 — 숨긴 섹션도 빈 칸이면 400 이다. */
-  it('숨긴 섹션의 빈 칸도 막고, 어느 섹션인지 밝힌다', () => {
+  /* 결과 사례의 섹션 설명은 편집 폼에 입력이 없다. 요구하면 채울 방법이 없다 (LC-3343). */
+  it('결과 사례의 섹션 설명이 비어도 막지 않는다', () => {
+    const template = base();
+    template.results.subtitle = '';
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  /*
+    숨긴 섹션은 막지 않는다. 서버 `@NotBlank` 가 `visible` 을 보지 않아 빈 칸이면
+    400 이지만, 화면이 숨긴 섹션의 입력을 잠그므로 여기서 막으면 멘토가 채울 방법이
+    없는 덫이 된다. 서버도 `visible` 이 꺼진 섹션은 검사하지 않는다 (LC-3289).
+  */
+  it('숨긴 섹션의 빈 칸은 막지 않는다', () => {
     const template = base();
     template.video.visible = false;
+    template.video.caption = '   ';
+    expect(describeAutosaveBlock(template)).toBeNull();
+  });
+
+  it('켜진 섹션의 빈 칸은 그대로 막는다', () => {
+    const template = base();
+    template.video.visible = true;
     template.video.caption = '   ';
     expect(describeAutosaveBlock(template)).toBe(
       '「소개 영상」의 영상 안내 문구를 채우면 저장돼요',
@@ -111,6 +135,14 @@ describe('describeAutosaveBlock', () => {
     expect(describeAutosaveBlock(template)).toBe(
       '「소개 영상」의 영상 주소를 YouTube 주소로 고치면 저장돼요',
     );
+  });
+
+  /* LC-3311 — 끈 섹션의 주소는 보낼 때 비우므로 막지 않는다. 입력이 잠겨 고칠 수 없다. */
+  it('숨긴 섹션의 YouTube 가 아닌 주소는 막지 않는다', () => {
+    const template = base();
+    template.video.visible = false;
+    template.video.videoUrl = 'https://vimeo.com/123';
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 
   it('영상 주소는 비워 둘 수 있다', () => {
@@ -137,5 +169,34 @@ describe('describeAutosaveBlock', () => {
     expect(describeAutosaveBlock(template)).toBe(
       '「취업 성공 전략」의 섹션 설명을 채우면 저장돼요',
     );
+  });
+
+  /*
+    서버 `StrategyRequest.title` 과 `StrategyPointRequest.title` 은 `@Size(max = 255)` 다.
+    게이트가 길이를 안 보면 보내서 400 을 받는데, 자동 저장은 실패해도 값이 그대로면
+    다시 시도하지 않아 멘토가 더 치기 전까지 저장이 멈춘다.
+  */
+  it('취업 성공 전략의 섹션 제목이 255자를 넘으면 줄이라고 알린다', () => {
+    const template = base();
+    template.strategy.title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBe(
+      '「취업 성공 전략」의 섹션 제목을 255자 이내로 줄이면 저장돼요',
+    );
+  });
+
+  it('Point 제목이 255자를 넘어도 잡는다', () => {
+    const template = base();
+    template.strategy.points[0].title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBe(
+      '「취업 성공 전략」의 1번 Point 제목을 255자 이내로 줄이면 저장돼요',
+    );
+  });
+
+  /* 숨긴 섹션은 길이도 보지 않는다 — 보낼 때 기본 문구로 갈아끼우기 때문이다. */
+  it('숨긴 섹션은 길이도 검사하지 않는다', () => {
+    const template = base();
+    template.strategy.visible = false;
+    template.strategy.title = 'ㄱ'.repeat(256);
+    expect(describeAutosaveBlock(template)).toBeNull();
   });
 });

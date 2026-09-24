@@ -1,6 +1,11 @@
 import { SETTINGS_TABS, type SettingsTabId } from '../tabs';
 
 interface SettingsTabsProps {
+  /**
+   * 들어갈 수 있는 스텝(`unlockedSettingsTabs`). 여기 없는 탭은 **보이되 잠긴다** —
+   * 첫 세팅에서 아직 차례가 오지 않은 단계다. 안 넘기면 전부 열려 있는 것으로 본다.
+   */
+  unlockedTabs?: ReadonlySet<SettingsTabId>;
   activeTab: SettingsTabId;
   /** 완료 표시를 붙일 탭. 판정은 `tabs.ts` 의 `isDetailTabComplete` 가 한다. */
   completedTabs: ReadonlySet<SettingsTabId>;
@@ -47,6 +52,7 @@ const CheckIcon = () => (
  * 같은 말을 두 번 읽는다.
  */
 const SettingsTabs = ({
+  unlockedTabs,
   activeTab,
   completedTabs,
   onChange,
@@ -60,18 +66,23 @@ const SettingsTabs = ({
       const isActive = tab.id === activeTab;
       const requiredLabel = tab.required ? '필수' : '선택';
       const isComplete = completedTabs.has(tab.id);
+      /* 잠긴 스텝은 보이되 들어갈 수 없다. 안 넘겨주면 전부 열린 것으로 본다. */
+      const isLocked = unlockedTabs ? !unlockedTabs.has(tab.id) : false;
       return (
         <button
           key={tab.id}
           type="button"
           role="tab"
           aria-selected={isActive}
-          aria-label={`${tab.label} ${requiredLabel}${isComplete ? ' 완료' : ''}`}
+          disabled={isLocked}
+          aria-label={`${tab.label} ${requiredLabel}${isComplete ? ' 완료' : ''}${
+            isLocked ? ' 잠김' : ''
+          }`}
           onClick={() => onChange(tab.id)}
-          className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-sm transition-colors ${
+          className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isActive
               ? 'border-primary text-primary font-semibold'
-              : 'border-transparent font-medium text-gray-500 hover:text-gray-700'
+              : 'border-transparent font-medium text-gray-500 enabled:hover:text-gray-700'
           }`}
         >
           {tab.label}

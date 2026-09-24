@@ -14,6 +14,9 @@ export interface AutosaveResult {
  * 보내 봐야 400 이 온다. 이걸 `failed` 와 같은 말로 묶으면 멘토는 고장난 줄 알고 멈춘다.
  */
 export type AutosaveStatus =
+  /** 보낼 것이 없다. 이번 세션에서 한 번도 저장하지 않았다. */
+  | { kind: 'clean' }
+  /** 보낼 것이 없다. 방금 저장이 성공했다. */
   | { kind: 'saved' }
   | { kind: 'pending' }
   | { kind: 'saving' }
@@ -23,8 +26,14 @@ export type AutosaveStatus =
 /** 하단 바 왼쪽 한 줄. 무엇이 왜 멈춰 있는지까지 한 문장에 담는다. */
 export const autosaveMessage = (status: AutosaveStatus): string => {
   switch (status.kind) {
+    /*
+      "아직 저장한 적 없음" 과 "방금 저장함" 을 한 문구로 묶지 않는다. 화면을 열자마자
+      `저장된 상태예요.` 가 뜨면 손대지도 않았는데 방금 저장이 일어난 것처럼 읽힌다.
+     */
+    case 'clean':
+      return '변경사항이 없어요.';
     case 'saved':
-      return '저장된 상태예요.';
+      return '저장했어요.';
     case 'pending':
       return '입력을 멈추면 자동으로 저장돼요.';
     case 'saving':
@@ -55,6 +64,9 @@ export const isAutosaveAttention = (status: AutosaveStatus): boolean =>
  * - **실패하면 재시도하지 않는다.** 값이 그대로면 결과도 그대로다. 멘토가 다시 고칠 때
  *   자연히 재시도된다 — 같은 요청을 1.5초마다 두들기지 않는다
  */
+/** 실패한 저장을 다시 시도하기까지 기다리는 시간. 디바운스보다 길게 둔다. */
+const RETRY_DELAY_MS = 5000;
+
 export const useAutosave = ({
   fingerprint,
   isDirty,
@@ -72,31 +84,51 @@ export const useAutosave = ({
 }): AutosaveStatus => {
   const [isSaving, setIsSaving] = useState(false);
   const [failure, setFailure] = useState<{ reason?: string } | null>(null);
+  /** 이번 세션에서 저장이 한 번이라도 성공했는지. 첫 진입 문구를 가르는 값이다. */
+  const [hasSaved, setHasSaved] = useState(false);
 
   /* 매 렌더 새 함수가 와도 타이머를 다시 걸지 않는다 — 부를 때 최신이면 된다. */
   const saveRef = useRef(save);
   saveRef.current = save;
   /* 저장 요청을 한 줄로 세우는 꼬리. 앞의 것이 끝나야 다음이 나간다. */
   const queueRef = useRef<Promise<unknown>>(Promise.resolve());
+  /* 재시도를 이미 한 번 쓴 값. 같은 값으로 두 번은 시도하지 않는다. */
+  const retriedForRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isDirty || blockedReason) return;
-    setFailure(null);
+
+    /*
+      실패했다고 영영 멈추지 않는다. 값이 그대로면 결과도 그대로지만, 네트워크
+      일시 장애는 값의 문제가 아니다. 멘토가 더 치지 않으면 마지막 편집이 그대로
+      사라지므로 한 번은 더 시도한다.
+
+      **값 하나당 한 번뿐이다.** 실패할 때마다 `failure` 가 새 객체로 바뀌어 이펙트가
+      다시 도는데, 횟수를 세지 않으면 같은 요청을 5초마다 영원히 두들기게 된다.
+     */
+    const isRetry = failure !== null;
+    if (isRetry && retriedForRef.current === fingerprint) return;
+    if (isRetry) retriedForRef.current = fingerprint;
+
+    const delayMs = isRetry ? RETRY_DELAY_MS : delay;
 
     const timer = setTimeout(() => {
       queueRef.current = queueRef.current.then(async () => {
+        setFailure(null);
         setIsSaving(true);
         try {
           const result = await saveRef.current();
           setFailure(result.ok ? null : { reason: result.reason });
+          if (result.ok) setHasSaved(true);
         } finally {
           setIsSaving(false);
         }
       });
-    }, delay);
+    }, delayMs);
 
     return () => clearTimeout(timer);
-  }, [fingerprint, isDirty, blockedReason, delay]);
+    /* `failure` 를 의존성에 넣어 실패 직후 한 번 더 돌게 한다. 횟수는 위에서 막는다. */
+  }, [fingerprint, isDirty, blockedReason, delay, failure]);
 
   /*
     상태를 메모한다. 매 렌더 새 객체를 돌려주면, 이 값을 위로 올려 하단 바를 그리는
@@ -104,9 +136,14 @@ export const useAutosave = ({
    */
   return useMemo((): AutosaveStatus => {
     if (isSaving) return { kind: 'saving' };
-    if (!isDirty) return { kind: 'saved' };
-    if (failure) return { kind: 'failed', reason: failure.reason };
+    if (!isDirty) return hasSaved ? { kind: 'saved' } : { kind: 'clean' };
+    /*
+      막힌 이유가 있으면 그것을 먼저 말한다. 실패를 앞에 두면 길이 초과로 실패한 뒤
+      제목을 지웠을 때 비어 있는데도 "너무 깁니다" 가 계속 남는다 — 지금 해야 할 일은
+      "채우기" 인데 화면은 "줄이기" 를 말하게 된다.
+     */
     if (blockedReason) return { kind: 'blocked', reason: blockedReason };
+    if (failure) return { kind: 'failed', reason: failure.reason };
     return { kind: 'pending' };
-  }, [isSaving, isDirty, failure, blockedReason]);
+  }, [isSaving, isDirty, failure, blockedReason, hasSaved]);
 };

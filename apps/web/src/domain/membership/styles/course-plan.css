@@ -1,25 +1,34 @@
 /* =====================================================================
-   하반기 공채 13주 합격 플랜 — 전체 플랜(매트릭스) / 월별 플랜(타임라인) / 토글
+   하반기 공채 13주 합격 플랜 — 전체 플랜(매트릭스) / 주 단위(10주 목록) / 토글
    모든 셀렉터는 .membership-root 스코프 하위(전역 누수 금지).
    기존 --lc-* / --g* / --tint-* / --num 토큰 재사용.
    ===================================================================== */
 
-/* 시안 6-0 은 흰 배경, 6-1(플레이북 본문)은 연한 파랑이다. 한 섹션 안에서 배경이 갈리므로
-   밴드 두 개로 나누고 섹션 자체에는 배경·패딩을 두지 않는다. */
+/* 시안 9 는 헤더부터 매트릭스까지 한 배경(#f8faff)이다. 밴드 구분은 남기되 색은 같다 —
+   예전 시안(6-0/6-1)에서는 흰 배경과 연한 파랑으로 갈렸다. */
 .membership-root .courseplan {
   padding: 0;
-  background: #fff;
+  background: var(--bg-cool);
 }
 .membership-root .cp-head-band {
-  background: #fff;
-  padding: 140px 0 48px;
+  background: var(--bg-cool);
+  padding: 140px 0 24px;
 }
 .membership-root .cp-body-band {
   background: var(--bg-cool);
-  padding: 64px 0 140px;
+  padding: 0 0 140px;
 }
 .membership-root .cp-head-band .sec-head {
   margin-bottom: 0;
+}
+/* 시안 9 의 아이브로우는 알약이 아니라 주황 글자다. 페이지 공통 .eyebrow(파란 알약)를
+   이 섹션에서만 되돌린다. */
+.membership-root .courseplan .sec-head .eyebrow {
+  background: none;
+  padding: 0;
+  color: #f36d32;
+  font-size: 14px;
+  letter-spacing: 0.02em;
 }
 /* 헤드라인 강조 어절 — 시안 6-0.png 의 파란 "올인원 패스"·"모든 혜택" */
 .membership-root .courseplan .sec-head h2 .hl {
@@ -63,7 +72,8 @@
   background: #fff;
   border: 1.5px solid var(--g300);
   border-radius: 999px;
-  margin: 0 auto 30px;
+  /* 위 여백 — 바로 위 유형 카드(.cp-types)에 붙어 보여서 띄운다. (LC-3294) */
+  margin: 22px auto 30px;
 }
 .membership-root .cp-toggle-wrap {
   display: flex;
@@ -316,6 +326,11 @@
   color: var(--g500);
   word-break: keep-all;
 }
+/* 일정(날짜·요일·시각)은 갈리지 않게 한 덩어리로 둔다. 날짜와 시각이 다른 줄로
+   떨어지면 다른 날 일정처럼 읽힌다. 셀 폭 142px 에 이 텍스트는 78px 이라 넘치지 않는다. */
+.cpm-cell-when {
+  white-space: nowrap;
+}
 .membership-root .cpm-cell[data-provided='true'] .cpm-cell-title {
   color: var(--lc-ink);
 }
@@ -336,21 +351,60 @@
   border-radius: 999px;
   white-space: nowrap;
 }
-.membership-root .cpm-cell-tag[data-tag='free'] {
-  color: #2f5bd0;
-  background: var(--tint-blue);
+/*
+ * 태그 색은 셀 배지와 범례 칩, 주 단위 「함께합니다」 항목이 **같은 규칙**을 쓴다.
+ * 예전에는 두 벌로 나뉘어 있어 태그를 늘렸을 때 셀에는 색이 붙고 범례에는 안 붙어
+ * 어긋났다. (LC-3294)
+ * 색은 플레이북 시안(image.png) 칩에서 뽑았다. 채운 색은 챌린지뿐이다.
+ */
+.membership-root .cpm-cell-tag[data-tag='free'],
+.membership-root .cpm-note-chip[data-tag='free'],
+.membership-root .cpw-support[data-tag='free'] {
+  color: #2a6b45;
+  background: #e9f7ee;
 }
-.membership-root .cpm-cell-tag[data-tag='template'] {
-  color: #15803d;
-  background: #dcf3e4;
+.membership-root .cpm-cell-tag[data-tag='template'],
+.membership-root .cpm-note-chip[data-tag='template'],
+.membership-root .cpw-support[data-tag='template'] {
+  color: #3648ae;
+  background: #edf1ff;
 }
-.membership-root .cpm-cell-tag[data-tag='checklist'] {
+.membership-root .cpm-cell-tag[data-tag='checklist'],
+.membership-root .cpm-note-chip[data-tag='checklist'],
+.membership-root .cpw-support[data-tag='checklist'] {
   color: #b45309;
   background: #fcefd6;
 }
-.membership-root .cpm-cell-tag[data-tag='challenge'] {
+.membership-root .cpm-cell-tag[data-tag='challenge'],
+.membership-root .cpm-note-chip[data-tag='challenge'],
+.membership-root .cpw-support[data-tag='challenge'] {
   color: #fff;
-  background: var(--lc-blue);
+  background: #4b5fe3;
+}
+/*
+ * LC-3294 로 늘어난 태그 3종. 시안 8 범례는 색을 역할로 묶는다 —
+ * 자료 계열(가이드북·템플릿·체크리스트·VOD)은 은은한 틴트,
+ * 렛츠커리어가 직접 함께하는 계열도 챌린지만 채우고 나머지는 틴트다.
+ * 색이 없으면 그 행만 기본색으로 떨어져 표 안에서 따로 논다.
+ */
+.membership-root .cpm-cell-tag[data-tag='vod'],
+.membership-root .cpm-note-chip[data-tag='vod'],
+.membership-root .cpw-support[data-tag='vod'] {
+  color: #6a2fa8;
+  background: #f4edfc;
+}
+.membership-root .cpm-cell-tag[data-tag='live'],
+.membership-root .cpm-note-chip[data-tag='live'],
+.membership-root .cpw-support[data-tag='live'] {
+  /* 시안 8 은 연한 크림 배경에 주황 글씨다. 채운 주황이 아니다. */
+  color: #d1601f;
+  background: #fdeee0;
+}
+.membership-root .cpm-cell-tag[data-tag='mentoring'],
+.membership-root .cpm-note-chip[data-tag='mentoring'],
+.membership-root .cpw-support[data-tag='mentoring'] {
+  color: #a82657;
+  background: #fdebf2;
 }
 /* 하단 안내 — 흐리게: 태그 없는 단계는 직접 준비 영역 */
 .membership-root .cpm-note {
@@ -371,192 +425,272 @@
   border-radius: 999px;
   margin: 0 2px;
 }
-.membership-root .cpm-note-chip[data-tag='free'] {
-  color: #2f5bd0;
-  background: var(--tint-blue);
-}
-.membership-root .cpm-note-chip[data-tag='template'] {
-  color: #15803d;
-  background: #dcf3e4;
-}
-.membership-root .cpm-note-chip[data-tag='checklist'] {
-  color: #b45309;
-  background: #fcefd6;
-}
-.membership-root .cpm-note-chip[data-tag='challenge'] {
-  color: #fff;
-  background: var(--lc-blue);
-}
 
 /* =====================================================================
-   월별 플랜 — 타임라인 (기존 HTML wk-* 디자인 그대로 구현)
-   --m-accent / --m-badge-* 는 각 월 블록 래퍼에 인라인 주입.
+   주 단위로 보기 — 10주 목록 (시안 image copy.png · image copy 2.png)
+   접두사 cpw-. membership-legacy 의 같은 이름 CSS 가 옛 wk-* 규칙을 갖고 있어
+   이름을 겹치지 않게 둔다.
    ===================================================================== */
-.membership-root .wk-timeline {
-  max-width: 1080px;
+.membership-root .cpw {
+  max-width: 1120px;
   margin: 0 auto;
 }
-/* 월 블록 스택(데스크톱). 모바일에서 가로 scroll-snap 트랙으로 전환된다. */
-.membership-root .wk-track {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-bottom: 30px;
+
+/* 구간 색 — 주차 카드 막대(--cpw-bar)와 흐름 막대(--cpw-fill). 시안 원본에서 뽑았다 */
+.membership-root .cpw [data-phase='documents'] {
+  --cpw-bar: #4b5fe3;
+  --cpw-fill: #3648ae;
 }
-.membership-root .wk-month {
-  background: #fff;
-  border: 1px solid #e7e9f0;
-  border-radius: 22px;
-  padding: 26px 28px 28px;
+.membership-root .cpw [data-phase='weapons'] {
+  --cpw-bar: #0c9971;
+  --cpw-fill: #0c9971;
+}
+.membership-root .cpw [data-phase='apply'] {
+  --cpw-bar: #e8802a;
+  --cpw-fill: #cf6b0b;
 }
 
-.membership-root .wk-mhead {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-.membership-root .wk-mtitle {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  min-width: 0;
-}
-.membership-root .wk-mon {
-  font-family: var(--num);
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--m-accent);
-  flex: 0 0 auto;
-}
-.membership-root .wk-mtitle-txt {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-.membership-root .wk-mtitle b {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--lc-ink);
-}
-.membership-root .wk-mtitle .wk-msub {
-  font-size: 14px;
-  color: var(--g500);
-  font-weight: 600;
-}
-.membership-root .wk-badge {
-  font-family: var(--num);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 6px 14px;
-  border-radius: 999px;
-  flex: 0 0 auto;
-  background: var(--m-badge-bg);
-  color: var(--m-badge-fg);
-}
-.membership-root .wk-line {
-  height: 3px;
-  border-radius: 2px;
-  margin: 14px 0 18px;
-  background: var(--m-accent);
-}
-.membership-root .wk-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-.membership-root .wk-card {
+/* 10주 흐름 한눈에 보기 */
+.membership-root .cpw-flow {
   background: #fff;
-  border: 1px solid #e7e9f0;
-  border-left: 4px solid var(--m-accent);
-  border-radius: 14px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+  border: 1px solid #eaeaf3;
+  border-radius: 18px;
+  padding: 20px 20px 16px;
 }
-.membership-root .wk-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.membership-root .wk-no {
-  font-family: var(--num);
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--m-accent);
-  letter-spacing: -0.02em;
-}
-.membership-root .wk-wk {
-  font-family: var(--num);
+.membership-root .cpw-flow-label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--g500);
-  letter-spacing: 0.06em;
+  color: #8a8aa3;
 }
-.membership-root .wk-ch {
-  margin-left: auto;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 7px;
-  background: var(--m-accent);
+.membership-root .cpw-flow-list {
+  display: grid;
+  /* 막대 폭을 주차 수(3·4·3)에 맞춘다 */
+  grid-template-columns: 3fr 4fr 3fr;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.membership-root .cpw-flow-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px 14px;
+  border-radius: 10px;
+  background: var(--cpw-fill);
   color: #fff;
 }
-.membership-root .wk-card-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--lc-ink);
-  line-height: 1.35;
-  word-break: keep-all;
+.membership-root .cpw-flow-range {
+  font-size: 11.5px;
+  font-weight: 600;
+  opacity: 0.85;
 }
-.membership-root .wk-card-desc {
-  font-size: 13px;
-  color: var(--g600);
-  line-height: 1.5;
+.membership-root .cpw-flow-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+.membership-root .cpw-flow-desc {
+  font-size: 12px;
+  opacity: 0.85;
   word-break: keep-all;
 }
 
-/* "한 줄 동선" 푸터 — 페이지 다른 영역과 동일한 라이트 카드 톤(연한 틴트) */
-.membership-root .wk-flow {
-  background: var(--bg-cool);
-  border: 1px solid #e7e9f0;
-  border-radius: 20px;
-  padding: 30px 32px;
-  margin-top: 6px;
-  color: var(--lc-ink);
-}
-.membership-root .wk-flow p {
-  font-size: 14.5px;
-  color: var(--g600);
-  font-weight: 500;
-  line-height: 1.85;
-}
-.membership-root .wk-flow-label {
-  display: inline-block;
-  font-weight: 800;
+/* 월 구분선 — 글자 오른쪽으로 가는 선 */
+.membership-root .cpw-month {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 12px;
   font-size: 13px;
-  color: var(--lc-blue);
-  background: var(--tint-blue);
-  padding: 4px 12px;
-  border-radius: 999px;
-  margin-right: 12px;
+  font-weight: 700;
+  color: #8a8aa3;
 }
-.membership-root .wk-flow-chip {
+.membership-root .cpw-month::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e2ec;
+}
+
+/* 시작 전 한 줄 — 라이브 세미나 규칙의 크림색 */
+.membership-root .cpw-prestart {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 15px 18px;
+  border: 1px solid #f6e2cd;
+  border-radius: 12px;
+  background: #fdf5ec;
+  font-size: 14px;
+  color: var(--g600);
+  word-break: keep-all;
+}
+.membership-root .cpw-prestart-label {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #d1601f;
+}
+.membership-root .cpw-prestart-title {
   color: var(--lc-ink);
-  font-weight: 700;
-  white-space: nowrap;
+  font-weight: 600;
 }
-.membership-root .wk-flow-chip:last-child {
-  color: var(--lc-orange-deep);
+
+/* 주차 카드 — 왼쪽 막대 색은 구간을 따른다 */
+.membership-root .cpw-week {
+  display: grid;
+  grid-template-columns: 125px 1fr 300px;
+  column-gap: 24px;
+  margin-bottom: 10px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #eaeaf3;
+  border-left: 4px solid var(--cpw-bar);
+  border-radius: 16px;
+}
+.membership-root .cpw-week-when {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.membership-root .cpw-week-no {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lc-ink);
+}
+.membership-root .cpw-week-range {
+  /* 데이터의 '9.21 월 – 9.27 일' 을 끝 날짜 앞에서 줄바꿈한다 */
+  white-space: pre-line;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #8a8aa3;
+}
+.membership-root .cpw-week-title {
+  font-size: 16px;
   font-weight: 800;
+  color: var(--lc-ink);
+  word-break: keep-all;
 }
-.membership-root .wk-flow-arrow {
-  color: var(--g500);
+.membership-root .cpw-week-todos {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.membership-root .cpw-week-todos li {
+  position: relative;
+  padding-left: 13px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--g600);
+  word-break: keep-all;
+}
+.membership-root .cpw-week-todos li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--g300);
+}
+.membership-root .cpw-week-output {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 6px 11px;
+  border-radius: 8px;
+  background: #f3f4fa;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--g600);
+}
+.membership-root .cpw-week-output strong {
   font-weight: 700;
+  color: var(--lc-ink);
+}
+
+/* 렛츠커리어가 함께합니다 — 항목 색은 위 태그 색 규칙(.cpw-support[data-tag])이 준다 */
+.membership-root .cpw-supports-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8a8aa3;
+}
+.membership-root .cpw-support-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.membership-root .cpw-support {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 13px 11px;
+  border-radius: 10px;
+  word-break: keep-all;
+}
+.membership-root .cpw-support-tag {
+  font-size: 11px;
+  font-weight: 600;
+}
+.membership-root .cpw-support-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.membership-root .cpw-support-speaker {
+  font-size: 12px;
+  color: var(--g600);
+}
+/* 라이브 세미나는 머리글만 주황이고 제목은 검정이다 */
+.membership-root .cpw-support[data-tag='live'] .cpw-support-title {
+  color: var(--lc-ink);
+}
+
+@media (max-width: 920px) {
+  .membership-root .cpw-week {
+    grid-template-columns: 1fr;
+    row-gap: 14px;
+    padding: 20px;
+  }
+  /* 주차와 기간을 한 줄로 */
+  .membership-root .cpw-week-when {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .membership-root .cpw-week-range {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 600px) {
+  .membership-root .cpw-flow {
+    padding: 16px;
+  }
+  .membership-root .cpw-flow-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .membership-root .cpw-prestart {
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+  }
+  .membership-root .cpw-week {
+    padding: 18px 16px;
+  }
+  .membership-root .cpw-week-todos li {
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .membership-root .cpw-week-todos li + li {
+    margin-top: 4px;
+  }
 }
 
 /* 플레이북 안내 풋노트 */
@@ -605,53 +739,19 @@
   }
 }
 
-/* 본문 도입부 + 매트릭스 캡션 — 시안 6-1.png */
-.membership-root .cp-lead {
-  max-width: 900px;
-  margin: 0 auto 30px;
-  text-align: center;
-}
-.membership-root .cp-lead h3 {
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.32;
-}
-.membership-root .cp-lead p {
-  margin-top: 14px;
-  font-size: 16px;
-  color: var(--g600);
-  font-weight: 500;
-  word-break: keep-all;
-}
+/* 매트릭스 캡션 — 시안 9 는 유형 문구와 세미나 안내를 한 줄 작은 회색 글로 잇는다 */
 .membership-root .cp-matrix-head {
-  max-width: 900px;
+  max-width: 1080px;
   margin: 30px auto 26px;
   text-align: center;
-}
-.membership-root .cp-matrix-head h4 {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.membership-root .cp-matrix-head p {
-  margin-top: 10px;
   font-size: 15px;
+  line-height: 1.6;
   color: var(--g600);
   font-weight: 500;
   word-break: keep-all;
 }
 @media (max-width: 600px) {
-  .membership-root .cp-lead h3 {
-    font-size: 21px;
-  }
-  .membership-root .cp-lead p {
-    font-size: 14px;
-  }
-  .membership-root .cp-matrix-head h4 {
-    font-size: 17px;
-  }
-  .membership-root .cp-matrix-head p {
+  .membership-root .cp-matrix-head {
     font-size: 13.5px;
   }
 }
@@ -687,13 +787,6 @@
   }
   .membership-root .cpm-step-tag {
     display: block;
-  }
-}
-
-/* 월별: 4열 → 2열 */
-@media (max-width: 920px) {
-  .membership-root .wk-cards {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -733,37 +826,87 @@
     flex: 0 0 88%;
     scroll-snap-align: center;
   }
-  /* 월별: 2열 → 1열, 큰 숫자 축소 */
-  .membership-root .wk-cards {
-    grid-template-columns: 1fr;
+}
+
+/* 주차·날짜 (시안 8 STEP 헤더 3번째 줄). 단계명보다 한 단계 약하게 둔다. */
+.membership-root .cpm-step-range {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--lc-ink-40, #8b8d97);
+  letter-spacing: -0.01em;
+}
+
+/* 유형 안내 2칸 (시안 8 상단). 고르는 컨트롤이 아니라 자기 상황을 확인하는 자리다. */
+.membership-root .cp-types {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+  max-width: 720px;
+  margin: 28px auto 0;
+}
+@media (min-width: 601px) {
+  .membership-root .cp-types {
+    grid-template-columns: 1fr 1fr;
   }
-  /* 월별: 월(月) 블록을 좌우 스와이프 캐러셀로 (도트는 .cp-dots 공용) */
-  .membership-root .wk-track {
-    flex-direction: row;
-    gap: 12px;
-    margin-bottom: 28px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-padding-inline: 16px;
-  }
-  .membership-root .wk-track::-webkit-scrollbar {
-    display: none;
-  }
-  .membership-root .wk-month {
-    flex: 0 0 88%;
-    scroll-snap-align: center;
-    padding: 22px 20px 24px;
-  }
-  .membership-root .wk-mon {
-    font-size: 28px;
-  }
-  .membership-root .wk-mhead {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .membership-root .wk-flow {
-    padding: 24px 22px;
-  }
+}
+.membership-root .cp-type {
+  border: 1px solid var(--lc-line, #e7e7ee);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fff;
+  text-align: left;
+  /* 버튼이라 브라우저 기본 글꼴·글자색을 지운다 */
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+/* 선택된 유형 — 시안 image.png 의 진한 보라 채움 */
+.membership-root .cp-type[aria-pressed='true'] {
+  background: #4138a3;
+  border-color: var(--lc-primary, #4d55f5);
+}
+.membership-root .cp-type-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lc-primary, #4d55f5);
+}
+.membership-root .cp-type[aria-pressed='true'] .cp-type-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+.membership-root .cp-type-title {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.membership-root .cp-type[aria-pressed='true'] .cp-type-title {
+  color: #fff;
+}
+.membership-root .cp-type-desc {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--lc-ink-40, #8b8d97);
+}
+.membership-root .cp-type[aria-pressed='true'] .cp-type-desc {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/*
+ * 라이브 세미나 행 (시안 8 맨 아래).
+ * 셀 배경이 연한 크림이고 글씨는 검정, 일시만 주황이다.
+ * owner=challenge 의 기본 피치 톤보다 더 옅다 — 별도로 지정한다.
+ */
+.membership-root .cpm-cell[data-tag='live'] {
+  background: #fdf5ec;
+  border-color: #f6e2cd;
+}
+.membership-root .cpm-cell[data-tag='live'] .cpm-cell-desc {
+  color: #d1601f;
+  font-weight: 700;
 }

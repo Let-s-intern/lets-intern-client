@@ -28,14 +28,16 @@ describe('PlansSection', () => {
     window.matchMedia = jest.fn().mockReturnValue({ matches: true });
   });
 
-  it('시안 헤더 카피를 렌더한다', () => {
+  it('시안 15 헤더 카피를 렌더한다', () => {
     const { container } = render(<PlansSection />);
-    expect(screen.getByText('가격 플랜')).toBeInTheDocument();
-    // 제목은 의미 단위 두 줄로 나뉘어 있다(base.css 의 .brk 가 폭에 따라 붙인다).
+    // 섹션 헤더와 가격 카드 두 곳에 나온다(시안 15).
+    expect(screen.getAllByText('MARKETING ALL-IN-ONE PASS')).toHaveLength(2);
     expect(container.querySelector('.sec-head h2')?.textContent).toBe(
-      '공채 준비에 필요한 것만 모아,부담은 줄였어요',
+      PLAN_NAME,
     );
-    expect(screen.getByText(PLAN_NAME)).toBeInTheDocument();
+    expect(
+      screen.getByText('인턴·신입 마케팅 취준생 전용'),
+    ).toBeInTheDocument();
   });
 
   it('포함 혜택을 데이터 개수만큼 렌더한다', () => {
@@ -69,7 +71,9 @@ describe('PlansSection', () => {
     });
     render(<PlansSection />);
 
-    expect(screen.getByText('9월 30일까지 이용')).toBeInTheDocument();
+    expect(
+      screen.getByText('구매 시점부터 9월 30일까지 이용'),
+    ).toBeInTheDocument();
   });
 
   it('할인이 성립하지 않으면 할인율 배지를 그리지 않는다', () => {

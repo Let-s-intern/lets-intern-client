@@ -13,13 +13,28 @@
  * 어드민이 아니라 이 파일 수정으로 처리된다. 챌린지가 연결되면 어드민 값이 이긴다.
  */
 export const PLAN_PRICE = {
-  /** 정가 (취소선) — 개별 구매 합계 */
-  original: 938300,
-  /** 판매가. 얼리버드(169,900원)는 2026-08-27 로 종료됐다 */
-  sale: 184000,
+  /**
+   * 정가 (취소선). 시안 15 의 가격 카드에는 취소선도 할인 배지도 없어서 판매가와 같은
+   * 값을 둔다 — `getDiscountRate` 가 0 을 돌려주고 호출부가 배지를 렌더하지 않는다.
+   * 없는 정가를 지어내면 화면에 거짓 할인율이 뜬다.
+   */
+  original: 175900,
+  /** 판매가 (시안 1 히어로 CTA·시안 15 가격 카드) */
+  sale: 175900,
 } as const;
 
-export const PLAN_NAME = '하반기 공채 준비 올인원 패스';
+export const PLAN_NAME = '마케팅 취준 올인원 패스';
+
+/**
+ * 하단 고정 신청 바 문구 (개편 시안).
+ * 상품명 대신 "지금 결제하면 무엇이 해결되는지" 를 말한다.
+ */
+export const APPLY_BAR = {
+  title: '10주 동안 무엇부터 준비할지 고민하지 마세요',
+  sub: '마케팅 취업에 필요한 경험 정리부터 서류·포트폴리오·면접까지',
+  /** 가격은 어드민 값이 들어와 `{가격}원으로 시작하기` 가 된다 */
+  ctaSuffix: '원으로 시작하기',
+} as const;
 
 /**
  * VOD 옵션 표시용 가격 폴백 (시안 3.png 기준).
@@ -50,15 +65,15 @@ export interface PlanBenefit {
   title: string;
 }
 
-/**
- * 포함 혜택 (시안 3.png 좌측 ALL-IN-ONE PASS 목록).
- * "렛츠커리어 커뮤니티"는 뺐다 — 챌린지 참여자도 들어올 수 있어 멤버십 전용 혜택이 아니다.
- */
+/** 포함 혜택 (시안 15 가격 카드 좌측 목록, 2열 7줄). */
 export const PLAN_BENEFITS: PlanBenefit[] = [
-  { icon: 'flag', title: '렛츠커리어 챌린지 10종 베이직 플랜 참여' },
-  { icon: 'bookOpen', title: '렛츠커리어 가이드북 6종 제공' },
-  { icon: 'workflow', title: '이대로만 따라하면 합격 13주 플레이북' },
-  { icon: 'userRoundCheck', title: '1:1 LIVE 멘토링 2회 50%할인권' },
+  { icon: 'flag', title: '챌린지 10종 베이직' },
+  { icon: 'bookOpen', title: '가이드북 7종' },
+  { icon: 'workflow', title: '10주 합격 플레이북' },
+  { icon: 'users', title: '현직자 VOD 3종' },
+  { icon: 'users', title: '특별 LIVE 세미나 2종' },
+  { icon: 'userRoundCheck', title: '쥬디멘토의 LIVE 클리닉' },
+  { icon: 'userRoundCheck', title: '멘토링 50% 쿠폰 2장' },
 ];
 
 /**

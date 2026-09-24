@@ -3,8 +3,10 @@ import dayjs from '@/lib/dayjs';
 import { ProgramType } from '@/types/common';
 import { getProgramPathname } from '@/utils/url';
 
+import type { LiveMentoringOpening } from '@/api/live-mentoring/liveMentoringSchema';
 import type { MentorProgramListItem } from '@/api/mentor/mentorSchema';
 
+import MentorLiveMentoringItem from '../ui/MentorLiveMentoringItem';
 import type { MentorProgramItemProps } from '../ui/MentorProgramItem';
 import MentorProgramContainer from './MentorProgramContainer';
 
@@ -31,21 +33,32 @@ const toProgramItem = (
 });
 
 interface MentorProgramSectionProps {
+  /** 이 멘토의 OPEN 1:1 멘토링. 있으면 모집 중인 프로그램의 첫 카드가 된다. */
+  liveMentoringOpening?: LiveMentoringOpening | null;
   proceedingProgramList: MentorProgramListItem[];
   postProgramList: MentorProgramListItem[];
 }
 
 const MentorProgramSection = ({
+  liveMentoringOpening,
   proceedingProgramList,
   postProgramList,
 }: MentorProgramSectionProps) => (
   <section className="flex w-full flex-col gap-20">
     <MentorProgramContainer
       title="모집 중인 프로그램"
-      count={proceedingProgramList.length}
+      count={proceedingProgramList.length + (liveMentoringOpening ? 1 : 0)}
       programs={proceedingProgramList.map((program) =>
         toProgramItem(program, false),
       )}
+      leadingItem={
+        liveMentoringOpening && (
+          <MentorLiveMentoringItem
+            opening={liveMentoringOpening}
+            className="mentor_ongoing_program"
+          />
+        )
+      }
       emptyText="현재 모집 중인 프로그램이 없습니다."
       gaItem="mentor_ongoing_program"
       gaTitle="멘토 모집 중인 프로그램"

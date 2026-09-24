@@ -369,7 +369,12 @@ describe('useCloseLiveMentoringOpeningMutation', () => {
 });
 
 describe('useCreateLiveMentoringOpeningMutation', () => {
-  it('개설 후 오픈현황·설정 캐시를 함께 invalidate 한다', async () => {
+  /*
+    템플릿 캐시까지 비워야 한다. 첫 개설 전에는 템플릿 조회가 404 이고 그 실패가
+    캐시에 남는데(4xx 는 재시도하지 않는다), 개설로 서버가 템플릿을 만들어도
+    무효화하지 않으면 상세 스텝이 계속 실패 화면을 그린다 — 새로고침해야 보였다.
+  */
+  it('개설 후 오픈현황·설정·템플릿 캐시를 함께 invalidate 한다', async () => {
     axiosMock.post.mockResolvedValue({
       data: { data: { liveMentoringId: 1, openings: [] } },
     });
@@ -404,12 +409,20 @@ describe('useCreateLiveMentoringOpeningMutation', () => {
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
     });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
+    });
   });
 });
 
 // ── mutation 훅 (PUT — 제목·타입·진행시간을 보내고, 응답은 전체 설정) ────
 describe('useUpdateLiveMentoringSettingsMutation', () => {
-  it('PUT settings 에 제목·타입·진행시간을 보내고, 전체 설정 응답을 파싱해 캐시를 invalidate 한다', async () => {
+  /*
+    템플릿 캐시까지 비워야 한다. 이 요청이 상품을 만드는데, 상품이 없을 때의 템플릿
+    404 가 캐시에 남아 있으면(4xx 는 재시도하지 않는다) 저장 직후에도 상세 스텝이
+    "먼저 오픈 설정을 저장해주세요" 를 계속 그린다 — 새로고침해야 사라지던 버그다.
+  */
+  it('PUT settings 에 제목·타입·진행시간을 보내고, 설정·템플릿 캐시를 함께 invalidate 한다', async () => {
     const update = {
       title: '자소서 실전 첨삭 멘토링',
       categories: ['PERSONAL_STATEMENT'] as ('PERSONAL_STATEMENT' | 'RESUME')[],
@@ -439,6 +452,9 @@ describe('useUpdateLiveMentoringSettingsMutation', () => {
     );
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: LIVE_MENTORING_SETTINGS_QUERY_KEY,
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: LIVE_MENTORING_TEMPLATE_QUERY_KEY,
     });
   });
 });

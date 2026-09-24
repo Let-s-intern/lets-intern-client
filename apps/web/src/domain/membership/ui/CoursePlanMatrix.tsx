@@ -2,9 +2,10 @@ import { useRef, type CSSProperties } from 'react';
 import {
   CATEGORIES,
   COURSE_TAG_LABEL,
-  MATRIX_CELL_MAP,
+  MATRIX_CELL_MAPS,
   matrixCellKey,
   type Category,
+  type CoursePlanTypeId,
   type MatrixCell,
   type Owner,
   STEPS,
@@ -29,13 +30,33 @@ function StepColumn({ cells }: { cells: MatrixCell[] }) {
           key={cell.owner + cell.title}
           className="cpm-cell"
           data-owner={cell.owner}
+          // 셀 배경을 태그별로 달리 칠하려면 여기에도 태그가 있어야 한다
+          data-tag={cell.tag}
           data-provided={isProvided(cell.owner) ? 'true' : undefined}
         >
           <span className="cpm-cell-tag" data-tag={cell.tag}>
             {COURSE_TAG_LABEL[cell.tag]}
           </span>
           <p className="cpm-cell-title">{cell.title}</p>
-          <p className="cpm-cell-desc">{cell.desc}</p>
+          <p className="cpm-cell-desc">
+            {cell.desc}
+            {/*
+              일정은 nowrap 한 덩어리로 붙인다. 한 문자열로 두면 좁은 셀에서
+              "10.8 목" / "20:00" 으로 갈려 다른 날 일정처럼 읽힌다.
+            */}
+            {cell.when && (
+              <>
+                {' · '}
+                <span className="cpm-cell-when">{cell.when}</span>
+              </>
+            )}
+            {cell.whenNote && (
+              <>
+                {' · '}
+                <span className="cpm-cell-when">{cell.whenNote}</span>
+              </>
+            )}
+          </p>
         </article>
       ))}
     </div>
@@ -56,6 +77,8 @@ function StepHeader() {
         >
           <span className="cpm-step-no">STEP {step.no}</span>
           <span className="cpm-step-label">{step.label}</span>
+          {/* 주차·날짜 — 시안 8. 단계명만으로는 언제 하는 일인지 알 수 없다. */}
+          <span className="cpm-step-range">{step.range}</span>
         </div>
       ))}
     </div>
@@ -64,7 +87,13 @@ function StepHeader() {
 
 // 카테고리 한 줄(=행). 데스크탑은 [카테고리 라벨 | STEP01..05] 그리드,
 // 모바일은 카테고리 카드로 자연 분해되며 STEP 칸이 세로로 쌓인다.
-function CategoryRow({ category }: { category: Category }) {
+function CategoryRow({
+  category,
+  type,
+}: {
+  category: Category;
+  type: CoursePlanTypeId;
+}) {
   return (
     <div className="cpm-row">
       <div className="cpm-cat">
@@ -74,7 +103,8 @@ function CategoryRow({ category }: { category: Category }) {
       <div className="cpm-cells">
         {STEPS.map((step: Step) => {
           const cells =
-            MATRIX_CELL_MAP.get(matrixCellKey(step.id, category.id)) ?? [];
+            MATRIX_CELL_MAPS[type].get(matrixCellKey(step.id, category.id)) ??
+            [];
           return (
             <div
               className="cpm-step-cell"
@@ -93,7 +123,7 @@ function CategoryRow({ category }: { category: Category }) {
   );
 }
 
-export default function CoursePlanMatrix() {
+export default function CoursePlanMatrix({ type }: { type: CoursePlanTypeId }) {
   // 모바일에서 .cpm-body 는 가로 scroll-snap 트랙이 된다(CSS). 도트는
   // 공용 훅이 IntersectionObserver 로 활성 슬라이드를 추적한다.
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -111,25 +141,9 @@ export default function CoursePlanMatrix() {
       />
       <div className="cpm-body" ref={bodyRef}>
         {CATEGORIES.map((category) => (
-          <CategoryRow category={category} key={category.id} />
+          <CategoryRow category={category} type={type} key={category.id} />
         ))}
       </div>
-      <p className="cpm-note">
-        <span className="cpm-note-chip" data-tag="free">
-          무료 자료
-        </span>
-        <span className="cpm-note-chip" data-tag="template">
-          템플릿 제공
-        </span>
-        <span className="cpm-note-chip" data-tag="checklist">
-          체크리스트 제공
-        </span>
-        는 멤버십에 포함된 자료 제공,{' '}
-        <span className="cpm-note-chip" data-tag="challenge">
-          챌린지
-        </span>{' '}
-        는 렛츠커리어가 함께하는 단계예요.
-      </p>
     </div>
   );
 }

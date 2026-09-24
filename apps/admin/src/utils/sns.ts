@@ -17,9 +17,36 @@ export function parseSnsList(sns: string | null | undefined): string[] {
   }
 }
 
-/** URL 배열을 저장용 JSON 문자열로 직렬화. 빈 항목은 제외, 전부 비면 null */
-export function serializeSnsList(list: string[]): string | null {
+/**
+ * URL 배열을 저장용 JSON 문자열로 직렬화. 빈 항목은 제외, 전부 비면 빈 문자열.
+ * null 을 보내면 서버가 "바꾸지 않음"으로 받아 삭제가 반영되지 않는다 (LC-3306)
+ */
+export function serializeSnsList(list: string[]): string {
   const cleaned = list.map((s) => s.trim()).filter((s) => s !== '');
-  if (cleaned.length === 0) return null;
+  if (cleaned.length === 0) return '';
   return JSON.stringify(cleaned);
+}
+
+/** `mailto:`·`javascript:` 처럼 http(s) 가 아닌 스킴으로 시작하는지 */
+const SCHEME_PATTERN = /^[a-z][a-z\d+-]*:/i;
+
+/**
+ * 입력한 SNS 를 저장할 URL 로 바꾼다. 저장할 수 없으면 null (LC-3307)
+ * 도메인만 쓰면 https:// 를 붙이고, http(s) 가 아니거나 호스트에 점이 없으면 거절한다
+ */
+export function toSnsUrl(value: string): string | null {
+  const trimmed = value.trim();
+  let candidate = trimmed;
+  if (!/^https?:\/\//i.test(trimmed)) {
+    if (SCHEME_PATTERN.test(trimmed)) return null;
+    candidate = `https://${trimmed}`;
+  }
+
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    return url.hostname.includes('.') ? candidate : null;
+  } catch {
+    return null;
+  }
 }

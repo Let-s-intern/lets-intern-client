@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MutableRefObject } from 'react';
 import { Link } from 'react-router-dom';
 import {
   getLowestPrice,
@@ -25,11 +25,7 @@ import {
   formatPrice,
   representativeCareerLabel,
 } from '../constants';
-import {
-  useAutosave,
-  type AutosaveResult,
-  type AutosaveStatus,
-} from '../useAutosave';
+import { type AutosaveResult } from '../useAutosave';
 import {
   errorDescription,
   stateConflictAlert,
@@ -42,12 +38,15 @@ const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
 
 interface OpenSettingsSectionProps {
   /**
-   * 이 스텝의 실시간 저장 상태를 위로 올린다.
-   *
-   * 하단 바는 스텝을 아는 페이지가 하나만 그리는데(LC-3282), 이 스텝의 저장 대상인
-   * 제목·타입·진행시간은 여기가 들고 있다. 상태만 올려 보내고 그리는 건 페이지가 한다.
+   * 저장 상태를 위로 올린다. 저장 버튼은 페이지가 한 자리에 그리므로(스텝 이동 바와
+   * 같은 자리를 나눠 쓴다) 여기서는 「보낼 게 있는지」와 「보내면 거절당할 이유」만 알린다.
    */
-  onAutosaveStatusChange: (status: AutosaveStatus) => void;
+  onSaveStateChange: (state: {
+    isDirty: boolean;
+    blockedReason: string | null;
+  }) => void;
+  /** 페이지가 저장 버튼을 눌렀을 때 부를 함수를 담아 두는 자리. */
+  saveRef: MutableRefObject<(() => Promise<AutosaveResult>) | null>;
 }
 
 /**
@@ -55,7 +54,8 @@ interface OpenSettingsSectionProps {
  * `LiveMentoringSettingsPage` 가 그리므로 여기서는 본문만 그린다.
  */
 const OpenSettingsSection = ({
-  onAutosaveStatusChange,
+  onSaveStateChange,
+  saveRef,
 }: OpenSettingsSectionProps) => {
   const { data, refetch } = useLiveMentoringSettingsQuery();
   /*
@@ -119,7 +119,7 @@ const OpenSettingsSection = ({
           : null;
 
   /** 제목·타입·진행시간 저장. 상품이 없으면 이 요청이 상품을 초안으로 만든다. */
-  const handleAutosave = async (): Promise<AutosaveResult> => {
+  const handleSave = async (): Promise<AutosaveResult> => {
     if (!form) return { ok: false };
     try {
       await saveSettings({
@@ -141,16 +141,19 @@ const OpenSettingsSection = ({
     }
   };
 
-  const autosaveStatus = useAutosave({
-    fingerprint: formJson,
-    isDirty,
-    blockedReason,
-    save: handleAutosave,
-  });
+  /*
+    실시간 저장을 걷어내고 멘토가 직접 누르게 바꿨다(LC-3288). 상세 스텝과 같은 이유다 —
+    입력이 멎을 때마다 나가면 「타이틀을 채우면 저장돼요」 같은 상태가 계속 흘러가는데,
+    누를 버튼이 없어 멘토는 그게 오류인지 안내인지 알 수 없었다. 실제로 이 스텝은
+    저장이 500 으로 실패해도 화면이 조용했다.
 
+    대표 경력처럼 고르면 바로 반영되는 항목은 그대로다. 그건 별도 API 이고 즉시
+    저장이 맞다.
+  */
+  saveRef.current = handleSave;
   useEffect(() => {
-    onAutosaveStatusChange(autosaveStatus);
-  }, [autosaveStatus, onAutosaveStatusChange]);
+    onSaveStateChange({ isDirty, blockedReason });
+  }, [isDirty, blockedReason, onSaveStateChange]);
 
   if (!form || !original) {
     return (
@@ -183,7 +186,6 @@ const OpenSettingsSection = ({
       return { ...prev, categories };
     });
 
-  const status = form.status;
   const currentOpening = openings?.find((opening) => opening.status === 'OPEN');
   const hasPreviousOpening = (openings?.length ?? 0) > 0;
 

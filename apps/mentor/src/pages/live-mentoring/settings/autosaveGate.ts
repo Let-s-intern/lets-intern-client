@@ -18,6 +18,8 @@ import { withParticle } from './saveError';
 
 /** 히어로 불릿의 서버 상한(`@Size(max = 500)`). */
 const BULLET_MAX = 500;
+/** 섹션 제목류의 서버 상한(`@Size(max = 255)`). */
+const TITLE_MAX = 255;
 
 const isBlank = (value: string | null | undefined) => !value?.trim();
 
@@ -28,6 +30,16 @@ const firstBlankLabel = (
 
 const fill = (where: string, what: string) =>
   `「${where}」의 ${withParticle(what, '을', '를')} 채우면 저장돼요`;
+
+/** 서버 `@Size` 를 넘긴 첫 칸. 넘긴 게 없으면 null. */
+const firstTooLong = (
+  fields: readonly (readonly [label: string, value: string | null])[],
+): string | null =>
+  fields.find(([, value]) => (value?.trim().length ?? 0) > TITLE_MAX)?.[0] ??
+  null;
+
+const shorten = (where: string, what: string) =>
+  `「${where}」의 ${withParticle(what, '을', '를')} ${TITLE_MAX}자 이내로 줄이면 저장돼요`;
 
 export const describeAutosaveBlock = (
   template: LiveMentoringTemplate,
@@ -51,61 +63,86 @@ export const describeAutosaveBlock = (
   ]);
   if (typesSection) return fill('멘토링 유형', typesSection);
 
-  for (const [index, item] of mentoringTypes.items.entries()) {
-    const blank = firstBlankLabel([
-      ['유형 이름', item.typeName],
-      ['유형 제목', item.title],
-      ['부가 설명', item.description],
-    ]);
-    if (blank) return fill('멘토링 유형', `${index + 1}번 ${blank}`);
-  }
+  /*
+   * 반쯤 채운 반복 항목(유형 카드·Point·결과 사례)은 막지 않는다 (LC-3343).
+   *
+   * 「+ 추가」를 누른 순간 화면 전체 저장이 잠겨, 카드 하나가 다른 탭에서 쓴 글까지
+   * 볼모로 잡았다. 다 채운 항목만 보내고(`saveTemplate`), 아직 못 보내는 항목은 그
+   * 자리에 이유를 적는다. 섹션 제목·설명은 입력이 있어 멘토가 고칠 수 있으므로
+   * 그대로 막는다.
+   */
 
   /*
-   * 아래 세 섹션은 `visible` 이 꺼져 있어도 검사한다 — 서버 `@NotBlank` 는 노출 여부를
-   * 보지 않는다. 숨긴 섹션의 빈 칸 때문에 저장이 막히는 건 화면에서 이유가 안 보이므로,
-   * 어느 섹션인지 문구에 반드시 넣는다.
+   * 아래 세 섹션은 **켜져 있을 때만** 검사한다.
+   *
+   * 서버 `@NotBlank` 는 `visible` 을 보지 않으므로 숨긴 섹션의 빈 칸도 400 을 만든다.
+   * 그렇다고 여기서 막으면 덫이 된다 — 화면이 숨긴 섹션의 입력을
+   * `<fieldset disabled>` 로 잠그기 때문에 멘토는 그 칸을 채울 수가 없고, 저장도
+   * 공개도 안 되는 채로 빠져나올 방법이 없다.
+   *
+   * 그래서 숨긴 섹션은 통과시킨다. 서버도 `visible` 이 꺼진 섹션은 검사하지 않는다
+   * (LC-3289).
    */
-  const strategySection = firstBlankLabel([
-    ['섹션 제목', strategy.title],
-    ['섹션 설명', strategy.subtitle],
-  ]);
-  if (strategySection) return fill('취업 성공 전략', strategySection);
-
-  for (const [index, point] of strategy.points.entries()) {
-    const blank = firstBlankLabel([
-      ['Point 제목', point.title],
-      ['Point 설명', point.description],
+  if (strategy.visible) {
+    const strategySection = firstBlankLabel([
+      ['섹션 제목', strategy.title],
+      ['섹션 설명', strategy.subtitle],
     ]);
-    if (blank) return fill('취업 성공 전략', `${index + 1}번 ${blank}`);
+    if (strategySection) return fill('취업 성공 전략', strategySection);
+
+    /*
+      길이도 본다. 서버 `StrategyRequest.title` 과 `StrategyPointRequest.title` 이
+      `@Size(max = 255)` 인데 이 두 칸에는 `maxLength` 가 없어 넘겨 쓸 수 있다.
+      보내 봐야 400 이므로 여기서 잡아 무엇을 줄이면 되는지 알린다.
+     */
+    const tooLong = firstTooLong([['섹션 제목', strategy.title]]);
+    if (tooLong) return shorten('취업 성공 전략', tooLong);
+
+    /* 빈 Point 는 보낼 때 빠진다. 길이 초과는 다 채운 Point 도 400 이 되므로 여기서 잡는다. */
+    for (const [index, point] of strategy.points.entries()) {
+      const longPoint = firstTooLong([['Point 제목', point.title]]);
+      if (longPoint)
+        return shorten('취업 성공 전략', `${index + 1}번 ${longPoint}`);
+    }
   }
 
-  const videoSection = firstBlankLabel([
-    ['섹션 제목', video.title],
-    ['섹션 설명', video.subtitle],
-    ['영상 안내 문구', video.caption],
-  ]);
-  if (videoSection) return fill('소개 영상', videoSection);
+  if (video.visible) {
+    const videoSection = firstBlankLabel([
+      ['섹션 제목', video.title],
+      ['섹션 설명', video.subtitle],
+      ['영상 안내 문구', video.caption],
+    ]);
+    if (videoSection) return fill('소개 영상', videoSection);
+  }
 
   /*
    * 영상 주소는 비워 둘 수 있지만(`@Size` 만 있고 `@NotBlank` 는 없다), 서버가 받는 건
    * `https://www.youtube.com/embed/{id}` 뿐이다. 붙여넣는 중인 주소가 아직 변환되지 않는
    * 것뿐일 수 있으므로 실패가 아니라 대기로 다룬다.
+   *
+   * 끈 섹션은 보지 않는다. 입력이 잠겨 고칠 수 없고, 보낼 때 주소를 비운다(LC-3311).
    */
-  if (video.videoUrl?.trim() && !toYoutubeEmbedUrl(video.videoUrl))
+  if (
+    video.visible &&
+    video.videoUrl?.trim() &&
+    !toYoutubeEmbedUrl(video.videoUrl)
+  )
     return '「소개 영상」의 영상 주소를 YouTube 주소로 고치면 저장돼요';
 
-  const resultsSection = firstBlankLabel([
-    ['섹션 제목', results.title],
-    ['섹션 설명', results.subtitle],
-  ]);
-  if (resultsSection) return fill('결과 사례', resultsSection);
-
-  for (const [index, item] of results.cases.entries()) {
-    const blank = firstBlankLabel([
-      ['멘토링 전 상황', item.beforeCaption],
-      ['멘토링 후 변화', item.afterCaption],
-    ]);
-    if (blank) return fill('결과 사례', `${index + 1}번 ${blank}`);
+  /*
+   * 결과 사례는 섹션 제목만 본다 (LC-3343).
+   *
+   * 섹션 설명(`subtitle`)은 편집 폼에 입력이 아예 없다 — `TemplateEditForm` 이 제목만
+   * 그린다. 서버 기본값이 빈 문자열이라, 노출을 켜면 채울 수 없는 칸 때문에 저장이
+   * 잠기고 빠져나오는 길이 토글을 다시 끄는 것뿐이었다.
+   *
+   * 반쯤 채운 사례도 막지 않는다. 카드 하나 때문에 다른 탭에서 쓴 글까지 저장이 볼모로
+   * 잡혔다. 전·후 문구가 다 채워진 사례만 보내고(`saveTemplate`), 아직 못 보내는 카드는
+   * 그 자리에 이유를 적는다(`ResultCaseField`).
+   */
+  if (results.visible) {
+    const resultsSection = firstBlankLabel([['섹션 제목', results.title]]);
+    if (resultsSection) return fill('결과 사례', resultsSection);
   }
 
   return null;

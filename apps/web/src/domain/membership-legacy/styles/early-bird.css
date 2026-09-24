@@ -1,0 +1,12 @@
+/* ===================== 얼리버드 최상단 배너 ===================== */
+.membership-root .early-bird {
+  display: block;
+  width: 100%;
+}
+.membership-root .early-bird a {
+  display: block;
+}
+.membership-root .early-bird-img {
+  width: 100%;
+  height: auto;
+}

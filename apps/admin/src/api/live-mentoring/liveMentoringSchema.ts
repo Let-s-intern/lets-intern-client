@@ -11,6 +11,9 @@ export const liveMentoringCategorySchema = z.enum([
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ]);
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 
@@ -183,6 +186,11 @@ export const adminLiveMentoringParticipantSchema = z.object({
   refunded: z.boolean().nullable(),
   refundAmount: z.number().nullable(),
   createDate: z.string(),
+  /**
+   * 결제 시각 — 결제 엔티티의 생성 시각(LC-3336).
+   * 이 필드를 싣기 전 서버 응답에는 키가 없어 nullish 로 연다. 막으면 목록 전체가 파싱에 실패한다.
+   */
+  paidAt: z.string().nullish(),
 });
 export type AdminLiveMentoringParticipant = z.infer<
   typeof adminLiveMentoringParticipantSchema

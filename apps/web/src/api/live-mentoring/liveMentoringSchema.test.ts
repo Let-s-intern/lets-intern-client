@@ -175,6 +175,14 @@ describe('liveMentoringOpeningSchema', () => {
     ).not.toThrow();
   });
 
+  // LC-3336 — 서버 enum 코드 4~6 으로 추가된 유형
+  it('새 유형(커리어 커피챗·면접·경험 정리)을 파싱한다', () => {
+    const categories = ['CAREER_COFFEE_CHAT', 'INTERVIEW', 'EXPERIENCE'];
+    expect(
+      liveMentoringOpeningSchema.parse(makeOpening({ categories })).categories,
+    ).toEqual(categories);
+  });
+
   it('알 수 없는 카테고리는 파싱 실패', () => {
     expect(() =>
       liveMentoringOpeningSchema.parse(
@@ -242,6 +250,25 @@ describe('liveMentorDetailSchema', () => {
       makeDetail({ rating: null, reviewCount: 0 }),
     );
     expect(parsed.rating).toBeNull();
+  });
+
+  /*
+    개설 전 미리보기가 이 형태로 들어온다. 상세 페이지는 설정 저장 때 만들어지지만
+    개설은 공개 때 생기므로 openingId·price 가 비고 durationPrices 가 빈 배열이다.
+    openingId 를 필수로 두었더니 그 화면이 파싱에서 통째로 실패해
+    "멘토 정보를 불러오지 못했습니다" 만 떴다.
+  */
+  it('개설 전이라 openingId·price 가 null 이어도 파싱한다', () => {
+    const parsed = liveMentorDetailSchema.parse(
+      makeDetail({
+        openingId: null,
+        price: null,
+        durations: [],
+        durationPrices: [],
+      }),
+    );
+    expect(parsed.openingId).toBeNull();
+    expect(parsed.durationPrices).toEqual([]);
   });
 
   it('프로필 닉네임·소개가 null 이어도 파싱한다', () => {

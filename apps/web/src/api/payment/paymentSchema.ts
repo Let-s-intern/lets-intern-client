@@ -240,6 +240,19 @@ export const paymentDetailType = z.object({
   }),
   tossInfo: tossInfoType.nullable().optional(),
   accessMethod: z.string().nullable().optional(),
+  // 셀프 플랜 업그레이드로 원결제 뒤에 토스로 더 받은 차액 (LC-3247). 서버 배포 전에는 오지 않는다
+  planUpgradePaymentList: z
+    .array(
+      z.object({
+        fromPlan: z.string(),
+        toPlan: z.string(),
+        additionalAmount: z.number(),
+        paidAt: z.string().nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional()
+    .transform((list) => list ?? []),
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;

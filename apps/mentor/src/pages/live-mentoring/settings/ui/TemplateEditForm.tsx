@@ -343,6 +343,7 @@ const TemplateEditForm = ({
                 <textarea
                   id="strategyTitle"
                   className={inputClass}
+                  maxLength={SECTION_TITLE_MAX}
                   value={strategy.title}
                   placeholder="예) OO멘토만의 합격 전략을 제공해요"
                   onChange={(e) =>
@@ -380,17 +381,32 @@ const TemplateEditForm = ({
                 }
                 items={strategy.points}
                 makeEmpty={() => ({ image: null, title: '', description: '' })}
-                renderItem={(point, update) => (
+                renderItem={(point, update, index) => (
                   <div className="flex flex-col gap-2">
-                    <ImageField
-                      label="대표 이미지"
-                      value={point.image}
-                      onChange={(image) => update({ ...point, image })}
-                    />
-                    <div>
+                    {/* 다 채워야 서버로 나간다(LC-3343). 저장을 막는 대신 여기에 적는다. */}
+                    {(!point.title.trim() || !point.description.trim()) && (
+                      <span className="text-system-error text-xs">
+                        차별 전략과 설명을 채워야 저장돼요
+                      </span>
+                    )}
+                    {/*
+                      미리보기 번호를 이미지와 글에 나눠 붙인다(LC-3282). 하나로 묶으면
+                      세로로 긴 이미지 때문에 항목이 화면보다 커지고, 미리보기가 그
+                      중간을 맞춰 정작 입력 중인 글이 화면 밖에 남는다. 결과 사례와
+                      같은 규칙(`i * 2`, `i * 2 + 1`)을 쓴다.
+                    */}
+                    <div data-preview-index={index * 2}>
+                      <ImageField
+                        label="대표 이미지"
+                        value={point.image}
+                        onChange={(image) => update({ ...point, image })}
+                      />
+                    </div>
+                    <div data-preview-index={index * 2 + 1}>
                       <span className={labelClass}>차별 전략</span>
                       <textarea
                         className={inputClass}
+                        maxLength={SECTION_TITLE_MAX}
                         value={point.title}
                         placeholder="예) 2026년 취업 시장 핵심 키워드 5가지"
                         onChange={(e) =>
@@ -398,9 +414,7 @@ const TemplateEditForm = ({
                         }
                         rows={2}
                       />
-                    </div>
-                    <div>
-                      <span className={labelClass}>전략 설명</span>
+                      <span className={`${labelClass} mt-2`}>전략 설명</span>
                       <textarea
                         rows={4}
                         className={inputClass}

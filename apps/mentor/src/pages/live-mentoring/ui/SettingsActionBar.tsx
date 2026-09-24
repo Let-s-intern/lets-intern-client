@@ -1,19 +1,19 @@
 import { FLOATING_BAR_BODY, FLOATING_BAR_WRAP } from '../constants';
-import {
-  autosaveMessage,
-  isAutosaveAttention,
-  type AutosaveStatus,
-} from '../useAutosave';
 
 interface SettingsActionBarProps {
-  /** 지금 스텝의 실시간 저장 상태. 저장 대상이 스텝마다 달라 호출부가 넘긴다. */
-  status: AutosaveStatus;
   onPrev: () => void;
   onNext: () => void;
   /** 앞으로 갈 스텝이 있는지. 없으면 버튼을 잠근다. */
   hasPrev: boolean;
-  /** 뒤로 갈 스텝이 있는지. 없으면(마지막 스텝) 그 자리에 공개 버튼이 온다. */
+  /**
+   * 뒤로 갈 스텝이 **존재**하는지. 없으면(진짜 마지막 스텝) 그 자리에 공개 버튼이 온다.
+   *
+   * 잠겨서 못 가는 것과 아예 없는 것을 섞으면 안 된다 — 섞었더니 첫 세팅에서 다음
+   * 스텝이 잠긴 순간 「공개하기」가 떴다. 아직 아무것도 안 쓴 멘토에게 공개를 권한 셈이다.
+   */
   hasNext: boolean;
+  /** 다음 스텝이 아직 잠겨 있는지. 버튼은 「다음으로」인 채로 눌리지만 않는다. */
+  nextDisabled?: boolean;
   /** 마지막 스텝에서 「다음으로」 자리에 오는 공개 버튼. */
   publish: { label: string; disabled: boolean; onClick: () => void };
 }
@@ -31,37 +31,26 @@ const stepButton =
   'flex-1 rounded-lg px-10 py-3.5 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
- * 설정 화면 하단 고정 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
+ * 설정 화면 하단에 떠 있는 스텝 이동 바 — 모든 스텝이 이 하나를 쓴다(LC-3273).
  *
- * 예전에는 `저장` 과 오픈 버튼이 여기 있었다. 저장은 입력이 멎으면 알아서 나가고
- * (LC-3282), 오픈은 스텝과 무관한 화면 전체의 상태라 머리의 공개/비공개 토글로
- * 옮겼다(LC-3283). 남은 일은 스텝 이동이라, 바가 그것만 한다.
+ * **저장하지 않은 변경이 있으면 이 바 대신 저장 버튼이 같은 자리에 온다**
+ * (`SaveFloatingButton`, LC-3288). 둘을 함께 두지 않는 이유는 지금 해야 할 일이 늘
+ * 하나이기 때문이다 — 고친 게 있으면 저장이고, 없으면 다음 스텝이다. 나란히 두면
+ * 저장하지 않고 넘어가는 길이 남고, 넘어가고 나면 무엇을 안 저장했는지 화면에서 사라진다.
  *
- * 버튼 위에는 저장이 지금 어디까지 갔는지 한 줄로 남긴다 — 누를 버튼이 사라졌으니
- * "저장이 되긴 한 건가"를 화면이 대신 말해 줘야 한다.
+ * 저장 상태 문구도 저장 버튼으로 옮겼다. 상태를 말해 주는 자리와 누를 자리는 붙어
+ * 있어야 한다.
  */
 const SettingsActionBar = ({
-  status,
   onPrev,
   onNext,
   hasPrev,
   hasNext,
+  nextDisabled = false,
   publish,
 }: SettingsActionBarProps) => (
   <div className={FLOATING_BAR_WRAP}>
     <div className={FLOATING_BAR_BODY}>
-      {/*
-        `role="status"` 를 주지 않는다. 오픈 종료 배너가 이미 그 역할이라, 한 화면에
-        live region 이 둘이 되면 무엇을 읽어야 할지 갈린다.
-      */}
-      <p
-        className={`truncate text-sm font-medium ${
-          isAutosaveAttention(status) ? 'text-system-error' : 'text-gray-500'
-        }`}
-      >
-        {autosaveMessage(status)}
-      </p>
-
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -79,6 +68,7 @@ const SettingsActionBar = ({
           <button
             type="button"
             onClick={onNext}
+            disabled={nextDisabled}
             className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
           >
             다음으로

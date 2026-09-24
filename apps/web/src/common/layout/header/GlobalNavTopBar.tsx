@@ -80,13 +80,14 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         >
           홈
         </GlobalNavItem>
-        {/* [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴(데스크톱 상단바) — 시즌 종료 시 이 블록을 제거한다 */}
+        {/* [LC-3294] 마케팅 취준 올인원 패스 진입 메뉴(데스크톱 상단바) — 시즌 종료 시 이 블록을 제거한다.
+            구버전 하반기 멤버십(`/membership`)은 주소로만 남기고 메뉴에는 걸지 않는다. */}
         <GlobalNavItem
           className={twMerge(
             'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
-            pathname.startsWith('/membership') && 'border-neutral-0',
+            pathname.startsWith('/membership-marketing') && 'border-neutral-0',
           )}
-          href="/membership"
+          href="/membership-marketing"
           isNew
         >
           <MembershipNavLabel />

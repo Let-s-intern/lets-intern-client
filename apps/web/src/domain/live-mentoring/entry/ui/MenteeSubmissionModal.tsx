@@ -120,13 +120,20 @@ const MenteeSubmissionModal = ({
               첨부한 파일이 없습니다.
             </p>
           ) : openableUrl ? (
+            /*
+              파일은 저장, 링크는 새 탭이다. 저장을 만드는 것은 `download` 속성이
+              아니라 서버가 서명 URL 에 실은 `Content-Disposition: attachment` 다 —
+              교차 출처 링크의 `download` 는 브라우저가 무시한다. 파일을 새 탭으로
+              열지 않는 것도 그래서다. 첨부 응답은 문서를 그리지 않아 빈 탭만 남는다.
+            */
             <a
               href={openableUrl}
-              target="_blank"
-              rel="noreferrer"
+              {...(attachmentType === 'FILE'
+                ? {}
+                : { target: '_blank', rel: 'noreferrer' })}
               className="text-xsmall14 text-primary font-medium underline"
             >
-              {attachmentType === 'URL' ? '첨부 링크 열기' : '첨부 파일 열기'}
+              {attachmentType === 'URL' ? '첨부 링크 열기' : '첨부 파일 저장'}
             </a>
           ) : attachmentUrl ? (
             <p className="text-xsmall14 text-neutral-45">

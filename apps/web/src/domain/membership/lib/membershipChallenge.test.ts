@@ -85,10 +85,21 @@ describe('기수별 노션 가이드 (LC-3219)', () => {
     );
   });
 
+  it('[LC-3294] 마케팅 취준 올인원 패스(405)도 가이드 주소를 준다', () => {
+    // 운영 env 를 405 로 올리는 배포에서 이 키를 함께 넣지 않으면, 새로 결제한 사람의
+    // 마이페이지 버튼이 '가이드 확인' 대신 '대시보드 입장' 이 된다. 마케팅 패스도
+    // 챌린지 대시보드를 쓰지 않으므로 노션에 닿을 길이 사라진다 — 309 때와 같은 사고다.
+    expect(membershipGuideUrl(405)).toMatch(
+      /^https:\/\/letsintern\.notion\.site\//,
+    );
+  });
+
   it('기수마다 다른 문서를 가리킨다', () => {
     // 384 주소를 받기 전에는 두 기수가 1기 문서를 함께 쓰는 임시 상태였다.
     // 한쪽을 고치며 다른 쪽에 덮어쓰면 그 기수 참여자가 남의 가이드를 보게 된다.
     expect(membershipGuideUrl(384)).not.toBe(membershipGuideUrl(309));
+    // 마케팅 패스는 하반기 멤버십과 아예 다른 상품이라 문서도 따로다.
+    expect(membershipGuideUrl(405)).not.toBe(membershipGuideUrl(384));
   });
 
   it('멤버십 기수가 아니면 undefined → 카드가 대시보드 입장으로 남는다', () => {

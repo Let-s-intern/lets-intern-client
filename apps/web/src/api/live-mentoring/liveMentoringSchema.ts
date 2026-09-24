@@ -15,6 +15,9 @@ export const liveMentoringCategorySchema = z.enum([
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ]);
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 
@@ -235,8 +238,12 @@ export const liveMentorDetailSchema = z.object({
    * 신청 생성 경로가 `POST /live-mentoring/openings/{openingId}/applications` 라
    * 결제 페이지가 이 값을 들고 가야 한다. 서버는 예전부터 내려주고 있었는데
    * 스키마에 없어 zod 가 버리고 있었다.
+   *
+   * 한 번도 개설하지 않은 상품은 null 이다 — 아래 `price` 와 같은 이유로, 멘토가
+   * 공개 전에 미리보기로 들어올 수 있다. 필수로 두면 그 화면이 파싱 단계에서
+   * 통째로 실패해 "멘토 정보를 불러오지 못했습니다" 만 뜬다.
    */
-  openingId: z.number(),
+  openingId: z.number().nullable(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
@@ -478,8 +485,8 @@ export const myLiveMentoringApplicationSchema = z.object({
   productName: z.string().nullable(),
   durationMinutes: z.number(),
   /** `LocalDateTime`. 참여 예정·중·종료 판정의 기준이다. */
-  reservationStartAt: z.string(),
-  reservationEndAt: z.string(),
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   status: liveMentoringApplicationStatusSchema,
   /** 질문을 썼는지. 카드 버튼이 `작성` 인지 `수정` 인지 가른다. */
   questionWritten: z.boolean(),
@@ -521,7 +528,7 @@ export const liveMentoringQuestionSchema = z.object({
   fileId: z.number().nullable(),
   attachmentUrl: z.string().nullable(),
   mentorShareAgreed: z.boolean(),
-  reservationStartAt: z.string(),
+  reservationStartAt: z.string().nullable(),
   editable: z.boolean(),
   /** `LocalDateTime`. 언제까지 고칠 수 있는지 그대로 안내한다. */
   editDeadline: z.string().nullable(),
@@ -573,7 +580,7 @@ export const liveMentoringRefundPreviewSchema = z.object({
   cancelFeePercent: z.number(),
   cancelFee: z.number(),
   refundAmount: z.number(),
-  reservationStartAt: z.string(),
+  reservationStartAt: z.string().nullable(),
   cancelable: z.boolean(),
 });
 export type LiveMentoringRefundPreview = z.infer<
@@ -608,8 +615,8 @@ export const liveMentoringEntrySchema = z.object({
   myRole: liveMentoringEntryRoleSchema,
   productName: z.string(),
   durationMinutes: z.number(),
-  reservationStartAt: z.string(),
-  reservationEndAt: z.string(),
+  reservationStartAt: z.string().nullable(),
+  reservationEndAt: z.string().nullable(),
   mentorName: z.string(),
   menteeName: z.string(),
   questionDeferred: z.boolean(),

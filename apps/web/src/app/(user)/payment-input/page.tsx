@@ -9,6 +9,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 // [LC-3219-MEMBERSHIP] 하반기 멤버십 전액할인 쿠폰 차단에만 쓴다 — 시즌 종료 시 이 import 를
 // 지운다(아래 isMembership 블록과 짝). 담당자 임성빈
 import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
+import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
@@ -123,9 +124,15 @@ const PaymentInputContent = () => {
   // 시즌 종료 시 이 블록과 위 MEMBERSHIP_CHALLENGE_ID import, 아래 allowFullDiscount
   // 전달부, 그리고 CouponSection 의 allowFullDiscount prop·필터를 함께 지운다.
   // grep -rn "LC-3219-MEMBERSHIP" apps/web/src 로 전부 찾힌다. 담당자 임성빈
+  //
+  // [LC-3294] 멤버십 기수가 둘이 됐다. env 는 마케팅 취준 올인원 패스를 가리키고,
+  // 하반기 공채 멤버십(384)은 `/membership` 보존 랜딩이 그대로 판다. env 만 비교하면
+  // 하반기 기수가 이 가드에서 빠져 전액할인 쿠폰이 다시 통한다 — 결제창은 0원으로
+  // 정상 진행되므로 매출 정산 때나 드러난다.
   const isMembership =
     programApplicationData.programType === 'challenge' &&
-    programApplicationData.programId === MEMBERSHIP_CHALLENGE_ID;
+    (programApplicationData.programId === MEMBERSHIP_CHALLENGE_ID ||
+      programApplicationData.programId === LEGACY_MEMBERSHIP_CHALLENGE_ID);
   // [LC-3219-MEMBERSHIP] 끝
 
   const setUserInfo = useCallback((info: UserInfo) => {

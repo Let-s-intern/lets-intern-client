@@ -60,6 +60,7 @@ import SpeechToTextPlugin from './plugins/SpeechToTextPlugin';
 import TabFocusPlugin from './plugins/TabFocusPlugin';
 import TableCellActionMenuPlugin from './plugins/TableActionMenuPlugin';
 import TableCellResizer from './plugins/TableCellResizer';
+import TableIntegrityPlugin from './plugins/TableIntegrityPlugin';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 import TableOfContentsPlugin from './plugins/TableOfContentsPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
@@ -186,6 +187,13 @@ export default function Editor(): JSX.Element {
             <ListPlugin />
             <CheckListPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
+            {/*
+              순서가 의미를 갖는다. TableIntegrityPlugin 은 반드시 TablePlugin 보다
+              먼저 와야 한다 — 같은 노드 타입의 트랜스폼은 등록 순서대로 돌고,
+              TablePlugin 의 TableNode 트랜스폼은 행이 아닌 자식을 만나면 예외를
+              던진다. 순서를 바꾸면 조용히 다시 깨진다. (LC-3292)
+            */}
+            <TableIntegrityPlugin />
             <TablePlugin
               hasCellMerge={tableCellMerge}
               hasCellBackgroundColor={tableCellBackgroundColor}

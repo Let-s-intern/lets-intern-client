@@ -220,7 +220,7 @@ const MissionGuideBonusSection = ({
           <section className="flex flex-col gap-3 font-medium">
             <Heading3>4️⃣ 문의</Heading3>
             <div className="text-xsmall14 md:text-xsmall16 flex flex-col">
-              문의는 챌린지 오픈 채팅방으로 부탁드립니다!
+              문의는 대시보드 좌측 1:1 문의를 이용해주세요!
             </div>
           </section>
           <hr className="border-neutral-80" />

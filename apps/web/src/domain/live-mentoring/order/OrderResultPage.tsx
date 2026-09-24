@@ -9,7 +9,6 @@ import type { ConfirmLiveMentoringPaymentResponse } from '@/api/live-mentoring/l
 import { formatPrice } from '../constants';
 import { readServerError } from '../utils/serverError';
 import { useOrderDraftStore } from './hooks/useOrderDraft';
-import { formatReservationRange } from './utils';
 
 /** 승인 실패 문구. 서버가 code 를 `UNKNOWN` 으로 주는 경로가 있어 문구를 그대로 쓴다. */
 const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확인해 주세요.';
@@ -25,8 +24,8 @@ const DEFAULT_ERROR = '결제 승인에 실패했습니다. 결제 내역을 확
  */
 const OrderResultPage = () => {
   const searchParams = useSearchParams();
+  const hasHydrated = useOrderDraftStore((state) => state._hasHydrated);
   const application = useOrderDraftStore((state) => state.application);
-  const draft = useOrderDraftStore((state) => state.draft);
 
   const confirmPayment = useConfirmLiveMentoringPaymentMutation(
     application?.applicationId ?? 0,
@@ -45,15 +44,16 @@ const OrderResultPage = () => {
     useState<ConfirmLiveMentoringPaymentResponse | null>(null);
 
   useEffect(() => {
-    if (hasRequested.current) return;
+    // 복원 전에는 신청이 비어 보인다. 여기서 판단하면 결제한 사람에게 오류를 띄운다
+    if (!hasHydrated || hasRequested.current) return;
 
     const paymentKey = searchParams.get('paymentKey');
     const orderId = searchParams.get('orderId');
     const amount = searchParams.get('amount');
 
     /*
-      신청 정보는 메모리에만 있다. 새로고침하면 사라지는데, 그때 승인을 다시 부를
-      길이 없다. 이미 승인이 끝난 뒤일 수도 있어 상세로 돌려보내지 않고 안내만 남긴다.
+      복원까지 끝났는데 신청이 없다 — 다른 기기·브라우저로 돌아왔거나 선점이 끝났다.
+      이미 승인이 끝난 뒤일 수도 있어 상세로 돌려보내지 않고 안내만 남긴다.
     */
     if (!application) {
       setErrorMessage(
@@ -84,15 +84,35 @@ const OrderResultPage = () => {
     */
     confirmPayment
       .mutateAsync({ paymentKey: paymentKey ?? '', orderId, amount })
-      .then((data) => setConfirmed(data))
+      .then((data) => {
+        setConfirmed(data);
+        /*
+          결제 알림 슬랙봇은 GTM 이 이 이벤트를 받아 보낸다. 챌린지·리포트가 쓰는 이름을
+          그대로 쓴다 — 새 이름을 만들면 GTM 에 트리거를 붙이기 전까지 알림이 한 건도
+          가지 않는다. 상품군은 진입부에서 리터럴로 박는 기존 관례를 따른다
+          (`PricePlanBottomSheet` 의 `programType: 'challenge'`).
+
+          `setConfirmed` 와 같은 `then` 안에서 한 번만 보낸다. `useEffect` 로 빼면 승인 뒤
+          슬롯 목록 무효화로 이 화면이 재마운트될 때 같은 결제가 두 번 실려 나간다.
+        */
+        window.dataLayer?.push({
+          event: 'program_payment_success',
+          program_name: application.orderName,
+          program_type: 'live_mentoring',
+          // 0원 결제는 위젯을 건너뛰어 결제수단이 없다(`useOrderSubmit`).
+          payment_method: searchParams.get('paymentMethodKey') ?? undefined,
+          payment_amount: data.amount,
+          order_id: data.orderId,
+        });
+      })
       .catch((error) =>
         setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
       );
-    // 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다
+    // 복원이 끝나고 검색 파라미터와 신청 정보가 갖춰진 첫 렌더에 한 번만 돈다
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [application, searchParams]);
+  }, [hasHydrated, application, searchParams]);
 
-  const reservation = draft ? formatReservationRange(draft.slots) : null;
+  const reservation = application?.reservationLabel ?? null;
 
   if (errorMessage) {
     return (

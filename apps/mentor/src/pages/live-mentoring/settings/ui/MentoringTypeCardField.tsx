@@ -29,7 +29,14 @@ export const TYPE_TAG_MAX = 3;
  * 오픈 설정의 타입 선택과 같은 어휘를 쓴다. 서버 `typeName` 은 자유 문자열(100자)이라
  * 라벨을 그대로 담는다.
  */
-const TYPE_OPTIONS = ['자기소개서', '이력서', '포트폴리오'] as const;
+const TYPE_OPTIONS = [
+  '자기소개서',
+  '이력서',
+  '포트폴리오',
+  '커리어 커피챗',
+  '면접 준비, 모의 면접',
+  '경험 정리',
+] as const;
 
 const DragHandleIcon = () => (
   <svg
@@ -142,6 +149,18 @@ const MentoringTypeCardField = ({
                   <span className="text-system-error ml-0.5">*</span>
                 ) : null}
               </span>
+              {/*
+                다 채워야 서버로 나간다(LC-3343). 저장을 막는 대신 이 카드만 빠진다는
+                것을 여기에 적는다 — 하단 바에 적으면 어느 카드인지 모른 채 저장 버튼만
+                잠겨 보였다.
+              */}
+              {(!item.typeName.trim() ||
+                !item.title.trim() ||
+                !item.description.trim()) && (
+                <span className="text-system-error text-xs">
+                  모두 채워야 저장돼요
+                </span>
+              )}
               {/* 마지막 한 장은 지울 수 없다 — 필수 항목이라 빈 목록이 될 수 없다. */}
               <button
                 type="button"

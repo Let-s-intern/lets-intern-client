@@ -1,0 +1,78 @@
+/* ===================== PROOF ===================== */
+.membership-root .proof {
+  padding: 80px 0;
+  background: var(--bg-cool);
+}
+.membership-root .logowall {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  margin: 0 0 50px;
+}
+.membership-root .logotrack {
+  display: flex;
+  width: max-content;
+  animation: scroll 28s linear infinite;
+}
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.membership-root .logo-chip {
+  flex: 0 0 auto;
+  height: 64px;
+  min-width: 150px;
+  margin-right: 18px;
+  padding: 0 26px;
+  background: #fff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #9aa0ad;
+  letter-spacing: -0.02em;
+  border: 1px solid #eef;
+}
+.membership-root .stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.membership-root .stat {
+  background: #fff;
+  border-radius: 20px;
+  padding: 34px 28px;
+  text-align: center;
+  border: 1px solid #eef;
+}
+.membership-root .stat .n {
+  font-family: var(--num);
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.membership-root .stat .n.b {
+  color: var(--lc-blue);
+}
+.membership-root .stat .n.o {
+  color: var(--lc-orange);
+}
+.membership-root .stat .n.k {
+  color: var(--lc-ink);
+}
+.membership-root .stat .l {
+  margin-top: 12px;
+  font-size: 16px;
+  color: var(--g600);
+  font-weight: 600;
+}

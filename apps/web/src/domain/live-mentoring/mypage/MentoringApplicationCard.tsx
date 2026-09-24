@@ -38,10 +38,19 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
  * 서버가 60분 신청의 두 슬롯을 이미 한 구간(`reservationStartAt`~`EndAt`)으로
  * 합쳐 주므로 여기서 다시 잇지 않는다.
  */
+/**
+ * 예약 구간 표시. 슬롯이 없으면 서버가 두 값을 `null` 로 준다.
+ *
+ * 결제 만료·취소로 슬롯이 풀린 뒤 멘토가 그 슬롯을 지우면, 신청은 슬롯 id 를 들고
+ * 있는데 조회되는 행이 0개가 되어 시작·종료가 비게 된다. 그 경우 화면에는 일정
+ * 자리만 비우고, 카드의 나머지 정보는 그대로 보여준다 — 예약이 사라진 것이 아니라
+ * 일정을 알 수 없는 것이다.
+ */
 export const formatReservationPeriod = (
-  startAt: string,
-  endAt: string,
+  startAt: string | null,
+  endAt: string | null,
 ): string => {
+  if (!startAt || !endAt) return '일정 정보 없음';
   const [year, month, day] = startAt.slice(0, 10).split('-');
   const weekday =
     WEEKDAYS[new Date(`${startAt.slice(0, 10)}T00:00:00`).getDay()];

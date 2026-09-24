@@ -10,7 +10,7 @@ import {
   type LiveMentoringOrderDraft,
 } from './useOrderDraft';
 import type { QuestionInput } from '../types';
-import { validateQuestionInput } from '../utils';
+import { formatReservationRange, validateQuestionInput } from '../utils';
 import { readServerError } from '../../utils/serverError';
 
 /**
@@ -115,6 +115,8 @@ export function useOrderSubmit({
           customerEmail: contactEmail,
           customerMobilePhone: customerMobilePhone.replace(/[^0-9]/g, ''),
           expiresAt: created.reservation.expiresAt,
+          // 결제 복귀 뒤에는 슬롯 선택값이 없다. 결과 화면이 읽을 글자를 지금 만든다.
+          reservationLabel: formatReservationRange(draft.slots),
         });
         /*
           쿠폰으로 0원이 되면 결제할 것이 없다. 서버도 `finalAmount > 0` 일 때만 Toss 를

@@ -218,13 +218,10 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.getByText('핵심 키워드 5가지')).toBeInTheDocument();
     expect(screen.getByText('서류 완성도 UP!')).toBeInTheDocument();
     expect(screen.getByText('✓ 경험 연결')).toBeInTheDocument();
-    // 통이미지였던 고정 섹션 4개를 모두 마크업으로 옮겼다 (SEO)
+    // 통이미지였던 고정 섹션을 마크업으로 옮겼다 (SEO). 특별 혜택 섹션은 숨겼다
     expect(
-      screen.getByText('합격 포폴 일부를 제공해드립니다'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('OO뱅크 서비스 기획자 자기소개서'),
-    ).toBeInTheDocument();
+      screen.queryByText('합격 포폴 일부를 제공해드립니다'),
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/혼자 하기 막막하셨나요\?/)).toBeInTheDocument();
     expect(
       screen.getByText(/1:1 LIVE 멘토링으로 빠르게 정리해요/),
@@ -295,7 +292,8 @@ describe('LiveMentoringDetailPage', () => {
         screen.getAllByText('포폴메이커 멘토의 1:1 멘토링').length,
       ).toBeGreaterThan(0),
     );
-    expect(screen.getByText('후기 12건')).toBeInTheDocument();
+    // 후기 줄은 서버가 평점·후기를 실제 값으로 채울 때까지 숨긴다(1:1 오픈 준비 PRD W5).
+    expect(screen.queryByText('후기 12건')).not.toBeInTheDocument();
     expect(
       screen.getByRole('radio', { name: /\[LIVE\] 1:1 멘토링 \(60분\)/ }),
     ).toBeEnabled();
@@ -332,6 +330,25 @@ describe('LiveMentoringDetailPage', () => {
         screen.getByText('- 이력서, 자기소개서, 포트폴리오 피드백 및 첨삭'),
       ).toBeInTheDocument(),
     );
+  });
+
+  /*
+    멘토 프로필 입구는 데스크톱(오른쪽 위)과 모바일(구매 카드 위)에 하나씩 있다.
+    jsdom 은 미디어쿼리를 적용하지 않아 폭별 노출은 클래스로 확인한다.
+  */
+  it('멘토 프로필 링크를 데스크톱·모바일 자리에 하나씩 두고 둘 다 멘토 프로필로 보낸다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    const links = await screen.findAllByRole('link', {
+      name: /프로필 구경하러 가기/,
+    });
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute('href', '/mentors/3');
+    }
+    expect(links[0]).toHaveClass('hidden', 'md:block');
+    expect(links[1]).toHaveClass('md:hidden');
   });
 
   /*
@@ -522,15 +539,14 @@ describe('LiveMentoringDetailPage', () => {
     expect(draft?.slots.map((slot) => slot.slotId)).toEqual([1, 2]);
   });
 
-  // ⚠️ 임시 — 백엔드 연동 후 이 케이스는 일반 오류 문구 단언으로 되돌릴 것.
-  //    상세 조건은 UnderDevelopmentNotice.tsx 상단 주석 참고.
-  it('상세 조회에 실패하면 담당자와 함께 개발 중 안내를 노출한다', async () => {
+  it('상세 조회에 실패하면 오류 문구를 노출한다', async () => {
     axiosGet.mockRejectedValue(new Error('500'));
     renderDetail();
 
     await waitFor(() =>
-      expect(screen.getByText('개발 중인 페이지입니다.')).toBeInTheDocument(),
+      expect(
+        screen.getByText('멘토 정보를 불러오지 못했습니다.'),
+      ).toBeInTheDocument(),
     );
-    expect(screen.getByText('담당자 임성빈')).toBeInTheDocument();
   });
 });

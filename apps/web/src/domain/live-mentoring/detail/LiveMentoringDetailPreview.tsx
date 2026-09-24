@@ -45,6 +45,14 @@ interface PreviewMessage {
   activeTab?: string;
   /** 그 섹션 안에서 편집 중인 항목 번호(0부터). 없으면 섹션 전체로 간다. */
   activeItem?: number | null;
+  /**
+   * 포커스가 마지막으로 옮겨진 시각.
+   *
+   * 항목 번호만으로는 반복 항목 **밖**(섹션 제목·설명)으로 옮겨간 것을 알 수 없다 —
+   * 카드에서 제목으로 올라가도 번호는 `null` 그대로라 아무 변화가 없다. 이 값이 바뀌면
+   * 자리를 옮겼다는 뜻이므로, 지금 보는 곳이 화면 밖이면 따라간다.
+   */
+  focusedAt?: number;
 }
 
 /** 요소가 지금 화면 가운데 근처에 있는지. 살짝 걸친 정도는 "안 보인다"로 본다. */
@@ -176,7 +184,9 @@ const LiveMentoringDetailPreview = ({
   const [editing, setEditing] = useState<{
     tab?: string;
     item: number | null;
-  }>({ item: null });
+    /** 포커스가 옮겨진 시각. 값 자체는 쓰지 않고 "바뀌었다"만 본다. */
+    at: number;
+  }>({ item: null, at: 0 });
 
   useEffect(() => {
     const { sectionShown } = scrollToEditing(editing.tab, editing.item);
@@ -210,6 +220,7 @@ const LiveMentoringDetailPreview = ({
       setEditing({
         tab: event.data.activeTab,
         item: event.data.activeItem ?? null,
+        at: event.data.focusedAt ?? 0,
       });
     };
 
