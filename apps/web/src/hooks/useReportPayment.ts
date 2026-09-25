@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
 import axios from '../utils/axios';
+import { getCouponDiscountAmount } from '../utils/couponDiscount';
 
 export interface ReportPriceInfo {
   report: number;
@@ -57,6 +58,7 @@ export default function useReportPayment() {
         setReportApplication({
           couponId: data.couponId,
           couponDiscount: data.discount,
+          couponDiscountType: data.discountType,
         });
         return data;
       } catch (error) {
@@ -77,6 +79,7 @@ export default function useReportPayment() {
       setReportApplication({
         couponId: null,
         couponDiscount: 0,
+        couponDiscountType: undefined,
         couponCode: '',
       }),
     [setReportApplication],
@@ -119,6 +122,34 @@ export default function useReportPayment() {
     if (isFeedbackApplied)
       feedbackDiscount = feedbackPriceInfo?.feedbackDiscountPrice ?? 0;
 
+    const productAmount =
+      report +
+      option +
+      feedback -
+      (reportDiscount + optionDiscount + feedbackDiscount);
+    // 쿠폰은 1:1 피드백에 적용되지 않으므로, 피드백 제외 금액이 쿠폰 기준가(판매가)
+    const couponBase = report + option - (reportDiscount + optionDiscount);
+
+    let couponFields: Partial<ReportPriceInfo> = {};
+    if (couponId) {
+      const rawDiscount = reportApplication.couponDiscount ?? 0;
+      const couponAmount =
+        rawDiscount === -1
+          ? couponBase
+          : Math.min(
+              getCouponDiscountAmount({
+                discount: rawDiscount,
+                discountType: reportApplication.couponDiscountType,
+                salePrice: couponBase,
+              }),
+              couponBase,
+            );
+      couponFields = {
+        coupon: couponAmount,
+        amount: productAmount - couponAmount,
+      };
+    }
+
     setPayment((prev) => ({
       ...prev,
       report,
@@ -127,25 +158,9 @@ export default function useReportPayment() {
       reportDiscount,
       optionDiscount,
       feedbackDiscount,
-      amount:
-        report +
-        option +
-        feedback -
-        (reportDiscount + optionDiscount + feedbackDiscount),
+      amount: productAmount,
       isFeedbackApplied,
-      // 쿠폰 가격 책정 (쿠폰은 1:1 피드백에 적용되지 않음)
-      ...(couponId
-        ? {
-            coupon:
-              reportApplication.couponDiscount === -1
-                ? prev.amount - (prev.feedback - prev.feedbackDiscount)
-                : (reportApplication.couponDiscount ?? 0),
-            amount:
-              reportApplication.couponDiscount === -1
-                ? prev.feedback - prev.feedbackDiscount
-                : prev.amount - (reportApplication.couponDiscount ?? 0),
-          }
-        : {}),
+      ...couponFields,
       final: true,
     }));
   }, [reportPriceDetail, reportApplication.couponId]);
