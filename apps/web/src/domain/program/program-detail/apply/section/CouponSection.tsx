@@ -12,6 +12,7 @@ export interface CouponSectionProps {
     coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
   ) => void;
   maxAmount?: number;
+  salePrice?: number;
   programType: string;
   /**
    * [LC-3219-MEMBERSHIP] 전액할인 쿠폰 허용 여부. 담당자 임성빈.
@@ -24,6 +25,7 @@ const CouponSection = ({
   setCoupon,
   programType,
   maxAmount = Infinity,
+  salePrice,
   allowFullDiscount = true,
 }: CouponSectionProps) => {
   const { data: myCoupons = [] } = useMyCoupons(programType);
@@ -43,6 +45,7 @@ const CouponSection = ({
   const { applyCoupon, applyError } = useApplyCoupon({
     programType,
     maxAmount,
+    salePrice,
     setCoupon: (coupon) => setCoupon(coupon),
   });
 
@@ -119,6 +122,7 @@ const CouponSection = ({
         currentCouponId={selectedCoupon?.couponId ?? null}
         coupons={coupons}
         maxAmount={maxAmount}
+        salePrice={salePrice}
       />
     </>
   );

@@ -8,8 +8,9 @@ import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 // [LC-3219-MEMBERSHIP] 하반기 멤버십 전액할인 쿠폰 차단에만 쓴다 — 시즌 종료 시 이 import 를
 // 지운다(아래 isMembership 블록과 짝). 담당자 임성빈
-import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
+import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
@@ -27,11 +28,10 @@ import useProgramStore, {
   initProgramApplicationForm,
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
-import { isValidEmail } from '@/utils/valid';
-import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { captureDomainError } from '@/utils/captureError';
-import { NoticeDialog } from '@letscareer/ui';
+import { isValidEmail } from '@/utils/valid';
 import { ApiError } from '@letscareer/api';
+import { NoticeDialog } from '@letscareer/ui';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -386,6 +386,10 @@ const PaymentInputContent = () => {
                 setCoupon={setCoupon}
                 programType={programApplicationData.programType ?? 'live'}
                 maxAmount={maxCouponAmount}
+                salePrice={
+                  (programApplicationData.price ?? 0) -
+                  (programApplicationData.discount ?? 0)
+                }
                 // [LC-3219-MEMBERSHIP] 시즌 종료 시 이 줄을 지운다. 담당자 임성빈
                 allowFullDiscount={!isMembership}
               />
