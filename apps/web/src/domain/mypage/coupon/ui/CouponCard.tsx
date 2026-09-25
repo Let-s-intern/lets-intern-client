@@ -37,7 +37,9 @@ const CouponCard = ({ coupon }: CouponCardProps) => {
         <p className="text-small18 text-neutral-0 font-bold">
           {coupon.discount === -1
             ? '전액 할인'
-            : `${coupon.discount.toLocaleString()}원`}
+            : coupon.discountType === 'RATE'
+              ? `${coupon.discount}% 할인`
+              : `${coupon.discount.toLocaleString()}원`}
         </p>
         <p className="text-xsmall16 text-neutral-0 font-semibold">
           {coupon.name}

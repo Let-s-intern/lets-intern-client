@@ -1,4 +1,5 @@
 import axios from '@/utils/axios';
+import type { CouponDiscountType } from '@/api/coupon/coupon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
@@ -364,7 +365,11 @@ export const applyLiveMentoringCoupon = async (code: string) => {
   const res = await axios.get('/coupon', {
     params: { code, programType: 'LIVE_MENTORING' },
   });
-  return res.data.data as { couponId: number; discount: number };
+  return res.data.data as {
+    couponId: number;
+    discount: number;
+    discountType?: CouponDiscountType;
+  };
 };
 
 export const LIVE_MENTORING_ENTRY_QUERY_KEY = [
