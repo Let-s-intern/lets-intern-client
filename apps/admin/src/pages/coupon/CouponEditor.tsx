@@ -19,6 +19,7 @@ import Input from '@/common/input/v1/Input';
 import CouponTargetSection, {
   TargetCondition,
 } from '@/domain/admin/coupon/section/CouponTargetSection';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import axios from '@/utils/axios';
 import { couponProgramTypeToText, couponTypeToText } from '@/utils/convert';
 
@@ -60,6 +61,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   const navigate = useNavigate();
   const params = useParams();
   const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
 
   const [value, setValue] = useState<CouponInputValue>({
     couponType: '',
@@ -213,20 +215,32 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     !value.endDate;
 
   const handleSubmitError = (error: Error) => {
-    const errorData = (error as AxiosError).response?.data;
-    const errorCode = (errorData as { code: string }).code;
+    const axiosData = (error as AxiosError).response?.data as
+      | { code?: string; message?: string }
+      | undefined;
+    const errorCode = (error as { code?: string }).code ?? axiosData?.code;
     if (errorCode === 'COUPON_400_2') {
-      alert('이미 사용 중인 쿠폰 코드입니다.');
+      snackbar('이미 사용 중인 쿠폰 코드입니다.');
     } else if (errorCode === 'COUPON_400_3') {
-      alert('쿠폰 코드는 영문 대문자와 숫자로만 구성되어야 합니다.');
+      snackbar('쿠폰 코드는 영문 대문자와 숫자로만 구성되어야 합니다.');
     } else if (errorCode === 'COUPON_NOT_FOUND') {
-      alert('존재하지 않는 쿠폰입니다.');
+      snackbar('존재하지 않는 쿠폰입니다.');
     } else if (errorCode === 'COUPON_ISSUE_TARGET_NOT_FOUND') {
-      alert('존재하지 않는 프로그램입니다.');
+      snackbar(
+        '발급대상으로 선택한 챌린지에서 판매하지 않는 플랜이 포함되어 있습니다.',
+      );
     } else if (errorCode === 'COUPON_ISSUE_TARGET_INVALID') {
-      alert('쿠폰 대상 조건이 올바르지 않습니다.');
+      snackbar('쿠폰 대상 조건이 올바르지 않습니다.');
     } else if (errorCode === 'COUPON_INVALID_DISCOUNT_RATE') {
-      alert('정률 쿠폰의 할인율은 1~100 사이여야 합니다.');
+      snackbar('정률 쿠폰 할인율은 1~100 사이여야 합니다.');
+    } else {
+      const message =
+        (error as { serverMessage?: string }).serverMessage ??
+        (error as { message?: string }).message ??
+        axiosData?.message;
+      snackbar(
+        `쿠폰 저장 중 오류가 발생했습니다.${message ? ` (${message})` : ''}`,
+      );
     }
   };
 
