@@ -167,10 +167,9 @@ export interface AllInOnePassNotice {
   linkedPassIds: number[]; // 노출 영역: 이 콘텐츠를 노출할 패스 id 목록
 }
 
-/** A-4 공통 질문 (전 패스 공통, 모든 회차에 포함) */
+/** A-4 공통 질문 (하드코딩 상수, 모든 회차에 포함) */
 export interface RetrospectiveCommonQuestion {
   id: number;
-  order: number; // 표시 순서
   question: string;
 }
 
@@ -203,7 +202,6 @@ export interface RetrospectiveAnswer {
 export interface RetrospectiveResponse {
   id: number;
   submitterName: string; // 제출자 이름
-  passName: string; // 구매한 올인원패스 이름
   submittedAt: string; // 제출일(ISO)
   answers: RetrospectiveAnswer[];
 }
