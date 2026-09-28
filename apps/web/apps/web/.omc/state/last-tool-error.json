@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd apps/web && find src/domain/program/live-view -iname 'LiveFaq*' && echo \\\"=== LiveFaq props ===\\\" && grep -rn \\\"faqData\\\" src/domain/program/live-view/ui/ | head\"}",
+  "error": "Exit code 1\n(eval):cd:1: no such file or directory: apps/web",
+  "timestamp": "2026-07-09T14:16:03.694Z",
+  "retry_count": 1
+}

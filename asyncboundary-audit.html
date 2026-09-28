@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AsyncBoundary 위험도 감사 · apps/web</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --border:#242c3a; --text:#e6edf3; --muted:#9aa7b5; --muted2:#6e7d8d;
+    --high:#f85149; --high-bg:#2c1416; --med:#e3b341; --med-bg:#2a2311;
+    --safe:#3fb950; --safe-bg:#12261a; --accent:#58a6ff; --accent2:#bc8cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,Roboto,"Apple SD Gothic Neo",sans-serif;
+    line-height:1.55;font-size:14px}
+  a{color:var(--accent);text-decoration:none}
+  code{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:12px;
+    background:#1f2733;padding:1px 5px;border-radius:4px;color:#d8e0ea}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 24px 80px}
+  header.hero{border:1px solid var(--border);border-radius:16px;padding:28px 30px;
+    background:linear-gradient(135deg,#161b22,#131a26 60%,#171226);margin-bottom:24px}
+  h1{margin:0 0 6px;font-size:26px;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:14px}
+  .meta{margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;color:var(--muted2);font-size:12.5px}
+  .meta b{color:var(--text)}
+
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0 10px}
+  .card{border:1px solid var(--border);border-radius:14px;padding:18px 18px;background:var(--panel)}
+  .card .n{font-size:34px;font-weight:800;line-height:1}
+  .card .l{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .card.high{background:var(--high-bg);border-color:#5a2327}
+  .card.med{background:var(--med-bg);border-color:#54471a}
+  .card.safe{background:var(--safe-bg);border-color:#1f4d2d}
+  .card.high .n{color:var(--high)} .card.med .n{color:var(--med)} .card.safe .n{color:var(--safe)}
+  .card.total .n{color:var(--accent)}
+
+  .bar{height:14px;border-radius:8px;overflow:hidden;display:flex;margin:10px 0 26px;border:1px solid var(--border)}
+  .bar span{display:block;height:100%}
+  .bar .s-high{background:var(--high)} .bar .s-med{background:var(--med)} .bar .s-safe{background:var(--safe)}
+
+  h2{font-size:18px;margin:34px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .panel{border:1px solid var(--border);border-radius:14px;background:var(--panel);padding:18px 20px;margin-bottom:18px}
+
+  .vec{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .vec .v{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--panel2)}
+  .vec .v h4{margin:0 0 6px;font-size:14px}
+  .vec .v p{margin:0;color:var(--muted);font-size:12.5px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle}
+  .tag.high{color:var(--high);background:var(--high-bg);border:1px solid #5a2327}
+  .tag.med{color:var(--med);background:var(--med-bg);border:1px solid #54471a}
+  .tag.safe{color:var(--safe);background:var(--safe-bg);border:1px solid #1f4d2d}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 14px}
+  .btn{cursor:pointer;border:1px solid var(--border);background:var(--panel2);color:var(--text);
+    padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;user-select:none}
+  .btn.active{border-color:var(--accent);color:#fff;background:#1b2b45}
+  .btn.high.active{border-color:var(--high);background:var(--high-bg);color:var(--high)}
+  .btn.med.active{border-color:var(--med);background:var(--med-bg);color:var(--med)}
+  .btn.safe.active{border-color:var(--safe);background:var(--safe-bg);color:var(--safe)}
+  .search{margin-left:auto;background:var(--panel2);border:1px solid var(--border);color:var(--text);
+    padding:7px 12px;border-radius:8px;font-size:13px;min-width:220px}
+
+  table{width:100%;border-collapse:collapse;font-size:12.8px}
+  thead th{position:sticky;top:0;background:#11161f;text-align:left;padding:10px 10px;
+    border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:11.5px;
+    text-transform:uppercase;letter-spacing:.4px;z-index:2}
+  tbody td{padding:9px 10px;border-bottom:1px solid #1b222d;vertical-align:top}
+  tbody tr:hover{background:#141a23}
+  tr.grp td{background:#0f141c;font-weight:700;color:var(--accent2);font-size:12px;
+    text-transform:uppercase;letter-spacing:.5px;border-top:1px solid var(--border)}
+  .route{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:12px;color:#cdd6e0}
+  .comp{color:var(--muted);font-size:11.5px}
+  .lc{color:var(--accent);font-weight:700}
+  .rk{font-weight:800;font-size:11px;padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .rk.high{color:var(--high);background:var(--high-bg)}
+  .rk.med{color:var(--med);background:var(--med-bg)}
+  .rk.safe{color:var(--safe);background:var(--safe-bg)}
+  .bd{font-size:11.5px}
+  .bd.no{color:var(--high)} .bd.partial{color:var(--med)} .bd.yes{color:var(--safe)}
+  .why{color:var(--muted);font-size:11.8px;max-width:360px}
+  footer{margin-top:40px;color:var(--muted2);font-size:12px;text-align:center}
+  .hint{color:var(--muted2);font-size:11.5px;margin:-6px 0 14px}
+  ul.k{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+  ul.k li{margin:4px 0}
+  ul.k b{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>🛡️ AsyncBoundary 위험도 감사 리포트</h1>
+    <div class="sub">Next.js App Router · <code>apps/web/src/app</code> — 데이터 페칭이 에러 경계(Error Boundary) 없이 노출되어 <b>페이지 전체가 흰 화면으로 붕괴</b>할 수 있는 지점을 전수 조사</div>
+    <div class="meta">
+      <span>대상 페이지 <b>94개</b> (page.tsx 전수)</span>
+      <span>감사 방식 <b>6개 병렬 에이전트 · 페이지→도메인 컴포넌트 추적</b></span>
+      <span>기준 <b>AsyncBoundary = ErrorBoundary + Suspense</b></span>
+    </div>
+  </header>
+
+  <section class="cards">
+    <div class="card total"><div class="n">94</div><div class="l">전체 페이지</div></div>
+    <div class="card high"><div class="n">27</div><div class="l">🔴 HIGH · 에러 시 페이지 전체 붕괴</div></div>
+    <div class="card med"><div class="n">24</div><div class="l">🟡 MEDIUM · Suspense만 있거나 부분 방어</div></div>
+    <div class="card safe"><div class="n">43</div><div class="l">🟢 SAFE · 방어됨 / 페칭 없음</div></div>
+  </section>
+
+  <div class="panel" style="border-color:#1f4d2d;background:linear-gradient(135deg,#12261a,#0f1f16)">
+    <b style="color:var(--safe)">✅ 조치 완료 — 2계층 방어막 구축 (typecheck ✓ · ESLint 0 errors · 공유 api 훅 무변경)</b>
+    <ul class="k">
+      <li><b>① 구조적 안전망(전 페이지):</b> <code>(user)/error.tsx</code> · <code>(auth)/error.tsx</code> route-level 경계 신설. 서버 컴포넌트 fetch throw + 미포착 클라이언트 throw를 <b>모든 페이지</b>에서 헤더 유지한 "다시 시도" UI로 흡수(기존 Sentry+webhook 로깅 계승). → <b>blog·library·guidebook·vod 상세(서버 컴포넌트)는 이 경계로 커버.</b></li>
+      <li><b>② 지점 격리(HIGH/MEDIUM):</b> 소비 지점을 <code>useSuspenseQuery(xxxQueryOptions)</code>로 통일하고 <b>섹션/페이지 단위 <code>AsyncBoundary</code></b>로 감쌈(<b>신규 15곳</b>). 공유 훅 정의는 그대로 둬 타 소비자 무손상.</li>
+      <li><b>홈·리뷰:</b> 섹션마다 개별 AsyncBoundary → 한 섹션 실패해도 나머지 정상 렌더. <b>결제·리포트·구 챌린지·마이페이지·프로그램 상세:</b> page 레벨 AsyncBoundary + suspense 통일. <b>order/report-order/payment-input:</b> 무의미하던 <code>Suspense</code> → <code>AsyncBoundary</code> 교체.</li>
+      <li><b>미조치(의도적):</b> <code>challenge/*/latest</code> 리다이렉트 9개·<code>live/.../notification</code>는 자체 error→redirect로 이미 안전. <code>useProgramQuery</code>류 공유 plain 훅은 전환 시 타 페이지 파손 위험이라 래핑만.</li>
+    </ul>
+  </div>
+  <div class="bar" title="27 HIGH / 24 MEDIUM / 43 SAFE">
+    <span class="s-high" style="width:28.7%"></span>
+    <span class="s-med" style="width:25.5%"></span>
+    <span class="s-safe" style="width:45.8%"></span>
+  </div>
+
+  <div class="panel">
+    <b>핵심 진단 — 전역 안전망이 사실상 없음</b>
+    <ul class="k">
+      <li><b>세그먼트 <code>error.tsx</code> 0개.</b> 라우트 어디에도 세그먼트 단위 에러 경계가 없어, 던져진 에러는 상위로 계속 전파되어 루트 <code>global-error.tsx</code>까지 올라가 <b>페이지 전체를 통째로 교체</b>합니다.</li>
+      <li><b>루트 <code>layout.tsx</code>에 ErrorBoundary·Suspense 없음.</b> 전역 폴백이 없습니다.</li>
+      <li><b>QueryClient <code>retry:0</code> + 전역 <code>throwOnError</code> 미설정</b> (<code>context/Providers.tsx</code>). 일반 <code>useQuery</code> 에러는 <code>error</code> 상태로만 잡히지만, <b><code>useSuspenseQuery</code>·<code>throwOnError:true</code>는 즉시 에러를 던집니다.</b> 상위에 경계가 없으면 100% 크래시.</li>
+      <li>따라서 위험의 본질은 “한 파일에 모든 로직이 몰려 있고 그 파일이 페칭도 하는데 경계가 없음” → 그 한 파일의 에러가 <b>페이지 전부</b>를 무너뜨림.</li>
+    </ul>
+  </div>
+
+  <h2>💥 크래시가 발생하는 3가지 경로</h2>
+  <div class="vec">
+    <div class="v"><h4>① 경계 없는 <code>useSuspenseQuery</code></h4><p>Suspense는 있어도 ErrorBoundary가 없으면(=AsyncBoundary가 아니면) 쿼리 실패가 그대로 튀어 페이지 붕괴. <b>report/management</b>가 대표 사례.</p></div>
+    <div class="v"><h4>② <code>throwOnError:true</code> + 경계 없음</h4><p>의도적으로 에러를 던지지만 상위 AsyncBoundary가 없으면 크래시. 현행 challenge 대시보드는 올바르게 감쌌지만, 다수 페이지는 경계 없이 다수 <code>useQuery</code>를 나열.</p></div>
+    <div class="v"><h4>③ 서버 컴포넌트 async fetch / undefined 역참조</h4><p>Server Component의 <code>await fetch</code>나 <code>Promise.all</code>이 throw하면 세그먼트 붕괴. 렌더 중 undefined 데이터 접근도 동일. <b>blog·library 상세, home</b>이 해당.</p></div>
+  </div>
+
+  <h2>📋 전체 페이지 감사 표 <span class="hint" style="font-weight:400"></span></h2>
+  <div class="hint">행을 위험도/도메인별로 필터링할 수 있습니다. 라인 수(<span class="lc">파란색</span>)가 클수록 “한 파일 집중”이 심해 붕괴 반경이 큽니다.</div>
+  <div class="controls">
+    <span class="btn active" data-f="all" onclick="filt(this)">전체</span>
+    <span class="btn high active" data-f="high" onclick="filt(this)">🔴 HIGH</span>
+    <span class="btn med active" data-f="med" onclick="filt(this)">🟡 MEDIUM</span>
+    <span class="btn safe active" data-f="safe" onclick="filt(this)">🟢 SAFE</span>
+    <input class="search" id="q" placeholder="라우트/컴포넌트 검색…" oninput="search()" />
+  </div>
+
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th style="width:27%">Route</th>
+        <th style="width:20%">Main Component (lines)</th>
+        <th style="width:16%">데이터 페칭</th>
+        <th style="width:9%">경계</th>
+        <th style="width:7%">위험도</th>
+        <th style="width:21%">사유 / 처방</th>
+      </tr>
+    </thead>
+    <tbody id="tb"></tbody>
+  </table>
+
+  <h2>🧭 권장 조치 (우선순위)</h2>
+  <div class="panel">
+    <ul class="k">
+      <li><b>P0 — 결제·리포트·구 챌린지 대시보드부터.</b> <code>old/challenge/*</code> 4페이지, <code>payment</code>, <code>report/payment</code>, <code>report/toss/payment</code>, <code>report/management</code>를 page.tsx에서 <code>&lt;AsyncBoundary&gt;</code>로 감싸기. (돈·핵심 플로우 + 다수 쿼리 집중)</li>
+      <li><b>P1 — “Suspense만” 페이지를 AsyncBoundary로 교체.</b> <code>order/*</code>, <code>report/order/*</code>, <code>payment-input</code>, <code>live/.../notification/*</code>는 이미 Suspense로 감쌌으나 ErrorBoundary가 빠져 있음 → <code>&lt;Suspense&gt;</code>를 <code>&lt;AsyncBoundary&gt;</code>로 바꾸면 끝.</li>
+      <li><b>P1 — 홈·리뷰·블로그/라이브러리 상세.</b> 섹션별 다수 쿼리를 <b>섹션 단위</b> AsyncBoundary로 감싸 한 섹션 실패가 페이지 전체를 죽이지 않게 격리(부분 렌더 유지).</li>
+      <li><b>P2 — 구조적 안전망.</b> <code>(user)/layout.tsx</code>(또는 도메인별 layout)에 세그먼트 <code>error.tsx</code>를 추가하면, 개별 페이지 누락분까지 라우트 단위로 잡아 흰 화면 대신 재시도 UI 노출.</li>
+    </ul>
+  </div>
+
+  <footer>
+    렛츠커리어 · apps/web AsyncBoundary 감사 · page.tsx 94개 전수 · 6-way 병렬 에이전트 교차검증
+  </footer>
+</div>
+
+<script>
+const DATA = [
+ // ===== CHALLENGE =====
+ {g:"challenge (구 old)", r:"(user)/old/challenge/[applicationId]/[programId]", c:"OldChallengeDashboard.tsx", ln:140, f:"쿼리 ~12개", b:"no", risk:"high", why:"layout은 Provider만 제공(경계 없음). 12개 쿼리 중 하나만 실패해도 대시보드 전체 붕괴 → AsyncBoundary로 래핑"},
+ {g:"challenge (구 old)", r:"(user)/old/challenge/[applicationId]/[programId]/user/info", c:"OldChallengeUserInfo.tsx", ln:261, f:"쿼리 ~10개", b:"no", risk:"high", why:"261줄에 폼+쿼리 집중, 경계 없음 → AsyncBoundary"},
+ {g:"challenge (구 old)", r:"(user)/old/challenge/[applicationId]/[programId]/missions/[missionId]/feedback", c:"OldMissionFeedback.tsx", ln:111, f:"쿼리 ~4개", b:"no", risk:"high", why:"피드백 쿼리 실패 시 붕괴 → AsyncBoundary"},
+ {g:"challenge (구 old)", r:"(user)/old/challenge/[applicationId]/[programId]/me", c:"OldMyChallengeDashboard.tsx", ln:65, f:"쿼리 ~4개", b:"no", risk:"high", why:"경계 없음 → AsyncBoundary"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]/inquiry", c:"ChallengeInquiryPage.tsx", ln:87, f:"쿼리 2개", b:"no", risk:"med", why:"page.tsx가 경계 없이 직접 렌더 → AsyncBoundary 추가"},
+ {g:"challenge", r:"(user)/challenge/feedback-mentoring", c:"ChallengeFeedbackScreen.tsx", ln:169, f:"자식 섹션 페칭", b:"no", risk:"med", why:"스크린 전체 경계 없음 → AsyncBoundary"},
+ {g:"challenge", r:"(user)/challenge/experience-summary/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"최신 챌린지 조회 후 redirect. 조회 실패 시 LoadingContainer에서 멈춤/크래시 → 경계"},
+ {g:"challenge", r:"(user)/challenge/hr/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/marketing/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/meeting-preparation/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/personal-statement-large-corp/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/personal-statement/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/pm/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/portfolio/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/resume/latest", c:"useLatestChallengeRedirect", ln:0, f:"리다이렉트 훅", b:"no", risk:"med", why:"동일 리다이렉트 패턴 → 경계"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]", c:"page.tsx (dashboard)", ln:200, f:"useChallengeHome+useUserQuery, throwOnError:true", b:"yes", risk:"safe", why:"throwOnError를 쓰되 page.tsx에서 AsyncBoundary로 감쌈 → 올바른 패턴"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]/me", c:"page.tsx (mission)", ln:80, f:"다수 훅", b:"yes", risk:"safe", why:"AsyncBoundary 래핑"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]/guides", c:"ChallengeGuidePage", ln:0, f:"페칭", b:"yes", risk:"safe", why:"AsyncBoundary 래핑"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]/missions/[missionId]/feedback", c:"page.tsx", ln:135, f:"페칭", b:"yes", risk:"safe", why:"AsyncBoundary 래핑"},
+ {g:"challenge", r:"(user)/challenge/[applicationId]/[programId]/user/info", c:"page.tsx", ln:435, f:"다수 쿼리/뮤테이션", b:"yes", risk:"safe", why:"AsyncBoundary 래핑"},
+
+ // ===== MYPAGE =====
+ {g:"mypage", r:"(user)/mypage/application", c:"Application.tsx", ln:100, f:"useMypageApplicationsQuery", b:"no", risk:"high", why:"페이지 레벨 useQuery 미래핑, 단일 파일 집중 → AsyncBoundary"},
+ {g:"mypage", r:"(user)/mypage/career/plan", c:"CareerInfoForm.tsx", ln:330, f:"useUserQuery+usePatchUser", b:"no", risk:"high", why:"330줄 폼+뮤테이션, 경계 없음 → AsyncBoundary"},
+ {g:"mypage", r:"(user)/mypage/career/record", c:"Career.tsx", ln:104, f:"useGetUserCareerQuery", b:"no", risk:"high", why:"페이지 레벨 쿼리 경계 없음 → AsyncBoundary"},
+ {g:"mypage", r:"(user)/mypage/feedback", c:"Feedback.tsx", ln:48, f:"useMentorChallengeListQuery+useUserQuery", b:"no", risk:"high", why:"쿼리 2개 경계 없음(수동 isLoading만) → AsyncBoundary"},
+ {g:"mypage", r:"(user)/mypage/review", c:"Review.tsx", ln:40, f:"useGetAllApplicationsForReviewQuery", b:"no", risk:"med", why:"경계 없이 useMemo 필터만 → AsyncBoundary"},
+ {g:"mypage", r:"(user)/mypage/privacy", c:"Privacy.tsx", ln:71, f:"뮤테이션+자식 useUserQuery", b:"partial", risk:"med", why:"자식 섹션(BasicInfo/ChangePassword) 미보호 → 섹션 래핑"},
+ {g:"mypage", r:"(user)/mypage/credit", c:"CreditList (dynamic ssr:false)", ln:88, f:"useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/credit/[paymentId]", c:"CreditDetailPage.tsx", ln:320, f:"useCredit+useUserQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/credit/[paymentId]/delete", c:"CreditDeletePage.tsx", ln:198, f:"useCredit+뮤테이션", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/credit/report/[paymentId]", c:"ReportCreditDetailPage.tsx", ln:0, f:"useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/credit/report/[paymentId]/delete", c:"ReportCreditDelete.tsx", ln:374, f:"useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/challenge/[programId]", c:"ChallengeReviewPage", ln:0, f:"3 쿼리", b:"yes", risk:"safe", why:"페이지 레벨 Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/live/[programId]", c:"LiveReviewPage", ln:0, f:"2 쿼리", b:"yes", risk:"safe", why:"Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/report/[reportId]", c:"ReportReviewPage", ln:0, f:"3 쿼리", b:"yes", risk:"safe", why:"Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/new/challenge/[programId]", c:"ChallengeReviewCreatePage", ln:0, f:"쿼리+뮤테이션", b:"yes", risk:"safe", why:"Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/new/live/[programId]", c:"LiveReviewCreatePage", ln:0, f:"쿼리+뮤테이션", b:"yes", risk:"safe", why:"Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/review/new/report/[reportId]", c:"ReportReviewCreatePage", ln:0, f:"쿼리+뮤테이션", b:"yes", risk:"safe", why:"Suspense 래핑 ✓"},
+ {g:"mypage", r:"(user)/mypage/career/experience", c:"Experience.tsx", ln:178, f:"뮤테이션만", b:"no", risk:"safe", why:"초기 페칭 없음 → 경계 불필요"},
+ {g:"mypage", r:"(user)/mypage/career/resume", c:"Page.tsx", ln:38, f:"페칭 없음", b:"no", risk:"safe", why:"로컬 상태(파일 업로드)만"},
+ {g:"mypage", r:"(user)/mypage/career/board", c:"CareerBoard (dynamic ssr:false)", ln:26, f:"자식이 자체 boundary", b:"yes", risk:"safe", why:"자식 섹션이 각자 경계 관리 ✓"},
+ {g:"mypage", r:"(user)/mypage", c:"Redirect → /mypage/career", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"mypage", r:"(user)/mypage/career", c:"Redirect → /mypage/career/board", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+
+ // ===== PROGRAM =====
+ {g:"program", r:"(user)/program/challenge/[id]/[title]", c:"ChallengeView.tsx", ln:257, f:"클라이언트 쿼리 2개", b:"no", risk:"high", why:"257줄 상세 뷰, 경계 없음 → AsyncBoundary"},
+ {g:"program", r:"(user)/program/live/[id]/[title]", c:"LiveView.tsx", ln:160, f:"useGetLiveFaq", b:"no", risk:"high", why:"FAQ 쿼리 실패 시 붕괴 → AsyncBoundary"},
+ {g:"program", r:"(user)/program/guidebook/[id]/[title]", c:"GuidebookView.tsx", ln:33, f:"Server fetch", b:"no", risk:"high", why:"서버 컴포넌트 fetch throw 시 세그먼트 붕괴 → 경계/try-catch"},
+ {g:"program", r:"(user)/program/vod/[id]/[title]", c:"VodView.tsx", ln:33, f:"Server fetch", b:"no", risk:"high", why:"서버 fetch throw 시 붕괴 → 경계/try-catch"},
+ {g:"program", r:"(user)/program/old/challenge/[id]", c:"ProgramDetailLegacyPage.tsx", ln:206, f:"쿼리 3개", b:"no", risk:"high", why:"구 상세 페이지 경계 없음 → AsyncBoundary"},
+ {g:"program", r:"(user)/program/old/live/[id]", c:"ProgramDetailLegacyPage.tsx", ln:206, f:"쿼리 3개", b:"no", risk:"high", why:"구 상세 페이지 경계 없음 → AsyncBoundary"},
+ {g:"program", r:"(user)/program", c:"Program 리스트", ln:0, f:"쿼리(래핑됨)", b:"yes", risk:"safe", why:"리스트는 경계 안에서 렌더 ✓"},
+ {g:"program", r:"(user)/program/challenge/[id]", c:"Redirect → [id]/[title]", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"program", r:"(user)/program/live/[id]", c:"Redirect → [id]/[title]", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"program", r:"(user)/program/guidebook/[id]", c:"Redirect → [id]/[title]", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"program", r:"(user)/program/vod/[id]", c:"Redirect → [id]/[title]", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"program", r:"(user)/curation", c:"Curation 폼", ln:0, f:"폼/쿼리", b:"no", risk:"med", why:"큐레이션 폼 경계 없음 → AsyncBoundary"},
+ {g:"program", r:"(user)/community", c:"Community", ln:0, f:"정적/경미", b:"yes", risk:"safe", why:"페칭 위험 낮음"},
+ {g:"program", r:"(user)/membership", c:"Membership", ln:0, f:"정적/경미", b:"yes", risk:"safe", why:"페칭 위험 낮음"},
+
+ // ===== REPORT / PAYMENT =====
+ {g:"report · payment", r:"(user)/report/management", c:"ReportManagementPage.tsx", ln:598, f:"useSuspenseQuery", b:"partial", risk:"high", why:"598줄 초대형 + useSuspenseQuery인데 Suspense만·ErrorBoundary 없음 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/report/payment/[reportType]/[reportId]", c:"ReportPaymentPage.tsx", ln:447, f:"쿼리 3개", b:"no", risk:"high", why:"3개 쿼리+뮤테이션 경계 전무, 결제 플로우 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/report/toss/payment", c:"ReportTossPage.tsx", ln:134, f:"쿼리 3개 + loadTossPayments", b:"no", risk:"high", why:"SDK 로드/쿼리 throw 시 결제 페이지 붕괴 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/payment", c:"Payment.tsx", ln:149, f:"useUserQuery+useProgramQuery+loadTossPayments", b:"no", risk:"high", why:"결제 진입 다중 페칭 경계 없음 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/payment-input", c:"PaymentInputContent.tsx", ln:427, f:"쿼리/뮤테이션 3개", b:"partial", risk:"med", why:"Suspense만·ErrorBoundary 없음 → AsyncBoundary로 교체"},
+ {g:"report · payment", r:"(user)/report/order/result", c:"ReportPaymentResult.tsx", ln:328, f:"useProgramQuery+axios", b:"partial", risk:"med", why:"Suspense만, axios 에러 로깅만 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/order/result", c:"PaymentResult.tsx", ln:327, f:"useProgramQuery+axios", b:"partial", risk:"med", why:"Suspense만 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/report/order/fail", c:"ReportPaymentFail.tsx", ln:162, f:"useProgramQuery", b:"partial", risk:"med", why:"Suspense만 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/order/fail", c:"PaymentFail.tsx", ln:159, f:"useProgramQuery", b:"partial", risk:"med", why:"Suspense만 → AsyncBoundary"},
+ {g:"report · payment", r:"(user)/report/[reportType]/application/[applicationId]", c:"ReportApplicationPage.tsx", ln:212, f:"usePatchMyApplication", b:"no", risk:"med", why:"뮤테이션/파일변환 에러 미처리 → try-catch/경계"},
+ {g:"report · payment", r:"(user)/report/apply/[reportType]/[reportId]", c:"ReportApplyPage.tsx", ln:194, f:"uploadFile async", b:"no", risk:"med", why:"convertFile throw 미처리 → try-catch/경계"},
+ {g:"report · payment", r:"(user)/report/landing", c:"Redirect", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"report · payment", r:"(user)/report/landing/personal-statement", c:"ReportPersonalStatementPage.tsx", ln:144, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"report · payment", r:"(user)/report/landing/personal-statement/[id]", c:"ReportPersonalStatementPage.tsx", ln:144, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"report · payment", r:"(user)/report/landing/portfolio", c:"ReportPortfolioPage.tsx", ln:117, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"report · payment", r:"(user)/report/landing/portfolio/[id]", c:"ReportPortfolioPage.tsx", ln:117, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"report · payment", r:"(user)/report/landing/resume", c:"ReportResumePage.tsx", ln:111, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+ {g:"report · payment", r:"(user)/report/landing/resume/[id]", c:"ReportResumePage.tsx", ln:111, f:"SSR fetch+useSuspenseQuery", b:"yes", risk:"safe", why:"AsyncBoundary 래핑 ✓"},
+
+ // ===== HOME / BLOG / LIBRARY / REVIEW =====
+ {g:"home · 콘텐츠", r:"(user)/  (홈)", c:"HomeScreen", ln:0, f:"독립 쿼리 섹션 5개", b:"no", risk:"high", why:"섹션 쿼리 경계 전무 → 섹션별 AsyncBoundary(부분 렌더 유지)"},
+ {g:"home · 콘텐츠", r:"(user)/blog/[id]/[title]", c:"Server Component", ln:0, f:"async 5회", b:"no", risk:"high", why:"서버 컴포넌트 다중 fetch 미보호 → try-catch/경계"},
+ {g:"home · 콘텐츠", r:"(user)/library/[id]/[title]", c:"Server Component", ln:0, f:"Promise.all fetch", b:"no", risk:"high", why:"서버 병렬 fetch throw 시 붕괴 → 경계"},
+ {g:"home · 콘텐츠", r:"(user)/library/[id]/apply", c:"ApplyContent", ln:0, f:"useQuery 2개", b:"no", risk:"high", why:"클라이언트 쿼리 경계 없음 → AsyncBoundary"},
+ {g:"home · 콘텐츠", r:"(user)/review/mission", c:"MissionReviewSection", ln:0, f:"병렬 쿼리 8개", b:"no", risk:"high", why:"8개 쿼리 경계 없음 → 섹션 AsyncBoundary"},
+ {g:"home · 콘텐츠", r:"(user)/review/program", c:"ProgramReviewSection", ln:0, f:"쿼리 4개", b:"no", risk:"high", why:"경계 없음 → 섹션 AsyncBoundary"},
+ {g:"home · 콘텐츠", r:"(user)/review", c:"Review 섹션 3개", ln:0, f:"쿼리 6+개", b:"no", risk:"high", why:"섹션 다수 쿼리 미보호 → 섹션 AsyncBoundary"},
+ {g:"home · 콘텐츠", r:"(user)/library/list", c:"LibraryList", ln:0, f:"useSuspenseQuery(부분)", b:"partial", risk:"med", why:"탭/필터 셋업 UI가 AsyncBoundary 밖에서 렌더 → 경계 범위 확장"},
+ {g:"home · 콘텐츠", r:"(user)/library/list/my", c:"LibraryList(내 라이브러리)", ln:0, f:"useSuspenseQuery(부분)", b:"partial", risk:"med", why:"셋업 UI가 경계 밖 → 경계 범위 확장"},
+ {g:"home · 콘텐츠", r:"(user)/review/blog", c:"BlogReviewSection", ln:0, f:"useSuspenseQuery", b:"partial", risk:"med", why:"Suspense가 부모만 감싸고 데이터 섹션 미포함 → 섹션 래핑"},
+ {g:"home · 콘텐츠", r:"(user)/blog/[id]", c:"Redirect → [id]/[title]", ln:0, f:"없음", b:"yes", risk:"safe", why:"리다이렉트"},
+ {g:"home · 콘텐츠", r:"(user)/blog/list", c:"BlogListContent", ln:0, f:"쿼리(래핑됨)", b:"yes", risk:"safe", why:"AsyncBoundary 사용 ✓"},
+ {g:"home · 콘텐츠", r:"(user)/about", c:"About", ln:0, f:"정적", b:"yes", risk:"safe", why:"페칭 없음/정적"},
+ {g:"home · 콘텐츠", r:"(user)/b2b", c:"B2B", ln:0, f:"정적", b:"yes", risk:"safe", why:"페칭 없음/정적"},
+ {g:"home · 콘텐츠", r:"(user)/dev", c:"DevPage", ln:0, f:"쿼리(retry:1)", b:"yes", risk:"safe", why:"개발용/경미"},
+
+ // ===== AUTH / LIVE =====
+ {g:"auth · live", r:"(auth)/signup", c:"SignupContent", ln:0, f:"뮤테이션", b:"yes", risk:"safe", why:"SocialLogin이 AsyncBoundary 사용, 초기 페칭 없음"},
+ {g:"auth · live", r:"(user)/login", c:"LoginContent", ln:0, f:"뮤테이션", b:"yes", risk:"safe", why:"초기 페칭 없음"},
+ {g:"auth · live", r:"(user)/find-password", c:"FindPassword", ln:0, f:"뮤테이션", b:"yes", risk:"safe", why:"초기 페칭 없음"},
+ {g:"auth · live", r:"(user)/live/[id]/mentor/notification/before", c:"MentorNotificationBeforeContent.tsx", ln:132, f:"useQuery+axios", b:"partial", risk:"high", why:"Suspense만 있고 ErrorBoundary 없음. useQuery 에러가 useEffect 핸들러보다 먼저 throw → AsyncBoundary로 교체"},
+ {g:"auth · live", r:"(user)/live/[id]/mentor/notification/after", c:"MentorNotificationAfterContent.tsx", ln:83, f:"useQuery+axios", b:"partial", risk:"high", why:"Suspense만·ErrorBoundary 없음 → AsyncBoundary로 교체"},
+];
+
+// 이번에 조치 완료된 라우트 (✅ 표시)
+const FIXED = new Set([
+  "(user)/old/challenge/[applicationId]/[programId]",
+  "(user)/old/challenge/[applicationId]/[programId]/user/info",
+  "(user)/old/challenge/[applicationId]/[programId]/missions/[missionId]/feedback",
+  "(user)/old/challenge/[applicationId]/[programId]/me",
+  "(user)/mypage/application",
+  "(user)/mypage/career/plan",
+  "(user)/mypage/career/record",
+  "(user)/mypage/feedback",
+  "(user)/mypage/review",
+  "(user)/mypage/privacy",
+  "(user)/program/challenge/[id]/[title]",
+  "(user)/program/live/[id]/[title]",
+  "(user)/program/old/challenge/[id]",
+  "(user)/program/old/live/[id]",
+  "(user)/report/management",
+  "(user)/report/payment/[reportType]/[reportId]",
+  "(user)/report/toss/payment",
+  "(user)/payment",
+  "(user)/payment-input",
+  "(user)/report/order/result",
+  "(user)/order/result",
+  "(user)/report/order/fail",
+  "(user)/order/fail",
+  "(user)/report/[reportType]/application/[applicationId]",
+  "(user)/report/apply/[reportType]/[reportId]",
+  "(user)/  (홈)",
+  "(user)/review",
+  "(user)/review/mission",
+  "(user)/review/program",
+  "(user)/review/blog",
+  "(user)/library/[id]/apply",
+  // 서버 컴포넌트: route-level (user)/error.tsx 로 커버
+  "(user)/blog/[id]/[title]",
+  "(user)/library/[id]/[title]",
+  "(user)/program/guidebook/[id]/[title]",
+  "(user)/program/vod/[id]/[title]",
+  "(user)/library/list",
+  "(user)/library/list/my",
+]);
+
+// 조사 결과 코드 변경이 불필요한(이미 안전 / route 경계 커버) MEDIUM
+const VERIFIED_SAFE = new Set([
+  "(user)/challenge/[applicationId]/[programId]/inquiry",
+  "(user)/challenge/feedback-mentoring",
+  "(user)/challenge/experience-summary/latest",
+  "(user)/challenge/hr/latest",
+  "(user)/challenge/marketing/latest",
+  "(user)/challenge/meeting-preparation/latest",
+  "(user)/challenge/personal-statement-large-corp/latest",
+  "(user)/challenge/personal-statement/latest",
+  "(user)/challenge/pm/latest",
+  "(user)/challenge/portfolio/latest",
+  "(user)/challenge/resume/latest",
+  "(user)/curation",
+  "(user)/live/[id]/mentor/notification/before",
+  "(user)/live/[id]/mentor/notification/after",
+]);
+
+const order={high:0,med:1,safe:2};
+const groupsOrder=["challenge (구 old)","challenge","mypage","program","report · payment","home · 콘텐츠","auth · live"];
+let active={high:true,med:true,safe:true};
+let term="";
+
+function render(){
+  const tb=document.getElementById("tb"); tb.innerHTML="";
+  const rows=DATA.filter(d=>active[d.risk])
+    .filter(d=>!term|| (d.r+ " "+d.c+" "+d.why).toLowerCase().includes(term));
+  // group
+  const byG={};
+  rows.forEach(d=>{(byG[d.g]=byG[d.g]||[]).push(d)});
+  const gseen=[...new Set(rows.map(r=>r.g))].sort((a,b)=>groupsOrder.indexOf(a)-groupsOrder.indexOf(b));
+  gseen.forEach(g=>{
+    const list=byG[g].sort((a,b)=>order[a.risk]-order[b.risk]||b.ln-a.ln);
+    const gr=document.createElement("tr"); gr.className="grp";
+    const nH=list.filter(x=>x.risk==="high").length, nM=list.filter(x=>x.risk==="med").length, nS=list.filter(x=>x.risk==="safe").length;
+    gr.innerHTML=`<td colspan="6">${g} &nbsp; <span style="color:var(--high)">${nH} high</span> · <span style="color:var(--med)">${nM} med</span> · <span style="color:var(--safe)">${nS} safe</span></td>`;
+    tb.appendChild(gr);
+    list.forEach(d=>{
+      const tr=document.createElement("tr");
+      const lc = d.ln>0 ? `<span class="lc">${d.ln}</span>` : `<span class="comp">—</span>`;
+      const bdTxt={no:"없음",partial:"Suspense만",yes:"보호됨"}[d.b];
+      const rkTxt={high:"HIGH",med:"MEDIUM",safe:"SAFE"}[d.risk];
+      const fixed=FIXED.has(d.r);
+      const vsafe=VERIFIED_SAFE.has(d.r);
+      const fixMark=fixed
+        ?'<span class="rk safe" title="이번 작업에서 AsyncBoundary/route 경계로 조치됨" style="margin-left:6px">✅ 조치완료</span>'
+        :vsafe
+        ?'<span class="rk" title="조사 결과 이미 안전/route 경계 커버 — 변경 불필요" style="margin-left:6px;color:var(--accent);background:#152238">🔵 확인완료(안전)</span>'
+        :'';
+      if(fixed||vsafe) tr.style.opacity='0.72';
+      tr.innerHTML=`
+        <td><span class="route">${fixed?'✅ ':vsafe?'🔵 ':''}${d.r}</span></td>
+        <td><span class="comp">${d.c}</span> ${lc}</td>
+        <td class="comp">${d.f}</td>
+        <td class="bd ${d.b}">${bdTxt}</td>
+        <td><span class="rk ${d.risk}">${rkTxt}</span>${fixMark}</td>
+        <td class="why">${d.why}</td>`;
+      tb.appendChild(tr);
+    });
+  });
+  if(!rows.length){tb.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted)">일치하는 페이지가 없습니다.</td></tr>';}
+}
+function filt(el){
+  const f=el.dataset.f;
+  if(f==="all"){const on=!el.classList.contains("active");active={high:on,med:on,safe:on};
+    document.querySelectorAll(".btn[data-f]").forEach(b=>b.classList.toggle("active",on||b.dataset.f==="all"?on:on));
+    document.querySelectorAll('.btn.high,.btn.med,.btn.safe').forEach(b=>b.classList.toggle("active",on));
+    el.classList.toggle("active",true); render(); return;}
+  active[f]=!active[f]; el.classList.toggle("active",active[f]); render();
+}
+function search(){term=document.getElementById("q").value.toLowerCase().trim(); render();}
+render();
+</script>
+</body>
+</html>
