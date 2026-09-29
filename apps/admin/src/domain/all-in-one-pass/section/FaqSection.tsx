@@ -94,7 +94,9 @@ export default function FaqSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
+      <h2 className="text-small20 text-neutral-0 flex items-baseline gap-2 font-semibold">
+        FAQ (공통)
+      </h2>
 
       <div className="flex items-center justify-between gap-3">
         <CategoryTabs

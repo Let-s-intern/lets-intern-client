@@ -33,8 +33,8 @@ export default function BasicInfoSection({ input, patch }: Props) {
         fullWidth
       />
 
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 flex-col gap-4">
+      <div className="flex flex-wrap items-start gap-4">
+        <div className="flex min-w-[240px] flex-1 flex-col gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <DatePicker
