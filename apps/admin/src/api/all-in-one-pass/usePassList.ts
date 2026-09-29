@@ -1,14 +1,19 @@
+import {
+  toCreateDto,
+  toFormInput,
+  toListItem,
+} from '@/domain/all-in-one-pass/util/membershipMapper';
+import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
-
-import { AllInOnePassListItem } from '@/domain/all-in-one-pass/types';
-import { mockDelay, nextPassId, passStore } from './mock/passStore';
+import {
+  membershipDetailSchema,
+  membershipListResponseSchema,
+} from './membershipSchema';
 
 /**
- * 올인원패스 목록/노출/삭제/복제 훅.
+ * 올인원패스(멤버십) 목록/노출/삭제 훅.
  *
- * 페이지는 이 파일만 import 한다(프로그램의 api/program.ts 와 같은 역할).
- * 현재는 mock 스토어(./mock)를 읽고 쓰며, 백엔드 스펙이 나오면 각 queryFn/
- * mutationFn 본문만 axios 호출로 교체하고 ./mock 폴더를 삭제하면 된다.
+ * 서버: /api/v1/admin/membership. 페이지는 이 파일만 import 한다.
  */
 
 type MutationCallbacks = {
@@ -18,35 +23,34 @@ type MutationCallbacks = {
 
 export const allInOnePassListQueryKey = 'allInOnePassList';
 
-/** 개설 목록 (최신 개설순) */
+/** 개설 목록 (현재 서버 페이지네이션 미노출 — 넉넉히 1페이지로 조회) */
 export const useGetAllInOnePassListQuery = () =>
   useQuery({
     queryKey: [allInOnePassListQueryKey],
-    queryFn: () =>
-      mockDelay(
-        [...passStore.list].sort((a, b) =>
-          b.createdAt.localeCompare(a.createdAt),
-        ),
-      ),
+    queryFn: async () => {
+      const res = await axios.get('/admin/membership', {
+        params: { page: 1, size: 100 },
+      });
+      const parsed = membershipListResponseSchema.parse(res.data.data);
+      return parsed.membershipList.map(toListItem);
+    },
   });
 
-/**
- * 노출 여부 토글. 단일 노출 규칙: 이미 노출 중인 다른 패스가 있으면 켤 수 없다.
- * (실서버도 동일하게 강제해야 하며, 화면의 사전 체크는 UX 보조용)
- */
+/** 노출 여부 토글 (PATCH membership) */
 export const usePatchAllInOnePassVisibleMutation = ({
   successCallback,
   errorCallback,
 }: MutationCallbacks = {}) =>
   useMutation({
-    mutationFn: ({ id, isVisible }: { id: number; isVisible: boolean }) => {
-      const item = passStore.list.find((p) => p.id === id);
-      if (!item) return Promise.reject(new Error('존재하지 않는 패스입니다.'));
-      if (isVisible && passStore.list.some((p) => p.id !== id && p.isVisible)) {
-        return Promise.reject(new Error('노출 중인 올인원패스가 존재합니다.'));
-      }
-      item.isVisible = isVisible;
-      return mockDelay(item);
+    mutationFn: async ({
+      id,
+      isVisible,
+    }: {
+      id: number;
+      isVisible: boolean;
+    }) => {
+      const res = await axios.patch(`/admin/membership/${id}`, { isVisible });
+      return res.data;
     },
     onSuccess: successCallback,
     onError: errorCallback,
@@ -57,32 +61,29 @@ export const useDeleteAllInOnePassMutation = ({
   errorCallback,
 }: MutationCallbacks = {}) =>
   useMutation({
-    mutationFn: (id: number) => {
-      passStore.list = passStore.list.filter((p) => p.id !== id);
-      return mockDelay(undefined);
+    mutationFn: async (id: number) => {
+      const res = await axios.delete(`/admin/membership/${id}`);
+      return res.data;
     },
     onSuccess: successCallback,
     onError: errorCallback,
   });
 
+/**
+ * 복제: 복제 전용 API가 없어, 원본 상세를 조회해 생성(POST)을 다시 호출한다.
+ * (가이드북 복제와 동일 방식) 제목에 "(복제)"를 붙이고 비노출로 생성된다.
+ */
 export const useDuplicateAllInOnePassMutation = ({
   successCallback,
   errorCallback,
 }: MutationCallbacks = {}) =>
   useMutation({
-    mutationFn: (id: number) => {
-      const src = passStore.list.find((p) => p.id === id);
-      if (!src) return Promise.reject(new Error('존재하지 않는 패스입니다.'));
-      const copy: AllInOnePassListItem = {
-        ...src,
-        id: nextPassId(),
-        title: `${src.title} (복제)`,
-        isVisible: false, // 복제본은 비노출로 생성 (단일 노출 규칙)
-        currentApplicantCount: 0,
-        createdAt: new Date().toISOString(),
-      };
-      passStore.list.push(copy);
-      return mockDelay(copy);
+    mutationFn: async (id: number) => {
+      const detailRes = await axios.get(`/admin/membership/${id}`);
+      const input = toFormInput(membershipDetailSchema.parse(detailRes.data.data));
+      const body = toCreateDto({ ...input, title: `${input.title} (복제)` });
+      const res = await axios.post('/admin/membership', body);
+      return res.data;
     },
     onSuccess: successCallback,
     onError: errorCallback,

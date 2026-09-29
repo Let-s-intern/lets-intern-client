@@ -1,34 +1,49 @@
+import { uploadFile } from '@/api/file';
 import { twMerge } from '@/lib/twMerge';
+import { useState } from 'react';
 import { FiUpload } from 'react-icons/fi';
 
 interface Props {
   value: string | null;
-  onChange: (dataUrl: string) => void;
+  onChange: (url: string) => void;
   /** 크기 등 오버라이드 (기본 aspect-[4/3] w-40) */
   className?: string;
 }
 
 /**
- * 썸네일 업로드. 백엔드 부재로 실제 업로드 대신 로컬 미리보기(data URL)를 넘긴다.
- * 스펙 준비 시 onChange 를 실제 업로드 URL 로 교체.
+ * 썸네일 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘긴다.
+ * TODO: 백엔드에 MEMBERSHIP FileType 추가되면 type 을 교체(현재 CHALLENGE 임시 사용).
  */
 export default function ThumbnailUpload({ value, onChange, className }: Props) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => onChange(reader.result as string);
-    reader.readAsDataURL(file);
+    setIsUploading(true);
+    try {
+      const url = await uploadFile({ file, type: 'CHALLENGE' });
+      onChange(url);
+    } catch (err) {
+      console.error(err);
+      alert('썸네일 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
   };
 
   return (
     <label
       className={twMerge(
         'border-neutral-80 bg-neutral-95 flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
+        isUploading && 'cursor-progress',
         className,
       )}
     >
-      {value ? (
+      {isUploading ? (
+        <span className="text-neutral-40 text-xxsmall12">업로드 중...</span>
+      ) : value ? (
         <img
           src={value}
           alt="썸네일"
@@ -44,6 +59,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
         type="file"
         accept="image/*"
         className="hidden"
+        disabled={isUploading}
         onChange={handleChange}
       />
     </label>

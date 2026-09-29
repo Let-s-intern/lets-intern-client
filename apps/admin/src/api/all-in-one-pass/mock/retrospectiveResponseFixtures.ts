@@ -1,25 +1,27 @@
 import { RetrospectiveResponse } from '@/domain/all-in-one-pass/types';
 
 /**
- * A-5 회고 응답 mock 시드. 회차 id(=retrospectiveRoundFixtures.id)로 키를 잡는다.
+ * A-5 회고 응답 mock 시드. 회차 id(passId*100 + 회차)로 키를 잡는다.
  * 실제 API가 나오면 이 파일을 삭제한다.
  *
- * answers.questionId 규칙: 공통 질문 1·2, 회차별 주차 질문 10N (round N).
+ * answers.questionId: 공통 질문 1·2(고정), 주차별 질문 = 회차 id.
  * questionLabel 은 제출 당시 문구 스냅샷.
  */
 
-const COMMON_Q1 = '이번 기간 가장 크게 성장한 부분은 무엇인가요?';
-const COMMON_Q2 = '아쉬웠던 점과 다음 회차 목표를 적어주세요.';
+const COMMON_Q1 = '지난 회고 이후 어떤 점이 성장했나요?';
+const COMMON_Q2 = '이번 기간에 어떤 목표를 실천했나요?';
+const WEEKLY_R1 = '이번 2주간 가장 도움이 된 활동은 무엇이었나요?';
+const WEEKLY_R2 = '지난 목표 대비 어떤 진전이 있었나요?';
 
 export const retrospectiveResponseFixtures: Record<
   number,
   RetrospectiveResponse[]
 > = {
-  1: [
+  // 패스 1 · 1회차 (roundId 101)
+  101: [
     {
       id: 1,
       submitterName: '취준생홍',
-      passName: '2026 하반기 올인원패스',
       submittedAt: '2026-08-18T21:12:00',
       answers: [
         {
@@ -34,21 +36,20 @@ export const retrospectiveResponseFixtures: Record<
         },
         {
           questionId: 101,
-          questionLabel: '자기소개서 작성에서 가장 어려웠던 점은 무엇이었나요?',
-          answer: '경험을 직무 역량과 연결하는 부분이 어려웠습니다.',
+          questionLabel: WEEKLY_R1,
+          answer: '경험을 직무 역량과 연결하는 활동이 가장 도움이 됐습니다.',
         },
       ],
     },
     {
       id: 2,
       submitterName: '김지원',
-      passName: '2026 하반기 올인원패스',
       submittedAt: '2026-08-19T09:40:00',
       answers: [
         {
           questionId: 1,
           questionLabel: COMMON_Q1,
-          answer: '지표를 근거로 문장을 쓰는 습관이 생겼습니다.',
+          answer: '지표로 문장을 쓰는 습관이 생겼습니다.',
         },
         {
           questionId: 2,
@@ -57,38 +58,14 @@ export const retrospectiveResponseFixtures: Record<
         },
         {
           questionId: 101,
-          questionLabel: '자기소개서 작성에서 가장 어려웠던 점은 무엇이었나요?',
-          answer: '두괄식으로 요약하는 게 힘들었습니다.',
-        },
-      ],
-    },
-    {
-      id: 3,
-      submitterName: '이하늘',
-      passName: '2026 겨울 올인원패스',
-      submittedAt: '2026-08-20T14:03:00',
-      answers: [
-        {
-          questionId: 1,
-          questionLabel: COMMON_Q1,
-          answer: '피드백을 반영하는 속도가 빨라졌습니다.',
-        },
-        {
-          questionId: 2,
-          questionLabel: COMMON_Q2,
-          answer: '초안 완성도가 낮았던 점이 아쉽습니다.',
-        },
-        {
-          questionId: 101,
-          questionLabel: '자기소개서 작성에서 가장 어려웠던 점은 무엇이었나요?',
-          answer: '소재 선정에 시간이 오래 걸렸습니다.',
+          questionLabel: WEEKLY_R1,
+          answer: '자소서 첨삭 세션이 가장 유익했습니다.',
         },
       ],
     },
     {
       id: 5,
       submitterName: '박서준',
-      passName: '2026 하반기 올인원패스',
       submittedAt: '2026-08-21T11:20:00',
       answers: [
         {
@@ -105,18 +82,18 @@ export const retrospectiveResponseFixtures: Record<
         },
         {
           questionId: 101,
-          questionLabel: '자기소개서 작성에서 가장 어려웠던 점은 무엇이었나요?',
+          questionLabel: WEEKLY_R1,
           answer:
-            '가장 어려웠던 건 한정된 글자 수 안에서 경험을 직무 역량으로 압축하는 일이었습니다. 하고 싶은 말은 많은데 핵심만 남기려니 매번 문장을 줄이고 다시 쓰기를 반복했고, 두괄식으로 결론을 먼저 제시하는 구조가 익숙해지기까지 시간이 꽤 걸렸습니다.',
+            '가장 도움이 된 건 현직자 피드백이었습니다. 한정된 글자 수 안에서 경험을 직무 역량으로 압축하는 법을 반복해서 연습했고, 두괄식으로 결론을 먼저 제시하는 구조가 익숙해지기까지 시간이 꽤 걸렸지만 그만큼 완성도가 올라갔습니다.',
         },
       ],
     },
   ],
-  2: [
+  // 패스 1 · 2회차 (roundId 102)
+  102: [
     {
-      id: 4,
+      id: 3,
       submitterName: '취준생홍',
-      passName: '2026 하반기 올인원패스',
       submittedAt: '2026-09-02T20:15:00',
       answers: [
         {
@@ -131,11 +108,10 @@ export const retrospectiveResponseFixtures: Record<
         },
         {
           questionId: 102,
-          questionLabel: '지원 직무 탐색은 어느 정도 진행되었나요?',
-          answer: '관심 직무 3개를 좁혔습니다.',
+          questionLabel: WEEKLY_R2,
+          answer: '관심 직무를 3개로 좁혔습니다.',
         },
       ],
     },
   ],
-  3: [],
 };

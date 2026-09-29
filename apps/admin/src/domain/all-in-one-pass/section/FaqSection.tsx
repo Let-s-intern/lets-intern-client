@@ -1,27 +1,31 @@
+import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
 import { PassFaq } from '@/domain/all-in-one-pass/types';
 import FaqModal from '@/domain/all-in-one-pass/ui/faq/FaqModal';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { Faq, ProgramTypeEnum } from '@/schema';
 import { CategoryTabs } from '@letscareer/ui';
 import { Button } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 
-export const createEmptyFaq = (): PassFaq => ({
-  id: crypto.randomUUID(),
-  category: '',
-  question: '',
-  answer: '',
-});
-
+const MEMBERSHIP = ProgramTypeEnum.enum.MEMBERSHIP;
 const ALL = '';
 
-interface Props {
-  faqs: PassFaq[];
-  onChange: (faqs: PassFaq[]) => void;
-}
+/**
+ * 1.7 FAQ: 전 멤버십 공통(글로벌) FAQ. 멤버십 폼과 무관하게 공유 /faq API를
+ * type=MEMBERSHIP 으로 직접 관리한다(챌린지 FAQ와 동일 훅 재사용).
+ */
+export default function FaqSection() {
+  const { snackbar } = useAdminSnackbar();
 
-/** 1.7 FAQ: 카테고리 탭 + 리스트(질문·답변·수정/삭제) + 추가/수정 모달 */
-export default function FaqSection({ faqs, onChange }: Props) {
+  const { data } = useGetFaq(MEMBERSHIP);
+  const faqs = useMemo(() => data?.faqList ?? [], [data]);
+
+  const postFaq = usePostFaq();
+  const patchFaq = usePatchFaq();
+  const deleteFaq = useDeleteFaq();
+
   const [editing, setEditing] = useState<{
     faq: PassFaq;
     isEdit: boolean;
@@ -29,7 +33,8 @@ export default function FaqSection({ faqs, onChange }: Props) {
   const [tab, setTab] = useState<string>(ALL);
 
   const categories = useMemo(
-    () => Array.from(new Set(faqs.map((f) => f.category).filter(Boolean))),
+    () =>
+      Array.from(new Set(faqs.map((f) => f.category ?? '').filter(Boolean))),
     [faqs],
   );
   const tabOptions = [
@@ -40,18 +45,58 @@ export default function FaqSection({ faqs, onChange }: Props) {
   const filtered =
     visibleTab === ALL ? faqs : faqs.filter((f) => f.category === visibleTab);
 
-  const handleSave = (saved: PassFaq) => {
-    onChange(
-      faqs.some((f) => f.id === saved.id)
-        ? faqs.map((f) => (f.id === saved.id ? saved : f))
-        : [...faqs, saved],
-    );
-    setEditing(null);
+  const openEdit = (f: Faq) =>
+    setEditing({
+      faq: {
+        id: String(f.id),
+        category: f.category ?? '',
+        question: f.question ?? '',
+        answer: f.answer ?? '',
+      },
+      isEdit: true,
+    });
+
+  const handleSave = async (saved: PassFaq) => {
+    try {
+      if (editing?.isEdit) {
+        await patchFaq.mutateAsync({
+          id: Number(saved.id),
+          question: saved.question,
+          answer: saved.answer,
+          category: saved.category,
+          faqProgramType: MEMBERSHIP,
+        });
+        snackbar('수정되었습니다.');
+      } else {
+        await postFaq.mutateAsync({
+          programType: MEMBERSHIP,
+          question: saved.question,
+          answer: saved.answer,
+          category: saved.category,
+        });
+        snackbar('추가되었습니다.');
+      }
+      setEditing(null);
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '저장에 실패했습니다.');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+    try {
+      await deleteFaq.mutateAsync(id);
+      snackbar('삭제되었습니다.');
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '삭제에 실패했습니다.');
+    }
   };
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
+      <h2 className="text-small20 text-neutral-0 flex items-baseline gap-2 font-semibold">
+        FAQ (공통)
+      </h2>
 
       <div className="flex items-center justify-between gap-3">
         <CategoryTabs
@@ -65,7 +110,12 @@ export default function FaqSection({ faqs, onChange }: Props) {
           className="shrink-0"
           sx={{ borderStyle: 'dashed' }}
           startIcon={<FaPlus size={12} />}
-          onClick={() => setEditing({ faq: createEmptyFaq(), isEdit: false })}
+          onClick={() =>
+            setEditing({
+              faq: { id: '', category: '', question: '', answer: '' },
+              isEdit: false,
+            })
+          }
         >
           FAQ 추가
         </Button>
@@ -103,7 +153,7 @@ export default function FaqSection({ faqs, onChange }: Props) {
                 <button
                   type="button"
                   aria-label="수정"
-                  onClick={() => setEditing({ faq, isEdit: true })}
+                  onClick={() => openEdit(faq)}
                   className="text-neutral-40 hover:bg-neutral-95 hover:text-neutral-0 flex flex-1 items-center justify-center transition-colors"
                 >
                   <Pencil size={16} />
@@ -111,7 +161,7 @@ export default function FaqSection({ faqs, onChange }: Props) {
                 <button
                   type="button"
                   aria-label="삭제"
-                  onClick={() => onChange(faqs.filter((f) => f.id !== faq.id))}
+                  onClick={() => handleDelete(faq.id)}
                   className="text-neutral-40 hover:bg-system-error/10 hover:text-system-error flex flex-1 items-center justify-center transition-colors"
                 >
                   <FaTrashCan size={16} />
@@ -125,7 +175,7 @@ export default function FaqSection({ faqs, onChange }: Props) {
       <FaqModal
         faq={editing?.faq ?? null}
         isEdit={editing?.isEdit ?? false}
-        existingCategories={faqs.map((f) => f.category)}
+        existingCategories={faqs.map((f) => f.category ?? '')}
         onSave={handleSave}
         onClose={() => setEditing(null)}
       />

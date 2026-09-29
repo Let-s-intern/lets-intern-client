@@ -1,10 +1,11 @@
+import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
 import {
-  useGetCommonQuestionsQuery,
   useGetRetrospectiveResponsesQuery,
   useGetRetrospectiveRoundsQuery,
 } from '@/api/all-in-one-pass/useRetrospectives';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { COMMON_QUESTION_IDS } from '@/domain/all-in-one-pass/section/CommonQuestionSection';
 import { RetrospectiveResponse } from '@/domain/all-in-one-pass/types';
 import { downloadResponsesCsv } from '@/domain/all-in-one-pass/util/downloadResponsesCsv';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
@@ -20,7 +21,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 interface QuestionTab {
   questionId: number;
@@ -28,17 +29,14 @@ interface QuestionTab {
 }
 
 /** 응답에 등장한 질문들로 탭 구성 (공통 먼저 → 주차별). 저장 라벨은 스냅샷. */
-const buildTabs = (
-  responses: RetrospectiveResponse[],
-  commonQuestionIds: number[],
-): QuestionTab[] => {
+const buildTabs = (responses: RetrospectiveResponse[]): QuestionTab[] => {
   const present = new Set<number>();
   responses.forEach((r) => r.answers.forEach((a) => present.add(a.questionId)));
 
-  const commonSet = new Set(commonQuestionIds);
-  const commonTabs = commonQuestionIds
-    .filter((id) => present.has(id))
-    .map((id, i) => ({ questionId: id, label: `공통 질문 ${i + 1}` }));
+  const commonSet = new Set(COMMON_QUESTION_IDS);
+  const commonTabs = COMMON_QUESTION_IDS.filter((id) => present.has(id)).map(
+    (id, i) => ({ questionId: id, label: `공통 질문 ${i + 1}` }),
+  );
   const weeklyTabs = [...present]
     .filter((id) => !commonSet.has(id))
     .map((id) => ({ questionId: id, label: '주차별 질문' }));
@@ -50,8 +48,13 @@ export default function AllInOnePassRetrospectiveResponses() {
   const { retrospectiveId } = useParams();
   const roundId = retrospectiveId ? Number(retrospectiveId) : undefined;
 
-  const { data: rounds = [] } = useGetRetrospectiveRoundsQuery();
-  const { data: commonQuestions = [] } = useGetCommonQuestionsQuery();
+  const [searchParams] = useSearchParams();
+  const passId = Number(searchParams.get('passId')) || undefined;
+
+  const { data: passes = [] } = useGetAllInOnePassListQuery();
+  const passName = passes.find((p) => p.id === passId)?.title;
+
+  const { data: rounds = [] } = useGetRetrospectiveRoundsQuery(passId);
   const {
     data: responses = [],
     isLoading,
@@ -59,21 +62,13 @@ export default function AllInOnePassRetrospectiveResponses() {
   } = useGetRetrospectiveResponsesQuery(roundId);
 
   const round = rounds.find((r) => r.id === roundId);
-  const tabs = useMemo(
-    () =>
-      buildTabs(
-        responses,
-        commonQuestions.map((q) => q.id),
-      ),
-    [responses, commonQuestions],
-  );
+  const tabs = useMemo(() => buildTabs(responses), [responses]);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const activeId = selectedId ?? tabs[0]?.questionId ?? null;
 
   const [detail, setDetail] = useState<{
     submitterName: string;
-    passName: string;
     submittedAt: string;
     answer: string;
   } | null>(null);
@@ -89,14 +84,12 @@ export default function AllInOnePassRetrospectiveResponses() {
   const rows = responses.map((r) => ({
     id: r.id,
     submitterName: r.submitterName,
-    passName: r.passName,
     submittedAt: r.submittedAt,
     answer: r.answers.find((a) => a.questionId === activeId)?.answer ?? '-',
   }));
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
     { field: 'submitterName', headerName: '제출자', width: 140 },
-    { field: 'passName', headerName: '올인원 패스', width: 200 },
     {
       field: 'submittedAt',
       headerName: '제출일',
@@ -119,7 +112,6 @@ export default function AllInOnePassRetrospectiveResponses() {
               onClick={() =>
                 setDetail({
                   submitterName: row.submitterName,
-                  passName: row.passName,
                   submittedAt: row.submittedAt,
                   answer: String(value),
                 })
@@ -135,7 +127,7 @@ export default function AllInOnePassRetrospectiveResponses() {
 
   return (
     <main className="flex flex-col gap-5 p-6">
-      <header className="flex flex-col gap-2">
+      <header className="flex flex-col gap-3">
         <Link
           to="/all-in-one-pass/retrospectives"
           className="text-xsmall14 text-neutral-40 hover:text-neutral-0 flex w-fit items-center gap-1"
@@ -145,9 +137,16 @@ export default function AllInOnePassRetrospectiveResponses() {
         </Link>
 
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-medium24 text-neutral-0 font-bold">
-            {round?.round ?? '-'}회차 회고 응답 조회
-          </h1>
+          <div className="flex flex-col gap-0.5">
+            {passName && (
+              <span className="text-xsmall16 text-neutral-30 font-semibold">
+                {passName}
+              </span>
+            )}
+            <h1 className="text-medium24 text-neutral-0 font-bold">
+              {round?.round ?? '-'}회차 회고 응답 조회
+            </h1>
+          </div>
           <Button
             variant="outlined"
             onClick={() => downloadResponsesCsv(responses, tabs, round?.round)}
@@ -212,7 +211,7 @@ export default function AllInOnePassRetrospectiveResponses() {
         <DialogContent dividers className="flex flex-col gap-4">
           <div className="text-xxsmall12 text-neutral-40 flex flex-col gap-1">
             <span>
-              {detail?.submitterName} | {detail?.passName} |{' '}
+              {detail?.submitterName} |{' '}
               {detail && dayjs(detail.submittedAt).format('YYYY.MM.DD HH:mm')}
             </span>
           </div>

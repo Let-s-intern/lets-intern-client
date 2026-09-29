@@ -1,11 +1,21 @@
-import { useGetAllInOnePassDetailQuery } from '@/api/all-in-one-pass/usePassDetail';
+import {
+  allInOnePassDetailQueryKey,
+  useGetAllInOnePassDetailQuery,
+} from '@/api/all-in-one-pass/usePassDetail';
+import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
+import {
+  useSyncMembershipBenefitsMutation,
+  useUpdateAllInOnePassMutation,
+} from '@/api/all-in-one-pass/usePassMutations';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import PassForm from '@/domain/all-in-one-pass/section/PassForm';
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +25,8 @@ export default function AllInOnePassEdit() {
   const { passId } = useParams();
   const numericPassId = passId ? Number(passId) : undefined;
   const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } =
     useGetAllInOnePassDetailQuery(numericPassId);
@@ -27,10 +39,27 @@ export default function AllInOnePassEdit() {
   const patch = (partial: Partial<PassFormInput>) =>
     setInput((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  const handleSave = () => {
-    // TODO: 수정 submit 단계에서 수정 뮤테이션 연결 (API 연결 전까지 보류)
-    // eslint-disable-next-line no-console
-    console.log('[올인원패스 수정 입력값]', input);
+  const updateMutation = useUpdateAllInOnePassMutation();
+  const syncBenefits = useSyncMembershipBenefitsMutation();
+
+  const handleSave = async () => {
+    if (!input || numericPassId == null) return;
+    try {
+      await updateMutation.mutateAsync({ id: numericPassId, input });
+      await syncBenefits.mutateAsync({
+        membershipId: numericPassId,
+        original: data?.benefits ?? [],
+        current: input.benefits,
+      });
+      snackbar('수정되었습니다.');
+      queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
+      queryClient.removeQueries({
+        queryKey: [allInOnePassDetailQueryKey, numericPassId],
+      });
+      navigate('/all-in-one-pass');
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '수정에 실패했습니다.');
+    }
   };
 
   return (
@@ -65,7 +94,11 @@ export default function AllInOnePassEdit() {
             >
               취소
             </Button>
-            <Button variant="contained" onClick={handleSave}>
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={updateMutation.isPending || syncBenefits.isPending}
+            >
               저장하기
             </Button>
           </div>

@@ -1,60 +1,33 @@
-import { useGetCommonQuestionsQuery } from '@/api/all-in-one-pass/useRetrospectives';
-import CommonQuestionModal from '@/domain/all-in-one-pass/ui/retrospective/CommonQuestionModal';
-import { Button } from '@mui/material';
-import { Pencil } from 'lucide-react';
-import { useState } from 'react';
+import { RetrospectiveCommonQuestion } from '@/domain/all-in-one-pass/types';
 
-/** A-4 공통 질문 카드(읽기) + 수정 모달 */
+/**
+ * 전 패스 공통 질문 (하드코딩·수정 불가). 기획 확정: FE 하드코딩으로 진행.
+ * 답변 FK·응답 조회 매칭을 위해 id 고정 (백엔드도 동일 id 로 DB 시드).
+ */
+export const COMMON_QUESTIONS: RetrospectiveCommonQuestion[] = [
+  { id: 1, question: '지난 회고 이후 어떤 점이 성장했나요?' },
+  { id: 2, question: '이번 기간에 어떤 목표를 실천했나요?' },
+];
+
+export const COMMON_QUESTION_IDS = COMMON_QUESTIONS.map((q) => q.id);
+
+/** A-4 공통 질문 (하드코딩·읽기 전용) */
 export default function CommonQuestionSection() {
-  const [open, setOpen] = useState(false);
-  const { data: questions = [] } = useGetCommonQuestionsQuery();
-
-  const handleSubmit = (updated: string[]) => {
-    // TODO: API 연결 후 공통 질문 저장 뮤테이션 연결
-    // eslint-disable-next-line no-console
-    console.log('[공통 질문 저장]', updated);
-    setOpen(false);
-  };
-
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
         <h2 className="text-small20 text-neutral-0 font-semibold">공통 질문</h2>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="medium"
-          startIcon={<Pencil />}
-          onClick={() => setOpen(true)}
-        >
-          공통 질문 수정
-        </Button>
       </div>
       <div className="border-neutral-80 flex flex-col gap-2 rounded-md border p-4">
-        {questions.length === 0 ? (
-          <span className="text-xsmall14 text-neutral-40">
-            등록된 공통 질문이 없습니다.
-          </span>
-        ) : (
-          questions.map((q, i) => (
-            <div key={q.id} className="flex gap-2">
-              <span className="text-xsmall16 text-primary font-medium">
-                Q{i + 1}.
-              </span>
-              <span className="text-xsmall16 text-neutral-10">
-                {q.question}
-              </span>
-            </div>
-          ))
-        )}
+        {COMMON_QUESTIONS.map((q, i) => (
+          <div key={q.id} className="flex gap-2">
+            <span className="text-xsmall16 text-primary font-medium">
+              Q{i + 1}.
+            </span>
+            <span className="text-xsmall16 text-neutral-10">{q.question}</span>
+          </div>
+        ))}
       </div>
-
-      <CommonQuestionModal
-        open={open}
-        initial={questions}
-        onSubmit={handleSubmit}
-        onClose={() => setOpen(false)}
-      />
     </section>
   );
 }

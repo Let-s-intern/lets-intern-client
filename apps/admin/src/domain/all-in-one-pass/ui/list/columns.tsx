@@ -20,8 +20,11 @@ export const getListColumns = (
     headerName: '개설일자',
     type: 'dateTime',
     width: 180,
-    valueGetter: (_, row) => dayjs(row.createdAt).toDate(),
-    valueFormatter: (value) => dayjs(value).format('YYYY/MM/DD(dd) HH:mm'),
+    // 서버 미제공(추가 예정) — 값 없으면 '-'
+    valueGetter: (_, row) =>
+      row.createdAt ? dayjs(row.createdAt).toDate() : null,
+    valueFormatter: (value) =>
+      value ? dayjs(value).format('YYYY/MM/DD(dd) HH:mm') : '-',
   },
   {
     field: 'title',

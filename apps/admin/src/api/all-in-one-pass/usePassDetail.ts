@@ -1,30 +1,25 @@
-import { PassFormInput } from '@/domain/all-in-one-pass/types';
+import { toFormInput } from '@/domain/all-in-one-pass/util/membershipMapper';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { passDetailFixtures } from './mock/passDetailFixtures';
-import { mockDelay } from './mock/passStore';
+import { membershipDetailSchema } from './membershipSchema';
 
 /**
- * 올인원패스 단건 상세 조회 훅 (수정 폼 프리필용).
+ * 올인원패스(멤버십) 단건 상세 조회 훅 (수정 폼 프리필용).
  *
- * 현재는 mock 시드(./mock/passDetailFixtures)를 읽는다. 백엔드 스펙이 나오면
- * queryFn 본문만 axios 호출로 교체하면 된다.
+ * 서버: GET /api/v1/admin/membership/{id}. 응답 DTO를 membershipMapper 로 폼 입력값으로 변환.
  */
 
 export const allInOnePassDetailQueryKey = 'allInOnePassDetail';
 
-/** id 로 상세(폼 입력값)를 조회한다. 없으면 에러. */
+/** id 로 상세(폼 입력값)를 조회한다. */
 export const useGetAllInOnePassDetailQuery = (id?: number) =>
   useQuery({
     queryKey: [allInOnePassDetailQueryKey, id],
     enabled: id != null,
     // 수정 폼 프리필용. 포커스 refetch로 편집 중 값이 덮어써지지 않게 한다.
     refetchOnWindowFocus: false,
-    queryFn: () => {
-      const detail = id != null ? passDetailFixtures[id] : undefined;
-      if (!detail) {
-        return Promise.reject(new Error('존재하지 않는 패스입니다.'));
-      }
-      // 원본 시드를 수정하지 않도록 깊은 복사본을 반환
-      return mockDelay(structuredClone(detail) as PassFormInput);
+    queryFn: async () => {
+      const res = await axios.get(`/admin/membership/${id}`);
+      return toFormInput(membershipDetailSchema.parse(res.data.data));
     },
   });
