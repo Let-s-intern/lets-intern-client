@@ -132,7 +132,6 @@ export const toFormInput = (detail: MembershipDetail): PassFormInput => {
       link: b.link ?? '',
       coupon: null, // 멘토링 쿠폰은 혜택과 별개
     })),
-    // FAQ는 전 멤버십 공통(글로벌) — 폼에 포함하지 않음(FaqSection이 /faq로 직접 관리)
   };
 };
 
@@ -148,7 +147,7 @@ const planToDto = (plan: PassPlan) => ({
   })),
 });
 
-const benefitToDto = (benefit: PassBenefit) => ({
+export const benefitToDto = (benefit: PassBenefit) => ({
   title: benefit.title,
   type: benefit.category,
   link: benefit.link || null,

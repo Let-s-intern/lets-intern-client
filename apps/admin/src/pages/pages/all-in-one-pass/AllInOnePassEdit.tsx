@@ -1,9 +1,12 @@
-import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
 import {
   allInOnePassDetailQueryKey,
   useGetAllInOnePassDetailQuery,
 } from '@/api/all-in-one-pass/usePassDetail';
-import { useUpdateAllInOnePassMutation } from '@/api/all-in-one-pass/usePassMutations';
+import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
+import {
+  useSyncMembershipBenefitsMutation,
+  useUpdateAllInOnePassMutation,
+} from '@/api/all-in-one-pass/usePassMutations';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -37,15 +40,19 @@ export default function AllInOnePassEdit() {
     setInput((prev) => (prev ? { ...prev, ...partial } : prev));
 
   const updateMutation = useUpdateAllInOnePassMutation();
+  const syncBenefits = useSyncMembershipBenefitsMutation();
 
   const handleSave = async () => {
     if (!input || numericPassId == null) return;
     try {
       await updateMutation.mutateAsync({ id: numericPassId, input });
+      await syncBenefits.mutateAsync({
+        membershipId: numericPassId,
+        original: data?.benefits ?? [],
+        current: input.benefits,
+      });
       snackbar('수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
-      // 상세 캐시는 제거해 재진입 시 서버에서 새로 받아오게 한다
-      // (prefill effect의 prev ?? data guard 때문에 invalidate만으론 갱신 안 됨)
       queryClient.removeQueries({
         queryKey: [allInOnePassDetailQueryKey, numericPassId],
       });
@@ -90,7 +97,7 @@ export default function AllInOnePassEdit() {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={updateMutation.isPending}
+              disabled={updateMutation.isPending || syncBenefits.isPending}
             >
               저장하기
             </Button>

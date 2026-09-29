@@ -1,16 +1,18 @@
+import { PassBenefit, PassFormInput } from '@/domain/all-in-one-pass/types';
 import {
+  benefitToDto,
   toCreateDto,
   toUpdateDto,
 } from '@/domain/all-in-one-pass/util/membershipMapper';
-import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import axios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 
 /**
  * 올인원패스(멤버십) 생성/수정 뮤테이션.
  *
- * 생성은 plan/benefit/faq 를 한 번에 전송(POST), 수정은 basic 필드만(PATCH).
- * 혜택 개별 수정은 별도 benefit CRUD 엔드포인트 사용(추후).
+ * 생성은 plan/benefit 를 한 번에 전송(POST), 수정(PATCH)은 basic 필드만.
+ * 혜택은 수정 페이지에서 별도 benefit CRUD 엔드포인트로 diff 반영한다
+ * (플랜은 서버 수정 엔드포인트가 없어 개설 후 변경 불가).
  */
 
 type MutationCallbacks = {
@@ -42,6 +44,55 @@ export const useUpdateAllInOnePassMutation = ({
         toUpdateDto(input),
       );
       return res.data;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+
+export const useSyncMembershipBenefitsMutation = ({
+  successCallback,
+  errorCallback,
+}: MutationCallbacks = {}) =>
+  useMutation({
+    mutationFn: async ({
+      membershipId,
+      original,
+      current,
+    }: {
+      membershipId: number;
+      original: PassBenefit[];
+      current: PassBenefit[];
+    }) => {
+      const originalById = new Map(original.map((b) => [b.id, b]));
+      const currentIds = new Set(current.map((b) => b.id));
+
+      const toDelete = original.filter((b) => !currentIds.has(b.id));
+      const toCreate = current.filter((b) => !originalById.has(b.id));
+      const toUpdate = current.filter((b) => {
+        const prev = originalById.get(b.id);
+        return (
+          prev &&
+          JSON.stringify(benefitToDto(prev)) !== JSON.stringify(benefitToDto(b))
+        );
+      });
+
+      await Promise.all([
+        ...toDelete.map((b) =>
+          axios.delete(`/admin/membership/${membershipId}/benefit/${b.id}`),
+        ),
+        ...toCreate.map((b) =>
+          axios.post(
+            `/admin/membership/${membershipId}/benefit`,
+            benefitToDto(b),
+          ),
+        ),
+        ...toUpdate.map((b) =>
+          axios.patch(
+            `/admin/membership/${membershipId}/benefit/${b.id}`,
+            benefitToDto(b),
+          ),
+        ),
+      ]);
     },
     onSuccess: successCallback,
     onError: errorCallback,
