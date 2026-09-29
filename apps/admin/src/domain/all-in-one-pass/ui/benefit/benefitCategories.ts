@@ -15,7 +15,8 @@ export const isFixedBenefitCategory = (category: string): boolean =>
 /** 쿠폰 할인 라벨 (예: "전액 할인 쿠폰" · "50% 할인 쿠폰" · "5,000원 할인 쿠폰") */
 export const benefitCouponLabel = (coupon: BenefitCouponSetting): string => {
   if (coupon.discountType === 'FULL') return '전액 할인 쿠폰';
-  if (coupon.discountType === 'PERCENT') return `${coupon.value ?? 0}% 할인 쿠폰`;
+  if (coupon.discountType === 'PERCENT')
+    return `${coupon.value ?? 0}% 할인 쿠폰`;
   return `${(coupon.value ?? 0).toLocaleString()}원 할인 쿠폰`;
 };
 
