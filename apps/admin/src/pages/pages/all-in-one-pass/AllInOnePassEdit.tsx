@@ -1,5 +1,8 @@
 import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
-import { useGetAllInOnePassDetailQuery } from '@/api/all-in-one-pass/usePassDetail';
+import {
+  allInOnePassDetailQueryKey,
+  useGetAllInOnePassDetailQuery,
+} from '@/api/all-in-one-pass/usePassDetail';
 import { useUpdateAllInOnePassMutation } from '@/api/all-in-one-pass/usePassMutations';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
@@ -41,6 +44,11 @@ export default function AllInOnePassEdit() {
       await updateMutation.mutateAsync({ id: numericPassId, input });
       snackbar('수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
+      // 상세 캐시는 제거해 재진입 시 서버에서 새로 받아오게 한다
+      // (prefill effect의 prev ?? data guard 때문에 invalidate만으론 갱신 안 됨)
+      queryClient.removeQueries({
+        queryKey: [allInOnePassDetailQueryKey, numericPassId],
+      });
       navigate('/all-in-one-pass');
     } catch (e) {
       snackbar(e instanceof Error ? e.message : '수정에 실패했습니다.');
