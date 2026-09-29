@@ -5,7 +5,7 @@ import {
 } from '@/domain/all-in-one-pass/ui/benefit/benefitCategories';
 import BenefitModal from '@/domain/all-in-one-pass/ui/benefit/BenefitModal';
 import { CategoryTabs } from '@letscareer/ui';
-import { Button, Switch } from '@mui/material';
+import { Button } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
@@ -58,8 +58,9 @@ export default function BenefitSection({ benefits, onChange }: Props) {
       ? benefits
       : benefits.filter((b) => b.category === visibleTab);
 
-  const update = (id: string, partial: Partial<PassBenefit>) =>
-    onChange(benefits.map((b) => (b.id === id ? { ...b, ...partial } : b)));
+  // 노출 토글(isVisible) 보류로 현재 미사용. 백엔드 지원되면 해제.
+  // const update = (id: string, partial: Partial<PassBenefit>) =>
+  //   onChange(benefits.map((b) => (b.id === id ? { ...b, ...partial } : b)));
 
   const handleSave = (saved: PassBenefit) => {
     onChange(
@@ -160,6 +161,8 @@ export default function BenefitSection({ benefits, onChange }: Props) {
                       </ul>
                     )}
                   </div>
+                  {/* 노출 토글: 멤버십 혜택 API에 isVisible 필드가 없어 일단 보류(주석).
+                      백엔드 지원되면 해제.
                   {!benefit.coupon && (
                     <Switch
                       size="small"
@@ -169,7 +172,7 @@ export default function BenefitSection({ benefits, onChange }: Props) {
                         update(benefit.id, { isVisible: e.target.checked })
                       }
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
 

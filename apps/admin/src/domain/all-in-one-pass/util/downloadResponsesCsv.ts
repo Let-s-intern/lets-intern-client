@@ -19,7 +19,6 @@ export const downloadResponsesCsv = (
 
   const header = [
     '제출자',
-    '올인원 패스',
     '제출일',
     ...questions.map((q) => `${q.label}: ${labelOf(q.questionId)}`),
   ];
@@ -27,7 +26,6 @@ export const downloadResponsesCsv = (
     const byId = new Map(r.answers.map((a) => [a.questionId, a.answer]));
     return [
       r.submitterName,
-      r.passName,
       dayjs(r.submittedAt).format('YYYY-MM-DD HH:mm'),
       ...questions.map((q) => byId.get(q.questionId) ?? ''),
     ];

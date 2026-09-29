@@ -22,7 +22,7 @@ export const passFixtures: AllInOnePassListItem[] = [
     title: '2026 겨울 올인원패스',
     purchaseStartDate: '2026-11-01T00:00:00',
     purchaseEndDate: '2026-11-30T23:59:59', // 모집 전
-    passDays: 90,
+    passDays: 84, // 딱 12주 → 6회차(자투리 없음)
     isVisible: false,
     currentApplicantCount: 0,
     maxApplicantCount: null,
@@ -33,7 +33,7 @@ export const passFixtures: AllInOnePassListItem[] = [
     title: '2026 상반기 올인원패스',
     purchaseStartDate: '2026-01-15T00:00:00',
     purchaseEndDate: '2026-02-28T23:59:59', // 모집 마감
-    passDays: 90,
+    passDays: 60, // 8주 + 4일 → 5회차(마지막 자투리 회차)
     isVisible: false,
     currentApplicantCount: 95,
     maxApplicantCount: null,
