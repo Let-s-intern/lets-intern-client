@@ -23,10 +23,10 @@ export default function RowActions({ pass }: Props) {
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
-  const duplicatePass = useDuplicateAllInOnePassMutation({
+  const deletePass = useDeleteAllInOnePassMutation({
     successCallback: invalidate,
   });
-  const deletePass = useDeleteAllInOnePassMutation({
+  const duplicatePass = useDuplicateAllInOnePassMutation({
     successCallback: invalidate,
   });
 
@@ -76,6 +76,7 @@ export default function RowActions({ pass }: Props) {
         size="small"
         startIcon={<FaCopy />}
         onClick={handleDuplicate}
+        disabled={duplicatePass.isPending}
       >
         복제
       </Button>
